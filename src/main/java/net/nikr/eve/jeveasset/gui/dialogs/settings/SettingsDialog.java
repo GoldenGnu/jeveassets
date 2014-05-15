@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2013 Contributors (see credits.txt)
+ * Copyright 2009-2014 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -32,6 +32,7 @@ import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.*;
 import net.nikr.eve.jeveasset.Program;
+import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
 import net.nikr.eve.jeveasset.i18n.DialoguesSettings;
@@ -112,7 +113,7 @@ public class SettingsDialog extends JDialogCentered {
 		layout.setVerticalGroup(
 			layout.createSequentialGroup()
 				.addGroup(layout.createParallelGroup()
-					.addComponent(jTreeScroller, 200, 200, 220)
+					.addComponent(jTreeScroller, 250, 250, 250)
 					.addComponent(jContent)
 				)
 				.addComponent(jSeparator, 5, 5, 5)
@@ -136,6 +137,12 @@ public class SettingsDialog extends JDialogCentered {
 
 		StockpileToolSettingsPanel stockpileToolSettingsPanel = new StockpileToolSettingsPanel(program, this);
 		add(stockpileToolSettingsPanel, toolNode);
+
+		TransactionsToolSettingsPanel transactionsToolSettingsPanel = new TransactionsToolSettingsPanel(program, this);
+		add(transactionsToolSettingsPanel, toolNode);
+
+		JournalToolSettingsPanel journalToolSettingsPanel = new JournalToolSettingsPanel(program, this);
+		add(journalToolSettingsPanel, toolNode);
 		
 		DefaultMutableTreeNode valuesNode = addGroup("Values", Images.EDIT_RENAME.getIcon());
 		userPriceSettingsPanel = new UserPriceSettingsPanel(program, this);
@@ -221,14 +228,17 @@ public class SettingsDialog extends JDialogCentered {
 	@Override
 	protected void save() {
 		boolean update = false;
+		Settings.lock(); //Lock for Settings Dialog
 		for (Map.Entry<String, JSettingsPanel> entry : settingsPanels.entrySet()) {
 			if (entry.getValue().save()) {
 				update = true;
 			}
 		}
-		if (update) {
+		Settings.unlock(); //Unlock for Settings Dialog
+		if (update) { //Update
 			program.updateEventLists();
 		}
+		program.saveSettings("Save Settings Dialog"); //Save Settings Dialog
 	}
 
 	public void setVisible(final JSettingsPanel c) {

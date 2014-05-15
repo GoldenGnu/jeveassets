@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2013 Contributors (see credits.txt)
+ * Copyright 2009-2014 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -28,9 +28,9 @@ import java.beans.PropertyChangeListener;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 import java.util.concurrent.CancellationException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -48,11 +48,12 @@ import org.slf4j.LoggerFactory;
 public abstract class UpdateTask extends SwingWorker<Void, Void> {
 	private static final Logger LOG = LoggerFactory.getLogger(UpdateTask.class);
 
-	private boolean taskDone = false;
-	private JLabel jText;
-	private Map<String, String> errors;
-	private String name;
+	private final JLabel jText;
+	private final List<ErrorClass> errors;
+	private final String name;
+
 	private boolean errorShown = false;
+	private boolean taskDone = false;
 
 	public UpdateTask(final String name) {
 		this.name = name;
@@ -60,7 +61,7 @@ public abstract class UpdateTask extends SwingWorker<Void, Void> {
 		jText = new JLabel(name);
 		jText.setIcon(Images.UPDATE_NOT_STARTED.getIcon());
 
-		errors = new HashMap<String, String>();
+		errors = new ArrayList<ErrorClass>();
 	}
 
 	public String getName() {
@@ -72,7 +73,7 @@ public abstract class UpdateTask extends SwingWorker<Void, Void> {
 	}
 
 	public void addError(final String owner, final String error) {
-		errors.put(owner, error);
+		errors.add(new ErrorClass(owner, error));
 	}
 
 	public boolean hasError() {
@@ -122,14 +123,14 @@ public abstract class UpdateTask extends SwingWorker<Void, Void> {
 
 			try {
 				boolean first = true;
-				for (Map.Entry<String, String> entry : errors.entrySet()) {
+				for (ErrorClass errorClass : errors) {
 					if (first) {
 						first = false;
 					} else {
 						doc.insertString(doc.getLength(), "\n\r", null);
 					}
-					doc.insertString(doc.getLength(), entry.getKey(), null);
-					doc.insertString(doc.getLength(), "\r\n" + processError(entry.getValue()), errorAttributeSet);
+					doc.insertString(doc.getLength(), errorClass.getOwner(), null);
+					doc.insertString(doc.getLength(), "\r\n" + processError(errorClass.getError()), errorAttributeSet);
 				}
 			} catch (BadLocationException ex) {
 				LOG.warn("Ignoring exception: " + ex.getMessage(), ex);
@@ -209,6 +210,24 @@ public abstract class UpdateTask extends SwingWorker<Void, Void> {
 			} else {
 				jText.setIcon(Images.UPDATE_WORKING.getIcon());
 			}
+		}
+	}
+
+	private static class ErrorClass {
+		private final String owner;
+		private final String error;
+
+		public ErrorClass(String owner, String error) {
+			this.owner = owner;
+			this.error = error;
+		}
+
+		public String getOwner() {
+			return owner;
+		}
+
+		public String getError() {
+			return error;
 		}
 	}
 }

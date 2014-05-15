@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2013 Contributors (see credits.txt)
+ * Copyright 2009-2014 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -22,57 +22,70 @@
 package net.nikr.eve.jeveasset.io.eveapi;
 
 import com.beimin.eveapi.exception.ApiException;
-import com.beimin.eveapi.shared.wallet.transactions.ApiWalletTransaction;
-import com.beimin.eveapi.shared.wallet.transactions.WalletTransactionsResponse;
+import com.beimin.eveapi.model.shared.WalletTransaction;
+import com.beimin.eveapi.response.shared.WalletTransactionsResponse;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
-import net.nikr.eve.jeveasset.data.Account;
-import net.nikr.eve.jeveasset.data.Account.AccessMask;
+import java.util.Map;
+import net.nikr.eve.jeveasset.data.MyAccount;
+import net.nikr.eve.jeveasset.data.MyAccount.AccessMask;
 import net.nikr.eve.jeveasset.data.Owner;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
-import net.nikr.eve.jeveasset.gui.tabs.transaction.Transaction;
-import net.nikr.eve.jeveasset.io.shared.AbstractApiGetter;
+import net.nikr.eve.jeveasset.gui.tabs.transaction.MyTransaction;
+import net.nikr.eve.jeveasset.io.shared.AbstractApiAccountKeyGetter;
 import net.nikr.eve.jeveasset.io.shared.ApiConverter;
 
 
-public class TransactionsGetter extends AbstractApiGetter<WalletTransactionsResponse> {
+public class TransactionsGetter extends AbstractApiAccountKeyGetter<WalletTransactionsResponse, MyTransaction> {
+
+	private boolean saveHistory;
 
 	public TransactionsGetter() {
-		super("Transaction", true, false);
+		super("Transaction");
 	}
 
-	public void load(final UpdateTask updateTask, final boolean forceUpdate, final List<Account> accounts) {
+	public void load(final UpdateTask updateTask, final boolean forceUpdate, final List<MyAccount> accounts, final boolean saveHistory) {
 		super.loadAccounts(updateTask, forceUpdate, accounts);
+		this.saveHistory = saveHistory;
 	}
 
 	@Override
-	protected WalletTransactionsResponse getResponse(final boolean bCorp) throws ApiException {
-		if (bCorp) {
-			return com.beimin.eveapi.corporation
-					.wallet.transactions.WalletTransactionsParser.getInstance()
-					.getResponse(Owner.getApiAuthorization(getOwner()),0);
+	protected Map<Long, MyTransaction> get() {
+		if (saveHistory) {
+			return getOwner().getTransactions();
 		} else {
-			return com.beimin.eveapi.character
-					.wallet.transactions.WalletTransactionsParser.getInstance()
-					.getResponse(Owner.getApiAuthorization(getOwner()),0);
+			return new HashMap<Long, MyTransaction>();
 		}
+	}
+
+	@Override
+	protected void set(Map<Long, MyTransaction> values, Date nextUpdate) {
+		getOwner().setTransactions(values);
+		getOwner().setTransactionsNextUpdate(nextUpdate);
+	}
+
+	@Override
+	protected WalletTransactionsResponse getResponse(boolean bCorp, int accountKey, long fromID, int rowCount) throws ApiException {
+		if (bCorp) {
+			return new com.beimin.eveapi.parser.corporation.WalletTransactionsParser()
+					.getResponse(Owner.getApiAuthorization(getOwner()), accountKey, fromID, rowCount);
+		} else {
+			return new com.beimin.eveapi.parser.pilot.WalletTransactionsParser()
+					.getTransactionsResponse(Owner.getApiAuthorization(getOwner()), fromID, rowCount);
+		}
+	}
+
+	@Override
+	protected Map<Long, MyTransaction> convertData(WalletTransactionsResponse response, int accountKey) {
+		List<WalletTransaction> api = new ArrayList<WalletTransaction>(response.getAll());
+		return ApiConverter.convertTransactions(api, getOwner(), accountKey);
 	}
 
 	@Override
 	protected Date getNextUpdate() {
 		return getOwner().getTransactionsNextUpdate();
-	}
-
-	@Override
-	protected void setNextUpdate(final Date nextUpdate) {
-		getOwner().setTransactionsNextUpdate(nextUpdate);
-	}
-
-	@Override
-	protected void setData(final WalletTransactionsResponse response) {
-		List<Transaction> transactions = ApiConverter.convertTransactions(new ArrayList<ApiWalletTransaction>(response.getAll()), getOwner());
-		getOwner().setTransactions(transactions);
 	}
 
 	@Override

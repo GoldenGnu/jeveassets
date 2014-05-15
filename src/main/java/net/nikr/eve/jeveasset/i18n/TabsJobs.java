@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2013 Contributors (see credits.txt)
+ * Copyright 2009-2014 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -40,6 +40,7 @@ public abstract class TabsJobs extends Bundle {
 	public abstract String industry();
 	public abstract String install();
 	public abstract String inventionSuccess();
+	public abstract String manufactureJobsValue();
 	public abstract String no();
 	public abstract String whitespace(Object arg0);
 	public abstract String columnState();
@@ -51,6 +52,9 @@ public abstract class TabsJobs extends Bundle {
 	public abstract String columnInstallDate();
 	public abstract String columnStartDate();
 	public abstract String columnEndDate();
+	public abstract String columnRuns();
 	public abstract String columnBpMe();
 	public abstract String columnBpPe();
+	public abstract String columnOutputCount();
+	public abstract String columnOutputValue();
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2013 Contributors (see credits.txt)
+ * Copyright 2009-2014 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -141,28 +141,37 @@ public class JOverviewMenu extends JMenu {
 			if (OverviewMenu.NEW.name().equals(e.getActionCommand())) {
 				String value = JOptionPane.showInputDialog(program.getMainWindow().getFrame(), TabsOverview.get().groupName(), TabsOverview.get().addGroup(), JOptionPane.PLAIN_MESSAGE);
 				if (value != null) {
+					Settings.lock(); //Lock for Overview Groups (New)
 					OverviewGroup overviewGroup = new OverviewGroup(value);
 					Settings.get().getOverviewGroups().put(overviewGroup.getName(), overviewGroup);
 					overviewGroup.addAll(program.getOverviewTab().getSelectedLocations());
 					program.getOverviewTab().updateTable();
+					Settings.unlock(); //Unlock for Overview Groups (New)
+					program.saveSettings("Save Overview Groups (New)"); //Save Overview Groups (New)
 				}
 			}
 			if (OverviewMenu.DELETE.name().equals(e.getActionCommand())) {
 				OverviewGroup overviewGroup = program.getOverviewTab().getSelectGroup();
 				int value = JOptionPane.showConfirmDialog(program.getMainWindow().getFrame(), TabsOverview.get().deleteTheGroup(overviewGroup.getName()), TabsOverview.get().deleteGroup(), JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
 				if (value == JOptionPane.OK_OPTION) {
+					Settings.lock(); //Lock for Overview Groups (Delete)
 					Settings.get().getOverviewGroups().remove(overviewGroup.getName());
 					program.getOverviewTab().updateTable();
+					Settings.unlock(); //Unlock for Overview Groups (Delete)
+					program.saveSettings("Save Overview Groups (Delete)"); //Save Overview Groups (Delete)
 				}
 			}
 			if (OverviewMenu.RENAME.name().equals(e.getActionCommand())) {
 				OverviewGroup overviewGroup = program.getOverviewTab().getSelectGroup();
 				String value = (String) JOptionPane.showInputDialog(program.getMainWindow().getFrame(), TabsOverview.get().groupName(), TabsOverview.get().renameGroup(), JOptionPane.PLAIN_MESSAGE, null, null, overviewGroup.getName());
 				if (value != null) {
+					Settings.lock(); //Lock for Overview Groups (Rename)
 					Settings.get().getOverviewGroups().remove(overviewGroup.getName());
 					overviewGroup.setName(value);
 					Settings.get().getOverviewGroups().put(overviewGroup.getName(), overviewGroup);
 					program.getOverviewTab().updateTable();
+					Settings.unlock(); //Unlock for Overview Groups (Rename)
+					program.saveSettings("Save Overview Groups (Rename)"); //Save Overview Groups (Rename)
 				}
 			}
 		}

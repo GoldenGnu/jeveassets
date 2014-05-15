@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2013 Contributors (see credits.txt)
+ * Copyright 2009-2014 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -27,6 +27,7 @@ import java.util.*;
 import java.util.Map.Entry;
 import javax.swing.*;
 import net.nikr.eve.jeveasset.Program;
+import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.data.UserItem;
 import net.nikr.eve.jeveasset.i18n.DialoguesSettings;
 
@@ -163,11 +164,14 @@ public abstract class JUserListPanel<K, V extends Comparable<V>> extends JSettin
 				//Update GUI
 				updateGUI();
 				if (save) { //Save (if not in setttings dialog)
+					Settings.lock(); //Lock for Custom Price/Name (Edit)
 					boolean update = save();
+					Settings.unlock(); //Unlock for Custom Price/Name (Edit)
 					if (update) {
 						//FIXME - - - > Price/Name: Update Price/Name (no need to update all date - just need to update the data in tags column)
 						program.updateEventLists();
 					}
+					program.saveSettings("Save Custom Price/Name (Edit)"); //Save Custom Price/Name (Edit)
 				}
 			} else {
 				JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), DialoguesSettings.get().inputNotValid(), DialoguesSettings.get().badInput(), JOptionPane.PLAIN_MESSAGE);
@@ -208,11 +212,14 @@ public abstract class JUserListPanel<K, V extends Comparable<V>> extends JSettin
 		if (value == JOptionPane.OK_OPTION) {
 			items.keySet().removeAll(containedKeys);
 			updateGUI();
-			if (save) {
+			if (save) { //Save (if not in setttings dialog)
+				Settings.lock(); //Lock for Custom Price/Name (Delete)
 				boolean update = save();
+				Settings.unlock(); //Unlock for Custom Price/Name (Delete)
 				if (update) {
 					program.updateEventLists();
 				}
+				program.saveSettings("Save Custom Price/Name (Delete)"); //Save Custom Price/Name (Delete)
 			}
 		}
 	}

@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2013 Contributors (see credits.txt)
+ * Copyright 2009-2014 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -51,15 +51,15 @@ import net.nikr.eve.jeveasset.i18n.TabsItems;
 
 public class ItemsTab extends JMainTab {
 
-	private JAutoColumnTable jTable;
+	private final JAutoColumnTable jTable;
 
 	//Table
-	private ItemsFilterControl filterControl;
-	private EnumTableFormatAdaptor<ItemTableFormat, Item> tableFormat;
-	private DefaultEventTableModel<Item> tableModel;
-	private FilterList<Item> filterList;
-	private EventList<Item> eventList;
-	private DefaultEventSelectionModel<Item> selectionModel;
+	private final ItemsFilterControl filterControl;
+	private final EnumTableFormatAdaptor<ItemTableFormat, Item> tableFormat;
+	private final DefaultEventTableModel<Item> tableModel;
+	private final FilterList<Item> filterList;
+	private final EventList<Item> eventList;
+	private final DefaultEventSelectionModel<Item> selectionModel;
 
 	public static final String NAME = "items"; //Not to be changed!
 
@@ -148,9 +148,9 @@ public class ItemsTab extends JMainTab {
 		public void addToolMenu(JComponent jComponent) { }
 	}
 
-	public static class ItemsFilterControl extends FilterControl<Item> {
+	private class ItemsFilterControl extends FilterControl<Item> {
 
-		private EnumTableFormatAdaptor<ItemTableFormat, Item> tableFormat;
+		private final EnumTableFormatAdaptor<ItemTableFormat, Item> tableFormat;
 
 		public ItemsFilterControl(final JFrame jFrame, final EnumTableFormatAdaptor<ItemTableFormat, Item> tableFormat, final EventList<Item> eventList, final FilterList<Item> filterList, final Map<String, List<Filter>> filters) {
 			super(jFrame, NAME, eventList, filterList, filters);
@@ -176,6 +176,11 @@ public class ItemsTab extends JMainTab {
 		@Override
 		protected List<EnumTableColumn<Item>> getShownColumns() {
 			return new ArrayList<EnumTableColumn<Item>>(tableFormat.getShownColumns());
+		}
+
+		@Override
+		protected void saveSettings(final String msg) {
+			program.saveSettings("Save Item " + msg); //Save Item Filters and Export Setttings
 		}
 	}
 }

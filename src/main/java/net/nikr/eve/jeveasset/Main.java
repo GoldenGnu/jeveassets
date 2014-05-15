@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2013 Contributors (see credits.txt)
+ * Copyright 2009-2014 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -49,11 +49,11 @@ public final class Main {
 	/**
 	 * JEveAssets main launcher.
 	 */
-	private Program program;
+	private final Program program;
 	/**
 	 * Ensure only one instance is running...
 	 */
-	private SingleInstance instance;
+	private final SingleInstance instance;
 
 	/** Creates a new instance of Main. */
 	private Main() {
@@ -76,6 +76,7 @@ public final class Main {
 		boolean portable = false;
 		boolean forceNoUpdate = false;
 		boolean forceUpdate = false;
+		boolean lazySave = false;
 
 		for (String arg : args) {
 			if (arg.toLowerCase().equals("-debug")) {
@@ -89,6 +90,9 @@ public final class Main {
 			}
 			if (arg.toLowerCase().equals("-update")) {
 				forceUpdate = true;
+			}
+			if (arg.toLowerCase().equals("-lazysave")) {
+				lazySave = true;
 			}
 		}
 
@@ -133,10 +137,10 @@ public final class Main {
 		Program.setPortable(portable);
 		Program.setForceNoUpdate(forceNoUpdate && debug);
 		Program.setForceUpdate(forceUpdate && debug);
+		Program.setLazySave(lazySave);
 
 		// fix the uncaught exception handlers
-		System.setProperty("sun.awt.exception.handler", "net.nikr.eve.jeveasset.NikrUncaughtExceptionHandler");
-		Thread.setDefaultUncaughtExceptionHandler(new NikrUncaughtExceptionHandler());
+		NikrUncaughtExceptionHandler.install();
 
 		//XXX - Workaround for IPv6 fail (force IPv4)
 		//eveonline.com is not IPv6 ready...

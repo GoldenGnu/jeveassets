@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2013 Contributors (see credits.txt)
+ * Copyright 2009-2014 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -23,11 +23,10 @@ package net.nikr.eve.jeveasset.gui.dialogs.account;
 
 import ca.odell.glazedlists.GlazedLists;
 import java.util.Comparator;
-import java.util.Date;
 import net.nikr.eve.jeveasset.data.Owner;
-import net.nikr.eve.jeveasset.data.Settings;
-import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
+import net.nikr.eve.jeveasset.gui.shared.table.containers.ExpirerDate;
+import net.nikr.eve.jeveasset.gui.shared.table.containers.YesNo;
 import net.nikr.eve.jeveasset.i18n.DialoguesAccount;
 
 
@@ -39,10 +38,14 @@ enum AccountTableFormat implements EnumTableColumn<Owner> {
 		}
 		@Override
 		public Object getColumnValue(final Owner from) {
-			return from.isShowOwner();
+			return from.isShowOwner() && !from.getName().equals(DialoguesAccount.get().noOwners());
 		}
 		@Override
 		public boolean isColumnEditable(final Object baseObject) {
+			if (baseObject instanceof Owner) {
+				Owner owner = (Owner) baseObject;
+				return !owner.getName().equals(DialoguesAccount.get().noOwners());
+			}
 			return true;
 		}
 		@Override
@@ -136,6 +139,26 @@ enum AccountTableFormat implements EnumTableColumn<Owner> {
 			return new YesNo(from.getParentAccount().isJournal());
 		}
 	},
+	CONTRACTS(YesNo.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return DialoguesAccount.get().tableFormatContracts();
+		}
+		@Override
+		public Object getColumnValue(final Owner from) {
+			return new YesNo(from.getParentAccount().isContracts());
+		}
+	},
+	LOCATIONS(YesNo.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return DialoguesAccount.get().tableFormatLocations();
+		}
+		@Override
+		public Object getColumnValue(final Owner from) {
+			return new YesNo(from.getParentAccount().isLocations());
+		}
+	},
 	EXPIRES(ExpirerDate.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
@@ -147,8 +170,8 @@ enum AccountTableFormat implements EnumTableColumn<Owner> {
 		}
 	};
 
-	private Class<?> type;
-	private Comparator<?> comparator;
+	private final Class<?> type;
+	private final Comparator<?> comparator;
 	private AccountTableFormat(final Class<?> type, final Comparator<?> comparator) {
 		this.type = type;
 		this.comparator = comparator;
@@ -175,53 +198,5 @@ enum AccountTableFormat implements EnumTableColumn<Owner> {
 	}
 	@Override public Owner setColumnValue(final Object baseObject, final Object editedValue) {
 		return null;
-	}
-
-	//FIXME - - > Account Table Format: Move inner classes to containers
-	public class YesNo implements Comparable<YesNo> {
-
-		private boolean b;
-
-		public YesNo(final boolean b) {
-			this.b = b;
-		}
-
-		@Override
-		public String toString() {
-			if (b) {
-				return DialoguesAccount.get().tableFormatYes();
-			} else {
-				return DialoguesAccount.get().tableFormatNo();
-			}
-		}
-
-		@Override
-		public int compareTo(final YesNo o) {
-			return this.toString().compareToIgnoreCase(o.toString());
-		}
-	}
-
-	public class ExpirerDate implements Comparable<ExpirerDate> {
-		private Date expirer;
-
-		public ExpirerDate(final Date expirer) {
-			this.expirer = expirer;
-		}
-
-		@Override
-		public String toString() {
-			if (expirer == null) {
-				return "Never";
-			} else if (Settings.getNow().after(expirer)) {
-				return "Expired";
-			} else {
-				return Formater.dateOnly(expirer);
-			}
-		}
-
-		@Override
-		public int compareTo(final ExpirerDate o) {
-			return this.expirer.compareTo(o.expirer);
-		}
 	}
 }

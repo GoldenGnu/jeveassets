@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2013 Contributors (see credits.txt)
+ * Copyright 2009-2014 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -22,12 +22,12 @@
 package net.nikr.eve.jeveasset.io.shared;
 
 import java.awt.Desktop;
+import java.awt.Window;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import javax.swing.JEditorPane;
-import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
@@ -73,8 +73,19 @@ public final class DesktopUtil {
 		JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), "Could not open " + file.getName(), "Open File", JOptionPane.PLAIN_MESSAGE);
 	}
 
+	public static void browse(final String url) {
+		browse(url, (Window)null);
+	}
 
-	public static void browse(final String url, final Program program) {
+	public static void browse(final String url, Program program) {
+		if (program != null) {
+			browse(url, program.getMainWindow().getFrame());
+		} else {
+			browse(url, (Window)null);
+		}
+	}
+
+	public static void browse(final String url, final Window window) {
 		LOG.info("Browsing: {}", url);
 		URI uri;
 		try {
@@ -93,11 +104,7 @@ public final class DesktopUtil {
 		} else {
 			LOG.warn("	Browsing failed");
 		}
-		JFrame jFrame = null;
-		if (program != null) {
-			jFrame = program.getMainWindow().getFrame();
-		}
-		JOptionPane.showMessageDialog(jFrame, "Could not browse to:\n" + url, "Browse", JOptionPane.PLAIN_MESSAGE);
+		JOptionPane.showMessageDialog(window, "Could not browse to:\n" + url, "Browse", JOptionPane.PLAIN_MESSAGE);
 	}
 
 	private static class LinkListener implements HyperlinkListener {

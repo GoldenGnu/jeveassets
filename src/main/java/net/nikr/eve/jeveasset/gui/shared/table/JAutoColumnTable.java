@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2013 Contributors (see credits.txt)
+ * Copyright 2009-2014 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -52,6 +52,8 @@ import net.nikr.eve.jeveasset.gui.shared.table.TableCellRenderers.IntegerCellRen
 import net.nikr.eve.jeveasset.gui.shared.table.TableCellRenderers.LongCellRenderer;
 import net.nikr.eve.jeveasset.gui.shared.table.TableCellRenderers.TagsCellRenderer;
 import net.nikr.eve.jeveasset.gui.shared.table.TableCellRenderers.ToStringCellRenderer;
+import net.nikr.eve.jeveasset.gui.shared.table.containers.ExpirerDate;
+import net.nikr.eve.jeveasset.gui.shared.table.containers.YesNo;
 
 
 public class JAutoColumnTable extends JTable {
@@ -91,6 +93,8 @@ public class JAutoColumnTable extends JTable {
 		this.setDefaultRenderer(String.class, new ToStringCellRenderer(SwingConstants.LEFT));
 		this.setDefaultRenderer(Object.class, new ToStringCellRenderer());
 		this.setDefaultRenderer(Tags.class, new TagsCellRenderer());
+		this.setDefaultRenderer(YesNo.class, new ToStringCellRenderer(SwingConstants.CENTER));
+		this.setDefaultRenderer(ExpirerDate.class, new ToStringCellRenderer(SwingConstants.CENTER));
 
 		autoResizeColumns();
 
@@ -376,6 +380,7 @@ public class JAutoColumnTable extends JTable {
 					i++;
 				}
 			}
+			program.saveSettings("Save Columns Width"); //Save Columns Width
 		}
 	}
 
@@ -506,6 +511,9 @@ public class JAutoColumnTable extends JTable {
 				if (tableFormat != null && model != null) {
 					tableFormat.moveColumn(from, to);
 					model.fireTableStructureChanged();
+					if (from != to) {
+						program.saveSettings("Save Columns (Moved)"); //Save Columns (Moved)
+					}
 				}
 				autoResizeColumns();
 			}

@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2013 Contributors (see credits.txt)
+ * Copyright 2009-2014 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -61,17 +61,17 @@ import net.nikr.eve.jeveasset.i18n.TabsTransaction;
 
 public class TransactionTab extends JMainTab {
 
-	private JAutoColumnTable jTable;
-	private JLabel jSellOrdersTotal;
-	private JLabel jBuyOrdersTotal;
+	private final JAutoColumnTable jTable;
+	private final JLabel jSellOrdersTotal;
+	private final JLabel jBuyOrdersTotal;
 
 	//Table
-	private TransactionsFilterControl filterControl;
-	private EnumTableFormatAdaptor<TransactionTableFormat, Transaction> tableFormat;
-	private DefaultEventTableModel<Transaction> tableModel;
-	private FilterList<Transaction> filterList;
-	private EventList<Transaction> eventList;
-	private DefaultEventSelectionModel<Transaction> selectionModel;
+	private final TransactionsFilterControl filterControl;
+	private final EnumTableFormatAdaptor<TransactionTableFormat, MyTransaction> tableFormat;
+	private final DefaultEventTableModel<MyTransaction> tableModel;
+	private final FilterList<MyTransaction> filterList;
+	private final EventList<MyTransaction> eventList;
+	private final DefaultEventSelectionModel<MyTransaction> selectionModel;
 
 	public static final String NAME = "transaction"; //Not to be changed!
 
@@ -80,13 +80,13 @@ public class TransactionTab extends JMainTab {
 
 		ListenerClass listener = new ListenerClass();
 		//Table Format
-		tableFormat = new EnumTableFormatAdaptor<TransactionTableFormat, Transaction>(TransactionTableFormat.class);
+		tableFormat = new EnumTableFormatAdaptor<TransactionTableFormat, MyTransaction>(TransactionTableFormat.class);
 		//Backend
 		eventList = program.getTransactionsEventList();
 		//Sorting (per column)
-		SortedList<Transaction> sortedList = new SortedList<Transaction>(eventList);
+		SortedList<MyTransaction> sortedList = new SortedList<MyTransaction>(eventList);
 		//Filter
-		filterList = new FilterList<Transaction>(sortedList);
+		filterList = new FilterList<MyTransaction>(sortedList);
 		filterList.addListEventListener(listener);
 		//Table Model
 		tableModel = EventModels.createTableModel(filterList, tableFormat);
@@ -123,7 +123,7 @@ public class TransactionTab extends JMainTab {
 				);
 
 		//Menu
-		installMenu(program, new TransactionTableMenu(), jTable, Transaction.class);
+		installMenu(program, new TransactionTableMenu(), jTable, MyTransaction.class);
 
 		jSellOrdersTotal = StatusPanel.createLabel(TabsTransaction.get().totalSell(), Images.ORDERS_SELL.getIcon());
 		this.addStatusbarLabel(jSellOrdersTotal);
@@ -146,7 +146,7 @@ public class TransactionTab extends JMainTab {
 	@Override
 	public void updateData() { }
 
-	private class TransactionTableMenu implements TableMenu<Transaction> {
+	private class TransactionTableMenu implements TableMenu<MyTransaction> {
 		@Override
 		public JMenu getFilterMenu() {
 			return filterControl.getMenu(jTable, selectionModel.getSelected());
@@ -158,8 +158,8 @@ public class TransactionTab extends JMainTab {
 		}
 
 		@Override
-		public MenuData<Transaction> getMenuData() {
-			return new MenuData<Transaction>(selectionModel.getSelected());
+		public MenuData<MyTransaction> getMenuData() {
+			return new MenuData<MyTransaction>(selectionModel.getSelected());
 		}
 
 		@Override
@@ -171,12 +171,12 @@ public class TransactionTab extends JMainTab {
 		public void addToolMenu(JComponent jComponent) { }
 	}
 
-	private class ListenerClass implements ListEventListener<Transaction> {
+	private class ListenerClass implements ListEventListener<MyTransaction> {
 		@Override
-		public void listChanged(ListEvent<Transaction> listChanges) {
+		public void listChanged(ListEvent<MyTransaction> listChanges) {
 			double sellOrdersTotal = 0;
 			double buyOrdersTotal = 0;
-			for (Transaction transaction : filterList) {
+			for (MyTransaction transaction : filterList) {
 				if (transaction.getTransactionType().equals("sell")) { //Sell
 					sellOrdersTotal += transaction.getPrice() * transaction.getQuantity();
 				} else { //Buy
@@ -188,17 +188,17 @@ public class TransactionTab extends JMainTab {
 		}
 	}
 
-	public static class TransactionsFilterControl extends FilterControl<Transaction> {
+	private class TransactionsFilterControl extends FilterControl<MyTransaction> {
 
-		private EnumTableFormatAdaptor<TransactionTableFormat, Transaction> tableFormat;
+		private final EnumTableFormatAdaptor<TransactionTableFormat, MyTransaction> tableFormat;
 
-		public TransactionsFilterControl(final JFrame jFrame, final EnumTableFormatAdaptor<TransactionTableFormat, Transaction> tableFormat, final EventList<Transaction> eventList, final FilterList<Transaction> filterList, final Map<String, List<Filter>> filters, final Map<String, List<Filter>> defaultFilters) {
+		public TransactionsFilterControl(final JFrame jFrame, final EnumTableFormatAdaptor<TransactionTableFormat, MyTransaction> tableFormat, final EventList<MyTransaction> eventList, final FilterList<MyTransaction> filterList, final Map<String, List<Filter>> filters, final Map<String, List<Filter>> defaultFilters) {
 			super(jFrame, NAME, eventList, filterList, filters, defaultFilters);
 			this.tableFormat = tableFormat;
 		}
 
 		@Override
-		protected Object getColumnValue(final Transaction item, final String column) {
+		protected Object getColumnValue(final MyTransaction item, final String column) {
 			TransactionTableFormat format = TransactionTableFormat.valueOf(column);
 			return format.getColumnValue(item);
 		}
@@ -209,13 +209,18 @@ public class TransactionTab extends JMainTab {
 		}
 
 		@Override
-		protected List<EnumTableColumn<Transaction>> getColumns() {
+		protected List<EnumTableColumn<MyTransaction>> getColumns() {
 			return columnsAsList(TransactionTableFormat.values());
 		}
 
 		@Override
-		protected List<EnumTableColumn<Transaction>> getShownColumns() {
-			return new ArrayList<EnumTableColumn<Transaction>>(tableFormat.getShownColumns());
+		protected List<EnumTableColumn<MyTransaction>> getShownColumns() {
+			return new ArrayList<EnumTableColumn<MyTransaction>>(tableFormat.getShownColumns());
+		}
+
+		@Override
+		protected void saveSettings(final String msg) {
+			program.saveSettings("Save Transaction " + msg); //Save Transaction Filters and Export Setttings
 		}
 	}
 }

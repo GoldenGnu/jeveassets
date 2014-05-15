@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2013 Contributors (see credits.txt)
+ * Copyright 2009-2014 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -62,19 +62,19 @@ import net.nikr.eve.jeveasset.i18n.TabsOrders;
 
 public class MarketOrdersTab extends JMainTab {
 
-	private JAutoColumnTable jTable;
-	private JLabel jSellOrdersTotal;
-	private JLabel jBuyOrdersTotal;
-	private JLabel jEscrowTotal;
-	private JLabel jToCoverTotal;
+	private final JAutoColumnTable jTable;
+	private final JLabel jSellOrdersTotal;
+	private final JLabel jBuyOrdersTotal;
+	private final JLabel jEscrowTotal;
+	private final JLabel jToCoverTotal;
 
 	//Table
-	private MarketOrdersFilterControl filterControl;
-	private EnumTableFormatAdaptor<MarketTableFormat, MarketOrder> tableFormat;
-	private DefaultEventTableModel<MarketOrder> tableModel;
-	private FilterList<MarketOrder> filterList;
-	private EventList<MarketOrder> eventList;
-	private DefaultEventSelectionModel<MarketOrder> selectionModel;
+	private final MarketOrdersFilterControl filterControl;
+	private final EnumTableFormatAdaptor<MarketTableFormat, MyMarketOrder> tableFormat;
+	private final DefaultEventTableModel<MyMarketOrder> tableModel;
+	private final FilterList<MyMarketOrder> filterList;
+	private final EventList<MyMarketOrder> eventList;
+	private final DefaultEventSelectionModel<MyMarketOrder> selectionModel;
 
 	public static final String NAME = "marketorders"; //Not to be changed!
 
@@ -83,13 +83,13 @@ public class MarketOrdersTab extends JMainTab {
 
 		ListenerClass listener = new ListenerClass();
 		//Table Format
-		tableFormat = new EnumTableFormatAdaptor<MarketTableFormat, MarketOrder>(MarketTableFormat.class);
+		tableFormat = new EnumTableFormatAdaptor<MarketTableFormat, MyMarketOrder>(MarketTableFormat.class);
 		//Backend
 		eventList = program.getMarketOrdersEventList();
 		//Sorting (per column)
-		SortedList<MarketOrder> sortedList = new SortedList<MarketOrder>(eventList);
+		SortedList<MyMarketOrder> sortedList = new SortedList<MyMarketOrder>(eventList);
 		//Filter
-		filterList = new FilterList<MarketOrder>(sortedList);
+		filterList = new FilterList<MyMarketOrder>(sortedList);
 		filterList.addListEventListener(listener);
 		//Table Model
 		tableModel = EventModels.createTableModel(filterList, tableFormat);
@@ -128,7 +128,7 @@ public class MarketOrdersTab extends JMainTab {
 				);
 
 		//Menu
-		installMenu(program, new OrdersTableMenu(), jTable, MarketOrder.class);
+		installMenu(program, new OrdersTableMenu(), jTable, MyMarketOrder.class);
 
 		jSellOrdersTotal = StatusPanel.createLabel(TabsOrders.get().totalSellOrders(), Images.ORDERS_SELL.getIcon());
 		this.addStatusbarLabel(jSellOrdersTotal);
@@ -157,10 +157,10 @@ public class MarketOrdersTab extends JMainTab {
 	@Override
 	public void updateData() { }
 
-	private class OrdersTableMenu implements TableMenu<MarketOrder> {
+	private class OrdersTableMenu implements TableMenu<MyMarketOrder> {
 		@Override
-		public MenuData<MarketOrder> getMenuData() {
-			return new MenuData<MarketOrder>(selectionModel.getSelected());
+		public MenuData<MyMarketOrder> getMenuData() {
+			return new MenuData<MyMarketOrder>(selectionModel.getSelected());
 		}
 
 		@Override
@@ -182,14 +182,14 @@ public class MarketOrdersTab extends JMainTab {
 		public void addToolMenu(JComponent jComponent) { }
 	}
 
-	private class ListenerClass implements ListEventListener<MarketOrder> {
+	private class ListenerClass implements ListEventListener<MyMarketOrder> {
 		@Override
-		public void listChanged(ListEvent<MarketOrder> listChanges) {
+		public void listChanged(ListEvent<MyMarketOrder> listChanges) {
 			double sellOrdersTotal = 0;
 			double buyOrdersTotal = 0;
 			double toCoverTotal = 0;
 			double escrowTotal = 0;
-			for (MarketOrder marketOrder : filterList) {
+			for (MyMarketOrder marketOrder : filterList) {
 				if (marketOrder.getBid() < 1) { //Sell
 					sellOrdersTotal += marketOrder.getPrice() * marketOrder.getVolRemaining();
 				} else { //Buy
@@ -205,17 +205,17 @@ public class MarketOrdersTab extends JMainTab {
 		}
 	}
 
-	public static class MarketOrdersFilterControl extends FilterControl<MarketOrder> {
+	private class MarketOrdersFilterControl extends FilterControl<MyMarketOrder> {
 
-		private EnumTableFormatAdaptor<MarketTableFormat, MarketOrder> tableFormat;
+		private final EnumTableFormatAdaptor<MarketTableFormat, MyMarketOrder> tableFormat;
 
-		public MarketOrdersFilterControl(final JFrame jFrame, final EnumTableFormatAdaptor<MarketTableFormat, MarketOrder> tableFormat, final EventList<MarketOrder> eventList, final FilterList<MarketOrder> filterList, final Map<String, List<Filter>> filters, final Map<String, List<Filter>> defaultFilters) {
+		public MarketOrdersFilterControl(final JFrame jFrame, final EnumTableFormatAdaptor<MarketTableFormat, MyMarketOrder> tableFormat, final EventList<MyMarketOrder> eventList, final FilterList<MyMarketOrder> filterList, final Map<String, List<Filter>> filters, final Map<String, List<Filter>> defaultFilters) {
 			super(jFrame, NAME, eventList, filterList, filters, defaultFilters);
 			this.tableFormat = tableFormat;
 		}
 
 		@Override
-		protected Object getColumnValue(final MarketOrder item, final String column) {
+		protected Object getColumnValue(final MyMarketOrder item, final String column) {
 			MarketTableFormat format = MarketTableFormat.valueOf(column);
 			return format.getColumnValue(item);
 		}
@@ -226,13 +226,18 @@ public class MarketOrdersTab extends JMainTab {
 		}
 
 		@Override
-		protected List<EnumTableColumn<MarketOrder>> getColumns() {
+		protected List<EnumTableColumn<MyMarketOrder>> getColumns() {
 			return columnsAsList(MarketTableFormat.values());
 		}
 
 		@Override
-		protected List<EnumTableColumn<MarketOrder>> getShownColumns() {
-			return new ArrayList<EnumTableColumn<MarketOrder>>(tableFormat.getShownColumns());
+		protected List<EnumTableColumn<MyMarketOrder>> getShownColumns() {
+			return new ArrayList<EnumTableColumn<MyMarketOrder>>(tableFormat.getShownColumns());
+		}
+
+		@Override
+		protected void saveSettings(final String msg) {
+			program.saveSettings("Save Market Order " + msg); //Save Market Order Filters and Export Setttings
 		}
 	}
 }

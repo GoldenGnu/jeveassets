@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2013 Contributors (see credits.txt)
+ * Copyright 2009-2014 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -26,7 +26,9 @@ import java.net.Proxy;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import net.nikr.eve.jeveasset.data.*;
+import net.nikr.eve.jeveasset.data.Settings.SettingFlag;
 import net.nikr.eve.jeveasset.data.tag.Tag;
 import net.nikr.eve.jeveasset.data.tag.TagID;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
@@ -81,6 +83,7 @@ public class SettingsWriter extends AbstractXmlWriter {
 		writeFlags(xmldoc, settings.getFlags());
 		writeUserPrices(xmldoc, settings.getUserPrices());
 		writeUserItemNames(xmldoc, settings.getUserItemNames());
+		writeEveNames(xmldoc, settings.getEveNames());
 		writeUpdates(xmldoc, settings);
 		writeTableFilters(xmldoc, settings.getTableFilters());
 		writeTableColumns(xmldoc, settings.getTableColumns());
@@ -92,6 +95,7 @@ public class SettingsWriter extends AbstractXmlWriter {
 		writeTrackerData(xmldoc, settings.getTrackerData());
 		writeOwners(xmldoc, settings.getOwners());
 		writeTags(xmldoc, settings.getTags());
+		writeRoutingSettings(xmldoc, settings.getRoutingSettings());
 		try {
 			writeXmlFile(xmldoc, settings.getPathSettings(), true);
 		} catch (XmlException ex) {
@@ -100,6 +104,28 @@ public class SettingsWriter extends AbstractXmlWriter {
 		}
 		LOG.info("Settings saved");
 		return true;
+	}
+
+	private void writeRoutingSettings(Document xmldoc, RoutingSettings routingSettings) {
+		Element routingNode = xmldoc.createElementNS(null, "routingsettings");
+		xmldoc.getDocumentElement().appendChild(routingNode);
+		routingNode.setAttribute("securitymaximum", String.valueOf(routingSettings.getSecMax()));
+		routingNode.setAttribute("securityminimum", String.valueOf(routingSettings.getSecMin()));
+		for (long systemID : routingSettings.getAvoid().keySet()) {
+			Element systemNode = xmldoc.createElementNS(null, "routingsystem");
+			systemNode.setAttributeNS(null, "id", String.valueOf(systemID));
+			routingNode.appendChild(systemNode);
+		}
+		for (Map.Entry<String, Set<Long>> entry : routingSettings.getPresets().entrySet()) {
+			Element presetNode = xmldoc.createElementNS(null, "routingpreset");
+			presetNode.setAttributeNS(null, "name", entry.getKey());
+			routingNode.appendChild(presetNode);
+			for (Long systemID : entry.getValue()) {
+				Element systemNode = xmldoc.createElementNS(null, "presetsystem");
+				systemNode.setAttributeNS(null, "id", String.valueOf(systemID));
+				presetNode.appendChild(systemNode);
+			}
+		}
 	}
 
 	private void writeTags(Document xmldoc, Map<String, Tag> tags) {
@@ -323,6 +349,17 @@ public class SettingsWriter extends AbstractXmlWriter {
 		}
 	}
 
+	private void writeEveNames(final Document xmldoc, final Map<Long, String> eveNames) {
+		Element parentNode = xmldoc.createElementNS(null, "evenames");
+		xmldoc.getDocumentElement().appendChild(parentNode);
+		for (Map.Entry<Long, String> entry : eveNames.entrySet()) {
+			Element node = xmldoc.createElementNS(null, "evename");
+			node.setAttributeNS(null, "name", entry.getValue());
+			node.setAttributeNS(null, "itemid", String.valueOf(entry.getKey()));
+			parentNode.appendChild(node);
+		}
+	}
+
 	private void writeReprocessSettings(final Document xmldoc, final ReprocessSettings reprocessSettings) {
 		Element parentNode = xmldoc.createElementNS(null, "reprocessing");
 		xmldoc.getDocumentElement().appendChild(parentNode);
@@ -373,12 +410,12 @@ public class SettingsWriter extends AbstractXmlWriter {
 		xmldoc.getDocumentElement().appendChild(parentNode);
 	}
 
-	private void writeFlags(final Document xmldoc, final Map<String, Boolean> flags) {
+	private void writeFlags(final Document xmldoc, final Map<SettingFlag, Boolean> flags) {
 		Element parentNode = xmldoc.createElementNS(null, "flags");
 		xmldoc.getDocumentElement().appendChild(parentNode);
-		for (Map.Entry<String, Boolean> entry : flags.entrySet()) {
+		for (Map.Entry<SettingFlag, Boolean> entry : flags.entrySet()) {
 			Element node = xmldoc.createElementNS(null, "flag");
-			node.setAttributeNS(null, "key", entry.getKey());
+			node.setAttributeNS(null, "key", entry.getKey().name());
 			node.setAttributeNS(null, "enabled", String.valueOf(entry.getValue()));
 			parentNode.appendChild(node);
 		}

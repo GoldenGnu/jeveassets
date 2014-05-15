@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2013 Contributors (see credits.txt)
+ * Copyright 2009-2014 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -27,15 +27,16 @@ import java.util.Map;
 import javax.swing.JOptionPane;
 import javax.swing.table.AbstractTableModel;
 import net.nikr.eve.jeveasset.Program;
+import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.shared.components.JManageDialog;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 
 
 public class ViewManager extends JManageDialog {
 
-	private EnumTableFormatAdaptor<?, ?> tableFormat;
-	private AbstractTableModel tableModel;
-	private JAutoColumnTable jTable;
+	private final EnumTableFormatAdaptor<?, ?> tableFormat;
+	private final AbstractTableModel tableModel;
+	private final JAutoColumnTable jTable;
 	private Map<String ,View> views;
 
 	public ViewManager(Program program, EnumTableFormatAdaptor<?, ?> tableFormat, AbstractTableModel tableModel, JAutoColumnTable jTable) {
@@ -68,6 +69,7 @@ public class ViewManager extends JManageDialog {
 		tableModel.fireTableStructureChanged();
 		jTable.autoResizeColumns();
 		program.updateTableMenu();
+		program.saveSettings("Save Columns (Changed - Load View)"); //Save Columns (Changed - Load View)
 	}
 
 	@Override
@@ -78,19 +80,25 @@ public class ViewManager extends JManageDialog {
 	@Override
 	protected void rename(String name, String oldName) {
 		View view = views.get(oldName);
+		Settings.lock(); //Lock for View (Rename)
 		view.setName(name);
 		views.remove(oldName); //Remove renamed filter (with old name)
 		views.remove(name); //Remove overwritten filter
 		views.put(name, view); //Add renamed filter (with new name)
-		update();
+		update(); //Unlock for View (Rename)
+		Settings.unlock();
+		program.saveSettings("Save View (Rename)"); //Save View (Rename)
 	}
 
 	@Override
 	protected void delete(List<String> list) {
+		Settings.lock(); //Lock for View (Delete)
 		for (String name : list) {
 			views.remove(name);
 		}
 		update();
+		Settings.unlock(); //Unlock for View (Delete)
+		program.saveSettings("Save View (Delete)"); //Save View (Delete)
 	}
 
 	@Override

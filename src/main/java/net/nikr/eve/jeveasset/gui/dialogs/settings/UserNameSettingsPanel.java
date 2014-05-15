@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2013 Contributors (see credits.txt)
+ * Copyright 2009-2014 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -25,7 +25,7 @@ import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.data.UserItem;
 import net.nikr.eve.jeveasset.gui.images.Images;
-import net.nikr.eve.jeveasset.gui.tabs.assets.Asset;
+import net.nikr.eve.jeveasset.gui.tabs.assets.MyAsset;
 import net.nikr.eve.jeveasset.i18n.DialoguesSettings;
 
 
@@ -64,7 +64,7 @@ public class UserNameSettingsPanel extends JUserListPanel<Long, String> {
 		public UserName(final UserItem<Long, String> userItem) {
 			super(userItem);
 		}
-		public UserName(final Asset asset) {
+		public UserName(final MyAsset asset) {
 			super(asset.getName(), asset.getItemID(), asset.getItem().getTypeName());
 		}
 		public UserName(final String value, final Long key, final String name) {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2013 Contributors (see credits.txt)
+ * Copyright 2009-2014 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -22,64 +22,58 @@
 package net.nikr.eve.jeveasset.io.eveapi;
 
 import com.beimin.eveapi.exception.ApiException;
-import com.beimin.eveapi.shared.wallet.journal.ApiJournalEntry;
-import com.beimin.eveapi.shared.wallet.journal.WalletJournalResponse;
+import com.beimin.eveapi.model.shared.JournalEntry;
+import com.beimin.eveapi.response.shared.WalletJournalResponse;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
-import net.nikr.eve.jeveasset.data.Account;
-import net.nikr.eve.jeveasset.data.Account.AccessMask;
+import java.util.Map;
+import net.nikr.eve.jeveasset.data.MyAccount;
+import net.nikr.eve.jeveasset.data.MyAccount.AccessMask;
 import net.nikr.eve.jeveasset.data.Owner;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
-import net.nikr.eve.jeveasset.gui.tabs.journal.Journal;
-import net.nikr.eve.jeveasset.io.shared.AbstractApiGetter;
+import net.nikr.eve.jeveasset.gui.tabs.journal.MyJournal;
+import net.nikr.eve.jeveasset.io.shared.AbstractApiAccountKeyGetter;
 import net.nikr.eve.jeveasset.io.shared.ApiConverter;
 
 
-public class JournalGetter extends AbstractApiGetter<WalletJournalResponse> {
+public class JournalGetter extends AbstractApiAccountKeyGetter<WalletJournalResponse, MyJournal> {
 
-	private int accountKey = 1000;
-	private boolean updateInProgress = false;
-	private List<Journal> corpJournal = new ArrayList<Journal>();
+	private boolean saveHistory;
 
 	public JournalGetter() {
-		super("Journal", true, false);
+		super("Journal");
 	}
 
-	public void load(final UpdateTask updateTask, final boolean forceUpdate, final List<Account> accounts) {
+	public void load(final UpdateTask updateTask, final boolean forceUpdate, final List<MyAccount> accounts, final boolean saveHistory) {
 		super.loadAccounts(updateTask, forceUpdate, accounts);
+		this.saveHistory = saveHistory;
 	}
 
 	@Override
-	protected boolean load(Date nextUpdate, boolean updateCorporation, String updateName) {
-		if (updateCorporation) {
-			boolean ok = false;
-			updateInProgress = true;
-			for (int i = 1000; i <= 1006; i++) {
-				accountKey = i;
-				boolean updated = super.load(nextUpdate, updateCorporation, updateName+" (accountKey: " + accountKey + ")");
-				ok = ok || updated;
-			}
-			if (ok) {
-				getOwner().setJournal(corpJournal);
-			}
-			updateInProgress = false;
-			return ok;
+	protected void set(Map<Long, MyJournal> values, Date nextUpdate) {
+		getOwner().setJournal(values);
+		getOwner().setJournalNextUpdate(nextUpdate);
+	}
+
+	@Override
+	protected Map<Long, MyJournal> get() {
+		if (saveHistory) {
+			return getOwner().getJournal();
 		} else {
-			return super.load(nextUpdate, updateCorporation, updateName);
+			return new HashMap<Long, MyJournal>();
 		}
 	}
 
 	@Override
-	protected WalletJournalResponse getResponse(final boolean bCorp) throws ApiException {
+	protected WalletJournalResponse getResponse(final boolean bCorp, final int accountKey, final long fromID, final int rowCount) throws ApiException {
 		if (bCorp) {
-			return com.beimin.eveapi.corporation
-					.wallet.journal.WalletJournalParser.getInstance()
-					.getResponse(Owner.getApiAuthorization(getOwner()), accountKey);
+			return new com.beimin.eveapi.parser.corporation.WalletJournalParser()
+					.getResponse(Owner.getApiAuthorization(getOwner()), accountKey, fromID, rowCount);
 		} else {
-			return com.beimin.eveapi.character
-					.wallet.journal.WalletJournalParser.getInstance()
-					.getResponse(Owner.getApiAuthorization(getOwner()), 0);
+			return new com.beimin.eveapi.parser.pilot.WalletJournalParser()
+					.getWalletJournalResponse(Owner.getApiAuthorization(getOwner()), fromID, rowCount);
 		}
 	}
 
@@ -89,26 +83,9 @@ public class JournalGetter extends AbstractApiGetter<WalletJournalResponse> {
 	}
 
 	@Override
-	protected void setNextUpdate(final Date nextUpdate) {
-		getOwner().setJournalNextUpdate(nextUpdate);
-	}
-
-	@Override
-	protected void setData(final WalletJournalResponse response) {
-		List<ApiJournalEntry> api = new ArrayList<ApiJournalEntry>(response.getAll());
-		if (updateInProgress) {
-			for (ApiJournalEntry apiJournal : api) {
-				Journal journal = ApiConverter.convertJournal(apiJournal, getOwner(), accountKey);
-				corpJournal.add(journal);
-			}
-		} else {
-			List<Journal> charJournal = new ArrayList<Journal>();
-			for (ApiJournalEntry apiJournal : api) {
-				Journal journal = ApiConverter.convertJournal(apiJournal, getOwner(), accountKey);
-				charJournal.add(journal);
-			}
-			getOwner().setJournal(charJournal);
-		}
+	protected Map<Long, MyJournal> convertData(final WalletJournalResponse response, final int accountKey) {
+		List<JournalEntry> api = new ArrayList<JournalEntry>(response.getAll());
+		return ApiConverter.convertJournals(api, getOwner(), accountKey);
 	}
 
 	@Override

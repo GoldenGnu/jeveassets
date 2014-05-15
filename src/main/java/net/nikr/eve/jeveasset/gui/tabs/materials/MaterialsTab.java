@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2013 Contributors (see credits.txt)
+ * Copyright 2009-2014 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -59,7 +59,7 @@ import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
 import net.nikr.eve.jeveasset.gui.shared.table.JSeparatorTable;
 import net.nikr.eve.jeveasset.gui.shared.table.PaddingTableCellRenderer;
-import net.nikr.eve.jeveasset.gui.tabs.assets.Asset;
+import net.nikr.eve.jeveasset.gui.tabs.assets.MyAsset;
 import net.nikr.eve.jeveasset.gui.tabs.materials.Material.MaterialType;
 import net.nikr.eve.jeveasset.i18n.General;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
@@ -76,20 +76,20 @@ public class MaterialsTab extends JMainTab {
 	}
 
 	//GUI
-	private JComboBox jOwners;
-	private JButton jExport;
-	private JButton jExpand;
-	private JButton jCollapse;
-	private JCheckBox jPiMaterial;
-	private JSeparatorTable jTable;
-	private JScrollPane jTableScroll;
+	private final JComboBox jOwners;
+	private final JButton jExport;
+	private final JButton jExpand;
+	private final JButton jCollapse;
+	private final JCheckBox jPiMaterial;
+	private final JSeparatorTable jTable;
+	private final JScrollPane jTableScroll;
 
 	//Table
-	private EventList<Material> eventList;
-	private SeparatorList<Material> separatorList;
-	private DefaultEventSelectionModel<Material> selectionModel;
-	private DefaultEventTableModel<Material> tableModel;
-	private EnumTableFormatAdaptor<MaterialTableFormat, Material> tableFormat;
+	private final EventList<Material> eventList;
+	private final SeparatorList<Material> separatorList;
+	private final DefaultEventSelectionModel<Material> selectionModel;
+	private final DefaultEventTableModel<Material> tableModel;
+	private final EnumTableFormatAdaptor<MaterialTableFormat, Material> tableFormat;
 
 	//Dialog
 	ExportDialog<Material> exportDialog;
@@ -237,7 +237,7 @@ public class MaterialsTab extends JMainTab {
 		Map<String, Material> total = new HashMap<String, Material>();
 		//Summary Total All
 		Material summaryTotalAllMaterial = new Material(MaterialType.SUMMARY_ALL, null, TabsMaterials.get().summary(), TabsMaterials.get().grandTotal(), General.get().all());
-		for (Asset asset : program.getAssetEventList()) {
+		for (MyAsset asset : program.getAssetEventList()) {
 			//Skip none-material + none Pi Material (if not enabled)
 			if (!asset.getItem().getCategory().equals("Material") && (!asset.getItem().isPiMaterial() || !jPiMaterial.isSelected())) {
 				continue;
@@ -375,7 +375,7 @@ public class MaterialsTab extends JMainTab {
 		}
 	}
 
-	class MaterialsFilterControl extends ExportFilterControl<Material> {
+	private class MaterialsFilterControl extends ExportFilterControl<Material> {
 
 		@Override
 		protected EnumTableColumn<?> valueOf(final String column) {
@@ -395,6 +395,11 @@ public class MaterialsTab extends JMainTab {
 		@Override
 		protected List<EnumTableColumn<Material>> getShownColumns() {
 			return new ArrayList<EnumTableColumn<Material>>(tableFormat.getShownColumns());
+		}
+
+		@Override
+		protected void saveSettings(final String msg) {
+			program.saveSettings("Save Material " + msg); //Save Material Export Setttings (Filters not used)
 		}
 	}
 }

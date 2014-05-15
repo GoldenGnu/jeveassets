@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2013 Contributors (see credits.txt)
+ * Copyright 2009-2014 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -30,19 +30,22 @@ import net.nikr.eve.jeveasset.data.ExportSettings.ExportFormat;
 import net.nikr.eve.jeveasset.data.ExportSettings.FieldDelimiter;
 import net.nikr.eve.jeveasset.data.ExportSettings.LineDelimiter;
 import net.nikr.eve.jeveasset.data.Item;
-import net.nikr.eve.jeveasset.data.Location;
+import net.nikr.eve.jeveasset.data.MyLocation;
 import net.nikr.eve.jeveasset.data.PriceDataSettings;
 import net.nikr.eve.jeveasset.data.PriceDataSettings.PriceMode;
 import net.nikr.eve.jeveasset.data.PriceDataSettings.PriceSource;
 import net.nikr.eve.jeveasset.data.PriceDataSettings.RegionType;
 import net.nikr.eve.jeveasset.data.ReprocessSettings;
 import net.nikr.eve.jeveasset.data.Settings;
+import net.nikr.eve.jeveasset.data.Settings.SettingFlag;
+import net.nikr.eve.jeveasset.data.SolarSystem;
 import net.nikr.eve.jeveasset.data.UserItem;
 import net.nikr.eve.jeveasset.data.tag.Tag;
 import net.nikr.eve.jeveasset.data.tag.TagColor;
 import net.nikr.eve.jeveasset.data.tag.TagID;
 import net.nikr.eve.jeveasset.gui.dialogs.settings.UserNameSettingsPanel.UserName;
 import net.nikr.eve.jeveasset.gui.dialogs.settings.UserPriceSettingsPanel.UserPrice;
+import net.nikr.eve.jeveasset.gui.shared.CaseInsensitiveComparator;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter.AllColumn;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter.CompareType;
@@ -127,6 +130,13 @@ public final class SettingsReader extends AbstractXmlReader {
 		}
 
 		//Tags
+		NodeList routingNodes = element.getElementsByTagName("routingsettings");
+		if (routingNodes.getLength() == 1) {
+			Element routingElement = (Element) routingNodes.item(0);
+			parseRoutingSettings(routingElement, settings);
+		}
+
+		//Tags
 		NodeList tagsNodes = element.getElementsByTagName("tags");
 		if (tagsNodes.getLength() == 1) {
 			Element tagsElement = (Element) tagsNodes.item(0);
@@ -159,6 +169,7 @@ public final class SettingsReader extends AbstractXmlReader {
 		if (stockpilesNodes.getLength() == 1) {
 			Element stockpilesElement = (Element) stockpilesNodes.item(0);
 			parseStockpiles(stockpilesElement, settings);
+			Collections.sort(Settings.get().getStockpiles());
 		}
 
 		//Export Settings
@@ -202,6 +213,13 @@ public final class SettingsReader extends AbstractXmlReader {
 		if (userItemNameNodes.getLength() == 1) {
 			Element userItemNameElement = (Element) userItemNameNodes.item(0);
 			parseUserItemNames(userItemNameElement, settings);
+		}
+
+		//Eve Item Names
+		NodeList eveNameNodes = element.getElementsByTagName("evenames");
+		if (eveNameNodes.getLength() == 1) {
+			Element eveNameElement = (Element) eveNameNodes.item(0);
+			parseEveNames(eveNameElement, settings);
 		}
 
 		//PriceDataSettings
@@ -378,7 +396,7 @@ public final class SettingsReader extends AbstractXmlReader {
 				}
 			}
 			//Locations
-			Location location = null;
+			MyLocation location = null;
 			if (AttributeGetters.haveAttribute(stockpileNode, "locationid")) {
 				long locationID = AttributeGetters.getLong(stockpileNode, "locationid");
 				location = ApiIdConverter.getLocation(locationID);
@@ -472,6 +490,33 @@ public final class SettingsReader extends AbstractXmlReader {
 					stockpile.add(stockpileItem);
 				}
 			}
+		}
+	}
+
+	private void parseRoutingSettings(Element routingElement, Settings settings) {
+		double secMax = AttributeGetters.getDouble(routingElement, "securitymaximum");
+		double secMin = AttributeGetters.getDouble(routingElement, "securityminimum");
+		settings.getRoutingSettings().setSecMax(secMax);
+		settings.getRoutingSettings().setSecMin(secMin);
+		NodeList systemNodes = routingElement.getElementsByTagName("routingsystem");
+		for (int a = 0; a < systemNodes.getLength(); a++) {
+			Element systemNode = (Element) systemNodes.item(a);
+			Long systemID = AttributeGetters.getLong(systemNode, "id");
+			MyLocation location = ApiIdConverter.getLocation(systemID);
+			settings.getRoutingSettings().getAvoid().put(systemID, new SolarSystem(location));
+		}
+		NodeList presetNodes = routingElement.getElementsByTagName("routingpreset");
+		for (int a = 0; a < presetNodes.getLength(); a++) {
+			Element presetNode = (Element) presetNodes.item(a);
+			String name = AttributeGetters.getString(presetNode, "name");
+			Set<Long> systemIDs = new HashSet<Long>();
+			NodeList presetSystemNodes = presetNode.getElementsByTagName("presetsystem");
+			for (int b = 0; b < presetSystemNodes.getLength(); b++) {
+				Element systemNode = (Element) presetSystemNodes.item(b);
+				Long systemID = AttributeGetters.getLong(systemNode, "id");
+				systemIDs.add(systemID);
+			}
+			Settings.get().getRoutingSettings().getPresets().put(name, systemIDs);
 		}
 	}
 
@@ -581,6 +626,16 @@ public final class SettingsReader extends AbstractXmlReader {
 		}
 	}
 
+	private void parseEveNames(final Element element, final Settings settings) {
+		NodeList eveNameNodes = element.getElementsByTagName("evename");
+		for (int i = 0; i < eveNameNodes.getLength(); i++) {
+			Element currentNode = (Element) eveNameNodes.item(i);
+			String name = AttributeGetters.getString(currentNode, "name");
+			long itemId = AttributeGetters.getLong(currentNode, "itemid");
+			settings.getEveNames().put(itemId, name);
+		}
+	}
+
 	private void parsePriceDataSettings(final Element element, final Settings settings) {
 		PriceMode priceType = settings.getPriceDataSettings().getPriceType(); //Default
 		if (AttributeGetters.haveAttribute(element, "defaultprice")) {
@@ -633,8 +688,18 @@ public final class SettingsReader extends AbstractXmlReader {
 			Element currentNode = (Element) flagNodes.item(i);
 			String key = AttributeGetters.getString(currentNode, "key");
 			boolean enabled = AttributeGetters.getBoolean(currentNode, "enabled");
-			settings.getFlags().put(key, enabled);
+			try {
+				if (key.equals("FLAG_INCLUDE_CONTRACTS")) {
+					settings.getFlags().put(SettingFlag.FLAG_INCLUDE_SELL_CONTRACTS, enabled);
+					settings.getFlags().put(SettingFlag.FLAG_INCLUDE_BUY_CONTRACTS, enabled);
+				}
+				SettingFlag settingFlag = SettingFlag.valueOf(key);
+				settings.getFlags().put(settingFlag, enabled);
+			} catch (IllegalArgumentException ex) {
+				LOG.warn("Removing Setting Flag:" + key);
+			}
 		}
+		settings.cacheFlags();
 	}
 
 	private void parseUpdates(final Element element, final Settings settings) {
@@ -705,7 +770,7 @@ public final class SettingsReader extends AbstractXmlReader {
 		for (int a = 0; a < viewToolNodeList.getLength(); a++) {
 			Element viewToolNode = (Element) viewToolNodeList.item(a);
 			String toolName = AttributeGetters.getString(viewToolNode, "tool");
-			Map<String, View> views = new HashMap<String, View>();
+			Map<String, View> views = new TreeMap<String, View>(new CaseInsensitiveComparator());
 			settings.getTableViews().put(toolName, views);
 			NodeList viewNodeList = viewToolNode.getElementsByTagName("view");
 			for (int b = 0; b < viewNodeList.getLength(); b++) {

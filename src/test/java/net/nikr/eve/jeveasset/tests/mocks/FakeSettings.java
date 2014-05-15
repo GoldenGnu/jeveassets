@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2013 Contributors (see credits.txt)
+ * Copyright 2009-2014 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -47,9 +47,7 @@ import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerOwner;
  */
 public abstract class FakeSettings extends Settings {
 
-	public FakeSettings() {
-		super(false);
-	}
+	public FakeSettings() { }
 
 	@Override
 	public String getApiProxy() {
@@ -62,7 +60,7 @@ public abstract class FakeSettings extends Settings {
 	}
 
 	@Override
-	public Map<String, Boolean> getFlags() {
+	public Map<SettingFlag, Boolean> getFlags() {
 		throw new UnsupportedOperationException("not implemented");
 	}
 
@@ -102,11 +100,6 @@ public abstract class FakeSettings extends Settings {
 	}
 
 	@Override
-	public boolean isAutoUpdate() {
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	@Override
 	public boolean isForceUpdate() {
 		throw new UnsupportedOperationException("not implemented");
 	}
@@ -137,11 +130,6 @@ public abstract class FakeSettings extends Settings {
 	}
 
 	@Override
-	public boolean isUpdateDev() {
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	@Override
 	public boolean isWindowAutoSave() {
 		throw new UnsupportedOperationException("not implemented");
 	}
@@ -152,17 +140,7 @@ public abstract class FakeSettings extends Settings {
 	}
 
 	@Override
-	public void saveSettings() {
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	@Override
 	public void setApiProxy(final String apiProxy) {
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	@Override
-	public void setAutoUpdate(final boolean updateStable) {
 		throw new UnsupportedOperationException("not implemented");
 	}
 
@@ -213,11 +191,6 @@ public abstract class FakeSettings extends Settings {
 
 	@Override
 	public void setReprocessSettings(final ReprocessSettings reprocessSettings) {
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	@Override
-	public void setUpdateDev(final boolean updateDev) {
 		throw new UnsupportedOperationException("not implemented");
 	}
 
@@ -377,16 +350,6 @@ public abstract class FakeSettings extends Settings {
 	}
 
 	@Override
-	public boolean isIncludeContracts() {
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	@Override
-	public void setIncludeContracts(boolean includeBuyOrders) {
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	@Override
 	public Map<Integer, PriceData> getPriceData() {
 		throw new UnsupportedOperationException("not implemented");
 	}
@@ -448,6 +411,61 @@ public abstract class FakeSettings extends Settings {
 
 	@Override
 	public void setBlueprintBasePriceTech2(boolean includeBuyOrders) {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public void setJournalHistory(boolean blueprintsTech2) {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public boolean isJournalHistory() {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public void setTransactionHistory(boolean transactionHistory) {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public boolean isTransactionHistory() {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public void setEveNames(Map<Long, String> eveNames) {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public Map<Long, String> getEveNames() {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public RoutingSettings getRoutingSettings() {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public void setIncludeSellContracts(boolean includeBuyOrders) {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public boolean isIncludeSellContracts() {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public void setIncludeBuyContracts(boolean includeBuyOrders) {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public boolean isIncludeBuyContracts() {
 		throw new UnsupportedOperationException("not implemented");
 	}
 }

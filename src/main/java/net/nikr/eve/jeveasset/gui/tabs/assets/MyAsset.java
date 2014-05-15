@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2013 Contributors (see credits.txt)
+ * Copyright 2009-2014 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -24,7 +24,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import net.nikr.eve.jeveasset.data.Item;
-import net.nikr.eve.jeveasset.data.Location;
+import net.nikr.eve.jeveasset.data.MyLocation;
 import net.nikr.eve.jeveasset.data.MarketPriceData;
 import net.nikr.eve.jeveasset.data.Owner;
 import net.nikr.eve.jeveasset.data.PriceData;
@@ -40,15 +40,15 @@ import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo.InfoItem;
 import net.nikr.eve.jeveasset.i18n.DataModelAsset;
 
-public class Asset implements Comparable<Asset>, InfoItem, LocationType, ItemType, BlueprintType, PriceType, TagsType {
+public class MyAsset implements Comparable<MyAsset>, InfoItem, LocationType, ItemType, BlueprintType, PriceType, TagsType {
 
 	//Static values (set by constructor)
-	private List<Asset> assets = new ArrayList<Asset>();
+	private final List<MyAsset> assets = new ArrayList<MyAsset>();
 	private Item item;
-	private Location location;
+	private MyLocation location;
 	private Owner owner;
 	private long count;
-	private List<Asset> parents;
+	private List<MyAsset> parents;
 	private String flag;
 	private int flagID; //FlagID : int
 	private long itemID; //ItemID : long
@@ -70,16 +70,19 @@ public class Asset implements Comparable<Asset>, InfoItem, LocationType, ItemTyp
 	private Date added;
 	private double price;
 	private Tags tags;
+	private int bpME;
+	private int bpPE;
 	//Dynamic values cache
 	private boolean userNameSet = false;
+	private boolean eveNameSet = false;
 	private boolean userPriceSet = false;
 
 	/**
 	 * For mockups...
 	 */
-	protected Asset() { }
+	protected MyAsset() { }
 
-	protected Asset(Asset asset) {
+	protected MyAsset(MyAsset asset) {
 		this(asset.item,
 				asset.location,
 				asset.owner,
@@ -104,9 +107,12 @@ public class Asset implements Comparable<Asset>, InfoItem, LocationType, ItemTyp
 		this.volume = asset.volume;
 		this.userNameSet = asset.userNameSet;
 		this.userPriceSet = asset.userPriceSet;
+		this.eveNameSet = asset.eveNameSet;
+		this.bpME = asset.bpME;
+		this.bpPE = asset.bpPE;
 	}
 
-	public Asset(final Item item, final Location location, final Owner owner, final long count, final List<Asset> parents, final String flag, final int flagID, final long itemID, final boolean singleton, final int rawQuantity) {
+	public MyAsset(final Item item, final MyLocation location, final Owner owner, final long count, final List<MyAsset> parents, final String flag, final int flagID, final long itemID, final boolean singleton, final int rawQuantity) {
 		this.item = item;
 		this.location = location;
 		this.owner = owner;
@@ -118,16 +124,23 @@ public class Asset implements Comparable<Asset>, InfoItem, LocationType, ItemTyp
 		this.volume = item.getVolume();
 		this.singleton = singleton;
 		this.rawQuantity = rawQuantity;
+		this.bpME = 0;
+		this.bpPE = 0;
 		//The order matter!
 		//1st
-		this.bpo = (item.isBlueprint() && rawQuantity == -1);
+		//rawQuantity: -1 = BPO. Only BPOs can be packaged (singleton == false). Only packaged items can be stacked (count > 1)
+		this.bpo = (item.isBlueprint() && (rawQuantity == -1 || !singleton || count > 1));
+		//rawQuantity: -2 = BPC
 		this.bpc = (item.isBlueprint() && rawQuantity == -2);
 		//2nd
 		if (item.isBlueprint()) {
 			if (isBPO()) {
 				this.typeName = item.getTypeName() + " (BPO)";
-			} else {
+			} else if (isBPC()){
 				this.typeName = item.getTypeName() + " (BPC)";
+			} else {
+				this.bpc = true;
+				this.typeName = item.getTypeName() + " (BP)";
 			}
 		} else {
 			this.typeName = item.getTypeName();
@@ -136,7 +149,7 @@ public class Asset implements Comparable<Asset>, InfoItem, LocationType, ItemTyp
 		this.name = getTypeName();
 	}
 
-	public void addAsset(final Asset asset) {
+	public void addAsset(final MyAsset asset) {
 		assets.add(asset);
 	}
 
@@ -144,8 +157,16 @@ public class Asset implements Comparable<Asset>, InfoItem, LocationType, ItemTyp
 		return added;
 	}
 
-	public List<Asset> getAssets() {
+	public List<MyAsset> getAssets() {
 		return assets;
+	}
+
+	public int getBpME() {
+		return bpME;
+	}
+
+	public int getBpPE() {
+		return bpPE;
 	}
 
 	public String getContainer() {
@@ -175,7 +196,7 @@ public class Asset implements Comparable<Asset>, InfoItem, LocationType, ItemTyp
 	}
 
 	@Override
-	public Location getLocation() {
+	public MyLocation getLocation() {
 		return location;
 	}
 
@@ -199,7 +220,7 @@ public class Asset implements Comparable<Asset>, InfoItem, LocationType, ItemTyp
 		return owner.getOwnerID();
 	}
 
-	public List<Asset> getParents() {
+	public List<MyAsset> getParents() {
 		return parents;
 	}
 
@@ -315,12 +336,16 @@ public class Asset implements Comparable<Asset>, InfoItem, LocationType, ItemTyp
 	}
 
 	@Override
-	public boolean isBPC() {
+	public final boolean isBPC() {
 		return bpc;
 	}
 
 	public boolean isCorporation() {
 		return owner.isCorporation();
+	}
+
+	public boolean isEveName() {
+		return eveNameSet;
 	}
 
 	/**
@@ -351,6 +376,14 @@ public class Asset implements Comparable<Asset>, InfoItem, LocationType, ItemTyp
 		this.added = added;
 	}
 
+	public void setBpME(int bpME) {
+		this.bpME = bpME;
+	}
+
+	public void setBpPE(int bpPE) {
+		this.bpPE = bpPE;
+	}
+
 	public void setContainer(final String container) {
 		this.container = container;
 	}
@@ -359,9 +392,10 @@ public class Asset implements Comparable<Asset>, InfoItem, LocationType, ItemTyp
 		this.marketPriceData = marketPriceData;
 	}
 
-	public void setName(final String name) {
+	public void setName(final String name, final boolean userNameSet, final boolean eveNameSet) {
 		this.name = name;
-		userNameSet = !getName().equals(getTypeName());
+		this.userNameSet = userNameSet;
+		this.eveNameSet = eveNameSet;
 	}
 
 	public void setPriceData(final PriceData priceData) {
@@ -396,7 +430,7 @@ public class Asset implements Comparable<Asset>, InfoItem, LocationType, ItemTyp
 	}
 
 	@Override
-	public int compareTo(final Asset o) {
+	public int compareTo(final MyAsset o) {
 		return this.getName().compareToIgnoreCase(o.getName());
 	}
 
@@ -416,13 +450,10 @@ public class Asset implements Comparable<Asset>, InfoItem, LocationType, ItemTyp
 		if (getClass() != obj.getClass()) {
 			return false;
 		}
-		final Asset other = (Asset) obj;
+		final MyAsset other = (MyAsset) obj;
 		if (this.owner != other.owner && (this.owner == null || !this.owner.equals(other.owner))) {
 			return false;
 		}
-		if (this.itemID != other.itemID) {
-			return false;
-		}
-		return true;
+		return this.itemID == other.itemID;
 	}
 }

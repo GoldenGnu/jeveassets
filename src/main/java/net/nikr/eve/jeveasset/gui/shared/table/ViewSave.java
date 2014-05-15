@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2013 Contributors (see credits.txt)
+ * Copyright 2009-2014 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -34,8 +34,7 @@ import net.nikr.eve.jeveasset.i18n.GuiShared;
 public class ViewSave extends JAutoCompleteDialog<View> {
 
 	public ViewSave(Program program) {
-		super(program, GuiShared.get().saveView(), Images.FILTER_SAVE.getImage(), GuiShared.get().saveViewMsg());
-		this.setStrict(false);
+		super(program, GuiShared.get().saveView(), Images.FILTER_SAVE.getImage(), GuiShared.get().saveViewMsg(), false, false);
 	}
 
 	@Override

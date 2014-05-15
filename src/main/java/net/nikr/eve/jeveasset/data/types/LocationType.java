@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2013 Contributors (see credits.txt)
+ * Copyright 2009-2014 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -20,9 +20,9 @@
  */
 package net.nikr.eve.jeveasset.data.types;
 
-import net.nikr.eve.jeveasset.data.Location;
+import net.nikr.eve.jeveasset.data.MyLocation;
 
 
 public interface LocationType {
-	public Location getLocation();
+	public MyLocation getLocation();
 }

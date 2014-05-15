@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2013 Contributors (see credits.txt)
+ * Copyright 2009-2014 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -45,14 +45,14 @@ public class EditColumnsDialog<T extends Enum<T> & EnumTableColumn<Q>, Q> extend
 		CHECK_ALL
 	}
 
-	private DefaultListModel listModel = new DefaultListModel();
-	private JList jList;
-	private JCheckBox jAll;
-	private JButton jOk;
-	private JButton jCancel;
+	private final DefaultListModel listModel = new DefaultListModel();
+	private final JList jList;
+	private final JCheckBox jAll;
+	private final JButton jOk;
+	private final JButton jCancel;
 
-	private JTextArea jInfo;
-	private EnumTableFormatAdaptor<T, Q> adaptor;
+	private final JTextArea jInfo;
+	private final EnumTableFormatAdaptor<T, Q> adaptor;
 
 	public EditColumnsDialog(final Program program, final EnumTableFormatAdaptor<T, Q> adaptor) {
 		super(program, GuiShared.get().tableColumnsTitle(), Images.TABLE_COLUMN_SHOW.getImage());
@@ -182,6 +182,7 @@ public class EditColumnsDialog<T extends Enum<T> & EnumTableColumn<Q>, Q> extend
 			columns.add((SimpleColumn) listModel.getElementAt(i));
 		}
 		adaptor.setColumns(columns);
+		program.saveSettings("Save Columns (Changed - Edit Columns)"); //Save Columns (Changed - Edit Columns)
 		setVisible(false);
 	}
 
@@ -207,7 +208,7 @@ public class EditColumnsDialog<T extends Enum<T> & EnumTableColumn<Q>, Q> extend
 
 	private class JCheckBoxListRenderer extends DefaultListCellRenderer {
 
-		private JCheckBox checkBox = new JCheckBox();
+		private final JCheckBox checkBox = new JCheckBox();
 
 		@Override
 		public Component getListCellRendererComponent(final JList list, final Object value, final int index, final boolean isSelected, final boolean hasFocus) {

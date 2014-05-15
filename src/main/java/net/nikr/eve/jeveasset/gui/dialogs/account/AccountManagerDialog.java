@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2013 Contributors (see credits.txt)
+ * Copyright 2009-2014 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -35,18 +35,15 @@ import java.util.Map;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.*;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.data.Account;
+import net.nikr.eve.jeveasset.data.MyAccount;
 import net.nikr.eve.jeveasset.data.Owner;
 import net.nikr.eve.jeveasset.gui.dialogs.account.AccountSeparatorTableCell.AccountCellAction;
-import net.nikr.eve.jeveasset.gui.dialogs.account.AccountTableFormat.ExpirerDate;
-import net.nikr.eve.jeveasset.gui.dialogs.account.AccountTableFormat.YesNo;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
 import net.nikr.eve.jeveasset.gui.shared.components.JDropDownButton;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
 import net.nikr.eve.jeveasset.gui.shared.table.JSeparatorTable;
-import net.nikr.eve.jeveasset.gui.shared.table.TableCellRenderers.ToStringCellRenderer;
 import net.nikr.eve.jeveasset.i18n.DialoguesAccount;
 
 
@@ -64,17 +61,17 @@ public class AccountManagerDialog extends JDialogCentered {
 	}
 
 	//GUI
-	private AccountImportDialog accountImportDialog;
-	private JSeparatorTable jTable;
-	private JButton jAdd;
-	private JButton jExpand;
-	private JButton jCollapse;
-	private JDropDownButton jAssets;
-	private JButton jClose;
-	private EventList<Owner> eventList;
-	private DefaultEventTableModel<Owner> tableModel;
-	private SeparatorList<Owner> separatorList;
-	private DefaultEventSelectionModel<Owner> selectionModel;
+	private final AccountImportDialog accountImportDialog;
+	private final JSeparatorTable jTable;
+	private final JButton jAdd;
+	private final JButton jExpand;
+	private final JButton jCollapse;
+	private final JDropDownButton jAssets;
+	private final JButton jClose;
+	private final EventList<Owner> eventList;
+	private final DefaultEventTableModel<Owner> tableModel;
+	private final SeparatorList<Owner> separatorList;
+	private final DefaultEventSelectionModel<Owner> selectionModel;
 
 	private Map<Owner, Boolean> shownAssets;
 	private boolean forceUpdate = false;
@@ -90,12 +87,10 @@ public class AccountManagerDialog extends JDialogCentered {
 		separatorList = new SeparatorList<Owner>(eventList, new SeparatorListComparator(), 1, 3);
 		EnumTableFormatAdaptor<AccountTableFormat, Owner> tableFormat = new EnumTableFormatAdaptor<AccountTableFormat, Owner>(AccountTableFormat.class);
 		tableModel = EventModels.createTableModel(separatorList, tableFormat);
-		jTable = new JSeparatorTable(program, tableModel, separatorList);
+		jTable = new JAccountTable(program, tableModel, separatorList);
 		jTable.getTableHeader().setReorderingAllowed(false);
 		jTable.setSeparatorRenderer(new AccountSeparatorTableCell(listener, jTable, separatorList));
 		jTable.setSeparatorEditor(new AccountSeparatorTableCell(listener, jTable, separatorList));
-		jTable.setDefaultRenderer(YesNo.class, new ToStringCellRenderer(SwingConstants.CENTER));
-		jTable.setDefaultRenderer(ExpirerDate.class, new ToStringCellRenderer(SwingConstants.CENTER));
 
 		JScrollPane jTableScroll = new JScrollPane(jTable);
 
@@ -187,9 +182,13 @@ public class AccountManagerDialog extends JDialogCentered {
 		//Update rows (Add all rows)
 		eventList.getReadWriteLock().writeLock().lock();
 		eventList.clear();
-		for (Account account : program.getAccounts()) {
-			for (Owner owner : account.getOwners()) {
-				eventList.add(owner);
+		for (MyAccount account : program.getAccounts()) {
+			if (account.getOwners().isEmpty()) {
+				eventList.add(new Owner(account, DialoguesAccount.get().noOwners(), 0));
+			} else {
+				for (Owner owner : account.getOwners()) {
+					eventList.add(owner);
+				}
 			}
 		}
 		eventList.getReadWriteLock().writeLock().unlock();
@@ -212,13 +211,17 @@ public class AccountManagerDialog extends JDialogCentered {
 				Object o = tableModel.getElementAt(selectedRows[i]);
 				if (o instanceof Owner) {
 					Owner owner = (Owner) o;
-					owner.setShowOwner(check);
+					if (!owner.getName().equals(DialoguesAccount.get().noOwners())) {
+						owner.setShowOwner(check);
+					}
 				}
 			}
 		} else { //Set all the check value
-			for (Account account : program.getAccounts()) {
+			for (MyAccount account : program.getAccounts()) {
 				for (Owner owner : account.getOwners()) {
-					owner.setShowOwner(check);
+					if (!owner.getName().equals(DialoguesAccount.get().noOwners())) {
+						owner.setShowOwner(check);
+					}
 				}
 			}
 		}
@@ -247,7 +250,7 @@ public class AccountManagerDialog extends JDialogCentered {
 	@Override
 	protected void save() {
 		boolean changed = false;
-		for (Account account : program.getAccounts()) {
+		for (MyAccount account : program.getAccounts()) {
 			for (Owner owner : account.getOwners()) {
 				if (!shownAssets.containsKey(owner)) { //New account
 					if (owner.isShowOwner()) { //if shown: Updated
@@ -270,7 +273,7 @@ public class AccountManagerDialog extends JDialogCentered {
 			forceUpdate = false;
 			updateTable();
 			shownAssets = new HashMap<Owner, Boolean>();
-			for (Account account : program.getAccounts()) {
+			for (MyAccount account : program.getAccounts()) {
 				for (Owner owner : account.getOwners()) {
 					shownAssets.put(owner, owner.isShowOwner());
 				}
@@ -299,7 +302,7 @@ public class AccountManagerDialog extends JDialogCentered {
 				if (o instanceof SeparatorList.Separator<?>) {
 					SeparatorList.Separator<?> separator = (SeparatorList.Separator<?>) o;
 					Owner owner = (Owner) separator.first();
-					Account account = owner.getParentAccount();
+					MyAccount account = owner.getParentAccount();
 					accountImportDialog.show(account);
 				}
 			}
@@ -315,7 +318,7 @@ public class AccountManagerDialog extends JDialogCentered {
 					if (nReturn == JOptionPane.YES_OPTION) {
 						SeparatorList.Separator<?> separator = (SeparatorList.Separator<?>) o;
 						Owner owner = (Owner) separator.first();
-						Account account = owner.getParentAccount();
+						MyAccount account = owner.getParentAccount();
 						program.getAccounts().remove(account);
 						forceUpdate();
 						updateTable();

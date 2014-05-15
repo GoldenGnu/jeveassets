@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2013 Contributors (see credits.txt)
+ * Copyright 2009-2014 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -45,7 +45,7 @@ public class FakeRoutingTab extends RoutingTab {
 	}
 
 	public void buildTestGraph() {
-		super.buildGraph();
+		super.buildGraph(true);
 	}
 
 	public List<Node> getNodesFromNames(final List<String> names) {

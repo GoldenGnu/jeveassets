@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2013 Contributors (see credits.txt)
+ * Copyright 2009-2014 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -21,13 +21,13 @@
 
 package net.nikr.eve.jeveasset.data;
 
-import com.beimin.eveapi.shared.KeyType;
+import com.beimin.eveapi.model.shared.KeyType;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 
-public class Account {
+public class MyAccount {
 
 	public enum AccessMask {
 		OPEN(0L),
@@ -40,7 +40,9 @@ public class Account {
 		JOURNAL_CHAR(2097152L),
 		JOURNAL_CORP(1048576L),
 		CONTRACTS_CORP(8388608L),
-		CONTRACTS_CHAR(67108864L);
+		CONTRACTS_CHAR(67108864L),
+		LOCATIONS_CHAR(134217728L),
+		LOCATIONS_CORP(16777216L);
 
 		private final long accessMask;
 
@@ -60,27 +62,29 @@ public class Account {
 	private long accessMask;
 	private KeyType type;
 	private Date expires;
+	private boolean invalid;
 
 	private List<Owner> owners = new ArrayList<Owner>();
 
-	public Account(final Account account) {
+	public MyAccount(final MyAccount account) {
 		this(account.getKeyID(),
 				account.getVCode(),
 				account.getName(),
 				account.getAccountNextUpdate(),
 				account.getAccessMask(),
 				account.getType(),
-				account.getExpires());
+				account.getExpires(),
+				account.isInvalid());
 		for (Owner owner : account.getOwners()) {
 			owners.add(new Owner(this, owner));
 		}
 	}
 
-	public Account(final int keyID, final String vCode) {
-		this(keyID, vCode, Integer.toString(keyID), Settings.getNow(), 0, null, null);
+	public MyAccount(final int keyID, final String vCode) {
+		this(keyID, vCode, Integer.toString(keyID), Settings.getNow(), 0, null, null, false);
 	}
 
-	public Account(final int keyID, final String vCode, final String name, final Date accountNextUpdate, final long accessMask, final KeyType type, final Date expires) {
+	public MyAccount(final int keyID, final String vCode, final String name, final Date accountNextUpdate, final long accessMask, final KeyType type, final Date expires, final boolean invalid) {
 		this.keyID = keyID;
 		this.vCode = vCode;
 		this.name = name;
@@ -88,6 +92,7 @@ public class Account {
 		this.accessMask = accessMask;
 		this.type = type;
 		this.expires = expires;
+		this.invalid = invalid;
 	}
 
 	public String getVCode() {
@@ -132,6 +137,14 @@ public class Account {
 		} else {
 			return Settings.getNow().after(getExpires());
 		}
+	}
+
+	public boolean isInvalid() {
+		return invalid;
+	}
+
+	public void setInvalid(boolean invalid) {
+		this.invalid = invalid;
 	}
 
 	public void setExpires(final Date expires) {
@@ -216,6 +229,14 @@ public class Account {
 		}
 	}
 
+	public boolean isLocations() {
+		if (isCorporation()) {
+			return ((getAccessMask() & AccessMask.LOCATIONS_CORP.getAccessMask()) == AccessMask.LOCATIONS_CORP.getAccessMask());
+		} else {
+			return ((getAccessMask() & AccessMask.LOCATIONS_CHAR.getAccessMask()) == AccessMask.LOCATIONS_CHAR.getAccessMask());
+		}
+	}
+
 	@Override
 	public String toString() {
 		return keyID + "::" + vCode;
@@ -229,7 +250,7 @@ public class Account {
 		if (getClass() != obj.getClass()) {
 			return false;
 		}
-		final Account other = (Account) obj;
+		final MyAccount other = (MyAccount) obj;
 		if (this.keyID != other.keyID) {
 			return false;
 		}

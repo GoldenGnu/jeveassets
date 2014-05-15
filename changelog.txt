@@ -16,6 +16,63 @@
                   #### #  # #  # #  # #### #### #### #### ####
 
 ________________________________________________________________________________
+_2.8.0__________________________________________________________________________
+
+New Features:
+-Tree Tool Sorting
+-Routing: Avoid System (By name or security)
+-Industry Jobs: Manufacturing Output Value
+-Assets: ME/PE columns
+-Added time to date columns
+-Added simple bug reporting tool
+-Added auto update tool (program and static data)
+
+Changed:
+-Date format is now ISO 8601: yyyy-MM-dd (Warning: May break your filters)
+-Updated static data to Rubicon 1.3.0.95173
+-Now save settings when they are changed (disable with "-lazysave")
+
+Bug Fixes:
+-StackOverflowError (PaddingTableCellRenderer)
+
+________________________________________________________________________________
+_2.7.3__________________________________________________________________________
+
+Changed:
+-Updated static data to Rubicon 1.0.4.93577
+-Api Keys: Assets access is now optional
+-Updated eve toolkit copyright
+
+Bug Fixes:
+-Current filter name not displayed
+-BPO shown as BPC
+
+________________________________________________________________________________
+_2.7.2__________________________________________________________________________
+
+New Features:
+-New Contract Column: Status
+
+Bug Fixes:
+-Assets included completed contracts 
+-Empty accounts was hidden in account manager
+
+________________________________________________________________________________
+_2.7.1__________________________________________________________________________
+
+Changed:
+-Save history for Transactions and Journal (Optional - on by default)
+-Support for EVE API HTTP errors (Invalid accounts)
+-Updated static data to Rubicon 1.0.93082
+
+Bug Fixes:
+-Java 6 could prevent jEveAssets from exiting
+-Copying from Materials/Loadouts/Overview tables now include all columns
+-Copying from tables added an extra newline at the end
+-Stockpile EFT Import could not import drones
+-Transaction and Journal now supports API walking (Thanks Yinmatook)
+
+________________________________________________________________________________
 _2.7.0__________________________________________________________________________
 
 New Features:

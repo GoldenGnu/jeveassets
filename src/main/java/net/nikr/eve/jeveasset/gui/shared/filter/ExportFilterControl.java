@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2013 Contributors (see credits.txt)
+ * Copyright 2009-2014 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -32,6 +32,7 @@ public abstract class ExportFilterControl<E> {
 
 	protected abstract EnumTableColumn<?> valueOf(String column);
 	protected abstract List<EnumTableColumn<E>> getShownColumns();
+	protected abstract void saveSettings(final String msg);
 
 	public Map<String, List<Filter>> getAllFilters() {
 		return new HashMap<String, List<Filter>>();

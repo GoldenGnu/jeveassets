@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2013 Contributors (see credits.txt)
+ * Copyright 2009-2014 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -26,25 +26,25 @@ import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.util.List;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.data.Account;
-import net.nikr.eve.jeveasset.data.AccountBalance;
+import net.nikr.eve.jeveasset.data.MyAccount;
+import net.nikr.eve.jeveasset.data.MyAccountBalance;
 import net.nikr.eve.jeveasset.data.ProfileManager;
 import net.nikr.eve.jeveasset.gui.dialogs.settings.UserNameSettingsPanel;
 import net.nikr.eve.jeveasset.gui.dialogs.settings.UserPriceSettingsPanel;
 import net.nikr.eve.jeveasset.gui.frame.MainWindow;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
-import net.nikr.eve.jeveasset.gui.tabs.assets.Asset;
+import net.nikr.eve.jeveasset.gui.tabs.assets.MyAsset;
 import net.nikr.eve.jeveasset.gui.tabs.assets.AssetsTab;
-import net.nikr.eve.jeveasset.gui.tabs.contracts.ContractItem;
-import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustryJob;
-import net.nikr.eve.jeveasset.gui.tabs.journal.Journal;
-import net.nikr.eve.jeveasset.gui.tabs.orders.MarketOrder;
+import net.nikr.eve.jeveasset.gui.tabs.contracts.MyContractItem;
+import net.nikr.eve.jeveasset.gui.tabs.jobs.MyIndustryJob;
+import net.nikr.eve.jeveasset.gui.tabs.journal.MyJournal;
+import net.nikr.eve.jeveasset.gui.tabs.orders.MyMarketOrder;
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewTab;
 import net.nikr.eve.jeveasset.gui.tabs.reprocessed.ReprocessedTab;
 import net.nikr.eve.jeveasset.gui.tabs.routing.RoutingTab;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.StockpileTab;
-import net.nikr.eve.jeveasset.gui.tabs.transaction.Transaction;
+import net.nikr.eve.jeveasset.gui.tabs.transaction.MyTransaction;
 import net.nikr.eve.jeveasset.io.online.PriceDataGetter;
 
 /**
@@ -68,17 +68,12 @@ public abstract class FakeProgram extends Program {
 	}
 
 	@Override
-	public void checkForProgramUpdates(final Window parent) {
-		throw new UnsupportedOperationException("Not implemented");
-	}
-
-	@Override
 	public void exit() {
 		throw new UnsupportedOperationException("Not implemented");
 	}
 
 	@Override
-	public EventList<Asset> getAssetEventList() {
+	public EventList<MyAsset> getAssetEventList() {
 		throw new UnsupportedOperationException("Not implemented");
 	}
 
@@ -99,7 +94,7 @@ public abstract class FakeProgram extends Program {
 	}
 
 	@Override
-	public void saveSettings() {
+	public void saveSettingsAndProfile() {
 		throw new UnsupportedOperationException("Not implemented");
 	}
 
@@ -164,17 +159,17 @@ public abstract class FakeProgram extends Program {
 	}
 
 	@Override
-	public EventList<ContractItem> getContractItemEventList() {
+	public EventList<MyContractItem> getContractItemEventList() {
 		throw new UnsupportedOperationException("Not implemented");
 	}
 
 	@Override
-	public EventList<IndustryJob> getIndustryJobsEventList() {
+	public EventList<MyIndustryJob> getIndustryJobsEventList() {
 		throw new UnsupportedOperationException("Not implemented");
 	}
 
 	@Override
-	public EventList<MarketOrder> getMarketOrdersEventList() {
+	public EventList<MyMarketOrder> getMarketOrdersEventList() {
 		throw new UnsupportedOperationException("Not implemented");
 	}
 
@@ -184,7 +179,7 @@ public abstract class FakeProgram extends Program {
 	}
 
 	@Override
-	public List<Account> getAccounts() {
+	public List<MyAccount> getAccounts() {
 		throw new UnsupportedOperationException("Not implemented");
 	}
 
@@ -199,12 +194,12 @@ public abstract class FakeProgram extends Program {
 	}
 
 	@Override
-	public EventList<AccountBalance> getAccountBalanceEventList() {
+	public EventList<MyAccountBalance> getAccountBalanceEventList() {
 		throw new UnsupportedOperationException("Not implemented");
 	}
 
 	@Override
-	public EventList<Transaction> getTransactionsEventList() {
+	public EventList<MyTransaction> getTransactionsEventList() {
 		throw new UnsupportedOperationException("Not implemented");
 	}
 
@@ -214,12 +209,22 @@ public abstract class FakeProgram extends Program {
 	}
 
 	@Override
-	public EventList<Journal> getJournalEventList() {
+	public EventList<MyJournal> getJournalEventList() {
 		throw new UnsupportedOperationException("Not implemented");
 	}
 
 	@Override
 	public void updateTags() {
+		throw new UnsupportedOperationException("Not implemented");
+	}
+
+	@Override
+	public void saveSettings(String msg) {
+		throw new UnsupportedOperationException("Not implemented");
+	}
+
+	@Override
+	public void saveExit() {
 		throw new UnsupportedOperationException("Not implemented");
 	}
 }

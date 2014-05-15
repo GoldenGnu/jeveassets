@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2013 Contributors (see credits.txt)
+ * Copyright 2009-2014 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -21,19 +21,19 @@
 
 package net.nikr.eve.jeveasset.data;
 
-import com.beimin.eveapi.core.ApiAuthorization;
+import com.beimin.eveapi.parser.ApiAuthorization;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import net.nikr.eve.jeveasset.gui.tabs.assets.Asset;
-import net.nikr.eve.jeveasset.gui.tabs.contracts.Contract;
-import net.nikr.eve.jeveasset.gui.tabs.contracts.ContractItem;
-import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustryJob;
-import net.nikr.eve.jeveasset.gui.tabs.journal.Journal;
-import net.nikr.eve.jeveasset.gui.tabs.orders.MarketOrder;
-import net.nikr.eve.jeveasset.gui.tabs.transaction.Transaction;
+import net.nikr.eve.jeveasset.gui.tabs.assets.MyAsset;
+import net.nikr.eve.jeveasset.gui.tabs.contracts.MyContract;
+import net.nikr.eve.jeveasset.gui.tabs.contracts.MyContractItem;
+import net.nikr.eve.jeveasset.gui.tabs.jobs.MyIndustryJob;
+import net.nikr.eve.jeveasset.gui.tabs.journal.MyJournal;
+import net.nikr.eve.jeveasset.gui.tabs.orders.MyMarketOrder;
+import net.nikr.eve.jeveasset.gui.tabs.transaction.MyTransaction;
 
 
 public class Owner implements Comparable<Owner> {
@@ -48,16 +48,17 @@ public class Owner implements Comparable<Owner> {
 	private Date transactionsNextUpdate;
 	private Date industryJobsNextUpdate;
 	private Date contractsNextUpdate;
-	private Account parentAccount;
-	private List<AccountBalance> accountBalances;
-	private List<MarketOrder> marketOrders;
-	private List<Transaction> transactions;
-	private List<Journal> journal;
-	private List<IndustryJob> industryJobs;
-	private Map<Contract, List<ContractItem>> contracts;
-	private List<Asset> assets;
+	private Date locationsNextUpdate;
+	private MyAccount parentAccount;
+	private List<MyAccountBalance> accountBalances;
+	private List<MyMarketOrder> marketOrders;
+	private Map<Long, MyTransaction> transactions;
+	private Map<Long, MyJournal> journal;
+	private List<MyIndustryJob> industryJobs;
+	private Map<MyContract, List<MyContractItem>> contracts;
+	private List<MyAsset> assets;
 
-	public Owner(final Account parentAccount, final Owner owner) {
+	public Owner(final MyAccount parentAccount, final Owner owner) {
 		this(parentAccount,
 				owner.getName(),
 				owner.getOwnerID(),
@@ -69,7 +70,8 @@ public class Owner implements Comparable<Owner> {
 				owner.getJournalNextUpdate(),
 				owner.getTransactionsNextUpdate(),
 				owner.getIndustryJobsNextUpdate(),
-				owner.getContractsNextUpdate());
+				owner.getContractsNextUpdate(),
+				owner.getLocationsNextUpdate());
 		accountBalances = owner.getAccountBalances();
 		marketOrders = owner.getMarketOrders();
 		industryJobs = owner.getIndustryJobs();
@@ -79,11 +81,11 @@ public class Owner implements Comparable<Owner> {
 		journal = owner.getJournal();
 	}
 
-	public Owner(final Account parentAccount, final String name, final long ownerID) {
-		this(parentAccount, name, ownerID, true, null, Settings.getNow(), Settings.getNow(), Settings.getNow(), Settings.getNow(), Settings.getNow(), Settings.getNow(), Settings.getNow());
+	public Owner(final MyAccount parentAccount, final String name, final long ownerID) {
+		this(parentAccount, name, ownerID, true, null, Settings.getNow(), Settings.getNow(), Settings.getNow(), Settings.getNow(), Settings.getNow(), Settings.getNow(), Settings.getNow(), Settings.getNow());
 	}
 
-	public Owner(final Account parentAccount, final String name, final long ownerID, final boolean showOwner, final Date assetLastUpdate, final Date assetNextUpdate, final Date balanceNextUpdate, final Date marketOrdersNextUpdate, final Date journalNextUpdate, final Date transactionsNextUpdate, final Date industryJobsNextUpdate, final Date contractsNextUpdate) {
+	public Owner(final MyAccount parentAccount, final String name, final long ownerID, final boolean showOwner, final Date assetLastUpdate, final Date assetNextUpdate, final Date balanceNextUpdate, final Date marketOrdersNextUpdate, final Date journalNextUpdate, final Date transactionsNextUpdate, final Date industryJobsNextUpdate, final Date contractsNextUpdate, final Date locationsNextUpdate) {
 		this.parentAccount = parentAccount;
 		this.name = name;
 		this.ownerID = ownerID;
@@ -96,25 +98,26 @@ public class Owner implements Comparable<Owner> {
 		this.transactionsNextUpdate = transactionsNextUpdate;
 		this.industryJobsNextUpdate = industryJobsNextUpdate;
 		this.contractsNextUpdate = contractsNextUpdate;
+		this.locationsNextUpdate = locationsNextUpdate;
 		//Default
-		assets = new ArrayList<Asset>();
-		accountBalances = new  ArrayList<AccountBalance>();
-		marketOrders = new  ArrayList<MarketOrder>();
-		transactions = new ArrayList<Transaction>();
-		industryJobs = new  ArrayList<IndustryJob>();
-		contracts = new HashMap<Contract, List<ContractItem>>();
-		journal = new ArrayList<Journal>();
+		assets = new ArrayList<MyAsset>();
+		accountBalances = new  ArrayList<MyAccountBalance>();
+		marketOrders = new  ArrayList<MyMarketOrder>();
+		transactions = new HashMap<Long, MyTransaction>();
+		industryJobs = new  ArrayList<MyIndustryJob>();
+		contracts = new HashMap<MyContract, List<MyContractItem>>();
+		journal = new HashMap<Long, MyJournal>();
 	}
 
-	public void setAccountBalances(final List<AccountBalance> accountBalances) {
+	public void setAccountBalances(final List<MyAccountBalance> accountBalances) {
 		this.accountBalances = accountBalances;
 	}
 
-	public void setAssets(final List<Asset> assets) {
+	public void setAssets(final List<MyAsset> assets) {
 		this.assets = assets;
 	}
 
-	public void setAssetLastUpdate(Date assetLastUpdate) {
+	public void setAssetLastUpdate(final Date assetLastUpdate) {
 		this.assetLastUpdate = assetLastUpdate;
 	}
 
@@ -126,15 +129,15 @@ public class Owner implements Comparable<Owner> {
 		this.balanceNextUpdate = balanceNextUpdate;
 	}
 
-	public void setContracts(Map<Contract, List<ContractItem>> contracts) {
+	public void setContracts(final Map<MyContract, List<MyContractItem>> contracts) {
 		this.contracts = contracts;
 	}
 
-	public void setContractsNextUpdate(Date contractsNextUpdate) {
+	public void setContractsNextUpdate(final Date contractsNextUpdate) {
 		this.contractsNextUpdate = contractsNextUpdate;
 	}
 
-	public void setIndustryJobs(final List<IndustryJob> industryJobs) {
+	public void setIndustryJobs(final List<MyIndustryJob> industryJobs) {
 		this.industryJobs = industryJobs;
 	}
 
@@ -142,7 +145,11 @@ public class Owner implements Comparable<Owner> {
 		this.industryJobsNextUpdate = industryJobsNextUpdate;
 	}
 
-	public void setMarketOrders(final List<MarketOrder> marketOrders) {
+	public void setLocationsNextUpdate(Date locationsNextUpdate) {
+		this.locationsNextUpdate = locationsNextUpdate;
+	}
+
+	public void setMarketOrders(final List<MyMarketOrder> marketOrders) {
 		this.marketOrders = marketOrders;
 	}
 
@@ -162,7 +169,7 @@ public class Owner implements Comparable<Owner> {
 		this.showOwner = showOwner;
 	}
 
-	public void setJournal(List<Journal> journal) {
+	public void setJournal(final Map<Long, MyJournal> journal) {
 		this.journal = journal;
 	}
 
@@ -170,7 +177,7 @@ public class Owner implements Comparable<Owner> {
 		this.journalNextUpdate = journalNextUpdate;
 	}
 
- 	public void setTransactions(final List<Transaction> transactions) {
+ 	public void setTransactions(final Map<Long, MyTransaction> transactions) {
 		this.transactions = transactions;
 	}
 
@@ -190,11 +197,11 @@ public class Owner implements Comparable<Owner> {
 		return parentAccount.isCharacter();
 	}
 
-	public List<AccountBalance> getAccountBalances() {
+	public List<MyAccountBalance> getAccountBalances() {
 		return accountBalances;
 	}
 
-	public List<Asset> getAssets() {
+	public List<MyAsset> getAssets() {
 		return assets;
 	}
 
@@ -210,7 +217,7 @@ public class Owner implements Comparable<Owner> {
 		return balanceNextUpdate;
 	}
 
-	public Map<Contract, List<ContractItem>> getContracts() {
+	public Map<MyContract, List<MyContractItem>> getContracts() {
 		return contracts;
 	}
 
@@ -218,7 +225,7 @@ public class Owner implements Comparable<Owner> {
 		return contractsNextUpdate;
 	}
 
-	public List<IndustryJob> getIndustryJobs() {
+	public List<MyIndustryJob> getIndustryJobs() {
 		return industryJobs;
 	}
 
@@ -226,7 +233,11 @@ public class Owner implements Comparable<Owner> {
 		return industryJobsNextUpdate;
 	}
 
-	public List<MarketOrder> getMarketOrders() {
+	public Date getLocationsNextUpdate() {
+		return locationsNextUpdate;
+	}
+
+	public List<MyMarketOrder> getMarketOrders() {
 		return marketOrders;
 	}
 
@@ -242,11 +253,11 @@ public class Owner implements Comparable<Owner> {
 		return ownerID;
 	}
 
-	public Account getParentAccount() {
+	public MyAccount getParentAccount() {
 		return parentAccount;
 	}
 
-	public List<Journal> getJournal() {
+	public Map<Long, MyJournal> getJournal() {
 		return journal;
 	}
 
@@ -254,7 +265,7 @@ public class Owner implements Comparable<Owner> {
 		return journalNextUpdate;
 	}
 
-	public List<Transaction> getTransactions() {
+	public Map<Long, MyTransaction> getTransactions() {
  		return transactions;
 	}
 
@@ -298,13 +309,13 @@ public class Owner implements Comparable<Owner> {
 		return getName();
 	}
 
-	public static ApiAuthorization getApiAuthorization(final Account account) {
+	public static ApiAuthorization getApiAuthorization(final MyAccount account) {
 		return new ApiAuthorization(account.getKeyID(), account.getVCode());
 	}
 	public static ApiAuthorization getApiAuthorization(final Owner owner) {
 		return getApiAuthorization(owner.getParentAccount(), owner.getOwnerID());
 	}
-	private static ApiAuthorization getApiAuthorization(final Account account, final long ownerID) {
+	private static ApiAuthorization getApiAuthorization(final MyAccount account, final long ownerID) {
 		return new ApiAuthorization(account.getKeyID(), ownerID, account.getVCode());
 	}
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2013 Contributors (see credits.txt)
+ * Copyright 2009-2014 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -20,10 +20,10 @@
  */
 package net.nikr.eve.jeveasset.gui.tabs.jobs;
 
-import com.beimin.eveapi.shared.industryjobs.ApiIndustryJob;
+import com.beimin.eveapi.model.shared.IndustryJob;
 import java.util.Date;
 import net.nikr.eve.jeveasset.data.Item;
-import net.nikr.eve.jeveasset.data.Location;
+import net.nikr.eve.jeveasset.data.MyLocation;
 import net.nikr.eve.jeveasset.data.Owner;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.data.types.BlueprintType;
@@ -33,7 +33,7 @@ import net.nikr.eve.jeveasset.data.types.PriceType;
 import net.nikr.eve.jeveasset.i18n.DataModelIndustryJob;
 
 
-public class IndustryJob extends ApiIndustryJob implements Comparable<IndustryJob>, LocationType, ItemType, BlueprintType, PriceType {
+public class MyIndustryJob extends IndustryJob implements Comparable<MyIndustryJob>, LocationType, ItemType, BlueprintType, PriceType {
 
 	public enum IndustryJobState {
 		STATE_ALL() {
@@ -152,7 +152,7 @@ public class IndustryJob extends ApiIndustryJob implements Comparable<IndustryJo
 				return DataModelIndustryJob.get().activityCopying();
 			}
 			@Override
-			public String getDescriptionOf(final IndustryJob job) {
+			public String getDescriptionOf(final MyIndustryJob job) {
 				// "Copying: Xyz Blueprint making 5 copies with 1500 runs each."
 				return DataModelIndustryJob.get().descriptionCopying(
 						String.valueOf(job.getInstalledItemTypeID()),
@@ -189,7 +189,7 @@ public class IndustryJob extends ApiIndustryJob implements Comparable<IndustryJo
 		 * @param job
 		 * @return a single line, human readable description of the job.
 		 */
-		public String getDescriptionOf(final IndustryJob job) {
+		public String getDescriptionOf(final MyIndustryJob job) {
 			return toString();
 		}
 	}
@@ -198,11 +198,14 @@ public class IndustryJob extends ApiIndustryJob implements Comparable<IndustryJo
 	private IndustryJobState state;
 	private final Item item;
 	private final Owner owner;
-	private final Location location;
+	private final MyLocation location;
 	private final int portion;
+	private final String name;
 	private double price;
+	private double outputValue;
+	private int outputCount;
 
-	public IndustryJob(final ApiIndustryJob apiIndustryJob, final Item item, final Location location, final Owner owner, final int portion) {
+	public MyIndustryJob(final IndustryJob apiIndustryJob, final Item item, final MyLocation location, final Owner owner, final int portion) {
 		this.setJobID(apiIndustryJob.getJobID());
 		this.setContainerID(apiIndustryJob.getContainerID());
 		this.setInstalledItemID(apiIndustryJob.getInstalledItemID());
@@ -302,10 +305,26 @@ public class IndustryJob extends ApiIndustryJob implements Comparable<IndustryJo
 				state = IndustryJobState.STATE_DESTROYED;
 				break;
 		}
+		switch(activity) {
+			case ACTIVITY_MANUFACTURING:
+				outputCount = getRuns() * portion;
+				break;
+			case ACTIVITY_COPYING:
+				outputCount = getRuns();
+				break;
+			default:
+				outputCount = 1;
+				break;
+		}
+		if (getInstalledItemCopy() > 0) {
+			this.name = item.getTypeName() + " (BPC)";
+		} else {
+			this.name = item.getTypeName() + " (BPO)";
+		}
 	}
 
 	@Override
-	public int compareTo(final IndustryJob o) {
+	public int compareTo(final MyIndustryJob o) {
 		return 0;
 	}
 
@@ -326,6 +345,26 @@ public class IndustryJob extends ApiIndustryJob implements Comparable<IndustryJo
 		return price;
 	}
 
+	public double getOutputValue() {
+		return outputValue;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setOutputPrice(double outputPrice) {
+		if (getState() == IndustryJobState.STATE_ACTIVE && getActivity() == IndustryActivity.ACTIVITY_MANUFACTURING){
+			this.outputValue = outputPrice * (double) getRuns() * getPortion();
+		} else {
+			this.outputValue = 0;
+		}
+	}
+
+	public int getOutputCount() {
+		return outputCount;
+	}
+
 	@Override
 	public boolean isBPO() {
 		return !isBPC();
@@ -337,7 +376,7 @@ public class IndustryJob extends ApiIndustryJob implements Comparable<IndustryJo
 	}
 
 	@Override
-	public Location getLocation() {
+	public MyLocation getLocation() {
 		return location;
 	}
 
@@ -374,13 +413,10 @@ public class IndustryJob extends ApiIndustryJob implements Comparable<IndustryJo
 		if (getClass() != obj.getClass()) {
 			return false;
 		}
-		final IndustryJob other = (IndustryJob) obj;
+		final MyIndustryJob other = (MyIndustryJob) obj;
 		if (this.owner != other.owner && (this.owner == null || !this.owner.equals(other.owner))) {
 			return false;
 		}
-		if (this.getJobID() != other.getJobID()) {
-			return false;
-		}
-		return true;
+		return this.getJobID() == other.getJobID();
 	}
 }

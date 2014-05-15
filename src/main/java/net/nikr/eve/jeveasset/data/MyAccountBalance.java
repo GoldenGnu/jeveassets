@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2013 Contributors (see credits.txt)
+ * Copyright 2009-2014 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -21,14 +21,14 @@
 
 package net.nikr.eve.jeveasset.data;
 
-import com.beimin.eveapi.shared.accountbalance.EveAccountBalance;
+import com.beimin.eveapi.model.shared.AccountBalance;
 
 
-public class AccountBalance extends EveAccountBalance {
-	private EveAccountBalance eveAccountBalance;
-	private Owner owner;
+public class MyAccountBalance extends AccountBalance {
+	private final AccountBalance eveAccountBalance;
+	private final Owner owner;
 
-	public AccountBalance(EveAccountBalance eveAccountBalance, Owner owner) {
+	public MyAccountBalance(AccountBalance eveAccountBalance, Owner owner) {
 		this.eveAccountBalance = eveAccountBalance;
 		this.owner = owner;
 	}

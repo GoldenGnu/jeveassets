@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2013 Contributors (see credits.txt)
+ * Copyright 2009-2014 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -35,6 +35,7 @@ import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Item;
+import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.data.StaticData;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
@@ -293,6 +294,7 @@ public class StockpileItemDialog extends JDialogCentered {
 
 	@Override
 	protected void save() {
+		Settings.lock(); //Lock for Stockpile (Items Dialog)
 		if (stockpileItem != null) { //EDIT
 			if (itemExist()) { //EDIT + UPDATING (Editing to an existing item)
 				StockpileItem existingItem = getExistingItem();
@@ -307,6 +309,8 @@ public class StockpileItemDialog extends JDialogCentered {
 			stockpileItem = getStockpileItem();
 			stockpile.add(stockpileItem);
 		}
+		Settings.unlock(); //Unlock for Stockpile (Items Dialog)
+		program.saveSettings("Save Stockpile (Items Dialog)"); //Save Stockpile (Items Dialog)
 		super.setVisible(false);
 	}
 

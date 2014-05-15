@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2013 Contributors (see credits.txt)
+ * Copyright 2009-2014 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -23,15 +23,14 @@ package net.nikr.eve.jeveasset;
 
 import apple.dts.samplecode.osxadapter.OSXAdapter;
 import ca.odell.glazedlists.EventList;
-import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JOptionPane;
 import javax.swing.Timer;
-import net.nikr.eve.jeveasset.data.Account;
-import net.nikr.eve.jeveasset.data.AccountBalance;
+import net.nikr.eve.jeveasset.data.MyAccount;
+import net.nikr.eve.jeveasset.data.MyAccountBalance;
 import net.nikr.eve.jeveasset.data.ProfileData;
 import net.nikr.eve.jeveasset.data.ProfileManager;
 import net.nikr.eve.jeveasset.data.Settings;
@@ -39,7 +38,9 @@ import net.nikr.eve.jeveasset.data.StaticData;
 import net.nikr.eve.jeveasset.gui.dialogs.AboutDialog;
 import net.nikr.eve.jeveasset.gui.dialogs.account.AccountManagerDialog;
 import net.nikr.eve.jeveasset.gui.dialogs.profile.ProfileDialog;
-import net.nikr.eve.jeveasset.gui.dialogs.settings.*;
+import net.nikr.eve.jeveasset.gui.dialogs.settings.SettingsDialog;
+import net.nikr.eve.jeveasset.gui.dialogs.settings.UserNameSettingsPanel;
+import net.nikr.eve.jeveasset.gui.dialogs.settings.UserPriceSettingsPanel;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateDialog;
 import net.nikr.eve.jeveasset.gui.frame.MainMenu.MainMenuAction;
 import net.nikr.eve.jeveasset.gui.frame.MainWindow;
@@ -47,32 +48,32 @@ import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Updatable;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
-import net.nikr.eve.jeveasset.gui.tabs.assets.Asset;
 import net.nikr.eve.jeveasset.gui.tabs.assets.AssetsTab;
-import net.nikr.eve.jeveasset.gui.tabs.contracts.ContractItem;
+import net.nikr.eve.jeveasset.gui.tabs.assets.MyAsset;
 import net.nikr.eve.jeveasset.gui.tabs.contracts.ContractsTab;
+import net.nikr.eve.jeveasset.gui.tabs.contracts.MyContractItem;
 import net.nikr.eve.jeveasset.gui.tabs.items.ItemsTab;
-import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustryJob;
 import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustryJobsTab;
 import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustryPlotTab;
-import net.nikr.eve.jeveasset.gui.tabs.journal.Journal;
+import net.nikr.eve.jeveasset.gui.tabs.jobs.MyIndustryJob;
 import net.nikr.eve.jeveasset.gui.tabs.journal.JournalTab;
+import net.nikr.eve.jeveasset.gui.tabs.journal.MyJournal;
 import net.nikr.eve.jeveasset.gui.tabs.loadout.LoadoutsTab;
 import net.nikr.eve.jeveasset.gui.tabs.materials.MaterialsTab;
-import net.nikr.eve.jeveasset.gui.tabs.orders.MarketOrder;
 import net.nikr.eve.jeveasset.gui.tabs.orders.MarketOrdersTab;
+import net.nikr.eve.jeveasset.gui.tabs.orders.MyMarketOrder;
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewTab;
 import net.nikr.eve.jeveasset.gui.tabs.reprocessed.ReprocessedTab;
 import net.nikr.eve.jeveasset.gui.tabs.routing.RoutingTab;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.StockpileTab;
 import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerTab;
-import net.nikr.eve.jeveasset.gui.tabs.transaction.Transaction;
+import net.nikr.eve.jeveasset.gui.tabs.transaction.MyTransaction;
 import net.nikr.eve.jeveasset.gui.tabs.transaction.TransactionTab;
 import net.nikr.eve.jeveasset.gui.tabs.tree.TreeTab;
 import net.nikr.eve.jeveasset.gui.tabs.values.ValueRetroTab;
 import net.nikr.eve.jeveasset.gui.tabs.values.ValueTableTab;
 import net.nikr.eve.jeveasset.io.online.PriceDataGetter;
-import net.nikr.eve.jeveasset.io.online.ProgramUpdateChecker;
+import net.nikr.eve.jeveasset.io.online.Updater;
 import net.nikr.eve.jeveasset.io.shared.DesktopUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -84,7 +85,7 @@ public class Program implements ActionListener {
 		TIMER
 	}
 	//Major.Minor.Bugfix [Release Candidate n] [BETA n] [DEV BUILD #n];
-	public static final String PROGRAM_VERSION = "2.7.0";
+	public static final String PROGRAM_VERSION = "2.8.0";
 	public static final String PROGRAM_NAME = "jEveAssets";
 	public static final String PROGRAM_UPDATE_URL = "http://eve.nikr.net/jeveassets/update.xml";
 	public static final String PROGRAM_HOMEPAGE = "http://eve.nikr.net/jeveasset";
@@ -98,6 +99,7 @@ public class Program implements ActionListener {
 	private static boolean forceUpdate = false;
 	private static boolean forceNoUpdate = false;
 	private static boolean portable = false;
+	private static boolean lazySave = false;
 
 	//GUI
 	private MainWindow mainWindow;
@@ -130,11 +132,11 @@ public class Program implements ActionListener {
 	private TreeTab treeTab;
 
 	//Misc
-	private ProgramUpdateChecker programUpdateChecker;
+	private Updater updater;
 	private Timer timer;
 	private Updatable updatable;
 
-	private List<JMainTab> jMainTabs = new ArrayList<JMainTab>();
+	private final List<JMainTab> jMainTabs = new ArrayList<JMainTab>();
 
 	//Data
 	private final ProfileData profileData;
@@ -142,6 +144,8 @@ public class Program implements ActionListener {
 	private final PriceDataGetter priceDataGetter;
 
 	public Program() {
+		updater = new Updater();
+		updater.update();
 		if (debug) {
 			LOG.debug("Force Update: {} Force No Update: {}", forceUpdate, forceNoUpdate);
 		}
@@ -161,7 +165,6 @@ public class Program implements ActionListener {
 		//Can not update profile data now - list needs to be empty doing creation...
 		priceDataGetter = new PriceDataGetter(profileData);
 		priceDataGetter.load();
-		programUpdateChecker = new ProgramUpdateChecker(this);
 	//Timer
 		timer = new Timer(15000, this); //Once a minute
 		timer.setActionCommand(ProgramAction.TIMER.name());
@@ -261,8 +264,6 @@ public class Program implements ActionListener {
 			LOG.info("Show Debug Warning");
 			JOptionPane.showMessageDialog(mainWindow.getFrame(), "WARNING: Debug is enabled", "Debug", JOptionPane.WARNING_MESSAGE);
 		}
-		programUpdateChecker.showDevBuildMessage();
-		programUpdateChecker.showMessages();
 		if (profileManager.getAccounts().isEmpty()) {
 			LOG.info("Show Account Manager");
 			accountManagerDialog.setVisible(true);
@@ -297,7 +298,7 @@ public class Program implements ActionListener {
 		for (JMainTab jMainTab : mainWindow.getTabs()) {
 			jMainTab.beforeUpdateData();
 		}
-		profileData.updateEventLists();
+		boolean saveSettings = profileData.updateEventLists();
 		System.gc(); //clean post-update mess :)
 		
 		for (JMainTab jMainTab : mainWindow.getTabs()) {
@@ -308,44 +309,89 @@ public class Program implements ActionListener {
 		}
 		timerTicked();
 		updateTableMenu();
+		if (saveSettings) {
+			saveSettings("Save Asset Added Date"); //Save Asset Added Date
+		}
 	}
 
-	public void saveSettings() {
-		LOG.info("Saving...");
+	/**
+	 * Save Settings ASAP
+	 * @param msg Who is saving what?
+	 */
+	public void saveSettings(final String msg) {
+		if (!lazySave) {
+			if (!Settings.ignoreSave()) {
+				Settings.saveStart();
+				Thread thread = new SaveSettings(msg, this);
+				thread.start();
+			}
+		}
+	}
+
+	private void doSaveSettings(final String msg) {
+		LOG.info("Saving Settings: " + msg);
+		Settings.lock(); //Lock for Table (Column/Width/Resize) and Window Settings
 		mainWindow.updateSettings();
 		for (JMainTab jMainTab : jMainTabs) {
 			jMainTab.saveSettings();
 		}
-		Settings.get().saveSettings();
+		Settings.unlock(); //Unlock for Table (Column/Width/Resize) and Window Settings
+		Settings.saveSettings();
+	}
+
+	public void saveSettingsAndProfile() {
+		if (lazySave) {
+			doSaveSettings("API Update");
+		} else {
+			saveSettings("API Update");
+			Settings.waitForEmptySaveQueue();
+		}
 		profileManager.saveProfile();
 	}
 
+	/**
+	 * Used by macOsxCode() - should not be changed
+	 */
 	public void exit() {
-		saveSettings();
-		LOG.info("Exiting...");
+		saveExit();
+		LOG.info("Running shutdown hook(s) and exiting...");
 		System.exit(0);
 	}
 
+	/**
+	 * Used by macOsxCode() - should not be renamed
+	 */
+	public void saveExit() {
+		if (lazySave) {
+			doSaveSettings("Exit");
+		} else {
+			LOG.info("Waiting for save queue to finish...");
+			Settings.waitForEmptySaveQueue();
+		}
+	}
+
+	/**
+	 * Used by macOsxCode() - should not be renamed
+	 */
 	public void showAbout() {
 		aboutDialog.setVisible(true);
 	}
 
+	/**
+	 * Used by macOsxCode() - should not be renamed
+	 */
 	public void showSettings() {
 		settingsDialog.setVisible(true);
 	}
 
-	public void checkForProgramUpdates(final Window parent) {
-		programUpdateChecker.showMessages(parent, true);
-	}
-
 	public String getProgramDataVersion() {
-		return programUpdateChecker.getProgramDataVersion();
+		return updater.getLocalData();
 	}
 
 	private void macOsxCode() {
 		if (onMac()) {
 			try {
-				OSXAdapter.setQuitHandler(this, getClass().getDeclaredMethod("saveSettings", (Class[]) null));
+				OSXAdapter.setQuitHandler(this, getClass().getDeclaredMethod("saveExit", (Class[]) null));
 				OSXAdapter.setAboutHandler(this, getClass().getDeclaredMethod("showAbout", (Class[]) null));
 				OSXAdapter.setPreferencesHandler(this, getClass().getDeclaredMethod("showSettings", (Class[]) null));
 			} catch (NoSuchMethodException ex) {
@@ -395,31 +441,31 @@ public class Program implements ActionListener {
 	public RoutingTab getRoutingTab() {
 		return routingTab;
 	}
-	public EventList<Asset> getAssetEventList() {
+	public EventList<MyAsset> getAssetEventList() {
 		return profileData.getAssetsEventList();
 	}
-	public EventList<ContractItem> getContractItemEventList() {
+	public EventList<MyContractItem> getContractItemEventList() {
 		return profileData.getContractItemEventList();
 	}
-	public EventList<IndustryJob> getIndustryJobsEventList() {
+	public EventList<MyIndustryJob> getIndustryJobsEventList() {
 		return profileData.getIndustryJobsEventList();
 	}
-	public EventList<MarketOrder> getMarketOrdersEventList() {
+	public EventList<MyMarketOrder> getMarketOrdersEventList() {
 		return profileData.getMarketOrdersEventList();
 	}
-	public EventList<Journal> getJournalEventList() {
+	public EventList<MyJournal> getJournalEventList() {
 		return profileData.getJournalEventList();
 	}
-	public EventList<Transaction> getTransactionsEventList() {
+	public EventList<MyTransaction> getTransactionsEventList() {
 		return profileData.getTransactionsEventList();
 	}
-	public EventList<AccountBalance> getAccountBalanceEventList() {
+	public EventList<MyAccountBalance> getAccountBalanceEventList() {
 		return profileData.getAccountBalanceEventList();
 	}
 	public List<String> getOwners(boolean all) {
 		return profileData.getOwners(all);
 	}
-	public List<Account> getAccounts() {
+	public List<MyAccount> getAccounts() {
 		return profileManager.getAccounts();
 	}
 	public ProfileManager getProfileManager() {
@@ -462,6 +508,10 @@ public class Program implements ActionListener {
 
 	public static void setPortable(final boolean portable) {
 		Program.portable = portable;
+	}
+
+	public static void setLazySave(final boolean lazySave) {
+		Program.lazySave = lazySave;
 	}
 
 	public static boolean isPortable() {
@@ -599,6 +649,54 @@ public class Program implements ActionListener {
 	//Ticker
 		if (ProgramAction.TIMER.name().equals(e.getActionCommand())) {
 			timerTicked();
+		}
+	}
+
+	private static class SaveSettings extends Thread {
+
+		private static int counter = 0;
+
+		private final String msg;
+		private final Program program;
+		private final int id;
+
+		public SaveSettings(String msg, Program program) {
+			super("Save Settings " + counter++ + ": " + msg);
+			this.msg = msg;
+			this.program = program;
+			this.id = counter;
+		}
+
+		@Override
+		public void run() {
+			long before = System.currentTimeMillis();
+
+			program.doSaveSettings(msg);
+
+			Settings.saveEnd();
+
+			long after = System.currentTimeMillis();
+
+			LOG.debug("Settings saved in: " + (after - before) + "ms");
+		}
+
+		@Override
+		public int hashCode() {
+			int hash = 7;
+			hash = 67 * hash + this.id;
+			return hash;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (obj == null) {
+				return false;
+			}
+			if (getClass() != obj.getClass()) {
+				return false;
+			}
+			final SaveSettings other = (SaveSettings) obj;
+			return this.id == other.id;
 		}
 	}
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2013 Contributors (see credits.txt)
+ * Copyright 2009-2014 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -72,6 +72,8 @@ public abstract class TabsAssets extends Bundle {
 	public abstract String columnVolumeTotal();
 	public abstract String columnSingleton();
 	public abstract String columnAdded();
+	public abstract String columnBpME();
+	public abstract String columnBpPE();
 	public abstract String columnItemID();
 	public abstract String columnTypeID();
 }

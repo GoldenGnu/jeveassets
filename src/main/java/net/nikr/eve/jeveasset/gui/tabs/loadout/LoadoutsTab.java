@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2013 Contributors (see credits.txt)
+ * Copyright 2009-2014 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -68,7 +68,7 @@ import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
 import net.nikr.eve.jeveasset.gui.shared.table.JSeparatorTable;
 import net.nikr.eve.jeveasset.gui.shared.table.PaddingTableCellRenderer;
-import net.nikr.eve.jeveasset.gui.tabs.assets.Asset;
+import net.nikr.eve.jeveasset.gui.tabs.assets.MyAsset;
 import net.nikr.eve.jeveasset.gui.tabs.loadout.Loadout.FlagType;
 import net.nikr.eve.jeveasset.i18n.General;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
@@ -95,22 +95,22 @@ public class LoadoutsTab extends JMainTab {
 	private static final String SHIP_CATEGORY = "Ship";
 
 	//GUI
-	private JComboBox jOwners;
-	private JComboBox jShips;
-	private JButton jExpand;
-	private JButton jCollapse;
-	private JSeparatorTable jTable;
-	private JDropDownButton jExport;
-	private LoadoutsExportDialog loadoutsExportDialog;
+	private final JComboBox jOwners;
+	private final JComboBox jShips;
+	private final JButton jExpand;
+	private final JButton jCollapse;
+	private final JSeparatorTable jTable;
+	private final JDropDownButton jExport;
+	private final LoadoutsExportDialog loadoutsExportDialog;
 	private JCustomFileChooser jXmlFileChooser;
 
 	//Table
-	private EventList<Loadout> eventList;
-	private FilterList<Loadout> filterList;
-	private SeparatorList<Loadout> separatorList;
-	private DefaultEventSelectionModel<Loadout> selectionModel;
-	private DefaultEventTableModel<Loadout> tableModel;
-	private EnumTableFormatAdaptor<LoadoutTableFormat, Loadout> tableFormat;
+	private final EventList<Loadout> eventList;
+	private final FilterList<Loadout> filterList;
+	private final SeparatorList<Loadout> separatorList;
+	private final DefaultEventSelectionModel<Loadout> selectionModel;
+	private final DefaultEventTableModel<Loadout> tableModel;
+	private final EnumTableFormatAdaptor<LoadoutTableFormat, Loadout> tableFormat;
 
 	//Dialog
 	ExportDialog<Loadout> exportDialog;
@@ -324,8 +324,8 @@ public class LoadoutsTab extends JMainTab {
 		String fitDescription = loadoutsExportDialog.getFittingDescription();
 		if (!fitName.isEmpty()) {
 			String selectedShip = (String) jShips.getSelectedItem();
-			Asset exportAsset = null;
-			for (Asset asset : program.getAssetEventList()) {
+			MyAsset exportAsset = null;
+			for (MyAsset asset : program.getAssetEventList()) {
 				String key = asset.getName() + " #" + asset.getItemID();
 				if (!selectedShip.equals(key)) {
 					continue;
@@ -352,7 +352,7 @@ public class LoadoutsTab extends JMainTab {
 
 	private void updateTable() {
 		List<Loadout> ship = new ArrayList<Loadout>();
-		for (Asset asset : program.getAssetEventList()) {
+		for (MyAsset asset : program.getAssetEventList()) {
 			String key = asset.getName() + " #" + asset.getItemID();
 			if (!asset.getItem().getCategory().equals(SHIP_CATEGORY) || !asset.isSingleton()) {
 				continue;
@@ -363,7 +363,7 @@ public class LoadoutsTab extends JMainTab {
 			ship.add(moduleShip);
 			ship.add(moduleModules);
 			ship.add(moduleTotal);
-			for (Asset assetModule : asset.getAssets()) {
+			for (MyAsset assetModule : asset.getAssets()) {
 				Loadout module = new Loadout(assetModule.getItem(), assetModule.getLocation(), assetModule.getOwner(), assetModule.getName(), key, assetModule.getFlag(), assetModule.getDynamicPrice(), (assetModule.getDynamicPrice() * assetModule.getCount()), assetModule.getCount());
 				if (!ship.contains(module)
 						|| assetModule.getFlag().contains(FlagType.HIGH_SLOT.getFlag())
@@ -437,7 +437,7 @@ public class LoadoutsTab extends JMainTab {
 			if (LoadoutsAction.OWNERS.name().equals(e.getActionCommand())) {
 				String owner = (String) jOwners.getSelectedItem();
 				List<String> charShips = new ArrayList<String>();
-				for (Asset asset : program.getAssetEventList()) {
+				for (MyAsset asset : program.getAssetEventList()) {
 					String key = asset.getName() + " #" + asset.getItemID();
 					if (!asset.getItem().getCategory().equals(SHIP_CATEGORY) || !asset.isSingleton()) {
 						continue;
@@ -485,15 +485,15 @@ public class LoadoutsTab extends JMainTab {
 			}
 			if (LoadoutsAction.EXPORT_LOADOUT_ALL.name().equals(e.getActionCommand())) {
 				String filename = browse();
-				List<Asset> ships = new ArrayList<Asset>();
-				for (Asset asset : program.getAssetEventList()) {
+				List<MyAsset> ships = new ArrayList<MyAsset>();
+				for (MyAsset asset : program.getAssetEventList()) {
 					if (!asset.getItem().getCategory().equals(SHIP_CATEGORY) || !asset.isSingleton()) {
 						continue;
 					}
 					ships.add(asset);
 				}
 				if (filename != null) {
-					EveFittingWriter.save(new ArrayList<Asset>(ships), filename);
+					EveFittingWriter.save(new ArrayList<MyAsset>(ships), filename);
 				}
 			}
 			if (LoadoutsAction.EXPORT.name().equals(e.getActionCommand())) {
@@ -502,7 +502,7 @@ public class LoadoutsTab extends JMainTab {
 		}
 	}
 
-	public class LoadoutsFilterControl extends ExportFilterControl<Loadout> {
+	private class LoadoutsFilterControl extends ExportFilterControl<Loadout> {
 		@Override
 		protected EnumTableColumn<?> valueOf(final String column) {
 			try {
@@ -521,6 +521,11 @@ public class LoadoutsTab extends JMainTab {
 		@Override
 		protected List<EnumTableColumn<Loadout>> getShownColumns() {
 			return new ArrayList<EnumTableColumn<Loadout>>(tableFormat.getShownColumns());
+		}
+
+		@Override
+		protected void saveSettings(final String msg) {
+			program.saveSettings("Save Ship Loudout " + msg); //Save Ship Loudout Export Setttings (Filters not used)
 		}
 	}
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2013 Contributors (see credits.txt)
+ * Copyright 2009-2014 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -34,13 +34,13 @@ import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.data.Account;
+import net.nikr.eve.jeveasset.data.MyAccount;
 import net.nikr.eve.jeveasset.data.Owner;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
-import net.nikr.eve.jeveasset.gui.tabs.contracts.Contract;
+import net.nikr.eve.jeveasset.gui.tabs.contracts.MyContract;
 import net.nikr.eve.jeveasset.i18n.DialoguesUpdate;
 import net.nikr.eve.jeveasset.i18n.General;
 import net.nikr.eve.jeveasset.io.eveapi.*;
@@ -52,37 +52,34 @@ public class UpdateDialog extends JDialogCentered {
 		CANCEL, UPDATE, CHANGED, CHECK_ALL
 	}
 
-	private JCheckBox jCheckAll;
-	private JCheckBox jMarketOrders;
-	private JLabel jMarketOrdersUpdate;
-	private JLabel jMarketOrdersLeft;
-	private JCheckBox jJournal;
-	private JLabel jJournalUpdate;
-	private JLabel jJournalLeft;
-	private JCheckBox jTransactions;
-	private JLabel jTransactionsUpdate;
-	private JLabel jTransactionsLeft;
-	private JCheckBox jIndustryJobs;
-	private JLabel jIndustryJobsUpdate;
-	private JLabel jIndustryJobsLeft;
-	private JCheckBox jAccounts;
-	private JLabel jAccountsUpdate;
-	private JLabel jAccountsLeft;
-	private JCheckBox jAccountBalance;
-	private JLabel jAccountBalanceUpdate;
-	private JLabel jAccountBalanceLeft;
-	private JCheckBox jContracts;
-	private JLabel jContractsUpdate;
-	private JLabel jContractsLeft;
-	private JCheckBox jAssets;
-	private JLabel jAssetsUpdate;
-	private JLabel jAssetsLeft;
-	private JCheckBox jPriceData;
-	private JLabel jPriceDataUpdate;
-	private JLabel jPriceDataLeft;
-	private JButton jUpdate;
-	private JButton jCancel;
-	private List<JCheckBox> jCheckBoxes = new ArrayList<JCheckBox>();
+	private final JCheckBox jCheckAll;
+	private final JCheckBox jMarketOrders;
+	private final JLabel jMarketOrdersUpdate;
+	private final JLabel jMarketOrdersLeft;
+	private final JCheckBox jJournal;
+	private final JLabel jJournalUpdate;
+	private final JLabel jJournalLeft;
+	private final JCheckBox jTransactions;
+	private final JLabel jTransactionsUpdate;
+	private final JLabel jTransactionsLeft;
+	private final JCheckBox jIndustryJobs;
+	private final JLabel jIndustryJobsUpdate;
+	private final JLabel jIndustryJobsLeft;
+	private final JCheckBox jAccountBalance;
+	private final JLabel jAccountBalanceUpdate;
+	private final JLabel jAccountBalanceLeft;
+	private final JCheckBox jContracts;
+	private final JLabel jContractsUpdate;
+	private final JLabel jContractsLeft;
+	private final JCheckBox jAssets;
+	private final JLabel jAssetsUpdate;
+	private final JLabel jAssetsLeft;
+	private final JCheckBox jPriceData;
+	private final JLabel jPriceDataUpdate;
+	private final JLabel jPriceDataLeft;
+	private final JButton jUpdate;
+	private final JButton jCancel;
+	private final List<JCheckBox> jCheckBoxes = new ArrayList<JCheckBox>();
 
 	public UpdateDialog(final Program program) {
 		super(program, DialoguesUpdate.get().update(), Images.DIALOG_UPDATE.getImage());
@@ -97,7 +94,6 @@ public class UpdateDialog extends JDialogCentered {
 		jJournal = new JCheckBox(DialoguesUpdate.get().journal());
 		jTransactions = new JCheckBox(DialoguesUpdate.get().transactions());
 		jIndustryJobs = new JCheckBox(DialoguesUpdate.get().industryJobs());
-		jAccounts = new JCheckBox(DialoguesUpdate.get().accounts());
 		jAccountBalance = new JCheckBox(DialoguesUpdate.get().accountBlances());
 		jContracts = new JCheckBox(DialoguesUpdate.get().contracts());
 		jAssets = new JCheckBox(DialoguesUpdate.get().assets());
@@ -107,7 +103,6 @@ public class UpdateDialog extends JDialogCentered {
 		jCheckBoxes.add(jJournal);
 		jCheckBoxes.add(jTransactions);
 		jCheckBoxes.add(jIndustryJobs);
-		jCheckBoxes.add(jAccounts);
 		jCheckBoxes.add(jAccountBalance);
 		jCheckBoxes.add(jContracts);
 		jCheckBoxes.add(jAssets);
@@ -121,7 +116,6 @@ public class UpdateDialog extends JDialogCentered {
 		jJournalUpdate = new JLabel();
 		jTransactionsUpdate = new JLabel();
 		jIndustryJobsUpdate = new JLabel();
-		jAccountsUpdate = new JLabel();
 		jAccountBalanceUpdate = new JLabel();
 		jContractsUpdate = new JLabel();
 		jAssetsUpdate = new JLabel();
@@ -131,7 +125,6 @@ public class UpdateDialog extends JDialogCentered {
 		jJournalLeft = new JLabel();
 		jTransactionsLeft = new JLabel();
 		jIndustryJobsLeft = new JLabel();
-		jAccountsLeft = new JLabel();
 		jAccountBalanceLeft = new JLabel();
 		jContractsLeft = new JLabel();
 		jAssetsLeft = new JLabel();
@@ -154,7 +147,6 @@ public class UpdateDialog extends JDialogCentered {
 						.addComponent(jJournal)
 						.addComponent(jTransactions)
 						.addComponent(jIndustryJobs)
-						.addComponent(jAccounts)
 						.addComponent(jAccountBalance)
 						.addComponent(jContracts)
 						.addComponent(jAssets)
@@ -169,7 +161,6 @@ public class UpdateDialog extends JDialogCentered {
 								.addComponent(jJournalLeft)
 								.addComponent(jTransactionsLeft)
 								.addComponent(jIndustryJobsLeft)
-								.addComponent(jAccountsLeft)
 								.addComponent(jAccountBalanceLeft)
 								.addComponent(jContractsLeft)
 								.addComponent(jAssetsLeft)
@@ -181,7 +172,6 @@ public class UpdateDialog extends JDialogCentered {
 								.addComponent(jJournalUpdate)
 								.addComponent(jTransactionsUpdate)
 								.addComponent(jIndustryJobsUpdate)
-								.addComponent(jAccountsUpdate)
 								.addComponent(jAccountBalanceUpdate)
 								.addComponent(jContractsUpdate)
 								.addComponent(jAssetsUpdate)
@@ -221,11 +211,6 @@ public class UpdateDialog extends JDialogCentered {
 					.addComponent(jIndustryJobs, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 					.addComponent(jIndustryJobsLeft, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 					.addComponent(jIndustryJobsUpdate, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-				)
-				.addGroup(layout.createParallelGroup()
-					.addComponent(jAccounts, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					.addComponent(jAccountsLeft, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					.addComponent(jAccountsUpdate, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				)
 				.addGroup(layout.createParallelGroup()
 					.addComponent(jAccountBalance, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
@@ -277,7 +262,6 @@ public class UpdateDialog extends JDialogCentered {
 	}
 
 	private void update() {
-		Date accountsNextUpdate = null;
 		Date industryJobsNextUpdate = null;
 		Date marketOrdersNextUpdate = null;
 		Date journalNextUpdate = null;
@@ -286,7 +270,6 @@ public class UpdateDialog extends JDialogCentered {
 		Date assetsNextUpdate = null;
 		Date accountBalanceNextUpdate = null;
 
-		boolean accountsUpdateAll = true;
 		boolean industryJobsUpdateAll = true;
 		boolean marketOrdersUpdateAll = true;
 		boolean journalUpdateAll = true;
@@ -296,10 +279,7 @@ public class UpdateDialog extends JDialogCentered {
 		boolean accountBalanceUpdateAll = true;
 
 		Date priceDataNextUpdate = program.getPriceDataGetter().getNextUpdate();
-		for (Account account : program.getAccounts()) {
-			//Account
-			accountsNextUpdate = nextUpdate(accountsNextUpdate, account.getAccountNextUpdate());
-			accountsUpdateAll = updateAll(accountsUpdateAll, account.getAccountNextUpdate());
+		for (MyAccount account : program.getAccounts()) {
 			for (Owner owner : account.getOwners()) {
 				if (owner.isShowOwner()) {
 					industryJobsNextUpdate = nextUpdate(industryJobsNextUpdate, owner.getIndustryJobsNextUpdate());
@@ -325,7 +305,6 @@ public class UpdateDialog extends JDialogCentered {
 		setUpdateLabel(jJournalUpdate, jJournalLeft, jJournal, journalNextUpdate, journalUpdateAll);
 		setUpdateLabel(jTransactionsUpdate, jTransactionsLeft, jTransactions, transactionsNextUpdate, transactionsUpdateAll);
 		setUpdateLabel(jIndustryJobsUpdate, jIndustryJobsLeft, jIndustryJobs, industryJobsNextUpdate, industryJobsUpdateAll);
-		setUpdateLabel(jAccountsUpdate, jAccountsLeft, jAccounts, accountsNextUpdate, accountsUpdateAll);
 		setUpdateLabel(jAccountBalanceUpdate, jAccountBalanceLeft, jAccountBalance, accountBalanceNextUpdate, accountBalanceUpdateAll);
 		setUpdateLabel(jContractsUpdate, jContractsLeft, jContracts, contractsNextUpdate, contractsUpdateAll);
 		setUpdateLabel(jAssetsUpdate, jAssetsLeft, jAssets, assetsNextUpdate, assetsUpdateAll);
@@ -337,7 +316,6 @@ public class UpdateDialog extends JDialogCentered {
 		setUpdatableButton(transactionsNextUpdate);
 		setUpdatableButton(transactionsNextUpdate);
 		setUpdatableButton(industryJobsNextUpdate);
-		setUpdatableButton(accountsNextUpdate);
 		setUpdatableButton(accountBalanceNextUpdate);
 		setUpdatableButton(contractsNextUpdate);
 		setUpdatableButton(assetsNextUpdate);
@@ -362,12 +340,21 @@ public class UpdateDialog extends JDialogCentered {
 			jCheckBox.setSelected(true);
 			jCheckBox.setEnabled(true);
 		} else {
+			String timeLeft;
 			long time = nextUpdate.getTime() - Settings.getNow().getTime();
+			if (time < (60 * 1000)) { //less than 1 minute
+				timeLeft = "<1m";
+			} else {
+				timeLeft = Formater.milliseconds(time);
+			}
 			long minutes = time / (60 * 1000) % 60;
 			long hours = time / (60 * 60 * 1000) % 24;
 			long days = time / (24 * 60 * 60 * 1000);
+			if (days == 0 && hours == 0 && minutes == 0) {
+				minutes = -1;
+			}
 			jUpdate.setText(Formater.weekdayAndTime(nextUpdate));
-			jLeft.setText(DialoguesUpdate.get().timeLeft(days, hours, minutes));
+			jLeft.setText(timeLeft);
 			jCheckBox.setSelected(false);
 			jCheckBox.setEnabled(false);
 		}
@@ -436,12 +423,15 @@ public class UpdateDialog extends JDialogCentered {
 			if (UpdateDialogAction.UPDATE.name().equals(e.getActionCommand())) {
 				setVisible(false);
 				List<UpdateTask> updateTasks = new ArrayList<UpdateTask>();
-				if (jMarketOrders.isSelected() || jIndustryJobs.isSelected()
-						|| jAssets.isSelected() || jContracts.isSelected()
-						|| jTransactions.isSelected()) {
+				if (jMarketOrders.isSelected()
+						|| jJournal.isSelected()
+						|| jTransactions.isSelected()
+						|| jIndustryJobs.isSelected()
+						|| jAccountBalance.isSelected()
+						|| jContracts.isSelected()
+						|| jAssets.isSelected()
+						) { //Updating from EVE API
 					updateTasks.add(new ConquerableStationsTask()); //Should properly always be first
-				}
-				if (jAccounts.isSelected()) {
 					updateTasks.add(new AccountsTask());
 				}
 				if (jMarketOrders.isSelected()) {
@@ -465,7 +455,7 @@ public class UpdateDialog extends JDialogCentered {
 				if (jAssets.isSelected()) {
 					updateTasks.add(new AssetsTask());
 				}
-				if (jPriceData.isSelected()
+				if (jPriceData.isSelected() //May need prices for new items
 						|| jMarketOrders.isSelected()
 						|| jIndustryJobs.isSelected()
 						|| jAssets.isSelected()
@@ -530,6 +520,8 @@ public class UpdateDialog extends JDialogCentered {
 		public void update() {
 			AssetsGetter assetsGetter = new AssetsGetter();
 			assetsGetter.load(this, Settings.get().isForceUpdate(), program.getAccounts());
+			LocationsGetter locationsGetter = new LocationsGetter();
+			locationsGetter.load(this, Settings.get().isForceUpdate(), program.getAccounts());
 		}
 	}
 
@@ -581,7 +573,7 @@ public class UpdateDialog extends JDialogCentered {
 		@Override
 		public void update() {
 			JournalGetter journalGetter = new JournalGetter();
-			journalGetter.load(this, Settings.get().isForceUpdate(), program.getAccounts());
+			journalGetter.load(this, Settings.get().isForceUpdate(), program.getAccounts(), Settings.get().isJournalHistory());
 		}
 	}
 
@@ -594,7 +586,7 @@ public class UpdateDialog extends JDialogCentered {
 		@Override
 		public void update() {
 			TransactionsGetter transactionsGetter = new TransactionsGetter();
-			transactionsGetter.load(this, Settings.get().isForceUpdate(), program.getAccounts());
+			transactionsGetter.load(this, Settings.get().isForceUpdate(), program.getAccounts(), Settings.get().isTransactionHistory());
 		}
 	}
 
@@ -613,10 +605,10 @@ public class UpdateDialog extends JDialogCentered {
 			ContractItemsGetter itemsGetter = new ContractItemsGetter();
 			itemsGetter.load(this, Settings.get().isForceUpdate(), program.getAccounts());
 			Set<Long> list = new HashSet<Long>();
-			for (Account account : program.getAccounts()) {
+			for (MyAccount account : program.getAccounts()) {
 				for (Owner owner : account.getOwners()) {
 					list.add(owner.getOwnerID()); //Just to be sure
-					for (Contract contract : owner.getContracts().keySet()) {
+					for (MyContract contract : owner.getContracts().keySet()) {
 						list.add(contract.getAcceptorID());
 						list.add(contract.getAssigneeID());
 						list.add(contract.getIssuerCorpID());
@@ -631,7 +623,7 @@ public class UpdateDialog extends JDialogCentered {
 	}
 
 	public class PriceDataTask extends UpdateTask {
-		private boolean update;
+		private final boolean update;
 
 		public PriceDataTask(final boolean update) {
 			super(DialoguesUpdate.get().priceData() + " (" + (Settings.get().getPriceDataSettings().getSource().toString()) + ")");

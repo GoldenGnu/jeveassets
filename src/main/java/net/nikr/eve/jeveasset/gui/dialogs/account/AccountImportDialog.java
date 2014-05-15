@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2013 Contributors (see credits.txt)
+ * Copyright 2009-2014 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -21,7 +21,7 @@
 
 package net.nikr.eve.jeveasset.gui.dialogs.account;
 
-import com.beimin.eveapi.core.ApiError;
+import com.beimin.eveapi.handler.ApiError;
 import java.awt.CardLayout;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
@@ -30,10 +30,19 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import javax.swing.*;
+import javax.swing.BorderFactory;
+import javax.swing.GroupLayout;
+import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JEditorPane;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextField;
+import javax.swing.SwingWorker;
 import javax.swing.text.html.HTMLDocument;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.data.Account;
+import net.nikr.eve.jeveasset.data.MyAccount;
 import net.nikr.eve.jeveasset.gui.shared.DocumentFactory;
 import net.nikr.eve.jeveasset.gui.shared.components.JCopyPopup;
 import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
@@ -82,8 +91,8 @@ public class AccountImportDialog extends JDialogCentered {
 	private JButton jCancel;
 	private CardLayout cardLayout;
 	private JPanel jContent;
-	private Account account;
-	private Account editAccount;
+	private MyAccount account;
+	private MyAccount editAccount;
 	private ListenerClass listener = new ListenerClass();
 
 	private DonePanel donePanel;
@@ -171,7 +180,7 @@ public class AccountImportDialog extends JDialogCentered {
 	@Override
 	protected void save() { }
 
-	public void show(final Account editAccount) {
+	public void show(final MyAccount editAccount) {
 		this.editAccount = editAccount;
 		if (editAccount != null) { //Edit
 			jKeyID.setText(String.valueOf(editAccount.getKeyID()));
@@ -212,9 +221,9 @@ public class AccountImportDialog extends JDialogCentered {
 		jNext.setEnabled(false);
 		jNext.setText(DialoguesAccount.get().nextArrow());
 		if (editAccount == null) { //Add
-			account = new Account(getKeyID(), getVCode());
+			account = new MyAccount(getKeyID(), getVCode());
 		} else { //Edit
-			account = new Account(editAccount);
+			account = new MyAccount(editAccount);
 			account.setKeyID(getKeyID());
 			account.setvCode(getVCode());
 		}
@@ -505,25 +514,22 @@ public class AccountImportDialog extends JDialogCentered {
 			accountGetter.load(null, true, account); //Update account
 			if (accountGetter.hasError() || accountGetter.isFail()) { //Failed to add new account
 				Object object = accountGetter.getError();
-				if (object instanceof Exception) {
-					//Exception exception = (Exception) object;
+				if (accountGetter.isInvalid()) { //invalid account
+					result = Result.FAIL_NOT_VALID;
+				} else if (object instanceof Exception) { //Real error
 					result = Result.FAIL_API_EXCEPTION;
-				} else if (object instanceof ApiError) {
+				} else if (object instanceof ApiError) { //API error
 					ApiError apiError = (ApiError) object;
-					if (apiError.getCode() == 203) {
-						result = Result.FAIL_NOT_VALID;
-					} else {
-						result = Result.FAIL_API_ERROR;
-						error = apiError.getError() + " (Code: " + apiError.getCode() + ")";
-					}
-				} else if (object instanceof String) {
+					result = Result.FAIL_API_ERROR;
+					error = apiError.getError() + " (Code: " + apiError.getCode() + ")";
+				} else if (object instanceof String) { //String error
 					String string = (String) object;
 					error = string;
 					result = Result.FAIL_API_GENERIC;
-				} else if (accountGetter.isFail()) {
+				} else if (accountGetter.isFail()) { // Not enough privileges
 					result = Result.FAIL_NOT_ENOUGH_PRIVILEGES;
-				} else {
-					result = Result.FAIL_API_GENERIC; //Fallback...
+				} else { //Fallback - should never happen
+					result = Result.FAIL_API_GENERIC;
 					error = "Unknown Error";
 				}
 			} else { //Successfully added new account

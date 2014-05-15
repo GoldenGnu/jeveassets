@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2013 Contributors (see credits.txt)
+ * Copyright 2009-2014 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -39,8 +39,7 @@ import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JScrollPane;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.data.AccountBalance;
-import net.nikr.eve.jeveasset.data.Item;
+import net.nikr.eve.jeveasset.data.MyAccountBalance;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
@@ -53,9 +52,9 @@ import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
 import net.nikr.eve.jeveasset.gui.shared.table.JAutoColumnTable;
 import net.nikr.eve.jeveasset.gui.shared.table.PaddingTableCellRenderer;
-import net.nikr.eve.jeveasset.gui.tabs.assets.Asset;
-import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustryJob;
-import net.nikr.eve.jeveasset.gui.tabs.orders.MarketOrder;
+import net.nikr.eve.jeveasset.gui.tabs.assets.MyAsset;
+import net.nikr.eve.jeveasset.gui.tabs.jobs.MyIndustryJob;
+import net.nikr.eve.jeveasset.gui.tabs.orders.MyMarketOrder;
 import net.nikr.eve.jeveasset.i18n.General;
 import net.nikr.eve.jeveasset.i18n.TabsValues;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
@@ -64,15 +63,15 @@ import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 public class ValueTableTab extends JMainTab {
 
 	//GUI
-	private JAutoColumnTable jTable;
+	private final JAutoColumnTable jTable;
 
 	//Table
-	private ValueFilterControl filterControl;
-	private DefaultEventTableModel<Value> tableModel;
-	private EventList<Value> eventList;
-	private FilterList<Value> filterList;
-	private EnumTableFormatAdaptor<ValueTableFormat, Value> tableFormat;
-	private DefaultEventSelectionModel<Value> selectionModel;
+	private final ValueFilterControl filterControl;
+	private final DefaultEventTableModel<Value> tableModel;
+	private final EventList<Value> eventList;
+	private final FilterList<Value> filterList;
+	private final EnumTableFormatAdaptor<ValueTableFormat, Value> tableFormat;
+	private final DefaultEventSelectionModel<Value> selectionModel;
 
 	public static final String NAME = "value"; //Not to be changed!
 
@@ -144,7 +143,7 @@ public class ValueTableTab extends JMainTab {
 		Map<String, Value> values = new HashMap<String, Value>();
 		Value total = new Value(TabsValues.get().grandTotal());
 		values.put(total.getName(), total);
-		for (Asset asset : program.getAssetEventList()) {
+		for (MyAsset asset : program.getAssetEventList()) {
 			//Skip market orders
 			if (asset.getFlag().equals(General.get().marketOrderSellFlag())) {
 				continue; //Ignore market sell orders
@@ -164,13 +163,13 @@ public class ValueTableTab extends JMainTab {
 			total.addAssets(asset);
 		}
 		//Account Balance
-		for (AccountBalance accountBalance : program.getAccountBalanceEventList()) {
+		for (MyAccountBalance accountBalance : program.getAccountBalanceEventList()) {
 			Value value = getValue(values, accountBalance.getOwner());
 			value.addBalance(accountBalance.getBalance());
 			total.addBalance(accountBalance.getBalance());
 		}
 		//Market Orders
-		for (MarketOrder marketOrder : program.getMarketOrdersEventList()) {
+		for (MyMarketOrder marketOrder : program.getMarketOrdersEventList()) {
 			Value value = getValue(values, marketOrder.getOwner());
 			if (marketOrder.getOrderState() == 0) {
 				if (marketOrder.getBid() < 1) { //Sell Orders
@@ -185,10 +184,10 @@ public class ValueTableTab extends JMainTab {
 			}
 		}
 		//Industrys Job: Manufacturing
-		for (IndustryJob industryJob : program.getIndustryJobsEventList()) {
+		for (MyIndustryJob industryJob : program.getIndustryJobsEventList()) {
 			Value value = getValue(values, industryJob.getOwner());
 			//Manufacturing and not completed
-			if (industryJob.getActivity() == IndustryJob.IndustryActivity.ACTIVITY_MANUFACTURING && !industryJob.isCompleted()) {
+			if (industryJob.getActivity() == MyIndustryJob.IndustryActivity.ACTIVITY_MANUFACTURING && !industryJob.isCompleted()) {
 				double manufacturingTotal = industryJob.getPortion() * industryJob.getRuns() * ApiIdConverter.getPrice(industryJob.getOutputTypeID(), false);
 				value.addManufacturing(manufacturingTotal);
 				total.addManufacturing(manufacturingTotal);
@@ -226,9 +225,9 @@ public class ValueTableTab extends JMainTab {
 		public void addToolMenu(JComponent jComponent) { }
 	}
 
-	public static class ValueFilterControl extends FilterControl<Value> {
+	private class ValueFilterControl extends FilterControl<Value> {
 
-		private EnumTableFormatAdaptor<ValueTableFormat, Value> tableFormat;
+		private final EnumTableFormatAdaptor<ValueTableFormat, Value> tableFormat;
 
 		public ValueFilterControl(final JFrame jFrame, final EnumTableFormatAdaptor<ValueTableFormat, Value> tableFormat, final EventList<Value> eventList, final FilterList<Value> filterList, final Map<String, List<Filter>> filters) {
 			super(jFrame, NAME, eventList, filterList, filters);
@@ -254,6 +253,11 @@ public class ValueTableTab extends JMainTab {
 		@Override
 		protected List<EnumTableColumn<Value>> getShownColumns() {
 			return new ArrayList<EnumTableColumn<Value>>(tableFormat.getShownColumns());
+		}
+
+		@Override
+		protected void saveSettings(final String msg) {
+			program.saveSettings("Save ISK " + msg); //Save ISK Filters and Export Setttings
 		}
 	}
 

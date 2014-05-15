@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2013 Contributors (see credits.txt)
+ * Copyright 2009-2014 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -356,6 +356,26 @@ public enum TreeTableFormat implements EnumTableColumn<TreeAsset> {
 			return false;
 		}
 	},
+	BP_ME(Integer.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsAssets.get().columnBpME();
+		}
+		@Override
+		public Object getColumnValue(final TreeAsset from) {
+			return from.getBpME();
+		}
+	},
+	BP_PE(Integer.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsAssets.get().columnBpPE();
+		}
+		@Override
+		public Object getColumnValue(final TreeAsset from) {
+			return from.getBpPE();
+		}
+	},
 	ITEM_ID(LongInt.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
@@ -377,8 +397,8 @@ public enum TreeTableFormat implements EnumTableColumn<TreeAsset> {
 		}
 	};
 
-	private Class<?> type;
-	private Comparator<?> comparator;
+	private final Class<?> type;
+	private final Comparator<?> comparator;
 
 	private TreeTableFormat(final Class<?> type, final Comparator<?> comparator) {
 		this.type = type;
@@ -413,8 +433,9 @@ public enum TreeTableFormat implements EnumTableColumn<TreeAsset> {
 
 	//FIXME - - > TreeTableFormat: Move inner classes to containers
 	public static class HierarchyColumn implements Comparable<HierarchyColumn>{
-		private String export;
-		private String gui;
+		private final String export;
+		private final String gui;
+		//private final String compare;
 
 		public HierarchyColumn(String text, boolean parent) {
 			this.gui = text.trim();
@@ -432,7 +453,7 @@ public enum TreeTableFormat implements EnumTableColumn<TreeAsset> {
 
 		@Override
 		public int compareTo(HierarchyColumn o) {
-			return this.getExport().compareTo(o.getExport());
+			return this.toString().compareTo(o.toString());
 		}
 
 		@Override

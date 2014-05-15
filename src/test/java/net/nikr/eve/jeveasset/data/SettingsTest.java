@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2013 Contributors (see credits.txt)
+ * Copyright 2009-2014 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -23,6 +23,7 @@ package net.nikr.eve.jeveasset.data;
 import java.net.URISyntaxException;
 import java.util.List;
 import net.nikr.eve.jeveasset.data.BackwardCompatibilitySettings.Function;
+import net.nikr.eve.jeveasset.data.Settings.SettingFlag;
 import net.nikr.eve.jeveasset.io.local.SettingsReader;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -49,6 +50,14 @@ public class SettingsTest {
 	private void test(BackwardCompatibilitySettings settings){
 		List<Function> test = settings.test();
 		assertEquals(settings.getName()+" is missing tests for: "+test.toString(), 0, test.size());
+	}
+
+	@Test
+	public void flagsTest() throws URISyntaxException {
+		Settings settings = new Settings();
+		for (SettingFlag settingFlag : SettingFlag.values()) {
+			assertTrue(settingFlag.name() + " is missing from default settings", settings.getFlags().containsKey(settingFlag));
+		}
 	}
 
 	
@@ -813,6 +822,41 @@ public class SettingsTest {
 		test(settings, Function.GET_TABLE_COLUMNS_WIDTH);
 		test(settings, Function.GET_TABLE_FILTERS);
 		test(settings, Function.GET_TABLE_RESIZE);
+		test(settings, Function.GET_TRACKER_DATA);
+		test(settings, Function.GET_USER_ITEM_NAMES);
+		test(settings, Function.GET_USER_PRICES);
+		test(settings, Function.SET_API_PROXY);
+		test(settings, Function.SET_CONQUERABLE_STATIONS_NEXT_UPDATE);
+		test(settings, Function.SET_MAXIMUM_PURCHASE_AGE);
+		test(settings, Function.SET_PRICE_DATA_SETTINGS);
+		test(settings, Function.SET_PROXY);
+		test(settings, Function.SET_REPROCESS_SETTINGS);
+		test(settings, Function.SET_WINDOW_ALWAYS_ON_TOP);
+		test(settings, Function.SET_WINDOW_AUTO_SAVE);
+		test(settings, Function.SET_WINDOW_LOCATION);
+		test(settings, Function.SET_WINDOW_MAXIMIZED);
+		test(settings, Function.SET_WINDOW_SIZE);
+		test(settings);
+	}
+
+	@Test
+	public void backwardCompatibility270() throws URISyntaxException {
+		BackwardCompatibilitySettings settings = new BackwardCompatibilitySettings("data-2-7-0");
+		SettingsReader.load(settings);
+		test(settings, Function.GET_ASSET_ADDED);
+		test(settings, Function.GET_EXPORT_SETTINGS);
+		test(settings, Function.GET_FLAGS);
+		test(settings, Function.GET_OVERVIEW_GROUPS);
+		test(settings, Function.GET_OWNERS);
+		test(settings, Function.GET_PRICE_DATA_SETTINGS);
+		test(settings, Function.GET_STOCKPILES);
+		test(settings, Function.GET_TABLE_COLUMNS);
+		test(settings, Function.GET_TABLE_COLUMNS_WIDTH);
+		test(settings, Function.GET_TABLE_FILTERS);
+		test(settings, Function.GET_TABLE_RESIZE);
+		test(settings, Function.GET_TABLE_VIEWS);
+		test(settings, Function.GET_TAGS);
+		test(settings, Function.GET_TAGS_ID);
 		test(settings, Function.GET_TRACKER_DATA);
 		test(settings, Function.GET_USER_ITEM_NAMES);
 		test(settings, Function.GET_USER_PRICES);

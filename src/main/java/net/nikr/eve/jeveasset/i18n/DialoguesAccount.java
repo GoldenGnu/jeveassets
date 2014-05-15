@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2013 Contributors (see credits.txt)
+ * Copyright 2009-2014 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -70,6 +70,8 @@ public abstract class DialoguesAccount extends Bundle {
 
 	public abstract String dialogueNameAccountManagement();
 
+	public abstract String accountExpired();
+	public abstract String accountInvalid();
 	public abstract String add();
 	public abstract String collapse();
 	public abstract String expand();
@@ -80,6 +82,7 @@ public abstract class DialoguesAccount extends Bundle {
 	public abstract String uncheckSelected();
 	public abstract String showCorp();
 	public abstract String close();
+	public abstract String noOwners();
 
 
 	public abstract String deleteAccountQuestion();
@@ -96,6 +99,8 @@ public abstract class DialoguesAccount extends Bundle {
 	public abstract String tableFormatMarketOrders();
 	public abstract String tableFormatJournal();
 	public abstract String tableFormatTransactions();
+	public abstract String tableFormatContracts();
+	public abstract String tableFormatLocations();
 	public abstract String tableFormatYes();
 	public abstract String tableFormatNo();
 	public abstract String tableFormatExpires();

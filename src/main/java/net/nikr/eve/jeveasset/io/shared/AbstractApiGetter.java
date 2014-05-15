@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2013 Contributors (see credits.txt)
+ * Copyright 2009-2014 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -21,12 +21,16 @@
 
 package net.nikr.eve.jeveasset.io.shared;
 
-import com.beimin.eveapi.core.ApiError;
-import com.beimin.eveapi.core.ApiResponse;
 import com.beimin.eveapi.exception.ApiException;
-import java.util.*;
+import com.beimin.eveapi.handler.ApiError;
+import com.beimin.eveapi.response.ApiResponse;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.data.Account;
+import net.nikr.eve.jeveasset.data.MyAccount;
 import net.nikr.eve.jeveasset.data.Owner;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
@@ -38,8 +42,10 @@ public abstract class AbstractApiGetter<T extends ApiResponse> {
 
 	private static final Logger LOG = LoggerFactory.getLogger(AbstractApiGetter.class);
 
+	private static final String INVALID_ACCOUNT = "HTTP response code: 403";
+
 	private String taskName;
-	private Account account;
+	private MyAccount account;
 	private Owner owner;
 	private boolean forceUpdate;
 	private boolean updated;
@@ -82,24 +88,24 @@ public abstract class AbstractApiGetter<T extends ApiResponse> {
 		loadOwner();
 	}
 
-	protected void loadAccount(final UpdateTask updateTask, final boolean forceUpdate, final Account account) {
+	protected void loadAccount(final UpdateTask updateTask, final boolean forceUpdate, final MyAccount account) {
 		init(updateTask, forceUpdate, null, account);
 		loadAccount();
 	}
 
-	protected void loadAccounts(final UpdateTask updateTask, final boolean forceUpdate, final List<Account> accounts) {
+	protected void loadAccounts(final UpdateTask updateTask, final boolean forceUpdate, final List<MyAccount> accounts) {
 		init(updateTask, forceUpdate, null, null);
 		LOG.info("{} updating:", taskName);
 		//Calc size
 		int ownerSize = 0;
 		if (updateTask != null) { //Only relevant when tracking progress
-			for (Account countAccount : accounts) {
+			for (MyAccount countAccount : accounts) {
 				ownerSize = ownerSize + countAccount.getOwners().size();
 			}
 		}
 		int ownerCount = 0;
 		int accountCount = 0;
-		for (Account accountLoop : accounts) {
+		for (MyAccount accountLoop : accounts) {
 			this.account = accountLoop;
 			if (updateAccount) {
 				if (updateTask != null) {
@@ -149,7 +155,14 @@ public abstract class AbstractApiGetter<T extends ApiResponse> {
 		}
 	}
 
-	private void init(final UpdateTask updateTask, final boolean forceUpdate, final Owner owner, final Account account) {
+	/**
+	 * Init all values
+	 * @param updateTask	UpdateTask from the UpdateDialog (can be null)
+	 * @param forceUpdate	Ignore cachedUntil
+	 * @param owner			Single char/corp (can be null)
+	 * @param account		Single account (can be null)
+	 */
+	private void init(final UpdateTask updateTask, final boolean forceUpdate, final Owner owner, final MyAccount account) {
 		this.forceUpdate = forceUpdate;
 		this.updateTask = updateTask;
 		this.owner = owner;
@@ -175,7 +188,13 @@ public abstract class AbstractApiGetter<T extends ApiResponse> {
 	}
 
 	private void loadAccount() {
-		load(getNextUpdate(), false, String.valueOf("Account #" + account.getKeyID()));
+		String name;
+		if (account.getName().equals(Integer.toString(account.getKeyID()))) {
+			name = "Account #" + Integer.toString(account.getKeyID());
+		} else {
+			name = "Account " +  account.getName() + " (#" + Integer.toString(account.getKeyID()) + ")";
+		}
+		load(getNextUpdate(), false, name);
 	}
 
 	protected boolean load(final Date nextUpdate, final boolean updateCorporation, final String updateName) {
@@ -195,28 +214,42 @@ public abstract class AbstractApiGetter<T extends ApiResponse> {
 			LOG.info("	{} failed to update for: {} (NOT ALLOWED YET)", taskName, updateName);
 			return false;
 		}
-		//Check if API key is expired (not to check the account...)
+		//Check if API key is expired (still update account)
 		if (isExpired() && !updateAccount) {
-			addError(updateName, "API Key expired");
-			LOG.info("	{} failed to update for: {} (API KEY EXPIRED)", taskName, updateName);
+			expired(updateName);
+			return false;
+		}
+		//Check if API key is invalid (still update account)
+		if (isInvalid() && !updateAccount) {
+			invalid(updateName);
 			return false;
 		}
 		try {
 			T response = getResponse(updateCorporation);
 			setNextUpdate(response.getCachedUntil());
-			if (!response.hasError()) {
+			if (!response.hasError()) { //OK
 				LOG.info("	{} updated for: {}", taskName, updateName);
 				this.updated = true;
 				setData(response);
+				notInvalid();
 				return true;
-			} else {
+			} else { //API Error
 				ApiError apiError = response.getError();
+				if (apiError.getCode() == 203) {
+					invalid(updateName);
+				}
 				addError(updateName, apiError.getError(), apiError);
 				LOG.info("	{} failed to update for: {} (API ERROR: code: {} :: {})", new Object[]{taskName, updateName, apiError.getCode(), apiError.getError()});
 			}
-		} catch (ApiException ex) {
-			addError(updateName, ex.getMessage(), ex);
-			LOG.info("	{} failed to update for: {} (ApiException: {})", new Object[]{taskName, updateName, ex.getMessage()});
+		} catch (ApiException ex) { //Real Error
+			if (ex.getMessage().contains(INVALID_ACCOUNT) && !isExpired()) { //Invalid
+				invalid(updateName);
+			} else if (isExpired()) { //Expired
+				expired(updateName);
+			} else {
+				addError(updateName, ex.getMessage(), ex); //Real Error
+				LOG.error(taskName + " failed to update for: " + updateName + " (ApiException: " + ex.getMessage() + ")", ex);
+			}
 		}
 		return false;
 	}
@@ -236,11 +269,44 @@ public abstract class AbstractApiGetter<T extends ApiResponse> {
 		} else if (owner != null) {
 			return owner.getParentAccount().isExpired();
 		} else {
-			return false;
+			return false; //Eve
 		}
 	}
 
-	protected Account getAccount() {
+	private void expired(String updateName) {
+		addError(updateName, "API Key expired");
+		LOG.info("	{} failed to update for: {} (API KEY EXPIRED)", taskName, updateName);
+	}
+
+	public boolean isInvalid() {
+		if (account != null) {
+			return account.isInvalid();
+		} else if (owner != null) {
+			return owner.getParentAccount().isInvalid();
+		} else {
+			return false; //Eve
+		}
+	}
+
+	private void invalid(String updateName) {
+		if (account != null) {
+			account.setInvalid(true);
+		} else if (owner != null) {
+			owner.getParentAccount().setInvalid(true);
+		}
+		addError(updateName, "API Key invalid");
+		LOG.info("	{} failed to update for: {} (API KEY INVALID)", taskName, updateName);
+	}
+
+	private void notInvalid() {
+		if (account != null) {
+			account.setInvalid(false);
+		} else if (owner != null) {
+			owner.getParentAccount().setInvalid(false);
+		}
+	}
+
+	protected MyAccount getAccount() {
 		return account;
 	}
 
@@ -265,10 +331,10 @@ public abstract class AbstractApiGetter<T extends ApiResponse> {
 	}
 
 	protected void addError(final String owner, final String errorText, final Object errorObject) {
+		error = errorObject;
 		if (updateTask != null) {
 			updateTask.addError(owner, errorText);
 		}
-		error = errorObject;
 	}
 
 	protected abstract T getResponse(boolean bCorp) throws ApiException;

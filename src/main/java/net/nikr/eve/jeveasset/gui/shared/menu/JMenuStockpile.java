@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2013 Contributors (see credits.txt)
+ * Copyright 2009-2014 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -24,7 +24,6 @@ package net.nikr.eve.jeveasset.gui.shared.menu;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import javax.swing.JMenuItem;
 import net.nikr.eve.jeveasset.Program;
@@ -88,7 +87,6 @@ public class JMenuStockpile<T> extends JAutoMenu<T> {
 			addSeparator();
 		}
 
-		Collections.sort(Settings.get().getStockpiles()); //Sort Stockpiles
 		stockpilesCashe = new ArrayList<Stockpile>(Settings.get().getStockpiles()); //Update Cache
 		jMenuItems.clear(); //Clear update list
 		for (Stockpile stockpile : Settings.get().getStockpiles()) { //Create menu items

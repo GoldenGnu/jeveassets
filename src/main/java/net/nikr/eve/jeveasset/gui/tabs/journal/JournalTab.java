@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2013 Contributors (see credits.txt)
+ * Copyright 2009-2014 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -45,15 +45,15 @@ import net.nikr.eve.jeveasset.i18n.TabsJournal;
 
 public class JournalTab extends JMainTab {
 
-	private JAutoColumnTable jTable;
+	private final JAutoColumnTable jTable;
 
 	//Table
-	private JournalFilterControl filterControl;
-	private EnumTableFormatAdaptor<JournalTableFormat, Journal> tableFormat;
-	private DefaultEventTableModel<Journal> tableModel;
-	private FilterList<Journal> filterList;
-	private EventList<Journal> eventList;
-	private DefaultEventSelectionModel<Journal> selectionModel;
+	private final JournalFilterControl filterControl;
+	private final EnumTableFormatAdaptor<JournalTableFormat, MyJournal> tableFormat;
+	private final DefaultEventTableModel<MyJournal> tableModel;
+	private final FilterList<MyJournal> filterList;
+	private final EventList<MyJournal> eventList;
+	private final DefaultEventSelectionModel<MyJournal> selectionModel;
 
 	public static final String NAME = "journal"; //Not to be changed!
 
@@ -61,13 +61,13 @@ public class JournalTab extends JMainTab {
 		super(program, TabsJournal.get().title(), Images.TOOL_JOURNAL.getIcon(), true);
 
 		//Table Format
-		tableFormat = new EnumTableFormatAdaptor<JournalTableFormat, Journal>(JournalTableFormat.class);
+		tableFormat = new EnumTableFormatAdaptor<JournalTableFormat, MyJournal>(JournalTableFormat.class);
 		//Backend
 		eventList = program.getJournalEventList();
 		//Sorting (per column)
-		SortedList<Journal> sortedList = new SortedList<Journal>(eventList);
+		SortedList<MyJournal> sortedList = new SortedList<MyJournal>(eventList);
 		//Filter
-		filterList = new FilterList<Journal>(sortedList);
+		filterList = new FilterList<MyJournal>(sortedList);
 		//Table Model
 		tableModel = EventModels.createTableModel(filterList, tableFormat);
 		//Table
@@ -94,7 +94,7 @@ public class JournalTab extends JMainTab {
 				);
 
 		//Menu
-		installMenu(program, new JournalTableMenu(), jTable, Journal.class);
+		installMenu(program, new JournalTableMenu(), jTable, MyJournal.class);
 
 		layout.setHorizontalGroup(
 			layout.createParallelGroup()
@@ -111,7 +111,7 @@ public class JournalTab extends JMainTab {
 	@Override
 	public void updateData() { }
 
-	private class JournalTableMenu implements TableMenu<Journal> {
+	private class JournalTableMenu implements TableMenu<MyJournal> {
 		@Override
 		public JMenu getFilterMenu() {
 			return filterControl.getMenu(jTable, selectionModel.getSelected());
@@ -123,8 +123,8 @@ public class JournalTab extends JMainTab {
 		}
 
 		@Override
-		public MenuData<Journal> getMenuData() {
-			return new MenuData<Journal>(selectionModel.getSelected());
+		public MenuData<MyJournal> getMenuData() {
+			return new MenuData<MyJournal>(selectionModel.getSelected());
 		}
 
 		@Override
@@ -137,17 +137,17 @@ public class JournalTab extends JMainTab {
 		}
 	}
 
-	public static class JournalFilterControl extends FilterControl<Journal> {
+	private class JournalFilterControl extends FilterControl<MyJournal> {
 
-		private EnumTableFormatAdaptor<JournalTableFormat, Journal> tableFormat;
+		private final EnumTableFormatAdaptor<JournalTableFormat, MyJournal> tableFormat;
 
-		public JournalFilterControl(final JFrame jFrame, final EnumTableFormatAdaptor<JournalTableFormat, Journal> tableFormat, final EventList<Journal> eventList, final FilterList<Journal> filterList, final Map<String, List<Filter>> filters) {
+		public JournalFilterControl(final JFrame jFrame, final EnumTableFormatAdaptor<JournalTableFormat, MyJournal> tableFormat, final EventList<MyJournal> eventList, final FilterList<MyJournal> filterList, final Map<String, List<Filter>> filters) {
 			super(jFrame, NAME, eventList, filterList, filters);
 			this.tableFormat = tableFormat;
 		}
 
 		@Override
-		protected Object getColumnValue(final Journal item, final String column) {
+		protected Object getColumnValue(final MyJournal item, final String column) {
 			JournalTableFormat format = JournalTableFormat.valueOf(column);
 			return format.getColumnValue(item);
 		}
@@ -158,13 +158,18 @@ public class JournalTab extends JMainTab {
 		}
 
 		@Override
-		protected List<EnumTableColumn<Journal>> getColumns() {
+		protected List<EnumTableColumn<MyJournal>> getColumns() {
 			return columnsAsList(JournalTableFormat.values());
 		}
 
 		@Override
-		protected List<EnumTableColumn<Journal>> getShownColumns() {
-			return new ArrayList<EnumTableColumn<Journal>>(tableFormat.getShownColumns());
+		protected List<EnumTableColumn<MyJournal>> getShownColumns() {
+			return new ArrayList<EnumTableColumn<MyJournal>>(tableFormat.getShownColumns());
+		}
+
+		@Override
+		protected void saveSettings(final String msg) {
+			program.saveSettings("Save Journal " + msg); //Save Journal Filters and Export Setttings
 		}
 	}
 }

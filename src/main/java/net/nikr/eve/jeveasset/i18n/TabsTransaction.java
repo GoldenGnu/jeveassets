@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2013 Contributors (see credits.txt)
+ * Copyright 2009-2014 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -53,5 +53,6 @@ public abstract class TabsTransaction extends Bundle {
 	public abstract String columnTransactionDate();
 	public abstract String columnOwner();
 	public abstract String columnLocation();
+	public abstract String columnAccountKey();
 
 }

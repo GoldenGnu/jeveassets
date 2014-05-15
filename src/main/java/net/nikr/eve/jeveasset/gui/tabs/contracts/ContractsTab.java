@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2013 Contributors (see credits.txt)
+ * Copyright 2009-2014 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -68,19 +68,19 @@ public class ContractsTab extends JMainTab {
 	}
 
 	//GUI
-	private JSeparatorTable jTable;
+	private final JSeparatorTable jTable;
 
 	//Table
-	private EventList<ContractItem> eventList;
-	private FilterList<ContractItem> filterList;
-	private SeparatorList<ContractItem> separatorList;
-	private DefaultEventSelectionModel<ContractItem> selectionModel;
-	private DefaultEventTableModel<ContractItem> tableModel;
-	private EnumTableFormatAdaptor<ContractsTableFormat, ContractItem> tableFormat;
-	private ContractsFilterControl filterControl;
+	private final EventList<MyContractItem> eventList;
+	private final FilterList<MyContractItem> filterList;
+	private final SeparatorList<MyContractItem> separatorList;
+	private final DefaultEventSelectionModel<MyContractItem> selectionModel;
+	private final DefaultEventTableModel<MyContractItem> tableModel;
+	private final EnumTableFormatAdaptor<ContractsTableFormat, MyContractItem> tableFormat;
+	private final ContractsFilterControl filterControl;
 
 	//Listener
-	private ListenerClass listener = new ListenerClass();
+	private final ListenerClass listener = new ListenerClass();
 
 	public static final String NAME = "contracts"; //Not to be changed!
 
@@ -108,17 +108,17 @@ public class ContractsTab extends JMainTab {
 		jToolBarRight.add(jExpand);
 
 		//Table Format
-		tableFormat = new EnumTableFormatAdaptor<ContractsTableFormat, ContractItem>(ContractsTableFormat.class);
+		tableFormat = new EnumTableFormatAdaptor<ContractsTableFormat, MyContractItem>(ContractsTableFormat.class);
 		//Backend
 		eventList = program.getContractItemEventList();
 		//Sorting (per column)
-		SortedList<ContractItem> sortedListColumn = new SortedList<ContractItem>(eventList);
+		SortedList<MyContractItem> sortedListColumn = new SortedList<MyContractItem>(eventList);
 		//Sorting Separator (ensure export always has the right order)
-		SortedList<ContractItem> sortedListSeparator = new SortedList<ContractItem>(sortedListColumn, new SeparatorComparator());
+		SortedList<MyContractItem> sortedListSeparator = new SortedList<MyContractItem>(sortedListColumn, new SeparatorComparator());
 		//Filter
-		filterList = new FilterList<ContractItem>(sortedListSeparator);
+		filterList = new FilterList<MyContractItem>(sortedListSeparator);
 		//Separator
-		separatorList = new SeparatorList<ContractItem>(filterList, new SeparatorComparator(), 1, Integer.MAX_VALUE);
+		separatorList = new SeparatorList<MyContractItem>(filterList, new SeparatorComparator(), 1, Integer.MAX_VALUE);
 		//Table Model
 		tableModel = EventModels.createTableModel(separatorList, tableFormat);
 		//Table
@@ -147,7 +147,7 @@ public class ContractsTab extends JMainTab {
 				);
 
 		//Menu
-		installMenu(program, new ContractsTableMenu(), jTable, ContractItem.class);
+		installMenu(program, new ContractsTableMenu(), jTable, MyContractItem.class);
 
 		layout.setHorizontalGroup(
 			layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
@@ -172,10 +172,10 @@ public class ContractsTab extends JMainTab {
 	@Override
 	public void updateData() { }
 
-	private class ContractsTableMenu implements TableMenu<ContractItem> {
+	private class ContractsTableMenu implements TableMenu<MyContractItem> {
 		@Override
-		public MenuData<ContractItem> getMenuData() {
-			return new MenuData<ContractItem>(selectionModel.getSelected());
+		public MenuData<MyContractItem> getMenuData() {
+			return new MenuData<MyContractItem>(selectionModel.getSelected());
 		}
 
 		@Override
@@ -208,29 +208,29 @@ public class ContractsTab extends JMainTab {
 		}
 	}
 
-	public class SeparatorComparator implements Comparator<ContractItem> {
+	public class SeparatorComparator implements Comparator<MyContractItem> {
 		@Override
-		public int compare(final ContractItem o1, final ContractItem o2) {
+		public int compare(final MyContractItem o1, final MyContractItem o2) {
 			Long l1 = o1.getContract().getContractID();
 			Long l2 = o2.getContract().getContractID();
 			return l1.compareTo(l2);
 		}
 	}
 
-	public class ContractsFilterControl extends FilterControl<ContractItem> {
+	private class ContractsFilterControl extends FilterControl<MyContractItem> {
 
-		private List<EnumTableColumn<ContractItem>> columns = null;
-		private EnumTableFormatAdaptor<ContractsTableFormat, ContractItem> tableFormat;
+		private List<EnumTableColumn<MyContractItem>> columns = null;
+		private final EnumTableFormatAdaptor<ContractsTableFormat, MyContractItem> tableFormat;
 
-		public ContractsFilterControl(final JFrame jFrame, final EnumTableFormatAdaptor<ContractsTableFormat, ContractItem> tableFormat, final EventList<ContractItem> eventList, final FilterList<ContractItem> filterList, final Map<String, List<Filter>> filters) {
+		public ContractsFilterControl(final JFrame jFrame, final EnumTableFormatAdaptor<ContractsTableFormat, MyContractItem> tableFormat, final EventList<MyContractItem> eventList, final FilterList<MyContractItem> filterList, final Map<String, List<Filter>> filters) {
 			super(jFrame, NAME, eventList, filterList, filters);
 			this.tableFormat = tableFormat;
 		}
 
 		@Override
-		protected List<EnumTableColumn<ContractItem>> getColumns() {
+		protected List<EnumTableColumn<MyContractItem>> getColumns() {
 			if (columns == null) {
-				columns = new ArrayList<EnumTableColumn<ContractItem>>();
+				columns = new ArrayList<EnumTableColumn<MyContractItem>>();
 				columns.addAll(Arrays.asList(ContractsExtendedTableFormat.values()));
 				columns.addAll(Arrays.asList(ContractsTableFormat.values()));
 			}
@@ -238,8 +238,8 @@ public class ContractsTab extends JMainTab {
 		}
 
 		@Override
-		protected List<EnumTableColumn<ContractItem>> getShownColumns() {
-			return new ArrayList<EnumTableColumn<ContractItem>>(tableFormat.getShownColumns());
+		protected List<EnumTableColumn<MyContractItem>> getShownColumns() {
+			return new ArrayList<EnumTableColumn<MyContractItem>>(tableFormat.getShownColumns());
 		}
 
 		@Override
@@ -258,7 +258,7 @@ public class ContractsTab extends JMainTab {
 		}
 
 		@Override
-		protected Object getColumnValue(ContractItem item, String columnString) {
+		protected Object getColumnValue(MyContractItem item, String columnString) {
 			EnumTableColumn<?> column = valueOf(columnString);
 			if (column instanceof ContractsTableFormat) {
 				ContractsTableFormat format = (ContractsTableFormat) column;
@@ -279,6 +279,11 @@ public class ContractsTab extends JMainTab {
 		@Override
 		protected void beforeFilter() {
 			jTable.saveExpandedState();
+		}
+
+		@Override
+		protected void saveSettings(final String msg) {
+			program.saveSettings("Save Contract " + msg); //Save Contract Filters and Export Setttings
 		}
 	}
 }

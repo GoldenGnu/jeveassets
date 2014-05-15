@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <rows>
+    <!--Generated from Eve Online Toolkit. ©CCP hf. All rights reserved. Used with permission.-->
     <row flagid="0" flagname="None" flagtext="None"/>
     <row flagid="1" flagname="Wallet" flagtext="Wallet"/>
     <row flagid="2" flagname="Factory" flagtext="Factory"/>

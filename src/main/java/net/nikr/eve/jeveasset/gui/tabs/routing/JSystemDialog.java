@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2013 Contributors (see credits.txt)
+ * Copyright 2009-2014 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -37,8 +37,7 @@ import uk.me.candle.eve.graph.Node;
 public class JSystemDialog extends JAutoCompleteDialog<SolarSystem> {
 
 	public JSystemDialog(Program program) {
-		super(program, TabsRouting.get().addSystemTitle(), Images.TOOL_ROUTING.getImage(), TabsRouting.get().addSystemSelect());
-		this.setStrict(true);
+		super(program, TabsRouting.get().addSystemTitle(), Images.TOOL_ROUTING.getImage(), TabsRouting.get().addSystemSelect(), true, true);
 	}
 
 	public void updateData(Set<Node> nodes) {

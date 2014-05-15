@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2013 Contributors (see credits.txt)
+ * Copyright 2009-2014 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -28,15 +28,25 @@ import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.i18n.TabsContracts;
 
 
-public enum ContractsTableFormat implements EnumTableColumn<ContractItem> {
+public enum ContractsTableFormat implements EnumTableColumn<MyContractItem> {
 	NAME(String.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
 			return TabsContracts.get().columnName();
 		}
 		@Override
-		public Object getColumnValue(final ContractItem from) {
+		public Object getColumnValue(final MyContractItem from) {
 			return from.getName();
+		}
+	},
+	STATUS(String.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsContracts.get().columnStatus();
+		}
+		@Override
+		public Object getColumnValue(final MyContractItem from) {
+			return from.getContract().getStatusFormated();
 		}
 	},
 	INCLUDED(String.class, GlazedLists.comparableComparator()) {
@@ -45,7 +55,7 @@ public enum ContractsTableFormat implements EnumTableColumn<ContractItem> {
 			return TabsContracts.get().columnIncluded();
 		}
 		@Override
-		public Object getColumnValue(final ContractItem from) {
+		public Object getColumnValue(final MyContractItem from) {
 			return from.getIncluded();
 		}
 	},
@@ -55,7 +65,7 @@ public enum ContractsTableFormat implements EnumTableColumn<ContractItem> {
 			return TabsContracts.get().columnQuantity();
 		}
 		@Override
-		public Object getColumnValue(final ContractItem from) {
+		public Object getColumnValue(final MyContractItem from) {
 			return from.getQuantity();
 		}
 	},
@@ -65,7 +75,7 @@ public enum ContractsTableFormat implements EnumTableColumn<ContractItem> {
 			return TabsContracts.get().columnSingleton();
 		}
 		@Override
-		public Object getColumnValue(final ContractItem from) {
+		public Object getColumnValue(final MyContractItem from) {
 			return from.getSingleton();
 		}
 	},
@@ -75,7 +85,7 @@ public enum ContractsTableFormat implements EnumTableColumn<ContractItem> {
 			return TabsContracts.get().columnTypeID();
 		}
 		@Override
-		public Object getColumnValue(final ContractItem from) {
+		public Object getColumnValue(final MyContractItem from) {
 			return from.getTypeID();
 		}
 	},
@@ -85,7 +95,7 @@ public enum ContractsTableFormat implements EnumTableColumn<ContractItem> {
 			return TabsContracts.get().columnVolume();
 		}
 		@Override
-		public Object getColumnValue(final ContractItem from) {
+		public Object getColumnValue(final MyContractItem from) {
 			return from.getContract().getVolume();
 		}
 	},
@@ -95,7 +105,7 @@ public enum ContractsTableFormat implements EnumTableColumn<ContractItem> {
 			return TabsContracts.get().columnPrice();
 		}
 		@Override
-		public Object getColumnValue(final ContractItem from) {
+		public Object getColumnValue(final MyContractItem from) {
 			return from.getContract().getPrice();
 		}
 	},
@@ -105,7 +115,7 @@ public enum ContractsTableFormat implements EnumTableColumn<ContractItem> {
 			return TabsContracts.get().columnBuyout();
 		}
 		@Override
-		public Object getColumnValue(final ContractItem from) {
+		public Object getColumnValue(final MyContractItem from) {
 			return from.getContract().getBuyout();
 		}
 	},
@@ -115,7 +125,7 @@ public enum ContractsTableFormat implements EnumTableColumn<ContractItem> {
 			return TabsContracts.get().columnCollateral();
 		}
 		@Override
-		public Object getColumnValue(final ContractItem from) {
+		public Object getColumnValue(final MyContractItem from) {
 			return from.getContract().getCollateral();
 		}
 	},
@@ -125,7 +135,7 @@ public enum ContractsTableFormat implements EnumTableColumn<ContractItem> {
 			return TabsContracts.get().columnNumDays();
 		}
 		@Override
-		public Object getColumnValue(final ContractItem from) {
+		public Object getColumnValue(final MyContractItem from) {
 			return from.getContract().getNumDays();
 		}
 	},
@@ -135,7 +145,7 @@ public enum ContractsTableFormat implements EnumTableColumn<ContractItem> {
 			return TabsContracts.get().columnReward();
 		}
 		@Override
-		public Object getColumnValue(final ContractItem from) {
+		public Object getColumnValue(final MyContractItem from) {
 			return from.getContract().getReward();
 		}
 	},
@@ -145,7 +155,7 @@ public enum ContractsTableFormat implements EnumTableColumn<ContractItem> {
 			return TabsContracts.get().columnIssuer();
 		}
 		@Override
-		public Object getColumnValue(final ContractItem from) {
+		public Object getColumnValue(final MyContractItem from) {
 			return from.getContract().getIssuer();
 		}
 	},
@@ -155,7 +165,7 @@ public enum ContractsTableFormat implements EnumTableColumn<ContractItem> {
 			return TabsContracts.get().columnIssuerCorp();
 		}
 		@Override
-		public Object getColumnValue(final ContractItem from) {
+		public Object getColumnValue(final MyContractItem from) {
 			return from.getContract().getIssuerCorp();
 		}
 	},
@@ -165,7 +175,7 @@ public enum ContractsTableFormat implements EnumTableColumn<ContractItem> {
 			return TabsContracts.get().columnAssignee();
 		}
 		@Override
-		public Object getColumnValue(final ContractItem from) {
+		public Object getColumnValue(final MyContractItem from) {
 			return from.getContract().getAssignee();
 		}
 	},
@@ -175,7 +185,7 @@ public enum ContractsTableFormat implements EnumTableColumn<ContractItem> {
 			return TabsContracts.get().columnAcceptor();
 		}
 		@Override
-		public Object getColumnValue(final ContractItem from) {
+		public Object getColumnValue(final MyContractItem from) {
 			return from.getContract().getAcceptor();
 		}
 	},
@@ -185,7 +195,7 @@ public enum ContractsTableFormat implements EnumTableColumn<ContractItem> {
 			return TabsContracts.get().columnStartStation();
 		}
 		@Override
-		public Object getColumnValue(final ContractItem from) {
+		public Object getColumnValue(final MyContractItem from) {
 			return from.getContract().getStartStation();
 		}
 	},
@@ -195,7 +205,7 @@ public enum ContractsTableFormat implements EnumTableColumn<ContractItem> {
 			return TabsContracts.get().columnEndStation();
 		}
 		@Override
-		public Object getColumnValue(final ContractItem from) {
+		public Object getColumnValue(final MyContractItem from) {
 			return from.getContract().getEndStation();
 		}
 	},
@@ -205,7 +215,7 @@ public enum ContractsTableFormat implements EnumTableColumn<ContractItem> {
 			return TabsContracts.get().columnIssued();
 		}
 		@Override
-		public Object getColumnValue(final ContractItem from) {
+		public Object getColumnValue(final MyContractItem from) {
 			return from.getContract().getDateIssued();
 		}
 	},
@@ -215,7 +225,7 @@ public enum ContractsTableFormat implements EnumTableColumn<ContractItem> {
 			return TabsContracts.get().columnExpired();
 		}
 		@Override
-		public Object getColumnValue(final ContractItem from) {
+		public Object getColumnValue(final MyContractItem from) {
 			return from.getContract().getDateExpired();
 		}
 	},
@@ -225,7 +235,7 @@ public enum ContractsTableFormat implements EnumTableColumn<ContractItem> {
 			return TabsContracts.get().columnAccepted();
 		}
 		@Override
-		public Object getColumnValue(final ContractItem from) {
+		public Object getColumnValue(final MyContractItem from) {
 			return from.getContract().getDateAccepted();
 		}
 	},
@@ -235,7 +245,7 @@ public enum ContractsTableFormat implements EnumTableColumn<ContractItem> {
 			return TabsContracts.get().columnCompleted();
 		}
 		@Override
-		public Object getColumnValue(final ContractItem from) {
+		public Object getColumnValue(final MyContractItem from) {
 			return from.getContract().getDateCompleted();
 		}
 	};
@@ -262,7 +272,7 @@ public enum ContractsTableFormat implements EnumTableColumn<ContractItem> {
 	public boolean isShowDefault() {
 		return true;
 	}
-	@Override public ContractItem setColumnValue(final Object baseObject, final Object editedValue) {
+	@Override public MyContractItem setColumnValue(final Object baseObject, final Object editedValue) {
 		return null;
 	}
 	@Override
@@ -270,7 +280,7 @@ public enum ContractsTableFormat implements EnumTableColumn<ContractItem> {
 		return getColumnName();
 	}
 	//XXX - TableFormat.getColumnValue(...) Workaround
-	@Override public abstract Object getColumnValue(final ContractItem from);
+	@Override public abstract Object getColumnValue(final MyContractItem from);
 	//XXX - TableFormat.getColumnName() Workaround
 	@Override public abstract String getColumnName();
 }

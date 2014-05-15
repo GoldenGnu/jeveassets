@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2013 Contributors (see credits.txt)
+ * Copyright 2009-2014 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -22,6 +22,7 @@
 package net.nikr.eve.jeveasset.gui.shared.menu;
 
 import java.awt.Component;
+import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.Arrays;
@@ -41,7 +42,7 @@ import net.nikr.eve.jeveasset.data.types.LocationType;
 import net.nikr.eve.jeveasset.data.types.PriceType;
 import net.nikr.eve.jeveasset.data.types.TagsType;
 import net.nikr.eve.jeveasset.gui.shared.components.JDropDownButton;
-import net.nikr.eve.jeveasset.gui.tabs.assets.Asset;
+import net.nikr.eve.jeveasset.gui.tabs.assets.MyAsset;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile;
 import net.nikr.eve.jeveasset.gui.tabs.tree.TreeAsset;
 
@@ -96,7 +97,7 @@ public class MenuManager<Q> {
 		this.program = program;
 		this.tableMenu = tableMenu;
 		this.jTable = jTable;
-		assets = Asset.class.isAssignableFrom(clazz) && !TreeAsset.class.isAssignableFrom(clazz);
+		assets = MyAsset.class.isAssignableFrom(clazz) && !TreeAsset.class.isAssignableFrom(clazz);
 		stockpile = Stockpile.StockpileItem.class.isAssignableFrom(clazz);
 		locationSupported = LocationType.class.isAssignableFrom(clazz);
 		itemSupported = ItemType.class.isAssignableFrom(clazz);
@@ -259,39 +260,53 @@ public class MenuManager<Q> {
 		jTablePopupMenu.show(e.getComponent(), e.getX(), e.getY());
 	}
 
-	protected void selectClickedCell(final MouseEvent e) {
+	private void selectClickedCell(final MouseEvent e) {
 		Object source = e.getSource();
 		if (source instanceof JTable) {
 			JTable jSelectTable = (JTable) source;
 
+			Point point = e.getPoint();
+			if (!jSelectTable.getVisibleRect().contains(point)) { //Ignore clickes outside table
+				return;
+			}
+
+			int clickedRow = jSelectTable.rowAtPoint(point);
+			int clickedColumn = jSelectTable.columnAtPoint(point);
+
 			//Rows
-			boolean clickInRowsSelection = false;
-			int[] selectedRows = jSelectTable.getSelectedRows();
-			for (int i = 0; i < selectedRows.length; i++) {
-				if (selectedRows[i] == jSelectTable.rowAtPoint(e.getPoint())) {
-					clickInRowsSelection = true;
-					break;
+			boolean clickInRowsSelection;
+			if (jSelectTable.getRowSelectionAllowed()) { //clicked in selected rows?
+				clickInRowsSelection = false;
+				int[] selectedRows = jSelectTable.getSelectedRows();
+				for (int i = 0; i < selectedRows.length; i++) {
+					if (selectedRows[i] == clickedRow) {
+						clickInRowsSelection = true;
+						break;
+					}
 				}
+			} else { //Row selection not allowed - all rows selected
+				clickInRowsSelection = true;
 			}
 
 			//Column
-			boolean clickInColumnsSelection = false;
-			int[] selectedColumns = jSelectTable.getSelectedColumns();
-			for (int i = 0; i < selectedColumns.length; i++) {
-				if (selectedColumns[i] == jSelectTable.columnAtPoint(e.getPoint())) {
-					clickInColumnsSelection = true;
-					break;
+			boolean clickInColumnsSelection;
+			if (jSelectTable.getColumnSelectionAllowed()) { //clicked in selected columns?
+				clickInColumnsSelection = false;
+				int[] selectedColumns = jSelectTable.getSelectedColumns();
+				for (int i = 0; i < selectedColumns.length; i++) {
+					if (selectedColumns[i] == clickedColumn) {
+						clickInColumnsSelection = true;
+						break;
+					}
 				}
+			} else { //Column selection not allowed - all columns selected
+				clickInColumnsSelection = true;
 			}
 
 			//Clicked outside selection, select clicked cell
-			if (!clickInRowsSelection || !clickInColumnsSelection) {
-				int row = jSelectTable.rowAtPoint(e.getPoint());
-				int column = jSelectTable.columnAtPoint(e.getPoint());
-				if (row >= 0 && column >= 0) {
-					jSelectTable.setRowSelectionInterval(row, row);
-					jSelectTable.setColumnSelectionInterval(column, column);
-				}
+			if ( (!clickInRowsSelection || !clickInColumnsSelection) && clickedRow >= 0 && clickedColumn >= 0) {
+				jSelectTable.setRowSelectionInterval(clickedRow, clickedRow);
+				jSelectTable.setColumnSelectionInterval(clickedColumn, clickedColumn);
 			}
 		}
 	}

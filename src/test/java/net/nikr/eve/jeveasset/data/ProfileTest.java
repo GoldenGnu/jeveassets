@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2013 Contributors (see credits.txt)
+ * Copyright 2009-2014 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -58,10 +58,14 @@ public class ProfileTest {
 	}
 
 	private void test(String name, boolean supportContracts) throws URISyntaxException {
-		test(name, supportContracts, false);
+		test(name, supportContracts, false, false);
 	}
 
 	private void test(String name, boolean supportContracts, boolean supportTransactions) throws URISyntaxException {
+		test(name, supportContracts, supportTransactions, false);
+	}
+
+	private void test(String name, boolean supportContracts, boolean supportTransactions, boolean supportJournal) throws URISyntaxException {
 		ProfileManager profileManager = new ProfileManager();
 		boolean load = ProfileReader.load(profileManager, getFilename(name));
 		assertEquals(name+" fail to load", load, true);
@@ -70,9 +74,10 @@ public class ProfileTest {
 		boolean industryJobs = false;
 		boolean contracts = false;
 		boolean transactions = false;
-		for (Account account : profileManager.getAccounts()) {
+		boolean journal = false;
+		for (MyAccount account : profileManager.getAccounts()) {
 			if (!account.getName().equals("") && !account.getName().equals("-1")) {
-				fail(name+" Name: "+account.getName()+" is not safe");
+				fail(name+" Name is not safe expected:<[]> but was:<[" + account.getName() + "]>");
 			}
 			assertEquals(name+" KeyID is not safe", -1, account.getKeyID());
 			assertEquals(name+" VCode is not safe", "", account.getVCode());
@@ -82,6 +87,7 @@ public class ProfileTest {
 				industryJobs = industryJobs || !owner.getIndustryJobs().isEmpty();
 				transactions = transactions || !owner.getTransactions().isEmpty();
 				contracts = contracts || !owner.getContracts().isEmpty();
+				journal = journal || !owner.getJournal().isEmpty();
 				assertEquals(name+" had no assets", true, !owner.getAssets().isEmpty());
 				assertEquals(name+" had no account balances", true, !owner.getAccountBalances().isEmpty());
 			}
@@ -92,7 +98,10 @@ public class ProfileTest {
 			assertEquals(name+" had no contracts", true, contracts);
 		}
 		if (supportTransactions) {
-			assertEquals(name+" had no transactions", true, industryJobs);
+			assertEquals(name+" had no transactions", true, transactions);
+		}
+		if (supportJournal) {
+			assertEquals(name+" had no journal", true, journal);
 		}
 	}
 
@@ -130,5 +139,6 @@ public class ProfileTest {
 		test("data-2-4-0");
 		test("data-2-5-0", true);
 		test("data-2-6-0", true, true);
+		test("data-2-7-0", true, true, true);
 	}
 }

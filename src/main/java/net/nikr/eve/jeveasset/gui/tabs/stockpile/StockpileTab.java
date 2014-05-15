@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2013 Contributors (see credits.txt)
+ * Copyright 2009-2014 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -40,8 +40,10 @@ import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
+import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -51,6 +53,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -80,14 +84,14 @@ import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
 import net.nikr.eve.jeveasset.gui.shared.table.JSeparatorTable;
 import net.nikr.eve.jeveasset.gui.shared.table.PaddingTableCellRenderer;
-import net.nikr.eve.jeveasset.gui.tabs.assets.Asset;
-import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustryJob;
-import net.nikr.eve.jeveasset.gui.tabs.orders.MarketOrder;
+import net.nikr.eve.jeveasset.gui.tabs.assets.MyAsset;
+import net.nikr.eve.jeveasset.gui.tabs.jobs.MyIndustryJob;
+import net.nikr.eve.jeveasset.gui.tabs.orders.MyMarketOrder;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileFilter;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileTotal;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.StockpileSeparatorTableCell.StockpileCellAction;
-import net.nikr.eve.jeveasset.gui.tabs.transaction.Transaction;
+import net.nikr.eve.jeveasset.gui.tabs.transaction.MyTransaction;
 import net.nikr.eve.jeveasset.i18n.General;
 import net.nikr.eve.jeveasset.i18n.TabsStockpile;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
@@ -104,25 +108,25 @@ public class StockpileTab extends JMainTab {
 		EXPAND
 	}
 
-	private JSeparatorTable jTable;
-	private JLabel jVolumeNow;
-	private JLabel jVolumeNeeded;
-	private JLabel jValueNow;
-	private JLabel jValueNeeded;
+	private final JSeparatorTable jTable;
+	private final JLabel jVolumeNow;
+	private final JLabel jVolumeNeeded;
+	private final JLabel jValueNow;
+	private final JLabel jValueNeeded;
 
-	private StockpileDialog stockpileDialog;
-	private StockpileItemDialog stockpileItemDialog;
-	private StockpileShoppingListDialog stockpileShoppingListDialog;
-	private StockpileSelectionDialog stockpileSelectionDialog;
+	private final StockpileDialog stockpileDialog;
+	private final StockpileItemDialog stockpileItemDialog;
+	private final StockpileShoppingListDialog stockpileShoppingListDialog;
+	private final StockpileSelectionDialog stockpileSelectionDialog;
 
 	//Table
-	private EnumTableFormatAdaptor<StockpileTableFormat, StockpileItem> tableFormat;
-	private DefaultEventTableModel<StockpileItem> tableModel;
-	private EventList<StockpileItem> eventList;
-	private FilterList<StockpileItem> filterList;
-	private SeparatorList<StockpileItem> separatorList;
-	private DefaultEventSelectionModel<StockpileItem> selectionModel;
-	private StockpileFilterControl filterControl;
+	private final EnumTableFormatAdaptor<StockpileTableFormat, StockpileItem> tableFormat;
+	private final DefaultEventTableModel<StockpileItem> tableModel;
+	private final EventList<StockpileItem> eventList;
+	private final FilterList<StockpileItem> filterList;
+	private final SeparatorList<StockpileItem> separatorList;
+	private final DefaultEventSelectionModel<StockpileItem> selectionModel;
+	private final StockpileFilterControl filterControl;
 
 	//Data
 	Map<Long, String> ownersName;
@@ -331,11 +335,17 @@ public class StockpileTab extends JMainTab {
 				}
 				if (toItem != null) { //Update existing (add counts)
 					if (merge) {
+						Settings.lock(); //Lock for Stockpile (addTo - Merge)
 						toItem.addCountMinimum(fromItem.getCountMinimum());
+						Settings.unlock(); //Unlock for Stockpile (addTo - Merge)
+						program.saveSettings("Save Stockpile (addTo - Merge)"); //Save Stockpile (addTo - Merge)
 					}
 				} else { //Add new
+					Settings.lock(); //Lock for Stockpile (addTo - New)
 					StockpileItem item = new StockpileItem(stockpile, fromItem);
 					stockpile.add(item);
+					Settings.unlock(); //Unlock for Stockpile (addTo - New)
+					program.saveSettings("Save Stockpile (addTo - New)"); //Save Stockpile (addTo - New)
 				}
 			}
 			addStockpile(stockpile);
@@ -481,7 +491,7 @@ public class StockpileTab extends JMainTab {
 				item.updateValues(price, volume);
 				//Inventory AKA Assets
 				if (stockpile.isAssets()) {
-					for (Asset asset : program.getAssetEventList()) {
+					for (MyAsset asset : program.getAssetEventList()) {
 						if (asset.getItem().getTypeID() != TYPE_ID) {
 							continue; //Ignore wrong typeID
 						}
@@ -504,7 +514,7 @@ public class StockpileTab extends JMainTab {
 				}
 				//Market Orders
 				if (stockpile.isBuyOrders() || stockpile.isSellOrders()) {
-					for (MarketOrder marketOrder : program.getMarketOrdersEventList()) {
+					for (MyMarketOrder marketOrder : program.getMarketOrdersEventList()) {
 						if (marketOrder.getTypeID() != TYPE_ID) {
 							continue; //Ignore wrong typeID
 						}
@@ -513,7 +523,7 @@ public class StockpileTab extends JMainTab {
 				}
 				//Industry Job
 				if (stockpile.isJobs()) {
-					for (IndustryJob industryJob : program.getIndustryJobsEventList()) {
+					for (MyIndustryJob industryJob : program.getIndustryJobsEventList()) {
 						if (industryJob.getOutputTypeID() != TYPE_ID) {
 							continue; //Ignore wrong typeID
 						}
@@ -522,7 +532,7 @@ public class StockpileTab extends JMainTab {
 				}
 				//Transactions
 				if (stockpile.isTransactions()) {
-					for (Transaction transaction : program.getTransactionsEventList()) {
+					for (MyTransaction transaction : program.getTransactionsEventList()) {
 						if (transaction.getTypeID() != TYPE_ID) {
 							continue; //Ignore wrong typeID
 						}
@@ -576,10 +586,23 @@ public class StockpileTab extends JMainTab {
 			return;
 		}
 
+		Settings.lock(); //Lock for Stockpile (EFT import)
 		//Add modules
 		Map<Integer, StockpileItem> items = new HashMap<Integer, StockpileItem>();
 		for (String module : modules) {
 			module = module.trim().toLowerCase(); //Format line
+			//Find x[Number] - used for drones and cargo
+			Pattern p = Pattern.compile("x\\d+$");
+			Matcher m = p.matcher(module);
+			long count = 0;
+			while (m.find()) {
+				String group = m.group().replace("x", "");
+				count = count + Long.valueOf(group);
+			}
+			if (count == 0) {
+				count = 1;
+			}
+			module = module.replaceAll("x\\d+$", "").trim();
 			if (module.isEmpty()) { //Skip empty lines
 				continue;
 			}
@@ -594,12 +617,13 @@ public class StockpileTab extends JMainTab {
 					}
 					//Update item count
 					StockpileItem stockpileItem = items.get(typeID);
-					stockpileItem.addCountMinimum(1);
+					stockpileItem.addCountMinimum(count);
 					break; //search done
 				}
 			}
 		}
-
+		Settings.unlock(); //Unlock for Stockpile (EFT import)
+		program.saveSettings("Save Stockpile (EFT import)"); //Save Stockpile (EFT import)
 		//Update stockpile data
 		addStockpile(stockpile);
 		scrollToSctockpile(stockpile);
@@ -706,6 +730,7 @@ public class StockpileTab extends JMainTab {
 		if (stockpile == null) { //Dialog cancelled
 			return;
 		}
+		Settings.lock(); //Lock for Stockpile (IskPerHour import)
 		//Search for item names
 		for (Map.Entry<String, Double> entry : data.entrySet()) {
 			for (Item item : StaticData.get().getItems().values()) {
@@ -716,7 +741,8 @@ public class StockpileTab extends JMainTab {
 				}
 			}
 		}
-
+		Settings.unlock(); //Unlock for Stockpile (IskPerHour import)
+		program.saveSettings("Save Stockpile (IskPerHour import)"); //Save Stockpile (EFT import)
 		//Update stockpile data
 		addStockpile(stockpile);
 		scrollToSctockpile(stockpile);
@@ -725,7 +751,7 @@ public class StockpileTab extends JMainTab {
 	private void updateOwners() {
 		//Owners Look-Up
 		ownersName = new HashMap<Long, String>();
-		for (Account account : program.getAccounts()) {
+		for (MyAccount account : program.getAccounts()) {
 			for (Owner owner : account.getOwners()) {
 				ownersName.put(owner.getOwnerID(), owner.getName());
 			}
@@ -739,7 +765,9 @@ public class StockpileTab extends JMainTab {
 		if (contents != null && contents.isDataFlavorSupported(DataFlavor.stringFlavor)) {
 			try {
 				return (String) contents.getTransferData(DataFlavor.stringFlavor);
-			} catch (Exception ex) {
+			} catch (UnsupportedFlavorException ex) {
+				return "";
+			} catch (IOException ex) {
 				return "";
 			}
 		}
@@ -947,7 +975,7 @@ public class StockpileTab extends JMainTab {
 	public class StockpileFilterControl extends FilterControl<StockpileItem> {
 
 		private List<EnumTableColumn<StockpileItem>> columns = null;
-		private EnumTableFormatAdaptor<StockpileTableFormat, StockpileItem> tableFormat;
+		private final EnumTableFormatAdaptor<StockpileTableFormat, StockpileItem> tableFormat;
 
 		public StockpileFilterControl(final JFrame jFrame, final EnumTableFormatAdaptor<StockpileTableFormat, StockpileItem> tableFormat, final EventList<StockpileItem> eventList, final FilterList<StockpileItem> filterList, final Map<String, List<Filter>> filters) {
 			super(jFrame, NAME, eventList, filterList, filters);
@@ -1007,6 +1035,11 @@ public class StockpileTab extends JMainTab {
 		@Override
 		protected List<EnumTableColumn<StockpileItem>> getShownColumns() {
 			return new ArrayList<EnumTableColumn<StockpileItem>>(tableFormat.getShownColumns());
+		}
+
+		@Override
+		protected void saveSettings(final String msg) {
+			program.saveSettings("Save Stockpile " + msg); //Save Stockpile Filters and Export Setttings
 		}
 	}
 

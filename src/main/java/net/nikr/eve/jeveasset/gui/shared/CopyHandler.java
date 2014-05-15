@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2013 Contributors (see credits.txt)
+ * Copyright 2009-2014 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -51,14 +51,36 @@ public class CopyHandler {
 	}
 
 	private static void copy(JTable jTable) {
+		//Rows
+		int[] rows;
+		if (jTable.getRowSelectionAllowed()) { //Selected rows
+			rows = jTable.getSelectedRows();
+		} else { //All rows (if row selection is not allowed)
+			rows = new int[jTable.getRowCount()];
+			for (int i = 0; i < jTable.getRowCount(); i++) {
+				rows[i] = i;
+			}
+		}
+
+		//Columns
+		int[] columns;
+		if (jTable.getColumnSelectionAllowed()) { //Selected columns
+			columns = jTable.getSelectedColumns();
+		} else { //All columns (if column selection is not allowed)
+			columns = new int[jTable.getColumnCount()];
+			for (int i = 0; i < jTable.getColumnCount(); i++) {
+				columns[i] = i;
+			}
+		}
 		StringBuilder tableText = new StringBuilder(); //Table text buffer
 		String separatorText = ""; //Separator text buffer (is never added to, only set for each separator)
 		int rowCount = 0; //used to find last row
-		for (int row : jTable.getSelectedRows()) {
+
+		for (int row : rows) {
 			rowCount++; //count rows
 			StringBuilder rowText = new StringBuilder(); //Row text buffer
 			boolean firstColumn = true; //used to find first column
-			for (int column : jTable.getSelectedColumns()) {
+			for (int column : columns) {
 				//Get value
 				Object value = jTable.getValueAt(row, column);
 
@@ -103,13 +125,15 @@ public class CopyHandler {
 			}
 
 			//Add
-			if (rowText.length() > 0 || (!separatorText.isEmpty() && rowCount == jTable.getSelectedRows().length)) {
+			if (rowText.length() > 0 || (!separatorText.isEmpty() && rowCount == rows.length)) {
 				tableText.append(separatorText); //Add separator text (will be empty for normal tables)
 				if (rowText.length() > 0 && !separatorText.isEmpty()) { //Add tab separator (if needed)
 					tableText.append("\t");
 				}
 				tableText.append(rowText.toString()); //Add row text (will be empty if only copying sinlge separator)
-				tableText.append("\r\n"); //Add end line
+				if (rowCount != rows.length) {
+					tableText.append("\r\n");
+				} //Add end line
 			}
 		}
 		copyToClipboard(tableText.toString()); //Send it all to the clipboard

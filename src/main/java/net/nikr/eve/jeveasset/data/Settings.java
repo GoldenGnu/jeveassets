@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2013 Contributors (see credits.txt)
+ * Copyright 2009-2014 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -36,6 +36,7 @@ import net.nikr.eve.jeveasset.SplashUpdater;
 import net.nikr.eve.jeveasset.data.tag.Tag;
 import net.nikr.eve.jeveasset.data.tag.TagID;
 import net.nikr.eve.jeveasset.data.tag.Tags;
+import net.nikr.eve.jeveasset.gui.shared.CaseInsensitiveComparator;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.ResizeMode;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.SimpleColumn;
@@ -58,7 +59,7 @@ public class Settings {
 	private static final String PATH_JUMPS = "data" + File.separator + "jumps.xml";
 	private static final String PATH_LOCATIONS = "data" + File.separator + "locations.xml";
 	private static final String PATH_FLAGS = "data" + File.separator + "flags.xml";
-	private static final String PATH_DATA_VERSION = "data" + File.separator + "data.xml";
+	private static final String PATH_DATA_VERSION = "data" + File.separator + "data.dat";
 	private static final String PATH_PRICE_DATA = "data" + File.separator + "pricedata.dat";
 	private static final String PATH_ASSETS = "data" + File.separator + "assets.xml";
 	private static final String PATH_CONQUERABLE_STATIONS = "data" + File.separator + "conquerable_stations.xml";
@@ -66,110 +67,171 @@ public class Settings {
 	private static final String PATH_LICENSE = "license.txt";
 	private static final String PATH_CREDITS = "credits.txt";
 	private static final String PATH_CHANGELOG = "changelog.txt";
+	private static final String PATH_UPDATE = "jupdate.jar";
+	private static final String PATH_JAR = "jeveassets.jar";
 	private static final String PATH_PROFILES = "profiles";
 	private static final String PATH_DATA = "data";
 
-	//FIXME - - > Settings: create flag enum
-	private static final String FLAG_IGNORE_SECURE_CONTAINERS = "FLAG_IGNORE_SECURE_CONTAINERS";
-	private static final String FLAG_FILTER_ON_ENTER = "FLAG_FILTER_ON_ENTER";
-	private static final String FLAG_REPROCESS_COLORS = "FLAG_REPROCESS_COLORS";
-	private static final String FLAG_INCLUDE_SELL_ORDERS = "FLAG_INCLUDE_SELL_ORDERS";
-	private static final String FLAG_INCLUDE_BUY_ORDERS = "FLAG_INCLUDE_BUY_ORDERS";
-	private static final String FLAG_INCLUDE_CONTRACTS = "FLAG_INCLUDE_CONTRACTS";
-	private static final String FLAG_HIGHLIGHT_SELECTED_ROWS = "FLAG_HIGHLIGHT_SELECTED_ROWS";
-	private static final String FLAG_AUTO_UPDATE = "FLAG_AUTO_UPDATE";
-	private static final String FLAG_UPDATE_DEV = "FLAG_UPDATE_DEV";
-	private static final String FLAG_STOCKPILE_FOCUS_TAB = "FLAG_STOCKPILE_FOCUS_TAB";
-	private static final String FLAG_STOCKPILE_HALF_COLORS = "FLAG_STOCKPILE_HALF_COLORS";
-	private static final String FLAG_BLUEPRINT_BASE_PRICE_TECH_1 = "FLAG_BLUEPRINT_BASE_PRICE_TECH_1";
-	private static final String FLAG_BLUEPRINT_BASE_PRICE_TECH_2 = "FLAG_BLUEPRINT_BASE_PRICE_TECH_2";
+	public static enum SettingFlag {
+		FLAG_IGNORE_SECURE_CONTAINERS,
+		FLAG_FILTER_ON_ENTER,
+		FLAG_REPROCESS_COLORS,
+		FLAG_INCLUDE_SELL_ORDERS,
+		FLAG_INCLUDE_BUY_ORDERS,
+		FLAG_INCLUDE_SELL_CONTRACTS,
+		FLAG_INCLUDE_BUY_CONTRACTS,
+		FLAG_HIGHLIGHT_SELECTED_ROWS,
+		FLAG_STOCKPILE_FOCUS_TAB,
+		FLAG_STOCKPILE_HALF_COLORS,
+		FLAG_BLUEPRINT_BASE_PRICE_TECH_1,
+		FLAG_BLUEPRINT_BASE_PRICE_TECH_2,
+		FLAG_TRANSACTION_HISTORY,
+		FLAG_JOURNAL_HISTORY
+	}
 
 	private static Settings settings;
+	private static final SettingsLock LOCK = new SettingsLock();
 
-	//Price
-	private Map<Integer, PriceData> priceDatas = new HashMap<Integer, PriceData>();; //TypeID : int
-	//Custom Price
+//External
+	//Price						Saved by PriceDataGetter.process() in pricedata.dat (on api update)
+	private Map<Integer, PriceData> priceDatas = new HashMap<Integer, PriceData>(); //TypeID : int
+//API Data
+	//Api id to owner name		Saved by TaskDialog.update() (on API update)
+	private final Map<Long, String> owners = new HashMap<Long, String>();
+	//Stations Next Update		Saved by TaskDialog.update() (on API update)
+	private Date conquerableStationsNextUpdate = Settings.getNow();
+//!! - Values
+	//OK - Custom Price			Saved by JUserListPanel.edit()/delete() + SettingsDialog.save()
+	//Lock OK
 	private Map<Integer, UserItem<Integer, Double>> userPrices = new HashMap<Integer, UserItem<Integer, Double>>();; //TypeID : int
-	//Custom Item Name
+	//OK - Custom Item Name		Saved by JUserListPanel.edit()/delete() + SettingsDialog.save()
+	//Lock OK
 	private Map<Long, UserItem<Long, String>> userNames = new HashMap<Long, UserItem<Long, String>>(); //ItemID : long
-	//Assets
+	//Eve Item Name				Saved by TaskDialog.update() (on API update)
+	//Lock ???
+	private Map<Long, String> eveNames = new HashMap<Long, String>();
+	//!! - Assets				Saved by Program.updateEventLists() if needed
+	//Lock OK
 	private final Map<Long, Date> assetAdded = new HashMap<Long, Date>();
-	//Stockpile
+//!! - Stockpile				Saved by StockpileTab.removeItems() / addStockpile() / removeStockpile()
+	//							Could be more selective...
+	//Lock FAIL!!!
 	private final List<Stockpile> stockpiles = new ArrayList<Stockpile>();
-	//API
-	private Date conquerableStationsNextUpdate = Settings.getNow();;
-	//Mixed boolean flags
-	private Map<String, Boolean> flags = new HashMap<String, Boolean>();;
+//Routing						Saved by ???
+	//Lock ???
+	private final RoutingSettings routingSettings = new RoutingSettings();
+//Overview						Saved by JOverviewMenu.ListenerClass.NEW/DELETE/RENAME
+	//Lock OK
+	private final Map<String, OverviewGroup> overviewGroups = new HashMap<String, OverviewGroup>();;
+//Export						Saved in ExportDialog.saveSettings()
+	//Lock OK
+	private final ExportSettings exportSettings = new ExportSettings();
+//Tracker						Saved by TaskDialog.update() (on API update)
+	private final Map<TrackerOwner, List<TrackerData>> trackerData = new HashMap<TrackerOwner, List<TrackerData>>(); //ownerID :: long
+//Runtime flags					Is not saved to file
 	private boolean settingsLoaded;
 	private boolean settingsImported;
+//Settings Dialog:				Saved by SettingsDialog.save()
+	//Lock OK
+	//Mixed boolean flags
+	private final Map<SettingFlag, Boolean> flags = new EnumMap<SettingFlag, Boolean>(SettingFlag.class);
 	//Price
 	private PriceDataSettings priceDataSettings = new PriceDataSettings();
 	//Proxy (API)
 	private Proxy proxy;
 	private String apiProxy;
 	//FIXME - - > Settings: Create windows settings
+	//Window
+	//							Saved by MainWindow.ListenerClass.componentMoved() (on change)
 	private Point windowLocation = new Point(0, 0);;
+	//							Saved by MainWindow.ListenerClass.componentResized() (on change)
 	private Dimension windowSize = new Dimension(800, 600);;
+	//							Saved by MainWindow.ListenerClass.componentMoved() (on change)
 	private boolean windowMaximized = false;
-	private boolean windowAutoSave = true;;
+	//							Saved by SettingsDialog.save()
+	private boolean windowAutoSave = true;
 	private boolean windowAlwaysOnTop = false;
 	//Assets
-	private Boolean highlightSelectedRows = null;
-	private Boolean reprocessColors = null;
 	private int maximumPurchaseAge = 0;
-	//Stockpile
-	private Boolean stockpileHalfColors = null;
-	//Overview
-	private Map<String, OverviewGroup> overviewGroups = new HashMap<String, OverviewGroup>();;
 	//Reprocess price
 	private ReprocessSettings reprocessSettings = new ReprocessSettings();;
-	//Export
-	private ExportSettings exportSettings = new ExportSettings();
-	//Filter tools
-	private boolean filterOnEnter = false;
-	//Tracker
-	private Map<TrackerOwner, List<TrackerData>> trackerData = new HashMap<TrackerOwner, List<TrackerData>>(); //ownerID :: long
-	//Api id to owner name
-	private Map<Long, String> owners = new HashMap<Long, String>();
-	//Table settings
-	private Map<String, Map<String, List<Filter>>> tableFilters = new HashMap<String, Map<String, List<Filter>>>();
-	private Map<String, List<SimpleColumn>> tableColumns = new HashMap<String, List<SimpleColumn>>();
-	private Map<String, Map<String, Integer>> tableColumnsWidth = new HashMap<String, Map<String, Integer>>();
-	private Map<String, ResizeMode> tableResize = new HashMap<String, ResizeMode>();
-	private Map<String, Map<String, View>> tableViews = new HashMap<String, Map<String, View>>();
-	//Tags
+	//Cache
+	private Boolean filterOnEnter = null; //Filter tools
+	private Boolean highlightSelectedRows = null;  //Assets
+	private Boolean reprocessColors = null;  //Assets
+	private Boolean stockpileHalfColors = null; //Stockpile
+//Table settings
+	//Filters					Saved by ExportFilterControl.saveSettings()
+	//Lock OK
+	private final Map<String, Map<String, List<Filter>>> tableFilters = new HashMap<String, Map<String, List<Filter>>>();
+	//Columns					Saved by EnumTableFormatAdaptor.getMenu() - Reset
+	//									 EditColumnsDialog.save() - Edit Columns
+	//									 JAutoColumnTable.ListenerClass.mouseReleased() - Moved
+	//									 ViewManager.loadView() - Load View
+	//Lock OK
+	private final Map<String, List<SimpleColumn>> tableColumns = new HashMap<String, List<SimpleColumn>>();
+	//Column Width				Saved by JAutoColumnTable.saveColumnsWidth()
+	//Lock OK
+	private final Map<String, Map<String, Integer>> tableColumnsWidth = new HashMap<String, Map<String, Integer>>();
+	//Resize Mode				Saved by EnumTableFormatAdaptor.getMenu()
+	//Lock OK
+	private final Map<String, ResizeMode> tableResize = new HashMap<String, ResizeMode>();
+	//Views						Saved by EnumTableFormatAdaptor.getMenu() - New
+	//									 ViewManager.rename() - Rename
+	//									 ViewManager.delete() - Delete
+	//Lock OK
+	private final Map<String, Map<String, View>> tableViews = new HashMap<String, Map<String, View>>();
+//Tags						Saved by JMenuTags.addTag()/removeTag() + SettingsDialog.save()
+	//Lock OK
 	private final Map<String, Tag> tags = new HashMap<String, Tag>();
 	private final Map<TagID, Tags> tagIds = new HashMap<TagID, Tags>();
 
-	private Settings() {
+	protected Settings() {
 		SplashUpdater.setProgress(30);
 
 		//Settings
-		flags.put(FLAG_FILTER_ON_ENTER, false);
-		flags.put(FLAG_HIGHLIGHT_SELECTED_ROWS, true);
-		flags.put(FLAG_AUTO_UPDATE, true);
-		flags.put(FLAG_UPDATE_DEV, false);
-		flags.put(FLAG_REPROCESS_COLORS, false);
-		flags.put(FLAG_IGNORE_SECURE_CONTAINERS, true);
-		flags.put(FLAG_STOCKPILE_FOCUS_TAB, true);
-		flags.put(FLAG_STOCKPILE_HALF_COLORS, false);
-		flags.put(FLAG_INCLUDE_SELL_ORDERS, true);
-		flags.put(FLAG_INCLUDE_BUY_ORDERS, false);
-		flags.put(FLAG_INCLUDE_CONTRACTS, false);
-		flags.put(FLAG_BLUEPRINT_BASE_PRICE_TECH_1, true);
-		flags.put(FLAG_BLUEPRINT_BASE_PRICE_TECH_2, false);
+		flags.put(SettingFlag.FLAG_FILTER_ON_ENTER, false); //Cached
+		flags.put(SettingFlag.FLAG_HIGHLIGHT_SELECTED_ROWS, true); //Cached
+		flags.put(SettingFlag.FLAG_REPROCESS_COLORS, false); //Cached
+		flags.put(SettingFlag.FLAG_IGNORE_SECURE_CONTAINERS, true);
+		flags.put(SettingFlag.FLAG_STOCKPILE_FOCUS_TAB, true);
+		flags.put(SettingFlag.FLAG_STOCKPILE_HALF_COLORS, false); //Cached
+		flags.put(SettingFlag.FLAG_INCLUDE_SELL_ORDERS, true);
+		flags.put(SettingFlag.FLAG_INCLUDE_BUY_ORDERS, false);
+		flags.put(SettingFlag.FLAG_INCLUDE_SELL_CONTRACTS, false);
+		flags.put(SettingFlag.FLAG_INCLUDE_BUY_CONTRACTS, false);
+		flags.put(SettingFlag.FLAG_BLUEPRINT_BASE_PRICE_TECH_1, true);
+		flags.put(SettingFlag.FLAG_BLUEPRINT_BASE_PRICE_TECH_2, false);
+		flags.put(SettingFlag.FLAG_TRANSACTION_HISTORY, true);
+		flags.put(SettingFlag.FLAG_JOURNAL_HISTORY, true);
+		cacheFlags();
 	}
-
-	/**
-	 *
-	 * @param load does nothing except change the method signature.
-	 */
-	protected Settings(final boolean load) { }
-
 
 	public static Settings get() {
 		load();
 		return settings;
+	}
+	public static void lock() {
+		LOCK.lock();
+	}
+	public static void unlock() {
+		LOCK.unlock();
+	}
+
+	public static boolean ignoreSave() {
+		return LOCK.ignoreSave();
+	}
+
+	public static void waitForEmptySaveQueue() {
+		LOCK.waitForEmptySaveQueue();
+	}
+
+	public static void saveStart() {
+		LOCK.saveStart();
+	}
+
+	public static void saveEnd() {
+		LOCK.saveEnd();
 	}
 
 	public static void load() {
@@ -195,7 +257,7 @@ public class Settings {
 				//Restore default
 				Program.setPortable(true);
 				//Save
-				settings.saveSettings();
+				Settings.saveSettings();
 				return true;
 			} else {
 				//Restore default
@@ -209,8 +271,13 @@ public class Settings {
 		return exportSettings;
 	}
 
-	public void saveSettings() {
-		SettingsWriter.save(this);
+	public static void saveSettings() {
+		LOCK.lock();
+		try {
+			SettingsWriter.save(settings);
+		} finally {
+			LOCK.unlock();
+		}
 	}
 
 	private void loadSettings() {
@@ -253,12 +320,27 @@ public class Settings {
 		this.priceDatas = priceData;
 	}
 
+	public Map<Long, String> getEveNames() {
+		return eveNames;
+	}
+
+	public void setEveNames(Map<Long, String> eveNames) {
+		this.eveNames = eveNames;
+	}
+
 	public Map<Integer, PriceData> getPriceData() {
 		return priceDatas;
 	}
 
-	public Map<String, Boolean> getFlags() {
+	public Map<SettingFlag, Boolean> getFlags() {
 		return flags;
+	}
+
+	public final void cacheFlags() {
+		highlightSelectedRows = flags.get(SettingFlag.FLAG_HIGHLIGHT_SELECTED_ROWS);
+		filterOnEnter = flags.get(SettingFlag.FLAG_FILTER_ON_ENTER);
+		reprocessColors = flags.get(SettingFlag.FLAG_REPROCESS_COLORS);
+		stockpileHalfColors = flags.get(SettingFlag.FLAG_STOCKPILE_HALF_COLORS);
 	}
 
 	public ReprocessSettings getReprocessSettings() {
@@ -267,6 +349,10 @@ public class Settings {
 
 	public void setReprocessSettings(final ReprocessSettings reprocessSettings) {
 		this.reprocessSettings = reprocessSettings;
+	}
+
+	public RoutingSettings getRoutingSettings() {
+		return routingSettings;
 	}
 
 	//@NotNull
@@ -399,7 +485,7 @@ public class Settings {
 	public Map<String ,View> getTableViews(String name) {
 		Map<String, View> views = tableViews.get(name);
 		if (views == null) {
-			views = new HashMap<String, View>();
+			views = new TreeMap<String, View>(new CaseInsensitiveComparator());
 			tableViews.put(name, views);
 		}
 		return views;
@@ -427,98 +513,97 @@ public class Settings {
 	}
 
 	public boolean isFilterOnEnter() {
+		if (filterOnEnter == null) {
+			filterOnEnter = flags.get(SettingFlag.FLAG_FILTER_ON_ENTER);
+		}
 		return filterOnEnter;
 	}
 	public void setFilterOnEnter(final boolean filterOnEnter) {
+		flags.put(SettingFlag.FLAG_FILTER_ON_ENTER, filterOnEnter); //Save & Load
 		this.filterOnEnter = filterOnEnter;
-		flags.put(FLAG_FILTER_ON_ENTER, filterOnEnter); //Save & Load
 	}
 	public boolean isHighlightSelectedRows() { //High volume call - Map.get is too slow, use cache
-		if (highlightSelectedRows == null) {
-			highlightSelectedRows = flags.get(FLAG_HIGHLIGHT_SELECTED_ROWS);
-		}
 		return highlightSelectedRows;
 	}
 	public void setHighlightSelectedRows(final boolean highlightSelectedRows) {
-		flags.put(FLAG_HIGHLIGHT_SELECTED_ROWS, highlightSelectedRows);
+		flags.put(SettingFlag.FLAG_HIGHLIGHT_SELECTED_ROWS, highlightSelectedRows);
 		this.highlightSelectedRows = highlightSelectedRows;
 	}
-
-	public boolean isAutoUpdate() {
-		return flags.get(FLAG_AUTO_UPDATE);
-	}
-	public void setAutoUpdate(final boolean updateStable) {
-		flags.put(FLAG_AUTO_UPDATE, updateStable);
-	}
-	public boolean isUpdateDev() {
-		return flags.get(FLAG_UPDATE_DEV);
-	}
-	public void setUpdateDev(final boolean updateDev) {
-		flags.put(FLAG_UPDATE_DEV, updateDev);
-	}
 	public boolean isIgnoreSecureContainers() {
-		return flags.get(FLAG_IGNORE_SECURE_CONTAINERS);
+		return flags.get(SettingFlag.FLAG_IGNORE_SECURE_CONTAINERS);
 	}
 	public void setIgnoreSecureContainers(final boolean ignoreSecureContainers) {
-		flags.put(FLAG_IGNORE_SECURE_CONTAINERS, ignoreSecureContainers);
+		flags.put(SettingFlag.FLAG_IGNORE_SECURE_CONTAINERS, ignoreSecureContainers);
 	}
 	public boolean isReprocessColors() { //High volume call - Map.get is too slow, use cache
-		if (reprocessColors == null) {
-			reprocessColors = flags.get(FLAG_REPROCESS_COLORS);
-		}
 		return reprocessColors;
 	}
 	public void setReprocessColors(final boolean reprocessColors) {
-		flags.put(FLAG_REPROCESS_COLORS, reprocessColors);
+		flags.put(SettingFlag.FLAG_REPROCESS_COLORS, reprocessColors);
 		this.reprocessColors = reprocessColors;
 	}
 	public boolean isStockpileFocusTab() {
-		return flags.get(FLAG_STOCKPILE_FOCUS_TAB);
+		return flags.get(SettingFlag.FLAG_STOCKPILE_FOCUS_TAB);
 	}
 	public void setStockpileFocusTab(final boolean stockpileFocusOnAdd) {
-		flags.put(FLAG_STOCKPILE_FOCUS_TAB, stockpileFocusOnAdd);
+		flags.put(SettingFlag.FLAG_STOCKPILE_FOCUS_TAB, stockpileFocusOnAdd);
 	}
 	public boolean isStockpileHalfColors() {
-		if (stockpileHalfColors == null) {
-			stockpileHalfColors = flags.get(FLAG_STOCKPILE_HALF_COLORS);
-		}
 		return stockpileHalfColors;
-		//return flags.get(FLAG_STOCKPILE_HALF_COLORS);
 	}
 	public void setStockpileHalfColors(final boolean stockpileHalfColors) {
-		flags.put(FLAG_STOCKPILE_HALF_COLORS, stockpileHalfColors);
+		flags.put(SettingFlag.FLAG_STOCKPILE_HALF_COLORS, stockpileHalfColors);
 		this.stockpileHalfColors = stockpileHalfColors;
 	}
 	public boolean isIncludeSellOrders() {
-		return flags.get(FLAG_INCLUDE_SELL_ORDERS);
+		return flags.get(SettingFlag.FLAG_INCLUDE_SELL_ORDERS);
 	}
 	public void setIncludeSellOrders(final boolean includeSellOrders) {
-		flags.put(FLAG_INCLUDE_SELL_ORDERS, includeSellOrders);
+		flags.put(SettingFlag.FLAG_INCLUDE_SELL_ORDERS, includeSellOrders);
 	}
 	public boolean isIncludeBuyOrders() {
-		return flags.get(FLAG_INCLUDE_BUY_ORDERS);
+		return flags.get(SettingFlag.FLAG_INCLUDE_BUY_ORDERS);
 	}
 	public void setIncludeBuyOrders(final boolean includeBuyOrders) {
-		flags.put(FLAG_INCLUDE_BUY_ORDERS, includeBuyOrders);
+		flags.put(SettingFlag.FLAG_INCLUDE_BUY_ORDERS, includeBuyOrders);
 	}
-	public boolean isIncludeContracts() {
-		return flags.get(FLAG_INCLUDE_CONTRACTS);
+	public boolean isIncludeBuyContracts() {
+		return flags.get(SettingFlag.FLAG_INCLUDE_BUY_CONTRACTS);
 	}
-	public void setIncludeContracts(final boolean includeBuyOrders) {
-		flags.put(FLAG_INCLUDE_CONTRACTS, includeBuyOrders);
+	public void setIncludeBuyContracts(final boolean includeBuyOrders) {
+		flags.put(SettingFlag.FLAG_INCLUDE_BUY_CONTRACTS, includeBuyOrders);
+ 	}
+	public boolean isIncludeSellContracts() {
+		return flags.get(SettingFlag.FLAG_INCLUDE_SELL_CONTRACTS);
+	}
+	public void setIncludeSellContracts(final boolean includeBuyOrders) {
+		flags.put(SettingFlag.FLAG_INCLUDE_SELL_CONTRACTS, includeBuyOrders);
 	}
 	public boolean isBlueprintBasePriceTech1() {
-		return flags.get(FLAG_BLUEPRINT_BASE_PRICE_TECH_1);
+		return flags.get(SettingFlag.FLAG_BLUEPRINT_BASE_PRICE_TECH_1);
 	}
 	public void setBlueprintBasePriceTech1(final boolean blueprintsTech1) {
-		flags.put(FLAG_BLUEPRINT_BASE_PRICE_TECH_1, blueprintsTech1);
+		flags.put(SettingFlag.FLAG_BLUEPRINT_BASE_PRICE_TECH_1, blueprintsTech1);
 	}
 	public boolean isBlueprintBasePriceTech2() {
-		return flags.get(FLAG_BLUEPRINT_BASE_PRICE_TECH_2);
+		return flags.get(SettingFlag.FLAG_BLUEPRINT_BASE_PRICE_TECH_2);
 	}
 	public void setBlueprintBasePriceTech2(final boolean blueprintsTech2) {
-		flags.put(FLAG_BLUEPRINT_BASE_PRICE_TECH_2, blueprintsTech2);
+		flags.put(SettingFlag.FLAG_BLUEPRINT_BASE_PRICE_TECH_2, blueprintsTech2);
 	}
+	public boolean isTransactionHistory() {
+		return flags.get(SettingFlag.FLAG_TRANSACTION_HISTORY);
+	}
+	public void setTransactionHistory(final boolean transactionHistory) {
+		flags.put(SettingFlag.FLAG_TRANSACTION_HISTORY, transactionHistory);
+	}
+	public boolean isJournalHistory() {
+		return flags.get(SettingFlag.FLAG_JOURNAL_HISTORY);
+	}
+	public void setJournalHistory(final boolean blueprintsTech2) {
+		flags.put(SettingFlag.FLAG_JOURNAL_HISTORY, blueprintsTech2);
+	}
+	
 	public List<Stockpile> getStockpiles() {
 		return stockpiles;
 	}
@@ -627,6 +712,12 @@ public class Settings {
 	public static String getPathChangeLog() {
 		return getLocalFile(Settings.PATH_CHANGELOG, false);
 	}
+	public static String getPathRunUpdate() {
+		return getLocalFile(Settings.PATH_UPDATE, false);
+	}
+	public static String getPathRunJar() {
+		return getLocalFile(Settings.PATH_JAR, false);
+	}
 
 	public static String getUserDirectory() {
 		File userDir = new File(System.getProperty("user.home", "."));
@@ -687,5 +778,73 @@ public class Settings {
 				|| Program.isForceUpdate()
 				|| (getApiProxy() != null && ignoreOnProxy))
 				&& !Program.isForceNoUpdate());
+	}
+
+	private static class SettingsLock {
+		private boolean locked = false;
+		private final SettingsQueue settingsQueue = new SettingsQueue();
+
+		public boolean ignoreSave() {
+			return settingsQueue.ignoreSave();
+		}
+		
+		public void saveStart() {
+			settingsQueue.saveStart();
+		}
+
+		public void saveEnd() {
+			settingsQueue.saveEnd();
+		}
+
+		public void waitForEmptySaveQueue() {
+			settingsQueue.waitForEmptySaveQueue();
+		}
+
+		public synchronized void lock() {
+			while(locked){
+				try {
+					wait();
+				} catch (InterruptedException ex) {
+
+				}
+			}
+			locked = true;
+			LOG.debug("Settings Locked");
+		}
+
+		public synchronized void unlock(){
+			locked = false;
+			LOG.debug("Settings Unlocked");
+			notify();
+		}
+	}
+
+	private static class SettingsQueue {
+		private short savesQueue = 0;
+
+		public synchronized boolean ignoreSave() {
+			LOG.debug("Save Queue: " + savesQueue + " ignore: " + (savesQueue > 1));
+			return savesQueue > 1;
+		}
+
+		public synchronized void saveStart() {
+			this.savesQueue++;
+			notifyAll();
+		}
+
+		public synchronized void saveEnd() {
+			this.savesQueue--;
+			notifyAll();
+		}
+
+		public synchronized void waitForEmptySaveQueue() {
+			while (savesQueue > 0) {
+				try {
+					wait();
+				} catch (InterruptedException ex) {
+					
+				}
+			}
+		}
 	}
 }

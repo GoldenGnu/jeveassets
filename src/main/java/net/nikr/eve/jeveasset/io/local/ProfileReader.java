@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2013 Contributors (see credits.txt)
+ * Copyright 2009-2014 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -21,26 +21,33 @@
 
 package net.nikr.eve.jeveasset.io.local;
 
-import com.beimin.eveapi.shared.KeyType;
-import com.beimin.eveapi.shared.accountbalance.EveAccountBalance;
-import com.beimin.eveapi.shared.contract.ContractAvailability;
-import com.beimin.eveapi.shared.contract.ContractStatus;
-import com.beimin.eveapi.shared.contract.ContractType;
-import com.beimin.eveapi.shared.contract.EveContract;
-import com.beimin.eveapi.shared.contract.items.EveContractItem;
-import com.beimin.eveapi.shared.industryjobs.ApiIndustryJob;
-import com.beimin.eveapi.shared.marketorders.ApiMarketOrder;
-import com.beimin.eveapi.shared.wallet.journal.ApiJournalEntry;
-import com.beimin.eveapi.shared.wallet.transactions.ApiWalletTransaction;
+import com.beimin.eveapi.model.shared.AccountBalance;
+import com.beimin.eveapi.model.shared.Contract;
+import com.beimin.eveapi.model.shared.ContractAvailability;
+import com.beimin.eveapi.model.shared.ContractItem;
+import com.beimin.eveapi.model.shared.ContractStatus;
+import com.beimin.eveapi.model.shared.ContractType;
+import com.beimin.eveapi.model.shared.IndustryJob;
+import com.beimin.eveapi.model.shared.JournalEntry;
+import com.beimin.eveapi.model.shared.KeyType;
+import com.beimin.eveapi.model.shared.MarketOrder;
+import com.beimin.eveapi.model.shared.WalletTransaction;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import net.nikr.eve.jeveasset.data.*;
-import net.nikr.eve.jeveasset.gui.tabs.assets.Asset;
-import net.nikr.eve.jeveasset.gui.tabs.journal.Journal;
+import net.nikr.eve.jeveasset.data.ItemFlag;
+import net.nikr.eve.jeveasset.data.MyAccount;
+import net.nikr.eve.jeveasset.data.MyAccountBalance;
+import net.nikr.eve.jeveasset.data.Owner;
+import net.nikr.eve.jeveasset.data.ProfileManager;
+import net.nikr.eve.jeveasset.data.Settings;
+import net.nikr.eve.jeveasset.data.StaticData;
+import net.nikr.eve.jeveasset.gui.tabs.assets.MyAsset;
+import net.nikr.eve.jeveasset.gui.tabs.journal.MyJournal;
+import net.nikr.eve.jeveasset.gui.tabs.transaction.MyTransaction;
 import net.nikr.eve.jeveasset.io.shared.AbstractXmlReader;
 import net.nikr.eve.jeveasset.io.shared.ApiConverter;
 import net.nikr.eve.jeveasset.io.shared.AttributeGetters;
@@ -90,17 +97,17 @@ public final class ProfileReader extends AbstractXmlReader {
 		}
 	}
 
-	private void parseAccounts(final Element element, final List<Account> accounts) {
+	private void parseAccounts(final Element element, final List<MyAccount> accounts) {
 		NodeList accountNodes = element.getElementsByTagName("account");
 		for (int i = 0; i < accountNodes.getLength(); i++) {
 			Element currentNode = (Element) accountNodes.item(i);
-			Account account = parseAccount(currentNode);
+			MyAccount account = parseAccount(currentNode);
 			parseOwners(currentNode, account);
 			accounts.add(account);
 		}
 	}
 
-	private Account parseAccount(final Node node) {
+	private MyAccount parseAccount(final Node node) {
 		int keyID;
 		if (AttributeGetters.haveAttribute(node, "keyid")) {
 			keyID = AttributeGetters.getInt(node, "keyid");
@@ -137,10 +144,14 @@ public final class ProfileReader extends AbstractXmlReader {
 				expires = new Date(i);
 			}
 		}
-		return new Account(keyID, vCode, name, nextUpdate, accessMask, type, expires);
+		boolean invalid = false;
+		if (AttributeGetters.haveAttribute(node, "invalid")) {
+			invalid = AttributeGetters.getBoolean(node, "invalid");
+		}
+		return new MyAccount(keyID, vCode, name, nextUpdate, accessMask, type, expires, invalid);
 	}
 
-	private void parseOwners(final Element element, final Account account) {
+	private void parseOwners(final Element element, final MyAccount account) {
 		NodeList ownerNodes =  element.getElementsByTagName("human");
 		for (int i = 0; i < ownerNodes.getLength(); i++) {
 			Element currentNode = (Element) ownerNodes.item(i);
@@ -159,7 +170,7 @@ public final class ProfileReader extends AbstractXmlReader {
 		}
 	}
 
-	private Owner parseOwner(final Node node, final Account account) {
+	private Owner parseOwner(final Node node, final MyAccount account) {
 		String name = AttributeGetters.getString(node, "name");
 		int ownerID = AttributeGetters.getInt(node, "id");
 		Date assetsNextUpdate = new Date(AttributeGetters.getLong(node, "assetsnextupdate"));
@@ -192,24 +203,28 @@ public final class ProfileReader extends AbstractXmlReader {
 		if (AttributeGetters.haveAttribute(node, "contractsnextupdate")) {
 			contractsNextUpdate = new Date(AttributeGetters.getLong(node, "contractsnextupdate"));
 		}
+		Date locationsNextUpdate = Settings.getNow();
+		if (AttributeGetters.haveAttribute(node, "locationsnextupdate")) {
+			locationsNextUpdate = new Date(AttributeGetters.getLong(node, "locationsnextupdate"));
+		}
 
-		return new Owner(account, name, ownerID, showAssets, assetsLastUpdate, assetsNextUpdate, balanceNextUpdate, marketOrdersNextUpdate, journalNextUpdate, transactionsNextUpdate, industryJobsNextUpdate, contractsNextUpdate);
+		return new Owner(account, name, ownerID, showAssets, assetsLastUpdate, assetsNextUpdate, balanceNextUpdate, marketOrdersNextUpdate, journalNextUpdate, transactionsNextUpdate, industryJobsNextUpdate, contractsNextUpdate, locationsNextUpdate);
 	}
 
 	private void parseContracts(final Element element, final Owner owner) {
 		NodeList contractsNodes = element.getElementsByTagName("contracts");
-		Map<EveContract, List<EveContractItem>> eveContracts = new HashMap<EveContract, List<EveContractItem>>();
+		Map<Contract, List<ContractItem>> eveContracts = new HashMap<Contract, List<ContractItem>>();
 		for (int a = 0; a < contractsNodes.getLength(); a++) {
 			Element contractsNode = (Element) contractsNodes.item(a);
 			NodeList contractNodes = contractsNode.getElementsByTagName("contract");
 			for (int b = 0; b < contractNodes.getLength(); b++) {
 				Element contractNode = (Element) contractNodes.item(b);
-				EveContract contract = parseContract(contractNode);
+				Contract contract = parseContract(contractNode);
 				NodeList itemNodes = contractNode.getElementsByTagName("contractitem");
-				List<EveContractItem> contractItems = new ArrayList<EveContractItem>();
+				List<ContractItem> contractItems = new ArrayList<ContractItem>();
 				for (int c = 0; c < itemNodes.getLength(); c++) {
 					Element currentNode = (Element) itemNodes.item(c);
-					EveContractItem contractItem = parseContractItem(currentNode);
+					ContractItem contractItem = parseContractItem(currentNode);
 					contractItems.add(contractItem);
 				}
 				eveContracts.put(contract, contractItems);
@@ -218,8 +233,8 @@ public final class ProfileReader extends AbstractXmlReader {
 		owner.setContracts(ApiConverter.convertContracts(eveContracts));
 	}
 
-	private EveContract parseContract(final Element element) {
-		EveContract contract = new EveContract();
+	private Contract parseContract(final Element element) {
+		Contract contract = new Contract();
 		long acceptorID = AttributeGetters.getLong(element, "acceptorid");
 		long assigneeID = AttributeGetters.getLong(element, "assigneeid");
 		ContractAvailability availability
@@ -280,8 +295,8 @@ public final class ProfileReader extends AbstractXmlReader {
 		return contract;
 	}
 
-	private EveContractItem parseContractItem(final Element element) {
-		EveContractItem contractItem = new EveContractItem();
+	private ContractItem parseContractItem(final Element element) {
+		ContractItem contractItem = new ContractItem();
 		boolean included = AttributeGetters.getBoolean(element, "included");
 		long quantity = AttributeGetters.getLong(element, "quantity");
 		long recordID = AttributeGetters.getLong(element, "recordid");
@@ -308,14 +323,14 @@ public final class ProfileReader extends AbstractXmlReader {
 			NodeList balanceNodes = currentBalancesNode.getElementsByTagName("balance");
 			for (int b = 0; b < balanceNodes.getLength(); b++) {
 				Element currentNode = (Element) balanceNodes.item(b);
-				EveAccountBalance accountBalance = parseBalance(currentNode);
-				owner.getAccountBalances().add(new AccountBalance(accountBalance, owner));
+				AccountBalance accountBalance = parseBalance(currentNode);
+				owner.getAccountBalances().add(new MyAccountBalance(accountBalance, owner));
 			}
 		}
 	}
 
-	private EveAccountBalance parseBalance(final Element element) {
-		EveAccountBalance accountBalance = new EveAccountBalance();
+	private AccountBalance parseBalance(final Element element) {
+		AccountBalance accountBalance = new AccountBalance();
 		int accountID = AttributeGetters.getInt(element, "accountid");
 		int accountKey = AttributeGetters.getInt(element, "accountkey");
 		double balance = AttributeGetters.getDouble(element, "balance");
@@ -327,21 +342,21 @@ public final class ProfileReader extends AbstractXmlReader {
 
 	private void parseMarkerOrders(final Element element, final Owner owner) {
 		NodeList markerOrdersNodes = element.getElementsByTagName("markerorders");
-		List<ApiMarketOrder> marketOrders = new ArrayList<ApiMarketOrder>();
+		List<MarketOrder> marketOrders = new ArrayList<MarketOrder>();
 		for (int a = 0; a < markerOrdersNodes.getLength(); a++) {
 			Element currentMarkerOrdersNode = (Element) markerOrdersNodes.item(a);
 			NodeList markerOrderNodes = currentMarkerOrdersNode.getElementsByTagName("markerorder");
 			for (int b = 0; b < markerOrderNodes.getLength(); b++) {
 				Element currentNode = (Element) markerOrderNodes.item(b);
-				ApiMarketOrder apiMarketOrder = parseMarkerOrder(currentNode);
+				MarketOrder apiMarketOrder = parseMarkerOrder(currentNode);
 				marketOrders.add(apiMarketOrder);
 			}
 		}
 		owner.setMarketOrders(ApiConverter.convertMarketOrders(marketOrders, owner));
 	}
 
-	private ApiMarketOrder parseMarkerOrder(final Element element) {
-		ApiMarketOrder apiMarketOrder = new ApiMarketOrder();
+	private MarketOrder parseMarkerOrder(final Element element) {
+		MarketOrder apiMarketOrder = new MarketOrder();
 		long orderID = AttributeGetters.getLong(element, "orderid");
 		long charID = AttributeGetters.getLong(element, "charid");
 		long stationID = AttributeGetters.getLong(element, "stationid");
@@ -377,21 +392,22 @@ public final class ProfileReader extends AbstractXmlReader {
 
 	private void parseJournals(final Element element, final Owner owner) {
 		NodeList journalsNodes = element.getElementsByTagName("journals");
-		List<Journal> journal = new ArrayList<Journal>();
+		Map<Long, MyJournal> journals = new HashMap<Long, MyJournal>();
 		for (int a = 0; a < journalsNodes.getLength(); a++) {
 			Element currentAalletJournalsNode = (Element) journalsNodes.item(a);
 			NodeList journalNodes = currentAalletJournalsNode.getElementsByTagName("journal");
 			for (int b = 0; b < journalNodes.getLength(); b++) {
 				Element currentNode = (Element) journalNodes.item(b);
-				journal.add(parseJournal(currentNode, owner));
+				MyJournal journal = parseJournal(currentNode, owner);
+				journals.put(journal.getRefID(), journal);
 			}
 		}
-		owner.setJournal(journal);
+		owner.setJournal(journals);
 	}
 
-	private Journal parseJournal(final Element element, final Owner owner) {
+	private MyJournal parseJournal(final Element element, final Owner owner) {
 		//Base
-		ApiJournalEntry apiJournalEntry = new ApiJournalEntry();
+		JournalEntry apiJournalEntry = new JournalEntry();
 		double amount = AttributeGetters.getDouble(element, "amount");
 		long argID1 = AttributeGetters.getLong(element, "argid1");
 		String argName1 = AttributeGetters.getString(element, "argname1");
@@ -411,6 +427,15 @@ public final class ProfileReader extends AbstractXmlReader {
 		Long taxReceiverID = null;
 		if (AttributeGetters.haveAttribute(element, "taxreceiverid")) {
 			taxReceiverID = AttributeGetters.getLong(element, "taxreceiverid");
+		}
+		//New
+		int owner1TypeID = 0;
+		if (AttributeGetters.haveAttribute(element, "owner1typeid")) {
+			owner1TypeID = AttributeGetters.getInt(element, "owner1typeid");
+		}
+		int owner2TypeID = 0;
+		if (AttributeGetters.haveAttribute(element, "owner2typeid")) {
+			owner2TypeID = AttributeGetters.getInt(element, "owner2typeid");
 		}
 		//Extra
 		int accountKey = AttributeGetters.getInt(element, "accountkey");
@@ -434,21 +459,21 @@ public final class ProfileReader extends AbstractXmlReader {
 
 	private void parseTransactions(final Element element, final Owner owner) {
 		NodeList transactionsNodes = element.getElementsByTagName("wallettransactions");
-		List<ApiWalletTransaction> transactions = new ArrayList<ApiWalletTransaction>();
+		Map<Long, MyTransaction> transactions = new HashMap<Long, MyTransaction>();
 		for (int a = 0; a < transactionsNodes.getLength(); a++) {
 			Element currentTransactionsNode = (Element) transactionsNodes.item(a);
 			NodeList transactionNodes = currentTransactionsNode.getElementsByTagName("wallettransaction");
 			for (int b = 0; b < transactionNodes.getLength(); b++) {
 				Element currentNode = (Element) transactionNodes.item(b);
-				ApiWalletTransaction apiTransaction = parseTransaction(currentNode);
-				transactions.add(apiTransaction);
+				MyTransaction transaction = parseTransaction(currentNode, owner);
+				transactions.put(transaction.getTransactionID(), transaction);
 			}
 		}
-		owner.setTransactions(ApiConverter.convertTransactions(transactions, owner));
+		owner.setTransactions(transactions);
 	}
 
-	private ApiWalletTransaction parseTransaction(final Element element) {
-		ApiWalletTransaction apiTransaction = new ApiWalletTransaction();
+	private MyTransaction parseTransaction(final Element element, final Owner owner) {
+		WalletTransaction apiTransaction = new WalletTransaction();
 		Date transactionDateTime = AttributeGetters.getDate(element, "transactiondatetime");
 		Long transactionID = AttributeGetters.getLong(element, "transactionid");
 		int quantity = AttributeGetters.getInt(element, "quantity");
@@ -469,6 +494,21 @@ public final class ProfileReader extends AbstractXmlReader {
 		String stationName = AttributeGetters.getString(element, "stationname");
 		String transactionType = AttributeGetters.getString(element, "transactiontype");
 		String transactionFor = AttributeGetters.getString(element, "transactionfor");
+
+		//New
+		long journalTransactionID = 0;
+		if (AttributeGetters.haveAttribute(element, "journaltransactionid")) {
+			journalTransactionID = AttributeGetters.getLong(element, "journaltransactionid");
+		}
+		int clientTypeID = 0;
+		if (AttributeGetters.haveAttribute(element, "clienttypeid")) {
+			clientTypeID = AttributeGetters.getInt(element, "clienttypeid");
+		}
+		//Extra
+		int accountKey = 1000;
+		if (AttributeGetters.haveAttribute(element, "accountkey")) {
+			accountKey = AttributeGetters.getInt(element, "accountkey");
+		}
 		
 		apiTransaction.setTransactionDateTime(transactionDateTime);
 		apiTransaction.setTransactionID(transactionID);
@@ -484,26 +524,28 @@ public final class ProfileReader extends AbstractXmlReader {
 		apiTransaction.setStationName(stationName);
 		apiTransaction.setTransactionType(transactionType);
 		apiTransaction.setTransactionFor(transactionFor);
-		return apiTransaction;
+		apiTransaction.setTransactionID(journalTransactionID);
+		apiTransaction.setClientID(clientTypeID);
+		return ApiConverter.convertTransaction(apiTransaction, owner, accountKey);
 	}
 
 	private void parseIndustryJobs(final Element element, final Owner owner) {
 		NodeList industryJobsNodes = element.getElementsByTagName("industryjobs");
-		List<ApiIndustryJob> industryJobs = new ArrayList<ApiIndustryJob>();
+		List<IndustryJob> industryJobs = new ArrayList<IndustryJob>();
 		for (int a = 0; a < industryJobsNodes.getLength(); a++) {
 			Element currentIndustryJobsNode = (Element) industryJobsNodes.item(a);
 			NodeList industryJobNodes = currentIndustryJobsNode.getElementsByTagName("industryjob");
 			for (int b = 0; b < industryJobNodes.getLength(); b++) {
 				Element currentNode = (Element) industryJobNodes.item(b);
-				ApiIndustryJob apiIndustryJob = parseIndustryJobs(currentNode);
+				IndustryJob apiIndustryJob = parseIndustryJobs(currentNode);
 				industryJobs.add(apiIndustryJob);
 			}
 		}
 		owner.setIndustryJobs(ApiConverter.convertIndustryJobs(industryJobs, owner));
 	}
 
-	private ApiIndustryJob parseIndustryJobs(final Element element) {
-		ApiIndustryJob apiIndustryJob = new ApiIndustryJob();
+	private IndustryJob parseIndustryJobs(final Element element) {
+		IndustryJob apiIndustryJob = new IndustryJob();
 
 		long jobID = AttributeGetters.getLong(element, "jobid");
 		long containerID = AttributeGetters.getLong(element, "containerid");
@@ -576,12 +618,12 @@ public final class ProfileReader extends AbstractXmlReader {
 		return apiIndustryJob;
 	}
 
-	private void parseAssets(final Node node, final Owner owner, final List<Asset> assets, final Asset parentAsset) {
+	private void parseAssets(final Node node, final Owner owner, final List<MyAsset> assets, final MyAsset parentAsset) {
 		NodeList assetsNodes = node.getChildNodes();
 		for (int i = 0; i < assetsNodes.getLength(); i++) {
 			Node currentNode = assetsNodes.item(i);
 			if (currentNode.getNodeName().equals("asset")) {
-				Asset asset = parseEveAsset(currentNode, owner, parentAsset);
+				MyAsset asset = parseEveAsset(currentNode, owner, parentAsset);
 				if (parentAsset == null) {
 					assets.add(asset);
 				} else {
@@ -592,7 +634,7 @@ public final class ProfileReader extends AbstractXmlReader {
 		}
 	}
 
-	private Asset parseEveAsset(final Node node, final Owner owner, final Asset parentAsset) {
+	private MyAsset parseEveAsset(final Node node, final Owner owner, final MyAsset parentAsset) {
 		long count = AttributeGetters.getLong(node, "count");
 
 		long itemId = AttributeGetters.getLong(node, "id");

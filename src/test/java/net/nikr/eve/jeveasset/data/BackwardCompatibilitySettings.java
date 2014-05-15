@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2013 Contributors (see credits.txt)
+ * Copyright 2009-2014 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -27,8 +27,12 @@ import java.io.File;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.*;
+import net.nikr.eve.jeveasset.data.tag.Tag;
+import net.nikr.eve.jeveasset.data.tag.TagID;
+import net.nikr.eve.jeveasset.data.tag.Tags;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
+import net.nikr.eve.jeveasset.gui.shared.table.View;
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewGroup;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile;
 import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerData;
@@ -51,6 +55,9 @@ public class BackwardCompatibilitySettings extends FakeSettings {
 		GET_TABLE_FILTERS,
 		GET_TABLE_FILTERS_KEY,
 		GET_TABLE_RESIZE,
+		GET_TABLE_VIEWS,
+		GET_TAGS,
+		GET_TAGS_ID,
 		GET_TRACKER_DATA,
 		GET_USER_ITEM_NAMES,
 		GET_USER_PRICES,
@@ -67,12 +74,12 @@ public class BackwardCompatibilitySettings extends FakeSettings {
 		SET_WINDOW_SIZE,
 	}
 
-	private Map<TrackerOwner, List<TrackerData>> trackerData = new HashMap<TrackerOwner, List<TrackerData>>();
+	private final Map<TrackerOwner, List<TrackerData>> trackerData = new HashMap<TrackerOwner, List<TrackerData>>();
 
-	private String settingsPath;
-	private String name;
-	private Map<Function, Boolean> ok = new EnumMap<Function, Boolean>(Function.class);
-	private List<Function> tested = new ArrayList<Function>();
+	private final String settingsPath;
+	private final String name;
+	private final Map<Function, Boolean> ok = new EnumMap<Function, Boolean>(Function.class);
+	private final List<Function> tested = new ArrayList<Function>();
 
 	public BackwardCompatibilitySettings(final String name) throws URISyntaxException {
 		this.name = name;
@@ -144,9 +151,9 @@ public class BackwardCompatibilitySettings extends FakeSettings {
 	}
 
 	@Override
-	public Map<String, Boolean> getFlags() {
+	public Map<SettingFlag, Boolean> getFlags() {
 		ok.put(Function.GET_FLAGS, true);
-		return new HashMap<String, Boolean>();
+		return new EnumMap<SettingFlag, Boolean>(SettingFlag.class);
 	}
 
 	@Override
@@ -206,6 +213,24 @@ public class BackwardCompatibilitySettings extends FakeSettings {
 	public Map<String, EnumTableFormatAdaptor.ResizeMode> getTableResize() {
 		ok.put(Function.GET_TABLE_RESIZE, true);
 		return new HashMap<String, EnumTableFormatAdaptor.ResizeMode>();
+	}
+
+	@Override
+	public Map<String, Map<String ,View>> getTableViews() {
+		ok.put(Function.GET_TABLE_VIEWS, true);
+		return new HashMap<String, Map<String ,View>>();
+	}
+
+	@Override
+	public Map<String, Tag> getTags() {
+		ok.put(Function.GET_TAGS, true);
+		return new HashMap<String, Tag>();
+	}
+
+	@Override
+	public Tags getTags(TagID tagID) {
+		ok.put(Function.GET_TAGS_ID, true);
+		return new Tags();
 	}
 
 	@Override
