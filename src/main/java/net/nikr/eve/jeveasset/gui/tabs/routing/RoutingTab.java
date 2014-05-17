@@ -1345,6 +1345,12 @@ public class RoutingTab extends JMainTab  {
 		public void setValue(int value) {
 			this.value = value;
 			int progress = (int) Math.floor(value * 100.0 / getMaximum());
+			if (progress < 0) {
+				progress = 0;
+			}
+			if (progress > 100) {
+				progress = 100;
+			}
 			if (progress != oldProgress) {
 				oldProgress = progress;
 				setProgress(oldProgress);
