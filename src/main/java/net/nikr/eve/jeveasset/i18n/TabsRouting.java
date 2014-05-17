@@ -70,7 +70,6 @@ public abstract class TabsRouting extends Bundle {
 	public abstract String resultTabShort();
 	public abstract String resultText(String name, int jumps, int waypoints, String security, String avoid, String time);
 	public abstract String routingTab();
-	public abstract String routingThread();
 	public abstract String routingTitle();
 	public abstract String saveFilterMsg();
 	public abstract String saveFilterTitle();

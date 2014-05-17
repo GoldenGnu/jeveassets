@@ -21,7 +21,12 @@
 
 package net.nikr.eve.jeveasset.io.online;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.Proxy;
 import java.util.Date;
 import java.util.HashMap;
@@ -58,8 +63,8 @@ public class PriceDataGetter implements PricingListener {
 	private final Set<Integer> failed = new HashSet<Integer>();
 
 	private UpdateTask updateTask;
-	private Map<Integer, PriceData> priceDataList;
-	private Set<Integer> typeIDs;
+	private final Map<Integer, PriceData> priceDataList = new HashMap<Integer, PriceData>();
+	private final Set<Integer> typeIDs = new HashSet<Integer>();
 	private boolean update;
 	private long nextUpdate = 0;
 
@@ -101,14 +106,15 @@ public class PriceDataGetter implements PricingListener {
 		}
 	}
 
-	protected Map<Integer, PriceData> process(final UpdateTask task, final boolean processUpdate, final PricingOptions pricingOptions, final Set<Integer> typeIDs, final PriceSource priceSource) {
+	protected Map<Integer, PriceData> process(final UpdateTask task, final boolean update, final PricingOptions pricingOptions, final Set<Integer> typeIDs, final PriceSource priceSource) {
 		this.updateTask = task;
-		this.update = processUpdate;
-		this.typeIDs = new HashSet<Integer>(typeIDs);
-		//Create new price data map (Will only be used if task complete)
-		priceDataList = new HashMap<Integer, PriceData>();
+		this.update = update;
+		this.typeIDs.clear();
+		this.typeIDs.addAll(typeIDs);
+		//Create clear price data map (Will only be used if task complete)
+		priceDataList.clear();
 
-		if (processUpdate) {
+		if (update) {
 			LOG.info("Price data update (" + priceSource + "):");
 		} else {
 			LOG.info("Price data loading (" + priceSource + "):");
@@ -119,7 +125,7 @@ public class PriceDataGetter implements PricingListener {
 		pricing.addPricingListener(this);
 
 		//Reset cache timers...
-		if (processUpdate) {
+		if (update) {
 			for (int id : typeIDs) {
 				pricing.setPrice(id, -1.0);
 			}
@@ -131,73 +137,77 @@ public class PriceDataGetter implements PricingListener {
 		}
 		//Wait to complete
 		failed.clear();
-		try {
-			while (typeIDs.size() > (priceDataList.size() + failed.size())) {
-				try {
-					synchronized (this) {
-						wait();
-						//System.out.println(priceDataList.size() + " of " + ids.size() + " done - " + fail.size() + " failed");
-					}
-				} catch (InterruptedException ex) {
-					LOG.info("Failed to update price");
-					pricing.cancelAll();
-					if (updateTask != null) {
-						updateTask.addError("Price data", "Cancelled");
-						updateTask.setTaskProgress(100, 100, 0, 100);
-						updateTask = null;
-					}
-					return null;
+		while (typeIDs.size() > (priceDataList.size() + failed.size())) {
+			try {
+				synchronized (this) {
+					wait();
 				}
-			}
-			if (!failed.isEmpty()) {
-				StringBuilder errorString = new StringBuilder();
-				for (int typeID : failed) {
-					if (!errorString.toString().isEmpty()) {
-						errorString.append(", ");
-					}
-					errorString.append(typeID);
-				}
-				LOG.error("Failed to update price data for the following typeIDs: " + errorString.toString());
+			} catch (InterruptedException ex) {
+				LOG.info("Failed to update price");
+				pricing.cancelAll();
 				if (updateTask != null) {
-					updateTask.addError("Price data", "Failed to update price data for " + failed.size() + " item types");
-				}
-			}
-			boolean updated = (!priceDataList.isEmpty() && (typeIDs.size() * 5 / 100) > failed.size()); //
-			if (updated) { //All Updated
-				if (processUpdate) {
-					LOG.info("	Price data updated");
-				} else {
-					LOG.info("	Price data loaded");
-				}
-				try {
-					pricing.writeCache();
-					LOG.info("	Price data cached saved");
-				} catch (IOException ex) {
-					LOG.error("Failed to write price data cache", ex);
-				}
-				//We only set the price data if everthing worked (AKA all updated)
-				return new HashMap<Integer, PriceData>(priceDataList);
-			} else { //None or some updated
-				LOG.info("	Failed to update price data");
-				if (updateTask != null) {
-					updateTask.addError("Price data", "Failed to update price data");
+					updateTask.addError("Price data", "Cancelled");
 					updateTask.setTaskProgress(100, 100, 0, 100);
+					updateTask = null;
 				}
+				clear();
 				return null;
 			}
-		} finally {
-			//Memory
-			this.updateTask = null;
-			this.typeIDs.clear();
-			this.typeIDs = null;
-			this.priceDataList.clear();
-			this.priceDataList = null;
-			this.failed.clear();
+		}
+		if (!failed.isEmpty()) {
+			StringBuilder errorString = new StringBuilder();
+			for (int typeID : failed) {
+				if (!errorString.toString().isEmpty()) {
+					errorString.append(", ");
+				}
+				errorString.append(typeID);
+			}
+			LOG.error("Failed to update price data for the following typeIDs: " + errorString.toString());
+			if (updateTask != null) {
+				updateTask.addError("Price data", "Failed to update price data for " + failed.size() + " item types");
+			}
+		}
+		boolean updated = (!priceDataList.isEmpty() && (typeIDs.size() * 5 / 100) > failed.size()); //
+		if (updated) { //All Updated
+			if (update) {
+				LOG.info("	Price data updated");
+			} else {
+				LOG.info("	Price data loaded");
+			}
+			try {
+				pricing.writeCache();
+				LOG.info("	Price data cached saved");
+			} catch (IOException ex) {
+				LOG.error("Failed to write price data cache", ex);
+			}
+			//We only set the price data if everthing worked (AKA all updated)
+			try {
+				return new HashMap<Integer, PriceData>(priceDataList);
+			} finally {
+				clear();
+			}
+		} else { //None or some updated
+			LOG.info("	Failed to update price data");
+			if (updateTask != null) {
+				updateTask.addError("Price data", "Failed to update price data");
+				updateTask.setTaskProgress(100, 100, 0, 100);
+			}
+			clear();
+			return null;
 		}
 	}
 
 	public Date getNextUpdate() {
 		return new Date(nextUpdate + priceCacheTimer);
+	}
+
+	private void clear() {
+		//Memory
+		SplashUpdater.setSubProgress(100);
+		this.updateTask = null;
+		this.typeIDs.clear();
+		this.priceDataList.clear();
+		this.failed.clear();
 	}
 
 	@Override

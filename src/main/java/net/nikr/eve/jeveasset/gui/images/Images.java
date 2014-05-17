@@ -207,6 +207,7 @@ public enum Images {
 			count++;
 			SplashUpdater.setSubProgress((int) (count * 100.0 / Images.values().length));
 		}
+		SplashUpdater.setSubProgress(100);
 		return ok;
 	}
 
