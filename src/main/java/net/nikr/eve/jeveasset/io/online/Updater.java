@@ -46,39 +46,48 @@ public class Updater {
 
 	private static final String PROGRAM_UPDATE_URL = "http://eve.nikr.net/jeveassets/update/program/";
 	private static final String DATA_UPDATE_URL =    "http://eve.nikr.net/jeveassets/update/data/";
+	private static final String UPDATE_URL =         "http://eve.nikr.net/jeveassets/update/jupdate.jar";
 
 	public void update() {
 		LOG.info("Checking online version");
 		Getter getter = new Getter();
-		String programVersion = getter.get(PROGRAM_UPDATE_URL);
-		LOG.info("PROGRAM Online: " + programVersion + " Local: " + Program.PROGRAM_VERSION);
-		if (programVersion != null && !programVersion.equals(Program.PROGRAM_VERSION)) {
-			int value = JOptionPane.showConfirmDialog(null, 
-					"Update jEveAssets now?",
-					"Program Update Available",
-					JOptionPane.OK_CANCEL_OPTION);
-			if (value == JOptionPane.OK_OPTION) {
-				LOG.info("Updating program");
-				runUpdate(PROGRAM_UPDATE_URL);
-			}
-		}
-		String dataVersion = getter.get(DATA_UPDATE_URL);
-		LOG.info("DATA Online: " + dataVersion + " Local: " + getLocalData());
-		if (dataVersion != null && !dataVersion.equals(getLocalData())) {
-			int value = JOptionPane.showConfirmDialog(null, 
-					"Update static data now?",
-					"Data Update Available",
-					JOptionPane.OK_CANCEL_OPTION);
-			if (value == JOptionPane.OK_OPTION) {
-				LOG.info("Updating program");
-				runUpdate(DATA_UPDATE_URL);
-			}
-		}
+		final String onlineProgram = getter.get(PROGRAM_UPDATE_URL+"update_version.dat");
+		final String localProgram = Program.PROGRAM_VERSION;
+		update("Program", onlineProgram, localProgram, PROGRAM_UPDATE_URL);
+		final String onlineData = getter.get(DATA_UPDATE_URL+"update_version.dat");
+		final String localData = getLocalData();
+		update("Static data", onlineData, localData, DATA_UPDATE_URL);
 	}
 
 	public String getLocalData() {
 		Getter getter = new Getter();
 		return getter.get(new File(Settings.getPathDataVersion()));
+	}
+
+	private void update(String title, String online, String local, String link) {
+		LOG.info(title.toUpperCase() + " Online: " + online + " Local: " + local);
+		if (online != null && !online.equals(local)) {
+			boolean download = downloadUpdater();
+			if (!download) {
+				JOptionPane.showMessageDialog(null, "Auto update failed\r\nRestart jEveAssets to try again...", "Auto Update", JOptionPane.ERROR_MESSAGE);
+				return;
+			}
+			int value = JOptionPane.showConfirmDialog(null, 
+					title + " update available\r\n"
+					+ "\r\n"
+					+ "Your version: " + local + "\r\n"
+					+ "Latest version: " + online + "\r\n"
+					+ "\r\n"
+					+ "Update " + title.toLowerCase() + " now?\r\n"
+					+ "\r\n"
+					,
+					"Auto Update",
+					JOptionPane.OK_CANCEL_OPTION);
+			if (value == JOptionPane.OK_OPTION) {
+				LOG.info("Updating program");
+				runUpdate(link);
+			}
+		}
 	}
 
 	private void runUpdate(String link) {
@@ -103,9 +112,15 @@ public class Updater {
 		list.add("-jar");
 		list.add(Settings.getPathRunUpdate());
 		list.add(link);
-		System.out.println(Settings.getPathRunJar());
 		list.add(Settings.getPathRunJar());
 		return list;
+	}
+
+	private static boolean downloadUpdater() {
+		DataGetter dataGetter = new DataGetter();
+		Getter getter = new Getter();
+		String checksum = getter.get(UPDATE_URL+".md5");
+		return dataGetter.get(UPDATE_URL, new File(Settings.getPathRunUpdate()), checksum);
 	}
 
 	private static class Getter {
@@ -120,7 +135,7 @@ public class Updater {
 
 		protected String get(String link) {
 			try {
-				URL url = new URL(link+"update_version.dat");
+				URL url = new URL(link);
 				return get(new InputStreamReader(url.openStream()));
 			} catch (MalformedURLException e) {
 				return null;
