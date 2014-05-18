@@ -33,7 +33,13 @@ import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import javax.swing.*;
+import javax.swing.GroupLayout;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.text.JTextComponent;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.gui.shared.CaseInsensitiveComparator;
@@ -49,8 +55,8 @@ public class FilterSave extends JDialogCentered {
 
 	private final EventList<String> filters;
 	private final List<String> defaultFilters = new ArrayList<String>();
-	private JComboBox jName;
-	private JButton jSave;
+	private final JComboBox jName;
+	private final JButton jSave;
 
 	private String returnString;
 
@@ -98,8 +104,13 @@ public class FilterSave extends JDialogCentered {
 	String show(final List<String> filters, final List<String> defaultFilters) {
 		returnString = null;
 		Collections.sort(filters, new CaseInsensitiveComparator());
-		this.filters.clear();
-		this.filters.addAll(filters);
+		try {
+			this.filters.getReadWriteLock().writeLock().lock();
+			this.filters.clear();
+			this.filters.addAll(filters);
+		} finally {
+			this.filters.getReadWriteLock().writeLock().unlock();
+		}
 		this.defaultFilters.clear();
 		this.defaultFilters.addAll(defaultFilters);
 		this.setVisible(true);
