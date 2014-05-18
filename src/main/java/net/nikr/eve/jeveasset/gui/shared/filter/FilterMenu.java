@@ -23,9 +23,13 @@ package net.nikr.eve.jeveasset.gui.shared.filter;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.TimeZone;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import net.nikr.eve.jeveasset.gui.images.Images;
+import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter.CompareType;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter.LogicType;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
@@ -76,9 +80,25 @@ class FilterMenu<E> extends JMenu {
 			CompareType compareType = Filter.CompareType.valueOf(e.getActionCommand());
 			if (CompareType.isColumnCompare(compareType)) {
 				gui.addFilter(new Filter(LogicType.AND, column, compareType, column.name()));
+			} else if (compareType == CompareType.LAST_DAYS) {
+				gui.addFilter(new Filter(LogicType.AND, column, compareType, daysBetween()));
 			} else {
 				gui.addFilter(new Filter(LogicType.AND, column, compareType, text));
 			}
 		}
+	}
+
+	public String daysBetween(){
+		Date date = Formater.columnStringToDate(text);
+		// reset hour, minutes, seconds and millis
+		Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
+		calendar.setTime(date);
+		calendar.set(Calendar.HOUR_OF_DAY, 0);
+		calendar.set(Calendar.MINUTE, 0);
+		calendar.set(Calendar.SECOND, 0);
+		calendar.set(Calendar.MILLISECOND, 0);
+		
+		int days = (int)( (new Date().getTime() - calendar.getTime().getTime()) / (1000 * 60 * 60 * 24));
+		return String.valueOf(days);
 	}
 }

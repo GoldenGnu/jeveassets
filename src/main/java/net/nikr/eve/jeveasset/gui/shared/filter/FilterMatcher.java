@@ -24,8 +24,10 @@ package net.nikr.eve.jeveasset.gui.shared.filter;
 import ca.odell.glazedlists.matchers.Matcher;
 import java.text.NumberFormat;
 import java.text.ParsePosition;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
+import java.util.TimeZone;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter.CompareType;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter.LogicType;
@@ -114,6 +116,8 @@ public class FilterMatcher<E> implements Matcher<E> {
 			return before(column, filterControl.getColumnValue(item, text));
 		} else if (compare == Filter.CompareType.AFTER_COLUMN) {
 			return after(column, filterControl.getColumnValue(item, text));
+		} else if (compare == Filter.CompareType.LAST_DAYS) {
+			return lastDays(column, text);
 		} else { //Fallback: show all...
 			return true;
 		}
@@ -149,6 +153,7 @@ public class FilterMatcher<E> implements Matcher<E> {
 		//Equals (case insentive)
 		return format(object1).equals(formatedText);
 	}
+
 	private boolean contains(final Object object1, final String formatedText) {
 		//Null
 		if (object1 == null || formatedText == null) {
@@ -158,12 +163,15 @@ public class FilterMatcher<E> implements Matcher<E> {
 		//Contains (case insentive)
 		return format(object1).contains(formatedText);
 	}
+
 	private boolean less(final Object object1, final Object object2) {
 		return greatThen(object2, object1, false);
 	}
+
 	private boolean great(final Object object1, final Object object2) {
 		return greatThen(object1, object2, true);
 	}
+
 	private boolean greatThen(final Object object1, final Object object2, final boolean fallback) {
 		//Null
 		if (object1 == null || object2 == null) {
@@ -210,6 +218,21 @@ public class FilterMatcher<E> implements Matcher<E> {
 		Date date2 = getDate(object2, true);
 		if (date1 != null && date2 != null) {
 			return date1.after(date2);
+		}
+		return false;
+	}
+
+	private boolean lastDays(final Object object1, final Object object2) {
+		Date date = getDate(object1, false);
+		Number days = createNumber(object2);
+		if (date != null && days != null) {
+			Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
+			calendar.set(Calendar.HOUR_OF_DAY, 0);
+			calendar.set(Calendar.MINUTE, 0);
+			calendar.set(Calendar.SECOND, 0);
+			calendar.set(Calendar.MILLISECOND, 0);
+			calendar.add(Calendar.DAY_OF_MONTH, -days.intValue());  
+			return date.after(calendar.getTime());
 		}
 		return false;
 	}
