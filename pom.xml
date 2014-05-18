@@ -112,7 +112,6 @@
 								<copy todir="${project.build.directory}">
 									<fileset dir="" includes="*.txt"/>
 									<fileset dir="tools" includes="jmemory.jar"/>
-+									<fileset dir="tools" includes="jupdate.jar"/>
 								</copy>
 							</target>
 						</configuration>
