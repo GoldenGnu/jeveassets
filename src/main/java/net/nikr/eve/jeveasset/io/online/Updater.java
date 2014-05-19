@@ -44,19 +44,20 @@ import org.slf4j.LoggerFactory;
 public class Updater {
 	private static final Logger LOG = LoggerFactory.getLogger(Updater.class);
 
-	private static final String PROGRAM_UPDATE_URL = "http://eve.nikr.net/jeveassets/update/program/";
-	private static final String DATA_UPDATE_URL =    "http://eve.nikr.net/jeveassets/update/data/";
-	private static final String UPDATE_URL =         "http://eve.nikr.net/jeveassets/update/jupdate.jar";
+	private static final String UPDATE_URL = "http://eve.nikr.net/jeveassets/update/";
+	private static final String PROGRAM =    UPDATE_URL + "program/";
+	private static final String DATA =       UPDATE_URL + "data/";
+	private static final String UPDATE =     UPDATE_URL + "jupdate.jar";
 
 	public void update() {
 		LOG.info("Checking online version");
 		Getter getter = new Getter();
-		final String onlineProgram = getter.get(PROGRAM_UPDATE_URL+"update_version.dat");
+		final String onlineProgram = getter.get(PROGRAM+"update_version.dat");
 		final String localProgram = Program.PROGRAM_VERSION;
-		update("Program", onlineProgram, localProgram, PROGRAM_UPDATE_URL);
-		final String onlineData = getter.get(DATA_UPDATE_URL+"update_version.dat");
+		update("Program", onlineProgram, localProgram, PROGRAM);
+		final String onlineData = getter.get(DATA+"update_version.dat");
 		final String localData = getLocalData();
-		update("Static data", onlineData, localData, DATA_UPDATE_URL);
+		update("Static data", onlineData, localData, DATA);
 	}
 
 	public String getLocalData() {
@@ -119,8 +120,8 @@ public class Updater {
 	private static boolean downloadUpdater() {
 		DataGetter dataGetter = new DataGetter();
 		Getter getter = new Getter();
-		String checksum = getter.get(UPDATE_URL+".md5");
-		return dataGetter.get(UPDATE_URL, new File(Settings.getPathRunUpdate()), checksum);
+		String checksum = getter.get(UPDATE+".md5");
+		return dataGetter.get(UPDATE, new File(Settings.getPathRunUpdate()), checksum);
 	}
 
 	private static class Getter {
