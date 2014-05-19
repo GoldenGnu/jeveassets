@@ -16,6 +16,20 @@
                   #### #  # #  # #  # #### #### #### #### ####
 
 ________________________________________________________________________________
+_2.8.3__________________________________________________________________________
+
+Changed:
+-Better auto update code (update jupdate.jar and validate downloaded files)
+
+Source:
+-Deploy: Uploaded release automatic
+
+Notes:
+The new auto update code will only be used
+when updating from 2.8.3 to any later version.
+Updating to 2.8.3 will still use the old code.
+
+________________________________________________________________________________
 _2.8.2__________________________________________________________________________
 
 Bug Fixes:
