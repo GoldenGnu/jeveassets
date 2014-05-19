@@ -1,3 +1,7 @@
+changelog.txt
+credits.txt
+jeveassets.jar
+jmemory.jar
 lib/asm-4.0.jar
 lib/dom4j-1.6.1.jar
 lib/eveapi-5.1.4-SNAPSHOT.jar
@@ -17,9 +21,5 @@ lib/slf4j-api-1.6.1.jar
 lib/slf4j-log4j12-1.6.1.jar
 lib/supercsv-1.52.jar
 lib/translations-2.0.1.jar
-changelog.txt
-credits.txt
-jeveassets.jar
-jmemory.jar
 license.txt
 readme.txt
