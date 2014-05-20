@@ -22,7 +22,7 @@ Changed:
 -Better auto update code (update jupdate.jar and validate downloaded files)
 
 Source:
--Deploy: Uploaded release automatic
+-Deploy: Upload release automatic
 
 Notes:
 The new auto update code will only be used
