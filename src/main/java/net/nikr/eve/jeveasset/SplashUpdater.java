@@ -21,7 +21,11 @@
 
 package net.nikr.eve.jeveasset;
 
-import java.awt.*;
+import java.awt.AlphaComposite;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics2D;
+import java.awt.SplashScreen;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import javax.imageio.ImageIO;
@@ -89,11 +93,10 @@ public class SplashUpdater {
 			number = 0;
 		}
 		if (subProgress != number) {
-			if (isVisible() && number < subProgress && number != 0) {
-				throw new RuntimeException("please only move forward... (subProgress)");
+			if (isVisible() && (number > subProgress || number == 0)) {
+				subProgress = number;
+				update();
 			}
-			subProgress = number;
-			update();
 		}
 	}
 
@@ -110,11 +113,10 @@ public class SplashUpdater {
 			number = 0;
 		}
 		if (progress != number) {
-			if (isVisible() && number < progress) {
-				throw new RuntimeException("please only move forward... (progress)");
+			if (isVisible() && number > progress) {
+				progress = number;
+				update();
 			}
-			progress = number;
-			update();
 		}
 	}
 
