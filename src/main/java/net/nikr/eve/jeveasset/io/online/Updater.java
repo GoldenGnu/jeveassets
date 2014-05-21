@@ -85,7 +85,7 @@ public class Updater {
 					"Auto Update",
 					JOptionPane.OK_CANCEL_OPTION);
 			if (value == JOptionPane.OK_OPTION) {
-				LOG.info("Updating program");
+				LOG.info("Updating " + title);
 				runUpdate(link);
 			}
 		}
