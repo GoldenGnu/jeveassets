@@ -69,6 +69,12 @@ public class TestI18N {
 	}
 
 	@Test
+	public void testDialoguesBugs_en() throws Exception {
+		DialoguesBugs g = Main.getBundleService().get(DialoguesBugs.class);
+		assertNotNull(g.cancel());
+	}
+
+	@Test
 	public void testDialoguesExport_en() throws Exception {
 		DialoguesExport g = Main.getBundleService().get(DialoguesExport.class);
 		assertNotNull(g.noFilter());

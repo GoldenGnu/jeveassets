@@ -37,6 +37,7 @@ import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.data.StaticData;
 import net.nikr.eve.jeveasset.gui.dialogs.AboutDialog;
 import net.nikr.eve.jeveasset.gui.dialogs.account.AccountManagerDialog;
+import net.nikr.eve.jeveasset.gui.dialogs.bugs.BugsDialog;
 import net.nikr.eve.jeveasset.gui.dialogs.profile.ProfileDialog;
 import net.nikr.eve.jeveasset.gui.dialogs.settings.SettingsDialog;
 import net.nikr.eve.jeveasset.gui.dialogs.settings.UserNameSettingsPanel;
@@ -109,6 +110,7 @@ public class Program implements ActionListener {
 	private ProfileDialog profileDialog;
 	private SettingsDialog settingsDialog;
 	private UpdateDialog updateDialog;
+	private BugsDialog bugsDialog;
 
 	//Tabs
 	private ValueRetroTab valueRetroTab;
@@ -243,6 +245,8 @@ public class Program implements ActionListener {
 		SplashUpdater.setProgress(88);
 		LOG.info("Loading: Update Dialog");
 		updateDialog = new UpdateDialog(this);
+		LOG.info("Loading: Bugs Dialog");
+		bugsDialog = new BugsDialog(this);
 		SplashUpdater.setProgress(90);
 		LOG.info("Loading: Options Dialog");
 		settingsDialog = new SettingsDialog(this);
@@ -618,6 +622,9 @@ public class Program implements ActionListener {
 		if (MainMenuAction.UPDATE.name().equals(e.getActionCommand())) {
 			updateDialog.setVisible(true);
 		}
+		if (MainMenuAction.SEND_BUG_REPORT.name().equals(e.getActionCommand())) {
+			bugsDialog.setVisible(true);
+		}
 	//External Files
 		if (MainMenuAction.README.name().equals(e.getActionCommand())) {
 			DesktopUtil.open(Settings.getPathReadme(), this);
@@ -632,9 +639,6 @@ public class Program implements ActionListener {
 			DesktopUtil.open(Settings.getPathChangeLog(), this);
 		}
 	//Links
-		if (MainMenuAction.LINK_BUGS.name().equals(e.getActionCommand())) {
-			DesktopUtil.browse("https://code.google.com/p/jeveassets/wiki/ReadMe#Bugs", this);
-		}
 		if (MainMenuAction.LINK_FEATURES.name().equals(e.getActionCommand())) {
 			DesktopUtil.browse("http://jeveassets.uservoice.com/", this);
 		}
