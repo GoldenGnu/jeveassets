@@ -43,7 +43,7 @@ public class JournalGetter extends AbstractApiAccountKeyGetter<WalletJournalResp
 	private boolean saveHistory;
 
 	public JournalGetter() {
-		super("Journal");
+		super("Wallet Journal");
 	}
 
 	public void load(final UpdateTask updateTask, final boolean forceUpdate, final List<MyAccount> accounts, final boolean saveHistory) {

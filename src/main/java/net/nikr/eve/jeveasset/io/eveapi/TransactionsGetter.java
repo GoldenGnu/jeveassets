@@ -43,7 +43,7 @@ public class TransactionsGetter extends AbstractApiAccountKeyGetter<WalletTransa
 	private boolean saveHistory;
 
 	public TransactionsGetter() {
-		super("Transaction");
+		super("Wallet Transactions");
 	}
 
 	public void load(final UpdateTask updateTask, final boolean forceUpdate, final List<MyAccount> accounts, final boolean saveHistory) {

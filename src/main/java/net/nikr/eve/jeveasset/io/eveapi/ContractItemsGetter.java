@@ -46,7 +46,7 @@ public class ContractItemsGetter extends AbstractApiGetter<ContractItemsResponse
 	private Map<Long, List<ContractItem>> savedItems = new HashMap<Long, List<ContractItem>>();
 
 	public ContractItemsGetter() {
-		super("Contract Items", false, false);
+		super("Contracts", false, false);
 	}
 
 	//FIXME - - > Move to overwrite load (See: JournalGetter)
