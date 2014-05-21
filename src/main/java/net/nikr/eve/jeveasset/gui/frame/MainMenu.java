@@ -54,7 +54,7 @@ public class MainMenu extends JMenuBar {
 		CREDITS,
 		README,
 		CHANGELOG,
-		LINK_BUGS,
+		SEND_BUG_REPORT,
 		LINK_FEATURES,
 		LINK_HELP,
 		ROUTING,
@@ -272,10 +272,10 @@ public class MainMenu extends JMenuBar {
 		menuItem.addActionListener(program);
 		menu.add(menuItem);
 
-		menuItem = new JMenuItem(GuiFrame.get().linkBugs());
+		menuItem = new JMenuItem(GuiFrame.get().sendBugReport());
 		//menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.ALT_MASK));
 		menuItem.setIcon(Images.MISC_DEBUG.getIcon());
-		menuItem.setActionCommand(MainMenuAction.LINK_BUGS.name());
+		menuItem.setActionCommand(MainMenuAction.SEND_BUG_REPORT.name());
 		menuItem.addActionListener(program);
 		
 		menu.add(menuItem);

@@ -97,13 +97,17 @@ public class NikrUncaughtExceptionHandler implements Thread.UncaughtExceptionHan
 	}
 
 	private String send(Throwable t) {
+		return send(getStackTrace(t));
+	}
+
+	public static String send(String bug) {
 		HttpURLConnection connection = null;
 		try {
 			String urlParameters
 					= "os=" + URLEncoder.encode(System.getProperty("os.name") + " " + System.getProperty("os.version"), "UTF-8")
 					+ "&java=" + URLEncoder.encode(System.getProperty("java.vendor") + " " + System.getProperty("java.version"), "UTF-8")
 					+ "&version=" + URLEncoder.encode(Program.PROGRAM_NAME + " " + Program.PROGRAM_VERSION, "UTF-8")
-					+ "&log=" + URLEncoder.encode(getStackTrace(t), "UTF-8");
+					+ "&log=" + URLEncoder.encode(bug, "UTF-8");
 			URL url = new URL(SUBMIT);
 			connection = (HttpURLConnection) url.openConnection();
 			connection.setRequestMethod("POST");
