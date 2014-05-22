@@ -41,9 +41,21 @@ import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
 import net.nikr.eve.jeveasset.gui.tabs.contracts.MyContract;
+import net.nikr.eve.jeveasset.gui.tabs.jobs.MyIndustryJob;
 import net.nikr.eve.jeveasset.i18n.DialoguesUpdate;
 import net.nikr.eve.jeveasset.i18n.General;
-import net.nikr.eve.jeveasset.io.eveapi.*;
+import net.nikr.eve.jeveasset.io.eveapi.AccountBalanceGetter;
+import net.nikr.eve.jeveasset.io.eveapi.AccountGetter;
+import net.nikr.eve.jeveasset.io.eveapi.AssetsGetter;
+import net.nikr.eve.jeveasset.io.eveapi.ConquerableStationsGetter;
+import net.nikr.eve.jeveasset.io.eveapi.ContractItemsGetter;
+import net.nikr.eve.jeveasset.io.eveapi.ContractsGetter;
+import net.nikr.eve.jeveasset.io.eveapi.IndustryJobsGetter;
+import net.nikr.eve.jeveasset.io.eveapi.JournalGetter;
+import net.nikr.eve.jeveasset.io.eveapi.LocationsGetter;
+import net.nikr.eve.jeveasset.io.eveapi.MarketOrdersGetter;
+import net.nikr.eve.jeveasset.io.eveapi.NameGetter;
+import net.nikr.eve.jeveasset.io.eveapi.TransactionsGetter;
 
 
 public class UpdateDialog extends JDialogCentered {
@@ -347,12 +359,6 @@ public class UpdateDialog extends JDialogCentered {
 			} else {
 				timeLeft = Formater.milliseconds(time);
 			}
-			long minutes = time / (60 * 1000) % 60;
-			long hours = time / (60 * 60 * 1000) % 24;
-			long days = time / (24 * 60 * 60 * 1000);
-			if (days == 0 && hours == 0 && minutes == 0) {
-				minutes = -1;
-			}
 			jUpdate.setText(Formater.weekdayAndTime(nextUpdate));
 			jLeft.setText(timeLeft);
 			jCheckBox.setSelected(false);
@@ -454,6 +460,9 @@ public class UpdateDialog extends JDialogCentered {
 				}
 				if (jAssets.isSelected()) {
 					updateTasks.add(new AssetsTask());
+				}
+				if (jContracts.isSelected() || jIndustryJobs.isSelected()) {
+					updateTasks.add(new NameTask());
 				}
 				if (jPriceData.isSelected() //May need prices for new items
 						|| jMarketOrders.isSelected()
@@ -604,10 +613,24 @@ public class UpdateDialog extends JDialogCentered {
 			//Get Contract Items
 			ContractItemsGetter itemsGetter = new ContractItemsGetter();
 			itemsGetter.load(this, Settings.get().isForceUpdate(), program.getAccounts());
+		}
+	}
+
+	public class NameTask extends UpdateTask {
+
+		public NameTask() {
+			super(DialoguesUpdate.get().names());
+		}
+
+		@Override
+		public void update() {
 			Set<Long> list = new HashSet<Long>();
 			for (MyAccount account : program.getAccounts()) {
 				for (Owner owner : account.getOwners()) {
 					list.add(owner.getOwnerID()); //Just to be sure
+					for (MyIndustryJob myIndustryJob : owner.getIndustryJobs()) {
+						list.add(myIndustryJob.getInstallerID());
+					}
 					for (MyContract contract : owner.getContracts().keySet()) {
 						list.add(contract.getAcceptorID());
 						list.add(contract.getAssigneeID());
