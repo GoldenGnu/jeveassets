@@ -194,13 +194,9 @@ public final class ApiConverter {
 	}
 
 	public static MyContract toContract(final Contract eveContract) {
-		String acceptor = ApiIdConverter.getOwnerName(eveContract.getAcceptorID());
-		String assignee = ApiIdConverter.getOwnerName(eveContract.getAssigneeID());
-		String issuerCorp = ApiIdConverter.getOwnerName(eveContract.getIssuerCorpID());
-		String issuer = ApiIdConverter.getOwnerName(eveContract.getIssuerID());
 		MyLocation endStation = ApiIdConverter.getLocation(eveContract.getEndStationID());
 		MyLocation startStation = ApiIdConverter.getLocation(eveContract.getStartStationID());
-		return new MyContract(eveContract, acceptor, assignee, issuerCorp, issuer, startStation, endStation);
+		return new MyContract(eveContract, startStation, endStation);
 	}
 
 	private static MyContractItem toContractItem(final ContractItem eveContractItem, MyContract contract) {

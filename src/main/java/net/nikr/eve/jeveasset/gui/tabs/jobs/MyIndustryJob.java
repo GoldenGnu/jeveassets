@@ -204,6 +204,7 @@ public class MyIndustryJob extends IndustryJob implements Comparable<MyIndustryJ
 	private double price;
 	private double outputValue;
 	private int outputCount;
+	private String installer;
 
 	public MyIndustryJob(final IndustryJob apiIndustryJob, final Item item, final MyLocation location, final Owner owner, final int portion) {
 		this.setJobID(apiIndustryJob.getJobID());
@@ -363,6 +364,14 @@ public class MyIndustryJob extends IndustryJob implements Comparable<MyIndustryJ
 
 	public int getOutputCount() {
 		return outputCount;
+	}
+
+	public String getInstaller() {
+		return installer;
+	}
+
+	public void setInstaller(String installer) {
+		this.installer = installer;
 	}
 
 	@Override

@@ -256,6 +256,10 @@ public class ProfileData {
 				if (!owner.getIndustryJobs().isEmpty() && !ownersJobs.contains(owner.getName())) {
 					//Industry Jobs
 					industryJobs.addAll(owner.getIndustryJobs());
+					//Update Owners
+					for (MyIndustryJob industryJob : owner.getIndustryJobs()) {
+						industryJob.setInstaller(ApiIdConverter.getOwnerName(industryJob.getInstallerID()));
+					}
 					//Assets
 					addAssets(ApiConverter.assetIndustryJob(owner.getIndustryJobs(), owner), assets);
 					ownersJobs.add(owner.getName());
@@ -264,6 +268,11 @@ public class ProfileData {
 				for (Map.Entry<MyContract, List<MyContractItem>> entry : owner.getContracts().entrySet()) {
 					//Contracts
 					MyContract contract = entry.getKey();
+					//Update Owners
+					contract.setAcceptor(ApiIdConverter.getOwnerName(contract.getAcceptorID()));
+					contract.setAssignee(ApiIdConverter.getOwnerName(contract.getAssigneeID()));
+					contract.setIssuerCorp(ApiIdConverter.getOwnerName(contract.getIssuerCorpID()));
+					contract.setIssuer(ApiIdConverter.getOwnerName(contract.getIssuerID()));
 					if (contractIDs.contains(contract.getContractID())) {
 						continue;
 					}
