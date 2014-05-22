@@ -8,7 +8,7 @@ $log_in = filter_input(INPUT_POST, 'log');
 
 //Find existing bug report
 $dbh = con(); //Get connection
-$stmt = $dbh->prepare("SELECT * FROM jeveasset where log = ?");
+$stmt = $dbh->prepare("SELECT * FROM ".table()." where log = ?");
 if ($stmt->execute(array($log_in))) {
 	while ($row = $stmt->fetch()) {
 		$foundRow = $row;
@@ -18,7 +18,7 @@ if ($stmt->execute(array($log_in))) {
 
 if (empty($foundRow)) { //New bug report
 	$count = '1';
-	$stmt = $dbh->prepare("INSERT INTO jeveasset (os,java,version,log,count) VALUES (:os, :java, :version, :log, :count)");
+	$stmt = $dbh->prepare("INSERT INTO ".table()." (os,java,version,log,count) VALUES (:os, :java, :version, :log, :count)");
 	$stmt->bindParam(':os', $os_in);
 	$stmt->bindParam(':java', $java_in);
 	$stmt->bindParam(':version', $version_in);
@@ -30,13 +30,19 @@ if (empty($foundRow)) { //New bug report
 	print $id;
 
 	$to      = 'nkr@niklaskr.dk';
-	$subject = 'New jEveAsset bug report';
-	$message = 'jEveAsset bug report'."\r\n"
-				.'BugID: ' . $id . "\r\n"
-				.'http://eve.nikr.net/jeveassets/bugs/'
+	$subject = name();
+	$message = "New Bug Report\r\n"
+				."BugID: " . $id . "\r\n"
+				."http://eve.nikr.net/jeveassets/bugs/\r\n"
+				."\r\n"
+				.$log_in
+				."\r\n"
 				;
 	$headers = 'From: nkr@niklaskr.dk' . "\r\n" .
 			 'X-Mailer: PHP/' . phpversion();
+
+	// In case any of our lines are larger than 70 characters, we should use wordwrap()
+	$message = wordwrap($message, 70, "\r\n");
 	
 	mail($to, $subject, $message, $headers);
 } else { //Old bug report - Add: count, os, java, version - Update: status
@@ -48,7 +54,7 @@ if (empty($foundRow)) { //New bug report
 	} else {
 		$status = $foundRow['status'];
 	}
-	$stmt = $dbh->prepare("UPDATE jeveasset SET os=:os,java=:java,version=:version,count=:count,status=:status WHERE id=:id");
+	$stmt = $dbh->prepare("UPDATE ".table()." SET os=:os,java=:java,version=:version,count=:count,status=:status WHERE id=:id");
 	$stmt->bindParam(':os', add($foundRow['os'], $os_in));
 	$stmt->bindParam(':java', add($foundRow['java'], $java_in));
 	$stmt->bindParam(':version', add($foundRow['version'], $version_in));
