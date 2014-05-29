@@ -278,8 +278,10 @@ public class Stockpile implements Comparable<Stockpile>, LocationType {
 	public void updateTotal() {
 		totalItem.reset();
 		percentFull = Double.MAX_VALUE;
-		items.remove(totalItem);
 		for (StockpileItem item : items) {
+			if (item.getTypeID() == 0) {
+				continue;
+			}
 			double percent;
 			if (item.getCountNow() == 0) {
 				percent = 0;
@@ -292,7 +294,6 @@ public class Stockpile implements Comparable<Stockpile>, LocationType {
 		if (percentFull == Double.MAX_VALUE) { //Default value
 			percentFull = 1;
 		}
-		items.add(totalItem);
 	}
 
 	public StockpileTotal getTotal() {
@@ -957,16 +958,16 @@ public class Stockpile implements Comparable<Stockpile>, LocationType {
 	}
 
 	public static class StockpileFilter {
-		private MyLocation location;
-		private List<Integer> flagIDs;
-		private List<String> containers;
-		private List<Long> ownerIDs;
-		private boolean assets;
-		private boolean sellOrders;
-		private boolean buyOrders;
-		private boolean buyTransactions;
-		private boolean sellTransactions;
-		private boolean jobs;
+		private final MyLocation location;
+		private final List<Integer> flagIDs;
+		private final List<String> containers;
+		private final List<Long> ownerIDs;
+		private final boolean assets;
+		private final boolean sellOrders;
+		private final boolean buyOrders;
+		private final boolean buyTransactions;
+		private final boolean sellTransactions;
+		private final boolean jobs;
 
 		public StockpileFilter(MyLocation location, List<Integer> flagIDs, List<String> containers, List<Long> ownerIDs, boolean inventory, boolean sellOrders, boolean buyOrders, boolean jobs, boolean buyTransactions, boolean sellTransactions) {
 			this.location = location;
