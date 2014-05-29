@@ -81,6 +81,7 @@ import net.nikr.eve.jeveasset.gui.shared.menu.*;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.TableMenu;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
+import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.ColumnValueChangeListener;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
 import net.nikr.eve.jeveasset.gui.shared.table.JSeparatorTable;
 import net.nikr.eve.jeveasset.gui.shared.table.PaddingTableCellRenderer;
@@ -136,7 +137,7 @@ public class StockpileTab extends JMainTab {
 	public StockpileTab(final Program program) {
 		super(program, TabsStockpile.get().stockpile(), Images.TOOL_STOCKPILE.getIcon(), true);
 
-		ListenerClass listener = new ListenerClass();
+		final ListenerClass listener = new ListenerClass();
 
 		stockpileDialog = new StockpileDialog(program);
 		stockpileItemDialog = new StockpileItemDialog(program);
@@ -205,6 +206,7 @@ public class StockpileTab extends JMainTab {
 
 		//Table Format
 		tableFormat = new EnumTableFormatAdaptor<StockpileTableFormat, StockpileItem>(StockpileTableFormat.class);
+		tableFormat.addListener(listener);
 		//Backend
 		eventList = new BasicEventList<StockpileItem>();
 		//Sorting (per column)
@@ -802,7 +804,7 @@ public class StockpileTab extends JMainTab {
 		}
 	}
 
-	private class ListenerClass implements ActionListener, ListEventListener<StockpileItem> {
+	private class ListenerClass implements ActionListener, ListEventListener<StockpileItem>, ColumnValueChangeListener {
 		@Override
 		public void listChanged(final ListEvent<StockpileItem> listChanges) {
 			List<StockpileItem> items = new ArrayList<StockpileItem>(filterList);
@@ -882,8 +884,11 @@ public class StockpileTab extends JMainTab {
 						multiplier = 1;
 					}
 					StockpileItem item = (StockpileItem) separator.first();
-					item.getStockpile().setMultiplier(multiplier);
-					item.getStockpile().updateTotal();
+					if (multiplier != item.getStockpile().getMultiplier()) {
+						item.getStockpile().setMultiplier(multiplier);
+						item.getStockpile().updateTotal();
+						program.saveSettings("Save Stockpile: Multiplier changed");
+					}
 					tableModel.fireTableDataChanged();
 				}
 			}
@@ -962,6 +967,11 @@ public class StockpileTab extends JMainTab {
 					}
 				}
 			}
+		}
+
+		@Override
+		public void columnValueChanged() {
+			program.saveSettings("Save Stockpile: Target changed");
 		}
 	}
 
