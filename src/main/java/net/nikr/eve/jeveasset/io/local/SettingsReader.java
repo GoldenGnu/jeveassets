@@ -24,7 +24,15 @@ package net.nikr.eve.jeveasset.io.local;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
 import net.nikr.eve.jeveasset.data.ExportSettings.DecimalSeparator;
 import net.nikr.eve.jeveasset.data.ExportSettings.ExportFormat;
 import net.nikr.eve.jeveasset.data.ExportSettings.FieldDelimiter;
@@ -69,9 +77,12 @@ import net.nikr.eve.jeveasset.gui.tabs.orders.MarketOrdersTab;
 import net.nikr.eve.jeveasset.gui.tabs.orders.MarketTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewGroup;
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewLocation;
-import net.nikr.eve.jeveasset.gui.tabs.stockpile.*;
+import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileFilter;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
+import net.nikr.eve.jeveasset.gui.tabs.stockpile.StockpileExtendedTableFormat;
+import net.nikr.eve.jeveasset.gui.tabs.stockpile.StockpileTab;
+import net.nikr.eve.jeveasset.gui.tabs.stockpile.StockpileTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerData;
 import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerOwner;
 import net.nikr.eve.jeveasset.gui.tabs.transaction.TransactionTab;
@@ -334,6 +345,10 @@ public final class SettingsReader extends AbstractXmlReader {
 			Element ownerNode = (Element) tableNodeList.item(a);
 			String ownerName = AttributeGetters.getString(ownerNode, "name");
 			long ownerID = AttributeGetters.getLong(ownerNode, "id");
+			//Ignore grand total, not used anymore
+			if (ownerName.isEmpty()) {
+				continue;
+			}
 			//Add new Owner
 			TrackerOwner owner = new TrackerOwner(ownerID, ownerName);
 			settings.getTrackerData().put(owner, new ArrayList<TrackerData>());
