@@ -27,8 +27,13 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import net.nikr.eve.jeveasset.data.*;
+import net.nikr.eve.jeveasset.data.ExportSettings;
+import net.nikr.eve.jeveasset.data.PriceDataSettings;
+import net.nikr.eve.jeveasset.data.ReprocessSettings;
+import net.nikr.eve.jeveasset.data.RoutingSettings;
+import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.data.Settings.SettingFlag;
+import net.nikr.eve.jeveasset.data.UserItem;
 import net.nikr.eve.jeveasset.data.tag.Tag;
 import net.nikr.eve.jeveasset.data.tag.TagID;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
@@ -73,6 +78,7 @@ public class SettingsWriter extends AbstractXmlWriter {
 		xmldoc.getDocumentElement().setAttribute("version", String.valueOf(SettingsReader.SETTINGS_VERSION));
 
 		writeAssetSettings(xmldoc, settings);
+		writeStockpileGroups(xmldoc, settings);
 		writeStockpiles(xmldoc, settings.getStockpiles());
 		writeOverviewGroups(xmldoc, settings.getOverviewGroups());
 		writeReprocessSettings(xmldoc, settings.getReprocessSettings());
@@ -271,6 +277,13 @@ public class SettingsWriter extends AbstractXmlWriter {
 		Element parentNode = xmldoc.createElementNS(null, "assetsettings");
 		xmldoc.getDocumentElement().appendChild(parentNode);
 		parentNode.setAttributeNS(null, "maximumpurchaseage", String.valueOf(settings.getMaximumPurchaseAge()));
+	}
+
+	private void writeStockpileGroups(final Document xmldoc, final Settings settings) {
+		Element parentNode = xmldoc.createElementNS(null, "stockpilegroups");
+		xmldoc.getDocumentElement().appendChild(parentNode);
+		parentNode.setAttributeNS(null, "stockpilegroup2", String.valueOf(settings.getStockpileColorGroup2()));
+		parentNode.setAttributeNS(null, "stockpilegroup3", String.valueOf(settings.getStockpileColorGroup3()));
 	}
 
 	private void writeStockpiles(final Document xmldoc, final List<Stockpile> stockpiles) {

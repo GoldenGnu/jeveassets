@@ -112,14 +112,6 @@ public class Stockpile implements Comparable<Stockpile>, LocationType {
 		}
 	}
 
-	public boolean isOK() {
-		return totalItem.isOK();
-	}
-
-	public boolean isHalf() {
-		return totalItem.isHalf();
-	}
-
 	public boolean isEmpty() {
 		return (items.size() <= 1);
 	}
@@ -377,14 +369,6 @@ public class Stockpile implements Comparable<Stockpile>, LocationType {
 			this.item = stockpileItem.item;
 			this.typeID = stockpileItem.typeID;
 			this.countMinimum = stockpileItem.countMinimum;
-		}
-
-		public boolean isOK() {
-			return getCountNeeded() >= 0;
-		}
-
-		public boolean isHalf() {
-			return getCountNow() >= (getCountMinimumMultiplied() / 2.0);
 		}
 
 		private void reset() {
@@ -791,8 +775,6 @@ public class Stockpile implements Comparable<Stockpile>, LocationType {
 
 	public static class StockpileTotal extends StockpileItem {
 
-		private boolean ok = true;
-		private boolean half = true;
 		private long inventoryCountNow = 0;
 		private long sellOrdersCountNow = 0;
 		private long buyOrdersCountNow = 0;
@@ -812,8 +794,6 @@ public class Stockpile implements Comparable<Stockpile>, LocationType {
 		}
 
 		private void reset() {
-			ok = true;
-			half = true;
 			inventoryCountNow = 0;
 			sellOrdersCountNow = 0;
 			buyOrdersCountNow = 0;
@@ -830,12 +810,6 @@ public class Stockpile implements Comparable<Stockpile>, LocationType {
 		}
 
 		private void updateTotal(final StockpileItem item) {
-			if (!item.isOK()) {
-				ok = false;
-			}
-			if (!item.isHalf()) {
-				half = false;
-			}
 			inventoryCountNow = inventoryCountNow + item.getInventoryCountNow();
 			sellOrdersCountNow = sellOrdersCountNow + item.getSellOrdersCountNow();
 			buyOrdersCountNow = buyOrdersCountNow + item.getBuyOrdersCountNow();
@@ -863,18 +837,6 @@ public class Stockpile implements Comparable<Stockpile>, LocationType {
 		@Override
 		public String getName() {
 			return TabsStockpile.get().totalStockpile();
-		}
-
-		
-
-		@Override
-		public boolean isOK() {
-			return ok;
-		}
-
-		@Override
-		public boolean isHalf() {
-			return half;
 		}
 
 		@Override

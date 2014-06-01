@@ -61,12 +61,11 @@ public abstract class DialoguesSettings extends Bundle {
 
 	// used in StockpileToolSettingsPanel
 	public abstract String stockpile();
-	public abstract String stockpileSwitchTab();
 	public abstract String stockpileColors();
-	public abstract String stockpile0_100();
-	public abstract String stockpile0_50();
-	public abstract String stockpile50_100();
-	public abstract String stockpile100();
+	public abstract String stockpileSwitchTab();
+	public abstract String stockpileTwoGroups();
+	public abstract String stockpileThreeGroups();
+	public abstract String percentPlusSymbol();
 
 	public abstract String saveHistoryWarning(); //Transactions & Journal
 

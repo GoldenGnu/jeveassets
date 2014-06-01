@@ -28,7 +28,13 @@ import java.net.Proxy.Type;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import net.nikr.eve.jeveasset.data.*;
+import net.nikr.eve.jeveasset.data.ExportSettings;
+import net.nikr.eve.jeveasset.data.PriceData;
+import net.nikr.eve.jeveasset.data.PriceDataSettings;
+import net.nikr.eve.jeveasset.data.ReprocessSettings;
+import net.nikr.eve.jeveasset.data.RoutingSettings;
+import net.nikr.eve.jeveasset.data.Settings;
+import net.nikr.eve.jeveasset.data.UserItem;
 import net.nikr.eve.jeveasset.data.tag.Tag;
 import net.nikr.eve.jeveasset.data.tag.TagID;
 import net.nikr.eve.jeveasset.data.tag.Tags;
@@ -466,6 +472,26 @@ public abstract class FakeSettings extends Settings {
 
 	@Override
 	public boolean isIncludeBuyContracts() {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public void setStockpileColorGroup3(int stockpileColorGroup2) {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public int getStockpileColorGroup3() {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public void setStockpileColorGroup2(int stockpileColorGroup1) {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public int getStockpileColorGroup2() {
 		throw new UnsupportedOperationException("not implemented");
 	}
 }

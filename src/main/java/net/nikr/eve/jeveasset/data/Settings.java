@@ -27,10 +27,21 @@ import com.beimin.eveapi.connectors.ProxyConnector;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.io.File;
-import java.net.*;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.Proxy;
+import java.net.SocketAddress;
+import java.net.URISyntaxException;
+import java.net.UnknownHostException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.SplashUpdater;
 import net.nikr.eve.jeveasset.data.tag.Tag;
@@ -45,7 +56,8 @@ import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewGroup;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile;
 import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerData;
 import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerOwner;
-import net.nikr.eve.jeveasset.io.local.*;
+import net.nikr.eve.jeveasset.io.local.SettingsReader;
+import net.nikr.eve.jeveasset.io.local.SettingsWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -117,6 +129,8 @@ public class Settings {
 	//							Could be more selective...
 	//Lock FAIL!!!
 	private final List<Stockpile> stockpiles = new ArrayList<Stockpile>();
+	private int stockpileColorGroup2 = 0;
+	private int stockpileColorGroup3 = 0;
 //Routing						Saved by ???
 	//Lock ???
 	private final RoutingSettings routingSettings = new RoutingSettings();
@@ -607,6 +621,23 @@ public class Settings {
 	public List<Stockpile> getStockpiles() {
 		return stockpiles;
 	}
+
+	public int getStockpileColorGroup2() {
+		return stockpileColorGroup2;
+	}
+
+	public void setStockpileColorGroup2(int stockpileColorGroup1) {
+		this.stockpileColorGroup2 = stockpileColorGroup1;
+	}
+
+	public int getStockpileColorGroup3() {
+		return stockpileColorGroup3;
+	}
+
+	public void setStockpileColorGroup3(int stockpileColorGroup2) {
+		this.stockpileColorGroup3 = stockpileColorGroup2;
+	}
+
 	//Window
 	public Point getWindowLocation() {
 		return windowLocation;

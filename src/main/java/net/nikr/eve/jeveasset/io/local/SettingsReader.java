@@ -183,6 +183,13 @@ public final class SettingsReader extends AbstractXmlReader {
 			Collections.sort(Settings.get().getStockpiles());
 		}
 
+		//Stockpile Groups
+		NodeList stockpileGroupsNodes = element.getElementsByTagName("stockpilegroups");
+		if (stockpileGroupsNodes.getLength() == 1) {
+			Element stockpileGroupsElement = (Element) stockpileGroupsNodes.item(0);
+			parseStockpileGroups(stockpileGroupsElement, settings);
+		}
+
 		//Export Settings
 		NodeList exportNodes = element.getElementsByTagName("csvexport");
 		if (exportNodes.getLength() == 1) {
@@ -377,6 +384,13 @@ public final class SettingsReader extends AbstractXmlReader {
 	private void parseAssetSettings(final Element assetSettingsElement, final Settings settings) {
 		int maximumPurchaseAge = AttributeGetters.getInt(assetSettingsElement, "maximumpurchaseage");
 		settings.setMaximumPurchaseAge(maximumPurchaseAge);
+	}
+
+	private void parseStockpileGroups(final Element stockpilesElement, final Settings settings) {
+		int group2 = AttributeGetters.getInt(stockpilesElement, "stockpilegroup2");
+		int group3 = AttributeGetters.getInt(stockpilesElement, "stockpilegroup3");
+		settings.setStockpileColorGroup2(group2);
+		settings.setStockpileColorGroup3(group3);
 	}
 
 	private void parseStockpiles(final Element stockpilesElement, final Settings settings) {

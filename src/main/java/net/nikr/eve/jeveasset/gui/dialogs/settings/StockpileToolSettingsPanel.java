@@ -22,9 +22,24 @@
 package net.nikr.eve.jeveasset.gui.dialogs.settings;
 
 import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import javax.swing.*;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.util.Locale;
+import javax.swing.BorderFactory;
+import javax.swing.ButtonGroup;
+import javax.swing.GroupLayout;
+import javax.swing.JCheckBox;
+import javax.swing.JFormattedTextField;
+import javax.swing.JLabel;
+import javax.swing.JRadioButton;
+import javax.swing.SwingUtilities;
+import javax.swing.text.JTextComponent;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
@@ -32,12 +47,20 @@ import net.nikr.eve.jeveasset.i18n.DialoguesSettings;
 
 
 public class StockpileToolSettingsPanel extends JSettingsPanel {
-		private JCheckBox jSwitchTab;
-		private JRadioButton jHalfColors;
-		private JRadioButton jDefaultColors;
 
-		private static final int LABEL_WIDTH = 70;
-
+	private final Color RED = new Color(255, 200, 200);
+	private final Color YELLOW = new Color(255, 255, 200);
+	private final Color GREEN = new Color(200, 255, 200);
+	
+	private final JCheckBox jSwitchTab;
+	private final JRadioButton jTwoGroups;
+	private final JRadioButton jThreeGroups;
+	private final JFormattedTextField jGroup2;
+	private final JFormattedTextField jGroup3;
+	private final JLabel jGroup1Label;
+	private final JLabel jGroup2Label;
+	private final JLabel jGroup3Label;
+	
 	public StockpileToolSettingsPanel(final Program program, final SettingsDialog settingsDialog) {
 		super(program, settingsDialog, DialoguesSettings.get().stockpile(), Images.TOOL_STOCKPILE.getIcon());
 
@@ -45,44 +68,124 @@ public class StockpileToolSettingsPanel extends JSettingsPanel {
 
 		ButtonGroup group = new ButtonGroup();
 
-		jDefaultColors = new JRadioButton();
-		group.add(jDefaultColors);
+		jTwoGroups = new JRadioButton(DialoguesSettings.get().stockpileTwoGroups());
+		jTwoGroups.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				useTwoGroups();
+			}
+		});
+		group.add(jTwoGroups);
+
+		jThreeGroups = new JRadioButton(DialoguesSettings.get().stockpileThreeGroups());
+		jThreeGroups.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				useThreeGroups();
+			}
+		});
+		group.add(jThreeGroups);
+
+		JLabel jColors = new JLabel(DialoguesSettings.get().stockpileColors());
+
+		jGroup1Label = new JLabel();
+		jGroup1Label.setOpaque(true);
+		jGroup1Label.setHorizontalAlignment(JLabel.CENTER);
+		jGroup1Label.setBackground(RED);
+		jGroup1Label.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
+
+		jGroup2 = new JFormattedTextField(new DecimalFormat("##0", new DecimalFormatSymbols(Locale.ENGLISH)) );
+		jGroup2.setOpaque(true);
+		jGroup2.setHorizontalAlignment(JLabel.TRAILING);
+		jGroup2.addFocusListener(new FocusListener() {
+			@Override
+			public void focusGained(FocusEvent e) {
+				validate();
+				SwingUtilities.invokeLater(new Runnable() {
+					@Override
+					public void run() {
+						jGroup2.selectAll();
+					}
+				});
+			}
+			@Override
+			public void focusLost(FocusEvent e) {
+				validate();
+			}
+		});
+
+		jGroup2Label = new JLabel();
+		jGroup2Label.setOpaque(true);
+		jGroup2Label.setHorizontalAlignment(JLabel.LEADING);
+		jGroup2Label.setBackground(RED);
+		jGroup2Label.setBorder(BorderFactory.createMatteBorder(1, 0, 1, 1, Color.BLACK));
+		jGroup2Label.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mousePressed(MouseEvent e) {
+				jGroup2.requestFocusInWindow();
+			}
+		});
+
+		jGroup3 = new JFormattedTextField(new DecimalFormat("##0", new DecimalFormatSymbols(Locale.ENGLISH)) );
+		jGroup3.setOpaque(true);
+		jGroup3.setHorizontalAlignment(JLabel.TRAILING);
+		jGroup3.addFocusListener(new FocusListener() {
+			@Override
+			public void focusGained(FocusEvent e) {
+				validate();
+				SwingUtilities.invokeLater(new Runnable() {
+					@Override
+					public void run() {
+						jGroup3.selectAll();
+					}
+				});
+			}
+			@Override
+			public void focusLost(FocusEvent e) {
+				validate();
+			}
+		});
+
+		jGroup3Label = new JLabel();
+		jGroup3Label.setOpaque(true);
+		jGroup3Label.setHorizontalAlignment(JLabel.LEADING);
+		jGroup3Label.setBackground(RED);
+		jGroup3Label.setBorder(BorderFactory.createMatteBorder(1, 0, 1, 1, Color.BLACK));
+		jGroup3Label.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mousePressed(MouseEvent e) {
+				if (jGroup3.isEnabled()) {
+					jGroup3.requestFocusInWindow();
+				}
+			}
+		});
 
 
-		JLabel jColors = createLabel(DialoguesSettings.get().stockpileColors(), Color.LIGHT_GRAY, null);
-
-		JLabel jDefaultGreen = createLabel(DialoguesSettings.get().stockpile100(), new Color(200, 255, 200), jDefaultColors);
-
-		JLabel jDefaultRed = createLabel(DialoguesSettings.get().stockpile0_100(), new Color(255, 200, 200), jDefaultColors);
-
-		jHalfColors = new JRadioButton();
-		group.add(jHalfColors);
-
-		JLabel jHalfGreen = createLabel(DialoguesSettings.get().stockpile100(), new Color(200, 255, 200), jHalfColors);
-
-		JLabel jHalfYellow = createLabel(DialoguesSettings.get().stockpile50_100(), new Color(255, 255, 200), jHalfColors);
-
-		JLabel jHalfRed = createLabel(DialoguesSettings.get().stockpile0_50(), new Color(255, 200, 200), jHalfColors);
+		jTwoGroups.setSelected(true);
 
 		layout.setHorizontalGroup(
 			layout.createParallelGroup(GroupLayout.Alignment.LEADING)
 				.addComponent(jSwitchTab)
-				.addComponent(jColors, 300, 300, Integer.MAX_VALUE)
 				.addGroup(layout.createSequentialGroup()
 					.addGroup(layout.createParallelGroup()
-						.addComponent(jDefaultColors)
-						.addComponent(jHalfColors)
+						.addComponent(jColors)
+						.addComponent(jGroup1Label, 70, 70, Integer.MAX_VALUE)
 					)
 					.addGroup(layout.createParallelGroup()
-						.addComponent(jDefaultRed, LABEL_WIDTH * 2, LABEL_WIDTH * 2, Integer.MAX_VALUE)
+						.addComponent(jTwoGroups)
 						.addGroup(layout.createSequentialGroup()
-							.addComponent(jHalfRed, LABEL_WIDTH, LABEL_WIDTH, Integer.MAX_VALUE)
-							.addComponent(jHalfYellow, LABEL_WIDTH, LABEL_WIDTH, Integer.MAX_VALUE)
+							.addComponent(jGroup2, 35, 35, Integer.MAX_VALUE)
+							.addGap(0)
+							.addComponent(jGroup2Label, 35, 35, Integer.MAX_VALUE)
 						)
 					)
 					.addGroup(layout.createParallelGroup()
-						.addComponent(jDefaultGreen, LABEL_WIDTH, LABEL_WIDTH, Integer.MAX_VALUE)
-						.addComponent(jHalfGreen, LABEL_WIDTH, LABEL_WIDTH, Integer.MAX_VALUE)
+						.addComponent(jThreeGroups)
+						.addGroup(layout.createSequentialGroup()
+							.addComponent(jGroup3, 35, 35, Integer.MAX_VALUE)
+							.addGap(0)
+							.addComponent(jGroup3Label, 35, 35, Integer.MAX_VALUE)
+						)
 					)
 				)
 		);
@@ -90,63 +193,106 @@ public class StockpileToolSettingsPanel extends JSettingsPanel {
 			layout.createSequentialGroup()
 				.addComponent(jSwitchTab, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				.addGap(20)
-				.addComponent(jColors, Program.BUTTONS_HEIGHT - 4, Program.BUTTONS_HEIGHT - 4, Program.BUTTONS_HEIGHT - 4)
 				.addGroup(layout.createParallelGroup()
-					.addComponent(jDefaultColors, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					.addGroup(layout.createSequentialGroup()
-						.addGap(3)
-						.addGroup(layout.createParallelGroup()
-							.addComponent(jDefaultGreen, Program.BUTTONS_HEIGHT - 4, Program.BUTTONS_HEIGHT - 4, Program.BUTTONS_HEIGHT - 4)
-							.addComponent(jDefaultRed, Program.BUTTONS_HEIGHT - 4, Program.BUTTONS_HEIGHT - 4, Program.BUTTONS_HEIGHT - 4)
-						)
-					)
+					.addComponent(jColors, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					.addComponent(jTwoGroups, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					.addComponent(jThreeGroups, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				)
 				.addGroup(layout.createParallelGroup()
-					.addComponent(jHalfColors, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					.addGroup(layout.createSequentialGroup()
-						.addGap(3)
-						.addGroup(layout.createParallelGroup()
-							.addComponent(jHalfGreen, Program.BUTTONS_HEIGHT - 4, Program.BUTTONS_HEIGHT - 4, Program.BUTTONS_HEIGHT - 4)
-							.addComponent(jHalfYellow, Program.BUTTONS_HEIGHT - 4, Program.BUTTONS_HEIGHT - 4, Program.BUTTONS_HEIGHT - 4)
-							.addComponent(jHalfRed, Program.BUTTONS_HEIGHT - 4, Program.BUTTONS_HEIGHT - 4, Program.BUTTONS_HEIGHT - 4)
-						)
-					)
+					.addComponent(jGroup1Label, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					.addComponent(jGroup2, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					.addComponent(jGroup2Label, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					.addComponent(jGroup3, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					.addComponent(jGroup3Label, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				)
 		);
 	}
 
 	@Override
 	public boolean save() {
-		boolean updated = Settings.get().isStockpileHalfColors() != jHalfColors.isSelected();
+		int group2 = getNumber(jGroup2);
+		int group3 = getNumber(jGroup3);
+		boolean updated = Settings.get().isStockpileHalfColors() != jThreeGroups.isSelected()
+				|| group2 != Settings.get().getStockpileColorGroup2()
+				|| group3 != Settings.get().getStockpileColorGroup3();
+		Settings.get().setStockpileColorGroup2(group2);
 		Settings.get().setStockpileFocusTab(jSwitchTab.isSelected());
-		Settings.get().setStockpileHalfColors(jHalfColors.isSelected());
+		Settings.get().setStockpileHalfColors(jThreeGroups.isSelected());
+		Settings.get().setStockpileColorGroup3(group3);
 		return updated;
 	}
 
 	@Override
 	public void load() {
 		jSwitchTab.setSelected(Settings.get().isStockpileFocusTab());
+		int group1 = Settings.get().getStockpileColorGroup2();
+		int group2 = Settings.get().getStockpileColorGroup3();
 		if (Settings.get().isStockpileHalfColors()) {
-			jHalfColors.setSelected(true);
+			jThreeGroups.setSelected(true);
+			if (group1 > 0) {
+				jGroup2.setText(String.valueOf(group1));
+			} else {
+				jGroup2.setText("50");
+			}
+			if (group2 > 0) {
+				jGroup3.setText(String.valueOf(group2));
+			} else {
+				jGroup3.setText("100");
+			}
+			useThreeGroups();
 		} else {
-			jDefaultColors.setSelected(true);
+			jTwoGroups.setSelected(true);
+			if (group1 > 0) {
+				jGroup2.setText(String.valueOf(group1));
+			} else {
+				jGroup2.setText("100");
+			}
+			useTwoGroups();
+		}
+		validate();
+	}
+
+	private void validate() {
+		int group2 = getNumber(jGroup2);
+		if (group2 <= 0) {
+			group2 = 1;
+			jGroup2.setText("1");
+		}
+		jGroup1Label.setText("0-" + jGroup2.getText() + DialoguesSettings.get().percentSymbol());
+		if (jGroup3.isEnabled()) {
+			int group3 = getNumber(jGroup3);
+			if (group2 >= group3) {
+				jGroup3.setText(String.valueOf(group2 + 1));
+			}
+			jGroup2Label.setText("-" + jGroup3.getText() + DialoguesSettings.get().percentSymbol());
+			jGroup3Label.setText(DialoguesSettings.get().percentPlusSymbol());
+		} else {
+			jGroup3Label.setText("");
+			jGroup2Label.setText(DialoguesSettings.get().percentPlusSymbol());
 		}
 	}
 
-	private JLabel createLabel(final String title, final Color color, final JRadioButton jRadioButton) {
-		JLabel jLabel = new JLabel(title);
-		jLabel.setOpaque(true);
-		jLabel.setHorizontalAlignment(JLabel.CENTER);
-		jLabel.setBackground(color);
-		jLabel.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
-		if (jRadioButton != null) {
-			jLabel.addMouseListener(new MouseAdapter() {
-				@Override
-				public void mouseClicked(final MouseEvent e) {
-					jRadioButton.setSelected(true);
-				}
-			});
+	private void useTwoGroups() {
+		jGroup2Label.setBackground(GREEN);
+		jGroup3Label.setBackground(Color.LIGHT_GRAY);
+		jGroup3.setText("");
+		jGroup3.setEnabled(false);
+		jGroup2.requestFocusInWindow();
+	}
+	private void useThreeGroups() {
+		jGroup2Label.setBackground(YELLOW);
+		jGroup3Label.setBackground(GREEN);
+		jGroup3.setEnabled(true);
+		jGroup2.requestFocusInWindow();
+	}
+
+	private int getNumber(JTextComponent jText) {
+		int number;
+		try {
+			number = Integer.valueOf(jText.getText());
+		} catch (NumberFormatException ex) {
+			number = 0;
 		}
-		return jLabel;
+		return number;
 	}
 }
