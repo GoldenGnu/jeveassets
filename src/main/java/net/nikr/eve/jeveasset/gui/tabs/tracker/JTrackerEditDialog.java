@@ -34,6 +34,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import net.nikr.eve.jeveasset.Program;
+import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
@@ -48,14 +49,14 @@ public class JTrackerEditDialog extends JDialogCentered {
 	}
 
 	//GUI
-	private JTextField jDate;
-	private JTextField jWalletBalance;
-	private JTextField jAssets;
-	private JTextField jSellOrders;
-	private JTextField jEscrows;
-	private JTextField jEscrowsToCover;
-	private JTextField jManufacturing;
-	private JButton jOK;
+	private final JTextField jDate;
+	private final JTextField jWalletBalance;
+	private final JTextField jAssets;
+	private final JTextField jSellOrders;
+	private final JTextField jEscrows;
+	private final JTextField jEscrowsToCover;
+	private final JTextField jManufacturing;
+	private final JButton jOK;
 
 	//Data
 	private TrackerData trackerData;
@@ -226,12 +227,15 @@ public class JTrackerEditDialog extends JDialogCentered {
 			double escrows = parse(jEscrows.getText());
 			double escrowsToCover = parse(jEscrowsToCover.getText());
 			double manufacturing = parse(jManufacturing.getText());
+			Settings.lock();
 			trackerData.setWalletBalance(walletBalanc);
 			trackerData.setAssets(assets);
 			trackerData.setSellOrders(sellOrders);
 			trackerData.setEscrows(escrows);
 			trackerData.setEscrowsToCover(escrowsToCover);
 			trackerData.setManufacturing(manufacturing);
+			Settings.unlock();
+			program.saveSettings("Save Tracker Data (Edit)");
 			update = true;
 			setVisible(false);
 		} catch (ParseException ex) {

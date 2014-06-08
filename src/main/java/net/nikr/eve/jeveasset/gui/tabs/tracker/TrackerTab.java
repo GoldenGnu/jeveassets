@@ -106,32 +106,32 @@ public class TrackerTab extends JMainTab {
 
 	private final int PANEL_WIDTH = 140;
 
-	private NumberFormat iskFormat = new DecimalFormat("#,##0.00 isk");
-	private DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+	private final NumberFormat iskFormat = new DecimalFormat("#,##0.00 isk");
+	private final DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
 
-	private JFreeChart jNextChart;
-	private JDateChooser jFrom;
-	private JDateChooser jTo;
-	private JComboBox jOwners;
-	private JComboBox jQuickDate;
-	private JCheckBox jAll;
-	private JCheckBox jTotal;
-	private JCheckBox jWalletBalance;
-	private JCheckBox jAssets;
-	private JCheckBox jSellOrders;
-	private JCheckBox jEscrows;
-	private JCheckBox jEscrowsToCover;
-	private JCheckBox jManufacturing;
-	private JPopupMenu jPopupMenu;
-	private JMenuItem jIskValue;
-	private JMenuItem jDateValue;
-	private JTrackerEditDialog jEditDialog;
-	private ChartPanel jChartPanel;
-	private JTextArea jHelp;
+	private final JFreeChart jNextChart;
+	private final JDateChooser jFrom;
+	private final JDateChooser jTo;
+	private final JComboBox jOwners;
+	private final JComboBox jQuickDate;
+	private final JCheckBox jAll;
+	private final JCheckBox jTotal;
+	private final JCheckBox jWalletBalance;
+	private final JCheckBox jAssets;
+	private final JCheckBox jSellOrders;
+	private final JCheckBox jEscrows;
+	private final JCheckBox jEscrowsToCover;
+	private final JCheckBox jManufacturing;
+	private final JPopupMenu jPopupMenu;
+	private final JMenuItem jIskValue;
+	private final JMenuItem jDateValue;
+	private final JTrackerEditDialog jEditDialog;
+	private final ChartPanel jChartPanel;
+	private final JTextArea jHelp;
 
-	private ListenerClass listener = new ListenerClass();
+	private final ListenerClass listener = new ListenerClass();
 
-	private TimePeriodValuesCollection dataset = new TimePeriodValuesCollection();
+	private final TimePeriodValuesCollection dataset = new TimePeriodValuesCollection();
 	TimePeriodValues total;
 	TimePeriodValues walletBalance;
 	TimePeriodValues assets;
@@ -628,7 +628,10 @@ public class TrackerTab extends JMainTab {
 				if (trackerData != null && owner != null && !owner.isEmpty()) {
 					int value = JOptionPane.showConfirmDialog(program.getMainWindow().getFrame(), TabsTracker.get().deleteSelected(), TabsTracker.get().delete(), JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
 					if (value == JOptionPane.OK_OPTION) {
+						Settings.lock();
 						Settings.get().getTrackerData().get(owner).remove(trackerData);
+						Settings.unlock();
+						program.saveSettings("Save Tracker Data (Delete)");
 						createData();
 					}
 				}
