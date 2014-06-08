@@ -714,7 +714,10 @@ public class TrackerTab extends JMainTab {
 				}
 				int value = JOptionPane.showConfirmDialog(program.getMainWindow().getFrame(), TabsTracker.get().deleteSelected(), TabsTracker.get().delete(), JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
 				if (value == JOptionPane.OK_OPTION) {
+					Settings.lock();
 					Settings.get().getTrackerData().get(owner).remove(trackerData);
+					Settings.unlock();
+					program.saveSettings("Save Tracker Data (Delete)");
 					createData();
 				}
 				jNextChart.getXYPlot().setDomainCrosshairVisible(false);
