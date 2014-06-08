@@ -16,6 +16,21 @@
                   #### #  # #  # #  # #### #### #### #### ####
 
 ________________________________________________________________________________
+_2.8.4__________________________________________________________________________
+
+New Feature:
+-New bug report dialog
+-Added new column: 'Installer' to the Industry Job Tool
+
+Changed:
+-Better API Update error messages
+
+Bug Fixes:
+-Settings was not saved when editing or deleting Tracker data point
+-Settings was not saved when changing Stockpile Target or Multiplier
+-Contracts owners was not updated correct
+
+________________________________________________________________________________
 _2.8.3__________________________________________________________________________
 
 Changed:
