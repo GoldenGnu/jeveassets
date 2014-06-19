@@ -86,7 +86,7 @@ public class Program implements ActionListener {
 		TIMER
 	}
 	//Major.Minor.Bugfix [Release Candidate n] [BETA n] [DEV BUILD #n];
-	public static final String PROGRAM_VERSION = "2.8.4";
+	public static final String PROGRAM_VERSION = "2.8.5";
 	public static final String PROGRAM_NAME = "jEveAssets";
 	public static final String PROGRAM_HOMEPAGE = "http://eve.nikr.net/jeveasset";
 	public static final boolean PROGRAM_FORCE_PORTABLE = false;
