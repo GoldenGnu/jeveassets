@@ -730,7 +730,7 @@ public class Settings {
    * @param dynamic true if the file is expecting to be written to, false for things like the items and locations.
    * @return
    */
-	private static String getLocalFile(final String filename, final boolean dynamic) {
+	protected static String getLocalFile(final String filename, final boolean dynamic) {
 		LOG.debug("Looking for file: {} dynamic: {}", filename, dynamic);
 		try {
 			File file;

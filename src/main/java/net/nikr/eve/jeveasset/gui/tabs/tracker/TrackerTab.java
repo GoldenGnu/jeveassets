@@ -416,7 +416,7 @@ public class TrackerTab extends JMainTab {
 			TrackerData trackerData = getTrackerData(data, industryJob.getOwnerID(), industryJob.getOwner(), date);
 			//Manufacturing and not completed
 			if (industryJob.getActivity() == MyIndustryJob.IndustryActivity.ACTIVITY_MANUFACTURING && !industryJob.isCompleted()) {
-				double manufacturingTotal = industryJob.getPortion() * industryJob.getRuns() * ApiIdConverter.getPrice(industryJob.getOutputTypeID(), false);
+				double manufacturingTotal = industryJob.getPortion() * industryJob.getRuns() * ApiIdConverter.getPrice(industryJob.getProductTypeID(), false);
 				trackerData.addManufacturing(manufacturingTotal);
 				allTracker.addManufacturing(manufacturingTotal);
 			}

@@ -16,6 +16,17 @@
                   #### #  # #  # #  # #### #### #### #### ####
 
 ________________________________________________________________________________
+_2.8.6__________________________________________________________________________
+
+Changed:
+-Static data updated to Crius 1.0.0
+-Removed PE/ME from industry jobs and assets (no longer part of the API)
+-Removed BPO/PBC from industry jobs (no longer part of the API)
+
+Bug Fixes:
+-Industry Jobs was not updating (due to API changes)
+
+________________________________________________________________________________
 _2.8.5__________________________________________________________________________
 
 Changed:

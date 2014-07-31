@@ -304,40 +304,33 @@ public final class ProfileWriter extends AbstractXmlWriter {
 		}
 		for (MyIndustryJob industryJob : industryJobs) {
 			Element childNode = xmldoc.createElementNS(null, "industryjob");
-
 			childNode.setAttributeNS(null, "jobid", String.valueOf(industryJob.getJobID()));
-			childNode.setAttributeNS(null, "containerid", String.valueOf(industryJob.getContainerID()));
-			childNode.setAttributeNS(null, "installeditemid", String.valueOf(industryJob.getInstalledItemID()));
-			childNode.setAttributeNS(null, "installeditemlocationid", String.valueOf(industryJob.getInstalledItemLocationID()));
-			childNode.setAttributeNS(null, "installeditemquantity", String.valueOf(industryJob.getInstalledItemQuantity()));
-			childNode.setAttributeNS(null, "installeditemproductivitylevel", String.valueOf(industryJob.getInstalledItemProductivityLevel()));
-			childNode.setAttributeNS(null, "installeditemmateriallevel", String.valueOf(industryJob.getInstalledItemMaterialLevel()));
-			childNode.setAttributeNS(null, "installeditemlicensedproductionrunsremaining", String.valueOf(industryJob.getInstalledItemLicensedProductionRunsRemaining()));
-			childNode.setAttributeNS(null, "outputlocationid", String.valueOf(industryJob.getOutputLocationID()));
 			childNode.setAttributeNS(null, "installerid", String.valueOf(industryJob.getInstallerID()));
-			childNode.setAttributeNS(null, "runs", String.valueOf(industryJob.getRuns()));
-			childNode.setAttributeNS(null, "licensedproductionruns", String.valueOf(industryJob.getLicensedProductionRuns()));
-			childNode.setAttributeNS(null, "installedinsolarsystemid", String.valueOf(industryJob.getInstalledInSolarSystemID()));
-			childNode.setAttributeNS(null, "containerlocationid", String.valueOf(industryJob.getContainerLocationID()));
-			childNode.setAttributeNS(null, "materialmultiplier", String.valueOf(industryJob.getMaterialMultiplier()));
-			childNode.setAttributeNS(null, "charmaterialmultiplier", String.valueOf(industryJob.getCharMaterialMultiplier()));
-			childNode.setAttributeNS(null, "timemultiplier", String.valueOf(industryJob.getTimeMultiplier()));
-			childNode.setAttributeNS(null, "chartimemultiplier", String.valueOf(industryJob.getCharTimeMultiplier()));
-			childNode.setAttributeNS(null, "installeditemtypeid", String.valueOf(industryJob.getInstalledItemTypeID()));
-			childNode.setAttributeNS(null, "outputtypeid", String.valueOf(industryJob.getOutputTypeID()));
-			childNode.setAttributeNS(null, "containertypeid", String.valueOf(industryJob.getContainerTypeID()));
-			childNode.setAttributeNS(null, "installeditemcopy", String.valueOf(industryJob.getInstalledItemCopy()));
-			childNode.setAttributeNS(null, "completed", String.valueOf(industryJob.isCompleted()));
-			childNode.setAttributeNS(null, "completedsuccessfully", String.valueOf(industryJob.isCompletedSuccessfully()));
-			childNode.setAttributeNS(null, "installeditemflag", String.valueOf(industryJob.getInstalledItemFlag()));
-			childNode.setAttributeNS(null, "outputflag", String.valueOf(industryJob.getOutputFlag()));
+			childNode.setAttributeNS(null, "installername", industryJob.getInstallerName());
+			childNode.setAttributeNS(null, "facilityid", String.valueOf(industryJob.getFacilityID()));
+			childNode.setAttributeNS(null, "solarsystemid", String.valueOf(industryJob.getSolarSystemID()));
+			childNode.setAttributeNS(null, "solarsystemname", industryJob.getSolarSystemName());
+			childNode.setAttributeNS(null, "stationid", String.valueOf(industryJob.getStationID()));
 			childNode.setAttributeNS(null, "activityid", String.valueOf(industryJob.getActivityID()));
-			childNode.setAttributeNS(null, "completedstatus", String.valueOf(industryJob.getCompletedStatus()));
-			childNode.setAttributeNS(null, "installtime", String.valueOf(industryJob.getInstallTime().getTime()));
-			childNode.setAttributeNS(null, "beginproductiontime", String.valueOf(industryJob.getBeginProductionTime().getTime()));
-			childNode.setAttributeNS(null, "endproductiontime", String.valueOf(industryJob.getEndProductionTime().getTime()));
-			childNode.setAttributeNS(null, "pauseproductiontime", String.valueOf(industryJob.getPauseProductionTime().getTime()));
-			childNode.setAttributeNS(null, "assemblylineid", String.valueOf(industryJob.getAssemblyLineID()));
+			childNode.setAttributeNS(null, "blueprintid", String.valueOf(industryJob.getBlueprintID()));
+			childNode.setAttributeNS(null, "blueprinttypeid", String.valueOf(industryJob.getBlueprintTypeID()));
+			childNode.setAttributeNS(null, "blueprinttypename", industryJob.getBlueprintTypeName());
+			childNode.setAttributeNS(null, "blueprintlocationid", String.valueOf(industryJob.getBlueprintLocationID()));
+			childNode.setAttributeNS(null, "outputlocationid", String.valueOf(industryJob.getOutputLocationID()));
+			childNode.setAttributeNS(null, "runs", String.valueOf(industryJob.getRuns()));
+			childNode.setAttributeNS(null, "cost", String.valueOf(industryJob.getCost()));
+			childNode.setAttributeNS(null, "teamid", String.valueOf(industryJob.getTeamID()));
+			childNode.setAttributeNS(null, "licensedruns", String.valueOf(industryJob.getLicensedRuns()));
+			childNode.setAttributeNS(null, "probability", industryJob.getProbability());
+			childNode.setAttributeNS(null, "producttypeid", String.valueOf(industryJob.getProductTypeID()));
+			childNode.setAttributeNS(null, "producttypename", industryJob.getProductTypeName());
+			childNode.setAttributeNS(null, "status", String.valueOf(industryJob.getStatus()));
+			childNode.setAttributeNS(null, "timeinseconds", String.valueOf(industryJob.getTimeInSeconds()));
+			childNode.setAttributeNS(null, "startdate", String.valueOf(industryJob.getStartDate().getTime()));
+			childNode.setAttributeNS(null, "enddate", String.valueOf(industryJob.getEndDate().getTime()));
+			childNode.setAttributeNS(null, "pausedate", String.valueOf(industryJob.getPauseDate().getTime()));
+			childNode.setAttributeNS(null, "completeddate", String.valueOf(industryJob.getCompletedDate().getTime()));
+			childNode.setAttributeNS(null, "completedcharacterid", String.valueOf(industryJob.getCompletedCharacterID()));
 			node.appendChild(childNode);
 		}
 	}

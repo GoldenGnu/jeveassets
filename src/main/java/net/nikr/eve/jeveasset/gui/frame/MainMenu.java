@@ -43,7 +43,6 @@ public class MainMenu extends JMenuBar {
 		TRANSACTION,
 		JOURNAL,
 		INDUSTRY_JOBS,
-		INDUSTRY_PLOT,
 		OVERVIEW,
 		MATERIALS,
 		ACCOUNT_MANAGER,

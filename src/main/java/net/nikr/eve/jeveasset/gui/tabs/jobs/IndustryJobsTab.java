@@ -111,13 +111,9 @@ public class IndustryJobsTab extends JMainTab {
 		List<Filter> filter;
 		filter = new ArrayList<Filter>();
 		filter.add(new Filter(LogicType.OR, IndustryJobTableFormat.STATE, CompareType.EQUALS,  IndustryJobState.STATE_ACTIVE.toString()));
-		filter.add(new Filter(LogicType.OR, IndustryJobTableFormat.STATE, CompareType.EQUALS,  IndustryJobState.STATE_PENDING.toString()));
-		filter.add(new Filter(LogicType.OR, IndustryJobTableFormat.STATE, CompareType.EQUALS,  IndustryJobState.STATE_READY.toString()));
 		defaultFilters.put(TabsJobs.get().active(), filter);
 		filter = new ArrayList<Filter>();
-		filter.add(new Filter(LogicType.AND, IndustryJobTableFormat.STATE, CompareType.EQUALS_NOT,  IndustryJobState.STATE_ACTIVE.toString()));
-		filter.add(new Filter(LogicType.AND, IndustryJobTableFormat.STATE, CompareType.EQUALS_NOT,  IndustryJobState.STATE_PENDING.toString()));
-		filter.add(new Filter(LogicType.AND, IndustryJobTableFormat.STATE, CompareType.EQUALS_NOT,  IndustryJobState.STATE_READY.toString()));
+		filter.add(new Filter(LogicType.AND, IndustryJobTableFormat.STATE, CompareType.EQUALS_NOT,  IndustryJobState.STATE_DONE.toString()));
 		defaultFilters.put(TabsJobs.get().completed(), filter);
 		filterControl = new IndustryJobsFilterControl(
 				program.getMainWindow().getFrame(),

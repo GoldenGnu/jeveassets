@@ -137,7 +137,7 @@ public class ProfileData {
 					//Manufacturing Output
 					if (industryJob.getActivity() == IndustryActivity.ACTIVITY_MANUFACTURING && !industryJob.isCompleted()) {
 						//Output
-						Item output = ApiIdConverter.getItem(industryJob.getOutputTypeID());
+						Item output = ApiIdConverter.getItem(industryJob.getProductTypeID());
 						if (output.isMarketGroup()) {
 							priceTypeIDs.add(output.getTypeID());
 						}
@@ -316,9 +316,9 @@ public class ProfileData {
 				for (MyIndustryJob job : owner.getIndustryJobs()) {
 					Item itemType = job.getItem();
 					//Price
-					double price = ApiIdConverter.getPrice(itemType.getTypeID(), job.isBPC());
+					double price = ApiIdConverter.getPrice(itemType.getTypeID(), true);
 					job.setDynamicPrice(price);
-					double outputPrice = ApiIdConverter.getPrice(job.getOutputTypeID(), false);
+					double outputPrice = ApiIdConverter.getPrice(job.getProductTypeID(), false);
 					job.setOutputPrice(outputPrice);
 				}
 				//Update Contracts dynamic values
@@ -330,32 +330,6 @@ public class ProfileData {
 						contractItem.setDynamicPrice(price);
 					}
 				}
-			}
-		}
-		//Add blueprint ME/PE
-		Map<Long, MyIndustryJob> industryJobsMap = new HashMap<Long, MyIndustryJob>();
-		for (MyIndustryJob industryJob : industryJobs) {
-			MyIndustryJob old = industryJobsMap.put(industryJob.getInstalledItemID(), industryJob);
-			if (old != null && old.getInstallTime().after(industryJob.getInstallTime())) {
-				industryJobsMap.put(old.getInstalledItemID(), old);
-			}
-		}
-		for (MyAsset asset : assets) {
-			MyIndustryJob industryJob = industryJobsMap.get(asset.getItemID());
-			if (industryJob != null) {
-				int bpME = industryJob.getInstalledItemMaterialLevel();
-				int bpPE = industryJob.getInstalledItemProductivityLevel();
-				//If the last job was to research ME or PE; add it to the total
-				if (industryJob.isCompleted()) {
-					if (industryJob.getActivity() == IndustryActivity.ACTIVITY_RESEARCHING_METERIAL_PRODUCTIVITY) {
-						bpME = bpME + industryJob.getRuns();
-					}
-					if (industryJob.getActivity() == IndustryActivity.ACTIVITY_RESEARCHING_TIME_PRODUCTIVITY) {
-						bpPE = bpPE + industryJob.getRuns();
-					}
-				}
-				asset.setBpME(bpME);
-				asset.setBpPE(bpPE);
 			}
 		}
 		//Update Items dynamic values

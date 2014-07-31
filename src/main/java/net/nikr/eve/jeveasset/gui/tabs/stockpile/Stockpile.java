@@ -418,8 +418,8 @@ public class Stockpile implements Comparable<Stockpile>, LocationType {
 					&& matches(marketOrder.getTypeID(), marketOrder.getOwnerID(), null, null, marketOrder.getLocation(), null, marketOrder, null, null);
 		}
 		boolean matches(final MyIndustryJob industryJob) {
-			return industryJob != null //better safe then sorry
-					&& matches(industryJob.getOutputTypeID(), industryJob.getOwnerID(), null, industryJob.getOutputFlag(), industryJob.getLocation(), null, null, industryJob, null);
+			return industryJob != null //better safe then sorry 
+					&& matches(industryJob.getProductTypeID(), industryJob.getOwnerID(), null, null, industryJob.getLocation(), null, null, industryJob, null);
 		}
 
 		private boolean matches(final int typeID, final Long ownerID, final String container, final Integer flagID, final MyLocation location, final MyAsset asset, final MyMarketOrder marketOrder, final MyIndustryJob industryJob, final MyTransaction transaction) {
@@ -462,7 +462,7 @@ public class Stockpile implements Comparable<Stockpile>, LocationType {
 					}
 				} else if (industryJob != null) { //Jobs include
 					if (industryJob.getActivityID() == 1  //Manufacturing
-							&& industryJob.getCompletedStatus() == 0 //Inprogress AKA not delivered
+							&& industryJob.getStatus() == 1 //Inprogress AKA not delivered
 							&& filter.isJobs()) {
 						//OK
 					} else {
