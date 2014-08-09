@@ -68,8 +68,10 @@ public final class ApiConverter {
 	public static List<MyAsset> assetIndustryJob(final List<MyIndustryJob> industryJobs, final Owner owner) {
 		List<MyAsset> assets = new ArrayList<MyAsset>();
 		for (MyIndustryJob industryJob : industryJobs) {
-			if (!industryJob.isCompleted()) {
+			if (!industryJob.isDelivered()) {
 				MyAsset asset = toAssetIndustryJob(industryJob, owner);
+				System.out.println(asset.isBPC());
+				System.out.println(asset.isBPO());
 				assets.add(asset);
 			}
 		}
@@ -83,7 +85,7 @@ public final class ApiConverter {
 		long itemID = industryJob.getBlueprintID();
 		int flagID = 0;
 		String flag = "Industry Job";
-		boolean singleton  = false;
+		boolean singleton  = true;
 		int rawQuantity = -2;
 		return createAsset(null, owner, count, flagID, itemID, typeID, locationID, singleton, rawQuantity, flag);
 	}
@@ -263,8 +265,9 @@ public final class ApiConverter {
 		Item item = ApiIdConverter.getItem(apiIndustryJob.getBlueprintTypeID());
 		long locationID = toLocationID(apiIndustryJob);
 		MyLocation location = ApiIdConverter.getLocation(locationID);
-		Item output = ApiIdConverter.getItem(apiIndustryJob.getProductTypeID());
-		return new MyIndustryJob(apiIndustryJob, item, location, owner, output.getPortion());
+		Item blueprint = ApiIdConverter.getItem(apiIndustryJob.getBlueprintTypeID());
+		Item product = ApiIdConverter.getItem(blueprint.getProduct());
+		return new MyIndustryJob(apiIndustryJob, item, location, owner, product.getPortion(), product.getTypeID());
 	}
 
 	private static long toLocationID(final IndustryJob apiIndustryJob) {
@@ -275,6 +278,10 @@ public final class ApiConverter {
 		location = ApiIdConverter.isLocationOK(apiIndustryJob.getOutputLocationID());
 		if (location) {
 			return apiIndustryJob.getOutputLocationID();
+		}
+		location = ApiIdConverter.isLocationOK(apiIndustryJob.getSolarSystemID());
+		if (location) {
+			return apiIndustryJob.getSolarSystemID();
 		}
 		LOG.error("Failed to find locationID for IndustryJob. InstalledItemLocationID: " + apiIndustryJob.getBlueprintLocationID() + " - ContainerLocationID: " + apiIndustryJob.getOutputLocationID());
 		return -1;

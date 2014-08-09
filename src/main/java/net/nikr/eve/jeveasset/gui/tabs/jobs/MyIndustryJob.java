@@ -181,7 +181,7 @@ public class MyIndustryJob extends IndustryJob implements Comparable<MyIndustryJ
 	private int outputCount;
 	private String installer;
 
-	public MyIndustryJob(final IndustryJob apiIndustryJob, final Item item, final MyLocation location, final Owner owner, final int portion) {
+	public MyIndustryJob(final IndustryJob apiIndustryJob, final Item item, final MyLocation location, final Owner owner, final int portion, final int productTypeID) {
 		setJobID(apiIndustryJob.getJobID());
 		setInstallerID(apiIndustryJob.getInstallerID());
 		setInstallerName(apiIndustryJob.getInstallerName());
@@ -200,7 +200,7 @@ public class MyIndustryJob extends IndustryJob implements Comparable<MyIndustryJ
 		setTeamID(apiIndustryJob.getTeamID());
 		setLicensedRuns(apiIndustryJob.getLicensedRuns());
 		setProbability(apiIndustryJob.getProbability());
-		setProductTypeID(apiIndustryJob.getProductTypeID());
+		setProductTypeID(productTypeID);
 		setProductTypeName(apiIndustryJob.getProductTypeName());
 		setStatus(apiIndustryJob.getStatus());
 		setTimeInSeconds(apiIndustryJob.getTimeInSeconds());
@@ -245,7 +245,7 @@ public class MyIndustryJob extends IndustryJob implements Comparable<MyIndustryJ
 		}
 		switch (getStatus()) {
 			case 1: //Active
-				if (isCompleted()) {
+				if (getEndDate().before(Settings.getNow())) {
 					state = IndustryJobState.STATE_DONE;
 				} else {
 					state = IndustryJobState.STATE_ACTIVE;
@@ -276,6 +276,9 @@ public class MyIndustryJob extends IndustryJob implements Comparable<MyIndustryJ
 				break;
 		}
 		this.name = item.getTypeName();
+		if (outputCount == 0) {
+			System.out.println("Output Count: " + outputCount + " Runs: " + getRuns() + " Portion: " + portion);
+		}
 	}
 
 	@Override
@@ -284,7 +287,19 @@ public class MyIndustryJob extends IndustryJob implements Comparable<MyIndustryJ
 	}
 
 	public final boolean isCompleted() {
-		return getEndDate().before(Settings.getNow());
+		return getCompletedDate().after(Settings.getNow());
+	}
+
+	public final boolean isDelivered() {
+		return getState() == IndustryJobState.STATE_DELIVERED;
+	}
+
+	public final boolean isManufacturing() {
+		return getActivity() == IndustryActivity.ACTIVITY_MANUFACTURING;
+	}
+
+	public final boolean isInvention() {
+		return getActivity() == IndustryActivity.ACTIVITY_REVERSE_INVENTION;
 	}
 
 	public IndustryActivity getActivity() {
@@ -313,8 +328,8 @@ public class MyIndustryJob extends IndustryJob implements Comparable<MyIndustryJ
 	}
 
 	public void setOutputPrice(double outputPrice) {
-		if (getState() == IndustryJobState.STATE_ACTIVE && getActivity() == IndustryActivity.ACTIVITY_MANUFACTURING){
-			this.outputValue = outputPrice * (double) getRuns() * getPortion();
+		if (isManufacturing() && !isDelivered()) {
+			this.outputValue = outputPrice * getRuns() * getPortion();
 		} else {
 			this.outputValue = 0;
 		}

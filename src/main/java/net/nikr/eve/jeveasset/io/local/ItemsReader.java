@@ -83,7 +83,13 @@ public final class ItemsReader extends AbstractXmlReader {
 		boolean marketGroup = AttributeGetters.getBoolean(node, "marketgroup");
 		boolean piMaterial = AttributeGetters.getBoolean(node, "pi");
 		int portion = AttributeGetters.getInt(node, "portion");
-		return new Item(id, name, group, category, price, volume, meta, tech, marketGroup, piMaterial, portion);
+		int product;
+		if (AttributeGetters.haveAttribute(node, "product")) {
+			product = AttributeGetters.getInt(node, "product");
+		} else {
+			product = 0;
+		}
+		return new Item(id, name, group, category, price, volume, meta, tech, marketGroup, piMaterial, portion, product);
 	}
 
 	private void parseMaterials(final Element element, final Item item) {

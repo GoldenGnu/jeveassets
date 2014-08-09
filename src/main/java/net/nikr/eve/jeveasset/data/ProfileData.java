@@ -38,6 +38,7 @@ import net.nikr.eve.jeveasset.gui.tabs.contracts.MyContract;
 import net.nikr.eve.jeveasset.gui.tabs.contracts.MyContractItem;
 import net.nikr.eve.jeveasset.gui.tabs.jobs.MyIndustryJob;
 import net.nikr.eve.jeveasset.gui.tabs.jobs.MyIndustryJob.IndustryActivity;
+import net.nikr.eve.jeveasset.gui.tabs.jobs.MyIndustryJob.IndustryJobState;
 import net.nikr.eve.jeveasset.gui.tabs.journal.MyJournal;
 import net.nikr.eve.jeveasset.gui.tabs.orders.MyMarketOrder;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile;
@@ -135,7 +136,7 @@ public class ProfileData {
 						priceTypeIDs.add(blueprint.getTypeID());
 					}
 					//Manufacturing Output
-					if (industryJob.getActivity() == IndustryActivity.ACTIVITY_MANUFACTURING && !industryJob.isCompleted()) {
+					if (industryJob.isManufacturing() && !industryJob.isDelivered()) {
 						//Output
 						Item output = ApiIdConverter.getItem(industryJob.getProductTypeID());
 						if (output.isMarketGroup()) {

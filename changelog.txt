@@ -16,6 +16,17 @@
                   #### #  # #  # #  # #### #### #### #### ####
 
 ________________________________________________________________________________
+_2.8.7__________________________________________________________________________
+
+Changed:
+-Assets converted from industry jobs are now always marked as BPC
+
+Bug Fixes:
+-Industry Jobs Output Count/Value was not working (Thanks to Busje Komt Zo)
+-Tracker manufacturing was always zero (Same bug as above)
+-Crashed when filters contained removed columns (Thanks to Uber Pie)
+
+________________________________________________________________________________
 _2.8.6__________________________________________________________________________
 
 Changed:
