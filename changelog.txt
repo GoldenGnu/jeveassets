@@ -16,6 +16,18 @@
                   #### #  # #  # #  # #### #### #### #### ####
 
 ________________________________________________________________________________
+_2.9.0__________________________________________________________________________
+
+New Feature:
+-Stockpile: Adjustable percentage grouping
+-Tracker: Multiple characters select
+-Date filter: Last X Days
+
+Bug Fixes:
+-Updated reprocessing to the latest formula and fixed reprocessing skills
+-Accounts was not saved when deleted/added
+
+________________________________________________________________________________
 _2.8.7__________________________________________________________________________
 
 Changed:
