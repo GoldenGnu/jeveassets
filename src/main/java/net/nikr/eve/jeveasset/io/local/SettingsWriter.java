@@ -376,8 +376,8 @@ public class SettingsWriter extends AbstractXmlWriter {
 	private void writeReprocessSettings(final Document xmldoc, final ReprocessSettings reprocessSettings) {
 		Element parentNode = xmldoc.createElementNS(null, "reprocessing");
 		xmldoc.getDocumentElement().appendChild(parentNode);
-		parentNode.setAttributeNS(null, "refining", String.valueOf(reprocessSettings.getRefiningLevel()));
-		parentNode.setAttributeNS(null, "efficiency", String.valueOf(reprocessSettings.getRefineryEfficiencyLevel()));
+		parentNode.setAttributeNS(null, "refining", String.valueOf(reprocessSettings.getReprocessingLevel()));
+		parentNode.setAttributeNS(null, "efficiency", String.valueOf(reprocessSettings.getReprocessingEfficiencyLevel()));
 		parentNode.setAttributeNS(null, "processing", String.valueOf(reprocessSettings.getScrapmetalProcessingLevel()));
 		parentNode.setAttributeNS(null, "station", String.valueOf(reprocessSettings.getStation()));
 	}

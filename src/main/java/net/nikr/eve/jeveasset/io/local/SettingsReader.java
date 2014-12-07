@@ -592,11 +592,11 @@ public final class SettingsReader extends AbstractXmlReader {
 	}
 
 	private void parseReprocessing(final Element windowElement, final Settings settings) {
-		int refining = AttributeGetters.getInt(windowElement, "refining");
-		int efficiency = AttributeGetters.getInt(windowElement, "efficiency");
-		int processing = AttributeGetters.getInt(windowElement, "processing");
+		int reprocessing = AttributeGetters.getInt(windowElement, "refining");
+		int reprocessingEfficiency = AttributeGetters.getInt(windowElement, "efficiency");
+		int scrapmetalProcessing = AttributeGetters.getInt(windowElement, "processing");
 		int station = AttributeGetters.getInt(windowElement, "station");
-		settings.setReprocessSettings(new ReprocessSettings(station, refining, efficiency, processing));
+		settings.setReprocessSettings(new ReprocessSettings(station, reprocessing, reprocessingEfficiency, scrapmetalProcessing));
 	}
 
 	private void parseWindow(final Element windowElement, final Settings settings) {
