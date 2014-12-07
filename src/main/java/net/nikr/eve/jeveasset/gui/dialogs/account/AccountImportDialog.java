@@ -30,6 +30,7 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.concurrent.ExecutionException;
 import javax.swing.BorderFactory;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
@@ -71,7 +72,7 @@ public class AccountImportDialog extends JDialogCentered {
 		DONE
 	}
 
-	private AccountManagerDialog apiManager;
+	private final AccountManagerDialog apiManager;
 
 	private enum Result {
 		FAIL_EXIST,
@@ -86,16 +87,16 @@ public class AccountImportDialog extends JDialogCentered {
 
 	private JTextField jKeyID;
 	private JTextField jVCode;
-	private JButton jNext;
-	private JButton jPrevious;
-	private JButton jCancel;
-	private CardLayout cardLayout;
-	private JPanel jContent;
+	private final JButton jNext;
+	private final JButton jPrevious;
+	private final JButton jCancel;
+	private final CardLayout cardLayout;
+	private final JPanel jContent;
 	private MyAccount account;
 	private MyAccount editAccount;
-	private ListenerClass listener = new ListenerClass();
+	private final ListenerClass listener = new ListenerClass();
 
-	private DonePanel donePanel;
+	private final DonePanel donePanel;
 
 	private int nTabIndex;
 
@@ -245,6 +246,7 @@ public class AccountImportDialog extends JDialogCentered {
 		apiManager.forceUpdate();
 		program.getAccounts().add(account);
 		apiManager.updateTable();
+		program.saveProfile();
 		this.setVisible(false);
 	}
 
@@ -434,9 +436,9 @@ public class AccountImportDialog extends JDialogCentered {
 
 	private class DonePanel extends JCardPanel {
 
-		private JLabel jResult;
+		private final JLabel jResult;
 
-		private JEditorPane jHelp;
+		private final JEditorPane jHelp;
 
 		public DonePanel() {
 			jResult = new JLabel();
@@ -502,7 +504,7 @@ public class AccountImportDialog extends JDialogCentered {
 		private Result result = null;
 		private boolean done = false;
 		private String error = "";
-		private AccountGetter accountGetter = new AccountGetter();
+		private final AccountGetter accountGetter = new AccountGetter();
 
 		@Override
 		public Void doInBackground() {
@@ -546,7 +548,10 @@ public class AccountImportDialog extends JDialogCentered {
 		public void done() {
 			try {
 				get();
-			} catch (Exception ex) {
+			} catch (InterruptedException ex) {
+				LOG.error(ex.getMessage(), ex);
+				throw new RuntimeException(ex);
+			} catch (ExecutionException ex) {
 				LOG.error(ex.getMessage(), ex);
 				throw new RuntimeException(ex);
 			}

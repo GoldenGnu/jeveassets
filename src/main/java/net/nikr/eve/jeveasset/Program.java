@@ -351,6 +351,11 @@ public class Program implements ActionListener {
 		profileManager.saveProfile();
 	}
 
+	public void saveProfile() {
+		LOG.info("Saving Profile");
+		profileManager.saveProfile();
+	}
+
 	/**
 	 * Used by macOsxCode() - should not be changed
 	 */

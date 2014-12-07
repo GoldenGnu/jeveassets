@@ -33,7 +33,11 @@ import java.awt.event.ActionListener;
 import java.util.HashMap;
 import java.util.Map;
 import javax.swing.GroupLayout.Alignment;
-import javax.swing.*;
+import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.MyAccount;
 import net.nikr.eve.jeveasset.data.Owner;
@@ -322,6 +326,7 @@ public class AccountManagerDialog extends JDialogCentered {
 						program.getAccounts().remove(account);
 						forceUpdate();
 						updateTable();
+						program.saveProfile();
 					}
 				}
 			}
