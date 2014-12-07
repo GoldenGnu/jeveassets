@@ -70,8 +70,6 @@ public final class ApiConverter {
 		for (MyIndustryJob industryJob : industryJobs) {
 			if (!industryJob.isDelivered()) {
 				MyAsset asset = toAssetIndustryJob(industryJob, owner);
-				System.out.println(asset.isBPC());
-				System.out.println(asset.isBPO());
 				assets.add(asset);
 			}
 		}

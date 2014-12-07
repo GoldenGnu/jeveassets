@@ -276,9 +276,6 @@ public class MyIndustryJob extends IndustryJob implements Comparable<MyIndustryJ
 				break;
 		}
 		this.name = item.getTypeName();
-		if (outputCount == 0) {
-			System.out.println("Output Count: " + outputCount + " Runs: " + getRuns() + " Portion: " + portion);
-		}
 	}
 
 	@Override
