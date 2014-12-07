@@ -16,6 +16,37 @@
                   #### #  # #  # #  # #### #### #### #### ####
 
 ________________________________________________________________________________
+_2.8.7__________________________________________________________________________
+
+Changed:
+-Assets converted from industry jobs are now always marked as BPC
+
+Bug Fixes:
+-Industry Jobs Output Count/Value was not working (Thanks to Busje Komt Zo)
+-Tracker manufacturing was always zero (Same bug as above)
+-Crashed when filters contained removed columns (Thanks to Uber Pie)
+
+________________________________________________________________________________
+_2.8.6__________________________________________________________________________
+
+Changed:
+-Static data updated to Crius 1.0.0
+-Removed PE/ME from industry jobs and assets (no longer part of the API)
+-Removed BPO/PBC from industry jobs (no longer part of the API)
+
+Bug Fixes:
+-Industry Jobs was not updating (due to API changes)
+
+________________________________________________________________________________
+_2.8.5__________________________________________________________________________
+
+Changed:
+-Static data updated to Kronos 1.0.0
+
+Bug Fixes:
+-Auto update could fail before asked to update
+
+________________________________________________________________________________
 _2.8.4__________________________________________________________________________
 
 New Feature:

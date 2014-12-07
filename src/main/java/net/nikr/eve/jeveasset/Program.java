@@ -55,7 +55,6 @@ import net.nikr.eve.jeveasset.gui.tabs.contracts.ContractsTab;
 import net.nikr.eve.jeveasset.gui.tabs.contracts.MyContractItem;
 import net.nikr.eve.jeveasset.gui.tabs.items.ItemsTab;
 import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustryJobsTab;
-import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustryPlotTab;
 import net.nikr.eve.jeveasset.gui.tabs.jobs.MyIndustryJob;
 import net.nikr.eve.jeveasset.gui.tabs.journal.JournalTab;
 import net.nikr.eve.jeveasset.gui.tabs.journal.MyJournal;
@@ -123,7 +122,6 @@ public class Program implements ActionListener {
 	private JournalTab journalTab;
 	private TransactionTab transactionsTab;
 	private IndustryJobsTab industryJobsTab;
-	private IndustryPlotTab industryPlotTab;
 	private AssetsTab assetsTab;
 	private OverviewTab overviewTab;
 	private StockpileTab stockpileTab;
@@ -577,9 +575,6 @@ public class Program implements ActionListener {
 		}
 		if (MainMenuAction.INDUSTRY_JOBS.name().equals(e.getActionCommand())) {
 			mainWindow.addTab(industryJobsTab);
-		}
-		if (MainMenuAction.INDUSTRY_PLOT.name().equals(e.getActionCommand())) {
-			mainWindow.addTab(industryPlotTab, true, true);
 		}
 		if (MainMenuAction.OVERVIEW.name().equals(e.getActionCommand())) {
 			mainWindow.addTab(overviewTab);

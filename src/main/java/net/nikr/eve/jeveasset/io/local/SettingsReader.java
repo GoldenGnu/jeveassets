@@ -835,11 +835,19 @@ public final class SettingsReader extends AbstractXmlReader {
 					String text = AttributeGetters.getString(rowNode, "text");
 					String columnString = AttributeGetters.getString(rowNode, "column");
 					EnumTableColumn<?> column =  getColumn(columnString, tableName);
-					String compare = AttributeGetters.getString(rowNode, "compare");
-					String logic = AttributeGetters.getString(rowNode, "logic");
-					filter.add(new Filter(logic, column, compare, text));
+					if (column != null) {
+						String compare = AttributeGetters.getString(rowNode, "compare");
+						String logic = AttributeGetters.getString(rowNode, "logic");
+						filter.add(new Filter(logic, column, compare, text));
+					} else {
+						LOG.warn(columnString + " column removed from filter");
+					}
 				}
-				filters.put(filterName, filter);
+				if (!filter.isEmpty()) {
+					filters.put(filterName, filter);
+				} else {
+					LOG.warn(filterName + " filter removed (Empty)");
+				}
 			}
 			settings.getTableFilters().put(tableName, filters);
 		}
@@ -946,7 +954,7 @@ public final class SettingsReader extends AbstractXmlReader {
 		if (column.equals("ALL")) {
 			return AllColumn.ALL;
 		}
-		throw new RuntimeException("Fail to load filter column: " + column);
+		return null;
 	}
 
 	private void parseAssetFilters(final Element filtersElement, final Settings settings) {

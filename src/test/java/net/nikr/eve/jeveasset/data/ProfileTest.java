@@ -71,7 +71,7 @@ public class ProfileTest {
 		assertEquals(name+" fail to load", load, true);
 		assertEquals(name+" had no accounts", profileManager.getAccounts().isEmpty(), false);
 		boolean marketOrders = false;
-		boolean industryJobs = false;
+		//boolean industryJobs = false;
 		boolean contracts = false;
 		boolean transactions = false;
 		boolean journal = false;
@@ -84,7 +84,7 @@ public class ProfileTest {
 			assertEquals(name+" had no owners", account.getOwners().isEmpty(), false);
 			for (Owner owner : account.getOwners()) {
 				marketOrders = marketOrders || !owner.getMarketOrders().isEmpty();
-				industryJobs = industryJobs || !owner.getIndustryJobs().isEmpty();
+				//industryJobs = industryJobs || !owner.getIndustryJobs().isEmpty();
 				transactions = transactions || !owner.getTransactions().isEmpty();
 				contracts = contracts || !owner.getContracts().isEmpty();
 				journal = journal || !owner.getJournal().isEmpty();
@@ -93,7 +93,7 @@ public class ProfileTest {
 			}
 		}
 		assertEquals(name+" had no market orders", true, marketOrders);
-		assertEquals(name+" had no industry jobs", true, industryJobs);
+		//assertEquals(name+" had no industry jobs", true, industryJobs);
 		if (supportContracts) {
 			assertEquals(name+" had no contracts", true, contracts);
 		}

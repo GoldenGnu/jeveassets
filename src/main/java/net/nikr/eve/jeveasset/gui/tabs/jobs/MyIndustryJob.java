@@ -21,19 +21,17 @@
 package net.nikr.eve.jeveasset.gui.tabs.jobs;
 
 import com.beimin.eveapi.model.shared.IndustryJob;
-import java.util.Date;
 import net.nikr.eve.jeveasset.data.Item;
 import net.nikr.eve.jeveasset.data.MyLocation;
 import net.nikr.eve.jeveasset.data.Owner;
 import net.nikr.eve.jeveasset.data.Settings;
-import net.nikr.eve.jeveasset.data.types.BlueprintType;
 import net.nikr.eve.jeveasset.data.types.ItemType;
 import net.nikr.eve.jeveasset.data.types.LocationType;
 import net.nikr.eve.jeveasset.data.types.PriceType;
 import net.nikr.eve.jeveasset.i18n.DataModelIndustryJob;
 
 
-public class MyIndustryJob extends IndustryJob implements Comparable<MyIndustryJob>, LocationType, ItemType, BlueprintType, PriceType {
+public class MyIndustryJob extends IndustryJob implements Comparable<MyIndustryJob>, LocationType, ItemType, PriceType {
 
 	public enum IndustryJobState {
 		STATE_ALL() {
@@ -42,28 +40,10 @@ public class MyIndustryJob extends IndustryJob implements Comparable<MyIndustryJ
 				return DataModelIndustryJob.get().stateAll();
 			}
 		},
-		STATE_NOT_DELIVERED() {
+		STATE_PAUSED() {
 			@Override
 			String getI18N() {
-				return DataModelIndustryJob.get().stateNotDelivered();
-			}
-		},
-		STATE_DELIVERED() {
-			@Override
-			String getI18N() {
-				return DataModelIndustryJob.get().stateDelivered();
-			}
-		},
-		STATE_FAILED() {
-			@Override
-			String getI18N() {
-				return DataModelIndustryJob.get().stateFailed();
-			}
-		},
-		STATE_READY() {
-			@Override
-			String getI18N() {
-				return DataModelIndustryJob.get().stateReady();
+				return DataModelIndustryJob.get().statePaused();
 			}
 		},
 		STATE_ACTIVE() {
@@ -72,36 +52,31 @@ public class MyIndustryJob extends IndustryJob implements Comparable<MyIndustryJ
 				return DataModelIndustryJob.get().stateActive();
 			}
 		},
-		STATE_PENDING() {
+		STATE_DONE() {
 			@Override
 			String getI18N() {
-				return DataModelIndustryJob.get().statePending();
+				return DataModelIndustryJob.get().stateDone();
 			}
 		},
-		STATE_ABORTED() {
+		STATE_FAILED() {
 			@Override
 			String getI18N() {
-				return DataModelIndustryJob.get().stateAborted();
+				return DataModelIndustryJob.get().stateFailed();
 			}
 		},
-		STATE_GM_ABORTED() {
+		STATE_CANCELLED() {
 			@Override
 			String getI18N() {
-				return DataModelIndustryJob.get().stateGmAborted();
+				return DataModelIndustryJob.get().stateCancelled();
 			}
 		},
-		STATE_IN_FLIGHT() {
+		STATE_DELIVERED() {
 			@Override
 			String getI18N() {
-				return DataModelIndustryJob.get().stateInFlight();
-			}
-		},
-		STATE_DESTROYED() {
-			@Override
-			String getI18N() {
-				return DataModelIndustryJob.get().stateDestroyed();
+				return DataModelIndustryJob.get().stateDelivered();
 			}
 		};
+		
 		abstract String getI18N();
 		@Override
 		public String toString() {
@@ -155,9 +130,9 @@ public class MyIndustryJob extends IndustryJob implements Comparable<MyIndustryJ
 			public String getDescriptionOf(final MyIndustryJob job) {
 				// "Copying: Xyz Blueprint making 5 copies with 1500 runs each."
 				return DataModelIndustryJob.get().descriptionCopying(
-						String.valueOf(job.getInstalledItemTypeID()),
+						String.valueOf(job.getBlueprintTypeID()),
 						job.getRuns(),
-						job.getLicensedProductionRuns()
+						job.getLicensedRuns()
 						);
 			}
 		},
@@ -206,40 +181,34 @@ public class MyIndustryJob extends IndustryJob implements Comparable<MyIndustryJ
 	private int outputCount;
 	private String installer;
 
-	public MyIndustryJob(final IndustryJob apiIndustryJob, final Item item, final MyLocation location, final Owner owner, final int portion) {
-		this.setJobID(apiIndustryJob.getJobID());
-		this.setContainerID(apiIndustryJob.getContainerID());
-		this.setInstalledItemID(apiIndustryJob.getInstalledItemID());
-		this.setInstalledItemLocationID(apiIndustryJob.getInstalledItemLocationID());
-		this.setInstalledItemQuantity(apiIndustryJob.getInstalledItemQuantity());
-		this.setInstalledItemProductivityLevel(apiIndustryJob.getInstalledItemProductivityLevel());
-		this.setInstalledItemMaterialLevel(apiIndustryJob.getInstalledItemMaterialLevel());
-		this.setInstalledItemLicensedProductionRunsRemaining(apiIndustryJob.getInstalledItemLicensedProductionRunsRemaining());
-		this.setOutputLocationID(apiIndustryJob.getOutputLocationID());
-		this.setInstallerID(apiIndustryJob.getInstallerID());
-		this.setRuns(apiIndustryJob.getRuns());
-		this.setAssemblyLineID(apiIndustryJob.getAssemblyLineID());
-		this.setLicensedProductionRuns(apiIndustryJob.getLicensedProductionRuns());
-		this.setInstalledInSolarSystemID(apiIndustryJob.getInstalledInSolarSystemID());
-		this.setContainerLocationID(apiIndustryJob.getContainerLocationID());
-		this.setMaterialMultiplier(apiIndustryJob.getMaterialMultiplier());
-		this.setCharMaterialMultiplier(apiIndustryJob.getCharMaterialMultiplier());
-		this.setTimeMultiplier(apiIndustryJob.getTimeMultiplier());
-		this.setCharTimeMultiplier(apiIndustryJob.getCharTimeMultiplier());
-		this.setInstalledItemTypeID(apiIndustryJob.getInstalledItemTypeID()); //Fixed
-		this.setOutputTypeID(apiIndustryJob.getOutputTypeID());
-		this.setContainerTypeID(apiIndustryJob.getContainerTypeID());
-		this.setInstalledItemCopy(apiIndustryJob.getInstalledItemCopy());
-		this.setCompleted(apiIndustryJob.isCompleted());
-		this.setCompletedSuccessfully(apiIndustryJob.isCompletedSuccessfully());
-		this.setInstalledItemFlag(apiIndustryJob.getInstalledItemFlag());
-		this.setOutputFlag(apiIndustryJob.getOutputFlag());
-		this.setActivityID(apiIndustryJob.getActivityID());
-		this.setCompletedStatus(apiIndustryJob.getCompletedStatus());
-		this.setInstallTime(apiIndustryJob.getInstallTime());
-		this.setBeginProductionTime(apiIndustryJob.getBeginProductionTime());
-		this.setEndProductionTime(apiIndustryJob.getEndProductionTime());
-		this.setPauseProductionTime(apiIndustryJob.getPauseProductionTime());
+	public MyIndustryJob(final IndustryJob apiIndustryJob, final Item item, final MyLocation location, final Owner owner, final int portion, final int productTypeID) {
+		setJobID(apiIndustryJob.getJobID());
+		setInstallerID(apiIndustryJob.getInstallerID());
+		setInstallerName(apiIndustryJob.getInstallerName());
+		setFacilityID(apiIndustryJob.getFacilityID());
+		setSolarSystemID(apiIndustryJob.getSolarSystemID());
+		setSolarSystemName(apiIndustryJob.getSolarSystemName());
+		setStationID(apiIndustryJob.getStationID());
+		setActivityID(apiIndustryJob.getActivityID());
+		setBlueprintID(apiIndustryJob.getBlueprintID());
+		setBlueprintTypeID(apiIndustryJob.getBlueprintTypeID());
+		setBlueprintTypeName(apiIndustryJob.getBlueprintTypeName());
+		setBlueprintLocationID(apiIndustryJob.getBlueprintLocationID());
+		setOutputLocationID(apiIndustryJob.getOutputLocationID());
+		setRuns(apiIndustryJob.getRuns());
+		setCost(apiIndustryJob.getCost());
+		setTeamID(apiIndustryJob.getTeamID());
+		setLicensedRuns(apiIndustryJob.getLicensedRuns());
+		setProbability(apiIndustryJob.getProbability());
+		setProductTypeID(productTypeID);
+		setProductTypeName(apiIndustryJob.getProductTypeName());
+		setStatus(apiIndustryJob.getStatus());
+		setTimeInSeconds(apiIndustryJob.getTimeInSeconds());
+		setStartDate(apiIndustryJob.getStartDate());
+		setEndDate(apiIndustryJob.getEndDate());
+		setPauseDate(apiIndustryJob.getPauseDate());
+		setCompletedDate(apiIndustryJob.getCompletedDate());
+		setCompletedCharacterID(apiIndustryJob.getCompletedCharacterID());
 		this.item = item;
 		this.location = location;
 		this.owner = owner;
@@ -274,36 +243,25 @@ public class MyIndustryJob extends IndustryJob implements Comparable<MyIndustryJ
 				activity = IndustryActivity.ACTIVITY_REVERSE_INVENTION;
 				break;
 		}
-		Date start = this.getBeginProductionTime();
-		Date end = this.getEndProductionTime();
-		switch (this.getCompletedStatus()) {
-			case 0:
-				if (this.isCompleted()) {
-					state = IndustryJobState.STATE_FAILED;
-				} else if (start.before(Settings.getNow())) {
-					if (end.before(Settings.getNow())) {
-						state = IndustryJobState.STATE_READY;
-					} else {
-						state = IndustryJobState.STATE_ACTIVE;
-					}
+		switch (getStatus()) {
+			case 1: //Active
+				if (getEndDate().before(Settings.getNow())) {
+					state = IndustryJobState.STATE_DONE;
 				} else {
-					state = IndustryJobState.STATE_PENDING;
+					state = IndustryJobState.STATE_ACTIVE;
 				}
 				break;
-			case 1:
+			case 2:
+				state = IndustryJobState.STATE_PAUSED;
+				break;
+			case 102:
+				state = IndustryJobState.STATE_CANCELLED;
+				break;
+			case 104:
 				state = IndustryJobState.STATE_DELIVERED;
 				break;
-			case 2:
-				state = IndustryJobState.STATE_ABORTED;
-				break;
-			case 3:
-				state = IndustryJobState.STATE_GM_ABORTED;
-				break;
-			case 4:
-				state = IndustryJobState.STATE_IN_FLIGHT;
-				break;
-			case 5:
-				state = IndustryJobState.STATE_DESTROYED;
+			case 105 :
+				state = IndustryJobState.STATE_FAILED;
 				break;
 		}
 		switch(activity) {
@@ -317,16 +275,31 @@ public class MyIndustryJob extends IndustryJob implements Comparable<MyIndustryJ
 				outputCount = 1;
 				break;
 		}
-		if (getInstalledItemCopy() > 0) {
-			this.name = item.getTypeName() + " (BPC)";
-		} else {
-			this.name = item.getTypeName() + " (BPO)";
+		this.name = item.getTypeName();
+		if (outputCount == 0) {
+			System.out.println("Output Count: " + outputCount + " Runs: " + getRuns() + " Portion: " + portion);
 		}
 	}
 
 	@Override
 	public int compareTo(final MyIndustryJob o) {
 		return 0;
+	}
+
+	public final boolean isCompleted() {
+		return getCompletedDate().after(Settings.getNow());
+	}
+
+	public final boolean isDelivered() {
+		return getState() == IndustryJobState.STATE_DELIVERED;
+	}
+
+	public final boolean isManufacturing() {
+		return getActivity() == IndustryActivity.ACTIVITY_MANUFACTURING;
+	}
+
+	public final boolean isInvention() {
+		return getActivity() == IndustryActivity.ACTIVITY_REVERSE_INVENTION;
 	}
 
 	public IndustryActivity getActivity() {
@@ -355,8 +328,8 @@ public class MyIndustryJob extends IndustryJob implements Comparable<MyIndustryJ
 	}
 
 	public void setOutputPrice(double outputPrice) {
-		if (getState() == IndustryJobState.STATE_ACTIVE && getActivity() == IndustryActivity.ACTIVITY_MANUFACTURING){
-			this.outputValue = outputPrice * (double) getRuns() * getPortion();
+		if (isManufacturing() && !isDelivered()) {
+			this.outputValue = outputPrice * getRuns() * getPortion();
 		} else {
 			this.outputValue = 0;
 		}
@@ -372,16 +345,6 @@ public class MyIndustryJob extends IndustryJob implements Comparable<MyIndustryJ
 
 	public void setInstaller(String installer) {
 		this.installer = installer;
-	}
-
-	@Override
-	public boolean isBPO() {
-		return !isBPC();
-	}
-
-	@Override
-	public boolean isBPC() {
-		return getInstalledItemCopy() > 0;
 	}
 
 	@Override

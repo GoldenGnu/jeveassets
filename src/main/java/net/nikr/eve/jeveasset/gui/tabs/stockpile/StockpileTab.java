@@ -526,7 +526,7 @@ public class StockpileTab extends JMainTab {
 				//Industry Job
 				if (stockpile.isJobs()) {
 					for (MyIndustryJob industryJob : program.getIndustryJobsEventList()) {
-						if (industryJob.getOutputTypeID() != TYPE_ID) {
+						if (industryJob.getProductTypeID() != TYPE_ID) {
 							continue; //Ignore wrong typeID
 						}
 						item.updateIndustryJob(industryJob);

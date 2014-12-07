@@ -31,6 +31,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class RefTypeTest {
@@ -52,7 +53,7 @@ public class RefTypeTest {
 	/**
 	 * Test of EVEAPI RefType enum (via the API - need to be online)
 	 */
-	@Test
+	@Ignore @Test
 	public void testEnum() {
 		try {
 			RefTypesResponse response = new com.beimin.eveapi.parser.eve.RefTypesParser().getResponse();

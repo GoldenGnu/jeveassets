@@ -537,8 +537,10 @@ public final class ProfileReader extends AbstractXmlReader {
 			NodeList industryJobNodes = currentIndustryJobsNode.getElementsByTagName("industryjob");
 			for (int b = 0; b < industryJobNodes.getLength(); b++) {
 				Element currentNode = (Element) industryJobNodes.item(b);
-				IndustryJob apiIndustryJob = parseIndustryJobs(currentNode);
-				industryJobs.add(apiIndustryJob);
+				if (AttributeGetters.haveAttribute(currentNode, "blueprintid")) {
+					IndustryJob apiIndustryJob = parseIndustryJobs(currentNode);
+					industryJobs.add(apiIndustryJob);
+				}
 			}
 		}
 		owner.setIndustryJobs(ApiConverter.convertIndustryJobs(industryJobs, owner));
@@ -546,74 +548,61 @@ public final class ProfileReader extends AbstractXmlReader {
 
 	private IndustryJob parseIndustryJobs(final Element element) {
 		IndustryJob apiIndustryJob = new IndustryJob();
-
 		long jobID = AttributeGetters.getLong(element, "jobid");
-		long containerID = AttributeGetters.getLong(element, "containerid");
-		long installedItemID = AttributeGetters.getLong(element, "installeditemid");
-		long installedItemLocationID = AttributeGetters.getLong(element, "installeditemlocationid");
-		int installedItemQuantity = AttributeGetters.getInt(element, "installeditemquantity");
-		int installedItemProductivityLevel = AttributeGetters.getInt(element, "installeditemproductivitylevel");
-		int installedItemMaterialLevel = AttributeGetters.getInt(element, "installeditemmateriallevel");
-		int installedItemLicensedProductionRunsRemaining = AttributeGetters.getInt(element, "installeditemlicensedproductionrunsremaining");
-		long outputLocationID = AttributeGetters.getLong(element, "outputlocationid");
 		long installerID = AttributeGetters.getLong(element, "installerid");
-		int runs = AttributeGetters.getInt(element, "runs");
-		int licensedProductionRuns = AttributeGetters.getInt(element, "licensedproductionruns");
-		long installedInSolarSystemID = AttributeGetters.getLong(element, "installedinsolarsystemid");
-		long containerLocationID = AttributeGetters.getLong(element, "containerlocationid");
-		double materialMultiplier = AttributeGetters.getDouble(element, "materialmultiplier");
-		double charMaterialMultiplier = AttributeGetters.getDouble(element, "charmaterialmultiplier");
-		double timeMultiplier = AttributeGetters.getDouble(element, "timemultiplier");
-		double charTimeMultiplier = AttributeGetters.getDouble(element, "chartimemultiplier");
-		int installedItemTypeID = AttributeGetters.getInt(element, "installeditemtypeid");
-		int outputTypeID = AttributeGetters.getInt(element, "outputtypeid");
-		int containerTypeID = AttributeGetters.getInt(element, "containertypeid");
-		long installedItemCopy = AttributeGetters.getLong(element, "installeditemcopy");
-		boolean completed = AttributeGetters.getBoolean(element, "completed");
-		boolean completedSuccessfully = AttributeGetters.getBoolean(element, "completedsuccessfully");
-		int installedItemFlag = AttributeGetters.getInt(element, "installeditemflag");
-		int outputFlag = AttributeGetters.getInt(element, "outputflag");
+		String installerName = AttributeGetters.getString(element, "installername");
+		long facilityID = AttributeGetters.getLong(element, "facilityid");
+		long solarSystemID = AttributeGetters.getLong(element, "solarsystemid");
+		String solarSystemName = AttributeGetters.getString(element, "solarsystemname");
+		long stationID = AttributeGetters.getLong(element, "stationid");
 		int activityID = AttributeGetters.getInt(element, "activityid");
-		int completedStatus = AttributeGetters.getInt(element, "completedstatus");
-		Date installTime = AttributeGetters.getDate(element, "installtime");
-		Date beginProductionTime = AttributeGetters.getDate(element, "beginproductiontime");
-		Date endProductionTime = AttributeGetters.getDate(element, "endproductiontime");
-		Date pauseProductionTime = AttributeGetters.getDate(element, "pauseproductiontime");
-		long assemblyLineId = AttributeGetters.getLong(element, "assemblylineid");
+		long blueprintID = AttributeGetters.getLong(element, "blueprintid");
+		int blueprintTypeID = AttributeGetters.getInt(element, "blueprinttypeid");
+		String blueprintTypeName = AttributeGetters.getString(element, "blueprinttypename");
+		long blueprintLocationID = AttributeGetters.getLong(element, "blueprintlocationid");
+		long outputLocationID = AttributeGetters.getLong(element, "outputlocationid");
+		int runs = AttributeGetters.getInt(element, "runs");
+		double cost = AttributeGetters.getDouble(element, "cost");
+		long teamID = AttributeGetters.getLong(element, "teamid");
+		int licensedRuns = AttributeGetters.getInt(element, "licensedruns");
+		String probability = AttributeGetters.getString(element, "probability");
+		int productTypeID = AttributeGetters.getInt(element, "producttypeid");
+		String productTypeName = AttributeGetters.getString(element, "producttypename");
+		int status = AttributeGetters.getInt(element, "status");
+		long timeInSeconds = AttributeGetters.getLong(element, "timeinseconds");
+		Date startDate = AttributeGetters.getDate(element, "startdate");
+		Date endDate = AttributeGetters.getDate(element, "enddate");
+		Date pauseDate = AttributeGetters.getDate(element, "pausedate");
+		Date completedDate = AttributeGetters.getDate(element, "completeddate");
+		long completedCharacterID = AttributeGetters.getLong(element, "completedcharacterid");
 
 		apiIndustryJob.setJobID(jobID);
-		apiIndustryJob.setContainerID(containerID);
-		apiIndustryJob.setInstalledItemID(installedItemID);
-		apiIndustryJob.setInstalledItemLocationID(installedItemLocationID);
-		apiIndustryJob.setInstalledItemQuantity(installedItemQuantity);
-		apiIndustryJob.setInstalledItemProductivityLevel(installedItemProductivityLevel);
-		apiIndustryJob.setInstalledItemMaterialLevel(installedItemMaterialLevel);
-		apiIndustryJob.setInstalledItemLicensedProductionRunsRemaining(installedItemLicensedProductionRunsRemaining);
-		apiIndustryJob.setOutputLocationID(outputLocationID);
 		apiIndustryJob.setInstallerID(installerID);
-		apiIndustryJob.setRuns(runs);
-		apiIndustryJob.setLicensedProductionRuns(licensedProductionRuns);
-		apiIndustryJob.setInstalledInSolarSystemID(installedInSolarSystemID);
-		apiIndustryJob.setContainerLocationID(containerLocationID);
-		apiIndustryJob.setMaterialMultiplier(materialMultiplier);
-		apiIndustryJob.setCharMaterialMultiplier(charMaterialMultiplier);
-		apiIndustryJob.setTimeMultiplier(timeMultiplier);
-		apiIndustryJob.setCharTimeMultiplier(charTimeMultiplier);
-		apiIndustryJob.setInstalledItemTypeID(installedItemTypeID);
-		apiIndustryJob.setOutputTypeID(outputTypeID);
-		apiIndustryJob.setContainerTypeID(containerTypeID);
-		apiIndustryJob.setInstalledItemCopy(installedItemCopy);
-		apiIndustryJob.setCompleted(completed);
-		apiIndustryJob.setCompletedSuccessfully(completedSuccessfully);
-		apiIndustryJob.setInstalledItemFlag(installedItemFlag);
-		apiIndustryJob.setOutputFlag(outputFlag);
+		apiIndustryJob.setInstallerName(installerName);
+		apiIndustryJob.setFacilityID(facilityID);
+		apiIndustryJob.setSolarSystemID(solarSystemID);
+		apiIndustryJob.setSolarSystemName(solarSystemName);
+		apiIndustryJob.setStationID(stationID);
 		apiIndustryJob.setActivityID(activityID);
-		apiIndustryJob.setCompletedStatus(completedStatus);
-		apiIndustryJob.setInstallTime(installTime);
-		apiIndustryJob.setBeginProductionTime(beginProductionTime);
-		apiIndustryJob.setEndProductionTime(endProductionTime);
-		apiIndustryJob.setPauseProductionTime(pauseProductionTime);
-		apiIndustryJob.setAssemblyLineID(assemblyLineId);
+		apiIndustryJob.setBlueprintID(blueprintID);
+		apiIndustryJob.setBlueprintTypeID(blueprintTypeID);
+		apiIndustryJob.setBlueprintTypeName(blueprintTypeName);
+		apiIndustryJob.setBlueprintLocationID(blueprintLocationID);
+		apiIndustryJob.setOutputLocationID(outputLocationID);
+		apiIndustryJob.setRuns(runs);
+		apiIndustryJob.setCost(cost);
+		apiIndustryJob.setTeamID(teamID);
+		apiIndustryJob.setLicensedRuns(licensedRuns);
+		apiIndustryJob.setProbability(probability);
+		apiIndustryJob.setProductTypeID(productTypeID);
+		apiIndustryJob.setProductTypeName(productTypeName);
+		apiIndustryJob.setStatus(status);
+		apiIndustryJob.setTimeInSeconds(timeInSeconds);
+		apiIndustryJob.setStartDate(startDate);
+		apiIndustryJob.setEndDate(endDate);
+		apiIndustryJob.setPauseDate(pauseDate);
+		apiIndustryJob.setCompletedDate(completedDate);
+		apiIndustryJob.setCompletedCharacterID(completedCharacterID);
 
 		return apiIndustryJob;
 	}

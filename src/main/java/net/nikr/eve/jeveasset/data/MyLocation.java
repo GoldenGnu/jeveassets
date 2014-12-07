@@ -25,20 +25,19 @@ import net.nikr.eve.jeveasset.gui.shared.table.containers.Security;
 
 
 public class MyLocation implements Comparable<MyLocation> {
-	private long locationID; //LocationID : long
-	private String location;
-	private long stationID; //LocationID : long
-	private String station;
-	private long systemID; //LocationID : long
-	private String system;
-	private long regionID; //LocationID : long
-	private String region;
-	private String security;
-	private Security securityObject;
+	private final long locationID; //LocationID : long
+	private final String location;
+	private final long stationID; //LocationID : long
+	private final String station;
+	private final long systemID; //LocationID : long
+	private final String system;
+	private final long regionID; //LocationID : long
+	private final String region;
+	private final String security;
+	private final Security securityObject;
 
 	public MyLocation(long locationID) {
 		this(0, "", 0, "", 0, "", "0.0");
-		this.locationID = locationID;
 	}
 
 	public MyLocation(long stationID, String station, long systemID, String system, long regionID, String region, String security) {

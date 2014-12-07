@@ -199,7 +199,7 @@ class StockpileShoppingListDialog extends JDialogCentered {
 		}
 		//Industry Jobs
 		for (MyIndustryJob industryJob : program.getIndustryJobsEventList()) {
-			add(industryJob.getOutputTypeID(), industryJob, new StockItem(industryJob), claims, items);
+			add(industryJob.getProductTypeID(), industryJob, new StockItem(industryJob), claims, items);
 		}
 		//Transactions
 		for (MyTransaction transaction : program.getTransactionsEventList()) {
