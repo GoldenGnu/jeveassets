@@ -28,6 +28,9 @@ import net.nikr.eve.jeveasset.i18n.TabsTracker;
 
 public enum QuickDate {
 	EMPTY(null, null, TabsTracker.get().quickDate())
+	,DAY_ONE(Calendar.DAY_OF_YEAR, -1, TabsTracker.get().day1())
+	,WEEK_ONE(Calendar.DAY_OF_YEAR, -7, TabsTracker.get().week1())
+	,WEEK_TWO(Calendar.DAY_OF_YEAR, -14, TabsTracker.get().week2())
 	,MONTH_ONE(Calendar.MONTH, -1, TabsTracker.get().month1())
 	,MONTH_THREE(Calendar.MONTH, -3, TabsTracker.get().months3())
 	,MONTH_SIX(Calendar.MONTH, -6, TabsTracker.get().months6())

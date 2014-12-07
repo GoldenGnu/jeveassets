@@ -38,6 +38,7 @@ import net.nikr.eve.jeveasset.gui.tabs.contracts.MyContract;
 import net.nikr.eve.jeveasset.gui.tabs.contracts.MyContractItem;
 import net.nikr.eve.jeveasset.gui.tabs.jobs.MyIndustryJob;
 import net.nikr.eve.jeveasset.gui.tabs.jobs.MyIndustryJob.IndustryActivity;
+import net.nikr.eve.jeveasset.gui.tabs.jobs.MyIndustryJob.IndustryJobState;
 import net.nikr.eve.jeveasset.gui.tabs.journal.MyJournal;
 import net.nikr.eve.jeveasset.gui.tabs.orders.MyMarketOrder;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile;
@@ -135,9 +136,9 @@ public class ProfileData {
 						priceTypeIDs.add(blueprint.getTypeID());
 					}
 					//Manufacturing Output
-					if (industryJob.getActivity() == IndustryActivity.ACTIVITY_MANUFACTURING && !industryJob.isCompleted()) {
+					if (industryJob.isManufacturing() && !industryJob.isDelivered()) {
 						//Output
-						Item output = ApiIdConverter.getItem(industryJob.getOutputTypeID());
+						Item output = ApiIdConverter.getItem(industryJob.getProductTypeID());
 						if (output.isMarketGroup()) {
 							priceTypeIDs.add(output.getTypeID());
 						}
@@ -256,6 +257,10 @@ public class ProfileData {
 				if (!owner.getIndustryJobs().isEmpty() && !ownersJobs.contains(owner.getName())) {
 					//Industry Jobs
 					industryJobs.addAll(owner.getIndustryJobs());
+					//Update Owners
+					for (MyIndustryJob industryJob : owner.getIndustryJobs()) {
+						industryJob.setInstaller(ApiIdConverter.getOwnerName(industryJob.getInstallerID()));
+					}
 					//Assets
 					addAssets(ApiConverter.assetIndustryJob(owner.getIndustryJobs(), owner), assets);
 					ownersJobs.add(owner.getName());
@@ -264,6 +269,11 @@ public class ProfileData {
 				for (Map.Entry<MyContract, List<MyContractItem>> entry : owner.getContracts().entrySet()) {
 					//Contracts
 					MyContract contract = entry.getKey();
+					//Update Owners
+					contract.setAcceptor(ApiIdConverter.getOwnerName(contract.getAcceptorID()));
+					contract.setAssignee(ApiIdConverter.getOwnerName(contract.getAssigneeID()));
+					contract.setIssuerCorp(ApiIdConverter.getOwnerName(contract.getIssuerCorpID()));
+					contract.setIssuer(ApiIdConverter.getOwnerName(contract.getIssuerID()));
 					if (contractIDs.contains(contract.getContractID())) {
 						continue;
 					}
@@ -307,9 +317,9 @@ public class ProfileData {
 				for (MyIndustryJob job : owner.getIndustryJobs()) {
 					Item itemType = job.getItem();
 					//Price
-					double price = ApiIdConverter.getPrice(itemType.getTypeID(), job.isBPC());
+					double price = ApiIdConverter.getPrice(itemType.getTypeID(), true);
 					job.setDynamicPrice(price);
-					double outputPrice = ApiIdConverter.getPrice(job.getOutputTypeID(), false);
+					double outputPrice = ApiIdConverter.getPrice(job.getProductTypeID(), false);
 					job.setOutputPrice(outputPrice);
 				}
 				//Update Contracts dynamic values
@@ -321,32 +331,6 @@ public class ProfileData {
 						contractItem.setDynamicPrice(price);
 					}
 				}
-			}
-		}
-		//Add blueprint ME/PE
-		Map<Long, MyIndustryJob> industryJobsMap = new HashMap<Long, MyIndustryJob>();
-		for (MyIndustryJob industryJob : industryJobs) {
-			MyIndustryJob old = industryJobsMap.put(industryJob.getInstalledItemID(), industryJob);
-			if (old != null && old.getInstallTime().after(industryJob.getInstallTime())) {
-				industryJobsMap.put(old.getInstalledItemID(), old);
-			}
-		}
-		for (MyAsset asset : assets) {
-			MyIndustryJob industryJob = industryJobsMap.get(asset.getItemID());
-			if (industryJob != null) {
-				int bpME = industryJob.getInstalledItemMaterialLevel();
-				int bpPE = industryJob.getInstalledItemProductivityLevel();
-				//If the last job was to research ME or PE; add it to the total
-				if (industryJob.isCompleted()) {
-					if (industryJob.getActivity() == IndustryActivity.ACTIVITY_RESEARCHING_METERIAL_PRODUCTIVITY) {
-						bpME = bpME + industryJob.getRuns();
-					}
-					if (industryJob.getActivity() == IndustryActivity.ACTIVITY_RESEARCHING_TIME_PRODUCTIVITY) {
-						bpPE = bpPE + industryJob.getRuns();
-					}
-				}
-				asset.setBpME(bpME);
-				asset.setBpPE(bpPE);
 			}
 		}
 		//Update Items dynamic values

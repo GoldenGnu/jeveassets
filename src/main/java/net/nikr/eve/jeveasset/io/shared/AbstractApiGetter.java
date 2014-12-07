@@ -204,13 +204,13 @@ public abstract class AbstractApiGetter<T extends ApiResponse> {
 	private boolean loadAPI(final Date nextUpdate, final boolean updateCorporation, final String updateName) {
 		//Check API key access mask
 		if ((getAccessMask() & requestMask(updateCorporation)) != requestMask(updateCorporation)) {
-			addError(updateName, "Not enough access privileges");
+			addError(updateName, "Not enough access privileges.\r\n(Fix: Add " + taskName + " to the API Key)");
 			LOG.info("	{} failed to update for: {} (NOT ENOUGH ACCESS PRIVILEGES)", taskName, updateName);
 			return false;
 		}
 		//Check API cache time
 		if (!isUpdatable(nextUpdate)) {
-			addError(updateName, "Not allowed yet");
+			addError(updateName, "Not allowed yet.\r\n(Fix: Just wait a bit)");
 			LOG.info("	{} failed to update for: {} (NOT ALLOWED YET)", taskName, updateName);
 			return false;
 		}

@@ -43,18 +43,14 @@ import net.nikr.eve.jeveasset.i18n.TabsContracts;
 
 public class MyContract extends Contract implements LocationType {
 
-	private final String acceptor;
-	private final String assignee;
-	private final String issuerCorp;
-	private final String issuer;
 	private final MyLocation endStation;
 	private final MyLocation startStation;
+	private String acceptor;
+	private String assignee;
+	private String issuerCorp;
+	private String issuer;
 
-	public MyContract(Contract contract, String acceptor, String assignee, String issuerCorp, String issuer, MyLocation startStation, MyLocation endStation) {
-		this.acceptor = acceptor;
-		this.assignee = assignee;
-		this.issuerCorp = issuerCorp;
-		this.issuer = issuer;
+	public MyContract(Contract contract, MyLocation startStation, MyLocation endStation) {
 		this.endStation = endStation;
 		this.startStation = startStation;
 		this.setAcceptorID(contract.getAcceptorID());
@@ -113,6 +109,22 @@ public class MyContract extends Contract implements LocationType {
 
 	public String getIssuer() {
 		return issuer;
+	}
+
+	public void setAcceptor(String acceptor) {
+		this.acceptor = acceptor;
+	}
+
+	public void setAssignee(String assignee) {
+		this.assignee = assignee;
+	}
+
+	public void setIssuerCorp(String issuerCorp) {
+		this.issuerCorp = issuerCorp;
+	}
+
+	public void setIssuer(String issuer) {
+		this.issuer = issuer;
 	}
 
 	public MyLocation getEndStation() {

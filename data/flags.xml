@@ -133,4 +133,5 @@
     <row flagid="153" flagname="DustCharacterBattle" flagtext="Dust Character Battle"/>
     <row flagid="154" flagname="QuafeBay" flagtext="Quafe Bay"/>
     <row flagid="155" flagname="FleetHangar" flagtext="Fleet Hangar"/>
+    <row flagid="156" flagname="HiddenModifiers" flagtext="Hidden Modifiers"/>
 </rows>

@@ -25,7 +25,12 @@ import ca.odell.glazedlists.gui.AdvancedTableFormat;
 import ca.odell.glazedlists.gui.WritableTableFormat;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
 import javax.swing.ButtonGroup;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
@@ -42,6 +47,8 @@ import org.slf4j.LoggerFactory;
 /**
  *
  * @author Candle
+ * @param <T>
+ * @param <Q>
  */
 public class EnumTableFormatAdaptor<T extends Enum<T> & EnumTableColumn<Q>, Q> implements AdvancedTableFormat<Q>, WritableTableFormat<Q> {
 
@@ -72,10 +79,12 @@ public class EnumTableFormatAdaptor<T extends Enum<T> & EnumTableColumn<Q>, Q> i
 		}
 	}
 
-	private Class<T> enumClass;
+	private final List<ColumnValueChangeListener> listeners = new ArrayList<ColumnValueChangeListener>();
+
+	private final Class<T> enumClass;
 	private List<T> shownColumns;
 	private List<T> orderColumns;
-	private ColumnComparator columnComparator;
+	private final ColumnComparator columnComparator;
 
 	private EditColumnsDialog<T, Q> editColumns;
 	private ViewSave viewSave;
@@ -331,6 +340,20 @@ public class EnumTableFormatAdaptor<T extends Enum<T> & EnumTableColumn<Q>, Q> i
 		return jMenu;
 	}
 
+	public void addListener(ColumnValueChangeListener listener) {
+		listeners.add(listener);
+	}
+
+	public void removeListener(ColumnValueChangeListener listener) {
+		listeners.remove(listener);
+	}
+
+	private void notifyListeners() {
+		for (ColumnValueChangeListener listener : listeners) {
+			listener.columnValueChanged();
+		}
+	}
+
 	private T getColumn(final int i) {
 		return shownColumns.get(i);
 	}
@@ -365,7 +388,9 @@ public class EnumTableFormatAdaptor<T extends Enum<T> & EnumTableColumn<Q>, Q> i
 		return getColumn(i).isColumnEditable(baseObject);
 	}
 	@Override public Q setColumnValue(final Q baseObject, final Object editedValue, final int i) {
-		return getColumn(i).setColumnValue(baseObject, editedValue);
+		Q value = getColumn(i).setColumnValue(baseObject, editedValue);
+		notifyListeners();
+		return value;
 	}
 
 	class ColumnComparator implements Comparator<T> {
@@ -409,5 +434,9 @@ public class EnumTableFormatAdaptor<T extends Enum<T> & EnumTableColumn<Q>, Q> i
 		public void setShown(final boolean shown) {
 			this.shown = shown;
 		}
+	}
+
+	public static interface ColumnValueChangeListener {
+		public void columnValueChanged();
 	}
 }

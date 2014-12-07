@@ -37,6 +37,7 @@ import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.data.StaticData;
 import net.nikr.eve.jeveasset.gui.dialogs.AboutDialog;
 import net.nikr.eve.jeveasset.gui.dialogs.account.AccountManagerDialog;
+import net.nikr.eve.jeveasset.gui.dialogs.bugs.BugsDialog;
 import net.nikr.eve.jeveasset.gui.dialogs.profile.ProfileDialog;
 import net.nikr.eve.jeveasset.gui.dialogs.settings.SettingsDialog;
 import net.nikr.eve.jeveasset.gui.dialogs.settings.UserNameSettingsPanel;
@@ -54,7 +55,6 @@ import net.nikr.eve.jeveasset.gui.tabs.contracts.ContractsTab;
 import net.nikr.eve.jeveasset.gui.tabs.contracts.MyContractItem;
 import net.nikr.eve.jeveasset.gui.tabs.items.ItemsTab;
 import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustryJobsTab;
-import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustryPlotTab;
 import net.nikr.eve.jeveasset.gui.tabs.jobs.MyIndustryJob;
 import net.nikr.eve.jeveasset.gui.tabs.journal.JournalTab;
 import net.nikr.eve.jeveasset.gui.tabs.journal.MyJournal;
@@ -85,7 +85,7 @@ public class Program implements ActionListener {
 		TIMER
 	}
 	//Major.Minor.Bugfix [Release Candidate n] [BETA n] [DEV BUILD #n];
-	public static final String PROGRAM_VERSION = "2.8.0";
+	public static final String PROGRAM_VERSION = "2.9.0";
 	public static final String PROGRAM_NAME = "jEveAssets";
 	public static final String PROGRAM_UPDATE_URL = "http://eve.nikr.net/jeveassets/update.xml";
 	public static final String PROGRAM_HOMEPAGE = "http://eve.nikr.net/jeveasset";
@@ -110,6 +110,7 @@ public class Program implements ActionListener {
 	private ProfileDialog profileDialog;
 	private SettingsDialog settingsDialog;
 	private UpdateDialog updateDialog;
+	private BugsDialog bugsDialog;
 
 	//Tabs
 	private ValueRetroTab valueRetroTab;
@@ -121,7 +122,6 @@ public class Program implements ActionListener {
 	private JournalTab journalTab;
 	private TransactionTab transactionsTab;
 	private IndustryJobsTab industryJobsTab;
-	private IndustryPlotTab industryPlotTab;
 	private AssetsTab assetsTab;
 	private OverviewTab overviewTab;
 	private StockpileTab stockpileTab;
@@ -244,6 +244,8 @@ public class Program implements ActionListener {
 		SplashUpdater.setProgress(88);
 		LOG.info("Loading: Update Dialog");
 		updateDialog = new UpdateDialog(this);
+		LOG.info("Loading: Bugs Dialog");
+		bugsDialog = new BugsDialog(this);
 		SplashUpdater.setProgress(90);
 		LOG.info("Loading: Options Dialog");
 		settingsDialog = new SettingsDialog(this);
@@ -346,6 +348,11 @@ public class Program implements ActionListener {
 			saveSettings("API Update");
 			Settings.waitForEmptySaveQueue();
 		}
+		profileManager.saveProfile();
+	}
+
+	public void saveProfile() {
+		LOG.info("Saving Profile");
 		profileManager.saveProfile();
 	}
 
@@ -574,9 +581,6 @@ public class Program implements ActionListener {
 		if (MainMenuAction.INDUSTRY_JOBS.name().equals(e.getActionCommand())) {
 			mainWindow.addTab(industryJobsTab);
 		}
-		if (MainMenuAction.INDUSTRY_PLOT.name().equals(e.getActionCommand())) {
-			mainWindow.addTab(industryPlotTab, true, true);
-		}
 		if (MainMenuAction.OVERVIEW.name().equals(e.getActionCommand())) {
 			mainWindow.addTab(overviewTab);
 			overviewTab.resetViews();
@@ -619,6 +623,9 @@ public class Program implements ActionListener {
 		if (MainMenuAction.UPDATE.name().equals(e.getActionCommand())) {
 			updateDialog.setVisible(true);
 		}
+		if (MainMenuAction.SEND_BUG_REPORT.name().equals(e.getActionCommand())) {
+			bugsDialog.setVisible(true);
+		}
 	//External Files
 		if (MainMenuAction.README.name().equals(e.getActionCommand())) {
 			DesktopUtil.open(Settings.getPathReadme(), this);
@@ -633,9 +640,6 @@ public class Program implements ActionListener {
 			DesktopUtil.open(Settings.getPathChangeLog(), this);
 		}
 	//Links
-		if (MainMenuAction.LINK_BUGS.name().equals(e.getActionCommand())) {
-			DesktopUtil.browse("https://code.google.com/p/jeveassets/wiki/ReadMe#Bugs", this);
-		}
 		if (MainMenuAction.LINK_FEATURES.name().equals(e.getActionCommand())) {
 			DesktopUtil.browse("http://jeveassets.uservoice.com/", this);
 		}

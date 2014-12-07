@@ -56,12 +56,25 @@ public class JStockpileTable extends JSeparatorTable {
 				component.setForeground(Color.BLACK);
 				if (isSelected) {
 					component.setBackground(this.getSelectionBackground().darker());
-				} else if (stockpileItem.isOK()) { //FULL
-					component.setBackground(new Color(200, 255, 200));
-				} else if (stockpileItem.isHalf() && Settings.get().isStockpileHalfColors()) { //ABOVE HALF
-					component.setBackground(new Color(255, 255, 200));
+				} else if (Settings.get().isStockpileHalfColors()) {
+					if (stockpileItem.getPercentNeeded() >= (Settings.get().getStockpileColorGroup3() / 100.0) ) {
+						//Group 3
+						component.setBackground(new Color(200, 255, 200));
+					} else if (stockpileItem.getPercentNeeded() >= (Settings.get().getStockpileColorGroup2() / 100.0) ) {
+						//Group 2
+						component.setBackground(new Color(255, 255, 200));
+					} else {
+						//Group 1
+						component.setBackground(new Color(255, 200, 200));
+					}
 				} else {
-					component.setBackground(new Color(255, 200, 200)); //LESS THEN HALF/FULL
+					if (stockpileItem.getPercentNeeded() >= (Settings.get().getStockpileColorGroup2() / 100.0) ) {
+						//Group 2
+						component.setBackground(new Color(200, 255, 200));
+					} else {
+						//Group 1
+						component.setBackground(new Color(255, 200, 200));
+					}
 				}
 			} else if (object instanceof StockpileTotal) { //Total
 				if (!isSelected) {

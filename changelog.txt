@@ -16,6 +16,90 @@
                   #### #  # #  # #  # #### #### #### #### ####
 
 ________________________________________________________________________________
+_2.9.0__________________________________________________________________________
+
+New Feature:
+-Stockpile: Adjustable percentage grouping
+-Tracker: Multiple characters select
+-Date filter: Last X Days
+
+Bug Fixes:
+-Updated reprocessing to the latest formula and fixed reprocessing skills
+-Accounts was not saved when deleted/added
+
+________________________________________________________________________________
+_2.8.7__________________________________________________________________________
+
+Changed:
+-Assets converted from industry jobs are now always marked as BPC
+
+Bug Fixes:
+-Industry Jobs Output Count/Value was not working (Thanks to Busje Komt Zo)
+-Tracker manufacturing was always zero (Same bug as above)
+-Crashed when filters contained removed columns (Thanks to Uber Pie)
+
+________________________________________________________________________________
+_2.8.6__________________________________________________________________________
+
+Changed:
+-Static data updated to Crius 1.0.0
+-Removed PE/ME from industry jobs and assets (no longer part of the API)
+-Removed BPO/PBC from industry jobs (no longer part of the API)
+
+Bug Fixes:
+-Industry Jobs was not updating (due to API changes)
+
+________________________________________________________________________________
+_2.8.5__________________________________________________________________________
+
+Changed:
+-Static data updated to Kronos 1.0.0
+
+Bug Fixes:
+-Auto update could fail before asked to update
+
+________________________________________________________________________________
+_2.8.4__________________________________________________________________________
+
+New Feature:
+-New bug report dialog
+-Added new column: 'Installer' to the Industry Job Tool
+
+Changed:
+-Better API Update error messages
+
+Bug Fixes:
+-Settings was not saved when editing or deleting Tracker data point
+-Settings was not saved when changing Stockpile Target or Multiplier
+-Contracts owners was not updated correct
+
+________________________________________________________________________________
+_2.8.3__________________________________________________________________________
+
+Changed:
+-Better auto update code (update jupdate.jar and validate downloaded files)
+
+Source:
+-Deploy: Upload release automatic
+
+Notes:
+The new auto update code will only be used
+when updating from 2.8.3 to any later version.
+Updating to 2.8.3 will still use the old code.
+
+________________________________________________________________________________
+_2.8.2__________________________________________________________________________
+
+Bug Fixes:
+-Routing Mutation 2-opt and Crossover does not work
+
+________________________________________________________________________________
+_2.8.1__________________________________________________________________________
+
+Bug Fixes:
+-Possible fix for BugID: 3, 4, 5, 6
+
+________________________________________________________________________________
 _2.8.0__________________________________________________________________________
 
 New Features:

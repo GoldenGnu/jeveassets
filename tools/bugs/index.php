@@ -1,4 +1,13 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<?php
+include 'conn.php';
+
+$order_in = filter_input(INPUT_POST, 'order');
+$order = makeSafe(strtolower($order_in), array("date", "count", "id"), 'date');
+
+$desc_in = filter_input(INPUT_POST, 'desc');
+$desc = makeSafe(strtoupper($desc_in), array("DESC", "ASC"), 'DESC');
+
+?><!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
 <head>
 	<meta http-equiv="cache-control" content="max-age=0" />
@@ -6,7 +15,7 @@
 	<meta http-equiv="expires" content="0" />
 	<meta http-equiv="expires" content="Tue, 01 Jan 1980 1:00:00 GMT" />
 	<meta http-equiv="pragma" content="no-cache" />
-	<title>jEveAssets Bug Database</title>
+	<title><?php echo name() ?></title>
 	<link rel="icon" type="image/png" href="favicon.ico" />
 	<script> 
 	function toggle(elementId) {
@@ -20,16 +29,9 @@
 	</script>
 </head>
 <body>
-	<h1>jEveAssets Bug Database</h1>
+	<h1><?php echo name() ?></h1>
 	<hr>
 <?php
-include 'conn.php';
-
-$order_in = filter_input(INPUT_POST, 'order');
-$order = makeSafe(strtolower($order_in), array("date", "count", "id"), 'date');
-
-$desc_in = filter_input(INPUT_POST, 'desc');
-$desc = makeSafe(strtoupper($desc_in), array("DESC", "ASC"), 'DESC');
 
 echo '<form method="post" action="">';
 select(array("Date", "Count", "ID"), 'order', $order);
@@ -39,29 +41,32 @@ echo '</form">';
 echo "<hr>";
 
 $dbh = con();
-$statement = $dbh->prepare("SELECT * FROM jeveasset ORDER BY $order $desc");
+$statement = $dbh->prepare("SELECT * FROM ".table()." ORDER BY $order $desc");
 $statement->execute();
 $rows = $statement->fetchAll(PDO::FETCH_ASSOC);
 foreach ($rows as &$row) {
 	echo " <b>Status:</b> ";
 	switch ($row['status']) {
+		case -2:
+			echo "<span style=\"background: Gainsboro;\">&nbsp;Won't Fix&nbsp;</span>";
+			break;
 		case -1:
-			echo "Re-Opened";
+			echo "<span style=\"background: DarkRed;\">&nbsp;Re-Opened&nbsp;</span>";
 			break;
 		case 0:
-			echo "New";
+			echo "<span style=\"background: Brown;\">&nbsp;New&nbsp;</span>";
 			break;
 		case 1:
-			echo "Accepted";
+			echo "<span style=\"background: OrangeRed;\">&nbsp;Accepted&nbsp;</span>";
 			break;
 		case 2:
-			echo "Started";
+			echo "<span style=\"background: Orange;\">&nbsp;Started&nbsp;</span>";
 			break;
 		case 3:
-			echo "Fixed";
+			echo "<span style=\"background: LightSkyBlue ;\">&nbsp;Fixed&nbsp;</span>";
 			break;
 		case 4:
-			echo "Released";
+			echo "<span style=\"background: LimeGreen  ;\">&nbsp;Fix Released&nbsp;</span>";
 			break;
 	}
 	echo " <b>Date:</b> ".format($row['date']);

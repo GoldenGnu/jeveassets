@@ -68,7 +68,7 @@ public final class ApiConverter {
 	public static List<MyAsset> assetIndustryJob(final List<MyIndustryJob> industryJobs, final Owner owner) {
 		List<MyAsset> assets = new ArrayList<MyAsset>();
 		for (MyIndustryJob industryJob : industryJobs) {
-			if (!industryJob.isCompleted()) {
+			if (!industryJob.isDelivered()) {
 				MyAsset asset = toAssetIndustryJob(industryJob, owner);
 				assets.add(asset);
 			}
@@ -77,20 +77,15 @@ public final class ApiConverter {
 	}
 
 	private static MyAsset toAssetIndustryJob(final MyIndustryJob industryJob, final Owner owner) {
-		int typeID = industryJob.getInstalledItemTypeID();
+		int typeID = industryJob.getBlueprintTypeID();
 		long locationID = toLocationID(industryJob);
-		long count = industryJob.getInstalledItemQuantity();
-		long itemID = industryJob.getInstalledItemID();
-		int flagID = industryJob.getInstalledItemFlag();
-		boolean singleton  = false;
-		int rawQuantity;
-		if (industryJob.getInstalledItemCopy() == 0) { //0 = BPO | 1 = PBC
-			rawQuantity = -1; //-1 = BPO
-		} else {
-			rawQuantity = -2; //-2 = BPC
-		}
-
-		return createAsset(null, owner, count, flagID, itemID, typeID, locationID, singleton, rawQuantity, null);
+		long count = 1;
+		long itemID = industryJob.getBlueprintID();
+		int flagID = 0;
+		String flag = "Industry Job";
+		boolean singleton  = true;
+		int rawQuantity = -2;
+		return createAsset(null, owner, count, flagID, itemID, typeID, locationID, singleton, rawQuantity, flag);
 	}
 
 	public static List<MyAsset> convertAsset(final List<Asset<?>> eveAssets, final Owner owner) {
@@ -194,13 +189,9 @@ public final class ApiConverter {
 	}
 
 	public static MyContract toContract(final Contract eveContract) {
-		String acceptor = ApiIdConverter.getOwnerName(eveContract.getAcceptorID());
-		String assignee = ApiIdConverter.getOwnerName(eveContract.getAssigneeID());
-		String issuerCorp = ApiIdConverter.getOwnerName(eveContract.getIssuerCorpID());
-		String issuer = ApiIdConverter.getOwnerName(eveContract.getIssuerID());
 		MyLocation endStation = ApiIdConverter.getLocation(eveContract.getEndStationID());
 		MyLocation startStation = ApiIdConverter.getLocation(eveContract.getStartStationID());
-		return new MyContract(eveContract, acceptor, assignee, issuerCorp, issuer, startStation, endStation);
+		return new MyContract(eveContract, startStation, endStation);
 	}
 
 	private static MyContractItem toContractItem(final ContractItem eveContractItem, MyContract contract) {
@@ -269,23 +260,28 @@ public final class ApiConverter {
 	}
 
 	private static MyIndustryJob toIndustryJob(final IndustryJob apiIndustryJob, final Owner owner) {
-		Item item = ApiIdConverter.getItem(apiIndustryJob.getInstalledItemTypeID());
+		Item item = ApiIdConverter.getItem(apiIndustryJob.getBlueprintTypeID());
 		long locationID = toLocationID(apiIndustryJob);
 		MyLocation location = ApiIdConverter.getLocation(locationID);
-		Item output = ApiIdConverter.getItem(apiIndustryJob.getOutputTypeID());
-		return new MyIndustryJob(apiIndustryJob, item, location, owner, output.getPortion());
+		Item blueprint = ApiIdConverter.getItem(apiIndustryJob.getBlueprintTypeID());
+		Item product = ApiIdConverter.getItem(blueprint.getProduct());
+		return new MyIndustryJob(apiIndustryJob, item, location, owner, product.getPortion(), product.getTypeID());
 	}
 
 	private static long toLocationID(final IndustryJob apiIndustryJob) {
-		boolean location = ApiIdConverter.isLocationOK(apiIndustryJob.getInstalledItemLocationID());
+		boolean location = ApiIdConverter.isLocationOK(apiIndustryJob.getBlueprintLocationID());
 		if (location) {
-			return apiIndustryJob.getInstalledItemLocationID();
+			return apiIndustryJob.getBlueprintLocationID();
 		}
-		location = ApiIdConverter.isLocationOK(apiIndustryJob.getContainerLocationID());
+		location = ApiIdConverter.isLocationOK(apiIndustryJob.getOutputLocationID());
 		if (location) {
-			return apiIndustryJob.getContainerLocationID();
+			return apiIndustryJob.getOutputLocationID();
 		}
-		LOG.error("Failed to find locationID for IndustryJob. InstalledItemLocationID: " + apiIndustryJob.getInstalledItemLocationID() + " - ContainerLocationID: " + apiIndustryJob.getContainerLocationID());
+		location = ApiIdConverter.isLocationOK(apiIndustryJob.getSolarSystemID());
+		if (location) {
+			return apiIndustryJob.getSolarSystemID();
+		}
+		LOG.error("Failed to find locationID for IndustryJob. InstalledItemLocationID: " + apiIndustryJob.getBlueprintLocationID() + " - ContainerLocationID: " + apiIndustryJob.getOutputLocationID());
 		return -1;
 	}
 

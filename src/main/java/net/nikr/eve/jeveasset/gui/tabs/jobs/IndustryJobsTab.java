@@ -49,7 +49,8 @@ import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter.CompareType;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter.LogicType;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
-import net.nikr.eve.jeveasset.gui.shared.menu.*;
+import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo;
+import net.nikr.eve.jeveasset.gui.shared.menu.MenuData;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.TableMenu;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
@@ -110,14 +111,10 @@ public class IndustryJobsTab extends JMainTab {
 		Map<String, List<Filter>> defaultFilters = new HashMap<String, List<Filter>>();
 		List<Filter> filter;
 		filter = new ArrayList<Filter>();
-		filter.add(new Filter(LogicType.OR, IndustryJobTableFormat.STATE, CompareType.EQUALS,  IndustryJobState.STATE_ACTIVE.toString()));
-		filter.add(new Filter(LogicType.OR, IndustryJobTableFormat.STATE, CompareType.EQUALS,  IndustryJobState.STATE_PENDING.toString()));
-		filter.add(new Filter(LogicType.OR, IndustryJobTableFormat.STATE, CompareType.EQUALS,  IndustryJobState.STATE_READY.toString()));
+		filter.add(new Filter(LogicType.AND, IndustryJobTableFormat.STATE, CompareType.EQUALS_NOT, IndustryJobState.STATE_DELIVERED.toString()));
 		defaultFilters.put(TabsJobs.get().active(), filter);
 		filter = new ArrayList<Filter>();
-		filter.add(new Filter(LogicType.AND, IndustryJobTableFormat.STATE, CompareType.EQUALS_NOT,  IndustryJobState.STATE_ACTIVE.toString()));
-		filter.add(new Filter(LogicType.AND, IndustryJobTableFormat.STATE, CompareType.EQUALS_NOT,  IndustryJobState.STATE_PENDING.toString()));
-		filter.add(new Filter(LogicType.AND, IndustryJobTableFormat.STATE, CompareType.EQUALS_NOT,  IndustryJobState.STATE_READY.toString()));
+		filter.add(new Filter(LogicType.AND, IndustryJobTableFormat.STATE, CompareType.EQUALS, IndustryJobState.STATE_DELIVERED.toString()));
 		defaultFilters.put(TabsJobs.get().completed(), filter);
 		filterControl = new IndustryJobsFilterControl(
 				program.getMainWindow().getFrame(),
@@ -184,9 +181,9 @@ public class IndustryJobsTab extends JMainTab {
 			double success = 0;
 			double outputValue = 0;
 			for (MyIndustryJob industryJob : filterList) {
-				if (industryJob.getActivity() == IndustryActivity.ACTIVITY_REVERSE_INVENTION && industryJob.isCompleted()) {
+				if (industryJob.isInvention() && industryJob.isCompleted()) {
 					count++;
-					if (industryJob.getState() == IndustryJobState.STATE_DELIVERED) {
+					if (industryJob.isDelivered()) {
 						success++;
 					}
 				}

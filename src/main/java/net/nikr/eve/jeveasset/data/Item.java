@@ -39,15 +39,16 @@ public class Item implements Comparable<Item>, ItemType {
 	private boolean marketGroup;
 	private boolean piMaterial;
 	private int portion;
+	private int product;
 	private boolean blueprint;
 	private List<ReprocessedMaterial> reprocessedMaterials = new ArrayList<ReprocessedMaterial>();
 	private double priceReprocessed;
 
 	public Item(int typeID) {
-		this(typeID, emptyType(typeID), "", "", -1, -1, -1, "", false, false, 0);
+		this(typeID, emptyType(typeID), "", "", -1, -1, -1, "", false, false, 0, 0);
 	}
 
-	public Item(final int typeID, final String name, final String group, final String category, final long price, final float volume, final int meta, final String tech, final boolean marketGroup, final boolean piMaterial, final int portion) {
+	public Item(final int typeID, final String name, final String group, final String category, final long price, final float volume, final int meta, final String tech, final boolean marketGroup, final boolean piMaterial, final int portion, final int product) {
 		this.typeID = typeID;
 		this.name = name;
 		this.group = group;
@@ -59,6 +60,7 @@ public class Item implements Comparable<Item>, ItemType {
 		this.marketGroup = marketGroup;
 		this.piMaterial = piMaterial;
 		this.portion = portion;
+		this.product = product;
 		this.blueprint = (name.toLowerCase().contains("blueprint"));
 	}
 
@@ -120,6 +122,10 @@ public class Item implements Comparable<Item>, ItemType {
 
 	public int getPortion() {
 		return portion;
+	}
+
+	public int getProduct() {
+		return product;
 	}
 
 	public boolean isEmpty() {

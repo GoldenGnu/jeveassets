@@ -172,9 +172,9 @@ public class JMenuInfo {
 			double success = 0;
 			double total = 0.0;
 			for (MyIndustryJob industryJob : list) {
-				if (industryJob.getActivity() == MyIndustryJob.IndustryActivity.ACTIVITY_REVERSE_INVENTION && industryJob.isCompleted()) {
+				if (industryJob.isInvention() && industryJob.isCompleted()) {
 					count++;
-					if (industryJob.getState() == MyIndustryJob.IndustryJobState.STATE_DELIVERED) {
+					if (industryJob.isDelivered()) {
 						success++;
 					}
 				}

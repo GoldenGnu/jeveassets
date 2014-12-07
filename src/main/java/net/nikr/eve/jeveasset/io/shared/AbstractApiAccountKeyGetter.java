@@ -90,7 +90,19 @@ public abstract class AbstractApiAccountKeyGetter<T extends ApiListResponse<?>, 
 		rowCount = ROW_COUNT;
 		fromID = 0;
 		while (rowCount >= ROW_COUNT) {
-			boolean updated = super.load(nextUpdate, updateCorporation, updateName + " (accountKey: " + accountKey + " - page: " + page + ")");
+			if (updateCorporation) {
+				updateName = updateName + " (division " + accountKey + " ";
+			}
+			if (page > 1) {
+				if (!updateCorporation) {
+					updateName = updateName + " (";
+				}
+				updateName = updateName + "page " + page;
+			}
+			if (page > 1 || updateCorporation) {
+				updateName = updateName + ")";
+			}
+			boolean updated = super.load(nextUpdate, updateCorporation, updateName);
 			if (!updated) {
 				return false;
 			} else {

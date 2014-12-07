@@ -62,12 +62,6 @@ public class MyTransaction extends WalletTransaction implements LocationType, It
 		this.ownerCharacter = "";
 	}
 
-	public int compareTo(final MyTransaction o) {
-		Long thisID = this.getTransactionID();
-		Long thatID = o.getTransactionID();
-		return thisID.compareTo(thatID);
-	}
-
 	public int getAccountKey() {
 		return accountKey;
 	}
@@ -151,7 +145,11 @@ public class MyTransaction extends WalletTransaction implements LocationType, It
 	public void setOwnerCharacter(String ownerCharacter) {
 		this.ownerCharacter = ownerCharacter;
 	}
-	
+
+	@Override
+	public int compareTo(final WalletTransaction o) {
+		return o.getTransactionDateTime().compareTo(this.getTransactionDateTime());
+	}
 
 	@Override
 	public int hashCode() {

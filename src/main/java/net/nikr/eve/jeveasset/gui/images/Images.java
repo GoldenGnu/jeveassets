@@ -72,6 +72,7 @@ public enum Images {
 	FILTER_EQUAL_DATE ("filter_equal_date.png"),
 	FILTER_NOT_EQUAL_DATE ("filter_not_equal_date.png"),
 	FILTER_GREATER_THAN ("filter_greater_than.png"),
+	FILTER_LAST_DAYS ("filter_last_days.png"),
 	FILTER_LESS_THAN ("filter_less_than.png"),
 	FILTER_AFTER ("filter_after.png"),
 	FILTER_BEFORE ("filter_before.png"),
@@ -207,6 +208,7 @@ public enum Images {
 			count++;
 			SplashUpdater.setSubProgress((int) (count * 100.0 / Images.values().length));
 		}
+		SplashUpdater.setSubProgress(100);
 		return ok;
 	}
 

@@ -28,6 +28,8 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -57,6 +59,7 @@ import javax.swing.JTextField;
 import javax.swing.JToolBar;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
+import javax.swing.SwingWorker;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import net.nikr.eve.jeveasset.Program;
@@ -144,7 +147,7 @@ public class RoutingTab extends JMainTab  {
 	private JLabel jSecuritySeparatorLabel;
 	private JComboBox jSecurityMaximum;
 	//Progress
-	private ProgressBar jProgress;
+	private JProgressBar jProgress;
 	private JButton jCalculate;
 	//Result
 	private JTextArea jResult;
@@ -156,7 +159,8 @@ public class RoutingTab extends JMainTab  {
 	private JManageSystemList jManageSystemList;
 
 	private ListenerClass listener;
-	
+	private RouteFind routeFind;
+
 	//Data
 	protected Graph filteredGraph;
 	private double lastSecMin = 0.0;
@@ -460,9 +464,9 @@ public class RoutingTab extends JMainTab  {
 				.addComponent(jSecurityPanel)
 		);
 	//Progress
-		jProgress = new ProgressBar();
+		jProgress = new JProgressBar();
 		jProgress.setValue(0);
-		jProgress.setMaximum(1);
+		jProgress.setMaximum(100);
 		jProgress.setMinimum(0);
 
 		jCalculate = new JButton(TabsRouting.get().calculate());
@@ -658,6 +662,7 @@ public class RoutingTab extends JMainTab  {
 				filteredGraph.addEdge(new Edge(from, to));
 			}
 		}
+		SplashUpdater.setSubProgress(100);
 		systemCache.clear();
 	}
 
@@ -750,21 +755,32 @@ public class RoutingTab extends JMainTab  {
 	}
 
 	private void processRoute() {
-		new Thread(new Runnable() {
+		//Disable the UI controls
+		setUIEnabled(false);
+		//Reset Progress
+		jProgress.setValue(0);
+		jProgress.setIndeterminate(true);
+		//Create Thread
+		routeFind = new RouteFind();
+		//Add progress listener
+		routeFind.addPropertyChangeListener(new PropertyChangeListener() {
 			@Override
-			public void run() {
-				processRouteInner();
+			public void propertyChange(PropertyChangeEvent evt) {
+				if ("progress".equals(evt.getPropertyName())) {
+		            int progress = (Integer) evt.getNewValue();
+					if (jProgress.isIndeterminate() && progress > 0) {
+						jProgress.setIndeterminate(false);
+					}
+					jProgress.setValue(progress);
+				}
 			}
-		}, TabsRouting.get().routingThread()).start();
+		});
+		//Start Thread
+		routeFind.execute();
 	}
 
 	private void processRouteInner() {
 		try {
-			//Disable the UI controls
-			setUIEnabled(false);
-			//Reset Progress
-			jProgress.setValue(0);
-			jProgress.setIndeterminate(true);
 			//Update Graph if needed (AKA filter has changed)
 			if (lastSecMin != (Double) jSecurityMinimum.getSelectedItem()
 					|| lastSecMax != (Double) jSecurityMaximum.getSelectedItem()
@@ -906,10 +922,6 @@ public class RoutingTab extends JMainTab  {
 							, dce.getMessage()
 							, TabsRouting.get().error()
 							, JOptionPane.ERROR_MESSAGE);
-		} finally {
-			setUIEnabled(true);
-			jProgress.setValue(0);
-			jProgress.setIndeterminate(false);
 		}
 	}
 
@@ -918,7 +930,7 @@ public class RoutingTab extends JMainTab  {
 	}
 
 	private List<Node> executeRouteFinding(final List<Node> inputWaypoints, final RoutingAlgorithmContainer algorithm) {
-		return algorithm.execute(jProgress, filteredGraph, inputWaypoints);
+		return algorithm.execute(routeFind, filteredGraph, inputWaypoints);
 	}
 
 	private void setUIEnabled(final boolean b) {
@@ -1284,17 +1296,65 @@ public class RoutingTab extends JMainTab  {
 		}
 	}
 
-	static class ProgressBar extends JProgressBar implements Progress {
+	private class RouteFind extends SwingWorker<Void, Void> implements Progress {
 
-		private static final long serialVersionUID = 1L;
+		private int maximum = 1;
+		private int minimum = 0;
+		private int value = 0;
+		private int oldProgress = 0;
 
 		@Override
-		public void setValue(int n) {
-			int percent = (int) Math.floor(n * 100.0 / getMaximum());
-			if (isIndeterminate() && percent > 1) {
-				setIndeterminate(false);
+		protected Void doInBackground() throws Exception {
+			processRouteInner();
+			return null;
+		}
+
+		@Override
+		protected void done() {
+			setUIEnabled(true);
+			jProgress.setValue(0);
+			jProgress.setIndeterminate(false);
+		}
+
+		@Override
+		public int getMaximum() {
+			return maximum;
+		}
+
+		@Override
+		public void setMaximum(int maximum) {
+			this.maximum = maximum;
+		}
+
+		@Override
+		public int getMinimum() {
+			return minimum;
+		}
+
+		@Override
+		public void setMinimum(int minimum) {
+			this.minimum = minimum;
+		}
+
+		@Override
+		public int getValue() {
+			return value;
+		}
+
+		@Override
+		public void setValue(int value) {
+			this.value = value;
+			int progress = (int) Math.floor(value * 100.0 / getMaximum());
+			if (progress < 0) {
+				progress = 0;
 			}
-			super.setValue(n);
+			if (progress > 100) {
+				progress = 100;
+			}
+			if (progress != oldProgress) {
+				oldProgress = progress;
+				setProgress(oldProgress);
+			}
 		}
 	}
 

@@ -32,6 +32,7 @@ public class TrackerData {
 	private double escrows;
 	private double escrowsToCover;
 	private double manufacturing;
+	private double total;
 
 	public TrackerData(Date date, double walletBalance, double assets, double sellOrders, double escrows, double escrowsToCover, double manufacturing) {
 		this.date = date;
@@ -41,6 +42,7 @@ public class TrackerData {
 		this.escrows = escrows;
 		this.escrowsToCover = escrowsToCover;
 		this.manufacturing = manufacturing;
+		setTotal();
 	}
 
 	public TrackerData(Date date) {
@@ -51,6 +53,7 @@ public class TrackerData {
 		this.escrows = 0.0;
 		this.escrowsToCover = 0.0;
 		this.manufacturing = 0.0;
+		this.total = 0.0;
 	}
 
 	public void addWalletBalance(double walletBalance) {
@@ -77,12 +80,16 @@ public class TrackerData {
 		this.manufacturing = this.manufacturing + manufacturing;
 	}
 
+	public void addTotal(double total) {
+		this.total = this.total + total;
+	}
+
 	public Date getDate() {
 		return date;
 	}
 
 	public double getTotal() {
-		return getAssets() + getWalletBalance() + getSellOrders() + getEscrows() + getManufacturing();
+		return total;
 	}
 
 	public double getWalletBalance() {
@@ -131,6 +138,10 @@ public class TrackerData {
 
 	public void setEscrowsToCover(double escrowsToCover) {
 		this.escrowsToCover = escrowsToCover;
+	}
+
+	public final void setTotal() {
+		this.total = getAssets() + getWalletBalance() + getSellOrders() + getEscrows() + getManufacturing();
 	}
 
 	public void setManufacturing(double manufacturing) {

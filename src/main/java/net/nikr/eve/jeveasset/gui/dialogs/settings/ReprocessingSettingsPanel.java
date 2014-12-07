@@ -45,8 +45,8 @@ public class ReprocessingSettingsPanel extends JSettingsPanel {
 	private JRadioButton jStation50;
 	private JRadioButton jStationOther;
 	private JTextField jStation;
-	private JRadioButton[] jRefining;
-	private JRadioButton[] jRefineryEfficiency;
+	private JRadioButton[] jReprocessing;
+	private JRadioButton[] jReprocessingEfficiency;
 	private JRadioButton[] jScrapmetalProcessing;
 
 	public ReprocessingSettingsPanel(final Program program, final SettingsDialog optionsDialog) {
@@ -75,51 +75,51 @@ public class ReprocessingSettingsPanel extends JSettingsPanel {
 		JLabel j4 = new JLabel(DialoguesSettings.get().four());
 		JLabel j5 = new JLabel(DialoguesSettings.get().five());
 
-		JLabel jRefiningLabel = new JLabel(DialoguesSettings.get().refiningLevel());
-		jRefining = new JRadioButton[6];
-		jRefining[LEVEL0] = new JRadioButton();
-		jRefining[LEVEL0].addActionListener(listener);
-		jRefining[LEVEL1] = new JRadioButton();
-		jRefining[LEVEL1].addActionListener(listener);
-		jRefining[LEVEL2] = new JRadioButton();
-		jRefining[LEVEL2].addActionListener(listener);
-		jRefining[LEVEL3] = new JRadioButton();
-		jRefining[LEVEL3].addActionListener(listener);
-		jRefining[LEVEL4] = new JRadioButton();
-		jRefining[LEVEL4].addActionListener(listener);
-		jRefining[LEVEL5] = new JRadioButton();
-		jRefining[LEVEL5].addActionListener(listener);
+		JLabel jReprocessingLabel=  new JLabel(DialoguesSettings.get().reprocessingLevel());
+		jReprocessing = new JRadioButton[6];
+		jReprocessing[LEVEL0] = new JRadioButton();
+		jReprocessing[LEVEL0].addActionListener(listener);
+		jReprocessing[LEVEL1] = new JRadioButton();
+		jReprocessing[LEVEL1].addActionListener(listener);
+		jReprocessing[LEVEL2] = new JRadioButton();
+		jReprocessing[LEVEL2].addActionListener(listener);
+		jReprocessing[LEVEL3] = new JRadioButton();
+		jReprocessing[LEVEL3].addActionListener(listener);
+		jReprocessing[LEVEL4] = new JRadioButton();
+		jReprocessing[LEVEL4].addActionListener(listener);
+		jReprocessing[LEVEL5] = new JRadioButton();
+		jReprocessing[LEVEL5].addActionListener(listener);
 
-		ButtonGroup jRefiningButtonGroup = new ButtonGroup();
-		jRefiningButtonGroup.add(jRefining[LEVEL0]);
-		jRefiningButtonGroup.add(jRefining[LEVEL1]);
-		jRefiningButtonGroup.add(jRefining[LEVEL2]);
-		jRefiningButtonGroup.add(jRefining[LEVEL3]);
-		jRefiningButtonGroup.add(jRefining[LEVEL4]);
-		jRefiningButtonGroup.add(jRefining[LEVEL5]);
+		ButtonGroup jReprocessingButtonGroup = new ButtonGroup();
+		jReprocessingButtonGroup.add(jReprocessing[LEVEL0]);
+		jReprocessingButtonGroup.add(jReprocessing[LEVEL1]);
+		jReprocessingButtonGroup.add(jReprocessing[LEVEL2]);
+		jReprocessingButtonGroup.add(jReprocessing[LEVEL3]);
+		jReprocessingButtonGroup.add(jReprocessing[LEVEL4]);
+		jReprocessingButtonGroup.add(jReprocessing[LEVEL5]);
 
-		JLabel jRefineryEfficiencyLabel = new JLabel(DialoguesSettings.get().refiningEfficiencyLevel());
-		jRefineryEfficiency = new JRadioButton[6];
-		jRefineryEfficiency[LEVEL0] = new JRadioButton();
-		jRefineryEfficiency[LEVEL0].addActionListener(listener);
-		jRefineryEfficiency[LEVEL1] = new JRadioButton();
-		jRefineryEfficiency[LEVEL1].addActionListener(listener);
-		jRefineryEfficiency[LEVEL2] = new JRadioButton();
-		jRefineryEfficiency[LEVEL2].addActionListener(listener);
-		jRefineryEfficiency[LEVEL3] = new JRadioButton();
-		jRefineryEfficiency[LEVEL3].addActionListener(listener);
-		jRefineryEfficiency[LEVEL4] = new JRadioButton();
-		jRefineryEfficiency[LEVEL4].addActionListener(listener);
-		jRefineryEfficiency[LEVEL5] = new JRadioButton();
-		jRefineryEfficiency[LEVEL5].addActionListener(listener);
+		JLabel jReprocessingEfficiencyLabel = new JLabel(DialoguesSettings.get().reprocessingEfficiencyLevel());
+		jReprocessingEfficiency = new JRadioButton[6];
+		jReprocessingEfficiency[LEVEL0] = new JRadioButton();
+		jReprocessingEfficiency[LEVEL0].addActionListener(listener);
+		jReprocessingEfficiency[LEVEL1] = new JRadioButton();
+		jReprocessingEfficiency[LEVEL1].addActionListener(listener);
+		jReprocessingEfficiency[LEVEL2] = new JRadioButton();
+		jReprocessingEfficiency[LEVEL2].addActionListener(listener);
+		jReprocessingEfficiency[LEVEL3] = new JRadioButton();
+		jReprocessingEfficiency[LEVEL3].addActionListener(listener);
+		jReprocessingEfficiency[LEVEL4] = new JRadioButton();
+		jReprocessingEfficiency[LEVEL4].addActionListener(listener);
+		jReprocessingEfficiency[LEVEL5] = new JRadioButton();
+		jReprocessingEfficiency[LEVEL5].addActionListener(listener);
 
-		ButtonGroup jEfficiencyButtonGroup = new ButtonGroup();
-		jEfficiencyButtonGroup.add(jRefineryEfficiency[LEVEL0]);
-		jEfficiencyButtonGroup.add(jRefineryEfficiency[LEVEL1]);
-		jEfficiencyButtonGroup.add(jRefineryEfficiency[LEVEL2]);
-		jEfficiencyButtonGroup.add(jRefineryEfficiency[LEVEL3]);
-		jEfficiencyButtonGroup.add(jRefineryEfficiency[LEVEL4]);
-		jEfficiencyButtonGroup.add(jRefineryEfficiency[LEVEL5]);
+		ButtonGroup jReprocessingEfficiencyButtonGroup = new ButtonGroup();
+		jReprocessingEfficiencyButtonGroup.add(jReprocessingEfficiency[LEVEL0]);
+		jReprocessingEfficiencyButtonGroup.add(jReprocessingEfficiency[LEVEL1]);
+		jReprocessingEfficiencyButtonGroup.add(jReprocessingEfficiency[LEVEL2]);
+		jReprocessingEfficiencyButtonGroup.add(jReprocessingEfficiency[LEVEL3]);
+		jReprocessingEfficiencyButtonGroup.add(jReprocessingEfficiency[LEVEL4]);
+		jReprocessingEfficiencyButtonGroup.add(jReprocessingEfficiency[LEVEL5]);
 
 		JLabel jScrapmetalProcessingLabel = new JLabel(DialoguesSettings.get().scrapMetalProcessingLevel());
 		jScrapmetalProcessing = new JRadioButton[6];
@@ -145,8 +145,8 @@ public class ReprocessingSettingsPanel extends JSettingsPanel {
 				.addGroup(layout.createSequentialGroup()
 					.addGroup(layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
 						.addComponent(jStationLabel)
-						.addComponent(jRefiningLabel)
-						.addComponent(jRefineryEfficiencyLabel)
+						.addComponent(jReprocessingLabel)
+						.addComponent(jReprocessingEfficiencyLabel)
 						.addComponent(jScrapmetalProcessingLabel)
 					)
 					.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
@@ -159,38 +159,38 @@ public class ReprocessingSettingsPanel extends JSettingsPanel {
 						.addGroup(layout.createSequentialGroup()
 							.addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
 								.addComponent(j0)
-								.addComponent(jRefining[LEVEL0])
-								.addComponent(jRefineryEfficiency[LEVEL0])
+								.addComponent(jReprocessing[LEVEL0])
+								.addComponent(jReprocessingEfficiency[LEVEL0])
 								.addComponent(jScrapmetalProcessing[LEVEL0])
 							)
 							.addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
 								.addComponent(j1)
-								.addComponent(jRefining[LEVEL1])
-								.addComponent(jRefineryEfficiency[LEVEL1])
+								.addComponent(jReprocessing[LEVEL1])
+								.addComponent(jReprocessingEfficiency[LEVEL1])
 								.addComponent(jScrapmetalProcessing[LEVEL1])
 							)
 							.addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
 								.addComponent(j2)
-								.addComponent(jRefining[LEVEL2])
-								.addComponent(jRefineryEfficiency[LEVEL2])
+								.addComponent(jReprocessing[LEVEL2])
+								.addComponent(jReprocessingEfficiency[LEVEL2])
 								.addComponent(jScrapmetalProcessing[LEVEL2])
 							)
 							.addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
 								.addComponent(j3)
-								.addComponent(jRefining[LEVEL3])
-								.addComponent(jRefineryEfficiency[LEVEL3])
+								.addComponent(jReprocessing[LEVEL3])
+								.addComponent(jReprocessingEfficiency[LEVEL3])
 								.addComponent(jScrapmetalProcessing[LEVEL3])
 							)
 							.addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
 								.addComponent(j4)
-								.addComponent(jRefining[LEVEL4])
-								.addComponent(jRefineryEfficiency[LEVEL4])
+								.addComponent(jReprocessing[LEVEL4])
+								.addComponent(jReprocessingEfficiency[LEVEL4])
 								.addComponent(jScrapmetalProcessing[LEVEL4])
 							)
 							.addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
 								.addComponent(j5)
-								.addComponent(jRefining[LEVEL5])
-								.addComponent(jRefineryEfficiency[LEVEL5])
+								.addComponent(jReprocessing[LEVEL5])
+								.addComponent(jReprocessingEfficiency[LEVEL5])
 								.addComponent(jScrapmetalProcessing[LEVEL5])
 							)
 						)
@@ -213,26 +213,25 @@ public class ReprocessingSettingsPanel extends JSettingsPanel {
 					.addComponent(j3, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 					.addComponent(j4, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 					.addComponent(j5, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					//.addComponent(jRefining, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				)
 				.addGap(0)
 				.addGroup(layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
-					.addComponent(jRefiningLabel, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					.addComponent(jRefining[LEVEL0], Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					.addComponent(jRefining[LEVEL1], Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					.addComponent(jRefining[LEVEL2], Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					.addComponent(jRefining[LEVEL3], Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					.addComponent(jRefining[LEVEL4], Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					.addComponent(jRefining[LEVEL5], Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					.addComponent(jReprocessingLabel, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					.addComponent(jReprocessing[LEVEL0], Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					.addComponent(jReprocessing[LEVEL1], Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					.addComponent(jReprocessing[LEVEL2], Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					.addComponent(jReprocessing[LEVEL3], Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					.addComponent(jReprocessing[LEVEL4], Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					.addComponent(jReprocessing[LEVEL5], Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				)
 				.addGroup(layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
-					.addComponent(jRefineryEfficiencyLabel, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					.addComponent(jRefineryEfficiency[LEVEL0], Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					.addComponent(jRefineryEfficiency[LEVEL1], Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					.addComponent(jRefineryEfficiency[LEVEL2], Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					.addComponent(jRefineryEfficiency[LEVEL3], Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					.addComponent(jRefineryEfficiency[LEVEL4], Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					.addComponent(jRefineryEfficiency[LEVEL5], Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					.addComponent(jReprocessingEfficiencyLabel, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					.addComponent(jReprocessingEfficiency[LEVEL0], Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					.addComponent(jReprocessingEfficiency[LEVEL1], Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					.addComponent(jReprocessingEfficiency[LEVEL2], Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					.addComponent(jReprocessingEfficiency[LEVEL3], Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					.addComponent(jReprocessingEfficiency[LEVEL4], Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					.addComponent(jReprocessingEfficiency[LEVEL5], Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				)
 				.addGroup(layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
 					.addComponent(jScrapmetalProcessingLabel, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
@@ -251,7 +250,7 @@ public class ReprocessingSettingsPanel extends JSettingsPanel {
 
 	@Override
 	public boolean save() {
-		ReprocessSettings reprocessSettings = new ReprocessSettings(Integer.parseInt(jStation.getText()), getSelected(jRefining), getSelected(jRefineryEfficiency), getSelected(jScrapmetalProcessing));
+		ReprocessSettings reprocessSettings = new ReprocessSettings(Integer.parseInt(jStation.getText()), getSelected(jReprocessing), getSelected(jReprocessingEfficiency), getSelected(jScrapmetalProcessing));
 		boolean update = !Settings.get().getReprocessSettings().equals(reprocessSettings);
 		Settings.get().setReprocessSettings(reprocessSettings);
 		//Update table if needed
@@ -267,8 +266,8 @@ public class ReprocessingSettingsPanel extends JSettingsPanel {
 			jStationOther.setSelected(true);
 		}
 		jStation.setText(String.valueOf(reprocessSettings.getStation()));
-		jRefining[reprocessSettings.getRefiningLevel()].setSelected(true);
-		jRefineryEfficiency[reprocessSettings.getRefineryEfficiencyLevel()].setSelected(true);
+		jReprocessing[reprocessSettings.getReprocessingLevel()].setSelected(true);
+		jReprocessingEfficiency[reprocessSettings.getReprocessingEfficiencyLevel()].setSelected(true);
 		jScrapmetalProcessing[reprocessSettings.getScrapmetalProcessingLevel()].setSelected(true);
 		validateSkills();
 		validateStation();
@@ -290,13 +289,13 @@ public class ReprocessingSettingsPanel extends JSettingsPanel {
 	}
 
 	private void validateSkills() {
-		if (getSelected(jRefining) < 5) {
-			setEnabled(jRefineryEfficiency, false);
-			jRefineryEfficiency[LEVEL0].setSelected(true);
+		if (getSelected(jReprocessing) < 4) {
+			setEnabled(jReprocessingEfficiency, false);
+			jReprocessingEfficiency[LEVEL0].setSelected(true);
 		} else {
-			setEnabled(jRefineryEfficiency, true);
+			setEnabled(jReprocessingEfficiency, true);
 		}
-		if (getSelected(jRefineryEfficiency) < 5) {
+		if (getSelected(jReprocessingEfficiency) < 5) {
 			setEnabled(jScrapmetalProcessing, false);
 			jScrapmetalProcessing[LEVEL0].setSelected(true);
 		} else {

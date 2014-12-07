@@ -40,16 +40,12 @@ public abstract class DataModelIndustryJob extends Bundle {
 	}
 
 	public abstract String stateAll();
-	public abstract String stateDelivered();
-	public abstract String stateFailed();
-	public abstract String stateReady();
+	public abstract String statePaused();
 	public abstract String stateActive();
-	public abstract String statePending();
-	public abstract String stateAborted();
-	public abstract String stateGmAborted();
-	public abstract String stateInFlight();
-	public abstract String stateDestroyed();
-	public abstract String stateNotDelivered();
+	public abstract String stateDone();
+	public abstract String stateFailed();
+	public abstract String stateCancelled();
+	public abstract String stateDelivered();
 	public abstract String activityAll();
 	public abstract String activityNone();
 	public abstract String activityManufacturing();

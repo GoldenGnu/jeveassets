@@ -69,6 +69,16 @@ public enum IndustryJobTableFormat implements EnumTableColumn<MyIndustryJob> {
 			return from.getOwner();
 		}
 	},
+	INSTALLER(String.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsJobs.get().columnInstaller();
+		}
+		@Override
+		public Object getColumnValue(final MyIndustryJob from) {
+			return from.getInstaller();
+		}
+	},
 	LOCATION(String.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
@@ -89,16 +99,6 @@ public enum IndustryJobTableFormat implements EnumTableColumn<MyIndustryJob> {
 			return from.getLocation().getRegion();
 		}
 	},
-	INSTALL_DATE(Date.class, GlazedLists.comparableComparator()) {
-		@Override
-		public String getColumnName() {
-			return TabsJobs.get().columnInstallDate();
-		}
-		@Override
-		public Object getColumnValue(final MyIndustryJob from) {
-			return from.getInstallTime();
-		}
-	},
 	START_DATE(Date.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
@@ -106,7 +106,7 @@ public enum IndustryJobTableFormat implements EnumTableColumn<MyIndustryJob> {
 		}
 		@Override
 		public Object getColumnValue(final MyIndustryJob from) {
-			return from.getBeginProductionTime();
+			return from.getStartDate();
 		}
 	},
 	END_DATE(Date.class, GlazedLists.comparableComparator()) {
@@ -116,7 +116,7 @@ public enum IndustryJobTableFormat implements EnumTableColumn<MyIndustryJob> {
 		}
 		@Override
 		public Object getColumnValue(final MyIndustryJob from) {
-			return from.getEndProductionTime();
+			return from.getEndDate();
 		}
 	},
 	RUNS(Integer.class, GlazedLists.comparableComparator()) {
@@ -127,26 +127,6 @@ public enum IndustryJobTableFormat implements EnumTableColumn<MyIndustryJob> {
 		@Override
 		public Object getColumnValue(final MyIndustryJob from) {
 			return from.getRuns();
-		}
-	},
-	BP_ME(Integer.class, GlazedLists.comparableComparator()) {
-		@Override
-		public String getColumnName() {
-			return TabsJobs.get().columnBpMe();
-		}
-		@Override
-		public Object getColumnValue(final MyIndustryJob from) {
-			return from.getInstalledItemMaterialLevel();
-		}
-	},
-	BP_PE(Integer.class, GlazedLists.comparableComparator()) {
-		@Override
-		public String getColumnName() {
-			return TabsJobs.get().columnBpPe();
-		}
-		@Override
-		public Object getColumnValue(final MyIndustryJob from) {
-			return from.getInstalledItemProductivityLevel();
 		}
 	},
 	OUTPUT_COUNT(Integer.class, GlazedLists.comparableComparator()) {

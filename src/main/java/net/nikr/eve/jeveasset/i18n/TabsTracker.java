@@ -41,6 +41,7 @@ public abstract class TabsTracker extends Bundle {
 	public abstract String cancel();
 	public abstract String clear();
 	public abstract String date();
+	public abstract String day1();
 	public abstract String delete();
 	public abstract String deleteSelected();
 	public abstract String edit();
@@ -66,6 +67,8 @@ public abstract class TabsTracker extends Bundle {
 	public abstract String today();
 	public abstract String total();
 	public abstract String walletBalance();
+	public abstract String week1();
+	public abstract String week2();
 	public abstract String year1();
 	public abstract String years2();
 	

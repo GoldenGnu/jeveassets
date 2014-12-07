@@ -24,7 +24,15 @@ package net.nikr.eve.jeveasset.io.local;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
 import net.nikr.eve.jeveasset.data.ExportSettings.DecimalSeparator;
 import net.nikr.eve.jeveasset.data.ExportSettings.ExportFormat;
 import net.nikr.eve.jeveasset.data.ExportSettings.FieldDelimiter;
@@ -69,9 +77,12 @@ import net.nikr.eve.jeveasset.gui.tabs.orders.MarketOrdersTab;
 import net.nikr.eve.jeveasset.gui.tabs.orders.MarketTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewGroup;
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewLocation;
-import net.nikr.eve.jeveasset.gui.tabs.stockpile.*;
+import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileFilter;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
+import net.nikr.eve.jeveasset.gui.tabs.stockpile.StockpileExtendedTableFormat;
+import net.nikr.eve.jeveasset.gui.tabs.stockpile.StockpileTab;
+import net.nikr.eve.jeveasset.gui.tabs.stockpile.StockpileTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerData;
 import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerOwner;
 import net.nikr.eve.jeveasset.gui.tabs.transaction.TransactionTab;
@@ -170,6 +181,13 @@ public final class SettingsReader extends AbstractXmlReader {
 			Element stockpilesElement = (Element) stockpilesNodes.item(0);
 			parseStockpiles(stockpilesElement, settings);
 			Collections.sort(Settings.get().getStockpiles());
+		}
+
+		//Stockpile Groups
+		NodeList stockpileGroupsNodes = element.getElementsByTagName("stockpilegroups");
+		if (stockpileGroupsNodes.getLength() == 1) {
+			Element stockpileGroupsElement = (Element) stockpileGroupsNodes.item(0);
+			parseStockpileGroups(stockpileGroupsElement, settings);
 		}
 
 		//Export Settings
@@ -334,6 +352,10 @@ public final class SettingsReader extends AbstractXmlReader {
 			Element ownerNode = (Element) tableNodeList.item(a);
 			String ownerName = AttributeGetters.getString(ownerNode, "name");
 			long ownerID = AttributeGetters.getLong(ownerNode, "id");
+			//Ignore grand total, not used anymore
+			if (ownerName.isEmpty()) {
+				continue;
+			}
 			//Add new Owner
 			TrackerOwner owner = new TrackerOwner(ownerID, ownerName);
 			settings.getTrackerData().put(owner, new ArrayList<TrackerData>());
@@ -362,6 +384,13 @@ public final class SettingsReader extends AbstractXmlReader {
 	private void parseAssetSettings(final Element assetSettingsElement, final Settings settings) {
 		int maximumPurchaseAge = AttributeGetters.getInt(assetSettingsElement, "maximumpurchaseage");
 		settings.setMaximumPurchaseAge(maximumPurchaseAge);
+	}
+
+	private void parseStockpileGroups(final Element stockpilesElement, final Settings settings) {
+		int group2 = AttributeGetters.getInt(stockpilesElement, "stockpilegroup2");
+		int group3 = AttributeGetters.getInt(stockpilesElement, "stockpilegroup3");
+		settings.setStockpileColorGroup2(group2);
+		settings.setStockpileColorGroup3(group3);
 	}
 
 	private void parseStockpiles(final Element stockpilesElement, final Settings settings) {
@@ -563,11 +592,11 @@ public final class SettingsReader extends AbstractXmlReader {
 	}
 
 	private void parseReprocessing(final Element windowElement, final Settings settings) {
-		int refining = AttributeGetters.getInt(windowElement, "refining");
-		int efficiency = AttributeGetters.getInt(windowElement, "efficiency");
-		int processing = AttributeGetters.getInt(windowElement, "processing");
+		int reprocessing = AttributeGetters.getInt(windowElement, "refining");
+		int reprocessingEfficiency = AttributeGetters.getInt(windowElement, "efficiency");
+		int scrapmetalProcessing = AttributeGetters.getInt(windowElement, "processing");
 		int station = AttributeGetters.getInt(windowElement, "station");
-		settings.setReprocessSettings(new ReprocessSettings(station, refining, efficiency, processing));
+		settings.setReprocessSettings(new ReprocessSettings(station, reprocessing, reprocessingEfficiency, scrapmetalProcessing));
 	}
 
 	private void parseWindow(final Element windowElement, final Settings settings) {
@@ -806,11 +835,19 @@ public final class SettingsReader extends AbstractXmlReader {
 					String text = AttributeGetters.getString(rowNode, "text");
 					String columnString = AttributeGetters.getString(rowNode, "column");
 					EnumTableColumn<?> column =  getColumn(columnString, tableName);
-					String compare = AttributeGetters.getString(rowNode, "compare");
-					String logic = AttributeGetters.getString(rowNode, "logic");
-					filter.add(new Filter(logic, column, compare, text));
+					if (column != null) {
+						String compare = AttributeGetters.getString(rowNode, "compare");
+						String logic = AttributeGetters.getString(rowNode, "logic");
+						filter.add(new Filter(logic, column, compare, text));
+					} else {
+						LOG.warn(columnString + " column removed from filter");
+					}
 				}
-				filters.put(filterName, filter);
+				if (!filter.isEmpty()) {
+					filters.put(filterName, filter);
+				} else {
+					LOG.warn(filterName + " filter removed (Empty)");
+				}
 			}
 			settings.getTableFilters().put(tableName, filters);
 		}
@@ -917,7 +954,7 @@ public final class SettingsReader extends AbstractXmlReader {
 		if (column.equals("ALL")) {
 			return AllColumn.ALL;
 		}
-		throw new RuntimeException("Fail to load filter column: " + column);
+		return null;
 	}
 
 	private void parseAssetFilters(final Element filtersElement, final Settings settings) {

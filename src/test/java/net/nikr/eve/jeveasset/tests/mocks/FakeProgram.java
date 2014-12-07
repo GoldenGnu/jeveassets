@@ -22,7 +22,6 @@
 package net.nikr.eve.jeveasset.tests.mocks;
 
 import ca.odell.glazedlists.EventList;
-import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.util.List;
 import net.nikr.eve.jeveasset.Program;
@@ -34,8 +33,8 @@ import net.nikr.eve.jeveasset.gui.dialogs.settings.UserPriceSettingsPanel;
 import net.nikr.eve.jeveasset.gui.frame.MainWindow;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
-import net.nikr.eve.jeveasset.gui.tabs.assets.MyAsset;
 import net.nikr.eve.jeveasset.gui.tabs.assets.AssetsTab;
+import net.nikr.eve.jeveasset.gui.tabs.assets.MyAsset;
 import net.nikr.eve.jeveasset.gui.tabs.contracts.MyContractItem;
 import net.nikr.eve.jeveasset.gui.tabs.jobs.MyIndustryJob;
 import net.nikr.eve.jeveasset.gui.tabs.journal.MyJournal;
@@ -225,6 +224,11 @@ public abstract class FakeProgram extends Program {
 
 	@Override
 	public void saveExit() {
+		throw new UnsupportedOperationException("Not implemented");
+	}
+
+	@Override
+	public void saveProfile() {
 		throw new UnsupportedOperationException("Not implemented");
 	}
 }

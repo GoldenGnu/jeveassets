@@ -210,12 +210,20 @@ public class StockpileSeparatorTableCell extends SeparatorTableCell<StockpileIte
 			return;
 		}
 		jGroup.setText(stockpileItem.getStockpile().getName());
-		if (stockpileItem.getStockpile().isOK()) {
-			jColor.setBackground(new Color(200, 255, 200));
-		} else if (stockpileItem.getStockpile().isHalf() && Settings.get().isStockpileHalfColors()) {
-			jColor.setBackground(new Color(255, 255, 200));
+		if (Settings.get().isStockpileHalfColors()) {
+			if (stockpileItem.getStockpile().getPercentFull() >= (Settings.get().getStockpileColorGroup3() / 100.0) ) {
+				jColor.setBackground(new Color(200, 255, 200));
+			} else if (stockpileItem.getStockpile().getPercentFull() >= (Settings.get().getStockpileColorGroup2() / 100.0)) {
+				jColor.setBackground(new Color(255, 255, 200));
+			} else {
+				jColor.setBackground(new Color(255, 200, 200));
+			}
 		} else {
-			jColor.setBackground(new Color(255, 200, 200));
+			if (stockpileItem.getStockpile().getPercentFull() >= (Settings.get().getStockpileColorGroup2() / 100.0)) {
+				jColor.setBackground(new Color(255, 255, 200));
+			} else {
+				jColor.setBackground(new Color(255, 200, 200));
+			}
 		}
 		String location = stockpileItem.getStockpile().getLocationName();
 		jLocation.setText(location);

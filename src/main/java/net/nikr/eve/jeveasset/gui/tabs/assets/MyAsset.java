@@ -70,8 +70,6 @@ public class MyAsset implements Comparable<MyAsset>, InfoItem, LocationType, Ite
 	private Date added;
 	private double price;
 	private Tags tags;
-	private int bpME;
-	private int bpPE;
 	//Dynamic values cache
 	private boolean userNameSet = false;
 	private boolean eveNameSet = false;
@@ -108,8 +106,6 @@ public class MyAsset implements Comparable<MyAsset>, InfoItem, LocationType, Ite
 		this.userNameSet = asset.userNameSet;
 		this.userPriceSet = asset.userPriceSet;
 		this.eveNameSet = asset.eveNameSet;
-		this.bpME = asset.bpME;
-		this.bpPE = asset.bpPE;
 	}
 
 	public MyAsset(final Item item, final MyLocation location, final Owner owner, final long count, final List<MyAsset> parents, final String flag, final int flagID, final long itemID, final boolean singleton, final int rawQuantity) {
@@ -124,8 +120,6 @@ public class MyAsset implements Comparable<MyAsset>, InfoItem, LocationType, Ite
 		this.volume = item.getVolume();
 		this.singleton = singleton;
 		this.rawQuantity = rawQuantity;
-		this.bpME = 0;
-		this.bpPE = 0;
 		//The order matter!
 		//1st
 		//rawQuantity: -1 = BPO. Only BPOs can be packaged (singleton == false). Only packaged items can be stacked (count > 1)
@@ -159,14 +153,6 @@ public class MyAsset implements Comparable<MyAsset>, InfoItem, LocationType, Ite
 
 	public List<MyAsset> getAssets() {
 		return assets;
-	}
-
-	public int getBpME() {
-		return bpME;
-	}
-
-	public int getBpPE() {
-		return bpPE;
 	}
 
 	public String getContainer() {
@@ -374,14 +360,6 @@ public class MyAsset implements Comparable<MyAsset>, InfoItem, LocationType, Ite
 
 	public void setAdded(final Date added) {
 		this.added = added;
-	}
-
-	public void setBpME(int bpME) {
-		this.bpME = bpME;
-	}
-
-	public void setBpPE(int bpPE) {
-		this.bpPE = bpPE;
 	}
 
 	public void setContainer(final String container) {

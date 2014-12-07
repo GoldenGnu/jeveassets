@@ -170,6 +170,7 @@ public abstract class GuiShared extends Bundle {
 	public abstract String filterEquals();
 	public abstract String filterEqualsNot();
 	public abstract String filterGreaterThan();
+	public abstract String filterLastDays();
 	public abstract String filterLessThan();
 	public abstract String filterBefore();
 	public abstract String filterAfter();

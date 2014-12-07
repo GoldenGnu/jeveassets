@@ -25,33 +25,33 @@ public class ReprocessSettings {
 	private static final double BASE_YIELD = 0.375;
 
 	private int station;
-	private int refiningLevel;
-	private int refineryEfficiencyLevel;
+	private int reprocessingLevel;
+	private int reprocessingEfficiencyLevel;
 	private int scrapmetalProcessingLevel;
 
 	//Defaults
 	public ReprocessSettings() {
 		this.station = 50;
-		this.refiningLevel = 0;
-		this.refineryEfficiencyLevel = 0;
+		this.reprocessingLevel = 0;
+		this.reprocessingEfficiencyLevel = 0;
 		this.scrapmetalProcessingLevel = 0;
 	}
 
 
 
-	public ReprocessSettings(final int station, final int refining, final int refineryEfficiency, final int scrapmetalProcessing) {
+	public ReprocessSettings(final int station, final int reprocessingLevel, final int reprocessingEfficiencyLevel, final int scrapmetalProcessing) {
 		this.station = station;
-		this.refiningLevel = refining;
-		this.refineryEfficiencyLevel = refineryEfficiency;
+		this.reprocessingLevel = reprocessingLevel;
+		this.reprocessingEfficiencyLevel = reprocessingEfficiencyLevel;
 		this.scrapmetalProcessingLevel = scrapmetalProcessing;
 	}
 
-	public int getRefineryEfficiencyLevel() {
-		return refineryEfficiencyLevel;
+	public int getReprocessingEfficiencyLevel() {
+		return reprocessingEfficiencyLevel;
 	}
 
-	public int getRefiningLevel() {
-		return refiningLevel;
+	public int getReprocessingLevel() {
+		return reprocessingLevel;
 	}
 
 	public int getScrapmetalProcessingLevel() {
@@ -66,13 +66,12 @@ public class ReprocessSettings {
 		return (int) Math.round(((double) start / 100.0) * getPercent());
 	}
 
-	private double getPercent() {
+	protected double getPercent() {
 		double percent = (((double) station / 100.0)
-		+ (BASE_YIELD
-		* (1.0 + ((double) refiningLevel * 0.02))
-		* (1.0 + ((double) refineryEfficiencyLevel * 0.04))
-		* (1.0 + ((double) scrapmetalProcessingLevel * 0.05))
-		)) * 100.0;
+		* (1.0 + ((double) reprocessingLevel * 0.03))
+		* (1.0 + ((double) reprocessingEfficiencyLevel * 0.02))
+		* (1.0 + ((double) scrapmetalProcessingLevel * 0.02))
+		) * 100.0;
 		if (percent > 100) {
 			return 100;
 		}
@@ -91,10 +90,10 @@ public class ReprocessSettings {
 		if (this.station != other.station) {
 			return false;
 		}
-		if (this.refiningLevel != other.refiningLevel) {
+		if (this.reprocessingLevel != other.reprocessingLevel) {
 			return false;
 		}
-		if (this.refineryEfficiencyLevel != other.refineryEfficiencyLevel) {
+		if (this.reprocessingEfficiencyLevel != other.reprocessingEfficiencyLevel) {
 			return false;
 		}
 		if (this.scrapmetalProcessingLevel != other.scrapmetalProcessingLevel) {
@@ -107,8 +106,8 @@ public class ReprocessSettings {
 	public int hashCode() {
 		int hash = 7;
 		hash = 83 * hash + this.station;
-		hash = 83 * hash + this.refiningLevel;
-		hash = 83 * hash + this.refineryEfficiencyLevel;
+		hash = 83 * hash + this.reprocessingLevel;
+		hash = 83 * hash + this.reprocessingEfficiencyLevel;
 		hash = 83 * hash + this.scrapmetalProcessingLevel;
 		return hash;
 	}

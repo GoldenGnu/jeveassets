@@ -5,7 +5,7 @@
 	<groupId>net.nikr</groupId>
 	<artifactId>jeveassets</artifactId>
 	<packaging>jar</packaging>
-	<version>2.8.0</version>
+	<version>2.9.0</version>
 	<name>jeveassets</name>
 	<description>jEveAssets is an out-of-game asset manager for Eve-Online, written in Java</description>
 	<url>http://eve.nikr.net/jeveasset</url>
@@ -112,7 +112,12 @@
 								<copy todir="${project.build.directory}">
 									<fileset dir="" includes="*.txt"/>
 									<fileset dir="tools" includes="jmemory.jar"/>
-+									<fileset dir="tools" includes="jupdate.jar"/>
+								</copy>
+								<copy todir="${project.build.directory}">
+									<fileset dir="${project.build.directory}/classes" includes="update_version.dat"/>
+								</copy>
+								<copy todir="${project.build.directory}">
+									<fileset dir="tools/update" includes="list.php"/>
 								</copy>
 							</target>
 						</configuration>
@@ -171,7 +176,124 @@
 					</arguments>
 				</configuration>
 			</plugin>
+			<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<version>2.4</version>
+				<configuration>
+					<finalName>${project.name}-${project.version}</finalName>
+					<appendAssemblyId>false</appendAssemblyId>
+					<descriptors>
+						<descriptor>src/main/assembly/assembly.xml</descriptor>
+					</descriptors>
+				</configuration>
+				<executions>
+					<execution>
+						<id>make-assembly</id> <!-- this is used for inheritance merges -->
+						<phase>package</phase> <!-- append to the packaging phase. -->
+						<goals>
+							<goal>single</goal> <!-- goals == mojos -->
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>net.ju-n.maven.plugins</groupId>
+				<artifactId>checksum-maven-plugin</artifactId>
+				<version>1.2</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>files</goal>
+						</goals>
+						<phase>verify</phase>
+					</execution>
+				</executions>
+				<configuration>
+					<fileSets>
+						<fileSet>
+							<directory>${project.build.directory}</directory>
+							<includes>
+								<include>*.txt</include>
+								<include>*.jar</include>
+								<include>lib/*.jar</include>
+							</includes>
+						</fileSet>
+					</fileSets>
+					<algorithms>
+						<algorithm>MD5</algorithm>
+					</algorithms>
+					<csvSummary>false</csvSummary>
+					<individualFiles>true</individualFiles>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>wagon-maven-plugin</artifactId>
+				<version>1.0-beta-5</version>
+				<executions>
+					<execution>
+						<id>upload-update</id>
+						<phase>deploy</phase>
+						<goals>
+							<goal>upload</goal>
+						</goals>
+						<configuration>
+							<fromDir>${project.build.directory}</fromDir>
+							<includes>*.txt,*.jar,*.md5,lib/*,*.dat,*.php</includes>
+							<serverId>eve-nikr-net</serverId>
+							<url>ftp://ftp.nikr.net</url>
+							<toDir>eve.nikr.net/jeveassets/update/program</toDir>
+						</configuration>
+					</execution>
+					<execution>
+						<id>upload-zip</id>
+						<phase>deploy</phase>
+						<goals>
+							<goal>upload</goal>
+						</goals>
+						<configuration>
+							<fromDir>${project.build.directory}</fromDir>
+							<includes>*.zip</includes>
+							<serverId>eve-nikr-net</serverId>
+							<url>ftp://ftp.nikr.net</url>
+							<toDir>eve.nikr.net/jeveassets</toDir>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-deploy-plugin</artifactId>
+				<version>2.8.1</version>
+				<configuration>
+					<skip>true</skip>
+				</configuration>
+			</plugin>
 		</plugins>
+		<extensions>
+			<!-- Enabling the use of FTP -->
+			<extension>
+				<groupId>org.apache.maven.wagon</groupId>
+				<artifactId>wagon-ftp</artifactId>
+				<version>2.6</version>
+			</extension>
+		</extensions>
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>true</filtering>
+				<includes>
+					<include>**/update_version.dat</include>
+				</includes>
+			</resource>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>false</filtering>
+				<excludes>
+					<exclude>**/update_version.dat</exclude>
+				</excludes>
+			</resource>
+		</resources>
 	</build>
 
 	<reporting>

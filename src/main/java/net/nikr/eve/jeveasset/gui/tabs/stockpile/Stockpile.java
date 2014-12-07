@@ -112,14 +112,6 @@ public class Stockpile implements Comparable<Stockpile>, LocationType {
 		}
 	}
 
-	public boolean isOK() {
-		return totalItem.isOK();
-	}
-
-	public boolean isHalf() {
-		return totalItem.isHalf();
-	}
-
 	public boolean isEmpty() {
 		return (items.size() <= 1);
 	}
@@ -278,8 +270,10 @@ public class Stockpile implements Comparable<Stockpile>, LocationType {
 	public void updateTotal() {
 		totalItem.reset();
 		percentFull = Double.MAX_VALUE;
-		items.remove(totalItem);
 		for (StockpileItem item : items) {
+			if (item.getTypeID() == 0) {
+				continue;
+			}
 			double percent;
 			if (item.getCountNow() == 0) {
 				percent = 0;
@@ -292,7 +286,6 @@ public class Stockpile implements Comparable<Stockpile>, LocationType {
 		if (percentFull == Double.MAX_VALUE) { //Default value
 			percentFull = 1;
 		}
-		items.add(totalItem);
 	}
 
 	public StockpileTotal getTotal() {
@@ -378,14 +371,6 @@ public class Stockpile implements Comparable<Stockpile>, LocationType {
 			this.countMinimum = stockpileItem.countMinimum;
 		}
 
-		public boolean isOK() {
-			return getCountNeeded() >= 0;
-		}
-
-		public boolean isHalf() {
-			return getCountNow() >= (getCountMinimumMultiplied() / 2.0);
-		}
-
 		private void reset() {
 			inventoryCountNow = 0;
 			sellOrdersCountNow = 0;
@@ -417,8 +402,8 @@ public class Stockpile implements Comparable<Stockpile>, LocationType {
 					&& matches(marketOrder.getTypeID(), marketOrder.getOwnerID(), null, null, marketOrder.getLocation(), null, marketOrder, null, null);
 		}
 		boolean matches(final MyIndustryJob industryJob) {
-			return industryJob != null //better safe then sorry
-					&& matches(industryJob.getOutputTypeID(), industryJob.getOwnerID(), null, industryJob.getOutputFlag(), industryJob.getLocation(), null, null, industryJob, null);
+			return industryJob != null //better safe then sorry 
+					&& matches(industryJob.getProductTypeID(), industryJob.getOwnerID(), null, null, industryJob.getLocation(), null, null, industryJob, null);
 		}
 
 		private boolean matches(final int typeID, final Long ownerID, final String container, final Integer flagID, final MyLocation location, final MyAsset asset, final MyMarketOrder marketOrder, final MyIndustryJob industryJob, final MyTransaction transaction) {
@@ -461,7 +446,7 @@ public class Stockpile implements Comparable<Stockpile>, LocationType {
 					}
 				} else if (industryJob != null) { //Jobs include
 					if (industryJob.getActivityID() == 1  //Manufacturing
-							&& industryJob.getCompletedStatus() == 0 //Inprogress AKA not delivered
+							&& industryJob.getStatus() == 1 //Inprogress AKA not delivered
 							&& filter.isJobs()) {
 						//OK
 					} else {
@@ -790,8 +775,6 @@ public class Stockpile implements Comparable<Stockpile>, LocationType {
 
 	public static class StockpileTotal extends StockpileItem {
 
-		private boolean ok = true;
-		private boolean half = true;
 		private long inventoryCountNow = 0;
 		private long sellOrdersCountNow = 0;
 		private long buyOrdersCountNow = 0;
@@ -811,8 +794,6 @@ public class Stockpile implements Comparable<Stockpile>, LocationType {
 		}
 
 		private void reset() {
-			ok = true;
-			half = true;
 			inventoryCountNow = 0;
 			sellOrdersCountNow = 0;
 			buyOrdersCountNow = 0;
@@ -829,12 +810,6 @@ public class Stockpile implements Comparable<Stockpile>, LocationType {
 		}
 
 		private void updateTotal(final StockpileItem item) {
-			if (!item.isOK()) {
-				ok = false;
-			}
-			if (!item.isHalf()) {
-				half = false;
-			}
 			inventoryCountNow = inventoryCountNow + item.getInventoryCountNow();
 			sellOrdersCountNow = sellOrdersCountNow + item.getSellOrdersCountNow();
 			buyOrdersCountNow = buyOrdersCountNow + item.getBuyOrdersCountNow();
@@ -862,18 +837,6 @@ public class Stockpile implements Comparable<Stockpile>, LocationType {
 		@Override
 		public String getName() {
 			return TabsStockpile.get().totalStockpile();
-		}
-
-		
-
-		@Override
-		public boolean isOK() {
-			return ok;
-		}
-
-		@Override
-		public boolean isHalf() {
-			return half;
 		}
 
 		@Override
@@ -957,16 +920,16 @@ public class Stockpile implements Comparable<Stockpile>, LocationType {
 	}
 
 	public static class StockpileFilter {
-		private MyLocation location;
-		private List<Integer> flagIDs;
-		private List<String> containers;
-		private List<Long> ownerIDs;
-		private boolean assets;
-		private boolean sellOrders;
-		private boolean buyOrders;
-		private boolean buyTransactions;
-		private boolean sellTransactions;
-		private boolean jobs;
+		private final MyLocation location;
+		private final List<Integer> flagIDs;
+		private final List<String> containers;
+		private final List<Long> ownerIDs;
+		private final boolean assets;
+		private final boolean sellOrders;
+		private final boolean buyOrders;
+		private final boolean buyTransactions;
+		private final boolean sellTransactions;
+		private final boolean jobs;
 
 		public StockpileFilter(MyLocation location, List<Integer> flagIDs, List<String> containers, List<Long> ownerIDs, boolean inventory, boolean sellOrders, boolean buyOrders, boolean jobs, boolean buyTransactions, boolean sellTransactions) {
 			this.location = location;
