@@ -18,7 +18,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
  */
-
 package net.nikr.eve.jeveasset.data;
 
 import com.beimin.eveapi.EveApi;
@@ -32,6 +31,7 @@ import java.net.InetSocketAddress;
 import java.net.Proxy;
 import java.net.SocketAddress;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.net.UnknownHostException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -60,7 +60,6 @@ import net.nikr.eve.jeveasset.io.local.SettingsReader;
 import net.nikr.eve.jeveasset.io.local.SettingsWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 
 public class Settings {
 
@@ -115,7 +114,7 @@ public class Settings {
 //!! - Values
 	//OK - Custom Price			Saved by JUserListPanel.edit()/delete() + SettingsDialog.save()
 	//Lock OK
-	private Map<Integer, UserItem<Integer, Double>> userPrices = new HashMap<Integer, UserItem<Integer, Double>>();; //TypeID : int
+	private Map<Integer, UserItem<Integer, Double>> userPrices = new HashMap<Integer, UserItem<Integer, Double>>(); //TypeID : int
 	//OK - Custom Item Name		Saved by JUserListPanel.edit()/delete() + SettingsDialog.save()
 	//Lock OK
 	private Map<Long, UserItem<Long, String>> userNames = new HashMap<Long, UserItem<Long, String>>(); //ItemID : long
@@ -136,7 +135,7 @@ public class Settings {
 	private final RoutingSettings routingSettings = new RoutingSettings();
 //Overview						Saved by JOverviewMenu.ListenerClass.NEW/DELETE/RENAME
 	//Lock OK
-	private final Map<String, OverviewGroup> overviewGroups = new HashMap<String, OverviewGroup>();;
+	private final Map<String, OverviewGroup> overviewGroups = new HashMap<String, OverviewGroup>();
 //Export						Saved in ExportDialog.saveSettings()
 	//Lock OK
 	private final ExportSettings exportSettings = new ExportSettings();
@@ -157,9 +156,9 @@ public class Settings {
 	//FIXME - - > Settings: Create windows settings
 	//Window
 	//							Saved by MainWindow.ListenerClass.componentMoved() (on change)
-	private Point windowLocation = new Point(0, 0);;
+	private Point windowLocation = new Point(0, 0);
 	//							Saved by MainWindow.ListenerClass.componentResized() (on change)
-	private Dimension windowSize = new Dimension(800, 600);;
+	private Dimension windowSize = new Dimension(800, 600);
 	//							Saved by MainWindow.ListenerClass.componentMoved() (on change)
 	private boolean windowMaximized = false;
 	//							Saved by SettingsDialog.save()
@@ -168,7 +167,7 @@ public class Settings {
 	//Assets
 	private int maximumPurchaseAge = 0;
 	//Reprocess price
-	private ReprocessSettings reprocessSettings = new ReprocessSettings();;
+	private ReprocessSettings reprocessSettings = new ReprocessSettings();
 	//Cache
 	private Boolean filterOnEnter = null; //Filter tools
 	private Boolean highlightSelectedRows = null;  //Assets
@@ -225,9 +224,11 @@ public class Settings {
 		load();
 		return settings;
 	}
+
 	public static void lock() {
 		LOCK.lock();
 	}
+
 	public static void unlock() {
 		LOCK.unlock();
 	}
@@ -295,7 +296,7 @@ public class Settings {
 	}
 
 	private void loadSettings() {
-	//Load data and overwite default values
+		//Load data and overwite default values
 		settingsLoaded = SettingsReader.load(this);
 		SplashUpdater.setProgress(35);
 		constructEveApiConnector();
@@ -308,24 +309,31 @@ public class Settings {
 	public Date getConquerableStationsNextUpdate() {
 		return conquerableStationsNextUpdate;
 	}
+
 	public void setConquerableStationsNextUpdate(final Date conquerableStationNextUpdate) {
 		this.conquerableStationsNextUpdate = conquerableStationNextUpdate;
 	}
+
 	public PriceDataSettings getPriceDataSettings() {
 		return priceDataSettings;
 	}
+
 	public void setPriceDataSettings(final PriceDataSettings priceDataSettings) {
 		this.priceDataSettings = priceDataSettings;
 	}
+
 	public Map<Integer, UserItem<Integer, Double>> getUserPrices() {
 		return userPrices;
 	}
+
 	public void setUserPrices(final Map<Integer, UserItem<Integer, Double>> userPrices) {
 		this.userPrices = userPrices;
 	}
+
 	public Map<Long, UserItem<Long, String>> getUserItemNames() {
 		return userNames;
 	}
+
 	public void setUserItemNames(final Map<Long, UserItem<Long, String>> userItemNames) {
 		this.userNames = userItemNames;
 	}
@@ -378,23 +386,24 @@ public class Settings {
 		}
 	}
 
-  /**
-   *
-   * @param proxy passing 'null' removes proxying.
-   */
+	/**
+	 *
+	 * @param proxy passing 'null' removes proxying.
+	 */
 	public void setProxy(final Proxy proxy) {
 		this.proxy = proxy;
 		// pass the new proxy onto the API framework.
 		constructEveApiConnector();
 	}
 
-  /**
-   * handles converting "basic" types to a Proxy type.
-   * @param host
-   * @param port
-   * @param type
-   * @throws IllegalArgumentException
-   */
+	/**
+	 * handles converting "basic" types to a Proxy type.
+	 *
+	 * @param host
+	 * @param port
+	 * @param type
+	 * @throws IllegalArgumentException
+	 */
 	public void setProxy(final String host, final int port, final String type) {
 		// Convert the proxy type. not using the "valueof()" method so that they can be case-insensitive.
 		Proxy.Type proxyType = Proxy.Type.DIRECT;
@@ -409,13 +418,14 @@ public class Settings {
 		setProxy(host, port, proxyType);
 	}
 
-  /**
-   * handles converting "basic" types to a Proxy type.
-   * @param host
-   * @param port
-   * @param type
-   * @throws IllegalArgumentException
-   */
+	/**
+	 * handles converting "basic" types to a Proxy type.
+	 *
+	 * @param host
+	 * @param port
+	 * @param type
+	 * @throws IllegalArgumentException
+	 */
 	public void setProxy(final String host, final int port, final Proxy.Type type) {
 		// Convert it into something we can use.
 		InetAddress addr = null;
@@ -440,7 +450,9 @@ public class Settings {
 
 	/**
 	 * Set API Proxy.
-	 * @param apiProxy pass null to disable any API proxy, and use the default: http://api.eve-online.com
+	 *
+	 * @param apiProxy pass null to disable any API proxy, and use the default:
+	 * http://api.eve-online.com
 	 */
 	public void setApiProxy(final String apiProxy) {
 		this.apiProxy = apiProxy;
@@ -492,11 +504,11 @@ public class Settings {
 		return tableResize;
 	}
 
-	public Map<String, Map<String ,View>> getTableViews() {
+	public Map<String, Map<String, View>> getTableViews() {
 		return tableViews;
 	}
 
-	public Map<String ,View> getTableViews(String name) {
+	public Map<String, View> getTableViews(String name) {
 		Map<String, View> views = tableViews.get(name);
 		if (views == null) {
 			views = new TreeMap<String, View>(new CaseInsensitiveComparator());
@@ -532,92 +544,119 @@ public class Settings {
 		}
 		return filterOnEnter;
 	}
+
 	public void setFilterOnEnter(final boolean filterOnEnter) {
 		flags.put(SettingFlag.FLAG_FILTER_ON_ENTER, filterOnEnter); //Save & Load
 		this.filterOnEnter = filterOnEnter;
 	}
+
 	public boolean isHighlightSelectedRows() { //High volume call - Map.get is too slow, use cache
 		return highlightSelectedRows;
 	}
+
 	public void setHighlightSelectedRows(final boolean highlightSelectedRows) {
 		flags.put(SettingFlag.FLAG_HIGHLIGHT_SELECTED_ROWS, highlightSelectedRows);
 		this.highlightSelectedRows = highlightSelectedRows;
 	}
+
 	public boolean isIgnoreSecureContainers() {
 		return flags.get(SettingFlag.FLAG_IGNORE_SECURE_CONTAINERS);
 	}
+
 	public void setIgnoreSecureContainers(final boolean ignoreSecureContainers) {
 		flags.put(SettingFlag.FLAG_IGNORE_SECURE_CONTAINERS, ignoreSecureContainers);
 	}
+
 	public boolean isReprocessColors() { //High volume call - Map.get is too slow, use cache
 		return reprocessColors;
 	}
+
 	public void setReprocessColors(final boolean reprocessColors) {
 		flags.put(SettingFlag.FLAG_REPROCESS_COLORS, reprocessColors);
 		this.reprocessColors = reprocessColors;
 	}
+
 	public boolean isStockpileFocusTab() {
 		return flags.get(SettingFlag.FLAG_STOCKPILE_FOCUS_TAB);
 	}
+
 	public void setStockpileFocusTab(final boolean stockpileFocusOnAdd) {
 		flags.put(SettingFlag.FLAG_STOCKPILE_FOCUS_TAB, stockpileFocusOnAdd);
 	}
+
 	public boolean isStockpileHalfColors() {
 		return stockpileHalfColors;
 	}
+
 	public void setStockpileHalfColors(final boolean stockpileHalfColors) {
 		flags.put(SettingFlag.FLAG_STOCKPILE_HALF_COLORS, stockpileHalfColors);
 		this.stockpileHalfColors = stockpileHalfColors;
 	}
+
 	public boolean isIncludeSellOrders() {
 		return flags.get(SettingFlag.FLAG_INCLUDE_SELL_ORDERS);
 	}
+
 	public void setIncludeSellOrders(final boolean includeSellOrders) {
 		flags.put(SettingFlag.FLAG_INCLUDE_SELL_ORDERS, includeSellOrders);
 	}
+
 	public boolean isIncludeBuyOrders() {
 		return flags.get(SettingFlag.FLAG_INCLUDE_BUY_ORDERS);
 	}
+
 	public void setIncludeBuyOrders(final boolean includeBuyOrders) {
 		flags.put(SettingFlag.FLAG_INCLUDE_BUY_ORDERS, includeBuyOrders);
 	}
+
 	public boolean isIncludeBuyContracts() {
 		return flags.get(SettingFlag.FLAG_INCLUDE_BUY_CONTRACTS);
 	}
+
 	public void setIncludeBuyContracts(final boolean includeBuyOrders) {
 		flags.put(SettingFlag.FLAG_INCLUDE_BUY_CONTRACTS, includeBuyOrders);
- 	}
+	}
+
 	public boolean isIncludeSellContracts() {
 		return flags.get(SettingFlag.FLAG_INCLUDE_SELL_CONTRACTS);
 	}
+
 	public void setIncludeSellContracts(final boolean includeBuyOrders) {
 		flags.put(SettingFlag.FLAG_INCLUDE_SELL_CONTRACTS, includeBuyOrders);
 	}
+
 	public boolean isBlueprintBasePriceTech1() {
 		return flags.get(SettingFlag.FLAG_BLUEPRINT_BASE_PRICE_TECH_1);
 	}
+
 	public void setBlueprintBasePriceTech1(final boolean blueprintsTech1) {
 		flags.put(SettingFlag.FLAG_BLUEPRINT_BASE_PRICE_TECH_1, blueprintsTech1);
 	}
+
 	public boolean isBlueprintBasePriceTech2() {
 		return flags.get(SettingFlag.FLAG_BLUEPRINT_BASE_PRICE_TECH_2);
 	}
+
 	public void setBlueprintBasePriceTech2(final boolean blueprintsTech2) {
 		flags.put(SettingFlag.FLAG_BLUEPRINT_BASE_PRICE_TECH_2, blueprintsTech2);
 	}
+
 	public boolean isTransactionHistory() {
 		return flags.get(SettingFlag.FLAG_TRANSACTION_HISTORY);
 	}
+
 	public void setTransactionHistory(final boolean transactionHistory) {
 		flags.put(SettingFlag.FLAG_TRANSACTION_HISTORY, transactionHistory);
 	}
+
 	public boolean isJournalHistory() {
 		return flags.get(SettingFlag.FLAG_JOURNAL_HISTORY);
 	}
+
 	public void setJournalHistory(final boolean blueprintsTech2) {
 		flags.put(SettingFlag.FLAG_JOURNAL_HISTORY, blueprintsTech2);
 	}
-	
+
 	public List<Stockpile> getStockpiles() {
 		return stockpiles;
 	}
@@ -698,54 +737,71 @@ public class Settings {
 	public String getPathSettings() {
 		return getLocalFile(Settings.PATH_SETTINGS, !Program.isPortable());
 	}
+
 	public static String getPathConquerableStations() {
 		return getLocalFile(Settings.PATH_CONQUERABLE_STATIONS, !Program.isPortable());
 	}
+
 	public static String getPathJumps() {
 		return getLocalFile(Settings.PATH_JUMPS, false);
 	}
+
 	public static String getPathFlags() {
 		return getLocalFile(Settings.PATH_FLAGS, false);
 	}
+
 	public static String getPathPriceData() {
 		return getLocalFile(Settings.PATH_PRICE_DATA, !Program.isPortable());
 	}
+
 	public static String getPathAssetsOld() {
 		return getLocalFile(Settings.PATH_ASSETS, !Program.isPortable());
 	}
+
 	public static String getPathProfilesDirectory() {
 		return getLocalFile(Settings.PATH_PROFILES, !Program.isPortable());
 	}
+
 	public static String getPathStaticDataDirectory() {
 		return getLocalFile(Settings.PATH_DATA, false);
 	}
+
 	public static String getPathDataDirectory() {
 		return getLocalFile(Settings.PATH_DATA, !Program.isPortable());
 	}
+
 	public static String getPathItems() {
 		return getLocalFile(Settings.PATH_ITEMS, false);
 	}
+
 	public static String getPathLocations() {
 		return getLocalFile(Settings.PATH_LOCATIONS, false);
 	}
+
 	public static String getPathDataVersion() {
 		return getLocalFile(Settings.PATH_DATA_VERSION, false);
 	}
+
 	public static String getPathReadme() {
 		return getLocalFile(Settings.PATH_README, false);
 	}
+
 	public static String getPathLicense() {
 		return getLocalFile(Settings.PATH_LICENSE, false);
 	}
+
 	public static String getPathCredits() {
 		return getLocalFile(Settings.PATH_CREDITS, false);
 	}
+
 	public static String getPathChangeLog() {
 		return getLocalFile(Settings.PATH_CHANGELOG, false);
 	}
+
 	public static String getPathRunUpdate() {
 		return getLocalFile(Settings.PATH_UPDATE, false);
 	}
+
 	public static String getPathRunJar() {
 		return getLocalFile(Settings.PATH_JAR, false);
 	}
@@ -755,40 +811,41 @@ public class Settings {
 		return userDir.getAbsolutePath() + File.separator;
 	}
 
-  /**
-   *
-   * @param filename the name of the data file to obtain
-   * @param dynamic true if the file is expecting to be written to, false for things like the items and locations.
-   * @return
-   */
+	/**
+	 *
+	 * @param filename the name of the data file to obtain
+	 * @param dynamic true if the file is expecting to be written to, false for
+	 * things like the items and locations.
+	 * @return
+	 */
 	protected static String getLocalFile(final String filename, final boolean dynamic) {
 		LOG.debug("Looking for file: {} dynamic: {}", filename, dynamic);
-		try {
-			File file;
-			File ret;
-			if (dynamic) {
-				File userDir = new File(System.getProperty("user.home", "."));
-				if (Program.onMac()) { // preferences are stored in user.home/Library/Preferences
-					file = new File(userDir, "Library/Preferences/JEveAssets");
-				} else {
-					file = new File(userDir.getAbsolutePath() + File.separator + ".jeveassets");
-				}
-				ret = new File(file.getAbsolutePath() + File.separator + filename);
-				File parent = ret.getParentFile();
-				if (!parent.exists()
-								&& !parent.mkdirs()) {
-					LOG.error("failed to create directories for " + parent.getAbsolutePath());
-				}
+		File file;
+		File ret;
+		if (dynamic) {
+			File userDir = new File(System.getProperty("user.home", "."));
+			if (Program.onMac()) { // preferences are stored in user.home/Library/Preferences
+				file = new File(userDir, "Library/Preferences/JEveAssets");
 			} else {
-				file = new File(net.nikr.eve.jeveasset.Program.class.getProtectionDomain().getCodeSource().getLocation().toURI()).getParentFile();
-				ret = new File(file.getAbsolutePath() + File.separator + filename);
+				file = new File(userDir.getAbsolutePath() + File.separator + ".jeveassets");
 			}
-			LOG.debug("Found file at: {}", ret.getAbsolutePath());
-			return ret.getAbsolutePath();
-		} catch (URISyntaxException ex) {
-			LOG.error("Failed to get program directory: Please email the latest error.txt in the logs directory to niklaskr@gmail.com", ex);
+			ret = new File(file.getAbsolutePath() + File.separator + filename);
+			File parent = ret.getParentFile();
+			if (!parent.exists()
+					&& !parent.mkdirs()) {
+				LOG.error("failed to create directories for " + parent.getAbsolutePath());
+			}
+		} else {
+			URL location = net.nikr.eve.jeveasset.Program.class.getProtectionDomain().getCodeSource().getLocation();
+			try {
+				file = new File(location.toURI());
+			} catch (URISyntaxException ex) {
+				file = new File(location.getPath());
+			}
+			ret = new File(file.getParentFile().getAbsolutePath() + File.separator + filename);
 		}
-		return null;
+		LOG.debug("Found file at: {}", ret.getAbsolutePath());
+		return ret.getAbsolutePath();
 	}
 
 	public static Date getNow() {
@@ -812,13 +869,14 @@ public class Settings {
 	}
 
 	private static class SettingsLock {
+
 		private boolean locked = false;
 		private final SettingsQueue settingsQueue = new SettingsQueue();
 
 		public boolean ignoreSave() {
 			return settingsQueue.ignoreSave();
 		}
-		
+
 		public void saveStart() {
 			settingsQueue.saveStart();
 		}
@@ -832,7 +890,7 @@ public class Settings {
 		}
 
 		public synchronized void lock() {
-			while(locked){
+			while (locked) {
 				try {
 					wait();
 				} catch (InterruptedException ex) {
@@ -843,7 +901,7 @@ public class Settings {
 			LOG.debug("Settings Locked");
 		}
 
-		public synchronized void unlock(){
+		public synchronized void unlock() {
 			locked = false;
 			LOG.debug("Settings Unlocked");
 			notify();
@@ -851,6 +909,7 @@ public class Settings {
 	}
 
 	private static class SettingsQueue {
+
 		private short savesQueue = 0;
 
 		public synchronized boolean ignoreSave() {
@@ -873,7 +932,7 @@ public class Settings {
 				try {
 					wait();
 				} catch (InterruptedException ex) {
-					
+
 				}
 			}
 		}
