@@ -22,22 +22,16 @@ package net.nikr.eve.jeveasset.data;
 
 
 public class ReprocessSettings {
-	private static final double BASE_YIELD = 0.375;
 
-	private int station;
-	private int reprocessingLevel;
-	private int reprocessingEfficiencyLevel;
-	private int scrapmetalProcessingLevel;
+	private final int station;
+	private final int reprocessingLevel;
+	private final int reprocessingEfficiencyLevel;
+	private final int scrapmetalProcessingLevel;
 
 	//Defaults
 	public ReprocessSettings() {
-		this.station = 50;
-		this.reprocessingLevel = 0;
-		this.reprocessingEfficiencyLevel = 0;
-		this.scrapmetalProcessingLevel = 0;
+		this(50, 0, 0, 0);
 	}
-
-
 
 	public ReprocessSettings(final int station, final int reprocessingLevel, final int reprocessingEfficiencyLevel, final int scrapmetalProcessing) {
 		this.station = station;
@@ -62,16 +56,23 @@ public class ReprocessSettings {
 		return station;
 	}
 
-	public int getLeft(final int start) {
-		return (int) Math.round(((double) start / 100.0) * getPercent());
+	public int getLeft(final int start, final boolean ore) {
+		return (int) Math.round((((double) start) / 100.0) * getPercent(ore));
 	}
 
-	protected double getPercent() {
-		double percent = (((double) station / 100.0)
-		* (1.0 + ((double) reprocessingLevel * 0.03))
-		* (1.0 + ((double) reprocessingEfficiencyLevel * 0.02))
-		* (1.0 + ((double) scrapmetalProcessingLevel * 0.02))
-		) * 100.0;
+	protected double getPercent(final boolean ore) {
+		double percent;
+		if (ore) {
+			percent = (((double) station / 100.0)
+			* (1.0 + ((double) reprocessingLevel * 0.03))
+			* (1.0 + ((double) reprocessingEfficiencyLevel * 0.02))
+			* (1.0 + ((double) scrapmetalProcessingLevel * 0.02))
+			) * 100.0;
+		} else {
+			percent = (((double) station / 100.0)
+			* (1.0 + ((double) scrapmetalProcessingLevel * 0.02))
+			) * 100.0;
+		}
 		if (percent > 100) {
 			return 100;
 		}

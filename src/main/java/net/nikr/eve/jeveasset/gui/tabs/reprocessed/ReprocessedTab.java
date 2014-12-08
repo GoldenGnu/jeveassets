@@ -224,7 +224,7 @@ public class ReprocessedTab extends JMainTab {
 					Item materialItem = StaticData.get().getItems().get(material.getTypeID());
 					if (materialItem != null) {
 						double price = ApiIdConverter.getPrice(materialItem.getTypeID(), false);
-						int quantitySkill = Settings.get().getReprocessSettings().getLeft(material.getQuantity());
+						int quantitySkill = Settings.get().getReprocessSettings().getLeft(material.getQuantity(), item.isOre());
 						ReprocessedItem reprocessedItem = new ReprocessedItem(total, materialItem, material, quantitySkill, price);
 						list.add(reprocessedItem);
 						//Total

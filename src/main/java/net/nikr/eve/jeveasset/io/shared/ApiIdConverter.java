@@ -151,7 +151,7 @@ public final class ApiIdConverter {
 			//Calculate reprocessed price
 			portionSize = material.getPortionSize();
 			double price = ApiIdConverter.getPriceReprocessed(material.getTypeID(), false);
-			priceReprocessed = priceReprocessed + (price * Settings.get().getReprocessSettings().getLeft(material.getQuantity()));
+			priceReprocessed = priceReprocessed + (price * Settings.get().getReprocessSettings().getLeft(material.getQuantity(), item.isOre()));
 		}
 		if (priceReprocessed > 0 && portionSize > 0) {
 			priceReprocessed = priceReprocessed / portionSize;
