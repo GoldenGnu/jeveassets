@@ -64,6 +64,10 @@ public class Item implements Comparable<Item>, ItemType {
 		this.blueprint = (name.toLowerCase().contains("blueprint"));
 	}
 
+	public boolean isOre() {
+		return category.equals("Asteroid");
+	}
+
 	public void addReprocessedMaterial(final ReprocessedMaterial material) {
 		reprocessedMaterials.add(material);
 	}
