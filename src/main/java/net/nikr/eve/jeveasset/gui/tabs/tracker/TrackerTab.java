@@ -78,7 +78,6 @@ import net.nikr.eve.jeveasset.gui.shared.components.JMultiSelectionList;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo;
 import net.nikr.eve.jeveasset.gui.tabs.assets.MyAsset;
 import net.nikr.eve.jeveasset.gui.tabs.jobs.MyIndustryJob;
-import net.nikr.eve.jeveasset.gui.tabs.jobs.MyIndustryJob.IndustryJobState;
 import net.nikr.eve.jeveasset.gui.tabs.orders.MyMarketOrder;
 import net.nikr.eve.jeveasset.i18n.General;
 import net.nikr.eve.jeveasset.i18n.TabsTracker;
@@ -112,6 +111,7 @@ public class TrackerTab extends JMainTab {
 	}
 
 	private final int PANEL_WIDTH = 140;
+	private final int LABEL_WIDTH = 45;
 
 	private final NumberFormat iskFormat = new DecimalFormat("#,##0.00 isk");
 	private final DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
@@ -302,12 +302,13 @@ public class TrackerTab extends JMainTab {
 					.addComponent(jQuickDate, PANEL_WIDTH, PANEL_WIDTH, PANEL_WIDTH)
 					.addGroup(layout.createSequentialGroup()
 						.addGroup(layout.createParallelGroup()
-							.addComponent(jFromLabel)
-							.addComponent(jToLabel)
+							.addComponent(jFromLabel, LABEL_WIDTH, LABEL_WIDTH, LABEL_WIDTH)
+							.addComponent(jToLabel, LABEL_WIDTH, LABEL_WIDTH, LABEL_WIDTH)
 						)
+						.addGap(0)
 						.addGroup(layout.createParallelGroup()	
-							.addComponent(jFrom)
-							.addComponent(jTo)
+							.addComponent(jFrom, PANEL_WIDTH - LABEL_WIDTH, PANEL_WIDTH - LABEL_WIDTH, PANEL_WIDTH - LABEL_WIDTH)
+							.addComponent(jTo, PANEL_WIDTH - LABEL_WIDTH, PANEL_WIDTH - LABEL_WIDTH, PANEL_WIDTH - LABEL_WIDTH)
 						)
 					)
 					.addComponent(jDateSeparator, PANEL_WIDTH, PANEL_WIDTH, PANEL_WIDTH)
