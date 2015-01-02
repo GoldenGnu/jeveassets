@@ -114,7 +114,7 @@ public class TrackerTab extends JMainTab {
 	private final int LABEL_WIDTH = 45;
 
 	private final NumberFormat iskFormat = new DecimalFormat("#,##0.00 isk");
-	private final DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+	private final DateFormat dateFormat = new SimpleDateFormat(Formater.COLUMN_DATE);
 
 	private final JFreeChart jNextChart;
 	private final JDateChooser jFrom;
