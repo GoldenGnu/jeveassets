@@ -54,8 +54,7 @@ import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.SimpleColu
 import net.nikr.eve.jeveasset.gui.shared.table.View;
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewGroup;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile;
-import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerData;
-import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerOwner;
+import net.nikr.eve.jeveasset.gui.tabs.values.Value;
 import net.nikr.eve.jeveasset.io.local.SettingsReader;
 import net.nikr.eve.jeveasset.io.local.SettingsWriter;
 import org.slf4j.Logger;
@@ -140,7 +139,7 @@ public class Settings {
 	//Lock OK
 	private final ExportSettings exportSettings = new ExportSettings();
 //Tracker						Saved by TaskDialog.update() (on API update)
-	private final Map<TrackerOwner, List<TrackerData>> trackerData = new HashMap<TrackerOwner, List<TrackerData>>(); //ownerID :: long
+	private final Map<String, List<Value>> trackerData = new HashMap<String, List<Value>>(); //ownerID :: long
 //Runtime flags					Is not saved to file
 	private boolean settingsLoaded;
 	private boolean settingsImported;
@@ -302,7 +301,7 @@ public class Settings {
 		constructEveApiConnector();
 	}
 
-	public Map<TrackerOwner, List<TrackerData>> getTrackerData() {
+	public Map<String, List<Value>> getTrackerData() {
 		return trackerData;
 	}
 

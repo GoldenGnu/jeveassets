@@ -21,12 +21,15 @@
 
 package net.nikr.eve.jeveasset.gui.tabs.values;
 
+import java.util.Date;
+import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.tabs.assets.MyAsset;
 import net.nikr.eve.jeveasset.i18n.TabsValues;
 
 
 public class Value implements Comparable<Value> {
-	private String name;
+	private final String name;
+	private final Date date;
 	private double assets = 0;
 	private double sellOrders = 0;
 	private double escrows = 0;
@@ -38,8 +41,17 @@ public class Value implements Comparable<Value> {
 	private MyAsset bestShipFitted = null;
 	private MyAsset bestModule = null;
 
-	public Value(String name) {
+	public Value(Date date) {
+		this("", date);
+	}
+
+	public Value(String name, Date date) {
 		this.name = name;
+		this.date = date;
+	}
+
+	public void addAssets(double assets) {
+		this.assets = this.assets + assets;
 	}
 
 	public void addAssets(MyAsset asset) {
@@ -68,6 +80,10 @@ public class Value implements Comparable<Value> {
 
 	public void addManufacturing(double manufacturing) {
 		this.manufacturing = this.manufacturing + manufacturing;
+	}
+
+	public Date getDate() {
+		return date;
 	}
 
 	public String getName() {
@@ -155,6 +171,30 @@ public class Value implements Comparable<Value> {
 
 	public double getTotal() {
 		return getAssets() + getBalance() + getEscrows() + getSellOrders() + getManufacturing();
+	}
+
+	public void setAssets(double assets) {
+		this.assets = assets;
+	}
+
+	public void setSellOrders(double sellOrders) {
+		this.sellOrders = sellOrders;
+	}
+
+	public void setEscrows(double escrows) {
+		this.escrows = escrows;
+	}
+
+	public void setEscrowsToCover(double escrowsToCover) {
+		this.escrowsToCover = escrowsToCover;
+	}
+
+	public void setBalance(double balance) {
+		this.balance = balance;
+	}
+
+	public void setManufacturing(double manufacturing) {
+		this.manufacturing = manufacturing;
 	}
 
 	private void setBestAsset(MyAsset bestAsset) {

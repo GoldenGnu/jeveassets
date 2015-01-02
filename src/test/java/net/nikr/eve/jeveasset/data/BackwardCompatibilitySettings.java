@@ -35,8 +35,7 @@ import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.View;
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewGroup;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile;
-import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerData;
-import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerOwner;
+import net.nikr.eve.jeveasset.gui.tabs.values.Value;
 import net.nikr.eve.jeveasset.tests.mocks.FakeSettings;
 
 
@@ -74,7 +73,7 @@ public class BackwardCompatibilitySettings extends FakeSettings {
 		SET_WINDOW_SIZE,
 	}
 
-	private final Map<TrackerOwner, List<TrackerData>> trackerData = new HashMap<TrackerOwner, List<TrackerData>>();
+	private final Map<String, List<Value>> trackerData = new HashMap<String, List<Value>>();
 
 	private final String settingsPath;
 	private final String name;
@@ -234,7 +233,7 @@ public class BackwardCompatibilitySettings extends FakeSettings {
 	}
 
 	@Override
-	public Map<TrackerOwner, List<TrackerData>> getTrackerData() {
+	public Map<String, List<Value>> getTrackerData() {
 		ok.put(Function.GET_TRACKER_DATA, true);
 		return trackerData;
 	}

@@ -38,6 +38,7 @@ import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
+import net.nikr.eve.jeveasset.gui.tabs.values.Value;
 import net.nikr.eve.jeveasset.i18n.TabsTracker;
 
 
@@ -59,7 +60,7 @@ public class JTrackerEditDialog extends JDialogCentered {
 	private final JButton jOK;
 
 	//Data
-	private TrackerData trackerData;
+	private Value value;
 	private boolean update;
 
 	public JTrackerEditDialog(Program program) {
@@ -176,16 +177,16 @@ public class JTrackerEditDialog extends JDialogCentered {
 		);
 	}
 
-	public boolean showEdit(TrackerData trackerData) {
-		this.trackerData = trackerData;
+	public boolean showEdit(Value value) {
+		this.value = value;
 		update = false;
-		jWalletBalance.setText(format(trackerData.getWalletBalance()));
-		jAssets.setText(format(trackerData.getAssets()));
-		jSellOrders.setText(format(trackerData.getSellOrders()));
-		jEscrows.setText(format(trackerData.getEscrows()));
-		jEscrowsToCover.setText(format(trackerData.getEscrowsToCover()));
-		jManufacturing.setText(format(trackerData.getManufacturing()));
-		jDate.setText(format(trackerData.getDate()));
+		jWalletBalance.setText(format(value.getBalance()));
+		jAssets.setText(format(value.getAssets()));
+		jSellOrders.setText(format(value.getSellOrders()));
+		jEscrows.setText(format(value.getEscrows()));
+		jEscrowsToCover.setText(format(value.getEscrowsToCover()));
+		jManufacturing.setText(format(value.getManufacturing()));
+		jDate.setText(format(value.getDate()));
 		setVisible(true);
 		return update;
 	}
@@ -228,12 +229,12 @@ public class JTrackerEditDialog extends JDialogCentered {
 			double escrowsToCover = parse(jEscrowsToCover.getText());
 			double manufacturing = parse(jManufacturing.getText());
 			Settings.lock();
-			trackerData.setWalletBalance(walletBalanc);
-			trackerData.setAssets(assets);
-			trackerData.setSellOrders(sellOrders);
-			trackerData.setEscrows(escrows);
-			trackerData.setEscrowsToCover(escrowsToCover);
-			trackerData.setManufacturing(manufacturing);
+			value.setBalance(walletBalanc);
+			value.setAssets(assets);
+			value.setSellOrders(sellOrders);
+			value.setEscrows(escrows);
+			value.setEscrowsToCover(escrowsToCover);
+			value.setManufacturing(manufacturing);
 			Settings.unlock();
 			program.saveSettings("Save Tracker Data (Edit)");
 			update = true;

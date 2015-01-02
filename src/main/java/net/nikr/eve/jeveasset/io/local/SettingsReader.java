@@ -83,12 +83,11 @@ import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.StockpileExtendedTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.StockpileTab;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.StockpileTableFormat;
-import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerData;
-import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerOwner;
 import net.nikr.eve.jeveasset.gui.tabs.transaction.TransactionTab;
 import net.nikr.eve.jeveasset.gui.tabs.transaction.TransactionTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.tree.TreeTab;
 import net.nikr.eve.jeveasset.gui.tabs.tree.TreeTableFormat;
+import net.nikr.eve.jeveasset.gui.tabs.values.Value;
 import net.nikr.eve.jeveasset.gui.tabs.values.ValueTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.values.ValueTableTab;
 import net.nikr.eve.jeveasset.i18n.General;
@@ -350,15 +349,13 @@ public final class SettingsReader extends AbstractXmlReader {
 		for (int a = 0; a < tableNodeList.getLength(); a++) {
 			//Read Owner
 			Element ownerNode = (Element) tableNodeList.item(a);
-			String ownerName = AttributeGetters.getString(ownerNode, "name");
-			long ownerID = AttributeGetters.getLong(ownerNode, "id");
+			String owner = AttributeGetters.getString(ownerNode, "name");
 			//Ignore grand total, not used anymore
-			if (ownerName.isEmpty()) {
+			if (owner.isEmpty()) {
 				continue;
 			}
 			//Add new Owner
-			TrackerOwner owner = new TrackerOwner(ownerID, ownerName);
-			settings.getTrackerData().put(owner, new ArrayList<TrackerData>());
+			settings.getTrackerData().put(owner, new ArrayList<Value>());
 			//Data
 			NodeList dataNodeList = ownerNode.getElementsByTagName("data");
 			for (int b = 0; b < dataNodeList.getLength(); b++) {
@@ -375,8 +372,14 @@ public final class SettingsReader extends AbstractXmlReader {
 					manufacturing = AttributeGetters.getDouble(dataNode, "manufacturing");
 				}
 				//Add data
-				TrackerData data = new TrackerData(date, walletbalance, assets, sellorders, escrows, escrowstocover, manufacturing);
-				settings.getTrackerData().get(owner).add(data);
+				Value value = new Value(date);
+				value.setAssets(assets);
+				value.setEscrows(escrows);
+				value.setEscrowsToCover(escrowstocover);
+				value.setSellOrders(sellorders);
+				value.setBalance(walletbalance);
+				value.setManufacturing(manufacturing);
+				settings.getTrackerData().get(owner).add(value);
 			}
 		}
 	}

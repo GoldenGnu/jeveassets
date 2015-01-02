@@ -27,6 +27,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,7 +37,10 @@ import javax.swing.JEditorPane;
 import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 import net.nikr.eve.jeveasset.Program;
+import net.nikr.eve.jeveasset.data.MyAccount;
 import net.nikr.eve.jeveasset.data.MyAccountBalance;
+import net.nikr.eve.jeveasset.data.Owner;
+import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.CaseInsensitiveComparator;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
@@ -195,69 +199,29 @@ public class ValueRetroTab extends JMainTab {
 		setData(jTotal, total);
 	}
 
-	private Value getValue(String key, boolean corporation) {
-		Map<String, Value> values;
-		if (corporation) {
-			values = corporations;
-		} else {
-			values = characters;
-		}
-		Value value = values.get(key);
-		if (value == null) {
-			value = new Value(key);
-			values.put(key, value);
-		}
-		return value;
-	}
-
 	private boolean calcTotal() {
+		Date date = Settings.getNow();
+		Map<String, Value> values = ValueTableTab.createDataSet(program);
 		characters = new HashMap<String, Value>();
 		corporations = new HashMap<String, Value>();
-		total = new Value(TabsValues.get().grandTotal());
-		for (MyAsset asset : program.getAssetEventList()) {
-			//Skip market orders
-			if (asset.getFlag().equals(General.get().marketOrderSellFlag())) {
-				continue; //Ignore market sell orders
-			}
-			if (asset.getFlag().equals(General.get().marketOrderBuyFlag())) {
-				continue; //Ignore market buy orders
-			}
-			//Skip contracts
-			if (asset.getFlag().equals(General.get().contractIncluded())) {
-				continue; //Ignore contracts included
-			}
-			if (asset.getFlag().equals(General.get().contractExcluded())) {
-				continue; //Ignore contracts excluded
-			}
-			Value value = getValue(asset.getOwner(), asset.isCorporation());
-			value.addAssets(asset);
-			total.addAssets(asset);
-		}
-		for (MyMarketOrder marketOrder : program.getMarketOrdersEventList()) {
-			Value value = getValue(marketOrder.getOwner(), marketOrder.isCorporation());
-			if (marketOrder.getOrderState() == 0) {
-				if (marketOrder.getBid() < 1) { //Sell Orders
-					value.addSellOrders(marketOrder.getPrice() * marketOrder.getVolRemaining());
-					total.addSellOrders(marketOrder.getPrice() * marketOrder.getVolRemaining());
-				} else { //Buy Orders
-					value.addEscrows(marketOrder.getEscrow());
-					value.addEscrowsToCover((marketOrder.getPrice() * marketOrder.getVolRemaining()) - marketOrder.getEscrow());
-					total.addEscrows(marketOrder.getEscrow());
-					total.addEscrowsToCover((marketOrder.getPrice() * marketOrder.getVolRemaining()) - marketOrder.getEscrow());
+		total = values.get(TabsValues.get().grandTotal());
+		for (MyAccount account : program.getAccounts()) {
+			for (Owner owner : account.getOwners()) {
+				Value value = ValueTableTab.getValue(values, owner.getName(), date);
+				if (owner.isCharacter()) {
+					characters.put(value.getName(), value);
+				} else if (owner.isCorporation()) {
+					corporations.put(value.getName(), value);
 				}
+				
 			}
-		}
-		for (MyAccountBalance accountBalance : program.getAccountBalanceEventList()) {
-			Value value = getValue(accountBalance.getOwner(), accountBalance.isCorporation());
-			value.addBalance(accountBalance.getBalance());
-			total.addBalance(accountBalance.getBalance());
 		}
 		return !program.getAssetEventList().isEmpty();
 	}
 
 	private void setData(JEditorPane jEditorPane, Value value) {
 		if (value == null) {
-			value = new Value(""); //Create empty
+			value = new Value("", Settings.getNow()); //Create empty
 		}
 		Output output = new Output();
 

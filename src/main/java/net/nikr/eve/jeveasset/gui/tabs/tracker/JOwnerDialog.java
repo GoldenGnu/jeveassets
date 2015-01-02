@@ -23,15 +23,12 @@ package net.nikr.eve.jeveasset.gui.tabs.tracker;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Set;
-import java.util.TreeSet;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
 
@@ -48,7 +45,7 @@ public class JOwnerDialog extends JDialogCentered {
 	private final JButton jCancel;
 	private final ListenerClass listener;
 
-	private TrackerOwner owner;
+	private String owner;
 
 	public JOwnerDialog(Program program) {
 		super(program, "Select Owner", Images.TOOL_TRACKER.getImage());
@@ -83,9 +80,8 @@ public class JOwnerDialog extends JDialogCentered {
 		);
 	}
 
-	public TrackerOwner show() {
-		Set<TrackerOwner> owners = new TreeSet<TrackerOwner>(Settings.get().getTrackerData().keySet());
-		jOwners.setModel(new DefaultComboBoxModel(owners.toArray()));
+	public String show(Object[] owners) {
+		jOwners.setModel(new DefaultComboBoxModel(owners));
 		owner = null;
 		setVisible(true);
 		return owner;
@@ -106,7 +102,7 @@ public class JOwnerDialog extends JDialogCentered {
 
 	@Override
 	protected void save() {
-		owner = (TrackerOwner) jOwners.getSelectedItem();
+		owner = (String) jOwners.getSelectedItem();
 		setVisible(false);
 	}
 
