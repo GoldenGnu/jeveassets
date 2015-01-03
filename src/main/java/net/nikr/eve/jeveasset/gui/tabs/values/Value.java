@@ -22,6 +22,7 @@
 package net.nikr.eve.jeveasset.gui.tabs.values;
 
 import java.util.Date;
+import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.tabs.assets.MyAsset;
 import net.nikr.eve.jeveasset.i18n.TabsValues;
 
@@ -29,6 +30,7 @@ import net.nikr.eve.jeveasset.i18n.TabsValues;
 public class Value implements Comparable<Value> {
 	private final String name;
 	private final Date date;
+	private final String compare;
 	private double assets = 0;
 	private double sellOrders = 0;
 	private double escrows = 0;
@@ -42,12 +44,13 @@ public class Value implements Comparable<Value> {
 	private MyAsset bestModule = null;
 
 	public Value(Date date) {
-		this(date.toString(), date);
+		this("", date);
 	}
 
 	public Value(String name, Date date) {
 		this.name = name;
 		this.date = date;
+		this.compare = name + Formater.simpleDate(date);
 	}
 
 	public void addAssets(double assets) {
@@ -260,8 +263,8 @@ public class Value implements Comparable<Value> {
 
 	@Override
 	public int hashCode() {
-		int hash = 5;
-		hash = 97 * hash + (this.name != null ? this.name.hashCode() : 0);
+		int hash = 7;
+		hash = 79 * hash + (this.compare != null ? this.compare.hashCode() : 0);
 		return hash;
 	}
 
@@ -274,7 +277,7 @@ public class Value implements Comparable<Value> {
 			return false;
 		}
 		final Value other = (Value) obj;
-		if ((this.name == null) ? (other.name != null) : !this.name.equals(other.name)) {
+		if ((this.compare == null) ? (other.compare != null) : !this.compare.equals(other.compare)) {
 			return false;
 		}
 		return true;
