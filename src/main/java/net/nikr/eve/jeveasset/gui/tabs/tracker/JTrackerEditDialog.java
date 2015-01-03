@@ -57,6 +57,7 @@ public class JTrackerEditDialog extends JDialogCentered {
 	private final JTextField jEscrows;
 	private final JTextField jEscrowsToCover;
 	private final JTextField jManufacturing;
+	private final JTextField jContractCollateral;
 	private final JButton jOK;
 
 	//Data
@@ -104,6 +105,11 @@ public class JTrackerEditDialog extends JDialogCentered {
 		jManufacturing.setHorizontalAlignment(JTextField.RIGHT);
 		jManufacturing.addFocusListener(listener);
 
+		JLabel jContractCollateralLabel = new JLabel(TabsTracker.get().contractCollateral());
+		jContractCollateral = new JTextField();
+		jContractCollateral.setHorizontalAlignment(JTextField.RIGHT);
+		jContractCollateral.addFocusListener(listener);
+
 		jOK = new JButton(TabsTracker.get().ok());
 		jOK.setActionCommand(TrackerEditAction.OK.name());
 		jOK.addActionListener(listener);
@@ -123,6 +129,7 @@ public class JTrackerEditDialog extends JDialogCentered {
 						.addComponent(jEscrowsLabel)
 						.addComponent(jEscrowsToCoverLabel)
 						.addComponent(jManufacturingLabel)
+						.addComponent(jContractCollateralLabel)
 					)
 					.addGroup(layout.createParallelGroup()
 						.addComponent(jDate, 100, 100, 100)
@@ -132,6 +139,7 @@ public class JTrackerEditDialog extends JDialogCentered {
 						.addComponent(jEscrows, 100, 100, 100)
 						.addComponent(jEscrowsToCover, 100, 100, 100)
 						.addComponent(jManufacturing, 100, 100, 100)
+						.addComponent(jContractCollateral, 100, 100, 100)
 					)
 				)
 				.addGroup(layout.createSequentialGroup()
@@ -171,6 +179,10 @@ public class JTrackerEditDialog extends JDialogCentered {
 					.addComponent(jManufacturing, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				)
 				.addGroup(layout.createParallelGroup()
+					.addComponent(jContractCollateralLabel, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					.addComponent(jContractCollateral, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+				)
+				.addGroup(layout.createParallelGroup()
 					.addComponent(jOK, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 					.addComponent(jCancel, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				)
@@ -186,6 +198,7 @@ public class JTrackerEditDialog extends JDialogCentered {
 		jEscrows.setText(format(value.getEscrows()));
 		jEscrowsToCover.setText(format(value.getEscrowsToCover()));
 		jManufacturing.setText(format(value.getManufacturing()));
+		jContractCollateral.setText(format(value.getContractCollateral()));
 		jDate.setText(format(value.getDate()));
 		setVisible(true);
 		return update;
@@ -228,6 +241,7 @@ public class JTrackerEditDialog extends JDialogCentered {
 			double escrows = parse(jEscrows.getText());
 			double escrowsToCover = parse(jEscrowsToCover.getText());
 			double manufacturing = parse(jManufacturing.getText());
+			double contractCollateral = parse(jContractCollateral.getText());
 			Settings.lock();
 			value.setBalance(walletBalanc);
 			value.setAssets(assets);
@@ -235,6 +249,7 @@ public class JTrackerEditDialog extends JDialogCentered {
 			value.setEscrows(escrows);
 			value.setEscrowsToCover(escrowsToCover);
 			value.setManufacturing(manufacturing);
+			value.setContractCollateral(contractCollateral);
 			Settings.unlock();
 			program.saveSettings("Save Tracker Data (Edit)");
 			update = true;

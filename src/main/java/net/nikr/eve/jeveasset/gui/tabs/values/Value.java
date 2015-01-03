@@ -22,7 +22,6 @@
 package net.nikr.eve.jeveasset.gui.tabs.values;
 
 import java.util.Date;
-import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.tabs.assets.MyAsset;
 import net.nikr.eve.jeveasset.i18n.TabsValues;
 
@@ -36,13 +35,14 @@ public class Value implements Comparable<Value> {
 	private double escrowsToCover = 0;
 	private double balance = 0;
 	private double manufacturing;
+	private double contractCollateral;
 	private MyAsset bestAsset = null;
 	private MyAsset bestShip = null;
 	private MyAsset bestShipFitted = null;
 	private MyAsset bestModule = null;
 
 	public Value(Date date) {
-		this("", date);
+		this(date.toString(), date);
 	}
 
 	public Value(String name, Date date) {
@@ -82,6 +82,10 @@ public class Value implements Comparable<Value> {
 		this.manufacturing = this.manufacturing + manufacturing;
 	}
 
+	public void addContractCollateral(double contractCollateral) {
+		this.contractCollateral = this.contractCollateral + contractCollateral;
+	}
+
 	public Date getDate() {
 		return date;
 	}
@@ -114,6 +118,10 @@ public class Value implements Comparable<Value> {
 		return manufacturing;
 	}
 
+	public double getContractCollateral() {
+		return contractCollateral;
+	}
+
 	public String getBestAssetName() {
 		return getName(bestAsset);
 	}
@@ -131,11 +139,11 @@ public class Value implements Comparable<Value> {
 	}
 
 	public double getBestAssetValue() {
-		return getValue(bestAsset);
+		return getDynamicPrice(bestAsset);
 	}
 
 	public double getBestShipValue() {
-		return getValue(bestShip);
+		return getDynamicPrice(bestShip);
 	}
 
 	public double getBestShipFittedValue() {
@@ -147,7 +155,7 @@ public class Value implements Comparable<Value> {
 	}
 
 	public double getBestModuleValue() {
-		return getValue(bestModule);
+		return getDynamicPrice(bestModule);
 	}
 
 	private String getName(MyAsset asset) {
@@ -157,9 +165,9 @@ public class Value implements Comparable<Value> {
 			return TabsValues.get().none();
 		}
 	}
-	private double getValue(MyAsset asset) {
+	private double getDynamicPrice(MyAsset asset) {
 		if (asset != null) {
-			return asset.getValue();
+			return asset.getDynamicPrice();
 		} else {
 			return 0;
 		}
@@ -170,7 +178,7 @@ public class Value implements Comparable<Value> {
 	}
 
 	public double getTotal() {
-		return getAssets() + getBalance() + getEscrows() + getSellOrders() + getManufacturing();
+		return getAssets() + getBalance() + getEscrows() + getSellOrders() + getManufacturing() + getContractCollateral();
 	}
 
 	public void setAssets(double assets) {
@@ -195,6 +203,10 @@ public class Value implements Comparable<Value> {
 
 	public void setManufacturing(double manufacturing) {
 		this.manufacturing = manufacturing;
+	}
+
+	public void setContractCollateral(double contractCollateral) {
+		this.contractCollateral = contractCollateral;
 	}
 
 	private void setBestAsset(MyAsset bestAsset) {

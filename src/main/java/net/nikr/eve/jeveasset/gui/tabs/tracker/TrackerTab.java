@@ -126,6 +126,7 @@ public class TrackerTab extends JMainTab {
 	private final JCheckBox jEscrows;
 	private final JCheckBox jEscrowsToCover;
 	private final JCheckBox jManufacturing;
+	private final JCheckBox jContractCollateral;
 	private final JPopupMenu jPopupMenu;
 	private final JMenuItem jIskValue;
 	private final JMenuItem jDateValue;
@@ -144,6 +145,7 @@ public class TrackerTab extends JMainTab {
 	TimePeriodValues escrows;
 	TimePeriodValues escrowsToCover;
 	TimePeriodValues manufacturing;
+	TimePeriodValues contractCollateral;
 
 	public TrackerTab(Program program) {
 		super(program, TabsTracker.get().title(), Images.TOOL_TRACKER.getIcon(), true);
@@ -243,6 +245,11 @@ public class TrackerTab extends JMainTab {
 		jManufacturing.setActionCommand(TrackerAction.UPDATE_SHOWN.name());
 		jManufacturing.addActionListener(listener);
 
+		jContractCollateral = new JCheckBox(TabsTracker.get().contractCollateral());
+		jContractCollateral.setSelected(true);
+		jContractCollateral.setActionCommand(TrackerAction.UPDATE_SHOWN.name());
+		jContractCollateral.addActionListener(listener);
+
 		jHelp = new JTextArea();
 		jHelp.setEditable(false);
 		jHelp.setFocusable(false);
@@ -317,6 +324,7 @@ public class TrackerTab extends JMainTab {
 					.addComponent(jEscrows, PANEL_WIDTH, PANEL_WIDTH, PANEL_WIDTH)
 					.addComponent(jEscrowsToCover, PANEL_WIDTH, PANEL_WIDTH, PANEL_WIDTH)
 					.addComponent(jManufacturing, PANEL_WIDTH, PANEL_WIDTH, PANEL_WIDTH)
+					.addComponent(jContractCollateral, PANEL_WIDTH, PANEL_WIDTH, PANEL_WIDTH)
 					.addComponent(jDataSeparator, PANEL_WIDTH, PANEL_WIDTH, PANEL_WIDTH)
 					.addComponent(jHelp, PANEL_WIDTH, PANEL_WIDTH, PANEL_WIDTH)
 					.addComponent(jDataSeparator, PANEL_WIDTH, PANEL_WIDTH, PANEL_WIDTH)
@@ -351,6 +359,7 @@ public class TrackerTab extends JMainTab {
 					.addComponent(jEscrows, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 					.addComponent(jEscrowsToCover, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 					.addComponent(jManufacturing, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					.addComponent(jContractCollateral, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 					.addGap(10)
 					.addComponent(jDataSeparator, 3, 3, 3)
 					.addGap(0)
@@ -448,6 +457,7 @@ public class TrackerTab extends JMainTab {
 		escrows = new TimePeriodValues(TabsTracker.get().escrows());
 		escrowsToCover = new TimePeriodValues(TabsTracker.get().escrowsToCover());
 		manufacturing = new TimePeriodValues(TabsTracker.get().manufacturing());
+		contractCollateral = new TimePeriodValues(TabsTracker.get().contractCollateral());
 		Date from = jFrom.getDate();
 		if (from != null) { //Start of day
 			Calendar calendar = Calendar.getInstance();
@@ -480,6 +490,7 @@ public class TrackerTab extends JMainTab {
 						value.addEscrows(data.getEscrows());
 						value.addEscrowsToCover(data.getEscrowsToCover());
 						value.addManufacturing(data.getManufacturing());
+						value.addContractCollateral(data.getContractCollateral());
 						value.addSellOrders(data.getSellOrders());
 						value.addBalance(data.getBalance());
 					}
@@ -493,6 +504,7 @@ public class TrackerTab extends JMainTab {
 				escrows.add(entry.getKey(), entry.getValue().getEscrows());
 				escrowsToCover.add(entry.getKey(), entry.getValue().getEscrowsToCover());
 				manufacturing.add(entry.getKey(), entry.getValue().getManufacturing());
+				contractCollateral.add(entry.getKey(), entry.getValue().getContractCollateral());
 			}
 		}
 		updateShown();
@@ -532,6 +544,10 @@ public class TrackerTab extends JMainTab {
 		if (jManufacturing.isSelected() && manufacturing != null) {
 			dataset.addSeries(manufacturing);
 			updateRender(dataset.getSeriesCount() - 1, Color.MAGENTA);
+		}
+		if (jContractCollateral.isSelected() && contractCollateral != null) {
+			dataset.addSeries(contractCollateral);
+			updateRender(dataset.getSeriesCount() - 1, Color.PINK);
 		}
 		//Add empty dataset
 		if (dataset.getSeriesCount() == 0) {
@@ -633,7 +649,8 @@ public class TrackerTab extends JMainTab {
 						&& jSellOrders.isSelected()
 						&& jEscrows.isSelected()
 						&& jEscrowsToCover.isSelected()
-						&& jManufacturing.isSelected());
+						&& jManufacturing.isSelected()
+						&& jContractCollateral.isSelected());
 			} else if (TrackerAction.ALL.name().equals(e.getActionCommand())) {
 				jTotal.setSelected(jAll.isSelected());
 				jWalletBalance.setSelected(jAll.isSelected());
@@ -642,6 +659,7 @@ public class TrackerTab extends JMainTab {
 				jEscrows.setSelected(jAll.isSelected());
 				jEscrowsToCover.setSelected(jAll.isSelected());
 				jManufacturing.setSelected(jAll.isSelected());
+				jContractCollateral.setSelected(jAll.isSelected());
 				updateShown();
 			} else if (TrackerAction.EDIT.name().equals(e.getActionCommand())) {
 				jNextChart.getXYPlot().setDomainCrosshairVisible(true);

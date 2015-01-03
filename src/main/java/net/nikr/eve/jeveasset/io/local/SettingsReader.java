@@ -371,6 +371,10 @@ public final class SettingsReader extends AbstractXmlReader {
 				if (AttributeGetters.haveAttribute(dataNode, "manufacturing")){
 					manufacturing = AttributeGetters.getDouble(dataNode, "manufacturing");
 				}
+				double contractCollateral = 0.0;
+				if (AttributeGetters.haveAttribute(dataNode, "contractcollateral")){
+					contractCollateral = AttributeGetters.getDouble(dataNode, "contractcollateral");
+				}
 				//Add data
 				Value value = new Value(date);
 				value.setAssets(assets);
@@ -379,6 +383,7 @@ public final class SettingsReader extends AbstractXmlReader {
 				value.setSellOrders(sellorders);
 				value.setBalance(walletbalance);
 				value.setManufacturing(manufacturing);
+				value.setContractCollateral(contractCollateral);
 				settings.getTrackerData().get(owner).add(value);
 			}
 		}

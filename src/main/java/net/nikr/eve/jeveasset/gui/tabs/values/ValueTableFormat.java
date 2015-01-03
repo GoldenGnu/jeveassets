@@ -108,6 +108,16 @@ public enum ValueTableFormat implements EnumTableColumn<Value> {
 			return from.getManufacturing();
 		}
 	},
+	CONTRACT_COLLATERAL(Double.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsValues.get().columnContractCollateral();
+		}
+		@Override
+		public Object getColumnValue(final Value from) {
+			return from.getContractCollateral();
+		}
+	},
 	BEST_ASSET_NAME(String.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
@@ -189,8 +199,8 @@ public enum ValueTableFormat implements EnumTableColumn<Value> {
 		}
 	};
 
-	private Class<?> type;
-	private Comparator<?> comparator;
+	private final Class<?> type;
+	private final Comparator<?> comparator;
 
 	private ValueTableFormat(final Class<?> type, final Comparator<?> comparator) {
 		this.type = type;

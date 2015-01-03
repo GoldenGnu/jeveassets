@@ -29,6 +29,7 @@ import ca.odell.glazedlists.SortedList;
 import ca.odell.glazedlists.swing.DefaultEventSelectionModel;
 import ca.odell.glazedlists.swing.DefaultEventTableModel;
 import ca.odell.glazedlists.swing.TableComparatorChooser;
+import com.beimin.eveapi.model.shared.ContractStatus;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
@@ -40,7 +41,9 @@ import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JScrollPane;
 import net.nikr.eve.jeveasset.Program;
+import net.nikr.eve.jeveasset.data.MyAccount;
 import net.nikr.eve.jeveasset.data.MyAccountBalance;
+import net.nikr.eve.jeveasset.data.Owner;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
@@ -54,6 +57,7 @@ import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
 import net.nikr.eve.jeveasset.gui.shared.table.JAutoColumnTable;
 import net.nikr.eve.jeveasset.gui.shared.table.PaddingTableCellRenderer;
 import net.nikr.eve.jeveasset.gui.tabs.assets.MyAsset;
+import net.nikr.eve.jeveasset.gui.tabs.contracts.MyContract;
 import net.nikr.eve.jeveasset.gui.tabs.jobs.MyIndustryJob;
 import net.nikr.eve.jeveasset.gui.tabs.orders.MyMarketOrder;
 import net.nikr.eve.jeveasset.i18n.General;
@@ -192,6 +196,38 @@ public class ValueTableTab extends JMainTab {
 				double manufacturingTotal = industryJob.getPortion() * industryJob.getRuns() * ApiIdConverter.getPrice(industryJob.getProductTypeID(), false);
 				value.addManufacturing(manufacturingTotal);
 				total.addManufacturing(manufacturingTotal);
+			}
+		}
+		//Contract Collateral
+		for (MyAccount account : program.getAccounts()) {
+			for (Owner owner : account.getOwners()) {
+				for (MyContract contract : owner.getContracts().keySet()) {
+					if (contract.isCourier()) {
+						boolean add = false;
+						//Transporting cargo (will get collateral back)
+						if (contract.getAcceptor().equals(owner.getName())
+							&& contract.getStatus() == ContractStatus.INPROGRESS) {
+							add = true;
+						}
+						//Shipping cargo (will get collateral or cargo back)
+						if (contract.getIssuer().equals(owner.getName()) 
+								&& 
+								(
+								contract.getStatus() == ContractStatus.INPROGRESS
+								|| contract.getStatus() == ContractStatus.OUTSTANDING
+								)
+								) {
+							add = true;
+						}
+						if (add) {
+							double contractCollateral = contract.getCollateral();
+							Value value = getValue(values, owner.getName(), date);
+							value.addContractCollateral(contractCollateral);
+							total.addContractCollateral(contractCollateral);
+						}
+					}
+					
+				}
 			}
 		}
 		return values;
