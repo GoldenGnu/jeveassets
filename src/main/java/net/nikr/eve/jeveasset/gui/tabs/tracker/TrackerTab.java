@@ -44,6 +44,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -104,7 +105,8 @@ public class TrackerTab extends JMainTab {
 		UPDATE_SHOWN,
 		ALL,
 		EDIT,
-		DELETE
+		DELETE,
+		PROFILE
 	}
 
 	private final int PANEL_WIDTH = 140;
@@ -127,6 +129,7 @@ public class TrackerTab extends JMainTab {
 	private final JCheckBox jEscrowsToCover;
 	private final JCheckBox jManufacturing;
 	private final JCheckBox jContractCollateral;
+	private final JCheckBox jAllProfiles;
 	private final JPopupMenu jPopupMenu;
 	private final JMenuItem jIskValue;
 	private final JMenuItem jDateValue;
@@ -204,6 +207,10 @@ public class TrackerTab extends JMainTab {
 
 		JSeparator jDataSeparator = new JSeparator();
 
+		jAllProfiles = new JCheckBox(TabsTracker.get().allProfiles());
+		jAllProfiles.setActionCommand(TrackerAction.PROFILE.name());
+		jAllProfiles.addActionListener(listener);
+		
 		jAll = new JCheckBox(General.get().all());
 		jAll.setSelected(true);
 		jAll.setActionCommand(TrackerAction.ALL.name());
@@ -260,15 +267,17 @@ public class TrackerTab extends JMainTab {
 		jHelp.setFont(jPanel.getFont());
 		jHelp.setText(TabsTracker.get().help());
 
-		DateAxis domainAxis = new DateAxis(TabsTracker.get().date());
-		domainAxis.setDateFormatOverride(new SimpleDateFormat("dd-MM-yyyy"));
+		DateAxis domainAxis = new DateAxis();
+		domainAxis.setDateFormatOverride(dateFormat);
 		domainAxis.setVerticalTickLabels(true);
 		domainAxis.setAutoTickUnitSelection(true);
 		domainAxis.setAutoRange(true);
+		domainAxis.setTickLabelFont(jFromLabel.getFont());
 
-		NumberAxis rangeAxis = new NumberAxis(TabsTracker.get().isk());
+		NumberAxis rangeAxis = new NumberAxis();
 		rangeAxis.setAutoRange(true);
 		rangeAxis.setStandardTickUnits(NumberAxis.createStandardTickUnits());
+		rangeAxis.setTickLabelFont(jFromLabel.getFont());
 
 		XYPlot plot = new XYPlot(dataset, domainAxis, rangeAxis, new XYLineAndShapeRenderer(true, true));
 		plot.setBackgroundPaint(Color.WHITE);
@@ -289,6 +298,7 @@ public class TrackerTab extends JMainTab {
 		jNextChart.setAntiAlias(true);
 		jNextChart.setBackgroundPaint(jPanel.getBackground());
 		jNextChart.addProgressListener(null);
+		jNextChart.getLegend().setItemFont(jFrom.getFont());
 
 		jChartPanel = new ChartPanel(jNextChart);
 		jChartPanel.addMouseListener(listener);
@@ -296,11 +306,16 @@ public class TrackerTab extends JMainTab {
 		jChartPanel.setRangeZoomable(false);
 		jChartPanel.setPopupMenu(null);
 		jChartPanel.addChartMouseListener(listener);
+		jChartPanel.setMaximumDrawHeight(Integer.MAX_VALUE);
+		jChartPanel.setMaximumDrawWidth(Integer.MAX_VALUE);
+		jChartPanel.setMinimumDrawWidth(10);
+		jChartPanel.setMinimumDrawHeight(10);
 
 		layout.setHorizontalGroup(
 			layout.createSequentialGroup()
 				.addComponent(jChartPanel)
 				.addGroup(layout.createParallelGroup()
+					.addComponent(jAllProfiles, PANEL_WIDTH, PANEL_WIDTH, PANEL_WIDTH)
 					.addComponent(jOwnersScroll, PANEL_WIDTH, PANEL_WIDTH, PANEL_WIDTH)
 					.addComponent(jOwnersSeparator, PANEL_WIDTH, PANEL_WIDTH, PANEL_WIDTH)
 					.addComponent(jQuickDate, PANEL_WIDTH, PANEL_WIDTH, PANEL_WIDTH)
@@ -334,6 +349,8 @@ public class TrackerTab extends JMainTab {
 			layout.createParallelGroup()
 				.addComponent(jChartPanel)
 				.addGroup(layout.createSequentialGroup()
+					.addGap(5)
+					.addComponent(jAllProfiles, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 					.addGap(5)
 					.addComponent(jOwnersScroll, 70, GroupLayout.PREFERRED_SIZE, Integer.MAX_VALUE)
 					.addGap(10)
@@ -417,7 +434,17 @@ public class TrackerTab extends JMainTab {
 
 	private void updateOwners() {
 		Set<String> owners = new TreeSet<String>(Settings.get().getTrackerData().keySet());
-		final List<String> ownersList = new ArrayList<String>(owners);
+		final List<String> ownersList;
+		if (jAllProfiles.isSelected()) {
+			ownersList = new ArrayList<String>(owners);
+		} else {
+			ownersList = new ArrayList<String>();
+			for (String s : owners) {
+				if (program.getOwners(false).contains(s)) {
+					ownersList.add(s);
+				}
+			}
+		}
 		if (owners.isEmpty()) {
 			jOwners.setEnabled(false);
 			jOwners.setModel(new AbstractListModel() {
@@ -579,12 +606,15 @@ public class TrackerTab extends JMainTab {
 		renderer.setSeriesShape(index, new Ellipse2D.Float(-3.0f, -3.0f, 6.0f, 6.0f));
 	}
 
-	private String getSelectedOwner() {
+	private String getSelectedOwner(boolean all) {
 		if (jOwners.getSelectedIndices().length == 1) {
 			return (String) jOwners.getSelectedValue();
 		} else {
 			Object[] owners = jOwners.getSelectedValues();
 			List<Object> list = new ArrayList<Object>();
+			if (all) {
+				list.add(General.get().all());
+			}
 			for (Object owner : owners) {
 				Value value = getSelectedValue((String)owner);
 				if (value != null) {
@@ -663,7 +693,7 @@ public class TrackerTab extends JMainTab {
 				updateShown();
 			} else if (TrackerAction.EDIT.name().equals(e.getActionCommand())) {
 				jNextChart.getXYPlot().setDomainCrosshairVisible(true);
-				String owner = getSelectedOwner();
+				String owner = getSelectedOwner(false);
 				if (owner == null) {
 					return;
 				}
@@ -678,27 +708,49 @@ public class TrackerTab extends JMainTab {
 				jNextChart.getXYPlot().setDomainCrosshairVisible(false);
 			} else if (TrackerAction.DELETE.name().equals(e.getActionCommand())) {
 				jNextChart.getXYPlot().setDomainCrosshairVisible(true);
-				String owner = getSelectedOwner();
+				String owner = getSelectedOwner(true);
 				if (owner == null) {
 					return;
 				}
-				Value value = getSelectedValue(owner);
-				if (value == null) {
+				List<String> owners = new ArrayList<String>();
+				if (owner.equals(General.get().all())) {
+					for (Object obj : jOwners.getSelectedValues()) {
+						owners.add((String)obj);
+					}
+				} else {
+					owners.add(owner);
+				}
+				Map<String, Value> values = new HashMap<String, Value>();
+				for (String s : owners) {
+					Value value = getSelectedValue(s);
+					if (value != null) {
+						values.put(s, value);
+					}
+				}
+				if (values.isEmpty()) {
 					return;
 				}
+				
 				int retrunValue = JOptionPane.showConfirmDialog(program.getMainWindow().getFrame(), TabsTracker.get().deleteSelected(), TabsTracker.get().delete(), JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
 				if (retrunValue == JOptionPane.OK_OPTION) {
 					Settings.lock();
-					Settings.get().getTrackerData().get(owner).remove(value);
-					if (Settings.get().getTrackerData().get(owner).isEmpty()) {
-						Settings.get().getTrackerData().remove(owner);
-						updateOwners();
-					} 
+					for (Map.Entry<String, Value> entry : values.entrySet()) {
+						//Remove value
+						Settings.get().getTrackerData().get(entry.getKey()).remove(entry.getValue());
+						//Remove empty owner
+						if (Settings.get().getTrackerData().get(entry.getKey()).isEmpty()) {
+							Settings.get().getTrackerData().remove(entry.getKey());
+							updateOwners();
+						} 
+					}
 					Settings.unlock();
 					program.saveSettings("Save Tracker Data (Delete)");
 					createData();
 				}
 				jNextChart.getXYPlot().setDomainCrosshairVisible(false);
+			} else if (TrackerAction.PROFILE.name().equals(e.getActionCommand())) {
+				updateOwners();
+				updateData();
 			}
 			
 		}

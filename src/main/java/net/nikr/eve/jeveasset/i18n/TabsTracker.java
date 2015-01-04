@@ -35,7 +35,6 @@ public abstract class TabsTracker extends Bundle {
 		super(locale);
 	}
 
-	public abstract String all();
 	public abstract String assets();
 	public abstract String autoZoom();
 	public abstract String cancel();
@@ -54,13 +53,13 @@ public abstract class TabsTracker extends Bundle {
 	public abstract String grandTotal();
 	public abstract String help();
 	public abstract String invalid();
-	public abstract String isk();
 	public abstract String manufacturing();
 	public abstract String month1();
 	public abstract String months3();
 	public abstract String months6();
 	public abstract String noDataFound();
 	public abstract String ok();
+	public abstract String allProfiles();
 	public abstract String quickDate();
 	public abstract String sellOrders();
 	public abstract String title();
