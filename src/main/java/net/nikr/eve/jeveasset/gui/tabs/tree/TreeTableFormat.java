@@ -356,6 +356,26 @@ public enum TreeTableFormat implements EnumTableColumn<TreeAsset> {
 			return false;
 		}
 	},
+	MATERIAL_EFFICIENCY(Integer.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsAssets.get().columnMaterialEfficiency();
+		}
+		@Override
+		public Object getColumnValue(final TreeAsset from) {
+			return from.getMaterialEfficiency();
+		}
+	},
+	TIME_EFFICIENCY(Integer.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsAssets.get().columnTimeEfficiency();
+		}
+		@Override
+		public Object getColumnValue(final TreeAsset from) {
+			return from.getTimeEfficiency();
+		}
+	},
 	ITEM_ID(LongInt.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {

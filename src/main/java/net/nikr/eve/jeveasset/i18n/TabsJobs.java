@@ -36,6 +36,8 @@ public abstract class TabsJobs extends Bundle {
 
 	public abstract String active();
 	public abstract String all();
+	public abstract String bpc();
+	public abstract String bpo();
 	public abstract String completed();
 	public abstract String industry();
 	public abstract String install();
@@ -55,4 +57,7 @@ public abstract class TabsJobs extends Bundle {
 	public abstract String columnRuns();
 	public abstract String columnOutputCount();
 	public abstract String columnOutputValue();
+	public abstract String columnBPO();
+	public abstract String columnMaterialEfficiency();
+	public abstract String columnTimeEfficiency();
 }

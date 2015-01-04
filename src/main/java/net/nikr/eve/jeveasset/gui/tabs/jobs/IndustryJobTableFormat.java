@@ -148,6 +148,40 @@ public enum IndustryJobTableFormat implements EnumTableColumn<MyIndustryJob> {
 		public Object getColumnValue(final MyIndustryJob from) {
 			return from.getOutputValue();
 		}
+	},
+	BPO(String.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsJobs.get().columnBPO();
+		}
+		@Override
+		public Object getColumnValue(final MyIndustryJob from) {
+			if (from.isBPC()) {
+				return TabsJobs.get().bpc();
+			} else {
+				return TabsJobs.get().bpo();
+			}
+		}
+	},
+	MATERIAL_EFFICIENCY(Integer.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsJobs.get().columnMaterialEfficiency();
+		}
+		@Override
+		public Object getColumnValue(final MyIndustryJob from) {
+			return from.getMaterialEfficiency();
+		}
+	},
+	TIME_EFFICIENCY(Integer.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsJobs.get().columnTimeEfficiency();
+		}
+		@Override
+		public Object getColumnValue(final MyIndustryJob from) {
+			return from.getTimeEfficiency();
+		}
 	};
 
 	private final Class<?> type;

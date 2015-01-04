@@ -72,6 +72,8 @@ public abstract class TabsAssets extends Bundle {
 	public abstract String columnVolumeTotal();
 	public abstract String columnSingleton();
 	public abstract String columnAdded();
+	public abstract String columnMaterialEfficiency();
+	public abstract String columnTimeEfficiency();
 	public abstract String columnItemID();
 	public abstract String columnTypeID();
 }

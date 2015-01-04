@@ -20,12 +20,13 @@
  */
 package net.nikr.eve.jeveasset.gui.tabs.assets;
 
+import com.beimin.eveapi.model.shared.Blueprint;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import net.nikr.eve.jeveasset.data.Item;
-import net.nikr.eve.jeveasset.data.MyLocation;
 import net.nikr.eve.jeveasset.data.MarketPriceData;
+import net.nikr.eve.jeveasset.data.MyLocation;
 import net.nikr.eve.jeveasset.data.Owner;
 import net.nikr.eve.jeveasset.data.PriceData;
 import net.nikr.eve.jeveasset.data.UserItem;
@@ -70,6 +71,7 @@ public class MyAsset implements Comparable<MyAsset>, InfoItem, LocationType, Ite
 	private Date added;
 	private double price;
 	private Tags tags;
+	private Blueprint blueprint;
 	//Dynamic values cache
 	private boolean userNameSet = false;
 	private boolean eveNameSet = false;
@@ -103,6 +105,7 @@ public class MyAsset implements Comparable<MyAsset>, InfoItem, LocationType, Ite
 		this.typeCount = asset.typeCount;
 		this.userPrice = asset.userPrice;
 		this.volume = asset.volume;
+		this.blueprint = asset.blueprint;
 		this.userNameSet = asset.userNameSet;
 		this.userPriceSet = asset.userPriceSet;
 		this.eveNameSet = asset.eveNameSet;
@@ -326,6 +329,22 @@ public class MyAsset implements Comparable<MyAsset>, InfoItem, LocationType, Ite
 		return bpc;
 	}
 
+	public int getMaterialEfficiency() {
+		if (blueprint != null) {
+			return blueprint.getMaterialEfficiency();
+		} else {
+			return 0;
+		}
+	}
+
+	public int getTimeEfficiency() {
+		if (blueprint != null) {
+			return blueprint.getTimeEfficiency();
+		} else {
+			return 0;
+		}
+	}
+
 	public boolean isCorporation() {
 		return owner.isCorporation();
 	}
@@ -360,6 +379,10 @@ public class MyAsset implements Comparable<MyAsset>, InfoItem, LocationType, Ite
 
 	public void setAdded(final Date added) {
 		this.added = added;
+	}
+
+	public void setBlueprint(Blueprint blueprint) {
+		this.blueprint = blueprint;
 	}
 
 	public void setContainer(final String container) {

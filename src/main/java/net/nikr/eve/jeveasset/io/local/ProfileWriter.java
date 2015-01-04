@@ -21,6 +21,7 @@
 
 package net.nikr.eve.jeveasset.io.local;
 
+import com.beimin.eveapi.model.shared.Blueprint;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -110,6 +111,7 @@ public final class ProfileWriter extends AbstractXmlWriter {
 			node.setAttributeNS(null, "industryjobsnextupdate", String.valueOf(owner.getIndustryJobsNextUpdate().getTime()));
 			node.setAttributeNS(null, "contractsnextupdate", String.valueOf(owner.getContractsNextUpdate().getTime()));
 			node.setAttributeNS(null, "locationsnextupdate", String.valueOf(owner.getLocationsNextUpdate().getTime()));
+			node.setAttributeNS(null, "blueprintsnextupdate", String.valueOf(owner.getBlueprintsNextUpdate().getTime()));
 			parentNode.appendChild(node);
 			Element childNode = xmldoc.createElementNS(null, "assets");
 			node.appendChild(childNode);
@@ -120,6 +122,7 @@ public final class ProfileWriter extends AbstractXmlWriter {
 			writeJournals(xmldoc, node, new ArrayList<MyJournal>(owner.getJournal().values()), owner.isCorporation());
 			writeTransactions(xmldoc, node, new ArrayList<MyTransaction>(owner.getTransactions().values()), owner.isCorporation());
 			writeIndustryJobs(xmldoc, node, owner.getIndustryJobs(), owner.isCorporation());
+			writeBlueprints(xmldoc, node, owner.getBlueprints(), owner.isCorporation());
 		}
 	}
 
@@ -331,6 +334,27 @@ public final class ProfileWriter extends AbstractXmlWriter {
 			childNode.setAttributeNS(null, "pausedate", String.valueOf(industryJob.getPauseDate().getTime()));
 			childNode.setAttributeNS(null, "completeddate", String.valueOf(industryJob.getCompletedDate().getTime()));
 			childNode.setAttributeNS(null, "completedcharacterid", String.valueOf(industryJob.getCompletedCharacterID()));
+			node.appendChild(childNode);
+		}
+	}
+
+	private void writeBlueprints(final Document xmldoc, final Element parentNode, final Map<Long, Blueprint> blueprints, final boolean bCorp) {
+		Element node = xmldoc.createElementNS(null, "blueprints");
+		if (!blueprints.isEmpty()) {
+			node.setAttributeNS(null, "corp", String.valueOf(bCorp));
+			parentNode.appendChild(node);
+		}
+		for (Blueprint blueprint : blueprints.values()) {
+			Element childNode = xmldoc.createElementNS(null, "blueprint");
+			childNode.setAttributeNS(null, "itemid", String.valueOf(blueprint.getItemID()));
+			childNode.setAttributeNS(null, "locationid", String.valueOf(blueprint.getLocationID()));
+			childNode.setAttributeNS(null, "typeid", String.valueOf(blueprint.getTypeID()));
+			childNode.setAttributeNS(null, "typename", String.valueOf(blueprint.getTypeName()));
+			childNode.setAttributeNS(null, "flagid", String.valueOf(blueprint.getFlagID()));
+			childNode.setAttributeNS(null, "quantity", String.valueOf(blueprint.getQuantity()));
+			childNode.setAttributeNS(null, "timeefficiency", String.valueOf(blueprint.getTimeEfficiency()));
+			childNode.setAttributeNS(null, "materialefficiency", String.valueOf(blueprint.getMaterialEfficiency()));
+			childNode.setAttributeNS(null, "runs", String.valueOf(blueprint.getRuns()));
 			node.appendChild(childNode);
 		}
 	}

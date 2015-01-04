@@ -22,6 +22,7 @@ package net.nikr.eve.jeveasset.data;
 
 import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.EventList;
+import com.beimin.eveapi.model.shared.Blueprint;
 import com.beimin.eveapi.model.shared.ContractType;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -37,8 +38,6 @@ import net.nikr.eve.jeveasset.gui.tabs.assets.MyAsset;
 import net.nikr.eve.jeveasset.gui.tabs.contracts.MyContract;
 import net.nikr.eve.jeveasset.gui.tabs.contracts.MyContractItem;
 import net.nikr.eve.jeveasset.gui.tabs.jobs.MyIndustryJob;
-import net.nikr.eve.jeveasset.gui.tabs.jobs.MyIndustryJob.IndustryActivity;
-import net.nikr.eve.jeveasset.gui.tabs.jobs.MyIndustryJob.IndustryJobState;
 import net.nikr.eve.jeveasset.gui.tabs.journal.MyJournal;
 import net.nikr.eve.jeveasset.gui.tabs.orders.MyMarketOrder;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile;
@@ -220,7 +219,7 @@ public class ProfileData {
 					//Market Orders
 					marketOrders.addAll(owner.getMarketOrders());
 					//Assets
-					addAssets(ApiConverter.assetMarketOrder(owner.getMarketOrders(), owner), assets);
+					addAssets(ApiConverter.assetMarketOrder(owner.getMarketOrders(), owner), assets, owner.getBlueprints());
 					ownersOrders.add(owner.getName());
 				}
 				//Journal
@@ -257,12 +256,15 @@ public class ProfileData {
 				if (!owner.getIndustryJobs().isEmpty() && !ownersJobs.contains(owner.getName())) {
 					//Industry Jobs
 					industryJobs.addAll(owner.getIndustryJobs());
-					//Update Owners
 					for (MyIndustryJob industryJob : owner.getIndustryJobs()) {
+						//Update Owners
 						industryJob.setInstaller(ApiIdConverter.getOwnerName(industryJob.getInstallerID()));
+						//Update BPO/BPC status
+						Blueprint blueprint = owner.getBlueprints().get(industryJob.getBlueprintID());
+						industryJob.setBlueprint(blueprint);
 					}
 					//Assets
-					addAssets(ApiConverter.assetIndustryJob(owner.getIndustryJobs(), owner), assets);
+					addAssets(ApiConverter.assetIndustryJob(owner.getIndustryJobs(), owner), assets, owner.getBlueprints());
 					ownersJobs.add(owner.getName());
 				}
 				//Contracts
@@ -294,11 +296,11 @@ public class ProfileData {
 					}
 					//Assets
 					List<MyAsset> contractAssets = ApiConverter.assetContracts(entry.getValue(), owner);
-					addAssets(contractAssets, assets);
+					addAssets(contractAssets, assets, owner.getBlueprints());
 				}
 				//Assets
 				if (!owner.getAssets().isEmpty() && !ownersAssets.contains(owner.getName())) {
-					addAssets(owner.getAssets(), assets);
+					addAssets(owner.getAssets(), assets, owner.getBlueprints());
 					ownersAssets.add(owner.getName());
 				}
 				//Account Balance
@@ -419,8 +421,11 @@ public class ProfileData {
 		}
 	}
 
-	private void addAssets(final List<MyAsset> assets, List<MyAsset> addTo) {
+	private void addAssets(final List<MyAsset> assets, List<MyAsset> addTo, Map<Long, Blueprint> blueprints) {
 		for (MyAsset asset : assets) {
+			//Blueprint
+			Blueprint blueprint = blueprints.get(asset.getItemID());
+			asset.setBlueprint(blueprint);
 			//Tags
 			Tags tags = Settings.get().getTags(asset.getTagID());
 			asset.setTags(tags);
@@ -503,7 +508,7 @@ public class ProfileData {
 			//Add asset
 			addTo.add(asset);
 			//Add sub-assets
-			addAssets(asset.getAssets(), addTo);
+			addAssets(asset.getAssets(), addTo, blueprints);
 		}
 	}
 }

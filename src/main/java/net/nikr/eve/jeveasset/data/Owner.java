@@ -21,6 +21,7 @@
 
 package net.nikr.eve.jeveasset.data;
 
+import com.beimin.eveapi.model.shared.Blueprint;
 import com.beimin.eveapi.parser.ApiAuthorization;
 import java.util.ArrayList;
 import java.util.Date;
@@ -42,6 +43,7 @@ public class Owner implements Comparable<Owner> {
 	private boolean showOwner;
 	private Date assetLastUpdate;
 	private Date assetNextUpdate;
+	private Date blueprintsNextUpdate;
 	private Date balanceNextUpdate;
 	private Date marketOrdersNextUpdate;
 	private Date journalNextUpdate;
@@ -57,6 +59,7 @@ public class Owner implements Comparable<Owner> {
 	private List<MyIndustryJob> industryJobs;
 	private Map<MyContract, List<MyContractItem>> contracts;
 	private List<MyAsset> assets;
+	private Map<Long, Blueprint> blueprints;
 
 	public Owner(final MyAccount parentAccount, final Owner owner) {
 		this(parentAccount,
@@ -71,7 +74,8 @@ public class Owner implements Comparable<Owner> {
 				owner.getTransactionsNextUpdate(),
 				owner.getIndustryJobsNextUpdate(),
 				owner.getContractsNextUpdate(),
-				owner.getLocationsNextUpdate());
+				owner.getLocationsNextUpdate(),
+				owner.getBlueprintsNextUpdate());
 		accountBalances = owner.getAccountBalances();
 		marketOrders = owner.getMarketOrders();
 		industryJobs = owner.getIndustryJobs();
@@ -79,18 +83,20 @@ public class Owner implements Comparable<Owner> {
 		contracts = owner.getContracts();
 		transactions = owner.getTransactions();
 		journal = owner.getJournal();
+		blueprints = owner.getBlueprints();
 	}
 
 	public Owner(final MyAccount parentAccount, final String name, final long ownerID) {
-		this(parentAccount, name, ownerID, true, null, Settings.getNow(), Settings.getNow(), Settings.getNow(), Settings.getNow(), Settings.getNow(), Settings.getNow(), Settings.getNow(), Settings.getNow());
+		this(parentAccount, name, ownerID, true, null, Settings.getNow(), Settings.getNow(), Settings.getNow(), Settings.getNow(), Settings.getNow(), Settings.getNow(), Settings.getNow(), Settings.getNow(), Settings.getNow());
 	}
 
-	public Owner(final MyAccount parentAccount, final String name, final long ownerID, final boolean showOwner, final Date assetLastUpdate, final Date assetNextUpdate, final Date balanceNextUpdate, final Date marketOrdersNextUpdate, final Date journalNextUpdate, final Date transactionsNextUpdate, final Date industryJobsNextUpdate, final Date contractsNextUpdate, final Date locationsNextUpdate) {
+	public Owner(final MyAccount parentAccount, final String name, final long ownerID, final boolean showOwner, final Date assetLastUpdate, final Date assetNextUpdate, final Date balanceNextUpdate, final Date marketOrdersNextUpdate, final Date journalNextUpdate, final Date transactionsNextUpdate, final Date industryJobsNextUpdate, final Date contractsNextUpdate, final Date locationsNextUpdate, final Date blueprintsNextUpdate) {
 		this.parentAccount = parentAccount;
 		this.name = name;
 		this.ownerID = ownerID;
 		this.showOwner = showOwner;
 		this.assetLastUpdate = assetLastUpdate;
+		this.blueprintsNextUpdate = blueprintsNextUpdate;
 		this.assetNextUpdate = assetNextUpdate;
 		this.balanceNextUpdate = balanceNextUpdate;
 		this.marketOrdersNextUpdate = marketOrdersNextUpdate;
@@ -107,6 +113,7 @@ public class Owner implements Comparable<Owner> {
 		industryJobs = new  ArrayList<MyIndustryJob>();
 		contracts = new HashMap<MyContract, List<MyContractItem>>();
 		journal = new HashMap<Long, MyJournal>();
+		blueprints = new HashMap<Long, Blueprint>();
 	}
 
 	public void setAccountBalances(final List<MyAccountBalance> accountBalances) {
@@ -127,6 +134,14 @@ public class Owner implements Comparable<Owner> {
 
 	public void setBalanceNextUpdate(final Date balanceNextUpdate) {
 		this.balanceNextUpdate = balanceNextUpdate;
+	}
+
+	public void setBlueprints(Map<Long, Blueprint> blueprints) {
+		this.blueprints = blueprints;
+	}
+
+	public void setBlueprintsNextUpdate(Date blueprintsNextUpdate) {
+		this.blueprintsNextUpdate = blueprintsNextUpdate;
 	}
 
 	public void setContracts(final Map<MyContract, List<MyContractItem>> contracts) {
@@ -215,6 +230,14 @@ public class Owner implements Comparable<Owner> {
 
 	public Date getBalanceNextUpdate() {
 		return balanceNextUpdate;
+	}
+
+	public Map<Long, Blueprint> getBlueprints() {
+		return blueprints;
+	}
+
+	public Date getBlueprintsNextUpdate() {
+		return blueprintsNextUpdate;
 	}
 
 	public Map<MyContract, List<MyContractItem>> getContracts() {

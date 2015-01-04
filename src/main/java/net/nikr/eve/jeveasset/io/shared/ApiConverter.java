@@ -84,7 +84,12 @@ public final class ApiConverter {
 		int flagID = 0;
 		String flag = General.get().industryJobFlag();
 		boolean singleton  = true;
-		int rawQuantity = -2;
+		int rawQuantity;
+		if (industryJob.isBPO()) {
+			rawQuantity = -1;
+		} else {
+			rawQuantity = -2;
+		}
 		return createAsset(null, owner, count, flagID, itemID, typeID, locationID, singleton, rawQuantity, flag);
 	}
 

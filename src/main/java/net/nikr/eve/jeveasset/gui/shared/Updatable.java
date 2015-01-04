@@ -65,6 +65,9 @@ public class Updatable {
 					if (isUpdatable(owner.getTransactionsNextUpdate())){
 						return true;
 					}
+					if (isUpdatable(owner.getBlueprintsNextUpdate())){
+						return true;
+					}
 				}
 			}
 		}

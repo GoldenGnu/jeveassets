@@ -20,18 +20,20 @@
  */
 package net.nikr.eve.jeveasset.gui.tabs.jobs;
 
+import com.beimin.eveapi.model.shared.Blueprint;
 import com.beimin.eveapi.model.shared.IndustryJob;
 import net.nikr.eve.jeveasset.data.Item;
 import net.nikr.eve.jeveasset.data.MyLocation;
 import net.nikr.eve.jeveasset.data.Owner;
 import net.nikr.eve.jeveasset.data.Settings;
+import net.nikr.eve.jeveasset.data.types.BlueprintType;
 import net.nikr.eve.jeveasset.data.types.ItemType;
 import net.nikr.eve.jeveasset.data.types.LocationType;
 import net.nikr.eve.jeveasset.data.types.PriceType;
 import net.nikr.eve.jeveasset.i18n.DataModelIndustryJob;
 
 
-public class MyIndustryJob extends IndustryJob implements Comparable<MyIndustryJob>, LocationType, ItemType, PriceType {
+public class MyIndustryJob extends IndustryJob implements Comparable<MyIndustryJob>, LocationType, ItemType, PriceType, BlueprintType {
 
 	public enum IndustryJobState {
 		STATE_ALL() {
@@ -180,6 +182,7 @@ public class MyIndustryJob extends IndustryJob implements Comparable<MyIndustryJ
 	private double outputValue;
 	private int outputCount;
 	private String installer;
+	private Blueprint blueprint;
 
 	public MyIndustryJob(final IndustryJob apiIndustryJob, final Item item, final MyLocation location, final Owner owner, final int portion, final int productTypeID) {
 		setJobID(apiIndustryJob.getJobID());
@@ -281,6 +284,41 @@ public class MyIndustryJob extends IndustryJob implements Comparable<MyIndustryJ
 	@Override
 	public int compareTo(final MyIndustryJob o) {
 		return 0;
+	}
+
+	public void setBlueprint(Blueprint blueprint) {
+		this.blueprint = blueprint;
+	}
+
+
+	@Override
+	public boolean isBPO() {
+		if (blueprint != null) {
+			return blueprint.getQuantity() > -2;
+		} else {
+			return false;
+		}
+	}
+
+	@Override
+	public boolean isBPC() {
+		return !isBPO();
+	}
+
+	public int getMaterialEfficiency() {
+		if (blueprint != null) {
+			return blueprint.getMaterialEfficiency();
+		} else {
+			return 0;
+		}
+	}
+
+	public int getTimeEfficiency() {
+		if (blueprint != null) {
+			return blueprint.getTimeEfficiency();
+		} else {
+			return 0;
+		}
 	}
 
 	public final boolean isCompleted() {
