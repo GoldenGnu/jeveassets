@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2014 Contributors (see credits.txt)
+ * Copyright 2009-2015 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -82,9 +82,14 @@ public final class ApiConverter {
 		long count = 1;
 		long itemID = industryJob.getBlueprintID();
 		int flagID = 0;
-		String flag = "Industry Job";
+		String flag = General.get().industryJobFlag();
 		boolean singleton  = true;
-		int rawQuantity = -2;
+		int rawQuantity;
+		if (industryJob.isBPO()) {
+			rawQuantity = -1;
+		} else {
+			rawQuantity = -2;
+		}
 		return createAsset(null, owner, count, flagID, itemID, typeID, locationID, singleton, rawQuantity, flag);
 	}
 

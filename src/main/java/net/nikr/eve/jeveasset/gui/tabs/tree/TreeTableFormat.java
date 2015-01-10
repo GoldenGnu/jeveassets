@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2014 Contributors (see credits.txt)
+ * Copyright 2009-2015 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -354,6 +354,26 @@ public enum TreeTableFormat implements EnumTableColumn<TreeAsset> {
 		@Override
 		public boolean isShowDefault() {
 			return false;
+		}
+	},
+	MATERIAL_EFFICIENCY(Integer.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsAssets.get().columnMaterialEfficiency();
+		}
+		@Override
+		public Object getColumnValue(final TreeAsset from) {
+			return from.getMaterialEfficiency();
+		}
+	},
+	TIME_EFFICIENCY(Integer.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsAssets.get().columnTimeEfficiency();
+		}
+		@Override
+		public Object getColumnValue(final TreeAsset from) {
+			return from.getTimeEfficiency();
 		}
 	},
 	ITEM_ID(LongInt.class, GlazedLists.comparableComparator()) {

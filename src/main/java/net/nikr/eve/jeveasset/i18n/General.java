@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2014 Contributors (see credits.txt)
+ * Copyright 2009-2015 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -44,6 +44,7 @@ public abstract class General extends Bundle {
 	public abstract String error();
 	public abstract String contractIncluded();
 	public abstract String contractExcluded();
+	public abstract String industryJobFlag();
 	public abstract String marketOrderSellFlag();
 	public abstract String marketOrderBuyFlag();
 	public abstract String none();

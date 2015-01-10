@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2014 Contributors (see credits.txt)
+ * Copyright 2009-2015 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -22,6 +22,7 @@
 package net.nikr.eve.jeveasset.io.local;
 
 import com.beimin.eveapi.model.shared.AccountBalance;
+import com.beimin.eveapi.model.shared.Blueprint;
 import com.beimin.eveapi.model.shared.Contract;
 import com.beimin.eveapi.model.shared.ContractAvailability;
 import com.beimin.eveapi.model.shared.ContractItem;
@@ -167,6 +168,7 @@ public final class ProfileReader extends AbstractXmlReader {
 			parseJournals(currentNode, owner);
 			parseTransactions(currentNode, owner);
 			parseIndustryJobs(currentNode, owner);
+			parseBlueprints(currentNode, owner);
 		}
 	}
 
@@ -207,8 +209,12 @@ public final class ProfileReader extends AbstractXmlReader {
 		if (AttributeGetters.haveAttribute(node, "locationsnextupdate")) {
 			locationsNextUpdate = new Date(AttributeGetters.getLong(node, "locationsnextupdate"));
 		}
+		Date blueprintsnextupdate = Settings.getNow();
+		if (AttributeGetters.haveAttribute(node, "blueprintsnextupdate")) {
+			blueprintsnextupdate = new Date(AttributeGetters.getLong(node, "blueprintsnextupdate"));
+		}
 
-		return new Owner(account, name, ownerID, showAssets, assetsLastUpdate, assetsNextUpdate, balanceNextUpdate, marketOrdersNextUpdate, journalNextUpdate, transactionsNextUpdate, industryJobsNextUpdate, contractsNextUpdate, locationsNextUpdate);
+		return new Owner(account, name, ownerID, showAssets, assetsLastUpdate, assetsNextUpdate, balanceNextUpdate, marketOrdersNextUpdate, journalNextUpdate, transactionsNextUpdate, industryJobsNextUpdate, contractsNextUpdate, locationsNextUpdate, blueprintsnextupdate);
 	}
 
 	private void parseContracts(final Element element, final Owner owner) {
@@ -650,5 +656,45 @@ public final class ProfileReader extends AbstractXmlReader {
 			}
 		}
 		return ApiConverter.createAsset(parentAsset, owner, count, flagID, itemId, typeID, locationID, singleton, rawQuantity, null);
+	}
+
+	private void parseBlueprints(final Element element, final Owner owners) {
+		Map<Long, Blueprint> blueprints = new HashMap<Long, Blueprint>();
+		NodeList blueprintsNodes = element.getElementsByTagName("blueprints");
+		for (int a = 0; a < blueprintsNodes.getLength(); a++) {
+			Element currentBlueprintsNode = (Element) blueprintsNodes.item(a);
+			NodeList blueprintNodes = currentBlueprintsNode.getElementsByTagName("blueprint");
+			for (int b = 0; b < blueprintNodes.getLength(); b++) {
+				Element currentNode = (Element) blueprintNodes.item(b);
+				Blueprint blueprint = parseBlueprint(currentNode);
+				blueprints.put(blueprint.getItemID(), blueprint);
+			}
+		}
+		owners.setBlueprints(blueprints);
+	}
+
+	private Blueprint parseBlueprint(final Node node) {
+		Blueprint blueprint = new Blueprint();
+		long itemID = AttributeGetters.getLong(node, "itemid");
+		long locationID = AttributeGetters.getLong(node, "locationid");
+		int typeID = AttributeGetters.getInt(node, "typeid");
+		String typeName = AttributeGetters.getString(node, "typename");
+		int flagID = AttributeGetters.getInt(node, "flagid");
+		int quantity = AttributeGetters.getInt(node, "quantity");
+		int timeEfficiency = AttributeGetters.getInt(node, "timeefficiency");
+		int materialEfficiency = AttributeGetters.getInt(node, "materialefficiency");
+		int runs = AttributeGetters.getInt(node, "runs");
+
+		blueprint.setItemID(itemID);
+		blueprint.setLocationID(locationID);
+		blueprint.setTypeID(typeID);
+		blueprint.setTypeName(typeName);
+		blueprint.setFlagID(flagID);
+		blueprint.setQuantity(quantity);
+		blueprint.setTimeEfficiency(timeEfficiency);
+		blueprint.setMaterialEfficiency(materialEfficiency);
+		blueprint.setRuns(runs);
+
+		return blueprint;
 	}
 }

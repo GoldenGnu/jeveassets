@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2014 Contributors (see credits.txt)
+ * Copyright 2009-2015 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -35,11 +35,11 @@ public abstract class TabsTracker extends Bundle {
 		super(locale);
 	}
 
-	public abstract String all();
 	public abstract String assets();
 	public abstract String autoZoom();
 	public abstract String cancel();
 	public abstract String clear();
+	public abstract String contractCollateral();
 	public abstract String date();
 	public abstract String day1();
 	public abstract String delete();
@@ -53,13 +53,13 @@ public abstract class TabsTracker extends Bundle {
 	public abstract String grandTotal();
 	public abstract String help();
 	public abstract String invalid();
-	public abstract String isk();
 	public abstract String manufacturing();
 	public abstract String month1();
 	public abstract String months3();
 	public abstract String months6();
 	public abstract String noDataFound();
 	public abstract String ok();
+	public abstract String allProfiles();
 	public abstract String quickDate();
 	public abstract String sellOrders();
 	public abstract String title();

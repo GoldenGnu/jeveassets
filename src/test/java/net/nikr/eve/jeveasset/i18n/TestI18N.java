@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2014 Contributors (see credits.txt)
+ * Copyright 2009-2015 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -170,7 +170,7 @@ public class TestI18N {
 
 	@Test public void testTabsTrackerBundle_en() throws Exception {
 		TabsTracker g = Main.getBundleService().get(TabsTracker.class);
-		assertNotNull(g.all());
+		assertNotNull(g.allProfiles());
 	}
 
 	@Test public void testTabsTransactionBundle_en() throws Exception {

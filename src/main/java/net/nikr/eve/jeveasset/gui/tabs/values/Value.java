@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2014 Contributors (see credits.txt)
+ * Copyright 2009-2015 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -21,25 +21,40 @@
 
 package net.nikr.eve.jeveasset.gui.tabs.values;
 
+import java.util.Date;
+import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.tabs.assets.MyAsset;
 import net.nikr.eve.jeveasset.i18n.TabsValues;
 
 
 public class Value implements Comparable<Value> {
-	private String name;
+	private final String name;
+	private final Date date;
+	private final String compare;
 	private double assets = 0;
 	private double sellOrders = 0;
 	private double escrows = 0;
 	private double escrowsToCover = 0;
 	private double balance = 0;
 	private double manufacturing;
+	private double contractCollateral;
 	private MyAsset bestAsset = null;
 	private MyAsset bestShip = null;
 	private MyAsset bestShipFitted = null;
 	private MyAsset bestModule = null;
 
-	public Value(String name) {
+	public Value(Date date) {
+		this("", date);
+	}
+
+	public Value(String name, Date date) {
 		this.name = name;
+		this.date = date;
+		this.compare = name + Formater.simpleDate(date);
+	}
+
+	public void addAssets(double assets) {
+		this.assets = this.assets + assets;
 	}
 
 	public void addAssets(MyAsset asset) {
@@ -70,6 +85,14 @@ public class Value implements Comparable<Value> {
 		this.manufacturing = this.manufacturing + manufacturing;
 	}
 
+	public void addContractCollateral(double contractCollateral) {
+		this.contractCollateral = this.contractCollateral + contractCollateral;
+	}
+
+	public Date getDate() {
+		return date;
+	}
+
 	public String getName() {
 		return name;
 	}
@@ -98,6 +121,10 @@ public class Value implements Comparable<Value> {
 		return manufacturing;
 	}
 
+	public double getContractCollateral() {
+		return contractCollateral;
+	}
+
 	public String getBestAssetName() {
 		return getName(bestAsset);
 	}
@@ -115,11 +142,11 @@ public class Value implements Comparable<Value> {
 	}
 
 	public double getBestAssetValue() {
-		return getValue(bestAsset);
+		return getDynamicPrice(bestAsset);
 	}
 
 	public double getBestShipValue() {
-		return getValue(bestShip);
+		return getDynamicPrice(bestShip);
 	}
 
 	public double getBestShipFittedValue() {
@@ -131,7 +158,7 @@ public class Value implements Comparable<Value> {
 	}
 
 	public double getBestModuleValue() {
-		return getValue(bestModule);
+		return getDynamicPrice(bestModule);
 	}
 
 	private String getName(MyAsset asset) {
@@ -141,9 +168,9 @@ public class Value implements Comparable<Value> {
 			return TabsValues.get().none();
 		}
 	}
-	private double getValue(MyAsset asset) {
+	private double getDynamicPrice(MyAsset asset) {
 		if (asset != null) {
-			return asset.getValue();
+			return asset.getDynamicPrice();
 		} else {
 			return 0;
 		}
@@ -154,7 +181,35 @@ public class Value implements Comparable<Value> {
 	}
 
 	public double getTotal() {
-		return getAssets() + getBalance() + getEscrows() + getSellOrders() + getManufacturing();
+		return getAssets() + getBalance() + getEscrows() + getSellOrders() + getManufacturing() + getContractCollateral();
+	}
+
+	public void setAssets(double assets) {
+		this.assets = assets;
+	}
+
+	public void setSellOrders(double sellOrders) {
+		this.sellOrders = sellOrders;
+	}
+
+	public void setEscrows(double escrows) {
+		this.escrows = escrows;
+	}
+
+	public void setEscrowsToCover(double escrowsToCover) {
+		this.escrowsToCover = escrowsToCover;
+	}
+
+	public void setBalance(double balance) {
+		this.balance = balance;
+	}
+
+	public void setManufacturing(double manufacturing) {
+		this.manufacturing = manufacturing;
+	}
+
+	public void setContractCollateral(double contractCollateral) {
+		this.contractCollateral = contractCollateral;
 	}
 
 	private void setBestAsset(MyAsset bestAsset) {
@@ -208,8 +263,8 @@ public class Value implements Comparable<Value> {
 
 	@Override
 	public int hashCode() {
-		int hash = 5;
-		hash = 97 * hash + (this.name != null ? this.name.hashCode() : 0);
+		int hash = 7;
+		hash = 79 * hash + (this.compare != null ? this.compare.hashCode() : 0);
 		return hash;
 	}
 
@@ -222,7 +277,7 @@ public class Value implements Comparable<Value> {
 			return false;
 		}
 		final Value other = (Value) obj;
-		if ((this.name == null) ? (other.name != null) : !this.name.equals(other.name)) {
+		if ((this.compare == null) ? (other.compare != null) : !this.compare.equals(other.compare)) {
 			return false;
 		}
 		return true;

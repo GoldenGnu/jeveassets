@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2014 Contributors (see credits.txt)
+ * Copyright 2009-2015 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -45,8 +45,7 @@ import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewLocation;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileFilter;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
-import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerData;
-import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerOwner;
+import net.nikr.eve.jeveasset.gui.tabs.values.Value;
 import net.nikr.eve.jeveasset.io.shared.AbstractXmlWriter;
 import net.nikr.eve.jeveasset.io.shared.XmlException;
 import org.slf4j.Logger;
@@ -163,23 +162,23 @@ public class SettingsWriter extends AbstractXmlWriter {
 		}
 	}
 
-	private void writeTrackerData(final Document xmldoc, final Map<TrackerOwner, List<TrackerData>> trackerData) {
+	private void writeTrackerData(final Document xmldoc, final Map<String, List<Value>> trackerData) {
 		Element trackerDataNode = xmldoc.createElementNS(null, "trackerdata");
 		xmldoc.getDocumentElement().appendChild(trackerDataNode);
-		for (Map.Entry<TrackerOwner, List<TrackerData>> entry : trackerData.entrySet()) {
+		for (Map.Entry<String, List<Value>> entry : trackerData.entrySet()) {
 			Element ownerNode = xmldoc.createElementNS(null, "owner");
-			ownerNode.setAttributeNS(null, "name", entry.getKey().getOwner());
-			ownerNode.setAttributeNS(null, "id", String.valueOf(entry.getKey().getOwnerID()));
+			ownerNode.setAttributeNS(null, "name", entry.getKey());
 			trackerDataNode.appendChild(ownerNode);
-			for (TrackerData data : entry.getValue()) {
+			for (Value value : entry.getValue()) {
 				Element dataNode = xmldoc.createElementNS(null, "data");
-				dataNode.setAttributeNS(null, "date", String.valueOf(data.getDate().getTime()));
-				dataNode.setAttributeNS(null, "assets", String.valueOf(data.getAssets()));
-				dataNode.setAttributeNS(null, "escrows", String.valueOf(data.getEscrows()));
-				dataNode.setAttributeNS(null, "escrowstocover", String.valueOf(data.getEscrowsToCover()));
-				dataNode.setAttributeNS(null, "sellorders", String.valueOf(data.getSellOrders()));
-				dataNode.setAttributeNS(null, "walletbalance", String.valueOf(data.getWalletBalance()));
-				dataNode.setAttributeNS(null, "manufacturing", String.valueOf(data.getManufacturing()));
+				dataNode.setAttributeNS(null, "date", String.valueOf(value.getDate().getTime()));
+				dataNode.setAttributeNS(null, "assets", String.valueOf(value.getAssets()));
+				dataNode.setAttributeNS(null, "escrows", String.valueOf(value.getEscrows()));
+				dataNode.setAttributeNS(null, "escrowstocover", String.valueOf(value.getEscrowsToCover()));
+				dataNode.setAttributeNS(null, "sellorders", String.valueOf(value.getSellOrders()));
+				dataNode.setAttributeNS(null, "walletbalance", String.valueOf(value.getBalance()));
+				dataNode.setAttributeNS(null, "manufacturing", String.valueOf(value.getManufacturing()));
+				dataNode.setAttributeNS(null, "contractcollateral", String.valueOf(value.getContractCollateral()));
 				ownerNode.appendChild(dataNode);
 			}
 		}

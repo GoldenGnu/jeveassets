@@ -16,6 +16,22 @@
                   #### #  # #  # #  # #### #### #### #### ####
 
 ________________________________________________________________________________
+_2.10.0_________________________________________________________________________
+
+New Features:
+-Blueprints API (Asset/Tree/Industry: ME/TE & BPC/BPO)
+-Added profiles filter to the Tracker tool
+-Added option to delete data point for all owners
+-Added Contract Collateral to the Isk/Values/Tracker tools
+
+Changed:
+-Changed the font and formating of the Tracker tool chart
+-Now remove owner from the Tracker when the last data point is deleted
+
+Bug Fix:
+-Fixed date format in the Tracker Tool
+
+________________________________________________________________________________
 _2.9.1__________________________________________________________________________
 
 Bug Fixes:

@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2014 Contributors (see credits.txt)
+ * Copyright 2009-2015 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -23,7 +23,12 @@ package net.nikr.eve.jeveasset.gui.dialogs;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import javax.swing.*;
+import javax.swing.BorderFactory;
+import javax.swing.GroupLayout;
+import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JEditorPane;
+import javax.swing.JLabel;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
@@ -38,8 +43,8 @@ public class AboutDialog extends JDialogCentered {
 		CLOSE
 	}
 
-	private JButton jClose;
-	private JLockWindow jLockWindow;
+	private final JButton jClose;
+	private final JLockWindow jLockWindow;
 
 	public AboutDialog(final Program program) {
 		super(program, DialoguesAbout.get().about(), Images.DIALOG_ABOUT.getImage());
@@ -52,7 +57,7 @@ public class AboutDialog extends JDialogCentered {
 
 		JEditorPane jProgram = createEditorPane(false,
 				"<div style=\"font-size: 30pt;\"><b>" + Program.PROGRAM_NAME + "</b></div>"
-				+ "Copyright &copy; 2009-2014 Contributors<br>"
+				+ "Copyright &copy; 2009-2015 Contributors<br>"
 				);
 
 		JEditorPane jInfo = createEditorPane(

@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2014 Contributors (see credits.txt)
+ * Copyright 2009-2015 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -47,6 +47,7 @@ import net.nikr.eve.jeveasset.i18n.General;
 import net.nikr.eve.jeveasset.io.eveapi.AccountBalanceGetter;
 import net.nikr.eve.jeveasset.io.eveapi.AccountGetter;
 import net.nikr.eve.jeveasset.io.eveapi.AssetsGetter;
+import net.nikr.eve.jeveasset.io.eveapi.BlueprintsGetter;
 import net.nikr.eve.jeveasset.io.eveapi.ConquerableStationsGetter;
 import net.nikr.eve.jeveasset.io.eveapi.ContractItemsGetter;
 import net.nikr.eve.jeveasset.io.eveapi.ContractsGetter;
@@ -86,6 +87,9 @@ public class UpdateDialog extends JDialogCentered {
 	private final JCheckBox jAssets;
 	private final JLabel jAssetsUpdate;
 	private final JLabel jAssetsLeft;
+	private final JCheckBox jBlueprints;
+	private final JLabel jBlueprintsUpdate;
+	private final JLabel jBlueprintsLeft;
 	private final JCheckBox jPriceData;
 	private final JLabel jPriceDataUpdate;
 	private final JLabel jPriceDataLeft;
@@ -109,6 +113,7 @@ public class UpdateDialog extends JDialogCentered {
 		jAccountBalance = new JCheckBox(DialoguesUpdate.get().accountBlances());
 		jContracts = new JCheckBox(DialoguesUpdate.get().contracts());
 		jAssets = new JCheckBox(DialoguesUpdate.get().assets());
+		jBlueprints = new JCheckBox(DialoguesUpdate.get().blueprints());
 		jPriceData = new JCheckBox(DialoguesUpdate.get().priceData());
 
 		jCheckBoxes.add(jMarketOrders);
@@ -118,6 +123,7 @@ public class UpdateDialog extends JDialogCentered {
 		jCheckBoxes.add(jAccountBalance);
 		jCheckBoxes.add(jContracts);
 		jCheckBoxes.add(jAssets);
+		jCheckBoxes.add(jBlueprints);
 		jCheckBoxes.add(jPriceData);
 		for (JCheckBox jCheckBox : jCheckBoxes) {
 			jCheckBox.setActionCommand(UpdateDialogAction.CHANGED.name());
@@ -131,6 +137,7 @@ public class UpdateDialog extends JDialogCentered {
 		jAccountBalanceUpdate = new JLabel();
 		jContractsUpdate = new JLabel();
 		jAssetsUpdate = new JLabel();
+		jBlueprintsUpdate = new JLabel();
 		jPriceDataUpdate = new JLabel();
 
 		jMarketOrdersLeft = new JLabel();
@@ -140,6 +147,7 @@ public class UpdateDialog extends JDialogCentered {
 		jAccountBalanceLeft = new JLabel();
 		jContractsLeft = new JLabel();
 		jAssetsLeft = new JLabel();
+		jBlueprintsLeft = new JLabel();
 		jPriceDataLeft = new JLabel();
 
 		jUpdate = new JButton(DialoguesUpdate.get().update());
@@ -162,6 +170,7 @@ public class UpdateDialog extends JDialogCentered {
 						.addComponent(jAccountBalance)
 						.addComponent(jContracts)
 						.addComponent(jAssets)
+						.addComponent(jBlueprints)
 						.addComponent(jPriceData)
 					)
 					.addGap(20)
@@ -176,6 +185,7 @@ public class UpdateDialog extends JDialogCentered {
 								.addComponent(jAccountBalanceLeft)
 								.addComponent(jContractsLeft)
 								.addComponent(jAssetsLeft)
+								.addComponent(jBlueprintsLeft)
 								.addComponent(jPriceDataLeft)
 							)
 							.addGap(20)
@@ -187,6 +197,7 @@ public class UpdateDialog extends JDialogCentered {
 								.addComponent(jAccountBalanceUpdate)
 								.addComponent(jContractsUpdate)
 								.addComponent(jAssetsUpdate)
+								.addComponent(jBlueprintsUpdate)
 								.addComponent(jPriceDataUpdate)
 							)
 						)
@@ -240,6 +251,11 @@ public class UpdateDialog extends JDialogCentered {
 					.addComponent(jAssetsUpdate, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				)
 				.addGroup(layout.createParallelGroup()
+					.addComponent(jBlueprints, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					.addComponent(jBlueprintsLeft, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					.addComponent(jBlueprintsUpdate, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+				)
+				.addGroup(layout.createParallelGroup()
 					.addComponent(jPriceData, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 					.addComponent(jPriceDataLeft, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 					.addComponent(jPriceDataUpdate, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
@@ -280,6 +296,7 @@ public class UpdateDialog extends JDialogCentered {
 		Date transactionsNextUpdate = null;
 		Date contractsNextUpdate = null;
 		Date assetsNextUpdate = null;
+		Date blueprintsNextUpdate = null;
 		Date accountBalanceNextUpdate = null;
 
 		boolean industryJobsUpdateAll = true;
@@ -288,6 +305,7 @@ public class UpdateDialog extends JDialogCentered {
 		boolean transactionsUpdateAll = true;
 		boolean contractsUpdateAll = true;
 		boolean assetsUpdateAll = true;
+		boolean blueprintsUpdateAll = true;
 		boolean accountBalanceUpdateAll = true;
 
 		Date priceDataNextUpdate = program.getPriceDataGetter().getNextUpdate();
@@ -300,6 +318,7 @@ public class UpdateDialog extends JDialogCentered {
 					transactionsNextUpdate = nextUpdate(transactionsNextUpdate, owner.getTransactionsNextUpdate());
 					contractsNextUpdate = nextUpdate(contractsNextUpdate, owner.getContractsNextUpdate());
 					assetsNextUpdate = nextUpdate(assetsNextUpdate, owner.getAssetNextUpdate());
+					blueprintsNextUpdate = nextUpdate(blueprintsNextUpdate, owner.getBlueprintsNextUpdate());
 					accountBalanceNextUpdate = nextUpdate(accountBalanceNextUpdate, owner.getBalanceNextUpdate());
 
 					industryJobsUpdateAll = updateAll(industryJobsUpdateAll, owner.getIndustryJobsNextUpdate());
@@ -308,6 +327,7 @@ public class UpdateDialog extends JDialogCentered {
 					transactionsUpdateAll = updateAll(transactionsUpdateAll, owner.getTransactionsNextUpdate());
 					contractsUpdateAll = updateAll(contractsUpdateAll, owner.getContractsNextUpdate());
 					assetsUpdateAll = updateAll(assetsUpdateAll, owner.getAssetNextUpdate());
+					blueprintsUpdateAll = updateAll(blueprintsUpdateAll, owner.getBlueprintsNextUpdate());
 					accountBalanceUpdateAll = updateAll(accountBalanceUpdateAll, owner.getBalanceNextUpdate());
 
 				}
@@ -320,6 +340,7 @@ public class UpdateDialog extends JDialogCentered {
 		setUpdateLabel(jAccountBalanceUpdate, jAccountBalanceLeft, jAccountBalance, accountBalanceNextUpdate, accountBalanceUpdateAll);
 		setUpdateLabel(jContractsUpdate, jContractsLeft, jContracts, contractsNextUpdate, contractsUpdateAll);
 		setUpdateLabel(jAssetsUpdate, jAssetsLeft, jAssets, assetsNextUpdate, assetsUpdateAll);
+		setUpdateLabel(jBlueprintsUpdate, jBlueprintsLeft, jBlueprints, blueprintsNextUpdate, blueprintsUpdateAll);
 		setUpdateLabel(jPriceDataUpdate, jPriceDataLeft, jPriceData, priceDataNextUpdate, true, false);
 		changed();
 		jUpdate.setEnabled(false);
@@ -331,6 +352,7 @@ public class UpdateDialog extends JDialogCentered {
 		setUpdatableButton(accountBalanceNextUpdate);
 		setUpdatableButton(contractsNextUpdate);
 		setUpdatableButton(assetsNextUpdate);
+		setUpdatableButton(blueprintsNextUpdate);
 		setUpdatableButton(priceDataNextUpdate, false);
 	}
 
@@ -460,6 +482,9 @@ public class UpdateDialog extends JDialogCentered {
 				}
 				if (jAssets.isSelected()) {
 					updateTasks.add(new AssetsTask());
+				}
+				if (jBlueprints.isSelected()) {
+					updateTasks.add(new BlueprintsTask());
 				}
 				if (jContracts.isSelected() || jIndustryJobs.isSelected()) {
 					updateTasks.add(new NameTask());
@@ -613,6 +638,19 @@ public class UpdateDialog extends JDialogCentered {
 			//Get Contract Items
 			ContractItemsGetter itemsGetter = new ContractItemsGetter();
 			itemsGetter.load(this, Settings.get().isForceUpdate(), program.getAccounts());
+		}
+	}
+
+	public class BlueprintsTask extends UpdateTask {
+
+		public BlueprintsTask() {
+			super(DialoguesUpdate.get().blueprints());
+		}
+
+		@Override
+		public void update() {
+			BlueprintsGetter blueprintsGetter = new BlueprintsGetter();
+			blueprintsGetter.load(this, Settings.get().isForceUpdate(), program.getAccounts());
 		}
 	}
 

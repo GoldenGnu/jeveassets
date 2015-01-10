@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2014 Contributors (see credits.txt)
+ * Copyright 2009-2015 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -38,6 +38,7 @@ import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
+import net.nikr.eve.jeveasset.gui.tabs.values.Value;
 import net.nikr.eve.jeveasset.i18n.TabsTracker;
 
 
@@ -56,10 +57,11 @@ public class JTrackerEditDialog extends JDialogCentered {
 	private final JTextField jEscrows;
 	private final JTextField jEscrowsToCover;
 	private final JTextField jManufacturing;
+	private final JTextField jContractCollateral;
 	private final JButton jOK;
 
 	//Data
-	private TrackerData trackerData;
+	private Value value;
 	private boolean update;
 
 	public JTrackerEditDialog(Program program) {
@@ -103,6 +105,11 @@ public class JTrackerEditDialog extends JDialogCentered {
 		jManufacturing.setHorizontalAlignment(JTextField.RIGHT);
 		jManufacturing.addFocusListener(listener);
 
+		JLabel jContractCollateralLabel = new JLabel(TabsTracker.get().contractCollateral());
+		jContractCollateral = new JTextField();
+		jContractCollateral.setHorizontalAlignment(JTextField.RIGHT);
+		jContractCollateral.addFocusListener(listener);
+
 		jOK = new JButton(TabsTracker.get().ok());
 		jOK.setActionCommand(TrackerEditAction.OK.name());
 		jOK.addActionListener(listener);
@@ -122,6 +129,7 @@ public class JTrackerEditDialog extends JDialogCentered {
 						.addComponent(jEscrowsLabel)
 						.addComponent(jEscrowsToCoverLabel)
 						.addComponent(jManufacturingLabel)
+						.addComponent(jContractCollateralLabel)
 					)
 					.addGroup(layout.createParallelGroup()
 						.addComponent(jDate, 100, 100, 100)
@@ -131,6 +139,7 @@ public class JTrackerEditDialog extends JDialogCentered {
 						.addComponent(jEscrows, 100, 100, 100)
 						.addComponent(jEscrowsToCover, 100, 100, 100)
 						.addComponent(jManufacturing, 100, 100, 100)
+						.addComponent(jContractCollateral, 100, 100, 100)
 					)
 				)
 				.addGroup(layout.createSequentialGroup()
@@ -170,22 +179,27 @@ public class JTrackerEditDialog extends JDialogCentered {
 					.addComponent(jManufacturing, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				)
 				.addGroup(layout.createParallelGroup()
+					.addComponent(jContractCollateralLabel, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					.addComponent(jContractCollateral, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+				)
+				.addGroup(layout.createParallelGroup()
 					.addComponent(jOK, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 					.addComponent(jCancel, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				)
 		);
 	}
 
-	public boolean showEdit(TrackerData trackerData) {
-		this.trackerData = trackerData;
+	public boolean showEdit(Value value) {
+		this.value = value;
 		update = false;
-		jWalletBalance.setText(format(trackerData.getWalletBalance()));
-		jAssets.setText(format(trackerData.getAssets()));
-		jSellOrders.setText(format(trackerData.getSellOrders()));
-		jEscrows.setText(format(trackerData.getEscrows()));
-		jEscrowsToCover.setText(format(trackerData.getEscrowsToCover()));
-		jManufacturing.setText(format(trackerData.getManufacturing()));
-		jDate.setText(format(trackerData.getDate()));
+		jWalletBalance.setText(format(value.getBalance()));
+		jAssets.setText(format(value.getAssets()));
+		jSellOrders.setText(format(value.getSellOrders()));
+		jEscrows.setText(format(value.getEscrows()));
+		jEscrowsToCover.setText(format(value.getEscrowsToCover()));
+		jManufacturing.setText(format(value.getManufacturing()));
+		jContractCollateral.setText(format(value.getContractCollateral()));
+		jDate.setText(format(value.getDate()));
 		setVisible(true);
 		return update;
 	}
@@ -227,13 +241,15 @@ public class JTrackerEditDialog extends JDialogCentered {
 			double escrows = parse(jEscrows.getText());
 			double escrowsToCover = parse(jEscrowsToCover.getText());
 			double manufacturing = parse(jManufacturing.getText());
+			double contractCollateral = parse(jContractCollateral.getText());
 			Settings.lock();
-			trackerData.setWalletBalance(walletBalanc);
-			trackerData.setAssets(assets);
-			trackerData.setSellOrders(sellOrders);
-			trackerData.setEscrows(escrows);
-			trackerData.setEscrowsToCover(escrowsToCover);
-			trackerData.setManufacturing(manufacturing);
+			value.setBalance(walletBalanc);
+			value.setAssets(assets);
+			value.setSellOrders(sellOrders);
+			value.setEscrows(escrows);
+			value.setEscrowsToCover(escrowsToCover);
+			value.setManufacturing(manufacturing);
+			value.setContractCollateral(contractCollateral);
 			Settings.unlock();
 			program.saveSettings("Save Tracker Data (Edit)");
 			update = true;

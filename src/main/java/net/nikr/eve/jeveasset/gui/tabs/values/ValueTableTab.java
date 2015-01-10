@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2014 Contributors (see credits.txt)
+ * Copyright 2009-2015 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -29,8 +29,10 @@ import ca.odell.glazedlists.SortedList;
 import ca.odell.glazedlists.swing.DefaultEventSelectionModel;
 import ca.odell.glazedlists.swing.DefaultEventTableModel;
 import ca.odell.glazedlists.swing.TableComparatorChooser;
+import com.beimin.eveapi.model.shared.ContractStatus;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,7 +41,9 @@ import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JScrollPane;
 import net.nikr.eve.jeveasset.Program;
+import net.nikr.eve.jeveasset.data.MyAccount;
 import net.nikr.eve.jeveasset.data.MyAccountBalance;
+import net.nikr.eve.jeveasset.data.Owner;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
@@ -53,8 +57,8 @@ import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
 import net.nikr.eve.jeveasset.gui.shared.table.JAutoColumnTable;
 import net.nikr.eve.jeveasset.gui.shared.table.PaddingTableCellRenderer;
 import net.nikr.eve.jeveasset.gui.tabs.assets.MyAsset;
+import net.nikr.eve.jeveasset.gui.tabs.contracts.MyContract;
 import net.nikr.eve.jeveasset.gui.tabs.jobs.MyIndustryJob;
-import net.nikr.eve.jeveasset.gui.tabs.jobs.MyIndustryJob.IndustryJobState;
 import net.nikr.eve.jeveasset.gui.tabs.orders.MyMarketOrder;
 import net.nikr.eve.jeveasset.i18n.General;
 import net.nikr.eve.jeveasset.i18n.TabsValues;
@@ -130,19 +134,19 @@ public class ValueTableTab extends JMainTab {
 		);
 	}
 
-	private Value getValue(Map<String, Value> values, String owner) {
+	public static Value getValue(Map<String, Value> values, String owner, Date date) {
 		Value value = values.get(owner);
 		if (value == null) {
-			value = new Value(owner);
+			value = new Value(owner, date);
 			values.put(owner, value);
 		}
 		return value;
 	}
 
-	@Override
-	public void updateData() {
+	public static Map<String, Value> createDataSet(Program program) {
+		Date date = Settings.getNow();
 		Map<String, Value> values = new HashMap<String, Value>();
-		Value total = new Value(TabsValues.get().grandTotal());
+		Value total = new Value(TabsValues.get().grandTotal(), date);
 		values.put(total.getName(), total);
 		for (MyAsset asset : program.getAssetEventList()) {
 			//Skip market orders
@@ -159,19 +163,19 @@ public class ValueTableTab extends JMainTab {
 			if (asset.getFlag().equals(General.get().contractExcluded())) {
 				continue; //Ignore contracts excluded
 			}
-			Value value = getValue(values, asset.getOwner());
+			Value value = getValue(values, asset.getOwner(), date);
 			value.addAssets(asset);
 			total.addAssets(asset);
 		}
 		//Account Balance
 		for (MyAccountBalance accountBalance : program.getAccountBalanceEventList()) {
-			Value value = getValue(values, accountBalance.getOwner());
+			Value value = getValue(values, accountBalance.getOwner(), date);
 			value.addBalance(accountBalance.getBalance());
 			total.addBalance(accountBalance.getBalance());
 		}
 		//Market Orders
 		for (MyMarketOrder marketOrder : program.getMarketOrdersEventList()) {
-			Value value = getValue(values, marketOrder.getOwner());
+			Value value = getValue(values, marketOrder.getOwner(), date);
 			if (marketOrder.getOrderState() == 0) {
 				if (marketOrder.getBid() < 1) { //Sell Orders
 					value.addSellOrders(marketOrder.getPrice() * marketOrder.getVolRemaining());
@@ -186,7 +190,7 @@ public class ValueTableTab extends JMainTab {
 		}
 		//Industrys Job: Manufacturing
 		for (MyIndustryJob industryJob : program.getIndustryJobsEventList()) {
-			Value value = getValue(values, industryJob.getOwner());
+			Value value = getValue(values, industryJob.getOwner(), date);
 			//Manufacturing and not completed
 			if (industryJob.isManufacturing() && !industryJob.isDelivered()) {
 				double manufacturingTotal = industryJob.getPortion() * industryJob.getRuns() * ApiIdConverter.getPrice(industryJob.getProductTypeID(), false);
@@ -194,10 +198,47 @@ public class ValueTableTab extends JMainTab {
 				total.addManufacturing(manufacturingTotal);
 			}
 		}
+		//Contract Collateral
+		for (MyAccount account : program.getAccounts()) {
+			for (Owner owner : account.getOwners()) {
+				for (MyContract contract : owner.getContracts().keySet()) {
+					if (contract.isCourier()) {
+						boolean add = false;
+						//Transporting cargo (will get collateral back)
+						if (contract.getAcceptor().equals(owner.getName())
+							&& contract.getStatus() == ContractStatus.INPROGRESS) {
+							add = true;
+						}
+						//Shipping cargo (will get collateral or cargo back)
+						if (contract.getIssuer().equals(owner.getName()) 
+								&& 
+								(
+								contract.getStatus() == ContractStatus.INPROGRESS
+								|| contract.getStatus() == ContractStatus.OUTSTANDING
+								)
+								) {
+							add = true;
+						}
+						if (add) {
+							double contractCollateral = contract.getCollateral();
+							Value value = getValue(values, owner.getName(), date);
+							value.addContractCollateral(contractCollateral);
+							total.addContractCollateral(contractCollateral);
+						}
+					}
+					
+				}
+			}
+		}
+		return values;
+	}
+
+	@Override
+	public void updateData() {
 		try {
 			eventList.getReadWriteLock().writeLock().lock();
 			eventList.clear();
-			eventList.addAll(values.values());
+			eventList.addAll(createDataSet(program).values());
 		} finally {
 			eventList.getReadWriteLock().writeLock().unlock();
 		}

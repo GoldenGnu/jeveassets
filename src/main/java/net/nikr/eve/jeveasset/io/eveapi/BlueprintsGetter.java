@@ -23,24 +23,24 @@ package net.nikr.eve.jeveasset.io.eveapi;
 
 
 import com.beimin.eveapi.exception.ApiException;
-import com.beimin.eveapi.model.shared.AccountBalance;
-import com.beimin.eveapi.response.shared.AccountBalanceResponse;
+import com.beimin.eveapi.model.shared.Blueprint;
+import com.beimin.eveapi.response.shared.BlueprintsResponse;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import net.nikr.eve.jeveasset.data.MyAccount;
 import net.nikr.eve.jeveasset.data.MyAccount.AccessMask;
-import net.nikr.eve.jeveasset.data.MyAccountBalance;
 import net.nikr.eve.jeveasset.data.Owner;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import net.nikr.eve.jeveasset.io.shared.AbstractApiGetter;
-import net.nikr.eve.jeveasset.io.shared.ApiConverter;
 
 
-public class AccountBalanceGetter extends AbstractApiGetter<AccountBalanceResponse> {
+public class BlueprintsGetter extends AbstractApiGetter<BlueprintsResponse> {
 
-	public AccountBalanceGetter() {
-		super("Account Balance", true, false);
+	public BlueprintsGetter() {
+		super("Blueprints", true, false);
 	}
 
 	public void load(final UpdateTask updateTask, final boolean forceUpdate, final List<MyAccount> accounts) {
@@ -48,40 +48,44 @@ public class AccountBalanceGetter extends AbstractApiGetter<AccountBalanceRespon
 	}
 
 	@Override
-	protected AccountBalanceResponse getResponse(final boolean bCorp) throws ApiException {
+	protected BlueprintsResponse getResponse(final boolean bCorp) throws ApiException {
 		if (bCorp) {
-			return new com.beimin.eveapi.parser.corporation.AccountBalanceParser()
+			return new com.beimin.eveapi.parser.corporation.BlueprintsParser()
 					.getResponse(Owner.getApiAuthorization(getOwner()));
 		} else {
-			return new com.beimin.eveapi.parser.pilot.AccountBalanceParser()
+			return new com.beimin.eveapi.parser.pilot.BlueprintsParser()
 					.getResponse(Owner.getApiAuthorization(getOwner()));
 		}
 	}
 
 	@Override
 	protected void setNextUpdate(final Date nextUpdate) {
-		getOwner().setBalanceNextUpdate(nextUpdate);
+		getOwner().setBlueprintsNextUpdate(nextUpdate);
 	}
 
 	@Override
 	protected Date getNextUpdate() {
-		return getOwner().getBalanceNextUpdate();
+		return getOwner().getBlueprintsNextUpdate();
 	}
 
 	@Override
-	protected void setData(final AccountBalanceResponse response) {
-		List<MyAccountBalance> accountBalances = ApiConverter.convertAccountBalance(new ArrayList<AccountBalance>(response.getAll()), getOwner());
-		getOwner().setAccountBalances(accountBalances);
+	protected void setData(final BlueprintsResponse response) {
+		List<Blueprint> blueprints = new ArrayList<Blueprint>(response.getAll());
+		Map<Long, Blueprint> blueprintsMap = new HashMap<Long, Blueprint>();
+		for (Blueprint blueprint : blueprints) {
+			blueprintsMap.put(blueprint.getItemID(), blueprint);
+		}
+		getOwner().setBlueprints(blueprintsMap);
 	}
 
 	@Override
 	protected void updateFailed(final Owner ownerFrom, final Owner ownerTo) {
-		ownerTo.setAccountBalances(ownerFrom.getAccountBalances());
-		ownerTo.setBalanceNextUpdate(ownerFrom.getBalanceNextUpdate());
+		ownerTo.setBlueprints(ownerFrom.getBlueprints());
+		ownerTo.setBlueprintsNextUpdate(ownerFrom.getBlueprintsNextUpdate());
 	}
 
 	@Override
 	protected long requestMask(boolean bCorp) {
-		return AccessMask.ACCOUNT_BALANCE.getAccessMask();
+		return AccessMask.ASSET_LIST.getAccessMask();
 	}
 }
