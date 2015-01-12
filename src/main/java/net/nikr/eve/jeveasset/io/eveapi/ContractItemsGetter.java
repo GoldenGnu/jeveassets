@@ -73,7 +73,7 @@ public class ContractItemsGetter extends AbstractApiGetter<ContractItemsResponse
 					if (!entry.getValue().isEmpty()) {
 							continue; //Ignore existing
  					}
-					///XXX - workaround for alien contracts
+					///XXX - Workaround for alien contracts
 					if ((owner.getOwnerID() != contract.getAcceptorID()
 							&& owner.getOwnerID() != contract.getAssigneeID()
 							&& owner.getOwnerID() != contract.getIssuerID())

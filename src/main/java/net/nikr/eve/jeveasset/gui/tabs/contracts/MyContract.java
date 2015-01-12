@@ -45,10 +45,10 @@ public class MyContract extends Contract implements LocationType {
 
 	private final MyLocation endStation;
 	private final MyLocation startStation;
-	private String acceptor;
-	private String assignee;
-	private String issuerCorp;
-	private String issuer;
+	private String acceptor = "";
+	private String assignee = "";
+	private String issuerCorp = "";
+	private String issuer = "";
 
 	public MyContract(Contract contract, MyLocation startStation, MyLocation endStation) {
 		this.endStation = endStation;

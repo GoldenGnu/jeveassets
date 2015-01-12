@@ -52,6 +52,7 @@ import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
 import net.nikr.eve.jeveasset.gui.tabs.assets.AssetsTab;
 import net.nikr.eve.jeveasset.gui.tabs.assets.MyAsset;
 import net.nikr.eve.jeveasset.gui.tabs.contracts.ContractsTab;
+import net.nikr.eve.jeveasset.gui.tabs.contracts.MyContract;
 import net.nikr.eve.jeveasset.gui.tabs.contracts.MyContractItem;
 import net.nikr.eve.jeveasset.gui.tabs.items.ItemsTab;
 import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustryJobsTab;
@@ -450,6 +451,9 @@ public class Program implements ActionListener {
 	}
 	public EventList<MyAsset> getAssetEventList() {
 		return profileData.getAssetsEventList();
+	}
+	public EventList<MyContract> getContractEventList() {
+		return profileData.getContractEventList();
 	}
 	public EventList<MyContractItem> getContractItemEventList() {
 		return profileData.getContractItemEventList();

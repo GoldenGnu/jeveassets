@@ -199,38 +199,32 @@ public class ValueTableTab extends JMainTab {
 			}
 		}
 		//Contract Collateral
-		for (MyAccount account : program.getAccounts()) {
-			for (Owner owner : account.getOwners()) {
-				for (MyContract contract : owner.getContracts().keySet()) {
-					if (contract.isCourier()) {
-						boolean add = false;
-						//Transporting cargo (will get collateral back)
-						if (contract.getAcceptor().equals(owner.getName())
-							&& contract.getStatus() == ContractStatus.INPROGRESS) {
-							add = true;
-						}
-						//Shipping cargo (will get collateral or cargo back)
-						if (contract.getIssuer().equals(owner.getName()) 
-								&& 
-								(
-								contract.getStatus() == ContractStatus.INPROGRESS
-								|| contract.getStatus() == ContractStatus.OUTSTANDING
-								)
-								) {
-							add = true;
-						}
-						if (add) {
-							double contractCollateral = contract.getCollateral();
-							Value value = getValue(values, owner.getName(), date);
-							value.addContractCollateral(contractCollateral);
-							total.addContractCollateral(contractCollateral);
-						}
-					}
-					
+		for (MyContract contract : program.getContractEventList()) {
+			if (contract.isCourier()) {
+				//Transporting cargo (will get collateral back)
+				if (program.getOwners(false).contains(contract.getAcceptor()) && contract.getStatus() == ContractStatus.INPROGRESS) {
+					addContract(contract, values, total, date, contract.getAcceptor());
+				}
+				//Shipping cargo (will get collateral or cargo back)
+				if (program.getOwners(false).contains(contract.getIssuer())
+						&&
+						(
+						contract.getStatus() == ContractStatus.INPROGRESS
+						|| contract.getStatus() == ContractStatus.OUTSTANDING
+						)
+						) {
+					addContract(contract, values, total, date, contract.getIssuer());
 				}
 			}
 		}
 		return values;
+	}
+
+	private static void addContract(MyContract contract, Map<String, Value> values, Value total, Date date, String owner) {
+		double contractCollateral = contract.getCollateral();
+		Value value = getValue(values, owner, date);
+		value.addContractCollateral(contractCollateral);
+		total.addContractCollateral(contractCollateral);
 	}
 
 	@Override
