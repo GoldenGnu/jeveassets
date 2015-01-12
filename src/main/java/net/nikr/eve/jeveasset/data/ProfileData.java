@@ -58,6 +58,7 @@ public class ProfileData {
 	private final EventList<MyTransaction> transactionsEventList = new BasicEventList<MyTransaction>();
 	private final EventList<MyAsset> assetsEventList = new BasicEventList<MyAsset>();
 	private final EventList<MyAccountBalance> accountBalanceEventList = new BasicEventList<MyAccountBalance>();
+	private final EventList<MyContract> contractEventList = new BasicEventList<MyContract>();
 	private Map<Integer, List<MyAsset>> uniqueAssetsDuplicates = null; //TypeID : int
 	private Map<Integer, MarketPriceData> marketPriceData; //TypeID : int
 	private final List<String> owners = new ArrayList<String>();
@@ -93,6 +94,10 @@ public class ProfileData {
 
 	public EventList<MyTransaction> getTransactionsEventList() {
 		return transactionsEventList;
+	}
+
+	public EventList<MyContract> getContractEventList() {
+		return contractEventList;
 	}
 
 	public EventList<MyContractItem> getContractItemEventList() {
@@ -204,6 +209,7 @@ public class ProfileData {
 		List<MyTransaction> transactions = new ArrayList<MyTransaction>();
 		List<MyIndustryJob> industryJobs = new ArrayList<MyIndustryJob>();
 		List<MyContractItem> contractItems = new ArrayList<MyContractItem>();
+		List<MyContract> contracts = new ArrayList<MyContract>();
 		List<MyAccountBalance> accountBalance = new ArrayList<MyAccountBalance>();
 		maximumPurchaseAge();
 		//Add assets
@@ -289,9 +295,11 @@ public class ProfileData {
 						)
 						) {
 						contractIDs.add(contract.getContractID());
+						contracts.add(contract);
 						contractItems.add(new MyContractItem(contract));
 					} else if (!entry.getValue().isEmpty()) {
 						contractIDs.add(contract.getContractID());
+						contracts.add(contract);
 						contractItems.addAll(entry.getValue());
 					}
 					//Assets
@@ -380,6 +388,13 @@ public class ProfileData {
 			contractItemEventList.addAll(contractItems);
 		} finally {
 			contractItemEventList.getReadWriteLock().writeLock().unlock();
+		}
+		try {
+			contractEventList.getReadWriteLock().writeLock().lock();
+			contractEventList.clear();
+			contractEventList.addAll(contracts);
+		} finally {
+			contractEventList.getReadWriteLock().writeLock().unlock();
 		}
 		try {
 			accountBalanceEventList.getReadWriteLock().writeLock().lock();
