@@ -47,8 +47,8 @@ public class TransactionsGetter extends AbstractApiAccountKeyGetter<WalletTransa
 	}
 
 	public void load(final UpdateTask updateTask, final boolean forceUpdate, final List<MyAccount> accounts, final boolean saveHistory) {
-		super.loadAccounts(updateTask, forceUpdate, accounts);
 		this.saveHistory = saveHistory;
+		super.loadAccounts(updateTask, forceUpdate, accounts);
 	}
 
 	@Override

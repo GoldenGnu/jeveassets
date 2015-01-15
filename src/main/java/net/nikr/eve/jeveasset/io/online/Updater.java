@@ -100,7 +100,7 @@ public class Updater {
 			processBuilder.start();
 			System.exit(0);
 		} catch (IOException ex) {
-			LOG.error("Failed to start jupdate.jat", ex);
+			LOG.error("Failed to start jupdate.jar", ex);
 		}
 	}
 
