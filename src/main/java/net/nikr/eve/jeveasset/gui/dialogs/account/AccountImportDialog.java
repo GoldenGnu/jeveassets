@@ -246,7 +246,6 @@ public class AccountImportDialog extends JDialogCentered {
 		apiManager.forceUpdate();
 		program.getAccounts().add(account);
 		apiManager.updateTable();
-		program.saveProfile();
 		this.setVisible(false);
 	}
 
