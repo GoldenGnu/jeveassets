@@ -77,7 +77,8 @@ public class AccountManagerDialog extends JDialogCentered {
 	private final SeparatorList<Owner> separatorList;
 	private final DefaultEventSelectionModel<Owner> selectionModel;
 
-	private Map<Owner, Boolean> shownAssets;
+	private Map<Owner, Boolean> ownerShows;
+	private Map<MyAccount, String> accountNames;
 	private boolean forceUpdate = false;
 
 	public AccountManagerDialog(final Program program) {
@@ -253,22 +254,24 @@ public class AccountManagerDialog extends JDialogCentered {
 
 	@Override
 	protected void save() {
-		boolean changed = false;
+		if (forceUpdate || isChanged()) {
+			program.updateEventLists();
+			program.saveProfile();
+		}
+	}
+
+	private boolean isChanged() {
 		for (MyAccount account : program.getAccounts()) {
+			if (!account.getName().equals(accountNames.get(account))) { //Account name changed
+				return true;
+			}
 			for (Owner owner : account.getOwners()) {
-				if (!shownAssets.containsKey(owner)) { //New account
-					if (owner.isShowOwner()) { //if shown: Updated
-						changed = true;
-					}
-				} else if (owner.isShowOwner() != shownAssets.get(owner)) { //Old account changed: Update
-					changed = true;
+				if (owner.isShowOwner() != ownerShows.get(owner)) { //Owner show changed
+					return true;
 				}
 			}
 		}
-		if (changed || forceUpdate) {
-			program.updateEventLists();
-		}
-		this.setVisible(false);
+		return false;
 	}
 
 	@Override
@@ -276,12 +279,16 @@ public class AccountManagerDialog extends JDialogCentered {
 		if (b) {
 			forceUpdate = false;
 			updateTable();
-			shownAssets = new HashMap<Owner, Boolean>();
+			ownerShows = new HashMap<Owner, Boolean>();
+			accountNames = new HashMap<MyAccount, String>();
 			for (MyAccount account : program.getAccounts()) {
+				accountNames.put(account, account.getName());
 				for (Owner owner : account.getOwners()) {
-					shownAssets.put(owner, owner.isShowOwner());
+					ownerShows.put(owner, owner.isShowOwner());
 				}
 			}
+		} else {
+			save();
 		}
 		super.setVisible(b);
 	}
@@ -298,7 +305,7 @@ public class AccountManagerDialog extends JDialogCentered {
 				jTable.expandSeparators(true);
 			}
 			if (AccountManagerAction.CLOSE.name().equals(e.getActionCommand())) {
-				save();
+				setVisible(false);
 			}
 			if (AccountCellAction.EDIT.name().equals(e.getActionCommand())) {
 				int index = jTable.getSelectedRow();
@@ -326,7 +333,6 @@ public class AccountManagerDialog extends JDialogCentered {
 						program.getAccounts().remove(account);
 						forceUpdate();
 						updateTable();
-						program.saveProfile();
 					}
 				}
 			}
