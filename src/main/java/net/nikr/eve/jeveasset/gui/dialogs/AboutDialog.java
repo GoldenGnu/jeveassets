@@ -32,7 +32,6 @@ import javax.swing.JLabel;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
-import net.nikr.eve.jeveasset.gui.shared.components.JLockWindow;
 import net.nikr.eve.jeveasset.i18n.DialoguesAbout;
 import net.nikr.eve.jeveasset.io.shared.DesktopUtil;
 
@@ -44,12 +43,10 @@ public class AboutDialog extends JDialogCentered {
 	}
 
 	private final JButton jClose;
-	private final JLockWindow jLockWindow;
 
 	public AboutDialog(final Program program) {
 		super(program, DialoguesAbout.get().about(), Images.DIALOG_ABOUT.getImage());
 
-		jLockWindow = new JLockWindow(this.getDialog());
 		ListenerClass listener = new ListenerClass();
 
 		JLabel jIcon = new JLabel();
@@ -78,7 +75,7 @@ public class AboutDialog extends JDialogCentered {
 				+ "<br>"
 				+ "<b>www</b><br>"
 				+ "&nbsp;<a href=\"" + Program.PROGRAM_HOMEPAGE + "\">Homepage</a> (download and source)<br>"
-				+ "&nbsp;<a href=\"http://code.google.com/p/jeveassets/\">Google Code Project</a> (developers)<br>"
+				+ "&nbsp;<a href=\"https://github.com/GoldenGnu/jeveassets\">GitHub Project</a> (developers)<br>"
 				+ "&nbsp;<a href=\"https://forums.eveonline.com/default.aspx?g=posts&t=6419\">Forum Thread</a> (feedback)<br>"
 				+ "<br>"
 				+ "<br>"
@@ -96,7 +93,7 @@ public class AboutDialog extends JDialogCentered {
 				+ "<b>Libraries</b><br>"
 				+ "&nbsp;<a href=\"http://publicobject.com/glazedlists/\">Glazed Lists</a> (table sorting and filtering)<br> "
 				+ "&nbsp;<a href=\"http://supercsv.sourceforge.net/\">Super CSV</a> (csv export)<br> "
-				+ "&nbsp;<a href=\"http://code.google.com/p/eveapi/\">eveapi</a> (parsing eve-online api)<br> "
+				+ "&nbsp;<a href=\"https://github.com/ZyorTaelon/eveapi\">eveapi</a> (parsing eve-online api)<br> "
 				+ "&nbsp;<a href=\"http://www.toedter.com/en/jcalendar/\">JCalendar</a> (date input)<br> "
 				+ "&nbsp;<a href=\"http://www.jfree.org/jfreechart/\">JFreeChart</a> (charts)<br> "
 				+ "&nbsp;<a href=\"http://junit.sourceforge.net/\">JUnit</a> (unit testing)<br>"
