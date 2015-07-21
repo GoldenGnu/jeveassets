@@ -136,7 +136,7 @@ _EVEAPI_________________________________________________________________________
 jEveAssets use eveapi to get data from the EVE-Online API
 
 Link:
-  http://code.google.com/p/eveapi/
+  https://github.com/ZyorTaelon/eveapi
 
 License:
   GNU Lesser General Public License (http://www.gnu.org/copyleft/lesser.html)

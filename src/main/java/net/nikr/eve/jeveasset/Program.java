@@ -645,7 +645,7 @@ public class Program implements ActionListener {
 			DesktopUtil.browse("http://jeveassets.uservoice.com/", this);
 		}
 		if (MainMenuAction.LINK_HELP.name().equals(e.getActionCommand())) {
-			DesktopUtil.browse("https://code.google.com/p/jeveassets/wiki/ReadMe", this);
+			DesktopUtil.browse("https://github.com/GoldenGnu/jeveassets/wiki/ReadMe", this);
 		}
 	//Exit
 		if (MainMenuAction.EXIT_PROGRAM.name().equals(e.getActionCommand())) {

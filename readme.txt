@@ -33,7 +33,7 @@ _FAQ____________________________________________________________________________
 Please see the online FAQ
 
 Link:
-  http://code.google.com/p/jeveassets/wiki/ReadMe
+  https://github.com/GoldenGnu/jeveassets/wiki/ReadMe
 
 ________________________________________________________________________________
 _CONTACT________________________________________________________________________
