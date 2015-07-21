@@ -109,36 +109,48 @@ public class MaterialsSeparatorTableCell extends SeparatorTableCell<Material> {
 	private void expandHeader() {
 		Material material = (Material) currentSeparator.first();
 		boolean expand = isHeaderCollapsed();
-		for (int i = 0; i < separatorList.size(); i++) {
-			Object object = separatorList.get(i);
-			if (object instanceof SeparatorList.Separator<?>) {
-				SeparatorList.Separator<?> separator = (SeparatorList.Separator<?>) object;
-				Material currentMaterial = (Material) separator.first();
-				if (currentMaterial.getHeader().equals(material.getHeader())) {
-					separatorList.getReadWriteLock().writeLock().lock();
-					try {
-						separator.setLimit(expand ? Integer.MAX_VALUE : 0);
-					} finally {
-						separatorList.getReadWriteLock().writeLock().unlock();
+		try {
+			separatorList.getReadWriteLock().readLock().lock();
+			for (int i = 0; i < separatorList.size(); i++) {
+				Object object = separatorList.get(i);
+				if (object instanceof SeparatorList.Separator<?>) {
+					SeparatorList.Separator<?> separator = (SeparatorList.Separator<?>) object;
+					Material currentMaterial = (Material) separator.first();
+					if (currentMaterial.getHeader().equals(material.getHeader())) {
+						try {
+							separatorList.getReadWriteLock().readLock().unlock();
+							separatorList.getReadWriteLock().writeLock().lock();
+							separator.setLimit(expand ? Integer.MAX_VALUE : 0);
+						} finally {
+							separatorList.getReadWriteLock().writeLock().unlock();
+							separatorList.getReadWriteLock().readLock().lock();
+						}
 					}
 				}
 			}
+		} finally {
+			separatorList.getReadWriteLock().readLock().unlock();
 		}
 	}
 
 	private boolean isHeaderCollapsed() {
 		Material material = (Material) currentSeparator.first();
-		for (int i = 0; i < separatorList.size(); i++) {
-			Object object = separatorList.get(i);
-			if (object instanceof SeparatorList.Separator<?>) {
-				SeparatorList.Separator<?> separator = (SeparatorList.Separator<?>) object;
-				Material currentMaterial = (Material) separator.first();
-				if (currentMaterial.getHeader().equals(material.getHeader())) {
-					if (separator.getLimit() != 0) {
-						return false;
+		try {
+			separatorList.getReadWriteLock().readLock().lock();
+			for (int i = 0; i < separatorList.size(); i++) {
+				Object object = separatorList.get(i);
+				if (object instanceof SeparatorList.Separator<?>) {
+					SeparatorList.Separator<?> separator = (SeparatorList.Separator<?>) object;
+					Material currentMaterial = (Material) separator.first();
+					if (currentMaterial.getHeader().equals(material.getHeader())) {
+						if (separator.getLimit() != 0) {
+							return false;
+						}
 					}
 				}
 			}
+		} finally {
+			separatorList.getReadWriteLock().readLock().unlock();
 		}
 		return true;
 	}

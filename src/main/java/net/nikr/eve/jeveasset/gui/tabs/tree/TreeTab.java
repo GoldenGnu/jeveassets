@@ -21,7 +21,6 @@
 
 package net.nikr.eve.jeveasset.gui.tabs.tree;
 
-import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.FilterList;
 import ca.odell.glazedlists.ListSelection;
@@ -67,6 +66,7 @@ import javax.swing.UIManager;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import net.nikr.eve.jeveasset.Program;
+import net.nikr.eve.jeveasset.data.EventListManager;
 import net.nikr.eve.jeveasset.data.MyLocation;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
@@ -75,7 +75,8 @@ import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
-import net.nikr.eve.jeveasset.gui.shared.menu.*;
+import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo;
+import net.nikr.eve.jeveasset.gui.shared.menu.MenuData;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.TableMenu;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
@@ -171,12 +172,18 @@ public class TreeTab extends JMainTab {
 		//Table Format
 		tableFormat = new EnumTableFormatAdaptor<TreeTableFormat, TreeAsset>(TreeTableFormat.class);
 		//Backend
-		eventList = new BasicEventList<TreeAsset>();
-		exportEventList = new BasicEventList<TreeAsset>();
+		eventList = new EventListManager<TreeAsset>().create();
+		exportEventList = new EventListManager<TreeAsset>().create();
 		//Sorting (per column)
-		sortedList = new SortedList<TreeAsset>(new BasicEventList<TreeAsset>());
+		
+		EventList<TreeAsset> myEventList = new EventListManager<TreeAsset>().create();
+		myEventList.getReadWriteLock().readLock().lock();
+		sortedList = new SortedList<TreeAsset>(myEventList);
+		myEventList.getReadWriteLock().readLock().unlock();
 		//Filter
+		eventList.getReadWriteLock().readLock().lock();
 		filterList = new FilterList<TreeAsset>(eventList);
+		eventList.getReadWriteLock().readLock().unlock();
 		filterList.addListEventListener(listener);
 		//Tree
 		expansionModel = new AssetTreeExpansionModel();
@@ -285,7 +292,7 @@ public class TreeTab extends JMainTab {
 		categoriesExport.clear();
 		Map<String, TreeAsset> categoryCache = new HashMap<String, TreeAsset>();
 		Map<String, TreeAsset> locationCache = new HashMap<String, TreeAsset>();
-		for (MyAsset asset : program.getAssetEventList()) {
+		for (MyAsset asset : program.getAssetList()) {
 		//LOCATION
 			List<TreeAsset> locationTree = new ArrayList<TreeAsset>();
 			MyLocation location = asset.getLocation();
@@ -408,24 +415,35 @@ public class TreeTab extends JMainTab {
 			for (TreeAsset treeAsset : categoriesExport) {
 				treeAsset.resetValues();
 			}
-			for (TreeAsset treeAsset : filterList) {
-				treeAsset.updateParents();
+			try {
+				filterList.getReadWriteLock().readLock().lock();
+				for (TreeAsset treeAsset : filterList) {
+					treeAsset.updateParents();
+				}
+			} finally {
+				filterList.getReadWriteLock().readLock().unlock();
 			}
+			
 		} else {
 			for (TreeAsset treeAsset : locationsExport) {
 				treeAsset.resetValues();
 			}
 			Set<TreeAsset> parentItems = new TreeSet<TreeAsset>(new AssetTreeComparator());
-			for (TreeAsset treeAsset : filterList) {
-				if (treeAsset.isItem()) {
-					treeAsset.updateParents();
-				}
-				//Add containers
-				for (TreeAsset treeParent : treeAsset.getTree()) {
-					if (treeParent.isItem()) {
-						parentItems.add(treeParent);
+			try {
+				filterList.getReadWriteLock().readLock().lock();
+				for (TreeAsset treeAsset : filterList) {
+					if (treeAsset.isItem()) {
+						treeAsset.updateParents();
+					}
+					//Add containers
+					for (TreeAsset treeParent : treeAsset.getTree()) {
+						if (treeParent.isItem()) {
+							parentItems.add(treeParent);
+						}
 					}
 				}
+			} finally {
+				filterList.getReadWriteLock().readLock().unlock();
 			}
 			//Update containers
 			for (TreeAsset treeAsset : parentItems) {

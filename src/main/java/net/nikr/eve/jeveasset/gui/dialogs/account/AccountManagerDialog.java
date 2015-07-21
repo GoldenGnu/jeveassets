@@ -21,7 +21,6 @@
 
 package net.nikr.eve.jeveasset.gui.dialogs.account;
 
-import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.ListSelection;
 import ca.odell.glazedlists.SeparatorList;
@@ -39,6 +38,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import net.nikr.eve.jeveasset.Program;
+import net.nikr.eve.jeveasset.data.EventListManager;
 import net.nikr.eve.jeveasset.data.MyAccount;
 import net.nikr.eve.jeveasset.data.Owner;
 import net.nikr.eve.jeveasset.gui.dialogs.account.AccountSeparatorTableCell.AccountCellAction;
@@ -87,9 +87,12 @@ public class AccountManagerDialog extends JDialogCentered {
 		accountImportDialog = new AccountImportDialog(this, program);
 		ListenerClass listener = new ListenerClass();
 
-		eventList = new BasicEventList<Owner>();
+		eventList = new EventListManager<Owner>().create();
 
+		eventList.getReadWriteLock().readLock().lock();
 		separatorList = new SeparatorList<Owner>(eventList, new SeparatorListComparator(), 1, 3);
+		eventList.getReadWriteLock().readLock().unlock();
+
 		EnumTableFormatAdaptor<AccountTableFormat, Owner> tableFormat = new EnumTableFormatAdaptor<AccountTableFormat, Owner>(AccountTableFormat.class);
 		tableModel = EventModels.createTableModel(separatorList, tableFormat);
 		jTable = new JAccountTable(program, tableModel, separatorList);
@@ -185,19 +188,22 @@ public class AccountManagerDialog extends JDialogCentered {
 
 	public void updateTable() {
 		//Update rows (Add all rows)
-		eventList.getReadWriteLock().writeLock().lock();
-		eventList.clear();
-		for (MyAccount account : program.getAccounts()) {
-			if (account.getOwners().isEmpty()) {
-				eventList.add(new Owner(account, DialoguesAccount.get().noOwners(), 0));
-			} else {
-				for (Owner owner : account.getOwners()) {
-					eventList.add(owner);
+		try {
+			eventList.getReadWriteLock().writeLock().lock();
+			eventList.clear();
+			for (MyAccount account : program.getAccounts()) {
+				if (account.getOwners().isEmpty()) {
+					eventList.add(new Owner(account, DialoguesAccount.get().noOwners(), 0));
+				} else {
+					for (Owner owner : account.getOwners()) {
+						eventList.add(owner);
+					}
 				}
 			}
+		} finally {
+			eventList.getReadWriteLock().writeLock().unlock();
 		}
-		eventList.getReadWriteLock().writeLock().unlock();
-		if (!eventList.isEmpty()) {
+		if (!EventListManager.isEmpty(eventList)) {
 			jTable.setRowSelectionInterval(1, 1);
 			jAssets.setEnabled(true);
 			jCollapse.setEnabled(true);

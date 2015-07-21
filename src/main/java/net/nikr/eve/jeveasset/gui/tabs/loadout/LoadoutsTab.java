@@ -21,7 +21,6 @@
 
 package net.nikr.eve.jeveasset.gui.tabs.loadout;
 
-import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.FilterList;
 import ca.odell.glazedlists.ListSelection;
@@ -52,6 +51,7 @@ import javax.swing.JToolBar;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import net.nikr.eve.jeveasset.Program;
+import net.nikr.eve.jeveasset.data.EventListManager;
 import net.nikr.eve.jeveasset.data.Item;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
@@ -194,9 +194,11 @@ public class LoadoutsTab extends JMainTab {
 		//Table Format
 		tableFormat = new EnumTableFormatAdaptor<LoadoutTableFormat, Loadout>(LoadoutTableFormat.class);
 		//Backend
-		eventList = new BasicEventList<Loadout>();
+		eventList = new EventListManager<Loadout>().create();
 		//Filter
+		eventList.getReadWriteLock().readLock().lock();
 		filterList = new FilterList<Loadout>(eventList);
+		eventList.getReadWriteLock().readLock().unlock();
 		//Separator
 		separatorList = new SeparatorList<Loadout>(filterList, new LoadoutSeparatorComparator(), 1, Integer.MAX_VALUE);
 		//Table Model
@@ -325,15 +327,15 @@ public class LoadoutsTab extends JMainTab {
 		if (!fitName.isEmpty()) {
 			String selectedShip = (String) jShips.getSelectedItem();
 			MyAsset exportAsset = null;
-			for (MyAsset asset : program.getAssetEventList()) {
-				String key = asset.getName() + " #" + asset.getItemID();
-				if (!selectedShip.equals(key)) {
-					continue;
-				} else {
-					exportAsset = asset;
-					break;
+			for (MyAsset asset : program.getAssetList()) {
+					String key = asset.getName() + " #" + asset.getItemID();
+					if (!selectedShip.equals(key)) {
+						continue;
+					} else {
+						exportAsset = asset;
+						break;
+					}
 				}
-			}
 			loadoutsExportDialog.setVisible(false);
 			if (exportAsset == null) {
 				return;
@@ -352,7 +354,7 @@ public class LoadoutsTab extends JMainTab {
 
 	private void updateTable() {
 		List<Loadout> ship = new ArrayList<Loadout>();
-		for (MyAsset asset : program.getAssetEventList()) {
+		for (MyAsset asset : program.getAssetList()) {
 			String key = asset.getName() + " #" + asset.getItemID();
 			if (!asset.getItem().getCategory().equals(SHIP_CATEGORY) || !asset.isSingleton()) {
 				continue;
@@ -437,7 +439,7 @@ public class LoadoutsTab extends JMainTab {
 			if (LoadoutsAction.OWNERS.name().equals(e.getActionCommand())) {
 				String owner = (String) jOwners.getSelectedItem();
 				List<String> charShips = new ArrayList<String>();
-				for (MyAsset asset : program.getAssetEventList()) {
+				for (MyAsset asset : program.getAssetList()) {
 					String key = asset.getName() + " #" + asset.getItemID();
 					if (!asset.getItem().getCategory().equals(SHIP_CATEGORY) || !asset.isSingleton()) {
 						continue;
@@ -486,7 +488,7 @@ public class LoadoutsTab extends JMainTab {
 			if (LoadoutsAction.EXPORT_LOADOUT_ALL.name().equals(e.getActionCommand())) {
 				String filename = browse();
 				List<MyAsset> ships = new ArrayList<MyAsset>();
-				for (MyAsset asset : program.getAssetEventList()) {
+				for (MyAsset asset : program.getAssetList()) {
 					if (!asset.getItem().getCategory().equals(SHIP_CATEGORY) || !asset.isSingleton()) {
 						continue;
 					}

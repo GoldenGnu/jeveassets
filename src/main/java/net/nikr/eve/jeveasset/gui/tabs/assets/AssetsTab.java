@@ -33,8 +33,13 @@ import ca.odell.glazedlists.swing.TableComparatorChooser;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import javax.swing.*;
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JScrollPane;
 import net.nikr.eve.jeveasset.Program;
+import net.nikr.eve.jeveasset.data.EventListManager;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
 import net.nikr.eve.jeveasset.gui.images.Images;
@@ -43,8 +48,9 @@ import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterLogicalMatcher;
-import net.nikr.eve.jeveasset.gui.shared.menu.*;
+import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuName.AssetMenuData;
+import net.nikr.eve.jeveasset.gui.shared.menu.MenuData;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.TableMenu;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
@@ -81,11 +87,17 @@ public class AssetsTab extends JMainTab {
 		//Table Format
 		tableFormat = new EnumTableFormatAdaptor<AssetTableFormat, MyAsset>(AssetTableFormat.class);
 		//Backend
-		eventList = program.getAssetEventList();
+		eventList = program.getProfileData().getAssetsEventList();
 		//Sorting (per column)
+		eventList.getReadWriteLock().readLock().lock();
 		SortedList<MyAsset> sortedList = new SortedList<MyAsset>(eventList);
+		eventList.getReadWriteLock().readLock().unlock();
+		
 		//Filter
+		eventList.getReadWriteLock().readLock().lock();
 		filterList = new FilterList<MyAsset>(sortedList);
+		eventList.getReadWriteLock().readLock().unlock();
+
 		filterList.addListEventListener(listener);
 		//Table Model
 		tableModel = EventModels.createTableModel(filterList, tableFormat);
@@ -100,6 +112,7 @@ public class AssetsTab extends JMainTab {
 		selectionModel = EventModels.createSelectionModel(filterList);
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
 		jTable.setSelectionModel(selectionModel);
+		
 		//Listeners
 		installTable(jTable, NAME);
 		//Scroll
@@ -208,10 +221,7 @@ public class AssetsTab extends JMainTab {
 	 * @return a list of the filtered assets.
 	 */
 	public List<MyAsset> getFilteredAssets() {
-		eventList.getReadWriteLock().writeLock().lock();
-		List<MyAsset> ret = new ArrayList<MyAsset>(filterList);
-		eventList.getReadWriteLock().writeLock().unlock();
-		return ret;
+		return EventListManager.safeList(filterList);
 	}
 
 	private class AssetTableMenu implements TableMenu<MyAsset> {

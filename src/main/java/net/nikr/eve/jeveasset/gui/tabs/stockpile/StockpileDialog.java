@@ -21,7 +21,6 @@
 
 package net.nikr.eve.jeveasset.gui.tabs.stockpile;
 
-import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.FilterList;
 import ca.odell.glazedlists.TextFilterator;
@@ -66,7 +65,13 @@ import javax.swing.ToolTipManager;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.data.*;
+import net.nikr.eve.jeveasset.data.EventListManager;
+import net.nikr.eve.jeveasset.data.ItemFlag;
+import net.nikr.eve.jeveasset.data.MyAccount;
+import net.nikr.eve.jeveasset.data.MyLocation;
+import net.nikr.eve.jeveasset.data.Owner;
+import net.nikr.eve.jeveasset.data.Settings;
+import net.nikr.eve.jeveasset.data.StaticData;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.CaseInsensitiveComparator;
 import net.nikr.eve.jeveasset.gui.shared.DocumentFactory;
@@ -74,6 +79,7 @@ import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
 import net.nikr.eve.jeveasset.gui.shared.components.JDoubleField;
 import net.nikr.eve.jeveasset.gui.shared.components.JDropDownButton;
+import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
 import net.nikr.eve.jeveasset.gui.tabs.assets.MyAsset;
 import net.nikr.eve.jeveasset.gui.tabs.jobs.MyIndustryJob;
 import net.nikr.eve.jeveasset.gui.tabs.orders.MyMarketOrder;
@@ -130,9 +136,9 @@ public class StockpileDialog extends JDialogCentered {
 		itemFlags = new ArrayList<ItemFlag>(StaticData.get().getItemFlags().values());
 		Collections.sort(itemFlags);
 		//Locations - not static
-		stations = new BasicEventList<MyLocation>();
-		systems = new BasicEventList<MyLocation>();
-		regions = new BasicEventList<MyLocation>();
+		stations = new EventListManager<MyLocation>().create();
+		systems = new EventListManager<MyLocation>().create();
+		regions = new EventListManager<MyLocation>().create();
 		//Owners - not static
 		owners = new ArrayList<Owner>();
 		//myLocations - not static
@@ -447,7 +453,7 @@ public class StockpileDialog extends JDialogCentered {
 		//Containers & MyLocations Loop
 		Set<String> containerSet = new HashSet<String>();
 		myLocations.clear();
-		for (MyAsset asset : program.getAssetEventList()) {
+		for (MyAsset asset : program.getAssetList()) {
 			if (!asset.getContainer().isEmpty()) {
 				containerSet.add(asset.getContainer());
 			}
@@ -455,12 +461,12 @@ public class StockpileDialog extends JDialogCentered {
 			myLocations.add(asset.getLocation().getSystem());
 			myLocations.add(asset.getLocation().getRegion());
 		}
-		for (MyIndustryJob industryJob : program.getIndustryJobsEventList()) {
+		for (MyIndustryJob industryJob : program.getIndustryJobsList()) {
 			myLocations.add(industryJob.getLocation().getLocation());
 			myLocations.add(industryJob.getLocation().getSystem());
 			myLocations.add(industryJob.getLocation().getRegion());
 		}
-		for (MyMarketOrder marketOrder : program.getMarketOrdersEventList()) {
+		for (MyMarketOrder marketOrder : program.getMarketOrdersList()) {
 			myLocations.add(marketOrder.getLocation().getLocation());
 			myLocations.add(marketOrder.getLocation().getSystem());
 			myLocations.add(marketOrder.getLocation().getRegion());
@@ -1090,25 +1096,46 @@ public class StockpileDialog extends JDialogCentered {
 				jLocationType.setIcon(Images.LOC_STATION.getIcon());
 				jLocationType.setToolTipText(TabsStockpile.get().station());
 				jPanel.setBorder(BorderFactory.createTitledBorder(TabsStockpile.get().station()));
-				filterList = new FilterList<MyLocation>(stations);
+				try {
+					stations.getReadWriteLock().readLock().lock();
+					filterList = new FilterList<MyLocation>(stations);
+				} finally {
+					stations.getReadWriteLock().readLock().unlock();
+				}
 				jStation.setSelected(true);
 			} else if (locationType == LocationType.SYSTEM) {
 				jLocationType.setIcon(Images.LOC_SYSTEM.getIcon());
 				jLocationType.setToolTipText(TabsStockpile.get().system());
 				jPanel.setBorder(BorderFactory.createTitledBorder(TabsStockpile.get().system()));
-				filterList = new FilterList<MyLocation>(systems);
+				try {
+					systems.getReadWriteLock().readLock().lock();
+					filterList = new FilterList<MyLocation>(systems);
+				} finally {
+					systems.getReadWriteLock().readLock().unlock();
+				}
 				jSystem.setSelected(true);
 			} else if (locationType == LocationType.REGION) {
 				jLocationType.setIcon(Images.LOC_REGION.getIcon());
 				jLocationType.setToolTipText(TabsStockpile.get().region());
 				jPanel.setBorder(BorderFactory.createTitledBorder(TabsStockpile.get().region()));
-				filterList = new FilterList<MyLocation>(regions);
+				try {
+					regions.getReadWriteLock().readLock().lock();
+					filterList = new FilterList<MyLocation>(regions);
+				} finally {
+					regions.getReadWriteLock().readLock().unlock();
+				}
 				jRegion.setSelected(true);
 			} else {
 				jLocationType.setIcon(Images.LOC_LOCATIONS.getIcon());
 				jLocationType.setToolTipText(TabsStockpile.get().universe());
 				jPanel.setBorder(BorderFactory.createTitledBorder(TabsStockpile.get().universe()));
-				filterList = new FilterList<MyLocation>(new BasicEventList<MyLocation>());
+				EventList<MyLocation> eventList = new EventListManager<MyLocation>().create();
+				try {
+					eventList.getReadWriteLock().readLock().lock();
+					filterList = new FilterList<MyLocation>(eventList);
+				} finally {
+					eventList.getReadWriteLock().readLock().unlock();
+				}
 				jUniverse.setSelected(true);
 			}
 			if (autoComplete != null) { //Remove old
@@ -1118,7 +1145,7 @@ public class StockpileDialog extends JDialogCentered {
 			}
 			if (locationType != LocationType.UNIVERSE) {
 				jLocation.setEnabled(true);
-				autoComplete = AutoCompleteSupport.install(jLocation, filterList, new LocationsFilterator());
+				autoComplete = AutoCompleteSupport.install(jLocation, EventModels.createSwingThreadProxyList(filterList), new LocationsFilterator());
 				autoComplete.setStrict(true);
 				autoComplete.setCorrectsCase(true);
 				jLocation.addItemListener(listener); //Must be added after AutoCompleteSupport
@@ -1221,7 +1248,7 @@ public class StockpileDialog extends JDialogCentered {
 			} else {
 				filterList.setMatcher(null);
 			}
-			if (filterList.contains(location)) {
+			if (EventListManager.contains(filterList, location)) {
 				jLocation.setSelectedItem(location);
 			} else {
 				jLocation.setSelectedIndex(0);

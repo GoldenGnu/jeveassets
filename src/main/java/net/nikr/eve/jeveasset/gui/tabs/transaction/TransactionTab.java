@@ -82,11 +82,15 @@ public class TransactionTab extends JMainTab {
 		//Table Format
 		tableFormat = new EnumTableFormatAdaptor<TransactionTableFormat, MyTransaction>(TransactionTableFormat.class);
 		//Backend
-		eventList = program.getTransactionsEventList();
+		eventList = program.getProfileData().getTransactionsEventList();
 		//Sorting (per column)
+		eventList.getReadWriteLock().readLock().lock();
 		SortedList<MyTransaction> sortedList = new SortedList<MyTransaction>(eventList);
+		eventList.getReadWriteLock().readLock().unlock();
 		//Filter
+		eventList.getReadWriteLock().readLock().lock();
 		filterList = new FilterList<MyTransaction>(sortedList);
+		eventList.getReadWriteLock().readLock().unlock();
 		filterList.addListEventListener(listener);
 		//Table Model
 		tableModel = EventModels.createTableModel(filterList, tableFormat);

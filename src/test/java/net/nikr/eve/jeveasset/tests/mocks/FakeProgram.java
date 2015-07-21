@@ -21,12 +21,12 @@
 
 package net.nikr.eve.jeveasset.tests.mocks;
 
-import ca.odell.glazedlists.EventList;
 import java.awt.event.ActionEvent;
 import java.util.List;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.MyAccount;
 import net.nikr.eve.jeveasset.data.MyAccountBalance;
+import net.nikr.eve.jeveasset.data.ProfileData;
 import net.nikr.eve.jeveasset.data.ProfileManager;
 import net.nikr.eve.jeveasset.gui.dialogs.settings.UserNameSettingsPanel;
 import net.nikr.eve.jeveasset.gui.dialogs.settings.UserPriceSettingsPanel;
@@ -36,9 +36,7 @@ import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
 import net.nikr.eve.jeveasset.gui.tabs.assets.AssetsTab;
 import net.nikr.eve.jeveasset.gui.tabs.assets.MyAsset;
 import net.nikr.eve.jeveasset.gui.tabs.contracts.MyContract;
-import net.nikr.eve.jeveasset.gui.tabs.contracts.MyContractItem;
 import net.nikr.eve.jeveasset.gui.tabs.jobs.MyIndustryJob;
-import net.nikr.eve.jeveasset.gui.tabs.journal.MyJournal;
 import net.nikr.eve.jeveasset.gui.tabs.orders.MyMarketOrder;
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewTab;
 import net.nikr.eve.jeveasset.gui.tabs.reprocessed.ReprocessedTab;
@@ -71,12 +69,6 @@ public abstract class FakeProgram extends Program {
 	public void exit() {
 		throw new UnsupportedOperationException("Not implemented");
 	}
-
-	@Override
-	public EventList<MyAsset> getAssetEventList() {
-		throw new UnsupportedOperationException("Not implemented");
-	}
-
 
 	@Override
 	public MainWindow getMainWindow() {
@@ -159,17 +151,12 @@ public abstract class FakeProgram extends Program {
 	}
 
 	@Override
-	public EventList<MyContractItem> getContractItemEventList() {
+	public List<MyIndustryJob> getIndustryJobsList() {
 		throw new UnsupportedOperationException("Not implemented");
 	}
 
 	@Override
-	public EventList<MyIndustryJob> getIndustryJobsEventList() {
-		throw new UnsupportedOperationException("Not implemented");
-	}
-
-	@Override
-	public EventList<MyMarketOrder> getMarketOrdersEventList() {
+	public List<MyMarketOrder> getMarketOrdersList() {
 		throw new UnsupportedOperationException("Not implemented");
 	}
 
@@ -194,22 +181,17 @@ public abstract class FakeProgram extends Program {
 	}
 
 	@Override
-	public EventList<MyAccountBalance> getAccountBalanceEventList() {
+	public List<MyAccountBalance> getAccountBalanceList() {
 		throw new UnsupportedOperationException("Not implemented");
 	}
 
 	@Override
-	public EventList<MyTransaction> getTransactionsEventList() {
+	public List<MyTransaction> getTransactionsList() {
 		throw new UnsupportedOperationException("Not implemented");
 	}
 
 	@Override
 	public RoutingTab getRoutingTab() {
-		throw new UnsupportedOperationException("Not implemented");
-	}
-
-	@Override
-	public EventList<MyJournal> getJournalEventList() {
 		throw new UnsupportedOperationException("Not implemented");
 	}
 
@@ -234,7 +216,17 @@ public abstract class FakeProgram extends Program {
 	}
 
 	@Override
-	public EventList<MyContract> getContractEventList() {
+	public List<MyContract> getContractList() {
+		throw new UnsupportedOperationException("Not implemented");
+	}
+
+	@Override
+	public List<MyAsset> getAssetList() {
+		throw new UnsupportedOperationException("Not implemented");
+	}
+
+	@Override
+	public ProfileData getProfileData() {
 		throw new UnsupportedOperationException("Not implemented");
 	}
 }

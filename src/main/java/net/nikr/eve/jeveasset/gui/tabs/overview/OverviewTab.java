@@ -21,9 +21,7 @@
 
 package net.nikr.eve.jeveasset.gui.tabs.overview;
 
-import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.EventList;
-import ca.odell.glazedlists.GlazedLists;
 import ca.odell.glazedlists.ListSelection;
 import ca.odell.glazedlists.SortedList;
 import ca.odell.glazedlists.swing.DefaultEventSelectionModel;
@@ -55,6 +53,7 @@ import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 import javax.swing.SwingConstants;
 import net.nikr.eve.jeveasset.Program;
+import net.nikr.eve.jeveasset.data.EventListManager;
 import net.nikr.eve.jeveasset.data.MyLocation;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
@@ -77,9 +76,9 @@ import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.TableMenu;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
-import net.nikr.eve.jeveasset.gui.tabs.assets.MyAsset;
 import net.nikr.eve.jeveasset.gui.tabs.assets.AssetTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.assets.AssetsTab;
+import net.nikr.eve.jeveasset.gui.tabs.assets.MyAsset;
 import net.nikr.eve.jeveasset.i18n.General;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 import net.nikr.eve.jeveasset.i18n.TabsOverview;
@@ -194,9 +193,11 @@ public class OverviewTab extends JMainTab {
 		//Table Format
 		tableFormat = new EnumTableFormatAdaptor<OverviewTableFormat, Overview>(OverviewTableFormat.class);
 		//Backend
-		eventList = new BasicEventList<Overview>();
+		eventList = new EventListManager<Overview>().create();
 		//Sorting (per column)
+		eventList.getReadWriteLock().readLock().lock();
 		sortedList = new SortedList<Overview>(eventList);
+		eventList.getReadWriteLock().readLock().unlock();
 		//Table Model
 		tableModel = EventModels.createTableModel(sortedList, tableFormat);
 		//Table
@@ -326,11 +327,16 @@ public class OverviewTab extends JMainTab {
 		long totalCount = 0;
 		double totalVolume = 0;
 		double totalReprocessed = 0;
-		for (InfoItem infoItem : eventList) {
-			totalValue = totalValue + infoItem.getValue();
-			totalCount = totalCount + infoItem.getCount();
-			totalVolume = totalVolume + infoItem.getVolumeTotal();
-			totalReprocessed = totalReprocessed + infoItem.getValueReprocessed();
+		try {
+			eventList.getReadWriteLock().readLock().lock();
+			for (InfoItem infoItem : eventList) {
+				totalValue = totalValue + infoItem.getValue();
+				totalCount = totalCount + infoItem.getCount();
+				totalVolume = totalVolume + infoItem.getVolumeTotal();
+				totalReprocessed = totalReprocessed + infoItem.getValueReprocessed();
+			}
+		} finally {
+			eventList.getReadWriteLock().readLock().unlock();
 		}
 		if (totalCount > 0 && totalValue > 0) {
 			averageValue = totalValue / totalCount;
@@ -515,7 +521,7 @@ public class OverviewTab extends JMainTab {
 		updateStatusbar();
 		program.overviewGroupsChanged();
 
-		jShowing.setText(TabsOverview.get().filterShowing(rowCount, program.getAssetEventList().size(), program.getAssetsTab().getCurrentFilterName()));
+		jShowing.setText(TabsOverview.get().filterShowing(rowCount, EventListManager.size(program.getProfileData().getAssetsEventList()), program.getAssetsTab().getCurrentFilterName()));
 		afterUpdateData();
 	}
 
@@ -590,14 +596,16 @@ public class OverviewTab extends JMainTab {
 		@Override
 		public void actionPerformed(final ActionEvent e) {
 			if (OverviewAction.UPDATE_LIST.name().equals(e.getActionCommand())) {
+				//XXX - set default comparator or we can get IndexOutOfBoundsException
+				/*
 				if (e.getSource().equals(jStations)
 						|| e.getSource().equals(jSystems)
 						|| e.getSource().equals(jRegions)
 						|| e.getSource().equals(jGroups)
 						) {
-					//XXX - set default comparator or we can get IndexOutOfBoundsException
 					sortedList.setComparator(GlazedLists.comparableComparator());
 				}
+				*/
 				updateTable();
 			}
 			//Filter

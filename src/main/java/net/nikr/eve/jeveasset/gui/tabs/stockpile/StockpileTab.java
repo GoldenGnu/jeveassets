@@ -21,7 +21,6 @@
 
 package net.nikr.eve.jeveasset.gui.tabs.stockpile;
 
-import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.FilterList;
 import ca.odell.glazedlists.GlazedLists;
@@ -208,13 +207,19 @@ public class StockpileTab extends JMainTab {
 		tableFormat = new EnumTableFormatAdaptor<StockpileTableFormat, StockpileItem>(StockpileTableFormat.class);
 		tableFormat.addListener(listener);
 		//Backend
-		eventList = new BasicEventList<StockpileItem>();
+		eventList = new EventListManager<StockpileItem>().create();
 		//Sorting (per column)
+		eventList.getReadWriteLock().readLock().lock();
 		SortedList<StockpileItem> sortedListColumn = new SortedList<StockpileItem>(eventList);
+		eventList.getReadWriteLock().readLock().unlock();
 		//Sorting Total (Ensure that total is always last)
+		eventList.getReadWriteLock().readLock().lock();
 		SortedList<StockpileItem> sortedListTotal = new SortedList<StockpileItem>(sortedListColumn, new TotalComparator());
+		eventList.getReadWriteLock().readLock().unlock();
 		//Filter
+		eventList.getReadWriteLock().readLock().lock();
 		filterList = new FilterList<StockpileItem>(sortedListTotal);
+		eventList.getReadWriteLock().readLock().unlock();
 		filterList.addListEventListener(listener);
 		//Separator
 		separatorList = new SeparatorList<StockpileItem>(filterList, new StockpileSeparatorComparator(), 1, Integer.MAX_VALUE);
@@ -356,18 +361,23 @@ public class StockpileTab extends JMainTab {
 	}
 
 	private SeparatorList.Separator<?> getSeparator(final Stockpile stockpile) {
-		for (int i = 0; i < separatorList.size(); i++) {
-			Object object = separatorList.get(i);
-			if (object instanceof SeparatorList.Separator) {
-				SeparatorList.Separator<?> separator = (SeparatorList.Separator) object;
-				Object first = separator.first();
-				if (first instanceof StockpileItem) {
-					StockpileItem firstItem = (StockpileItem) first;
-					if (firstItem.getStockpile().equals(stockpile)) {
-						return separator;
+		try {
+			separatorList.getReadWriteLock().readLock().lock();
+			for (int i = 0; i < separatorList.size(); i++) {
+				Object object = separatorList.get(i);
+				if (object instanceof SeparatorList.Separator) {
+					SeparatorList.Separator<?> separator = (SeparatorList.Separator) object;
+					Object first = separator.first();
+					if (first instanceof StockpileItem) {
+						StockpileItem firstItem = (StockpileItem) first;
+						if (firstItem.getStockpile().equals(stockpile)) {
+							return separator;
+						}
 					}
 				}
 			}
+		} finally {
+			separatorList.getReadWriteLock().readLock().unlock();
 		}
 		return null;
 	}
@@ -378,13 +388,13 @@ public class StockpileTab extends JMainTab {
 			return;
 		}
 		if (separator.getLimit() > 0) { //Expanded: Scroll
-			int row = separatorList.indexOf(separator.first()) - 1;
+			int row = EventListManager.indexOf(separatorList, separator.first()) - 1;
 			Rectangle rect = jTable.getCellRect(row, 0, true);
 			rect.setSize(jTable.getVisibleRect().getSize());
 			jTable.scrollRectToVisible(rect);
 		} else { //Collapsed: Expand and run again...
-			separatorList.getReadWriteLock().writeLock().lock();
 			try {
+				separatorList.getReadWriteLock().writeLock().lock();
 				separator.setLimit(Integer.MAX_VALUE);
 			} finally {
 				separatorList.getReadWriteLock().writeLock().unlock();
@@ -493,7 +503,7 @@ public class StockpileTab extends JMainTab {
 				item.updateValues(price, volume);
 				//Inventory AKA Assets
 				if (stockpile.isAssets()) {
-					for (MyAsset asset : program.getAssetEventList()) {
+					for (MyAsset asset : program.getAssetList()) {
 						if (asset.getItem().getTypeID() != TYPE_ID) {
 							continue; //Ignore wrong typeID
 						}
@@ -516,7 +526,7 @@ public class StockpileTab extends JMainTab {
 				}
 				//Market Orders
 				if (stockpile.isBuyOrders() || stockpile.isSellOrders()) {
-					for (MyMarketOrder marketOrder : program.getMarketOrdersEventList()) {
+					for (MyMarketOrder marketOrder : program.getMarketOrdersList()) {
 						if (marketOrder.getTypeID() != TYPE_ID) {
 							continue; //Ignore wrong typeID
 						}
@@ -525,7 +535,7 @@ public class StockpileTab extends JMainTab {
 				}
 				//Industry Job
 				if (stockpile.isJobs()) {
-					for (MyIndustryJob industryJob : program.getIndustryJobsEventList()) {
+					for (MyIndustryJob industryJob : program.getIndustryJobsList()) {
 						if (industryJob.getProductTypeID() != TYPE_ID) {
 							continue; //Ignore wrong typeID
 						}
@@ -534,7 +544,7 @@ public class StockpileTab extends JMainTab {
 				}
 				//Transactions
 				if (stockpile.isTransactions()) {
-					for (MyTransaction transaction : program.getTransactionsEventList()) {
+					for (MyTransaction transaction : program.getTransactionsList()) {
 						if (transaction.getTypeID() != TYPE_ID) {
 							continue; //Ignore wrong typeID
 						}

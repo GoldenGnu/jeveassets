@@ -21,7 +21,6 @@
 
 package net.nikr.eve.jeveasset.gui.dialogs.settings;
 
-import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.SortedList;
 import ca.odell.glazedlists.TextFilterator;
@@ -32,8 +31,16 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.util.Collections;
 import java.util.List;
-import javax.swing.*;
+import javax.swing.ButtonGroup;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.GroupLayout;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JRadioButton;
+import javax.swing.JTextArea;
 import net.nikr.eve.jeveasset.Program;
+import net.nikr.eve.jeveasset.data.EventListManager;
 import net.nikr.eve.jeveasset.data.MyLocation;
 import net.nikr.eve.jeveasset.data.PriceDataSettings;
 import net.nikr.eve.jeveasset.data.PriceDataSettings.PriceMode;
@@ -42,6 +49,7 @@ import net.nikr.eve.jeveasset.data.PriceDataSettings.RegionType;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.data.StaticData;
 import net.nikr.eve.jeveasset.gui.images.Images;
+import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
 import net.nikr.eve.jeveasset.i18n.DialoguesSettings;
 import uk.me.candle.eve.pricing.options.LocationType;
 
@@ -52,48 +60,61 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 		SOURCE_SELECTED, LOCATION_SELECTED
 	}
 
-	private JRadioButton jRadioRegions;
-	private JRadioButton jRadioSystems;
-	private JRadioButton jRadioStations;
-	private JCheckBox jBlueprintsTech1;
-	private JCheckBox jBlueprintsTech2;
-	private JComboBox jRegions;
-	private JComboBox jSystems;
-	private JComboBox jStations;
-	private JComboBox jPriceType;
-	private JComboBox jPriceReprocessedType;
-	private JComboBox jSource;
+	private final JRadioButton jRadioRegions;
+	private final JRadioButton jRadioSystems;
+	private final JRadioButton jRadioStations;
+	private final JCheckBox jBlueprintsTech1;
+	private final JCheckBox jBlueprintsTech2;
+	private final JComboBox jRegions;
+	private final JComboBox jSystems;
+	private final JComboBox jStations;
+	private final JComboBox jPriceType;
+	private final JComboBox jPriceReprocessedType;
+	private final JComboBox jSource;
 
-	private EventList<RegionType> regions = new BasicEventList<RegionType>();
-	private AutoCompleteSupport<RegionType> regionsAutoComplete;
-	private AutoCompleteSupport<MyLocation> systemsAutoComplete;
-	private AutoCompleteSupport<MyLocation> stationsAutoComplete;
+	private final EventList<RegionType> regions = new EventListManager<RegionType>().create();
+	
+	private final AutoCompleteSupport<RegionType> regionsAutoComplete;
+	private final AutoCompleteSupport<MyLocation> systemsAutoComplete;
+	private final AutoCompleteSupport<MyLocation> stationsAutoComplete;
 
 	public PriceDataSettingsPanel(final Program program, final SettingsDialog optionsDialog) {
 		super(program, optionsDialog, DialoguesSettings.get().priceData(), Images.SETTINGS_PRICE_DATA.getIcon());
 
 		ListenerClass listener = new ListenerClass();
 
-		EventList<MyLocation> systemsEventList = new BasicEventList<MyLocation>();
-		EventList<MyLocation> stationsEventList = new BasicEventList<MyLocation>();
 		String system = "";
 		String station = "";
-		for (MyLocation location : StaticData.get().getLocations().values()) {
-			if (location.isStation()) {
-				stationsEventList.add(location);
-				if (station.length() < location.getLocation().length()) {
-					station = location.getLocation();
+		EventList<MyLocation> systemsEventList = new EventListManager<MyLocation>().create();
+		EventList<MyLocation> stationsEventList = new EventListManager<MyLocation>().create();
+		try {
+			systemsEventList.getReadWriteLock().writeLock().lock();
+			stationsEventList.getReadWriteLock().writeLock().lock();
+			for (MyLocation location : StaticData.get().getLocations().values()) {
+				if (location.isStation()) {
+					stationsEventList.add(location);
+					if (station.length() < location.getLocation().length()) {
+						station = location.getLocation();
+					}
+				}
+				if (location.isSystem()) {
+					systemsEventList.add(location);
+					if (system.length() < location.getLocation().length()) {
+						system = location.getLocation();
+					}
 				}
 			}
-			if (location.isSystem()) {
-				systemsEventList.add(location);
-				if (system.length() < location.getLocation().length()) {
-					system = location.getLocation();
-				}
-			}
+		} finally {
+			systemsEventList.getReadWriteLock().writeLock().unlock();
+			stationsEventList.getReadWriteLock().writeLock().unlock();
 		}
+		systemsEventList.getReadWriteLock().readLock().lock();
 		SortedList<MyLocation> systemsSortedList = new SortedList<MyLocation>(systemsEventList);
+		systemsEventList.getReadWriteLock().readLock().unlock();
+
+		stationsEventList.getReadWriteLock().readLock().lock();
 		SortedList<MyLocation> stationsSortedList = new SortedList<MyLocation>(stationsEventList);
+		stationsEventList.getReadWriteLock().readLock().unlock();
 
 		ButtonGroup group = new ButtonGroup();
 
@@ -115,22 +136,26 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 		JLabel jRegionsLabel = new JLabel(DialoguesSettings.get().includeRegions());
 		jRegions = new JComboBox();
 		jRegions.getEditor().getEditorComponent().addFocusListener(listener);
-		regionsAutoComplete = AutoCompleteSupport.install(jRegions, regions, new RegionTypeFilterator());
+		regionsAutoComplete = AutoCompleteSupport.install(jRegions, EventModels.createSwingThreadProxyList(regions), new RegionTypeFilterator());
 		regionsAutoComplete.setStrict(true);
 
 		JLabel jSystemsLabel = new JLabel(DialoguesSettings.get().includeSystems());
 		jSystems = new JComboBox();
 		jSystems.setPrototypeDisplayValue(system);
 		jSystems.getEditor().getEditorComponent().addFocusListener(listener);
-		systemsAutoComplete = AutoCompleteSupport.install(jSystems, systemsSortedList, new LocationsFilterator());
+		systemsAutoComplete = AutoCompleteSupport.install(jSystems, EventModels.createSwingThreadProxyList(systemsSortedList), new LocationsFilterator());
+		systemsEventList.getReadWriteLock().readLock().lock();
 		systemsAutoComplete.setStrict(true);
+		systemsEventList.getReadWriteLock().readLock().unlock();
 
 		JLabel jStationsLabel = new JLabel(DialoguesSettings.get().includeStations());
 		jStations = new JComboBox();
 		jStations.setPrototypeDisplayValue(station);
 		jStations.getEditor().getEditorComponent().addFocusListener(listener);
-		stationsAutoComplete = AutoCompleteSupport.install(jStations, stationsSortedList, new LocationsFilterator());
+		stationsAutoComplete = AutoCompleteSupport.install(jStations, EventModels.createSwingThreadProxyList(stationsSortedList), new LocationsFilterator());
+		stationsEventList.getReadWriteLock().readLock().lock();
 		stationsAutoComplete.setStrict(true);
+		stationsEventList.getReadWriteLock().readLock().unlock();
 
 		JLabel jPriceTypeLabel = new JLabel(DialoguesSettings.get().price());
 		jPriceType = new JComboBox(PriceMode.values());
@@ -345,12 +370,12 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 			jRadioRegions.setEnabled(false);
 			regionsAutoComplete.setFirstItem(RegionType.NOT_CONFIGURABLE);
 		}
-		jRegions.setSelectedIndex(0);
+			jRegions.setSelectedIndex(0);
 		if (locationType == LocationType.REGION && jRadioRegions.isEnabled()) {
 			if (!locations.isEmpty()) {
 				for (RegionType regionType : regionTypes) {
 					if (regionType.getRegions().equals(locations)) {
-						jRegions.setSelectedItem(regionType);
+							jRegions.setSelectedItem(regionType);
 						break;
 					}
 				}
@@ -369,12 +394,12 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 		}
 		if (locationType == LocationType.SYSTEM && jRadioSystems.isEnabled()) {
 			if (!locations.isEmpty()) {
-				jSystems.setSelectedItem(StaticData.get().getLocations().get(locations.get(0)));
-			}
+					jSystems.setSelectedItem(StaticData.get().getLocations().get(locations.get(0)));
+				}
 			jRadioSystems.setSelected(true);
 		} else {
-			jSystems.setSelectedIndex(0);
-		}
+				jSystems.setSelectedIndex(0);
+			}
 	//STATION
 		if (source.supportsStation()) {
 			stationsAutoComplete.removeFirstItem();
@@ -387,13 +412,13 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 		}
 		if (locationType == LocationType.STATION && jRadioStations.isEnabled()) {
 			if (!locations.isEmpty()) {
-				jStations.setSelectedItem(StaticData.get().getLocations().get(locations.get(0)));
-			}
+					jStations.setSelectedItem(StaticData.get().getLocations().get(locations.get(0)));
+				}
 			jRadioStations.setSelected(true);
 		} else {
-			jStations.setSelectedIndex(0);
+				jStations.setSelectedIndex(0);
+			}
 		}
-	}
 
 	private class ListenerClass implements ActionListener, FocusListener {
 

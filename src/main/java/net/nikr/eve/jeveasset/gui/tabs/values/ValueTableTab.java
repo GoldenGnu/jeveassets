@@ -21,7 +21,6 @@
 
 package net.nikr.eve.jeveasset.gui.tabs.values;
 
-import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.FilterList;
 import ca.odell.glazedlists.ListSelection;
@@ -41,9 +40,8 @@ import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JScrollPane;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.data.MyAccount;
+import net.nikr.eve.jeveasset.data.EventListManager;
 import net.nikr.eve.jeveasset.data.MyAccountBalance;
-import net.nikr.eve.jeveasset.data.Owner;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
@@ -85,13 +83,19 @@ public class ValueTableTab extends JMainTab {
 		//Table Format
 		tableFormat = new EnumTableFormatAdaptor<ValueTableFormat, Value>(ValueTableFormat.class);
 		//Backend
-		eventList = new BasicEventList<Value>();
+		eventList = new EventListManager<Value>().create();
 		//Sorting (per column)
+		eventList.getReadWriteLock().readLock().lock();
 		SortedList<Value> columnSortedList = new SortedList<Value>(eventList);
+		eventList.getReadWriteLock().readLock().unlock();
 		//Sorting Total
+		eventList.getReadWriteLock().readLock().lock();
 		SortedList<Value> totalSortedList = new SortedList<Value>(columnSortedList, new TotalComparator());
+		eventList.getReadWriteLock().readLock().unlock();
 		//Filter
+		eventList.getReadWriteLock().readLock().lock();
 		filterList = new FilterList<Value>(totalSortedList);
+		eventList.getReadWriteLock().readLock().unlock();
 		//Table Model
 		tableModel = EventModels.createTableModel(filterList, tableFormat);
 		//Table
@@ -148,7 +152,7 @@ public class ValueTableTab extends JMainTab {
 		Map<String, Value> values = new HashMap<String, Value>();
 		Value total = new Value(TabsValues.get().grandTotal(), date);
 		values.put(total.getName(), total);
-		for (MyAsset asset : program.getAssetEventList()) {
+		for (MyAsset asset : program.getAssetList()) {
 			//Skip market orders
 			if (asset.getFlag().equals(General.get().marketOrderSellFlag())) {
 				continue; //Ignore market sell orders
@@ -168,13 +172,13 @@ public class ValueTableTab extends JMainTab {
 			total.addAssets(asset);
 		}
 		//Account Balance
-		for (MyAccountBalance accountBalance : program.getAccountBalanceEventList()) {
+		for (MyAccountBalance accountBalance : program.getAccountBalanceList()) {
 			Value value = getValue(values, accountBalance.getOwner(), date);
 			value.addBalance(accountBalance.getBalance());
 			total.addBalance(accountBalance.getBalance());
 		}
 		//Market Orders
-		for (MyMarketOrder marketOrder : program.getMarketOrdersEventList()) {
+		for (MyMarketOrder marketOrder : program.getMarketOrdersList()) {
 			Value value = getValue(values, marketOrder.getOwner(), date);
 			if (marketOrder.getOrderState() == 0) {
 				if (marketOrder.getBid() < 1) { //Sell Orders
@@ -189,7 +193,7 @@ public class ValueTableTab extends JMainTab {
 			}
 		}
 		//Industrys Job: Manufacturing
-		for (MyIndustryJob industryJob : program.getIndustryJobsEventList()) {
+		for (MyIndustryJob industryJob : program.getIndustryJobsList()) {
 			Value value = getValue(values, industryJob.getOwner(), date);
 			//Manufacturing and not completed
 			if (industryJob.isManufacturing() && !industryJob.isDelivered()) {
@@ -199,7 +203,7 @@ public class ValueTableTab extends JMainTab {
 			}
 		}
 		//Contract Collateral
-		for (MyContract contract : program.getContractEventList()) {
+		for (MyContract contract : program.getContractList()) {
 			if (contract.isCourier()) {
 				//Transporting cargo (will get collateral back)
 				if (program.getOwners(false).contains(contract.getAcceptor()) && contract.getStatus() == ContractStatus.INPROGRESS) {

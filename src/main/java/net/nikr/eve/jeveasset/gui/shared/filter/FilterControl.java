@@ -38,6 +38,7 @@ import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JPanel;
 import javax.swing.JTable;
+import net.nikr.eve.jeveasset.data.EventListManager;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter.AllColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.NumberValue;
@@ -173,7 +174,7 @@ public abstract class FilterControl<E> extends ExportFilterControl<E> {
 	int getTotalSize() {
 		int totalSize = 0;
 		for (EventList<E> eventList : eventLists) {
-			totalSize = totalSize + eventList.size();
+			totalSize = totalSize + EventListManager.size(eventList);
 		}
 		return totalSize;
 	}

@@ -41,6 +41,7 @@ import javax.swing.JPanel;
 import javax.swing.JToolBar;
 import javax.swing.SwingConstants;
 import net.nikr.eve.jeveasset.Program;
+import net.nikr.eve.jeveasset.data.EventListManager;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.CaseInsensitiveComparator;
@@ -176,7 +177,7 @@ class FilterGui<E> {
 	void updateShowing() {
 		int showing = 0;
 		for (FilterList<E> filterList : filterControl.getFilterLists()) {
-			showing = showing + filterList.size();
+			showing = showing + EventListManager.size(filterList);
 		}
 		jShowing.setText(GuiShared.get().filterShowing(showing, filterControl.getTotalSize(), getCurrentFilterName()));
 	}

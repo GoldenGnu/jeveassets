@@ -729,29 +729,44 @@ public class ExportDialog<E> extends JDialogCentered {
 	//Filters
 		if (jNoFilter.isSelected()) {
 			for (EventList<E> eventList : eventLists) {
-				items.addAll(eventList);
+				try {
+					eventList.getReadWriteLock().readLock().lock();
+					items.addAll(eventList);
+				} finally {
+					eventList.getReadWriteLock().readLock().unlock();
+				}
 			}
 		} else if (jCurrentFilter.isSelected()) {
 			List<Filter> filter = exportFilterControl.getCurrentFilters();
 			for (EventList<E> eventList : eventLists) {
-				FilterList<E> filterList = new FilterList<E>(eventList, new FilterLogicalMatcher<E>(filterControl, filter));
-				if (!filterList.isEmpty() && filterList.get(0) instanceof TreeAsset) {
-					FilterList<E> treeFilterList = new FilterList<E>(eventList, new TreeMatcher<E>(filterList));
-					items.addAll(treeFilterList);
-				} else {
-					items.addAll(filterList);
+				try {
+					eventList.getReadWriteLock().readLock().lock();
+					FilterList<E> filterList = new FilterList<E>(eventList, new FilterLogicalMatcher<E>(filterControl, filter));
+					if (!filterList.isEmpty() && filterList.get(0) instanceof TreeAsset) {
+						FilterList<E> treeFilterList = new FilterList<E>(eventList, new TreeMatcher<E>(filterList));
+						items.addAll(treeFilterList);
+					} else {
+						items.addAll(filterList);
+					}
+				} finally {
+					eventList.getReadWriteLock().readLock().unlock();
 				}
 			}
 		} else if (jSavedFilter.isSelected()) {
 			String filterName = (String) jFilters.getSelectedItem();
 			List<Filter> filter = exportFilterControl.getAllFilters().get(filterName);
 			for (EventList<E> eventList : eventLists) {
-				FilterList<E> filterList = new FilterList<E>(eventList, new FilterLogicalMatcher<E>(filterControl, filter));
-				if (!filterList.isEmpty() && filterList.get(0) instanceof TreeAsset) {
-					FilterList<E> treeFilterList = new FilterList<E>(eventList, new TreeMatcher<E>(filterList));
-					items.addAll(treeFilterList);
-				} else {
-					items.addAll(filterList);
+				try {
+					eventList.getReadWriteLock().readLock().lock();
+					FilterList<E> filterList = new FilterList<E>(eventList, new FilterLogicalMatcher<E>(filterControl, filter));
+					if (!filterList.isEmpty() && filterList.get(0) instanceof TreeAsset) {
+						FilterList<E> treeFilterList = new FilterList<E>(eventList, new TreeMatcher<E>(filterList));
+						items.addAll(treeFilterList);
+					} else {
+						items.addAll(filterList);
+					}
+				} finally {
+					eventList.getReadWriteLock().readLock().unlock();
 				}
 			}
 		}

@@ -21,7 +21,6 @@
 
 package net.nikr.eve.jeveasset.gui.shared.filter;
 
-import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.TextFilterator;
 import ca.odell.glazedlists.swing.AutoCompleteSupport;
@@ -42,9 +41,11 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.text.JTextComponent;
 import net.nikr.eve.jeveasset.Program;
+import net.nikr.eve.jeveasset.data.EventListManager;
 import net.nikr.eve.jeveasset.gui.shared.CaseInsensitiveComparator;
 import net.nikr.eve.jeveasset.gui.shared.components.JCopyPopup;
 import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
+import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 
 public class FilterSave extends JDialogCentered {
@@ -69,8 +70,8 @@ public class FilterSave extends JDialogCentered {
 
 		jName = new JComboBox();
 		JCopyPopup.install((JTextComponent) jName.getEditor().getEditorComponent());
-		filters = new BasicEventList<String>();
-		AutoCompleteSupport.install(jName, filters, new Filterator());
+		filters = new EventListManager<String>().create();
+		AutoCompleteSupport.install(jName, EventModels.createSwingThreadProxyList(filters), new Filterator());
 		jSave = new JButton(GuiShared.get().save());
 		jSave.setActionCommand(FilterSaveAction.SAVE.name());
 		jSave.addActionListener(listener);
@@ -133,11 +134,16 @@ public class FilterSave extends JDialogCentered {
 				return false;
 			}
 		}
-		if (filters.contains(name)) {
-			int nReturn = JOptionPane.showConfirmDialog(this.getDialog(), GuiShared.get().overwrite(), GuiShared.get().overwriteFilter(), JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE);
-			if (nReturn == JOptionPane.NO_OPTION) {
-				return false;
+		try {
+			filters.getReadWriteLock().readLock().lock();
+			if (filters.contains(name)) {
+				int nReturn = JOptionPane.showConfirmDialog(this.getDialog(), GuiShared.get().overwrite(), GuiShared.get().overwriteFilter(), JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE);
+				if (nReturn == JOptionPane.NO_OPTION) {
+					return false;
+				}
 			}
+		} finally {
+			filters.getReadWriteLock().readLock().lock();
 		}
 		return true;
 	}

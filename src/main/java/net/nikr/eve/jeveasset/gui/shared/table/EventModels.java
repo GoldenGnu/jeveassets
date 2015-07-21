@@ -39,7 +39,7 @@ public class EventModels {
 		return new DefaultEventSelectionModel<E>(createSwingThreadProxyList(source));
 	}
 
-	private static <E> EventList<E> createSwingThreadProxyList(EventList<E> source) {
+	public static <E> EventList<E> createSwingThreadProxyList(EventList<E> source) {
 		final EventList<E> result;
 		source.getReadWriteLock().readLock().lock();
 		try {

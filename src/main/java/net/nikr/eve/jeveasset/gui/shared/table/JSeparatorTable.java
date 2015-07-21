@@ -51,17 +51,24 @@ public class JSeparatorTable extends JAutoColumnTable {
 		if (selectModel != null) {
 			selectModel.setEnabled(false);
 		}
-		for (int i = 0; i < separatorList.size(); i++) {
-			Object object = separatorList.get(i);
-			if (object instanceof SeparatorList.Separator) {
-				SeparatorList.Separator<?> separator = (SeparatorList.Separator<?>) object;
-				try {
-					separatorList.getReadWriteLock().writeLock().lock();
-					separator.setLimit(expand ? Integer.MAX_VALUE : 0);
-				} finally {
-					separatorList.getReadWriteLock().writeLock().unlock();
+		try {
+			separatorList.getReadWriteLock().readLock().lock();
+			for (int i = 0; i < separatorList.size(); i++) {
+				Object object = separatorList.get(i);
+				if (object instanceof SeparatorList.Separator) {
+					SeparatorList.Separator<?> separator = (SeparatorList.Separator<?>) object;
+					try {
+						separatorList.getReadWriteLock().readLock().unlock();
+						separatorList.getReadWriteLock().writeLock().lock();
+						separator.setLimit(expand ? Integer.MAX_VALUE : 0);
+					} finally {
+						separatorList.getReadWriteLock().writeLock().unlock();
+						separatorList.getReadWriteLock().readLock().lock();
+					}
 				}
 			}
+		} finally {
+			separatorList.getReadWriteLock().readLock().unlock();
 		}
 		if (selectModel != null) {
 			selectModel.setEnabled(true);
@@ -75,39 +82,51 @@ public class JSeparatorTable extends JAutoColumnTable {
 	}
 
 	public void saveExpandedState() {
-		for (int i = 0; i < separatorList.size(); i++) {
-			Object object = separatorList.get(i);
-			if (object instanceof SeparatorList.Separator) {
-				SeparatorList.Separator<?> separator = (SeparatorList.Separator) object;
-				for (Object item : separator.getGroup()) {
-					expandedSate.put(item.hashCode(), separator.getLimit() != 0);
+		try {
+			separatorList.getReadWriteLock().readLock().lock();
+			for (int i = 0; i < separatorList.size(); i++) {
+				Object object = separatorList.get(i);
+				if (object instanceof SeparatorList.Separator) {
+					SeparatorList.Separator<?> separator = (SeparatorList.Separator) object;
+					for (Object item : separator.getGroup()) {
+						expandedSate.put(item.hashCode(), separator.getLimit() != 0);
+					}
 				}
 			}
+		} finally {
+			separatorList.getReadWriteLock().readLock().unlock();
 		}
 	}
 
 	public void loadExpandedState() {
-		for (int i = 0; i < separatorList.size(); i++) {
-			Object object = separatorList.get(i);
-			if (object instanceof SeparatorList.Separator) {
-				SeparatorList.Separator<?> separator = (SeparatorList.Separator) object;
-				Boolean expanded = null;
-				for (Object item : separator.getGroup()) {
-					expanded = expandedSate.get(item.hashCode());
-					if (expanded != null) {
-						break;
+		try {
+			separatorList.getReadWriteLock().readLock().lock();
+			for (int i = 0; i < separatorList.size(); i++) {
+				Object object = separatorList.get(i);
+				if (object instanceof SeparatorList.Separator) {
+					SeparatorList.Separator<?> separator = (SeparatorList.Separator) object;
+					Boolean expanded = null;
+					for (Object item : separator.getGroup()) {
+						expanded = expandedSate.get(item.hashCode());
+						if (expanded != null) {
+							break;
+						}
+					}
+					if (expanded == null) {
+						expanded = defaultState;
+					}
+					try {
+						separatorList.getReadWriteLock().readLock().unlock();
+						separatorList.getReadWriteLock().writeLock().lock();
+						separator.setLimit(expanded ? Integer.MAX_VALUE : 0);
+					} finally {
+						separatorList.getReadWriteLock().writeLock().unlock();
+						separatorList.getReadWriteLock().readLock().lock();
 					}
 				}
-				if (expanded == null) {
-					expanded = defaultState;
-				}
-				try {
-					separatorList.getReadWriteLock().writeLock().lock();
-					separator.setLimit(expanded ? Integer.MAX_VALUE : 0);
-				} finally {
-					separatorList.getReadWriteLock().writeLock().unlock();
-				}
 			}
+		} finally {
+			separatorList.getReadWriteLock().readLock().unlock();
 		}
 	}
 

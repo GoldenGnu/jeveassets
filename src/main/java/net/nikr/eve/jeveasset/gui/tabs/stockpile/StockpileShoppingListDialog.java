@@ -176,7 +176,7 @@ class StockpileShoppingListDialog extends JDialogCentered {
 	//All items
 		Map<Integer, List<StockItem>> items = new HashMap<Integer, List<StockItem>>();
 		//Assets
-		for (MyAsset asset : program.getAssetEventList()) {
+		for (MyAsset asset : program.getAssetList()) {
 			//Skip market orders
 			if (asset.getFlag().equals(General.get().marketOrderSellFlag())) {
 				continue; //Ignore market sell orders
@@ -194,15 +194,15 @@ class StockpileShoppingListDialog extends JDialogCentered {
 			add(asset.getItem().getTypeID(), asset, new StockItem(asset), claims, items);
 		}
 		//Market Orders
-		for (MyMarketOrder marketOrder : program.getMarketOrdersEventList()) {
+		for (MyMarketOrder marketOrder : program.getMarketOrdersList()) {
 			add(marketOrder.getTypeID(), marketOrder, new StockItem(marketOrder), claims, items);
 		}
 		//Industry Jobs
-		for (MyIndustryJob industryJob : program.getIndustryJobsEventList()) {
+		for (MyIndustryJob industryJob : program.getIndustryJobsList()) {
 			add(industryJob.getProductTypeID(), industryJob, new StockItem(industryJob), claims, items);
 		}
 		//Transactions
-		for (MyTransaction transaction : program.getTransactionsEventList()) {
+		for (MyTransaction transaction : program.getTransactionsList()) {
 			add(transaction.getTypeID(), transaction, new StockItem(transaction), claims, items);
 		}
 
