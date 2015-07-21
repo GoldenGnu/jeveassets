@@ -85,11 +85,15 @@ public class MarketOrdersTab extends JMainTab {
 		//Table Format
 		tableFormat = new EnumTableFormatAdaptor<MarketTableFormat, MyMarketOrder>(MarketTableFormat.class);
 		//Backend
-		eventList = program.getMarketOrdersEventList();
+		eventList = program.getProfileData().getMarketOrdersEventList();
 		//Sorting (per column)
+		eventList.getReadWriteLock().readLock().lock();
 		SortedList<MyMarketOrder> sortedList = new SortedList<MyMarketOrder>(eventList);
+		eventList.getReadWriteLock().readLock().unlock();
 		//Filter
+		eventList.getReadWriteLock().readLock().lock();
 		filterList = new FilterList<MyMarketOrder>(sortedList);
+		eventList.getReadWriteLock().readLock().unlock();
 		filterList.addListEventListener(listener);
 		//Table Model
 		tableModel = EventModels.createTableModel(filterList, tableFormat);

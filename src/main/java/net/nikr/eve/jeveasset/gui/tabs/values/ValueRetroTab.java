@@ -37,8 +37,8 @@ import javax.swing.JEditorPane;
 import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 import net.nikr.eve.jeveasset.Program;
+import net.nikr.eve.jeveasset.data.EventListManager;
 import net.nikr.eve.jeveasset.data.MyAccount;
-import net.nikr.eve.jeveasset.data.MyAccountBalance;
 import net.nikr.eve.jeveasset.data.Owner;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
@@ -46,9 +46,6 @@ import net.nikr.eve.jeveasset.gui.shared.CaseInsensitiveComparator;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.components.JCopyPopup;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
-import net.nikr.eve.jeveasset.gui.tabs.assets.MyAsset;
-import net.nikr.eve.jeveasset.gui.tabs.orders.MyMarketOrder;
-import net.nikr.eve.jeveasset.i18n.General;
 import net.nikr.eve.jeveasset.i18n.TabsValues;
 
 
@@ -60,11 +57,11 @@ public class ValueRetroTab extends JMainTab {
 	}
 
 	//GUI
-	private JComboBox jCharacters;
-	private JEditorPane jCharacter;
-	private JComboBox jCorporations;
-	private JEditorPane jCorporation;
-	private JEditorPane jTotal;
+	private final JComboBox jCharacters;
+	private final JEditorPane jCharacter;
+	private final JComboBox jCorporations;
+	private final JEditorPane jCorporation;
+	private final JEditorPane jTotal;
 
 	//Data
 	private Map<String, Value> characters;
@@ -216,7 +213,7 @@ public class ValueRetroTab extends JMainTab {
 				
 			}
 		}
-		return !program.getAssetEventList().isEmpty();
+		return !EventListManager.isEmpty(program.getProfileData().getAssetsEventList());
 	}
 
 	private void setData(JEditorPane jEditorPane, Value value) {

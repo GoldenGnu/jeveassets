@@ -63,11 +63,16 @@ public class JournalTab extends JMainTab {
 		//Table Format
 		tableFormat = new EnumTableFormatAdaptor<JournalTableFormat, MyJournal>(JournalTableFormat.class);
 		//Backend
-		eventList = program.getJournalEventList();
+		eventList = program.getProfileData().getJournalEventList();
 		//Sorting (per column)
+		eventList.getReadWriteLock().readLock().lock();
 		SortedList<MyJournal> sortedList = new SortedList<MyJournal>(eventList);
+		eventList.getReadWriteLock().readLock().unlock();
+
 		//Filter
+		eventList.getReadWriteLock().readLock().lock();
 		filterList = new FilterList<MyJournal>(sortedList);
+		eventList.getReadWriteLock().readLock().unlock();
 		//Table Model
 		tableModel = EventModels.createTableModel(filterList, tableFormat);
 		//Table

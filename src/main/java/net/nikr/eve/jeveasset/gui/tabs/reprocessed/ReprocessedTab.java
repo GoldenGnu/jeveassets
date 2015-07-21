@@ -21,7 +21,6 @@
 
 package net.nikr.eve.jeveasset.gui.tabs.reprocessed;
 
-import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.FilterList;
 import ca.odell.glazedlists.GlazedLists;
@@ -51,6 +50,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JToolBar;
 import javax.swing.SwingConstants;
 import net.nikr.eve.jeveasset.Program;
+import net.nikr.eve.jeveasset.data.EventListManager;
 import net.nikr.eve.jeveasset.data.Item;
 import net.nikr.eve.jeveasset.data.ReprocessedMaterial;
 import net.nikr.eve.jeveasset.data.Settings;
@@ -143,13 +143,20 @@ public class ReprocessedTab extends JMainTab {
 		//Table Format
 		tableFormat = new EnumTableFormatAdaptor<ReprocessedTableFormat, ReprocessedInterface>(ReprocessedTableFormat.class);
 		//Backend
-		eventList = new BasicEventList<ReprocessedInterface>();
+		eventList = new EventListManager<ReprocessedInterface>().create();
 		//Sorting (per column)
+		eventList.getReadWriteLock().readLock().lock();
 		SortedList<ReprocessedInterface> sortedListColumn = new SortedList<ReprocessedInterface>(eventList);
+		eventList.getReadWriteLock().readLock().unlock();
+
 		//Sorting Total (Ensure that total is always last)
+		eventList.getReadWriteLock().readLock().lock();
 		SortedList<ReprocessedInterface> sortedListTotal = new SortedList<ReprocessedInterface>(sortedListColumn, new TotalComparator());
+		eventList.getReadWriteLock().readLock().unlock();
 		//Filter
+		eventList.getReadWriteLock().readLock().lock();
 		filterList = new FilterList<ReprocessedInterface>(sortedListTotal);
+		eventList.getReadWriteLock().readLock().unlock();
 		//Separator
 		separatorList = new SeparatorList<ReprocessedInterface>(filterList, new ReprocessedSeparatorComparator(), 1, Integer.MAX_VALUE);
 		//Table Model

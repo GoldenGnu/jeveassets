@@ -21,7 +21,6 @@
 
 package net.nikr.eve.jeveasset.gui.tabs.stockpile;
 
-import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.TextFilterator;
 import ca.odell.glazedlists.swing.AutoCompleteSupport;
@@ -34,11 +33,13 @@ import javax.swing.*;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
 import net.nikr.eve.jeveasset.Program;
+import net.nikr.eve.jeveasset.data.EventListManager;
 import net.nikr.eve.jeveasset.data.Item;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.data.StaticData;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
+import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
 import net.nikr.eve.jeveasset.i18n.TabsStockpile;
 
@@ -57,7 +58,7 @@ public class StockpileItemDialog extends JDialogCentered {
 	private JTextField jCountMinimum;
 	private JCheckBox jCopy;
 
-	private EventList<Item> items = new BasicEventList<Item>();
+	private EventList<Item> items = new EventListManager<Item>().create();
 	private Stockpile stockpile;
 	private StockpileItem stockpileItem;
 
@@ -68,7 +69,7 @@ public class StockpileItemDialog extends JDialogCentered {
 
 		JLabel jItemsLabel = new JLabel(TabsStockpile.get().item());
 		jItems = new JComboBox();
-		AutoCompleteSupport<Item> itemAutoComplete = AutoCompleteSupport.install(jItems, items, new ItemFilterator());
+		AutoCompleteSupport<Item> itemAutoComplete = AutoCompleteSupport.install(jItems, EventModels.createSwingThreadProxyList(items), new ItemFilterator());
 		itemAutoComplete.setStrict(true);
 		itemAutoComplete.setCorrectsCase(true);
 		jItems.addItemListener(listener); //Must be added after AutoCompleteSupport

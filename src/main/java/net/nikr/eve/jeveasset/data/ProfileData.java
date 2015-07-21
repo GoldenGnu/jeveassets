@@ -20,7 +20,6 @@
  */
 package net.nikr.eve.jeveasset.data;
 
-import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.EventList;
 import com.beimin.eveapi.model.shared.Blueprint;
 import com.beimin.eveapi.model.shared.ContractType;
@@ -51,14 +50,14 @@ import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 public class ProfileData {
 	private final ProfileManager profileManager;
 	
-	private final EventList<MyContractItem> contractItemEventList = new BasicEventList<MyContractItem>();
-	private final EventList<MyIndustryJob> industryJobsEventList = new BasicEventList<MyIndustryJob>();
-	private final EventList<MyMarketOrder> marketOrdersEventList = new BasicEventList<MyMarketOrder>();
-	private final EventList<MyJournal> journalEventList = new BasicEventList<MyJournal>();
-	private final EventList<MyTransaction> transactionsEventList = new BasicEventList<MyTransaction>();
-	private final EventList<MyAsset> assetsEventList = new BasicEventList<MyAsset>();
-	private final EventList<MyAccountBalance> accountBalanceEventList = new BasicEventList<MyAccountBalance>();
-	private final EventList<MyContract> contractEventList = new BasicEventList<MyContract>();
+	private final EventList<MyContractItem> contractItemEventList = new EventListManager<MyContractItem>().create();
+	private final EventList<MyIndustryJob> industryJobsEventList = new EventListManager<MyIndustryJob>().create();
+	private final EventList<MyMarketOrder> marketOrdersEventList = new EventListManager<MyMarketOrder>().create();
+	private final EventList<MyJournal> journalEventList = new EventListManager<MyJournal>().create();
+	private final EventList<MyTransaction> transactionsEventList = new EventListManager<MyTransaction>().create();
+	private final EventList<MyAsset> assetsEventList = new EventListManager<MyAsset>().create();
+	private final EventList<MyAccountBalance> accountBalanceEventList = new EventListManager<MyAccountBalance>().create();
+	private final EventList<MyContract> contractEventList = new EventListManager<MyContract>().create();
 	private Map<Integer, List<MyAsset>> uniqueAssetsDuplicates = null; //TypeID : int
 	private Map<Integer, MarketPriceData> marketPriceData; //TypeID : int
 	private final List<String> owners = new ArrayList<String>();

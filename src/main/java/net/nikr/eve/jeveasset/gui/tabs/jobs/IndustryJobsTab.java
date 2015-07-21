@@ -84,11 +84,16 @@ public class IndustryJobsTab extends JMainTab {
 		//Table Format
 		tableFormat = new EnumTableFormatAdaptor<IndustryJobTableFormat, MyIndustryJob>(IndustryJobTableFormat.class);
 		//Backend
-		eventList = program.getIndustryJobsEventList();
+		eventList = program.getProfileData().getIndustryJobsEventList();
 		//Sorting (per column)
+		eventList.getReadWriteLock().readLock().lock();
 		SortedList<MyIndustryJob> sortedList = new SortedList<MyIndustryJob>(eventList);
+		eventList.getReadWriteLock().readLock().unlock();
+
 		//Filter
+		eventList.getReadWriteLock().readLock().lock();
 		filterList = new FilterList<MyIndustryJob>(sortedList);
+		eventList.getReadWriteLock().readLock().unlock();
 		filterList.addListEventListener(listener);
 		//Table Model
 		tableModel = EventModels.createTableModel(filterList, tableFormat);

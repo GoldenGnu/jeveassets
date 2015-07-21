@@ -110,13 +110,21 @@ public class ContractsTab extends JMainTab {
 		//Table Format
 		tableFormat = new EnumTableFormatAdaptor<ContractsTableFormat, MyContractItem>(ContractsTableFormat.class);
 		//Backend
-		eventList = program.getContractItemEventList();
+		eventList = program.getProfileData().getContractItemEventList();
 		//Sorting (per column)
+		eventList.getReadWriteLock().readLock().lock();
 		SortedList<MyContractItem> sortedListColumn = new SortedList<MyContractItem>(eventList);
+		eventList.getReadWriteLock().readLock().unlock();
+
 		//Sorting Separator (ensure export always has the right order)
+		eventList.getReadWriteLock().readLock().lock();
 		SortedList<MyContractItem> sortedListSeparator = new SortedList<MyContractItem>(sortedListColumn, new SeparatorComparator());
+		eventList.getReadWriteLock().readLock().unlock();
+
 		//Filter
+		eventList.getReadWriteLock().readLock().lock();
 		filterList = new FilterList<MyContractItem>(sortedListSeparator);
+		eventList.getReadWriteLock().readLock().unlock();
 		//Separator
 		separatorList = new SeparatorList<MyContractItem>(filterList, new SeparatorComparator(), 1, Integer.MAX_VALUE);
 		//Table Model

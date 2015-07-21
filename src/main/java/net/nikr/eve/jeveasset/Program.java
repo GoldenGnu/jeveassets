@@ -22,13 +22,13 @@
 package net.nikr.eve.jeveasset;
 
 import apple.dts.samplecode.osxadapter.OSXAdapter;
-import ca.odell.glazedlists.EventList;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JOptionPane;
 import javax.swing.Timer;
+import net.nikr.eve.jeveasset.data.EventListManager;
 import net.nikr.eve.jeveasset.data.MyAccount;
 import net.nikr.eve.jeveasset.data.MyAccountBalance;
 import net.nikr.eve.jeveasset.data.ProfileData;
@@ -53,12 +53,10 @@ import net.nikr.eve.jeveasset.gui.tabs.assets.AssetsTab;
 import net.nikr.eve.jeveasset.gui.tabs.assets.MyAsset;
 import net.nikr.eve.jeveasset.gui.tabs.contracts.ContractsTab;
 import net.nikr.eve.jeveasset.gui.tabs.contracts.MyContract;
-import net.nikr.eve.jeveasset.gui.tabs.contracts.MyContractItem;
 import net.nikr.eve.jeveasset.gui.tabs.items.ItemsTab;
 import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustryJobsTab;
 import net.nikr.eve.jeveasset.gui.tabs.jobs.MyIndustryJob;
 import net.nikr.eve.jeveasset.gui.tabs.journal.JournalTab;
-import net.nikr.eve.jeveasset.gui.tabs.journal.MyJournal;
 import net.nikr.eve.jeveasset.gui.tabs.loadout.LoadoutsTab;
 import net.nikr.eve.jeveasset.gui.tabs.materials.MaterialsTab;
 import net.nikr.eve.jeveasset.gui.tabs.orders.MarketOrdersTab;
@@ -449,29 +447,28 @@ public class Program implements ActionListener {
 	public RoutingTab getRoutingTab() {
 		return routingTab;
 	}
-	public EventList<MyAsset> getAssetEventList() {
-		return profileData.getAssetsEventList();
+
+	public ProfileData getProfileData() {
+		return profileData;
 	}
-	public EventList<MyContract> getContractEventList() {
-		return profileData.getContractEventList();
+
+	public List<MyAsset> getAssetList() {
+		return EventListManager.safeList(profileData.getAssetsEventList());
 	}
-	public EventList<MyContractItem> getContractItemEventList() {
-		return profileData.getContractItemEventList();
+	public List<MyContract> getContractList() {
+		return EventListManager.safeList(profileData.getContractEventList());
 	}
-	public EventList<MyIndustryJob> getIndustryJobsEventList() {
-		return profileData.getIndustryJobsEventList();
+	public List<MyIndustryJob> getIndustryJobsList() {
+		return EventListManager.safeList(profileData.getIndustryJobsEventList());
 	}
-	public EventList<MyMarketOrder> getMarketOrdersEventList() {
-		return profileData.getMarketOrdersEventList();
+	public List<MyMarketOrder> getMarketOrdersList() {
+		return EventListManager.safeList(profileData.getMarketOrdersEventList());
 	}
-	public EventList<MyJournal> getJournalEventList() {
-		return profileData.getJournalEventList();
+	public List<MyTransaction> getTransactionsList() {
+		return EventListManager.safeList(profileData.getTransactionsEventList());
 	}
-	public EventList<MyTransaction> getTransactionsEventList() {
-		return profileData.getTransactionsEventList();
-	}
-	public EventList<MyAccountBalance> getAccountBalanceEventList() {
-		return profileData.getAccountBalanceEventList();
+	public List<MyAccountBalance> getAccountBalanceList() {
+		return EventListManager.safeList(profileData.getAccountBalanceEventList());
 	}
 	public List<String> getOwners(boolean all) {
 		return profileData.getOwners(all);

@@ -21,7 +21,6 @@
 
 package net.nikr.eve.jeveasset.gui.shared.components;
 
-import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.SortedList;
 import ca.odell.glazedlists.TextFilterator;
@@ -38,6 +37,8 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import net.nikr.eve.jeveasset.Program;
+import net.nikr.eve.jeveasset.data.EventListManager;
+import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 
 
@@ -68,9 +69,13 @@ public abstract class JAutoCompleteDialog<T> extends JDialogCentered {
 		JLabel jText = new JLabel(msg);
 
 		jItems = new JComboBox();
-		eventList = new BasicEventList<T>();
+		eventList = new EventListManager<T>().create();
+
+		eventList.getReadWriteLock().readLock().lock();
 		SortedList<T> sortedList = new SortedList<T>(eventList, getComparator());
-		autoComplete = AutoCompleteSupport.install(jItems, sortedList, getFilterator());
+		eventList.getReadWriteLock().readLock().unlock();
+		
+		autoComplete = AutoCompleteSupport.install(jItems, EventModels.createSwingThreadProxyList(sortedList), getFilterator());
 
 		jOK = new JButton(GuiShared.get().ok());
 		jOK.setActionCommand(AutoCompleteAction.OK.name());
@@ -107,21 +112,22 @@ public abstract class JAutoCompleteDialog<T> extends JDialogCentered {
 	protected abstract T getValue(Object object);
 
 	public final void updateData(List<T> list) {
-		eventList.getReadWriteLock().writeLock().lock();
 		try {
+			eventList.getReadWriteLock().writeLock().lock();
 			eventList.clear();
 			eventList.addAll(list);
 		} finally {
 			eventList.getReadWriteLock().writeLock().unlock();
 		}
 		//Can not set strict on empty EventList - so we do it now (if possible)
-		if (!eventList.isEmpty()) {
-			autoComplete.setStrict(strict);
+		try {
+			eventList.getReadWriteLock().readLock().lock();
+			if (eventList.isEmpty()) {
+				autoComplete.setStrict(strict);
+			}
+		} finally {
+			eventList.getReadWriteLock().readLock().unlock();
 		}
-	}
-
-	public EventList<T> getEventList() {
-		return eventList;
 	}
 
 	public T show() {
@@ -141,7 +147,7 @@ public abstract class JAutoCompleteDialog<T> extends JDialogCentered {
 		if (allowOverwrite) {
 			return true;
 		} else {
-			if (eventList.contains(value)) {
+			if (EventListManager.contains(eventList, value)) {
 				int nReturn = JOptionPane.showConfirmDialog(getDialog(), GuiShared.get().overwrite(), GuiShared.get().overwriteView(), JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE);
 				if (nReturn == JOptionPane.NO_OPTION) { //Overwrite cancelled
 					return false;

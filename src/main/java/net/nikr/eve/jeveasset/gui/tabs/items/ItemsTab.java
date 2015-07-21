@@ -21,7 +21,10 @@
 
 package net.nikr.eve.jeveasset.gui.tabs.items;
 
-import ca.odell.glazedlists.*;
+import ca.odell.glazedlists.EventList;
+import ca.odell.glazedlists.FilterList;
+import ca.odell.glazedlists.ListSelection;
+import ca.odell.glazedlists.SortedList;
 import ca.odell.glazedlists.swing.DefaultEventSelectionModel;
 import ca.odell.glazedlists.swing.DefaultEventTableModel;
 import ca.odell.glazedlists.swing.TableComparatorChooser;
@@ -33,6 +36,7 @@ import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JScrollPane;
 import net.nikr.eve.jeveasset.Program;
+import net.nikr.eve.jeveasset.data.EventListManager;
 import net.nikr.eve.jeveasset.data.Item;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.data.StaticData;
@@ -40,7 +44,7 @@ import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
-import net.nikr.eve.jeveasset.gui.shared.menu.*;
+import net.nikr.eve.jeveasset.gui.shared.menu.MenuData;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.TableMenu;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
@@ -69,11 +73,15 @@ public class ItemsTab extends JMainTab {
 		//Table Format
 		tableFormat = new EnumTableFormatAdaptor<ItemTableFormat, Item>(ItemTableFormat.class);
 		//Backend
-		eventList = new BasicEventList<Item>();
+		eventList = new EventListManager<Item>().create();
 		//Sorting (per column)
+		eventList.getReadWriteLock().readLock().lock();
 		SortedList<Item> sortedList = new SortedList<Item>(eventList);
+		eventList.getReadWriteLock().readLock().unlock();
 		//Filter
+		eventList.getReadWriteLock().readLock().lock();
 		filterList = new FilterList<Item>(sortedList);
+		eventList.getReadWriteLock().readLock().unlock();
 		
 		//Table Model
 		tableModel = EventModels.createTableModel(filterList, tableFormat);
