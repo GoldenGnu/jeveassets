@@ -960,10 +960,17 @@ public class RoutingTab extends JMainTab  {
 		//Filters
 		jAvoid.setEnabled(b);
 		jAvoidAdd.setEnabled(b);
-		jAvoidRemove.setEnabled(b);
-		jAvoidClear.setEnabled(b);
-		jAvoidSave.setEnabled(b);
-		jAvoidLoad.setEnabled(b);
+		if (b) {
+			jAvoidRemove.setEnabled(jAvoid.getSelectedIndices().length > 0);
+			jAvoidClear.setEnabled(!avoidModel.getAll().isEmpty());
+			jAvoidSave.setEnabled(!avoidModel.getAll().isEmpty());
+			jAvoidLoad.setEnabled(!Settings.get().getRoutingSettings().getPresets().isEmpty());
+		} else {
+			jAvoidRemove.setEnabled(b);
+			jAvoidClear.setEnabled(b);
+			jAvoidSave.setEnabled(b);
+			jAvoidLoad.setEnabled(b);
+		}
 		jSecurityMinimum.setEnabled(b);
 		jSecuritySeparatorLabel.setEnabled(b);
 		jSecurityMaximum.setEnabled(b);
@@ -1015,8 +1022,8 @@ public class RoutingTab extends JMainTab  {
 			jFilterSecurityIcon.setIcon(Images.UPDATE_DONE_SOME.getIcon());
 		}
 		jFilterSystem.setText(String.valueOf(size));
-		jAvoidSave.setEnabled(!avoidModel.getAll().isEmpty());
 		jAvoidClear.setEnabled(!avoidModel.getAll().isEmpty());
+		jAvoidSave.setEnabled(!avoidModel.getAll().isEmpty());
 		jAvoidLoad.setEnabled(!Settings.get().getRoutingSettings().getPresets().isEmpty());
 	}
 
