@@ -291,7 +291,7 @@ public class ContractsTab extends JMainTab {
 
 		@Override
 		protected void saveSettings(final String msg) {
-			program.saveSettings("Save Contract " + msg); //Save Contract Filters and Export Setttings
+			program.saveSettings("Contracts Table: " + msg); //Save Contract Filters and Export Setttings
 		}
 	}
 }

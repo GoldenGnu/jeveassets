@@ -109,7 +109,7 @@ public class JMenuTags<T> extends JAutoMenu<T> {
 
 	private void addTag(Tag tag) {
 		if (tag != null && !tag.getName().isEmpty()) {
-			Settings.lock(); //Lock for Tags (New)
+			Settings.lock("Tags (New)"); //Lock for Tags (New)
 			Tag settingsTag = Settings.get().getTags().get(tag.getName());
 			if (settingsTag != null) { //Update
 				//Load tag
@@ -125,15 +125,15 @@ public class JMenuTags<T> extends JAutoMenu<T> {
 				//Update settings
 				Settings.get().getTags(tagsType.getTagID()).add(tag);
 			}
-			Settings.unlock(); //Unlock for Tags (New)
+			Settings.unlock("Tags (New)"); //Unlock for Tags (New)
 			program.updateTags();
-			program.saveSettings("Save Tags (New)"); //Save Tags (New)
+			program.saveSettings("Tags (New)"); //Save Tags (New)
 		}
 	}
 
 	private void removeTag(Tag tag) {
 		if (tag != null) {
-			Settings.lock(); //Lock for Tags (Delete)
+			Settings.lock("Tags (Delete)"); //Lock for Tags (Delete)
 			for (TagsType tagsType : tagsTypes) {
 				//Remove tag form item
 				tagsType.getTags().remove(tag);
@@ -142,9 +142,9 @@ public class JMenuTags<T> extends JAutoMenu<T> {
 				//Update settings
 				Settings.get().getTags(tagsType.getTagID()).remove(tag);
 			}
-			Settings.unlock(); //Unlock for Tags (Delete)
+			Settings.unlock("Tags (Delete)"); //Unlock for Tags (Delete)
 			program.updateTags();
-			program.saveSettings("Save Tags (Delete)"); //Save Tags (Delete)
+			program.saveSettings("Tags (Delete)"); //Save Tags (Delete)
 		}
 	}
 

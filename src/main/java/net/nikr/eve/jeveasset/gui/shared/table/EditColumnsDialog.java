@@ -182,7 +182,7 @@ public class EditColumnsDialog<T extends Enum<T> & EnumTableColumn<Q>, Q> extend
 			columns.add((SimpleColumn) listModel.getElementAt(i));
 		}
 		adaptor.setColumns(columns);
-		program.saveSettings("Save Columns (Changed - Edit Columns)"); //Save Columns (Changed - Edit Columns)
+		program.saveSettings("Columns (Edit)"); //Save Columns (Changed - Edit Columns)
 		setVisible(false);
 	}
 

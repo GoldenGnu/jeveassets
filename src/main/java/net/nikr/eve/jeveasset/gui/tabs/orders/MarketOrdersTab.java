@@ -241,7 +241,7 @@ public class MarketOrdersTab extends JMainTab {
 
 		@Override
 		protected void saveSettings(final String msg) {
-			program.saveSettings("Save Market Order " + msg); //Save Market Order Filters and Export Setttings
+			program.saveSettings("Market Orders Table: " + msg); //Save Market Order Filters and Export Setttings
 		}
 	}
 }

@@ -402,7 +402,7 @@ public class MaterialsTab extends JMainTab {
 
 		@Override
 		protected void saveSettings(final String msg) {
-			program.saveSettings("Save Material " + msg); //Save Material Export Setttings (Filters not used)
+			program.saveSettings("Materials Table " + msg); //Save Material Export Setttings (Filters not used)
 		}
 	}
 }

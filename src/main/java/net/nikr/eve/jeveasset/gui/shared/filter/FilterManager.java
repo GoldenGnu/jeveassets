@@ -45,23 +45,23 @@ public class FilterManager<E> extends JManageDialog {
 	@Override
 	protected void rename(final String name, final String oldName) {
 		List<Filter> filter = filters.get(oldName);
-		Settings.lock(); //Lock for Filter (Rename)
+		Settings.lock("Filter (Rename)"); //Lock for Filter (Rename)
 		filters.remove(oldName); //Remove renamed filter (with old name)
 		filters.remove(name); //Remove overwritten filter
 		filters.put(name, filter); //Add renamed filter (with new name)
 		updateFilters();
-		Settings.unlock(); //Unlock for Filter (Rename)
+		Settings.unlock("Filter (Rename)"); //Unlock for Filter (Rename)
 		gui.saveSettings("Filter (Rename)"); //Save Filter (Rename)
 	}
 
 	@Override
 	protected void delete(final List<String> list) {
-		Settings.lock(); //Lock for Filter (Delete)
+		Settings.lock("Filter (Delete)"); //Lock for Filter (Delete)
 		for (String filterName : list) {
 			filters.remove(filterName);
 		}
 		updateFilters();
-		Settings.unlock(); //Unlock for Filter (Delete)
+		Settings.unlock("Filter (Delete)"); //Unlock for Filter (Delete)
 		gui.saveSettings("Filter (Delete)"); //Save Filter (Delete)
 	}
 
@@ -75,7 +75,7 @@ public class FilterManager<E> extends JManageDialog {
 	@Override
 	protected void merge(final String name, final Object[] objects) {
 		//Get filters to merge
-		Settings.lock(); //Lock for Filter (Merge)
+		Settings.lock("Filter (Merge)"); //Lock for Filter (Merge)
 		List<Filter> filter = new ArrayList<Filter>();
 		for (Object obj : objects) {
 			for (Filter currentFilter : filters.get((String) obj)) {
@@ -86,7 +86,7 @@ public class FilterManager<E> extends JManageDialog {
 		}
 		filters.put(name, filter);
 		updateFilters();
-		Settings.unlock(); //Unlock for Filter (Merge)
+		Settings.unlock("Filter (Merge)"); //Unlock for Filter (Merge)
 		gui.saveSettings("Filter (Merge)"); //Save Filter (Merge)
 	}
 

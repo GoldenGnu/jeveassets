@@ -311,7 +311,7 @@ public class Program implements ActionListener {
 		timerTicked();
 		updateTableMenu();
 		if (saveSettings) {
-			saveSettings("Save Asset Added Date"); //Save Asset Added Date
+			saveSettings("Asset Added Date"); //Save Asset Added Date
 		}
 	}
 
@@ -331,12 +331,12 @@ public class Program implements ActionListener {
 
 	private void doSaveSettings(final String msg) {
 		LOG.info("Saving Settings: " + msg);
-		Settings.lock(); //Lock for Table (Column/Width/Resize) and Window Settings
+		Settings.lock("Table (Column/Width/Resize) and Window Settings"); //Lock for Table (Column/Width/Resize) and Window Settings
 		mainWindow.updateSettings();
 		for (JMainTab jMainTab : jMainTabs) {
 			jMainTab.saveSettings();
 		}
-		Settings.unlock(); //Unlock for Table (Column/Width/Resize) and Window Settings
+		Settings.unlock("Table (Column/Width/Resize) and Window Settings"); //Unlock for Table (Column/Width/Resize) and Window Settings
 		Settings.saveSettings();
 	}
 

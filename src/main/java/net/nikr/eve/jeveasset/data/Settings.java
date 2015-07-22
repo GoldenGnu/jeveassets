@@ -224,12 +224,12 @@ public class Settings {
 		return settings;
 	}
 
-	public static void lock() {
-		LOCK.lock();
+	public static void lock(String msg) {
+		LOCK.lock(msg);
 	}
 
-	public static void unlock() {
-		LOCK.unlock();
+	public static void unlock(String msg) {
+		LOCK.unlock(msg);
 	}
 
 	public static boolean ignoreSave() {
@@ -286,11 +286,11 @@ public class Settings {
 	}
 
 	public static void saveSettings() {
-		LOCK.lock();
+		LOCK.lock("Save Settings");
 		try {
 			SettingsWriter.save(settings);
 		} finally {
-			LOCK.unlock();
+			LOCK.unlock("Save Settings");
 		}
 	}
 
@@ -888,7 +888,7 @@ public class Settings {
 			settingsQueue.waitForEmptySaveQueue();
 		}
 
-		public synchronized void lock() {
+		public synchronized void lock(String msg) {
 			while (locked) {
 				try {
 					wait();
@@ -897,12 +897,12 @@ public class Settings {
 				}
 			}
 			locked = true;
-			LOG.debug("Settings Locked");
+			LOG.debug("Settings Locked: " + msg);
 		}
 
-		public synchronized void unlock() {
+		public synchronized void unlock(String msg) {
 			locked = false;
-			LOG.debug("Settings Unlocked");
+			LOG.debug("Settings Unlocked: " + msg);
 			notify();
 		}
 	}

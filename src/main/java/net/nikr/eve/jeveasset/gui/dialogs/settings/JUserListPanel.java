@@ -38,13 +38,13 @@ public abstract class JUserListPanel<K, V extends Comparable<V>> extends JSettin
 		DELETE, EDIT
 	}
 
-	private JComboBox jItems;
-	private JButton jEdit;
-	private JButton jDelete;
+	private final JComboBox jItems;
+	private final JButton jEdit;
+	private final JButton jDelete;
 
 	private Map<K, UserItem<K, V>> items;
 	private List<UserItem<K, V>> listItems;
-	private String type;
+	private final String type;
 
 	public JUserListPanel(final Program program, final SettingsDialog optionsDialog, final Icon icon, final String title, final String type, final String help) {
 		super(program, optionsDialog, title, icon);
@@ -164,14 +164,14 @@ public abstract class JUserListPanel<K, V extends Comparable<V>> extends JSettin
 				//Update GUI
 				updateGUI();
 				if (save) { //Save (if not in setttings dialog)
-					Settings.lock(); //Lock for Custom Price/Name (Edit)
+					Settings.lock("Custom Price/Name (Edit)"); //Lock for Custom Price/Name (Edit)
 					boolean update = save();
-					Settings.unlock(); //Unlock for Custom Price/Name (Edit)
+					Settings.unlock("Custom Price/Name (Edit)"); //Unlock for Custom Price/Name (Edit)
 					if (update) {
 						//FIXME - - - > Price/Name: Update Price/Name (no need to update all date - just need to update the data in tags column)
 						program.updateEventLists();
 					}
-					program.saveSettings("Save Custom Price/Name (Edit)"); //Save Custom Price/Name (Edit)
+					program.saveSettings("Custom Price/Name (Edit)"); //Save Custom Price/Name (Edit)
 				}
 			} else {
 				JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), DialoguesSettings.get().inputNotValid(), DialoguesSettings.get().badInput(), JOptionPane.PLAIN_MESSAGE);
@@ -213,13 +213,13 @@ public abstract class JUserListPanel<K, V extends Comparable<V>> extends JSettin
 			items.keySet().removeAll(containedKeys);
 			updateGUI();
 			if (save) { //Save (if not in setttings dialog)
-				Settings.lock(); //Lock for Custom Price/Name (Delete)
+				Settings.lock("Custom Price/Name (Delete)"); //Lock for Custom Price/Name (Delete)
 				boolean update = save();
-				Settings.unlock(); //Unlock for Custom Price/Name (Delete)
+				Settings.unlock("Custom Price/Name (Delete)"); //Unlock for Custom Price/Name (Delete)
 				if (update) {
 					program.updateEventLists();
 				}
-				program.saveSettings("Save Custom Price/Name (Delete)"); //Save Custom Price/Name (Delete)
+				program.saveSettings("Custom Price/Name (Delete)"); //Save Custom Price/Name (Delete)
 			}
 		}
 	}

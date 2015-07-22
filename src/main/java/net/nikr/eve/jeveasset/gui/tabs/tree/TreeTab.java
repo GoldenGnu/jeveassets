@@ -736,7 +736,7 @@ public class TreeTab extends JMainTab {
 
 		@Override
 		protected void saveSettings(final String msg) {
-			program.saveSettings("Save Tree " + msg); //Save Tree Filters and Export Setttings
+			program.saveSettings("Tree Talbe: " + msg); //Save Tree Filters and Export Setttings
 		}
 	}
 
