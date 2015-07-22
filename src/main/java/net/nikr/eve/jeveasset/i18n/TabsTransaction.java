@@ -34,13 +34,20 @@ public abstract class TabsTransaction extends Bundle {
 		super(locale);
 	}
 
+	public abstract String bothAvg();
+	public abstract String bothTitle();
+	public abstract String bothTotal();
 	public abstract String buy();
+	public abstract String buyAvg();
+	public abstract String buyTitle();
+	public abstract String buyTotal();
 	public abstract String corporation();
 	public abstract String personal();
 	public abstract String sell();
+	public abstract String sellAvg();
+	public abstract String sellTitle();
+	public abstract String sellTotal();
 	public abstract String title();
-	public abstract String totalBuy();
-	public abstract String totalSell();
 	public abstract String columnTransactionType();
 	public abstract String columnName();
 	public abstract String columnQuantity();
