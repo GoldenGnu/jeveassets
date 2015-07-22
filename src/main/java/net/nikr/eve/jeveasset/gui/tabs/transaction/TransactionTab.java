@@ -224,7 +224,7 @@ public class TransactionTab extends JMainTab {
 
 		@Override
 		protected void saveSettings(final String msg) {
-			program.saveSettings("Save Transaction " + msg); //Save Transaction Filters and Export Setttings
+			program.saveSettings("Transaction Table: " + msg); //Save Transaction Filters and Export Setttings
 		}
 	}
 }

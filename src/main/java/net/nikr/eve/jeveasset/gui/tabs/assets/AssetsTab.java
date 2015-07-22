@@ -297,7 +297,7 @@ public class AssetsTab extends JMainTab {
 
 		@Override
 		protected void saveSettings(final String msg) {
-			program.saveSettings("Save Asset " + msg); //Save Asset Filters and Export Setttings
+			program.saveSettings("Assets Table: " + msg); //Save Asset Filters and Export Setttings
 		}
 	}
 }

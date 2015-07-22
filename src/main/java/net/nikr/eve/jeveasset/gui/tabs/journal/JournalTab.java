@@ -174,7 +174,7 @@ public class JournalTab extends JMainTab {
 
 		@Override
 		protected void saveSettings(final String msg) {
-			program.saveSettings("Save Journal " + msg); //Save Journal Filters and Export Setttings
+			program.saveSettings("Journal Table: " + msg); //Save Journal Filters and Export Setttings
 		}
 	}
 }

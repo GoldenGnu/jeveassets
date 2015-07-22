@@ -1053,40 +1053,40 @@ public class RoutingTab extends JMainTab  {
 
 	public void loadFilter(Set<Long> systemIds) {
 		avoidModel.clear();
-		Settings.lock();
+		Settings.lock("Routing (Load Filter)");
 		Settings.get().getRoutingSettings().getAvoid().clear();
 		for (Long systemID : systemIds) {
 			SolarSystem system = new SolarSystem(ApiIdConverter.getLocation(systemID));
 			Settings.get().getRoutingSettings().getAvoid().put(system.getSystemID(), system);
 			avoidModel.add(system);
 		}
-		Settings.unlock();
+		Settings.unlock("Routing (Load Filter)");
 		program.saveSettings("Routing (Load Filter)");
 		updateFilterLabels();
 	}
 
 	public void deleteFilters(List<String> list) {
-		Settings.lock();
+		Settings.lock("Routing (Delete Filters)");
 		for (String filter : list) {
 			Settings.get().getRoutingSettings().getPresets().remove(filter);
 		}
-		Settings.unlock();
+		Settings.unlock("Routing (Delete Filters)");
 		program.saveSettings("Routing (Delete Filters)");
 		updateSavedFilters();
 	}
 
 	public void renameFilter(String name, String oldName) {
-		Settings.lock();
+		Settings.lock("Routing (Rename Filter)");
 		Set<Long> systemIDs = Settings.get().getRoutingSettings().getPresets().remove(oldName);
 		Settings.get().getRoutingSettings().getPresets().put(name, systemIDs);
-		Settings.unlock();
+		Settings.unlock("Routing (Rename Filter)");
 		program.saveSettings("Routing (Rename Filter)");
 		updateSavedFilters();
 	}
 
 	public void mergeFilters(String name, Object[] objects) {
 		Set<Long> systemIDs = new HashSet<Long>();
-		Settings.lock();
+		Settings.lock("Routing (Merge Filters)");
 		for (Object object : objects) {
 			if (object instanceof String) {
 				String mergeName = (String) object;
@@ -1094,19 +1094,19 @@ public class RoutingTab extends JMainTab  {
 			}
 		}
 		Settings.get().getRoutingSettings().getPresets().put(name, systemIDs);
-		Settings.unlock();
+		Settings.unlock("Routing (Merge Filters)");
 		program.saveSettings("Routing (Merge Filters)");
 		updateSavedFilters();
 	}
 
 	private void removeSystems() {
 		int[] selected = jAvoid.getSelectedIndices();
-		Settings.lock();
+		Settings.lock("Routing (Delete Systems)");
 		for (int index : selected) {
 			SolarSystem removed = avoidModel.remove(index);
 			Settings.get().getRoutingSettings().getAvoid().remove(removed.getSystemID());
 		}
-		Settings.unlock();
+		Settings.unlock("Routing (Delete Systems)");
 		program.saveSettings("Routing (Delete Systems)");
 		updateFilterLabels();
 	}
@@ -1144,20 +1144,20 @@ public class RoutingTab extends JMainTab  {
 			} else if (RoutingAction.AVOID_REMOVE.name().equals(e.getActionCommand())) {
 				removeSystems();
 			} else if (RoutingAction.AVOID_CLEAR.name().equals(e.getActionCommand())) {
-				Settings.lock();
+				Settings.lock("Routing (Clear Systems)");
 				Settings.get().getRoutingSettings().getAvoid().clear();
 				avoidModel.clear();
 				updateFilterLabels();
-				Settings.unlock();
+				Settings.unlock("Routing (Clear Systems)");
 				program.saveSettings("Routing (Clear Systems)");
 			} else if (RoutingAction.AVOID_ADD.name().equals(e.getActionCommand())) {
 				SolarSystem system = jSystemDialog.show();
 				if (system != null) {
-					Settings.lock();
+					Settings.lock("Routing (Add System)");
 					Settings.get().getRoutingSettings().getAvoid().put(system.getSystemID(), system);
 					avoidModel.clear();
 					avoidModel.addAll(Settings.get().getRoutingSettings().getAvoid().values());
-					Settings.unlock();
+					Settings.unlock("Routing (Add System)");
 					program.saveSettings("Routing (Add System)");
 					updateFilterLabels();
 				}
@@ -1165,13 +1165,13 @@ public class RoutingTab extends JMainTab  {
 				jSaveSystemList.updateData(new ArrayList<String>(Settings.get().getRoutingSettings().getPresets().keySet()));
 				String name = jSaveSystemList.show();
 				if (name != null) {
-					Settings.lock();
+					Settings.lock("Routing (Save Filter)");
 					Set<Long> systemIDs = new HashSet<Long>();
 					for (SolarSystem system : avoidModel.getAll()) {
 						systemIDs.add(system.getSystemID());
 					}
 					Settings.get().getRoutingSettings().getPresets().put(name, systemIDs);
-					Settings.unlock();
+					Settings.unlock("Routing (Save Filter)");
 					program.saveSettings("Routing (Save Filter)");
 					updateSavedFilters();
 				}
@@ -1191,11 +1191,11 @@ public class RoutingTab extends JMainTab  {
 					max = min;
 					jSecurityMaximum.setSelectedItem(min);
 				}
-				Settings.lock();
+				Settings.lock("Routing (Security)");
 				Settings.get().getRoutingSettings().setSecMin(min);
 				Settings.get().getRoutingSettings().setSecMax(max);
-				Settings.unlock();
-				program.saveSettings("Routing (Save Security)");
+				Settings.unlock("Routing (Security)");
+				program.saveSettings("Routing (Security)");
 				updateFilterLabels();
 				
 			} else if (RoutingAction.ADD_SYSTEM.name().equals(e.getActionCommand())) {

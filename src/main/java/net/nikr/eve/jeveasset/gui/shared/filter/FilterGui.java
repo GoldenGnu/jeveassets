@@ -405,9 +405,9 @@ class FilterGui<E> {
 				} else {
 					String name = filterSave.show(new ArrayList<String>(filterControl.getFilters().keySet()), new ArrayList<String>(filterControl.getDefaultFilters().keySet()));
 					if (name != null && !name.isEmpty()) {
-						Settings.lock(); //Lock for Filter (New)
+						Settings.lock("Filter (New)"); //Lock for Filter (New)
 						filterControl.getFilters().put(name, getFilters());
-						Settings.unlock(); //Unlock for Filter (New)
+						Settings.unlock("Filter (New)"); //Unlock for Filter (New)
 						saveSettings("Filter (New)"); //Save Filter (New)
 						updateFilters();
 					}

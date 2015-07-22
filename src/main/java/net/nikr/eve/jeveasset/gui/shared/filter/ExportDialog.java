@@ -524,7 +524,7 @@ public class ExportDialog<E> extends JDialogCentered {
 	}
 
 	private void saveSettings() {
-		Settings.lock(); //Lock for Export Settings (Save)
+		Settings.lock("Export Settings (Save)"); //Lock for Export Settings (Save)
 		//CSV
 		Settings.get().getExportSettings().setFieldDelimiter((FieldDelimiter) jFieldDelimiter.getSelectedItem());
 		Settings.get().getExportSettings().setLineDelimiter((LineDelimiter) jLineDelimiter.getSelectedItem());
@@ -544,8 +544,8 @@ public class ExportDialog<E> extends JDialogCentered {
 		} else {
 			Settings.get().getExportSettings().putTableExportColumns(toolName, getExportColumns());
 		}
-		Settings.unlock(); //Unlock for Export Settings (Save)
-		exportFilterControl.saveSettings("Export Settings");
+		Settings.unlock("Export Settings (Save)"); //Unlock for Export Settings (Save)
+		exportFilterControl.saveSettings("Export Settings (Save)");
 	}
 
 	private void loadSettings() {
@@ -594,7 +594,7 @@ public class ExportDialog<E> extends JDialogCentered {
 	}
 
 	private void resetSettings() {
-		Settings.lock(); //Lock for Export Settings (Reset)
+		Settings.lock("Export Settings (Reset)"); //Lock for Export Settings (Reset)
 		//CSV
 		Settings.get().getExportSettings().setFieldDelimiter(FieldDelimiter.COMMA);
 		Settings.get().getExportSettings().setLineDelimiter(LineDelimiter.DOS);
@@ -611,7 +611,7 @@ public class ExportDialog<E> extends JDialogCentered {
 		Settings.get().getExportSettings().putFilename(toolName, Settings.get().getExportSettings().getDefaultFilename(toolName));
 		Settings.get().getExportSettings().putTableExportColumns(toolName, null);
 		Settings.get().getExportSettings().setExportFormat(ExportFormat.CSV);
-		Settings.unlock(); //Unlock for Export Settings (Reset)
+		Settings.unlock("Export Settings (Reset)"); //Unlock for Export Settings (Reset)
 		loadSettings();
 	}
 

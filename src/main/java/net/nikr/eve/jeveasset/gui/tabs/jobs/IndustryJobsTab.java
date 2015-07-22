@@ -234,7 +234,7 @@ public class IndustryJobsTab extends JMainTab {
 
 		@Override
 		protected void saveSettings(final String msg) {
-			program.saveSettings("Save Industry Job " + msg); //Save Industry Job Filters and Export Setttings
+			program.saveSettings("Industry Jobs Table: " + msg); //Save Industry Job Filters and Export Setttings
 		}
 	}
 }

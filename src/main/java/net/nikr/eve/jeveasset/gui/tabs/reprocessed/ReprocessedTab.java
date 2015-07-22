@@ -436,7 +436,7 @@ public class ReprocessedTab extends JMainTab {
 
 		@Override
 		protected void saveSettings(final String msg) {
-			program.saveSettings("Save Reprocessed " + msg); //Save Reprocessed Filters and Export Setttings
+			program.saveSettings("Reprocessed Table: " + msg); //Save Reprocessed Filters and Export Setttings
 		}
 	}
 

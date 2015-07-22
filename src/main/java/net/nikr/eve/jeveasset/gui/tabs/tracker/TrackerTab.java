@@ -413,6 +413,7 @@ public class TrackerTab extends JMainTab {
 		Map<String, Value> data = ValueTableTab.createDataSet(program);
 		
 		//Add everything
+		Settings.lock("Tracker Data (Create Point)");
 		for (Map.Entry<String, Value> entry : data.entrySet()) {
 			String owner = entry.getKey();
 			Value value = entry.getValue();
@@ -428,6 +429,7 @@ public class TrackerTab extends JMainTab {
 			list.add(value);
 			
 		}
+		Settings.unlock("Tracker Data (Create Point)");
 		//Update data
 		updateData();
 	}
@@ -733,7 +735,7 @@ public class TrackerTab extends JMainTab {
 				
 				int retrunValue = JOptionPane.showConfirmDialog(program.getMainWindow().getFrame(), TabsTracker.get().deleteSelected(), TabsTracker.get().delete(), JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
 				if (retrunValue == JOptionPane.OK_OPTION) {
-					Settings.lock();
+					Settings.lock("Tracker Data (Delete)");
 					for (Map.Entry<String, Value> entry : values.entrySet()) {
 						//Remove value
 						Settings.get().getTrackerData().get(entry.getKey()).remove(entry.getValue());
@@ -743,8 +745,8 @@ public class TrackerTab extends JMainTab {
 							updateOwners();
 						} 
 					}
-					Settings.unlock();
-					program.saveSettings("Save Tracker Data (Delete)");
+					Settings.unlock("Tracker Data (Delete)");
+					program.saveSettings("Tracker Data (Delete)");
 					createData();
 				}
 				jNextChart.getXYPlot().setDomainCrosshairVisible(false);

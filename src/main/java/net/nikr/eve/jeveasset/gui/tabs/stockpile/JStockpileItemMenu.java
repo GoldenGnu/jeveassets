@@ -126,12 +126,12 @@ public class JStockpileItemMenu extends JMenu {
 							value = JOptionPane.showConfirmDialog(program.getMainWindow().getFrame(), TabsStockpile.get().deleteItems(items.size()), TabsStockpile.get().deleteItemTitle(), JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
 						}
 						if (value == JOptionPane.OK_OPTION) {
-							Settings.lock(); //Lock for Stokcpile (Stockpile Menu)
+							Settings.lock("Stokcpile (Stockpile Menu)"); //Lock for Stokcpile (Stockpile Menu)
 							for (Stockpile.StockpileItem item : items) {
 								item.getStockpile().remove(item);
 							}
-							Settings.unlock(); //Unlock for Stokcpile (Stockpile Menu)
-							program.saveSettings("Save Stokcpile (Stockpile Menu)"); //Save Stokcpile (Stockpile Menu)
+							Settings.unlock("Stokcpile (Stockpile Menu)"); //Unlock for Stokcpile (Stockpile Menu)
+							program.saveSettings("Stokcpile (Stockpile Menu)"); //Save Stokcpile (Stockpile Menu)
 							program.getStockpileTool().removeItems(items);
 						}
 					}

@@ -380,7 +380,7 @@ public class JAutoColumnTable extends JTable {
 					i++;
 				}
 			}
-			program.saveSettings("Save Columns Width"); //Save Columns Width
+			program.saveSettings("Columns (Width)"); //Save Columns Width
 		}
 	}
 
@@ -512,7 +512,7 @@ public class JAutoColumnTable extends JTable {
 					tableFormat.moveColumn(from, to);
 					model.fireTableStructureChanged();
 					if (from != to) {
-						program.saveSettings("Save Columns (Moved)"); //Save Columns (Moved)
+						program.saveSettings("Columns (Moved)"); //Save Columns (Moved)
 					}
 				}
 				autoResizeColumns();

@@ -242,7 +242,7 @@ public class JTrackerEditDialog extends JDialogCentered {
 			double escrowsToCover = parse(jEscrowsToCover.getText());
 			double manufacturing = parse(jManufacturing.getText());
 			double contractCollateral = parse(jContractCollateral.getText());
-			Settings.lock();
+			Settings.lock("Tracker Data (Edit)");
 			value.setBalance(walletBalanc);
 			value.setAssets(assets);
 			value.setSellOrders(sellOrders);
@@ -250,8 +250,8 @@ public class JTrackerEditDialog extends JDialogCentered {
 			value.setEscrowsToCover(escrowsToCover);
 			value.setManufacturing(manufacturing);
 			value.setContractCollateral(contractCollateral);
-			Settings.unlock();
-			program.saveSettings("Save Tracker Data (Edit)");
+			Settings.unlock("Tracker Data (Edit)");
+			program.saveSettings("Tracker Data (Edit)");
 			update = true;
 			setVisible(false);
 		} catch (ParseException ex) {

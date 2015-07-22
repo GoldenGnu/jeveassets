@@ -69,7 +69,7 @@ public class ViewManager extends JManageDialog {
 		tableModel.fireTableStructureChanged();
 		jTable.autoResizeColumns();
 		program.updateTableMenu();
-		program.saveSettings("Save Columns (Changed - Load View)"); //Save Columns (Changed - Load View)
+		program.saveSettings("View (Load)"); //Save Columns (Changed - Load View)
 	}
 
 	@Override
@@ -80,25 +80,25 @@ public class ViewManager extends JManageDialog {
 	@Override
 	protected void rename(String name, String oldName) {
 		View view = views.get(oldName);
-		Settings.lock(); //Lock for View (Rename)
+		Settings.lock("View (Rename)"); //Lock for View (Rename)
 		view.setName(name);
 		views.remove(oldName); //Remove renamed filter (with old name)
 		views.remove(name); //Remove overwritten filter
 		views.put(name, view); //Add renamed filter (with new name)
-		update(); //Unlock for View (Rename)
-		Settings.unlock();
-		program.saveSettings("Save View (Rename)"); //Save View (Rename)
+		update();
+		Settings.unlock("View (Rename)");//Unlock for View (Rename)
+		program.saveSettings("View (Rename)"); //Save View (Rename)
 	}
 
 	@Override
 	protected void delete(List<String> list) {
-		Settings.lock(); //Lock for View (Delete)
+		Settings.lock("View (Delete)"); //Lock for View (Delete)
 		for (String name : list) {
 			views.remove(name);
 		}
 		update();
-		Settings.unlock(); //Unlock for View (Delete)
-		program.saveSettings("Save View (Delete)"); //Save View (Delete)
+		Settings.unlock("View (Delete)"); //Unlock for View (Delete)
+		program.saveSettings("View (Delete)"); //Save View (Delete)
 	}
 
 	@Override

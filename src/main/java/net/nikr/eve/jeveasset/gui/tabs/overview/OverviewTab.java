@@ -700,7 +700,7 @@ public class OverviewTab extends JMainTab {
 
 		@Override
 		protected void saveSettings(final String msg) {
-			program.saveSettings("Save Overview " + msg); //Save Overview Export Setttings (Filters not used)
+			program.saveSettings("Overview Table: " + msg); //Save Overview Export Setttings (Filters not used)
 		}
 	}
 }

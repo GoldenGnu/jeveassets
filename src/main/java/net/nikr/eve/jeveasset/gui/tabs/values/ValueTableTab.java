@@ -297,7 +297,7 @@ public class ValueTableTab extends JMainTab {
 
 		@Override
 		protected void saveSettings(final String msg) {
-			program.saveSettings("Save ISK " + msg); //Save ISK Filters and Export Setttings
+			program.saveSettings("ISK Talbe: " + msg); //Save ISK Filters and Export Setttings
 		}
 	}
 

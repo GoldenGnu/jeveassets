@@ -52,13 +52,13 @@ public class StockpileItemDialog extends JDialogCentered {
 		COPY
 	}
 
-	private JButton jOK;
-	private JButton jCancel;
-	private JComboBox jItems;
+	private final JButton jOK;
+	private final JButton jCancel;
+	private final JComboBox jItems;
 	private JTextField jCountMinimum;
-	private JCheckBox jCopy;
+	private final JCheckBox jCopy;
 
-	private EventList<Item> items = new EventListManager<Item>().create();
+	private final EventList<Item> items = new EventListManager<Item>().create();
 	private Stockpile stockpile;
 	private StockpileItem stockpileItem;
 
@@ -295,7 +295,7 @@ public class StockpileItemDialog extends JDialogCentered {
 
 	@Override
 	protected void save() {
-		Settings.lock(); //Lock for Stockpile (Items Dialog)
+		Settings.lock("Stockpile (Items Dialog)"); //Lock for Stockpile (Items Dialog)
 		if (stockpileItem != null) { //EDIT
 			if (itemExist()) { //EDIT + UPDATING (Editing to an existing item)
 				StockpileItem existingItem = getExistingItem();
@@ -310,8 +310,8 @@ public class StockpileItemDialog extends JDialogCentered {
 			stockpileItem = getStockpileItem();
 			stockpile.add(stockpileItem);
 		}
-		Settings.unlock(); //Unlock for Stockpile (Items Dialog)
-		program.saveSettings("Save Stockpile (Items Dialog)"); //Save Stockpile (Items Dialog)
+		Settings.unlock("Stockpile (Items Dialog)"); //Unlock for Stockpile (Items Dialog)
+		program.saveSettings("Stockpile (Items Dialog)"); //Save Stockpile (Items Dialog)
 		super.setVisible(false);
 	}
 

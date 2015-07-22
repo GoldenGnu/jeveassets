@@ -342,17 +342,17 @@ public class StockpileTab extends JMainTab {
 				}
 				if (toItem != null) { //Update existing (add counts)
 					if (merge) {
-						Settings.lock(); //Lock for Stockpile (addTo - Merge)
+						Settings.lock("Stockpile (addTo - Merge)"); //Lock for Stockpile (addTo - Merge)
 						toItem.addCountMinimum(fromItem.getCountMinimum());
-						Settings.unlock(); //Unlock for Stockpile (addTo - Merge)
-						program.saveSettings("Save Stockpile (addTo - Merge)"); //Save Stockpile (addTo - Merge)
+						Settings.unlock("Stockpile (addTo - Merge)"); //Unlock for Stockpile (addTo - Merge)
+						program.saveSettings("Stockpile (addTo - Merge)"); //Save Stockpile (addTo - Merge)
 					}
 				} else { //Add new
-					Settings.lock(); //Lock for Stockpile (addTo - New)
+					Settings.lock("Stockpile (addTo - New)"); //Lock for Stockpile (addTo - New)
 					StockpileItem item = new StockpileItem(stockpile, fromItem);
 					stockpile.add(item);
-					Settings.unlock(); //Unlock for Stockpile (addTo - New)
-					program.saveSettings("Save Stockpile (addTo - New)"); //Save Stockpile (addTo - New)
+					Settings.unlock("Stockpile (addTo - New)"); //Unlock for Stockpile (addTo - New)
+					program.saveSettings("Stockpile (addTo - New)"); //Save Stockpile (addTo - New)
 				}
 			}
 			addStockpile(stockpile);
@@ -598,7 +598,7 @@ public class StockpileTab extends JMainTab {
 			return;
 		}
 
-		Settings.lock(); //Lock for Stockpile (EFT import)
+		Settings.lock("Stockpile (EFT import)"); //Lock for Stockpile (EFT import)
 		//Add modules
 		Map<Integer, StockpileItem> items = new HashMap<Integer, StockpileItem>();
 		for (String module : modules) {
@@ -634,8 +634,8 @@ public class StockpileTab extends JMainTab {
 				}
 			}
 		}
-		Settings.unlock(); //Unlock for Stockpile (EFT import)
-		program.saveSettings("Save Stockpile (EFT import)"); //Save Stockpile (EFT import)
+		Settings.unlock("Stockpile (EFT import)"); //Unlock for Stockpile (EFT import)
+		program.saveSettings("Stockpile (EFT import)"); //Save Stockpile (EFT import)
 		//Update stockpile data
 		addStockpile(stockpile);
 		scrollToSctockpile(stockpile);
@@ -742,7 +742,7 @@ public class StockpileTab extends JMainTab {
 		if (stockpile == null) { //Dialog cancelled
 			return;
 		}
-		Settings.lock(); //Lock for Stockpile (IskPerHour import)
+		Settings.lock("Stockpile (IskPerHour import)"); //Lock for Stockpile (IskPerHour import)
 		//Search for item names
 		for (Map.Entry<String, Double> entry : data.entrySet()) {
 			for (Item item : StaticData.get().getItems().values()) {
@@ -753,8 +753,8 @@ public class StockpileTab extends JMainTab {
 				}
 			}
 		}
-		Settings.unlock(); //Unlock for Stockpile (IskPerHour import)
-		program.saveSettings("Save Stockpile (IskPerHour import)"); //Save Stockpile (EFT import)
+		Settings.unlock("Stockpile (IskPerHour import)"); //Unlock for Stockpile (IskPerHour import)
+		program.saveSettings("Stockpile (IskPerHour import)"); //Save Stockpile (EFT import)
 		//Update stockpile data
 		addStockpile(stockpile);
 		scrollToSctockpile(stockpile);
@@ -897,7 +897,7 @@ public class StockpileTab extends JMainTab {
 					if (multiplier != item.getStockpile().getMultiplier()) {
 						item.getStockpile().setMultiplier(multiplier);
 						item.getStockpile().updateTotal();
-						program.saveSettings("Save Stockpile: Multiplier changed");
+						program.saveSettings("Stockpile: Multiplier changed");
 					}
 					tableModel.fireTableDataChanged();
 				}
@@ -981,7 +981,7 @@ public class StockpileTab extends JMainTab {
 
 		@Override
 		public void columnValueChanged() {
-			program.saveSettings("Save Stockpile: Target changed");
+			program.saveSettings("Stockpile: Target changed");
 		}
 	}
 
@@ -1059,7 +1059,7 @@ public class StockpileTab extends JMainTab {
 
 		@Override
 		protected void saveSettings(final String msg) {
-			program.saveSettings("Save Stockpile " + msg); //Save Stockpile Filters and Export Setttings
+			program.saveSettings("Stockpile Table: " + msg); //Save Stockpile Filters and Export Setttings
 		}
 	}
 

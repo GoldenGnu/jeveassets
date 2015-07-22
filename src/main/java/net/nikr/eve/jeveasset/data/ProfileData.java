@@ -448,9 +448,9 @@ public class ProfileData {
 				asset.setAdded(Settings.get().getAssetAdded().get(asset.getItemID()));
 			} else {
 				Date date = new Date();
-				Settings.lock(); //Lock for Asset Added
+				Settings.lock("Asset Added Date"); //Lock for Asset Added
 				Settings.get().getAssetAdded().put(asset.getItemID(), date);
-				Settings.unlock(); //Unlock for Asset Added
+				Settings.unlock("Asset Added Date"); //Unlock for Asset Added
 				saveSettings = true;
 				asset.setAdded(date);
 			}

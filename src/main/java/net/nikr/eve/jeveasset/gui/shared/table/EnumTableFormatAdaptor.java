@@ -257,11 +257,11 @@ public class EnumTableFormatAdaptor<T extends Enum<T> & EnumTableColumn<Q>, Q> i
 								return;
 							}
 						}
-						Settings.lock(); //Lock for View (New)
+						Settings.lock("View (New)"); //Lock for View (New)
 						views.remove(view.getName()); //Remove old
 						views.put(view.getName(), view); //Add new
-						Settings.unlock(); //Unlock for View (New)
-						program.saveSettings("Save View (New)"); //Save View (New)
+						Settings.unlock("View (New)"); //Unlock for View (New)
+						program.saveSettings("View (New)"); //Save View (New)
 					}
 				}
 			});
@@ -312,7 +312,7 @@ public class EnumTableFormatAdaptor<T extends Enum<T> & EnumTableColumn<Q>, Q> i
 				reset();
 				tableModel.fireTableStructureChanged();
 				jTable.autoResizeColumns();
-				program.saveSettings("Save Columns (Reset)"); //Save Resize Mode
+				program.saveSettings("Columns (Reset)"); //Save Resize Mode
 			}
 		});
 		jMenu.add(jMenuItem);
@@ -331,7 +331,7 @@ public class EnumTableFormatAdaptor<T extends Enum<T> & EnumTableColumn<Q>, Q> i
 						jTable.saveColumnsWidth();
 						jTable.autoResizeColumns();
 						program.updateTableMenu();
-						program.saveSettings("Save Resize Mode"); //Save Resize Mode
+						program.saveSettings("Resize Mode"); //Save Resize Mode
 					}
 				});
 			buttonGroup.add(jRadioButton);
