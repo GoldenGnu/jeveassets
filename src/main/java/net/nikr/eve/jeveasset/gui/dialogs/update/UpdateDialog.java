@@ -594,7 +594,7 @@ public class UpdateDialog extends JDialogCentered {
 		@Override
 		public void update() {
 			MarketOrdersGetter marketOrdersGetter = new MarketOrdersGetter();
-			marketOrdersGetter.load(this, Settings.get().isForceUpdate(), program.getAccounts());
+			marketOrdersGetter.load(this, Settings.get().isForceUpdate(), program.getAccounts(), Settings.get().isMarketOrderHistory());
 		}
 	}
 

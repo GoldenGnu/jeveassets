@@ -96,7 +96,8 @@ public class Settings {
 		FLAG_BLUEPRINT_BASE_PRICE_TECH_1,
 		FLAG_BLUEPRINT_BASE_PRICE_TECH_2,
 		FLAG_TRANSACTION_HISTORY,
-		FLAG_JOURNAL_HISTORY
+		FLAG_JOURNAL_HISTORY,
+		FLAG_MARKET_ORDER_HISTORY
 	}
 
 	private static Settings settings;
@@ -216,6 +217,7 @@ public class Settings {
 		flags.put(SettingFlag.FLAG_BLUEPRINT_BASE_PRICE_TECH_2, false);
 		flags.put(SettingFlag.FLAG_TRANSACTION_HISTORY, true);
 		flags.put(SettingFlag.FLAG_JOURNAL_HISTORY, true);
+		flags.put(SettingFlag.FLAG_MARKET_ORDER_HISTORY, true);
 		cacheFlags();
 	}
 
@@ -652,8 +654,15 @@ public class Settings {
 		return flags.get(SettingFlag.FLAG_JOURNAL_HISTORY);
 	}
 
-	public void setJournalHistory(final boolean blueprintsTech2) {
-		flags.put(SettingFlag.FLAG_JOURNAL_HISTORY, blueprintsTech2);
+	public void setJournalHistory(final boolean journalHistory) {
+		flags.put(SettingFlag.FLAG_JOURNAL_HISTORY, journalHistory);
+	}
+	public boolean isMarketOrderHistory() {
+		return flags.get(SettingFlag.FLAG_MARKET_ORDER_HISTORY);
+	}
+
+	public void setMarketOrderHistory(final boolean marketOrderHistory) {
+		flags.put(SettingFlag.FLAG_MARKET_ORDER_HISTORY, marketOrderHistory);
 	}
 
 	public List<Stockpile> getStockpiles() {

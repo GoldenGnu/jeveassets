@@ -493,4 +493,14 @@ public abstract class FakeSettings extends Settings {
 	public int getStockpileColorGroup2() {
 		throw new UnsupportedOperationException("not implemented");
 	}
+
+	@Override
+	public void setMarketOrderHistory(boolean blueprintsTech2) {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public boolean isMarketOrderHistory() {
+		throw new UnsupportedOperationException("not implemented");
+	}
 }

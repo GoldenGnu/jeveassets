@@ -26,7 +26,9 @@ import com.beimin.eveapi.model.shared.MarketOrder;
 import com.beimin.eveapi.response.shared.MarketOrdersResponse;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import net.nikr.eve.jeveasset.data.MyAccount;
 import net.nikr.eve.jeveasset.data.MyAccount.AccessMask;
 import net.nikr.eve.jeveasset.data.Owner;
@@ -38,11 +40,14 @@ import net.nikr.eve.jeveasset.io.shared.ApiConverter;
 
 public class MarketOrdersGetter extends AbstractApiGetter<MarketOrdersResponse> {
 
+	private boolean saveHistory;
+	
 	public MarketOrdersGetter() {
 		super("Market Orders", true, false);
 	}
 
-	public void load(final UpdateTask updateTask, final boolean forceUpdate, final List<MyAccount> accounts) {
+	public void load(final UpdateTask updateTask, final boolean forceUpdate, final List<MyAccount> accounts, final boolean saveHistory) {
+		this.saveHistory = saveHistory;
 		super.loadAccounts(updateTask, forceUpdate, accounts);
 	}
 
@@ -70,7 +75,14 @@ public class MarketOrdersGetter extends AbstractApiGetter<MarketOrdersResponse> 
 	@Override
 	protected void setData(final MarketOrdersResponse response) {
 		List<MyMarketOrder> marketOrders = ApiConverter.convertMarketOrders(new ArrayList<MarketOrder>(response.getAll()), getOwner());
-		getOwner().setMarketOrders(marketOrders);
+		if (saveHistory) {
+			Set<MyMarketOrder> marketOrdersUnique = new HashSet<MyMarketOrder>();
+			marketOrdersUnique.addAll(marketOrders); //Add new
+			marketOrdersUnique.addAll(getOwner().getMarketOrders()); //Add old (Keep new, if equal to old)
+			getOwner().setMarketOrders(new ArrayList<MyMarketOrder>(marketOrdersUnique));
+		} else {
+			getOwner().setMarketOrders(marketOrders);
+		}
 	}
 
 	@Override
