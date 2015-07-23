@@ -60,6 +60,8 @@ public class ProfileData {
 	private final EventList<MyContract> contractEventList = new EventListManager<MyContract>().create();
 	private Map<Integer, List<MyAsset>> uniqueAssetsDuplicates = null; //TypeID : int
 	private Map<Integer, MarketPriceData> marketPriceData; //TypeID : int
+	private Map<Integer, MarketPriceData> transactionPriceDataSell; //TypeID : int
+	private Map<Integer, MarketPriceData> transactionPriceDataBuy; //TypeID : int
 	private final List<String> owners = new ArrayList<String>();
 	private boolean saveSettings = false;
 
@@ -211,6 +213,7 @@ public class ProfileData {
 		List<MyContract> contracts = new ArrayList<MyContract>();
 		List<MyAccountBalance> accountBalance = new ArrayList<MyAccountBalance>();
 		maximumPurchaseAge();
+		calcTransactionsPriceData();
 		//Add assets
 		for (MyAccount account : profileManager.getAccounts()) {
 			for (Owner owner : account.getOwners()) {
@@ -321,6 +324,12 @@ public class ProfileData {
 					//Price
 					double price = ApiIdConverter.getPrice(item.getTypeID(), false);
 					order.setDynamicPrice(price);
+					//Last Transaction
+					if (order.getBid() > 0) { //Buy
+						order.setLastTransaction(transactionPriceDataSell.get(order.getTypeID()));
+					} else { //Sell
+						order.setLastTransaction(transactionPriceDataBuy.get(order.getTypeID()));
+					}
 				}
 				//Update IndustryJobs dynamic values
 				for (MyIndustryJob job : owner.getIndustryJobs()) {
@@ -433,6 +442,34 @@ public class ProfileData {
 				}
 			}
 		}
+	}
+
+	private void calcTransactionsPriceData() {
+		//Create Transaction Price Data
+		transactionPriceDataSell = new HashMap<Integer, MarketPriceData>();
+		transactionPriceDataBuy = new HashMap<Integer, MarketPriceData>();
+		//Date - maximumPurchaseAge in days
+		for (MyAccount account : profileManager.getAccounts()) {
+			for (Owner owner : account.getOwners()) {
+				for (MyTransaction transaction : owner.getTransactions().values()) {
+					if (transaction.getTransactionType().equals("sell")) { //Sell
+						createTransactionsPriceData(transactionPriceDataSell, transaction);
+					} else { //Buy
+						createTransactionsPriceData(transactionPriceDataBuy, transaction);
+					}
+					
+				}
+			}
+		}
+	}
+
+	private void createTransactionsPriceData(Map<Integer, MarketPriceData> transactionPriceData, MyTransaction transaction) {
+		int typeID = transaction.getTypeID();
+		if (!transactionPriceData.containsKey(typeID)) {
+			transactionPriceData.put(typeID, new MarketPriceData());
+		}
+		MarketPriceData data = transactionPriceData.get(typeID);
+		data.update(transaction.getPrice(), transaction.getTransactionDateTime());
 	}
 
 	private void addAssets(final List<MyAsset> assets, List<MyAsset> addTo, Map<Long, Blueprint> blueprints) {

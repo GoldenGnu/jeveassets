@@ -25,11 +25,13 @@ import com.beimin.eveapi.model.shared.MarketOrder;
 import java.util.Date;
 import javax.management.timer.Timer;
 import net.nikr.eve.jeveasset.data.Item;
+import net.nikr.eve.jeveasset.data.MarketPriceData;
 import net.nikr.eve.jeveasset.data.MyLocation;
 import net.nikr.eve.jeveasset.data.Owner;
 import net.nikr.eve.jeveasset.data.types.ItemType;
 import net.nikr.eve.jeveasset.data.types.LocationType;
 import net.nikr.eve.jeveasset.data.types.PriceType;
+import net.nikr.eve.jeveasset.gui.shared.table.containers.Percent;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.Quantity;
 import net.nikr.eve.jeveasset.i18n.TabsOrders;
 
@@ -100,6 +102,9 @@ public class MyMarketOrder extends MarketOrder implements Comparable<MyMarketOrd
 	private Owner owner;
 	private Quantity quantity;
 	private double price;
+	private double lastTransactionPrice;
+	private double lastTransactionValue;
+	private Percent lastTransactionPercent;
 
 	public MyMarketOrder(final MarketOrder apiMarketOrder, final Item item, final MyLocation location, final Owner owner) {
 		this.setAccountKey(apiMarketOrder.getAccountKey());
@@ -188,6 +193,34 @@ public class MyMarketOrder extends MarketOrder implements Comparable<MyMarketOrd
 		return price;
 	}
 
+	public double getLastTransactionPrice() {
+		return lastTransactionPrice;
+	}
+
+	public double getLastTransactionValue() {
+		return lastTransactionValue;
+	}
+
+	public Percent getLastTransactionPercent() {
+		return lastTransactionPercent;
+	}
+
+	public void setLastTransaction(MarketPriceData lastTransaction) {
+		if (lastTransaction != null) {
+			this.lastTransactionPrice = lastTransaction.getLatest();
+			if (getBid() > 0) { //Buy
+				this.lastTransactionValue = this.lastTransactionPrice - getPrice();
+				this.lastTransactionPercent = new Percent(this.lastTransactionPrice / getPrice());
+			} else { //Sell
+				this.lastTransactionValue = getPrice() - this.lastTransactionPrice;
+				this.lastTransactionPercent = new Percent(getPrice() / this.lastTransactionPrice);
+			}
+		} else {
+			this.lastTransactionPrice = 0;
+			this.lastTransactionValue = 0;
+			this.lastTransactionPercent = new Percent(0);
+		}
+	}
 
 	@Override
 	public Item getItem() {
