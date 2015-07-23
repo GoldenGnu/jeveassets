@@ -804,7 +804,7 @@ public class TrackerTab extends JMainTab {
 				SwingUtilities.invokeLater(new Runnable() {
 					@Override
 					public void run() {
-						if (total.isEmpty()) {
+						if (cache.isEmpty()) {
 							return;
 						}
 						jNextChart.getXYPlot().setDomainCrosshairVisible(true);
