@@ -141,14 +141,14 @@ public class TrackerTab extends JMainTab {
 	private final ListenerClass listener = new ListenerClass();
 
 	private final TimePeriodValuesCollection dataset = new TimePeriodValuesCollection();
-	TimePeriodValues total;
-	TimePeriodValues walletBalance;
-	TimePeriodValues assets;
-	TimePeriodValues sellOrders;
-	TimePeriodValues escrows;
-	TimePeriodValues escrowsToCover;
-	TimePeriodValues manufacturing;
-	TimePeriodValues contractCollateral;
+	private TimePeriodValues walletBalance;
+	private TimePeriodValues assets;
+	private TimePeriodValues sellOrders;
+	private TimePeriodValues escrows;
+	private TimePeriodValues escrowsToCover;
+	private TimePeriodValues manufacturing;
+	private TimePeriodValues contractCollateral;
+	private Map<SimpleTimePeriod, Value> cache;
 
 	public TrackerTab(Program program) {
 		super(program, TabsTracker.get().title(), Images.TOOL_TRACKER.getIcon(), true);
@@ -479,7 +479,6 @@ public class TrackerTab extends JMainTab {
 
 	private void createData() {
 		Object[] owners = jOwners.getSelectedValues();
-		total = new TimePeriodValues(TabsTracker.get().total());
 		walletBalance = new TimePeriodValues(TabsTracker.get().walletBalance());
 		assets = new TimePeriodValues(TabsTracker.get().assets());
 		sellOrders = new TimePeriodValues(TabsTracker.get().sellOrders());
@@ -503,8 +502,8 @@ public class TrackerTab extends JMainTab {
 			calendar.set(Calendar.MILLISECOND, 0);
 			to = calendar.getTime();
 		}
+		cache = new TreeMap<SimpleTimePeriod, Value>();
 		if (owners != null && owners.length > 0) { //No data set...
-			Map<SimpleTimePeriod, Value> cache = new TreeMap<SimpleTimePeriod, Value>();
 			for (Object o : owners) {
 				String owner = (String) o;
 				for (Value data : Settings.get().getTrackerData().get(owner)) {
@@ -526,7 +525,6 @@ public class TrackerTab extends JMainTab {
 				}
 			}
 			for (Map.Entry<SimpleTimePeriod, Value> entry : cache.entrySet()) {
-				total.add(entry.getKey(), entry.getValue().getTotal());
 				walletBalance.add(entry.getKey(), entry.getValue().getBalance());
 				assets.add(entry.getKey(), entry.getValue().getAssets());
 				sellOrders.add(entry.getKey(), entry.getValue().getSellOrders());
@@ -544,8 +542,33 @@ public class TrackerTab extends JMainTab {
 		while (dataset.getSeriesCount() != 0) {
 			dataset.removeSeries(0);
 		}
-
-		if (jTotal.isSelected() && total != null) {
+		if (jTotal.isSelected()) {
+			TimePeriodValues total = new TimePeriodValues(TabsTracker.get().total());
+			for (Map.Entry<SimpleTimePeriod, Value> entry : cache.entrySet()) {
+				double t = 0;
+				if (jWalletBalance.isSelected() && walletBalance != null) {
+					t += entry.getValue().getBalance();
+				}
+				if (jAssets.isSelected() && assets != null) {
+					t += entry.getValue().getAssets();
+				}
+				if (jSellOrders.isSelected() && sellOrders != null) {
+					t += entry.getValue().getSellOrders();
+				}
+				if (jEscrows.isSelected() && escrows != null) {
+					t += entry.getValue().getEscrows();
+				}
+				if (jEscrowsToCover.isSelected() && escrowsToCover != null) {
+					t += entry.getValue().getEscrowsToCover();
+				}
+				if (jManufacturing.isSelected() && manufacturing != null) {
+					t += entry.getValue().getManufacturing();
+				}
+				if (jContractCollateral.isSelected() && contractCollateral != null) {
+					t += entry.getValue().getContractCollateral();
+				}
+				total.add(entry.getKey(), t);
+			}
 			dataset.addSeries(total);
 			updateRender(dataset.getSeriesCount() - 1, Color.RED.darker());
 		}
