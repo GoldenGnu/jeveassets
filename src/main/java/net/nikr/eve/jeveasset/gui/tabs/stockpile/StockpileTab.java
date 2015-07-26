@@ -68,7 +68,13 @@ import javax.swing.JToolBar;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.data.*;
+import net.nikr.eve.jeveasset.data.EventListManager;
+import net.nikr.eve.jeveasset.data.Item;
+import net.nikr.eve.jeveasset.data.ItemFlag;
+import net.nikr.eve.jeveasset.data.MyAccount;
+import net.nikr.eve.jeveasset.data.Owner;
+import net.nikr.eve.jeveasset.data.Settings;
+import net.nikr.eve.jeveasset.data.StaticData;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
@@ -76,7 +82,9 @@ import net.nikr.eve.jeveasset.gui.shared.components.JDropDownButton;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
-import net.nikr.eve.jeveasset.gui.shared.menu.*;
+import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo;
+import net.nikr.eve.jeveasset.gui.shared.menu.MenuData;
+import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.TableMenu;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
@@ -330,6 +338,7 @@ public class StockpileTab extends JMainTab {
 		}
 		if (stockpile != null) { //Add items
 			removeStockpile(stockpile);
+			boolean save = false;
 			for (StockpileItem fromItem : items) {
 				//Clone item
 				StockpileItem toItem = null;
@@ -342,18 +351,21 @@ public class StockpileTab extends JMainTab {
 				}
 				if (toItem != null) { //Update existing (add counts)
 					if (merge) {
+						save = true;
 						Settings.lock("Stockpile (addTo - Merge)"); //Lock for Stockpile (addTo - Merge)
 						toItem.addCountMinimum(fromItem.getCountMinimum());
 						Settings.unlock("Stockpile (addTo - Merge)"); //Unlock for Stockpile (addTo - Merge)
-						program.saveSettings("Stockpile (addTo - Merge)"); //Save Stockpile (addTo - Merge)
 					}
 				} else { //Add new
+					save = true;
 					Settings.lock("Stockpile (addTo - New)"); //Lock for Stockpile (addTo - New)
 					StockpileItem item = new StockpileItem(stockpile, fromItem);
 					stockpile.add(item);
 					Settings.unlock("Stockpile (addTo - New)"); //Unlock for Stockpile (addTo - New)
-					program.saveSettings("Stockpile (addTo - New)"); //Save Stockpile (addTo - New)
 				}
+			}
+			if (save) {
+				program.saveSettings("Stockpile (addTo)"); //Save Stockpile (Merge);
 			}
 			addStockpile(stockpile);
 		}
@@ -958,7 +970,10 @@ public class StockpileTab extends JMainTab {
 					Stockpile stockpile = item.getStockpile();
 					int value = JOptionPane.showConfirmDialog(program.getMainWindow().getFrame(), stockpile.getName(), TabsStockpile.get().deleteStockpileTitle(), JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
 					if (value == JOptionPane.OK_OPTION) {
+						Settings.lock("Stockpile (Delete Stockpile)");
 						Settings.get().getStockpiles().remove(stockpile);
+						Settings.unlock("Stockpile (Delete Stockpile)");
+						program.saveSettings("Stockpile (Delete Stockpile)");
 						removeStockpile(stockpile);
 					}
 				}
