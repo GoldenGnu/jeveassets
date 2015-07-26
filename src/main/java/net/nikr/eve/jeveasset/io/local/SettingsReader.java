@@ -116,6 +116,25 @@ public final class SettingsReader extends AbstractXmlReader {
 		return reader.read(settings);
 	}
 
+	public static List<Stockpile> loadStockpile(final String filename) {
+		SettingsReader reader = new SettingsReader();
+		return reader.readStockpile(filename);
+	}
+
+	private List<Stockpile> readStockpile(String filename) {
+		try {
+			Element element = getDocumentElement(filename, true);
+			List<Stockpile> stockpiles = parseStockpile(element);
+			LOG.info("Stockpile loaded");
+			return stockpiles;
+		} catch (IOException ex) {
+			LOG.info("Stockpile not loaded");
+		} catch (XmlException ex) {
+			LOG.warn("Stockpile parser error: (" + filename + ")" + ex.getMessage(), ex);
+		}
+		return null;
+	}
+
 	private boolean read(final Settings settings) {
 		try {
 			Update updater = new Update();
@@ -132,6 +151,21 @@ public final class SettingsReader extends AbstractXmlReader {
 		}
 		LOG.info("Settings loaded");
 		return true;
+	}
+
+	private List<Stockpile> parseStockpile(final Element element) throws XmlException {
+		if (!element.getNodeName().equals("settings")) {
+			throw new XmlException("Wrong root element name.");
+		}
+		//Stockpiles
+		List<Stockpile> stockpiles = new ArrayList<Stockpile>();
+		NodeList stockpilesNodes = element.getElementsByTagName("stockpiles");
+		if (stockpilesNodes.getLength() == 1) {
+			Element stockpilesElement = (Element) stockpilesNodes.item(0);
+			parseStockpiles(stockpilesElement, stockpiles);
+			Collections.sort(Settings.get().getStockpiles());
+		}
+		return stockpiles;
 	}
 
 	private void parseSettings(final Element element, final Settings settings) throws XmlException {
@@ -178,7 +212,7 @@ public final class SettingsReader extends AbstractXmlReader {
 		NodeList stockpilesNodes = element.getElementsByTagName("stockpiles");
 		if (stockpilesNodes.getLength() == 1) {
 			Element stockpilesElement = (Element) stockpilesNodes.item(0);
-			parseStockpiles(stockpilesElement, settings);
+			parseStockpiles(stockpilesElement, settings.getStockpiles());
 			Collections.sort(Settings.get().getStockpiles());
 		}
 
@@ -401,7 +435,7 @@ public final class SettingsReader extends AbstractXmlReader {
 		settings.setStockpileColorGroup3(group3);
 	}
 
-	private void parseStockpiles(final Element stockpilesElement, final Settings settings) {
+	private void parseStockpiles(final Element stockpilesElement, final List<Stockpile> stockpiles) {
 		NodeList stockpileNodes = stockpilesElement.getElementsByTagName("stockpile");
 		for (int a = 0; a < stockpileNodes.getLength(); a++) {
 			Element stockpileNode = (Element) stockpileNodes.item(a);
@@ -514,7 +548,7 @@ public final class SettingsReader extends AbstractXmlReader {
 			}
 		
 			Stockpile stockpile = new Stockpile(name, filters, multiplier);
-			settings.getStockpiles().add(stockpile);
+			stockpiles.add(stockpile);
 		//ITEMS
 			NodeList itemNodes = stockpileNode.getElementsByTagName("item");
 			for (int b = 0; b < itemNodes.getLength(); b++) {

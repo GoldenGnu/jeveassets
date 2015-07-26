@@ -62,6 +62,8 @@ class FilterGui<E> {
 	private final JPanel jPanel;
 	private final GroupLayout layout;
 	private final JToolBar jToolBar;
+	private final JButton jExportButton;
+	private final JDropDownButton jExportMenu;
 	private final JDropDownButton jLoadFilter;
 	private final JCheckBox jShowFilters;
 	private final JLabel jShowing;
@@ -74,6 +76,7 @@ class FilterGui<E> {
 	private final FilterManager<E> filterManager;
 
 	private final ExportDialog<E> exportDialog;
+	private final List<JMenuItem> exportOptions = new ArrayList<JMenuItem>();
 
 	ListenerClass listener = new ListenerClass();
 
@@ -128,11 +131,21 @@ class FilterGui<E> {
 		addToolSeparator();
 
 		//Export
-		JButton jExport = new JButton(GuiShared.get().export());
-		jExport.setIcon(Images.DIALOG_CSV_EXPORT.getIcon());
-		jExport.setActionCommand(FilterGuiAction.EXPORT.name());
-		jExport.addActionListener(listener);
-		addToolButton(jExport);
+		jExportButton = new JButton(GuiShared.get().export());
+		jExportButton.setIcon(Images.DIALOG_CSV_EXPORT.getIcon());
+		jExportButton.setActionCommand(FilterGuiAction.EXPORT.name());
+		jExportButton.addActionListener(listener);
+		addToolButton(jExportButton);
+
+		jExportMenu = new JDropDownButton(GuiShared.get().export(), Images.DIALOG_CSV_EXPORT.getIcon());
+		jExportMenu.setVisible(false);
+		addToolButton(jExportMenu);
+
+		JMenuItem jExportMenuItem = new JMenuItem(GuiShared.get().exportTableData());
+		jExportMenuItem.setIcon(Images.DIALOG_CSV_EXPORT.getIcon());
+		jExportMenuItem.setActionCommand(FilterGuiAction.EXPORT.name());
+		jExportMenuItem.addActionListener(listener);
+		jExportMenu.add(jExportMenuItem);
 
 		addToolSeparator();
 
@@ -169,6 +182,14 @@ class FilterGui<E> {
 		}
 		jButton.setHorizontalAlignment(SwingConstants.LEFT);
 		jToolBar.add(jButton);
+	}
+
+	final void addExportOption(final JMenuItem jMenuItem) {
+		if (!jExportMenu.isVisible()) { //First
+			jExportMenu.setVisible(true);
+			jExportButton.setVisible(false);
+		}
+		jExportMenu.add(jMenuItem);
 	}
 	final void addToolSeparator() {
 		jToolBar.addSeparator();

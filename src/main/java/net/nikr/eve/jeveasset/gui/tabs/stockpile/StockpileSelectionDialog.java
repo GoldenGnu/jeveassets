@@ -33,7 +33,6 @@ import javax.swing.JScrollPane;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
 import net.nikr.eve.jeveasset.gui.shared.components.JMultiSelectionList;
 import net.nikr.eve.jeveasset.i18n.TabsStockpile;
@@ -45,10 +44,11 @@ public class StockpileSelectionDialog extends JDialogCentered {
 		OK, CANCEL
 	}
 
-	private JMultiSelectionList jList;
-	private JButton jOK;
+	//GUI
+	private final JMultiSelectionList jList;
+	private final JButton jOK;
 
-	//
+	//Data
 	private List<Stockpile> stockpiles;
 
 	public StockpileSelectionDialog(final Program program) {
@@ -97,16 +97,15 @@ public class StockpileSelectionDialog extends JDialogCentered {
 		return jOK;
 	}
 
-	public List<Stockpile> show() {
-		stockpiles = null;
+	public List<Stockpile> show(List<Stockpile> stockpiles) {
+		jList.setModel(new DataListModel(stockpiles));
+		this.stockpiles = null;
 		this.setVisible(true);
-		return stockpiles;
+		return this.stockpiles;
 	}
 
 	@Override
-	protected void windowShown() {
-		jList.setModel(new DataListModel(Settings.get().getStockpiles()));
-	}
+	protected void windowShown() { }
 
 	@Override
 	protected void save() {
@@ -138,7 +137,7 @@ public class StockpileSelectionDialog extends JDialogCentered {
 
 	private static class DataListModel extends AbstractListModel {
 
-		private List<?> data;
+		private final List<?> data;
 
 		public DataListModel(final List<?> data) {
 			this.data = data;

@@ -42,7 +42,7 @@ public class JCustomFileChooser extends JFileChooser {
 
 	@Override
 	public void setSelectedFile(File file) {
-		if (file != null) {
+		if (getDialogType() != OPEN_DIALOG && file != null) {
 			String filename = file.getAbsolutePath();
 			if (filename.matches("(?i).*\\.\\w{0,4}$")) { //Already got a extension - remove it
 				int end = filename.lastIndexOf(".");
@@ -66,7 +66,7 @@ public class JCustomFileChooser extends JFileChooser {
 	public void approveSelection() {
 		File selectedFile = this.getSelectedFile();
 		//Confirm Overwrite file
-		if (selectedFile != null && selectedFile.exists()) {
+		if (getDialogType() != OPEN_DIALOG && selectedFile != null && selectedFile.exists()) {
 			int nReturn = JOptionPane.showConfirmDialog(
 					jFrame,
 					GuiShared.get().overwrite(),

@@ -36,6 +36,7 @@ import java.util.Map;
 import javax.swing.AbstractButton;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JTable;
 import net.nikr.eve.jeveasset.data.EventListManager;
@@ -117,6 +118,9 @@ public abstract class FilterControl<E> extends ExportFilterControl<E> {
 	}
 	public void addToolButton(final AbstractButton jButton, final int width) {
 		gui.addToolButton(jButton, width);
+	}
+	public void addExportOption(final JMenuItem jMenuItem) {
+		gui.addExportOption(jMenuItem);
 	}
 	public void addToolSeparator() {
 		gui.addToolSeparator();

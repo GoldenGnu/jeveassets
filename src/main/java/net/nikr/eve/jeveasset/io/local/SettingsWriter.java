@@ -65,6 +65,31 @@ public class SettingsWriter extends AbstractXmlWriter {
 		return writer.write(settings);
 	}
 
+	public static boolean saveStockpiles(final List<Stockpile> stockpiles, final String filename) {
+		SettingsWriter writer = new SettingsWriter();
+		return writer.writeStockpiles(stockpiles, filename);
+	}
+
+	private boolean writeStockpiles(final List<Stockpile> stockpiles, final String filename) {
+		Document xmldoc;
+		try {
+			xmldoc = getXmlDocument("settings");
+		} catch (XmlException ex) {
+			LOG.error("Stockpile not saved " + ex.getMessage(), ex);
+			return false;
+		}
+
+		writeStockpiles(xmldoc, stockpiles);
+		try {
+			writeXmlFile(xmldoc, filename, false);
+		} catch (XmlException ex) {
+			LOG.error("Stockpile not saved " + ex.getMessage(), ex);
+			return false;
+		}
+		LOG.info("Stockpile saved");
+		return true;
+	}
+
 	private boolean write(final Settings settings) {
 		Document xmldoc;
 		try {

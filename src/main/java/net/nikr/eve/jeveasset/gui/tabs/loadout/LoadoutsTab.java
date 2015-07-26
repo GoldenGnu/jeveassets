@@ -158,10 +158,15 @@ public class LoadoutsTab extends JMainTab {
 		jExport = new JDropDownButton(GuiShared.get().export(), Images.DIALOG_CSV_EXPORT.getIcon());
 		addToolButton(jToolBarLeft, jExport);
 
+		JMenuItem jExportSqlCsvHtml = new JMenuItem(TabsLoadout.get().exportTableData(), Images.DIALOG_CSV_EXPORT.getIcon());
+		jExportSqlCsvHtml.setActionCommand(LoadoutsAction.EXPORT.name());
+		jExportSqlCsvHtml.addActionListener(listener);
+		jExport.add(jExportSqlCsvHtml);
+
 		JMenu jMenu = new JMenu(TabsLoadout.get().exportEveXml());
 		jMenu.setIcon(Images.MISC_EVE.getIcon());
 		jExport.add(jMenu);
-
+		
 		JMenuItem jExportEveXml = new JMenuItem(TabsLoadout.get().exportEveXmlSelected());
 		jExportEveXml.setActionCommand(LoadoutsAction.EXPORT_LOADOUT_SELECTED.name());
 		jExportEveXml.addActionListener(listener);
@@ -171,11 +176,6 @@ public class LoadoutsTab extends JMainTab {
 		jExportEveXmlAll.setActionCommand(LoadoutsAction.EXPORT_LOADOUT_ALL.name());
 		jExportEveXmlAll.addActionListener(listener);
 		jMenu.add(jExportEveXmlAll);
-
-		JMenuItem jExportSqlCsvHtml = new JMenuItem(TabsLoadout.get().exportSqlCsvHtml(), Images.DIALOG_CSV_EXPORT.getIcon());
-		jExportSqlCsvHtml.setActionCommand(LoadoutsAction.EXPORT.name());
-		jExportSqlCsvHtml.addActionListener(listener);
-		jExport.add(jExportSqlCsvHtml);
 
 		JToolBar jToolBarRight = new JToolBar();
 		jToolBarRight.setFloatable(false);

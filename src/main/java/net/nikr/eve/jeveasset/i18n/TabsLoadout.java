@@ -48,7 +48,7 @@ public abstract class TabsLoadout extends Bundle {
 	public abstract String exportEveXml();
 	public abstract String exportEveXmlAll();
 	public abstract String exportEveXmlSelected();
-	public abstract String exportSqlCsvHtml();
+	public abstract String exportTableData();
 	public abstract String flagCargo();
 	public abstract String flagDroneBay();
 	public abstract String flagHighSlot();

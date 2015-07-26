@@ -331,6 +331,22 @@ public class StockpileDialog extends JDialogCentered {
 		return stockpile;
 	}
 
+	Stockpile showRename(final Stockpile stockpile) {
+		clear();
+		cloneStockpile = stockpile.clone();
+		//Title
+		this.getDialog().setTitle(TabsStockpile.get().renameStockpileTitle());
+		//Load
+		loadStockpile(cloneStockpile, cloneStockpile.getName());
+		//Show
+		show();
+		if (updated) {
+			return cloneStockpile;
+		} else {
+			return null;
+		}
+	}
+
 	Stockpile showClone(final Stockpile stockpile) {
 		clear();
 		cloneStockpile = stockpile.clone();

@@ -57,6 +57,7 @@ import java.util.regex.Pattern;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JComponent;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -78,6 +79,7 @@ import net.nikr.eve.jeveasset.data.StaticData;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
+import net.nikr.eve.jeveasset.gui.shared.components.JCustomFileChooser;
 import net.nikr.eve.jeveasset.gui.shared.components.JDropDownButton;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
@@ -98,10 +100,13 @@ import net.nikr.eve.jeveasset.gui.tabs.orders.MyMarketOrder;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileFilter;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileTotal;
+import net.nikr.eve.jeveasset.gui.tabs.stockpile.StockpileImportDialog.ImportReturn;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.StockpileSeparatorTableCell.StockpileCellAction;
 import net.nikr.eve.jeveasset.gui.tabs.transaction.MyTransaction;
 import net.nikr.eve.jeveasset.i18n.General;
 import net.nikr.eve.jeveasset.i18n.TabsStockpile;
+import net.nikr.eve.jeveasset.io.local.SettingsReader;
+import net.nikr.eve.jeveasset.io.local.SettingsWriter;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 
 
@@ -112,6 +117,8 @@ public class StockpileTab extends JMainTab {
 		SHOPPING_LIST_MULTI,
 		IMPORT_EFT,
 		IMPORT_ISK_PER_HOUR,
+		IMPORT_XML,
+		EXPORT_XML,
 		COLLAPSE,
 		EXPAND
 	}
@@ -121,11 +128,13 @@ public class StockpileTab extends JMainTab {
 	private final JLabel jVolumeNeeded;
 	private final JLabel jValueNow;
 	private final JLabel jValueNeeded;
+	private final JCustomFileChooser jFileChooser;
 
 	private final StockpileDialog stockpileDialog;
 	private final StockpileItemDialog stockpileItemDialog;
 	private final StockpileShoppingListDialog stockpileShoppingListDialog;
 	private final StockpileSelectionDialog stockpileSelectionDialog;
+	private final StockpileImportDialog stockpileImportDialog;
 
 	//Table
 	private final EnumTableFormatAdaptor<StockpileTableFormat, StockpileItem> tableFormat;
@@ -146,10 +155,15 @@ public class StockpileTab extends JMainTab {
 
 		final ListenerClass listener = new ListenerClass();
 
+		jFileChooser = new JCustomFileChooser(program.getMainWindow().getFrame(), "xml");
+		jFileChooser.setMultiSelectionEnabled(false);
+		jFileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+
 		stockpileDialog = new StockpileDialog(program);
 		stockpileItemDialog = new StockpileItemDialog(program);
 		stockpileShoppingListDialog = new StockpileShoppingListDialog(program);
 		stockpileSelectionDialog = new StockpileSelectionDialog(program);
+		stockpileImportDialog = new StockpileImportDialog(program);
 
 		JToolBar jToolBarLeft = new JToolBar();
 		jToolBarLeft.setFloatable(false);
@@ -190,6 +204,15 @@ public class StockpileTab extends JMainTab {
 		jImportIskPerHour.setActionCommand(StockpileAction.IMPORT_ISK_PER_HOUR.name());
 		jImportIskPerHour.addActionListener(listener);
 		jImport.add(jImportIskPerHour);
+
+		JMenuItem jEveAssets = new JMenuItem(TabsStockpile.get().exportStockpiles(), Images.TOOL_STOCKPILE.getIcon());
+		jEveAssets.setActionCommand(StockpileAction.IMPORT_XML.name());
+		jEveAssets.addActionListener(listener);
+		jImport.add(jEveAssets);
+
+		JMenuItem jExport = new JMenuItem(TabsStockpile.get().importStockpiles(), Images.TOOL_STOCKPILE.getIcon());
+		jExport.setActionCommand(StockpileAction.EXPORT_XML.name());
+		jExport.addActionListener(listener);
 
 		JToolBar jToolBarRight = new JToolBar();
 		jToolBarRight.setFloatable(false);
@@ -258,6 +281,7 @@ public class StockpileTab extends JMainTab {
 				Settings.get().getTableFilters(NAME)
 				);
 
+		filterControl.addExportOption(jExport);
 		//Menu
 		installMenu(program, new StockpileTableMenu(), jTable, StockpileItem.class);
 
@@ -772,6 +796,102 @@ public class StockpileTab extends JMainTab {
 		scrollToSctockpile(stockpile);
 	}
 
+	private void importXml() {
+		jFileChooser.setSelectedFile(null);
+		int value = jFileChooser.showOpenDialog(program.getMainWindow().getFrame());
+		if (value == JFileChooser.APPROVE_OPTION) {
+			List<Stockpile> stockpiles = SettingsReader.loadStockpile(jFileChooser.getSelectedFile().getAbsolutePath());
+			if (stockpiles != null) {
+				stockpiles = stockpileSelectionDialog.show(stockpiles);
+				if (stockpiles != null) {
+					List<Stockpile> existing = new ArrayList<Stockpile>();
+					boolean save = false;
+					for (Stockpile stockpile : stockpiles) {
+						if (Settings.get().getStockpiles().contains(stockpile)) { //Exist
+							existing.add(stockpile);
+						} else { //New
+							//Save Result
+							save = true;
+							Settings.lock("Stockpile (Import XML new)");
+							Settings.get().getStockpiles().add(stockpile); //Add
+							Settings.unlock("Stockpile (Import XML new)");
+							//Update UI
+							addStockpile(stockpile);
+						}
+					}
+					stockpileImportDialog.resetToDefault();
+					int count = existing.size();
+					ImportReturn importReturn = ImportReturn.SKIP;
+					for (Stockpile stockpile : existing) {
+						importReturn = importOptions(stockpile, importReturn, count);
+						if (importReturn == ImportReturn.OVERWRITE || importReturn == ImportReturn.OVERWRITE_ALL) {
+							save = true;
+						}
+						count--;
+					}
+					Collections.sort(Settings.get().getStockpiles());
+					if (save) {
+						program.saveSettings("Stockpile (Import XML)");
+					}
+					
+				}
+			} else {
+				JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), TabsStockpile.get().importXmlFailedMsg(), TabsStockpile.get().importXmlFailedTitle(), JOptionPane.WARNING_MESSAGE);
+			}
+		}
+	}
+
+	private ImportReturn importOptions(Stockpile stockpile, ImportReturn importReturn, int count) {
+		if (importReturn != ImportReturn.OVERWRITE_ALL
+				&& importReturn != ImportReturn.MERGE_ALL
+				&& importReturn != ImportReturn.RENAME_ALL
+				&& importReturn != ImportReturn.SKIP_ALL) { //Not decided - ask what to do
+			importReturn = stockpileImportDialog.show(stockpile.getName(), count);
+		}
+		//Rename
+		if (importReturn == ImportReturn.RENAME || importReturn == ImportReturn.RENAME_ALL) {
+			Stockpile returnRename = stockpileDialog.showRename(stockpile); //Rename stockpile
+			if (returnRename != null) { //OK
+				addStockpile(returnRename); //Update UI
+			} else { //Cancel
+				JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), TabsStockpile.get().importXmlCancelledMsg(), TabsStockpile.get().importXmlCancelledTitle(), JOptionPane.PLAIN_MESSAGE);
+				return importOptions(stockpile, ImportReturn.RENAME, count); //Retry - if RENAME_ALL, ask again
+			}
+		}
+		//Merge
+		if (importReturn == ImportReturn.MERGE || importReturn == ImportReturn.MERGE_ALL) {
+			int index = Settings.get().getStockpiles().indexOf(stockpile); //Get index of old Stockpile
+			Stockpile mergeStockpile = Settings.get().getStockpiles().get(index); //Get old stockpile
+			addToStockpile(mergeStockpile, stockpile.getItems(), true); //Merge old and imported stockpiles
+		}
+		//Overwrite
+		if (importReturn == ImportReturn.OVERWRITE || importReturn == ImportReturn.OVERWRITE_ALL) {
+			Settings.lock("Stockpile (Import XML overwrite)"); //Lock settings
+			//Remove
+			int index = Settings.get().getStockpiles().indexOf(stockpile); //Get index of old Stockpile
+			Stockpile removeStockpile = Settings.get().getStockpiles().get(index); //Get old stockpile
+			removeStockpile(removeStockpile); //Remove old stockpile from the UI
+			Settings.get().getStockpiles().remove(removeStockpile); //Remove old stockpile from the Settings
+			//Add
+			Settings.get().getStockpiles().add(stockpile); //Add imported stockpile to Settings
+			Settings.unlock("Stockpile (Import XML overwrite)"); //Unlock settings
+			//Update UI
+			addStockpile(stockpile); //Add imported stockpile to Settings
+		}
+		//Skip - Do nothing
+		return importReturn;
+	}
+
+	private void exportXml() {
+		List<Stockpile> stockpiles = stockpileSelectionDialog.show(Settings.get().getStockpiles());
+		if (stockpiles != null) {
+			int value = jFileChooser.showSaveDialog(program.getMainWindow().getFrame());
+			if (value == JFileChooser.APPROVE_OPTION) {
+				SettingsWriter.saveStockpiles(stockpiles, jFileChooser.getSelectedFile().getAbsolutePath());
+			}
+		}
+	}
+
 	private void updateOwners() {
 		//Owners Look-Up
 		ownersName = new HashMap<Long, String>();
@@ -875,7 +995,7 @@ public class StockpileTab extends JMainTab {
 			}
 			//Shopping list multi
 			if (StockpileAction.SHOPPING_LIST_MULTI.name().equals(e.getActionCommand())) {
-				List<Stockpile> stockpiles = stockpileSelectionDialog.show();
+				List<Stockpile> stockpiles = stockpileSelectionDialog.show(Settings.get().getStockpiles());
 				if (stockpiles != null) {
 					stockpileShoppingListDialog.show(stockpiles);
 				}
@@ -921,6 +1041,12 @@ public class StockpileTab extends JMainTab {
 			//Add stockpile (EFT Import)
 			if (StockpileAction.IMPORT_ISK_PER_HOUR.name().equals(e.getActionCommand())) {
 				importIskPerHour();
+			}
+			if (StockpileAction.IMPORT_XML.name().equals(e.getActionCommand())) {
+				importXml();
+			}
+			if (StockpileAction.EXPORT_XML.name().equals(e.getActionCommand())) {
+				exportXml();
 			}
 			//Add stockpile
 			if (StockpileAction.ADD_STOCKPILE.name().equals(e.getActionCommand())) {

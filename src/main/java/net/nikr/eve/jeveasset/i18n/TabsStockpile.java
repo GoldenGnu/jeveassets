@@ -65,6 +65,7 @@ public abstract class TabsStockpile extends Bundle {
 	public abstract String editStockpileTitle();
 	public abstract String estimatedMarketValue();
 	public abstract String expand();
+	public abstract String exportStockpiles();
 	public abstract String flag();
 	public abstract String getShoppingList();
 	public abstract String importButton();
@@ -76,6 +77,20 @@ public abstract class TabsStockpile extends Bundle {
 	public abstract String importIskPerHourTitle();
 	public abstract String importIskPerHourInclude();
 	public abstract String importIskPerHourHelp();
+	public abstract String importStockpiles();
+	public abstract String importXmlAll(int count);
+	public abstract String importXmlCancelledMsg();
+	public abstract String importXmlCancelledTitle();
+	public abstract String importXmlFailedMsg();
+	public abstract String importXmlFailedTitle();
+	public abstract String importXmlMerge();
+	public abstract String importXmlMergeHelp();
+	public abstract String importXmlOverwrite();
+	public abstract String importXmlOverwriteHelp();
+	public abstract String importXmlRename();
+	public abstract String importXmlRenameHelp();
+	public abstract String importXmlSkip();
+	public abstract String importXmlSkipHelp();
 	public abstract String include();
 	public abstract String includeAssets();
 	public abstract String includeAssetsTip();
@@ -107,6 +122,7 @@ public abstract class TabsStockpile extends Bundle {
 	public abstract String percentFull();
 	public abstract String region();
 	public abstract String remove();
+	public abstract String renameStockpileTitle();
 	public abstract String selectStockpiles();
 	public abstract String shoppingList();
 	public abstract String shownValueNeeded();
