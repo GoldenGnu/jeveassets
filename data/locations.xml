@@ -100,6 +100,7 @@
     <row r="F-R00030" ri="11000030" s="" se="0.0" si="0" sy="" syi="0"/>
     <row r="G-R00031" ri="11000031" s="" se="0.0" si="0" sy="" syi="0"/>
     <row r="H-R00032" ri="11000032" s="" se="0.0" si="0" sy="" syi="0"/>
+    <row r="K-R00033" ri="11000033" s="" se="0.0" si="0" sy="" syi="0"/>
     <row r="Derelik" ri="10000001" s="" se="0.9" si="0" sy="Tanoo" syi="30000001"/>
     <row r="Derelik" ri="10000001" s="" se="0.8" si="0" sy="Lashesih" syi="30000002"/>
     <row r="Derelik" ri="10000001" s="" se="0.8" si="0" sy="Akpivem" syi="30000003"/>
@@ -5531,7 +5532,12 @@
     <row r="Black Rise" ri="10000069" s="" se="0.3" si="0" sy="Nisuwa" syi="30045352"/>
     <row r="Black Rise" ri="10000069" s="" se="0.2" si="0" sy="Pynekastoh" syi="30045353"/>
     <row r="Black Rise" ri="10000069" s="" se="0.2" si="0" sy="Reitsato" syi="30045354"/>
+    <row r="K-R00033" ri="11000033" s="" se="0.0" si="0" sy="J055520" syi="31000001"/>
+    <row r="K-R00033" ri="11000033" s="" se="0.0" si="0" sy="J110145" syi="31000002"/>
+    <row r="K-R00033" ri="11000033" s="" se="0.0" si="0" sy="J164710" syi="31000003"/>
+    <row r="K-R00033" ri="11000033" s="" se="0.0" si="0" sy="J200727" syi="31000004"/>
     <row r="G-R00031" ri="11000031" s="" se="0.0" si="0" sy="Thera" syi="31000005"/>
+    <row r="K-R00033" ri="11000033" s="" se="0.0" si="0" sy="J174618" syi="31000006"/>
     <row r="A-R00001" ri="11000001" s="" se="0.0" si="0" sy="J105443" syi="31000007"/>
     <row r="A-R00001" ri="11000001" s="" se="0.0" si="0" sy="J100744" syi="31000008"/>
     <row r="A-R00001" ri="11000001" s="" se="0.0" si="0" sy="J225046" syi="31000009"/>
