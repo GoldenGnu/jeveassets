@@ -64,14 +64,16 @@ public enum StockpileTableFormat implements EnumTableColumn<StockpileItem> {
 			return !(baseObject instanceof StockpileTotal);
 		}
 
-		@Override public StockpileItem setColumnValue(final Object baseObject, final Object editedValue) {
+		@Override
+		public boolean setColumnValue(final Object baseObject, final Object editedValue) {
 			if ((editedValue instanceof Double) && (baseObject instanceof StockpileItem)) {
 				StockpileItem item = (StockpileItem) baseObject;
-				double l = (Double) editedValue;
-				item.setCountMinimum(l);
-				return item;
+				double before = item.getCountMinimum();
+				double after = (Double) editedValue;
+				item.setCountMinimum(after);
+				return before != after;
 			}
-			return null;
+			return false;
 		}
 	},
 	COUNT_MINIMUM_MULTIPLIED(Long.class, GlazedLists.comparableComparator()) {
@@ -225,8 +227,8 @@ public enum StockpileTableFormat implements EnumTableColumn<StockpileItem> {
 		}
 	};
 
-	private Class<?> type;
-	private Comparator<?> comparator;
+	private final Class<?> type;
+	private final Comparator<?> comparator;
 
 	private StockpileTableFormat(final Class<?> type, final Comparator<?> comparator) {
 		this.type = type;
@@ -240,11 +242,6 @@ public enum StockpileTableFormat implements EnumTableColumn<StockpileItem> {
 	public Comparator<?> getComparator() {
 		return comparator;
 	}
-
-	@Override
-	public String toString() {
-		return getColumnName();
-	}
 	@Override
 	public boolean isColumnEditable(final Object baseObject) {
 		return false;
@@ -254,8 +251,12 @@ public enum StockpileTableFormat implements EnumTableColumn<StockpileItem> {
 		return true;
 	}
 	@Override
-	public StockpileItem setColumnValue(final Object baseObject, final Object editedValue) {
-		return null;
+	public boolean setColumnValue(final Object baseObject, final Object editedValue) {
+		return false;
+	}
+	@Override
+	public String toString() {
+		return getColumnName();
 	}
 	//XXX - TableFormat.getColumnValue(...) Workaround
 	@Override public abstract Object getColumnValue(final StockpileItem from);

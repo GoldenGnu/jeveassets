@@ -388,9 +388,11 @@ public class EnumTableFormatAdaptor<T extends Enum<T> & EnumTableColumn<Q>, Q> i
 		return getColumn(i).isColumnEditable(baseObject);
 	}
 	@Override public Q setColumnValue(final Q baseObject, final Object editedValue, final int i) {
-		Q value = getColumn(i).setColumnValue(baseObject, editedValue);
-		notifyListeners();
-		return value;
+		boolean changed = getColumn(i).setColumnValue(baseObject, editedValue);
+		if (changed) {
+			notifyListeners();
+		}
+		return baseObject;
 	}
 
 	class ColumnComparator implements Comparator<T> {

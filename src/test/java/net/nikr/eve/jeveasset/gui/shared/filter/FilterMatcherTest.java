@@ -102,8 +102,8 @@ public class FilterMatcherTest {
 		}
 
 		@Override
-		public Item setColumnValue(Object baseObject, Object editedValue) {
-			return null;
+		public boolean setColumnValue(Object baseObject, Object editedValue) {
+			return false;
 		}
 	}
 

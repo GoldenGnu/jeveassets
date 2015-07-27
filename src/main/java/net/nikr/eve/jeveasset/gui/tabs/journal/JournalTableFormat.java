@@ -129,30 +129,8 @@ public enum JournalTableFormat implements EnumTableColumn<MyJournal> {
 			return from.getReason();
 		}
 	};
-	/*
-	ARG_ID_1(Long.class, GlazedLists.comparableComparator()) {
-		@Override
-		public String getColumnName() {
-			return TabsJournal.get().columnArgID1();
-		}
-		@Override
-		public Object getColumnValue(final Journal from) {
-			return from.getArgID1();
-		}
-	},
-	ARG_NAME_1(String.class, GlazedLists.comparableComparator()) {
-		@Override
-		public String getColumnName() {
-			return TabsJournal.get().columnArgName1();
-		}
-		@Override
-		public Object getColumnValue(final Journal from) {
-			return from.getArgName1();
-		}
-	};
-	*/
-	private Class<?> type;
-	private Comparator<?> comparator;
+	private final Class<?> type;
+	private final Comparator<?> comparator;
 	private JournalTableFormat(final Class<?> type, final Comparator<?> comparator) {
 		this.type = type;
 		this.comparator = comparator;
@@ -166,10 +144,6 @@ public enum JournalTableFormat implements EnumTableColumn<MyJournal> {
 		return comparator;
 	}
 	@Override
-	public String toString() {
-		return getColumnName();
-	}
-	@Override
 	public boolean isColumnEditable(final Object baseObject) {
 		return false;
 	}
@@ -178,8 +152,12 @@ public enum JournalTableFormat implements EnumTableColumn<MyJournal> {
 		return true;
 	}
 	@Override
-	public MyJournal setColumnValue(final Object baseObject, final Object editedValue) {
-		return null;
+	public boolean setColumnValue(final Object baseObject, final Object editedValue) {
+		return false;
+	}
+	@Override
+	public String toString() {
+		return getColumnName();
 	}
 	//XXX - TableFormat.getColumnValue(...) Workaround
 	@Override public abstract Object getColumnValue(final MyJournal from);

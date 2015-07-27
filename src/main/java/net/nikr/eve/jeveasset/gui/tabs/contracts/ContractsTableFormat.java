@@ -250,8 +250,8 @@ public enum ContractsTableFormat implements EnumTableColumn<MyContractItem> {
 		}
 	};
 
-	private Class<?> type;
-	private Comparator<?> comparator;
+	private final Class<?> type;
+	private final Comparator<?> comparator;
 	private ContractsTableFormat(final Class<?> type, final Comparator<?> comparator) {
 		this.type = type;
 		this.comparator = comparator;
@@ -272,8 +272,9 @@ public enum ContractsTableFormat implements EnumTableColumn<MyContractItem> {
 	public boolean isShowDefault() {
 		return true;
 	}
-	@Override public MyContractItem setColumnValue(final Object baseObject, final Object editedValue) {
-		return null;
+	@Override
+	public boolean setColumnValue(final Object baseObject, final Object editedValue) {
+		return false;
 	}
 	@Override
 	public String toString() {

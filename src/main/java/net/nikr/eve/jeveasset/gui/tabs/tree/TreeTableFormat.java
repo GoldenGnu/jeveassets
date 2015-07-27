@@ -413,10 +413,6 @@ public enum TreeTableFormat implements EnumTableColumn<TreeAsset> {
 		return comparator;
 	}
 	@Override
-	public String toString() {
-		return getColumnName();
-	}
-	@Override
 	public boolean isColumnEditable(final Object baseObject) {
 		return false;
 	}
@@ -425,8 +421,12 @@ public enum TreeTableFormat implements EnumTableColumn<TreeAsset> {
 		return true;
 	}
 	@Override
-	public TreeAsset setColumnValue(final Object baseObject, final Object editedValue) {
-		return null;
+	public boolean setColumnValue(final Object baseObject, final Object editedValue) {
+		return false;
+	}
+	@Override
+	public String toString() {
+		return getColumnName();
 	}
 	//XXX - TableFormat.getColumnValue(...) Workaround
 	@Override public abstract Object getColumnValue(final TreeAsset from);

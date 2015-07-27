@@ -119,8 +119,8 @@ public enum ItemTableFormat implements EnumTableColumn<Item> {
 			return from.getTypeID();
 		}
 	};
-	private Class<?> type;
-	private Comparator<?> comparator;
+	private final Class<?> type;
+	private final Comparator<?> comparator;
 	private ItemTableFormat(final Class<?> type, final Comparator<?> comparator) {
 		this.type = type;
 		this.comparator = comparator;
@@ -134,10 +134,6 @@ public enum ItemTableFormat implements EnumTableColumn<Item> {
 		return comparator;
 	}
 	@Override
-	public String toString() {
-		return getColumnName();
-	}
-	@Override
 	public boolean isColumnEditable(final Object baseObject) {
 		return false;
 	}
@@ -146,8 +142,12 @@ public enum ItemTableFormat implements EnumTableColumn<Item> {
 		return true;
 	}
 	@Override
-	public Item setColumnValue(final Object baseObject, final Object editedValue) {
-		return null;
+	public boolean setColumnValue(final Object baseObject, final Object editedValue) {
+		return false;
+	}
+	@Override
+	public String toString() {
+		return getColumnName();
 	}
 	//XXX - TableFormat.getColumnValue(...) Workaround
 	@Override public abstract Object getColumnValue(final Item from);

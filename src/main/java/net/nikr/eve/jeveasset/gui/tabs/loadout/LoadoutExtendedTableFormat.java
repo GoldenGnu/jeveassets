@@ -59,8 +59,8 @@ enum LoadoutExtendedTableFormat implements EnumTableColumn<Loadout> {
 		}
 	};
 
-	private Class<?> type;
-	private Comparator<?> comparator;
+	private final Class<?> type;
+	private final Comparator<?> comparator;
 	private LoadoutExtendedTableFormat(final Class<?> type, final Comparator<?> comparator) {
 		this.type = type;
 		this.comparator = comparator;
@@ -81,8 +81,9 @@ enum LoadoutExtendedTableFormat implements EnumTableColumn<Loadout> {
 	public boolean isShowDefault() {
 		return true;
 	}
-	@Override public Loadout setColumnValue(final Object baseObject, final Object editedValue) {
-		return null;
+	@Override
+	public boolean setColumnValue(final Object baseObject, final Object editedValue) {
+		return false;
 	}
 	@Override
 	public String toString() {
