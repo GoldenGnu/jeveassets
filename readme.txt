@@ -42,7 +42,7 @@ www:
   http://eve.nikr.net/jeveasset
 
 email:
-  niklaskr@gmail.com (English or Danish)
+  niklaskr@gmail.com
 
 Eve-Online forum thread:
   https://forums.eveonline.com/default.aspx?g=posts&t=6419

@@ -147,7 +147,7 @@ _PRICING________________________________________________________________________
 jEveAssets use the Pricing library to get price data
 
 Link:
-  http://eve.nikr.net/jeveasset
+  https://github.com/GoldenGnu/price
 
 License:
   GNU General Public License (http://www.gnu.org/copyleft/gpl.html)
@@ -158,7 +158,7 @@ _ROUTING________________________________________________________________________
 jEveAssets use the Routing library in the routing tool
 
 Link:
-  http://eve.nikr.net/jeveasset
+  https://github.com/GoldenGnu/routing
 
 License:
   GNU General Public License (http://www.gnu.org/copyleft/gpl.html)
@@ -169,7 +169,7 @@ _TRANSLATIONS___________________________________________________________________
 jEveAssets use the Translations library for i18n
 
 Link:
-  http://eve.nikr.net/jeveasset
+  https://github.com/GoldenGnu/translations
 
 License:
   GNU General Public License (http://www.gnu.org/copyleft/gpl.html)
