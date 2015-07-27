@@ -39,7 +39,7 @@ import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.junit.After;
 import org.junit.AfterClass;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -57,6 +57,7 @@ public class PriceDataGetterTest {
 	private static final long REGION = 10000002L;  //The Forge (Jita region)
 	private static final long SYSTEM = 30000142L;  //Jita
 	private static final long STATION = 60003760L; //Jita 4 - 4
+	private static final long MAX_RUNS = 0;
 
 	private final PriceGetter getter = new PriceGetter();
 	private final Set<Integer> typeIDs = new HashSet<Integer>();
@@ -77,13 +78,11 @@ public class PriceDataGetterTest {
 	@Before
 	public void setUp() {
 		for (Item item : StaticData.get().getItems().values()) {
-			if (typeIDs.size() > 200) { break; }
+			if (typeIDs.size() > MAX_RUNS && MAX_RUNS > 0) { break; }
 			if (item.isMarketGroup()) {
 				typeIDs.add(item.getTypeID());
 			}
 		}
-		typeIDs.add(33578);
-		typeIDs.add(33579);
 	}
 	
 	@After
@@ -121,10 +120,6 @@ public class PriceDataGetterTest {
 
 	private void test(PriceSource source) {
 		okFailes.clear();
-		if (source == PriceSource.EVE_CENTRAL) {
-			okFailes.add(33578);
-			okFailes.add(33579);
-		}
 		if (source.supportsMultipleRegions()) {
 			test(source, LocationType.REGION, RegionType.EMPIRE.getRegions());
 		}
@@ -169,8 +164,7 @@ public class PriceDataGetterTest {
         }
 		for (Map.Entry<Integer, PriceData> entry : process.entrySet()) {
 			assertNotNull(entry.getValue());
-			assertFalse(entry.getValue().toString(), entry.getValue().isEmpty());
-			//assertTrue(entry.getValue().toString(), entry.getValue().isFull());
+			//assertFalse(entry.getKey() + ": " + entry.getValue().toString(), entry.getValue().isEmpty());
 			
 		}
 		process.clear();
