@@ -86,6 +86,7 @@ import uk.me.candle.eve.graph.DisconnectedGraphException;
 import uk.me.candle.eve.graph.Edge;
 import uk.me.candle.eve.graph.Graph;
 import uk.me.candle.eve.graph.Node;
+import uk.me.candle.eve.graph.distances.Jumps;
 import uk.me.candle.eve.routing.Progress;
 import uk.me.candle.eve.routing.RoutingAlgorithm;
 import uk.me.candle.eve.routing.cancel.CancelService;
@@ -623,7 +624,7 @@ public class RoutingTab extends JMainTab  {
 		if (filteredGraph != null) {
 			filteredGraph.clear();
 		}
-		filteredGraph = new Graph();
+		filteredGraph = new Graph(new Jumps());
 		double secMin;
 		double secMax;
 		if (jSecurityMinimum != null) {
