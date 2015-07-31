@@ -82,6 +82,7 @@ import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.components.JCustomFileChooser;
 import net.nikr.eve.jeveasset.gui.shared.components.JDropDownButton;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
+import net.nikr.eve.jeveasset.gui.shared.components.JTextDialog;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo;
@@ -135,6 +136,7 @@ public class StockpileTab extends JMainTab {
 	private final StockpileShoppingListDialog stockpileShoppingListDialog;
 	private final StockpileSelectionDialog stockpileSelectionDialog;
 	private final StockpileImportDialog stockpileImportDialog;
+	private final JTextDialog jTextDialog;
 
 	//Table
 	private final EnumTableFormatAdaptor<StockpileTableFormat, StockpileItem> tableFormat;
@@ -164,6 +166,7 @@ public class StockpileTab extends JMainTab {
 		stockpileShoppingListDialog = new StockpileShoppingListDialog(program);
 		stockpileSelectionDialog = new StockpileSelectionDialog(program);
 		stockpileImportDialog = new StockpileImportDialog(program);
+		jTextDialog = new JTextDialog(program.getMainWindow().getFrame());
 
 		JToolBar jToolBarLeft = new JToolBar();
 		jToolBarLeft.setFloatable(false);
@@ -594,7 +597,10 @@ public class StockpileTab extends JMainTab {
 
 	private void importEFT() {
 		//Get string from clipboard
-		String fit = getClipboardContents();
+		String fit = jTextDialog.importText();
+		if (fit == null) {
+			return; //Cancelled
+		}
 
 		//Validate
 		fit = fit.trim();
@@ -679,7 +685,10 @@ public class StockpileTab extends JMainTab {
 
 	private void importIskPerHour() {
 		//Get string from clipboard
-		String shoppingList = getClipboardContents();
+		String shoppingList = jTextDialog.importText();
+		if (shoppingList == null) {
+			return; //Cancelled
+		}
 
 		//Validate
 		shoppingList = shoppingList.trim();
@@ -900,22 +909,6 @@ public class StockpileTab extends JMainTab {
 				ownersName.put(owner.getOwnerID(), owner.getName());
 			}
 		}
-	}
-
-	private String getClipboardContents() {
-		Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-		//odd: the Object param of getContents is not currently used
-		Transferable contents = clipboard.getContents(null);
-		if (contents != null && contents.isDataFlavorSupported(DataFlavor.stringFlavor)) {
-			try {
-				return (String) contents.getTransferData(DataFlavor.stringFlavor);
-			} catch (UnsupportedFlavorException ex) {
-				return "";
-			} catch (IOException ex) {
-				return "";
-			}
-		}
-		return "";
 	}
 
 	private class StockpileTableMenu implements TableMenu<StockpileItem> {
