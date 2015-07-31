@@ -895,7 +895,7 @@ public final class SettingsReader extends AbstractXmlReader {
 		}
 	}
 
-	private EnumTableColumn<?> getColumn(final String column, final String tableName) {
+	public static EnumTableColumn<?> getColumn(final String column, final String tableName) {
 		//Stockpile
 		try {
 			if (tableName.equals(StockpileTab.NAME)) {

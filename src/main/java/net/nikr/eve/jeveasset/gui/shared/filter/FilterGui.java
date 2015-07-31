@@ -76,7 +76,6 @@ class FilterGui<E> {
 	private final FilterManager<E> filterManager;
 
 	private final ExportDialog<E> exportDialog;
-	private final List<JMenuItem> exportOptions = new ArrayList<JMenuItem>();
 
 	ListenerClass listener = new ListenerClass();
 
@@ -165,7 +164,7 @@ class FilterGui<E> {
 		add();
 
 		filterSave = new FilterSave(jFrame);
-		filterManager = new FilterManager<E>(jFrame, this, filterControl.getFilters(), filterControl.getDefaultFilters());
+		filterManager = new FilterManager<E>(jFrame, filterControl.getName(), this, filterControl.getFilters(), filterControl.getDefaultFilters());
 	}
 
 	JPanel getPanel() {
@@ -398,6 +397,10 @@ class FilterGui<E> {
 
 		filterControl.afterFilter();
 		updateShowing();
+	}
+
+	String getFilterName() {
+		return filterSave.show(new ArrayList<String>(filterControl.getFilters().keySet()), new ArrayList<String>(filterControl.getDefaultFilters().keySet()));
 	}
 
 	private class ListenerClass implements ActionListener {

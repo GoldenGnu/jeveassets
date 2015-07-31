@@ -40,11 +40,10 @@ public class ViewManager extends JManageDialog {
 	private Map<String ,View> views;
 
 	public ViewManager(Program program, EnumTableFormatAdaptor<?, ?> tableFormat, AbstractTableModel tableModel, JAutoColumnTable jTable) {
-		super(program, program.getMainWindow().getFrame(), GuiShared.get().manageViews());
+		super(program, program.getMainWindow().getFrame(), GuiShared.get().manageViews(), false, false);
 		this.tableFormat = tableFormat;
 		this.tableModel = tableModel;
 		this.jTable = jTable;
-		setSupportMerge(false);
 	}
 
 	public final void updateData(Map<String, View> views) {
@@ -73,7 +72,7 @@ public class ViewManager extends JManageDialog {
 	}
 
 	@Override
-	protected void merge(String name, Object[] objects) {
+	protected void merge(String name, List<String> list) {
 		//Merge is not supported...
 	}
 
@@ -99,6 +98,16 @@ public class ViewManager extends JManageDialog {
 		update();
 		Settings.unlock("View (Delete)"); //Unlock for View (Delete)
 		program.saveSettings("View (Delete)"); //Save View (Delete)
+	}
+
+	@Override
+	protected void export(List<String> list) {
+		//Export is not supported
+	}
+
+	@Override
+	protected void importData() {
+		//Import is not supported
 	}
 
 	@Override

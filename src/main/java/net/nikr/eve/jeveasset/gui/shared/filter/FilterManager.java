@@ -18,28 +18,37 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
  */
-
 package net.nikr.eve.jeveasset.gui.shared.filter;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import javax.swing.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.shared.components.JManageDialog;
+import net.nikr.eve.jeveasset.gui.shared.components.JTextDialog;
+import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
+import net.nikr.eve.jeveasset.io.local.SettingsReader;
 
 public class FilterManager<E> extends JManageDialog {
 
 	private final Map<String, List<Filter>> filters;
 	private final Map<String, List<Filter>> defaultFilters;
 	private final FilterGui<E> gui;
+	private final String toolName;
+	private final JTextDialog jTextDialog;
 
-	FilterManager(final JFrame jFrame, final FilterGui<E> gui, final Map<String, List<Filter>> filters, final Map<String, List<Filter>> defaultFilters) {
-		super(null, jFrame, GuiShared.get().filterManager());
+	FilterManager(final JFrame jFrame, final String toolName, final FilterGui<E> gui, final Map<String, List<Filter>> filters, final Map<String, List<Filter>> defaultFilters) {
+		super(null, jFrame, GuiShared.get().filterManager(), true, true);
+		this.toolName = toolName;
 		this.gui = gui;
 		this.filters = filters;
 		this.defaultFilters = defaultFilters;
+		jTextDialog = new JTextDialog(jFrame);
 	}
 
 	@Override
@@ -73,12 +82,12 @@ public class FilterManager<E> extends JManageDialog {
 	}
 
 	@Override
-	protected void merge(final String name, final Object[] objects) {
+	protected void merge(final String name, final List<String> list) {
 		//Get filters to merge
 		Settings.lock("Filter (Merge)"); //Lock for Filter (Merge)
 		List<Filter> filter = new ArrayList<Filter>();
-		for (Object obj : objects) {
-			for (Filter currentFilter : filters.get((String) obj)) {
+		for (String mergeName : list) {
+			for (Filter currentFilter : filters.get(mergeName)) {
 				if (!filter.contains(currentFilter)) {
 					filter.add(currentFilter);
 				}
@@ -88,6 +97,143 @@ public class FilterManager<E> extends JManageDialog {
 		updateFilters();
 		Settings.unlock("Filter (Merge)"); //Unlock for Filter (Merge)
 		gui.saveSettings("Filter (Merge)"); //Save Filter (Merge)
+	}
+
+	@Override
+	protected void export(List<String> list) {
+		StringBuilder builder = new StringBuilder();
+		for (String filterName : list) {
+			//Header
+			builder.append("[");
+			builder.append(toolName.toUpperCase()); //Never used, but, usefull to identify where the filters fit
+			builder.append("] [");
+			builder.append(wrap(filterName));
+			builder.append("]\r\n");
+			//Each filter
+			for (Filter filter : filters.get(filterName)) {
+				builder.append("[");
+				builder.append(filter.getLogic().name());
+				builder.append("] [");
+				builder.append(filter.getColumn().name());
+				builder.append("] [");
+				builder.append(filter.getCompareType().name());
+				builder.append("] [");
+				builder.append(wrap(filter.getText()));
+				builder.append("]\r\n");
+			}
+			builder.append("\r\n");
+		}
+		jTextDialog.exportText(builder.toString());
+	}
+
+	@Override
+	protected void importData() {
+		importData("");
+	}
+
+	private void importData(String oldText) {
+		String filterName = null;
+		List<Filter> filterList = new ArrayList<Filter>();
+		boolean headerLoaded = false;
+		boolean filtersSaved = false;
+		String importText = jTextDialog.importText(oldText);
+		if (importText == null) {
+			return;
+		}
+		List<String> groups = new ArrayList<String>();
+		for (String line : importText.split("[\r\n]+")) {
+			groups.clear(); //Clear old data
+			
+			//For each [*]
+			Pattern group = Pattern.compile("\\[([^\\]]|\\]\\])*\\]"); //	\[([^\]]|\]\])*\]	A([^B]|BB)*B
+			Matcher m = group.matcher(line);
+			while (m.find()) {
+				groups.add(m.group());
+			}
+			//Header
+			if (groups.size()== 2) {
+				if (headerLoaded) { //Save previous filter
+					filtersSaved = saveFilter(filterName, filterList) || filtersSaved;
+				}
+				filterList = new ArrayList<Filter>(); //New list (as the list is passed to "filters")
+				filterName = unwrap(groups.get(1));
+				headerLoaded = true;
+			}
+			//Filter
+			if (groups.size() == 4 && headerLoaded) {
+				//Logic
+				Filter.LogicType logic = null;
+				try {
+					logic = Filter.LogicType.valueOf(unwrap(groups.get(0)));
+				} catch (IllegalArgumentException ex) {
+					//Already null;
+				}
+				//Column
+				EnumTableColumn<?> column = SettingsReader.getColumn(unwrap(groups.get(1)), toolName);
+
+				//Compare
+				Filter.CompareType compare = null;
+				try {
+					compare = Filter.CompareType.valueOf(unwrap(groups.get(2)));
+				} catch (IllegalArgumentException ex) {
+					//Already null;
+				}
+				String text = null;
+				EnumTableColumn<?> compareColumn = null;
+				if (Filter.CompareType.isColumnCompare(compare)) {
+					compareColumn = SettingsReader.getColumn(unwrap(groups.get(3)), toolName);
+					if (compareColumn != null) { //Valid
+						text = unwrap(groups.get(3));
+					}
+				} else {
+					text = unwrap(groups.get(3));
+				}
+				if (logic != null && column != null && compare != null && (text != null || compareColumn != null)) {
+					Filter filter = new Filter(logic, column, compare, text);
+					filterList.add(filter);
+				}
+			}
+			//Ignore everything that does not match the syntax
+		}
+		if (headerLoaded) { //Save last filter
+			filtersSaved = saveFilter(filterName, filterList) || filtersSaved;
+		}
+		if (filtersSaved) {
+			updateFilters();
+			gui.saveSettings("Filter (Import)"); //Save Filter (Import);
+		} else if (!headerLoaded) { //Not cancelled
+			int value = JOptionPane.showConfirmDialog(getDialog(), GuiShared.get().managerImportFailMsg(), GuiShared.get().managerImportFailTitle(), JOptionPane.OK_CANCEL_OPTION);
+			if (value == JOptionPane.OK_OPTION) {
+				importData(importText);
+			}
+		}
+	}
+
+	private boolean saveFilter(String filterName, List<Filter> filterList) {
+		if (filterList.isEmpty() || filterName == null || filterName.isEmpty()) {
+			return false;
+		}
+		List<Filter> filter = filters.get(filterName);
+		if (filter != null) { //Filter already exist
+			filterName = gui.getFilterName(); //get new name
+		}
+		if (filterName != null && !filterName.isEmpty()) {
+			Settings.lock("Filter (Import)"); //Lock for Filter (Merge)
+			filters.put(filterName, filterList);
+			Settings.unlock("Filter (Import)"); //Lock for Filter (Merge)
+			return true;
+		}
+		return false;
+	}
+
+	private String wrap(String text) {
+		return text.replace("]", "]]");
+	}
+
+	private String unwrap(String text) {
+		text = text.substring(1, text.length() - 1);
+		text = text.replace("]]", "]");
+		return text;
 	}
 
 	@Override

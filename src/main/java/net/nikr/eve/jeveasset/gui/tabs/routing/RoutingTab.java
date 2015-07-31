@@ -1085,14 +1085,11 @@ public class RoutingTab extends JMainTab  {
 		updateSavedFilters();
 	}
 
-	public void mergeFilters(String name, Object[] objects) {
+	public void mergeFilters(String name, List<String> list) {
 		Set<Long> systemIDs = new HashSet<Long>();
 		Settings.lock("Routing (Merge Filters)");
-		for (Object object : objects) {
-			if (object instanceof String) {
-				String mergeName = (String) object;
-				systemIDs.addAll(Settings.get().getRoutingSettings().getPresets().get(mergeName));
-			}
+		for (String mergeName : list) {
+			systemIDs.addAll(Settings.get().getRoutingSettings().getPresets().get(mergeName));
 		}
 		Settings.get().getRoutingSettings().getPresets().put(name, systemIDs);
 		Settings.unlock("Routing (Merge Filters)");
