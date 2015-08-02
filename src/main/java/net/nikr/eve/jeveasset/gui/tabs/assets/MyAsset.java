@@ -23,7 +23,9 @@ package net.nikr.eve.jeveasset.gui.tabs.assets;
 import com.beimin.eveapi.model.shared.Blueprint;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import net.nikr.eve.jeveasset.data.Item;
 import net.nikr.eve.jeveasset.data.MarketPriceData;
 import net.nikr.eve.jeveasset.data.MyLocation;
@@ -34,14 +36,14 @@ import net.nikr.eve.jeveasset.data.tag.TagID;
 import net.nikr.eve.jeveasset.data.tag.Tags;
 import net.nikr.eve.jeveasset.data.types.BlueprintType;
 import net.nikr.eve.jeveasset.data.types.ItemType;
-import net.nikr.eve.jeveasset.data.types.LocationType;
+import net.nikr.eve.jeveasset.data.types.JumpType;
 import net.nikr.eve.jeveasset.data.types.PriceType;
 import net.nikr.eve.jeveasset.data.types.TagsType;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo.InfoItem;
 import net.nikr.eve.jeveasset.i18n.DataModelAsset;
 
-public class MyAsset implements Comparable<MyAsset>, InfoItem, LocationType, ItemType, BlueprintType, PriceType, TagsType {
+public class MyAsset implements Comparable<MyAsset>, InfoItem, JumpType, ItemType, BlueprintType, PriceType, TagsType {
 
 	//Static values (set by constructor)
 	private final List<MyAsset> assets = new ArrayList<MyAsset>();
@@ -76,6 +78,7 @@ public class MyAsset implements Comparable<MyAsset>, InfoItem, LocationType, Ite
 	private boolean userNameSet = false;
 	private boolean eveNameSet = false;
 	private boolean userPriceSet = false;
+	private final Map<Long, Integer> jumpsList = new HashMap<Long, Integer>();
 
 	/**
 	 * For mockups...
@@ -187,6 +190,21 @@ public class MyAsset implements Comparable<MyAsset>, InfoItem, LocationType, Ite
 	@Override
 	public MyLocation getLocation() {
 		return location;
+	}
+
+	@Override
+	public void addJump(Long systemID, int jumps) {
+		jumpsList.put(systemID, jumps);
+	}
+
+	@Override
+	public Integer getJumps(Long systemID) {
+		return jumpsList.get(systemID);
+	}
+
+	@Override
+	public void clearJumps() {
+		jumpsList.clear();
 	}
 
 	public MarketPriceData getMarketPriceData() {

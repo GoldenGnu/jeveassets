@@ -63,6 +63,10 @@ public abstract class GuiShared extends Bundle {
 	public abstract String itemEdit();
 	public abstract String itemNameTitle();
 	public abstract String itemPriceTitle();
+	public abstract String jumps();
+	public abstract String jumpsAddCustom();
+	public abstract String jumpsAddSelected();
+	public abstract String jumpsClear();
 	public abstract String lookup();
 	public abstract String newStockpile();
 	public abstract String ok();

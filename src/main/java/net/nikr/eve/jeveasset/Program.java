@@ -420,6 +420,10 @@ public class Program implements ActionListener {
 		return overviewTab;
 	}
 
+	public TreeTab getTreeTab() {
+		return treeTab;
+	}
+
 	public StatusPanel getStatusPanel() {
 		return this.getMainWindow().getStatusPanel();
 	}

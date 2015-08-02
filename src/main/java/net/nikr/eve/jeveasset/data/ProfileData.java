@@ -24,6 +24,7 @@ import ca.odell.glazedlists.EventList;
 import com.beimin.eveapi.model.shared.Blueprint;
 import com.beimin.eveapi.model.shared.ContractType;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -31,7 +32,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import net.nikr.eve.jeveasset.SplashUpdater;
 import net.nikr.eve.jeveasset.data.tag.Tags;
+import net.nikr.eve.jeveasset.data.types.JumpType;
 import net.nikr.eve.jeveasset.gui.shared.CaseInsensitiveComparator;
 import net.nikr.eve.jeveasset.gui.tabs.assets.MyAsset;
 import net.nikr.eve.jeveasset.gui.tabs.contracts.MyContract;
@@ -45,6 +48,9 @@ import net.nikr.eve.jeveasset.gui.tabs.transaction.MyTransaction;
 import net.nikr.eve.jeveasset.i18n.General;
 import net.nikr.eve.jeveasset.io.shared.ApiConverter;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
+import uk.me.candle.eve.graph.Edge;
+import uk.me.candle.eve.graph.Graph;
+import uk.me.candle.eve.graph.distances.Jumps;
 
 
 public class ProfileData {
@@ -64,9 +70,34 @@ public class ProfileData {
 	private Map<Integer, MarketPriceData> transactionPriceDataBuy; //TypeID : int
 	private final List<String> owners = new ArrayList<String>();
 	private boolean saveSettings = false;
+	private final Graph graph;
+	private final Map<Long, SolarSystem> systemCache;
+	private final Map<Long, Map<Long, Integer>> distance = new HashMap<Long, Map<Long, Integer>>();
 
 	public ProfileData(ProfileManager profileManager) {
 		this.profileManager = profileManager;
+		// build the graph.
+		// filter the solarsystems based on the settings.
+		graph = new Graph(new Jumps());
+		int count = 0;
+		systemCache = new HashMap<Long, SolarSystem>();
+		for (Jump jump : StaticData.get().getJumps()) { // this way we exclude the locations that are unreachable.
+			count++;
+			SplashUpdater.setSubProgress((int) (count * 100.0 / StaticData.get().getJumps().size()));
+
+			SolarSystem from = systemCache.get(jump.getFrom().getSystemID());
+			SolarSystem to = systemCache.get(jump.getTo().getSystemID());
+			if (from == null) {
+				from = new SolarSystem(jump.getFrom());
+				systemCache.put(from.getSystemID(), from);
+			}
+			if (to == null) {
+				to = new SolarSystem(jump.getTo());
+				systemCache.put(to.getSystemID(), to);
+			}
+			graph.addEdge(new Edge(from, to));
+		}
+		SplashUpdater.setSubProgress(100);
 	}
 
 	public Set<Integer> getPriceTypeIDs() {
@@ -111,6 +142,34 @@ public class ProfileData {
 			sortedOwners.add(0, General.get().all());
 		}
 		return sortedOwners;
+	}
+
+	public void updateJumps(Collection<JumpType> jumpTypes, Class<?> clazz) {
+		for (JumpType jumpType : jumpTypes) {
+			jumpType.clearJumps(); //Clear old
+			long systemID = jumpType.getLocation().getSystemID();
+			if (systemID <= 0) {
+				return;
+			}
+			for (MyLocation jumpLocation : Settings.get().getJumpLocations(clazz)) {
+				long jumpSystemID = jumpLocation.getSystemID();
+				if (systemID != jumpSystemID) {
+					Map<Long, Integer> distances = distance.get(jumpSystemID);
+					if (distances == null) {
+						distances = new HashMap<Long, Integer>();
+						distance.put(jumpSystemID, distances);
+					}
+					Integer jumps = distances.get(systemID);
+					if (jumps == null) {
+						jumps = graph.distanceBetween(systemCache.get(systemID), systemCache.get(jumpSystemID));
+						distances.put(systemID, jumps);
+					}
+					jumpType.addJump(jumpSystemID, jumps);
+				} else {
+					jumpType.addJump(jumpSystemID, 0);
+				}
+			}
+		}
 	}
 
 	private Set<Integer> createPriceTypeIDs() {
@@ -355,6 +414,8 @@ public class ProfileData {
 		for (Item item : StaticData.get().getItems().values()) {
 			item.setPriceReprocessed(ApiIdConverter.getPriceReprocessed(item));
 		}
+		//Update Jumps
+		updateJumps(new ArrayList<JumpType>(assets), MyAsset.class);
 		try {
 			assetsEventList.getReadWriteLock().writeLock().lock();
 			assetsEventList.clear();

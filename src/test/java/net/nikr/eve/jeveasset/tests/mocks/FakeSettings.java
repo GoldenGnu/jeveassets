@@ -29,6 +29,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import net.nikr.eve.jeveasset.data.ExportSettings;
+import net.nikr.eve.jeveasset.data.MyLocation;
 import net.nikr.eve.jeveasset.data.PriceData;
 import net.nikr.eve.jeveasset.data.PriceDataSettings;
 import net.nikr.eve.jeveasset.data.ReprocessSettings;
@@ -501,6 +502,26 @@ public abstract class FakeSettings extends Settings {
 
 	@Override
 	public boolean isMarketOrderHistory() {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public void clearJumpLocations(Class<?> clazz) {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public void removeJumpLocation(Class<?> clazz, MyLocation location) {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public void addJumpLocation(Class<?> clazz, MyLocation location) {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public List<MyLocation> getJumpLocations(Class<?> clazz) {
 		throw new UnsupportedOperationException("not implemented");
 	}
 }

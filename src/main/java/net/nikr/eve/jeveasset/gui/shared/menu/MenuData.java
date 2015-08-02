@@ -41,6 +41,7 @@ import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 public class MenuData<T> {
 
 	private final Set<Integer> typeIDs = new HashSet<Integer>();
+	private final Set<MyLocation> systemLocations = new HashSet<MyLocation>();
 	private final Map<Integer, Double> prices = new HashMap<Integer, Double>();
 	private final Set<String> typeNames = new HashSet<String>();
 	private final Set<String> stations = new HashSet<String>();
@@ -135,6 +136,7 @@ public class MenuData<T> {
 		if (location != null && !location.isEmpty()) {
 			if (location.isStation()) {
 				stations.add(location.getStation());
+				systemLocations.add(location);
 			}
 			if (location.isStation() || location.isSystem()) {
 				systems.add(location.getSystem());
@@ -184,6 +186,10 @@ public class MenuData<T> {
 
 	public Set<String> getSystems() {
 		return systems;
+	}
+
+	public Set<MyLocation> getSystemLocations() {
+		return systemLocations;
 	}
 
 	public Set<String> getRegions() {

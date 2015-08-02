@@ -69,6 +69,7 @@ import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.EventListManager;
 import net.nikr.eve.jeveasset.data.MyLocation;
 import net.nikr.eve.jeveasset.data.Settings;
+import net.nikr.eve.jeveasset.data.types.JumpType;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
@@ -76,6 +77,7 @@ import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo;
+import net.nikr.eve.jeveasset.gui.shared.menu.JMenuJumps;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuData;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.TableMenu;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
@@ -218,8 +220,6 @@ public class TreeTab extends JMainTab {
 		//Table Filter
 		filterControl = new AssetFilterControl(
 				program.getMainWindow().getFrame(),
-				tableFormat,
-				//eventList,
 				exportEventList,
 				filterList,
 				Settings.get().getTableFilters(NAME)
@@ -384,6 +384,17 @@ public class TreeTab extends JMainTab {
 		updateTable();
 	}
 
+	public void addColumn(MyLocation location) {
+		tableFormat.addColumn(new JMenuJumps.Column<TreeAsset>(location.getSystem(), location.getSystemID()));
+	}
+	public void removeColumn(MyLocation location) {
+		tableFormat.removeColumn(new JMenuJumps.Column<TreeAsset>(location.getSystem(), location.getSystemID()));
+	}
+
+	public EventList<TreeAsset> getEventList() {
+		return eventList;
+	}
+
 	public void updateTable() {
 		jTable.lock();
 		Set<TreeAsset> treeAssets = locations;
@@ -392,6 +403,8 @@ public class TreeTab extends JMainTab {
 			treeAssets = categories;
 			treeAssetsExport = categoriesExport;
 		}
+		//Update Jumps
+		program.getProfileData().updateJumps(new ArrayList<JumpType>(treeAssets), TreeAsset.class);
 		eventList.getReadWriteLock().writeLock().lock();
 		try {
 			eventList.clear();
@@ -585,7 +598,7 @@ public class TreeTab extends JMainTab {
 		}
 
 		private ExpandeState expandeState = ExpandeState.COLLAPSE;
-		
+
 		@Override
 		public boolean isExpanded(TreeAsset element, List<TreeAsset> path) {
 			if (expandeState == ExpandeState.EXPANDE) {
@@ -689,17 +702,13 @@ public class TreeTab extends JMainTab {
 
 	private class AssetFilterControl extends FilterControl<TreeAsset> {
 
-		private final EnumTableFormatAdaptor<TreeTableFormat, TreeAsset> tableFormat;
-
-		public AssetFilterControl(final JFrame jFrame, final EnumTableFormatAdaptor<TreeTableFormat, TreeAsset> tableFormat, final EventList<TreeAsset> eventList, final FilterList<TreeAsset> filterList, final Map<String, List<Filter>> filters) {
+		public AssetFilterControl(final JFrame jFrame, final EventList<TreeAsset> eventList, final FilterList<TreeAsset> filterList, final Map<String, List<Filter>> filters) {
 			super(jFrame, NAME, eventList, filterList, filters);
-			this.tableFormat = tableFormat;
 		}
 
 		@Override
 		protected Object getColumnValue(final TreeAsset item, final String column) {
-			TreeTableFormat format = TreeTableFormat.valueOf(column);
-			return format.getColumnValue(item);
+			return tableFormat.getColumnValue(item, column);
 		}
 
 		@Override
@@ -709,7 +718,7 @@ public class TreeTab extends JMainTab {
 
 		@Override
 		protected List<EnumTableColumn<TreeAsset>> getColumns() {
-			return columnsAsList(TreeTableFormat.values());
+			return new ArrayList<EnumTableColumn<TreeAsset>>(tableFormat.getOrderColumns());
 		}
 
 		@Override

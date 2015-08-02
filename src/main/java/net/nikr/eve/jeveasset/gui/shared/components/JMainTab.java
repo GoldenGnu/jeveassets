@@ -80,6 +80,13 @@ public abstract class JMainTab {
 		MenuManager.update(program ,clazz);
 	}
 
+	public void tableStructureChanged() {
+		if (eventTableModel != null && jTable != null) {
+			eventTableModel.fireTableStructureChanged();
+			jTable.autoResizeColumns();
+		}
+	}
+
 	public final void saveSettings() {
 		//Save Settings
 		if (eventTableModel != null && jTable != null && toolName != null) {

@@ -593,6 +593,10 @@ public class RoutingTab extends JMainTab  {
 		updateRemaining();
 	}
 
+	public SolarSystem getSolarSystem() {
+		return jSystemDialog.show();
+	}
+
 	private void updateRemaining() {
 		updateWaypointsRemaining();
 		updateAvailableRemaining();

@@ -198,6 +198,8 @@ public class Settings {
 	//Lock OK
 	private final Map<String, Tag> tags = new HashMap<String, Tag>();
 	private final Map<TagID, Tags> tagIds = new HashMap<TagID, Tags>();
+//Jumps
+	private final Map<Class<?>, List<MyLocation>> jumpLocations = new HashMap<Class<?>, List<MyLocation>>();
 
 	protected Settings() {
 		SplashUpdater.setProgress(30);
@@ -376,6 +378,25 @@ public class Settings {
 
 	public RoutingSettings getRoutingSettings() {
 		return routingSettings;
+	}
+
+	public List<MyLocation> getJumpLocations(Class<?> clazz) {
+		List<MyLocation> locations = jumpLocations.get(clazz);
+		if (locations == null) {
+			locations = new ArrayList<MyLocation>();
+			jumpLocations.put(clazz, locations);
+		}
+		return locations;
+	}
+
+	public void addJumpLocation(Class<?> clazz, MyLocation location) {
+		getJumpLocations(clazz).add(location);
+	}
+	public void removeJumpLocation(Class<?> clazz, MyLocation location) {
+		getJumpLocations(clazz).remove(location);
+	}
+	public void clearJumpLocations(Class<?> clazz) {
+		getJumpLocations(clazz).clear();
 	}
 
 	//@NotNull
