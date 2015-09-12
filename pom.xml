@@ -94,6 +94,12 @@
 				<version>2.5</version>
 				<configuration>
 					<encoding>${project.build.sourceEncoding}</encoding>
+					<resources>
+						<resource>
+							<directory>src/main/izpack</directory>
+							<filtering>true</filtering>
+						</resource>
+					</resources>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -101,6 +107,7 @@
 				<version>1.7</version>
 				<executions>
 					<execution>
+						<id>process-resources</id>
 						<phase>process-resources</phase>
 						<configuration>
 							<target>
@@ -112,12 +119,44 @@
 								<copy todir="${project.build.directory}">
 									<fileset dir="" includes="*.txt"/>
 									<fileset dir="tools" includes="jmemory.jar"/>
+									<fileset dir="tools" includes="jmemory.properties"/>
 								</copy>
 								<copy todir="${project.build.directory}">
 									<fileset dir="${project.build.directory}/classes" includes="update_version.dat"/>
 								</copy>
 								<copy todir="${project.build.directory}">
 									<fileset dir="tools/update" includes="list.php"/>
+								</copy>
+							</target>
+						</configuration>
+						<goals>
+							<goal>run</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>copy-to-install</id>
+						<phase>package</phase>
+						<configuration>
+							<target>
+								<!--
+								<copy todir="${project.build.directory}/install/data">
+									<fileset dir="${project.build.directory}/data" includes="*.xml"/>
+									<fileset dir="${project.build.directory}/data" includes="*.dat"/>
+								</copy>
+								-->
+								<copy todir="${project.build.directory}/install/lib">
+									<fileset dir="${project.build.directory}/lib" includes="*.jar"/>
+								</copy>
+								<copy todir="${project.build.directory}/install">
+									<fileset dir="${project.build.directory}" includes="*.jar"/>
+									<fileset dir="${project.build.directory}" includes="*.txt"/>
+									<fileset dir="${project.build.directory}" includes="*jmemory.properties"/>
+								</copy>
+								<copy todir="${project.build.directory}/install/izpack">
+									<fileset dir="tools" includes="izpack-util.jar"/>
+								</copy>
+								<copy todir="${project.build.directory}/install/izpack">
+									<fileset dir="src/main/izpack" includes="ProcessPanel.Spec.xml"/>
 								</copy>
 							</target>
 						</configuration>
@@ -134,7 +173,7 @@
 				<executions>
 					<execution>
 						<id>copy-dependencies</id>
-						<phase>package</phase>
+						<phase>prepare-package</phase>
 						<goals>
 							<goal>copy-dependencies</goal>
 						</goals>
@@ -215,6 +254,7 @@
 							<includes>
 								<include>*.txt</include>
 								<include>*.jar</include>
+								<include>*.properties</include>
 								<include>lib/*.jar</include>
 							</includes>
 						</fileSet>
@@ -239,7 +279,7 @@
 						</goals>
 						<configuration>
 							<fromDir>${project.build.directory}</fromDir>
-							<includes>*.txt,*.jar,*.md5,lib/*,*.dat,*.php</includes>
+							<includes>*.txt,*.jar,*.md5,lib/*,*.dat,*.php,*.properties</includes>
 							<serverId>eve-nikr-net</serverId>
 							<url>ftp://ftp.nikr.net</url>
 							<toDir>eve.nikr.net/jeveassets/update/program</toDir>
@@ -268,6 +308,25 @@
 				<configuration>
 					<skip>true</skip>
 				</configuration>
+			</plugin>
+			<!-- Used to configure IzPack installer -->
+			<plugin>
+				<groupId>org.codehaus.izpack</groupId>
+				<artifactId>izpack-maven-plugin</artifactId>
+				<version>5.0.3</version>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>izpack</goal>
+						</goals>
+						<configuration>
+							<autoIncludeDevelopers>true</autoIncludeDevelopers>
+							<finalName>installer</finalName>
+							<baseDir>${project.build.directory}/install</baseDir>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 		<extensions>

@@ -1,0 +1,26 @@
+<processing>
+  <job name="run" final="true">
+	<os family="windows" />
+    <executeclass name="net.nikr.izpack.RunJava">
+        <arg>javaw</arg>
+        <arg>-jar</arg>
+        <arg>$INSTALL_PATH/jeveassets.jar</arg>
+    </executeclass>
+  </job>
+  <job name="run" final="true">
+	<os family="unix" />
+    <executeclass name="net.nikr.izpack.RunJava">
+        <arg>java</arg>
+        <arg>-jar</arg>
+        <arg>$INSTALL_PATH/jeveassets.jar</arg>
+    </executeclass>
+  </job>
+  <job name="run" final="true">
+	<os family="mac" />
+    <executeclass name="net.nikr.izpack.RunJava">
+        <arg>java</arg>
+        <arg>-jar</arg>
+        <arg>$INSTALL_PATH/jeveassets.jar</arg>
+    </executeclass>
+  </job>
+</processing>
