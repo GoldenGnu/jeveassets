@@ -48,12 +48,6 @@
 	<packs>
 		<pack name="Core" required="yes" uninstall="no">
 			<description>Core installation files</description>
-			<!--
-			<fileset dir="data" targetdir="${INSTALL_PATH}/data" override="true">
-				<include name="*.dat" />
-				<include name="*.xml" />
-			</fileset>
-			-->
 			<fileset dir="lib" targetdir="${INSTALL_PATH}/lib" override="true">
 				<include name="*.jar" />
 			</fileset>
@@ -63,9 +57,12 @@
 				<include name="*.txt" />
 				<include name="*.properties" />
 			</fileset>
-			<!--
-			<executable targetfile="$INSTALL_PATH/jmemory.jar" type="jar" stage="postinstall" failure ="warn" keep="true" condition="isRunOnExit" />
-			-->
+			<updatecheck>
+				<include name="lib/*.jar" />
+				<include name="log.txt" />
+				<include name="jeveassets.log" />
+				<include name="jeveassets.log.1" />
+			</updatecheck>
 		</pack>
 	</packs>
 </izpack:installation>
