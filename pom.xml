@@ -106,6 +106,7 @@
 				<artifactId>maven-antrun-plugin</artifactId>
 				<version>1.7</version>
 				<executions>
+					<!-- copy files to build directory -->
 					<execution>
 						<id>process-resources</id>
 						<phase>process-resources</phase>
@@ -133,17 +134,12 @@
 							<goal>run</goal>
 						</goals>
 					</execution>
+					<!-- copy files to installer -->
 					<execution>
 						<id>copy-to-install</id>
 						<phase>package</phase>
 						<configuration>
 							<target>
-								<!--
-								<copy todir="${project.build.directory}/install/data">
-									<fileset dir="${project.build.directory}/data" includes="*.xml"/>
-									<fileset dir="${project.build.directory}/data" includes="*.dat"/>
-								</copy>
-								-->
 								<copy todir="${project.build.directory}/install/lib">
 									<fileset dir="${project.build.directory}/lib" includes="*.jar"/>
 								</copy>
@@ -164,7 +160,49 @@
 							<goal>run</goal>
 						</goals>
 					</execution>
+					<!-- Delete old release -->
+					<execution>
+						<id>clear-old-release</id>
+						<phase>deploy</phase>
+						<configuration>
+							<target>
+								<ftp action="delete"
+									 server="ftp.nikr.net"
+									 userid="${ftp.user}"
+									 password="${ftp.pass}"
+									 remotedir="eve.nikr.net/jeveassets/update" >
+									<fileset>
+										<include name="program/**"/>
+									</fileset>
+								</ftp>
+								<ftp action="rmdir"
+									 server="ftp.nikr.net"
+									 userid="${ftp.user}"
+									 password="${ftp.pass}"
+									 remotedir="eve.nikr.net/jeveassets/update" >
+									<fileset>
+										<include name="program/**"/>
+									</fileset>
+								</ftp>
+							</target>
+						</configuration>
+						<goals>
+							<goal>run</goal>
+						</goals>
+					</execution>
 				</executions>
+				<dependencies>
+					<dependency>
+						<groupId>commons-net</groupId>
+						<artifactId>commons-net</artifactId>
+						<version>1.4.1</version>
+					</dependency>
+					<dependency>
+						<groupId>ant</groupId>
+						<artifactId>ant-commons-net</artifactId>
+						<version>1.6.5</version>
+					</dependency>
+				</dependencies>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
