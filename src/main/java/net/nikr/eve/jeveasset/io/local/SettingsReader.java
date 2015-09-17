@@ -716,6 +716,11 @@ public final class SettingsReader extends AbstractXmlReader {
 				//In case a price source is removed: Use the default
 			}
 		}
+		//Validate
+		if (!priceSource.isValid(locationType, locations)) {
+			locationType = priceSource.getDefaultLocationType();
+			locations = priceSource.getDefaultLocations();
+		}	
 		settings.setPriceDataSettings(new PriceDataSettings(locationType, locations, priceSource, priceType, priceReprocessedType));
 	}
 

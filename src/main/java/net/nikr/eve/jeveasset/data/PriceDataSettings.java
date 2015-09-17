@@ -34,7 +34,7 @@ import uk.me.candle.eve.pricing.options.PricingType;
 public class PriceDataSettings {
 
 	public enum PriceSource {
-		EVE_CENTRAL(PricingFetch.EVE_CENTRAL, true, false, true, false) {
+		EVE_CENTRAL(PricingFetch.EVE_CENTRAL, true, false, true, false, LocationType.REGION, Collections.singletonList(10000002L)) {
 			@Override public PriceMode[] getPriceTypes() {
 				return PriceMode.values();
 			}
@@ -42,7 +42,7 @@ public class PriceDataSettings {
 				return DataModelPriceDataSettings.get().sourceEveCentral();
 			}
 		},
-		EVE_MARKETDATA(PricingFetch.EVE_MARKETDATA, false, true, false, false) {
+		EVE_MARKETDATA(PricingFetch.EVE_MARKETDATA, false, true, false, false, LocationType.REGION, Collections.singletonList(10000002L)) {
 			@Override public PriceMode[] getPriceTypes() {
 				return new PriceMode[]{PriceMode.PRICE_SELL_PERCENTILE, PriceMode.PRICE_MIDPOINT, PriceMode.PRICE_BUY_PERCENTILE};
 			}
@@ -60,6 +60,7 @@ public class PriceDataSettings {
 			}
 		},
 		*/
+		/*
 		EVE_ADDICTS(PricingFetch.EVE_ADDICTS, false, true, false, true) {
 			@Override public PriceMode[] getPriceTypes() {
 				return new PriceMode[]{PriceMode.PRICE_SELL_AVG, PriceMode.PRICE_SELL_PERCENTILE, PriceMode.PRICE_MIDPOINT, PriceMode.PRICE_BUY_PERCENTILE, PriceMode.PRICE_BUY_AVG};
@@ -67,23 +68,31 @@ public class PriceDataSettings {
 			@Override String getI18N() {
 				return DataModelPriceDataSettings.get().sourceEveAddicts();
 			}
-		};
+		}
+		*/
+		;
 		private final PricingFetch pricingFetch;
 		private final boolean supportsMultipleRegions;
 		private final boolean supportsSingleRegion;
 		private final boolean supportsSystem;
 		private final boolean supportsStation;
+		private final LocationType defaultLocationType;
+		private final List<Long> defaultLocations;
 
 		private PriceSource(final PricingFetch pricingFetch,
 				final boolean supportsMultipleRegions,
 				final boolean supportsSingleRegion,
 				final boolean supportsSystem,
-				final boolean supportsStation) {
+				final boolean supportsStation,
+				final LocationType defaultLocationType,
+				final List<Long> defaultLocations) {
 			this.pricingFetch = pricingFetch;
 			this.supportsMultipleRegions = supportsMultipleRegions;
 			this.supportsSingleRegion = supportsSingleRegion;
 			this.supportsSystem = supportsSystem;
 			this.supportsStation = supportsStation;
+			this.defaultLocationType = defaultLocationType;
+			this.defaultLocations = defaultLocations;
 		}
 
 		public abstract PriceMode[] getPriceTypes();
@@ -91,6 +100,14 @@ public class PriceDataSettings {
 		@Override
 		public String toString() {
 			return getI18N();
+		}
+
+		public LocationType getDefaultLocationType() {
+			return defaultLocationType;
+		}
+
+		public List<Long> getDefaultLocations() {
+			return defaultLocations;
 		}
 
 		public PricingFetch getPricingFetch() {
@@ -111,6 +128,20 @@ public class PriceDataSettings {
 
 		public boolean supportsSystem() {
 			return supportsSystem;
+		}
+		public boolean isValid(LocationType locationType, List<Long> locations) {
+			if (locationType == LocationType.REGION) {
+				if (locations.size() == 1) {
+					return supportsSingleRegion();
+				} else {
+					return supportsMultipleRegions();
+				}
+			} else if (locationType == LocationType.SYSTEM) {
+				return supportsSystem();
+			} else if (locationType == LocationType.STATION) {
+				return supportsStation();
+			}
+			return false; //Should never happen
 		}
 	}
 
