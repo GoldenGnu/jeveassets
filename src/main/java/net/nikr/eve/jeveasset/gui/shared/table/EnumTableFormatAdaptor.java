@@ -358,16 +358,28 @@ public class EnumTableFormatAdaptor<T extends Enum<T> & EnumTableColumn<Q>, Q> i
 		return shownColumns.get(i);
 	}
 
+	private boolean validIndex(final int i) {
+		return i >= 0 && i < getShownColumns().size();
+	}
+
 	private void updateColumns() {
 		Collections.sort(shownColumns, columnComparator);
 	}
 
 	@Override public Class<?> getColumnClass(final int i) {
-		return getColumn(i).getType();
+		if (validIndex(i)) {
+			return getColumn(i).getType();
+		} else {
+			return null;
+		}
 	}
 
 	@Override public Comparator<?> getColumnComparator(final int i) {
-		return getColumn(i).getComparator();
+		if (validIndex(i)) {
+			return getColumn(i).getComparator();
+		} else {
+			return null;
+		}
 	}
 
 	@Override public int getColumnCount() {
@@ -375,22 +387,38 @@ public class EnumTableFormatAdaptor<T extends Enum<T> & EnumTableColumn<Q>, Q> i
 	}
 
 	@Override public String getColumnName(final int i) {
-		return getColumn(i).getColumnName();
+		if (validIndex(i)) {
+			return getColumn(i).getColumnName();
+		} else {
+			return null;
+		}
 	}
 
 	@Override public Object getColumnValue(final Q e, final int i) {
-		return getColumn(i).getColumnValue(e);
+		if (validIndex(i)) {
+			return getColumn(i).getColumnValue(e);
+		} else {
+			return null;
+		}
 	}
 
 
 	//Used by the JSeparatorTable
 	@Override public boolean isEditable(final Q baseObject, final int i) {
-		return getColumn(i).isColumnEditable(baseObject);
+		if (validIndex(i)) {
+			return getColumn(i).isColumnEditable(baseObject);
+		} else {
+			return false;
+		}
 	}
 	@Override public Q setColumnValue(final Q baseObject, final Object editedValue, final int i) {
-		Q value = getColumn(i).setColumnValue(baseObject, editedValue);
-		notifyListeners();
-		return value;
+		if (validIndex(i)) {
+			Q value = getColumn(i).setColumnValue(baseObject, editedValue);
+			notifyListeners();
+			return value;
+		} else {
+			return baseObject;
+		}
 	}
 
 	class ColumnComparator implements Comparator<T> {
