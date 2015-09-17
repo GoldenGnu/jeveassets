@@ -16,6 +16,22 @@
                   #### #  # #  # #  # #### #### #### #### ####
 
 ________________________________________________________________________________
+_2.10.3_________________________________________________________________________
+
+Changed:
+-Changed Google Code links to GitHub
+-Minor optimization to stockpile tool
+-Updated Glazed Lists library to 1.9.1
+-Removed eve.addicts.nl
+
+Bug Fix:
+-Added Glazed list read locks (could fix some bugs or not)
+-Save eve fittings (wrong type name)
+-Race condition when updating (tracker point creation)
+-Settings was not saved after deleting stockpile
+-ArrayIndexOutOfBounds in EnumTableFormatAdaptor
+
+________________________________________________________________________________
 _2.10.2_________________________________________________________________________
 
 Bug Fix:
