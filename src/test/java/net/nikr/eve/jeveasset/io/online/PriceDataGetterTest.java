@@ -94,10 +94,12 @@ public class PriceDataGetterTest {
 	public void testEveCentral() {
 		test(PriceSource.EVE_CENTRAL);
 	}
+	/*
 	//@Test
 	public void testEveAddicts() {
 		test(PriceSource.EVE_ADDICTS);
 	}
+	*/
 	//@Test
 	/*
 	public void testEveMarketeer() {
