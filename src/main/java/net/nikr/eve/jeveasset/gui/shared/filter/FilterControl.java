@@ -88,6 +88,10 @@ public abstract class FilterControl<E> extends ExportFilterControl<E> {
 		gui = new FilterGui<E>(jFrame, this);
 	}
 
+	public void setColumns(final List<EnumTableColumn<E>> enumColumns) {
+		gui.setColumns(enumColumns);
+	}
+
 	@Override
 	public List<Filter> getCurrentFilters() {
 		return gui.getFilters();

@@ -386,9 +386,12 @@ public class TreeTab extends JMainTab {
 
 	public void addColumn(MyLocation location) {
 		tableFormat.addColumn(new JMenuJumps.Column<TreeAsset>(location.getSystem(), location.getSystemID()));
+		filterControl.setColumns(tableFormat.getOrderColumns());
 	}
+
 	public void removeColumn(MyLocation location) {
 		tableFormat.removeColumn(new JMenuJumps.Column<TreeAsset>(location.getSystem(), location.getSystemID()));
+		filterControl.setColumns(tableFormat.getOrderColumns());
 	}
 
 	public EventList<TreeAsset> getEventList() {

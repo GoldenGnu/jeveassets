@@ -192,9 +192,11 @@ public class AssetsTab extends JMainTab {
 	}
 	public void addColumn(MyLocation location) {
 		tableFormat.addColumn(new JMenuJumps.Column<MyAsset>(location.getSystem(), location.getSystemID()));
+		filterControl.setColumns(tableFormat.getOrderColumns());
 	}
 	public void removeColumn(MyLocation location) {
 		tableFormat.removeColumn(new JMenuJumps.Column<MyAsset>(location.getSystem(), location.getSystemID()));
+		filterControl.setColumns(tableFormat.getOrderColumns());
 	}
 
 	private void updateStatusbar() {

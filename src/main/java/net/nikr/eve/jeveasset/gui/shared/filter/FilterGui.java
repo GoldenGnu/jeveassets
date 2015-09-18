@@ -46,6 +46,7 @@ import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.CaseInsensitiveComparator;
 import net.nikr.eve.jeveasset.gui.shared.components.JDropDownButton;
+import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 
 class FilterGui<E> {
@@ -169,6 +170,10 @@ class FilterGui<E> {
 
 	JPanel getPanel() {
 		return jPanel;
+	}
+
+	public void setColumns(final List<EnumTableColumn<E>> enumColumns) {
+		exportDialog.setColumns(enumColumns);
 	}
 
 	final void addToolButton(final AbstractButton jButton) {
