@@ -182,7 +182,11 @@ public class PriceDataGetter implements PricingListener {
 			}
 			//We only set the price data if everthing worked (AKA all updated)
 			try {
-				return new HashMap<Integer, PriceData>(priceDataList);
+				//return new HashMap<Integer, PriceData>(priceDataList);
+				// XXX - Workaround for ConcurrentModificationException in HashMap constructor
+				Map<Integer, PriceData> hashMap = new HashMap<Integer, PriceData>();
+				hashMap.putAll(priceDataList);
+				return hashMap;
 			} finally {
 				clear();
 			}

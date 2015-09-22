@@ -84,7 +84,10 @@ public class ContractsGetter extends AbstractApiGetter<ContractsResponse>{
 	protected void setData(ContractsResponse response) {
 		List<Contract> contracts = new ArrayList<Contract>(response.getAll());
 		//Create backup of existin contracts
-		Map<MyContract, List<MyContractItem>> existingContract= new HashMap<MyContract, List<MyContractItem>>(getOwner().getContracts());
+		//Map<MyContract, List<MyContractItem>> existingContract = new HashMap<MyContract, List<MyContractItem>>(getOwner().getContracts();
+		// XXX - Workaround for ConcurrentModificationException in HashMap constructor
+		Map<MyContract, List<MyContractItem>> existingContract = new HashMap<MyContract, List<MyContractItem>>();
+		existingContract.putAll(getOwner().getContracts());
 		//Remove existin contracts
 		getOwner().getContracts().clear();
 		for (Contract contract : contracts) {
