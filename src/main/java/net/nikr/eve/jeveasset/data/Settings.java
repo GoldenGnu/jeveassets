@@ -30,7 +30,6 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
 import java.net.SocketAddress;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.UnknownHostException;
 import java.text.DateFormat;
@@ -868,7 +867,7 @@ public class Settings {
 			URL location = net.nikr.eve.jeveasset.Program.class.getProtectionDomain().getCodeSource().getLocation();
 			try {
 				file = new File(location.toURI());
-			} catch (URISyntaxException ex) {
+			} catch (Exception ex) {
 				file = new File(location.getPath());
 			}
 			ret = new File(file.getParentFile().getAbsolutePath() + File.separator + filename);
