@@ -354,12 +354,8 @@ public class EnumTableFormatAdaptor<T extends Enum<T> & EnumTableColumn<Q>, Q> i
 		}
 	}
 
-	private T getColumn(final int i) {
+	private T getColumn(final int i) throws IndexOutOfBoundsException {
 		return shownColumns.get(i);
-	}
-
-	private boolean validIndex(final int i) {
-		return i >= 0 && i < getShownColumns().size();
 	}
 
 	private void updateColumns() {
@@ -367,17 +363,17 @@ public class EnumTableFormatAdaptor<T extends Enum<T> & EnumTableColumn<Q>, Q> i
 	}
 
 	@Override public Class<?> getColumnClass(final int i) {
-		if (validIndex(i)) {
+		try {
 			return getColumn(i).getType();
-		} else {
+		} catch (IndexOutOfBoundsException ex) {
 			return null;
 		}
 	}
 
 	@Override public Comparator<?> getColumnComparator(final int i) {
-		if (validIndex(i)) {
+		try {
 			return getColumn(i).getComparator();
-		} else {
+		} catch (IndexOutOfBoundsException ex) {
 			return null;
 		}
 	}
@@ -387,17 +383,17 @@ public class EnumTableFormatAdaptor<T extends Enum<T> & EnumTableColumn<Q>, Q> i
 	}
 
 	@Override public String getColumnName(final int i) {
-		if (validIndex(i)) {
+		try {
 			return getColumn(i).getColumnName();
-		} else {
+		} catch (IndexOutOfBoundsException ex) {
 			return null;
 		}
 	}
 
 	@Override public Object getColumnValue(final Q e, final int i) {
-		if (validIndex(i)) {
+		try {
 			return getColumn(i).getColumnValue(e);
-		} else {
+		} catch (IndexOutOfBoundsException ex) {
 			return null;
 		}
 	}
@@ -405,20 +401,20 @@ public class EnumTableFormatAdaptor<T extends Enum<T> & EnumTableColumn<Q>, Q> i
 
 	//Used by the JSeparatorTable
 	@Override public boolean isEditable(final Q baseObject, final int i) {
-		if (validIndex(i)) {
+		try {
 			return getColumn(i).isColumnEditable(baseObject);
-		} else {
+		} catch (IndexOutOfBoundsException ex) {
 			return false;
 		}
 	}
 	@Override public Q setColumnValue(final Q baseObject, final Object editedValue, final int i) {
-		if (validIndex(i)) {
-			Q value = getColumn(i).setColumnValue(baseObject, editedValue);
+		try {
+			getColumn(i).setColumnValue(baseObject, editedValue);
 			notifyListeners();
-			return value;
-		} else {
-			return baseObject;
+		} catch (IndexOutOfBoundsException ex) {
+			//No problem
 		}
+		return baseObject;
 	}
 
 	class ColumnComparator implements Comparator<T> {
