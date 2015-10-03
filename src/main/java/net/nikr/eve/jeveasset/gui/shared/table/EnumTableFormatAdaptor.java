@@ -395,7 +395,7 @@ public class EnumTableFormatAdaptor<T extends Enum<T> & EnumTableColumn<Q>, Q> i
 		}
 	}
 
-	private EnumTableColumn<Q> getColumn(final int i) {
+	private EnumTableColumn<Q> getColumn(final int i) throws IndexOutOfBoundsException {
 		return getShownColumns().get(i);
 	}
 
@@ -403,22 +403,18 @@ public class EnumTableFormatAdaptor<T extends Enum<T> & EnumTableColumn<Q>, Q> i
 		Collections.sort(shownColumns, columnComparator);
 	}
 
-	private boolean validIndex(final int i) {
-		return i >= 0 && i < getShownColumns().size();
-	}
-
 	@Override public Class<?> getColumnClass(final int i) {
-		if (validIndex(i)) {
+		try {
 			return getColumn(i).getType();
-		} else {
+		} catch (IndexOutOfBoundsException ex) {
 			return null;
 		}
 	}
 
 	@Override public Comparator<?> getColumnComparator(final int i) {
-		if (validIndex(i)) {
+		try {
 			return getColumn(i).getComparator();
-		} else {
+		} catch (IndexOutOfBoundsException ex) {
 			return null;
 		}
 	}
@@ -428,17 +424,17 @@ public class EnumTableFormatAdaptor<T extends Enum<T> & EnumTableColumn<Q>, Q> i
 	}
 
 	@Override public String getColumnName(final int i) {
-		if (validIndex(i)) {
+		try {
 			return getColumn(i).getColumnName();
-		} else {
+		} catch (IndexOutOfBoundsException ex) {
 			return null;
 		}
 	}
 
 	@Override public Object getColumnValue(final Q e, final int i) {
-		if (validIndex(i)) {
+		try {
 			return getColumn(i).getColumnValue(e);
-		} else {
+		} catch (IndexOutOfBoundsException ex) {
 			return null;
 		}
 	}
@@ -453,18 +449,20 @@ public class EnumTableFormatAdaptor<T extends Enum<T> & EnumTableColumn<Q>, Q> i
 
 	//Used by the JSeparatorTable
 	@Override public boolean isEditable(final Q baseObject, final int i) {
-		if (validIndex(i)) {
+		try {
 			return getColumn(i).isColumnEditable(baseObject);
-		} else {
+		} catch (IndexOutOfBoundsException ex) {
 			return false;
 		}
 	}
 	@Override public Q setColumnValue(final Q baseObject, final Object editedValue, final int i) {
-		if (validIndex(i)) {
-			boolean changed = getColumn(i).setColumnValue(baseObject, editedValue);;
+		try {
+			boolean changed = getColumn(i).setColumnValue(baseObject, editedValue);
 			if (changed) {
 				notifyListeners();
 			}
+		} catch (IndexOutOfBoundsException ex) {
+			//No problem
 		}
 		return baseObject;
 	}
