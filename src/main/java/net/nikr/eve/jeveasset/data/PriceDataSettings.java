@@ -42,7 +42,7 @@ public class PriceDataSettings {
 				return DataModelPriceDataSettings.get().sourceEveCentral();
 			}
 		},
-		EVE_MARKETDATA(PricingFetch.EVE_MARKETDATA, false, true, false, false, LocationType.REGION, Collections.singletonList(10000002L)) {
+		EVE_MARKETDATA(PricingFetch.EVE_MARKETDATA, false, true, true, true, LocationType.REGION, Collections.singletonList(10000002L)) {
 			@Override public PriceMode[] getPriceTypes() {
 				return new PriceMode[]{PriceMode.PRICE_SELL_PERCENTILE, PriceMode.PRICE_MIDPOINT, PriceMode.PRICE_BUY_PERCENTILE};
 			}

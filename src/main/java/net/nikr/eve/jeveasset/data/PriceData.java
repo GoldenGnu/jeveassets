@@ -23,16 +23,16 @@ package net.nikr.eve.jeveasset.data;
 
 public class PriceData {
 
-	private double sellMax;
-	private double sellAvg;
-	private double sellMedian;
-	private double sellPercentile;
-	private double sellMin;
-	private double buyMax;
-	private double buyAvg;
-	private double buyMedian;
-	private double buyPercentile;
-	private double buyMin;
+	private double sellMax = 0;
+	private double sellAvg = 0;
+	private double sellMedian = 0;
+	private double sellPercentile = 0;
+	private double sellMin = 0;
+	private double buyMax = 0;
+	private double buyAvg = 0;
+	private double buyMedian = 0;
+	private double buyPercentile = 0;
+	private double buyMin = 0;
 
 	public PriceData() { }
 
