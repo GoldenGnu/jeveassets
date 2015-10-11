@@ -143,7 +143,7 @@ public final class Main {
 		NikrUncaughtExceptionHandler.install();
 
 		//Add user agent to online requests
-		System.setProperty("http.agent", "jEveAssets");
+		System.setProperty("http.agent", Program.PROGRAM_NAME + "/" + Program.PROGRAM_VERSION.replace(" ", "_"));
 
 		//XXX - Workaround for IPv6 fail (force IPv4)
 		//eveonline.com is not IPv6 ready...
