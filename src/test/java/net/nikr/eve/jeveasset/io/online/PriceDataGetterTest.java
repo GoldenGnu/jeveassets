@@ -29,6 +29,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 import net.nikr.eve.jeveasset.data.Item;
 import net.nikr.eve.jeveasset.data.PriceData;
 import net.nikr.eve.jeveasset.data.PriceDataSettings.PriceSource;
@@ -39,9 +40,12 @@ import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.junit.After;
 import org.junit.AfterClass;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import uk.me.candle.eve.pricing.options.LocationType;
 import uk.me.candle.eve.pricing.options.PricingFetch;
@@ -57,11 +61,10 @@ public class PriceDataGetterTest {
 	private static final long REGION = 10000002L;  //The Forge (Jita region)
 	private static final long SYSTEM = 30000142L;  //Jita
 	private static final long STATION = 60003760L; //Jita 4 - 4
-	private static final long MAX_RUNS = 0;
+	private static final long MAX_RUNS = 250;
 
 	private final PriceGetter getter = new PriceGetter();
 	private final Set<Integer> typeIDs = new HashSet<Integer>();
-	private final Set<Integer> okFailes = new HashSet<Integer>();
 
 	public PriceDataGetterTest() { }
 	
@@ -78,7 +81,7 @@ public class PriceDataGetterTest {
 	@Before
 	public void setUp() {
 		for (Item item : StaticData.get().getItems().values()) {
-			if (typeIDs.size() > MAX_RUNS && MAX_RUNS > 0) { break; }
+			if (typeIDs.size() >= MAX_RUNS && MAX_RUNS > 0) { break; }
 			if (item.isMarketGroup()) {
 				typeIDs.add(item.getTypeID());
 			}
@@ -90,30 +93,33 @@ public class PriceDataGetterTest {
 		typeIDs.clear();
 	}
 
-	//@Test
+	@Test @Ignore
 	public void testEveCentral() {
 		test(PriceSource.EVE_CENTRAL);
 	}
+
 	/*
 	//@Test
 	public void testEveAddicts() {
 		test(PriceSource.EVE_ADDICTS);
 	}
 	*/
+
 	//@Test
 	/*
 	public void testEveMarketeer() {
 		test(PriceSource.EVEMARKETEER);
 	}
 	*/
-	//@Test
+
+	@Test @Ignore
 	public void testEveMarketdata() {
 		test(PriceSource.EVE_MARKETDATA);
 	}
-	//@Test
+
+	@Test //@Ignore
 	public void testAll() {
 		long time = System.currentTimeMillis();
-		System.out.println("Testing " + typeIDs.size() + " IDs");
 		for (PriceSource source : PriceSource.values()) {
 			test(source);
 		}
@@ -121,11 +127,10 @@ public class PriceDataGetterTest {
 	}
 
 	private void test(PriceSource source) {
-		okFailes.clear();
 		if (source.supportsMultipleRegions()) {
 			test(source, LocationType.REGION, RegionType.EMPIRE.getRegions());
 		}
-		if (source.supportsSingleRegion()) {
+		if (source.supportsMultipleRegions() || source.supportsSingleRegion()) {
 			test(source, LocationType.REGION, Collections.singletonList(REGION));
 		}
 		if (source.supportsSystem()) {
@@ -137,44 +142,32 @@ public class PriceDataGetterTest {
 	}
 
 	private void test(PriceSource source, LocationType locationType, List<Long> locations) {
-		long time = System.currentTimeMillis();
 		TestPricingOptions options = new TestPricingOptions(source, locationType, locations);
 		System.out.println(source.toString()
                 + " ("
                 + (options.getLocations().size() == 1 ? "Single" : "Multi")
                 + " "
                 + options.getLocationType().name().toLowerCase()
-                + ")"
+                + " - " +typeIDs.size() + " IDs)"
                 );
+		long start = System.currentTimeMillis();
 		Map<Integer, PriceData> process = getter.process(options, typeIDs, source);
+		long end = System.currentTimeMillis();
 		assertNotNull(process);
-		
-        Set<Integer> failed = new HashSet<Integer>(typeIDs);
+        Set<Integer> failed = new TreeSet<Integer>(typeIDs);
 		failed.removeAll(process.keySet());
-        failed.removeAll(okFailes);
-		
-		Set<Integer> failedAll = new HashSet<Integer>(typeIDs);
-		failedAll.removeAll(process.keySet());
-		failedAll.removeAll(failed);
 
-        System.out.println("    " + process.size() + " of " + typeIDs.size() + " done - " + failed.size() + " failed - " + failedAll.size() + " accepted fails"); 
-        if (!failed.isEmpty()) {
-            System.out.println("        Failed:");
-            for (Integer typeID : failed) {
-                System.out.println("        " + typeID);
-            }
-        }
+		Set<Integer> empty = new TreeSet<Integer>();
 		for (Map.Entry<Integer, PriceData> entry : process.entrySet()) {
 			assertNotNull(entry.getValue());
-			//assertFalse(entry.getKey() + ": " + entry.getValue().toString(), entry.getValue().isEmpty());
-			
+			if (entry.getValue().isEmpty()) {
+				empty.add(entry.getKey());
+			}
 		}
-		process.clear();
-		failed.clear();
-		failedAll.clear();
-		//assertEquals(process.size(), ids.size());
-		System.out.println("        completed in: " + Formater.milliseconds(System.currentTimeMillis() - time));
-		
+
+        System.out.println("    " + process.size() + " of " + typeIDs.size() + " done - " + empty.size() + " empty - " + failed.size() + " failed - completed in: " + Formater.milliseconds(end - start)); 
+		assertTrue(failed.isEmpty());
+		assertEquals(process.size(), typeIDs.size());
 	}
 
 	private static class PriceGetter extends PriceDataGetter {
@@ -201,7 +194,7 @@ public class PriceDataGetterTest {
 	
 		@Override
 		public long getPriceCacheTimer() {
-			return 0;
+			return 60*60*1000l; // 1 hour
 		}
 
 		@Override
@@ -251,8 +244,12 @@ public class PriceDataGetterTest {
 
 		@Override
 		public int getAttemptCount() {
-			return 10;
+			return 2;
 		}
-		
+
+		@Override
+		public boolean getUseBinaryErrorSearch() {
+			return false;
+		}
 	}
 }

@@ -59,13 +59,16 @@ public class PriceDataGetter implements PricingListener {
 
 	private final ProfileData profileData;
 	private final long priceCacheTimer = 1 * 60 * 60 * 1000L; // 1 hour (hours*min*sec*ms)
-	private final int attemptCount = 5;
-	private final Set<Integer> failed = new HashSet<Integer>();
+	private final int attemptCount = 2;
 
 	private UpdateTask updateTask;
-	private final Map<Integer, PriceData> priceDataList = new HashMap<Integer, PriceData>();
-	private final Set<Integer> typeIDs = new HashSet<Integer>();
 	private boolean update;
+	private Set<Integer> typeIDs;
+	private Set<Integer> failed;
+	private Set<Integer> okay;
+	private Set<Integer> queue;
+	private Map<Integer, PriceData> priceDataList;
+	
 	private long nextUpdate = 0;
 
 	public PriceDataGetter(final ProfileData profileData) {
@@ -109,10 +112,11 @@ public class PriceDataGetter implements PricingListener {
 	protected Map<Integer, PriceData> process(final UpdateTask task, final boolean update, final PricingOptions pricingOptions, final Set<Integer> typeIDs, final PriceSource priceSource) {
 		this.updateTask = task;
 		this.update = update;
-		this.typeIDs.clear();
-		this.typeIDs.addAll(typeIDs);
-		//Create clear price data map (Will only be used if task complete)
-		priceDataList.clear();
+		this.typeIDs = new HashSet<Integer>(typeIDs);
+		this.failed = new HashSet<Integer>();
+		this.okay = new HashSet<Integer>();
+		this.queue = new HashSet<Integer>(typeIDs);
+		this.priceDataList = new HashMap<Integer, PriceData>();
 
 		if (update) {
 			LOG.info("Price data update (" + priceSource + "):");
@@ -122,7 +126,6 @@ public class PriceDataGetter implements PricingListener {
 
 		Pricing pricing = PricingFactory.getPricing(pricingOptions);
 		pricing.resetAllAttemptCounters();
-		pricing.addPricingListener(this);
 
 		//Reset cache timers...
 		if (update) {
@@ -130,14 +133,13 @@ public class PriceDataGetter implements PricingListener {
 				pricing.setPrice(id, -1.0);
 			}
 		}
+		pricing.addPricingListener(this);
 
 		//Load price data (Update as needed)
 		for (int id : typeIDs) {
 			createPriceData(id, pricing);
 		}
-		//Wait to complete
-		failed.clear();
-		while (typeIDs.size() > (priceDataList.size() + failed.size())) {
+		while (!getQueue().isEmpty()) {
 			try {
 				synchronized (this) {
 					wait();
@@ -150,7 +152,7 @@ public class PriceDataGetter implements PricingListener {
 					updateTask.setTaskProgress(100, 100, 0, 100);
 					updateTask = null;
 				}
-				clear();
+				clear(pricing);
 				return null;
 			}
 		}
@@ -185,10 +187,11 @@ public class PriceDataGetter implements PricingListener {
 				//return new HashMap<Integer, PriceData>(priceDataList);
 				// XXX - Workaround for ConcurrentModificationException in HashMap constructor
 				Map<Integer, PriceData> hashMap = new HashMap<Integer, PriceData>();
+				priceDataList.keySet().removeAll(failed);
 				hashMap.putAll(priceDataList);
 				return hashMap;
 			} finally {
-				clear();
+				clear(pricing);
 			}
 		} else { //None or some updated
 			LOG.info("	Failed to update price data");
@@ -196,27 +199,33 @@ public class PriceDataGetter implements PricingListener {
 				updateTask.addError("Price data", "Failed to update price data");
 				updateTask.setTaskProgress(100, 100, 0, 100);
 			}
-			clear();
+			clear(pricing);
 			return null;
 		}
+	}
+
+	public synchronized Set<Integer> getQueue() {
+		return queue;
 	}
 
 	public Date getNextUpdate() {
 		return new Date(nextUpdate + priceCacheTimer);
 	}
 
-	private void clear() {
+	private void clear(Pricing pricing) {
 		//Memory
 		SplashUpdater.setSubProgress(100);
 		this.updateTask = null;
 		this.typeIDs.clear();
 		this.priceDataList.clear();
 		this.failed.clear();
+		pricing.removePricingListener(this);
 	}
 
 	@Override
 	public void priceUpdated(final int typeID, final Pricing pricing) {
 		createPriceData(typeID, pricing);
+		getQueue().remove(typeID);
 		synchronized (this) {
 			notify();
 		}
@@ -225,13 +234,18 @@ public class PriceDataGetter implements PricingListener {
 	@Override
 	public void priceUpdateFailed(final int typeID, final Pricing pricing) {
 		failed.add(typeID);
+		getQueue().remove(typeID);
 		synchronized (this) {
 			notify();
 		}
 	}
 
 	private void createPriceData(final int typeID, final Pricing pricing) {
-		PriceData priceData = new PriceData();
+		PriceData priceData = priceDataList.get(typeID);
+		if (priceData == null) {
+			priceData = new PriceData();
+			priceDataList.put(typeID, priceData);
+		}
 		boolean ok = false;
 		for (PriceMode priceMode : PriceMode.values()) {
 			PricingType pricingType = priceMode.getPricingType();
@@ -241,15 +255,14 @@ public class PriceDataGetter implements PricingListener {
 			}
 			Double price = pricing.getPrice(typeID, pricingType, pricingNumber);
 			if (price != null) {
-				ok = true;
-			} else {
-				price = 0.0;
+				ok = true; //Something is set
+				PriceMode.setDefaultPrice(priceData, priceMode, price);
 			}
-			PriceMode.setDefaultPrice(priceData, priceMode, price);
 		}
 		if (ok) {
+			getQueue().remove(typeID); //Load price...
+			okay.add(typeID);
 			failed.remove(typeID);
-			priceDataList.put(typeID, priceData);
 		} else {
 			failed.add(typeID);
 		}
@@ -258,10 +271,10 @@ public class PriceDataGetter implements PricingListener {
 			nextUpdate = nextUpdateTemp;
 		}
 		if (updateTask != null) {
-			updateTask.setTaskProgress(typeIDs.size(), priceDataList.size(), 0, 100);
+			updateTask.setTaskProgress(typeIDs.size(), okay.size(), 0, 100);
 		}
-		if (!priceDataList.isEmpty() && !typeIDs.isEmpty()) {
-			SplashUpdater.setSubProgress((int) (priceDataList.size() * 100.0 / typeIDs.size()));
+		if (!okay.isEmpty() && !typeIDs.isEmpty()) {
+			SplashUpdater.setSubProgress((int) (okay.size() * 100.0 / typeIDs.size()));
 		}
 	}
 
@@ -324,6 +337,11 @@ public class PriceDataGetter implements PricingListener {
 		@Override
 		public int getAttemptCount() {
 			return attemptCount;
+		}
+
+		@Override
+		public boolean getUseBinaryErrorSearch() {
+			return false;
 		}
 	}
 }
