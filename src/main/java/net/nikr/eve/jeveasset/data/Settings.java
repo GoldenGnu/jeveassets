@@ -141,7 +141,7 @@ public class Settings {
 //Tracker						Saved by TaskDialog.update() (on API update)
 	private final Map<String, List<Value>> trackerData = new HashMap<String, List<Value>>(); //ownerID :: long
 //Runtime flags					Is not saved to file
-	private boolean settingsLoaded;
+	private boolean settingsLoadError;
 	private boolean settingsImported;
 //Settings Dialog:				Saved by SettingsDialog.save()
 	//Lock OK
@@ -299,7 +299,7 @@ public class Settings {
 
 	private void loadSettings() {
 		//Load data and overwite default values
-		settingsLoaded = SettingsReader.load(this);
+		settingsLoadError = !SettingsReader.load(this);
 		SplashUpdater.setProgress(35);
 		constructEveApiConnector();
 	}
@@ -746,8 +746,8 @@ public class Settings {
 		this.windowAlwaysOnTop = windowAlwaysOnTop;
 	}
 
-	public boolean isSettingsLoaded() {
-		return settingsLoaded;
+	public boolean isSettingsLoadError() {
+		return settingsLoadError;
 	}
 
 	public boolean isSettingsImported() {

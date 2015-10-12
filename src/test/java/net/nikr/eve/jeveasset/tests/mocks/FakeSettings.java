@@ -121,7 +121,7 @@ public abstract class FakeSettings extends Settings {
 	}
 
 	@Override
-	public boolean isSettingsLoaded() {
+	public boolean isSettingsLoadError() {
 		throw new UnsupportedOperationException("not implemented");
 	}
 

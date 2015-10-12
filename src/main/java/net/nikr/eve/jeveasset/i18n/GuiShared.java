@@ -51,6 +51,8 @@ public abstract class GuiShared extends Bundle {
 	public abstract String dotlan();
 	public abstract String edit();
 	public abstract String emptyString();
+	public abstract String errorLoadingSettingsMsg();
+	public abstract String errorLoadingSettingsTitle();
 	public abstract String eveAddicts();
 	public abstract String eveCentral();
 	public abstract String eveMarketdata();
