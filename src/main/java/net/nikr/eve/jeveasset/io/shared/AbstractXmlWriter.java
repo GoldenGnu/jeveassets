@@ -34,7 +34,7 @@ import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Document;
 
 
-public abstract class AbstractXmlWriter {
+public abstract class AbstractXmlWriter extends AbstractXmlBackup {
 
 	private static final Logger LOG = LoggerFactory.getLogger(AbstractXmlWriter.class);
 
@@ -56,12 +56,15 @@ public abstract class AbstractXmlWriter {
 	private void writeXmlFile(final Document doc, final String filename, final String encoding, boolean createBackup) throws XmlException {
 		DOMSource source = new DOMSource(doc);
 		FileOutputStream outputStream = null;
-		File file = new File(filename);
+		File file;
+		if (createBackup) {
+			file = getNewFile(filename); //Save to .new file
+		} else {
+			file = new File(filename);
+		}
 		try {
 			FileLock.lock(file);
-			if (createBackup) {
-				backupFile(filename);
-			}
+			//Save file
 			outputStream = new FileOutputStream(file);
 			OutputStreamWriter outputStreamWriter = new OutputStreamWriter(outputStream, encoding);
 			// result
@@ -85,7 +88,6 @@ public abstract class AbstractXmlWriter {
 		} catch (UnsupportedEncodingException ex) {
 			throw new XmlException(ex.getMessage(), ex);
 		} finally {
-			FileLock.unlock(file);
 			if (outputStream != null) {
 				try {
 					outputStream.close();
@@ -93,27 +95,11 @@ public abstract class AbstractXmlWriter {
 					throw new XmlException(ex.getMessage(), ex);
 				}
 			}
+			//Saving done - create backup and rename new file to target
+			if (createBackup) {
+				backupFile(filename); //Rename .xml => .bac (.new is safe) and .new => .xml (.bac is safe). That way we always have at least one safe file
+			}
+			FileLock.unlock(file); //Last thing to do
 		}
-	}
-
-	private void backupFile(final String filename) {
-		File outputFile = new File(filename);
-		int end = filename.lastIndexOf(".");
-		String backup = filename.substring(0, end) + ".bac";
-		File backupFile = new File(backup);
-		if (!outputFile.exists()) {
-			LOG.info("No file to backup: {}", outputFile.getName());
-			return;
-		}
-		if (backupFile.exists() && !backupFile.delete()) {
-			LOG.warn("Was not able to delete previous backup file: {}", backupFile.getName());
-			return;
-		}
-		if (outputFile.exists() && outputFile.renameTo(backupFile)) {
-			LOG.info("Backup created: {}", backupFile.getName());
-		} else {
-			LOG.warn("Was not able to make backup of: {}", outputFile.getName());
-		}
-		
 	}
 }

@@ -63,7 +63,7 @@ public class FileLockTest {
 
 	private static class LoadSettings implements Runnable {
 
-		private Settings settings;
+		private final Settings settings;
 
 		public LoadSettings(Settings settings) {
 			this.settings = settings;
@@ -78,7 +78,7 @@ public class FileLockTest {
 
 	private static class SaveSettings implements Runnable {
 
-		private Settings settings;
+		private final Settings settings;
 
 		public SaveSettings(Settings settings) {
 			this.settings = settings;

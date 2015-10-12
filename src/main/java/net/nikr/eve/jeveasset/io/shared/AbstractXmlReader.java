@@ -34,15 +34,11 @@ import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
 
 
-public abstract class AbstractXmlReader {
+public abstract class AbstractXmlReader extends AbstractXmlBackup {
 
 	private static final Logger LOG = LoggerFactory.getLogger(AbstractXmlReader.class);
 
 	protected Element getDocumentElement(final String filename, final boolean fileLock) throws XmlException, IOException {
-		return getDocumentElement(filename, fileLock, false);
-	}
-
-	private Element getDocumentElement(final String filename, final boolean fileLock, final boolean usingBackupFile) throws XmlException, IOException {
 		DocumentBuilderFactory factory;
 		DocumentBuilder builder;
 		Document doc;
@@ -61,44 +57,31 @@ public abstract class AbstractXmlReader {
 			if (is != null) { //Close file - so we can delete it...
 				is.close();
 			}
-			if (!usingBackupFile && restoreBackupFile(filename)) {
+			if (restoreNewFile(filename)) { //If possible restore from .new (Should be the newest)
 				if (fileLock) {
 					FileLock.unlock(file);
 				}
-				return getDocumentElement(filename, fileLock, true);
+				return getDocumentElement(filename, fileLock);
+			} else if (restoreBackupFile(filename)) { //If possible restore from .bac (Should be the oldes, but, still worth trying)
+				if (fileLock) {
+					FileLock.unlock(file);
+				}
+				return getDocumentElement(filename, fileLock);
+			} else { //Nothing left to try - throw error
+				restoreFailed(filename); //Backup error file
+				throw new XmlException(ex.getMessage(), ex);
 			}
-			throw new XmlException(ex.getMessage(), ex);
 		} catch (ParserConfigurationException ex) {
 			throw new XmlException(ex.getMessage(), ex);
 		} finally {
-			if (fileLock) {
-				FileLock.unlock(file);
-			}
 			if (is != null) {
 				is.close();
+			}
+			if (fileLock) {
+				FileLock.unlock(file); //Last thing to do
 			}
 		}
 	}
 
-	private boolean restoreBackupFile(final String filename) {
-		int end = filename.lastIndexOf(".");
-		String backup = filename.substring(0, end) + ".bac";
-		File backupFile = new File(backup);
-		File inputFile = new File(filename);
-		if (!backupFile.exists()) {
-			LOG.warn("No backup file found: {}", backupFile.getName());
-			return false;
-		}
-		if (inputFile.exists() && !inputFile.delete()) {
-			LOG.warn("Was not able to delete buggy file: {}", inputFile.getName());
-			return false;
-		}
-		if (backupFile.renameTo(inputFile)) {
-			LOG.warn("Backup file restored: {}", backupFile.getName());
-			return true;
-		} else {
-			LOG.warn("Was not able to restore backup: {}", backupFile.getName());
-			return false;
-		}
-	}
+	
 }

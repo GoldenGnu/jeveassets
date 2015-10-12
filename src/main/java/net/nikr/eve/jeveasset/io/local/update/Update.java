@@ -92,9 +92,11 @@ public class Update extends AbstractXmlReader {
 	 * TODO When more updates are added convert this to a graph-based
 	 * search for a suitable list of updates and then perform the updates
 	 * in the correct order. - Candle 2010-09-19
-	 * @param requiredVersion
+	 * @param requiredVersion current version
+	 * @param path settings path
+	 * @throws net.nikr.eve.jeveasset.io.shared.XmlException on any error
 	 */
-	public void performUpdates(final int requiredVersion, final String path) {
+	public void performUpdates(final int requiredVersion, final String path) throws XmlException {
 		File xml = new File(path);
 		if (!xml.exists()) {
 			LOG.info("No settings.xml file found - nothing to update");
@@ -111,9 +113,15 @@ public class Update extends AbstractXmlReader {
 			} else {
 				LOG.info("settings.xml are up to date.");
 			}
-		} catch (Exception ex) {
-			LOG.error("Failed to update settings", ex);
-			throw new RuntimeException(ex);
+		} catch (XmlException ex) {
+			LOG.warn("Failed to update settings", ex);
+			throw new XmlException(ex);
+		} catch (IOException ex) {
+			LOG.warn("Failed to update settings", ex);
+			throw new XmlException(ex);
+		} catch (DocumentException ex) {
+			LOG.warn("Failed to update settings", ex);
+			throw new XmlException(ex);
 		} finally {
 			FileLock.unlock(xml);
 		}

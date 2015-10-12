@@ -23,6 +23,7 @@ package net.nikr.eve.jeveasset.io.local;
 
 import java.awt.Dimension;
 import java.awt.Point;
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -117,21 +118,23 @@ public final class SettingsReader extends AbstractXmlReader {
 	}
 
 	private boolean read(final Settings settings) {
+		if (!new File(settings.getPathSettings()).exists()) { //No settings file
+			return true;
+		}
 		try {
 			Update updater = new Update();
 			updater.performUpdates(SETTINGS_VERSION, settings.getPathSettings());
 
 			Element element = getDocumentElement(settings.getPathSettings(), true);
 			parseSettings(element, settings);
+			LOG.info("Settings loaded");
+			return true;
 		} catch (IOException ex) {
-			LOG.info("Settings not loaded");
-			return false;
+			LOG.warn("Settings not loaded");
 		} catch (XmlException ex) {
-			LOG.error("Settings parser error: (" + settings.getPathSettings() + ")" + ex.getMessage(), ex);
-			return false;
+			LOG.warn("Settings parser error: (" + settings.getPathSettings() + ")" + ex.getMessage(), ex);
 		}
-		LOG.info("Settings loaded");
-		return true;
+		return false;
 	}
 
 	private void parseSettings(final Element element, final Settings settings) throws XmlException {
