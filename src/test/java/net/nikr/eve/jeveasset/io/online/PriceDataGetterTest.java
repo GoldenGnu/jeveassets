@@ -176,7 +176,7 @@ public class PriceDataGetterTest {
 		}
 
 		protected Map<Integer, PriceData> process(PricingOptions pricingOptions, Set<Integer> ids, PriceSource source) {
-			return super.process(null, true, pricingOptions, ids, source);
+			return super.processUpdate(null, true, pricingOptions, ids, source);
 		}
 	}
 
