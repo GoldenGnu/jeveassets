@@ -769,9 +769,9 @@ public class UpdateDialog extends JDialogCentered {
 		@Override
 		public void update() {
 			if (update) {
-				program.getPriceDataGetter().update(this);
+				program.getPriceDataGetter().updateAll(this);
 			} else {
-				program.getPriceDataGetter().load(this);
+				program.getPriceDataGetter().updateNew(this);
 			}
 		}
 	}

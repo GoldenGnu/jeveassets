@@ -74,33 +74,13 @@ public class PriceDataGetter implements PricingListener {
 	public PriceDataGetter(final ProfileData profileData) {
 		this.profileData = profileData;
 	}
+
 	/**
-	 * Load price data from cache and only update missing price data.
+	 * Load price data from cache. Don't update missing prices
 	 * @return
 	 */
 	public boolean load() {
-		return process(null, false);
-	}
-	/**
-	 * Load price data from cache and only update missing price data.
-	 * @param task UpdateTask to track progress
-	 * @return
-	 */
-	public boolean load(final UpdateTask task) {
-		return process(task, false);
-	}
-	/**
-	 * Update of all price data.
-	 * @param task UpdateTask to track progress
-	 * @return
-	 */
-
-	public boolean update(final UpdateTask task) {
-		return process(task, true);
-	}
-
-	private boolean process(final UpdateTask task, final boolean processUpdates) {
-		Map<Integer, PriceData> priceData = process(task, processUpdates, new DefaultPricingOptions(), profileData.getPriceTypeIDs(), Settings.get().getPriceDataSettings().getSource());
+		Map<Integer, PriceData> priceData = processLoad(profileData.getPriceTypeIDs());
 		if (priceData != null) {
 			Settings.get().setPriceData(priceData);
 			return true;
@@ -109,26 +89,112 @@ public class PriceDataGetter implements PricingListener {
 		}
 	}
 
-	protected Map<Integer, PriceData> process(final UpdateTask task, final boolean update, final PricingOptions pricingOptions, final Set<Integer> typeIDs, final PriceSource priceSource) {
+	/**
+	 * Load price data from cache and only update missing price data.
+	 * @param task UpdateTask to track progress
+	 * @return
+	 */
+	public boolean updateNew(final UpdateTask task) {
+		return processUpdate(task, false);
+	}
+
+	/**
+	 * Update of all price data.
+	 * @param task UpdateTask to track progress
+	 * @return
+	 */
+	public boolean updateAll(final UpdateTask task) {
+		return processUpdate(task, true);
+	}
+
+	/**
+	 * Load data from price cache
+	 * @param typeIDs typeIDs to load from cache
+	 * @return available price data
+	 */
+	protected Map<Integer, PriceData> processLoad(Set<Integer> typeIDs) {
+		Pricing pricing = PricingFactory.getPricing(new DefaultPricingOptions());
+		LOG.info("Price data loading");
+		priceDataList = new HashMap<Integer, PriceData>();
+		for (int typeID : typeIDs) { //For each typeID
+			PriceData priceData = priceDataList.get(typeID);
+			if (priceData == null) {
+				priceData = new PriceData();
+				priceDataList.put(typeID, priceData);
+			}
+			boolean ok = false;
+			for (PriceMode priceMode : PriceMode.values()) { //For each PriceMode (all combinations of PricingNumber & PricingType)
+				PricingType pricingType = priceMode.getPricingType();
+				PricingNumber pricingNumber = priceMode.getPricingNumber();
+				if (pricingNumber == null || pricingType == null) {
+					continue; //Ignore calculated prices - f.ex. PriceMode.PRICE_MIDPOINT
+				}
+				Double price = pricing.getPriceCache(typeID, pricingType, pricingNumber);
+				if (price != null) {
+					ok = true; //Something is set
+					PriceMode.setDefaultPrice(priceData, priceMode, price);
+				}
+			}
+			if (!ok) {
+				priceDataList.remove(typeID); //Remove failed typeID
+			}
+		}
+		if (!priceDataList.isEmpty()) {
+			LOG.info("	Price data loaded");
+			Map<Integer, PriceData> hashMap = new HashMap<Integer, PriceData>();
+			hashMap.putAll(priceDataList);
+			priceDataList.clear(); //Free memory
+			return hashMap; //Return copy of Map
+		} else {
+			LOG.info("	Price data not loaded");
+			return null;
+		}
+	}
+
+	/**
+	 * Update settings with new price data
+	 * @param task UpdateTask to update progress on
+	 * @param updateAll if true update all prices, if false only update new/missing prices
+	 * @return true if OK or false if FAILED
+	 */
+	private boolean processUpdate(final UpdateTask task, final boolean updateAll) {
+		Map<Integer, PriceData> priceData = processUpdate(task, updateAll, new DefaultPricingOptions(), profileData.getPriceTypeIDs(), Settings.get().getPriceDataSettings().getSource());
+		if (priceData != null) {
+			Settings.get().setPriceData(priceData);
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	/**
+	 * 
+	 * @param task UpdateTask to update progress on
+	 * @param updateAll true to update all prices. false to only update new/missing prices
+	 * @param pricingOptions Options used doing update
+	 * @param typeIDs TypeIDs to get price data for
+	 * @param priceSource Price data source to update from (only used in log)
+	 * @return 
+	 */
+	protected Map<Integer, PriceData> processUpdate(final UpdateTask task, final boolean updateAll, final PricingOptions pricingOptions, final Set<Integer> typeIDs, final PriceSource priceSource) {
 		this.updateTask = task;
-		this.update = update;
+		this.update = updateAll;
 		this.typeIDs = new HashSet<Integer>(typeIDs);
 		this.failed = new HashSet<Integer>();
 		this.okay = new HashSet<Integer>();
 		this.queue = new HashSet<Integer>(typeIDs);
 		this.priceDataList = new HashMap<Integer, PriceData>();
 
-		if (update) {
-			LOG.info("Price data update (" + priceSource + "):");
+		if (updateAll) {
+			LOG.info("Price data update all (" + priceSource + "):");
 		} else {
-			LOG.info("Price data loading (" + priceSource + "):");
+			LOG.info("Price data update new (" + priceSource + "):");
 		}
 
 		Pricing pricing = PricingFactory.getPricing(pricingOptions);
-		pricing.resetAllAttemptCounters();
 
 		//Reset cache timers...
-		if (update) {
+		if (updateAll) {
 			for (int id : typeIDs) {
 				pricing.setPrice(id, -1.0);
 			}
@@ -171,7 +237,7 @@ public class PriceDataGetter implements PricingListener {
 		}
 		boolean updated = (!priceDataList.isEmpty() && (typeIDs.size() * 5 / 100) > failed.size()); //
 		if (updated) { //All Updated
-			if (update) {
+			if (updateAll) {
 				LOG.info("	Price data updated");
 			} else {
 				LOG.info("	Price data loaded");
