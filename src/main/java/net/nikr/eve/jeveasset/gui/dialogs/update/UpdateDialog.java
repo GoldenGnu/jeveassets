@@ -178,9 +178,9 @@ public class UpdateDialog extends JDialogCentered {
 		layout.setHorizontalGroup(
 			layout.createParallelGroup()
 				.addGroup(layout.createSequentialGroup()
-					.addComponent(jPriceDataAll, 50, 50, 50)
-					.addComponent(jPriceDataNew, 50, 50, 50)
-					.addComponent(jPriceDataNone, 50, 50, 50)
+					.addComponent(jPriceDataAll, 65, 65, 65)
+					.addComponent(jPriceDataNew, 65, 65, 65)
+					.addComponent(jPriceDataNone, 65, 65, 65)
 				)
 				.addGroup(layout.createSequentialGroup()
 					.addGroup(layout.createParallelGroup()
