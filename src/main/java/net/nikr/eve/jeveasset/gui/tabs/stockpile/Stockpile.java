@@ -51,6 +51,14 @@ public class Stockpile implements Comparable<Stockpile>, LocationType {
 	private final StockpileTotal totalItem = new StockpileTotal(this);
 	private double percentFull;
 	private double multiplier;
+	private boolean assets = false;
+	private boolean buyOrders = false;
+	private boolean sellOrders = false;
+	private boolean transactions = false;
+	private boolean buyTransactions = false;
+	private boolean sellTransactions = false;
+	private boolean jobs = false;
+	
 
 	private Stockpile(final Stockpile stockpile) {
 		update(stockpile);
@@ -69,6 +77,7 @@ public class Stockpile implements Comparable<Stockpile>, LocationType {
 		items.add(totalItem);
 		createContainerName();
 		createLocationName();
+		createInclude();
 	}
 
 	final void update(final Stockpile stockpile) {
@@ -79,6 +88,7 @@ public class Stockpile implements Comparable<Stockpile>, LocationType {
 		this.multiplier = stockpile.getMultiplier();
 		createContainerName();
 		createLocationName();
+		createInclude();
 	}
 
 	private void createLocationName() {
@@ -109,6 +119,51 @@ public class Stockpile implements Comparable<Stockpile>, LocationType {
 			}
 		} else {
 			containerName = TabsStockpile.get().multiple();
+		}
+	}
+
+	private void createInclude() {
+		if (getFilters().isEmpty()) {
+			assets = true;
+			buyOrders = true;
+			sellOrders = true;
+			transactions = true;
+			buyTransactions = true;
+			sellTransactions = true;
+			jobs = true;
+		} else {
+			assets = false;
+			buyOrders = false;
+			sellOrders = false;
+			transactions = false;
+			buyTransactions = false;
+			sellTransactions = false;
+			jobs = false;
+		}
+		for (StockpileFilter filter : getFilters()) {
+			if (filter.isAssets()) {
+				assets = true;
+			}
+			if (filter.isBuyOrders()) {
+				buyOrders = true;
+			}
+			if (filter.isSellOrders()) {
+				sellOrders = true;
+			}
+			if (filter.isBuyTransactions()) {
+				buyTransactions = true;
+				transactions = true;
+			}
+			if (filter.isSellTransactions()) {
+				sellTransactions = true;
+				transactions = true;
+			}
+			if (filter.isJobs()) {
+				jobs = true;
+			}
+			if (buyOrders && transactions && assets && jobs && sellOrders) {
+				break; //Everything included
+			}
 		}
 	}
 
@@ -146,64 +201,32 @@ public class Stockpile implements Comparable<Stockpile>, LocationType {
 		return multiplier;
 	}
 
-	public boolean isBuyOrders() {
-		if (getFilters().isEmpty()) {
-			return true;
-		}
-		for (StockpileFilter filter : getFilters()) {
-			if (filter.isBuyOrders()) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	public boolean isTransactions() {
-		if (getFilters().isEmpty()) {
-			return true;
-		}
-		for (StockpileFilter filter : getFilters()) {
-			if (filter.isBuyTransactions() || filter.isSellTransactions()) {
-				return true;
-			}
-		}
-		return false;
-	}
-
 	public boolean isAssets() {
-		if (getFilters().isEmpty()) {
-			return true;
-		}
-		for (StockpileFilter filter : getFilters()) {
-			if (filter.isAssets()) {
-				return true;
-			}
-		}
-		return false;
+		return assets;
 	}
 
-	public boolean isJobs() {
-		if (getFilters().isEmpty()) {
-			return true;
-		}
-		for (StockpileFilter filter : getFilters()) {
-			if (filter.isJobs()) {
-				return true;
-			}
-		}
-		return false;
+	public boolean isBuyOrders() {
+		return buyOrders;
 	}
 
 	public boolean isSellOrders() {
-		if (getFilters().isEmpty()) {
-			return true;
-		}
-		for (StockpileFilter filter : getFilters()) {
-			if (filter.isSellOrders()) {
-				return true;
-			}
-		}
-		return false;
+		return sellOrders;
+	}
+
+	public boolean isTransactions() {
+		return transactions;
+	}
+
+	public boolean isBuyTransactions() {
+		return buyTransactions;
+	}
+
+	public boolean isSellTransactions() {
+		return sellTransactions;
+	}
+
+	public boolean isJobs() {
+		return jobs;
 	}
 
 	public String getOwnerName() {

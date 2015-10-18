@@ -93,6 +93,12 @@ public class JStockpileTable extends JSeparatorTable {
 			if (columnName.equals(StockpileTableFormat.COUNT_NOW_SELL_ORDERS.getColumnName()) && !stockpileItem.getStockpile().isSellOrders()) {
 				component.setForeground(Color.GRAY);
 			}
+			if (columnName.equals(StockpileTableFormat.COUNT_NOW_BUY_TRANSACTIONS.getColumnName()) && !stockpileItem.getStockpile().isBuyTransactions()) {
+				component.setForeground(Color.GRAY);
+			}
+			if (columnName.equals(StockpileTableFormat.COUNT_NOW_SELL_TRANSACTIONS.getColumnName()) && !stockpileItem.getStockpile().isSellTransactions()) {
+				component.setForeground(Color.GRAY);
+			}
 			if (columnName.equals(StockpileTableFormat.COUNT_NOW_JOBS.getColumnName()) && !stockpileItem.getStockpile().isJobs()) {
 				component.setForeground(Color.GRAY);
 			}

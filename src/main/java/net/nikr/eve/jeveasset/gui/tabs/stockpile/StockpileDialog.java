@@ -953,13 +953,6 @@ public class StockpileDialog extends JDialogCentered {
 			jSellOrders.addActionListener(listener);
 			jInclude.add(jSellOrders, true);
 
-			jJobs = new JCheckBoxMenuItem(TabsStockpile.get().includeJobs());
-			jJobs.setToolTipText(TabsStockpile.get().includeJobsTip());
-			jJobs.setHorizontalAlignment(JButton.LEFT);
-			jJobs.setActionCommand(StockpileDialogAction.VALIDATE.name());
-			jJobs.addActionListener(listener);
-			jInclude.add(jJobs, true);
-
 			jBuyTransactions = new JCheckBoxMenuItem(TabsStockpile.get().includeBuyTransactions()); 
 			jBuyTransactions.setToolTipText(TabsStockpile.get().includeBuyTransactionsTip());
 			jBuyTransactions.setHorizontalAlignment(JButton.LEFT);
@@ -973,6 +966,13 @@ public class StockpileDialog extends JDialogCentered {
 			jSellTransactions.setActionCommand(StockpileDialogAction.VALIDATE.name());
 			jSellTransactions.addActionListener(listener);
 			jInclude.add(jSellTransactions, true);
+
+			jJobs = new JCheckBoxMenuItem(TabsStockpile.get().includeJobs());
+			jJobs.setToolTipText(TabsStockpile.get().includeJobsTip());
+			jJobs.setHorizontalAlignment(JButton.LEFT);
+			jJobs.setActionCommand(StockpileDialogAction.VALIDATE.name());
+			jJobs.addActionListener(listener);
+			jInclude.add(jJobs, true);
 
 			filterLayout.setHorizontalGroup(
 				filterLayout.createSequentialGroup()
