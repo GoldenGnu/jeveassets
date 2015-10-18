@@ -193,6 +193,19 @@ public class JSeparatorTable extends JAutoColumnTable {
 		return super.getValueAt(row, column);
 	}
 
+	@Override
+	public void setValueAt(Object aValue, int row, int column) {
+		final Object rowValue = getEventTableModel().getElementAt(row);
+
+		// if it's the separator row, ignore the call
+		if (rowValue instanceof SeparatorList.Separator) {
+			return;
+		}
+
+		// otherwise it's business as usual
+		super.setValueAt(aValue, row, column);
+	}
+
 	/** {@inheritDoc} */
 	@Override
 	public TableCellRenderer getCellRenderer(final int row, final int column) {
