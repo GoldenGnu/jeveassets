@@ -127,7 +127,7 @@ public class Settings {
 	//							Could be more selective...
 	//Lock FAIL!!!
 	private final List<Stockpile> stockpiles = new ArrayList<Stockpile>();
-	private int stockpileColorGroup2 = 0;
+	private int stockpileColorGroup2 = 100;
 	private int stockpileColorGroup3 = 0;
 //Routing						Saved by ???
 	//Lock ???
