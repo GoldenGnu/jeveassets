@@ -21,9 +21,9 @@
 
 package net.nikr.eve.jeveasset.gui.shared.components;
 
+import java.awt.Window;
 import java.io.File;
 import javax.swing.JFileChooser;
-import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileFilter;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
@@ -31,11 +31,11 @@ import net.nikr.eve.jeveasset.i18n.GuiShared;
 
 public class JCustomFileChooser extends JFileChooser {
 
-	private JFrame jFrame;
+	private final Window window;
 	private String extension;
 
-	public JCustomFileChooser(final JFrame jFrame, final String extension) {
-		this.jFrame = jFrame;
+	public JCustomFileChooser(final Window window, final String extension) {
+		this.window = window;
 		setExtension(extension);
 		this.setAcceptAllFileFilterUsed(false);
 	}
@@ -68,7 +68,7 @@ public class JCustomFileChooser extends JFileChooser {
 		//Confirm Overwrite file
 		if (getDialogType() != OPEN_DIALOG && selectedFile != null && selectedFile.exists()) {
 			int nReturn = JOptionPane.showConfirmDialog(
-					jFrame,
+					window,
 					GuiShared.get().overwrite(),
 					GuiShared.get().overwriteFile(),
 					JOptionPane.YES_NO_OPTION,
@@ -87,7 +87,7 @@ public class JCustomFileChooser extends JFileChooser {
 
 	public static class CustomFileFilter extends FileFilter {
 
-		private String extension;
+		private final String extension;
 
 		public CustomFileFilter(final String extension) {
 			this.extension = extension;

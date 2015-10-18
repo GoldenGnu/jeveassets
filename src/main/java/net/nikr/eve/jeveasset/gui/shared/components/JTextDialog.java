@@ -23,6 +23,7 @@ package net.nikr.eve.jeveasset.gui.shared.components;
 
 import java.awt.Color;
 import java.awt.Toolkit;
+import java.awt.Window;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.StringSelection;
@@ -39,7 +40,6 @@ import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
-import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
@@ -72,10 +72,10 @@ public class JTextDialog extends JDialogCentered {
 
 	private String returnValue = null;
 
-	public JTextDialog(JFrame jFrame) {
-		super(null, "",  jFrame, null);
+	public JTextDialog(Window window) {
+		super(null, "",  window, null);
 
-		jFileChooser = new JCustomFileChooser(jFrame, "txt");
+		jFileChooser = new JCustomFileChooser(window, "txt");
 		jFileChooser.setMultiSelectionEnabled(false);
 		jFileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
 

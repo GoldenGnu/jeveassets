@@ -41,6 +41,7 @@ public class FilterManager<E> extends JManageDialog {
 	private final FilterGui<E> gui;
 	private final String toolName;
 	private final JTextDialog jTextDialog;
+	private final FilterSave filterSave;
 
 	FilterManager(final JFrame jFrame, final String toolName, final FilterGui<E> gui, final Map<String, List<Filter>> filters, final Map<String, List<Filter>> defaultFilters) {
 		super(null, jFrame, GuiShared.get().filterManager(), true, true);
@@ -48,7 +49,8 @@ public class FilterManager<E> extends JManageDialog {
 		this.gui = gui;
 		this.filters = filters;
 		this.defaultFilters = defaultFilters;
-		jTextDialog = new JTextDialog(jFrame);
+		jTextDialog = new JTextDialog(getDialog());
+		filterSave = new FilterSave(getDialog());
 	}
 
 	@Override
@@ -215,7 +217,8 @@ public class FilterManager<E> extends JManageDialog {
 		}
 		List<Filter> filter = filters.get(filterName);
 		if (filter != null) { //Filter already exist
-			filterName = gui.getFilterName(); //get new name
+			//get new name
+			filterName = filterSave.show(new ArrayList<String>(filters.keySet()), new ArrayList<String>(defaultFilters.keySet()));
 		}
 		if (filterName != null && !filterName.isEmpty()) {
 			Settings.lock("Filter (Import)"); //Lock for Filter (Merge)

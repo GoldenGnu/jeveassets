@@ -26,6 +26,7 @@ import ca.odell.glazedlists.TextFilterator;
 import ca.odell.glazedlists.swing.AutoCompleteSupport;
 import java.awt.AWTException;
 import java.awt.Robot;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -36,7 +37,6 @@ import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.text.JTextComponent;
@@ -61,8 +61,8 @@ public class FilterSave extends JDialogCentered {
 
 	private String returnString;
 
-	public FilterSave(final JFrame jFrame) {
-		super(null, GuiShared.get().saveFilter(), jFrame);
+	public FilterSave(final Window window) {
+		super(null, GuiShared.get().saveFilter(), window);
 
 		ListenerClass listener = new ListenerClass();
 
