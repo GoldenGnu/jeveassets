@@ -400,6 +400,9 @@ public final class SettingsReader extends AbstractXmlReader {
 	private void parseStockpileGroups(final Element stockpilesElement, final Settings settings) {
 		int group2 = AttributeGetters.getInt(stockpilesElement, "stockpilegroup2");
 		int group3 = AttributeGetters.getInt(stockpilesElement, "stockpilegroup3");
+		if (group2 <= 0) {
+			group2 = 100;
+		}
 		settings.setStockpileColorGroup2(group2);
 		settings.setStockpileColorGroup3(group3);
 	}
