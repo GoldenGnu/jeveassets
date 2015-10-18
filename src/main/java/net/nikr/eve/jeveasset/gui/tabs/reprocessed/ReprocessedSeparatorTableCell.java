@@ -119,6 +119,7 @@ public class ReprocessedSeparatorTableCell extends SeparatorTableCell<Reprocesse
 		if (material == null) { // handle 'late' rendering calls after this separator is invalid
 			return;
 		}
+		jRemove.setEnabled(!material.getTotal().isGrandTotal());
 		jName.setText(material.getTotal().getTypeName());
 		//Price
 		jPrice.setText(Formater.iskFormat(material.getTotal().getSellPrice()));
