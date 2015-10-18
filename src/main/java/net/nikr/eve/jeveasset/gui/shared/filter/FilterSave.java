@@ -143,7 +143,7 @@ public class FilterSave extends JDialogCentered {
 				}
 			}
 		} finally {
-			filters.getReadWriteLock().readLock().lock();
+			filters.getReadWriteLock().readLock().unlock();
 		}
 		return true;
 	}

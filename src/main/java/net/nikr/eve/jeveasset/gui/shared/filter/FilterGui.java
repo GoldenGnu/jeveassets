@@ -404,6 +404,10 @@ class FilterGui<E> {
 		updateShowing();
 	}
 
+	String getFilterName() {
+		return filterSave.show(new ArrayList<String>(filterControl.getFilters().keySet()), new ArrayList<String>(filterControl.getDefaultFilters().keySet()));
+	}
+
 	private class ListenerClass implements ActionListener {
 
 		@Override
