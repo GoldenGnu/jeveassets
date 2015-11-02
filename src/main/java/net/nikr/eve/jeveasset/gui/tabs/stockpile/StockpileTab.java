@@ -346,7 +346,12 @@ public class StockpileTab extends JMainTab {
 		}
 		//Restore separator expanded/collapsed state
 		jTable.loadExpandedState();
+	}
 
+	/**
+	 * Needs to be updated before the stockpile tab is shown (for TableMenu > Add
+	 */
+	public void updateStockpileDialog() {
 		stockpileDialog.updateData();
 	}
 
