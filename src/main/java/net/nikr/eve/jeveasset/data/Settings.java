@@ -76,7 +76,6 @@ public class Settings {
 	private static final String PATH_LICENSE = "license.txt";
 	private static final String PATH_CREDITS = "credits.txt";
 	private static final String PATH_CHANGELOG = "changelog.txt";
-	private static final String PATH_UPDATE = "jupdate.jar";
 	private static final String PATH_JAR = "jeveassets.jar";
 	private static final String PATH_PROFILES = "profiles";
 	private static final String PATH_DATA = "data";
@@ -827,7 +826,13 @@ public class Settings {
 	}
 
 	public static String getPathRunUpdate() {
-		return getLocalFile(Settings.PATH_UPDATE, false);
+		File userDir = new File(System.getProperty("user.home", "."));
+		File file = new File(userDir.getAbsolutePath() + File.separator + ".jupdate" + File.separator + "jupdate.jar");
+		File parentDir = file.getParentFile();
+		if (!parentDir.exists() && !parentDir.mkdirs()) {
+			LOG.warn("Failed to create .jUpdate directory");
+		}
+		return file.getAbsolutePath();
 	}
 
 	public static String getPathRunJar() {
