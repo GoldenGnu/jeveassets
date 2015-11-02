@@ -312,6 +312,9 @@ public class Program implements ActionListener {
 		for (JMainTab jMainTab : mainWindow.getTabs()) {
 			jMainTab.afterUpdateData();
 		}
+		if (stockpileTab != null) {
+			stockpileTab.updateStockpileDialog();
+		}
 		timerTicked();
 		updateTableMenu();
 		if (saveSettings) {
