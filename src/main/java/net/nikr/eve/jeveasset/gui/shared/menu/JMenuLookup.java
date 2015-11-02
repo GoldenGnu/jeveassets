@@ -49,8 +49,8 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 		EVEMAPS_DOTLAN_STATION,
 		EVEMAPS_DOTLAN_SYSTEM,
 		EVEMAPS_DOTLAN_REGION,
-		EVEMARKETEER,
-		EVE_ADDICTS
+		//EVEMARKETEER,
+		//EVE_ADDICTS
 	}
 
 	private final JMenu jDotlan;
@@ -60,9 +60,11 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 	private final JMenuItem jDotlanLocations;
 	private final JMenuItem jEveCentral;
 	private final JMenuItem jEveMarketdata;
-	private final JMenuItem jEveMarketeer;
+	//Dead
+	//private final JMenuItem jEveMarketeer;
 	private final JMenuItem jEveMarkets;
-	private final JMenuItem jEveAddicts;
+	//Dead
+	//private final JMenuItem jEveAddicts;
 	private final JMenuItem jChruker;
 	private final JMenuItem jEveOnline;
 
@@ -114,11 +116,14 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 		jEveMarketdata.addActionListener(listener);
 		add(jEveMarketdata);
 
+		//Dead
+		/*
 		jEveMarketeer = new JMenuItem(GuiShared.get().eveMarketeer());
 		jEveMarketeer.setIcon(Images.LINK_EVEMARKETEER.getIcon());
 		jEveMarketeer.setActionCommand(MenuLookupAction.EVEMARKETEER.name());
 		jEveMarketeer.addActionListener(listener);
 		add(jEveMarketeer);
+		*/
 
 		jEveMarkets = new JMenuItem(GuiShared.get().eveMarkets());
 		jEveMarkets.setIcon(Images.LINK_EVE_MARKETS.getIcon());
@@ -126,11 +131,14 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 		jEveMarkets.addActionListener(listener);
 		add(jEveMarkets);
 
+		//Dead
+		/*
 		jEveAddicts = new JMenuItem(GuiShared.get().eveAddicts());
 		jEveAddicts.setIcon(Images.LINK_EVE_ADDICTS.getIcon());
 		jEveAddicts.setActionCommand(MenuLookupAction.EVE_ADDICTS.name());
 		jEveAddicts.addActionListener(listener);
 		add(jEveAddicts);
+		*/
 
 		addSeparator();
 
@@ -156,9 +164,11 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 		jDotlanRegion.setEnabled(!menuData.getRegions().isEmpty());
 		jEveCentral.setEnabled(!menuData.getMarketTypeIDs().isEmpty());
 		jEveMarketdata.setEnabled(!menuData.getMarketTypeIDs().isEmpty());
-		jEveMarketeer.setEnabled(!menuData.getMarketTypeIDs().isEmpty());
+		//Dead
+		//jEveMarketeer.setEnabled(!menuData.getMarketTypeIDs().isEmpty());
 		jEveMarkets.setEnabled(!menuData.getMarketTypeIDs().isEmpty());
-		jEveAddicts.setEnabled(!menuData.getMarketTypeIDs().isEmpty());
+		//Dead
+		//jEveAddicts.setEnabled(!menuData.getMarketTypeIDs().isEmpty());
 		jChruker.setEnabled(!menuData.getTypeIDs().isEmpty());
 		jEveOnline.setEnabled(!menuData.getTypeNames().isEmpty());
 	}
@@ -241,6 +251,8 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 					DesktopUtil.browse("http://eve-marketdata.com/price_check.php?type_id=" + marketTypeID, program);
 				}
 			}
+			//Dead
+			/*
 			if (MenuLookupAction.EVEMARKETEER.name().equals(e.getActionCommand())) {
 				if (!confirmOpenLinks(program, menuData.getMarketTypeIDs().size())) {
 					return;
@@ -249,6 +261,7 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 					DesktopUtil.browse("http://www.evemarketeer.com/item/info/" + marketTypeID, program);
 				}
 			}
+			*/
 			if (MenuLookupAction.EVE_MARKETS.name().equals(e.getActionCommand())) {
 				if (!confirmOpenLinks(program, menuData.getMarketTypeIDs().size())) {
 					return;
@@ -257,6 +270,8 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 					DesktopUtil.browse("http://www.eve-markets.net/detail.php?typeid=" + marketTypeID, program);
 				}
 			}
+			//Dead
+			/*
 			if (MenuLookupAction.EVE_ADDICTS.name().equals(e.getActionCommand())) {
 				if (!confirmOpenLinks(program, menuData.getMarketTypeIDs().size())) {
 					return;
@@ -265,6 +280,7 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 					DesktopUtil.browse("http://eve.addicts.nl/?typeID=" + marketTypeID, program);
 				}
 			}
+			*/
 			if (MenuLookupAction.GAMES_CHRUKER.name().equals(e.getActionCommand())) {
 				if (!confirmOpenLinks(program, menuData.getTypeIDs().size())) {
 					return;
