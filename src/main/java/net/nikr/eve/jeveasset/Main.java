@@ -27,6 +27,7 @@ import java.util.Locale;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 import static net.nikr.eve.jeveasset.Program.PROGRAM_NAME;
 import static net.nikr.eve.jeveasset.Program.PROGRAM_VERSION;
 import net.nikr.eve.jeveasset.io.shared.FileLock;
@@ -172,6 +173,10 @@ public final class Main {
 	}
 
 	private static void initLookAndFeel() {
+		//Allow users to overwrite LaF
+		if (System.getProperty("swing.defaultlaf") != null) {
+			return;
+		}
 		String lookAndFeel;
 		//lookAndFeel = "com.sun.java.swing.plaf.windows.WindowsLookAndFeel";
 		lookAndFeel = UIManager.getSystemLookAndFeelClassName(); //System
@@ -182,8 +187,14 @@ public final class Main {
 		//lookAndFeel = "com.sun.java.swing.plaf.motif.MotifLookAndFeel";
 		try {
 			UIManager.setLookAndFeel(lookAndFeel);
-		} catch (Exception ex) {
-			log.error("Failed to set LookAndFeel: " + lookAndFeel, ex);
+		} catch (ClassNotFoundException ex) {
+			log.warn("Failed to set LookAndFeel: " + lookAndFeel, ex);
+		} catch (InstantiationException ex) {
+			log.warn("Failed to set LookAndFeel: " + lookAndFeel, ex);
+		} catch (IllegalAccessException ex) {
+			log.warn("Failed to set LookAndFeel: " + lookAndFeel, ex);
+		} catch (UnsupportedLookAndFeelException ex) {
+			log.warn("Failed to set LookAndFeel: " + lookAndFeel, ex);
 		}
 	}
 
