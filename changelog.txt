@@ -16,6 +16,26 @@
                   #### #  # #  # #  # #### #### #### #### ####
 
 ________________________________________________________________________________
+_2.10.5_________________________________________________________________________
+
+Changed:
+-Added User Agent to HTTP requests (Global)
+-Safer backup and restore of settings files
+-Don't update missing prices on startup (price 1.4.0)
+-Changed jUpdate download location (To make sure we have write access)
+
+Bug Fix:
+-AIOOB EnumTableFormatAdaptor (Critical)
+-FilterSave deadlock read lock (Critical)
+-IllegalArgumentException in SeparatorList (Critical)
+-Stockpile table colors did not working with the default value
+-Buy/Sell Transaction columns are not grayed out when exclude
+-Reprocessed grand total remove button not disabled
+-Removed dead lookup links
+-Settings -> Window: The order of JTextField are illogical
+-Stockpile Dialog are not updated before shown (Empty location fields)
+
+________________________________________________________________________________
 _2.10.4_________________________________________________________________________
 
 Bug Fix:
