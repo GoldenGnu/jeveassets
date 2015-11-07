@@ -21,7 +21,6 @@
 
 package net.nikr.eve.jeveasset.gui.shared.components;
 
-import java.awt.Component;
 import java.awt.Dimension;
 import javax.swing.AbstractButton;
 import javax.swing.Box;
@@ -35,6 +34,9 @@ import net.nikr.eve.jeveasset.Program;
 
 public class JFixedToolBar extends JToolBar {
 
+	private Integer height = null;
+	private final Orientation orientation;
+	
 	public static enum Orientation  {
 		HORIZONTAL,
 		VERTICAL
@@ -42,21 +44,15 @@ public class JFixedToolBar extends JToolBar {
 	
 	public JFixedToolBar() {
 		this(Orientation.HORIZONTAL);
-		setFloatable(false);
-		setRollover(true);
-	}
-
-	@Override
-	public Component add(Component comp) {
-		return super.add(comp);
 	}
 
 	public JFixedToolBar(Orientation orientation) {
 		super(); //We don't need orientation as it's only used by DefaultToolBarLayout
-		
+		this.orientation = orientation;
 		setLayout(new BoxLayout(this, orientation == Orientation.HORIZONTAL ? BoxLayout.LINE_AXIS : BoxLayout.PAGE_AXIS));
 		setFloatable(false);
 		setRollover(true);
+		getSize();
 	}
 
 	public void addComboBox(final JComboBox jComboBox, int width) {
@@ -97,5 +93,18 @@ public class JFixedToolBar extends JToolBar {
 			dimension = new Dimension(width, height);
 		}
 		jComponent.setMaximumSize(dimension);
+	}
+
+	@Override
+	public Dimension getPreferredSize() {
+		if (orientation == Orientation.VERTICAL) {
+			return super.getPreferredSize();
+		} else {
+			if (height == null) {
+				height =  getInsets().top + getInsets().bottom + Program.getButtonsHeight();
+			}
+			Dimension preferredSize = super.getPreferredSize();
+			return new Dimension(preferredSize.width, height);
+		}
 	}
 }

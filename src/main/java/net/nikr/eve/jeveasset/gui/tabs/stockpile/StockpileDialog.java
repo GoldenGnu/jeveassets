@@ -230,7 +230,7 @@ public class StockpileDialog extends JDialogCentered {
 					.addComponent(jNamePanel.getPanel())
 					.addComponent(jMultiplierPanel.getPanel())
 				)
-				.addComponent(jToolBar)
+				.addComponent(jToolBar, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
 				.addComponent(jFiltersScroll, 0, GroupLayout.DEFAULT_SIZE, 500)
 				.addGap(15)
 				.addGroup(layout.createParallelGroup()
@@ -1023,7 +1023,7 @@ public class StockpileDialog extends JDialogCentered {
 											 
 			groupLayout.setVerticalGroup(
 				groupLayout.createSequentialGroup()
-					.addComponent(jToolBar)
+					.addComponent(jToolBar, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
 					.addGroup(groupLayout.createParallelGroup()
 						.addComponent(jLocationType, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 						.addComponent(jLocation, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())						.addComponent(jOptions, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())

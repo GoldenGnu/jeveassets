@@ -166,7 +166,6 @@ public class MaterialsTab extends JMainTab {
 		enumColumns.addAll(Arrays.asList(MaterialTableFormat.values()));
 		exportDialog = new ExportDialog<Material>(program.getMainWindow().getFrame(), NAME, null, new MaterialsFilterControl(), Collections.singletonList(eventList), enumColumns);
 
-		final int TOOLBAR_HEIGHT = jToolBarRight.getInsets().top + jToolBarRight.getInsets().bottom + Program.getButtonsHeight();
 		layout.setHorizontalGroup(
 			layout.createParallelGroup()
 				.addGroup(layout.createSequentialGroup()
@@ -179,8 +178,8 @@ public class MaterialsTab extends JMainTab {
 		layout.setVerticalGroup(
 			layout.createSequentialGroup()
 				.addGroup(layout.createParallelGroup()
-					.addComponent(jToolBarLeft, TOOLBAR_HEIGHT, TOOLBAR_HEIGHT, TOOLBAR_HEIGHT)
-					.addComponent(jToolBarRight, TOOLBAR_HEIGHT, TOOLBAR_HEIGHT, TOOLBAR_HEIGHT)
+					.addComponent(jToolBarLeft, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+					.addComponent(jToolBarRight, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
 				)
 				.addComponent(jTableScroll, 0, 0, Short.MAX_VALUE)
 		);

@@ -237,7 +237,6 @@ public class TreeTab extends JMainTab {
 		jValue = StatusPanel.createLabel(TabsAssets.get().totalValue(), Images.TOOL_VALUES.getIcon());
 		this.addStatusbarLabel(jValue);
 
-		final int TOOLBAR_HEIGHT = jToolBarLeft.getInsets().top + jToolBarLeft.getInsets().bottom + Program.getButtonsHeight();
 		layout.setHorizontalGroup(
 			layout.createParallelGroup()
 				.addComponent(filterControl.getPanel())
@@ -252,8 +251,8 @@ public class TreeTab extends JMainTab {
 			layout.createSequentialGroup()
 				.addComponent(filterControl.getPanel())
 				.addGroup(layout.createParallelGroup()
-					.addComponent(jToolBarLeft, TOOLBAR_HEIGHT, TOOLBAR_HEIGHT, TOOLBAR_HEIGHT)
-					.addComponent(jToolBarRight, TOOLBAR_HEIGHT, TOOLBAR_HEIGHT, TOOLBAR_HEIGHT)
+					.addComponent(jToolBarLeft, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+					.addComponent(jToolBarRight, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
 				)
 				.addComponent(jTableScroll, 0, 0, Short.MAX_VALUE)
 		);

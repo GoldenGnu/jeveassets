@@ -227,7 +227,6 @@ public class LoadoutsTab extends JMainTab {
 		eventLists.add(filterList);
 		exportDialog = new ExportDialog<Loadout>(program.getMainWindow().getFrame(), NAME, null, new LoadoutsFilterControl(), eventLists, enumColumns);
 
-		final int TOOLBAR_HEIGHT = jToolBarRight.getInsets().top + jToolBarRight.getInsets().bottom + Program.getButtonsHeight();
 		layout.setHorizontalGroup(
 			layout.createParallelGroup(GroupLayout.Alignment.LEADING)
 				.addComponent(jToolBarTop, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Integer.MAX_VALUE)
@@ -240,10 +239,10 @@ public class LoadoutsTab extends JMainTab {
 		);
 		layout.setVerticalGroup(
 			layout.createSequentialGroup()
-				.addComponent(jToolBarTop, TOOLBAR_HEIGHT, TOOLBAR_HEIGHT, TOOLBAR_HEIGHT)
+				.addComponent(jToolBarTop, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
 				.addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-					.addComponent(jToolBarLeft, TOOLBAR_HEIGHT, TOOLBAR_HEIGHT, TOOLBAR_HEIGHT)
-					.addComponent(jToolBarRight, TOOLBAR_HEIGHT, TOOLBAR_HEIGHT, TOOLBAR_HEIGHT)
+					.addComponent(jToolBarLeft, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+					.addComponent(jToolBarRight, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
 				)
 				.addComponent(jTableScroll, 0, 0, Short.MAX_VALUE)
 		);

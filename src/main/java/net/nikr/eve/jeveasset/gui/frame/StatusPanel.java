@@ -75,7 +75,7 @@ public class StatusPanel extends JGroupLayoutPanel {
 		);
 		layout.setVerticalGroup(
 			layout.createSequentialGroup()
-				.addComponent(jToolBar, 25, 25, 25)
+				.addComponent(jToolBar, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
 		);
 	}
 

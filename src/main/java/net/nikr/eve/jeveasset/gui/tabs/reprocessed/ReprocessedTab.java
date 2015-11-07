@@ -188,13 +188,12 @@ public class ReprocessedTab extends JMainTab {
 				)
 				.addComponent(jTableScroll, 0, 0, Short.MAX_VALUE)
 		);
-		final int TOOLBAR_HEIGHT = jToolBarRight.getInsets().top + jToolBarRight.getInsets().bottom + Program.getButtonsHeight();
 		layout.setVerticalGroup(
 			layout.createSequentialGroup()
 				.addComponent(filterControl.getPanel())
 				.addGroup(layout.createParallelGroup()
-					.addComponent(jToolBarLeft, TOOLBAR_HEIGHT, TOOLBAR_HEIGHT, TOOLBAR_HEIGHT)
-					.addComponent(jToolBarRight, TOOLBAR_HEIGHT, TOOLBAR_HEIGHT, TOOLBAR_HEIGHT)
+					.addComponent(jToolBarLeft, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+					.addComponent(jToolBarRight, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
 				)
 				.addComponent(jTableScroll, 0, 0, Short.MAX_VALUE)
 		);

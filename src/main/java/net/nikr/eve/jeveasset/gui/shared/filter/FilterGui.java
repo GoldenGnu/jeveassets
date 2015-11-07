@@ -37,7 +37,6 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
-import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.EventListManager;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
@@ -244,11 +243,10 @@ class FilterGui<E> {
 				.addGap(0)
 				.addComponent(jToolBarRight, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
 		);
-		final int TOOLBAR_HEIGHT = jToolBarLeft.getInsets().top + jToolBarLeft.getInsets().bottom + Program.getButtonsHeight();
 		verticalGroup
 				.addGroup(layout.createParallelGroup()
-					.addComponent(jToolBarLeft, TOOLBAR_HEIGHT, TOOLBAR_HEIGHT, TOOLBAR_HEIGHT)
-					.addComponent(jToolBarRight, TOOLBAR_HEIGHT, TOOLBAR_HEIGHT, TOOLBAR_HEIGHT)
+					.addComponent(jToolBarLeft, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+					.addComponent(jToolBarRight, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
 		);
 		//Filters
 		if (jShowFilters.isSelected()) {
