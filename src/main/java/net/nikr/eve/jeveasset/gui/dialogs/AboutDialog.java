@@ -120,7 +120,7 @@ public class AboutDialog extends JDialogCentered {
 					.addComponent(jIcon)
 					.addGroup(layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
 						.addComponent(jProgram)
-						.addComponent(jClose, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH)
+						.addComponent(jClose, Program.getButtonsWidth(), Program.getButtonsWidth(), Program.getButtonsWidth())
 					)
 				)
 				.addGroup(layout.createSequentialGroup()
@@ -141,7 +141,7 @@ public class AboutDialog extends JDialogCentered {
 					.addComponent(jExternal)
 				)
 				.addComponent(jThanks)
-				.addComponent(jClose, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+				.addComponent(jClose, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 		);
 	}
 

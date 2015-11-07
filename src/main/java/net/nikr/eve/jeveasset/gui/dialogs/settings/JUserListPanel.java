@@ -29,6 +29,7 @@ import javax.swing.*;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.data.UserItem;
+import net.nikr.eve.jeveasset.gui.shared.components.JLabelMultiline;
 import net.nikr.eve.jeveasset.i18n.DialoguesSettings;
 
 
@@ -62,29 +63,25 @@ public abstract class JUserListPanel<K, V extends Comparable<V>> extends JSettin
 		jDelete.setActionCommand(UserListAction.DELETE.name());
 		jDelete.addActionListener(listener);
 
-		JTextArea jHelp = new JTextArea(help);
-		jHelp.setEditable(false);
-		jHelp.setFocusable(false);
-		jHelp.setOpaque(false);
-		jHelp.setFont(jPanel.getFont());
+		JLabelMultiline jHelp = new JLabelMultiline(help);
 
 		layout.setHorizontalGroup(
 			layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
 				.addComponent(jItems)
 				.addGroup(layout.createSequentialGroup()
-					.addComponent(jEdit, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH)
-					.addComponent(jDelete, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH)
+					.addComponent(jEdit, Program.getButtonsWidth(), Program.getButtonsWidth(), Program.getButtonsWidth())
+					.addComponent(jDelete, Program.getButtonsWidth(), Program.getButtonsWidth(), Program.getButtonsWidth())
 				)
-				.addComponent(jHelp)
+				.addComponent(jHelp, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Integer.MAX_VALUE)
 		);
 		layout.setVerticalGroup(
 			layout.createSequentialGroup()
-				.addComponent(jItems, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+				.addComponent(jItems, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 				.addGroup(layout.createParallelGroup()
-					.addComponent(jEdit, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					.addComponent(jDelete, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					.addComponent(jEdit, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jDelete, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 				)
-				.addComponent(jHelp, 100, 100, 100)
+				.addComponent(jHelp, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
 		);
 	}
 

@@ -22,14 +22,12 @@
 package net.nikr.eve.jeveasset.gui.shared.filter;
 
 import ca.odell.glazedlists.FilterList;
-import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import javax.swing.AbstractButton;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -38,7 +36,6 @@ import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JToolBar;
 import javax.swing.SwingConstants;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.EventListManager;
@@ -46,6 +43,7 @@ import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.CaseInsensitiveComparator;
 import net.nikr.eve.jeveasset.gui.shared.components.JDropDownButton;
+import net.nikr.eve.jeveasset.gui.shared.components.JFixedToolBar;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 
@@ -62,7 +60,8 @@ class FilterGui<E> {
 
 	private final JPanel jPanel;
 	private final GroupLayout layout;
-	private final JToolBar jToolBar;
+	private final JFixedToolBar jToolBarLeft;
+	private final JFixedToolBar jToolBarRight;
 	private final JButton jExportButton;
 	private final JDropDownButton jExportMenu;
 	private final JDropDownButton jLoadFilter;
@@ -93,32 +92,30 @@ class FilterGui<E> {
 		layout.setAutoCreateGaps(true);
 		layout.setAutoCreateContainerGaps(false);
 
-		jToolBar = new JToolBar();
-		jToolBar.setFloatable(false);
-		jToolBar.setRollover(true);
+		jToolBarLeft = new JFixedToolBar();
 
 		//Add
 		JButton jAddField = new JButton(GuiShared.get().addField());
 		jAddField.setIcon(Images.EDIT_ADD.getIcon());
 		jAddField.setActionCommand(FilterGuiAction.ADD.name());
 		jAddField.addActionListener(listener);
-		addToolButton(jAddField);
+		jToolBarLeft.addButton(jAddField);
 
 		//Reset
 		JButton jClearFields = new JButton(GuiShared.get().clearField());
 		jClearFields.setIcon(Images.FILTER_CLEAR.getIcon());
 		jClearFields.setActionCommand(FilterGuiAction.CLEAR.name());
 		jClearFields.addActionListener(listener);
-		addToolButton(jClearFields);
+		jToolBarLeft.addButton(jClearFields);
 
-		addToolSeparator();
+		jToolBarLeft.addSeparator();
 
 		//Save Filter
 		JButton jSaveFilter = new JButton(GuiShared.get().saveFilter());
 		jSaveFilter.setIcon(Images.FILTER_SAVE.getIcon());
 		jSaveFilter.setActionCommand(FilterGuiAction.SAVE.name());
 		jSaveFilter.addActionListener(listener);
-		addToolButton(jSaveFilter);
+		jToolBarLeft.addButton(jSaveFilter);
 
 		//Load Filter
 		jLoadFilter = new JDropDownButton(GuiShared.get().loadFilter());
@@ -126,20 +123,20 @@ class FilterGui<E> {
 		jLoadFilter.keepVisible(2);
 		jLoadFilter.setTopFixedCount(2);
 		jLoadFilter.setInterval(125);
-		addToolButton(jLoadFilter);
+		jToolBarLeft.addButton(jLoadFilter);
 
-		addToolSeparator();
+		jToolBarLeft.addSeparator();
 
 		//Export
 		jExportButton = new JButton(GuiShared.get().export());
 		jExportButton.setIcon(Images.DIALOG_CSV_EXPORT.getIcon());
 		jExportButton.setActionCommand(FilterGuiAction.EXPORT.name());
 		jExportButton.addActionListener(listener);
-		addToolButton(jExportButton);
+		jToolBarLeft.addButton(jExportButton);
 
 		jExportMenu = new JDropDownButton(GuiShared.get().export(), Images.DIALOG_CSV_EXPORT.getIcon());
 		jExportMenu.setVisible(false);
-		addToolButton(jExportMenu);
+		jToolBarLeft.addButton(jExportMenu);
 
 		JMenuItem jExportMenuItem = new JMenuItem(GuiShared.get().exportTableData());
 		jExportMenuItem.setIcon(Images.DIALOG_CSV_EXPORT.getIcon());
@@ -147,17 +144,22 @@ class FilterGui<E> {
 		jExportMenuItem.addActionListener(listener);
 		jExportMenu.add(jExportMenuItem);
 
-		addToolSeparator();
+		jToolBarLeft.addSeparator();
 
 		//Show Filters
 		jShowFilters = new JCheckBox(GuiShared.get().showFilters());
 		jShowFilters.setActionCommand(FilterGuiAction.SHOW_FILTERS.name());
 		jShowFilters.addActionListener(listener);
 		jShowFilters.setSelected(true);
-		addToolButton(jShowFilters, 70);
+		jToolBarLeft.addButton(jShowFilters, 70, SwingConstants.CENTER);
+
+		jToolBarRight = new JFixedToolBar();
+
+		jToolBarRight.addSpace(10);
 
 		//Showing
 		jShowing = new JLabel();
+		jToolBarRight.add(jShowing);
 
 
 
@@ -176,27 +178,12 @@ class FilterGui<E> {
 		exportDialog.setColumns(enumColumns);
 	}
 
-	final void addToolButton(final AbstractButton jButton) {
-		addToolButton(jButton, 90);
-	}
-	final void addToolButton(final AbstractButton jButton, final int width) {
-		if (width > 0) {
-			jButton.setMinimumSize(new Dimension(width, Program.BUTTONS_HEIGHT));
-			jButton.setMaximumSize(new Dimension(width, Program.BUTTONS_HEIGHT));
-		}
-		jButton.setHorizontalAlignment(SwingConstants.LEFT);
-		jToolBar.add(jButton);
-	}
-
 	final void addExportOption(final JMenuItem jMenuItem) {
 		if (!jExportMenu.isVisible()) { //First
 			jExportMenu.setVisible(true);
 			jExportButton.setVisible(false);
 		}
 		jExportMenu.add(jMenuItem);
-	}
-	final void addToolSeparator() {
-		jToolBar.addSeparator();
 	}
 
 	void updateShowing() {
@@ -249,27 +236,27 @@ class FilterGui<E> {
 	private void update() {
 		jPanel.removeAll();
 		GroupLayout.ParallelGroup horizontalGroup = layout.createParallelGroup();
+		GroupLayout.SequentialGroup verticalGroup = layout.createSequentialGroup();
+		//Toolbars
 		horizontalGroup.addGroup(
 			layout.createSequentialGroup()
-				.addComponent(jToolBar)
-				.addGap(0, 0, Short.MAX_VALUE)
-				.addComponent(jShowing, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+				.addComponent(jToolBarLeft, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Integer.MAX_VALUE)
+				.addGap(0)
+				.addComponent(jToolBarRight, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
 		);
-
-		GroupLayout.SequentialGroup verticalGroup = layout.createSequentialGroup();
-		final int TOOLBAR_HEIGHT = jToolBar.getInsets().top + jToolBar.getInsets().bottom + Program.BUTTONS_HEIGHT;
+		final int TOOLBAR_HEIGHT = jToolBarLeft.getInsets().top + jToolBarLeft.getInsets().bottom + Program.getButtonsHeight();
 		verticalGroup
 				.addGroup(layout.createParallelGroup()
-					.addComponent(jToolBar, TOOLBAR_HEIGHT, TOOLBAR_HEIGHT, TOOLBAR_HEIGHT)
-					.addComponent(jShowing, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					.addComponent(jToolBarLeft, TOOLBAR_HEIGHT, TOOLBAR_HEIGHT, TOOLBAR_HEIGHT)
+					.addComponent(jToolBarRight, TOOLBAR_HEIGHT, TOOLBAR_HEIGHT, TOOLBAR_HEIGHT)
 		);
+		//Filters
 		if (jShowFilters.isSelected()) {
 			for (FilterPanel<E> filterPanel : filterPanels) {
 				verticalGroup.addComponent(filterPanel.getPanel());
 				horizontalGroup.addComponent(filterPanel.getPanel());
 			}
 		}
-
 		layout.setHorizontalGroup(horizontalGroup);
 		layout.setVerticalGroup(verticalGroup);
 	}

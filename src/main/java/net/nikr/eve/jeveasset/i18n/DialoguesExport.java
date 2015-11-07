@@ -65,7 +65,6 @@ public abstract class DialoguesExport extends Bundle {
 	public abstract String noFilter();
 	public abstract String noSavedFilter();
 	public abstract String ok();
-	public abstract String options();
 	public abstract String savedFilter();
 	public abstract String selectOne();
 	public abstract String semicolon();

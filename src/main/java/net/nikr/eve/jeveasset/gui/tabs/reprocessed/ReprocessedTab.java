@@ -47,7 +47,6 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JScrollPane;
-import javax.swing.JToolBar;
 import javax.swing.SwingConstants;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.EventListManager;
@@ -56,6 +55,7 @@ import net.nikr.eve.jeveasset.data.ReprocessedMaterial;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.data.StaticData;
 import net.nikr.eve.jeveasset.gui.images.Images;
+import net.nikr.eve.jeveasset.gui.shared.components.JFixedToolBar;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
@@ -102,43 +102,32 @@ public class ReprocessedTab extends JMainTab {
 	public ReprocessedTab(final Program program) {
 		super(program, TabsReprocessed.get().title(), Images.TOOL_REPROCESSED.getIcon(), true);
 
-		JToolBar jToolBarLeft = new JToolBar();
-		jToolBarLeft.setFloatable(false);
-		jToolBarLeft.setRollover(true);
-
-		JLabel jInfo = new JLabel(TabsReprocessed.get().info());
-		jInfo.setMinimumSize(new Dimension(100, Program.BUTTONS_HEIGHT));
-		jInfo.setMaximumSize(new Dimension(Short.MAX_VALUE, Program.BUTTONS_HEIGHT));
-		jInfo.setHorizontalAlignment(SwingConstants.LEFT);
-		jToolBarLeft.add(jInfo);
-
-		JToolBar jToolBarRight = new JToolBar();
-		jToolBarRight.setFloatable(false);
-		jToolBarRight.setRollover(true);
+		JFixedToolBar jToolBarLeft = new JFixedToolBar();
 
 		JButton jClear = new JButton(TabsReprocessed.get().removeAll(), Images.EDIT_DELETE.getIcon());
 		jClear.setActionCommand(ReprocessedAction.CLEAR.name());
 		jClear.addActionListener(listener);
-		jClear.setMinimumSize(new Dimension(100, Program.BUTTONS_HEIGHT));
-		jClear.setMaximumSize(new Dimension(100, Program.BUTTONS_HEIGHT));
-		jClear.setHorizontalAlignment(SwingConstants.LEFT);
-		jToolBarRight.add(jClear);
+		jToolBarLeft.addButton(jClear);
+
+		jToolBarLeft.addSpace(30);
+
+		JLabel jInfo = new JLabel(TabsReprocessed.get().info());
+		jInfo.setMinimumSize(new Dimension(100, Program.getButtonsHeight()));
+		jInfo.setMaximumSize(new Dimension(Short.MAX_VALUE, Program.getButtonsHeight()));
+		jInfo.setHorizontalAlignment(SwingConstants.LEFT);
+		jToolBarLeft.add(jInfo);
+
+		JFixedToolBar jToolBarRight = new JFixedToolBar();
 
 		JButton jCollapse = new JButton(TabsReprocessed.get().collapse(), Images.MISC_COLLAPSED.getIcon());
 		jCollapse.setActionCommand(ReprocessedAction.COLLAPSE.name());
 		jCollapse.addActionListener(listener);
-		jCollapse.setMinimumSize(new Dimension(90, Program.BUTTONS_HEIGHT));
-		jCollapse.setMaximumSize(new Dimension(90, Program.BUTTONS_HEIGHT));
-		jCollapse.setHorizontalAlignment(SwingConstants.LEFT);
-		jToolBarRight.add(jCollapse);
+		jToolBarRight.addButton(jCollapse);
 
 		JButton jExpand = new JButton(TabsReprocessed.get().expand(), Images.MISC_EXPANDED.getIcon());
 		jExpand.setActionCommand(ReprocessedAction.EXPAND.name());
 		jExpand.addActionListener(listener);
-		jExpand.setMinimumSize(new Dimension(90, Program.BUTTONS_HEIGHT));
-		jExpand.setMaximumSize(new Dimension(90, Program.BUTTONS_HEIGHT));
-		jExpand.setHorizontalAlignment(SwingConstants.LEFT);
-		jToolBarRight.add(jExpand);
+		jToolBarRight.addButton(jExpand);
 
 		//Table Format
 		tableFormat = new EnumTableFormatAdaptor<ReprocessedTableFormat, ReprocessedInterface>(ReprocessedTableFormat.class);
@@ -193,20 +182,18 @@ public class ReprocessedTab extends JMainTab {
 			layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
 				.addComponent(filterControl.getPanel())
 				.addGroup(layout.createSequentialGroup()
-					.addComponent(jToolBarLeft)
-					.addComponent(jInfo)
-					.addGap(0, 0, Integer.MAX_VALUE)
+					.addComponent(jToolBarLeft, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Integer.MAX_VALUE)
+					.addGap(0)
 					.addComponent(jToolBarRight)
 				)
 				.addComponent(jTableScroll, 0, 0, Short.MAX_VALUE)
 		);
-		final int TOOLBAR_HEIGHT = jToolBarRight.getInsets().top + jToolBarRight.getInsets().bottom + Program.BUTTONS_HEIGHT;
+		final int TOOLBAR_HEIGHT = jToolBarRight.getInsets().top + jToolBarRight.getInsets().bottom + Program.getButtonsHeight();
 		layout.setVerticalGroup(
 			layout.createSequentialGroup()
 				.addComponent(filterControl.getPanel())
 				.addGroup(layout.createParallelGroup()
 					.addComponent(jToolBarLeft, TOOLBAR_HEIGHT, TOOLBAR_HEIGHT, TOOLBAR_HEIGHT)
-					.addComponent(jInfo)
 					.addComponent(jToolBarRight, TOOLBAR_HEIGHT, TOOLBAR_HEIGHT, TOOLBAR_HEIGHT)
 				)
 				.addComponent(jTableScroll, 0, 0, Short.MAX_VALUE)

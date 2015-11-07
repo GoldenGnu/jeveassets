@@ -22,10 +22,10 @@ package net.nikr.eve.jeveasset.gui.dialogs.settings;
 
 import javax.swing.GroupLayout;
 import javax.swing.JCheckBox;
-import javax.swing.JTextArea;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
+import net.nikr.eve.jeveasset.gui.shared.components.JLabelMultiline;
 import net.nikr.eve.jeveasset.i18n.DialoguesSettings;
 
 
@@ -38,23 +38,17 @@ public class MarkerOrdersToolSettingsPanel extends JSettingsPanel {
 
 		jSaveHistory = new JCheckBox(DialoguesSettings.get().markerOrdersSaveHistory());
 
-		JTextArea jSaveHistoryWarning = new JTextArea(DialoguesSettings.get().saveHistoryWarning());
-		jSaveHistoryWarning.setFont(this.getPanel().getFont());
-		jSaveHistoryWarning.setBackground(this.getPanel().getBackground());
-		jSaveHistoryWarning.setLineWrap(true);
-		jSaveHistoryWarning.setWrapStyleWord(true);
-		jSaveHistoryWarning.setFocusable(false);
-		jSaveHistoryWarning.setEditable(false);
+		JLabelMultiline jSaveHistoryWarning = new JLabelMultiline(DialoguesSettings.get().saveHistoryWarning(), 2);
 
 		layout.setHorizontalGroup(
 			layout.createParallelGroup(GroupLayout.Alignment.LEADING)
 				.addComponent(jSaveHistory)
-				.addComponent(jSaveHistoryWarning)
+				.addComponent(jSaveHistoryWarning, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Integer.MAX_VALUE)
 		);
 		layout.setVerticalGroup(
 			layout.createSequentialGroup()
-				.addComponent(jSaveHistory, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-				.addComponent(jSaveHistoryWarning)
+				.addComponent(jSaveHistory, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+				.addComponent(jSaveHistoryWarning, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
 		);
 	}
 		

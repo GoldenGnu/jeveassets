@@ -26,7 +26,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
+import javax.swing.JTextField;
 import javax.swing.Timer;
 import net.nikr.eve.jeveasset.data.EventListManager;
 import net.nikr.eve.jeveasset.data.MyAccount;
@@ -92,9 +95,6 @@ public class Program implements ActionListener {
 	public static final boolean PROGRAM_FORCE_PORTABLE = false;
 	public static final boolean PROGRAM_SHOW_FEEDBACK_MSG = false;
 
-	public static final int BUTTONS_HEIGHT = 22;
-	public static final int BUTTONS_WIDTH = 90;
-
 	private static boolean debug = false;
 	private static boolean forceUpdate = false;
 	private static boolean forceNoUpdate = false;
@@ -143,7 +143,11 @@ public class Program implements ActionListener {
 	private final ProfileManager profileManager;
 	private final PriceDataGetter priceDataGetter;
 
+	//Height
+	private static int height = 0;
+
 	public Program() {
+		height = calcButtonsHeight();
 		updater = new Updater();
 		updater.update();
 		if (debug) {
@@ -283,6 +287,34 @@ public class Program implements ActionListener {
 		profileData = null;
 		profileManager = null;
 		priceDataGetter = null;
+	}
+
+	public static int getButtonsHeight() {
+		return height;
+	}
+
+	private int calcButtonsHeight() {
+		int comboBox = new JComboBox().getPreferredSize().height;
+		int textField = new JTextField().getPreferredSize().height;
+		int button = new JButton().getPreferredSize().height;
+		int height = 0;
+		if (height < comboBox) {
+			height = comboBox;
+		}
+		if (height < textField) {
+			height = textField;
+		}
+		if (height < button) {
+			height = button;
+		}
+		if (height < 22) {
+			height = 22;
+		}
+		return height;
+	}
+
+	public static int getButtonsWidth() {
+		return 90;
 	}
 
 	public void addMainTab(final JMainTab jMainTab) {

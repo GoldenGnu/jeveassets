@@ -37,7 +37,7 @@ public class JWorking extends JPanel {
 	private static final int IMG_WIDTH = 32;
 	private static final int IMG_HEIGHT = 32;
 
-	private BufferedImage[] loadingImages;
+	private final BufferedImage[] loadingImages;
 	private int currentLoadingImage = 0;
 	private Worker worker;
 
@@ -111,7 +111,7 @@ public class JWorking extends JPanel {
 	public class Worker extends Thread {
 
 		private static final int UPDATE_DELAY = 100;
-		private JWorking jWorking;
+		private final JWorking jWorking;
 
 		public Worker(final JWorking jWorking) {
 			this.jWorking = jWorking;
@@ -127,7 +127,9 @@ public class JWorking extends JPanel {
 				}
 				jWorking.repaint();
 				try {
-					Thread.sleep(UPDATE_DELAY);
+					synchronized(this) {
+						wait(UPDATE_DELAY);
+					}
 				} catch (InterruptedException e) {
 					break;
 				}

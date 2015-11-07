@@ -21,7 +21,6 @@
 
 package net.nikr.eve.jeveasset.gui.shared.table;
 
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -46,7 +45,7 @@ public class EditColumnsDialog<T extends Enum<T> & EnumTableColumn<Q>, Q> extend
 	}
 
 	private final DefaultListModel listModel = new DefaultListModel();
-	private final JList jList;
+	private final JList jColumns;
 	private final JCheckBox jAll;
 	private final JButton jOk;
 	private final JButton jCancel;
@@ -69,14 +68,12 @@ public class EditColumnsDialog<T extends Enum<T> & EnumTableColumn<Q>, Q> extend
 		jInfo.setWrapStyleWord(true);
 		jInfo.setText(GuiShared.get().tableColumnsTip());
 
-		jList = new JList(listModel);
-		jList.setCellRenderer(new JCheckBoxListRenderer());
-		jList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		//jList.setBorder(BorderFactory.createEtchedBorder());
-		jList.setBorder(BorderFactory.createLineBorder(Color.GRAY, 1));
+		jColumns = new JList(listModel);
+		jColumns.setCellRenderer(new JCheckBoxListRenderer());
+		jColumns.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		//jList.setBorder(BorderFactory.createLineBorder(Color.GRAY, 1));
 
-		// Add a mouse listener to handle changing selection
-		jList.addMouseListener(new MouseAdapter() {
+		jColumns.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(final MouseEvent event) {
 				JList list = (JList) event.getSource();
@@ -95,6 +92,8 @@ public class EditColumnsDialog<T extends Enum<T> & EnumTableColumn<Q>, Q> extend
 			}
 		});
 
+		JScrollPane jColumnsScroll = new JScrollPane(jColumns);
+
 		jCancel = new JButton(GuiShared.get().cancel());
 		jCancel.setActionCommand(EditColumnsAction.CANCEL.name());
 		jCancel.addActionListener(listener);
@@ -112,24 +111,24 @@ public class EditColumnsDialog<T extends Enum<T> & EnumTableColumn<Q>, Q> extend
 				.addComponent(jAll)
 				.addGroup(layout.createSequentialGroup()
 					.addGap(2)
-					.addComponent(jList, 300, 300, 300)
+					.addComponent(jColumnsScroll, 300, 300, 300)
 				)
 				.addGroup(layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
 					.addComponent(jInfo, 300, 300, 300)
 					.addGroup(layout.createSequentialGroup()
-						.addComponent(jOk, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH)
-						.addComponent(jCancel, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH)
+						.addComponent(jOk, Program.getButtonsWidth(), Program.getButtonsWidth(), Program.getButtonsWidth())
+						.addComponent(jCancel, Program.getButtonsWidth(), Program.getButtonsWidth(), Program.getButtonsWidth())
 					)
 				)
 		);
 		layout.setVerticalGroup(
 			layout.createSequentialGroup()
-				.addComponent(jAll, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-				.addComponent(jList, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
-				.addComponent(jInfo, Program.BUTTONS_HEIGHT * 2, Program.BUTTONS_HEIGHT * 2, Program.BUTTONS_HEIGHT * 2)
+				.addComponent(jAll, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+				.addComponent(jColumnsScroll, 300, 400, Integer.MAX_VALUE)
+				.addComponent(jInfo, 50, 50, 50)
 				.addGroup(layout.createParallelGroup()
-					.addComponent(jOk, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					.addComponent(jCancel, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					.addComponent(jOk, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jCancel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 				)
 		);
 	}
@@ -198,7 +197,7 @@ public class EditColumnsDialog<T extends Enum<T> & EnumTableColumn<Q>, Q> extend
 					SimpleColumn column = (SimpleColumn) listModel.getElementAt(i);
 					column.setShown(check);
 				}
-				jList.repaint();
+				jColumns.repaint();
 			}
 			if (EditColumnsAction.CANCEL.name().equals(e.getActionCommand())) {
 				setVisible(false);

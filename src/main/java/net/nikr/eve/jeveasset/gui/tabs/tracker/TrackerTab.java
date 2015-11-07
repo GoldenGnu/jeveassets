@@ -51,7 +51,6 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import javax.swing.AbstractListModel;
-import javax.swing.GroupLayout;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -60,7 +59,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
-import javax.swing.JTextArea;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.ToolTipManager;
@@ -109,7 +107,7 @@ public class TrackerTab extends JMainTab {
 		PROFILE
 	}
 
-	private final int PANEL_WIDTH = 140;
+	private final int PANEL_WIDTH = 160;
 	private final int LABEL_WIDTH = 45;
 
 	private final NumberFormat iskFormat = new DecimalFormat("#,##0.00 isk");
@@ -136,7 +134,7 @@ public class TrackerTab extends JMainTab {
 	private final JTrackerEditDialog jEditDialog;
 	private final JOwnerDialog jOwnerDialog;
 	private final ChartPanel jChartPanel;
-	private final JTextArea jHelp;
+	private final JLabel jHelp;
 
 	private final ListenerClass listener = new ListenerClass();
 
@@ -205,8 +203,6 @@ public class TrackerTab extends JMainTab {
 		JLabel jToLabel = new JLabel(TabsTracker.get().to());
 		jTo = createDateChooser();
 
-		JSeparator jDataSeparator = new JSeparator();
-
 		jAllProfiles = new JCheckBox(TabsTracker.get().allProfiles());
 		jAllProfiles.setActionCommand(TrackerAction.PROFILE.name());
 		jAllProfiles.addActionListener(listener);
@@ -257,7 +253,8 @@ public class TrackerTab extends JMainTab {
 		jContractCollateral.setActionCommand(TrackerAction.UPDATE_SHOWN.name());
 		jContractCollateral.addActionListener(listener);
 
-		jHelp = new JTextArea();
+		jHelp = new JLabel(TabsTracker.get().help());
+		/*
 		jHelp.setEditable(false);
 		jHelp.setFocusable(false);
 		jHelp.setOpaque(false);
@@ -266,6 +263,7 @@ public class TrackerTab extends JMainTab {
 		jHelp.setLineWrap(true);
 		jHelp.setFont(jPanel.getFont());
 		jHelp.setText(TabsTracker.get().help());
+		*/
 
 		DateAxis domainAxis = new DateAxis();
 		domainAxis.setDateFormatOverride(dateFormat);
@@ -313,11 +311,12 @@ public class TrackerTab extends JMainTab {
 
 		layout.setHorizontalGroup(
 			layout.createSequentialGroup()
-				.addComponent(jChartPanel)
 				.addGroup(layout.createParallelGroup()
-					.addComponent(jAllProfiles, PANEL_WIDTH, PANEL_WIDTH, PANEL_WIDTH)
-					.addComponent(jOwnersScroll, PANEL_WIDTH, PANEL_WIDTH, PANEL_WIDTH)
-					.addComponent(jOwnersSeparator, PANEL_WIDTH, PANEL_WIDTH, PANEL_WIDTH)
+					.addComponent(jHelp)
+					.addGap(0)
+					.addComponent(jChartPanel)
+				)
+				.addGroup(layout.createParallelGroup()
 					.addComponent(jQuickDate, PANEL_WIDTH, PANEL_WIDTH, PANEL_WIDTH)
 					.addGroup(layout.createSequentialGroup()
 						.addGroup(layout.createParallelGroup()
@@ -340,47 +339,44 @@ public class TrackerTab extends JMainTab {
 					.addComponent(jEscrowsToCover, PANEL_WIDTH, PANEL_WIDTH, PANEL_WIDTH)
 					.addComponent(jManufacturing, PANEL_WIDTH, PANEL_WIDTH, PANEL_WIDTH)
 					.addComponent(jContractCollateral, PANEL_WIDTH, PANEL_WIDTH, PANEL_WIDTH)
-					.addComponent(jDataSeparator, PANEL_WIDTH, PANEL_WIDTH, PANEL_WIDTH)
-					.addComponent(jHelp, PANEL_WIDTH, PANEL_WIDTH, PANEL_WIDTH)
-					.addComponent(jDataSeparator, PANEL_WIDTH, PANEL_WIDTH, PANEL_WIDTH)
+					.addComponent(jOwnersSeparator, PANEL_WIDTH, PANEL_WIDTH, PANEL_WIDTH)
+					.addComponent(jAllProfiles, PANEL_WIDTH, PANEL_WIDTH, PANEL_WIDTH)
+					.addComponent(jOwnersScroll, PANEL_WIDTH, PANEL_WIDTH, PANEL_WIDTH)
 				)
 		);
 		layout.setVerticalGroup(
 			layout.createParallelGroup()
-				.addComponent(jChartPanel)
 				.addGroup(layout.createSequentialGroup()
-					.addGap(5)
-					.addComponent(jAllProfiles, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					.addGap(5)
-					.addComponent(jOwnersScroll, 70, GroupLayout.PREFERRED_SIZE, Integer.MAX_VALUE)
-					.addGap(10)
-					.addComponent(jOwnersSeparator, 3, 3, 3)
-					.addGap(10)
-					.addComponent(jQuickDate, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-					.addGroup(layout.createParallelGroup()
-						.addComponent(jFromLabel, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-						.addComponent(jFrom, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-					)
-					.addGroup(layout.createParallelGroup()
-						.addComponent(jToLabel, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-						.addComponent(jTo, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-					)
-					.addGap(10)
-					.addComponent(jDateSeparator, 3, 3, 3)
-					.addGap(10)
-					.addComponent(jAll, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					.addComponent(jTotal, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					.addComponent(jWalletBalance, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					.addComponent(jAssets, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					.addComponent(jSellOrders, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					.addComponent(jEscrows, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					.addComponent(jEscrowsToCover, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					.addComponent(jManufacturing, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					.addComponent(jContractCollateral, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					.addGap(10)
-					.addComponent(jDataSeparator, 3, 3, 3)
-					.addGap(0)
 					.addComponent(jHelp)
+					.addComponent(jChartPanel)
+				)
+				.addGroup(layout.createSequentialGroup()
+					.addComponent(jQuickDate, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addGroup(layout.createParallelGroup()
+						.addComponent(jFromLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+						.addComponent(jFrom, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					)
+					.addGroup(layout.createParallelGroup()
+						.addComponent(jToLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+						.addComponent(jTo, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					)
+					//.addGap(10)
+					.addComponent(jDateSeparator, 3, 3, 3)
+					//.addGap(10)
+					.addComponent(jAll, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jTotal, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jWalletBalance, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jAssets, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jSellOrders, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jEscrows, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jEscrowsToCover, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jManufacturing, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jContractCollateral, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					//.addGap(10)
+					.addComponent(jOwnersSeparator, 3, 3, 3)
+					//.addGap(10)
+					.addComponent(jAllProfiles, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jOwnersScroll, 70, 70, Integer.MAX_VALUE)
 				)
 		);
 	}

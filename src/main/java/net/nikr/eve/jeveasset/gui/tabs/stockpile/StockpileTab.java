@@ -33,16 +33,9 @@ import ca.odell.glazedlists.event.ListEventListener;
 import ca.odell.glazedlists.swing.DefaultEventSelectionModel;
 import ca.odell.glazedlists.swing.DefaultEventTableModel;
 import ca.odell.glazedlists.swing.TableComparatorChooser;
-import java.awt.Dimension;
 import java.awt.Rectangle;
-import java.awt.Toolkit;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.Transferable;
-import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -65,8 +58,6 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
-import javax.swing.JToolBar;
-import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.EventListManager;
@@ -81,6 +72,7 @@ import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.components.JCustomFileChooser;
 import net.nikr.eve.jeveasset.gui.shared.components.JDropDownButton;
+import net.nikr.eve.jeveasset.gui.shared.components.JFixedToolBar;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
 import net.nikr.eve.jeveasset.gui.shared.components.JTextDialog;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
@@ -168,35 +160,24 @@ public class StockpileTab extends JMainTab {
 		stockpileImportDialog = new StockpileImportDialog(program);
 		jTextDialog = new JTextDialog(program.getMainWindow().getFrame());
 
-		JToolBar jToolBarLeft = new JToolBar();
-		jToolBarLeft.setFloatable(false);
-		jToolBarLeft.setRollover(true);
+		JFixedToolBar jToolBarLeft = new JFixedToolBar();
 
 		JButton jAdd = new JButton(TabsStockpile.get().newStockpile(), Images.LOC_GROUPS.getIcon());
 		jAdd.setActionCommand(StockpileAction.ADD_STOCKPILE.name());
 		jAdd.addActionListener(listener);
-		jAdd.setMinimumSize(new Dimension(100, Program.BUTTONS_HEIGHT));
-		jAdd.setMaximumSize(new Dimension(100, Program.BUTTONS_HEIGHT));
-		jAdd.setHorizontalAlignment(SwingConstants.LEFT);
-		jToolBarLeft.add(jAdd);
+		jToolBarLeft.addButton(jAdd);
 
 		jToolBarLeft.addSeparator();
 
 		JButton jShoppingList = new JButton(TabsStockpile.get().getShoppingList(), Images.STOCKPILE_SHOPPING_LIST.getIcon());
 		jShoppingList.setActionCommand(StockpileAction.SHOPPING_LIST_MULTI.name());
 		jShoppingList.addActionListener(listener);
-		jShoppingList.setMinimumSize(new Dimension(100, Program.BUTTONS_HEIGHT));
-		jShoppingList.setMaximumSize(new Dimension(100, Program.BUTTONS_HEIGHT));
-		jShoppingList.setHorizontalAlignment(SwingConstants.LEFT);
-		jToolBarLeft.add(jShoppingList);
+		jToolBarLeft.addButton(jShoppingList);
 
 		jToolBarLeft.addSeparator();
 
 		JDropDownButton jImport = new JDropDownButton(TabsStockpile.get().importButton(), Images.EDIT_IMPORT.getIcon());
-		jImport.setMinimumSize(new Dimension(100, Program.BUTTONS_HEIGHT));
-		jImport.setMaximumSize(new Dimension(100, Program.BUTTONS_HEIGHT));
-		jImport.setHorizontalAlignment(SwingConstants.LEFT);
-		jToolBarLeft.add(jImport);
+		jToolBarLeft.addButton(jImport);
 
 		JMenuItem jImportEFT = new JMenuItem(TabsStockpile.get().importEft(), Images.TOOL_SHIP_LOADOUTS.getIcon());
 		jImportEFT.setActionCommand(StockpileAction.IMPORT_EFT.name());
@@ -217,25 +198,17 @@ public class StockpileTab extends JMainTab {
 		jExport.setActionCommand(StockpileAction.EXPORT_XML.name());
 		jExport.addActionListener(listener);
 
-		JToolBar jToolBarRight = new JToolBar();
-		jToolBarRight.setFloatable(false);
-		jToolBarRight.setRollover(true);
+		JFixedToolBar jToolBarRight = new JFixedToolBar();
 
 		JButton jCollapse = new JButton(TabsStockpile.get().collapse(), Images.MISC_COLLAPSED.getIcon());
 		jCollapse.setActionCommand(StockpileAction.COLLAPSE.name());
 		jCollapse.addActionListener(listener);
-		jCollapse.setMinimumSize(new Dimension(90, Program.BUTTONS_HEIGHT));
-		jCollapse.setMaximumSize(new Dimension(90, Program.BUTTONS_HEIGHT));
-		jCollapse.setHorizontalAlignment(SwingConstants.LEFT);
-		jToolBarRight.add(jCollapse);
+		jToolBarRight.addButton(jCollapse);
 
 		JButton jExpand = new JButton(TabsStockpile.get().expand(), Images.MISC_EXPANDED.getIcon());
 		jExpand.setActionCommand(StockpileAction.EXPAND.name());
 		jExpand.addActionListener(listener);
-		jExpand.setMinimumSize(new Dimension(90, Program.BUTTONS_HEIGHT));
-		jExpand.setMaximumSize(new Dimension(90, Program.BUTTONS_HEIGHT));
-		jExpand.setHorizontalAlignment(SwingConstants.LEFT);
-		jToolBarRight.add(jExpand);
+		jToolBarRight.addButton(jExpand);
 
 		//Table Format
 		tableFormat = new EnumTableFormatAdaptor<StockpileTableFormat, StockpileItem>(StockpileTableFormat.class);
@@ -292,13 +265,13 @@ public class StockpileTab extends JMainTab {
 			layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
 				.addComponent(filterControl.getPanel())
 				.addGroup(layout.createSequentialGroup()
-					.addComponent(jToolBarLeft)
-					.addGap(0, 0, Integer.MAX_VALUE)
+					.addComponent(jToolBarLeft, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Integer.MAX_VALUE)
+					.addGap(0)
 					.addComponent(jToolBarRight)
 				)
 				.addComponent(jTableScroll, 0, 0, Short.MAX_VALUE)
 		);
-		final int TOOLBAR_HEIGHT = jToolBarRight.getInsets().top + jToolBarRight.getInsets().bottom + Program.BUTTONS_HEIGHT;
+		final int TOOLBAR_HEIGHT = jToolBarLeft.getInsets().top + jToolBarLeft.getInsets().bottom + Program.getButtonsHeight();
 		layout.setVerticalGroup(
 			layout.createSequentialGroup()
 				.addComponent(filterControl.getPanel())

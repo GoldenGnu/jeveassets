@@ -36,7 +36,6 @@ import ca.odell.glazedlists.swing.TreeTableCellEditor;
 import ca.odell.glazedlists.swing.TreeTableCellRenderer;
 import ca.odell.glazedlists.swing.TreeTableSupport;
 import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -48,8 +47,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
-import javax.swing.AbstractButton;
 import javax.swing.ButtonGroup;
+import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
@@ -59,8 +58,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JToggleButton;
-import javax.swing.JToolBar;
-import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.table.TableCellEditor;
@@ -73,6 +70,7 @@ import net.nikr.eve.jeveasset.data.types.JumpType;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
+import net.nikr.eve.jeveasset.gui.shared.components.JFixedToolBar;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
@@ -137,9 +135,7 @@ public class TreeTab extends JMainTab {
 
 		ListenerClass listener = new ListenerClass();
 		
-		JToolBar jToolBarLeft = new JToolBar();
-		jToolBarLeft.setFloatable(false);
-		jToolBarLeft.setRollover(true);
+		JFixedToolBar jToolBarLeft = new JFixedToolBar();
 
 		ButtonGroup buttonGroup = new ButtonGroup();
 
@@ -147,28 +143,26 @@ public class TreeTab extends JMainTab {
 		jCategories.setActionCommand(TreeAction.UPDATE.name());
 		jCategories.addActionListener(listener);
 		buttonGroup.add(jCategories);
-		addToolButton(jToolBarLeft, jCategories);
+		jToolBarLeft.addButton(jCategories);
 
 		jLocation = new JToggleButton(TabsTree.get().locations(), Images.LOC_LOCATIONS.getIcon());
 		jLocation.setActionCommand(TreeAction.UPDATE.name());
 		jLocation.addActionListener(listener);
 		jLocation.setSelected(true);
 		buttonGroup.add(jLocation);
-		addToolButton(jToolBarLeft, jLocation);
+		jToolBarLeft.addButton(jLocation);
 
-		JToolBar jToolBarRight = new JToolBar();
-		jToolBarRight.setFloatable(false);
-		jToolBarRight.setRollover(true);
+		JFixedToolBar jToolBarRight = new JFixedToolBar();
 
 		JButton jCollapse = new JButton(TabsTree.get().collapse(), Images.MISC_COLLAPSED.getIcon());
 		jCollapse.setActionCommand(TreeAction.COLLAPSE.name());
 		jCollapse.addActionListener(listener);
-		addToolButton(jToolBarRight, jCollapse);
+		jToolBarRight.addButton(jCollapse);
 
 		JButton jExpand = new JButton(TabsTree.get().expand(), Images.MISC_EXPANDED.getIcon());
 		jExpand.setActionCommand(TreeAction.EXPAND.name());
 		jExpand.addActionListener(listener);
-		addToolButton(jToolBarRight, jExpand);
+		jToolBarRight.addButton(jExpand);
 
 
 		//Table Format
@@ -243,13 +237,13 @@ public class TreeTab extends JMainTab {
 		jValue = StatusPanel.createLabel(TabsAssets.get().totalValue(), Images.TOOL_VALUES.getIcon());
 		this.addStatusbarLabel(jValue);
 
-		final int TOOLBAR_HEIGHT = jToolBarLeft.getInsets().top + jToolBarLeft.getInsets().bottom + Program.BUTTONS_HEIGHT;
+		final int TOOLBAR_HEIGHT = jToolBarLeft.getInsets().top + jToolBarLeft.getInsets().bottom + Program.getButtonsHeight();
 		layout.setHorizontalGroup(
 			layout.createParallelGroup()
 				.addComponent(filterControl.getPanel())
 				.addGroup(layout.createSequentialGroup()
-					.addComponent(jToolBarLeft)
-					.addGap(0, 0, Integer.MAX_VALUE)
+					.addComponent(jToolBarLeft, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Integer.MAX_VALUE)
+					.addGap(0)
 					.addComponent(jToolBarRight)
 				)
 				.addComponent(jTableScroll, 0, 0, Short.MAX_VALUE)
@@ -263,19 +257,6 @@ public class TreeTab extends JMainTab {
 				)
 				.addComponent(jTableScroll, 0, 0, Short.MAX_VALUE)
 		);
-	}
-
-	private void addToolButton(final JToolBar jToolBar, final AbstractButton jButton) {
-		addToolButton(jToolBar, jButton, 90);
-	}
-
-	private void addToolButton(final JToolBar jToolBar, final AbstractButton jButton, final int width) {
-		if (width > 0) {
-			jButton.setMinimumSize(new Dimension(width, Program.BUTTONS_HEIGHT));
-			jButton.setMaximumSize(new Dimension(width, Program.BUTTONS_HEIGHT));
-		}
-		jButton.setHorizontalAlignment(SwingConstants.LEFT);
-		jToolBar.add(jButton);
 	}
 
 	public void updateTags() {

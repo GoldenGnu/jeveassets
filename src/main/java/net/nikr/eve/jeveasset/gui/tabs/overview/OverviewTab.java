@@ -27,7 +27,6 @@ import ca.odell.glazedlists.SortedList;
 import ca.odell.glazedlists.swing.DefaultEventSelectionModel;
 import ca.odell.glazedlists.swing.DefaultEventTableModel;
 import ca.odell.glazedlists.swing.TableComparatorChooser;
-import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -38,7 +37,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import javax.swing.AbstractButton;
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.GroupLayout;
@@ -50,7 +48,6 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JScrollPane;
 import javax.swing.JToggleButton;
-import javax.swing.JToolBar;
 import javax.swing.SwingConstants;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.EventListManager;
@@ -61,6 +58,7 @@ import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.CaseInsensitiveComparator;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.components.JDropDownButton;
+import net.nikr.eve.jeveasset.gui.shared.components.JFixedToolBar;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
 import net.nikr.eve.jeveasset.gui.shared.filter.ExportDialog;
 import net.nikr.eve.jeveasset.gui.shared.filter.ExportFilterControl;
@@ -127,36 +125,37 @@ public class OverviewTab extends JMainTab {
 	public OverviewTab(final Program program) {
 		super(program, TabsOverview.get().overview(), Images.TOOL_OVERVIEW.getIcon(), true);
 
-		JLabel jViewsLabel = new JLabel(TabsOverview.get().view());
+		JFixedToolBar jToolBarLeft = new JFixedToolBar();
 
-		JToolBar jToolBarLeft = new JToolBar();
-		jToolBarLeft.setFloatable(false);
-		jToolBarLeft.setRollover(true);
+		JLabel jViewsLabel = new JLabel(TabsOverview.get().view());
+		jToolBarLeft.add(jViewsLabel);
+
+		jToolBarLeft.addSpace(10);
 
 		jStations = new JToggleButton(Images.LOC_STATION.getIcon());
 		jStations.setToolTipText(TabsOverview.get().stations());
 		jStations.setActionCommand(OverviewAction.UPDATE_LIST.name());
 		jStations.addActionListener(listener);
 		jStations.setSelected(true);
-		addToolButton(jToolBarLeft, jStations, 40, SwingConstants.CENTER);
+		jToolBarLeft.addButton(jStations, 1, SwingConstants.CENTER);
 
 		jSystems = new JToggleButton(Images.LOC_SYSTEM.getIcon());
 		jSystems.setToolTipText(TabsOverview.get().systems());
 		jSystems.setActionCommand(OverviewAction.UPDATE_LIST.name());
 		jSystems.addActionListener(listener);
-		addToolButton(jToolBarLeft, jSystems, 40, SwingConstants.CENTER);
+		jToolBarLeft.addButton(jSystems, 1, SwingConstants.CENTER);
 
 		jRegions = new JToggleButton(Images.LOC_REGION.getIcon());
 		jRegions.setToolTipText(TabsOverview.get().regions());
 		jRegions.setActionCommand(OverviewAction.UPDATE_LIST.name());
 		jRegions.addActionListener(listener);
-		addToolButton(jToolBarLeft, jRegions, 40, SwingConstants.CENTER);
+		jToolBarLeft.addButton(jRegions, 1, SwingConstants.CENTER);
 
 		jGroups = new JToggleButton(Images.LOC_GROUPS.getIcon());
 		jGroups.setToolTipText(TabsOverview.get().groups());
 		jGroups.setActionCommand(OverviewAction.UPDATE_LIST.name());
 		jGroups.addActionListener(listener);
-		addToolButton(jToolBarLeft, jGroups, 40, SwingConstants.CENTER);
+		jToolBarLeft.addButton(jGroups, 1, SwingConstants.CENTER);
 
 		ButtonGroup group = new ButtonGroup();
 		group.add(jStations);
@@ -168,25 +167,29 @@ public class OverviewTab extends JMainTab {
 
 		jLoadFilter = new JDropDownButton(TabsOverview.get().loadFilter());
 		jLoadFilter.setIcon(Images.FILTER_LOAD.getIcon());
-		addToolButton(jToolBarLeft, jLoadFilter);
+		jToolBarLeft.addButton(jLoadFilter);
 
 		jToolBarLeft.addSeparator();
 
 		JLabel jOwnerLabel = new JLabel(TabsOverview.get().owner());
+		jToolBarLeft.add(jOwnerLabel);
+
 		jOwner = new JComboBox();
 		jOwner.setActionCommand(OverviewAction.UPDATE_LIST.name());
 		jOwner.addActionListener(listener);
+		jToolBarLeft.addComboBox(jOwner, 150);
 
-		JToolBar jToolBarRight = new JToolBar();
-		jToolBarRight.setFloatable(false);
-		jToolBarRight.setRollover(true);
-		
 		JButton jExport = new JButton(GuiShared.get().export(), Images.DIALOG_CSV_EXPORT.getIcon());
 		jExport.setActionCommand(OverviewAction.EXPORT.name());
 		jExport.addActionListener(listener);
-		addToolButton(jToolBarRight, jExport);
+		jToolBarLeft.addButton(jExport);
+
+		JFixedToolBar jToolBarRight = new JFixedToolBar();
+
+		jToolBarRight.addSpace(10);
 
 		jShowing = new JLabel();
+		jToolBarRight.add(jShowing);
 
 		updateFilters();
 
@@ -236,61 +239,24 @@ public class OverviewTab extends JMainTab {
 		jValue = StatusPanel.createLabel(TabsOverview.get().totalValue(), Images.TOOL_VALUES.getIcon());
 		this.addStatusbarLabel(jValue);
 
-		final int TOOLBAR_HEIGHT = jToolBarLeft.getInsets().top + jToolBarLeft.getInsets().bottom + Program.BUTTONS_HEIGHT;
+		final int TOOLBAR_HEIGHT = jToolBarLeft.getInsets().top + jToolBarLeft.getInsets().bottom + Program.getButtonsHeight();
 		layout.setHorizontalGroup(
 			layout.createParallelGroup()
 				.addGroup(layout.createSequentialGroup()
-					.addComponent(jViewsLabel)
-					.addComponent(jToolBarLeft)
-					//.addComponent(jStations)
-					//.addComponent(jSystems)
-					//.addComponent(jRegions)
-					//.addComponent(jGroups)
-					//.addComponent(jSeparatorView, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-					//.addComponent(jLoadFilter)
-					//.addComponent(jSeparatorFilter, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-					.addComponent(jOwnerLabel)
-					.addComponent(jOwner, 150, 150, 150)
-					//.addComponent(jExport)
-					.addComponent(jToolBarRight)
-					.addGap(0, 0, Short.MAX_VALUE)
-					.addComponent(jShowing, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+					.addComponent(jToolBarLeft, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Integer.MAX_VALUE)
+					.addGap(0)
+					.addComponent(jToolBarRight, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
 				)
 				.addComponent(jTableScroll, 400, 400, Short.MAX_VALUE)
 		);
 		layout.setVerticalGroup(
 			layout.createSequentialGroup()
 				.addGroup(layout.createParallelGroup()
-					.addComponent(jViewsLabel, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 					.addComponent(jToolBarLeft, TOOLBAR_HEIGHT, TOOLBAR_HEIGHT, TOOLBAR_HEIGHT)
-					//.addComponent(jStations, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					//.addComponent(jSystems, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					//.addComponent(jRegions, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					//.addComponent(jGroups, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					//.addComponent(jSeparatorView, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					//.addComponent(jLoadFilter, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					//.addComponent(jSeparatorFilter, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					.addComponent(jOwnerLabel, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					.addComponent(jOwner, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					//.addComponent(jExport, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 					.addComponent(jToolBarRight, TOOLBAR_HEIGHT, TOOLBAR_HEIGHT, TOOLBAR_HEIGHT)
-					.addComponent(jShowing, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				)
 				.addComponent(jTableScroll, 100, 400, Short.MAX_VALUE)
 		);
-	}
-
-	private void addToolButton(final JToolBar jToolBar, final AbstractButton jButton) {
-		addToolButton(jToolBar, jButton, 90, SwingConstants.LEFT);
-	}
-
-	private void addToolButton(final JToolBar jToolBar, final AbstractButton jButton, final int width, final int alignment) {
-		if (width > 0) {
-			jButton.setMinimumSize(new Dimension(width, Program.BUTTONS_HEIGHT));
-			jButton.setMaximumSize(new Dimension(width, Program.BUTTONS_HEIGHT));
-		}
-		jButton.setHorizontalAlignment(alignment);
-		jToolBar.add(jButton);
 	}
 
 	private OverviewTab getThis() {

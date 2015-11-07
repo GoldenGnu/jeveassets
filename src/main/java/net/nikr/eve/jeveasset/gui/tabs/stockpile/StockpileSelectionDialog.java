@@ -73,16 +73,16 @@ public class StockpileSelectionDialog extends JDialogCentered {
 			layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
 				.addComponent(jListScroll, 300, 300, 300)
 				.addGroup(layout.createSequentialGroup()
-					.addComponent(jOK, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH)
-					.addComponent(jCancel, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH)
+					.addComponent(jOK, Program.getButtonsWidth(), Program.getButtonsWidth(), Program.getButtonsWidth())
+					.addComponent(jCancel, Program.getButtonsWidth(), Program.getButtonsWidth(), Program.getButtonsWidth())
 				)
 		);
 		layout.setVerticalGroup(
 			layout.createSequentialGroup()
 				.addComponent(jListScroll, 200, 200, 200)
 				.addGroup(layout.createParallelGroup()
-					.addComponent(jOK, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					.addComponent(jCancel, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					.addComponent(jOK, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jCancel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 				)
 		);
 	}

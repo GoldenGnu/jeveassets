@@ -33,7 +33,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.swing.AbstractButton;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
@@ -117,17 +116,8 @@ public abstract class FilterControl<E> extends ExportFilterControl<E> {
 		return gui.getPanel();
 	}
 
-	public void addToolButton(final AbstractButton jButton) {
-		gui.addToolButton(jButton);
-	}
-	public void addToolButton(final AbstractButton jButton, final int width) {
-		gui.addToolButton(jButton, width);
-	}
 	public void addExportOption(final JMenuItem jMenuItem) {
 		gui.addExportOption(jMenuItem);
-	}
-	public void addToolSeparator() {
-		gui.addToolSeparator();
 	}
 
 	public JMenu getMenu(final JTable jTable, final List<E> items) {

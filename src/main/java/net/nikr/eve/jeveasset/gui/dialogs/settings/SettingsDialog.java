@@ -76,53 +76,10 @@ public class SettingsDialog extends JDialogCentered {
 		jTree.setRootVisible(false);
 		jTree.setShowsRootHandles(true);
 		jTree.addTreeSelectionListener(listener);
-
-		JScrollPane jTreeScroller = new JScrollPane(jTree);
+		jTree.setVisibleRowCount(0);
 
 		cardLayout = new CardLayout();
-
 		jContent = new JPanel(cardLayout);
-
-		JSeparator jSeparator = new JSeparator();
-
-		jOK = new JButton(DialoguesSettings.get().ok());
-		jOK.setActionCommand(SettingsDialogAction.OK.name());
-		jOK.addActionListener(listener);
-
-		JButton jApply = new JButton(DialoguesSettings.get().apply());
-		jApply.setActionCommand(SettingsDialogAction.APPLY.name());
-		jApply.addActionListener(listener);
-
-		JButton jCancel = new JButton(DialoguesSettings.get().cancel());
-		jCancel.setActionCommand(SettingsDialogAction.CANCEL.name());
-		jCancel.addActionListener(listener);
-
-		layout.setHorizontalGroup(
-			layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
-				.addGroup(layout.createSequentialGroup()
-					.addComponent(jTreeScroller)
-					.addComponent(jContent)
-				)
-				.addComponent(jSeparator)
-				.addGroup(layout.createSequentialGroup()
-					.addComponent(jOK, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH)
-					.addComponent(jCancel, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH)
-					.addComponent(jApply, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH)
-				)
-		);
-		layout.setVerticalGroup(
-			layout.createSequentialGroup()
-				.addGroup(layout.createParallelGroup()
-					.addComponent(jTreeScroller, 270, 270, 270)
-					.addComponent(jContent)
-				)
-				.addComponent(jSeparator, 5, 5, 5)
-				.addGroup(layout.createParallelGroup()
-					.addComponent(jOK, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					.addComponent(jCancel, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					.addComponent(jApply, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-				)
-		);
 
 		GeneralSettingsPanel generalSettingsPanel = new GeneralSettingsPanel(program, this);
 		add(generalSettingsPanel);
@@ -166,6 +123,49 @@ public class SettingsDialog extends JDialogCentered {
 
 		WindowSettingsPanel windowSettingsPanel = new WindowSettingsPanel(program, this);
 		add(windowSettingsPanel);
+
+		JScrollPane jTreeScroller = new JScrollPane(jTree);
+
+		JSeparator jSeparator = new JSeparator();
+
+		jOK = new JButton(DialoguesSettings.get().ok());
+		jOK.setActionCommand(SettingsDialogAction.OK.name());
+		jOK.addActionListener(listener);
+
+		JButton jApply = new JButton(DialoguesSettings.get().apply());
+		jApply.setActionCommand(SettingsDialogAction.APPLY.name());
+		jApply.addActionListener(listener);
+
+		JButton jCancel = new JButton(DialoguesSettings.get().cancel());
+		jCancel.setActionCommand(SettingsDialogAction.CANCEL.name());
+		jCancel.addActionListener(listener);
+
+		layout.setHorizontalGroup(
+			layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
+				.addGroup(layout.createSequentialGroup()
+					.addComponent(jTreeScroller, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Integer.MAX_VALUE)
+					.addComponent(jContent, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+				)
+				.addComponent(jSeparator)
+				.addGroup(layout.createSequentialGroup()
+					.addComponent(jOK, Program.getButtonsWidth(), Program.getButtonsWidth(), Program.getButtonsWidth())
+					.addComponent(jCancel, Program.getButtonsWidth(), Program.getButtonsWidth(), Program.getButtonsWidth())
+					.addComponent(jApply, Program.getButtonsWidth(), Program.getButtonsWidth(), Program.getButtonsWidth())
+				)
+		);
+		layout.setVerticalGroup(
+			layout.createSequentialGroup()
+				.addGroup(layout.createParallelGroup()
+					.addComponent(jTreeScroller, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Integer.MAX_VALUE)
+					.addComponent(jContent, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+				)
+				.addComponent(jSeparator, 5, 5, 5)
+				.addGroup(layout.createParallelGroup()
+					.addComponent(jOK, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jCancel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jApply, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+				)
+		);
 	}
 
 	private DefaultMutableTreeNode addGroup(final String name, final Icon icon) {
@@ -182,6 +182,7 @@ public class SettingsDialog extends JDialogCentered {
 		settingsPanels.put(jSettingsPanel.getTitle(), jSettingsPanel);
 		icons.put(jSettingsPanel.getTitle(), jSettingsPanel.getIcon());
 		jContent.add(jSettingsPanel.getPanel(), jSettingsPanel.getTitle());
+		jTree.setVisibleRowCount(jTree.getVisibleRowCount() + 1);
 		DefaultMutableTreeNode node = new DefaultMutableTreeNode(jSettingsPanel.getTitle());
 		if (parentNode == null) {
 			treeModel.insertNodeInto(node, rootNode, rootNode.getChildCount());
