@@ -81,6 +81,7 @@ public abstract class GuiShared extends Bundle {
 	public abstract String selectionAverage();
 	public abstract String selectionCount();
 	public abstract String selectionInventionSuccess();
+	public abstract String selectionManufactureJobsValue();
 	public abstract String selectionOrdersBoth();
 	public abstract String selectionOrdersBothAvg();
 	public abstract String selectionOrdersBuy();

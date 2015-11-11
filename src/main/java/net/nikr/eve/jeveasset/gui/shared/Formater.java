@@ -44,6 +44,7 @@ public final class Formater {
 	public static final String COLUMN_DATE = "yyyy-MM-dd";
 
 	private static final DecimalFormat ISK_FORMAT  = new DecimalFormat("#,##0.00 isk");
+	private static final DecimalFormat ITEM_FORMAT  = new DecimalFormat("#,##0 item");
 	private static final DecimalFormat ITEMS_FORMAT  = new DecimalFormat("#,##0 items");
 	private static final DecimalFormat PERCENT_FORMAT  = new DecimalFormat("##0%");
 	private static final DecimalFormat TIMES_FORMAT  = new DecimalFormat("##0x");
@@ -113,7 +114,11 @@ public final class Formater {
 		return TIMES_FORMAT.format(number);
 	}
 	public static String itemsFormat(final Long number) {
-		return ITEMS_FORMAT.format(number);
+		if (number == 1) {
+			return ITEM_FORMAT.format(number);
+		} else {
+			return ITEMS_FORMAT.format(number);
+		}
 	}
 	public static String doubleFormat(final Object obj) {
 		return DECIMAL_FORMAT.format(obj);

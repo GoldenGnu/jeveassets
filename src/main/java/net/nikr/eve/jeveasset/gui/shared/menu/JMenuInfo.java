@@ -195,21 +195,27 @@ public class JMenuInfo {
 
 			createDefault(jPopupMenu);
 
-			int count = 0;
+			int inventionCount = 0;
+			long count = 0;
 			double success = 0;
-			double total = 0.0;
+			double outputValue = 0;
 			for (MyIndustryJob industryJob : list) {
+				count++;
 				if (industryJob.isInvention() && industryJob.isCompleted()) {
-					count++;
+					inventionCount++;
 					if (industryJob.isDelivered()) {
 						success++;
 					}
 				}
+				outputValue += industryJob.getOutputValue();
 			}
-			if (count > 0 && success > 0) {
-				total = (success / count);
+			if (inventionCount <= 0) {
+				createMenuItem(jPopupMenu, Formater.percentFormat(0.0), GuiShared.get().selectionInventionSuccess(), Images.JOBS_INVENTION_SUCCESS.getIcon());
+			} else {
+				createMenuItem(jPopupMenu, Formater.percentFormat(success / count), GuiShared.get().selectionInventionSuccess(), Images.JOBS_INVENTION_SUCCESS.getIcon());
 			}
-			createMenuItem(jPopupMenu, Formater.percentFormat(total), GuiShared.get().selectionInventionSuccess(), Images.JOBS_INVENTION_SUCCESS.getIcon());
+			createMenuItem(jPopupMenu, Formater.iskFormat(outputValue), GuiShared.get().selectionManufactureJobsValue(), Images.TOOL_VALUES.getIcon());
+			createMenuItem(jPopupMenu, Formater.itemsFormat(count), GuiShared.get().selectionCount(), Images.EDIT_ADD.getIcon());
 		}
 	}
 

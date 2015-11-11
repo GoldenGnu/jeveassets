@@ -39,6 +39,7 @@ public abstract class TabsJobs extends Bundle {
 	public abstract String bpc();
 	public abstract String bpo();
 	public abstract String completed();
+	public abstract String count();
 	public abstract String industry();
 	public abstract String install();
 	public abstract String inventionSuccess();
