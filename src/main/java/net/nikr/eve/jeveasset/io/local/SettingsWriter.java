@@ -329,6 +329,7 @@ public class SettingsWriter extends AbstractXmlWriter {
 			for (StockpileFilter filter : strockpile.getFilters()) {
 				Element locationNode = xmldoc.createElementNS(null, "stockpilefilter");
 				locationNode.setAttributeNS(null, "locationid", String.valueOf(filter.getLocation().getLocationID()));
+				locationNode.setAttributeNS(null, "exclude", String.valueOf(filter.isExclude()));
 				locationNode.setAttributeNS(null, "inventory", String.valueOf(filter.isAssets()));
 				locationNode.setAttributeNS(null, "sellorders", String.valueOf(filter.isSellOrders()));
 				locationNode.setAttributeNS(null, "buyorders", String.valueOf(filter.isBuyOrders()));

@@ -60,6 +60,7 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 import javax.swing.ToolTipManager;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
@@ -793,6 +794,8 @@ public class StockpileDialog extends JDialogCentered {
 		//Location
 		private final JLabel jLocationType;
 		private final JComboBox jLocation;
+		private final JDropDownButton jMatch;
+		private final JRadioButtonMenuItem jMatchExclude;
 		private final JCheckBoxMenuItem jMyLocations;
 		private FilterList<MyLocation> filterList;
 		private AutoCompleteSupport<MyLocation> autoComplete;
@@ -856,6 +859,8 @@ public class StockpileDialog extends JDialogCentered {
 					flagPanels.add(new FilterPanel(this, itemFlag));
 				}
 			}
+			//Exclude
+			jMatchExclude.setSelected(stockpileFilter.isExclude());
 			//Includes
 			jAssets.setSelected(stockpileFilter.isAssets());
 			jBuyOrders.setSelected(stockpileFilter.isBuyOrders());
@@ -884,6 +889,26 @@ public class StockpileDialog extends JDialogCentered {
 
 			JFixedToolBar jToolBar = new JFixedToolBar();
 
+		//MATCH
+			jMatch = new JDropDownButton(Images.EDIT_ADD_WHITE.getIcon());
+			jToolBar.addButton(jMatch, 1, SwingConstants.CENTER);
+
+			JRadioButtonMenuItem jMatchInclude = new JRadioButtonMenuItem(TabsStockpile.get().matchInclude(), Images.EDIT_ADD_WHITE.getIcon());
+			jMatchInclude.setHorizontalAlignment(JButton.LEFT);
+			jMatchInclude.setActionCommand(StockpileDialogAction.VALIDATE.name());
+			jMatchInclude.addActionListener(listener);
+			jMatchInclude.setSelected(true);
+			jMatch.add(jMatchInclude);
+
+			jMatchExclude = new JRadioButtonMenuItem(TabsStockpile.get().matchExclude(), Images.EDIT_DELETE_WHITE.getIcon());
+			jMatchExclude.setHorizontalAlignment(JButton.LEFT);
+			jMatchExclude.setActionCommand(StockpileDialogAction.VALIDATE.name());
+			jMatchExclude.addActionListener(listener);
+			jMatch.add(jMatchExclude);
+
+			ButtonGroup matchButtonGroup = new ButtonGroup();
+			matchButtonGroup.add(jMatchInclude);
+			matchButtonGroup.add(jMatchExclude);
 		//ADD
 			JButton jOwner = new JButton(TabsStockpile.get().owner(), Images.LOC_OWNER.getIcon());
 			jOwner.setActionCommand(StockpileDialogAction.ADD_OWNER.name());
@@ -1153,6 +1178,7 @@ public class StockpileDialog extends JDialogCentered {
 				location = new MyLocation(0);
 			}
 			return new StockpileFilter(location, flagIDs, containers, ownerIDs, 
+					jMatchExclude.isSelected(),
 					jAssets.isSelected(),
 					jSellOrders.isSelected(),
 					jBuyOrders.isSelected(),
@@ -1199,6 +1225,7 @@ public class StockpileDialog extends JDialogCentered {
 			} else {
 				jInclude.setIcon(Images.LOC_INCLUDE.getIcon());
 			}
+			jMatch.setIcon(jMatchExclude.isSelected() ? Images.EDIT_DELETE_WHITE.getIcon() : Images.EDIT_ADD_WHITE.getIcon());
 			jAssets.setIcon(jAssets.isSelected() ? Images.INCLUDE_ASSET_SELECTED.getIcon() : Images.TOOL_ASSETS.getIcon());
 			jSellOrders.setIcon(jSellOrders.isSelected() ? Images.INCLUDE_SELL_SELECTED.getIcon() : Images.INCLUDE_SELL.getIcon());
 			jBuyOrders.setIcon(jBuyOrders.isSelected() ? Images.INCLUDE_BUY_SELECTED.getIcon() : Images.ORDERS_BUY.getIcon());

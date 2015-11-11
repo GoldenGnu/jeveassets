@@ -22,6 +22,7 @@ package net.nikr.eve.jeveasset.gui.tabs.stockpile;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -436,55 +437,72 @@ public class Stockpile implements Comparable<Stockpile>, LocationType {
 			if (this.typeID != typeID) {
 				return false;
 			}
-			for (StockpileFilter filter : stockpile.getFilters()) {
+			//Put exclude filters first
+			List<StockpileFilter> filters = new ArrayList<StockpileFilter>(stockpile.getFilters());
+			Collections.sort(filters, new Comparator<StockpileFilter>() {
+				@Override
+				public int compare(StockpileFilter o1, StockpileFilter o2) {
+					if (o1.isExclude() && o2.isExclude()) {
+						return 0;  //Equals
+					} else if (o1.isExclude()) {
+						return -1; //First
+					} else if (o2.isExclude()) {
+						return 1;  //Last
+					} else {
+						return 0;  //Equals
+					}
+				}
+			});
+			//Match one of the filters
+			for (StockpileFilter filter : filters) {
 				if (!matchOwner(filter, ownerID)) {
-					continue;
+					continue; //Do not match
 				}
 				if (!matchContainer(filter, container)) {
-					continue;
+					continue; //Do not match
 				}
 				if (asset != null) {
 					if (!matchFlag(filter, asset)) {
-						continue;
+						continue; //Do not match
 					}
 				} else {
 					if (!matchFlag(filter, flagID)) {
-						continue;
+						continue; //Do not match
 					}
 				}
 				if (!matchLocation(filter, location)) {
-					continue;
+					continue; //Do not match
 				}
 				if (marketOrder != null) { //Orders include
 					if (marketOrder.getBid() < 1 && marketOrder.getOrderState() == 0  && filter.isSellOrders()) {
-						//Open/Active sell order
+						//Open/Active sell order - match
 					} else if (marketOrder.getBid() > 0 && marketOrder.getOrderState() == 0 && filter.isBuyOrders()) {
-						//Open/Active buy order
+						//Open/Active buy order - match
 					} else {
-						continue; //Fail
+						continue; //Do not match
 					}
 				} else if (asset != null) { //Asset include
 					if (!filter.isAssets()) {
-						continue;
+						continue; //Do not match
 					}
 				} else if (industryJob != null) { //Jobs include
 					if (industryJob.getActivityID() == 1  //Manufacturing
 							&& industryJob.getStatus() == 1 //Inprogress AKA not delivered
 							&& filter.isJobs()) {
-						//OK
+						//OK - match
 					} else {
-						continue;
+						continue; //Do not match
 					}
 				} else if (transaction != null) {
 					if (transaction.isAfterAssets() && transaction.isBuy() && filter.isBuyTransactions()) {
-						//Buy
+						//Buy - match
 					} else if (transaction.isAfterAssets() && transaction.isSell() && filter.isSellTransactions()) {
-						//Sell
+						//Sell - match
 					} else {
-						continue; //Fail
+						continue; //Do not match
 					}
 				}
-				return true;
+				return !filter.isExclude(); //Filter match
 			}
 			return false;
 		}
@@ -947,6 +965,7 @@ public class Stockpile implements Comparable<Stockpile>, LocationType {
 		private final List<Integer> flagIDs;
 		private final List<String> containers;
 		private final List<Long> ownerIDs;
+		private final boolean exclude;
 		private final boolean assets;
 		private final boolean sellOrders;
 		private final boolean buyOrders;
@@ -954,12 +973,13 @@ public class Stockpile implements Comparable<Stockpile>, LocationType {
 		private final boolean sellTransactions;
 		private final boolean jobs;
 
-		public StockpileFilter(MyLocation location, List<Integer> flagIDs, List<String> containers, List<Long> ownerIDs, boolean inventory, boolean sellOrders, boolean buyOrders, boolean jobs, boolean buyTransactions, boolean sellTransactions) {
+		public StockpileFilter(MyLocation location, List<Integer> flagIDs, List<String> containers, List<Long> ownerIDs, boolean exclude, boolean assets, boolean sellOrders, boolean buyOrders, boolean jobs, boolean buyTransactions, boolean sellTransactions) {
 			this.location = location;
 			this.flagIDs = flagIDs;
 			this.containers = containers;
 			this.ownerIDs = ownerIDs;
-			this.assets = inventory;
+			this.exclude = exclude;
+			this.assets = assets;
 			this.sellOrders = sellOrders;
 			this.buyOrders = buyOrders;
 			this.jobs = jobs;
@@ -981,6 +1001,10 @@ public class Stockpile implements Comparable<Stockpile>, LocationType {
 
 		public List<Long> getOwnerIDs() {
 			return ownerIDs;
+		}
+
+		public boolean isExclude() {
+			return exclude;
 		}
 
 		public boolean isAssets() {

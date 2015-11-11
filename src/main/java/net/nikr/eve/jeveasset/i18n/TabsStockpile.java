@@ -107,6 +107,8 @@ public abstract class TabsStockpile extends Bundle {
 	public abstract String item();
 	public abstract String items();
 	public abstract String location();
+	public abstract String matchExclude();
+	public abstract String matchInclude();
 	public abstract String multiple();
 	public abstract String multiplier();
 	public abstract String multiplierSign();
