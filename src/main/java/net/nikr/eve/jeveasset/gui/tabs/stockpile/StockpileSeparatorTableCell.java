@@ -6,6 +6,7 @@ package net.nikr.eve.jeveasset.gui.tabs.stockpile;
 
 import ca.odell.glazedlists.SeparatorList;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -46,10 +47,15 @@ public class StockpileSeparatorTableCell extends SeparatorTableCell<StockpileIte
 	private final JLabel jOwner;
 	private final JLabel jLocation;
 	private final JLabel jLocationLabel;
+	private final JLabel jMultiplierLabel;
 	private final JDoubleField jMultiplier;
+	private final Program program;
+
+	private Component focusOwner;
 
 	public StockpileSeparatorTableCell(final Program program, final JTable jTable, final SeparatorList<StockpileItem> separatorList, final ActionListener actionListener) {
 		super(jTable, separatorList);
+		this.program = program;
 
 		ListenerClass listener = new ListenerClass();
 
@@ -74,7 +80,7 @@ public class StockpileSeparatorTableCell extends SeparatorTableCell<StockpileIte
 		jMultiplier.setBorder(null);
 		jMultiplier.setAutoSelectAll(true);
 		
-		JLabel jMultiplierLabel = new JLabel(TabsStockpile.get().multiplierSign());
+		jMultiplierLabel = new JLabel(TabsStockpile.get().multiplierSign());
 
 		jGroup = new JLabel();
 		jGroup.setBorder(null);
@@ -191,16 +197,24 @@ public class StockpileSeparatorTableCell extends SeparatorTableCell<StockpileIte
 		);
 	}
 
-	private void setEnabled(final boolean aFlag) {
-		jGroup.setEnabled(aFlag);
-		jColor.setVisible(aFlag);
-		jColorDisabled.setVisible(!aFlag);
-		jStockpile.setEnabled(aFlag);
-		jOwnerLabel.setEnabled(aFlag);
-		jOwner.setEnabled(aFlag);
-		jLocation.setEnabled(aFlag);
-		jLocationLabel.setEnabled(aFlag);
-		jExpand.setEnabled(aFlag);
+	private void setEnabled(final boolean enabled) {
+		if (!enabled) { //Save focus owner
+			focusOwner = program.getMainWindow().getFrame().getFocusOwner();
+		}
+		jGroup.setEnabled(enabled);
+		jColor.setVisible(enabled);
+		jColorDisabled.setVisible(!enabled);
+		jStockpile.setEnabled(enabled);
+		jOwnerLabel.setEnabled(enabled);
+		jMultiplierLabel.setEnabled(enabled);
+		jMultiplier.setEnabled(enabled);
+		jOwner.setEnabled(enabled);
+		jLocation.setEnabled(enabled);
+		jLocationLabel.setEnabled(enabled);
+		jExpand.setEnabled(enabled);
+		if (enabled && focusOwner != null) { //Load focus owner
+			focusOwner.requestFocusInWindow();
+		}
 	}
 
 	@Override
