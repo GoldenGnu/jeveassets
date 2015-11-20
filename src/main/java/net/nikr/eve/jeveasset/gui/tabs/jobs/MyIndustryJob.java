@@ -60,10 +60,10 @@ public class MyIndustryJob extends IndustryJob implements Comparable<MyIndustryJ
 				return DataModelIndustryJob.get().stateDone();
 			}
 		},
-		STATE_FAILED() {
+		STATE_DELIVERED() {
 			@Override
 			String getI18N() {
-				return DataModelIndustryJob.get().stateFailed();
+				return DataModelIndustryJob.get().stateDelivered();
 			}
 		},
 		STATE_CANCELLED() {
@@ -72,10 +72,10 @@ public class MyIndustryJob extends IndustryJob implements Comparable<MyIndustryJ
 				return DataModelIndustryJob.get().stateCancelled();
 			}
 		},
-		STATE_DELIVERED() {
+		STATE_REVERTED() {
 			@Override
 			String getI18N() {
-				return DataModelIndustryJob.get().stateDelivered();
+				return DataModelIndustryJob.get().stateReverted();
 			}
 		};
 		
@@ -257,14 +257,17 @@ public class MyIndustryJob extends IndustryJob implements Comparable<MyIndustryJ
 			case 2:
 				state = IndustryJobState.STATE_PAUSED;
 				break;
+			case 3:
+				state = IndustryJobState.STATE_DONE;
+				break;
+			case 101:
+				state = IndustryJobState.STATE_DELIVERED;
+				break;
 			case 102:
 				state = IndustryJobState.STATE_CANCELLED;
 				break;
-			case 104:
-				state = IndustryJobState.STATE_DELIVERED;
-				break;
-			case 105 :
-				state = IndustryJobState.STATE_FAILED;
+			case 103:
+				state = IndustryJobState.STATE_REVERTED;
 				break;
 		}
 		switch(activity) {
@@ -342,6 +345,10 @@ public class MyIndustryJob extends IndustryJob implements Comparable<MyIndustryJ
 	}
 
 	public IndustryJobState getState() {
+		//Update STATE_DONE (may have changed after loading profile)
+		if (getEndDate().before(Settings.getNow()) && state == IndustryJobState.STATE_ACTIVE) {
+			state = IndustryJobState.STATE_DONE; 
+		}
 		return state;
 	}
 

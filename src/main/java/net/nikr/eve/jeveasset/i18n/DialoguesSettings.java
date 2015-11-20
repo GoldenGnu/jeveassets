@@ -67,11 +67,11 @@ public abstract class DialoguesSettings extends Bundle {
 	public abstract String stockpileThreeGroups();
 	public abstract String percentPlusSymbol();
 
-	public abstract String saveHistoryWarning(); //Transactions & Journal & Marker Orders
+	public abstract String saveHistoryWarning(); //Transactions & Journal & Market Orders
 
-	// used in MarkerOrdersToolSettingsPanel
-	public abstract String markerOrders();
-	public abstract String markerOrdersSaveHistory();
+	// used in MarketOrdersToolSettingsPanel
+	public abstract String marketOrders();
+	public abstract String marketOrdersSaveHistory();
 
 	// used in TransactionsToolSettingsPanel
 	public abstract String transactions();

@@ -802,11 +802,16 @@ public class StockpileDialog extends JDialogCentered {
 		//Include
 		private final JDropDownButton jInclude;
 		private final JCheckBoxMenuItem jAssets;
-		private final JCheckBoxMenuItem jBuyOrders;
-		private final JCheckBoxMenuItem jBuyTransactions;
-		private final JCheckBoxMenuItem jSellTransactions;
-		private final JCheckBoxMenuItem jSellOrders;
 		private final JCheckBoxMenuItem jJobs;
+		private final JCheckBoxMenuItem jBuyingOrders;
+		private final JCheckBoxMenuItem jSellingOrders;
+		private final JCheckBoxMenuItem jBoughtTransactions;
+		private final JCheckBoxMenuItem jSoldTransactions;
+		private final JCheckBoxMenuItem jBuyingContracts;
+		private final JCheckBoxMenuItem jSellingContracts;
+		private final JCheckBoxMenuItem jBoughtContracts;
+		private final JCheckBoxMenuItem jSoldContracts;
+
 		//Edit
 		private final JRadioButtonMenuItem jStation;
 		private final JRadioButtonMenuItem jSystem;
@@ -863,11 +868,15 @@ public class StockpileDialog extends JDialogCentered {
 			jMatchExclude.setSelected(stockpileFilter.isExclude());
 			//Includes
 			jAssets.setSelected(stockpileFilter.isAssets());
-			jBuyOrders.setSelected(stockpileFilter.isBuyOrders());
-			jSellOrders.setSelected(stockpileFilter.isSellOrders());
-			jBuyTransactions.setSelected(stockpileFilter.isBuyTransactions());
-			jSellTransactions.setSelected(stockpileFilter.isSellTransactions());
 			jJobs.setSelected(stockpileFilter.isJobs());
+			jBuyingOrders.setSelected(stockpileFilter.isBuyOrders());
+			jSellingOrders.setSelected(stockpileFilter.isSellOrders());
+			jBoughtTransactions.setSelected(stockpileFilter.isBuyTransactions());
+			jSoldTransactions.setSelected(stockpileFilter.isSellTransactions());
+			jBuyingContracts.setSelected(stockpileFilter.isBuyingContracts());
+			jSellingContracts.setSelected(stockpileFilter.isSellingContracts());
+			jBoughtContracts.setSelected(stockpileFilter.isBoughtContracts());
+			jSoldContracts.setSelected(stockpileFilter.isSoldContracts());
 			doLayout();
 		}
 
@@ -939,40 +948,69 @@ public class StockpileDialog extends JDialogCentered {
 			jAssets.setSelected(true);
 			jInclude.add(jAssets, true);
 
-			jBuyOrders = new JCheckBoxMenuItem(TabsStockpile.get().includeBuyOrders());
-			jBuyOrders.setToolTipText(TabsStockpile.get().includeBuyOrdersTip());
-			jBuyOrders.setHorizontalAlignment(JButton.LEFT);
-			jBuyOrders.setActionCommand(StockpileDialogAction.VALIDATE.name());
-			jBuyOrders.addActionListener(listener);
-			jInclude.add(jBuyOrders, true);
-
-			jSellOrders = new JCheckBoxMenuItem(TabsStockpile.get().includeSellOrders());
-			jSellOrders.setToolTipText(TabsStockpile.get().includeSellOrdersTip());
-			jSellOrders.setHorizontalAlignment(JButton.LEFT);
-			jSellOrders.setActionCommand(StockpileDialogAction.VALIDATE.name());
-			jSellOrders.addActionListener(listener);
-			jInclude.add(jSellOrders, true);
-
-			jBuyTransactions = new JCheckBoxMenuItem(TabsStockpile.get().includeBuyTransactions()); 
-			jBuyTransactions.setToolTipText(TabsStockpile.get().includeBuyTransactionsTip());
-			jBuyTransactions.setHorizontalAlignment(JButton.LEFT);
-			jBuyTransactions.setActionCommand(StockpileDialogAction.VALIDATE.name());
-			jBuyTransactions.addActionListener(listener);
-			jInclude.add(jBuyTransactions, true);
-
-			jSellTransactions = new JCheckBoxMenuItem(TabsStockpile.get().includeSellTransactions()); 
-			jSellTransactions.setToolTipText(TabsStockpile.get().includeSellTransactionsTip());
-			jSellTransactions.setHorizontalAlignment(JButton.LEFT);
-			jSellTransactions.setActionCommand(StockpileDialogAction.VALIDATE.name());
-			jSellTransactions.addActionListener(listener);
-			jInclude.add(jSellTransactions, true);
-
 			jJobs = new JCheckBoxMenuItem(TabsStockpile.get().includeJobs());
 			jJobs.setToolTipText(TabsStockpile.get().includeJobsTip());
 			jJobs.setHorizontalAlignment(JButton.LEFT);
 			jJobs.setActionCommand(StockpileDialogAction.VALIDATE.name());
 			jJobs.addActionListener(listener);
 			jInclude.add(jJobs, true);
+
+			jBuyingOrders = new JCheckBoxMenuItem(TabsStockpile.get().includeBuyOrders());
+			jBuyingOrders.setToolTipText(TabsStockpile.get().includeBuyOrdersTip());
+			jBuyingOrders.setHorizontalAlignment(JButton.LEFT);
+			jBuyingOrders.setActionCommand(StockpileDialogAction.VALIDATE.name());
+			jBuyingOrders.addActionListener(listener);
+			jInclude.add(jBuyingOrders, true);
+
+			jSellingOrders = new JCheckBoxMenuItem(TabsStockpile.get().includeSellOrders());
+			jSellingOrders.setToolTipText(TabsStockpile.get().includeSellOrdersTip());
+			jSellingOrders.setHorizontalAlignment(JButton.LEFT);
+			jSellingOrders.setActionCommand(StockpileDialogAction.VALIDATE.name());
+			jSellingOrders.addActionListener(listener);
+			jInclude.add(jSellingOrders, true);
+
+			jBoughtTransactions = new JCheckBoxMenuItem(TabsStockpile.get().includeBuyTransactions()); 
+			jBoughtTransactions.setToolTipText(TabsStockpile.get().includeBuyTransactionsTip());
+			jBoughtTransactions.setHorizontalAlignment(JButton.LEFT);
+			jBoughtTransactions.setActionCommand(StockpileDialogAction.VALIDATE.name());
+			jBoughtTransactions.addActionListener(listener);
+			jInclude.add(jBoughtTransactions, true);
+
+			jSoldTransactions = new JCheckBoxMenuItem(TabsStockpile.get().includeSellTransactions()); 
+			jSoldTransactions.setToolTipText(TabsStockpile.get().includeSellTransactionsTip());
+			jSoldTransactions.setHorizontalAlignment(JButton.LEFT);
+			jSoldTransactions.setActionCommand(StockpileDialogAction.VALIDATE.name());
+			jSoldTransactions.addActionListener(listener);
+			jInclude.add(jSoldTransactions, true);
+
+			jBuyingContracts = new JCheckBoxMenuItem(TabsStockpile.get().includeBuyingContracts());
+			jBuyingContracts.setToolTipText(TabsStockpile.get().includeBuyingContractsTip());
+			jBuyingContracts.setHorizontalAlignment(JButton.LEFT);
+			jBuyingContracts.setActionCommand(StockpileDialogAction.VALIDATE.name());
+			jBuyingContracts.addActionListener(listener);
+			jInclude.add(jBuyingContracts, true);
+
+			jSellingContracts = new JCheckBoxMenuItem(TabsStockpile.get().includeSellingContracts());
+			jSellingContracts.setToolTipText(TabsStockpile.get().includeSellingContractsTip());
+			jSellingContracts.setHorizontalAlignment(JButton.LEFT);
+			jSellingContracts.setActionCommand(StockpileDialogAction.VALIDATE.name());
+			jSellingContracts.addActionListener(listener);
+			jInclude.add(jSellingContracts, true);
+
+			jBoughtContracts = new JCheckBoxMenuItem(TabsStockpile.get().includeBoughtContracts());
+			jBoughtContracts.setToolTipText(TabsStockpile.get().includeBoughtContractsTip());
+			jBoughtContracts.setHorizontalAlignment(JButton.LEFT);
+			jBoughtContracts.setActionCommand(StockpileDialogAction.VALIDATE.name());
+			jBoughtContracts.addActionListener(listener);
+			jInclude.add(jBoughtContracts, true);
+
+			jSoldContracts = new JCheckBoxMenuItem(TabsStockpile.get().includeSoldContracts());
+			jSoldContracts.setToolTipText(TabsStockpile.get().includeSoldContractsTip());
+			jSoldContracts.setHorizontalAlignment(JButton.LEFT);
+			jSoldContracts.setActionCommand(StockpileDialogAction.VALIDATE.name());
+			jSoldContracts.addActionListener(listener);
+			jInclude.add(jSoldContracts, true);
+
 		//EDIT
 			JDropDownButton jEdit = new JDropDownButton(TabsStockpile.get().editStockpileFilter(), Images.EDIT_EDIT_WHITE.getIcon());
 			jToolBar.addButton(jEdit);
@@ -1177,14 +1215,19 @@ public class StockpileDialog extends JDialogCentered {
 			} else {
 				location = new MyLocation(0);
 			}
-			return new StockpileFilter(location, flagIDs, containers, ownerIDs, 
-					jMatchExclude.isSelected(),
-					jAssets.isSelected(),
-					jSellOrders.isSelected(),
-					jBuyOrders.isSelected(),
-					jJobs.isSelected(),
-					jBuyTransactions.isSelected(),
-					jSellTransactions.isSelected());
+			return new StockpileFilter(location, flagIDs, containers, ownerIDs
+					,jMatchExclude.isSelected()
+					,jAssets.isSelected()
+					,jSellingOrders.isSelected()
+					,jBuyingOrders.isSelected()
+					,jJobs.isSelected()
+					,jBoughtTransactions.isSelected()
+					,jSoldTransactions.isSelected()
+					,jSellingContracts.isSelected()
+					,jSoldContracts.isSelected()
+					,jBuyingContracts.isSelected()
+					,jBoughtContracts.isSelected()
+					);
 		}
 
 		public boolean isValid() {
@@ -1217,21 +1260,32 @@ public class StockpileDialog extends JDialogCentered {
 				}
 			}
 			if (!jAssets.isSelected() 
-					&& !jSellOrders.isSelected() && !jBuyOrders.isSelected()
-					&& !jBuyTransactions.isSelected() && !jSellTransactions.isSelected()
-					&& !jJobs.isSelected()) {
+					&& !jJobs.isSelected()
+					&& !jBuyingOrders.isSelected()
+					&& !jSellingOrders.isSelected()
+					&& !jBoughtTransactions.isSelected()
+					&& !jSoldTransactions.isSelected()
+					&& !jSellingContracts.isSelected()
+					&& !jBuyingContracts.isSelected()
+					&& !jSoldContracts.isSelected()
+					&& !jBoughtContracts.isSelected()
+					) {
 				ok = false;
 				jInclude.setIcon(Images.UPDATE_DONE_ERROR.getIcon());
 			} else {
 				jInclude.setIcon(Images.LOC_INCLUDE.getIcon());
 			}
 			jMatch.setIcon(jMatchExclude.isSelected() ? Images.EDIT_DELETE_WHITE.getIcon() : Images.EDIT_ADD_WHITE.getIcon());
-			jAssets.setIcon(jAssets.isSelected() ? Images.INCLUDE_ASSET_SELECTED.getIcon() : Images.TOOL_ASSETS.getIcon());
-			jSellOrders.setIcon(jSellOrders.isSelected() ? Images.INCLUDE_SELL_SELECTED.getIcon() : Images.INCLUDE_SELL.getIcon());
-			jBuyOrders.setIcon(jBuyOrders.isSelected() ? Images.INCLUDE_BUY_SELECTED.getIcon() : Images.ORDERS_BUY.getIcon());
+			jAssets.setIcon(jAssets.isSelected() ? Images.INCLUDE_ASSETS_SELECTED.getIcon() : Images.INCLUDE_ASSETS.getIcon());
 			jJobs.setIcon(jJobs.isSelected() ? Images.INCLUDE_JOBS_SELECTED.getIcon() : Images.INCLUDE_JOBS.getIcon());
-			jBuyTransactions.setIcon(jBuyTransactions.isSelected() ? Images.INCLUDE_BUY_SELECTED.getIcon() : Images.ORDERS_BUY.getIcon());
-			jSellTransactions.setIcon(jSellTransactions.isSelected() ? Images.INCLUDE_BUY_SELECTED.getIcon() : Images.ORDERS_BUY.getIcon());
+			jBuyingOrders.setIcon(jBuyingOrders.isSelected() ? Images.INCLUDE_ORDERS_SELECTED.getIcon() : Images.INCLUDE_ORDERS.getIcon());
+			jSellingOrders.setIcon(jSellingOrders.isSelected() ? Images.INCLUDE_ORDERS_SELECTED.getIcon() : Images.INCLUDE_ORDERS.getIcon());
+			jBoughtTransactions.setIcon(jBoughtTransactions.isSelected() ? Images.INCLUDE_ORDERS_SELECTED.getIcon() : Images.INCLUDE_ORDERS.getIcon());
+			jSoldTransactions.setIcon(jSoldTransactions.isSelected() ? Images.INCLUDE_ORDERS_SELECTED.getIcon() : Images.INCLUDE_ORDERS.getIcon());
+			jSellingContracts.setIcon(jSellingContracts.isSelected() ? Images.INCLUDE_CONTRACTS_SELECTED.getIcon() : Images.INCLUDE_CONTRACTS.getIcon());
+			jBuyingContracts.setIcon(jBuyingContracts.isSelected() ? Images.INCLUDE_CONTRACTS_SELECTED.getIcon() : Images.INCLUDE_CONTRACTS.getIcon());
+			jBoughtContracts.setIcon(jBoughtContracts.isSelected() ? Images.INCLUDE_CONTRACTS_SELECTED.getIcon() : Images.INCLUDE_CONTRACTS.getIcon());
+			jSoldContracts.setIcon(jSoldContracts.isSelected() ? Images.INCLUDE_CONTRACTS_SELECTED.getIcon() : Images.INCLUDE_CONTRACTS.getIcon());
 			return ok;
 		}
 

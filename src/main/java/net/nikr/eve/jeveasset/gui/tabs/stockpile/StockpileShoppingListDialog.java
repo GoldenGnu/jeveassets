@@ -343,16 +343,7 @@ class StockpileShoppingListDialog extends JDialogCentered {
 		}
 
 		private boolean matches(Object object) {
-			if (object instanceof MyAsset) {
-				return stockpileItem.matches((MyAsset) object);
-			} else if (object instanceof MyMarketOrder) {
-				return stockpileItem.matches((MyMarketOrder) object);
-			} else if (object instanceof MyIndustryJob) {
-				return stockpileItem.matches((MyIndustryJob) object);
-			} else if (object instanceof MyTransaction) {
-				return stockpileItem.matches((MyTransaction) object);
-			}
-			return false;
+			return stockpileItem.matches(object);
 		}
 
 		public long getCountMinimum() {

@@ -29,14 +29,14 @@ import net.nikr.eve.jeveasset.gui.shared.components.JLabelMultiline;
 import net.nikr.eve.jeveasset.i18n.DialoguesSettings;
 
 
-public class MarkerOrdersToolSettingsPanel extends JSettingsPanel {
+public class MarketOrdersToolSettingsPanel extends JSettingsPanel {
 
 	private final JCheckBox jSaveHistory;
 
-	public MarkerOrdersToolSettingsPanel(final Program program, final SettingsDialog settingsDialog) {
-		super(program, settingsDialog, DialoguesSettings.get().markerOrders(), Images.TOOL_MARKET_ORDERS.getIcon());
+	public MarketOrdersToolSettingsPanel(final Program program, final SettingsDialog settingsDialog) {
+		super(program, settingsDialog, DialoguesSettings.get().marketOrders(), Images.TOOL_MARKET_ORDERS.getIcon());
 
-		jSaveHistory = new JCheckBox(DialoguesSettings.get().markerOrdersSaveHistory());
+		jSaveHistory = new JCheckBox(DialoguesSettings.get().marketOrdersSaveHistory());
 
 		JLabelMultiline jSaveHistoryWarning = new JLabelMultiline(DialoguesSettings.get().saveHistoryWarning(), 2);
 

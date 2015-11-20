@@ -36,6 +36,7 @@ import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
 import net.nikr.eve.jeveasset.gui.tabs.assets.AssetsTab;
 import net.nikr.eve.jeveasset.gui.tabs.assets.MyAsset;
 import net.nikr.eve.jeveasset.gui.tabs.contracts.MyContract;
+import net.nikr.eve.jeveasset.gui.tabs.contracts.MyContractItem;
 import net.nikr.eve.jeveasset.gui.tabs.jobs.MyIndustryJob;
 import net.nikr.eve.jeveasset.gui.tabs.orders.MyMarketOrder;
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewTab;
@@ -233,6 +234,11 @@ public abstract class FakeProgram extends Program {
 
 	@Override
 	public TreeTab getTreeTab() {
+		throw new UnsupportedOperationException("Not implemented");
+	}
+
+	@Override
+	public List<MyContractItem> getContractItemList() {
 		throw new UnsupportedOperationException("Not implemented");
 	}
 }

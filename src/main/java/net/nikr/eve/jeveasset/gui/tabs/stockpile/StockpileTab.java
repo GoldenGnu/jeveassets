@@ -88,6 +88,7 @@ import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
 import net.nikr.eve.jeveasset.gui.shared.table.JSeparatorTable;
 import net.nikr.eve.jeveasset.gui.shared.table.PaddingTableCellRenderer;
 import net.nikr.eve.jeveasset.gui.tabs.assets.MyAsset;
+import net.nikr.eve.jeveasset.gui.tabs.contracts.MyContractItem;
 import net.nikr.eve.jeveasset.gui.tabs.jobs.MyIndustryJob;
 import net.nikr.eve.jeveasset.gui.tabs.orders.MyMarketOrder;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileFilter;
@@ -517,6 +518,21 @@ public class StockpileTab extends JMainTab {
 				double price = ApiIdConverter.getPrice(TYPE_ID, item.isBPC());
 				float volume = ApiIdConverter.getVolume(TYPE_ID, true);
 				item.updateValues(price, volume);
+				//ContractItems
+				if (stockpile.isContracts()) {
+					for (MyContractItem contractItem : program.getContractItemList()) {
+						if (contractItem.getContract().isCourier()) {
+							continue;
+						}
+						/*
+						long issuerID = contractItem.getContract().isForCorp() ? contractItem.getContract().getIssuerCorpID() : contractItem.getContract().getIssuerID();
+						if (!ownersName.containsKey(issuerID) && !ownersName.containsKey(contractItem.getContract().getAcceptorID())) {
+							continue; //Ignore not accepted/issued contracts
+						}
+						*/
+						item.updateContract(contractItem);
+					}
+				}
 				//Inventory AKA Assets
 				if (stockpile.isAssets()) {
 					for (MyAsset asset : program.getAssetList()) {
@@ -564,7 +580,7 @@ public class StockpileTab extends JMainTab {
 						if (transaction.getTypeID() != TYPE_ID) {
 							continue; //Ignore wrong typeID
 						}
-						item.updateTransactions(transaction);
+						item.updateTransaction(transaction);
 					}
 				}
 			}

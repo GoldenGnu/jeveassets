@@ -104,6 +104,14 @@ public abstract class TabsStockpile extends Bundle {
 	public abstract String includeSellOrdersTip();
 	public abstract String includeSellTransactions();
 	public abstract String includeSellTransactionsTip();
+	public abstract String includeBuyingContracts();
+	public abstract String includeBuyingContractsTip();
+	public abstract String includeBoughtContracts();
+	public abstract String includeBoughtContractsTip();
+	public abstract String includeSellingContracts();
+	public abstract String includeSellingContractsTip();
+	public abstract String includeSoldContracts();
+	public abstract String includeSoldContractsTip();
 	public abstract String item();
 	public abstract String items();
 	public abstract String location();
@@ -149,6 +157,10 @@ public abstract class TabsStockpile extends Bundle {
 	public abstract String columnCountNowSellOrders();
 	public abstract String columnCountNowSellTransactions();
 	public abstract String columnCountNowJobs();
+	public abstract String columnCountNowBuyingContracts();
+	public abstract String columnCountNowBoughtContracts();
+	public abstract String columnCountNowSellingContracts();
+	public abstract String columnCountNowSoldContracts();
 	public abstract String columnCountNeeded();
 	public abstract String columnCountMinimum();
 	public abstract String columnCountMinimumMultiplied();

@@ -164,7 +164,7 @@ public final class ProfileReader extends AbstractXmlReader {
 			}
 			parseContracts(currentNode, owner);
 			parseBalances(currentNode, owner);
-			parseMarkerOrders(currentNode, owner);
+			parseMarketOrders(currentNode, owner);
 			parseJournals(currentNode, owner);
 			parseTransactions(currentNode, owner);
 			parseIndustryJobs(currentNode, owner);
@@ -236,7 +236,7 @@ public final class ProfileReader extends AbstractXmlReader {
 				eveContracts.put(contract, contractItems);
 			}
 		}
-		owner.setContracts(ApiConverter.convertContracts(eveContracts));
+		owner.setContracts(ApiConverter.convertContracts(eveContracts, owner));
 	}
 
 	private Contract parseContract(final Element element) {
@@ -346,22 +346,22 @@ public final class ProfileReader extends AbstractXmlReader {
 		return accountBalance;
 	}
 
-	private void parseMarkerOrders(final Element element, final Owner owner) {
-		NodeList markerOrdersNodes = element.getElementsByTagName("markerorders");
+	private void parseMarketOrders(final Element element, final Owner owner) {
+		NodeList marketOrdersNodes = element.getElementsByTagName("markerorders");
 		List<MarketOrder> marketOrders = new ArrayList<MarketOrder>();
-		for (int a = 0; a < markerOrdersNodes.getLength(); a++) {
-			Element currentMarkerOrdersNode = (Element) markerOrdersNodes.item(a);
-			NodeList markerOrderNodes = currentMarkerOrdersNode.getElementsByTagName("markerorder");
-			for (int b = 0; b < markerOrderNodes.getLength(); b++) {
-				Element currentNode = (Element) markerOrderNodes.item(b);
-				MarketOrder apiMarketOrder = parseMarkerOrder(currentNode);
+		for (int a = 0; a < marketOrdersNodes.getLength(); a++) {
+			Element currentMarketOrdersNode = (Element) marketOrdersNodes.item(a);
+			NodeList marketOrderNodes = currentMarketOrdersNode.getElementsByTagName("markerorder");
+			for (int b = 0; b < marketOrderNodes.getLength(); b++) {
+				Element currentNode = (Element) marketOrderNodes.item(b);
+				MarketOrder apiMarketOrder = parseMarketOrder(currentNode);
 				marketOrders.add(apiMarketOrder);
 			}
 		}
 		owner.setMarketOrders(ApiConverter.convertMarketOrders(marketOrders, owner));
 	}
 
-	private MarketOrder parseMarkerOrder(final Element element) {
+	private MarketOrder parseMarketOrder(final Element element) {
 		MarketOrder apiMarketOrder = new MarketOrder();
 		long orderID = AttributeGetters.getLong(element, "orderid");
 		long charID = AttributeGetters.getLong(element, "charid");

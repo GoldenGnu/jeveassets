@@ -56,6 +56,7 @@ import net.nikr.eve.jeveasset.gui.tabs.assets.AssetsTab;
 import net.nikr.eve.jeveasset.gui.tabs.assets.MyAsset;
 import net.nikr.eve.jeveasset.gui.tabs.contracts.ContractsTab;
 import net.nikr.eve.jeveasset.gui.tabs.contracts.MyContract;
+import net.nikr.eve.jeveasset.gui.tabs.contracts.MyContractItem;
 import net.nikr.eve.jeveasset.gui.tabs.items.ItemsTab;
 import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustryJobsTab;
 import net.nikr.eve.jeveasset.gui.tabs.jobs.MyIndustryJob;
@@ -297,20 +298,20 @@ public class Program implements ActionListener {
 		int comboBox = new JComboBox().getPreferredSize().height;
 		int textField = new JTextField().getPreferredSize().height;
 		int button = new JButton().getPreferredSize().height;
-		int height = 0;
-		if (height < comboBox) {
-			height = comboBox;
+		int buttonsHeight = 0;
+		if (buttonsHeight < comboBox) {
+			buttonsHeight = comboBox;
 		}
-		if (height < textField) {
-			height = textField;
+		if (buttonsHeight < textField) {
+			buttonsHeight = textField;
 		}
-		if (height < button) {
-			height = button;
+		if (buttonsHeight < button) {
+			buttonsHeight = button;
 		}
-		if (height < 22) {
-			height = 22;
+		if (buttonsHeight < 22) {
+			buttonsHeight = 22;
 		}
-		return height;
+		return buttonsHeight;
 	}
 
 	public static int getButtonsWidth() {
@@ -500,6 +501,9 @@ public class Program implements ActionListener {
 	}
 	public List<MyContract> getContractList() {
 		return EventListManager.safeList(profileData.getContractEventList());
+	}
+	public List<MyContractItem> getContractItemList() {
+		return EventListManager.safeList(profileData.getContractItemEventList());
 	}
 	public List<MyIndustryJob> getIndustryJobsList() {
 		return EventListManager.safeList(profileData.getIndustryJobsEventList());

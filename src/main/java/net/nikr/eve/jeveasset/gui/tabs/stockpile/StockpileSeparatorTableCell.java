@@ -234,7 +234,7 @@ public class StockpileSeparatorTableCell extends SeparatorTableCell<StockpileIte
 			}
 		} else {
 			if (stockpileItem.getStockpile().getPercentFull() >= (Settings.get().getStockpileColorGroup2() / 100.0)) {
-				jColor.setBackground(new Color(255, 255, 200));
+				jColor.setBackground(new Color(200, 255, 200));
 			} else {
 				jColor.setBackground(new Color(255, 200, 200));
 			}

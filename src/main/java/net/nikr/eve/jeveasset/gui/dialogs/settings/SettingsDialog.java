@@ -44,17 +44,17 @@ public class SettingsDialog extends JDialogCentered {
 		OK, CANCEL, APPLY
 	}
 
-	private JTree jTree;
-	private JPanel jContent;
-	private JButton jOK;
-	private Map<String, JSettingsPanel> settingsPanels;
-	private Map<Object, Icon> icons;
-	private DefaultMutableTreeNode rootNode;
-	private DefaultTreeModel treeModel;
-	private CardLayout cardLayout;
+	private final JTree jTree;
+	private final JPanel jContent;
+	private final JButton jOK;
+	private final Map<String, JSettingsPanel> settingsPanels;
+	private final Map<Object, Icon> icons;
+	private final DefaultMutableTreeNode rootNode;
+	private final DefaultTreeModel treeModel;
+	private final CardLayout cardLayout;
 
-	private UserPriceSettingsPanel userPriceSettingsPanel;
-	private UserNameSettingsPanel userNameSettingsPanel;
+	private final UserPriceSettingsPanel userPriceSettingsPanel;
+	private final UserNameSettingsPanel userNameSettingsPanel;
 
 	private boolean tabSelected = false;
 
@@ -95,8 +95,8 @@ public class SettingsDialog extends JDialogCentered {
 		StockpileToolSettingsPanel stockpileToolSettingsPanel = new StockpileToolSettingsPanel(program, this);
 		add(stockpileToolSettingsPanel, toolNode);
 
-		MarkerOrdersToolSettingsPanel markerOrdersToolSettingsPanel = new MarkerOrdersToolSettingsPanel(program, this);
-		add(markerOrdersToolSettingsPanel, toolNode);
+		MarketOrdersToolSettingsPanel marketOrdersToolSettingsPanel = new MarketOrdersToolSettingsPanel(program, this);
+		add(marketOrdersToolSettingsPanel, toolNode);
 
 		TransactionsToolSettingsPanel transactionsToolSettingsPanel = new TransactionsToolSettingsPanel(program, this);
 		add(transactionsToolSettingsPanel, toolNode);
@@ -293,7 +293,7 @@ public class SettingsDialog extends JDialogCentered {
 	public class IconTreeCellRenderer implements TreeCellRenderer {
 
 		private Map<Object, Icon> icons = null;
-		private DefaultTreeCellRenderer cellRenderer = new DefaultTreeCellRenderer();
+		private final DefaultTreeCellRenderer cellRenderer = new DefaultTreeCellRenderer();
 
 		public IconTreeCellRenderer(final Map<Object, Icon> icons) {
 			this.icons = icons;

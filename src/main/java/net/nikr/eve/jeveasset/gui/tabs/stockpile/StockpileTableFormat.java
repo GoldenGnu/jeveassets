@@ -176,6 +176,46 @@ public enum StockpileTableFormat implements EnumTableColumn<StockpileItem> {
 			return from.getJobsCountNow();
 		}
 	},
+	COUNT_NOW_BUYING_CONTRACTS(Long.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsStockpile.get().columnCountNowBuyingContracts();
+		}
+		@Override
+		public Object getColumnValue(final StockpileItem from) {
+			return from.getBuyingContractsCountNow();
+		}
+	},
+	COUNT_NOW_BOUGHT_CONTRACTS(Long.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsStockpile.get().columnCountNowBoughtContracts();
+		}
+		@Override
+		public Object getColumnValue(final StockpileItem from) {
+			return from.getBoughtContractsCountNow();
+		}
+	},
+	COUNT_NOW_SELLING_CONTRACTS(Long.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsStockpile.get().columnCountNowSellingContracts();
+		}
+		@Override
+		public Object getColumnValue(final StockpileItem from) {
+			return from.getSellingContractsCountNow();
+		}
+	},
+	COUNT_NOW_SOLD_CONTRACTS(Long.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsStockpile.get().columnCountNowSoldContracts();
+		}
+		@Override
+		public Object getColumnValue(final StockpileItem from) {
+			return from.getSoldContractsCountNow();
+		}
+	},
 	PRICE(Double.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {

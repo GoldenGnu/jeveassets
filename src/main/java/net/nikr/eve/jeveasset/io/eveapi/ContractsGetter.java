@@ -99,7 +99,7 @@ public class ContractsGetter extends AbstractApiGetter<ContractsResponse>{
 					break;
 				}
 			}
-			getOwner().getContracts().put(ApiConverter.toContract(contract), contractItems);
+			getOwner().getContracts().put(ApiConverter.toContract(contract, getOwner()), contractItems);
 		}
 	}
 
