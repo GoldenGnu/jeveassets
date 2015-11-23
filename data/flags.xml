@@ -134,4 +134,5 @@
     <row flagid="154" flagname="QuafeBay" flagtext="Quafe Bay"/>
     <row flagid="155" flagname="FleetHangar" flagtext="Fleet Hangar"/>
     <row flagid="156" flagname="HiddenModifiers" flagtext="Hidden Modifiers"/>
+    <row flagid="157" flagname="Structure Offline" flagtext="StructureOffline"/>
 </rows>
