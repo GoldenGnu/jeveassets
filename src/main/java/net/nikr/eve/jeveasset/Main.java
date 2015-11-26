@@ -149,6 +149,9 @@ public final class Main {
 		//eveonline.com is not IPv6 ready...
 		System.setProperty("java.net.preferIPv4Stack" , "true");
 
+		//XXX - Workaround for Java Bug
+		System.setProperty("java.util.Arrays.useLegacyMergeSort", "true");
+
 		javax.swing.SwingUtilities.invokeLater(
 			new Runnable() {
 				@Override
