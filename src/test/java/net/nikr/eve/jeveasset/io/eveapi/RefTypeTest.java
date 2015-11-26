@@ -22,8 +22,9 @@
 package net.nikr.eve.jeveasset.io.eveapi;
 
 import com.beimin.eveapi.exception.ApiException;
-import com.beimin.eveapi.model.shared.RefType;
 import com.beimin.eveapi.response.eve.RefTypesResponse;
+import java.util.HashMap;
+import java.util.Map;
 import org.junit.After;
 import org.junit.AfterClass;
 import static org.junit.Assert.assertEquals;
@@ -31,7 +32,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class RefTypeTest {
@@ -53,14 +53,19 @@ public class RefTypeTest {
 	/**
 	 * Test of EVEAPI RefType enum (via the API - need to be online)
 	 */
-	@Ignore @Test
+	@Test
 	public void testEnum() {
 		try {
+			Map<Integer, com.beimin.eveapi.model.eve.RefType> map = new HashMap<Integer, com.beimin.eveapi.model.eve.RefType>();
 			RefTypesResponse response = new com.beimin.eveapi.parser.eve.RefTypesParser().getResponse();
 			for (com.beimin.eveapi.model.eve.RefType apiRefType : response.getAll()) {
-				RefType refType = RefType.forID(apiRefType.getRefTypeID());
+				map.put(apiRefType.getRefTypeID(), apiRefType);
+				com.beimin.eveapi.model.shared.RefType refType = com.beimin.eveapi.model.shared.RefType.forID(apiRefType.getRefTypeID());
 				assertNotNull("RefType missing - ID: " + apiRefType.getRefTypeID() + " (" + apiRefType.getRefTypeName() + ")", refType);
 				assertEquals("RefType ID: " + refType.getId() + " wrong name", apiRefType.getRefTypeName(), refType.getName());
+			}
+			for (com.beimin.eveapi.model.shared.RefType refType : com.beimin.eveapi.model.shared.RefType.values()) {
+				assertNotNull(refType.name() + " no longer in the API", map.get(refType.getId()));
 			}
 		} catch (ApiException ex) {
 			fail("Fail to get RefTypes");
