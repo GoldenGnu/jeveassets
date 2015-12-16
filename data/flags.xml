@@ -135,4 +135,18 @@
     <row flagid="155" flagname="FleetHangar" flagtext="Fleet Hangar"/>
     <row flagid="156" flagname="HiddenModifiers" flagtext="Hidden Modifiers"/>
     <row flagid="157" flagname="Structure Offline" flagtext="StructureOffline"/>
+    <row flagid="158" flagname="Fighter Bay" flagtext="FighterBay"/>
+    <row flagid="159" flagname="Fighter Tube 0" flagtext="FighterTube0"/>
+    <row flagid="160" flagname="Fighter Tube 1" flagtext="FighterTube1"/>
+    <row flagid="161" flagname="Fighter Tube 2" flagtext="FighterTube2"/>
+    <row flagid="162" flagname="Fighter Tube 3" flagtext="FighterTube3"/>
+    <row flagid="163" flagname="Fighter Tube 4" flagtext="FighterTube4"/>
+    <row flagid="164" flagname="StructureServiceSlot0" flagtext="Structure service slot 1"/>
+    <row flagid="165" flagname="StructureServiceSlot1" flagtext="Structure service slot 2"/>
+    <row flagid="166" flagname="StructureServiceSlot2" flagtext="Structure service slot 3"/>
+    <row flagid="167" flagname="StructureServiceSlot3" flagtext="Structure service slot 4"/>
+    <row flagid="168" flagname="StructureServiceSlot4" flagtext="Structure service slot 5"/>
+    <row flagid="169" flagname="StructureServiceSlot5" flagtext="Structure service slot 6"/>
+    <row flagid="170" flagname="StructureServiceSlot6" flagtext="Structure service slot 7"/>
+    <row flagid="171" flagname="StructureServiceSlot7" flagtext="Structure service slot 8"/>
 </rows>
