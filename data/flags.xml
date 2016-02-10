@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <rows>
     <!--Generated from Eve Online Toolkit. ©CCP hf. All rights reserved. Used with permission.-->
     <row flagid="0" flagname="None" flagtext="None"/>
@@ -37,6 +37,7 @@
     <row flagid="33" flagname="HiSlot6" flagtext="High power slot 7"/>
     <row flagid="34" flagname="HiSlot7" flagtext="High power slot 8"/>
     <row flagid="35" flagname="Fixed Slot" flagtext="Fixed Slot"/>
+    <row flagid="36" flagname="AssetSafety" flagtext="Asset Safety"/>
     <row flagid="40" flagname="PromenadeSlot1" flagtext="Promenade Slot 1"/>
     <row flagid="41" flagname="PromenadeSlot2" flagtext="Promenade Slot 2"/>
     <row flagid="42" flagname="PromenadeSlot3" flagtext="Promenade Slot 3"/>
