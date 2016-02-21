@@ -185,7 +185,7 @@ public final class ApiConverter {
 		return contracts;
 	}
 
-	public static List<MyContractItem> convertContractItems(final List<ContractItem> eveContractItems, MyContract contract) {
+	public static <T extends ContractItem> List<MyContractItem> convertContractItems(final List<T> eveContractItems, MyContract contract) {
 		List<MyContractItem> contractItems = new ArrayList<MyContractItem>();
 		for (ContractItem eveContractItem : eveContractItems) {
 			contractItems.add(toContractItem(eveContractItem, contract));

@@ -90,16 +90,25 @@ public class ContractsGetter extends AbstractApiGetter<ContractsResponse>{
 		existingContract.putAll(getOwner().getContracts());
 		//Remove existin contracts
 		getOwner().getContracts().clear();
+
+		//Create contract item cache (Optimization)
+		Map<Long, List<MyContractItem>> contractItemsCache = new HashMap<Long, List<MyContractItem>>();
+		for (Map.Entry<MyContract, List<MyContractItem>> entry : existingContract.entrySet()) {
+			contractItemsCache.put(entry.getKey().getContractID(), entry.getValue());
+		}
+
 		for (Contract contract : contracts) {
-			//Find existing contract
-			List<MyContractItem> contractItems = new ArrayList<MyContractItem>();
-			for (Map.Entry<MyContract, List<MyContractItem>> entry : existingContract.entrySet()) {
-				if (entry.getKey().getContractID() == contract.getContractID()) {
-					contractItems = entry.getValue();
-					break;
-				}
+			//Find existing contract items
+			List<MyContractItem> existingContractItems = contractItemsCache.get(contract.getContractID());
+			if (existingContractItems == null) {
+				existingContractItems = new ArrayList<MyContractItem>();
 			}
-			getOwner().getContracts().put(ApiConverter.toContract(contract), contractItems);
+			//Convert contract
+			MyContract myContract = ApiConverter.toContract(contract);
+			//This is needed because we need to update the parent contract or the data will be incorrect
+			List<MyContractItem> contractItems = ApiConverter.convertContractItems(existingContractItems, myContract);
+			//Add
+			getOwner().getContracts().put(myContract, contractItems);
 		}
 	}
 
