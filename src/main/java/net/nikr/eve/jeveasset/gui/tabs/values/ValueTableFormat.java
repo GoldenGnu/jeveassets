@@ -118,6 +118,16 @@ public enum ValueTableFormat implements EnumTableColumn<Value> {
 			return from.getContractCollateral();
 		}
 	},
+	CONTRACT_VALUE(Double.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsValues.get().columnContractValue();
+		}
+		@Override
+		public Object getColumnValue(final Value from) {
+			return from.getContractValue();
+		}
+	},
 	BEST_ASSET_NAME(String.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {

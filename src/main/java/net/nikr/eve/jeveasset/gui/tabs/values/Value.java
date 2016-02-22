@@ -38,6 +38,7 @@ public class Value implements Comparable<Value> {
 	private double balance = 0;
 	private double manufacturing;
 	private double contractCollateral;
+	private double contractValue = 0;
 	private MyAsset bestAsset = null;
 	private MyAsset bestShip = null;
 	private MyAsset bestShipFitted = null;
@@ -89,6 +90,10 @@ public class Value implements Comparable<Value> {
 		this.contractCollateral = this.contractCollateral + contractCollateral;
 	}
 
+	public void addContractValue(double contractValue) {
+		this.contractValue = this.contractValue + contractValue;
+	}
+
 	public Date getDate() {
 		return date;
 	}
@@ -123,6 +128,10 @@ public class Value implements Comparable<Value> {
 
 	public double getContractCollateral() {
 		return contractCollateral;
+	}
+
+	public double getContractValue() {
+		return contractValue;
 	}
 
 	public String getBestAssetName() {
@@ -181,7 +190,7 @@ public class Value implements Comparable<Value> {
 	}
 
 	public double getTotal() {
-		return getAssets() + getBalance() + getEscrows() + getSellOrders() + getManufacturing() + getContractCollateral();
+		return getAssets() + getBalance() + getEscrows() + getSellOrders() + getManufacturing() + getContractCollateral() + getContractValue();
 	}
 
 	public void setAssets(double assets) {
@@ -210,6 +219,10 @@ public class Value implements Comparable<Value> {
 
 	public void setContractCollateral(double contractCollateral) {
 		this.contractCollateral = contractCollateral;
+	}
+
+	public void setContractValue(double contractValue) {
+		this.contractValue = contractValue;
 	}
 
 	private void setBestAsset(MyAsset bestAsset) {

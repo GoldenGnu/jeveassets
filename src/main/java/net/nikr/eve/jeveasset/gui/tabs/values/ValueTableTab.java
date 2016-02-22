@@ -42,6 +42,7 @@ import javax.swing.JScrollPane;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.EventListManager;
 import net.nikr.eve.jeveasset.data.MyAccountBalance;
+import net.nikr.eve.jeveasset.data.Owner;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
@@ -56,6 +57,7 @@ import net.nikr.eve.jeveasset.gui.shared.table.JAutoColumnTable;
 import net.nikr.eve.jeveasset.gui.shared.table.PaddingTableCellRenderer;
 import net.nikr.eve.jeveasset.gui.tabs.assets.MyAsset;
 import net.nikr.eve.jeveasset.gui.tabs.contracts.MyContract;
+import net.nikr.eve.jeveasset.gui.tabs.contracts.MyContractItem;
 import net.nikr.eve.jeveasset.gui.tabs.jobs.MyIndustryJob;
 import net.nikr.eve.jeveasset.gui.tabs.orders.MyMarketOrder;
 import net.nikr.eve.jeveasset.i18n.General;
@@ -206,29 +208,143 @@ public class ValueTableTab extends JMainTab {
 		for (MyContract contract : program.getContractList()) {
 			if (contract.isCourier()) {
 				//Transporting cargo (will get collateral back)
-				if (program.getOwners(false).contains(contract.getAcceptor()) && contract.getStatus() == ContractStatus.INPROGRESS) {
-					addContract(contract, values, total, date, contract.getAcceptor());
+				if (program.getOwnerNames(false).contains(contract.getAcceptor()) && contract.getStatus() == ContractStatus.INPROGRESS) {
+					addContractCollateral(contract, values, total, date, contract.getAcceptor());
 				}
 				//Shipping cargo (will get collateral or cargo back)
-				if (program.getOwners(false).contains(contract.getIssuer())
+				if (program.getOwnerNames(false).contains(contract.getIssuer())
 						&&
 						(
 						contract.getStatus() == ContractStatus.INPROGRESS
 						|| contract.getStatus() == ContractStatus.OUTSTANDING
 						)
 						) {
-					addContract(contract, values, total, date, contract.getIssuer());
+					addContractCollateral(contract, values, total, date, contract.getIssuer());
+				}
+			}
+		}
+		//Contract Isk
+		System.out.println("-- Contract Isk --");
+		for (MyContract contract : program.getContractList()) {
+			if (contract.isCourier()) {
+				continue; //Ignore courier contracts
+			}
+			Owner issuer = program.getOwners().get(contract.getIssuer());
+			Owner acceptor = program.getOwners().get(contract.getAcceptor());
+			System.out.println("");
+			System.out.println(contract.getTitle()+":");
+			if (issuer != null) { //Issuer
+				if (contract.getStatus() == ContractStatus.OUTSTANDING) { //Not Completed
+					//Cost have been included in Balance -> Counter Isk (as we still own the Isk)
+					if (issuer.getBalanceLastUpdate() != null && contract.getDateIssued().before(issuer.getBalanceLastUpdate())) {
+						//Buying: +Reward (Still own the Isk)
+						if (contract.getReward() > 0) {
+							System.out.println(issuer.getName() + " Buying: " + contract.getReward());
+						}
+						addContractValue(values, total, date, issuer.getName(), contract.getReward());
+					}
+				} else { //Completed
+					//Isk have not been updated in Balance yet
+					if (issuer.getBalanceLastUpdate() != null && contract.getDateCompleted().after(issuer.getBalanceLastUpdate())) {
+						if (contract.getPrice() > 0) {
+							System.out.println(issuer.getName() + " Sold: " + contract.getPrice());
+						}
+						if (contract.getReward() > 0) {
+							System.out.println(issuer.getName() + " Bought: " + -contract.getReward());
+						}
+						//Sold: +Price
+						addContractValue(values, total, date, issuer.getName(), contract.getPrice());
+						//Bought: -Reward
+						addContractValue(values, total, date, issuer.getName(), -contract.getReward());
+					}
+				}
+			}
+			if (acceptor != null && contract.getDateCompleted() != null) { //Completed
+				//Isk have not been updated in Balance yet
+				if (acceptor.getBalanceLastUpdate() != null && contract.getDateCompleted().after(acceptor.getBalanceLastUpdate())) {
+					if (contract.getPrice() > 0) {
+						System.out.println(acceptor.getName() + " Bought: " + -contract.getPrice());
+					}
+					if (contract.getReward() > 0) {
+						System.out.println(acceptor.getName() + " Sold: " + contract.getReward());
+					}
+					//Bought: -Price
+					addContractValue(values, total, date, acceptor.getName(), -contract.getPrice());
+					//Sold: +Price
+					addContractValue(values, total, date, acceptor.getName(), contract.getReward());
+				}
+			}
+		}
+		System.out.println("-- Contract Items --");
+		//Contract Items
+		for (MyContractItem contractItem : program.getContractItemList()) {
+			MyContract contract = contractItem.getContract();
+			if (contract.isCourier()) {
+				continue; //Ignore courier contracts
+			}
+
+			Owner issuer = program.getOwners().get(contract.getIssuer());
+			Owner acceptor = program.getOwners().get(contract.getAcceptor());
+
+			System.out.println("");
+			System.out.println(contract.getTitle()+":");
+			//Issuer
+			if (issuer != null) {
+				if (contract.getStatus() == ContractStatus.OUTSTANDING) { //Not Completed
+					if (contractItem.isIncluded()) {
+						//Items have been removed from Assets -> Counter Items (as we still own the items)
+						if (issuer.getAssetLastUpdate() != null && contract.getDateIssued().before(issuer.getAssetLastUpdate())) {
+							//Selling: +Items Value (Still own items)
+							System.out.println(issuer.getName() + " Selling: " + (contractItem.getDynamicPrice() * contractItem.getQuantity()));
+							addContractValue(values, total, date, issuer.getName(), contractItem.getDynamicPrice() * contractItem.getQuantity());
+						}
+					} else {
+						
+					}
+				} else if (contract.getDateCompleted() != null){ //Completed
+					//Items have not been updated in Assets yet
+					if (issuer.getAssetLastUpdate() != null && contract.getDateCompleted().after(issuer.getAssetLastUpdate())) {
+						if (contractItem.isIncluded()) {
+							//Sold: -Item Value
+							System.out.println(issuer.getName() + " Sold: " + (-contractItem.getDynamicPrice() * contractItem.getQuantity()));
+							addContractValue(values, total, date, issuer.getName(), (-contractItem.getDynamicPrice() * contractItem.getQuantity()));
+						} else { //Add Items Value
+							//Bought: + Item Value
+							System.out.println(issuer.getName() + " Bought: " + (contractItem.getDynamicPrice() * contractItem.getQuantity()));
+							addContractValue(values, total, date, issuer.getName(), contractItem.getDynamicPrice() * contractItem.getQuantity());
+						}
+					}
+				}
+			}
+			if (acceptor != null && contract.getDateCompleted() != null) { //Completed
+				//Items have not been updated in Assets yet
+				if (acceptor.getAssetLastUpdate() != null && contract.getDateCompleted().after(acceptor.getAssetLastUpdate())) {
+					if (contractItem.isIncluded()) {
+						//Bought: + Item Value
+						System.out.println(acceptor.getName() + " Bought: " + (contractItem.getDynamicPrice() * contractItem.getQuantity()));
+						addContractValue(values, total, date, acceptor.getName(), contractItem.getDynamicPrice() * contractItem.getQuantity());
+					} else {
+						//Sold: -Item Value
+						System.out.println(acceptor.getName() + " Sold: " + (-contractItem.getDynamicPrice() * contractItem.getQuantity()));
+						addContractValue(values, total, date, acceptor.getName(), (-contractItem.getDynamicPrice() * contractItem.getQuantity()));
+					}
 				}
 			}
 		}
 		return values;
 	}
 
-	private static void addContract(MyContract contract, Map<String, Value> values, Value total, Date date, String owner) {
+	private static void addContractCollateral(MyContract contract, Map<String, Value> values, Value total, Date date, String owner) {
 		double contractCollateral = contract.getCollateral();
 		Value value = getValue(values, owner, date);
 		value.addContractCollateral(contractCollateral);
 		total.addContractCollateral(contractCollateral);
+	}
+
+	private static void addContractValue(Map<String, Value> values, Value total, Date date, String owner, double change) {
+		Value value = getValue(values, owner, date);
+		value.addContractValue(change);
+		total.addContractValue(change);
 	}
 
 	@Override

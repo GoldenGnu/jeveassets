@@ -38,14 +38,12 @@ import static com.beimin.eveapi.model.shared.ContractType.ITEMEXCHANGE;
 import static com.beimin.eveapi.model.shared.ContractType.LOAN;
 import java.util.Date;
 import net.nikr.eve.jeveasset.data.MyLocation;
-import net.nikr.eve.jeveasset.data.Owner;
 import net.nikr.eve.jeveasset.data.types.LocationType;
 import net.nikr.eve.jeveasset.i18n.TabsContracts;
 
 
 public class MyContract extends Contract implements LocationType {
 
-	private final Owner owner;
 	private final MyLocation endStation;
 	private final MyLocation startStation;
 	private String acceptor = "";
@@ -53,8 +51,10 @@ public class MyContract extends Contract implements LocationType {
 	private String issuerCorp = "";
 	private String issuer = "";
 
-	public MyContract(Contract contract, Owner owner, MyLocation startStation, MyLocation endStation) {
-		this.owner = owner;
+	private boolean issuerAfterAssets = false;
+	private boolean acceptorAfterAssets = false;
+
+	public MyContract(Contract contract, MyLocation startStation, MyLocation endStation) {
 		this.endStation = endStation;
 		this.startStation = startStation;
 		this.setAcceptorID(contract.getAcceptorID());
@@ -135,12 +135,27 @@ public class MyContract extends Contract implements LocationType {
 		return endStation;
 	}
 
-	public boolean isAfterAssets() {
-		Date date = owner.getAssetLastUpdate();
-		if (date != null) {
-			return getDateCompleted().after(date);
+	public boolean isIssuerAfterAssets() {
+		return issuerAfterAssets;
+	}
+
+	public void setIssuerAfterAssets(Date date) {
+		if (date != null && getDateCompleted() != null) {
+			this.issuerAfterAssets = getDateCompleted().after(date);
 		} else {
-			return false;
+			this.issuerAfterAssets = false;
+		}
+	}
+
+	public boolean isAcceptorAfterAssets() {
+		return acceptorAfterAssets;
+	}
+
+	public void setAcceptorAfterAssets(Date date) {
+		if (date != null && getDateCompleted() != null) {
+			this.acceptorAfterAssets = getDateCompleted().after(date);
+		} else {
+			this.acceptorAfterAssets = false;
 		}
 	}
 

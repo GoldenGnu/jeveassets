@@ -204,6 +204,7 @@ public class SettingsWriter extends AbstractXmlWriter {
 				dataNode.setAttributeNS(null, "walletbalance", String.valueOf(value.getBalance()));
 				dataNode.setAttributeNS(null, "manufacturing", String.valueOf(value.getManufacturing()));
 				dataNode.setAttributeNS(null, "contractcollateral", String.valueOf(value.getContractCollateral()));
+				dataNode.setAttributeNS(null, "contractvalue", String.valueOf(value.getContractValue()));
 				ownerNode.appendChild(dataNode);
 			}
 		}

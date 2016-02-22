@@ -26,6 +26,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
@@ -34,6 +35,7 @@ import javax.swing.Timer;
 import net.nikr.eve.jeveasset.data.EventListManager;
 import net.nikr.eve.jeveasset.data.MyAccount;
 import net.nikr.eve.jeveasset.data.MyAccountBalance;
+import net.nikr.eve.jeveasset.data.Owner;
 import net.nikr.eve.jeveasset.data.ProfileData;
 import net.nikr.eve.jeveasset.data.ProfileManager;
 import net.nikr.eve.jeveasset.data.Settings;
@@ -517,8 +519,11 @@ public class Program implements ActionListener {
 	public List<MyAccountBalance> getAccountBalanceList() {
 		return EventListManager.safeList(profileData.getAccountBalanceEventList());
 	}
-	public List<String> getOwners(boolean all) {
-		return profileData.getOwners(all);
+	public List<String> getOwnerNames(boolean all) {
+		return profileData.getOwnerNames(all);
+	}
+	public Map<String, Owner> getOwners() {
+		return profileData.getOwners();
 	}
 	public List<MyAccount> getAccounts() {
 		return profileManager.getAccounts();

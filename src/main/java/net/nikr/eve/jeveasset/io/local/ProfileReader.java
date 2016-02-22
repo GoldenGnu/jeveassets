@@ -176,10 +176,14 @@ public final class ProfileReader extends AbstractXmlReader {
 		String name = AttributeGetters.getString(node, "name");
 		int ownerID = AttributeGetters.getInt(node, "id");
 		Date assetsNextUpdate = new Date(AttributeGetters.getLong(node, "assetsnextupdate"));
-		Date balanceNextUpdate = new Date(AttributeGetters.getLong(node, "balancenextupdate"));
 		Date assetsLastUpdate = null;
 		if (AttributeGetters.haveAttribute(node, "assetslastupdate")) {
 			assetsLastUpdate = new Date(AttributeGetters.getLong(node, "assetslastupdate"));
+		}
+		Date balanceNextUpdate = new Date(AttributeGetters.getLong(node, "balancenextupdate"));
+		Date balanceLastUpdate = null;
+		if (AttributeGetters.haveAttribute(node, "balancelastupdate")) {
+			balanceLastUpdate = new Date(AttributeGetters.getLong(node, "balancelastupdate"));
 		}
 		boolean showAssets = true;
 		if (AttributeGetters.haveAttribute(node, "show")) {
@@ -214,7 +218,7 @@ public final class ProfileReader extends AbstractXmlReader {
 			blueprintsnextupdate = new Date(AttributeGetters.getLong(node, "blueprintsnextupdate"));
 		}
 
-		return new Owner(account, name, ownerID, showAssets, assetsLastUpdate, assetsNextUpdate, balanceNextUpdate, marketOrdersNextUpdate, journalNextUpdate, transactionsNextUpdate, industryJobsNextUpdate, contractsNextUpdate, locationsNextUpdate, blueprintsnextupdate);
+		return new Owner(account, name, ownerID, showAssets, assetsLastUpdate, assetsNextUpdate, balanceLastUpdate, balanceNextUpdate, marketOrdersNextUpdate, journalNextUpdate, transactionsNextUpdate, industryJobsNextUpdate, contractsNextUpdate, locationsNextUpdate, blueprintsnextupdate);
 	}
 
 	private void parseContracts(final Element element, final Owner owner) {
@@ -236,7 +240,7 @@ public final class ProfileReader extends AbstractXmlReader {
 				eveContracts.put(contract, contractItems);
 			}
 		}
-		owner.setContracts(ApiConverter.convertContracts(eveContracts, owner));
+		owner.setContracts(ApiConverter.convertContracts(eveContracts));
 	}
 
 	private Contract parseContract(final Element element) {

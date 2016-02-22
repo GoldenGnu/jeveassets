@@ -127,6 +127,7 @@ public class TrackerTab extends JMainTab {
 	private final JCheckBox jEscrowsToCover;
 	private final JCheckBox jManufacturing;
 	private final JCheckBox jContractCollateral;
+	private final JCheckBox jContractValue;
 	private final JCheckBox jAllProfiles;
 	private final JPopupMenu jPopupMenu;
 	private final JMenuItem jIskValue;
@@ -146,6 +147,7 @@ public class TrackerTab extends JMainTab {
 	private TimePeriodValues escrowsToCover;
 	private TimePeriodValues manufacturing;
 	private TimePeriodValues contractCollateral;
+	private TimePeriodValues contractValue;
 	private Map<SimpleTimePeriod, Value> cache;
 
 	public TrackerTab(Program program) {
@@ -253,6 +255,11 @@ public class TrackerTab extends JMainTab {
 		jContractCollateral.setActionCommand(TrackerAction.UPDATE_SHOWN.name());
 		jContractCollateral.addActionListener(listener);
 
+		jContractValue = new JCheckBox(TabsTracker.get().contractValue());
+		jContractValue.setSelected(true);
+		jContractValue.setActionCommand(TrackerAction.UPDATE_SHOWN.name());
+		jContractValue.addActionListener(listener);
+
 		jHelp = new JLabel(TabsTracker.get().help());
 		/*
 		jHelp.setEditable(false);
@@ -339,6 +346,7 @@ public class TrackerTab extends JMainTab {
 					.addComponent(jEscrowsToCover, PANEL_WIDTH, PANEL_WIDTH, PANEL_WIDTH)
 					.addComponent(jManufacturing, PANEL_WIDTH, PANEL_WIDTH, PANEL_WIDTH)
 					.addComponent(jContractCollateral, PANEL_WIDTH, PANEL_WIDTH, PANEL_WIDTH)
+					.addComponent(jContractValue, PANEL_WIDTH, PANEL_WIDTH, PANEL_WIDTH)
 					.addComponent(jOwnersSeparator, PANEL_WIDTH, PANEL_WIDTH, PANEL_WIDTH)
 					.addComponent(jAllProfiles, PANEL_WIDTH, PANEL_WIDTH, PANEL_WIDTH)
 					.addComponent(jOwnersScroll, PANEL_WIDTH, PANEL_WIDTH, PANEL_WIDTH)
@@ -372,6 +380,7 @@ public class TrackerTab extends JMainTab {
 					.addComponent(jEscrowsToCover, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 					.addComponent(jManufacturing, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 					.addComponent(jContractCollateral, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jContractValue, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 					//.addGap(10)
 					.addComponent(jOwnersSeparator, 3, 3, 3)
 					//.addGap(10)
@@ -438,7 +447,7 @@ public class TrackerTab extends JMainTab {
 		} else {
 			ownersList = new ArrayList<String>();
 			for (String s : owners) {
-				if (program.getOwners(false).contains(s)) {
+				if (program.getOwnerNames(false).contains(s)) {
 					ownersList.add(s);
 				}
 			}
@@ -482,6 +491,7 @@ public class TrackerTab extends JMainTab {
 		escrowsToCover = new TimePeriodValues(TabsTracker.get().escrowsToCover());
 		manufacturing = new TimePeriodValues(TabsTracker.get().manufacturing());
 		contractCollateral = new TimePeriodValues(TabsTracker.get().contractCollateral());
+		contractValue = new TimePeriodValues(TabsTracker.get().contractValue());
 		Date from = jFrom.getDate();
 		if (from != null) { //Start of day
 			Calendar calendar = Calendar.getInstance();
@@ -515,6 +525,7 @@ public class TrackerTab extends JMainTab {
 						value.addEscrowsToCover(data.getEscrowsToCover());
 						value.addManufacturing(data.getManufacturing());
 						value.addContractCollateral(data.getContractCollateral());
+						value.addContractValue(data.getContractValue());
 						value.addSellOrders(data.getSellOrders());
 						value.addBalance(data.getBalance());
 					}
@@ -528,6 +539,7 @@ public class TrackerTab extends JMainTab {
 				escrowsToCover.add(entry.getKey(), entry.getValue().getEscrowsToCover());
 				manufacturing.add(entry.getKey(), entry.getValue().getManufacturing());
 				contractCollateral.add(entry.getKey(), entry.getValue().getContractCollateral());
+				contractValue.add(entry.getKey(), entry.getValue().getContractValue());
 			}
 		}
 		updateShown();
@@ -563,6 +575,9 @@ public class TrackerTab extends JMainTab {
 				if (jContractCollateral.isSelected() && contractCollateral != null) {
 					t += entry.getValue().getContractCollateral();
 				}
+				if (jContractValue.isSelected() && contractValue != null) {
+					t += entry.getValue().getContractValue();
+				}
 				total.add(entry.getKey(), t);
 			}
 			dataset.addSeries(total);
@@ -596,6 +611,10 @@ public class TrackerTab extends JMainTab {
 		if (jContractCollateral.isSelected() && contractCollateral != null) {
 			dataset.addSeries(contractCollateral);
 			updateRender(dataset.getSeriesCount() - 1, Color.PINK);
+		}
+		if (jContractValue.isSelected() && contractValue != null) {
+			dataset.addSeries(contractValue);
+			updateRender(dataset.getSeriesCount() - 1, Color.ORANGE);
 		}
 		//Add empty dataset
 		if (dataset.getSeriesCount() == 0) {
@@ -701,7 +720,8 @@ public class TrackerTab extends JMainTab {
 						&& jEscrows.isSelected()
 						&& jEscrowsToCover.isSelected()
 						&& jManufacturing.isSelected()
-						&& jContractCollateral.isSelected());
+						&& jContractCollateral.isSelected()
+						&& jContractValue.isSelected());
 			} else if (TrackerAction.ALL.name().equals(e.getActionCommand())) {
 				jTotal.setSelected(jAll.isSelected());
 				jWalletBalance.setSelected(jAll.isSelected());
@@ -711,6 +731,7 @@ public class TrackerTab extends JMainTab {
 				jEscrowsToCover.setSelected(jAll.isSelected());
 				jManufacturing.setSelected(jAll.isSelected());
 				jContractCollateral.setSelected(jAll.isSelected());
+				jContractValue.setSelected(jAll.isSelected());
 				updateShown();
 			} else if (TrackerAction.EDIT.name().equals(e.getActionCommand())) {
 				jNextChart.getXYPlot().setDomainCrosshairVisible(true);

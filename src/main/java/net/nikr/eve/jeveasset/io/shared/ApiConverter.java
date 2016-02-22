@@ -175,10 +175,10 @@ public final class ApiConverter {
 		return createAsset(null, owner, count, flagID, itemID, typeID, locationID, singleton, rawQuantity, flag);
 	}
 
-	public static Map<MyContract, List<MyContractItem>> convertContracts(final Map<Contract, List<ContractItem>> eveContracts, final Owner owner) {
+	public static Map<MyContract, List<MyContractItem>> convertContracts(final Map<Contract, List<ContractItem>> eveContracts) {
 		Map<MyContract, List<MyContractItem>> contracts = new HashMap<MyContract, List<MyContractItem>>();
 		for (Entry<Contract, List<ContractItem>> entry : eveContracts.entrySet()) {
-			MyContract contract = toContract(entry.getKey(), owner);
+			MyContract contract = toContract(entry.getKey());
 			List<MyContractItem> contractItems = convertContractItems(entry.getValue(), contract);
 			contracts.put(contract, contractItems);
 		}
@@ -193,10 +193,10 @@ public final class ApiConverter {
 		return contractItems;
 	}
 
-	public static MyContract toContract(final Contract eveContract, final Owner owner) {
+	public static MyContract toContract(final Contract eveContract) {
 		MyLocation endStation = ApiIdConverter.getLocation(eveContract.getEndStationID());
 		MyLocation startStation = ApiIdConverter.getLocation(eveContract.getStartStationID());
-		return new MyContract(eveContract, owner, startStation, endStation);
+		return new MyContract(eveContract, startStation, endStation);
 	}
 
 	private static MyContractItem toContractItem(final ContractItem eveContractItem, MyContract contract) {

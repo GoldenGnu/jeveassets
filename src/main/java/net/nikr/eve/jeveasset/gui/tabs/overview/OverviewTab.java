@@ -264,7 +264,7 @@ public class OverviewTab extends JMainTab {
 
 	@Override
 	public void updateData() {
-		jOwner.setModel(new DefaultComboBoxModel(program.getOwners(true).toArray()));
+		jOwner.setModel(new DefaultComboBoxModel(program.getOwnerNames(true).toArray()));
 		updateTable();
 	}
 

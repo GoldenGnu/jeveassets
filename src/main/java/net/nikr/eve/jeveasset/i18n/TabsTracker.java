@@ -40,6 +40,7 @@ public abstract class TabsTracker extends Bundle {
 	public abstract String cancel();
 	public abstract String clear();
 	public abstract String contractCollateral();
+	public abstract String contractValue();
 	public abstract String date();
 	public abstract String day1();
 	public abstract String delete();

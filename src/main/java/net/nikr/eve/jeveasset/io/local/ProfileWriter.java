@@ -106,6 +106,9 @@ public final class ProfileWriter extends AbstractXmlWriter {
 				node.setAttributeNS(null, "assetslastupdate", String.valueOf(owner.getAssetLastUpdate().getTime()));
 			}
 			node.setAttributeNS(null, "assetsnextupdate", String.valueOf(owner.getAssetNextUpdate().getTime()));
+			if (owner.getBalanceLastUpdate() != null) {
+				node.setAttributeNS(null, "balancelastupdate", String.valueOf(owner.getBalanceLastUpdate().getTime()));
+			}
 			node.setAttributeNS(null, "balancenextupdate", String.valueOf(owner.getBalanceNextUpdate().getTime()));
 			node.setAttributeNS(null, "marketordersnextupdate", String.valueOf(owner.getMarketOrdersNextUpdate().getTime()));
 			node.setAttributeNS(null, "journalnextupdate", String.valueOf(owner.getJournalNextUpdate().getTime()));

@@ -250,11 +250,11 @@ public class LoadoutsTab extends JMainTab {
 
 	@Override
 	public void updateData() {
-		if (!program.getOwners(false).isEmpty()) {
+		if (!program.getOwnerNames(false).isEmpty()) {
 			jOwners.setEnabled(true);
 			String selectedItem = (String) jOwners.getSelectedItem();
-			jOwners.setModel(new DefaultComboBoxModel(program.getOwners(true).toArray()));
-			if (selectedItem != null && program.getOwners(true).contains(selectedItem)) {
+			jOwners.setModel(new DefaultComboBoxModel(program.getOwnerNames(true).toArray()));
+			if (selectedItem != null && program.getOwnerNames(true).contains(selectedItem)) {
 				jOwners.setSelectedItem(selectedItem);
 			} else {
 				jOwners.setSelectedIndex(0);

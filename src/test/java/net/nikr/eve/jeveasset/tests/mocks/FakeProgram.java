@@ -23,9 +23,11 @@ package net.nikr.eve.jeveasset.tests.mocks;
 
 import java.awt.event.ActionEvent;
 import java.util.List;
+import java.util.Map;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.MyAccount;
 import net.nikr.eve.jeveasset.data.MyAccountBalance;
+import net.nikr.eve.jeveasset.data.Owner;
 import net.nikr.eve.jeveasset.data.ProfileData;
 import net.nikr.eve.jeveasset.data.ProfileManager;
 import net.nikr.eve.jeveasset.gui.dialogs.settings.UserNameSettingsPanel;
@@ -163,7 +165,7 @@ public abstract class FakeProgram extends Program {
 	}
 
 	@Override
-	public List<String> getOwners(boolean all) {
+	public List<String> getOwnerNames(boolean all) {
 		throw new UnsupportedOperationException("Not implemented");
 	}
 
@@ -241,4 +243,11 @@ public abstract class FakeProgram extends Program {
 	public List<MyContractItem> getContractItemList() {
 		throw new UnsupportedOperationException("Not implemented");
 	}
+
+	@Override
+	public Map<String, Owner> getOwners() {
+		throw new UnsupportedOperationException("Not implemented");
+	}
+
+	
 }

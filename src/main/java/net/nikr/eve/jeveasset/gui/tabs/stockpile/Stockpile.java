@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Set;
 import net.nikr.eve.jeveasset.data.Item;
 import net.nikr.eve.jeveasset.data.MyLocation;
+import net.nikr.eve.jeveasset.data.Owner;
 import net.nikr.eve.jeveasset.data.types.BlueprintType;
 import net.nikr.eve.jeveasset.data.types.ItemType;
 import net.nikr.eve.jeveasset.data.types.LocationType;
@@ -651,9 +652,12 @@ public class Stockpile implements Comparable<Stockpile>, LocationType {
 							if (add) { //Selling
 								sellingContractsCountNow = sellingContractsCountNow + contractItem.getQuantity();
 							}
-						} else if (contractItem.getContract().isAfterAssets() && filter.isSoldContracts()) { //Sold
-							if (add) {
-								soldContractsCountNow = soldContractsCountNow - contractItem.getQuantity();
+						} else if (filter.isSoldContracts()) { //Sold
+							if ((isIssuer && contractItem.getContract().isIssuerAfterAssets())
+									|| isAcceptor && contractItem.getContract().isAcceptorAfterAssets()) {
+								if (add) {
+									soldContractsCountNow = soldContractsCountNow - contractItem.getQuantity();
+								}
 							}
 						}
 					}
@@ -663,9 +667,13 @@ public class Stockpile implements Comparable<Stockpile>, LocationType {
 							if (add) { //Buying
 								buyingContractsCountNow = buyingContractsCountNow + contractItem.getQuantity();
 							}
-						} else if (contractItem.getContract().isAfterAssets() && filter.isBoughtContracts()) { //Bought
-							if (add) {
-								boughtContractsCountNow = boughtContractsCountNow + contractItem.getQuantity();
+							
+						} else if (filter.isBoughtContracts()) { //Bought
+							if ((isIssuer && contractItem.getContract().isIssuerAfterAssets())
+									|| isAcceptor && contractItem.getContract().isAcceptorAfterAssets()) {
+								if (add) {
+									boughtContractsCountNow = boughtContractsCountNow + contractItem.getQuantity();
+								}
 							}
 						}
 					}

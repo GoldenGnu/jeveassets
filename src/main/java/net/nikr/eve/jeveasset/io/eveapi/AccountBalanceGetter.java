@@ -32,6 +32,7 @@ import net.nikr.eve.jeveasset.data.MyAccount;
 import net.nikr.eve.jeveasset.data.MyAccount.AccessMask;
 import net.nikr.eve.jeveasset.data.MyAccountBalance;
 import net.nikr.eve.jeveasset.data.Owner;
+import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import net.nikr.eve.jeveasset.io.shared.AbstractApiGetter;
 import net.nikr.eve.jeveasset.io.shared.ApiConverter;
@@ -61,6 +62,7 @@ public class AccountBalanceGetter extends AbstractApiGetter<AccountBalanceRespon
 	@Override
 	protected void setNextUpdate(final Date nextUpdate) {
 		getOwner().setBalanceNextUpdate(nextUpdate);
+		getOwner().setBalanceLastUpdate(Settings.getNow());
 	}
 
 	@Override

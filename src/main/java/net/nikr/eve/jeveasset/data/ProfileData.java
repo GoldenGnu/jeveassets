@@ -68,7 +68,8 @@ public class ProfileData {
 	private Map<Integer, MarketPriceData> marketPriceData; //TypeID : int
 	private Map<Integer, MarketPriceData> transactionPriceDataSell; //TypeID : int
 	private Map<Integer, MarketPriceData> transactionPriceDataBuy; //TypeID : int
-	private final List<String> owners = new ArrayList<String>();
+	private final List<String> ownerNames = new ArrayList<String>();
+	private final Map<String, Owner> owners = new HashMap<String, Owner>();
 	private boolean saveSettings = false;
 	private final Graph graph;
 	private final Map<Long, SolarSystem> systemCache;
@@ -136,12 +137,16 @@ public class ProfileData {
 		return contractItemEventList;
 	}
 
-	public List<String> getOwners(boolean all) {
-		List<String> sortedOwners = new ArrayList<String>(owners);
+	public List<String> getOwnerNames(boolean all) {
+		List<String> sortedOwners = new ArrayList<String>(ownerNames);
 		if (all) {
 			sortedOwners.add(0, General.get().all());
 		}
 		return sortedOwners;
+	}
+
+	public Map<String, Owner> getOwners() {
+		return new HashMap<String, Owner>(owners);
 	}
 
 	public void updateJumps(Collection<JumpType> jumpTypes, Class<?> clazz) {
@@ -254,7 +259,8 @@ public class ProfileData {
 	public boolean updateEventLists() {
 		saveSettings = false;
 		uniqueAssetsDuplicates = new HashMap<Integer, List<MyAsset>>();
-		Set<String> uniqueOwners = new HashSet<String>();
+		Set<String> uniqueOwnerNames = new HashSet<String>();
+		Map<String, Owner> uniqueOwners = new HashMap<String, Owner>();
 		List<String> ownersOrders = new ArrayList<String>();
 		List<String> ownersJournal = new ArrayList<String>();
 		List<String> ownersTransactions = new ArrayList<String>();
@@ -277,7 +283,8 @@ public class ProfileData {
 		for (MyAccount account : profileManager.getAccounts()) {
 			for (Owner owner : account.getOwners()) {
 				if (owner.isShowOwner()) {
-					uniqueOwners.add(owner.getName());
+					uniqueOwnerNames.add(owner.getName());
+					uniqueOwners.put(owner.getName(), owner);
 				} else {
 					continue;
 				}
@@ -410,12 +417,24 @@ public class ProfileData {
 				}
 			}
 		}
+		//Update Contracts dynamic values
+		for (MyContract contract : contracts) {
+			Owner issuer = uniqueOwners.get(contract.getIssuer());
+			Owner acceptor = uniqueOwners.get(contract.getAcceptor());
+			if (issuer != null) {
+				contract.setIssuerAfterAssets(issuer.getAssetLastUpdate());
+			}
+			if (acceptor != null) {
+				contract.setAcceptorAfterAssets(acceptor.getAssetLastUpdate());
+			}
+		}
 		//Update Items dynamic values
 		for (Item item : StaticData.get().getItems().values()) {
 			item.setPriceReprocessed(ApiIdConverter.getPriceReprocessed(item));
 		}
 		//Update Jumps
 		updateJumps(new ArrayList<JumpType>(assets), MyAsset.class);
+
 		try {
 			assetsEventList.getReadWriteLock().writeLock().lock();
 			assetsEventList.clear();
@@ -473,9 +492,11 @@ public class ProfileData {
 			accountBalanceEventList.getReadWriteLock().writeLock().unlock();
 		}
 		//Sort Owners
+		ownerNames.clear();
+		ownerNames.addAll(uniqueOwnerNames);
+		Collections.sort(ownerNames, new CaseInsensitiveComparator());
 		owners.clear();
-		owners.addAll(uniqueOwners);
-		Collections.sort(owners, new CaseInsensitiveComparator());
+		owners.putAll(uniqueOwners);
 		return saveSettings;
 	}
 

@@ -104,7 +104,7 @@ public class ContractsGetter extends AbstractApiGetter<ContractsResponse>{
 				existingContractItems = new ArrayList<MyContractItem>();
 			}
 			//Convert contract
-			MyContract myContract = ApiConverter.toContract(contract, getOwner());
+			MyContract myContract = ApiConverter.toContract(contract);
 			//This is needed because we need to update the parent contract or the data will be incorrect
 			List<MyContractItem> contractItems = ApiConverter.convertContractItems(existingContractItems, myContract);
 			//Add
