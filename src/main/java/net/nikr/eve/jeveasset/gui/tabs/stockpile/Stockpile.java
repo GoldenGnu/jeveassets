@@ -599,7 +599,6 @@ public class Stockpile implements Comparable<Stockpile>, LocationType {
 					}
 			 //Jobs
 				} else if (industryJob != null) {
-					System.out.println(industryJob.getStatus());
 					if (industryJob.getActivityID() == 1  //Manufacturing
 							//&& industryJob.getStatus() == 1 //Inprogress AKA not delivered (Old)
 							&& industryJob.getStatus() <= 3 //Inprogress AKA not delivered (1 = Active, 2 = Paused (Facility Offline), 3 = Ready)

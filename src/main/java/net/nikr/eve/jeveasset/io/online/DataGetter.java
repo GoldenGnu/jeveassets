@@ -43,7 +43,7 @@ public class DataGetter {
 	}
 
 	private boolean get(String link, File out, String checksum, int tries) {
-		System.out.println("Downloading: " + link + " to: " + out.getAbsolutePath());
+		LOG.info("Downloading: " + link + " to: " + out.getAbsolutePath());
 		DigestInputStream input = null;
 		FileOutputStream output = null;
 		int n;
