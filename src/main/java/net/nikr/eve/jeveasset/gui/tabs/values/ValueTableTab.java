@@ -149,6 +149,26 @@ public class ValueTableTab extends JMainTab {
 		return value;
 	}
 
+	private static String createAssetID(MyAsset asset) {
+		String flagID = null;
+		String[] flags = asset.getFlag().split(" > ");
+		for (String flag : flags) {
+			if (flag.contains("CorpSAG")) {
+				flagID = flag;
+				break;
+			}
+			if (flag.contains("Hangar") && asset.getFlag().contains("Office")) {
+				flagID = "CorpSAG1";
+				break;
+			}
+		}
+		if (flagID != null) {
+			return asset.getLocation().getLocation() + " > " + flagID;
+		} else {
+			return asset.getLocation().getLocation();
+		}
+	}
+
 	public static Map<String, Value> createDataSet(Program program) {
 		Date date = Settings.getNow();
 		Map<String, Value> values = new HashMap<String, Value>();
@@ -170,14 +190,22 @@ public class ValueTableTab extends JMainTab {
 				continue; //Ignore contracts excluded
 			}
 			Value value = getValue(values, asset.getOwner(), date);
-			value.addAssets(asset);
-			total.addAssets(asset);
+			//Location/Flag logic
+			String id = createAssetID(asset);
+			value.addAssets(id, asset);
+			total.addAssets(id, asset);
 		}
 		//Account Balance
 		for (MyAccountBalance accountBalance : program.getAccountBalanceList()) {
 			Value value = getValue(values, accountBalance.getOwner(), date);
-			value.addBalance(accountBalance.getBalance());
-			total.addBalance(accountBalance.getBalance());
+			String id;
+			if (accountBalance.isCorporation()) { //Corporation Wallets
+				id = "" + (accountBalance.getAccountKey() - 999);
+			} else {
+				id = "0"; //Character Wallet
+			}
+			value.addBalance(id, accountBalance.getBalance());
+			total.addBalance(id, accountBalance.getBalance());
 		}
 		//Market Orders
 		for (MyMarketOrder marketOrder : program.getMarketOrdersList()) {

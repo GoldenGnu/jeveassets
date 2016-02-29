@@ -227,11 +227,11 @@ public class ValueRetroTab extends JMainTab {
 		output.addNone();
 
 		output.addHeading(TabsValues.get().columnWalletBalance());
-		output.addValue(value.getBalance());
+		output.addValue(value.getBalanceTotal());
 		output.addNone();
 
 		output.addHeading(TabsValues.get().columnAssets());
-		output.addValue(value.getAssets());
+		output.addValue(value.getAssetsTotal());
 		output.addNone();
 
 		output.addHeading(TabsValues.get().columnSellOrders());

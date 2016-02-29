@@ -399,11 +399,11 @@ public final class SettingsReader extends AbstractXmlReader {
 				//Read data
 				Element dataNode = (Element) dataNodeList.item(b);
 				Date date = AttributeGetters.getDate(dataNode, "date");
-				double assets = AttributeGetters.getDouble(dataNode, "assets");
+				double assetsTotal = AttributeGetters.getDouble(dataNode, "assets");
 				double escrows = AttributeGetters.getDouble(dataNode, "escrows");
 				double escrowstocover = AttributeGetters.getDouble(dataNode, "escrowstocover");
 				double sellorders = AttributeGetters.getDouble(dataNode, "sellorders");
-				double walletbalance = AttributeGetters.getDouble(dataNode, "walletbalance");
+				double balanceTotal = AttributeGetters.getDouble(dataNode, "walletbalance");
 				double manufacturing = 0.0;
 				if (AttributeGetters.haveAttribute(dataNode, "manufacturing")){
 					manufacturing = AttributeGetters.getDouble(dataNode, "manufacturing");
@@ -418,11 +418,31 @@ public final class SettingsReader extends AbstractXmlReader {
 				}
 				//Add data
 				Value value = new Value(date);
-				value.setAssets(assets);
+				//Balance
+				NodeList balanceNodeList = dataNode.getElementsByTagName("balance");
+				for (int c = 0; c < balanceNodeList.getLength(); c++) { //New data
+					Element balanceNode = (Element) balanceNodeList.item(c);
+					String id = AttributeGetters.getString(balanceNode, "id");
+					double balance = AttributeGetters.getDouble(balanceNode, "value");
+					value.addBalance(id, balance);
+				}
+				if (balanceNodeList.getLength() == 0) { //Old data
+					value.setBalanceTotal(balanceTotal);
+				}
+				//Assets
+				NodeList assetNodeList = dataNode.getElementsByTagName("asset");
+				for (int c = 0; c < assetNodeList.getLength(); c++) { //New data
+					Element assetNode = (Element) assetNodeList.item(c);
+					String id = AttributeGetters.getString(assetNode, "id");
+					double assets = AttributeGetters.getDouble(assetNode, "value");
+					value.addAssets(id, assets);
+				}
+				if (assetNodeList.getLength() == 0) { //Old data
+					value.setAssetsTotal(assetsTotal);
+				}
 				value.setEscrows(escrows);
 				value.setEscrowsToCover(escrowstocover);
 				value.setSellOrders(sellorders);
-				value.setBalance(walletbalance);
 				value.setManufacturing(manufacturing);
 				value.setContractCollateral(contractCollateral);
 				value.setContractValue(contractValue);

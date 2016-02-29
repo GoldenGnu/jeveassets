@@ -26,7 +26,14 @@ import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.TreeSet;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -46,13 +53,17 @@ public class JTrackerEditDialog extends JDialogCentered {
 
 	private enum TrackerEditAction {
 		OK,
-		CANCEL
+		CANCEL,
+		EDIT_WALLET,
+		EDIT_ASSETS
 	}
 
 	//GUI
 	private final JTextField jDate;
 	private final JTextField jWalletBalance;
+	private final JButton jWalletBalanceFilterable;
 	private final JTextField jAssets;
+	private final JButton jAssetsFilterable;
 	private final JTextField jSellOrders;
 	private final JTextField jEscrows;
 	private final JTextField jEscrowsToCover;
@@ -60,6 +71,10 @@ public class JTrackerEditDialog extends JDialogCentered {
 	private final JTextField jContractCollateral;
 	private final JTextField jContractValue;
 	private final JButton jOK;
+	private final JSelectionDialog jSelectionDialog;
+
+	private final List<FilterUpdate> balanceUpdates = new ArrayList<FilterUpdate>();
+	private final List<FilterUpdate> assetUpdates = new ArrayList<FilterUpdate>();
 
 	//Data
 	private Value value;
@@ -69,6 +84,8 @@ public class JTrackerEditDialog extends JDialogCentered {
 		super(program, TabsTracker.get().edit(), Images.TOOL_TRACKER.getImage());
 
 		ListenerClass listener = new ListenerClass();
+
+		jSelectionDialog = new  JSelectionDialog(program);
 
 		JLabel jDateLabel = new JLabel(TabsTracker.get().date());
 		jDate = new JTextField();
@@ -81,10 +98,18 @@ public class JTrackerEditDialog extends JDialogCentered {
 		jWalletBalance.setHorizontalAlignment(JTextField.RIGHT);
 		jWalletBalance.addFocusListener(listener);
 
+		jWalletBalanceFilterable = new JButton(Images.EDIT_EDIT.getIcon());
+		jWalletBalanceFilterable.setActionCommand(TrackerEditAction.EDIT_WALLET.name());
+		jWalletBalanceFilterable.addActionListener(listener);
+
 		JLabel jAssetsLabel = new JLabel(TabsTracker.get().assets());
 		jAssets = new JTextField();
 		jAssets.setHorizontalAlignment(JTextField.RIGHT);
 		jAssets.addFocusListener(listener);
+
+		jAssetsFilterable = new JButton(Images.EDIT_EDIT.getIcon());
+		jAssetsFilterable.setActionCommand(TrackerEditAction.EDIT_ASSETS.name());
+		jAssetsFilterable.addActionListener(listener);
 
 		JLabel jSellOrdersLabel = new JLabel(TabsTracker.get().sellOrders());
 		jSellOrders = new JTextField();
@@ -149,6 +174,10 @@ public class JTrackerEditDialog extends JDialogCentered {
 						.addComponent(jContractCollateral, 100, 100, 100)
 						.addComponent(jContractValue, 100, 100, 100)
 					)
+					.addGroup(layout.createParallelGroup()
+						.addComponent(jWalletBalanceFilterable)
+						.addComponent(jAssetsFilterable)
+					)
 				)
 				.addGroup(layout.createSequentialGroup()
 					.addGap(0, 0, Integer.MAX_VALUE)
@@ -165,10 +194,12 @@ public class JTrackerEditDialog extends JDialogCentered {
 				.addGroup(layout.createParallelGroup()
 					.addComponent(jWalletBalanceLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 					.addComponent(jWalletBalance, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jWalletBalanceFilterable, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 				)
 				.addGroup(layout.createParallelGroup()
 					.addComponent(jAssetsLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 					.addComponent(jAssets, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jAssetsFilterable, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 				)
 				.addGroup(layout.createParallelGroup()
 					.addComponent(jSellOrdersLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
@@ -204,8 +235,24 @@ public class JTrackerEditDialog extends JDialogCentered {
 	public boolean showEdit(Value value) {
 		this.value = value;
 		update = false;
-		jWalletBalance.setText(format(value.getBalance()));
-		jAssets.setText(format(value.getAssets()));
+		balanceUpdates.clear();
+		assetUpdates.clear();
+		if (value.getBalanceFilter().size() < 2) {
+			jWalletBalance.setEnabled(true);
+			jWalletBalanceFilterable.setVisible(false);
+		} else {
+			jWalletBalance.setEnabled(false);
+			jWalletBalanceFilterable.setVisible(true);
+		}
+		if (value.getAssetsFilter().size() < 2) {
+			jAssets.setEnabled(true);
+			jAssetsFilterable.setVisible(false);
+		} else {
+			jAssets.setEnabled(false);
+			jAssetsFilterable.setVisible(true);
+		}
+		jWalletBalance.setText(format(value.getBalanceTotal()));
+		jAssets.setText(format(value.getAssetsTotal()));
 		jSellOrders.setText(format(value.getSellOrders()));
 		jEscrows.setText(format(value.getEscrows()));
 		jEscrowsToCover.setText(format(value.getEscrowsToCover()));
@@ -257,8 +304,34 @@ public class JTrackerEditDialog extends JDialogCentered {
 			double contractCollateral = parse(jContractCollateral.getText());
 			double contractValue = parse(jContractValue.getText());
 			Settings.lock("Tracker Data (Edit)");
-			value.setBalance(walletBalanc);
-			value.setAssets(assets);
+			if (value.getBalanceFilter().isEmpty()) {
+				value.setBalanceTotal(walletBalanc);
+			} else if (value.getBalanceFilter().size() == 1) {
+				for (Map.Entry<String, Double> entry : value.getBalanceFilter().entrySet()) {
+					//Just done once...
+					value.removeBalance(entry.getKey()); //Remove old value
+					value.addBalance(entry.getKey(), walletBalanc); //Add new value
+				}
+			} else {
+				for (FilterUpdate filterUpdate : balanceUpdates) {
+					value.removeBalance(filterUpdate.getKey());
+					value.addBalance(filterUpdate.getKey(), filterUpdate.getValue());
+				}
+			}
+			if (value.getAssetsFilter().isEmpty()) {
+				value.setAssetsTotal(assets);
+			} else if (value.getAssetsFilter().size() == 1) {
+				for (Map.Entry<String, Double> entry : value.getAssetsFilter().entrySet()) {
+					//Just done once...
+					value.removeAssets(entry.getKey()); //Remove old value
+					value.addAssets(entry.getKey(), walletBalanc); //Add new value
+				}
+			} else {
+				for (FilterUpdate filterUpdate : assetUpdates) {
+					value.removeAssets(filterUpdate.getKey());
+					value.addAssets(filterUpdate.getKey(), filterUpdate.getValue());
+				}
+			}
 			value.setSellOrders(sellOrders);
 			value.setEscrows(escrows);
 			value.setEscrowsToCover(escrowsToCover);
@@ -274,6 +347,19 @@ public class JTrackerEditDialog extends JDialogCentered {
 		}
 	}
 
+	private Double getValue(Double balance)  {
+		String balanceReturn = JOptionPane.showInputDialog(getDialog(), TabsTracker.get().enterNewValue(), format(balance));
+		if (balanceReturn == null) {
+			return null; //Cancel
+		}
+		try {
+			return parse(balanceReturn);
+		} catch (ParseException ex) {
+			JOptionPane.showMessageDialog(getDialog(), TabsTracker.get().invalidNumberMsg(), TabsTracker.get().invalidNumberTitle(), JOptionPane.WARNING_MESSAGE);
+			return getValue(balance);
+		}
+	}
+
 	private class ListenerClass implements ActionListener, FocusListener {
 		
 		@Override
@@ -282,7 +368,117 @@ public class JTrackerEditDialog extends JDialogCentered {
 				save();
 			} else if (TrackerEditAction.CANCEL.name().equals(e.getActionCommand())) {
 				setVisible(false);
-			}
+			} else if (TrackerEditAction.EDIT_WALLET.name().equals(e.getActionCommand())) {
+				//Create values for selection dialog
+				Set<String> ids = new TreeSet<String>();
+				for (String id : value.getBalanceFilter().keySet()) {
+					ids.add(TabsTracker.get().division(id));
+				}
+				//Select Division
+				String returnValue = jSelectionDialog.showDivision(ids.toArray());
+				if (returnValue == null) {
+					return; //Cancel
+				}
+				Double balance = null;
+				String key = null;
+				//Match return value with key and balance
+				for (Map.Entry<String, Double> entry : value.getBalanceFilter().entrySet()) {
+					if (TabsTracker.get().division(entry.getKey()).equals(returnValue)) {
+						balance = entry.getValue();
+						key = entry.getKey();
+						break; //Item found
+					}
+				}
+				if (balance != null) { //Item found
+					balance = getValue(balance); //Get new value
+					if (balance != null) { //Update number
+						balanceUpdates.add(new FilterUpdate(key, balance)); //Add update to queue (will only be executed if this dialog closed by pressing OK)
+
+						//Update displayed total - only a GUI thing, the textfield is never used when getBalanceFilter is not empty
+						Map<String, Double> map = new HashMap<String, Double>(value.getBalanceFilter());
+						for (FilterUpdate filterUpdate : balanceUpdates) {
+							map.put(filterUpdate.getKey(), filterUpdate.getValue());
+						}
+						double total = 0;
+						for (double d : map.values()) {
+							total = total + d;
+						}
+						jWalletBalance.setText(format(total));
+					}
+					
+				}
+			} else if (TrackerEditAction.EDIT_ASSETS.name().equals(e.getActionCommand())) {
+				//Create values for selection dialog
+				Map<String, Set<String>> values = new TreeMap<String, Set<String>>();
+				for (String id : value.getAssetsFilter().keySet()) {
+					String[] ids = id.split(" > ");
+					if (ids.length == 2) {
+						String location = ids[0];
+						Set<String> flags = values.get(location);
+						if (flags == null) {
+							flags = new TreeSet<String>();
+							values.put(location, flags);
+						}
+						String flag = ids[1];
+						flags.add(flag);
+					} else {
+						String location = id;
+						Set<String> flags = values.get(location);
+						if (flags == null) {
+							flags = new TreeSet<String>();
+							values.put(location, flags);
+						}
+						flags.add(TabsTracker.get().other());
+					}
+				}
+				//Select Location
+				String returnLocation = null;
+				if (values.keySet().size() > 1) {
+					returnLocation = jSelectionDialog.showLocation(values.keySet().toArray());
+				} else { //Size is always 1 (one) or 0 (zero)
+					for (String s : values.keySet()) {
+						returnLocation = s; //Only done if size is 1 (one) AKA only done once
+					}
+				}
+				if (returnLocation == null) {
+					return; //Cancelled or Empty
+				}
+
+				//Select Flag
+				String id;
+				Set<String> flags = values.get(returnLocation);
+				String returnFlag = TabsTracker.get().other(); //Used if size is 1
+				if (flags.size() > 1) { //Always contain "Other" flag
+					returnFlag = jSelectionDialog.showFlag(flags.toArray());
+					if (returnFlag == null) {
+						return; //Cancel
+					}
+				}
+				if (returnFlag.equals(TabsTracker.get().other())) {
+					id = returnLocation;
+				} else {
+					id = returnLocation + " > " + returnFlag;
+				}
+				Double asset = value.getAssetsFilter().get(id);
+				if (asset != null) { //Item found
+					asset = getValue(asset); //Get new value
+					if (asset != null) { //Update number
+						assetUpdates.add(new FilterUpdate(id, asset)); //Add update to queue (will only be executed if this dialog closed by pressing OK)
+						
+						//Update displayed total - only a GUI thing, the textfield is never used when getAssetsFilter is not empty
+						Map<String, Double> map = new HashMap<String, Double>(value.getAssetsFilter());
+						for (FilterUpdate filterUpdate : assetUpdates) {
+							map.put(filterUpdate.getKey(), filterUpdate.getValue());
+						}
+						double total = 0;
+						for (double d : map.values()) {
+							total = total + d;
+						}
+						jAssets.setText(format(total));
+					}
+					
+				}
+			}	
 		}
 
 		@Override
@@ -301,6 +497,24 @@ public class JTrackerEditDialog extends JDialogCentered {
 				jTextField.setBackground(new Color(255, 200, 200));
 			}
 			jTextField.setCaretPosition(jTextField.getText().length());
+		}
+	}
+
+	private static class FilterUpdate {
+		private final String key;
+		private final Double value;
+
+		public FilterUpdate(String key, Double value) {
+			this.key = key;
+			this.value = value;
+		}
+
+		public String getKey() {
+			return key;
+		}
+
+		public Double getValue() {
+			return value;
 		}
 	}
 }

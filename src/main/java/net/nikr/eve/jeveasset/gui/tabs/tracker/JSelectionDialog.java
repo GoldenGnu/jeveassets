@@ -31,9 +31,10 @@ import javax.swing.JComponent;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
+import net.nikr.eve.jeveasset.i18n.TabsTracker;
 
 
-public class JOwnerDialog extends JDialogCentered {
+public class JSelectionDialog extends JDialogCentered {
 
 	private enum OwnerSelectAction {
 		OK,
@@ -45,20 +46,20 @@ public class JOwnerDialog extends JDialogCentered {
 	private final JButton jCancel;
 	private final ListenerClass listener;
 
-	private String owner;
+	private String returnValue;
 
-	public JOwnerDialog(Program program) {
-		super(program, "Select Owner", Images.TOOL_TRACKER.getImage());
+	public JSelectionDialog(Program program) {
+		super(program, "", Images.TOOL_TRACKER.getImage());
 
 		listener = new ListenerClass();
 
 		jOwners = new JComboBox();
 
-		jOK = new JButton("OK");
+		jOK = new JButton(TabsTracker.get().ok());
 		jOK.setActionCommand(OwnerSelectAction.OK.name());
 		jOK.addActionListener(listener);
 
-		jCancel = new JButton("Cancel");
+		jCancel = new JButton(TabsTracker.get().cancel());
 		jCancel.setActionCommand(OwnerSelectAction.CANCEL.name());
 		jCancel.addActionListener(listener);
 
@@ -80,11 +81,31 @@ public class JOwnerDialog extends JDialogCentered {
 		);
 	}
 
-	public String show(Object[] owners) {
-		jOwners.setModel(new DefaultComboBoxModel(owners));
-		owner = null;
+	public String showOwner(Object[] owners) {
+		getDialog().setTitle(TabsTracker.get().selectOwner());
+		return show(owners);
+	}
+
+	public String showDivision(Object[] divisions) {
+		getDialog().setTitle(TabsTracker.get().selectDivision());
+		return show(divisions);
+	}
+
+	public String showLocation(Object[] locations) {
+		getDialog().setTitle(TabsTracker.get().selectLocation());
+		return show(locations);
+	}
+
+	public String showFlag(Object[] flags) {
+		getDialog().setTitle(TabsTracker.get().selectFlag());
+		return show(flags);
+	}
+
+	private String show(Object[] data) {
+		jOwners.setModel(new DefaultComboBoxModel(data));
+		returnValue = null;
 		setVisible(true);
-		return owner;
+		return returnValue;
 	}
 
 	@Override
@@ -102,7 +123,7 @@ public class JOwnerDialog extends JDialogCentered {
 
 	@Override
 	protected void save() {
-		owner = (String) jOwners.getSelectedItem();
+		returnValue = (String) jOwners.getSelectedItem();
 		setVisible(false);
 	}
 

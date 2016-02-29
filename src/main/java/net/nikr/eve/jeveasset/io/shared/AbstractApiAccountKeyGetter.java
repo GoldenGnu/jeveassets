@@ -55,7 +55,7 @@ public abstract class AbstractApiAccountKeyGetter<T extends ApiListResponse<?>, 
 		values = get();
 		if (updateCorporation) {
 			boolean ok = false;
-			for (int i = 1000; i <= 1006; i++) { //For each wallet devision
+			for (int i = 1000; i <= 1006; i++) { //For each wallet division
 				accountKey = i;
 				boolean updated = loadAll(nextUpdate, updateCorporation, updateName);
 				if (!updated) {

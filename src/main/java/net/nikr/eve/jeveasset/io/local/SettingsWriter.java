@@ -197,15 +197,27 @@ public class SettingsWriter extends AbstractXmlWriter {
 			for (Value value : entry.getValue()) {
 				Element dataNode = xmldoc.createElementNS(null, "data");
 				dataNode.setAttributeNS(null, "date", String.valueOf(value.getDate().getTime()));
-				dataNode.setAttributeNS(null, "assets", String.valueOf(value.getAssets()));
+				dataNode.setAttributeNS(null, "assets", String.valueOf(value.getAssetsTotal()));
 				dataNode.setAttributeNS(null, "escrows", String.valueOf(value.getEscrows()));
 				dataNode.setAttributeNS(null, "escrowstocover", String.valueOf(value.getEscrowsToCover()));
 				dataNode.setAttributeNS(null, "sellorders", String.valueOf(value.getSellOrders()));
-				dataNode.setAttributeNS(null, "walletbalance", String.valueOf(value.getBalance()));
+				dataNode.setAttributeNS(null, "walletbalance", String.valueOf(value.getBalanceTotal()));
 				dataNode.setAttributeNS(null, "manufacturing", String.valueOf(value.getManufacturing()));
 				dataNode.setAttributeNS(null, "contractcollateral", String.valueOf(value.getContractCollateral()));
 				dataNode.setAttributeNS(null, "contractvalue", String.valueOf(value.getContractValue()));
 				ownerNode.appendChild(dataNode);
+				for (Map.Entry<String, Double> balanceEntry : value.getBalanceFilter().entrySet()) {
+					Element balanceNode = xmldoc.createElementNS(null, "balance");
+					balanceNode.setAttributeNS(null, "id", balanceEntry.getKey());
+					balanceNode.setAttributeNS(null, "value", String.valueOf(balanceEntry.getValue()));
+					dataNode.appendChild(balanceNode);
+				}
+				for (Map.Entry<String, Double> assetEntry : value.getAssetsFilter().entrySet()) {
+					Element assetNode = xmldoc.createElementNS(null, "asset");
+					assetNode.setAttributeNS(null, "id", assetEntry.getKey());
+					assetNode.setAttributeNS(null, "value", String.valueOf(assetEntry.getValue()));
+					dataNode.appendChild(assetNode);
+				}
 			}
 		}
 	}

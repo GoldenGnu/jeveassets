@@ -55,7 +55,7 @@ public enum ValueTableFormat implements EnumTableColumn<Value> {
 		}
 		@Override
 		public Object getColumnValue(final Value from) {
-			return from.getBalance();
+			return from.getBalanceTotal();
 		}
 	},
 	ASSETS(Double.class, GlazedLists.comparableComparator()) {
@@ -65,7 +65,7 @@ public enum ValueTableFormat implements EnumTableColumn<Value> {
 		}
 		@Override
 		public Object getColumnValue(final Value from) {
-			return from.getAssets();
+			return from.getAssetsTotal();
 		}
 	},
 	SELL_ORDERS(Double.class, GlazedLists.comparableComparator()) {
