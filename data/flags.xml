@@ -94,6 +94,7 @@
     <row flagid="98" flagname="RigSlot6" flagtext="Rig power slot 7"/>
     <row flagid="99" flagname="RigSlot7" flagtext="Rig power slot 8"/>
     <row flagid="100" flagname="Factory Operation" flagtext="Factory Background Operation"/>
+    <row flagid="115" flagname="CorpSAG1" flagtext="Corp Security Access Group 1"/>
     <row flagid="116" flagname="CorpSAG2" flagtext="Corp Security Access Group 2"/>
     <row flagid="117" flagname="CorpSAG3" flagtext="Corp Security Access Group 3"/>
     <row flagid="118" flagname="CorpSAG4" flagtext="Corp Security Access Group 4"/>
