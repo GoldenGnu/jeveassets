@@ -123,8 +123,8 @@
     <row flagid="141" flagname="SpecializedLargeShipHold" flagtext="Specialized Large Ship Hold"/>
     <row flagid="142" flagname="SpecializedIndustrialShipHold" flagtext="Specialized Industrial Ship Hold"/>
     <row flagid="143" flagname="SpecializedAmmoHold" flagtext="Specialized Ammo Hold"/>
-    <row flagid="144" flagname="StructureActive" flagtext="StructureActive"/>
-    <row flagid="145" flagname="StructureInactive" flagtext="StructureInactive"/>
+    <row flagid="144" flagname="StructureActive" flagtext="Structure Active"/>
+    <row flagid="145" flagname="StructureInactive" flagtext="Structure Inactive"/>
     <row flagid="146" flagname="JunkyardReprocessed" flagtext="This item was put into a junkyard through reprocession."/>
     <row flagid="147" flagname="JunkyardTrashed" flagtext="This item was put into a junkyard through being trashed by its owner."/>
     <row flagid="148" flagname="SpecializedCommandCenterHold" flagtext="Specialized Command Center Hold"/>
@@ -136,13 +136,13 @@
     <row flagid="154" flagname="QuafeBay" flagtext="Quafe Bay"/>
     <row flagid="155" flagname="FleetHangar" flagtext="Fleet Hangar"/>
     <row flagid="156" flagname="HiddenModifiers" flagtext="Hidden Modifiers"/>
-    <row flagid="157" flagname="Structure Offline" flagtext="StructureOffline"/>
-    <row flagid="158" flagname="Fighter Bay" flagtext="FighterBay"/>
-    <row flagid="159" flagname="Fighter Tube 0" flagtext="FighterTube0"/>
-    <row flagid="160" flagname="Fighter Tube 1" flagtext="FighterTube1"/>
-    <row flagid="161" flagname="Fighter Tube 2" flagtext="FighterTube2"/>
-    <row flagid="162" flagname="Fighter Tube 3" flagtext="FighterTube3"/>
-    <row flagid="163" flagname="Fighter Tube 4" flagtext="FighterTube4"/>
+    <row flagid="157" flagname="StructureOffline" flagtext="Structure Offline"/>
+    <row flagid="158" flagname="FighterBay" flagtext="Fighter Bay"/>
+    <row flagid="159" flagname="FighterTube0" flagtext="Fighter Tube 0"/>
+    <row flagid="160" flagname="FighterTube1" flagtext="Fighter Tube 1"/>
+    <row flagid="161" flagname="FighterTube2" flagtext="Fighter Tube 2"/>
+    <row flagid="162" flagname="FighterTube3" flagtext="Fighter Tube 3"/>
+    <row flagid="163" flagname="FighterTube4" flagtext="Fighter Tube 4"/>
     <row flagid="164" flagname="StructureServiceSlot0" flagtext="Structure service slot 1"/>
     <row flagid="165" flagname="StructureServiceSlot1" flagtext="Structure service slot 2"/>
     <row flagid="166" flagname="StructureServiceSlot2" flagtext="Structure service slot 3"/>
@@ -151,4 +151,6 @@
     <row flagid="169" flagname="StructureServiceSlot5" flagtext="Structure service slot 6"/>
     <row flagid="170" flagname="StructureServiceSlot6" flagtext="Structure service slot 7"/>
     <row flagid="171" flagname="StructureServiceSlot7" flagtext="Structure service slot 8"/>
+    <row flagid="172" flagname="StructureFuel" flagtext="Structure Fuel"/>
+    <row flagid="173" flagname="Deliveries" flagtext="Deliveries"/>
 </rows>
