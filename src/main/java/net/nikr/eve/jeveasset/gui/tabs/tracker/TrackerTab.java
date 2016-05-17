@@ -126,8 +126,8 @@ public class TrackerTab extends JMainTab {
 	private final JFreeChart jNextChart;
 	private final JDateChooser jFrom;
 	private final JDateChooser jTo;
-	private final JMultiSelectionList jOwners;
-	private final JComboBox jQuickDate;
+	private final JMultiSelectionList<String> jOwners;
+	private final JComboBox<QuickDate> jQuickDate;
 	private final JCheckBox jAll;
 	private final JCheckBox jTotal;
 	private final JCheckBox jWalletBalance;
@@ -210,13 +210,13 @@ public class TrackerTab extends JMainTab {
 
 		JSeparator jOwnersSeparator = new JSeparator();
 
-		jOwners = new JMultiSelectionList();
+		jOwners = new JMultiSelectionList<String>();
 		jOwners.getSelectionModel().addListSelectionListener(listener);
 		JScrollPane jOwnersScroll = new JScrollPane(jOwners);
 
 		JSeparator jDateSeparator = new JSeparator();
 
-		jQuickDate = new JComboBox(QuickDate.values());
+		jQuickDate = new JComboBox<QuickDate>(QuickDate.values());
 		jQuickDate.setActionCommand(TrackerAction.QUICK_DATE.name());
 		jQuickDate.addActionListener(listener);
 
@@ -500,19 +500,16 @@ public class TrackerTab extends JMainTab {
 	private void updateFilterButtons() {
 		Set<String> walletIDs = new TreeSet<String>();
 		Set<String> assetsIDs = new TreeSet<String>();
-		Object[] objects = jOwners.getSelectedValues();
-		for (Object object : objects) {
-			if (object instanceof String) {
-				String owner = (String) object;
-				for (Value data : Settings.get().getTrackerData().get(owner)) {
-					//Get all account wallet account keys
-					for (String id : data.getBalanceFilter().keySet()) {
-						walletIDs.add(id);
-					}
-					//Get all asset IDs
-					for (String id : data.getAssetsFilter().keySet()) {
-						assetsIDs.add(id);
-					}
+		List<String> owners = jOwners.getSelectedValuesList();
+		for (String owner : owners) {
+			for (Value data : Settings.get().getTrackerData().get(owner)) {
+				//Get all account wallet account keys
+				for (String id : data.getBalanceFilter().keySet()) {
+					walletIDs.add(id);
+				}
+				//Get all asset IDs
+				for (String id : data.getAssetsFilter().keySet()) {
+					assetsIDs.add(id);
 				}
 			}
 		}
@@ -536,27 +533,27 @@ public class TrackerTab extends JMainTab {
 		}
 		if (owners.isEmpty()) {
 			jOwners.setEnabled(false);
-			jOwners.setModel(new AbstractListModel() {
+			jOwners.setModel(new AbstractListModel<String>() {
 				@Override
 				public int getSize() {
 					return 1;
 				}
 
 				@Override
-				public Object getElementAt(int index) {
+				public String getElementAt(int index) {
 					return TabsTracker.get().noDataFound();
 				}
 			});
 		} else {
 			jOwners.setEnabled(true);
-			jOwners.setModel(new AbstractListModel() {
+			jOwners.setModel(new AbstractListModel<String>() {
 				@Override
 				public int getSize() {
 					return ownersList.size();
 				}
 
 				@Override
-				public Object getElementAt(int index) {
+				public String getElementAt(int index) {
 					return ownersList.get(index);
 				}
 			});
@@ -629,7 +626,7 @@ public class TrackerTab extends JMainTab {
 		if (updateLock) {
 			return;
 		}
-		Object[] owners = jOwners.getSelectedValues();
+		List<String> owners = jOwners.getSelectedValuesList();
 		walletBalance = new TimePeriodValues(TabsTracker.get().walletBalance());
 		assets = new TimePeriodValues(TabsTracker.get().assets());
 		sellOrders = new TimePeriodValues(TabsTracker.get().sellOrders());
@@ -657,9 +654,8 @@ public class TrackerTab extends JMainTab {
 		cache = new TreeMap<SimpleTimePeriod, Value>();
 		Map<Date, Boolean> assetColumns = new TreeMap<Date, Boolean>();
 		Map<Date, Boolean> walletColumns = new TreeMap<Date, Boolean>();
-		if (owners != null && owners.length > 0) { //No data set...
-			for (Object o : owners) {
-				String owner = (String) o;
+		if (owners != null) { //No data set...
+			for (String owner : owners) {
 				for (Value data : Settings.get().getTrackerData().get(owner)) {
 					SimpleTimePeriod date = new SimpleTimePeriod(data.getDate(), data.getDate());
 					if ((from == null || data.getDate().after(from)) && (to == null || data.getDate().before(to))) {
@@ -857,20 +853,20 @@ public class TrackerTab extends JMainTab {
 
 	private String getSelectedOwner(boolean all) {
 		if (jOwners.getSelectedIndices().length == 1) {
-			return (String) jOwners.getSelectedValue();
+			return jOwners.getSelectedValue();
 		} else {
-			Object[] owners = jOwners.getSelectedValues();
-			List<Object> list = new ArrayList<Object>();
+			List<String> owners = jOwners.getSelectedValuesList();
+			List<String> list = new ArrayList<String>();
 			if (all) {
 				list.add(General.get().all());
 			}
-			for (Object owner : owners) {
-				Value value = getSelectedValue((String)owner);
+			for (String owner : owners) {
+				Value value = getSelectedValue(owner);
 				if (value != null) {
 					list.add(owner);
 				}
 			}
-			return jSelectionDialog.showOwner(list.toArray());
+			return jSelectionDialog.showOwner(list);
 		}
 	}
 
@@ -1028,9 +1024,7 @@ public class TrackerTab extends JMainTab {
 				}
 				List<String> owners = new ArrayList<String>();
 				if (owner.equals(General.get().all())) {
-					for (Object obj : jOwners.getSelectedValues()) {
-						owners.add((String)obj);
-					}
+					owners.addAll(jOwners.getSelectedValuesList());
 				} else {
 					owners.add(owner);
 				}

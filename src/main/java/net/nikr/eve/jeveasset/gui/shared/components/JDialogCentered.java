@@ -107,7 +107,7 @@ public abstract class JDialogCentered {
 	protected abstract void windowShown();
 	protected abstract void save();
 
-	public JDialog getDialog() {
+	public final JDialog getDialog() {
 		return dialog;
 	}
 

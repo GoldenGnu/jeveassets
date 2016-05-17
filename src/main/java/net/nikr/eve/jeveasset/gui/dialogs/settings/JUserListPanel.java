@@ -30,6 +30,7 @@ import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.data.UserItem;
 import net.nikr.eve.jeveasset.gui.shared.components.JLabelMultiline;
+import net.nikr.eve.jeveasset.gui.shared.components.ListComboBoxModel;
 import net.nikr.eve.jeveasset.i18n.DialoguesSettings;
 
 
@@ -39,7 +40,7 @@ public abstract class JUserListPanel<K, V extends Comparable<V>> extends JSettin
 		DELETE, EDIT
 	}
 
-	private final JComboBox jItems;
+	private final JComboBox<UserItem<K, V>> jItems;
 	private final JButton jEdit;
 	private final JButton jDelete;
 
@@ -53,7 +54,7 @@ public abstract class JUserListPanel<K, V extends Comparable<V>> extends JSettin
 
 		ListenerClass listener = new ListenerClass();
 
-		jItems = new JComboBox();
+		jItems = new JComboBox<UserItem<K, V>>();
 
 		jEdit = new JButton(DialoguesSettings.get().editItem());
 		jEdit.setActionCommand(UserListAction.EDIT.name());
@@ -224,13 +225,13 @@ public abstract class JUserListPanel<K, V extends Comparable<V>> extends JSettin
 	private void updateGUI() {
 		if (items.isEmpty()) {
 			setEnabledAll(false);
-			jItems.setModel(new DefaultComboBoxModel());
+			jItems.setModel(new ListComboBoxModel<UserItem<K, V>>());
 			jItems.getModel().setSelectedItem(DialoguesSettings.get().itemEmpty());
 			listItems = new ArrayList<UserItem<K, V>>(); //Clear list
 		} else {
 			setEnabledAll(true);
 			listItems = new ArrayList<UserItem<K, V>>(new TreeSet<UserItem<K, V>>(items.values()));
-			jItems.setModel(new DefaultComboBoxModel(listItems.toArray()));
+			jItems.setModel(new ListComboBoxModel<UserItem<K, V>>(listItems));
 		}
 	}
 

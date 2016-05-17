@@ -57,9 +57,9 @@ public class ValueRetroTab extends JMainTab {
 	}
 
 	//GUI
-	private final JComboBox jCharacters;
+	private final JComboBox<String> jCharacters;
 	private final JEditorPane jCharacter;
-	private final JComboBox jCorporations;
+	private final JComboBox<String> jCorporations;
 	private final JEditorPane jCorporation;
 	private final JEditorPane jTotal;
 
@@ -81,7 +81,7 @@ public class ValueRetroTab extends JMainTab {
 		gridHexColor = Integer.toHexString(jPanel.getBackground().darker().getRGB());
 		gridHexColor = gridHexColor.substring(2, gridHexColor.length());
 
-		jCharacters = new JComboBox();
+		jCharacters = new JComboBox<String>();
 		jCharacters.setActionCommand(ValueRetroAction.OWNER_SELECTED.name());
 		jCharacters.addActionListener(listener);
 
@@ -93,7 +93,7 @@ public class ValueRetroTab extends JMainTab {
 		JScrollPane jCharacterScroll = new JScrollPane(jCharacter);
 		jCharacterScroll.setBorder(null);
 
-		jCorporations = new JComboBox();
+		jCorporations = new JComboBox<String>();
 		jCorporations.setActionCommand(ValueRetroAction.CORP_SELECTED.name());
 		jCorporations.addActionListener(listener);
 

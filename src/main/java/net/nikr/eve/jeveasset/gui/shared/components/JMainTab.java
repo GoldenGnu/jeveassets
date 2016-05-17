@@ -42,7 +42,7 @@ public abstract class JMainTab {
 	private String title;
 	private Icon icon;
 	private boolean closeable;
-	private List<JLabel> statusbarLabels = new ArrayList<JLabel>();
+	private final List<JLabel> statusbarLabels = new ArrayList<JLabel>();
 	protected Program program;
 	protected JPanel jPanel;
 	protected GroupLayout layout;
@@ -71,7 +71,7 @@ public abstract class JMainTab {
 		layout.setAutoCreateContainerGaps(true);
 	}
 
-	public <T> void installMenu(final Program program, final TableMenu<T> tableMenu, final JTable jTable, final Class<T> clazz) {
+	public final <T> void installMenu(final Program program, final TableMenu<T> tableMenu, final JTable jTable, final Class<T> clazz) {
 		this.clazz = clazz;
 		MenuManager.install(program, tableMenu, jTable, clazz);
 	}
@@ -101,7 +101,7 @@ public abstract class JMainTab {
 		
 	}
 
-	public void addStatusbarLabel(final JLabel jLabel) {
+	public final void addStatusbarLabel(final JLabel jLabel) {
 		statusbarLabels.add(jLabel);
 	}
 
@@ -201,7 +201,7 @@ public abstract class JMainTab {
 	 * @param jTable
 	 * @param toolName unique tool name
 	 */
-	protected void installTable(final JAutoColumnTable jTable, String toolName) {
+	protected final void installTable(final JAutoColumnTable jTable, String toolName) {
 		this.toolName = toolName;
 
 		//Table Selection

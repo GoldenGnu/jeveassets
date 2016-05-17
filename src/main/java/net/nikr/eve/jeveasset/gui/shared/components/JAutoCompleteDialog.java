@@ -50,7 +50,7 @@ public abstract class JAutoCompleteDialog<T> extends JDialogCentered {
 
 	private final EventList<T> eventList;
 	private final AutoCompleteSupport<T> autoComplete;
-	private final JComboBox jItems;
+	private final JComboBox<T> jItems;
 	private final JButton jOK;
 
 	private final boolean strict;
@@ -68,7 +68,7 @@ public abstract class JAutoCompleteDialog<T> extends JDialogCentered {
 
 		JLabel jText = new JLabel(msg);
 
-		jItems = new JComboBox();
+		jItems = new JComboBox<T>();
 		eventList = new EventListManager<T>().create();
 
 		eventList.getReadWriteLock().readLock().lock();

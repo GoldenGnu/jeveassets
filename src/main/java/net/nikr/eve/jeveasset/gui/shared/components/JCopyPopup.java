@@ -41,13 +41,13 @@ public final class JCopyPopup {
 		CUT, COPY, PASTE
 	}
 
-	private JTextComponent component;
-	private JPopupMenu jPopupMenu;
-	private JMenuItem jCut;
-	private JMenuItem jCopy;
-	private JMenuItem jPaste;
+	private final JTextComponent component;
+	private final JPopupMenu jPopupMenu;
+	private final JMenuItem jCut;
+	private final JMenuItem jCopy;
+	private final JMenuItem jPaste;
 
-	private Clipboard clipboard;
+	private final Clipboard clipboard;
 
 	public static void install(final JTextComponent component) {
 		JCopyPopup jCopyPopup = new JCopyPopup(component);
@@ -141,15 +141,6 @@ public final class JCopyPopup {
 		@Override
 		public void actionPerformed(final ActionEvent e) {
 			if (CopyPopupAction.CUT.name().equals(e.getActionCommand())) {
-				SecurityManager sm = System.getSecurityManager();
-				if (sm != null) {
-					try {
-						sm.checkSystemClipboardAccess();
-					} catch (Exception ex) {
-						return;
-					}
-				}
-
 				String s = component.getSelectedText();
 				if (s == null) {
 					return;
@@ -165,14 +156,6 @@ public final class JCopyPopup {
 				clipboard.setContents(st, null);
 			}
 			if (CopyPopupAction.COPY.name().equals(e.getActionCommand())) {
-				SecurityManager sm = System.getSecurityManager();
-				if (sm != null) {
-					try {
-						sm.checkSystemClipboardAccess();
-					} catch (Exception ex) {
-						return;
-					}
-				}
 				String s = component.getSelectedText();
 				if (s == null) {
 					return;
@@ -184,14 +167,6 @@ public final class JCopyPopup {
 				clipboard.setContents(st, null);
 			}
 			if (CopyPopupAction.PASTE.name().equals(e.getActionCommand())) {
-				SecurityManager sm = System.getSecurityManager();
-				if (sm != null) {
-					try {
-						sm.checkSystemClipboardAccess();
-					} catch (Exception ex) {
-						return;
-					}
-				}
 				Transferable transferable = clipboard.getContents(this);
 				try {
 					String s = (String) transferable.getTransferData(DataFlavor.stringFlavor);

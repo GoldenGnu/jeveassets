@@ -23,7 +23,7 @@ package net.nikr.eve.jeveasset.gui.tabs.tracker;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import javax.swing.DefaultComboBoxModel;
+import java.util.Collection;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -31,6 +31,7 @@ import javax.swing.JComponent;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
+import net.nikr.eve.jeveasset.gui.shared.components.ListComboBoxModel;
 import net.nikr.eve.jeveasset.i18n.TabsTracker;
 
 
@@ -41,7 +42,7 @@ public class JSelectionDialog extends JDialogCentered {
 		CANCEL
 	}
 
-	private final JComboBox jOwners;
+	private final JComboBox<String> jOwners;
 	private final JButton jOK;
 	private final JButton jCancel;
 	private final ListenerClass listener;
@@ -53,7 +54,7 @@ public class JSelectionDialog extends JDialogCentered {
 
 		listener = new ListenerClass();
 
-		jOwners = new JComboBox();
+		jOwners = new JComboBox<String>();
 
 		jOK = new JButton(TabsTracker.get().ok());
 		jOK.setActionCommand(OwnerSelectAction.OK.name());
@@ -81,28 +82,28 @@ public class JSelectionDialog extends JDialogCentered {
 		);
 	}
 
-	public String showOwner(Object[] owners) {
+	public String showOwner(Collection<String> owners) {
 		getDialog().setTitle(TabsTracker.get().selectOwner());
 		return show(owners);
 	}
 
-	public String showDivision(Object[] divisions) {
+	public String showDivision(Collection<String> divisions) {
 		getDialog().setTitle(TabsTracker.get().selectDivision());
 		return show(divisions);
 	}
 
-	public String showLocation(Object[] locations) {
+	public String showLocation(Collection<String> locations) {
 		getDialog().setTitle(TabsTracker.get().selectLocation());
 		return show(locations);
 	}
 
-	public String showFlag(Object[] flags) {
+	public String showFlag(Collection<String> flags) {
 		getDialog().setTitle(TabsTracker.get().selectFlag());
 		return show(flags);
 	}
 
-	private String show(Object[] data) {
-		jOwners.setModel(new DefaultComboBoxModel(data));
+	private String show(Collection<String> data) {
+		jOwners.setModel(new ListComboBoxModel<String>(data));
 		returnValue = null;
 		setVisible(true);
 		return returnValue;

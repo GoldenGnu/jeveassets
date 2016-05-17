@@ -43,7 +43,6 @@ import java.util.TreeSet;
 import javax.swing.AbstractListModel;
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
-import javax.swing.DefaultComboBoxModel;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -75,6 +74,7 @@ import net.nikr.eve.jeveasset.gui.shared.components.JCustomFileChooser;
 import net.nikr.eve.jeveasset.gui.shared.components.JDefaultField;
 import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
 import net.nikr.eve.jeveasset.gui.shared.components.JMultiSelectionList;
+import net.nikr.eve.jeveasset.gui.shared.components.ListComboBoxModel;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.SimpleColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.View;
@@ -104,13 +104,13 @@ public class ExportDialog<E> extends JDialogCentered {
 	private final JRadioButton jNoFilter;
 	private final JRadioButton jSavedFilter;
 	private final JRadioButton jCurrentFilter;
-	private final JComboBox jFilters;
+	private final JComboBox<String> jFilters;
 	//Columns
 	private final JRadioButton jViewCurrent;
 	private final JRadioButton jViewSelect;
 	private final JRadioButton jViewSaved;
-	private final JComboBox jViews;
-	private final JMultiSelectionList jColumnSelection;
+	private final JComboBox<String> jViews;
+	private final JMultiSelectionList<EnumTableColumn<E>> jColumnSelection;
 	//Format
 	private final JRadioButton jCsv;
 	private final JRadioButton jHtml;
@@ -119,9 +119,9 @@ public class ExportDialog<E> extends JDialogCentered {
 	private final CardLayout cardLayout;
 	private final JPanel jOptionPanel;
 	//CSV
-	private final JComboBox jFieldDelimiter;
-	private final JComboBox jLineDelimiter;
-	private final JComboBox jDecimalSeparator;
+	private final JComboBox<FieldDelimiter> jFieldDelimiter;
+	private final JComboBox<LineDelimiter> jLineDelimiter;
+	private final JComboBox<DecimalSeparator> jDecimalSeparator;
 	//Html
 	private final JCheckBox jHtmlStyle;
 	private final JCheckBox jHtmlIGB;
@@ -216,18 +216,18 @@ public class ExportDialog<E> extends JDialogCentered {
 		jOptionPanel.add(jCsvPanel, ExportFormat.CSV.name());
 
 		JLabel jFieldDelimiterLabel = new JLabel(DialoguesExport.get().fieldTerminated());
-		jFieldDelimiter = new JComboBox(FieldDelimiter.values());
+		jFieldDelimiter = new JComboBox<FieldDelimiter>(FieldDelimiter.values());
 		jCsvPanel.add(jFieldDelimiterLabel);
 		jCsvPanel.add(jFieldDelimiter);
 
 		JLabel jLineDelimiterLabel = new JLabel(DialoguesExport.get().linesTerminated());
-		jLineDelimiter = new JComboBox(LineDelimiter.values());
+		jLineDelimiter = new JComboBox<LineDelimiter>(LineDelimiter.values());
 		jCsvPanel.add(jLineDelimiterLabel);
 		jCsvPanel.add(jLineDelimiter);
 
 		//FIXME - - > ExportDialog: DecimalSeparator also used by HTML export...
 		JLabel jDecimalSeparatorLabel = new JLabel(DialoguesExport.get().decimalSeparator());
-		jDecimalSeparator = new JComboBox(DecimalSeparator.values());
+		jDecimalSeparator = new JComboBox<DecimalSeparator>(DecimalSeparator.values());
 		jCsvPanel.add(jDecimalSeparatorLabel);
 		jCsvPanel.add(jDecimalSeparator);
 	//Sql
@@ -294,7 +294,7 @@ public class ExportDialog<E> extends JDialogCentered {
 		jFilterButtonGroup.add(jSavedFilter);
 		jFilterButtonGroup.add(jCurrentFilter);
 
-		jFilters = new JComboBox();
+		jFilters = new JComboBox<String>();
 
 		filterLayout.setHorizontalGroup(
 			filterLayout.createParallelGroup()
@@ -332,7 +332,7 @@ public class ExportDialog<E> extends JDialogCentered {
 		jViewSaved.setActionCommand(ExportAction.VIEW_CHANGED.name());
 		jViewSaved.addActionListener(listener);
 
-		jViews = new JComboBox();
+		jViews = new JComboBox<String>();
 
 		jViewSelect = new JRadioButton(DialoguesExport.get().viewSelect());
 		jViewSelect.setActionCommand(ExportAction.VIEW_CHANGED.name());
@@ -343,7 +343,7 @@ public class ExportDialog<E> extends JDialogCentered {
 			columns.put(column.name(), column);
 		}
 
-		jColumnSelection = new JMultiSelectionList(columnIndex);
+		jColumnSelection = new JMultiSelectionList<EnumTableColumn<E>>(columnIndex);
 		jColumnSelection.selectAll();
 		jColumnSelection.setEnabled(false);
 
@@ -446,14 +446,14 @@ public class ExportDialog<E> extends JDialogCentered {
 		for (EnumTableColumn<E> column : enumColumns) {
 			columns.put(column.name(), column);
 		}
-		jColumnSelection.setModel(new AbstractListModel() {
+		jColumnSelection.setModel(new AbstractListModel<EnumTableColumn<E>>() {
 			@Override
 			public int getSize() {
 				return columnIndex.size();
 			}
 
 			@Override
-			public Object getElementAt(int index) {
+			public EnumTableColumn<E> getElementAt(int index) {
 				return columnIndex.get(index);
 			}
 		});
@@ -461,12 +461,8 @@ public class ExportDialog<E> extends JDialogCentered {
 
 	private List<String> getExportColumns() {
 		List<String> selectedColumns = new ArrayList<String>();
-		Object[] values = jColumnSelection.getSelectedValues();
-		for (Object object : values) {
-			if (object instanceof EnumTableColumn<?>) {
-				EnumTableColumn<?> column = (EnumTableColumn) object;
-				selectedColumns.add(column.name());
-			}
+		for (EnumTableColumn<E> column : jColumnSelection.getSelectedValuesList()) {
+			selectedColumns.add(column.name());
 		}
 		return selectedColumns;
 	}
@@ -633,7 +629,7 @@ public class ExportDialog<E> extends JDialogCentered {
 				List<String> filterNames = new ArrayList<String>(exportFilterControl.getAllFilters().keySet());
 				Collections.sort(filterNames, new CaseInsensitiveComparator());
 				Object selectedItem = jFilters.getSelectedItem(); //Save selection
-				jFilters.setModel(new DefaultComboBoxModel(filterNames.toArray()));
+				jFilters.setModel(new ListComboBoxModel<String>(filterNames));
 				if (selectedItem != null) { //Restore selection
 					jFilters.setSelectedItem(selectedItem);
 				}
@@ -662,7 +658,7 @@ public class ExportDialog<E> extends JDialogCentered {
 				}
 				jViewSaved.setEnabled(true);
 				Object selectedItem = jViews.getSelectedItem(); //Save selection
-				jViews.setModel(new DefaultComboBoxModel(tableViews.keySet().toArray()));
+				jViews.setModel(new ListComboBoxModel<String>(tableViews.keySet()));
 				if (selectedItem != null) { //Restore selection
 					jViews.setSelectedItem(selectedItem);
 				}
@@ -704,15 +700,7 @@ public class ExportDialog<E> extends JDialogCentered {
 			}
 		} else {
 			//Use custom columns
-			Object[] values = jColumnSelection.getSelectedValues();
-			for (Object object : values) {
-				if (object instanceof EnumTableColumn<?>) {
-					String columnName = ((EnumTableColumn) object).name();
-					EnumTableColumn<E> column = columns.get(columnName);
-					header.add(column);
-				}
-			}
-			
+			header.addAll(jColumnSelection.getSelectedValuesList());
 		}
 	//Bad selection
 		if (header.isEmpty()) {

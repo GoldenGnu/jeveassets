@@ -34,8 +34,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import javax.swing.BoxLayout;
-import javax.swing.DefaultComboBoxModel;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -57,6 +55,7 @@ import net.nikr.eve.jeveasset.gui.shared.components.JCustomFileChooser;
 import net.nikr.eve.jeveasset.gui.shared.components.JDropDownButton;
 import net.nikr.eve.jeveasset.gui.shared.components.JFixedToolBar;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
+import net.nikr.eve.jeveasset.gui.shared.components.ListComboBoxModel;
 import net.nikr.eve.jeveasset.gui.shared.filter.ExportDialog;
 import net.nikr.eve.jeveasset.gui.shared.filter.ExportFilterControl;
 import net.nikr.eve.jeveasset.gui.shared.menu.*;
@@ -93,8 +92,8 @@ public class LoadoutsTab extends JMainTab {
 	private static final String SHIP_CATEGORY = "Ship";
 
 	//GUI
-	private final JComboBox jOwners;
-	private final JComboBox jShips;
+	private final JComboBox<String> jOwners;
+	private final JComboBox<String> jShips;
 	private final JButton jExpand;
 	private final JButton jCollapse;
 	private final JSeparatorTable jTable;
@@ -143,7 +142,7 @@ public class LoadoutsTab extends JMainTab {
 		JLabel jOwnersLabel = new JLabel(TabsLoadout.get().owner());
 		jToolBarTop.add(jOwnersLabel);
 
-		jOwners = new JComboBox();
+		jOwners = new JComboBox<String>();
 		jOwners.setActionCommand(LoadoutsAction.OWNERS.name());
 		jOwners.addActionListener(listener);
 		jToolBarTop.addComboBox(jOwners, 200);
@@ -151,7 +150,7 @@ public class LoadoutsTab extends JMainTab {
 		JLabel jShipsLabel = new JLabel(TabsLoadout.get().ship1());
 		jToolBarTop.add(jShipsLabel);
 
-		jShips = new JComboBox();
+		jShips = new JComboBox<String>();
 		jShips.setActionCommand(LoadoutsAction.FILTER.name());
 		jShips.addActionListener(listener);
 		jToolBarTop.addComboBox(jShips, 0);
@@ -253,7 +252,7 @@ public class LoadoutsTab extends JMainTab {
 		if (!program.getOwnerNames(false).isEmpty()) {
 			jOwners.setEnabled(true);
 			String selectedItem = (String) jOwners.getSelectedItem();
-			jOwners.setModel(new DefaultComboBoxModel(program.getOwnerNames(true).toArray()));
+			jOwners.setModel(new ListComboBoxModel<String>(program.getOwnerNames(true)));
 			if (selectedItem != null && program.getOwnerNames(true).contains(selectedItem)) {
 				jOwners.setSelectedItem(selectedItem);
 			} else {
@@ -261,9 +260,9 @@ public class LoadoutsTab extends JMainTab {
 			}
 		} else {
 			jOwners.setEnabled(false);
-			jOwners.setModel(new DefaultComboBoxModel());
+			jOwners.setModel(new ListComboBoxModel<String>());
 			jOwners.getModel().setSelectedItem(TabsLoadout.get().no());
-			jShips.setModel(new DefaultComboBoxModel());
+			jShips.setModel(new ListComboBoxModel<String>());
 			jShips.getModel().setSelectedItem(TabsLoadout.get().no());
 		}
 		updateTable();
@@ -436,7 +435,7 @@ public class LoadoutsTab extends JMainTab {
 					jOwners.setEnabled(true);
 					jShips.setEnabled(true);
 					String selectedItem = (String) jShips.getSelectedItem();
-					jShips.setModel(new DefaultComboBoxModel(charShips.toArray()));
+					jShips.setModel(new ListComboBoxModel<String>(charShips));
 					if (selectedItem != null && charShips.contains(selectedItem)) {
 						jShips.setSelectedItem(selectedItem);
 					} else {
@@ -447,7 +446,7 @@ public class LoadoutsTab extends JMainTab {
 					jCollapse.setEnabled(false);
 					jExport.setEnabled(false);
 					jShips.setEnabled(false);
-					jShips.setModel(new DefaultComboBoxModel());
+					jShips.setModel(new ListComboBoxModel<String>());
 					jShips.getModel().setSelectedItem(TabsLoadout.get().no1());
 				}
 			}

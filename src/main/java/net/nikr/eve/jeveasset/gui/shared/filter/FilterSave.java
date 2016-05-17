@@ -56,7 +56,7 @@ public class FilterSave extends JDialogCentered {
 
 	private final EventList<String> filters;
 	private final List<String> defaultFilters = new ArrayList<String>();
-	private final JComboBox jName;
+	private final JComboBox<String> jName;
 	private final JButton jSave;
 
 	private String returnString;
@@ -68,7 +68,7 @@ public class FilterSave extends JDialogCentered {
 
 		JLabel jText = new JLabel(GuiShared.get().enterFilterName());
 
-		jName = new JComboBox();
+		jName = new JComboBox<String>();
 		JCopyPopup.install((JTextComponent) jName.getEditor().getEditorComponent());
 		filters = new EventListManager<String>().create();
 		AutoCompleteSupport.install(jName, EventModels.createSwingThreadProxyList(filters), new Filterator());

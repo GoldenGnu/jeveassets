@@ -24,7 +24,7 @@ package net.nikr.eve.jeveasset.gui.tabs.routing;
 import java.util.*;
 import javax.swing.AbstractListModel;
 
-public class EditableListModel<T> extends AbstractListModel {
+public class EditableListModel<T> extends AbstractListModel<T> {
 
 	private static final long serialVersionUID = 1L;
 	private List<T> backed = new ArrayList<T>();
@@ -66,7 +66,7 @@ public class EditableListModel<T> extends AbstractListModel {
 	}
 
 	@Override
-	public Object getElementAt(final int index) {
+	public T getElementAt(final int index) {
 		return backed.get(index);
 	}
 

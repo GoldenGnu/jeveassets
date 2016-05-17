@@ -41,8 +41,6 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
-import javax.swing.DefaultComboBoxModel;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -72,6 +70,7 @@ import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.components.JDropDownButton;
 import net.nikr.eve.jeveasset.gui.shared.components.JFixedToolBar;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
+import net.nikr.eve.jeveasset.gui.shared.components.ListComboBoxModel;
 import net.nikr.eve.jeveasset.gui.tabs.assets.MyAsset;
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewGroup;
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewLocation;
@@ -116,7 +115,7 @@ public class RoutingTab extends JMainTab  {
 	}
 	//Routing
 	private JLabel jAlgorithmLabel;
-	private JComboBox jAlgorithm;
+	private JComboBox<RoutingAlgorithmContainer> jAlgorithm;
 	private JButton jAlgorithmInfo;
 	private JLabel jFilterLabel;
 	private JLabel jFilterSecurityIcon;
@@ -124,7 +123,7 @@ public class RoutingTab extends JMainTab  {
 	private JLabel jFilterSystemIcon;
 	private JLabel jFilterSystem;
 	private JLabel jSourceLabel;
-	private JComboBox jSource;
+	private JComboBox<SourceItem> jSource;
 	private JLabel jStartLabel;
 	private JTextField jStart;
 	private MoveJList<SolarSystem> jAvailable;
@@ -135,7 +134,7 @@ public class RoutingTab extends JMainTab  {
 	private MoveJList<SolarSystem> jWaypoints;
 	private JLabel jWaypointsRemaining;
 	//Filter
-	private JList jAvoid;
+	private JList<SolarSystem> jAvoid;
 	private EditableListModel<SolarSystem> avoidModel = new EditableListModel<SolarSystem>();
 	private JButton jAvoidAdd;
 	private JButton jAvoidRemove;
@@ -143,9 +142,9 @@ public class RoutingTab extends JMainTab  {
 	private JButton jAvoidSave;
 	private JDropDownButton jAvoidLoad;
 	private JLabel jSecurityIcon;
-	private JComboBox jSecurityMinimum;
+	private JComboBox<Double> jSecurityMinimum;
 	private JLabel jSecuritySeparatorLabel;
-	private JComboBox jSecurityMaximum;
+	private JComboBox<Double> jSecurityMaximum;
 	//Progress
 	private JProgressBar jProgress;
 	private JButton jCalculate;
@@ -193,7 +192,7 @@ public class RoutingTab extends JMainTab  {
 
 		jAlgorithmLabel = new JLabel(TabsRouting.get().algorithm());
 
-		jAlgorithm = new JComboBox(RoutingAlgorithmContainer.getRegisteredList().toArray());
+		jAlgorithm = new JComboBox<RoutingAlgorithmContainer>(new ListComboBoxModel<RoutingAlgorithmContainer>(RoutingAlgorithmContainer.getRegisteredList()));
 		jAlgorithm.setSelectedIndex(0);
 		jAlgorithm.setActionCommand(RoutingAction.ALGORITHM.name());
 		jAlgorithm.addActionListener(listener);
@@ -211,7 +210,7 @@ public class RoutingTab extends JMainTab  {
 
 		jSourceLabel = new JLabel(TabsRouting.get().source());
 
-		jSource = new JComboBox();
+		jSource = new JComboBox<SourceItem>();
 		jSource.setActionCommand(RoutingAction.SOURCE.name());
 		jSource.addActionListener(listener);
 
@@ -362,7 +361,7 @@ public class RoutingTab extends JMainTab  {
 		avoidModel.setSortComparator(comp);
 		avoidModel.addAll(Settings.get().getRoutingSettings().getAvoid().values());
 
-		jAvoid = new JList(avoidModel);
+		jAvoid = new JList<SolarSystem>(avoidModel);
 		jAvoid.addMouseListener(listener);
 		jAvoid.addListSelectionListener(listener);
 
@@ -398,14 +397,14 @@ public class RoutingTab extends JMainTab  {
 
 		jSecurityIcon = new JLabel();
 
-		jSecurityMinimum = new JComboBox(security);
+		jSecurityMinimum = new JComboBox<Double>(security);
 		jSecurityMinimum.setSelectedItem(Settings.get().getRoutingSettings().getSecMin());
 		jSecurityMinimum.setActionCommand(RoutingAction.SAVE.name());
 		jSecurityMinimum.addActionListener(listener);
 
 		jSecuritySeparatorLabel = new JLabel(" - ");
 
-		jSecurityMaximum = new JComboBox(security);
+		jSecurityMaximum = new JComboBox<Double>(security);
 		jSecurityMaximum.setSelectedItem(Settings.get().getRoutingSettings().getSecMax());
 		jSecurityMaximum.setActionCommand(RoutingAction.SAVE.name());
 		jSecurityMaximum.addActionListener(listener);
@@ -532,7 +531,7 @@ public class RoutingTab extends JMainTab  {
 		Collections.sort(sources);
 		sources.add(0, new SourceItem(TabsRouting.get().filteredAssets()));
 		sources.add(0, new SourceItem(General.get().all()));
-		jSource.setModel(new DefaultComboBoxModel(sources.toArray()));
+		jSource.setModel(new ListComboBoxModel<SourceItem>(sources));
 		jAlgorithm.setSelectedIndex(0);
 		jResult.setText(TabsRouting.get().emptyResult());
 		jResult.setCaretPosition(0);
@@ -976,11 +975,11 @@ public class RoutingTab extends JMainTab  {
 
 	private void validateLists() {
 		if (uiEnabled) {
-			jRemove.setEnabled(jWaypoints.getSelectedValues().length > 0);
-			jAdd.setEnabled(jAvailable.getSelectedValues().length > 0 && jWaypoints.getModel().getSize() < ((RoutingAlgorithmContainer) jAlgorithm.getSelectedItem()).getWaypointLimit());
+			jRemove.setEnabled(jWaypoints.getSelectedIndices().length > 0);
+			jAdd.setEnabled(jAvailable.getSelectedIndices().length > 0 && jWaypoints.getModel().getSize() < ((RoutingAlgorithmContainer) jAlgorithm.getSelectedItem()).getWaypointLimit());
 			jAddSystem.setEnabled(jWaypoints.getModel().getSize() < ((RoutingAlgorithmContainer) jAlgorithm.getSelectedItem()).getWaypointLimit());
 		}
-		if (jWaypoints.getSelectedValues().length == 1) { //Selected OK
+		if (jWaypoints.getSelectedIndices().length == 1) { //Selected OK
 			jStart.setText(jWaypoints.getSelectedValue().toString());
 			jStart.setEnabled(uiEnabled);
 		} else { //Empty List

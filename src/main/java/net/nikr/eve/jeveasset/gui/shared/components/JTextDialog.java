@@ -202,14 +202,6 @@ public class JTextDialog extends JDialogCentered {
 	}
 
 	private void toClipboard() {
-		SecurityManager sm = System.getSecurityManager();
-		if (sm != null) {
-			try {
-				sm.checkSystemClipboardAccess();
-			} catch (Exception ex) {
-				return;
-			}
-		}
 		Toolkit tk = Toolkit.getDefaultToolkit();
 		StringSelection data = new StringSelection(jText.getText());
 		Clipboard cp = tk.getSystemClipboard();
@@ -240,14 +232,6 @@ public class JTextDialog extends JDialogCentered {
 	}
 
 	private void fromClipboard() {
-		SecurityManager sm = System.getSecurityManager();
-		if (sm != null) {
-			try {
-				sm.checkSystemClipboardAccess();
-			} catch (Exception ex) {
-				return;
-			}
-		}
 		Toolkit tk = Toolkit.getDefaultToolkit();
 		Clipboard clipboard = tk.getSystemClipboard();
 		Transferable transferable = clipboard.getContents(this);

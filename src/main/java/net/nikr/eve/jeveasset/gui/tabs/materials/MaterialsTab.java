@@ -35,7 +35,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.swing.DefaultComboBoxModel;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -48,6 +47,7 @@ import net.nikr.eve.jeveasset.data.EventListManager;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.JFixedToolBar;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
+import net.nikr.eve.jeveasset.gui.shared.components.ListComboBoxModel;
 import net.nikr.eve.jeveasset.gui.shared.filter.ExportDialog;
 import net.nikr.eve.jeveasset.gui.shared.filter.ExportFilterControl;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo;
@@ -75,7 +75,7 @@ public class MaterialsTab extends JMainTab {
 	}
 
 	//GUI
-	private final JComboBox jOwners;
+	private final JComboBox<String> jOwners;
 	private final JButton jExport;
 	private final JButton jExpand;
 	private final JButton jCollapse;
@@ -104,7 +104,7 @@ public class MaterialsTab extends JMainTab {
 		
 		JFixedToolBar jToolBarLeft = new JFixedToolBar();
 
-		jOwners = new JComboBox();
+		jOwners = new JComboBox<String>();
 		jOwners.setActionCommand(MaterialsAction.SELECTED.name());
 		jOwners.addActionListener(listener);
 		jToolBarLeft.addComboBox(jOwners, 200);
@@ -193,7 +193,7 @@ public class MaterialsTab extends JMainTab {
 			jCollapse.setEnabled(true);
 			jOwners.setEnabled(true);
 			String selectedItem = (String) jOwners.getSelectedItem();
-			jOwners.setModel(new DefaultComboBoxModel(program.getOwnerNames(true).toArray()));
+			jOwners.setModel(new ListComboBoxModel<String>(program.getOwnerNames(true)));
 			if (selectedItem != null && program.getOwnerNames(true).contains(selectedItem)) {
 				jOwners.setSelectedItem(selectedItem);
 			} else {
@@ -204,7 +204,7 @@ public class MaterialsTab extends JMainTab {
 			jExpand.setEnabled(false);
 			jCollapse.setEnabled(false);
 			jOwners.setEnabled(false);
-			jOwners.setModel(new DefaultComboBoxModel());
+			jOwners.setModel(new ListComboBoxModel<String>());
 			jOwners.getModel().setSelectedItem(TabsMaterials.get().no());
 		}
 	}

@@ -44,8 +44,8 @@ public class EditColumnsDialog<T extends Enum<T> & EnumTableColumn<Q>, Q> extend
 		CHECK_ALL
 	}
 
-	private final DefaultListModel listModel = new DefaultListModel();
-	private final JList jColumns;
+	private final DefaultListModel<SimpleColumn> listModel = new DefaultListModel<SimpleColumn>();
+	private final JList<SimpleColumn> jColumns;
 	private final JCheckBox jAll;
 	private final JButton jOk;
 	private final JButton jCancel;
@@ -68,19 +68,17 @@ public class EditColumnsDialog<T extends Enum<T> & EnumTableColumn<Q>, Q> extend
 		jInfo.setWrapStyleWord(true);
 		jInfo.setText(GuiShared.get().tableColumnsTip());
 
-		jColumns = new JList(listModel);
-		jColumns.setCellRenderer(new JCheckBoxListRenderer());
+		jColumns = new JList<SimpleColumn>(listModel);
+		jColumns.setCellRenderer(new JCheckBoxListRenderer(jColumns.getCellRenderer()));
 		jColumns.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		//jList.setBorder(BorderFactory.createLineBorder(Color.GRAY, 1));
 
 		jColumns.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(final MouseEvent event) {
-				JList list = (JList) event.getSource();
-
 				// Get index of item clicked
-				int index = list.locationToIndex(event.getPoint());
-				SimpleColumn column = (SimpleColumn) list.getModel().getElementAt(index);
+				int index = jColumns.locationToIndex(event.getPoint());
+				SimpleColumn column = jColumns.getModel().getElementAt(index);
 
 				// Toggle selected state
 				column.setShown(!column.isShown());
@@ -88,7 +86,7 @@ public class EditColumnsDialog<T extends Enum<T> & EnumTableColumn<Q>, Q> extend
 				updateAll();
 
 				// Repaint cell
-				list.repaint(list.getCellBounds(index, index));
+				jColumns.repaint(jColumns.getCellBounds(index, index));
 			}
 		});
 
@@ -165,7 +163,7 @@ public class EditColumnsDialog<T extends Enum<T> & EnumTableColumn<Q>, Q> extend
 	private void updateAll() {
 		boolean allCheck = true;
 		for (int i = 0; i < listModel.size(); i++) {
-			SimpleColumn column = (SimpleColumn) listModel.getElementAt(i);
+			SimpleColumn column = listModel.getElementAt(i);
 			if (!column.isShown()) {
 				allCheck = false;
 				break;
@@ -178,7 +176,7 @@ public class EditColumnsDialog<T extends Enum<T> & EnumTableColumn<Q>, Q> extend
 	protected void save() {
 		List<SimpleColumn> columns = new ArrayList<SimpleColumn>();
 		for (int i = 0; i < listModel.size(); i++) {
-			columns.add((SimpleColumn) listModel.getElementAt(i));
+			columns.add(listModel.getElementAt(i));
 		}
 		adaptor.setColumns(columns);
 		program.saveSettings("Columns (Edit)"); //Save Columns (Changed - Edit Columns)
@@ -194,7 +192,7 @@ public class EditColumnsDialog<T extends Enum<T> & EnumTableColumn<Q>, Q> extend
 			if (EditColumnsAction.CHECK_ALL.name().equals(e.getActionCommand())) {
 				boolean check = jAll.isSelected();
 				for (int i = 0; i < listModel.size(); i++) {
-					SimpleColumn column = (SimpleColumn) listModel.getElementAt(i);
+					SimpleColumn column = listModel.getElementAt(i);
 					column.setShown(check);
 				}
 				jColumns.repaint();
@@ -205,14 +203,19 @@ public class EditColumnsDialog<T extends Enum<T> & EnumTableColumn<Q>, Q> extend
 		}
 	}
 
-	private class JCheckBoxListRenderer extends DefaultListCellRenderer {
+	private class JCheckBoxListRenderer implements ListCellRenderer<SimpleColumn> {
 
 		private final JCheckBox checkBox = new JCheckBox();
 
+		private final ListCellRenderer<? super SimpleColumn> renderer;
+
+		public JCheckBoxListRenderer(ListCellRenderer<? super SimpleColumn> renderer) {
+			this.renderer = renderer;
+		}
+
 		@Override
-		public Component getListCellRendererComponent(final JList list, final Object value, final int index, final boolean isSelected, final boolean hasFocus) {
-			JLabel jLabel = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, hasFocus);
-			SimpleColumn column = (SimpleColumn) value;
+		public Component getListCellRendererComponent(JList<? extends SimpleColumn> list, SimpleColumn value, int index, boolean isSelected, boolean cellHasFocus) {
+			JLabel jLabel = (JLabel) renderer.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
 
 			//Formating
 			checkBox.setEnabled(jLabel.isEnabled());
@@ -222,8 +225,8 @@ public class EditColumnsDialog<T extends Enum<T> & EnumTableColumn<Q>, Q> extend
 			checkBox.setBorder(jLabel.getBorder());
 
 			//Values
-			checkBox.setSelected(column.isShown());
-			checkBox.setText(column.getColumnName());
+			checkBox.setSelected(value.isShown());
+			checkBox.setText(value.getColumnName());
 			return checkBox;
 		}
 	}

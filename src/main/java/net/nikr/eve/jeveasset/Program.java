@@ -91,7 +91,7 @@ public class Program implements ActionListener {
 		TIMER
 	}
 	//Major.Minor.Bugfix [Release Candidate n] [BETA n] [DEV BUILD #n];
-	public static final String PROGRAM_VERSION = "2.11.0 DEV BUILD 3";
+	public static final String PROGRAM_VERSION = "3.0.0 DEV BUILD 3";
 	public static final String PROGRAM_NAME = "jEveAssets";
 	public static final String PROGRAM_UPDATE_URL = "http://eve.nikr.net/jeveassets/update.xml";
 	public static final String PROGRAM_HOMEPAGE = "http://eve.nikr.net/jeveasset";
@@ -297,7 +297,7 @@ public class Program implements ActionListener {
 	}
 
 	private int calcButtonsHeight() {
-		int comboBox = new JComboBox().getPreferredSize().height;
+		int comboBox = new JComboBox<String>().getPreferredSize().height;
 		int textField = new JTextField().getPreferredSize().height;
 		int button = new JButton().getPreferredSize().height;
 		int buttonsHeight = 0;

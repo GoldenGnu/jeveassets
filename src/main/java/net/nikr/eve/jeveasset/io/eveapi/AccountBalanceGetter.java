@@ -23,7 +23,7 @@ package net.nikr.eve.jeveasset.io.eveapi;
 
 
 import com.beimin.eveapi.exception.ApiException;
-import com.beimin.eveapi.model.shared.AccountBalance;
+import com.beimin.eveapi.model.shared.EveAccountBalance;
 import com.beimin.eveapi.response.shared.AccountBalanceResponse;
 import java.util.ArrayList;
 import java.util.Date;
@@ -54,7 +54,7 @@ public class AccountBalanceGetter extends AbstractApiGetter<AccountBalanceRespon
 			return new com.beimin.eveapi.parser.corporation.AccountBalanceParser()
 					.getResponse(Owner.getApiAuthorization(getOwner()));
 		} else {
-			return new com.beimin.eveapi.parser.pilot.AccountBalanceParser()
+			return new com.beimin.eveapi.parser.pilot.PilotAccountBalanceParser()
 					.getResponse(Owner.getApiAuthorization(getOwner()));
 		}
 	}
@@ -72,7 +72,7 @@ public class AccountBalanceGetter extends AbstractApiGetter<AccountBalanceRespon
 
 	@Override
 	protected void setData(final AccountBalanceResponse response) {
-		List<MyAccountBalance> accountBalances = ApiConverter.convertAccountBalance(new ArrayList<AccountBalance>(response.getAll()), getOwner());
+		List<MyAccountBalance> accountBalances = ApiConverter.convertAccountBalance(new ArrayList<EveAccountBalance>(response.getAll()), getOwner());
 		getOwner().setAccountBalances(accountBalances);
 	}
 

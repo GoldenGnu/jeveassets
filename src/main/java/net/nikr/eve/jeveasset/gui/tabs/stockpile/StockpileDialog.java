@@ -80,6 +80,7 @@ import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
 import net.nikr.eve.jeveasset.gui.shared.components.JDoubleField;
 import net.nikr.eve.jeveasset.gui.shared.components.JDropDownButton;
 import net.nikr.eve.jeveasset.gui.shared.components.JFixedToolBar;
+import net.nikr.eve.jeveasset.gui.shared.components.ListComboBoxModel;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
 import net.nikr.eve.jeveasset.gui.tabs.assets.MyAsset;
 import net.nikr.eve.jeveasset.gui.tabs.jobs.MyIndustryJob;
@@ -613,11 +614,11 @@ public class StockpileDialog extends JDialogCentered {
 		private final JLabel jType;
 		private final JLabel jWarning;
 		//Owner
-		private JComboBox jOwner;
+		private JComboBox<Owner> jOwner;
 		//Flag
-		private JComboBox jFlag;
+		private JComboBox<ItemFlag> jFlag;
 		//Container
-		private JComboBox jContainer;
+		private JComboBox<String> jContainer;
 
 		private final ListenerClass listener = new ListenerClass();
 
@@ -663,7 +664,7 @@ public class StockpileDialog extends JDialogCentered {
 				jType.setIcon(Images.LOC_CONTAINER_WHITE.getIcon());
 				jType.setToolTipText(TabsStockpile.get().container());
 
-				jContainer = new JComboBox(containers.toArray());
+				jContainer = new JComboBox<String>(new ListComboBoxModel<String>(containers));
 				jContainer.setEnabled(!containers.isEmpty());
 				jContainer.setActionCommand(StockpileDialogAction.VALIDATE.name());
 				jContainer.addActionListener(listener);
@@ -686,7 +687,7 @@ public class StockpileDialog extends JDialogCentered {
 				jType.setIcon(Images.LOC_FLAG.getIcon());
 				jType.setToolTipText(TabsStockpile.get().flag());
 
-				jFlag = new JComboBox(itemFlags.toArray());
+				jFlag = new JComboBox<ItemFlag>(new ListComboBoxModel<ItemFlag>(itemFlags));
 				jFlag.setActionCommand(StockpileDialogAction.VALIDATE.name());
 				jFlag.addActionListener(listener);
 
@@ -708,7 +709,7 @@ public class StockpileDialog extends JDialogCentered {
 				jType.setIcon(Images.LOC_OWNER.getIcon());
 				jType.setToolTipText(TabsStockpile.get().owner());
 
-				jOwner = new JComboBox(owners.toArray());
+				jOwner = new JComboBox<Owner>(new ListComboBoxModel<Owner>(owners));
 				jOwner.setActionCommand(StockpileDialogAction.VALIDATE.name());
 				jOwner.addActionListener(listener);
 				jOwner.setEnabled(!owners.isEmpty());
@@ -753,7 +754,7 @@ public class StockpileDialog extends JDialogCentered {
 			return getValue(jOwner, Owner.class).getOwnerID();
 		}
 
-		private <E> E getValue(JComboBox jComboBox, Class<E> clazz) {
+		private <E> E getValue(JComboBox<E> jComboBox, Class<E> clazz) {
 			if (jComboBox != null) {
 				Object object = jComboBox.getSelectedItem();
 				if (clazz.isInstance(object)) {
@@ -793,7 +794,7 @@ public class StockpileDialog extends JDialogCentered {
 		private final ListenerClass listener = new ListenerClass();
 		//Location
 		private final JLabel jLocationType;
-		private final JComboBox jLocation;
+		private final JComboBox<MyLocation> jLocation;
 		private final JDropDownButton jMatch;
 		private final JRadioButtonMenuItem jMatchExclude;
 		private final JCheckBoxMenuItem jMyLocations;
@@ -1071,7 +1072,7 @@ public class StockpileDialog extends JDialogCentered {
 
 			jLocationType = new JLabel();
 
-			jLocation = new JComboBox();
+			jLocation = new JComboBox<MyLocation>();
 
 			groupLayout.setHorizontalGroup(
 				groupLayout.createParallelGroup()

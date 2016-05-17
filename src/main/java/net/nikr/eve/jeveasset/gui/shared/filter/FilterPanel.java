@@ -32,10 +32,7 @@ import java.awt.event.KeyListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import javax.swing.DefaultComboBoxModel;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -50,6 +47,7 @@ import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
+import net.nikr.eve.jeveasset.gui.shared.components.ListComboBoxModel;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter.AllColumn;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter.CompareType;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter.LogicType;
@@ -62,17 +60,15 @@ class FilterPanel<E> {
 		FILTER, FILTER_TIMER, REMOVE
 	}
 
-	private static final Map<String, String> longestColumns = new HashMap<String, String>();
-
 	private final JPanel jPanel;
 	private final GroupLayout layout;
 
 	private final JCheckBox jEnabled;
-	private final JComboBox jLogic;
-	private final JComboBox jColumn;
-	private final JComboBox jCompare;
+	private final JComboBox<LogicType> jLogic;
+	private final JComboBox<EnumTableColumn<E>> jColumn;
+	private final JComboBox<CompareType> jCompare;
 	private final JTextField jText;
-	private final JComboBox jCompareColumn;
+	private final JComboBox<EnumTableColumn<E>> jCompareColumn;
 	private final JDateChooser jDate;
 
 	private final JLabel jSpacing;
@@ -117,31 +113,27 @@ class FilterPanel<E> {
 		jEnabled.addActionListener(listener);
 		jEnabled.setActionCommand(FilterPanelAction.FILTER.name());
 
-		jLogic = new JComboBox(LogicType.values());
-		jLogic.setPrototypeDisplayValue(LogicType.AND.toString());
+		jLogic = new JComboBox<LogicType>(LogicType.values());
+		jLogic.setPrototypeDisplayValue(LogicType.AND);
 		jLogic.addActionListener(listener);
 		jLogic.setActionCommand(FilterPanelAction.FILTER.name());
 
-		String longestColumn = longestColumns.get(filterControl.getName()); //Load cache
-		if (longestColumn == null) { //Create cache
-			JComboBox jComboBox = new JComboBox();
-			FontMetrics fontMetrics = jComboBox.getFontMetrics(jComboBox.getFont());
-			longestColumn = "";
-			for (EnumTableColumn<E> column : allColumns) {
-				if (fontMetrics.stringWidth(longestColumn) < fontMetrics.stringWidth(column.getColumnName())) {
-					longestColumn = column.getColumnName();
-				}
+		JComboBox<String> jComboBox = new JComboBox<String>();
+		FontMetrics fontMetrics = jComboBox.getFontMetrics(jComboBox.getFont());
+		EnumTableColumn<E>  longestColumn = null;
+		for (EnumTableColumn<E> column : allColumns) {
+			if (longestColumn == null || fontMetrics.stringWidth(longestColumn.getColumnName()) < fontMetrics.stringWidth(column.getColumnName())) {
+				longestColumn = column;
 			}
-			longestColumns.put(filterControl.getName(), longestColumn); //Save cache
 		}
 
-		jColumn = new JComboBox(allColumns.toArray());
+		jColumn = new JComboBox<EnumTableColumn<E>>(new ListComboBoxModel<EnumTableColumn<E>>(allColumns));
 		jColumn.setPrototypeDisplayValue(longestColumn);
 		jColumn.addActionListener(listener);
 		jColumn.setActionCommand(FilterPanelAction.FILTER.name());
 
-		jCompare = new JComboBox();
-		jCompare.setPrototypeDisplayValue(CompareType.CONTAINS_NOT_COLUMN.toString());
+		jCompare = new JComboBox<CompareType>();
+		jCompare.setPrototypeDisplayValue(CompareType.CONTAINS_NOT_COLUMN);
 		jCompare.addActionListener(listener);
 		jCompare.setActionCommand(FilterPanelAction.FILTER.name());
 
@@ -149,7 +141,7 @@ class FilterPanel<E> {
 		jText.getDocument().addDocumentListener(listener);
 		jText.addKeyListener(listener);
 
-		jCompareColumn = new JComboBox();
+		jCompareColumn = new JComboBox<EnumTableColumn<E>>();
 		jCompareColumn.setPrototypeDisplayValue(longestColumn);
 		jCompareColumn.addActionListener(listener);
 		jCompareColumn.setActionCommand(FilterPanelAction.FILTER.name());
@@ -304,7 +296,7 @@ class FilterPanel<E> {
 		} else {
 			compareTypes = CompareType.valuesString();
 		}
-		jCompare.setModel(new DefaultComboBoxModel(compareTypes));
+		jCompare.setModel(new ListComboBoxModel<CompareType>(compareTypes));
 		for (CompareType compareType : compareTypes) {
 			if (compareType.equals(object) && saveIndex) {
 				jCompare.setSelectedItem(compareType);
@@ -331,15 +323,15 @@ class FilterPanel<E> {
 			jSpacing.setVisible(false);
 		}
 		Object object = jCompareColumn.getSelectedItem();
-		Object[] compareColumns;
+		List<EnumTableColumn<E>> compareColumns;
 		if (isNumericCompare()) {
-			compareColumns = numericColumns.toArray();
+			compareColumns = new ArrayList<EnumTableColumn<E>>(numericColumns);
 		} else if (isDateCompare()) {
-			compareColumns = dateColumns.toArray();
+			compareColumns = new ArrayList<EnumTableColumn<E>>(dateColumns);
 		} else {
-			compareColumns = filterControl.getColumns().toArray();
+			compareColumns = new ArrayList<EnumTableColumn<E>>(filterControl.getColumns());
 		}
-		jCompareColumn.setModel(new DefaultComboBoxModel(compareColumns));
+		jCompareColumn.setModel(new ListComboBoxModel<EnumTableColumn<E>>(compareColumns));
 		for (Object column : compareColumns) {
 			if (column.equals(object) && saveIndex) {
 				jCompareColumn.setSelectedItem(column);

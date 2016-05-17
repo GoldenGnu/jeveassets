@@ -21,7 +21,7 @@
 
 package net.nikr.eve.jeveasset.io.shared;
 
-import com.beimin.eveapi.model.shared.AccountBalance;
+import com.beimin.eveapi.model.shared.EveAccountBalance;
 import com.beimin.eveapi.model.shared.Asset;
 import com.beimin.eveapi.model.shared.Contract;
 import com.beimin.eveapi.model.shared.ContractItem;
@@ -57,9 +57,9 @@ public final class ApiConverter {
 
 	private ApiConverter() { }
 
-	public static List<MyAccountBalance> convertAccountBalance(final List<AccountBalance> eveAccountBalances, final Owner owner) {
+	public static List<MyAccountBalance> convertAccountBalance(final List<EveAccountBalance> eveAccountBalances, final Owner owner) {
 		List<MyAccountBalance> accountBalances = new ArrayList<MyAccountBalance>();
-		for (AccountBalance eveAccountBalance : eveAccountBalances) {
+		for (EveAccountBalance eveAccountBalance : eveAccountBalances) {
 			accountBalances.add( new MyAccountBalance(eveAccountBalance, owner));
 		}
 		return accountBalances;
@@ -93,24 +93,24 @@ public final class ApiConverter {
 		return createAsset(null, owner, count, flagID, itemID, typeID, locationID, singleton, rawQuantity, flag);
 	}
 
-	public static List<MyAsset> convertAsset(final List<Asset<?>> eveAssets, final Owner owner) {
+	public static List<MyAsset> convertAsset(final List<Asset> eveAssets, final Owner owner) {
 		List<MyAsset> assets = new ArrayList<MyAsset>();
 		toDeepAsset(eveAssets, assets, null, owner);
 		return assets;
 	}
-	private static void toDeepAsset(final List<Asset<?>> eveAssets, final List<MyAsset> assets, final MyAsset parentAsset, final Owner owner) {
-		for (Asset<?> eveAsset : eveAssets) {
+	private static void toDeepAsset(final List<Asset> eveAssets, final List<MyAsset> assets, final MyAsset parentAsset, final Owner owner) {
+		for (Asset eveAsset : eveAssets) {
 			MyAsset asset = toAsset(owner, eveAsset, parentAsset);
 			if (parentAsset == null) {
 				assets.add(asset);
 			} else {
 				parentAsset.addAsset(asset);
 			}
-			toDeepAsset(new ArrayList<Asset<?>>(eveAsset.getAssets()), assets, asset, owner);
+			toDeepAsset(new ArrayList<Asset>(eveAsset.getAssets()), assets, asset, owner);
 		}
 	}
 
-	private static MyAsset toAsset(final Owner owner, final Asset<?> eveAsset, final MyAsset parentAsset) {
+	private static MyAsset toAsset(final Owner owner, final Asset eveAsset, final MyAsset parentAsset) {
 		long count = eveAsset.getQuantity();
 		int flagID = eveAsset.getFlag();
 		long itemID = eveAsset.getItemID();

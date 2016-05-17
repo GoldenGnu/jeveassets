@@ -21,13 +21,13 @@
 
 package net.nikr.eve.jeveasset.io.local;
 
-import com.beimin.eveapi.model.shared.AccountBalance;
 import com.beimin.eveapi.model.shared.Blueprint;
 import com.beimin.eveapi.model.shared.Contract;
 import com.beimin.eveapi.model.shared.ContractAvailability;
 import com.beimin.eveapi.model.shared.ContractItem;
 import com.beimin.eveapi.model.shared.ContractStatus;
 import com.beimin.eveapi.model.shared.ContractType;
+import com.beimin.eveapi.model.shared.EveAccountBalance;
 import com.beimin.eveapi.model.shared.IndustryJob;
 import com.beimin.eveapi.model.shared.JournalEntry;
 import com.beimin.eveapi.model.shared.KeyType;
@@ -333,14 +333,14 @@ public final class ProfileReader extends AbstractXmlReader {
 			NodeList balanceNodes = currentBalancesNode.getElementsByTagName("balance");
 			for (int b = 0; b < balanceNodes.getLength(); b++) {
 				Element currentNode = (Element) balanceNodes.item(b);
-				AccountBalance accountBalance = parseBalance(currentNode);
+				EveAccountBalance accountBalance = parseBalance(currentNode);
 				owner.getAccountBalances().add(new MyAccountBalance(accountBalance, owner));
 			}
 		}
 	}
 
-	private AccountBalance parseBalance(final Element element) {
-		AccountBalance accountBalance = new AccountBalance();
+	private EveAccountBalance parseBalance(final Element element) {
+		EveAccountBalance accountBalance = new EveAccountBalance();
 		int accountID = AttributeGetters.getInt(element, "accountid");
 		int accountKey = AttributeGetters.getInt(element, "accountkey");
 		double balance = AttributeGetters.getDouble(element, "balance");
@@ -575,11 +575,11 @@ public final class ProfileReader extends AbstractXmlReader {
 		double cost = AttributeGetters.getDouble(element, "cost");
 		long teamID = AttributeGetters.getLong(element, "teamid");
 		int licensedRuns = AttributeGetters.getInt(element, "licensedruns");
-		String probability = AttributeGetters.getString(element, "probability");
+		double probability = AttributeGetters.getDouble(element, "probability");
 		int productTypeID = AttributeGetters.getInt(element, "producttypeid");
 		String productTypeName = AttributeGetters.getString(element, "producttypename");
 		int status = AttributeGetters.getInt(element, "status");
-		long timeInSeconds = AttributeGetters.getLong(element, "timeinseconds");
+		int timeInSeconds = AttributeGetters.getInt(element, "timeinseconds");
 		Date startDate = AttributeGetters.getDate(element, "startdate");
 		Date endDate = AttributeGetters.getDate(element, "enddate");
 		Date pauseDate = AttributeGetters.getDate(element, "pausedate");

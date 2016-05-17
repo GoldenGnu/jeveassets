@@ -45,7 +45,7 @@ public class StockpileSelectionDialog extends JDialogCentered {
 	}
 
 	//GUI
-	private final JMultiSelectionList jList;
+	private final JMultiSelectionList<Stockpile> jList;
 	private final JButton jOK;
 
 	//Data
@@ -56,7 +56,7 @@ public class StockpileSelectionDialog extends JDialogCentered {
 
 		ListenerClass listener = new ListenerClass();
 
-		jList = new JMultiSelectionList();
+		jList = new JMultiSelectionList<Stockpile>();
 		jList.addListSelectionListener(listener);
 		JScrollPane jListScroll = new JScrollPane(jList);
 
@@ -98,7 +98,7 @@ public class StockpileSelectionDialog extends JDialogCentered {
 	}
 
 	public List<Stockpile> show(List<Stockpile> stockpiles) {
-		jList.setModel(new DataListModel(stockpiles));
+		jList.setModel(new DataListModel<Stockpile>(stockpiles));
 		this.stockpiles = null;
 		this.setVisible(true);
 		return this.stockpiles;
@@ -109,12 +109,7 @@ public class StockpileSelectionDialog extends JDialogCentered {
 
 	@Override
 	protected void save() {
-		stockpiles = new ArrayList<Stockpile>();
-		for (Object selectedValue : jList.getSelectedValues()) {
-			if (selectedValue instanceof Stockpile) {
-				stockpiles.add((Stockpile) selectedValue);
-			}
-		}
+		stockpiles = new ArrayList<Stockpile>(jList.getSelectedValuesList());
 		this.setVisible(false);
 	}
 
@@ -135,11 +130,11 @@ public class StockpileSelectionDialog extends JDialogCentered {
 		}
 	}
 
-	private static class DataListModel extends AbstractListModel {
+	private static class DataListModel<T> extends AbstractListModel<T> {
 
-		private final List<?> data;
+		private final List<T> data;
 
-		public DataListModel(final List<?> data) {
+		public DataListModel(final List<T> data) {
 			this.data = data;
 		}
 
@@ -149,7 +144,7 @@ public class StockpileSelectionDialog extends JDialogCentered {
 		}
 
 		@Override
-		public Object getElementAt(final int index) {
+		public T getElementAt(final int index) {
 			return data.get(index);
 		}
 	}

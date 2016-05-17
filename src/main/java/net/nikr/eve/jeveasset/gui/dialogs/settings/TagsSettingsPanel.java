@@ -56,16 +56,16 @@ public class TagsSettingsPanel extends JSettingsPanel {
 	}
 
 	//GUI
-	private JList jTags;
-	private JButton jAdd;
-	private JButton jEdit;
-	private JButton jDelete;
-	private DefaultListModel listModel;
-	private JTagsDialog jTagsDialog;
+	private final JList<Tag> jTags;
+	private final JButton jAdd;
+	private final JButton jEdit;
+	private final JButton jDelete;
+	private final DefaultListModel<Tag> listModel;
+	private final JTagsDialog jTagsDialog;
 
 	//Date
-	private List<TagTask> tasks = new ArrayList<TagTask>();
-	private Set<String> currentTags = new HashSet<String>();
+	private final List<TagTask> tasks = new ArrayList<TagTask>();
+	private final Set<String> currentTags = new HashSet<String>();
 
 	public TagsSettingsPanel(Program program, SettingsDialog settingsDialog) {
 		super(program, settingsDialog, GuiShared.get().tags(), Images.TAG_GRAY.getIcon());
@@ -74,9 +74,9 @@ public class TagsSettingsPanel extends JSettingsPanel {
 
 		jTagsDialog = new JTagsDialog(program);
 
-		listModel = new DefaultListModel();
+		listModel = new DefaultListModel<Tag>();
 
-		jTags = new JList(listModel);
+		jTags = new JList<Tag>(listModel);
 		jTags.setCellRenderer(new TagListCellRenderer(jTags.getCellRenderer()));
 		jTags.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		jTags.addListSelectionListener(listener);
@@ -151,7 +151,7 @@ public class TagsSettingsPanel extends JSettingsPanel {
 	private int addToList(Tag tag, int index) {
 		boolean ok = false;
 		for (int i = 0; i < listModel.size(); i++) {
-			Tag listTag = (Tag) listModel.get(i);
+			Tag listTag = listModel.get(i);
 			int compareTo = listTag.compareTo(tag);
 			if (compareTo >= 0) {
 				listModel.insertElementAt(tag, i);
@@ -190,7 +190,7 @@ public class TagsSettingsPanel extends JSettingsPanel {
 					currentTags.add(tag.getName());
 				}
 			} else if (TagsSettingsAction.EDIT.name().equals(e.getActionCommand())) {
-				Tag tag = (Tag) jTags.getSelectedValue();
+				Tag tag = jTags.getSelectedValue();
 				Tag editedTag = jTagsDialog.show(tag, currentTags);
 				if (editedTag != null && !editedTag.getName().isEmpty()) {
 					//Update count
@@ -215,7 +215,7 @@ public class TagsSettingsPanel extends JSettingsPanel {
 					jTags.setSelectedIndex(index);
 				}
 			} else if (TagsSettingsAction.DELETE.name().equals(e.getActionCommand())) {
-				Tag tag = (Tag) jTags.getSelectedValue();
+				Tag tag = jTags.getSelectedValue();
 				//Save for update (only executed if saved AKA ignored on cancel)
 				tasks.add(new DeleteTask(tag));
 				//Update List
@@ -231,8 +231,8 @@ public class TagsSettingsPanel extends JSettingsPanel {
 	}
 
 	private static class EditTask extends TagTask {
-		private Tag tag;
-		private Tag editedTag;
+		private final Tag tag;
+		private final Tag editedTag;
 
 		public EditTask(Tag tag, Tag editedTag) {
 			this.tag = tag;
@@ -256,7 +256,7 @@ public class TagsSettingsPanel extends JSettingsPanel {
 	}
 
 	private static class AddTask extends TagTask {
-		private Tag tag;
+		private final Tag tag;
 
 		public AddTask(Tag tag) {
 			this.tag = tag;
@@ -269,7 +269,7 @@ public class TagsSettingsPanel extends JSettingsPanel {
 	}
 
 	private static class DeleteTask extends TagTask {
-		private Tag tag;
+		private final Tag tag;
 
 		public DeleteTask(Tag tag) {
 			this.tag = tag;
@@ -287,7 +287,7 @@ public class TagsSettingsPanel extends JSettingsPanel {
 	}
 
 	private static class EditTag extends Tag {
-		private Tag tag;
+		private final Tag tag;
 
 		public EditTag(Tag tag, Tag editedTag) {
 			super(editedTag.getName(), editedTag.getColor());
@@ -300,22 +300,19 @@ public class TagsSettingsPanel extends JSettingsPanel {
 		}
 	}
 
-	private static class TagListCellRenderer implements ListCellRenderer {
+	private static class TagListCellRenderer implements ListCellRenderer<Tag> {
 
-		private ListCellRenderer renderer;
+		private final ListCellRenderer<? super Tag> renderer;
 
-		public TagListCellRenderer(ListCellRenderer renderer) {
+		public TagListCellRenderer(ListCellRenderer<? super Tag> renderer) {
 			this.renderer = renderer;
 		}
 
 		@Override
-		public Component getListCellRendererComponent(JList list, Object value, int index, boolean selected, boolean expanded) {
-			JLabel jLabel = (JLabel) renderer.getListCellRendererComponent(list, value, index, selected, expanded);
-			if (value instanceof Tag) {
-				Tag tag = (Tag) value;
-				jLabel.setText(GuiShared.get().tagsName(tag.getName(), tag.getIDs().size()));
-				jLabel.setIcon(new JTagsDialog.TagIcon(tag.getColor()));
-			}
+		public Component getListCellRendererComponent(JList<? extends Tag> list, Tag value, int index, boolean isSelected, boolean cellHasFocus) {
+			JLabel jLabel = (JLabel) renderer.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+			jLabel.setText(GuiShared.get().tagsName(value.getName(), value.getIDs().size()));
+			jLabel.setIcon(new JTagsDialog.TagIcon(value.getColor()));
 			return jLabel;
 		}
 	}

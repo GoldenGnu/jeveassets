@@ -275,14 +275,6 @@ class StockpileShoppingListDialog extends JDialogCentered {
 	}
 
 	private void copyToClipboard() {
-		SecurityManager sm = System.getSecurityManager();
-		if (sm != null) {
-			try {
-				sm.checkSystemClipboardAccess();
-			} catch (Exception ex) {
-				return;
-			}
-		}
 		Toolkit tk = Toolkit.getDefaultToolkit();
 		StringSelection data = new StringSelection(jText.getText());
 		Clipboard cp = tk.getSystemClipboard();

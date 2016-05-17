@@ -58,7 +58,7 @@ public class AssetsGetter extends AbstractApiGetter<AssetListResponse> {
 			return new com.beimin.eveapi.parser.corporation.AssetListParser()
 					.getResponse(Owner.getApiAuthorization(getOwner()));
 		} else {
-			return new com.beimin.eveapi.parser.pilot.AssetListParser()
+			return new com.beimin.eveapi.parser.pilot.PilotAssetListParser()
 					.getResponse(Owner.getApiAuthorization(getOwner()));
 		}
 	}
@@ -76,7 +76,7 @@ public class AssetsGetter extends AbstractApiGetter<AssetListResponse> {
 
 	@Override
 	protected void setData(final AssetListResponse response) {
-		List<Asset<?>> eveAssets = new ArrayList<Asset<?>>(response.getAll());
+		List<Asset> eveAssets = new ArrayList<Asset>(response.getAll());
 		List<MyAsset> assets = ApiConverter.convertAsset(eveAssets, getOwner());
 		getOwner().setAssets(assets);
 	}

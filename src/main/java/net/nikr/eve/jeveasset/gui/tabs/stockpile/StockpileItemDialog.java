@@ -54,7 +54,7 @@ public class StockpileItemDialog extends JDialogCentered {
 
 	private final JButton jOK;
 	private final JButton jCancel;
-	private final JComboBox jItems;
+	private final JComboBox<Item> jItems;
 	private JTextField jCountMinimum;
 	private final JCheckBox jCopy;
 
@@ -68,7 +68,7 @@ public class StockpileItemDialog extends JDialogCentered {
 		ListenerClass listener = new ListenerClass();
 
 		JLabel jItemsLabel = new JLabel(TabsStockpile.get().item());
-		jItems = new JComboBox();
+		jItems = new JComboBox<Item>();
 		AutoCompleteSupport<Item> itemAutoComplete = AutoCompleteSupport.install(jItems, EventModels.createSwingThreadProxyList(items), new ItemFilterator());
 		itemAutoComplete.setStrict(true);
 		itemAutoComplete.setCorrectsCase(true);

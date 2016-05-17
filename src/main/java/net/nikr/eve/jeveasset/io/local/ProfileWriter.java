@@ -329,7 +329,7 @@ public final class ProfileWriter extends AbstractXmlWriter {
 			childNode.setAttributeNS(null, "cost", String.valueOf(industryJob.getCost()));
 			childNode.setAttributeNS(null, "teamid", String.valueOf(industryJob.getTeamID()));
 			childNode.setAttributeNS(null, "licensedruns", String.valueOf(industryJob.getLicensedRuns()));
-			childNode.setAttributeNS(null, "probability", industryJob.getProbability());
+			childNode.setAttributeNS(null, "probability", String.valueOf(industryJob.getProbability()));
 			childNode.setAttributeNS(null, "producttypeid", String.valueOf(industryJob.getProductTypeID()));
 			childNode.setAttributeNS(null, "producttypename", industryJob.getProductTypeName());
 			childNode.setAttributeNS(null, "status", String.valueOf(industryJob.getStatus()));

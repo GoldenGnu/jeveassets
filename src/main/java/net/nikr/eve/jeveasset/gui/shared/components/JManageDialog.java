@@ -55,8 +55,8 @@ public abstract class JManageDialog extends JDialogCentered {
 		IMPORT
 	}
 
-	private final DefaultListModel listModel;
-	private final JList jList;
+	private final DefaultListModel<String> listModel;
+	private final JList<String> jList;
 	private final JButton jDelete;
 	private final JButton jLoad;
 	private final JButton jRename;
@@ -109,8 +109,8 @@ public abstract class JManageDialog extends JDialogCentered {
 		jClose.addActionListener(listener);
 
 		//List
-		listModel = new DefaultListModel();
-		jList = new JList(listModel);
+		listModel = new DefaultListModel<String>();
+		jList = new JList<String>(listModel);
 		jList.addMouseListener(listener);
 		jList.addListSelectionListener(listener);
 		JScrollPane jScrollPanel = new JScrollPane(jList);
@@ -147,7 +147,7 @@ public abstract class JManageDialog extends JDialogCentered {
 	private String getSelectedString() {
 		int selectedIndex =  jList.getSelectedIndex();
 		if (selectedIndex != -1) {
-			return (String) listModel.get(jList.getSelectedIndex());
+			return listModel.get(jList.getSelectedIndex());
 		} else {
 			return null;
 		}
@@ -211,7 +211,7 @@ public abstract class JManageDialog extends JDialogCentered {
 	private void delete() {
 		List<String> list = new ArrayList<String>();
 		for (int index : jList.getSelectedIndices()) {
-			String filterName = (String) listModel.get(index);
+			String filterName = listModel.get(index);
 			list.add(filterName);
 		}
 		int value;
@@ -230,7 +230,7 @@ public abstract class JManageDialog extends JDialogCentered {
 	private void export() {
 		List<String> list = new ArrayList<String>();
 		for (int index : jList.getSelectedIndices()) {
-			String filterName = (String) listModel.get(index);
+			String filterName = listModel.get(index);
 			list.add(filterName);
 		}
 		export(list);
@@ -251,7 +251,7 @@ public abstract class JManageDialog extends JDialogCentered {
 		}
 		List<String> list = new ArrayList<String>();
 		for (int index : jList.getSelectedIndices()) {
-			String filterName = (String) listModel.get(index);
+			String filterName = listModel.get(index);
 			list.add(filterName);
 		}
 		merge(name, list);

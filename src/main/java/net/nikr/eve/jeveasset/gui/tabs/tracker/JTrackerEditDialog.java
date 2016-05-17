@@ -375,7 +375,7 @@ public class JTrackerEditDialog extends JDialogCentered {
 					ids.add(TabsTracker.get().division(id));
 				}
 				//Select Division
-				String returnValue = jSelectionDialog.showDivision(ids.toArray());
+				String returnValue = jSelectionDialog.showDivision(ids);
 				if (returnValue == null) {
 					return; //Cancel
 				}
@@ -434,7 +434,7 @@ public class JTrackerEditDialog extends JDialogCentered {
 				//Select Location
 				String returnLocation = null;
 				if (values.keySet().size() > 1) {
-					returnLocation = jSelectionDialog.showLocation(values.keySet().toArray());
+					returnLocation = jSelectionDialog.showLocation(values.keySet());
 				} else { //Size is always 1 (one) or 0 (zero)
 					for (String s : values.keySet()) {
 						returnLocation = s; //Only done if size is 1 (one) AKA only done once
@@ -449,7 +449,7 @@ public class JTrackerEditDialog extends JDialogCentered {
 				Set<String> flags = values.get(returnLocation);
 				String returnFlag = TabsTracker.get().other(); //Used if size is 1
 				if (flags.size() > 1) { //Always contain "Other" flag
-					returnFlag = jSelectionDialog.showFlag(flags.toArray());
+					returnFlag = jSelectionDialog.showFlag(flags);
 					if (returnFlag == null) {
 						return; //Cancel
 					}

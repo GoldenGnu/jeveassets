@@ -38,7 +38,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import javax.swing.ButtonGroup;
-import javax.swing.DefaultComboBoxModel;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -60,6 +59,7 @@ import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.components.JDropDownButton;
 import net.nikr.eve.jeveasset.gui.shared.components.JFixedToolBar;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
+import net.nikr.eve.jeveasset.gui.shared.components.ListComboBoxModel;
 import net.nikr.eve.jeveasset.gui.shared.filter.ExportDialog;
 import net.nikr.eve.jeveasset.gui.shared.filter.ExportFilterControl;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
@@ -98,7 +98,7 @@ public class OverviewTab extends JMainTab {
 	private final JToggleButton jRegions;
 	private final JToggleButton jGroups;
 	private final JDropDownButton jLoadFilter;
-	private final JComboBox jOwner;
+	private final JComboBox<String> jOwner;
 	private final JLabel jValue;
 	private final JLabel jReprocessed;
 	private final JLabel jCount;
@@ -174,7 +174,7 @@ public class OverviewTab extends JMainTab {
 		JLabel jOwnerLabel = new JLabel(TabsOverview.get().owner());
 		jToolBarLeft.add(jOwnerLabel);
 
-		jOwner = new JComboBox();
+		jOwner = new JComboBox<String>();
 		jOwner.setActionCommand(OverviewAction.UPDATE_LIST.name());
 		jOwner.addActionListener(listener);
 		jToolBarLeft.addComboBox(jOwner, 150);
@@ -264,7 +264,7 @@ public class OverviewTab extends JMainTab {
 
 	@Override
 	public void updateData() {
-		jOwner.setModel(new DefaultComboBoxModel(program.getOwnerNames(true).toArray()));
+		jOwner.setModel(new ListComboBoxModel<String>(program.getOwnerNames(true)));
 		updateTable();
 	}
 

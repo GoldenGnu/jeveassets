@@ -30,6 +30,7 @@ import javax.swing.*;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
+import net.nikr.eve.jeveasset.gui.shared.components.ListComboBoxModel;
 import net.nikr.eve.jeveasset.i18n.DialoguesSettings;
 
 // </editor-fold>
@@ -39,7 +40,7 @@ import net.nikr.eve.jeveasset.i18n.DialoguesSettings;
  */
 public class ProxySettingsPanel extends JSettingsPanel {
 
-	private JComboBox proxyTypeField;
+	private JComboBox<Proxy.Type> proxyTypeField;
 	private JTextField proxyAddressField;
 	private JSpinner proxyPortField;
 	private JCheckBox enableApiProxy;
@@ -55,7 +56,7 @@ public class ProxySettingsPanel extends JSettingsPanel {
 		JLabel enableApiLabel = new JLabel(DialoguesSettings.get().enable());
 		JLabel apiProxyLabel = new JLabel(DialoguesSettings.get().apiProxy());
 
-		proxyTypeField = new JComboBox(new DefaultComboBoxModel(Proxy.Type.values()));
+		proxyTypeField = new JComboBox<Proxy.Type>(new ListComboBoxModel<Proxy.Type>(Proxy.Type.values()));
 		proxyTypeField.setEnabled(true);
 		proxyTypeField.setPreferredSize(new Dimension(200, (int) proxyTypeField.getPreferredSize().getHeight()));
 		proxyTypeField.setSelectedItem(Proxy.Type.DIRECT);
