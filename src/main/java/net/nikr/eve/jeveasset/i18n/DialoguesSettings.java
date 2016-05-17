@@ -126,6 +126,8 @@ public abstract class DialoguesSettings extends Bundle {
 	public abstract String ok();
 	public abstract String apply();
 	public abstract String cancel();
+	public abstract String tools();
+	public abstract String values();
 
 	// used in UserItemNameSettingsPanel
 	public abstract String names();

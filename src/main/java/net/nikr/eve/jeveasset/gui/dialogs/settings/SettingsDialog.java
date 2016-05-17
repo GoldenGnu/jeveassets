@@ -84,7 +84,7 @@ public class SettingsDialog extends JDialogCentered {
 		GeneralSettingsPanel generalSettingsPanel = new GeneralSettingsPanel(program, this);
 		add(generalSettingsPanel);
 
-		DefaultMutableTreeNode toolNode = addGroup("Tools", Images.SETTINGS_TOOLS.getIcon());
+		DefaultMutableTreeNode toolNode = addGroup(DialoguesSettings.get().tools(), Images.SETTINGS_TOOLS.getIcon());
 
 		AssetsToolSettingsPanel assetsToolSettingsPanel = new AssetsToolSettingsPanel(program, this);
 		add(assetsToolSettingsPanel, toolNode);
@@ -104,7 +104,7 @@ public class SettingsDialog extends JDialogCentered {
 		JournalToolSettingsPanel journalToolSettingsPanel = new JournalToolSettingsPanel(program, this);
 		add(journalToolSettingsPanel, toolNode);
 		
-		DefaultMutableTreeNode valuesNode = addGroup("Values", Images.EDIT_RENAME.getIcon());
+		DefaultMutableTreeNode valuesNode = addGroup(DialoguesSettings.get().values(), Images.EDIT_RENAME.getIcon());
 		userPriceSettingsPanel = new UserPriceSettingsPanel(program, this);
 		add(userPriceSettingsPanel, valuesNode);
 		userNameSettingsPanel = new UserNameSettingsPanel(program, this);
