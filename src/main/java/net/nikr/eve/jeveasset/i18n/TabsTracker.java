@@ -68,6 +68,7 @@ public abstract class TabsTracker extends Bundle {
 	public abstract String month1();
 	public abstract String months3();
 	public abstract String months6();
+	public abstract String newSelected();
 	public abstract String noDataFound();
 	public abstract String ok();
 	public abstract String other();

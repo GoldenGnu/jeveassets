@@ -524,4 +524,19 @@ public abstract class FakeSettings extends Settings {
 	public List<MyLocation> getJumpLocations(Class<?> clazz) {
 		throw new UnsupportedOperationException("not implemented");
 	}
+
+	@Override
+	public void setTrackerSelectNew(boolean trackerSelectNew) {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public boolean isTrackerSelectNew() {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public Map<String, Boolean> getTrackerFilters() {
+		throw new UnsupportedOperationException("not implemented");
+	}
 }

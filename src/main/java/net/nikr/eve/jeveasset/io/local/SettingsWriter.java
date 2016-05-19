@@ -123,6 +123,7 @@ public class SettingsWriter extends AbstractXmlWriter {
 		writeExportSettings(xmldoc, settings.getExportSettings());
 		writeAssetAdded(xmldoc, settings.getAssetAdded());
 		writeTrackerData(xmldoc, settings.getTrackerData());
+		writeTrackerFilters(xmldoc, settings.getTrackerFilters(), settings.isTrackerSelectNew());
 		writeOwners(xmldoc, settings.getOwners());
 		writeTags(xmldoc, settings.getTags());
 		writeRoutingSettings(xmldoc, settings.getRoutingSettings());
@@ -183,6 +184,18 @@ public class SettingsWriter extends AbstractXmlWriter {
 			Element ownerNode = xmldoc.createElementNS(null, "owner");
 			ownerNode.setAttributeNS(null, "name", entry.getValue());
 			ownerNode.setAttributeNS(null, "id", String.valueOf(entry.getKey()));
+			trackerDataNode.appendChild(ownerNode);
+		}
+	}
+
+	private void writeTrackerFilters(final Document xmldoc, final Map<String, Boolean> trackerFilters, boolean selectNew) {
+		Element trackerDataNode = xmldoc.createElementNS(null, "trackerfilters");
+		xmldoc.getDocumentElement().appendChild(trackerDataNode);
+		trackerDataNode.setAttributeNS(null, "selectnew", String.valueOf(selectNew));
+		for (Map.Entry<String, Boolean> entry : trackerFilters.entrySet()) {
+			Element ownerNode = xmldoc.createElementNS(null, "trackerfilter");
+			ownerNode.setAttributeNS(null, "id", entry.getKey());
+			ownerNode.setAttributeNS(null, "selected", String.valueOf(entry.getValue()));
 			trackerDataNode.appendChild(ownerNode);
 		}
 	}

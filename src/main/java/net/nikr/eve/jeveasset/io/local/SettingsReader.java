@@ -176,7 +176,7 @@ public final class SettingsReader extends AbstractXmlReader {
 			throw new XmlException("Wrong root element name.");
 		}
 
-		//Tags
+		//Routing
 		NodeList routingNodes = element.getElementsByTagName("routingsettings");
 		if (routingNodes.getLength() == 1) {
 			Element routingElement = (Element) routingNodes.item(0);
@@ -202,6 +202,13 @@ public final class SettingsReader extends AbstractXmlReader {
 		if (trackerDataNodes.getLength() == 1) {
 			Element trackerDataElement = (Element) trackerDataNodes.item(0);
 			parseTrackerData(trackerDataElement, settings);
+		}
+
+		//Tracker Filters
+		NodeList trackerFiltersNodes = element.getElementsByTagName("trackerfilters");
+		if (trackerFiltersNodes.getLength() == 1) {
+			Element trackerFilterElement = (Element) trackerFiltersNodes.item(0);
+			parseTrackerFilters(trackerFilterElement, settings);
 		}
 
 		//Asset Settings
@@ -448,6 +455,18 @@ public final class SettingsReader extends AbstractXmlReader {
 				value.setContractValue(contractValue);
 				settings.getTrackerData().get(owner).add(value);
 			}
+		}
+	}
+
+	private void parseTrackerFilters(final Element element, final Settings settings) {
+		NodeList tableNodeList = element.getElementsByTagName("trackerfilter");
+		boolean selectNew = AttributeGetters.getBoolean(element, "selectnew");
+		settings.setTrackerSelectNew(selectNew);
+		for (int a = 0; a < tableNodeList.getLength(); a++) {
+			Element trackerFilterNode = (Element) tableNodeList.item(a);
+			String id = AttributeGetters.getString(trackerFilterNode, "id");
+			boolean selected = AttributeGetters.getBoolean(trackerFilterNode, "selected");
+			settings.getTrackerFilters().put(id, selected);
 		}
 	}
 

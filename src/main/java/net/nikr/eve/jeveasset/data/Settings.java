@@ -139,6 +139,8 @@ public class Settings {
 	private final ExportSettings exportSettings = new ExportSettings();
 //Tracker						Saved by TaskDialog.update() (on API update)
 	private final Map<String, List<Value>> trackerData = new HashMap<String, List<Value>>(); //ownerID :: long
+	private final Map<String, Boolean> trackerFilters = new HashMap<String, Boolean>();
+	private boolean trackerSelectNew = true;
 //Runtime flags					Is not saved to file
 	private boolean settingsLoadError;
 	private boolean settingsImported;
@@ -305,6 +307,18 @@ public class Settings {
 
 	public Map<String, List<Value>> getTrackerData() {
 		return trackerData;
+	}
+
+	public Map<String, Boolean> getTrackerFilters() {
+		return trackerFilters;
+	}
+
+	public boolean isTrackerSelectNew() {
+		return trackerSelectNew;
+	}
+
+	public void setTrackerSelectNew(boolean trackerSelectNew) {
+		this.trackerSelectNew = trackerSelectNew;
 	}
 
 	public Date getConquerableStationsNextUpdate() {

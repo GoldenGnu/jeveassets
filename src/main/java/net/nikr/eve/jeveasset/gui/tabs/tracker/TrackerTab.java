@@ -449,6 +449,7 @@ public class TrackerTab extends JMainTab {
 	@Override
 	public void updateData() {
 		createNodes(); //Must be first or NPE!
+		updateButtonIcons();
 		updateOwners();
 		createData();
 		updateFilterButtons();
@@ -578,10 +579,11 @@ public class TrackerTab extends JMainTab {
 		//WALLET - Make nodes for found wallet account keys
 		CheckBoxNode corporationWalletNode = new CheckBoxNode(null, TabsTracker.get().corporationWallet(), TabsTracker.get().corporationWallet(), false);
 		for (String id : walletIDs) {
-			accountNodes.put(id, new CheckBoxNode(corporationWalletNode, id,  TabsTracker.get().division(id), true));
+			accountNodes.put(id, new CheckBoxNode(corporationWalletNode, id,  TabsTracker.get().division(id), selectNode(id)));
 		}
-		CheckBoxNode charecterWalletNode = new CheckBoxNode(null, "0", TabsTracker.get().characterWallet(), true);
-		accountNodes.put("0", charecterWalletNode);
+		String charecterWalletID = "0";
+		CheckBoxNode charecterWalletNode = new CheckBoxNode(null, charecterWalletID, TabsTracker.get().characterWallet(), selectNode(charecterWalletID));
+		accountNodes.put(charecterWalletID, charecterWalletNode);
 
 		//ASSETS - Make nodes for found asset IDs
 		CheckBoxNode assetNode = new CheckBoxNode(null, TabsTracker.get().assets(), TabsTracker.get().assets(), false);
@@ -602,13 +604,13 @@ public class TrackerTab extends JMainTab {
 			}
 			CheckBoxNode locationNode = nodeCache.get(location);
 			if (locationNode == null) {
-				locationNode = new CheckBoxNode(assetNode, location, location, true);
+				locationNode = new CheckBoxNode(assetNode, location, location, selectNode(location));
 				nodeCache.put(location, locationNode);
 			}
 
 			CheckBoxNode flagNode = nodeCache.get(id);
 			if (flagNode == null) {
-				flagNode = new CheckBoxNode(locationNode, id, flag, true);
+				flagNode = new CheckBoxNode(locationNode, id, flag, selectNode(id));
 				nodeCache.put(id, flagNode);
 			}
 			assetNodes.put(id, flagNode);
@@ -616,9 +618,19 @@ public class TrackerTab extends JMainTab {
 		//For locations with office, you should have the option to exclude all values in corp hangars
 		for (CheckBoxNode locationNode : nodeCache.values()) {
 			if (locationNode.isParent()) {
-				CheckBoxNode otherNode = new CheckBoxNode(locationNode, locationNode.getNodeId() + " > unique ID", TabsTracker.get().other(), true);
+				String id = locationNode.getNodeId() + " > unique ID";
+				CheckBoxNode otherNode = new CheckBoxNode(locationNode, id, TabsTracker.get().other(), selectNode(id));
 				assetNodes.put(locationNode.getNodeId(), otherNode);
 			}
+		}
+	}
+
+	private boolean selectNode(String id) {
+		Boolean selected = Settings.get().getTrackerFilters().get(id);
+		if (selected != null) {
+			return selected;
+		} else {
+			return Settings.get().isTrackerSelectNew();
 		}
 	}
 
@@ -736,6 +748,47 @@ public class TrackerTab extends JMainTab {
 		updateShown();
 	}
 
+	private void updateButtonIcons() {
+		boolean isAll;
+		boolean isSome;
+		//Assets
+		isAll = true;
+		isSome = false;
+		for (CheckBoxNode node : assetNodes.values()) {
+			if (!node.isSelected()) {
+				isAll = false;
+			}
+			if (node.isSelected()) {
+				isSome = true;
+			}
+		}
+		if (isAll) {
+			jAssetsFilters.setIcon(Images.LOC_INCLUDE.getIcon());
+		} else if (isSome) {
+			jAssetsFilters.setIcon(Images.EDIT_EDIT_WHITE.getIcon());
+		} else {
+			jAssetsFilters.setIcon(Images.UPDATE_DONE_ERROR.getIcon());
+		}
+		//Wallet
+		isAll = true;
+		isSome = false;
+		for (CheckBoxNode node : accountNodes.values()) {
+			if (!node.isSelected()) {
+				isAll = false;
+			}
+			if (node.isSelected()) {
+				isSome = true;
+			}
+		}
+		if (isAll) {
+			jWalletBalanceFilters.setIcon(Images.LOC_INCLUDE.getIcon());
+		} else if (isSome) {
+			jWalletBalanceFilters.setIcon(Images.EDIT_EDIT_WHITE.getIcon());
+		} else {
+			jWalletBalanceFilters.setIcon(Images.UPDATE_DONE_ERROR.getIcon());
+		}
+	}
+
 	private void updateShown() {
 		//Remove All
 		while (dataset.getSeriesCount() != 0) {
@@ -849,6 +902,20 @@ public class TrackerTab extends JMainTab {
 		XYItemRenderer renderer = jNextChart.getXYPlot().getRenderer();
 		renderer.setSeriesPaint(index, color);
 		renderer.setSeriesStroke(index, new BasicStroke(1));
+	}
+
+	private void updateSettings() {
+		Settings.lock("Tracker Filters: Update");
+		Settings.get().getTrackerFilters().clear();
+		for (CheckBoxNode checkBoxNode : assetNodes.values()) {
+			Settings.get().getTrackerFilters().put(checkBoxNode.getNodeId(), checkBoxNode.isSelected());
+		}
+		for (CheckBoxNode checkBoxNode : accountNodes.values()) {
+			Settings.get().getTrackerFilters().put(checkBoxNode.getNodeId(), checkBoxNode.isSelected());
+		}
+		Settings.get().setTrackerSelectNew(filterDialog.isSelectNew());
+		Settings.unlock("Tracker Filters: Update");
+		Settings.saveSettings();
 	}
 
 	private String getSelectedOwner(boolean all) {
@@ -1061,49 +1128,19 @@ public class TrackerTab extends JMainTab {
 				updateOwners();
 				updateData();
 			} else if (TrackerAction.FILTER_WALLET_BALANCE.name().equals(e.getActionCommand())) {
-				boolean save = filterDialog.show(accountNodes);
+				boolean save = filterDialog.showWallet(accountNodes);
 				if (save) { //Need refilter
+					updateSettings();
 					createData();
-					boolean isAll = true;
-					boolean isSome = false;
-					for (CheckBoxNode node : accountNodes.values()) {
-						if (!node.isSelected()) {
-							isAll = false;
-						}
-						if (node.isSelected()) {
-							isSome = true;
-						}
-					}
-					if (isAll) {
-						jWalletBalanceFilters.setIcon(Images.LOC_INCLUDE.getIcon());
-					} else if (isSome) {
-						jWalletBalanceFilters.setIcon(Images.EDIT_EDIT_WHITE.getIcon());
-					} else {
-						jWalletBalanceFilters.setIcon(Images.UPDATE_DONE_ERROR.getIcon());
-					}
+					updateButtonIcons();
 				}
 				
 			} else if (TrackerAction.FILTER_ASSETS.name().equals(e.getActionCommand())) {
-				boolean save = filterDialog.show(assetNodes);
+				boolean save = filterDialog.showLocations(assetNodes);
 				if (save) { //Need refilter
+					updateSettings();
 					createData();
-					boolean isAll = true;
-					boolean isSome = false;
-					for (CheckBoxNode node : assetNodes.values()) {
-						if (!node.isSelected()) {
-							isAll = false;
-						}
-						if (node.isSelected()) {
-							isSome = true;
-						}
-					}
-					if (isAll) {
-						jAssetsFilters.setIcon(Images.LOC_INCLUDE.getIcon());
-					} else if (isSome) {
-						jAssetsFilters.setIcon(Images.EDIT_EDIT_WHITE.getIcon());
-					} else {
-						jAssetsFilters.setIcon(Images.UPDATE_DONE_ERROR.getIcon());
-					}
+					updateButtonIcons();
 				}
 			}
 		}

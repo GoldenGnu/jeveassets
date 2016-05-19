@@ -28,6 +28,7 @@ import java.util.Map;
 import java.util.TreeMap;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JScrollPane;
 import javax.swing.JTree;
@@ -37,6 +38,7 @@ import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 import net.nikr.eve.jeveasset.Program;
+import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.CheckBoxNode;
 import net.nikr.eve.jeveasset.gui.shared.components.CheckBoxNodeEditor;
@@ -49,6 +51,7 @@ import net.nikr.eve.jeveasset.i18n.TabsTracker;
 public class TrackerFilterDialog extends JDialogCentered {
 
 	private final JTree jTree;
+	private final JCheckBox jNewSelected;
 	private final DefaultMutableTreeNode rootNode;
 	private final DefaultTreeModel treeModel;
 
@@ -71,6 +74,9 @@ public class TrackerFilterDialog extends JDialogCentered {
 		jTree.setCellEditor(new CheckBoxNodeEditor(jTree));
 		jTree.setEditable(true);
 
+		jNewSelected = new JCheckBox(TabsTracker.get().newSelected());
+		jNewSelected.setSelected(Settings.get().isTrackerSelectNew());
+
 		JButton jOK = new JButton(TabsTracker.get().ok());
 		jOK.addActionListener(new ActionListener() {
 			@Override
@@ -92,9 +98,11 @@ public class TrackerFilterDialog extends JDialogCentered {
 		jTreeScroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 
 		layout.setHorizontalGroup(
-			layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
+			layout.createParallelGroup(GroupLayout.Alignment.LEADING)
 				.addComponent(jTreeScroll, 0, GroupLayout.PREFERRED_SIZE, 600)
 				.addGroup(layout.createSequentialGroup()
+					.addComponent(jNewSelected)
+					.addGap(0, 0, Integer.MAX_VALUE)
 					.addComponent(jOK, Program.getButtonsWidth(), Program.getButtonsWidth(), Program.getButtonsWidth())
 					.addComponent(jCancel, Program.getButtonsWidth(), Program.getButtonsWidth(), Program.getButtonsWidth())
 				)
@@ -103,6 +111,7 @@ public class TrackerFilterDialog extends JDialogCentered {
 			layout.createSequentialGroup()
 				.addComponent(jTreeScroll, 0, GroupLayout.PREFERRED_SIZE, 500)
 				.addGroup(layout.createParallelGroup()
+					.addComponent(jNewSelected)
 					.addComponent(jOK, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 					.addComponent(jCancel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 				)
@@ -151,12 +160,25 @@ public class TrackerFilterDialog extends JDialogCentered {
 
 	@Override
 	protected void save() { }
-	
-	public boolean show(Map<String, CheckBoxNode> nodes) {
+
+	public boolean isSelectNew() {
+		return jNewSelected.isSelected();
+	}
+
+	public boolean showLocations(Map<String, CheckBoxNode> nodes) {
+		return show(nodes, true);
+	}
+
+	public boolean showWallet(Map<String, CheckBoxNode> nodes) {
+		return show(nodes, false);
+	}
+
+	private boolean show(Map<String, CheckBoxNode> nodes, boolean selected) {
 		save = false;
 		rootNode.removeAllChildren();
 		treeModel.reload();
 		jTree.setVisibleRowCount(0);
+		jNewSelected.setVisible(selected);
 
 		Map<String, CheckBoxNode> cloneList = cloneList(nodes);
 
@@ -168,14 +190,15 @@ public class TrackerFilterDialog extends JDialogCentered {
 
 		super.setVisible(true);
 
-		if (save) {
+		boolean changed = changed(cloneList, nodes); //Only need to update if something have been changed...
+		if (save && changed) {
 			nodes.clear();
 			nodes.putAll(cloneList);
 		}
-		return save;
+		return save && changed;
 	}
 
-	public Map<String, CheckBoxNode> cloneList(Map<String, CheckBoxNode> nodes) {
+	private Map<String, CheckBoxNode> cloneList(Map<String, CheckBoxNode> nodes) {
 		Map<String, CheckBoxNode> clonesCache = new HashMap<String, CheckBoxNode>();
 		Map<String, CheckBoxNode> clonedNodes = new TreeMap<String, CheckBoxNode>();
 		for (Map.Entry<String, CheckBoxNode> entry : nodes.entrySet()) {
@@ -184,12 +207,12 @@ public class TrackerFilterDialog extends JDialogCentered {
 		return clonedNodes;
 	}
 
-	public DefaultMutableTreeNode addTree(Map<String, DefaultMutableTreeNode> cache, CheckBoxNode node) {
+	private DefaultMutableTreeNode addTree(Map<String, DefaultMutableTreeNode> cache, CheckBoxNode node) {
 		//Add parents if any...
-		CheckBoxNode parent = node.getParent();
+		CheckBoxNode checkBoxNode = node.getParent();
 		DefaultMutableTreeNode parentNode = null;
-		if (parent != null) {
-			parentNode = addTree(cache, parent);
+		if (checkBoxNode != null) {
+			parentNode = addTree(cache, checkBoxNode);
 		}
 		//Add this node, if not already added
 		DefaultMutableTreeNode treeNode = cache.get(node.getNodeId());
@@ -200,7 +223,7 @@ public class TrackerFilterDialog extends JDialogCentered {
 		return treeNode;
 	}
 
-	public CheckBoxNode cloneTree(Map<String, CheckBoxNode> clonesCache, CheckBoxNode oldNode) {
+	private CheckBoxNode cloneTree(Map<String, CheckBoxNode> clonesCache, CheckBoxNode oldNode) {
 		CheckBoxNode oldParent = oldNode.getParent();
 		CheckBoxNode cloneParent = null;
 		if (oldParent != null) {
@@ -212,5 +235,22 @@ public class TrackerFilterDialog extends JDialogCentered {
 			clonesCache.put(cloneNode.getNodeId(), cloneNode);
 		}
 		return cloneNode;
+	}
+
+	/**
+	 * Check if the clone tree have been changed compared to the source tree
+	 * @param clone Clone Tree
+	 * @param source Source Tree
+	 * @return true if the maps are not equal. false if the maps are equal
+	 */
+	private boolean changed(Map<String, CheckBoxNode> clone, Map<String, CheckBoxNode> source) {
+		for (Map.Entry<String, CheckBoxNode> entry : clone.entrySet()) {
+			CheckBoxNode sourceNode = source.get(entry.getKey());
+			CheckBoxNode cloneNode = entry.getValue();
+			if (cloneNode.isSelected() != sourceNode.isSelected()) {
+				return true;
+			}
+		}
+		return false;
 	}
 }
