@@ -29,6 +29,7 @@ import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.io.shared.AbstractXmlReader;
 import net.nikr.eve.jeveasset.io.shared.AbstractXmlWriter;
 import net.nikr.eve.jeveasset.io.shared.XmlException;
+import org.junit.AfterClass;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import org.junit.BeforeClass;
@@ -47,11 +48,30 @@ public class BackupTest {
 	private static File bacFile;
 	private static File newFile;
 
+	private static File getFile(String extension) {
+		return new File(new File(Settings.getPathRunJar()).getParentFile().getAbsolutePath() + File.separator + "test." + extension);
+	}
 	@BeforeClass
 	public static void setUpClass() {
-		targetFile = new File(new File(Settings.getPathRunJar()).getParentFile().getAbsolutePath() + File.separator + "test.xml");
-		newFile = new File(new File(Settings.getPathRunJar()).getParentFile().getAbsolutePath() + File.separator + "test.new");
-		bacFile = new File(new File(Settings.getPathRunJar()).getParentFile().getAbsolutePath() + File.separator + "test.bac");
+		targetFile = getFile("xml");
+		newFile = getFile("new");
+		bacFile = getFile("bac");
+	}
+
+	@AfterClass
+	public static void tearDownClass() throws Exception {
+		targetFile.delete();
+		newFile.delete();
+		bacFile.delete();
+		File file;
+		int count = 0;
+		boolean next = true;
+		while (next) {
+			count++;
+			file = getFile("error" + count);
+			next = file.exists();
+			file.delete();
+		}
 	}
 
 	@Test

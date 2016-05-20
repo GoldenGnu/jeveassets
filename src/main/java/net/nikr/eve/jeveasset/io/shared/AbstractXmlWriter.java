@@ -63,7 +63,7 @@ public abstract class AbstractXmlWriter extends AbstractXmlBackup {
 			file = new File(filename);
 		}
 		try {
-			FileLock.lock(file);
+			lock(filename);
 			//Save file
 			outputStream = new FileOutputStream(file);
 			OutputStreamWriter outputStreamWriter = new OutputStreamWriter(outputStream, encoding);
@@ -99,7 +99,7 @@ public abstract class AbstractXmlWriter extends AbstractXmlBackup {
 			if (createBackup) {
 				backupFile(filename); //Rename .xml => .bac (.new is safe) and .new => .xml (.bac is safe). That way we always have at least one safe file
 			}
-			FileLock.unlock(file); //Last thing to do
+			unlock(filename); //Last thing to do
 		}
 	}
 }

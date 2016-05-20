@@ -32,6 +32,7 @@ public class FileLockSettings extends Settings {
 	private static final String TIMEOUT = "timeout";
 	private static final String XML = ".xml";
 	private static final String BAC = ".bac";
+	private static final String ERROR = ".error1";
 	
 
 	public FileLockSettings() {
@@ -52,12 +53,20 @@ public class FileLockSettings extends Settings {
 		return getPath(SETTINGS+XML); 
 	}
 
+	public static String getPathSettingsError() {
+		return getPath(SETTINGS+ERROR); 
+	}
+
 	public static String getPathProfile() {
 		return getPath(PROFILE+XML); 
 	}
 
 	public static String getPathProfileBackup() {
 		return getPath(PROFILE+BAC); 
+	}
+
+	public static String getPathProfileError() {
+		return getPath(PROFILE+ERROR); 
 	}
 
 	public static String getPathTimeout() {
