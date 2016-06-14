@@ -25,6 +25,7 @@ import ca.odell.glazedlists.GlazedLists;
 import java.util.Comparator;
 import java.util.Date;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
+import net.nikr.eve.jeveasset.gui.shared.table.containers.YesNo;
 import net.nikr.eve.jeveasset.i18n.TabsContracts;
 
 
@@ -147,6 +148,16 @@ public enum ContractsTableFormat implements EnumTableColumn<MyContractItem> {
 		@Override
 		public Object getColumnValue(final MyContractItem from) {
 			return from.getContract().getReward();
+		}
+	},
+	FOR_CORP(YesNo.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsContracts.get().columnForCorp();
+		}
+		@Override
+		public Object getColumnValue(final MyContractItem from) {
+			return new YesNo(from.getContract().isForCorp());
 		}
 	},
 	ISSUER(String.class, GlazedLists.comparableComparator()) {
