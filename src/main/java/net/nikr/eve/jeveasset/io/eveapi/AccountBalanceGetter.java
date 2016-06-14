@@ -80,6 +80,7 @@ public class AccountBalanceGetter extends AbstractApiGetter<AccountBalanceRespon
 	protected void updateFailed(final Owner ownerFrom, final Owner ownerTo) {
 		ownerTo.setAccountBalances(ownerFrom.getAccountBalances());
 		ownerTo.setBalanceNextUpdate(ownerFrom.getBalanceNextUpdate());
+		ownerTo.setBalanceLastUpdate(ownerFrom.getBalanceLastUpdate());
 	}
 
 	@Override

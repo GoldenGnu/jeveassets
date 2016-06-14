@@ -85,6 +85,7 @@ public class AssetsGetter extends AbstractApiGetter<AssetListResponse> {
 	protected void updateFailed(final Owner ownerFrom, final Owner ownerTo) {
 		ownerTo.setAssets(ownerFrom.getAssets());
 		ownerTo.setAssetNextUpdate(ownerFrom.getAssetNextUpdate());
+		ownerTo.setAssetLastUpdate(ownerFrom.getAssetLastUpdate());
 	}
 
 	@Override
