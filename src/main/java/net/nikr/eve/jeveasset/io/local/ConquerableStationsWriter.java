@@ -61,9 +61,9 @@ public final class ConquerableStationsWriter extends AbstractXmlWriter {
 		}
 		LOG.info("	Conquerable stations saved");
 	}
-	private void writeConquerableStations(final Document xmldoc, final Map<Integer, Station> conquerableStations) {
+	private void writeConquerableStations(final Document xmldoc, final Map<Long, Station> conquerableStations) {
 		Element parentNode = xmldoc.getDocumentElement();
-		for (Map.Entry<Integer, Station> entry : conquerableStations.entrySet()) {
+		for (Map.Entry<Long, Station> entry : conquerableStations.entrySet()) {
 			Element node = xmldoc.createElementNS(null, "station");
 			Station station = entry.getValue();
 			node.setAttributeNS(null, "corporationid", String.valueOf(station.getCorporationID()));

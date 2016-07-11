@@ -500,7 +500,7 @@ public final class ProfileReader extends AbstractXmlReader {
 		if (AttributeGetters.haveAttribute(element, "charactername")) {
 			characterName = AttributeGetters.getString(element, "charactername");
 		}
-		int stationID = AttributeGetters.getInt(element, "stationid");
+		long stationID = AttributeGetters.getLong(element, "stationid");
 		String stationName = AttributeGetters.getString(element, "stationname");
 		String transactionType = AttributeGetters.getString(element, "transactiontype");
 		String transactionFor = AttributeGetters.getString(element, "transactionfor");

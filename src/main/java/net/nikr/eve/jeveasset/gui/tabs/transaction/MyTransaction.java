@@ -53,7 +53,8 @@ public class MyTransaction extends WalletTransaction implements LocationType, It
 		this.setStationName(apiTransaction.getStationName());
 		this.setTransactionType(apiTransaction.getTransactionType());
 		this.setTransactionFor(apiTransaction.getTransactionFor());
-		//FIXME - EVEAPI Does not support Transaction.JournalTransactionID
+		this.setJournalTransactionID(apiTransaction.getJournalTransactionID());
+		this.setClientTypeID(apiTransaction.getClientTypeID());
 		
 		this.item = item;
 		this.location = location;

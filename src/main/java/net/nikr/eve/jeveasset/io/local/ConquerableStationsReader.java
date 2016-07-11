@@ -50,7 +50,7 @@ public final class ConquerableStationsReader extends AbstractXmlReader {
 	private boolean read() {
 		try {
 			Element element = getDocumentElement(Settings.getPathConquerableStations(), true);
-			Map<Integer, Station> conquerableStations = new HashMap<Integer, Station>();
+			Map<Long, Station> conquerableStations = new HashMap<Long, Station>();
 			parseConquerableStations(element, conquerableStations);
 			StaticData.get().setConquerableStations(conquerableStations);
 		} catch (IOException ex) {
@@ -63,14 +63,14 @@ public final class ConquerableStationsReader extends AbstractXmlReader {
 		return true;
 	}
 
-	private void parseConquerableStations(final Element element, final Map<Integer, Station> conquerableStations) throws XmlException {
+	private void parseConquerableStations(final Element element, final Map<Long, Station> conquerableStations) throws XmlException {
 		if (!element.getNodeName().equals("stations")) {
 			throw new XmlException("Wrong root element name.");
 		}
 		parseStations(element, conquerableStations);
 	}
 
-	private void parseStations(final Element element, final Map<Integer, Station> conquerableStations) {
+	private void parseStations(final Element element, final Map<Long, Station> conquerableStations) {
 		NodeList filterNodes = element.getElementsByTagName("station");
 		for (int i = 0; i < filterNodes.getLength(); i++) {
 			Element currentNode = (Element) filterNodes.item(i);
@@ -84,7 +84,7 @@ public final class ConquerableStationsReader extends AbstractXmlReader {
 		station.setCorporationID(AttributeGetters.getInt(element, "corporationid"));
 		station.setCorporationName(AttributeGetters.getString(element, "corporationname"));
 		station.setSolarSystemID(AttributeGetters.getInt(element, "solarsystemid"));
-		station.setStationID(AttributeGetters.getInt(element, "stationid"));
+		station.setStationID(AttributeGetters.getLong(element, "stationid"));
 		station.setStationName(AttributeGetters.getString(element, "stationname"));
 		station.setStationTypeID(AttributeGetters.getInt(element, "stationtypeid"));
 		return station;
