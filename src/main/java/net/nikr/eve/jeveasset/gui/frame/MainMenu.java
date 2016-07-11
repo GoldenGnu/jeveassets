@@ -179,16 +179,6 @@ public class MainMenu extends JMenuBar {
 		menuItem.addActionListener(program);
 		menu.add(menuItem);
 
-		//XXX Removed Industry Plot from the Main Menu (until after release)
-		/*
-		menuItem = new JMenuItem(GuiFrame.get().industryPlot());
-		//menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.ALT_MASK));
-		menuItem.setIcon(Images.TOOL_INDUSTRY_JOBS.getIcon());
-		menuItem.setActionCommand(MainMenuAction.INDUSTRY_PLOT.name());
-		menuItem.addActionListener(program);
-		menu.add(menuItem);
-		*/
-
 		menuItem = new JMenuItem(GuiFrame.get().overview());
 		//menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.ALT_MASK));
 		menuItem.setIcon(Images.TOOL_OVERVIEW.getIcon());
@@ -325,6 +315,15 @@ public class MainMenu extends JMenuBar {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					program.updateEventLists();
+				}
+			});
+			menu.add(menuItem);
+
+			menuItem = new JMenuItem("Create Tracker Point", Images.MISC_DEBUG.getIcon());
+			menuItem.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					program.createTrackerDataPoint();
 				}
 			});
 			menu.add(menuItem);
