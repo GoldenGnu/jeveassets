@@ -75,6 +75,7 @@ import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerTab;
 import net.nikr.eve.jeveasset.gui.tabs.transaction.MyTransaction;
 import net.nikr.eve.jeveasset.gui.tabs.transaction.TransactionTab;
 import net.nikr.eve.jeveasset.gui.tabs.tree.TreeTab;
+import net.nikr.eve.jeveasset.gui.tabs.values.DataSetCreator;
 import net.nikr.eve.jeveasset.gui.tabs.values.ValueRetroTab;
 import net.nikr.eve.jeveasset.gui.tabs.values.ValueTableTab;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
@@ -535,7 +536,8 @@ public class Program implements ActionListener {
 		return priceDataGetter;
 	}
 	public void createTrackerDataPoint() {
-		trackerTab.createTrackerDataPoint();
+		DataSetCreator.createTrackerDataPoint(this);
+		trackerTab.updateData();
 	}
 	
 	public static boolean onMac() {

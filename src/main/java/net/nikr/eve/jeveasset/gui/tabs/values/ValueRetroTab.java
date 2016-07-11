@@ -198,13 +198,13 @@ public class ValueRetroTab extends JMainTab {
 
 	private boolean calcTotal() {
 		Date date = Settings.getNow();
-		Map<String, Value> values = ValueTableTab.createDataSet(program);
+		Map<String, Value> values = DataSetCreator.createDataSet(program);
 		characters = new HashMap<String, Value>();
 		corporations = new HashMap<String, Value>();
 		total = values.get(TabsValues.get().grandTotal());
 		for (MyAccount account : program.getAccounts()) {
 			for (Owner owner : account.getOwners()) {
-				Value value = ValueTableTab.getValue(values, owner.getName(), date);
+				Value value = DataSetCreator.getValue(values, owner.getName(), date);
 				if (owner.isCharacter()) {
 					characters.put(value.getName(), value);
 				} else if (owner.isCorporation()) {

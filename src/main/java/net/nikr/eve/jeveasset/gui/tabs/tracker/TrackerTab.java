@@ -473,31 +473,6 @@ public class TrackerTab extends JMainTab {
 		return jDate;
 	}
 
-	public void createTrackerDataPoint() {
-		Map<String, Value> data = ValueTableTab.createDataSet(program);
-		
-		//Add everything
-		Settings.lock("Tracker Data (Create Point)");
-		for (Map.Entry<String, Value> entry : data.entrySet()) {
-			String owner = entry.getKey();
-			Value value = entry.getValue();
-			if (owner.equals(TabsValues.get().grandTotal())) {
-				continue;
-			}
-			//New TrackerOwner
-			List<Value> list = Settings.get().getTrackerData().get(owner);
-			if (list == null) {
-				list = new ArrayList<Value>();
-				Settings.get().getTrackerData().put(owner, list);
-			}
-			list.add(value);
-			
-		}
-		Settings.unlock("Tracker Data (Create Point)");
-		//Update data
-		updateData();
-	}
-
 	private void updateFilterButtons() {
 		Set<String> walletIDs = new TreeSet<String>();
 		Set<String> assetsIDs = new TreeSet<String>();

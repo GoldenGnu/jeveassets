@@ -285,7 +285,12 @@ public class ProfileData {
 				if (owner.isShowOwner()) {
 					uniqueOwnerNames.add(owner.getName());
 					uniqueOwners.put(owner.getName(), owner);
-				} else {
+				}
+			}
+		}
+		for (MyAccount account : profileManager.getAccounts()) {
+			for (Owner owner : account.getOwners()) {
+				if (!owner.isShowOwner()) {
 					continue;
 				}
 				//Market Orders
@@ -356,10 +361,10 @@ public class ProfileData {
 					if (entry.getValue().isEmpty() 
 						&& contract.getType() == ContractType.COURIER &&
 						( //XXX - Workaround for alien contracts
-							owner.getOwnerID() == contract.getAcceptorID()
-							|| owner.getOwnerID() == contract.getAssigneeID()
-							|| owner.getOwnerID() == contract.getIssuerID()
-							|| (owner.getOwnerID() == contract.getIssuerCorpID() && contract.isForCorp())
+							uniqueOwners.containsKey(contract.getAcceptor())
+							|| uniqueOwners.containsKey(contract.getAssignee())
+							|| uniqueOwners.containsKey(contract.getIssuer())
+							|| (contract.isForCorp() && uniqueOwners.containsKey(contract.getIssuerCorp()))
 						)
 						) {
 						contractIDs.add(contract.getContractID());
@@ -371,7 +376,7 @@ public class ProfileData {
 						contractItems.addAll(entry.getValue());
 					}
 					//Assets
-					List<MyAsset> contractAssets = ApiConverter.assetContracts(entry.getValue(), owner);
+					List<MyAsset> contractAssets = ApiConverter.assetContracts(entry.getValue(), uniqueOwners);
 					addAssets(contractAssets, assets, owner.getBlueprints());
 				}
 				//Assets

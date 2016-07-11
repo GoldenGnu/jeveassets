@@ -29,7 +29,6 @@ import java.util.List;
 import java.util.Set;
 import net.nikr.eve.jeveasset.data.Item;
 import net.nikr.eve.jeveasset.data.MyLocation;
-import net.nikr.eve.jeveasset.data.Owner;
 import net.nikr.eve.jeveasset.data.types.BlueprintType;
 import net.nikr.eve.jeveasset.data.types.ItemType;
 import net.nikr.eve.jeveasset.data.types.LocationType;
@@ -560,7 +559,7 @@ public class Stockpile implements Comparable<Stockpile>, LocationType {
 					long issuer = contractItem.getContract().isForCorp() ? contractItem.getContract().getIssuerCorpID() : contractItem.getContract().getIssuerID();
 					if (!matchOwner(filter, issuer) && (contractItem.getContract().getAcceptorID() <= 0 || !matchOwner(filter, contractItem.getContract().getAcceptorID()))) {
 						continue; //Do not match contract owner - try next filter
-					}	
+					}
 				} else {
 					if (!matchOwner(filter, ownerID)) {
 						continue; //Do not match owner - try next filter
@@ -594,7 +593,6 @@ public class Stockpile implements Comparable<Stockpile>, LocationType {
 							inventoryCountNow = inventoryCountNow + asset.getCount();
 						}
 					} else {
-						//Can we return here?
 						continue; //Do not match - try next filter
 					}
 			 //Jobs
@@ -607,7 +605,6 @@ public class Stockpile implements Comparable<Stockpile>, LocationType {
 							jobsCountNow = jobsCountNow + (industryJob.getRuns() * industryJob.getPortion());
 						}
 					} else {
-						//Can we return here?
 						continue; //Do not match - try next filter
 					}
 			//Orders
@@ -621,7 +618,6 @@ public class Stockpile implements Comparable<Stockpile>, LocationType {
 							buyOrdersCountNow = buyOrdersCountNow + marketOrder.getVolRemaining();
 						}
 					} else {
-						//Can we return here?
 						continue; //Do not match - try next filter
 					}
 			//Transactions
@@ -635,11 +631,11 @@ public class Stockpile implements Comparable<Stockpile>, LocationType {
 							sellTransactionsCountNow = sellTransactionsCountNow - transaction.getQuantity();
 						}
 					} else {
-						//Can we return here?
 						continue; //Do not match - try next filter
 					}
 			//Contracts
 				} else if (contractItem != null) {
+					boolean found = false;
 					//Get issuer
 					long issuer = contractItem.getContract().isForCorp() ? contractItem.getContract().getIssuerCorpID() : contractItem.getContract().getIssuerID();
 					//Only match owners once
@@ -650,12 +646,14 @@ public class Stockpile implements Comparable<Stockpile>, LocationType {
 						if (contractItem.getContract().getStatus() == ContractStatus.OUTSTANDING && filter.isSellingContracts()) {
 							if (add) { //Selling
 								sellingContractsCountNow = sellingContractsCountNow + contractItem.getQuantity();
+								found = true;
 							}
 						} else if (filter.isSoldContracts()) { //Sold
 							if ((isIssuer && contractItem.getContract().isIssuerAfterAssets())
 									|| isAcceptor && contractItem.getContract().isAcceptorAfterAssets()) {
 								if (add) {
 									soldContractsCountNow = soldContractsCountNow - contractItem.getQuantity();
+									found = true;
 								}
 							}
 						}
@@ -665,6 +663,7 @@ public class Stockpile implements Comparable<Stockpile>, LocationType {
 						if (contractItem.getContract().getStatus() == ContractStatus.OUTSTANDING && filter.isBuyingContracts()) {
 							if (add) { //Buying
 								buyingContractsCountNow = buyingContractsCountNow + contractItem.getQuantity();
+								found = true;
 							}
 							
 						} else if (filter.isBoughtContracts()) { //Bought
@@ -672,9 +671,13 @@ public class Stockpile implements Comparable<Stockpile>, LocationType {
 									|| isAcceptor && contractItem.getContract().isAcceptorAfterAssets()) {
 								if (add) {
 									boughtContractsCountNow = boughtContractsCountNow + contractItem.getQuantity();
+									found = true;
 								}
 							}
 						}
+					}
+					if (!found) {
+						continue; //Do not match - try next filter
 					}
 				}
 				return true; //Filter matched - Items added

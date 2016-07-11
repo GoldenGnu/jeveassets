@@ -205,20 +205,28 @@ public final class ApiConverter {
 	}
 
 	
-	public static List<MyAsset> assetContracts(final List<MyContractItem> contractItems, final Owner owner) {
+	public static List<MyAsset> assetContracts(final List<MyContractItem> contractItems, final Map<String, Owner> owners) {
 		List<MyAsset> list = new ArrayList<MyAsset>();
+		//Only includes issuer buying and selling items
+		//TODO Could add issuer bought/sold and acceptor bought/sold items to the assets list 
 		for (MyContractItem contractItem : contractItems) {
+			Owner issuer;
+			if (contractItem.getContract().isForCorp()) {
+				issuer = owners.get(contractItem.getContract().getIssuerCorp());
+			} else {
+				issuer = owners.get(contractItem.getContract().getIssuer());
+			}
 			if (	//Not completed
 					(contractItem.getContract().getStatus() == ContractStatus.INPROGRESS 
 					|| contractItem.getContract().getStatus() == ContractStatus.OUTSTANDING)
 					//Owned
-					&& contractItem.getContract().getIssuerID() == owner.getOwnerID()
+					&& issuer != null
 					//Sell
 					&& ((contractItem.isIncluded() && Settings.get().isIncludeSellContracts())
 					//Buy
 					|| (!contractItem.isIncluded() && Settings.get().isIncludeBuyContracts()))
-					) { 
-				MyAsset asset = toAssetContract(contractItem, owner);
+					) {
+				MyAsset asset = toAssetContract(contractItem, issuer);
 				list.add(asset);
 			}
 		}
@@ -328,7 +336,12 @@ public final class ApiConverter {
 
 	public static MyTransaction convertTransaction(final WalletTransaction apiTransaction, final Owner owner, final int accountKey) {
 		Item item = ApiIdConverter.getItem(apiTransaction.getTypeID());
-		MyLocation location = ApiIdConverter.getLocation(apiTransaction.getStationID());
+		MyLocation location;
+		if (apiTransaction.getStationID() == null) {
+			location = new MyLocation(0);
+		} else {
+			location = ApiIdConverter.getLocation(apiTransaction.getStationID());
+		}
 		MyTransaction transaction = new MyTransaction(apiTransaction, item, location, owner, accountKey);
 		return transaction;
 	}

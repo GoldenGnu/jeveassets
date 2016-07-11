@@ -28,11 +28,8 @@ import ca.odell.glazedlists.SortedList;
 import ca.odell.glazedlists.swing.DefaultEventSelectionModel;
 import ca.odell.glazedlists.swing.DefaultEventTableModel;
 import ca.odell.glazedlists.swing.TableComparatorChooser;
-import com.beimin.eveapi.model.shared.ContractStatus;
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.swing.JComponent;
@@ -41,8 +38,6 @@ import javax.swing.JMenu;
 import javax.swing.JScrollPane;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.EventListManager;
-import net.nikr.eve.jeveasset.data.MyAccountBalance;
-import net.nikr.eve.jeveasset.data.Owner;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
@@ -55,14 +50,7 @@ import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
 import net.nikr.eve.jeveasset.gui.shared.table.JAutoColumnTable;
 import net.nikr.eve.jeveasset.gui.shared.table.PaddingTableCellRenderer;
-import net.nikr.eve.jeveasset.gui.tabs.assets.MyAsset;
-import net.nikr.eve.jeveasset.gui.tabs.contracts.MyContract;
-import net.nikr.eve.jeveasset.gui.tabs.contracts.MyContractItem;
-import net.nikr.eve.jeveasset.gui.tabs.jobs.MyIndustryJob;
-import net.nikr.eve.jeveasset.gui.tabs.orders.MyMarketOrder;
-import net.nikr.eve.jeveasset.i18n.General;
 import net.nikr.eve.jeveasset.i18n.TabsValues;
-import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 
 
 public class ValueTableTab extends JMainTab {
@@ -140,221 +128,12 @@ public class ValueTableTab extends JMainTab {
 		);
 	}
 
-	public static Value getValue(Map<String, Value> values, String owner, Date date) {
-		Value value = values.get(owner);
-		if (value == null) {
-			value = new Value(owner, date);
-			values.put(owner, value);
-		}
-		return value;
-	}
-
-	private static String createAssetID(MyAsset asset) {
-		String flagID = null;
-		String[] flags = asset.getFlag().split(" > ");
-		for (String flag : flags) {
-			if (flag.contains("CorpSAG")) {
-				flagID = flag;
-				break;
-			}
-			if (flag.contains("Hangar") && asset.getFlag().contains("Office")) {
-				flagID = "CorpSAG1";
-				break;
-			}
-		}
-		if (flagID != null) {
-			return asset.getLocation().getLocation() + " > " + flagID;
-		} else {
-			return asset.getLocation().getLocation();
-		}
-	}
-
-	public static Map<String, Value> createDataSet(Program program) {
-		Date date = Settings.getNow();
-		Map<String, Value> values = new HashMap<String, Value>();
-		Value total = new Value(TabsValues.get().grandTotal(), date);
-		values.put(total.getName(), total);
-		for (MyAsset asset : program.getAssetList()) {
-			//Skip market orders
-			if (asset.getFlag().equals(General.get().marketOrderSellFlag())) {
-				continue; //Ignore market sell orders
-			}
-			if (asset.getFlag().equals(General.get().marketOrderBuyFlag())) {
-				continue; //Ignore market buy orders
-			}
-			//Skip contracts
-			if (asset.getFlag().equals(General.get().contractIncluded())) {
-				continue; //Ignore contracts included
-			}
-			if (asset.getFlag().equals(General.get().contractExcluded())) {
-				continue; //Ignore contracts excluded
-			}
-			Value value = getValue(values, asset.getOwner(), date);
-			//Location/Flag logic
-			String id = createAssetID(asset);
-			value.addAssets(id, asset);
-			total.addAssets(id, asset);
-		}
-		//Account Balance
-		for (MyAccountBalance accountBalance : program.getAccountBalanceList()) {
-			Value value = getValue(values, accountBalance.getOwner(), date);
-			String id;
-			if (accountBalance.isCorporation()) { //Corporation Wallets
-				id = "" + (accountBalance.getAccountKey() - 999);
-			} else {
-				id = "0"; //Character Wallet
-			}
-			value.addBalance(id, accountBalance.getBalance());
-			total.addBalance(id, accountBalance.getBalance());
-		}
-		//Market Orders
-		for (MyMarketOrder marketOrder : program.getMarketOrdersList()) {
-			Value value = getValue(values, marketOrder.getOwner(), date);
-			if (marketOrder.getOrderState() == 0) {
-				if (marketOrder.getBid() < 1) { //Sell Orders
-					value.addSellOrders(marketOrder.getPrice() * marketOrder.getVolRemaining());
-					total.addSellOrders(marketOrder.getPrice() * marketOrder.getVolRemaining());
-				} else { //Buy Orders
-					value.addEscrows(marketOrder.getEscrow());
-					value.addEscrowsToCover((marketOrder.getPrice() * marketOrder.getVolRemaining()) - marketOrder.getEscrow());
-					total.addEscrows(marketOrder.getEscrow());
-					total.addEscrowsToCover((marketOrder.getPrice() * marketOrder.getVolRemaining()) - marketOrder.getEscrow());
-				}
-			}
-		}
-		//Industrys Job: Manufacturing
-		for (MyIndustryJob industryJob : program.getIndustryJobsList()) {
-			Value value = getValue(values, industryJob.getOwner(), date);
-			//Manufacturing and not completed
-			if (industryJob.isManufacturing() && !industryJob.isDelivered()) {
-				double manufacturingTotal = industryJob.getPortion() * industryJob.getRuns() * ApiIdConverter.getPrice(industryJob.getProductTypeID(), false);
-				value.addManufacturing(manufacturingTotal);
-				total.addManufacturing(manufacturingTotal);
-			}
-		}
-		//Contract Collateral
-		for (MyContract contract : program.getContractList()) {
-			if (contract.isCourier()) {
-				//Transporting cargo (will get collateral back)
-				if (program.getOwnerNames(false).contains(contract.getAcceptor()) && contract.getStatus() == ContractStatus.INPROGRESS) {
-					addContractCollateral(contract, values, total, date, contract.getAcceptor());
-				}
-				//Shipping cargo (will get collateral or cargo back)
-				if (program.getOwnerNames(false).contains(contract.getIssuer())
-						&&
-						(
-						contract.getStatus() == ContractStatus.INPROGRESS
-						|| contract.getStatus() == ContractStatus.OUTSTANDING
-						)
-						) {
-					addContractCollateral(contract, values, total, date, contract.getIssuer());
-				}
-			}
-		}
-		//Contract Isk
-		for (MyContract contract : program.getContractList()) {
-			if (contract.isCourier()) {
-				continue; //Ignore courier contracts
-			}
-			Owner issuer = program.getOwners().get(contract.getIssuer());
-			Owner acceptor = program.getOwners().get(contract.getAcceptor());
-			if (issuer != null) { //Issuer
-				if (contract.getStatus() == ContractStatus.OUTSTANDING) { //Not Completed
-					//Cost have been included in Balance -> Counter Isk (as we still own the Isk)
-					if (issuer.getBalanceLastUpdate() != null && contract.getDateIssued().before(issuer.getBalanceLastUpdate())) {
-						//Buying: +Reward (Still own the Isk)
-						addContractValue(values, total, date, issuer.getName(), contract.getReward());
-					}
-				} else { //Completed
-					//Isk have not been updated in Balance yet
-					if (issuer.getBalanceLastUpdate() != null && contract.getDateCompleted().after(issuer.getBalanceLastUpdate())) {
-						//Sold: +Price
-						addContractValue(values, total, date, issuer.getName(), contract.getPrice());
-						//Bought: -Reward
-						addContractValue(values, total, date, issuer.getName(), -contract.getReward());
-					}
-				}
-			}
-			if (acceptor != null && contract.getDateCompleted() != null) { //Completed
-				//Isk have not been updated in Balance yet
-				if (acceptor.getBalanceLastUpdate() != null && contract.getDateCompleted().after(acceptor.getBalanceLastUpdate())) {
-					//Bought: -Price
-					addContractValue(values, total, date, acceptor.getName(), -contract.getPrice());
-					//Sold: +Price
-					addContractValue(values, total, date, acceptor.getName(), contract.getReward());
-				}
-			}
-		}
-		//Contract Items
-		for (MyContractItem contractItem : program.getContractItemList()) {
-			MyContract contract = contractItem.getContract();
-			if (contract.isCourier()) {
-				continue; //Ignore courier contracts
-			}
-
-			Owner issuer = program.getOwners().get(contract.getIssuer());
-			Owner acceptor = program.getOwners().get(contract.getAcceptor());
-
-			//Issuer
-			if (issuer != null) {
-				if (contract.getStatus() == ContractStatus.OUTSTANDING) { //Not Completed
-					if (contractItem.isIncluded()) {
-						//Items have been removed from Assets -> Counter Items (as we still own the items)
-						if (issuer.getAssetLastUpdate() != null && contract.getDateIssued().before(issuer.getAssetLastUpdate())) {
-							//Selling: +Items Value (Still own items)
-							addContractValue(values, total, date, issuer.getName(), contractItem.getDynamicPrice() * contractItem.getQuantity());
-						}
-					} else {
-						
-					}
-				} else if (contract.getDateCompleted() != null){ //Completed
-					//Items have not been updated in Assets yet
-					if (issuer.getAssetLastUpdate() != null && contract.getDateCompleted().after(issuer.getAssetLastUpdate())) {
-						if (contractItem.isIncluded()) {
-							//Sold: -Item Value
-							addContractValue(values, total, date, issuer.getName(), (-contractItem.getDynamicPrice() * contractItem.getQuantity()));
-						} else { //Add Items Value
-							//Bought: + Item Value
-							addContractValue(values, total, date, issuer.getName(), contractItem.getDynamicPrice() * contractItem.getQuantity());
-						}
-					}
-				}
-			}
-			if (acceptor != null && contract.getDateCompleted() != null) { //Completed
-				//Items have not been updated in Assets yet
-				if (acceptor.getAssetLastUpdate() != null && contract.getDateCompleted().after(acceptor.getAssetLastUpdate())) {
-					if (contractItem.isIncluded()) {
-						//Bought: + Item Value
-						addContractValue(values, total, date, acceptor.getName(), contractItem.getDynamicPrice() * contractItem.getQuantity());
-					} else {
-						//Sold: -Item Value
-						addContractValue(values, total, date, acceptor.getName(), (-contractItem.getDynamicPrice() * contractItem.getQuantity()));
-					}
-				}
-			}
-		}
-		return values;
-	}
-
-	private static void addContractCollateral(MyContract contract, Map<String, Value> values, Value total, Date date, String owner) {
-		double contractCollateral = contract.getCollateral();
-		Value value = getValue(values, owner, date);
-		value.addContractCollateral(contractCollateral);
-		total.addContractCollateral(contractCollateral);
-	}
-
-	private static void addContractValue(Map<String, Value> values, Value total, Date date, String owner, double change) {
-		Value value = getValue(values, owner, date);
-		value.addContractValue(change);
-		total.addContractValue(change);
-	}
-
 	@Override
 	public void updateData() {
 		try {
 			eventList.getReadWriteLock().writeLock().lock();
 			eventList.clear();
-			eventList.addAll(createDataSet(program).values());
+			eventList.addAll(DataSetCreator.createDataSet(program).values());
 		} finally {
 			eventList.getReadWriteLock().writeLock().unlock();
 		}
