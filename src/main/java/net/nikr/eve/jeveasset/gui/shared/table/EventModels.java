@@ -25,13 +25,16 @@ import ca.odell.glazedlists.gui.TableFormat;
 import ca.odell.glazedlists.swing.DefaultEventSelectionModel;
 import ca.odell.glazedlists.swing.DefaultEventTableModel;
 import ca.odell.glazedlists.swing.GlazedListsSwing;
+import javax.swing.JTable;
 
 
 public class EventModels {
 
 	//EventModels.createTableModel
 	public static <E> DefaultEventTableModel<E> createTableModel(EventList<E> source, TableFormat<E> tableFormat) {
-		return new DefaultEventTableModel<E>(createSwingThreadProxyList(source), tableFormat);
+		// XXX - Workaround for java bug: https://bugs.openjdk.java.net/browse/JDK-8068824
+		//return new DefaultEventTableModel<E>(createSwingThreadProxyList(source), tableFormat);
+		return new FixedEventTableModel<E>(createSwingThreadProxyList(source), tableFormat);
 	}
 
 	//EventModels.createSelectionModel
@@ -48,5 +51,33 @@ public class EventModels {
 			source.getReadWriteLock().readLock().unlock();
 		}
 		return result;
+	}
+
+	// XXX - Workaround for java bug: https://bugs.openjdk.java.net/browse/JDK-8068824
+	public static class FixedEventTableModel<E> extends DefaultEventTableModel<E> {
+
+		private JTable jTable;
+
+		public FixedEventTableModel(EventList<E> source, TableFormat<E> tableFormat) {
+			super(source, tableFormat);
+		}
+
+		public FixedEventTableModel(EventList<E> source, boolean disposeSource, TableFormat<E> tableFormat) {
+			super(source, disposeSource, tableFormat);
+		}
+
+		public void setTable(JTable jTable) {
+			this.jTable = jTable;
+		}
+
+		@Override
+		public void fireTableStructureChanged() {
+			if (jTable != null) {
+				jTable.getTableHeader().setDraggedColumn(null);
+			}
+			super.fireTableStructureChanged();
+		}
+
+		
 	}
 }
