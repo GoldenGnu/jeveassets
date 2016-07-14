@@ -44,6 +44,7 @@ import net.nikr.eve.jeveasset.data.tag.Tags;
 import net.nikr.eve.jeveasset.gui.shared.CopyHandler;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.ResizeMode;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.SimpleColumn;
+import net.nikr.eve.jeveasset.gui.shared.table.EventModels.FixedEventTableModel;
 import net.nikr.eve.jeveasset.gui.shared.table.SeparatorTableCell.JSeparatorPanel;
 import net.nikr.eve.jeveasset.gui.shared.table.TableCellRenderers.DateCellRenderer;
 import net.nikr.eve.jeveasset.gui.shared.table.TableCellRenderers.DoubleCellRenderer;
@@ -71,6 +72,12 @@ public class JAutoColumnTable extends JTable {
 	public JAutoColumnTable(final Program program, final TableModel tableModel) {
 		super(tableModel);
 		this.program = program;
+
+		// XXX - Workaround for java bug: https://bugs.openjdk.java.net/browse/JDK-8068824
+		if (tableModel instanceof FixedEventTableModel) {
+			FixedEventTableModel<?> eventTableModel = (FixedEventTableModel) tableModel;
+			eventTableModel.setTable(this);
+		}
 
 		//Listeners
 		ListenerClass listener = new ListenerClass();
