@@ -23,7 +23,6 @@ package net.nikr.eve.jeveasset.gui.shared.menu;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import javax.swing.DefaultComboBoxModel;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -31,6 +30,7 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
+import net.nikr.eve.jeveasset.gui.shared.components.ListComboBoxModel;
 import net.nikr.eve.jeveasset.gui.tabs.assets.MyAsset;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 
@@ -41,8 +41,8 @@ public class JContainerDialog extends JDialogCentered {
 		OK, CANCEL
 	}
 
-	private JComboBox jContainers;
-	private JButton jOK;
+	private final JComboBox<MyAsset> jContainers;
+	private final JButton jOK;
 	private MyAsset selected = null;
 
 	public JContainerDialog(Program program) {
@@ -52,7 +52,7 @@ public class JContainerDialog extends JDialogCentered {
 
 		JLabel jText = new JLabel(GuiShared.get().containerText());
 
-		jContainers = new JComboBox();
+		jContainers = new JComboBox<MyAsset>();
 
 		jOK = new JButton(GuiShared.get().ok());
 		jOK.setActionCommand(ContainerDialogAction.OK.name());
@@ -68,18 +68,18 @@ public class JContainerDialog extends JDialogCentered {
 				.addGroup(layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
 					.addComponent(jContainers, 220, 220, 220)
 					.addGroup(layout.createSequentialGroup()
-						.addComponent(jOK, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH)
-						.addComponent(jCancel, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH)
+						.addComponent(jOK, Program.getButtonsWidth(), Program.getButtonsWidth(), Program.getButtonsWidth())
+						.addComponent(jCancel, Program.getButtonsWidth(), Program.getButtonsWidth(), Program.getButtonsWidth())
 					)
 				)
 		);
 		layout.setVerticalGroup(
 			layout.createSequentialGroup()
-				.addComponent(jText, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-				.addComponent(jContainers, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+				.addComponent(jText, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+				.addComponent(jContainers, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 				.addGroup(layout.createParallelGroup()
-					.addComponent(jOK, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					.addComponent(jCancel, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					.addComponent(jOK, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jCancel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 				)
 		);
 	}
@@ -89,7 +89,7 @@ public class JContainerDialog extends JDialogCentered {
 			return asset.getParents().get(0);
 		}
 		selected = null;
-		jContainers.setModel( new DefaultComboBoxModel(asset.getParents().toArray()));
+		jContainers.setModel( new ListComboBoxModel<MyAsset>(asset.getParents()));
 		setVisible(true);
 		return selected;
 		

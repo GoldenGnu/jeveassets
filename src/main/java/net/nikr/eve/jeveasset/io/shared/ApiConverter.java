@@ -21,7 +21,7 @@
 
 package net.nikr.eve.jeveasset.io.shared;
 
-import com.beimin.eveapi.model.shared.AccountBalance;
+import com.beimin.eveapi.model.shared.EveAccountBalance;
 import com.beimin.eveapi.model.shared.Asset;
 import com.beimin.eveapi.model.shared.Contract;
 import com.beimin.eveapi.model.shared.ContractItem;
@@ -57,9 +57,9 @@ public final class ApiConverter {
 
 	private ApiConverter() { }
 
-	public static List<MyAccountBalance> convertAccountBalance(final List<AccountBalance> eveAccountBalances, final Owner owner) {
+	public static List<MyAccountBalance> convertAccountBalance(final List<EveAccountBalance> eveAccountBalances, final Owner owner) {
 		List<MyAccountBalance> accountBalances = new ArrayList<MyAccountBalance>();
-		for (AccountBalance eveAccountBalance : eveAccountBalances) {
+		for (EveAccountBalance eveAccountBalance : eveAccountBalances) {
 			accountBalances.add( new MyAccountBalance(eveAccountBalance, owner));
 		}
 		return accountBalances;
@@ -93,24 +93,24 @@ public final class ApiConverter {
 		return createAsset(null, owner, count, flagID, itemID, typeID, locationID, singleton, rawQuantity, flag);
 	}
 
-	public static List<MyAsset> convertAsset(final List<Asset<?>> eveAssets, final Owner owner) {
+	public static List<MyAsset> convertAsset(final List<Asset> eveAssets, final Owner owner) {
 		List<MyAsset> assets = new ArrayList<MyAsset>();
 		toDeepAsset(eveAssets, assets, null, owner);
 		return assets;
 	}
-	private static void toDeepAsset(final List<Asset<?>> eveAssets, final List<MyAsset> assets, final MyAsset parentAsset, final Owner owner) {
-		for (Asset<?> eveAsset : eveAssets) {
+	private static void toDeepAsset(final List<Asset> eveAssets, final List<MyAsset> assets, final MyAsset parentAsset, final Owner owner) {
+		for (Asset eveAsset : eveAssets) {
 			MyAsset asset = toAsset(owner, eveAsset, parentAsset);
 			if (parentAsset == null) {
 				assets.add(asset);
 			} else {
 				parentAsset.addAsset(asset);
 			}
-			toDeepAsset(new ArrayList<Asset<?>>(eveAsset.getAssets()), assets, asset, owner);
+			toDeepAsset(new ArrayList<Asset>(eveAsset.getAssets()), assets, asset, owner);
 		}
 	}
 
-	private static MyAsset toAsset(final Owner owner, final Asset<?> eveAsset, final MyAsset parentAsset) {
+	private static MyAsset toAsset(final Owner owner, final Asset eveAsset, final MyAsset parentAsset) {
 		long count = eveAsset.getQuantity();
 		int flagID = eveAsset.getFlag();
 		long itemID = eveAsset.getItemID();
@@ -205,20 +205,28 @@ public final class ApiConverter {
 	}
 
 	
-	public static List<MyAsset> assetContracts(final List<MyContractItem> contractItems, final Owner owner) {
+	public static List<MyAsset> assetContracts(final List<MyContractItem> contractItems, final Map<String, Owner> owners) {
 		List<MyAsset> list = new ArrayList<MyAsset>();
+		//Only includes issuer buying and selling items
+		//TODO Could add issuer bought/sold and acceptor bought/sold items to the assets list 
 		for (MyContractItem contractItem : contractItems) {
+			Owner issuer;
+			if (contractItem.getContract().isForCorp()) {
+				issuer = owners.get(contractItem.getContract().getIssuerCorp());
+			} else {
+				issuer = owners.get(contractItem.getContract().getIssuer());
+			}
 			if (	//Not completed
 					(contractItem.getContract().getStatus() == ContractStatus.INPROGRESS 
 					|| contractItem.getContract().getStatus() == ContractStatus.OUTSTANDING)
 					//Owned
-					&& contractItem.getContract().getIssuerID() == owner.getOwnerID()
+					&& issuer != null
 					//Sell
 					&& ((contractItem.isIncluded() && Settings.get().isIncludeSellContracts())
 					//Buy
 					|| (!contractItem.isIncluded() && Settings.get().isIncludeBuyContracts()))
-					) { 
-				MyAsset asset = toAssetContract(contractItem, owner);
+					) {
+				MyAsset asset = toAssetContract(contractItem, issuer);
 				list.add(asset);
 			}
 		}
@@ -328,7 +336,12 @@ public final class ApiConverter {
 
 	public static MyTransaction convertTransaction(final WalletTransaction apiTransaction, final Owner owner, final int accountKey) {
 		Item item = ApiIdConverter.getItem(apiTransaction.getTypeID());
-		MyLocation location = ApiIdConverter.getLocation(apiTransaction.getStationID());
+		MyLocation location;
+		if (apiTransaction.getStationID() == null) {
+			location = new MyLocation(0);
+		} else {
+			location = ApiIdConverter.getLocation(apiTransaction.getStationID());
+		}
 		MyTransaction transaction = new MyTransaction(apiTransaction, item, location, owner, accountKey);
 		return transaction;
 	}

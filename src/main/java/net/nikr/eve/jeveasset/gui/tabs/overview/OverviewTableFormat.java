@@ -130,8 +130,8 @@ enum OverviewTableFormat implements EnumTableColumn<Overview> {
 			return from.getValueReprocessed();
 		}
 	};
-	private Class<?> type;
-	private Comparator<?> comparator;
+	private final Class<?> type;
+	private final Comparator<?> comparator;
 	private OverviewTableFormat(final Class<?> type, final Comparator<?> comparator) {
 		this.type = type;
 		this.comparator = comparator;
@@ -153,13 +153,13 @@ enum OverviewTableFormat implements EnumTableColumn<Overview> {
 		return true;
 	}
 	@Override
-	public Overview setColumnValue(final Object baseObject, final Object editedValue) {
-		return null;
+	public boolean setColumnValue(final Object baseObject, final Object editedValue) {
+		return false;
 	}
-	//XXX - TableFormat.getColumnName() Workaround
-	@Override public abstract String getColumnName();
 	@Override
 	public String toString() {
 		return getColumnName();
 	}
+	//XXX - TableFormat.getColumnName() Workaround
+	@Override public abstract String getColumnName();
 }

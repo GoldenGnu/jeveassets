@@ -48,6 +48,7 @@ public abstract class TabsContracts extends Bundle {
 	public abstract String columnExpired();
 	public abstract String columnIncluded();
 	public abstract String columnIssued();
+	public abstract String columnForCorp();
 	public abstract String columnIssuer();
 	public abstract String columnIssuerCorp();
 	public abstract String columnName();

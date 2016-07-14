@@ -24,6 +24,7 @@ import com.toedter.calendar.JCalendar;
 import com.toedter.calendar.JDateChooser;
 import com.toedter.calendar.JTextFieldDateEditor;
 import java.awt.Color;
+import java.awt.FontMetrics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -32,7 +33,6 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.List;
-import javax.swing.DefaultComboBoxModel;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -47,6 +47,7 @@ import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
+import net.nikr.eve.jeveasset.gui.shared.components.ListComboBoxModel;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter.AllColumn;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter.CompareType;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter.LogicType;
@@ -63,11 +64,11 @@ class FilterPanel<E> {
 	private final GroupLayout layout;
 
 	private final JCheckBox jEnabled;
-	private final JComboBox jLogic;
-	private final JComboBox jColumn;
-	private final JComboBox jCompare;
+	private final JComboBox<LogicType> jLogic;
+	private final JComboBox<EnumTableColumn<E>> jColumn;
+	private final JComboBox<CompareType> jCompare;
 	private final JTextField jText;
-	private final JComboBox jCompareColumn;
+	private final JComboBox<EnumTableColumn<E>> jCompareColumn;
 	private final JDateChooser jDate;
 
 	private final JLabel jSpacing;
@@ -112,15 +113,27 @@ class FilterPanel<E> {
 		jEnabled.addActionListener(listener);
 		jEnabled.setActionCommand(FilterPanelAction.FILTER.name());
 
-		jLogic = new JComboBox(LogicType.values());
+		jLogic = new JComboBox<LogicType>(LogicType.values());
+		jLogic.setPrototypeDisplayValue(LogicType.AND);
 		jLogic.addActionListener(listener);
 		jLogic.setActionCommand(FilterPanelAction.FILTER.name());
 
-		jColumn = new JComboBox(allColumns.toArray());
+		JComboBox<String> jComboBox = new JComboBox<String>();
+		FontMetrics fontMetrics = jComboBox.getFontMetrics(jComboBox.getFont());
+		EnumTableColumn<E>  longestColumn = null;
+		for (EnumTableColumn<E> column : allColumns) {
+			if (longestColumn == null || fontMetrics.stringWidth(longestColumn.getColumnName()) < fontMetrics.stringWidth(column.getColumnName())) {
+				longestColumn = column;
+			}
+		}
+
+		jColumn = new JComboBox<EnumTableColumn<E>>(new ListComboBoxModel<EnumTableColumn<E>>(allColumns));
+		jColumn.setPrototypeDisplayValue(longestColumn);
 		jColumn.addActionListener(listener);
 		jColumn.setActionCommand(FilterPanelAction.FILTER.name());
 
-		jCompare = new JComboBox();
+		jCompare = new JComboBox<CompareType>();
+		jCompare.setPrototypeDisplayValue(CompareType.CONTAINS_NOT_COLUMN);
 		jCompare.addActionListener(listener);
 		jCompare.setActionCommand(FilterPanelAction.FILTER.name());
 
@@ -128,7 +141,8 @@ class FilterPanel<E> {
 		jText.getDocument().addDocumentListener(listener);
 		jText.addKeyListener(listener);
 
-		jCompareColumn = new JComboBox();
+		jCompareColumn = new JComboBox<EnumTableColumn<E>>();
+		jCompareColumn.setPrototypeDisplayValue(longestColumn);
 		jCompareColumn.addActionListener(listener);
 		jCompareColumn.setActionCommand(FilterPanelAction.FILTER.name());
 
@@ -163,26 +177,26 @@ class FilterPanel<E> {
 		layout.setHorizontalGroup(
 			layout.createSequentialGroup()
 				.addComponent(jEnabled, 30, 30, 30)
-				.addComponent(jLogic, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-				.addComponent(jColumn, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-				.addComponent(jCompare, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+				.addComponent(jLogic, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+				.addComponent(jColumn, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+				.addComponent(jCompare, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
 				.addComponent(jText, 100, 100, Integer.MAX_VALUE)
-				.addComponent(jCompareColumn, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-				.addComponent(jDate, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+				.addComponent(jCompareColumn, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+				.addComponent(jDate, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
 				.addComponent(jSpacing, 0, 0, Integer.MAX_VALUE)
 				.addComponent(jRemove, 30, 30, 30)
 		);
 		layout.setVerticalGroup(
 			layout.createParallelGroup()
-				.addComponent(jEnabled, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-				.addComponent(jLogic, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-				.addComponent(jColumn, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-				.addComponent(jCompare, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-				.addComponent(jText, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-				.addComponent(jCompareColumn, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-				.addComponent(jDate, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-				.addComponent(jSpacing, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-				.addComponent(jRemove, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+				.addComponent(jEnabled, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+				.addComponent(jLogic, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+				.addComponent(jColumn, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+				.addComponent(jCompare, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+				.addComponent(jText, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+				.addComponent(jCompareColumn, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+				.addComponent(jDate, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+				.addComponent(jSpacing, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+				.addComponent(jRemove, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 		);
 		updateNumeric(false);
 	}
@@ -282,7 +296,7 @@ class FilterPanel<E> {
 		} else {
 			compareTypes = CompareType.valuesString();
 		}
-		jCompare.setModel(new DefaultComboBoxModel(compareTypes));
+		jCompare.setModel(new ListComboBoxModel<CompareType>(compareTypes));
 		for (CompareType compareType : compareTypes) {
 			if (compareType.equals(object) && saveIndex) {
 				jCompare.setSelectedItem(compareType);
@@ -309,15 +323,15 @@ class FilterPanel<E> {
 			jSpacing.setVisible(false);
 		}
 		Object object = jCompareColumn.getSelectedItem();
-		Object[] compareColumns;
+		List<EnumTableColumn<E>> compareColumns;
 		if (isNumericCompare()) {
-			compareColumns = numericColumns.toArray();
+			compareColumns = new ArrayList<EnumTableColumn<E>>(numericColumns);
 		} else if (isDateCompare()) {
-			compareColumns = dateColumns.toArray();
+			compareColumns = new ArrayList<EnumTableColumn<E>>(dateColumns);
 		} else {
-			compareColumns = filterControl.getColumns().toArray();
+			compareColumns = new ArrayList<EnumTableColumn<E>>(filterControl.getColumns());
 		}
-		jCompareColumn.setModel(new DefaultComboBoxModel(compareColumns));
+		jCompareColumn.setModel(new ListComboBoxModel<EnumTableColumn<E>>(compareColumns));
 		for (Object column : compareColumns) {
 			if (column.equals(object) && saveIndex) {
 				jCompareColumn.setSelectedItem(column);

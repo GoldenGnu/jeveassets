@@ -1,0 +1,68 @@
+<izpack:installation version="5.0"
+					 xmlns:izpack="http://izpack.org/schema/installation"
+					 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+					 xsi:schemaLocation="http://izpack.org/schema/installation http://izpack.org/schema/5.0/izpack-installation-5.0.xsd">
+	<info>
+		<appname>jEveAssets</appname>
+		<appversion>@{project.version}</appversion>
+		<appsubpath>jEveAssets</appsubpath>
+		<url>http://eve.nikr.net/jeveasset</url>
+		<javaversion>1.6</javaversion>
+		<requiresjdk>no</requiresjdk>
+		<run-privileged/>
+		<uninstaller write="no" />
+		<writeinstallationinformation>no</writeinstallationinformation>
+	</info>
+
+	<dynamicvariables>
+		<variable name="runOnExit" value="${SYSTEM[runOnExit]}"/>
+	</dynamicvariables>
+
+	<resources>
+		<res id="ProcessPanel.Spec.xml" src="izpack/ProcessPanel.Spec.xml"/>
+	</resources>
+
+	<jar src="izpack/izpack-util.jar" stage="install"/>
+ 
+	<conditions>
+		<condition type="variable" id="isRunOnExit">
+			<name>runOnExit</name>
+			<value>true</value>
+		</condition>
+	</conditions>
+ 
+	<guiprefs width="640" height="480" resizable="no" />
+ 
+	<locale>
+		<langpack iso3="eng" />
+	</locale>
+ 
+	<panels>
+		<!--<panel classname="HelloPanel" />-->
+		<panel classname="TargetPanel"/>
+		<panel classname="InstallPanel"/>
+		<panel classname="ProcessPanel" condition="isRunOnExit"/>
+		<panel classname="SimpleFinishPanel" />
+	</panels>
+ 
+	<packs>
+		<pack name="Core" required="yes" uninstall="no">
+			<description>Core installation files</description>
+			<fileset dir="lib" targetdir="${INSTALL_PATH}/lib" override="true">
+				<include name="*.jar" />
+			</fileset>
+			<fileset dir="" targetdir="${INSTALL_PATH}" override="true">
+				<include name="jeveassets.jar" />
+				<include name="jmemory.jar" />
+				<include name="*.txt" />
+				<include name="*.properties" />
+			</fileset>
+			<updatecheck>
+				<include name="lib/*.jar" />
+				<include name="log.txt" />
+				<include name="jeveassets.log" />
+				<include name="jeveassets.log.1" />
+			</updatecheck>
+		</pack>
+	</packs>
+</izpack:installation>

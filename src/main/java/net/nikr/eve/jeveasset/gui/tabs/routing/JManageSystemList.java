@@ -38,7 +38,7 @@ public class JManageSystemList extends JManageDialog {
 	private final RoutingTab routingTab;
 
 	public JManageSystemList(RoutingTab routingTab, Program program) {
-		super(program, program.getMainWindow().getFrame(), TabsRouting.get().manageFiltersTitle());
+		super(program, program.getMainWindow().getFrame(), TabsRouting.get().manageFiltersTitle(), true, false);
 		this.routingTab = routingTab;
 	}
 
@@ -55,8 +55,8 @@ public class JManageSystemList extends JManageDialog {
 	}
 
 	@Override
-	protected void merge(String name, Object[] objects) {
-		routingTab.mergeFilters(name, objects);
+	protected void merge(String name, List<String> list) {
+		routingTab.mergeFilters(name, list);
 	}
 
 	@Override
@@ -67,6 +67,16 @@ public class JManageSystemList extends JManageDialog {
 	@Override
 	protected void delete(List<String> list) {
 		routingTab.deleteFilters(list);
+	}
+
+	@Override
+	protected void export(List<String> list) {
+		//Export is not supported
+	}
+
+	@Override
+	protected void importData() {
+		//Import is not supported
 	}
 
 	@Override

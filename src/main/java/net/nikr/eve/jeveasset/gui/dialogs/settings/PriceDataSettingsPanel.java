@@ -32,13 +32,11 @@ import java.awt.event.FocusListener;
 import java.util.Collections;
 import java.util.List;
 import javax.swing.ButtonGroup;
-import javax.swing.DefaultComboBoxModel;
 import javax.swing.GroupLayout;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JRadioButton;
-import javax.swing.JTextArea;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.EventListManager;
 import net.nikr.eve.jeveasset.data.MyLocation;
@@ -49,6 +47,8 @@ import net.nikr.eve.jeveasset.data.PriceDataSettings.RegionType;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.data.StaticData;
 import net.nikr.eve.jeveasset.gui.images.Images;
+import net.nikr.eve.jeveasset.gui.shared.components.JLabelMultiline;
+import net.nikr.eve.jeveasset.gui.shared.components.ListComboBoxModel;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
 import net.nikr.eve.jeveasset.i18n.DialoguesSettings;
 import uk.me.candle.eve.pricing.options.LocationType;
@@ -65,12 +65,12 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 	private final JRadioButton jRadioStations;
 	private final JCheckBox jBlueprintsTech1;
 	private final JCheckBox jBlueprintsTech2;
-	private final JComboBox jRegions;
-	private final JComboBox jSystems;
-	private final JComboBox jStations;
-	private final JComboBox jPriceType;
-	private final JComboBox jPriceReprocessedType;
-	private final JComboBox jSource;
+	private final JComboBox<RegionType> jRegions;
+	private final JComboBox<MyLocation> jSystems;
+	private final JComboBox<MyLocation> jStations;
+	private final JComboBox<PriceMode> jPriceType;
+	private final JComboBox<PriceMode> jPriceReprocessedType;
+	private final JComboBox<PriceSource> jSource;
 
 	private final EventList<RegionType> regions = new EventListManager<RegionType>().create();
 	
@@ -83,8 +83,8 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 
 		ListenerClass listener = new ListenerClass();
 
-		String system = "";
-		String station = "";
+		MyLocation system = null;
+		MyLocation station = null;
 		EventList<MyLocation> systemsEventList = new EventListManager<MyLocation>().create();
 		EventList<MyLocation> stationsEventList = new EventListManager<MyLocation>().create();
 		try {
@@ -93,14 +93,14 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 			for (MyLocation location : StaticData.get().getLocations().values()) {
 				if (location.isStation()) {
 					stationsEventList.add(location);
-					if (station.length() < location.getLocation().length()) {
-						station = location.getLocation();
+					if (station == null || station.getLocation().length() < location.getLocation().length()) {
+						station = location;
 					}
 				}
 				if (location.isSystem()) {
 					systemsEventList.add(location);
-					if (system.length() < location.getLocation().length()) {
-						system = location.getLocation();
+					if (system == null || system.getLocation().length() < location.getLocation().length()) {
+						system = location;
 					}
 				}
 			}
@@ -134,13 +134,13 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 		group.add(jRadioStations);
 
 		JLabel jRegionsLabel = new JLabel(DialoguesSettings.get().includeRegions());
-		jRegions = new JComboBox();
+		jRegions = new JComboBox<RegionType>();
 		jRegions.getEditor().getEditorComponent().addFocusListener(listener);
 		regionsAutoComplete = AutoCompleteSupport.install(jRegions, EventModels.createSwingThreadProxyList(regions), new RegionTypeFilterator());
 		regionsAutoComplete.setStrict(true);
 
 		JLabel jSystemsLabel = new JLabel(DialoguesSettings.get().includeSystems());
-		jSystems = new JComboBox();
+		jSystems = new JComboBox<MyLocation>();
 		jSystems.setPrototypeDisplayValue(system);
 		jSystems.getEditor().getEditorComponent().addFocusListener(listener);
 		systemsAutoComplete = AutoCompleteSupport.install(jSystems, EventModels.createSwingThreadProxyList(systemsSortedList), new LocationsFilterator());
@@ -149,7 +149,7 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 		systemsEventList.getReadWriteLock().readLock().unlock();
 
 		JLabel jStationsLabel = new JLabel(DialoguesSettings.get().includeStations());
-		jStations = new JComboBox();
+		jStations = new JComboBox<MyLocation>();
 		jStations.setPrototypeDisplayValue(station);
 		jStations.getEditor().getEditorComponent().addFocusListener(listener);
 		stationsAutoComplete = AutoCompleteSupport.install(jStations, EventModels.createSwingThreadProxyList(stationsSortedList), new LocationsFilterator());
@@ -158,13 +158,13 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 		stationsEventList.getReadWriteLock().readLock().unlock();
 
 		JLabel jPriceTypeLabel = new JLabel(DialoguesSettings.get().price());
-		jPriceType = new JComboBox(PriceMode.values());
+		jPriceType = new JComboBox<PriceMode>(PriceMode.values());
 
 		JLabel jPriceReprocessedTypeLabel = new JLabel(DialoguesSettings.get().priceReprocessed());
-		jPriceReprocessedType = new JComboBox(PriceMode.values());
+		jPriceReprocessedType = new JComboBox<PriceMode>(PriceMode.values());
 
 		JLabel jSourceLabel = new JLabel(DialoguesSettings.get().source());
-		jSource = new JComboBox(PriceSource.values());
+		jSource = new JComboBox<PriceSource>(PriceSource.values());
 		jSource.setActionCommand(PriceDataSettingsAction.SOURCE_SELECTED.name());
 		jSource.addActionListener(listener);
 
@@ -172,13 +172,7 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 		jBlueprintsTech1 = new JCheckBox(DialoguesSettings.get().priceTech1());
 		jBlueprintsTech2 = new JCheckBox(DialoguesSettings.get().priceTech2());
 
-		JTextArea jWarning = new JTextArea(DialoguesSettings.get().changeSourceWarning());
-		jWarning.setFont(this.getPanel().getFont());
-		jWarning.setBackground(this.getPanel().getBackground());
-		jWarning.setLineWrap(true);
-		jWarning.setWrapStyleWord(true);
-		jWarning.setFocusable(false);
-		jWarning.setEditable(false);
+		JLabelMultiline jWarning = new JLabelMultiline(DialoguesSettings.get().changeSourceWarning(), 2);
 
 		layout.setHorizontalGroup(
 			layout.createParallelGroup()
@@ -215,43 +209,43 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 						)
 					)
 				)
-				.addComponent(jWarning)
+				.addComponent(jWarning, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Integer.MAX_VALUE)
 		);
 		layout.setVerticalGroup(
 			layout.createSequentialGroup()
 				.addGroup(layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
-					.addComponent(jSourceLabel, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					.addComponent(jSource, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					.addComponent(jSourceLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jSource, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 				)
 				.addGroup(layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
-					.addComponent(jRegionsLabel, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					.addComponent(jRadioRegions, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					.addComponent(jRegions, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					.addComponent(jRegionsLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jRadioRegions, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jRegions, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 				)
 				.addGroup(layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
-					.addComponent(jSystemsLabel, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					.addComponent(jRadioSystems, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					.addComponent(jSystems, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					.addComponent(jSystemsLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jRadioSystems, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jSystems, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 				)
 				.addGroup(layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
-					.addComponent(jStationsLabel, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					.addComponent(jRadioStations, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					.addComponent(jStations, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					.addComponent(jStationsLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jRadioStations, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jStations, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 				)
 				.addGroup(layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
-					.addComponent(jPriceTypeLabel, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					.addComponent(jPriceType, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					.addComponent(jPriceTypeLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jPriceType, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 				)
 				.addGroup(layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
-					.addComponent(jPriceReprocessedTypeLabel, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					.addComponent(jPriceReprocessedType, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					.addComponent(jPriceReprocessedTypeLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jPriceReprocessedType, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 				)
 				.addGroup(layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
-					.addComponent(jBlueprintsLabel, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					.addComponent(jBlueprintsTech1, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					.addComponent(jBlueprintsTech2, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					.addComponent(jBlueprintsLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jBlueprintsTech1, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jBlueprintsTech2, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 				)
-				.addComponent(jWarning, 48, 48, 48)
+				.addComponent(jWarning, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
 		);
 	}
 
@@ -325,7 +319,7 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 		final LocationType locationType = Settings.get().getPriceDataSettings().getLocationType();
 
 		//Price Types
-		jPriceType.setModel(new DefaultComboBoxModel(source.getPriceTypes()));
+		jPriceType.setModel(new ListComboBoxModel<PriceMode>(source.getPriceTypes()));
 		jPriceType.setSelectedItem(Settings.get().getPriceDataSettings().getPriceType());
 		if (source.getPriceTypes().length <= 0) { //Empty
 			jPriceType.getModel().setSelectedItem(DialoguesSettings.get().notConfigurable());
@@ -335,7 +329,7 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 		}
 
 		//Price Reprocessed Types
-		jPriceReprocessedType.setModel(new DefaultComboBoxModel(source.getPriceTypes()));
+		jPriceReprocessedType.setModel(new ListComboBoxModel<PriceMode>(source.getPriceTypes()));
 		jPriceReprocessedType.setSelectedItem(Settings.get().getPriceDataSettings().getPriceReprocessedType());
 		if (source.getPriceTypes().length <= 0) { //Empty
 			jPriceReprocessedType.getModel().setSelectedItem(DialoguesSettings.get().notConfigurable());

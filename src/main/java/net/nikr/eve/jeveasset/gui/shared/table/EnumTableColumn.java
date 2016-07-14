@@ -35,5 +35,5 @@ public interface EnumTableColumn<Q> {
 	public String name();
 	public boolean isColumnEditable(Object baseObject);
 	public boolean isShowDefault();
-	public Q setColumnValue(Object baseObject, Object editedValue);
+	public boolean setColumnValue(Object baseObject, Object editedValue);
 }

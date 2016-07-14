@@ -25,7 +25,6 @@ import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.FilterList;
 import ca.odell.glazedlists.matchers.Matcher;
 import java.awt.CardLayout;
-import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -42,8 +41,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import javax.swing.AbstractListModel;
+import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
-import javax.swing.DefaultComboBoxModel;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -59,7 +58,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JSlider;
 import javax.swing.JTextField;
-import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.ExportSettings.DecimalSeparator;
@@ -76,6 +74,7 @@ import net.nikr.eve.jeveasset.gui.shared.components.JCustomFileChooser;
 import net.nikr.eve.jeveasset.gui.shared.components.JDefaultField;
 import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
 import net.nikr.eve.jeveasset.gui.shared.components.JMultiSelectionList;
+import net.nikr.eve.jeveasset.gui.shared.components.ListComboBoxModel;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.SimpleColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.View;
@@ -105,24 +104,24 @@ public class ExportDialog<E> extends JDialogCentered {
 	private final JRadioButton jNoFilter;
 	private final JRadioButton jSavedFilter;
 	private final JRadioButton jCurrentFilter;
-	private final JComboBox jFilters;
+	private final JComboBox<String> jFilters;
 	//Columns
 	private final JRadioButton jViewCurrent;
 	private final JRadioButton jViewSelect;
 	private final JRadioButton jViewSaved;
-	private final JComboBox jViews;
-	private final JMultiSelectionList jColumnSelection;
+	private final JComboBox<String> jViews;
+	private final JMultiSelectionList<EnumTableColumn<E>> jColumnSelection;
 	//Format
 	private final JRadioButton jCsv;
 	private final JRadioButton jHtml;
 	private final JRadioButton jSql;
 	//Options
 	private final CardLayout cardLayout;
-	private final JPanel jCardPanel;
+	private final JPanel jOptionPanel;
 	//CSV
-	private final JComboBox jFieldDelimiter;
-	private final JComboBox jLineDelimiter;
-	private final JComboBox jDecimalSeparator;
+	private final JComboBox<FieldDelimiter> jFieldDelimiter;
+	private final JComboBox<LineDelimiter> jLineDelimiter;
+	private final JComboBox<DecimalSeparator> jDecimalSeparator;
 	//Html
 	private final JCheckBox jHtmlStyle;
 	private final JCheckBox jHtmlIGB;
@@ -173,8 +172,12 @@ public class ExportDialog<E> extends JDialogCentered {
 			}
 		}
 	//Format
-		JLabel jFormatLabel = new JLabel(DialoguesExport.get().format());
-		jFormatLabel.setFont(new Font(jFormatLabel.getFont().getName(), Font.BOLD, jFormatLabel.getFont().getSize()));
+		JPanel jFormatPanel = new JPanel();
+		jFormatPanel.setBorder(BorderFactory.createTitledBorder(DialoguesExport.get().format()));
+		GroupLayout formatLayout = new GroupLayout(jFormatPanel);
+		jFormatPanel.setLayout(formatLayout);
+		formatLayout.setAutoCreateGaps(true);
+		formatLayout.setAutoCreateContainerGaps(true);
 
 		jCsv = new JRadioButton(DialoguesExport.get().csv());
 		jCsv.setActionCommand(ExportAction.FORMAT_CHANGED.name());
@@ -192,9 +195,86 @@ public class ExportDialog<E> extends JDialogCentered {
 		jFormatButtonGroup.add(jCsv);
 		jFormatButtonGroup.add(jHtml);
 		jFormatButtonGroup.add(jSql);
+
+		formatLayout.setHorizontalGroup(
+			formatLayout.createSequentialGroup()
+					.addComponent(jCsv)
+					.addComponent(jHtml)
+					.addComponent(jSql)
+		);
+		formatLayout.setVerticalGroup(
+			formatLayout.createParallelGroup()
+					.addComponent(jCsv, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jHtml, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jSql, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+		);
+	//Options
+		cardLayout = new CardLayout();
+		jOptionPanel = new JPanel(cardLayout);
+	//Csv
+		JOptionPanel jCsvPanel = new JOptionPanel();
+		jOptionPanel.add(jCsvPanel, ExportFormat.CSV.name());
+
+		JLabel jFieldDelimiterLabel = new JLabel(DialoguesExport.get().fieldTerminated());
+		jFieldDelimiter = new JComboBox<FieldDelimiter>(FieldDelimiter.values());
+		jCsvPanel.add(jFieldDelimiterLabel);
+		jCsvPanel.add(jFieldDelimiter);
+
+		JLabel jLineDelimiterLabel = new JLabel(DialoguesExport.get().linesTerminated());
+		jLineDelimiter = new JComboBox<LineDelimiter>(LineDelimiter.values());
+		jCsvPanel.add(jLineDelimiterLabel);
+		jCsvPanel.add(jLineDelimiter);
+
+		//FIXME - - > ExportDialog: DecimalSeparator also used by HTML export...
+		JLabel jDecimalSeparatorLabel = new JLabel(DialoguesExport.get().decimalSeparator());
+		jDecimalSeparator = new JComboBox<DecimalSeparator>(DecimalSeparator.values());
+		jCsvPanel.add(jDecimalSeparatorLabel);
+		jCsvPanel.add(jDecimalSeparator);
+	//Sql
+		JOptionPanel jSqlPanel = new JOptionPanel();
+		jOptionPanel.add(jSqlPanel, ExportFormat.SQL.name());
+
+		JLabel jTableNameLabel = new JLabel(DialoguesExport.get().tableName());
+		jTableName = new JDefaultField(Program.PROGRAM_NAME.toLowerCase() + "_" + toolName.toLowerCase());
+		jTableName.setDocument(DocumentFactory.getWordPlainDocument());
+		jSqlPanel.add(jTableNameLabel);
+		jSqlPanel.add(jTableName);
+
+		jDropTable = new JCheckBox(DialoguesExport.get().dropTable());
+		jSqlPanel.add(jDropTable);
+
+		jCreateTable = new JCheckBox(DialoguesExport.get().createTable());
+		jSqlPanel.add(jCreateTable);
+
+		jExtendedInserts = new JCheckBox(DialoguesExport.get().extendedInserts());
+		jSqlPanel.add(jExtendedInserts);
+	//Html
+		JOptionPanel jHtmlPanel = new JOptionPanel();
+		jOptionPanel.add(jHtmlPanel, ExportFormat.HTML.name());
+
+		jHtmlStyle = new JCheckBox(DialoguesExport.get().htmlStyled());
+		jHtmlPanel.add(jHtmlStyle);
+
+		jHtmlIGB = new JCheckBox(DialoguesExport.get().htmlIGB());
+		jHtmlPanel.add(jHtmlIGB);
+
+		JLabel jHtmlHeaderRepeatLabel = new JLabel(DialoguesExport.get().htmlHeaderRepeat());
+		jHtmlHeaderRepeat = new JSlider(JSlider.HORIZONTAL, 0, 50, 0);
+		jHtmlHeaderRepeat.setMajorTickSpacing(10);
+		jHtmlHeaderRepeat.setMinorTickSpacing(5);
+		jHtmlHeaderRepeat.setSnapToTicks(true);
+		jHtmlHeaderRepeat.setPaintTicks(true);
+		jHtmlHeaderRepeat.setPaintLabels(true);
+		jHtmlPanel.add(jHtmlHeaderRepeatLabel);
+		jHtmlPanel.add(jHtmlHeaderRepeat);
+
 	//Filters
-		JLabel jFiltersLabel = new JLabel(DialoguesExport.get().filters());
-		jFiltersLabel.setFont(new Font(jFiltersLabel.getFont().getName(), Font.BOLD, jFiltersLabel.getFont().getSize()));
+		JPanel jFilterPanel = new JPanel();
+		jFilterPanel.setBorder(BorderFactory.createTitledBorder(DialoguesExport.get().filters()));
+		GroupLayout filterLayout = new GroupLayout(jFilterPanel);
+		jFilterPanel.setLayout(filterLayout);
+		filterLayout.setAutoCreateGaps(true);
+		filterLayout.setAutoCreateContainerGaps(true);
 
 		jNoFilter = new JRadioButton(DialoguesExport.get().noFilter());
 		jNoFilter.setActionCommand(ExportAction.FILTER_CHANGED.name());
@@ -214,8 +294,35 @@ public class ExportDialog<E> extends JDialogCentered {
 		jFilterButtonGroup.add(jSavedFilter);
 		jFilterButtonGroup.add(jCurrentFilter);
 
-		jFilters = new JComboBox();
+		jFilters = new JComboBox<String>();
+
+		filterLayout.setHorizontalGroup(
+			filterLayout.createParallelGroup()
+					.addComponent(jNoFilter)
+					.addComponent(jCurrentFilter)
+					.addComponent(jSavedFilter)
+					.addGroup(filterLayout.createParallelGroup(GroupLayout.Alignment.TRAILING)
+						.addGroup(filterLayout.createSequentialGroup()
+							.addGap(20)
+							.addComponent(jFilters, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Integer.MAX_VALUE)
+						)
+					)
+		);
+		filterLayout.setVerticalGroup(
+			filterLayout.createSequentialGroup()
+					.addComponent(jNoFilter, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jCurrentFilter, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jSavedFilter, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jFilters, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+		);
 	//Columns
+		JPanel jColumnPanel = new JPanel();
+		jColumnPanel.setBorder(BorderFactory.createTitledBorder(DialoguesExport.get().columns()));
+		GroupLayout columnLayout = new GroupLayout(jColumnPanel);
+		jColumnPanel.setLayout(columnLayout);
+		columnLayout.setAutoCreateGaps(true);
+		columnLayout.setAutoCreateContainerGaps(true);
+
 		jViewCurrent = new JRadioButton(DialoguesExport.get().viewCurrent());
 		jViewCurrent.setActionCommand(ExportAction.VIEW_CHANGED.name());
 		jViewCurrent.addActionListener(listener);
@@ -225,21 +332,18 @@ public class ExportDialog<E> extends JDialogCentered {
 		jViewSaved.setActionCommand(ExportAction.VIEW_CHANGED.name());
 		jViewSaved.addActionListener(listener);
 
-		jViews = new JComboBox();
+		jViews = new JComboBox<String>();
 
 		jViewSelect = new JRadioButton(DialoguesExport.get().viewSelect());
 		jViewSelect.setActionCommand(ExportAction.VIEW_CHANGED.name());
 		jViewSelect.addActionListener(listener);
-		
-		JLabel jColumnLabel = new JLabel(DialoguesExport.get().columns());
-		jColumnLabel.setFont(new Font(jColumnLabel.getFont().getName(), Font.BOLD, jColumnLabel.getFont().getSize()));
 
 		columnIndex.addAll(enumColumns);
 		for (EnumTableColumn<E> column : enumColumns) {
 			columns.put(column.name(), column);
 		}
 
-		jColumnSelection = new JMultiSelectionList(columnIndex);
+		jColumnSelection = new JMultiSelectionList<EnumTableColumn<E>>(columnIndex);
 		jColumnSelection.selectAll();
 		jColumnSelection.setEnabled(false);
 
@@ -249,71 +353,33 @@ public class ExportDialog<E> extends JDialogCentered {
 		jViewButtonGroup.add(jViewCurrent);
 		jViewButtonGroup.add(jViewSaved);
 		jViewButtonGroup.add(jViewSelect);
-	//Options
-		cardLayout = new CardLayout();
-		jCardPanel = new JPanel(cardLayout);
 
-		JLabel jOptionsLabel = new JLabel(DialoguesExport.get().options());
-		jOptionsLabel.setFont(new Font(jOptionsLabel.getFont().getName(), Font.BOLD, jOptionsLabel.getFont().getSize()));
-	//Csv
-		JOptionPanel jCsvPanel = new JOptionPanel();
-		jCardPanel.add(jCsvPanel, ExportFormat.CSV.name());
-
-		JLabel jFieldDelimiterLabel = new JLabel(DialoguesExport.get().fieldTerminated());
-		jFieldDelimiter = new JComboBox(FieldDelimiter.values());
-		jCsvPanel.add(jFieldDelimiterLabel);
-		jCsvPanel.add(jFieldDelimiter);
-
-		JLabel jLineDelimiterLabel = new JLabel(DialoguesExport.get().linesTerminated());
-		jLineDelimiter = new JComboBox(LineDelimiter.values());
-		jCsvPanel.add(jLineDelimiterLabel);
-		jCsvPanel.add(jLineDelimiter);
-
-		//FIXME - - > ExportDialog: DecimalSeparator also used by HTML export...
-		JLabel jDecimalSeparatorLabel = new JLabel(DialoguesExport.get().decimalSeparator());
-		jDecimalSeparator = new JComboBox(DecimalSeparator.values());
-		jCsvPanel.add(jDecimalSeparatorLabel);
-		jCsvPanel.add(jDecimalSeparator);
-	//Sql
-		JOptionPanel jSqlPanel = new JOptionPanel();
-		jCardPanel.add(jSqlPanel, ExportFormat.SQL.name());
-
-		JLabel jTableNameLabel = new JLabel(DialoguesExport.get().tableName());
-		jTableName = new JDefaultField(Program.PROGRAM_NAME.toLowerCase() + "_" + toolName.toLowerCase());
-		jTableName.setDocument(DocumentFactory.getWordPlainDocument());
-		jSqlPanel.add(jTableNameLabel);
-		jSqlPanel.add(jTableName);
-
-		jDropTable = new JCheckBox(DialoguesExport.get().dropTable());
-		jSqlPanel.add(jDropTable);
-
-		jCreateTable = new JCheckBox(DialoguesExport.get().createTable());
-		jSqlPanel.add(jCreateTable);
-
-		jExtendedInserts = new JCheckBox(DialoguesExport.get().extendedInserts());
-		jSqlPanel.add(jExtendedInserts);
-	//Html
-		JOptionPanel jHtmlPanel = new JOptionPanel();
-		jCardPanel.add(jHtmlPanel, ExportFormat.HTML.name());
-
-		jHtmlStyle = new JCheckBox(DialoguesExport.get().htmlStyled());
-		jHtmlPanel.add(jHtmlStyle);
-
-		jHtmlIGB = new JCheckBox(DialoguesExport.get().htmlIGB());
-		jHtmlPanel.add(jHtmlIGB);
-
-		JLabel jHtmlHeaderRepeatLabel = new JLabel(DialoguesExport.get().htmlHeaderRepeat());
-		jHtmlHeaderRepeat = new JSlider(JSlider.HORIZONTAL, 0, 50, 0);
-		jHtmlHeaderRepeat.setMajorTickSpacing(10);
-		jHtmlHeaderRepeat.setMinorTickSpacing(5);
-		jHtmlHeaderRepeat.setSnapToTicks(true);
-		jHtmlHeaderRepeat.setPaintTicks(true);
-		jHtmlHeaderRepeat.setPaintLabels(true);
-		jHtmlPanel.add(jHtmlHeaderRepeatLabel);
-		jHtmlPanel.add(jHtmlHeaderRepeat);
-	//Separatora
-		JSeparator jHorizontalSeparator = new JSeparator(SwingConstants.HORIZONTAL);
-		JSeparator jVerticalSeparator = new JSeparator(SwingConstants.VERTICAL);
+		columnLayout.setHorizontalGroup(
+			columnLayout.createParallelGroup()
+					.addComponent(jViewCurrent)
+					.addComponent(jViewSaved)
+					.addGroup(columnLayout.createParallelGroup(GroupLayout.Alignment.TRAILING)
+						.addGroup(columnLayout.createSequentialGroup()
+							.addGap(20)
+							.addComponent(jViews, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Integer.MAX_VALUE)
+						)
+					)
+					.addComponent(jViewSelect)
+					.addGroup(columnLayout.createParallelGroup(GroupLayout.Alignment.TRAILING)
+						.addGroup(columnLayout.createSequentialGroup()
+							.addGap(20)
+							.addComponent(jColumnSelectionPanel, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Integer.MAX_VALUE)
+						)
+					)
+		);
+		columnLayout.setVerticalGroup(
+			columnLayout.createSequentialGroup()
+					.addComponent(jViewCurrent, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jViewSaved, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jViews, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jViewSelect, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jColumnSelectionPanel, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Integer.MAX_VALUE)
+		);
 	//Buttons
 		JSeparator jButtonSeparator = new JSeparator();
 
@@ -333,116 +399,41 @@ public class ExportDialog<E> extends JDialogCentered {
 			layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
 				.addGroup(layout.createSequentialGroup()
 					.addContainerGap()
-					.addGroup(layout.createParallelGroup()
+					.addGroup(layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
 						//Format
-						.addComponent(jFormatLabel, GroupLayout.Alignment.CENTER)
-						.addComponent(jCsv)
-						.addComponent(jHtml)
-						.addComponent(jSql)
-						//Filters
-						.addComponent(jFiltersLabel, GroupLayout.Alignment.CENTER)
-						.addComponent(jNoFilter)
-						.addComponent(jCurrentFilter)
-						.addComponent(jSavedFilter)
-						.addGroup(layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
-							.addGroup(layout.createSequentialGroup()
-								.addGap(20)
-								.addComponent(jFilters, 150, 150, 150)
-							)
-						)
+						.addComponent(jFormatPanel, 250, 250, 250)
+						.addComponent(jOptionPanel, 250, 250, 250)
+						.addComponent(jFilterPanel, 250, 250, 250)
 					)
-					.addGap(15)
-					.addComponent(jVerticalSeparator, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
-					.addGap(15)
-					.addGroup(layout.createParallelGroup()
-						//Columns
-						.addComponent(jColumnLabel, GroupLayout.Alignment.CENTER)
-						.addComponent(jViewCurrent)
-						.addComponent(jViewSaved)
-						.addGroup(layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
-							.addGroup(layout.createSequentialGroup()
-								.addGap(20)
-								.addComponent(jViews, 150, 150, 150)
-							)
-						)
-						.addComponent(jViewSelect)
-						.addGroup(layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
-							.addGroup(layout.createSequentialGroup()
-								.addGap(20)
-								.addComponent(jColumnSelectionPanel, 150, 150, 150)
-							)
-						)
-						//Options
-						.addComponent(jOptionsLabel, GroupLayout.Alignment.CENTER)
-						.addComponent(jCardPanel)
-					)
+					.addGap(10)
+					.addComponent(jColumnPanel, 250, 250, 250)
 					.addContainerGap()
 				)
-				.addComponent(jHorizontalSeparator)
 				.addComponent(jButtonSeparator)
 				.addGroup(layout.createSequentialGroup()
-					.addComponent(jOK, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH)
-					.addComponent(jDefault, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH)
-					.addComponent(jCancel, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH)
+					.addContainerGap()
+					.addComponent(jOK, Program.getButtonsWidth(), Program.getButtonsWidth(), Program.getButtonsWidth())
+					.addComponent(jDefault, Program.getButtonsWidth(), Program.getButtonsWidth(), Program.getButtonsWidth())
+					.addComponent(jCancel, Program.getButtonsWidth(), Program.getButtonsWidth(), Program.getButtonsWidth())
 					.addContainerGap()
 				)
 		);
 		layout.setVerticalGroup(
 			layout.createSequentialGroup()
+				.addContainerGap()
 				.addGroup(layout.createParallelGroup()
-					.addComponent(jVerticalSeparator)
 					.addGroup(layout.createSequentialGroup()
-						.addContainerGap()
-						.addGroup(layout.createParallelGroup()
-							//Format
-							.addGroup(layout.createSequentialGroup()
-								.addComponent(jFormatLabel)
-								.addGap(10)
-								.addComponent(jCsv, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-								.addComponent(jHtml, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-								.addComponent(jSql, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-							)
-							//Options
-							.addGroup(layout.createSequentialGroup()
-								.addComponent(jOptionsLabel)
-								.addGap(10)
-								.addComponent(jCardPanel)
-							)
-						)
-						.addGap(15)
-						.addComponent(jHorizontalSeparator, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
-						.addGap(10)
-						.addGroup(layout.createParallelGroup()
-							//Filters
-							.addGroup(layout.createSequentialGroup()
-								.addComponent(jFiltersLabel)
-								.addGap(10)
-								.addComponent(jNoFilter, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-								.addComponent(jCurrentFilter, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-								.addComponent(jSavedFilter, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-								.addComponent(jFilters, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-							)
-							//Columns
-							.addGroup(layout.createSequentialGroup()
-								.addComponent(jColumnLabel)
-								.addGap(10)
-								.addComponent(jViewCurrent, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-								.addComponent(jViewSaved, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-								.addComponent(jViews, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-								.addComponent(jViewSelect, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-								.addComponent(jColumnSelectionPanel, 120, 120, 120)
-							)
-						)
-						.addGap(20)
+						.addComponent(jFormatPanel)
+						.addComponent(jOptionPanel)
+						.addComponent(jFilterPanel)
 					)
+					.addComponent(jColumnPanel)
 				)
-				.addGap(0)
 				.addComponent(jButtonSeparator, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
-				.addGap(10)
 				.addGroup(layout.createParallelGroup()
-					.addComponent(jOK, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					.addComponent(jDefault, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					.addComponent(jCancel, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					.addComponent(jOK, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jDefault, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jCancel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 				)
 				.addContainerGap()
 		);
@@ -455,14 +446,14 @@ public class ExportDialog<E> extends JDialogCentered {
 		for (EnumTableColumn<E> column : enumColumns) {
 			columns.put(column.name(), column);
 		}
-		jColumnSelection.setModel(new AbstractListModel() {
+		jColumnSelection.setModel(new AbstractListModel<EnumTableColumn<E>>() {
 			@Override
 			public int getSize() {
 				return columnIndex.size();
 			}
 
 			@Override
-			public Object getElementAt(int index) {
+			public EnumTableColumn<E> getElementAt(int index) {
 				return columnIndex.get(index);
 			}
 		});
@@ -470,12 +461,8 @@ public class ExportDialog<E> extends JDialogCentered {
 
 	private List<String> getExportColumns() {
 		List<String> selectedColumns = new ArrayList<String>();
-		Object[] values = jColumnSelection.getSelectedValues();
-		for (Object object : values) {
-			if (object instanceof EnumTableColumn<?>) {
-				EnumTableColumn<?> column = (EnumTableColumn) object;
-				selectedColumns.add(column.name());
-			}
+		for (EnumTableColumn<E> column : jColumnSelection.getSelectedValuesList()) {
+			selectedColumns.add(column.name());
 		}
 		return selectedColumns;
 	}
@@ -564,13 +551,16 @@ public class ExportDialog<E> extends JDialogCentered {
 		jHtmlHeaderRepeat.setValue(Settings.get().getExportSettings().getHtmlRepeatHeader());
 		//Filename
 		ExportFormat exportFormat = Settings.get().getExportSettings().getExportFormat();
-		cardLayout.show(jCardPanel, exportFormat.name());
+		cardLayout.show(jOptionPanel, exportFormat.name());
 		if (exportFormat == ExportFormat.HTML) {
 			jHtml.setSelected(true);
+			jOptionPanel.setBorder(BorderFactory.createTitledBorder(DialoguesExport.get().html()));
 		} else if (exportFormat == ExportFormat.SQL) {
 			jSql.setSelected(true);
+			jOptionPanel.setBorder(BorderFactory.createTitledBorder(DialoguesExport.get().sql()));
 		} else { //CSV and Default
 			jCsv.setSelected(true);
+			jOptionPanel.setBorder(BorderFactory.createTitledBorder(DialoguesExport.get().csv()));
 		}
 		jFileChooser.setExtension(exportFormat.getExtension());
 		//Columns (Shared)
@@ -581,9 +571,13 @@ public class ExportDialog<E> extends JDialogCentered {
 		} else {
 			List<Integer> selections = new ArrayList<Integer>();
 			for (String column : list) {
-				EnumTableColumn<?> enumColumn = exportFilterControl.valueOf(column);
-				int index = columnIndex.indexOf(enumColumn);
-				selections.add(index);
+				try {
+					EnumTableColumn<?> enumColumn = exportFilterControl.valueOf(column);
+					int index = columnIndex.indexOf(enumColumn);
+					selections.add(index);
+				} catch (IllegalArgumentException ex) {
+					//ignore missing columns...
+				}	
 			}
 			int[] indices = new int[selections.size()];
 			for (int i = 0; i < selections.size(); i++) {
@@ -635,7 +629,7 @@ public class ExportDialog<E> extends JDialogCentered {
 				List<String> filterNames = new ArrayList<String>(exportFilterControl.getAllFilters().keySet());
 				Collections.sort(filterNames, new CaseInsensitiveComparator());
 				Object selectedItem = jFilters.getSelectedItem(); //Save selection
-				jFilters.setModel(new DefaultComboBoxModel(filterNames.toArray()));
+				jFilters.setModel(new ListComboBoxModel<String>(filterNames));
 				if (selectedItem != null) { //Restore selection
 					jFilters.setSelectedItem(selectedItem);
 				}
@@ -664,7 +658,7 @@ public class ExportDialog<E> extends JDialogCentered {
 				}
 				jViewSaved.setEnabled(true);
 				Object selectedItem = jViews.getSelectedItem(); //Save selection
-				jViews.setModel(new DefaultComboBoxModel(tableViews.keySet().toArray()));
+				jViews.setModel(new ListComboBoxModel<String>(tableViews.keySet()));
 				if (selectedItem != null) { //Restore selection
 					jViews.setSelectedItem(selectedItem);
 				}
@@ -706,20 +700,24 @@ public class ExportDialog<E> extends JDialogCentered {
 			}
 		} else {
 			//Use custom columns
-			Object[] values = jColumnSelection.getSelectedValues();
-			for (Object object : values) {
-				if (object instanceof EnumTableColumn<?>) {
-					String columnName = ((EnumTableColumn) object).name();
-					EnumTableColumn<E> column = columns.get(columnName);
-					header.add(column);
-				}
-			}
-			
+			header.addAll(jColumnSelection.getSelectedValuesList());
 		}
 	//Bad selection
 		if (header.isEmpty()) {
 			JOptionPane.showMessageDialog(getDialog(), DialoguesExport.get().selectOne(), DialoguesExport.get().export(), JOptionPane.PLAIN_MESSAGE);
 			return;
+		}
+	//Bad options
+		if (jCsv.isSelected() && Settings.get().getExportSettings().getDecimalSeparator() == DecimalSeparator.COMMA && Settings.get().getExportSettings().getFieldDelimiter() == FieldDelimiter.COMMA) {
+			int nReturn = JOptionPane.showConfirmDialog(
+					getDialog(),
+					DialoguesExport.get().confirmStupidDecision(),
+					DialoguesExport.get().export(),
+					JOptionPane.YES_NO_OPTION,
+					JOptionPane.PLAIN_MESSAGE);
+			if (nReturn == JOptionPane.NO_OPTION) {
+				return;
+			}
 		}
 	//Save location
 		boolean ok = browse();
@@ -776,18 +774,6 @@ public class ExportDialog<E> extends JDialogCentered {
 		boolean saved;
 		if (jCsv.isSelected()) {
 	//CSV
-			//Bad selection
-			if (Settings.get().getExportSettings().getDecimalSeparator() == DecimalSeparator.COMMA && Settings.get().getExportSettings().getFieldDelimiter() == FieldDelimiter.COMMA) {
-				int nReturn = JOptionPane.showConfirmDialog(
-						getDialog(),
-						DialoguesExport.get().confirmStupidDecision(),
-						DialoguesExport.get().export(),
-						JOptionPane.YES_NO_OPTION,
-						JOptionPane.PLAIN_MESSAGE);
-				if (nReturn == JOptionPane.NO_OPTION) {
-					return;
-				}
-			}
 			//Create data
 			List<String> headerStrings = new ArrayList<String>(header.size());
 			List<String> headerKeys = new ArrayList<String>(header.size());
@@ -875,13 +861,16 @@ public class ExportDialog<E> extends JDialogCentered {
 				ExportFormat exportFormat = ExportFormat.CSV;
 				if (jCsv.isSelected()) {
 					exportFormat = ExportFormat.CSV;
+					jOptionPanel.setBorder(BorderFactory.createTitledBorder(DialoguesExport.get().csv()));
 				} else if (jHtml.isSelected()) {
 					exportFormat = ExportFormat.HTML;
+					jOptionPanel.setBorder(BorderFactory.createTitledBorder(DialoguesExport.get().html()));
 				} else if (jSql.isSelected()) {
 					exportFormat = ExportFormat.SQL;
+					jOptionPanel.setBorder(BorderFactory.createTitledBorder(DialoguesExport.get().sql()));
 				}
 				Settings.get().getExportSettings().setExportFormat(exportFormat);
-				cardLayout.show(jCardPanel, exportFormat.name());
+				cardLayout.show(jOptionPanel, exportFormat.name());
 				jFileChooser.setExtension(exportFormat.getExtension());
 			} else if (ExportAction.FILTER_CHANGED.name().equals(e.getActionCommand())) {
 				jFilters.setEnabled(jSavedFilter.isSelected());
@@ -900,7 +889,7 @@ public class ExportDialog<E> extends JDialogCentered {
 			layout = new GroupLayout(this);
 			this.setLayout(layout);
 			layout.setAutoCreateGaps(false);
-			layout.setAutoCreateContainerGaps(false);
+			layout.setAutoCreateContainerGaps(true);
 		}
 
 		public void add(JComponent comp) {
@@ -920,7 +909,7 @@ public class ExportDialog<E> extends JDialogCentered {
 						|| jComponent instanceof JCheckBox
 						|| jComponent instanceof JTextField
 						|| jComponent instanceof JComboBox) {
-					verticalGroup.addComponent(jComponent, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT);
+					verticalGroup.addComponent(jComponent, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight());
 				} else {
 					verticalGroup.addComponent(jComponent);
 				}

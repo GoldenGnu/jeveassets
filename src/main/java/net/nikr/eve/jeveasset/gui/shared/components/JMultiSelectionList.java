@@ -29,27 +29,27 @@ import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 
 
-public class JMultiSelectionList extends JList {
+public class JMultiSelectionList<T> extends JList<T> {
 
 	private List<Integer> selectedList;
 	private ListenerClass listener = new ListenerClass();
 
 	public JMultiSelectionList() {
-		this(new DefaultListModel());
+		this(new DefaultListModel<T>());
 	}
 
-	public JMultiSelectionList(final List<?> listData) {
+	public JMultiSelectionList(final List<T> listData) {
 		this (
-			new AbstractListModel() {
+			new AbstractListModel<T>() {
 				@Override
 				public int getSize() { return listData.size(); }
 				@Override
-				public Object getElementAt(final int i) { return listData.get(i); }
+				public T getElementAt(final int i) { return listData.get(i); }
 			}
 		);
 	}
 
-	public JMultiSelectionList(final ListModel model) {
+	public JMultiSelectionList(final ListModel<T> model) {
 		super(model);
 		selectedList = new ArrayList<Integer>();
 
@@ -128,7 +128,7 @@ public class JMultiSelectionList extends JList {
 	}
 
 	@Override
-	public void setModel(final ListModel model) {
+	public void setModel(final ListModel<T> model) {
 		super.setModel(model);
 		model.addListDataListener(listener);
 	}
@@ -217,7 +217,7 @@ public class JMultiSelectionList extends JList {
 	}
 	//Public Methods
 	public void addSelection(final int index, final boolean bSelected) {
-		Integer indexObj = Integer.valueOf(index);
+		Integer indexObj = index;
 
 		//is this selected? if so remove it.
 		if (selectedList.contains(indexObj) && !bSelected) {
@@ -247,7 +247,7 @@ public class JMultiSelectionList extends JList {
 	}
 	private void setAnchor(final int nAnchor) {
 		ListSelectionModel sm = this.getSelectionModel();
-		ListModel lm = this.getModel();
+		ListModel<T> lm = this.getModel();
 		if (nAnchor >= 0 && nAnchor < lm.getSize()) {
 			if (this.isSelectedIndex(nAnchor)) {
 				sm.removeSelectionInterval(nAnchor, nAnchor);
@@ -290,7 +290,7 @@ public class JMultiSelectionList extends JList {
 		if (!isEnabled()) {
 			return;
 		} //Ingnore update when disabled
-		ListModel lm = this.getModel();
+		ListModel<T> lm = this.getModel();
 		int size = selectedList.size();
 		selectedList.clear();
 		if (size != lm.getSize()) {
@@ -302,7 +302,7 @@ public class JMultiSelectionList extends JList {
 		setAnchor(0);
 	}
 	public void selectAll() {
-		ListModel lm = this.getModel();
+		ListModel<T> lm = this.getModel();
 		selectedList.clear();
 		for (Integer i = 0; i < lm.getSize(); i++) {
 			selectedList.add(i);

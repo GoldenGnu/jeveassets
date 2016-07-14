@@ -150,10 +150,10 @@ public class StockpileSeparatorTableCell extends SeparatorTableCell<StockpileIte
 					.addComponent(jStartSpace)
 					.addComponent(jExpand)
 					.addGap(5)
-					.addComponent(jColor, Program.BUTTONS_HEIGHT - 6, Program.BUTTONS_HEIGHT - 6, Program.BUTTONS_HEIGHT - 6)
-					.addComponent(jColorDisabled, Program.BUTTONS_HEIGHT - 6, Program.BUTTONS_HEIGHT - 6, Program.BUTTONS_HEIGHT - 6)
+					.addComponent(jColor, Program.getButtonsHeight() - 6, Program.getButtonsHeight() - 6, Program.getButtonsHeight() - 6)
+					.addComponent(jColorDisabled, Program.getButtonsHeight() - 6, Program.getButtonsHeight() - 6, Program.getButtonsHeight() - 6)
 					.addGap(10)
-					.addComponent(jStockpile, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH)
+					.addComponent(jStockpile, Program.getButtonsWidth(), Program.getButtonsWidth(), Program.getButtonsWidth())
 					.addComponent(jMultiplier, 50, 50, 50)
 					.addComponent(jMultiplierLabel)
 					.addGap(10)
@@ -172,17 +172,17 @@ public class StockpileSeparatorTableCell extends SeparatorTableCell<StockpileIte
 			layout.createSequentialGroup()
 				.addGap(2)
 				.addGroup(layout.createParallelGroup()
-					.addComponent(jStartSpace, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					.addComponent(jExpand, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					.addComponent(jStartSpace, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jExpand, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 					.addGroup(layout.createSequentialGroup()
 						.addGap(3)
-						.addComponent(jColor, Program.BUTTONS_HEIGHT - 6, Program.BUTTONS_HEIGHT - 6, Program.BUTTONS_HEIGHT - 6)
-						.addComponent(jColorDisabled, Program.BUTTONS_HEIGHT - 6, Program.BUTTONS_HEIGHT - 6, Program.BUTTONS_HEIGHT - 6)
+						.addComponent(jColor, Program.getButtonsHeight() - 6, Program.getButtonsHeight() - 6, Program.getButtonsHeight() - 6)
+						.addComponent(jColorDisabled, Program.getButtonsHeight() - 6, Program.getButtonsHeight() - 6, Program.getButtonsHeight() - 6)
 					)
-					.addComponent(jStockpile, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					.addComponent(jMultiplier, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					.addComponent(jMultiplierLabel, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					.addComponent(jGroup, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					.addComponent(jStockpile, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jMultiplier, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jMultiplierLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jGroup, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 					.addGroup(layout.createSequentialGroup()
 						.addGap(4)
 						.addGroup(layout.createParallelGroup()
@@ -234,7 +234,7 @@ public class StockpileSeparatorTableCell extends SeparatorTableCell<StockpileIte
 			}
 		} else {
 			if (stockpileItem.getStockpile().getPercentFull() >= (Settings.get().getStockpileColorGroup2() / 100.0)) {
-				jColor.setBackground(new Color(255, 255, 200));
+				jColor.setBackground(new Color(200, 255, 200));
 			} else {
 				jColor.setBackground(new Color(255, 200, 200));
 			}
@@ -281,7 +281,7 @@ public class StockpileSeparatorTableCell extends SeparatorTableCell<StockpileIte
 		public void adjustmentValueChanged(final AdjustmentEvent e) {
 			if (!e.getValueIsAdjusting()) {
 				int position = getParentViewport().getViewPosition().x;
-				jStartSpace.setMinimumSize(new Dimension(position, Program.BUTTONS_HEIGHT));
+				jStartSpace.setMinimumSize(new Dimension(position, Program.getButtonsHeight()));
 				setEnabled(true);
 				jTable.repaint();
 			} else {

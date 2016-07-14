@@ -29,12 +29,12 @@ import java.util.List;
 import javax.swing.GroupLayout;
 import javax.swing.Icon;
 import javax.swing.JLabel;
-import javax.swing.JToolBar;
 import javax.swing.Timer;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
+import net.nikr.eve.jeveasset.gui.shared.components.JFixedToolBar;
 import net.nikr.eve.jeveasset.gui.shared.components.JGroupLayoutPanel;
 import net.nikr.eve.jeveasset.i18n.GuiFrame;
 
@@ -42,13 +42,13 @@ import net.nikr.eve.jeveasset.i18n.GuiFrame;
 public class StatusPanel extends JGroupLayoutPanel {
 
 	//GUI
-	private JLabel jEveTime;
-	private JLabel jUpdatable;
-	private JToolBar jToolBar;
-	private Timer eveTimer;
+	private final JLabel jEveTime;
+	private final JLabel jUpdatable;
+	private final JFixedToolBar jToolBar;
+	private final Timer eveTimer;
 
 
-	private List<JLabel> programStatus = new ArrayList<JLabel>();
+	private final List<JLabel> programStatus = new ArrayList<JLabel>();
 
 	public StatusPanel(final Program program) {
 		super(program);
@@ -58,9 +58,7 @@ public class StatusPanel extends JGroupLayoutPanel {
 		layout.setAutoCreateGaps(true);
 		layout.setAutoCreateContainerGaps(false);
 
-		jToolBar = new JToolBar();
-		jToolBar.setFloatable(false);
-		jToolBar.setRollover(false);
+		jToolBar = new JFixedToolBar();
 
 		jUpdatable = createIcon(Images.DIALOG_UPDATE.getIcon(), GuiFrame.get().updatable());
 		programStatus.add(jUpdatable);
@@ -77,7 +75,7 @@ public class StatusPanel extends JGroupLayoutPanel {
 		);
 		layout.setVerticalGroup(
 			layout.createSequentialGroup()
-				.addComponent(jToolBar, 25, 25, 25)
+				.addComponent(jToolBar, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
 		);
 	}
 

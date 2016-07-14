@@ -58,6 +58,16 @@ public abstract class AbstractXmlBackup {
 		return new File(filename.substring(0, filename.lastIndexOf(".")) + ".new");
 	}
 
+	protected void lock(final String filename) {
+		File xmlFile = new File(filename);
+		FileLock.lock(xmlFile);
+	}
+
+	protected void unlock(final String filename) {
+		File xmlFile = new File(filename);
+		FileLock.unlock(xmlFile);
+	}
+
 	private File getBackupFile(final String filename) {
 		return new File(filename.substring(0, filename.lastIndexOf(".")) + ".bac");
 	}

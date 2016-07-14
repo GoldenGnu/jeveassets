@@ -23,7 +23,7 @@ package net.nikr.eve.jeveasset.io.eveapi;
 
 
 import com.beimin.eveapi.exception.ApiException;
-import com.beimin.eveapi.model.shared.AccountBalance;
+import com.beimin.eveapi.model.shared.EveAccountBalance;
 import com.beimin.eveapi.response.shared.AccountBalanceResponse;
 import java.util.ArrayList;
 import java.util.Date;
@@ -32,6 +32,7 @@ import net.nikr.eve.jeveasset.data.MyAccount;
 import net.nikr.eve.jeveasset.data.MyAccount.AccessMask;
 import net.nikr.eve.jeveasset.data.MyAccountBalance;
 import net.nikr.eve.jeveasset.data.Owner;
+import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import net.nikr.eve.jeveasset.io.shared.AbstractApiGetter;
 import net.nikr.eve.jeveasset.io.shared.ApiConverter;
@@ -53,7 +54,7 @@ public class AccountBalanceGetter extends AbstractApiGetter<AccountBalanceRespon
 			return new com.beimin.eveapi.parser.corporation.AccountBalanceParser()
 					.getResponse(Owner.getApiAuthorization(getOwner()));
 		} else {
-			return new com.beimin.eveapi.parser.pilot.AccountBalanceParser()
+			return new com.beimin.eveapi.parser.pilot.PilotAccountBalanceParser()
 					.getResponse(Owner.getApiAuthorization(getOwner()));
 		}
 	}
@@ -61,6 +62,7 @@ public class AccountBalanceGetter extends AbstractApiGetter<AccountBalanceRespon
 	@Override
 	protected void setNextUpdate(final Date nextUpdate) {
 		getOwner().setBalanceNextUpdate(nextUpdate);
+		getOwner().setBalanceLastUpdate(Settings.getNow());
 	}
 
 	@Override
@@ -70,7 +72,7 @@ public class AccountBalanceGetter extends AbstractApiGetter<AccountBalanceRespon
 
 	@Override
 	protected void setData(final AccountBalanceResponse response) {
-		List<MyAccountBalance> accountBalances = ApiConverter.convertAccountBalance(new ArrayList<AccountBalance>(response.getAll()), getOwner());
+		List<MyAccountBalance> accountBalances = ApiConverter.convertAccountBalance(new ArrayList<EveAccountBalance>(response.getAll()), getOwner());
 		getOwner().setAccountBalances(accountBalances);
 	}
 
@@ -78,6 +80,7 @@ public class AccountBalanceGetter extends AbstractApiGetter<AccountBalanceRespon
 	protected void updateFailed(final Owner ownerFrom, final Owner ownerTo) {
 		ownerTo.setAccountBalances(ownerFrom.getAccountBalances());
 		ownerTo.setBalanceNextUpdate(ownerFrom.getBalanceNextUpdate());
+		ownerTo.setBalanceLastUpdate(ownerFrom.getBalanceLastUpdate());
 	}
 
 	@Override

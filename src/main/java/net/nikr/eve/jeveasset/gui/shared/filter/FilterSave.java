@@ -26,6 +26,7 @@ import ca.odell.glazedlists.TextFilterator;
 import ca.odell.glazedlists.swing.AutoCompleteSupport;
 import java.awt.AWTException;
 import java.awt.Robot;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -36,7 +37,6 @@ import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.text.JTextComponent;
@@ -56,19 +56,19 @@ public class FilterSave extends JDialogCentered {
 
 	private final EventList<String> filters;
 	private final List<String> defaultFilters = new ArrayList<String>();
-	private final JComboBox jName;
+	private final JComboBox<String> jName;
 	private final JButton jSave;
 
 	private String returnString;
 
-	public FilterSave(final JFrame jFrame) {
-		super(null, GuiShared.get().saveFilter(), jFrame);
+	public FilterSave(final Window window) {
+		super(null, GuiShared.get().saveFilter(), window);
 
 		ListenerClass listener = new ListenerClass();
 
 		JLabel jText = new JLabel(GuiShared.get().enterFilterName());
 
-		jName = new JComboBox();
+		jName = new JComboBox<String>();
 		JCopyPopup.install((JTextComponent) jName.getEditor().getEditorComponent());
 		filters = new EventListManager<String>().create();
 		AutoCompleteSupport.install(jName, EventModels.createSwingThreadProxyList(filters), new Filterator());
@@ -86,18 +86,18 @@ public class FilterSave extends JDialogCentered {
 				.addGroup(layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
 					.addComponent(jName, 220, 220, 220)
 					.addGroup(layout.createSequentialGroup()
-						.addComponent(jSave, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH)
-						.addComponent(jCancel, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH)
+						.addComponent(jSave, Program.getButtonsWidth(), Program.getButtonsWidth(), Program.getButtonsWidth())
+						.addComponent(jCancel, Program.getButtonsWidth(), Program.getButtonsWidth(), Program.getButtonsWidth())
 					)
 				)
 		);
 		layout.setVerticalGroup(
 			layout.createSequentialGroup()
-				.addComponent(jText, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-				.addComponent(jName, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+				.addComponent(jText, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+				.addComponent(jName, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 				.addGroup(layout.createParallelGroup()
-					.addComponent(jSave, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					.addComponent(jCancel, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					.addComponent(jSave, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jCancel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 				)
 		);
 	}

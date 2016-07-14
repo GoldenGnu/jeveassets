@@ -65,6 +65,10 @@ public abstract class GuiShared extends Bundle {
 	public abstract String itemEdit();
 	public abstract String itemNameTitle();
 	public abstract String itemPriceTitle();
+	public abstract String jumps();
+	public abstract String jumpsAddCustom();
+	public abstract String jumpsAddSelected();
+	public abstract String jumpsClear();
 	public abstract String lookup();
 	public abstract String newStockpile();
 	public abstract String ok();
@@ -77,13 +81,21 @@ public abstract class GuiShared extends Bundle {
 	public abstract String selectionAverage();
 	public abstract String selectionCount();
 	public abstract String selectionInventionSuccess();
+	public abstract String selectionManufactureJobsValue();
+	public abstract String selectionOrdersBoth();
+	public abstract String selectionOrdersBothAvg();
 	public abstract String selectionOrdersBuy();
+	public abstract String selectionOrdersBuyAvg();
 	public abstract String selectionOrdersEscrow();
 	public abstract String selectionOrdersSell();
+	public abstract String selectionOrdersSellAvg();
 	public abstract String selectionOrdersToCover();
 	public abstract String selectionTitle();
+	public abstract String selectionTitleBoth();
+	public abstract String selectionTitleBuy();
 	public abstract String selectionTitleNeeded();
 	public abstract String selectionTitleNow();
+	public abstract String selectionTitleSell();
 	public abstract String selectionValue();
 	public abstract String selectionValueNeeded();
 	public abstract String selectionValueNow();
@@ -113,7 +125,6 @@ public abstract class GuiShared extends Bundle {
 	public abstract String today(Object arg0);
 	public abstract String whitespace37(Object arg0, Object arg1);
 	public abstract String files(Object arg0);
-	//ViewsdeleteFilter=Delete Filter
 	public abstract String deleteView();
 	public abstract String deleteViews(int size);
 	public abstract String editViews();
@@ -155,10 +166,14 @@ public abstract class GuiShared extends Bundle {
 	public abstract String manageFilters();
 	public abstract String nothingToSave();
 	public abstract String filterManager();
+	public abstract String managerExport();
+	public abstract String managerImport();
+	public abstract String managerImportFailMsg();
+	public abstract String managerImportFailTitle();
 	public abstract String managerLoad();
 	public abstract String managerRename();
 	public abstract String managerDelete();
-	public abstract String managerDone();
+	public abstract String managerClose();
 	public abstract String renameFilter();
 	public abstract String deleteFilter();
 	public abstract String deleteFilters(int size);
@@ -191,4 +206,18 @@ public abstract class GuiShared extends Bundle {
 	public abstract String filterShowing(int rowCount, int size, String filterName);
 	public abstract String popupMenuAddField();
 	public abstract String export();
+	public abstract String exportTableData();
+	
+	//Text Dialog
+	public abstract String textLoadFailMsg();
+	public abstract String textLoadFailTitle();
+	public abstract String textSaveFailMsg();
+	public abstract String textSaveFailTitle();
+	public abstract String textToClipboard();
+	public abstract String textToFile();
+	public abstract String textFromClipboard();
+	public abstract String textFromFile();
+	public abstract String textClose();
+	public abstract String textImport();
+	public abstract String textExport();
 }

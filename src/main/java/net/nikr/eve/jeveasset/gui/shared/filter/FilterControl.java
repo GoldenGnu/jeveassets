@@ -33,9 +33,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.swing.AbstractButton;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JTable;
 import net.nikr.eve.jeveasset.data.EventListManager;
@@ -87,6 +87,10 @@ public abstract class FilterControl<E> extends ExportFilterControl<E> {
 		gui = new FilterGui<E>(jFrame, this);
 	}
 
+	public void setColumns(final List<EnumTableColumn<E>> enumColumns) {
+		gui.setColumns(enumColumns);
+	}
+
 	@Override
 	public List<Filter> getCurrentFilters() {
 		return gui.getFilters();
@@ -112,14 +116,8 @@ public abstract class FilterControl<E> extends ExportFilterControl<E> {
 		return gui.getPanel();
 	}
 
-	public void addToolButton(final AbstractButton jButton) {
-		gui.addToolButton(jButton);
-	}
-	public void addToolButton(final AbstractButton jButton, final int width) {
-		gui.addToolButton(jButton, width);
-	}
-	public void addToolSeparator() {
-		gui.addToolSeparator();
+	public void addExportOption(final JMenuItem jMenuItem) {
+		gui.addExportOption(jMenuItem);
 	}
 
 	public JMenu getMenu(final JTable jTable, final List<E> items) {

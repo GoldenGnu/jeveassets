@@ -117,6 +117,25 @@ public final class SettingsReader extends AbstractXmlReader {
 		return reader.read(settings);
 	}
 
+	public static List<Stockpile> loadStockpile(final String filename) {
+		SettingsReader reader = new SettingsReader();
+		return reader.readStockpile(filename);
+	}
+
+	private List<Stockpile> readStockpile(String filename) {
+		try {
+			Element element = getDocumentElement(filename, true);
+			List<Stockpile> stockpiles = parseStockpile(element);
+			LOG.info("Stockpile loaded");
+			return stockpiles;
+		} catch (IOException ex) {
+			LOG.info("Stockpile not loaded");
+		} catch (XmlException ex) {
+			LOG.warn("Stockpile parser error: (" + filename + ")" + ex.getMessage(), ex);
+		}
+		return null;
+	}
+
 	private boolean read(final Settings settings) {
 		if (!new File(settings.getPathSettings()).exists()) { //No settings file
 			return true;
@@ -137,12 +156,27 @@ public final class SettingsReader extends AbstractXmlReader {
 		return false;
 	}
 
+	private List<Stockpile> parseStockpile(final Element element) throws XmlException {
+		if (!element.getNodeName().equals("settings")) {
+			throw new XmlException("Wrong root element name.");
+		}
+		//Stockpiles
+		List<Stockpile> stockpiles = new ArrayList<Stockpile>();
+		NodeList stockpilesNodes = element.getElementsByTagName("stockpiles");
+		if (stockpilesNodes.getLength() == 1) {
+			Element stockpilesElement = (Element) stockpilesNodes.item(0);
+			parseStockpiles(stockpilesElement, stockpiles);
+			Collections.sort(Settings.get().getStockpiles());
+		}
+		return stockpiles;
+	}
+
 	private void parseSettings(final Element element, final Settings settings) throws XmlException {
 		if (!element.getNodeName().equals("settings")) {
 			throw new XmlException("Wrong root element name.");
 		}
 
-		//Tags
+		//Routing
 		NodeList routingNodes = element.getElementsByTagName("routingsettings");
 		if (routingNodes.getLength() == 1) {
 			Element routingElement = (Element) routingNodes.item(0);
@@ -170,6 +204,13 @@ public final class SettingsReader extends AbstractXmlReader {
 			parseTrackerData(trackerDataElement, settings);
 		}
 
+		//Tracker Filters
+		NodeList trackerFiltersNodes = element.getElementsByTagName("trackerfilters");
+		if (trackerFiltersNodes.getLength() == 1) {
+			Element trackerFilterElement = (Element) trackerFiltersNodes.item(0);
+			parseTrackerFilters(trackerFilterElement, settings);
+		}
+
 		//Asset Settings
 		NodeList assetSettingsNodes = element.getElementsByTagName("assetsettings");
 		if (assetSettingsNodes.getLength() == 1) {
@@ -181,7 +222,7 @@ public final class SettingsReader extends AbstractXmlReader {
 		NodeList stockpilesNodes = element.getElementsByTagName("stockpiles");
 		if (stockpilesNodes.getLength() == 1) {
 			Element stockpilesElement = (Element) stockpilesNodes.item(0);
-			parseStockpiles(stockpilesElement, settings);
+			parseStockpiles(stockpilesElement, settings.getStockpiles());
 			Collections.sort(Settings.get().getStockpiles());
 		}
 
@@ -365,11 +406,11 @@ public final class SettingsReader extends AbstractXmlReader {
 				//Read data
 				Element dataNode = (Element) dataNodeList.item(b);
 				Date date = AttributeGetters.getDate(dataNode, "date");
-				double assets = AttributeGetters.getDouble(dataNode, "assets");
+				double assetsTotal = AttributeGetters.getDouble(dataNode, "assets");
 				double escrows = AttributeGetters.getDouble(dataNode, "escrows");
 				double escrowstocover = AttributeGetters.getDouble(dataNode, "escrowstocover");
 				double sellorders = AttributeGetters.getDouble(dataNode, "sellorders");
-				double walletbalance = AttributeGetters.getDouble(dataNode, "walletbalance");
+				double balanceTotal = AttributeGetters.getDouble(dataNode, "walletbalance");
 				double manufacturing = 0.0;
 				if (AttributeGetters.haveAttribute(dataNode, "manufacturing")){
 					manufacturing = AttributeGetters.getDouble(dataNode, "manufacturing");
@@ -378,17 +419,54 @@ public final class SettingsReader extends AbstractXmlReader {
 				if (AttributeGetters.haveAttribute(dataNode, "contractcollateral")){
 					contractCollateral = AttributeGetters.getDouble(dataNode, "contractcollateral");
 				}
+				double contractValue = 0.0;
+				if (AttributeGetters.haveAttribute(dataNode, "contractvalue")){
+					contractValue = AttributeGetters.getDouble(dataNode, "contractvalue");
+				}
 				//Add data
 				Value value = new Value(date);
-				value.setAssets(assets);
+				//Balance
+				NodeList balanceNodeList = dataNode.getElementsByTagName("balance");
+				for (int c = 0; c < balanceNodeList.getLength(); c++) { //New data
+					Element balanceNode = (Element) balanceNodeList.item(c);
+					String id = AttributeGetters.getString(balanceNode, "id");
+					double balance = AttributeGetters.getDouble(balanceNode, "value");
+					value.addBalance(id, balance);
+				}
+				if (balanceNodeList.getLength() == 0) { //Old data
+					value.setBalanceTotal(balanceTotal);
+				}
+				//Assets
+				NodeList assetNodeList = dataNode.getElementsByTagName("asset");
+				for (int c = 0; c < assetNodeList.getLength(); c++) { //New data
+					Element assetNode = (Element) assetNodeList.item(c);
+					String id = AttributeGetters.getString(assetNode, "id");
+					double assets = AttributeGetters.getDouble(assetNode, "value");
+					value.addAssets(id, assets);
+				}
+				if (assetNodeList.getLength() == 0) { //Old data
+					value.setAssetsTotal(assetsTotal);
+				}
 				value.setEscrows(escrows);
 				value.setEscrowsToCover(escrowstocover);
 				value.setSellOrders(sellorders);
-				value.setBalance(walletbalance);
 				value.setManufacturing(manufacturing);
 				value.setContractCollateral(contractCollateral);
+				value.setContractValue(contractValue);
 				settings.getTrackerData().get(owner).add(value);
 			}
+		}
+	}
+
+	private void parseTrackerFilters(final Element element, final Settings settings) {
+		NodeList tableNodeList = element.getElementsByTagName("trackerfilter");
+		boolean selectNew = AttributeGetters.getBoolean(element, "selectnew");
+		settings.setTrackerSelectNew(selectNew);
+		for (int a = 0; a < tableNodeList.getLength(); a++) {
+			Element trackerFilterNode = (Element) tableNodeList.item(a);
+			String id = AttributeGetters.getString(trackerFilterNode, "id");
+			boolean selected = AttributeGetters.getBoolean(trackerFilterNode, "selected");
+			settings.getTrackerFilters().put(id, selected);
 		}
 	}
 
@@ -407,7 +485,7 @@ public final class SettingsReader extends AbstractXmlReader {
 		settings.setStockpileColorGroup3(group3);
 	}
 
-	private void parseStockpiles(final Element stockpilesElement, final Settings settings) {
+	private void parseStockpiles(final Element stockpilesElement, final List<Stockpile> stockpiles) {
 		NodeList stockpileNodes = stockpilesElement.getElementsByTagName("stockpile");
 		for (int a = 0; a < stockpileNodes.getLength(); a++) {
 			Element stockpileNode = (Element) stockpileNodes.item(a);
@@ -444,6 +522,7 @@ public final class SettingsReader extends AbstractXmlReader {
 				long locationID = AttributeGetters.getLong(stockpileNode, "locationid");
 				location = ApiIdConverter.getLocation(locationID);
 			}
+			boolean exclude = false;
 			//Include
 			Boolean inventory = null;
 			if (AttributeGetters.haveAttribute(stockpileNode, "inventory")) {
@@ -463,7 +542,7 @@ public final class SettingsReader extends AbstractXmlReader {
 			}
 			List<StockpileFilter> filters = new ArrayList<StockpileFilter>();
 			if (inventory != null && sellOrders != null && buyOrders != null && jobs != null) {
-				StockpileFilter filter = new StockpileFilter(location, flagIDs, containers, ownerIDs, inventory, sellOrders, buyOrders, jobs, false, false);
+				StockpileFilter filter = new StockpileFilter(location, flagIDs, containers, ownerIDs, exclude, inventory, sellOrders, buyOrders, jobs, false, false, false, false, false, false);
 				filters.add(filter);
 			}
 		//NEW
@@ -471,6 +550,26 @@ public final class SettingsReader extends AbstractXmlReader {
 			for (int b = 0; b < filterNodes.getLength(); b++) {
 				Element filterNode = (Element) filterNodes.item(b);
 				//Include
+				boolean filterExclude = false;
+				if (AttributeGetters.haveAttribute(filterNode, "exclude")) {
+					filterExclude = AttributeGetters.getBoolean(filterNode, "exclude");
+				}
+				boolean filterSellingContracts = false;
+				if (AttributeGetters.haveAttribute(filterNode, "sellingcontracts")) {
+					filterSellingContracts = AttributeGetters.getBoolean(filterNode, "sellingcontracts");
+				}
+				boolean filterSoldBuy = false;
+				if (AttributeGetters.haveAttribute(filterNode, "soldcontracts")) {
+					filterSoldBuy = AttributeGetters.getBoolean(filterNode, "soldcontracts");
+				}
+				boolean filterBuyingContracts = false;
+				if (AttributeGetters.haveAttribute(filterNode, "buyingcontracts")) {
+					filterBuyingContracts = AttributeGetters.getBoolean(filterNode, "buyingcontracts");
+				}
+				boolean filterBoughtContracts = false;
+				if (AttributeGetters.haveAttribute(filterNode, "boughtcontracts")) {
+					filterBoughtContracts = AttributeGetters.getBoolean(filterNode, "boughtcontracts");
+				}
 				boolean filterInventory = AttributeGetters.getBoolean(filterNode, "inventory");
 				boolean filterSellOrders = AttributeGetters.getBoolean(filterNode, "sellorders");
 				boolean filterBuyOrders = AttributeGetters.getBoolean(filterNode, "buyorders");
@@ -510,7 +609,7 @@ public final class SettingsReader extends AbstractXmlReader {
 					int filterFlagID = AttributeGetters.getInt(flagNode, "flagid");
 					filterFlagIDs.add(filterFlagID);
 				}
-				StockpileFilter stockpileFilter = new StockpileFilter(location, filterFlagIDs, filterContainers, filterOwnerIDs, filterInventory, filterSellOrders, filterBuyOrders, filterJobs, filterBuyTransactions, filterSellTransactions);
+				StockpileFilter stockpileFilter = new StockpileFilter(location, filterFlagIDs, filterContainers, filterOwnerIDs, filterExclude, filterInventory, filterSellOrders, filterBuyOrders, filterJobs, filterBuyTransactions, filterSellTransactions, filterSellingContracts, filterSoldBuy, filterBuyingContracts, filterBoughtContracts);
 				filters.add(stockpileFilter);
 			}
 		//MULTIPLIER
@@ -520,7 +619,7 @@ public final class SettingsReader extends AbstractXmlReader {
 			}
 		
 			Stockpile stockpile = new Stockpile(name, filters, multiplier);
-			settings.getStockpiles().add(stockpile);
+			stockpiles.add(stockpile);
 		//ITEMS
 			NodeList itemNodes = stockpileNode.getElementsByTagName("item");
 			for (int b = 0; b < itemNodes.getLength(); b++) {
@@ -872,7 +971,7 @@ public final class SettingsReader extends AbstractXmlReader {
 		}
 	}
 
-	private EnumTableColumn<?> getColumn(final String column, final String tableName) {
+	public static EnumTableColumn<?> getColumn(final String column, final String tableName) {
 		//Stockpile
 		try {
 			if (tableName.equals(StockpileTab.NAME)) {

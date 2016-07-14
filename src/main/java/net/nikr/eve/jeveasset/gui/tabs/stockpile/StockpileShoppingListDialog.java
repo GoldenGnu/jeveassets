@@ -115,14 +115,14 @@ class StockpileShoppingListDialog extends JDialogCentered {
 		layout.setVerticalGroup(
 			layout.createSequentialGroup()
 				.addGroup(layout.createParallelGroup()
-					.addComponent(jCopyToClipboard, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					.addComponent(jSeparator, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					.addComponent(jPercentFullLabel, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					.addComponent(jPercent, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					.addComponent(jPercentLabel, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					.addComponent(jCopyToClipboard, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jSeparator, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jPercentFullLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jPercent, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jPercentLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 				)
 				.addComponent(jTextScroll, 400, 400, Integer.MAX_VALUE)
-				.addComponent(jClose, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+				.addComponent(jClose, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 		);
 	}
 
@@ -275,14 +275,6 @@ class StockpileShoppingListDialog extends JDialogCentered {
 	}
 
 	private void copyToClipboard() {
-		SecurityManager sm = System.getSecurityManager();
-		if (sm != null) {
-			try {
-				sm.checkSystemClipboardAccess();
-			} catch (Exception ex) {
-				return;
-			}
-		}
 		Toolkit tk = Toolkit.getDefaultToolkit();
 		StringSelection data = new StringSelection(jText.getText());
 		Clipboard cp = tk.getSystemClipboard();
@@ -343,16 +335,7 @@ class StockpileShoppingListDialog extends JDialogCentered {
 		}
 
 		private boolean matches(Object object) {
-			if (object instanceof MyAsset) {
-				return stockpileItem.matches((MyAsset) object);
-			} else if (object instanceof MyMarketOrder) {
-				return stockpileItem.matches((MyMarketOrder) object);
-			} else if (object instanceof MyIndustryJob) {
-				return stockpileItem.matches((MyIndustryJob) object);
-			} else if (object instanceof MyTransaction) {
-				return stockpileItem.matches((MyTransaction) object);
-			}
-			return false;
+			return stockpileItem.matches(object);
 		}
 
 		public long getCountMinimum() {

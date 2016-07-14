@@ -40,6 +40,7 @@ import javax.swing.JMenu;
 import javax.swing.JScrollPane;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.EventListManager;
+import net.nikr.eve.jeveasset.data.MyLocation;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
 import net.nikr.eve.jeveasset.gui.images.Images;
@@ -49,6 +50,7 @@ import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterLogicalMatcher;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo;
+import net.nikr.eve.jeveasset.gui.shared.menu.JMenuJumps;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuName.AssetMenuData;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuData;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.TableMenu;
@@ -120,7 +122,6 @@ public class AssetsTab extends JMainTab {
 		//Table Filter
 		filterControl = new AssetFilterControl(
 				program.getMainWindow().getFrame(),
-				tableFormat,
 				sortedList,
 				filterList,
 				Settings.get().getTableFilters(NAME)
@@ -188,6 +189,14 @@ public class AssetsTab extends JMainTab {
 	}
 	public FilterLogicalMatcher<MyAsset> getFilterLogicalMatcher() {
 		return new FilterLogicalMatcher<MyAsset>(filterControl, getFilters());
+	}
+	public void addColumn(MyLocation location) {
+		tableFormat.addColumn(new JMenuJumps.Column<MyAsset>(location.getSystem(), location.getSystemID()));
+		filterControl.setColumns(tableFormat.getOrderColumns());
+	}
+	public void removeColumn(MyLocation location) {
+		tableFormat.removeColumn(new JMenuJumps.Column<MyAsset>(location.getSystem(), location.getSystemID()));
+		filterControl.setColumns(tableFormat.getOrderColumns());
 	}
 
 	private void updateStatusbar() {
@@ -260,17 +269,13 @@ public class AssetsTab extends JMainTab {
 
 	private class AssetFilterControl extends FilterControl<MyAsset> {
 
-		private final EnumTableFormatAdaptor<AssetTableFormat, MyAsset> tableFormat;
-
-		public AssetFilterControl(final JFrame jFrame, final EnumTableFormatAdaptor<AssetTableFormat, MyAsset> tableFormat, final EventList<MyAsset> eventList, final FilterList<MyAsset> filterList, final Map<String, List<Filter>> filters) {
+		public AssetFilterControl(final JFrame jFrame, final EventList<MyAsset> eventList, final FilterList<MyAsset> filterList, final Map<String, List<Filter>> filters) {
 			super(jFrame, NAME, eventList, filterList, filters);
-			this.tableFormat = tableFormat;
 		}
 
 		@Override
 		protected Object getColumnValue(final MyAsset item, final String column) {
-			AssetTableFormat format = AssetTableFormat.valueOf(column);
-			return format.getColumnValue(item);
+			return tableFormat.getColumnValue(item, column);
 		}
 
 		@Override
@@ -280,7 +285,7 @@ public class AssetsTab extends JMainTab {
 
 		@Override
 		protected List<EnumTableColumn<MyAsset>> getColumns() {
-			return columnsAsList(AssetTableFormat.values());
+			return new ArrayList<EnumTableColumn<MyAsset>>(tableFormat.getOrderColumns());
 		}
 
 		@Override

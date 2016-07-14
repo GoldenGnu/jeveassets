@@ -24,6 +24,7 @@ import ca.odell.glazedlists.EventList;
 import com.beimin.eveapi.model.shared.Blueprint;
 import com.beimin.eveapi.model.shared.ContractType;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -31,7 +32,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import net.nikr.eve.jeveasset.SplashUpdater;
 import net.nikr.eve.jeveasset.data.tag.Tags;
+import net.nikr.eve.jeveasset.data.types.JumpType;
 import net.nikr.eve.jeveasset.gui.shared.CaseInsensitiveComparator;
 import net.nikr.eve.jeveasset.gui.tabs.assets.MyAsset;
 import net.nikr.eve.jeveasset.gui.tabs.contracts.MyContract;
@@ -45,6 +48,9 @@ import net.nikr.eve.jeveasset.gui.tabs.transaction.MyTransaction;
 import net.nikr.eve.jeveasset.i18n.General;
 import net.nikr.eve.jeveasset.io.shared.ApiConverter;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
+import uk.me.candle.eve.graph.Edge;
+import uk.me.candle.eve.graph.Graph;
+import uk.me.candle.eve.graph.distances.Jumps;
 
 
 public class ProfileData {
@@ -60,11 +66,39 @@ public class ProfileData {
 	private final EventList<MyContract> contractEventList = new EventListManager<MyContract>().create();
 	private Map<Integer, List<MyAsset>> uniqueAssetsDuplicates = null; //TypeID : int
 	private Map<Integer, MarketPriceData> marketPriceData; //TypeID : int
-	private final List<String> owners = new ArrayList<String>();
+	private Map<Integer, MarketPriceData> transactionPriceDataSell; //TypeID : int
+	private Map<Integer, MarketPriceData> transactionPriceDataBuy; //TypeID : int
+	private final List<String> ownerNames = new ArrayList<String>();
+	private final Map<String, Owner> owners = new HashMap<String, Owner>();
 	private boolean saveSettings = false;
+	private final Graph graph;
+	private final Map<Long, SolarSystem> systemCache;
+	private final Map<Long, Map<Long, Integer>> distance = new HashMap<Long, Map<Long, Integer>>();
 
 	public ProfileData(ProfileManager profileManager) {
 		this.profileManager = profileManager;
+		// build the graph.
+		// filter the solarsystems based on the settings.
+		graph = new Graph(new Jumps());
+		int count = 0;
+		systemCache = new HashMap<Long, SolarSystem>();
+		for (Jump jump : StaticData.get().getJumps()) { // this way we exclude the locations that are unreachable.
+			count++;
+			SplashUpdater.setSubProgress((int) (count * 100.0 / StaticData.get().getJumps().size()));
+
+			SolarSystem from = systemCache.get(jump.getFrom().getSystemID());
+			SolarSystem to = systemCache.get(jump.getTo().getSystemID());
+			if (from == null) {
+				from = new SolarSystem(jump.getFrom());
+				systemCache.put(from.getSystemID(), from);
+			}
+			if (to == null) {
+				to = new SolarSystem(jump.getTo());
+				systemCache.put(to.getSystemID(), to);
+			}
+			graph.addEdge(new Edge(from, to));
+		}
+		SplashUpdater.setSubProgress(100);
 	}
 
 	public Set<Integer> getPriceTypeIDs() {
@@ -103,12 +137,44 @@ public class ProfileData {
 		return contractItemEventList;
 	}
 
-	public List<String> getOwners(boolean all) {
-		List<String> sortedOwners = new ArrayList<String>(owners);
+	public List<String> getOwnerNames(boolean all) {
+		List<String> sortedOwners = new ArrayList<String>(ownerNames);
 		if (all) {
 			sortedOwners.add(0, General.get().all());
 		}
 		return sortedOwners;
+	}
+
+	public Map<String, Owner> getOwners() {
+		return new HashMap<String, Owner>(owners);
+	}
+
+	public void updateJumps(Collection<JumpType> jumpTypes, Class<?> clazz) {
+		for (JumpType jumpType : jumpTypes) {
+			jumpType.clearJumps(); //Clear old
+			long systemID = jumpType.getLocation().getSystemID();
+			if (systemID <= 0) {
+				return;
+			}
+			for (MyLocation jumpLocation : Settings.get().getJumpLocations(clazz)) {
+				long jumpSystemID = jumpLocation.getSystemID();
+				if (systemID != jumpSystemID) {
+					Map<Long, Integer> distances = distance.get(jumpSystemID);
+					if (distances == null) {
+						distances = new HashMap<Long, Integer>();
+						distance.put(jumpSystemID, distances);
+					}
+					Integer jumps = distances.get(systemID);
+					if (jumps == null) {
+						jumps = graph.distanceBetween(systemCache.get(systemID), systemCache.get(jumpSystemID));
+						distances.put(systemID, jumps);
+					}
+					jumpType.addJump(jumpSystemID, jumps);
+				} else {
+					jumpType.addJump(jumpSystemID, 0);
+				}
+			}
+		}
 	}
 
 	private Set<Integer> createPriceTypeIDs() {
@@ -193,7 +259,8 @@ public class ProfileData {
 	public boolean updateEventLists() {
 		saveSettings = false;
 		uniqueAssetsDuplicates = new HashMap<Integer, List<MyAsset>>();
-		Set<String> uniqueOwners = new HashSet<String>();
+		Set<String> uniqueOwnerNames = new HashSet<String>();
+		Map<String, Owner> uniqueOwners = new HashMap<String, Owner>();
 		List<String> ownersOrders = new ArrayList<String>();
 		List<String> ownersJournal = new ArrayList<String>();
 		List<String> ownersTransactions = new ArrayList<String>();
@@ -211,12 +278,19 @@ public class ProfileData {
 		List<MyContract> contracts = new ArrayList<MyContract>();
 		List<MyAccountBalance> accountBalance = new ArrayList<MyAccountBalance>();
 		maximumPurchaseAge();
+		calcTransactionsPriceData();
 		//Add assets
 		for (MyAccount account : profileManager.getAccounts()) {
 			for (Owner owner : account.getOwners()) {
 				if (owner.isShowOwner()) {
-					uniqueOwners.add(owner.getName());
-				} else {
+					uniqueOwnerNames.add(owner.getName());
+					uniqueOwners.put(owner.getName(), owner);
+				}
+			}
+		}
+		for (MyAccount account : profileManager.getAccounts()) {
+			for (Owner owner : account.getOwners()) {
+				if (!owner.isShowOwner()) {
 					continue;
 				}
 				//Market Orders
@@ -287,10 +361,10 @@ public class ProfileData {
 					if (entry.getValue().isEmpty() 
 						&& contract.getType() == ContractType.COURIER &&
 						( //XXX - Workaround for alien contracts
-							owner.getOwnerID() == contract.getAcceptorID()
-							|| owner.getOwnerID() == contract.getAssigneeID()
-							|| owner.getOwnerID() == contract.getIssuerID()
-							|| (owner.getOwnerID() == contract.getIssuerCorpID() && contract.isForCorp())
+							uniqueOwners.containsKey(contract.getAcceptor())
+							|| uniqueOwners.containsKey(contract.getAssignee())
+							|| uniqueOwners.containsKey(contract.getIssuer())
+							|| (contract.isForCorp() && uniqueOwners.containsKey(contract.getIssuerCorp()))
 						)
 						) {
 						contractIDs.add(contract.getContractID());
@@ -302,7 +376,7 @@ public class ProfileData {
 						contractItems.addAll(entry.getValue());
 					}
 					//Assets
-					List<MyAsset> contractAssets = ApiConverter.assetContracts(entry.getValue(), owner);
+					List<MyAsset> contractAssets = ApiConverter.assetContracts(entry.getValue(), uniqueOwners);
 					addAssets(contractAssets, assets, owner.getBlueprints());
 				}
 				//Assets
@@ -321,6 +395,12 @@ public class ProfileData {
 					//Price
 					double price = ApiIdConverter.getPrice(item.getTypeID(), false);
 					order.setDynamicPrice(price);
+					//Last Transaction
+					if (order.getBid() > 0) { //Buy
+						order.setLastTransaction(transactionPriceDataSell.get(order.getTypeID()));
+					} else { //Sell
+						order.setLastTransaction(transactionPriceDataBuy.get(order.getTypeID()));
+					}
 				}
 				//Update IndustryJobs dynamic values
 				for (MyIndustryJob job : owner.getIndustryJobs()) {
@@ -342,10 +422,24 @@ public class ProfileData {
 				}
 			}
 		}
+		//Update Contracts dynamic values
+		for (MyContract contract : contracts) {
+			Owner issuer = uniqueOwners.get(contract.getIssuer());
+			Owner acceptor = uniqueOwners.get(contract.getAcceptor());
+			if (issuer != null) {
+				contract.setIssuerAfterAssets(issuer.getAssetLastUpdate());
+			}
+			if (acceptor != null) {
+				contract.setAcceptorAfterAssets(acceptor.getAssetLastUpdate());
+			}
+		}
 		//Update Items dynamic values
 		for (Item item : StaticData.get().getItems().values()) {
 			item.setPriceReprocessed(ApiIdConverter.getPriceReprocessed(item));
 		}
+		//Update Jumps
+		updateJumps(new ArrayList<JumpType>(assets), MyAsset.class);
+
 		try {
 			assetsEventList.getReadWriteLock().writeLock().lock();
 			assetsEventList.clear();
@@ -403,9 +497,11 @@ public class ProfileData {
 			accountBalanceEventList.getReadWriteLock().writeLock().unlock();
 		}
 		//Sort Owners
+		ownerNames.clear();
+		ownerNames.addAll(uniqueOwnerNames);
+		Collections.sort(ownerNames, new CaseInsensitiveComparator());
 		owners.clear();
-		owners.addAll(uniqueOwners);
-		Collections.sort(owners, new CaseInsensitiveComparator());
+		owners.putAll(uniqueOwners);
 		return saveSettings;
 	}
 
@@ -433,6 +529,34 @@ public class ProfileData {
 				}
 			}
 		}
+	}
+
+	private void calcTransactionsPriceData() {
+		//Create Transaction Price Data
+		transactionPriceDataSell = new HashMap<Integer, MarketPriceData>();
+		transactionPriceDataBuy = new HashMap<Integer, MarketPriceData>();
+		//Date - maximumPurchaseAge in days
+		for (MyAccount account : profileManager.getAccounts()) {
+			for (Owner owner : account.getOwners()) {
+				for (MyTransaction transaction : owner.getTransactions().values()) {
+					if (transaction.getTransactionType().equals("sell")) { //Sell
+						createTransactionsPriceData(transactionPriceDataSell, transaction);
+					} else { //Buy
+						createTransactionsPriceData(transactionPriceDataBuy, transaction);
+					}
+					
+				}
+			}
+		}
+	}
+
+	private void createTransactionsPriceData(Map<Integer, MarketPriceData> transactionPriceData, MyTransaction transaction) {
+		int typeID = transaction.getTypeID();
+		if (!transactionPriceData.containsKey(typeID)) {
+			transactionPriceData.put(typeID, new MarketPriceData());
+		}
+		MarketPriceData data = transactionPriceData.get(typeID);
+		data.update(transaction.getPrice(), transaction.getTransactionDateTime());
 	}
 
 	private void addAssets(final List<MyAsset> assets, List<MyAsset> addTo, Map<Long, Blueprint> blueprints) {

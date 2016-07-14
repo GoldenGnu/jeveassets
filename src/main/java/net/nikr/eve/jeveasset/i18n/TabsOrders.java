@@ -50,6 +50,9 @@ public abstract class TabsOrders extends Bundle {
 	public abstract String columnOwner();
 	public abstract String columnLocation();
 	public abstract String columnRegion();
+	public abstract String columnLastTransactionPrice();
+	public abstract String columnLastTransactionValue();
+	public abstract String columnLastTransactionPercent();
 	public abstract String market();
 	public abstract String rangeStation();
 	public abstract String rangeSolarSystem();

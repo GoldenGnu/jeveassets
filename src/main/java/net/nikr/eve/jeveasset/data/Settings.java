@@ -94,7 +94,8 @@ public class Settings {
 		FLAG_BLUEPRINT_BASE_PRICE_TECH_1,
 		FLAG_BLUEPRINT_BASE_PRICE_TECH_2,
 		FLAG_TRANSACTION_HISTORY,
-		FLAG_JOURNAL_HISTORY
+		FLAG_JOURNAL_HISTORY,
+		FLAG_MARKET_ORDER_HISTORY
 	}
 
 	private static Settings settings;
@@ -138,6 +139,8 @@ public class Settings {
 	private final ExportSettings exportSettings = new ExportSettings();
 //Tracker						Saved by TaskDialog.update() (on API update)
 	private final Map<String, List<Value>> trackerData = new HashMap<String, List<Value>>(); //ownerID :: long
+	private final Map<String, Boolean> trackerFilters = new HashMap<String, Boolean>();
+	private boolean trackerSelectNew = true;
 //Runtime flags					Is not saved to file
 	private boolean settingsLoadError;
 	private boolean settingsImported;
@@ -195,6 +198,8 @@ public class Settings {
 	//Lock OK
 	private final Map<String, Tag> tags = new HashMap<String, Tag>();
 	private final Map<TagID, Tags> tagIds = new HashMap<TagID, Tags>();
+//Jumps
+	private final Map<Class<?>, List<MyLocation>> jumpLocations = new HashMap<Class<?>, List<MyLocation>>();
 
 	protected Settings() {
 		SplashUpdater.setProgress(30);
@@ -214,6 +219,7 @@ public class Settings {
 		flags.put(SettingFlag.FLAG_BLUEPRINT_BASE_PRICE_TECH_2, false);
 		flags.put(SettingFlag.FLAG_TRANSACTION_HISTORY, true);
 		flags.put(SettingFlag.FLAG_JOURNAL_HISTORY, true);
+		flags.put(SettingFlag.FLAG_MARKET_ORDER_HISTORY, true);
 		cacheFlags();
 	}
 
@@ -303,6 +309,18 @@ public class Settings {
 		return trackerData;
 	}
 
+	public Map<String, Boolean> getTrackerFilters() {
+		return trackerFilters;
+	}
+
+	public boolean isTrackerSelectNew() {
+		return trackerSelectNew;
+	}
+
+	public void setTrackerSelectNew(boolean trackerSelectNew) {
+		this.trackerSelectNew = trackerSelectNew;
+	}
+
 	public Date getConquerableStationsNextUpdate() {
 		return conquerableStationsNextUpdate;
 	}
@@ -372,6 +390,25 @@ public class Settings {
 
 	public RoutingSettings getRoutingSettings() {
 		return routingSettings;
+	}
+
+	public List<MyLocation> getJumpLocations(Class<?> clazz) {
+		List<MyLocation> locations = jumpLocations.get(clazz);
+		if (locations == null) {
+			locations = new ArrayList<MyLocation>();
+			jumpLocations.put(clazz, locations);
+		}
+		return locations;
+	}
+
+	public void addJumpLocation(Class<?> clazz, MyLocation location) {
+		getJumpLocations(clazz).add(location);
+	}
+	public void removeJumpLocation(Class<?> clazz, MyLocation location) {
+		getJumpLocations(clazz).remove(location);
+	}
+	public void clearJumpLocations(Class<?> clazz) {
+		getJumpLocations(clazz).clear();
 	}
 
 	//@NotNull
@@ -650,8 +687,15 @@ public class Settings {
 		return flags.get(SettingFlag.FLAG_JOURNAL_HISTORY);
 	}
 
-	public void setJournalHistory(final boolean blueprintsTech2) {
-		flags.put(SettingFlag.FLAG_JOURNAL_HISTORY, blueprintsTech2);
+	public void setJournalHistory(final boolean journalHistory) {
+		flags.put(SettingFlag.FLAG_JOURNAL_HISTORY, journalHistory);
+	}
+	public boolean isMarketOrderHistory() {
+		return flags.get(SettingFlag.FLAG_MARKET_ORDER_HISTORY);
+	}
+
+	public void setMarketOrderHistory(final boolean marketOrderHistory) {
+		flags.put(SettingFlag.FLAG_MARKET_ORDER_HISTORY, marketOrderHistory);
 	}
 
 	public List<Stockpile> getStockpiles() {

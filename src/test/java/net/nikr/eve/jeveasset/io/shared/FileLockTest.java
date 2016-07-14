@@ -34,7 +34,8 @@ import net.nikr.eve.jeveasset.io.local.SettingsWriter;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.junit.AfterClass;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -42,7 +43,7 @@ import org.junit.Test;
 public class FileLockTest {
 	@BeforeClass
 	public static void setUpClass() throws Exception {
-		Logger.getRootLogger().setLevel(Level.OFF);
+		//Logger.getRootLogger().setLevel(Level.OFF);
 	}
 
 	@AfterClass
@@ -51,19 +52,24 @@ public class FileLockTest {
 		//Cleanup
 		File settings = new File(FileLockSettings.getPathSettingsStatic());
 		File settingsBackup = new File(FileLockSettings.getPathSettingsBackup());
+		File settingsError = new File(FileLockSettings.getPathSettingsError());
 		File profile = new File(FileLockSettings.getPathProfile());
 		File profileBackup = new File(FileLockSettings.getPathProfileBackup());
+		File profileError = new File(FileLockSettings.getPathProfileError());
 		File timeout = new File(FileLockSettings.getPathTimeout());
 		settings.delete();
 		settingsBackup.delete();
+		settingsError.delete();
 		profile.delete();
 		profileBackup.delete();
+		profileError.delete();
 		timeout.delete();
 	}
 
-	private static class LoadSettings implements Runnable {
+	private static class LoadSettings extends Thread implements TestThread {
 
 		private final Settings settings;
+		private Boolean ok = null;
 
 		public LoadSettings(Settings settings) {
 			this.settings = settings;
@@ -71,14 +77,19 @@ public class FileLockTest {
 		
 		@Override
 		public void run() {
-			boolean ok = SettingsReader.load(settings);
-			assertTrue("LockTest: Settings load failed", ok);
+			ok = SettingsReader.load(settings);
+		}
+
+		@Override
+		public Boolean isOk() {
+			return ok;
 		}
 	}
 
-	private static class SaveSettings implements Runnable {
+	private static class SaveSettings extends Thread implements TestThread {
 
 		private final Settings settings;
+		private Boolean ok = null;
 
 		public SaveSettings(Settings settings) {
 			this.settings = settings;
@@ -86,8 +97,12 @@ public class FileLockTest {
 		
 		@Override
 		public void run() {
-			boolean ok = SettingsWriter.save(settings);
-			assertTrue("LockTest: Settings save failed", ok);
+			ok = SettingsWriter.save(settings);
+		}
+
+		@Override
+		public Boolean isOk() {
+			return ok;
 		}
 	}
 
@@ -184,10 +199,11 @@ public class FileLockTest {
 	public void settingsLockTest() throws InterruptedException {
 		//Setup
 		Settings settings = new FileLockSettings();
-		SettingsWriter.save(settings);
+		boolean ok = SettingsWriter.save(settings);
+		assertTrue("LockTest: Setup failed", ok);
 		//Load
-		Thread load1 = new Thread(new LoadSettings(settings));
-		Thread load2 = new Thread(new LoadSettings(settings));
+		TestThread load1 = new LoadSettings(settings);
+		TestThread load2 = new LoadSettings(settings);
 		load1.start();
 		load2.start();
 		try {
@@ -196,9 +212,11 @@ public class FileLockTest {
 		} catch (InterruptedException ex) {
 			fail("Thread Interrupted");
 		}
+		assertTrue(load1.isOk());
+		assertTrue(load2.isOk());
 		//Save
-		Thread save1 = new Thread(new SaveSettings(settings));
-		Thread save2 = new Thread(new SaveSettings(settings));
+		TestThread save1 = new SaveSettings(settings);
+		TestThread save2 = new SaveSettings(settings);
 		save1.start();
 		save2.start();
 		try {
@@ -207,9 +225,11 @@ public class FileLockTest {
 		} catch (InterruptedException ex) {
 			fail("Thread Interrupted");
 		}
+		assertTrue(save1.isOk());
+		assertTrue(save2.isOk());
 		//Save & Load
-		Thread load = new Thread(new LoadSettings(settings));
-		Thread save = new Thread(new SaveSettings(settings));
+		TestThread load = new LoadSettings(settings);
+		TestThread save = new SaveSettings(settings);
 		load.start();
 		save.start();
 		try {
@@ -219,37 +239,52 @@ public class FileLockTest {
 		} catch (InterruptedException ex) {
 			fail("Thread Interrupted");
 		}
+		assertTrue(load.isOk());
+		assertTrue(save.isOk());
 		//Chaos! :D
-		List<Thread> threads = new ArrayList<Thread>();
+		List<TestThread> threads = new ArrayList<TestThread>();
 		for (int i = 0; i < 8; i++) {
-			threads.add(new Thread(new SaveSettings(settings)));
+			threads.add(new SaveSettings(settings));
 		}
 		for (int i = 0; i < 8; i++) {
-			threads.add(new Thread(new LoadSettings(settings)));
+			threads.add(new LoadSettings(settings));
 		}
-		for (Thread thread : threads) {
+		for (TestThread thread : threads) {
 			thread.start();
 		}
-		for (Thread thread : threads) {
+		for (TestThread thread : threads) {
 			thread.join();
 		}
-	}
-
-	private static class LoadProfile implements Runnable {
-	
-		@Override
-		public void run() {
-			boolean ok = ProfileReader.load(new ProfileManager(), FileLockSettings.getPathProfile());
-			assertTrue("LockTest: Profile load failed", ok);
+		for (TestThread thread : threads) {
+			assertTrue(thread.isOk());
 		}
 	}
 
-	private static class SaveProfile implements Runnable {
-	
+	private static class LoadProfile extends Thread implements TestThread {
+		Boolean ok = null;
+
 		@Override
 		public void run() {
-			boolean ok = ProfileWriter.save(new ProfileManager(), FileLockSettings.getPathProfile());
-			assertTrue("LockTest: Profile save failed", ok);
+			ok = ProfileReader.load(new ProfileManager(), FileLockSettings.getPathProfile());
+		}
+
+		@Override
+		public Boolean isOk() {
+			return ok;
+		}
+	}
+
+	private static class SaveProfile extends Thread implements TestThread {
+		private Boolean ok = null;
+
+		@Override
+		public void run() {
+			ok = ProfileWriter.save(new ProfileManager(), FileLockSettings.getPathProfile());
+		}
+
+		@Override
+		public Boolean isOk() {
+			return ok;
 		}
 	}
 
@@ -259,19 +294,27 @@ public class FileLockTest {
 		boolean ok = ProfileWriter.save(new ProfileManager(), FileLockSettings.getPathProfile());
 		assertTrue("LockTest: Setup failed", ok);
 		//Chaos! :D
-		List<Thread> threads = new ArrayList<Thread>();
+		List<TestThread> threads = new ArrayList<TestThread>();
 		for (int i = 0; i < 8; i++) {
-			threads.add(new Thread(new LoadProfile()));
+			threads.add(new LoadProfile());
 		}
 		for (int i = 0; i < 8; i++) {
-			threads.add(new Thread(new SaveProfile()));
+			threads.add(new SaveProfile());
 		}
-		for (Thread thread : threads) {
+		for (TestThread thread : threads) {
 			thread.start();
 		}
-		for (Thread thread : threads) {
+		for (TestThread thread : threads) {
 			thread.join();
 		}
+		for (TestThread thread : threads) {
+			assertTrue(thread.isOk());
+		}
 	}
-	
+
+	public static interface TestThread {
+		public Boolean isOk();
+		public void start();
+		public void join() throws InterruptedException;
+	}
 }

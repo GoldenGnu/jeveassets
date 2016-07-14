@@ -23,9 +23,11 @@ package net.nikr.eve.jeveasset.tests.mocks;
 
 import java.awt.event.ActionEvent;
 import java.util.List;
+import java.util.Map;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.MyAccount;
 import net.nikr.eve.jeveasset.data.MyAccountBalance;
+import net.nikr.eve.jeveasset.data.Owner;
 import net.nikr.eve.jeveasset.data.ProfileData;
 import net.nikr.eve.jeveasset.data.ProfileManager;
 import net.nikr.eve.jeveasset.gui.dialogs.settings.UserNameSettingsPanel;
@@ -36,6 +38,7 @@ import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
 import net.nikr.eve.jeveasset.gui.tabs.assets.AssetsTab;
 import net.nikr.eve.jeveasset.gui.tabs.assets.MyAsset;
 import net.nikr.eve.jeveasset.gui.tabs.contracts.MyContract;
+import net.nikr.eve.jeveasset.gui.tabs.contracts.MyContractItem;
 import net.nikr.eve.jeveasset.gui.tabs.jobs.MyIndustryJob;
 import net.nikr.eve.jeveasset.gui.tabs.orders.MyMarketOrder;
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewTab;
@@ -43,6 +46,7 @@ import net.nikr.eve.jeveasset.gui.tabs.reprocessed.ReprocessedTab;
 import net.nikr.eve.jeveasset.gui.tabs.routing.RoutingTab;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.StockpileTab;
 import net.nikr.eve.jeveasset.gui.tabs.transaction.MyTransaction;
+import net.nikr.eve.jeveasset.gui.tabs.tree.TreeTab;
 import net.nikr.eve.jeveasset.io.online.PriceDataGetter;
 
 /**
@@ -161,7 +165,7 @@ public abstract class FakeProgram extends Program {
 	}
 
 	@Override
-	public List<String> getOwners(boolean all) {
+	public List<String> getOwnerNames(boolean all) {
 		throw new UnsupportedOperationException("Not implemented");
 	}
 
@@ -229,4 +233,21 @@ public abstract class FakeProgram extends Program {
 	public ProfileData getProfileData() {
 		throw new UnsupportedOperationException("Not implemented");
 	}
+
+	@Override
+	public TreeTab getTreeTab() {
+		throw new UnsupportedOperationException("Not implemented");
+	}
+
+	@Override
+	public List<MyContractItem> getContractItemList() {
+		throw new UnsupportedOperationException("Not implemented");
+	}
+
+	@Override
+	public Map<String, Owner> getOwners() {
+		throw new UnsupportedOperationException("Not implemented");
+	}
+
+	
 }

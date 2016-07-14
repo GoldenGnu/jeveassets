@@ -140,14 +140,6 @@ public class CopyHandler {
 	}
 
 	private static void copyToClipboard(final String text) {
-		SecurityManager securityManager = System.getSecurityManager();
-		if (securityManager != null) {
-			try {
-				securityManager.checkSystemClipboardAccess();
-			} catch (Exception ex) {
-				return;
-			}
-		}
 		Toolkit toolkit = Toolkit.getDefaultToolkit();
 		StringSelection selection = new StringSelection(text);
 		Clipboard clipboard = toolkit.getSystemClipboard();
@@ -163,7 +155,7 @@ public class CopyHandler {
 
 	private static class ListenerClass extends AbstractAction {
 
-		private JTable jTable;
+		private final JTable jTable;
 
 		public ListenerClass(JTable jTable) {
 			this.jTable = jTable;

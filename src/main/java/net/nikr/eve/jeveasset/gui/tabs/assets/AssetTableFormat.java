@@ -414,10 +414,6 @@ public enum AssetTableFormat implements EnumTableColumn<MyAsset> {
 		return comparator;
 	}
 	@Override
-	public String toString() {
-		return getColumnName();
-	}
-	@Override
 	public boolean isColumnEditable(final Object baseObject) {
 		return false;
 	}
@@ -426,13 +422,15 @@ public enum AssetTableFormat implements EnumTableColumn<MyAsset> {
 		return true;
 	}
 	@Override
-	public MyAsset setColumnValue(final Object baseObject, final Object editedValue) {
-		return null;
+	public boolean setColumnValue(final Object baseObject, final Object editedValue) {
+		return false;
+	}
+	@Override
+	public String toString() {
+		return getColumnName();
 	}
 	//XXX - TableFormat.getColumnValue(...) Workaround
 	@Override public abstract Object getColumnValue(final MyAsset from);
 	//XXX - TableFormat.getColumnName() Workaround
 	@Override public abstract String getColumnName();
-
-
 }

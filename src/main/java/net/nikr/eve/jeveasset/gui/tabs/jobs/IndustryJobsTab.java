@@ -64,6 +64,7 @@ import net.nikr.eve.jeveasset.i18n.TabsJobs;
 public class IndustryJobsTab extends JMainTab {
 
 	private final JAutoColumnTable jTable;
+	private final JLabel jCount;
 	private final JLabel jInventionSuccess;
 	private final JLabel jManufactureOutputValue;
 
@@ -138,6 +139,9 @@ public class IndustryJobsTab extends JMainTab {
 		jManufactureOutputValue = StatusPanel.createLabel(TabsJobs.get().manufactureJobsValue(), Images.TOOL_VALUES.getIcon());
 		this.addStatusbarLabel(jManufactureOutputValue);
 
+		jCount = StatusPanel.createLabel(TabsJobs.get().count(), Images.EDIT_ADD.getIcon());
+		this.addStatusbarLabel(jCount);
+
 		layout.setHorizontalGroup(
 			layout.createParallelGroup()
 				.addComponent(filterControl.getPanel())
@@ -181,24 +185,27 @@ public class IndustryJobsTab extends JMainTab {
 	private class ListenerClass implements ListEventListener<MyIndustryJob> {
 		@Override
 		public void listChanged(final ListEvent<MyIndustryJob> listChanges) {
-			int count = 0;
+			int inventionCount = 0;
+			long count = 0;
 			double success = 0;
 			double outputValue = 0;
 			for (MyIndustryJob industryJob : filterList) {
+				count++;
 				if (industryJob.isInvention() && industryJob.isCompleted()) {
-					count++;
+					inventionCount++;
 					if (industryJob.isDelivered()) {
 						success++;
 					}
 				}
 				outputValue += industryJob.getOutputValue();
 			}
-			if (count <= 0) {
+			if (inventionCount <= 0) {
 				jInventionSuccess.setText(Formater.percentFormat(0.0));
 			} else {
-				jInventionSuccess.setText(Formater.percentFormat(success / count));
+				jInventionSuccess.setText(Formater.percentFormat(success / inventionCount));
 			}
 			jManufactureOutputValue.setText(Formater.iskFormat(outputValue));
+			jCount.setText(Formater.itemsFormat(count));
 		}
 	}
 

@@ -65,6 +65,31 @@ public class SettingsWriter extends AbstractXmlWriter {
 		return writer.write(settings);
 	}
 
+	public static boolean saveStockpiles(final List<Stockpile> stockpiles, final String filename) {
+		SettingsWriter writer = new SettingsWriter();
+		return writer.writeStockpiles(stockpiles, filename);
+	}
+
+	private boolean writeStockpiles(final List<Stockpile> stockpiles, final String filename) {
+		Document xmldoc;
+		try {
+			xmldoc = getXmlDocument("settings");
+		} catch (XmlException ex) {
+			LOG.error("Stockpile not saved " + ex.getMessage(), ex);
+			return false;
+		}
+
+		writeStockpiles(xmldoc, stockpiles);
+		try {
+			writeXmlFile(xmldoc, filename, false);
+		} catch (XmlException ex) {
+			LOG.error("Stockpile not saved " + ex.getMessage(), ex);
+			return false;
+		}
+		LOG.info("Stockpile saved");
+		return true;
+	}
+
 	private boolean write(final Settings settings) {
 		Document xmldoc;
 		try {
@@ -98,6 +123,7 @@ public class SettingsWriter extends AbstractXmlWriter {
 		writeExportSettings(xmldoc, settings.getExportSettings());
 		writeAssetAdded(xmldoc, settings.getAssetAdded());
 		writeTrackerData(xmldoc, settings.getTrackerData());
+		writeTrackerFilters(xmldoc, settings.getTrackerFilters(), settings.isTrackerSelectNew());
 		writeOwners(xmldoc, settings.getOwners());
 		writeTags(xmldoc, settings.getTags());
 		writeRoutingSettings(xmldoc, settings.getRoutingSettings());
@@ -162,6 +188,18 @@ public class SettingsWriter extends AbstractXmlWriter {
 		}
 	}
 
+	private void writeTrackerFilters(final Document xmldoc, final Map<String, Boolean> trackerFilters, boolean selectNew) {
+		Element trackerDataNode = xmldoc.createElementNS(null, "trackerfilters");
+		xmldoc.getDocumentElement().appendChild(trackerDataNode);
+		trackerDataNode.setAttributeNS(null, "selectnew", String.valueOf(selectNew));
+		for (Map.Entry<String, Boolean> entry : trackerFilters.entrySet()) {
+			Element ownerNode = xmldoc.createElementNS(null, "trackerfilter");
+			ownerNode.setAttributeNS(null, "id", entry.getKey());
+			ownerNode.setAttributeNS(null, "selected", String.valueOf(entry.getValue()));
+			trackerDataNode.appendChild(ownerNode);
+		}
+	}
+
 	private void writeTrackerData(final Document xmldoc, final Map<String, List<Value>> trackerData) {
 		Element trackerDataNode = xmldoc.createElementNS(null, "trackerdata");
 		xmldoc.getDocumentElement().appendChild(trackerDataNode);
@@ -172,14 +210,27 @@ public class SettingsWriter extends AbstractXmlWriter {
 			for (Value value : entry.getValue()) {
 				Element dataNode = xmldoc.createElementNS(null, "data");
 				dataNode.setAttributeNS(null, "date", String.valueOf(value.getDate().getTime()));
-				dataNode.setAttributeNS(null, "assets", String.valueOf(value.getAssets()));
+				dataNode.setAttributeNS(null, "assets", String.valueOf(value.getAssetsTotal()));
 				dataNode.setAttributeNS(null, "escrows", String.valueOf(value.getEscrows()));
 				dataNode.setAttributeNS(null, "escrowstocover", String.valueOf(value.getEscrowsToCover()));
 				dataNode.setAttributeNS(null, "sellorders", String.valueOf(value.getSellOrders()));
-				dataNode.setAttributeNS(null, "walletbalance", String.valueOf(value.getBalance()));
+				dataNode.setAttributeNS(null, "walletbalance", String.valueOf(value.getBalanceTotal()));
 				dataNode.setAttributeNS(null, "manufacturing", String.valueOf(value.getManufacturing()));
 				dataNode.setAttributeNS(null, "contractcollateral", String.valueOf(value.getContractCollateral()));
+				dataNode.setAttributeNS(null, "contractvalue", String.valueOf(value.getContractValue()));
 				ownerNode.appendChild(dataNode);
+				for (Map.Entry<String, Double> balanceEntry : value.getBalanceFilter().entrySet()) {
+					Element balanceNode = xmldoc.createElementNS(null, "balance");
+					balanceNode.setAttributeNS(null, "id", balanceEntry.getKey());
+					balanceNode.setAttributeNS(null, "value", String.valueOf(balanceEntry.getValue()));
+					dataNode.appendChild(balanceNode);
+				}
+				for (Map.Entry<String, Double> assetEntry : value.getAssetsFilter().entrySet()) {
+					Element assetNode = xmldoc.createElementNS(null, "asset");
+					assetNode.setAttributeNS(null, "id", assetEntry.getKey());
+					assetNode.setAttributeNS(null, "value", String.valueOf(assetEntry.getValue()));
+					dataNode.appendChild(assetNode);
+				}
 			}
 		}
 	}
@@ -304,6 +355,11 @@ public class SettingsWriter extends AbstractXmlWriter {
 			for (StockpileFilter filter : strockpile.getFilters()) {
 				Element locationNode = xmldoc.createElementNS(null, "stockpilefilter");
 				locationNode.setAttributeNS(null, "locationid", String.valueOf(filter.getLocation().getLocationID()));
+				locationNode.setAttributeNS(null, "sellingcontracts", String.valueOf(filter.isSellingContracts()));
+				locationNode.setAttributeNS(null, "soldcontracts", String.valueOf(filter.isSoldContracts()));
+				locationNode.setAttributeNS(null, "buyingcontracts", String.valueOf(filter.isBuyingContracts()));
+				locationNode.setAttributeNS(null, "boughtcontracts", String.valueOf(filter.isBoughtContracts()));
+				locationNode.setAttributeNS(null, "exclude", String.valueOf(filter.isExclude()));
 				locationNode.setAttributeNS(null, "inventory", String.valueOf(filter.isAssets()));
 				locationNode.setAttributeNS(null, "sellorders", String.valueOf(filter.isSellOrders()));
 				locationNode.setAttributeNS(null, "buyorders", String.valueOf(filter.isBuyOrders()));

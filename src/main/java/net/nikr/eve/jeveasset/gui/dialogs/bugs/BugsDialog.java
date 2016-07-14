@@ -79,8 +79,8 @@ public class BugsDialog extends JDialogCentered {
 				.addComponent(jHelp, GroupLayout.Alignment.LEADING)
 				.addComponent(jBugScroll, 300, 300, 300)
 				.addGroup(layout.createSequentialGroup()
-						.addComponent(jSend, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH)
-						.addComponent(jCancel, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH)
+						.addComponent(jSend, Program.getButtonsWidth(), Program.getButtonsWidth(), Program.getButtonsWidth())
+						.addComponent(jCancel, Program.getButtonsWidth(), Program.getButtonsWidth(), Program.getButtonsWidth())
 				)
 		);
 		layout.setVerticalGroup(
@@ -88,8 +88,8 @@ public class BugsDialog extends JDialogCentered {
 				.addComponent(jHelp)
 				.addComponent(jBugScroll, 150, 150, 150)
 				.addGroup(layout.createParallelGroup()
-						.addComponent(jSend, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-						.addComponent(jCancel, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+						.addComponent(jSend, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+						.addComponent(jCancel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 				)
 		);
 	}

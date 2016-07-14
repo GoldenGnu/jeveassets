@@ -38,6 +38,7 @@ import javax.swing.event.ListSelectionListener;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Item;
 import net.nikr.eve.jeveasset.data.types.ItemType;
+import net.nikr.eve.jeveasset.data.types.JumpType;
 import net.nikr.eve.jeveasset.data.types.LocationType;
 import net.nikr.eve.jeveasset.data.types.PriceType;
 import net.nikr.eve.jeveasset.data.types.TagsType;
@@ -56,12 +57,14 @@ public class MenuManager<Q> {
 		LOOKUP,
 		PRICE,
 		NAME,
-		REPROCESSED
+		REPROCESSED,
+		JUMPS
 	}
 
 	private boolean priceSupported = false;
 	private boolean itemSupported = false;
 	private boolean locationSupported = false;
+	private boolean jumpsSupported = false;
 	private boolean assets = false;
 	private boolean stockpile = false;
 	private boolean tagsSupported = false;
@@ -100,11 +103,12 @@ public class MenuManager<Q> {
 		assets = MyAsset.class.isAssignableFrom(clazz) && !TreeAsset.class.isAssignableFrom(clazz);
 		stockpile = Stockpile.StockpileItem.class.isAssignableFrom(clazz);
 		locationSupported = LocationType.class.isAssignableFrom(clazz);
+		jumpsSupported = JumpType.class.isAssignableFrom(clazz);
 		itemSupported = ItemType.class.isAssignableFrom(clazz);
 		tagsSupported = TagsType.class.isAssignableFrom(clazz);
 		priceSupported = PriceType.class.isAssignableFrom(clazz) || Item.class.isAssignableFrom(clazz);
-		createCashe(program, mainMenu);
-		createCashe(program, tablePopupMenu);
+		createCashe(program, mainMenu, clazz);
+		createCashe(program, tablePopupMenu, clazz);
 		ListenerClass listener  = new ListenerClass();
 		jTable.addMouseListener(listener);
 		jTable.getTableHeader().addMouseListener(listener);
@@ -113,7 +117,7 @@ public class MenuManager<Q> {
 		updateMainTableMenu();
 	}
 
-	public final void createCashe(final Program program, final Map<MenuEnum, JAutoMenu<Q>> menus) {
+	public final void createCashe(final Program program, final Map<MenuEnum, JAutoMenu<Q>> menus, final Class<Q> clazz) {
 	//ASSET FILTER
 		if (!assets && (itemSupported || locationSupported)) {
 			menus.put(MenuEnum.ASSET_FILTER, new JMenuAssetFilter<Q>(program));
@@ -139,6 +143,10 @@ public class MenuManager<Q> {
 	//REPROCESSED
 		if (itemSupported) {
 			menus.put(MenuEnum.REPROCESSED, new JMenuReprocessed<Q>(program));
+		}
+	//JUMPS
+		if (jumpsSupported) {
+			menus.put(MenuEnum.JUMPS, new JMenuJumps<Q>(program, clazz));
 		}
 	}
 
@@ -218,6 +226,12 @@ public class MenuManager<Q> {
 		JAutoMenu<Q> jReprocessed = menus.get(MenuEnum.REPROCESSED);
 		if (jReprocessed != null) {
 			jComponent.add(jReprocessed);
+			notEmpty = true;
+		}
+	//JUMPS
+		JAutoMenu<Q> jJumps = menus.get(MenuEnum.JUMPS);
+		if (jJumps != null) {
+			jComponent.add(jJumps);
 			notEmpty = true;
 		}
 	//COLUMNS

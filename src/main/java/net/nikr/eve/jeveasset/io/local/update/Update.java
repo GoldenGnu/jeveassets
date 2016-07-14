@@ -30,7 +30,12 @@ import net.nikr.eve.jeveasset.io.shared.AbstractXmlReader;
 import net.nikr.eve.jeveasset.io.shared.AttributeGetters;
 import net.nikr.eve.jeveasset.io.shared.FileLock;
 import net.nikr.eve.jeveasset.io.shared.XmlException;
-import org.dom4j.*;
+import org.dom4j.Attribute;
+import org.dom4j.Document;
+import org.dom4j.DocumentException;
+import org.dom4j.DocumentHelper;
+import org.dom4j.Element;
+import org.dom4j.XPath;
 import org.dom4j.io.OutputFormat;
 import org.dom4j.io.SAXReader;
 import org.dom4j.io.XMLWriter;
@@ -104,7 +109,7 @@ public class Update extends AbstractXmlReader {
 		}
 		try {
 			int currentVersion = getVersion(path); //Got Its own lock...
-			FileLock.lock(xml);
+			lock(path);
 			if (requiredVersion > currentVersion) {
 				LOG.info("settings.xml are out of date, updating.");
 				Update1To2 update = new Update1To2();
@@ -123,7 +128,7 @@ public class Update extends AbstractXmlReader {
 			LOG.warn("Failed to update settings", ex);
 			throw new XmlException(ex);
 		} finally {
-			FileLock.unlock(xml);
+			unlock(path);
 		}
 	}
 }

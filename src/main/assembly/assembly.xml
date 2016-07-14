@@ -13,6 +13,7 @@
 			<includes>
 				<include>*.txt</include>
 				<include>*.jar</include>
+				<include>*.properties</include>
 				<include>lib/*</include>
 				<include>data/*</include>
 			</includes>

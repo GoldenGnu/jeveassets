@@ -27,7 +27,6 @@ import ca.odell.glazedlists.ListSelection;
 import ca.odell.glazedlists.SeparatorList;
 import ca.odell.glazedlists.swing.DefaultEventSelectionModel;
 import ca.odell.glazedlists.swing.DefaultEventTableModel;
-import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -35,8 +34,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import javax.swing.AbstractButton;
-import javax.swing.DefaultComboBoxModel;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -47,8 +44,6 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
-import javax.swing.JToolBar;
-import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.EventListManager;
@@ -58,7 +53,9 @@ import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.CaseInsensitiveComparator;
 import net.nikr.eve.jeveasset.gui.shared.components.JCustomFileChooser;
 import net.nikr.eve.jeveasset.gui.shared.components.JDropDownButton;
+import net.nikr.eve.jeveasset.gui.shared.components.JFixedToolBar;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
+import net.nikr.eve.jeveasset.gui.shared.components.ListComboBoxModel;
 import net.nikr.eve.jeveasset.gui.shared.filter.ExportDialog;
 import net.nikr.eve.jeveasset.gui.shared.filter.ExportFilterControl;
 import net.nikr.eve.jeveasset.gui.shared.menu.*;
@@ -95,8 +92,8 @@ public class LoadoutsTab extends JMainTab {
 	private static final String SHIP_CATEGORY = "Ship";
 
 	//GUI
-	private final JComboBox jOwners;
-	private final JComboBox jShips;
+	private final JComboBox<String> jOwners;
+	private final JComboBox<String> jShips;
 	private final JButton jExpand;
 	private final JButton jCollapse;
 	private final JSeparatorTable jTable;
@@ -139,29 +136,39 @@ public class LoadoutsTab extends JMainTab {
 				jXmlFileChooser = new JCustomFileChooser(program.getMainWindow().getFrame(), "xml");
 			}
 		}
+
+		JFixedToolBar jToolBarTop = new JFixedToolBar();
+
 		JLabel jOwnersLabel = new JLabel(TabsLoadout.get().owner());
-		jOwners = new JComboBox();
+		jToolBarTop.add(jOwnersLabel);
+
+		jOwners = new JComboBox<String>();
 		jOwners.setActionCommand(LoadoutsAction.OWNERS.name());
 		jOwners.addActionListener(listener);
+		jToolBarTop.addComboBox(jOwners, 200);
 
 		JLabel jShipsLabel = new JLabel(TabsLoadout.get().ship1());
-		jShips = new JComboBox();
+		jToolBarTop.add(jShipsLabel);
+
+		jShips = new JComboBox<String>();
 		jShips.setActionCommand(LoadoutsAction.FILTER.name());
 		jShips.addActionListener(listener);
+		jToolBarTop.addComboBox(jShips, 0);
 
-		JToolBar jToolBarLeft = new JToolBar();
-		jToolBarLeft.setFloatable(false);
-		jToolBarLeft.setRollover(true);
-
-		jToolBarLeft.addSeparator();
+		JFixedToolBar jToolBarLeft = new JFixedToolBar();
 
 		jExport = new JDropDownButton(GuiShared.get().export(), Images.DIALOG_CSV_EXPORT.getIcon());
-		addToolButton(jToolBarLeft, jExport);
+		jToolBarLeft.addButton(jExport);
+
+		JMenuItem jExportSqlCsvHtml = new JMenuItem(TabsLoadout.get().exportTableData(), Images.DIALOG_CSV_EXPORT.getIcon());
+		jExportSqlCsvHtml.setActionCommand(LoadoutsAction.EXPORT.name());
+		jExportSqlCsvHtml.addActionListener(listener);
+		jExport.add(jExportSqlCsvHtml);
 
 		JMenu jMenu = new JMenu(TabsLoadout.get().exportEveXml());
 		jMenu.setIcon(Images.MISC_EVE.getIcon());
 		jExport.add(jMenu);
-
+		
 		JMenuItem jExportEveXml = new JMenuItem(TabsLoadout.get().exportEveXmlSelected());
 		jExportEveXml.setActionCommand(LoadoutsAction.EXPORT_LOADOUT_SELECTED.name());
 		jExportEveXml.addActionListener(listener);
@@ -172,24 +179,17 @@ public class LoadoutsTab extends JMainTab {
 		jExportEveXmlAll.addActionListener(listener);
 		jMenu.add(jExportEveXmlAll);
 
-		JMenuItem jExportSqlCsvHtml = new JMenuItem(TabsLoadout.get().exportSqlCsvHtml(), Images.DIALOG_CSV_EXPORT.getIcon());
-		jExportSqlCsvHtml.setActionCommand(LoadoutsAction.EXPORT.name());
-		jExportSqlCsvHtml.addActionListener(listener);
-		jExport.add(jExportSqlCsvHtml);
-
-		JToolBar jToolBarRight = new JToolBar();
-		jToolBarRight.setFloatable(false);
-		jToolBarRight.setRollover(true);
+		JFixedToolBar jToolBarRight = new JFixedToolBar();
 
 		jCollapse = new JButton(TabsLoadout.get().collapse(), Images.MISC_COLLAPSED.getIcon());
 		jCollapse.setActionCommand(LoadoutsAction.COLLAPSE.name());
 		jCollapse.addActionListener(listener);
-		addToolButton(jToolBarRight, jCollapse);
+		jToolBarRight.addButton(jCollapse);
 
 		jExpand = new JButton(TabsLoadout.get().expand(), Images.MISC_EXPANDED.getIcon());
 		jExpand.setActionCommand(LoadoutsAction.EXPAND.name());
 		jExpand.addActionListener(listener);
-		addToolButton(jToolBarRight, jExpand);
+		jToolBarRight.addButton(jExpand);
 
 		//Table Format
 		tableFormat = new EnumTableFormatAdaptor<LoadoutTableFormat, Loadout>(LoadoutTableFormat.class);
@@ -226,63 +226,43 @@ public class LoadoutsTab extends JMainTab {
 		eventLists.add(filterList);
 		exportDialog = new ExportDialog<Loadout>(program.getMainWindow().getFrame(), NAME, null, new LoadoutsFilterControl(), eventLists, enumColumns);
 
-		final int TOOLBAR_HEIGHT = jToolBarRight.getInsets().top + jToolBarRight.getInsets().bottom + Program.BUTTONS_HEIGHT;
 		layout.setHorizontalGroup(
 			layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+				.addComponent(jToolBarTop, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Integer.MAX_VALUE)
 				.addGroup(layout.createSequentialGroup()
-					.addComponent(jOwnersLabel)
-					.addComponent(jOwners, 200, 200, 200)
-					.addComponent(jShipsLabel)
-					.addComponent(jShips, 200, 200, 200)
-					.addComponent(jToolBarLeft)
-					.addGap(0, 0, Integer.MAX_VALUE)
+					.addComponent(jToolBarLeft, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Integer.MAX_VALUE)
+					.addGap(0)
 					.addComponent(jToolBarRight)
 				)
 				.addComponent(jTableScroll, 0, 0, Short.MAX_VALUE)
 		);
 		layout.setVerticalGroup(
 			layout.createSequentialGroup()
+				.addComponent(jToolBarTop, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
 				.addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-					.addComponent(jOwnersLabel, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					.addComponent(jOwners, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					.addComponent(jShipsLabel, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					.addComponent(jShips, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					.addComponent(jToolBarLeft, TOOLBAR_HEIGHT, TOOLBAR_HEIGHT, TOOLBAR_HEIGHT)
-					.addComponent(jToolBarRight, TOOLBAR_HEIGHT, TOOLBAR_HEIGHT, TOOLBAR_HEIGHT)
+					.addComponent(jToolBarLeft, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+					.addComponent(jToolBarRight, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
 				)
 				.addComponent(jTableScroll, 0, 0, Short.MAX_VALUE)
 		);
 	}
 
-	private void addToolButton(final JToolBar jToolBar, final AbstractButton jButton) {
-		addToolButton(jToolBar, jButton, 90);
-	}
-
-	private void addToolButton(final JToolBar jToolBar, final AbstractButton jButton, final int width) {
-		if (width > 0) {
-			jButton.setMinimumSize(new Dimension(width, Program.BUTTONS_HEIGHT));
-			jButton.setMaximumSize(new Dimension(width, Program.BUTTONS_HEIGHT));
-		}
-		jButton.setHorizontalAlignment(SwingConstants.LEFT);
-		jToolBar.add(jButton);
-	}
-
 	@Override
 	public void updateData() {
-		if (!program.getOwners(false).isEmpty()) {
+		if (!program.getOwnerNames(false).isEmpty()) {
 			jOwners.setEnabled(true);
 			String selectedItem = (String) jOwners.getSelectedItem();
-			jOwners.setModel(new DefaultComboBoxModel(program.getOwners(true).toArray()));
-			if (selectedItem != null && program.getOwners(true).contains(selectedItem)) {
+			jOwners.setModel(new ListComboBoxModel<String>(program.getOwnerNames(true)));
+			if (selectedItem != null && program.getOwnerNames(true).contains(selectedItem)) {
 				jOwners.setSelectedItem(selectedItem);
 			} else {
 				jOwners.setSelectedIndex(0);
 			}
 		} else {
 			jOwners.setEnabled(false);
-			jOwners.setModel(new DefaultComboBoxModel());
+			jOwners.setModel(new ListComboBoxModel<String>());
 			jOwners.getModel().setSelectedItem(TabsLoadout.get().no());
-			jShips.setModel(new DefaultComboBoxModel());
+			jShips.setModel(new ListComboBoxModel<String>());
 			jShips.getModel().setSelectedItem(TabsLoadout.get().no());
 		}
 		updateTable();
@@ -329,9 +309,7 @@ public class LoadoutsTab extends JMainTab {
 			MyAsset exportAsset = null;
 			for (MyAsset asset : program.getAssetList()) {
 					String key = asset.getName() + " #" + asset.getItemID();
-					if (!selectedShip.equals(key)) {
-						continue;
-					} else {
+					if (selectedShip.equals(key)) {
 						exportAsset = asset;
 						break;
 					}
@@ -457,7 +435,7 @@ public class LoadoutsTab extends JMainTab {
 					jOwners.setEnabled(true);
 					jShips.setEnabled(true);
 					String selectedItem = (String) jShips.getSelectedItem();
-					jShips.setModel(new DefaultComboBoxModel(charShips.toArray()));
+					jShips.setModel(new ListComboBoxModel<String>(charShips));
 					if (selectedItem != null && charShips.contains(selectedItem)) {
 						jShips.setSelectedItem(selectedItem);
 					} else {
@@ -468,7 +446,7 @@ public class LoadoutsTab extends JMainTab {
 					jCollapse.setEnabled(false);
 					jExport.setEnabled(false);
 					jShips.setEnabled(false);
-					jShips.setModel(new DefaultComboBoxModel());
+					jShips.setModel(new ListComboBoxModel<String>());
 					jShips.getModel().setSelectedItem(TabsLoadout.get().no1());
 				}
 			}

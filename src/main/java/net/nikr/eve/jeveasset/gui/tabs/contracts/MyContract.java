@@ -36,6 +36,7 @@ import static com.beimin.eveapi.model.shared.ContractType.AUCTION;
 import static com.beimin.eveapi.model.shared.ContractType.COURIER;
 import static com.beimin.eveapi.model.shared.ContractType.ITEMEXCHANGE;
 import static com.beimin.eveapi.model.shared.ContractType.LOAN;
+import java.util.Date;
 import net.nikr.eve.jeveasset.data.MyLocation;
 import net.nikr.eve.jeveasset.data.types.LocationType;
 import net.nikr.eve.jeveasset.i18n.TabsContracts;
@@ -49,6 +50,9 @@ public class MyContract extends Contract implements LocationType {
 	private String assignee = "";
 	private String issuerCorp = "";
 	private String issuer = "";
+
+	private boolean issuerAfterAssets = false;
+	private boolean acceptorAfterAssets = false;
 
 	public MyContract(Contract contract, MyLocation startStation, MyLocation endStation) {
 		this.endStation = endStation;
@@ -129,6 +133,30 @@ public class MyContract extends Contract implements LocationType {
 
 	public MyLocation getEndStation() {
 		return endStation;
+	}
+
+	public boolean isIssuerAfterAssets() {
+		return issuerAfterAssets;
+	}
+
+	public void setIssuerAfterAssets(Date date) {
+		if (date != null && getDateCompleted() != null) {
+			this.issuerAfterAssets = getDateCompleted().after(date);
+		} else {
+			this.issuerAfterAssets = false;
+		}
+	}
+
+	public boolean isAcceptorAfterAssets() {
+		return acceptorAfterAssets;
+	}
+
+	public void setAcceptorAfterAssets(Date date) {
+		if (date != null && getDateCompleted() != null) {
+			this.acceptorAfterAssets = getDateCompleted().after(date);
+		} else {
+			this.acceptorAfterAssets = false;
+		}
 	}
 
 	@Override

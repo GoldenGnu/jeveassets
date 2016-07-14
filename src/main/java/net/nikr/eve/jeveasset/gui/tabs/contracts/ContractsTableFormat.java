@@ -25,6 +25,7 @@ import ca.odell.glazedlists.GlazedLists;
 import java.util.Comparator;
 import java.util.Date;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
+import net.nikr.eve.jeveasset.gui.shared.table.containers.YesNo;
 import net.nikr.eve.jeveasset.i18n.TabsContracts;
 
 
@@ -149,6 +150,16 @@ public enum ContractsTableFormat implements EnumTableColumn<MyContractItem> {
 			return from.getContract().getReward();
 		}
 	},
+	FOR_CORP(YesNo.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsContracts.get().columnForCorp();
+		}
+		@Override
+		public Object getColumnValue(final MyContractItem from) {
+			return new YesNo(from.getContract().isForCorp());
+		}
+	},
 	ISSUER(String.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
@@ -250,8 +261,8 @@ public enum ContractsTableFormat implements EnumTableColumn<MyContractItem> {
 		}
 	};
 
-	private Class<?> type;
-	private Comparator<?> comparator;
+	private final Class<?> type;
+	private final Comparator<?> comparator;
 	private ContractsTableFormat(final Class<?> type, final Comparator<?> comparator) {
 		this.type = type;
 		this.comparator = comparator;
@@ -272,8 +283,9 @@ public enum ContractsTableFormat implements EnumTableColumn<MyContractItem> {
 	public boolean isShowDefault() {
 		return true;
 	}
-	@Override public MyContractItem setColumnValue(final Object baseObject, final Object editedValue) {
-		return null;
+	@Override
+	public boolean setColumnValue(final Object baseObject, final Object editedValue) {
+		return false;
 	}
 	@Override
 	public String toString() {

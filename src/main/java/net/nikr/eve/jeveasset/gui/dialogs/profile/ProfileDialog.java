@@ -46,28 +46,28 @@ public class ProfileDialog extends JDialogCentered {
 		NEW, LOAD, RENAME, DELETE, DEFAULT, CLOSE
 	}
 
-	private JList jProfiles;
-	private JButton jNew;
-	private JButton jLoad;
-	private JButton jRename;
-	private JButton jDelete;
-	private JButton jDefault;
-	private JButton jClose;
-	private JLockWindow jLockWindow;
-	private JValidatedInputDialog jValidatedInputDialog;
+	private final JList<Profile> jProfiles;
+	private final JButton jNew;
+	private final JButton jLoad;
+	private final JButton jRename;
+	private final JButton jDelete;
+	private final JButton jDefault;
+	private final JButton jClose;
+	private final JLockWindow jLockWindow;
+	private final JValidatedInputDialog jValidatedInputDialog;
 
 	public ProfileDialog(final Program program) {
 		super(program, DialoguesProfiles.get().profiles(), Images.DIALOG_PROFILES.getImage());
 
-		jLockWindow = new JLockWindow(this.getDialog());
+		jLockWindow = new JLockWindow(getDialog());
 		jValidatedInputDialog = new JValidatedInputDialog(program, this);
 
 		ListenerClass listener = new ListenerClass();
 
-		jProfiles = new JList();
+		jProfiles = new JList<Profile>();
 		jProfiles.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		jProfiles.setVisibleRowCount(-1);
-		jProfiles.setCellRenderer(new JProfileListRenderer());
+		jProfiles.setCellRenderer(new JProfileListRenderer(jProfiles.getCellRenderer()));
 		jProfiles.addMouseListener(listener);
 		JScrollPane jProfilesScrollPane = new JScrollPane(jProfiles);
 
@@ -99,12 +99,12 @@ public class ProfileDialog extends JDialogCentered {
 			layout.createSequentialGroup()
 				.addComponent(jProfilesScrollPane, 150, 150, 150)
 				.addGroup(layout.createParallelGroup()
-					.addComponent(jLoad, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH)
-					.addComponent(jDefault, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH)
-					.addComponent(jNew, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH)
-					.addComponent(jRename, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH)
-					.addComponent(jDelete, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH)
-					.addComponent(jClose, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH)
+					.addComponent(jLoad, Program.getButtonsWidth(), Program.getButtonsWidth(), Program.getButtonsWidth())
+					.addComponent(jDefault, Program.getButtonsWidth(), Program.getButtonsWidth(), Program.getButtonsWidth())
+					.addComponent(jNew, Program.getButtonsWidth(), Program.getButtonsWidth(), Program.getButtonsWidth())
+					.addComponent(jRename, Program.getButtonsWidth(), Program.getButtonsWidth(), Program.getButtonsWidth())
+					.addComponent(jDelete, Program.getButtonsWidth(), Program.getButtonsWidth(), Program.getButtonsWidth())
+					.addComponent(jClose, Program.getButtonsWidth(), Program.getButtonsWidth(), Program.getButtonsWidth())
 				)
 
 
@@ -113,20 +113,20 @@ public class ProfileDialog extends JDialogCentered {
 			layout.createParallelGroup()
 				.addComponent(jProfilesScrollPane)
 				.addGroup(layout.createSequentialGroup()
-					.addComponent(jLoad, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					.addComponent(jDefault, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					.addComponent(jLoad, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jDefault, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 					.addGap(25)
-					.addComponent(jNew, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					.addComponent(jRename, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					.addComponent(jDelete, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					.addComponent(jNew, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jRename, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jDelete, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 					.addGap(45)
-					.addComponent(jClose, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					.addComponent(jClose, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 				)
 		);
 	}
 
 	private void updateProfiles() {
-		DefaultListModel listModel = new DefaultListModel();
+		DefaultListModel<Profile> listModel = new DefaultListModel<Profile>();
 		List<Profile> profiles = program.getProfileManager().getProfiles();
 		Collections.sort(profiles);
 		for (Profile profile : profiles) {
@@ -140,7 +140,7 @@ public class ProfileDialog extends JDialogCentered {
 
 
 	private void startLoadProfile() {
-		Profile profile = (Profile) jProfiles.getSelectedValue();
+		Profile profile = jProfiles.getSelectedValue();
 		if (profile.isActiveProfile()) {
 			JOptionPane.showMessageDialog(this.getDialog(),
 					DialoguesProfiles.get().profileLoaded(),
@@ -232,7 +232,7 @@ public class ProfileDialog extends JDialogCentered {
 				startLoadProfile();
 			}
 			if (ProfileDialogAction.RENAME.name().equals(e.getActionCommand())) {
-				Profile profile = (Profile) jProfiles.getSelectedValue();
+				Profile profile = jProfiles.getSelectedValue();
 				if (profile != null) {
 					String s = jValidatedInputDialog.show(DialoguesProfiles.get().renameProfile(),
 							DialoguesProfiles.get().enterNewName(),
@@ -253,7 +253,7 @@ public class ProfileDialog extends JDialogCentered {
 				}
 			}
 			if (ProfileDialogAction.DELETE.name().equals(e.getActionCommand())) {
-				Profile profile = (Profile) jProfiles.getSelectedValue();
+				Profile profile = jProfiles.getSelectedValue();
 				if (profile != null && profile.isActiveProfile()) {
 					JOptionPane.showMessageDialog(getDialog(),
 							DialoguesProfiles.get().cannotDeleteActive(),
@@ -286,7 +286,7 @@ public class ProfileDialog extends JDialogCentered {
 				}
 			}
 			if (ProfileDialogAction.DEFAULT.name().equals(e.getActionCommand())) {
-				Profile profile = (Profile) jProfiles.getSelectedValue();
+				Profile profile = jProfiles.getSelectedValue();
 				if (profile != null && !profile.isDefaultProfile()) {
 					for (Profile profileLoop : program.getProfileManager().getProfiles()) {
 						profileLoop.setDefaultProfile(false);
@@ -319,17 +319,20 @@ public class ProfileDialog extends JDialogCentered {
 		@Override
 		public void mouseExited(final MouseEvent e) { }
 	}
-	public class JProfileListRenderer extends DefaultListCellRenderer {
+	public class JProfileListRenderer implements ListCellRenderer<Profile> {
+
+		private final ListCellRenderer<? super Profile> renderer;
+
+		public JProfileListRenderer(ListCellRenderer<? super Profile> renderer) {
+			this.renderer = renderer;
+		}
 
 		@Override
-		public Component getListCellRendererComponent(final JList list, final Object value, final int index,  final boolean isSelected, final boolean cellHasFocus) {
-			Component component = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-			if (value instanceof Profile) {
-				Profile profile = (Profile) value;
-				if (profile.isActiveProfile()) {
-					Font font = component.getFont();
-					component.setFont(new Font(font.getName(), font.getStyle() + Font.BOLD, font.getSize()));
-				}
+		public Component getListCellRendererComponent(JList<? extends Profile> list, Profile value, int index, boolean isSelected, boolean cellHasFocus) {
+			Component component = renderer.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+			if (value.isActiveProfile()) {
+				Font font = component.getFont();
+				component.setFont(new Font(font.getName(), font.getStyle() + Font.BOLD, font.getSize()));
 			}
 			return component;
 		}
@@ -339,7 +342,7 @@ public class ProfileDialog extends JDialogCentered {
 
 	private class NewProfile implements Runnable {
 
-		private String profileName;
+		private final String profileName;
 
 		public NewProfile(final String profileName) {
 			this.profileName = profileName;
@@ -355,7 +358,7 @@ public class ProfileDialog extends JDialogCentered {
 
 	private class LoadProfile implements Runnable {
 
-		private Profile profile;
+		private final Profile profile;
 
 		public LoadProfile(final Profile profile) {
 			this.profile = profile;

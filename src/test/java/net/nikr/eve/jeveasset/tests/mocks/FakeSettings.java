@@ -29,6 +29,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import net.nikr.eve.jeveasset.data.ExportSettings;
+import net.nikr.eve.jeveasset.data.MyLocation;
 import net.nikr.eve.jeveasset.data.PriceData;
 import net.nikr.eve.jeveasset.data.PriceDataSettings;
 import net.nikr.eve.jeveasset.data.ReprocessSettings;
@@ -491,6 +492,51 @@ public abstract class FakeSettings extends Settings {
 
 	@Override
 	public int getStockpileColorGroup2() {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public void setMarketOrderHistory(boolean blueprintsTech2) {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public boolean isMarketOrderHistory() {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public void clearJumpLocations(Class<?> clazz) {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public void removeJumpLocation(Class<?> clazz, MyLocation location) {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public void addJumpLocation(Class<?> clazz, MyLocation location) {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public List<MyLocation> getJumpLocations(Class<?> clazz) {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public void setTrackerSelectNew(boolean trackerSelectNew) {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public boolean isTrackerSelectNew() {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public Map<String, Boolean> getTrackerFilters() {
 		throw new UnsupportedOperationException("not implemented");
 	}
 }

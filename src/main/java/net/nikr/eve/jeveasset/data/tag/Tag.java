@@ -27,7 +27,7 @@ import java.util.Set;
 public class Tag implements Comparable<Tag> {
 	private String name;
 	private TagColor color;
-	private Set<TagID> ids = new HashSet<TagID>();
+	private final Set<TagID> ids = new HashSet<TagID>();
 
 	public Tag(String name, TagColor color) {
 		this.name = name;
@@ -42,7 +42,7 @@ public class Tag implements Comparable<Tag> {
 		return color;
 	}
 
-	public Set<TagID> getIDs() {
+	public final Set<TagID> getIDs() {
 		return ids;
 	}
 

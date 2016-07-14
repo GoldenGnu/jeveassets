@@ -46,7 +46,7 @@ public abstract class AbstractXmlReader extends AbstractXmlBackup {
 		File file = new File(filename);
 		try {
 			if (fileLock) {
-				FileLock.lock(file);
+				lock(filename);
 			}
 			is = new FileInputStream(file);
 			factory = DocumentBuilderFactory.newInstance();
@@ -58,15 +58,9 @@ public abstract class AbstractXmlReader extends AbstractXmlBackup {
 				is.close();
 			}
 			if (restoreNewFile(filename)) { //If possible restore from .new (Should be the newest)
-				if (fileLock) {
-					FileLock.unlock(file);
-				}
-				return getDocumentElement(filename, fileLock);
+				return getDocumentElement(filename, false); //File already locked
 			} else if (restoreBackupFile(filename)) { //If possible restore from .bac (Should be the oldes, but, still worth trying)
-				if (fileLock) {
-					FileLock.unlock(file);
-				}
-				return getDocumentElement(filename, fileLock);
+				return getDocumentElement(filename, false); //File already locked
 			} else { //Nothing left to try - throw error
 				restoreFailed(filename); //Backup error file
 				throw new XmlException(ex.getMessage(), ex);
@@ -78,7 +72,7 @@ public abstract class AbstractXmlReader extends AbstractXmlBackup {
 				is.close();
 			}
 			if (fileLock) {
-				FileLock.unlock(file); //Last thing to do
+				unlock(filename); //Last thing to do
 			}
 		}
 	}

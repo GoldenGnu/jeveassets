@@ -16,6 +16,36 @@
                   #### #  # #  # #  # #### #### #### #### ####
 
 ________________________________________________________________________________
+_3.0.0_________________________________________________________________________
+
+New Features:
+-Transactions: Added average price to status bar and popup menu
+-Market Orders: Added history
+-Market Orders: Added last opposite transaction price/profit/percent columns
+-Tracker: Total now only include selected values (Include/Exclude)
+-Stockpile: Export/Import to xml
+-Import/Export Filters
+-More user friendly import of text
+-Price Update Options (All/New/None)
+-Jump columns (via table menu)
+-Release updates via installer
+-Stockpile: Exclude Location
+-Stockpile: Added contracts
+-Industry Jobs: Added count to status bar and popup menu
+-Tracker/Isk/Values: Added contracts
+-Tracker: Added Location/Corporation Hangar and Wallet Division filters
+
+Changed:
+-Use the latest version of EVEAPI
+-Moved to Java 8: require Java 8 to run (will still compile on Java 7 JDK)
+
+Bug Fix:
+-Contracts: kept old data after updating from the API
+-Fixed a lot of GUI problems on Linux (Unity/GNOME/KDE)
+-File locks was not working correctly
+-Transactions failed to update
+
+________________________________________________________________________________
 _2.10.5_________________________________________________________________________
 
 Changed:

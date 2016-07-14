@@ -54,7 +54,7 @@ public class AboutDialog extends JDialogCentered {
 
 		JEditorPane jProgram = createEditorPane(false,
 				"<div style=\"font-size: 30pt;\"><b>" + Program.PROGRAM_NAME + "</b></div>"
-				+ "Copyright &copy; 2009-2015 Contributors<br>"
+				+ "Copyright &copy; 2009-2016 Contributors<br>"
 				);
 
 		JEditorPane jInfo = createEditorPane(
@@ -120,7 +120,7 @@ public class AboutDialog extends JDialogCentered {
 					.addComponent(jIcon)
 					.addGroup(layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
 						.addComponent(jProgram)
-						.addComponent(jClose, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH)
+						.addComponent(jClose, Program.getButtonsWidth(), Program.getButtonsWidth(), Program.getButtonsWidth())
 					)
 				)
 				.addGroup(layout.createSequentialGroup()
@@ -141,7 +141,7 @@ public class AboutDialog extends JDialogCentered {
 					.addComponent(jExternal)
 				)
 				.addComponent(jThanks)
-				.addComponent(jClose, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+				.addComponent(jClose, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 		);
 	}
 

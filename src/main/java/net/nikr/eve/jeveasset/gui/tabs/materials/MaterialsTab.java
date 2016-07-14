@@ -26,7 +26,6 @@ import ca.odell.glazedlists.ListSelection;
 import ca.odell.glazedlists.SeparatorList;
 import ca.odell.glazedlists.swing.DefaultEventSelectionModel;
 import ca.odell.glazedlists.swing.DefaultEventTableModel;
-import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -36,20 +35,19 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.swing.AbstractButton;
-import javax.swing.DefaultComboBoxModel;
+import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JMenu;
 import javax.swing.JScrollPane;
-import javax.swing.JToolBar;
-import javax.swing.SwingConstants;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.EventListManager;
 import net.nikr.eve.jeveasset.gui.images.Images;
+import net.nikr.eve.jeveasset.gui.shared.components.JFixedToolBar;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
+import net.nikr.eve.jeveasset.gui.shared.components.ListComboBoxModel;
 import net.nikr.eve.jeveasset.gui.shared.filter.ExportDialog;
 import net.nikr.eve.jeveasset.gui.shared.filter.ExportFilterControl;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo;
@@ -77,7 +75,7 @@ public class MaterialsTab extends JMainTab {
 	}
 
 	//GUI
-	private final JComboBox jOwners;
+	private final JComboBox<String> jOwners;
 	private final JButton jExport;
 	private final JButton jExpand;
 	private final JButton jCollapse;
@@ -103,39 +101,39 @@ public class MaterialsTab extends JMainTab {
 		//Category: Material
 
 		ListenerClass listener = new ListenerClass();
+		
+		JFixedToolBar jToolBarLeft = new JFixedToolBar();
+
+		jOwners = new JComboBox<String>();
+		jOwners.setActionCommand(MaterialsAction.SELECTED.name());
+		jOwners.addActionListener(listener);
+		jToolBarLeft.addComboBox(jOwners, 200);
 
 		jPiMaterial = new JCheckBox(TabsMaterials.get().includePI());
 		jPiMaterial.setActionCommand(MaterialsAction.SELECTED.name());
 		jPiMaterial.addActionListener(listener);
+		jToolBarLeft.add(jPiMaterial);
 
-		jOwners = new JComboBox();
-		jOwners.setActionCommand(MaterialsAction.SELECTED.name());
-		jOwners.addActionListener(listener);
-		
-		JToolBar jToolBarLeft = new JToolBar();
-		jToolBarLeft.setFloatable(false);
-		jToolBarLeft.setRollover(true);
+		jToolBarLeft.addSpace(10);
 
 		jToolBarLeft.addSeparator();
 
 		jExport = new JButton(GuiShared.get().export(), Images.DIALOG_CSV_EXPORT.getIcon());
 		jExport.setActionCommand(MaterialsAction.EXPORT.name());
 		jExport.addActionListener(listener);
-		addToolButton(jToolBarLeft, jExport);
+		jToolBarLeft.addButton(jExport);
 
-		JToolBar jToolBarRight = new JToolBar();
-		jToolBarRight.setFloatable(false);
-		jToolBarRight.setRollover(true);
+		JFixedToolBar jToolBarRight = new JFixedToolBar();
 
 		jCollapse = new JButton(TabsMaterials.get().collapse(), Images.MISC_COLLAPSED.getIcon());
 		jCollapse.setActionCommand(MaterialsAction.COLLAPSE.name());
 		jCollapse.addActionListener(listener);
-		addToolButton(jToolBarRight, jCollapse);
+		jToolBarRight.addButton(jCollapse);
 
 		jExpand = new JButton(TabsMaterials.get().expand(), Images.MISC_EXPANDED.getIcon());
 		jExpand.setActionCommand(MaterialsAction.EXPAND.name());
 		jExpand.addActionListener(listener);
-		addToolButton(jToolBarRight, jExpand);
+		jToolBarRight.addButton(jExpand);
 
 		//Table Format
 		tableFormat = new EnumTableFormatAdaptor<MaterialTableFormat, Material>(MaterialTableFormat.class);
@@ -168,14 +166,11 @@ public class MaterialsTab extends JMainTab {
 		enumColumns.addAll(Arrays.asList(MaterialTableFormat.values()));
 		exportDialog = new ExportDialog<Material>(program.getMainWindow().getFrame(), NAME, null, new MaterialsFilterControl(), Collections.singletonList(eventList), enumColumns);
 
-		final int TOOLBAR_HEIGHT = jToolBarRight.getInsets().top + jToolBarRight.getInsets().bottom + Program.BUTTONS_HEIGHT;
 		layout.setHorizontalGroup(
 			layout.createParallelGroup()
 				.addGroup(layout.createSequentialGroup()
-					.addComponent(jOwners, 200, 200, 200)
-					.addComponent(jPiMaterial)
-					.addComponent(jToolBarLeft)
-					.addGap(0, 0, Integer.MAX_VALUE)
+					.addComponent(jToolBarLeft, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Integer.MAX_VALUE)
+					.addGap(0)
 					.addComponent(jToolBarRight)
 				)
 				.addComponent(jTableScroll, 0, 0, Short.MAX_VALUE)
@@ -183,38 +178,23 @@ public class MaterialsTab extends JMainTab {
 		layout.setVerticalGroup(
 			layout.createSequentialGroup()
 				.addGroup(layout.createParallelGroup()
-					.addComponent(jOwners, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					.addComponent(jPiMaterial, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					.addComponent(jToolBarLeft, TOOLBAR_HEIGHT, TOOLBAR_HEIGHT, TOOLBAR_HEIGHT)
-					.addComponent(jToolBarRight, TOOLBAR_HEIGHT, TOOLBAR_HEIGHT, TOOLBAR_HEIGHT)
+					.addComponent(jToolBarLeft, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+					.addComponent(jToolBarRight, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
 				)
 				.addComponent(jTableScroll, 0, 0, Short.MAX_VALUE)
 		);
 	}
 
-	private void addToolButton(final JToolBar jToolBar, final AbstractButton jButton) {
-		addToolButton(jToolBar, jButton, 90);
-	}
-
-	private void addToolButton(final JToolBar jToolBar, final AbstractButton jButton, final int width) {
-		if (width > 0) {
-			jButton.setMinimumSize(new Dimension(width, Program.BUTTONS_HEIGHT));
-			jButton.setMaximumSize(new Dimension(width, Program.BUTTONS_HEIGHT));
-		}
-		jButton.setHorizontalAlignment(SwingConstants.LEFT);
-		jToolBar.add(jButton);
-	}
-
 	@Override
 	public void updateData() {
-		if (!program.getOwners(false).isEmpty()) {
+		if (!program.getOwnerNames(false).isEmpty()) {
 			jExport.setEnabled(true);
 			jExpand.setEnabled(true);
 			jCollapse.setEnabled(true);
 			jOwners.setEnabled(true);
 			String selectedItem = (String) jOwners.getSelectedItem();
-			jOwners.setModel(new DefaultComboBoxModel(program.getOwners(true).toArray()));
-			if (selectedItem != null && program.getOwners(true).contains(selectedItem)) {
+			jOwners.setModel(new ListComboBoxModel<String>(program.getOwnerNames(true)));
+			if (selectedItem != null && program.getOwnerNames(true).contains(selectedItem)) {
 				jOwners.setSelectedItem(selectedItem);
 			} else {
 				jOwners.setSelectedIndex(0);
@@ -224,7 +204,7 @@ public class MaterialsTab extends JMainTab {
 			jExpand.setEnabled(false);
 			jCollapse.setEnabled(false);
 			jOwners.setEnabled(false);
-			jOwners.setModel(new DefaultComboBoxModel());
+			jOwners.setModel(new ListComboBoxModel<String>());
 			jOwners.getModel().setSelectedItem(TabsMaterials.get().no());
 		}
 	}

@@ -33,7 +33,6 @@ import javax.swing.JScrollPane;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
 import net.nikr.eve.jeveasset.gui.shared.components.JMultiSelectionList;
 import net.nikr.eve.jeveasset.i18n.TabsStockpile;
@@ -45,10 +44,11 @@ public class StockpileSelectionDialog extends JDialogCentered {
 		OK, CANCEL
 	}
 
-	private JMultiSelectionList jList;
-	private JButton jOK;
+	//GUI
+	private final JMultiSelectionList<Stockpile> jList;
+	private final JButton jOK;
 
-	//
+	//Data
 	private List<Stockpile> stockpiles;
 
 	public StockpileSelectionDialog(final Program program) {
@@ -56,7 +56,7 @@ public class StockpileSelectionDialog extends JDialogCentered {
 
 		ListenerClass listener = new ListenerClass();
 
-		jList = new JMultiSelectionList();
+		jList = new JMultiSelectionList<Stockpile>();
 		jList.addListSelectionListener(listener);
 		JScrollPane jListScroll = new JScrollPane(jList);
 
@@ -73,16 +73,16 @@ public class StockpileSelectionDialog extends JDialogCentered {
 			layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
 				.addComponent(jListScroll, 300, 300, 300)
 				.addGroup(layout.createSequentialGroup()
-					.addComponent(jOK, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH)
-					.addComponent(jCancel, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH)
+					.addComponent(jOK, Program.getButtonsWidth(), Program.getButtonsWidth(), Program.getButtonsWidth())
+					.addComponent(jCancel, Program.getButtonsWidth(), Program.getButtonsWidth(), Program.getButtonsWidth())
 				)
 		);
 		layout.setVerticalGroup(
 			layout.createSequentialGroup()
 				.addComponent(jListScroll, 200, 200, 200)
 				.addGroup(layout.createParallelGroup()
-					.addComponent(jOK, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					.addComponent(jCancel, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					.addComponent(jOK, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jCancel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 				)
 		);
 	}
@@ -97,25 +97,19 @@ public class StockpileSelectionDialog extends JDialogCentered {
 		return jOK;
 	}
 
-	public List<Stockpile> show() {
-		stockpiles = null;
+	public List<Stockpile> show(List<Stockpile> stockpiles) {
+		jList.setModel(new DataListModel<Stockpile>(stockpiles));
+		this.stockpiles = null;
 		this.setVisible(true);
-		return stockpiles;
+		return this.stockpiles;
 	}
 
 	@Override
-	protected void windowShown() {
-		jList.setModel(new DataListModel(Settings.get().getStockpiles()));
-	}
+	protected void windowShown() { }
 
 	@Override
 	protected void save() {
-		stockpiles = new ArrayList<Stockpile>();
-		for (Object selectedValue : jList.getSelectedValues()) {
-			if (selectedValue instanceof Stockpile) {
-				stockpiles.add((Stockpile) selectedValue);
-			}
-		}
+		stockpiles = new ArrayList<Stockpile>(jList.getSelectedValuesList());
 		this.setVisible(false);
 	}
 
@@ -136,11 +130,11 @@ public class StockpileSelectionDialog extends JDialogCentered {
 		}
 	}
 
-	private static class DataListModel extends AbstractListModel {
+	private static class DataListModel<T> extends AbstractListModel<T> {
 
-		private List<?> data;
+		private final List<T> data;
 
-		public DataListModel(final List<?> data) {
+		public DataListModel(final List<T> data) {
 			this.data = data;
 		}
 
@@ -150,7 +144,7 @@ public class StockpileSelectionDialog extends JDialogCentered {
 		}
 
 		@Override
-		public Object getElementAt(final int index) {
+		public T getElementAt(final int index) {
 			return data.get(index);
 		}
 	}

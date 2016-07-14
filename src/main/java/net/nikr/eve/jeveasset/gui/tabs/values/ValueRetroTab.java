@@ -57,9 +57,9 @@ public class ValueRetroTab extends JMainTab {
 	}
 
 	//GUI
-	private final JComboBox jCharacters;
+	private final JComboBox<String> jCharacters;
 	private final JEditorPane jCharacter;
-	private final JComboBox jCorporations;
+	private final JComboBox<String> jCorporations;
 	private final JEditorPane jCorporation;
 	private final JEditorPane jTotal;
 
@@ -81,7 +81,7 @@ public class ValueRetroTab extends JMainTab {
 		gridHexColor = Integer.toHexString(jPanel.getBackground().darker().getRGB());
 		gridHexColor = gridHexColor.substring(2, gridHexColor.length());
 
-		jCharacters = new JComboBox();
+		jCharacters = new JComboBox<String>();
 		jCharacters.setActionCommand(ValueRetroAction.OWNER_SELECTED.name());
 		jCharacters.addActionListener(listener);
 
@@ -93,7 +93,7 @@ public class ValueRetroTab extends JMainTab {
 		JScrollPane jCharacterScroll = new JScrollPane(jCharacter);
 		jCharacterScroll.setBorder(null);
 
-		jCorporations = new JComboBox();
+		jCorporations = new JComboBox<String>();
 		jCorporations.setActionCommand(ValueRetroAction.CORP_SELECTED.name());
 		jCorporations.addActionListener(listener);
 
@@ -150,9 +150,9 @@ public class ValueRetroTab extends JMainTab {
 		layout.setVerticalGroup(
 			layout.createSequentialGroup()
 				.addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-					.addComponent(jTotalLabel, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					.addComponent(jCharacters, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					.addComponent(jCorporations, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					.addComponent(jTotalLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jCharacters, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jCorporations, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 				)
 				.addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
 					.addComponent(jTotalScroll, 0, 0, Short.MAX_VALUE)
@@ -198,13 +198,13 @@ public class ValueRetroTab extends JMainTab {
 
 	private boolean calcTotal() {
 		Date date = Settings.getNow();
-		Map<String, Value> values = ValueTableTab.createDataSet(program);
+		Map<String, Value> values = DataSetCreator.createDataSet(program);
 		characters = new HashMap<String, Value>();
 		corporations = new HashMap<String, Value>();
 		total = values.get(TabsValues.get().grandTotal());
 		for (MyAccount account : program.getAccounts()) {
 			for (Owner owner : account.getOwners()) {
-				Value value = ValueTableTab.getValue(values, owner.getName(), date);
+				Value value = DataSetCreator.getValue(values, owner.getName(), date);
 				if (owner.isCharacter()) {
 					characters.put(value.getName(), value);
 				} else if (owner.isCorporation()) {
@@ -227,11 +227,11 @@ public class ValueRetroTab extends JMainTab {
 		output.addNone();
 
 		output.addHeading(TabsValues.get().columnWalletBalance());
-		output.addValue(value.getBalance());
+		output.addValue(value.getBalanceTotal());
 		output.addNone();
 
 		output.addHeading(TabsValues.get().columnAssets());
-		output.addValue(value.getAssets());
+		output.addValue(value.getAssetsTotal());
 		output.addNone();
 
 		output.addHeading(TabsValues.get().columnSellOrders());

@@ -109,8 +109,8 @@ public enum ReprocessedTableFormat  implements EnumTableColumn<ReprocessedInterf
 		}
 	};
 
-	private Class<?> type;
-	private Comparator<?> comparator;
+	private final Class<?> type;
+	private final Comparator<?> comparator;
 	private ReprocessedTableFormat(final Class<?> type, final Comparator<?> comparator) {
 		this.type = type;
 		this.comparator = comparator;
@@ -124,10 +124,6 @@ public enum ReprocessedTableFormat  implements EnumTableColumn<ReprocessedInterf
 		return comparator;
 	}
 	@Override
-	public String toString() {
-		return getColumnName();
-	}
-	@Override
 	public boolean isColumnEditable(final Object baseObject) {
 		return false;
 	}
@@ -135,8 +131,13 @@ public enum ReprocessedTableFormat  implements EnumTableColumn<ReprocessedInterf
 	public boolean isShowDefault() {
 		return true;
 	}
-	@Override public ReprocessedInterface setColumnValue(final Object baseObject, final Object editedValue) {
-		return null;
+	@Override
+	public boolean setColumnValue(final Object baseObject, final Object editedValue) {
+		return false;
+	}
+	@Override
+	public String toString() {
+		return getColumnName();
 	}
 	//XXX - TableFormat.getColumnValue(...) Workaround
 	@Override public abstract Object getColumnValue(final ReprocessedInterface from);

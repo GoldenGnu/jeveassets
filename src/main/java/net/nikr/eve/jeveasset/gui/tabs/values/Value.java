@@ -22,6 +22,8 @@
 package net.nikr.eve.jeveasset.gui.tabs.values;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.tabs.assets.MyAsset;
 import net.nikr.eve.jeveasset.i18n.TabsValues;
@@ -32,12 +34,15 @@ public class Value implements Comparable<Value> {
 	private final Date date;
 	private final String compare;
 	private double assets = 0;
+	private final Map<String, Double> assetsFilter = new HashMap<String, Double>();
 	private double sellOrders = 0;
 	private double escrows = 0;
 	private double escrowsToCover = 0;
 	private double balance = 0;
+	private final Map<String, Double> balanceFilter = new HashMap<String, Double>();
 	private double manufacturing;
 	private double contractCollateral;
+	private double contractValue = 0;
 	private MyAsset bestAsset = null;
 	private MyAsset bestShip = null;
 	private MyAsset bestShipFitted = null;
@@ -57,12 +62,28 @@ public class Value implements Comparable<Value> {
 		this.assets = this.assets + assets;
 	}
 
-	public void addAssets(MyAsset asset) {
-		this.assets = this.assets + (asset.getDynamicPrice() * asset.getCount());
+	public void addAssets(String id, double assets) {
+		this.assets = this.assets + assets;
+		Double now = this.assetsFilter.get(id);
+		if (now == null) {
+			now = 0.0;
+		}
+		this.assetsFilter.put(id, now + assets);
+	}
+
+	public void addAssets(String id, MyAsset asset) {
+		double total = asset.getDynamicPrice() * asset.getCount();
+		addAssets(id, total);
 		setBestAsset(asset);
 		setBestShip(asset);
 		setBestShipFitted(asset);
 		setBestModule(asset);
+	}
+
+	public void removeAssets(String id) {
+		Double oldAssets = this.assetsFilter.get(id); //Get value
+		this.assets = this.assets - oldAssets; //Removing value from total
+		this.assetsFilter.remove(id); //Removing item
 	}
 
 	public void addSellOrders(double sellOrders) {
@@ -81,12 +102,31 @@ public class Value implements Comparable<Value> {
 		this.balance = this.balance + balance;
 	}
 
+	public void addBalance(String id, double balance) {
+		this.balance = this.balance + balance;
+		Double now = this.balanceFilter.get(id);
+		if (now == null) {
+			now = 0.0;
+		}
+		this.balanceFilter.put(id, now + balance);
+	}
+
+	public void removeBalance(String id) {
+		Double oldBalance = this.balanceFilter.get(id); //Get value
+		this.balance = this.balance - oldBalance; //Removing value from total
+		this.balanceFilter.remove(id); //Removing item
+	}
+
 	public void addManufacturing(double manufacturing) {
 		this.manufacturing = this.manufacturing + manufacturing;
 	}
 
 	public void addContractCollateral(double contractCollateral) {
 		this.contractCollateral = this.contractCollateral + contractCollateral;
+	}
+
+	public void addContractValue(double contractValue) {
+		this.contractValue = this.contractValue + contractValue;
 	}
 
 	public Date getDate() {
@@ -97,7 +137,11 @@ public class Value implements Comparable<Value> {
 		return name;
 	}
 
-	public double getAssets() {
+	public Map<String, Double> getAssetsFilter() {
+		return assetsFilter;
+	}
+
+	public double getAssetsTotal() {
 		return assets;
 	}
 
@@ -113,7 +157,11 @@ public class Value implements Comparable<Value> {
 		return escrowsToCover;
 	}
 
-	public double getBalance() {
+	public Map<String, Double> getBalanceFilter() {
+		return balanceFilter;
+	}
+
+	public double getBalanceTotal() {
 		return balance;
 	}
 
@@ -123,6 +171,10 @@ public class Value implements Comparable<Value> {
 
 	public double getContractCollateral() {
 		return contractCollateral;
+	}
+
+	public double getContractValue() {
+		return contractValue;
 	}
 
 	public String getBestAssetName() {
@@ -181,10 +233,10 @@ public class Value implements Comparable<Value> {
 	}
 
 	public double getTotal() {
-		return getAssets() + getBalance() + getEscrows() + getSellOrders() + getManufacturing() + getContractCollateral();
+		return getAssetsTotal() + getBalanceTotal() + getEscrows() + getSellOrders() + getManufacturing() + getContractCollateral() + + getContractValue();
 	}
 
-	public void setAssets(double assets) {
+	public void setAssetsTotal(double assets) {
 		this.assets = assets;
 	}
 
@@ -200,7 +252,7 @@ public class Value implements Comparable<Value> {
 		this.escrowsToCover = escrowsToCover;
 	}
 
-	public void setBalance(double balance) {
+	public void setBalanceTotal(double balance) {
 		this.balance = balance;
 	}
 
@@ -210,6 +262,10 @@ public class Value implements Comparable<Value> {
 
 	public void setContractCollateral(double contractCollateral) {
 		this.contractCollateral = contractCollateral;
+	}
+
+	public void setContractValue(double contractValue) {
+		this.contractValue = contractValue;
 	}
 
 	private void setBestAsset(MyAsset bestAsset) {

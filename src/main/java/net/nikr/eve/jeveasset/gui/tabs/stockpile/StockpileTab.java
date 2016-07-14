@@ -33,16 +33,9 @@ import ca.odell.glazedlists.event.ListEventListener;
 import ca.odell.glazedlists.swing.DefaultEventSelectionModel;
 import ca.odell.glazedlists.swing.DefaultEventTableModel;
 import ca.odell.glazedlists.swing.TableComparatorChooser;
-import java.awt.Dimension;
 import java.awt.Rectangle;
-import java.awt.Toolkit;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.Transferable;
-import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -57,6 +50,7 @@ import java.util.regex.Pattern;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JComponent;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -64,8 +58,6 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
-import javax.swing.JToolBar;
-import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.EventListManager;
@@ -78,8 +70,11 @@ import net.nikr.eve.jeveasset.data.StaticData;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
+import net.nikr.eve.jeveasset.gui.shared.components.JCustomFileChooser;
 import net.nikr.eve.jeveasset.gui.shared.components.JDropDownButton;
+import net.nikr.eve.jeveasset.gui.shared.components.JFixedToolBar;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
+import net.nikr.eve.jeveasset.gui.shared.components.JTextDialog;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo;
@@ -93,15 +88,19 @@ import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
 import net.nikr.eve.jeveasset.gui.shared.table.JSeparatorTable;
 import net.nikr.eve.jeveasset.gui.shared.table.PaddingTableCellRenderer;
 import net.nikr.eve.jeveasset.gui.tabs.assets.MyAsset;
+import net.nikr.eve.jeveasset.gui.tabs.contracts.MyContractItem;
 import net.nikr.eve.jeveasset.gui.tabs.jobs.MyIndustryJob;
 import net.nikr.eve.jeveasset.gui.tabs.orders.MyMarketOrder;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileFilter;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileTotal;
+import net.nikr.eve.jeveasset.gui.tabs.stockpile.StockpileImportDialog.ImportReturn;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.StockpileSeparatorTableCell.StockpileCellAction;
 import net.nikr.eve.jeveasset.gui.tabs.transaction.MyTransaction;
 import net.nikr.eve.jeveasset.i18n.General;
 import net.nikr.eve.jeveasset.i18n.TabsStockpile;
+import net.nikr.eve.jeveasset.io.local.SettingsReader;
+import net.nikr.eve.jeveasset.io.local.SettingsWriter;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 
 
@@ -112,6 +111,8 @@ public class StockpileTab extends JMainTab {
 		SHOPPING_LIST_MULTI,
 		IMPORT_EFT,
 		IMPORT_ISK_PER_HOUR,
+		IMPORT_XML,
+		EXPORT_XML,
 		COLLAPSE,
 		EXPAND
 	}
@@ -121,11 +122,14 @@ public class StockpileTab extends JMainTab {
 	private final JLabel jVolumeNeeded;
 	private final JLabel jValueNow;
 	private final JLabel jValueNeeded;
+	private final JCustomFileChooser jFileChooser;
 
 	private final StockpileDialog stockpileDialog;
 	private final StockpileItemDialog stockpileItemDialog;
 	private final StockpileShoppingListDialog stockpileShoppingListDialog;
 	private final StockpileSelectionDialog stockpileSelectionDialog;
+	private final StockpileImportDialog stockpileImportDialog;
+	private final JTextDialog jTextDialog;
 
 	//Table
 	private final EnumTableFormatAdaptor<StockpileTableFormat, StockpileItem> tableFormat;
@@ -146,40 +150,35 @@ public class StockpileTab extends JMainTab {
 
 		final ListenerClass listener = new ListenerClass();
 
+		jFileChooser = new JCustomFileChooser(program.getMainWindow().getFrame(), "xml");
+		jFileChooser.setMultiSelectionEnabled(false);
+		jFileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+
 		stockpileDialog = new StockpileDialog(program);
 		stockpileItemDialog = new StockpileItemDialog(program);
 		stockpileShoppingListDialog = new StockpileShoppingListDialog(program);
 		stockpileSelectionDialog = new StockpileSelectionDialog(program);
+		stockpileImportDialog = new StockpileImportDialog(program);
+		jTextDialog = new JTextDialog(program.getMainWindow().getFrame());
 
-		JToolBar jToolBarLeft = new JToolBar();
-		jToolBarLeft.setFloatable(false);
-		jToolBarLeft.setRollover(true);
+		JFixedToolBar jToolBarLeft = new JFixedToolBar();
 
 		JButton jAdd = new JButton(TabsStockpile.get().newStockpile(), Images.LOC_GROUPS.getIcon());
 		jAdd.setActionCommand(StockpileAction.ADD_STOCKPILE.name());
 		jAdd.addActionListener(listener);
-		jAdd.setMinimumSize(new Dimension(100, Program.BUTTONS_HEIGHT));
-		jAdd.setMaximumSize(new Dimension(100, Program.BUTTONS_HEIGHT));
-		jAdd.setHorizontalAlignment(SwingConstants.LEFT);
-		jToolBarLeft.add(jAdd);
+		jToolBarLeft.addButton(jAdd);
 
 		jToolBarLeft.addSeparator();
 
 		JButton jShoppingList = new JButton(TabsStockpile.get().getShoppingList(), Images.STOCKPILE_SHOPPING_LIST.getIcon());
 		jShoppingList.setActionCommand(StockpileAction.SHOPPING_LIST_MULTI.name());
 		jShoppingList.addActionListener(listener);
-		jShoppingList.setMinimumSize(new Dimension(100, Program.BUTTONS_HEIGHT));
-		jShoppingList.setMaximumSize(new Dimension(100, Program.BUTTONS_HEIGHT));
-		jShoppingList.setHorizontalAlignment(SwingConstants.LEFT);
-		jToolBarLeft.add(jShoppingList);
+		jToolBarLeft.addButton(jShoppingList);
 
 		jToolBarLeft.addSeparator();
 
 		JDropDownButton jImport = new JDropDownButton(TabsStockpile.get().importButton(), Images.EDIT_IMPORT.getIcon());
-		jImport.setMinimumSize(new Dimension(100, Program.BUTTONS_HEIGHT));
-		jImport.setMaximumSize(new Dimension(100, Program.BUTTONS_HEIGHT));
-		jImport.setHorizontalAlignment(SwingConstants.LEFT);
-		jToolBarLeft.add(jImport);
+		jToolBarLeft.addButton(jImport);
 
 		JMenuItem jImportEFT = new JMenuItem(TabsStockpile.get().importEft(), Images.TOOL_SHIP_LOADOUTS.getIcon());
 		jImportEFT.setActionCommand(StockpileAction.IMPORT_EFT.name());
@@ -191,25 +190,26 @@ public class StockpileTab extends JMainTab {
 		jImportIskPerHour.addActionListener(listener);
 		jImport.add(jImportIskPerHour);
 
-		JToolBar jToolBarRight = new JToolBar();
-		jToolBarRight.setFloatable(false);
-		jToolBarRight.setRollover(true);
+		JMenuItem jEveAssets = new JMenuItem(TabsStockpile.get().exportStockpiles(), Images.TOOL_STOCKPILE.getIcon());
+		jEveAssets.setActionCommand(StockpileAction.IMPORT_XML.name());
+		jEveAssets.addActionListener(listener);
+		jImport.add(jEveAssets);
+
+		JMenuItem jExport = new JMenuItem(TabsStockpile.get().importStockpiles(), Images.TOOL_STOCKPILE.getIcon());
+		jExport.setActionCommand(StockpileAction.EXPORT_XML.name());
+		jExport.addActionListener(listener);
+
+		JFixedToolBar jToolBarRight = new JFixedToolBar();
 
 		JButton jCollapse = new JButton(TabsStockpile.get().collapse(), Images.MISC_COLLAPSED.getIcon());
 		jCollapse.setActionCommand(StockpileAction.COLLAPSE.name());
 		jCollapse.addActionListener(listener);
-		jCollapse.setMinimumSize(new Dimension(90, Program.BUTTONS_HEIGHT));
-		jCollapse.setMaximumSize(new Dimension(90, Program.BUTTONS_HEIGHT));
-		jCollapse.setHorizontalAlignment(SwingConstants.LEFT);
-		jToolBarRight.add(jCollapse);
+		jToolBarRight.addButton(jCollapse);
 
 		JButton jExpand = new JButton(TabsStockpile.get().expand(), Images.MISC_EXPANDED.getIcon());
 		jExpand.setActionCommand(StockpileAction.EXPAND.name());
 		jExpand.addActionListener(listener);
-		jExpand.setMinimumSize(new Dimension(90, Program.BUTTONS_HEIGHT));
-		jExpand.setMaximumSize(new Dimension(90, Program.BUTTONS_HEIGHT));
-		jExpand.setHorizontalAlignment(SwingConstants.LEFT);
-		jToolBarRight.add(jExpand);
+		jToolBarRight.addButton(jExpand);
 
 		//Table Format
 		tableFormat = new EnumTableFormatAdaptor<StockpileTableFormat, StockpileItem>(StockpileTableFormat.class);
@@ -258,6 +258,7 @@ public class StockpileTab extends JMainTab {
 				Settings.get().getTableFilters(NAME)
 				);
 
+		filterControl.addExportOption(jExport);
 		//Menu
 		installMenu(program, new StockpileTableMenu(), jTable, StockpileItem.class);
 
@@ -265,19 +266,18 @@ public class StockpileTab extends JMainTab {
 			layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
 				.addComponent(filterControl.getPanel())
 				.addGroup(layout.createSequentialGroup()
-					.addComponent(jToolBarLeft)
-					.addGap(0, 0, Integer.MAX_VALUE)
+					.addComponent(jToolBarLeft, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Integer.MAX_VALUE)
+					.addGap(0)
 					.addComponent(jToolBarRight)
 				)
 				.addComponent(jTableScroll, 0, 0, Short.MAX_VALUE)
 		);
-		final int TOOLBAR_HEIGHT = jToolBarRight.getInsets().top + jToolBarRight.getInsets().bottom + Program.BUTTONS_HEIGHT;
 		layout.setVerticalGroup(
 			layout.createSequentialGroup()
 				.addComponent(filterControl.getPanel())
 				.addGroup(layout.createParallelGroup()
-					.addComponent(jToolBarLeft, TOOLBAR_HEIGHT, TOOLBAR_HEIGHT, TOOLBAR_HEIGHT)
-					.addComponent(jToolBarRight, TOOLBAR_HEIGHT, TOOLBAR_HEIGHT, TOOLBAR_HEIGHT)
+					.addComponent(jToolBarLeft, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+					.addComponent(jToolBarRight, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
 				)
 				.addComponent(jTableScroll, 0, 0, Short.MAX_VALUE)
 		);
@@ -518,6 +518,21 @@ public class StockpileTab extends JMainTab {
 				double price = ApiIdConverter.getPrice(TYPE_ID, item.isBPC());
 				float volume = ApiIdConverter.getVolume(TYPE_ID, true);
 				item.updateValues(price, volume);
+				//ContractItems
+				if (stockpile.isContracts()) {
+					for (MyContractItem contractItem : program.getContractItemList()) {
+						if (contractItem.getContract().isCourier()) {
+							continue;
+						}
+						/*
+						long issuerID = contractItem.getContract().isForCorp() ? contractItem.getContract().getIssuerCorpID() : contractItem.getContract().getIssuerID();
+						if (!ownersName.containsKey(issuerID) && !ownersName.containsKey(contractItem.getContract().getAcceptorID())) {
+							continue; //Ignore not accepted/issued contracts
+						}
+						*/
+						item.updateContract(contractItem);
+					}
+				}
 				//Inventory AKA Assets
 				if (stockpile.isAssets()) {
 					for (MyAsset asset : program.getAssetList()) {
@@ -565,7 +580,7 @@ public class StockpileTab extends JMainTab {
 						if (transaction.getTypeID() != TYPE_ID) {
 							continue; //Ignore wrong typeID
 						}
-						item.updateTransactions(transaction);
+						item.updateTransaction(transaction);
 					}
 				}
 			}
@@ -575,7 +590,10 @@ public class StockpileTab extends JMainTab {
 
 	private void importEFT() {
 		//Get string from clipboard
-		String fit = getClipboardContents();
+		String fit = jTextDialog.importText();
+		if (fit == null) {
+			return; //Cancelled
+		}
 
 		//Validate
 		fit = fit.trim();
@@ -660,7 +678,10 @@ public class StockpileTab extends JMainTab {
 
 	private void importIskPerHour() {
 		//Get string from clipboard
-		String shoppingList = getClipboardContents();
+		String shoppingList = jTextDialog.importText();
+		if (shoppingList == null) {
+			return; //Cancelled
+		}
 
 		//Validate
 		shoppingList = shoppingList.trim();
@@ -777,6 +798,102 @@ public class StockpileTab extends JMainTab {
 		scrollToSctockpile(stockpile);
 	}
 
+	private void importXml() {
+		jFileChooser.setSelectedFile(null);
+		int value = jFileChooser.showOpenDialog(program.getMainWindow().getFrame());
+		if (value == JFileChooser.APPROVE_OPTION) {
+			List<Stockpile> stockpiles = SettingsReader.loadStockpile(jFileChooser.getSelectedFile().getAbsolutePath());
+			if (stockpiles != null) {
+				stockpiles = stockpileSelectionDialog.show(stockpiles);
+				if (stockpiles != null) {
+					List<Stockpile> existing = new ArrayList<Stockpile>();
+					boolean save = false;
+					for (Stockpile stockpile : stockpiles) {
+						if (Settings.get().getStockpiles().contains(stockpile)) { //Exist
+							existing.add(stockpile);
+						} else { //New
+							//Save Result
+							save = true;
+							Settings.lock("Stockpile (Import XML new)");
+							Settings.get().getStockpiles().add(stockpile); //Add
+							Settings.unlock("Stockpile (Import XML new)");
+							//Update UI
+							addStockpile(stockpile);
+						}
+					}
+					stockpileImportDialog.resetToDefault();
+					int count = existing.size();
+					ImportReturn importReturn = ImportReturn.SKIP;
+					for (Stockpile stockpile : existing) {
+						importReturn = importOptions(stockpile, importReturn, count);
+						if (importReturn == ImportReturn.OVERWRITE || importReturn == ImportReturn.OVERWRITE_ALL) {
+							save = true;
+						}
+						count--;
+					}
+					Collections.sort(Settings.get().getStockpiles());
+					if (save) {
+						program.saveSettings("Stockpile (Import XML)");
+					}
+					
+				}
+			} else {
+				JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), TabsStockpile.get().importXmlFailedMsg(), TabsStockpile.get().importXmlFailedTitle(), JOptionPane.WARNING_MESSAGE);
+			}
+		}
+	}
+
+	private ImportReturn importOptions(Stockpile stockpile, ImportReturn importReturn, int count) {
+		if (importReturn != ImportReturn.OVERWRITE_ALL
+				&& importReturn != ImportReturn.MERGE_ALL
+				&& importReturn != ImportReturn.RENAME_ALL
+				&& importReturn != ImportReturn.SKIP_ALL) { //Not decided - ask what to do
+			importReturn = stockpileImportDialog.show(stockpile.getName(), count);
+		}
+		//Rename
+		if (importReturn == ImportReturn.RENAME || importReturn == ImportReturn.RENAME_ALL) {
+			Stockpile returnRename = stockpileDialog.showRename(stockpile); //Rename stockpile
+			if (returnRename != null) { //OK
+				addStockpile(returnRename); //Update UI
+			} else { //Cancel
+				JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), TabsStockpile.get().importXmlCancelledMsg(), TabsStockpile.get().importXmlCancelledTitle(), JOptionPane.PLAIN_MESSAGE);
+				return importOptions(stockpile, ImportReturn.RENAME, count); //Retry - if RENAME_ALL, ask again
+			}
+		}
+		//Merge
+		if (importReturn == ImportReturn.MERGE || importReturn == ImportReturn.MERGE_ALL) {
+			int index = Settings.get().getStockpiles().indexOf(stockpile); //Get index of old Stockpile
+			Stockpile mergeStockpile = Settings.get().getStockpiles().get(index); //Get old stockpile
+			addToStockpile(mergeStockpile, stockpile.getItems(), true); //Merge old and imported stockpiles
+		}
+		//Overwrite
+		if (importReturn == ImportReturn.OVERWRITE || importReturn == ImportReturn.OVERWRITE_ALL) {
+			Settings.lock("Stockpile (Import XML overwrite)"); //Lock settings
+			//Remove
+			int index = Settings.get().getStockpiles().indexOf(stockpile); //Get index of old Stockpile
+			Stockpile removeStockpile = Settings.get().getStockpiles().get(index); //Get old stockpile
+			removeStockpile(removeStockpile); //Remove old stockpile from the UI
+			Settings.get().getStockpiles().remove(removeStockpile); //Remove old stockpile from the Settings
+			//Add
+			Settings.get().getStockpiles().add(stockpile); //Add imported stockpile to Settings
+			Settings.unlock("Stockpile (Import XML overwrite)"); //Unlock settings
+			//Update UI
+			addStockpile(stockpile); //Add imported stockpile to Settings
+		}
+		//Skip - Do nothing
+		return importReturn;
+	}
+
+	private void exportXml() {
+		List<Stockpile> stockpiles = stockpileSelectionDialog.show(Settings.get().getStockpiles());
+		if (stockpiles != null) {
+			int value = jFileChooser.showSaveDialog(program.getMainWindow().getFrame());
+			if (value == JFileChooser.APPROVE_OPTION) {
+				SettingsWriter.saveStockpiles(stockpiles, jFileChooser.getSelectedFile().getAbsolutePath());
+			}
+		}
+	}
+
 	private void updateOwners() {
 		//Owners Look-Up
 		ownersName = new HashMap<Long, String>();
@@ -785,22 +902,6 @@ public class StockpileTab extends JMainTab {
 				ownersName.put(owner.getOwnerID(), owner.getName());
 			}
 		}
-	}
-
-	private String getClipboardContents() {
-		Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-		//odd: the Object param of getContents is not currently used
-		Transferable contents = clipboard.getContents(null);
-		if (contents != null && contents.isDataFlavorSupported(DataFlavor.stringFlavor)) {
-			try {
-				return (String) contents.getTransferData(DataFlavor.stringFlavor);
-			} catch (UnsupportedFlavorException ex) {
-				return "";
-			} catch (IOException ex) {
-				return "";
-			}
-		}
-		return "";
 	}
 
 	private class StockpileTableMenu implements TableMenu<StockpileItem> {
@@ -880,7 +981,7 @@ public class StockpileTab extends JMainTab {
 			}
 			//Shopping list multi
 			if (StockpileAction.SHOPPING_LIST_MULTI.name().equals(e.getActionCommand())) {
-				List<Stockpile> stockpiles = stockpileSelectionDialog.show();
+				List<Stockpile> stockpiles = stockpileSelectionDialog.show(Settings.get().getStockpiles());
 				if (stockpiles != null) {
 					stockpileShoppingListDialog.show(stockpiles);
 				}
@@ -926,6 +1027,12 @@ public class StockpileTab extends JMainTab {
 			//Add stockpile (EFT Import)
 			if (StockpileAction.IMPORT_ISK_PER_HOUR.name().equals(e.getActionCommand())) {
 				importIskPerHour();
+			}
+			if (StockpileAction.IMPORT_XML.name().equals(e.getActionCommand())) {
+				importXml();
+			}
+			if (StockpileAction.EXPORT_XML.name().equals(e.getActionCommand())) {
+				exportXml();
 			}
 			//Add stockpile
 			if (StockpileAction.ADD_STOCKPILE.name().equals(e.getActionCommand())) {

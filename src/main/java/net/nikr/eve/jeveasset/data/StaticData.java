@@ -41,7 +41,7 @@ public class StaticData {
 	private final Map<Long, MyLocation> locations = new HashMap<Long, MyLocation>(); //LocationID : long
 	private final List<Jump> jumps = new ArrayList<Jump>(); //LocationID : long
 	//XXX - Integer locationID
-	private final Map<Integer, Station> conquerableStations = new HashMap<Integer, Station>(); //LocationID : long
+	private final Map<Long, Station> conquerableStations = new HashMap<Long, Station>(); //LocationID : long
 
 	private static StaticData staticData = null;
 
@@ -88,11 +88,11 @@ public class StaticData {
 		return locations;
 	}
 
-	public Map<Integer, Station> getConquerableStations() {
+	public Map<Long, Station> getConquerableStations() {
 		return conquerableStations;
 	}
 
-	public void setConquerableStations(final Map<Integer, Station> conquerableStations) {
+	public void setConquerableStations(final Map<Long, Station> conquerableStations) {
 		this.conquerableStations.clear();
 		this.conquerableStations.putAll(conquerableStations);
 		for (Station station : conquerableStations.values()) {

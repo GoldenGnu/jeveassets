@@ -49,14 +49,15 @@ enum AccountTableFormat implements EnumTableColumn<Owner> {
 			return true;
 		}
 		@Override
-		public Owner setColumnValue(final Object baseObject, final Object editedValue) {
+		public boolean setColumnValue(final Object baseObject, final Object editedValue) {
 			if ((editedValue instanceof Boolean) && (baseObject instanceof Owner)) {
 				Owner owner = (Owner) baseObject;
-				boolean value = (Boolean) editedValue;
-				owner.setShowOwner(value);
-				return owner;
+				boolean before = owner.isShowOwner();
+				boolean after = (Boolean) editedValue;
+				owner.setShowOwner(after);
+				return before != after;
 			}
-			return null;
+			return false;
 		}
 	},
 	NAME(String.class, GlazedLists.comparableComparator()) {
@@ -185,10 +186,6 @@ enum AccountTableFormat implements EnumTableColumn<Owner> {
 		return comparator;
 	}
 	@Override
-	public String getColumnName() {
-		return getColumnName();
-	}
-	@Override
 	public boolean isColumnEditable(final Object baseObject) {
 		return false;
 	}
@@ -196,7 +193,13 @@ enum AccountTableFormat implements EnumTableColumn<Owner> {
 	public boolean isShowDefault() {
 		return true;
 	}
-	@Override public Owner setColumnValue(final Object baseObject, final Object editedValue) {
-		return null;
+	@Override
+	public boolean setColumnValue(final Object baseObject, final Object editedValue) {
+		return false;
 	}
+	@Override
+	public String toString() {
+		return getColumnName();
+	}
+	
 }

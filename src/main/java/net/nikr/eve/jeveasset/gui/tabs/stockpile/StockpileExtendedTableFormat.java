@@ -80,8 +80,8 @@ public enum StockpileExtendedTableFormat implements EnumTableColumn<StockpileIte
 		}
 	};
 
-	private Class<?> type;
-	private Comparator<?> comparator;
+	private final Class<?> type;
+	private final Comparator<?> comparator;
 	private StockpileExtendedTableFormat(final Class<?> type, final Comparator<?> comparator) {
 		this.type = type;
 		this.comparator = comparator;
@@ -95,10 +95,6 @@ public enum StockpileExtendedTableFormat implements EnumTableColumn<StockpileIte
 		return comparator;
 	}
 	@Override
-	public String toString() {
-		return getColumnName();
-	}
-	@Override
 	public boolean isColumnEditable(final Object baseObject) {
 		return false;
 	}
@@ -107,8 +103,12 @@ public enum StockpileExtendedTableFormat implements EnumTableColumn<StockpileIte
 		return true;
 	}
 	@Override
-	public StockpileItem setColumnValue(final Object baseObject, final Object editedValue) {
-		return null;
+	public boolean setColumnValue(final Object baseObject, final Object editedValue) {
+		return false;
+	}
+	@Override
+	public String toString() {
+		return getColumnName();
 	}
 	//XXX - TableFormat.getColumnName() Workaround
 	@Override public abstract String getColumnName();

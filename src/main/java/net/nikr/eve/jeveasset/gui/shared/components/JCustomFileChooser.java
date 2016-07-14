@@ -21,9 +21,9 @@
 
 package net.nikr.eve.jeveasset.gui.shared.components;
 
+import java.awt.Window;
 import java.io.File;
 import javax.swing.JFileChooser;
-import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileFilter;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
@@ -31,18 +31,18 @@ import net.nikr.eve.jeveasset.i18n.GuiShared;
 
 public class JCustomFileChooser extends JFileChooser {
 
-	private JFrame jFrame;
+	private final Window window;
 	private String extension;
 
-	public JCustomFileChooser(final JFrame jFrame, final String extension) {
-		this.jFrame = jFrame;
+	public JCustomFileChooser(final Window window, final String extension) {
+		this.window = window;
 		setExtension(extension);
 		this.setAcceptAllFileFilterUsed(false);
 	}
 
 	@Override
 	public void setSelectedFile(File file) {
-		if (file != null) {
+		if (getDialogType() != OPEN_DIALOG && file != null) {
 			String filename = file.getAbsolutePath();
 			if (filename.matches("(?i).*\\.\\w{0,4}$")) { //Already got a extension - remove it
 				int end = filename.lastIndexOf(".");
@@ -66,9 +66,9 @@ public class JCustomFileChooser extends JFileChooser {
 	public void approveSelection() {
 		File selectedFile = this.getSelectedFile();
 		//Confirm Overwrite file
-		if (selectedFile != null && selectedFile.exists()) {
+		if (getDialogType() != OPEN_DIALOG && selectedFile != null && selectedFile.exists()) {
 			int nReturn = JOptionPane.showConfirmDialog(
-					jFrame,
+					window,
 					GuiShared.get().overwrite(),
 					GuiShared.get().overwriteFile(),
 					JOptionPane.YES_NO_OPTION,
@@ -87,7 +87,7 @@ public class JCustomFileChooser extends JFileChooser {
 
 	public static class CustomFileFilter extends FileFilter {
 
-		private String extension;
+		private final String extension;
 
 		public CustomFileFilter(final String extension) {
 			this.extension = extension;

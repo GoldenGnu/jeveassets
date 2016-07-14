@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.swing.ButtonGroup;
@@ -82,8 +83,10 @@ public class EnumTableFormatAdaptor<T extends Enum<T> & EnumTableColumn<Q>, Q> i
 	private final List<ColumnValueChangeListener> listeners = new ArrayList<ColumnValueChangeListener>();
 
 	private final Class<T> enumClass;
-	private List<T> shownColumns;
-	private List<T> orderColumns;
+	private List<EnumTableColumn<Q>> shownColumns;
+	private Map<String, EnumTableColumn<Q>> orderColumnsName;
+	private List<EnumTableColumn<Q>> orderColumns;
+	private List<EnumTableColumn<Q>> tempColumns = new ArrayList<EnumTableColumn<Q>>();
 	private final ColumnComparator columnComparator;
 
 	private EditColumnsDialog<T, Q> editColumns;
@@ -99,20 +102,51 @@ public class EnumTableFormatAdaptor<T extends Enum<T> & EnumTableColumn<Q>, Q> i
 	}
 
 	private void reset() {
-		shownColumns = new ArrayList<T>();
+		shownColumns = new ArrayList<EnumTableColumn<Q>>();
+		orderColumnsName = new HashMap<String, EnumTableColumn<Q>>();
 		for (T t : enumClass.getEnumConstants()) {
 			if (t.isShowDefault()) {
 				shownColumns.add(t);
 			}
+			orderColumnsName.put(t.name(), t);
 		}
-		orderColumns = new ArrayList<T>(Arrays.asList(enumClass.getEnumConstants()));
+		orderColumns = new ArrayList<EnumTableColumn<Q>>(Arrays.asList(enumClass.getEnumConstants()));
+		addTempColumns();
 	}
 
-	public List<T> getShownColumns() {
+	private void addTempColumns() {
+		for (EnumTableColumn<Q> column : tempColumns) {
+			addColumn(column, false);
+		}
+	}
+
+	public void addColumn(EnumTableColumn<Q> column) {
+		addColumn(column, true);
+	}
+
+	private void addColumn(EnumTableColumn<Q> column, boolean temp) {
+		if (!shownColumns.contains(column)) {
+			orderColumnsName.put(column.name(), column);
+			shownColumns.add(column);
+			orderColumns.add(column);
+			if (temp) {
+				tempColumns.add(column);
+			}
+		}
+	}
+
+	public void removeColumn(EnumTableColumn<Q> column) {
+		orderColumnsName.remove(column.name());
+		shownColumns.remove(column);
+		orderColumns.remove(column);
+		tempColumns.remove(column);
+	}
+
+	public List<EnumTableColumn<Q>> getShownColumns() {
 		return shownColumns;
 	}
 
-	public List<T> getOrderColumns() {
+	public List<EnumTableColumn<Q>> getOrderColumns() {
 		return orderColumns;
 	}
 
@@ -131,13 +165,15 @@ public class EnumTableFormatAdaptor<T extends Enum<T> & EnumTableColumn<Q>, Q> i
 		if (columns == null) {
 			return;
 		}
-		orderColumns = new ArrayList<T>();
-		shownColumns = new ArrayList<T>();
+		orderColumns = new ArrayList<EnumTableColumn<Q>>();
+		shownColumns = new ArrayList<EnumTableColumn<Q>>();
+		orderColumnsName = new HashMap<String, EnumTableColumn<Q>>();
 		List<T> originalColumns = new ArrayList<T>(Arrays.asList(enumClass.getEnumConstants()));
 		for (SimpleColumn column : columns) {
 			try {
 				T t = Enum.valueOf(enumClass, column.getEnumName());
 				orderColumns.add(t);
+				orderColumnsName.put(t.name(), t);
 				if (column.isShown()) {
 					shownColumns.add(t);
 				}
@@ -154,17 +190,22 @@ public class EnumTableFormatAdaptor<T extends Enum<T> & EnumTableColumn<Q>, Q> i
 					index = orderColumns.size() - 1;
 				}
 				orderColumns.add(index, t);
+				orderColumnsName.put(t.name(), t);
 				if (t.isShowDefault()) {
 					shownColumns.add(t);
 				}
 			}
 		}
+		addTempColumns();
 		updateColumns();
 	}
 
 	public List<SimpleColumn> getColumns() {
 		List<SimpleColumn> columns = new ArrayList<SimpleColumn>(orderColumns.size());
-		for (T t : orderColumns) {
+		for (EnumTableColumn<Q> t : orderColumns) {
+			if (tempColumns.contains(t)) { //Ignore temp columns
+				continue;
+			}
 			String columnName = t.getColumnName();
 			String enumName = t.name();
 			boolean shown = shownColumns.contains(t);
@@ -177,8 +218,8 @@ public class EnumTableFormatAdaptor<T extends Enum<T> & EnumTableColumn<Q>, Q> i
 		if (from == to) {
 			return;
 		}
-		T fromColumn = getColumn(from);
-		T toColumn = getColumn(to);
+		EnumTableColumn<Q> fromColumn = getColumn(from);
+		EnumTableColumn<Q> toColumn = getColumn(to);
 
 		int fromIndex = orderColumns.indexOf(fromColumn);
 		orderColumns.remove(fromIndex);
@@ -354,8 +395,8 @@ public class EnumTableFormatAdaptor<T extends Enum<T> & EnumTableColumn<Q>, Q> i
 		}
 	}
 
-	private T getColumn(final int i) throws IndexOutOfBoundsException {
-		return shownColumns.get(i);
+	private EnumTableColumn<Q> getColumn(final int i) throws IndexOutOfBoundsException {
+		return getShownColumns().get(i);
 	}
 
 	private void updateColumns() {
@@ -397,7 +438,14 @@ public class EnumTableFormatAdaptor<T extends Enum<T> & EnumTableColumn<Q>, Q> i
 			return null;
 		}
 	}
-
+	public Object getColumnValue(final Q e, final String columnName) {
+		EnumTableColumn<Q> column = orderColumnsName.get(columnName);
+		if (column != null)  {
+			return column.getColumnValue(e);
+		} else {
+			return null;
+		}
+	}
 
 	//Used by the JSeparatorTable
 	@Override public boolean isEditable(final Q baseObject, final int i) {
@@ -409,18 +457,20 @@ public class EnumTableFormatAdaptor<T extends Enum<T> & EnumTableColumn<Q>, Q> i
 	}
 	@Override public Q setColumnValue(final Q baseObject, final Object editedValue, final int i) {
 		try {
-			getColumn(i).setColumnValue(baseObject, editedValue);
-			notifyListeners();
+			boolean changed = getColumn(i).setColumnValue(baseObject, editedValue);
+			if (changed) {
+				notifyListeners();
+			}
 		} catch (IndexOutOfBoundsException ex) {
 			//No problem
 		}
 		return baseObject;
 	}
 
-	class ColumnComparator implements Comparator<T> {
+	class ColumnComparator implements Comparator<EnumTableColumn<Q>> {
 
 		@Override
-		public int compare(final T o1, final T o2) {
+		public int compare(final EnumTableColumn<Q> o1, final EnumTableColumn<Q> o2) {
 			return orderColumns.indexOf(o1) - orderColumns.indexOf(o2);
 		}
 

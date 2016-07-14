@@ -35,7 +35,7 @@ import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileTotal;
 
 public class JStockpileTable extends JSeparatorTable {
 
-	private DefaultEventTableModel<StockpileItem> tableModel;
+	private final DefaultEventTableModel<StockpileItem> tableModel;
 
 	public JStockpileTable(final Program program, final DefaultEventTableModel<StockpileItem> tableModel, SeparatorList<?> separatorList) {
 		super(program, tableModel, separatorList);
@@ -100,6 +100,18 @@ public class JStockpileTable extends JSeparatorTable {
 				component.setForeground(Color.GRAY);
 			}
 			if (columnName.equals(StockpileTableFormat.COUNT_NOW_JOBS.getColumnName()) && !stockpileItem.getStockpile().isJobs()) {
+				component.setForeground(Color.GRAY);
+			}
+			if (columnName.equals(StockpileTableFormat.COUNT_NOW_SELLING_CONTRACTS.getColumnName()) && !stockpileItem.getStockpile().isSellingContracts()) {
+				component.setForeground(Color.GRAY);
+			}
+			if (columnName.equals(StockpileTableFormat.COUNT_NOW_SOLD_CONTRACTS.getColumnName()) && !stockpileItem.getStockpile().isSoldContracts()) {
+				component.setForeground(Color.GRAY);
+			}
+			if (columnName.equals(StockpileTableFormat.COUNT_NOW_BUYING_CONTRACTS.getColumnName()) && !stockpileItem.getStockpile().isBuyingContracts()) {
+				component.setForeground(Color.GRAY);
+			}
+			if (columnName.equals(StockpileTableFormat.COUNT_NOW_BOUGHT_CONTRACTS.getColumnName()) && !stockpileItem.getStockpile().isBoughtContracts()) {
 				component.setForeground(Color.GRAY);
 			}
 			if (columnName.equals(StockpileTableFormat.COUNT_NEEDED.getColumnName()) && stockpileItem.getCountNeeded() < 0) {

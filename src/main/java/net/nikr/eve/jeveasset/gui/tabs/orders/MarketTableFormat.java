@@ -25,6 +25,7 @@ import ca.odell.glazedlists.GlazedLists;
 import java.util.Comparator;
 import java.util.Date;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
+import net.nikr.eve.jeveasset.gui.shared.table.containers.Percent;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.Quantity;
 import net.nikr.eve.jeveasset.i18n.TabsOrders;
 
@@ -163,6 +164,36 @@ public enum MarketTableFormat implements EnumTableColumn<MyMarketOrder> {
 		public Object getColumnValue(final MyMarketOrder from) {
 			return Double.valueOf(from.getQuantity().getQuantityRemaining() * from.getPrice());
 		}
+	},
+	LAST_TRANSACTION_PRICE(Double.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsOrders.get().columnLastTransactionPrice();
+		}
+		@Override
+		public Object getColumnValue(final MyMarketOrder from) {
+			return from.getLastTransactionPrice();
+		}
+	},
+	LAST_TRANSACTION_VALUE(Double.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsOrders.get().columnLastTransactionValue();
+		}
+		@Override
+		public Object getColumnValue(final MyMarketOrder from) {
+			return from.getLastTransactionValue();
+		}
+	},
+	LAST_TRANSACTION_PERCENT(Percent.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsOrders.get().columnLastTransactionPercent();
+		}
+		@Override
+		public Object getColumnValue(final MyMarketOrder from) {
+			return from.getLastTransactionPercent();
+		}
 	};
 	private Class<?> type;
 	private Comparator<?> comparator;
@@ -179,10 +210,6 @@ public enum MarketTableFormat implements EnumTableColumn<MyMarketOrder> {
 		return comparator;
 	}
 	@Override
-	public String toString() {
-		return getColumnName();
-	}
-	@Override
 	public boolean isColumnEditable(final Object baseObject) {
 		return false;
 	}
@@ -191,8 +218,12 @@ public enum MarketTableFormat implements EnumTableColumn<MyMarketOrder> {
 		return true;
 	}
 	@Override
-	public MyMarketOrder setColumnValue(final Object baseObject, final Object editedValue) {
-		return null;
+	public boolean setColumnValue(final Object baseObject, final Object editedValue) {
+		return false;
+	}
+	@Override
+	public String toString() {
+		return getColumnName();
 	}
 	//XXX - TableFormat.getColumnValue(...) Workaround
 	@Override public abstract Object getColumnValue(final MyMarketOrder from);

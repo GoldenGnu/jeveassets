@@ -43,7 +43,7 @@ public abstract class DataModelIndustryJob extends Bundle {
 	public abstract String statePaused();
 	public abstract String stateActive();
 	public abstract String stateDone();
-	public abstract String stateFailed();
+	public abstract String stateReverted();
 	public abstract String stateCancelled();
 	public abstract String stateDelivered();
 	public abstract String activityAll();

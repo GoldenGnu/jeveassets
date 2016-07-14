@@ -21,13 +21,13 @@
 
 package net.nikr.eve.jeveasset.io.local;
 
-import com.beimin.eveapi.model.shared.AccountBalance;
 import com.beimin.eveapi.model.shared.Blueprint;
 import com.beimin.eveapi.model.shared.Contract;
 import com.beimin.eveapi.model.shared.ContractAvailability;
 import com.beimin.eveapi.model.shared.ContractItem;
 import com.beimin.eveapi.model.shared.ContractStatus;
 import com.beimin.eveapi.model.shared.ContractType;
+import com.beimin.eveapi.model.shared.EveAccountBalance;
 import com.beimin.eveapi.model.shared.IndustryJob;
 import com.beimin.eveapi.model.shared.JournalEntry;
 import com.beimin.eveapi.model.shared.KeyType;
@@ -164,7 +164,7 @@ public final class ProfileReader extends AbstractXmlReader {
 			}
 			parseContracts(currentNode, owner);
 			parseBalances(currentNode, owner);
-			parseMarkerOrders(currentNode, owner);
+			parseMarketOrders(currentNode, owner);
 			parseJournals(currentNode, owner);
 			parseTransactions(currentNode, owner);
 			parseIndustryJobs(currentNode, owner);
@@ -176,10 +176,14 @@ public final class ProfileReader extends AbstractXmlReader {
 		String name = AttributeGetters.getString(node, "name");
 		int ownerID = AttributeGetters.getInt(node, "id");
 		Date assetsNextUpdate = new Date(AttributeGetters.getLong(node, "assetsnextupdate"));
-		Date balanceNextUpdate = new Date(AttributeGetters.getLong(node, "balancenextupdate"));
 		Date assetsLastUpdate = null;
 		if (AttributeGetters.haveAttribute(node, "assetslastupdate")) {
 			assetsLastUpdate = new Date(AttributeGetters.getLong(node, "assetslastupdate"));
+		}
+		Date balanceNextUpdate = new Date(AttributeGetters.getLong(node, "balancenextupdate"));
+		Date balanceLastUpdate = null;
+		if (AttributeGetters.haveAttribute(node, "balancelastupdate")) {
+			balanceLastUpdate = new Date(AttributeGetters.getLong(node, "balancelastupdate"));
 		}
 		boolean showAssets = true;
 		if (AttributeGetters.haveAttribute(node, "show")) {
@@ -214,7 +218,7 @@ public final class ProfileReader extends AbstractXmlReader {
 			blueprintsnextupdate = new Date(AttributeGetters.getLong(node, "blueprintsnextupdate"));
 		}
 
-		return new Owner(account, name, ownerID, showAssets, assetsLastUpdate, assetsNextUpdate, balanceNextUpdate, marketOrdersNextUpdate, journalNextUpdate, transactionsNextUpdate, industryJobsNextUpdate, contractsNextUpdate, locationsNextUpdate, blueprintsnextupdate);
+		return new Owner(account, name, ownerID, showAssets, assetsLastUpdate, assetsNextUpdate, balanceLastUpdate, balanceNextUpdate, marketOrdersNextUpdate, journalNextUpdate, transactionsNextUpdate, industryJobsNextUpdate, contractsNextUpdate, locationsNextUpdate, blueprintsnextupdate);
 	}
 
 	private void parseContracts(final Element element, final Owner owner) {
@@ -329,14 +333,14 @@ public final class ProfileReader extends AbstractXmlReader {
 			NodeList balanceNodes = currentBalancesNode.getElementsByTagName("balance");
 			for (int b = 0; b < balanceNodes.getLength(); b++) {
 				Element currentNode = (Element) balanceNodes.item(b);
-				AccountBalance accountBalance = parseBalance(currentNode);
+				EveAccountBalance accountBalance = parseBalance(currentNode);
 				owner.getAccountBalances().add(new MyAccountBalance(accountBalance, owner));
 			}
 		}
 	}
 
-	private AccountBalance parseBalance(final Element element) {
-		AccountBalance accountBalance = new AccountBalance();
+	private EveAccountBalance parseBalance(final Element element) {
+		EveAccountBalance accountBalance = new EveAccountBalance();
 		int accountID = AttributeGetters.getInt(element, "accountid");
 		int accountKey = AttributeGetters.getInt(element, "accountkey");
 		double balance = AttributeGetters.getDouble(element, "balance");
@@ -346,22 +350,22 @@ public final class ProfileReader extends AbstractXmlReader {
 		return accountBalance;
 	}
 
-	private void parseMarkerOrders(final Element element, final Owner owner) {
-		NodeList markerOrdersNodes = element.getElementsByTagName("markerorders");
+	private void parseMarketOrders(final Element element, final Owner owner) {
+		NodeList marketOrdersNodes = element.getElementsByTagName("markerorders");
 		List<MarketOrder> marketOrders = new ArrayList<MarketOrder>();
-		for (int a = 0; a < markerOrdersNodes.getLength(); a++) {
-			Element currentMarkerOrdersNode = (Element) markerOrdersNodes.item(a);
-			NodeList markerOrderNodes = currentMarkerOrdersNode.getElementsByTagName("markerorder");
-			for (int b = 0; b < markerOrderNodes.getLength(); b++) {
-				Element currentNode = (Element) markerOrderNodes.item(b);
-				MarketOrder apiMarketOrder = parseMarkerOrder(currentNode);
+		for (int a = 0; a < marketOrdersNodes.getLength(); a++) {
+			Element currentMarketOrdersNode = (Element) marketOrdersNodes.item(a);
+			NodeList marketOrderNodes = currentMarketOrdersNode.getElementsByTagName("markerorder");
+			for (int b = 0; b < marketOrderNodes.getLength(); b++) {
+				Element currentNode = (Element) marketOrderNodes.item(b);
+				MarketOrder apiMarketOrder = parseMarketOrder(currentNode);
 				marketOrders.add(apiMarketOrder);
 			}
 		}
 		owner.setMarketOrders(ApiConverter.convertMarketOrders(marketOrders, owner));
 	}
 
-	private MarketOrder parseMarkerOrder(final Element element) {
+	private MarketOrder parseMarketOrder(final Element element) {
 		MarketOrder apiMarketOrder = new MarketOrder();
 		long orderID = AttributeGetters.getLong(element, "orderid");
 		long charID = AttributeGetters.getLong(element, "charid");
@@ -496,7 +500,7 @@ public final class ProfileReader extends AbstractXmlReader {
 		if (AttributeGetters.haveAttribute(element, "charactername")) {
 			characterName = AttributeGetters.getString(element, "charactername");
 		}
-		int stationID = AttributeGetters.getInt(element, "stationid");
+		long stationID = AttributeGetters.getLong(element, "stationid");
 		String stationName = AttributeGetters.getString(element, "stationname");
 		String transactionType = AttributeGetters.getString(element, "transactiontype");
 		String transactionFor = AttributeGetters.getString(element, "transactionfor");
@@ -571,11 +575,11 @@ public final class ProfileReader extends AbstractXmlReader {
 		double cost = AttributeGetters.getDouble(element, "cost");
 		long teamID = AttributeGetters.getLong(element, "teamid");
 		int licensedRuns = AttributeGetters.getInt(element, "licensedruns");
-		String probability = AttributeGetters.getString(element, "probability");
+		double probability = AttributeGetters.getDouble(element, "probability");
 		int productTypeID = AttributeGetters.getInt(element, "producttypeid");
 		String productTypeName = AttributeGetters.getString(element, "producttypename");
 		int status = AttributeGetters.getInt(element, "status");
-		long timeInSeconds = AttributeGetters.getLong(element, "timeinseconds");
+		int timeInSeconds = AttributeGetters.getInt(element, "timeinseconds");
 		Date startDate = AttributeGetters.getDate(element, "startdate");
 		Date endDate = AttributeGetters.getDate(element, "enddate");
 		Date pauseDate = AttributeGetters.getDate(element, "pausedate");

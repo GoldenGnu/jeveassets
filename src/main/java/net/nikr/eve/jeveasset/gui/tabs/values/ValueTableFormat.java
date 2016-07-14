@@ -55,7 +55,7 @@ public enum ValueTableFormat implements EnumTableColumn<Value> {
 		}
 		@Override
 		public Object getColumnValue(final Value from) {
-			return from.getBalance();
+			return from.getBalanceTotal();
 		}
 	},
 	ASSETS(Double.class, GlazedLists.comparableComparator()) {
@@ -65,7 +65,7 @@ public enum ValueTableFormat implements EnumTableColumn<Value> {
 		}
 		@Override
 		public Object getColumnValue(final Value from) {
-			return from.getAssets();
+			return from.getAssetsTotal();
 		}
 	},
 	SELL_ORDERS(Double.class, GlazedLists.comparableComparator()) {
@@ -116,6 +116,16 @@ public enum ValueTableFormat implements EnumTableColumn<Value> {
 		@Override
 		public Object getColumnValue(final Value from) {
 			return from.getContractCollateral();
+		}
+	},
+	CONTRACT_VALUE(Double.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsValues.get().columnContractValue();
+		}
+		@Override
+		public Object getColumnValue(final Value from) {
+			return from.getContractValue();
 		}
 	},
 	BEST_ASSET_NAME(String.class, GlazedLists.comparableComparator()) {
@@ -215,10 +225,6 @@ public enum ValueTableFormat implements EnumTableColumn<Value> {
 		return comparator;
 	}
 	@Override
-	public String toString() {
-		return getColumnName();
-	}
-	@Override
 	public boolean isColumnEditable(final Object baseObject) {
 		return false;
 	}
@@ -227,8 +233,12 @@ public enum ValueTableFormat implements EnumTableColumn<Value> {
 		return true;
 	}
 	@Override
-	public Value setColumnValue(final Object baseObject, final Object editedValue) {
-		return null;
+	public boolean setColumnValue(final Object baseObject, final Object editedValue) {
+		return false;
+	}
+	@Override
+	public String toString() {
+		return getColumnName();
 	}
 	//XXX - TableFormat.getColumnValue(...) Workaround
 	@Override public abstract Object getColumnValue(final Value from);

@@ -26,11 +26,16 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
+import javax.swing.JTextField;
 import javax.swing.Timer;
 import net.nikr.eve.jeveasset.data.EventListManager;
 import net.nikr.eve.jeveasset.data.MyAccount;
 import net.nikr.eve.jeveasset.data.MyAccountBalance;
+import net.nikr.eve.jeveasset.data.Owner;
 import net.nikr.eve.jeveasset.data.ProfileData;
 import net.nikr.eve.jeveasset.data.ProfileManager;
 import net.nikr.eve.jeveasset.data.Settings;
@@ -53,6 +58,7 @@ import net.nikr.eve.jeveasset.gui.tabs.assets.AssetsTab;
 import net.nikr.eve.jeveasset.gui.tabs.assets.MyAsset;
 import net.nikr.eve.jeveasset.gui.tabs.contracts.ContractsTab;
 import net.nikr.eve.jeveasset.gui.tabs.contracts.MyContract;
+import net.nikr.eve.jeveasset.gui.tabs.contracts.MyContractItem;
 import net.nikr.eve.jeveasset.gui.tabs.items.ItemsTab;
 import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustryJobsTab;
 import net.nikr.eve.jeveasset.gui.tabs.jobs.MyIndustryJob;
@@ -69,6 +75,7 @@ import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerTab;
 import net.nikr.eve.jeveasset.gui.tabs.transaction.MyTransaction;
 import net.nikr.eve.jeveasset.gui.tabs.transaction.TransactionTab;
 import net.nikr.eve.jeveasset.gui.tabs.tree.TreeTab;
+import net.nikr.eve.jeveasset.gui.tabs.values.DataSetCreator;
 import net.nikr.eve.jeveasset.gui.tabs.values.ValueRetroTab;
 import net.nikr.eve.jeveasset.gui.tabs.values.ValueTableTab;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
@@ -85,15 +92,12 @@ public class Program implements ActionListener {
 		TIMER
 	}
 	//Major.Minor.Bugfix [Release Candidate n] [BETA n] [DEV BUILD #n];
-	public static final String PROGRAM_VERSION = "2.10.6 DEV BUILD 1";
+	public static final String PROGRAM_VERSION = "3.0.0";
 	public static final String PROGRAM_NAME = "jEveAssets";
 	public static final String PROGRAM_UPDATE_URL = "http://eve.nikr.net/jeveassets/update.xml";
 	public static final String PROGRAM_HOMEPAGE = "http://eve.nikr.net/jeveasset";
 	public static final boolean PROGRAM_FORCE_PORTABLE = false;
 	public static final boolean PROGRAM_SHOW_FEEDBACK_MSG = false;
-
-	public static final int BUTTONS_HEIGHT = 22;
-	public static final int BUTTONS_WIDTH = 90;
 
 	private static boolean debug = false;
 	private static boolean forceUpdate = false;
@@ -143,7 +147,11 @@ public class Program implements ActionListener {
 	private final ProfileManager profileManager;
 	private final PriceDataGetter priceDataGetter;
 
+	//Height
+	private static int height = 0;
+
 	public Program() {
+		height = calcButtonsHeight();
 		updater = new Updater();
 		updater.update();
 		if (debug) {
@@ -283,6 +291,34 @@ public class Program implements ActionListener {
 		profileData = null;
 		profileManager = null;
 		priceDataGetter = null;
+	}
+
+	public static int getButtonsHeight() {
+		return height;
+	}
+
+	private int calcButtonsHeight() {
+		int comboBox = new JComboBox<String>().getPreferredSize().height;
+		int textField = new JTextField().getPreferredSize().height;
+		int button = new JButton().getPreferredSize().height;
+		int buttonsHeight = 0;
+		if (buttonsHeight < comboBox) {
+			buttonsHeight = comboBox;
+		}
+		if (buttonsHeight < textField) {
+			buttonsHeight = textField;
+		}
+		if (buttonsHeight < button) {
+			buttonsHeight = button;
+		}
+		if (buttonsHeight < 22) {
+			buttonsHeight = 22;
+		}
+		return buttonsHeight;
+	}
+
+	public static int getButtonsWidth() {
+		return 90;
 	}
 
 	public void addMainTab(final JMainTab jMainTab) {
@@ -427,6 +463,10 @@ public class Program implements ActionListener {
 		return overviewTab;
 	}
 
+	public TreeTab getTreeTab() {
+		return treeTab;
+	}
+
 	public StatusPanel getStatusPanel() {
 		return this.getMainWindow().getStatusPanel();
 	}
@@ -465,6 +505,9 @@ public class Program implements ActionListener {
 	public List<MyContract> getContractList() {
 		return EventListManager.safeList(profileData.getContractEventList());
 	}
+	public List<MyContractItem> getContractItemList() {
+		return EventListManager.safeList(profileData.getContractItemEventList());
+	}
 	public List<MyIndustryJob> getIndustryJobsList() {
 		return EventListManager.safeList(profileData.getIndustryJobsEventList());
 	}
@@ -477,8 +520,11 @@ public class Program implements ActionListener {
 	public List<MyAccountBalance> getAccountBalanceList() {
 		return EventListManager.safeList(profileData.getAccountBalanceEventList());
 	}
-	public List<String> getOwners(boolean all) {
-		return profileData.getOwners(all);
+	public List<String> getOwnerNames(boolean all) {
+		return profileData.getOwnerNames(all);
+	}
+	public Map<String, Owner> getOwners() {
+		return profileData.getOwners();
 	}
 	public List<MyAccount> getAccounts() {
 		return profileManager.getAccounts();
@@ -490,7 +536,8 @@ public class Program implements ActionListener {
 		return priceDataGetter;
 	}
 	public void createTrackerDataPoint() {
-		trackerTab.createTrackerDataPoint();
+		DataSetCreator.createTrackerDataPoint(this);
+		trackerTab.updateData();
 	}
 	
 	public static boolean onMac() {

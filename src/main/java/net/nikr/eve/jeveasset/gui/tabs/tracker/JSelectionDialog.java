@@ -23,7 +23,7 @@ package net.nikr.eve.jeveasset.gui.tabs.tracker;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import javax.swing.DefaultComboBoxModel;
+import java.util.Collection;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -31,34 +31,36 @@ import javax.swing.JComponent;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
+import net.nikr.eve.jeveasset.gui.shared.components.ListComboBoxModel;
+import net.nikr.eve.jeveasset.i18n.TabsTracker;
 
 
-public class JOwnerDialog extends JDialogCentered {
+public class JSelectionDialog extends JDialogCentered {
 
 	private enum OwnerSelectAction {
 		OK,
 		CANCEL
 	}
 
-	private final JComboBox jOwners;
+	private final JComboBox<String> jOwners;
 	private final JButton jOK;
 	private final JButton jCancel;
 	private final ListenerClass listener;
 
-	private String owner;
+	private String returnValue;
 
-	public JOwnerDialog(Program program) {
-		super(program, "Select Owner", Images.TOOL_TRACKER.getImage());
+	public JSelectionDialog(Program program) {
+		super(program, "", Images.TOOL_TRACKER.getImage());
 
 		listener = new ListenerClass();
 
-		jOwners = new JComboBox();
+		jOwners = new JComboBox<String>();
 
-		jOK = new JButton("OK");
+		jOK = new JButton(TabsTracker.get().ok());
 		jOK.setActionCommand(OwnerSelectAction.OK.name());
 		jOK.addActionListener(listener);
 
-		jCancel = new JButton("Cancel");
+		jCancel = new JButton(TabsTracker.get().cancel());
 		jCancel.setActionCommand(OwnerSelectAction.CANCEL.name());
 		jCancel.addActionListener(listener);
 
@@ -66,25 +68,45 @@ public class JOwnerDialog extends JDialogCentered {
 			layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
 				.addComponent(jOwners)
 				.addGroup(layout.createSequentialGroup()
-					.addComponent(jOK, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH)
-					.addComponent(jCancel, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH)
+					.addComponent(jOK, Program.getButtonsWidth(), Program.getButtonsWidth(), Program.getButtonsWidth())
+					.addComponent(jCancel, Program.getButtonsWidth(), Program.getButtonsWidth(), Program.getButtonsWidth())
 				)
 		);
 		layout.setVerticalGroup(
 			layout.createSequentialGroup()
-				.addComponent(jOwners, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+				.addComponent(jOwners, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 				.addGroup(layout.createParallelGroup()
-					.addComponent(jOK, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					.addComponent(jCancel, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					.addComponent(jOK, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jCancel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 				)
 		);
 	}
 
-	public String show(Object[] owners) {
-		jOwners.setModel(new DefaultComboBoxModel(owners));
-		owner = null;
+	public String showOwner(Collection<String> owners) {
+		getDialog().setTitle(TabsTracker.get().selectOwner());
+		return show(owners);
+	}
+
+	public String showDivision(Collection<String> divisions) {
+		getDialog().setTitle(TabsTracker.get().selectDivision());
+		return show(divisions);
+	}
+
+	public String showLocation(Collection<String> locations) {
+		getDialog().setTitle(TabsTracker.get().selectLocation());
+		return show(locations);
+	}
+
+	public String showFlag(Collection<String> flags) {
+		getDialog().setTitle(TabsTracker.get().selectFlag());
+		return show(flags);
+	}
+
+	private String show(Collection<String> data) {
+		jOwners.setModel(new ListComboBoxModel<String>(data));
+		returnValue = null;
 		setVisible(true);
-		return owner;
+		return returnValue;
 	}
 
 	@Override
@@ -102,7 +124,7 @@ public class JOwnerDialog extends JDialogCentered {
 
 	@Override
 	protected void save() {
-		owner = (String) jOwners.getSelectedItem();
+		returnValue = (String) jOwners.getSelectedItem();
 		setVisible(false);
 	}
 
