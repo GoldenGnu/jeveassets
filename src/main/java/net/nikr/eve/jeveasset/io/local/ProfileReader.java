@@ -402,14 +402,14 @@ public final class ProfileReader extends AbstractXmlReader {
 
 	private void parseJournals(final Element element, final Owner owner) {
 		NodeList journalsNodes = element.getElementsByTagName("journals");
-		Map<Long, MyJournal> journals = new HashMap<Long, MyJournal>();
+		List<MyJournal> journals = new ArrayList<MyJournal>();
 		for (int a = 0; a < journalsNodes.getLength(); a++) {
 			Element currentAalletJournalsNode = (Element) journalsNodes.item(a);
 			NodeList journalNodes = currentAalletJournalsNode.getElementsByTagName("journal");
 			for (int b = 0; b < journalNodes.getLength(); b++) {
 				Element currentNode = (Element) journalNodes.item(b);
 				MyJournal journal = parseJournal(currentNode, owner);
-				journals.put(journal.getRefID(), journal);
+				journals.add(journal);
 			}
 		}
 		owner.setJournal(journals);
@@ -469,14 +469,14 @@ public final class ProfileReader extends AbstractXmlReader {
 
 	private void parseTransactions(final Element element, final Owner owner) {
 		NodeList transactionsNodes = element.getElementsByTagName("wallettransactions");
-		Map<Long, MyTransaction> transactions = new HashMap<Long, MyTransaction>();
+		List<MyTransaction> transactions = new ArrayList<MyTransaction>();
 		for (int a = 0; a < transactionsNodes.getLength(); a++) {
 			Element currentTransactionsNode = (Element) transactionsNodes.item(a);
 			NodeList transactionNodes = currentTransactionsNode.getElementsByTagName("wallettransaction");
 			for (int b = 0; b < transactionNodes.getLength(); b++) {
 				Element currentNode = (Element) transactionNodes.item(b);
 				MyTransaction transaction = parseTransaction(currentNode, owner);
-				transactions.put(transaction.getTransactionID(), transaction);
+				transactions.add(transaction);
 			}
 		}
 		owner.setTransactions(transactions);

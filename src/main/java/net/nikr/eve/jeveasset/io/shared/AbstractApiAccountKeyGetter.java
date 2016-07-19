@@ -24,6 +24,7 @@ package net.nikr.eve.jeveasset.io.shared;
 import com.beimin.eveapi.exception.ApiException;
 import com.beimin.eveapi.response.ApiListResponse;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 
@@ -32,7 +33,7 @@ public abstract class AbstractApiAccountKeyGetter<T extends ApiListResponse<?>, 
 	private static final int ROW_COUNT = 1000;
 
 	//Date
-	private Map<Long, V> values;
+	private List<V> values;
 	private Date nextUpdate;
 
 	//Request controllers
@@ -44,10 +45,11 @@ public abstract class AbstractApiAccountKeyGetter<T extends ApiListResponse<?>, 
 		super(taskName, true, false);
 	}
 
-	protected abstract Map<Long, V> get();
-	protected abstract void set(Map<Long, V> values, Date nextUpdate);
+	protected abstract List<V> get();
+	protected abstract long getId(V v);
+	protected abstract void set(List<V> values, Date nextUpdate);
 	protected abstract T getResponse(final boolean bCorp, final int accountKey, final long fromID, final int rowCount) throws ApiException;
-	protected abstract Map<Long, V> convertData(final T response, final int accountKey);
+	protected abstract List<V> convertData(final T response, final int accountKey);
 
 	//Called for each owner by AbstractApiGetter
 	@Override
@@ -130,15 +132,15 @@ public abstract class AbstractApiAccountKeyGetter<T extends ApiListResponse<?>, 
 	protected final void setData(final T response) {
 		rowCount = response.getAll().size();
 		fromID = 0;
-		Map<Long, V> data = convertData(response, accountKey);
-		for (Map.Entry<Long, V> entry : data.entrySet()) {
-			Long id = entry.getKey();
+		List<V> data = convertData(response, accountKey);
+		for (V v : data) {
+			Long id = getId(v);
 			if (fromID == 0) {
 				fromID = id;
 			} else {
 				fromID = Math.min(fromID, id);
 			}
-			values.put(id, entry.getValue());
+			values.add(v);
 		}
 	}
 }

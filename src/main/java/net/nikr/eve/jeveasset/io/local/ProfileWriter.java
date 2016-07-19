@@ -124,8 +124,8 @@ public final class ProfileWriter extends AbstractXmlWriter {
 			writeContractItems(xmldoc, node, owner.getContracts());
 			writeAccountBalances(xmldoc, node, owner.getAccountBalances(), owner.isCorporation());
 			writeMarketOrders(xmldoc, node, owner.getMarketOrders(), owner.isCorporation());
-			writeJournals(xmldoc, node, new ArrayList<MyJournal>(owner.getJournal().values()), owner.isCorporation());
-			writeTransactions(xmldoc, node, new ArrayList<MyTransaction>(owner.getTransactions().values()), owner.isCorporation());
+			writeJournals(xmldoc, node, new ArrayList<MyJournal>(owner.getJournal()), owner.isCorporation());
+			writeTransactions(xmldoc, node, new ArrayList<MyTransaction>(owner.getTransactions()), owner.isCorporation());
 			writeIndustryJobs(xmldoc, node, owner.getIndustryJobs(), owner.isCorporation());
 			writeBlueprints(xmldoc, node, owner.getBlueprints(), owner.isCorporation());
 		}
