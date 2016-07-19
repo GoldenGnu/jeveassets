@@ -24,8 +24,7 @@ package net.nikr.eve.jeveasset.io.shared;
 import com.beimin.eveapi.exception.ApiException;
 import com.beimin.eveapi.response.ApiListResponse;
 import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.Set;
 
 
 public abstract class AbstractApiAccountKeyGetter<T extends ApiListResponse<?>, V> extends AbstractApiGetter<T> {
@@ -33,7 +32,7 @@ public abstract class AbstractApiAccountKeyGetter<T extends ApiListResponse<?>, 
 	private static final int ROW_COUNT = 1000;
 
 	//Date
-	private List<V> values;
+	private Set<V> values;
 	private Date nextUpdate;
 
 	//Request controllers
@@ -45,11 +44,11 @@ public abstract class AbstractApiAccountKeyGetter<T extends ApiListResponse<?>, 
 		super(taskName, true, false);
 	}
 
-	protected abstract List<V> get();
+	protected abstract Set<V> get();
 	protected abstract long getId(V v);
-	protected abstract void set(List<V> values, Date nextUpdate);
+	protected abstract void set(Set<V> values, Date nextUpdate);
 	protected abstract T getResponse(final boolean bCorp, final int accountKey, final long fromID, final int rowCount) throws ApiException;
-	protected abstract List<V> convertData(final T response, final int accountKey);
+	protected abstract Set<V> convertData(final T response, final int accountKey);
 
 	//Called for each owner by AbstractApiGetter
 	@Override
@@ -132,7 +131,7 @@ public abstract class AbstractApiAccountKeyGetter<T extends ApiListResponse<?>, 
 	protected final void setData(final T response) {
 		rowCount = response.getAll().size();
 		fromID = 0;
-		List<V> data = convertData(response, accountKey);
+		Set<V> data = convertData(response, accountKey);
 		for (V v : data) {
 			Long id = getId(v);
 			if (fromID == 0) {

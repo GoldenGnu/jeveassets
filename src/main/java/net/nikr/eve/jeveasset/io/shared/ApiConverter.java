@@ -32,9 +32,11 @@ import com.beimin.eveapi.model.shared.MarketOrder;
 import com.beimin.eveapi.model.shared.WalletTransaction;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import net.nikr.eve.jeveasset.data.Item;
 import net.nikr.eve.jeveasset.data.MyAccountBalance;
 import net.nikr.eve.jeveasset.data.MyLocation;
@@ -311,8 +313,8 @@ public final class ApiConverter {
 		return new MyAsset(item, location, owner, count, parents, flag, flagID, itemID, singleton, rawQuantity);
 	}
 
-	public static List<MyJournal> convertJournals(final List<JournalEntry> apiJournals, final Owner owner, final int accountKey) {
-		List<MyJournal> journals = new ArrayList<MyJournal>();
+	public static Set<MyJournal> convertJournals(final List<JournalEntry> apiJournals, final Owner owner, final int accountKey) {
+		Set<MyJournal> journals = new HashSet<MyJournal>();
 		for (JournalEntry apiJournal : apiJournals) {
 			MyJournal journal = convertJournal(apiJournal, owner, accountKey);
 			journals.add(journal);
@@ -325,8 +327,8 @@ public final class ApiConverter {
 		return journal;
 	}
 
-	public static List<MyTransaction> convertTransactions(final List<WalletTransaction> apiJournals, final Owner owner, final int accountKey) {
-		List<MyTransaction> transactions = new ArrayList<MyTransaction>();
+	public static Set<MyTransaction> convertTransactions(final List<WalletTransaction> apiJournals, final Owner owner, final int accountKey) {
+		Set<MyTransaction> transactions = new HashSet<MyTransaction>();
 		for (WalletTransaction apiTransaction : apiJournals) {
 			MyTransaction transaction = convertTransaction(apiTransaction, owner, accountKey);
 			transactions.add(transaction);

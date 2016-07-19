@@ -26,9 +26,9 @@ import com.beimin.eveapi.model.shared.WalletTransaction;
 import com.beimin.eveapi.response.shared.WalletTransactionsResponse;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
 import net.nikr.eve.jeveasset.data.MyAccount;
 import net.nikr.eve.jeveasset.data.MyAccount.AccessMask;
 import net.nikr.eve.jeveasset.data.Owner;
@@ -52,16 +52,16 @@ public class TransactionsGetter extends AbstractApiAccountKeyGetter<WalletTransa
 	}
 
 	@Override
-	protected List<MyTransaction> get() {
+	protected Set<MyTransaction> get() {
 		if (saveHistory) {
 			return getOwner().getTransactions();
 		} else {
-			return new ArrayList<MyTransaction>();
+			return new HashSet<MyTransaction>();
 		}
 	}
 
 	@Override
-	protected void set(List<MyTransaction> values, Date nextUpdate) {
+	protected void set(Set<MyTransaction> values, Date nextUpdate) {
 		getOwner().setTransactions(values);
 		getOwner().setTransactionsNextUpdate(nextUpdate);
 	}
@@ -78,7 +78,7 @@ public class TransactionsGetter extends AbstractApiAccountKeyGetter<WalletTransa
 	}
 
 	@Override
-	protected List<MyTransaction> convertData(WalletTransactionsResponse response, int accountKey) {
+	protected Set<MyTransaction> convertData(WalletTransactionsResponse response, int accountKey) {
 		List<WalletTransaction> api = new ArrayList<WalletTransaction>(response.getAll());
 		return ApiConverter.convertTransactions(api, getOwner(), accountKey);
 	}

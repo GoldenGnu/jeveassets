@@ -26,8 +26,10 @@ import com.beimin.eveapi.parser.ApiAuthorization;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import net.nikr.eve.jeveasset.gui.tabs.assets.MyAsset;
 import net.nikr.eve.jeveasset.gui.tabs.contracts.MyContract;
 import net.nikr.eve.jeveasset.gui.tabs.contracts.MyContractItem;
@@ -55,8 +57,8 @@ public class Owner implements Comparable<Owner> {
 	private MyAccount parentAccount;
 	private List<MyAccountBalance> accountBalances;
 	private List<MyMarketOrder> marketOrders;
-	private List<MyTransaction> transactions;
-	private List<MyJournal> journal;
+	private Set<MyTransaction> transactions;
+	private Set<MyJournal> journal;
 	private List<MyIndustryJob> industryJobs;
 	private Map<MyContract, List<MyContractItem>> contracts;
 	private List<MyAsset> assets;
@@ -112,10 +114,10 @@ public class Owner implements Comparable<Owner> {
 		assets = new ArrayList<MyAsset>();
 		accountBalances = new  ArrayList<MyAccountBalance>();
 		marketOrders = new  ArrayList<MyMarketOrder>();
-		transactions = new ArrayList<MyTransaction>();
+		transactions = new HashSet<MyTransaction>();
 		industryJobs = new  ArrayList<MyIndustryJob>();
 		contracts = new HashMap<MyContract, List<MyContractItem>>();
-		journal = new ArrayList<MyJournal>();
+		journal = new HashSet<MyJournal>();
 		blueprints = new HashMap<Long, Blueprint>();
 	}
 
@@ -191,7 +193,7 @@ public class Owner implements Comparable<Owner> {
 		this.showOwner = showOwner;
 	}
 
-	public void setJournal(final List<MyJournal> journal) {
+	public void setJournal(final Set<MyJournal> journal) {
 		this.journal = journal;
 	}
 
@@ -199,7 +201,7 @@ public class Owner implements Comparable<Owner> {
 		this.journalNextUpdate = journalNextUpdate;
 	}
 
- 	public void setTransactions(final List<MyTransaction> transactions) {
+ 	public void setTransactions(final Set<MyTransaction> transactions) {
 		this.transactions = transactions;
 	}
 
@@ -291,7 +293,7 @@ public class Owner implements Comparable<Owner> {
 		return parentAccount;
 	}
 
-	public List<MyJournal> getJournal() {
+	public Set<MyJournal> getJournal() {
 		return journal;
 	}
 
@@ -299,7 +301,7 @@ public class Owner implements Comparable<Owner> {
 		return journalNextUpdate;
 	}
 
-	public List<MyTransaction> getTransactions() {
+	public Set<MyTransaction> getTransactions() {
  		return transactions;
 	}
 

@@ -37,8 +37,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import net.nikr.eve.jeveasset.data.ItemFlag;
 import net.nikr.eve.jeveasset.data.MyAccount;
 import net.nikr.eve.jeveasset.data.MyAccountBalance;
@@ -402,7 +404,7 @@ public final class ProfileReader extends AbstractXmlReader {
 
 	private void parseJournals(final Element element, final Owner owner) {
 		NodeList journalsNodes = element.getElementsByTagName("journals");
-		List<MyJournal> journals = new ArrayList<MyJournal>();
+		Set<MyJournal> journals = new HashSet<MyJournal>();
 		for (int a = 0; a < journalsNodes.getLength(); a++) {
 			Element currentAalletJournalsNode = (Element) journalsNodes.item(a);
 			NodeList journalNodes = currentAalletJournalsNode.getElementsByTagName("journal");
@@ -469,7 +471,7 @@ public final class ProfileReader extends AbstractXmlReader {
 
 	private void parseTransactions(final Element element, final Owner owner) {
 		NodeList transactionsNodes = element.getElementsByTagName("wallettransactions");
-		List<MyTransaction> transactions = new ArrayList<MyTransaction>();
+		Set<MyTransaction> transactions = new HashSet<MyTransaction>();
 		for (int a = 0; a < transactionsNodes.getLength(); a++) {
 			Element currentTransactionsNode = (Element) transactionsNodes.item(a);
 			NodeList transactionNodes = currentTransactionsNode.getElementsByTagName("wallettransaction");
