@@ -149,13 +149,20 @@ public class MyTransaction extends WalletTransaction implements LocationType, It
 
 	@Override
 	public int compareTo(final WalletTransaction o) {
-		return o.getTransactionDateTime().compareTo(this.getTransactionDateTime());
+		int compared = o.getTransactionDateTime().compareTo(this.getTransactionDateTime());
+		if (compared != 0) {
+			return compared;
+		} else {
+			return Double.compare(o.getPrice(), this.getPrice());
+		}
 	}
 
 	@Override
 	public int hashCode() {
-		int hash = 5;
+		int hash = 7;
+		hash = 37 * hash + this.accountKey;
 		hash = 37 * hash + (int) (this.getTransactionID() ^ (this.getTransactionID() >>> 32));
+		hash = 37 * hash + (int) (Double.doubleToLongBits(this.getPrice()) ^ (Double.doubleToLongBits(this.getPrice()) >>> 32));
 		return hash;
 	}
 
@@ -169,6 +176,12 @@ public class MyTransaction extends WalletTransaction implements LocationType, It
 		}
 		final MyTransaction other = (MyTransaction) obj;
 		if (this.getTransactionID() != other.getTransactionID()) {
+			return false;
+		}
+		if (this.getPrice()!= other.getPrice()) {
+			return false;
+		}
+		if (this.getAccountKey()!= other.getAccountKey()) {
 			return false;
 		}
 		return true;

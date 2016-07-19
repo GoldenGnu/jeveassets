@@ -26,9 +26,9 @@ import com.beimin.eveapi.model.shared.JournalEntry;
 import com.beimin.eveapi.response.shared.WalletJournalResponse;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
 import net.nikr.eve.jeveasset.data.MyAccount;
 import net.nikr.eve.jeveasset.data.MyAccount.AccessMask;
 import net.nikr.eve.jeveasset.data.Owner;
@@ -52,17 +52,17 @@ public class JournalGetter extends AbstractApiAccountKeyGetter<WalletJournalResp
 	}
 
 	@Override
-	protected void set(List<MyJournal> values, Date nextUpdate) {
+	protected void set(Set<MyJournal> values, Date nextUpdate) {
 		getOwner().setJournal(values);
 		getOwner().setJournalNextUpdate(nextUpdate);
 	}
 
 	@Override
-	protected List<MyJournal> get() {
+	protected Set<MyJournal> get() {
 		if (saveHistory) {
 			return getOwner().getJournal();
 		} else {
-			return new ArrayList<MyJournal>();
+			return new HashSet<MyJournal>();
 		}
 	}
 
@@ -83,7 +83,7 @@ public class JournalGetter extends AbstractApiAccountKeyGetter<WalletJournalResp
 	}
 
 	@Override
-	protected List<MyJournal> convertData(final WalletJournalResponse response, final int accountKey) {
+	protected Set<MyJournal> convertData(final WalletJournalResponse response, final int accountKey) {
 		List<JournalEntry> api = new ArrayList<JournalEntry>(response.getAll());
 		return ApiConverter.convertJournals(api, getOwner(), accountKey);
 	}

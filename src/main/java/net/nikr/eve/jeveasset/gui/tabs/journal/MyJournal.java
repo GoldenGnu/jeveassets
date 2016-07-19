@@ -93,19 +93,28 @@ public class MyJournal extends JournalEntry implements Comparable<JournalEntry> 
 
 	@Override
 	public int compareTo(JournalEntry o) {
-		return o.getDate().compareTo(this.getDate());
+		int compared = o.getDate().compareTo(this.getDate());
+		if (compared != 0) {
+			return compared;
+		} else {
+			return Double.compare(o.getAmount(), this.getAmount());
+		}
 	}
 
 	@Override
 	public int hashCode() {
 		int hash = 5;
-		hash = 53 * hash + (this.owner != null ? this.owner.hashCode() : 0);
-		hash = 53 * hash + (int) (this.getRefID() ^ (this.getRefID() >>> 32));
+		hash = 41 * hash + this.accountKey;
+		hash = 41 * hash + (int) (this.getRefID() ^ (this.getRefID() >>> 32));
+		hash = 41 * hash + (int) (Double.doubleToLongBits(this.getAmount()) ^ (Double.doubleToLongBits(this.getAmount()) >>> 32));
 		return hash;
 	}
 
 	@Override
 	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
 		if (obj == null) {
 			return false;
 		}
@@ -113,10 +122,13 @@ public class MyJournal extends JournalEntry implements Comparable<JournalEntry> 
 			return false;
 		}
 		final MyJournal other = (MyJournal) obj;
-		if (this.owner != other.owner && (this.owner == null || !this.owner.equals(other.owner))) {
+		if (this.getRefID() != other.getRefID()) {
 			return false;
 		}
-		if (this.getRefID() != other.getRefID()) {
+		if (Double.doubleToLongBits(this.getAmount()) != Double.doubleToLongBits(other.getAmount())) {
+			return false;
+		}
+		if (this.accountKey != other.accountKey) {
 			return false;
 		}
 		return true;
