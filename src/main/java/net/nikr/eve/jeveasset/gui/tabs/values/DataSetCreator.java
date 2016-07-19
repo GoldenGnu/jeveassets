@@ -156,17 +156,6 @@ public class DataSetCreator {
 			}
 			Owner acceptor = owners.get(contract.getAcceptor());
 			//Contract Collateral
-			System.out.print("---");
-			System.out.print(contract.getStatus().name());
-			System.out.print(" ");
-			System.out.print(contract.getType().name());
-			if (issuer != null) { //Issuer
-				System.out.print(" issuer: " + issuer.getName());
-			}
-			if (acceptor != null) { //Issuer
-				System.out.print(" acceptor: " + acceptor.getName());
-			}
-			System.out.println();
 			if (contract.isCourier()) {
 				//Shipping cargo (will get collateral or cargo back)
 				//We can not get the assets in courier contracts, so we use only available value: collateral
@@ -177,10 +166,8 @@ public class DataSetCreator {
 					//Done & Assets not updated = Add Collateral
 					//If assets is updated, so are all the values
 					if (assetsUpdated(contract.getDateIssued(), issuer) && (contract.getStatus() == ContractStatus.INPROGRESS || contract.getStatus() == ContractStatus.OUTSTANDING)) {
-						System.out.println("Adding Collateral to " + issuer.getName() + ": " + contract.getCollateral() + " (Issuer: Not Done & Assets Updated)");
 						addContractCollateral(contract, values, total, date, issuer.getName()); //OK
 					} else if (AssetsNotUpdated(contract.getDateCompleted(), issuer)) {
-						System.out.println("Adding Collateral to " + issuer.getName() + ": " + contract.getCollateral() + " (Issuer: Done & Assets not updated)");
 						addContractCollateral(contract, values, total, date, issuer.getName()); //NOT TESTED
 					}
 				}
@@ -189,7 +176,6 @@ public class DataSetCreator {
 					//Not Done & Balance Updated = Add Collateral
 					//If ballance is not updated, there is nothing to counter...
 					if (balanceUpdated(contract.getDateIssued(), acceptor) && contract.getStatus() == ContractStatus.INPROGRESS) {
-						System.out.println("Adding Collateral to " + acceptor.getName() + ": " + contract.getCollateral() + " (Acceptor: Not Done & Balance Updated)");
 						addContractCollateral(contract, values, total, date, acceptor.getName()); //OK
 					}
 				}
@@ -201,7 +187,6 @@ public class DataSetCreator {
 					//If ballance is not updated, there is nothing to counter...
 					if (balanceUpdated(contract.getDateIssued(), issuer)) {
 						//Buying: +Reward
-						System.out.println("Adding Reward to " + issuer.getName() + ": " + contract.getReward() + " (Issuer: Not Done & Balance Updated)");
 						addContractValue(values, total, date, issuer.getName(), contract.getReward()); //OK
 					} // else: Selling: we do not own the price isk, until the contract is completed
 				} else if (contract.getDateCompleted() != null) { //Completed
@@ -209,10 +194,8 @@ public class DataSetCreator {
 					//If ballance is updated, so are all the values
 					if (balanceNotUpdated(contract.getDateCompleted(), issuer)) { //NOT TESTED
 						//Sold: +Price
-						System.out.println("Adding Price to " + issuer.getName() + ": " + contract.getReward() + " (Issuer: Done & Ballance not updated yet)");
 						addContractValue(values, total, date, issuer.getName(), contract.getPrice());
 						//Bought: -Reward
-						System.out.println("Removing Reward to " + issuer.getName() + ": " + -contract.getReward() + " (Issuer: Done & Ballance not updated yet)");
 						addContractValue(values, total, date, issuer.getName(), -contract.getReward());
 					}
 				}
@@ -221,11 +204,9 @@ public class DataSetCreator {
 				//Done & Ballance not updated yet = Remove Price & Add Reward (Contract completed, update with the current values)
 				//If ballance is updated, so are all the values
 				if (balanceNotUpdated(contract.getDateCompleted(), acceptor)) { //NOT TESTED
-					System.out.println("Removing Price to " + acceptor.getName() + ": " + -contract.getPrice() + " (Acceptor: Done & Ballance not updated yet)");
 					//Bought: -Price
 					addContractValue(values, total, date, acceptor.getName(), -contract.getPrice());
 					//Sold: +Reward
-					System.out.println("Adding Reward to " + acceptor.getName() + ": " + contract.getReward() + " (Acceptor: Done & Ballance not updated yet)");
 					addContractValue(values, total, date, acceptor.getName(), contract.getReward());
 				}
 			}
@@ -246,19 +227,6 @@ public class DataSetCreator {
 				issuer = owners.get(contract.getIssuer());
 			}
 			Owner acceptor = owners.get(contract.getAcceptor());
-			/*
-			System.out.print("---");
-			System.out.print(contract.getStatus().name());
-			System.out.print(" ");
-			System.out.print(contract.getType().name());
-			*/
-			if (issuer != null) { //Issuer
-				//System.out.print(" issuer: " + issuer.getName());
-			}
-			if (acceptor != null) { //Issuer
-				//System.out.print(" acceptor: " + acceptor.getName());
-			}
-			//System.out.println();
 			//Issuer
 			if (issuer != null) {
 				if (contract.getStatus() == ContractStatus.OUTSTANDING) { //Not Completed
@@ -267,7 +235,6 @@ public class DataSetCreator {
 						//If Assets is not updated, nothing to counter
 						if (assetsUpdated(contract.getDateIssued(), issuer)) {
 							//Selling: +Item
-							//System.out.println("Selling item for " + issuer.getName() + ": " + contractItem.getName() + "x" + contractItem.getQuantity() + ") (" + (contractItem.getDynamicPrice() * contractItem.getQuantity()) + " (Issuer: Not Done & Assets Updated)");
 							addContractValue(values, total, date, issuer.getName(), contractItem.getDynamicPrice() * contractItem.getQuantity());
 						}
 					} // else: Item is being bought - nothing have changed until the contract is done
@@ -277,11 +244,9 @@ public class DataSetCreator {
 					if (AssetsNotUpdated(contract.getDateCompleted(), issuer)) {
 						if (contractItem.isIncluded()) { //Item is being sold: remove item value
 							//Sold: -Item
-							//System.out.println("Sold item for " + issuer.getName() + ": " + contractItem.getName() + "x" + contractItem.getQuantity() + ") (" + (-contractItem.getDynamicPrice() * contractItem.getQuantity()) + ") (Issuer: Done & Assets not updated yet)");
 							addContractValue(values, total, date, issuer.getName(), (-contractItem.getDynamicPrice() * contractItem.getQuantity()));
 						} else { //Item are being bought: Add item value
 							//Bought: +Item
-							//System.out.println("Bought item for " + issuer.getName() + ": " + contractItem.getName() + "x" + contractItem.getQuantity() + ") (" + (contractItem.getDynamicPrice() * contractItem.getQuantity()) + " (Issuer: Done & Assets not updated yet)");
 							addContractValue(values, total, date, issuer.getName(), contractItem.getDynamicPrice() * contractItem.getQuantity());
 						}
 					}
@@ -293,11 +258,9 @@ public class DataSetCreator {
 				if (AssetsNotUpdated(contract.getDateCompleted(), acceptor)) {
 					if (contractItem.isIncluded()) { //Items are being bought: Add items value
 						//Bought: +Item
-						//System.out.println("Bought item for " + acceptor.getName() + ": " + contractItem.getName() + "x" + contractItem.getQuantity() + ") (" + (contractItem.getDynamicPrice() * contractItem.getQuantity()) + " (Acceptor: Done & Assets not updated yet)");
 						addContractValue(values, total, date, acceptor.getName(), contractItem.getDynamicPrice() * contractItem.getQuantity());
 					} else { //Items are being sold: remove items value
 						//Sold: -Item
-						//System.out.println("Sold item for " + acceptor.getName() + ": " + contractItem.getName() + "x" + contractItem.getQuantity() + ") (" + (-contractItem.getDynamicPrice() * contractItem.getQuantity()) + " (Acceptor: Done & Assets not updated yet)");
 						addContractValue(values, total, date, acceptor.getName(), (-contractItem.getDynamicPrice() * contractItem.getQuantity()));
 					}
 				}
