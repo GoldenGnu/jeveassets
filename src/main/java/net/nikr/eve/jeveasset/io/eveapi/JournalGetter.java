@@ -52,17 +52,17 @@ public class JournalGetter extends AbstractApiAccountKeyGetter<WalletJournalResp
 	}
 
 	@Override
-	protected void set(Map<Long, MyJournal> values, Date nextUpdate) {
+	protected void set(List<MyJournal> values, Date nextUpdate) {
 		getOwner().setJournal(values);
 		getOwner().setJournalNextUpdate(nextUpdate);
 	}
 
 	@Override
-	protected Map<Long, MyJournal> get() {
+	protected List<MyJournal> get() {
 		if (saveHistory) {
 			return getOwner().getJournal();
 		} else {
-			return new HashMap<Long, MyJournal>();
+			return new ArrayList<MyJournal>();
 		}
 	}
 
@@ -83,7 +83,7 @@ public class JournalGetter extends AbstractApiAccountKeyGetter<WalletJournalResp
 	}
 
 	@Override
-	protected Map<Long, MyJournal> convertData(final WalletJournalResponse response, final int accountKey) {
+	protected List<MyJournal> convertData(final WalletJournalResponse response, final int accountKey) {
 		List<JournalEntry> api = new ArrayList<JournalEntry>(response.getAll());
 		return ApiConverter.convertJournals(api, getOwner(), accountKey);
 	}
@@ -101,5 +101,10 @@ public class JournalGetter extends AbstractApiAccountKeyGetter<WalletJournalResp
 		} else {
 			return AccessMask.JOURNAL_CHAR.getAccessMask();
 		}
+	}
+
+	@Override
+	protected long getId(MyJournal v) {
+		return v.getRefID();
 	}
 }

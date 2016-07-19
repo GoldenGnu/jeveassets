@@ -55,8 +55,8 @@ public class Owner implements Comparable<Owner> {
 	private MyAccount parentAccount;
 	private List<MyAccountBalance> accountBalances;
 	private List<MyMarketOrder> marketOrders;
-	private Map<Long, MyTransaction> transactions;
-	private Map<Long, MyJournal> journal;
+	private List<MyTransaction> transactions;
+	private List<MyJournal> journal;
 	private List<MyIndustryJob> industryJobs;
 	private Map<MyContract, List<MyContractItem>> contracts;
 	private List<MyAsset> assets;
@@ -112,10 +112,10 @@ public class Owner implements Comparable<Owner> {
 		assets = new ArrayList<MyAsset>();
 		accountBalances = new  ArrayList<MyAccountBalance>();
 		marketOrders = new  ArrayList<MyMarketOrder>();
-		transactions = new HashMap<Long, MyTransaction>();
+		transactions = new ArrayList<MyTransaction>();
 		industryJobs = new  ArrayList<MyIndustryJob>();
 		contracts = new HashMap<MyContract, List<MyContractItem>>();
-		journal = new HashMap<Long, MyJournal>();
+		journal = new ArrayList<MyJournal>();
 		blueprints = new HashMap<Long, Blueprint>();
 	}
 
@@ -191,7 +191,7 @@ public class Owner implements Comparable<Owner> {
 		this.showOwner = showOwner;
 	}
 
-	public void setJournal(final Map<Long, MyJournal> journal) {
+	public void setJournal(final List<MyJournal> journal) {
 		this.journal = journal;
 	}
 
@@ -199,7 +199,7 @@ public class Owner implements Comparable<Owner> {
 		this.journalNextUpdate = journalNextUpdate;
 	}
 
- 	public void setTransactions(final Map<Long, MyTransaction> transactions) {
+ 	public void setTransactions(final List<MyTransaction> transactions) {
 		this.transactions = transactions;
 	}
 
@@ -291,7 +291,7 @@ public class Owner implements Comparable<Owner> {
 		return parentAccount;
 	}
 
-	public Map<Long, MyJournal> getJournal() {
+	public List<MyJournal> getJournal() {
 		return journal;
 	}
 
@@ -299,7 +299,7 @@ public class Owner implements Comparable<Owner> {
 		return journalNextUpdate;
 	}
 
-	public Map<Long, MyTransaction> getTransactions() {
+	public List<MyTransaction> getTransactions() {
  		return transactions;
 	}
 

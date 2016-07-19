@@ -191,7 +191,7 @@ public class ProfileData {
 					}
 				}
 				//Add Transaction to uniqueIds
-				for (MyTransaction transaction : owner.getTransactions().values()) {
+				for (MyTransaction transaction : owner.getTransactions()) {
 					Item item = transaction.getItem();
 					if (item.isMarketGroup()) {
 						priceTypeIDs.add(item.getTypeID());
@@ -304,13 +304,13 @@ public class ProfileData {
 				//Journal
 				if (!owner.getJournal().isEmpty() && !ownersJournal.contains(owner.getName())) {
 					//Journal
-					journal.addAll(owner.getJournal().values());
+					journal.addAll(owner.getJournal());
 					ownersJournal.add(owner.getName());
 				}
 				//Transactions
 				if (!owner.getTransactions().isEmpty() && !ownersTransactions.contains(owner.getName())) {
 					//Transactions
-					for (MyTransaction transaction : owner.getTransactions().values()) {
+					for (MyTransaction transaction : owner.getTransactions()) {
 						int index = transactions.indexOf(transaction);
 						if (index >= 0) { //Dublicate
 							if (owner.isCorporation()) {
@@ -538,7 +538,7 @@ public class ProfileData {
 		//Date - maximumPurchaseAge in days
 		for (MyAccount account : profileManager.getAccounts()) {
 			for (Owner owner : account.getOwners()) {
-				for (MyTransaction transaction : owner.getTransactions().values()) {
+				for (MyTransaction transaction : owner.getTransactions()) {
 					if (transaction.getTransactionType().equals("sell")) { //Sell
 						createTransactionsPriceData(transactionPriceDataSell, transaction);
 					} else { //Buy

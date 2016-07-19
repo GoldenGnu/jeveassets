@@ -311,11 +311,11 @@ public final class ApiConverter {
 		return new MyAsset(item, location, owner, count, parents, flag, flagID, itemID, singleton, rawQuantity);
 	}
 
-	public static Map<Long, MyJournal> convertJournals(final List<JournalEntry> apiJournals, final Owner owner, final int accountKey) {
-		Map<Long, MyJournal> journals = new HashMap<Long, MyJournal>();
+	public static List<MyJournal> convertJournals(final List<JournalEntry> apiJournals, final Owner owner, final int accountKey) {
+		List<MyJournal> journals = new ArrayList<MyJournal>();
 		for (JournalEntry apiJournal : apiJournals) {
 			MyJournal journal = convertJournal(apiJournal, owner, accountKey);
-			journals.put(journal.getRefID(), journal);
+			journals.add(journal);
 		}
 		return journals;
 	}
@@ -325,11 +325,11 @@ public final class ApiConverter {
 		return journal;
 	}
 
-	public static Map<Long, MyTransaction> convertTransactions(final List<WalletTransaction> apiJournals, final Owner owner, final int accountKey) {
-		Map<Long, MyTransaction> transactions = new HashMap<Long, MyTransaction>();
+	public static List<MyTransaction> convertTransactions(final List<WalletTransaction> apiJournals, final Owner owner, final int accountKey) {
+		List<MyTransaction> transactions = new ArrayList<MyTransaction>();
 		for (WalletTransaction apiTransaction : apiJournals) {
 			MyTransaction transaction = convertTransaction(apiTransaction, owner, accountKey);
-			transactions.put(transaction.getTransactionID(), transaction);
+			transactions.add(transaction);
 		}
 		return transactions;
 	}

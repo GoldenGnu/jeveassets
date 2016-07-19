@@ -52,16 +52,16 @@ public class TransactionsGetter extends AbstractApiAccountKeyGetter<WalletTransa
 	}
 
 	@Override
-	protected Map<Long, MyTransaction> get() {
+	protected List<MyTransaction> get() {
 		if (saveHistory) {
 			return getOwner().getTransactions();
 		} else {
-			return new HashMap<Long, MyTransaction>();
+			return new ArrayList<MyTransaction>();
 		}
 	}
 
 	@Override
-	protected void set(Map<Long, MyTransaction> values, Date nextUpdate) {
+	protected void set(List<MyTransaction> values, Date nextUpdate) {
 		getOwner().setTransactions(values);
 		getOwner().setTransactionsNextUpdate(nextUpdate);
 	}
@@ -78,7 +78,7 @@ public class TransactionsGetter extends AbstractApiAccountKeyGetter<WalletTransa
 	}
 
 	@Override
-	protected Map<Long, MyTransaction> convertData(WalletTransactionsResponse response, int accountKey) {
+	protected List<MyTransaction> convertData(WalletTransactionsResponse response, int accountKey) {
 		List<WalletTransaction> api = new ArrayList<WalletTransaction>(response.getAll());
 		return ApiConverter.convertTransactions(api, getOwner(), accountKey);
 	}
@@ -102,4 +102,10 @@ public class TransactionsGetter extends AbstractApiAccountKeyGetter<WalletTransa
 			return AccessMask.TRANSACTIONS_CHAR.getAccessMask();
 		}
 	}
+
+	@Override
+	protected long getId(MyTransaction v) {
+		return v.getTransactionID();
+	}
+
 }
