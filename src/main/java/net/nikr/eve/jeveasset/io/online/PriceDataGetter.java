@@ -28,6 +28,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Proxy;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -179,11 +180,11 @@ public class PriceDataGetter implements PricingListener {
 	protected Map<Integer, PriceData> processUpdate(final UpdateTask task, final boolean updateAll, final PricingOptions pricingOptions, final Set<Integer> typeIDs, final PriceSource priceSource) {
 		this.updateTask = task;
 		this.update = updateAll;
-		this.typeIDs = new HashSet<Integer>(typeIDs);
-		this.failed = new HashSet<Integer>();
-		this.okay = new HashSet<Integer>();
-		this.queue = new HashSet<Integer>(typeIDs);
-		this.priceDataList = new HashMap<Integer, PriceData>();
+		this.typeIDs =  Collections.synchronizedSet(new HashSet<Integer>(typeIDs));
+		this.failed = Collections.synchronizedSet(new HashSet<Integer>());
+		this.okay = Collections.synchronizedSet(new HashSet<Integer>());
+		this.queue = Collections.synchronizedSet(new HashSet<Integer>(typeIDs));
+		this.priceDataList = Collections.synchronizedMap(new HashMap<Integer, PriceData>());
 
 		if (updateAll) {
 			LOG.info("Price data update all (" + priceSource + "):");
@@ -205,7 +206,7 @@ public class PriceDataGetter implements PricingListener {
 		for (int id : typeIDs) {
 			createPriceData(id, pricing);
 		}
-		while (!getQueue().isEmpty()) {
+		while (!queue.isEmpty()) {
 			try {
 				synchronized (this) {
 					wait();
@@ -224,11 +225,13 @@ public class PriceDataGetter implements PricingListener {
 		}
 		if (!failed.isEmpty()) {
 			StringBuilder errorString = new StringBuilder();
-			for (int typeID : failed) {
-				if (!errorString.toString().isEmpty()) {
-					errorString.append(", ");
+			synchronized (failed) {
+				for (int typeID : failed) {
+					if (!errorString.toString().isEmpty()) {
+						errorString.append(", ");
+					}
+					errorString.append(typeID);
 				}
-				errorString.append(typeID);
 			}
 			LOG.error("Failed to update price data for the following typeIDs: " + errorString.toString());
 			if (updateTask != null) {
@@ -270,10 +273,6 @@ public class PriceDataGetter implements PricingListener {
 		}
 	}
 
-	public synchronized Set<Integer> getQueue() {
-		return queue;
-	}
-
 	public Date getNextUpdate() {
 		return new Date(nextUpdate + priceCacheTimer);
 	}
@@ -291,7 +290,7 @@ public class PriceDataGetter implements PricingListener {
 	@Override
 	public void priceUpdated(final int typeID, final Pricing pricing) {
 		createPriceData(typeID, pricing);
-		getQueue().remove(typeID);
+		queue.remove(typeID);
 		synchronized (this) {
 			notify();
 		}
@@ -300,7 +299,7 @@ public class PriceDataGetter implements PricingListener {
 	@Override
 	public void priceUpdateFailed(final int typeID, final Pricing pricing) {
 		failed.add(typeID);
-		getQueue().remove(typeID);
+		queue.remove(typeID);
 		synchronized (this) {
 			notify();
 		}
@@ -326,9 +325,9 @@ public class PriceDataGetter implements PricingListener {
 			}
 		}
 		if (ok) {
-			getQueue().remove(typeID); //Load price...
 			okay.add(typeID);
 			failed.remove(typeID);
+			queue.remove(typeID); //Load price...
 		} else {
 			failed.add(typeID);
 		}
