@@ -166,7 +166,13 @@ public class ProfileData {
 					}
 					Integer jumps = distances.get(systemID);
 					if (jumps == null) {
-						jumps = graph.distanceBetween(systemCache.get(systemID), systemCache.get(jumpSystemID));
+						SolarSystem from = systemCache.get(systemID);
+						SolarSystem to = systemCache.get(jumpSystemID);
+						if (from != null && to != null) {
+							jumps = graph.distanceBetween(from, to);
+						} else {
+							jumps = -1;
+						}
 						distances.put(systemID, jumps);
 					}
 					jumpType.addJump(jumpSystemID, jumps);
