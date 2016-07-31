@@ -30,19 +30,15 @@ if (empty($foundRow)) { //New bug report
 	print $id;
 
 	$to      = 'nkr@niklaskr.dk';
-	$subject = name();
-	$message = "New Bug Report\r\n"
+	$subject = "New " . name() . " bug report";
+	$message = name() . " bug report\r\n"
 				."BugID: " . $id . "\r\n"
-				."http://eve.nikr.net/jeveassets/bugs/\r\n"
+				.buglink()."#".$id."\r\n"
 				."\r\n"
 				.$log_in
-				."\r\n"
 				;
 	$headers = 'From: nkr@niklaskr.dk' . "\r\n" .
 			 'X-Mailer: PHP/' . phpversion();
-
-	// In case any of our lines are larger than 70 characters, we should use wordwrap()
-	$message = wordwrap($message, 70, "\r\n");
 	
 	mail($to, $subject, $message, $headers);
 } else { //Old bug report - Add: count, os, java, version - Update: status
@@ -54,10 +50,13 @@ if (empty($foundRow)) { //New bug report
 	} else {
 		$status = $foundRow['status'];
 	}
-	$stmt = $dbh->prepare("UPDATE ".table()." SET os=:os,java=:java,version=:version,count=:count,status=:status WHERE id=:id");
-	$stmt->bindParam(':os', add($foundRow['os'], $os_in));
-	$stmt->bindParam(':java', add($foundRow['java'], $java_in));
-	$stmt->bindParam(':version', add($foundRow['version'], $version_in));
+	$os = add($foundRow['os'], $os_in);
+	$java = add($foundRow['java'], $java_in);
+	$version = add($foundRow['version'], $version_in);
+	$stmt = $dbh->prepare("UPDATE ".table()." SET os=:os,java=:java,version=:version,count=:count,status=:status,date=current_timestamp WHERE id=:id");
+	$stmt->bindParam(':os', $os);
+	$stmt->bindParam(':java', $java);
+	$stmt->bindParam(':version', $version);
 	$stmt->bindParam(':count', $count);
 	$stmt->bindParam(':id', $id);
 	$stmt->bindParam(':status', $status);

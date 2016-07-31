@@ -6,6 +6,12 @@ function table() {
 	return "jeveasset";
 }
 function name() {
-	return "jEveAssets Bug Database";
+	return "jEveAssets";
+}
+function buglink() {
+	return 'http://localhost';
+}
+function password() {
+	return "pass";
 }
 ?>
