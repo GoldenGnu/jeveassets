@@ -1,11 +1,43 @@
 <?php
 include 'conn.php';
 
-$order_in = filter_input(INPUT_POST, 'order');
+//Get versions
+$dbh = con();
+$version_array = getArray($dbh, 'version');
+$java_array = getArray($dbh, 'java');
+$os_array = getArray($dbh, 'os');
+
+$admin = null !== filter_input(INPUT_GET, 'admin');
+
+$order_in = filter_input(INPUT_GET, 'order');
 $order = makeSafe(strtolower($order_in), array("date", "count", "id"), 'date');
 
-$desc_in = filter_input(INPUT_POST, 'desc');
+$desc_in = filter_input(INPUT_GET, 'desc');
 $desc = makeSafe(strtoupper($desc_in), array("DESC", "ASC"), 'DESC');
+
+$version_in = filter_input(INPUT_GET, 'version');
+$version = makeSafe($version_in, $version_array, 'All');
+
+$java_in = filter_input(INPUT_GET, 'java');
+$java = makeSafe($java_in, $java_array, 'All');
+
+$os_in = filter_input(INPUT_GET, 'os');
+$os = makeSafe($os_in, $os_array, 'All');
+
+$edit = filter_input(INPUT_POST, 'edit');
+if ($edit == password()) {
+	$id = filter_input(INPUT_POST, 'id');
+	$status = filter_input(INPUT_POST, 'status');
+	update($dbh, $id, $status);
+	header("Location: .?".$_SERVER['QUERY_STRING']);
+}
+
+$delete = filter_input(INPUT_POST, 'delete');
+if ($delete == password()) {
+	$id = filter_input(INPUT_POST, 'id');
+	delete($dbh, $id, $status);
+	header("Location: .?".$_SERVER['QUERY_STRING']);
+}
 
 ?><!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
@@ -15,37 +47,100 @@ $desc = makeSafe(strtoupper($desc_in), array("DESC", "ASC"), 'DESC');
 	<meta http-equiv="expires" content="0" />
 	<meta http-equiv="expires" content="Tue, 01 Jan 1980 1:00:00 GMT" />
 	<meta http-equiv="pragma" content="no-cache" />
-	<title><?php echo name() ?></title>
+	<title><?php echo name() . ' Bug Database' ?></title>
 	<link rel="icon" type="image/png" href="favicon.ico" />
 	<script> 
-	function toggle(elementId) {
-		var ele = document.getElementById(elementId);
-		if(ele.style.display == "block") {
-			ele.style.display = "none";
+	function toggle(id, name) {
+		var hide;
+		var otherName;
+		if (name === 'delete') {
+			otherName = 'edit';
 		} else {
-			ele.style.display = "block";
+			otherName = 'delete';
+		}
+		var ele = document.getElementById(name + id);
+		if(document.getElementById(name + id).style.display === "inline") {
+			//Hide span
+			document.getElementById(name + id).style.display = "none";
+			//Update text
+			document.getElementById('button' + name + id).value = document.getElementById('button' + name + id).value.toString().replace("Hide", "Show");
+			//Enable both buttons
+			document.getElementById('button' + name + id).disabled = false;
+			document.getElementById('button' + otherName + id).disabled = false;
+			//document.getElementById('button' + name + id).style.display = "inline";
+			
+			
+			//document.getElementById('button' + otherName + id).style.display = "inline";
+		} else {
+			//Show span
+			document.getElementById(name + id).style.display = "inline";
+			
+			document.getElementById('button' + name + id).value = document.getElementById('button' + name + id).value.toString().replace("Show", "Hide");
+			//Hide other span
+			document.getElementById(otherName + id).style.display = "none";
+			//Disable other button
+			//document.getElementById('button' + otherName + id).style.display = "none";
+			document.getElementById('button' + otherName + id).disabled = true;
+		}
+	}
+	function showhide(elementId) {
+		if(document.getElementById(elementId).style.display === "inline") {
+			//Hide span
+			document.getElementById(elementId).style.display = "none";
+		} else {
+			//Show span
+			document.getElementById(elementId).style.display = "inline";
+		}
+	}
+	window.onkeyup = function(e) {
+		var key = e.keyCode ? e.keyCode : e.which;
+
+		if (key == 65 && e.altKey) {
+			if (window.location.search.indexOf("admin") < 0) {
+				window.location.search += "&admin=admin";
+			} else {
+				window.location.search = window.location.search.replace("?admin=admin", "").replace("&admin=admin", "");
+			}
 		}
 	}
 	</script>
 </head>
 <body>
-	<h1><?php echo name() ?></h1>
+	<h1><?php echo name() . ' Bug Database' ?></h1>
 	<hr>
 <?php
-
-echo '<form method="post" action="">';
+echo '<form method="get" action="">';
+echo 'Order By:';
 select(array("Date", "Count", "ID"), 'order', $order);
 select(array("DESC", "ASC"), 'desc', $desc);
+echo ' Version: ';
+select($version_array, 'version', $version);
+echo ' Java: ';
+select($java_array, 'java', $java);
+echo ' OS: ';
+select($os_array, 'os', $os);
+if ($admin) {
+	echo '<input type="hidden" name="admin" value="admin">';
+}
 echo '<input type="submit" value="Submit">';
-echo '</form">';
+echo '</form>';
 echo "<hr>";
 
-$dbh = con();
-$statement = $dbh->prepare("SELECT * FROM ".table()." ORDER BY $order $desc");
+$sql = "SELECT * FROM ".table();
+$and = false;
+if ($version != 'All' || $java != 'All' || $os != 'All') {
+	$sql = $sql . " WHERE ";
+}
+add_where($sql, $and, $version, 'version');
+add_where($sql, $and, $java, 'java');
+add_where($sql, $and, $os, 'os');
+$sql = $sql." ORDER BY $order $desc";
+
+$statement = $dbh->prepare($sql);
 $statement->execute();
 $rows = $statement->fetchAll(PDO::FETCH_ASSOC);
 foreach ($rows as &$row) {
-	echo " <b>Status:</b> ";
+	echo '<div style="width: 350px; float: left;">';
 	switch ($row['status']) {
 		case -2:
 			echo "<span style=\"background: Gainsboro;\">&nbsp;Won't Fix&nbsp;</span>";
@@ -69,14 +164,58 @@ foreach ($rows as &$row) {
 			echo "<span style=\"background: LimeGreen  ;\">&nbsp;Fix Released&nbsp;</span>";
 			break;
 	}
-	echo " <b>Date:</b> ".format($row['date']);
-	echo " <b>Count:</b> ".format($row['count']);
-	echo " <b>Id:</b> ".format($row['id'])."<br>";
+	echo " <b>Date:</b> ".formatDate($row['date']);
+	echo " <b>Count:</b> ";
+	if ($row['count'] > 10) {
+		echo "<span style=\"background: Brown;\">";
+	} elseif ($row['count'] > 6) {
+		echo "<span style=\"background: OrangeRed;\">";
+	} elseif ($row['count'] > 2) {
+		echo "<span style=\"background: Orange;\">";
+	} else {
+		echo "<span>";
+	}
+	echo format($row['count']);
+	echo "</span>";
+	echo ' <b>Id:</b> <a href="#bugid'.format($row['id']).'" id="bugid'.format($row['id']).'">'.format($row['id']).'</a>';
+	echo "</div>";
+	if ($admin) {
+		echo '<div>';
+		//Edit
+		echo ' <input type="button" onclick="toggle(\''.$row['id'].'\', \'edit\')" id="buttonedit'.$row['id'].'" value="Show Edit" style="width: 110px;"><span id="edit'.$row['id'].'" style="display:none">';
+		echo '<form method="post" action="" style="display: inline;">';
+		echo ' <select name="status">';
+		echo '<option value="-2">Won\'t Fix</option>';
+		echo '<option value="-1">Re-Opened</option>';
+		echo '<option value="0">New</option>';
+		echo '<option value="1">Accepted</option>';
+		echo '<option value="2">Started</option>';
+		echo '<option value="3">Fixed</option>';
+		echo '<option value="4">Fix Released</option>';
+		echo '</select>';
+		echo '<input type="hidden" name="id" value="'.$row['id'].'">';
+		echo ' <input type="password" name="edit">';
+		echo ' <input type="submit" value="Update" style="display: inline;">';
+		echo '</form>';
+		echo '</span>';
+		//Delete
+		echo ' <input type="button" onclick="toggle(\''.$row['id'].'\', \'delete\')" id="buttondelete'.$row['id'].'" value="Show Delete" style="width: 110px;"><span id="delete'.$row['id'].'" style="display:none">';
+		echo '<form method="post" action="" style="display: inline;">';
+		echo '<input type="hidden" name="id" value="'.$row['id'].'">';
+		echo ' <input type="password" name="delete">';
+		echo ' <input type="submit" value="Delete" style="display: inline;">';
+		echo '</form>';
+		echo '</span>';
+		echo "</div>";
+	}
+	echo '<div style="clear: both;">';
 	echo "<b>OS:</b> ".format_list($row['os'])."<br>";
 	echo "<b>Java:</b> ".format_list($row['java'])."<br>";
 	echo "<b>Version:</b> ".format_list($row['version'])."<br>";
-	echo "<button type=\"button\" onclick=\"toggle('log".$row['id']."')\">Show Log</button><br><div id=\"log".$row['id']."\" style=\"display:none\">".format($row['log'])."</div><br>";
+	echo "<b>Bug:</b> ".strtok($row['log'], "\n")."<br>";
+	echo "<button type=\"button\" onclick=\"showhide('log".$row['id']."')\">Show Log</button><br><div id=\"log".$row['id']."\" style=\"display:none\">".format($row['log'])."</div><br>";
 	echo "<hr>";
+	echo "</div>";
 }
 
 function format_space($string) {
@@ -90,6 +229,17 @@ function format($string) {
 	$string = htmlentities($string);
 	$string = format_space($string);
 	return $string;
+}
+function formatDate($string) {
+	$db_date = new DateTime($string);
+    $today = new DateTime();
+    $interval = $db_date->diff($today);
+	$string = $interval->format('%a days ago');
+	if ($string == '0 days ago') {
+		return 'Today';
+	} else {
+		return $string;
+	}
 }
 function format_list($string) {
 	$string = str_replace(";", "&nbsp;&nbsp;&nbsp;&nbsp;", $string);
@@ -113,6 +263,36 @@ function makeSafe($find, $in, $default) {
 		return $default;
 	} else {
 		return $value;
+	}
+}
+function getArray($dbh, $column) {
+	$statement = $dbh->prepare("SELECT $column FROM ".table());
+	$statement->execute();
+	$rows = $statement->fetchAll(PDO::FETCH_ASSOC);
+	$array = array('All');
+	foreach ($rows as &$row) {
+		$temp = explode(';', $row[$column]);
+		$temp = array_merge($temp, $array);
+		$array = array_unique($temp);
+	}
+	sort($array);
+	return $array;
+}
+function update($dbh, $id, $status) {
+	$statement = $dbh->prepare("UPDATE ".table()." SET status=$status WHERE id=$id");
+	$statement->execute();
+}
+function delete($dbh, $id) {
+	$statement = $dbh->prepare("DELETE FROM ".table()." WHERE id=$id");
+	$statement->execute();
+}
+function add_where(&$sql, &$and, $value, $column) {
+	if ($value != 'All') {
+		if ($and) {
+			$sql = $sql . " AND ";
+		}
+		$sql = $sql . " $column LIKE '%$value%' ";
+		$and = true;
 	}
 }
 ?>
