@@ -1084,11 +1084,10 @@ public class RoutingTab extends JMainTab  {
 	}
 
 	private void removeSystems() {
-		int[] selected = jAvoid.getSelectedIndices();
 		Settings.lock("Routing (Delete Systems)");
-		for (int index : selected) {
-			SolarSystem removed = avoidModel.remove(index);
-			Settings.get().getRoutingSettings().getAvoid().remove(removed.getSystemID());
+		for (SolarSystem system : jAvoid.getSelectedValuesList()) {
+			avoidModel.remove(system);
+			Settings.get().getRoutingSettings().getAvoid().remove(system.getSystemID());
 		}
 		Settings.unlock("Routing (Delete Systems)");
 		program.saveSettings("Routing (Delete Systems)");
