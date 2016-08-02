@@ -32,7 +32,6 @@ import static net.nikr.eve.jeveasset.Program.PROGRAM_VERSION;
 import net.nikr.eve.jeveasset.io.shared.FileLock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import uk.me.candle.translations.service.BundleService;
 
 
 public final class Main {
@@ -42,7 +41,6 @@ public final class Main {
 	 *
 	 */
 	private static Logger log;
-	private static BundleService bundleService;
 
 	/**
 	 * JEveAssets main launcher.
