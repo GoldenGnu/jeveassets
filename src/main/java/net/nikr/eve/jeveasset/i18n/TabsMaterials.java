@@ -22,12 +22,12 @@
 package net.nikr.eve.jeveasset.i18n;
 
 import java.util.Locale;
-import net.nikr.eve.jeveasset.Main;
 import uk.me.candle.translations.Bundle;
 
 public abstract class TabsMaterials extends Bundle {
+
 	public static TabsMaterials get() {
-		return Main.getBundleService().get(TabsMaterials.class);
+		return BundleServiceFactory.getBundleService().get(TabsMaterials.class);
 	}
 
 	public TabsMaterials(final Locale locale) {

@@ -22,12 +22,12 @@
 package net.nikr.eve.jeveasset.i18n;
 
 import java.util.Locale;
-import net.nikr.eve.jeveasset.Main;
 import uk.me.candle.translations.Bundle;
 
 public abstract class TabsRouting extends Bundle {
+
 	public static TabsRouting get() {
-		return Main.getBundleService().get(TabsRouting.class);
+		return BundleServiceFactory.getBundleService().get(TabsRouting.class);
 	}
 
 	public TabsRouting(final Locale locale) {

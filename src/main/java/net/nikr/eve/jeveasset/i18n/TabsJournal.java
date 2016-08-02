@@ -21,13 +21,13 @@
 package net.nikr.eve.jeveasset.i18n;
 
 import java.util.Locale;
-import net.nikr.eve.jeveasset.Main;
 import uk.me.candle.translations.Bundle;
 
 
 public abstract class TabsJournal  extends Bundle {
+
 	public static TabsJournal get() {
-		return Main.getBundleService().get(TabsJournal.class);
+		return BundleServiceFactory.getBundleService().get(TabsJournal.class);
 	}
 
 	public TabsJournal(final Locale locale) {
@@ -35,7 +35,6 @@ public abstract class TabsJournal  extends Bundle {
 	}
 
 	public abstract String title();
-
 	public abstract String columnAccountKey();
 	public abstract String columnAmount();
 	public abstract String columnArgID1();

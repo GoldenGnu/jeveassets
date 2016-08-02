@@ -18,31 +18,23 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
  */
-
 package net.nikr.eve.jeveasset.i18n;
 
 import java.util.Locale;
-import uk.me.candle.translations.Bundle;
+import uk.me.candle.translations.conf.DefaultBundleConfiguration;
+import uk.me.candle.translations.service.BasicBundleService;
+import uk.me.candle.translations.service.BundleService;
 
-public abstract class TabsItems extends Bundle {
 
-	public static TabsItems get() {
-		return BundleServiceFactory.getBundleService().get(TabsItems.class);
+public class BundleServiceFactory {
+
+	private static BundleService bundleService;
+
+	public static BundleService getBundleService() {
+		//XXX - Workaround for default language
+		if (bundleService == null) {
+			bundleService = new BasicBundleService(new DefaultBundleConfiguration(), Locale.ENGLISH);
+		}
+		return bundleService;
 	}
-
-	public TabsItems(final Locale locale) {
-		super(locale);
-	}
-
-	public abstract String items();
-	public abstract String columnName();
-	public abstract String columnGroup();
-	public abstract String columnCategory();
-	public abstract String columnPriceBase();
-	public abstract String columnPriceReprocessed();
-	public abstract String columnMeta();
-	public abstract String columnTech();
-	public abstract String columnVolume();
-	public abstract String columnTypeID();
 }
-

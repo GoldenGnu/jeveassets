@@ -22,7 +22,6 @@
 package net.nikr.eve.jeveasset.i18n;
 
 import java.util.Locale;
-import net.nikr.eve.jeveasset.Main;
 import uk.me.candle.translations.Bundle;
 
 /**
@@ -30,12 +29,15 @@ import uk.me.candle.translations.Bundle;
  * @author Candle
  */
 public abstract class DataModelPriceDataSettings extends Bundle {
+
 	public static DataModelPriceDataSettings get() {
-		return Main.getBundleService().get(DataModelPriceDataSettings.class);
+		return BundleServiceFactory.getBundleService().get(DataModelPriceDataSettings.class);
 	}
+
 	public DataModelPriceDataSettings(final Locale locale) {
 		super(locale);
 	}
+
 	public abstract String sourceEveAddicts();
 	public abstract String sourceEveCentral();
 	public abstract String sourceEveMarketdata();

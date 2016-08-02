@@ -22,7 +22,6 @@
 package net.nikr.eve.jeveasset.i18n;
 
 import java.util.Locale;
-import net.nikr.eve.jeveasset.Main;
 import uk.me.candle.translations.Bundle;
 
 /**
@@ -32,7 +31,7 @@ import uk.me.candle.translations.Bundle;
 public abstract class DataModelIndustryJob extends Bundle {
 
 	public static DataModelIndustryJob get() {
-		return Main.getBundleService().get(DataModelIndustryJob.class);
+		return BundleServiceFactory.getBundleService().get(DataModelIndustryJob.class);
 	}
 
 	public DataModelIndustryJob(final Locale locale) {

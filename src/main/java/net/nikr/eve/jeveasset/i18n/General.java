@@ -22,7 +22,6 @@
 package net.nikr.eve.jeveasset.i18n;
 
 import java.util.Locale;
-import net.nikr.eve.jeveasset.Main;
 import uk.me.candle.translations.Bundle;
 
 /**
@@ -30,12 +29,11 @@ import uk.me.candle.translations.Bundle;
  * @author Candle
  */
 public abstract class General extends Bundle {
+
 	public static General get() {
-		return Main.getBundleService().get(General.class);
+		return BundleServiceFactory.getBundleService().get(General.class);
 	}
-	public static General get(final Locale locale) {
-		return Main.getBundleService().get(General.class, locale);
-	}
+
 	public General(final Locale locale) {
 		super(locale);
 	}

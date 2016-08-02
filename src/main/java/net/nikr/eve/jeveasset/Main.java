@@ -23,7 +23,6 @@ package net.nikr.eve.jeveasset;
 
 import java.io.File;
 import java.net.URISyntaxException;
-import java.util.Locale;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.UIManager;
@@ -33,8 +32,6 @@ import static net.nikr.eve.jeveasset.Program.PROGRAM_VERSION;
 import net.nikr.eve.jeveasset.io.shared.FileLock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import uk.me.candle.translations.conf.DefaultBundleConfiguration;
-import uk.me.candle.translations.service.BasicBundleService;
 import uk.me.candle.translations.service.BundleService;
 
 
@@ -199,13 +196,5 @@ public final class Main {
 		} catch (UnsupportedLookAndFeelException ex) {
 			log.warn("Failed to set LookAndFeel: " + lookAndFeel, ex);
 		}
-	}
-
-	public static BundleService getBundleService() {
-		//XXX - Workaround for default language
-		if (bundleService == null) {
-			bundleService = new BasicBundleService(new DefaultBundleConfiguration(), Locale.ENGLISH);
-		}
-		return bundleService;
 	}
 }
