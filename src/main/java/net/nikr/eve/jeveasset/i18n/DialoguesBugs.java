@@ -22,14 +22,15 @@
 package net.nikr.eve.jeveasset.i18n;
 
 import java.util.Locale;
-import net.nikr.eve.jeveasset.Main;
 import uk.me.candle.translations.Bundle;
 
 
 public abstract class DialoguesBugs extends Bundle {
+
 	public static DialoguesBugs get() {
-		return Main.getBundleService().get(DialoguesBugs.class);
+		return BundleServiceFactory.getBundleService().get(DialoguesBugs.class);
 	}
+
 	public DialoguesBugs(final Locale locale) {
 		super(locale);
 	}

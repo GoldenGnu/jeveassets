@@ -22,7 +22,6 @@
 package net.nikr.eve.jeveasset.i18n;
 
 
-import net.nikr.eve.jeveasset.Main;
 import static org.junit.Assert.assertNotNull;
 import org.junit.Test;
 
@@ -34,152 +33,152 @@ public class TestI18N {
 
 	@Test
 	public void testDataModelAssetBundle_en() throws Exception {
-		DataModelAsset g = Main.getBundleService().get(DataModelAsset.class);
+		DataModelAsset g = BundleServiceFactory.getBundleService().get(DataModelAsset.class);
 		assertNotNull(g.packaged());
 	}
 
 	@Test
 	public void testDataModelIndustryJobBundle_en() throws Exception {
-		DataModelIndustryJob g = Main.getBundleService().get(DataModelIndustryJob.class);
+		DataModelIndustryJob g = BundleServiceFactory.getBundleService().get(DataModelIndustryJob.class);
 		assertNotNull(g.activityAll());
 	}
 
 	@Test
 	public void testDataModelPriceDataSettings_en() throws Exception {
-		DataModelPriceDataSettings g = Main.getBundleService().get(DataModelPriceDataSettings.class);
+		DataModelPriceDataSettings g = BundleServiceFactory.getBundleService().get(DataModelPriceDataSettings.class);
 		assertNotNull(g.regionDerelik());
 	}
 
 	@Test
 	public void testDialoguesAbout_en() throws Exception {
-		DialoguesAbout g = Main.getBundleService().get(DialoguesAbout.class);
+		DialoguesAbout g = BundleServiceFactory.getBundleService().get(DialoguesAbout.class);
 		assertNotNull(g.about());
 	}
 
 	@Test
 	public void testDialoguesAccount_en() throws Exception {
-		DialoguesAccount g = Main.getBundleService().get(DialoguesAccount.class);
+		DialoguesAccount g = BundleServiceFactory.getBundleService().get(DialoguesAccount.class);
 		assertNotNull(g.helpText());
 	}
 
 	@Test
 	public void testDialoguesAddSystem_en() throws Exception {
-		DialoguesAddSystem g = Main.getBundleService().get(DialoguesAddSystem.class);
+		DialoguesAddSystem g = BundleServiceFactory.getBundleService().get(DialoguesAddSystem.class);
 		assertNotNull(g.filterResult(5));
 	}
 
 	@Test
 	public void testDialoguesBugs_en() throws Exception {
-		DialoguesBugs g = Main.getBundleService().get(DialoguesBugs.class);
+		DialoguesBugs g = BundleServiceFactory.getBundleService().get(DialoguesBugs.class);
 		assertNotNull(g.cancel());
 	}
 
 	@Test
 	public void testDialoguesExport_en() throws Exception {
-		DialoguesExport g = Main.getBundleService().get(DialoguesExport.class);
+		DialoguesExport g = BundleServiceFactory.getBundleService().get(DialoguesExport.class);
 		assertNotNull(g.noFilter());
 	}
 
 	@Test
 	public void testDialoguesProfiles_en() throws Exception {
-		DialoguesProfiles g = Main.getBundleService().get(DialoguesProfiles.class);
+		DialoguesProfiles g = BundleServiceFactory.getBundleService().get(DialoguesProfiles.class);
 		assertNotNull(g.deleteProfileConfirm("delete me!"));
 	}
 
 	@Test
 	public void testDialoguesSettings_en() throws Exception {
-		DialoguesSettings g = Main.getBundleService().get(DialoguesSettings.class);
+		DialoguesSettings g = BundleServiceFactory.getBundleService().get(DialoguesSettings.class);
 		assertNotNull(g.enterFilter());
 	}
 
 	@Test
 	public void testDialoguesUpdate_en() throws Exception {
-		DialoguesUpdate g = Main.getBundleService().get(DialoguesUpdate.class);
+		DialoguesUpdate g = BundleServiceFactory.getBundleService().get(DialoguesUpdate.class);
 		assertNotNull(g.accountBlances());
 	}
 
 	@Test public void testGeneralBundle_en() throws Exception {
-		General g = Main.getBundleService().get(General.class);
+		General g = BundleServiceFactory.getBundleService().get(General.class);
 		assertNotNull(g.uncaughtErrorMessage());
 	}
 
 	@Test public void testGuiFrameBundle_en() throws Exception {
-		GuiFrame g = Main.getBundleService().get(GuiFrame.class);
+		GuiFrame g = BundleServiceFactory.getBundleService().get(GuiFrame.class);
 		assertNotNull(g.about());
 	}
 
 	@Test public void testGuiSharedBundle_en() throws Exception {
-		GuiShared g = Main.getBundleService().get(GuiShared.class);
+		GuiShared g = BundleServiceFactory.getBundleService().get(GuiShared.class);
 		assertNotNull(g.add());
 	}
 
 	@Test public void testTabsAssetsBundle_en() throws Exception {
-		TabsAssets g = Main.getBundleService().get(TabsAssets.class);
+		TabsAssets g = BundleServiceFactory.getBundleService().get(TabsAssets.class);
 		assertNotNull(g.assets());
 	}
 
 	@Test public void testTabsContractsBundle_en() throws Exception {
-		TabsContracts g = Main.getBundleService().get(TabsContracts.class);
+		TabsContracts g = BundleServiceFactory.getBundleService().get(TabsContracts.class);
 		assertNotNull(g.auction());
 	}
 
 	@Test public void testTabsItemsBundle_en() throws Exception {
-		TabsItems g = Main.getBundleService().get(TabsItems.class);
+		TabsItems g = BundleServiceFactory.getBundleService().get(TabsItems.class);
 		assertNotNull(g.columnName());
 	}
 
 	@Test public void testTabsJobsBundle_en() throws Exception {
-		TabsJobs g = Main.getBundleService().get(TabsJobs.class);
+		TabsJobs g = BundleServiceFactory.getBundleService().get(TabsJobs.class);
 		assertNotNull(g.all());
 	}
 
 	@Test public void testTabsLoadoutBundle_en() throws Exception {
-		TabsLoadout g = Main.getBundleService().get(TabsLoadout.class);
+		TabsLoadout g = BundleServiceFactory.getBundleService().get(TabsLoadout.class);
 		assertNotNull(g.cancel());
 	}
 
 	@Test public void testTabsMaterialsBundle_en() throws Exception {
-		TabsMaterials g = Main.getBundleService().get(TabsMaterials.class);
+		TabsMaterials g = BundleServiceFactory.getBundleService().get(TabsMaterials.class);
 		assertNotNull(g.collapse());
 	}
 
 	@Test public void testTabsOrdersBundle_en() throws Exception {
-		TabsOrders g = Main.getBundleService().get(TabsOrders.class);
+		TabsOrders g = BundleServiceFactory.getBundleService().get(TabsOrders.class);
 		assertNotNull(g.columnExpires());
 	}
 
 	@Test public void testTabsOverviewBundle_en() throws Exception {
-		TabsOverview g = Main.getBundleService().get(TabsOverview.class);
+		TabsOverview g = BundleServiceFactory.getBundleService().get(TabsOverview.class);
 		assertNotNull(g.add());
 	}
 
 	@Test public void testTabsReprocessedBundle_en() throws Exception {
-		TabsReprocessed g = Main.getBundleService().get(TabsReprocessed.class);
+		TabsReprocessed g = BundleServiceFactory.getBundleService().get(TabsReprocessed.class);
 		assertNotNull(g.add());
 	}
 
 	@Test public void testTabsRoutingBundle_en() throws Exception {
-		TabsRouting g = Main.getBundleService().get(TabsRouting.class);
+		TabsRouting g = BundleServiceFactory.getBundleService().get(TabsRouting.class);
 		assertNotNull(g.add());
 	}
 
 	@Test public void testTabsStockpileBundle_en() throws Exception {
-		TabsStockpile g = Main.getBundleService().get(TabsStockpile.class);
+		TabsStockpile g = BundleServiceFactory.getBundleService().get(TabsStockpile.class);
 		assertNotNull(g.addItem());
 	}
 
 	@Test public void testTabsTrackerBundle_en() throws Exception {
-		TabsTracker g = Main.getBundleService().get(TabsTracker.class);
+		TabsTracker g = BundleServiceFactory.getBundleService().get(TabsTracker.class);
 		assertNotNull(g.allProfiles());
 	}
 
 	@Test public void testTabsTransactionBundle_en() throws Exception {
-		TabsTransaction g = Main.getBundleService().get(TabsTransaction.class);
+		TabsTransaction g = BundleServiceFactory.getBundleService().get(TabsTransaction.class);
 		assertNotNull(g.buy());
 	}
 
 	@Test public void testTabsValuesBundle_en() throws Exception {
-		TabsValues g = Main.getBundleService().get(TabsValues.class);
+		TabsValues g = BundleServiceFactory.getBundleService().get(TabsValues.class);
 		assertNotNull(g.columnAssets());
 	}
 }

@@ -22,7 +22,6 @@
 package net.nikr.eve.jeveasset.i18n;
 
 import java.util.Locale;
-import net.nikr.eve.jeveasset.Main;
 import uk.me.candle.translations.Bundle;
 
 /**
@@ -30,13 +29,15 @@ import uk.me.candle.translations.Bundle;
  * @author Candle
  */
 public abstract class DialoguesExport extends Bundle {
+
 	public static DialoguesExport get() {
-		return Main.getBundleService().get(DialoguesExport.class);
+		return BundleServiceFactory.getBundleService().get(DialoguesExport.class);
 	}
 
 	public DialoguesExport(final Locale locale) {
 		super(locale);
 	}
+
 	public abstract String cancel();
 	public abstract String columns();
 	public abstract String comma();

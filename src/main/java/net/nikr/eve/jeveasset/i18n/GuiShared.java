@@ -22,12 +22,12 @@
 package net.nikr.eve.jeveasset.i18n;
 
 import java.util.Locale;
-import net.nikr.eve.jeveasset.Main;
 import uk.me.candle.translations.Bundle;
 
 public abstract class GuiShared extends Bundle {
+
 	public static GuiShared get() {
-		return Main.getBundleService().get(GuiShared.class);
+		return BundleServiceFactory.getBundleService().get(GuiShared.class);
 	}
 
 	public GuiShared(final Locale locale) {
