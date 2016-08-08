@@ -184,6 +184,14 @@ public class MyMarketOrder extends MarketOrder implements Comparable<MyMarketOrd
 		return new Date(expires);
 	}
 
+	public boolean isExpired() {
+		return getExpires().before(new Date());
+	}
+
+	public boolean isActive() {
+		return getOrderState() == 0 && !isExpired();
+	}
+
 	public void setDynamicPrice(double price) {
 		this.price = price;
 	}

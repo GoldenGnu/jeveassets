@@ -148,7 +148,7 @@ public final class ApiConverter {
 	public static List<MyAsset> assetMarketOrder(final List<MyMarketOrder> marketOrders, final Owner owner) {
 		List<MyAsset> assets = new ArrayList<MyAsset>();
 		for (MyMarketOrder marketOrder : marketOrders) {
-			if (marketOrder.getOrderState() == 0 && marketOrder.getVolRemaining() > 0
+			if (marketOrder.isActive() && marketOrder.getVolRemaining() > 0
 					&& ((marketOrder.getBid() < 1 && Settings.get().isIncludeSellOrders())
 					|| (marketOrder.getBid() > 0 && Settings.get().isIncludeBuyOrders()))
 					) {

@@ -609,11 +609,11 @@ public class Stockpile implements Comparable<Stockpile>, LocationType {
 					}
 			//Orders
 				} else if (marketOrder != null) {
-					if (marketOrder.getBid() < 1 && marketOrder.getOrderState() == 0  && filter.isSellOrders()) {
+					if (marketOrder.getBid() < 1 && marketOrder.isActive() && filter.isSellOrders()) {
 						if (add) { //Open/Active sell order - match
 							sellOrdersCountNow = sellOrdersCountNow + marketOrder.getVolRemaining();
 						}
-					} else if (marketOrder.getBid() > 0 && marketOrder.getOrderState() == 0 && filter.isBuyOrders()) {
+					} else if (marketOrder.getBid() > 0 && marketOrder.isActive() && filter.isBuyOrders()) {
 						if (add) { //Open/Active buy order - match
 							buyOrdersCountNow = buyOrdersCountNow + marketOrder.getVolRemaining();
 						}

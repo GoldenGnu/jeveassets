@@ -26,8 +26,10 @@ import com.beimin.eveapi.model.shared.MarketOrder;
 import com.beimin.eveapi.response.shared.MarketOrdersResponse;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import net.nikr.eve.jeveasset.data.MyAccount;
 import net.nikr.eve.jeveasset.data.MyAccount.AccessMask;
@@ -41,6 +43,9 @@ import net.nikr.eve.jeveasset.io.shared.ApiConverter;
 public class MarketOrdersGetter extends AbstractApiGetter<MarketOrdersResponse> {
 
 	private boolean saveHistory;
+	private final Map<Long, Set<Long>> updatedByOwner = new HashMap<Long, Set<Long>>();
+	private Long orderID;
+	private boolean ingoreNextUpdate;
 	
 	public MarketOrdersGetter() {
 		super("Market Orders", true, false);
@@ -48,23 +53,89 @@ public class MarketOrdersGetter extends AbstractApiGetter<MarketOrdersResponse> 
 
 	public void load(final UpdateTask updateTask, final boolean forceUpdate, final List<MyAccount> accounts, final boolean saveHistory) {
 		this.saveHistory = saveHistory;
+		updatedByOwner.clear();
+		ingoreNextUpdate = false;
+		orderID = null;
+		//Default update - this will be enough if we don't save the history
 		super.loadAccounts(updateTask, forceUpdate, accounts);
+		
+		//If we save history we need to update none-completed orders in the history
+		if (saveHistory) { 
+			//Ignore nextUpdate value
+			ingoreNextUpdate = true;
+			int size = 0;
+			Map<Owner, Set<Long>> orderIDsByOwner = new HashMap<Owner, Set<Long>>();
+			//Find orders that needs updating
+			for (MyAccount account : accounts) {
+				for (Owner owner : account.getOwners()) {
+					Set<Long> updated = updatedByOwner.get(owner.getOwnerID());
+					if (updated == null) {
+						updated = new HashSet<Long>();
+					}
+					for (MyMarketOrder myMarketOrder : owner.getMarketOrders()) {
+						if (updated.contains(myMarketOrder.getOrderID())) {
+							continue; //Already updated
+						}
+						if (myMarketOrder.getStatus() != MyMarketOrder.OrderStatus.ACTIVE) {
+							continue; //Already completed
+						}
+						Set<Long> orderIDs = orderIDsByOwner.get(owner);
+						if (orderIDs == null) {
+							orderIDs = new HashSet<Long>();
+							orderIDsByOwner.put(owner, orderIDs);
+						}
+						size++;
+						orderIDs.add(myMarketOrder.getOrderID());
+					}
+				}
+			}
+			int count = 0;
+			//Update the needed orders
+			for (Map.Entry<Owner, Set<Long>> entry : orderIDsByOwner.entrySet()) {
+				for (long id : entry.getValue()) {
+					//Set orderID to update
+					orderID = id;
+					//Set task name
+					this.setTaskName("Market Orders ("+id+")");
+					//Update from the API
+					super.loadOwner(updateTask, forceUpdate, entry.getKey());
+					count++;
+					if (updateTask != null) {
+						updateTask.setTaskProgress(size, count, 0, 100);
+					}
+				}
+			}
+		}
 	}
 
 	@Override
 	protected MarketOrdersResponse getResponse(final boolean bCorp) throws ApiException {
-		if (bCorp) {
-			return new com.beimin.eveapi.parser.corporation.MarketOrdersParser()
-					.getResponse(Owner.getApiAuthorization(getOwner()));
+		if (orderID == null) {
+			if (bCorp) {
+				return new com.beimin.eveapi.parser.corporation.MarketOrdersParser()
+						.getResponse(Owner.getApiAuthorization(getOwner()));
+			} else {
+				return new com.beimin.eveapi.parser.pilot.MarketOrdersParser()
+						.getResponse(Owner.getApiAuthorization(getOwner()));
+			}
 		} else {
-			return new com.beimin.eveapi.parser.pilot.MarketOrdersParser()
-					.getResponse(Owner.getApiAuthorization(getOwner()));
+			if (bCorp) {
+				return new com.beimin.eveapi.parser.corporation.MarketOrdersParser()
+						.getResponse(Owner.getApiAuthorization(getOwner()), orderID);
+			} else {
+				return new com.beimin.eveapi.parser.pilot.MarketOrdersParser()
+						.getResponse(Owner.getApiAuthorization(getOwner()), orderID);
+			}
 		}
 	}
 
 	@Override
 	protected Date getNextUpdate() {
-		return getOwner().getMarketOrdersNextUpdate();
+		if (ingoreNextUpdate) {
+			return new Date();
+		} else {
+			return getOwner().getMarketOrdersNextUpdate();
+		}
 	}
 
 	@Override
@@ -80,6 +151,15 @@ public class MarketOrdersGetter extends AbstractApiGetter<MarketOrdersResponse> 
 			marketOrdersUnique.addAll(marketOrders); //Add new
 			marketOrdersUnique.addAll(getOwner().getMarketOrders()); //Add old (Keep new, if equal to old)
 			getOwner().setMarketOrders(new ArrayList<MyMarketOrder>(marketOrdersUnique));
+			//Save updated market orders
+			Set<Long> updated = updatedByOwner.get(getOwner().getOwnerID());
+			if (updated == null) {
+				updated = new HashSet<Long>();
+				updatedByOwner.put(getOwner().getOwnerID(), updated);
+			}	
+			for (MyMarketOrder marketOrder : marketOrders) {
+				updated.add(marketOrder.getOrderID());
+			}
 		} else {
 			getOwner().setMarketOrders(marketOrders);
 		}
