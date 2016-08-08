@@ -47,7 +47,7 @@ public class JMarketOrdersTable extends JAutoColumnTable {
 		String columnName = (String) this.getTableHeader().getColumnModel().getColumn(column).getHeaderValue();
 
 		if (columnName.equals(MarketTableFormat.EXPIRES.getColumnName())) {
-			if (marketOrder.getExpires().before(new Date())) {
+			if (marketOrder.isExpired()) {
 				if (isSelected) {
 					component.setBackground(this.getSelectionBackground().darker());
 				} else {

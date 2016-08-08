@@ -117,7 +117,7 @@ public class DataSetCreator {
 		//Market Orders
 		for (MyMarketOrder marketOrder : program.getMarketOrdersList()) {
 			Value value = getValueInner(values, marketOrder.getOwner(), date);
-			if (marketOrder.getOrderState() == 0) {
+			if (marketOrder.isActive()) {
 				if (marketOrder.getBid() < 1) { //Sell Orders
 					value.addSellOrders(marketOrder.getPrice() * marketOrder.getVolRemaining());
 					total.addSellOrders(marketOrder.getPrice() * marketOrder.getVolRemaining());
