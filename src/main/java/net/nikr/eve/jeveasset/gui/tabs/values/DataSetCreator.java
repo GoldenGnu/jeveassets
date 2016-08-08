@@ -220,6 +220,9 @@ public class DataSetCreator {
 			if (contract.isCourier()) {
 				continue; //Ignore courier contracts
 			}
+			if (contractItem.getItem() != null && contractItem.getItem().isBlueprint()) {
+				continue; //Ignore blueprints value - as we do not know if it's a BPO or BPC. Feels like assuming BPC (zero value) is the better option
+			}
 			Owner issuer;
 			if (contract.isForCorp()) {
 				issuer = owners.get(contract.getIssuerCorp());
