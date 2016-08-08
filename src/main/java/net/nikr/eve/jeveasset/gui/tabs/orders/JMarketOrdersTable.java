@@ -24,7 +24,6 @@ package net.nikr.eve.jeveasset.gui.tabs.orders;
 import ca.odell.glazedlists.swing.DefaultEventTableModel;
 import java.awt.Color;
 import java.awt.Component;
-import java.util.Date;
 import javax.swing.table.TableCellRenderer;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.gui.shared.table.JAutoColumnTable;
