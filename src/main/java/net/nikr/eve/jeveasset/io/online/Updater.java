@@ -34,35 +34,83 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
-import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.data.Settings;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import net.nikr.eve.jeveasset.io.shared.FileUtil;
 
 
 public class Updater {
-	private static final Logger LOG = LoggerFactory.getLogger(Updater.class);
+	private static final Logger LOG = Logger.getLogger(Updater.class.getName());
 
 	private static final String UPDATE_URL = "http://eve.nikr.net/jeveassets/update/";
 	private static final String PROGRAM =    UPDATE_URL + "program/";
 	private static final String DATA =       UPDATE_URL + "data/";
 	private static final String UPDATE =     UPDATE_URL + "jupdate.jar";
 
-	public void update() {
+	public void update(final String localProgram) {
 		LOG.info("Checking online version");
 		Getter getter = new Getter();
 		final String onlineProgram = getter.get(PROGRAM+"update_version.dat");
-		final String localProgram = Program.PROGRAM_VERSION;
 		update("Program", onlineProgram, localProgram, PROGRAM);
 		final String onlineData = getter.get(DATA+"update_version.dat");
 		final String localData = getLocalData();
-		update("Static data", onlineData, localData, DATA);
+		if (localData == null) {
+			fixData();
+		} else {
+			update("Static data", onlineData, localData, DATA);
+		}
+	}
+
+	public void fixData() {
+		int value = JOptionPane.showConfirmDialog(null, 
+				"One of the data files in the data folder is corrupted or missing\r\n"
+				+ "jEveAssets will not work without it\r\n"
+				+ "Download the latest version with auto update?\r\n"
+				,
+				"Critical Error",
+				JOptionPane.OK_CANCEL_OPTION, JOptionPane.ERROR_MESSAGE);
+		if (value == JOptionPane.OK_OPTION) {
+			LOG.info("Updating data");
+			boolean download = downloadUpdater();
+			if (download) {
+				runUpdate(DATA);
+			} else {
+				JOptionPane.showMessageDialog(null, "Auto update failed\r\nPlease, re-download jEveAssets and leave the unzipped directory intact\r\nPress OK to close jEveAssets", "Critical Error", JOptionPane.ERROR_MESSAGE);
+				System.exit(-1);
+			}
+		} else {
+			JOptionPane.showMessageDialog(null, "Please, re-download jEveAssets and leave the unzipped directory intact\r\nRestart jEveAssets to use auto update to fix the problem\r\nPress OK to close jEveAssets", "Critical Error", JOptionPane.ERROR_MESSAGE);
+			System.exit(-1);
+		}
+	}
+
+	public void fixLibs() {
+		int value = JOptionPane.showConfirmDialog(null, 
+				"One of the libraies in the lib folder is corrupted or missing\r\n"
+				+ "jEveAssets will not work without it\r\n"
+				+ "Download the latest version with auto update?\r\n"
+				,
+				"Critical Error",
+				JOptionPane.OK_CANCEL_OPTION, JOptionPane.ERROR_MESSAGE);
+		if (value == JOptionPane.OK_OPTION) {
+			LOG.info("Updating program");
+			boolean download = downloadUpdater();
+			if (download) {
+				runUpdate(PROGRAM);
+			} else {
+				JOptionPane.showMessageDialog(null, "Auto update failed\r\nPlease, re-download jEveAssets and leave the unzipped directory intact\r\nPress OK to close jEveAssets", "Critical Error", JOptionPane.ERROR_MESSAGE);
+				System.exit(-1);
+			}
+		} else {
+			JOptionPane.showMessageDialog(null, "Please, re-download jEveAssets and leave the unzipped directory intact\r\nRestart jEveAssets to use auto update to fix the problem\r\nPress OK to close jEveAssets", "Critical Error", JOptionPane.ERROR_MESSAGE);
+			System.exit(-1);
+		}
 	}
 
 	public String getLocalData() {
 		Getter getter = new Getter();
-		return getter.get(new File(Settings.getPathDataVersion()));
+		return getter.get(new File(FileUtil.getPathDataVersion()));
 	}
 
 	private void update(String title, String online, String local, String link) {
@@ -80,13 +128,12 @@ public class Updater {
 					"Auto Update",
 					JOptionPane.OK_CANCEL_OPTION);
 			if (value == JOptionPane.OK_OPTION) {
-				LOG.info("Updating " + title);
+				LOG.log(Level.INFO, "Updating {0}", title);
 				boolean download = downloadUpdater();
 				if (download) {
 					runUpdate(link);
 				} else {
 					JOptionPane.showMessageDialog(null, "Auto update failed\r\nRestart jEveAssets to try again...", "Auto Update", JOptionPane.ERROR_MESSAGE);
-					return;
 				}
 			}
 		}
@@ -100,7 +147,7 @@ public class Updater {
 			processBuilder.start();
 			System.exit(0);
 		} catch (IOException ex) {
-			LOG.error("Failed to start jupdate.jar", ex);
+			LOG.log(Level.SEVERE, "Failed to start jupdate.jar", ex);
 		}
 	}
 
@@ -112,9 +159,9 @@ public class Updater {
 		List<String> list = new ArrayList<String>();
 		list.add("java");
 		list.add("-jar");
-		list.add(Settings.getPathRunUpdate());
+		list.add(FileUtil.getPathRunUpdate());
 		list.add(link);
-		list.add(Settings.getPathRunJar());
+		list.add(FileUtil.getPathRunJar());
 		return list;
 	}
 
@@ -122,7 +169,7 @@ public class Updater {
 		DataGetter dataGetter = new DataGetter();
 		Getter getter = new Getter();
 		String checksum = getter.get(UPDATE+".md5");
-		return dataGetter.get(UPDATE, new File(Settings.getPathRunUpdate()), checksum);
+		return dataGetter.get(UPDATE, new File(FileUtil.getPathRunUpdate()), checksum);
 	}
 
 	private static class Getter {

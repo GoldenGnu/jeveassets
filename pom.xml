@@ -211,7 +211,7 @@
 				<executions>
 					<execution>
 						<id>copy-dependencies</id>
-						<phase>prepare-package</phase>
+						<phase>process-test-resources</phase>
 						<goals>
 							<goal>copy-dependencies</goal>
 						</goals>
@@ -654,6 +654,15 @@
 			-->
 			<groupId>org.slf4j</groupId>
 			<artifactId>jcl-over-slf4j</artifactId>
+			<version>1.6.1</version>
+		</dependency>
+		<dependency>
+			<!--
+				redirect java.util.logging (jul) calls to the slf4j API
+				jul is used for logging when libraries are missing
+			-->
+			<groupId>org.slf4j</groupId>
+			<artifactId>jul-to-slf4j</artifactId>
 			<version>1.6.1</version>
 		</dependency>
 		<dependency>

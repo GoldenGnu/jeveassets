@@ -23,57 +23,63 @@ package net.nikr.eve.jeveasset;
 
 import java.io.File;
 import java.net.URISyntaxException;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import static net.nikr.eve.jeveasset.Program.PROGRAM_NAME;
 import static net.nikr.eve.jeveasset.Program.PROGRAM_VERSION;
+import net.nikr.eve.jeveasset.io.online.Updater;
 import net.nikr.eve.jeveasset.io.shared.FileLock;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import net.nikr.eve.jeveasset.io.shared.FileUtil;
 
 
 public final class Main {
-	/**
-	 * We cannot init this until we have set the two system properties: log.home and log.level
-	 * They are set in the entry point method and then the LOG is created.
-	 *
-	 */
+	private static boolean debug = false;
+	private static boolean portable = false;
+	private static boolean forceNoUpdate = false;
+	private static boolean forceUpdate = false;
+	private static boolean lazySave = false;
+
 	private static Logger log;
 
-	/**
-	 * JEveAssets main launcher.
-	 */
-	private final Program program;
-	/**
-	 * Ensure only one instance is running...
-	 */
-	private final SingleInstance instance;
-
-	/** Creates a new instance of Main. */
 	private Main() {
-		log.info("Starting {} {}", PROGRAM_NAME, PROGRAM_VERSION);
+		//Validate directory
+		checkLibs();
+		//install the uncaught exception handlers
+		NikrUncaughtExceptionHandler.install();
+		//Splash screen
+		SplashUpdater splashUpdater = new SplashUpdater();
+		splashUpdater.start();
+		//Print program data
+		log.info("Starting " + PROGRAM_NAME + " " +PROGRAM_VERSION);
 		log.info("OS: " + System.getProperty("os.name") + " " + System.getProperty("os.version"));
 		log.info("Java: " + System.getProperty("java.vendor") + " " + System.getProperty("java.version"));
-		instance = new SingleInstance();
+		// variables to the main program and settings.
+		Program.setDebug(debug);
+		Program.setPortable(portable);
+		Program.setForceNoUpdate(forceNoUpdate && debug);
+		Program.setForceUpdate(forceUpdate && debug);
+		Program.setLazySave(lazySave);
+		//Ensure only one instance is running...
+		SingleInstance instance = new SingleInstance();
 		if (instance.isSingleInstance()) {
 			FileLock.unlockAll();
 		}
-		program = new Program();
+		//Lets go!
+		Program program = new Program();
 	}
 
 	/**
-	 * Entry point for JEveAssets.
+	 * Entry point for jEveAssets.
 	 * @param args the command line arguments
 	 */
 	public static void main(final String[] args) {
-		boolean debug = false;
-		boolean portable = false;
-		boolean forceNoUpdate = false;
-		boolean forceUpdate = false;
-		boolean lazySave = false;
-
 		for (String arg : args) {
 			if (arg.toLowerCase().equals("-debug")) {
 				debug = true;
@@ -123,21 +129,9 @@ public final class Main {
 				System.setProperty("log.level", "INFO");
 			}
 		}
-
-		// only now can we create the Logger.
-		log = LoggerFactory.getLogger(Main.class);
-
-		// Now we have the logging stuff done, we can pass the
-		// variables to the main program and settings.
-		Program.setDebug(debug);
-		Program.setPortable(portable);
-		Program.setForceNoUpdate(forceNoUpdate && debug);
-		Program.setForceUpdate(forceUpdate && debug);
-		Program.setLazySave(lazySave);
-
-		// fix the uncaught exception handlers
-		NikrUncaughtExceptionHandler.install();
-
+		//Set format
+		System.setProperty("java.util.logging.SimpleFormatter.format", " %4$s: %2$s - %5$s%n");
+		log = Logger.getLogger(Main.class.getName());
 		//Add user agent to online requests
 		System.setProperty("http.agent", Program.PROGRAM_NAME + "/" + Program.PROGRAM_VERSION.replace(" ", "_"));
 
@@ -158,9 +152,6 @@ public final class Main {
 	}
 
 	private static void createAndShowGUI() {
-		SplashUpdater splashUpdater = new SplashUpdater();
-		splashUpdater.start();
-
 		initLookAndFeel();
 
 		//Make sure we have nice window decorations.
@@ -186,13 +177,64 @@ public final class Main {
 		try {
 			UIManager.setLookAndFeel(lookAndFeel);
 		} catch (ClassNotFoundException ex) {
-			log.warn("Failed to set LookAndFeel: " + lookAndFeel, ex);
+			log.log(Level.SEVERE, "Failed to set LookAndFeel: " + lookAndFeel, ex);
 		} catch (InstantiationException ex) {
-			log.warn("Failed to set LookAndFeel: " + lookAndFeel, ex);
+			log.log(Level.SEVERE, "Failed to set LookAndFeel: " + lookAndFeel, ex);
 		} catch (IllegalAccessException ex) {
-			log.warn("Failed to set LookAndFeel: " + lookAndFeel, ex);
+			log.log(Level.SEVERE, "Failed to set LookAndFeel: " + lookAndFeel, ex);
 		} catch (UnsupportedLookAndFeelException ex) {
-			log.warn("Failed to set LookAndFeel: " + lookAndFeel, ex);
+			log.log(Level.SEVERE, "Failed to set LookAndFeel: " + lookAndFeel, ex);
 		}
+	}
+
+	private static void checkLibs() {
+		File jar = new File(FileUtil.getPathRunJar());
+		boolean temp = false;
+		//Check if trying to run from inside zip file (Windows only)
+		if (jar.getAbsolutePath().contains(".zip") && jar.getAbsolutePath().contains(System.getProperty("java.io.tmpdir")) && System.getProperty("os.name").startsWith("Windows")) {
+			temp = true;
+		}
+		boolean missing = false;
+		//Check if all lirbaries are pressent
+		for (String filename : getLibFiles()) {
+			File file = new File(FileUtil.getPathLib(filename));
+			if (!file.exists()) {
+				missing = true;
+				break;
+			}
+		}
+		if (temp && missing) { //Running from zip file...
+			JOptionPane.showMessageDialog(null, "You need to unzip jEveAssets to run it\r\nIt will not work from inside the zip file", "Critical Error", JOptionPane.ERROR_MESSAGE);
+			System.exit(-1);
+		} else if (missing) { //Missing lirbaries
+			Updater updater = new Updater();
+			updater.fixLibs();
+		}
+	}
+
+	public static Set<String> getLibFiles() {
+		Set<String> files = new HashSet<String>();
+		files.add("asm-5.0.4.jar");
+		files.add("dom4j-1.6.1.jar");
+		files.add("eveapi-6.0.5-SNAPSHOT.jar");
+		files.add("glazedlists_java15-1.9.1.jar");
+		files.add("graph-1.5.0.jar");
+		files.add("guava-r09.jar");
+		files.add("jaxen-1.1.6.jar");
+		files.add("guava-r09.jar");
+		files.add("jcalendar-1.4.0.jar");
+		files.add("jcl-over-slf4j-1.6.1.jar");
+		files.add("jcommon-1.0.16.jar");
+		files.add("jfreechart-1.0.13.jar");
+		files.add("log4j-1.2.16.jar");
+		files.add("osxadapter-1.1.0.jar");
+		files.add("pricing-1.5.1.jar");
+		files.add("routing-1.5.0.jar");
+		files.add("slf4j-api-1.6.1.jar");
+		files.add("slf4j-log4j12-1.6.1.jar");
+		files.add("supercsv-1.52.jar");
+		files.add("translations-2.2.0.jar");
+		files.add("jul-to-slf4j-1.6.1.jar");
+		return files;
 	}
 }

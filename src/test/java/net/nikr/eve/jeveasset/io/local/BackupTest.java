@@ -25,9 +25,9 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.io.shared.AbstractXmlReader;
 import net.nikr.eve.jeveasset.io.shared.AbstractXmlWriter;
+import net.nikr.eve.jeveasset.io.shared.FileUtil;
 import net.nikr.eve.jeveasset.io.shared.XmlException;
 import org.junit.AfterClass;
 import static org.junit.Assert.assertFalse;
@@ -49,7 +49,7 @@ public class BackupTest {
 	private static File newFile;
 
 	private static File getFile(String extension) {
-		return new File(new File(Settings.getPathRunJar()).getParentFile().getAbsolutePath() + File.separator + "test." + extension);
+		return new File(new File(FileUtil.getPathRunJar()).getParentFile().getAbsolutePath() + File.separator + "test." + extension);
 	}
 	@BeforeClass
 	public static void setUpClass() {

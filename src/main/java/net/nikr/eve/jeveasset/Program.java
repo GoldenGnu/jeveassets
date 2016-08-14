@@ -82,6 +82,7 @@ import net.nikr.eve.jeveasset.i18n.GuiShared;
 import net.nikr.eve.jeveasset.io.online.PriceDataGetter;
 import net.nikr.eve.jeveasset.io.online.Updater;
 import net.nikr.eve.jeveasset.io.shared.DesktopUtil;
+import net.nikr.eve.jeveasset.io.shared.FileUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -153,7 +154,7 @@ public class Program implements ActionListener {
 	public Program() {
 		height = calcButtonsHeight();
 		updater = new Updater();
-		updater.update();
+		updater.update(Program.PROGRAM_VERSION);
 		if (debug) {
 			LOG.debug("Force Update: {} Force No Update: {}", forceUpdate, forceNoUpdate);
 		}
@@ -438,7 +439,7 @@ public class Program implements ActionListener {
 	}
 
 	private void macOsxCode() {
-		if (onMac()) {
+		if (FileUtil.onMac()) {
 			try {
 				OSXAdapter.setQuitHandler(this, getClass().getDeclaredMethod("saveExit", (Class[]) null));
 				OSXAdapter.setAboutHandler(this, getClass().getDeclaredMethod("showAbout", (Class[]) null));
@@ -538,10 +539,6 @@ public class Program implements ActionListener {
 	public void createTrackerDataPoint() {
 		DataSetCreator.createTrackerDataPoint(this);
 		trackerTab.updateData();
-	}
-	
-	public static boolean onMac() {
-		return System.getProperty("os.name").toLowerCase().startsWith("mac os x");
 	}
 
 	public static boolean isDebug() {
