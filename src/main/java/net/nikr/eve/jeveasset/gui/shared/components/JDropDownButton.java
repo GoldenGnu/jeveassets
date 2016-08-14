@@ -177,6 +177,11 @@ public class JDropDownButton extends JButton {
 		if (!this.isEnabled()) {
 			return;
 		}
+		///XXX Workaround for BugID: 281
+		//http://eve.nikr.net/jeveassets/bugs/#bugid281
+		if (!this.isVisible()) {
+			return;
+		}
 		int verticalPosition = this.getHeight();
 		int horizontalPosition = 0;
 		Dimension popupMenuSize = jPopupMenu.getPreferredSize();
