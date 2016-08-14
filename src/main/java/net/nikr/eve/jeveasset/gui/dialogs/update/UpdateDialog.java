@@ -60,6 +60,7 @@ import net.nikr.eve.jeveasset.io.eveapi.LocationsGetter;
 import net.nikr.eve.jeveasset.io.eveapi.MarketOrdersGetter;
 import net.nikr.eve.jeveasset.io.eveapi.NameGetter;
 import net.nikr.eve.jeveasset.io.eveapi.TransactionsGetter;
+import net.nikr.eve.jeveasset.io.local.ConquerableStationsWriter;
 
 
 public class UpdateDialog extends JDialogCentered {
@@ -603,6 +604,7 @@ public class UpdateDialog extends JDialogCentered {
 		public void update() {
 			ConquerableStationsGetter conquerableStationsGetter = new ConquerableStationsGetter();
 			conquerableStationsGetter.load(this);
+			ConquerableStationsWriter.save();
 		}
 	}
 
