@@ -30,13 +30,13 @@ import java.nio.charset.MalformedInputException;
 import java.security.DigestInputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 public class DataGetter {
 
-	private static final Logger LOG = LoggerFactory.getLogger(DataGetter.class);
+	private static final Logger LOG = Logger.getLogger(DataGetter.class.getName());
 
 	public boolean get(String link, File out, String checksum) {
 		return get(link, out, checksum, 0);
@@ -64,24 +64,24 @@ public class DataGetter {
 				return true; //OK
 			}
 		} catch (MalformedInputException ex) {
-			LOG.error(ex.getMessage(), ex);
+			LOG.log(Level.SEVERE, ex.getMessage(), ex);
 		} catch (IOException ex) {
-			LOG.error(ex.getMessage(), ex);
+			LOG.log(Level.SEVERE, ex.getMessage(), ex);
 		} catch (NoSuchAlgorithmException ex) {
-			LOG.error(ex.getMessage(), ex);
+			LOG.log(Level.SEVERE, ex.getMessage(), ex);
 		} finally {
 			if (input != null) {
 				try {
 					input.close();
 				} catch (IOException ex) {
-					LOG.error(ex.getMessage(), ex);
+					LOG.log(Level.SEVERE, ex.getMessage(), ex);
 				}
 			}
 			if (output != null) {
 				try {
 					output.close();
 				} catch (IOException ex) {
-					LOG.error(ex.getMessage(), ex);
+					LOG.log(Level.SEVERE, ex.getMessage(), ex);
 				}
 			}
 		}

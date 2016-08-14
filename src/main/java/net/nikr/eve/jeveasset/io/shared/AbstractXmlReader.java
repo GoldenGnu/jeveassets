@@ -27,6 +27,7 @@ import java.io.IOException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import net.nikr.eve.jeveasset.io.online.Updater;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -37,6 +38,11 @@ import org.xml.sax.SAXException;
 public abstract class AbstractXmlReader extends AbstractXmlBackup {
 
 	private static final Logger LOG = LoggerFactory.getLogger(AbstractXmlReader.class);
+
+	protected void staticDataFix() {
+		Updater updater = new Updater();
+		updater.fixData();
+	}
 
 	protected Element getDocumentElement(final String filename, final boolean fileLock) throws XmlException, IOException {
 		DocumentBuilderFactory factory;

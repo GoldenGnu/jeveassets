@@ -30,7 +30,6 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
 import java.net.SocketAddress;
-import java.net.URL;
 import java.net.UnknownHostException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -56,6 +55,7 @@ import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile;
 import net.nikr.eve.jeveasset.gui.tabs.values.Value;
 import net.nikr.eve.jeveasset.io.local.SettingsReader;
 import net.nikr.eve.jeveasset.io.local.SettingsWriter;
+import net.nikr.eve.jeveasset.io.shared.FileUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -68,7 +68,6 @@ public class Settings {
 	private static final String PATH_JUMPS = "data" + File.separator + "jumps.xml";
 	private static final String PATH_LOCATIONS = "data" + File.separator + "locations.xml";
 	private static final String PATH_FLAGS = "data" + File.separator + "flags.xml";
-	private static final String PATH_DATA_VERSION = "data" + File.separator + "data.dat";
 	private static final String PATH_PRICE_DATA = "data" + File.separator + "pricedata.dat";
 	private static final String PATH_ASSETS = "data" + File.separator + "assets.xml";
 	private static final String PATH_CONQUERABLE_STATIONS = "data" + File.separator + "conquerable_stations.xml";
@@ -76,7 +75,7 @@ public class Settings {
 	private static final String PATH_LICENSE = "license.txt";
 	private static final String PATH_CREDITS = "credits.txt";
 	private static final String PATH_CHANGELOG = "changelog.txt";
-	private static final String PATH_JAR = "jeveassets.jar";
+	
 	private static final String PATH_PROFILES = "profiles";
 	private static final String PATH_DATA = "data";
 
@@ -776,123 +775,68 @@ public class Settings {
 	}
 
 	public String getPathSettings() {
-		return getLocalFile(Settings.PATH_SETTINGS, !Program.isPortable());
+		return FileUtil.getLocalFile(Settings.PATH_SETTINGS, !Program.isPortable());
 	}
 
 	public static String getPathConquerableStations() {
-		return getLocalFile(Settings.PATH_CONQUERABLE_STATIONS, !Program.isPortable());
+		return FileUtil.getLocalFile(Settings.PATH_CONQUERABLE_STATIONS, !Program.isPortable());
 	}
 
 	public static String getPathJumps() {
-		return getLocalFile(Settings.PATH_JUMPS, false);
+		return FileUtil.getLocalFile(Settings.PATH_JUMPS, false);
 	}
 
 	public static String getPathFlags() {
-		return getLocalFile(Settings.PATH_FLAGS, false);
+		return FileUtil.getLocalFile(Settings.PATH_FLAGS, false);
 	}
 
 	public static String getPathPriceData() {
-		return getLocalFile(Settings.PATH_PRICE_DATA, !Program.isPortable());
+		return FileUtil.getLocalFile(Settings.PATH_PRICE_DATA, !Program.isPortable());
 	}
 
 	public static String getPathAssetsOld() {
-		return getLocalFile(Settings.PATH_ASSETS, !Program.isPortable());
+		return FileUtil.getLocalFile(Settings.PATH_ASSETS, !Program.isPortable());
 	}
 
 	public static String getPathProfilesDirectory() {
-		return getLocalFile(Settings.PATH_PROFILES, !Program.isPortable());
+		return FileUtil.getLocalFile(Settings.PATH_PROFILES, !Program.isPortable());
 	}
 
 	public static String getPathStaticDataDirectory() {
-		return getLocalFile(Settings.PATH_DATA, false);
+		return FileUtil.getLocalFile(Settings.PATH_DATA, false);
 	}
 
 	public static String getPathDataDirectory() {
-		return getLocalFile(Settings.PATH_DATA, !Program.isPortable());
+		return FileUtil.getLocalFile(Settings.PATH_DATA, !Program.isPortable());
 	}
 
 	public static String getPathItems() {
-		return getLocalFile(Settings.PATH_ITEMS, false);
+		return FileUtil.getLocalFile(Settings.PATH_ITEMS, false);
 	}
 
 	public static String getPathLocations() {
-		return getLocalFile(Settings.PATH_LOCATIONS, false);
-	}
-
-	public static String getPathDataVersion() {
-		return getLocalFile(Settings.PATH_DATA_VERSION, false);
+		return FileUtil.getLocalFile(Settings.PATH_LOCATIONS, false);
 	}
 
 	public static String getPathReadme() {
-		return getLocalFile(Settings.PATH_README, false);
+		return FileUtil.getLocalFile(Settings.PATH_README, false);
 	}
 
 	public static String getPathLicense() {
-		return getLocalFile(Settings.PATH_LICENSE, false);
+		return FileUtil.getLocalFile(Settings.PATH_LICENSE, false);
 	}
 
 	public static String getPathCredits() {
-		return getLocalFile(Settings.PATH_CREDITS, false);
+		return FileUtil.getLocalFile(Settings.PATH_CREDITS, false);
 	}
 
 	public static String getPathChangeLog() {
-		return getLocalFile(Settings.PATH_CHANGELOG, false);
-	}
-
-	public static String getPathRunUpdate() {
-		File userDir = new File(System.getProperty("user.home", "."));
-		File file = new File(userDir.getAbsolutePath() + File.separator + ".jupdate" + File.separator + "jupdate.jar");
-		File parentDir = file.getParentFile();
-		if (!parentDir.exists() && !parentDir.mkdirs()) {
-			LOG.warn("Failed to create .jUpdate directory");
-		}
-		return file.getAbsolutePath();
-	}
-
-	public static String getPathRunJar() {
-		return getLocalFile(Settings.PATH_JAR, false);
+		return FileUtil.getLocalFile(Settings.PATH_CHANGELOG, false);
 	}
 
 	public static String getUserDirectory() {
 		File userDir = new File(System.getProperty("user.home", "."));
 		return userDir.getAbsolutePath() + File.separator;
-	}
-
-	/**
-	 *
-	 * @param filename the name of the data file to obtain
-	 * @param dynamic true if the file is expecting to be written to, false for
-	 * things like the items and locations.
-	 * @return
-	 */
-	protected static String getLocalFile(final String filename, final boolean dynamic) {
-		LOG.debug("Looking for file: {} dynamic: {}", filename, dynamic);
-		File file;
-		File ret;
-		if (dynamic) {
-			File userDir = new File(System.getProperty("user.home", "."));
-			if (Program.onMac()) { // preferences are stored in user.home/Library/Preferences
-				file = new File(userDir, "Library/Preferences/JEveAssets");
-			} else {
-				file = new File(userDir.getAbsolutePath() + File.separator + ".jeveassets");
-			}
-			ret = new File(file.getAbsolutePath() + File.separator + filename);
-			File parent = ret.getParentFile();
-			if (!parent.exists()
-					&& !parent.mkdirs()) {
-				LOG.error("failed to create directories for " + parent.getAbsolutePath());
-			}
-		} else {
-			URL location = net.nikr.eve.jeveasset.Program.class.getProtectionDomain().getCodeSource().getLocation();
-			try {
-				file = new File(location.toURI());
-			} catch (Exception ex) {
-				file = new File(location.getPath());
-			}
-			ret = new File(file.getParentFile().getAbsolutePath() + File.separator + filename);
-		}
-		LOG.debug("Found file at: {}", ret.getAbsolutePath());
-		return ret.getAbsolutePath();
 	}
 
 	public static Date getNow() {

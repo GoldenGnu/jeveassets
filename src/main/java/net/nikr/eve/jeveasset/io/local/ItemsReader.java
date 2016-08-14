@@ -52,12 +52,14 @@ public final class ItemsReader extends AbstractXmlReader {
 		try {
 			Element element = getDocumentElement(Settings.getPathItems(), false);
 			parseItems(element, StaticData.get().getItems());
+			LOG.info("Items loaded");
 		} catch (IOException ex) {
 			LOG.error("Items not loaded: " + ex.getMessage(), ex);
+			staticDataFix();
 		} catch (XmlException ex) {
 			LOG.error("Items not loaded: " + ex.getMessage(), ex);
+			staticDataFix();
 		}
-		LOG.info("Items loaded");
 	}
 
 	private void parseItems(final Element element, final Map<Integer, Item> items) {
