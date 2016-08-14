@@ -10,7 +10,7 @@ $os_array = getArray($dbh, 'os');
 $admin = null !== filter_input(INPUT_GET, 'admin');
 
 $order_in = filter_input(INPUT_GET, 'order');
-$order = makeSafe(strtolower($order_in), array("date", "count", "id"), 'date');
+$order = makeSafe(strtolower($order_in), array("date", "count", "id", "status"), 'date');
 
 $desc_in = filter_input(INPUT_GET, 'desc');
 $desc = makeSafe(strtoupper($desc_in), array("DESC", "ASC"), 'DESC');
@@ -23,6 +23,15 @@ $java = makeSafe($java_in, $java_array, 'All');
 
 $os_in = filter_input(INPUT_GET, 'os');
 $os = makeSafe($os_in, $os_array, 'All');
+
+$wontfix = "hide" === filter_input(INPUT_GET, 'wontfix');
+$reopened = "hide" === filter_input(INPUT_GET, 'reopened');
+$new = "hide" === filter_input(INPUT_GET, 'new');
+$accepted = "hide" === filter_input(INPUT_GET, 'accepted');
+$started = "hide" === filter_input(INPUT_GET, 'started');
+$fixed = "hide" === filter_input(INPUT_GET, 'fixed');
+$fixreleased = "hide" === filter_input(INPUT_GET, 'fixreleased');
+$compact = "hide" === filter_input(INPUT_GET, 'compact');
 
 $edit = filter_input(INPUT_POST, 'edit');
 if ($edit == password()) {
@@ -109,38 +118,61 @@ if ($delete == password()) {
 	<h1><?php echo name() . ' Bug Database' ?></h1>
 	<hr>
 <?php
-echo '<form method="get" action="">';
-echo 'Order By:';
-select(array("Date", "Count", "ID"), 'order', $order);
+echo '<div>'.PHP_EOL;
+echo '<form method="get" action="." style="display: inline;">'.PHP_EOL;
+echo '<input type="submit" value="Reset">'.PHP_EOL;
+echo '</form>'.PHP_EOL;
+echo '<form method="get" action="" style="display: inline;">'.PHP_EOL;
+echo 'Order By:'.PHP_EOL;
+select(array("Date", "Count", "ID", "Status"), 'order', $order);
 select(array("DESC", "ASC"), 'desc', $desc);
-echo ' Version: ';
+echo ' Version:'.PHP_EOL;
 select($version_array, 'version', $version);
-echo ' Java: ';
+echo ' Java:'.PHP_EOL;
 select($java_array, 'java', $java);
-echo ' OS: ';
+echo ' OS:'.PHP_EOL;
 select($os_array, 'os', $os);
 if ($admin) {
-	echo '<input type="hidden" name="admin" value="admin">';
+	echo '<input type="hidden" name="admin" value="admin">'.PHP_EOL;
 }
-echo '<input type="submit" value="Submit">';
-echo '</form>';
-echo "<hr>";
+echo checkbox($compact, 'compact', "Compact");
+echo '</div>'.PHP_EOL;
+echo '<hr>'.PHP_EOL;
+echo '<div>'.PHP_EOL;
+checkbox($wontfix, 'wontfix', "Won't Fix");
+checkbox($reopened, 'reopened', "Re-Opened");
+checkbox($new, 'new', "New");
+checkbox($accepted, 'accepted', "Accepted");
+checkbox($started, 'started', "Started");
+checkbox($fixed, 'fixed', "Fixed");
+checkbox($fixreleased, 'fixreleased', "Fix Released");
+echo '</div>'.PHP_EOL;
+//echo '<input type="submit" value="Submit">'.PHP_EOL;
+echo '</form>'.PHP_EOL;
+echo "<hr>".PHP_EOL;
 
 $sql = "SELECT * FROM ".table();
 $and = false;
-if ($version != 'All' || $java != 'All' || $os != 'All') {
+if ($version != 'All' || $java != 'All' || $os != 'All' || $wontfix || $reopened || $new || $accepted || $started || $fixed || $fixreleased) {
 	$sql = $sql . " WHERE ";
 }
 add_where($sql, $and, $version, 'version');
 add_where($sql, $and, $java, 'java');
 add_where($sql, $and, $os, 'os');
+checkbox_where($sql, $and, $wontfix, '-2');
+checkbox_where($sql, $and, $reopened, '-1');
+checkbox_where($sql, $and, $new, '0');
+checkbox_where($sql, $and, $accepted, '1');
+checkbox_where($sql, $and, $started, '2');
+checkbox_where($sql, $and, $fixed, '3');
+checkbox_where($sql, $and, $fixreleased, '4');
 $sql = $sql." ORDER BY $order $desc";
 
 $statement = $dbh->prepare($sql);
 $statement->execute();
 $rows = $statement->fetchAll(PDO::FETCH_ASSOC);
 foreach ($rows as &$row) {
-	echo '<div style="width: 350px; float: left;">';
+	echo '<div style="width: 350px; float: left;">'.PHP_EOL;;
 	switch ($row['status']) {
 		case -2:
 			echo "<span style=\"background: Gainsboro;\">&nbsp;Won't Fix&nbsp;</span>";
@@ -178,7 +210,7 @@ foreach ($rows as &$row) {
 	echo format($row['count']);
 	echo "</span>";
 	echo ' <b>Id:</b> <a href="#bugid'.format($row['id']).'" id="bugid'.format($row['id']).'">'.format($row['id']).'</a>';
-	echo "</div>";
+	echo "</div>".PHP_EOL;s;
 	if ($admin) {
 		echo '<div>';
 		//Edit
@@ -212,8 +244,13 @@ foreach ($rows as &$row) {
 	echo "<b>OS:</b> ".format_list($row['os'])."<br>";
 	echo "<b>Java:</b> ".format_list($row['java'])."<br>";
 	echo "<b>Version:</b> ".format_list($row['version'])."<br>";
-	echo "<b>Bug:</b> ".strtok($row['log'], "\n")."<br>";
-	echo "<button type=\"button\" onclick=\"showhide('log".$row['id']."')\">Show Log</button><br><div id=\"log".$row['id']."\" style=\"display:none\">".format($row['log'])."</div><br>";
+	if ($compact) {
+		echo "<b>Bug:</b><br>";
+		echo format($row['log']);
+	} else {
+		echo "<b>Bug:</b> ".strtok($row['log'], "\n")."<br>";
+		echo "<button type=\"button\" onclick=\"showhide('log".$row['id']."')\">Show Log</button><br><div id=\"log".$row['id']."\" style=\"display:none\">".format($row['log'])."</div><br>";
+	}
 	echo "<hr>";
 	echo "</div>";
 }
@@ -246,15 +283,15 @@ function format_list($string) {
 	return format_space($string); 
 }
 function select($values, $name, $selected) {
-	print '<select name="'.$name.'">';
+	echo '<select name="'.$name.'" onchange="this.form.submit()">'.PHP_EOL;
 	foreach ($values as &$value) {
 		$select = '';
 		if (strtolower($selected) == strtolower($value)) {
 			$select = ' selected="selected"';
 		}
-		print '<option value="'.$value.'"'.$select.'>'.$value.' </option>';
+		echo '	<option value="'.$value.'"'.$select.'>'.$value.' </option>'.PHP_EOL;
 	}
-	print "<select>";
+	echo "</select>".PHP_EOL;
 }
 function makeSafe($find, $in, $default) {
 	$key = array_search($find, $in);
@@ -291,7 +328,56 @@ function add_where(&$sql, &$and, $value, $column) {
 		if ($and) {
 			$sql = $sql . " AND ";
 		}
-		$sql = $sql . " $column LIKE '%$value%' ";
+		$sql = $sql . " $column regexp '(^|;)$value(;|$)' ";
+		$and = true;
+	}
+}
+function checkbox($ignore, $value, $name) {
+	echo '<input type="hidden" name="'.$value.'" value="hide">'.PHP_EOL;
+	switch ($value) {
+		case 'wontfix':
+			$bg = 'Gainsboro';
+			break;
+		case 'reopened':
+			$bg = 'DarkRed';
+			break;
+		case 'new':
+			$bg = 'Brown';
+			break;
+		case 'accepted':
+			$bg = 'OrangeRed';
+			break;
+		case 'started':
+			$bg = 'Orange';
+			break;
+		case 'fixed':
+			$bg = 'LightSkyBlue';
+			break;
+		case 'fixreleased':
+			$bg = 'LimeGreen';
+			break;
+	}
+
+	if (isset($bg)) {
+		if ($ignore) {
+			echo '<span style="color: '.$bg.'; border: 1px '.$bg.' solid; padding: 1px 3px 1px 3px;"><input type="checkbox" name="'.$value.'" value="show" onchange="this.form.submit()">'.$name.'</span>'.PHP_EOL;
+		} else {
+			echo '<span style="background: '.$bg.'; border: 1px '.$bg.' solid; padding: 1px 3px 1px 3px;"><input type="checkbox" name="'.$value.'" value="show" checked="checked" onchange="this.form.submit()">'.$name.'</span>'.PHP_EOL;
+		}
+	} else {
+		if ($ignore) {
+			echo '<span style="padding: 2px 4px 2px 4px;"><input type="checkbox" name="'.$value.'" value="show" onchange="this.form.submit()">'.$name.'</span>'.PHP_EOL;
+		} else {
+			echo '<span style="padding: 2px 4px 2px 4px;"><input type="checkbox" name="'.$value.'" value="show" checked="checked" onchange="this.form.submit()">'.$name.'</span>'.PHP_EOL;
+		}
+	}
+}
+function checkbox_where(&$sql, &$and, $ignore, $value) {
+	if ($ignore) {
+		if ($and) {
+			$sql = $sql . " AND ";
+		}
+		$sql = $sql . " status != $value ";
 		$and = true;
 	}
 }
