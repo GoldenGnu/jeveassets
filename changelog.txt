@@ -16,6 +16,23 @@
                   #### #  # #  # #  # #### #### #### #### ####
 
 ________________________________________________________________________________
+_3.0.2__________________________________________________________________________
+
+Bug Fixes:
+-Possible fixes for following bugs with BugID: 281, 412, 406, 403
+-Fixed crash when removing multiple avoid system from the routing tool
+-Old market orders are never marked as completed (BugID 410)
+-Better handling of missing data and library files
+-Warning when trying to run jEveAssets from inside the zip file
+
+Changed:
+-Blueprints in contracts now use PBC value (zero). See bellow...
+
+Known issues:
+-Assets in citadels are not included in the API (API Bug)
+-Blueprint in the contracts API are not marked as BPO or BPC (API Bug)
+ 
+________________________________________________________________________________
 _3.0.1__________________________________________________________________________
 
 Bug Fix:
