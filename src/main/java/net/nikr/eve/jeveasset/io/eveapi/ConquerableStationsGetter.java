@@ -29,7 +29,6 @@ import net.nikr.eve.jeveasset.data.Owner;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.data.StaticData;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
-import net.nikr.eve.jeveasset.io.local.ConquerableStationsWriter;
 import net.nikr.eve.jeveasset.io.shared.AbstractApiGetter;
 
 
@@ -62,7 +61,6 @@ public class ConquerableStationsGetter extends AbstractApiGetter<StationListResp
 	@Override
 	protected void setData(final StationListResponse response) {
 		StaticData.get().setConquerableStations(response.getStations());
-		ConquerableStationsWriter.save();
 	}
 
 	@Override
