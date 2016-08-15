@@ -141,7 +141,7 @@ public final class ApiConverter {
 
 	private static MyMarketOrder toMarketOrder(final MarketOrder apiMarketOrder, final Owner owner) {
 		Item item = ApiIdConverter.getItem(apiMarketOrder.getTypeID());
-		MyLocation location = ApiIdConverter.getLocation(apiMarketOrder.getStationID(), null);
+		MyLocation location = ApiIdConverter.getLocation(apiMarketOrder.getStationID());
 		return new MyMarketOrder(apiMarketOrder, item, location, owner);
 	}
 
@@ -338,12 +338,7 @@ public final class ApiConverter {
 
 	public static MyTransaction convertTransaction(final WalletTransaction apiTransaction, final Owner owner, final int accountKey) {
 		Item item = ApiIdConverter.getItem(apiTransaction.getTypeID());
-		MyLocation location;
-		if (apiTransaction.getStationID() == null) {
-			location = new MyLocation(0);
-		} else {
-			location = ApiIdConverter.getLocation(apiTransaction.getStationID());
-		}
+		MyLocation location = ApiIdConverter.getLocation(apiTransaction.getStationID());
 		MyTransaction transaction = new MyTransaction(apiTransaction, item, location, owner, accountKey);
 		return transaction;
 	}
