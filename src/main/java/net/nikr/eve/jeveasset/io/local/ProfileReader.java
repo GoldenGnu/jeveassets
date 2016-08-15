@@ -128,9 +128,9 @@ public final class ProfileReader extends AbstractXmlReader {
 		if (AttributeGetters.haveAttribute(node, "name")) {
 			name = AttributeGetters.getString(node, "name");
 		}
-		int accessMask = 0;
+		long accessMask = 0;
 		if (AttributeGetters.haveAttribute(node, "accessmask")) {
-			accessMask = AttributeGetters.getInt(node, "accessmask");
+			accessMask = AttributeGetters.getLong(node, "accessmask");
 		}
 		KeyType type = null;
 		if (AttributeGetters.haveAttribute(node, "type")) {
