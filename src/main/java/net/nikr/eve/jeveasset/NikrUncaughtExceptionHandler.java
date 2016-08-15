@@ -40,6 +40,7 @@ public class NikrUncaughtExceptionHandler implements Thread.UncaughtExceptionHan
 
 	private static final Logger LOG = LoggerFactory.getLogger(NikrUncaughtExceptionHandler.class);
 	private static final String SUBMIT = "http://eve.nikr.net/jeveassets/bugs/submit.php";
+	private static final String JAVA = "Java 8";
 
 	private static boolean error = false;
 
@@ -65,7 +66,14 @@ public class NikrUncaughtExceptionHandler implements Thread.UncaughtExceptionHan
 			error = true;
 			LOG.error("Uncaught Exception (" + s + "): " + t.getMessage(), t);
 
-			if (t instanceof OutOfMemoryError) {
+			if (t instanceof UnsupportedClassVersionError) {
+				JOptionPane.showMessageDialog(null,
+						"Please update Java to the latest version.\r\n"
+						+ "Minimum supported version is: " + JAVA + "\r\n"
+						+ "Press OK to close"
+						,
+						"Critical Error", JOptionPane.ERROR_MESSAGE);
+			}else if (t instanceof OutOfMemoryError) {
 				JOptionPane.showMessageDialog(null,
 						"Java have run out of memory\r\n"
 						+ "\r\n"
