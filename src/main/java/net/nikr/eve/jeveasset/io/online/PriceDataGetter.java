@@ -139,6 +139,10 @@ public class PriceDataGetter implements PricingListener {
 			if (!ok) {
 				priceDataList.remove(typeID); //Remove failed typeID
 			}
+			long nextUpdateTemp = pricing.getNextUpdateTime(typeID);
+			if (nextUpdateTemp >= 0 && nextUpdateTemp > nextUpdate) {
+				nextUpdate = nextUpdateTemp;
+			}
 		}
 		if (!priceDataList.isEmpty()) {
 			LOG.info("	Price data loaded");
