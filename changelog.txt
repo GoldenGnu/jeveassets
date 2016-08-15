@@ -16,6 +16,21 @@
                   #### #  # #  # #  # #### #### #### #### ####
 
 ________________________________________________________________________________
+_3.0.3__________________________________________________________________________
+
+Bug Fixes:
+-Fixed problem with updating contracts in citadels
+-Fixed problem with reading AccessMask in ProfileReader
+-The price cache time was not loaded on startup
+
+Code:
+-Better handling of old versions of Java
+
+Known issues:
+-Assets in citadels are not included in the API (API Bug)
+-Blueprint in the contracts API are not marked as BPO or BPC (API Bug)
+
+________________________________________________________________________________
 _3.0.2__________________________________________________________________________
 
 Bug Fixes:
