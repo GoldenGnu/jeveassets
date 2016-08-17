@@ -363,6 +363,14 @@ public class MyAsset implements Comparable<MyAsset>, InfoItem, JumpType, ItemTyp
 		}
 	}
 
+	public int getRuns() {
+		if (blueprint != null) {
+			return blueprint.getRuns();
+		} else {
+			return 0;
+		}
+	}
+
 	public boolean isCorporation() {
 		return owner.isCorporation();
 	}
