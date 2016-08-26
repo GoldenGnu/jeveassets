@@ -61,6 +61,7 @@ public abstract class TabsTracker extends Bundle {
 	public abstract String help();
 	public abstract String helpLegacyData();
 	public abstract String helpNewData();
+	public abstract String includeZero();
 	public abstract String invalid();
 	public abstract String invalidNumberMsg();
 	public abstract String invalidNumberTitle();

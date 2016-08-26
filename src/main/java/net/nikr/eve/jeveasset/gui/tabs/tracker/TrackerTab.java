@@ -59,6 +59,7 @@ import javax.swing.AbstractListModel;
 import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
@@ -78,14 +79,13 @@ import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.components.CheckBoxNode;
+import net.nikr.eve.jeveasset.gui.shared.components.JDropDownButton;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
 import net.nikr.eve.jeveasset.gui.shared.components.JMultiSelectionList;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo;
 import net.nikr.eve.jeveasset.gui.tabs.values.Value;
-import net.nikr.eve.jeveasset.gui.tabs.values.ValueTableTab;
 import net.nikr.eve.jeveasset.i18n.General;
 import net.nikr.eve.jeveasset.i18n.TabsTracker;
-import net.nikr.eve.jeveasset.i18n.TabsValues;
 import org.jfree.chart.ChartMouseEvent;
 import org.jfree.chart.ChartMouseListener;
 import org.jfree.chart.ChartPanel;
@@ -109,6 +109,7 @@ public class TrackerTab extends JMainTab {
 		QUICK_DATE,
 		UPDATE_DATA,
 		UPDATE_SHOWN,
+		INCLUDE_ZERO,
 		ALL,
 		EDIT,
 		DELETE,
@@ -141,6 +142,7 @@ public class TrackerTab extends JMainTab {
 	private final JCheckBox jContractCollateral;
 	private final JCheckBox jContractValue;
 	private final JCheckBox jAllProfiles;
+	private final JCheckBoxMenuItem jIncludeZero;
 	private final JPopupMenu jPopupMenu;
 	private final JMenuItem jIskValue;
 	private final JMenuItem jDateValue;
@@ -208,12 +210,6 @@ public class TrackerTab extends JMainTab {
 
 		jSelectionDialog = new JSelectionDialog(program);
 
-		JSeparator jOwnersSeparator = new JSeparator();
-
-		jOwners = new JMultiSelectionList<String>();
-		jOwners.getSelectionModel().addListSelectionListener(listener);
-		JScrollPane jOwnersScroll = new JScrollPane(jOwners);
-
 		JSeparator jDateSeparator = new JSeparator();
 
 		jQuickDate = new JComboBox<QuickDate>(QuickDate.values());
@@ -225,10 +221,6 @@ public class TrackerTab extends JMainTab {
 
 		JLabel jToLabel = new JLabel(TabsTracker.get().to());
 		jTo = createDateChooser();
-
-		jAllProfiles = new JCheckBox(TabsTracker.get().allProfiles());
-		jAllProfiles.setActionCommand(TrackerAction.PROFILE.name());
-		jAllProfiles.addActionListener(listener);
 		
 		jAll = new JCheckBox(General.get().all());
 		jAll.setSelected(true);
@@ -289,6 +281,16 @@ public class TrackerTab extends JMainTab {
 		jContractValue.setActionCommand(TrackerAction.UPDATE_SHOWN.name());
 		jContractValue.addActionListener(listener);
 
+		JSeparator jOwnersSeparator = new JSeparator();
+
+		jAllProfiles = new JCheckBox(TabsTracker.get().allProfiles());
+		jAllProfiles.setActionCommand(TrackerAction.PROFILE.name());
+		jAllProfiles.addActionListener(listener);
+
+		jOwners = new JMultiSelectionList<String>();
+		jOwners.getSelectionModel().addListSelectionListener(listener);
+		JScrollPane jOwnersScroll = new JScrollPane(jOwners);
+
 		JLabel jHelp = new JLabel(TabsTracker.get().help());
 		jHelp.setIcon(Images.MISC_HELP.getIcon());
 
@@ -297,6 +299,14 @@ public class TrackerTab extends JMainTab {
 
 		JLabel jFilter = new JLabel(TabsTracker.get().helpNewData());
 		jFilter.setIcon(new ShapeIcon(FILTER_AND_DEFAULT));
+
+		JDropDownButton jSettings = new JDropDownButton(Images.DIALOG_SETTINGS.getIcon());
+
+		jIncludeZero = new JCheckBoxMenuItem(TabsTracker.get().includeZero());
+		jIncludeZero.setSelected(true);
+		jIncludeZero.setActionCommand(TrackerAction.INCLUDE_ZERO.name());
+		jIncludeZero.addActionListener(listener);
+		jSettings.add(jIncludeZero);
 
 		DateAxis domainAxis = new DateAxis();
 		domainAxis.setDateFormatOverride(dateFormat);
@@ -362,6 +372,9 @@ public class TrackerTab extends JMainTab {
 						.addComponent(jNoFilter)
 						.addGap(20)
 						.addComponent(jFilter)
+						.addGap(20, 20, Integer.MAX_VALUE)
+						.addComponent(jSettings)
+						.addGap(6)
 					)
 					.addComponent(jChartPanel)
 				)
@@ -406,9 +419,10 @@ public class TrackerTab extends JMainTab {
 			layout.createParallelGroup()
 				.addGroup(layout.createSequentialGroup()
 					.addGroup(layout.createParallelGroup()
-							.addComponent(jHelp)
-							.addComponent(jNoFilter)
-							.addComponent(jFilter)
+							.addComponent(jHelp, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+							.addComponent(jNoFilter, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+							.addComponent(jFilter, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+							.addComponent(jSettings, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 					)
 					.addComponent(jChartPanel)
 				)
@@ -1024,6 +1038,9 @@ public class TrackerTab extends JMainTab {
 						jFrom.setDate(fromDate);
 					}
 				}
+			} else if (TrackerAction.INCLUDE_ZERO.name().equals(e.getActionCommand())) {
+				NumberAxis domainAxis = (NumberAxis)jNextChart.getXYPlot().getRangeAxis();
+				domainAxis.setAutoRangeIncludesZero(jIncludeZero.isSelected());
 			} else if (TrackerAction.UPDATE_DATA.name().equals(e.getActionCommand())) {
 				createData();
 			} else if (TrackerAction.UPDATE_SHOWN.name().equals(e.getActionCommand())) {
