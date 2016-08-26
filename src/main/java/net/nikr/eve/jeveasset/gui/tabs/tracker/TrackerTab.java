@@ -800,9 +800,12 @@ public class TrackerTab extends JMainTab {
 				if (jEscrows.isSelected() && escrows != null) {
 					t += entry.getValue().getEscrows();
 				}
-				if (jEscrowsToCover.isSelected() && escrowsToCover != null) {
-					t += entry.getValue().getEscrowsToCover();
-				}
+				//Escrows To Cover is not money you own, It's technically money you owe
+				//Therefor it's not included in the total
+				//See: https://forums.eveonline.com/default.aspx?g=posts&m=6607898#post6607898
+				//if (jEscrowsToCover.isSelected() && escrowsToCover != null) {
+				//	t += entry.getValue().getEscrowsToCover();
+				//}
 				if (jManufacturing.isSelected() && manufacturing != null) {
 					t += entry.getValue().getManufacturing();
 				}
