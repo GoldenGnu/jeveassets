@@ -1011,13 +1011,18 @@ public class TrackerTab extends JMainTab {
 		public void actionPerformed(ActionEvent e) {
 			if (TrackerAction.QUICK_DATE.name().equals(e.getActionCommand())) {
 				QuickDate quickDate = (QuickDate) jQuickDate.getSelectedItem();
-				Date toDate = jTo.getDate();
-				if (toDate == null) {
-					toDate = new Date(); //now
-				}
-				Date fromDate = quickDate.apply(toDate);
-				if (fromDate != null) {
-					jFrom.setDate(fromDate);
+				if (quickDate == QuickDate.RESET) {
+					jTo.setDate(null);
+					jFrom.setDate(null);
+				} else {
+					Date toDate = jTo.getDate();
+					if (toDate == null) {
+						toDate = new Date(); //now
+					}
+					Date fromDate = quickDate.apply(toDate);
+					if (fromDate != null) {
+						jFrom.setDate(fromDate);
+					}
 				}
 			} else if (TrackerAction.UPDATE_DATA.name().equals(e.getActionCommand())) {
 				createData();
