@@ -32,13 +32,14 @@ $started = "hide" === filter_input(INPUT_GET, 'started');
 $fixed = "hide" === filter_input(INPUT_GET, 'fixed');
 $fixreleased = "hide" === filter_input(INPUT_GET, 'fixreleased');
 $compact = "hide" === filter_input(INPUT_GET, 'compact');
+$javabug = "hide" === filter_input(INPUT_GET, 'javabug');
 
 $edit = filter_input(INPUT_POST, 'edit');
 if ($edit == password()) {
 	$id = filter_input(INPUT_POST, 'id');
 	$status = filter_input(INPUT_POST, 'status');
 	update($dbh, $id, $status);
-	header("Location: .?".$_SERVER['QUERY_STRING']);
+	header("Location: .?".$_SERVER['QUERY_STRING']."#bugid".$id);
 }
 
 $delete = filter_input(INPUT_POST, 'delete');
@@ -58,9 +59,18 @@ if ($delete == password()) {
 	<meta http-equiv="pragma" content="no-cache" />
 	<title><?php echo name() . ' Bug Database' ?></title>
 	<link rel="icon" type="image/png" href="favicon.ico" />
+	<link href="https://fonts.googleapis.com/css?family=Jura" rel="stylesheet"> 
+	<link href="https://fonts.googleapis.com/css?family=Press+Start+2P" rel="stylesheet"> 
+	<style>
+		h1 {
+			font-family: 'Press Start 2P', cursive;
+		}
+		label, .status {
+			font-family: 'Jura', sans-serif;
+		}
+	</style>
 	<script> 
 	function toggle(id, name) {
-		var hide;
 		var otherName;
 		if (name === 'delete') {
 			otherName = 'edit';
@@ -101,42 +111,94 @@ if ($delete == password()) {
 			document.getElementById(elementId).style.display = "inline";
 		}
 	}
-	window.onkeyup = function(e) {
-		var key = e.keyCode ? e.keyCode : e.which;
-
-		if (key == 65 && e.altKey) {
-			if (window.location.search.indexOf("admin") < 0) {
-				window.location.search += "&admin=admin";
-			} else {
-				window.location.search = window.location.search.replace("?admin=admin", "").replace("&admin=admin", "");
-			}
+	function admin() {
+		if (window.location.search.indexOf("admin") < 0) {
+			window.location.search += "&admin=admin";
+		} else {
+			window.location.search = window.location.search.replace("?admin=admin", "").replace("&admin=admin", "");
 		}
 	}
-	</script>
+	window.onkeyup = function(e) {
+		var key = e.keyCode ? e.keyCode : e.which;
+		if (key === 65 && e.altKey) {
+			admin();
+		}
+	};
+ 
+window.addEventListener('load', function(){
+ 	var box1 = document.getElementById('title');
+	var startx = 0;
+	var dist = 0;
+	var minus = 0;
+	var plus = 0;
+
+	box1.addEventListener('touchstart', function(e){
+		var touchobj = e.changedTouches[0]; // reference first touch point (ie: first finger)
+		startx = parseInt(touchobj.clientX); // get x position of touch point relative to left edge of browser
+		dist = 0;
+		minus = 0;
+		plus = 0;
+		e.preventDefault();
+	}, false);
+
+	box1.addEventListener('touchmove', function(e){
+		var touchobj = e.changedTouches[0]; // reference first touch point for this event
+		var travled = parseInt(touchobj.clientX) - startx;
+		if (travled < 0) {
+			minus = Math.min(minus, travled);
+		} else {
+			plus = Math.max(plus, travled);
+		}
+		dist = Math.abs(minus) + plus;
+		e.preventDefault();
+	}, false);
+
+	box1.addEventListener('touchend', function(e){
+		if (Math.abs(dist) > 100) {
+			admin();
+		}
+		e.preventDefault();
+	}, false);
+ 
+}, false);
+ 
+</script>
 </head>
 <body>
-	<h1><?php echo name() . ' Bug Database' ?></h1>
+	<h1 id="title"><?php echo name() . ' Bug Database' ?></h1>
 	<hr>
 <?php
-echo '<div>'.PHP_EOL;
 echo '<form method="get" action="." style="display: inline;">'.PHP_EOL;
 echo '<input type="submit" value="Reset">'.PHP_EOL;
 echo '</form>'.PHP_EOL;
+
 echo '<form method="get" action="" style="display: inline;">'.PHP_EOL;
-echo 'Order By:'.PHP_EOL;
+
+echo '&nbsp;&nbsp;&nbsp;<label>'.PHP_EOL;
+echo 'Version'.PHP_EOL;
+select($version_array, 'version', $version);
+echo '</label>'.PHP_EOL;
+
+echo '&nbsp;&nbsp;&nbsp;<label>'.PHP_EOL;
+echo 'Java'.PHP_EOL;
+select($java_array, 'java', $java);
+echo '</label>'.PHP_EOL;
+
+echo '&nbsp;&nbsp;&nbsp;<label>'.PHP_EOL;
+echo 'OS'.PHP_EOL;
+select($os_array, 'os', $os);
+echo '</label>'.PHP_EOL;
+
+echo '&nbsp;&nbsp;&nbsp;<label>'.PHP_EOL;
+echo 'Order By'.PHP_EOL;
 select(array("Date", "Count", "ID", "Status"), 'order', $order);
 select(array("DESC", "ASC"), 'desc', $desc);
-echo ' Version:'.PHP_EOL;
-select($version_array, 'version', $version);
-echo ' Java:'.PHP_EOL;
-select($java_array, 'java', $java);
-echo ' OS:'.PHP_EOL;
-select($os_array, 'os', $os);
+echo '</label>'.PHP_EOL;
+
 if ($admin) {
 	echo '<input type="hidden" name="admin" value="admin">'.PHP_EOL;
 }
-echo checkbox($compact, 'compact', "Compact");
-echo '</div>'.PHP_EOL;
+checkbox($compact, 'compact', "Compact");
 echo '<hr>'.PHP_EOL;
 echo '<div>'.PHP_EOL;
 checkbox($wontfix, 'wontfix', "Won't Fix");
@@ -146,6 +208,7 @@ checkbox($accepted, 'accepted', "Accepted");
 checkbox($started, 'started', "Started");
 checkbox($fixed, 'fixed', "Fixed");
 checkbox($fixreleased, 'fixreleased', "Fix Released");
+checkbox($javabug, 'javabug', "Java Bugs");
 echo '</div>'.PHP_EOL;
 //echo '<input type="submit" value="Submit">'.PHP_EOL;
 echo '</form>'.PHP_EOL;
@@ -153,7 +216,7 @@ echo "<hr>".PHP_EOL;
 
 $sql = "SELECT * FROM ".table();
 $and = false;
-if ($version != 'All' || $java != 'All' || $os != 'All' || $wontfix || $reopened || $new || $accepted || $started || $fixed || $fixreleased) {
+if ($version != 'All' || $java != 'All' || $os != 'All' || $wontfix || $reopened || $new || $accepted || $started || $fixed || $fixreleased || $javabug) {
 	$sql = $sql . " WHERE ";
 }
 add_where($sql, $and, $version, 'version');
@@ -166,44 +229,48 @@ checkbox_where($sql, $and, $accepted, '1');
 checkbox_where($sql, $and, $started, '2');
 checkbox_where($sql, $and, $fixed, '3');
 checkbox_where($sql, $and, $fixreleased, '4');
+search_where($sql, $and, $javabug, 'log', 'net.nikr');
 $sql = $sql." ORDER BY $order $desc";
 
 $statement = $dbh->prepare($sql);
 $statement->execute();
 $rows = $statement->fetchAll(PDO::FETCH_ASSOC);
 foreach ($rows as &$row) {
-	echo '<div style="width: 350px; float: left;">'.PHP_EOL;;
+	echo '<div style="width: 400px; float: left;">'.PHP_EOL;;
 	switch ($row['status']) {
 		case -2:
-			echo "<span style=\"background: Gainsboro;\">&nbsp;Won't Fix&nbsp;</span>";
+			echo '<span class="status" style="background: Gainsboro;">&nbsp;Won\'t Fix&nbsp;</span>';
 			break;
 		case -1:
-			echo "<span style=\"background: DarkRed;\">&nbsp;Re-Opened&nbsp;</span>";
+			echo '<span class="status" style="background: #ff33ff;">&nbsp;Re-Opened&nbsp;</span>';
 			break;
 		case 0:
-			echo "<span style=\"background: Brown;\">&nbsp;New&nbsp;</span>";
+			echo '<span class="status" style="background: #cc3300;">&nbsp;New&nbsp;</span>';
 			break;
 		case 1:
-			echo "<span style=\"background: OrangeRed;\">&nbsp;Accepted&nbsp;</span>";
+			echo '<span class="status" style="background: #ff9933;">&nbsp;Accepted&nbsp;</span>';
 			break;
 		case 2:
-			echo "<span style=\"background: Orange;\">&nbsp;Started&nbsp;</span>";
+			echo '<span class="status" style="background: #ffcc33;">&nbsp;Started&nbsp;</span>';
 			break;
 		case 3:
-			echo "<span style=\"background: LightSkyBlue ;\">&nbsp;Fixed&nbsp;</span>";
+			echo '<span class="status" style="background: LightSkyBlue ;">&nbsp;Fixed&nbsp;</span>';
 			break;
 		case 4:
-			echo "<span style=\"background: LimeGreen  ;\">&nbsp;Fix Released&nbsp;</span>";
+			echo '<span class="status" style="background: LimeGreen  ;">&nbsp;Fix Released&nbsp;</span>';
 			break;
+	}
+	if (strpos(format($row['log']), 'net.nikr') === false) {
+		echo ' <span class="status" style="color: #cc3300;">&nbsp;Java&nbsp;Bug&nbsp;</span>';
 	}
 	echo " <b>Date:</b> ".formatDate($row['date']);
 	echo " <b>Count:</b> ";
 	if ($row['count'] > 10) {
-		echo "<span style=\"background: Brown;\">";
+		echo '<span style="border: 3px #cc3300 solid; padding: 0px 1px 0px 1px">';
 	} elseif ($row['count'] > 6) {
-		echo "<span style=\"background: OrangeRed;\">";
+		echo '<span style="border: 3px #ff9933 solid; padding: 0px 1px 0px 1px">';
 	} elseif ($row['count'] > 2) {
-		echo "<span style=\"background: Orange;\">";
+		echo '<span style="border: 3px #ffcc33 solid; padding: 0px 1px 0px 1px">';
 	} else {
 		echo "<span>";
 	}
@@ -334,21 +401,22 @@ function add_where(&$sql, &$and, $value, $column) {
 }
 function checkbox($ignore, $value, $name) {
 	echo '<input type="hidden" name="'.$value.'" value="hide">'.PHP_EOL;
+	$fg = 'Black';
 	switch ($value) {
 		case 'wontfix':
 			$bg = 'Gainsboro';
 			break;
 		case 'reopened':
-			$bg = 'DarkRed';
+			$bg = '#ff33ff';
 			break;
 		case 'new':
-			$bg = 'Brown';
+			$bg = '#cc3300';
 			break;
 		case 'accepted':
-			$bg = 'OrangeRed';
+			$bg = '#ff9933';
 			break;
 		case 'started':
-			$bg = 'Orange';
+			$bg = '#ffcc33';
 			break;
 		case 'fixed':
 			$bg = 'LightSkyBlue';
@@ -356,19 +424,25 @@ function checkbox($ignore, $value, $name) {
 		case 'fixreleased':
 			$bg = 'LimeGreen';
 			break;
+		case 'javabug':
+			if (!$ignore) {
+				$fg = '#cc3300';
+			}
+			break;
 	}
 
 	if (isset($bg)) {
 		if ($ignore) {
-			echo '<span style="color: '.$bg.'; border: 1px '.$bg.' solid; padding: 1px 3px 1px 3px;"><input type="checkbox" name="'.$value.'" value="show" onchange="this.form.submit()">'.$name.'</span>'.PHP_EOL;
+			//echo '<label style="color: '.$bg.'; border: 1px '.$bg.' solid; padding: 1px 3px 1px 3px;"><input type="checkbox" name="'.$value.'" value="show" onchange="this.form.submit()">'.$name.'</label>'.PHP_EOL;
+			echo '<label style="border: 1px '.$bg.' solid; padding: 1px 3px 1px 3px; color: '.$fg.'"><input type="checkbox" name="'.$value.'" value="show" onchange="this.form.submit()">'.$name.'</label>'.PHP_EOL;
 		} else {
-			echo '<span style="background: '.$bg.'; border: 1px '.$bg.' solid; padding: 1px 3px 1px 3px;"><input type="checkbox" name="'.$value.'" value="show" checked="checked" onchange="this.form.submit()">'.$name.'</span>'.PHP_EOL;
+			echo '<label style="background: '.$bg.'; border: 1px '.$bg.' solid; padding: 1px 3px 1px 3px; color: '.$fg.'""><input type="checkbox" name="'.$value.'" value="show" checked="checked" onchange="this.form.submit()">'.$name.'</label>'.PHP_EOL;
 		}
 	} else {
 		if ($ignore) {
-			echo '<span style="padding: 2px 4px 2px 4px;"><input type="checkbox" name="'.$value.'" value="show" onchange="this.form.submit()">'.$name.'</span>'.PHP_EOL;
+			echo '<label style="padding: 2px 4px 2px 4px; color: '.$fg.'""><input type="checkbox" name="'.$value.'" value="show" onchange="this.form.submit()">'.$name.'</label>'.PHP_EOL;
 		} else {
-			echo '<span style="padding: 2px 4px 2px 4px;"><input type="checkbox" name="'.$value.'" value="show" checked="checked" onchange="this.form.submit()">'.$name.'</span>'.PHP_EOL;
+			echo '<label style="padding: 2px 4px 2px 4px; color: '.$fg.'""><input type="checkbox" name="'.$value.'" value="show" checked="checked" onchange="this.form.submit()">'.$name.'</label>'.PHP_EOL;
 		}
 	}
 }
@@ -378,6 +452,15 @@ function checkbox_where(&$sql, &$and, $ignore, $value) {
 			$sql = $sql . " AND ";
 		}
 		$sql = $sql . " status != $value ";
+		$and = true;
+	}
+}
+function search_where(&$sql, &$and, $ignore, $column, $value) {
+	if ($ignore) {
+		if ($and) {
+			$sql = $sql . " AND ";
+		}
+		$sql = $sql . " $column LIKE '%$value%' ";
 		$and = true;
 	}
 }
