@@ -179,7 +179,8 @@ public class JDropDownButton extends JButton {
 		}
 		///XXX Workaround for BugID: 281
 		//http://eve.nikr.net/jeveassets/bugs/#bugid281
-		if (!this.isVisible()) {
+		//http://eve.nikr.net/jeveassets/bugs/#bugid420
+		if (!this.isShowing()) {
 			return;
 		}
 		int verticalPosition = this.getHeight();
