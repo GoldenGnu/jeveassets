@@ -122,7 +122,7 @@ public abstract class JAutoCompleteDialog<T> extends JDialogCentered {
 		//Can not set strict on empty EventList - so we do it now (if possible)
 		try {
 			eventList.getReadWriteLock().readLock().lock();
-			if (eventList.isEmpty()) {
+			if (!eventList.isEmpty()) {
 				autoComplete.setStrict(strict);
 			}
 		} finally {
