@@ -677,9 +677,9 @@
 			<version>1.0.13</version>
 		</dependency>
 		<dependency>
-			<groupId>com.toedter</groupId>
-			<artifactId>jcalendar</artifactId>
-			<version>1.4.0</version>
+			<groupId>com.github.lgooddatepicker</groupId>
+			<artifactId>LGoodDatePicker</artifactId>
+			<version>7.6.3</version>
 		</dependency>
 	</dependencies>
 

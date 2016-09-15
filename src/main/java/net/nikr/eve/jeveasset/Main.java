@@ -222,7 +222,7 @@ public final class Main {
 		files.add("guava-r09.jar");
 		files.add("jaxen-1.1.6.jar");
 		files.add("guava-r09.jar");
-		files.add("jcalendar-1.4.0.jar");
+		files.add("LGoodDatePicker-7.6.3.jar");
 		files.add("jcl-over-slf4j-1.6.1.jar");
 		files.add("jcommon-1.0.16.jar");
 		files.add("jfreechart-1.0.13.jar");

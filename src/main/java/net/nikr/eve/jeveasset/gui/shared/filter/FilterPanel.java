@@ -20,18 +20,20 @@
  */
 package net.nikr.eve.jeveasset.gui.shared.filter;
 
-import com.toedter.calendar.JCalendar;
-import com.toedter.calendar.JDateChooser;
-import com.toedter.calendar.JTextFieldDateEditor;
+import com.github.lgooddatepicker.optionalusertools.DateChangeListener;
+import com.github.lgooddatepicker.zinternaltools.DateChangeEvent;
 import java.awt.Color;
 import java.awt.FontMetrics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
@@ -47,6 +49,7 @@ import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
+import net.nikr.eve.jeveasset.gui.shared.components.JDateChooser;
 import net.nikr.eve.jeveasset.gui.shared.components.ListComboBoxModel;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter.AllColumn;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter.CompareType;
@@ -146,16 +149,8 @@ class FilterPanel<E> {
 		jCompareColumn.addActionListener(listener);
 		jCompareColumn.setActionCommand(FilterPanelAction.FILTER.name());
 
-		jDate = new JDateChooser(Settings.getNow());
-		jDate.setDateFormatString(Formater.COLUMN_DATE);
-		JCalendar jCalendar = jDate.getJCalendar();
-		jCalendar.setTodayButtonText("Today");
-		jCalendar.setTodayButtonVisible(true);
-		JTextFieldDateEditor dateEditor = (JTextFieldDateEditor) jDate.getDateEditor().getUiComponent();
-		dateEditor.setEnabled(false);
-		dateEditor.setBorder(null);
-		dateEditor.setDisabledTextColor(Color.BLACK);
-		jDate.addPropertyChangeListener(listener);
+		jDate = new JDateChooser(false);
+		jDate.addDateChangeListener(listener);
 
 		jSpacing = new JLabel();
 
@@ -251,7 +246,7 @@ class FilterPanel<E> {
 		if (isColumnCompare()) {
 			jCompareColumn.setSelectedItem(filterControl.valueOf(filter.getText()));
 		} else if (isDateCompare()) {
-			jDate.setDate(Formater.columnStringToDate(filter.getText()));
+			setDateString(Formater.columnStringToDate(filter.getText()));
 		} else {
 			jText.setText(filter.getText());
 			timer.stop();
@@ -259,8 +254,16 @@ class FilterPanel<E> {
 		loading = false;
 	}
 
+	private void setDateString(Date date) {
+		Instant instant = Instant.ofEpochMilli(date.getTime());
+		LocalDate localDate = LocalDateTime.ofInstant(instant, ZoneId.of("GMT")).toLocalDate();
+		jDate.setDate(localDate);
+	}
+
 	private String getDataString() {
-		return  Formater.columnDate(jDate.getDate());
+		LocalDate date = jDate.getDate();
+		Instant instant = date.atStartOfDay().atZone(ZoneId.of("GMT")).toInstant(); //End of day - GMT
+		return  Formater.columnDate(Date.from(instant));
 	}
 
 	private void refilter() {
@@ -355,7 +358,7 @@ class FilterPanel<E> {
 		refilter();
 	}
 
-	private class ListenerClass implements ActionListener, KeyListener, DocumentListener, PropertyChangeListener {
+	private class ListenerClass implements ActionListener, KeyListener, DocumentListener, DateChangeListener {
 
 		@Override
 		public void insertUpdate(final DocumentEvent e) {
@@ -406,10 +409,8 @@ class FilterPanel<E> {
 		}
 
 		@Override
-		public void propertyChange(final PropertyChangeEvent evt) {
-			if ("date".equals(evt.getPropertyName())) {
-				refilter();
-			}
+		public void dateChanged(DateChangeEvent event) {
+			refilter();
 		}
 	}
 }
