@@ -142,34 +142,42 @@ public class MyMarketOrder extends MarketOrder implements Comparable<MyMarketOrd
 		if (this.getRange() > 1 && this.getRange() < 32767) {
 			rangeFormated = TabsOrders.get().rangeJumps(this.getRange());
 		}
-		//0 = open/active, 1 = closed, 2 = expired (or fulfilled), 3 = cancelled, 4 = pending, 5 = character deleted.
-		switch (this.getOrderState()) {
-			case 0:
-				status = OrderStatus.ACTIVE;
-				break;
-			case 1:
-				status = OrderStatus.CLOSED;
-				break;
-			case 2:
-				if (this.getVolRemaining() == 0) {
-					status = OrderStatus.FULFILLED;
-				} else if (this.getVolRemaining() == this.getVolEntered()) {
-					status = OrderStatus.EXPIRED;
-				} else {
-					status = OrderStatus.PARTIALLY_FULFILLED;
-				}
-				break;
-			case 3:
-				status = OrderStatus.CANCELLED;
-				break;
-			case 4:
-				status = OrderStatus.PENDING;
-				break;
-			case 5:
-				status = OrderStatus.CHARACTER_DELETED;
-				break;
+		if (isExpired()) { //expired (status may be out-of-date)
+			if (this.getVolRemaining() == 0) {
+				status = OrderStatus.FULFILLED;
+			} else if (this.getVolRemaining() == this.getVolEntered()) {
+				status = OrderStatus.EXPIRED;
+			} else {
+				status = OrderStatus.PARTIALLY_FULFILLED;
+			}
+		} else {
+			switch (this.getOrderState()) {
+				case 0: //open/active
+					status = OrderStatus.ACTIVE;
+					break;
+				case 1: //closed
+					status = OrderStatus.CLOSED;
+					break;
+				case 2: //expired (or fulfilled)
+					if (this.getVolRemaining() == 0) {
+						status = OrderStatus.FULFILLED;
+					} else if (this.getVolRemaining() == this.getVolEntered()) {
+						status = OrderStatus.EXPIRED;
+					} else {
+						status = OrderStatus.PARTIALLY_FULFILLED;
+					}
+					break;
+				case 3: //cancelled
+					status = OrderStatus.CANCELLED;
+					break;
+				case 4: //pending
+					status = OrderStatus.PENDING;
+					break;
+				case 5: //character deleted
+					status = OrderStatus.CHARACTER_DELETED;
+					break;
+			}
 		}
-
 	}
 
 	@Override
@@ -184,7 +192,7 @@ public class MyMarketOrder extends MarketOrder implements Comparable<MyMarketOrd
 		return new Date(expires);
 	}
 
-	public boolean isExpired() {
+	public final boolean isExpired() {
 		return getExpires().before(new Date());
 	}
 

@@ -76,7 +76,7 @@ public class MarketOrdersGetter extends AbstractApiGetter<MarketOrdersResponse> 
 						if (updated.contains(myMarketOrder.getOrderID())) {
 							continue; //Already updated
 						}
-						if (myMarketOrder.getStatus() != MyMarketOrder.OrderStatus.ACTIVE) {
+						if (!myMarketOrder.isActive()) {
 							continue; //Already completed
 						}
 						Set<Long> orderIDs = orderIDsByOwner.get(owner);
