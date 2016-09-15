@@ -21,9 +21,8 @@
 
 package net.nikr.eve.jeveasset.gui.tabs.tracker;
 
-import com.toedter.calendar.JCalendar;
-import com.toedter.calendar.JDateChooser;
-import com.toedter.calendar.JTextFieldDateEditor;
+import com.github.lgooddatepicker.optionalusertools.DateChangeListener;
+import com.github.lgooddatepicker.zinternaltools.DateChangeEvent;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Component;
@@ -40,14 +39,15 @@ import java.awt.event.MouseEvent;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -79,6 +79,7 @@ import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.components.CheckBoxNode;
+import net.nikr.eve.jeveasset.gui.shared.components.JDateChooser;
 import net.nikr.eve.jeveasset.gui.shared.components.JDropDownButton;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
 import net.nikr.eve.jeveasset.gui.shared.components.JMultiSelectionList;
@@ -470,20 +471,8 @@ public class TrackerTab extends JMainTab {
 	}
 
 	private JDateChooser createDateChooser() {
-		JDateChooser jDate = new JDateChooser(Settings.getNow());
-		jDate.setDateFormatString(Formater.COLUMN_DATE);
-		jDate.setCalendar(null);
-		JCalendar jCalendar = jDate.getJCalendar();
-		jCalendar.setTodayButtonText(TabsTracker.get().today());
-		jCalendar.setTodayButtonVisible(true);
-		jCalendar.setNullDateButtonText(TabsTracker.get().clear());
-		jCalendar.setNullDateButtonVisible(true);
-		JTextFieldDateEditor dateEditor = (JTextFieldDateEditor) jDate.getDateEditor().getUiComponent();
-		dateEditor.setEnabled(false);
-		dateEditor.setBorder(null);
-		dateEditor.setDisabledTextColor(Color.BLACK);
-		dateEditor.setHorizontalAlignment(JTextFieldDateEditor.CENTER);
-		jDate.addPropertyChangeListener(listener);
+		JDateChooser jDate = new JDateChooser(true);
+		jDate.addDateChangeListener(listener);
 		return jDate;
 	}
 
@@ -636,22 +625,8 @@ public class TrackerTab extends JMainTab {
 		manufacturing = new TimePeriodValues(TabsTracker.get().manufacturing());
 		contractCollateral = new TimePeriodValues(TabsTracker.get().contractCollateral());
 		contractValue = new TimePeriodValues(TabsTracker.get().contractValue());
-		Date from = jFrom.getDate();
-		if (from != null) { //Start of day
-			Calendar calendar = Calendar.getInstance();
-			calendar.setTime(from);
-			calendar.set(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH),calendar.get(Calendar.DAY_OF_MONTH), 0, 0, 0);
-			calendar.set(Calendar.MILLISECOND, 0);
-			from = calendar.getTime();
-		}
-		Date to = jTo.getDate();
-		if (to != null) { //End of day
-			Calendar calendar = Calendar.getInstance();
-			calendar.setTime(to);
-			calendar.set(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH), 23, 59, 59);
-			calendar.set(Calendar.MILLISECOND, 0);
-			to = calendar.getTime();
-		}
+		Date from = getFromDate();
+		Date to = getToDate();
 		cache = new TreeMap<SimpleTimePeriod, Value>();
 		Map<Date, Boolean> assetColumns = new TreeMap<Date, Boolean>();
 		Map<Date, Boolean> walletColumns = new TreeMap<Date, Boolean>();
@@ -1003,9 +978,32 @@ public class TrackerTab extends JMainTab {
 		}
 	}
 
+	private Date getFromDate() {
+		LocalDate date = jFrom.getDate();
+		if (date == null) {
+			return null;
+		}
+		Instant instant = date.atStartOfDay().atZone(ZoneId.of("GMT")).toInstant();  //Start of day - GMT
+		return Date.from(instant);
+	}
+
+	private Date getToDate() {
+		LocalDate date = jTo.getDate();
+		if (date == null) {
+			return null;
+		}
+		Instant instant = date.atTime(23, 59, 59).atZone(ZoneId.of("GMT")).toInstant(); //End of day - GMT
+		return Date.from(instant);
+	}
+
+	private LocalDate dateToLocalDate(Date date) {
+		Instant instant = date.toInstant();
+		return LocalDateTime.ofInstant(instant, ZoneId.of("GMT")).toLocalDate();
+	}
+
 	private class ListenerClass extends MouseAdapter implements 
-			ActionListener, PropertyChangeListener, PopupMenuListener,
-			ChartMouseListener, ListSelectionListener {
+			ActionListener, PopupMenuListener,
+			ChartMouseListener, ListSelectionListener, DateChangeListener {
 
 		private int defaultDismissTimeout;
 		private int defaultInitialDelay;
@@ -1032,13 +1030,13 @@ public class TrackerTab extends JMainTab {
 					jTo.setDate(null);
 					jFrom.setDate(null);
 				} else {
-					Date toDate = jTo.getDate();
+					Date toDate = getToDate();
 					if (toDate == null) {
 						toDate = new Date(); //now
 					}
 					Date fromDate = quickDate.apply(toDate);
 					if (fromDate != null) {
-						jFrom.setDate(fromDate);
+						jFrom.setDate(dateToLocalDate(fromDate));
 					}
 				}
 			} else if (TrackerAction.INCLUDE_ZERO.name().equals(e.getActionCommand())) {
@@ -1146,20 +1144,18 @@ public class TrackerTab extends JMainTab {
 		}
 
 		@Override
-		public void propertyChange(PropertyChangeEvent evt) {
-			if (evt.getPropertyName().equals("date")) {
-				Date from = jFrom.getDate();
-				Date to = jTo.getDate();
-				QuickDate quickDate = (QuickDate) jQuickDate.getSelectedItem();
-				if (!quickDate.isValid(from, to)) {
-					QuickDate selected = quickDate.getSelected(from, to);
-					jQuickDate.setSelectedItem(selected);
-				}
-				if (from != null && to != null && from.after(to)) {
-					jTo.setDate(from);
-				}
-				createData();
+		public void dateChanged(DateChangeEvent event) {
+			Date from = getFromDate();
+			Date to = getToDate();
+			QuickDate quickDate = (QuickDate) jQuickDate.getSelectedItem();
+			if (!quickDate.isValid(from, to)) {
+				QuickDate selected = quickDate.getSelected(from, to);
+				jQuickDate.setSelectedItem(selected);
 			}
+			if (from != null && to != null && from.after(to)) {
+				jTo.setDate(dateToLocalDate(from));
+			}
+			createData();
 		}
 
 		boolean mouseClicked = false;

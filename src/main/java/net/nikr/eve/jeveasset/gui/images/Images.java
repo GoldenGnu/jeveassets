@@ -55,6 +55,7 @@ public enum Images {
 	EDIT_PASTE ("edit_paste.png"),
 	EDIT_EDIT ("edit_edit.png"),
 	EDIT_RENAME ("edit_rename.png"),
+	EDIT_DATE ("edit_date.png"),
 	EDIT_DELETE ("edit_delete.png"),
 	EDIT_DELETE_WHITE ("edit_delete_white.png"),
 	EDIT_ADD ("edit_add.png"),
