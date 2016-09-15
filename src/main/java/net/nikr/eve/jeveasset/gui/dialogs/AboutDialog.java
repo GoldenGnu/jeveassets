@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2015 Contributors (see credits.txt)
+ * Copyright 2009-2016 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -94,7 +94,7 @@ public class AboutDialog extends JDialogCentered {
 				+ "&nbsp;<a href=\"http://publicobject.com/glazedlists/\">Glazed Lists</a> (table sorting and filtering)<br> "
 				+ "&nbsp;<a href=\"http://supercsv.sourceforge.net/\">Super CSV</a> (csv export)<br> "
 				+ "&nbsp;<a href=\"https://github.com/ZyorTaelon/eveapi\">eveapi</a> (parsing eve-online api)<br> "
-				+ "&nbsp;<a href=\"http://www.toedter.com/en/jcalendar/\">JCalendar</a> (date input)<br> "
+				+ "&nbsp;<a href=\"https://github.com/LGoodDatePicker/LGoodDatePicker\">LGoodDatePicker</a> (date input)<br> "
 				+ "&nbsp;<a href=\"http://www.jfree.org/jfreechart/\">JFreeChart</a> (charts)<br> "
 				+ "&nbsp;<a href=\"http://junit.sourceforge.net/\">JUnit</a> (unit testing)<br>"
 				+ "&nbsp;<a href=\"http://www.slf4j.org/\">slf4J</a> (logging)<br>"

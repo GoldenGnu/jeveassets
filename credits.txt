@@ -220,16 +220,16 @@ License:
   Common Public License V1.0 (http://junit.sourceforge.net/cpl-v10.html)
 
 ________________________________________________________________________________
-_JCALENDAR______________________________________________________________________
+_LGOODDATEPICKER________________________________________________________________
 
 jEveAssets use JCalendar to get user input as a Date
 
 Link:
-  http://www.toedter.com/en/jcalendar/
+  https://github.com/LGoodDatePicker/LGoodDatePicker
 
 License:
-  GNU Lesser General Public License
-  http://www.toedter.com/en/jcalendar/license.html
+  The MIT License (MIT)
+  https://opensource.org/licenses/MIT
 
 ________________________________________________________________________________
 _JFREECHART_____________________________________________________________________
@@ -246,7 +246,7 @@ License:
 ________________________________________________________________________________
 _COPYRIGHT______________________________________________________________________
 
-Copyright 2009-2015 Contributors (see above)
+Copyright 2009-2016 Contributors (see above)
 
 jEveAssets is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
