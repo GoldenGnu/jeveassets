@@ -18,7 +18,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
  */
-
 package net.nikr.eve.jeveasset;
 
 import java.io.BufferedReader;
@@ -65,24 +64,41 @@ public class NikrUncaughtExceptionHandler implements Thread.UncaughtExceptionHan
 		if (!error) {
 			error = true;
 			LOG.error("Uncaught Exception (" + s + "): " + t.getMessage(), t);
-
 			if (t instanceof UnsupportedClassVersionError) {
 				JOptionPane.showMessageDialog(null,
 						"Please update Java to the latest version.\r\n"
 						+ "Minimum supported version is: " + JAVA + "\r\n"
+						+ "\r\n"
 						+ "Press OK to close"
-						,
+						+ "\r\n"
+						+ "\r\n",
 						"Critical Error", JOptionPane.ERROR_MESSAGE);
-			}else if (t instanceof OutOfMemoryError) {
+			} else if (t instanceof OutOfMemoryError) {
 				JOptionPane.showMessageDialog(null,
-						"Java have run out of memory\r\n"
+						"Java has run out of memory\r\n"
 						+ "\r\n"
 						+ "To avoid this error:\r\n"
 						+ "Use jmemory.jar to run.\r\n"
 						+ "\r\n"
-						,
+						+ "Please ask for help in the forum thread,\r\n"
+						+ "if you can not get jmemory to work.\r\n"
+						+ "\r\n"
+						+ "Press OK to close"
+						+ "\r\n"
+						+ "\r\n",
 						"Critical Error", JOptionPane.ERROR_MESSAGE);
 			} else {
+				if (isJavaBug(t)) {
+					JOptionPane.showMessageDialog(null,
+						"You have encountered a bug that is most likely a java bug.\r\n"
+						+ "Updating to the latest version of java may fix this problem.\r\n"
+						+ "It's still very helpful to send the the bug report.\r\n"
+						+ "\r\n"
+						+ "Press OK to continue\r\n"
+						+ "\r\n"
+						+ "\r\n",
+						"Critical Error", JOptionPane.ERROR_MESSAGE);
+				}
 				int value = JOptionPane.showConfirmDialog(null,
 						"Send bug report?\r\n"
 						+ "\r\n"
@@ -102,6 +118,15 @@ public class NikrUncaughtExceptionHandler implements Thread.UncaughtExceptionHan
 			}
 			System.exit(-1);
 		}
+	}
+
+	private static boolean isJavaBug(Throwable t) {
+		for (StackTraceElement stackTraceElement : t.getStackTrace()) {
+			if (stackTraceElement.getClassName().startsWith("net.nikr")) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	private String send(Throwable t) {
@@ -142,7 +167,7 @@ public class NikrUncaughtExceptionHandler implements Thread.UncaughtExceptionHan
 			}
 			rd.close();
 			String bugID = response.toString();
-			if (!bugID.trim().equals("0") && !bugID.trim().isEmpty() ) {
+			if (!bugID.trim().equals("0") && !bugID.trim().isEmpty()) {
 				return "Bug report send. Thank you very much!\r\n"
 						+ "\r\n"
 						+ "BugID: " + bugID;
