@@ -268,13 +268,13 @@ public final class ProfileReader extends AbstractXmlReader {
 		}
 		Date dateExpired = AttributeGetters.getDate(element, "dateexpired");
 		Date dateIssued = AttributeGetters.getDate(element, "dateissued");
-		int endStationID = AttributeGetters.getInt(element, "endstationid");
+		long endStationID = AttributeGetters.getLong(element, "endstationid");
 		long issuerCorpID = AttributeGetters.getLong(element, "issuercorpid");
 		long issuerID = AttributeGetters.getLong(element, "issuerid");
 		int numDays = AttributeGetters.getInt(element, "numdays");
 		double price = AttributeGetters.getDouble(element, "price");
 		double reward = AttributeGetters.getDouble(element, "reward");
-		int startStationID = AttributeGetters.getInt(element, "startstationid");
+		long startStationID = AttributeGetters.getLong(element, "startstationid");
 		ContractStatus status = ContractStatus.valueOf(AttributeGetters.getString(element, "status"));
 		String title = AttributeGetters.getString(element, "title");
 		ContractType type = ContractType.valueOf(AttributeGetters.getString(element, "type"));
@@ -640,7 +640,7 @@ public final class ProfileReader extends AbstractXmlReader {
 
 		long itemId = AttributeGetters.getLong(node, "id");
 		int typeID = AttributeGetters.getInt(node, "typeid");
-		long locationID = AttributeGetters.getInt(node, "locationid");
+		long locationID = AttributeGetters.getLong(node, "locationid");
 		if (locationID == 0 && parentAsset != null) {
 			locationID = parentAsset.getLocation().getLocationID();
 		}
