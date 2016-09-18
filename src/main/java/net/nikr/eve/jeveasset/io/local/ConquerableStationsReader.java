@@ -83,7 +83,7 @@ public final class ConquerableStationsReader extends AbstractXmlReader {
 		Station station = new Station();
 		station.setCorporationID(AttributeGetters.getInt(element, "corporationid"));
 		station.setCorporationName(AttributeGetters.getString(element, "corporationname"));
-		station.setSolarSystemID(AttributeGetters.getInt(element, "solarsystemid"));
+		station.setSolarSystemID(AttributeGetters.getLong(element, "solarsystemid"));
 		station.setStationID(AttributeGetters.getLong(element, "stationid"));
 		station.setStationName(AttributeGetters.getString(element, "stationname"));
 		station.setStationTypeID(AttributeGetters.getInt(element, "stationtypeid"));
