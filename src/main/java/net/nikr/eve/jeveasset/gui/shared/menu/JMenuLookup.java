@@ -45,7 +45,7 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 		EVE_MARKETDATA,
 		EVE_MARKETS,
 		GAMES_CHRUKER,
-		EVE_ITEM_DATABASE,
+		//EVE_ITEM_DATABASE,
 		EVEMAPS_DOTLAN_STATION,
 		EVEMAPS_DOTLAN_SYSTEM,
 		EVEMAPS_DOTLAN_REGION,
@@ -66,7 +66,8 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 	//Dead
 	//private final JMenuItem jEveAddicts;
 	private final JMenuItem jChruker;
-	private final JMenuItem jEveOnline;
+	//Dead
+	//private final JMenuItem jEveOnline;
 
 	private MenuData<T> menuData;
 
@@ -148,11 +149,14 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 		jChruker.addActionListener(listener);
 		add(jChruker);
 
+		//Dead
+		/*
 		jEveOnline = new JMenuItem(GuiShared.get().eveOnline());
 		jEveOnline.setIcon(Images.MISC_EVE.getIcon());
 		jEveOnline.setActionCommand(MenuLookupAction.EVE_ITEM_DATABASE.name());
 		jEveOnline.addActionListener(listener);
 		add(jEveOnline);
+		*/
 	}
 
 	@Override
@@ -170,7 +174,8 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 		//Dead
 		//jEveAddicts.setEnabled(!menuData.getMarketTypeIDs().isEmpty());
 		jChruker.setEnabled(!menuData.getTypeIDs().isEmpty());
-		jEveOnline.setEnabled(!menuData.getTypeNames().isEmpty());
+		//Dead
+		//jEveOnline.setEnabled(!menuData.getTypeNames().isEmpty());
 	}
 
 	public void setTool(Object object) {
@@ -289,6 +294,8 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 					DesktopUtil.browse("http://games.chruker.dk/eve_online/item.php?type_id=" + typeID, program);
 				}
 			}
+			//Dead
+			/*
 			if (MenuLookupAction.EVE_ITEM_DATABASE.name().equals(e.getActionCommand())) {
 				if (!confirmOpenLinks(program, menuData.getTypeNames().size())) {
 					return;
@@ -297,6 +304,7 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 					DesktopUtil.browse("http://wiki.eveonline.com/wiki/" + typeName.replace(" ", "_"), program);
 				}
 			}
+			*/
 		}
 	}
 }
