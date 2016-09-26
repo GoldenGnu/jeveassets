@@ -25,15 +25,12 @@ package net.nikr.eve.jeveasset.io.shared;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import net.nikr.eve.jeveasset.data.Settings;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.w3c.dom.Node;
 
 
 public final class AttributeGetters {
 
-	private static final Logger LOG = LoggerFactory.getLogger(AttributeGetters.class);
+	private static final SimpleDateFormat FORMAT = new SimpleDateFormat("yyy-MM-dd HH:mm:ss");
 
 	private AttributeGetters() { }
 
@@ -46,117 +43,42 @@ public final class AttributeGetters {
 	}
 
 	public static String getString(final Node node, final String attributeName) {
-		Node attributeNode = node.getAttributes().getNamedItem(attributeName);
-		if (attributeNode == null) {
-			LOG.warn("Failed to parse attribute from node: {} > {}", node.getNodeName(), attributeName);
-			return "";
-		}
-		return attributeNode.getNodeValue();
+		return getNodeValue(node, attributeName);
 	}
 
 	public static Date getDate(final Node node, final String attributeName) {
-		Node attributeNode = node.getAttributes().getNamedItem(attributeName);
-		if (attributeNode == null) {
-			LOG.warn("Failed to parse attribute from node: {} > {}", node.getNodeName(), attributeName);
-			return Settings.getNow();
-		}
-		String dTemp = null;
-		SimpleDateFormat format = new SimpleDateFormat("yyy-MM-dd HH:mm:ss");
-		Date date = null;
+		String value = getNodeValue(node, attributeName);
 		try {
-			dTemp = attributeNode.getNodeValue();
-			date = format.parse(dTemp);
-		} catch (ParseException ex) { }
-		try {
-			dTemp = attributeNode.getNodeValue();
-			date = new Date(Long.parseLong(dTemp));
-		} catch (NumberFormatException ex) { }
-		if (date != null) {
-			return date;
-		} else {
-			LOG.warn("Failed to convert string to date: {} from node: {} > {}", new Object[]{dTemp, node.getNodeName(), attributeName});
-			return Settings.getNow();
+			return FORMAT.parse(value);
+		} catch (ParseException ex) {
+			return new Date(Long.parseLong(value));
 		}
 	}
 
 	public static int getInt(final Node node, final String attributeName) {
-		Node attributeNode = node.getAttributes().getNamedItem(attributeName);
-		if (attributeNode == null) {
-			LOG.warn("Failed to parse attribute from node: {} > {}", node.getNodeName(), attributeName);
-			return -1;
-		}
-		String sTemp = attributeNode.getNodeValue();
-		int nTemp;
-		try {
-			nTemp = Integer.parseInt(sTemp);
-			return nTemp;
-		} catch (NumberFormatException ex) {
-			LOG.warn("Failed to convert string to int: {} from node: {} > {}", new Object[]{sTemp, node.getNodeName(), attributeName});
-			return -1;
-		}
+		String value = getNodeValue(node, attributeName);
+		return Integer.parseInt(value);
 	}
 
 	public static long getLong(final Node node, final String attributeName) {
-		Node attributeNode = node.getAttributes().getNamedItem(attributeName);
-		if (attributeNode == null) {
-			LOG.warn("Failed to parse attribute from node: {} > {}", node.getNodeName(), attributeName);
-			return -1;
-		}
-		String sTemp = attributeNode.getNodeValue();
-		long nTemp;
-		try {
-			nTemp = safeStringToLong(sTemp); //Long.parseLong(sTemp);
-			return nTemp;
-		} catch (NumberFormatException ex) {
-			LOG.warn("Failed to convert string to long: {} from node: {} > {}", new Object[]{sTemp, node.getNodeName(), attributeName});
-			return -1;
-		}
+		String value = getNodeValue(node, attributeName);
+		return safeStringToLong(value); //Long.parseLong(sTemp);
 	}
 
 	public static double getDouble(final Node node, final String attributeName) {
-		Node attributeNode = node.getAttributes().getNamedItem(attributeName);
-		if (attributeNode == null) {
-			LOG.warn("Failed to parse attribute from node: {} > {}", node.getNodeName(), attributeName);
-			return -1;
-		}
-		String sTemp = attributeNode.getNodeValue();
-		double nTemp;
-		try {
-			nTemp = Double.valueOf(sTemp); //Long.parseLong(sTemp);
-			return nTemp;
-		} catch (NumberFormatException ex) {
-			LOG.warn("Failed to convert string to double: {} from node: {} > {}", new Object[]{sTemp, node.getNodeName(), attributeName});
-			return -1;
-		}
+		String value = getNodeValue(node, attributeName);
+		return Double.valueOf(value); //Long.parseLong(sTemp);
 	}
 
 	public static float getFloat(final Node node, final String attributeName) {
-		Node attributeNode = node.getAttributes().getNamedItem(attributeName);
-		if (attributeNode == null) {
-			LOG.warn("Failed to parse attribute from node: {} > {}", node.getNodeName(), attributeName);
-			return -1;
-		}
-		String sTemp = attributeNode.getNodeValue();
-		float nTemp;
-		try {
-			nTemp = Float.valueOf(sTemp); //Long.parseLong(sTemp);
-			return nTemp;
-		} catch (NumberFormatException ex) {
-			LOG.warn("Failed to convert string to float: {} from node: {} > {}", new Object[]{sTemp, node.getNodeName(), attributeName});
-			return -1;
-		}
+		String value = getNodeValue(node, attributeName);
+		return Float.valueOf(value); //Long.parseLong(sTemp);
 	}
 
 	public static boolean getBoolean(final Node node, final String attributeName) {
-		Node attributeNode = node.getAttributes().getNamedItem(attributeName);
-		if (attributeNode == null) {
-			LOG.warn("Failed to parse attribute from node: {} > {}", node.getNodeName(), attributeName);
-			return false;
-		}
-		String sTemp = attributeNode.getNodeValue();
-		return (sTemp.equals("true") || sTemp.equals("1"));
+		String value = getNodeValue(node, attributeName);
+		return (value.equals("true") || value.equals("1"));
 	}
-
 
 	private static Long safeStringToLong(final String s) {
 		int nE = s.indexOf("E");
@@ -177,5 +99,13 @@ public final class AttributeGetters {
 		}
 		nOutput = (long) Math.ceil(nFirstNumber * nOutput);
 		return nOutput;
+	}
+
+	private static String getNodeValue(final Node node, final String attributeName) {
+		Node attributeNode = node.getAttributes().getNamedItem(attributeName);
+		if (attributeNode == null) {
+			throw new RuntimeException("Failed to parse attribute from node: " + node.getNodeName() + " > " + attributeName);
+		}
+		return attributeNode.getNodeValue();
 	}
 }
