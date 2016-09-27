@@ -109,7 +109,7 @@ _SUPER_CSV______________________________________________________________________
 jEveAssets use Super CSV to export CSV
 
 Link:
-  http://supercsv.sourceforge.net/
+  http://super-csv.github.io/super-csv/
 
 License:
   Apache License (http://www.apache.org/licenses/LICENSE-2.0)
@@ -143,6 +143,17 @@ jEveAssets use the Routing library in the routing tool
 
 Link:
   https://github.com/GoldenGnu/routing
+
+License:
+  GNU General Public License (http://www.gnu.org/copyleft/gpl.html)
+
+________________________________________________________________________________
+_GRAPH__________________________________________________________________________
+
+EveAssets use the graph library in the routing tool
+
+Link:
+  https://github.com/GoldenGnu/graph
 
 License:
   GNU General Public License (http://www.gnu.org/copyleft/gpl.html)
@@ -198,7 +209,7 @@ _JUNIT__________________________________________________________________________
 jEveAssets use JUnit for unit testing
 
 Link:
-  http://junit.sourceforge.net/
+  http://junit.org
 
 License:
   Common Public License V1.0 (http://junit.sourceforge.net/cpl-v10.html)
