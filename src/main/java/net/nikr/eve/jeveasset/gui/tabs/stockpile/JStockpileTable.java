@@ -85,34 +85,34 @@ public class JStockpileTable extends JSeparatorTable {
 			}
 			//Foreground
 			if (columnName.equals(StockpileTableFormat.COUNT_NOW_INVENTORY.getColumnName()) && !stockpileItem.getStockpile().isAssets()) {
-				component.setForeground(Color.GRAY);
+				component.setForeground(component.getBackground());
 			}
 			if (columnName.equals(StockpileTableFormat.COUNT_NOW_BUY_ORDERS.getColumnName()) && !stockpileItem.getStockpile().isBuyOrders()) {
-				component.setForeground(Color.GRAY);
+				component.setForeground(component.getBackground());
 			}
 			if (columnName.equals(StockpileTableFormat.COUNT_NOW_SELL_ORDERS.getColumnName()) && !stockpileItem.getStockpile().isSellOrders()) {
-				component.setForeground(Color.GRAY);
+				component.setForeground(component.getBackground());
 			}
 			if (columnName.equals(StockpileTableFormat.COUNT_NOW_BUY_TRANSACTIONS.getColumnName()) && !stockpileItem.getStockpile().isBuyTransactions()) {
-				component.setForeground(Color.GRAY);
+				component.setForeground(component.getBackground());
 			}
 			if (columnName.equals(StockpileTableFormat.COUNT_NOW_SELL_TRANSACTIONS.getColumnName()) && !stockpileItem.getStockpile().isSellTransactions()) {
-				component.setForeground(Color.GRAY);
+				component.setForeground(component.getBackground());
 			}
 			if (columnName.equals(StockpileTableFormat.COUNT_NOW_JOBS.getColumnName()) && !stockpileItem.getStockpile().isJobs()) {
-				component.setForeground(Color.GRAY);
+				component.setForeground(component.getBackground());
 			}
 			if (columnName.equals(StockpileTableFormat.COUNT_NOW_SELLING_CONTRACTS.getColumnName()) && !stockpileItem.getStockpile().isSellingContracts()) {
-				component.setForeground(Color.GRAY);
+				component.setForeground(component.getBackground());
 			}
 			if (columnName.equals(StockpileTableFormat.COUNT_NOW_SOLD_CONTRACTS.getColumnName()) && !stockpileItem.getStockpile().isSoldContracts()) {
-				component.setForeground(Color.GRAY);
+				component.setForeground(component.getBackground());
 			}
 			if (columnName.equals(StockpileTableFormat.COUNT_NOW_BUYING_CONTRACTS.getColumnName()) && !stockpileItem.getStockpile().isBuyingContracts()) {
-				component.setForeground(Color.GRAY);
+				component.setForeground(component.getBackground());
 			}
 			if (columnName.equals(StockpileTableFormat.COUNT_NOW_BOUGHT_CONTRACTS.getColumnName()) && !stockpileItem.getStockpile().isBoughtContracts()) {
-				component.setForeground(Color.GRAY);
+				component.setForeground(component.getBackground());
 			}
 			if (columnName.equals(StockpileTableFormat.COUNT_NEEDED.getColumnName()) && stockpileItem.getCountNeeded() < 0) {
 				if (!isSelected) {
