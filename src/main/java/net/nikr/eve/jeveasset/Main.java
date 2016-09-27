@@ -235,6 +235,9 @@ public final class Main {
 		files.add("supercsv-1.52.jar");
 		files.add("translations-2.2.0.jar");
 		files.add("jul-to-slf4j-1.6.1.jar");
+		files.add("jackson-core-2.8.3.jar");
+		files.add("jackson-databind-2.8.3.jar");
+		files.add("jackson-annotations-2.8.0.jar");
 		return files;
 	}
 }

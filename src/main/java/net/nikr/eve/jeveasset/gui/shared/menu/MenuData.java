@@ -44,6 +44,7 @@ public class MenuData<T> {
 	private final Set<MyLocation> systemLocations = new HashSet<MyLocation>();
 	private final Map<Integer, Double> prices = new HashMap<Integer, Double>();
 	private final Set<String> typeNames = new HashSet<String>();
+	private final Set<String> stationsAndCitadels = new HashSet<String>();
 	private final Set<String> stations = new HashSet<String>();
 	private final Set<String> systems = new HashSet<String>();
 	private final Set<String> regions = new HashSet<String>();
@@ -134,8 +135,11 @@ public class MenuData<T> {
 		}
 		//Locations
 		if (location != null && !location.isEmpty()) {
-			if (location.isStation()) {
-				stations.add(location.getStation());
+			if (location.isStation()) { //Ignore citadels stations as they're not supported by dotlan
+				if (!location.isCitadel()) {
+					stations.add(location.getStation());
+				}
+				stationsAndCitadels.add(location.getStation());
 				systemLocations.add(location);
 			}
 			if (location.isStation() || location.isSystem()) {
@@ -180,8 +184,12 @@ public class MenuData<T> {
 		return typeNames;
 	}
 
-	public Set<String> getStations() {
+	public Set<String> getStationsOnly() {
 		return stations;
+	}
+
+	public Set<String> getStationsAndCitadels() {
+		return stationsAndCitadels;
 	}
 
 	public Set<String> getSystems() {

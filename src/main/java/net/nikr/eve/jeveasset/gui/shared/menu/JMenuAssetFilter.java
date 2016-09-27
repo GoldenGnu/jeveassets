@@ -95,7 +95,7 @@ public class JMenuAssetFilter<T> extends JAutoMenu<T> {
 	public void setMenuData(MenuData<T> menuData) {
 		this.menuData = menuData;
 		jTypeID.setEnabled(!menuData.getTypeIDs().isEmpty());
-		jStation.setEnabled(!menuData.getStations().isEmpty());
+		jStation.setEnabled(!menuData.getStationsAndCitadels().isEmpty());
 		jSystem.setEnabled(!menuData.getSystems().isEmpty());
 		jRegion.setEnabled(!menuData.getRegions().isEmpty());
 	}
@@ -120,7 +120,7 @@ public class JMenuAssetFilter<T> extends JAutoMenu<T> {
 		@Override
 		public void actionPerformed(final ActionEvent e) {
 			if (MenuAssetFilterAction.STATION_FILTER.name().equals(e.getActionCommand())) {
-				for (String station : menuData.getStations()) {
+				for (String station : menuData.getStationsAndCitadels()) {
 					Filter filter = new Filter(LogicType.AND, AssetTableFormat.LOCATION, CompareType.EQUALS, station);
 					program.getAssetsTab().addFilter(filter);
 				}

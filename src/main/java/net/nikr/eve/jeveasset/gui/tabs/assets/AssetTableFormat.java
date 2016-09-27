@@ -30,6 +30,7 @@ import net.nikr.eve.jeveasset.gui.shared.table.containers.LongInt;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.Percent;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.Runs;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.Security;
+import net.nikr.eve.jeveasset.gui.shared.table.containers.YesNo;
 import net.nikr.eve.jeveasset.i18n.TabsAssets;
 
 
@@ -386,6 +387,20 @@ public enum AssetTableFormat implements EnumTableColumn<MyAsset> {
 		@Override
 		public Object getColumnValue(final MyAsset from) {
 			return new Runs(from.getRuns());
+		}
+	},
+	CITADEL(YesNo.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsAssets.get().columnCitadel();
+		}
+		@Override
+		public Object getColumnValue(final MyAsset from) {
+			return new YesNo(from.getLocation().isCitadel());
+		}
+		@Override
+		public boolean isShowDefault() {
+			return false;
 		}
 	},
 	ITEM_ID(LongInt.class, GlazedLists.comparableComparator()) {

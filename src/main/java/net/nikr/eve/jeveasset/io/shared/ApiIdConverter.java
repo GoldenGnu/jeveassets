@@ -35,6 +35,7 @@ import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.data.StaticData;
 import net.nikr.eve.jeveasset.data.UserItem;
 import net.nikr.eve.jeveasset.gui.tabs.assets.MyAsset;
+import net.nikr.eve.jeveasset.io.online.CitadelGetter;
 
 
 public final class ApiIdConverter {
@@ -219,16 +220,17 @@ public final class ApiIdConverter {
 		return getLocation(locationID, null);
 	}
 
-	public static MyLocation getLocation(long locationID, final MyAsset parentAsset) {
+	public static MyLocation getLocation(final long locationID, final MyAsset parentAsset) {
 		//Offices
-		if (locationID >= 66000000) {
-			if (locationID < 66014933) {
-				locationID = locationID - 6000001;
+		long fixedLocationID = locationID;
+		if (fixedLocationID >= 66000000) {
+			if (fixedLocationID < 66014933) {
+				fixedLocationID = fixedLocationID - 6000001;
 			} else {
-				locationID = locationID - 6000000;
+				fixedLocationID = fixedLocationID - 6000000;
 			}
 		}
-		MyLocation location = StaticData.get().getLocations().get(locationID);
+		MyLocation location = StaticData.get().getLocations().get(fixedLocationID);
 		if (location != null) {
 			return location;
 		}
@@ -238,7 +240,11 @@ public final class ApiIdConverter {
 				return location;
 			}
 		}
-		return new MyLocation(locationID);
+		if (fixedLocationID > 61001139) { //Citadel
+			return CitadelGetter.load(locationID);
+		} else {
+			return new MyLocation(locationID);
+		}
 	}
 
 	public static void addLocation(final Station station) {
