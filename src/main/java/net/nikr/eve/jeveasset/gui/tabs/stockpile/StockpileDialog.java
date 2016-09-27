@@ -812,6 +812,10 @@ public class StockpileDialog extends JDialogCentered {
 		private final JCheckBoxMenuItem jSellingContracts;
 		private final JCheckBoxMenuItem jBoughtContracts;
 		private final JCheckBoxMenuItem jSoldContracts;
+		private final JLabel jAssetsLabel;
+		private final JLabel jJobsLabel;
+		private final JLabel jOrdersLabel;
+		private final JLabel jContractsLabel;
 
 		//Edit
 		private final JRadioButtonMenuItem jStation;
@@ -1012,6 +1016,20 @@ public class StockpileDialog extends JDialogCentered {
 			jSoldContracts.addActionListener(listener);
 			jInclude.add(jSoldContracts, true);
 
+		//INCLIDE LABELS
+			jAssetsLabel = new JLabel();
+			jAssetsLabel.setDisabledIcon(Images.INCLUDE_ASSETS.getIcon());
+			jAssetsLabel.setEnabled(false);
+			jJobsLabel = new JLabel();
+			jJobsLabel.setDisabledIcon(Images.INCLUDE_JOBS.getIcon());
+			jJobsLabel.setEnabled(false);
+			jOrdersLabel = new JLabel();
+			jOrdersLabel.setDisabledIcon(Images.INCLUDE_ORDERS.getIcon());
+			jOrdersLabel.setEnabled(false);
+			jContractsLabel = new JLabel();
+			jContractsLabel.setDisabledIcon(Images.INCLUDE_CONTRACTS.getIcon());
+			jContractsLabel.setEnabled(false);
+
 		//EDIT
 			JDropDownButton jEdit = new JDropDownButton(TabsStockpile.get().editStockpileFilter(), Images.EDIT_EDIT_WHITE.getIcon());
 			jToolBar.addButton(jEdit);
@@ -1083,6 +1101,12 @@ public class StockpileDialog extends JDialogCentered {
 						.addComponent(jOptions, 30, 30, 30)
 					)
 					.addComponent(jFilters)
+					.addGroup(groupLayout.createSequentialGroup()
+						.addComponent(jAssetsLabel)
+						.addComponent(jJobsLabel)
+						.addComponent(jOrdersLabel)
+						.addComponent(jContractsLabel)
+					)
 			);
 											 
 			groupLayout.setVerticalGroup(
@@ -1090,9 +1114,16 @@ public class StockpileDialog extends JDialogCentered {
 					.addComponent(jToolBar, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
 					.addGroup(groupLayout.createParallelGroup()
 						.addComponent(jLocationType, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-						.addComponent(jLocation, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())						.addComponent(jOptions, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+						.addComponent(jLocation, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+						.addComponent(jOptions, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 					)
 					.addComponent(jFilters)
+					.addGroup(groupLayout.createParallelGroup()
+						.addComponent(jAssetsLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+						.addComponent(jJobsLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+						.addComponent(jOrdersLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+						.addComponent(jContractsLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					)
 			);
 		}
 
@@ -1276,6 +1307,43 @@ public class StockpileDialog extends JDialogCentered {
 			} else {
 				jInclude.setIcon(Images.LOC_INCLUDE.getIcon());
 			}
+
+			jAssetsLabel.setVisible(jAssets.isSelected());
+
+			jJobsLabel.setVisible(jJobs.isSelected());
+
+			int orders = 0;
+			if (jBuyingOrders.isSelected()) {
+				orders++;
+			}
+			if (jSellingOrders.isSelected()) {
+				orders++;
+			}
+			if (jBoughtTransactions.isSelected()) {
+				orders++;
+			}
+			if (jSoldTransactions.isSelected()) {
+				orders++;
+			}
+			jOrdersLabel.setVisible(orders > 0);
+			jOrdersLabel.setText(TabsStockpile.get().includeCount(orders));
+
+			int contracts = 0;
+			if (jBuyingContracts.isSelected()) {
+				contracts++;
+			}
+			if (jSellingContracts.isSelected()) {
+				contracts++;
+			}
+			if (jBoughtContracts.isSelected()) {
+				contracts++;
+			}
+			if (jSoldContracts.isSelected()) {
+				contracts++;
+			}
+			jContractsLabel.setText(TabsStockpile.get().includeCount(contracts));
+			jContractsLabel.setVisible(contracts > 0);
+
 			jMatch.setIcon(jMatchExclude.isSelected() ? Images.EDIT_DELETE_WHITE.getIcon() : Images.EDIT_ADD_WHITE.getIcon());
 			jAssets.setIcon(jAssets.isSelected() ? Images.INCLUDE_ASSETS_SELECTED.getIcon() : Images.INCLUDE_ASSETS.getIcon());
 			jJobs.setIcon(jJobs.isSelected() ? Images.INCLUDE_JOBS_SELECTED.getIcon() : Images.INCLUDE_JOBS.getIcon());
@@ -1287,6 +1355,7 @@ public class StockpileDialog extends JDialogCentered {
 			jBuyingContracts.setIcon(jBuyingContracts.isSelected() ? Images.INCLUDE_CONTRACTS_SELECTED.getIcon() : Images.INCLUDE_CONTRACTS.getIcon());
 			jBoughtContracts.setIcon(jBoughtContracts.isSelected() ? Images.INCLUDE_CONTRACTS_SELECTED.getIcon() : Images.INCLUDE_CONTRACTS.getIcon());
 			jSoldContracts.setIcon(jSoldContracts.isSelected() ? Images.INCLUDE_CONTRACTS_SELECTED.getIcon() : Images.INCLUDE_CONTRACTS.getIcon());
+			getDialog().pack();
 			return ok;
 		}
 
