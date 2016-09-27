@@ -55,16 +55,16 @@ public class Stockpile implements Comparable<Stockpile>, LocationType {
 	private double percentFull;
 	private double multiplier;
 	private boolean assets = false;
+	private boolean jobs = false;
 	private boolean buyOrders = false;
 	private boolean sellOrders = false;
 	private boolean transactions = false;
 	private boolean buyTransactions = false;
 	private boolean sellTransactions = false;
-	private boolean jobs = false;
 	private boolean contracts = false;
+	private boolean buyingContracts = false;
 	private boolean sellingContracts = false;
 	private boolean soldContracts = false;
-	private boolean buyingContracts = false;
 	private boolean boughtContracts = false;
 	
 
@@ -133,29 +133,29 @@ public class Stockpile implements Comparable<Stockpile>, LocationType {
 	private void createInclude() {
 		if (getFilters().isEmpty()) {
 			assets = true;
+			jobs = true;
 			buyOrders = true;
 			sellOrders = true;
 			transactions = true;
 			buyTransactions = true;
 			sellTransactions = true;
-			jobs = true;
 			contracts = true;
-			sellingContracts = true;
-			soldContracts = true;
 			buyingContracts = true;
+			sellingContracts = true;
 			boughtContracts = true;
+			soldContracts = true;
 		} else {
 			assets = false;
+			jobs = false;
 			buyOrders = false;
 			sellOrders = false;
 			transactions = false;
 			buyTransactions = false;
 			sellTransactions = false;
-			jobs = false;
 			contracts = false;
-			sellingContracts = false;
-			soldContracts = false;
 			buyingContracts = false;
+			sellingContracts = false;
+			boughtContracts = false;
 			soldContracts = false;
 		}
 		for (StockpileFilter filter : getFilters()) {
