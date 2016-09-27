@@ -120,6 +120,10 @@ public class MyLocation implements Comparable<MyLocation> {
 		return location.isEmpty();
 	}
 
+	public boolean isCitadel() {
+		return stationID > 61001139;
+	}
+
 	@Override
 	public String toString() {
 		return location;

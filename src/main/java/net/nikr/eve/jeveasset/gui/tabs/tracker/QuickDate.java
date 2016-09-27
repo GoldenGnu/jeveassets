@@ -28,6 +28,7 @@ import net.nikr.eve.jeveasset.i18n.TabsTracker;
 
 public enum QuickDate {
 	EMPTY(null, null, TabsTracker.get().quickDate())
+	,RESET(null, null, TabsTracker.get().reset())
 	,DAY_ONE(Calendar.DAY_OF_YEAR, -1, TabsTracker.get().day1())
 	,WEEK_ONE(Calendar.DAY_OF_YEAR, -7, TabsTracker.get().week1())
 	,WEEK_TWO(Calendar.DAY_OF_YEAR, -14, TabsTracker.get().week2())
@@ -37,9 +38,9 @@ public enum QuickDate {
 	,YEAR_ONE(Calendar.YEAR, -1, TabsTracker.get().year1())
 	,YEAR_TWO(Calendar.YEAR, -2, TabsTracker.get().years2());
 
-	private Integer field;
-	private Integer amount;
-	private String title;
+	private final Integer field;
+	private final Integer amount;
+	private final String title;
 
 	private QuickDate(Integer field, Integer amount, String title) {
 		this.field = field;

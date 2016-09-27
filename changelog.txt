@@ -16,6 +16,23 @@
                   #### #  # #  # #  # #### #### #### #### ####
 
 ________________________________________________________________________________
+_3.1.0__________________________________________________________________________
+
+New Features:
+-Added support for getting assets in citadels
+-Added blueprint runs to Assets and Tree tools
+-Added reset to QuickDate in the tracker tool
+-Added option to hide zero in the tracker tool 
+
+Changed
+-Stockpile: Hide the column text for excluded count columns
+-Removed eve-online wiki from lookup menu
+-Updated credits.txt and about dialog
+
+Bug Fix:
+-Bought contracts always included in stockpile
+
+________________________________________________________________________________
 _3.0.4__________________________________________________________________________
 
 Bug Fixes:

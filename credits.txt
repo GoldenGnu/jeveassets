@@ -77,6 +77,14 @@ Link:
   http://eve-marketdata.com/
 
 ________________________________________________________________________________
+_STOP.HAMMERTI.ME.UK____________________________________________________________
+
+jEveAssets use stop.hammerti.me.uk API to get citadel names and locations
+
+Link:
+  https://stop.hammerti.me.uk/api/
+
+________________________________________________________________________________
 _SILK_ICONS_____________________________________________________________________
 
 jEveAssets use Silk Icons from famfamfam.com
@@ -183,7 +191,7 @@ License:
 ________________________________________________________________________________
 _SLF4J__________________________________________________________________________
 
-jEveAssets use SLF4J as logging facade 
+jEveAssets use SLF4J as logging facade
 
 Link:
   http://www.slf4j.org/
@@ -237,6 +245,18 @@ Link:
 License:
   GNU Lesser General Public Licence 
   http://www.gnu.org/licenses/lgpl.html
+
+________________________________________________________________________________
+_JACKSON________________________________________________________________________
+
+jEveAssets use Jackson to parse json into java objects
+
+Link:
+  https://github.com/FasterXML/jackson-databind/
+
+License:
+  Apache License 2.0
+  http://www.apache.org/licenses/LICENSE-2.0
 
 ________________________________________________________________________________
 _COPYRIGHT______________________________________________________________________
