@@ -32,6 +32,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 import javax.swing.JOptionPane;
+import net.nikr.eve.jeveasset.io.online.Updater;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -64,31 +65,39 @@ public class NikrUncaughtExceptionHandler implements Thread.UncaughtExceptionHan
 		if (!error) {
 			error = true;
 			LOG.error("Uncaught Exception (" + s + "): " + t.getMessage(), t);
-			if (t instanceof UnsupportedClassVersionError) {
+			if (t instanceof UnsupportedClassVersionError) { //Old Java
 				JOptionPane.showMessageDialog(null,
 						"Please update Java to the latest version.\r\n"
-						+ "Minimum supported version is: " + JAVA + "\r\n"
+						+ "The minimum supported version is " + JAVA + "\r\n"
 						+ "\r\n"
-						+ "Press OK to close"
+						+ "Press OK to close jEveAssets"
 						+ "\r\n"
 						+ "\r\n",
 						"Critical Error", JOptionPane.ERROR_MESSAGE);
-			} else if (t instanceof OutOfMemoryError) {
+			} else if (t instanceof OutOfMemoryError) { //Out of memory
 				JOptionPane.showMessageDialog(null,
 						"Java has run out of memory\r\n"
 						+ "\r\n"
-						+ "To avoid this error:\r\n"
-						+ "Use jmemory.jar to run.\r\n"
+						+ "To avoid this error you can use jmemory.jar\r\n"
+						+ "(instead of jeveassets.jar)\r\n"
 						+ "\r\n"
-						+ "Please ask for help in the forum thread,\r\n"
-						+ "if you can not get jmemory to work.\r\n"
+						+ "Feel free to ask for help in the forum thread\r\n"
+						+ "if you encounter any problems with jmemory.jar\r\n"
+						+ "I will do my best to resolve any issues.\r\n"
 						+ "\r\n"
-						+ "Press OK to close"
+						+ "Press OK to close jEveAssets"
 						+ "\r\n"
 						+ "\r\n",
 						"Critical Error", JOptionPane.ERROR_MESSAGE);
-			} else {
-				if (isJavaBug(t)) {
+			} else if (t instanceof NoClassDefFoundError) { //Corrupted class files
+				try {
+					Updater updater = new Updater();
+					updater.fixMissingClasses();
+				} catch (Throwable ex) { //Better safe than sorry...
+					JOptionPane.showMessageDialog(null, "Please, re-download jEveAssets and leave the unzipped directory intact\r\nPress OK to close jEveAssets", "Critical Error", JOptionPane.ERROR_MESSAGE);
+				}
+			} else { //Bug
+				if (isJavaBug(t)) { //Java Bug
 					JOptionPane.showMessageDialog(null,
 						"You have encountered a bug that is most likely a java bug.\r\n"
 						+ "Updating to the latest version of java may fix this problem.\r\n"
