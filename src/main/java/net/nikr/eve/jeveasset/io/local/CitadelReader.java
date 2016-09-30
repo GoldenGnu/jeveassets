@@ -21,13 +21,11 @@
 
 package net.nikr.eve.jeveasset.io.local;
 
-import com.beimin.eveapi.model.eve.Station;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Date;
 import net.nikr.eve.jeveasset.data.Citadel;
+import net.nikr.eve.jeveasset.data.CitadelSettings;
 import net.nikr.eve.jeveasset.data.Settings;
-import net.nikr.eve.jeveasset.data.StaticData;
 import net.nikr.eve.jeveasset.io.shared.AbstractXmlReader;
 import net.nikr.eve.jeveasset.io.shared.AttributeGetters;
 import net.nikr.eve.jeveasset.io.shared.XmlException;
@@ -43,33 +41,34 @@ public final class CitadelReader extends AbstractXmlReader {
 
 	private CitadelReader() { }
 
-	public static Map<Long, Citadel> load() {
+	public static CitadelSettings load() {
 		CitadelReader reader = new CitadelReader();
 		return reader.read();
 	}
 
-	private Map<Long, Citadel> read() {
-		Map<Long, Citadel> citadels = new HashMap<Long, Citadel>();
+	private CitadelSettings read() {
+		CitadelSettings settings = new CitadelSettings();
 		try {
 			Element element = getDocumentElement(Settings.getPathCitadel(), true);
-			parseCitadels(element, citadels);
+			parseCitadels(element, settings);
 			LOG.info("Citadels loaded");
 		} catch (IOException ex) {
 			LOG.info("Citadels not loaded");
 		} catch (XmlException ex) {
 			LOG.error("Citadels not loaded: " + ex.getMessage(), ex);
 		}
-		return citadels;
+		return settings;
 	}
 
-	private void parseCitadels(final Element element, final Map<Long, Citadel> citadels) throws XmlException {
+	private void parseCitadels(final Element element, final CitadelSettings settings) throws XmlException {
 		if (!element.getNodeName().equals("citadels")) {
 			throw new XmlException("Wrong root element name.");
 		}
-		parseCitadel(element, citadels);
+		parseCitadel(element, settings);
+		parseSettings(element, settings);
 	}
 
-	private void parseCitadel(final Element element, final Map<Long, Citadel> citadels) {
+	private void parseCitadel(final Element element, final CitadelSettings settings) {
 		NodeList filterNodes = element.getElementsByTagName("citadel");
 		for (int i = 0; i < filterNodes.getLength(); i++) {
 			Element currentNode = (Element) filterNodes.item(i);
@@ -84,8 +83,17 @@ public final class CitadelReader extends AbstractXmlReader {
 			citadel.regionId = AttributeGetters.getLong(currentNode, "regionid");
 			citadel.firstSeen = AttributeGetters.getString(currentNode, "firstseen");
 			citadel.regionName = AttributeGetters.getString(currentNode, "regionname");
-			citadel.setNextUpdate(AttributeGetters.getDate(currentNode, "updated"));
-			citadels.put(stationid, citadel);
+			settings.put(stationid, citadel);
 		}
 	}
+
+	private void parseSettings(final Element element, final CitadelSettings settings) {
+		NodeList filterNodes = element.getElementsByTagName("settings");
+		for (int i = 0; i < filterNodes.getLength(); i++) {
+			Element currentNode = (Element) filterNodes.item(i);
+			Date nextUpdate = AttributeGetters.getDate(currentNode, "nextupdate");
+			settings.setNextUpdate(nextUpdate);
+		}
+	}
+
 }

@@ -141,7 +141,14 @@ public abstract class UpdateTask extends SwingWorker<Void, Void> {
 
 	public void setTaskProgress(final float end, final float done, final int start, final int max) {
 		int progress = Math.round(((done / end) * (max - start)) + start);
-		this.setProgress(progress);
+		if (progress > 100) {
+			progress = 100;
+		} else if (progress < 0) {
+			progress = 0;
+		}
+		if (progress != getProgress()) {
+			setProgress(progress);
+		}
 	}
 
 	public void cancelled() {

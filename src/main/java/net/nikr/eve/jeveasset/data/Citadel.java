@@ -20,13 +20,12 @@
  */
 package net.nikr.eve.jeveasset.data;
 
-import java.util.Date;
+import net.nikr.eve.jeveasset.i18n.General;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 
 
 public class Citadel {
 
-	private final long priceCacheTimer = 1 * 60 * 60 * 1000L; // 1 hour (hours*min*sec*ms)
 	public int typeId;
 	public long systemId;
 	public String name;
@@ -36,13 +35,8 @@ public class Citadel {
 	public long regionId;
 	public String firstSeen;
 	public String regionName;
-	private Date nextUpdate;
 
-	public Citadel() {
-		this.nextUpdate = new Date(new Date().getTime() + priceCacheTimer);
-	}
-
-	public boolean isEmpty() {
+	private boolean isEmpty() {
 		if (typeId == 0) {
 			return true;
 		}
@@ -74,14 +68,11 @@ public class Citadel {
 	}
 
 	public MyLocation getLocation(long locationID) {
-		return new MyLocation(locationID, name, systemId, systemName, regionId, regionName, ApiIdConverter.getLocation(systemId).getSecurity());
+		if (!isEmpty()) { //Location is valid -> return locations
+			return new MyLocation(locationID, name, systemId, systemName, regionId, regionName, ApiIdConverter.getLocation(systemId).getSecurity());
+		} else { //Location not valid -> return fallback location
+			return new MyLocation(locationID, General.get().citadel(locationID), locationID, General.get().citadelSystem(locationID), locationID, General.get().citadelRegion(locationID), "0.0");
+		}
 	}
 
-	public Date getNextUpdate() {
-		return nextUpdate;
-	}
-
-	public void setNextUpdate(Date updated) {
-		this.nextUpdate = updated;
-	}
 }

@@ -23,6 +23,7 @@ package net.nikr.eve.jeveasset.io.local;
 
 import java.util.Map;
 import net.nikr.eve.jeveasset.data.Citadel;
+import net.nikr.eve.jeveasset.data.CitadelSettings;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.io.shared.AbstractXmlWriter;
 import net.nikr.eve.jeveasset.io.shared.XmlException;
@@ -38,31 +39,33 @@ public final class CitadelWriter extends AbstractXmlWriter {
 
 	private CitadelWriter() { }
 
-	public static void save(Map<Long, Citadel> citadels) {
+	public static void save(CitadelSettings settings) {
 		CitadelWriter writer = new CitadelWriter();
-		writer.write(citadels);
+		writer.write(settings);
 	}
 
-	private void write(Map<Long, Citadel> citadels) {
+	private void write(CitadelSettings settings) {
 		Document xmldoc = null;
 		try {
 			xmldoc = getXmlDocument("citadels");
 		} catch (XmlException ex) {
 			LOG.error("Citadel not saved " + ex.getMessage(), ex);
 		}
-		writeCitadels(xmldoc, citadels);
+		writeCitadels(xmldoc, settings);
+		writeSettings(xmldoc, settings);
 
 		//xmldoc.normalizeDocument();
 		try {
 			writeXmlFile(xmldoc, Settings.getPathCitadel(), true);
 		} catch (XmlException ex) {
-			LOG.error("Citadel saved " + ex.getMessage(), ex);
+			LOG.error("Citadel not saved " + ex.getMessage(), ex);
 		}
 		LOG.info("	Citadel saved");
 	}
-	private void writeCitadels(final Document xmldoc, final Map<Long, Citadel> citadels) {
+
+	private void writeCitadels(final Document xmldoc, final CitadelSettings settings) {
 		Element parentNode = xmldoc.getDocumentElement();
-		for (Map.Entry<Long, Citadel> entry : citadels.entrySet()) {
+		for (Map.Entry<Long, Citadel> entry : settings.getCache()) {
 			Element node = xmldoc.createElementNS(null, "citadel");
 			Citadel citadel = entry.getValue();
 			node.setAttributeNS(null, "stationid", String.valueOf(entry.getKey()));
@@ -75,8 +78,15 @@ public final class CitadelWriter extends AbstractXmlWriter {
 			node.setAttributeNS(null, "regionid", String.valueOf(citadel.regionId));
 			node.setAttributeNS(null, "firstseen", citadel.firstSeen);
 			node.setAttributeNS(null, "regionname", citadel.regionName);
-			node.setAttributeNS(null, "updated", String.valueOf(citadel.getNextUpdate().getTime()));
 			parentNode.appendChild(node);
 		}
 	}
+
+	private void writeSettings(final Document xmldoc, final CitadelSettings settings) {
+		Element parentNode = xmldoc.getDocumentElement();
+		Element node = xmldoc.createElementNS(null, "settings");
+		node.setAttributeNS(null, "nextupdate", String.valueOf(settings.getNextUpdate().getTime()));
+		parentNode.appendChild(node);
+	}
+
 }

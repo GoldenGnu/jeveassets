@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import net.nikr.eve.jeveasset.data.Citadel;
 import net.nikr.eve.jeveasset.data.Item;
 import net.nikr.eve.jeveasset.data.ItemFlag;
 import net.nikr.eve.jeveasset.data.MyLocation;
@@ -240,11 +241,16 @@ public final class ApiIdConverter {
 				return location;
 			}
 		}
-		if (fixedLocationID > 61001139) { //Citadel
-			return CitadelGetter.load(locationID);
+		if (fixedLocationID > 61001139) { //Citadel fallback
+			return CitadelGetter.get(locationID);
 		} else {
 			return new MyLocation(locationID);
 		}
+	}
+
+	public static void addLocation(final Citadel citadel, long locationID) {
+		MyLocation location = citadel.getLocation(locationID);
+		StaticData.get().getLocations().put(location.getLocationID(), location);
 	}
 
 	public static void addLocation(final Station station) {

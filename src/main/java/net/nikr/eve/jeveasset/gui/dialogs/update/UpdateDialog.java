@@ -61,6 +61,7 @@ import net.nikr.eve.jeveasset.io.eveapi.MarketOrdersGetter;
 import net.nikr.eve.jeveasset.io.eveapi.NameGetter;
 import net.nikr.eve.jeveasset.io.eveapi.TransactionsGetter;
 import net.nikr.eve.jeveasset.io.local.ConquerableStationsWriter;
+import net.nikr.eve.jeveasset.io.online.CitadelGetter;
 
 
 public class UpdateDialog extends JDialogCentered {
@@ -531,6 +532,7 @@ public class UpdateDialog extends JDialogCentered {
 						|| jAssets.isSelected()
 						) { //Updating from EVE API
 					updateTasks.add(new ConquerableStationsTask()); //Should properly always be first
+					updateTasks.add(new CitadelTask()); //Should properly always be first
 					updateTasks.add(new AccountsTask());
 				}
 				if (jMarketOrders.isSelected()) {
@@ -605,6 +607,18 @@ public class UpdateDialog extends JDialogCentered {
 			ConquerableStationsGetter conquerableStationsGetter = new ConquerableStationsGetter();
 			conquerableStationsGetter.load(this);
 			ConquerableStationsWriter.save();
+		}
+	}
+
+	public class CitadelTask extends UpdateTask {
+
+		public CitadelTask() {
+			super(DialoguesUpdate.get().citadel());
+		}
+
+		@Override
+		public void update() {
+			CitadelGetter.update(this);
 		}
 	}
 
