@@ -51,5 +51,8 @@ public abstract class General extends Bundle {
 	public abstract String fileLockMsg(String s);
 	public abstract String singleInstanceTitle();
 	public abstract String singleInstanceMsg();
+	public abstract String citadel(long LocationID);
+	public abstract String citadelSystem(long LocationID);
+	public abstract String citadelRegion(long LocationID);
 
 }
