@@ -16,10 +16,25 @@
                   #### #  # #  # #  # #### #### #### #### ####
 
 ________________________________________________________________________________
+_3.1.2__________________________________________________________________________
+
+New Features:
+-Enabled GZip support for the pricing library (faster price update)
+
+Bug Fix:
+-Better error handling for the the stop.hammerti.me.uk citadel API
+
+Known issues:
+-Blueprint in contracts are always marked as BPC (API Bug)
+
+________________________________________________________________________________
 _3.1.1__________________________________________________________________________
 
 Bug Fix:
 -Better integration of the stop.hammerti.me.uk citadel API
+
+Known issues:
+-Blueprint in contracts are always marked as BPC (API Bug)
 
 ________________________________________________________________________________
 _3.1.0__________________________________________________________________________
@@ -37,6 +52,9 @@ Changed
 
 Bug Fix:
 -Bought contracts always included in stockpile
+
+Known issues:
+-Blueprint in contracts are always marked as BPC (API Bug)
 
 ________________________________________________________________________________
 _3.0.4__________________________________________________________________________
@@ -56,7 +74,7 @@ Code:
 
 Known issues:
 -Assets in citadels are not included in the API (Workaround in the works)
--Blueprint in the contracts API are not marked as BPO or BPC (API Bug)
+-Blueprint in contracts are always marked as BPC (API Bug)
 
 ________________________________________________________________________________
 _3.0.3__________________________________________________________________________
@@ -71,7 +89,7 @@ Code:
 
 Known issues:
 -Assets in citadels are not included in the API (API Bug)
--Blueprint in the contracts API are not marked as BPO or BPC (API Bug)
+-Blueprint in contracts are always marked as BPC (API Bug)
 
 ________________________________________________________________________________
 _3.0.2__________________________________________________________________________
@@ -88,7 +106,7 @@ Changed:
 
 Known issues:
 -Assets in citadels are not included in the API (API Bug)
--Blueprint in the contracts API are not marked as BPO or BPC (API Bug)
+-Blueprint in contracts are always marked as BPC (API Bug)
  
 ________________________________________________________________________________
 _3.0.1__________________________________________________________________________
