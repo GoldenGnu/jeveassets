@@ -89,10 +89,7 @@ public class UpdateTaskInputStream extends FilterInputStream {
     private long updateProgress(final long numBytesRead) {
         if (numBytesRead > 0) {
             this.totalNumBytesRead += numBytesRead;
-			if (maxNumBytes >= totalNumBytesRead) {
-				updateTask.setTaskProgress(maxNumBytes, totalNumBytesRead, start, end);
-			}
-
+			updateTask.setTaskProgress(maxNumBytes, totalNumBytesRead, start, end);
         }
         return numBytesRead;
     }
