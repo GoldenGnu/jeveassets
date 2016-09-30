@@ -87,7 +87,6 @@ public class CitadelGetter extends AbstractXmlWriter {
 			LOG.info("	Citadels failed to update (NOT ALLOWED YET)");
 			return;
 		}
-		System.out.println("EventDispatchThread: " + SwingUtilities.isEventDispatchThread());
 		//Update citadel
 		InputStream in = null;
 		try { //Update from API
