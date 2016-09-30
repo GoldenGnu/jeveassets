@@ -102,6 +102,7 @@ public class CitadelGetter extends AbstractXmlWriter {
 			if ("gzip".equals(contentEncoding)) {
 				in = new GZIPInputStream(inputStream);
 			} else {
+				in = inputStream;
 			}
 			Map<Long, Citadel> results = mapper.readValue(in, new TypeReference<Map<Long, Citadel>>() {
 			});
@@ -114,13 +115,16 @@ public class CitadelGetter extends AbstractXmlWriter {
 			saveXml();
 			LOG.info("	Updated citadels for jEveAssets");
 		} catch (IOException ex) {
+			if (updateTask != null) {
+				updateTask.addError(DialoguesUpdate.get().citadel(), ex.getMessage());
+			}
 			LOG.error("	Citadels failed to update", ex);
 		} finally {
 			if (in != null) {
 				try {
 					in.close();
 				} catch (IOException ex) {
-					LOG.error(ex.getMessage(), ex);
+					//No problem...
 				}
 			}
 		}
