@@ -29,9 +29,9 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import net.nikr.eve.jeveasset.data.MyAccount;
-import net.nikr.eve.jeveasset.data.MyAccount.AccessMask;
-import net.nikr.eve.jeveasset.data.Owner;
+import net.nikr.eve.jeveasset.data.eveapi.EveApiAccessMask;
+import net.nikr.eve.jeveasset.data.eveapi.EveApiAccount;
+import net.nikr.eve.jeveasset.data.eveapi.EveApiOwner;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import net.nikr.eve.jeveasset.gui.tabs.transaction.MyTransaction;
 import net.nikr.eve.jeveasset.io.shared.AbstractApiAccountKeyGetter;
@@ -46,7 +46,7 @@ public class TransactionsGetter extends AbstractApiAccountKeyGetter<WalletTransa
 		super("Wallet Transactions");
 	}
 
-	public void load(final UpdateTask updateTask, final boolean forceUpdate, final List<MyAccount> accounts, final boolean saveHistory) {
+	public void load(final UpdateTask updateTask, final boolean forceUpdate, final List<EveApiAccount> accounts, final boolean saveHistory) {
 		this.saveHistory = saveHistory;
 		super.loadAccounts(updateTask, forceUpdate, accounts);
 	}
@@ -70,10 +70,10 @@ public class TransactionsGetter extends AbstractApiAccountKeyGetter<WalletTransa
 	protected WalletTransactionsResponse getResponse(boolean bCorp, int accountKey, long fromID, int rowCount) throws ApiException {
 		if (bCorp) {
 			return new com.beimin.eveapi.parser.corporation.WalletTransactionsParser()
-					.getResponse(Owner.getApiAuthorization(getOwner()), accountKey, fromID, rowCount);
+					.getResponse(EveApiOwner.getApiAuthorization(getOwner()), accountKey, fromID, rowCount);
 		} else {
 			return new com.beimin.eveapi.parser.pilot.WalletTransactionsParser()
-					.getTransactionsResponse(Owner.getApiAuthorization(getOwner()), fromID, rowCount);
+					.getTransactionsResponse(EveApiOwner.getApiAuthorization(getOwner()), fromID, rowCount);
 		}
 	}
 
@@ -89,7 +89,7 @@ public class TransactionsGetter extends AbstractApiAccountKeyGetter<WalletTransa
 	}
 
 	@Override
-	protected void updateFailed(final Owner ownerFrom, final Owner ownerTo) {
+	protected void updateFailed(final EveApiOwner ownerFrom, final EveApiOwner ownerTo) {
 		ownerTo.setTransactions(ownerFrom.getTransactions());
 		ownerTo.setTransactionsNextUpdate(ownerFrom.getTransactionsNextUpdate());
 	}
@@ -97,9 +97,9 @@ public class TransactionsGetter extends AbstractApiAccountKeyGetter<WalletTransa
 	@Override
 	protected long requestMask(boolean bCorp) {
 		if (bCorp) {
-			return AccessMask.TRANSACTIONS_CORP.getAccessMask();
+			return EveApiAccessMask.TRANSACTIONS_CORP.getAccessMask();
 		} else {
-			return AccessMask.TRANSACTIONS_CHAR.getAccessMask();
+			return EveApiAccessMask.TRANSACTIONS_CHAR.getAccessMask();
 		}
 	}
 

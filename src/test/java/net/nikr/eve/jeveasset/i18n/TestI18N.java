@@ -58,7 +58,7 @@ public class TestI18N {
 	@Test
 	public void testDialoguesAccount_en() throws Exception {
 		DialoguesAccount g = BundleServiceFactory.getBundleService().get(DialoguesAccount.class);
-		assertNotNull(g.helpText());
+		assertNotNull(g.eveApiHelpText());
 	}
 
 	@Test

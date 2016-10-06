@@ -25,7 +25,7 @@ import com.beimin.eveapi.model.shared.WalletTransaction;
 import java.util.Date;
 import net.nikr.eve.jeveasset.data.Item;
 import net.nikr.eve.jeveasset.data.MyLocation;
-import net.nikr.eve.jeveasset.data.Owner;
+import net.nikr.eve.jeveasset.data.api.OwnerType;
 import net.nikr.eve.jeveasset.data.types.ItemType;
 import net.nikr.eve.jeveasset.data.types.LocationType;
 import net.nikr.eve.jeveasset.i18n.TabsTransaction;
@@ -34,11 +34,11 @@ public class MyTransaction extends WalletTransaction implements LocationType, It
 
 	private final Item item;
 	private final MyLocation location;
-	private final Owner owner;
+	private final OwnerType owner;
 	private final int accountKey;
 	private String ownerCharacter;
 
-	public MyTransaction(final WalletTransaction apiTransaction, final Item item, final MyLocation location, final Owner owner, final int accountKey) {		
+	public MyTransaction(final WalletTransaction apiTransaction, final Item item, final MyLocation location, final OwnerType owner, final int accountKey) {		
 		this.setTransactionDateTime(apiTransaction.getTransactionDateTime());
 		this.setTransactionID(apiTransaction.getTransactionID());
 		this.setQuantity(apiTransaction.getQuantity());
@@ -104,9 +104,9 @@ public class MyTransaction extends WalletTransaction implements LocationType, It
 
 	public String getOwnerName() {
 		if (ownerCharacter.isEmpty()) {
-			return owner.getName();
+			return owner.getOwnerName();
 		} else {
-			return ownerCharacter + " > " + owner.getName();
+			return ownerCharacter + " > " + owner.getOwnerName();
 		}
 	}
 

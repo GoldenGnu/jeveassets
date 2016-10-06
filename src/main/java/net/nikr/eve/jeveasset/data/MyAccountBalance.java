@@ -22,49 +22,50 @@
 package net.nikr.eve.jeveasset.data;
 
 import com.beimin.eveapi.model.shared.EveAccountBalance;
+import net.nikr.eve.jeveasset.data.api.OwnerType;
 
 
 public class MyAccountBalance extends EveAccountBalance {
 	private final EveAccountBalance eveAccountBalance;
-	private final Owner owner;
+	private final OwnerType owner;
 
-	public MyAccountBalance(EveAccountBalance eveAccountBalance, Owner owner) {
+	public MyAccountBalance(EveAccountBalance eveAccountBalance, OwnerType owner) {
 		this.eveAccountBalance = eveAccountBalance;
 		this.owner = owner;
 	}
 
 	@Override
 	public int getAccountID() {
-		return eveAccountBalance.getAccountID(); //To change body of generated methods, choose Tools | Templates.
+		return eveAccountBalance.getAccountID();
 	}
 
 	@Override
 	public void setAccountID(int accountID) {
-		eveAccountBalance.setAccountID(accountID); //To change body of generated methods, choose Tools | Templates.
+		eveAccountBalance.setAccountID(accountID);
 	}
 
 	@Override
 	public int getAccountKey() {
-		return eveAccountBalance.getAccountKey(); //To change body of generated methods, choose Tools | Templates.
+		return eveAccountBalance.getAccountKey();
 	}
 
 	@Override
 	public void setAccountKey(int accountKey) {
-		eveAccountBalance.setAccountKey(accountKey); //To change body of generated methods, choose Tools | Templates.
+		eveAccountBalance.setAccountKey(accountKey);
 	}
 
 	@Override
 	public double getBalance() {
-		return eveAccountBalance.getBalance(); //To change body of generated methods, choose Tools | Templates.
+		return eveAccountBalance.getBalance();
 	}
 
 	@Override
 	public void setBalance(double balance) {
-		eveAccountBalance.setBalance(balance); //To change body of generated methods, choose Tools | Templates.
+		eveAccountBalance.setBalance(balance);
 	}
 
 	public String getOwner() {
-		return owner.getName();
+		return owner.getOwnerName();
 	}
 
 	public long getOwnerID() {

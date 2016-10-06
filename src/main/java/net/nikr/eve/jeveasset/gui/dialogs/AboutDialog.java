@@ -84,6 +84,7 @@ public class AboutDialog extends JDialogCentered {
 		JEditorPane jExternal = createEditorPane(
 				  "<b>Content</b><br>"
 				+ "&nbsp;<a href=\"http://www.eveonline.com/\">EVE-Online</a> (api and toolkit)<br> "
+				+ "&nbsp;<a href=\"https://evekit.orbital.enterprises\">EveKit</a> (account api)<br> "
 				+ "&nbsp;<a href=\"http://eve-central.com/\">EVE-Central.com</a> (price data api)<br>"
 				+ "&nbsp;<a href=\"http://eve-marketdata.com/\">EVE-Marketdata.com</a> (price data api)<br>"
 				+ "&nbsp;<a href=\"https://stop.hammerti.me.uk/api/\">stop.hammerti.me.uk</a> (citadel api)<br>"

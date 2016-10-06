@@ -31,9 +31,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import net.nikr.eve.jeveasset.data.MyAccount;
-import net.nikr.eve.jeveasset.data.MyAccount.AccessMask;
-import net.nikr.eve.jeveasset.data.Owner;
+import net.nikr.eve.jeveasset.data.eveapi.EveApiAccessMask;
+import net.nikr.eve.jeveasset.data.eveapi.EveApiAccount;
+import net.nikr.eve.jeveasset.data.eveapi.EveApiOwner;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import net.nikr.eve.jeveasset.gui.tabs.orders.MyMarketOrder;
 import net.nikr.eve.jeveasset.io.shared.AbstractApiGetter;
@@ -51,7 +51,7 @@ public class MarketOrdersGetter extends AbstractApiGetter<MarketOrdersResponse> 
 		super("Market Orders", true, false);
 	}
 
-	public void load(final UpdateTask updateTask, final boolean forceUpdate, final List<MyAccount> accounts, final boolean saveHistory) {
+	public void load(final UpdateTask updateTask, final boolean forceUpdate, final List<EveApiAccount> accounts, final boolean saveHistory) {
 		this.saveHistory = saveHistory;
 		updatedByOwner.clear();
 		ingoreNextUpdate = false;
@@ -64,10 +64,10 @@ public class MarketOrdersGetter extends AbstractApiGetter<MarketOrdersResponse> 
 			//Ignore nextUpdate value
 			ingoreNextUpdate = true;
 			int size = 0;
-			Map<Owner, Set<Long>> orderIDsByOwner = new HashMap<Owner, Set<Long>>();
+			Map<EveApiOwner, Set<Long>> orderIDsByOwner = new HashMap<EveApiOwner, Set<Long>>();
 			//Find orders that needs updating
-			for (MyAccount account : accounts) {
-				for (Owner owner : account.getOwners()) {
+			for (EveApiAccount account : accounts) {
+				for (EveApiOwner owner : account.getOwners()) {
 					Set<Long> updated = updatedByOwner.get(owner.getOwnerID());
 					if (updated == null) {
 						updated = new HashSet<Long>();
@@ -91,7 +91,7 @@ public class MarketOrdersGetter extends AbstractApiGetter<MarketOrdersResponse> 
 			}
 			int count = 0;
 			//Update the needed orders
-			for (Map.Entry<Owner, Set<Long>> entry : orderIDsByOwner.entrySet()) {
+			for (Map.Entry<EveApiOwner, Set<Long>> entry : orderIDsByOwner.entrySet()) {
 				for (long id : entry.getValue()) {
 					//Set orderID to update
 					orderID = id;
@@ -113,18 +113,18 @@ public class MarketOrdersGetter extends AbstractApiGetter<MarketOrdersResponse> 
 		if (orderID == null) {
 			if (bCorp) {
 				return new com.beimin.eveapi.parser.corporation.MarketOrdersParser()
-						.getResponse(Owner.getApiAuthorization(getOwner()));
+						.getResponse(EveApiOwner.getApiAuthorization(getOwner()));
 			} else {
 				return new com.beimin.eveapi.parser.pilot.MarketOrdersParser()
-						.getResponse(Owner.getApiAuthorization(getOwner()));
+						.getResponse(EveApiOwner.getApiAuthorization(getOwner()));
 			}
 		} else {
 			if (bCorp) {
 				return new com.beimin.eveapi.parser.corporation.MarketOrdersParser()
-						.getResponse(Owner.getApiAuthorization(getOwner()), orderID);
+						.getResponse(EveApiOwner.getApiAuthorization(getOwner()), orderID);
 			} else {
 				return new com.beimin.eveapi.parser.pilot.MarketOrdersParser()
-						.getResponse(Owner.getApiAuthorization(getOwner()), orderID);
+						.getResponse(EveApiOwner.getApiAuthorization(getOwner()), orderID);
 			}
 		}
 	}
@@ -166,13 +166,13 @@ public class MarketOrdersGetter extends AbstractApiGetter<MarketOrdersResponse> 
 	}
 
 	@Override
-	protected void updateFailed(final Owner ownerFrom, final Owner ownerTo) {
+	protected void updateFailed(final EveApiOwner ownerFrom, final EveApiOwner ownerTo) {
 		ownerTo.setMarketOrders(ownerFrom.getMarketOrders());
 		ownerTo.setMarketOrdersNextUpdate(ownerFrom.getMarketOrdersNextUpdate());
 	}
 
 	@Override
 	protected long requestMask(boolean bCorp) {
-		return AccessMask.MARKET_ORDERS.getAccessMask();
+		return EveApiAccessMask.MARKET_ORDERS.getAccessMask();
 	}
 }

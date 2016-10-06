@@ -29,10 +29,10 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import net.nikr.eve.jeveasset.data.MyAccount;
-import net.nikr.eve.jeveasset.data.MyAccount.AccessMask;
-import net.nikr.eve.jeveasset.data.Owner;
+import net.nikr.eve.jeveasset.data.eveapi.EveApiAccount;
+import net.nikr.eve.jeveasset.data.eveapi.EveApiOwner;
 import net.nikr.eve.jeveasset.data.Settings;
+import net.nikr.eve.jeveasset.data.eveapi.EveApiAccessMask;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import net.nikr.eve.jeveasset.gui.tabs.assets.MyAsset;
 import net.nikr.eve.jeveasset.io.shared.AbstractApiGetter;
@@ -47,7 +47,7 @@ public class AssetsGetter extends AbstractApiGetter<AssetListResponse> {
 		super("Assets", true, false);
 	}
 
-	public void load(final UpdateTask updateTask, final boolean forceUpdate, List<MyAccount> accounts) {
+	public void load(final UpdateTask updateTask, final boolean forceUpdate, List<EveApiAccount> accounts) {
 		flat = false;
 		super.loadAccounts(updateTask, forceUpdate, accounts);
 		flat = true;
@@ -76,10 +76,10 @@ public class AssetsGetter extends AbstractApiGetter<AssetListResponse> {
 	protected AssetListResponse getResponse(final boolean bCorp) throws ApiException {
 		if (bCorp) {
 			return new com.beimin.eveapi.parser.corporation.AssetListParser()
-					.getResponse(Owner.getApiAuthorization(getOwner()), flat);
+					.getResponse(EveApiOwner.getApiAuthorization(getOwner()), flat);
 		} else {
 			return new com.beimin.eveapi.parser.pilot.PilotAssetListParser()
-					.getResponse(Owner.getApiAuthorization(getOwner()), flat);
+					.getResponse(EveApiOwner.getApiAuthorization(getOwner()), flat);
 		}
 	}
 
@@ -125,7 +125,7 @@ public class AssetsGetter extends AbstractApiGetter<AssetListResponse> {
 	}
 
 	@Override
-	protected void updateFailed(final Owner ownerFrom, final Owner ownerTo) {
+	protected void updateFailed(final EveApiOwner ownerFrom, final EveApiOwner ownerTo) {
 		ownerTo.setAssets(ownerFrom.getAssets());
 		ownerTo.setAssetNextUpdate(ownerFrom.getAssetNextUpdate());
 		ownerTo.setAssetLastUpdate(ownerFrom.getAssetLastUpdate());
@@ -133,7 +133,7 @@ public class AssetsGetter extends AbstractApiGetter<AssetListResponse> {
 
 	@Override
 	protected long requestMask(boolean bCorp) {
-		return AccessMask.ASSET_LIST.getAccessMask();
+		return EveApiAccessMask.ASSET_LIST.getAccessMask();
 	}
 
 	private void deepAssets(List<MyAsset> assets, Set<Long> itemIDs) {

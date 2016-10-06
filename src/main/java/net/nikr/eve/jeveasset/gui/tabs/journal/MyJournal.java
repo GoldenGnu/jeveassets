@@ -23,16 +23,16 @@ package net.nikr.eve.jeveasset.gui.tabs.journal;
 
 import com.beimin.eveapi.model.shared.JournalEntry;
 import com.beimin.eveapi.model.shared.RefType;
-import net.nikr.eve.jeveasset.data.Owner;
+import net.nikr.eve.jeveasset.data.api.OwnerType;
 
 
 public class MyJournal extends JournalEntry implements Comparable<JournalEntry> {
 
 	private final String corp = "(Corporation)";
-	private final Owner owner;
+	private final OwnerType owner;
 	private final int accountKey;
 
-	public MyJournal(JournalEntry apiJournalEntry, Owner owner, int accountKey) {
+	public MyJournal(JournalEntry apiJournalEntry, OwnerType owner, int accountKey) {
 		setAmount(apiJournalEntry.getAmount());
 		setArgID1(apiJournalEntry.getArgID1());
 		setArgName1(apiJournalEntry.getArgName1());
@@ -60,7 +60,7 @@ public class MyJournal extends JournalEntry implements Comparable<JournalEntry> 
 	}
 
 	public String getOwnerName() {
-		return owner.getName();
+		return owner.getOwnerName();
 	}
 
 	public String getRefTypeFormated() {

@@ -30,10 +30,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import net.nikr.eve.jeveasset.data.MyAccount;
-import net.nikr.eve.jeveasset.data.MyAccount.AccessMask;
-import net.nikr.eve.jeveasset.data.Owner;
+import net.nikr.eve.jeveasset.data.eveapi.EveApiAccount;
+import net.nikr.eve.jeveasset.data.eveapi.EveApiOwner;
 import net.nikr.eve.jeveasset.data.Settings;
+import net.nikr.eve.jeveasset.data.eveapi.EveApiAccessMask;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import net.nikr.eve.jeveasset.gui.tabs.assets.MyAsset;
 import net.nikr.eve.jeveasset.io.shared.AbstractApiGetter;
@@ -51,7 +51,7 @@ public class LocationsGetter extends AbstractApiGetter<LocationsResponse> {
 		super("Locations", true, false);
 	}
 
-	public void load(UpdateTask updateTask, boolean forceUpdate, List<MyAccount> accounts) {
+	public void load(UpdateTask updateTask, boolean forceUpdate, List<EveApiAccount> accounts) {
 		eveNames = new HashMap<Long, String>();
 		super.loadAccounts(updateTask, forceUpdate, accounts);
 		if (!hasError()) {
@@ -99,10 +99,10 @@ public class LocationsGetter extends AbstractApiGetter<LocationsResponse> {
 	protected LocationsResponse getResponse(boolean bCorp) throws ApiException {
 		if (bCorp) {
 			return new com.beimin.eveapi.parser.corporation.LocationsParser()
-					.getResponse(Owner.getApiAuthorization(getOwner()), getItems());
+					.getResponse(EveApiOwner.getApiAuthorization(getOwner()), getItems());
 		} else {
 			return new com.beimin.eveapi.parser.pilot.LocationsParser()
-					.getResponse(Owner.getApiAuthorization(getOwner()), getItems());
+					.getResponse(EveApiOwner.getApiAuthorization(getOwner()), getItems());
 		}
 	}
 
@@ -130,16 +130,16 @@ public class LocationsGetter extends AbstractApiGetter<LocationsResponse> {
 	}
 
 	@Override
-	protected void updateFailed(Owner ownerFrom, Owner ownerTo) {
+	protected void updateFailed(EveApiOwner ownerFrom, EveApiOwner ownerTo) {
 		
 	}
 
 	@Override
 	protected long requestMask(boolean bCorp) {
 		if (bCorp) {
-			return AccessMask.LOCATIONS_CORP.getAccessMask();
+			return EveApiAccessMask.LOCATIONS_CORP.getAccessMask();
 		} else {
-			return AccessMask.LOCATIONS_CHAR.getAccessMask();
+			return EveApiAccessMask.LOCATIONS_CHAR.getAccessMask();
 		}
 	}
 }

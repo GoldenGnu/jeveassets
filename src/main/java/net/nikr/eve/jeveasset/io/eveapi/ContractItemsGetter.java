@@ -30,9 +30,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import net.nikr.eve.jeveasset.data.MyAccount;
-import net.nikr.eve.jeveasset.data.MyAccount.AccessMask;
-import net.nikr.eve.jeveasset.data.Owner;
+import net.nikr.eve.jeveasset.data.eveapi.EveApiAccessMask;
+import net.nikr.eve.jeveasset.data.eveapi.EveApiAccount;
+import net.nikr.eve.jeveasset.data.eveapi.EveApiOwner;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import net.nikr.eve.jeveasset.gui.tabs.contracts.MyContract;
 import net.nikr.eve.jeveasset.gui.tabs.contracts.MyContractItem;
@@ -50,17 +50,17 @@ public class ContractItemsGetter extends AbstractApiGetter<ContractItemsResponse
 	}
 
 	//FIXME - - > Move to overwrite load (See: JournalGetter)
-	public void load(UpdateTask updateTask, boolean forceUpdate, List<MyAccount> accounts) {
+	public void load(UpdateTask updateTask, boolean forceUpdate, List<EveApiAccount> accounts) {
 		//Calc size
 		int size = 0;
-		for (MyAccount account : accounts) {
-			for (Owner owner : account.getOwners()) {
+		for (EveApiAccount account : accounts) {
+			for (EveApiOwner owner : account.getOwners()) {
 				size = size + owner.getContracts().size();
 			}
 		}
 		int count = 0;
-		for (MyAccount account : accounts) {
-			for (Owner owner : account.getOwners()) {
+		for (EveApiAccount account : accounts) {
+			for (EveApiOwner owner : account.getOwners()) {
 				for (Map.Entry<MyContract, List<MyContractItem>> entry : owner.getContracts().entrySet()) {
 					MyContract contract = entry.getKey();
 					if (updateTask != null && updateTask.isCancelled()) {
@@ -118,10 +118,10 @@ public class ContractItemsGetter extends AbstractApiGetter<ContractItemsResponse
 	protected ContractItemsResponse getResponse(boolean bCorp) throws ApiException {
 		if (bCorp) {
 			return new com.beimin.eveapi.parser.corporation.ContractItemsParser()
-					.getResponse(Owner.getApiAuthorization(getOwner()), currentContract.getContractID());
+					.getResponse(EveApiOwner.getApiAuthorization(getOwner()), currentContract.getContractID());
 		} else {
 			return new com.beimin.eveapi.parser.pilot.ContractItemsParser()
-					.getResponse(Owner.getApiAuthorization(getOwner()), currentContract.getContractID());
+					.getResponse(EveApiOwner.getApiAuthorization(getOwner()), currentContract.getContractID());
 		}
 	}
 
@@ -143,16 +143,16 @@ public class ContractItemsGetter extends AbstractApiGetter<ContractItemsResponse
 	}
 
 	@Override
-	protected void updateFailed(Owner ownerFrom, Owner ownerTo) {
+	protected void updateFailed(EveApiOwner ownerFrom, EveApiOwner ownerTo) {
 		//Never called
 	}
 
 	@Override
 	protected long requestMask(boolean bCorp) {
 		if (bCorp) {
-			return AccessMask.CONTRACTS_CORP.getAccessMask();
+			return EveApiAccessMask.CONTRACTS_CORP.getAccessMask();
 		} else {
-			return AccessMask.CONTRACTS_CHAR.getAccessMask();
+			return EveApiAccessMask.CONTRACTS_CHAR.getAccessMask();
 		}
 	}
 	

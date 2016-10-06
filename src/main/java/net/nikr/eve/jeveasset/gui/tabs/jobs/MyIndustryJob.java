@@ -24,8 +24,8 @@ import com.beimin.eveapi.model.shared.Blueprint;
 import com.beimin.eveapi.model.shared.IndustryJob;
 import net.nikr.eve.jeveasset.data.Item;
 import net.nikr.eve.jeveasset.data.MyLocation;
-import net.nikr.eve.jeveasset.data.Owner;
 import net.nikr.eve.jeveasset.data.Settings;
+import net.nikr.eve.jeveasset.data.api.OwnerType;
 import net.nikr.eve.jeveasset.data.types.BlueprintType;
 import net.nikr.eve.jeveasset.data.types.ItemType;
 import net.nikr.eve.jeveasset.data.types.LocationType;
@@ -174,7 +174,7 @@ public class MyIndustryJob extends IndustryJob implements Comparable<MyIndustryJ
 	private IndustryActivity activity;
 	private IndustryJobState state;
 	private final Item item;
-	private final Owner owner;
+	private final OwnerType owner;
 	private final MyLocation location;
 	private final int portion;
 	private final String name;
@@ -184,7 +184,7 @@ public class MyIndustryJob extends IndustryJob implements Comparable<MyIndustryJ
 	private String installer;
 	private Blueprint blueprint;
 
-	public MyIndustryJob(final IndustryJob apiIndustryJob, final Item item, final MyLocation location, final Owner owner, final int portion, final int productTypeID) {
+	public MyIndustryJob(final IndustryJob apiIndustryJob, final Item item, final MyLocation location, final OwnerType owner, final int portion, final int productTypeID) {
 		setJobID(apiIndustryJob.getJobID());
 		setInstallerID(apiIndustryJob.getInstallerID());
 		setInstallerName(apiIndustryJob.getInstallerName());
@@ -395,7 +395,7 @@ public class MyIndustryJob extends IndustryJob implements Comparable<MyIndustryJ
 	}
 
 	public String getOwner() {
-		return owner.getName();
+		return owner.getOwnerName();
 	}
 
 	public long getOwnerID() {

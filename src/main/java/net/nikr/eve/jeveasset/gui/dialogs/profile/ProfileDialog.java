@@ -27,12 +27,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import javax.swing.*;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.data.MyAccount;
 import net.nikr.eve.jeveasset.data.Profile;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
@@ -160,7 +158,8 @@ public class ProfileDialog extends JDialogCentered {
 			//Save old profile
 			program.getProfileManager().saveProfile();
 			//Clear accounts
-			program.getProfileManager().setAccounts(new ArrayList<MyAccount>());
+			program.getProfileManager().getAccounts().clear();
+			program.getProfileManager().getEveKitOwners().clear();
 			//Clear data
 			program.updateEventLists();
 			//Set active profile

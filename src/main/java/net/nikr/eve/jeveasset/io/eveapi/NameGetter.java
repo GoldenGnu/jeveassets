@@ -26,9 +26,9 @@ import com.beimin.eveapi.model.eve.CharacterLookup;
 import com.beimin.eveapi.response.eve.CharacterLookupResponse;
 import java.util.Date;
 import java.util.Set;
-import net.nikr.eve.jeveasset.data.MyAccount.AccessMask;
-import net.nikr.eve.jeveasset.data.Owner;
+import net.nikr.eve.jeveasset.data.eveapi.EveApiOwner;
 import net.nikr.eve.jeveasset.data.Settings;
+import net.nikr.eve.jeveasset.data.eveapi.EveApiAccessMask;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import net.nikr.eve.jeveasset.io.shared.AbstractApiGetter;
 
@@ -89,13 +89,13 @@ public class NameGetter extends AbstractApiGetter<CharacterLookupResponse> {
 	}
 
 	@Override
-	protected void updateFailed(Owner ownerFrom, Owner ownerTo) {
+	protected void updateFailed(EveApiOwner ownerFrom, EveApiOwner ownerTo) {
 		
 	}
 
 	@Override
 	protected long requestMask(boolean bCorp) {
-		return AccessMask.OPEN.getAccessMask();
+		return EveApiAccessMask.OPEN.getAccessMask();
 	}
 
 	protected long[][] convert(Set<Long> list){

@@ -27,7 +27,7 @@ import javax.management.timer.Timer;
 import net.nikr.eve.jeveasset.data.Item;
 import net.nikr.eve.jeveasset.data.MarketPriceData;
 import net.nikr.eve.jeveasset.data.MyLocation;
-import net.nikr.eve.jeveasset.data.Owner;
+import net.nikr.eve.jeveasset.data.api.OwnerType;
 import net.nikr.eve.jeveasset.data.types.ItemType;
 import net.nikr.eve.jeveasset.data.types.LocationType;
 import net.nikr.eve.jeveasset.data.types.PriceType;
@@ -99,14 +99,14 @@ public class MyMarketOrder extends MarketOrder implements Comparable<MyMarketOrd
 	private MyLocation location;
 	private String rangeFormated;
 	private OrderStatus status;
-	private Owner owner;
+	private OwnerType owner;
 	private Quantity quantity;
 	private double price;
 	private double lastTransactionPrice;
 	private double lastTransactionValue;
 	private Percent lastTransactionPercent;
 
-	public MyMarketOrder(final MarketOrder apiMarketOrder, final Item item, final MyLocation location, final Owner owner) {
+	public MyMarketOrder(final MarketOrder apiMarketOrder, final Item item, final MyLocation location, final OwnerType owner) {
 		this.setAccountKey(apiMarketOrder.getAccountKey());
 		this.setBid(apiMarketOrder.getBid());
 		this.setCharID(apiMarketOrder.getCharID());
@@ -253,7 +253,7 @@ public class MyMarketOrder extends MarketOrder implements Comparable<MyMarketOrd
 	}
 
 	public String getOwner() {
-		return owner.getName();
+		return owner.getOwnerName();
 	}
 
 	public long getOwnerID() {

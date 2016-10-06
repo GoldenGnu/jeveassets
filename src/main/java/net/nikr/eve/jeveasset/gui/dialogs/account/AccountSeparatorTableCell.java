@@ -16,8 +16,8 @@ import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.data.MyAccount;
-import net.nikr.eve.jeveasset.data.Owner;
+import net.nikr.eve.jeveasset.data.api.OwnerType;
+import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.table.SeparatorTableCell;
 import net.nikr.eve.jeveasset.i18n.DialoguesAccount;
 
@@ -25,7 +25,7 @@ import net.nikr.eve.jeveasset.i18n.DialoguesAccount;
  *
  * @author <a href="mailto:jesse@swank.ca">Jesse Wilson</a>
  */
-public class AccountSeparatorTableCell extends SeparatorTableCell<Owner> {
+public class AccountSeparatorTableCell extends SeparatorTableCell<OwnerType> {
 
 	public enum AccountCellAction {
 		ACCOUNT_NAME,
@@ -34,6 +34,7 @@ public class AccountSeparatorTableCell extends SeparatorTableCell<Owner> {
 	}
 
 	private final JTextField jAccountName;
+	private final JLabel jAccountType;
 	private final JButton jEdit;
 	private final JButton jDelete;
 	private final JLabel jInvalidLabel;
@@ -43,18 +44,14 @@ public class AccountSeparatorTableCell extends SeparatorTableCell<Owner> {
 	private final Color defaultColor;
 	private final Color errorColor = new Color(255, 200, 200);
 
-	public AccountSeparatorTableCell(final ActionListener actionListener, final JTable jTable, final SeparatorList<Owner> separatorList) {
+	public AccountSeparatorTableCell(final ActionListener actionListener, final JTable jTable, final SeparatorList<OwnerType> separatorList) {
 		super(jTable, separatorList);
 
 		defaultColor = jPanel.getBackground();
 
 		ListenerClass listener = new ListenerClass();
-		jAccountName = new JTextField();
-		jAccountName.addFocusListener(listener);
-		jAccountName.setBorder(null);
-		jAccountName.setOpaque(false);
-		jAccountName.setActionCommand(AccountCellAction.ACCOUNT_NAME.name());
-		jAccountName.addActionListener(listener);
+
+		jAccountType = new JLabel();
 
 		jEdit = new JButton(DialoguesAccount.get().edit());
 		jEdit.setOpaque(false);
@@ -66,6 +63,13 @@ public class AccountSeparatorTableCell extends SeparatorTableCell<Owner> {
 		jDelete.setActionCommand(AccountCellAction.DELETE.name());
 		jDelete.addActionListener(actionListener);
 
+		jAccountName = new JTextField();
+		jAccountName.addFocusListener(listener);
+		jAccountName.setBorder(null);
+		jAccountName.setOpaque(false);
+		jAccountName.setActionCommand(AccountCellAction.ACCOUNT_NAME.name());
+		jAccountName.addActionListener(listener);
+
 		jInvalidLabel = new JLabel(DialoguesAccount.get().accountInvalid());
 
 		jExpiredLabel = new JLabel(DialoguesAccount.get().accountExpired());
@@ -76,25 +80,29 @@ public class AccountSeparatorTableCell extends SeparatorTableCell<Owner> {
 			layout.createSequentialGroup()
 				.addComponent(jExpand)
 				.addGap(1)
+				.addComponent(jEdit, Program.getButtonsWidth(), Program.getButtonsWidth(), Program.getButtonsWidth())
+				.addComponent(jDelete, Program.getButtonsWidth(), Program.getButtonsWidth(), Program.getButtonsWidth())
+				.addGap(5)
+				.addComponent(jAccountType)
+				.addGap(5)
 				.addComponent(jAccountName, 20, 20, Integer.MAX_VALUE)
 				.addGap(10)
 				.addComponent(jExpiredLabel)
 				.addComponent(jInvalidLabel)
 				.addComponent(jSpaceLabel, 20, 20, Integer.MAX_VALUE)
-				.addComponent(jEdit, Program.getButtonsWidth(), Program.getButtonsWidth(), Program.getButtonsWidth())
-				.addComponent(jDelete, Program.getButtonsWidth(), Program.getButtonsWidth(), Program.getButtonsWidth())
 		);
 		layout.setVerticalGroup(
 			layout.createSequentialGroup()
 				.addGap(1)
 				.addGroup(layout.createParallelGroup()
 					.addComponent(jExpand, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jAccountType, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jEdit, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jDelete, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 					.addComponent(jAccountName, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 					.addComponent(jInvalidLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 					.addComponent(jExpiredLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 					.addComponent(jSpaceLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-					.addComponent(jEdit, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-					.addComponent(jDelete, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 				)
 				.addGap(2)
 		);
@@ -102,37 +110,40 @@ public class AccountSeparatorTableCell extends SeparatorTableCell<Owner> {
 
 	@Override
 	protected void configure(final Separator<?> separator) {
-		Owner owner = (Owner) separator.first();
+		OwnerType owner = (OwnerType) separator.first();
 		if (owner == null) { // handle 'late' rendering calls after this separator is invalid
 			return;
 		}
-		MyAccount account = owner.getParentAccount();
-		if (account.getName().isEmpty()) {
-			jAccountName.setText(String.valueOf(account.getKeyID()));
-		} else {
-			jAccountName.setText(account.getName());
+		switch (owner.getAccountAPI()) {
+			case EVE_ONLINE:
+				jAccountType.setIcon(Images.MISC_EVE.getIcon());
+				break;
+			case EVEKIT:
+				jAccountType.setIcon(Images.MISC_EVEKIT.getIcon());
+				break;
 		}
+		jAccountName.setText(owner.getAccountName());
 		//Expired
-		jExpiredLabel.setVisible(account.isExpired());
+		jExpiredLabel.setVisible(owner.isExpired());
 
 		//Invalid
-		jInvalidLabel.setVisible(account.isInvalid());
+		jInvalidLabel.setVisible(owner.isInvalid());
 
 		//Invalid / Expired
-		jSpaceLabel.setVisible(account.isInvalid() || account.isExpired());
-		jPanel.setBackground(account.isInvalid() || account.isExpired() ? errorColor : defaultColor);
+		jSpaceLabel.setVisible(owner.isInvalid() || owner.isExpired());
+		jPanel.setBackground(owner.isInvalid() || owner.isExpired() ? errorColor : defaultColor);
 	}
 
 	private class ListenerClass implements FocusListener, ActionListener {
 		@Override
 		public void actionPerformed(final ActionEvent e) {
 			if (AccountCellAction.ACCOUNT_NAME.name().equals(e.getActionCommand())) {
-				Owner owner = (Owner) currentSeparator.first();
-				MyAccount account = owner.getParentAccount();
+				OwnerType owner = (OwnerType) currentSeparator.first();
 				if (jAccountName.getText().isEmpty()) {
-					jAccountName.setText(String.valueOf(account.getKeyID()));
+					owner.setResetAccountName();
+				} else {
+					owner.setAccountName(jAccountName.getText());
 				}
-				account.setName(jAccountName.getText());
 				jAccountName.transferFocus();
 				expandSeparator(true);
 				int index = jTable.getSelectedRow() + 1;
@@ -153,4 +164,5 @@ public class AccountSeparatorTableCell extends SeparatorTableCell<Owner> {
 		@Override
 		public void focusLost(final FocusEvent e) { }
 	}
+
 }

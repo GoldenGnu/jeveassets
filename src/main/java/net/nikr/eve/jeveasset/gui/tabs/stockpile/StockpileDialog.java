@@ -67,11 +67,11 @@ import javax.swing.event.CaretListener;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.EventListManager;
 import net.nikr.eve.jeveasset.data.ItemFlag;
-import net.nikr.eve.jeveasset.data.MyAccount;
 import net.nikr.eve.jeveasset.data.MyLocation;
-import net.nikr.eve.jeveasset.data.Owner;
+import net.nikr.eve.jeveasset.data.eveapi.EveApiOwner;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.data.StaticData;
+import net.nikr.eve.jeveasset.data.api.OwnerType;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.CaseInsensitiveComparator;
 import net.nikr.eve.jeveasset.gui.shared.DocumentFactory;
@@ -126,7 +126,7 @@ public class StockpileDialog extends JDialogCentered {
 	private final EventList<MyLocation> systems;
 	private final EventList<MyLocation> regions;
 	private final Set<String> myLocations;
-	private final List<Owner> owners;
+	private final List<OwnerType> owners;
 	private final List<ItemFlag> itemFlags;
 	private final List<String> containers;
 
@@ -141,7 +141,7 @@ public class StockpileDialog extends JDialogCentered {
 		systems = new EventListManager<MyLocation>().create();
 		regions = new EventListManager<MyLocation>().create();
 		//Owners - not static
-		owners = new ArrayList<Owner>();
+		owners = new ArrayList<OwnerType>();
 		//myLocations - not static
 		myLocations = new HashSet<String>();
 		//Containers - not static
@@ -439,11 +439,9 @@ public class StockpileDialog extends JDialogCentered {
 		jName.setText("");
 
 		//Owners
-		Map<Long, Owner> ownersById = new HashMap<Long, Owner>();
-		for (MyAccount account : program.getAccounts()) {
-			for (Owner owner : account.getOwners()) {
-				ownersById.put(owner.getOwnerID(), owner);
-			}
+		Map<Long, OwnerType> ownersById = new HashMap<Long, OwnerType>();
+		for (OwnerType owner : program.getOwnerTypes()) {
+			ownersById.put(owner.getOwnerID(), owner);
 		}
 		owners.clear();
 		owners.addAll(ownersById.values());
@@ -560,10 +558,10 @@ public class StockpileDialog extends JDialogCentered {
 		}
 	}
 
-	static class OwnerFilterator implements TextFilterator<Owner> {
+	static class OwnerFilterator implements TextFilterator<EveApiOwner> {
 		@Override
-		public void getFilterStrings(final List<String> baseList, final Owner element) {
-			baseList.add(element.getName());
+		public void getFilterStrings(final List<String> baseList, final EveApiOwner element) {
+			baseList.add(element.getOwnerName());
 		}
 	}
 	static class ItemFlagFilterator implements TextFilterator<ItemFlag> {
@@ -614,7 +612,7 @@ public class StockpileDialog extends JDialogCentered {
 		private final JLabel jType;
 		private final JLabel jWarning;
 		//Owner
-		private JComboBox<Owner> jOwner;
+		private JComboBox<OwnerType> jOwner;
 		//Flag
 		private JComboBox<ItemFlag> jFlag;
 		//Container
@@ -637,7 +635,7 @@ public class StockpileDialog extends JDialogCentered {
 			jFlag.setSelectedItem(itemFlag);
 		}
 
-		public FilterPanel(final LocationPanel locationPanel, final Owner owner) {
+		public FilterPanel(final LocationPanel locationPanel, final OwnerType owner) {
 			this(locationPanel, FilterType.OWNER);
 
 			jOwner.setSelectedItem(owner);
@@ -709,7 +707,7 @@ public class StockpileDialog extends JDialogCentered {
 				jType.setIcon(Images.LOC_OWNER.getIcon());
 				jType.setToolTipText(TabsStockpile.get().owner());
 
-				jOwner = new JComboBox<Owner>(new ListComboBoxModel<Owner>(owners));
+				jOwner = new JComboBox<OwnerType>(new ListComboBoxModel<OwnerType>(owners));
 				jOwner.setActionCommand(StockpileDialogAction.VALIDATE.name());
 				jOwner.addActionListener(listener);
 				jOwner.setEnabled(!owners.isEmpty());
@@ -751,7 +749,7 @@ public class StockpileDialog extends JDialogCentered {
 		}
 
 		public Long getOwner() {
-			return getValue(jOwner, Owner.class).getOwnerID();
+			return getValue(jOwner, OwnerType.class).getOwnerID();
 		}
 
 		private <E> E getValue(JComboBox<E> jComboBox, Class<E> clazz) {
@@ -850,16 +848,16 @@ public class StockpileDialog extends JDialogCentered {
 				containerPanels.add(new FilterPanel(this, container));
 			}
 			//Owner
-			Set<Owner> ownersFound = new HashSet<Owner>();
+			Set<OwnerType> ownersFound = new HashSet<OwnerType>();
 			for (long ownerID : stockpileFilter.getOwnerIDs()) {
-				for (Owner owner : owners) {
+				for (OwnerType owner : owners) {
 					if (owner.getOwnerID() == ownerID) {
 						ownersFound.add(owner);
 						break;
 					}
 				}
 			}
-			for (Owner owner : ownersFound) {
+			for (OwnerType owner : ownersFound) {
 				ownerPanels.add(new FilterPanel(this, owner));
 			}
 			//Flag

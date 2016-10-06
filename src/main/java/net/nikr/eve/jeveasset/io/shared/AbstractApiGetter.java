@@ -30,8 +30,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.data.MyAccount;
-import net.nikr.eve.jeveasset.data.Owner;
+import net.nikr.eve.jeveasset.data.eveapi.EveApiAccount;
+import net.nikr.eve.jeveasset.data.eveapi.EveApiOwner;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import org.slf4j.Logger;
@@ -45,16 +45,16 @@ public abstract class AbstractApiGetter<T extends ApiResponse> {
 	private static final String INVALID_ACCOUNT = "HTTP response code: 403";
 
 	private String taskName;
-	private MyAccount account;
-	private Owner owner;
+	private EveApiAccount account;
+	private EveApiOwner owner;
 	private boolean forceUpdate;
 	private boolean updated;
 	private boolean updateOwner;
 	private boolean updateAccount;
 	private UpdateTask updateTask;
-	private Map<String, Owner> owners;
-	private List<Owner> failOwners;
-	private Object error;
+	private Map<String, EveApiOwner> owners;
+	private List<EveApiOwner> failOwners;
+	private String error;
 
 	protected AbstractApiGetter(final String name) {
 		this(name, false, false);
@@ -83,29 +83,29 @@ public abstract class AbstractApiGetter<T extends ApiResponse> {
 		load(getNextUpdate(), false, updateName);
 	}
 
-	protected void loadOwner(final UpdateTask updateTask, final boolean forceUpdate, final Owner owner) {
+	protected void loadOwner(final UpdateTask updateTask, final boolean forceUpdate, final EveApiOwner owner) {
 		init(updateTask, forceUpdate, owner, null);
 		loadOwner();
 	}
 
-	protected void loadAccount(final UpdateTask updateTask, final boolean forceUpdate, final MyAccount account) {
+	protected void loadAccount(final UpdateTask updateTask, final boolean forceUpdate, final EveApiAccount account) {
 		init(updateTask, forceUpdate, null, account);
 		loadAccount();
 	}
 
-	protected void loadAccounts(final UpdateTask updateTask, final boolean forceUpdate, final List<MyAccount> accounts) {
+	protected void loadAccounts(final UpdateTask updateTask, final boolean forceUpdate, final List<EveApiAccount> accounts) {
 		init(updateTask, forceUpdate, null, null);
 		LOG.info("{} updating:", taskName);
 		//Calc size
 		int ownerSize = 0;
 		if (updateTask != null) { //Only relevant when tracking progress
-			for (MyAccount countAccount : accounts) {
+			for (EveApiAccount countAccount : accounts) {
 				ownerSize = ownerSize + countAccount.getOwners().size();
 			}
 		}
 		int ownerCount = 0;
 		int accountCount = 0;
-		for (MyAccount accountLoop : accounts) {
+		for (EveApiAccount accountLoop : accounts) {
 			this.account = accountLoop;
 			if (updateAccount) {
 				if (updateTask != null) {
@@ -121,11 +121,11 @@ public abstract class AbstractApiGetter<T extends ApiResponse> {
 				}
 			}
 			if (updateOwner) {
-				for (Owner ownerLoop : accountLoop.getOwners()) {
+				for (EveApiOwner ownerLoop : accountLoop.getOwners()) {
 					this.owner = ownerLoop;
 					if (updateTask != null) {
 						if (updateTask.isCancelled()) {
-							addError(owner.getName(), "Cancelled");
+							addError(owner.getOwnerName(), "Cancelled");
 						} else {
 							loadOwner();
 						}
@@ -139,8 +139,8 @@ public abstract class AbstractApiGetter<T extends ApiResponse> {
 		}
 		//Set data for duplicated/failed owners
 		if (updateOwner) {
-			for (Owner failOwner : failOwners) {
-				Owner okOwner = owners.get(failOwner.getName());
+			for (EveApiOwner failOwner : failOwners) {
+				EveApiOwner okOwner = owners.get(failOwner.getOwnerName());
 				if (okOwner != null) {
 					updateFailed(okOwner, failOwner);
 				}
@@ -162,20 +162,20 @@ public abstract class AbstractApiGetter<T extends ApiResponse> {
 	 * @param owner			Single char/corp (can be null)
 	 * @param account		Single account (can be null)
 	 */
-	private void init(final UpdateTask updateTask, final boolean forceUpdate, final Owner owner, final MyAccount account) {
+	private void init(final UpdateTask updateTask, final boolean forceUpdate, final EveApiOwner owner, final EveApiAccount account) {
 		this.forceUpdate = forceUpdate;
 		this.updateTask = updateTask;
 		this.owner = owner;
 		this.account = account;
 		this.updated = false;
-		this.owners = new HashMap<String, Owner>();
-		this.failOwners = new ArrayList<Owner>();
+		this.owners = new HashMap<String, EveApiOwner>();
+		this.failOwners = new ArrayList<EveApiOwner>();
 		this.error = null;
 	}
 
 	private void loadOwner() {
 		boolean updatedOK = false;
-		String name = owner.getName();
+		String name = owner.getOwnerName();
 		//Ignore hidden owners && don't update the same owner twice
 		if (owner.isShowOwner() && !owners.containsKey(name)) {
 			updatedOK = load(getNextUpdate(), owner.isCorporation(), name); //Update...
@@ -204,8 +204,7 @@ public abstract class AbstractApiGetter<T extends ApiResponse> {
 	private boolean loadAPI(final Date nextUpdate, final boolean updateCorporation, final String updateName) {
 		//Check API key access mask
 		if ((getAccessMask() & requestMask(updateCorporation)) != requestMask(updateCorporation)) {
-			addError(updateName, "Not enough access privileges.\r\n(Fix: Add " + taskName + " to the API Key)");
-			LOG.info("	{} failed to update for: {} (NOT ENOUGH ACCESS PRIVILEGES)", taskName, updateName);
+			errorAccessMask(updateName);
 			return false;
 		}
 		//Check API cache time
@@ -216,12 +215,12 @@ public abstract class AbstractApiGetter<T extends ApiResponse> {
 		}
 		//Check if API key is expired (still update account)
 		if (isExpired() && !updateAccount) {
-			expired(updateName);
+			errorExpired(updateName);
 			return false;
 		}
 		//Check if API key is invalid (still update account)
 		if (isInvalid() && !updateAccount) {
-			invalid(updateName);
+			errorInvalid(updateName);
 			return false;
 		}
 		try {
@@ -236,18 +235,18 @@ public abstract class AbstractApiGetter<T extends ApiResponse> {
 			} else { //API Error
 				ApiError apiError = response.getError();
 				if (apiError.getCode() == 203) {
-					invalid(updateName);
+					errorInvalid(updateName);
 				}
-				addError(updateName, apiError.getError(), apiError);
+				addError(updateName, "ApiError: " + apiError.getError() + " (Code: " + apiError.getCode() + ")");
 				LOG.info("	{} failed to update for: {} (API ERROR: code: {} :: {})", new Object[]{taskName, updateName, apiError.getCode(), apiError.getError()});
 			}
 		} catch (ApiException ex) { //Real Error
 			if (ex.getMessage().contains(INVALID_ACCOUNT) && !isExpired()) { //Invalid
-				invalid(updateName);
+				errorInvalid(updateName);
 			} else if (isExpired()) { //Expired
-				expired(updateName);
+				errorExpired(updateName);
 			} else {
-				addError(updateName, ex.getMessage(), ex); //Real Error
+				addError(updateName, "ApiException: " + ex.getMessage()); //Real Error
 				LOG.error(taskName + " failed to update for: " + updateName + " (ApiException: " + ex.getMessage() + ")", ex);
 			}
 		}
@@ -273,9 +272,14 @@ public abstract class AbstractApiGetter<T extends ApiResponse> {
 		}
 	}
 
-	private void expired(String updateName) {
+	private void errorExpired(String updateName) {
 		addError(updateName, "API Key expired");
 		LOG.info("	{} failed to update for: {} (API KEY EXPIRED)", taskName, updateName);
+	}
+	
+	private void errorAccessMask(String updateName) {
+		addError(updateName, "Not enough access privileges.\r\n(Fix: Add " + taskName + " to the API Key)");
+		LOG.info("	{} failed to update for: {} (NOT ENOUGH ACCESS PRIVILEGES)", taskName, updateName);
 	}
 
 	public boolean isInvalid() {
@@ -288,7 +292,7 @@ public abstract class AbstractApiGetter<T extends ApiResponse> {
 		}
 	}
 
-	private void invalid(String updateName) {
+	private void errorInvalid(String updateName) {
 		if (account != null) {
 			account.setInvalid(true);
 		} else if (owner != null) {
@@ -306,11 +310,11 @@ public abstract class AbstractApiGetter<T extends ApiResponse> {
 		}
 	}
 
-	protected MyAccount getAccount() {
+	protected EveApiAccount getAccount() {
 		return account;
 	}
 
-	protected Owner getOwner() {
+	protected EveApiOwner getOwner() {
 		return owner;
 	}
 
@@ -322,16 +326,12 @@ public abstract class AbstractApiGetter<T extends ApiResponse> {
 		return error != null;
 	}
 
-	public Object getError() {
+	public String getError() {
 		return error;
 	}
 
 	protected void addError(final String owner, final String errorText) {
-		addError(owner, errorText, errorText);
-	}
-
-	protected void addError(final String owner, final String errorText, final Object errorObject) {
-		error = errorObject;
+		error = errorText;
 		if (updateTask != null) {
 			updateTask.addError(owner, errorText);
 		}
@@ -341,7 +341,7 @@ public abstract class AbstractApiGetter<T extends ApiResponse> {
 	protected abstract Date getNextUpdate();
 	protected abstract void setNextUpdate(Date nextUpdate);
 	protected abstract void setData(T response);
-	protected abstract void updateFailed(Owner ownerFrom, Owner ownerTo);
+	protected abstract void updateFailed(EveApiOwner ownerFrom, EveApiOwner ownerTo);
 	protected abstract long requestMask(boolean bCorp);
 
 	private boolean isUpdatable(final Date date) {

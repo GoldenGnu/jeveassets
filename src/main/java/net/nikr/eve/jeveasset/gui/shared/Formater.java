@@ -58,6 +58,7 @@ public final class Formater {
 	public static final NumberFormat BILLIONS_FORMAT  = new FixedFormat(1000000000.0, "B");
 	public static final NumberFormat TRILLIONS_FORMAT  = new FixedFormat(1000000000000.0, "T");
 
+	private static DateFormat expireDate = null;
 	private static DateFormat columnDate = null;
 	private static DateFormat columnDatetime = null;
 	private static DateFormat todaysDate = null;
@@ -100,7 +101,20 @@ public final class Formater {
 
 			//Always GMT
 			eveTime = new SimpleDateFormat("HH:mm z", new Locale("en"));
-			eveTime.setTimeZone(TimeZone.getTimeZone("GMT"));
+			eveTime.setTimeZone(timeZone);
+
+			//Tue, 04 Oct 2016 18:21:28 GMT
+			expireDate = new SimpleDateFormat("EEE, dd MMM yyyy kk:mm:ss zzz", new Locale("en"));
+			expireDate.setTimeZone(timeZone);
+		}
+	}
+
+	public static Date parseExpireDate(String date) {
+		initDate();
+		try {
+			return expireDate.parse(date);
+		} catch (ParseException ex) {
+			return new Date();
 		}
 	}
 

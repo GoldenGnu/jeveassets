@@ -63,10 +63,9 @@ import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.EventListManager;
 import net.nikr.eve.jeveasset.data.Item;
 import net.nikr.eve.jeveasset.data.ItemFlag;
-import net.nikr.eve.jeveasset.data.MyAccount;
-import net.nikr.eve.jeveasset.data.Owner;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.data.StaticData;
+import net.nikr.eve.jeveasset.data.api.OwnerType;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
@@ -897,10 +896,8 @@ public class StockpileTab extends JMainTab {
 	private void updateOwners() {
 		//Owners Look-Up
 		ownersName = new HashMap<Long, String>();
-		for (MyAccount account : program.getAccounts()) {
-			for (Owner owner : account.getOwners()) {
-				ownersName.put(owner.getOwnerID(), owner.getName());
-			}
+		for (OwnerType owner : program.getOwnerTypes()) {
+			ownersName.put(owner.getOwnerID(), owner.getOwnerName());
 		}
 	}
 

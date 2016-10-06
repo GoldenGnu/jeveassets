@@ -28,35 +28,39 @@ import com.beimin.eveapi.response.account.ApiKeyInfoResponse;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import net.nikr.eve.jeveasset.data.MyAccount;
-import net.nikr.eve.jeveasset.data.MyAccount.AccessMask;
-import net.nikr.eve.jeveasset.data.Owner;
+import net.nikr.eve.jeveasset.data.eveapi.EveApiAccessMask;
+import net.nikr.eve.jeveasset.data.eveapi.EveApiAccount;
+import net.nikr.eve.jeveasset.data.eveapi.EveApiOwner;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import net.nikr.eve.jeveasset.io.shared.AbstractApiGetter;
+import net.nikr.eve.jeveasset.io.shared.AccountAdder;
 
 
-public class AccountGetter extends AbstractApiGetter<ApiKeyInfoResponse> {
+public class AccountGetter extends AbstractApiGetter<ApiKeyInfoResponse> implements AccountAdder  {
 
 	private boolean limited = false;
-	private boolean full = false;
-	private boolean fail = true;
+	private boolean invalidPrivileges = false;
 
 	public AccountGetter() {
 		super("Accounts", false, true);
 	}
 
-	public void load(final UpdateTask updateTask, final boolean forceUpdate, final MyAccount account) {
+	public void load(final UpdateTask updateTask, final boolean forceUpdate, final EveApiAccount account) {
+		limited = false;
+		invalidPrivileges = false;
 		super.loadAccount(updateTask, forceUpdate, account);
 	}
 
-	public void load(final UpdateTask updateTask, final boolean forceUpdate, final List<MyAccount> accounts) {
+	public void load(final UpdateTask updateTask, final boolean forceUpdate, final List<EveApiAccount> accounts) {
+		limited = false;
+		invalidPrivileges = false;
 		super.loadAccounts(updateTask, forceUpdate, accounts);
 	}
 
 	@Override
 	protected ApiKeyInfoResponse getResponse(final boolean bCorp) throws ApiException {
 		return new com.beimin.eveapi.parser.account.ApiKeyInfoParser()
-				.getResponse(Owner.getApiAuthorization(getAccount()));
+				.getResponse(EveApiOwner.getApiAuthorization(getAccount()));
 	}
 
 	@Override
@@ -81,7 +85,7 @@ public class AccountGetter extends AbstractApiGetter<ApiKeyInfoResponse> {
 		getAccount().setType(apiKeyInfo.getType());
 
 		List<Character> characters = new ArrayList<Character>(apiKeyInfo.getEveCharacters());
-		List<Owner> owners = new ArrayList<Owner>();
+		List<EveApiOwner> owners = new ArrayList<EveApiOwner>();
 
 		int fails = 0;
 		int max = 0;
@@ -121,14 +125,13 @@ public class AccountGetter extends AbstractApiGetter<ApiKeyInfoResponse> {
 		}
 
 		limited = (fails > 0 && fails < max);
-		full = (fails == 0);
-		fail = (fails >= max);
+		invalidPrivileges = (fails >= max);
 
 		for (Character apiCharacter : characters) {
 			boolean found = false;
-			for (Owner owner : getAccount().getOwners()) {
+			for (EveApiOwner owner : getAccount().getOwners()) {
 				if ((owner.getOwnerID() == apiCharacter.getCharacterID() || owner.getOwnerID() == apiCharacter.getCorporationID()) && !typeChanged) {
-					owner.setName(getName(apiCharacter));
+					owner.setOwnerName(getName(apiCharacter));
 					owner.setOwnerID(getID(apiCharacter));
 					owners.add(owner);
 					found = true;
@@ -136,18 +139,18 @@ public class AccountGetter extends AbstractApiGetter<ApiKeyInfoResponse> {
 				}
 			}
 			if (!found) { //Add New
-				owners.add(new Owner(getAccount(), getName(apiCharacter), getID(apiCharacter)));
+				owners.add(new EveApiOwner(getAccount(), getName(apiCharacter), getID(apiCharacter)));
 			}
 		}
 		getAccount().setOwners(owners);
 	}
 
 	@Override
-	protected void updateFailed(final Owner ownerFrom, final Owner ownerTo) { }
+	protected void updateFailed(final EveApiOwner ownerFrom, final EveApiOwner ownerTo) { }
 
 	@Override
 	protected long requestMask(boolean bCorp) {
-		return AccessMask.OPEN.getAccessMask();
+		return EveApiAccessMask.OPEN.getAccessMask();
 	}
 
 	private String getName(final Character apiCharacter) {
@@ -165,15 +168,13 @@ public class AccountGetter extends AbstractApiGetter<ApiKeyInfoResponse> {
 		}
 	}
 
+	@Override
 	public boolean isLimited() {
 		return limited;
 	}
 
-	public boolean isFull() {
-		return full;
-	}
-
-	public boolean isFail() {
-		return fail;
+	@Override
+	public boolean isInvalidPrivileges() {
+		return invalidPrivileges;
 	}
 }

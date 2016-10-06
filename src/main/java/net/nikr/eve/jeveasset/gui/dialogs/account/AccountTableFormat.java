@@ -23,35 +23,35 @@ package net.nikr.eve.jeveasset.gui.dialogs.account;
 
 import ca.odell.glazedlists.GlazedLists;
 import java.util.Comparator;
-import net.nikr.eve.jeveasset.data.Owner;
+import net.nikr.eve.jeveasset.data.api.OwnerType;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.ExpirerDate;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.YesNo;
 import net.nikr.eve.jeveasset.i18n.DialoguesAccount;
 
 
-enum AccountTableFormat implements EnumTableColumn<Owner> {
+enum AccountTableFormat implements EnumTableColumn<OwnerType> {
 	SHOW_ASSETS(Boolean.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
 			return "";
 		}
 		@Override
-		public Object getColumnValue(final Owner from) {
-			return from.isShowOwner() && !from.getName().equals(DialoguesAccount.get().noOwners());
+		public Object getColumnValue(final OwnerType from) {
+			return from.isShowOwner() && !from.getOwnerName().equals(DialoguesAccount.get().noOwners());
 		}
 		@Override
 		public boolean isColumnEditable(final Object baseObject) {
-			if (baseObject instanceof Owner) {
-				Owner owner = (Owner) baseObject;
-				return !owner.getName().equals(DialoguesAccount.get().noOwners());
+			if (baseObject instanceof OwnerType) {
+				OwnerType owner = (OwnerType) baseObject;
+				return !owner.getOwnerName().equals(DialoguesAccount.get().noOwners());
 			}
 			return true;
 		}
 		@Override
 		public boolean setColumnValue(final Object baseObject, final Object editedValue) {
-			if ((editedValue instanceof Boolean) && (baseObject instanceof Owner)) {
-				Owner owner = (Owner) baseObject;
+			if ((editedValue instanceof Boolean) && (baseObject instanceof OwnerType)) {
+				OwnerType owner = (OwnerType) baseObject;
 				boolean before = owner.isShowOwner();
 				boolean after = (Boolean) editedValue;
 				owner.setShowOwner(after);
@@ -66,8 +66,8 @@ enum AccountTableFormat implements EnumTableColumn<Owner> {
 			return DialoguesAccount.get().tableFormatName();
 		}
 		@Override
-		public Object getColumnValue(final Owner from) {
-			return from.getName();
+		public Object getColumnValue(final OwnerType from) {
+			return from.getOwnerName();
 		}
 	},
 	CORPORATION(YesNo.class, GlazedLists.comparableComparator()) {
@@ -76,7 +76,7 @@ enum AccountTableFormat implements EnumTableColumn<Owner> {
 			return DialoguesAccount.get().tableFormatCorporation();
 		}
 		@Override
-		public Object getColumnValue(final Owner from) {
+		public Object getColumnValue(final OwnerType from) {
 			return new YesNo(from.isCorporation());
 		}
 	},
@@ -86,8 +86,8 @@ enum AccountTableFormat implements EnumTableColumn<Owner> {
 			return DialoguesAccount.get().tableFormatAssetList();
 		}
 		@Override
-		public Object getColumnValue(final Owner from) {
-			return new YesNo(from.getParentAccount().isAssetList());
+		public Object getColumnValue(final OwnerType from) {
+			return new YesNo(from.isAssetList());
 		}
 	},
 	ACCOUNT_BALANCE(YesNo.class, GlazedLists.comparableComparator()) {
@@ -96,8 +96,8 @@ enum AccountTableFormat implements EnumTableColumn<Owner> {
 			return DialoguesAccount.get().tableFormatAccountBalance();
 		}
 		@Override
-		public Object getColumnValue(final Owner from) {
-			return new YesNo(from.getParentAccount().isAccountBalance());
+		public Object getColumnValue(final OwnerType from) {
+			return new YesNo(from.isAccountBalance());
 		}
 	},
 	INDUSTRY_JOBS(YesNo.class, GlazedLists.comparableComparator()) {
@@ -106,8 +106,8 @@ enum AccountTableFormat implements EnumTableColumn<Owner> {
 			return DialoguesAccount.get().tableFormatIndustryJobs();
 		}
 		@Override
-		public Object getColumnValue(final Owner from) {
-			return new YesNo(from.getParentAccount().isIndustryJobs());
+		public Object getColumnValue(final OwnerType from) {
+			return new YesNo(from.isIndustryJobs());
 		}
 	},
 	MARKET_ORDERS(YesNo.class, GlazedLists.comparableComparator()) {
@@ -116,8 +116,8 @@ enum AccountTableFormat implements EnumTableColumn<Owner> {
 			return DialoguesAccount.get().tableFormatMarketOrders();
 		}
 		@Override
-		public Object getColumnValue(final Owner from) {
-			return new YesNo(from.getParentAccount().isMarketOrders());
+		public Object getColumnValue(final OwnerType from) {
+			return new YesNo(from.isMarketOrders());
 		}
 	},
 	TRANSACTIONS(YesNo.class, GlazedLists.comparableComparator()) {
@@ -126,8 +126,8 @@ enum AccountTableFormat implements EnumTableColumn<Owner> {
 			return DialoguesAccount.get().tableFormatTransactions();
 		}
 		@Override
-		public Object getColumnValue(final Owner from) {
-			return new YesNo(from.getParentAccount().isTransactions());
+		public Object getColumnValue(final OwnerType from) {
+			return new YesNo(from.isTransactions());
 		}
 	},
 	JOURNAL(YesNo.class, GlazedLists.comparableComparator()) {
@@ -136,8 +136,8 @@ enum AccountTableFormat implements EnumTableColumn<Owner> {
 			return DialoguesAccount.get().tableFormatJournal();
 		}
 		@Override
-		public Object getColumnValue(final Owner from) {
-			return new YesNo(from.getParentAccount().isJournal());
+		public Object getColumnValue(final OwnerType from) {
+			return new YesNo(from.isJournal());
 		}
 	},
 	CONTRACTS(YesNo.class, GlazedLists.comparableComparator()) {
@@ -146,8 +146,8 @@ enum AccountTableFormat implements EnumTableColumn<Owner> {
 			return DialoguesAccount.get().tableFormatContracts();
 		}
 		@Override
-		public Object getColumnValue(final Owner from) {
-			return new YesNo(from.getParentAccount().isContracts());
+		public Object getColumnValue(final OwnerType from) {
+			return new YesNo(from.isContracts());
 		}
 	},
 	LOCATIONS(YesNo.class, GlazedLists.comparableComparator()) {
@@ -156,8 +156,8 @@ enum AccountTableFormat implements EnumTableColumn<Owner> {
 			return DialoguesAccount.get().tableFormatLocations();
 		}
 		@Override
-		public Object getColumnValue(final Owner from) {
-			return new YesNo(from.getParentAccount().isLocations());
+		public Object getColumnValue(final OwnerType from) {
+			return new YesNo(from.isLocations());
 		}
 	},
 	EXPIRES(ExpirerDate.class, GlazedLists.comparableComparator()) {
@@ -166,8 +166,8 @@ enum AccountTableFormat implements EnumTableColumn<Owner> {
 			return DialoguesAccount.get().tableFormatExpires();
 		}
 		@Override
-		public Object getColumnValue(final Owner from) {
-			return new ExpirerDate(from.getParentAccount().getExpires());
+		public Object getColumnValue(final OwnerType from) {
+			return new ExpirerDate(from.getExpire());
 		}
 	};
 

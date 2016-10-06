@@ -33,13 +33,12 @@ import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.Timer;
 import net.nikr.eve.jeveasset.data.EventListManager;
-import net.nikr.eve.jeveasset.data.MyAccount;
 import net.nikr.eve.jeveasset.data.MyAccountBalance;
-import net.nikr.eve.jeveasset.data.Owner;
 import net.nikr.eve.jeveasset.data.ProfileData;
 import net.nikr.eve.jeveasset.data.ProfileManager;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.data.StaticData;
+import net.nikr.eve.jeveasset.data.api.OwnerType;
 import net.nikr.eve.jeveasset.gui.dialogs.AboutDialog;
 import net.nikr.eve.jeveasset.gui.dialogs.account.AccountManagerDialog;
 import net.nikr.eve.jeveasset.gui.dialogs.bugs.BugsDialog;
@@ -278,7 +277,7 @@ public class Program implements ActionListener {
 		if (Settings.get().isSettingsLoadError()) {
 			JOptionPane.showMessageDialog(mainWindow.getFrame(), GuiShared.get().errorLoadingSettingsMsg(), GuiShared.get().errorLoadingSettingsTitle(), JOptionPane.ERROR_MESSAGE);
 		}
-		if (profileManager.getAccounts().isEmpty()) {
+		if (profileManager.getOwnerTypes().isEmpty()) {
 			LOG.info("Show Account Manager");
 			accountManagerDialog.setVisible(true);
 		}
@@ -524,11 +523,11 @@ public class Program implements ActionListener {
 	public List<String> getOwnerNames(boolean all) {
 		return profileData.getOwnerNames(all);
 	}
-	public Map<String, Owner> getOwners() {
+	public Map<String, OwnerType> getOwners() {
 		return profileData.getOwners();
 	}
-	public List<MyAccount> getAccounts() {
-		return profileManager.getAccounts();
+	public List<OwnerType> getOwnerTypes() {
+		return profileManager.getOwnerTypes();
 	}
 	public ProfileManager getProfileManager() {
 		return profileManager;

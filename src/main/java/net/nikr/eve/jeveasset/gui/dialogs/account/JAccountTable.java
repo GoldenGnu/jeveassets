@@ -23,21 +23,19 @@ package net.nikr.eve.jeveasset.gui.dialogs.account;
 
 import ca.odell.glazedlists.SeparatorList;
 import ca.odell.glazedlists.swing.DefaultEventTableModel;
-import java.awt.Color;
 import java.awt.Component;
-import java.awt.Font;
 import javax.swing.table.TableCellRenderer;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.data.Owner;
+import net.nikr.eve.jeveasset.data.api.OwnerType;
 import net.nikr.eve.jeveasset.gui.shared.table.JSeparatorTable;
 import net.nikr.eve.jeveasset.i18n.DialoguesAccount;
 
 
 public class JAccountTable extends JSeparatorTable {
 
-	private final DefaultEventTableModel<Owner> tableModel;
+	private final DefaultEventTableModel<OwnerType> tableModel;
 
-	public JAccountTable(final Program program, final DefaultEventTableModel<Owner> tableModel, SeparatorList<Owner> separatorList) {
+	public JAccountTable(final Program program, final DefaultEventTableModel<OwnerType> tableModel, SeparatorList<OwnerType> separatorList) {
 		super(program, tableModel, separatorList);
 		this.tableModel = tableModel;
 	}
@@ -48,9 +46,9 @@ public class JAccountTable extends JSeparatorTable {
 		Object object = tableModel.getElementAt(row);
 
 		//No Owners
-		if (object instanceof Owner) {
-			Owner owner = (Owner) object;
-			if (owner.getName().equals(DialoguesAccount.get().noOwners())) {
+		if (object instanceof OwnerType) {
+			OwnerType owner = (OwnerType) object;
+			if (owner.getOwnerName().equals(DialoguesAccount.get().noOwners())) {
 				component.setEnabled(false);
 				return component;
 			} else {

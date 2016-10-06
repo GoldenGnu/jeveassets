@@ -22,16 +22,14 @@
 package net.nikr.eve.jeveasset.gui.dialogs.account;
 
 import java.util.Comparator;
-import net.nikr.eve.jeveasset.data.Owner;
+import net.nikr.eve.jeveasset.data.api.OwnerType;
 
 
-public class SeparatorListComparator implements Comparator<Owner> {
+public class SeparatorListComparator implements Comparator<OwnerType> {
 
 	@Override
-	public int compare(final Owner o1, final Owner o2) {
-		Integer keyid1 = o1.getParentAccount().getKeyID();
-		Integer keyid2 = o2.getParentAccount().getKeyID();
-		return keyid1.compareTo(keyid2);
+	public int compare(final OwnerType o1, final OwnerType o2) {
+		return o1.getComparator().compareTo(o2.getComparator());
 	}
 
 }

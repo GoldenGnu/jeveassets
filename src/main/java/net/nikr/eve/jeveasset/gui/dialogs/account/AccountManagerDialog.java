@@ -39,8 +39,10 @@ import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.EventListManager;
-import net.nikr.eve.jeveasset.data.MyAccount;
-import net.nikr.eve.jeveasset.data.Owner;
+import net.nikr.eve.jeveasset.data.eveapi.EveApiAccount;
+import net.nikr.eve.jeveasset.data.eveapi.EveApiOwner;
+import net.nikr.eve.jeveasset.data.evekit.EveKitOwner;
+import net.nikr.eve.jeveasset.data.api.OwnerType;
 import net.nikr.eve.jeveasset.gui.dialogs.account.AccountSeparatorTableCell.AccountCellAction;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
@@ -54,7 +56,8 @@ import net.nikr.eve.jeveasset.i18n.DialoguesAccount;
 public class AccountManagerDialog extends JDialogCentered {
 
 	private enum AccountManagerAction {
-		ADD,
+		ADD_EVEAPI,
+		ADD_EVEKIT,
 		CLOSE,
 		COLLAPSE,
 		EXPAND,
@@ -67,18 +70,18 @@ public class AccountManagerDialog extends JDialogCentered {
 	//GUI
 	private final AccountImportDialog accountImportDialog;
 	private final JSeparatorTable jTable;
-	private final JButton jAdd;
+	private final JDropDownButton jAdd;
 	private final JButton jExpand;
 	private final JButton jCollapse;
 	private final JDropDownButton jAssets;
 	private final JButton jClose;
-	private final EventList<Owner> eventList;
-	private final DefaultEventTableModel<Owner> tableModel;
-	private final SeparatorList<Owner> separatorList;
-	private final DefaultEventSelectionModel<Owner> selectionModel;
+	private final EventList<OwnerType> eventList;
+	private final DefaultEventTableModel<OwnerType> tableModel;
+	private final SeparatorList<OwnerType> separatorList;
+	private final DefaultEventSelectionModel<OwnerType> selectionModel;
 
-	private Map<Owner, Boolean> ownerShows;
-	private Map<MyAccount, String> accountNames;
+	private Map<OwnerType, Boolean> ownerShows;
+	private Map<String, String> accountNames;
 	private boolean forceUpdate = false;
 
 	public AccountManagerDialog(final Program program) {
@@ -87,13 +90,13 @@ public class AccountManagerDialog extends JDialogCentered {
 		accountImportDialog = new AccountImportDialog(this, program);
 		ListenerClass listener = new ListenerClass();
 
-		eventList = new EventListManager<Owner>().create();
+		eventList = new EventListManager<OwnerType>().create();
 
 		eventList.getReadWriteLock().readLock().lock();
-		separatorList = new SeparatorList<Owner>(eventList, new SeparatorListComparator(), 1, 3);
+		separatorList = new SeparatorList<OwnerType>(eventList, new SeparatorListComparator(), 1, 3);
 		eventList.getReadWriteLock().readLock().unlock();
 
-		EnumTableFormatAdaptor<AccountTableFormat, Owner> tableFormat = new EnumTableFormatAdaptor<AccountTableFormat, Owner>(AccountTableFormat.class);
+		EnumTableFormatAdaptor<AccountTableFormat, OwnerType> tableFormat = new EnumTableFormatAdaptor<AccountTableFormat, OwnerType>(AccountTableFormat.class);
 		tableModel = EventModels.createTableModel(separatorList, tableFormat);
 		jTable = new JAccountTable(program, tableModel, separatorList);
 		jTable.getTableHeader().setReorderingAllowed(false);
@@ -107,10 +110,18 @@ public class AccountManagerDialog extends JDialogCentered {
 		jTable.setSelectionModel(selectionModel);
 
 		//Add Button
-		jAdd = new JButton(DialoguesAccount.get().add());
-		jAdd.setActionCommand(AccountManagerAction.ADD.name());
-		jAdd.addActionListener(listener);
+		jAdd = new JDropDownButton(DialoguesAccount.get().add());
+		
+		JMenuItem jEveApi = new JMenuItem(DialoguesAccount.get().eveapi(), Images.MISC_EVE.getIcon());
+		jEveApi.setActionCommand(AccountManagerAction.ADD_EVEAPI.name());
+		jEveApi.addActionListener(listener);
+		jAdd.add(jEveApi);
 
+		JMenuItem jEveKit = new JMenuItem(DialoguesAccount.get().evekit(), Images.MISC_EVEKIT.getIcon());
+		jEveKit.setActionCommand(AccountManagerAction.ADD_EVEKIT.name());
+		jEveKit.addActionListener(listener);
+		jAdd.add(jEveKit);
+		
 		jCollapse = new JButton(DialoguesAccount.get().collapse());
 		jCollapse.setActionCommand(AccountManagerAction.COLLAPSE.name());
 		jCollapse.addActionListener(listener);
@@ -191,15 +202,16 @@ public class AccountManagerDialog extends JDialogCentered {
 		try {
 			eventList.getReadWriteLock().writeLock().lock();
 			eventList.clear();
-			for (MyAccount account : program.getAccounts()) {
+			//Eve Online API
+			for (EveApiAccount account : program.getProfileManager().getAccounts()) {
 				if (account.getOwners().isEmpty()) {
-					eventList.add(new Owner(account, DialoguesAccount.get().noOwners(), 0));
+					eventList.add(new EveApiOwner(account, DialoguesAccount.get().noOwners(), 0));
 				} else {
-					for (Owner owner : account.getOwners()) {
-						eventList.add(owner);
-					}
+					eventList.addAll(account.getOwners());
 				}
 			}
+			//EveKit API
+			eventList.addAll(program.getProfileManager().getEveKitOwners());
 		} finally {
 			eventList.getReadWriteLock().writeLock().unlock();
 		}
@@ -220,19 +232,17 @@ public class AccountManagerDialog extends JDialogCentered {
 			int[] selectedRows = jTable.getSelectedRows();
 			for (int i = 0; i < selectedRows.length; i++) {
 				Object o = tableModel.getElementAt(selectedRows[i]);
-				if (o instanceof Owner) {
-					Owner owner = (Owner) o;
-					if (!owner.getName().equals(DialoguesAccount.get().noOwners())) {
+				if (o instanceof OwnerType) {
+					OwnerType owner = (OwnerType) o;
+					if (!owner.getOwnerName().equals(DialoguesAccount.get().noOwners())) {
 						owner.setShowOwner(check);
 					}
 				}
 			}
 		} else { //Set all the check value
-			for (MyAccount account : program.getAccounts()) {
-				for (Owner owner : account.getOwners()) {
-					if (!owner.getName().equals(DialoguesAccount.get().noOwners())) {
-						owner.setShowOwner(check);
-					}
+			for (OwnerType owner : program.getOwnerTypes()) {
+				if (!owner.getOwnerName().equals(DialoguesAccount.get().noOwners())) {
+					owner.setShowOwner(check);
 				}
 			}
 		}
@@ -253,8 +263,8 @@ public class AccountManagerDialog extends JDialogCentered {
 
 	@Override
 	protected void windowShown() {
-		if (program.getAccounts().isEmpty()) {
-			accountImportDialog.show();
+		if (program.getOwnerTypes().isEmpty()) {
+			accountImportDialog.add();
 		}
 	}
 
@@ -267,14 +277,12 @@ public class AccountManagerDialog extends JDialogCentered {
 	}
 
 	private boolean isChanged() {
-		for (MyAccount account : program.getAccounts()) {
-			if (!account.getName().equals(accountNames.get(account))) { //Account name changed
+		for (OwnerType owner  : program.getOwnerTypes()) {
+			if (!owner.getAccountName().equals(accountNames.get(owner.getComparator()))) {
 				return true;
 			}
-			for (Owner owner : account.getOwners()) {
-				if (owner.isShowOwner() != ownerShows.get(owner)) { //Owner show changed
-					return true;
-				}
+			if (owner.isShowOwner() != ownerShows.get(owner)) { //Owner show changed
+				return true;
 			}
 		}
 		return false;
@@ -285,13 +293,11 @@ public class AccountManagerDialog extends JDialogCentered {
 		if (b) {
 			forceUpdate = false;
 			updateTable();
-			ownerShows = new HashMap<Owner, Boolean>();
-			accountNames = new HashMap<MyAccount, String>();
-			for (MyAccount account : program.getAccounts()) {
-				accountNames.put(account, account.getName());
-				for (Owner owner : account.getOwners()) {
-					ownerShows.put(owner, owner.isShowOwner());
-				}
+			ownerShows = new HashMap<OwnerType, Boolean>();
+			accountNames = new HashMap<String, String>();
+			for (OwnerType owner  : program.getOwnerTypes()) {
+				accountNames.put(owner.getComparator(), owner.getAccountName());
+				ownerShows.put(owner, owner.isShowOwner());
 			}
 		} else {
 			save();
@@ -301,29 +307,33 @@ public class AccountManagerDialog extends JDialogCentered {
 	private class ListenerClass implements ActionListener {
 		@Override
 		public void actionPerformed(final ActionEvent e) {
-			if (AccountManagerAction.ADD.name().equals(e.getActionCommand())) {
-				accountImportDialog.show();
-			}
-			if (AccountManagerAction.COLLAPSE.name().equals(e.getActionCommand())) {
+			if (AccountManagerAction.ADD_EVEAPI.name().equals(e.getActionCommand())) {
+				accountImportDialog.addEveApi();
+			} else if (AccountManagerAction.ADD_EVEKIT.name().equals(e.getActionCommand())) {
+				accountImportDialog.addEveKit();
+			} else if (AccountManagerAction.COLLAPSE.name().equals(e.getActionCommand())) {
 				jTable.expandSeparators(false);
-			}
-			if (AccountManagerAction.EXPAND.name().equals(e.getActionCommand())) {
+			} else if (AccountManagerAction.EXPAND.name().equals(e.getActionCommand())) {
 				jTable.expandSeparators(true);
-			}
-			if (AccountManagerAction.CLOSE.name().equals(e.getActionCommand())) {
+			} else if (AccountManagerAction.CLOSE.name().equals(e.getActionCommand())) {
 				setVisible(false);
-			}
-			if (AccountCellAction.EDIT.name().equals(e.getActionCommand())) {
+			} else if (AccountCellAction.EDIT.name().equals(e.getActionCommand())) {
 				int index = jTable.getSelectedRow();
 				Object o = tableModel.getElementAt(index);
 				if (o instanceof SeparatorList.Separator<?>) {
 					SeparatorList.Separator<?> separator = (SeparatorList.Separator<?>) o;
-					Owner owner = (Owner) separator.first();
-					MyAccount account = owner.getParentAccount();
-					accountImportDialog.show(account);
+					Object object = separator.first();
+					if (object instanceof EveApiOwner) { //Eve Api
+						EveApiOwner owner = (EveApiOwner) object;
+						EveApiAccount account = owner.getParentAccount();
+						accountImportDialog.editEveApi(account);
+					}
+					if (object instanceof EveKitOwner) {
+						EveKitOwner eveKitOwner = (EveKitOwner) object;
+						accountImportDialog.editEveKit(eveKitOwner);
+					}		
 				}
-			}
-			if (AccountCellAction.DELETE.name().equals(e.getActionCommand())) {
+			} else if (AccountCellAction.DELETE.name().equals(e.getActionCommand())) {
 				int index = jTable.getSelectedRow();
 				Object o = tableModel.getElementAt(index);
 				if (o instanceof SeparatorList.Separator<?>) {
@@ -334,27 +344,29 @@ public class AccountManagerDialog extends JDialogCentered {
 							, JOptionPane.PLAIN_MESSAGE);
 					if (nReturn == JOptionPane.YES_OPTION) {
 						SeparatorList.Separator<?> separator = (SeparatorList.Separator<?>) o;
-						Owner owner = (Owner) separator.first();
-						MyAccount account = owner.getParentAccount();
-						program.getAccounts().remove(account);
-						forceUpdate();
-						updateTable();
+						Object object = separator.first();
+						if (object instanceof EveApiOwner) { //Eve Api
+							EveApiOwner owner = (EveApiOwner) object;
+							EveApiAccount account = owner.getParentAccount();
+							program.getProfileManager().getAccounts().remove(account);
+							forceUpdate();
+							updateTable();
+						}
+						if (object instanceof EveKitOwner) {
+							EveKitOwner eveKitOwner = (EveKitOwner) object;
+							program.getProfileManager().getEveKitOwners().remove(eveKitOwner);
+							forceUpdate();
+							updateTable();
+						}
 					}
 				}
-			}
-			if (AccountManagerAction.CHECK_ALL.name().equals(e.getActionCommand())) {
+			} else if (AccountManagerAction.CHECK_ALL.name().equals(e.getActionCommand())) {
 				checkAssets(false, true);
-			}
-
-			if (AccountManagerAction.UNCHECK_ALL.name().equals(e.getActionCommand())) {
+			} else if (AccountManagerAction.UNCHECK_ALL.name().equals(e.getActionCommand())) {
 				checkAssets(false, false);
-			}
-
-			if (AccountManagerAction.CHECK_SELECTED.name().equals(e.getActionCommand())) {
+			} else if (AccountManagerAction.CHECK_SELECTED.name().equals(e.getActionCommand())) {
 				checkAssets(true, true);
-			}
-
-			if (AccountManagerAction.UNCHECK_SELECTED.name().equals(e.getActionCommand())) {
+			} else if (AccountManagerAction.UNCHECK_SELECTED.name().equals(e.getActionCommand())) {
 				checkAssets(true, false);
 			}
 		}
