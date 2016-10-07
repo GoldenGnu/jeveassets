@@ -21,11 +21,13 @@
 package net.nikr.eve.jeveasset.io.evekit;
 
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
 import enterprises.orbital.evekit.client.invoker.ApiClient;
 import enterprises.orbital.evekit.client.invoker.ApiException;
 import enterprises.orbital.evekit.client.model.WalletTransaction;
-import java.util.Date;
-import java.util.List;
 import net.nikr.eve.jeveasset.data.evekit.EveKitAccessMask;
 import net.nikr.eve.jeveasset.data.evekit.EveKitOwner;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
@@ -40,8 +42,14 @@ public class EveKitTransactionsGetter extends AbstractEveKitGetter {
 
 	@Override
 	protected void get(EveKitOwner owner) throws ApiException {
-		List<WalletTransaction> walletTransactions = getCommonApi().getWalletTransactions(owner.getAccessKey(), owner.getAccessCred(),
+	  List<WalletTransaction> walletTransactions = new ArrayList<>();
+	  List<WalletTransaction> batch = getCommonApi().getWalletTransactions(owner.getAccessKey(), owner.getAccessCred(),
 				null, null, Integer.MAX_VALUE, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+	  while (!batch.isEmpty()) {
+	    walletTransactions.addAll(batch);
+	    batch = getCommonApi().getWalletTransactions(owner.getAccessKey(), owner.getAccessCred(),
+				null, batch.get(batch.size() - 1).getCid(), Integer.MAX_VALUE, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+	  }
 		owner.setTransactions(EveKitConverter.convertTransactions(walletTransactions, owner));
 	}
 

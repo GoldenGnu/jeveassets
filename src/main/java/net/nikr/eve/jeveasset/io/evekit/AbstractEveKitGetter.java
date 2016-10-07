@@ -31,6 +31,8 @@ import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.evekit.EveKitOwner;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
+
+import org.apache.commons.lang.StringEscapeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -181,4 +183,44 @@ public abstract class AbstractEveKitGetter {
 	protected abstract void setNextUpdate(EveKitOwner owner, Date date);
 	protected abstract ApiClient getApiClient();
 
+  /**
+   * Convenience methods for constructing EveKit attribute selectors. There are four possible selector types (as documented here:
+   * https://github.com/OrbitalEnterprises/evekit-model-frontend#usage):
+   * 
+   * <ol>
+   * <li>{any: <boolean>} - Wildcard selector. Normally, this is the default for a field, meaning you can usually omit using this selector.
+   * <li>{like: <string>} - String match selector. If the associated data field is string valued, then all returned model data must satisfy the SQL expression
+   * 'field LIKE selector'. Normal SQL 'LIKE' syntax is allowed (e.g. % as wildcard).
+   * <li>{values: [<v1>,...,<vn>]} - Set selector. The associated data field of each returned model data item must contain one of the listed values.
+   * <li>{start: <lower>, end: <upper>} - Range selector. The associated data field of each returned model data item must satisfy lower <= value <= upper.
+   * </ol>
+   * 
+   */
+  public static String ek_any() {
+    return "{ any: true }";
+  }
+
+  public static String ek_like(
+                               Object l) {
+    return "{ like: \"" + StringEscapeUtils.escapeJavaScript(String.valueOf(l)) + "\" }";
+  }
+
+  public static String ek_values(
+                                 Object... v) {
+    StringBuilder builder = new StringBuilder();
+    builder.append("{ values: [");
+    for (Object i : v)
+      builder.append("\"").append(StringEscapeUtils.escapeJavaScript(String.valueOf(i))).append("\",");
+    if (v.length > 0) builder.setLength(builder.length() - 1);
+    builder.append("] }");
+    return builder.toString();
+  }
+
+  public static String ek_range(
+                                Object start,
+                                Object end) {
+    return "{ start: \"" + StringEscapeUtils.escapeJavaScript(String.valueOf(start)) + "\", end: \"" + StringEscapeUtils.escapeJavaScript(String.valueOf(end))
+        + "\" }";
+  }
+	
 }

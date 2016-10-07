@@ -21,11 +21,13 @@
 package net.nikr.eve.jeveasset.io.evekit;
 
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
 import enterprises.orbital.evekit.client.invoker.ApiClient;
 import enterprises.orbital.evekit.client.invoker.ApiException;
 import enterprises.orbital.evekit.client.model.MarketOrder;
-import java.util.Date;
-import java.util.List;
 import net.nikr.eve.jeveasset.data.evekit.EveKitAccessMask;
 import net.nikr.eve.jeveasset.data.evekit.EveKitOwner;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
@@ -40,9 +42,17 @@ public class EveKitMarketOrdersGetter extends AbstractEveKitGetter  {
 
 	@Override
 	protected void get(EveKitOwner owner) throws ApiException {
-		List<MarketOrder> marketOrders = getCommonApi().getMarketOrders(owner.getAccessKey(), owner.getAccessCred(), null, null, Integer.MAX_VALUE, null,
-				null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
-		owner.setMarketOrders(EveKitConverter.convertMarketOrders(marketOrders, owner));
+    List<MarketOrder> marketOrders = new ArrayList<>();
+    // All EveKit results are ordered by the "cached id" (cid field).  Page through setting continuation ID to the last cid until we no longer receive results.
+    List<MarketOrder> nextOrders = getCommonApi().getMarketOrders(owner.getAccessKey(), owner.getAccessCred(), null, null, Integer.MAX_VALUE, null, null, null,
+                                                                  null, null, null, null, null, null, null, null, null, null, null, null, null);
+    while (!nextOrders.isEmpty()) {
+      marketOrders.addAll(nextOrders);
+      nextOrders = getCommonApi().getMarketOrders(owner.getAccessKey(), owner.getAccessCred(), null, nextOrders.get(nextOrders.size() - 1).getCid(),
+                                                  Integer.MAX_VALUE, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null,
+                                                  null);
+    }
+    owner.setMarketOrders(EveKitConverter.convertMarketOrders(marketOrders, owner));
 	}
 
 	@Override
