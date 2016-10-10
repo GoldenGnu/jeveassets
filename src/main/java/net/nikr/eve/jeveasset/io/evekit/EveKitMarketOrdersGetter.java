@@ -20,10 +20,9 @@
  */
 package net.nikr.eve.jeveasset.io.evekit;
 
-
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import enterprises.orbital.evekit.client.invoker.ApiClient;
 import enterprises.orbital.evekit.client.invoker.ApiException;
@@ -41,17 +40,34 @@ public class EveKitMarketOrdersGetter extends AbstractEveKitGetter  {
 	}
 
 	@Override
-	protected void get(EveKitOwner owner) throws ApiException {
-    List<MarketOrder> marketOrders = new ArrayList<>();
-    // All EveKit results are ordered by the "cached id" (cid field).  Page through setting continuation ID to the last cid until we no longer receive results.
-    List<MarketOrder> nextOrders = getCommonApi().getMarketOrders(owner.getAccessKey(), owner.getAccessCred(), null, null, Integer.MAX_VALUE, null, null, null,
-                                                                  null, null, null, null, null, null, null, null, null, null, null, null, null);
-    while (!nextOrders.isEmpty()) {
-      marketOrders.addAll(nextOrders);
-      nextOrders = getCommonApi().getMarketOrders(owner.getAccessKey(), owner.getAccessCred(), null, nextOrders.get(nextOrders.size() - 1).getCid(),
-                                                  Integer.MAX_VALUE, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null,
-                                                  null);
-    }
+	protected void get(final EveKitOwner owner) throws ApiException {
+	  // Market orders change state, but are never removed.  So a call to getMarketOrders here will return every
+	  // market order ever stored in EveKit because they will all be live at the current time.  To avoid that, we
+	  // filter on the "issued" attribute to only get recent orders.  We could do better by only querying from
+	  // the oldest active order but we'd need to pass that date in.
+	  //
+	  // We know that market orders can't be live more than 90 days (but issued date moves if the order is changed),
+	  // so we double the max order duration to set a query threshold.
+	  final long threshold = System.currentTimeMillis() - TimeUnit.DAYS.toMillis(180);
+	  // Page to make sure we get all desired results
+    List<MarketOrder> marketOrders = retrievePagedResults(new BatchRetriever<MarketOrder>() {
+
+      @Override
+      public List<MarketOrder> getNextBatch(
+                                            long contid)
+        throws ApiException {
+        return getCommonApi().getMarketOrders(owner.getAccessKey(), owner.getAccessCred(), null, contid, Integer.MAX_VALUE, null, 
+                                              null, null, null, null, null, null, ek_range(threshold, Long.MAX_VALUE), null, null, 
+                                              null, null, null, null, null, null);
+      }
+
+      @Override
+      public long getCid(
+                         MarketOrder obj) {
+        return obj.getCid();
+      }
+      
+    });
     owner.setMarketOrders(EveKitConverter.convertMarketOrders(marketOrders, owner));
 	}
 

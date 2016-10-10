@@ -39,9 +39,25 @@ public class EveKitBlueprintsGetter extends AbstractEveKitGetter {
 	}
 
 	@Override
-	protected void get(EveKitOwner owner) throws ApiException {
-		List<Blueprint> blueprints = getCommonApi().getBlueprints(owner.getAccessKey(), owner.getAccessCred(), null, null, Integer.MAX_VALUE, null,
+	protected void get(final EveKitOwner owner) throws ApiException {
+	  // Return current blueprints.  Paging required for large blueprint lists.
+		List<Blueprint> blueprints = retrievePagedResults(new BatchRetriever<Blueprint>() {
+
+      @Override
+      public List<Blueprint> getNextBatch(
+                                          long contid)
+        throws ApiException {
+        return getCommonApi().getBlueprints(owner.getAccessKey(), owner.getAccessCred(), null, contid, Integer.MAX_VALUE, null,
 				null, null, null, null, null, null, null, null, null);
+      }
+
+      @Override
+      public long getCid(
+                         Blueprint obj) {
+        return obj.getCid();
+      }
+		  
+		}); 
 		owner.setBlueprints(EveKitConverter.convertBlueprints(blueprints));
 	}
 

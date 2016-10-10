@@ -26,6 +26,8 @@ import enterprises.orbital.evekit.client.invoker.ApiException;
 import enterprises.orbital.evekit.client.model.IndustryJob;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+
 import net.nikr.eve.jeveasset.data.evekit.EveKitAccessMask;
 import net.nikr.eve.jeveasset.data.evekit.EveKitOwner;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
@@ -39,9 +41,36 @@ public class EveKitIndustryJobsGetter extends AbstractEveKitGetter {
 	}
 
 	@Override
-	protected void get(EveKitOwner owner) throws ApiException {
-		List<IndustryJob> industryJobs = getCommonApi().getIndustryJobs(owner.getAccessKey(), owner.getAccessCred(), null, null, Integer.MAX_VALUE, null,
-				null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+	protected void get(final EveKitOwner owner) throws ApiException {
+	  // Industry jobs can change state, but are never removed.  So a call to getIndustryJobs here will
+	  // return every industry job ever stored in EveKit because they will all be live at the current
+	  // time.  To avoid that, we filter on the "startDate" attribute to only get recent orders.  We
+	  // could do better by only querying from the oldest active industry job but we'd need to pass that
+	  // date in.
+	  //
+	  // I don't actually know how long an industry job is allowed to take or be paused, so I made up
+	  // a threshold of one year.
+	  final long threshold = System.currentTimeMillis() - TimeUnit.DAYS.toMillis(360);
+	  // Page to make sure we get all desired results
+		List<IndustryJob> industryJobs = retrievePagedResults(new BatchRetriever<IndustryJob>() {
+
+      @Override
+      public List<IndustryJob> getNextBatch(
+                                            long contid)
+        throws ApiException {
+        return getCommonApi().getIndustryJobs(owner.getAccessKey(), owner.getAccessCred(), null, contid, Integer.MAX_VALUE, null,
+                                              null, null, null, null, null, null, null, null, null, null, null, null, null, null, 
+                                              null, null, null, null, null, null, null, null, ek_range(threshold, Long.MAX_VALUE), 
+                                              null, null, null, null, null);
+      }
+
+      @Override
+      public long getCid(
+                         IndustryJob obj) {
+        return obj.getCid();
+      }
+		  
+		}); 
 		owner.setIndustryJobs(EveKitConverter.convertIndustryJobs(industryJobs, owner));
 	}
 

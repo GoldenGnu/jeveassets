@@ -21,11 +21,14 @@
 package net.nikr.eve.jeveasset.io.evekit;
 
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+
 import enterprises.orbital.evekit.client.invoker.ApiClient;
 import enterprises.orbital.evekit.client.invoker.ApiException;
 import enterprises.orbital.evekit.client.model.ContractItem;
-import java.util.Date;
-import java.util.List;
 import net.nikr.eve.jeveasset.data.evekit.EveKitAccessMask;
 import net.nikr.eve.jeveasset.data.evekit.EveKitOwner;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
@@ -40,8 +43,23 @@ public class EveKitContractItemsGetter extends AbstractEveKitGetter {
 
 	@Override
 	protected void get(EveKitOwner owner) throws ApiException {
-		List<ContractItem> contractItems = getCommonApi().getContractItems(owner.getAccessKey(), owner.getAccessCred(), null, null, Integer.MAX_VALUE, null,
-				null, null, null, null, null, null, null);
+	  // In an ideal world, we'd only retrieve contract items based on the contracts we retrieved in the ContractsGetter.
+	  // We can't do that as written, so we'll do something slightly evil: we'll retrieve contract items live at the current
+	  // time in reverse order, and stop when we find a "lifeStart" past our threshold.  We set our threshold based on the
+	  // maximum length of a contract, which is 2 weeks, and we double it to provide some buffer.
+	  long threshold = System.currentTimeMillis() - TimeUnit.DAYS.toMillis(28);
+		List<ContractItem> contractItems = new ArrayList<>();
+		// Start paging since there may be many items before the threshold
+		List<ContractItem> batch = getCommonApi().getContractItems(owner.getAccessKey(), owner.getAccessCred(), null, Long.MAX_VALUE, Integer.MAX_VALUE, 
+		                                                           true, null, null, null, null, null, null, null);
+		while (!batch.isEmpty()) {
+		  contractItems.addAll(batch);
+		  if (batch.get(0).getLifeStart() < threshold)
+		    // This contract item was created before our threshold, so stop retrieval
+		    break;
+		  batch = getCommonApi().getContractItems(owner.getAccessKey(), owner.getAccessCred(), null, batch.get(0).getCid(), Integer.MAX_VALUE, 
+		                                          true, null, null, null, null, null, null, null);
+		}
 		EveKitConverter.convertContractItems(owner.getContracts(), contractItems);
 	}
 

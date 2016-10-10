@@ -21,20 +21,24 @@
 package net.nikr.eve.jeveasset.io.evekit;
 
 
-import enterprises.orbital.evekit.client.api.AccessKeyApi;
-import enterprises.orbital.evekit.client.api.CommonApi;
-import enterprises.orbital.evekit.client.invoker.ApiClient;
-import enterprises.orbital.evekit.client.invoker.ApiException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.data.evekit.EveKitOwner;
-import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
-import net.nikr.eve.jeveasset.gui.shared.Formater;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import enterprises.orbital.evekit.client.api.AccessKeyApi;
+import enterprises.orbital.evekit.client.api.CommonApi;
+import enterprises.orbital.evekit.client.invoker.ApiClient;
+import enterprises.orbital.evekit.client.invoker.ApiException;
+import net.nikr.eve.jeveasset.Program;
+import net.nikr.eve.jeveasset.data.evekit.EveKitOwner;
+import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
+import net.nikr.eve.jeveasset.gui.shared.Formater;
 
 
 public abstract class AbstractEveKitGetter { 
@@ -197,12 +201,22 @@ public abstract class AbstractEveKitGetter {
    * 
    */
   public static String ek_any() {
-    return "{ any: true }";
+    try {
+      return URLEncoder.encode("{ any: true }", "UTF-8");
+    } catch (UnsupportedEncodingException e) {
+      // This should never happen!
+      throw new RuntimeException(e);
+    }
   }
 
   public static String ek_like(
                                Object l) {
-    return "{ like: \"" + StringEscapeUtils.escapeJavaScript(String.valueOf(l)) + "\" }";
+    try {
+      return URLEncoder.encode("{ like: \"" + StringEscapeUtils.escapeJavaScript(String.valueOf(l)) + "\" }", "UTF-8");
+    } catch (UnsupportedEncodingException e) {
+      // This should never happen!
+      throw new RuntimeException(e);
+    }
   }
 
   public static String ek_values(
@@ -213,14 +227,40 @@ public abstract class AbstractEveKitGetter {
       builder.append("\"").append(StringEscapeUtils.escapeJavaScript(String.valueOf(i))).append("\",");
     if (v.length > 0) builder.setLength(builder.length() - 1);
     builder.append("] }");
-    return builder.toString();
+    try {
+      return URLEncoder.encode(builder.toString(), "UTF-8");
+    } catch (UnsupportedEncodingException e) {
+      // This should never happen!
+      throw new RuntimeException(e);
+    }
   }
 
   public static String ek_range(
                                 Object start,
                                 Object end) {
-    return "{ start: \"" + StringEscapeUtils.escapeJavaScript(String.valueOf(start)) + "\", end: \"" + StringEscapeUtils.escapeJavaScript(String.valueOf(end))
-        + "\" }";
+    try {
+      return URLEncoder.encode("{ start: \"" + StringEscapeUtils.escapeJavaScript(String.valueOf(start)) + "\", end: \"" + StringEscapeUtils.escapeJavaScript(String.valueOf(end))
+          + "\" }", "UTF-8");
+    } catch (UnsupportedEncodingException e) {
+      // This should never happen!
+      throw new RuntimeException(e);
+    }
   }
-	
+
+  // Convenience class and methods for retrieving paged results
+  public static interface BatchRetriever<A> {
+    public List<A> getNextBatch(long contid) throws ApiException;
+    public long getCid(A obj);
+  }
+  
+  public static <A> List<A> retrievePagedResults(BatchRetriever<A> br) throws ApiException {
+    List<A> results = new ArrayList<>();
+    List<A> batch = br.getNextBatch(0);
+    while (!batch.isEmpty()) {
+      results.addAll(batch);
+      batch = br.getNextBatch(br.getCid(batch.get(batch.size() - 1)));
+    }
+    return batch;
+  }
+  
 }

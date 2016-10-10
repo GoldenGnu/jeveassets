@@ -46,8 +46,25 @@ public class EveKitLocationsGetter extends AbstractEveKitGetter {
 	}
 	
 	@Override
-	protected void get(EveKitOwner owner) throws ApiException {
-		List<Location> locations = getCommonApi().getLocations(owner.getAccessKey(), owner.getAccessCred(), null, null, Integer.MAX_VALUE, null, null, null, null, null, null);
+	protected void get(final EveKitOwner owner) throws ApiException {
+	  // Page to get all location data
+		List<Location> locations = retrievePagedResults(new BatchRetriever<Location>() {
+
+      @Override
+      public List<Location> getNextBatch(
+                                         long contid)
+        throws ApiException {
+        return getCommonApi().getLocations(owner.getAccessKey(), owner.getAccessCred(), null, contid, Integer.MAX_VALUE, null, 
+                                           null, null, null, null, null);
+      }
+
+      @Override
+      public long getCid(
+                         Location obj) {
+        return obj.getCid();
+      }
+		  
+		}); 
 		eveNames.putAll(EveKitConverter.convertLocations(locations));
 	}
 
