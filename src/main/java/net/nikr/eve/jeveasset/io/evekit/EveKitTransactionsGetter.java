@@ -31,7 +31,7 @@ import net.nikr.eve.jeveasset.data.evekit.EveKitOwner;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 
 
-public class EveKitTransactionsGetter extends AbstractEveKitGetter {
+public class EveKitTransactionsGetter extends AbstractEveKitListGetter<WalletTransaction> {
 
 	@Override
 	public void load(UpdateTask updateTask, List<EveKitOwner> owners) {
@@ -39,10 +39,24 @@ public class EveKitTransactionsGetter extends AbstractEveKitGetter {
 	}
 
 	@Override
-	protected void get(EveKitOwner owner) throws ApiException {
-		List<WalletTransaction> walletTransactions = getCommonApi().getWalletTransactions(owner.getAccessKey(), owner.getAccessCred(),
-				null, null, Integer.MAX_VALUE, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
-		owner.setTransactions(EveKitConverter.convertTransactions(walletTransactions, owner));
+	protected List<WalletTransaction> get(EveKitOwner owner, long contid) throws ApiException {
+		return getCommonApi().getWalletTransactions(owner.getAccessKey(), owner.getAccessCred(), null, contid, MAX_RESULTS, REVERSE,
+				null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+	}
+
+	@Override
+	protected void set(EveKitOwner owner, List<WalletTransaction> data) throws ApiException {
+		owner.setTransactions(EveKitConverter.convertTransactions(data, owner));
+	}
+
+	@Override
+	protected long getCid(WalletTransaction obj) {
+		return obj.getCid();
+	}
+
+	@Override
+	protected boolean isNow(WalletTransaction obj) {
+		return obj.getLifeEnd() == Long.MAX_VALUE;
 	}
 
 	@Override

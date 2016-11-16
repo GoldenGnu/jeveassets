@@ -31,7 +31,7 @@ import net.nikr.eve.jeveasset.data.evekit.EveKitOwner;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 
 
-public class EveKitMarketOrdersGetter extends AbstractEveKitGetter  {
+public class EveKitMarketOrdersGetter extends AbstractEveKitListGetter<MarketOrder>  {
 
 	@Override
 	public void load(UpdateTask updateTask, List<EveKitOwner> owners) {
@@ -39,10 +39,24 @@ public class EveKitMarketOrdersGetter extends AbstractEveKitGetter  {
 	}
 
 	@Override
-	protected void get(EveKitOwner owner) throws ApiException {
-		List<MarketOrder> marketOrders = getCommonApi().getMarketOrders(owner.getAccessKey(), owner.getAccessCred(), null, null, Integer.MAX_VALUE, null,
+	protected List<MarketOrder> get(EveKitOwner owner, long contid) throws ApiException {
+		return getCommonApi().getMarketOrders(owner.getAccessKey(), owner.getAccessCred(), null, contid, MAX_RESULTS, REVERSE,
 				null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
-		owner.setMarketOrders(EveKitConverter.convertMarketOrders(marketOrders, owner));
+	}
+
+	@Override
+	protected void set(EveKitOwner owner, List<MarketOrder> data) throws ApiException {
+		owner.setMarketOrders(EveKitConverter.convertMarketOrders(data, owner));
+	}
+
+	@Override
+	protected long getCid(MarketOrder obj) {
+		return obj.getCid();
+	}
+
+	@Override
+	protected boolean isNow(MarketOrder obj) {
+		return obj.getLifeEnd() == Long.MAX_VALUE;
 	}
 
 	@Override

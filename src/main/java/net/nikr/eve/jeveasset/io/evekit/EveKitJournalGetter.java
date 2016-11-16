@@ -31,7 +31,7 @@ import net.nikr.eve.jeveasset.data.evekit.EveKitOwner;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 
 
-public class EveKitJournalGetter extends AbstractEveKitGetter {
+public class EveKitJournalGetter extends AbstractEveKitListGetter<WalletJournal> {
 
 	@Override
 	public void load(UpdateTask updateTask, List<EveKitOwner> owners) {
@@ -39,10 +39,24 @@ public class EveKitJournalGetter extends AbstractEveKitGetter {
 	}
 
 	@Override
-	protected void get(EveKitOwner owner) throws ApiException {
-		List<WalletJournal> journalEntries = getCommonApi().getJournalEntries(owner.getAccessKey(), owner.getAccessCred(), null, null, Integer.MAX_VALUE, null,
+	protected List<WalletJournal> get(EveKitOwner owner, long contid) throws ApiException {
+		return getCommonApi().getJournalEntries(owner.getAccessKey(), owner.getAccessCred(), null, contid, MAX_RESULTS, REVERSE,
 				null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
-		owner.setJournal(EveKitConverter.convertJournals(journalEntries, owner));
+	}
+
+	@Override
+	protected void set(EveKitOwner owner, List<WalletJournal> data) throws ApiException {
+		owner.setJournal(EveKitConverter.convertJournals(data, owner));
+	}
+
+	@Override
+	protected long getCid(WalletJournal obj) {
+		return obj.getCid();
+	}
+
+	@Override
+	protected boolean isNow(WalletJournal obj) {
+		return obj.getLifeEnd() == Long.MAX_VALUE;
 	}
 
 	@Override

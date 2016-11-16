@@ -34,7 +34,7 @@ import net.nikr.eve.jeveasset.data.evekit.EveKitOwner;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 
 
-public class EveKitLocationsGetter extends AbstractEveKitGetter {
+public class EveKitLocationsGetter extends AbstractEveKitListGetter<Location> {
 
 	private final Map<Long, String> eveNames = new HashMap<Long, String>();
 
@@ -44,11 +44,26 @@ public class EveKitLocationsGetter extends AbstractEveKitGetter {
 		super.load(updateTask, owners);
 		Settings.get().setEveNames(eveNames);
 	}
-	
+
 	@Override
-	protected void get(EveKitOwner owner) throws ApiException {
-		List<Location> locations = getCommonApi().getLocations(owner.getAccessKey(), owner.getAccessCred(), null, null, Integer.MAX_VALUE, null, null, null, null, null, null);
-		eveNames.putAll(EveKitConverter.convertLocations(locations));
+	protected List<Location> get(EveKitOwner owner, long contid) throws ApiException {
+		return getCommonApi().getLocations(owner.getAccessKey(), owner.getAccessCred(), null, contid, MAX_RESULTS, REVERSE,
+				null, null, null, null, null);
+	}
+
+	@Override
+	protected void set(EveKitOwner owner, List<Location> data) throws ApiException {
+		eveNames.putAll(EveKitConverter.convertLocations(data));
+	}
+
+	@Override
+	protected long getCid(Location obj) {
+		return obj.getCid();
+	}
+
+	@Override
+	protected boolean isNow(Location obj) {
+		return obj.getLifeEnd() == Long.MAX_VALUE;
 	}
 
 	@Override

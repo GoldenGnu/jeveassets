@@ -20,7 +20,6 @@
  */
 package net.nikr.eve.jeveasset.io.evekit;
 
-
 import enterprises.orbital.evekit.client.api.AccessKeyApi;
 import enterprises.orbital.evekit.client.api.CommonApi;
 import enterprises.orbital.evekit.client.invoker.ApiClient;
@@ -35,7 +34,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
-public abstract class AbstractEveKitGetter { 
+public abstract class AbstractEveKitGetter {
 
 	private static final Logger LOG = LoggerFactory.getLogger(Program.class);
 
@@ -70,12 +69,11 @@ public abstract class AbstractEveKitGetter {
 		loadApi(updateTask, owner);
 	}
 
-	
 	private boolean loadApi(UpdateTask updateTask, EveKitOwner owner) {
 		try {
 			//Check if the Access Mask include this API
 			if ((owner.getAccessMask() & getAccessMask()) != getAccessMask()) {
-				addError("	" +  getTaskName() + " failed to update for: " + owner.getOwnerName() + " (NOT ENOUGH ACCESS PRIVILEGES)");
+				addError("	" + getTaskName() + " failed to update for: " + owner.getOwnerName() + " (NOT ENOUGH ACCESS PRIVILEGES)");
 				if (updateTask != null) {
 					updateTask.addError(owner.getOwnerName(), "Not enough access privileges.\r\n(Fix: Add " + getTaskName() + " to the API Key)");
 				}
@@ -159,7 +157,6 @@ public abstract class AbstractEveKitGetter {
 	protected final void addError(String error, Exception ex) {
 		this.error = error;
 		LOG.error(error, ex);
-		
 	}
 
 	protected final void addError(String error) {

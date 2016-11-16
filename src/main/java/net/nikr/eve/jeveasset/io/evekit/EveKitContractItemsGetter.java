@@ -31,7 +31,7 @@ import net.nikr.eve.jeveasset.data.evekit.EveKitOwner;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 
 
-public class EveKitContractItemsGetter extends AbstractEveKitGetter {
+public class EveKitContractItemsGetter extends AbstractEveKitListGetter<ContractItem> {
 
 	@Override
 	public void load(UpdateTask updateTask, List<EveKitOwner> owners) {
@@ -39,10 +39,24 @@ public class EveKitContractItemsGetter extends AbstractEveKitGetter {
 	}
 
 	@Override
-	protected void get(EveKitOwner owner) throws ApiException {
-		List<ContractItem> contractItems = getCommonApi().getContractItems(owner.getAccessKey(), owner.getAccessCred(), null, null, Integer.MAX_VALUE, null,
+	protected List<ContractItem> get(EveKitOwner owner, long contid) throws ApiException {
+		return getCommonApi().getContractItems(owner.getAccessKey(), owner.getAccessCred(), null, contid, MAX_RESULTS, REVERSE,
 				null, null, null, null, null, null, null);
-		EveKitConverter.convertContractItems(owner.getContracts(), contractItems);
+	}
+
+	@Override
+	protected void set(EveKitOwner owner, List<ContractItem> data) throws ApiException {
+		EveKitConverter.convertContractItems(owner.getContracts(), data);
+	}
+
+	@Override
+	protected long getCid(ContractItem obj) {
+		return obj.getCid();
+	}
+
+	@Override
+	protected boolean isNow(ContractItem obj) {
+		return obj.getLifeEnd() == Long.MAX_VALUE;
 	}
 
 	@Override

@@ -31,7 +31,7 @@ import net.nikr.eve.jeveasset.data.evekit.EveKitOwner;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 
 
-public class EveKitIndustryJobsGetter extends AbstractEveKitGetter {
+public class EveKitIndustryJobsGetter extends AbstractEveKitListGetter<IndustryJob> {
 
 	@Override
 	public void load(UpdateTask updateTask, List<EveKitOwner> owners) {
@@ -39,10 +39,24 @@ public class EveKitIndustryJobsGetter extends AbstractEveKitGetter {
 	}
 
 	@Override
-	protected void get(EveKitOwner owner) throws ApiException {
-		List<IndustryJob> industryJobs = getCommonApi().getIndustryJobs(owner.getAccessKey(), owner.getAccessCred(), null, null, Integer.MAX_VALUE, null,
+	protected List<IndustryJob> get(EveKitOwner owner, long contid) throws ApiException {
+		return getCommonApi().getIndustryJobs(owner.getAccessKey(), owner.getAccessCred(), null, contid, MAX_RESULTS, REVERSE,
 				null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
-		owner.setIndustryJobs(EveKitConverter.convertIndustryJobs(industryJobs, owner));
+	}
+
+	@Override
+	protected void set(EveKitOwner owner, List<IndustryJob> data) throws ApiException {
+		owner.setIndustryJobs(EveKitConverter.convertIndustryJobs(data, owner));
+	}
+
+	@Override
+	protected long getCid(IndustryJob obj) {
+		return obj.getCid();
+	}
+
+	@Override
+	protected boolean isNow(IndustryJob obj) {
+		return obj.getLifeEnd() == Long.MAX_VALUE;
 	}
 
 	@Override

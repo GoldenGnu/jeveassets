@@ -31,7 +31,7 @@ import net.nikr.eve.jeveasset.data.evekit.EveKitOwner;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 
 
-public class EveKitAccountBalanceGetter extends AbstractEveKitGetter {
+public class EveKitAccountBalanceGetter extends AbstractEveKitListGetter<AccountBalance> {
 
 	@Override
 	public void load(UpdateTask updateTask, List<EveKitOwner> owners) {
@@ -39,17 +39,31 @@ public class EveKitAccountBalanceGetter extends AbstractEveKitGetter {
 	}
 
 	@Override
-	protected void get(EveKitOwner owner) throws ApiException {
-		List<AccountBalance> accountBalance = getCommonApi().getAccountBalance(owner.getAccessKey(), owner.getAccessCred(), null, null, Integer.MAX_VALUE, null,
+	protected List<AccountBalance> get(EveKitOwner owner, long contid) throws ApiException {
+		return getCommonApi().getAccountBalance(owner.getAccessKey(), owner.getAccessCred(), null, contid, MAX_RESULTS, REVERSE,
 				null, null);
+	}
+
+	@Override
+	protected void set(EveKitOwner owner, List<AccountBalance> data) throws ApiException {
 		Date balanceLastUpdate = null;
-		for (AccountBalance balance : accountBalance) {
+		for (AccountBalance balance : data) {
 			if (balanceLastUpdate == null || balanceLastUpdate.getTime() < balance.getLifeStart()) { //Newer
 				balanceLastUpdate = new Date(balance.getLifeStart());
 			}
 		}
-		owner.setAccountBalances(EveKitConverter.convertAccountBalance(accountBalance, owner));
+		owner.setAccountBalances(EveKitConverter.convertAccountBalance(data, owner));
 		owner.setBalanceLastUpdate(balanceLastUpdate);
+	}
+
+	@Override
+	protected long getCid(AccountBalance obj) {
+		return obj.getCid();
+	}
+
+	@Override
+	protected boolean isNow(AccountBalance obj) {
+		return obj.getLifeEnd() == Long.MAX_VALUE;
 	}
 
 	@Override

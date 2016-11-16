@@ -31,7 +31,7 @@ import net.nikr.eve.jeveasset.data.evekit.EveKitOwner;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 
 
-public class EveKitAssetGetter extends AbstractEveKitGetter {
+public class EveKitAssetGetter extends AbstractEveKitListGetter<Asset> {
 
 	@Override
 	public void load(UpdateTask updateTask, List<EveKitOwner> owners) {
@@ -39,17 +39,38 @@ public class EveKitAssetGetter extends AbstractEveKitGetter {
 	}
 
 	@Override
-	protected void get(EveKitOwner owner) throws ApiException {
-		List<Asset> assets = getCommonApi().getAssets(owner.getAccessKey(), owner.getAccessCred(), null, null, Integer.MAX_VALUE, null,
+	protected List<Asset> get(EveKitOwner owner, long contid) throws ApiException {
+		return getCommonApi().getAssets(owner.getAccessKey(), owner.getAccessCred(), null, contid, MAX_RESULTS, REVERSE,
 				null, null, null, null, null, null, null, null);
+	}
+
+	@Override
+	protected void set(EveKitOwner owner, List<Asset> data) throws ApiException {
 		Date assetLastUpdate = null;
-		for (Asset asset : assets) {
+		for (Asset asset : data) {
 			if (assetLastUpdate == null || assetLastUpdate.getTime() < asset.getLifeStart()) { //Newer
 				assetLastUpdate = new Date(asset.getLifeStart());
 			}
 		}
-		owner.setAssets(EveKitConverter.convertAssets(assets, owner));
+		owner.setAssets(EveKitConverter.convertAssets(data, owner));
 		owner.setAssetLastUpdate(assetLastUpdate);
+	}
+
+	@Override
+	protected long getCid(Asset obj) {
+		return obj.getCid();
+	}
+
+	@Override
+	protected boolean isNow(Asset obj) {
+		return obj.getLifeEnd() == Long.MAX_VALUE;
+	}
+
+	@Override
+	protected boolean isValid(Asset obj) {
+		return obj.getFlag() != 7 //Skill
+				&& obj.getFlag() != 61 //Skill In Training
+				&& obj.getFlag() != 89; //Implant;
 	}
 
 	@Override

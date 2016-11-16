@@ -31,7 +31,7 @@ import net.nikr.eve.jeveasset.data.evekit.EveKitOwner;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 
 
-public class EveKitBlueprintsGetter extends AbstractEveKitGetter {
+public class EveKitBlueprintsGetter extends AbstractEveKitListGetter<Blueprint> {
 
 	@Override
 	public void load(UpdateTask updateTask, List<EveKitOwner> owners) {
@@ -39,10 +39,24 @@ public class EveKitBlueprintsGetter extends AbstractEveKitGetter {
 	}
 
 	@Override
-	protected void get(EveKitOwner owner) throws ApiException {
-		List<Blueprint> blueprints = getCommonApi().getBlueprints(owner.getAccessKey(), owner.getAccessCred(), null, null, Integer.MAX_VALUE, null,
+	protected List<Blueprint> get(EveKitOwner owner, long contid) throws ApiException {
+		return getCommonApi().getBlueprints(owner.getAccessKey(), owner.getAccessCred(), null, contid, MAX_RESULTS, REVERSE,
 				null, null, null, null, null, null, null, null, null);
-		owner.setBlueprints(EveKitConverter.convertBlueprints(blueprints));
+	}
+
+	@Override
+	protected void set(EveKitOwner owner, List<Blueprint> data) throws ApiException {
+		owner.setBlueprints(EveKitConverter.convertBlueprints(data));
+	}
+
+	@Override
+	protected long getCid(Blueprint obj) {
+		return obj.getCid();
+	}
+
+	@Override
+	protected boolean isNow(Blueprint obj) {
+		return obj.getLifeEnd() == Long.MAX_VALUE;
 	}
 
 	@Override

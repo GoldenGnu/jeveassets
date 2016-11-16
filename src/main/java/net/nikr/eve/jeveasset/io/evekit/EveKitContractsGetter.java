@@ -34,7 +34,7 @@ import net.nikr.eve.jeveasset.gui.tabs.contracts.MyContract;
 import net.nikr.eve.jeveasset.gui.tabs.contracts.MyContractItem;
 
 
-public class EveKitContractsGetter extends AbstractEveKitGetter {
+public class EveKitContractsGetter extends AbstractEveKitListGetter<Contract> {
 
 	@Override
 	public void load(UpdateTask updateTask, List<EveKitOwner> owners) {
@@ -42,16 +42,30 @@ public class EveKitContractsGetter extends AbstractEveKitGetter {
 	}
 
 	@Override
-	protected void get(EveKitOwner owner) throws ApiException {
-		List<Contract> contracts = getCommonApi().getContracts(owner.getAccessKey(), owner.getAccessCred(), null, null, Integer.MAX_VALUE, null, 
+	protected List<Contract> get(EveKitOwner owner, long contid) throws ApiException {
+		return getCommonApi().getContracts(owner.getAccessKey(), owner.getAccessCred(), null, contid, MAX_RESULTS, REVERSE,
 				null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
-		owner.setContracts(EveKitConverter.convertContracts(contracts));
+	}
+
+	@Override
+	protected void set(EveKitOwner owner, List<Contract> data) throws ApiException {
+		owner.setContracts(EveKitConverter.convertContracts(data));
 		for (Map.Entry<MyContract, List<MyContractItem>> entry : owner.getContracts().entrySet()) {
 			System.out.println("MyContract: " + entry.getKey().getTitle());
 			for (MyContractItem contractItem : entry.getValue()) {
 				System.out.println("	MyContractItem: " + contractItem.getName());
 			}
 		}
+	}
+
+	@Override
+	protected long getCid(Contract obj) {
+		return obj.getCid();
+	}
+
+	@Override
+	protected boolean isNow(Contract obj) {
+		return obj.getLifeEnd() == Long.MAX_VALUE;
 	}
 
 	@Override
