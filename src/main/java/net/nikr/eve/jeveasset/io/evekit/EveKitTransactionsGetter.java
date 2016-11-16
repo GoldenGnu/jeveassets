@@ -20,12 +20,13 @@
  */
 package net.nikr.eve.jeveasset.io.evekit;
 
+import java.util.Date;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import enterprises.orbital.evekit.client.invoker.ApiClient;
 import enterprises.orbital.evekit.client.invoker.ApiException;
 import enterprises.orbital.evekit.client.model.WalletTransaction;
-import java.util.Date;
-import java.util.List;
 import net.nikr.eve.jeveasset.data.evekit.EveKitAccessMask;
 import net.nikr.eve.jeveasset.data.evekit.EveKitOwner;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
@@ -39,9 +40,31 @@ public class EveKitTransactionsGetter extends AbstractEveKitGetter {
 	}
 
 	@Override
-	protected void get(EveKitOwner owner) throws ApiException {
-		List<WalletTransaction> walletTransactions = getCommonApi().getWalletTransactions(owner.getAccessKey(), owner.getAccessCred(),
-				null, null, Integer.MAX_VALUE, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+	protected void get(final EveKitOwner owner) throws ApiException {
+	  // Since wallet transactions never change once created, a call to getWalletTransactions will return every
+	  // transaction ever stored by EveKit since they will all be live at the current time.  So to avoid that we filter
+	  // on the "date" attribute to only get the last two months worth of transactions.  We could be smarter here and 
+	  // only get transactions after the latest transaction we've seen but we'd need to pass that date in.
+	  final long threshold = System.currentTimeMillis() - TimeUnit.DAYS.toMillis(60);
+	  // Page to make sure we get all results
+	  List<WalletTransaction> walletTransactions = retrievePagedResults(new BatchRetriever<WalletTransaction>() {
+
+      @Override
+      public List<WalletTransaction> getNextBatch(
+                                                  long contid)
+        throws ApiException {
+        return getCommonApi().getWalletTransactions(owner.getAccessKey(), owner.getAccessCred(), null, contid, Integer.MAX_VALUE, 
+                                                    null, null, null, ek_range(threshold, Long.MAX_VALUE), null, null, null, null, 
+                                                    null, null, null, null, null, null, null, null, null, null);
+      }
+
+      @Override
+      public long getCid(
+                         WalletTransaction obj) {
+        return obj.getCid();
+      }
+	    
+	  });
 		owner.setTransactions(EveKitConverter.convertTransactions(walletTransactions, owner));
 	}
 

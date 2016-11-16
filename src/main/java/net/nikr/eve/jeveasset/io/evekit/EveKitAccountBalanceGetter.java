@@ -40,6 +40,7 @@ public class EveKitAccountBalanceGetter extends AbstractEveKitGetter {
 
 	@Override
 	protected void get(EveKitOwner owner) throws ApiException {
+	  // As written, this will always get the latest account balances.  No changes needed.
 		List<AccountBalance> accountBalance = getCommonApi().getAccountBalance(owner.getAccessKey(), owner.getAccessCred(), null, null, Integer.MAX_VALUE, null,
 				null, null);
 		Date balanceLastUpdate = null;

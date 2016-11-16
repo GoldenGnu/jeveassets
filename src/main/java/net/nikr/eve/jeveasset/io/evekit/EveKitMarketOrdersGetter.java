@@ -20,12 +20,13 @@
  */
 package net.nikr.eve.jeveasset.io.evekit;
 
+import java.util.Date;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import enterprises.orbital.evekit.client.invoker.ApiClient;
 import enterprises.orbital.evekit.client.invoker.ApiException;
 import enterprises.orbital.evekit.client.model.MarketOrder;
-import java.util.Date;
-import java.util.List;
 import net.nikr.eve.jeveasset.data.evekit.EveKitAccessMask;
 import net.nikr.eve.jeveasset.data.evekit.EveKitOwner;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
@@ -39,10 +40,35 @@ public class EveKitMarketOrdersGetter extends AbstractEveKitGetter  {
 	}
 
 	@Override
-	protected void get(EveKitOwner owner) throws ApiException {
-		List<MarketOrder> marketOrders = getCommonApi().getMarketOrders(owner.getAccessKey(), owner.getAccessCred(), null, null, Integer.MAX_VALUE, null,
-				null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
-		owner.setMarketOrders(EveKitConverter.convertMarketOrders(marketOrders, owner));
+	protected void get(final EveKitOwner owner) throws ApiException {
+	  // Market orders change state, but are never removed.  So a call to getMarketOrders here will return every
+	  // market order ever stored in EveKit because they will all be live at the current time.  To avoid that, we
+	  // filter on the "issued" attribute to only get recent orders.  We could do better by only querying from
+	  // the oldest active order but we'd need to pass that date in.
+	  //
+	  // We know that market orders can't be live more than 90 days (but issued date moves if the order is changed),
+	  // so we double the max order duration to set a query threshold.
+	  final long threshold = System.currentTimeMillis() - TimeUnit.DAYS.toMillis(180);
+	  // Page to make sure we get all desired results
+    List<MarketOrder> marketOrders = retrievePagedResults(new BatchRetriever<MarketOrder>() {
+
+      @Override
+      public List<MarketOrder> getNextBatch(
+                                            long contid)
+        throws ApiException {
+        return getCommonApi().getMarketOrders(owner.getAccessKey(), owner.getAccessCred(), null, contid, Integer.MAX_VALUE, null, 
+                                              null, null, null, null, null, null, ek_range(threshold, Long.MAX_VALUE), null, null, 
+                                              null, null, null, null, null, null);
+      }
+
+      @Override
+      public long getCid(
+                         MarketOrder obj) {
+        return obj.getCid();
+      }
+      
+    });
+    owner.setMarketOrders(EveKitConverter.convertMarketOrders(marketOrders, owner));
 	}
 
 	@Override

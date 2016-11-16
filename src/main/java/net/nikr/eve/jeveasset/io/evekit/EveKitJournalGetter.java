@@ -20,12 +20,13 @@
  */
 package net.nikr.eve.jeveasset.io.evekit;
 
+import java.util.Date;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import enterprises.orbital.evekit.client.invoker.ApiClient;
 import enterprises.orbital.evekit.client.invoker.ApiException;
 import enterprises.orbital.evekit.client.model.WalletJournal;
-import java.util.Date;
-import java.util.List;
 import net.nikr.eve.jeveasset.data.evekit.EveKitAccessMask;
 import net.nikr.eve.jeveasset.data.evekit.EveKitOwner;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
@@ -39,9 +40,31 @@ public class EveKitJournalGetter extends AbstractEveKitGetter {
 	}
 
 	@Override
-	protected void get(EveKitOwner owner) throws ApiException {
-		List<WalletJournal> journalEntries = getCommonApi().getJournalEntries(owner.getAccessKey(), owner.getAccessCred(), null, null, Integer.MAX_VALUE, null,
-				null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+	protected void get(final EveKitOwner owner) throws ApiException {
+	  // Since the journal doesn't change once created, a call to getJournalEntries will return every
+	  // entry ever stored by EveKit since they will all be live at the current time.  So to avoid that we filter
+	  // on the "date" attribute to only get the last two months worth of entries.  We could be smarter here and 
+	  // only get entries after the latest entry we've seen but we'd need to pass that date in.
+	  final long threshold = System.currentTimeMillis() - TimeUnit.DAYS.toMillis(60);
+	  // Page to make sure we get all results
+	  List<WalletJournal> journalEntries = retrievePagedResults(new BatchRetriever<WalletJournal>() {
+
+      @Override
+      public List<WalletJournal> getNextBatch(
+                                              long contid)
+        throws ApiException {
+        return getCommonApi().getJournalEntries(owner.getAccessKey(), owner.getAccessCred(), null, contid, Integer.MAX_VALUE, null,
+                                                null, null, ek_range(threshold, Long.MAX_VALUE), null, null, null, null, null, null, 
+                                                null, null, null, null, null, null);
+      }
+
+      @Override
+      public long getCid(
+                         WalletJournal obj) {
+        return obj.getCid();
+      }
+	    
+	  }); 
 		owner.setJournal(EveKitConverter.convertJournals(journalEntries, owner));
 	}
 

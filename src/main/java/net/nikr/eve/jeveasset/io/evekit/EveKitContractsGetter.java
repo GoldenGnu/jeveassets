@@ -27,6 +27,8 @@ import enterprises.orbital.evekit.client.model.Contract;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
+
 import net.nikr.eve.jeveasset.data.evekit.EveKitAccessMask;
 import net.nikr.eve.jeveasset.data.evekit.EveKitOwner;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
@@ -42,9 +44,33 @@ public class EveKitContractsGetter extends AbstractEveKitGetter {
 	}
 
 	@Override
-	protected void get(EveKitOwner owner) throws ApiException {
-		List<Contract> contracts = getCommonApi().getContracts(owner.getAccessKey(), owner.getAccessCred(), null, null, Integer.MAX_VALUE, null, 
-				null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+	protected void get(final EveKitOwner owner) throws ApiException {
+	  // Contracts change state, but are never removed.  So a call to getContracts here will return every
+	  // contract ever stored in EveKit because they will all be live at the current time.  To avoid that,
+	  // we filter on the "dateIssued" attribute.
+	  //
+	  // We know that contracts can't have a duration of more than 2 weeks, so we double this duration
+	  // to create a query threshold.
+	  final long threshold = System.currentTimeMillis() - TimeUnit.DAYS.toMillis(28);
+	  // Page to make sure we get all desired results
+		List<Contract> contracts = retrievePagedResults(new BatchRetriever<Contract>() {
+
+      @Override
+      public List<Contract> getNextBatch(
+                                         long contid)
+        throws ApiException {
+        return getCommonApi().getContracts(owner.getAccessKey(), owner.getAccessCred(), null, contid, Integer.MAX_VALUE, null,
+                                           null, null, null, null, null, null, null, null, null, null, null, null, ek_range(threshold, Long.MAX_VALUE), 
+                                           null, null, null, null, null, null, null, null, null);
+      }
+
+      @Override
+      public long getCid(
+                         Contract obj) {
+        return obj.getCid();
+      } 
+		    
+		});
 		owner.setContracts(EveKitConverter.convertContracts(contracts));
 		for (Map.Entry<MyContract, List<MyContractItem>> entry : owner.getContracts().entrySet()) {
 			System.out.println("MyContract: " + entry.getKey().getTitle());

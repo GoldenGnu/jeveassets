@@ -21,18 +21,24 @@
 package net.nikr.eve.jeveasset.io.evekit;
 
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import org.apache.commons.lang.StringEscapeUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import enterprises.orbital.evekit.client.api.AccessKeyApi;
 import enterprises.orbital.evekit.client.api.CommonApi;
 import enterprises.orbital.evekit.client.invoker.ApiClient;
 import enterprises.orbital.evekit.client.invoker.ApiException;
-import java.util.Date;
-import java.util.List;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.evekit.EveKitOwner;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 
 public abstract class AbstractEveKitGetter { 
@@ -181,4 +187,80 @@ public abstract class AbstractEveKitGetter {
 	protected abstract void setNextUpdate(EveKitOwner owner, Date date);
 	protected abstract ApiClient getApiClient();
 
+  /**
+   * Convenience methods for constructing EveKit attribute selectors. There are four possible selector types (as documented here:
+   * https://github.com/OrbitalEnterprises/evekit-model-frontend#usage):
+   * 
+   * <ol>
+   * <li>{any: <boolean>} - Wildcard selector. Normally, this is the default for a field, meaning you can usually omit using this selector.
+   * <li>{like: <string>} - String match selector. If the associated data field is string valued, then all returned model data must satisfy the SQL expression
+   * 'field LIKE selector'. Normal SQL 'LIKE' syntax is allowed (e.g. % as wildcard).
+   * <li>{values: [<v1>,...,<vn>]} - Set selector. The associated data field of each returned model data item must contain one of the listed values.
+   * <li>{start: <lower>, end: <upper>} - Range selector. The associated data field of each returned model data item must satisfy lower <= value <= upper.
+   * </ol>
+   * 
+   */
+  public static String ek_any() {
+    try {
+      return URLEncoder.encode("{ any: true }", "UTF-8");
+    } catch (UnsupportedEncodingException e) {
+      // This should never happen!
+      throw new RuntimeException(e);
+    }
+  }
+
+  public static String ek_like(
+                               Object l) {
+    try {
+      return URLEncoder.encode("{ like: \"" + StringEscapeUtils.escapeJavaScript(String.valueOf(l)) + "\" }", "UTF-8");
+    } catch (UnsupportedEncodingException e) {
+      // This should never happen!
+      throw new RuntimeException(e);
+    }
+  }
+
+  public static String ek_values(
+                                 Object... v) {
+    StringBuilder builder = new StringBuilder();
+    builder.append("{ values: [");
+    for (Object i : v)
+      builder.append("\"").append(StringEscapeUtils.escapeJavaScript(String.valueOf(i))).append("\",");
+    if (v.length > 0) builder.setLength(builder.length() - 1);
+    builder.append("] }");
+    try {
+      return URLEncoder.encode(builder.toString(), "UTF-8");
+    } catch (UnsupportedEncodingException e) {
+      // This should never happen!
+      throw new RuntimeException(e);
+    }
+  }
+
+  public static String ek_range(
+                                Object start,
+                                Object end) {
+    try {
+      return URLEncoder.encode("{ start: \"" + StringEscapeUtils.escapeJavaScript(String.valueOf(start)) + "\", end: \"" + StringEscapeUtils.escapeJavaScript(String.valueOf(end))
+          + "\" }", "UTF-8");
+    } catch (UnsupportedEncodingException e) {
+      // This should never happen!
+      throw new RuntimeException(e);
+    }
+  }
+
+  // Convenience class and methods for retrieving paged results
+  public static interface BatchRetriever<A> {
+    public List<A> getNextBatch(long contid) throws ApiException;
+    public long getCid(A obj);
+  }
+  
+  public static <A> List<A> retrievePagedResults(BatchRetriever<A> br) throws ApiException {
+    List<A> results = new ArrayList<>();
+    List<A> batch = br.getNextBatch(0);
+    while (!batch.isEmpty()) {
+      results.addAll(batch);
+      batch = br.getNextBatch(br.getCid(batch.get(batch.size() - 1)));
+    }
+    return batch;
+  }
+  
 }

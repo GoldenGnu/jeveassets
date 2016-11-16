@@ -20,12 +20,12 @@
  */
 package net.nikr.eve.jeveasset.io.evekit;
 
+import java.util.Date;
+import java.util.List;
 
 import enterprises.orbital.evekit.client.invoker.ApiClient;
 import enterprises.orbital.evekit.client.invoker.ApiException;
 import enterprises.orbital.evekit.client.model.Asset;
-import java.util.Date;
-import java.util.List;
 import net.nikr.eve.jeveasset.data.evekit.EveKitAccessMask;
 import net.nikr.eve.jeveasset.data.evekit.EveKitOwner;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
@@ -39,9 +39,25 @@ public class EveKitAssetGetter extends AbstractEveKitGetter {
 	}
 
 	@Override
-	protected void get(EveKitOwner owner) throws ApiException {
-		List<Asset> assets = getCommonApi().getAssets(owner.getAccessKey(), owner.getAccessCred(), null, null, Integer.MAX_VALUE, null,
-				null, null, null, null, null, null, null, null);
+	protected void get(final EveKitOwner owner) throws ApiException {
+	  // Return current assets.  Paging required for large asset lists.
+	  List<Asset> assets = retrievePagedResults(new BatchRetriever<Asset>() {
+
+      @Override
+      public List<Asset> getNextBatch(
+                                      long contid) throws ApiException {
+        return getCommonApi().getAssets(owner.getAccessKey(), owner.getAccessCred(), null, contid, Integer.MAX_VALUE, null,
+                                        null, null, null, null, null, null, null, null);
+      }
+
+      @Override
+      public long getCid(
+                         Asset obj) {
+        return obj.getCid();
+      }
+	  
+	  });
+	  
 		Date assetLastUpdate = null;
 		for (Asset asset : assets) {
 			if (assetLastUpdate == null || assetLastUpdate.getTime() < asset.getLifeStart()) { //Newer
