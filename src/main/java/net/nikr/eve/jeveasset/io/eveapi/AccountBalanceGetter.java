@@ -23,13 +23,12 @@ package net.nikr.eve.jeveasset.io.eveapi;
 
 
 import com.beimin.eveapi.exception.ApiException;
-import com.beimin.eveapi.model.shared.EveAccountBalance;
+import com.beimin.eveapi.parser.character.CharAccountBalanceParser;
+import com.beimin.eveapi.parser.corporation.CorpAccountBalanceParser;
 import com.beimin.eveapi.response.shared.AccountBalanceResponse;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import net.nikr.eve.jeveasset.data.eveapi.EveApiAccount;
-import net.nikr.eve.jeveasset.data.MyAccountBalance;
 import net.nikr.eve.jeveasset.data.eveapi.EveApiOwner;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.data.eveapi.EveApiAccessMask;
@@ -51,10 +50,10 @@ public class AccountBalanceGetter extends AbstractApiGetter<AccountBalanceRespon
 	@Override
 	protected AccountBalanceResponse getResponse(final boolean bCorp) throws ApiException {
 		if (bCorp) {
-			return new com.beimin.eveapi.parser.corporation.AccountBalanceParser()
+			return new CorpAccountBalanceParser()
 					.getResponse(EveApiOwner.getApiAuthorization(getOwner()));
 		} else {
-			return new com.beimin.eveapi.parser.pilot.PilotAccountBalanceParser()
+			return new CharAccountBalanceParser()
 					.getResponse(EveApiOwner.getApiAuthorization(getOwner()));
 		}
 	}
@@ -72,8 +71,7 @@ public class AccountBalanceGetter extends AbstractApiGetter<AccountBalanceRespon
 
 	@Override
 	protected void setData(final AccountBalanceResponse response) {
-		List<MyAccountBalance> accountBalances = ApiConverter.convertAccountBalance(new ArrayList<EveAccountBalance>(response.getAll()), getOwner());
-		getOwner().setAccountBalances(accountBalances);
+		getOwner().setAccountBalances(ApiConverter.convertAccountBalance(response.getAll(), getOwner()));
 	}
 
 	@Override

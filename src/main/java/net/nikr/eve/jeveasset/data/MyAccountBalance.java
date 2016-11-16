@@ -21,15 +21,15 @@
 
 package net.nikr.eve.jeveasset.data;
 
-import com.beimin.eveapi.model.shared.EveAccountBalance;
+import com.beimin.eveapi.model.shared.AccountBalance;
 import net.nikr.eve.jeveasset.data.api.OwnerType;
 
 
-public class MyAccountBalance extends EveAccountBalance {
-	private final EveAccountBalance eveAccountBalance;
+public class MyAccountBalance extends AccountBalance {
+	private final AccountBalance eveAccountBalance;
 	private final OwnerType owner;
 
-	public MyAccountBalance(EveAccountBalance eveAccountBalance, OwnerType owner) {
+	public MyAccountBalance(AccountBalance eveAccountBalance, OwnerType owner) {
 		this.eveAccountBalance = eveAccountBalance;
 		this.owner = owner;
 	}

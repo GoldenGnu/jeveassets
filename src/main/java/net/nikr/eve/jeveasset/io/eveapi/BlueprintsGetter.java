@@ -24,8 +24,9 @@ package net.nikr.eve.jeveasset.io.eveapi;
 
 import com.beimin.eveapi.exception.ApiException;
 import com.beimin.eveapi.model.shared.Blueprint;
+import com.beimin.eveapi.parser.character.CharBlueprintsParser;
+import com.beimin.eveapi.parser.corporation.CorpBlueprintsParser;
 import com.beimin.eveapi.response.shared.BlueprintsResponse;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -50,10 +51,10 @@ public class BlueprintsGetter extends AbstractApiGetter<BlueprintsResponse> {
 	@Override
 	protected BlueprintsResponse getResponse(final boolean bCorp) throws ApiException {
 		if (bCorp) {
-			return new com.beimin.eveapi.parser.corporation.BlueprintsParser()
+			return new CorpBlueprintsParser()
 					.getResponse(EveApiOwner.getApiAuthorization(getOwner()));
 		} else {
-			return new com.beimin.eveapi.parser.pilot.BlueprintsParser()
+			return new CharBlueprintsParser()
 					.getResponse(EveApiOwner.getApiAuthorization(getOwner()));
 		}
 	}
@@ -70,7 +71,7 @@ public class BlueprintsGetter extends AbstractApiGetter<BlueprintsResponse> {
 
 	@Override
 	protected void setData(final BlueprintsResponse response) {
-		List<Blueprint> blueprints = new ArrayList<Blueprint>(response.getAll());
+		List<Blueprint> blueprints = response.getAll();
 		Map<Long, Blueprint> blueprintsMap = new HashMap<Long, Blueprint>();
 		for (Blueprint blueprint : blueprints) {
 			blueprintsMap.put(blueprint.getItemID(), blueprint);

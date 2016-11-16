@@ -22,9 +22,9 @@
 package net.nikr.eve.jeveasset.io.eveapi;
 
 import com.beimin.eveapi.exception.ApiException;
-import com.beimin.eveapi.model.shared.WalletTransaction;
+import com.beimin.eveapi.parser.character.CharWalletTransactionsParser;
+import com.beimin.eveapi.parser.corporation.CorpWalletTransactionsParser;
 import com.beimin.eveapi.response.shared.WalletTransactionsResponse;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -69,18 +69,17 @@ public class TransactionsGetter extends AbstractApiAccountKeyGetter<WalletTransa
 	@Override
 	protected WalletTransactionsResponse getResponse(boolean bCorp, int accountKey, long fromID, int rowCount) throws ApiException {
 		if (bCorp) {
-			return new com.beimin.eveapi.parser.corporation.WalletTransactionsParser()
+			return new CorpWalletTransactionsParser()
 					.getResponse(EveApiOwner.getApiAuthorization(getOwner()), accountKey, fromID, rowCount);
 		} else {
-			return new com.beimin.eveapi.parser.pilot.WalletTransactionsParser()
+			return new CharWalletTransactionsParser()
 					.getTransactionsResponse(EveApiOwner.getApiAuthorization(getOwner()), fromID, rowCount);
 		}
 	}
 
 	@Override
 	protected Set<MyTransaction> convertData(WalletTransactionsResponse response, int accountKey) {
-		List<WalletTransaction> api = new ArrayList<WalletTransaction>(response.getAll());
-		return ApiConverter.convertTransactions(api, getOwner(), accountKey);
+		return ApiConverter.convertTransactions(response.getAll(), getOwner(), accountKey);
 	}
 
 	@Override

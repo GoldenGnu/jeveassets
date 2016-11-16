@@ -140,12 +140,12 @@ public class EveApiAccount {
 	 * @return true if equal (both corp or both not corp) - false if not equal (one corp other not corp)
 	 */
 	public boolean compareTypes(final KeyType accountType) {
-		boolean corp = accountType == KeyType.Corporation; //Enum can be null
+		boolean corp = accountType == KeyType.CORPORATION; //Enum can be null
 		return (isCorporation() == corp);
 	}
 
 	public boolean isCorporation() {
-		return type == KeyType.Corporation; //Enum can be null
+		return type == KeyType.CORPORATION; //Enum can be null
 	}
 
 	public boolean isCharacter() {

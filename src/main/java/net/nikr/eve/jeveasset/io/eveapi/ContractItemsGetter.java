@@ -24,8 +24,9 @@ package net.nikr.eve.jeveasset.io.eveapi;
 import com.beimin.eveapi.exception.ApiException;
 import com.beimin.eveapi.model.shared.ContractItem;
 import com.beimin.eveapi.model.shared.ContractType;
+import com.beimin.eveapi.parser.character.CharContractItemsParser;
+import com.beimin.eveapi.parser.corporation.CorpContractItemsParser;
 import com.beimin.eveapi.response.shared.ContractItemsResponse;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -117,10 +118,10 @@ public class ContractItemsGetter extends AbstractApiGetter<ContractItemsResponse
 	@Override
 	protected ContractItemsResponse getResponse(boolean bCorp) throws ApiException {
 		if (bCorp) {
-			return new com.beimin.eveapi.parser.corporation.ContractItemsParser()
+			return new CorpContractItemsParser()
 					.getResponse(EveApiOwner.getApiAuthorization(getOwner()), currentContract.getContractID());
 		} else {
-			return new com.beimin.eveapi.parser.pilot.ContractItemsParser()
+			return new CharContractItemsParser()
 					.getResponse(EveApiOwner.getApiAuthorization(getOwner()), currentContract.getContractID());
 		}
 	}
@@ -137,7 +138,7 @@ public class ContractItemsGetter extends AbstractApiGetter<ContractItemsResponse
 
 	@Override
 	protected void setData(ContractItemsResponse response) {
-		List<ContractItem> contractItems = new ArrayList<ContractItem>(response.getAll());
+		List<ContractItem> contractItems = response.getAll();
 		getOwner().getContracts().put(currentContract, ApiConverter.convertContractItems(contractItems, currentContract));
 		savedItems.put(currentContract.getContractID(), contractItems);
 	}

@@ -605,9 +605,9 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>net.nikr.eve</groupId>
+			<groupId>com.beimin</groupId>
 			<artifactId>eveapi</artifactId>
-			<version>6.0.6</version>
+			<version>7.0.1</version>
 		</dependency>
 		<dependency>
 			<groupId>uk.me.candle</groupId>

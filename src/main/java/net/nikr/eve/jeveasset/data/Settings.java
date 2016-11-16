@@ -20,9 +20,9 @@
  */
 package net.nikr.eve.jeveasset.data;
 
-import com.beimin.eveapi.EveApi;
 import com.beimin.eveapi.connectors.ApiConnector;
 import com.beimin.eveapi.connectors.ProxyConnector;
+import com.beimin.eveapi.parser.shared.AbstractApiParser;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.io.File;
@@ -504,7 +504,7 @@ public class Settings {
 		if (proxy != null) { //Real Proxy
 			connector = new ProxyConnector(getProxy(), connector);
 		}
-		EveApi.setConnector(connector);
+		AbstractApiParser.setConnector(connector);
 	}
 
 	public Map<Long, String> getOwners() {

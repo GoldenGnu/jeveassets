@@ -22,7 +22,6 @@ package net.nikr.eve.jeveasset.io.eveapi;
 
 import com.beimin.eveapi.exception.ApiException;
 import com.beimin.eveapi.model.calllist.Call;
-import com.beimin.eveapi.model.calllist.CallList;
 import com.beimin.eveapi.model.shared.KeyType;
 import com.beimin.eveapi.parser.calllist.CallListParser;
 import com.beimin.eveapi.response.calllist.CallListResponse;
@@ -40,27 +39,26 @@ public class AccessMaskOnlineTest {
 	public void testAccessMask() throws ApiException {
 		CallListParser callListParser = new CallListParser();
 		CallListResponse response = callListParser.getResponse();
-		CallList callList = response.get();
 		Map<ID, Call> calls = new HashMap<ID, Call>();
-		for (Call call : callList.getCalls()) {
+		for (Call call : response.getCalls()) {
 			calls.put(new ID(call.getAccessMask(), call.getType()), call);
 		}
-		test(calls, EveApiAccessMask.ACCOUNT_BALANCE, KeyType.Character , "AccountBalance");
-		test(calls, EveApiAccessMask.ACCOUNT_BALANCE, KeyType.Corporation , "AccountBalance");
-		test(calls, EveApiAccessMask.ASSET_LIST, KeyType.Character , "AssetList");
-		test(calls, EveApiAccessMask.ASSET_LIST, KeyType.Corporation , "AssetList");
-		test(calls, EveApiAccessMask.INDUSTRY_JOBS, KeyType.Character , "IndustryJobs");
-		test(calls, EveApiAccessMask.INDUSTRY_JOBS, KeyType.Corporation , "IndustryJobs");
-		test(calls, EveApiAccessMask.MARKET_ORDERS, KeyType.Character , "MarketOrders");
-		test(calls, EveApiAccessMask.MARKET_ORDERS, KeyType.Corporation , "MarketOrders");
-		test(calls, EveApiAccessMask.TRANSACTIONS_CHAR, KeyType.Character , "WalletTransactions");
-		test(calls, EveApiAccessMask.TRANSACTIONS_CORP, KeyType.Corporation , "WalletTransactions");
-		test(calls, EveApiAccessMask.JOURNAL_CHAR, KeyType.Character , "WalletJournal");
-		test(calls, EveApiAccessMask.JOURNAL_CORP, KeyType.Corporation , "WalletJournal");
-		test(calls, EveApiAccessMask.CONTRACTS_CHAR, KeyType.Character , "Contracts");
-		test(calls, EveApiAccessMask.CONTRACTS_CORP, KeyType.Corporation , "Contracts");
-		test(calls, EveApiAccessMask.LOCATIONS_CHAR, KeyType.Character , "Locations");
-		test(calls, EveApiAccessMask.LOCATIONS_CORP, KeyType.Corporation , "Locations");
+		test(calls, EveApiAccessMask.ACCOUNT_BALANCE, KeyType.CHARACTER , "AccountBalance");
+		test(calls, EveApiAccessMask.ACCOUNT_BALANCE, KeyType.CORPORATION , "AccountBalance");
+		test(calls, EveApiAccessMask.ASSET_LIST, KeyType.CHARACTER , "AssetList");
+		test(calls, EveApiAccessMask.ASSET_LIST, KeyType.CORPORATION , "AssetList");
+		test(calls, EveApiAccessMask.INDUSTRY_JOBS, KeyType.CHARACTER , "IndustryJobs");
+		test(calls, EveApiAccessMask.INDUSTRY_JOBS, KeyType.CORPORATION , "IndustryJobs");
+		test(calls, EveApiAccessMask.MARKET_ORDERS, KeyType.CHARACTER , "MarketOrders");
+		test(calls, EveApiAccessMask.MARKET_ORDERS, KeyType.CORPORATION , "MarketOrders");
+		test(calls, EveApiAccessMask.TRANSACTIONS_CHAR, KeyType.CHARACTER , "WalletTransactions");
+		test(calls, EveApiAccessMask.TRANSACTIONS_CORP, KeyType.CORPORATION , "WalletTransactions");
+		test(calls, EveApiAccessMask.JOURNAL_CHAR, KeyType.CHARACTER , "WalletJournal");
+		test(calls, EveApiAccessMask.JOURNAL_CORP, KeyType.CORPORATION , "WalletJournal");
+		test(calls, EveApiAccessMask.CONTRACTS_CHAR, KeyType.CHARACTER , "Contracts");
+		test(calls, EveApiAccessMask.CONTRACTS_CORP, KeyType.CORPORATION , "Contracts");
+		test(calls, EveApiAccessMask.LOCATIONS_CHAR, KeyType.CHARACTER , "Locations");
+		test(calls, EveApiAccessMask.LOCATIONS_CORP, KeyType.CORPORATION , "Locations");
 	}
 
 	private void test(Map<ID, Call> calls, EveApiAccessMask accessMask, KeyType keyType, String expected) {

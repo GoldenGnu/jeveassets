@@ -21,7 +21,7 @@
 
 package net.nikr.eve.jeveasset.io.shared;
 
-import com.beimin.eveapi.model.shared.EveAccountBalance;
+import com.beimin.eveapi.model.shared.AccountBalance;
 import com.beimin.eveapi.model.shared.Asset;
 import com.beimin.eveapi.model.shared.Contract;
 import com.beimin.eveapi.model.shared.ContractItem;
@@ -59,9 +59,9 @@ public final class ApiConverter {
 
 	private ApiConverter() { }
 
-	public static List<MyAccountBalance> convertAccountBalance(final List<EveAccountBalance> eveAccountBalances, final OwnerType owner) {
+	public static List<MyAccountBalance> convertAccountBalance(final List<AccountBalance> eveAccountBalances, final OwnerType owner) {
 		List<MyAccountBalance> accountBalances = new ArrayList<MyAccountBalance>();
-		for (EveAccountBalance eveAccountBalance : eveAccountBalances) {
+		for (AccountBalance eveAccountBalance : eveAccountBalances) {
 			accountBalances.add( new MyAccountBalance(eveAccountBalance, owner));
 		}
 		return accountBalances;

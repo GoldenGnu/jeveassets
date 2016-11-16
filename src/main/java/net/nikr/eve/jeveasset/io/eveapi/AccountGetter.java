@@ -22,7 +22,6 @@
 package net.nikr.eve.jeveasset.io.eveapi;
 
 import com.beimin.eveapi.exception.ApiException;
-import com.beimin.eveapi.model.account.ApiKeyInfo;
 import com.beimin.eveapi.model.account.Character;
 import com.beimin.eveapi.response.account.ApiKeyInfoResponse;
 import java.util.ArrayList;
@@ -76,15 +75,14 @@ public class AccountGetter extends AbstractApiGetter<ApiKeyInfoResponse> impleme
 	@Override
 	protected void setData(final ApiKeyInfoResponse response) {
 		//Changed between Char and Corp AKA should be treated as a new api
-		ApiKeyInfo apiKeyInfo = response.getApiKeyInfo();
-		boolean typeChanged = !getAccount().compareTypes(apiKeyInfo.getType());
+		boolean typeChanged = !getAccount().compareTypes(response.getType());
 
 		//Update account
-		getAccount().setAccessMask(apiKeyInfo.getAccessMask());
-		getAccount().setExpires(apiKeyInfo.getExpires());
-		getAccount().setType(apiKeyInfo.getType());
+		getAccount().setAccessMask(response.getAccessMask());
+		getAccount().setExpires(response.getExpires());
+		getAccount().setType(response.getType());
 
-		List<Character> characters = new ArrayList<Character>(apiKeyInfo.getEveCharacters());
+		List<Character> characters = new ArrayList<Character>(response.getEveCharacters());
 		List<EveApiOwner> owners = new ArrayList<EveApiOwner>();
 
 		int fails = 0;

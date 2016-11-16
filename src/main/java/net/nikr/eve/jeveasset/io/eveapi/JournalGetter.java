@@ -22,9 +22,9 @@
 package net.nikr.eve.jeveasset.io.eveapi;
 
 import com.beimin.eveapi.exception.ApiException;
-import com.beimin.eveapi.model.shared.JournalEntry;
+import com.beimin.eveapi.parser.character.CharWalletJournalParser;
+import com.beimin.eveapi.parser.corporation.CorpWalletJournalParser;
 import com.beimin.eveapi.response.shared.WalletJournalResponse;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -69,10 +69,10 @@ public class JournalGetter extends AbstractApiAccountKeyGetter<WalletJournalResp
 	@Override
 	protected WalletJournalResponse getResponse(final boolean bCorp, final int accountKey, final long fromID, final int rowCount) throws ApiException {
 		if (bCorp) {
-			return new com.beimin.eveapi.parser.corporation.WalletJournalParser()
+			return new CorpWalletJournalParser()
 					.getResponse(EveApiOwner.getApiAuthorization(getOwner()), accountKey, fromID, rowCount);
 		} else {
-			return new com.beimin.eveapi.parser.pilot.WalletJournalParser()
+			return new CharWalletJournalParser()
 					.getWalletJournalResponse(EveApiOwner.getApiAuthorization(getOwner()), fromID, rowCount);
 		}
 	}
@@ -84,8 +84,7 @@ public class JournalGetter extends AbstractApiAccountKeyGetter<WalletJournalResp
 
 	@Override
 	protected Set<MyJournal> convertData(final WalletJournalResponse response, final int accountKey) {
-		List<JournalEntry> api = new ArrayList<JournalEntry>(response.getAll());
-		return ApiConverter.convertJournals(api, getOwner(), accountKey);
+		return ApiConverter.convertJournals(response.getAll(), getOwner(), accountKey);
 	}
 
 	@Override

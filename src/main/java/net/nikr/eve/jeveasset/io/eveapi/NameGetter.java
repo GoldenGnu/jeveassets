@@ -25,6 +25,7 @@ import com.beimin.eveapi.exception.ApiException;
 import com.beimin.eveapi.model.eve.CharacterLookup;
 import com.beimin.eveapi.response.eve.CharacterLookupResponse;
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 import net.nikr.eve.jeveasset.data.eveapi.EveApiOwner;
 import net.nikr.eve.jeveasset.data.Settings;
@@ -82,7 +83,7 @@ public class NameGetter extends AbstractApiGetter<CharacterLookupResponse> {
 
 	@Override
 	protected void setData(CharacterLookupResponse response) {
-		Set<CharacterLookup> lookups = response.getAll();
+		List<CharacterLookup> lookups = response.getAll();
 		for (CharacterLookup lookup : lookups) {
 			Settings.get().getOwners().put(lookup.getCharacterID(), lookup.getName());
 		}

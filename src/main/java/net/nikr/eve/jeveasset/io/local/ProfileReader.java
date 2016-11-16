@@ -27,7 +27,7 @@ import com.beimin.eveapi.model.shared.ContractAvailability;
 import com.beimin.eveapi.model.shared.ContractItem;
 import com.beimin.eveapi.model.shared.ContractStatus;
 import com.beimin.eveapi.model.shared.ContractType;
-import com.beimin.eveapi.model.shared.EveAccountBalance;
+import com.beimin.eveapi.model.shared.AccountBalance;
 import com.beimin.eveapi.model.shared.IndustryJob;
 import com.beimin.eveapi.model.shared.JournalEntry;
 import com.beimin.eveapi.model.shared.KeyType;
@@ -381,15 +381,15 @@ public final class ProfileReader extends AbstractXmlReader {
 			NodeList balanceNodes = currentBalancesNode.getElementsByTagName("balance");
 			for (int b = 0; b < balanceNodes.getLength(); b++) {
 				Element currentNode = (Element) balanceNodes.item(b);
-				EveAccountBalance accountBalance = parseBalance(currentNode);
+				AccountBalance accountBalance = parseBalance(currentNode);
 				accountBalances.add(new MyAccountBalance(accountBalance, owner));
 			}
 		}
 		owner.setAccountBalances(accountBalances);
 	}
 
-	private EveAccountBalance parseBalance(final Element element) {
-		EveAccountBalance accountBalance = new EveAccountBalance();
+	private AccountBalance parseBalance(final Element element) {
+		AccountBalance accountBalance = new AccountBalance();
 		int accountID = AttributeGetters.getInt(element, "accountid");
 		int accountKey = AttributeGetters.getInt(element, "accountkey");
 		double balance = AttributeGetters.getDouble(element, "balance");

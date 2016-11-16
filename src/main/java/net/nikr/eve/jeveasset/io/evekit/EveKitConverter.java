@@ -26,7 +26,6 @@ package net.nikr.eve.jeveasset.io.evekit;
 import com.beimin.eveapi.model.shared.ContractAvailability;
 import com.beimin.eveapi.model.shared.ContractStatus;
 import com.beimin.eveapi.model.shared.ContractType;
-import com.beimin.eveapi.model.shared.EveAccountBalance;
 import com.beimin.eveapi.model.shared.JournalEntry;
 import enterprises.orbital.evekit.client.model.AccountBalance;
 import enterprises.orbital.evekit.client.model.Asset;
@@ -365,15 +364,15 @@ public final class EveKitConverter {
 	}
 
 	static List<MyAccountBalance> convertAccountBalance(final List<AccountBalance> eveKitAccountBalances, final EveKitOwner owner) {
-		List<EveAccountBalance> accountBalances = new ArrayList<EveAccountBalance>();
+		List<com.beimin.eveapi.model.shared.AccountBalance> accountBalances = new ArrayList<com.beimin.eveapi.model.shared.AccountBalance>();
 		for (AccountBalance accountBalance : eveKitAccountBalances) {
 			accountBalances.add(toAccountBalance(accountBalance));
 		}
 		return ApiConverter.convertAccountBalance(accountBalances, owner);
 	}
 
-	private static EveAccountBalance toAccountBalance(final AccountBalance accountBalance) {
-		EveAccountBalance eveApiAccountBalance = new EveAccountBalance();
+	private static com.beimin.eveapi.model.shared.AccountBalance toAccountBalance(final AccountBalance accountBalance) {
+		com.beimin.eveapi.model.shared.AccountBalance eveApiAccountBalance = new com.beimin.eveapi.model.shared.AccountBalance();
 		eveApiAccountBalance.setAccountID(accountBalance.getAccountID());
 		eveApiAccountBalance.setAccountKey(accountBalance.getAccountKey());
 		eveApiAccountBalance.setBalance(accountBalance.getBalance().doubleValue()); //BigDecimal to double
