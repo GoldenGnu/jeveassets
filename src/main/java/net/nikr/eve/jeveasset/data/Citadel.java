@@ -20,10 +20,10 @@
  */
 package net.nikr.eve.jeveasset.data;
 
-import net.nikr.eve.jeveasset.i18n.General;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 
-
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Citadel {
 
 	public int typeId;
@@ -69,9 +69,9 @@ public class Citadel {
 
 	public MyLocation getLocation(long locationID) {
 		if (!isEmpty()) { //Location is valid -> return locations
-			return new MyLocation(locationID, name, systemId, systemName, regionId, regionName, ApiIdConverter.getLocation(systemId).getSecurity());
+			return new MyLocation(locationID, name, systemId, systemName, regionId, regionName, ApiIdConverter.getLocation(systemId).getSecurity(), true);
 		} else { //Location not valid -> return fallback location
-			return new MyLocation(locationID, General.get().citadel(locationID), locationID, General.get().citadelSystem(locationID), locationID, General.get().citadelRegion(locationID), "0.0");
+			return null;
 		}
 	}
 
