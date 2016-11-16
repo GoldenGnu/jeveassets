@@ -22,6 +22,7 @@
 package net.nikr.eve.jeveasset.data;
 
 import net.nikr.eve.jeveasset.gui.shared.table.containers.Security;
+import net.nikr.eve.jeveasset.i18n.General;
 
 
 public class MyLocation implements Comparable<MyLocation> {
@@ -35,12 +36,29 @@ public class MyLocation implements Comparable<MyLocation> {
 	private final String region;
 	private final String security;
 	private final Security securityObject;
+	private final boolean citadel;
+	private final boolean empty;
 
 	public MyLocation(long locationID) {
-		this(0, "", 0, "", 0, "", "0.0");
+		this.stationID = 0;
+		this.station = General.get().emptyLocation(String.valueOf(locationID));;
+		this.systemID = 0;
+		this.system = General.get().emptyLocation(String.valueOf(locationID));;
+		this.regionID = 0;
+		this.region = General.get().emptyLocation(String.valueOf(locationID));;
+		this.security = "0.0";
+		this.securityObject = new Security(security);
+		this.locationID = locationID;
+		this.location = General.get().emptyLocation(String.valueOf(locationID));
+		this.citadel = false;
+		this.empty = true;
 	}
 
 	public MyLocation(long stationID, String station, long systemID, String system, long regionID, String region, String security) {
+		this(stationID, station, systemID, system, regionID, region, security, false);
+	}
+
+	public MyLocation(long stationID, String station, long systemID, String system, long regionID, String region, String security, boolean citadel) {
 		this.stationID = stationID;
 		this.station = station;
 		this.systemID = systemID;
@@ -50,18 +68,23 @@ public class MyLocation implements Comparable<MyLocation> {
 		this.security = security;
 		this.securityObject = new Security(security);
 		if (isStation()) {
+			empty = false;
 			this.locationID = stationID;
 			this.location = station;
 		} else if (isSystem()) {
+			empty = false;
 			this.locationID = systemID;
 			this.location = system;
 		} else if (isRegion()) {
+			empty = false;
 			this.locationID = regionID;
 			this.location = region;
 		} else {
+			empty = true;
 			this.locationID = 0;
 			this.location = "";
 		}
+		this.citadel = citadel;
 	}
 
 	public String getLocation() {
@@ -117,11 +140,11 @@ public class MyLocation implements Comparable<MyLocation> {
 	}
 
 	public boolean isEmpty() {
-		return location.isEmpty();
+		return empty;
 	}
 
 	public boolean isCitadel() {
-		return stationID > 61001139;
+		return citadel;
 	}
 
 	@Override

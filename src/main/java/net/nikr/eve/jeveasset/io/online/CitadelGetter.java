@@ -29,7 +29,6 @@ import java.net.URL;
 import java.util.Date;
 import java.util.Map;
 import java.util.zip.GZIPInputStream;
-import javax.swing.SwingUtilities;
 import net.nikr.eve.jeveasset.data.Citadel;
 import net.nikr.eve.jeveasset.data.CitadelSettings;
 import net.nikr.eve.jeveasset.data.MyLocation;

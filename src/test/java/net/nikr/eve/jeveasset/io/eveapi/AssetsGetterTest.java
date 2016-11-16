@@ -20,7 +20,6 @@
  */
 package net.nikr.eve.jeveasset.io.eveapi;
 
-import net.nikr.eve.jeveasset.data.MyLocation;
 import net.nikr.eve.jeveasset.data.StaticData;
 import static org.junit.Assert.assertEquals;
 import org.junit.Test;
@@ -36,10 +35,5 @@ public class AssetsGetterTest {
 		assertEquals(StaticData.get().getItemFlags().get(7).getFlagName(), "Skill");
 		assertEquals(StaticData.get().getItemFlags().get(89).getFlagName(), "Implant");
 		assertEquals(StaticData.get().getItemFlags().get(61).getFlagName(), "Skill In Training");
-		long max = 0;
-		for (MyLocation location : StaticData.get().getLocations().values()) {
-			max = Math.max(max, location.getLocationID());
-		}
-		assertEquals("MyLocation.isCitadel() and ApiIdConverter.getLocation(final long locationID, final MyAsset parentAsset) needs to be updated", 61001139, max);
 	}
 }

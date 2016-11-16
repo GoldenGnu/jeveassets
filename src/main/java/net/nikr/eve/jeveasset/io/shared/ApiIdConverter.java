@@ -43,46 +43,46 @@ public final class ApiIdConverter {
 
 	private ApiIdConverter() { }
 
-	private static final Map<String, Float> packagedVolume = new HashMap<String, Float>();
+	private static final Map<String, Float> PACKAGED_VOLUME = new HashMap<String, Float>();
 
 	private static void buildVolume() {
-		packagedVolume.put("Assault Ship", 2500f);
-		packagedVolume.put("Battlecruiser", 15000f);
-		packagedVolume.put("Battleship", 50000f);
-		packagedVolume.put("Black Ops", 50000f);
-		packagedVolume.put("Capital Industrial Ship", 1000000f);
-		packagedVolume.put("Capsule", 500f);
-		packagedVolume.put("Carrier", 1000000f);
-		packagedVolume.put("Combat Recon Ship", 10000f);
-		packagedVolume.put("Command Ship", 15000f);
-		packagedVolume.put("Covert Ops", 2500f);
-		packagedVolume.put("Cruiser", 10000f);
-		packagedVolume.put("Destroyer", 5000f);
-		packagedVolume.put("Dreadnought", 1000000f);
-		packagedVolume.put("Electronic Attack Ship", 2500f);
-		packagedVolume.put("Elite Battleship", 50000f);
-		packagedVolume.put("Exhumer", 3750f);
-		packagedVolume.put("Force Recon Ship", 10000f);
-		packagedVolume.put("Freighter", 1000000f);
-		packagedVolume.put("Frigate", 2500f);
-		packagedVolume.put("Heavy Assault Ship", 10000f);
-		packagedVolume.put("Heavy Interdictor", 10000f);
-		packagedVolume.put("Industrial", 20000f);
-		packagedVolume.put("Industrial Command Ship", 500000f);
-		packagedVolume.put("Interceptor", 2500f);
-		packagedVolume.put("Interdictor", 5000f);
-		packagedVolume.put("Jump Freighter", 1000000f);
-		packagedVolume.put("Logistics", 10000f);
-		packagedVolume.put("Marauder", 50000f);
-		packagedVolume.put("Mining Barge", 3750f);
-		packagedVolume.put("Prototype Exploration Ship", 500f);
-		packagedVolume.put("Rookie ship", 2500f);
-		packagedVolume.put("Shuttle", 500f);
-		packagedVolume.put("Stealth Bomber", 2500f);
-		packagedVolume.put("Strategic Cruiser", 5000f);
-		packagedVolume.put("Supercarrier", 1000000f);
-		packagedVolume.put("Titan", 10000000f);
-		packagedVolume.put("Transport Ship", 20000f);
+		PACKAGED_VOLUME.put("Assault Ship", 2500f);
+		PACKAGED_VOLUME.put("Battlecruiser", 15000f);
+		PACKAGED_VOLUME.put("Battleship", 50000f);
+		PACKAGED_VOLUME.put("Black Ops", 50000f);
+		PACKAGED_VOLUME.put("Capital Industrial Ship", 1000000f);
+		PACKAGED_VOLUME.put("Capsule", 500f);
+		PACKAGED_VOLUME.put("Carrier", 1000000f);
+		PACKAGED_VOLUME.put("Combat Recon Ship", 10000f);
+		PACKAGED_VOLUME.put("Command Ship", 15000f);
+		PACKAGED_VOLUME.put("Covert Ops", 2500f);
+		PACKAGED_VOLUME.put("Cruiser", 10000f);
+		PACKAGED_VOLUME.put("Destroyer", 5000f);
+		PACKAGED_VOLUME.put("Dreadnought", 1000000f);
+		PACKAGED_VOLUME.put("Electronic Attack Ship", 2500f);
+		PACKAGED_VOLUME.put("Elite Battleship", 50000f);
+		PACKAGED_VOLUME.put("Exhumer", 3750f);
+		PACKAGED_VOLUME.put("Force Recon Ship", 10000f);
+		PACKAGED_VOLUME.put("Freighter", 1000000f);
+		PACKAGED_VOLUME.put("Frigate", 2500f);
+		PACKAGED_VOLUME.put("Heavy Assault Ship", 10000f);
+		PACKAGED_VOLUME.put("Heavy Interdictor", 10000f);
+		PACKAGED_VOLUME.put("Industrial", 20000f);
+		PACKAGED_VOLUME.put("Industrial Command Ship", 500000f);
+		PACKAGED_VOLUME.put("Interceptor", 2500f);
+		PACKAGED_VOLUME.put("Interdictor", 5000f);
+		PACKAGED_VOLUME.put("Jump Freighter", 1000000f);
+		PACKAGED_VOLUME.put("Logistics", 10000f);
+		PACKAGED_VOLUME.put("Marauder", 50000f);
+		PACKAGED_VOLUME.put("Mining Barge", 3750f);
+		PACKAGED_VOLUME.put("Prototype Exploration Ship", 500f);
+		PACKAGED_VOLUME.put("Rookie ship", 2500f);
+		PACKAGED_VOLUME.put("Shuttle", 500f);
+		PACKAGED_VOLUME.put("Stealth Bomber", 2500f);
+		PACKAGED_VOLUME.put("Strategic Cruiser", 5000f);
+		PACKAGED_VOLUME.put("Supercarrier", 1000000f);
+		PACKAGED_VOLUME.put("Titan", 10000000f);
+		PACKAGED_VOLUME.put("Transport Ship", 20000f);
 	}
 
 	public static String flag(final int flag, final MyAsset parentAsset) {
@@ -164,11 +164,11 @@ public final class ApiIdConverter {
 	public static float getVolume(final int typeID, final boolean packaged) {
 		Item item = StaticData.get().getItems().get(typeID);
 		if (item != null) {
-			if (packagedVolume.isEmpty()) {
+			if (PACKAGED_VOLUME.isEmpty()) {
 				buildVolume();
 			}
-			if (packaged && packagedVolume.containsKey(item.getGroup())) {
-				return packagedVolume.get(item.getGroup());
+			if (packaged && PACKAGED_VOLUME.containsKey(item.getGroup())) {
+				return PACKAGED_VOLUME.get(item.getGroup());
 			} else {
 				return item.getVolume();
 			}
@@ -241,16 +241,18 @@ public final class ApiIdConverter {
 				return location;
 			}
 		}
-		if (fixedLocationID > 61001139) { //Citadel fallback
-			return CitadelGetter.get(locationID);
-		} else {
-			return new MyLocation(locationID);
+		location = CitadelGetter.get(locationID);
+		if (location != null) {
+			return location;
 		}
+		return new MyLocation(locationID);
 	}
 
 	public static void addLocation(final Citadel citadel, long locationID) {
 		MyLocation location = citadel.getLocation(locationID);
-		StaticData.get().getLocations().put(location.getLocationID(), location);
+		if (location != null) {
+			StaticData.get().getLocations().put(location.getLocationID(), location);
+		}
 	}
 
 	public static void addLocation(final Station station) {
