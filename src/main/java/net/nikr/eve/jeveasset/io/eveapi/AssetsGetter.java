@@ -23,6 +23,8 @@ package net.nikr.eve.jeveasset.io.eveapi;
 
 import com.beimin.eveapi.exception.ApiException;
 import com.beimin.eveapi.model.shared.Asset;
+import com.beimin.eveapi.parser.character.CharAssetListParser;
+import com.beimin.eveapi.parser.corporation.CorpAssetListParser;
 import com.beimin.eveapi.response.shared.AssetListResponse;
 import java.util.ArrayList;
 import java.util.Date;
@@ -61,10 +63,10 @@ public class AssetsGetter extends AbstractApiGetter<AssetListResponse> {
 	@Override
 	protected AssetListResponse getResponse(final boolean bCorp) throws ApiException {
 		if (bCorp) {
-			return new com.beimin.eveapi.parser.corporation.AssetListParser()
+			return new CorpAssetListParser()
 					.getResponse(Owner.getApiAuthorization(getOwner()), true);
 		} else {
-			return new com.beimin.eveapi.parser.pilot.PilotAssetListParser()
+			return new CharAssetListParser()
 					.getResponse(Owner.getApiAuthorization(getOwner()), true);
 		}
 	}
@@ -82,7 +84,7 @@ public class AssetsGetter extends AbstractApiGetter<AssetListResponse> {
 
 	@Override
 	protected void setData(final AssetListResponse response) {
-		List<Asset> flatAssets = new ArrayList<Asset>(response.getAll()); // Get new asset from the flat list
+		List<Asset> flatAssets = response.getAll(); // Get new asset from the flat list
 		Map<Long, Asset> lookupAssets = new HashMap<>();
 		for (Asset asset : flatAssets) { //Create Lookup table
 			lookupAssets.put(asset.getItemID(), asset);

@@ -23,6 +23,8 @@ package net.nikr.eve.jeveasset.io.eveapi;
 
 import com.beimin.eveapi.exception.ApiException;
 import com.beimin.eveapi.model.shared.MarketOrder;
+import com.beimin.eveapi.parser.character.CharMarketOrdersParser;
+import com.beimin.eveapi.parser.corporation.CorpMarketOrdersParser;
 import com.beimin.eveapi.response.shared.MarketOrdersResponse;
 import java.util.ArrayList;
 import java.util.Date;
@@ -112,18 +114,18 @@ public class MarketOrdersGetter extends AbstractApiGetter<MarketOrdersResponse> 
 	protected MarketOrdersResponse getResponse(final boolean bCorp) throws ApiException {
 		if (orderID == null) {
 			if (bCorp) {
-				return new com.beimin.eveapi.parser.corporation.MarketOrdersParser()
+				return new CorpMarketOrdersParser()
 						.getResponse(Owner.getApiAuthorization(getOwner()));
 			} else {
-				return new com.beimin.eveapi.parser.pilot.MarketOrdersParser()
+				return new CharMarketOrdersParser()
 						.getResponse(Owner.getApiAuthorization(getOwner()));
 			}
 		} else {
 			if (bCorp) {
-				return new com.beimin.eveapi.parser.corporation.MarketOrdersParser()
+				return new CorpMarketOrdersParser()
 						.getResponse(Owner.getApiAuthorization(getOwner()), orderID);
 			} else {
-				return new com.beimin.eveapi.parser.pilot.MarketOrdersParser()
+				return new CharMarketOrdersParser()
 						.getResponse(Owner.getApiAuthorization(getOwner()), orderID);
 			}
 		}
@@ -145,7 +147,7 @@ public class MarketOrdersGetter extends AbstractApiGetter<MarketOrdersResponse> 
 
 	@Override
 	protected void setData(final MarketOrdersResponse response) {
-		List<MyMarketOrder> marketOrders = ApiConverter.convertMarketOrders(new ArrayList<MarketOrder>(response.getAll()), getOwner());
+		List<MyMarketOrder> marketOrders = ApiConverter.convertMarketOrders(response.getAll(), getOwner());
 		if (saveHistory) {
 			Set<MyMarketOrder> marketOrdersUnique = new HashSet<MyMarketOrder>();
 			marketOrdersUnique.addAll(marketOrders); //Add new

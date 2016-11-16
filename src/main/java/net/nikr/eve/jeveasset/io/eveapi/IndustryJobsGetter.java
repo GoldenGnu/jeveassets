@@ -23,6 +23,8 @@ package net.nikr.eve.jeveasset.io.eveapi;
 
 import com.beimin.eveapi.exception.ApiException;
 import com.beimin.eveapi.model.shared.IndustryJob;
+import com.beimin.eveapi.parser.character.CharIndustryJobsParser;
+import com.beimin.eveapi.parser.corporation.CorpIndustryJobsParser;
 import com.beimin.eveapi.response.shared.IndustryJobsResponse;
 import java.util.ArrayList;
 import java.util.Date;
@@ -49,10 +51,10 @@ public class IndustryJobsGetter extends AbstractApiGetter<IndustryJobsResponse> 
 	@Override
 	protected IndustryJobsResponse getResponse(final boolean bCorp) throws ApiException {
 		if (bCorp) {
-			return new com.beimin.eveapi.parser.corporation.IndustryJobsParser()
+			return new CorpIndustryJobsParser()
 					.getResponse(Owner.getApiAuthorization(getOwner()));
 		} else {
-			return new com.beimin.eveapi.parser.pilot.IndustryJobsParser()
+			return new CharIndustryJobsParser()
 					.getResponse(Owner.getApiAuthorization(getOwner()));
 			}
 	}
@@ -69,8 +71,7 @@ public class IndustryJobsGetter extends AbstractApiGetter<IndustryJobsResponse> 
 
 	@Override
 	protected void setData(final IndustryJobsResponse response) {
-		List<MyIndustryJob> industryJobs = ApiConverter.convertIndustryJobs(new ArrayList<IndustryJob>(response.getAll()), getOwner());
-		getOwner().setIndustryJobs(industryJobs);
+		getOwner().setIndustryJobs(ApiConverter.convertIndustryJobs(response.getAll(), getOwner()));
 	}
 
 	@Override

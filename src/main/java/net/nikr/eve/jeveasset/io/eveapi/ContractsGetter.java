@@ -23,6 +23,8 @@ package net.nikr.eve.jeveasset.io.eveapi;
 
 import com.beimin.eveapi.exception.ApiException;
 import com.beimin.eveapi.model.shared.Contract;
+import com.beimin.eveapi.parser.character.CharContractsParser;
+import com.beimin.eveapi.parser.corporation.CorpContractsParser;
 import com.beimin.eveapi.response.shared.ContractsResponse;
 import java.util.ArrayList;
 import java.util.Date;
@@ -62,10 +64,10 @@ public class ContractsGetter extends AbstractApiGetter<ContractsResponse>{
 	@Override
 	protected ContractsResponse getResponse(boolean bCorp) throws ApiException {
 		if (bCorp) {
-			return new com.beimin.eveapi.parser.corporation.ContractsParser()
+			return new CorpContractsParser()
 					.getResponse(Owner.getApiAuthorization(getOwner()));
 		} else {
-			return new com.beimin.eveapi.parser.pilot.ContractsParser()
+			return new CharContractsParser()
 					.getResponse(Owner.getApiAuthorization(getOwner()));
 		}
 	}
@@ -82,7 +84,7 @@ public class ContractsGetter extends AbstractApiGetter<ContractsResponse>{
 
 	@Override
 	protected void setData(ContractsResponse response) {
-		List<Contract> contracts = new ArrayList<Contract>(response.getAll());
+		List<Contract> contracts = response.getAll();
 		//Create backup of existin contracts
 		//Map<MyContract, List<MyContractItem>> existingContract = new HashMap<MyContract, List<MyContractItem>>(getOwner().getContracts();
 		// XXX - Workaround for ConcurrentModificationException in HashMap constructor

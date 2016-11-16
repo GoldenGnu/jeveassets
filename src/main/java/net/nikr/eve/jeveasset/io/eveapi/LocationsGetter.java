@@ -23,13 +23,14 @@ package net.nikr.eve.jeveasset.io.eveapi;
 
 import com.beimin.eveapi.exception.ApiException;
 import com.beimin.eveapi.model.shared.Location;
+import com.beimin.eveapi.parser.character.CharLocationsParser;
+import com.beimin.eveapi.parser.corporation.CorpLocationsParser;
 import com.beimin.eveapi.response.shared.LocationsResponse;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import net.nikr.eve.jeveasset.data.MyAccount;
 import net.nikr.eve.jeveasset.data.MyAccount.AccessMask;
 import net.nikr.eve.jeveasset.data.Owner;
@@ -98,10 +99,10 @@ public class LocationsGetter extends AbstractApiGetter<LocationsResponse> {
 	@Override
 	protected LocationsResponse getResponse(boolean bCorp) throws ApiException {
 		if (bCorp) {
-			return new com.beimin.eveapi.parser.corporation.LocationsParser()
+			return new CorpLocationsParser()
 					.getResponse(Owner.getApiAuthorization(getOwner()), getItems());
 		} else {
-			return new com.beimin.eveapi.parser.pilot.LocationsParser()
+			return new CharLocationsParser()
 					.getResponse(Owner.getApiAuthorization(getOwner()), getItems());
 		}
 	}
@@ -118,7 +119,7 @@ public class LocationsGetter extends AbstractApiGetter<LocationsResponse> {
 
 	@Override
 	protected void setData(LocationsResponse response) {
-		Set<Location> all = response.getAll();
+		List<Location> all = response.getAll();
 		for (Location apiLocation : all) {
 			final long itemID = apiLocation.getItemID();
 			final String eveName = apiLocation.getItemName();
