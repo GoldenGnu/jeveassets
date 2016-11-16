@@ -26,8 +26,9 @@ import com.beimin.eveapi.model.shared.Asset;
 import com.beimin.eveapi.response.shared.AssetListResponse;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import net.nikr.eve.jeveasset.data.eveapi.EveApiAccount;
 import net.nikr.eve.jeveasset.data.eveapi.EveApiOwner;
@@ -41,55 +42,38 @@ import net.nikr.eve.jeveasset.io.shared.ApiConverter;
 
 public class AssetsGetter extends AbstractApiGetter<AssetListResponse> {
 
-	private boolean flat;
-
 	public AssetsGetter() {
 		super("Assets", true, false);
 	}
 
 	public void load(final UpdateTask updateTask, final boolean forceUpdate, List<EveApiAccount> accounts) {
-		flat = false;
-		super.loadAccounts(updateTask, forceUpdate, accounts);
-		flat = true;
 		super.loadAccounts(updateTask, forceUpdate, accounts);
 	}
 
 	@Override
 	protected int getProgressStart() {
-		if (!flat) {
-			return 0;
-		} else {
-			return 40;
-		}
+		return 0;
 	}
 
 	@Override
 	protected int getProgressEnd() {
-		if (!flat) {
-			return 40;
-		} else {
-			return 80;
-		}
+		return 80;
 	}
 
 	@Override
 	protected AssetListResponse getResponse(final boolean bCorp) throws ApiException {
 		if (bCorp) {
 			return new com.beimin.eveapi.parser.corporation.AssetListParser()
-					.getResponse(EveApiOwner.getApiAuthorization(getOwner()), flat);
+					.getResponse(EveApiOwner.getApiAuthorization(getOwner()), true);
 		} else {
 			return new com.beimin.eveapi.parser.pilot.PilotAssetListParser()
-					.getResponse(EveApiOwner.getApiAuthorization(getOwner()), flat);
+					.getResponse(EveApiOwner.getApiAuthorization(getOwner()), true);
 		}
 	}
 
 	@Override
 	protected Date getNextUpdate() {
-		if (flat) {
-			return new Date();
-		} else {
-			return getOwner().getAssetNextUpdate();
-		}
+		return getOwner().getAssetNextUpdate();
 	}
 
 	@Override
@@ -100,28 +84,28 @@ public class AssetsGetter extends AbstractApiGetter<AssetListResponse> {
 
 	@Override
 	protected void setData(final AssetListResponse response) {
-		if (!flat) {
-			List<Asset> eveAssets = new ArrayList<Asset>(response.getAll());
-			List<MyAsset> assets = ApiConverter.convertAsset(eveAssets, getOwner());
-			getOwner().setAssets(assets);
-		} else {
-			Set<Long> itemIDs = new HashSet<Long>(); //Hold current all itemIDs
-			deepAssets(getOwner().getAssets(), itemIDs); //Get all current itemIDs
-			List<Asset> assets = new ArrayList<Asset>(response.getAll()); // Get new asset from the flat list
-			List<Asset> assetsInclude = new ArrayList<Asset>(); // Get new asset from the flat list
-			for (Asset asset : assets) { //Find new assets
-				if (!itemIDs.contains(asset.getItemID()) && 
-						//Ignore:
-						asset.getFlag() != 7 //Skill
-						&& asset.getFlag() != 61 //Skill In Training
-						&& asset.getFlag() != 89 //Implant
-						) {
-					assetsInclude.add(asset);
-					
+		List<Asset> flatAssets = new ArrayList<Asset>(response.getAll()); // Get new asset from the flat list
+		Map<Long, Asset> lookupAssets = new HashMap<>();
+		for (Asset asset : flatAssets) { //Create Lookup table
+			lookupAssets.put(asset.getItemID(), asset);
+		}
+		List<Asset> treeAssets = new ArrayList<>();
+		for (Asset asset : flatAssets) { //Make Tree
+			if (//Ignore:
+					asset.getFlag() != 7 //Skill
+					&& asset.getFlag() != 61 //Skill In Training
+					&& asset.getFlag() != 89 //Implant
+					) {
+				Asset parentAsset = lookupAssets.get(asset.getLocationID());
+				if (parentAsset != null) {
+					asset.setLocationID(0L);
+					parentAsset.add(asset);
+				} else {
+					treeAssets.add(asset);
 				}
 			}
-			getOwner().getAssets().addAll(ApiConverter.convertAsset(assetsInclude, getOwner()));  //Convert and add MyAssets
 		}
+		getOwner().setAssets(ApiConverter.convertAsset(treeAssets, getOwner()));  //Convert and add MyAssets
 	}
 
 	@Override
