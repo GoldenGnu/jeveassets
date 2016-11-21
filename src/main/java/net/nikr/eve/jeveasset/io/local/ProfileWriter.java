@@ -29,7 +29,6 @@ import net.nikr.eve.jeveasset.data.eveapi.EveApiAccount;
 import net.nikr.eve.jeveasset.data.MyAccountBalance;
 import net.nikr.eve.jeveasset.data.eveapi.EveApiOwner;
 import net.nikr.eve.jeveasset.data.ProfileManager;
-import net.nikr.eve.jeveasset.data.api.AbstractOwner;
 import net.nikr.eve.jeveasset.data.api.OwnerType;
 import net.nikr.eve.jeveasset.data.evekit.EveKitOwner;
 import net.nikr.eve.jeveasset.gui.tabs.assets.MyAsset;

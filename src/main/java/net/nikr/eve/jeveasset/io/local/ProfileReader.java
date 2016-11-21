@@ -597,7 +597,7 @@ public final class ProfileReader extends AbstractXmlReader {
 			for (int b = 0; b < industryJobNodes.getLength(); b++) {
 				Element currentNode = (Element) industryJobNodes.item(b);
 				if (AttributeGetters.haveAttribute(currentNode, "blueprintid")) {
-					IndustryJob apiIndustryJob = parseIndustryJobs(currentNode);
+					IndustryJob apiIndustryJob = parseIndustryJob(currentNode);
 					industryJobs.add(apiIndustryJob);
 				}
 			}
@@ -605,7 +605,7 @@ public final class ProfileReader extends AbstractXmlReader {
 		owner.setIndustryJobs(ApiConverter.convertIndustryJobs(industryJobs, owner));
 	}
 
-	private IndustryJob parseIndustryJobs(final Element element) {
+	private IndustryJob parseIndustryJob(final Element element) {
 		IndustryJob apiIndustryJob = new IndustryJob();
 		long jobID = AttributeGetters.getLong(element, "jobid");
 		long installerID = AttributeGetters.getLong(element, "installerid");
@@ -671,7 +671,7 @@ public final class ProfileReader extends AbstractXmlReader {
 		for (int i = 0; i < assetsNodes.getLength(); i++) {
 			Node currentNode = assetsNodes.item(i);
 			if (currentNode.getNodeName().equals("asset")) {
-				MyAsset asset = parseEveAsset(currentNode, owner, parentAsset);
+				MyAsset asset = parseAsset(currentNode, owner, parentAsset);
 				if (parentAsset == null) {
 					assets.add(asset);
 				} else {
@@ -682,7 +682,7 @@ public final class ProfileReader extends AbstractXmlReader {
 		}
 	}
 
-	private MyAsset parseEveAsset(final Node node, final OwnerType owner, final MyAsset parentAsset) {
+	private MyAsset parseAsset(final Node node, final OwnerType owner, final MyAsset parentAsset) {
 		long count = AttributeGetters.getLong(node, "count");
 
 		long itemId = AttributeGetters.getLong(node, "id");
