@@ -29,9 +29,11 @@ import java.net.URL;
 import java.util.Date;
 import java.util.Map;
 import java.util.zip.GZIPInputStream;
+import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Citadel;
 import net.nikr.eve.jeveasset.data.CitadelSettings;
 import net.nikr.eve.jeveasset.data.MyLocation;
+import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import net.nikr.eve.jeveasset.i18n.DialoguesUpdate;
 import net.nikr.eve.jeveasset.io.local.CitadelReader;
@@ -79,7 +81,7 @@ public class CitadelGetter extends AbstractXmlWriter {
 
 	private void updateCache(UpdateTask updateTask) {
 		LOG.info("Citadels updating:");
-		if (citadelSettings.getNextUpdate().after(new Date())) { //Check if we can update now
+		if (citadelSettings.getNextUpdate().after(new Date()) && !Settings.get().isForceUpdate() && !Program.isForceUpdate()) { //Check if we can update now
 			if (updateTask != null) {
 				updateTask.addError(DialoguesUpdate.get().citadel(), "Not allowed yet.\r\n(Fix: Just wait a bit)");
 			}
@@ -94,7 +96,7 @@ public class CitadelGetter extends AbstractXmlWriter {
 			HttpURLConnection con = (HttpURLConnection) url.openConnection();
 			con.setRequestProperty("Accept-Encoding", "gzip");
 
-			int contentLength = con.getContentLength();
+			long contentLength = con.getContentLengthLong();
 			String contentEncoding = con.getContentEncoding();
 			InputStream inputStream = new UpdateTaskInputStream(con.getInputStream(), contentLength, updateTask);
 			if ("gzip".equals(contentEncoding)) {
