@@ -56,19 +56,22 @@ public class UpdateTaskInputStream extends FilterInputStream {
 
     @Override
     public int read() throws IOException {
-        int b = super.read();
-        updateProgress(1);
-        return b;
+        return updateProgressInteger(super.read());
     }
+
+	@Override
+	public int read(byte[] b) throws IOException {
+		return updateProgressInteger(super.read(b));
+	}
 
     @Override
     public int read(byte[] b, int off, int len) throws IOException {
-        return (int)updateProgress(super.read(b, off, len));
+        return updateProgressInteger(super.read(b, off, len));
     }
 
     @Override
     public long skip(long n) throws IOException {
-        return updateProgress(super.skip(n));
+        return updateProgressLong(super.skip(n));
     }
 
     @Override
@@ -86,7 +89,12 @@ public class UpdateTaskInputStream extends FilterInputStream {
         return false;
     }
 
-    private long updateProgress(final long numBytesRead) {
+	private int updateProgressInteger(final int numBytesRead) {
+		updateProgressLong(numBytesRead);
+		return numBytesRead;
+	}
+
+    private long updateProgressLong(final long numBytesRead) {
         if (numBytesRead > 0) {
             this.totalNumBytesRead += numBytesRead;
 			updateTask.setTaskProgress(maxNumBytes, totalNumBytesRead, start, end);
