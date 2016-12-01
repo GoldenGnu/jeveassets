@@ -22,11 +22,9 @@
 package net.nikr.eve.jeveasset.io.eveapi;
 
 import com.beimin.eveapi.exception.ApiException;
-import com.beimin.eveapi.model.shared.JournalEntry;
 import com.beimin.eveapi.parser.character.CharWalletJournalParser;
 import com.beimin.eveapi.parser.corporation.CorpWalletJournalParser;
 import com.beimin.eveapi.response.shared.WalletJournalResponse;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;

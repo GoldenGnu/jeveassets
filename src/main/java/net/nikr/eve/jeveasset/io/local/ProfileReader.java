@@ -134,11 +134,7 @@ public final class ProfileReader extends AbstractXmlReader {
 		}
 		KeyType type = null;
 		if (AttributeGetters.haveAttribute(node, "type")) {
-			try {
-				type = KeyType.valueOf(AttributeGetters.getString(node, "type"));
-			} catch (IllegalArgumentException ex) {
-				type = null;
-			}
+			type = KeyType.valueOf(AttributeGetters.getString(node, "type").toUpperCase());
 		}
 		Date expires = null;
 		if (AttributeGetters.haveAttribute(node, "expires")) {
@@ -176,7 +172,7 @@ public final class ProfileReader extends AbstractXmlReader {
 
 	private Owner parseOwner(final Node node, final MyAccount account) {
 		String name = AttributeGetters.getString(node, "name");
-		int ownerID = AttributeGetters.getInt(node, "id");
+		long ownerID = AttributeGetters.getLong(node, "id");
 		Date assetsNextUpdate = new Date(AttributeGetters.getLong(node, "assetsnextupdate"));
 		Date assetsLastUpdate = null;
 		if (AttributeGetters.haveAttribute(node, "assetslastupdate")) {
