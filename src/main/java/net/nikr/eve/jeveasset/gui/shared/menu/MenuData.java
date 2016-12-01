@@ -22,6 +22,7 @@
 package net.nikr.eve.jeveasset.gui.shared.menu;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -32,6 +33,7 @@ import net.nikr.eve.jeveasset.data.tag.Tag;
 import net.nikr.eve.jeveasset.data.types.BlueprintType;
 import net.nikr.eve.jeveasset.data.types.ItemType;
 import net.nikr.eve.jeveasset.data.types.LocationType;
+import net.nikr.eve.jeveasset.data.types.LocationsType;
 import net.nikr.eve.jeveasset.data.types.PriceType;
 import net.nikr.eve.jeveasset.data.types.TagsType;
 import net.nikr.eve.jeveasset.gui.tabs.assets.MyAsset;
@@ -45,6 +47,8 @@ public class MenuData<T> {
 	private final Map<Integer, Double> prices = new HashMap<Integer, Double>();
 	private final Set<String> typeNames = new HashSet<String>();
 	private final Set<String> stationsAndCitadels = new HashSet<String>();
+	private final Set<MyLocation> emptyStations = new HashSet<MyLocation>();
+	private final Set<MyLocation> userStations = new HashSet<MyLocation>();
 	private final Set<String> stations = new HashSet<String>();
 	private final Set<String> systems = new HashSet<String>();
 	private final Set<String> regions = new HashSet<String>();
@@ -66,10 +70,15 @@ public class MenuData<T> {
 				continue;
 			}
 
-			MyLocation location = null;
+			Set<MyLocation> locations = new HashSet<>();
 			if (t instanceof LocationType) {
 				LocationType type = (LocationType) t;
-				location = type.getLocation();
+				locations.add(type.getLocation());
+			}
+
+			if (t instanceof LocationsType) {
+				LocationsType type = (LocationsType) t;
+				locations.addAll(type.getLocations());
 			}
 
 			Item itemType = null;
@@ -104,11 +113,11 @@ public class MenuData<T> {
 				}
 			}
 
-			add(itemType, location, price, blueprint, tagsType);
+			add(itemType, locations, price, blueprint, tagsType);
 		}
 	}
 
-	private void add(final Item item, final MyLocation location, final Double price, final BlueprintType blueprintType, final TagsType tagsType) {
+	private void add(final Item item, final Collection<MyLocation> locations, final Double price, final BlueprintType blueprintType, final TagsType tagsType) {
 		if (item != null && !item.isEmpty()) {
 			//Type Name
 			typeNames.add(item.getTypeName());
@@ -134,19 +143,27 @@ public class MenuData<T> {
 			}
 		}
 		//Locations
-		if (location != null && !location.isEmpty()) {
-			if (location.isStation()) { //Ignore citadels stations as they're not supported by dotlan
-				if (!location.isCitadel()) {
-					stations.add(location.getStation());
+		for (MyLocation location : locations) {
+			if (location != null && !location.isEmpty()) {
+				if (location.isStation()) { //Ignore citadels stations as they're not supported by dotlan
+					if (!location.isCitadel()) {
+						stations.add(location.getStation());
+					}
+					stationsAndCitadels.add(location.getStation());
+					systemLocations.add(location);
 				}
-				stationsAndCitadels.add(location.getStation());
-				systemLocations.add(location);
+				if (location.isStation() || location.isSystem()) {
+					systems.add(location.getSystem());
+				}
+				if (location.isStation() || location.isSystem() || location.isRegion()) {
+					regions.add(location.getRegion());
+				}
 			}
-			if (location.isStation() || location.isSystem()) {
-				systems.add(location.getSystem());
+			if (location != null && location.isEmpty()) {
+				emptyStations.add(location);
 			}
-			if (location.isStation() || location.isSystem() || location.isRegion()) {
-				regions.add(location.getRegion());
+			if (location != null && location.isUserLocation()) {
+				userStations.add(location);
 			}
 		}
 		//Tags
@@ -186,6 +203,14 @@ public class MenuData<T> {
 
 	public Set<String> getStationsOnly() {
 		return stations;
+	}
+
+	public Set<MyLocation> getEmptyStations() {
+		return emptyStations;
+	}
+
+	public Set<MyLocation> getUserStations() {
+		return userStations;
 	}
 
 	public Set<String> getStationsAndCitadels() {

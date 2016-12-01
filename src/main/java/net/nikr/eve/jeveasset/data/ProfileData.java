@@ -35,6 +35,7 @@ import java.util.Set;
 import net.nikr.eve.jeveasset.SplashUpdater;
 import net.nikr.eve.jeveasset.data.api.OwnerType;
 import net.nikr.eve.jeveasset.data.tag.Tags;
+import net.nikr.eve.jeveasset.data.types.EditableLocationType;
 import net.nikr.eve.jeveasset.data.types.JumpType;
 import net.nikr.eve.jeveasset.gui.shared.CaseInsensitiveComparator;
 import net.nikr.eve.jeveasset.gui.tabs.assets.MyAsset;
@@ -352,6 +353,9 @@ public class ProfileData {
 			for (Map.Entry<MyContract, List<MyContractItem>> entry : owner.getContracts().entrySet()) {
 				//Contracts
 				MyContract contract = entry.getKey();
+				//Update Locations
+				contract.setStartStation(ApiIdConverter.getLocation(contract.getStartStation()));
+				contract.setEndStation(ApiIdConverter.getLocation(contract.getEndStation()));
 				//Update Owners
 				contract.setAcceptor(ApiIdConverter.getOwnerName(contract.getAcceptorID()));
 				contract.setAssignee(ApiIdConverter.getOwnerName(contract.getAssigneeID()));
@@ -440,6 +444,16 @@ public class ProfileData {
 		}
 		//Update Jumps
 		updateJumps(new ArrayList<JumpType>(assets), MyAsset.class);
+
+		//Update Locations
+		List<EditableLocationType> editableLocationTypes = new ArrayList<EditableLocationType>();
+		editableLocationTypes.addAll(assets);
+		editableLocationTypes.addAll(marketOrders);
+		editableLocationTypes.addAll(transactions);
+		editableLocationTypes.addAll(industryJobs);
+		for (EditableLocationType editableLocationType : editableLocationTypes) {
+			editableLocationType.setLocation(ApiIdConverter.getLocation(editableLocationType.getLocation()));
+		}
 
 		try {
 			assetsEventList.getReadWriteLock().writeLock().lock();

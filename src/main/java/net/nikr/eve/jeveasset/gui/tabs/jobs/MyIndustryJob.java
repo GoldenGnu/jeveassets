@@ -27,13 +27,13 @@ import net.nikr.eve.jeveasset.data.MyLocation;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.data.api.OwnerType;
 import net.nikr.eve.jeveasset.data.types.BlueprintType;
+import net.nikr.eve.jeveasset.data.types.EditableLocationType;
 import net.nikr.eve.jeveasset.data.types.ItemType;
-import net.nikr.eve.jeveasset.data.types.LocationType;
 import net.nikr.eve.jeveasset.data.types.PriceType;
 import net.nikr.eve.jeveasset.i18n.DataModelIndustryJob;
 
 
-public class MyIndustryJob extends IndustryJob implements Comparable<MyIndustryJob>, LocationType, ItemType, PriceType, BlueprintType {
+public class MyIndustryJob extends IndustryJob implements Comparable<MyIndustryJob>, EditableLocationType, ItemType, PriceType, BlueprintType {
 
 	public enum IndustryJobState {
 		STATE_ALL() {
@@ -175,7 +175,6 @@ public class MyIndustryJob extends IndustryJob implements Comparable<MyIndustryJ
 	private IndustryJobState state;
 	private final Item item;
 	private final OwnerType owner;
-	private final MyLocation location;
 	private final int portion;
 	private final String name;
 	private double price;
@@ -183,6 +182,7 @@ public class MyIndustryJob extends IndustryJob implements Comparable<MyIndustryJ
 	private int outputCount;
 	private String installer;
 	private Blueprint blueprint;
+	private MyLocation location;
 
 	public MyIndustryJob(final IndustryJob apiIndustryJob, final Item item, final MyLocation location, final OwnerType owner, final int portion, final int productTypeID) {
 		setJobID(apiIndustryJob.getJobID());
@@ -392,6 +392,11 @@ public class MyIndustryJob extends IndustryJob implements Comparable<MyIndustryJ
 	@Override
 	public MyLocation getLocation() {
 		return location;
+	}
+
+	@Override
+	public void setLocation(MyLocation location) {
+		this.location = location;
 	}
 
 	public String getOwner() {

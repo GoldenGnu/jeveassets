@@ -82,8 +82,8 @@ public class Loadout implements Comparable<Loadout>, LocationType, ItemType, Pri
 			}
 		};
 
-		private String flag;
-		private int order;
+		private final String flag;
+		private final int order;
 		private FlagType(final String flag, final int order) {
 			this.flag = flag;
 			this.order = order;
@@ -105,13 +105,13 @@ public class Loadout implements Comparable<Loadout>, LocationType, ItemType, Pri
 		}
 	}
 
-	private Item item;
-	private MyLocation location;
-	private String name;
-	private String key;
-	private FlagType flag;
-	private String owner;
-	private Double price;
+	private final Item item;
+	private final MyLocation location; //New objects are created by updateData() - no need to update
+	private final String name;
+	private final String key;
+	private final FlagType flag;
+	private final String owner;
+	private final Double price;
 	private double value;
 	private long count;
 	private boolean first = false;
@@ -271,7 +271,7 @@ public class Loadout implements Comparable<Loadout>, LocationType, ItemType, Pri
 
 	public static class LoadoutMatcher implements Matcher<Loadout> {
 
-		private String key;
+		private final String key;
 
 		public LoadoutMatcher(final String key) {
 			this.key = key;

@@ -217,6 +217,10 @@ public final class ApiIdConverter {
 		return parents;
 	}
 
+	public static MyLocation getLocation(MyLocation location) {
+		return getLocation(location.getLocationID(), null);
+	}
+
 	public static MyLocation getLocation(long locationID) {
 		return getLocation(locationID, null);
 	}
@@ -241,7 +245,7 @@ public final class ApiIdConverter {
 				return location;
 			}
 		}
-		location = CitadelGetter.get(locationID);
+		location = CitadelGetter.get(locationID).getLocation();
 		if (location != null) {
 			return location;
 		}
@@ -249,7 +253,7 @@ public final class ApiIdConverter {
 	}
 
 	public static void addLocation(final Citadel citadel, long locationID) {
-		MyLocation location = citadel.getLocation(locationID);
+		MyLocation location = citadel.getLocation();
 		if (location != null) {
 			StaticData.get().getLocations().put(location.getLocationID(), location);
 		}

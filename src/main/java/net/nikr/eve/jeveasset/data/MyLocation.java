@@ -38,27 +38,33 @@ public class MyLocation implements Comparable<MyLocation> {
 	private final Security securityObject;
 	private final boolean citadel;
 	private final boolean empty;
+	private final boolean userLocation;
 
 	public MyLocation(long locationID) {
 		this.stationID = 0;
-		this.station = General.get().emptyLocation(String.valueOf(locationID));;
+		this.station = General.get().emptyLocation(String.valueOf(locationID));
 		this.systemID = 0;
-		this.system = General.get().emptyLocation(String.valueOf(locationID));;
+		this.system = General.get().emptyLocation(String.valueOf(locationID));
 		this.regionID = 0;
-		this.region = General.get().emptyLocation(String.valueOf(locationID));;
+		this.region = General.get().emptyLocation(String.valueOf(locationID));
 		this.security = "0.0";
 		this.securityObject = new Security(security);
 		this.locationID = locationID;
 		this.location = General.get().emptyLocation(String.valueOf(locationID));
 		this.citadel = false;
 		this.empty = true;
+		this.userLocation = false;
 	}
 
 	public MyLocation(long stationID, String station, long systemID, String system, long regionID, String region, String security) {
-		this(stationID, station, systemID, system, regionID, region, security, false);
+		this(stationID, station, systemID, system, regionID, region, security, false, false);
 	}
 
 	public MyLocation(long stationID, String station, long systemID, String system, long regionID, String region, String security, boolean citadel) {
+		this(stationID, station, systemID, system, regionID, region, security, citadel, false);
+	}
+
+	public MyLocation(long stationID, String station, long systemID, String system, long regionID, String region, String security, boolean citadel, boolean userLocation) {
 		this.stationID = stationID;
 		this.station = station;
 		this.systemID = systemID;
@@ -85,6 +91,7 @@ public class MyLocation implements Comparable<MyLocation> {
 			this.location = "";
 		}
 		this.citadel = citadel;
+		this.userLocation = userLocation;
 	}
 
 	public String getLocation() {
@@ -145,6 +152,10 @@ public class MyLocation implements Comparable<MyLocation> {
 
 	public boolean isCitadel() {
 		return citadel;
+	}
+
+	public boolean isUserLocation() {
+		return userLocation;
 	}
 
 	@Override

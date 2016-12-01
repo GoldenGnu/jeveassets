@@ -37,15 +37,17 @@ import static com.beimin.eveapi.model.shared.ContractType.COURIER;
 import static com.beimin.eveapi.model.shared.ContractType.ITEMEXCHANGE;
 import static com.beimin.eveapi.model.shared.ContractType.LOAN;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 import net.nikr.eve.jeveasset.data.MyLocation;
-import net.nikr.eve.jeveasset.data.types.LocationType;
+import net.nikr.eve.jeveasset.data.types.LocationsType;
 import net.nikr.eve.jeveasset.i18n.TabsContracts;
 
 
-public class MyContract extends Contract implements LocationType {
+public class MyContract extends Contract implements LocationsType {
 
-	private final MyLocation endStation;
-	private final MyLocation startStation;
+	private MyLocation endStation;
+	private MyLocation startStation;
 	private String acceptor = "";
 	private String assignee = "";
 	private String issuerCorp = "";
@@ -55,8 +57,8 @@ public class MyContract extends Contract implements LocationType {
 	private boolean acceptorAfterAssets = false;
 
 	public MyContract(Contract contract, MyLocation startStation, MyLocation endStation) {
-		this.endStation = endStation;
-		this.startStation = startStation;
+		setEndStation(endStation);
+		setStartStation(startStation);
 		this.setAcceptorID(contract.getAcceptorID());
 		this.setAssigneeID(contract.getAssigneeID());
 		this.setAvailability(contract.getAvailability());
@@ -160,8 +162,19 @@ public class MyContract extends Contract implements LocationType {
 	}
 
 	@Override
-	public MyLocation getLocation() {
-		return startStation;
+	public Set<MyLocation> getLocations() {
+		Set<MyLocation> locations = new HashSet<>();
+		locations.add(startStation);
+		locations.add(endStation);
+		return locations;
+	}
+
+	public final void setEndStation(MyLocation endStation) {
+		this.endStation = endStation;
+	}
+
+	public final void setStartStation(MyLocation startStation) {
+		this.startStation = startStation;
 	}
 
 	public MyLocation getStartStation() {

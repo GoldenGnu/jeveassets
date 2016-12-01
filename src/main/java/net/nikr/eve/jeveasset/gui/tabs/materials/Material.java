@@ -42,9 +42,9 @@ public class Material implements Comparable<Material>, LocationType, ItemType, P
 		SUMMARY_TOTAL(1, 2, 1),
 		SUMMARY_ALL(1, 2, 2);
 
-		private int headerOrder;
-		private int goupeOrder;
-		private int nameOrder;
+		private final int headerOrder;
+		private final int goupeOrder;
+		private final int nameOrder;
 		private MaterialType(final int headerOrder, final int goupeOrder, final int nameOrder) {
 			this.headerOrder = headerOrder;
 			this.goupeOrder = goupeOrder;
@@ -67,7 +67,7 @@ public class Material implements Comparable<Material>, LocationType, ItemType, P
 	private final String header;
 	private final String group;
 	private final String name;
-	private final MyLocation location;
+	private final MyLocation location; //New objects are created by updateData() - no need to update
 	private final Item item;
 
 	private double value = 0;

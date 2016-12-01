@@ -37,18 +37,18 @@ import net.nikr.eve.jeveasset.data.types.BlueprintType;
 import net.nikr.eve.jeveasset.data.types.ItemType;
 import net.nikr.eve.jeveasset.data.types.JumpType;
 import net.nikr.eve.jeveasset.data.api.OwnerType;
+import net.nikr.eve.jeveasset.data.types.EditableLocationType;
 import net.nikr.eve.jeveasset.data.types.PriceType;
 import net.nikr.eve.jeveasset.data.types.TagsType;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo.InfoItem;
 import net.nikr.eve.jeveasset.i18n.DataModelAsset;
 
-public class MyAsset implements Comparable<MyAsset>, InfoItem, JumpType, ItemType, BlueprintType, PriceType, TagsType {
+public class MyAsset implements Comparable<MyAsset>, InfoItem, JumpType, ItemType, BlueprintType, PriceType, TagsType, EditableLocationType {
 
 	//Static values (set by constructor)
 	private final List<MyAsset> assets = new ArrayList<MyAsset>();
 	private Item item;
-	private MyLocation location;
 	private OwnerType owner;
 	private long count;
 	private List<MyAsset> parents;
@@ -74,6 +74,7 @@ public class MyAsset implements Comparable<MyAsset>, InfoItem, JumpType, ItemTyp
 	private double price;
 	private Tags tags;
 	private Blueprint blueprint;
+	private MyLocation location;
 	//Dynamic values cache
 	private boolean userNameSet = false;
 	private boolean eveNameSet = false;
@@ -190,6 +191,11 @@ public class MyAsset implements Comparable<MyAsset>, InfoItem, JumpType, ItemTyp
 	@Override
 	public MyLocation getLocation() {
 		return location;
+	}
+
+	@Override
+	public void setLocation(MyLocation location) {
+		this.location = location;
 	}
 
 	@Override

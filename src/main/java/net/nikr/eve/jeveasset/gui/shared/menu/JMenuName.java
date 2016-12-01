@@ -48,11 +48,11 @@ public class JMenuName<T> extends JAutoMenu<T> {
 	private List<UserItem<Long, String>> containerNames;
 	private MyAsset selected;
 
-	private JMenuItem jEditItem;
-	private JMenuItem jResetItem;
-	private JMenuItem jEditContainer;
-	private JMenuItem jResetContainer;
-	private JContainerDialog jContainerDialog;
+	private final JMenuItem jEditItem;
+	private final JMenuItem jResetItem;
+	private final JMenuItem jEditContainer;
+	private final JMenuItem jResetContainer;
+	private final JSelectionDialog<MyAsset> jContainerDialog;
 
 	public JMenuName(final Program program) {
 		super(GuiShared.get().itemNameTitle(), program);
@@ -60,7 +60,7 @@ public class JMenuName<T> extends JAutoMenu<T> {
 
 		ListenerClass listener = new ListenerClass();
 
-		jContainerDialog = new JContainerDialog(program);
+		jContainerDialog = new JSelectionDialog<MyAsset>(program, GuiShared.get().containerTitle(), GuiShared.get().containerText());
 
 		jEditItem = new JMenuItem(GuiShared.get().itemEdit());
 		jEditItem.setIcon(Images.EDIT_EDIT.getIcon());
@@ -122,7 +122,7 @@ public class JMenuName<T> extends JAutoMenu<T> {
 			}
 			if (MenuNameAction.EDIT_CONTAINER.name().equals(e.getActionCommand())) {
 				if (selected != null) {
-					MyAsset value = jContainerDialog.showDialog(selected);
+					MyAsset value = jContainerDialog.showDialog(selected.getParents());
 					if (value != null) {
 						program.getUserNameSettingsPanel().edit(new UserName(value));
 					}

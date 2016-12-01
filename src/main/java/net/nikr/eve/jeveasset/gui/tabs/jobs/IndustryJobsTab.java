@@ -99,7 +99,7 @@ public class IndustryJobsTab extends JMainTab {
 		//Table Model
 		tableModel = EventModels.createTableModel(filterList, tableFormat);
 		//Table
-		jTable = new JAutoColumnTable(program, tableModel);
+		jTable = new JIndustryJobsTable(program, tableModel);
 		jTable.setCellSelectionEnabled(true);
 		PaddingTableCellRenderer.install(jTable, 1);
 		//Sorting

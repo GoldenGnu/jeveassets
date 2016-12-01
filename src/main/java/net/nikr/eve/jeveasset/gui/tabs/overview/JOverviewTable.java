@@ -34,7 +34,7 @@ import net.nikr.eve.jeveasset.gui.shared.table.JAutoColumnTable;
 class JOverviewTable extends JAutoColumnTable {
 
 	private List<String> groupedLocations = new ArrayList<String>();
-	private DefaultEventTableModel<Overview> tableModel;
+	private final DefaultEventTableModel<Overview> tableModel;
 
 	public JOverviewTable(final Program program, final DefaultEventTableModel<Overview> tableModel) {
 		super(program, tableModel);
@@ -52,14 +52,25 @@ class JOverviewTable extends JAutoColumnTable {
 		Overview overview = tableModel.getElementAt(row);
 		String columnName = (String) this.getTableHeader().getColumnModel().getColumn(column).getHeaderValue();
 
-		if (groupedLocations.contains(overview.getName()) && columnName.equals(OverviewTableFormat.NAME.getColumnName())) { //In group
-			if (!isSelected) {
-				component.setBackground(new Color(200, 255, 200));
-			} else {
-				component.setBackground(this.getSelectionBackground().darker());
+		//User set location
+		if (columnName.equals(OverviewTableFormat.NAME.getColumnName())) {
+			if (groupedLocations.contains(overview.getName())) { //In group
+				if (!isSelected) {
+					component.setBackground(new Color(200, 255, 200));
+				} else {
+					component.setBackground(this.getSelectionBackground().darker());
+				}
+				return component;
+			} else if (overview.getLocation().isUserLocation()) {
+				if (!isSelected) {
+					component.setBackground(new Color(230, 230, 230));
+				} else {
+					component.setBackground(this.getSelectionBackground().darker());
+				}
+				return component;
 			}
-			return component;
 		}
+
 		if (groupedLocations.contains(overview.getLocation().getSystem()) && columnName.equals(OverviewTableFormat.SYSTEM.getColumnName())) { //In group
 			if (!isSelected) {
 				component.setBackground(new Color(200, 255, 200));

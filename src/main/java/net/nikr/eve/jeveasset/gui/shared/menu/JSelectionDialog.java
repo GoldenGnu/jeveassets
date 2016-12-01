@@ -23,6 +23,7 @@ package net.nikr.eve.jeveasset.gui.shared.menu;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Collection;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -31,28 +32,27 @@ import javax.swing.JLabel;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
 import net.nikr.eve.jeveasset.gui.shared.components.ListComboBoxModel;
-import net.nikr.eve.jeveasset.gui.tabs.assets.MyAsset;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 
 
-public class JContainerDialog extends JDialogCentered {
+public class JSelectionDialog<T> extends JDialogCentered {
 
 	private enum ContainerDialogAction {
 		OK, CANCEL
 	}
 
-	private final JComboBox<MyAsset> jContainers;
+	private final JComboBox<T> jLocations;
 	private final JButton jOK;
-	private MyAsset selected = null;
+	private T selected = null;
 
-	public JContainerDialog(Program program) {
-		super(program, GuiShared.get().containerTitle());
+	public JSelectionDialog(Program program, String title, String lableText) {
+		super(program, title);
 
 		ListenerClass listenerClass = new ListenerClass();
 
-		JLabel jText = new JLabel(GuiShared.get().containerText());
+		JLabel jText = new JLabel(lableText);
 
-		jContainers = new JComboBox<MyAsset>();
+		jLocations = new JComboBox<T>();
 
 		jOK = new JButton(GuiShared.get().ok());
 		jOK.setActionCommand(ContainerDialogAction.OK.name());
@@ -66,7 +66,7 @@ public class JContainerDialog extends JDialogCentered {
 			layout.createParallelGroup(GroupLayout.Alignment.LEADING)
 				.addComponent(jText)
 				.addGroup(layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
-					.addComponent(jContainers, 220, 220, 220)
+					.addComponent(jLocations, 220, 220, 220)
 					.addGroup(layout.createSequentialGroup()
 						.addComponent(jOK, Program.getButtonsWidth(), Program.getButtonsWidth(), Program.getButtonsWidth())
 						.addComponent(jCancel, Program.getButtonsWidth(), Program.getButtonsWidth(), Program.getButtonsWidth())
@@ -76,7 +76,7 @@ public class JContainerDialog extends JDialogCentered {
 		layout.setVerticalGroup(
 			layout.createSequentialGroup()
 				.addComponent(jText, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-				.addComponent(jContainers, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+				.addComponent(jLocations, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 				.addGroup(layout.createParallelGroup()
 					.addComponent(jOK, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 					.addComponent(jCancel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
@@ -84,12 +84,12 @@ public class JContainerDialog extends JDialogCentered {
 		);
 	}
 
-	public MyAsset showDialog(MyAsset asset) {
-		if (asset.getParents().size() == 1) {
-			return asset.getParents().get(0);
+	public T showDialog(Collection<T> locations) {
+		if (locations.size() == 1) {
+			return locations.iterator().next();
 		}
 		selected = null;
-		jContainers.setModel( new ListComboBoxModel<MyAsset>(asset.getParents()));
+		jLocations.setModel(new ListComboBoxModel<T>(locations));
 		setVisible(true);
 		return selected;
 		
@@ -98,7 +98,7 @@ public class JContainerDialog extends JDialogCentered {
 
 	@Override
 	protected JComponent getDefaultFocus() {
-		return jContainers;
+		return jLocations;
 	}
 
 	@Override
@@ -111,7 +111,7 @@ public class JContainerDialog extends JDialogCentered {
 
 	@Override
 	protected void save() {
-		selected = (MyAsset) jContainers.getSelectedItem();
+		selected = jLocations.getItemAt(jLocations.getSelectedIndex());
 		setVisible(false);
 	}
 

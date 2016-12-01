@@ -31,7 +31,7 @@ import net.nikr.eve.jeveasset.gui.shared.table.JAutoColumnTable;
 
 public class JMarketOrdersTable extends JAutoColumnTable {
 
-	private DefaultEventTableModel<MyMarketOrder> tableModel;
+	private final DefaultEventTableModel<MyMarketOrder> tableModel;
 
 	public JMarketOrdersTable(final Program program, final DefaultEventTableModel<MyMarketOrder> tableModel) {
 		super(program, tableModel);
@@ -53,6 +53,15 @@ public class JMarketOrdersTable extends JAutoColumnTable {
 					component.setBackground(new Color(255, 200, 200));
 				}
 			}
+		}
+		//User set location
+		if (marketOrder.getLocation().isUserLocation() && columnName.equals(MarketTableFormat.LOCATION.getColumnName())) {
+			if (!isSelected) {
+				component.setBackground(new Color(230, 230, 230));
+			} else {
+				component.setBackground(this.getSelectionBackground().darker());
+			}
+			return component;
 		}
 		return component;
 	}

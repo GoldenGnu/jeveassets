@@ -32,7 +32,7 @@ import net.nikr.eve.jeveasset.gui.shared.table.JAutoColumnTable;
 
 public class JAssetTable extends JAutoColumnTable {
 
-	private DefaultEventTableModel<MyAsset> tableModel;
+	private final DefaultEventTableModel<MyAsset> tableModel;
 
 	public JAssetTable(final Program program, final DefaultEventTableModel<MyAsset> tableModel) {
 		super(program, tableModel);
@@ -57,6 +57,15 @@ public class JAssetTable extends JAutoColumnTable {
 		}
 		//User set name
 		if (asset.isUserName() && columnName.equals(AssetTableFormat.NAME.getColumnName())) {
+			if (!isSelected) {
+				component.setBackground(new Color(230, 230, 230));
+			} else {
+				component.setBackground(this.getSelectionBackground().darker());
+			}
+			return component;
+		}
+		//User set location
+		if (asset.getLocation().isUserLocation() && columnName.equals(AssetTableFormat.LOCATION.getColumnName())) {
 			if (!isSelected) {
 				component.setBackground(new Color(230, 230, 230));
 			} else {

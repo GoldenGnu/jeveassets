@@ -31,7 +31,7 @@ import net.nikr.eve.jeveasset.gui.shared.table.JAutoColumnTable;
 
 public class JTransactionTable extends JAutoColumnTable {
 
-	final DefaultEventTableModel<MyTransaction> tableModel;
+	private final DefaultEventTableModel<MyTransaction> tableModel;
 
 	public JTransactionTable(Program program, final DefaultEventTableModel<MyTransaction> tableModel) {
 		super(program, tableModel);
@@ -67,6 +67,15 @@ public class JTransactionTable extends JAutoColumnTable {
 			} else {
 				component.setForeground(new Color(255, 200, 200));
 			}
+		}
+		//User set location
+		if (transaction.getLocation().isUserLocation() && columnName.equals(TransactionTableFormat.LOCATION.getColumnName())) {
+			if (!isSelected) {
+				component.setBackground(new Color(230, 230, 230));
+			} else {
+				component.setBackground(this.getSelectionBackground().darker());
+			}
+			return component;
 		}
 		return component;
 	}

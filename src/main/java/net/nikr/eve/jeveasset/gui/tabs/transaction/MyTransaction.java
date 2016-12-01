@@ -26,17 +26,17 @@ import java.util.Date;
 import net.nikr.eve.jeveasset.data.Item;
 import net.nikr.eve.jeveasset.data.MyLocation;
 import net.nikr.eve.jeveasset.data.api.OwnerType;
+import net.nikr.eve.jeveasset.data.types.EditableLocationType;
 import net.nikr.eve.jeveasset.data.types.ItemType;
-import net.nikr.eve.jeveasset.data.types.LocationType;
 import net.nikr.eve.jeveasset.i18n.TabsTransaction;
 
-public class MyTransaction extends WalletTransaction implements LocationType, ItemType {
+public class MyTransaction extends WalletTransaction implements EditableLocationType, ItemType {
 
 	private final Item item;
-	private final MyLocation location;
 	private final OwnerType owner;
 	private final int accountKey;
 	private String ownerCharacter;
+	private MyLocation location;
 
 	public MyTransaction(final WalletTransaction apiTransaction, final Item item, final MyLocation location, final OwnerType owner, final int accountKey) {		
 		this.setTransactionDateTime(apiTransaction.getTransactionDateTime());
@@ -55,7 +55,7 @@ public class MyTransaction extends WalletTransaction implements LocationType, It
 		this.setTransactionFor(apiTransaction.getTransactionFor());
 		this.setJournalTransactionID(apiTransaction.getJournalTransactionID());
 		this.setClientTypeID(apiTransaction.getClientTypeID());
-		
+
 		this.item = item;
 		this.location = location;
 		this.owner = owner;
@@ -95,6 +95,11 @@ public class MyTransaction extends WalletTransaction implements LocationType, It
 	@Override
 	public MyLocation getLocation() {
 		return location;
+	}
+
+	@Override
+	public void setLocation(MyLocation location) {
+		this.location = location;
 	}
 
 	@Override

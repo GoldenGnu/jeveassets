@@ -28,15 +28,15 @@ import net.nikr.eve.jeveasset.data.Item;
 import net.nikr.eve.jeveasset.data.MarketPriceData;
 import net.nikr.eve.jeveasset.data.MyLocation;
 import net.nikr.eve.jeveasset.data.api.OwnerType;
+import net.nikr.eve.jeveasset.data.types.EditableLocationType;
 import net.nikr.eve.jeveasset.data.types.ItemType;
-import net.nikr.eve.jeveasset.data.types.LocationType;
 import net.nikr.eve.jeveasset.data.types.PriceType;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.Percent;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.Quantity;
 import net.nikr.eve.jeveasset.i18n.TabsOrders;
 
 
-public class MyMarketOrder extends MarketOrder implements Comparable<MyMarketOrder>, LocationType, ItemType, PriceType  {
+public class MyMarketOrder extends MarketOrder implements Comparable<MyMarketOrder>, EditableLocationType, ItemType, PriceType  {
 
 	public enum OrderStatus {
 		ACTIVE() {
@@ -246,6 +246,11 @@ public class MyMarketOrder extends MarketOrder implements Comparable<MyMarketOrd
 	@Override
 	public MyLocation getLocation() {
 		return location;
+	}
+
+	@Override
+	public void setLocation(MyLocation location) {
+		this.location = location;
 	}
 
 	public String getRangeFormated() {

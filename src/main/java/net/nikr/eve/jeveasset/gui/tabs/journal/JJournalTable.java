@@ -31,7 +31,7 @@ import net.nikr.eve.jeveasset.gui.shared.table.JAutoColumnTable;
 
 public class JJournalTable extends JAutoColumnTable {
 
-	final DefaultEventTableModel<MyJournal> tableModel;
+	private final DefaultEventTableModel<MyJournal> tableModel;
 
 	public JJournalTable(Program program, final DefaultEventTableModel<MyJournal> tableModel) {
 		super(program, tableModel);

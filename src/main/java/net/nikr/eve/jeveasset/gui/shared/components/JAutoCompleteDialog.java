@@ -130,6 +130,13 @@ public abstract class JAutoCompleteDialog<T> extends JDialogCentered {
 		}
 	}
 
+	public T show(T t) {
+		jItems.getModel().setSelectedItem(t);
+		value = null;
+		setVisible(true);
+		return value;
+	}
+
 	public T show() {
 		autoComplete.removeFirstItem();
 		if (jItems.getModel().getSize() > 0) {

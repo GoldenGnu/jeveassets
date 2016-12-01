@@ -19,44 +19,42 @@
  *
  */
 
-package net.nikr.eve.jeveasset.gui.tabs.reprocessed;
+package net.nikr.eve.jeveasset.gui.tabs.jobs;
 
-import ca.odell.glazedlists.SeparatorList;
 import ca.odell.glazedlists.swing.DefaultEventTableModel;
 import java.awt.Color;
 import java.awt.Component;
 import javax.swing.table.TableCellRenderer;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.gui.shared.table.JSeparatorTable;
+import net.nikr.eve.jeveasset.gui.shared.table.JAutoColumnTable;
 
 
-public class JReprocessedTable extends JSeparatorTable {
+public class JIndustryJobsTable extends JAutoColumnTable {
 
-	private final DefaultEventTableModel<ReprocessedInterface> tableModel;
+	private final DefaultEventTableModel<MyIndustryJob> tableModel;
 
-	public JReprocessedTable(final Program program, final DefaultEventTableModel<ReprocessedInterface> tableModel, SeparatorList<?> separatorList) {
-		super(program, tableModel, separatorList);
+	public JIndustryJobsTable(Program program, final DefaultEventTableModel<MyIndustryJob> tableModel) {
+		super(program, tableModel);
 		this.tableModel = tableModel;
 	}
 
-		@Override
+	@Override
 	public Component prepareRenderer(final TableCellRenderer renderer, final int row, final int column) {
 		Component component = super.prepareRenderer(renderer, row, column);
 		boolean isSelected = isCellSelected(row, column);
-		Object object = tableModel.getElementAt(row);
-		//String columnName = (String) this.getTableHeader().getColumnModel().getColumn(column).getHeaderValue();
+		MyIndustryJob industryJob = tableModel.getElementAt(row);
+		String columnName = (String) this.getTableHeader().getColumnModel().getColumn(column).getHeaderValue();
 
-		if (object instanceof ReprocessedInterface) {
-			ReprocessedInterface reprocessed = (ReprocessedInterface) object;
-			//Background
-			if (reprocessed.isTotal()) { //Total
-				if (!isSelected) {
-					component.setBackground(new Color(235, 235, 235));
-				} else {
-					component.setBackground(this.getSelectionBackground().darker());
-				}
+		//User set location
+		if (industryJob.getLocation().isUserLocation() && columnName.equals(IndustryJobTableFormat.LOCATION.getColumnName())) {
+			if (!isSelected) {
+				component.setBackground(new Color(230, 230, 230));
+			} else {
+				component.setBackground(this.getSelectionBackground().darker());
 			}
+			return component;
 		}
 		return component;
 	}
+	
 }

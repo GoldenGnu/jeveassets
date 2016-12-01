@@ -32,7 +32,7 @@ import net.nikr.eve.jeveasset.gui.shared.table.JSeparatorTable;
 
 public class JContractsTable extends JSeparatorTable {
 
-	private DefaultEventTableModel<MyContractItem> tableModel;
+	private final DefaultEventTableModel<MyContractItem> tableModel;
 
 	public JContractsTable(final Program program, final DefaultEventTableModel<MyContractItem> tableModel, SeparatorList<?> separatorList) {
 		super(program, tableModel, separatorList);
@@ -58,6 +58,16 @@ public class JContractsTable extends JSeparatorTable {
 				} else {
 					component.setBackground(new Color(255, 160, 160)); //Red
 				}
+			}
+			//User set location
+			if ((item.getContract().getStartStation().isUserLocation() && columnName.equals(ContractsTableFormat.START_STATION.getColumnName()))
+				|| (item.getContract().getEndStation().isUserLocation() && columnName.equals(ContractsTableFormat.END_STATION.getColumnName()))) {
+				if (!isSelected) {
+					component.setBackground(new Color(230, 230, 230));
+				} else {
+					component.setBackground(this.getSelectionBackground().darker());
+				}
+				return component;
 			}
 		}
 		return component;

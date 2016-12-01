@@ -32,7 +32,6 @@ import java.util.zip.GZIPInputStream;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Citadel;
 import net.nikr.eve.jeveasset.data.CitadelSettings;
-import net.nikr.eve.jeveasset.data.MyLocation;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import net.nikr.eve.jeveasset.i18n.DialoguesUpdate;
@@ -55,12 +54,16 @@ public class CitadelGetter extends AbstractXmlWriter {
 	private CitadelGetter() {
 	}
 
-	public static MyLocation get(long locationID) {
-		return getCitadelGetter().load(locationID);
+	public static Citadel get(long locationID) {
+		return getCitadelGetter().getCitadel(locationID);
 	}
 
 	public static void update(UpdateTask updateTask) {
 		getCitadelGetter().updateCache(updateTask);
+	}
+
+	public static void set(Citadel citadel) {
+		getCitadelGetter().setCitadel(citadel);
 	}
 
 	private static CitadelGetter getCitadelGetter() {
@@ -108,6 +111,7 @@ public class CitadelGetter extends AbstractXmlWriter {
 			});
 			if (results != null) { //Updated OK
 				for (Map.Entry<Long, Citadel> entry : results.entrySet()) {
+					entry.getValue().id = entry.getKey(); //Update locationID
 					citadelSettings.put(entry.getKey(), entry.getValue());
 				}
 			}
@@ -130,13 +134,19 @@ public class CitadelGetter extends AbstractXmlWriter {
 		}
 	}
 
-	private MyLocation load(long locationID) {
+	private void setCitadel(Citadel citadel) {
+		citadelSettings.put(citadel.id, citadel);
+		saveXml();
+	}
+
+	private Citadel getCitadel(long locationID) {
 		Citadel citadel = citadelSettings.get(locationID);
 		if (citadel == null) { //Location not found in cache -> add placeholder for future updates
 			citadel = new Citadel();
+			citadel.id = locationID; //Save locationID
 			citadelSettings.put(locationID, citadel);
 			saveXml();
 		}
-		return citadel.getLocation(locationID);
+		return citadel;
 	}
 }

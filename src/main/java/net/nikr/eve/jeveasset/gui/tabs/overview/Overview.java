@@ -27,8 +27,8 @@ import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo;
 
 
 public class Overview implements Comparable<Overview>, JMenuInfo.InfoItem, LocationType {
-	private String name;
-	private MyLocation location;
+	private final String name;
+	private final MyLocation location; //New objects are created by updateData() - no need to update
 	private double valueReprocessed;
 	private double volume;
 	private long count;

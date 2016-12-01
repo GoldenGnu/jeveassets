@@ -33,7 +33,7 @@ import net.nikr.eve.jeveasset.i18n.TabsValues;
 
 public class JValueTable  extends JAutoColumnTable {
 
-	private DefaultEventTableModel<Value> tableModel;
+	private final DefaultEventTableModel<Value> tableModel;
 
 	public JValueTable(final Program program, final DefaultEventTableModel<Value> tableModel) {
 		super(program, tableModel);
