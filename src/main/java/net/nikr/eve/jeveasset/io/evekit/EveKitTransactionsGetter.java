@@ -40,8 +40,9 @@ public class EveKitTransactionsGetter extends AbstractEveKitListGetter<WalletTra
 
 	@Override
 	protected List<WalletTransaction> get(EveKitOwner owner, long contid) throws ApiException {
+		//3 months
 		return getCommonApi().getWalletTransactions(owner.getAccessKey(), owner.getAccessCred(), null, contid, MAX_RESULTS, REVERSE,
-				null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+				null, null, dateFilter(), null, null, null, null, null, null, null, null, null, null, null, null, null, null);
 	}
 
 	@Override

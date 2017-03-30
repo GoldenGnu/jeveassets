@@ -23,39 +23,27 @@ package net.nikr.eve.jeveasset.io.evekit;
 import enterprises.orbital.evekit.client.invoker.ApiException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import net.nikr.eve.jeveasset.data.evekit.EveKitOwner;
 
 
-public abstract class AbstractEveKitListGetter<T> extends AbstractEveKitValidatedGetter<T> {
-	
+public abstract class AbstractEveKitIdGetter<T> extends AbstractEveKitValidatedGetter<T> {
+
 	@Override
 	protected final void get(EveKitOwner owner) throws ApiException {
 		List<T> results = new ArrayList<T>();
-		List<T> batch = null;
-		boolean more = true;
-		while (batch == null || (!batch.isEmpty() && more)) {
-			batch = get(owner, getCid(batch));
-			more = false;
+		Set<Long> ids = getIDs(owner);
+		for (long id : ids) {
+			List<T> batch = get(owner, id);
 			for (T t : batch) {
-				if ((isUpdateFullHistory() || isNow(t))) { //Ignore old objects, unless we're getting everything
-					if (isValid(t)) {
-						results.add(t);
-					}
-					more = true; //At least one item was not old (or we're getting everything): run another batch
+				if ((isUpdateFullHistory() || isNow(t)) || isValid(t)) { //Ignore old objects, unless we're getting everything
+					results.add(t);
 				}
 			}
 		}
 		set(owner, results);
 	}
 
-	private long getCid(List<T> batch) {
-		if (batch == null) {
-			return 0;
-		} else {
-			return getCid(batch.get(batch.size() - 1));
-		}
-	}
-
-	protected abstract List<T> get(EveKitOwner owner, long contid) throws ApiException;
-	protected abstract long getCid(T obj);
+	protected abstract List<T> get(EveKitOwner owner, long id) throws ApiException;
+	protected abstract Set<Long> getIDs(EveKitOwner owner) throws ApiException;
 }

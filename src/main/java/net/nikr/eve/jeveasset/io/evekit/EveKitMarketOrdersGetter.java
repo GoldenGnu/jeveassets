@@ -40,8 +40,9 @@ public class EveKitMarketOrdersGetter extends AbstractEveKitListGetter<MarketOrd
 
 	@Override
 	protected List<MarketOrder> get(EveKitOwner owner, long contid) throws ApiException {
+		//3 months
 		return getCommonApi().getMarketOrders(owner.getAccessKey(), owner.getAccessCred(), null, contid, MAX_RESULTS, REVERSE,
-				null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+				null, null, null, null, null, null, dateFilter(), null, null, null, null, null, null, null, null);
 	}
 
 	@Override

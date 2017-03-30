@@ -171,6 +171,8 @@ public final class EveKitConverter {
 		journal.setReason(journal.getReason());
 		journal.setTaxReceiverID(journal.getTaxReceiverID());
 		journal.setTaxAmount(journal.getTaxAmount());
+		journal.setOwner1TypeID(journal.getOwner1TypeID());
+		journal.setOwner2TypeID(journal.getOwner2TypeID());
 		return journal;
 	}
 
@@ -257,10 +259,10 @@ public final class EveKitConverter {
 		contract.setTitle(eveKitContract.getTitle());
 		contract.setForCorp(eveKitContract.getForCorp());
 		contract.setAvailability(ContractAvailability.valueOf(eveKitContract.getAvailability().toUpperCase()));
-		contract.setDateIssued(new Date(eveKitContract.getDateIssued()));
-		contract.setDateExpired(new Date(eveKitContract.getDateExpired()));
-		contract.setDateAccepted(new Date(eveKitContract.getDateAccepted()));
-		contract.setDateCompleted(new Date(eveKitContract.getDateCompleted()));
+		contract.setDateIssued(getDate(eveKitContract.getDateIssued()));
+		contract.setDateExpired(getDate(eveKitContract.getDateExpired()));
+		contract.setDateAccepted(getDate(eveKitContract.getDateAccepted(), true));
+		contract.setDateCompleted(getDate(eveKitContract.getDateCompleted(), true));
 		contract.setNumDays(eveKitContract.getNumDays());
 		contract.setPrice(eveKitContract.getPrice().doubleValue()); //BigDecimal to double
 		contract.setReward(eveKitContract.getReward().doubleValue()); //BigDecimal to double
@@ -274,7 +276,6 @@ public final class EveKitConverter {
 		//Create MyContract lookup table
 		Map<Long, MyContract> contractsLookup = new HashMap<Long, MyContract>();
 		for (MyContract contract : contracts.keySet()) {
-			System.out.println("contractsLookup > Put: " + contract.getContractID());
 			contractsLookup.put(contract.getContractID(), contract);
 		}
 		//Convert EveKit>ContractItem to EveApi>ContractItem
@@ -285,19 +286,14 @@ public final class EveKitConverter {
 				list = new ArrayList<com.beimin.eveapi.model.shared.ContractItem>();
 				contractItems.put(contractItem.getContractID(), list);
 			}
-			System.out.println("contractItems > Put: " + contractItem.getContractID());
 			list.add(toContractItem(contractItem));
 		}
-		System.out.println("contractItems: " + contractItems.size());
 		//Convert EveApi>ContractItem to MyContractItem
 		for (Map.Entry<Long, List<com.beimin.eveapi.model.shared.ContractItem>> entry : contractItems.entrySet()) {
 			MyContract myContract = contractsLookup.get(entry.getKey());
-			System.out.println("myContract null:" + myContract == null);
 			List<MyContractItem> myContractItems = ApiConverter.convertContractItems(entry.getValue(), myContract);
-			System.out.println("myContractItems Empty: " + myContractItems.isEmpty());
 			contracts.put(myContract, myContractItems);
 		}
-		System.out.println("contracts:" + contracts.size());
 	}
 
 	private static com.beimin.eveapi.model.shared.ContractItem toContractItem(ContractItem eveKitContractItem) {
@@ -377,5 +373,21 @@ public final class EveKitConverter {
 		eveApiAccountBalance.setAccountKey(accountBalance.getAccountKey());
 		eveApiAccountBalance.setBalance(accountBalance.getBalance().doubleValue()); //BigDecimal to double
 		return eveApiAccountBalance;
+	}
+
+	private static Date getDate(Long date) {
+		return getDate(date, false);
+	}
+
+	private static Date getDate(Long date, boolean useNull) {
+		if (date == null || date == -1) {
+			if (useNull) {
+				return null;
+			} else {
+				return new Date(-62135769600000L);
+			}
+		} else {
+			return new Date(date);
+		}
 	}
 }

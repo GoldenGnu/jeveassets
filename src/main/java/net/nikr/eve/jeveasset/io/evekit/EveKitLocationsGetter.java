@@ -28,15 +28,18 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.data.evekit.EveKitAccessMask;
 import net.nikr.eve.jeveasset.data.evekit.EveKitOwner;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
+import net.nikr.eve.jeveasset.gui.tabs.assets.MyAsset;
 
 
-public class EveKitLocationsGetter extends AbstractEveKitListGetter<Location> {
+public class EveKitLocationsGetter extends AbstractEveKitIdGetter<Location> {
 
 	private final Map<Long, String> eveNames = new HashMap<Long, String>();
+	private final Map<Long, String> itemMap = new HashMap<Long, String>();
 
 	@Override
 	public void load(UpdateTask updateTask, List<EveKitOwner> owners) {
@@ -46,19 +49,41 @@ public class EveKitLocationsGetter extends AbstractEveKitListGetter<Location> {
 	}
 
 	@Override
-	protected List<Location> get(EveKitOwner owner, long contid) throws ApiException {
-		return getCommonApi().getLocations(owner.getAccessKey(), owner.getAccessCred(), null, contid, MAX_RESULTS, REVERSE,
-				null, null, null, null, null);
+	protected List<Location> get(EveKitOwner owner, long id) throws ApiException {
+		//Get all items matching itemID
+		return getCommonApi().getLocations(owner.getAccessKey(), owner.getAccessCred(), null, null, MAX_RESULTS, REVERSE,
+				valuesFilter(id), null, null, null, null);
 	}
 
 	@Override
 	protected void set(EveKitOwner owner, List<Location> data) throws ApiException {
-		eveNames.putAll(EveKitConverter.convertLocations(data));
+		Map<Long, String> locations = EveKitConverter.convertLocations(data);
+		for (Map.Entry<Long, String> entry : locations.entrySet()) {
+			Long itemID = entry.getKey();
+			String eveName = entry.getValue();
+			String typeName = itemMap.get(itemID);
+			if (!eveName.equals(typeName)) {
+				eveNames.put(itemID, eveName);
+			}
+		}
 	}
 
 	@Override
-	protected long getCid(Location obj) {
-		return obj.getCid();
+	protected Set<Long> getIDs(EveKitOwner owner) throws ApiException {
+		itemMap.clear();
+		getItemID(itemMap, owner.getAssets());
+		return itemMap.keySet();
+	}
+
+	private void getItemID(Map<Long, String> itemIDs, List<MyAsset> assets) {
+		for (MyAsset asset : assets) {
+			if ((asset.getItem().getGroup().equals("Audit Log Secure Container")
+					|| asset.getItem().getCategory().equals("Ship"))
+					&& asset.isSingleton()) {
+				itemIDs.put(asset.getItemID(), asset.getItem().getTypeName());
+			}
+			getItemID(itemIDs, asset.getAssets());
+		}
 	}
 
 	@Override

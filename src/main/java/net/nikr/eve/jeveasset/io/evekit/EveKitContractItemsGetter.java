@@ -25,23 +25,27 @@ import enterprises.orbital.evekit.client.invoker.ApiClient;
 import enterprises.orbital.evekit.client.invoker.ApiException;
 import enterprises.orbital.evekit.client.model.ContractItem;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import net.nikr.eve.jeveasset.data.evekit.EveKitAccessMask;
 import net.nikr.eve.jeveasset.data.evekit.EveKitOwner;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
+import net.nikr.eve.jeveasset.gui.tabs.contracts.MyContract;
 
 
-public class EveKitContractItemsGetter extends AbstractEveKitListGetter<ContractItem> {
+public class EveKitContractItemsGetter extends AbstractEveKitIdGetter<ContractItem> {
 
 	@Override
 	public void load(UpdateTask updateTask, List<EveKitOwner> owners) {
 		super.load(updateTask, owners);
 	}
-
+	
 	@Override
-	protected List<ContractItem> get(EveKitOwner owner, long contid) throws ApiException {
-		return getCommonApi().getContractItems(owner.getAccessKey(), owner.getAccessCred(), null, contid, MAX_RESULTS, REVERSE,
-				null, null, null, null, null, null, null);
+	protected List<ContractItem> get(EveKitOwner owner, long id) throws ApiException {
+		//Get all items matching contractID
+		return getCommonApi().getContractItems(owner.getAccessKey(), owner.getAccessCred(), null, null, MAX_RESULTS, REVERSE,
+				valuesFilter(id), null, null, null, null, null, null);
 	}
 
 	@Override
@@ -50,8 +54,12 @@ public class EveKitContractItemsGetter extends AbstractEveKitListGetter<Contract
 	}
 
 	@Override
-	protected long getCid(ContractItem obj) {
-		return obj.getCid();
+	protected Set<Long> getIDs(EveKitOwner owner) throws ApiException {
+		Set<Long> ids = new HashSet<Long>();
+		for (MyContract contract : owner.getContracts().keySet()) {
+			ids.add(contract.getContractID());
+		}
+		return ids;
 	}
 
 	@Override
