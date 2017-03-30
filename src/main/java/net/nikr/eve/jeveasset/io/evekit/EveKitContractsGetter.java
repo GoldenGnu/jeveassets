@@ -54,7 +54,7 @@ public class EveKitContractsGetter extends AbstractEveKitListGetter<Contract> {
 	}
 
 	@Override
-	protected List<Contract> get(EveKitOwner owner, long contid) throws ApiException {
+	protected List<Contract> get(EveKitOwner owner, Long contid) throws ApiException {
 		if (run == Runs.IN_PROGRESS) { //In-Progress
 			return getCommonApi().getContracts(owner.getAccessKey(), owner.getAccessCred(), null, contid, MAX_RESULTS, REVERSE,
 				null, null, null, null, null, null, null, null, contractsFilter(), null, null, null, null, null, null, null, null, null, null, null, null, null);
@@ -129,4 +129,22 @@ public class EveKitContractsGetter extends AbstractEveKitListGetter<Contract> {
 		return getCommonApi().getApiClient();
 	}
 
+	@Override
+	protected void saveCid(EveKitOwner owner, Long contid) {
+		if (run == Runs.IN_PROGRESS) { //In-Progress
+			owner.setContractsInProgressContID(contid);
+		}
+		if (run == Runs.LAST_3_MONTHS) { //Expired in that last 3 months
+			owner.setContractsDateContID(contid);
+		}
+	}
+
+	@Override
+	protected Long loadCid(EveKitOwner owner) {
+		if (run == Runs.IN_PROGRESS) { //In-Progress
+			return owner.getContractsInProgressContID();
+		} else {
+			return owner.getContractsDateContID();
+		}
+	}
 }

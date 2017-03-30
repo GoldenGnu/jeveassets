@@ -39,7 +39,7 @@ public class EveKitBlueprintsGetter extends AbstractEveKitListGetter<Blueprint> 
 	}
 
 	@Override
-	protected List<Blueprint> get(EveKitOwner owner, long contid) throws ApiException {
+	protected List<Blueprint> get(EveKitOwner owner, Long contid) throws ApiException {
 		return getCommonApi().getBlueprints(owner.getAccessKey(), owner.getAccessCred(), null, contid, MAX_RESULTS, REVERSE,
 				null, null, null, null, null, null, null, null, null);
 	}
@@ -77,5 +77,13 @@ public class EveKitBlueprintsGetter extends AbstractEveKitListGetter<Blueprint> 
 	@Override
 	protected ApiClient getApiClient() {
 		return getCommonApi().getApiClient();
+	}
+
+	@Override
+	protected void saveCid(EveKitOwner owner, Long contid) { } //Always get all data
+
+	@Override
+	protected Long loadCid(EveKitOwner owner) {
+		return null; //Always get all data
 	}
 }

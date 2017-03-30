@@ -53,7 +53,7 @@ public class EveKitIndustryJobsGetter extends AbstractEveKitListGetter<IndustryJ
 	}
 
 	@Override
-	protected List<IndustryJob> get(EveKitOwner owner, long contid) throws ApiException {
+	protected List<IndustryJob> get(EveKitOwner owner, Long contid) throws ApiException {
 		if (run == Runs.ACTIVE_PAUSED_READY) { //Status 1,2,3 = Active, Paused, Ready
 			return getCommonApi().getIndustryJobs(owner.getAccessKey(), owner.getAccessCred(), null, contid, MAX_RESULTS, REVERSE,
 				null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, industryJobsFilter(), null, null, null, null, null, null, null);
@@ -126,6 +126,25 @@ public class EveKitIndustryJobsGetter extends AbstractEveKitListGetter<IndustryJ
 	@Override
 	protected ApiClient getApiClient() {
 		return getCommonApi().getApiClient();
+	}
+
+	@Override
+	protected void saveCid(EveKitOwner owner, Long contid) {
+		if (run == Runs.ACTIVE_PAUSED_READY) { //Status 1,2,3 = Active, Paused, Ready
+			owner.setIndustryJobsActiveContID(contid);
+		}
+		if (run == Runs.LAST_3_MONTHS) { ///Completed in the last 3 months
+			owner.setIndustryJobsDateContID(contid);
+		}
+	}
+
+	@Override
+	protected Long loadCid(EveKitOwner owner) {
+		if (run == Runs.ACTIVE_PAUSED_READY) { //Status 1,2,3 = Active, Paused, Ready
+			return owner.getIndustryJobsActiveContID();
+		} else {
+			return owner.getIndustryJobsDateContID();
+		}
 	}
 
 }

@@ -39,7 +39,7 @@ public class EveKitAccountBalanceGetter extends AbstractEveKitListGetter<Account
 	}
 
 	@Override
-	protected List<AccountBalance> get(EveKitOwner owner, long contid) throws ApiException {
+	protected List<AccountBalance> get(EveKitOwner owner, Long contid) throws ApiException {
 		return getCommonApi().getAccountBalance(owner.getAccessKey(), owner.getAccessCred(), null, contid, MAX_RESULTS, REVERSE,
 				null, null);
 	}
@@ -84,5 +84,13 @@ public class EveKitAccountBalanceGetter extends AbstractEveKitListGetter<Account
 	@Override
 	protected ApiClient getApiClient() {
 		return getCommonApi().getApiClient();
+	}
+
+	@Override
+	protected void saveCid(EveKitOwner owner, Long contid) { } //Always get all data
+
+	@Override
+	protected Long loadCid(EveKitOwner owner) {
+		return null; //Always get all data
 	}
 }

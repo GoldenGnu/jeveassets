@@ -39,7 +39,7 @@ public class EveKitJournalGetter extends AbstractEveKitListGetter<WalletJournal>
 	}
 
 	@Override
-	protected List<WalletJournal> get(EveKitOwner owner, long contid) throws ApiException {
+	protected List<WalletJournal> get(EveKitOwner owner, Long contid) throws ApiException {
 		//3 months
 		return getCommonApi().getJournalEntries(owner.getAccessKey(), owner.getAccessCred(), null, contid, MAX_RESULTS, REVERSE,
 				null, null, dateFilter(), null, null, null, null, null, null, null, null, null, null, null, null, null, null);
@@ -78,6 +78,16 @@ public class EveKitJournalGetter extends AbstractEveKitListGetter<WalletJournal>
 	@Override
 	protected ApiClient getApiClient() {
 		return getCommonApi().getApiClient();
+	}
+
+	@Override
+	protected void saveCid(EveKitOwner owner, Long contid) {
+		owner.setJournalContID(contid);
+	}
+
+	@Override
+	protected Long loadCid(EveKitOwner owner) {
+		return owner.getJournalContID();
 	}
 
 }

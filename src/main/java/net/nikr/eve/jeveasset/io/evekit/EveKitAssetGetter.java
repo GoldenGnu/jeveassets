@@ -39,7 +39,7 @@ public class EveKitAssetGetter extends AbstractEveKitListGetter<Asset> {
 	}
 
 	@Override
-	protected List<Asset> get(EveKitOwner owner, long contid) throws ApiException {
+	protected List<Asset> get(EveKitOwner owner, Long contid) throws ApiException {
 		return getCommonApi().getAssets(owner.getAccessKey(), owner.getAccessCred(), null, contid, MAX_RESULTS, REVERSE,
 				null, null, null, null, null, null, null, null);
 	}
@@ -98,4 +98,11 @@ public class EveKitAssetGetter extends AbstractEveKitListGetter<Asset> {
 		return getCommonApi().getApiClient();
 	}
 
+	@Override
+	protected void saveCid(EveKitOwner owner, Long contid) { } //Always get all data
+
+	@Override
+	protected Long loadCid(EveKitOwner owner) {
+		return null; //Always get all data
+	}
 }

@@ -39,7 +39,7 @@ public class EveKitMarketOrdersGetter extends AbstractEveKitListGetter<MarketOrd
 	}
 
 	@Override
-	protected List<MarketOrder> get(EveKitOwner owner, long contid) throws ApiException {
+	protected List<MarketOrder> get(EveKitOwner owner, Long contid) throws ApiException {
 		//3 months
 		return getCommonApi().getMarketOrders(owner.getAccessKey(), owner.getAccessCred(), null, contid, MAX_RESULTS, REVERSE,
 				null, null, null, null, null, null, dateFilter(), null, null, null, null, null, null, null, null);
@@ -78,6 +78,17 @@ public class EveKitMarketOrdersGetter extends AbstractEveKitListGetter<MarketOrd
 	@Override
 	protected ApiClient getApiClient() {
 		return getCommonApi().getApiClient();
+	}
+
+	
+	@Override
+	protected void saveCid(EveKitOwner owner, Long contid) {
+		owner.setMarketOrdersContID(contid);
+	}
+
+	@Override
+	protected Long loadCid(EveKitOwner owner) {
+		return owner.getMarketOrdersContID();
 	}
 
 }

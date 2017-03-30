@@ -36,6 +36,13 @@ public class EveKitOwner extends AbstractOwner implements OwnerType {
 	private boolean corporation;
 	private Date limit = null;
 	private String accountName;
+	private Long marketOrdersContID = null;
+	private Long journalContID = null;
+	private Long transactionsContID = null;
+	private Long industryJobsActiveContID = null;
+	private Long industryJobsDateContID = null;
+	private Long contractsInProgressContID = null;
+	private Long contractsDateContID = null;
 
 	//New owner
 	public EveKitOwner(Integer accessKey, String accessCred) {
@@ -63,6 +70,62 @@ public class EveKitOwner extends AbstractOwner implements OwnerType {
 		this.expire = editEveKitOwner.expire;
 		this.limit = editEveKitOwner.limit;
 		this.accessMask = editEveKitOwner.accessMask;
+	}
+
+	public Long getMarketOrdersContID() {
+		return marketOrdersContID;
+	}
+
+	public void setMarketOrdersContID(Long marketOrdersContID) {
+		this.marketOrdersContID = marketOrdersContID;
+	}
+
+	public Long getJournalContID() {
+		return journalContID;
+	}
+
+	public void setJournalContID(Long journalContID) {
+		this.journalContID = journalContID;
+	}
+
+	public Long getTransactionsContID() {
+		return transactionsContID;
+	}
+
+	public void setTransactionsContID(Long transactionsContID) {
+		this.transactionsContID = transactionsContID;
+	}
+
+	public Long getIndustryJobsActiveContID() {
+		return industryJobsActiveContID;
+	}
+
+	public void setIndustryJobsActiveContID(Long industryJobsActiveContID) {
+		this.industryJobsActiveContID = industryJobsActiveContID;
+	}
+
+	public Long getIndustryJobsDateContID() {
+		return industryJobsDateContID;
+	}
+
+	public void setIndustryJobsDateContID(Long industryJobsDateContID) {
+		this.industryJobsDateContID = industryJobsDateContID;
+	}
+
+	public Long getContractsInProgressContID() {
+		return contractsInProgressContID;
+	}
+
+	public void setContractsInProgressContID(Long contractsInProgressContID) {
+		this.contractsInProgressContID = contractsInProgressContID;
+	}
+
+	public Long getContractsDateContID() {
+		return contractsDateContID;
+	}
+
+	public void setContractsDateContID(Long contractsDateContID) {
+		this.contractsDateContID = contractsDateContID;
 	}
 
 	public Integer getAccessKey() {

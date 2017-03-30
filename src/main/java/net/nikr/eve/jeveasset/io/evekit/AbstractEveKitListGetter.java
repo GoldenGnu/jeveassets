@@ -34,7 +34,7 @@ public abstract class AbstractEveKitListGetter<T> extends AbstractEveKitValidate
 		List<T> batch = null;
 		boolean more = true;
 		while (batch == null || (!batch.isEmpty() && more)) {
-			batch = get(owner, getCid(batch));
+			batch = get(owner, getCid(owner, batch));
 			more = false;
 			for (T t : batch) {
 				if ((isUpdateFullHistory() || isNow(t))) { //Ignore old objects, unless we're getting everything
@@ -46,16 +46,19 @@ public abstract class AbstractEveKitListGetter<T> extends AbstractEveKitValidate
 			}
 		}
 		set(owner, results);
+		saveCid(owner, getCid(owner, results));
 	}
 
-	private long getCid(List<T> batch) {
-		if (batch == null) {
-			return 0;
+	private Long getCid(EveKitOwner owner, List<T> batch) {
+		if (batch == null || batch.isEmpty()) {
+			return loadCid(owner);
 		} else {
 			return getCid(batch.get(batch.size() - 1));
 		}
 	}
 
-	protected abstract List<T> get(EveKitOwner owner, long contid) throws ApiException;
+	protected abstract List<T> get(EveKitOwner owner, Long contid) throws ApiException;
 	protected abstract long getCid(T obj);
+	protected abstract void saveCid(EveKitOwner owner, Long contid);
+	protected abstract Long loadCid(EveKitOwner owner);
 }

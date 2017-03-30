@@ -39,7 +39,7 @@ public class EveKitTransactionsGetter extends AbstractEveKitListGetter<WalletTra
 	}
 
 	@Override
-	protected List<WalletTransaction> get(EveKitOwner owner, long contid) throws ApiException {
+	protected List<WalletTransaction> get(EveKitOwner owner, Long contid) throws ApiException {
 		//3 months
 		return getCommonApi().getWalletTransactions(owner.getAccessKey(), owner.getAccessCred(), null, contid, MAX_RESULTS, REVERSE,
 				null, null, dateFilter(), null, null, null, null, null, null, null, null, null, null, null, null, null, null);
@@ -78,6 +78,16 @@ public class EveKitTransactionsGetter extends AbstractEveKitListGetter<WalletTra
 	@Override
 	protected ApiClient getApiClient() {
 		return getCommonApi().getApiClient();
+	}
+
+	@Override
+	protected void saveCid(EveKitOwner owner, Long contid) {
+		owner.setTransactionsContID(contid);
+	}
+
+	@Override
+	protected Long loadCid(EveKitOwner owner) {
+		return owner.getTransactionsContID();
 	}
 
 }
