@@ -166,13 +166,13 @@ public final class EveKitConverter {
 		journal.setOwnerID2(eveKitJournal.getOwnerID2());
 		journal.setArgName1(eveKitJournal.getArgName1());
 		journal.setArgID1(eveKitJournal.getArgID1());
-		journal.setAmount(journal.getAmount());
-		journal.setBalance(journal.getBalance());
-		journal.setReason(journal.getReason());
-		journal.setTaxReceiverID(journal.getTaxReceiverID());
-		journal.setTaxAmount(journal.getTaxAmount());
-		journal.setOwner1TypeID(journal.getOwner1TypeID());
-		journal.setOwner2TypeID(journal.getOwner2TypeID());
+		journal.setAmount(eveKitJournal.getAmount().doubleValue());
+		journal.setBalance(eveKitJournal.getBalance().doubleValue());
+		journal.setReason(eveKitJournal.getReason());
+		journal.setTaxReceiverID(eveKitJournal.getTaxReceiverID());
+		journal.setTaxAmount(eveKitJournal.getTaxAmount().doubleValue());
+		journal.setOwner1TypeID(eveKitJournal.getOwner1TypeID());
+		journal.setOwner2TypeID(eveKitJournal.getOwner2TypeID());
 		return journal;
 	}
 
