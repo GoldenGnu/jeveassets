@@ -31,25 +31,32 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.data.evekit.EveKitAccessMask;
 import net.nikr.eve.jeveasset.data.evekit.EveKitOwner;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
+import net.nikr.eve.jeveasset.gui.tabs.jobs.MyIndustryJob;
 
 
 public class EveKitIndustryJobsGetter extends AbstractEveKitListGetter<IndustryJob> {
 
-	private enum Runs { ACTIVE_PAUSED_READY, LAST_3_MONTHS }
+	private enum Runs { ACTIVE_PAUSED_READY, MONTHS, ALL }
 	
 	private Runs run;
-	private Map<EveKitOwner, Set<IndustryJob>> industryJobs;
+	private Map<EveKitOwner, Set<MyIndustryJob>> industryJobs;
 
 	@Override
 	public void load(UpdateTask updateTask, List<EveKitOwner> owners) {
-		industryJobs = new HashMap<EveKitOwner, Set<IndustryJob>>();
-		run = Runs.ACTIVE_PAUSED_READY;
-		super.load(updateTask, owners);
-		run = Runs.LAST_3_MONTHS;
-		super.load(updateTask, owners);
+		industryJobs = new HashMap<EveKitOwner, Set<MyIndustryJob>>();
+		if (Settings.get().getEveKitIndustryJobsHistory() == 0) {
+			run = Runs.ALL;
+			super.load(updateTask, owners);
+		} else {
+			run = Runs.ACTIVE_PAUSED_READY;
+			super.load(updateTask, owners);
+			run = Runs.MONTHS;
+			super.load(updateTask, owners);
+		}
 	}
 
 	@Override
@@ -58,22 +65,25 @@ public class EveKitIndustryJobsGetter extends AbstractEveKitListGetter<IndustryJ
 			return getCommonApi().getIndustryJobs(owner.getAccessKey(), owner.getAccessCred(), null, contid, MAX_RESULTS, REVERSE,
 				null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, industryJobsFilter(), null, null, null, null, null, null, null);
 		}
-		if (run == Runs.LAST_3_MONTHS) { //3 months
+		if (run == Runs.MONTHS || run == Runs.ALL) { //months
 			return getCommonApi().getIndustryJobs(owner.getAccessKey(), owner.getAccessCred(), null, contid, MAX_RESULTS, REVERSE,
-				null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, dateFilter(), null, null);
+				null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, dateFilter(Settings.get().getEveKitIndustryJobsHistory()), null, null);
 		}
 		return new ArrayList<IndustryJob>();
 	}
 
 	@Override
 	protected void set(EveKitOwner owner, List<IndustryJob> data) throws ApiException {
-		Set<IndustryJob> set = industryJobs.get(owner);
+		Set<MyIndustryJob> set = industryJobs.get(owner);
 		if (set == null) { //New owner
-			set = new HashSet<IndustryJob>();
+			 set = new HashSet<MyIndustryJob>();
+			if (loadCid(owner) != null) { //Old
+				set.addAll(owner.getIndustryJobs());
+			}
 			industryJobs.put(owner, set);
 		}
-		set.addAll(data); //Add newest data
-		owner.setIndustryJobs(EveKitConverter.convertIndustryJobs(new ArrayList<IndustryJob>(set), owner));
+		set.addAll(EveKitConverter.convertIndustryJobs(data, owner)); //New
+		owner.setIndustryJobs(new ArrayList<MyIndustryJob>(set)); //All
 	}
 
 	@Override
@@ -93,24 +103,22 @@ public class EveKitIndustryJobsGetter extends AbstractEveKitListGetter<IndustryJ
 
 	@Override
 	protected int getProgressStart() {
-		if (run == Runs.ACTIVE_PAUSED_READY) { //Status 1,2,3 = Active, Paused, Ready
-			return 0;
+		switch (run) {
+			case ACTIVE_PAUSED_READY: return 0;
+			case MONTHS: return 50;
+			case ALL: return 0;
+			default: return 0;
 		}
-		if (run == Runs.LAST_3_MONTHS) { ///Completed in the last 3 months
-			return 50;
-		}
-		return 50;
 	}
 
 	@Override
 	protected int getProgressEnd() {
-		if (run == Runs.ACTIVE_PAUSED_READY) { //Status 1,2,3 = Active, Paused, Ready
-			return 50;
+		switch (run) {
+			case ACTIVE_PAUSED_READY: return 50;
+			case MONTHS: return 100;
+			case ALL: return 100;
+			default: return 100;
 		}
-		if (run == Runs.LAST_3_MONTHS) { ///Completed in the last 3 months
-			return 100;
-		}
-		return 100;
 	}
 
 	@Override
@@ -130,20 +138,21 @@ public class EveKitIndustryJobsGetter extends AbstractEveKitListGetter<IndustryJ
 
 	@Override
 	protected void saveCid(EveKitOwner owner, Long contid) {
-		if (run == Runs.ACTIVE_PAUSED_READY) { //Status 1,2,3 = Active, Paused, Ready
-			owner.setIndustryJobsActiveContID(contid);
-		}
-		if (run == Runs.LAST_3_MONTHS) { ///Completed in the last 3 months
-			owner.setIndustryJobsDateContID(contid);
+		switch (run) {
+			case ACTIVE_PAUSED_READY: owner.setIndustryJobsActiveContID(contid); break;
+			case MONTHS: owner.setIndustryJobsDateContID(contid); break;
+			case ALL: owner.setIndustryJobsDateContID(contid); break;
+			default: owner.setIndustryJobsDateContID(contid); break;
 		}
 	}
 
 	@Override
 	protected Long loadCid(EveKitOwner owner) {
-		if (run == Runs.ACTIVE_PAUSED_READY) { //Status 1,2,3 = Active, Paused, Ready
-			return owner.getIndustryJobsActiveContID();
-		} else {
-			return owner.getIndustryJobsDateContID();
+		switch (run) {
+			case ACTIVE_PAUSED_READY: return owner.getIndustryJobsActiveContID();
+			case MONTHS: return owner.getIndustryJobsDateContID();
+			case ALL: return owner.getIndustryJobsDateContID();
+			default: return owner.getIndustryJobsDateContID();
 		}
 	}
 

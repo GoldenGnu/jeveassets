@@ -176,6 +176,13 @@ public final class SettingsReader extends AbstractXmlReader {
 			throw new XmlException("Wrong root element name.");
 		}
 
+		//EveKit
+		NodeList evekitNodes = element.getElementsByTagName("evekit");
+		if (evekitNodes.getLength() == 1) {
+			Element evekitElement = (Element) evekitNodes.item(0);
+			parseEveKitSettings(evekitElement, settings);
+		}
+
 		//Routing
 		NodeList routingNodes = element.getElementsByTagName("routingsettings");
 		if (routingNodes.getLength() == 1) {
@@ -633,6 +640,35 @@ public final class SettingsReader extends AbstractXmlReader {
 				}
 			}
 		}
+	}
+
+	private void parseEveKitSettings(Element eveKitElement, Settings settings) {
+		int transactionsHistory = 3;
+		if (AttributeGetters.haveAttribute(eveKitElement, "transactionshistory")) {
+			transactionsHistory = AttributeGetters.getInt(eveKitElement, "transactionshistory");
+		}
+		int journalHistory = 3;
+		if (AttributeGetters.haveAttribute(eveKitElement, "journalhistory")) {
+			journalHistory = AttributeGetters.getInt(eveKitElement, "journalhistory");
+		}
+		int marketOrdersHistory = 3;
+		if (AttributeGetters.haveAttribute(eveKitElement, "marketordershistory")) {
+			marketOrdersHistory = AttributeGetters.getInt(eveKitElement, "marketordershistory");
+		}
+		int industryJobsHistory = 3;
+		if (AttributeGetters.haveAttribute(eveKitElement, "industryjobshistory")) {
+			industryJobsHistory = AttributeGetters.getInt(eveKitElement, "industryjobshistory");
+		}
+		int contractsHistory = 3;
+		if (AttributeGetters.haveAttribute(eveKitElement, "contractshistory")) {
+			contractsHistory = AttributeGetters.getInt(eveKitElement, "contractshistory");
+		}
+		settings.setEveKitTransactionsHistory(transactionsHistory);
+		settings.setEveKitJournalHistory(journalHistory);
+		settings.setEveKitMarketOrdersHistory(marketOrdersHistory);
+		settings.setEveKitIndustryJobsHistory(industryJobsHistory);
+		settings.setEveKitContractsHistory(contractsHistory);
+		
 	}
 
 	private void parseRoutingSettings(Element routingElement, Settings settings) {

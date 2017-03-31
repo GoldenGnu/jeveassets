@@ -25,10 +25,14 @@ import enterprises.orbital.evekit.client.invoker.ApiClient;
 import enterprises.orbital.evekit.client.invoker.ApiException;
 import enterprises.orbital.evekit.client.model.WalletTransaction;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.data.evekit.EveKitAccessMask;
 import net.nikr.eve.jeveasset.data.evekit.EveKitOwner;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
+import net.nikr.eve.jeveasset.gui.tabs.transaction.MyTransaction;
 
 
 public class EveKitTransactionsGetter extends AbstractEveKitListGetter<WalletTransaction> {
@@ -40,14 +44,19 @@ public class EveKitTransactionsGetter extends AbstractEveKitListGetter<WalletTra
 
 	@Override
 	protected List<WalletTransaction> get(EveKitOwner owner, Long contid) throws ApiException {
-		//3 months
+		//months
 		return getCommonApi().getWalletTransactions(owner.getAccessKey(), owner.getAccessCred(), null, contid, MAX_RESULTS, REVERSE,
-				null, null, dateFilter(), null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+				null, null, dateFilter(Settings.get().getEveKitTransactionsHistory()), null, null, null, null, null, null, null, null, null, null, null, null, null, null);
 	}
 
 	@Override
 	protected void set(EveKitOwner owner, List<WalletTransaction> data) throws ApiException {
-		owner.setTransactions(EveKitConverter.convertTransactions(data, owner));
+		Set<MyTransaction> set = new HashSet<>();
+		if (loadCid(owner) != null) { //Old
+			set.addAll(owner.getTransactions());
+		}
+		set.addAll(EveKitConverter.convertTransactions(data, owner)); //New
+		owner.setTransactions(set); //All
 	}
 
 	@Override

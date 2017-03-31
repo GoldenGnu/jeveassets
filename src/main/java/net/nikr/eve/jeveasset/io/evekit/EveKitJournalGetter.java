@@ -25,10 +25,14 @@ import enterprises.orbital.evekit.client.invoker.ApiClient;
 import enterprises.orbital.evekit.client.invoker.ApiException;
 import enterprises.orbital.evekit.client.model.WalletJournal;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.data.evekit.EveKitAccessMask;
 import net.nikr.eve.jeveasset.data.evekit.EveKitOwner;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
+import net.nikr.eve.jeveasset.gui.tabs.journal.MyJournal;
 
 
 public class EveKitJournalGetter extends AbstractEveKitListGetter<WalletJournal> {
@@ -40,14 +44,19 @@ public class EveKitJournalGetter extends AbstractEveKitListGetter<WalletJournal>
 
 	@Override
 	protected List<WalletJournal> get(EveKitOwner owner, Long contid) throws ApiException {
-		//3 months
+		//months
 		return getCommonApi().getJournalEntries(owner.getAccessKey(), owner.getAccessCred(), null, contid, MAX_RESULTS, REVERSE,
-				null, null, dateFilter(), null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+				null, null, dateFilter(Settings.get().getEveKitJournalHistory()), null, null, null, null, null, null, null, null, null, null, null, null, null, null);
 	}
 
 	@Override
 	protected void set(EveKitOwner owner, List<WalletJournal> data) throws ApiException {
-		owner.setJournal(EveKitConverter.convertJournals(data, owner));
+		Set<MyJournal> set = new HashSet<MyJournal>();
+		if (loadCid(owner) != null) { //Old
+			set.addAll(owner.getJournal());
+		}
+		set.addAll(EveKitConverter.convertJournals(data, owner)); //New
+		owner.setJournal(set); //All
 	}
 
 	@Override

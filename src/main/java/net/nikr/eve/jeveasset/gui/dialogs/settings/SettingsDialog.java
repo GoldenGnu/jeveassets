@@ -112,6 +112,9 @@ public class SettingsDialog extends JDialogCentered {
 		TagsSettingsPanel tagsSettingsPanel = new TagsSettingsPanel(program, this);
 		add(tagsSettingsPanel, valuesNode);
 
+		EveKitSettingsPanel eveKitSettingsPanel = new EveKitSettingsPanel(program, this);
+		add(eveKitSettingsPanel);
+
 		PriceDataSettingsPanel priceDataSettingsPanel = new PriceDataSettingsPanel(program, this);
 		add(priceDataSettingsPanel);
 

@@ -27,30 +27,35 @@ import enterprises.orbital.evekit.client.model.Contract;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
+import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.data.evekit.EveKitAccessMask;
 import net.nikr.eve.jeveasset.data.evekit.EveKitOwner;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
+import net.nikr.eve.jeveasset.gui.tabs.contracts.MyContract;
+import net.nikr.eve.jeveasset.gui.tabs.contracts.MyContractItem;
 
 
 public class EveKitContractsGetter extends AbstractEveKitListGetter<Contract> {
 
-	private enum Runs { IN_PROGRESS, LAST_3_MONTHS }
+	private enum Runs { IN_PROGRESS, MONTHS, ALL} 
 	
 	private Runs run;
-	private Map<EveKitOwner, Set<Contract>> contracts;
+	private Map<EveKitOwner, Map<MyContract, List<MyContractItem>>> contracts;
 	
 	@Override
 	public void load(UpdateTask updateTask, List<EveKitOwner> owners) {
-		contracts = new HashMap<EveKitOwner, Set<Contract>>();
-		run = Runs.IN_PROGRESS;
-		super.load(updateTask, owners);
-
-		run = Runs.LAST_3_MONTHS;
-		super.load(updateTask, owners);
+		contracts = new HashMap<EveKitOwner, Map<MyContract, List<MyContractItem>>>();
+		if (Settings.get().getEveKitContractsHistory() == 0) {
+			run = Runs.ALL;
+			super.load(updateTask, owners);
+		} else {
+			run = Runs.IN_PROGRESS;
+			super.load(updateTask, owners);
+			run = Runs.MONTHS;
+			super.load(updateTask, owners);
+		}
 	}
 
 	@Override
@@ -59,22 +64,25 @@ public class EveKitContractsGetter extends AbstractEveKitListGetter<Contract> {
 			return getCommonApi().getContracts(owner.getAccessKey(), owner.getAccessCred(), null, contid, MAX_RESULTS, REVERSE,
 				null, null, null, null, null, null, null, null, contractsFilter(), null, null, null, null, null, null, null, null, null, null, null, null, null);
 		}
-		if (run == Runs.LAST_3_MONTHS) { //3 months
+		if (run == Runs.MONTHS || run == Runs.ALL) { //months
 			return getCommonApi().getContracts(owner.getAccessKey(), owner.getAccessCred(), null, contid, MAX_RESULTS, REVERSE,
-					null, null, null, null, null, null, null, null, null, null, null, null, null, dateFilter(), null, null, null, null, null, null, null, null);
+					null, null, null, null, null, null, null, null, null, null, null, null, null, dateFilter(Settings.get().getEveKitContractsHistory()), null, null, null, null, null, null, null, null);
 		}
 		return new ArrayList<Contract>();
 	}
 
 	@Override
 	protected void set(EveKitOwner owner, List<Contract> data) throws ApiException {
-		Set<Contract> set = contracts.get(owner);
-		if (set == null) { //New owner
-			set = new HashSet<Contract>();
-			contracts.put(owner, set);
+		Map<MyContract, List<MyContractItem>> map = contracts.get(owner);
+		if (map == null) { //New owner
+			map = new HashMap<MyContract, List<MyContractItem>>();
+			if (loadCid(owner) != null) { //Old
+				map.putAll(owner.getContracts());
+			}
+			contracts.put(owner, map);
 		}
-		set.addAll(data); //Add newest data
-		owner.setContracts(EveKitConverter.convertContracts(new ArrayList<Contract>(set)));
+		map.putAll(EveKitConverter.convertContracts(data)); //New
+		owner.setContracts(map); //All
 	}
 
 	@Override
@@ -94,24 +102,22 @@ public class EveKitContractsGetter extends AbstractEveKitListGetter<Contract> {
 
 	@Override
 	protected int getProgressStart() {
-		if (run == Runs.IN_PROGRESS) { //In-Progress
-			return 0;
+		switch(run) {
+			case IN_PROGRESS: return 0;
+			case MONTHS: return 15;
+			case ALL: return 0;
+			default: return 0;
 		}
-		if (run == Runs.LAST_3_MONTHS) { //Expired in that last 3 months
-			return 15;
-		}
-		return 15;
 	}
 
 	@Override
 	protected int getProgressEnd() {
-		if (run == Runs.IN_PROGRESS) { //In-Progress
-			return 15;
+		switch(run) {
+			case IN_PROGRESS: return 15;
+			case MONTHS: return 30;
+			case ALL: return 30;
+			default: return 30;
 		}
-		if (run == Runs.LAST_3_MONTHS) { //Expired in that last 3 months
-			return 30;
-		}
-		return 30;
 	}
 
 	@Override
@@ -131,20 +137,21 @@ public class EveKitContractsGetter extends AbstractEveKitListGetter<Contract> {
 
 	@Override
 	protected void saveCid(EveKitOwner owner, Long contid) {
-		if (run == Runs.IN_PROGRESS) { //In-Progress
-			owner.setContractsInProgressContID(contid);
-		}
-		if (run == Runs.LAST_3_MONTHS) { //Expired in that last 3 months
-			owner.setContractsDateContID(contid);
+		switch(run) {
+			case IN_PROGRESS: owner.setContractsInProgressContID(contid); break;
+			case MONTHS: owner.setContractsDateContID(contid); break;
+			case ALL: owner.setContractsDateContID(contid); break;
+			default: owner.setContractsDateContID(contid); break;
 		}
 	}
 
 	@Override
 	protected Long loadCid(EveKitOwner owner) {
-		if (run == Runs.IN_PROGRESS) { //In-Progress
-			return owner.getContractsInProgressContID();
-		} else {
-			return owner.getContractsDateContID();
+		switch(run) {
+			case IN_PROGRESS: return owner.getContractsInProgressContID();
+			case MONTHS: return owner.getContractsDateContID();
+			case ALL: return owner.getContractsDateContID();
+			default: return owner.getContractsDateContID();
 		}
 	}
 }

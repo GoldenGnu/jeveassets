@@ -24,11 +24,16 @@ package net.nikr.eve.jeveasset.io.evekit;
 import enterprises.orbital.evekit.client.invoker.ApiClient;
 import enterprises.orbital.evekit.client.invoker.ApiException;
 import enterprises.orbital.evekit.client.model.MarketOrder;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.data.evekit.EveKitAccessMask;
 import net.nikr.eve.jeveasset.data.evekit.EveKitOwner;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
+import net.nikr.eve.jeveasset.gui.tabs.orders.MyMarketOrder;
 
 
 public class EveKitMarketOrdersGetter extends AbstractEveKitListGetter<MarketOrder>  {
@@ -40,14 +45,19 @@ public class EveKitMarketOrdersGetter extends AbstractEveKitListGetter<MarketOrd
 
 	@Override
 	protected List<MarketOrder> get(EveKitOwner owner, Long contid) throws ApiException {
-		//3 months
+		//months
 		return getCommonApi().getMarketOrders(owner.getAccessKey(), owner.getAccessCred(), null, contid, MAX_RESULTS, REVERSE,
-				null, null, null, null, null, null, dateFilter(), null, null, null, null, null, null, null, null);
+				null, null, null, null, null, null, dateFilter(Settings.get().getEveKitMarketOrdersHistory()), null, null, null, null, null, null, null, null);
 	}
 
 	@Override
 	protected void set(EveKitOwner owner, List<MarketOrder> data) throws ApiException {
-		owner.setMarketOrders(EveKitConverter.convertMarketOrders(data, owner));
+		Set<MyMarketOrder> set = new HashSet<>();
+		if (loadCid(owner) != null) { //Old
+			set.addAll(owner.getMarketOrders());
+		}
+		set.addAll(EveKitConverter.convertMarketOrders(data, owner)); //New
+		owner.setMarketOrders(new ArrayList<>(set)); //All
 	}
 
 	@Override

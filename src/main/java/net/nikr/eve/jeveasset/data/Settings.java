@@ -101,6 +101,11 @@ public class Settings {
 	private static Settings settings;
 	private static final SettingsLock LOCK = new SettingsLock();
 
+	private int eveKitTransactionsHistory = 3;
+	private int eveKitJournalHistory = 3;
+	private int eveKitMarketOrdersHistory = 3;
+	private int eveKitIndustryJobsHistory = 3;
+	private int eveKitContractsHistory = 3;
 //External
 	//Price						Saved by PriceDataGetter.process() in pricedata.dat (on api update)
 	private Map<Integer, PriceData> priceDatas = new HashMap<Integer, PriceData>(); //TypeID : int
@@ -773,6 +778,46 @@ public class Settings {
 
 	public Map<String, OverviewGroup> getOverviewGroups() {
 		return overviewGroups;
+	}
+
+	public int getEveKitTransactionsHistory() {
+		return eveKitTransactionsHistory;
+	}
+
+	public void setEveKitTransactionsHistory(int eveKitTransactionsHistory) {
+		this.eveKitTransactionsHistory = eveKitTransactionsHistory;
+	}
+
+	public int getEveKitJournalHistory() {
+		return eveKitJournalHistory;
+	}
+
+	public void setEveKitJournalHistory(int eveKitJournalHistory) {
+		this.eveKitJournalHistory = eveKitJournalHistory;
+	}
+
+	public int getEveKitMarketOrdersHistory() {
+		return eveKitMarketOrdersHistory;
+	}
+
+	public void setEveKitMarketOrdersHistory(int eveKitMarketOrdersHistory) {
+		this.eveKitMarketOrdersHistory = eveKitMarketOrdersHistory;
+	}
+
+	public int getEveKitIndustryJobsHistory() {
+		return eveKitIndustryJobsHistory;
+	}
+
+	public void setEveKitIndustryJobsHistory(int eveKitIndustryJobsHistory) {
+		this.eveKitIndustryJobsHistory = eveKitIndustryJobsHistory;
+	}
+
+	public int getEveKitContractsHistory() {
+		return eveKitContractsHistory;
+	}
+
+	public void setEveKitContractsHistory(int eveKitContractsHistory) {
+		this.eveKitContractsHistory = eveKitContractsHistory;
 	}
 
 	public String getPathSettings() {

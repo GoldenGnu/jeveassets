@@ -31,8 +31,6 @@ import net.nikr.eve.jeveasset.data.evekit.EveKitOwner;
 
 public abstract class AbstractEveKitValidatedGetter<T> extends AbstractEveKitGetter {
 
-	private static final int MONTHS = 3;
-
 	protected static final boolean REVERSE = false;
 	protected static final Integer MAX_RESULTS = Integer.MAX_VALUE;
 	private boolean updateFullHistory = false;
@@ -63,10 +61,14 @@ public abstract class AbstractEveKitValidatedGetter<T> extends AbstractEveKitGet
 		return encode("{ values: [\"" + id + "\"] }");
 	}
 
-	protected final String dateFilter() {
-		Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
-		calendar.add(Calendar.DAY_OF_MONTH, (-MONTHS * 28));
-		return encode("{ start: \"" + String.valueOf(calendar.getTime().getTime()) + "\", end: \"" + String.valueOf(Long.MAX_VALUE) + "\" }");
+	protected final String dateFilter(int months) {
+		if (months == 0) {
+			return encode("{ any: true }");
+		} else {
+			Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
+			calendar.add(Calendar.DAY_OF_MONTH, (-months * 30));
+			return encode("{ start: \"" + String.valueOf(calendar.getTime().getTime()) + "\", end: \"" + String.valueOf(Long.MAX_VALUE) + "\" }");
+		}
 	}
 
 	private String encode(String plane) {
