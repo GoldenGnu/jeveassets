@@ -22,10 +22,10 @@
 package net.nikr.eve.jeveasset.gui.tabs.jobs;
 
 import ca.odell.glazedlists.swing.DefaultEventTableModel;
-import java.awt.Color;
 import java.awt.Component;
 import javax.swing.table.TableCellRenderer;
 import net.nikr.eve.jeveasset.Program;
+import net.nikr.eve.jeveasset.gui.shared.Colors;
 import net.nikr.eve.jeveasset.gui.shared.table.JAutoColumnTable;
 
 
@@ -48,7 +48,7 @@ public class JIndustryJobsTable extends JAutoColumnTable {
 		//User set location
 		if (industryJob.getLocation().isUserLocation() && columnName.equals(IndustryJobTableFormat.LOCATION.getColumnName())) {
 			if (!isSelected) {
-				component.setBackground(new Color(230, 230, 230));
+				component.setBackground(Colors.LIGHT_GRAY.getColor());
 			} else {
 				component.setBackground(this.getSelectionBackground().darker());
 			}

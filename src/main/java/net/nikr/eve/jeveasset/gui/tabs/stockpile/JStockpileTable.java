@@ -28,6 +28,7 @@ import java.awt.Component;
 import javax.swing.table.TableCellRenderer;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Settings;
+import net.nikr.eve.jeveasset.gui.shared.Colors;
 import net.nikr.eve.jeveasset.gui.shared.table.JSeparatorTable;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileTotal;
@@ -59,26 +60,26 @@ public class JStockpileTable extends JSeparatorTable {
 				} else if (Settings.get().isStockpileHalfColors()) {
 					if (stockpileItem.getPercentNeeded() >= (Settings.get().getStockpileColorGroup3() / 100.0) ) {
 						//Group 3
-						component.setBackground(new Color(200, 255, 200));
+						component.setBackground(Colors.LIGHT_GREEN.getColor());
 					} else if (stockpileItem.getPercentNeeded() >= (Settings.get().getStockpileColorGroup2() / 100.0) ) {
 						//Group 2
-						component.setBackground(new Color(255, 255, 200));
+						component.setBackground(Colors.LIGHT_YELLOW.getColor());
 					} else {
 						//Group 1
-						component.setBackground(new Color(255, 200, 200));
+						component.setBackground(Colors.LIGHT_RED.getColor());
 					}
 				} else {
 					if (stockpileItem.getPercentNeeded() >= (Settings.get().getStockpileColorGroup2() / 100.0) ) {
 						//Group 2
-						component.setBackground(new Color(200, 255, 200));
+						component.setBackground(Colors.LIGHT_GREEN.getColor());
 					} else {
 						//Group 1
-						component.setBackground(new Color(255, 200, 200));
+						component.setBackground(Colors.LIGHT_RED.getColor());
 					}
 				}
 			} else if (object instanceof StockpileTotal) { //Total
 				if (!isSelected) {
-					component.setBackground(new Color(235, 235, 235));
+					component.setBackground(Colors.LIGHT_GRAY.getColor());
 				} else {
 					component.setBackground(this.getSelectionBackground().darker());
 				}
@@ -118,21 +119,21 @@ public class JStockpileTable extends JSeparatorTable {
 				if (!isSelected) {
 					component.setForeground(Color.RED.darker());
 				} else {
-					component.setForeground(new Color(255, 200, 200));
+					component.setForeground(Colors.LIGHT_RED.getColor());
 				}
 			}
 			if (columnName.equals(StockpileTableFormat.VALUE_NEEDED.getColumnName()) && stockpileItem.getValueNeeded() < 0) {
 				if (!isSelected) {
 					component.setForeground(Color.RED.darker());
 				} else {
-					component.setForeground(new Color(255, 200, 200));
+					component.setForeground(Colors.LIGHT_RED.getColor());
 				}
 			}
 			if (columnName.equals(StockpileTableFormat.VOLUME_NEEDED.getColumnName()) && stockpileItem.getVolumeNeeded() < 0) {
 				if (!isSelected) {
 					component.setForeground(Color.RED.darker());
 				} else {
-					component.setForeground(new Color(255, 200, 200));
+					component.setForeground(Colors.LIGHT_RED.getColor());
 				}
 			}
 		}

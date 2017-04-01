@@ -55,6 +55,7 @@ import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.data.tag.Tag;
 import net.nikr.eve.jeveasset.data.tag.TagColor;
+import net.nikr.eve.jeveasset.gui.shared.Colors;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
@@ -211,7 +212,7 @@ public class JTagsDialog extends JDialogCentered {
 		public void caretUpdate(CaretEvent e) {
 			String name = jTextField.getText();
 			if (unique.contains(name) && (editTag == null || !editTag.getName().equals(name))) {
-				jTextField.setBackground(new Color(255, 200, 200));
+				jTextField.setBackground(Colors.LIGHT_RED.getColor());
 				jOK.setEnabled(false);
 			} else {
 				jOK.setEnabled(true);

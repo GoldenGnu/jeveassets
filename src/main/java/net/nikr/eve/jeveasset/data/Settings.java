@@ -95,7 +95,8 @@ public class Settings {
 		FLAG_BLUEPRINT_BASE_PRICE_TECH_2,
 		FLAG_TRANSACTION_HISTORY,
 		FLAG_JOURNAL_HISTORY,
-		FLAG_MARKET_ORDER_HISTORY
+		FLAG_MARKET_ORDER_HISTORY,
+		FLAG_STRONG_COLORS
 	}
 
 	private static Settings settings;
@@ -225,6 +226,7 @@ public class Settings {
 		flags.put(SettingFlag.FLAG_TRANSACTION_HISTORY, true);
 		flags.put(SettingFlag.FLAG_JOURNAL_HISTORY, true);
 		flags.put(SettingFlag.FLAG_MARKET_ORDER_HISTORY, true);
+		flags.put(SettingFlag.FLAG_STRONG_COLORS, false);
 		cacheFlags();
 	}
 
@@ -701,6 +703,14 @@ public class Settings {
 
 	public void setMarketOrderHistory(final boolean marketOrderHistory) {
 		flags.put(SettingFlag.FLAG_MARKET_ORDER_HISTORY, marketOrderHistory);
+	}
+
+	public boolean isStrongColors() {
+		return flags.get(SettingFlag.FLAG_STRONG_COLORS);
+	}
+
+	public void setStrongColors(final boolean strongColors) {
+		flags.put(SettingFlag.FLAG_STRONG_COLORS, strongColors);
 	}
 
 	public List<Stockpile> getStockpiles() {

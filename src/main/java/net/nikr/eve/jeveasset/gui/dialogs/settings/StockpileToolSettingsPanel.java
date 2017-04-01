@@ -42,15 +42,12 @@ import javax.swing.SwingUtilities;
 import javax.swing.text.JTextComponent;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Settings;
+import net.nikr.eve.jeveasset.gui.shared.Colors;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.i18n.DialoguesSettings;
 
 
 public class StockpileToolSettingsPanel extends JSettingsPanel {
-
-	private final Color RED = new Color(255, 200, 200);
-	private final Color YELLOW = new Color(255, 255, 200);
-	private final Color GREEN = new Color(200, 255, 200);
 	
 	private final JCheckBox jSwitchTab;
 	private final JRadioButton jTwoGroups;
@@ -91,7 +88,7 @@ public class StockpileToolSettingsPanel extends JSettingsPanel {
 		jGroup1Label = new JLabel();
 		jGroup1Label.setOpaque(true);
 		jGroup1Label.setHorizontalAlignment(JLabel.CENTER);
-		jGroup1Label.setBackground(RED);
+		jGroup1Label.setBackground(Colors.LIGHT_RED.getColor());
 		jGroup1Label.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
 
 		jGroup2 = new JFormattedTextField(new DecimalFormat("##0", new DecimalFormatSymbols(Locale.ENGLISH)) );
@@ -117,7 +114,7 @@ public class StockpileToolSettingsPanel extends JSettingsPanel {
 		jGroup2Label = new JLabel();
 		jGroup2Label.setOpaque(true);
 		jGroup2Label.setHorizontalAlignment(JLabel.LEADING);
-		jGroup2Label.setBackground(RED);
+		jGroup2Label.setBackground(Colors.LIGHT_RED.getColor());
 		jGroup2Label.setBorder(BorderFactory.createMatteBorder(1, 0, 1, 1, Color.BLACK));
 		jGroup2Label.addMouseListener(new MouseAdapter() {
 			@Override
@@ -149,7 +146,7 @@ public class StockpileToolSettingsPanel extends JSettingsPanel {
 		jGroup3Label = new JLabel();
 		jGroup3Label.setOpaque(true);
 		jGroup3Label.setHorizontalAlignment(JLabel.LEADING);
-		jGroup3Label.setBackground(RED);
+		jGroup3Label.setBackground(Colors.LIGHT_RED.getColor());
 		jGroup3Label.setBorder(BorderFactory.createMatteBorder(1, 0, 1, 1, Color.BLACK));
 		jGroup3Label.addMouseListener(new MouseAdapter() {
 			@Override
@@ -273,15 +270,15 @@ public class StockpileToolSettingsPanel extends JSettingsPanel {
 	}
 
 	private void useTwoGroups() {
-		jGroup2Label.setBackground(GREEN);
+		jGroup2Label.setBackground(Colors.LIGHT_GREEN.getColor());
 		jGroup3Label.setBackground(Color.LIGHT_GRAY);
 		jGroup3.setText("");
 		jGroup3.setEnabled(false);
 		jGroup2.requestFocusInWindow();
 	}
 	private void useThreeGroups() {
-		jGroup2Label.setBackground(YELLOW);
-		jGroup3Label.setBackground(GREEN);
+		jGroup2Label.setBackground(Colors.LIGHT_YELLOW.getColor());
+		jGroup3Label.setBackground(Colors.LIGHT_GREEN.getColor());
 		jGroup3.setEnabled(true);
 		jGroup2.requestFocusInWindow();
 	}

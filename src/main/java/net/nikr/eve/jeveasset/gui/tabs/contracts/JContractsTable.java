@@ -23,10 +23,10 @@ package net.nikr.eve.jeveasset.gui.tabs.contracts;
 
 import ca.odell.glazedlists.SeparatorList;
 import ca.odell.glazedlists.swing.DefaultEventTableModel;
-import java.awt.Color;
 import java.awt.Component;
 import javax.swing.table.TableCellRenderer;
 import net.nikr.eve.jeveasset.Program;
+import net.nikr.eve.jeveasset.gui.shared.Colors;
 import net.nikr.eve.jeveasset.gui.shared.table.JSeparatorTable;
 
 
@@ -52,18 +52,18 @@ public class JContractsTable extends JSeparatorTable {
 				if (isSelected) {
 					component.setBackground(this.getSelectionBackground().darker());
 				} else if (item.getContract().isCourier()) {
-					component.setBackground(new Color(255, 255, 160)); //Yellow
+					component.setBackground(Colors.LIGHT_YELLOW.getColor());
 				} else if (item.isIncluded()) {
-					component.setBackground(new Color(160, 255, 160)); //Green
+					component.setBackground(Colors.LIGHT_GREEN.getColor());
 				} else {
-					component.setBackground(new Color(255, 160, 160)); //Red
+					component.setBackground(Colors.LIGHT_RED.getColor());
 				}
 			}
 			//User set location
 			if ((item.getContract().getStartStation().isUserLocation() && columnName.equals(ContractsTableFormat.START_STATION.getColumnName()))
 				|| (item.getContract().getEndStation().isUserLocation() && columnName.equals(ContractsTableFormat.END_STATION.getColumnName()))) {
 				if (!isSelected) {
-					component.setBackground(new Color(230, 230, 230));
+					component.setBackground(Colors.LIGHT_GRAY.getColor());
 				} else {
 					component.setBackground(this.getSelectionBackground().darker());
 				}

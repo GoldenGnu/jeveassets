@@ -590,4 +590,14 @@ public abstract class FakeSettings extends Settings {
 		throw new UnsupportedOperationException("not implemented");
 	}
 
+	@Override
+	public void setStrongColors(boolean strongColors) {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public boolean isStrongColors() {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
 }

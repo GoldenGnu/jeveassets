@@ -22,10 +22,10 @@
 package net.nikr.eve.jeveasset.gui.tabs.orders;
 
 import ca.odell.glazedlists.swing.DefaultEventTableModel;
-import java.awt.Color;
 import java.awt.Component;
 import javax.swing.table.TableCellRenderer;
 import net.nikr.eve.jeveasset.Program;
+import net.nikr.eve.jeveasset.gui.shared.Colors;
 import net.nikr.eve.jeveasset.gui.shared.table.JAutoColumnTable;
 
 
@@ -50,14 +50,14 @@ public class JMarketOrdersTable extends JAutoColumnTable {
 				if (isSelected) {
 					component.setBackground(this.getSelectionBackground().darker());
 				} else {
-					component.setBackground(new Color(255, 200, 200));
+					component.setBackground(Colors.LIGHT_RED.getColor());
 				}
 			}
 		}
 		//User set location
 		if (marketOrder.getLocation().isUserLocation() && columnName.equals(MarketTableFormat.LOCATION.getColumnName())) {
 			if (!isSelected) {
-				component.setBackground(new Color(230, 230, 230));
+				component.setBackground(Colors.LIGHT_GRAY.getColor());
 			} else {
 				component.setBackground(this.getSelectionBackground().darker());
 			}

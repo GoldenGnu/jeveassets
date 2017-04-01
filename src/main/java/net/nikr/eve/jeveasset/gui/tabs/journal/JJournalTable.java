@@ -26,6 +26,7 @@ import java.awt.Color;
 import java.awt.Component;
 import javax.swing.table.TableCellRenderer;
 import net.nikr.eve.jeveasset.Program;
+import net.nikr.eve.jeveasset.gui.shared.Colors;
 import net.nikr.eve.jeveasset.gui.shared.table.JAutoColumnTable;
 
 
@@ -49,14 +50,14 @@ public class JJournalTable extends JAutoColumnTable {
 			if (!isSelected) {
 				component.setForeground(Color.RED.darker());
 			} else {
-				component.setForeground(new Color(255, 200, 200));
+				component.setForeground(Colors.LIGHT_RED.getColor());
 			}
 		}
 		if (columnName.equals(JournalTableFormat.BALANCE.getColumnName()) && journal.getBalance() < 0) {
 			if (!isSelected) {
 				component.setForeground(Color.RED.darker());
 			} else {
-				component.setForeground(new Color(255, 200, 200));
+				component.setForeground(Colors.LIGHT_RED.getColor());
 			}
 		}
 		return component;

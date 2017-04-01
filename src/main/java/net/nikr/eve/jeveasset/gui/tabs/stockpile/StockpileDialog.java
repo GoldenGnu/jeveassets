@@ -72,6 +72,7 @@ import net.nikr.eve.jeveasset.data.eveapi.EveApiOwner;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.data.StaticData;
 import net.nikr.eve.jeveasset.data.api.OwnerType;
+import net.nikr.eve.jeveasset.gui.shared.Colors;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.CaseInsensitiveComparator;
 import net.nikr.eve.jeveasset.gui.shared.DocumentFactory;
@@ -277,10 +278,10 @@ public class StockpileDialog extends JDialogCentered {
 				jName.setBackground(Color.WHITE);
 			} else {
 				b = false;
-				jName.setBackground(new Color(255, 200, 200));
+				jName.setBackground(Colors.LIGHT_RED.getColor());
 			}
 		} else if (jName.getText().isEmpty()) {
-			jName.setBackground(new Color(255, 200, 200));
+			jName.setBackground(Colors.LIGHT_RED.getColor());
 			b = false;
 		} else {
 			jName.setBackground(Color.WHITE);

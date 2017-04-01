@@ -40,10 +40,9 @@ public abstract class DialoguesSettings extends Bundle {
 
 	// used in GeneralSettingsPanel
 	public abstract String general();
-	public abstract String searchForNewVersion(String programName);
-	public abstract String searchForNewVersionBeta();
 	public abstract String enterFilter();
 	public abstract String highlightSelectedRow();
+	public abstract String strongColors();
 
 	// used in AssetsToolSettingsPanel
 	public abstract String assets();

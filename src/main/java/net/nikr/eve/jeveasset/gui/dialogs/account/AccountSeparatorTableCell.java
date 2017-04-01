@@ -17,6 +17,7 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.api.OwnerType;
+import net.nikr.eve.jeveasset.gui.shared.Colors;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.table.SeparatorTableCell;
 import net.nikr.eve.jeveasset.i18n.DialoguesAccount;
@@ -42,7 +43,6 @@ public class AccountSeparatorTableCell extends SeparatorTableCell<OwnerType> {
 	private final JLabel jSpaceLabel;
 
 	private final Color defaultColor;
-	private final Color errorColor = new Color(255, 200, 200);
 
 	public AccountSeparatorTableCell(final ActionListener actionListener, final JTable jTable, final SeparatorList<OwnerType> separatorList) {
 		super(jTable, separatorList);
@@ -131,7 +131,7 @@ public class AccountSeparatorTableCell extends SeparatorTableCell<OwnerType> {
 
 		//Invalid / Expired
 		jSpaceLabel.setVisible(owner.isInvalid() || owner.isExpired());
-		jPanel.setBackground(owner.isInvalid() || owner.isExpired() ? errorColor : defaultColor);
+		jPanel.setBackground(owner.isInvalid() || owner.isExpired() ? Colors.LIGHT_RED.getColor() : defaultColor);
 	}
 
 	private class ListenerClass implements FocusListener, ActionListener {
