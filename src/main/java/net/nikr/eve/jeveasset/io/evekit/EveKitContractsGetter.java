@@ -76,9 +76,6 @@ public class EveKitContractsGetter extends AbstractEveKitListGetter<Contract> {
 		Map<MyContract, List<MyContractItem>> map = contracts.get(owner);
 		if (map == null) { //New owner
 			map = new HashMap<MyContract, List<MyContractItem>>();
-			if (loadCid(owner) != null) { //Old
-				map.putAll(owner.getContracts());
-			}
 			contracts.put(owner, map);
 		}
 		map.putAll(EveKitConverter.convertContracts(data)); //New
@@ -136,22 +133,10 @@ public class EveKitContractsGetter extends AbstractEveKitListGetter<Contract> {
 	}
 
 	@Override
-	protected void saveCid(EveKitOwner owner, Long contid) {
-		switch(run) {
-			case IN_PROGRESS: owner.setContractsInProgressContID(contid); break;
-			case MONTHS: owner.setContractsDateContID(contid); break;
-			case ALL: owner.setContractsDateContID(contid); break;
-			default: owner.setContractsDateContID(contid); break;
-		}
-	}
+	protected void saveCid(EveKitOwner owner, Long contid) { } //Always get all data
 
 	@Override
 	protected Long loadCid(EveKitOwner owner) {
-		switch(run) {
-			case IN_PROGRESS: return owner.getContractsInProgressContID();
-			case MONTHS: return owner.getContractsDateContID();
-			case ALL: return owner.getContractsDateContID();
-			default: return owner.getContractsDateContID();
-		}
+		return null; //Always get all data
 	}
 }

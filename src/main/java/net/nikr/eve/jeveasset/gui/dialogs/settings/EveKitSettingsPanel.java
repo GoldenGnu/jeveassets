@@ -341,17 +341,12 @@ public class EveKitSettingsPanel extends JSettingsPanel {
 						eveKitOwner.setJournalNextUpdate(new Date(0)); //Reset update time
 					}
 					if (marketOrdersChanged) {
-						eveKitOwner.setMarketOrdersContID(null); //Reset item cache
 						eveKitOwner.setMarketOrdersNextUpdate(new Date(0)); //Reset update time
 					}
 					if (industryJobsChanged) {
-						eveKitOwner.setIndustryJobsActiveContID(null); //Reset item cache
-						eveKitOwner.setIndustryJobsDateContID(null); //Reset item cache
 						eveKitOwner.setIndustryJobsNextUpdate(new Date(0)); //Reset update time
 					}
 					if (contractsChanged) {
-						eveKitOwner.setContractsDateContID(null); //Reset item cache
-						eveKitOwner.setContractsInProgressContID(null); //Reset item cache
 						eveKitOwner.setContractsNextUpdate(new Date(0)); //Reset update time
 					}
 				}

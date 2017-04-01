@@ -126,42 +126,17 @@ public final class ProfileReader extends AbstractXmlReader {
 			}
 			String accountName = AttributeGetters.getString(currentNode, "accountname");
 			//ContID
-			Long marketOrdersContID = null;
-			if (AttributeGetters.haveAttribute(currentNode, "marketorderscontid")) {
-				marketOrdersContID = AttributeGetters.getLong(currentNode, "marketorderscontid");
-			}
 			Long journalContID = null;
-			if (AttributeGetters.haveAttribute(currentNode, "journalcontid")) {
-				journalContID = AttributeGetters.getLong(currentNode, "journalcontid");
+			if (AttributeGetters.haveAttribute(currentNode, "journalcid")) {
+				journalContID = AttributeGetters.getLong(currentNode, "journalcid");
 			}
 			Long transactionsContID = null;
-			if (AttributeGetters.haveAttribute(currentNode, "transactionscontid")) {
-				transactionsContID = AttributeGetters.getLong(currentNode, "transactionscontid");
-			}
-			Long industryJobsActiveContID = null;
-			if (AttributeGetters.haveAttribute(currentNode, "industryjobsactivecontid")) {
-				industryJobsActiveContID = AttributeGetters.getLong(currentNode, "industryjobsactivecontid");
-			}
-			Long industryJobsDateContID = null;
-			if (AttributeGetters.haveAttribute(currentNode, "industryjobsdatecontid")) {
-				industryJobsDateContID = AttributeGetters.getLong(currentNode, "industryjobsdatecontid");
-			}
-			Long contractsInProgressContID = null;
-			if (AttributeGetters.haveAttribute(currentNode, "contractsinprogresscontid")) {
-				contractsInProgressContID = AttributeGetters.getLong(currentNode, "contractsinprogresscontid");
-			}
-			Long contractsDateContID = null;
-			if (AttributeGetters.haveAttribute(currentNode, "contractsdatecontid")) {
-				contractsDateContID = AttributeGetters.getLong(currentNode, "contractsdatecontid");
+			if (AttributeGetters.haveAttribute(currentNode, "transactionscid")) {
+				transactionsContID = AttributeGetters.getLong(currentNode, "transactionscid");
 			}
 			EveKitOwner owner = new EveKitOwner(accessKey, accessCred, expire, accessmask, corporation, limit, accountName);
-			owner.setMarketOrdersContID(marketOrdersContID);
 			owner.setJournalContID(journalContID);
 			owner.setTransactionsContID(transactionsContID);
-			owner.setIndustryJobsActiveContID(industryJobsActiveContID);
-			owner.setIndustryJobsDateContID(industryJobsDateContID);
-			owner.setContractsInProgressContID(contractsInProgressContID);
-			owner.setContractsDateContID(contractsDateContID);
 			parseOwnerType(currentNode, owner);
 			eveKitOwners.add(owner);
 		}

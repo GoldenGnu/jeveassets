@@ -76,10 +76,7 @@ public class EveKitIndustryJobsGetter extends AbstractEveKitListGetter<IndustryJ
 	protected void set(EveKitOwner owner, List<IndustryJob> data) throws ApiException {
 		Set<MyIndustryJob> set = industryJobs.get(owner);
 		if (set == null) { //New owner
-			 set = new HashSet<MyIndustryJob>();
-			if (loadCid(owner) != null) { //Old
-				set.addAll(owner.getIndustryJobs());
-			}
+			set = new HashSet<MyIndustryJob>();
 			industryJobs.put(owner, set);
 		}
 		set.addAll(EveKitConverter.convertIndustryJobs(data, owner)); //New
@@ -137,23 +134,11 @@ public class EveKitIndustryJobsGetter extends AbstractEveKitListGetter<IndustryJ
 	}
 
 	@Override
-	protected void saveCid(EveKitOwner owner, Long contid) {
-		switch (run) {
-			case ACTIVE_PAUSED_READY: owner.setIndustryJobsActiveContID(contid); break;
-			case MONTHS: owner.setIndustryJobsDateContID(contid); break;
-			case ALL: owner.setIndustryJobsDateContID(contid); break;
-			default: owner.setIndustryJobsDateContID(contid); break;
-		}
-	}
+	protected void saveCid(EveKitOwner owner, Long contid) { } //Always get all data
 
 	@Override
 	protected Long loadCid(EveKitOwner owner) {
-		switch (run) {
-			case ACTIVE_PAUSED_READY: return owner.getIndustryJobsActiveContID();
-			case MONTHS: return owner.getIndustryJobsDateContID();
-			case ALL: return owner.getIndustryJobsDateContID();
-			default: return owner.getIndustryJobsDateContID();
-		}
+		return null; //Always get all data
 	}
 
 }

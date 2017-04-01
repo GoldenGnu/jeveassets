@@ -94,26 +94,11 @@ public final class ProfileWriter extends AbstractXmlWriter {
 			}
 			node.setAttributeNS(null, "accountname", owner.getAccountName());
 			//ContID
-			if (owner.getMarketOrdersContID() != null) {
-				node.setAttributeNS(null, "marketorderscontid", String.valueOf(owner.getMarketOrdersContID()));
-			}
 			if (owner.getJournalContID() != null) {
-				node.setAttributeNS(null, "journalcontid", String.valueOf(owner.getJournalContID()));
+				node.setAttributeNS(null, "journalcid", String.valueOf(owner.getJournalContID()));
 			}
 			if (owner.getTransactionsContID() != null) {
-				node.setAttributeNS(null, "transactionscontid", String.valueOf(owner.getTransactionsContID()));
-			}
-			if (owner.getIndustryJobsActiveContID() != null) {
-				node.setAttributeNS(null, "industryjobsactivecontid", String.valueOf(owner.getIndustryJobsActiveContID()));
-			}
-			if (owner.getIndustryJobsDateContID() != null) {
-				node.setAttributeNS(null, "industryjobsdatecontid", String.valueOf(owner.getIndustryJobsDateContID()));
-			}
-			if (owner.getContractsInProgressContID() != null) {
-				node.setAttributeNS(null, "contractsinprogresscontid", String.valueOf(owner.getContractsInProgressContID()));
-			}
-			if (owner.getContractsDateContID() != null) {
-				node.setAttributeNS(null, "contractsdatecontid", String.valueOf(owner.getContractsDateContID()));
+				node.setAttributeNS(null, "transactionscid", String.valueOf(owner.getTransactionsContID()));
 			}
 			writeTypeOwner(xmldoc, node, owner);
 			parentNode.appendChild(node);
