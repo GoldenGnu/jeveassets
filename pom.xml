@@ -641,8 +641,8 @@
 		</dependency>
 		<dependency>
 			<groupId>net.java.dev.glazedlists</groupId>
-			<artifactId>glazedlists_java15</artifactId>
-			<version>1.9.1</version>
+			<artifactId>glazedlists_java16</artifactId>
+			<version>1.10.0</version>
 		</dependency>
 		<dependency>
 			<groupId>org.supercsv</groupId>
