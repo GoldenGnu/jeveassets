@@ -234,11 +234,23 @@ public abstract class AbstractApiGetter<T extends ApiResponse> {
 				return true;
 			} else { //API Error
 				ApiError apiError = response.getError();
-				if (apiError.getCode() == 203) {
-					errorInvalid(updateName);
+				switch (apiError.getCode()) {
+					case 203: //Invalid
+						errorInvalid(updateName);
+						break;
+					case 222: //Expired
+						if (account != null) {
+							account.setExpires(new Date(1));
+						} else if (owner != null) {
+							owner.getParentAccount().setExpires(new Date(1));
+						}
+						errorExpired(updateName);
+						break;
+					default:
+						addError(updateName, "ApiError: " + apiError.getError() + " (Code: " + apiError.getCode() + ")");
+						LOG.info("	{} failed to update for: {} (API ERROR: code: {} :: {})", new Object[]{taskName, updateName, apiError.getCode(), apiError.getError()});
+						break;
 				}
-				addError(updateName, "ApiError: " + apiError.getError() + " (Code: " + apiError.getCode() + ")");
-				LOG.info("	{} failed to update for: {} (API ERROR: code: {} :: {})", new Object[]{taskName, updateName, apiError.getCode(), apiError.getError()});
 			}
 		} catch (ApiException ex) { //Real Error
 			if (ex.getMessage().contains(INVALID_ACCOUNT) && !isExpired()) { //Invalid

@@ -741,7 +741,7 @@ public class AccountImportDialog extends JDialogCentered {
 
 		@Override
 		public boolean exist() {
-			return program.getProfileManager().getAccounts().contains(account);
+			return program.getProfileManager().getAccounts().contains(account) && !account.isExpired();
 		}
 
 		@Override
