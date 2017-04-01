@@ -27,11 +27,13 @@ import enterprises.orbital.evekit.client.model.ContractItem;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import net.nikr.eve.jeveasset.data.evekit.EveKitAccessMask;
 import net.nikr.eve.jeveasset.data.evekit.EveKitOwner;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import net.nikr.eve.jeveasset.gui.tabs.contracts.MyContract;
+import net.nikr.eve.jeveasset.gui.tabs.contracts.MyContractItem;
 
 
 public class EveKitContractItemsGetter extends AbstractEveKitIdGetter<ContractItem> {
@@ -56,8 +58,10 @@ public class EveKitContractItemsGetter extends AbstractEveKitIdGetter<ContractIt
 	@Override
 	protected Set<Long> getIDs(EveKitOwner owner) throws ApiException {
 		Set<Long> ids = new HashSet<Long>();
-		for (MyContract contract : owner.getContracts().keySet()) {
-			ids.add(contract.getContractID());
+		for (Map.Entry<MyContract, List<MyContractItem>> entry : owner.getContracts().entrySet()) {
+			if (!entry.getKey().isCourier() //Do not get courier contracts
+					&& entry.getValue().isEmpty()) //Only get items once (Contract items can not be changed)
+			ids.add(entry.getKey().getContractID());
 		}
 		return ids;
 	}
