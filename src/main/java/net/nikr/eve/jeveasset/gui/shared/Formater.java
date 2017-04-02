@@ -231,31 +231,39 @@ public final class Formater {
 	}
 
 	public static String milliseconds(long time) {
+		return milliseconds(time, true, true, true, true);
+	}
+
+	public static String milliseconds(long time, boolean showDays, boolean showHours, boolean showMinutes, boolean showSecounds) {
 		final StringBuilder timeString = new StringBuilder();
 		long days = time / (24 * 60 * 60 * 1000);
-		if (days > 0) {
+		boolean space = false;
+		if (days > 0 && showDays) {
 			timeString.append(days);
 			timeString.append("d");
+			space = true;
 		}
 		long hours = time / (60 * 60 * 1000) % 24;
-		if (hours > 0) {
-			if (days > 0) {
+		if (hours > 0 && showHours) {
+			if (space) {
 				timeString.append(" ");
 			}
 			timeString.append(hours);
 			timeString.append("h");
+			space = true;
 		}
 		long minutes = time / (60 * 1000) % 60;
-		if (minutes > 0) {
-			if (hours > 0) {
+		if (minutes > 0 && showMinutes) {
+			if (space) {
 				timeString.append(" ");
 			}
 			timeString.append(minutes);
 			timeString.append("m");
+			space = true;
 		}
 		long seconds = time / (1000) % 60;
-		if (seconds > 0) {
-			if (minutes > 0) {
+		if (seconds > 0 && showSecounds) {
+			if (space) {
 				timeString.append(" ");
 			}
 			timeString.append(seconds);
