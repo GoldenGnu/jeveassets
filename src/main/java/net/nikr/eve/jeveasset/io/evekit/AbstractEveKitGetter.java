@@ -48,6 +48,9 @@ public abstract class AbstractEveKitGetter {
 		error = null;
 		invalid = false;
 		int progress = 0;
+		if (updateTask != null && getProgressStart() == 0) {
+			updateTask.resetTaskProgress();
+		}
 		for (EveKitOwner owner : owners) {
 			if (owner.isShowOwner()) { //Ignore not shown owners
 				load(updateTask, owner);
@@ -124,7 +127,7 @@ public abstract class AbstractEveKitGetter {
 					invalid = true;
 					break;
 				default:
-					AbstractEveKitGetter.this.addError(ex.getMessage(), ex);
+					addError(ex.getMessage(), ex);
 					if (updateTask != null) {
 						updateTask.addError(owner.getOwnerName(), "Unknown Error Code: " + ex.getCode());
 					}

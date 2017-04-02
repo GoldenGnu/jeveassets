@@ -171,6 +171,9 @@ public abstract class AbstractApiGetter<T extends ApiResponse> {
 		this.owners = new HashMap<String, EveApiOwner>();
 		this.failOwners = new ArrayList<EveApiOwner>();
 		this.error = null;
+		if (updateTask != null && getProgressStart() == 0) {
+			updateTask.resetTaskProgress();
+		}
 	}
 
 	private void loadOwner() {

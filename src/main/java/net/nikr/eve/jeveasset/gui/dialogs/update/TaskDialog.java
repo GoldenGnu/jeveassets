@@ -43,6 +43,7 @@ public class TaskDialog {
 
 	//GUI
 	private JDialog jWindow;
+	private JLabel jIcon;
 	private JProgressBar jProgressBar;
 	private JButton jOK;
 	private JButton jCancel;
@@ -86,6 +87,8 @@ public class TaskDialog {
 		JLabel jUpdate = new JLabel(DialoguesUpdate.get().updating());
 		jUpdate.setFont(new Font(jUpdate.getFont().getName(), Font.BOLD, jUpdate.getFont().getSize() + 4));
 
+		jIcon = new JLabel(new UpdateTask.EmptyIcon());
+		
 		jProgressBar = new JProgressBar(0, 100);
 
 		jOK = new JButton(DialoguesUpdate.get().ok());
@@ -115,7 +118,11 @@ public class TaskDialog {
 			horizontalGroup.addComponent(updateTaskLoop.getTextLabel(), WIDTH, WIDTH, WIDTH);
 			updateTaskLoop.getTextLabel().addMouseListener(new ErrorMouseListener(updateTaskLoop));
 		}
-		horizontalGroup.addComponent(jProgressBar, WIDTH, WIDTH, WIDTH);
+		horizontalGroup.addGroup(layout.createSequentialGroup()
+			.addComponent(jIcon, 16, 16, 16)
+			.addGap(5)
+			.addComponent(jProgressBar, WIDTH - 21, WIDTH - 21, WIDTH - 21)
+		);
 		horizontalGroup.addGroup(layout.createSequentialGroup()
 				.addComponent(jOK, Program.getButtonsWidth(), Program.getButtonsWidth(), Program.getButtonsWidth())
 				.addComponent(jCancel, Program.getButtonsWidth(), Program.getButtonsWidth(), Program.getButtonsWidth())
@@ -134,7 +141,12 @@ public class TaskDialog {
 		for (UpdateTask updateTaskLoop : updateTasks) {
 			verticalGroup.addComponent(updateTaskLoop.getTextLabel(), Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight());
 		}
-		verticalGroup.addComponent(jProgressBar, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight());
+		verticalGroup.addGroup(
+			layout.createParallelGroup()
+				.addComponent(jIcon, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+				.addComponent(jProgressBar, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+		);
+				
 		verticalGroup.addGroup(layout.createParallelGroup()
 				.addComponent(jOK, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 				.addComponent(jCancel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
@@ -160,7 +172,8 @@ public class TaskDialog {
 			updateTask = updateTasks.get(index);
 			updateTask.addPropertyChangeListener(listener);
 			updateTask.execute();
-		} else {
+		} else { //Done
+			jIcon.setIcon(new UpdateTask.EmptyIcon());
 			program.updateEventLists();
 			//Create value tracker point
 			program.createTrackerDataPoint();
@@ -206,6 +219,7 @@ public class TaskDialog {
 		}
 		jProgressBar.setIndeterminate(false);
 		jProgressBar.setValue(0);
+		jIcon.setIcon(new UpdateTask.EmptyIcon());
 	}
 
 	private class ListenerClass implements PropertyChangeListener, ActionListener, WindowListener {
@@ -213,6 +227,7 @@ public class TaskDialog {
 		@Override
 		public void propertyChange(final PropertyChangeEvent evt) {
 			int value = updateTask.getProgress();
+			jIcon.setIcon(updateTask.getIcon());
 			if (value == 100 && updateTask.isTaskDone()) {
 				updateTask.setTaskDone(false);
 				jProgressBar.setValue(100);

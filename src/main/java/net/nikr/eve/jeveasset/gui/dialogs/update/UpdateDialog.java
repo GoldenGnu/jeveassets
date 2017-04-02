@@ -614,6 +614,7 @@ public class UpdateDialog extends JDialogCentered {
 
 		@Override
 		public void update() {
+			setIcon(Images.MISC_EVE.getIcon());
 			ConquerableStationsGetter conquerableStationsGetter = new ConquerableStationsGetter();
 			conquerableStationsGetter.load(this);
 			ConquerableStationsWriter.save();
@@ -641,9 +642,15 @@ public class UpdateDialog extends JDialogCentered {
 		@Override
 		public void update() {
 			//EveAPI
+			if (!program.getProfileManager().getAccounts().isEmpty()) {
+				setIcon(Images.MISC_EVE.getIcon());
+			}
 			AccountGetter accountGetter = new AccountGetter();
 			accountGetter.load(this, Settings.get().isForceUpdate(), program.getProfileManager().getAccounts());
 			//EveKit
+			if (!program.getProfileManager().getEveKitOwners().isEmpty()) {
+				setIcon(Images.MISC_EVEKIT.getIcon());
+			}
 			EveKitOwnerGetter ownerGetter = new EveKitOwnerGetter();
 			ownerGetter.load(this, program.getProfileManager().getEveKitOwners());
 		}
@@ -658,11 +665,17 @@ public class UpdateDialog extends JDialogCentered {
 		@Override
 		public void update() {
 			//EveApi
+			if (!program.getProfileManager().getAccounts().isEmpty()) {
+				setIcon(Images.MISC_EVE.getIcon());
+			}
 			AssetsGetter assetsGetter = new AssetsGetter();
 			assetsGetter.load(this, Settings.get().isForceUpdate(), program.getProfileManager().getAccounts());
 			LocationsGetter locationsGetter = new LocationsGetter();
 			locationsGetter.load(this, Settings.get().isForceUpdate(), program.getProfileManager().getAccounts());
 			//EveKit
+			if (!program.getProfileManager().getEveKitOwners().isEmpty()) {
+				setIcon(Images.MISC_EVEKIT.getIcon());
+			}
 			EveKitAssetGetter eveKitAssetGetter = new EveKitAssetGetter();
 			eveKitAssetGetter.load(this, program.getProfileManager().getEveKitOwners());
 			EveKitLocationsGetter eveKitLocationsGetter = new EveKitLocationsGetter();
@@ -679,9 +692,15 @@ public class UpdateDialog extends JDialogCentered {
 		@Override
 		public void update() {
 			//EveApi
+			if (!program.getProfileManager().getAccounts().isEmpty()) {
+				setIcon(Images.MISC_EVE.getIcon());
+			}
 			AccountBalanceGetter accountBalanceGetter = new AccountBalanceGetter();
 			accountBalanceGetter.load(this, Settings.get().isForceUpdate(), program.getProfileManager().getAccounts());
 			//EveKit
+			if (!program.getProfileManager().getEveKitOwners().isEmpty()) {
+				setIcon(Images.MISC_EVEKIT.getIcon());
+			}
 			EveKitAccountBalanceGetter eveKitAccountBalanceGetter = new EveKitAccountBalanceGetter();
 			eveKitAccountBalanceGetter.load(this, program.getProfileManager().getEveKitOwners());
 		}
@@ -696,9 +715,15 @@ public class UpdateDialog extends JDialogCentered {
 		@Override
 		public void update() {
 			//EveApi
+			if (!program.getProfileManager().getAccounts().isEmpty()) {
+				setIcon(Images.MISC_EVE.getIcon());
+			}
 			IndustryJobsGetter industryJobsGetter = new IndustryJobsGetter();
 			industryJobsGetter.load(this, Settings.get().isForceUpdate(), program.getProfileManager().getAccounts());
 			//EveKit
+			if (!program.getProfileManager().getEveKitOwners().isEmpty()) {
+				setIcon(Images.MISC_EVEKIT.getIcon());
+			}
 			EveKitIndustryJobsGetter eveKitIndustryJobsGetter = new EveKitIndustryJobsGetter();
 			eveKitIndustryJobsGetter.load(this, program.getProfileManager().getEveKitOwners());
 		}
@@ -713,9 +738,15 @@ public class UpdateDialog extends JDialogCentered {
 		@Override
 		public void update() {
 			//EveApi
+			if (!program.getProfileManager().getAccounts().isEmpty()) {
+				setIcon(Images.MISC_EVE.getIcon());
+			}
 			MarketOrdersGetter marketOrdersGetter = new MarketOrdersGetter();
 			marketOrdersGetter.load(this, Settings.get().isForceUpdate(), program.getProfileManager().getAccounts(), Settings.get().isMarketOrderHistory());
 			//EveKit
+			if (!program.getProfileManager().getEveKitOwners().isEmpty()) {
+				setIcon(Images.MISC_EVEKIT.getIcon());
+			}
 			EveKitMarketOrdersGetter eveKitMarketOrdersGetter = new EveKitMarketOrdersGetter();
 			eveKitMarketOrdersGetter.load(this, program.getProfileManager().getEveKitOwners());
 		}
@@ -730,9 +761,15 @@ public class UpdateDialog extends JDialogCentered {
 		@Override
 		public void update() {
 			//EveApi
+			if (!program.getProfileManager().getAccounts().isEmpty()) {
+				setIcon(Images.MISC_EVE.getIcon());
+			}
 			JournalGetter journalGetter = new JournalGetter();
 			journalGetter.load(this, Settings.get().isForceUpdate(), program.getProfileManager().getAccounts(), Settings.get().isJournalHistory());
 			//EveKit
+			if (!program.getProfileManager().getEveKitOwners().isEmpty()) {
+				setIcon(Images.MISC_EVEKIT.getIcon());
+			}
 			EveKitJournalGetter eveKitJournalGetter = new EveKitJournalGetter();
 			eveKitJournalGetter.load(this, program.getProfileManager().getEveKitOwners());
 		}
@@ -747,9 +784,15 @@ public class UpdateDialog extends JDialogCentered {
 		@Override
 		public void update() {
 			//EveApi
+			if (!program.getProfileManager().getAccounts().isEmpty()) {
+				setIcon(Images.MISC_EVE.getIcon());
+			}
 			TransactionsGetter transactionsGetter = new TransactionsGetter();
 			transactionsGetter.load(this, Settings.get().isForceUpdate(), program.getProfileManager().getAccounts(), Settings.get().isTransactionHistory());
 			//EveKit
+			if (!program.getProfileManager().getEveKitOwners().isEmpty()) {
+				setIcon(Images.MISC_EVEKIT.getIcon());
+			}
 			EveKitTransactionsGetter eveKitTransactionsGetter = new EveKitTransactionsGetter();
 			eveKitTransactionsGetter.load(this, program.getProfileManager().getEveKitOwners());
 		}
@@ -764,11 +807,17 @@ public class UpdateDialog extends JDialogCentered {
 		@Override
 		public void update() {
 			//EveApi
+			if (!program.getProfileManager().getAccounts().isEmpty()) {
+				setIcon(Images.MISC_EVE.getIcon());
+			}
 			ContractsGetter contractsGetter = new ContractsGetter();
 			contractsGetter.load(this, Settings.get().isForceUpdate(), program.getProfileManager().getAccounts());
 			ContractItemsGetter itemsGetter = new ContractItemsGetter();
 			itemsGetter.load(this, Settings.get().isForceUpdate(), program.getProfileManager().getAccounts());
 			//EveKit
+			if (!program.getProfileManager().getEveKitOwners().isEmpty()) {
+				setIcon(Images.MISC_EVEKIT.getIcon());
+			}
 			EveKitContractsGetter eveKitContractsGetter = new EveKitContractsGetter();
 			eveKitContractsGetter.load(this, program.getProfileManager().getEveKitOwners());
 			EveKitContractItemsGetter eveKitContractItemsGetter = new EveKitContractItemsGetter();
@@ -785,9 +834,15 @@ public class UpdateDialog extends JDialogCentered {
 		@Override
 		public void update() {
 			//EveApi
+			if (!program.getProfileManager().getAccounts().isEmpty()) {
+				setIcon(Images.MISC_EVE.getIcon());
+			}
 			BlueprintsGetter blueprintsGetter = new BlueprintsGetter();
 			blueprintsGetter.load(this, Settings.get().isForceUpdate(), program.getProfileManager().getAccounts());
 			//EveKit
+			if (!program.getProfileManager().getEveKitOwners().isEmpty()) {
+				setIcon(Images.MISC_EVEKIT.getIcon());
+			}
 			EveKitBlueprintsGetter eveKitBlueprintsGetter = new EveKitBlueprintsGetter();
 			eveKitBlueprintsGetter.load(this, program.getProfileManager().getEveKitOwners());
 		}
@@ -801,6 +856,7 @@ public class UpdateDialog extends JDialogCentered {
 
 		@Override
 		public void update() {
+			setIcon(Images.MISC_EVE.getIcon());
 			Set<Long> list = new HashSet<Long>();
 			for (OwnerType owner : program.getOwnerTypes()) {
 				list.add(owner.getOwnerID()); //Just to be sure
@@ -830,6 +886,10 @@ public class UpdateDialog extends JDialogCentered {
 
 		@Override
 		public void update() {
+			switch (Settings.get().getPriceDataSettings().getSource()) {
+				case EVE_CENTRAL: setIcon(Images.LINK_EVE_CENTRAL.getIcon()); break;
+				case EVE_MARKETDATA: setIcon(Images.LINK_EVE_MARKETDATA.getIcon()); break;
+			}
 			if (update) {
 				program.getPriceDataGetter().updateAll(this);
 			} else {
