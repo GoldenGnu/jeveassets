@@ -80,7 +80,7 @@ public class EveKitAssetGetter extends AbstractEveKitListGetter<Asset> {
 
 	@Override
 	protected int getProgressEnd() {
-		return 80;
+		return 50;
 	}
 
 	@Override

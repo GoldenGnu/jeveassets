@@ -25,6 +25,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Set;
 import java.util.TimeZone;
 import net.nikr.eve.jeveasset.data.evekit.EveKitOwner;
 
@@ -57,8 +58,24 @@ public abstract class AbstractEveKitValidatedGetter<T> extends AbstractEveKitGet
 		return encode("{ values: [\"InProgress\"] }");
 	}
 
-	protected final String valuesFilter(long id) {
+	protected final String valueFilter(long id) {
 		return encode("{ values: [\"" + id + "\"] }");
+	}
+
+	protected final String valuesFilter(Set<Long> ids) {
+		StringBuilder builder = new StringBuilder();
+		builder.append("{ values: [");
+		boolean first = true;
+		for (Long id : ids) {
+			if (first) {
+				first = false;
+			} else {
+				builder.append(", ");
+			}
+			builder.append("\""+id+"\"");
+		}
+		builder.append("] }");
+		return encode(builder.toString());
 	}
 
 	protected final String dateFilter(int months) {

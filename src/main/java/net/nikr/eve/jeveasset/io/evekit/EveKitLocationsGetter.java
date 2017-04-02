@@ -36,23 +36,24 @@ import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import net.nikr.eve.jeveasset.gui.tabs.assets.MyAsset;
 
 
-public class EveKitLocationsGetter extends AbstractEveKitIdGetter<Location> {
+public class EveKitLocationsGetter extends AbstractEveKitListGetter<Location> {
 
 	private final Map<Long, String> eveNames = new HashMap<Long, String>();
-	private final Map<Long, String> itemMap = new HashMap<Long, String>();
+	private final Map<EveKitOwner, Map<Long, String>> itemMap = new HashMap<EveKitOwner, Map<Long, String>>();
 
 	@Override
 	public void load(UpdateTask updateTask, List<EveKitOwner> owners) {
 		eveNames.clear();
+		itemMap.clear();
 		super.load(updateTask, owners);
 		Settings.get().setEveNames(eveNames);
 	}
 
 	@Override
-	protected List<Location> get(EveKitOwner owner, long id) throws ApiException {
+	protected List<Location> get(EveKitOwner owner, Long contid) throws ApiException {
 		//Get all items matching itemID
-		return getCommonApi().getLocations(owner.getAccessKey(), owner.getAccessCred(), null, null, MAX_RESULTS, REVERSE,
-				valuesFilter(id), null, null, null, null);
+		return getCommonApi().getLocations(owner.getAccessKey(), owner.getAccessCred(), null, contid, MAX_RESULTS, REVERSE,
+				valuesFilter(getIDs(owner)), null, null, null, null);
 	}
 
 	@Override
@@ -61,18 +62,21 @@ public class EveKitLocationsGetter extends AbstractEveKitIdGetter<Location> {
 		for (Map.Entry<Long, String> entry : locations.entrySet()) {
 			Long itemID = entry.getKey();
 			String eveName = entry.getValue();
-			String typeName = itemMap.get(itemID);
+			String typeName = itemMap.get(owner).get(itemID);
 			if (!eveName.equals(typeName)) {
 				eveNames.put(itemID, eveName);
 			}
 		}
 	}
 
-	@Override
-	protected Set<Long> getIDs(EveKitOwner owner) throws ApiException {
-		itemMap.clear();
-		getItemID(itemMap, owner.getAssets());
-		return itemMap.keySet();
+	private Set<Long> getIDs(EveKitOwner owner) throws ApiException {
+		Map<Long, String> map = itemMap.get(owner);
+		if (map == null) {
+			map = new HashMap<Long, String>();
+			itemMap.put(owner, map);
+			getItemID(map, owner.getAssets());
+		}
+		return map.keySet();
 	}
 
 	private void getItemID(Map<Long, String> itemIDs, List<MyAsset> assets) {
@@ -98,7 +102,7 @@ public class EveKitLocationsGetter extends AbstractEveKitIdGetter<Location> {
 
 	@Override
 	protected int getProgressStart() {
-		return 80;
+		return 50;
 	}
 
 	@Override
@@ -114,6 +118,19 @@ public class EveKitLocationsGetter extends AbstractEveKitIdGetter<Location> {
 	@Override
 	protected ApiClient getApiClient() {
 		return getCommonApi().getApiClient();
+	}
+
+	@Override
+	protected long getCid(Location obj) {
+		return obj.getCid();
+	}
+
+	@Override
+	protected void saveCid(EveKitOwner owner, Long contid) { } //Always get all data
+
+	@Override
+	protected Long loadCid(EveKitOwner owner) {
+		return null; //Always get all data
 	}
 
 }

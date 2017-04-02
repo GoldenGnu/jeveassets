@@ -47,7 +47,7 @@ public class EveKitContractItemsGetter extends AbstractEveKitIdGetter<ContractIt
 	protected List<ContractItem> get(EveKitOwner owner, long id) throws ApiException {
 		//Get all items matching contractID
 		return getCommonApi().getContractItems(owner.getAccessKey(), owner.getAccessCred(), null, null, MAX_RESULTS, REVERSE,
-				valuesFilter(id), null, null, null, null, null, null);
+				valueFilter(id), null, null, null, null, null, null);
 	}
 
 	@Override
@@ -92,9 +92,7 @@ public class EveKitContractItemsGetter extends AbstractEveKitIdGetter<ContractIt
 	}
 
 	@Override
-	protected void setNextUpdate(EveKitOwner owner, Date date) {
-		owner.setContractsNextUpdate(date);
-	}
+	protected void setNextUpdate(EveKitOwner owner, Date date) { } //Only relevent for the Contracts API (Not contract items)
 
 	@Override
 	protected ApiClient getApiClient() {
