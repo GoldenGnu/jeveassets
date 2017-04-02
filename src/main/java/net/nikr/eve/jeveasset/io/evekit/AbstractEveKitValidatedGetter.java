@@ -58,10 +58,6 @@ public abstract class AbstractEveKitValidatedGetter<T> extends AbstractEveKitGet
 		return encode("{ values: [\"InProgress\"] }");
 	}
 
-	protected final String valueFilter(long id) {
-		return encode("{ values: [\"" + id + "\"] }");
-	}
-
 	protected final String valuesFilter(Set<Long> ids) {
 		StringBuilder builder = new StringBuilder();
 		builder.append("{ values: [");
