@@ -306,7 +306,6 @@ public class UpdateDialog extends JDialogCentered {
 				)
 				.addGap(30)
 				.addGroup(layout.createParallelGroup()
-					//.addComponent(jCheckAll, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 					.addComponent(jUpdate, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 					.addComponent(jCancel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 				)
@@ -514,6 +513,7 @@ public class UpdateDialog extends JDialogCentered {
 			jContracts.setSelected(true);
 			jAssets.setSelected(true);
 			jBlueprints.setSelected(true);
+			jPriceDataAll.setSelected(true);
 			update();
 			timer.start();
 		} else {
@@ -521,8 +521,6 @@ public class UpdateDialog extends JDialogCentered {
 		}
 		super.setVisible(b);
 	}
-
-	
 
 	@Override
 	protected void save() {
