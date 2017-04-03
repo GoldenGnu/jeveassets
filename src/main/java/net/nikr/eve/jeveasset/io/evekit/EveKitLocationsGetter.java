@@ -121,15 +121,15 @@ public class EveKitLocationsGetter extends AbstractEveKitListGetter<Location> {
 	}
 
 	@Override
-	protected long getCid(Location obj) {
+	protected long getCID(Location obj) {
 		return obj.getCid();
 	}
 
 	@Override
-	protected void saveCid(EveKitOwner owner, Long contid) { } //Always get all data
+	protected void saveCID(EveKitOwner owner, Long cid) { } //Always get all data
 
 	@Override
-	protected Long loadCid(EveKitOwner owner) {
+	protected Long loadCID(EveKitOwner owner) {
 		return null; //Always get all data
 	}
 

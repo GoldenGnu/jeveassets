@@ -326,31 +326,42 @@ public class EveKitSettingsPanel extends JSettingsPanel {
 		}
 		boolean contractsChanged = contracts != Settings.get().getEveKitContractsHistory();
 		Settings.get().setEveKitContractsHistory(contracts);
-
+		boolean saveProfile = false;
 		//Reset EveKitOwners item cache and update time
 		if (transactionsChanged || journalChanged || marketOrdersChanged || industryJobsChanged || contractsChanged) {
 			for (OwnerType ownerType : program.getOwnerTypes()) {
 				if (ownerType instanceof EveKitOwner) {
 					EveKitOwner eveKitOwner = (EveKitOwner) ownerType;
 					if (transactionsChanged) {
-						eveKitOwner.setTransactionsContID(null); //Reset item cache
+						eveKitOwner.setTransactionsCID(null); //Reset item cache
 						eveKitOwner.setTransactionsNextUpdate(new Date(0)); //Reset update time
+						saveProfile = true;
 					}
 					if (journalChanged) {
-						eveKitOwner.setJournalContID(null); //Reset item cache
+						eveKitOwner.setJournalCID(null); //Reset item cache
 						eveKitOwner.setJournalNextUpdate(new Date(0)); //Reset update time
+						saveProfile = true;
 					}
 					if (marketOrdersChanged) {
+						eveKitOwner.setMarketOrdersCID(null); //Reset item cache
 						eveKitOwner.setMarketOrdersNextUpdate(new Date(0)); //Reset update time
+						saveProfile = true;
 					}
 					if (industryJobsChanged) {
+						eveKitOwner.setIndustryJobsCID(null); //Reset item cache
 						eveKitOwner.setIndustryJobsNextUpdate(new Date(0)); //Reset update time
+						saveProfile = true;
 					}
 					if (contractsChanged) {
+						eveKitOwner.setContractsCID(null); //Reset item cache
 						eveKitOwner.setContractsNextUpdate(new Date(0)); //Reset update time
+						saveProfile = true;
 					}
 				}
 			}
+		}
+		if (saveProfile) {
+			program.saveProfile();
 		}
 		return false; //Do not need to update the EventLists
 	}

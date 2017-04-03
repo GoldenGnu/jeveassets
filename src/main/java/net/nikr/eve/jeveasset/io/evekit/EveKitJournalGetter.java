@@ -52,7 +52,7 @@ public class EveKitJournalGetter extends AbstractEveKitListGetter<WalletJournal>
 	@Override
 	protected void set(EveKitOwner owner, List<WalletJournal> data) throws ApiException {
 		Set<MyJournal> set = new HashSet<MyJournal>();
-		if (loadCid(owner) != null) { //Old
+		if (loadCID(owner) != null) { //Old
 			set.addAll(owner.getJournal());
 		}
 		set.addAll(EveKitConverter.convertJournals(data, owner)); //New
@@ -60,7 +60,7 @@ public class EveKitJournalGetter extends AbstractEveKitListGetter<WalletJournal>
 	}
 
 	@Override
-	protected long getCid(WalletJournal obj) {
+	protected long getCID(WalletJournal obj) {
 		return obj.getCid();
 	}
 
@@ -90,13 +90,12 @@ public class EveKitJournalGetter extends AbstractEveKitListGetter<WalletJournal>
 	}
 
 	@Override
-	protected void saveCid(EveKitOwner owner, Long contid) {
-		owner.setJournalContID(contid);
+	protected void saveCID(EveKitOwner owner, Long contid) {
+		owner.setJournalCID(contid);
 	}
 
 	@Override
-	protected Long loadCid(EveKitOwner owner) {
-		return owner.getJournalContID();
+	protected Long loadCID(EveKitOwner owner) {
+		return owner.getJournalCID();
 	}
-
 }

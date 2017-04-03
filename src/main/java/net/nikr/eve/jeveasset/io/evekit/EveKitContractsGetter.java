@@ -76,6 +76,9 @@ public class EveKitContractsGetter extends AbstractEveKitListGetter<Contract> {
 		Map<MyContract, List<MyContractItem>> map = contracts.get(owner);
 		if (map == null) { //New owner
 			map = new HashMap<MyContract, List<MyContractItem>>();
+			if (loadCID(owner) != null) { //Old
+				map.putAll(owner.getContracts());
+			}
 			contracts.put(owner, map);
 		}
 		map.putAll(EveKitConverter.convertContracts(data)); //New
@@ -83,7 +86,7 @@ public class EveKitContractsGetter extends AbstractEveKitListGetter<Contract> {
 	}
 
 	@Override
-	protected long getCid(Contract obj) {
+	protected long getCID(Contract obj) {
 		return obj.getCid();
 	}
 
@@ -133,10 +136,18 @@ public class EveKitContractsGetter extends AbstractEveKitListGetter<Contract> {
 	}
 
 	@Override
-	protected void saveCid(EveKitOwner owner, Long contid) { } //Always get all data
+	protected void saveCID(EveKitOwner owner, Long cid) {
+		if (run == Runs.MONTHS || run == Runs.ALL) {
+			owner.setContractsCID(cid);
+		}
+	}
 
 	@Override
-	protected Long loadCid(EveKitOwner owner) {
-		return null; //Always get all data
+	protected Long loadCID(EveKitOwner owner) {
+		if (run == Runs.MONTHS || run == Runs.ALL) {
+			return owner.getContractsCID();
+		} else {
+			return null;
+		}
 	}
 }

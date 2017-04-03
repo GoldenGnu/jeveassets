@@ -52,7 +52,7 @@ public class EveKitTransactionsGetter extends AbstractEveKitListGetter<WalletTra
 	@Override
 	protected void set(EveKitOwner owner, List<WalletTransaction> data) throws ApiException {
 		Set<MyTransaction> set = new HashSet<>();
-		if (loadCid(owner) != null) { //Old
+		if (loadCID(owner) != null) { //Old
 			set.addAll(owner.getTransactions());
 		}
 		set.addAll(EveKitConverter.convertTransactions(data, owner)); //New
@@ -60,7 +60,7 @@ public class EveKitTransactionsGetter extends AbstractEveKitListGetter<WalletTra
 	}
 
 	@Override
-	protected long getCid(WalletTransaction obj) {
+	protected long getCID(WalletTransaction obj) {
 		return obj.getCid();
 	}
 
@@ -90,13 +90,12 @@ public class EveKitTransactionsGetter extends AbstractEveKitListGetter<WalletTra
 	}
 
 	@Override
-	protected void saveCid(EveKitOwner owner, Long contid) {
-		owner.setTransactionsContID(contid);
+	protected void saveCID(EveKitOwner owner, Long contid) {
+		owner.setTransactionsCID(contid);
 	}
 
 	@Override
-	protected Long loadCid(EveKitOwner owner) {
-		return owner.getTransactionsContID();
+	protected Long loadCID(EveKitOwner owner) {
+		return owner.getTransactionsCID();
 	}
-
 }

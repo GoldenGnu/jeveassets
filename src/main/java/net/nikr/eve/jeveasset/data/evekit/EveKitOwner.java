@@ -36,8 +36,11 @@ public class EveKitOwner extends AbstractOwner implements OwnerType {
 	private boolean corporation;
 	private Date limit = null;
 	private String accountName;
-	private Long journalContID = null;
-	private Long transactionsContID = null;
+	private Long journalCID = null;
+	private Long transactionsCID = null;
+	private Long contractsCID = null;
+	private Long industryJobsCID = null;
+	private Long marketOrdersCID = null;
 
 	//New owner
 	public EveKitOwner(Integer accessKey, String accessCred) {
@@ -67,20 +70,44 @@ public class EveKitOwner extends AbstractOwner implements OwnerType {
 		this.accessMask = editEveKitOwner.accessMask;
 	}
 
-	public Long getJournalContID() {
-		return journalContID;
+	public Long getJournalCID() {
+		return journalCID;
 	}
 
-	public void setJournalContID(Long journalContID) {
-		this.journalContID = journalContID;
+	public void setJournalCID(Long journalCID) {
+		this.journalCID = journalCID;
 	}
 
-	public Long getTransactionsContID() {
-		return transactionsContID;
+	public Long getTransactionsCID() {
+		return transactionsCID;
 	}
 
-	public void setTransactionsContID(Long transactionsContID) {
-		this.transactionsContID = transactionsContID;
+	public void setTransactionsCID(Long transactionsCID) {
+		this.transactionsCID = transactionsCID;
+	}
+
+	public Long getContractsCID() {
+		return contractsCID;
+	}
+
+	public void setContractsCID(Long contractsCID) {
+		this.contractsCID = contractsCID;
+	}
+
+	public Long getIndustryJobsCID() {
+		return industryJobsCID;
+	}
+
+	public void setIndustryJobsCID(Long industryJobsCID) {
+		this.industryJobsCID = industryJobsCID;
+	}
+
+	public Long getMarketOrdersCID() {
+		return marketOrdersCID;
+	}
+
+	public void setMarketOrdersCID(Long marketOrdersCID) {
+		this.marketOrdersCID = marketOrdersCID;
 	}
 
 	public Integer getAccessKey() {

@@ -50,7 +50,7 @@ public class EveKitBlueprintsGetter extends AbstractEveKitListGetter<Blueprint> 
 	}
 
 	@Override
-	protected long getCid(Blueprint obj) {
+	protected long getCID(Blueprint obj) {
 		return obj.getCid();
 	}
 
@@ -80,10 +80,10 @@ public class EveKitBlueprintsGetter extends AbstractEveKitListGetter<Blueprint> 
 	}
 
 	@Override
-	protected void saveCid(EveKitOwner owner, Long contid) { } //Always get all data
+	protected void saveCID(EveKitOwner owner, Long cid) { } //Always get all data
 
 	@Override
-	protected Long loadCid(EveKitOwner owner) {
+	protected Long loadCID(EveKitOwner owner) {
 		return null; //Always get all data
 	}
 }

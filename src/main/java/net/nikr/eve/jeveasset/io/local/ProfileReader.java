@@ -126,17 +126,32 @@ public final class ProfileReader extends AbstractXmlReader {
 			}
 			String accountName = AttributeGetters.getString(currentNode, "accountname");
 			//ContID
-			Long journalContID = null;
+			Long journalCID = null;
 			if (AttributeGetters.haveAttribute(currentNode, "journalcid")) {
-				journalContID = AttributeGetters.getLong(currentNode, "journalcid");
+				journalCID = AttributeGetters.getLong(currentNode, "journalcid");
 			}
-			Long transactionsContID = null;
+			Long transactionsCID = null;
 			if (AttributeGetters.haveAttribute(currentNode, "transactionscid")) {
-				transactionsContID = AttributeGetters.getLong(currentNode, "transactionscid");
+				transactionsCID = AttributeGetters.getLong(currentNode, "transactionscid");
+			}
+			Long contractsCID = null;
+			if (AttributeGetters.haveAttribute(currentNode, "contractscid")) {
+				contractsCID = AttributeGetters.getLong(currentNode, "contractscid");
+			}
+			Long industryJobsCID = null;
+			if (AttributeGetters.haveAttribute(currentNode, "industryjobscid")) {
+				industryJobsCID = AttributeGetters.getLong(currentNode, "industryjobscid");
+			}
+			Long marketOrdersCID = null;
+			if (AttributeGetters.haveAttribute(currentNode, "marketorderscid")) {
+				marketOrdersCID = AttributeGetters.getLong(currentNode, "marketorderscid");
 			}
 			EveKitOwner owner = new EveKitOwner(accessKey, accessCred, expire, accessmask, corporation, limit, accountName);
-			owner.setJournalContID(journalContID);
-			owner.setTransactionsContID(transactionsContID);
+			owner.setJournalCID(journalCID);
+			owner.setTransactionsCID(transactionsCID);
+			owner.setContractsCID(contractsCID);
+			owner.setIndustryJobsCID(industryJobsCID);
+			owner.setMarketOrdersCID(marketOrdersCID);
 			parseOwnerType(currentNode, owner);
 			eveKitOwners.add(owner);
 		}

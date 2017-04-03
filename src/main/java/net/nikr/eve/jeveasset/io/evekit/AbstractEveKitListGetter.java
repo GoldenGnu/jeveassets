@@ -47,19 +47,19 @@ public abstract class AbstractEveKitListGetter<T> extends AbstractEveKitValidate
 		}
 		System.out.println("Downloaded: " + results.size());
 		set(owner, results);
-		saveCid(owner, getCid(owner, results));
+		saveCID(owner, getCid(owner, results));
 	}
 
 	private Long getCid(EveKitOwner owner, List<T> batch) {
 		if (batch == null || batch.isEmpty()) {
-			return loadCid(owner);
+			return loadCID(owner);
 		} else {
-			return getCid(batch.get(batch.size() - 1));
+			return getCID(batch.get(batch.size() - 1));
 		}
 	}
 
-	protected abstract List<T> get(EveKitOwner owner, Long contid) throws ApiException;
-	protected abstract long getCid(T obj);
-	protected abstract void saveCid(EveKitOwner owner, Long contid);
-	protected abstract Long loadCid(EveKitOwner owner);
+	protected abstract List<T> get(EveKitOwner owner, Long cid) throws ApiException;
+	protected abstract long getCID(T obj);
+	protected abstract void saveCID(EveKitOwner owner, Long cid);
+	protected abstract Long loadCID(EveKitOwner owner);
 }

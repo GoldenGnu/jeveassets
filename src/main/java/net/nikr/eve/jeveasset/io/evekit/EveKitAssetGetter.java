@@ -57,7 +57,7 @@ public class EveKitAssetGetter extends AbstractEveKitListGetter<Asset> {
 	}
 
 	@Override
-	protected long getCid(Asset obj) {
+	protected long getCID(Asset obj) {
 		return obj.getCid();
 	}
 
@@ -99,10 +99,10 @@ public class EveKitAssetGetter extends AbstractEveKitListGetter<Asset> {
 	}
 
 	@Override
-	protected void saveCid(EveKitOwner owner, Long contid) { } //Always get all data
+	protected void saveCID(EveKitOwner owner, Long cid) { } //Always get all data
 
 	@Override
-	protected Long loadCid(EveKitOwner owner) {
+	protected Long loadCID(EveKitOwner owner) {
 		return null; //Always get all data
 	}
 }

@@ -94,11 +94,20 @@ public final class ProfileWriter extends AbstractXmlWriter {
 			}
 			node.setAttributeNS(null, "accountname", owner.getAccountName());
 			//ContID
-			if (owner.getJournalContID() != null) {
-				node.setAttributeNS(null, "journalcid", String.valueOf(owner.getJournalContID()));
+			if (owner.getJournalCID() != null) {
+				node.setAttributeNS(null, "journalcid", String.valueOf(owner.getJournalCID()));
 			}
-			if (owner.getTransactionsContID() != null) {
-				node.setAttributeNS(null, "transactionscid", String.valueOf(owner.getTransactionsContID()));
+			if (owner.getTransactionsCID() != null) {
+				node.setAttributeNS(null, "transactionscid", String.valueOf(owner.getTransactionsCID()));
+			}
+			if (owner.getContractsCID()!= null) {
+				node.setAttributeNS(null, "contractscid", String.valueOf(owner.getContractsCID()));
+			}
+			if (owner.getIndustryJobsCID()!= null) {
+				node.setAttributeNS(null, "industryjobscid", String.valueOf(owner.getIndustryJobsCID()));
+			}
+			if (owner.getMarketOrdersCID()!= null) {
+				node.setAttributeNS(null, "marketorderscid", String.valueOf(owner.getMarketOrdersCID()));
 			}
 			writeTypeOwner(xmldoc, node, owner);
 			parentNode.appendChild(node);

@@ -57,7 +57,7 @@ public class EveKitAccountBalanceGetter extends AbstractEveKitListGetter<Account
 	}
 
 	@Override
-	protected long getCid(AccountBalance obj) {
+	protected long getCID(AccountBalance obj) {
 		return obj.getCid();
 	}
 
@@ -87,10 +87,10 @@ public class EveKitAccountBalanceGetter extends AbstractEveKitListGetter<Account
 	}
 
 	@Override
-	protected void saveCid(EveKitOwner owner, Long contid) { } //Always get all data
+	protected void saveCID(EveKitOwner owner, Long cid) { } //Always get all data
 
 	@Override
-	protected Long loadCid(EveKitOwner owner) {
+	protected Long loadCID(EveKitOwner owner) {
 		return null; //Always get all data
 	}
 }

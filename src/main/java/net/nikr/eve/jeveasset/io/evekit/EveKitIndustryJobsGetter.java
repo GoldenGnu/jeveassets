@@ -77,6 +77,9 @@ public class EveKitIndustryJobsGetter extends AbstractEveKitListGetter<IndustryJ
 		Set<MyIndustryJob> set = industryJobs.get(owner);
 		if (set == null) { //New owner
 			set = new HashSet<MyIndustryJob>();
+			if (loadCID(owner) != null) { //Old
+				set.addAll(owner.getIndustryJobs());
+			}
 			industryJobs.put(owner, set);
 		}
 		set.addAll(EveKitConverter.convertIndustryJobs(data, owner)); //New
@@ -84,7 +87,7 @@ public class EveKitIndustryJobsGetter extends AbstractEveKitListGetter<IndustryJ
 	}
 
 	@Override
-	protected long getCid(IndustryJob obj) {
+	protected long getCID(IndustryJob obj) {
 		return obj.getCid();
 	}
 
@@ -134,11 +137,18 @@ public class EveKitIndustryJobsGetter extends AbstractEveKitListGetter<IndustryJ
 	}
 
 	@Override
-	protected void saveCid(EveKitOwner owner, Long contid) { } //Always get all data
-
-	@Override
-	protected Long loadCid(EveKitOwner owner) {
-		return null; //Always get all data
+	protected void saveCID(EveKitOwner owner, Long cid) {
+		if (run == Runs.MONTHS || run == Runs.ALL) {
+			owner.setIndustryJobsCID(cid);
+		}
 	}
 
+	@Override
+	protected Long loadCID(EveKitOwner owner) {
+		if (run == Runs.MONTHS || run == Runs.ALL) {
+			return owner.getIndustryJobsCID();
+		} else {
+			return null;
+		}
+	}
 }
