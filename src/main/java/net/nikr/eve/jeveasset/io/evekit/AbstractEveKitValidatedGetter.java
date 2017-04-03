@@ -61,6 +61,9 @@ public abstract class AbstractEveKitValidatedGetter<T> extends AbstractEveKitGet
 	protected final String valuesFilter(Set<Long> ids) {
 		StringBuilder builder = new StringBuilder();
 		builder.append("{ values: [");
+		if (ids.isEmpty()) {
+			builder.append("\"\"");
+		}
 		boolean first = true;
 		for (Long id : ids) {
 			if (first) {
