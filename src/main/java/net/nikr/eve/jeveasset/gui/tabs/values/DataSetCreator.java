@@ -128,7 +128,7 @@ public class DataSetCreator {
 		}
 		//Market Orders
 		for (MyMarketOrder marketOrder : program.getMarketOrdersList()) {
-			Value value = getValueInner(values, marketOrder.getOwner(), date);
+			Value value = getValueInner(values, marketOrder.getOwnerName(), date);
 			if (marketOrder.isActive()) {
 				if (marketOrder.getBid() < 1) { //Sell Orders
 					value.addSellOrders(marketOrder.getPrice() * marketOrder.getVolRemaining());
@@ -143,7 +143,7 @@ public class DataSetCreator {
 		}
 		//Industrys Job: Manufacturing
 		for (MyIndustryJob industryJob : program.getIndustryJobsList()) {
-			Value value = getValueInner(values, industryJob.getOwner(), date);
+			Value value = getValueInner(values, industryJob.getOwnerName(), date);
 			//Manufacturing and not completed
 			if (industryJob.isManufacturing() && !industryJob.isDelivered()) {
 				double manufacturingTotal = industryJob.getPortion() * industryJob.getRuns() * ApiIdConverter.getPrice(industryJob.getProductTypeID(), false);
@@ -158,15 +158,15 @@ public class DataSetCreator {
 		return values;
 	}
 
-	protected void addContracts(List<MyContract> contractItems, Map<String, Value> values, Map<String, OwnerType> owners, Value total, Date date) {
+	protected void addContracts(List<MyContract> contractItems, Map<String, Value> values, Map<Long, OwnerType> owners, Value total, Date date) {
 		for (MyContract contract : contractItems) {
 			OwnerType issuer;
 			if (contract.isForCorp()) {
-				issuer = owners.get(contract.getIssuerCorp());
+				issuer = owners.get(contract.getIssuerCorpID());
 			} else {
-				issuer = owners.get(contract.getIssuer());
+				issuer = owners.get(contract.getIssuerID());
 			}
-			OwnerType acceptor = owners.get(contract.getAcceptor());
+			OwnerType acceptor = owners.get(contract.getAcceptorID());
 			//Contract Collateral
 			if (contract.isCourier()) {
 				//Shipping cargo (will get collateral or cargo back)
@@ -225,7 +225,7 @@ public class DataSetCreator {
 		}
 	}
 
-	protected void addContractItems(List<MyContractItem> contractItems, Map<String, Value> values, Map<String, OwnerType> owners, Value total, Date date) {
+	protected void addContractItems(List<MyContractItem> contractItems, Map<String, Value> values, Map<Long, OwnerType> owners, Value total, Date date) {
 		//Contract Items
 		for (MyContractItem contractItem : contractItems) {
 			MyContract contract = contractItem.getContract();
@@ -237,11 +237,11 @@ public class DataSetCreator {
 			}
 			OwnerType issuer;
 			if (contract.isForCorp()) {
-				issuer = owners.get(contract.getIssuerCorp());
+				issuer = owners.get(contract.getIssuerCorpID());
 			} else {
-				issuer = owners.get(contract.getIssuer());
+				issuer = owners.get(contract.getIssuerID());
 			}
-			OwnerType acceptor = owners.get(contract.getAcceptor());
+			OwnerType acceptor = owners.get(contract.getAcceptorID());
 			//Issuer
 			if (issuer != null) {
 				if (contract.getStatus() == ContractStatus.OUTSTANDING) { //Not Completed

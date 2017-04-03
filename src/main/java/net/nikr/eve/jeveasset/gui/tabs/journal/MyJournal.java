@@ -103,10 +103,11 @@ public class MyJournal extends JournalEntry implements Comparable<JournalEntry> 
 
 	@Override
 	public int hashCode() {
-		int hash = 5;
-		hash = 41 * hash + this.accountKey;
-		hash = 41 * hash + (int) (this.getRefID() ^ (this.getRefID() >>> 32));
-		hash = 41 * hash + (int) (Double.doubleToLongBits(this.getAmount()) ^ (Double.doubleToLongBits(this.getAmount()) >>> 32));
+		int hash = 3;
+		hash = 73 * hash + this.accountKey;
+		hash = 73 * hash + (int) (this.owner.getOwnerID() ^ (this.owner.getOwnerID() >>> 32));
+		hash = 73 * hash + (int) (this.getRefID() ^ (this.getRefID() >>> 32));
+		hash = 73 * hash + (int) (Double.doubleToLongBits(this.getAmount()) ^ (Double.doubleToLongBits(this.getAmount()) >>> 32));
 		return hash;
 	}
 
@@ -122,13 +123,16 @@ public class MyJournal extends JournalEntry implements Comparable<JournalEntry> 
 			return false;
 		}
 		final MyJournal other = (MyJournal) obj;
+		if (this.accountKey != other.accountKey) {
+			return false;
+		}
+		if (this.owner.getOwnerID() != other.owner.getOwnerID()) {
+			return false;
+		}
 		if (this.getRefID() != other.getRefID()) {
 			return false;
 		}
 		if (Double.doubleToLongBits(this.getAmount()) != Double.doubleToLongBits(other.getAmount())) {
-			return false;
-		}
-		if (this.accountKey != other.accountKey) {
 			return false;
 		}
 		return true;

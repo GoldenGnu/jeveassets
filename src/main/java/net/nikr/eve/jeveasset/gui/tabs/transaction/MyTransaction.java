@@ -35,7 +35,6 @@ public class MyTransaction extends WalletTransaction implements EditableLocation
 	private final Item item;
 	private final OwnerType owner;
 	private final int accountKey;
-	private String ownerCharacter;
 	private MyLocation location;
 
 	public MyTransaction(final WalletTransaction apiTransaction, final Item item, final MyLocation location, final OwnerType owner, final int accountKey) {		
@@ -60,7 +59,6 @@ public class MyTransaction extends WalletTransaction implements EditableLocation
 		this.location = location;
 		this.owner = owner;
 		this.accountKey = accountKey;
-		this.ownerCharacter = "";
 	}
 
 	public int getAccountKey() {
@@ -108,11 +106,7 @@ public class MyTransaction extends WalletTransaction implements EditableLocation
 	}
 
 	public String getOwnerName() {
-		if (ownerCharacter.isEmpty()) {
-			return owner.getOwnerName();
-		} else {
-			return ownerCharacter + " > " + owner.getOwnerName();
-		}
+		return owner.getOwnerName();
 	}
 
 	public double getValue() {
@@ -148,10 +142,6 @@ public class MyTransaction extends WalletTransaction implements EditableLocation
 		return getTransactionFor().equals("corporation");
 	}
 
-	public void setOwnerCharacter(String ownerCharacter) {
-		this.ownerCharacter = ownerCharacter;
-	}
-
 	@Override
 	public int compareTo(final WalletTransaction o) {
 		int compared = o.getTransactionDateTime().compareTo(this.getTransactionDateTime());
@@ -165,14 +155,18 @@ public class MyTransaction extends WalletTransaction implements EditableLocation
 	@Override
 	public int hashCode() {
 		int hash = 7;
-		hash = 37 * hash + this.accountKey;
-		hash = 37 * hash + (int) (this.getTransactionID() ^ (this.getTransactionID() >>> 32));
-		hash = 37 * hash + (int) (Double.doubleToLongBits(this.getPrice()) ^ (Double.doubleToLongBits(this.getPrice()) >>> 32));
+		hash = 11 * hash + this.accountKey;
+		hash = 11 * hash + (int) (this.getTransactionID() ^ (this.getTransactionID() >>> 32));
+		hash = 11 * hash + (int) (this.owner.getOwnerID() ^ (this.owner.getOwnerID() >>> 32));
+		hash = 11 * hash + (int) (Double.doubleToLongBits(this.getPrice()) ^ (Double.doubleToLongBits(this.getPrice()) >>> 32));
 		return hash;
 	}
 
 	@Override
 	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
 		if (obj == null) {
 			return false;
 		}
@@ -180,13 +174,16 @@ public class MyTransaction extends WalletTransaction implements EditableLocation
 			return false;
 		}
 		final MyTransaction other = (MyTransaction) obj;
+		if (this.accountKey != other.accountKey) {
+			return false;
+		}
 		if (this.getTransactionID() != other.getTransactionID()) {
 			return false;
 		}
-		if (this.getPrice()!= other.getPrice()) {
+		if (this.owner.getOwnerID() != other.owner.getOwnerID()) {
 			return false;
 		}
-		if (this.getAccountKey()!= other.getAccountKey()) {
+		if (Double.doubleToLongBits(this.getPrice()) != Double.doubleToLongBits(other.getPrice())) {
 			return false;
 		}
 		return true;

@@ -257,7 +257,11 @@ public class MyMarketOrder extends MarketOrder implements Comparable<MyMarketOrd
 		return rangeFormated;
 	}
 
-	public String getOwner() {
+	public OwnerType getOwner() {
+		return owner;
+	}
+
+	public String getOwnerName() {
 		return owner.getOwnerName();
 	}
 
@@ -280,13 +284,16 @@ public class MyMarketOrder extends MarketOrder implements Comparable<MyMarketOrd
 	@Override
 	public int hashCode() {
 		int hash = 3;
-		hash = 97 * hash + (this.owner != null ? this.owner.hashCode() : 0);
-		hash = 97 * hash + (int) (this.getOrderID() ^ (this.getOrderID() >>> 32));
+		hash = 13 * hash + (int) (this.owner.getOwnerID() ^ (this.owner.getOwnerID() >>> 32));
+		hash = 13 * hash + (int) (this.getOrderID() ^ (this.getOrderID() >>> 32));
 		return hash;
 	}
 
 	@Override
 	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
 		if (obj == null) {
 			return false;
 		}
@@ -294,7 +301,7 @@ public class MyMarketOrder extends MarketOrder implements Comparable<MyMarketOrd
 			return false;
 		}
 		final MyMarketOrder other = (MyMarketOrder) obj;
-		if (this.owner != other.owner && (this.owner == null || !this.owner.equals(other.owner))) {
+		if (this.owner.getOwnerID() != other.owner.getOwnerID()) {
 			return false;
 		}
 		if (this.getOrderID() != other.getOrderID()) {

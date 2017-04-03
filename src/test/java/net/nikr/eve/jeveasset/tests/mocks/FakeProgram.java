@@ -239,7 +239,7 @@ public abstract class FakeProgram extends Program {
 	}
 
 	@Override
-	public Map<String, OwnerType> getOwners() {
+	public Map<Long, OwnerType> getOwners() {
 		throw new UnsupportedOperationException("Not implemented");
 	}
 

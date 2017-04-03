@@ -66,11 +66,11 @@ public class DataSetCreatorTest {
 		Map<String, Value> values = new HashMap<String, Value>();
 		Value total = new Value(TabsValues.get().grandTotal(), now);
 		//Owners
-		Map<String, OwnerType> owners = new HashMap<String, OwnerType>();
-		EveApiOwner issuer = getOwner("Issuer", after, now);
-		EveApiOwner acceptor = getOwner("Acceptor");
-		owners.put(issuer.getOwnerName(), issuer);
-		owners.put(acceptor.getOwnerName(), acceptor);
+		Map<Long, OwnerType> owners = new HashMap<Long, OwnerType>();
+		EveApiOwner issuer = getOwner("Issuer", 1, after, now);
+		EveApiOwner acceptor = getOwner("Acceptor", 2);
+		owners.put(issuer.getOwnerID(), issuer);
+		owners.put(acceptor.getOwnerID(), acceptor);
 		//Contacts Items
 		List<MyContractItem> contractItems = new ArrayList<MyContractItem>();
 		MyContract contract = getContract(issuer, acceptor, ContractStatus.OUTSTANDING, 0, 0, 0, null, now);
@@ -88,11 +88,11 @@ public class DataSetCreatorTest {
 		Map<String, Value> values = new HashMap<String, Value>();
 		Value total = new Value(TabsValues.get().grandTotal(), now);
 		//Owners
-		Map<String, OwnerType> owners = new HashMap<String, OwnerType>();
-		EveApiOwner issuer = getOwner("Issuer", after, now);
-		EveApiOwner acceptor = getOwner("Acceptor");
-		owners.put(issuer.getOwnerName(), issuer);
-		owners.put(acceptor.getOwnerName(), acceptor);
+		Map<Long, OwnerType> owners = new HashMap<Long, OwnerType>();
+		EveApiOwner issuer = getOwner("Issuer", 1, after, now);
+		EveApiOwner acceptor = getOwner("Acceptor", 2);
+		owners.put(issuer.getOwnerID(), issuer);
+		owners.put(acceptor.getOwnerID(), acceptor);
 		//Contacts Items
 		List<MyContractItem> contractItems = new ArrayList<MyContractItem>();
 		MyContract contract = getContract(issuer, acceptor, ContractStatus.OUTSTANDING, 0, 0, 0, null, now);
@@ -104,12 +104,12 @@ public class DataSetCreatorTest {
 		Assert.assertEquals(10, values.get(issuer.getOwnerName()).getContractValue(), 0.0001);
 	}
 
-	private EveApiOwner getOwner(String name) {
-		return getOwner(name, now, now);
+	private EveApiOwner getOwner(String name, long id) {
+		return getOwner(name, id, now, now);
 	}
 
-	private EveApiOwner getOwner(String name, Date lastAsset, Date lastBalance) {
-		EveApiOwner owner = new EveApiOwner(null, name, 0);
+	private EveApiOwner getOwner(String name, long id, Date lastAsset, Date lastBalance) {
+		EveApiOwner owner = new EveApiOwner(null, name, id);
 		owner.setAssetLastUpdate(lastAsset);
 		owner.setBalanceLastUpdate(lastBalance);
 		return owner;
@@ -124,6 +124,12 @@ public class DataSetCreatorTest {
 		contract.setReward(reward);
 		contract.setStatus(status);
 		contract.setForCorp(false);
+		if (issuer != null) {
+			contract.setIssuerID(issuer.getOwnerID());
+		}
+		if (acceptor != null) {
+			contract.setAcceptorID(acceptor.getOwnerID());
+		}
 		MyContract myContract = new MyContract(contract, new MyLocation(0), new MyLocation(0));
 		if (issuer != null) {
 			myContract.setIssuer(issuer.getOwnerName());
@@ -166,12 +172,12 @@ public class DataSetCreatorTest {
 		public DataSetCreatorTester() {}
 
 		@Override
-		public void addContractItems(List<MyContractItem> contractItems, Map<String, Value> values, Map<String, OwnerType> owners, Value total, Date date) {
+		public void addContractItems(List<MyContractItem> contractItems, Map<String, Value> values, Map<Long, OwnerType> owners, Value total, Date date) {
 			super.addContractItems(contractItems, values, owners, total, date);
 		}
 
 		@Override
-		public void addContracts(List<MyContract> contractItems, Map<String, Value> values, Map<String, OwnerType> owners, Value total, Date date) {
+		public void addContracts(List<MyContract> contractItems, Map<String, Value> values, Map<Long, OwnerType> owners, Value total, Date date) {
 			super.addContracts(contractItems, values, owners, total, date);
 		}
 

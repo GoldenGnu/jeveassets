@@ -399,7 +399,11 @@ public class MyIndustryJob extends IndustryJob implements Comparable<MyIndustryJ
 		this.location = location;
 	}
 
-	public String getOwner() {
+	public OwnerType getOwner() {
+		return owner;
+	}
+
+	public String getOwnerName() {
 		return owner.getOwnerName();
 	}
 
@@ -418,14 +422,17 @@ public class MyIndustryJob extends IndustryJob implements Comparable<MyIndustryJ
 
 	@Override
 	public int hashCode() {
-		int hash = 7;
-		hash = 37 * hash + (this.owner != null ? this.owner.hashCode() : 0);
+		int hash = 5;
 		hash = 37 * hash + (int) (this.getJobID() ^ (this.getJobID() >>> 32));
+		hash = 37 * hash + (int) (this.owner.getOwnerID() ^ (this.owner.getOwnerID() >>> 32));
 		return hash;
 	}
 
 	@Override
 	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
 		if (obj == null) {
 			return false;
 		}
@@ -433,9 +440,12 @@ public class MyIndustryJob extends IndustryJob implements Comparable<MyIndustryJ
 			return false;
 		}
 		final MyIndustryJob other = (MyIndustryJob) obj;
-		if (this.owner != other.owner && (this.owner == null || !this.owner.equals(other.owner))) {
+		if (this.getJobID() != other.getJobID()) {
 			return false;
 		}
-		return this.getJobID() == other.getJobID();
+		if (this.owner.getOwnerID() != other.owner.getOwnerID()) {
+			return false;
+		}
+		return true;
 	}
 }

@@ -31,6 +31,7 @@ import com.beimin.eveapi.model.shared.JournalEntry;
 import com.beimin.eveapi.model.shared.MarketOrder;
 import com.beimin.eveapi.model.shared.WalletTransaction;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -67,18 +68,18 @@ public final class ApiConverter {
 		return accountBalances;
 	}
 
-	public static List<MyAsset> assetIndustryJob(final List<MyIndustryJob> industryJobs, final OwnerType owner) {
+	public static List<MyAsset> assetIndustryJob(final Collection<MyIndustryJob> industryJobs) {
 		List<MyAsset> assets = new ArrayList<MyAsset>();
 		for (MyIndustryJob industryJob : industryJobs) {
 			if (!industryJob.isDelivered()) {
-				MyAsset asset = toAssetIndustryJob(industryJob, owner);
+				MyAsset asset = toAssetIndustryJob(industryJob);
 				assets.add(asset);
 			}
 		}
 		return assets;
 	}
 
-	private static MyAsset toAssetIndustryJob(final MyIndustryJob industryJob, final OwnerType owner) {
+	private static MyAsset toAssetIndustryJob(final MyIndustryJob industryJob) {
 		int typeID = industryJob.getBlueprintTypeID();
 		long locationID = toLocationID(industryJob);
 		long count = 1;
@@ -92,7 +93,7 @@ public final class ApiConverter {
 		} else {
 			rawQuantity = -2;
 		}
-		return createAsset(null, owner, count, flagID, itemID, typeID, locationID, singleton, rawQuantity, flag);
+		return createAsset(null, industryJob.getOwner(), count, flagID, itemID, typeID, locationID, singleton, rawQuantity, flag);
 	}
 
 	public static List<MyAsset> convertAsset(final List<Asset> eveAssets, final OwnerType owner) {
@@ -145,21 +146,21 @@ public final class ApiConverter {
 		return new MyMarketOrder(apiMarketOrder, item, location, owner);
 	}
 
-	public static List<MyAsset> assetMarketOrder(final List<MyMarketOrder> marketOrders, final OwnerType owner) {
+	public static List<MyAsset> assetMarketOrder(final Collection<MyMarketOrder> marketOrders) {
 		List<MyAsset> assets = new ArrayList<MyAsset>();
 		for (MyMarketOrder marketOrder : marketOrders) {
 			if (marketOrder.isActive() && marketOrder.getVolRemaining() > 0
 					&& ((marketOrder.getBid() < 1 && Settings.get().isIncludeSellOrders())
 					|| (marketOrder.getBid() > 0 && Settings.get().isIncludeBuyOrders()))
 					) {
-				MyAsset asset = toAssetMarketOrder(marketOrder, owner);
+				MyAsset asset = toAssetMarketOrder(marketOrder);
 				assets.add(asset);
 			}
 		}
 		return assets;
 	}
 
-	private static MyAsset toAssetMarketOrder(final MyMarketOrder marketOrder, final OwnerType owner) {
+	private static MyAsset toAssetMarketOrder(final MyMarketOrder marketOrder) {
 		int typeID = marketOrder.getTypeID();
 		long locationID = marketOrder.getStationID();
 		long count = marketOrder.getVolRemaining();
@@ -174,7 +175,7 @@ public final class ApiConverter {
 		boolean singleton = false;
 		int rawQuantity = 0;
 
-		return createAsset(null, owner, count, flagID, itemID, typeID, locationID, singleton, rawQuantity, flag);
+		return createAsset(null, marketOrder.getOwner(), count, flagID, itemID, typeID, locationID, singleton, rawQuantity, flag);
 	}
 
 	public static Map<MyContract, List<MyContractItem>> convertContracts(final Map<Contract, List<ContractItem>> eveContracts) {
@@ -207,16 +208,16 @@ public final class ApiConverter {
 	}
 
 	
-	public static List<MyAsset> assetContracts(final List<MyContractItem> contractItems, final Map<String, OwnerType> owners) {
+	public static List<MyAsset> assetContracts(final Collection<MyContractItem> contractItems, final Map<Long, OwnerType> owners) {
 		List<MyAsset> list = new ArrayList<MyAsset>();
 		//Only includes issuer buying and selling items
 		//TODO Could add issuer bought/sold and acceptor bought/sold items to the assets list 
 		for (MyContractItem contractItem : contractItems) {
 			OwnerType issuer;
 			if (contractItem.getContract().isForCorp()) {
-				issuer = owners.get(contractItem.getContract().getIssuerCorp());
+				issuer = owners.get(contractItem.getContract().getIssuerCorpID());
 			} else {
-				issuer = owners.get(contractItem.getContract().getIssuer());
+				issuer = owners.get(contractItem.getContract().getIssuerID());
 			}
 			if (	//Not completed
 					(contractItem.getContract().getStatus() == ContractStatus.INPROGRESS 
