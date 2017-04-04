@@ -45,7 +45,6 @@ public abstract class AbstractEveKitListGetter<T> extends AbstractEveKitValidate
 				}
 			}
 		}
-		System.out.println("Downloaded: " + results.size());
 		set(owner, results);
 		saveCID(owner, getCid(owner, results));
 	}
