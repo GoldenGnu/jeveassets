@@ -19,7 +19,7 @@
  *
  */
 
-package net.nikr.eve.jeveasset.io.shared;
+package net.nikr.eve.jeveasset.io.local;
 
 
 public class XmlException extends Exception {

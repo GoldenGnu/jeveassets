@@ -37,8 +37,7 @@ import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import net.nikr.eve.jeveasset.i18n.DialoguesUpdate;
 import net.nikr.eve.jeveasset.io.local.CitadelReader;
 import net.nikr.eve.jeveasset.io.local.CitadelWriter;
-import net.nikr.eve.jeveasset.io.shared.AbstractXmlWriter;
-import net.nikr.eve.jeveasset.io.shared.UpdateTaskInputStream;
+import net.nikr.eve.jeveasset.io.local.AbstractXmlWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

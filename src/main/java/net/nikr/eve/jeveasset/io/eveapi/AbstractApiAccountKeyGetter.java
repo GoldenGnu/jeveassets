@@ -19,7 +19,7 @@
  *
  */
 
-package net.nikr.eve.jeveasset.io.shared;
+package net.nikr.eve.jeveasset.io.eveapi;
 
 import com.beimin.eveapi.exception.ApiException;
 import com.beimin.eveapi.response.ApiListResponse;

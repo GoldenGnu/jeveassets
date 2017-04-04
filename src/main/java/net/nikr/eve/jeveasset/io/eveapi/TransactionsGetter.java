@@ -34,7 +34,6 @@ import net.nikr.eve.jeveasset.data.eveapi.EveApiAccount;
 import net.nikr.eve.jeveasset.data.eveapi.EveApiOwner;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import net.nikr.eve.jeveasset.gui.tabs.transaction.MyTransaction;
-import net.nikr.eve.jeveasset.io.shared.AbstractApiAccountKeyGetter;
 import net.nikr.eve.jeveasset.io.shared.ApiConverter;
 
 

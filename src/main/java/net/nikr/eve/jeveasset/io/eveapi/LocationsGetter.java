@@ -37,7 +37,6 @@ import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.data.eveapi.EveApiAccessMask;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import net.nikr.eve.jeveasset.gui.tabs.assets.MyAsset;
-import net.nikr.eve.jeveasset.io.shared.AbstractApiGetter;
 
 
 public class LocationsGetter extends AbstractApiGetter<LocationsResponse> {

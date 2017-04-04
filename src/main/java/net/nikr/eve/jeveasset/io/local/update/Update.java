@@ -26,10 +26,10 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
 import net.nikr.eve.jeveasset.io.local.update.updates.Update1To2;
-import net.nikr.eve.jeveasset.io.shared.AbstractXmlReader;
-import net.nikr.eve.jeveasset.io.shared.AttributeGetters;
-import net.nikr.eve.jeveasset.io.shared.FileLock;
-import net.nikr.eve.jeveasset.io.shared.XmlException;
+import net.nikr.eve.jeveasset.io.local.AbstractXmlReader;
+import net.nikr.eve.jeveasset.io.local.AttributeGetters;
+import net.nikr.eve.jeveasset.io.local.FileLock;
+import net.nikr.eve.jeveasset.io.local.XmlException;
 import org.dom4j.Attribute;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
@@ -99,7 +99,7 @@ public class Update extends AbstractXmlReader {
 	 * in the correct order. - Candle 2010-09-19
 	 * @param requiredVersion current version
 	 * @param path settings path
-	 * @throws net.nikr.eve.jeveasset.io.shared.XmlException on any error
+	 * @throws net.nikr.eve.jeveasset.io.local.XmlException on any error
 	 */
 	public void performUpdates(final int requiredVersion, final String path) throws XmlException {
 		File xml = new File(path);

@@ -19,7 +19,7 @@
  *
  */
 
-package net.nikr.eve.jeveasset.io.shared;
+package net.nikr.eve.jeveasset.io.local;
 
 import java.io.*;
 import javax.xml.parsers.DocumentBuilder;

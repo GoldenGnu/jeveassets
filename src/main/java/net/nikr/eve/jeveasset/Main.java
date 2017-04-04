@@ -35,7 +35,7 @@ import javax.swing.UnsupportedLookAndFeelException;
 import static net.nikr.eve.jeveasset.Program.PROGRAM_NAME;
 import static net.nikr.eve.jeveasset.Program.PROGRAM_VERSION;
 import net.nikr.eve.jeveasset.io.online.Updater;
-import net.nikr.eve.jeveasset.io.shared.FileLock;
+import net.nikr.eve.jeveasset.io.local.FileLock;
 import net.nikr.eve.jeveasset.io.shared.FileUtil;
 
 
