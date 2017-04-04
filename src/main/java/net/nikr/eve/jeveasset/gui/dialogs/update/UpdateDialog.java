@@ -333,7 +333,7 @@ public class UpdateDialog extends JDialogCentered {
 				allChecked = false;
 			}
 			allDiabled = false;
-		} else if (jPriceDataNew.isEnabled()) {
+		} else {
 			if (!jPriceDataNew.isSelected()) {
 				allChecked = false;
 			}
@@ -384,7 +384,6 @@ public class UpdateDialog extends JDialogCentered {
 				accountBalanceLast = updateLast(accountBalanceLast, owner.getBalanceNextUpdate());
 			}
 		}
-		boolean enabled = jPriceDataAll.isEnabled();
 		setUpdateLabel(jMarketOrdersLeftFirst, jMarketOrdersLeftLast, jMarketOrders, marketOrdersFirst, marketOrdersLast);
 		setUpdateLabel(jJournalLeftFirst, jJournalLeftLast, jJournal, journalFirst, journalLast);
 		setUpdateLabel(jTransactionsLeftFirst, jTransactionsLeftLast, jTransactions, transactionsFirst, transactionsLast);
@@ -394,7 +393,7 @@ public class UpdateDialog extends JDialogCentered {
 		setUpdateLabel(jAssetsLeftFirst, jAssetsLeftLast, jAssets, assetsFirst, assetsLast);
 		setUpdateLabel(jBlueprintsLeftFirst, jBlueprintsLeftLast, jBlueprints, blueprintsFirst, blueprintsLast);
 		setUpdateLabel(null, jPriceDataLeftLast, jPriceDataAll, priceData, priceData, false);
-		if (enabled && !jPriceDataAll.isEnabled()) {
+		if (!jPriceDataAll.isEnabled() && !jPriceDataNone.isSelected()) {
 			jPriceDataNew.setSelected(true);
 		}
 		changed();
