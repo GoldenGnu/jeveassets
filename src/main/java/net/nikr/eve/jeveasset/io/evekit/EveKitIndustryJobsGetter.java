@@ -132,6 +132,11 @@ public class EveKitIndustryJobsGetter extends AbstractEveKitListGetter<IndustryJ
 	}
 
 	@Override
+	protected Date getNextUpdate(EveKitOwner owner) {
+		return owner.getIndustryJobsNextUpdate();
+	}
+
+	@Override
 	protected ApiClient getApiClient() {
 		return getCommonApi().getApiClient();
 	}

@@ -107,6 +107,9 @@ public final class ProfileWriter extends AbstractXmlWriter {
 			if (owner.getMarketOrdersCID()!= null) {
 				node.setAttributeNS(null, "marketorderscid", String.valueOf(owner.getMarketOrdersCID()));
 			}
+			if (owner.getAccountNextUpdate()!= null) {
+				node.setAttributeNS(null, "accountnextupdate", String.valueOf(owner.getAccountNextUpdate().getTime()));
+			}
 			writeTypeOwner(xmldoc, node, owner);
 			parentNode.appendChild(node);
 		}

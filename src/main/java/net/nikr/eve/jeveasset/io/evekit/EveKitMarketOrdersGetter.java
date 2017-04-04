@@ -86,6 +86,11 @@ public class EveKitMarketOrdersGetter extends AbstractEveKitListGetter<MarketOrd
 	}
 
 	@Override
+	protected Date getNextUpdate(EveKitOwner owner) {
+		return owner.getMarketOrdersNextUpdate();
+	}
+
+	@Override
 	protected ApiClient getApiClient() {
 		return getCommonApi().getApiClient();
 	}

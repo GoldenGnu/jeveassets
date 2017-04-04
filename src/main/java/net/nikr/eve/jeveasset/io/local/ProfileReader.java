@@ -143,12 +143,17 @@ public final class ProfileReader extends AbstractXmlReader {
 			if (AttributeGetters.haveAttribute(currentNode, "marketorderscid")) {
 				marketOrdersCID = AttributeGetters.getLong(currentNode, "marketorderscid");
 			}
+			Date accountNextUpdate = Settings.getNow();
+			if (AttributeGetters.haveAttribute(currentNode, "accountnextupdate")) {
+				accountNextUpdate = AttributeGetters.getDate(currentNode, "accountnextupdate");
+			}
 			EveKitOwner owner = new EveKitOwner(accessKey, accessCred, expire, accessmask, corporation, limit, accountName);
 			owner.setJournalCID(journalCID);
 			owner.setTransactionsCID(transactionsCID);
 			owner.setContractsCID(contractsCID);
 			owner.setIndustryJobsCID(industryJobsCID);
 			owner.setMarketOrdersCID(marketOrdersCID);
+			owner.setAccountNextUpdate(accountNextUpdate);
 			parseOwnerType(currentNode, owner);
 			eveKitOwners.add(owner);
 		}

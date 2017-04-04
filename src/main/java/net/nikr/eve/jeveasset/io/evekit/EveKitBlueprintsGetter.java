@@ -75,6 +75,11 @@ public class EveKitBlueprintsGetter extends AbstractEveKitListGetter<Blueprint> 
 	}
 
 	@Override
+	protected Date getNextUpdate(EveKitOwner owner) {
+		return owner.getBlueprintsNextUpdate();
+	}
+
+	@Override
 	protected ApiClient getApiClient() {
 		return getCommonApi().getApiClient();
 	}

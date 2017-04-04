@@ -26,6 +26,7 @@ import enterprises.orbital.evekit.client.invoker.ApiException;
 import enterprises.orbital.evekit.client.model.KeyInfo;
 import java.util.Date;
 import java.util.List;
+import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.data.evekit.EveKitOwner;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import net.nikr.eve.jeveasset.io.shared.AccountAdder;
@@ -130,7 +131,12 @@ public class EveKitOwnerGetter extends AbstractEveKitGetter implements AccountAd
 
 	@Override
 	protected void setNextUpdate(EveKitOwner owner, Date date) {
-		
+		owner.setAccountNextUpdate(date);
+	}
+
+	@Override
+	protected Date getNextUpdate(EveKitOwner owner) {
+		return owner.getAccountNextUpdate();
 	}
 
 	@Override

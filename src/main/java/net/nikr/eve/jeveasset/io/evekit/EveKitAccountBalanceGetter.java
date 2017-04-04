@@ -82,6 +82,11 @@ public class EveKitAccountBalanceGetter extends AbstractEveKitListGetter<Account
 	}
 
 	@Override
+	protected Date getNextUpdate(EveKitOwner owner) {
+		return owner.getBalanceNextUpdate();
+	}
+
+	@Override
 	protected ApiClient getApiClient() {
 		return getCommonApi().getApiClient();
 	}

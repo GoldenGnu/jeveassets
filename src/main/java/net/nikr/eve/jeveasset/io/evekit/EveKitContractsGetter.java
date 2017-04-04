@@ -131,6 +131,11 @@ public class EveKitContractsGetter extends AbstractEveKitListGetter<Contract> {
 	}
 
 	@Override
+	protected Date getNextUpdate(EveKitOwner owner) {
+		return owner.getContractsNextUpdate();
+	}
+
+	@Override
 	protected ApiClient getApiClient() {
 		return getCommonApi().getApiClient();
 	}

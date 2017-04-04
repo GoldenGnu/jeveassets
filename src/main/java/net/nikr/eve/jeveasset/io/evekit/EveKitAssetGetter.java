@@ -94,6 +94,11 @@ public class EveKitAssetGetter extends AbstractEveKitListGetter<Asset> {
 	}
 
 	@Override
+	protected Date getNextUpdate(EveKitOwner owner) {
+		return owner.getAssetNextUpdate();
+	}
+
+	@Override
 	protected ApiClient getApiClient() {
 		return getCommonApi().getApiClient();
 	}

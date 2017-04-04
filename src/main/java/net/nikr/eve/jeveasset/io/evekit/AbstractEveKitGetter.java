@@ -27,6 +27,7 @@ import enterprises.orbital.evekit.client.invoker.ApiException;
 import java.util.Date;
 import java.util.List;
 import net.nikr.eve.jeveasset.Program;
+import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.data.evekit.EveKitOwner;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
@@ -87,6 +88,14 @@ public abstract class AbstractEveKitGetter {
 				addError("	" + getTaskName() + " failed to update for: " + owner.getOwnerName() + " (API KEY EXPIRED)");
 				if (updateTask != null) {
 					updateTask.addError(owner.getOwnerName(), "API Key expired");
+				}
+				return false;
+			}
+			//Check API cache time
+			if (!Settings.get().isUpdatable(getNextUpdate(owner), false)) {
+				addError("	" + getTaskName() + " failed to update for: " + owner.getOwnerName() + " (NOT ALLOWED YET)");
+				if (updateTask != null) {
+					updateTask.addError(owner.getOwnerName(), "Not allowed yet.\r\n(Fix: Just wait a bit)");
 				}
 				return false;
 			}
@@ -179,6 +188,7 @@ public abstract class AbstractEveKitGetter {
 	protected abstract String getTaskName();
 	protected abstract long getAccessMask();
 	protected abstract void setNextUpdate(EveKitOwner owner, Date date);
+	protected abstract Date getNextUpdate(EveKitOwner owner);
 	protected abstract ApiClient getApiClient();
 
 }

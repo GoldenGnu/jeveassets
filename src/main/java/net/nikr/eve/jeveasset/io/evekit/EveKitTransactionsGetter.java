@@ -85,6 +85,11 @@ public class EveKitTransactionsGetter extends AbstractEveKitListGetter<WalletTra
 	}
 
 	@Override
+	protected Date getNextUpdate(EveKitOwner owner) {
+		return owner.getTransactionsNextUpdate();
+	}
+
+	@Override
 	protected ApiClient getApiClient() {
 		return getCommonApi().getApiClient();
 	}

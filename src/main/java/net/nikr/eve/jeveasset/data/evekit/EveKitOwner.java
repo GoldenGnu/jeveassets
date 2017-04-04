@@ -41,6 +41,7 @@ public class EveKitOwner extends AbstractOwner implements OwnerType {
 	private Long contractsCID = null;
 	private Long industryJobsCID = null;
 	private Long marketOrdersCID = null;
+	private Date accountNextUpdate;
 
 	//New owner
 	public EveKitOwner(Integer accessKey, String accessCred) {
@@ -108,6 +109,14 @@ public class EveKitOwner extends AbstractOwner implements OwnerType {
 
 	public void setMarketOrdersCID(Long marketOrdersCID) {
 		this.marketOrdersCID = marketOrdersCID;
+	}
+
+	public Date getAccountNextUpdate() {
+		return accountNextUpdate;
+	}
+
+	public void setAccountNextUpdate(Date accountNextUpdate) {
+		this.accountNextUpdate = accountNextUpdate;
 	}
 
 	public Integer getAccessKey() {

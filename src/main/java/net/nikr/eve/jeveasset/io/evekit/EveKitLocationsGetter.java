@@ -116,6 +116,11 @@ public class EveKitLocationsGetter extends AbstractEveKitListGetter<Location> {
 	}
 
 	@Override
+	protected Date getNextUpdate(EveKitOwner owner) {
+		return owner.getLocationsNextUpdate();
+	}
+
+	@Override
 	protected ApiClient getApiClient() {
 		return getCommonApi().getApiClient();
 	}

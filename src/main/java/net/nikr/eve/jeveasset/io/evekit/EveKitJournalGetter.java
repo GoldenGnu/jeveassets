@@ -85,6 +85,11 @@ public class EveKitJournalGetter extends AbstractEveKitListGetter<WalletJournal>
 	}
 
 	@Override
+	protected Date getNextUpdate(EveKitOwner owner) {
+		return owner.getJournalNextUpdate();
+	}
+
+	@Override
 	protected ApiClient getApiClient() {
 		return getCommonApi().getApiClient();
 	}
