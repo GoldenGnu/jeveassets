@@ -362,15 +362,6 @@ public class UpdateDialog extends JDialogCentered {
 		Date blueprintsLast = null;
 		Date accountBalanceLast = null;
 
-		boolean industryJobsUpdateAll = true;
-		boolean marketOrdersUpdateAll = true;
-		boolean journalUpdateAll = true;
-		boolean transactionsUpdateAll = true;
-		boolean contractsUpdateAll = true;
-		boolean assetsUpdateAll = true;
-		boolean blueprintsUpdateAll = true;
-		boolean accountBalanceUpdateAll = true;
-
 		Date priceData = program.getPriceDataGetter().getNextUpdate();
 		for (OwnerType owner : program.getOwnerTypes()) {
 			if (owner.isShowOwner()) {
@@ -391,27 +382,18 @@ public class UpdateDialog extends JDialogCentered {
 				assetsLast = updateLast(assetsLast, owner.getAssetNextUpdate());
 				blueprintsLast = updateLast(blueprintsLast, owner.getBlueprintsNextUpdate());
 				accountBalanceLast = updateLast(accountBalanceLast, owner.getBalanceNextUpdate());
-
-				industryJobsUpdateAll = updateAll(industryJobsUpdateAll, owner.getIndustryJobsNextUpdate());
-				marketOrdersUpdateAll = updateAll(marketOrdersUpdateAll, owner.getMarketOrdersNextUpdate());
-				journalUpdateAll = updateAll(journalUpdateAll, owner.getJournalNextUpdate());
-				transactionsUpdateAll = updateAll(transactionsUpdateAll, owner.getTransactionsNextUpdate());
-				contractsUpdateAll = updateAll(contractsUpdateAll, owner.getContractsNextUpdate());
-				assetsUpdateAll = updateAll(assetsUpdateAll, owner.getAssetNextUpdate());
-				blueprintsUpdateAll = updateAll(blueprintsUpdateAll, owner.getBlueprintsNextUpdate());
-				accountBalanceUpdateAll = updateAll(accountBalanceUpdateAll, owner.getBalanceNextUpdate());
 			}
 		}
 		boolean enabled = jPriceDataAll.isEnabled();
-		setUpdateLabel(jMarketOrdersLeftFirst, jMarketOrdersLeftLast, jMarketOrders, marketOrdersFirst, marketOrdersLast, marketOrdersUpdateAll);
-		setUpdateLabel(jJournalLeftFirst, jJournalLeftLast, jJournal, journalFirst, journalLast, journalUpdateAll);
-		setUpdateLabel(jTransactionsLeftFirst, jTransactionsLeftLast, jTransactions, transactionsFirst, transactionsLast, transactionsUpdateAll);
-		setUpdateLabel(jIndustryJobsLeftFirst, jIndustryJobsLeftLast, jIndustryJobs, industryJobsFirst, industryJobsLast, industryJobsUpdateAll);
-		setUpdateLabel(jAccountBalanceLeftFirst, jAccountBalanceLeftLast, jAccountBalance, accountBalanceFirst, accountBalanceLast, accountBalanceUpdateAll);
-		setUpdateLabel(jContractsLeftFirst, jContractsLeftLast, jContracts, contractsFirst, contractsLast, contractsUpdateAll);
-		setUpdateLabel(jAssetsLeftFirst, jAssetsLeftLast, jAssets, assetsFirst, assetsLast, assetsUpdateAll);
-		setUpdateLabel(jBlueprintsLeftFirst, jBlueprintsLeftLast, jBlueprints, blueprintsFirst, blueprintsLast, blueprintsUpdateAll);
-		setUpdateLabel(null, jPriceDataLeftLast, jPriceDataAll, priceData, priceData, true, false);
+		setUpdateLabel(jMarketOrdersLeftFirst, jMarketOrdersLeftLast, jMarketOrders, marketOrdersFirst, marketOrdersLast);
+		setUpdateLabel(jJournalLeftFirst, jJournalLeftLast, jJournal, journalFirst, journalLast);
+		setUpdateLabel(jTransactionsLeftFirst, jTransactionsLeftLast, jTransactions, transactionsFirst, transactionsLast);
+		setUpdateLabel(jIndustryJobsLeftFirst, jIndustryJobsLeftLast, jIndustryJobs, industryJobsFirst, industryJobsLast);
+		setUpdateLabel(jAccountBalanceLeftFirst, jAccountBalanceLeftLast, jAccountBalance, accountBalanceFirst, accountBalanceLast);
+		setUpdateLabel(jContractsLeftFirst, jContractsLeftLast, jContracts, contractsFirst, contractsLast);
+		setUpdateLabel(jAssetsLeftFirst, jAssetsLeftLast, jAssets, assetsFirst, assetsLast);
+		setUpdateLabel(jBlueprintsLeftFirst, jBlueprintsLeftLast, jBlueprints, blueprintsFirst, blueprintsLast);
+		setUpdateLabel(null, jPriceDataLeftLast, jPriceDataAll, priceData, priceData, false);
 		if (enabled && !jPriceDataAll.isEnabled()) {
 			jPriceDataNew.setSelected(true);
 		}
@@ -419,16 +401,16 @@ public class UpdateDialog extends JDialogCentered {
 		
 	}
 
-	private void setUpdateLabel(final JLabel jFirst, final JLabel jAll, final JToggleButton jCheckBox, final Date first, final Date last ,final boolean updateAll) {
-		this.setUpdateLabel(jFirst, jAll, jCheckBox, first, last, updateAll, true);
+	private void setUpdateLabel(final JLabel jFirst, final JLabel jAll, final JToggleButton jCheckBox, final Date first, final Date last) {
+		this.setUpdateLabel(jFirst, jAll, jCheckBox, first, last, true);
 	}
 
-	private void setUpdateLabel(final JLabel jFirst, final JLabel jAll, final JToggleButton jCheckBox, Date first, final Date last, final boolean updateAll, final boolean ignoreOnProxy) {
+	private void setUpdateLabel(final JLabel jFirst, final JLabel jAll, final JToggleButton jCheckBox, Date first, final Date last, final boolean ignoreOnProxy) {
 		if (first == null) {
 			first = Settings.getNow();
 		}
 		if (Settings.get().isUpdatable(first, ignoreOnProxy)) {
-			if (updateAll) {
+			if (Settings.get().isUpdatable(last, ignoreOnProxy)) {
 				if (jFirst != null) {
 					jFirst.setText("");
 				}
@@ -465,27 +447,21 @@ public class UpdateDialog extends JDialogCentered {
 	}
 
 	private Date updateFirst(Date nextUpdate, Date thisUpdate) {
-		if (nextUpdate == null) {
+		if (nextUpdate == null) { //First
 			nextUpdate = thisUpdate;
-		}
-		if (thisUpdate.before(nextUpdate)) {
-			nextUpdate = thisUpdate;
-		}
-		return nextUpdate;
-	}
-
-	private Date updateLast(Date nextUpdate, Date thisUpdate) {
-		if (nextUpdate == null) {
-			nextUpdate = thisUpdate;
-		}
-		if (thisUpdate.after(nextUpdate)) {
+		} else if (thisUpdate.before(nextUpdate)) {
 			nextUpdate = thisUpdate;
 		}
 		return nextUpdate;
 	}
 
-	private boolean updateAll(final boolean updateAll, final Date nextUpdate) {
-		return updateAll && Settings.get().isUpdatable(nextUpdate, true);
+	private Date updateLast(Date lastUpdate, Date thisUpdate) {
+		if (lastUpdate == null) { //First
+			lastUpdate = thisUpdate;
+		} else if (thisUpdate.after(lastUpdate)) {
+			lastUpdate = thisUpdate;
+		}
+		return lastUpdate;
 	}
 
 	@Override
