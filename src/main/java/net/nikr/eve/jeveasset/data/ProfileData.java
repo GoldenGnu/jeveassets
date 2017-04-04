@@ -271,6 +271,7 @@ public class ProfileData {
 		List<MyAsset> assets = new ArrayList<MyAsset>();
 		List<MyAccountBalance> accountBalance = new ArrayList<MyAccountBalance>();
 		//ownerID > 
+		Date blueprintsNewest = null;
 		Date assetsNewest = null;
 		Date accountBalanceNewest = null;
 		Map<Long, List<MyAsset>> assetsMap = new HashMap<Long, List<MyAsset>>();
@@ -281,6 +282,7 @@ public class ProfileData {
 		Set<MyIndustryJob> industryJobs = new HashSet<MyIndustryJob>();
 		Set<MyContractItem> contractItems = new HashSet<MyContractItem>();
 		Set<MyContract> contracts = new HashSet<MyContract>();
+		Map<Long, Map<Long, Blueprint>> blueprintsMap = new HashMap<Long, Map<Long, Blueprint>>();
 		Map<Long, Blueprint> blueprints = new HashMap<Long, Blueprint>();
 
 		maximumPurchaseAge();
@@ -324,29 +326,40 @@ public class ProfileData {
 					contractItems.addAll(entry.getValue());
 				}
 			}
-			//Blueprints
-			blueprints.putAll(owner.getBlueprints()); //Will not work!
-			//Assets
-			if (!owner.getAssets().isEmpty()) {
-				List<MyAsset> list = assetsMap.get(owner.getOwnerID());
-				if (list == null || (owner.getAssetLastUpdate() != null && assetsNewest != null &&owner.getAssetLastUpdate().after(assetsNewest))) {
-					assetsMap.put(owner.getOwnerID(), owner.getAssets());
-					assetsNewest = owner.getAssetLastUpdate();
+			//Blueprints (Newest)
+			if (!owner.getBlueprints().isEmpty()) {
+				Map<Long, Blueprint> map = blueprintsMap.get(owner.getOwnerID());
+				if (map == null || (owner.getBlueprintsNextUpdate() != null && blueprintsNewest != null && owner.getBlueprintsNextUpdate().after(blueprintsNewest))) {
+					blueprintsMap.put(owner.getOwnerID(), owner.getBlueprints());
+					blueprintsNewest = owner.getBlueprintsNextUpdate();
 				}
 			}
-			//Account Balance
+			//Assets (Newest)
+			if (!owner.getAssets().isEmpty()) {
+				List<MyAsset> list = assetsMap.get(owner.getOwnerID());
+				if (list == null || (owner.getAssetNextUpdate() != null && assetsNewest != null && owner.getAssetNextUpdate().after(assetsNewest))) {
+					assetsMap.put(owner.getOwnerID(), owner.getAssets());
+					assetsNewest = owner.getAssetNextUpdate();
+				}
+			}
+			//Account Balance (Newest)
 			if (!owner.getAccountBalances().isEmpty()) {
 				List<MyAccountBalance> list = accountBalanceMap.get(owner.getOwnerID());
-				if (list == null || (owner.getBalanceLastUpdate()!= null && accountBalanceNewest != null && owner.getBalanceLastUpdate().after(accountBalanceNewest))) {
+				if (list == null || (owner.getBalanceNextUpdate()!= null && accountBalanceNewest != null && owner.getBalanceNextUpdate().after(accountBalanceNewest))) {
 					accountBalanceMap.put(owner.getOwnerID(), owner.getAccountBalances());
-					accountBalanceNewest = owner.getBalanceLastUpdate();
+					accountBalanceNewest = owner.getBalanceNextUpdate();
 				}
 			}
 		}
-		
 
+		//Fill accountBalance
 		for (List<MyAccountBalance> list : accountBalanceMap.values()) {
 			accountBalance.addAll(list);
+		}
+
+		//Fill blueprints
+		for (Map<Long, Blueprint> map : blueprintsMap.values()) {
+			blueprints.putAll(map);
 		}
 
 		//Update MarketOrders dynamic values
