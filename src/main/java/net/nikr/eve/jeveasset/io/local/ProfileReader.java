@@ -180,7 +180,7 @@ public final class ProfileReader extends AbstractXmlReader {
 		} else {
 			vCode = AttributeGetters.getString(node, "apikey");
 		}
-		Date nextUpdate = new Date(AttributeGetters.getLong(node, "charactersnextupdate"));
+		Date nextUpdate = AttributeGetters.getDate(node, "charactersnextupdate");
 		String name = Integer.toString(keyID);
 		if (AttributeGetters.haveAttribute(node, "name")) {
 			name = AttributeGetters.getString(node, "name");
@@ -220,15 +220,21 @@ public final class ProfileReader extends AbstractXmlReader {
 	private void parseOwnerType(final Element node, OwnerType owner) {
 		String ownerName = AttributeGetters.getString(node, "name");
 		long ownerID = AttributeGetters.getLong(node, "id");
-		Date assetsNextUpdate = new Date(AttributeGetters.getLong(node, "assetsnextupdate"));
+		Date assetsNextUpdate = Settings.getNow();
+		if (AttributeGetters.haveAttribute(node, "assetsnextupdate")) {
+			assetsNextUpdate = AttributeGetters.getDate(node, "assetsnextupdate");
+		}
 		Date assetsLastUpdate = null;
 		if (AttributeGetters.haveAttribute(node, "assetslastupdate")) {
-			assetsLastUpdate = new Date(AttributeGetters.getLong(node, "assetslastupdate"));
+			assetsLastUpdate = AttributeGetters.getDate(node, "assetslastupdate");
 		}
-		Date balanceNextUpdate = new Date(AttributeGetters.getLong(node, "balancenextupdate"));
+		Date balanceNextUpdate = Settings.getNow();
+		if (AttributeGetters.haveAttribute(node, "balancenextupdate")) {
+			balanceNextUpdate = AttributeGetters.getDate(node, "balancenextupdate");
+		}
 		Date balanceLastUpdate = null;
 		if (AttributeGetters.haveAttribute(node, "balancelastupdate")) {
-			balanceLastUpdate = new Date(AttributeGetters.getLong(node, "balancelastupdate"));
+			balanceLastUpdate = AttributeGetters.getDate(node, "balancelastupdate");
 		}
 		boolean showOwner = true;
 		if (AttributeGetters.haveAttribute(node, "show")) {
@@ -236,31 +242,31 @@ public final class ProfileReader extends AbstractXmlReader {
 		}
 		Date marketOrdersNextUpdate = Settings.getNow();
 		if (AttributeGetters.haveAttribute(node, "marketordersnextupdate")) {
-			marketOrdersNextUpdate = new Date(AttributeGetters.getLong(node, "marketordersnextupdate"));
+			marketOrdersNextUpdate = AttributeGetters.getDate(node, "marketordersnextupdate");
 		}
 		Date journalNextUpdate = Settings.getNow();
 		if (AttributeGetters.haveAttribute(node, "journalnextupdate")) {
-			journalNextUpdate = new Date(AttributeGetters.getLong(node, "journalnextupdate"));
+			journalNextUpdate = AttributeGetters.getDate(node, "journalnextupdate");
 		}
 		Date transactionsNextUpdate = Settings.getNow();
 		if (AttributeGetters.haveAttribute(node, "wallettransactionsnextupdate")) {
-			transactionsNextUpdate = new Date(AttributeGetters.getLong(node, "wallettransactionsnextupdate"));
+			transactionsNextUpdate =AttributeGetters.getDate(node, "wallettransactionsnextupdate");
 		}
 		Date industryJobsNextUpdate = Settings.getNow();
 		if (AttributeGetters.haveAttribute(node, "industryjobsnextupdate")) {
-			industryJobsNextUpdate = new Date(AttributeGetters.getLong(node, "industryjobsnextupdate"));
+			industryJobsNextUpdate = AttributeGetters.getDate(node, "industryjobsnextupdate");
 		}
 		Date contractsNextUpdate = Settings.getNow();
 		if (AttributeGetters.haveAttribute(node, "contractsnextupdate")) {
-			contractsNextUpdate = new Date(AttributeGetters.getLong(node, "contractsnextupdate"));
+			contractsNextUpdate = AttributeGetters.getDate(node, "contractsnextupdate");
 		}
 		Date locationsNextUpdate = Settings.getNow();
 		if (AttributeGetters.haveAttribute(node, "locationsnextupdate")) {
-			locationsNextUpdate = new Date(AttributeGetters.getLong(node, "locationsnextupdate"));
+			locationsNextUpdate = AttributeGetters.getDate(node, "locationsnextupdate");
 		}
-		Date blueprintsnextupdate = Settings.getNow();
+		Date blueprintsNextUpdate = Settings.getNow();
 		if (AttributeGetters.haveAttribute(node, "blueprintsnextupdate")) {
-			blueprintsnextupdate = new Date(AttributeGetters.getLong(node, "blueprintsnextupdate"));
+			blueprintsNextUpdate = AttributeGetters.getDate(node, "blueprintsnextupdate");
 		}
 		owner.setOwnerName(ownerName);
 		owner.setOwnerID(ownerID);
@@ -275,7 +281,7 @@ public final class ProfileReader extends AbstractXmlReader {
 		owner.setIndustryJobsNextUpdate(industryJobsNextUpdate);
 		owner.setContractsNextUpdate(contractsNextUpdate);
 		owner.setLocationsNextUpdate(locationsNextUpdate);
-		owner.setBlueprintsNextUpdate(blueprintsnextupdate);
+		owner.setBlueprintsNextUpdate(blueprintsNextUpdate);
 
 		NodeList assetNodes = node.getElementsByTagName("assets");
 		if (assetNodes.getLength() == 1) {

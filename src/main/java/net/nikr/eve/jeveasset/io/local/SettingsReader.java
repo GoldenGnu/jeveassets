@@ -894,7 +894,7 @@ public final class SettingsReader extends AbstractXmlReader {
 	}
 	private void parseUpdate(final Element element, final Settings settings) {
 		String text = AttributeGetters.getString(element, "name");
-		Date nextUpdate = new Date(AttributeGetters.getLong(element, "nextupdate"));
+		Date nextUpdate = AttributeGetters.getDate(element, "nextupdate");
 		if (text.equals("conquerable station")) {
 			settings.setConquerableStationsNextUpdate(nextUpdate);
 		}
