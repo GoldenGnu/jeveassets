@@ -315,7 +315,6 @@ public class UpdateDialog extends JDialogCentered {
 	private void changed() {
 		boolean allChecked = true;
 		boolean someChecked = false;
-		boolean allDiabled = true;
 		for (JCheckBox jCheckBox : jCheckBoxes) {
 			if (jCheckBox.isEnabled()) {
 				if (jCheckBox.isSelected()) {
@@ -323,7 +322,6 @@ public class UpdateDialog extends JDialogCentered {
 				} else {
 					allChecked = false;
 				}
-				allDiabled = false;
 			}
 		}
 		if (jPriceDataAll.isEnabled()) {
@@ -332,15 +330,13 @@ public class UpdateDialog extends JDialogCentered {
 			} else { //Not selected
 				allChecked = false;
 			}
-			allDiabled = false;
 		} else {
 			if (!jPriceDataNew.isSelected()) {
 				allChecked = false;
 			}
-			allDiabled = false;
 		}
 		jUpdate.setEnabled(someChecked);
-		jCheckAll.setSelected(allChecked && !allDiabled);
+		jCheckAll.setSelected(allChecked);
 	}
 
 	private void update() {
