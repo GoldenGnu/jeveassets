@@ -24,6 +24,7 @@ import net.nikr.eve.jeveasset.data.api.OwnerType;
 import net.nikr.eve.jeveasset.data.api.ApiType;
 import java.util.Date;
 import java.util.Objects;
+import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.data.api.AbstractOwner;
 
 
@@ -41,7 +42,7 @@ public class EveKitOwner extends AbstractOwner implements OwnerType {
 	private Long contractsCID = null;
 	private Long industryJobsCID = null;
 	private Long marketOrdersCID = null;
-	private Date accountNextUpdate;
+	private Date accountNextUpdate = Settings.getNow();
 
 	//New owner
 	public EveKitOwner(Integer accessKey, String accessCred) {
