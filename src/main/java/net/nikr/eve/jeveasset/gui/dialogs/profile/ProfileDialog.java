@@ -258,14 +258,12 @@ public class ProfileDialog extends JDialogCentered {
 							DialoguesProfiles.get().cannotDeleteActive(),
 							DialoguesProfiles.get().deleteProfile(),
 							JOptionPane.INFORMATION_MESSAGE);
-					//showMessageDialog("Delete Profile", "You can not delete the active profile");
 				}
 				if (profile != null && !profile.isActiveProfile() && profile.isDefaultProfile()) {
 					JOptionPane.showMessageDialog(getDialog(),
 							DialoguesProfiles.get().cannotDeleteDefault(),
 							DialoguesProfiles.get().deleteProfile(),
 							JOptionPane.INFORMATION_MESSAGE);
-					//showMessageDialog("Delete Profile", "You can not delete the default profile");
 				}
 				if (profile != null && !profile.isActiveProfile() && !profile.isDefaultProfile()) {
 					int value = JOptionPane.showConfirmDialog(getDialog(),
@@ -273,7 +271,6 @@ public class ProfileDialog extends JDialogCentered {
 							DialoguesProfiles.get().deleteProfile(),
 							JOptionPane.YES_NO_OPTION,
 							JOptionPane.QUESTION_MESSAGE);
-					//boolean value = showConfirmDialog("Delete Profile", "Delete Profile: \""+profile.getName()+"\"?\r\nWarning: Deleted profiles can not be restored");
 					if (value == JOptionPane.YES_OPTION) {
 						program.getProfileManager().getProfiles().remove(profile);
 						profile.getFile().delete();
@@ -352,6 +349,7 @@ public class ProfileDialog extends JDialogCentered {
 			Profile profile = new Profile(profileName, false, false);
 			program.getProfileManager().getProfiles().add(profile);
 			loadProfile(profile);
+			program.saveProfile();
 		}
 	}
 
