@@ -66,10 +66,17 @@ public class EveKitOwner extends AbstractOwner implements OwnerType {
 		super(editEveKitOwner);
 		this.accessKey = accessKey;
 		this.accessCred = accessCred;
-		this.corporation = editEveKitOwner.corporation;
 		this.expire = editEveKitOwner.expire;
-		this.limit = editEveKitOwner.limit;
 		this.accessMask = editEveKitOwner.accessMask;
+		this.corporation = editEveKitOwner.corporation;
+		this.limit = editEveKitOwner.limit;
+		this.accountName = editEveKitOwner.accountName;
+		this.journalCID = editEveKitOwner.journalCID;
+		this.transactionsCID = editEveKitOwner.transactionsCID;
+		this.contractsCID = editEveKitOwner.contractsCID;
+		this.industryJobsCID = editEveKitOwner.industryJobsCID;
+		this.marketOrdersCID = editEveKitOwner.marketOrdersCID;
+		this.accountNextUpdate = editEveKitOwner.accountNextUpdate;
 	}
 
 	public Long getJournalCID() {

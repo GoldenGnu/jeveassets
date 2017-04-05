@@ -73,29 +73,29 @@ public abstract class AbstractOwner implements OwnerType, Comparable<OwnerType> 
 		this.ownerID = ownerID;
 	}
 
-	public AbstractOwner(AbstractOwner editEveKitOwner) {
-		accountBalances.addAll(editEveKitOwner.accountBalances);
-		marketOrders.addAll(editEveKitOwner.marketOrders);
-		transactions.addAll(editEveKitOwner.transactions);
-		journal.addAll(editEveKitOwner.journal);
-		industryJobs.addAll(editEveKitOwner.industryJobs);
-		contracts.putAll(editEveKitOwner.contracts);
-		assets.addAll(editEveKitOwner.assets);
-		blueprints.putAll(editEveKitOwner.blueprints);
-		this.ownerName = editEveKitOwner.ownerName;
-		this.ownerID = editEveKitOwner.ownerID;
-		this.showOwner = editEveKitOwner.showOwner;
-		this.assetLastUpdate = editEveKitOwner.assetLastUpdate;
-		this.assetNextUpdate = editEveKitOwner.assetNextUpdate;
-		this.balanceLastUpdate = editEveKitOwner.balanceLastUpdate;
-		this.balanceNextUpdate = editEveKitOwner.balanceNextUpdate;
-		this.marketOrdersNextUpdate = editEveKitOwner.marketOrdersNextUpdate;
-		this.journalNextUpdate = editEveKitOwner.journalNextUpdate;
-		this.transactionsNextUpdate = editEveKitOwner.transactionsNextUpdate;
-		this.industryJobsNextUpdate = editEveKitOwner.industryJobsNextUpdate;
-		this.contractsNextUpdate = editEveKitOwner.contractsNextUpdate;
-		this.locationsNextUpdate = editEveKitOwner.locationsNextUpdate;
-		this.blueprintsNextUpdate = editEveKitOwner.blueprintsNextUpdate;
+	public AbstractOwner(AbstractOwner abstractOwner) {
+		accountBalances.addAll(abstractOwner.accountBalances);
+		marketOrders.addAll(abstractOwner.marketOrders);
+		transactions.addAll(abstractOwner.transactions);
+		journal.addAll(abstractOwner.journal);
+		industryJobs.addAll(abstractOwner.industryJobs);
+		contracts.putAll(abstractOwner.contracts);
+		assets.addAll(abstractOwner.assets);
+		blueprints.putAll(abstractOwner.blueprints);
+		this.ownerName = abstractOwner.ownerName;
+		this.ownerID = abstractOwner.ownerID;
+		this.showOwner = abstractOwner.showOwner;
+		this.assetLastUpdate = abstractOwner.assetLastUpdate;
+		this.assetNextUpdate = abstractOwner.assetNextUpdate;
+		this.balanceLastUpdate = abstractOwner.balanceLastUpdate;
+		this.balanceNextUpdate = abstractOwner.balanceNextUpdate;
+		this.marketOrdersNextUpdate = abstractOwner.marketOrdersNextUpdate;
+		this.journalNextUpdate = abstractOwner.journalNextUpdate;
+		this.transactionsNextUpdate = abstractOwner.transactionsNextUpdate;
+		this.industryJobsNextUpdate = abstractOwner.industryJobsNextUpdate;
+		this.contractsNextUpdate = abstractOwner.contractsNextUpdate;
+		this.locationsNextUpdate = abstractOwner.locationsNextUpdate;
+		this.blueprintsNextUpdate = abstractOwner.blueprintsNextUpdate;
 	}
 
 	@Override
