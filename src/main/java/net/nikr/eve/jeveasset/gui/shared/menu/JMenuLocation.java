@@ -147,7 +147,7 @@ public class JMenuLocation<T> extends MenuManager.JAutoMenu<T> {
 					return;
 				}
 				//Create data for the system dialog
-				List<MyLocation> locations = new ArrayList<>(); 
+				List<MyLocation> locations = new ArrayList<MyLocation>(); 
 				for (MyLocation system : StaticData.get().getLocations().values()) {
 					if (system.isSystem()) {
 						locations.add(system);

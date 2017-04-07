@@ -86,11 +86,11 @@ public class AssetsGetter extends AbstractApiGetter<AssetListResponse> {
 	@Override
 	protected void setData(final AssetListResponse response) {
 		List<Asset> flatAssets = new ArrayList<Asset>(response.getAll()); // Get new asset from the flat list
-		Map<Long, Asset> lookupAssets = new HashMap<>();
+		Map<Long, Asset> lookupAssets = new HashMap<Long, Asset>();
 		for (Asset asset : flatAssets) { //Create Lookup table
 			lookupAssets.put(asset.getItemID(), asset);
 		}
-		List<Asset> treeAssets = new ArrayList<>();
+		List<Asset> treeAssets = new ArrayList<Asset>();
 		for (Asset asset : flatAssets) { //Make Tree
 			if (//Ignore:
 					asset.getFlag() != 7 //Skill

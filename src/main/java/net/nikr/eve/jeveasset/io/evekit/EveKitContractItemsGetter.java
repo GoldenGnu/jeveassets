@@ -40,7 +40,7 @@ import net.nikr.eve.jeveasset.gui.tabs.contracts.MyContractItem;
 
 public class EveKitContractItemsGetter extends AbstractEveKitListGetter<ContractItem> {
 
-	private final Map<EveKitOwner, Set<Long>> ids = new HashMap<>();
+	private final Map<EveKitOwner, Set<Long>> ids = new HashMap<EveKitOwner, Set<Long>>();
 
 	@Override
 	public void load(UpdateTask updateTask, List<EveKitOwner> owners) {

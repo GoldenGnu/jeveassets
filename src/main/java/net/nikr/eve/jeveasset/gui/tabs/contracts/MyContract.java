@@ -163,7 +163,7 @@ public class MyContract extends Contract implements LocationsType {
 
 	@Override
 	public Set<MyLocation> getLocations() {
-		Set<MyLocation> locations = new HashSet<>();
+		Set<MyLocation> locations = new HashSet<MyLocation>();
 		locations.add(startStation);
 		locations.add(endStation);
 		return locations;

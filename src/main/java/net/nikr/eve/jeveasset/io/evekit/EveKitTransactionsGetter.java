@@ -51,7 +51,7 @@ public class EveKitTransactionsGetter extends AbstractEveKitListGetter<WalletTra
 
 	@Override
 	protected void set(EveKitOwner owner, List<WalletTransaction> data) throws ApiException {
-		Set<MyTransaction> set = new HashSet<>();
+		Set<MyTransaction> set = new HashSet<MyTransaction>();
 		if (loadCID(owner) != null) { //Old
 			set.addAll(owner.getTransactions());
 		}

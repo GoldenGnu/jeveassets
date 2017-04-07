@@ -70,7 +70,7 @@ public class MenuData<T> {
 				continue;
 			}
 
-			Set<MyLocation> locations = new HashSet<>();
+			Set<MyLocation> locations = new HashSet<MyLocation>();
 			if (t instanceof LocationType) {
 				LocationType type = (LocationType) t;
 				locations.add(type.getLocation());

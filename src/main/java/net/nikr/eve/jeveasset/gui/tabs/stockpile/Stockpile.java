@@ -322,7 +322,7 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType {
 
 	@Override
 	public Set<MyLocation> getLocations() {
-		Set<MyLocation> locations = new HashSet<>();
+		Set<MyLocation> locations = new HashSet<MyLocation>();
 		for (StockpileFilter filter : filters) {
 			if (!filter.getLocation().isEmpty()) {
 				locations.add(filter.getLocation());

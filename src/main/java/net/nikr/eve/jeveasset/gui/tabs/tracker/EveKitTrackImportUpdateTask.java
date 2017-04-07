@@ -109,7 +109,7 @@ public class EveKitTrackImportUpdateTask extends UpdateTask {
 			day = day + dateInterval.getUpdatesDays();
 			setTotalProgress(days, day, 0, 100);
 			setProgress(0);
-			List<EveKitOwner> clones = new ArrayList<>();
+			List<EveKitOwner> clones = new ArrayList<EveKitOwner>();
 			for (EveKitOwner owner : owners) { //Find owners without data
 				if (!haveData(date, owner)) {
 					EveKitOwner eveKitOwner = new EveKitOwner(owner.getAccessKey(), owner.getAccessCred(), owner.getExpire(), owner.getAccessMask(), owner.isCorporation(), owner.getLimit(), owner.getAccountName());
@@ -281,7 +281,7 @@ public class EveKitTrackImportUpdateTask extends UpdateTask {
 
 	private Date getLifeStart() {
 		setProgress(0);
-		List<EveKitOwner> clones = new ArrayList<>();
+		List<EveKitOwner> clones = new ArrayList<EveKitOwner>();
 		for (EveKitOwner owner : owners) { //Find owners without data
 			EveKitOwner eveKitOwner = new EveKitOwner(owner.getAccessKey(), owner.getAccessCred(), owner.getExpire(), owner.getAccessMask(), owner.isCorporation(), owner.getLimit(), owner.getAccountName());
 			eveKitOwner.setOwnerName(owner.getOwnerName());
