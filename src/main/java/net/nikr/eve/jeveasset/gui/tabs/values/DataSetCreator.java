@@ -26,8 +26,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.MyAccountBalance;
+import net.nikr.eve.jeveasset.data.ProfileData;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.data.api.OwnerType;
 import net.nikr.eve.jeveasset.gui.tabs.assets.MyAsset;
@@ -46,12 +46,12 @@ public class DataSetCreator {
 
 	protected DataSetCreator() { }
 
-	public static void createTrackerDataPoint(Program program) {
-		getCreator().createTrackerDataPointInner(program);
+	public static void createTrackerDataPoint(ProfileData profileData, Date date) {
+		getCreator().createTrackerDataPointInner(profileData, date);
 	}
 
-	public static Map<String, Value> createDataSet(Program program) {
-		return getCreator().createDataSetInner(program);
+	public static Map<String, Value> createDataSet(ProfileData profileData, Date date) {
+		return getCreator().createDataSetInner(profileData, date);
 	}
 
 	public static Value getValue(Map<String, Value> values, String owner, Date date) {
@@ -65,8 +65,8 @@ public class DataSetCreator {
 		return creator;
 	}
 
-	private void createTrackerDataPointInner(Program program) {
-		Map<String, Value> data = createDataSetInner(program);
+	private void createTrackerDataPointInner(ProfileData profileData, Date date) {
+		Map<String, Value> data = createDataSetInner(profileData, date);
 		
 		//Add everything
 		Settings.lock("Tracker Data (Create Point)");
@@ -88,12 +88,11 @@ public class DataSetCreator {
 		Settings.unlock("Tracker Data (Create Point)");
 	}
 
-	private Map<String, Value> createDataSetInner(Program program) {
-		Date date = Settings.getNow();
+	private Map<String, Value> createDataSetInner(ProfileData profileData, Date date) {
 		Map<String, Value> values = new HashMap<String, Value>();
 		Value total = new Value(TabsValues.get().grandTotal(), date);
 		values.put(total.getName(), total);
-		for (MyAsset asset : program.getAssetList()) {
+		for (MyAsset asset : profileData.getAssetsEventList()) {
 			//Skip market orders
 			if (asset.getFlag().equals(General.get().marketOrderSellFlag())) {
 				continue; //Ignore market sell orders
@@ -115,7 +114,7 @@ public class DataSetCreator {
 			total.addAssets(id, asset);
 		}
 		//Account Balance
-		for (MyAccountBalance accountBalance : program.getAccountBalanceList()) {
+		for (MyAccountBalance accountBalance : profileData.getAccountBalanceEventList()) {
 			Value value = getValueInner(values, accountBalance.getOwner(), date);
 			String id;
 			if (accountBalance.isCorporation()) { //Corporation Wallets
@@ -127,7 +126,7 @@ public class DataSetCreator {
 			total.addBalance(id, accountBalance.getBalance());
 		}
 		//Market Orders
-		for (MyMarketOrder marketOrder : program.getMarketOrdersList()) {
+		for (MyMarketOrder marketOrder : profileData.getMarketOrdersEventList()) {
 			Value value = getValueInner(values, marketOrder.getOwnerName(), date);
 			if (marketOrder.isActive()) {
 				if (marketOrder.getBid() < 1) { //Sell Orders
@@ -142,7 +141,7 @@ public class DataSetCreator {
 			}
 		}
 		//Industrys Job: Manufacturing
-		for (MyIndustryJob industryJob : program.getIndustryJobsList()) {
+		for (MyIndustryJob industryJob : profileData.getIndustryJobsEventList()) {
 			Value value = getValueInner(values, industryJob.getOwnerName(), date);
 			//Manufacturing and not completed
 			if (industryJob.isManufacturing() && !industryJob.isDelivered()) {
@@ -152,9 +151,9 @@ public class DataSetCreator {
 			}
 		}
 		//Contract
-		addContracts(program.getContractList(), values, program.getOwners(), total, date);
+		addContracts(profileData.getContractEventList(), values, profileData.getOwners(), total, date);
 		//Contract Items
-		addContractItems(program.getContractItemList(), values, program.getOwners(), total, date);
+		addContractItems(profileData.getContractItemEventList(), values, profileData.getOwners(), total, date);
 		return values;
 	}
 

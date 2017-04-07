@@ -41,11 +41,23 @@ public abstract class AbstractEveKitGetter {
 
 	private final CommonApi commonApi = new CommonApi();
 	private final AccessKeyApi accessKeyApi = new AccessKeyApi();
-
+	
 	private String error = null;
 	private boolean invalid = false;
 
 	protected void load(UpdateTask updateTask, List<EveKitOwner> owners) {
+		load(updateTask, owners, null, false);
+	}
+
+	protected void load(UpdateTask updateTask, List<EveKitOwner> owners, Long at) {
+		load(updateTask, owners, at, false);
+	}
+
+	protected void load(UpdateTask updateTask, List<EveKitOwner> owners, boolean first) {
+		load(updateTask, owners, null, first);
+	}
+
+	private void load(UpdateTask updateTask, List<EveKitOwner> owners, Long at, boolean first) {
 		error = null;
 		invalid = false;
 		int progress = 0;
@@ -54,7 +66,7 @@ public abstract class AbstractEveKitGetter {
 		}
 		for (EveKitOwner owner : owners) {
 			if (owner.isShowOwner()) { //Ignore not shown owners
-				load(updateTask, owner);
+				loadOwner(updateTask, owner, at, first);
 			}
 			if (updateTask != null) {
 				if (updateTask.isCancelled()) {
@@ -67,13 +79,13 @@ public abstract class AbstractEveKitGetter {
 		}
 	}
 
-	protected void load(UpdateTask updateTask, EveKitOwner owner) {
+	protected void loadOwner(UpdateTask updateTask, EveKitOwner owner, Long at, boolean first) {
 		error = null;
 		invalid = false;
-		loadApi(updateTask, owner);
+		loadApi(updateTask, owner, at, first);
 	}
 
-	private boolean loadApi(UpdateTask updateTask, EveKitOwner owner) {
+	private boolean loadApi(UpdateTask updateTask, EveKitOwner owner, Long at, boolean first) {
 		try {
 			//Check if the Access Mask include this API
 			if ((owner.getAccessMask() & getAccessMask()) != getAccessMask()) {
@@ -99,7 +111,7 @@ public abstract class AbstractEveKitGetter {
 				}
 				return false;
 			}
-			get(owner);
+			get(owner, at, first);
 			LOG.info("	EveKit " + getTaskName() + " updated for " + owner.getOwnerName());
 			List<String> expiryHeaders = getApiClient().getResponseHeaders().get("Expires");
 			if (expiryHeaders != null && !expiryHeaders.isEmpty()) {
@@ -184,7 +196,7 @@ public abstract class AbstractEveKitGetter {
 		return accessKeyApi;
 	}
 
-	protected abstract void get(EveKitOwner owner) throws ApiException;
+	protected abstract void get(EveKitOwner owner, Long at, boolean first) throws ApiException;
 	protected abstract String getTaskName();
 	protected abstract long getAccessMask();
 	protected abstract void setNextUpdate(EveKitOwner owner, Date date);

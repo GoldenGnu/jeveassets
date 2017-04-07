@@ -26,7 +26,6 @@ import enterprises.orbital.evekit.client.invoker.ApiException;
 import enterprises.orbital.evekit.client.model.KeyInfo;
 import java.util.Date;
 import java.util.List;
-import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.data.evekit.EveKitOwner;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import net.nikr.eve.jeveasset.io.shared.AccountAdder;
@@ -37,11 +36,10 @@ public class EveKitOwnerGetter extends AbstractEveKitGetter implements AccountAd
 	private boolean limited = false;
 	private boolean invalidPrivileges = false;
 
-	@Override
 	public void load(UpdateTask updateTask, EveKitOwner owner) {
 		limited = false;
 		invalidPrivileges = false;
-		super.load(updateTask, owner);
+		super.loadOwner(updateTask, owner, null, false);
 	}
 
 	@Override
@@ -52,7 +50,7 @@ public class EveKitOwnerGetter extends AbstractEveKitGetter implements AccountAd
 	}
 
 	@Override
-	protected void get(EveKitOwner owner) throws ApiException {
+	protected void get(EveKitOwner owner, Long at, boolean first) throws ApiException {
 		KeyInfo keyInfo = getAccessKeyApi().getKeyInfo(owner.getAccessKey(), owner.getAccessCred());
 		owner.setOwnerID(keyInfo.getEntityID());
 		owner.setOwnerName(keyInfo.getEntityName());

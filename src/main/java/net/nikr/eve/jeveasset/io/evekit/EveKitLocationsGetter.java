@@ -50,9 +50,9 @@ public class EveKitLocationsGetter extends AbstractEveKitListGetter<Location> {
 	}
 
 	@Override
-	protected List<Location> get(EveKitOwner owner, Long contid) throws ApiException {
+	protected List<Location> get(EveKitOwner owner, String at, Long contid) throws ApiException {
 		//Get all items matching itemID
-		return getCommonApi().getLocations(owner.getAccessKey(), owner.getAccessCred(), null, contid, MAX_RESULTS, REVERSE,
+		return getCommonApi().getLocations(owner.getAccessKey(), owner.getAccessCred(), null, contid, getMaxResults(), getReverse(),
 				valuesFilter(getIDs(owner)), null, null, null, null);
 	}
 
@@ -91,8 +91,8 @@ public class EveKitLocationsGetter extends AbstractEveKitListGetter<Location> {
 	}
 
 	@Override
-	protected boolean isNow(Location obj) {
-		return obj.getLifeEnd() == Long.MAX_VALUE;
+	protected Long getLifeStart(Location obj) {
+		return obj.getLifeStart();
 	}
 
 	@Override

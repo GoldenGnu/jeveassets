@@ -45,6 +45,7 @@ public class TaskDialog {
 	private JDialog jWindow;
 	private JLabel jIcon;
 	private JProgressBar jProgressBar;
+	private JProgressBar jTotalProgressBar;
 	private JButton jOK;
 	private JButton jCancel;
 	private JTextPane jErrorMessage;
@@ -59,14 +60,16 @@ public class TaskDialog {
 	private List<UpdateTask> updateTasks;
 	private int index;
 	private UpdateTask updateTask;
+	private final TasksCompleted completed;
 
-	public TaskDialog(final Program program, final UpdateTask updateTask) {
-		this(program, Collections.singletonList(updateTask));
+	public TaskDialog(final Program program, final UpdateTask updateTask, boolean totalProgress, TasksCompleted completed) {
+		this(program, Collections.singletonList(updateTask), totalProgress, completed);
 	}
 
-	public TaskDialog(final Program program, final List<UpdateTask> updateTasks) {
+	public TaskDialog(final Program program, final List<UpdateTask> updateTasks, boolean totalProgress, TasksCompleted completed) {
 		this.program = program;
 		this.updateTasks = updateTasks;
+		this.completed = completed;
 
 		listener = new ListenerClass();
 
@@ -90,6 +93,8 @@ public class TaskDialog {
 		jIcon = new JLabel(new UpdateTask.EmptyIcon());
 		
 		jProgressBar = new JProgressBar(0, 100);
+		jTotalProgressBar = new JProgressBar(0, 100);
+		jTotalProgressBar.setIndeterminate(true);
 
 		jOK = new JButton(DialoguesUpdate.get().ok());
 		jOK.setActionCommand(TaskAction.OK.name());
@@ -123,6 +128,9 @@ public class TaskDialog {
 			.addGap(5)
 			.addComponent(jProgressBar, WIDTH - 21, WIDTH - 21, WIDTH - 21)
 		);
+		if (totalProgress) {
+			horizontalGroup.addComponent(jTotalProgressBar);
+		}
 		horizontalGroup.addGroup(layout.createSequentialGroup()
 				.addComponent(jOK, Program.getButtonsWidth(), Program.getButtonsWidth(), Program.getButtonsWidth())
 				.addComponent(jCancel, Program.getButtonsWidth(), Program.getButtonsWidth(), Program.getButtonsWidth())
@@ -146,7 +154,9 @@ public class TaskDialog {
 				.addComponent(jIcon, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 				.addComponent(jProgressBar, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 		);
-				
+		if (totalProgress) {
+			verticalGroup.addComponent(jTotalProgressBar, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight());
+		}
 		verticalGroup.addGroup(layout.createParallelGroup()
 				.addComponent(jOK, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 				.addComponent(jCancel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
@@ -166,6 +176,10 @@ public class TaskDialog {
 		}
 	}
 
+	public void hide() {
+		setVisible(false);
+	}
+
 	private void update() {
 		if (index < updateTasks.size()) {
 			jOK.setEnabled(false);
@@ -174,11 +188,7 @@ public class TaskDialog {
 			updateTask.execute();
 		} else { //Done
 			jIcon.setIcon(new UpdateTask.EmptyIcon());
-			program.updateEventLists();
-			//Create value tracker point
-			program.createTrackerDataPoint();
-			//Save settings after updating (if we crash later)
-			program.saveSettingsAndProfile();
+			completed.tasksCompleted(this);
 			jOK.setEnabled(true);
 			jCancel.setEnabled(false);
 		}
@@ -226,6 +236,13 @@ public class TaskDialog {
 
 		@Override
 		public void propertyChange(final PropertyChangeEvent evt) {
+			Integer totalProgress = updateTask.getTotalProgress();
+			if (totalProgress != null && totalProgress > 0 && totalProgress <= 100) {
+				jTotalProgressBar.setValue(totalProgress);
+				jTotalProgressBar.setIndeterminate(false);
+			} else {
+				jTotalProgressBar.setIndeterminate(true);
+			}
 			int value = updateTask.getProgress();
 			jIcon.setIcon(updateTask.getIcon());
 			if (value == 100 && updateTask.isTaskDone()) {
@@ -287,7 +304,7 @@ public class TaskDialog {
 
 	private class ErrorMouseListener implements MouseListener {
 
-		private UpdateTask mouseTask;
+		private final UpdateTask mouseTask;
 
 		public ErrorMouseListener(final UpdateTask mouseTask) {
 			this.mouseTask = mouseTask;
@@ -331,4 +348,7 @@ public class TaskDialog {
 		public void mouseExited(final MouseEvent e) { }
 	}
 
+	public static interface TasksCompleted {
+		public void tasksCompleted(TaskDialog taskDialog);
+	}
 }

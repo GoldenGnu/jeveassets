@@ -111,6 +111,7 @@ public class TrackerTab extends JMainTab {
 		UPDATE_DATA,
 		UPDATE_SHOWN,
 		INCLUDE_ZERO,
+		IMPORT_EVEKIT,
 		ALL,
 		EDIT,
 		DELETE,
@@ -152,6 +153,8 @@ public class TrackerTab extends JMainTab {
 	private final ChartPanel jChartPanel;
 	private final TrackerFilterDialog filterDialog;
 	private final MyRender render;
+	private final EveKitTrackerImportDialog eveKitTrackerImportDialog;
+	private final JMenuItem jEveKitImport;
 	private final Shape NO_FILTER = new Rectangle(-3, -3, 6, 6);
 	private final Shape FILTER_AND_DEFAULT = new Ellipse2D.Float(-3.0f, -3.0f, 6.0f, 6.0f);
 
@@ -177,6 +180,8 @@ public class TrackerTab extends JMainTab {
 		super(program, TabsTracker.get().title(), Images.TOOL_TRACKER.getIcon(), true);
 
 		filterDialog = new TrackerFilterDialog(program);
+
+		eveKitTrackerImportDialog = new EveKitTrackerImportDialog(program);
 
 		jPopupMenu = new JPopupMenu();
 		jPopupMenu.addPopupMenuListener(listener);
@@ -309,6 +314,13 @@ public class TrackerTab extends JMainTab {
 		jIncludeZero.addActionListener(listener);
 		jSettings.add(jIncludeZero);
 
+		JDropDownButton jImport = new JDropDownButton(Images.EDIT_IMPORT.getIcon());
+
+		jEveKitImport = new JMenuItem(TabsTracker.get().eveKitImportTitle(), Images.MISC_EVEKIT.getIcon());
+		jEveKitImport.setActionCommand(TrackerAction.IMPORT_EVEKIT.name());
+		jEveKitImport.addActionListener(listener);
+		jImport.add(jEveKitImport);
+
 		DateAxis domainAxis = new DateAxis();
 		domainAxis.setDateFormatOverride(dateFormat);
 		domainAxis.setVerticalTickLabels(true);
@@ -374,6 +386,7 @@ public class TrackerTab extends JMainTab {
 						.addGap(20)
 						.addComponent(jFilter)
 						.addGap(20, 20, Integer.MAX_VALUE)
+						.addComponent(jImport)
 						.addComponent(jSettings)
 						.addGap(6)
 					)
@@ -424,6 +437,7 @@ public class TrackerTab extends JMainTab {
 							.addComponent(jNoFilter, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 							.addComponent(jFilter, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 							.addComponent(jSettings, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+							.addComponent(jImport, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 					)
 					.addComponent(jChartPanel)
 				)
@@ -459,6 +473,10 @@ public class TrackerTab extends JMainTab {
 					.addComponent(jOwnersScroll, 70, 70, Integer.MAX_VALUE)
 				)
 		);
+	}
+
+	public void profilesChanged() {
+		jEveKitImport.setEnabled(!program.getProfileManager().getEveKitOwners().isEmpty());
 	}
 
 	@Override
@@ -1132,7 +1150,6 @@ public class TrackerTab extends JMainTab {
 					createData();
 					updateButtonIcons();
 				}
-				
 			} else if (TrackerAction.FILTER_ASSETS.name().equals(e.getActionCommand())) {
 				boolean save = filterDialog.showLocations(assetNodes);
 				if (save) { //Need refilter
@@ -1140,6 +1157,8 @@ public class TrackerTab extends JMainTab {
 					createData();
 					updateButtonIcons();
 				}
+			} else if (TrackerAction.IMPORT_EVEKIT.name().equals(e.getActionCommand())) {
+				eveKitTrackerImportDialog.setVisible(true);
 			}
 		}
 

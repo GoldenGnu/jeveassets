@@ -231,16 +231,35 @@ public final class Formater {
 	}
 
 	public static String milliseconds(long time) {
-		return milliseconds(time, true, true, true, true);
+		return milliseconds(time, false, false, true, true, true, true);
+	}
+
+	public static String milliseconds(long time, boolean first, boolean verbose) {
+		return milliseconds(time, first, verbose, true, true, true, true);
 	}
 
 	public static String milliseconds(long time, boolean showDays, boolean showHours, boolean showMinutes, boolean showSecounds) {
+		return milliseconds(time, false, false, showDays, showHours, showMinutes, showSecounds);
+	}
+
+	public static String milliseconds(long time, boolean first, boolean verbose, boolean showDays, boolean showHours, boolean showMinutes, boolean showSecounds) {
 		final StringBuilder timeString = new StringBuilder();
 		long days = time / (24 * 60 * 60 * 1000);
 		boolean space = false;
 		if (days > 0 && showDays) {
 			timeString.append(days);
-			timeString.append("d");
+			if (verbose) {
+				if (days > 1) {
+					timeString.append(" days");
+				} else {
+					timeString.append(" day");
+				}
+			} else {
+				timeString.append("d");
+			}
+			if (first) {
+				return timeString.toString();
+			}
 			space = true;
 		}
 		long hours = time / (60 * 60 * 1000) % 24;
@@ -249,7 +268,18 @@ public final class Formater {
 				timeString.append(" ");
 			}
 			timeString.append(hours);
-			timeString.append("h");
+			if (verbose) {
+				if (hours > 1) {
+					timeString.append(" hours");
+				} else {
+					timeString.append(" hour");
+				}
+			} else {
+				timeString.append("h");
+			}
+			if (first) {
+				return timeString.toString();
+			}
 			space = true;
 		}
 		long minutes = time / (60 * 1000) % 60;
@@ -258,7 +288,18 @@ public final class Formater {
 				timeString.append(" ");
 			}
 			timeString.append(minutes);
-			timeString.append("m");
+			if (verbose) {
+				if (minutes > 1) {
+					timeString.append(" minutes");
+				} else {
+					timeString.append(" minute");
+				}
+			} else {
+				timeString.append("m");
+			}
+			if (first) {
+				return timeString.toString();
+			}
 			space = true;
 		}
 		long seconds = time / (1000) % 60;
@@ -267,7 +308,18 @@ public final class Formater {
 				timeString.append(" ");
 			}
 			timeString.append(seconds);
-			timeString.append("s");
+			if (verbose) {
+				if (seconds > 1) {
+					timeString.append(" seconds");
+				} else {
+					timeString.append(" second");
+				}
+			} else {
+				timeString.append("s");
+			}
+			if (first) {
+				return timeString.toString();
+			}
 		}
 		if (days == 0 && hours == 0 && minutes == 0 && seconds == 0) {
 			timeString.append(time);

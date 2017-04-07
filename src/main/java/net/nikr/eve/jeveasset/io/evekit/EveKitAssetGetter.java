@@ -39,8 +39,18 @@ public class EveKitAssetGetter extends AbstractEveKitListGetter<Asset> {
 	}
 
 	@Override
-	protected List<Asset> get(EveKitOwner owner, Long contid) throws ApiException {
-		return getCommonApi().getAssets(owner.getAccessKey(), owner.getAccessCred(), null, contid, MAX_RESULTS, REVERSE,
+	public void load(UpdateTask updateTask, List<EveKitOwner> owners, boolean first) {
+		super.load(updateTask, owners, first);
+	}
+
+	@Override
+	public void load(UpdateTask updateTask, List<EveKitOwner> owners, Long at) {
+		super.load(updateTask, owners, at);
+	}
+
+	@Override
+	protected List<Asset> get(EveKitOwner owner, String at, Long contid) throws ApiException {
+		return getCommonApi().getAssets(owner.getAccessKey(), owner.getAccessCred(), at, contid, getMaxResults(), getReverse(),
 				null, null, null, null, null, null, null, null);
 	}
 
@@ -62,8 +72,8 @@ public class EveKitAssetGetter extends AbstractEveKitListGetter<Asset> {
 	}
 
 	@Override
-	protected boolean isNow(Asset obj) {
-		return obj.getLifeEnd() == Long.MAX_VALUE;
+	protected Long getLifeStart(Asset obj) {
+		return obj.getLifeStart();
 	}
 
 	@Override

@@ -49,9 +49,9 @@ public class EveKitContractItemsGetter extends AbstractEveKitListGetter<Contract
 	}
 
 	@Override
-	protected List<ContractItem> get(EveKitOwner owner, Long contid) throws ApiException {
+	protected List<ContractItem> get(EveKitOwner owner, String at, Long contid) throws ApiException {
 		//Get all items matching contractID
-		return getCommonApi().getContractItems(owner.getAccessKey(), owner.getAccessCred(), null, contid, MAX_RESULTS, REVERSE,
+		return getCommonApi().getContractItems(owner.getAccessKey(), owner.getAccessCred(), null, contid, getMaxResults(), getReverse(),
 				valuesFilter(getIDs(owner)), null, null, null, null, null, null);
 	}
 
@@ -75,8 +75,8 @@ public class EveKitContractItemsGetter extends AbstractEveKitListGetter<Contract
 	}
 
 	@Override
-	protected boolean isNow(ContractItem obj) {
-		return obj.getLifeEnd() == Long.MAX_VALUE;
+	protected Long getLifeStart(ContractItem obj) {
+		return obj.getLifeStart();
 	}
 
 	@Override

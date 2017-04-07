@@ -43,9 +43,9 @@ public class EveKitTransactionsGetter extends AbstractEveKitListGetter<WalletTra
 	}
 
 	@Override
-	protected List<WalletTransaction> get(EveKitOwner owner, Long contid) throws ApiException {
+	protected List<WalletTransaction> get(EveKitOwner owner, String at, Long contid) throws ApiException {
 		//months
-		return getCommonApi().getWalletTransactions(owner.getAccessKey(), owner.getAccessCred(), null, contid, MAX_RESULTS, REVERSE,
+		return getCommonApi().getWalletTransactions(owner.getAccessKey(), owner.getAccessCred(), null, contid, getMaxResults(), getReverse(),
 				null, null, dateFilter(Settings.get().getEveKitTransactionsHistory()), null, null, null, null, null, null, null, null, null, null, null, null, null, null);
 	}
 
@@ -65,8 +65,8 @@ public class EveKitTransactionsGetter extends AbstractEveKitListGetter<WalletTra
 	}
 
 	@Override
-	protected boolean isNow(WalletTransaction obj) {
-		return obj.getLifeEnd() == Long.MAX_VALUE;
+	protected Long getLifeStart(WalletTransaction obj) {
+		return obj.getLifeStart();
 	}
 
 	@Override

@@ -39,8 +39,18 @@ public class EveKitBlueprintsGetter extends AbstractEveKitListGetter<Blueprint> 
 	}
 
 	@Override
-	protected List<Blueprint> get(EveKitOwner owner, Long contid) throws ApiException {
-		return getCommonApi().getBlueprints(owner.getAccessKey(), owner.getAccessCred(), null, contid, MAX_RESULTS, REVERSE,
+	public void load(UpdateTask updateTask, List<EveKitOwner> owners, boolean first) {
+		super.load(updateTask, owners, first);
+	}
+
+	@Override
+	public void load(UpdateTask updateTask, List<EveKitOwner> owners, Long at) {
+		super.load(updateTask, owners, at);
+	}
+
+	@Override
+	protected List<Blueprint> get(EveKitOwner owner, String at, Long contid) throws ApiException {
+		return getCommonApi().getBlueprints(owner.getAccessKey(), owner.getAccessCred(), at, contid, getMaxResults(), getReverse(),
 				null, null, null, null, null, null, null, null, null);
 	}
 
@@ -55,8 +65,8 @@ public class EveKitBlueprintsGetter extends AbstractEveKitListGetter<Blueprint> 
 	}
 
 	@Override
-	protected boolean isNow(Blueprint obj) {
-		return obj.getLifeEnd() == Long.MAX_VALUE;
+	protected Long getLifeStart(Blueprint obj) {
+		return obj.getLifeStart();
 	}
 
 	@Override

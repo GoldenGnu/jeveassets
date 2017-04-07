@@ -43,9 +43,9 @@ public class EveKitJournalGetter extends AbstractEveKitListGetter<WalletJournal>
 	}
 
 	@Override
-	protected List<WalletJournal> get(EveKitOwner owner, Long contid) throws ApiException {
+	protected List<WalletJournal> get(EveKitOwner owner, String at, Long contid) throws ApiException {
 		//months
-		return getCommonApi().getJournalEntries(owner.getAccessKey(), owner.getAccessCred(), null, contid, MAX_RESULTS, REVERSE,
+		return getCommonApi().getJournalEntries(owner.getAccessKey(), owner.getAccessCred(), null, contid, getMaxResults(), getReverse(),
 				null, null, dateFilter(Settings.get().getEveKitJournalHistory()), null, null, null, null, null, null, null, null, null, null, null, null, null, null);
 	}
 
@@ -65,8 +65,8 @@ public class EveKitJournalGetter extends AbstractEveKitListGetter<WalletJournal>
 	}
 
 	@Override
-	protected boolean isNow(WalletJournal obj) {
-		return obj.getLifeEnd() == Long.MAX_VALUE;
+	protected Long getLifeStart(WalletJournal obj) {
+		return obj.getLifeStart();
 	}
 
 	@Override

@@ -197,7 +197,7 @@ public class ValueRetroTab extends JMainTab {
 
 	private boolean calcTotal() {
 		Date date = Settings.getNow();
-		Map<String, Value> values = DataSetCreator.createDataSet(program);
+		Map<String, Value> values = DataSetCreator.createDataSet(program.getProfileData(), Settings.getNow());
 		characters = new HashMap<String, Value>();
 		corporations = new HashMap<String, Value>();
 		total = values.get(TabsValues.get().grandTotal());

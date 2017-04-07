@@ -38,16 +38,39 @@ import net.nikr.eve.jeveasset.gui.tabs.orders.MyMarketOrder;
 
 public class EveKitMarketOrdersGetter extends AbstractEveKitListGetter<MarketOrder>  {
 
+	private enum Runs { MONTHS, ALL }
+
+	private Runs run;
+	
 	@Override
 	public void load(UpdateTask updateTask, List<EveKitOwner> owners) {
+		run = Runs.MONTHS;
 		super.load(updateTask, owners);
 	}
 
 	@Override
-	protected List<MarketOrder> get(EveKitOwner owner, Long contid) throws ApiException {
-		//months
-		return getCommonApi().getMarketOrders(owner.getAccessKey(), owner.getAccessCred(), null, contid, MAX_RESULTS, REVERSE,
-				null, null, null, null, null, null, dateFilter(Settings.get().getEveKitMarketOrdersHistory()), null, null, null, null, null, null, null, null);
+	public void load(UpdateTask updateTask, List<EveKitOwner> owners, boolean first) {
+		run = Runs.ALL;
+		super.load(updateTask, owners, first);
+	}
+
+	@Override
+	public void load(UpdateTask updateTask, List<EveKitOwner> owners, Long at) {
+		run = Runs.ALL;
+		super.load(updateTask, owners, at);
+	}
+
+	@Override
+	protected List<MarketOrder> get(EveKitOwner owner, String at, Long contid) throws ApiException {
+		if (run == Runs.MONTHS) { //months
+			return getCommonApi().getMarketOrders(owner.getAccessKey(), owner.getAccessCred(), at, contid, getMaxResults(), getReverse(),
+					null, null, null, null, null, null, dateFilter(Settings.get().getEveKitMarketOrdersHistory()), null, null, null, null, null, null, null, null);
+		}
+		if (run == Runs.ALL) {
+			return getCommonApi().getMarketOrders(owner.getAccessKey(), owner.getAccessCred(), at, contid, getMaxResults(), getReverse(),
+					null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+		}
+		return new ArrayList<MarketOrder>();
 	}
 
 	@Override
@@ -66,8 +89,8 @@ public class EveKitMarketOrdersGetter extends AbstractEveKitListGetter<MarketOrd
 	}
 
 	@Override
-	protected boolean isNow(MarketOrder obj) {
-		return obj.getLifeEnd() == Long.MAX_VALUE;
+	protected Long getLifeStart(MarketOrder obj) {
+		return obj.getLifeStart();
 	}
 
 	@Override

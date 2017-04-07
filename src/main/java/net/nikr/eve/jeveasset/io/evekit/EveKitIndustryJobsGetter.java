@@ -60,14 +60,32 @@ public class EveKitIndustryJobsGetter extends AbstractEveKitListGetter<IndustryJ
 	}
 
 	@Override
-	protected List<IndustryJob> get(EveKitOwner owner, Long contid) throws ApiException {
+	public void load(UpdateTask updateTask, List<EveKitOwner> owners, boolean first) {
+		industryJobs = new HashMap<EveKitOwner, Set<MyIndustryJob>>();
+		run = Runs.ALL;
+		super.load(updateTask, owners, first);
+	}
+
+	@Override
+	public void load(UpdateTask updateTask, List<EveKitOwner> owners, Long at) {
+		industryJobs = new HashMap<EveKitOwner, Set<MyIndustryJob>>();
+		run = Runs.ALL;
+		super.load(updateTask, owners, at);
+	}
+
+	@Override
+	protected List<IndustryJob> get(EveKitOwner owner, String at, Long contid) throws ApiException {
 		if (run == Runs.ACTIVE_PAUSED_READY) { //Status 1,2,3 = Active, Paused, Ready
-			return getCommonApi().getIndustryJobs(owner.getAccessKey(), owner.getAccessCred(), null, contid, MAX_RESULTS, REVERSE,
+			return getCommonApi().getIndustryJobs(owner.getAccessKey(), owner.getAccessCred(), null, contid, getMaxResults(), getReverse(),
 				null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, industryJobsFilter(), null, null, null, null, null, null, null);
 		}
-		if (run == Runs.MONTHS || run == Runs.ALL) { //months
-			return getCommonApi().getIndustryJobs(owner.getAccessKey(), owner.getAccessCred(), null, contid, MAX_RESULTS, REVERSE,
+		if (run == Runs.MONTHS) { //months
+			return getCommonApi().getIndustryJobs(owner.getAccessKey(), owner.getAccessCred(), at, contid, getMaxResults(), getReverse(),
 				null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, dateFilter(Settings.get().getEveKitIndustryJobsHistory()), null, null);
+		}
+		if (run == Runs.ALL) { //months
+			return getCommonApi().getIndustryJobs(owner.getAccessKey(), owner.getAccessCred(), at, contid, getMaxResults(), getReverse(),
+				null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
 		}
 		return new ArrayList<IndustryJob>();
 	}
@@ -90,10 +108,10 @@ public class EveKitIndustryJobsGetter extends AbstractEveKitListGetter<IndustryJ
 	protected long getCID(IndustryJob obj) {
 		return obj.getCid();
 	}
-
+	
 	@Override
-	protected boolean isNow(IndustryJob obj) {
-		return obj.getLifeEnd() == Long.MAX_VALUE;
+	protected Long getLifeStart(IndustryJob obj) {
+		return obj.getLifeStart();
 	}
 
 	@Override

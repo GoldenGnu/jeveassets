@@ -68,6 +68,10 @@ public abstract class UpdateTask extends SwingWorker<Void, Void> {
 		errors = new ArrayList<ErrorClass>();
 	}
 
+	public Integer getTotalProgress() {
+		return null;
+	}
+
 	public String getName() {
 		return name;
 	}

@@ -547,7 +547,16 @@ public class UpdateDialog extends JDialogCentered {
 					updateTasks.add(new PriceDataTask(jPriceDataAll.isSelected()));
 				}
 				if (!updateTasks.isEmpty()) {
-					TaskDialog taskDialog = new TaskDialog(program, updateTasks);
+					TaskDialog taskDialog = new TaskDialog(program, updateTasks, false, new TaskDialog.TasksCompleted() {
+						@Override
+						public void tasksCompleted(TaskDialog taskDialog) {
+							program.updateEventLists();
+							//Create value tracker point
+							program.createTrackerDataPoint();
+							//Save settings after updating (if we crash later)
+							program.saveSettingsAndProfile();
+						}
+					});
 				}
 			}
 			if (UpdateDialogAction.CANCEL.name().equals(e.getActionCommand())) {

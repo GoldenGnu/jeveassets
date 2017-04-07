@@ -92,7 +92,7 @@ public class Program implements ActionListener {
 		TIMER
 	}
 	//Major.Minor.Bugfix [Release Candidate n] [BETA n] [DEV BUILD #n];
-	public static final String PROGRAM_VERSION = "4.0.0 DEV BUILD 2";
+	public static final String PROGRAM_VERSION = "4.0.0 DEV BUILD 4";
 	public static final String PROGRAM_NAME = "jEveAssets";
 	public static final String PROGRAM_UPDATE_URL = "http://eve.nikr.net/jeveassets/update.xml";
 	public static final String PROGRAM_HOMEPAGE = "http://eve.nikr.net/jeveasset";
@@ -263,6 +263,8 @@ public class Program implements ActionListener {
 	//Updating data...
 		LOG.info("Updating data...");
 		updateEventLists(); //Update price
+		//Update EveKit Import
+		profilesChanged();
 		macOsxCode();
 		SplashUpdater.setProgress(100);
 		LOG.info("Showing GUI");
@@ -390,12 +392,20 @@ public class Program implements ActionListener {
 			saveSettings("API Update");
 			Settings.waitForEmptySaveQueue();
 		}
+		//Update EveKit Import
+		profilesChanged();
 		profileManager.saveProfile();
 	}
 
 	public void saveProfile() {
 		LOG.info("Saving Profile");
+		//Update EveKit Import
+		profilesChanged();
 		profileManager.saveProfile();
+	}
+
+	public final void profilesChanged() {
+		trackerTab.profilesChanged();
 	}
 
 	/**
@@ -467,6 +477,10 @@ public class Program implements ActionListener {
 		return treeTab;
 	}
 
+	public TrackerTab getTrackerTab() {
+		return trackerTab;
+	}
+
 	public StatusPanel getStatusPanel() {
 		return this.getMainWindow().getStatusPanel();
 	}
@@ -536,7 +550,7 @@ public class Program implements ActionListener {
 		return priceDataGetter;
 	}
 	public void createTrackerDataPoint() {
-		DataSetCreator.createTrackerDataPoint(this);
+		DataSetCreator.createTrackerDataPoint(profileData, Settings.getNow());
 		trackerTab.updateData();
 	}
 

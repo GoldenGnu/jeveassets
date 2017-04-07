@@ -40,10 +40,10 @@ import net.nikr.eve.jeveasset.gui.tabs.contracts.MyContractItem;
 public class EveKitContractsGetter extends AbstractEveKitListGetter<Contract> {
 
 	private enum Runs { IN_PROGRESS, MONTHS, ALL} 
-	
+
 	private Runs run;
 	private Map<EveKitOwner, Map<MyContract, List<MyContractItem>>> contracts;
-	
+
 	@Override
 	public void load(UpdateTask updateTask, List<EveKitOwner> owners) {
 		contracts = new HashMap<EveKitOwner, Map<MyContract, List<MyContractItem>>>();
@@ -59,14 +59,32 @@ public class EveKitContractsGetter extends AbstractEveKitListGetter<Contract> {
 	}
 
 	@Override
-	protected List<Contract> get(EveKitOwner owner, Long contid) throws ApiException {
+	public void load(UpdateTask updateTask, List<EveKitOwner> owners, Long at) {
+		contracts = new HashMap<EveKitOwner, Map<MyContract, List<MyContractItem>>>();
+		run = Runs.ALL;
+		super.load(updateTask, owners, at);
+	}
+
+	@Override
+	public void load(UpdateTask updateTask, List<EveKitOwner> owners, boolean first) {
+		contracts = new HashMap<EveKitOwner, Map<MyContract, List<MyContractItem>>>();
+		run = Runs.ALL;
+		super.load(updateTask, owners, first);
+	}
+
+	@Override
+	protected List<Contract> get(EveKitOwner owner, String at, Long contid) throws ApiException {
 		if (run == Runs.IN_PROGRESS) { //In-Progress
-			return getCommonApi().getContracts(owner.getAccessKey(), owner.getAccessCred(), null, contid, MAX_RESULTS, REVERSE,
+			return getCommonApi().getContracts(owner.getAccessKey(), owner.getAccessCred(), null, contid, getMaxResults(), getReverse(),
 				null, null, null, null, null, null, null, null, contractsFilter(), null, null, null, null, null, null, null, null, null, null, null, null, null);
 		}
-		if (run == Runs.MONTHS || run == Runs.ALL) { //months
-			return getCommonApi().getContracts(owner.getAccessKey(), owner.getAccessCred(), null, contid, MAX_RESULTS, REVERSE,
+		if (run == Runs.MONTHS) { //months
+			return getCommonApi().getContracts(owner.getAccessKey(), owner.getAccessCred(), at, contid, getMaxResults(), getReverse(),
 					null, null, null, null, null, null, null, null, null, null, null, null, null, dateFilter(Settings.get().getEveKitContractsHistory()), null, null, null, null, null, null, null, null);
+		}
+		if (run == Runs.ALL) { //months
+			return getCommonApi().getContracts(owner.getAccessKey(), owner.getAccessCred(), at, contid, getMaxResults(), getReverse(),
+					null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
 		}
 		return new ArrayList<Contract>();
 	}
@@ -91,8 +109,8 @@ public class EveKitContractsGetter extends AbstractEveKitListGetter<Contract> {
 	}
 
 	@Override
-	protected boolean isNow(Contract obj) {
-		return obj.getLifeEnd() == Long.MAX_VALUE;
+	protected Long getLifeStart(Contract obj) {
+		return obj.getLifeStart();
 	}
 
 	@Override

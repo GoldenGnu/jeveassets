@@ -167,6 +167,8 @@ public class ProfileDialog extends JDialogCentered {
 			profile.setActiveProfile(true);
 			//Load new profile
 			program.getProfileManager().loadActiveProfile();
+			//Update EveKit Import
+			program.profilesChanged();
 			//Update data
 			program.updateEventLists();
 			//Update GUI (this dialog)

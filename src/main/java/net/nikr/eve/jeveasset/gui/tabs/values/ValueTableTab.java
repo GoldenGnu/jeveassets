@@ -133,7 +133,7 @@ public class ValueTableTab extends JMainTab {
 		try {
 			eventList.getReadWriteLock().writeLock().lock();
 			eventList.clear();
-			eventList.addAll(DataSetCreator.createDataSet(program).values());
+			eventList.addAll(DataSetCreator.createDataSet(program.getProfileData(), Settings.getNow()).values());
 		} finally {
 			eventList.getReadWriteLock().writeLock().unlock();
 		}
