@@ -92,68 +92,99 @@ public class DataSetCreator {
 		Map<String, Value> values = new HashMap<String, Value>();
 		Value total = new Value(TabsValues.get().grandTotal(), date);
 		values.put(total.getName(), total);
-		for (MyAsset asset : profileData.getAssetsEventList()) {
-			//Skip market orders
-			if (asset.getFlag().equals(General.get().marketOrderSellFlag())) {
-				continue; //Ignore market sell orders
+		//Asset
+		try {
+			profileData.getAssetsEventList().getReadWriteLock().readLock().lock();
+			for (MyAsset asset : profileData.getAssetsEventList()) {
+				//Skip market orders
+				if (asset.getFlag().equals(General.get().marketOrderSellFlag())) {
+					continue; //Ignore market sell orders
+				}
+				if (asset.getFlag().equals(General.get().marketOrderBuyFlag())) {
+					continue; //Ignore market buy orders
+				}
+				//Skip contracts
+				if (asset.getFlag().equals(General.get().contractIncluded())) {
+					continue; //Ignore contracts included
+				}
+				if (asset.getFlag().equals(General.get().contractExcluded())) {
+					continue; //Ignore contracts excluded
+				}
+				Value value = getValueInner(values, asset.getOwner(), date);
+				//Location/Flag logic
+				String id = createAssetID(asset);
+				value.addAssets(id, asset);
+				total.addAssets(id, asset);
 			}
-			if (asset.getFlag().equals(General.get().marketOrderBuyFlag())) {
-				continue; //Ignore market buy orders
-			}
-			//Skip contracts
-			if (asset.getFlag().equals(General.get().contractIncluded())) {
-				continue; //Ignore contracts included
-			}
-			if (asset.getFlag().equals(General.get().contractExcluded())) {
-				continue; //Ignore contracts excluded
-			}
-			Value value = getValueInner(values, asset.getOwner(), date);
-			//Location/Flag logic
-			String id = createAssetID(asset);
-			value.addAssets(id, asset);
-			total.addAssets(id, asset);
+		} finally {
+			profileData.getAssetsEventList().getReadWriteLock().readLock().unlock();
 		}
 		//Account Balance
-		for (MyAccountBalance accountBalance : profileData.getAccountBalanceEventList()) {
-			Value value = getValueInner(values, accountBalance.getOwner(), date);
-			String id;
-			if (accountBalance.isCorporation()) { //Corporation Wallets
-				id = "" + (accountBalance.getAccountKey() - 999);
-			} else {
-				id = "0"; //Character Wallet
+		try {
+			profileData.getAccountBalanceEventList().getReadWriteLock().readLock().lock();
+			for (MyAccountBalance accountBalance : profileData.getAccountBalanceEventList()) {
+				Value value = getValueInner(values, accountBalance.getOwner(), date);
+				String id;
+				if (accountBalance.isCorporation()) { //Corporation Wallets
+					id = "" + (accountBalance.getAccountKey() - 999);
+				} else {
+					id = "0"; //Character Wallet
+				}
+				value.addBalance(id, accountBalance.getBalance());
+				total.addBalance(id, accountBalance.getBalance());
 			}
-			value.addBalance(id, accountBalance.getBalance());
-			total.addBalance(id, accountBalance.getBalance());
+		} finally {
+			profileData.getAccountBalanceEventList().getReadWriteLock().readLock().unlock();
 		}
 		//Market Orders
-		for (MyMarketOrder marketOrder : profileData.getMarketOrdersEventList()) {
-			Value value = getValueInner(values, marketOrder.getOwnerName(), date);
-			if (marketOrder.isActive()) {
-				if (marketOrder.getBid() < 1) { //Sell Orders
-					value.addSellOrders(marketOrder.getPrice() * marketOrder.getVolRemaining());
-					total.addSellOrders(marketOrder.getPrice() * marketOrder.getVolRemaining());
-				} else { //Buy Orders
-					value.addEscrows(marketOrder.getEscrow());
-					value.addEscrowsToCover((marketOrder.getPrice() * marketOrder.getVolRemaining()) - marketOrder.getEscrow());
-					total.addEscrows(marketOrder.getEscrow());
-					total.addEscrowsToCover((marketOrder.getPrice() * marketOrder.getVolRemaining()) - marketOrder.getEscrow());
+		try {
+			profileData.getMarketOrdersEventList().getReadWriteLock().readLock().lock();
+			for (MyMarketOrder marketOrder : profileData.getMarketOrdersEventList()) {
+				Value value = getValueInner(values, marketOrder.getOwnerName(), date);
+				if (marketOrder.isActive()) {
+					if (marketOrder.getBid() < 1) { //Sell Orders
+						value.addSellOrders(marketOrder.getPrice() * marketOrder.getVolRemaining());
+						total.addSellOrders(marketOrder.getPrice() * marketOrder.getVolRemaining());
+					} else { //Buy Orders
+						value.addEscrows(marketOrder.getEscrow());
+						value.addEscrowsToCover((marketOrder.getPrice() * marketOrder.getVolRemaining()) - marketOrder.getEscrow());
+						total.addEscrows(marketOrder.getEscrow());
+						total.addEscrowsToCover((marketOrder.getPrice() * marketOrder.getVolRemaining()) - marketOrder.getEscrow());
+					}
 				}
 			}
+		} finally {
+			profileData.getMarketOrdersEventList().getReadWriteLock().readLock().unlock();
 		}
 		//Industrys Job: Manufacturing
-		for (MyIndustryJob industryJob : profileData.getIndustryJobsEventList()) {
-			Value value = getValueInner(values, industryJob.getOwnerName(), date);
-			//Manufacturing and not completed
-			if (industryJob.isManufacturing() && !industryJob.isDelivered()) {
-				double manufacturingTotal = industryJob.getPortion() * industryJob.getRuns() * ApiIdConverter.getPrice(industryJob.getProductTypeID(), false);
-				value.addManufacturing(manufacturingTotal);
-				total.addManufacturing(manufacturingTotal);
+		try {
+			profileData.getIndustryJobsEventList().getReadWriteLock().readLock().lock();
+			for (MyIndustryJob industryJob : profileData.getIndustryJobsEventList()) {
+				Value value = getValueInner(values, industryJob.getOwnerName(), date);
+				//Manufacturing and not completed
+				if (industryJob.isManufacturing() && !industryJob.isDelivered()) {
+					double manufacturingTotal = industryJob.getPortion() * industryJob.getRuns() * ApiIdConverter.getPrice(industryJob.getProductTypeID(), false);
+					value.addManufacturing(manufacturingTotal);
+					total.addManufacturing(manufacturingTotal);
+				}
 			}
+		} finally {
+			profileData.getIndustryJobsEventList().getReadWriteLock().readLock().unlock();
 		}
 		//Contract
-		addContracts(profileData.getContractEventList(), values, profileData.getOwners(), total, date);
+		try {
+			profileData.getContractEventList().getReadWriteLock().readLock().lock();
+			addContracts(profileData.getContractEventList(), values, profileData.getOwners(), total, date);
+		} finally {
+			profileData.getContractEventList().getReadWriteLock().readLock().unlock();
+		}
 		//Contract Items
-		addContractItems(profileData.getContractItemEventList(), values, profileData.getOwners(), total, date);
+		try {
+			profileData.getContractItemEventList().getReadWriteLock().readLock().lock();
+			addContractItems(profileData.getContractItemEventList(), values, profileData.getOwners(), total, date);
+		} finally {
+			profileData.getContractItemEventList().getReadWriteLock().readLock().unlock();
+		}
 		return values;
 	}
 
