@@ -105,7 +105,11 @@ public final class ApiConverter {
 		for (Asset eveAsset : eveAssets) {
 			MyAsset asset = toAsset(owner, eveAsset, parentAsset);
 			if (parentAsset == null) {
-				assets.add(asset);
+				if (!asset.getFlag().contains("Slot") //Filter out wrecks (No parent with ship flags)
+						&& !asset.getFlag().contains("Bay")
+						&& !asset.getFlag().contains("Cargo")) {
+					assets.add(asset);
+				}
 			} else {
 				parentAsset.addAsset(asset);
 			}
