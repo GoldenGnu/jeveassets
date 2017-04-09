@@ -228,6 +228,8 @@ public final class ApiConverter {
 					|| contractItem.getContract().getStatus() == ContractStatus.OUTSTANDING)
 					//Owned
 					&& issuer != null
+					//Not courier
+					&& !contractItem.getContract().isCourier()
 					//Sell
 					&& ((contractItem.isIncluded() && Settings.get().isIncludeSellContracts())
 					//Buy
