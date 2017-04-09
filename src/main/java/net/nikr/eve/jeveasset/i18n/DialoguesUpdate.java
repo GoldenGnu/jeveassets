@@ -60,8 +60,8 @@ public abstract class DialoguesUpdate extends Bundle {
 	public abstract String priceDataNew();
 	public abstract String priceDataNone();
 	public abstract String nextUpdate();
-	public abstract String nowAll();
-	public abstract String nowSome();
+	public abstract String noAccounts();
+	public abstract String now();
 	public abstract String conqStations();
 	public abstract String citadel();
 	public abstract String balance();

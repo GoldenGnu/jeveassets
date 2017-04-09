@@ -315,6 +315,7 @@ public class UpdateDialog extends JDialogCentered {
 	private void changed() {
 		boolean allChecked = true;
 		boolean someChecked = false;
+		boolean allDisabled = true;
 		for (JCheckBox jCheckBox : jCheckBoxes) {
 			if (jCheckBox.isEnabled()) {
 				if (jCheckBox.isSelected()) {
@@ -322,6 +323,7 @@ public class UpdateDialog extends JDialogCentered {
 				} else {
 					allChecked = false;
 				}
+				allDisabled = false;
 			}
 		}
 		if (jPriceDataAll.isEnabled()) {
@@ -330,13 +332,16 @@ public class UpdateDialog extends JDialogCentered {
 			} else { //Not selected
 				allChecked = false;
 			}
-		} else {
+			allDisabled = false;
+		} else if (jPriceDataNew.isEnabled()) {
 			if (!jPriceDataNew.isSelected()) {
 				allChecked = false;
 			}
+			allDisabled = false;
 		}
 		jUpdate.setEnabled(someChecked);
-		jCheckAll.setSelected(allChecked);
+		jCheckAll.setSelected(allChecked && !allDisabled);
+		jCheckAll.setEnabled(!allDisabled);
 	}
 
 	private void update() {
@@ -380,6 +385,20 @@ public class UpdateDialog extends JDialogCentered {
 				accountBalanceLast = updateLast(accountBalanceLast, owner.getBalanceNextUpdate());
 			}
 		}
+		if (program.getOwnerTypes().isEmpty()) {
+			jPriceDataNone.setSelected(true);
+			jPriceDataNone.setEnabled(false);
+			jPriceDataNew.setEnabled(false);
+			jPriceDataAll.setEnabled(false);
+		} else {
+			jPriceDataNone.setEnabled(true);
+			jPriceDataNew.setEnabled(true);
+			jPriceDataAll.setEnabled(true);
+			setUpdateLabel(null, jPriceDataLeftLast, jPriceDataAll, priceData, priceData, false);
+			if (!jPriceDataAll.isEnabled() && jPriceDataNew.isEnabled() && !jPriceDataNone.isSelected()) {
+				jPriceDataNew.setSelected(true);
+			}
+		}
 		setUpdateLabel(jMarketOrdersLeftFirst, jMarketOrdersLeftLast, jMarketOrders, marketOrdersFirst, marketOrdersLast);
 		setUpdateLabel(jJournalLeftFirst, jJournalLeftLast, jJournal, journalFirst, journalLast);
 		setUpdateLabel(jTransactionsLeftFirst, jTransactionsLeftLast, jTransactions, transactionsFirst, transactionsLast);
@@ -388,10 +407,6 @@ public class UpdateDialog extends JDialogCentered {
 		setUpdateLabel(jContractsLeftFirst, jContractsLeftLast, jContracts, contractsFirst, contractsLast);
 		setUpdateLabel(jAssetsLeftFirst, jAssetsLeftLast, jAssets, assetsFirst, assetsLast);
 		setUpdateLabel(jBlueprintsLeftFirst, jBlueprintsLeftLast, jBlueprints, blueprintsFirst, blueprintsLast);
-		setUpdateLabel(null, jPriceDataLeftLast, jPriceDataAll, priceData, priceData, false);
-		if (!jPriceDataAll.isEnabled() && !jPriceDataNone.isSelected()) {
-			jPriceDataNew.setSelected(true);
-		}
 		changed();
 		
 	}
@@ -400,19 +415,16 @@ public class UpdateDialog extends JDialogCentered {
 		this.setUpdateLabel(jFirst, jAll, jCheckBox, first, last, true);
 	}
 
-	private void setUpdateLabel(final JLabel jFirst, final JLabel jAll, final JToggleButton jCheckBox, Date first, final Date last, final boolean ignoreOnProxy) {
-		if (first == null) {
-			first = Settings.getNow();
-		}
-		if (Settings.get().isUpdatable(first, ignoreOnProxy)) {
-			if (Settings.get().isUpdatable(last, ignoreOnProxy)) {
+	private void setUpdateLabel(final JLabel jFirst, final JLabel jAll, final JToggleButton jCheckBox, final Date first, final Date last, final boolean ignoreOnProxy) {
+		if (first != null && Settings.get().isUpdatable(first, ignoreOnProxy)) {
+			if (last != null && Settings.get().isUpdatable(last, ignoreOnProxy)) {
 				if (jFirst != null) {
 					jFirst.setText("");
 				}
-				jAll.setText("Now");
+				jAll.setText(DialoguesUpdate.get().now());
 			} else {
 				if (jFirst != null) {
-					jFirst.setText("Now");
+					jFirst.setText(DialoguesUpdate.get().now());
 				}
 				jAll.setText(getFormatedDuration(last));
 			}
@@ -428,16 +440,34 @@ public class UpdateDialog extends JDialogCentered {
 			jCheckBox.setSelected(false);
 			jCheckBox.setEnabled(false);
 		}
+		if (first == null) {
+			if (jFirst != null) {
+				jFirst.setEnabled(false);
+			}
+		} else {
+			if (jFirst != null) {
+				jFirst.setEnabled(true);
+			}
+		}
+		if (last == null) {
+			jAll.setEnabled(false);
+		} else {
+			jAll.setEnabled(true);
+		}
 	}
 
 	private String getFormatedDuration(Date date) {
-		long time = date.getTime() - Settings.getNow().getTime();
-		if (time <= 1000) { //less than 1 second
-			return "...";
-		} else if (time < (60 * 1000)) { //less than 1 minute
-			return Formater.milliseconds(time, false, false, false, true);
+		if (date == null) { //less than 1 second
+			return DialoguesUpdate.get().noAccounts();
 		} else {
-			return Formater.milliseconds(time, false, true, true, false);
+			long time = date.getTime() - Settings.getNow().getTime();
+			if (time <= 1000) { //less than 1 second
+				return "...";
+			} else if (time < (60 * 1000)) { //less than 1 minute
+				return Formater.milliseconds(time, false, false, false, true);
+			} else {
+				return Formater.milliseconds(time, false, true, true, false);
+			}
 		}
 	}
 
