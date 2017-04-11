@@ -82,7 +82,7 @@ public class EveKitContractsGetter extends AbstractEveKitListGetter<Contract> {
 			return getCommonApi().getContracts(owner.getAccessKey(), owner.getAccessCred(), at, contid, getMaxResults(), getReverse(),
 					null, null, null, null, null, null, null, null, null, null, null, null, null, dateFilter(Settings.get().getEveKitContractsHistory()), null, null, null, null, null, null, null, null);
 		}
-		if (run == Runs.ALL) { //months
+		if (run == Runs.ALL) {
 			return getCommonApi().getContracts(owner.getAccessKey(), owner.getAccessCred(), at, contid, getMaxResults(), getReverse(),
 					null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
 		}
@@ -145,7 +145,9 @@ public class EveKitContractsGetter extends AbstractEveKitListGetter<Contract> {
 
 	@Override
 	protected void setNextUpdate(EveKitOwner owner, Date date) {
-		owner.setContractsNextUpdate(date);
+		if (run == Runs.MONTHS || run == Runs.ALL) { //Ignore first update...
+			owner.setContractsNextUpdate(date);
+		}
 	}
 
 	@Override

@@ -83,7 +83,7 @@ public class EveKitIndustryJobsGetter extends AbstractEveKitListGetter<IndustryJ
 			return getCommonApi().getIndustryJobs(owner.getAccessKey(), owner.getAccessCred(), at, contid, getMaxResults(), getReverse(),
 				null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, dateFilter(Settings.get().getEveKitIndustryJobsHistory()), null, null);
 		}
-		if (run == Runs.ALL) { //months
+		if (run == Runs.ALL) {
 			return getCommonApi().getIndustryJobs(owner.getAccessKey(), owner.getAccessCred(), at, contid, getMaxResults(), getReverse(),
 				null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
 		}
@@ -146,7 +146,9 @@ public class EveKitIndustryJobsGetter extends AbstractEveKitListGetter<IndustryJ
 
 	@Override
 	protected void setNextUpdate(EveKitOwner owner, Date date) {
-		owner.setIndustryJobsNextUpdate(date);
+		if (run == Runs.MONTHS || run == Runs.ALL) { //Ignore first update...
+			owner.setIndustryJobsNextUpdate(date);
+		}
 	}
 
 	@Override
