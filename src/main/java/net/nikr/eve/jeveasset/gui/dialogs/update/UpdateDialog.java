@@ -901,9 +901,9 @@ public class UpdateDialog extends JDialogCentered {
 				case EVE_MARKETDATA: setIcon(Images.LINK_EVE_MARKETDATA.getIcon()); break;
 			}
 			if (update) {
-				program.getPriceDataGetter().updateAll(this);
+				program.getPriceDataGetter().updateAll(program.getProfileData(), this);
 			} else {
-				program.getPriceDataGetter().updateNew(this);
+				program.getPriceDataGetter().updateNew(program.getProfileData(), this);
 			}
 		}
 	}

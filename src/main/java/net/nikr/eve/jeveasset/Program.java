@@ -171,8 +171,7 @@ public class Program implements ActionListener {
 		profileManager.loadActiveProfile();
 		profileData = new ProfileData(profileManager);
 		//Can not update profile data now - list needs to be empty doing creation...
-		priceDataGetter = new PriceDataGetter(profileData);
-		priceDataGetter.load();
+		priceDataGetter = new PriceDataGetter();
 	//Timer
 		timer = new Timer(15000, this); //Once a minute
 		timer.setActionCommand(ProgramAction.TIMER.name());

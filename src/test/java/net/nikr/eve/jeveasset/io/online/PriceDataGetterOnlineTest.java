@@ -49,7 +49,6 @@ import uk.me.candle.eve.pricing.options.PricingFetch;
 import uk.me.candle.eve.pricing.options.PricingNumber;
 import uk.me.candle.eve.pricing.options.PricingOptions;
 import uk.me.candle.eve.pricing.options.PricingType;
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -167,13 +166,10 @@ public class PriceDataGetterOnlineTest {
 
         System.out.println("    " + process.size() + " of " + typeIDs.size() + " done - " + empty.size() + " empty - " + failed.size() + " failed - completed in: " + Formater.milliseconds(end - start)); 
 		assertTrue(failed.isEmpty());
-		assertEquals(process.size(), typeIDs.size());
+		assertTrue(process.size() >= typeIDs.size());
 	}
 
 	private static class PriceGetter extends PriceDataGetter {
-		public PriceGetter() {
-			super(null);
-		}
 
 		protected Map<Integer, PriceData> process(PricingOptions pricingOptions, Set<Integer> ids, PriceSource source) {
 			return super.processUpdate(null, true, pricingOptions, ids, source);

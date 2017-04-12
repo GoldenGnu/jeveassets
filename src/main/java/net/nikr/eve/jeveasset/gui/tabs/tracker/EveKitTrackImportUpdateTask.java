@@ -25,6 +25,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.ProfileData;
 import net.nikr.eve.jeveasset.data.ProfileManager;
 import net.nikr.eve.jeveasset.data.Settings;
@@ -42,20 +43,21 @@ import net.nikr.eve.jeveasset.io.evekit.EveKitContractsGetter;
 import net.nikr.eve.jeveasset.io.evekit.EveKitIndustryJobsGetter;
 import net.nikr.eve.jeveasset.io.evekit.EveKitMarketOrdersGetter;
 import net.nikr.eve.jeveasset.io.online.CitadelGetter;
-import net.nikr.eve.jeveasset.io.online.PriceDataGetter;
 
 
 public class EveKitTrackImportUpdateTask extends UpdateTask {
 
+	private final Program program;
 	private final List<EveKitOwner> owners;
 	private final DateInterval dateInterval;
 	private final Merge merge;
 	private int totalProgress;
 	private ReturnValue returnValue;
 
-	public EveKitTrackImportUpdateTask(List<EveKitOwner> owners, DateInterval dateInterval, Merge merge) {
+	public EveKitTrackImportUpdateTask(Program program, List<EveKitOwner> owners, DateInterval dateInterval, Merge merge) {
 		super(TabsTracker.get().eveKitImportTaskTitle(dateInterval.getTitle(), merge.toString()));
 		setIcon(Images.MISC_EVEKIT.getIcon());
+		this.program = program;
 		this.owners = owners;
 		this.dateInterval = dateInterval;
 		this.merge = merge;
@@ -205,24 +207,13 @@ public class EveKitTrackImportUpdateTask extends UpdateTask {
 			}
 			setProgress(100);
 
-			//Add data to Manager
-			ProfileManager manager = new ProfileManager();
-			manager.getEveKitOwners().addAll(clones);
-			//Create Profile
-			ProfileData profile = new ProfileData(manager);
-			//Update missing prices
-			PriceDataGetter priceDataGetter = new PriceDataGetter(profile);
-			priceDataGetter.updateNew(null);
-			profile.updateEventLists();
-			//Create Tracker point
-			DataSetCreator.createTrackerDataPoint(profile, date);
-
 			//Check if we're still getting data from the API
 			boolean end = true;
+			List<EveKitOwner> updatedClones = new ArrayList<EveKitOwner>();
 			for (EveKitOwner owner : clones) {
 				if (!isEmpty(owner)) {
 					end = false;
-					break;
+					updatedClones.add(owner);
 				}
 			}
 			if (merge == Merge.OVERWRITE) {
@@ -239,6 +230,21 @@ public class EveKitTrackImportUpdateTask extends UpdateTask {
 			if (end || isCancelled()) { //No data return by the API OR Task is cancelled
 				break;
 			}
+			//Only create data point if we have date to save!
+
+			//Add data to Manager
+			ProfileManager manager = new ProfileManager();
+			manager.getEveKitOwners().addAll(updatedClones);
+			//Create Profile
+			ProfileData profile = new ProfileData(manager);
+			//Update data
+			//profile.updateEventLists();
+			//Update missing prices
+			program.getPriceDataGetter().updateNew(profile, null);
+			//Update data
+			profile.updateEventLists();
+			//Create Tracker point
+			DataSetCreator.createTrackerDataPoint(profile, date);
 		}
 		if (error) {
 			returnValue = ReturnValue.ERROR;
