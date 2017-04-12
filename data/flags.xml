@@ -3,15 +3,12 @@
     <!--Generated from Eve Online Toolkit. ©CCP hf. All rights reserved. Used with permission.-->
     <row flagid="0" flagname="None" flagtext="None"/>
     <row flagid="1" flagname="Wallet" flagtext="Wallet"/>
-    <row flagid="2" flagname="Factory" flagtext="Factory"/>
+    <row flagid="2" flagname="Offices" flagtext="OfficeFolder"/>
     <row flagid="3" flagname="Wardrobe" flagtext="Wardrobe"/>
     <row flagid="4" flagname="Hangar" flagtext="Hangar"/>
     <row flagid="5" flagname="Cargo" flagtext="Cargo"/>
-    <row flagid="6" flagname="Briefcase" flagtext="Briefcase"/>
     <row flagid="7" flagname="Skill" flagtext="Skill"/>
     <row flagid="8" flagname="Reward" flagtext="Reward"/>
-    <row flagid="9" flagname="Connected" flagtext="Character in station connected"/>
-    <row flagid="10" flagname="Disconnected" flagtext="Character in station offline"/>
     <row flagid="11" flagname="LoSlot0" flagtext="Low power slot 1"/>
     <row flagid="12" flagname="LoSlot1" flagtext="Low power slot 2"/>
     <row flagid="13" flagname="LoSlot2" flagtext="Low power slot 3"/>
@@ -38,27 +35,8 @@
     <row flagid="34" flagname="HiSlot7" flagtext="High power slot 8"/>
     <row flagid="35" flagname="Fixed Slot" flagtext="Fixed Slot"/>
     <row flagid="36" flagname="AssetSafety" flagtext="Asset Safety"/>
-    <row flagid="40" flagname="PromenadeSlot1" flagtext="Promenade Slot 1"/>
-    <row flagid="41" flagname="PromenadeSlot2" flagtext="Promenade Slot 2"/>
-    <row flagid="42" flagname="PromenadeSlot3" flagtext="Promenade Slot 3"/>
-    <row flagid="43" flagname="PromenadeSlot4" flagtext="Promenade Slot 4"/>
-    <row flagid="44" flagname="PromenadeSlot5" flagtext="Promenade Slot 5"/>
-    <row flagid="45" flagname="PromenadeSlot6" flagtext="Promenade Slot 6"/>
-    <row flagid="46" flagname="PromenadeSlot7" flagtext="Promenade Slot 7"/>
-    <row flagid="47" flagname="PromenadeSlot8" flagtext="Promenade Slot 8"/>
-    <row flagid="48" flagname="PromenadeSlot9" flagtext="Promenade Slot 9"/>
-    <row flagid="49" flagname="PromenadeSlot10" flagtext="Promenade Slot 10"/>
-    <row flagid="50" flagname="PromenadeSlot11" flagtext="Promenade Slot 11"/>
-    <row flagid="51" flagname="PromenadeSlot12" flagtext="Promenade Slot 12"/>
-    <row flagid="52" flagname="PromenadeSlot13" flagtext="Promenade Slot 13"/>
-    <row flagid="53" flagname="PromenadeSlot14" flagtext="Promenade Slot 14"/>
-    <row flagid="54" flagname="PromenadeSlot15" flagtext="Promenade Slot 15"/>
-    <row flagid="55" flagname="PromenadeSlot16" flagtext="Promenade Slot 16"/>
     <row flagid="56" flagname="Capsule" flagtext="Capsule"/>
     <row flagid="57" flagname="Pilot" flagtext="Pilot"/>
-    <row flagid="58" flagname="Passenger" flagtext="Passenger"/>
-    <row flagid="59" flagname="Boarding Gate" flagtext="Boarding gate"/>
-    <row flagid="60" flagname="Crew" flagtext="Crew"/>
     <row flagid="61" flagname="Skill In Training" flagtext="Skill in training"/>
     <row flagid="62" flagname="CorpMarket" flagtext="Corporation Market Deliveries / Returns"/>
     <row flagid="63" flagname="Locked" flagtext="Locked item, can not be moved unless unlocked"/>
@@ -93,7 +71,6 @@
     <row flagid="97" flagname="RigSlot5" flagtext="Rig power slot 6"/>
     <row flagid="98" flagname="RigSlot6" flagtext="Rig power slot 7"/>
     <row flagid="99" flagname="RigSlot7" flagtext="Rig power slot 8"/>
-    <row flagid="100" flagname="Factory Operation" flagtext="Factory Background Operation"/>
     <row flagid="115" flagname="CorpSAG1" flagtext="Corp Security Access Group 1"/>
     <row flagid="116" flagname="CorpSAG2" flagtext="Corp Security Access Group 2"/>
     <row flagid="117" flagname="CorpSAG3" flagtext="Corp Security Access Group 3"/>
@@ -102,8 +79,6 @@
     <row flagid="120" flagname="CorpSAG6" flagtext="Corp Security Access Group 6"/>
     <row flagid="121" flagname="CorpSAG7" flagtext="Corp Security Access Group 7"/>
     <row flagid="122" flagname="SecondaryStorage" flagtext="Secondary Storage"/>
-    <row flagid="123" flagname="CaptainsQuarters" flagtext="Captains Quarters"/>
-    <row flagid="124" flagname="Wis Promenade" flagtext="Wis Promenade"/>
     <row flagid="125" flagname="SubSystem0" flagtext="Sub system slot 0"/>
     <row flagid="126" flagname="SubSystem1" flagtext="Sub system slot 1"/>
     <row flagid="127" flagname="SubSystem2" flagtext="Sub system slot 2"/>
@@ -153,4 +128,5 @@
     <row flagid="171" flagname="StructureServiceSlot7" flagtext="Structure service slot 8"/>
     <row flagid="172" flagname="StructureFuel" flagtext="Structure Fuel"/>
     <row flagid="173" flagname="Deliveries" flagtext="Deliveries"/>
+    <row flagid="174" flagname="CrateLoot" flagtext="Crate Loot"/>
 </rows>
