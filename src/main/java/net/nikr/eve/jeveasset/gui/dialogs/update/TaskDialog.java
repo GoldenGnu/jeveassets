@@ -111,7 +111,7 @@ public class TaskDialog {
 		jErrorMessage = new JTextPane();
 		jErrorMessage.setText("");
 		jErrorMessage.setEditable(false);
-		jErrorMessage.setFocusable(false);
+		jErrorMessage.setFocusable(true);
 		jErrorMessage.setOpaque(false);
 
 		jErrorScroll = new JScrollPane(jErrorMessage);
