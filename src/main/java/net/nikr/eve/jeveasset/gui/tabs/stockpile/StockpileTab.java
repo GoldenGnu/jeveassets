@@ -676,7 +676,6 @@ public class StockpileTab extends JMainTab {
 	}
 
 	private void importIskPerHour() {
-		//Get string from clipboard
 		String shoppingList = jTextDialog.importText();
 		if (shoppingList == null) {
 			return; //Cancelled
@@ -688,88 +687,9 @@ public class StockpileTab extends JMainTab {
 			JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), TabsStockpile.get().importEmpty(), TabsStockpile.get().importIskPerHourTitle(), JOptionPane.PLAIN_MESSAGE);
 			return;
 		}
-		boolean doSkip = false;
-		if (shoppingList.contains("Shopping List for:")) {
-			int value = JOptionPane.showConfirmDialog(program.getMainWindow().getFrame(), TabsStockpile.get().importIskPerHourInclude(), TabsStockpile.get().importIskPerHourTitle(), JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-			doSkip = (value != JOptionPane.YES_OPTION);
-		}
-		String[] lines = shoppingList.split("[\r\n]");
-		Map<String, Double> data = new HashMap<String, Double>();
-		boolean plain = shoppingList.contains("Material - Quantity");
-		boolean csv = shoppingList.contains("Material, Quantity, ME, Meta, Cost Per Item, Total Cost");
-		if (plain || csv) {
-			boolean skip = false;
-			for (String line : lines) {
-				if (line.contains("Shopping List for:") && doSkip) {
-					skip = true;
-				}
-				if (skip) { //Skip "Shopping List for" paragraph if selected
-					if (line.isEmpty()) {
-						skip = false;
-					}
-					continue;
-				}
-				String text;
-				String number;
-				boolean blueprint;
-				if (plain) {
-					//PLAIN (shopping list and copy to clipboard)
-					if (line.equals("Material - Quantity") //Skip none-data
-							|| line.isEmpty()
-							|| !line.contains(" - ")) {
-						continue;
-					}
-					int end = line.lastIndexOf(" - ");
-					if (end < 0) { //Validate
-						JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), TabsStockpile.get().importIskPerHourHelp(), TabsStockpile.get().importIskPerHourTitle(), JOptionPane.PLAIN_MESSAGE);
-						return;
-					}
-					text = line.substring(0, end);
-					number = line.substring(end + 3);
-					blueprint = text.contains("(") && text.contains(")");
-				} else if (csv) {
-					//CSV (shopping list)
-					if (line.startsWith("Material") //Skip none-data
-							|| line.isEmpty()
-							|| !line.contains(",")
-							|| line.contains("Total")) {
-						continue;
-					}
-					String[] s = line.split(", ");
-					if (s.length != 6) { //Validate
-						JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), TabsStockpile.get().importIskPerHourHelp(), TabsStockpile.get().importIskPerHourTitle(), JOptionPane.PLAIN_MESSAGE);
-						return;
-					}
-					text = s[0];
-					number = s[1];
-					blueprint = !s[2].equals("-");
-				} else {
-					JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), TabsStockpile.get().importIskPerHourHelp(), TabsStockpile.get().importIskPerHourTitle(), JOptionPane.PLAIN_MESSAGE);
-					return;
-				}
-				//Format text
-				String module = text.toLowerCase();
-				blueprint = (blueprint && !module.contains("blueprint"));
-				module = module.replaceAll("\\([^\\)]*\\)", "").trim();
-				if (blueprint) {
-					module = module + " blueprint";
-				}
-				//Convert number
-				Double count;
-				try {
-					count = Double.valueOf(number.replace(",", "").trim());
-				} catch (NumberFormatException e) {
-					JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), TabsStockpile.get().importIskPerHourHelp(), TabsStockpile.get().importIskPerHourTitle(), JOptionPane.PLAIN_MESSAGE);
-					return;
-				}
-				if (data.containsKey(module)) { //Add count
-					count = count + data.get(module);
-				}
-				data.put(module, count);
-			}
-		}
+		Map<String, Double> data = ImportIskPerHour.importIskPerHour(shoppingList);
 
-		if (data.isEmpty()) { //Validate
+		if (data == null || data.isEmpty()) { //Validate
 			JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), TabsStockpile.get().importIskPerHourHelp(), TabsStockpile.get().importIskPerHourTitle(), JOptionPane.PLAIN_MESSAGE);
 			return;
 		}
@@ -783,7 +703,7 @@ public class StockpileTab extends JMainTab {
 		//Search for item names
 		for (Map.Entry<String, Double> entry : data.entrySet()) {
 			for (Item item : StaticData.get().getItems().values()) {
-				if (item.getTypeName().toLowerCase().equals(entry.getKey())) { //Found item
+				if (item.getTypeName().toLowerCase().equals(entry.getKey().toLowerCase())) { //Found item
 					StockpileItem stockpileItem = new StockpileItem(stockpile, item, item.getTypeID(), entry.getValue());
 					stockpile.add(stockpileItem);
 					break; //search done

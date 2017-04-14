@@ -75,7 +75,6 @@ public abstract class TabsStockpile extends Bundle {
 	public abstract String importEmpty();
 	public abstract String importIskPerHour();
 	public abstract String importIskPerHourTitle();
-	public abstract String importIskPerHourInclude();
 	public abstract String importIskPerHourHelp();
 	public abstract String importStockpiles();
 	public abstract String importXmlAll(int count);
