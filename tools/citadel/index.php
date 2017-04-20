@@ -24,7 +24,11 @@ function downloadPage() {
 	ini_set('default_socket_timeout', 20); // 20 Seconds timeout
 	$url = "https://stop.hammerti.me.uk/api/citadel/all";
 	$file = file_get_contents($url); // Fetch the file
-	file_put_contents(FILE, $file, LOCK_EX); // Save the cache
+	if ($file !== false) { //Download successful 
+		file_put_contents(FILE, $file, LOCK_EX); // Save the cache
+	} else { //Download failed
+		touch(FILE); //Let try again in an hour...
+	}
 }
 
 fetchURL(); // Execute the function
