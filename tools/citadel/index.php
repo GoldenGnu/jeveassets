@@ -5,18 +5,17 @@ define("FILE", "citadel.json");
 function fetchURL() {
 	if (!file_exists(FILE)) { //New
 		downloadPage();
-	}
-	if (file_exists(FILE) && ((filemtime(FILE) + 3600) < time())) { // Update every 3600 seconds (1 hour)
+	} elseif (file_exists(FILE) && ((filemtime(FILE) + 3600) < time())) { // Update every 3600 seconds (1 hour)
 		downloadPage();
 	}
 	if (file_exists(FILE)) { // If cache exist
-		ob_start();
-		ob_start("ob_gzhandler");
+		ob_start(); //Object: start
+		ob_start("ob_gzhandler"); //GZip: start
 		echo file_get_contents(FILE); // Echo the file from cache.
-		ob_end_flush();
-		header('Content-Length: '.ob_get_length());
-		ob_end_flush();
-	} else {
+		ob_end_flush(); //GZip: end
+		header('Content-Length: '.ob_get_length()); //Set content length of the GZip object
+		ob_end_flush(); //Object: end
+	} else { // If all else fails: Redirect to the API
 		header('Location: https://stop.hammerti.me.uk/api/citadel/all');
 	}
 }
