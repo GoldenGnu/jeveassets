@@ -42,6 +42,7 @@ import net.nikr.eve.jeveasset.gui.tabs.orders.MyMarketOrder;
 import net.nikr.eve.jeveasset.gui.tabs.transaction.MyTransaction;
 import net.nikr.eve.jeveasset.i18n.General;
 import net.nikr.eve.jeveasset.i18n.TabsStockpile;
+import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 
 
 public class Stockpile implements Comparable<Stockpile>, LocationsType {
@@ -84,9 +85,7 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType {
 		this.filters = filters;
 		this.multiplier = multiplier;
 		items.add(totalItem);
-		createContainerName();
-		createLocationName();
-		createInclude();
+		updateDynamicValues();
 	}
 
 	final void update(final Stockpile stockpile) {
@@ -95,6 +94,10 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType {
 		this.filters = stockpile.getFilters();
 		this.flagName = stockpile.getFlagName();
 		this.multiplier = stockpile.getMultiplier();
+		updateDynamicValues();
+	}
+
+	final void updateDynamicValues() {
 		createContainerName();
 		createLocationName();
 		createInclude();
@@ -103,7 +106,9 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType {
 	private void createLocationName() {
 		locationName = General.get().all();
 		for (StockpileFilter filter : filters) {
-			MyLocation location = filter.getLocation();
+			//Update Location
+			MyLocation location = ApiIdConverter.getLocation(filter.getLocation().getLocationID());
+			filter.setLocation(location);
 			if (location != null && !location.isEmpty()) { //Not All
 				if (filters.size() > 1) {
 					locationName = TabsStockpile.get().multiple();
@@ -1195,7 +1200,7 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType {
 	}
 
 	public static class StockpileFilter {
-		private final MyLocation location;
+		private MyLocation location;
 		private final List<Integer> flagIDs;
 		private final List<String> containers;
 		private final List<Long> ownerIDs;
@@ -1232,6 +1237,10 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType {
 
 		public MyLocation getLocation() {
 			return location;
+		}
+
+		private void setLocation(MyLocation location) {
+			this.location = location;
 		}
 
 		public List<Integer> getFlagIDs() {

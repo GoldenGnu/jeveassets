@@ -302,6 +302,7 @@ public class StockpileTab extends JMainTab {
 		updateOwners();
 
 		for (Stockpile stockpile : Settings.get().getStockpiles()) {
+			stockpile.updateDynamicValues();
 			stockpileItems.addAll(stockpile.getItems());
 			updateStockpile(stockpile);
 		}

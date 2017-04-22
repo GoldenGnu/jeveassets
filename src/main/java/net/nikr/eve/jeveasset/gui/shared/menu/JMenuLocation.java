@@ -23,7 +23,9 @@ package net.nikr.eve.jeveasset.gui.shared.menu;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import net.nikr.eve.jeveasset.Program;
@@ -132,13 +134,16 @@ public class JMenuLocation<T> extends MenuManager.JAutoMenu<T> {
 					}
 				}
 			} else if (MenuLocationAction.EDIT.name().equals(e.getActionCommand())) {
-				MyLocation renameLocation = jLocationDialog.showDialog(menuData.getEmptyStations());
+				Set<MyLocation> emptyAndUserStations = new HashSet<MyLocation>();
+				emptyAndUserStations.addAll(menuData.getEmptyStations());
+				emptyAndUserStations.addAll(menuData.getUserStations());
+				MyLocation renameLocation = jLocationDialog.showDialog(emptyAndUserStations);
 				if (renameLocation == null) { //Cancel
 					return;
 				}
 				String locationName;
 				if (renameLocation.isUserLocation()) { //Input previous value
-					locationName = getLocationName(renameLocation.getLocation());
+					locationName = getLocationName(CitadelGetter.get(renameLocation.getLocationID()).getName());
 				} else {
 					locationName = getLocationName("");
 				}

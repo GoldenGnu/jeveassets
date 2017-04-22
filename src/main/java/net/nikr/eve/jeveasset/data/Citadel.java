@@ -48,6 +48,10 @@ public class Citadel {
 		this.userLocation = true;
 	}
 
+	public String getName() {
+		return name;
+	}
+
 	private boolean isEmpty() {
 		if (name == null) {
 			return true;
@@ -69,7 +73,11 @@ public class Citadel {
 
 	public MyLocation getLocation() {
 		if (!isEmpty()) { //Location is valid -> return locations
-			return new MyLocation(id, name, systemId, systemName, regionId, regionName, ApiIdConverter.getLocation(systemId).getSecurity(), true, userLocation);
+			if (userLocation) {
+				return new MyLocation(id, systemName + " - " + name, systemId, systemName, regionId, regionName, ApiIdConverter.getLocation(systemId).getSecurity(), true, userLocation);
+			} else {
+				return new MyLocation(id, name, systemId, systemName, regionId, regionName, ApiIdConverter.getLocation(systemId).getSecurity(), true, userLocation);
+			}
 		} else { //Location not valid -> return fallback location
 			return null;
 		}
