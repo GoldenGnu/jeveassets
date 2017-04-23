@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2016 Contributors (see credits.txt)
+ * Copyright 2009-2017 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -46,6 +46,8 @@ public abstract class DialoguesUpdate extends Bundle {
 	public abstract String errors(String mouseTask);
 
 	// used in UpdateDialog
+	public abstract String firstAccount();
+	public abstract String allAccounts();
 	public abstract String update();
 	public abstract String contracts();
 	public abstract String marketOrders();
@@ -58,8 +60,8 @@ public abstract class DialoguesUpdate extends Bundle {
 	public abstract String priceDataNew();
 	public abstract String priceDataNone();
 	public abstract String nextUpdate();
-	public abstract String nowAll();
-	public abstract String nowSome();
+	public abstract String noAccounts();
+	public abstract String now();
 	public abstract String conqStations();
 	public abstract String citadel();
 	public abstract String balance();

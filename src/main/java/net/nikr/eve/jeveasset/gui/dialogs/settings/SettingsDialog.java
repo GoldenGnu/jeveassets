@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2016 Contributors (see credits.txt)
+ * Copyright 2009-2017 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -111,6 +111,9 @@ public class SettingsDialog extends JDialogCentered {
 		add(userNameSettingsPanel, valuesNode);
 		TagsSettingsPanel tagsSettingsPanel = new TagsSettingsPanel(program, this);
 		add(tagsSettingsPanel, valuesNode);
+
+		EveKitSettingsPanel eveKitSettingsPanel = new EveKitSettingsPanel(program, this);
+		add(eveKitSettingsPanel);
 
 		PriceDataSettingsPanel priceDataSettingsPanel = new PriceDataSettingsPanel(program, this);
 		add(priceDataSettingsPanel);

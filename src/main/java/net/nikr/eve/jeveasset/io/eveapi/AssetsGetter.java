@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2016 Contributors (see credits.txt)
+ * Copyright 2009-2017 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -31,12 +31,13 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import net.nikr.eve.jeveasset.data.MyAccount;
-import net.nikr.eve.jeveasset.data.MyAccount.AccessMask;
-import net.nikr.eve.jeveasset.data.Owner;
+import java.util.Set;
+import net.nikr.eve.jeveasset.data.eveapi.EveApiAccount;
+import net.nikr.eve.jeveasset.data.eveapi.EveApiOwner;
 import net.nikr.eve.jeveasset.data.Settings;
+import net.nikr.eve.jeveasset.data.eveapi.EveApiAccessMask;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
-import net.nikr.eve.jeveasset.io.shared.AbstractApiGetter;
+import net.nikr.eve.jeveasset.gui.tabs.assets.MyAsset;
 import net.nikr.eve.jeveasset.io.shared.ApiConverter;
 
 
@@ -46,7 +47,7 @@ public class AssetsGetter extends AbstractApiGetter<AssetListResponse> {
 		super("Assets", true, false);
 	}
 
-	public void load(final UpdateTask updateTask, final boolean forceUpdate, List<MyAccount> accounts) {
+	public void load(final UpdateTask updateTask, final boolean forceUpdate, List<EveApiAccount> accounts) {
 		super.loadAccounts(updateTask, forceUpdate, accounts);
 	}
 
@@ -64,10 +65,10 @@ public class AssetsGetter extends AbstractApiGetter<AssetListResponse> {
 	protected AssetListResponse getResponse(final boolean bCorp) throws ApiException {
 		if (bCorp) {
 			return new CorpAssetListParser()
-					.getResponse(Owner.getApiAuthorization(getOwner()), true);
+					.getResponse(EveApiOwner.getApiAuthorization(getOwner()), true);
 		} else {
 			return new CharAssetListParser()
-					.getResponse(Owner.getApiAuthorization(getOwner()), true);
+					.getResponse(EveApiOwner.getApiAuthorization(getOwner()), true);
 		}
 	}
 
@@ -84,12 +85,12 @@ public class AssetsGetter extends AbstractApiGetter<AssetListResponse> {
 
 	@Override
 	protected void setData(final AssetListResponse response) {
-		List<Asset> flatAssets = response.getAll(); // Get new asset from the flat list
-		Map<Long, Asset> lookupAssets = new HashMap<>();
+		List<Asset> flatAssets = new ArrayList<Asset>(response.getAll()); // Get new asset from the flat list
+		Map<Long, Asset> lookupAssets = new HashMap<Long, Asset>();
 		for (Asset asset : flatAssets) { //Create Lookup table
 			lookupAssets.put(asset.getItemID(), asset);
 		}
-		List<Asset> treeAssets = new ArrayList<>();
+		List<Asset> treeAssets = new ArrayList<Asset>();
 		for (Asset asset : flatAssets) { //Make Tree
 			if (//Ignore:
 					asset.getFlag() != 7 //Skill
@@ -109,7 +110,7 @@ public class AssetsGetter extends AbstractApiGetter<AssetListResponse> {
 	}
 
 	@Override
-	protected void updateFailed(final Owner ownerFrom, final Owner ownerTo) {
+	protected void updateFailed(final EveApiOwner ownerFrom, final EveApiOwner ownerTo) {
 		ownerTo.setAssets(ownerFrom.getAssets());
 		ownerTo.setAssetNextUpdate(ownerFrom.getAssetNextUpdate());
 		ownerTo.setAssetLastUpdate(ownerFrom.getAssetLastUpdate());
@@ -117,6 +118,15 @@ public class AssetsGetter extends AbstractApiGetter<AssetListResponse> {
 
 	@Override
 	protected long requestMask(boolean bCorp) {
-		return AccessMask.ASSET_LIST.getAccessMask();
+		return EveApiAccessMask.ASSET_LIST.getAccessMask();
+	}
+
+	private void deepAssets(List<MyAsset> assets, Set<Long> itemIDs) {
+		for (MyAsset myAsset : assets) {
+			itemIDs.add(myAsset.getItemID());
+			if (!myAsset.getAssets().isEmpty()) {
+				deepAssets(myAsset.getAssets(), itemIDs);
+			}
+		}
 	}
 }

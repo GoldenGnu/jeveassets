@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2016 Contributors (see credits.txt)
+ * Copyright 2009-2017 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -25,20 +25,19 @@ import com.beimin.eveapi.model.shared.WalletTransaction;
 import java.util.Date;
 import net.nikr.eve.jeveasset.data.Item;
 import net.nikr.eve.jeveasset.data.MyLocation;
-import net.nikr.eve.jeveasset.data.Owner;
+import net.nikr.eve.jeveasset.data.api.OwnerType;
+import net.nikr.eve.jeveasset.data.types.EditableLocationType;
 import net.nikr.eve.jeveasset.data.types.ItemType;
-import net.nikr.eve.jeveasset.data.types.LocationType;
 import net.nikr.eve.jeveasset.i18n.TabsTransaction;
 
-public class MyTransaction extends WalletTransaction implements LocationType, ItemType {
+public class MyTransaction extends WalletTransaction implements EditableLocationType, ItemType {
 
 	private final Item item;
-	private final MyLocation location;
-	private final Owner owner;
+	private final OwnerType owner;
 	private final int accountKey;
-	private String ownerCharacter;
+	private MyLocation location;
 
-	public MyTransaction(final WalletTransaction apiTransaction, final Item item, final MyLocation location, final Owner owner, final int accountKey) {		
+	public MyTransaction(final WalletTransaction apiTransaction, final Item item, final MyLocation location, final OwnerType owner, final int accountKey) {		
 		this.setTransactionDateTime(apiTransaction.getTransactionDateTime());
 		this.setTransactionID(apiTransaction.getTransactionID());
 		this.setQuantity(apiTransaction.getQuantity());
@@ -55,12 +54,11 @@ public class MyTransaction extends WalletTransaction implements LocationType, It
 		this.setTransactionFor(apiTransaction.getTransactionFor());
 		this.setJournalTransactionID(apiTransaction.getJournalTransactionID());
 		this.setClientTypeID(apiTransaction.getClientTypeID());
-		
+
 		this.item = item;
 		this.location = location;
 		this.owner = owner;
 		this.accountKey = accountKey;
-		this.ownerCharacter = "";
 	}
 
 	public int getAccountKey() {
@@ -98,16 +96,17 @@ public class MyTransaction extends WalletTransaction implements LocationType, It
 	}
 
 	@Override
+	public void setLocation(MyLocation location) {
+		this.location = location;
+	}
+
+	@Override
 	public Item getItem() {
 		return item;
 	}
 
 	public String getOwnerName() {
-		if (ownerCharacter.isEmpty()) {
-			return owner.getName();
-		} else {
-			return ownerCharacter + " > " + owner.getName();
-		}
+		return owner.getOwnerName();
 	}
 
 	public double getValue() {
@@ -143,10 +142,6 @@ public class MyTransaction extends WalletTransaction implements LocationType, It
 		return getTransactionFor().equals("corporation");
 	}
 
-	public void setOwnerCharacter(String ownerCharacter) {
-		this.ownerCharacter = ownerCharacter;
-	}
-
 	@Override
 	public int compareTo(final WalletTransaction o) {
 		int compared = o.getTransactionDateTime().compareTo(this.getTransactionDateTime());
@@ -160,14 +155,18 @@ public class MyTransaction extends WalletTransaction implements LocationType, It
 	@Override
 	public int hashCode() {
 		int hash = 7;
-		hash = 37 * hash + this.accountKey;
-		hash = 37 * hash + (int) (this.getTransactionID() ^ (this.getTransactionID() >>> 32));
-		hash = 37 * hash + (int) (Double.doubleToLongBits(this.getPrice()) ^ (Double.doubleToLongBits(this.getPrice()) >>> 32));
+		hash = 11 * hash + this.accountKey;
+		hash = 11 * hash + (int) (this.getTransactionID() ^ (this.getTransactionID() >>> 32));
+		hash = 11 * hash + (int) (this.owner.getOwnerID() ^ (this.owner.getOwnerID() >>> 32));
+		hash = 11 * hash + (int) (Double.doubleToLongBits(this.getPrice()) ^ (Double.doubleToLongBits(this.getPrice()) >>> 32));
 		return hash;
 	}
 
 	@Override
 	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
 		if (obj == null) {
 			return false;
 		}
@@ -175,13 +174,16 @@ public class MyTransaction extends WalletTransaction implements LocationType, It
 			return false;
 		}
 		final MyTransaction other = (MyTransaction) obj;
+		if (this.accountKey != other.accountKey) {
+			return false;
+		}
 		if (this.getTransactionID() != other.getTransactionID()) {
 			return false;
 		}
-		if (this.getPrice()!= other.getPrice()) {
+		if (this.owner.getOwnerID() != other.owner.getOwnerID()) {
 			return false;
 		}
-		if (this.getAccountKey()!= other.getAccountKey()) {
+		if (Double.doubleToLongBits(this.getPrice()) != Double.doubleToLongBits(other.getPrice())) {
 			return false;
 		}
 		return true;

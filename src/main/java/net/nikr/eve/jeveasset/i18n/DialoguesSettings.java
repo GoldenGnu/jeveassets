@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2016 Contributors (see credits.txt)
+ * Copyright 2009-2017 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -40,10 +40,9 @@ public abstract class DialoguesSettings extends Bundle {
 
 	// used in GeneralSettingsPanel
 	public abstract String general();
-	public abstract String searchForNewVersion(String programName);
-	public abstract String searchForNewVersionBeta();
 	public abstract String enterFilter();
 	public abstract String highlightSelectedRow();
+	public abstract String strongColors();
 
 	// used in AssetsToolSettingsPanel
 	public abstract String assets();
@@ -160,4 +159,14 @@ public abstract class DialoguesSettings extends Bundle {
 	public abstract String windowY();
 	public abstract String windowMaximised();
 	public abstract String windowDefault();
+
+	// used in EveKitSettingsPanel
+	public abstract String eveKit();
+	public abstract String transactionsHistory();
+	public abstract String journalHistory();
+	public abstract String marketOrdersHistory();
+	public abstract String industryJobsHistory();
+	public abstract String contractsHistory();
+	public abstract String allHistory();
+	public abstract String monthsHistory();
 }

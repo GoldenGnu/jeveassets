@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2016 Contributors (see credits.txt)
+ * Copyright 2009-2017 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -38,9 +38,8 @@ import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.EventListManager;
-import net.nikr.eve.jeveasset.data.MyAccount;
-import net.nikr.eve.jeveasset.data.Owner;
 import net.nikr.eve.jeveasset.data.Settings;
+import net.nikr.eve.jeveasset.data.api.OwnerType;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.CaseInsensitiveComparator;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
@@ -198,20 +197,18 @@ public class ValueRetroTab extends JMainTab {
 
 	private boolean calcTotal() {
 		Date date = Settings.getNow();
-		Map<String, Value> values = DataSetCreator.createDataSet(program);
+		Map<String, Value> values = DataSetCreator.createDataSet(program.getProfileData(), Settings.getNow());
 		characters = new HashMap<String, Value>();
 		corporations = new HashMap<String, Value>();
 		total = values.get(TabsValues.get().grandTotal());
-		for (MyAccount account : program.getAccounts()) {
-			for (Owner owner : account.getOwners()) {
-				Value value = DataSetCreator.getValue(values, owner.getName(), date);
-				if (owner.isCharacter()) {
-					characters.put(value.getName(), value);
-				} else if (owner.isCorporation()) {
-					corporations.put(value.getName(), value);
-				}
-				
+		for (OwnerType owner : program.getOwnerTypes()) {
+			Value value = DataSetCreator.getValue(values, owner.getOwnerName(), date);
+			if (owner.isCharacter()) {
+				characters.put(value.getName(), value);
+			} else if (owner.isCorporation()) {
+				corporations.put(value.getName(), value);
 			}
+
 		}
 		return !EventListManager.isEmpty(program.getProfileData().getAssetsEventList());
 	}

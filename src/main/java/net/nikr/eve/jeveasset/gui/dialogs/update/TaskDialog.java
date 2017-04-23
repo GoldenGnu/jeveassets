@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2016 Contributors (see credits.txt)
+ * Copyright 2009-2017 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -43,7 +43,9 @@ public class TaskDialog {
 
 	//GUI
 	private JDialog jWindow;
+	private JLabel jIcon;
 	private JProgressBar jProgressBar;
+	private JProgressBar jTotalProgressBar;
 	private JButton jOK;
 	private JButton jCancel;
 	private JTextPane jErrorMessage;
@@ -58,14 +60,16 @@ public class TaskDialog {
 	private List<UpdateTask> updateTasks;
 	private int index;
 	private UpdateTask updateTask;
+	private final TasksCompleted completed;
 
-	public TaskDialog(final Program program, final UpdateTask updateTask) {
-		this(program, Collections.singletonList(updateTask));
+	public TaskDialog(final Program program, final UpdateTask updateTask, boolean totalProgress, TasksCompleted completed) {
+		this(program, Collections.singletonList(updateTask), totalProgress, completed);
 	}
 
-	public TaskDialog(final Program program, final List<UpdateTask> updateTasks) {
+	public TaskDialog(final Program program, final List<UpdateTask> updateTasks, boolean totalProgress, TasksCompleted completed) {
 		this.program = program;
 		this.updateTasks = updateTasks;
+		this.completed = completed;
 
 		listener = new ListenerClass();
 
@@ -86,7 +90,11 @@ public class TaskDialog {
 		JLabel jUpdate = new JLabel(DialoguesUpdate.get().updating());
 		jUpdate.setFont(new Font(jUpdate.getFont().getName(), Font.BOLD, jUpdate.getFont().getSize() + 4));
 
+		jIcon = new JLabel(new UpdateTask.EmptyIcon());
+		
 		jProgressBar = new JProgressBar(0, 100);
+		jTotalProgressBar = new JProgressBar(0, 100);
+		jTotalProgressBar.setIndeterminate(true);
 
 		jOK = new JButton(DialoguesUpdate.get().ok());
 		jOK.setActionCommand(TaskAction.OK.name());
@@ -103,7 +111,7 @@ public class TaskDialog {
 		jErrorMessage = new JTextPane();
 		jErrorMessage.setText("");
 		jErrorMessage.setEditable(false);
-		jErrorMessage.setFocusable(false);
+		jErrorMessage.setFocusable(true);
 		jErrorMessage.setOpaque(false);
 
 		jErrorScroll = new JScrollPane(jErrorMessage);
@@ -115,7 +123,14 @@ public class TaskDialog {
 			horizontalGroup.addComponent(updateTaskLoop.getTextLabel(), WIDTH, WIDTH, WIDTH);
 			updateTaskLoop.getTextLabel().addMouseListener(new ErrorMouseListener(updateTaskLoop));
 		}
-		horizontalGroup.addComponent(jProgressBar, WIDTH, WIDTH, WIDTH);
+		horizontalGroup.addGroup(layout.createSequentialGroup()
+			.addComponent(jIcon, 16, 16, 16)
+			.addGap(5)
+			.addComponent(jProgressBar, WIDTH - 21, WIDTH - 21, WIDTH - 21)
+		);
+		if (totalProgress) {
+			horizontalGroup.addComponent(jTotalProgressBar);
+		}
 		horizontalGroup.addGroup(layout.createSequentialGroup()
 				.addComponent(jOK, Program.getButtonsWidth(), Program.getButtonsWidth(), Program.getButtonsWidth())
 				.addComponent(jCancel, Program.getButtonsWidth(), Program.getButtonsWidth(), Program.getButtonsWidth())
@@ -134,7 +149,14 @@ public class TaskDialog {
 		for (UpdateTask updateTaskLoop : updateTasks) {
 			verticalGroup.addComponent(updateTaskLoop.getTextLabel(), Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight());
 		}
-		verticalGroup.addComponent(jProgressBar, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight());
+		verticalGroup.addGroup(
+			layout.createParallelGroup()
+				.addComponent(jIcon, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+				.addComponent(jProgressBar, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+		);
+		if (totalProgress) {
+			verticalGroup.addComponent(jTotalProgressBar, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight());
+		}
 		verticalGroup.addGroup(layout.createParallelGroup()
 				.addComponent(jOK, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 				.addComponent(jCancel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
@@ -154,18 +176,19 @@ public class TaskDialog {
 		}
 	}
 
+	public void hide() {
+		setVisible(false);
+	}
+
 	private void update() {
 		if (index < updateTasks.size()) {
 			jOK.setEnabled(false);
 			updateTask = updateTasks.get(index);
 			updateTask.addPropertyChangeListener(listener);
 			updateTask.execute();
-		} else {
-			program.updateEventLists();
-			//Create value tracker point
-			program.createTrackerDataPoint();
-			//Save settings after updating (if we crash later)
-			program.saveSettingsAndProfile();
+		} else { //Done
+			jIcon.setIcon(new UpdateTask.EmptyIcon());
+			completed.tasksCompleted(this);
 			jOK.setEnabled(true);
 			jCancel.setEnabled(false);
 		}
@@ -206,13 +229,22 @@ public class TaskDialog {
 		}
 		jProgressBar.setIndeterminate(false);
 		jProgressBar.setValue(0);
+		jIcon.setIcon(new UpdateTask.EmptyIcon());
 	}
 
 	private class ListenerClass implements PropertyChangeListener, ActionListener, WindowListener {
 
 		@Override
 		public void propertyChange(final PropertyChangeEvent evt) {
+			Integer totalProgress = updateTask.getTotalProgress();
+			if (totalProgress != null && totalProgress > 0 && totalProgress <= 100) {
+				jTotalProgressBar.setValue(totalProgress);
+				jTotalProgressBar.setIndeterminate(false);
+			} else {
+				jTotalProgressBar.setIndeterminate(true);
+			}
 			int value = updateTask.getProgress();
+			jIcon.setIcon(updateTask.getIcon());
 			if (value == 100 && updateTask.isTaskDone()) {
 				updateTask.setTaskDone(false);
 				jProgressBar.setValue(100);
@@ -272,7 +304,7 @@ public class TaskDialog {
 
 	private class ErrorMouseListener implements MouseListener {
 
-		private UpdateTask mouseTask;
+		private final UpdateTask mouseTask;
 
 		public ErrorMouseListener(final UpdateTask mouseTask) {
 			this.mouseTask = mouseTask;
@@ -316,4 +348,7 @@ public class TaskDialog {
 		public void mouseExited(final MouseEvent e) { }
 	}
 
+	public static interface TasksCompleted {
+		public void tasksCompleted(TaskDialog taskDialog);
+	}
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2016 Contributors (see credits.txt)
+ * Copyright 2009-2017 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -93,10 +93,7 @@ import net.nikr.eve.jeveasset.gui.tabs.values.ValueTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.values.ValueTableTab;
 import net.nikr.eve.jeveasset.i18n.General;
 import net.nikr.eve.jeveasset.io.local.update.Update;
-import net.nikr.eve.jeveasset.io.shared.AbstractXmlReader;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
-import net.nikr.eve.jeveasset.io.shared.AttributeGetters;
-import net.nikr.eve.jeveasset.io.shared.XmlException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
@@ -174,6 +171,13 @@ public final class SettingsReader extends AbstractXmlReader {
 	private void parseSettings(final Element element, final Settings settings) throws XmlException {
 		if (!element.getNodeName().equals("settings")) {
 			throw new XmlException("Wrong root element name.");
+		}
+
+		//EveKit
+		NodeList evekitNodes = element.getElementsByTagName("evekit");
+		if (evekitNodes.getLength() == 1) {
+			Element evekitElement = (Element) evekitNodes.item(0);
+			parseEveKitSettings(evekitElement, settings);
 		}
 
 		//Routing
@@ -635,6 +639,35 @@ public final class SettingsReader extends AbstractXmlReader {
 		}
 	}
 
+	private void parseEveKitSettings(Element eveKitElement, Settings settings) {
+		int transactionsHistory = 3;
+		if (AttributeGetters.haveAttribute(eveKitElement, "transactionshistory")) {
+			transactionsHistory = AttributeGetters.getInt(eveKitElement, "transactionshistory");
+		}
+		int journalHistory = 3;
+		if (AttributeGetters.haveAttribute(eveKitElement, "journalhistory")) {
+			journalHistory = AttributeGetters.getInt(eveKitElement, "journalhistory");
+		}
+		int marketOrdersHistory = 3;
+		if (AttributeGetters.haveAttribute(eveKitElement, "marketordershistory")) {
+			marketOrdersHistory = AttributeGetters.getInt(eveKitElement, "marketordershistory");
+		}
+		int industryJobsHistory = 3;
+		if (AttributeGetters.haveAttribute(eveKitElement, "industryjobshistory")) {
+			industryJobsHistory = AttributeGetters.getInt(eveKitElement, "industryjobshistory");
+		}
+		int contractsHistory = 3;
+		if (AttributeGetters.haveAttribute(eveKitElement, "contractshistory")) {
+			contractsHistory = AttributeGetters.getInt(eveKitElement, "contractshistory");
+		}
+		settings.setEveKitTransactionsHistory(transactionsHistory);
+		settings.setEveKitJournalHistory(journalHistory);
+		settings.setEveKitMarketOrdersHistory(marketOrdersHistory);
+		settings.setEveKitIndustryJobsHistory(industryJobsHistory);
+		settings.setEveKitContractsHistory(contractsHistory);
+		
+	}
+
 	private void parseRoutingSettings(Element routingElement, Settings settings) {
 		double secMax = AttributeGetters.getDouble(routingElement, "securitymaximum");
 		double secMin = AttributeGetters.getDouble(routingElement, "securityminimum");
@@ -858,7 +891,7 @@ public final class SettingsReader extends AbstractXmlReader {
 	}
 	private void parseUpdate(final Element element, final Settings settings) {
 		String text = AttributeGetters.getString(element, "name");
-		Date nextUpdate = new Date(AttributeGetters.getLong(element, "nextupdate"));
+		Date nextUpdate = AttributeGetters.getDate(element, "nextupdate");
 		if (text.equals("conquerable station")) {
 			settings.setConquerableStationsNextUpdate(nextUpdate);
 		}

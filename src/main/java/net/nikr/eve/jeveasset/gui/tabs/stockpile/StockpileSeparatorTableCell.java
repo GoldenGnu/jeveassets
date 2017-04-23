@@ -14,6 +14,7 @@ import java.awt.event.*;
 import javax.swing.*;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Settings;
+import net.nikr.eve.jeveasset.gui.shared.Colors;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.DocumentFactory;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
@@ -226,17 +227,17 @@ public class StockpileSeparatorTableCell extends SeparatorTableCell<StockpileIte
 		jGroup.setText(stockpileItem.getStockpile().getName());
 		if (Settings.get().isStockpileHalfColors()) {
 			if (stockpileItem.getStockpile().getPercentFull() >= (Settings.get().getStockpileColorGroup3() / 100.0) ) {
-				jColor.setBackground(new Color(200, 255, 200));
+				jColor.setBackground(Colors.LIGHT_GREEN.getColor());
 			} else if (stockpileItem.getStockpile().getPercentFull() >= (Settings.get().getStockpileColorGroup2() / 100.0)) {
-				jColor.setBackground(new Color(255, 255, 200));
+				jColor.setBackground(Colors.LIGHT_YELLOW.getColor());
 			} else {
-				jColor.setBackground(new Color(255, 200, 200));
+				jColor.setBackground(Colors.LIGHT_RED.getColor());
 			}
 		} else {
 			if (stockpileItem.getStockpile().getPercentFull() >= (Settings.get().getStockpileColorGroup2() / 100.0)) {
-				jColor.setBackground(new Color(200, 255, 200));
+				jColor.setBackground(Colors.LIGHT_GREEN.getColor());
 			} else {
-				jColor.setBackground(new Color(255, 200, 200));
+				jColor.setBackground(Colors.LIGHT_RED.getColor());
 			}
 		}
 		String location = stockpileItem.getStockpile().getLocationName();

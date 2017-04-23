@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2016 Contributors (see credits.txt)
+ * Copyright 2009-2017 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -69,6 +69,15 @@ public abstract class GuiShared extends Bundle {
 	public abstract String jumpsAddCustom();
 	public abstract String jumpsAddSelected();
 	public abstract String jumpsClear();
+	public abstract String location();
+	public abstract String locationClear();
+	public abstract String locationClearConfirm(String location);
+	public abstract String locationClearConfirmAll(int size);
+	public abstract String locationEmpty();
+	public abstract String locationID();
+	public abstract String locationName();
+	public abstract String locationRename();
+	public abstract String locationSystem();
 	public abstract String lookup();
 	public abstract String newStockpile();
 	public abstract String ok();

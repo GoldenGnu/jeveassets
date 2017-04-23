@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2016 Contributors (see credits.txt)
+ * Copyright 2009-2017 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -25,21 +25,21 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
+import java.net.InetAddress;
 import java.net.URL;
+import java.net.UnknownHostException;
 import java.util.Date;
 import java.util.Map;
 import java.util.zip.GZIPInputStream;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Citadel;
 import net.nikr.eve.jeveasset.data.CitadelSettings;
-import net.nikr.eve.jeveasset.data.MyLocation;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import net.nikr.eve.jeveasset.i18n.DialoguesUpdate;
 import net.nikr.eve.jeveasset.io.local.CitadelReader;
 import net.nikr.eve.jeveasset.io.local.CitadelWriter;
-import net.nikr.eve.jeveasset.io.shared.AbstractXmlWriter;
-import net.nikr.eve.jeveasset.io.shared.UpdateTaskInputStream;
+import net.nikr.eve.jeveasset.io.local.AbstractXmlWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,7 +47,10 @@ public class CitadelGetter extends AbstractXmlWriter {
 
 	private static final Logger LOG = LoggerFactory.getLogger(CitadelGetter.class);
 
-	private final String URL = "https://stop.hammerti.me.uk/api/citadel/all";
+	private static final String HAMMERTI_HOST = "stop.hammerti.me.uk";
+	private static final String HAMMERTI_URL = "https://stop.hammerti.me.uk/api/citadel/all";
+	private static final String NIKR_HOST = "eve.nikr.net";
+	private static final String NIKR_URL = "https://eve.nikr.net/jeveassets/citadel/";
 
 	private static CitadelGetter citadelGetter;
 	private CitadelSettings citadelSettings = new CitadelSettings();
@@ -55,12 +58,22 @@ public class CitadelGetter extends AbstractXmlWriter {
 	private CitadelGetter() {
 	}
 
-	public static MyLocation get(long locationID) {
-		return getCitadelGetter().load(locationID);
+	public static Citadel get(long locationID) {
+		return getCitadelGetter().getCitadel(locationID);
 	}
 
 	public static void update(UpdateTask updateTask) {
-		getCitadelGetter().updateCache(updateTask);
+		if (isReachable(NIKR_HOST)) { //Get my cached version
+			getCitadelGetter().updateCache(updateTask, NIKR_URL);
+		} else if (isReachable(HAMMERTI_HOST)) { //Get it from the source
+			getCitadelGetter().updateCache(updateTask, HAMMERTI_URL);
+		} else {
+			updateTask.addError(DialoguesUpdate.get().citadel(), "Connection timed out.\r\n(Fix: Try again later)");
+		}
+	}
+
+	public static void set(Citadel citadel) {
+		getCitadelGetter().setCitadel(citadel);
 	}
 
 	private static CitadelGetter getCitadelGetter() {
@@ -79,8 +92,8 @@ public class CitadelGetter extends AbstractXmlWriter {
 		citadelSettings = CitadelReader.load();
 	}
 
-	private void updateCache(UpdateTask updateTask) {
-		LOG.info("Citadels updating:");
+	private void updateCache(UpdateTask updateTask, String hostUrl) {
+		LOG.info("Citadels updating from: " + hostUrl);
 		if (citadelSettings.getNextUpdate().after(new Date()) && !Settings.get().isForceUpdate() && !Program.isForceUpdate()) { //Check if we can update now
 			if (updateTask != null) {
 				updateTask.addError(DialoguesUpdate.get().citadel(), "Not allowed yet.\r\n(Fix: Just wait a bit)");
@@ -92,7 +105,7 @@ public class CitadelGetter extends AbstractXmlWriter {
 		InputStream in = null;
 		try { //Update from API
 			ObjectMapper mapper = new ObjectMapper(); //create once, reuse
-			URL url = new URL(URL);
+			URL url = new URL(hostUrl);
 			HttpURLConnection con = (HttpURLConnection) url.openConnection();
 			con.setRequestProperty("Accept-Encoding", "gzip");
 
@@ -108,6 +121,7 @@ public class CitadelGetter extends AbstractXmlWriter {
 			});
 			if (results != null) { //Updated OK
 				for (Map.Entry<Long, Citadel> entry : results.entrySet()) {
+					entry.getValue().id = entry.getKey(); //Update locationID
 					citadelSettings.put(entry.getKey(), entry.getValue());
 				}
 			}
@@ -130,13 +144,32 @@ public class CitadelGetter extends AbstractXmlWriter {
 		}
 	}
 
-	private MyLocation load(long locationID) {
+	private static boolean isReachable(String hostUrl) {
+		try {
+			InetAddress address = InetAddress.getByName(hostUrl);
+			return address.isReachable(2000);
+		} catch (UnknownHostException ex) {
+			LOG.error(ex.getMessage(), ex);
+			return false;
+		} catch (IOException ex) {
+			LOG.error(ex.getMessage(), ex);
+			return false;
+		}
+	}
+
+	private void setCitadel(Citadel citadel) {
+		citadelSettings.put(citadel.id, citadel);
+		saveXml();
+	}
+
+	private Citadel getCitadel(long locationID) {
 		Citadel citadel = citadelSettings.get(locationID);
 		if (citadel == null) { //Location not found in cache -> add placeholder for future updates
 			citadel = new Citadel();
+			citadel.id = locationID; //Save locationID
 			citadelSettings.put(locationID, citadel);
 			saveXml();
 		}
-		return citadel.getLocation(locationID);
+		return citadel;
 	}
 }

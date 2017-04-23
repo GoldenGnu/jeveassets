@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2016 Contributors (see credits.txt)
+ * Copyright 2009-2017 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -26,30 +26,37 @@ import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Citadel {
 
-	public int typeId;
-	public long systemId;
+	public long id;
 	public String name;
-	public String typeName;
-	public String lastSeen;
+	public long systemId;
 	public String systemName;
 	public long regionId;
-	public String firstSeen;
 	public String regionName;
+	public boolean userLocation;
+
+	public Citadel() {
+		userLocation = false;
+	}
+
+	public Citadel(long id, String name, long systemId, String systemName, long regionId, String regionName) {
+		this.id = id;
+		this.name = name;
+		this.systemId = systemId;
+		this.systemName = systemName;
+		this.regionId = regionId;
+		this.regionName = regionName;
+		this.userLocation = true;
+	}
+
+	public String getName() {
+		return name;
+	}
 
 	private boolean isEmpty() {
-		if (typeId == 0) {
-			return true;
-		}
-		if (systemId == 0) {
-			return true;
-		}
 		if (name == null) {
 			return true;
 		}
-		if (typeName == null) {
-			return true;
-		}
-		if (lastSeen == null) {
+		if (systemId == 0) {
 			return true;
 		}
 		if (systemName == null) {
@@ -58,18 +65,19 @@ public class Citadel {
 		if (regionId == 0) {
 			return true;
 		}
-		if (firstSeen == null) {
-			return true;
-		}
 		if (regionName == null) {
 			return true;
 		}
 		return false;
 	}
 
-	public MyLocation getLocation(long locationID) {
+	public MyLocation getLocation() {
 		if (!isEmpty()) { //Location is valid -> return locations
-			return new MyLocation(locationID, name, systemId, systemName, regionId, regionName, ApiIdConverter.getLocation(systemId).getSecurity(), true);
+			if (userLocation) {
+				return new MyLocation(id, systemName + " - " + name, systemId, systemName, regionId, regionName, ApiIdConverter.getLocation(systemId).getSecurity(), true, userLocation);
+			} else {
+				return new MyLocation(id, name, systemId, systemName, regionId, regionName, ApiIdConverter.getLocation(systemId).getSecurity(), true, userLocation);
+			}
 		} else { //Location not valid -> return fallback location
 			return null;
 		}

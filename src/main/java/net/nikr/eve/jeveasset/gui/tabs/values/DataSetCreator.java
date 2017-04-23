@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2016 Contributors (see credits.txt)
+ * Copyright 2009-2017 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -26,10 +26,10 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.MyAccountBalance;
-import net.nikr.eve.jeveasset.data.Owner;
+import net.nikr.eve.jeveasset.data.ProfileData;
 import net.nikr.eve.jeveasset.data.Settings;
+import net.nikr.eve.jeveasset.data.api.OwnerType;
 import net.nikr.eve.jeveasset.gui.tabs.assets.MyAsset;
 import net.nikr.eve.jeveasset.gui.tabs.contracts.MyContract;
 import net.nikr.eve.jeveasset.gui.tabs.contracts.MyContractItem;
@@ -46,12 +46,12 @@ public class DataSetCreator {
 
 	protected DataSetCreator() { }
 
-	public static void createTrackerDataPoint(Program program) {
-		getCreator().createTrackerDataPointInner(program);
+	public static void createTrackerDataPoint(ProfileData profileData, Date date) {
+		getCreator().createTrackerDataPointInner(profileData, date);
 	}
 
-	public static Map<String, Value> createDataSet(Program program) {
-		return getCreator().createDataSetInner(program);
+	public static Map<String, Value> createDataSet(ProfileData profileData, Date date) {
+		return getCreator().createDataSetInner(profileData, date);
 	}
 
 	public static Value getValue(Map<String, Value> values, String owner, Date date) {
@@ -65,8 +65,8 @@ public class DataSetCreator {
 		return creator;
 	}
 
-	private void createTrackerDataPointInner(Program program) {
-		Map<String, Value> data = createDataSetInner(program);
+	private void createTrackerDataPointInner(ProfileData profileData, Date date) {
+		Map<String, Value> data = createDataSetInner(profileData, date);
 		
 		//Add everything
 		Settings.lock("Tracker Data (Create Point)");
@@ -88,85 +88,115 @@ public class DataSetCreator {
 		Settings.unlock("Tracker Data (Create Point)");
 	}
 
-	private Map<String, Value> createDataSetInner(Program program) {
-		Date date = Settings.getNow();
+	private Map<String, Value> createDataSetInner(ProfileData profileData, Date date) {
 		Map<String, Value> values = new HashMap<String, Value>();
 		Value total = new Value(TabsValues.get().grandTotal(), date);
 		values.put(total.getName(), total);
-		for (MyAsset asset : program.getAssetList()) {
-			//Skip market orders
-			if (asset.getFlag().equals(General.get().marketOrderSellFlag())) {
-				continue; //Ignore market sell orders
+		//Asset
+		try {
+			profileData.getAssetsEventList().getReadWriteLock().readLock().lock();
+			for (MyAsset asset : profileData.getAssetsEventList()) {
+				//Skip market orders
+				if (asset.getFlag().equals(General.get().marketOrderSellFlag())) {
+					continue; //Ignore market sell orders
+				}
+				if (asset.getFlag().equals(General.get().marketOrderBuyFlag())) {
+					continue; //Ignore market buy orders
+				}
+				//Skip contracts
+				if (asset.getFlag().equals(General.get().contractIncluded())) {
+					continue; //Ignore contracts included
+				}
+				if (asset.getFlag().equals(General.get().contractExcluded())) {
+					continue; //Ignore contracts excluded
+				}
+				Value value = getValueInner(values, asset.getOwner(), date);
+				//Location/Flag logic
+				String id = createAssetID(asset);
+				value.addAssets(id, asset);
+				total.addAssets(id, asset);
 			}
-			if (asset.getFlag().equals(General.get().marketOrderBuyFlag())) {
-				continue; //Ignore market buy orders
-			}
-			//Skip contracts
-			if (asset.getFlag().equals(General.get().contractIncluded())) {
-				continue; //Ignore contracts included
-			}
-			if (asset.getFlag().equals(General.get().contractExcluded())) {
-				continue; //Ignore contracts excluded
-			}
-			Value value = getValueInner(values, asset.getOwner(), date);
-			//Location/Flag logic
-			String id = createAssetID(asset);
-			value.addAssets(id, asset);
-			total.addAssets(id, asset);
+		} finally {
+			profileData.getAssetsEventList().getReadWriteLock().readLock().unlock();
 		}
 		//Account Balance
-		for (MyAccountBalance accountBalance : program.getAccountBalanceList()) {
-			Value value = getValueInner(values, accountBalance.getOwner(), date);
-			String id;
-			if (accountBalance.isCorporation()) { //Corporation Wallets
-				id = "" + (accountBalance.getAccountKey() - 999);
-			} else {
-				id = "0"; //Character Wallet
+		try {
+			profileData.getAccountBalanceEventList().getReadWriteLock().readLock().lock();
+			for (MyAccountBalance accountBalance : profileData.getAccountBalanceEventList()) {
+				Value value = getValueInner(values, accountBalance.getOwner(), date);
+				String id;
+				if (accountBalance.isCorporation()) { //Corporation Wallets
+					id = "" + (accountBalance.getAccountKey() - 999);
+				} else {
+					id = "0"; //Character Wallet
+				}
+				value.addBalance(id, accountBalance.getBalance());
+				total.addBalance(id, accountBalance.getBalance());
 			}
-			value.addBalance(id, accountBalance.getBalance());
-			total.addBalance(id, accountBalance.getBalance());
+		} finally {
+			profileData.getAccountBalanceEventList().getReadWriteLock().readLock().unlock();
 		}
 		//Market Orders
-		for (MyMarketOrder marketOrder : program.getMarketOrdersList()) {
-			Value value = getValueInner(values, marketOrder.getOwner(), date);
-			if (marketOrder.isActive()) {
-				if (marketOrder.getBid() < 1) { //Sell Orders
-					value.addSellOrders(marketOrder.getPrice() * marketOrder.getVolRemaining());
-					total.addSellOrders(marketOrder.getPrice() * marketOrder.getVolRemaining());
-				} else { //Buy Orders
-					value.addEscrows(marketOrder.getEscrow());
-					value.addEscrowsToCover((marketOrder.getPrice() * marketOrder.getVolRemaining()) - marketOrder.getEscrow());
-					total.addEscrows(marketOrder.getEscrow());
-					total.addEscrowsToCover((marketOrder.getPrice() * marketOrder.getVolRemaining()) - marketOrder.getEscrow());
+		try {
+			profileData.getMarketOrdersEventList().getReadWriteLock().readLock().lock();
+			for (MyMarketOrder marketOrder : profileData.getMarketOrdersEventList()) {
+				Value value = getValueInner(values, marketOrder.getOwnerName(), date);
+				if (marketOrder.isActive()) {
+					if (marketOrder.getBid() < 1) { //Sell Orders
+						value.addSellOrders(marketOrder.getPrice() * marketOrder.getVolRemaining());
+						total.addSellOrders(marketOrder.getPrice() * marketOrder.getVolRemaining());
+					} else { //Buy Orders
+						value.addEscrows(marketOrder.getEscrow());
+						value.addEscrowsToCover((marketOrder.getPrice() * marketOrder.getVolRemaining()) - marketOrder.getEscrow());
+						total.addEscrows(marketOrder.getEscrow());
+						total.addEscrowsToCover((marketOrder.getPrice() * marketOrder.getVolRemaining()) - marketOrder.getEscrow());
+					}
 				}
 			}
+		} finally {
+			profileData.getMarketOrdersEventList().getReadWriteLock().readLock().unlock();
 		}
 		//Industrys Job: Manufacturing
-		for (MyIndustryJob industryJob : program.getIndustryJobsList()) {
-			Value value = getValueInner(values, industryJob.getOwner(), date);
-			//Manufacturing and not completed
-			if (industryJob.isManufacturing() && !industryJob.isDelivered()) {
-				double manufacturingTotal = industryJob.getPortion() * industryJob.getRuns() * ApiIdConverter.getPrice(industryJob.getProductTypeID(), false);
-				value.addManufacturing(manufacturingTotal);
-				total.addManufacturing(manufacturingTotal);
+		try {
+			profileData.getIndustryJobsEventList().getReadWriteLock().readLock().lock();
+			for (MyIndustryJob industryJob : profileData.getIndustryJobsEventList()) {
+				Value value = getValueInner(values, industryJob.getOwnerName(), date);
+				//Manufacturing and not completed
+				if (industryJob.isManufacturing() && !industryJob.isDelivered()) {
+					double manufacturingTotal = industryJob.getPortion() * industryJob.getRuns() * ApiIdConverter.getPrice(industryJob.getProductTypeID(), false);
+					value.addManufacturing(manufacturingTotal);
+					total.addManufacturing(manufacturingTotal);
+				}
 			}
+		} finally {
+			profileData.getIndustryJobsEventList().getReadWriteLock().readLock().unlock();
 		}
 		//Contract
-		addContracts(program.getContractList(), values, program.getOwners(), total, date);
+		try {
+			profileData.getContractEventList().getReadWriteLock().readLock().lock();
+			addContracts(profileData.getContractEventList(), values, profileData.getOwners(), total, date);
+		} finally {
+			profileData.getContractEventList().getReadWriteLock().readLock().unlock();
+		}
 		//Contract Items
-		addContractItems(program.getContractItemList(), values, program.getOwners(), total, date);
+		try {
+			profileData.getContractItemEventList().getReadWriteLock().readLock().lock();
+			addContractItems(profileData.getContractItemEventList(), values, profileData.getOwners(), total, date);
+		} finally {
+			profileData.getContractItemEventList().getReadWriteLock().readLock().unlock();
+		}
 		return values;
 	}
 
-	protected void addContracts(List<MyContract> contractItems, Map<String, Value> values, Map<String, Owner> owners, Value total, Date date) {
+	protected void addContracts(List<MyContract> contractItems, Map<String, Value> values, Map<Long, OwnerType> owners, Value total, Date date) {
 		for (MyContract contract : contractItems) {
-			Owner issuer;
+			OwnerType issuer;
 			if (contract.isForCorp()) {
-				issuer = owners.get(contract.getIssuerCorp());
+				issuer = owners.get(contract.getIssuerCorpID());
 			} else {
-				issuer = owners.get(contract.getIssuer());
+				issuer = owners.get(contract.getIssuerID());
 			}
-			Owner acceptor = owners.get(contract.getAcceptor());
+			OwnerType acceptor = owners.get(contract.getAcceptorID());
 			//Contract Collateral
 			if (contract.isCourier()) {
 				//Shipping cargo (will get collateral or cargo back)
@@ -178,9 +208,9 @@ public class DataSetCreator {
 					//Done & Assets not updated = Add Collateral
 					//If assets is updated, so are all the values
 					if (assetsUpdated(contract.getDateIssued(), issuer) && (contract.getStatus() == ContractStatus.INPROGRESS || contract.getStatus() == ContractStatus.OUTSTANDING)) {
-						addContractCollateral(contract, values, total, date, issuer.getName()); //OK
+						addContractCollateral(contract, values, total, date, issuer.getOwnerName()); //OK
 					} else if (AssetsNotUpdated(contract.getDateCompleted(), issuer)) {
-						addContractCollateral(contract, values, total, date, issuer.getName()); //NOT TESTED
+						addContractCollateral(contract, values, total, date, issuer.getOwnerName()); //NOT TESTED
 					}
 				}
 				//Transporting cargo (will get collateral back)
@@ -188,7 +218,7 @@ public class DataSetCreator {
 					//Not Done & Balance Updated = Add Collateral
 					//If ballance is not updated, there is nothing to counter...
 					if (balanceUpdated(contract.getDateIssued(), acceptor) && contract.getStatus() == ContractStatus.INPROGRESS) {
-						addContractCollateral(contract, values, total, date, acceptor.getName()); //OK
+						addContractCollateral(contract, values, total, date, acceptor.getOwnerName()); //OK
 					}
 				}
 			}
@@ -199,16 +229,16 @@ public class DataSetCreator {
 					//If ballance is not updated, there is nothing to counter...
 					if (balanceUpdated(contract.getDateIssued(), issuer)) {
 						//Buying: +Reward
-						addContractValue(values, total, date, issuer.getName(), contract.getReward()); //OK
+						addContractValue(values, total, date, issuer.getOwnerName(), contract.getReward()); //OK
 					} // else: Selling: we do not own the price isk, until the contract is completed
 				} else if (contract.getDateCompleted() != null) { //Completed
 					//Done & Ballance not updated yet = Add Price + Remove Reward (Contract completed, update with the current values)
 					//If ballance is updated, so are all the values
 					if (balanceNotUpdated(contract.getDateCompleted(), issuer)) { //NOT TESTED
 						//Sold: +Price
-						addContractValue(values, total, date, issuer.getName(), contract.getPrice());
+						addContractValue(values, total, date, issuer.getOwnerName(), contract.getPrice());
 						//Bought: -Reward
-						addContractValue(values, total, date, issuer.getName(), -contract.getReward());
+						addContractValue(values, total, date, issuer.getOwnerName(), -contract.getReward());
 					}
 				}
 			}
@@ -217,15 +247,15 @@ public class DataSetCreator {
 				//If ballance is updated, so are all the values
 				if (balanceNotUpdated(contract.getDateCompleted(), acceptor)) { //NOT TESTED
 					//Bought: -Price
-					addContractValue(values, total, date, acceptor.getName(), -contract.getPrice());
+					addContractValue(values, total, date, acceptor.getOwnerName(), -contract.getPrice());
 					//Sold: +Reward
-					addContractValue(values, total, date, acceptor.getName(), contract.getReward());
+					addContractValue(values, total, date, acceptor.getOwnerName(), contract.getReward());
 				}
 			}
 		}
 	}
 
-	protected void addContractItems(List<MyContractItem> contractItems, Map<String, Value> values, Map<String, Owner> owners, Value total, Date date) {
+	protected void addContractItems(List<MyContractItem> contractItems, Map<String, Value> values, Map<Long, OwnerType> owners, Value total, Date date) {
 		//Contract Items
 		for (MyContractItem contractItem : contractItems) {
 			MyContract contract = contractItem.getContract();
@@ -235,13 +265,13 @@ public class DataSetCreator {
 			if (contractItem.getItem() != null && contractItem.getItem().isBlueprint()) {
 				continue; //Ignore blueprints value - as we do not know if it's a BPO or BPC. Feels like assuming BPC (zero value) is the better option
 			}
-			Owner issuer;
+			OwnerType issuer;
 			if (contract.isForCorp()) {
-				issuer = owners.get(contract.getIssuerCorp());
+				issuer = owners.get(contract.getIssuerCorpID());
 			} else {
-				issuer = owners.get(contract.getIssuer());
+				issuer = owners.get(contract.getIssuerID());
 			}
-			Owner acceptor = owners.get(contract.getAcceptor());
+			OwnerType acceptor = owners.get(contract.getAcceptorID());
 			//Issuer
 			if (issuer != null) {
 				if (contract.getStatus() == ContractStatus.OUTSTANDING) { //Not Completed
@@ -250,7 +280,7 @@ public class DataSetCreator {
 						//If Assets is not updated, nothing to counter
 						if (assetsUpdated(contract.getDateIssued(), issuer)) {
 							//Selling: +Item
-							addContractValue(values, total, date, issuer.getName(), contractItem.getDynamicPrice() * contractItem.getQuantity());
+							addContractValue(values, total, date, issuer.getOwnerName(), contractItem.getDynamicPrice() * contractItem.getQuantity());
 						}
 					} // else: Item is being bought - nothing have changed until the contract is done
 				} else if (contract.getDateCompleted() != null) { //Completed
@@ -259,10 +289,10 @@ public class DataSetCreator {
 					if (AssetsNotUpdated(contract.getDateCompleted(), issuer)) {
 						if (contractItem.isIncluded()) { //Item is being sold: remove item value
 							//Sold: -Item
-							addContractValue(values, total, date, issuer.getName(), (-contractItem.getDynamicPrice() * contractItem.getQuantity()));
+							addContractValue(values, total, date, issuer.getOwnerName(), (-contractItem.getDynamicPrice() * contractItem.getQuantity()));
 						} else { //Item are being bought: Add item value
 							//Bought: +Item
-							addContractValue(values, total, date, issuer.getName(), contractItem.getDynamicPrice() * contractItem.getQuantity());
+							addContractValue(values, total, date, issuer.getOwnerName(), contractItem.getDynamicPrice() * contractItem.getQuantity());
 						}
 					}
 				}
@@ -273,17 +303,17 @@ public class DataSetCreator {
 				if (AssetsNotUpdated(contract.getDateCompleted(), acceptor)) {
 					if (contractItem.isIncluded()) { //Items are being bought: Add items value
 						//Bought: +Item
-						addContractValue(values, total, date, acceptor.getName(), contractItem.getDynamicPrice() * contractItem.getQuantity());
+						addContractValue(values, total, date, acceptor.getOwnerName(), contractItem.getDynamicPrice() * contractItem.getQuantity());
 					} else { //Items are being sold: remove items value
 						//Sold: -Item
-						addContractValue(values, total, date, acceptor.getName(), (-contractItem.getDynamicPrice() * contractItem.getQuantity()));
+						addContractValue(values, total, date, acceptor.getOwnerName(), (-contractItem.getDynamicPrice() * contractItem.getQuantity()));
 					}
 				}
 			}
 		}
 	}
 
-	private boolean assetsUpdated(Date date, Owner owner) {
+	private boolean assetsUpdated(Date date, OwnerType owner) {
 		if (date == null) {
 			return false;
 		}
@@ -293,7 +323,7 @@ public class DataSetCreator {
 		return owner.getAssetLastUpdate().after(date);
 	}
 
-	private boolean AssetsNotUpdated(Date date, Owner owner) {
+	private boolean AssetsNotUpdated(Date date, OwnerType owner) {
 		if (date == null) {
 			return false;
 		}
@@ -303,7 +333,7 @@ public class DataSetCreator {
 		return owner.getAssetLastUpdate().before(date);
 	}
 
-	private boolean balanceUpdated(Date date, Owner owner) {
+	private boolean balanceUpdated(Date date, OwnerType owner) {
 		if (date == null) {
 			return false;
 		}
@@ -313,7 +343,7 @@ public class DataSetCreator {
 		return owner.getBalanceLastUpdate().after(date);
 	}
 
-	private boolean balanceNotUpdated(Date date, Owner owner) {
+	private boolean balanceNotUpdated(Date date, OwnerType owner) {
 		if (date == null) {
 			return false;
 		}

@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2016 Contributors (see credits.txt)
+ * Copyright 2009-2017 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -25,8 +25,6 @@ import com.beimin.eveapi.model.eve.Station;
 import java.util.Map;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.data.StaticData;
-import net.nikr.eve.jeveasset.io.shared.AbstractXmlWriter;
-import net.nikr.eve.jeveasset.io.shared.XmlException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;

@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2016 Contributors (see credits.txt)
+ * Copyright 2009-2017 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -28,7 +28,7 @@ import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 
 
 public class CitadelSettings {
-	private final Map<Long, Citadel> cache = new HashMap<>();
+	private final Map<Long, Citadel> cache = new HashMap<Long, Citadel>();
 	private Date nextUpdate = new Date(); //Default
 	private final long priceCacheTimer = 2 * 60 * 60 * 1000L; // 2 hours (hours*min*sec*ms)
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2016 Contributors (see credits.txt)
+ * Copyright 2009-2017 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -31,11 +31,10 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import net.nikr.eve.jeveasset.data.MyAccount;
-import net.nikr.eve.jeveasset.data.MyAccount.AccessMask;
-import net.nikr.eve.jeveasset.data.Owner;
+import net.nikr.eve.jeveasset.data.eveapi.EveApiAccessMask;
+import net.nikr.eve.jeveasset.data.eveapi.EveApiAccount;
+import net.nikr.eve.jeveasset.data.eveapi.EveApiOwner;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
-import net.nikr.eve.jeveasset.io.shared.AbstractApiGetter;
 
 
 public class BlueprintsGetter extends AbstractApiGetter<BlueprintsResponse> {
@@ -44,7 +43,7 @@ public class BlueprintsGetter extends AbstractApiGetter<BlueprintsResponse> {
 		super("Blueprints", true, false);
 	}
 
-	public void load(final UpdateTask updateTask, final boolean forceUpdate, final List<MyAccount> accounts) {
+	public void load(final UpdateTask updateTask, final boolean forceUpdate, final List<EveApiAccount> accounts) {
 		super.loadAccounts(updateTask, forceUpdate, accounts);
 	}
 
@@ -52,10 +51,10 @@ public class BlueprintsGetter extends AbstractApiGetter<BlueprintsResponse> {
 	protected BlueprintsResponse getResponse(final boolean bCorp) throws ApiException {
 		if (bCorp) {
 			return new CorpBlueprintsParser()
-					.getResponse(Owner.getApiAuthorization(getOwner()));
+					.getResponse(EveApiOwner.getApiAuthorization(getOwner()));
 		} else {
 			return new CharBlueprintsParser()
-					.getResponse(Owner.getApiAuthorization(getOwner()));
+					.getResponse(EveApiOwner.getApiAuthorization(getOwner()));
 		}
 	}
 
@@ -80,13 +79,13 @@ public class BlueprintsGetter extends AbstractApiGetter<BlueprintsResponse> {
 	}
 
 	@Override
-	protected void updateFailed(final Owner ownerFrom, final Owner ownerTo) {
+	protected void updateFailed(final EveApiOwner ownerFrom, final EveApiOwner ownerTo) {
 		ownerTo.setBlueprints(ownerFrom.getBlueprints());
 		ownerTo.setBlueprintsNextUpdate(ownerFrom.getBlueprintsNextUpdate());
 	}
 
 	@Override
 	protected long requestMask(boolean bCorp) {
-		return AccessMask.ASSET_LIST.getAccessMask();
+		return EveApiAccessMask.ASSET_LIST.getAccessMask();
 	}
 }

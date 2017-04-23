@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2016 Contributors (see credits.txt)
+ * Copyright 2009-2017 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -128,6 +128,13 @@ public abstract class JAutoCompleteDialog<T> extends JDialogCentered {
 		} finally {
 			eventList.getReadWriteLock().readLock().unlock();
 		}
+	}
+
+	public T show(T t) {
+		jItems.getModel().setSelectedItem(t);
+		value = null;
+		setVisible(true);
+		return value;
 	}
 
 	public T show() {

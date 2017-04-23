@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2016 Contributors (see credits.txt)
+ * Copyright 2009-2017 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -27,16 +27,16 @@ import javax.management.timer.Timer;
 import net.nikr.eve.jeveasset.data.Item;
 import net.nikr.eve.jeveasset.data.MarketPriceData;
 import net.nikr.eve.jeveasset.data.MyLocation;
-import net.nikr.eve.jeveasset.data.Owner;
+import net.nikr.eve.jeveasset.data.api.OwnerType;
+import net.nikr.eve.jeveasset.data.types.EditableLocationType;
 import net.nikr.eve.jeveasset.data.types.ItemType;
-import net.nikr.eve.jeveasset.data.types.LocationType;
 import net.nikr.eve.jeveasset.data.types.PriceType;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.Percent;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.Quantity;
 import net.nikr.eve.jeveasset.i18n.TabsOrders;
 
 
-public class MyMarketOrder extends MarketOrder implements Comparable<MyMarketOrder>, LocationType, ItemType, PriceType  {
+public class MyMarketOrder extends MarketOrder implements Comparable<MyMarketOrder>, EditableLocationType, ItemType, PriceType  {
 
 	public enum OrderStatus {
 		ACTIVE() {
@@ -99,14 +99,14 @@ public class MyMarketOrder extends MarketOrder implements Comparable<MyMarketOrd
 	private MyLocation location;
 	private String rangeFormated;
 	private OrderStatus status;
-	private Owner owner;
+	private OwnerType owner;
 	private Quantity quantity;
 	private double price;
 	private double lastTransactionPrice;
 	private double lastTransactionValue;
 	private Percent lastTransactionPercent;
 
-	public MyMarketOrder(final MarketOrder apiMarketOrder, final Item item, final MyLocation location, final Owner owner) {
+	public MyMarketOrder(final MarketOrder apiMarketOrder, final Item item, final MyLocation location, final OwnerType owner) {
 		this.setAccountKey(apiMarketOrder.getAccountKey());
 		this.setBid(apiMarketOrder.getBid());
 		this.setCharID(apiMarketOrder.getCharID());
@@ -248,12 +248,21 @@ public class MyMarketOrder extends MarketOrder implements Comparable<MyMarketOrd
 		return location;
 	}
 
+	@Override
+	public void setLocation(MyLocation location) {
+		this.location = location;
+	}
+
 	public String getRangeFormated() {
 		return rangeFormated;
 	}
 
-	public String getOwner() {
-		return owner.getName();
+	public OwnerType getOwner() {
+		return owner;
+	}
+
+	public String getOwnerName() {
+		return owner.getOwnerName();
 	}
 
 	public long getOwnerID() {
@@ -275,13 +284,16 @@ public class MyMarketOrder extends MarketOrder implements Comparable<MyMarketOrd
 	@Override
 	public int hashCode() {
 		int hash = 3;
-		hash = 97 * hash + (this.owner != null ? this.owner.hashCode() : 0);
-		hash = 97 * hash + (int) (this.getOrderID() ^ (this.getOrderID() >>> 32));
+		hash = 13 * hash + (int) (this.owner.getOwnerID() ^ (this.owner.getOwnerID() >>> 32));
+		hash = 13 * hash + (int) (this.getOrderID() ^ (this.getOrderID() >>> 32));
 		return hash;
 	}
 
 	@Override
 	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
 		if (obj == null) {
 			return false;
 		}
@@ -289,7 +301,7 @@ public class MyMarketOrder extends MarketOrder implements Comparable<MyMarketOrd
 			return false;
 		}
 		final MyMarketOrder other = (MyMarketOrder) obj;
-		if (this.owner != other.owner && (this.owner == null || !this.owner.equals(other.owner))) {
+		if (this.owner.getOwnerID() != other.owner.getOwnerID()) {
 			return false;
 		}
 		if (this.getOrderID() != other.getOrderID()) {

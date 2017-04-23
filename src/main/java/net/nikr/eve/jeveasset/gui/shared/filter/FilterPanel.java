@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2016 Contributors (see credits.txt)
+ * Copyright 2009-2017 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -47,6 +47,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Settings;
+import net.nikr.eve.jeveasset.gui.shared.Colors;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.components.JDateChooser;
@@ -352,7 +353,7 @@ class FilterPanel<E> {
 		if (jEnabled.isSelected()) {
 			jText.setBackground(Color.WHITE);
 		} else {
-			jText.setBackground(new Color(255, 200, 200));
+			jText.setBackground(Colors.LIGHT_RED.getColor());
 		}
 		timer.stop();
 		refilter();

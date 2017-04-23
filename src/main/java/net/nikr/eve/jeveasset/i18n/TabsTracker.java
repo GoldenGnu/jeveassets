@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2016 Contributors (see credits.txt)
+ * Copyright 2009-2017 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -55,6 +55,31 @@ public abstract class TabsTracker extends Bundle {
 	public abstract String error();
 	public abstract String escrows();
 	public abstract String escrowsToCover();
+	public abstract String eveKitImportCancelledMsg();
+	public abstract String eveKitImportCompletedMsg();
+	public abstract String eveKitImportErrorMsg();
+	public abstract String eveKitImportIntervalDayTime();
+	public abstract String eveKitImportIntervalEmpty();
+	public abstract String eveKitImportIntervalDay();
+	public abstract String eveKitImportIntervalMonthTime();
+	public abstract String eveKitImportIntervalMonth();
+	public abstract String eveKitImportIntervalWeekTime();
+	public abstract String eveKitImportIntervalPerMonth(String time);
+	public abstract String eveKitImportIntervalPerMonthLabel();
+	public abstract String eveKitImportIntervalWeek();
+	public abstract String eveKitImportMerge();
+	public abstract String eveKitImportMergeKeep();
+	public abstract String eveKitImportMergeKeepInfo();
+	public abstract String eveKitImportMergeMerge();
+	public abstract String eveKitImportMergeMergeInfo();
+	public abstract String eveKitImportMergeOverwrite();
+	public abstract String eveKitImportMergeOverwriteInfo();
+	public abstract String eveKitImportMergeOverwriteWarning();
+	public abstract String eveKitImportNothingNewMsg();
+	public abstract String eveKitImportTaskTitle(String interval, String merge);
+	public abstract String eveKitImportTimeInterval();
+	public abstract String eveKitImportTimeMsg();
+	public abstract String eveKitImportTitle();
 	public abstract String filterTitle();
 	public abstract String from();
 	public abstract String grandTotal();

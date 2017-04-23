@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2016 Contributors (see credits.txt)
+ * Copyright 2009-2017 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -58,6 +58,7 @@ public final class Formater {
 	public static final NumberFormat BILLIONS_FORMAT  = new FixedFormat(1000000000.0, "B");
 	public static final NumberFormat TRILLIONS_FORMAT  = new FixedFormat(1000000000000.0, "T");
 
+	private static DateFormat expireDate = null;
 	private static DateFormat columnDate = null;
 	private static DateFormat columnDatetime = null;
 	private static DateFormat todaysDate = null;
@@ -100,7 +101,20 @@ public final class Formater {
 
 			//Always GMT
 			eveTime = new SimpleDateFormat("HH:mm z", new Locale("en"));
-			eveTime.setTimeZone(TimeZone.getTimeZone("GMT"));
+			eveTime.setTimeZone(timeZone);
+
+			//Tue, 04 Oct 2016 18:21:28 GMT
+			expireDate = new SimpleDateFormat("EEE, dd MMM yyyy kk:mm:ss zzz", new Locale("en"));
+			expireDate.setTimeZone(timeZone);
+		}
+	}
+
+	public static Date parseExpireDate(String date) {
+		initDate();
+		try {
+			return expireDate.parse(date);
+		} catch (ParseException ex) {
+			return new Date();
 		}
 	}
 
@@ -217,35 +231,95 @@ public final class Formater {
 	}
 
 	public static String milliseconds(long time) {
+		return milliseconds(time, false, false, true, true, true, true);
+	}
+
+	public static String milliseconds(long time, boolean first, boolean verbose) {
+		return milliseconds(time, first, verbose, true, true, true, true);
+	}
+
+	public static String milliseconds(long time, boolean showDays, boolean showHours, boolean showMinutes, boolean showSecounds) {
+		return milliseconds(time, false, false, showDays, showHours, showMinutes, showSecounds);
+	}
+
+	public static String milliseconds(long time, boolean first, boolean verbose, boolean showDays, boolean showHours, boolean showMinutes, boolean showSecounds) {
 		final StringBuilder timeString = new StringBuilder();
 		long days = time / (24 * 60 * 60 * 1000);
-		if (days > 0) {
+		boolean space = false;
+		if (days > 0 && showDays) {
 			timeString.append(days);
-			timeString.append("d");
+			if (verbose) {
+				if (days > 1) {
+					timeString.append(" days");
+				} else {
+					timeString.append(" day");
+				}
+			} else {
+				timeString.append("d");
+			}
+			if (first) {
+				return timeString.toString();
+			}
+			space = true;
 		}
 		long hours = time / (60 * 60 * 1000) % 24;
-		if (hours > 0) {
-			if (days > 0) {
+		if (hours > 0 && showHours) {
+			if (space) {
 				timeString.append(" ");
 			}
 			timeString.append(hours);
-			timeString.append("h");
+			if (verbose) {
+				if (hours > 1) {
+					timeString.append(" hours");
+				} else {
+					timeString.append(" hour");
+				}
+			} else {
+				timeString.append("h");
+			}
+			if (first) {
+				return timeString.toString();
+			}
+			space = true;
 		}
 		long minutes = time / (60 * 1000) % 60;
-		if (minutes > 0) {
-			if (hours > 0) {
+		if (minutes > 0 && showMinutes) {
+			if (space) {
 				timeString.append(" ");
 			}
 			timeString.append(minutes);
-			timeString.append("m");
+			if (verbose) {
+				if (minutes > 1) {
+					timeString.append(" minutes");
+				} else {
+					timeString.append(" minute");
+				}
+			} else {
+				timeString.append("m");
+			}
+			if (first) {
+				return timeString.toString();
+			}
+			space = true;
 		}
 		long seconds = time / (1000) % 60;
-		if (seconds > 0) {
-			if (minutes > 0) {
+		if (seconds > 0 && showSecounds) {
+			if (space) {
 				timeString.append(" ");
 			}
 			timeString.append(seconds);
-			timeString.append("s");
+			if (verbose) {
+				if (seconds > 1) {
+					timeString.append(" seconds");
+				} else {
+					timeString.append(" second");
+				}
+			} else {
+				timeString.append("s");
+			}
+			if (first) {
+				return timeString.toString();
+			}
 		}
 		if (days == 0 && hours == 0 && minutes == 0 && seconds == 0) {
 			timeString.append(time);

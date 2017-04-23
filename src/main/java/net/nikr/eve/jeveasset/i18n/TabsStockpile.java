@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2016 Contributors (see credits.txt)
+ * Copyright 2009-2017 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -75,7 +75,6 @@ public abstract class TabsStockpile extends Bundle {
 	public abstract String importEmpty();
 	public abstract String importIskPerHour();
 	public abstract String importIskPerHourTitle();
-	public abstract String importIskPerHourInclude();
 	public abstract String importIskPerHourHelp();
 	public abstract String importStockpiles();
 	public abstract String importXmlAll(int count);
@@ -92,6 +91,7 @@ public abstract class TabsStockpile extends Bundle {
 	public abstract String importXmlSkip();
 	public abstract String importXmlSkipHelp();
 	public abstract String include();
+	public abstract String includeCount(int i);
 	public abstract String includeAssets();
 	public abstract String includeAssetsTip();
 	public abstract String includeBuyOrders();

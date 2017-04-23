@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2016 Contributors (see credits.txt)
+ * Copyright 2009-2017 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -30,7 +30,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import net.nikr.eve.jeveasset.data.MyLocation;
-import net.nikr.eve.jeveasset.data.Owner;
+import net.nikr.eve.jeveasset.data.eveapi.EveApiOwner;
+import net.nikr.eve.jeveasset.data.api.OwnerType;
 import net.nikr.eve.jeveasset.gui.tabs.contracts.MyContract;
 import net.nikr.eve.jeveasset.gui.tabs.contracts.MyContractItem;
 import net.nikr.eve.jeveasset.i18n.TabsValues;
@@ -43,10 +44,10 @@ import org.junit.Test;
  */
 public class DataSetCreatorTest {
 
-	private Date now = new Date();
-	private Date before = getBefore();
-	private Date after = getAfter();
-	private DataSetCreatorTester creator = new DataSetCreatorTester();
+	private final Date now = new Date();
+	private final Date before = getBefore();
+	private final Date after = getAfter();
+	private final DataSetCreatorTester creator = new DataSetCreatorTester();
 	
 	public DataSetCreatorTest() {
 	}
@@ -65,11 +66,11 @@ public class DataSetCreatorTest {
 		Map<String, Value> values = new HashMap<String, Value>();
 		Value total = new Value(TabsValues.get().grandTotal(), now);
 		//Owners
-		Map<String, Owner> owners = new HashMap<String, Owner>();
-		Owner issuer = getOwner("Issuer", after, now);
-		Owner acceptor = getOwner("Acceptor");
-		owners.put(issuer.getName(), issuer);
-		owners.put(acceptor.getName(), acceptor);
+		Map<Long, OwnerType> owners = new HashMap<Long, OwnerType>();
+		EveApiOwner issuer = getOwner("Issuer", 1, after, now);
+		EveApiOwner acceptor = getOwner("Acceptor", 2);
+		owners.put(issuer.getOwnerID(), issuer);
+		owners.put(acceptor.getOwnerID(), acceptor);
 		//Contacts Items
 		List<MyContractItem> contractItems = new ArrayList<MyContractItem>();
 		MyContract contract = getContract(issuer, acceptor, ContractStatus.OUTSTANDING, 0, 0, 0, null, now);
@@ -78,7 +79,7 @@ public class DataSetCreatorTest {
 		
 		creator.addContractItems(contractItems, values, owners, total, now);
 		Assert.assertEquals(1, values.size());
-		Assert.assertEquals(10, values.get(issuer.getName()).getContractValue(), 0.0001);
+		Assert.assertEquals(10, values.get(issuer.getOwnerName()).getContractValue(), 0.0001);
 	}
 
 	@Test
@@ -87,11 +88,11 @@ public class DataSetCreatorTest {
 		Map<String, Value> values = new HashMap<String, Value>();
 		Value total = new Value(TabsValues.get().grandTotal(), now);
 		//Owners
-		Map<String, Owner> owners = new HashMap<String, Owner>();
-		Owner issuer = getOwner("Issuer", after, now);
-		Owner acceptor = getOwner("Acceptor");
-		owners.put(issuer.getName(), issuer);
-		owners.put(acceptor.getName(), acceptor);
+		Map<Long, OwnerType> owners = new HashMap<Long, OwnerType>();
+		EveApiOwner issuer = getOwner("Issuer", 1, after, now);
+		EveApiOwner acceptor = getOwner("Acceptor", 2);
+		owners.put(issuer.getOwnerID(), issuer);
+		owners.put(acceptor.getOwnerID(), acceptor);
 		//Contacts Items
 		List<MyContractItem> contractItems = new ArrayList<MyContractItem>();
 		MyContract contract = getContract(issuer, acceptor, ContractStatus.OUTSTANDING, 0, 0, 0, null, now);
@@ -100,21 +101,21 @@ public class DataSetCreatorTest {
 		
 		creator.addContractItems(contractItems, values, owners, total, now);
 		Assert.assertEquals(1, values.size());
-		Assert.assertEquals(10, values.get(issuer.getName()).getContractValue(), 0.0001);
+		Assert.assertEquals(10, values.get(issuer.getOwnerName()).getContractValue(), 0.0001);
 	}
 
-	private Owner getOwner(String name) {
-		return getOwner(name, now, now);
+	private EveApiOwner getOwner(String name, long id) {
+		return getOwner(name, id, now, now);
 	}
 
-	private Owner getOwner(String name, Date lastAsset, Date lastBalance) {
-		Owner owner = new Owner(null, name, 0);
+	private EveApiOwner getOwner(String name, long id, Date lastAsset, Date lastBalance) {
+		EveApiOwner owner = new EveApiOwner(null, name, id);
 		owner.setAssetLastUpdate(lastAsset);
 		owner.setBalanceLastUpdate(lastBalance);
 		return owner;
 	}
 
-	private MyContract getContract(Owner issuer, Owner acceptor, ContractStatus status, double collateral, double price, double reward, Date completed, Date issued) {
+	private MyContract getContract(EveApiOwner issuer, EveApiOwner acceptor, ContractStatus status, double collateral, double price, double reward, Date completed, Date issued) {
 		Contract contract = new Contract();
 		contract.setCollateral(collateral);
 		contract.setDateCompleted(completed);
@@ -123,12 +124,18 @@ public class DataSetCreatorTest {
 		contract.setReward(reward);
 		contract.setStatus(status);
 		contract.setForCorp(false);
-		MyContract myContract = new MyContract(contract, new MyLocation(0), new MyLocation(0));
 		if (issuer != null) {
-			myContract.setIssuer(issuer.getName());
+			contract.setIssuerID(issuer.getOwnerID());
 		}
 		if (acceptor != null) {
-			myContract.setAcceptor(acceptor.getName());
+			contract.setAcceptorID(acceptor.getOwnerID());
+		}
+		MyContract myContract = new MyContract(contract, new MyLocation(0), new MyLocation(0));
+		if (issuer != null) {
+			myContract.setIssuer(issuer.getOwnerName());
+		}
+		if (acceptor != null) {
+			myContract.setAcceptor(acceptor.getOwnerName());
 		}
 		return myContract;
 	}
@@ -165,12 +172,12 @@ public class DataSetCreatorTest {
 		public DataSetCreatorTester() {}
 
 		@Override
-		public void addContractItems(List<MyContractItem> contractItems, Map<String, Value> values, Map<String, Owner> owners, Value total, Date date) {
+		public void addContractItems(List<MyContractItem> contractItems, Map<String, Value> values, Map<Long, OwnerType> owners, Value total, Date date) {
 			super.addContractItems(contractItems, values, owners, total, date);
 		}
 
 		@Override
-		public void addContracts(List<MyContract> contractItems, Map<String, Value> values, Map<String, Owner> owners, Value total, Date date) {
+		public void addContracts(List<MyContract> contractItems, Map<String, Value> values, Map<Long, OwnerType> owners, Value total, Date date) {
 			super.addContracts(contractItems, values, owners, total, date);
 		}
 

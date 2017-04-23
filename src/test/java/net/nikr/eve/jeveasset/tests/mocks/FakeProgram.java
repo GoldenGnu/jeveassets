@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2016 Contributors (see credits.txt)
+ * Copyright 2009-2017 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -25,11 +25,10 @@ import java.awt.event.ActionEvent;
 import java.util.List;
 import java.util.Map;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.data.MyAccount;
 import net.nikr.eve.jeveasset.data.MyAccountBalance;
-import net.nikr.eve.jeveasset.data.Owner;
 import net.nikr.eve.jeveasset.data.ProfileData;
 import net.nikr.eve.jeveasset.data.ProfileManager;
+import net.nikr.eve.jeveasset.data.api.OwnerType;
 import net.nikr.eve.jeveasset.gui.dialogs.settings.UserNameSettingsPanel;
 import net.nikr.eve.jeveasset.gui.dialogs.settings.UserPriceSettingsPanel;
 import net.nikr.eve.jeveasset.gui.frame.MainWindow;
@@ -45,6 +44,7 @@ import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewTab;
 import net.nikr.eve.jeveasset.gui.tabs.reprocessed.ReprocessedTab;
 import net.nikr.eve.jeveasset.gui.tabs.routing.RoutingTab;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.StockpileTab;
+import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerTab;
 import net.nikr.eve.jeveasset.gui.tabs.transaction.MyTransaction;
 import net.nikr.eve.jeveasset.gui.tabs.tree.TreeTab;
 import net.nikr.eve.jeveasset.io.online.PriceDataGetter;
@@ -170,11 +170,6 @@ public abstract class FakeProgram extends Program {
 	}
 
 	@Override
-	public List<MyAccount> getAccounts() {
-		throw new UnsupportedOperationException("Not implemented");
-	}
-
-	@Override
 	public ProfileManager getProfileManager() {
 		throw new UnsupportedOperationException("Not implemented");
 	}
@@ -245,9 +240,17 @@ public abstract class FakeProgram extends Program {
 	}
 
 	@Override
-	public Map<String, Owner> getOwners() {
+	public Map<Long, OwnerType> getOwners() {
 		throw new UnsupportedOperationException("Not implemented");
 	}
 
-	
+	@Override
+	public List<OwnerType> getOwnerTypes() {
+		throw new UnsupportedOperationException("Not implemented");
+	}
+
+	@Override
+	public TrackerTab getTrackerTab() {
+		throw new UnsupportedOperationException("Not implemented");
+	}
 }

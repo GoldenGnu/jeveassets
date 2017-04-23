@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2016 Contributors (see credits.txt)
+ * Copyright 2009-2017 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -19,7 +19,7 @@
  *
  */
 
-package net.nikr.eve.jeveasset.io.shared;
+package net.nikr.eve.jeveasset.io.eveapi;
 
 import com.beimin.eveapi.exception.ApiException;
 import com.beimin.eveapi.response.ApiListResponse;

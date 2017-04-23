@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2016 Contributors (see credits.txt)
+ * Copyright 2009-2017 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -36,10 +36,10 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JRadioButton;
 import javax.swing.JToggleButton;
+import javax.swing.Timer;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.data.MyAccount;
-import net.nikr.eve.jeveasset.data.Owner;
 import net.nikr.eve.jeveasset.data.Settings;
+import net.nikr.eve.jeveasset.data.api.OwnerType;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
@@ -60,6 +60,17 @@ import net.nikr.eve.jeveasset.io.eveapi.LocationsGetter;
 import net.nikr.eve.jeveasset.io.eveapi.MarketOrdersGetter;
 import net.nikr.eve.jeveasset.io.eveapi.NameGetter;
 import net.nikr.eve.jeveasset.io.eveapi.TransactionsGetter;
+import net.nikr.eve.jeveasset.io.evekit.EveKitAccountBalanceGetter;
+import net.nikr.eve.jeveasset.io.evekit.EveKitAssetGetter;
+import net.nikr.eve.jeveasset.io.evekit.EveKitBlueprintsGetter;
+import net.nikr.eve.jeveasset.io.evekit.EveKitContractItemsGetter;
+import net.nikr.eve.jeveasset.io.evekit.EveKitContractsGetter;
+import net.nikr.eve.jeveasset.io.evekit.EveKitIndustryJobsGetter;
+import net.nikr.eve.jeveasset.io.evekit.EveKitJournalGetter;
+import net.nikr.eve.jeveasset.io.evekit.EveKitLocationsGetter;
+import net.nikr.eve.jeveasset.io.evekit.EveKitMarketOrdersGetter;
+import net.nikr.eve.jeveasset.io.evekit.EveKitOwnerGetter;
+import net.nikr.eve.jeveasset.io.evekit.EveKitTransactionsGetter;
 import net.nikr.eve.jeveasset.io.local.ConquerableStationsWriter;
 import net.nikr.eve.jeveasset.io.online.CitadelGetter;
 
@@ -72,42 +83,49 @@ public class UpdateDialog extends JDialogCentered {
 
 	private final JCheckBox jCheckAll;
 	private final JCheckBox jMarketOrders;
-	private final JLabel jMarketOrdersUpdate;
-	private final JLabel jMarketOrdersLeft;
+	private final JLabel jMarketOrdersLeftFirst;
+	private final JLabel jMarketOrdersLeftLast;
 	private final JCheckBox jJournal;
-	private final JLabel jJournalUpdate;
-	private final JLabel jJournalLeft;
+	private final JLabel jJournalLeftFirst;
+	private final JLabel jJournalLeftLast;
 	private final JCheckBox jTransactions;
-	private final JLabel jTransactionsUpdate;
-	private final JLabel jTransactionsLeft;
+	private final JLabel jTransactionsLeftFirst;
+	private final JLabel jTransactionsLeftLast;
 	private final JCheckBox jIndustryJobs;
-	private final JLabel jIndustryJobsUpdate;
-	private final JLabel jIndustryJobsLeft;
+	private final JLabel jIndustryJobsLeftFirst;
+	private final JLabel jIndustryJobsLeftLast;
 	private final JCheckBox jAccountBalance;
-	private final JLabel jAccountBalanceUpdate;
-	private final JLabel jAccountBalanceLeft;
+	private final JLabel jAccountBalanceLeftFirst;
+	private final JLabel jAccountBalanceLeftLast;
 	private final JCheckBox jContracts;
-	private final JLabel jContractsUpdate;
-	private final JLabel jContractsLeft;
+	private final JLabel jContractsLeftFirst;
+	private final JLabel jContractsLeftLast;
 	private final JCheckBox jAssets;
-	private final JLabel jAssetsUpdate;
-	private final JLabel jAssetsLeft;
+	private final JLabel jAssetsLeftFirst;
+	private final JLabel jAssetsLeftLast;
 	private final JCheckBox jBlueprints;
-	private final JLabel jBlueprintsUpdate;
-	private final JLabel jBlueprintsLeft;
+	private final JLabel jBlueprintsLeftFirst;
+	private final JLabel jBlueprintsLeftLast;
 	private final JRadioButton jPriceDataAll;
 	private final JRadioButton jPriceDataNew;
 	private final JRadioButton jPriceDataNone;
-	private final JLabel jPriceDataUpdate;
-	private final JLabel jPriceDataLeft;
+	private final JLabel jPriceDataLeftLast;
 	private final JButton jUpdate;
 	private final JButton jCancel;
 	private final List<JCheckBox> jCheckBoxes = new ArrayList<JCheckBox>();
+	private final Timer timer;
 
 	public UpdateDialog(final Program program) {
 		super(program, DialoguesUpdate.get().update(), Images.DIALOG_UPDATE.getImage());
 
 		ListenerClass listener = new ListenerClass();
+
+		timer = new Timer(1000, new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				update();
+			}
+		});
 
 		jCheckAll = new JCheckBox(General.get().all());
 		jCheckAll.setActionCommand(UpdateDialogAction.CHECK_ALL.name());
@@ -148,26 +166,27 @@ public class UpdateDialog extends JDialogCentered {
 			jCheckBox.setActionCommand(UpdateDialogAction.CHANGED.name());
 			jCheckBox.addActionListener(listener);
 		}
-		JLabel jNextUpdateLabel = new JLabel(DialoguesUpdate.get().nextUpdate());
-		jMarketOrdersUpdate = new JLabel();
-		jJournalUpdate = new JLabel();
-		jTransactionsUpdate = new JLabel();
-		jIndustryJobsUpdate = new JLabel();
-		jAccountBalanceUpdate = new JLabel();
-		jContractsUpdate = new JLabel();
-		jAssetsUpdate = new JLabel();
-		jBlueprintsUpdate = new JLabel();
-		jPriceDataUpdate = new JLabel();
 
-		jMarketOrdersLeft = new JLabel();
-		jJournalLeft = new JLabel();
-		jTransactionsLeft = new JLabel();
-		jIndustryJobsLeft = new JLabel();
-		jAccountBalanceLeft = new JLabel();
-		jContractsLeft = new JLabel();
-		jAssetsLeft = new JLabel();
-		jBlueprintsLeft = new JLabel();
-		jPriceDataLeft = new JLabel();
+		JLabel jLeftFirst = new JLabel(DialoguesUpdate.get().firstAccount());
+		jMarketOrdersLeftFirst = new JLabel();
+		jJournalLeftFirst = new JLabel();
+		jTransactionsLeftFirst = new JLabel();
+		jIndustryJobsLeftFirst = new JLabel();
+		jAccountBalanceLeftFirst = new JLabel();
+		jContractsLeftFirst = new JLabel();
+		jAssetsLeftFirst = new JLabel();
+		jBlueprintsLeftFirst = new JLabel();
+		jPriceDataLeftLast = new JLabel();
+
+		JLabel jLeftLast = new JLabel(DialoguesUpdate.get().allAccounts());
+		jMarketOrdersLeftLast = new JLabel();
+		jJournalLeftLast = new JLabel();
+		jTransactionsLeftLast = new JLabel();
+		jIndustryJobsLeftLast = new JLabel();
+		jAccountBalanceLeftLast = new JLabel();
+		jContractsLeftLast = new JLabel();
+		jAssetsLeftLast = new JLabel();
+		jBlueprintsLeftLast = new JLabel();
 
 		jUpdate = new JButton(DialoguesUpdate.get().update());
 		jUpdate.setActionCommand(UpdateDialogAction.UPDATE.name());
@@ -196,40 +215,31 @@ public class UpdateDialog extends JDialogCentered {
 						.addComponent(jAssets)
 						.addComponent(jBlueprints)
 						.addComponent(jPriceDataLabel)
-						/*
-						.addComponent(jPriceDataAll)
-						.addComponent(jPriceDataNew)
-						.addComponent(jPriceDataNone)
-						*/
 					)
 					.addGap(20)
-					.addGroup(layout.createParallelGroup()
-						.addComponent(jNextUpdateLabel)
-						.addGroup(layout.createSequentialGroup()
-							.addGroup(layout.createParallelGroup(Alignment.TRAILING)
-								.addComponent(jMarketOrdersLeft)
-								.addComponent(jJournalLeft)
-								.addComponent(jTransactionsLeft)
-								.addComponent(jIndustryJobsLeft)
-								.addComponent(jAccountBalanceLeft)
-								.addComponent(jContractsLeft)
-								.addComponent(jAssetsLeft)
-								.addComponent(jBlueprintsLeft)
-								.addComponent(jPriceDataLeft)
-							)
-							.addGap(20)
-							.addGroup(layout.createParallelGroup()
-								.addComponent(jMarketOrdersUpdate)
-								.addComponent(jJournalUpdate)
-								.addComponent(jTransactionsUpdate)
-								.addComponent(jIndustryJobsUpdate)
-								.addComponent(jAccountBalanceUpdate)
-								.addComponent(jContractsUpdate)
-								.addComponent(jAssetsUpdate)
-								.addComponent(jBlueprintsUpdate)
-								.addComponent(jPriceDataUpdate)
-							)
-						)
+					.addGroup(layout.createParallelGroup(Alignment.TRAILING)
+						.addComponent(jLeftFirst)
+						.addComponent(jMarketOrdersLeftFirst)
+						.addComponent(jJournalLeftFirst)
+						.addComponent(jTransactionsLeftFirst)
+						.addComponent(jIndustryJobsLeftFirst)
+						.addComponent(jAccountBalanceLeftFirst)
+						.addComponent(jContractsLeftFirst)
+						.addComponent(jAssetsLeftFirst)
+						.addComponent(jBlueprintsLeftFirst)
+					)
+					.addGap(20)
+					.addGroup(layout.createParallelGroup(Alignment.TRAILING)
+						.addComponent(jLeftLast)
+						.addComponent(jMarketOrdersLeftLast)
+						.addComponent(jJournalLeftLast)
+						.addComponent(jTransactionsLeftLast)
+						.addComponent(jIndustryJobsLeftLast)
+						.addComponent(jAccountBalanceLeftLast)
+						.addComponent(jContractsLeftLast)
+						.addComponent(jAssetsLeftLast)
+						.addComponent(jBlueprintsLeftLast)
+						.addComponent(jPriceDataLeftLast)
 					)
 				)
 				.addGroup(Alignment.TRAILING, layout.createSequentialGroup()
@@ -242,78 +252,60 @@ public class UpdateDialog extends JDialogCentered {
 			layout.createSequentialGroup()
 				.addGroup(layout.createParallelGroup()
 					.addComponent(jCheckAll, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-					.addComponent(jNextUpdateLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jLeftFirst, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jLeftLast, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 				)
 				.addGroup(layout.createParallelGroup()
 					.addComponent(jMarketOrders, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-					.addComponent(jMarketOrdersLeft, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-					.addComponent(jMarketOrdersUpdate, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jMarketOrdersLeftFirst, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jMarketOrdersLeftLast, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 				)
 				.addGroup(layout.createParallelGroup()
 					.addComponent(jJournal, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-					.addComponent(jJournalLeft, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-					.addComponent(jJournalUpdate, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jJournalLeftFirst, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jJournalLeftLast, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 				)
 				.addGroup(layout.createParallelGroup()
 					.addComponent(jTransactions, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-					.addComponent(jTransactionsLeft, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-					.addComponent(jTransactionsUpdate, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jTransactionsLeftFirst, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jTransactionsLeftLast, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 				)
 				.addGroup(layout.createParallelGroup()
 					.addComponent(jIndustryJobs, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-					.addComponent(jIndustryJobsLeft, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-					.addComponent(jIndustryJobsUpdate, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jIndustryJobsLeftFirst, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jIndustryJobsLeftLast, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 				)
 				.addGroup(layout.createParallelGroup()
 					.addComponent(jAccountBalance, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-					.addComponent(jAccountBalanceLeft, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-					.addComponent(jAccountBalanceUpdate, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jAccountBalanceLeftFirst, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jAccountBalanceLeftLast, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 				)
 				.addGroup(layout.createParallelGroup()
 					.addComponent(jContracts, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-					.addComponent(jContractsLeft, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-					.addComponent(jContractsUpdate, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jContractsLeftFirst, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jContractsLeftLast, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 				)
 				.addGroup(layout.createParallelGroup()
 					.addComponent(jAssets, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-					.addComponent(jAssetsLeft, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-					.addComponent(jAssetsUpdate, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jAssetsLeftFirst, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jAssetsLeftLast, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 				)
 				.addGroup(layout.createParallelGroup()
 					.addComponent(jBlueprints, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-					.addComponent(jBlueprintsLeft, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-					.addComponent(jBlueprintsUpdate, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jBlueprintsLeftFirst, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jBlueprintsLeftLast, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 				)
 				.addGroup(layout.createParallelGroup()
 					.addComponent(jPriceDataLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-					.addComponent(jPriceDataLeft, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-					.addComponent(jPriceDataUpdate, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jPriceDataLeftLast, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 				)
 				.addGroup(layout.createParallelGroup()
 					.addComponent(jPriceDataAll, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 					.addComponent(jPriceDataNew, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 					.addComponent(jPriceDataNone, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 				)
-				/*
-				.addComponent(jPriceDataAll, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-				.addComponent(jPriceDataNew, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-				.addComponent(jPriceDataNone, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-				*/
-				/*
-				.addGroup(layout.createParallelGroup()
-					.addComponent(jPriceDataLabel, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					.addComponent(jPriceDataLeft, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					.addComponent(jPriceDataUpdate, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-				)
-				.addGroup(layout.createParallelGroup()
-					.addComponent(jPriceDataAll, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					.addComponent(jPriceDataNew, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					.addComponent(jPriceDataNone, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-				)
-				*/
 				.addGap(30)
 				.addGroup(layout.createParallelGroup()
-					//.addComponent(jCheckAll, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 					.addComponent(jUpdate, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 					.addComponent(jCancel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 				)
@@ -323,7 +315,7 @@ public class UpdateDialog extends JDialogCentered {
 	private void changed() {
 		boolean allChecked = true;
 		boolean someChecked = false;
-		boolean allDiabled = true;
+		boolean allDisabled = true;
 		for (JCheckBox jCheckBox : jCheckBoxes) {
 			if (jCheckBox.isEnabled()) {
 				if (jCheckBox.isSelected()) {
@@ -331,7 +323,7 @@ public class UpdateDialog extends JDialogCentered {
 				} else {
 					allChecked = false;
 				}
-				allDiabled = false;
+				allDisabled = false;
 			}
 		}
 		if (jPriceDataAll.isEnabled()) {
@@ -340,152 +332,161 @@ public class UpdateDialog extends JDialogCentered {
 			} else { //Not selected
 				allChecked = false;
 			}
-			allDiabled = false;
+			allDisabled = false;
 		} else if (jPriceDataNew.isEnabled()) {
-			if (jPriceDataNew.isSelected()) {
-				someChecked = true;
-			} else {
+			if (!jPriceDataNew.isSelected()) {
 				allChecked = false;
 			}
-			allDiabled = false;
+			allDisabled = false;
 		}
 		jUpdate.setEnabled(someChecked);
-		jCheckAll.setSelected(allChecked && !allDiabled);
+		jCheckAll.setSelected(allChecked && !allDisabled);
+		jCheckAll.setEnabled(!allDisabled);
 	}
 
 	private void update() {
-		Date industryJobsNextUpdate = null;
-		Date marketOrdersNextUpdate = null;
-		Date journalNextUpdate = null;
-		Date transactionsNextUpdate = null;
-		Date contractsNextUpdate = null;
-		Date assetsNextUpdate = null;
-		Date blueprintsNextUpdate = null;
-		Date accountBalanceNextUpdate = null;
+		Date industryJobsFirst = null;
+		Date marketOrdersFirst = null;
+		Date journalFirst = null;
+		Date transactionsFirst = null;
+		Date contractsFirst = null;
+		Date assetsFirst = null;
+		Date blueprintsFirst = null;
+		Date accountBalanceFirst = null;
 
-		boolean industryJobsUpdateAll = true;
-		boolean marketOrdersUpdateAll = true;
-		boolean journalUpdateAll = true;
-		boolean transactionsUpdateAll = true;
-		boolean contractsUpdateAll = true;
-		boolean assetsUpdateAll = true;
-		boolean blueprintsUpdateAll = true;
-		boolean accountBalanceUpdateAll = true;
+		Date industryJobsLast = null;
+		Date marketOrdersLast = null;
+		Date journalLast = null;
+		Date transactionsLast = null;
+		Date contractsLast = null;
+		Date assetsLast = null;
+		Date blueprintsLast = null;
+		Date accountBalanceLast = null;
 
-		Date priceDataNextUpdate = program.getPriceDataGetter().getNextUpdate();
-		for (MyAccount account : program.getAccounts()) {
-			for (Owner owner : account.getOwners()) {
-				if (owner.isShowOwner()) {
-					industryJobsNextUpdate = nextUpdate(industryJobsNextUpdate, owner.getIndustryJobsNextUpdate());
-					marketOrdersNextUpdate = nextUpdate(marketOrdersNextUpdate, owner.getMarketOrdersNextUpdate());
-					journalNextUpdate = nextUpdate(journalNextUpdate, owner.getJournalNextUpdate());
-					transactionsNextUpdate = nextUpdate(transactionsNextUpdate, owner.getTransactionsNextUpdate());
-					contractsNextUpdate = nextUpdate(contractsNextUpdate, owner.getContractsNextUpdate());
-					assetsNextUpdate = nextUpdate(assetsNextUpdate, owner.getAssetNextUpdate());
-					blueprintsNextUpdate = nextUpdate(blueprintsNextUpdate, owner.getBlueprintsNextUpdate());
-					accountBalanceNextUpdate = nextUpdate(accountBalanceNextUpdate, owner.getBalanceNextUpdate());
+		Date priceData = program.getPriceDataGetter().getNextUpdate();
+		for (OwnerType owner : program.getOwnerTypes()) {
+			if (owner.isShowOwner()) {
+				industryJobsFirst = updateFirst(industryJobsFirst, owner.getIndustryJobsNextUpdate());
+				marketOrdersFirst = updateFirst(marketOrdersFirst, owner.getMarketOrdersNextUpdate());
+				journalFirst = updateFirst(journalFirst, owner.getJournalNextUpdate());
+				transactionsFirst = updateFirst(transactionsFirst, owner.getTransactionsNextUpdate());
+				contractsFirst = updateFirst(contractsFirst, owner.getContractsNextUpdate());
+				assetsFirst = updateFirst(assetsFirst, owner.getAssetNextUpdate());
+				blueprintsFirst = updateFirst(blueprintsFirst, owner.getBlueprintsNextUpdate());
+				accountBalanceFirst = updateFirst(accountBalanceFirst, owner.getBalanceNextUpdate());
 
-					industryJobsUpdateAll = updateAll(industryJobsUpdateAll, owner.getIndustryJobsNextUpdate());
-					marketOrdersUpdateAll = updateAll(marketOrdersUpdateAll, owner.getMarketOrdersNextUpdate());
-					journalUpdateAll = updateAll(journalUpdateAll, owner.getJournalNextUpdate());
-					transactionsUpdateAll = updateAll(transactionsUpdateAll, owner.getTransactionsNextUpdate());
-					contractsUpdateAll = updateAll(contractsUpdateAll, owner.getContractsNextUpdate());
-					assetsUpdateAll = updateAll(assetsUpdateAll, owner.getAssetNextUpdate());
-					blueprintsUpdateAll = updateAll(blueprintsUpdateAll, owner.getBlueprintsNextUpdate());
-					accountBalanceUpdateAll = updateAll(accountBalanceUpdateAll, owner.getBalanceNextUpdate());
-
-				}
+				industryJobsLast = updateLast(industryJobsLast, owner.getIndustryJobsNextUpdate());
+				marketOrdersLast = updateLast(marketOrdersLast, owner.getMarketOrdersNextUpdate());
+				journalLast = updateLast(journalLast, owner.getJournalNextUpdate());
+				transactionsLast = updateLast(transactionsLast, owner.getTransactionsNextUpdate());
+				contractsLast = updateLast(contractsLast, owner.getContractsNextUpdate());
+				assetsLast = updateLast(assetsLast, owner.getAssetNextUpdate());
+				blueprintsLast = updateLast(blueprintsLast, owner.getBlueprintsNextUpdate());
+				accountBalanceLast = updateLast(accountBalanceLast, owner.getBalanceNextUpdate());
 			}
 		}
-		setUpdateLabel(jMarketOrdersUpdate, jMarketOrdersLeft, jMarketOrders, marketOrdersNextUpdate, marketOrdersUpdateAll);
-		setUpdateLabel(jJournalUpdate, jJournalLeft, jJournal, journalNextUpdate, journalUpdateAll);
-		setUpdateLabel(jTransactionsUpdate, jTransactionsLeft, jTransactions, transactionsNextUpdate, transactionsUpdateAll);
-		setUpdateLabel(jIndustryJobsUpdate, jIndustryJobsLeft, jIndustryJobs, industryJobsNextUpdate, industryJobsUpdateAll);
-		setUpdateLabel(jAccountBalanceUpdate, jAccountBalanceLeft, jAccountBalance, accountBalanceNextUpdate, accountBalanceUpdateAll);
-		setUpdateLabel(jContractsUpdate, jContractsLeft, jContracts, contractsNextUpdate, contractsUpdateAll);
-		setUpdateLabel(jAssetsUpdate, jAssetsLeft, jAssets, assetsNextUpdate, assetsUpdateAll);
-		setUpdateLabel(jBlueprintsUpdate, jBlueprintsLeft, jBlueprints, blueprintsNextUpdate, blueprintsUpdateAll);
-		setUpdateLabel(jPriceDataUpdate, jPriceDataLeft, jPriceDataAll, priceDataNextUpdate, true, false);
-		changed();
-		/*
-		jUpdate.setEnabled(false);
-		jCheckAll.setEnabled(false);
-		setUpdatableButton(marketOrdersNextUpdate);
-		setUpdatableButton(transactionsNextUpdate);
-		setUpdatableButton(transactionsNextUpdate);
-		setUpdatableButton(industryJobsNextUpdate);
-		setUpdatableButton(accountBalanceNextUpdate);
-		setUpdatableButton(contractsNextUpdate);
-		setUpdatableButton(assetsNextUpdate);
-		setUpdatableButton(blueprintsNextUpdate);
-		setUpdatableButton(priceDataNextUpdate, false);
-		*/
-		if (!jPriceDataAll.isEnabled()) {
-			//jUpdate.setEnabled(true);
-			//jCheckAll.setEnabled(true);
-			jPriceDataNew.setSelected(true);
-			changed();
-		}
-	}
-
-	private void setUpdateLabel(final JLabel jUpdate, final JLabel jLeft, final JToggleButton jCheckBox, final Date nextUpdate, final boolean updateAll) {
-		this.setUpdateLabel(jUpdate, jLeft, jCheckBox, nextUpdate, updateAll, true);
-	}
-
-	private void setUpdateLabel(final JLabel jUpdate, final JLabel jLeft, final JToggleButton jCheckBox, Date nextUpdate, final boolean updateAll, final boolean ignoreOnProxy) {
-		if (nextUpdate == null) {
-			nextUpdate = Settings.getNow();
-		}
-		if (Settings.get().isUpdatable(nextUpdate, ignoreOnProxy)) {
-			jLeft.setText("");
-			if (updateAll) {
-				jUpdate.setText(DialoguesUpdate.get().nowAll());
-			} else {
-				jUpdate.setText(DialoguesUpdate.get().nowSome());
-			}
-			jCheckBox.setSelected(true);
-			jCheckBox.setEnabled(true);
+		if (program.getOwnerTypes().isEmpty()) {
+			jPriceDataNone.setSelected(true);
+			jPriceDataNone.setEnabled(false);
+			jPriceDataNew.setEnabled(false);
+			jPriceDataAll.setEnabled(false);
 		} else {
-			String timeLeft;
-			long time = nextUpdate.getTime() - Settings.getNow().getTime();
-			if (time < (60 * 1000)) { //less than 1 minute
-				timeLeft = "<1m";
-			} else {
-				timeLeft = Formater.milliseconds(time);
+			jPriceDataNone.setEnabled(true);
+			jPriceDataNew.setEnabled(true);
+			jPriceDataAll.setEnabled(true);
+			setUpdateLabel(null, jPriceDataLeftLast, jPriceDataAll, priceData, priceData, false);
+			if (!jPriceDataAll.isEnabled() && jPriceDataNew.isEnabled() && !jPriceDataNone.isSelected()) {
+				jPriceDataNew.setSelected(true);
 			}
-			jUpdate.setText(Formater.weekdayAndTime(nextUpdate));
-			jLeft.setText(timeLeft);
+		}
+		setUpdateLabel(jMarketOrdersLeftFirst, jMarketOrdersLeftLast, jMarketOrders, marketOrdersFirst, marketOrdersLast);
+		setUpdateLabel(jJournalLeftFirst, jJournalLeftLast, jJournal, journalFirst, journalLast);
+		setUpdateLabel(jTransactionsLeftFirst, jTransactionsLeftLast, jTransactions, transactionsFirst, transactionsLast);
+		setUpdateLabel(jIndustryJobsLeftFirst, jIndustryJobsLeftLast, jIndustryJobs, industryJobsFirst, industryJobsLast);
+		setUpdateLabel(jAccountBalanceLeftFirst, jAccountBalanceLeftLast, jAccountBalance, accountBalanceFirst, accountBalanceLast);
+		setUpdateLabel(jContractsLeftFirst, jContractsLeftLast, jContracts, contractsFirst, contractsLast);
+		setUpdateLabel(jAssetsLeftFirst, jAssetsLeftLast, jAssets, assetsFirst, assetsLast);
+		setUpdateLabel(jBlueprintsLeftFirst, jBlueprintsLeftLast, jBlueprints, blueprintsFirst, blueprintsLast);
+		changed();
+		
+	}
+
+	private void setUpdateLabel(final JLabel jFirst, final JLabel jAll, final JToggleButton jCheckBox, final Date first, final Date last) {
+		this.setUpdateLabel(jFirst, jAll, jCheckBox, first, last, true);
+	}
+
+	private void setUpdateLabel(final JLabel jFirst, final JLabel jAll, final JToggleButton jCheckBox, final Date first, final Date last, final boolean ignoreOnProxy) {
+		if (first != null && Settings.get().isUpdatable(first, ignoreOnProxy)) {
+			if (last != null && Settings.get().isUpdatable(last, ignoreOnProxy)) {
+				if (jFirst != null) {
+					jFirst.setText("");
+				}
+				jAll.setText(DialoguesUpdate.get().now());
+			} else {
+				if (jFirst != null) {
+					jFirst.setText(DialoguesUpdate.get().now());
+				}
+				jAll.setText(getFormatedDuration(last));
+			}
+			if (!jCheckBox.isEnabled()) {
+				jCheckBox.setSelected(true);
+				jCheckBox.setEnabled(true);
+			}
+		} else {
+			if (jFirst != null) {
+				jFirst.setText(getFormatedDuration(first));
+			}
+			jAll.setText(getFormatedDuration(last));
 			jCheckBox.setSelected(false);
 			jCheckBox.setEnabled(false);
 		}
+		if (first == null) {
+			if (jFirst != null) {
+				jFirst.setEnabled(false);
+			}
+		} else {
+			if (jFirst != null) {
+				jFirst.setEnabled(true);
+			}
+		}
+		if (last == null) {
+			jAll.setEnabled(false);
+		} else {
+			jAll.setEnabled(true);
+		}
 	}
 
-	private void setUpdatableButton(final Date nextUpdate) {
-		setUpdatableButton(nextUpdate, true);
+	private String getFormatedDuration(Date date) {
+		if (date == null) { //less than 1 second
+			return DialoguesUpdate.get().noAccounts();
+		} else {
+			long time = date.getTime() - Settings.getNow().getTime();
+			if (time <= 1000) { //less than 1 second
+				return "...";
+			} else if (time < (60 * 1000)) { //less than 1 minute
+				return Formater.milliseconds(time, false, false, false, true);
+			} else {
+				return Formater.milliseconds(time, false, true, true, false);
+			}
+		}
 	}
 
-	private void setUpdatableButton(Date nextUpdate, final boolean ignoreOnProxy) {
-		if (nextUpdate == null) {
-			nextUpdate = Settings.getNow();
-		}
-		if (Settings.get().isUpdatable(nextUpdate, ignoreOnProxy)) {
-			jUpdate.setEnabled(true);
-			jCheckAll.setEnabled(true);
-		}
-	}
-
-	private Date nextUpdate(Date nextUpdate, Date thisUpdate) {
-		if (nextUpdate == null) {
-				nextUpdate = thisUpdate;
-		}
-		if (thisUpdate.before(nextUpdate)) {
+	private Date updateFirst(Date nextUpdate, Date thisUpdate) {
+		if (nextUpdate == null) { //First
+			nextUpdate = thisUpdate;
+		} else if (thisUpdate.before(nextUpdate)) {
 			nextUpdate = thisUpdate;
 		}
 		return nextUpdate;
 	}
 
-	private boolean updateAll(final boolean updateAll, final Date nextUpdate) {
-		return updateAll && Settings.get().isUpdatable(nextUpdate, true);
+	private Date updateLast(Date lastUpdate, Date thisUpdate) {
+		if (lastUpdate == null) { //First
+			lastUpdate = thisUpdate;
+		} else if (thisUpdate.after(lastUpdate)) {
+			lastUpdate = thisUpdate;
+		}
+		return lastUpdate;
 	}
 
 	@Override
@@ -505,12 +506,22 @@ public class UpdateDialog extends JDialogCentered {
 	@Override
 	public void setVisible(boolean b) {
 		if (b) {
+			jMarketOrders.setSelected(true);
+			jJournal.setSelected(true);
+			jTransactions.setSelected(true);
+			jIndustryJobs.setSelected(true);
+			jAccountBalance.setSelected(true);
+			jContracts.setSelected(true);
+			jAssets.setSelected(true);
+			jBlueprints.setSelected(true);
+			jPriceDataAll.setSelected(true);
 			update();
+			timer.start();
+		} else {
+			timer.stop();
 		}
 		super.setVisible(b);
 	}
-
-	
 
 	@Override
 	protected void save() {
@@ -566,7 +577,16 @@ public class UpdateDialog extends JDialogCentered {
 					updateTasks.add(new PriceDataTask(jPriceDataAll.isSelected()));
 				}
 				if (!updateTasks.isEmpty()) {
-					TaskDialog taskDialog = new TaskDialog(program, updateTasks);
+					TaskDialog taskDialog = new TaskDialog(program, updateTasks, false, new TaskDialog.TasksCompleted() {
+						@Override
+						public void tasksCompleted(TaskDialog taskDialog) {
+							program.updateEventLists();
+							//Create value tracker point
+							program.createTrackerDataPoint();
+							//Save settings after updating (if we crash later)
+							program.saveSettingsAndProfile();
+						}
+					});
 				}
 			}
 			if (UpdateDialogAction.CANCEL.name().equals(e.getActionCommand())) {
@@ -604,6 +624,7 @@ public class UpdateDialog extends JDialogCentered {
 
 		@Override
 		public void update() {
+			setIcon(Images.MISC_EVE.getIcon());
 			ConquerableStationsGetter conquerableStationsGetter = new ConquerableStationsGetter();
 			conquerableStationsGetter.load(this);
 			ConquerableStationsWriter.save();
@@ -630,8 +651,18 @@ public class UpdateDialog extends JDialogCentered {
 
 		@Override
 		public void update() {
+			//EveAPI
+			if (!program.getProfileManager().getAccounts().isEmpty()) {
+				setIcon(Images.MISC_EVE.getIcon());
+			}
 			AccountGetter accountGetter = new AccountGetter();
-			accountGetter.load(this, Settings.get().isForceUpdate(), program.getAccounts());
+			accountGetter.load(this, Settings.get().isForceUpdate(), program.getProfileManager().getAccounts());
+			//EveKit
+			if (!program.getProfileManager().getEveKitOwners().isEmpty()) {
+				setIcon(Images.MISC_EVEKIT.getIcon());
+			}
+			EveKitOwnerGetter ownerGetter = new EveKitOwnerGetter();
+			ownerGetter.load(this, program.getProfileManager().getEveKitOwners());
 		}
 	}
 
@@ -643,10 +674,22 @@ public class UpdateDialog extends JDialogCentered {
 
 		@Override
 		public void update() {
+			//EveApi
+			if (!program.getProfileManager().getAccounts().isEmpty()) {
+				setIcon(Images.MISC_EVE.getIcon());
+			}
 			AssetsGetter assetsGetter = new AssetsGetter();
-			assetsGetter.load(this, Settings.get().isForceUpdate(), program.getAccounts());
+			assetsGetter.load(this, Settings.get().isForceUpdate(), program.getProfileManager().getAccounts());
 			LocationsGetter locationsGetter = new LocationsGetter();
-			locationsGetter.load(this, Settings.get().isForceUpdate(), program.getAccounts());
+			locationsGetter.load(this, Settings.get().isForceUpdate(), program.getProfileManager().getAccounts());
+			//EveKit
+			if (!program.getProfileManager().getEveKitOwners().isEmpty()) {
+				setIcon(Images.MISC_EVEKIT.getIcon());
+			}
+			EveKitAssetGetter eveKitAssetGetter = new EveKitAssetGetter();
+			eveKitAssetGetter.load(this, program.getProfileManager().getEveKitOwners());
+			EveKitLocationsGetter eveKitLocationsGetter = new EveKitLocationsGetter();
+			eveKitLocationsGetter.load(this, program.getProfileManager().getEveKitOwners());
 		}
 	}
 
@@ -658,8 +701,18 @@ public class UpdateDialog extends JDialogCentered {
 
 		@Override
 		public void update() {
+			//EveApi
+			if (!program.getProfileManager().getAccounts().isEmpty()) {
+				setIcon(Images.MISC_EVE.getIcon());
+			}
 			AccountBalanceGetter accountBalanceGetter = new AccountBalanceGetter();
-			accountBalanceGetter.load(this, Settings.get().isForceUpdate(), program.getAccounts());
+			accountBalanceGetter.load(this, Settings.get().isForceUpdate(), program.getProfileManager().getAccounts());
+			//EveKit
+			if (!program.getProfileManager().getEveKitOwners().isEmpty()) {
+				setIcon(Images.MISC_EVEKIT.getIcon());
+			}
+			EveKitAccountBalanceGetter eveKitAccountBalanceGetter = new EveKitAccountBalanceGetter();
+			eveKitAccountBalanceGetter.load(this, program.getProfileManager().getEveKitOwners());
 		}
 	}
 
@@ -671,8 +724,18 @@ public class UpdateDialog extends JDialogCentered {
 
 		@Override
 		public void update() {
+			//EveApi
+			if (!program.getProfileManager().getAccounts().isEmpty()) {
+				setIcon(Images.MISC_EVE.getIcon());
+			}
 			IndustryJobsGetter industryJobsGetter = new IndustryJobsGetter();
-			industryJobsGetter.load(this, Settings.get().isForceUpdate(), program.getAccounts());
+			industryJobsGetter.load(this, Settings.get().isForceUpdate(), program.getProfileManager().getAccounts());
+			//EveKit
+			if (!program.getProfileManager().getEveKitOwners().isEmpty()) {
+				setIcon(Images.MISC_EVEKIT.getIcon());
+			}
+			EveKitIndustryJobsGetter eveKitIndustryJobsGetter = new EveKitIndustryJobsGetter();
+			eveKitIndustryJobsGetter.load(this, program.getProfileManager().getEveKitOwners());
 		}
 	}
 
@@ -684,8 +747,18 @@ public class UpdateDialog extends JDialogCentered {
 
 		@Override
 		public void update() {
+			//EveApi
+			if (!program.getProfileManager().getAccounts().isEmpty()) {
+				setIcon(Images.MISC_EVE.getIcon());
+			}
 			MarketOrdersGetter marketOrdersGetter = new MarketOrdersGetter();
-			marketOrdersGetter.load(this, Settings.get().isForceUpdate(), program.getAccounts(), Settings.get().isMarketOrderHistory());
+			marketOrdersGetter.load(this, Settings.get().isForceUpdate(), program.getProfileManager().getAccounts(), Settings.get().isMarketOrderHistory());
+			//EveKit
+			if (!program.getProfileManager().getEveKitOwners().isEmpty()) {
+				setIcon(Images.MISC_EVEKIT.getIcon());
+			}
+			EveKitMarketOrdersGetter eveKitMarketOrdersGetter = new EveKitMarketOrdersGetter();
+			eveKitMarketOrdersGetter.load(this, program.getProfileManager().getEveKitOwners());
 		}
 	}
 
@@ -697,8 +770,18 @@ public class UpdateDialog extends JDialogCentered {
 
 		@Override
 		public void update() {
+			//EveApi
+			if (!program.getProfileManager().getAccounts().isEmpty()) {
+				setIcon(Images.MISC_EVE.getIcon());
+			}
 			JournalGetter journalGetter = new JournalGetter();
-			journalGetter.load(this, Settings.get().isForceUpdate(), program.getAccounts(), Settings.get().isJournalHistory());
+			journalGetter.load(this, Settings.get().isForceUpdate(), program.getProfileManager().getAccounts(), Settings.get().isJournalHistory());
+			//EveKit
+			if (!program.getProfileManager().getEveKitOwners().isEmpty()) {
+				setIcon(Images.MISC_EVEKIT.getIcon());
+			}
+			EveKitJournalGetter eveKitJournalGetter = new EveKitJournalGetter();
+			eveKitJournalGetter.load(this, program.getProfileManager().getEveKitOwners());
 		}
 	}
 
@@ -710,8 +793,18 @@ public class UpdateDialog extends JDialogCentered {
 
 		@Override
 		public void update() {
+			//EveApi
+			if (!program.getProfileManager().getAccounts().isEmpty()) {
+				setIcon(Images.MISC_EVE.getIcon());
+			}
 			TransactionsGetter transactionsGetter = new TransactionsGetter();
-			transactionsGetter.load(this, Settings.get().isForceUpdate(), program.getAccounts(), Settings.get().isTransactionHistory());
+			transactionsGetter.load(this, Settings.get().isForceUpdate(), program.getProfileManager().getAccounts(), Settings.get().isTransactionHistory());
+			//EveKit
+			if (!program.getProfileManager().getEveKitOwners().isEmpty()) {
+				setIcon(Images.MISC_EVEKIT.getIcon());
+			}
+			EveKitTransactionsGetter eveKitTransactionsGetter = new EveKitTransactionsGetter();
+			eveKitTransactionsGetter.load(this, program.getProfileManager().getEveKitOwners());
 		}
 	}
 
@@ -723,12 +816,22 @@ public class UpdateDialog extends JDialogCentered {
 
 		@Override
 		public void update() {
-			//Get Contracts
+			//EveApi
+			if (!program.getProfileManager().getAccounts().isEmpty()) {
+				setIcon(Images.MISC_EVE.getIcon());
+			}
 			ContractsGetter contractsGetter = new ContractsGetter();
-			contractsGetter.load(this, Settings.get().isForceUpdate(), program.getAccounts());
-			//Get Contract Items
+			contractsGetter.load(this, Settings.get().isForceUpdate(), program.getProfileManager().getAccounts());
 			ContractItemsGetter itemsGetter = new ContractItemsGetter();
-			itemsGetter.load(this, Settings.get().isForceUpdate(), program.getAccounts());
+			itemsGetter.load(this, Settings.get().isForceUpdate(), program.getProfileManager().getAccounts());
+			//EveKit
+			if (!program.getProfileManager().getEveKitOwners().isEmpty()) {
+				setIcon(Images.MISC_EVEKIT.getIcon());
+			}
+			EveKitContractsGetter eveKitContractsGetter = new EveKitContractsGetter();
+			eveKitContractsGetter.load(this, program.getProfileManager().getEveKitOwners());
+			EveKitContractItemsGetter eveKitContractItemsGetter = new EveKitContractItemsGetter();
+			eveKitContractItemsGetter.load(this, program.getProfileManager().getEveKitOwners());
 		}
 	}
 
@@ -740,8 +843,18 @@ public class UpdateDialog extends JDialogCentered {
 
 		@Override
 		public void update() {
+			//EveApi
+			if (!program.getProfileManager().getAccounts().isEmpty()) {
+				setIcon(Images.MISC_EVE.getIcon());
+			}
 			BlueprintsGetter blueprintsGetter = new BlueprintsGetter();
-			blueprintsGetter.load(this, Settings.get().isForceUpdate(), program.getAccounts());
+			blueprintsGetter.load(this, Settings.get().isForceUpdate(), program.getProfileManager().getAccounts());
+			//EveKit
+			if (!program.getProfileManager().getEveKitOwners().isEmpty()) {
+				setIcon(Images.MISC_EVEKIT.getIcon());
+			}
+			EveKitBlueprintsGetter eveKitBlueprintsGetter = new EveKitBlueprintsGetter();
+			eveKitBlueprintsGetter.load(this, program.getProfileManager().getEveKitOwners());
 		}
 	}
 
@@ -753,19 +866,18 @@ public class UpdateDialog extends JDialogCentered {
 
 		@Override
 		public void update() {
+			setIcon(Images.MISC_EVE.getIcon());
 			Set<Long> list = new HashSet<Long>();
-			for (MyAccount account : program.getAccounts()) {
-				for (Owner owner : account.getOwners()) {
-					list.add(owner.getOwnerID()); //Just to be sure
-					for (MyIndustryJob myIndustryJob : owner.getIndustryJobs()) {
-						list.add(myIndustryJob.getInstallerID());
-					}
-					for (MyContract contract : owner.getContracts().keySet()) {
-						list.add(contract.getAcceptorID());
-						list.add(contract.getAssigneeID());
-						list.add(contract.getIssuerCorpID());
-						list.add(contract.getIssuerID());
-					}
+			for (OwnerType owner : program.getOwnerTypes()) {
+				list.add(owner.getOwnerID()); //Just to be sure
+				for (MyIndustryJob myIndustryJob : owner.getIndustryJobs()) {
+					list.add(myIndustryJob.getInstallerID());
+				}
+				for (MyContract contract : owner.getContracts().keySet()) {
+					list.add(contract.getAcceptorID());
+					list.add(contract.getAssigneeID());
+					list.add(contract.getIssuerCorpID());
+					list.add(contract.getIssuerID());
 				}
 			}
 			//Get Name
@@ -784,10 +896,14 @@ public class UpdateDialog extends JDialogCentered {
 
 		@Override
 		public void update() {
+			switch (Settings.get().getPriceDataSettings().getSource()) {
+				case EVE_CENTRAL: setIcon(Images.LINK_EVE_CENTRAL.getIcon()); break;
+				case EVE_MARKETDATA: setIcon(Images.LINK_EVE_MARKETDATA.getIcon()); break;
+			}
 			if (update) {
-				program.getPriceDataGetter().updateAll(this);
+				program.getPriceDataGetter().updateAll(program.getProfileData(), this);
 			} else {
-				program.getPriceDataGetter().updateNew(this);
+				program.getPriceDataGetter().updateNew(program.getProfileData(), this);
 			}
 		}
 	}

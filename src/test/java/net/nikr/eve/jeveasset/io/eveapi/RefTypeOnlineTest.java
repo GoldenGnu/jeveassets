@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2016 Contributors (see credits.txt)
+ * Copyright 2009-2017 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -27,16 +27,16 @@ import java.util.HashMap;
 import java.util.Map;
 import org.junit.After;
 import org.junit.AfterClass;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
 
-public class RefTypeTest {
+public class RefTypeOnlineTest {
 
-	public RefTypeTest() { }
+	public RefTypeOnlineTest() { }
 
 	@BeforeClass
 	public static void setUpClass() { }

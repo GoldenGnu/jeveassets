@@ -33,7 +33,7 @@ if (empty($foundRow)) { //New bug report
 	$subject = "New " . name() . " bug report";
 	$message = name() . " bug report\r\n"
 				."BugID: " . $id . "\r\n"
-				.buglink()."#".$id."\r\n"
+				.buglink()."#bugid".$id."\r\n"
 				."\r\n"
 				.$log_in
 				;

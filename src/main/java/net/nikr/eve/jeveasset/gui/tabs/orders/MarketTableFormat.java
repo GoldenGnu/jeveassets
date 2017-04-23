@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2016 Contributors (see credits.txt)
+ * Copyright 2009-2017 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -132,7 +132,7 @@ public enum MarketTableFormat implements EnumTableColumn<MyMarketOrder> {
 		}
 		@Override
 		public Object getColumnValue(final MyMarketOrder from) {
-			return from.getOwner();
+			return from.getOwnerName();
 		}
 	},
 	LOCATION(String.class, GlazedLists.comparableComparator()) {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2016 Contributors (see credits.txt)
+ * Copyright 2009-2017 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -26,9 +26,6 @@ import java.util.Date;
 import net.nikr.eve.jeveasset.data.Citadel;
 import net.nikr.eve.jeveasset.data.CitadelSettings;
 import net.nikr.eve.jeveasset.data.Settings;
-import net.nikr.eve.jeveasset.io.shared.AbstractXmlReader;
-import net.nikr.eve.jeveasset.io.shared.AttributeGetters;
-import net.nikr.eve.jeveasset.io.shared.XmlException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
@@ -74,15 +71,15 @@ public final class CitadelReader extends AbstractXmlReader {
 			Element currentNode = (Element) filterNodes.item(i);
 			Citadel citadel = new Citadel();
 			long stationid = AttributeGetters.getLong(currentNode, "stationid");
-			citadel.typeId = AttributeGetters.getInt(currentNode, "typeid");
+			citadel.id = stationid;
 			citadel.systemId = AttributeGetters.getLong(currentNode, "systemid");
 			citadel.name = AttributeGetters.getString(currentNode, "name");
-			citadel.typeName = AttributeGetters.getString(currentNode, "typename");
-			citadel.lastSeen = AttributeGetters.getString(currentNode, "lastseen");
 			citadel.systemName = AttributeGetters.getString(currentNode, "systemname");
 			citadel.regionId = AttributeGetters.getLong(currentNode, "regionid");
-			citadel.firstSeen = AttributeGetters.getString(currentNode, "firstseen");
 			citadel.regionName = AttributeGetters.getString(currentNode, "regionname");
+			if (AttributeGetters.haveAttribute(currentNode, "userlocation")) {
+				citadel.userLocation = AttributeGetters.getBoolean(currentNode, "userlocation");
+			}
 			settings.put(stationid, citadel);
 		}
 	}

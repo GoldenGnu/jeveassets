@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2016 Contributors (see credits.txt)
+ * Copyright 2009-2017 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -26,11 +26,13 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Item;
 import net.nikr.eve.jeveasset.data.MyLocation;
 import net.nikr.eve.jeveasset.data.types.ItemType;
 import net.nikr.eve.jeveasset.data.types.LocationType;
+import net.nikr.eve.jeveasset.data.types.LocationsType;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.NumberValue;
 import net.nikr.eve.jeveasset.gui.tabs.assets.MyAsset;
@@ -244,6 +246,27 @@ public final class HtmlWriter {
 						if (location.isStation()) {
 							writer.write("\t\tStation:\r\n");
 							writer.write("\t\t<button type=\"button\" title=\"Show Info\" onclick=\"CCPEVE.showInfo(3867, '" + location.getStationID()+ "');\">i</button>\r\n");
+						}
+					}
+				}
+				if (object instanceof LocationsType) {
+					LocationsType locationType = (LocationsType) object;
+					Set<MyLocation> locations = locationType.getLocations();
+					for (MyLocation location : locations) {
+						if (location != null && !location.isEmpty()) {
+							//Region
+							writer.write("\t\tRegion:\r\n");
+							writer.write("\t\t<button type=\"button\" title=\"Show Info\" onclick=\"CCPEVE.showInfo(3, '" + location.getRegionID() + "');\">i</button>\r\n");
+							if (!location.isRegion()) { //System
+								writer.write("\t\tSystem:\r\n");
+								writer.write("\t\t<button type=\"button\" title=\"Show Info\" onclick=\"CCPEVE.showInfo(5, '" + location.getSystemID() + "');\">i</button>\r\n");
+								writer.write("\t\t<button type=\"button\" title=\"Show Map\" onclick=\"CCPEVE.showMap('" + location.getSystemID() + "');\">M</button>\r\n");
+								writer.write("\t\t<button type=\"button\" title=\"Show Route\" onclick=\"CCPEVE.showRouteTo('" + location.getSystemID() + "');\">R</button>\r\n");
+							}
+							if (location.isStation()) {
+								writer.write("\t\tStation:\r\n");
+								writer.write("\t\t<button type=\"button\" title=\"Show Info\" onclick=\"CCPEVE.showInfo(3867, '" + location.getStationID()+ "');\">i</button>\r\n");
+							}
 						}
 					}
 				}

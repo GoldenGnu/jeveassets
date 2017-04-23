@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2016 Contributors (see credits.txt)
+ * Copyright 2009-2017 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -20,9 +20,12 @@
  */
 package net.nikr.eve.jeveasset.data;
 
+import net.nikr.eve.jeveasset.data.eveapi.EveApiAccount;
 import java.util.ArrayList;
 import java.util.List;
 import net.nikr.eve.jeveasset.SplashUpdater;
+import net.nikr.eve.jeveasset.data.evekit.EveKitOwner;
+import net.nikr.eve.jeveasset.data.api.OwnerType;
 import net.nikr.eve.jeveasset.io.local.ProfileReader;
 import net.nikr.eve.jeveasset.io.local.ProfileWriter;
 import net.nikr.eve.jeveasset.io.local.ProfileFinder;
@@ -34,7 +37,8 @@ public class ProfileManager {
 
 	private static final Logger LOG = LoggerFactory.getLogger(ProfileManager.class);
 
-	private List<MyAccount> accounts = new ArrayList<MyAccount>();
+	private final List<EveApiAccount> accounts = new ArrayList<EveApiAccount>();
+	private final List<EveKitOwner> eveKitOwners = new ArrayList<EveKitOwner>();
 	private Profile activeProfile;
 	private List<Profile> profiles = new ArrayList<Profile>();
 
@@ -68,18 +72,28 @@ public class ProfileManager {
 		ProfileWriter.save(this, activeProfile.getFilename());
 	}
 
-	public List<MyAccount> getAccounts() {
+	public List<EveApiAccount> getAccounts() {
 		return accounts;
 	}
 
-	public void setAccounts(final List<MyAccount> accounts) {
-		this.accounts = accounts;
+	public List<OwnerType> getOwnerTypes() {
+		List<OwnerType> owners = new ArrayList<OwnerType>();
+		for (EveApiAccount account : getAccounts()) {
+			owners.addAll(account.getOwners());
+		}
+		owners.addAll(getEveKitOwners());
+		return owners;
+	}
+
+	public List<EveKitOwner> getEveKitOwners() {
+		return eveKitOwners;
 	}
 
 	public void loadActiveProfile() {
 	//Load Profile
 		LOG.info("Loading profile: {}", activeProfile.getName());
-		accounts = new ArrayList<MyAccount>();
+		accounts.clear();
+		eveKitOwners.clear();
 		ProfileReader.load(this, activeProfile.getFilename()); //Assets (Must be loaded before the price data)
 		SplashUpdater.setProgress(40);
 	//Price data (update as needed)

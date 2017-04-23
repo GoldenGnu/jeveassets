@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2016 Contributors (see credits.txt)
+ * Copyright 2009-2017 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -23,16 +23,16 @@ package net.nikr.eve.jeveasset.gui.tabs.journal;
 
 import com.beimin.eveapi.model.shared.JournalEntry;
 import com.beimin.eveapi.model.shared.RefType;
-import net.nikr.eve.jeveasset.data.Owner;
+import net.nikr.eve.jeveasset.data.api.OwnerType;
 
 
 public class MyJournal extends JournalEntry implements Comparable<JournalEntry> {
 
 	private final String corp = "(Corporation)";
-	private final Owner owner;
+	private final OwnerType owner;
 	private final int accountKey;
 
-	public MyJournal(JournalEntry apiJournalEntry, Owner owner, int accountKey) {
+	public MyJournal(JournalEntry apiJournalEntry, OwnerType owner, int accountKey) {
 		setAmount(apiJournalEntry.getAmount());
 		setArgID1(apiJournalEntry.getArgID1());
 		setArgName1(apiJournalEntry.getArgName1());
@@ -60,7 +60,7 @@ public class MyJournal extends JournalEntry implements Comparable<JournalEntry> 
 	}
 
 	public String getOwnerName() {
-		return owner.getName();
+		return owner.getOwnerName();
 	}
 
 	public String getRefTypeFormated() {
@@ -103,10 +103,11 @@ public class MyJournal extends JournalEntry implements Comparable<JournalEntry> 
 
 	@Override
 	public int hashCode() {
-		int hash = 5;
-		hash = 41 * hash + this.accountKey;
-		hash = 41 * hash + (int) (this.getRefID() ^ (this.getRefID() >>> 32));
-		hash = 41 * hash + (int) (Double.doubleToLongBits(this.getAmount()) ^ (Double.doubleToLongBits(this.getAmount()) >>> 32));
+		int hash = 3;
+		hash = 73 * hash + this.accountKey;
+		hash = 73 * hash + (int) (this.owner.getOwnerID() ^ (this.owner.getOwnerID() >>> 32));
+		hash = 73 * hash + (int) (this.getRefID() ^ (this.getRefID() >>> 32));
+		hash = 73 * hash + (int) (Double.doubleToLongBits(this.getAmount()) ^ (Double.doubleToLongBits(this.getAmount()) >>> 32));
 		return hash;
 	}
 
@@ -122,13 +123,16 @@ public class MyJournal extends JournalEntry implements Comparable<JournalEntry> 
 			return false;
 		}
 		final MyJournal other = (MyJournal) obj;
+		if (this.accountKey != other.accountKey) {
+			return false;
+		}
+		if (this.owner.getOwnerID() != other.owner.getOwnerID()) {
+			return false;
+		}
 		if (this.getRefID() != other.getRefID()) {
 			return false;
 		}
 		if (Double.doubleToLongBits(this.getAmount()) != Double.doubleToLongBits(other.getAmount())) {
-			return false;
-		}
-		if (this.accountKey != other.accountKey) {
 			return false;
 		}
 		return true;

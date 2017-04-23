@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2016 Contributors (see credits.txt)
+ * Copyright 2009-2017 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -67,11 +67,12 @@ import javax.swing.event.CaretListener;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.EventListManager;
 import net.nikr.eve.jeveasset.data.ItemFlag;
-import net.nikr.eve.jeveasset.data.MyAccount;
 import net.nikr.eve.jeveasset.data.MyLocation;
-import net.nikr.eve.jeveasset.data.Owner;
+import net.nikr.eve.jeveasset.data.eveapi.EveApiOwner;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.data.StaticData;
+import net.nikr.eve.jeveasset.data.api.OwnerType;
+import net.nikr.eve.jeveasset.gui.shared.Colors;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.CaseInsensitiveComparator;
 import net.nikr.eve.jeveasset.gui.shared.DocumentFactory;
@@ -126,7 +127,7 @@ public class StockpileDialog extends JDialogCentered {
 	private final EventList<MyLocation> systems;
 	private final EventList<MyLocation> regions;
 	private final Set<String> myLocations;
-	private final List<Owner> owners;
+	private final List<OwnerType> owners;
 	private final List<ItemFlag> itemFlags;
 	private final List<String> containers;
 
@@ -141,7 +142,7 @@ public class StockpileDialog extends JDialogCentered {
 		systems = new EventListManager<MyLocation>().create();
 		regions = new EventListManager<MyLocation>().create();
 		//Owners - not static
-		owners = new ArrayList<Owner>();
+		owners = new ArrayList<OwnerType>();
 		//myLocations - not static
 		myLocations = new HashSet<String>();
 		//Containers - not static
@@ -277,10 +278,10 @@ public class StockpileDialog extends JDialogCentered {
 				jName.setBackground(Color.WHITE);
 			} else {
 				b = false;
-				jName.setBackground(new Color(255, 200, 200));
+				jName.setBackground(Colors.LIGHT_RED.getColor());
 			}
 		} else if (jName.getText().isEmpty()) {
-			jName.setBackground(new Color(255, 200, 200));
+			jName.setBackground(Colors.LIGHT_RED.getColor());
 			b = false;
 		} else {
 			jName.setBackground(Color.WHITE);
@@ -439,11 +440,9 @@ public class StockpileDialog extends JDialogCentered {
 		jName.setText("");
 
 		//Owners
-		Map<Long, Owner> ownersById = new HashMap<Long, Owner>();
-		for (MyAccount account : program.getAccounts()) {
-			for (Owner owner : account.getOwners()) {
-				ownersById.put(owner.getOwnerID(), owner);
-			}
+		Map<Long, OwnerType> ownersById = new HashMap<Long, OwnerType>();
+		for (OwnerType owner : program.getOwnerTypes()) {
+			ownersById.put(owner.getOwnerID(), owner);
 		}
 		owners.clear();
 		owners.addAll(ownersById.values());
@@ -560,10 +559,10 @@ public class StockpileDialog extends JDialogCentered {
 		}
 	}
 
-	static class OwnerFilterator implements TextFilterator<Owner> {
+	static class OwnerFilterator implements TextFilterator<EveApiOwner> {
 		@Override
-		public void getFilterStrings(final List<String> baseList, final Owner element) {
-			baseList.add(element.getName());
+		public void getFilterStrings(final List<String> baseList, final EveApiOwner element) {
+			baseList.add(element.getOwnerName());
 		}
 	}
 	static class ItemFlagFilterator implements TextFilterator<ItemFlag> {
@@ -614,7 +613,7 @@ public class StockpileDialog extends JDialogCentered {
 		private final JLabel jType;
 		private final JLabel jWarning;
 		//Owner
-		private JComboBox<Owner> jOwner;
+		private JComboBox<OwnerType> jOwner;
 		//Flag
 		private JComboBox<ItemFlag> jFlag;
 		//Container
@@ -637,7 +636,7 @@ public class StockpileDialog extends JDialogCentered {
 			jFlag.setSelectedItem(itemFlag);
 		}
 
-		public FilterPanel(final LocationPanel locationPanel, final Owner owner) {
+		public FilterPanel(final LocationPanel locationPanel, final OwnerType owner) {
 			this(locationPanel, FilterType.OWNER);
 
 			jOwner.setSelectedItem(owner);
@@ -709,7 +708,7 @@ public class StockpileDialog extends JDialogCentered {
 				jType.setIcon(Images.LOC_OWNER.getIcon());
 				jType.setToolTipText(TabsStockpile.get().owner());
 
-				jOwner = new JComboBox<Owner>(new ListComboBoxModel<Owner>(owners));
+				jOwner = new JComboBox<OwnerType>(new ListComboBoxModel<OwnerType>(owners));
 				jOwner.setActionCommand(StockpileDialogAction.VALIDATE.name());
 				jOwner.addActionListener(listener);
 				jOwner.setEnabled(!owners.isEmpty());
@@ -751,7 +750,7 @@ public class StockpileDialog extends JDialogCentered {
 		}
 
 		public Long getOwner() {
-			return getValue(jOwner, Owner.class).getOwnerID();
+			return getValue(jOwner, OwnerType.class).getOwnerID();
 		}
 
 		private <E> E getValue(JComboBox<E> jComboBox, Class<E> clazz) {
@@ -812,6 +811,10 @@ public class StockpileDialog extends JDialogCentered {
 		private final JCheckBoxMenuItem jSellingContracts;
 		private final JCheckBoxMenuItem jBoughtContracts;
 		private final JCheckBoxMenuItem jSoldContracts;
+		private final JLabel jAssetsLabel;
+		private final JLabel jJobsLabel;
+		private final JLabel jOrdersLabel;
+		private final JLabel jContractsLabel;
 
 		//Edit
 		private final JRadioButtonMenuItem jStation;
@@ -846,16 +849,16 @@ public class StockpileDialog extends JDialogCentered {
 				containerPanels.add(new FilterPanel(this, container));
 			}
 			//Owner
-			Set<Owner> ownersFound = new HashSet<Owner>();
+			Set<OwnerType> ownersFound = new HashSet<OwnerType>();
 			for (long ownerID : stockpileFilter.getOwnerIDs()) {
-				for (Owner owner : owners) {
+				for (OwnerType owner : owners) {
 					if (owner.getOwnerID() == ownerID) {
 						ownersFound.add(owner);
 						break;
 					}
 				}
 			}
-			for (Owner owner : ownersFound) {
+			for (OwnerType owner : ownersFound) {
 				ownerPanels.add(new FilterPanel(this, owner));
 			}
 			//Flag
@@ -1012,6 +1015,20 @@ public class StockpileDialog extends JDialogCentered {
 			jSoldContracts.addActionListener(listener);
 			jInclude.add(jSoldContracts, true);
 
+		//INCLIDE LABELS
+			jAssetsLabel = new JLabel();
+			jAssetsLabel.setDisabledIcon(Images.INCLUDE_ASSETS.getIcon());
+			jAssetsLabel.setEnabled(false);
+			jJobsLabel = new JLabel();
+			jJobsLabel.setDisabledIcon(Images.INCLUDE_JOBS.getIcon());
+			jJobsLabel.setEnabled(false);
+			jOrdersLabel = new JLabel();
+			jOrdersLabel.setDisabledIcon(Images.INCLUDE_ORDERS.getIcon());
+			jOrdersLabel.setEnabled(false);
+			jContractsLabel = new JLabel();
+			jContractsLabel.setDisabledIcon(Images.INCLUDE_CONTRACTS.getIcon());
+			jContractsLabel.setEnabled(false);
+
 		//EDIT
 			JDropDownButton jEdit = new JDropDownButton(TabsStockpile.get().editStockpileFilter(), Images.EDIT_EDIT_WHITE.getIcon());
 			jToolBar.addButton(jEdit);
@@ -1083,6 +1100,12 @@ public class StockpileDialog extends JDialogCentered {
 						.addComponent(jOptions, 30, 30, 30)
 					)
 					.addComponent(jFilters)
+					.addGroup(groupLayout.createSequentialGroup()
+						.addComponent(jAssetsLabel)
+						.addComponent(jJobsLabel)
+						.addComponent(jOrdersLabel)
+						.addComponent(jContractsLabel)
+					)
 			);
 											 
 			groupLayout.setVerticalGroup(
@@ -1090,9 +1113,16 @@ public class StockpileDialog extends JDialogCentered {
 					.addComponent(jToolBar, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
 					.addGroup(groupLayout.createParallelGroup()
 						.addComponent(jLocationType, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-						.addComponent(jLocation, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())						.addComponent(jOptions, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+						.addComponent(jLocation, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+						.addComponent(jOptions, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 					)
 					.addComponent(jFilters)
+					.addGroup(groupLayout.createParallelGroup()
+						.addComponent(jAssetsLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+						.addComponent(jJobsLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+						.addComponent(jOrdersLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+						.addComponent(jContractsLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					)
 			);
 		}
 
@@ -1276,6 +1306,43 @@ public class StockpileDialog extends JDialogCentered {
 			} else {
 				jInclude.setIcon(Images.LOC_INCLUDE.getIcon());
 			}
+
+			jAssetsLabel.setVisible(jAssets.isSelected());
+
+			jJobsLabel.setVisible(jJobs.isSelected());
+
+			int orders = 0;
+			if (jBuyingOrders.isSelected()) {
+				orders++;
+			}
+			if (jSellingOrders.isSelected()) {
+				orders++;
+			}
+			if (jBoughtTransactions.isSelected()) {
+				orders++;
+			}
+			if (jSoldTransactions.isSelected()) {
+				orders++;
+			}
+			jOrdersLabel.setVisible(orders > 0);
+			jOrdersLabel.setText(TabsStockpile.get().includeCount(orders));
+
+			int contracts = 0;
+			if (jBuyingContracts.isSelected()) {
+				contracts++;
+			}
+			if (jSellingContracts.isSelected()) {
+				contracts++;
+			}
+			if (jBoughtContracts.isSelected()) {
+				contracts++;
+			}
+			if (jSoldContracts.isSelected()) {
+				contracts++;
+			}
+			jContractsLabel.setText(TabsStockpile.get().includeCount(contracts));
+			jContractsLabel.setVisible(contracts > 0);
+
 			jMatch.setIcon(jMatchExclude.isSelected() ? Images.EDIT_DELETE_WHITE.getIcon() : Images.EDIT_ADD_WHITE.getIcon());
 			jAssets.setIcon(jAssets.isSelected() ? Images.INCLUDE_ASSETS_SELECTED.getIcon() : Images.INCLUDE_ASSETS.getIcon());
 			jJobs.setIcon(jJobs.isSelected() ? Images.INCLUDE_JOBS_SELECTED.getIcon() : Images.INCLUDE_JOBS.getIcon());
@@ -1287,6 +1354,7 @@ public class StockpileDialog extends JDialogCentered {
 			jBuyingContracts.setIcon(jBuyingContracts.isSelected() ? Images.INCLUDE_CONTRACTS_SELECTED.getIcon() : Images.INCLUDE_CONTRACTS.getIcon());
 			jBoughtContracts.setIcon(jBoughtContracts.isSelected() ? Images.INCLUDE_CONTRACTS_SELECTED.getIcon() : Images.INCLUDE_CONTRACTS.getIcon());
 			jSoldContracts.setIcon(jSoldContracts.isSelected() ? Images.INCLUDE_CONTRACTS_SELECTED.getIcon() : Images.INCLUDE_CONTRACTS.getIcon());
+			getDialog().pack();
 			return ok;
 		}
 

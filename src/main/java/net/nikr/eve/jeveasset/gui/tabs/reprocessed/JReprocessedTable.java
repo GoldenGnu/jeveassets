@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2016 Contributors (see credits.txt)
+ * Copyright 2009-2017 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -23,16 +23,16 @@ package net.nikr.eve.jeveasset.gui.tabs.reprocessed;
 
 import ca.odell.glazedlists.SeparatorList;
 import ca.odell.glazedlists.swing.DefaultEventTableModel;
-import java.awt.Color;
 import java.awt.Component;
 import javax.swing.table.TableCellRenderer;
 import net.nikr.eve.jeveasset.Program;
+import net.nikr.eve.jeveasset.gui.shared.Colors;
 import net.nikr.eve.jeveasset.gui.shared.table.JSeparatorTable;
 
 
 public class JReprocessedTable extends JSeparatorTable {
 
-	private DefaultEventTableModel<ReprocessedInterface> tableModel;
+	private final DefaultEventTableModel<ReprocessedInterface> tableModel;
 
 	public JReprocessedTable(final Program program, final DefaultEventTableModel<ReprocessedInterface> tableModel, SeparatorList<?> separatorList) {
 		super(program, tableModel, separatorList);
@@ -51,7 +51,7 @@ public class JReprocessedTable extends JSeparatorTable {
 			//Background
 			if (reprocessed.isTotal()) { //Total
 				if (!isSelected) {
-					component.setBackground(new Color(235, 235, 235));
+					component.setBackground(Colors.LIGHT_GRAY.getColor());
 				} else {
 					component.setBackground(this.getSelectionBackground().darker());
 				}

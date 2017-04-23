@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2016 Contributors (see credits.txt)
+ * Copyright 2009-2017 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -25,10 +25,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import net.nikr.eve.jeveasset.io.shared.AbstractXmlReader;
-import net.nikr.eve.jeveasset.io.shared.AbstractXmlWriter;
 import net.nikr.eve.jeveasset.io.shared.FileUtil;
-import net.nikr.eve.jeveasset.io.shared.XmlException;
 import org.junit.AfterClass;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;

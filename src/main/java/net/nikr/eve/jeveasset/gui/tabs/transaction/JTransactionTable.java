@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2016 Contributors (see credits.txt)
+ * Copyright 2009-2017 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -26,12 +26,13 @@ import java.awt.Color;
 import java.awt.Component;
 import javax.swing.table.TableCellRenderer;
 import net.nikr.eve.jeveasset.Program;
+import net.nikr.eve.jeveasset.gui.shared.Colors;
 import net.nikr.eve.jeveasset.gui.shared.table.JAutoColumnTable;
 
 
 public class JTransactionTable extends JAutoColumnTable {
 
-	final DefaultEventTableModel<MyTransaction> tableModel;
+	private final DefaultEventTableModel<MyTransaction> tableModel;
 
 	public JTransactionTable(Program program, final DefaultEventTableModel<MyTransaction> tableModel) {
 		super(program, tableModel);
@@ -49,13 +50,13 @@ public class JTransactionTable extends JAutoColumnTable {
 		if (columnName.equals(TransactionTableFormat.NAME.getColumnName())) {
 			if (transaction.isSell()) {
 				if (!isSelected) {
-					component.setBackground(new Color(200, 255, 200));
+					component.setBackground(Colors.LIGHT_GREEN.getColor());
 				} else {
 					component.setBackground(this.getSelectionBackground().darker());
 				}
 			} else {
 				if (!isSelected) {
-					component.setBackground(new Color(255, 200, 200));
+					component.setBackground(Colors.LIGHT_RED.getColor());
 				} else {
 					component.setBackground(this.getSelectionBackground().darker());
 				}
@@ -65,8 +66,17 @@ public class JTransactionTable extends JAutoColumnTable {
 			if (!isSelected) {
 				component.setForeground(Color.RED.darker());
 			} else {
-				component.setForeground(new Color(255, 200, 200));
+				component.setForeground(Colors.LIGHT_RED.getColor());
 			}
+		}
+		//User set location
+		if (transaction.getLocation().isUserLocation() && columnName.equals(TransactionTableFormat.LOCATION.getColumnName())) {
+			if (!isSelected) {
+				component.setBackground(Colors.LIGHT_GRAY.getColor());
+			} else {
+				component.setBackground(this.getSelectionBackground().darker());
+			}
+			return component;
 		}
 		return component;
 	}

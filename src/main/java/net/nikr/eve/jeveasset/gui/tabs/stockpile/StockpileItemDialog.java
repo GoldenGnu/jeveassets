@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2016 Contributors (see credits.txt)
+ * Copyright 2009-2017 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -37,6 +37,7 @@ import net.nikr.eve.jeveasset.data.EventListManager;
 import net.nikr.eve.jeveasset.data.Item;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.data.StaticData;
+import net.nikr.eve.jeveasset.gui.shared.Colors;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
@@ -242,20 +243,20 @@ public class StockpileItemDialog extends JDialogCentered {
 		}
 		if (itemExist() || stockpileItem != null) {
 			color = true;
-			jCountMinimum.setBackground(new Color(255, 255, 200));
+			jCountMinimum.setBackground(Colors.LIGHT_YELLOW.getColor());
 		}
 		try {
 			double d = Double.valueOf(jCountMinimum.getText());
 			if (d <= 0) {
 				valid = false; //Negative and zero is not valid
 				color = true;
-				jCountMinimum.setBackground(new Color(255, 200, 200));
+				jCountMinimum.setBackground(Colors.LIGHT_RED.getColor());
 			}
 		} catch (NumberFormatException ex) {
 			valid = false; //Empty and NaN is not valid
 			if (!jCountMinimum.getText().isEmpty()) {
 				color = true;
-				jCountMinimum.setBackground(new Color(255, 200, 200));
+				jCountMinimum.setBackground(Colors.LIGHT_RED.getColor());
 			}
 		}
 		if (!color) {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2016 Contributors (see credits.txt)
+ * Copyright 2009-2017 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -23,14 +23,14 @@ package net.nikr.eve.jeveasset.gui.shared;
 
 import java.util.Date;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.data.MyAccount;
-import net.nikr.eve.jeveasset.data.Owner;
+import net.nikr.eve.jeveasset.data.eveapi.EveApiAccount;
 import net.nikr.eve.jeveasset.data.Settings;
+import net.nikr.eve.jeveasset.data.api.OwnerType;
 
 
 public class Updatable {
 
-	private Program program;
+	private final Program program;
 
 	public Updatable(final Program program) {
 		this.program = program;
@@ -40,34 +40,34 @@ public class Updatable {
 		if (isUpdatable(program.getPriceDataGetter().getNextUpdate(), false)) {
 			return true;
 		}
-		for (MyAccount account : program.getAccounts()) {
+		for (EveApiAccount account : program.getProfileManager().getAccounts()) {
 			//Account
 			if (isUpdatable(account.getAccountNextUpdate())) {
 				return true;
 			}
-			for (Owner owner : account.getOwners()) {
-				if (owner.isShowOwner()) {
-					if (isUpdatable(owner.getIndustryJobsNextUpdate())){
-						return true;
-					}
-					if (isUpdatable(owner.getMarketOrdersNextUpdate())){
-						return true;
-					}
-					if (isUpdatable(owner.getAssetNextUpdate())){
-						return true;
-					}
-					if (isUpdatable(owner.getBalanceNextUpdate())){
-						return true;
-					}
-					if (isUpdatable(owner.getContractsNextUpdate())){
-						return true;
-					}
-					if (isUpdatable(owner.getTransactionsNextUpdate())){
-						return true;
-					}
-					if (isUpdatable(owner.getBlueprintsNextUpdate())){
-						return true;
-					}
+		}
+		for (OwnerType owner : program.getOwnerTypes()) {
+			if (owner.isShowOwner()) {
+				if (isUpdatable(owner.getIndustryJobsNextUpdate())){
+					return true;
+				}
+				if (isUpdatable(owner.getMarketOrdersNextUpdate())){
+					return true;
+				}
+				if (isUpdatable(owner.getAssetNextUpdate())){
+					return true;
+				}
+				if (isUpdatable(owner.getBalanceNextUpdate())){
+					return true;
+				}
+				if (isUpdatable(owner.getContractsNextUpdate())){
+					return true;
+				}
+				if (isUpdatable(owner.getTransactionsNextUpdate())){
+					return true;
+				}
+				if (isUpdatable(owner.getBlueprintsNextUpdate())){
+					return true;
 				}
 			}
 		}

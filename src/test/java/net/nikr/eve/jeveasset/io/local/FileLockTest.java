@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2016 Contributors (see credits.txt)
+ * Copyright 2009-2017 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -19,8 +19,9 @@
  *
  */
 
-package net.nikr.eve.jeveasset.io.shared;
+package net.nikr.eve.jeveasset.io.local;
 
+import net.nikr.eve.jeveasset.io.local.FileLock;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;

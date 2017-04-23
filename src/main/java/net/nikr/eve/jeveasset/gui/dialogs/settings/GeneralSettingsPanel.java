@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2016 Contributors (see credits.txt)
+ * Copyright 2009-2017 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -33,6 +33,7 @@ public class GeneralSettingsPanel extends JSettingsPanel {
 
 	private final JCheckBox jEnterFilters;
 	private final JCheckBox jHighlightSelectedRow;
+	private final JCheckBox jStrongColors;
 
 
 	public GeneralSettingsPanel(final Program program, final SettingsDialog optionsDialog) {
@@ -42,23 +43,28 @@ public class GeneralSettingsPanel extends JSettingsPanel {
 
 		jHighlightSelectedRow = new JCheckBox(DialoguesSettings.get().highlightSelectedRow());
 
+		jStrongColors = new JCheckBox(DialoguesSettings.get().strongColors());
+
 		layout.setHorizontalGroup(
 			layout.createParallelGroup(GroupLayout.Alignment.LEADING)
 				.addComponent(jEnterFilters)
 				.addComponent(jHighlightSelectedRow)
+				.addComponent(jStrongColors)
 		);
 		layout.setVerticalGroup(
 			layout.createSequentialGroup()
 				.addComponent(jEnterFilters, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 				.addComponent(jHighlightSelectedRow, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+				.addComponent(jStrongColors, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 		);
 	}
 
 	@Override
 	public boolean save() {
-		boolean update = jHighlightSelectedRow.isSelected() != Settings.get().isHighlightSelectedRows();
+		boolean update = jHighlightSelectedRow.isSelected() != Settings.get().isHighlightSelectedRows() || Settings.get().isStrongColors() != jStrongColors.isSelected();
 		Settings.get().setFilterOnEnter(jEnterFilters.isSelected());
 		Settings.get().setHighlightSelectedRows(jHighlightSelectedRow.isSelected());
+		Settings.get().setStrongColors(jStrongColors.isSelected());
 		return update;
 	}
 
@@ -66,5 +72,6 @@ public class GeneralSettingsPanel extends JSettingsPanel {
 	public void load() {
 		jEnterFilters.setSelected(Settings.get().isFilterOnEnter());
 		jHighlightSelectedRow.setSelected(Settings.get().isHighlightSelectedRows());
+		jStrongColors.setSelected(Settings.get().isStrongColors());
 	}
 }

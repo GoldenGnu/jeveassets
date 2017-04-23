@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2016 Contributors (see credits.txt)
+ * Copyright 2009-2017 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -117,6 +117,9 @@ public enum Images {
 	INCLUDE_ORDERS_SELECTED ("include_orders_selected.png"),
 	INCLUDE_ORDERS ("include_orders.png"),
 	MISC_EVE ("misc_eve.png"),
+	MISC_EVE42 ("misc_eve42.png"),
+	MISC_EVEKIT ("misc_evekit.png"),
+	MISC_EVEKIT42 ("misc_evekit42.png"),
 	MISC_EXIT ("misc_exit.png"),
 	MISC_HELP ("misc_help.png"),
 	MISC_EXPANDED ("misc_expanded.png"),

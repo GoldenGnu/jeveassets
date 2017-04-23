@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2016 Contributors (see credits.txt)
+ * Copyright 2009-2017 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -40,9 +40,6 @@ import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.junit.After;
 import org.junit.AfterClass;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
@@ -52,12 +49,14 @@ import uk.me.candle.eve.pricing.options.PricingFetch;
 import uk.me.candle.eve.pricing.options.PricingNumber;
 import uk.me.candle.eve.pricing.options.PricingOptions;
 import uk.me.candle.eve.pricing.options.PricingType;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 /**
  *
  * @author Niklas
  */
-public class PriceDataGetterTest {
+public class PriceDataGetterOnlineTest {
 	private static final long REGION = 10000002L;  //The Forge (Jita region)
 	private static final long SYSTEM = 30000142L;  //Jita
 	private static final long STATION = 60003760L; //Jita 4 - 4
@@ -66,7 +65,7 @@ public class PriceDataGetterTest {
 	private final PriceGetter getter = new PriceGetter();
 	private final Set<Integer> typeIDs = new HashSet<Integer>();
 
-	public PriceDataGetterTest() { }
+	public PriceDataGetterOnlineTest() { }
 	
 	@BeforeClass
 	public static void setUpClass() {
@@ -167,13 +166,10 @@ public class PriceDataGetterTest {
 
         System.out.println("    " + process.size() + " of " + typeIDs.size() + " done - " + empty.size() + " empty - " + failed.size() + " failed - completed in: " + Formater.milliseconds(end - start)); 
 		assertTrue(failed.isEmpty());
-		assertEquals(process.size(), typeIDs.size());
+		assertTrue(process.size() >= typeIDs.size());
 	}
 
 	private static class PriceGetter extends PriceDataGetter {
-		public PriceGetter() {
-			super(null);
-		}
 
 		protected Map<Integer, PriceData> process(PricingOptions pricingOptions, Set<Integer> ids, PriceSource source) {
 			return super.processUpdate(null, true, pricingOptions, ids, source);

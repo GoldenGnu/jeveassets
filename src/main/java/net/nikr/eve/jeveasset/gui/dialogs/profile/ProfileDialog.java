@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2016 Contributors (see credits.txt)
+ * Copyright 2009-2017 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -27,12 +27,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import javax.swing.*;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.data.MyAccount;
 import net.nikr.eve.jeveasset.data.Profile;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
@@ -160,7 +158,8 @@ public class ProfileDialog extends JDialogCentered {
 			//Save old profile
 			program.getProfileManager().saveProfile();
 			//Clear accounts
-			program.getProfileManager().setAccounts(new ArrayList<MyAccount>());
+			program.getProfileManager().getAccounts().clear();
+			program.getProfileManager().getEveKitOwners().clear();
 			//Clear data
 			program.updateEventLists();
 			//Set active profile
@@ -168,6 +167,8 @@ public class ProfileDialog extends JDialogCentered {
 			profile.setActiveProfile(true);
 			//Load new profile
 			program.getProfileManager().loadActiveProfile();
+			//Update EveKit Import
+			program.profilesChanged();
 			//Update data
 			program.updateEventLists();
 			//Update GUI (this dialog)
@@ -259,14 +260,12 @@ public class ProfileDialog extends JDialogCentered {
 							DialoguesProfiles.get().cannotDeleteActive(),
 							DialoguesProfiles.get().deleteProfile(),
 							JOptionPane.INFORMATION_MESSAGE);
-					//showMessageDialog("Delete Profile", "You can not delete the active profile");
 				}
 				if (profile != null && !profile.isActiveProfile() && profile.isDefaultProfile()) {
 					JOptionPane.showMessageDialog(getDialog(),
 							DialoguesProfiles.get().cannotDeleteDefault(),
 							DialoguesProfiles.get().deleteProfile(),
 							JOptionPane.INFORMATION_MESSAGE);
-					//showMessageDialog("Delete Profile", "You can not delete the default profile");
 				}
 				if (profile != null && !profile.isActiveProfile() && !profile.isDefaultProfile()) {
 					int value = JOptionPane.showConfirmDialog(getDialog(),
@@ -274,7 +273,6 @@ public class ProfileDialog extends JDialogCentered {
 							DialoguesProfiles.get().deleteProfile(),
 							JOptionPane.YES_NO_OPTION,
 							JOptionPane.QUESTION_MESSAGE);
-					//boolean value = showConfirmDialog("Delete Profile", "Delete Profile: \""+profile.getName()+"\"?\r\nWarning: Deleted profiles can not be restored");
 					if (value == JOptionPane.YES_OPTION) {
 						program.getProfileManager().getProfiles().remove(profile);
 						profile.getFile().delete();
@@ -353,6 +351,7 @@ public class ProfileDialog extends JDialogCentered {
 			Profile profile = new Profile(profileName, false, false);
 			program.getProfileManager().getProfiles().add(profile);
 			loadProfile(profile);
+			program.saveProfile();
 		}
 	}
 

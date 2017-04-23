@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2016 Contributors (see credits.txt)
+ * Copyright 2009-2017 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -27,8 +27,6 @@ import java.util.List;
 import java.util.Map;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.gui.tabs.assets.MyAsset;
-import net.nikr.eve.jeveasset.io.shared.AbstractXmlWriter;
-import net.nikr.eve.jeveasset.io.shared.XmlException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;

@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2016 Contributors (see credits.txt)
+ * Copyright 2009-2017 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -29,7 +29,6 @@ import java.util.Map;
 import net.nikr.eve.jeveasset.data.Item;
 import net.nikr.eve.jeveasset.data.MarketPriceData;
 import net.nikr.eve.jeveasset.data.MyLocation;
-import net.nikr.eve.jeveasset.data.Owner;
 import net.nikr.eve.jeveasset.data.PriceData;
 import net.nikr.eve.jeveasset.data.UserItem;
 import net.nikr.eve.jeveasset.data.tag.TagID;
@@ -37,19 +36,20 @@ import net.nikr.eve.jeveasset.data.tag.Tags;
 import net.nikr.eve.jeveasset.data.types.BlueprintType;
 import net.nikr.eve.jeveasset.data.types.ItemType;
 import net.nikr.eve.jeveasset.data.types.JumpType;
+import net.nikr.eve.jeveasset.data.api.OwnerType;
+import net.nikr.eve.jeveasset.data.types.EditableLocationType;
 import net.nikr.eve.jeveasset.data.types.PriceType;
 import net.nikr.eve.jeveasset.data.types.TagsType;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo.InfoItem;
 import net.nikr.eve.jeveasset.i18n.DataModelAsset;
 
-public class MyAsset implements Comparable<MyAsset>, InfoItem, JumpType, ItemType, BlueprintType, PriceType, TagsType {
+public class MyAsset implements Comparable<MyAsset>, InfoItem, JumpType, ItemType, BlueprintType, PriceType, TagsType, EditableLocationType {
 
 	//Static values (set by constructor)
 	private final List<MyAsset> assets = new ArrayList<MyAsset>();
 	private Item item;
-	private MyLocation location;
-	private Owner owner;
+	private OwnerType owner;
 	private long count;
 	private List<MyAsset> parents;
 	private String flag;
@@ -74,6 +74,7 @@ public class MyAsset implements Comparable<MyAsset>, InfoItem, JumpType, ItemTyp
 	private double price;
 	private Tags tags;
 	private Blueprint blueprint;
+	private MyLocation location;
 	//Dynamic values cache
 	private boolean userNameSet = false;
 	private boolean eveNameSet = false;
@@ -114,7 +115,7 @@ public class MyAsset implements Comparable<MyAsset>, InfoItem, JumpType, ItemTyp
 		this.eveNameSet = asset.eveNameSet;
 	}
 
-	public MyAsset(final Item item, final MyLocation location, final Owner owner, final long count, final List<MyAsset> parents, final String flag, final int flagID, final long itemID, final boolean singleton, final int rawQuantity) {
+	public MyAsset(final Item item, final MyLocation location, final OwnerType owner, final long count, final List<MyAsset> parents, final String flag, final int flagID, final long itemID, final boolean singleton, final int rawQuantity) {
 		this.item = item;
 		this.location = location;
 		this.owner = owner;
@@ -193,6 +194,11 @@ public class MyAsset implements Comparable<MyAsset>, InfoItem, JumpType, ItemTyp
 	}
 
 	@Override
+	public void setLocation(MyLocation location) {
+		this.location = location;
+	}
+
+	@Override
 	public void addJump(Long systemID, int jumps) {
 		jumpsList.put(systemID, jumps);
 	}
@@ -220,7 +226,7 @@ public class MyAsset implements Comparable<MyAsset>, InfoItem, JumpType, ItemTyp
 	}
 
 	public String getOwner() {
-		return owner.getName();
+		return owner.getOwnerName();
 	}
 
 	public long getOwnerID() {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2016 Contributors (see credits.txt)
+ * Copyright 2009-2017 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -40,6 +40,7 @@ import net.nikr.eve.jeveasset.data.Item;
 import net.nikr.eve.jeveasset.data.types.ItemType;
 import net.nikr.eve.jeveasset.data.types.JumpType;
 import net.nikr.eve.jeveasset.data.types.LocationType;
+import net.nikr.eve.jeveasset.data.types.LocationsType;
 import net.nikr.eve.jeveasset.data.types.PriceType;
 import net.nikr.eve.jeveasset.data.types.TagsType;
 import net.nikr.eve.jeveasset.gui.shared.components.JDropDownButton;
@@ -55,6 +56,7 @@ public class MenuManager<Q> {
 		TAGS,
 		STOCKPILE,
 		LOOKUP,
+		LOCATION,
 		PRICE,
 		NAME,
 		REPROCESSED,
@@ -102,7 +104,7 @@ public class MenuManager<Q> {
 		this.jTable = jTable;
 		assets = MyAsset.class.isAssignableFrom(clazz) && !TreeAsset.class.isAssignableFrom(clazz);
 		stockpile = Stockpile.StockpileItem.class.isAssignableFrom(clazz);
-		locationSupported = LocationType.class.isAssignableFrom(clazz);
+		locationSupported = LocationType.class.isAssignableFrom(clazz) || LocationsType.class.isAssignableFrom(clazz);
 		jumpsSupported = JumpType.class.isAssignableFrom(clazz);
 		itemSupported = ItemType.class.isAssignableFrom(clazz);
 		tagsSupported = TagsType.class.isAssignableFrom(clazz);
@@ -147,6 +149,10 @@ public class MenuManager<Q> {
 	//JUMPS
 		if (jumpsSupported) {
 			menus.put(MenuEnum.JUMPS, new JMenuJumps<Q>(program, clazz));
+		}
+	//LOCATION
+		if (locationSupported) {
+			menus.put(MenuEnum.LOCATION, new JMenuLocation<Q>(program));
 		}
 	}
 
@@ -232,6 +238,12 @@ public class MenuManager<Q> {
 		JAutoMenu<Q> jJumps = menus.get(MenuEnum.JUMPS);
 		if (jJumps != null) {
 			jComponent.add(jJumps);
+			notEmpty = true;
+		}
+	//LOCATION
+		JAutoMenu<Q> jLocation = menus.get(MenuEnum.LOCATION);
+		if (jLocation != null) {
+			jComponent.add(jLocation);
 			notEmpty = true;
 		}
 	//COLUMNS

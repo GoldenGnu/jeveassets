@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2016 Contributors (see credits.txt)
+ * Copyright 2009-2017 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
  */
-package net.nikr.eve.jeveasset.io.shared;
+package net.nikr.eve.jeveasset.io.local;
 
 import java.io.File;
 import java.io.IOException;
@@ -29,6 +29,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.i18n.General;
+import net.nikr.eve.jeveasset.io.shared.DesktopUtil;
 import org.slf4j.LoggerFactory;
 
 public class FileLock {

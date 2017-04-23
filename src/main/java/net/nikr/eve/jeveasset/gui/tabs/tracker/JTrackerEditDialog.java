@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2016 Contributors (see credits.txt)
+ * Copyright 2009-2017 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -42,6 +42,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Settings;
+import net.nikr.eve.jeveasset.gui.shared.Colors;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
@@ -494,7 +495,7 @@ public class JTrackerEditDialog extends JDialogCentered {
 				parse(jTextField.getText());
 				jTextField.setBackground(Color.WHITE);
 			} catch (ParseException ex) {
-				jTextField.setBackground(new Color(255, 200, 200));
+				jTextField.setBackground(Colors.LIGHT_RED.getColor());
 			}
 			jTextField.setCaretPosition(jTextField.getText().length());
 		}

@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2016 Contributors (see credits.txt)
+ * Copyright 2009-2017 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -21,6 +21,8 @@
 
 package net.nikr.eve.jeveasset.data;
 
+import net.nikr.eve.jeveasset.data.eveapi.EveApiAccount;
+import net.nikr.eve.jeveasset.data.eveapi.EveApiOwner;
 import java.io.File;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -75,14 +77,14 @@ public class ProfileTest {
 		boolean contracts = false;
 		boolean transactions = false;
 		boolean journal = false;
-		for (MyAccount account : profileManager.getAccounts()) {
+		for (EveApiAccount account : profileManager.getAccounts()) {
 			if (!account.getName().equals("") && !account.getName().equals("-1")) {
 				fail(name+" Name is not safe expected:<[]> but was:<[" + account.getName() + "]>");
 			}
 			assertEquals(name+" KeyID is not safe", -1, account.getKeyID());
 			assertEquals(name+" VCode is not safe", "", account.getVCode());
 			assertEquals(name+" had no owners", account.getOwners().isEmpty(), false);
-			for (Owner owner : account.getOwners()) {
+			for (EveApiOwner owner : account.getOwners()) {
 				marketOrders = marketOrders || !owner.getMarketOrders().isEmpty();
 				//industryJobs = industryJobs || !owner.getIndustryJobs().isEmpty();
 				transactions = transactions || !owner.getTransactions().isEmpty();

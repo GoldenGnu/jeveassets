@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2016 Contributors (see credits.txt)
+ * Copyright 2009-2017 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -47,12 +47,8 @@ public abstract class DialoguesAccount extends Bundle {
 
 	public abstract String failApiError();
 	public abstract String failApiErrorText(String s);
-	public abstract String failApiException();
-	public abstract String failApiExceptionText();
 	public abstract String failExist();
 	public abstract String failExistText();
-	public abstract String failGeneric();
-	public abstract String failGenericText(String s);
 	public abstract String failNotEnoughPrivileges();
 	public abstract String failNotEnoughPrivilegesText();
 	public abstract String failNotValid();
@@ -64,7 +60,10 @@ public abstract class DialoguesAccount extends Bundle {
 
 	public abstract String keyId();
 	public abstract String vCode();
-	public abstract String helpText();
+	public abstract String accessKey();
+	public abstract String credential();
+	public abstract String eveApiHelpText();
+	public abstract String eveKitHelpText();
 	public abstract String validatingMessage();
 
 	public abstract String dialogueNameAccountManagement();
@@ -72,6 +71,8 @@ public abstract class DialoguesAccount extends Bundle {
 	public abstract String accountExpired();
 	public abstract String accountInvalid();
 	public abstract String add();
+	public abstract String eveapi();
+	public abstract String evekit();
 	public abstract String collapse();
 	public abstract String expand();
 	public abstract String showAssets();

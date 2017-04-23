@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2016 Contributors (see credits.txt)
+ * Copyright 2009-2017 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -42,19 +42,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import net.nikr.eve.jeveasset.data.ItemFlag;
-import net.nikr.eve.jeveasset.data.MyAccount;
+import net.nikr.eve.jeveasset.data.eveapi.EveApiAccount;
 import net.nikr.eve.jeveasset.data.MyAccountBalance;
-import net.nikr.eve.jeveasset.data.Owner;
+import net.nikr.eve.jeveasset.data.eveapi.EveApiOwner;
 import net.nikr.eve.jeveasset.data.ProfileManager;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.data.StaticData;
+import net.nikr.eve.jeveasset.data.evekit.EveKitOwner;
+import net.nikr.eve.jeveasset.data.api.OwnerType;
 import net.nikr.eve.jeveasset.gui.tabs.assets.MyAsset;
 import net.nikr.eve.jeveasset.gui.tabs.journal.MyJournal;
 import net.nikr.eve.jeveasset.gui.tabs.transaction.MyTransaction;
-import net.nikr.eve.jeveasset.io.shared.AbstractXmlReader;
 import net.nikr.eve.jeveasset.io.shared.ApiConverter;
-import net.nikr.eve.jeveasset.io.shared.AttributeGetters;
-import net.nikr.eve.jeveasset.io.shared.XmlException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
@@ -98,19 +97,79 @@ public final class ProfileReader extends AbstractXmlReader {
 			Element accountsElement = (Element) accountNodes.item(0);
 			parseAccounts(accountsElement, profileManager.getAccounts());
 		}
+		//Accounts
+		NodeList eveKitOwnersNodes = element.getElementsByTagName("evekitowners");
+		if (eveKitOwnersNodes.getLength() == 1) {
+			Element eveKitOwnersElement = (Element) eveKitOwnersNodes.item(0);
+			parseEveKitOwners(eveKitOwnersElement, profileManager.getEveKitOwners());
+		}
 	}
 
-	private void parseAccounts(final Element element, final List<MyAccount> accounts) {
+	private void parseEveKitOwners(final Element element, final List<EveKitOwner> eveKitOwners) {
+		NodeList ownerNodes =  element.getElementsByTagName("evekitowner");
+		for (int i = 0; i < ownerNodes.getLength(); i++) {
+			Element currentNode = (Element) ownerNodes.item(i);
+			int accessKey = AttributeGetters.getInt(currentNode, "accesskey");
+			String accessCred = AttributeGetters.getString(currentNode, "accesscred");
+			Date expire = null;
+			if (AttributeGetters.haveAttribute(currentNode, "expire")) {
+				expire = AttributeGetters.getDate(currentNode, "expire");
+			}
+			long accessmask = AttributeGetters.getLong(currentNode, "accessmask");
+			boolean corporation = AttributeGetters.getBoolean(currentNode, "corporation");
+			Date limit = null;
+			if (AttributeGetters.haveAttribute(currentNode, "limit")) {
+				limit = AttributeGetters.getDate(currentNode, "limit");
+			}
+			String accountName = AttributeGetters.getString(currentNode, "accountname");
+			//ContID
+			Long journalCID = null;
+			if (AttributeGetters.haveAttribute(currentNode, "journalcid")) {
+				journalCID = AttributeGetters.getLong(currentNode, "journalcid");
+			}
+			Long transactionsCID = null;
+			if (AttributeGetters.haveAttribute(currentNode, "transactionscid")) {
+				transactionsCID = AttributeGetters.getLong(currentNode, "transactionscid");
+			}
+			Long contractsCID = null;
+			if (AttributeGetters.haveAttribute(currentNode, "contractscid")) {
+				contractsCID = AttributeGetters.getLong(currentNode, "contractscid");
+			}
+			Long industryJobsCID = null;
+			if (AttributeGetters.haveAttribute(currentNode, "industryjobscid")) {
+				industryJobsCID = AttributeGetters.getLong(currentNode, "industryjobscid");
+			}
+			Long marketOrdersCID = null;
+			if (AttributeGetters.haveAttribute(currentNode, "marketorderscid")) {
+				marketOrdersCID = AttributeGetters.getLong(currentNode, "marketorderscid");
+			}
+			Date accountNextUpdate = Settings.getNow();
+			if (AttributeGetters.haveAttribute(currentNode, "accountnextupdate")) {
+				accountNextUpdate = AttributeGetters.getDate(currentNode, "accountnextupdate");
+			}
+			EveKitOwner owner = new EveKitOwner(accessKey, accessCred, expire, accessmask, corporation, limit, accountName);
+			owner.setJournalCID(journalCID);
+			owner.setTransactionsCID(transactionsCID);
+			owner.setContractsCID(contractsCID);
+			owner.setIndustryJobsCID(industryJobsCID);
+			owner.setMarketOrdersCID(marketOrdersCID);
+			owner.setAccountNextUpdate(accountNextUpdate);
+			parseOwnerType(currentNode, owner);
+			eveKitOwners.add(owner);
+		}
+	}
+
+	private void parseAccounts(final Element element, final List<EveApiAccount> accounts) {
 		NodeList accountNodes = element.getElementsByTagName("account");
 		for (int i = 0; i < accountNodes.getLength(); i++) {
 			Element currentNode = (Element) accountNodes.item(i);
-			MyAccount account = parseAccount(currentNode);
+			EveApiAccount account = parseAccount(currentNode);
 			parseOwners(currentNode, account);
 			accounts.add(account);
 		}
 	}
 
-	private MyAccount parseAccount(final Node node) {
+	private EveApiAccount parseAccount(final Node node) {
 		int keyID;
 		if (AttributeGetters.haveAttribute(node, "keyid")) {
 			keyID = AttributeGetters.getInt(node, "keyid");
@@ -123,7 +182,7 @@ public final class ProfileReader extends AbstractXmlReader {
 		} else {
 			vCode = AttributeGetters.getString(node, "apikey");
 		}
-		Date nextUpdate = new Date(AttributeGetters.getLong(node, "charactersnextupdate"));
+		Date nextUpdate = AttributeGetters.getDate(node, "charactersnextupdate");
 		String name = Integer.toString(keyID);
 		if (AttributeGetters.haveAttribute(node, "name")) {
 			name = AttributeGetters.getString(node, "name");
@@ -147,79 +206,99 @@ public final class ProfileReader extends AbstractXmlReader {
 		if (AttributeGetters.haveAttribute(node, "invalid")) {
 			invalid = AttributeGetters.getBoolean(node, "invalid");
 		}
-		return new MyAccount(keyID, vCode, name, nextUpdate, accessMask, type, expires, invalid);
+		return new EveApiAccount(keyID, vCode, name, nextUpdate, accessMask, type, expires, invalid);
 	}
 
-	private void parseOwners(final Element element, final MyAccount account) {
+	private void parseOwners(final Element element, final EveApiAccount account) {
 		NodeList ownerNodes =  element.getElementsByTagName("human");
 		for (int i = 0; i < ownerNodes.getLength(); i++) {
 			Element currentNode = (Element) ownerNodes.item(i);
-			Owner owner = parseOwner(currentNode, account);
+			EveApiOwner owner = new EveApiOwner(account);
+			parseOwnerType(currentNode, owner);
 			account.getOwners().add(owner);
-			NodeList assetNodes = currentNode.getElementsByTagName("assets");
-			if (assetNodes.getLength() == 1) {
-				parseAssets(assetNodes.item(0), owner, owner.getAssets(), null);
-			}
-			parseContracts(currentNode, owner);
-			parseBalances(currentNode, owner);
-			parseMarketOrders(currentNode, owner);
-			parseJournals(currentNode, owner);
-			parseTransactions(currentNode, owner);
-			parseIndustryJobs(currentNode, owner);
-			parseBlueprints(currentNode, owner);
 		}
 	}
 
-	private Owner parseOwner(final Node node, final MyAccount account) {
-		String name = AttributeGetters.getString(node, "name");
+	private void parseOwnerType(final Element node, OwnerType owner) {
+		String ownerName = AttributeGetters.getString(node, "name");
 		long ownerID = AttributeGetters.getLong(node, "id");
-		Date assetsNextUpdate = new Date(AttributeGetters.getLong(node, "assetsnextupdate"));
+		Date assetsNextUpdate = Settings.getNow();
+		if (AttributeGetters.haveAttribute(node, "assetsnextupdate")) {
+			assetsNextUpdate = AttributeGetters.getDate(node, "assetsnextupdate");
+		}
 		Date assetsLastUpdate = null;
 		if (AttributeGetters.haveAttribute(node, "assetslastupdate")) {
-			assetsLastUpdate = new Date(AttributeGetters.getLong(node, "assetslastupdate"));
+			assetsLastUpdate = AttributeGetters.getDate(node, "assetslastupdate");
 		}
-		Date balanceNextUpdate = new Date(AttributeGetters.getLong(node, "balancenextupdate"));
+		Date balanceNextUpdate = Settings.getNow();
+		if (AttributeGetters.haveAttribute(node, "balancenextupdate")) {
+			balanceNextUpdate = AttributeGetters.getDate(node, "balancenextupdate");
+		}
 		Date balanceLastUpdate = null;
 		if (AttributeGetters.haveAttribute(node, "balancelastupdate")) {
-			balanceLastUpdate = new Date(AttributeGetters.getLong(node, "balancelastupdate"));
+			balanceLastUpdate = AttributeGetters.getDate(node, "balancelastupdate");
 		}
-		boolean showAssets = true;
+		boolean showOwner = true;
 		if (AttributeGetters.haveAttribute(node, "show")) {
-			showAssets = AttributeGetters.getBoolean(node, "show");
+			showOwner = AttributeGetters.getBoolean(node, "show");
 		}
 		Date marketOrdersNextUpdate = Settings.getNow();
 		if (AttributeGetters.haveAttribute(node, "marketordersnextupdate")) {
-			marketOrdersNextUpdate = new Date(AttributeGetters.getLong(node, "marketordersnextupdate"));
+			marketOrdersNextUpdate = AttributeGetters.getDate(node, "marketordersnextupdate");
 		}
 		Date journalNextUpdate = Settings.getNow();
 		if (AttributeGetters.haveAttribute(node, "journalnextupdate")) {
-			journalNextUpdate = new Date(AttributeGetters.getLong(node, "journalnextupdate"));
+			journalNextUpdate = AttributeGetters.getDate(node, "journalnextupdate");
 		}
 		Date transactionsNextUpdate = Settings.getNow();
 		if (AttributeGetters.haveAttribute(node, "wallettransactionsnextupdate")) {
-			transactionsNextUpdate = new Date(AttributeGetters.getLong(node, "wallettransactionsnextupdate"));
+			transactionsNextUpdate =AttributeGetters.getDate(node, "wallettransactionsnextupdate");
 		}
 		Date industryJobsNextUpdate = Settings.getNow();
 		if (AttributeGetters.haveAttribute(node, "industryjobsnextupdate")) {
-			industryJobsNextUpdate = new Date(AttributeGetters.getLong(node, "industryjobsnextupdate"));
+			industryJobsNextUpdate = AttributeGetters.getDate(node, "industryjobsnextupdate");
 		}
 		Date contractsNextUpdate = Settings.getNow();
 		if (AttributeGetters.haveAttribute(node, "contractsnextupdate")) {
-			contractsNextUpdate = new Date(AttributeGetters.getLong(node, "contractsnextupdate"));
+			contractsNextUpdate = AttributeGetters.getDate(node, "contractsnextupdate");
 		}
 		Date locationsNextUpdate = Settings.getNow();
 		if (AttributeGetters.haveAttribute(node, "locationsnextupdate")) {
-			locationsNextUpdate = new Date(AttributeGetters.getLong(node, "locationsnextupdate"));
+			locationsNextUpdate = AttributeGetters.getDate(node, "locationsnextupdate");
 		}
-		Date blueprintsnextupdate = Settings.getNow();
+		Date blueprintsNextUpdate = Settings.getNow();
 		if (AttributeGetters.haveAttribute(node, "blueprintsnextupdate")) {
-			blueprintsnextupdate = new Date(AttributeGetters.getLong(node, "blueprintsnextupdate"));
+			blueprintsNextUpdate = AttributeGetters.getDate(node, "blueprintsnextupdate");
 		}
+		owner.setOwnerName(ownerName);
+		owner.setOwnerID(ownerID);
+		owner.setAssetNextUpdate(assetsNextUpdate);
+		owner.setAssetLastUpdate(assetsLastUpdate);
+		owner.setBalanceNextUpdate(balanceNextUpdate);
+		owner.setBalanceLastUpdate(balanceLastUpdate);
+		owner.setShowOwner(showOwner);
+		owner.setMarketOrdersNextUpdate(marketOrdersNextUpdate);
+		owner.setJournalNextUpdate(journalNextUpdate);
+		owner.setTransactionsNextUpdate(transactionsNextUpdate);
+		owner.setIndustryJobsNextUpdate(industryJobsNextUpdate);
+		owner.setContractsNextUpdate(contractsNextUpdate);
+		owner.setLocationsNextUpdate(locationsNextUpdate);
+		owner.setBlueprintsNextUpdate(blueprintsNextUpdate);
 
-		return new Owner(account, name, ownerID, showAssets, assetsLastUpdate, assetsNextUpdate, balanceLastUpdate, balanceNextUpdate, marketOrdersNextUpdate, journalNextUpdate, transactionsNextUpdate, industryJobsNextUpdate, contractsNextUpdate, locationsNextUpdate, blueprintsnextupdate);
+		NodeList assetNodes = node.getElementsByTagName("assets");
+		if (assetNodes.getLength() == 1) {
+			parseAssets(assetNodes.item(0), owner, owner.getAssets(), null);
+		}
+		parseContracts(node, owner);
+		parseBalances(node, owner);
+		parseMarketOrders(node, owner);
+		parseJournals(node, owner);
+		parseTransactions(node, owner);
+		parseIndustryJobs(node, owner);
+		parseBlueprints(node, owner);
 	}
 
-	private void parseContracts(final Element element, final Owner owner) {
+	private void parseContracts(final Element element, final OwnerType owner) {
 		NodeList contractsNodes = element.getElementsByTagName("contracts");
 		Map<Contract, List<ContractItem>> eveContracts = new HashMap<Contract, List<ContractItem>>();
 		for (int a = 0; a < contractsNodes.getLength(); a++) {
@@ -324,7 +403,8 @@ public final class ProfileReader extends AbstractXmlReader {
 		return contractItem;
 	}
 
-	private void parseBalances(final Element element, final Owner owner) {
+	private void parseBalances(final Element element, final OwnerType owner) {
+		List<MyAccountBalance> accountBalances = new ArrayList<MyAccountBalance>();
 		NodeList balancesNodes = element.getElementsByTagName("balances");
 		for (int a = 0; a < balancesNodes.getLength(); a++) {
 			Element currentBalancesNode = (Element) balancesNodes.item(a);
@@ -332,9 +412,10 @@ public final class ProfileReader extends AbstractXmlReader {
 			for (int b = 0; b < balanceNodes.getLength(); b++) {
 				Element currentNode = (Element) balanceNodes.item(b);
 				AccountBalance accountBalance = parseBalance(currentNode);
-				owner.getAccountBalances().add(new MyAccountBalance(accountBalance, owner));
+				accountBalances.add(new MyAccountBalance(accountBalance, owner));
 			}
 		}
+		owner.setAccountBalances(accountBalances);
 	}
 
 	private AccountBalance parseBalance(final Element element) {
@@ -348,7 +429,7 @@ public final class ProfileReader extends AbstractXmlReader {
 		return accountBalance;
 	}
 
-	private void parseMarketOrders(final Element element, final Owner owner) {
+	private void parseMarketOrders(final Element element, final OwnerType owner) {
 		NodeList marketOrdersNodes = element.getElementsByTagName("markerorders");
 		List<MarketOrder> marketOrders = new ArrayList<MarketOrder>();
 		for (int a = 0; a < marketOrdersNodes.getLength(); a++) {
@@ -398,7 +479,7 @@ public final class ProfileReader extends AbstractXmlReader {
 		return apiMarketOrder;
 	}
 
-	private void parseJournals(final Element element, final Owner owner) {
+	private void parseJournals(final Element element, final OwnerType owner) {
 		NodeList journalsNodes = element.getElementsByTagName("journals");
 		Set<MyJournal> journals = new HashSet<MyJournal>();
 		for (int a = 0; a < journalsNodes.getLength(); a++) {
@@ -413,7 +494,7 @@ public final class ProfileReader extends AbstractXmlReader {
 		owner.setJournal(journals);
 	}
 
-	private MyJournal parseJournal(final Element element, final Owner owner) {
+	private MyJournal parseJournal(final Element element, final OwnerType owner) {
 		//Base
 		JournalEntry apiJournalEntry = new JournalEntry();
 		double amount = AttributeGetters.getDouble(element, "amount");
@@ -465,7 +546,7 @@ public final class ProfileReader extends AbstractXmlReader {
 		return ApiConverter.convertJournal(apiJournalEntry, owner, accountKey);
 	}
 
-	private void parseTransactions(final Element element, final Owner owner) {
+	private void parseTransactions(final Element element, final OwnerType owner) {
 		NodeList transactionsNodes = element.getElementsByTagName("wallettransactions");
 		Set<MyTransaction> transactions = new HashSet<MyTransaction>();
 		for (int a = 0; a < transactionsNodes.getLength(); a++) {
@@ -480,7 +561,7 @@ public final class ProfileReader extends AbstractXmlReader {
 		owner.setTransactions(transactions);
 	}
 
-	private MyTransaction parseTransaction(final Element element, final Owner owner) {
+	private MyTransaction parseTransaction(final Element element, final OwnerType owner) {
 		WalletTransaction apiTransaction = new WalletTransaction();
 		Date transactionDateTime = AttributeGetters.getDate(element, "transactiondatetime");
 		Long transactionID = AttributeGetters.getLong(element, "transactionid");
@@ -537,7 +618,7 @@ public final class ProfileReader extends AbstractXmlReader {
 		return ApiConverter.convertTransaction(apiTransaction, owner, accountKey);
 	}
 
-	private void parseIndustryJobs(final Element element, final Owner owner) {
+	private void parseIndustryJobs(final Element element, final OwnerType owner) {
 		NodeList industryJobsNodes = element.getElementsByTagName("industryjobs");
 		List<IndustryJob> industryJobs = new ArrayList<IndustryJob>();
 		for (int a = 0; a < industryJobsNodes.getLength(); a++) {
@@ -615,7 +696,7 @@ public final class ProfileReader extends AbstractXmlReader {
 		return apiIndustryJob;
 	}
 
-	private void parseAssets(final Node node, final Owner owner, final List<MyAsset> assets, final MyAsset parentAsset) {
+	private void parseAssets(final Node node, final OwnerType owner, final List<MyAsset> assets, final MyAsset parentAsset) {
 		NodeList assetsNodes = node.getChildNodes();
 		for (int i = 0; i < assetsNodes.getLength(); i++) {
 			Node currentNode = assetsNodes.item(i);
@@ -631,7 +712,7 @@ public final class ProfileReader extends AbstractXmlReader {
 		}
 	}
 
-	private MyAsset parseAsset(final Node node, final Owner owner, final MyAsset parentAsset) {
+	private MyAsset parseAsset(final Node node, final OwnerType owner, final MyAsset parentAsset) {
 		long count = AttributeGetters.getLong(node, "count");
 
 		long itemId = AttributeGetters.getLong(node, "id");
@@ -660,7 +741,7 @@ public final class ProfileReader extends AbstractXmlReader {
 		return ApiConverter.createAsset(parentAsset, owner, count, flagID, itemId, typeID, locationID, singleton, rawQuantity, null);
 	}
 
-	private void parseBlueprints(final Element element, final Owner owners) {
+	private void parseBlueprints(final Element element, final OwnerType owners) {
 		Map<Long, Blueprint> blueprints = new HashMap<Long, Blueprint>();
 		NodeList blueprintsNodes = element.getElementsByTagName("blueprints");
 		for (int a = 0; a < blueprintsNodes.getLength(); a++) {

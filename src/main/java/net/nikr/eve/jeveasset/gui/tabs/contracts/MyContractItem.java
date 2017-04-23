@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2016 Contributors (see credits.txt)
+ * Copyright 2009-2017 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -22,17 +22,18 @@
 package net.nikr.eve.jeveasset.gui.tabs.contracts;
 
 import com.beimin.eveapi.model.shared.ContractItem;
+import java.util.Set;
 import net.nikr.eve.jeveasset.data.Item;
 import net.nikr.eve.jeveasset.data.MyLocation;
 import net.nikr.eve.jeveasset.data.types.BlueprintType;
 import net.nikr.eve.jeveasset.data.types.ItemType;
-import net.nikr.eve.jeveasset.data.types.LocationType;
+import net.nikr.eve.jeveasset.data.types.LocationsType;
 import net.nikr.eve.jeveasset.data.types.PriceType;
 import net.nikr.eve.jeveasset.gui.shared.CopyHandler.CopySeparator;
 import net.nikr.eve.jeveasset.i18n.TabsContracts;
 
 
-public class MyContractItem extends ContractItem implements Comparable<MyContractItem>, LocationType, ItemType, BlueprintType, PriceType, CopySeparator {
+public class MyContractItem extends ContractItem implements Comparable<MyContractItem>, LocationsType, ItemType, BlueprintType, PriceType, CopySeparator {
 
 	private final MyContract contract;
 	private final Item item;
@@ -113,8 +114,8 @@ public class MyContractItem extends ContractItem implements Comparable<MyContrac
 	}
 
 	@Override
-	public MyLocation getLocation() {
-		return getContract().getStartStation();
+	public Set<MyLocation> getLocations() {
+		return getContract().getLocations();
 	}
 
 	@Override

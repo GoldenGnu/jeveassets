@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2016 Contributors (see credits.txt)
+ * Copyright 2009-2017 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -21,8 +21,10 @@
 
 package net.nikr.eve.jeveasset.gui.dialogs.update;
 
+import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Font;
+import java.awt.Graphics;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.text.DateFormat;
@@ -34,6 +36,7 @@ import java.util.List;
 import java.util.concurrent.CancellationException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import javax.swing.Icon;
 import javax.swing.JLabel;
 import javax.swing.JTextPane;
 import javax.swing.SwingWorker;
@@ -48,6 +51,7 @@ import org.slf4j.LoggerFactory;
 public abstract class UpdateTask extends SwingWorker<Void, Void> {
 	private static final Logger LOG = LoggerFactory.getLogger(UpdateTask.class);
 
+	private Icon icon;
 	private final JLabel jText;
 	private final List<ErrorClass> errors;
 	private final String name;
@@ -64,6 +68,10 @@ public abstract class UpdateTask extends SwingWorker<Void, Void> {
 		errors = new ArrayList<ErrorClass>();
 	}
 
+	public Integer getTotalProgress() {
+		return null;
+	}
+
 	public String getName() {
 		return name;
 	}
@@ -78,6 +86,17 @@ public abstract class UpdateTask extends SwingWorker<Void, Void> {
 
 	public boolean hasError() {
 		return !errors.isEmpty();
+	}
+
+	public Icon getIcon() {
+		if (icon == null) {
+			icon = Images.UPDATE_WORKING.getIcon();
+		}
+		return icon;
+	}
+
+	public void setIcon(Icon icon) {
+		this.icon = icon;
 	}
 
 	public abstract void update();
@@ -149,6 +168,10 @@ public abstract class UpdateTask extends SwingWorker<Void, Void> {
 		if (progress != getProgress()) {
 			setProgress(progress);
 		}
+	}
+
+	public void resetTaskProgress() {
+		setProgress(0);
 	}
 
 	public void cancelled() {
@@ -236,5 +259,24 @@ public abstract class UpdateTask extends SwingWorker<Void, Void> {
 		public String getError() {
 			return error;
 		}
+	}
+
+	public static class EmptyIcon implements Icon {
+
+		@Override
+		public void paintIcon(Component c, Graphics g, int x, int y) {
+			//Nothing to paint
+		}
+
+		@Override
+		public int getIconWidth() {
+			return 16;
+		}
+
+		@Override
+		public int getIconHeight() {
+			return 16;
+		}
+		
 	}
 }

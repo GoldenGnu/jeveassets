@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2016 Contributors (see credits.txt)
+ * Copyright 2009-2017 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -66,7 +66,7 @@ public enum IndustryJobTableFormat implements EnumTableColumn<MyIndustryJob> {
 		}
 		@Override
 		public Object getColumnValue(final MyIndustryJob from) {
-			return from.getOwner();
+			return from.getOwnerName();
 		}
 	},
 	INSTALLER(String.class, GlazedLists.comparableComparator()) {

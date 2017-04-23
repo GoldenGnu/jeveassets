@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2016 Contributors (see credits.txt)
+ * Copyright 2009-2017 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -35,7 +35,7 @@ import javax.swing.UnsupportedLookAndFeelException;
 import static net.nikr.eve.jeveasset.Program.PROGRAM_NAME;
 import static net.nikr.eve.jeveasset.Program.PROGRAM_VERSION;
 import net.nikr.eve.jeveasset.io.online.Updater;
-import net.nikr.eve.jeveasset.io.shared.FileLock;
+import net.nikr.eve.jeveasset.io.local.FileLock;
 import net.nikr.eve.jeveasset.io.shared.FileUtil;
 
 
@@ -217,7 +217,7 @@ public final class Main {
 		files.add("asm-5.0.4.jar");
 		files.add("dom4j-1.6.1.jar");
 		files.add("eveapi-7.0.1.jar");
-		files.add("glazedlists_java15-1.9.1.jar");
+		files.add("glazedlists_java16-1.10.0.jar");
 		files.add("graph-1.5.0.jar");
 		files.add("guava-r09.jar");
 		files.add("jaxen-1.1.6.jar");
@@ -238,6 +238,30 @@ public final class Main {
 		files.add("jackson-core-2.8.3.jar");
 		files.add("jackson-databind-2.8.3.jar");
 		files.add("jackson-annotations-2.8.0.jar");
+		files.add("aopalliance-repackaged-2.4.0-b34.jar");
+		files.add("jersey-guava-2.22.2.jar");
+		files.add("javax.inject-2.4.0-b34.jar");
+		files.add("hk2-locator-2.4.0-b34.jar");
+		files.add("hk2-utils-2.4.0-b34.jar");
+		files.add("javassist-3.18.1-GA.jar");
+		files.add("jackson-jaxrs-json-provider-2.5.4.jar");
+		files.add("mimepull-1.9.6.jar");
+		files.add("joda-time-2.9.4.jar");
+		files.add("jersey-media-multipart-2.22.2.jar");
+		files.add("jersey-entity-filtering-2.22.2.jar");
+		files.add("jackson-datatype-joda-2.7.5.jar");
+		files.add("jackson-jaxrs-base-2.5.4.jar");
+		files.add("javax.ws.rs-api-2.0.1.jar");
+		files.add("jersey-media-json-jackson-2.22.2.jar");
+		files.add("osgi-resource-locator-1.0.1.jar");
+		files.add("evekit-3.0.0.jar");
+		files.add("javax.annotation-api-1.2.jar");
+		files.add("hk2-api-2.4.0-b34.jar");
+		files.add("jersey-common-2.22.2.jar");
+		files.add("jackson-module-jaxb-annotations-2.5.4.jar");
+		files.add("jersey-client-2.22.2.jar");
+		files.add("migbase64-2.2.jar");
+		files.add("swagger-annotations-1.5.9.jar");
 		return files;
 	}
 }

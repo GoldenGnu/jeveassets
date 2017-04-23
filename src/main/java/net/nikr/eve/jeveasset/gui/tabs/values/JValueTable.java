@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2016 Contributors (see credits.txt)
+ * Copyright 2009-2017 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -22,18 +22,18 @@
 package net.nikr.eve.jeveasset.gui.tabs.values;
 
 import ca.odell.glazedlists.swing.DefaultEventTableModel;
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
 import javax.swing.table.TableCellRenderer;
 import net.nikr.eve.jeveasset.Program;
+import net.nikr.eve.jeveasset.gui.shared.Colors;
 import net.nikr.eve.jeveasset.gui.shared.table.JAutoColumnTable;
 import net.nikr.eve.jeveasset.i18n.TabsValues;
 
 
 public class JValueTable  extends JAutoColumnTable {
 
-	private DefaultEventTableModel<Value> tableModel;
+	private final DefaultEventTableModel<Value> tableModel;
 
 	public JValueTable(final Program program, final DefaultEventTableModel<Value> tableModel) {
 		super(program, tableModel);
@@ -57,7 +57,7 @@ public class JValueTable  extends JAutoColumnTable {
 		//UGrand Total
 		if (value.isGrandTotal()) {
 			if (!isSelected) {
-				component.setBackground(new Color(230, 230, 230));
+				component.setBackground(Colors.LIGHT_GRAY.getColor());
 			} else {
 				component.setBackground(this.getSelectionBackground().darker());
 			}

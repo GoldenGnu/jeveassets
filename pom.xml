@@ -5,7 +5,7 @@
 	<groupId>net.nikr</groupId>
 	<artifactId>jeveassets</artifactId>
 	<packaging>jar</packaging>
-	<version>3.1.5-SNAPSHOT</version>
+	<version>4.1.0-SNAPSHOT</version>
 	<name>jeveassets</name>
 	<description>jEveAssets is an out-of-game asset manager for Eve-Online, written in Java</description>
 	<url>http://eve.nikr.net/jeveasset</url>
@@ -366,6 +366,16 @@
 					</execution>
 				</executions>
 			</plugin>
+			<plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.19.1</version>
+                <configuration>
+                    <excludes>
+                        <exclude>${tests.to.skip}</exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
 		</plugins>
 		<extensions>
 			<!-- Enabling the use of FTP -->
@@ -532,6 +542,26 @@
 
 	<profiles>
 		<profile>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+				<tests.to.skip>NOTHING</tests.to.skip>
+            </properties>
+		</profile>
+		<profile>
+            <id>skip-online-tests</id>
+            <activation>
+                <property>
+                    <name>skip-online-tests</name>
+                    <value>true</value>
+                </property>
+            </activation>
+            <properties>
+				<tests.to.skip>**/*OnlineTest.java</tests.to.skip>
+            </properties>
+		</profile>
+		<profile>
 			<id>portable</id>
 			<properties>
 				<arg1>-portable</arg1>
@@ -611,8 +641,8 @@
 		</dependency>
 		<dependency>
 			<groupId>net.java.dev.glazedlists</groupId>
-			<artifactId>glazedlists_java15</artifactId>
-			<version>1.9.1</version>
+			<artifactId>glazedlists_java16</artifactId>
+			<version>1.10.0</version>
 		</dependency>
 		<dependency>
 			<groupId>org.supercsv</groupId>
@@ -686,11 +716,16 @@
 			<artifactId>jackson-databind</artifactId>
 			<version>2.8.3</version>
 		</dependency>
+		<dependency>
+			<groupId>enterprises.orbital.evekit</groupId>
+			<artifactId>evekit</artifactId>
+			<version>3.0.0</version>
+		</dependency>
 	</dependencies>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<project.build.sourceVersion>1.7</project.build.sourceVersion>
+		<project.build.sourceVersion>1.8</project.build.sourceVersion>
 		<targetJdk>1.8</targetJdk>
 		<arg1>-empty</arg1>
 		<arg2>-empty</arg2>

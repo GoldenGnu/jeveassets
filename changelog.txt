@@ -16,6 +16,31 @@
                   #### #  # #  # #  # #### #### #### #### ####
 
 ________________________________________________________________________________
+_4.0.0__________________________________________________________________________
+
+New Features:
+-EveKit support
+-Import tracker data from EveKit
+-Rename unknown locations
+-Added unknown locations and citadels to the stockpile tool
+-Lookup all locations for items with multiple locations (Stockpile/Contracts)
+-Added option to use stronger colors
+-Show time until the the first and last account can be updated
+
+Changed:
+-Made it easier to reactivate expired accounts
+-You can now copy the error message from the update dialog
+-The Citadel API is now cached at my server
+
+Bug Fixes:
+-Profiles was not saved on creation
+-Removed wrecks from the Assets Tool
+-Fixed ISK per Hour import
+
+Code:
+-Moved to glazed list 1.10
+
+________________________________________________________________________________
 _3.1.4__________________________________________________________________________
 
 Bug Fixes:

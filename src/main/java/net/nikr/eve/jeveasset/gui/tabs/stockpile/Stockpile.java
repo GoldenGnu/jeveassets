@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2016 Contributors (see credits.txt)
+ * Copyright 2009-2017 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -22,6 +22,7 @@ package net.nikr.eve.jeveasset.gui.tabs.stockpile;
 
 import com.beimin.eveapi.model.shared.ContractStatus;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -31,7 +32,7 @@ import net.nikr.eve.jeveasset.data.Item;
 import net.nikr.eve.jeveasset.data.MyLocation;
 import net.nikr.eve.jeveasset.data.types.BlueprintType;
 import net.nikr.eve.jeveasset.data.types.ItemType;
-import net.nikr.eve.jeveasset.data.types.LocationType;
+import net.nikr.eve.jeveasset.data.types.LocationsType;
 import net.nikr.eve.jeveasset.data.types.PriceType;
 import net.nikr.eve.jeveasset.gui.shared.CopyHandler.CopySeparator;
 import net.nikr.eve.jeveasset.gui.tabs.assets.MyAsset;
@@ -41,9 +42,10 @@ import net.nikr.eve.jeveasset.gui.tabs.orders.MyMarketOrder;
 import net.nikr.eve.jeveasset.gui.tabs.transaction.MyTransaction;
 import net.nikr.eve.jeveasset.i18n.General;
 import net.nikr.eve.jeveasset.i18n.TabsStockpile;
+import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 
 
-public class Stockpile implements Comparable<Stockpile>, LocationType {
+public class Stockpile implements Comparable<Stockpile>, LocationsType {
 	private String name;
 	private String ownerName;
 	private String flagName;
@@ -83,9 +85,7 @@ public class Stockpile implements Comparable<Stockpile>, LocationType {
 		this.filters = filters;
 		this.multiplier = multiplier;
 		items.add(totalItem);
-		createContainerName();
-		createLocationName();
-		createInclude();
+		updateDynamicValues();
 	}
 
 	final void update(final Stockpile stockpile) {
@@ -94,6 +94,10 @@ public class Stockpile implements Comparable<Stockpile>, LocationType {
 		this.filters = stockpile.getFilters();
 		this.flagName = stockpile.getFlagName();
 		this.multiplier = stockpile.getMultiplier();
+		updateDynamicValues();
+	}
+
+	final void updateDynamicValues() {
 		createContainerName();
 		createLocationName();
 		createInclude();
@@ -102,7 +106,9 @@ public class Stockpile implements Comparable<Stockpile>, LocationType {
 	private void createLocationName() {
 		locationName = General.get().all();
 		for (StockpileFilter filter : filters) {
-			MyLocation location = filter.getLocation();
+			//Update Location
+			MyLocation location = ApiIdConverter.getLocation(filter.getLocation().getLocationID());
+			filter.setLocation(location);
 			if (location != null && !location.isEmpty()) { //Not All
 				if (filters.size() > 1) {
 					locationName = TabsStockpile.get().multiple();
@@ -319,14 +325,15 @@ public class Stockpile implements Comparable<Stockpile>, LocationType {
 		return items;
 	}
 
-	//FIXME - - - > Stockpile: getLocation is useless
 	@Override
-	public MyLocation getLocation() {
-		if (filters.isEmpty()) {
-			return null;
-		} else {
-			return filters.get(0).getLocation();
+	public Set<MyLocation> getLocations() {
+		Set<MyLocation> locations = new HashSet<MyLocation>();
+		for (StockpileFilter filter : filters) {
+			if (!filter.getLocation().isEmpty()) {
+				locations.add(filter.getLocation());
+			}
 		}
+		return locations;
 	}
 
 	public List<StockpileFilter> getFilters() {
@@ -403,7 +410,7 @@ public class Stockpile implements Comparable<Stockpile>, LocationType {
 		return this.getName().compareToIgnoreCase(o.getName());
 	}
 
-	public static class StockpileItem implements Comparable<StockpileItem>, LocationType, ItemType, BlueprintType, PriceType, CopySeparator {
+	public static class StockpileItem implements Comparable<StockpileItem>, LocationsType, ItemType, BlueprintType, PriceType, CopySeparator {
 		//Constructor
 		private Stockpile stockpile;
 		private Item item;
@@ -526,10 +533,14 @@ public class Stockpile implements Comparable<Stockpile>, LocationType {
 
 		private boolean matchesContract(MyContractItem contractItem, boolean add) {
 			return contractItem != null //better safe then sorry
-				&& matches(add, contractItem.getTypeID(), contractItem.getContract().isForCorp() ? contractItem.getContract().getIssuerCorpID() : contractItem.getContract().getIssuerID(), null, null, contractItem.getContract().getLocation(), null, null, null, null, contractItem);
+				&& matches(add, contractItem.getTypeID(), contractItem.getContract().isForCorp() ? contractItem.getContract().getIssuerCorpID() : contractItem.getContract().getIssuerID(), null, null, contractItem.getContract().getLocations(), null, null, null, null, contractItem);
 		}
 
 		private boolean matches(final boolean add, final int typeID, final Long ownerID, final String container, final Integer flagID, final MyLocation location, final MyAsset asset, final MyMarketOrder marketOrder, final MyIndustryJob industryJob, final MyTransaction transaction, final MyContractItem contractItem) {
+			return matches(add, typeID, ownerID, container, flagID, Collections.singleton(location), asset, marketOrder, industryJob, transaction, contractItem);
+		}
+
+		private boolean matches(final boolean add, final int typeID, final Long ownerID, final String container, final Integer flagID, final Set<MyLocation> locations, final MyAsset asset, final MyMarketOrder marketOrder, final MyIndustryJob industryJob, final MyTransaction transaction, final MyContractItem contractItem) {
 			if (stockpile.getFilters().isEmpty()) {
 				return true; //All
 			}
@@ -579,7 +590,7 @@ public class Stockpile implements Comparable<Stockpile>, LocationType {
 					}
 				}
 			//Location
-				if (!matchLocation(filter, location)) {
+				if (!matchLocation(filter, locations)) {
 					continue; //Do not match location - try next filter
 				}
 			//Exclude
@@ -750,19 +761,21 @@ public class Stockpile implements Comparable<Stockpile>, LocationType {
 			return false; //No match
 		}
 	
-		private boolean matchLocation(final StockpileFilter filter, final MyLocation location) {
+		private boolean matchLocation(final StockpileFilter filter, final Collection<MyLocation> locations) {
 			MyLocation stockpileLocation = filter.getLocation();
-			if (filter.getLocation().isEmpty()) {
-				return true; //Nothing selected - always match
-			}
-			if (stockpileLocation.getLocation().equals(location.getStation())) {
-				return true;
-			}
-			if (stockpileLocation.getLocation().equals(location.getSystem())) {
-				return true;
-			}
-			if (stockpileLocation.getLocation().equals(location.getRegion())) {
-				return true;
+			for (MyLocation location : locations) {
+				if (filter.getLocation().isEmpty()) {
+					return true; //Nothing selected - always match (Univers/Galaxy)
+				}
+				if (stockpileLocation.getLocation().equals(location.getStation())) {
+					return true;
+				}
+				if (stockpileLocation.getLocation().equals(location.getSystem())) {
+					return true;
+				}
+				if (stockpileLocation.getLocation().equals(location.getRegion())) {
+					return true;
+				}
 			}
 			return false;
 		}
@@ -928,8 +941,8 @@ public class Stockpile implements Comparable<Stockpile>, LocationType {
 		}
 
 		@Override
-		public MyLocation getLocation() {
-			return stockpile.getLocation();
+		public Set<MyLocation> getLocations() {
+			return stockpile.getLocations();
 		}
 
 		@Override
@@ -1187,7 +1200,7 @@ public class Stockpile implements Comparable<Stockpile>, LocationType {
 	}
 
 	public static class StockpileFilter {
-		private final MyLocation location;
+		private MyLocation location;
 		private final List<Integer> flagIDs;
 		private final List<String> containers;
 		private final List<Long> ownerIDs;
@@ -1224,6 +1237,10 @@ public class Stockpile implements Comparable<Stockpile>, LocationType {
 
 		public MyLocation getLocation() {
 			return location;
+		}
+
+		private void setLocation(MyLocation location) {
+			this.location = location;
 		}
 
 		public List<Integer> getFlagIDs() {

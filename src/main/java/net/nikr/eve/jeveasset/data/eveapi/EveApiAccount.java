@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2016 Contributors (see credits.txt)
+ * Copyright 2009-2017 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -19,41 +19,16 @@
  *
  */
 
-package net.nikr.eve.jeveasset.data;
+package net.nikr.eve.jeveasset.data.eveapi;
 
 import com.beimin.eveapi.model.shared.KeyType;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import net.nikr.eve.jeveasset.data.Settings;
 
 
-public class MyAccount {
-
-	public enum AccessMask {
-		OPEN(0L),
-		ACCOUNT_BALANCE(1L),
-		ASSET_LIST(2L),
-		INDUSTRY_JOBS(128L),
-		MARKET_ORDERS(4096L),
-		TRANSACTIONS_CHAR(4194304L),
-		TRANSACTIONS_CORP(2097152L),
-		JOURNAL_CHAR(2097152L),
-		JOURNAL_CORP(1048576L),
-		CONTRACTS_CORP(8388608L),
-		CONTRACTS_CHAR(67108864L),
-		LOCATIONS_CHAR(134217728L),
-		LOCATIONS_CORP(16777216L);
-
-		private final long accessMask;
-
-		private AccessMask(long accessMask) {
-			this.accessMask = accessMask;
-		}
-
-		public long getAccessMask() {
-			return accessMask;
-		}
-	}
+public class EveApiAccount {
 
 	private int keyID;
 	private String vCode;
@@ -64,9 +39,9 @@ public class MyAccount {
 	private Date expires;
 	private boolean invalid;
 
-	private List<Owner> owners = new ArrayList<Owner>();
+	private List<EveApiOwner> owners = new ArrayList<EveApiOwner>();
 
-	public MyAccount(final MyAccount account) {
+	public EveApiAccount(final EveApiAccount account) {
 		this(account.getKeyID(),
 				account.getVCode(),
 				account.getName(),
@@ -75,16 +50,16 @@ public class MyAccount {
 				account.getType(),
 				account.getExpires(),
 				account.isInvalid());
-		for (Owner owner : account.getOwners()) {
-			owners.add(new Owner(this, owner));
+		for (EveApiOwner owner : account.getOwners()) {
+			owners.add(new EveApiOwner(this, owner));
 		}
 	}
 
-	public MyAccount(final int keyID, final String vCode) {
+	public EveApiAccount(final int keyID, final String vCode) {
 		this(keyID, vCode, Integer.toString(keyID), Settings.getNow(), 0, null, null, false);
 	}
 
-	public MyAccount(final int keyID, final String vCode, final String name, final Date accountNextUpdate, final long accessMask, final KeyType type, final Date expires, final boolean invalid) {
+	public EveApiAccount(final int keyID, final String vCode, final String name, final Date accountNextUpdate, final long accessMask, final KeyType type, final Date expires, final boolean invalid) {
 		this.keyID = keyID;
 		this.vCode = vCode;
 		this.name = name;
@@ -177,7 +152,7 @@ public class MyAccount {
 		return !isCorporation(); //type.equals("Character") || type.equals("Account");
 	}
 
-	public List<Owner> getOwners() {
+	public List<EveApiOwner> getOwners() {
 		return owners;
 	}
 
@@ -185,55 +160,55 @@ public class MyAccount {
 		this.vCode = vCode;
 	}
 
-	public void setOwners(final List<Owner> owners) {
+	public void setOwners(final List<EveApiOwner> owners) {
 		this.owners = owners;
 	}
 
 	public boolean isAccountBalance() {
-		return ((getAccessMask() & AccessMask.ACCOUNT_BALANCE.getAccessMask()) == AccessMask.ACCOUNT_BALANCE.getAccessMask());
+		return ((getAccessMask() & EveApiAccessMask.ACCOUNT_BALANCE.getAccessMask()) == EveApiAccessMask.ACCOUNT_BALANCE.getAccessMask());
 	}
 
 	public boolean isAssetList() {
-		return ((getAccessMask() & AccessMask.ASSET_LIST.getAccessMask()) == AccessMask.ASSET_LIST.getAccessMask());
+		return ((getAccessMask() & EveApiAccessMask.ASSET_LIST.getAccessMask()) == EveApiAccessMask.ASSET_LIST.getAccessMask());
 	}
 
 	public boolean isMarketOrders() {
-		return ((getAccessMask() & AccessMask.MARKET_ORDERS.getAccessMask()) == AccessMask.MARKET_ORDERS.getAccessMask());
+		return ((getAccessMask() & EveApiAccessMask.MARKET_ORDERS.getAccessMask()) == EveApiAccessMask.MARKET_ORDERS.getAccessMask());
 	}
 
 	public boolean isIndustryJobs() {
-		return ((getAccessMask() & AccessMask.INDUSTRY_JOBS.getAccessMask()) == AccessMask.INDUSTRY_JOBS.getAccessMask());
+		return ((getAccessMask() & EveApiAccessMask.INDUSTRY_JOBS.getAccessMask()) == EveApiAccessMask.INDUSTRY_JOBS.getAccessMask());
 	}
 
 	public boolean isContracts() {
 		if (isCorporation()) {
-			return ((getAccessMask() & AccessMask.CONTRACTS_CORP.getAccessMask()) == AccessMask.CONTRACTS_CORP.getAccessMask());
+			return ((getAccessMask() & EveApiAccessMask.CONTRACTS_CORP.getAccessMask()) == EveApiAccessMask.CONTRACTS_CORP.getAccessMask());
 		} else {
-			return ((getAccessMask() & AccessMask.CONTRACTS_CHAR.getAccessMask()) == AccessMask.CONTRACTS_CHAR.getAccessMask());
+			return ((getAccessMask() & EveApiAccessMask.CONTRACTS_CHAR.getAccessMask()) == EveApiAccessMask.CONTRACTS_CHAR.getAccessMask());
 		}
 	}
 
 	public boolean isJournal() {
 		if (isCorporation()) {
-			return ((getAccessMask() & AccessMask.JOURNAL_CORP.getAccessMask()) == AccessMask.JOURNAL_CORP.getAccessMask());
+			return ((getAccessMask() & EveApiAccessMask.JOURNAL_CORP.getAccessMask()) == EveApiAccessMask.JOURNAL_CORP.getAccessMask());
 		} else {
-			return ((getAccessMask() & AccessMask.JOURNAL_CHAR.getAccessMask()) == AccessMask.JOURNAL_CHAR.getAccessMask());
+			return ((getAccessMask() & EveApiAccessMask.JOURNAL_CHAR.getAccessMask()) == EveApiAccessMask.JOURNAL_CHAR.getAccessMask());
 		}
 	}
 
 	public boolean isTransactions() {
 		if (isCorporation()) {
-			return ((getAccessMask() & AccessMask.TRANSACTIONS_CORP.getAccessMask()) == AccessMask.TRANSACTIONS_CORP.getAccessMask());
+			return ((getAccessMask() & EveApiAccessMask.TRANSACTIONS_CORP.getAccessMask()) == EveApiAccessMask.TRANSACTIONS_CORP.getAccessMask());
 		} else {
-			return ((getAccessMask() & AccessMask.TRANSACTIONS_CHAR.getAccessMask()) == AccessMask.TRANSACTIONS_CHAR.getAccessMask());
+			return ((getAccessMask() & EveApiAccessMask.TRANSACTIONS_CHAR.getAccessMask()) == EveApiAccessMask.TRANSACTIONS_CHAR.getAccessMask());
 		}
 	}
 
 	public boolean isLocations() {
 		if (isCorporation()) {
-			return ((getAccessMask() & AccessMask.LOCATIONS_CORP.getAccessMask()) == AccessMask.LOCATIONS_CORP.getAccessMask());
+			return ((getAccessMask() & EveApiAccessMask.LOCATIONS_CORP.getAccessMask()) == EveApiAccessMask.LOCATIONS_CORP.getAccessMask());
 		} else {
-			return ((getAccessMask() & AccessMask.LOCATIONS_CHAR.getAccessMask()) == AccessMask.LOCATIONS_CHAR.getAccessMask());
+			return ((getAccessMask() & EveApiAccessMask.LOCATIONS_CHAR.getAccessMask()) == EveApiAccessMask.LOCATIONS_CHAR.getAccessMask());
 		}
 	}
 
@@ -250,7 +225,7 @@ public class MyAccount {
 		if (getClass() != obj.getClass()) {
 			return false;
 		}
-		final MyAccount other = (MyAccount) obj;
+		final EveApiAccount other = (EveApiAccount) obj;
 		if (this.keyID != other.keyID) {
 			return false;
 		}

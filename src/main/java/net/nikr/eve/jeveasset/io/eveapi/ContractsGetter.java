@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2016 Contributors (see credits.txt)
+ * Copyright 2009-2017 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -31,13 +31,12 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import net.nikr.eve.jeveasset.data.MyAccount;
-import net.nikr.eve.jeveasset.data.MyAccount.AccessMask;
-import net.nikr.eve.jeveasset.data.Owner;
+import net.nikr.eve.jeveasset.data.eveapi.EveApiAccessMask;
+import net.nikr.eve.jeveasset.data.eveapi.EveApiAccount;
+import net.nikr.eve.jeveasset.data.eveapi.EveApiOwner;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import net.nikr.eve.jeveasset.gui.tabs.contracts.MyContract;
 import net.nikr.eve.jeveasset.gui.tabs.contracts.MyContractItem;
-import net.nikr.eve.jeveasset.io.shared.AbstractApiGetter;
 import net.nikr.eve.jeveasset.io.shared.ApiConverter;
 
 
@@ -47,7 +46,7 @@ public class ContractsGetter extends AbstractApiGetter<ContractsResponse>{
 		super("Contracts", true, false);
 	}
 
-	public void load(UpdateTask updateTask, boolean forceUpdate, List<MyAccount> accounts) {
+	public void load(UpdateTask updateTask, boolean forceUpdate, List<EveApiAccount> accounts) {
 		super.loadAccounts(updateTask, forceUpdate, accounts);
 	}
 
@@ -65,10 +64,10 @@ public class ContractsGetter extends AbstractApiGetter<ContractsResponse>{
 	protected ContractsResponse getResponse(boolean bCorp) throws ApiException {
 		if (bCorp) {
 			return new CorpContractsParser()
-					.getResponse(Owner.getApiAuthorization(getOwner()));
+					.getResponse(EveApiOwner.getApiAuthorization(getOwner()));
 		} else {
 			return new CharContractsParser()
-					.getResponse(Owner.getApiAuthorization(getOwner()));
+					.getResponse(EveApiOwner.getApiAuthorization(getOwner()));
 		}
 	}
 
@@ -115,7 +114,7 @@ public class ContractsGetter extends AbstractApiGetter<ContractsResponse>{
 	}
 
 	@Override
-	protected void updateFailed(Owner ownerFrom, Owner ownerTo) {
+	protected void updateFailed(EveApiOwner ownerFrom, EveApiOwner ownerTo) {
 		ownerTo.setContractsNextUpdate(ownerFrom.getContractsNextUpdate());
 		//Clear existin
 		ownerTo.getContracts().clear();
@@ -126,9 +125,9 @@ public class ContractsGetter extends AbstractApiGetter<ContractsResponse>{
 	@Override
 	protected long requestMask(boolean bCorp) {
 		if (bCorp) {
-			return AccessMask.CONTRACTS_CORP.getAccessMask();
+			return EveApiAccessMask.CONTRACTS_CORP.getAccessMask();
 		} else {
-			return AccessMask.CONTRACTS_CHAR.getAccessMask();
+			return EveApiAccessMask.CONTRACTS_CHAR.getAccessMask();
 		}
 	}
 	

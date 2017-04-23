@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2016 Contributors (see credits.txt)
+ * Copyright 2009-2017 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -23,7 +23,6 @@ package net.nikr.eve.jeveasset.gui.shared.table;
 
 import ca.odell.glazedlists.gui.TableFormat;
 import ca.odell.glazedlists.swing.DefaultEventTableModel;
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.event.*;
@@ -41,6 +40,7 @@ import javax.swing.text.JTextComponent;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.data.tag.Tags;
+import net.nikr.eve.jeveasset.gui.shared.Colors;
 import net.nikr.eve.jeveasset.gui.shared.CopyHandler;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.ResizeMode;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.SimpleColumn;
@@ -124,7 +124,7 @@ public class JAutoColumnTable extends JTable {
 			component.setForeground(this.getForeground());
 			//Highlight selected row
 			if (Settings.get().isHighlightSelectedRows() && this.isRowSelected(row)) {
-				component.setBackground(new Color(220, 240, 255));
+				component.setBackground(Colors.LIGHT_BLUE.getColor());
 				return component;
 			} else {
 				component.setBackground(this.getBackground());

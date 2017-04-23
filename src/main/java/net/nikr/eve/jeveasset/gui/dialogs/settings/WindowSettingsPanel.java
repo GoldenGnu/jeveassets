@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2016 Contributors (see credits.txt)
+ * Copyright 2009-2017 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -44,15 +44,15 @@ public class WindowSettingsPanel extends JSettingsPanel {
 	public static final int FLAG_SAVE_MAXIMIZED = 2;
 	public static final int FLAG_SAVE_FIXED = 3;
 
-	private JRadioButton jAutoSave;
-	private JRadioButton jFixed;
-	private JTextField jWidth;
-	private JTextField jHeight;
-	private JTextField jX;
-	private JTextField jY;
-	private JCheckBox jMaximized;
-	private JCheckBox jAlwaysOnTop;
-	private JButton jDefault;
+	private final JRadioButton jAutoSave;
+	private final JRadioButton jFixed;
+	private final JTextField jWidth;
+	private final JTextField jHeight;
+	private final JTextField jX;
+	private final JTextField jY;
+	private final JCheckBox jMaximized;
+	private final JCheckBox jAlwaysOnTop;
+	private final JButton jDefault;
 
 	public WindowSettingsPanel(final Program program, final SettingsDialog optionsDialog) {
 		super(program, optionsDialog, DialoguesSettings.get().windowWindow(), Images.SETTINGS_WINDOW.getIcon());

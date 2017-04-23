@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2016 Contributors (see credits.txt)
+ * Copyright 2009-2017 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -25,8 +25,6 @@ import java.util.Map;
 import net.nikr.eve.jeveasset.data.Citadel;
 import net.nikr.eve.jeveasset.data.CitadelSettings;
 import net.nikr.eve.jeveasset.data.Settings;
-import net.nikr.eve.jeveasset.io.shared.AbstractXmlWriter;
-import net.nikr.eve.jeveasset.io.shared.XmlException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -69,15 +67,12 @@ public final class CitadelWriter extends AbstractXmlWriter {
 			Element node = xmldoc.createElementNS(null, "citadel");
 			Citadel citadel = entry.getValue();
 			node.setAttributeNS(null, "stationid", String.valueOf(entry.getKey()));
-			node.setAttributeNS(null, "typeid", String.valueOf(citadel.typeId));
 			node.setAttributeNS(null, "systemid", String.valueOf(citadel.systemId));
 			node.setAttributeNS(null, "name", citadel.name);
-			node.setAttributeNS(null, "typename", citadel.typeName);
-			node.setAttributeNS(null, "lastseen", citadel.lastSeen);
 			node.setAttributeNS(null, "systemname", citadel.systemName);
 			node.setAttributeNS(null, "regionid", String.valueOf(citadel.regionId));
-			node.setAttributeNS(null, "firstseen", citadel.firstSeen);
 			node.setAttributeNS(null, "regionname", citadel.regionName);
+			node.setAttributeNS(null, "userlocation", String.valueOf(citadel.userLocation));
 			parentNode.appendChild(node);
 		}
 	}

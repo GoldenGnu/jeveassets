@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2016 Contributors (see credits.txt)
+ * Copyright 2009-2017 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -46,8 +46,6 @@ import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileFilter;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
 import net.nikr.eve.jeveasset.gui.tabs.values.Value;
-import net.nikr.eve.jeveasset.io.shared.AbstractXmlWriter;
-import net.nikr.eve.jeveasset.io.shared.XmlException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -127,6 +125,7 @@ public class SettingsWriter extends AbstractXmlWriter {
 		writeOwners(xmldoc, settings.getOwners());
 		writeTags(xmldoc, settings.getTags());
 		writeRoutingSettings(xmldoc, settings.getRoutingSettings());
+		writeEveKitSettings(xmldoc, settings);
 		try {
 			writeXmlFile(xmldoc, settings.getPathSettings(), true);
 		} catch (XmlException ex) {
@@ -135,6 +134,16 @@ public class SettingsWriter extends AbstractXmlWriter {
 		}
 		LOG.info("Settings saved");
 		return true;
+	}
+
+	private void writeEveKitSettings(Document xmldoc, Settings settings) {
+		Element routingNode = xmldoc.createElementNS(null, "evekit");
+		xmldoc.getDocumentElement().appendChild(routingNode);
+		routingNode.setAttribute("transactionshistory", String.valueOf(settings.getEveKitTransactionsHistory()));
+		routingNode.setAttribute("journalhistory", String.valueOf(settings.getEveKitJournalHistory()));
+		routingNode.setAttribute("marketordershistory", String.valueOf(settings.getEveKitMarketOrdersHistory()));
+		routingNode.setAttribute("industryjobshistory", String.valueOf(settings.getEveKitIndustryJobsHistory()));
+		routingNode.setAttribute("contractshistory", String.valueOf(settings.getEveKitContractsHistory()));
 	}
 
 	private void writeRoutingSettings(Document xmldoc, RoutingSettings routingSettings) {

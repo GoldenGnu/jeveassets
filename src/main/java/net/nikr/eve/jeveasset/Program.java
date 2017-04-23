@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2016 Contributors (see credits.txt)
+ * Copyright 2009-2017 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -33,13 +33,12 @@ import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.Timer;
 import net.nikr.eve.jeveasset.data.EventListManager;
-import net.nikr.eve.jeveasset.data.MyAccount;
 import net.nikr.eve.jeveasset.data.MyAccountBalance;
-import net.nikr.eve.jeveasset.data.Owner;
 import net.nikr.eve.jeveasset.data.ProfileData;
 import net.nikr.eve.jeveasset.data.ProfileManager;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.data.StaticData;
+import net.nikr.eve.jeveasset.data.api.OwnerType;
 import net.nikr.eve.jeveasset.gui.dialogs.AboutDialog;
 import net.nikr.eve.jeveasset.gui.dialogs.account.AccountManagerDialog;
 import net.nikr.eve.jeveasset.gui.dialogs.bugs.BugsDialog;
@@ -93,7 +92,7 @@ public class Program implements ActionListener {
 		TIMER
 	}
 	//Major.Minor.Bugfix [Release Candidate n] [BETA n] [DEV BUILD #n];
-	public static final String PROGRAM_VERSION = "3.1.5 DEV BUILD 1";
+	public static final String PROGRAM_VERSION = "4.1.0 DEV BUILD 1";
 	public static final String PROGRAM_NAME = "jEveAssets";
 	public static final String PROGRAM_UPDATE_URL = "http://eve.nikr.net/jeveassets/update.xml";
 	public static final String PROGRAM_HOMEPAGE = "http://eve.nikr.net/jeveasset";
@@ -172,8 +171,7 @@ public class Program implements ActionListener {
 		profileManager.loadActiveProfile();
 		profileData = new ProfileData(profileManager);
 		//Can not update profile data now - list needs to be empty doing creation...
-		priceDataGetter = new PriceDataGetter(profileData);
-		priceDataGetter.load();
+		priceDataGetter = new PriceDataGetter();
 	//Timer
 		timer = new Timer(15000, this); //Once a minute
 		timer.setActionCommand(ProgramAction.TIMER.name());
@@ -264,6 +262,8 @@ public class Program implements ActionListener {
 	//Updating data...
 		LOG.info("Updating data...");
 		updateEventLists(); //Update price
+		//Update EveKit Import
+		profilesChanged();
 		macOsxCode();
 		SplashUpdater.setProgress(100);
 		LOG.info("Showing GUI");
@@ -278,7 +278,7 @@ public class Program implements ActionListener {
 		if (Settings.get().isSettingsLoadError()) {
 			JOptionPane.showMessageDialog(mainWindow.getFrame(), GuiShared.get().errorLoadingSettingsMsg(), GuiShared.get().errorLoadingSettingsTitle(), JOptionPane.ERROR_MESSAGE);
 		}
-		if (profileManager.getAccounts().isEmpty()) {
+		if (profileManager.getOwnerTypes().isEmpty()) {
 			LOG.info("Show Account Manager");
 			accountManagerDialog.setVisible(true);
 		}
@@ -391,12 +391,20 @@ public class Program implements ActionListener {
 			saveSettings("API Update");
 			Settings.waitForEmptySaveQueue();
 		}
+		//Update EveKit Import
+		profilesChanged();
 		profileManager.saveProfile();
 	}
 
 	public void saveProfile() {
 		LOG.info("Saving Profile");
+		//Update EveKit Import
+		profilesChanged();
 		profileManager.saveProfile();
+	}
+
+	public final void profilesChanged() {
+		trackerTab.profilesChanged();
 	}
 
 	/**
@@ -468,6 +476,10 @@ public class Program implements ActionListener {
 		return treeTab;
 	}
 
+	public TrackerTab getTrackerTab() {
+		return trackerTab;
+	}
+
 	public StatusPanel getStatusPanel() {
 		return this.getMainWindow().getStatusPanel();
 	}
@@ -524,11 +536,11 @@ public class Program implements ActionListener {
 	public List<String> getOwnerNames(boolean all) {
 		return profileData.getOwnerNames(all);
 	}
-	public Map<String, Owner> getOwners() {
+	public Map<Long, OwnerType> getOwners() {
 		return profileData.getOwners();
 	}
-	public List<MyAccount> getAccounts() {
-		return profileManager.getAccounts();
+	public List<OwnerType> getOwnerTypes() {
+		return profileManager.getOwnerTypes();
 	}
 	public ProfileManager getProfileManager() {
 		return profileManager;
@@ -537,7 +549,7 @@ public class Program implements ActionListener {
 		return priceDataGetter;
 	}
 	public void createTrackerDataPoint() {
-		DataSetCreator.createTrackerDataPoint(this);
+		DataSetCreator.createTrackerDataPoint(profileData, Settings.getNow());
 		trackerTab.updateData();
 	}
 

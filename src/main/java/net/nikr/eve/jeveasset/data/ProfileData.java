@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2016 Contributors (see credits.txt)
+ * Copyright 2009-2017 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -33,7 +33,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import net.nikr.eve.jeveasset.SplashUpdater;
+import net.nikr.eve.jeveasset.data.api.OwnerType;
 import net.nikr.eve.jeveasset.data.tag.Tags;
+import net.nikr.eve.jeveasset.data.types.EditableLocationType;
 import net.nikr.eve.jeveasset.data.types.JumpType;
 import net.nikr.eve.jeveasset.gui.shared.CaseInsensitiveComparator;
 import net.nikr.eve.jeveasset.gui.tabs.assets.MyAsset;
@@ -69,7 +71,7 @@ public class ProfileData {
 	private Map<Integer, MarketPriceData> transactionPriceDataSell; //TypeID : int
 	private Map<Integer, MarketPriceData> transactionPriceDataBuy; //TypeID : int
 	private final List<String> ownerNames = new ArrayList<String>();
-	private final Map<String, Owner> owners = new HashMap<String, Owner>();
+	private final Map<Long, OwnerType> owners = new HashMap<Long, OwnerType>();
 	private boolean saveSettings = false;
 	private final Graph graph;
 	private final Map<Long, SolarSystem> systemCache;
@@ -145,8 +147,8 @@ public class ProfileData {
 		return sortedOwners;
 	}
 
-	public Map<String, Owner> getOwners() {
-		return new HashMap<String, Owner>(owners);
+	public Map<Long, OwnerType> getOwners() {
+		return new HashMap<Long, OwnerType>(owners);
 	}
 
 	public void updateJumps(Collection<JumpType> jumpTypes, Class<?> clazz) {
@@ -185,47 +187,45 @@ public class ProfileData {
 
 	private Set<Integer> createPriceTypeIDs() {
 		Set<Integer> priceTypeIDs = new HashSet<Integer>();
-		for (MyAccount account : profileManager.getAccounts()) {
-			for (Owner owner : account.getOwners()) {
-				//Add Assets to uniqueIds
-				deepAssets(owner.getAssets(), priceTypeIDs);
-				//Add Market Orders to uniqueIds
-				for (MyMarketOrder marketOrder : owner.getMarketOrders()) {
-					Item item = marketOrder.getItem();
+		for (OwnerType owner : profileManager.getOwnerTypes()) {
+			//Add Assets to uniqueIds
+			deepAssets(owner.getAssets(), priceTypeIDs);
+			//Add Market Orders to uniqueIds
+			for (MyMarketOrder marketOrder : owner.getMarketOrders()) {
+				Item item = marketOrder.getItem();
+				if (item.isMarketGroup()) {
+					priceTypeIDs.add(item.getTypeID());
+				}
+			}
+			//Add Transaction to uniqueIds
+			for (MyTransaction transaction : owner.getTransactions()) {
+				Item item = transaction.getItem();
+				if (item.isMarketGroup()) {
+					priceTypeIDs.add(item.getTypeID());
+				}
+			}
+			//Add Industry Job to uniqueIds
+			for (MyIndustryJob industryJob : owner.getIndustryJobs()) {
+				//Blueprint
+				Item blueprint = industryJob.getItem();
+				if (blueprint.isMarketGroup()) {
+					priceTypeIDs.add(blueprint.getTypeID());
+				}
+				//Manufacturing Output
+				if (industryJob.isManufacturing() && !industryJob.isDelivered()) {
+					//Output
+					Item output = ApiIdConverter.getItem(industryJob.getProductTypeID());
+					if (output.isMarketGroup()) {
+						priceTypeIDs.add(output.getTypeID());
+					}
+				}
+			}
+			//Add Contract to uniqueIds
+			for (Map.Entry<MyContract, List<MyContractItem>> entry : owner.getContracts().entrySet()) {
+				for (MyContractItem contractItem : entry.getValue()) {
+					Item item = contractItem.getItem();
 					if (item.isMarketGroup()) {
 						priceTypeIDs.add(item.getTypeID());
-					}
-				}
-				//Add Transaction to uniqueIds
-				for (MyTransaction transaction : owner.getTransactions()) {
-					Item item = transaction.getItem();
-					if (item.isMarketGroup()) {
-						priceTypeIDs.add(item.getTypeID());
-					}
-				}
-				//Add Industry Job to uniqueIds
-				for (MyIndustryJob industryJob : owner.getIndustryJobs()) {
-					//Blueprint
-					Item blueprint = industryJob.getItem();
-					if (blueprint.isMarketGroup()) {
-						priceTypeIDs.add(blueprint.getTypeID());
-					}
-					//Manufacturing Output
-					if (industryJob.isManufacturing() && !industryJob.isDelivered()) {
-						//Output
-						Item output = ApiIdConverter.getItem(industryJob.getProductTypeID());
-						if (output.isMarketGroup()) {
-							priceTypeIDs.add(output.getTypeID());
-						}
-					}
-				}
-				//Add Contract to uniqueIds
-				for (Map.Entry<MyContract, List<MyContractItem>> entry : owner.getContracts().entrySet()) {
-					for (MyContractItem contractItem : entry.getValue()) {
-						Item item = contractItem.getItem();
-						if (item.isMarketGroup()) {
-							priceTypeIDs.add(item.getTypeID());
-						}
 					}
 				}
 			}
@@ -266,185 +266,190 @@ public class ProfileData {
 		saveSettings = false;
 		uniqueAssetsDuplicates = new HashMap<Integer, List<MyAsset>>();
 		Set<String> uniqueOwnerNames = new HashSet<String>();
-		Map<String, Owner> uniqueOwners = new HashMap<String, Owner>();
-		List<String> ownersOrders = new ArrayList<String>();
-		List<String> ownersJournal = new ArrayList<String>();
-		List<String> ownersTransactions = new ArrayList<String>();
-		List<String> ownersJobs = new ArrayList<String>();
-		List<String> ownersAssets = new ArrayList<String>();
-		List<String> ownersAccountBalance = new ArrayList<String>();
-		List<Long> contractIDs = new ArrayList<Long>();
+		Map<Long, OwnerType> uniqueOwners = new HashMap<Long, OwnerType>();
 		//Temp
 		List<MyAsset> assets = new ArrayList<MyAsset>();
-		List<MyMarketOrder> marketOrders = new ArrayList<MyMarketOrder>();
-		List<MyJournal> journal = new ArrayList<MyJournal>();
-		List<MyTransaction> transactions = new ArrayList<MyTransaction>();
-		List<MyIndustryJob> industryJobs = new ArrayList<MyIndustryJob>();
-		List<MyContractItem> contractItems = new ArrayList<MyContractItem>();
-		List<MyContract> contracts = new ArrayList<MyContract>();
 		List<MyAccountBalance> accountBalance = new ArrayList<MyAccountBalance>();
+		//ownerID > 
+		Date blueprintsNewest = null;
+		Date assetsNewest = null;
+		Date accountBalanceNewest = null;
+		Map<Long, List<MyAsset>> assetsMap = new HashMap<Long, List<MyAsset>>();
+		Map<Long, List<MyAccountBalance>> accountBalanceMap = new HashMap<Long, List<MyAccountBalance>>();
+		Set<MyMarketOrder> marketOrders = new HashSet<MyMarketOrder>();
+		Set<MyJournal> journal = new HashSet<MyJournal>();
+		Set<MyTransaction> transactions = new HashSet<MyTransaction>();
+		Set<MyIndustryJob> industryJobs = new HashSet<MyIndustryJob>();
+		Set<MyContractItem> contractItems = new HashSet<MyContractItem>();
+		Set<MyContract> contracts = new HashSet<MyContract>();
+		Map<Long, Map<Long, Blueprint>> blueprintsMap = new HashMap<Long, Map<Long, Blueprint>>();
+		Map<Long, Blueprint> blueprints = new HashMap<Long, Blueprint>();
+
 		maximumPurchaseAge();
 		calcTransactionsPriceData();
-		//Add assets
-		for (MyAccount account : profileManager.getAccounts()) {
-			for (Owner owner : account.getOwners()) {
-				if (owner.isShowOwner()) {
-					uniqueOwnerNames.add(owner.getName());
-					uniqueOwners.put(owner.getName(), owner);
+		for (OwnerType owner : profileManager.getOwnerTypes()) {
+			if (!owner.isShowOwner()) {
+				continue;
+			}
+			uniqueOwnerNames.add(owner.getOwnerName());
+			uniqueOwners.put(owner.getOwnerID(), owner);
+		}
+		//Add Market Orders/Journal/Transactions/Industry Jobs/Contracts/Contract Items/Blueprints/Assets/Account Balance
+		for (OwnerType owner : profileManager.getOwnerTypes()) {
+			if (!owner.isShowOwner()) {
+				continue;
+			}
+			//Marker Orders
+			marketOrders.addAll(owner.getMarketOrders());
+			//Journal
+			journal.addAll(owner.getJournal());
+			//Transactions
+			transactions.addAll(owner.getTransactions());
+			//Industry Jobs
+			industryJobs.addAll(owner.getIndustryJobs());
+			//Contracts
+			contracts.addAll(owner.getContracts().keySet());
+			//Contract Items
+			for (Map.Entry<MyContract, List<MyContractItem>> entry : owner.getContracts().entrySet()) {
+				MyContract contract = entry.getKey();
+				if (entry.getValue().isEmpty() 
+					&& contract.getType() == ContractType.COURIER &&
+					( //XXX - Workaround for alien contracts
+						uniqueOwners.containsKey(contract.getAcceptorID())
+						|| uniqueOwners.containsKey(contract.getAssigneeID())
+						|| uniqueOwners.containsKey(contract.getIssuerID())
+						|| (contract.isForCorp() && uniqueOwners.containsKey(contract.getIssuerCorpID()))
+					)
+					) {
+					contractItems.add(new MyContractItem(contract));
+				} else if (!entry.getValue().isEmpty()) {
+					contractItems.addAll(entry.getValue());
+				}
+			}
+			//Blueprints (Newest)
+			if (!owner.getBlueprints().isEmpty()) {
+				Map<Long, Blueprint> map = blueprintsMap.get(owner.getOwnerID());
+				if (map == null || (owner.getBlueprintsNextUpdate() != null && blueprintsNewest != null && owner.getBlueprintsNextUpdate().after(blueprintsNewest))) {
+					blueprintsMap.put(owner.getOwnerID(), owner.getBlueprints());
+					blueprintsNewest = owner.getBlueprintsNextUpdate();
+				}
+			}
+			//Assets (Newest)
+			if (!owner.getAssets().isEmpty()) {
+				List<MyAsset> list = assetsMap.get(owner.getOwnerID());
+				if (list == null || (owner.getAssetNextUpdate() != null && assetsNewest != null && owner.getAssetNextUpdate().after(assetsNewest))) {
+					assetsMap.put(owner.getOwnerID(), owner.getAssets());
+					assetsNewest = owner.getAssetNextUpdate();
+				}
+			}
+			//Account Balance (Newest)
+			if (!owner.getAccountBalances().isEmpty()) {
+				List<MyAccountBalance> list = accountBalanceMap.get(owner.getOwnerID());
+				if (list == null || (owner.getBalanceNextUpdate()!= null && accountBalanceNewest != null && owner.getBalanceNextUpdate().after(accountBalanceNewest))) {
+					accountBalanceMap.put(owner.getOwnerID(), owner.getAccountBalances());
+					accountBalanceNewest = owner.getBalanceNextUpdate();
 				}
 			}
 		}
-		for (MyAccount account : profileManager.getAccounts()) {
-			for (Owner owner : account.getOwners()) {
-				if (!owner.isShowOwner()) {
-					continue;
-				}
-				//Market Orders
-				if (!owner.getMarketOrders().isEmpty() && !ownersOrders.contains(owner.getName())) {
-					//Market Orders
-					marketOrders.addAll(owner.getMarketOrders());
-					//Assets
-					addAssets(ApiConverter.assetMarketOrder(owner.getMarketOrders(), owner), assets, owner.getBlueprints());
-					ownersOrders.add(owner.getName());
-				}
-				//Journal
-				if (!owner.getJournal().isEmpty() && !ownersJournal.contains(owner.getName())) {
-					//Journal
-					journal.addAll(owner.getJournal());
-					ownersJournal.add(owner.getName());
-				}
-				//Transactions
-				if (!owner.getTransactions().isEmpty() && !ownersTransactions.contains(owner.getName())) {
-					//Transactions
-					for (MyTransaction transaction : owner.getTransactions()) {
-						int index = transactions.indexOf(transaction);
-						if (index >= 0) { //Dublicate
-							if (owner.isCorporation()) {
-								MyTransaction remove = transactions.remove(index);
-								transaction.setOwnerCharacter(remove.getOwnerName());
-								transactions.add(transaction);
-							} else {
-								transactions.get(index).setOwnerCharacter(transaction.getOwnerName());
-							}
-						} else { //New
-							transactions.add(transaction);
-						}
-					}
-					//Assets
-					//FIXME - - > Transactions Assets:
-					//Add items added after last asset update
-					//Remove item sold after last asset update
-					//addAssets(ApiConverter.assetMarketOrder(owner.getMarketOrders(), owner, settings), assets);
-					ownersTransactions.add(owner.getName());
-				}
-				//Industry Jobs
-				if (!owner.getIndustryJobs().isEmpty() && !ownersJobs.contains(owner.getName())) {
-					//Industry Jobs
-					industryJobs.addAll(owner.getIndustryJobs());
-					for (MyIndustryJob industryJob : owner.getIndustryJobs()) {
-						//Update Owners
-						industryJob.setInstaller(ApiIdConverter.getOwnerName(industryJob.getInstallerID()));
-						//Update BPO/BPC status
-						Blueprint blueprint = owner.getBlueprints().get(industryJob.getBlueprintID());
-						industryJob.setBlueprint(blueprint);
-					}
-					//Assets
-					addAssets(ApiConverter.assetIndustryJob(owner.getIndustryJobs(), owner), assets, owner.getBlueprints());
-					ownersJobs.add(owner.getName());
-				}
-				//Contracts
-				for (Map.Entry<MyContract, List<MyContractItem>> entry : owner.getContracts().entrySet()) {
-					//Contracts
-					MyContract contract = entry.getKey();
-					//Update Owners
-					contract.setAcceptor(ApiIdConverter.getOwnerName(contract.getAcceptorID()));
-					contract.setAssignee(ApiIdConverter.getOwnerName(contract.getAssigneeID()));
-					contract.setIssuerCorp(ApiIdConverter.getOwnerName(contract.getIssuerCorpID()));
-					contract.setIssuer(ApiIdConverter.getOwnerName(contract.getIssuerID()));
-					if (contractIDs.contains(contract.getContractID())) {
-						continue;
-					}
-					if (entry.getValue().isEmpty() 
-						&& contract.getType() == ContractType.COURIER &&
-						( //XXX - Workaround for alien contracts
-							uniqueOwners.containsKey(contract.getAcceptor())
-							|| uniqueOwners.containsKey(contract.getAssignee())
-							|| uniqueOwners.containsKey(contract.getIssuer())
-							|| (contract.isForCorp() && uniqueOwners.containsKey(contract.getIssuerCorp()))
-						)
-						) {
-						contractIDs.add(contract.getContractID());
-						contracts.add(contract);
-						contractItems.add(new MyContractItem(contract));
-					} else if (!entry.getValue().isEmpty()) {
-						contractIDs.add(contract.getContractID());
-						contracts.add(contract);
-						contractItems.addAll(entry.getValue());
-					}
-					//Assets
-					List<MyAsset> contractAssets = ApiConverter.assetContracts(entry.getValue(), uniqueOwners);
-					addAssets(contractAssets, assets, owner.getBlueprints());
-				}
-				//Assets
-				if (!owner.getAssets().isEmpty() && !ownersAssets.contains(owner.getName())) {
-					addAssets(owner.getAssets(), assets, owner.getBlueprints());
-					ownersAssets.add(owner.getName());
-				}
-				//Account Balance
-				if (!owner.getAccountBalances().isEmpty() && !ownersAccountBalance.contains(owner.getName())) {
-					accountBalance.addAll(owner.getAccountBalances());
-					ownersAccountBalance.add(owner.getName());
-				}
-				//Update MarketOrders dynamic values
-				for (MyMarketOrder order : owner.getMarketOrders()) {
-					Item item = order.getItem();
-					//Price
-					double price = ApiIdConverter.getPrice(item.getTypeID(), false);
-					order.setDynamicPrice(price);
-					//Last Transaction
-					if (order.getBid() > 0) { //Buy
-						order.setLastTransaction(transactionPriceDataSell.get(order.getTypeID()));
-					} else { //Sell
-						order.setLastTransaction(transactionPriceDataBuy.get(order.getTypeID()));
-					}
-				}
-				//Update IndustryJobs dynamic values
-				for (MyIndustryJob job : owner.getIndustryJobs()) {
-					Item itemType = job.getItem();
-					//Price
-					double price = ApiIdConverter.getPrice(itemType.getTypeID(), true);
-					job.setDynamicPrice(price);
-					double outputPrice = ApiIdConverter.getPrice(job.getProductTypeID(), false);
-					job.setOutputPrice(outputPrice);
-				}
-				//Update Contracts dynamic values
-				for (Map.Entry<MyContract, List<MyContractItem>> entry : owner.getContracts().entrySet()) {
-					for (MyContractItem contractItem : entry.getValue()) {
-						Item item = contractItem.getItem();
-						//Price
-						double price = ApiIdConverter.getPrice(item.getTypeID(), contractItem.isBPC());
-						contractItem.setDynamicPrice(price);
-					}
-				}
+
+		//Fill accountBalance
+		for (List<MyAccountBalance> list : accountBalanceMap.values()) {
+			accountBalance.addAll(list);
+		}
+
+		//Fill blueprints
+		for (Map<Long, Blueprint> map : blueprintsMap.values()) {
+			blueprints.putAll(map);
+		}
+
+		//Update MarketOrders dynamic values
+		for (MyMarketOrder order : marketOrders) {
+			Item item = order.getItem();
+			//Price
+			double price = ApiIdConverter.getPrice(item.getTypeID(), false);
+			order.setDynamicPrice(price);
+			//Last Transaction
+			if (order.getBid() > 0) { //Buy
+				order.setLastTransaction(transactionPriceDataSell.get(order.getTypeID()));
+			} else { //Sell
+				order.setLastTransaction(transactionPriceDataBuy.get(order.getTypeID()));
 			}
 		}
+
+		//Update IndustryJobs dynamic values
+		for (MyIndustryJob industryJob : industryJobs) {
+			Item itemType = industryJob.getItem();
+			//Update Owners
+			industryJob.setInstaller(ApiIdConverter.getOwnerName(industryJob.getInstallerID()));
+			//Update BPO/BPC status
+			Blueprint blueprint = blueprints.get(industryJob.getBlueprintID());
+			industryJob.setBlueprint(blueprint);
+			//Price
+			double price = ApiIdConverter.getPrice(itemType.getTypeID(), true);
+			industryJob.setDynamicPrice(price);
+			double outputPrice = ApiIdConverter.getPrice(industryJob.getProductTypeID(), false);
+			industryJob.setOutputPrice(outputPrice);
+		}
+
+		//Update Contracts Items dynamic values
+		for (MyContractItem contractItem : contractItems) {
+			Item item = contractItem.getItem();
+			//Price
+			double price = ApiIdConverter.getPrice(item.getTypeID(), contractItem.isBPC());
+			contractItem.setDynamicPrice(price);
+		}
+
 		//Update Contracts dynamic values
 		for (MyContract contract : contracts) {
-			Owner issuer = uniqueOwners.get(contract.getIssuer());
-			Owner acceptor = uniqueOwners.get(contract.getAcceptor());
+			OwnerType issuer = uniqueOwners.get(contract.getIssuerID());
+			OwnerType acceptor = uniqueOwners.get(contract.getAcceptorID());
 			if (issuer != null) {
 				contract.setIssuerAfterAssets(issuer.getAssetLastUpdate());
 			}
 			if (acceptor != null) {
 				contract.setAcceptorAfterAssets(acceptor.getAssetLastUpdate());
 			}
+			//Update Locations
+			contract.setStartStation(ApiIdConverter.getLocation(contract.getStartStation()));
+			contract.setEndStation(ApiIdConverter.getLocation(contract.getEndStation()));
+			//Update Owners
+			contract.setAcceptor(ApiIdConverter.getOwnerName(contract.getAcceptorID()));
+			contract.setAssignee(ApiIdConverter.getOwnerName(contract.getAssigneeID()));
+			contract.setIssuerCorp(ApiIdConverter.getOwnerName(contract.getIssuerCorpID()));
+			contract.setIssuer(ApiIdConverter.getOwnerName(contract.getIssuerID()));
 		}
+
 		//Update Items dynamic values
 		for (Item item : StaticData.get().getItems().values()) {
 			item.setPriceReprocessed(ApiIdConverter.getPriceReprocessed(item));
 		}
+
+		//Add Market Orders to Assets
+		addAssets(ApiConverter.assetMarketOrder(marketOrders), assets, blueprints);
+
+		//Add Industry Jobs to Assets
+		addAssets(ApiConverter.assetIndustryJob(industryJobs), assets, blueprints);
+
+		//Add Contract Items to Assets
+		addAssets(ApiConverter.assetContracts(contractItems, uniqueOwners), assets, blueprints);
+
+		//Add Assets to Assets
+		for (List<MyAsset> list : assetsMap.values()) {
+			addAssets(list, assets, blueprints);
+		}
+		
 		//Update Jumps
 		updateJumps(new ArrayList<JumpType>(assets), MyAsset.class);
+
+		//Update Locations
+		List<EditableLocationType> editableLocationTypes = new ArrayList<EditableLocationType>();
+		editableLocationTypes.addAll(assets);
+		editableLocationTypes.addAll(marketOrders);
+		editableLocationTypes.addAll(transactions);
+		editableLocationTypes.addAll(industryJobs);
+		for (EditableLocationType editableLocationType : editableLocationTypes) {
+			editableLocationType.setLocation(ApiIdConverter.getLocation(editableLocationType.getLocation()));
+		}
 
 		try {
 			assetsEventList.getReadWriteLock().writeLock().lock();
@@ -516,22 +521,20 @@ public class ProfileData {
 		marketPriceData = new HashMap<Integer, MarketPriceData>();
 		//Date - maximumPurchaseAge in days
 		Date maxAge = new Date(System.currentTimeMillis() - (Settings.get().getMaximumPurchaseAge() * 24 * 60 * 60 * 1000L));
-		for (MyAccount account : profileManager.getAccounts()) {
-			for (Owner owner : account.getOwners()) {
-				for (MyMarketOrder marketOrder : owner.getMarketOrders()) {
-					if (marketOrder.getBid() > 0 //Buy orders only
-							//at least one bought
-							&& marketOrder.getVolRemaining() != marketOrder.getVolEntered()
-							//Date in range or unlimited
-							&& (marketOrder.getIssued().after(maxAge) || Settings.get().getMaximumPurchaseAge() == 0)
-							) {
-						int typeID = marketOrder.getTypeID();
-						if (!marketPriceData.containsKey(typeID)) {
-							marketPriceData.put(typeID, new MarketPriceData());
-						}
-						MarketPriceData data = marketPriceData.get(typeID);
-						data.update(marketOrder.getPrice(), marketOrder.getIssued());
+		for (OwnerType owner : profileManager.getOwnerTypes()) {
+			for (MyMarketOrder marketOrder : owner.getMarketOrders()) {
+				if (marketOrder.getBid() > 0 //Buy orders only
+						//at least one bought
+						&& marketOrder.getVolRemaining() != marketOrder.getVolEntered()
+						//Date in range or unlimited
+						&& (marketOrder.getIssued().after(maxAge) || Settings.get().getMaximumPurchaseAge() == 0)
+						) {
+					int typeID = marketOrder.getTypeID();
+					if (!marketPriceData.containsKey(typeID)) {
+						marketPriceData.put(typeID, new MarketPriceData());
 					}
+					MarketPriceData data = marketPriceData.get(typeID);
+					data.update(marketOrder.getPrice(), marketOrder.getIssued());
 				}
 			}
 		}
@@ -542,16 +545,14 @@ public class ProfileData {
 		transactionPriceDataSell = new HashMap<Integer, MarketPriceData>();
 		transactionPriceDataBuy = new HashMap<Integer, MarketPriceData>();
 		//Date - maximumPurchaseAge in days
-		for (MyAccount account : profileManager.getAccounts()) {
-			for (Owner owner : account.getOwners()) {
-				for (MyTransaction transaction : owner.getTransactions()) {
-					if (transaction.getTransactionType().equals("sell")) { //Sell
-						createTransactionsPriceData(transactionPriceDataSell, transaction);
-					} else { //Buy
-						createTransactionsPriceData(transactionPriceDataBuy, transaction);
-					}
-					
+		for (OwnerType owner : profileManager.getOwnerTypes()) {
+			for (MyTransaction transaction : owner.getTransactions()) {
+				if (transaction.getTransactionType().equals("sell")) { //Sell
+					createTransactionsPriceData(transactionPriceDataSell, transaction);
+				} else { //Buy
+					createTransactionsPriceData(transactionPriceDataBuy, transaction);
 				}
+
 			}
 		}
 	}

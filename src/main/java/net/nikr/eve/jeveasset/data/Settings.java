@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2016 Contributors (see credits.txt)
+ * Copyright 2009-2017 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -95,12 +95,18 @@ public class Settings {
 		FLAG_BLUEPRINT_BASE_PRICE_TECH_2,
 		FLAG_TRANSACTION_HISTORY,
 		FLAG_JOURNAL_HISTORY,
-		FLAG_MARKET_ORDER_HISTORY
+		FLAG_MARKET_ORDER_HISTORY,
+		FLAG_STRONG_COLORS
 	}
 
 	private static Settings settings;
 	private static final SettingsLock LOCK = new SettingsLock();
 
+	private int eveKitTransactionsHistory = 3;
+	private int eveKitJournalHistory = 3;
+	private int eveKitMarketOrdersHistory = 3;
+	private int eveKitIndustryJobsHistory = 3;
+	private int eveKitContractsHistory = 3;
 //External
 	//Price						Saved by PriceDataGetter.process() in pricedata.dat (on api update)
 	private Map<Integer, PriceData> priceDatas = new HashMap<Integer, PriceData>(); //TypeID : int
@@ -220,6 +226,7 @@ public class Settings {
 		flags.put(SettingFlag.FLAG_TRANSACTION_HISTORY, true);
 		flags.put(SettingFlag.FLAG_JOURNAL_HISTORY, true);
 		flags.put(SettingFlag.FLAG_MARKET_ORDER_HISTORY, true);
+		flags.put(SettingFlag.FLAG_STRONG_COLORS, false);
 		cacheFlags();
 	}
 
@@ -698,6 +705,14 @@ public class Settings {
 		flags.put(SettingFlag.FLAG_MARKET_ORDER_HISTORY, marketOrderHistory);
 	}
 
+	public boolean isStrongColors() {
+		return flags.get(SettingFlag.FLAG_STRONG_COLORS);
+	}
+
+	public void setStrongColors(final boolean strongColors) {
+		flags.put(SettingFlag.FLAG_STRONG_COLORS, strongColors);
+	}
+
 	public List<Stockpile> getStockpiles() {
 		return stockpiles;
 	}
@@ -773,6 +788,46 @@ public class Settings {
 
 	public Map<String, OverviewGroup> getOverviewGroups() {
 		return overviewGroups;
+	}
+
+	public int getEveKitTransactionsHistory() {
+		return eveKitTransactionsHistory;
+	}
+
+	public void setEveKitTransactionsHistory(int eveKitTransactionsHistory) {
+		this.eveKitTransactionsHistory = eveKitTransactionsHistory;
+	}
+
+	public int getEveKitJournalHistory() {
+		return eveKitJournalHistory;
+	}
+
+	public void setEveKitJournalHistory(int eveKitJournalHistory) {
+		this.eveKitJournalHistory = eveKitJournalHistory;
+	}
+
+	public int getEveKitMarketOrdersHistory() {
+		return eveKitMarketOrdersHistory;
+	}
+
+	public void setEveKitMarketOrdersHistory(int eveKitMarketOrdersHistory) {
+		this.eveKitMarketOrdersHistory = eveKitMarketOrdersHistory;
+	}
+
+	public int getEveKitIndustryJobsHistory() {
+		return eveKitIndustryJobsHistory;
+	}
+
+	public void setEveKitIndustryJobsHistory(int eveKitIndustryJobsHistory) {
+		this.eveKitIndustryJobsHistory = eveKitIndustryJobsHistory;
+	}
+
+	public int getEveKitContractsHistory() {
+		return eveKitContractsHistory;
+	}
+
+	public void setEveKitContractsHistory(int eveKitContractsHistory) {
+		this.eveKitContractsHistory = eveKitContractsHistory;
 	}
 
 	public String getPathSettings() {

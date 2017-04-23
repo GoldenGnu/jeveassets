@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2016 Contributors (see credits.txt)
+ * Copyright 2009-2017 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -36,11 +36,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import net.nikr.eve.jeveasset.SplashUpdater;
+import net.nikr.eve.jeveasset.data.Item;
 import net.nikr.eve.jeveasset.data.PriceData;
 import net.nikr.eve.jeveasset.data.PriceDataSettings.PriceMode;
 import net.nikr.eve.jeveasset.data.PriceDataSettings.PriceSource;
 import net.nikr.eve.jeveasset.data.ProfileData;
 import net.nikr.eve.jeveasset.data.Settings;
+import net.nikr.eve.jeveasset.data.StaticData;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,7 +60,6 @@ public class PriceDataGetter implements PricingListener {
 
 	private static final Logger LOG = LoggerFactory.getLogger(PriceDataGetter.class);
 
-	private final ProfileData profileData;
 	private final long priceCacheTimer = 1 * 60 * 60 * 1000L; // 1 hour (hours*min*sec*ms)
 	private final int attemptCount = 2;
 
@@ -68,56 +69,49 @@ public class PriceDataGetter implements PricingListener {
 	private Set<Integer> failed;
 	private Set<Integer> okay;
 	private Set<Integer> queue;
-	private Map<Integer, PriceData> priceDataList;
+	private final Map<Integer, PriceData> priceDataList = Collections.synchronizedMap(new HashMap<Integer, PriceData>());;
 	
 	private long nextUpdate = 0;
 
-	public PriceDataGetter(final ProfileData profileData) {
-		this.profileData = profileData;
-	}
-
-	/**
-	 * Load price data from cache. Don't update missing prices
-	 * @return
-	 */
-	public boolean load() {
-		Map<Integer, PriceData> priceData = processLoad(profileData.getPriceTypeIDs());
+	public PriceDataGetter() {
+		Map<Integer, PriceData> priceData = processLoad();
 		if (priceData != null) {
 			Settings.get().setPriceData(priceData);
-			return true;
-		} else {
-			return false;
 		}
 	}
 
 	/**
 	 * Load price data from cache and only update missing price data.
+	 * @param profileData
 	 * @param task UpdateTask to track progress
 	 * @return
 	 */
-	public boolean updateNew(final UpdateTask task) {
-		return processUpdate(task, false);
+	public boolean updateNew(final ProfileData profileData, final UpdateTask task) {
+		return processUpdate(profileData, task, false);
 	}
 
 	/**
 	 * Update of all price data.
+	 * @param profileData
 	 * @param task UpdateTask to track progress
 	 * @return
 	 */
-	public boolean updateAll(final UpdateTask task) {
-		return processUpdate(task, true);
+	public boolean updateAll(final ProfileData profileData, final UpdateTask task) {
+		return processUpdate(profileData, task, true);
 	}
 
 	/**
 	 * Load data from price cache
-	 * @param typeIDs typeIDs to load from cache
 	 * @return available price data
 	 */
-	protected Map<Integer, PriceData> processLoad(Set<Integer> typeIDs) {
+	private Map<Integer, PriceData> processLoad() {
 		Pricing pricing = PricingFactory.getPricing(new DefaultPricingOptions());
 		LOG.info("Price data loading");
-		priceDataList = new HashMap<Integer, PriceData>();
-		for (int typeID : typeIDs) { //For each typeID
+		for (Item item : StaticData.get().getItems().values()) { //For each typeID
+			if (!item.isMarketGroup()) {
+				continue;
+			}
+			int typeID = item.getTypeID();
 			PriceData priceData = priceDataList.get(typeID);
 			if (priceData == null) {
 				priceData = new PriceData();
@@ -148,7 +142,6 @@ public class PriceDataGetter implements PricingListener {
 			LOG.info("	Price data loaded");
 			Map<Integer, PriceData> hashMap = new HashMap<Integer, PriceData>();
 			hashMap.putAll(priceDataList);
-			priceDataList.clear(); //Free memory
 			return hashMap; //Return copy of Map
 		} else {
 			LOG.info("	Price data not loaded");
@@ -162,7 +155,7 @@ public class PriceDataGetter implements PricingListener {
 	 * @param updateAll if true update all prices, if false only update new/missing prices
 	 * @return true if OK or false if FAILED
 	 */
-	private boolean processUpdate(final UpdateTask task, final boolean updateAll) {
+	private boolean processUpdate(final ProfileData profileData, final UpdateTask task, final boolean updateAll) {
 		Map<Integer, PriceData> priceData = processUpdate(task, updateAll, new DefaultPricingOptions(), profileData.getPriceTypeIDs(), Settings.get().getPriceDataSettings().getSource());
 		if (priceData != null) {
 			Settings.get().setPriceData(priceData);
@@ -188,7 +181,6 @@ public class PriceDataGetter implements PricingListener {
 		this.failed = Collections.synchronizedSet(new HashSet<Integer>());
 		this.okay = Collections.synchronizedSet(new HashSet<Integer>());
 		this.queue = Collections.synchronizedSet(new HashSet<Integer>(typeIDs));
-		this.priceDataList = Collections.synchronizedMap(new HashMap<Integer, PriceData>());
 
 		if (updateAll) {
 			LOG.info("Price data update all (" + priceSource + "):");
@@ -242,7 +234,7 @@ public class PriceDataGetter implements PricingListener {
 				updateTask.addError("Price data", "Failed to update price data for " + failed.size() + " item types");
 			}
 		}
-		boolean updated = (!priceDataList.isEmpty() && (typeIDs.size() * 5 / 100) > failed.size()); //
+		boolean updated = (!okay.isEmpty() && (typeIDs.size() * 5 / 100) > failed.size()); //
 		if (updated) { //All Updated
 			if (updateAll) {
 				LOG.info("	Price data updated");
@@ -286,7 +278,6 @@ public class PriceDataGetter implements PricingListener {
 		SplashUpdater.setSubProgress(100);
 		this.updateTask = null;
 		this.typeIDs.clear();
-		this.priceDataList.clear();
 		this.failed.clear();
 		pricing.removePricingListener(this);
 	}

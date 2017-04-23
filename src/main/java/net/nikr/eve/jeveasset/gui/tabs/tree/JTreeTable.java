@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2016 Contributors (see credits.txt)
+ * Copyright 2009-2017 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -31,7 +31,7 @@ import net.nikr.eve.jeveasset.gui.shared.table.JAutoColumnTable;
 
 public class JTreeTable extends JAutoColumnTable {
 
-	private DefaultEventTableModel<TreeAsset> tableModel;
+	private final DefaultEventTableModel<TreeAsset> tableModel;
 
 	public JTreeTable(final Program program, final DefaultEventTableModel<TreeAsset> tableModel) {
 		super(program, tableModel);
