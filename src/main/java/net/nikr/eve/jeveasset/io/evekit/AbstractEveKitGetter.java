@@ -26,7 +26,6 @@ import enterprises.orbital.evekit.client.invoker.ApiClient;
 import enterprises.orbital.evekit.client.invoker.ApiException;
 import java.util.Date;
 import java.util.List;
-import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.data.evekit.EveKitOwner;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
@@ -37,7 +36,7 @@ import org.slf4j.LoggerFactory;
 
 public abstract class AbstractEveKitGetter {
 
-	private static final Logger LOG = LoggerFactory.getLogger(Program.class);
+	private static final Logger LOG = LoggerFactory.getLogger(AbstractEveKitGetter.class);
 
 	private final CommonApi commonApi = new CommonApi();
 	private final AccessKeyApi accessKeyApi = new AccessKeyApi();
