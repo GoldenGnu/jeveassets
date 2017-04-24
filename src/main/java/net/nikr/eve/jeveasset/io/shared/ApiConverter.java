@@ -56,7 +56,7 @@ import org.slf4j.LoggerFactory;
 
 public final class ApiConverter {
 
-	private static final Logger LOG = LoggerFactory.getLogger(ApiConverter.class);;
+	private static final Logger LOG = LoggerFactory.getLogger(ApiConverter.class);
 
 	private ApiConverter() { }
 
