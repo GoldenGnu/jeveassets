@@ -46,6 +46,38 @@ public class ReprocessSettingsTest {
 		//Max Skill At 52% Reprocessing Array
 		reprocessSettings = new ReprocessSettings(52, 5, 5, 5);
 		assertEquals(72.358, reprocessSettings.getPercent(true), 0);
+
+		//Level 4 Material Skill At 50% Facilities
+		reprocessSettings = new ReprocessSettings(50, 0, 0, 0);
+		Item item = StaticData.get().getItems().get(238);
+		for (ReprocessedMaterial reprocessedMaterial : item.getReprocessedMaterial()) {
+			if (reprocessedMaterial.getTypeID() == 34) { //Tritanium
+				assertEquals(889, reprocessSettings.getLeft(reprocessedMaterial.getQuantity(), false));
+			}
+			if (reprocessedMaterial.getTypeID() == 35) { //Pyerite
+				assertEquals(63, reprocessSettings.getLeft(reprocessedMaterial.getQuantity(), false));
+			}
+			if (reprocessedMaterial.getTypeID() == 36) { //Mexallon
+				assertEquals(44, reprocessSettings.getLeft(reprocessedMaterial.getQuantity(), false));
+			}
+			if (reprocessedMaterial.getTypeID() == 37) { //Isogen
+				assertEquals(14, reprocessSettings.getLeft(reprocessedMaterial.getQuantity(), false));
+			}
+		}
+		for (ReprocessedMaterial reprocessedMaterial : item.getReprocessedMaterial()) {
+			if (reprocessedMaterial.getTypeID() == 34) { //Tritanium
+				assertEquals(177800, reprocessSettings.getLeft(reprocessedMaterial.getQuantity() * 200, false));
+			}
+			if (reprocessedMaterial.getTypeID() == 35) { //Pyerite
+				assertEquals(12700, reprocessSettings.getLeft(reprocessedMaterial.getQuantity() * 200, false));
+			}
+			if (reprocessedMaterial.getTypeID() == 36) { //Mexallon
+				assertEquals(8900, reprocessSettings.getLeft(reprocessedMaterial.getQuantity() * 200, false));
+			}
+			if (reprocessedMaterial.getTypeID() == 37) { //Isogen
+				assertEquals(2900, reprocessSettings.getLeft(reprocessedMaterial.getQuantity() * 200, false));
+			}
+		}
 	}
 	
 }
