@@ -89,6 +89,7 @@ public class AccountImportDialog extends JDialogCentered {
 		FAIL_API_FAIL,
 		FAIL_INVALID,
 		FAIL_NOT_ENOUGH_PRIVILEGES, //OK
+		FAIL_WRONG_ENTRY,
 		OK_LIMITED_ACCESS, //OK
 		OK_ACCOUNT_VALID //OK
 	}
@@ -240,6 +241,7 @@ public class AccountImportDialog extends JDialogCentered {
 		currentCard = accountImportCard;
 		this.changeType = apiTypeEdit;
 		this.editAccount = editAccount;
+		this.editEveKitOwner = editEveKitOwner;
 		if (editAccount != null) { //Edit EveApi
 			jKeyID.setText(String.valueOf(editAccount.getKeyID()));
 			jVCode.setText(editAccount.getVCode());
@@ -470,6 +472,11 @@ public class AccountImportDialog extends JDialogCentered {
 							jNext.setEnabled(false);
 							donePanel.setResult(DialoguesAccount.get().failNotEnoughPrivileges());
 							donePanel.setText(DialoguesAccount.get().failNotEnoughPrivilegesText());
+							break;
+						case FAIL_WRONG_ENTRY:
+							jNext.setEnabled(false);
+							donePanel.setResult(DialoguesAccount.get().failWrongEntry());
+							donePanel.setText(DialoguesAccount.get().failWrongEntryText());
 							break;
 						case OK_LIMITED_ACCESS:
 							jNext.setEnabled(true);
@@ -799,6 +806,8 @@ public class AccountImportDialog extends JDialogCentered {
 					result = Result.FAIL_INVALID;
 				} else if (getAccountAdder().isInvalidPrivileges()) { // Not enough privileges
 					result = Result.FAIL_NOT_ENOUGH_PRIVILEGES;
+				} else if (getAccountAdder().isWrongEntry()) { // Editing account to a different character/corporation 
+					result = Result.FAIL_WRONG_ENTRY;
 				} else { //String error
 					error = s;
 					result = Result.FAIL_API_FAIL;

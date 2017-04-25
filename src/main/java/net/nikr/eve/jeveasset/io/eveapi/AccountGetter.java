@@ -38,6 +38,7 @@ public class AccountGetter extends AbstractApiGetter<ApiKeyInfoResponse> impleme
 
 	private boolean limited = false;
 	private boolean invalidPrivileges = false;
+	private boolean wrongEntry = false;
 
 	public AccountGetter() {
 		super("Accounts", false, true);
@@ -46,12 +47,14 @@ public class AccountGetter extends AbstractApiGetter<ApiKeyInfoResponse> impleme
 	public void load(final UpdateTask updateTask, final boolean forceUpdate, final EveApiAccount account) {
 		limited = false;
 		invalidPrivileges = false;
+		wrongEntry = false;
 		super.loadAccount(updateTask, forceUpdate, account);
 	}
 
 	public void load(final UpdateTask updateTask, final boolean forceUpdate, final List<EveApiAccount> accounts) {
 		limited = false;
 		invalidPrivileges = false;
+		wrongEntry = false;
 		super.loadAccounts(updateTask, forceUpdate, accounts);
 	}
 
@@ -124,6 +127,7 @@ public class AccountGetter extends AbstractApiGetter<ApiKeyInfoResponse> impleme
 		limited = (fails > 0 && fails < max);
 		invalidPrivileges = (fails >= max);
 
+		wrongEntry = !getAccount().getOwners().isEmpty();
 		for (Character apiCharacter : characters) {
 			boolean found = false;
 			for (EveApiOwner owner : getAccount().getOwners()) {
@@ -132,6 +136,7 @@ public class AccountGetter extends AbstractApiGetter<ApiKeyInfoResponse> impleme
 					owner.setOwnerID(getID(apiCharacter));
 					owners.add(owner);
 					found = true;
+					wrongEntry = false;
 					break;
 				}
 			}
@@ -139,7 +144,11 @@ public class AccountGetter extends AbstractApiGetter<ApiKeyInfoResponse> impleme
 				owners.add(new EveApiOwner(getAccount(), getName(apiCharacter), getID(apiCharacter)));
 			}
 		}
-		getAccount().setOwners(owners);
+		if (wrongEntry) {
+			errorWrongEntry();
+		} else {
+			getAccount().setOwners(owners);
+		}
 	}
 
 	@Override
@@ -173,5 +182,10 @@ public class AccountGetter extends AbstractApiGetter<ApiKeyInfoResponse> impleme
 	@Override
 	public boolean isInvalidPrivileges() {
 		return invalidPrivileges;
+	}
+
+	@Override
+	public boolean isWrongEntry() {
+		return wrongEntry;
 	}
 }

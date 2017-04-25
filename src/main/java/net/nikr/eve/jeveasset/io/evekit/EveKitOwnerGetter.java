@@ -35,23 +35,31 @@ public class EveKitOwnerGetter extends AbstractEveKitGetter implements AccountAd
 
 	private boolean limited = false;
 	private boolean invalidPrivileges = false;
+	private boolean wrongEntry = false;
 
 	public void load(UpdateTask updateTask, EveKitOwner owner) {
 		limited = false;
 		invalidPrivileges = false;
-		super.loadOwner(updateTask, owner, null, false);
+		wrongEntry = false;
+		super.loadOwner(updateTask, owner, null, false, true);
 	}
 
 	@Override
 	public void load(UpdateTask updateTask, List<EveKitOwner> owners) {
 		limited = false;
 		invalidPrivileges = false;
+		wrongEntry = false;
 		super.load(updateTask, owners);
 	}
 
 	@Override
 	protected void get(EveKitOwner owner, Long at, boolean first) throws ApiException {
 		KeyInfo keyInfo = getAccessKeyApi().getKeyInfo(owner.getAccessKey(), owner.getAccessCred());
+		if (owner.getOwnerID() != keyInfo.getEntityID() && owner.getOwnerID() != 0) {
+			addError("Wrong Entry");
+			wrongEntry = true;
+			return;
+		}
 		owner.setOwnerID(keyInfo.getEntityID());
 		owner.setOwnerName(keyInfo.getEntityName());
 		owner.setCorporation(keyInfo.getKeyType().equals("corporation"));
@@ -125,6 +133,11 @@ public class EveKitOwnerGetter extends AbstractEveKitGetter implements AccountAd
 	@Override
 	public boolean isInvalidPrivileges() {
 		return invalidPrivileges;
+	}
+
+	@Override
+	public boolean isWrongEntry() {
+		return wrongEntry;
 	}
 
 	@Override

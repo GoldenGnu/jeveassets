@@ -345,6 +345,10 @@ public abstract class AbstractApiGetter<T extends ApiResponse> {
 		return error;
 	}
 
+	protected void errorWrongEntry() {
+		error = "Wrong Entry";
+	}
+
 	protected void addError(final String owner, final String errorText) {
 		error = errorText;
 		if (updateTask != null) {
