@@ -53,7 +53,7 @@ public class TransactionsGetter extends AbstractApiAccountKeyGetter<WalletTransa
 	@Override
 	protected Set<MyTransaction> get() {
 		if (saveHistory) {
-			return getOwner().getTransactions();
+			return new HashSet<MyTransaction>(getOwner().getTransactions());
 		} else {
 			return new HashSet<MyTransaction>();
 		}
