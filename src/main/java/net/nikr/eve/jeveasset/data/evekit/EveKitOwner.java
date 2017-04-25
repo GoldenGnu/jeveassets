@@ -269,8 +269,4 @@ public class EveKitOwner extends AbstractOwner implements OwnerType {
 		}
 		return Objects.equals(this.accessKey, other.accessKey);
 	}
-
-	
-
-	
 }

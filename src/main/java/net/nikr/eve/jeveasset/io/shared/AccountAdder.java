@@ -29,6 +29,8 @@ public interface AccountAdder {
 
 	public boolean isInvalidPrivileges();
 
+	public boolean isWrongEntry();
+
 	public String getError();
 
 	public boolean isInvalid();

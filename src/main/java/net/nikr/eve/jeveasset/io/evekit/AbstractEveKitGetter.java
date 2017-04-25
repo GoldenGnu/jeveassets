@@ -65,7 +65,7 @@ public abstract class AbstractEveKitGetter {
 		}
 		for (EveKitOwner owner : owners) {
 			if (owner.isShowOwner()) { //Ignore not shown owners
-				loadOwner(updateTask, owner, at, first);
+				loadOwner(updateTask, owner, at, first, false);
 			}
 			if (updateTask != null) {
 				if (updateTask.isCancelled()) {
@@ -78,13 +78,13 @@ public abstract class AbstractEveKitGetter {
 		}
 	}
 
-	protected void loadOwner(UpdateTask updateTask, EveKitOwner owner, Long at, boolean first) {
+	protected void loadOwner(UpdateTask updateTask, EveKitOwner owner, Long at, boolean first, boolean forceUpdate) {
 		error = null;
 		invalid = false;
-		loadApi(updateTask, owner, at, first);
+		loadApi(updateTask, owner, at, first, forceUpdate);
 	}
 
-	private boolean loadApi(UpdateTask updateTask, EveKitOwner owner, Long at, boolean first) {
+	private boolean loadApi(UpdateTask updateTask, EveKitOwner owner, Long at, boolean first, boolean forceUpdate) {
 		try {
 			//Check if the Access Mask include this API
 			if ((owner.getAccessMask() & getAccessMask()) != getAccessMask()) {
@@ -103,7 +103,7 @@ public abstract class AbstractEveKitGetter {
 				return false;
 			}
 			//Check API cache time
-			if (!Settings.get().isUpdatable(getNextUpdate(owner), false)) {
+			if (!forceUpdate && !Settings.get().isUpdatable(getNextUpdate(owner), false)) {
 				addError("	" + getTaskName() + " failed to update for: " + owner.getOwnerName() + " (NOT ALLOWED YET)");
 				if (updateTask != null) {
 					updateTask.addError(owner.getOwnerName(), "Not allowed yet.\r\n(Fix: Just wait a bit)");

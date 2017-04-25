@@ -53,6 +53,8 @@ public abstract class DialoguesAccount extends Bundle {
 	public abstract String failNotEnoughPrivilegesText();
 	public abstract String failNotValid();
 	public abstract String failNotValidText();
+	public abstract String failWrongEntry();
+	public abstract String failWrongEntryText();
 	public abstract String okLimited();
 	public abstract String okLimitedText();
 	public abstract String okValid();
