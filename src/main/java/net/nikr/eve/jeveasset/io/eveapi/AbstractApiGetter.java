@@ -205,6 +205,16 @@ public abstract class AbstractApiGetter<T extends ApiResponse> {
 	}
 
 	private boolean loadAPI(final Date nextUpdate, final boolean updateCorporation, final String updateName) {
+		//Check if API key is invalid (still update when editing account AKA forceUpdate)
+		if (isInvalid() && !forceUpdate) {
+			errorInvalid(updateName);
+			return false;
+		}
+		//Check if API key is expired (still update when editing account AKA forceUpdate)
+		if (isExpired() && !forceUpdate) {
+			errorExpired(updateName);
+			return false;
+		}
 		//Check API key access mask
 		if ((getAccessMask() & requestMask(updateCorporation)) != requestMask(updateCorporation)) {
 			errorAccessMask(updateName);
@@ -214,16 +224,6 @@ public abstract class AbstractApiGetter<T extends ApiResponse> {
 		if (!isUpdatable(nextUpdate)) {
 			addError(updateName, "Not allowed yet.\r\n(Fix: Just wait a bit)");
 			LOG.info("	{} failed to update for: {} (NOT ALLOWED YET)", taskName, updateName);
-			return false;
-		}
-		//Check if API key is expired (still update account)
-		if (isExpired() && !updateAccount) {
-			errorExpired(updateName);
-			return false;
-		}
-		//Check if API key is invalid (still update account)
-		if (isInvalid() && !updateAccount) {
-			errorInvalid(updateName);
 			return false;
 		}
 		try {
@@ -287,16 +287,6 @@ public abstract class AbstractApiGetter<T extends ApiResponse> {
 		}
 	}
 
-	private void errorExpired(String updateName) {
-		addError(updateName, "API Key expired");
-		LOG.info("	{} failed to update for: {} (API KEY EXPIRED)", taskName, updateName);
-	}
-	
-	private void errorAccessMask(String updateName) {
-		addError(updateName, "Not enough access privileges.\r\n(Fix: Add " + taskName + " to the API Key)");
-		LOG.info("	{} failed to update for: {} (NOT ENOUGH ACCESS PRIVILEGES)", taskName, updateName);
-	}
-
 	public boolean isInvalid() {
 		if (account != null) {
 			return account.isInvalid();
@@ -305,16 +295,6 @@ public abstract class AbstractApiGetter<T extends ApiResponse> {
 		} else {
 			return false; //Eve
 		}
-	}
-
-	private void errorInvalid(String updateName) {
-		if (account != null) {
-			account.setInvalid(true);
-		} else if (owner != null) {
-			owner.getParentAccount().setInvalid(true);
-		}
-		addError(updateName, "API Key invalid");
-		LOG.info("	{} failed to update for: {} (API KEY INVALID)", taskName, updateName);
 	}
 
 	private void notInvalid() {
@@ -345,8 +325,29 @@ public abstract class AbstractApiGetter<T extends ApiResponse> {
 		return error;
 	}
 
+	private void errorInvalid(String updateName) {
+		if (account != null) {
+			account.setInvalid(true);
+		} else if (owner != null) {
+			owner.getParentAccount().setInvalid(true);
+		}
+		addError(updateName, "API Key invalid");
+		LOG.info("	{} failed to update for: {} (API KEY INVALID)", taskName, updateName);
+	}
+
+	private void errorExpired(String updateName) {
+		addError(updateName, "API Key expired");
+		LOG.info("	{} failed to update for: {} (API KEY EXPIRED)", taskName, updateName);
+	}
+
+
+	private void errorAccessMask(String updateName) {
+		addError(updateName, "Not enough access privileges.\r\n(Fix: Add " + taskName + " to the API Key)");
+		LOG.info("	{} failed to update for: {} (NOT ENOUGH ACCESS PRIVILEGES)", taskName, updateName);
+	}
+
 	protected void errorWrongEntry() {
-		error = "Wrong Entry";
+		addError("", "Wrong Entry");
 	}
 
 	protected void addError(final String owner, final String errorText) {

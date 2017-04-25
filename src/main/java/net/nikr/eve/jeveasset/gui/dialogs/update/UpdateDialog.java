@@ -365,7 +365,7 @@ public class UpdateDialog extends JDialogCentered {
 
 		Date priceData = program.getPriceDataGetter().getNextUpdate();
 		for (OwnerType owner : program.getOwnerTypes()) {
-			if (owner.isShowOwner()) {
+			if (owner.isShowOwner() && !owner.isInvalid() && !owner.isExpired()) {
 				industryJobsFirst = updateFirst(industryJobsFirst, owner.getIndustryJobsNextUpdate());
 				marketOrdersFirst = updateFirst(marketOrdersFirst, owner.getMarketOrdersNextUpdate());
 				journalFirst = updateFirst(journalFirst, owner.getJournalNextUpdate());
