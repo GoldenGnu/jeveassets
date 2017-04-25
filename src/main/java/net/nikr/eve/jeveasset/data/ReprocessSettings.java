@@ -57,7 +57,7 @@ public class ReprocessSettings {
 	}
 
 	public int getLeft(final int start, final boolean ore) {
-		return (int) Math.round((((double) start) / 100.0) * getPercent(ore));
+		return (int) Math.floor((((double) start) / 100.0) * getPercent(ore));
 	}
 
 	protected double getPercent(final boolean ore) {
