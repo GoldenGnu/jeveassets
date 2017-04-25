@@ -59,7 +59,7 @@ public class JournalGetter extends AbstractApiAccountKeyGetter<WalletJournalResp
 	@Override
 	protected Set<MyJournal> get() {
 		if (saveHistory) {
-			return getOwner().getJournal();
+			return new HashSet<MyJournal>(getOwner().getJournal());
 		} else {
 			return new HashSet<MyJournal>();
 		}
