@@ -32,7 +32,6 @@ import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.Timer;
-import net.nikr.eve.jeveasset.data.EventListManager;
 import net.nikr.eve.jeveasset.data.MyAccountBalance;
 import net.nikr.eve.jeveasset.data.ProfileData;
 import net.nikr.eve.jeveasset.data.ProfileManager;
@@ -62,6 +61,7 @@ import net.nikr.eve.jeveasset.gui.tabs.items.ItemsTab;
 import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustryJobsTab;
 import net.nikr.eve.jeveasset.gui.tabs.jobs.MyIndustryJob;
 import net.nikr.eve.jeveasset.gui.tabs.journal.JournalTab;
+import net.nikr.eve.jeveasset.gui.tabs.journal.MyJournal;
 import net.nikr.eve.jeveasset.gui.tabs.loadout.LoadoutsTab;
 import net.nikr.eve.jeveasset.gui.tabs.materials.MaterialsTab;
 import net.nikr.eve.jeveasset.gui.tabs.orders.MarketOrdersTab;
@@ -513,25 +513,28 @@ public class Program implements ActionListener {
 	}
 
 	public List<MyAsset> getAssetList() {
-		return EventListManager.safeList(profileData.getAssetsEventList());
+		return profileData.getAssetsList();
 	}
 	public List<MyContract> getContractList() {
-		return EventListManager.safeList(profileData.getContractEventList());
+		return profileData.getContractList();
 	}
 	public List<MyContractItem> getContractItemList() {
-		return EventListManager.safeList(profileData.getContractItemEventList());
+		return profileData.getContractItemList();
 	}
 	public List<MyIndustryJob> getIndustryJobsList() {
-		return EventListManager.safeList(profileData.getIndustryJobsEventList());
+		return profileData.getIndustryJobsList();
 	}
 	public List<MyMarketOrder> getMarketOrdersList() {
-		return EventListManager.safeList(profileData.getMarketOrdersEventList());
+		return profileData.getMarketOrdersList();
+	}
+	public List<MyJournal> getJournalList() {
+		return profileData.getJournalList();
 	}
 	public List<MyTransaction> getTransactionsList() {
-		return EventListManager.safeList(profileData.getTransactionsEventList());
+		return profileData.getTransactionsList();
 	}
 	public List<MyAccountBalance> getAccountBalanceList() {
-		return EventListManager.safeList(profileData.getAccountBalanceEventList());
+		return profileData.getAccountBalanceList();
 	}
 	public List<String> getOwnerNames(boolean all) {
 		return profileData.getOwnerNames(all);

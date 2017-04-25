@@ -66,6 +66,14 @@ public class ProfileData {
 	private final EventList<MyAsset> assetsEventList = new EventListManager<MyAsset>().create();
 	private final EventList<MyAccountBalance> accountBalanceEventList = new EventListManager<MyAccountBalance>().create();
 	private final EventList<MyContract> contractEventList = new EventListManager<MyContract>().create();
+	private final List<MyContractItem> contractItemList = new ArrayList<MyContractItem>();
+	private final List<MyIndustryJob> industryJobsList = new ArrayList<MyIndustryJob>();
+	private final List<MyMarketOrder> marketOrdersList = new ArrayList<MyMarketOrder>();
+	private final List<MyJournal> journalList = new ArrayList<MyJournal>();
+	private final List<MyTransaction> transactionsList = new ArrayList<MyTransaction>();
+	private final List<MyAsset> assetsList = new ArrayList<MyAsset>();
+	private final List<MyAccountBalance> accountBalanceList = new ArrayList<MyAccountBalance>();
+	private final List<MyContract> contractList = new ArrayList<MyContract>();
 	private Map<Integer, List<MyAsset>> uniqueAssetsDuplicates = null; //TypeID : int
 	private Map<Integer, MarketPriceData> marketPriceData; //TypeID : int
 	private Map<Integer, MarketPriceData> transactionPriceDataSell; //TypeID : int
@@ -137,6 +145,38 @@ public class ProfileData {
 
 	public EventList<MyContractItem> getContractItemEventList() {
 		return contractItemEventList;
+	}
+
+	public List<MyContractItem> getContractItemList() {
+		return contractItemList;
+	}
+
+	public List<MyIndustryJob> getIndustryJobsList() {
+		return industryJobsList;
+	}
+
+	public List<MyMarketOrder> getMarketOrdersList() {
+		return marketOrdersList;
+	}
+
+	public List<MyJournal> getJournalList() {
+		return journalList;
+	}
+
+	public List<MyTransaction> getTransactionsList() {
+		return transactionsList;
+	}
+
+	public List<MyAsset> getAssetsList() {
+		return assetsList;
+	}
+
+	public List<MyAccountBalance> getAccountBalanceList() {
+		return accountBalanceList;
+	}
+
+	public List<MyContract> getContractList() {
+		return contractList;
 	}
 
 	public List<String> getOwnerNames(boolean all) {
@@ -451,6 +491,22 @@ public class ProfileData {
 			editableLocationType.setLocation(ApiIdConverter.getLocation(editableLocationType.getLocation()));
 		}
 
+		assetsList.clear();
+		assetsList.addAll(assets);
+		marketOrdersList.clear();
+		marketOrdersList.addAll(marketOrders);
+		journalList.clear();
+		journalList.addAll(journal);
+		transactionsList.clear();
+		transactionsList.addAll(transactions);
+		industryJobsList.clear();
+		industryJobsList.addAll(industryJobs);
+		contractItemList.clear();
+		contractItemList.addAll(contractItems);
+		contractList.clear();
+		contractList.addAll(contracts);
+		accountBalanceList.clear();
+		accountBalanceList.addAll(accountBalance);
 		try {
 			assetsEventList.getReadWriteLock().writeLock().lock();
 			assetsEventList.clear();
