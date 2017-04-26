@@ -62,11 +62,19 @@ public abstract class DialoguesAccount extends Bundle {
 
 	public abstract String keyId();
 	public abstract String vCode();
+	public abstract String authCode();
+	public abstract String authentication();
+	public abstract String authorize();
 	public abstract String accessKey();
 	public abstract String credential();
 	public abstract String eveApiHelpText();
 	public abstract String eveKitHelpText();
+	public abstract String esiHelpText();
 	public abstract String validatingMessage();
+	public abstract String scopes();
+	public abstract String scopeStructures();
+	public abstract String scopeAssets();
+	public abstract String scopeAccountBalance();
 
 	public abstract String dialogueNameAccountManagement();
 
@@ -75,6 +83,7 @@ public abstract class DialoguesAccount extends Bundle {
 	public abstract String add();
 	public abstract String eveapi();
 	public abstract String evekit();
+	public abstract String esi();
 	public abstract String collapse();
 	public abstract String expand();
 	public abstract String showAssets();
@@ -103,6 +112,7 @@ public abstract class DialoguesAccount extends Bundle {
 	public abstract String tableFormatTransactions();
 	public abstract String tableFormatContracts();
 	public abstract String tableFormatLocations();
+	public abstract String tableFormatStructures();
 	public abstract String tableFormatYes();
 	public abstract String tableFormatNo();
 	public abstract String tableFormatExpires();

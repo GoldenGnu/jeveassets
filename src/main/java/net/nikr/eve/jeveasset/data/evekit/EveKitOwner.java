@@ -202,6 +202,11 @@ public class EveKitOwner extends AbstractOwner implements OwnerType {
 	}
 
 	@Override
+	public boolean isStructures() {
+		return false; //Not supported by the EveKit, Yet?
+	}
+
+	@Override
 	public String getComparator() {
 		return "evekit" + getAccessKey();
 	}

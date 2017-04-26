@@ -80,6 +80,7 @@ public interface OwnerType extends Comparable<OwnerType> {
 	public boolean isJournal();
 	public boolean isContracts();
 	public boolean isLocations();
+	public boolean isStructures();
 	//Last Update
 	public Date getAssetLastUpdate();
 	public Date getBalanceLastUpdate();

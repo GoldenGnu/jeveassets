@@ -121,6 +121,9 @@ public class AccountSeparatorTableCell extends SeparatorTableCell<OwnerType> {
 			case EVEKIT:
 				jAccountType.setIcon(Images.MISC_EVEKIT.getIcon());
 				break;
+			case ESI:
+				jAccountType.setIcon(Images.MISC_ESI.getIcon());
+				break;
 		}
 		jAccountName.setText(owner.getAccountName());
 		//Expired
