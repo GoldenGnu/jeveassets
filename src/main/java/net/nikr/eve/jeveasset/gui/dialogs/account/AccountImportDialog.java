@@ -29,11 +29,12 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.Collection;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
@@ -104,6 +105,7 @@ public class AccountImportDialog extends JDialogCentered {
 		FAIL_INVALID,
 		FAIL_NOT_ENOUGH_PRIVILEGES, //OK
 		FAIL_WRONG_ENTRY,
+		FAIL_CANCEL,
 		OK_LIMITED_ACCESS, //OK
 		OK_ACCOUNT_VALID //OK
 	}
@@ -133,7 +135,8 @@ public class AccountImportDialog extends JDialogCentered {
 	private AccountImportCard currentCard;
 	private ApiType apiType;
 	private boolean changeType;
-	private Map<Scopes, JCheckBoxMenuItem> scopesMap = new HashMap<Scopes, JCheckBoxMenuItem>();
+	private AddTask addTask;
+	private final Map<Scopes, JCheckBoxMenuItem> scopesMap = new EnumMap<Scopes, JCheckBoxMenuItem>(Scopes.class);
 
 	public AccountImportDialog(final AccountManagerDialog apiManager, final Program program) {
 		super(program, DialoguesAccount.get().dialogueNameAccountImport(), apiManager.getDialog());
@@ -360,9 +363,9 @@ public class AccountImportDialog extends JDialogCentered {
 				account.setKeyID(getKeyID());
 				account.setvCode(getVCode());
 			}
-			EveApiTask eveApiTask = new EveApiTask();
-			eveApiTask.addPropertyChangeListener(listener);
-			eveApiTask.execute();
+			addTask = new EveApiTask();
+			addTask.addPropertyChangeListener(listener);
+			addTask.execute();
 		}
 		if (apiType == ApiType.EVEKIT) {
 			if (editEveKitOwner == null) { //Add
@@ -370,9 +373,9 @@ public class AccountImportDialog extends JDialogCentered {
 			} else { //Edit
 				eveKitOwner = new EveKitOwner(getAccessKey(), getAccessCred(), editEveKitOwner);
 			}
-			EveKitTask eveKitTask = new EveKitTask();
-			eveKitTask.addPropertyChangeListener(listener);
-			eveKitTask.execute();
+			addTask = new EveKitTask();
+			addTask.addPropertyChangeListener(listener);
+			addTask.execute();
 		}
 		if (apiType == ApiType.ESI) {
 			if (editEsiOwner == null) { //Add
@@ -380,9 +383,9 @@ public class AccountImportDialog extends JDialogCentered {
 			} else { //Edit
 				esiOwner = new EsiOwner(editEsiOwner);
 			}
-			EsiTask esiTask = new EsiTask();
-			esiTask.addPropertyChangeListener(listener);
-			esiTask.execute();
+			addTask = new EsiTask();
+			addTask.addPropertyChangeListener(listener);
+			addTask.execute();
 		}
 	}
 
@@ -455,6 +458,7 @@ public class AccountImportDialog extends JDialogCentered {
 		@Override
 		public void actionPerformed(final ActionEvent e) {
 			if (AccountImportAction.ADD_KEY_CANCEL.name().equals(e.getActionCommand())) {
+				addTask.cancel(true);
 				setVisible(false);
 			} else if (AccountImportAction.PREVIOUS.name().equals(e.getActionCommand())) {
 				switch (currentCard) {
@@ -477,6 +481,7 @@ public class AccountImportDialog extends JDialogCentered {
 						if (apiType == ApiType.ESI) {
 							currentCard = AccountImportCard.ADD_ESI;
 						}
+						addTask.cancel(true);
 						break;
 					case DONE: //Previous: Add
 						if (apiType == ApiType.EVEKIT) {
@@ -534,47 +539,66 @@ public class AccountImportDialog extends JDialogCentered {
 		public void propertyChange(final PropertyChangeEvent evt) {
 			Object o = evt.getSource();
 			if (o instanceof AddTask) {
-				AddTask eveApiTask = (AddTask) o;
-				if (eveApiTask.done) {
-					eveApiTask.done = false;
-					switch (eveApiTask.result) {
+				AddTask addTask = (AddTask) o;
+				if (addTask.done) {
+					addTask.done = false;
+					switch (addTask.result) {
 						case FAIL_EXIST:
+							currentCard = AccountImportCard.DONE;
 							jNext.setEnabled(false);
 							donePanel.setResult(DialoguesAccount.get().failExist());
 							donePanel.setText(DialoguesAccount.get().failExistText());
 							break;
 						case FAIL_API_FAIL:
+							currentCard = AccountImportCard.DONE;
 							jNext.setEnabled(false);
 							donePanel.setResult(DialoguesAccount.get().failApiError());
-							donePanel.setText(DialoguesAccount.get().failApiErrorText(eveApiTask.error));
+							donePanel.setText(DialoguesAccount.get().failApiErrorText(addTask.error));
 							break;
 						case FAIL_INVALID:
+							currentCard = AccountImportCard.DONE;
 							jNext.setEnabled(false);
 							donePanel.setResult(DialoguesAccount.get().failNotValid());
 							donePanel.setText(DialoguesAccount.get().failNotValidText());
 							break;
 						case FAIL_NOT_ENOUGH_PRIVILEGES:
+							currentCard = AccountImportCard.DONE;
 							jNext.setEnabled(false);
 							donePanel.setResult(DialoguesAccount.get().failNotEnoughPrivileges());
 							donePanel.setText(DialoguesAccount.get().failNotEnoughPrivilegesText());
 							break;
 						case FAIL_WRONG_ENTRY:
+							currentCard = AccountImportCard.DONE;
 							jNext.setEnabled(false);
 							donePanel.setResult(DialoguesAccount.get().failWrongEntry());
 							donePanel.setText(DialoguesAccount.get().failWrongEntryText());
 							break;
+						case FAIL_CANCEL:
+							switch(apiType) {
+								case EVE_ONLINE:
+									currentCard = AccountImportCard.ADD_EVEAPI;
+									break;
+								case EVEKIT:
+									currentCard = AccountImportCard.ADD_EVEKIT;
+									break;
+								case ESI:
+									currentCard = AccountImportCard.ADD_ESI;
+									break;
+							}
+							break;
 						case OK_LIMITED_ACCESS:
+							currentCard = AccountImportCard.DONE;
 							jNext.setEnabled(true);
 							donePanel.setResult(DialoguesAccount.get().okLimited());
 							donePanel.setText(DialoguesAccount.get().okLimitedText());
 							break;
 						case OK_ACCOUNT_VALID:
+							currentCard = AccountImportCard.DONE;
 							jNext.setEnabled(true);
 							donePanel.setResult(DialoguesAccount.get().okValid());
 							donePanel.setText(DialoguesAccount.get().okValidText());
 							break;
 					}
-					currentCard = AccountImportCard.DONE;
 					updateTab();
 				}
 			}
@@ -1062,6 +1086,8 @@ public class AccountImportDialog extends JDialogCentered {
 		public final void done() {
 			try {
 				get();
+			} catch (CancellationException ex) {
+				result = Result.FAIL_CANCEL;
 			} catch (InterruptedException ex) {
 				LOG.error(ex.getMessage(), ex);
 				throw new RuntimeException(ex);
