@@ -94,7 +94,6 @@ public class ImportIskPerHour {
 			if (decimalComma) {
 				number = number.replace(".", "").replace(",", ".");
 			}
-			System.out.println("Name: " + name + " x" + number);
 			double d;
 			try {
 				d = Double.valueOf(number);
