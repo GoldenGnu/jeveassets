@@ -39,9 +39,13 @@ import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 import net.troja.eve.esi.ApiException;
 import net.troja.eve.esi.auth.SsoScopes;
 import net.troja.eve.esi.model.StructureResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 public class EsiStructuresGetter extends AbstractEsiGetter {
+
+	private static final Logger LOG = LoggerFactory.getLogger(EsiStructuresGetter.class);
 
 	Map<Long, Set<Long>> map = new HashMap<Long, Set<Long>>();
 
@@ -69,7 +73,7 @@ public class EsiStructuresGetter extends AbstractEsiGetter {
 				if (ex.getCode() != 403 && ex.getCode() != 404) { //Ignore 403: Forbidden and 404: Structure not found
 					throw ex;
 				} else {
-					System.out.println("Failed to find locationID: " + locationID);
+					LOG.info("Failed to find locationID: " + locationID);
 				}
 			}
 		}
