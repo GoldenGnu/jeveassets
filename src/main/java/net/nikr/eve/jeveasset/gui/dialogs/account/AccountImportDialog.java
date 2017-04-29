@@ -385,7 +385,9 @@ public class AccountImportDialog extends JDialogCentered {
 		@Override
 		public void actionPerformed(final ActionEvent e) {
 			if (AccountImportAction.ADD_KEY_CANCEL.name().equals(e.getActionCommand())) {
-				addTask.cancel(true);
+				if (addTask != null) {
+					addTask.cancel(true);
+				}
 				setVisible(false);
 			} else if (AccountImportAction.PREVIOUS.name().equals(e.getActionCommand())) {
 				switch (currentCard) {
