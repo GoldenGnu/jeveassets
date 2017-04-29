@@ -26,6 +26,7 @@ import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.data.api.AbstractOwner;
 import net.nikr.eve.jeveasset.data.api.ApiType;
 import net.nikr.eve.jeveasset.data.api.OwnerType;
+import net.nikr.eve.jeveasset.io.esi.EsiCallbackURL;
 import net.troja.eve.esi.auth.SsoScopes;
 
 
@@ -40,6 +41,7 @@ public class EsiOwner  extends AbstractOwner implements OwnerType {
     private String intellectualProperty;
     private Date structuresNextUpdate = Settings.getNow();
 	private Date accountNextUpdate = Settings.getNow();
+	private EsiCallbackURL callbackURL;
 
 	public EsiOwner() {}
 
@@ -54,6 +56,7 @@ public class EsiOwner  extends AbstractOwner implements OwnerType {
 		this.intellectualProperty = esiOwner.intellectualProperty;
 		this.structuresNextUpdate = esiOwner.structuresNextUpdate;
 		this.accountNextUpdate = esiOwner.accountNextUpdate;
+		this.callbackURL = esiOwner.callbackURL;
 	}
 
 	public String getRefreshToken() {
@@ -110,6 +113,14 @@ public class EsiOwner  extends AbstractOwner implements OwnerType {
 
 	public void setAccountNextUpdate(Date accountNextUpdate) {
 		this.accountNextUpdate = accountNextUpdate;
+	}
+
+	public EsiCallbackURL getCallbackURL() {
+		return callbackURL;
+	}
+
+	public void setCallbackURL(EsiCallbackURL callbackURL) {
+		this.callbackURL = callbackURL;
 	}
 
 	public void setExpire(Date expire) {

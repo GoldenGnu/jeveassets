@@ -21,9 +21,11 @@
 package net.nikr.eve.jeveasset.io.esi;
 
 import java.awt.Desktop;
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.util.Base64;
 import java.util.Set;
+import net.nikr.eve.jeveasset.data.esi.EsiOwner;
 import net.troja.eve.esi.auth.OAuth;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,16 +36,32 @@ public class EsiAuth {
 	private static final Logger LOG = LoggerFactory.getLogger(EsiAuth.class);
 
 	private final OAuth oAuth;
+	private final MicroServe microServe;
+	private EsiCallbackURL callbackURL;
 	
 	public EsiAuth() {
 		oAuth = new OAuth();
-		oAuth.setClientId(AbstractEsiGetter.getA());
-		oAuth.setClientSecret(AbstractEsiGetter.getB());
+		microServe = new MicroServe();
+		microServe.startServer();
 	}
-	
-	public boolean openWebpage(Set<String> scopes) {
+
+	public void cancelImport() {
+		microServe.stopListening();
+	}
+
+	public boolean isServerStarted() {
+		return microServe.isServerStarted();
+	}
+
+	public boolean openWebpage(EsiCallbackURL callbackURL, Set<String> scopes) {
 		try {
-			String authorizationUri = oAuth.getAuthorizationUri("https://eve.nikr.net/jeveasset/auth", scopes, "jeveassets");
+			if (callbackURL == EsiCallbackURL.LOCALHOST) {
+				microServe.startListening();
+			}
+			this.callbackURL = callbackURL;
+			oAuth.setClientId(callbackURL.getA());
+			oAuth.setClientSecret(callbackURL.getB());
+			String authorizationUri = oAuth.getAuthorizationUri(callbackURL.getUrl(), scopes, "jeveassets");
 			Desktop.getDesktop().browse(new URI(authorizationUri));
 			return true;
 		} catch (Exception ex) {
@@ -52,14 +70,28 @@ public class EsiAuth {
 		}
 	}
 
-	public String finishFlow(String authCode) {
+	public boolean finishFlow(EsiOwner esiOwner, String authCode) {
+		String code;
+		if (callbackURL == EsiCallbackURL.LOCALHOST) {
+			code = microServe.getAuthCode();
+			if (code == null) {
+				return false;
+			}
+		} else {
+			try {
+				code = new String(Base64.getUrlDecoder().decode(authCode), "UTF-8");
+			} catch (UnsupportedEncodingException ex) {
+				return false;
+			}
+		}
 		try {
-			String code = new String(Base64.getUrlDecoder().decode(authCode), "UTF-8");
 			oAuth.finishFlow(code, "jeveassets");
-			return oAuth.getRefreshToken();
+			esiOwner.setRefreshToken(oAuth.getRefreshToken());
+			esiOwner.setCallbackURL(callbackURL);
+			return true;
 		} catch (Exception ex) {
 			LOG.error(ex.getMessage(), ex);
-			return null;
+			return false;
 		}
 	}
 }

@@ -54,6 +54,7 @@ import net.nikr.eve.jeveasset.data.esi.EsiOwner;
 import net.nikr.eve.jeveasset.gui.tabs.assets.MyAsset;
 import net.nikr.eve.jeveasset.gui.tabs.journal.MyJournal;
 import net.nikr.eve.jeveasset.gui.tabs.transaction.MyTransaction;
+import net.nikr.eve.jeveasset.io.esi.EsiCallbackURL;
 import net.nikr.eve.jeveasset.io.shared.ApiConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -125,6 +126,7 @@ public final class ProfileReader extends AbstractXmlReader {
 			String intellectualProperty = AttributeGetters.getString(currentNode, "intellectualproperty");
 			Date structuresNextUpdate = AttributeGetters.getDate(currentNode, "structuresnextupdate");
 			Date accountNextUpdate = AttributeGetters.getDate(currentNode, "accountnextupdate");
+			EsiCallbackURL callbackURL = EsiCallbackURL.valueOf(AttributeGetters.getString(currentNode, "callbackurl"));
 
 			EsiOwner owner = new EsiOwner();
 			owner.setAccountName(accountName);
@@ -136,6 +138,7 @@ public final class ProfileReader extends AbstractXmlReader {
 			owner.setIntellectualProperty(intellectualProperty);
 			owner.setStructuresNextUpdate(structuresNextUpdate);
 			owner.setAccountNextUpdate(accountNextUpdate);
+			owner.setCallbackURL(callbackURL);
 
 			parseOwnerType(currentNode, owner);
 			esiOwners.add(owner);

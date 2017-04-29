@@ -42,8 +42,6 @@ public abstract class AbstractEsiGetter {
 
 	private static final Logger LOG = LoggerFactory.getLogger(AbstractEsiGetter.class);
 
-	private static final String A = "";
-	private static final String B = "";
 	protected final String DATASOURCE = "tranquility";
 	private String error = null;
 	private ApiClient client;
@@ -144,8 +142,8 @@ public abstract class AbstractEsiGetter {
 	private ApiClient getClient(EsiOwner owner) {
 		ApiClient apiClient = new ApiClient();
 		OAuth auth = (OAuth) apiClient.getAuthentication("evesso");
-		auth.setClientId(getA());
-		auth.setClientSecret(getB());
+		auth.setClientId(owner.getCallbackURL().getA());
+		auth.setClientSecret(owner.getCallbackURL().getB());
 		auth.setRefreshToken(owner.getRefreshToken());
 		return apiClient;
 	}
@@ -190,13 +188,5 @@ public abstract class AbstractEsiGetter {
 
 	public final String getError() {
 		return error;
-	}
-
-	public static String getA() {
-		return A;
-	}
-
-	public static String getB() {
-		return B;
 	}
 }

@@ -62,6 +62,7 @@ import net.nikr.eve.jeveasset.gui.shared.components.JIntegerField;
 import net.nikr.eve.jeveasset.gui.shared.components.JWorking;
 import net.nikr.eve.jeveasset.i18n.DialoguesAccount;
 import net.nikr.eve.jeveasset.io.esi.EsiAuth;
+import net.nikr.eve.jeveasset.io.esi.EsiCallbackURL;
 import net.nikr.eve.jeveasset.io.esi.EsiOwnerGetter;
 import net.nikr.eve.jeveasset.io.esi.Scopes;
 import net.nikr.eve.jeveasset.io.eveapi.AccountGetter;
@@ -342,6 +343,7 @@ public class AccountImportDialog extends JDialogCentered {
 		jAuthCode.setEnabled(false);
 		jAuthCode.setText("");
 		jNext.setEnabled(false);
+		esiAuth.cancelImport();
 		for (JCheckBoxMenuItem menuItem : scopesMap.values()) {
 			menuItem.setSelected(true);
 		}
@@ -460,6 +462,7 @@ public class AccountImportDialog extends JDialogCentered {
 				if (addTask != null) {
 					addTask.cancel(true);
 				}
+				esiAuth.cancelImport();
 				setVisible(false);
 			} else if (AccountImportAction.PREVIOUS.name().equals(e.getActionCommand())) {
 				switch (currentCard) {
@@ -784,10 +787,18 @@ public class AccountImportDialog extends JDialogCentered {
 							scopes.add(entry.getKey().getScope());
 						}
 					}
-					boolean ok = esiAuth.openWebpage(scopes);
-					if (ok) {
-						jAuthCode.setEnabled(true);
-						jNext.setEnabled(true);
+					if (esiAuth.isServerStarted()) { //Localhost
+						boolean ok = esiAuth.openWebpage(EsiCallbackURL.LOCALHOST, scopes);
+						if (ok) { //Wait for response
+							currentCard = AccountImportCard.VALIDATE;
+							updateTab();
+						}
+					} else {
+						boolean ok = esiAuth.openWebpage(EsiCallbackURL.EVE_NIKR_NET, scopes);
+						if (ok) {
+							jAuthCode.setEnabled(true);
+							jNext.setEnabled(true);
+						}
 					}
 				}
 			});
@@ -1017,8 +1028,8 @@ public class AccountImportDialog extends JDialogCentered {
 
 		@Override
 		public void load() {
-			String refreshToken = esiAuth.finishFlow(getAuthCode());
-			if (refreshToken == null) {
+			boolean ok = esiAuth.finishFlow(esiOwner, getAuthCode());
+			if (!ok) {
 				accountAdder = new AccountAdderAdapter() {
 					@Override
 					public boolean hasError() {
@@ -1033,7 +1044,6 @@ public class AccountImportDialog extends JDialogCentered {
 				return;
 			}
 			accountAdder = esiOwnerGetter;
-			esiOwner.setRefreshToken(refreshToken);
 			esiOwnerGetter.load(esiOwner);
 		}
 
