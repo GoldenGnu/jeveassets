@@ -30,7 +30,6 @@ import java.awt.event.WindowFocusListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.EnumMap;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -458,7 +457,9 @@ public class AccountImportDialog extends JDialogCentered {
 		@Override
 		public void actionPerformed(final ActionEvent e) {
 			if (AccountImportAction.ADD_KEY_CANCEL.name().equals(e.getActionCommand())) {
-				addTask.cancel(true);
+				if (addTask != null) {
+					addTask.cancel(true);
+				}
 				setVisible(false);
 			} else if (AccountImportAction.PREVIOUS.name().equals(e.getActionCommand())) {
 				switch (currentCard) {
