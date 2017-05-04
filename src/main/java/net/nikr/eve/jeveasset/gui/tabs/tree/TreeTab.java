@@ -311,7 +311,7 @@ public class TreeTab extends JMainTab {
 				fullLocation = location.getRegion()+location.getSystem()+location.getLocation();
 			}
 
-			//Add Parent(s)
+			//Add parent item(s)
 			String parentKey = fullLocation;
 			if (!asset.getParents().isEmpty()) {
 				for (MyAsset parentAsset : asset.getParents()) {
@@ -320,13 +320,14 @@ public class TreeTab extends JMainTab {
 					if (parentTreeAsset == null) {
 						parentTreeAsset = new TreeAsset(parentAsset, TreeType.LOCATION, locationTree, parentKey, !parentAsset.getAssets().isEmpty());
 						locationCache.put(cacheKey, parentTreeAsset);
+						locations.add(parentTreeAsset);
 					}
 					parentKey = parentKey + parentAsset.getName() + " #" + parentAsset.getItemID();
 					locationTree.add(parentTreeAsset);
 					locationsExport.add(parentTreeAsset);
 				}
 			}
-			//Add Item
+			//Add item
 			if (asset.getAssets().isEmpty()) {
 				TreeAsset locationAsset = new TreeAsset(asset, TreeType.LOCATION, locationTree, parentKey, !asset.getAssets().isEmpty());
 				locations.add(locationAsset);
