@@ -476,7 +476,7 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType {
 			this.volume = updateVolume;
 		}
 
-		boolean matches(Object object) {
+		Long matches(Object object) {
 			if (object instanceof MyAsset) {
 				return matchesAsset((MyAsset) object, false);
 			} else if (object instanceof MyMarketOrder) {
@@ -488,64 +488,79 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType {
 			} else if (object instanceof MyContractItem) {
 				return matchesContract((MyContractItem) object, false);
 			}
-			return false;
+			return null;
 		}
 
-		boolean updateAsset(MyAsset asset) {
-			return matchesAsset(asset, true);
+		void updateAsset(MyAsset asset) {
+			matchesAsset(asset, true);
 		}
 
-		private boolean matchesAsset(MyAsset asset, boolean add) {
-			return asset != null //better safe then sorry
-				&& matches(add, isBPC() ? -asset.getItem().getTypeID() : asset.getItem().getTypeID(), asset.getOwnerID(), asset.getContainer(), null, asset.getLocation(), asset, null, null, null, null);
+		private Long matchesAsset(MyAsset asset, boolean add) {
+			if (asset != null) { //better safe then sorry
+				return matches(add, isBPC() ? -asset.getItem().getTypeID() : asset.getItem().getTypeID(), asset.getOwnerID(), asset.getContainer(), null, asset.getLocation(), asset, null, null, null, null);
+			} else {
+				return null;
+			}
 		}
 
-		boolean updateMarketOrder(final MyMarketOrder marketOrder) {
-			return matchesMarketOrder(marketOrder, true);
+		void updateMarketOrder(final MyMarketOrder marketOrder) {
+			matchesMarketOrder(marketOrder, true);
 		}
 
-		private boolean matchesMarketOrder(final MyMarketOrder marketOrder, boolean add) {
-			return marketOrder != null //better safe then sorry
-					&& matches(add, marketOrder.getTypeID(), marketOrder.getOwnerID(), null, null, marketOrder.getLocation(), null, marketOrder, null, null, null);
+		private Long matchesMarketOrder(final MyMarketOrder marketOrder, boolean add) {
+			if (marketOrder != null) { //better safe then sorry
+				return matches(add, marketOrder.getTypeID(), marketOrder.getOwnerID(), null, null, marketOrder.getLocation(), null, marketOrder, null, null, null);
+			} else {
+				return null;
+			}
 		}
 
-		boolean updateIndustryJob(final MyIndustryJob industryJob) {
-			return matchesIndustryJob(industryJob, true);
+		void updateIndustryJob(final MyIndustryJob industryJob) {
+			matchesIndustryJob(industryJob, true);
 		}
 
-		private boolean matchesIndustryJob(final MyIndustryJob industryJob, boolean add) {
-			return industryJob != null //better safe then sorry 
-					&& matches(add, industryJob.getProductTypeID(), industryJob.getOwnerID(), null, null, industryJob.getLocation(), null, null, industryJob, null, null);
+		private Long matchesIndustryJob(final MyIndustryJob industryJob, boolean add) {
+			if (industryJob != null) { //better safe then sorry 
+				return matches(add, industryJob.getProductTypeID(), industryJob.getOwnerID(), null, null, industryJob.getLocation(), null, null, industryJob, null, null);
+			} else {
+				return null;
+			}
 		}
 
-		boolean updateTransaction(MyTransaction transaction) {
-			return matchesTransaction(transaction, true);
+		void updateTransaction(MyTransaction transaction) {
+			matchesTransaction(transaction, true);
 		}
 
-		private boolean matchesTransaction(MyTransaction transaction, boolean add) {
-			return transaction != null //better safe then sorry
-				&& matches(add, transaction.getTypeID(), transaction.getCharacterID(), null, null, transaction.getLocation(), null, null, null, transaction, null);
+		private Long matchesTransaction(MyTransaction transaction, boolean add) {
+			if (transaction != null) { //better safe then sorry
+				return matches(add, transaction.getTypeID(), transaction.getCharacterID(), null, null, transaction.getLocation(), null, null, null, transaction, null);
+			} else {
+				return null;
+			}
 		}
 
-		boolean updateContract(MyContractItem contractItem) {
-			return matchesContract(contractItem, true);
+		void updateContract(MyContractItem contractItem) {
+			matchesContract(contractItem, true);
 		}
 
-		private boolean matchesContract(MyContractItem contractItem, boolean add) {
-			return contractItem != null //better safe then sorry
-				&& matches(add, contractItem.getTypeID(), contractItem.getContract().isForCorp() ? contractItem.getContract().getIssuerCorpID() : contractItem.getContract().getIssuerID(), null, null, contractItem.getContract().getLocations(), null, null, null, null, contractItem);
+		private Long matchesContract(MyContractItem contractItem, boolean add) {
+			if (contractItem != null) { //better safe then sorry
+				return matches(add, contractItem.getTypeID(), contractItem.getContract().isForCorp() ? contractItem.getContract().getIssuerCorpID() : contractItem.getContract().getIssuerID(), null, null, contractItem.getContract().getLocations(), null, null, null, null, contractItem);
+			} else {
+				return null;
+			}
 		}
 
-		private boolean matches(final boolean add, final int typeID, final Long ownerID, final String container, final Integer flagID, final MyLocation location, final MyAsset asset, final MyMarketOrder marketOrder, final MyIndustryJob industryJob, final MyTransaction transaction, final MyContractItem contractItem) {
+		private Long matches(final boolean add, final int typeID, final Long ownerID, final String container, final Integer flagID, final MyLocation location, final MyAsset asset, final MyMarketOrder marketOrder, final MyIndustryJob industryJob, final MyTransaction transaction, final MyContractItem contractItem) {
 			return matches(add, typeID, ownerID, container, flagID, Collections.singleton(location), asset, marketOrder, industryJob, transaction, contractItem);
 		}
 
-		private boolean matches(final boolean add, final int typeID, final Long ownerID, final String container, final Integer flagID, final Set<MyLocation> locations, final MyAsset asset, final MyMarketOrder marketOrder, final MyIndustryJob industryJob, final MyTransaction transaction, final MyContractItem contractItem) {
+		private Long matches(final boolean add, final int typeID, final Long ownerID, final String container, final Integer flagID, final Set<MyLocation> locations, final MyAsset asset, final MyMarketOrder marketOrder, final MyIndustryJob industryJob, final MyTransaction transaction, final MyContractItem contractItem) {
 			if (stockpile.getFilters().isEmpty()) {
-				return true; //All
+				return null; //All
 			}
 			if (this.typeID != typeID) {
-				return false;
+				return null;
 			}
 			//Put exclude filters first
 			List<StockpileFilter> filters = new ArrayList<StockpileFilter>(stockpile.getFilters());
@@ -595,13 +610,16 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType {
 				}
 			//Exclude
 				if (filter.isExclude()) {
-					return false; //Match exclude filter AKA do not match any following filters
+					return null; //Match exclude filter AKA do not match any following filters
 				}
+				long count = 0;
 			//Assets
 				if (asset != null) {
 					if (filter.isAssets()) {
 						if (add) { //Match
 							inventoryCountNow = inventoryCountNow + asset.getCount();
+						} else {
+							count = count + asset.getCount();
 						}
 					} else {
 						continue; //Do not match - try next filter
@@ -614,6 +632,8 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType {
 							&& filter.isJobs()) {
 						if (add) { //Match
 							jobsCountNow = jobsCountNow + (industryJob.getRuns() * industryJob.getPortion());
+						} else {
+							count = count + (industryJob.getRuns() * industryJob.getPortion());
 						}
 					} else {
 						continue; //Do not match - try next filter
@@ -623,10 +643,14 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType {
 					if (marketOrder.getBid() < 1 && marketOrder.isActive() && filter.isSellOrders()) {
 						if (add) { //Open/Active sell order - match
 							sellOrdersCountNow = sellOrdersCountNow + marketOrder.getVolRemaining();
+						} else {
+							count = count + marketOrder.getVolRemaining();
 						}
 					} else if (marketOrder.getBid() > 0 && marketOrder.isActive() && filter.isBuyOrders()) {
 						if (add) { //Open/Active buy order - match
 							buyOrdersCountNow = buyOrdersCountNow + marketOrder.getVolRemaining();
+						} else {
+							count = count + marketOrder.getVolRemaining();
 						}
 					} else {
 						continue; //Do not match - try next filter
@@ -636,10 +660,14 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType {
 					if (transaction.isAfterAssets() && transaction.isBuy() && filter.isBuyTransactions()) {
 						if (add) { //Buy - match
 							buyTransactionsCountNow = buyTransactionsCountNow + transaction.getQuantity();
+						} else {
+							count = count + transaction.getQuantity();
 						}
 					} else if (transaction.isAfterAssets() && transaction.isSell() && filter.isSellTransactions()) {
 						if (add) { //Sell - match
 							sellTransactionsCountNow = sellTransactionsCountNow - transaction.getQuantity();
+						} else {
+							count = count + -transaction.getQuantity();
 						}
 					} else {
 						continue; //Do not match - try next filter
@@ -657,15 +685,19 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType {
 						if (contractItem.getContract().getStatus() == ContractStatus.OUTSTANDING && filter.isSellingContracts()) {
 							if (add) { //Selling
 								sellingContractsCountNow = sellingContractsCountNow + contractItem.getQuantity();
-								found = true;
+							} else {
+								count = count + contractItem.getQuantity();
 							}
+							found = true;
 						} else if (filter.isSoldContracts()) { //Sold
 							if ((isIssuer && contractItem.getContract().isIssuerAfterAssets())
 									|| isAcceptor && contractItem.getContract().isAcceptorAfterAssets()) {
 								if (add) {
 									soldContractsCountNow = soldContractsCountNow - contractItem.getQuantity();
-									found = true;
+								} else {
+									count = count + -contractItem.getQuantity();
 								}
+								found = true;
 							}
 						}
 					}
@@ -674,16 +706,20 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType {
 						if (contractItem.getContract().getStatus() == ContractStatus.OUTSTANDING && filter.isBuyingContracts()) {
 							if (add) { //Buying
 								buyingContractsCountNow = buyingContractsCountNow + contractItem.getQuantity();
-								found = true;
+							} else {
+								count = count + contractItem.getQuantity();
 							}
+							found = true;
 							
 						} else if (filter.isBoughtContracts()) { //Bought
 							if ((isIssuer && contractItem.getContract().isIssuerAfterAssets())
 									|| isAcceptor && contractItem.getContract().isAcceptorAfterAssets()) {
 								if (add) {
 									boughtContractsCountNow = boughtContractsCountNow + contractItem.getQuantity();
-									found = true;
+								} else {
+									count = count + contractItem.getQuantity();
 								}
+								found = true;
 							}
 						}
 					}
@@ -691,9 +727,9 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType {
 						continue; //Do not match - try next filter
 					}
 				}
-				return true; //Filter matched - Items added
+				return count; //Filter matched - Items added
 			}
-			return false; //Nothing matched, nothing added
+			return null; //Nothing matched, nothing added
 		}
 
 		private boolean matchOwner(final StockpileFilter filter, final Long ownerID) {
