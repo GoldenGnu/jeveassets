@@ -46,6 +46,7 @@ import net.nikr.eve.jeveasset.gui.shared.Colors;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
+import net.nikr.eve.jeveasset.gui.shared.components.JSelectionDialog;
 import net.nikr.eve.jeveasset.gui.tabs.values.Value;
 import net.nikr.eve.jeveasset.i18n.TabsTracker;
 
@@ -72,7 +73,7 @@ public class JTrackerEditDialog extends JDialogCentered {
 	private final JTextField jContractCollateral;
 	private final JTextField jContractValue;
 	private final JButton jOK;
-	private final JSelectionDialog jSelectionDialog;
+	private final JSelectionDialog<String> jSelectionDialog;
 
 	private final List<FilterUpdate> balanceUpdates = new ArrayList<FilterUpdate>();
 	private final List<FilterUpdate> assetUpdates = new ArrayList<FilterUpdate>();
@@ -86,7 +87,7 @@ public class JTrackerEditDialog extends JDialogCentered {
 
 		ListenerClass listener = new ListenerClass();
 
-		jSelectionDialog = new  JSelectionDialog(program);
+		jSelectionDialog = new  JSelectionDialog<String>(program);
 
 		JLabel jDateLabel = new JLabel(TabsTracker.get().date());
 		jDate = new JTextField();
@@ -376,7 +377,7 @@ public class JTrackerEditDialog extends JDialogCentered {
 					ids.add(TabsTracker.get().division(id));
 				}
 				//Select Division
-				String returnValue = jSelectionDialog.showDivision(ids);
+				String returnValue = jSelectionDialog.show(TabsTracker.get().selectDivision(), ids);
 				if (returnValue == null) {
 					return; //Cancel
 				}
@@ -435,7 +436,7 @@ public class JTrackerEditDialog extends JDialogCentered {
 				//Select Location
 				String returnLocation = null;
 				if (values.keySet().size() > 1) {
-					returnLocation = jSelectionDialog.showLocation(values.keySet());
+					returnLocation = jSelectionDialog.show(TabsTracker.get().selectLocation(), values.keySet());
 				} else { //Size is always 1 (one) or 0 (zero)
 					for (String s : values.keySet()) {
 						returnLocation = s; //Only done if size is 1 (one) AKA only done once
@@ -450,7 +451,7 @@ public class JTrackerEditDialog extends JDialogCentered {
 				Set<String> flags = values.get(returnLocation);
 				String returnFlag = TabsTracker.get().other(); //Used if size is 1
 				if (flags.size() > 1) { //Always contain "Other" flag
-					returnFlag = jSelectionDialog.showFlag(flags);
+					returnFlag = jSelectionDialog.show(TabsTracker.get().selectFlag(), flags);
 					if (returnFlag == null) {
 						return; //Cancel
 					}

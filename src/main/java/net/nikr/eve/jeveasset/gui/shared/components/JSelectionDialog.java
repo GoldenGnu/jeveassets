@@ -19,7 +19,7 @@
  *
  */
 
-package net.nikr.eve.jeveasset.gui.shared.menu;
+package net.nikr.eve.jeveasset.gui.shared.components;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -28,10 +28,7 @@ import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
-import javax.swing.JLabel;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
-import net.nikr.eve.jeveasset.gui.shared.components.ListComboBoxModel;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 
 
@@ -45,12 +42,10 @@ public class JSelectionDialog<T> extends JDialogCentered {
 	private final JButton jOK;
 	private T selected = null;
 
-	public JSelectionDialog(Program program, String title, String lableText) {
-		super(program, title);
+	public JSelectionDialog(Program program) {
+		super(program, "");
 
 		ListenerClass listenerClass = new ListenerClass();
-
-		JLabel jText = new JLabel(lableText);
 
 		jLocations = new JComboBox<T>();
 
@@ -64,7 +59,6 @@ public class JSelectionDialog<T> extends JDialogCentered {
 
 		layout.setHorizontalGroup(
 			layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-				.addComponent(jText)
 				.addGroup(layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
 					.addComponent(jLocations, 220, 220, 220)
 					.addGroup(layout.createSequentialGroup()
@@ -75,7 +69,6 @@ public class JSelectionDialog<T> extends JDialogCentered {
 		);
 		layout.setVerticalGroup(
 			layout.createSequentialGroup()
-				.addComponent(jText, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 				.addComponent(jLocations, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 				.addGroup(layout.createParallelGroup()
 					.addComponent(jOK, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
@@ -83,13 +76,14 @@ public class JSelectionDialog<T> extends JDialogCentered {
 				)
 		);
 	}
-
-	public T showDialog(Collection<T> locations) {
-		if (locations.size() == 1) {
-			return locations.iterator().next();
+	
+	public T show(String title, Collection<T> data) {
+		if (data.size() == 1) {
+			return data.iterator().next();
 		}
+		getDialog().setTitle(title);
 		selected = null;
-		jLocations.setModel(new ListComboBoxModel<T>(locations));
+		jLocations.setModel(new ListComboBoxModel<T>(data));
 		setVisible(true);
 		return selected;
 		

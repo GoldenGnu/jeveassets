@@ -33,6 +33,7 @@ import net.nikr.eve.jeveasset.data.Citadel;
 import net.nikr.eve.jeveasset.data.MyLocation;
 import net.nikr.eve.jeveasset.data.StaticData;
 import net.nikr.eve.jeveasset.gui.images.Images;
+import net.nikr.eve.jeveasset.gui.shared.components.JSelectionDialog;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 import net.nikr.eve.jeveasset.io.online.CitadelGetter;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
@@ -57,7 +58,7 @@ public class JMenuLocation<T> extends MenuManager.JAutoMenu<T> {
 
 		ListenerClass listener = new ListenerClass();
 
-		jLocationDialog = new JSelectionDialog<MyLocation>(program, GuiShared.get().locationRename(), GuiShared.get().locationID());
+		jLocationDialog = new JSelectionDialog<MyLocation>(program);
 		jSystemDialog = new JSystemDialog(program);
 
 		jEdit = new JMenuItem(GuiShared.get().itemEdit());
@@ -122,7 +123,7 @@ public class JMenuLocation<T> extends MenuManager.JAutoMenu<T> {
 						}
 						program.updateEventLists();
 					} else { //Single
-						MyLocation location = jLocationDialog.showDialog(menuData.getUserStations());
+						MyLocation location = jLocationDialog.show(GuiShared.get().locationID(), menuData.getUserStations());
 						if (location == null) { //Cancel
 							return;
 						}
@@ -137,7 +138,7 @@ public class JMenuLocation<T> extends MenuManager.JAutoMenu<T> {
 				Set<MyLocation> emptyAndUserStations = new HashSet<MyLocation>();
 				emptyAndUserStations.addAll(menuData.getEmptyStations());
 				emptyAndUserStations.addAll(menuData.getUserStations());
-				MyLocation renameLocation = jLocationDialog.showDialog(emptyAndUserStations);
+				MyLocation renameLocation = jLocationDialog.show(GuiShared.get().locationID(), emptyAndUserStations);
 				if (renameLocation == null) { //Cancel
 					return;
 				}
