@@ -42,6 +42,7 @@ import net.nikr.eve.jeveasset.gui.shared.components.JCopyPopup;
 import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
 import net.nikr.eve.jeveasset.gui.shared.components.JIntegerField;
 import net.nikr.eve.jeveasset.gui.tabs.assets.MyAsset;
+import net.nikr.eve.jeveasset.gui.tabs.contracts.MyContractItem;
 import net.nikr.eve.jeveasset.gui.tabs.jobs.MyIndustryJob;
 import net.nikr.eve.jeveasset.gui.tabs.orders.MyMarketOrder;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
@@ -58,9 +59,9 @@ class StockpileShoppingListDialog extends JDialogCentered {
 		CLOSE
 	}
 
-	private JTextArea jText;
-	private JButton jClose;
-	private JTextField jPercent;
+	private final JTextArea jText;
+	private final JButton jClose;
+	private final JTextField jPercent;
 
 	private List<Stockpile> stockpiles;
 	private boolean updating = false;
@@ -191,19 +192,26 @@ class StockpileShoppingListDialog extends JDialogCentered {
 			if (asset.getFlag().equals(General.get().contractExcluded())) {
 				continue; //Ignore contracts excluded
 			}
-			add(asset.getItem().getTypeID(), asset, new StockItem(asset), claims, items);
+			add(asset.getItem().getTypeID(), asset, claims, items);
 		}
 		//Market Orders
 		for (MyMarketOrder marketOrder : program.getMarketOrdersList()) {
-			add(marketOrder.getTypeID(), marketOrder, new StockItem(marketOrder), claims, items);
+			add(marketOrder.getTypeID(), marketOrder, claims, items);
 		}
 		//Industry Jobs
 		for (MyIndustryJob industryJob : program.getIndustryJobsList()) {
-			add(industryJob.getProductTypeID(), industryJob, new StockItem(industryJob), claims, items);
+			add(industryJob.getProductTypeID(), industryJob, claims, items);
 		}
 		//Transactions
 		for (MyTransaction transaction : program.getTransactionsList()) {
-			add(transaction.getTypeID(), transaction, new StockItem(transaction), claims, items);
+			add(transaction.getTypeID(), transaction, claims, items);
+		}
+		//ContractItems
+		for (MyContractItem contractItem : program.getContractItemList()) {
+			if (contractItem.getContract().isCourier()) {
+				continue;
+			}
+			add(contractItem.getTypeID(), contractItem, claims, items);
 		}
 
 	//Claim items
@@ -248,7 +256,7 @@ class StockpileShoppingListDialog extends JDialogCentered {
 	}
 
 	//Add claims to item
-	private void add(final int typeID, final Object object, final StockItem stockItem, final Map<Integer, List<StockClaim>> claims, final Map<Integer, List<StockItem>> items) {
+	private void add(final int typeID, final Object object, final Map<Integer, List<StockClaim>> claims, final Map<Integer, List<StockItem>> items) {
 		//Get claims by typeID
 		List<StockClaim> minimumList = claims.get(typeID);
 		if (minimumList == null) { //if no claims for typeID: return
@@ -262,14 +270,15 @@ class StockpileShoppingListDialog extends JDialogCentered {
 			items.put(typeID, itemList);
 		}
 
-		boolean added = false;
+		StockItem stockItem = null;
 		for (StockClaim stockMinimum : minimumList) {
-			if (stockMinimum.matches(object)){ //if match (have claim)
-				if (!added) { //if item not added already - add to items list
+			Long count = stockMinimum.matches(object);
+			if (count != null && count != 0){ //if match (have claim)
+				if (stockItem == null) { //if item not added already - add to items list
+					stockItem = new StockItem();
 					itemList.add(stockItem);
-					added = true;
 				}
-				stockItem.addClaim(stockMinimum); //Add claim
+				stockItem.addClaim(stockMinimum, count); //Add claim
 			}
 		}
 	}
@@ -334,7 +343,7 @@ class StockpileShoppingListDialog extends JDialogCentered {
 			return stockpileItem.getDynamicPrice();
 		}
 
-		private boolean matches(Object object) {
+		private Long matches(Object object) {
 			return stockpileItem.matches(object);
 		}
 
@@ -367,46 +376,84 @@ class StockpileShoppingListDialog extends JDialogCentered {
 	}
 
 	private static class StockItem {
-		private final List<StockClaim> claims = new ArrayList<StockClaim>();
-		private long count;
+		private final Map<Count, List<StockClaim>> claims = new HashMap<Count, List<StockClaim>>();
 
-		private StockItem(MyAsset asset) {
-			this(asset.getCount());
-		}
+		public StockItem() { }
 
-		private StockItem(MyMarketOrder marketOrder) {
-			this(marketOrder.getVolRemaining());
-		}
-
-		private StockItem(MyIndustryJob industryJob) {
-			this((industryJob.getRuns() * industryJob.getPortion()));
-		}
-		private StockItem(MyTransaction transaction) {
-			this(transaction.isBuy() ? transaction.getQuantity() : -transaction.getQuantity());
-		}
-
-		public StockItem(long count) {
-			this.count = count;
-		}
-
-		public void addClaim(StockClaim stockMinimum) {
-			claims.add(stockMinimum);
+		public void addClaim(StockClaim stockMinimum, long count) {
+			List<StockClaim> claimList = claims.get(new Count(count));
+			if (claimList == null) {
+				claimList = new ArrayList<StockClaim>();
+				claims.put(new Count(count), claimList);
+			}
+			claimList.add(stockMinimum);
 			stockMinimum.addAvailable(count);
 		}
 
 		public void claim() {
-			Collections.sort(claims); //Sort by need
-			for (StockClaim stockMinimum : claims) {
-				if (stockMinimum.getCountMinimum() >= count) { //Add all
-					stockMinimum.addCount(count);
-					count = 0;
-					break;
-				} else { //Add part of the count
-					long missing = stockMinimum.getCountMinimum();
-					stockMinimum.addCount(missing);
-					count = count - missing;
+			for (Map.Entry<Count, List<StockClaim>> entry : claims.entrySet()) {
+				List<StockClaim> claimList = entry.getValue();
+				Count count = entry.getKey();
+				Collections.sort(claimList); //Sort by need
+				for (StockClaim stockMinimum : claimList) {
+					if (stockMinimum.getCountMinimum() >= count.getCount()) { //Add all
+						stockMinimum.addCount(count.getCount());
+						count.takeAll();
+						break;
+					} else { //Add part of the count
+						long missing = stockMinimum.getCountMinimum();
+						stockMinimum.addCount(missing);
+						count.take(missing);
+					}
 				}
 			}
+		}
+	}
+
+	private static class Count {
+		private final long id;
+		private long count;
+
+		public Count(long count) {
+			this.count = count;
+			this.id = count;
+		}
+
+		public void takeAll() {
+			count = 0;
+		}
+
+		public void take(long missing) {
+			count = count - missing;
+		}
+
+		public long getCount() {
+			return count;
+		}
+
+		@Override
+		public int hashCode() {
+			int hash = 5;
+			hash = 67 * hash + (int) (this.id ^ (this.id >>> 32));
+			return hash;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj) {
+				return true;
+			}
+			if (obj == null) {
+				return false;
+			}
+			if (getClass() != obj.getClass()) {
+				return false;
+			}
+			final Count other = (Count) obj;
+			if (this.id != other.id) {
+				return false;
+			}
+			return true;
 		}
 	}
 }
