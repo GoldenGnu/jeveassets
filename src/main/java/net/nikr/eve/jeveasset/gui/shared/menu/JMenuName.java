@@ -30,6 +30,7 @@ import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.UserItem;
 import net.nikr.eve.jeveasset.gui.dialogs.settings.UserNameSettingsPanel.UserName;
 import net.nikr.eve.jeveasset.gui.images.Images;
+import net.nikr.eve.jeveasset.gui.shared.components.JSelectionDialog;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.JAutoMenu;
 import net.nikr.eve.jeveasset.gui.tabs.assets.MyAsset;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
@@ -60,7 +61,7 @@ public class JMenuName<T> extends JAutoMenu<T> {
 
 		ListenerClass listener = new ListenerClass();
 
-		jContainerDialog = new JSelectionDialog<MyAsset>(program, GuiShared.get().containerTitle(), GuiShared.get().containerText());
+		jContainerDialog = new JSelectionDialog<MyAsset>(program);
 
 		jEditItem = new JMenuItem(GuiShared.get().itemEdit());
 		jEditItem.setIcon(Images.EDIT_EDIT.getIcon());
@@ -122,7 +123,7 @@ public class JMenuName<T> extends JAutoMenu<T> {
 			}
 			if (MenuNameAction.EDIT_CONTAINER.name().equals(e.getActionCommand())) {
 				if (selected != null) {
-					MyAsset value = jContainerDialog.showDialog(selected.getParents());
+					MyAsset value = jContainerDialog.show(GuiShared.get().containerText(), selected.getParents());
 					if (value != null) {
 						program.getUserNameSettingsPanel().edit(new UserName(value));
 					}

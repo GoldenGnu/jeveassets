@@ -84,6 +84,7 @@ import net.nikr.eve.jeveasset.gui.shared.components.JDropDownButton;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
 import net.nikr.eve.jeveasset.gui.shared.components.JMultiSelectionList;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo;
+import net.nikr.eve.jeveasset.gui.shared.components.JSelectionDialog;
 import net.nikr.eve.jeveasset.gui.tabs.values.Value;
 import net.nikr.eve.jeveasset.i18n.General;
 import net.nikr.eve.jeveasset.i18n.TabsTracker;
@@ -149,7 +150,7 @@ public class TrackerTab extends JMainTab {
 	private final JMenuItem jIskValue;
 	private final JMenuItem jDateValue;
 	private final JTrackerEditDialog jEditDialog;
-	private final JSelectionDialog jSelectionDialog;
+	private final JSelectionDialog<String> jSelectionDialog;
 	private final ChartPanel jChartPanel;
 	private final TrackerFilterDialog filterDialog;
 	private final MyRender render;
@@ -214,7 +215,7 @@ public class TrackerTab extends JMainTab {
 
 		jEditDialog = new JTrackerEditDialog(program);
 
-		jSelectionDialog = new JSelectionDialog(program);
+		jSelectionDialog = new JSelectionDialog<String>(program);
 
 		JSeparator jDateSeparator = new JSeparator();
 
@@ -918,7 +919,7 @@ public class TrackerTab extends JMainTab {
 					list.add(owner);
 				}
 			}
-			return jSelectionDialog.showOwner(list);
+			return jSelectionDialog.show(TabsTracker.get().selectOwner(), list);
 		}
 	}
 
