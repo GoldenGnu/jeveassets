@@ -36,6 +36,7 @@ public abstract class GuiFrame extends Bundle {
 
 	public abstract String about();
 	public abstract String accounts();
+	public abstract String business();
 	public abstract String change();
 	public abstract String close();
 	public abstract String contracts();
@@ -44,6 +45,7 @@ public abstract class GuiFrame extends Bundle {
 	public abstract String exit();
 	public abstract String file();
 	public abstract String help();
+	public abstract String inventory();
 	public abstract String items();
 	public abstract String industry();
 	public abstract String industryPlot();
@@ -53,6 +55,8 @@ public abstract class GuiFrame extends Bundle {
 	public abstract String linkHelp();
 	public abstract String market();
 	public abstract String materials();
+	public abstract String misc();
+	public abstract String netWorth();
 	public abstract String not();
 	public abstract String options();
 	public abstract String options1();

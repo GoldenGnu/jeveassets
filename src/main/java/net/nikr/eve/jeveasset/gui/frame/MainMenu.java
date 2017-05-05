@@ -67,11 +67,12 @@ public class MainMenu extends JMenuBar {
 		EXIT_PROGRAM
 	}
 
-	private JMenuItem jUpdateMenu;
-	private JMenu jTableMenu;
+	private final JMenuItem jUpdateMenu;
+	private final JMenu jTableMenu;
 
 	public MainMenu(final Program program) {
 		JMenu menu;
+		JMenu submenu;
 		JMenuItem menuItem;
 
 //FILE
@@ -88,117 +89,117 @@ public class MainMenu extends JMenuBar {
 		menu = new JMenu(GuiFrame.get().tools());
 		this.add(menu);
 
-		menuItem = new JMenuItem(GuiFrame.get().tree());
-		//menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.ALT_MASK));
-		menuItem.setIcon(Images.TOOL_TREE.getIcon());
-		menuItem.setActionCommand(MainMenuAction.TREE.name());
-		menuItem.addActionListener(program);
-		menu.add(menuItem);
-
-		menuItem = new JMenuItem(GuiFrame.get().values());
-		//menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.ALT_MASK));
-		menuItem.setIcon(Images.TOOL_VALUES.getIcon());
-		menuItem.setActionCommand(MainMenuAction.VALUES.name());
-		menuItem.addActionListener(program);
-		menu.add(menuItem);
-
-		menuItem = new JMenuItem(GuiFrame.get().valueTable());
-		//menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.ALT_MASK));
-		menuItem.setIcon(Images.TOOL_VALUE_TABLE.getIcon());
-		menuItem.setActionCommand(MainMenuAction.VALUE_TABLE.name());
-		menuItem.addActionListener(program);
-		menu.add(menuItem);
+		submenu = new JMenu(GuiFrame.get().netWorth());
+		submenu.setIcon(Images.TOOL_VALUES.getIcon());
+		menu.add(submenu);
 
 		menuItem = new JMenuItem(GuiFrame.get().tracker());
-		//menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.ALT_MASK));
 		menuItem.setIcon(Images.TOOL_TRACKER.getIcon());
 		menuItem.setActionCommand(MainMenuAction.TRACKER.name());
 		menuItem.addActionListener(program);
-		menu.add(menuItem);
+		submenu.add(menuItem);
 
-		menuItem = new JMenuItem(GuiFrame.get().items());
-		//menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.ALT_MASK));
-		menuItem.setIcon(Images.TOOL_ITEMS.getIcon());
-		menuItem.setActionCommand(MainMenuAction.ITEMS.name());
+		menuItem = new JMenuItem(GuiFrame.get().values());
+		menuItem.setIcon(Images.TOOL_VALUES.getIcon());
+		menuItem.setActionCommand(MainMenuAction.VALUES.name());
 		menuItem.addActionListener(program);
-		menu.add(menuItem);
+		submenu.add(menuItem);
 
-		menuItem = new JMenuItem(GuiFrame.get().materials());
-		//menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.ALT_MASK));
-		menuItem.setIcon(Images.TOOL_MATERIALS.getIcon());
-		menuItem.setActionCommand(MainMenuAction.MATERIALS.name());
+		menuItem = new JMenuItem(GuiFrame.get().valueTable());
+		menuItem.setIcon(Images.TOOL_VALUE_TABLE.getIcon());
+		menuItem.setActionCommand(MainMenuAction.VALUE_TABLE.name());
 		menuItem.addActionListener(program);
-		menu.add(menuItem);
+		submenu.add(menuItem);
 
-		menuItem = new JMenuItem(GuiFrame.get().reprocessed());
-		//menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.ALT_MASK));
-		menuItem.setIcon(Images.TOOL_REPROCESSED.getIcon());
-		menuItem.setActionCommand(MainMenuAction.REPROCESSED.name());
-		menuItem.addActionListener(program);
-		menu.add(menuItem);
+		submenu = new JMenu(GuiFrame.get().inventory()); //
+		submenu.setIcon(Images.TOOL_ASSETS.getIcon());
+		menu.add(submenu);
 
-		menuItem = new JMenuItem(GuiFrame.get().ship());
-		//menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.ALT_MASK));
-		menuItem.setIcon(Images.TOOL_SHIP_LOADOUTS.getIcon());
-		menuItem.setActionCommand(MainMenuAction.LOADOUTS.name());
+		menuItem = new JMenuItem(GuiFrame.get().tree());
+		menuItem.setIcon(Images.TOOL_TREE.getIcon());
+		menuItem.setActionCommand(MainMenuAction.TREE.name());
 		menuItem.addActionListener(program);
-		menu.add(menuItem);
-
-		menuItem = new JMenuItem(GuiFrame.get().market());
-		//menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.ALT_MASK));
-		menuItem.setIcon(Images.TOOL_MARKET_ORDERS.getIcon());
-		menuItem.setActionCommand(MainMenuAction.MARKET_ORDERS.name());
-		menuItem.addActionListener(program);
-		menu.add(menuItem);
-
- 		menuItem = new JMenuItem(GuiFrame.get().journal());
-		//menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.ALT_MASK));
-		menuItem.setIcon(Images.TOOL_JOURNAL.getIcon());
-		menuItem.setActionCommand(MainMenuAction.JOURNAL.name());
-		menuItem.addActionListener(program);
-		menu.add(menuItem);
-
- 		menuItem = new JMenuItem(GuiFrame.get().transaction());
-		//menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.ALT_MASK));
-		menuItem.setIcon(Images.TOOL_TRANSACTION.getIcon());
-		menuItem.setActionCommand(MainMenuAction.TRANSACTION.name());
-		menuItem.addActionListener(program);
-		menu.add(menuItem);
-
-		menuItem = new JMenuItem(GuiFrame.get().industry());
-		//menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.ALT_MASK));
-		menuItem.setIcon(Images.TOOL_INDUSTRY_JOBS.getIcon());
-		menuItem.setActionCommand(MainMenuAction.INDUSTRY_JOBS.name());
-		menuItem.addActionListener(program);
-		menu.add(menuItem);
-
-		menuItem = new JMenuItem(GuiFrame.get().contracts());
-		//menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.ALT_MASK));
-		menuItem.setIcon(Images.TOOL_CONTRACTS.getIcon());
-		menuItem.setActionCommand(MainMenuAction.CONTRACTS.name());
-		menuItem.addActionListener(program);
-		menu.add(menuItem);
-
-		menuItem = new JMenuItem(GuiFrame.get().overview());
-		//menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.ALT_MASK));
-		menuItem.setIcon(Images.TOOL_OVERVIEW.getIcon());
-		menuItem.setActionCommand(MainMenuAction.OVERVIEW.name());
-		menuItem.addActionListener(program);
-		menu.add(menuItem);
-
-		menuItem = new JMenuItem(GuiFrame.get().routing());
-		//menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.ALT_MASK));
-		menuItem.setIcon(Images.TOOL_ROUTING.getIcon());
-		menuItem.setActionCommand(MainMenuAction.ROUTING.name());
-		menuItem.addActionListener(program);
-		menu.add(menuItem);
+		submenu.add(menuItem);
 
 		menuItem = new JMenuItem(GuiFrame.get().stockpile());
-		//menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.ALT_MASK));
 		menuItem.setIcon(Images.TOOL_STOCKPILE.getIcon());
 		menuItem.setActionCommand(MainMenuAction.STOCKPILE.name());
 		menuItem.addActionListener(program);
-		menu.add(menuItem);
+		submenu.add(menuItem);
+
+		menuItem = new JMenuItem(GuiFrame.get().overview());
+		menuItem.setIcon(Images.TOOL_OVERVIEW.getIcon());
+		menuItem.setActionCommand(MainMenuAction.OVERVIEW.name());
+		menuItem.addActionListener(program);
+		submenu.add(menuItem);
+
+		menuItem = new JMenuItem(GuiFrame.get().materials());
+		menuItem.setIcon(Images.TOOL_MATERIALS.getIcon());
+		menuItem.setActionCommand(MainMenuAction.MATERIALS.name());
+		menuItem.addActionListener(program);
+		submenu.add(menuItem);
+
+		submenu = new JMenu(GuiFrame.get().business());
+		submenu.setIcon(Images.TOOL_JOURNAL.getIcon());
+		menu.add(submenu);
+
+ 		menuItem = new JMenuItem(GuiFrame.get().journal());
+		menuItem.setIcon(Images.TOOL_JOURNAL.getIcon());
+		menuItem.setActionCommand(MainMenuAction.JOURNAL.name());
+		menuItem.addActionListener(program);
+		submenu.add(menuItem);
+
+ 		menuItem = new JMenuItem(GuiFrame.get().transaction());
+		menuItem.setIcon(Images.TOOL_TRANSACTION.getIcon());
+		menuItem.setActionCommand(MainMenuAction.TRANSACTION.name());
+		menuItem.addActionListener(program);
+		submenu.add(menuItem);
+
+		menuItem = new JMenuItem(GuiFrame.get().market());
+		menuItem.setIcon(Images.TOOL_MARKET_ORDERS.getIcon());
+		menuItem.setActionCommand(MainMenuAction.MARKET_ORDERS.name());
+		menuItem.addActionListener(program);
+		submenu.add(menuItem);
+
+		menuItem = new JMenuItem(GuiFrame.get().industry());
+		menuItem.setIcon(Images.TOOL_INDUSTRY_JOBS.getIcon());
+		menuItem.setActionCommand(MainMenuAction.INDUSTRY_JOBS.name());
+		menuItem.addActionListener(program);
+		submenu.add(menuItem);
+
+		menuItem = new JMenuItem(GuiFrame.get().contracts());
+		menuItem.setIcon(Images.TOOL_CONTRACTS.getIcon());
+		menuItem.setActionCommand(MainMenuAction.CONTRACTS.name());
+		menuItem.addActionListener(program);
+		submenu.add(menuItem);
+
+		submenu = new JMenu(GuiFrame.get().misc());
+		submenu.setIcon(Images.TOOL_ROUTING.getIcon());
+		menu.add(submenu);
+
+		menuItem = new JMenuItem(GuiFrame.get().routing());
+		menuItem.setIcon(Images.TOOL_ROUTING.getIcon());
+		menuItem.setActionCommand(MainMenuAction.ROUTING.name());
+		menuItem.addActionListener(program);
+		submenu.add(menuItem);
+
+		menuItem = new JMenuItem(GuiFrame.get().ship());
+		menuItem.setIcon(Images.TOOL_SHIP_LOADOUTS.getIcon());
+		menuItem.setActionCommand(MainMenuAction.LOADOUTS.name());
+		menuItem.addActionListener(program);
+		submenu.add(menuItem);
+
+		menuItem = new JMenuItem(GuiFrame.get().reprocessed());
+		menuItem.setIcon(Images.TOOL_REPROCESSED.getIcon());
+		menuItem.setActionCommand(MainMenuAction.REPROCESSED.name());
+		menuItem.addActionListener(program);
+		submenu.add(menuItem);
+
+		menuItem = new JMenuItem(GuiFrame.get().items());
+		menuItem.setIcon(Images.TOOL_ITEMS.getIcon());
+		menuItem.setActionCommand(MainMenuAction.ITEMS.name());
+		menuItem.addActionListener(program);
+		submenu.add(menuItem);
 
 //UPDATE
 		menu = new JMenu(GuiFrame.get().update());
@@ -328,7 +329,7 @@ public class MainMenu extends JMenuBar {
 			});
 			menu.add(menuItem);
 
-			JMenu submenu = new JMenu("Add systems to routing");
+			submenu = new JMenu("Add systems to routing");
 			menu.add(submenu);
 
 			menuItem = new JMenuItem("10", Images.MISC_DEBUG.getIcon());
@@ -360,6 +361,11 @@ public class MainMenu extends JMenuBar {
 
 		}
 	}
+
+	@Override
+	public final JMenu add(JMenu c) {
+        return super.add(c);
+    }
 
 	public JMenu getTableMenu() {
 		return jTableMenu;
