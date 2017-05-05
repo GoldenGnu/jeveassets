@@ -84,6 +84,8 @@ import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.StockpileExtendedTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.StockpileTab;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.StockpileTableFormat;
+import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerDate;
+import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerNote;
 import net.nikr.eve.jeveasset.gui.tabs.transaction.TransactionTab;
 import net.nikr.eve.jeveasset.gui.tabs.transaction.TransactionTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.tree.TreeTab;
@@ -206,6 +208,13 @@ public final class SettingsReader extends AbstractXmlReader {
 		if (trackerDataNodes.getLength() == 1) {
 			Element trackerDataElement = (Element) trackerDataNodes.item(0);
 			parseTrackerData(trackerDataElement, settings);
+		}
+
+		//Tracker Data
+		NodeList trackerNotesNodes = element.getElementsByTagName("trackernotes");
+		if (trackerNotesNodes.getLength() == 1) {
+			Element trackerNoteElement = (Element) trackerNotesNodes.item(0);
+			parseTrackerNotes(trackerNoteElement, settings);
 		}
 
 		//Tracker Filters
@@ -459,6 +468,21 @@ public final class SettingsReader extends AbstractXmlReader {
 				value.setContractValue(contractValue);
 				settings.getTrackerData().get(owner).add(value);
 			}
+			//Remove empty owners
+			if (settings.getTrackerData().get(owner).isEmpty()) {
+				settings.getTrackerData().remove(owner);
+			}
+		}
+	}
+
+	private void parseTrackerNotes(final Element element, final Settings settings) {
+		NodeList noteNodeList = element.getElementsByTagName("trackernote");
+		for (int a = 0; a < noteNodeList.getLength(); a++) {
+			//Read Owner
+			Element noteNode = (Element) noteNodeList.item(a);
+			String note = AttributeGetters.getString(noteNode, "note");
+			Date date = AttributeGetters.getDate(noteNode, "date");
+			settings.getTrackerNotes().put(new TrackerDate(date), new TrackerNote(note));
 		}
 	}
 

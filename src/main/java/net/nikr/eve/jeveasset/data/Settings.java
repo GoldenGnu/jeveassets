@@ -52,6 +52,8 @@ import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.SimpleColu
 import net.nikr.eve.jeveasset.gui.shared.table.View;
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewGroup;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile;
+import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerDate;
+import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerNote;
 import net.nikr.eve.jeveasset.gui.tabs.values.Value;
 import net.nikr.eve.jeveasset.io.local.SettingsReader;
 import net.nikr.eve.jeveasset.io.local.SettingsWriter;
@@ -145,6 +147,7 @@ public class Settings {
 	private final ExportSettings exportSettings = new ExportSettings();
 //Tracker						Saved by TaskDialog.update() (on API update)
 	private final Map<String, List<Value>> trackerData = new HashMap<String, List<Value>>(); //ownerID :: long
+	private final Map<TrackerDate, TrackerNote> trackerNotes = new HashMap<TrackerDate, TrackerNote>();
 	private final Map<String, Boolean> trackerFilters = new HashMap<String, Boolean>();
 	private boolean trackerSelectNew = true;
 //Runtime flags					Is not saved to file
@@ -314,6 +317,10 @@ public class Settings {
 
 	public Map<String, List<Value>> getTrackerData() {
 		return trackerData;
+	}
+
+	public Map<TrackerDate, TrackerNote> getTrackerNotes() {
+		return trackerNotes;
 	}
 
 	public Map<String, Boolean> getTrackerFilters() {
