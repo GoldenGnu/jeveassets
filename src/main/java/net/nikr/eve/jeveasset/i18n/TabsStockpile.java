@@ -130,6 +130,7 @@ public abstract class TabsStockpile extends Bundle {
 	public abstract String owner();
 	public abstract String percent();
 	public abstract String percentFull();
+	public abstract String percentIgnore();
 	public abstract String region();
 	public abstract String remove();
 	public abstract String renameStockpileTitle();
