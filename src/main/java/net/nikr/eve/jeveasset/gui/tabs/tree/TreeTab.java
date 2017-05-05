@@ -272,6 +272,7 @@ public class TreeTab extends JMainTab {
 		categoriesExport.clear();
 		Map<String, TreeAsset> categoryCache = new HashMap<String, TreeAsset>();
 		Map<String, TreeAsset> locationCache = new HashMap<String, TreeAsset>();
+		MyLocation emptyLocation = new MyLocation(0, "", 0, "", 0, "", "");
 		for (MyAsset asset : program.getAssetList()) {
 		//LOCATION
 			List<TreeAsset> locationTree = new ArrayList<TreeAsset>();
@@ -341,7 +342,7 @@ public class TreeTab extends JMainTab {
 			String categoryKey = asset.getItem().getCategory();
 			TreeAsset categoryAsset = categoryCache.get(categoryKey);
 			if (categoryAsset == null) {
-				categoryAsset = new TreeAsset(new MyLocation(0), asset.getItem().getCategory(), categoryKey, null, categoryTree, 1);
+				categoryAsset = new TreeAsset(emptyLocation, asset.getItem().getCategory(), categoryKey, null, categoryTree, 1);
 				categoryCache.put(categoryKey, categoryAsset);
 			}
 			categoryTree.add(categoryAsset);
@@ -351,7 +352,7 @@ public class TreeTab extends JMainTab {
 			String groupKey = categoryKey + asset.getItem().getGroup();
 			TreeAsset groupAsset = categoryCache.get(groupKey);
 			if (groupAsset == null) {
-				groupAsset = new TreeAsset(new MyLocation(0), asset.getItem().getGroup(), groupKey, null, categoryTree, 1);
+				groupAsset = new TreeAsset(emptyLocation, asset.getItem().getGroup(), groupKey, null, categoryTree, 1);
 				categoryCache.put(groupKey, groupAsset);
 			}
 			categoryTree.add(groupAsset);
