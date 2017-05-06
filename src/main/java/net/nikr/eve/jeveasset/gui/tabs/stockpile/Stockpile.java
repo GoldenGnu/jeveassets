@@ -497,7 +497,7 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType {
 
 		private Long matchesAsset(MyAsset asset, boolean add) {
 			if (asset != null) { //better safe then sorry
-				return matches(add, isBPC() ? -asset.getItem().getTypeID() : asset.getItem().getTypeID(), asset.getOwnerID(), asset.getContainer(), null, asset.getLocation(), asset, null, null, null, null);
+				return matches(add, asset.isBPC() ? -asset.getItem().getTypeID() : asset.getItem().getTypeID(), asset.getOwnerID(), asset.getContainer(), null, asset.getLocation(), asset, null, null, null, null);
 			} else {
 				return null;
 			}
