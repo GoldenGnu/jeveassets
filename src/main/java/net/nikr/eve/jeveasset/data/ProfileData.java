@@ -696,10 +696,11 @@ public class ProfileData {
 			} else {
 				typeID = asset.getItem().getTypeID();
 			}
-			if (!uniqueAssetsDuplicates.containsKey(typeID)) {
-				uniqueAssetsDuplicates.put(typeID, new ArrayList<MyAsset>());
+			List<MyAsset> dup = uniqueAssetsDuplicates.get(typeID);
+			if (dup == null) {
+				dup = new ArrayList<MyAsset>();
+				uniqueAssetsDuplicates.put(typeID, dup);
 			}
-			List<MyAsset> dup = uniqueAssetsDuplicates.get(asset.getItem().getTypeID());
 			long newCount = asset.getCount();
 			if (!dup.isEmpty()) {
 				newCount = newCount + dup.get(0).getTypeCount();
