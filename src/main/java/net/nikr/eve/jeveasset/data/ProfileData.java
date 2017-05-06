@@ -690,8 +690,14 @@ public class ProfileData {
 			asset.setPriceReprocessed(ApiIdConverter.getPriceReprocessed(asset.getItem()));
 
 			//Type Count
-			if (!uniqueAssetsDuplicates.containsKey(asset.getItem().getTypeID())) {
-				uniqueAssetsDuplicates.put(asset.getItem().getTypeID(), new ArrayList<MyAsset>());
+			int typeID;
+			if (asset.isBPC()) {
+				typeID = -asset.getItem().getTypeID();
+			} else {
+				typeID = asset.getItem().getTypeID();
+			}
+			if (!uniqueAssetsDuplicates.containsKey(typeID)) {
+				uniqueAssetsDuplicates.put(typeID, new ArrayList<MyAsset>());
 			}
 			List<MyAsset> dup = uniqueAssetsDuplicates.get(asset.getItem().getTypeID());
 			long newCount = asset.getCount();
