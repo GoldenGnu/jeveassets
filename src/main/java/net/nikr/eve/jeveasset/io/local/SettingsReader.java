@@ -189,7 +189,7 @@ public final class SettingsReader extends AbstractXmlReader {
 			parseRoutingSettings(routingElement, settings);
 		}
 
-		//Tags
+		//Tags - Must be loaded before stockpiles (and everything else that uses tags)
 		NodeList tagsNodes = element.getElementsByTagName("tags");
 		if (tagsNodes.getLength() == 1) {
 			Element tagsElement = (Element) tagsNodes.item(0);
@@ -652,11 +652,17 @@ public final class SettingsReader extends AbstractXmlReader {
 			NodeList itemNodes = stockpileNode.getElementsByTagName("item");
 			for (int b = 0; b < itemNodes.getLength(); b++) {
 				Element itemNode = (Element) itemNodes.item(b);
+				long id;
+				if (AttributeGetters.haveAttribute(itemNode, "id")) {
+					id = AttributeGetters.getLong(itemNode, "id");
+				} else {
+					id = StockpileItem.getNewID();
+				}
 				int typeID = AttributeGetters.getInt(itemNode, "typeid");
 				double countMinimum = AttributeGetters.getDouble(itemNode, "minimum");
 				if (typeID != 0) { //Ignore Total
 					Item item = ApiIdConverter.getItem(Math.abs(typeID));
-					StockpileItem stockpileItem = new StockpileItem(stockpile, item, typeID, countMinimum);
+					StockpileItem stockpileItem = new StockpileItem(stockpile, item, typeID, countMinimum, id);
 					stockpile.add(stockpileItem);
 				}
 			}

@@ -167,6 +167,7 @@ public abstract class TabsStockpile extends Bundle {
 	public abstract String columnCountMinimumMultiplied();
 	public abstract String columnPercentNeeded();
 	public abstract String columnPrice();
+	public abstract String columnTags();
 	public abstract String columnValueNow();
 	public abstract String columnValueNeeded();
 	public abstract String columnVolumeNow();

@@ -66,6 +66,7 @@ import net.nikr.eve.jeveasset.data.ItemFlag;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.data.StaticData;
 import net.nikr.eve.jeveasset.data.api.OwnerType;
+import net.nikr.eve.jeveasset.data.tag.TagUpdate;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
@@ -103,7 +104,7 @@ import net.nikr.eve.jeveasset.io.local.SettingsWriter;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 
 
-public class StockpileTab extends JMainTab {
+public class StockpileTab extends JMainTab implements TagUpdate {
 
 	private enum StockpileAction {
 		ADD_STOCKPILE,
@@ -423,6 +424,13 @@ public class StockpileTab extends JMainTab {
 				}
 			});
 		}
+	}
+
+	@Override
+	public void updateTags() {
+		beforeUpdateData();
+		tableModel.fireTableDataChanged();
+		afterUpdateData();
 	}
 
 	protected void editItem(StockpileItem item) {

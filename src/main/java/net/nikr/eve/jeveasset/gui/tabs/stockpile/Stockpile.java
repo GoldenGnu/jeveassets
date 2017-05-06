@@ -28,12 +28,17 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicLong;
 import net.nikr.eve.jeveasset.data.Item;
 import net.nikr.eve.jeveasset.data.MyLocation;
+import net.nikr.eve.jeveasset.data.Settings;
+import net.nikr.eve.jeveasset.data.tag.TagID;
+import net.nikr.eve.jeveasset.data.tag.Tags;
 import net.nikr.eve.jeveasset.data.types.BlueprintType;
 import net.nikr.eve.jeveasset.data.types.ItemType;
 import net.nikr.eve.jeveasset.data.types.LocationsType;
 import net.nikr.eve.jeveasset.data.types.PriceType;
+import net.nikr.eve.jeveasset.data.types.TagsType;
 import net.nikr.eve.jeveasset.gui.shared.CopyHandler.CopySeparator;
 import net.nikr.eve.jeveasset.gui.tabs.assets.MyAsset;
 import net.nikr.eve.jeveasset.gui.tabs.contracts.MyContractItem;
@@ -101,6 +106,14 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType {
 		createContainerName();
 		createLocationName();
 		createInclude();
+		updateTags();
+	}
+
+	private void updateTags() {
+		locationName = General.get().all();
+		for (StockpileItem item : items) {
+			item.updateTags();
+		}
 	}
 
 	private void createLocationName() {
@@ -410,8 +423,10 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType {
 		return this.getName().compareToIgnoreCase(o.getName());
 	}
 
-	public static class StockpileItem implements Comparable<StockpileItem>, LocationsType, ItemType, BlueprintType, PriceType, CopySeparator {
+	public static class StockpileItem implements Comparable<StockpileItem>, LocationsType, ItemType, BlueprintType, PriceType, CopySeparator, TagsType {
+		private static final AtomicLong TS = new AtomicLong();
 		//Constructor
+		private final long id;
 		private Stockpile stockpile;
 		private Item item;
 		private int typeID;
@@ -421,6 +436,9 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType {
 		private boolean marketGroup;
 		private double price = 0.0;
 		private double volume = 0.0f;
+
+		//Dynamic values
+		private Tags tags;
 
 		//Updated counts
 		private long inventoryCountNow = 0;
@@ -443,10 +461,16 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType {
 		}
 
 		public StockpileItem(final Stockpile stockpile, final Item item, final int typeID, final double countMinimum) {
+			this(stockpile, item, typeID, countMinimum, getNewID());
+		}
+
+		public StockpileItem(final Stockpile stockpile, final Item item, final int typeID, final double countMinimum, final long id) {
 			this.stockpile = stockpile;
 			this.item = item;
 			this.typeID = typeID;
 			this.countMinimum = countMinimum;
+			this.id = id;
+			updateTags();
 		}
 
 		void update(StockpileItem stockpileItem) {
@@ -454,6 +478,10 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType {
 			this.item = stockpileItem.item;
 			this.typeID = stockpileItem.typeID;
 			this.countMinimum = stockpileItem.countMinimum;
+		}
+
+		private void updateTags() {
+			setTags(Settings.get().getTags(getTagID()));
 		}
 
 		private void reset() {
@@ -471,6 +499,7 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType {
 			volume = 0.0f;
 			marketGroup = false;
 		}
+
 		public void updateValues(final double updatePrice, final float updateVolume) {
 			this.price = updatePrice;
 			this.volume = updateVolume;
@@ -971,6 +1000,36 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType {
 			return marketGroup;
 		}
 
+		public long getID() {
+			return id;
+		}
+
+		public static long getNewID() {
+			long micros = System.currentTimeMillis() * 1000;
+			for ( ; ; ) {
+				long value = TS.get();
+				if (micros <= value)
+					micros = value + 1;
+				if (TS.compareAndSet(value, micros))
+					return micros;
+			}
+		}
+
+		@Override
+		public Tags getTags() {
+			return tags;
+		}
+
+		@Override
+		public void setTags(Tags tags) {
+			this.tags = tags;
+		}
+
+		@Override
+		public TagID getTagID() {
+			return new TagID(StockpileTab.NAME, getID());
+		}
+
 		@Override
 		public Item getItem() {
 			return item;
@@ -1058,7 +1117,7 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType {
 		private double volumeNeeded = 0;
 
 		public StockpileTotal(final Stockpile stockpile) {
-			super(stockpile, new Item(0), 0, 0);
+			super(stockpile, new Item(0), 0, 0, 0);
 		}
 
 		private void reset() {
@@ -1118,6 +1177,14 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType {
 			if (item.getVolumeNeeded() < 0) {
 				volumeNeeded = volumeNeeded + item.getVolumeNeeded();
 			}
+		}
+
+		@Override
+		public void setTags(Tags tags) { }
+
+		@Override
+		public Tags getTags() {
+			return null;
 		}
 
 		@Override

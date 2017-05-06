@@ -369,6 +369,7 @@ public class SettingsWriter extends AbstractXmlWriter {
 			for (StockpileItem item : strockpile.getItems()) {
 				if (item.getItemTypeID() != 0) { //Ignore Total
 					Element itemNode = xmldoc.createElementNS(null, "item");
+					itemNode.setAttributeNS(null, "id", String.valueOf(item.getID()));
 					itemNode.setAttributeNS(null, "typeid", String.valueOf(item.getItemTypeID()));
 					itemNode.setAttributeNS(null, "minimum", String.valueOf(item.getCountMinimum()));
 					strockpileNode.appendChild(itemNode);
