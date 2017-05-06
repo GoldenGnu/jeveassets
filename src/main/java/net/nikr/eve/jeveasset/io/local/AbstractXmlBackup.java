@@ -22,8 +22,12 @@
 package net.nikr.eve.jeveasset.io.local;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import net.nikr.eve.jeveasset.Program;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.Element;
 
 
 public abstract class AbstractXmlBackup {
@@ -56,6 +60,23 @@ public abstract class AbstractXmlBackup {
 
 	protected File getNewFile(final String filename) {
 		return new File(filename.substring(0, filename.lastIndexOf(".")) + ".new");
+	}
+
+	private File getProgramBackup(final String filename) {
+		return new File(filename.substring(0, filename.lastIndexOf(".")) + "_" + Program.PROGRAM_VERSION + ".backup");
+	}
+
+	protected void backup(final String filename, final Element element) {
+		getProgramBackup(filename);
+		File backupFile = getProgramBackup(filename);
+		if (!backupFile.exists()) {
+			try {
+				Files.copy(new File(filename).toPath(), backupFile.toPath());
+				LOG.info("Backup Created: " + backupFile.getName());
+			} catch (IOException ex) {
+				LOG.error("Failed to create backup for new program version", ex);
+			}
+		}
 	}
 
 	protected void lock(final String filename) {

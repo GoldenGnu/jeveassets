@@ -76,7 +76,7 @@ public final class ProfileReader extends AbstractXmlReader {
 
 	private boolean read(ProfileManager profileManager, final String filename) {
 		try {
-			Element element = getDocumentElement(filename, true);
+			Element element = getDocumentElement(filename, true, true);
 			parseSettings(element, profileManager);
 		} catch (IOException ex) {
 			LOG.info("Profile not loaded");

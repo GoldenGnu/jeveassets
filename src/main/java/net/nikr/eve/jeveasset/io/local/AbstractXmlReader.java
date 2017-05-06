@@ -45,6 +45,10 @@ public abstract class AbstractXmlReader extends AbstractXmlBackup {
 	}
 
 	protected Element getDocumentElement(final String filename, final boolean fileLock) throws XmlException, IOException {
+		return getDocumentElement(filename, fileLock, false);
+	}
+
+	protected Element getDocumentElement(final String filename, final boolean fileLock, final boolean backupOnNewProgramVersion) throws XmlException, IOException {
 		DocumentBuilderFactory factory;
 		DocumentBuilder builder;
 		Document doc;
@@ -58,7 +62,11 @@ public abstract class AbstractXmlReader extends AbstractXmlBackup {
 			factory = DocumentBuilderFactory.newInstance();
 			builder = factory.newDocumentBuilder();
 			doc = builder.parse(is);
-			return doc.getDocumentElement();
+			Element element = doc.getDocumentElement();
+			if (backupOnNewProgramVersion) {
+				backup(filename, element);
+			}
+			return element;
 		} catch (SAXException ex) {
 			if (is != null) { //Close file - so we can delete it...
 				is.close();

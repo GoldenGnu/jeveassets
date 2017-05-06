@@ -143,7 +143,7 @@ public final class SettingsReader extends AbstractXmlReader {
 			Update updater = new Update();
 			updater.performUpdates(SETTINGS_VERSION, settings.getPathSettings());
 
-			Element element = getDocumentElement(settings.getPathSettings(), true);
+			Element element = getDocumentElement(settings.getPathSettings(), true, true);
 			parseSettings(element, settings);
 			LOG.info("Settings loaded");
 			return true;
