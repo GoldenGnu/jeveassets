@@ -507,6 +507,115 @@ public class StockpileTab extends JMainTab {
 				}
 			}
 		}
+	//Create lookup set of TypeIDs
+		Set<Integer> typeIDs = new HashSet<Integer>();
+		for (StockpileItem item : stockpile.getItems()) {
+			typeIDs.add(item.getTypeID());
+		}
+	//Create lookup maps of Items
+		//ContractItems
+		Map<Integer, List<MyContractItem>> contractItems = new HashMap<Integer, List<MyContractItem>>();
+		if (stockpile.isContracts()) {
+			for (MyContractItem contractItem : program.getContractItemList()) {
+				if (contractItem.getContract().isCourier()) {
+					continue;
+				}
+				int typeID = contractItem.getItem().getTypeID();
+				if (!typeIDs.contains(typeID)) {
+					continue; //Ignore wrong typeID
+				}
+				List<MyContractItem> items = contractItems.get(typeID);
+				if (items == null) {
+					items = new ArrayList<MyContractItem>();
+					contractItems.put(typeID, items);
+				}
+				items.add(contractItem);
+			}
+		}
+
+		//Inventory AKA Assets
+		Map<Integer, List<MyAsset>> assets = new HashMap<Integer, List<MyAsset>>();
+		String marketOrderSellFlag = General.get().marketOrderSellFlag();
+		String marketOrderBuyFlag = General.get().marketOrderBuyFlag();
+		String contractIncluded = General.get().contractIncluded();
+		String contractExcluded = General.get().contractExcluded();
+		if (stockpile.isAssets()) {
+			for (MyAsset asset : program.getAssetList()) {
+				//Skip market orders
+				if (asset.getFlag().equals(marketOrderSellFlag)) {
+					continue; //Ignore market sell orders
+				}
+				if (asset.getFlag().equals(marketOrderBuyFlag)) {
+					continue; //Ignore market buy orders
+				}
+				//Skip contracts
+				if (asset.getFlag().equals(contractIncluded)) {
+					continue; //Ignore contracts included
+				}
+				if (asset.getFlag().equals(contractExcluded)) {
+					continue; //Ignore contracts excluded
+				}
+				int typeID = asset.getItem().getTypeID();
+				if (!typeIDs.contains(typeID)) {
+					continue; //Ignore wrong typeID
+				}
+				List<MyAsset> items = assets.get(typeID);
+				if (items == null) {
+					items = new ArrayList<MyAsset>();
+					assets.put(typeID, items);
+				}
+				items.add(asset);
+			}
+		}
+		//Market Orders
+		Map<Integer, List<MyMarketOrder>> marketOrders = new HashMap<Integer, List<MyMarketOrder>>();
+		if (stockpile.isBuyOrders() || stockpile.isSellOrders()) {
+			for (MyMarketOrder marketOrder : program.getMarketOrdersList()) {
+				int typeID = marketOrder.getItem().getTypeID();
+				if (!typeIDs.contains(typeID)) {
+					continue; //Ignore wrong typeID
+				}
+				List<MyMarketOrder> items = marketOrders.get(typeID);
+				if (items == null) {
+					items = new ArrayList<MyMarketOrder>();
+					marketOrders.put(typeID, items);
+				}
+				items.add(marketOrder);
+			}
+		}
+		//Industry Job
+		Map<Integer, List<MyIndustryJob>> industryJobs = new HashMap<Integer, List<MyIndustryJob>>();
+		if (stockpile.isJobs()) {
+			for (MyIndustryJob industryJob : program.getIndustryJobsList()) {
+				int typeID = industryJob.getItem().getTypeID();
+				if (!typeIDs.contains(typeID)) {
+					continue; //Ignore wrong typeID
+				}
+				List<MyIndustryJob> items = industryJobs.get(typeID);
+				if (items == null) {
+					items = new ArrayList<MyIndustryJob>();
+					industryJobs.put(typeID, items);
+				}
+				items.add(industryJob);
+			}
+		}
+		//Transactions
+		Map<Integer, List<MyTransaction>> transactions = new HashMap<Integer, List<MyTransaction>>();
+		if (stockpile.isTransactions()) {
+			for (MyTransaction transaction : program.getTransactionsList()) {
+				int typeID = transaction.getItem().getTypeID();
+				if (!typeIDs.contains(typeID)) {
+					continue; //Ignore wrong typeID
+				}
+				List<MyTransaction> items = transactions.get(typeID);
+				if (items == null) {
+					items = new ArrayList<MyTransaction>();
+					transactions.put(typeID, items);
+				}
+				items.add(transaction);
+			}
+		}
+		
 		stockpile.setFlagName(new ArrayList<String>(flags));
 		stockpile.reset();
 		if (!stockpile.isEmpty()) {
@@ -520,67 +629,47 @@ public class StockpileTab extends JMainTab {
 				item.updateValues(price, volume);
 				//ContractItems
 				if (stockpile.isContracts()) {
-					for (MyContractItem contractItem : program.getContractItemList()) {
-						if (contractItem.getContract().isCourier()) {
-							continue;
+					List<MyContractItem> items = contractItems.get(TYPE_ID);
+					if (items != null) {
+						for (MyContractItem contractItem : items) {
+							item.updateContract(contractItem);
 						}
-						/*
-						long issuerID = contractItem.getContract().isForCorp() ? contractItem.getContract().getIssuerCorpID() : contractItem.getContract().getIssuerID();
-						if (!ownersName.containsKey(issuerID) && !ownersName.containsKey(contractItem.getContract().getAcceptorID())) {
-							continue; //Ignore not accepted/issued contracts
-						}
-						*/
-						item.updateContract(contractItem);
 					}
 				}
 				//Inventory AKA Assets
 				if (stockpile.isAssets()) {
-					for (MyAsset asset : program.getAssetList()) {
-						if (asset.getItem().getTypeID() != TYPE_ID) {
-							continue; //Ignore wrong typeID
+					List<MyAsset> items = assets.get(TYPE_ID);
+					if (items != null) {
+						for (MyAsset asset : items) {
+							item.updateAsset(asset);
 						}
-						//Skip market orders
-						if (asset.getFlag().equals(General.get().marketOrderSellFlag())) {
-							continue; //Ignore market sell orders
-						}
-						if (asset.getFlag().equals(General.get().marketOrderBuyFlag())) {
-							continue; //Ignore market buy orders
-						}
-						//Skip contracts
-						if (asset.getFlag().equals(General.get().contractIncluded())) {
-							continue; //Ignore contracts included
-						}
-						if (asset.getFlag().equals(General.get().contractExcluded())) {
-							continue; //Ignore contracts excluded
-						}
-						item.updateAsset(asset);
 					}
 				}
 				//Market Orders
 				if (stockpile.isBuyOrders() || stockpile.isSellOrders()) {
-					for (MyMarketOrder marketOrder : program.getMarketOrdersList()) {
-						if (marketOrder.getTypeID() != TYPE_ID) {
-							continue; //Ignore wrong typeID
+					List<MyMarketOrder> items = marketOrders.get(TYPE_ID);
+					if (items != null) {
+						for (MyMarketOrder marketOrder : items) {
+							item.updateMarketOrder(marketOrder);
 						}
-						item.updateMarketOrder(marketOrder);
 					}
 				}
 				//Industry Job
 				if (stockpile.isJobs()) {
-					for (MyIndustryJob industryJob : program.getIndustryJobsList()) {
-						if (industryJob.getProductTypeID() != TYPE_ID) {
-							continue; //Ignore wrong typeID
+					List<MyIndustryJob> items = industryJobs.get(TYPE_ID);
+					if (items != null) {
+						for (MyIndustryJob industryJob : items) {
+							item.updateIndustryJob(industryJob);
 						}
-						item.updateIndustryJob(industryJob);
 					}
 				}
 				//Transactions
 				if (stockpile.isTransactions()) {
-					for (MyTransaction transaction : program.getTransactionsList()) {
-						if (transaction.getTypeID() != TYPE_ID) {
-							continue; //Ignore wrong typeID
+					List<MyTransaction> items = transactions.get(TYPE_ID);
+					if (items != null) {
+						for (MyTransaction transaction : items) {
+							item.updateTransaction(transaction);
 						}
-						item.updateTransaction(transaction);
 					}
 				}
 			}
