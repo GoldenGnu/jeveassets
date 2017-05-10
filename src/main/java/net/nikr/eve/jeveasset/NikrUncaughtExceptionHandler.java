@@ -39,7 +39,7 @@ import org.slf4j.LoggerFactory;
 public class NikrUncaughtExceptionHandler implements Thread.UncaughtExceptionHandler {
 
 	private static final Logger LOG = LoggerFactory.getLogger(NikrUncaughtExceptionHandler.class);
-	private static final String SUBMIT = "http://eve.nikr.net/jeveassets/bugs/submit.php";
+	private static final String SUBMIT = "https://eve.nikr.net/jeveassets/bugs/submit.php";
 	private static final String JAVA = "Java 8";
 
 	private static boolean error = false;

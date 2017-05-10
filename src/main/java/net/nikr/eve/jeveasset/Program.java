@@ -95,8 +95,7 @@ public class Program implements ActionListener {
 	//Major.Minor.Bugfix [Release Candidate n] [BETA n] [DEV BUILD #n];
 	public static final String PROGRAM_VERSION = "4.1.0 DEV BUILD 1";
 	public static final String PROGRAM_NAME = "jEveAssets";
-	public static final String PROGRAM_UPDATE_URL = "http://eve.nikr.net/jeveassets/update.xml";
-	public static final String PROGRAM_HOMEPAGE = "http://eve.nikr.net/jeveasset";
+	public static final String PROGRAM_HOMEPAGE = "https://eve.nikr.net/jeveasset";
 	public static final boolean PROGRAM_FORCE_PORTABLE = false;
 	public static final boolean PROGRAM_SHOW_FEEDBACK_MSG = false;
 
