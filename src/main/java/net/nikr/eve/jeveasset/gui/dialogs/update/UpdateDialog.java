@@ -577,13 +577,13 @@ public class UpdateDialog extends JDialogCentered {
 				if (jContracts.isSelected() || jIndustryJobs.isSelected()) {
 					updateTasks.add(new NameTask());
 				}
-				if (jMarketOrders.isSelected()
+				if ((jMarketOrders.isSelected()
 						|| jJournal.isSelected()
 						|| jTransactions.isSelected()
 						|| jIndustryJobs.isSelected()
 						|| jAccountBalance.isSelected()
 						|| jContracts.isSelected()
-						|| jAssets.isSelected()
+						|| jAssets.isSelected())
 						&& !program.getProfileManager().getEsiOwners().isEmpty()) {
 					updateTasks.add(new StructureTask()); //Should always be last
 				}
