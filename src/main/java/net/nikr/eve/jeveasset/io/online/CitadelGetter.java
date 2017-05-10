@@ -25,9 +25,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
-import java.net.InetAddress;
 import java.net.URL;
-import java.net.UnknownHostException;
 import java.util.Date;
 import java.util.Map;
 import java.util.zip.GZIPInputStream;
@@ -47,28 +45,21 @@ public class CitadelGetter extends AbstractXmlWriter {
 
 	private static final Logger LOG = LoggerFactory.getLogger(CitadelGetter.class);
 
-	private static final String HAMMERTI_HOST = "stop.hammerti.me.uk";
 	private static final String HAMMERTI_URL = "https://stop.hammerti.me.uk/api/citadel/all";
-	private static final String NIKR_HOST = "eve.nikr.net";
 	private static final String NIKR_URL = "https://eve.nikr.net/jeveassets/citadel/";
 
 	private static CitadelGetter citadelGetter;
 	private CitadelSettings citadelSettings = new CitadelSettings();
 
-	private CitadelGetter() {
-	}
+	private CitadelGetter() { }
 
 	public static Citadel get(long locationID) {
 		return getCitadelGetter().getCitadel(locationID);
 	}
 
 	public static void update(UpdateTask updateTask) {
-		if (isReachable(NIKR_HOST)) { //Get my cached version
-			getCitadelGetter().updateCache(updateTask, NIKR_URL);
-		} else if (isReachable(HAMMERTI_HOST)) { //Get it from the source
-			getCitadelGetter().updateCache(updateTask, HAMMERTI_URL);
-		} else {
-			updateTask.addError(DialoguesUpdate.get().citadel(), "Connection timed out.\r\n(Fix: Try again later)");
+		if (!getCitadelGetter().updateCache(updateTask, NIKR_URL)) { //Get the cached version
+			getCitadelGetter().updateCache(updateTask, HAMMERTI_URL); //Get it from the source
 		}
 	}
 
@@ -92,14 +83,14 @@ public class CitadelGetter extends AbstractXmlWriter {
 		citadelSettings = CitadelReader.load();
 	}
 
-	private void updateCache(UpdateTask updateTask, String hostUrl) {
+	private boolean updateCache(UpdateTask updateTask, String hostUrl) {
 		LOG.info("Citadels updating from: " + hostUrl);
 		if (citadelSettings.getNextUpdate().after(new Date()) && !Settings.get().isForceUpdate() && !Program.isForceUpdate()) { //Check if we can update now
 			if (updateTask != null) {
 				updateTask.addError(DialoguesUpdate.get().citadel(), "Not allowed yet.\r\n(Fix: Just wait a bit)");
 			}
 			LOG.info("	Citadels failed to update (NOT ALLOWED YET)");
-			return;
+			return false;
 		}
 		//Update citadel
 		InputStream in = null;
@@ -128,11 +119,13 @@ public class CitadelGetter extends AbstractXmlWriter {
 			citadelSettings.setNextUpdate();
 			saveXml();
 			LOG.info("	Updated citadels for jEveAssets");
+			return true;
 		} catch (IOException ex) {
 			if (updateTask != null) {
 				updateTask.addError(DialoguesUpdate.get().citadel(), ex.getMessage());
 			}
 			LOG.error("	Citadels failed to update", ex);
+			return false;
 		} finally {
 			if (in != null) {
 				try {
@@ -141,19 +134,6 @@ public class CitadelGetter extends AbstractXmlWriter {
 					//No problem...
 				}
 			}
-		}
-	}
-
-	private static boolean isReachable(String hostUrl) {
-		try {
-			InetAddress address = InetAddress.getByName(hostUrl);
-			return address.isReachable(2000);
-		} catch (UnknownHostException ex) {
-			LOG.error(ex.getMessage(), ex);
-			return false;
-		} catch (IOException ex) {
-			LOG.error(ex.getMessage(), ex);
-			return false;
 		}
 	}
 
