@@ -7,6 +7,7 @@
     <row flagid="3" flagname="Wardrobe" flagtext="Wardrobe"/>
     <row flagid="4" flagname="Hangar" flagtext="Hangar"/>
     <row flagid="5" flagname="Cargo" flagtext="Cargo"/>
+    <row flagid="6" flagname="OfficeImpound" flagtext="Impounded Offices"/>
     <row flagid="7" flagname="Skill" flagtext="Skill"/>
     <row flagid="8" flagname="Reward" flagtext="Reward"/>
     <row flagid="11" flagname="LoSlot0" flagtext="Low power slot 1"/>
