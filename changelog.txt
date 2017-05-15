@@ -16,6 +16,30 @@
                   #### #  # #  # #  # #### #### #### #### ####
 
 ________________________________________________________________________________
+_4.1.0__________________________________________________________________________
+
+New Features:
+-ESI structure endpoint (Resolve structure names, optional)
+-Tracker: You can now add notes (Limitation: 1 note per day)
+-Stockpile: Tags (just like in the Assets tool)
+-Stockpile: Shopping list allow you to hide items above X% full
+
+Changed:
+-Rearranged the tool menu
+-Creates backup of data when a new version is run for the first time
+-Made the citadel update more resilient to errors
+-Use https for updates and bug reports
+-Stockpile: Optimized
+-Assets: Type count column now counts BPO and BPC separately 
+
+Bug Fixes:
+-Account import: Better handling of cancel and previous
+-Stockpile: Shopping list did not include contract items
+-Tree: Containers and ships was missing if their children was filtered out
+-Tree: Category tool had unknown locations for items without a location
+-Stockpile: All blueprints match both BPC and BPO
+
+________________________________________________________________________________
 _4.0.1__________________________________________________________________________
 
 Code:
