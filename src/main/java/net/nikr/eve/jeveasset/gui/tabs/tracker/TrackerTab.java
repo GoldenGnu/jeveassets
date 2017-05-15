@@ -62,6 +62,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
+import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
@@ -94,7 +95,7 @@ import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.DateAxis;
 import org.jfree.chart.axis.NumberAxis;
-import org.jfree.chart.labels.StandardXYToolTipGenerator;
+import org.jfree.chart.labels.XYToolTipGenerator;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
@@ -102,6 +103,7 @@ import org.jfree.data.general.DatasetUtilities;
 import org.jfree.data.time.SimpleTimePeriod;
 import org.jfree.data.time.TimePeriodValues;
 import org.jfree.data.time.TimePeriodValuesCollection;
+import org.jfree.data.xy.XYDataset;
 import org.jfree.ui.RectangleEdge;
 
 
@@ -116,6 +118,8 @@ public class TrackerTab extends JMainTab {
 		ALL,
 		EDIT,
 		DELETE,
+		NOTE_ADD,
+		NOTE_DELETE,
 		PROFILE,
 		FILTER_ASSETS,
 		FILTER_WALLET_BALANCE
@@ -147,6 +151,7 @@ public class TrackerTab extends JMainTab {
 	private final JCheckBox jAllProfiles;
 	private final JCheckBoxMenuItem jIncludeZero;
 	private final JPopupMenu jPopupMenu;
+	private final JMenuItem jNote;
 	private final JMenuItem jIskValue;
 	private final JMenuItem jDateValue;
 	private final JTrackerEditDialog jEditDialog;
@@ -158,6 +163,8 @@ public class TrackerTab extends JMainTab {
 	private final JMenuItem jEveKitImport;
 	private final Shape NO_FILTER = new Rectangle(-3, -3, 6, 6);
 	private final Shape FILTER_AND_DEFAULT = new Ellipse2D.Float(-3.0f, -3.0f, 6.0f, 6.0f);
+	private final JMenuItem jAddNote;
+	private final JMenu jEditNote;
 
 	private final ListenerClass listener = new ListenerClass();
 
@@ -198,6 +205,27 @@ public class TrackerTab extends JMainTab {
 		jMenuItem.addActionListener(listener);
 		jPopupMenu.add(jMenuItem);
 
+		jPopupMenu.addSeparator();
+
+		jAddNote = new JMenuItem(TabsTracker.get().notesAdd(), Images.EDIT_ADD.getIcon());
+		jAddNote.setActionCommand(TrackerAction.NOTE_ADD.name());
+		jAddNote.addActionListener(listener);
+		jPopupMenu.add(jAddNote);
+
+		jEditNote = new JMenu(TabsTracker.get().note());
+		jEditNote.setIcon(Images.SETTINGS_USER_NAME.getIcon());
+		jPopupMenu.add(jEditNote);
+
+		jMenuItem = new JMenuItem(TabsTracker.get().edit(), Images.EDIT_EDIT.getIcon());
+		jMenuItem.setActionCommand(TrackerAction.NOTE_ADD.name());
+		jMenuItem.addActionListener(listener);
+		jEditNote.add(jMenuItem);
+
+		jMenuItem = new JMenuItem(TabsTracker.get().delete(), Images.EDIT_DELETE.getIcon());
+		jMenuItem.setActionCommand(TrackerAction.NOTE_DELETE.name());
+		jMenuItem.addActionListener(listener);
+		jEditNote.add(jMenuItem);
+
 		JMenuInfo.createDefault(jPopupMenu);
 
 		jIskValue = new JMenuItem();
@@ -211,7 +239,14 @@ public class TrackerTab extends JMainTab {
 		jDateValue.setEnabled(false);
 		jDateValue.setForeground(Color.BLACK);
 		jDateValue.setHorizontalAlignment(SwingConstants.RIGHT);
+		jDateValue.setDisabledIcon(Images.EDIT_DATE.getIcon());
 		jPopupMenu.add(jDateValue);
+
+		jNote = new JMenuItem();
+		jNote.setEnabled(false);
+		jNote.setForeground(Color.BLACK);
+		jNote.setDisabledIcon(Images.SETTINGS_USER_NAME.getIcon());
+		jPopupMenu.add(jNote);
 
 		jEditDialog = new JTrackerEditDialog(program);
 
@@ -340,10 +375,32 @@ public class TrackerTab extends JMainTab {
 		plot.setBackgroundPaint(Color.WHITE);
 		plot.setRangeGridlinePaint(Color.LIGHT_GRAY);
 		plot.setDomainGridlinePaint(Color.LIGHT_GRAY);
-		plot.getRenderer().setBaseToolTipGenerator(new StandardXYToolTipGenerator(
-				"{0}: {2} ({1})",
-				dateFormat,
-				iskFormat));
+		plot.getRenderer().setBaseToolTipGenerator(new XYToolTipGenerator() {
+			@Override
+			public String generateToolTip(XYDataset dataset, int series, int item)	{
+				Date date = new Date(dataset.getX(series, item).longValue());
+				Number isk = dataset.getY(series, item);
+				StringBuilder stringBuilder = new StringBuilder();
+				stringBuilder.append("<html>");
+				stringBuilder.append("<b>");
+				stringBuilder.append(dataset.getSeriesKey(series));
+				stringBuilder.append(":</b> ");
+				stringBuilder.append(iskFormat.format(isk));
+				stringBuilder.append("<br>");
+				stringBuilder.append("<b>");
+				stringBuilder.append(TabsTracker.get().date());
+				stringBuilder.append(":</b> ");
+				stringBuilder.append(dateFormat.format(date));
+				TrackerNote trackerNote = Settings.get().getTrackerNotes().get(new TrackerDate(date));
+				if (trackerNote != null) {
+					stringBuilder.append("<br><b>");
+					stringBuilder.append(TabsTracker.get().note());
+					stringBuilder.append(":</b> ");
+					stringBuilder.append(trackerNote.getNote());
+				}
+				return stringBuilder.toString();
+			}
+		});
 		plot.setDomainCrosshairLockedOnData(true);
 		plot.setDomainCrosshairStroke(new BasicStroke(1));
 		plot.setDomainCrosshairPaint(Color.BLACK);
@@ -576,7 +633,7 @@ public class TrackerTab extends JMainTab {
 		//WALLET - Make nodes for found wallet account keys
 		CheckBoxNode corporationWalletNode = new CheckBoxNode(null, TabsTracker.get().corporationWallet(), TabsTracker.get().corporationWallet(), false);
 		for (String id : walletIDs) {
-			accountNodes.put(id, new CheckBoxNode(corporationWalletNode, id,  TabsTracker.get().division(id), selectNode(id)));
+			accountNodes.put(id, new CheckBoxNode(corporationWalletNode, id, TabsTracker.get().division(id), selectNode(id)));
 		}
 		String charecterWalletID = "0";
 		CheckBoxNode charecterWalletNode = new CheckBoxNode(null, charecterWalletID, TabsTracker.get().characterWallet(), selectNode(charecterWalletID));
@@ -905,10 +962,10 @@ public class TrackerTab extends JMainTab {
 	}
 
 	private String getSelectedOwner(boolean all) {
-		if (jOwners.getSelectedIndices().length == 1) {
+		List<String> owners = jOwners.getSelectedValuesList();
+		if (owners.size() == 1) {
 			return jOwners.getSelectedValue();
 		} else {
-			List<String> owners = jOwners.getSelectedValuesList();
 			List<String> list = new ArrayList<String>();
 			if (all) {
 				list.add(General.get().all());
@@ -932,6 +989,35 @@ public class TrackerTab extends JMainTab {
 		}
 		return null;
 
+	}
+
+	private void addNote() {
+		Date date = new Date((long)jNextChart.getXYPlot().getDomainCrosshairValue());
+		TrackerNote trackerNote = Settings.get().getTrackerNotes().get(new TrackerDate(date));
+		String newNote;
+		if (trackerNote == null) {
+			newNote = JOptionPane.showInputDialog(program.getMainWindow().getFrame(), TabsTracker.get().notesEditMsg(), TabsTracker.get().notesEditTitle(), JOptionPane.PLAIN_MESSAGE);
+		} else {
+			newNote = (String) JOptionPane.showInputDialog(program.getMainWindow().getFrame(), TabsTracker.get().notesEditMsg(), TabsTracker.get().notesEditTitle(), JOptionPane.PLAIN_MESSAGE, null, null, trackerNote.getNote());
+		}
+		if (newNote != null) {
+			Settings.lock("Tracker Data (Set Note)");
+			Settings.get().getTrackerNotes().put(new TrackerDate(date), new TrackerNote(newNote));
+			Settings.unlock("Tracker Data (Set Note)");
+			program.saveSettings("Tracker Data (Set Note)");
+		}
+	}
+
+	private void removeNote() {
+		Date date = new Date((long)jNextChart.getXYPlot().getDomainCrosshairValue());
+		TrackerNote trackerNote = Settings.get().getTrackerNotes().get(new TrackerDate(date));
+		int returnValue = JOptionPane.showConfirmDialog(program.getMainWindow().getFrame(), TabsTracker.get().notesDeleteMsg(trackerNote.getNote()), TabsTracker.get().notesDeleteTitle(), JOptionPane.OK_CANCEL_OPTION);
+		if (returnValue == JOptionPane.OK_OPTION) {
+			Settings.lock("Tracker Data (Delete Note)");
+			Settings.get().getTrackerNotes().remove(new TrackerDate(date));
+			Settings.unlock("Tracker Data (Delete Note)");
+			program.saveSettings("Tracker Data (Delete Note)");
+		}
 	}
 
 	private class MyRender extends XYLineAndShapeRenderer {
@@ -1141,6 +1227,14 @@ public class TrackerTab extends JMainTab {
 					updateFilterButtons();
 				}
 				jNextChart.getXYPlot().setDomainCrosshairVisible(false);
+			} else if (TrackerAction.NOTE_DELETE.name().equals(e.getActionCommand())) {
+				jNextChart.getXYPlot().setDomainCrosshairVisible(true);
+				removeNote();
+				jNextChart.getXYPlot().setDomainCrosshairVisible(false);
+			} else if (TrackerAction.NOTE_ADD.name().equals(e.getActionCommand())) {
+				jNextChart.getXYPlot().setDomainCrosshairVisible(true);
+				addNote();
+				jNextChart.getXYPlot().setDomainCrosshairVisible(false);
 			} else if (TrackerAction.PROFILE.name().equals(e.getActionCommand())) {
 				updateOwners();
 				updateData();
@@ -1191,7 +1285,6 @@ public class TrackerTab extends JMainTab {
 							return;
 						}
 						jNextChart.getXYPlot().setDomainCrosshairVisible(true);
-						Point2D p = jChartPanel.translateScreenToJava2D(cme.getTrigger().getPoint());
 						double xValue = jNextChart.getXYPlot().getDomainCrosshairValue();
 						double yValue = jNextChart.getXYPlot().getRangeCrosshairValue();
 						RectangleEdge xEdge = jNextChart.getXYPlot().getDomainAxisEdge();
@@ -1199,8 +1292,20 @@ public class TrackerTab extends JMainTab {
 						Rectangle2D dataArea = jChartPanel.getScreenDataArea(); // jChartPanel.getChartRenderingInfo().getPlotInfo().getSubplotInfo(0).getDataArea();
 						int x = (int) jNextChart.getXYPlot().getDomainAxis().valueToJava2D(xValue, dataArea, xEdge);
 						int y = (int) jNextChart.getXYPlot().getRangeAxis().valueToJava2D(yValue, dataArea, yEdge);
+						Date date = new Date((long)xValue);
 						jIskValue.setText(iskFormat.format(yValue));
-						jDateValue.setText(dateFormat.format(new Date((long)xValue)));
+						jDateValue.setText(dateFormat.format(date));
+						TrackerNote trackerNote = Settings.get().getTrackerNotes().get(new TrackerDate(date));
+						if (trackerNote != null) {
+							jAddNote.setVisible(false);
+							jEditNote.setVisible(true);
+							jNote.setVisible(true);
+							jNote.setText(trackerNote.getNote());
+						} else {
+							jAddNote.setVisible(true);
+							jEditNote.setVisible(false);
+							jNote.setVisible(false);
+						}
 						jPopupMenu.show((Component)cme.getTrigger().getSource(), x, y);
 					}
 				});

@@ -95,6 +95,11 @@ public class EveApiOwner extends AbstractOwner implements OwnerType {
 	}
 
 	@Override
+	public boolean isStructures() {
+		return false; //Not supported by the XML API
+	}
+
+	@Override
 	public Date getExpire() {
 		return getParentAccount().getExpires();
 	}

@@ -45,6 +45,8 @@ import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewLocation;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileFilter;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
+import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerDate;
+import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerNote;
 import net.nikr.eve.jeveasset.gui.tabs.values.Value;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -121,6 +123,7 @@ public class SettingsWriter extends AbstractXmlWriter {
 		writeExportSettings(xmldoc, settings.getExportSettings());
 		writeAssetAdded(xmldoc, settings.getAssetAdded());
 		writeTrackerData(xmldoc, settings.getTrackerData());
+		writeTrackerNotes(xmldoc, settings.getTrackerNotes());
 		writeTrackerFilters(xmldoc, settings.getTrackerFilters(), settings.isTrackerSelectNew());
 		writeOwners(xmldoc, settings.getOwners());
 		writeTags(xmldoc, settings.getTags());
@@ -244,6 +247,17 @@ public class SettingsWriter extends AbstractXmlWriter {
 		}
 	}
 
+	private void writeTrackerNotes(final Document xmldoc, final Map<TrackerDate, TrackerNote> trackerNotes) {
+		Element notesNode = xmldoc.createElementNS(null, "trackernotes");
+		xmldoc.getDocumentElement().appendChild(notesNode);
+		for (Map.Entry<TrackerDate, TrackerNote> entry : trackerNotes.entrySet()) {
+			Element noteNode = xmldoc.createElementNS(null, "trackernote");
+			noteNode.setAttributeNS(null, "note", entry.getValue().getNote());
+			noteNode.setAttributeNS(null, "date", String.valueOf(entry.getKey().getDate().getTime()));
+			notesNode.appendChild(noteNode);
+		}
+	}
+
 	private void writeTableFilters(final Document xmldoc, final Map<String, Map<String, List<Filter>>> tableFilters) {
 		Element tablefiltersNode = xmldoc.createElementNS(null, "tablefilters");
 		xmldoc.getDocumentElement().appendChild(tablefiltersNode);
@@ -355,6 +369,7 @@ public class SettingsWriter extends AbstractXmlWriter {
 			for (StockpileItem item : strockpile.getItems()) {
 				if (item.getItemTypeID() != 0) { //Ignore Total
 					Element itemNode = xmldoc.createElementNS(null, "item");
+					itemNode.setAttributeNS(null, "id", String.valueOf(item.getID()));
 					itemNode.setAttributeNS(null, "typeid", String.valueOf(item.getItemTypeID()));
 					itemNode.setAttributeNS(null, "minimum", String.valueOf(item.getCountMinimum()));
 					strockpileNode.appendChild(itemNode);

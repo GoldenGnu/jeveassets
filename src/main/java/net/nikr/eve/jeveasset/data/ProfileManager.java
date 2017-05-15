@@ -26,6 +26,7 @@ import java.util.List;
 import net.nikr.eve.jeveasset.SplashUpdater;
 import net.nikr.eve.jeveasset.data.evekit.EveKitOwner;
 import net.nikr.eve.jeveasset.data.api.OwnerType;
+import net.nikr.eve.jeveasset.data.esi.EsiOwner;
 import net.nikr.eve.jeveasset.io.local.ProfileReader;
 import net.nikr.eve.jeveasset.io.local.ProfileWriter;
 import net.nikr.eve.jeveasset.io.local.ProfileFinder;
@@ -39,6 +40,7 @@ public class ProfileManager {
 
 	private final List<EveApiAccount> accounts = new ArrayList<EveApiAccount>();
 	private final List<EveKitOwner> eveKitOwners = new ArrayList<EveKitOwner>();
+	private final List<EsiOwner> esiOwners = new ArrayList<EsiOwner>();
 	private Profile activeProfile;
 	private List<Profile> profiles = new ArrayList<Profile>();
 
@@ -82,6 +84,7 @@ public class ProfileManager {
 			owners.addAll(account.getOwners());
 		}
 		owners.addAll(getEveKitOwners());
+		owners.addAll(getEsiOwners());
 		return owners;
 	}
 
@@ -89,11 +92,16 @@ public class ProfileManager {
 		return eveKitOwners;
 	}
 
+	public List<EsiOwner> getEsiOwners() {
+		return esiOwners;
+	}
+
 	public void loadActiveProfile() {
 	//Load Profile
 		LOG.info("Loading profile: {}", activeProfile.getName());
 		accounts.clear();
 		eveKitOwners.clear();
+		esiOwners.clear();
 		ProfileReader.load(this, activeProfile.getFilename()); //Assets (Must be loaded before the price data)
 		SplashUpdater.setProgress(40);
 	//Price data (update as needed)

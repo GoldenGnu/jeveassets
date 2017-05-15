@@ -18,11 +18,10 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
  */
-package net.nikr.eve.jeveasset.data.api;
+package net.nikr.eve.jeveasset.io.esi;
 
 
-public enum ApiType {
-	EVE_ONLINE,
-	EVEKIT,
-	ESI
+public interface AuthCodeListener {
+	public void setAuthCode(String authCode);
+	public boolean isListening();
 }

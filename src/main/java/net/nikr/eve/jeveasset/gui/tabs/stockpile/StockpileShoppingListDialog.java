@@ -61,7 +61,8 @@ class StockpileShoppingListDialog extends JDialogCentered {
 
 	private final JTextArea jText;
 	private final JButton jClose;
-	private final JTextField jPercent;
+	private final JTextField jPercentFull;
+	private final JTextField jPercentIgnore;
 
 	private List<Stockpile> stockpiles;
 	private boolean updating = false;
@@ -77,11 +78,21 @@ class StockpileShoppingListDialog extends JDialogCentered {
 		jCopyToClipboard.setActionCommand(StockpileShoppingListAction.CLIPBOARD_STOCKPILE.name());
 		jCopyToClipboard.addActionListener(listener);
 
-		JLabel jPercentFullLabel = new JLabel(TabsStockpile.get().percentFull());
-		JLabel jPercentLabel = new JLabel(TabsStockpile.get().percent());
+		JSeparator jSeparator1 = new JSeparator(SwingConstants.VERTICAL);
 
-		jPercent = new JIntegerField("");
-		jPercent.addCaretListener(listener);
+		JLabel jFullLabel = new JLabel(TabsStockpile.get().percentFull());
+		JLabel jFullPercentLabel = new JLabel(TabsStockpile.get().percent());
+
+		jPercentFull = new JIntegerField("");
+		jPercentFull.addCaretListener(listener);
+
+		JSeparator jSeparator2 = new JSeparator(SwingConstants.VERTICAL);
+
+		JLabel jIgnoreLabel = new JLabel(TabsStockpile.get().percentIgnore());
+		JLabel jIgnorePercentLabel = new JLabel(TabsStockpile.get().percent());
+
+		jPercentIgnore = new JIntegerField("");
+		jPercentIgnore.addCaretListener(listener);
 
 		jClose = new JButton(TabsStockpile.get().close());
 		jClose.setActionCommand(StockpileShoppingListAction.CLOSE.name());
@@ -93,8 +104,6 @@ class StockpileShoppingListDialog extends JDialogCentered {
 		jText.setBackground(jPanel.getBackground());
 		JCopyPopup.install(jText);
 
-		JSeparator jSeparator = new JSeparator(SwingConstants.VERTICAL);
-
 		JScrollPane jTextScroll = new JScrollPane(jText);
 
 		layout.setHorizontalGroup(
@@ -102,11 +111,17 @@ class StockpileShoppingListDialog extends JDialogCentered {
 				.addGroup(layout.createSequentialGroup()
 					.addComponent(jCopyToClipboard)
 					.addGap(10)
-					.addComponent(jSeparator, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+					.addComponent(jSeparator1, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
 					.addGap(10)
-					.addComponent(jPercentFullLabel)
-					.addComponent(jPercent, 100, 100, 100)
-					.addComponent(jPercentLabel)
+					.addComponent(jFullLabel)
+					.addComponent(jPercentFull, 100, 100, 100)
+					.addComponent(jFullPercentLabel)
+					.addGap(10)
+					.addComponent(jSeparator2, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+					.addGap(10)
+					.addComponent(jIgnoreLabel)
+					.addComponent(jPercentIgnore, 100, 100, 100)
+					.addComponent(jIgnorePercentLabel)
 				)
 				.addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
 					.addComponent(jTextScroll, 500, 500, Integer.MAX_VALUE)
@@ -117,10 +132,14 @@ class StockpileShoppingListDialog extends JDialogCentered {
 			layout.createSequentialGroup()
 				.addGroup(layout.createParallelGroup()
 					.addComponent(jCopyToClipboard, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-					.addComponent(jSeparator, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-					.addComponent(jPercentFullLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-					.addComponent(jPercent, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-					.addComponent(jPercentLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jSeparator1, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jFullLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jPercentFull, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jFullPercentLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jSeparator2, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jIgnoreLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jPercentIgnore, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jIgnorePercentLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 				)
 				.addComponent(jTextScroll, 400, 400, Integer.MAX_VALUE)
 				.addComponent(jClose, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
@@ -134,7 +153,8 @@ class StockpileShoppingListDialog extends JDialogCentered {
 	void show(final List<Stockpile> addStockpiles) {
 		updating = true;
 		this.stockpiles = addStockpiles;
-		jPercent.setText("100");
+		jPercentFull.setText("100");
+		jPercentIgnore.setText("100");
 		updateList();
 		updating = false;
 		super.setVisible(true);
@@ -144,12 +164,23 @@ class StockpileShoppingListDialog extends JDialogCentered {
 		//Multiplier
 		long percent;
 		try {
-			percent = Long.valueOf(jPercent.getText());
+			percent = Long.valueOf(jPercentFull.getText());
 			if (percent <= 0) {
 				percent = 100;
 			}
 		} catch (NumberFormatException e) {
 			percent = 100;
+		}
+		long hide;
+		try {
+			hide = Long.valueOf(jPercentIgnore.getText());
+			if (hide <= 0) {
+				hide = 100;
+			} else if (hide > 100) {
+				hide = 100;
+			}
+		} catch (NumberFormatException e) {
+			hide = 100;
 		}
 
 	//All claims
@@ -229,6 +260,9 @@ class StockpileShoppingListDialog extends JDialogCentered {
 			Item item = ApiIdConverter.getItem(entry.getKey());
 			long countMinimum = 0;
 			for (StockClaim stockClaim : entry.getValue()) {
+				if (stockClaim.getPercentFull() > hide) {
+					continue; //Ignore everything above x% percent
+				}
 				//Add missing
 				countMinimum = countMinimum + stockClaim.getCountMinimum();
 				//Add volume (will add zero if nothing is needed)
@@ -326,13 +360,20 @@ class StockpileShoppingListDialog extends JDialogCentered {
 	}
 
 	private static class StockClaim implements Comparable<StockClaim>{
-		private long countMinimum;
 		private final StockpileItem stockpileItem;
+		private final long totalNeed;
+		private long countMinimum;
 		private long available = 0;
 
 		public StockClaim(StockpileItem stockpileItem, long percent) {
 			this.stockpileItem = stockpileItem;
-			this.countMinimum = (long)(stockpileItem.getCountMinimumMultiplied() * percent / 100.0);
+			this.totalNeed = (long)(stockpileItem.getCountMinimumMultiplied() * percent / 100.0);
+			this.countMinimum = this.totalNeed;
+			
+		}
+
+		public double getPercentFull() {
+			return (totalNeed - countMinimum) * 100.0 / totalNeed ;
 		}
 
 		public double getVolume() {

@@ -18,11 +18,39 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
  */
-package net.nikr.eve.jeveasset.data.api;
+package net.nikr.eve.jeveasset.io.shared;
 
 
-public enum ApiType {
-	EVE_ONLINE,
-	EVEKIT,
-	ESI
+public class AccountAdderAdapter implements AccountAdder {
+
+	@Override
+	public boolean hasError() {
+		return false;
+	}
+
+	@Override
+	public boolean isLimited() {
+		return false;
+	}
+
+	@Override
+	public boolean isInvalidPrivileges() {
+		return false;
+	}
+
+	@Override
+	public boolean isWrongEntry() {
+		return false;
+	}
+
+	@Override
+	public String getError() {
+		return null;
+	}
+
+	@Override
+	public boolean isInvalid() {
+		return false;
+	}
+	
 }

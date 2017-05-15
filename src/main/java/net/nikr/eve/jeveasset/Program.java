@@ -38,6 +38,7 @@ import net.nikr.eve.jeveasset.data.ProfileManager;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.data.StaticData;
 import net.nikr.eve.jeveasset.data.api.OwnerType;
+import net.nikr.eve.jeveasset.data.tag.TagUpdate;
 import net.nikr.eve.jeveasset.gui.dialogs.AboutDialog;
 import net.nikr.eve.jeveasset.gui.dialogs.account.AccountManagerDialog;
 import net.nikr.eve.jeveasset.gui.dialogs.bugs.BugsDialog;
@@ -92,7 +93,7 @@ public class Program implements ActionListener {
 		TIMER
 	}
 	//Major.Minor.Bugfix [Release Candidate n] [BETA n] [DEV BUILD #n];
-	public static final String PROGRAM_VERSION = "4.0.2 DEV BUILD 1";
+	public static final String PROGRAM_VERSION = "4.2.0 DEV BUILD 1";
 	public static final String PROGRAM_NAME = "jEveAssets";
 	public static final String PROGRAM_HOMEPAGE = "https://eve.nikr.net/jeveasset";
 	public static final boolean PROGRAM_FORCE_PORTABLE = false;
@@ -595,8 +596,12 @@ public class Program implements ActionListener {
 	 * Called when Tags are changed.
 	 */
 	public void updateTags() {
-		assetsTab.updateTags();
-		treeTab.updateTags();
+		for (JMainTab mainTab : jMainTabs) {
+			if (mainTab instanceof TagUpdate) {
+				TagUpdate tagUpdate = (TagUpdate) mainTab;
+				tagUpdate.updateTags();
+			}
+		}
 	}
 	/**
 	 * Called when Overview Groups are changed.

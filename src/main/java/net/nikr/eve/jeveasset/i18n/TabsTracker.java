@@ -96,6 +96,12 @@ public abstract class TabsTracker extends Bundle {
 	public abstract String months6();
 	public abstract String newSelected();
 	public abstract String noDataFound();
+	public abstract String note();
+	public abstract String notesAdd();
+	public abstract String notesDeleteMsg(String note);
+	public abstract String notesDeleteTitle();
+	public abstract String notesEditMsg();
+	public abstract String notesEditTitle();
 	public abstract String ok();
 	public abstract String other();
 	public abstract String quickDate();

@@ -18,11 +18,32 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
  */
-package net.nikr.eve.jeveasset.data.api;
+package net.nikr.eve.jeveasset.io.esi;
 
 
-public enum ApiType {
-	EVE_ONLINE,
-	EVEKIT,
-	ESI
+public enum EsiCallbackURL {
+	LOCALHOST("http://localhost:2221", "", ""),
+	EVE_NIKR_NET("https://eve.nikr.net/jeveasset/auth", "", ""),
+	;
+	private final String url;
+	private final String a;
+	private final String b;
+
+	private EsiCallbackURL(String url, String a, String b) {
+		this.url = url;
+		this.a = a;
+		this.b = b;
+	}
+
+	public String getUrl() {
+		return url;
+	}
+
+	public String getA() {
+		return a;
+	}
+
+	public String getB() {
+		return b;
+	}
 }

@@ -39,13 +39,16 @@ public class Citadel {
 	}
 
 	public Citadel(long id, String name, long systemId, String systemName, long regionId, String regionName) {
+		this(id, name, systemId, systemName, regionId, regionName, true);
+	}
+	public Citadel(long id, String name, long systemId, String systemName, long regionId, String regionName, boolean userLocation) {
 		this.id = id;
 		this.name = name;
 		this.systemId = systemId;
 		this.systemName = systemName;
 		this.regionId = regionId;
 		this.regionName = regionName;
-		this.userLocation = true;
+		this.userLocation = userLocation;
 	}
 
 	public String getName() {

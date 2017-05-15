@@ -130,6 +130,7 @@ public abstract class TabsStockpile extends Bundle {
 	public abstract String owner();
 	public abstract String percent();
 	public abstract String percentFull();
+	public abstract String percentIgnore();
 	public abstract String region();
 	public abstract String remove();
 	public abstract String renameStockpileTitle();
@@ -166,6 +167,7 @@ public abstract class TabsStockpile extends Bundle {
 	public abstract String columnCountMinimumMultiplied();
 	public abstract String columnPercentNeeded();
 	public abstract String columnPrice();
+	public abstract String columnTags();
 	public abstract String columnValueNow();
 	public abstract String columnValueNeeded();
 	public abstract String columnVolumeNow();

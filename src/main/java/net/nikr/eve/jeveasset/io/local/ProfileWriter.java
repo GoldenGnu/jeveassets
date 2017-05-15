@@ -30,6 +30,7 @@ import net.nikr.eve.jeveasset.data.MyAccountBalance;
 import net.nikr.eve.jeveasset.data.eveapi.EveApiOwner;
 import net.nikr.eve.jeveasset.data.ProfileManager;
 import net.nikr.eve.jeveasset.data.api.OwnerType;
+import net.nikr.eve.jeveasset.data.esi.EsiOwner;
 import net.nikr.eve.jeveasset.data.evekit.EveKitOwner;
 import net.nikr.eve.jeveasset.gui.tabs.assets.MyAsset;
 import net.nikr.eve.jeveasset.gui.tabs.contracts.MyContract;
@@ -65,6 +66,7 @@ public final class ProfileWriter extends AbstractXmlWriter {
 		}
 		writeAccounts(xmldoc, profileManager.getAccounts());
 		writeEveKitOwners(xmldoc, profileManager.getEveKitOwners());
+		writeEsiOwners(xmldoc, profileManager.getEsiOwners());
 		try {
 			writeXmlFile(xmldoc, filename, true);
 		} catch (XmlException ex) {
@@ -73,6 +75,26 @@ public final class ProfileWriter extends AbstractXmlWriter {
 		}
 		LOG.info("Profile saved");
 		return true;
+	}
+
+	private void writeEsiOwners(final Document xmldoc, final List<EsiOwner> esiOwners) {
+		Element parentNode = xmldoc.createElementNS(null, "esiowners");
+		xmldoc.getDocumentElement().appendChild(parentNode);
+		for (EsiOwner owner : esiOwners) {
+			Element node = xmldoc.createElementNS(null, "esiowner");
+			node.setAttributeNS(null, "accountname", owner.getAccountName());
+			node.setAttributeNS(null, "refreshtoken", owner.getRefreshToken());
+			node.setAttributeNS(null, "expire", String.valueOf(owner.getExpire().getTime()));
+			node.setAttributeNS(null, "scopes", owner.getScopes());
+			node.setAttributeNS(null, "tokentype", owner.getTokenType());
+			node.setAttributeNS(null, "characterownerhash", owner.getCharacterOwnerHash());
+			node.setAttributeNS(null, "intellectualproperty", owner.getIntellectualProperty());
+			node.setAttributeNS(null, "structuresnextupdate", String.valueOf(owner.getStructuresNextUpdate().getTime()));
+			node.setAttributeNS(null, "accountnextupdate", String.valueOf(owner.getAccountNextUpdate().getTime()));
+			node.setAttributeNS(null, "callbackurl", owner.getCallbackURL().name());
+			writeTypeOwner(xmldoc, node, owner);
+			parentNode.appendChild(node);
+		}
 	}
 
 	private void writeEveKitOwners(final Document xmldoc, final List<EveKitOwner> eveKitOwners) {

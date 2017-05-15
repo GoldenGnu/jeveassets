@@ -42,6 +42,7 @@ import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.EventListManager;
 import net.nikr.eve.jeveasset.data.MyLocation;
 import net.nikr.eve.jeveasset.data.Settings;
+import net.nikr.eve.jeveasset.data.tag.TagUpdate;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
@@ -60,7 +61,7 @@ import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
 import net.nikr.eve.jeveasset.i18n.TabsAssets;
 
 
-public class AssetsTab extends JMainTab {
+public class AssetsTab extends JMainTab implements TagUpdate {
 
 	//GUI
 	private final JAssetTable jTable;
@@ -157,6 +158,7 @@ public class AssetsTab extends JMainTab {
 		);
 	}
 
+	@Override
 	public void updateTags() {
 		beforeUpdateData();
 		tableModel.fireTableDataChanged();

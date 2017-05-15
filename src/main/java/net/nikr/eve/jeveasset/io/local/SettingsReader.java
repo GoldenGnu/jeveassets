@@ -84,6 +84,8 @@ import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.StockpileExtendedTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.StockpileTab;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.StockpileTableFormat;
+import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerDate;
+import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerNote;
 import net.nikr.eve.jeveasset.gui.tabs.transaction.TransactionTab;
 import net.nikr.eve.jeveasset.gui.tabs.transaction.TransactionTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.tree.TreeTab;
@@ -141,7 +143,7 @@ public final class SettingsReader extends AbstractXmlReader {
 			Update updater = new Update();
 			updater.performUpdates(SETTINGS_VERSION, settings.getPathSettings());
 
-			Element element = getDocumentElement(settings.getPathSettings(), true);
+			Element element = getDocumentElement(settings.getPathSettings(), true, true);
 			parseSettings(element, settings);
 			LOG.info("Settings loaded");
 			return true;
@@ -187,7 +189,7 @@ public final class SettingsReader extends AbstractXmlReader {
 			parseRoutingSettings(routingElement, settings);
 		}
 
-		//Tags
+		//Tags - Must be loaded before stockpiles (and everything else that uses tags)
 		NodeList tagsNodes = element.getElementsByTagName("tags");
 		if (tagsNodes.getLength() == 1) {
 			Element tagsElement = (Element) tagsNodes.item(0);
@@ -206,6 +208,13 @@ public final class SettingsReader extends AbstractXmlReader {
 		if (trackerDataNodes.getLength() == 1) {
 			Element trackerDataElement = (Element) trackerDataNodes.item(0);
 			parseTrackerData(trackerDataElement, settings);
+		}
+
+		//Tracker Data
+		NodeList trackerNotesNodes = element.getElementsByTagName("trackernotes");
+		if (trackerNotesNodes.getLength() == 1) {
+			Element trackerNoteElement = (Element) trackerNotesNodes.item(0);
+			parseTrackerNotes(trackerNoteElement, settings);
 		}
 
 		//Tracker Filters
@@ -459,6 +468,21 @@ public final class SettingsReader extends AbstractXmlReader {
 				value.setContractValue(contractValue);
 				settings.getTrackerData().get(owner).add(value);
 			}
+			//Remove empty owners
+			if (settings.getTrackerData().get(owner).isEmpty()) {
+				settings.getTrackerData().remove(owner);
+			}
+		}
+	}
+
+	private void parseTrackerNotes(final Element element, final Settings settings) {
+		NodeList noteNodeList = element.getElementsByTagName("trackernote");
+		for (int a = 0; a < noteNodeList.getLength(); a++) {
+			//Read Owner
+			Element noteNode = (Element) noteNodeList.item(a);
+			String note = AttributeGetters.getString(noteNode, "note");
+			Date date = AttributeGetters.getDate(noteNode, "date");
+			settings.getTrackerNotes().put(new TrackerDate(date), new TrackerNote(note));
 		}
 	}
 
@@ -628,11 +652,17 @@ public final class SettingsReader extends AbstractXmlReader {
 			NodeList itemNodes = stockpileNode.getElementsByTagName("item");
 			for (int b = 0; b < itemNodes.getLength(); b++) {
 				Element itemNode = (Element) itemNodes.item(b);
+				long id;
+				if (AttributeGetters.haveAttribute(itemNode, "id")) {
+					id = AttributeGetters.getLong(itemNode, "id");
+				} else {
+					id = StockpileItem.getNewID();
+				}
 				int typeID = AttributeGetters.getInt(itemNode, "typeid");
 				double countMinimum = AttributeGetters.getDouble(itemNode, "minimum");
 				if (typeID != 0) { //Ignore Total
 					Item item = ApiIdConverter.getItem(Math.abs(typeID));
-					StockpileItem stockpileItem = new StockpileItem(stockpile, item, typeID, countMinimum);
+					StockpileItem stockpileItem = new StockpileItem(stockpile, item, typeID, countMinimum, id);
 					stockpile.add(stockpileItem);
 				}
 			}

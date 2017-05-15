@@ -90,7 +90,7 @@ public class JMenuTags<T> extends JAutoMenu<T> {
 			if (count == null) {
 				count = 0;
 			}
-			boolean selected = count == tagsTypes.size();
+			boolean selected = count == tagsTypes.size() && valid;
 			if (selected) {
 				count = 0;
 			}

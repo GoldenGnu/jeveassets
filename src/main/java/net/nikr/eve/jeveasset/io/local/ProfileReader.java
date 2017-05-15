@@ -50,9 +50,11 @@ import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.data.StaticData;
 import net.nikr.eve.jeveasset.data.evekit.EveKitOwner;
 import net.nikr.eve.jeveasset.data.api.OwnerType;
+import net.nikr.eve.jeveasset.data.esi.EsiOwner;
 import net.nikr.eve.jeveasset.gui.tabs.assets.MyAsset;
 import net.nikr.eve.jeveasset.gui.tabs.journal.MyJournal;
 import net.nikr.eve.jeveasset.gui.tabs.transaction.MyTransaction;
+import net.nikr.eve.jeveasset.io.esi.EsiCallbackURL;
 import net.nikr.eve.jeveasset.io.shared.ApiConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -74,7 +76,7 @@ public final class ProfileReader extends AbstractXmlReader {
 
 	private boolean read(ProfileManager profileManager, final String filename) {
 		try {
-			Element element = getDocumentElement(filename, true);
+			Element element = getDocumentElement(filename, true, true);
 			parseSettings(element, profileManager);
 		} catch (IOException ex) {
 			LOG.info("Profile not loaded");
@@ -91,17 +93,55 @@ public final class ProfileReader extends AbstractXmlReader {
 		if (!element.getNodeName().equals("assets")) {
 			throw new XmlException("Wrong root element name.");
 		}
-		//Accounts
+		//Eve XML Api
 		NodeList accountNodes = element.getElementsByTagName("accounts");
 		if (accountNodes.getLength() == 1) {
 			Element accountsElement = (Element) accountNodes.item(0);
 			parseAccounts(accountsElement, profileManager.getAccounts());
 		}
-		//Accounts
+		//EveKit
 		NodeList eveKitOwnersNodes = element.getElementsByTagName("evekitowners");
 		if (eveKitOwnersNodes.getLength() == 1) {
 			Element eveKitOwnersElement = (Element) eveKitOwnersNodes.item(0);
 			parseEveKitOwners(eveKitOwnersElement, profileManager.getEveKitOwners());
+		}
+		//Esi
+		NodeList esiOwnersNodes = element.getElementsByTagName("esiowners");
+		if (esiOwnersNodes.getLength() == 1) {
+			Element esiElement = (Element) esiOwnersNodes.item(0);
+			parseEsiOwners(esiElement, profileManager.getEsiOwners());
+		}
+	}
+
+	private void parseEsiOwners(final Element element, final List<EsiOwner> esiOwners) {
+		NodeList ownerNodes =  element.getElementsByTagName("esiowner");
+		for (int i = 0; i < ownerNodes.getLength(); i++) {
+			Element currentNode = (Element) ownerNodes.item(i);
+			String accountName = AttributeGetters.getString(currentNode, "accountname");
+			String refreshToken = AttributeGetters.getString(currentNode, "refreshtoken");
+			Date expire = AttributeGetters.getDate(currentNode, "expire");
+			String scopes = AttributeGetters.getString(currentNode, "scopes");
+			String tokenType = AttributeGetters.getString(currentNode, "tokentype");
+			String characterOwnerHash = AttributeGetters.getString(currentNode, "characterownerhash");
+			String intellectualProperty = AttributeGetters.getString(currentNode, "intellectualproperty");
+			Date structuresNextUpdate = AttributeGetters.getDate(currentNode, "structuresnextupdate");
+			Date accountNextUpdate = AttributeGetters.getDate(currentNode, "accountnextupdate");
+			EsiCallbackURL callbackURL = EsiCallbackURL.valueOf(AttributeGetters.getString(currentNode, "callbackurl"));
+
+			EsiOwner owner = new EsiOwner();
+			owner.setAccountName(accountName);
+			owner.setRefreshToken(refreshToken);
+			owner.setExpire(expire);
+			owner.setScopes(scopes);
+			owner.setTokenType(tokenType);
+			owner.setCharacterOwnerHash(characterOwnerHash);
+			owner.setIntellectualProperty(intellectualProperty);
+			owner.setStructuresNextUpdate(structuresNextUpdate);
+			owner.setAccountNextUpdate(accountNextUpdate);
+			owner.setCallbackURL(callbackURL);
+
+			parseOwnerType(currentNode, owner);
+			esiOwners.add(owner);
 		}
 	}
 

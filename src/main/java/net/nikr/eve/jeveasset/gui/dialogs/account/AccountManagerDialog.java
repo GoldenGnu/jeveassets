@@ -43,6 +43,7 @@ import net.nikr.eve.jeveasset.data.eveapi.EveApiAccount;
 import net.nikr.eve.jeveasset.data.eveapi.EveApiOwner;
 import net.nikr.eve.jeveasset.data.evekit.EveKitOwner;
 import net.nikr.eve.jeveasset.data.api.OwnerType;
+import net.nikr.eve.jeveasset.data.esi.EsiOwner;
 import net.nikr.eve.jeveasset.gui.dialogs.account.AccountSeparatorTableCell.AccountCellAction;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
@@ -58,6 +59,7 @@ public class AccountManagerDialog extends JDialogCentered {
 	private enum AccountManagerAction {
 		ADD_EVEAPI,
 		ADD_EVEKIT,
+		ADD_ESI,
 		CLOSE,
 		COLLAPSE,
 		EXPAND,
@@ -121,6 +123,11 @@ public class AccountManagerDialog extends JDialogCentered {
 		jEveKit.setActionCommand(AccountManagerAction.ADD_EVEKIT.name());
 		jEveKit.addActionListener(listener);
 		jAdd.add(jEveKit);
+
+		JMenuItem jEsi = new JMenuItem(DialoguesAccount.get().esi(), Images.MISC_ESI.getIcon());
+		jEsi.setActionCommand(AccountManagerAction.ADD_ESI.name());
+		jEsi.addActionListener(listener);
+		jAdd.add(jEsi);
 		
 		jCollapse = new JButton(DialoguesAccount.get().collapse());
 		jCollapse.setActionCommand(AccountManagerAction.COLLAPSE.name());
@@ -212,6 +219,8 @@ public class AccountManagerDialog extends JDialogCentered {
 			}
 			//EveKit API
 			eventList.addAll(program.getProfileManager().getEveKitOwners());
+			//ESI
+			eventList.addAll(program.getProfileManager().getEsiOwners());
 		} finally {
 			eventList.getReadWriteLock().writeLock().unlock();
 		}
@@ -311,6 +320,8 @@ public class AccountManagerDialog extends JDialogCentered {
 				accountImportDialog.addEveApi();
 			} else if (AccountManagerAction.ADD_EVEKIT.name().equals(e.getActionCommand())) {
 				accountImportDialog.addEveKit();
+			} else if (AccountManagerAction.ADD_ESI.name().equals(e.getActionCommand())) {
+				accountImportDialog.addEsi();
 			} else if (AccountManagerAction.COLLAPSE.name().equals(e.getActionCommand())) {
 				jTable.expandSeparators(false);
 			} else if (AccountManagerAction.EXPAND.name().equals(e.getActionCommand())) {
@@ -331,6 +342,10 @@ public class AccountManagerDialog extends JDialogCentered {
 					if (object instanceof EveKitOwner) {
 						EveKitOwner eveKitOwner = (EveKitOwner) object;
 						accountImportDialog.editEveKit(eveKitOwner);
+					}		
+					if (object instanceof EsiOwner) {
+						EsiOwner esiOwner = (EsiOwner) object;
+						accountImportDialog.editEsi(esiOwner);
 					}		
 				}
 			} else if (AccountCellAction.DELETE.name().equals(e.getActionCommand())) {
@@ -355,6 +370,12 @@ public class AccountManagerDialog extends JDialogCentered {
 						if (object instanceof EveKitOwner) {
 							EveKitOwner eveKitOwner = (EveKitOwner) object;
 							program.getProfileManager().getEveKitOwners().remove(eveKitOwner);
+							forceUpdate();
+							updateTable();
+						}
+						if (object instanceof EsiOwner) {
+							EsiOwner esiOwner = (EsiOwner) object;
+							program.getProfileManager().getEsiOwners().remove(esiOwner);
 							forceUpdate();
 							updateTable();
 						}

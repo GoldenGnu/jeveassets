@@ -66,6 +66,7 @@ import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.EventListManager;
 import net.nikr.eve.jeveasset.data.MyLocation;
 import net.nikr.eve.jeveasset.data.Settings;
+import net.nikr.eve.jeveasset.data.tag.TagUpdate;
 import net.nikr.eve.jeveasset.data.types.JumpType;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
 import net.nikr.eve.jeveasset.gui.images.Images;
@@ -90,7 +91,7 @@ import net.nikr.eve.jeveasset.i18n.TabsTree;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 
 
-public class TreeTab extends JMainTab {
+public class TreeTab extends JMainTab implements TagUpdate {
 
 	private enum TreeAction {
 		UPDATE,
@@ -258,6 +259,7 @@ public class TreeTab extends JMainTab {
 		);
 	}
 
+	@Override
 	public void updateTags() {
 		beforeUpdateData();
 		tableModel.fireTableDataChanged();
