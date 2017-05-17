@@ -371,23 +371,36 @@ public class UpdateDialog extends JDialogCentered {
 		Date priceData = program.getPriceDataGetter().getNextUpdate();
 		for (OwnerType owner : program.getOwnerTypes()) {
 			if (owner.isShowOwner() && !owner.isInvalid() && !owner.isExpired()) {
-				industryJobsFirst = updateFirst(industryJobsFirst, owner.getIndustryJobsNextUpdate());
-				marketOrdersFirst = updateFirst(marketOrdersFirst, owner.getMarketOrdersNextUpdate());
-				journalFirst = updateFirst(journalFirst, owner.getJournalNextUpdate());
-				transactionsFirst = updateFirst(transactionsFirst, owner.getTransactionsNextUpdate());
-				contractsFirst = updateFirst(contractsFirst, owner.getContractsNextUpdate());
-				assetsFirst = updateFirst(assetsFirst, owner.getAssetNextUpdate());
-				blueprintsFirst = updateFirst(blueprintsFirst, owner.getBlueprintsNextUpdate());
-				accountBalanceFirst = updateFirst(accountBalanceFirst, owner.getBalanceNextUpdate());
-
-				industryJobsLast = updateLast(industryJobsLast, owner.getIndustryJobsNextUpdate());
-				marketOrdersLast = updateLast(marketOrdersLast, owner.getMarketOrdersNextUpdate());
-				journalLast = updateLast(journalLast, owner.getJournalNextUpdate());
-				transactionsLast = updateLast(transactionsLast, owner.getTransactionsNextUpdate());
-				contractsLast = updateLast(contractsLast, owner.getContractsNextUpdate());
-				assetsLast = updateLast(assetsLast, owner.getAssetNextUpdate());
-				blueprintsLast = updateLast(blueprintsLast, owner.getBlueprintsNextUpdate());
-				accountBalanceLast = updateLast(accountBalanceLast, owner.getBalanceNextUpdate());
+				if (owner.isIndustryJobs()) {
+					industryJobsFirst = updateFirst(industryJobsFirst, owner.getIndustryJobsNextUpdate());
+					industryJobsLast = updateLast(industryJobsLast, owner.getIndustryJobsNextUpdate());
+				}
+				if (owner.isMarketOrders()) {
+					marketOrdersFirst = updateFirst(marketOrdersFirst, owner.getMarketOrdersNextUpdate());
+					marketOrdersLast = updateLast(marketOrdersLast, owner.getMarketOrdersNextUpdate());
+				}
+				if (owner.isJournal()) {
+					journalFirst = updateFirst(journalFirst, owner.getJournalNextUpdate());
+					journalLast = updateLast(journalLast, owner.getJournalNextUpdate());
+				}
+				if (owner.isTransactions()) {
+					transactionsFirst = updateFirst(transactionsFirst, owner.getTransactionsNextUpdate());
+					transactionsLast = updateLast(transactionsLast, owner.getTransactionsNextUpdate());
+				}
+				if (owner.isContracts()) {
+					contractsFirst = updateFirst(contractsFirst, owner.getContractsNextUpdate());
+					contractsLast = updateLast(contractsLast, owner.getContractsNextUpdate());
+				}
+				if (owner.isAssetList()) {
+					assetsFirst = updateFirst(assetsFirst, owner.getAssetNextUpdate());
+					assetsLast = updateLast(assetsLast, owner.getAssetNextUpdate());
+					blueprintsFirst = updateFirst(blueprintsFirst, owner.getBlueprintsNextUpdate());
+					blueprintsLast = updateLast(blueprintsLast, owner.getBlueprintsNextUpdate());
+				}
+				if (owner.isAccountBalance()) {
+					accountBalanceFirst = updateFirst(accountBalanceFirst, owner.getBalanceNextUpdate());
+					accountBalanceLast = updateLast(accountBalanceLast, owner.getBalanceNextUpdate());
+				}
 			}
 		}
 		if (program.getOwnerTypes().isEmpty()) {
