@@ -595,7 +595,7 @@ public class StockpileTab extends JMainTab implements TagUpdate {
 		Map<Integer, List<MyIndustryJob>> industryJobs = new HashMap<Integer, List<MyIndustryJob>>();
 		if (stockpile.isJobs()) {
 			for (MyIndustryJob industryJob : program.getIndustryJobsList()) {
-				int typeID = industryJob.getItem().getTypeID();
+				int typeID = industryJob.getProductTypeID();
 				if (!typeIDs.contains(typeID)) {
 					continue; //Ignore wrong typeID
 				}
