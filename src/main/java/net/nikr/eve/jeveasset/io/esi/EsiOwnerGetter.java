@@ -74,7 +74,7 @@ public class EsiOwnerGetter extends AbstractEsiGetter implements AccountAdder{
 		int fails = 0;
 		int max = 0;
 		if (accountImport) {
-			for (Scopes scopes : Scopes.values()) {
+			for (EsiScopes scopes : EsiScopes.values()) {
 				if (!scopes.isEnabled()) {
 					continue;
 				}

@@ -66,7 +66,7 @@ import net.nikr.eve.jeveasset.i18n.DialoguesAccount;
 import net.nikr.eve.jeveasset.io.esi.EsiAuth;
 import net.nikr.eve.jeveasset.io.esi.EsiCallbackURL;
 import net.nikr.eve.jeveasset.io.esi.EsiOwnerGetter;
-import net.nikr.eve.jeveasset.io.esi.Scopes;
+import net.nikr.eve.jeveasset.io.esi.EsiScopes;
 import net.nikr.eve.jeveasset.io.eveapi.AccountGetter;
 import net.nikr.eve.jeveasset.io.evekit.EveKitOwnerGetter;
 import net.nikr.eve.jeveasset.io.shared.AccountAdder;
@@ -138,7 +138,7 @@ public class AccountImportDialog extends JDialogCentered {
 	private ApiType apiType;
 	private boolean changeType;
 	private AddTask addTask;
-	private final Map<Scopes, JCheckBoxMenuItem> scopesMap = new EnumMap<Scopes, JCheckBoxMenuItem>(Scopes.class);
+	private final Map<EsiScopes, JCheckBoxMenuItem> scopesMap = new EnumMap<EsiScopes, JCheckBoxMenuItem>(EsiScopes.class);
 
 	public AccountImportDialog(final AccountManagerDialog apiManager, final Program program) {
 		super(program, DialoguesAccount.get().dialogueNameAccountImport(), apiManager.getDialog());
@@ -784,7 +784,7 @@ public class AccountImportDialog extends JDialogCentered {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					Set<String> scopes = new HashSet<String>();
-					for (Map.Entry<Scopes, JCheckBoxMenuItem> entry : scopesMap.entrySet()) {
+					for (Map.Entry<EsiScopes, JCheckBoxMenuItem> entry : scopesMap.entrySet()) {
 						if (entry.getValue().isSelected()) {
 							scopes.add(entry.getKey().getScope());
 						}
@@ -807,7 +807,7 @@ public class AccountImportDialog extends JDialogCentered {
 
 			scopesMap.clear();
 			jScopes = new JDropDownButton(DialoguesAccount.get().scopes(), Images.MISC_ESI.getIcon(), JDropDownButton.LEFT, JDropDownButton.TOP);
-			for (Scopes scopes : Scopes.values()) {
+			for (EsiScopes scopes : EsiScopes.values()) {
 				if (!scopes.isEnabled()) {
 					continue;
 				}
