@@ -189,14 +189,12 @@ public class EsiOwner  extends AbstractOwner implements OwnerType {
 
 	@Override
 	public boolean isTransactions() {
-		return scopes.contains(SsoScopes.ESI_WALLET_READ_CHARACTER_WALLET_V1);
+		return false;
 	}
-	//esi-universe.read_structures.v1
-	//esi-universe.read_structures.v1
 
 	@Override
 	public boolean isJournal() {
-		return scopes.contains(SsoScopes.ESI_WALLET_READ_CHARACTER_WALLET_V1);
+		return false;
 	}
 
 	@Override
