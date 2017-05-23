@@ -85,7 +85,7 @@ public abstract class AbstractEsiGetter {
 				return;
 			}
 			//Check if the Api Key is expired
-			if (owner.isExpired()) {
+			if (!forceUpdate && owner.isExpired()) {
 				addError("	" + getTaskName() + " failed to update for: " + owner.getOwnerName() + " (API KEY EXPIRED)");
 				if (updateTask != null) {
 					updateTask.addError(owner.getOwnerName(), "API Key expired");
@@ -104,9 +104,13 @@ public abstract class AbstractEsiGetter {
 			LOG.info("	EveKit " + getTaskName() + " updated for " + owner.getOwnerName());
 			Map<String, List<String>> responseHeaders = client.getResponseHeaders();
 			if (responseHeaders != null) {
-				List<String> expiryHeaders = responseHeaders.get("Expires");
-				if (expiryHeaders != null && !expiryHeaders.isEmpty()) {
-					setNextUpdate(owner, Formater.parseExpireDate(expiryHeaders.get(0)));
+				for (Map.Entry<String, List<String>> entry : responseHeaders.entrySet()) {
+					if (entry.getKey().toLowerCase().equals("expires")) { //Case insensitive
+						List<String> expiryHeaders = entry.getValue();
+						if (expiryHeaders != null && !expiryHeaders.isEmpty()) {
+							setNextUpdate(owner, Formater.parseExpireDate(expiryHeaders.get(0)));
+						}
+					}
 				}
 			}
 		} catch (ApiException ex) {
