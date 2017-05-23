@@ -21,12 +21,14 @@
 package net.nikr.eve.jeveasset.io.esi;
 
 import com.beimin.eveapi.model.shared.Blueprint;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import net.nikr.eve.jeveasset.data.Citadel;
 import net.nikr.eve.jeveasset.data.MyLocation;
 import net.nikr.eve.jeveasset.data.api.OwnerType;
 import net.nikr.eve.jeveasset.data.esi.EsiOwner;
@@ -35,6 +37,7 @@ import net.nikr.eve.jeveasset.gui.tabs.assets.MyAsset;
 import net.nikr.eve.jeveasset.gui.tabs.contracts.MyContract;
 import net.nikr.eve.jeveasset.gui.tabs.jobs.MyIndustryJob;
 import net.nikr.eve.jeveasset.gui.tabs.orders.MyMarketOrder;
+import net.nikr.eve.jeveasset.io.online.CitadelGetter;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 import net.troja.eve.esi.ApiException;
 import net.troja.eve.esi.auth.SsoScopes;
@@ -47,7 +50,7 @@ public class EsiStructuresGetter extends AbstractEsiGetter {
 
 	private static final Logger LOG = LoggerFactory.getLogger(EsiStructuresGetter.class);
 
-	Map<Long, Set<Long>> map = new HashMap<Long, Set<Long>>();
+	private final Map<Long, Set<Long>> map = new HashMap<Long, Set<Long>>();
 
 	public void load(UpdateTask updateTask, List<EsiOwner> owners, List<OwnerType> typeOwners) {
 		map.clear();
@@ -62,13 +65,14 @@ public class EsiStructuresGetter extends AbstractEsiGetter {
 		}
 		super.load(updateTask, owners);
 	}
-	
+
 	@Override
 	protected void get(EsiOwner owner) throws ApiException {
+		List<Citadel> citadels = new ArrayList<>();
 		for (Long locationID : map.get(owner.getOwnerID())) {
 			try {
-			StructureResponse response = getUniverseApi().getUniverseStructuresStructureId(locationID, DATASOURCE, null, null, null);
-			ApiIdConverter.addLocation(response, locationID);
+				StructureResponse response = getUniverseApi().getUniverseStructuresStructureId(locationID, DATASOURCE, null, null, null);
+				citadels.add(ApiIdConverter.getCitadel(response, locationID));
 			} catch (ApiException ex) {
 				if (ex.getCode() != 403 && ex.getCode() != 404) { //Ignore 403: Forbidden and 404: Structure not found
 					throw ex;
@@ -77,6 +81,7 @@ public class EsiStructuresGetter extends AbstractEsiGetter {
 				}
 			}
 		}
+		CitadelGetter.set(citadels);
 	}
 
 	@Override

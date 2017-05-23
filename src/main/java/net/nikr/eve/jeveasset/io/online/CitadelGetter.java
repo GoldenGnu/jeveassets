@@ -27,6 +27,7 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.zip.GZIPInputStream;
 import net.nikr.eve.jeveasset.Program;
@@ -65,6 +66,10 @@ public class CitadelGetter extends AbstractXmlWriter {
 
 	public static void set(Citadel citadel) {
 		getCitadelGetter().setCitadel(citadel);
+	}
+
+	public static void set(List<Citadel> citadels) {
+		getCitadelGetter().setCitadels(citadels);
 	}
 
 	private static CitadelGetter getCitadelGetter() {
@@ -139,6 +144,13 @@ public class CitadelGetter extends AbstractXmlWriter {
 
 	private void setCitadel(Citadel citadel) {
 		citadelSettings.put(citadel.id, citadel);
+		saveXml();
+	}
+
+	private void setCitadels(List<Citadel> citadels) {
+		for (Citadel citadel : citadels) {
+			citadelSettings.put(citadel.id, citadel);
+		}
 		saveXml();
 	}
 
