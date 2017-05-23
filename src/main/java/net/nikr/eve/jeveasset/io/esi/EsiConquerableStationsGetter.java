@@ -53,6 +53,11 @@ public class EsiConquerableStationsGetter extends AbstractEsiGetter {
 		Map<Integer, SovereigntyStructuresResponse> map = new HashMap<Integer, SovereigntyStructuresResponse>();
 		for (SovereigntyStructuresResponse structure : structures) {
 			try {
+				if (structure.getStructureId() == 32226 //Territorial Claim Unit
+						|| structure.getStructureId() == 32458 //Infrastructure Hub
+						) {
+					continue;
+				}
 				int stationID = Math.toIntExact(structure.getStructureId());
 				map.put(stationID, structure);
 			} catch (ArithmeticException ex) {
