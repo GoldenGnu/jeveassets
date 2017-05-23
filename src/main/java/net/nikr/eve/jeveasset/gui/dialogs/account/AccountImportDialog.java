@@ -808,7 +808,7 @@ public class AccountImportDialog extends JDialogCentered {
 			scopesMap.clear();
 			jScopes = new JDropDownButton(DialoguesAccount.get().scopes(), Images.MISC_ESI.getIcon(), JDropDownButton.LEFT, JDropDownButton.TOP);
 			for (EsiScopes scopes : EsiScopes.values()) {
-				if (!scopes.isEnabled()) {
+				if (!scopes.isEnabled() || scopes.getScope().isEmpty()) {
 					continue;
 				}
 				JCheckBoxMenuItem jCheckBoxMenuItem = new JCheckBoxMenuItem(scopes.toString());

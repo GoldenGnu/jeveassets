@@ -33,6 +33,7 @@ public class Citadel {
 	public long regionId;
 	public String regionName;
 	public boolean userLocation;
+	public boolean citadel;
 
 	public Citadel() {
 		userLocation = false;
@@ -41,7 +42,12 @@ public class Citadel {
 	public Citadel(long id, String name, long systemId, String systemName, long regionId, String regionName) {
 		this(id, name, systemId, systemName, regionId, regionName, true);
 	}
+
 	public Citadel(long id, String name, long systemId, String systemName, long regionId, String regionName, boolean userLocation) {
+		this(id, name, systemId, systemName, regionId, regionName, userLocation, true);
+	}
+
+	public Citadel(long id, String name, long systemId, String systemName, long regionId, String regionName, boolean userLocation, boolean citadel) {
 		this.id = id;
 		this.name = name;
 		this.systemId = systemId;
@@ -49,6 +55,7 @@ public class Citadel {
 		this.regionId = regionId;
 		this.regionName = regionName;
 		this.userLocation = userLocation;
+		this.citadel = citadel;
 	}
 
 	public String getName() {
@@ -77,9 +84,9 @@ public class Citadel {
 	public MyLocation getLocation() {
 		if (!isEmpty()) { //Location is valid -> return locations
 			if (userLocation) {
-				return new MyLocation(id, systemName + " - " + name, systemId, systemName, regionId, regionName, ApiIdConverter.getLocation(systemId).getSecurity(), true, userLocation);
+				return new MyLocation(id, systemName + " - " + name, systemId, systemName, regionId, regionName, ApiIdConverter.getLocation(systemId).getSecurity(), citadel, userLocation);
 			} else {
-				return new MyLocation(id, name, systemId, systemName, regionId, regionName, ApiIdConverter.getLocation(systemId).getSecurity(), true, userLocation);
+				return new MyLocation(id, name, systemId, systemName, regionId, regionName, ApiIdConverter.getLocation(systemId).getSecurity(), citadel, userLocation);
 			}
 		} else { //Location not valid -> return fallback location
 			return null;

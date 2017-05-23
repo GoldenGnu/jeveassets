@@ -37,6 +37,7 @@ import net.nikr.eve.jeveasset.data.StaticData;
 import net.nikr.eve.jeveasset.data.UserItem;
 import net.nikr.eve.jeveasset.gui.tabs.assets.MyAsset;
 import net.nikr.eve.jeveasset.io.online.CitadelGetter;
+import net.troja.eve.esi.model.SovereigntyStructuresResponse;
 import net.troja.eve.esi.model.StructureResponse;
 
 
@@ -270,6 +271,11 @@ public final class ApiIdConverter {
 				system.getRegion(),
 				system.getSecurity());
 		StaticData.get().getLocations().put(location.getLocationID(), location);
+	}
+
+	public static Citadel getCitadel(final SovereigntyStructuresResponse station, String name) {
+		MyLocation system = getLocation(station.getSolarSystemId());
+		return new Citadel(station.getStructureId(), name, system.getSystemID(), system.getSystem(), system.getRegionID(), system.getRegion(), false, false);
 	}
 
 	public static Citadel getCitadel(final StructureResponse response, final long locationID) {

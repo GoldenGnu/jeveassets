@@ -49,6 +49,8 @@ import net.nikr.eve.jeveasset.i18n.DialoguesUpdate;
 import net.nikr.eve.jeveasset.i18n.General;
 import net.nikr.eve.jeveasset.io.esi.EsiAccountBalanceGetter;
 import net.nikr.eve.jeveasset.io.esi.EsiAssetsGetter;
+import net.nikr.eve.jeveasset.io.esi.EsiConquerableStationsGetter;
+import net.nikr.eve.jeveasset.io.esi.EsiNameGetter;
 import net.nikr.eve.jeveasset.io.esi.EsiOwnerGetter;
 import net.nikr.eve.jeveasset.io.esi.EsiStructuresGetter;
 import net.nikr.eve.jeveasset.io.esi.EsiScopes;
@@ -652,10 +654,18 @@ public class UpdateDialog extends JDialogCentered {
 
 		@Override
 		public void update() {
-			setIcon(Images.MISC_EVE.getIcon());
-			ConquerableStationsGetter conquerableStationsGetter = new ConquerableStationsGetter();
-			conquerableStationsGetter.load(this);
-			ConquerableStationsWriter.save();
+			if (EsiScopes.CONQUERABLE_STATIONS.isEnabled()) {
+				//ESI
+				setIcon(Images.MISC_ESI.getIcon());
+				EsiConquerableStationsGetter esiConquerableStationsGetter = new EsiConquerableStationsGetter();
+				esiConquerableStationsGetter.load(this);
+			} else {
+				//EveAPI
+				setIcon(Images.MISC_EVE.getIcon());
+				ConquerableStationsGetter conquerableStationsGetter = new ConquerableStationsGetter();
+				conquerableStationsGetter.load(this);
+				ConquerableStationsWriter.save();
+			}
 		}
 	}
 
@@ -694,9 +704,9 @@ public class UpdateDialog extends JDialogCentered {
 			//Esi
 			if (!program.getProfileManager().getEsiOwners().isEmpty()) {
 				setIcon(Images.MISC_ESI.getIcon());
+				EsiOwnerGetter esiOwnerGetter = new EsiOwnerGetter();
+				esiOwnerGetter.load(this, program.getProfileManager().getEsiOwners());
 			}
-			EsiOwnerGetter esiOwnerGetter = new EsiOwnerGetter();
-			esiOwnerGetter.load(this, program.getProfileManager().getEsiOwners());
 		}
 	}
 
@@ -725,10 +735,8 @@ public class UpdateDialog extends JDialogCentered {
 			EveKitLocationsGetter eveKitLocationsGetter = new EveKitLocationsGetter();
 			eveKitLocationsGetter.load(this, program.getProfileManager().getEveKitOwners());
 			//Esi
-			if (!program.getProfileManager().getEsiOwners().isEmpty()) {
+			if (EsiScopes.ASSETS.isEnabled() && !program.getProfileManager().getEsiOwners().isEmpty()) {
 				setIcon(Images.MISC_ESI.getIcon());
-			}
-			if (EsiScopes.ASSETS.isEnabled()) {
 				EsiAssetsGetter esiAssetsGetter = new EsiAssetsGetter();
 				esiAssetsGetter.load(this, program.getProfileManager().getEsiOwners());
 			}
@@ -756,10 +764,8 @@ public class UpdateDialog extends JDialogCentered {
 			EveKitAccountBalanceGetter eveKitAccountBalanceGetter = new EveKitAccountBalanceGetter();
 			eveKitAccountBalanceGetter.load(this, program.getProfileManager().getEveKitOwners());
 			//Esi
-			if (!program.getProfileManager().getEsiOwners().isEmpty()) {
+			if (EsiScopes.ACCOUNT_BALANCE.isEnabled() && !program.getProfileManager().getEsiOwners().isEmpty()) {
 				setIcon(Images.MISC_ESI.getIcon());
-			}
-			if (EsiScopes.ACCOUNT_BALANCE.isEnabled()) {
 				EsiAccountBalanceGetter esiAccountBalanceGetter = new EsiAccountBalanceGetter();
 				esiAccountBalanceGetter.load(this, program.getProfileManager().getEsiOwners());
 			}
@@ -916,7 +922,7 @@ public class UpdateDialog extends JDialogCentered {
 
 		@Override
 		public void update() {
-			setIcon(Images.MISC_EVE.getIcon());
+			//Create list of needed Owner IDs
 			Set<Long> list = new HashSet<Long>();
 			for (OwnerType owner : program.getOwnerTypes()) {
 				list.add(owner.getOwnerID()); //Just to be sure
@@ -930,9 +936,25 @@ public class UpdateDialog extends JDialogCentered {
 					list.add(contract.getIssuerID());
 				}
 			}
-			//Get Name
-			NameGetter nameGetter = new NameGetter();
-			nameGetter.load(this, list);
+			if (EsiScopes.NAMES.isEnabled()) {
+				//ESI
+				setIcon(Images.MISC_ESI.getIcon());
+				Set<Integer> ids = new HashSet<Integer>();
+				for (long id : list) {
+					try {
+						ids.add(Math.toIntExact(id));
+					} catch (ArithmeticException ex) {
+						//Ignore...
+					}
+				}
+				EsiNameGetter esiNameGetter = new EsiNameGetter();
+				esiNameGetter.load(this, ids);
+			} else {
+				//EveAPI
+				setIcon(Images.MISC_EVE.getIcon());
+				NameGetter nameGetter = new NameGetter();
+				nameGetter.load(this, list);
+			}
 		}
 	}
 

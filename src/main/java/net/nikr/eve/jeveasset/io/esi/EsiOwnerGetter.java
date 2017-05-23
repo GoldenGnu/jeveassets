@@ -25,6 +25,7 @@ import java.util.List;
 import net.nikr.eve.jeveasset.data.esi.EsiOwner;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import net.nikr.eve.jeveasset.io.shared.AccountAdder;
+import net.troja.eve.esi.ApiClient;
 import net.troja.eve.esi.ApiException;
 import net.troja.eve.esi.auth.CharacterInfo;
 
@@ -55,12 +56,12 @@ public class EsiOwnerGetter extends AbstractEsiGetter implements AccountAdder{
 	}
 
 	@Override
-	protected void get(EsiOwner owner) throws ApiException {
-		CharacterInfo characterInfo = getSsoApi(owner).getCharacterInfo();
+	protected ApiClient get(EsiOwner owner) throws ApiException {
+		CharacterInfo characterInfo = getSsoApiAuth(owner).getCharacterInfo();
 		if (characterInfo.getCharacterId() != owner.getOwnerID() && owner.getOwnerID() != 0) {
 			addError("Wrong Entry");
 			wrongEntry = true;
-			return;
+			return getSsoClient();
 		}
 		owner.setAccountName(characterInfo.getCharacterName());
 		owner.setOwnerID(characterInfo.getCharacterId());
@@ -86,6 +87,7 @@ public class EsiOwnerGetter extends AbstractEsiGetter implements AccountAdder{
 		}
 		limited = (fails > 0 && fails < max);
 		invalidPrivileges = (fails >= max);
+		return getSsoClient();
 	}
 
 	@Override

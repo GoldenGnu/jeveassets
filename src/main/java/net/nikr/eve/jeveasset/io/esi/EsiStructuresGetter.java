@@ -39,6 +39,7 @@ import net.nikr.eve.jeveasset.gui.tabs.jobs.MyIndustryJob;
 import net.nikr.eve.jeveasset.gui.tabs.orders.MyMarketOrder;
 import net.nikr.eve.jeveasset.io.online.CitadelGetter;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
+import net.troja.eve.esi.ApiClient;
 import net.troja.eve.esi.ApiException;
 import net.troja.eve.esi.auth.SsoScopes;
 import net.troja.eve.esi.model.StructureResponse;
@@ -67,11 +68,11 @@ public class EsiStructuresGetter extends AbstractEsiGetter {
 	}
 
 	@Override
-	protected void get(EsiOwner owner) throws ApiException {
+	protected ApiClient get(EsiOwner owner) throws ApiException {
 		List<Citadel> citadels = new ArrayList<>();
 		for (Long locationID : map.get(owner.getOwnerID())) {
 			try {
-				StructureResponse response = getUniverseApi().getUniverseStructuresStructureId(locationID, DATASOURCE, null, null, null);
+				StructureResponse response = getUniverseApiAuth().getUniverseStructuresStructureId(locationID, DATASOURCE, null, null, null);
 				citadels.add(ApiIdConverter.getCitadel(response, locationID));
 			} catch (ApiException ex) {
 				if (ex.getCode() != 403 && ex.getCode() != 404) { //Ignore 403: Forbidden and 404: Structure not found
@@ -82,6 +83,7 @@ public class EsiStructuresGetter extends AbstractEsiGetter {
 			}
 		}
 		CitadelGetter.set(citadels);
+		return getUniverseApiAuth().getApiClient();
 	}
 
 	@Override

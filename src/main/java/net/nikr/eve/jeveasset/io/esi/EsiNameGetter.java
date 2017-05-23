@@ -20,49 +20,59 @@
  */
 package net.nikr.eve.jeveasset.io.esi;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.data.esi.EsiOwner;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import net.troja.eve.esi.ApiClient;
 import net.troja.eve.esi.ApiException;
-import net.troja.eve.esi.auth.SsoScopes;
-import net.troja.eve.esi.model.CharacterAssetsResponse;
+import net.troja.eve.esi.model.UniverseNamesResponse;
 
 
-public class EsiAssetsGetter extends AbstractEsiGetter {
+public class EsiNameGetter extends AbstractEsiGetter {
 
-	@Override
-	public void load(UpdateTask updateTask, List<EsiOwner> owners) {
-		super.load(updateTask, owners);
+	private List<Integer> ids;
+	private UpdateTask updateTask;
+
+	public void load(UpdateTask updateTask, Set<Integer> ids) {
+		this.ids = new ArrayList<>(ids);
+		this.updateTask = updateTask;
+		super.load(updateTask);
 	}
 
 	@Override
 	protected ApiClient get(EsiOwner owner) throws ApiException {
-		List<CharacterAssetsResponse> responses = getAssetsApiAuth().getCharactersCharacterIdAssets((int)owner.getOwnerID(), DATASOURCE, null, null, null);
-		owner.setAssets(EsiConverter.convertAssets(owner, responses));
-		return getAssetsApiAuth().getApiClient();
-	}
-
-	@Override
-	protected void setNextUpdate(EsiOwner owner, Date date) {
-		owner.setAssetNextUpdate(date);
-		owner.setAssetLastUpdate(Settings.getNow());
-	}
-
-	@Override
-	protected Date getNextUpdate(EsiOwner owner) {
-		return owner.getAssetNextUpdate();
-	}
-
-	@Override
-	protected boolean inScope(EsiOwner owner) {
-		return owner.getScopes().contains(SsoScopes.ESI_ASSETS_READ_ASSETS_V1);
+		List<List<Integer>> batches = splitList(ids, UNIVERSE_BATCH_SIZE);
+		int progress = 0;
+		for (List<Integer> batch : batches) {
+			List<UniverseNamesResponse> names = getUniverseApi().postUniverseNames(batch, DATASOURCE, System.getProperty("http.agent"), null);
+			for (UniverseNamesResponse lookup : names) {
+				Settings.get().getOwners().put((long)lookup.getId(), lookup.getName());
+			}
+			progress++;
+			updateTask.setTaskProgress(batches.size(), progress, 0, 100);
+		}
+		return getUniverseApi().getApiClient();
 	}
 
 	@Override
 	protected String getTaskName() {
-		return "Assets";
+		return "OwnerID to Name";
+	}
+
+	@Override
+	protected void setNextUpdate(EsiOwner owner, Date date) { }
+
+	@Override
+	protected Date getNextUpdate(EsiOwner owner) {
+		return new Date();
+	}
+
+	@Override
+	protected boolean inScope(EsiOwner owner) {
+		return true;
 	}
 }

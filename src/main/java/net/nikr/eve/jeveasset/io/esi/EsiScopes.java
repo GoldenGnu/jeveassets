@@ -28,6 +28,8 @@ public enum EsiScopes {
 	STRUCTURES(SsoScopes.ESI_UNIVERSE_READ_STRUCTURES_V1, DialoguesAccount.get().scopeStructures(), true),
 	ASSETS(SsoScopes.ESI_ASSETS_READ_ASSETS_V1, DialoguesAccount.get().scopeAssets(), false),
 	ACCOUNT_BALANCE(SsoScopes.ESI_WALLET_READ_CHARACTER_WALLET_V1, DialoguesAccount.get().scopeAccountBalance(), false),
+	NAMES("", "", true),
+	CONQUERABLE_STATIONS("", "", true),
 	;
 
 	private final String scope;

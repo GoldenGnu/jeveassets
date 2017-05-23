@@ -20,9 +20,11 @@
  */
 package net.nikr.eve.jeveasset.io.esi;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.data.esi.EsiOwner;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
@@ -30,6 +32,7 @@ import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.troja.eve.esi.ApiClient;
 import net.troja.eve.esi.ApiException;
 import net.troja.eve.esi.api.AssetsApi;
+import net.troja.eve.esi.api.SovereigntyApi;
 import net.troja.eve.esi.api.SsoApi;
 import net.troja.eve.esi.api.UniverseApi;
 import net.troja.eve.esi.api.WalletApi;
@@ -43,13 +46,23 @@ public abstract class AbstractEsiGetter {
 	private static final Logger LOG = LoggerFactory.getLogger(AbstractEsiGetter.class);
 
 	protected final String DATASOURCE = "tranquility";
+	protected final int UNIVERSE_BATCH_SIZE = 100;
 	private String error = null;
-	private ApiClient client;
 	private AssetsApi assetsApi;
 	private WalletApi walletApi;
-	private UniverseApi universeApi;
+	private UniverseApi universeApiAuth;
+	private final UniverseApi universeApi;
+	private final SovereigntyApi sovereigntyApi;
+	private ApiClient ssoClient;
 
-	protected AbstractEsiGetter() { }
+	protected AbstractEsiGetter() {
+		universeApi = new UniverseApi();
+		sovereigntyApi = new SovereigntyApi();
+	}
+
+	protected void load(UpdateTask updateTask) {
+		loadAPI(updateTask, null, false);
+	}
 
 	protected void load(EsiOwner owner) {
 		loadAPI(null, owner, true);
@@ -77,31 +90,31 @@ public abstract class AbstractEsiGetter {
 		createClient(owner);
 		try {
 			//Check if the Access Mask include this API
-			if (!inScope(owner)) {
-				addError("	" + getTaskName() + " failed to update for: " + owner.getOwnerName() + " (NOT ENOUGH ACCESS PRIVILEGES)");
+			if (owner != null && !inScope(owner)) {
+				addError("	" + getTaskName() + " failed to update for: " + getOwnerName(owner) + " (NOT ENOUGH ACCESS PRIVILEGES)");
 				if (updateTask != null) {
-					updateTask.addError(owner.getOwnerName(), "Not enough access privileges.\r\n(Fix: Add " + getTaskName() + " to the API Key)");
+					updateTask.addError(getOwnerName(owner), "Not enough access privileges.\r\n(Fix: Add " + getTaskName() + " to the API Key)");
 				}
 				return;
 			}
 			//Check if the Api Key is expired
-			if (owner.isExpired()) {
-				addError("	" + getTaskName() + " failed to update for: " + owner.getOwnerName() + " (API KEY EXPIRED)");
+			if (owner != null && owner.isExpired()) {
+				addError("	" + getTaskName() + " failed to update for: " + getOwnerName(owner) + " (API KEY EXPIRED)");
 				if (updateTask != null) {
-					updateTask.addError(owner.getOwnerName(), "API Key expired");
+					updateTask.addError(getOwnerName(owner), "API Key expired");
 				}
 				return;
 			}
 			//Check API cache time
-			if (!forceUpdate && !Settings.get().isUpdatable(getNextUpdate(owner), false)) {
-				addError("	" + getTaskName() + " failed to update for: " + owner.getOwnerName() + " (NOT ALLOWED YET)");
+			if (!forceUpdate && owner != null && !Settings.get().isUpdatable(getNextUpdate(owner), false)) {
+				addError("	" + getTaskName() + " failed to update for: " + getOwnerName(owner) + " (NOT ALLOWED YET)");
 				if (updateTask != null) {
-					updateTask.addError(owner.getOwnerName(), "Not allowed yet.\r\n(Fix: Just wait a bit)");
+					updateTask.addError(getOwnerName(owner), "Not allowed yet.\r\n(Fix: Just wait a bit)");
 				}
 				return;
 			}
-			get(owner);
-			LOG.info("	EveKit " + getTaskName() + " updated for " + owner.getOwnerName());
+			ApiClient client = get(owner);
+			LOG.info("	ESI " + getTaskName() + " updated for " +  getOwnerName(owner));
 			Map<String, List<String>> responseHeaders = client.getResponseHeaders();
 			if (responseHeaders != null) {
 				List<String> expiryHeaders = responseHeaders.get("Expires");
@@ -112,32 +125,40 @@ public abstract class AbstractEsiGetter {
 		} catch (ApiException ex) {
 			switch (ex.getCode()) {
 				case 403:
-					addError("	" + getTaskName() + " failed to update for: " + owner.getOwnerName() + " (FORBIDDEN)");
+					addError("	" + getTaskName() + " failed to update for: " + getOwnerName(owner) + " (FORBIDDEN)");
 					if (updateTask != null) {
-						updateTask.addError(owner.getOwnerName(), "Forbidden");
+						updateTask.addError(getOwnerName(owner), "Forbidden");
 					}
 					break;
 				case 500:
-					addError("	" + getTaskName() + " failed to update for: " + owner.getOwnerName() + " (INTERNAL SERVER ERROR)");
+					addError("	" + getTaskName() + " failed to update for: " + getOwnerName(owner) + " (INTERNAL SERVER ERROR)");
 					if (updateTask != null) {
-						updateTask.addError(owner.getOwnerName(), "Internal server error");
+						updateTask.addError(getOwnerName(owner), "Internal server error");
 					}
 					break;
 				default:
 					addError(ex.getMessage(), ex);
 					if (updateTask != null) {
-						updateTask.addError(owner.getOwnerName(), "Unknown Error Code: " + ex.getCode());
+						updateTask.addError(getOwnerName(owner), "Unknown Error Code: " + ex.getCode());
 					}
 					break;
 			}
 		}
 	}
 
-	protected abstract void get(EsiOwner owner) throws ApiException;
+	protected abstract ApiClient get(EsiOwner owner) throws ApiException;
 	protected abstract String getTaskName();
 	protected abstract void setNextUpdate(EsiOwner owner, Date date);
 	protected abstract Date getNextUpdate(EsiOwner owner);
 	protected abstract boolean inScope(EsiOwner owner);
+
+	private String getOwnerName(EsiOwner owner) {
+		if (owner != null) {
+			return owner.getOwnerName();
+		} else {
+			return Program.PROGRAM_NAME;
+		}
+	}
 
 	private ApiClient getClient(EsiOwner owner) {
 		ApiClient apiClient = new ApiClient();
@@ -149,27 +170,53 @@ public abstract class AbstractEsiGetter {
 	}
 
 	private void createClient(EsiOwner owner) {
-		client = getClient(owner);
+		if (owner == null) {
+			return;
+		}
+		ApiClient client = getClient(owner);
 		assetsApi = new AssetsApi(client);
 		walletApi = new WalletApi(client);
-		universeApi = new UniverseApi(client);
+		universeApiAuth = new UniverseApi(client);
 	}
 
-	protected SsoApi getSsoApi(EsiOwner owner) {
-		client = getClient(owner);
-		return new SsoApi(client);
+	protected <T> List<List<T>> splitList(List<T> list, final int L) {
+		List<List<T>> parts = new ArrayList<List<T>>();
+		final int N = list.size();
+		for (int i = 0; i < N; i += L) {
+			parts.add(new ArrayList<T>(
+				list.subList(i, Math.min(N, i + L)))
+			);
+		}
+		return parts;
 	}
 
-	protected AssetsApi getAssetsApi() {
+	protected ApiClient getSsoClient() {
+		return ssoClient;
+	}
+
+	protected SsoApi getSsoApiAuth(EsiOwner owner) {
+		ssoClient = getClient(owner);
+		return new SsoApi(ssoClient);
+	}
+
+	protected AssetsApi getAssetsApiAuth() {
 		return assetsApi;
 	}
 
-	protected WalletApi getWalletApi() {
+	protected WalletApi getWalletApiAuth() {
 		return  walletApi;
 	}
 
-	protected UniverseApi getUniverseApi() {
+	protected UniverseApi getUniverseApiAuth() {
+		return universeApiAuth;
+	}
+
+	public UniverseApi getUniverseApi() {
 		return universeApi;
+	}
+
+	public SovereigntyApi getSovereigntyApi() {
+		return sovereigntyApi;
 	}
 
 	protected final void addError(String error, Exception ex) {
