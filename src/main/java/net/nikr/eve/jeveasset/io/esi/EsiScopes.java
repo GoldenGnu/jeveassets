@@ -28,6 +28,13 @@ public enum EsiScopes {
 	STRUCTURES(SsoScopes.ESI_UNIVERSE_READ_STRUCTURES_V1, DialoguesAccount.get().scopeStructures(), true),
 	ASSETS(SsoScopes.ESI_ASSETS_READ_ASSETS_V1, DialoguesAccount.get().scopeAssets(), false),
 	ACCOUNT_BALANCE(SsoScopes.ESI_WALLET_READ_CHARACTER_WALLET_V1, DialoguesAccount.get().scopeAccountBalance(), false),
+	INDUSTRY_JOBS(SsoScopes.ESI_INDUSTRY_READ_CHARACTER_JOBS_V1, DialoguesAccount.get().scopeIndustryJobs(), false),
+	MARKET_ORDERS(SsoScopes.ESI_MARKETS_READ_CHARACTER_ORDERS_V1, DialoguesAccount.get().scopeMarketOrders(), false),
+	BLUEPRINTS(SsoScopes.ESI_CHARACTERS_READ_BLUEPRINTS_V1, DialoguesAccount.get().scopeBlueprints(), false),
+	TRANSACTIONS("DO_NOT_MATCH", DialoguesAccount.get().scopeTransactions(), false),
+	JOURNAL("DO_NOT_MATCH", DialoguesAccount.get().scopeJournal(), false),
+	CONTRACTS("DO_NOT_MATCH", DialoguesAccount.get().scopeContracts(), false),
+	LOCATIONS("DO_NOT_MATCH", DialoguesAccount.get().scopeLocations(), false),
 	NAMES("", "", true),
 	CONQUERABLE_STATIONS("", "", true),
 	;
@@ -44,6 +51,10 @@ public enum EsiScopes {
 
 	public String getScope() {
 		return scope;
+	}
+
+	public boolean isInScope(String scopes) {
+		return scopes.contains(scope);
 	}
 
 	public boolean isEnabled() {

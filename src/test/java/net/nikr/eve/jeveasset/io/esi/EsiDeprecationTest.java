@@ -26,6 +26,9 @@ import java.util.Map;
 import net.troja.eve.esi.ApiClient;
 import net.troja.eve.esi.ApiException;
 import net.troja.eve.esi.api.AssetsApi;
+import net.troja.eve.esi.api.CharacterApi;
+import net.troja.eve.esi.api.IndustryApi;
+import net.troja.eve.esi.api.MarketApi;
 import net.troja.eve.esi.api.SovereigntyApi;
 import net.troja.eve.esi.api.UniverseApi;
 import net.troja.eve.esi.api.WalletApi;
@@ -33,11 +36,11 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 
-public class AbstractEsiGetterTest {
+public class EsiDeprecationTest {
 
 	private final String DATASOURCE = "tranquility";
 
-	public AbstractEsiGetterTest() { }
+	public EsiDeprecationTest() { }
 
 	@Test
 	public void assetsApi() {
@@ -88,6 +91,39 @@ public class AbstractEsiGetterTest {
 		SovereigntyApi api = new SovereigntyApi();
 		try {
 			api.getSovereigntyStructures(DATASOURCE, null, null);
+		} catch (ApiException ex) {
+			
+		}
+		validate(api.getApiClient());
+	}
+
+	@Test
+	public void characterApi() {
+		CharacterApi api = new CharacterApi();
+		try {
+			api.getCharactersCharacterIdBlueprints(1, DATASOURCE, null, null, null);
+		} catch (ApiException ex) {
+			
+		}
+		validate(api.getApiClient());
+	}
+
+	@Test
+	public void industryApi() {
+		IndustryApi api = new IndustryApi();
+		try {
+			api.getCharactersCharacterIdIndustryJobs(1, DATASOURCE, true, null, null, null);
+		} catch (ApiException ex) {
+			
+		}
+		validate(api.getApiClient());
+	}
+
+	@Test
+	public void marketApi() {
+		MarketApi api = new MarketApi();
+		try {
+			api.getCharactersCharacterIdOrders(1, DATASOURCE, null, null, null);
 		} catch (ApiException ex) {
 			
 		}

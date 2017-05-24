@@ -75,6 +75,13 @@ public abstract class DialoguesAccount extends Bundle {
 	public abstract String scopeStructures();
 	public abstract String scopeAssets();
 	public abstract String scopeAccountBalance();
+	public abstract String scopeBlueprints();
+	public abstract String scopeIndustryJobs();
+	public abstract String scopeMarketOrders();
+	public abstract String scopeTransactions();
+	public abstract String scopeJournal();
+	public abstract String scopeContracts();
+	public abstract String scopeLocations();
 
 	public abstract String dialogueNameAccountManagement();
 
@@ -113,6 +120,7 @@ public abstract class DialoguesAccount extends Bundle {
 	public abstract String tableFormatContracts();
 	public abstract String tableFormatLocations();
 	public abstract String tableFormatStructures();
+	public abstract String tableFormatBlueprints();
 	public abstract String tableFormatYes();
 	public abstract String tableFormatNo();
 	public abstract String tableFormatExpires();

@@ -32,6 +32,9 @@ import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.troja.eve.esi.ApiClient;
 import net.troja.eve.esi.ApiException;
 import net.troja.eve.esi.api.AssetsApi;
+import net.troja.eve.esi.api.CharacterApi;
+import net.troja.eve.esi.api.IndustryApi;
+import net.troja.eve.esi.api.MarketApi;
 import net.troja.eve.esi.api.SovereigntyApi;
 import net.troja.eve.esi.api.SsoApi;
 import net.troja.eve.esi.api.UniverseApi;
@@ -48,9 +51,12 @@ public abstract class AbstractEsiGetter {
 	protected final String DATASOURCE = "tranquility";
 	protected final int UNIVERSE_BATCH_SIZE = 100;
 	private String error = null;
-	private AssetsApi assetsApi;
-	private WalletApi walletApi;
+	private AssetsApi assetsApiAuth;
+	private WalletApi walletApiAuth;
 	private UniverseApi universeApiAuth;
+	private CharacterApi characterApiAuth;
+	private IndustryApi industryApiAuth;
+	private MarketApi marketApiAuth;
 	private final UniverseApi universeApi;
 	private final SovereigntyApi sovereigntyApi;
 	private ApiClient ssoClient;
@@ -178,9 +184,12 @@ public abstract class AbstractEsiGetter {
 			return;
 		}
 		ApiClient client = getClient(owner);
-		assetsApi = new AssetsApi(client);
-		walletApi = new WalletApi(client);
+		assetsApiAuth = new AssetsApi(client);
+		walletApiAuth = new WalletApi(client);
 		universeApiAuth = new UniverseApi(client);
+		characterApiAuth = new CharacterApi(client);
+		industryApiAuth = new IndustryApi(client);
+		marketApiAuth = new MarketApi(client);
 	}
 
 	protected <T> List<List<T>> splitList(List<T> list, final int L) {
@@ -203,12 +212,24 @@ public abstract class AbstractEsiGetter {
 		return new SsoApi(ssoClient);
 	}
 
+	public MarketApi getMarketApiAuth() {
+		return marketApiAuth;
+	}
+
+	public IndustryApi getIndustryApiAuth() {
+		return industryApiAuth;
+	}
+
+	protected CharacterApi getCharacterApiAuth() {
+		return characterApiAuth;
+	}
+
 	protected AssetsApi getAssetsApiAuth() {
-		return assetsApi;
+		return assetsApiAuth;
 	}
 
 	protected WalletApi getWalletApiAuth() {
-		return  walletApi;
+		return  walletApiAuth;
 	}
 
 	protected UniverseApi getUniverseApiAuth() {

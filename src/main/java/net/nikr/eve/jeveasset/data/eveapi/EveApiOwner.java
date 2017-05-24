@@ -65,6 +65,11 @@ public class EveApiOwner extends AbstractOwner implements OwnerType {
 	}
 
 	@Override
+	public boolean isBlueprints() {
+		return isAssetList();
+	}
+
+	@Override
 	public boolean isIndustryJobs() {
 		return getParentAccount().isIndustryJobs();
 	}

@@ -22,17 +22,31 @@ package net.nikr.eve.jeveasset.io.esi;
 
 import com.beimin.eveapi.model.shared.AccountBalance;
 import com.beimin.eveapi.model.shared.Asset;
+import com.beimin.eveapi.model.shared.Blueprint;
+import com.beimin.eveapi.model.shared.IndustryJob;
+import com.beimin.eveapi.model.shared.MarketOrder;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
+import net.nikr.eve.jeveasset.data.Item;
 import net.nikr.eve.jeveasset.data.ItemFlag;
 import net.nikr.eve.jeveasset.data.MyAccountBalance;
+import net.nikr.eve.jeveasset.data.MyLocation;
 import net.nikr.eve.jeveasset.data.StaticData;
 import net.nikr.eve.jeveasset.data.esi.EsiOwner;
 import net.nikr.eve.jeveasset.gui.tabs.assets.MyAsset;
+import net.nikr.eve.jeveasset.gui.tabs.jobs.MyIndustryJob;
+import net.nikr.eve.jeveasset.gui.tabs.orders.MyMarketOrder;
 import net.nikr.eve.jeveasset.io.shared.ApiConverter;
+import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 import net.troja.eve.esi.model.CharacterAssetsResponse;
+import net.troja.eve.esi.model.CharacterBlueprintsResponse;
+import net.troja.eve.esi.model.CharacterIndustryJobsResponse;
+import net.troja.eve.esi.model.CharacterOrdersResponse;
 import net.troja.eve.esi.model.CharacterWalletsResponse;
 
 
@@ -76,8 +90,8 @@ public class EsiConverter {
 		return asset;
 	}
 
-	private static com.beimin.eveapi.model.shared.Asset toAsset(final CharacterAssetsResponse asset, final com.beimin.eveapi.model.shared.Asset parentAsset) {
-		com.beimin.eveapi.model.shared.Asset eveApiAsset = new com.beimin.eveapi.model.shared.Asset();
+	private static Asset toAsset(final CharacterAssetsResponse asset, final Asset parentAsset) {
+		Asset eveApiAsset = new Asset();
 		int count;
 		int rawQuantity;
 		boolean singleton = asset.getIsSingleton();
@@ -106,19 +120,12 @@ public class EsiConverter {
 				rawQuantity = 0;
 			}
 		}
-		int flagID = 0;
-		for (ItemFlag flag : StaticData.get().getItemFlags().values()) {
-			if (flag.getFlagName().equals(asset.getLocationFlag().toString())) {
-				flagID = flag.getFlagID();
-				break;
-			}
-		}
 		eveApiAsset.setItemID(asset.getItemId());
 		eveApiAsset.setLocationID(asset.getLocationId());
 		eveApiAsset.setTypeID(asset.getTypeId());
-		eveApiAsset.setQuantity(count); //Long to Int
-		eveApiAsset.setRawQuantity(rawQuantity); //Long to Int
-		eveApiAsset.setFlag(flagID);
+		eveApiAsset.setQuantity(count);
+		eveApiAsset.setRawQuantity(rawQuantity);
+		eveApiAsset.setFlag(toFlagID(asset.getLocationFlag().toString()));
 		eveApiAsset.setSingleton(singleton);
 		if (parentAsset != null) {
 			parentAsset.getAssets().add(eveApiAsset);
@@ -137,5 +144,163 @@ public class EsiConverter {
 			accountBalances.add(myAccountBalance);
 		}
 		return accountBalances;
+	}
+
+	public static List<MyIndustryJob> convertIndustryJobs(EsiOwner owner, List<CharacterIndustryJobsResponse> responses) {
+		List<IndustryJob> industryJobs = new ArrayList<IndustryJob>();
+		for (CharacterIndustryJobsResponse response : responses) {
+			industryJobs.add(toIndustryJob(response));
+		}
+		return ApiConverter.convertIndustryJobs(industryJobs, owner);
+	}
+
+	private static IndustryJob toIndustryJob(CharacterIndustryJobsResponse response) {
+		IndustryJob industryJob = new IndustryJob();
+		industryJob.setJobID(response.getJobId());
+		industryJob.setInstallerID(response.getInstallerId());
+		industryJob.setInstallerName(""); //Set in ProfileData
+		industryJob.setFacilityID(response.getFacilityId());
+		MyLocation location = ApiIdConverter.getLocation(response.getStationId());
+		industryJob.setSolarSystemID(location.getSystemID());
+		industryJob.setStationID(response.getStationId());
+		industryJob.setActivityID(response.getActivityId());
+		industryJob.setBlueprintID(response.getBlueprintId());
+		industryJob.setBlueprintTypeID(response.getBlueprintTypeId());
+		Item blueprint = ApiIdConverter.getItem(response.getBlueprintTypeId());
+		industryJob.setBlueprintTypeName(blueprint.getTypeName());
+		industryJob.setBlueprintLocationID(response.getBlueprintLocationId());
+		industryJob.setOutputLocationID(response.getOutputLocationId());
+		industryJob.setRuns(response.getRuns());
+		industryJob.setCost(response.getCost());
+		industryJob.setTeamID(0); //Teams have been removed from the game: https://community.eveonline.com/news/dev-blogs/teams-removal/
+		industryJob.setLicensedRuns(response.getLicensedRuns());
+		industryJob.setProbability(response.getProbability());
+		industryJob.setProductTypeID(response.getProductTypeId());
+		Item product = ApiIdConverter.getItem(response.getProductTypeId());
+		industryJob.setProductTypeName(product.getTypeName());
+		int status;
+		switch (response.getStatus()) {
+			case ACTIVE: status = 1; break;
+			case PAUSED: status = 2; break;
+			case READY: status = 3; break;
+			case DELIVERED: status = 101; break;
+			case CANCELLED: status = 102; break;
+			case REVERTED: status = 103; break;
+			default: status = 1; //Should never happen!
+		}
+		industryJob.setStatus(status);
+		Date start = toDate(response.getStartDate());
+		Date end = toDate(response.getEndDate());
+		int timeInSeconds = 0;
+		if (start != null && end != null) {
+			try {
+				timeInSeconds = Math.toIntExact(TimeUnit.MILLISECONDS.toSeconds(end.getTime() - start.getTime()));
+			} catch (ArithmeticException ex) {
+				//Failed to convert to int
+			}
+		}
+		industryJob.setTimeInSeconds(timeInSeconds);
+		industryJob.setCompletedDate(toDate(response.getCompletedDate()));
+		industryJob.setStartDate(start);
+		industryJob.setEndDate(end);
+		industryJob.setPauseDate(toDate(response.getPauseDate()));
+		industryJob.setCompletedCharacterID(response.getCompletedCharacterId());
+		return industryJob;
+	}
+
+	static List<MyMarketOrder> convertMarketOrders(EsiOwner owner, List<CharacterOrdersResponse> responses) {
+		List<MarketOrder> marketOrders = new ArrayList<MarketOrder>();
+		for (CharacterOrdersResponse response : responses) {
+			marketOrders.add(toMarketOrder(owner, response));
+		}
+		return ApiConverter.convertMarketOrders(marketOrders, owner);
+	}
+
+	private static MarketOrder toMarketOrder(EsiOwner owner, CharacterOrdersResponse response) {
+		MarketOrder marketOrder = new MarketOrder();
+		marketOrder.setOrderID(response.getOrderId());
+		marketOrder.setCharID(owner.getOwnerID());
+		marketOrder.setStationID(response.getLocationId());
+		marketOrder.setVolEntered(response.getVolumeTotal());
+		marketOrder.setVolRemaining(response.getVolumeRemain());
+		marketOrder.setMinVolume(response.getMinVolume());
+		int state;
+		switch(response.getState()) {
+			case OPEN: state = 0; break;
+			case CLOSED: state = 1; break;
+			case EXPIRED: state = 2; break;
+			case CANCELLED: state = 3; break;
+			case PENDING: state = 4; break;
+			case CHARACTER_DELETED: state = 5; break;
+			default: state = 0; //Should never happen!
+		}
+		marketOrder.setOrderState(state);
+		marketOrder.setTypeID(response.getTypeId());
+		int range;
+		switch (response.getRange()) {
+			case REGION: range = 32767; break;
+			case SOLARSYSTEM: range = 0; break;
+			case STATION: range = -1; break;
+			case _1: range = 1; break;
+			case _2: range = 2; break;
+			case _3: range = 3; break;
+			case _4: range = 4; break;
+			case _5: range = 5; break;
+			case _10: range = 10; break;
+			case _20: range = 20; break;
+			case _30: range = 30; break;
+			case _40: range = 40; break;
+			default: range = 32767; //Should never happen!
+		}
+		marketOrder.setRange(range);
+		marketOrder.setAccountKey(response.getAccountId());
+		marketOrder.setDuration(response.getDuration());
+		marketOrder.setEscrow(response.getEscrow());
+		marketOrder.setPrice(response.getPrice());
+		marketOrder.setBid(response.getIsBuyOrder() ? 1 : 0);
+		marketOrder.setIssued(toDate(response.getIssued()));
+		return marketOrder;
+	}
+
+	static Map<Long, Blueprint> convertBlueprints(EsiOwner owner, List<CharacterBlueprintsResponse> responses) {
+		Map<Long, Blueprint> blueprints = new HashMap<Long, Blueprint>();
+		for (CharacterBlueprintsResponse blueprint : responses) {
+			blueprints.put(blueprint.getItemId(), toBlueprint(blueprint));
+		}
+		return blueprints;
+	}
+
+	private static Blueprint toBlueprint(CharacterBlueprintsResponse response) {
+		Blueprint blueprint = new Blueprint();
+		blueprint.setItemID(response.getItemId());
+		blueprint.setLocationID(response.getLocationId());
+		blueprint.setTypeID(response.getTypeId());
+		Item item = ApiIdConverter.getItem(response.getTypeId());
+		blueprint.setTypeName(item.getTypeName());
+		blueprint.setFlagID(toFlagID(response.getLocationFlag().toString()));
+		blueprint.setQuantity(response.getQuantity());
+		blueprint.setTimeEfficiency(response.getTimeEfficiency());
+		blueprint.setMaterialEfficiency(response.getMaterialEfficiency());
+		blueprint.setRuns(response.getRuns());
+		return blueprint;
+	}
+
+	private static Date toDate(OffsetDateTime dateTime) {
+		if (dateTime == null) {
+			return null;
+		} else {
+			return Date.from(dateTime.toInstant());
+		}	
+	}
+
+	private static int toFlagID(String flagName) {
+		int flagID = 0;
+		for (ItemFlag flag : StaticData.get().getItemFlags().values()) {
+			if (flag.getFlagName().equals(flagName)) {
+				flagID = flag.getFlagID();
+				break;
+			}
+		}
+		return flagID;
 	}
 }

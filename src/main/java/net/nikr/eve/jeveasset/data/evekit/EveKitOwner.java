@@ -175,6 +175,11 @@ public class EveKitOwner extends AbstractOwner implements OwnerType {
 	}
 
 	@Override
+	public boolean isBlueprints() {
+		return isAssetList();
+	}
+
+	@Override
 	public boolean isMarketOrders() {
 		return (getAccessMask() & EveKitAccessMask.MARKET_ORDERS.getAccessMask()) == EveKitAccessMask.MARKET_ORDERS.getAccessMask();
 	}

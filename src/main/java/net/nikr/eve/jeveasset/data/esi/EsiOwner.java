@@ -27,7 +27,7 @@ import net.nikr.eve.jeveasset.data.api.AbstractOwner;
 import net.nikr.eve.jeveasset.data.api.ApiType;
 import net.nikr.eve.jeveasset.data.api.OwnerType;
 import net.nikr.eve.jeveasset.io.esi.EsiCallbackURL;
-import net.troja.eve.esi.auth.SsoScopes;
+import net.nikr.eve.jeveasset.io.esi.EsiScopes;
 
 
 public class EsiOwner  extends AbstractOwner implements OwnerType {
@@ -169,47 +169,52 @@ public class EsiOwner  extends AbstractOwner implements OwnerType {
 
 	@Override
 	public boolean isAssetList() {
-		return scopes.contains(SsoScopes.ESI_ASSETS_READ_ASSETS_V1);
+		return EsiScopes.ASSETS.isInScope(scopes);
 	}
 
 	@Override
 	public boolean isAccountBalance() {
-		return scopes.contains(SsoScopes.ESI_WALLET_READ_CHARACTER_WALLET_V1);
+		return EsiScopes.ACCOUNT_BALANCE.isInScope(scopes);
+	}
+
+	@Override
+	public boolean isBlueprints() {
+		return EsiScopes.BLUEPRINTS.isInScope(scopes);
 	}
 
 	@Override
 	public boolean isIndustryJobs() {
-		return false;
+		return EsiScopes.INDUSTRY_JOBS.isInScope(scopes);
 	}
 
 	@Override
 	public boolean isMarketOrders() {
-		return false;
+		return EsiScopes.MARKET_ORDERS.isInScope(scopes);
 	}
 
 	@Override
 	public boolean isTransactions() {
-		return false;
+		return EsiScopes.TRANSACTIONS.isInScope(scopes);
 	}
 
 	@Override
 	public boolean isJournal() {
-		return false;
+		return EsiScopes.JOURNAL.isInScope(scopes);
 	}
 
 	@Override
 	public boolean isContracts() {
-		return false;
+		return EsiScopes.CONTRACTS.isInScope(scopes);
 	}
 
 	@Override
 	public boolean isLocations() {
-		return false;
+		return EsiScopes.LOCATIONS.isInScope(scopes);
 	}
 
 	@Override
 	public boolean isStructures() {
-		return scopes.contains(SsoScopes.ESI_UNIVERSE_READ_STRUCTURES_V1);
+		return EsiScopes.STRUCTURES.isInScope(scopes);
 	}
 
 	@Override

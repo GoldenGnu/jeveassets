@@ -49,7 +49,10 @@ import net.nikr.eve.jeveasset.i18n.DialoguesUpdate;
 import net.nikr.eve.jeveasset.i18n.General;
 import net.nikr.eve.jeveasset.io.esi.EsiAccountBalanceGetter;
 import net.nikr.eve.jeveasset.io.esi.EsiAssetsGetter;
+import net.nikr.eve.jeveasset.io.esi.EsiBlueprintsGetter;
 import net.nikr.eve.jeveasset.io.esi.EsiConquerableStationsGetter;
+import net.nikr.eve.jeveasset.io.esi.EsiIndustryJobsGetter;
+import net.nikr.eve.jeveasset.io.esi.EsiMarketOrdersGetter;
 import net.nikr.eve.jeveasset.io.esi.EsiNameGetter;
 import net.nikr.eve.jeveasset.io.esi.EsiOwnerGetter;
 import net.nikr.eve.jeveasset.io.esi.EsiStructuresGetter;
@@ -396,6 +399,8 @@ public class UpdateDialog extends JDialogCentered {
 				if (owner.isAssetList()) {
 					assetsFirst = updateFirst(assetsFirst, owner.getAssetNextUpdate());
 					assetsLast = updateLast(assetsLast, owner.getAssetNextUpdate());
+				}
+				if (owner.isBlueprints()) {
 					blueprintsFirst = updateFirst(blueprintsFirst, owner.getBlueprintsNextUpdate());
 					blueprintsLast = updateLast(blueprintsLast, owner.getBlueprintsNextUpdate());
 				}
@@ -792,6 +797,12 @@ public class UpdateDialog extends JDialogCentered {
 				EveKitIndustryJobsGetter eveKitIndustryJobsGetter = new EveKitIndustryJobsGetter();
 				eveKitIndustryJobsGetter.load(this, program.getProfileManager().getEveKitOwners());
 			}
+			//Esi
+			if (EsiScopes.INDUSTRY_JOBS.isEnabled() && !program.getProfileManager().getEsiOwners().isEmpty()) {
+				setIcon(Images.MISC_ESI.getIcon());
+				EsiIndustryJobsGetter esiIndustryJobsGetter = new EsiIndustryJobsGetter();
+				esiIndustryJobsGetter.load(this, program.getProfileManager().getEsiOwners());
+			}
 		}
 	}
 
@@ -814,6 +825,12 @@ public class UpdateDialog extends JDialogCentered {
 				setIcon(Images.MISC_EVEKIT.getIcon());
 				EveKitMarketOrdersGetter eveKitMarketOrdersGetter = new EveKitMarketOrdersGetter();
 				eveKitMarketOrdersGetter.load(this, program.getProfileManager().getEveKitOwners());
+			}
+			//Esi
+			if (EsiScopes.MARKET_ORDERS.isEnabled() && !program.getProfileManager().getEsiOwners().isEmpty()) {
+				setIcon(Images.MISC_ESI.getIcon());
+				EsiMarketOrdersGetter esiMarketOrdersGetter = new EsiMarketOrdersGetter();
+				esiMarketOrdersGetter.load(this, program.getProfileManager().getEsiOwners());
 			}
 		}
 	}
@@ -910,6 +927,12 @@ public class UpdateDialog extends JDialogCentered {
 				setIcon(Images.MISC_EVEKIT.getIcon());
 				EveKitBlueprintsGetter eveKitBlueprintsGetter = new EveKitBlueprintsGetter();
 				eveKitBlueprintsGetter.load(this, program.getProfileManager().getEveKitOwners());
+			}
+			//Esi
+			if (EsiScopes.BLUEPRINTS.isEnabled() && !program.getProfileManager().getEsiOwners().isEmpty()) {
+				setIcon(Images.MISC_ESI.getIcon());
+				EsiBlueprintsGetter esiBlueprintsGetter = new EsiBlueprintsGetter();
+				esiBlueprintsGetter.load(this, program.getProfileManager().getEsiOwners());
 			}
 		}
 	}
