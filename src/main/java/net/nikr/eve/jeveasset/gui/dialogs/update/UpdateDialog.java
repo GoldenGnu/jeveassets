@@ -692,15 +692,15 @@ public class UpdateDialog extends JDialogCentered {
 			//EveAPI
 			if (!program.getProfileManager().getAccounts().isEmpty()) {
 				setIcon(Images.MISC_EVE.getIcon());
+				AccountGetter accountGetter = new AccountGetter();
+				accountGetter.load(this, Settings.get().isForceUpdate(), program.getProfileManager().getAccounts());
 			}
-			AccountGetter accountGetter = new AccountGetter();
-			accountGetter.load(this, Settings.get().isForceUpdate(), program.getProfileManager().getAccounts());
 			//EveKit
 			if (!program.getProfileManager().getEveKitOwners().isEmpty()) {
 				setIcon(Images.MISC_EVEKIT.getIcon());
+				EveKitOwnerGetter ownerGetter = new EveKitOwnerGetter();
+				ownerGetter.load(this, program.getProfileManager().getEveKitOwners());
 			}
-			EveKitOwnerGetter ownerGetter = new EveKitOwnerGetter();
-			ownerGetter.load(this, program.getProfileManager().getEveKitOwners());
 			//Esi
 			if (!program.getProfileManager().getEsiOwners().isEmpty()) {
 				setIcon(Images.MISC_ESI.getIcon());
@@ -721,19 +721,19 @@ public class UpdateDialog extends JDialogCentered {
 			//EveApi
 			if (!program.getProfileManager().getAccounts().isEmpty()) {
 				setIcon(Images.MISC_EVE.getIcon());
+				AssetsGetter assetsGetter = new AssetsGetter();
+				assetsGetter.load(this, Settings.get().isForceUpdate(), program.getProfileManager().getAccounts());
+				LocationsGetter locationsGetter = new LocationsGetter();
+				locationsGetter.load(this, Settings.get().isForceUpdate(), program.getProfileManager().getAccounts());
 			}
-			AssetsGetter assetsGetter = new AssetsGetter();
-			assetsGetter.load(this, Settings.get().isForceUpdate(), program.getProfileManager().getAccounts());
-			LocationsGetter locationsGetter = new LocationsGetter();
-			locationsGetter.load(this, Settings.get().isForceUpdate(), program.getProfileManager().getAccounts());
 			//EveKit
 			if (!program.getProfileManager().getEveKitOwners().isEmpty()) {
 				setIcon(Images.MISC_EVEKIT.getIcon());
+				EveKitAssetGetter eveKitAssetGetter = new EveKitAssetGetter();
+				eveKitAssetGetter.load(this, program.getProfileManager().getEveKitOwners());
+				EveKitLocationsGetter eveKitLocationsGetter = new EveKitLocationsGetter();
+				eveKitLocationsGetter.load(this, program.getProfileManager().getEveKitOwners());
 			}
-			EveKitAssetGetter eveKitAssetGetter = new EveKitAssetGetter();
-			eveKitAssetGetter.load(this, program.getProfileManager().getEveKitOwners());
-			EveKitLocationsGetter eveKitLocationsGetter = new EveKitLocationsGetter();
-			eveKitLocationsGetter.load(this, program.getProfileManager().getEveKitOwners());
 			//Esi
 			if (EsiScopes.ASSETS.isEnabled() && !program.getProfileManager().getEsiOwners().isEmpty()) {
 				setIcon(Images.MISC_ESI.getIcon());
@@ -754,15 +754,15 @@ public class UpdateDialog extends JDialogCentered {
 			//EveApi
 			if (!program.getProfileManager().getAccounts().isEmpty()) {
 				setIcon(Images.MISC_EVE.getIcon());
+				AccountBalanceGetter accountBalanceGetter = new AccountBalanceGetter();
+				accountBalanceGetter.load(this, Settings.get().isForceUpdate(), program.getProfileManager().getAccounts());
 			}
-			AccountBalanceGetter accountBalanceGetter = new AccountBalanceGetter();
-			accountBalanceGetter.load(this, Settings.get().isForceUpdate(), program.getProfileManager().getAccounts());
 			//EveKit
 			if (!program.getProfileManager().getEveKitOwners().isEmpty()) {
 				setIcon(Images.MISC_EVEKIT.getIcon());
+				EveKitAccountBalanceGetter eveKitAccountBalanceGetter = new EveKitAccountBalanceGetter();
+				eveKitAccountBalanceGetter.load(this, program.getProfileManager().getEveKitOwners());
 			}
-			EveKitAccountBalanceGetter eveKitAccountBalanceGetter = new EveKitAccountBalanceGetter();
-			eveKitAccountBalanceGetter.load(this, program.getProfileManager().getEveKitOwners());
 			//Esi
 			if (EsiScopes.ACCOUNT_BALANCE.isEnabled() && !program.getProfileManager().getEsiOwners().isEmpty()) {
 				setIcon(Images.MISC_ESI.getIcon());
@@ -783,15 +783,15 @@ public class UpdateDialog extends JDialogCentered {
 			//EveApi
 			if (!program.getProfileManager().getAccounts().isEmpty()) {
 				setIcon(Images.MISC_EVE.getIcon());
+				IndustryJobsGetter industryJobsGetter = new IndustryJobsGetter();
+				industryJobsGetter.load(this, Settings.get().isForceUpdate(), program.getProfileManager().getAccounts());
 			}
-			IndustryJobsGetter industryJobsGetter = new IndustryJobsGetter();
-			industryJobsGetter.load(this, Settings.get().isForceUpdate(), program.getProfileManager().getAccounts());
 			//EveKit
 			if (!program.getProfileManager().getEveKitOwners().isEmpty()) {
 				setIcon(Images.MISC_EVEKIT.getIcon());
+				EveKitIndustryJobsGetter eveKitIndustryJobsGetter = new EveKitIndustryJobsGetter();
+				eveKitIndustryJobsGetter.load(this, program.getProfileManager().getEveKitOwners());
 			}
-			EveKitIndustryJobsGetter eveKitIndustryJobsGetter = new EveKitIndustryJobsGetter();
-			eveKitIndustryJobsGetter.load(this, program.getProfileManager().getEveKitOwners());
 		}
 	}
 
@@ -806,15 +806,15 @@ public class UpdateDialog extends JDialogCentered {
 			//EveApi
 			if (!program.getProfileManager().getAccounts().isEmpty()) {
 				setIcon(Images.MISC_EVE.getIcon());
+				MarketOrdersGetter marketOrdersGetter = new MarketOrdersGetter();
+				marketOrdersGetter.load(this, Settings.get().isForceUpdate(), program.getProfileManager().getAccounts(), Settings.get().isMarketOrderHistory());
 			}
-			MarketOrdersGetter marketOrdersGetter = new MarketOrdersGetter();
-			marketOrdersGetter.load(this, Settings.get().isForceUpdate(), program.getProfileManager().getAccounts(), Settings.get().isMarketOrderHistory());
 			//EveKit
 			if (!program.getProfileManager().getEveKitOwners().isEmpty()) {
 				setIcon(Images.MISC_EVEKIT.getIcon());
+				EveKitMarketOrdersGetter eveKitMarketOrdersGetter = new EveKitMarketOrdersGetter();
+				eveKitMarketOrdersGetter.load(this, program.getProfileManager().getEveKitOwners());
 			}
-			EveKitMarketOrdersGetter eveKitMarketOrdersGetter = new EveKitMarketOrdersGetter();
-			eveKitMarketOrdersGetter.load(this, program.getProfileManager().getEveKitOwners());
 		}
 	}
 
@@ -829,15 +829,15 @@ public class UpdateDialog extends JDialogCentered {
 			//EveApi
 			if (!program.getProfileManager().getAccounts().isEmpty()) {
 				setIcon(Images.MISC_EVE.getIcon());
+				JournalGetter journalGetter = new JournalGetter();
+				journalGetter.load(this, Settings.get().isForceUpdate(), program.getProfileManager().getAccounts(), Settings.get().isJournalHistory());
 			}
-			JournalGetter journalGetter = new JournalGetter();
-			journalGetter.load(this, Settings.get().isForceUpdate(), program.getProfileManager().getAccounts(), Settings.get().isJournalHistory());
 			//EveKit
 			if (!program.getProfileManager().getEveKitOwners().isEmpty()) {
 				setIcon(Images.MISC_EVEKIT.getIcon());
+				EveKitJournalGetter eveKitJournalGetter = new EveKitJournalGetter();
+				eveKitJournalGetter.load(this, program.getProfileManager().getEveKitOwners());
 			}
-			EveKitJournalGetter eveKitJournalGetter = new EveKitJournalGetter();
-			eveKitJournalGetter.load(this, program.getProfileManager().getEveKitOwners());
 		}
 	}
 
@@ -852,15 +852,15 @@ public class UpdateDialog extends JDialogCentered {
 			//EveApi
 			if (!program.getProfileManager().getAccounts().isEmpty()) {
 				setIcon(Images.MISC_EVE.getIcon());
+				TransactionsGetter transactionsGetter = new TransactionsGetter();
+				transactionsGetter.load(this, Settings.get().isForceUpdate(), program.getProfileManager().getAccounts(), Settings.get().isTransactionHistory());
 			}
-			TransactionsGetter transactionsGetter = new TransactionsGetter();
-			transactionsGetter.load(this, Settings.get().isForceUpdate(), program.getProfileManager().getAccounts(), Settings.get().isTransactionHistory());
 			//EveKit
 			if (!program.getProfileManager().getEveKitOwners().isEmpty()) {
 				setIcon(Images.MISC_EVEKIT.getIcon());
+				EveKitTransactionsGetter eveKitTransactionsGetter = new EveKitTransactionsGetter();
+				eveKitTransactionsGetter.load(this, program.getProfileManager().getEveKitOwners());
 			}
-			EveKitTransactionsGetter eveKitTransactionsGetter = new EveKitTransactionsGetter();
-			eveKitTransactionsGetter.load(this, program.getProfileManager().getEveKitOwners());
 		}
 	}
 
@@ -875,19 +875,19 @@ public class UpdateDialog extends JDialogCentered {
 			//EveApi
 			if (!program.getProfileManager().getAccounts().isEmpty()) {
 				setIcon(Images.MISC_EVE.getIcon());
+				ContractsGetter contractsGetter = new ContractsGetter();
+				contractsGetter.load(this, Settings.get().isForceUpdate(), program.getProfileManager().getAccounts());
+				ContractItemsGetter itemsGetter = new ContractItemsGetter();
+				itemsGetter.load(this, Settings.get().isForceUpdate(), program.getProfileManager().getAccounts());
 			}
-			ContractsGetter contractsGetter = new ContractsGetter();
-			contractsGetter.load(this, Settings.get().isForceUpdate(), program.getProfileManager().getAccounts());
-			ContractItemsGetter itemsGetter = new ContractItemsGetter();
-			itemsGetter.load(this, Settings.get().isForceUpdate(), program.getProfileManager().getAccounts());
 			//EveKit
 			if (!program.getProfileManager().getEveKitOwners().isEmpty()) {
 				setIcon(Images.MISC_EVEKIT.getIcon());
+				EveKitContractsGetter eveKitContractsGetter = new EveKitContractsGetter();
+				eveKitContractsGetter.load(this, program.getProfileManager().getEveKitOwners());
+				EveKitContractItemsGetter eveKitContractItemsGetter = new EveKitContractItemsGetter();
+				eveKitContractItemsGetter.load(this, program.getProfileManager().getEveKitOwners());
 			}
-			EveKitContractsGetter eveKitContractsGetter = new EveKitContractsGetter();
-			eveKitContractsGetter.load(this, program.getProfileManager().getEveKitOwners());
-			EveKitContractItemsGetter eveKitContractItemsGetter = new EveKitContractItemsGetter();
-			eveKitContractItemsGetter.load(this, program.getProfileManager().getEveKitOwners());
 		}
 	}
 
@@ -902,15 +902,15 @@ public class UpdateDialog extends JDialogCentered {
 			//EveApi
 			if (!program.getProfileManager().getAccounts().isEmpty()) {
 				setIcon(Images.MISC_EVE.getIcon());
+				BlueprintsGetter blueprintsGetter = new BlueprintsGetter();
+				blueprintsGetter.load(this, Settings.get().isForceUpdate(), program.getProfileManager().getAccounts());
 			}
-			BlueprintsGetter blueprintsGetter = new BlueprintsGetter();
-			blueprintsGetter.load(this, Settings.get().isForceUpdate(), program.getProfileManager().getAccounts());
 			//EveKit
 			if (!program.getProfileManager().getEveKitOwners().isEmpty()) {
 				setIcon(Images.MISC_EVEKIT.getIcon());
+				EveKitBlueprintsGetter eveKitBlueprintsGetter = new EveKitBlueprintsGetter();
+				eveKitBlueprintsGetter.load(this, program.getProfileManager().getEveKitOwners());
 			}
-			EveKitBlueprintsGetter eveKitBlueprintsGetter = new EveKitBlueprintsGetter();
-			eveKitBlueprintsGetter.load(this, program.getProfileManager().getEveKitOwners());
 		}
 	}
 
