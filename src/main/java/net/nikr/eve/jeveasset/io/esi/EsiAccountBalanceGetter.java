@@ -27,7 +27,6 @@ import net.nikr.eve.jeveasset.data.esi.EsiOwner;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import net.troja.eve.esi.ApiClient;
 import net.troja.eve.esi.ApiException;
-import net.troja.eve.esi.auth.SsoScopes;
 import net.troja.eve.esi.model.CharacterWalletsResponse;
 
 
@@ -58,7 +57,7 @@ public class EsiAccountBalanceGetter extends AbstractEsiGetter {
 
 	@Override
 	protected boolean inScope(EsiOwner owner) {
-		return owner.getScopes().contains(SsoScopes.ESI_WALLET_READ_CHARACTER_WALLET_V1);
+		return owner.isAccountBalance();
 	}
 
 	@Override

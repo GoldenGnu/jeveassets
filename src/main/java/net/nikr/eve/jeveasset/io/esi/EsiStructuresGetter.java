@@ -41,7 +41,6 @@ import net.nikr.eve.jeveasset.io.online.CitadelGetter;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 import net.troja.eve.esi.ApiClient;
 import net.troja.eve.esi.ApiException;
-import net.troja.eve.esi.auth.SsoScopes;
 import net.troja.eve.esi.model.StructureResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -98,7 +97,7 @@ public class EsiStructuresGetter extends AbstractEsiGetter {
 
 	@Override
 	protected boolean inScope(EsiOwner owner) {
-		return owner.getScopes().contains(SsoScopes.ESI_UNIVERSE_READ_STRUCTURES_V1);
+		return owner.isStructures();
 	}
 
 	@Override

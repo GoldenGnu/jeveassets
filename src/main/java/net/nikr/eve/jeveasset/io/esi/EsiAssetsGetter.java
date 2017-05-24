@@ -27,7 +27,6 @@ import net.nikr.eve.jeveasset.data.esi.EsiOwner;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import net.troja.eve.esi.ApiClient;
 import net.troja.eve.esi.ApiException;
-import net.troja.eve.esi.auth.SsoScopes;
 import net.troja.eve.esi.model.CharacterAssetsResponse;
 
 
@@ -58,7 +57,7 @@ public class EsiAssetsGetter extends AbstractEsiGetter {
 
 	@Override
 	protected boolean inScope(EsiOwner owner) {
-		return owner.getScopes().contains(SsoScopes.ESI_ASSETS_READ_ASSETS_V1);
+		return owner.isAssetList();
 	}
 
 	@Override
