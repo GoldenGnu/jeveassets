@@ -58,7 +58,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JSlider;
 import javax.swing.JTextField;
-import javax.swing.UIManager;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.ExportSettings.DecimalSeparator;
 import net.nikr.eve.jeveasset.data.ExportSettings.ExportFormat;
@@ -137,14 +136,14 @@ public class ExportDialog<E> extends JDialogCentered {
 	private static final DecimalFormat EN_NUMBER_FORMAT  = new DecimalFormat("0.####", new DecimalFormatSymbols(new Locale("en")));
 	private static final DecimalFormat EU_NUMBER_FORMAT  = new DecimalFormat("0.####", new DecimalFormatSymbols(new Locale("da")));
 
-	private JCustomFileChooser jFileChooser;
+	private final JCustomFileChooser jFileChooser;
 
-	private List<EventList<E>> eventLists;
-	private Map<String, EnumTableColumn<E>> columns = new HashMap<String, EnumTableColumn<E>>();
-	private List<EnumTableColumn<E>> columnIndex = new ArrayList<EnumTableColumn<E>>();
-	private FilterControl<E> filterControl;
-	private ExportFilterControl<E> exportFilterControl;
-	private String toolName;
+	private final List<EventList<E>> eventLists;
+	private final Map<String, EnumTableColumn<E>> columns = new HashMap<String, EnumTableColumn<E>>();
+	private final List<EnumTableColumn<E>> columnIndex = new ArrayList<EnumTableColumn<E>>();
+	private final FilterControl<E> filterControl;
+	private final ExportFilterControl<E> exportFilterControl;
+	private final String toolName;
 
 	public ExportDialog(final JFrame jFrame, final String toolName, final FilterControl<E> filterControl, ExportFilterControl<E> exportFilterControl, final List<EventList<E>> eventLists, final List<EnumTableColumn<E>> enumColumns) {
 		super(null, DialoguesExport.get().export(), jFrame, Images.DIALOG_CSV_EXPORT.getImage());
@@ -156,21 +155,7 @@ public class ExportDialog<E> extends JDialogCentered {
 		ListenerClass listener = new ListenerClass();
 		layout.setAutoCreateContainerGaps(false);
 
-		try {
-			jFileChooser = new JCustomFileChooser(jFrame, Settings.get().getExportSettings().getExportFormat().getExtension());
-		} catch (RuntimeException e) {
-			// Workaround for JRE bug 4711700. A NullPointer is thrown
-			// sometimes on the first construction under XP look and feel,
-			// but construction succeeds on successive attempts.
-			try {
-				jFileChooser = new JCustomFileChooser(jFrame, Settings.get().getExportSettings().getExportFormat().getExtension());
-			} catch (RuntimeException npe) {
-				// ok, now we use the metal file chooser, takes a long time to load
-				// but the user can still use the program
-				UIManager.getDefaults().put("FileChooserUI", "javax.swing.plaf.metal.MetalFileChooserUI");
-				jFileChooser = new JCustomFileChooser(jFrame, Settings.get().getExportSettings().getExportFormat().getExtension());
-			}
-		}
+		jFileChooser = JCustomFileChooser.createFileChooser(jFrame, Settings.get().getExportSettings().getExportFormat().getExtension());
 	//Format
 		JPanel jFormatPanel = new JPanel();
 		jFormatPanel.setBorder(BorderFactory.createTitledBorder(DialoguesExport.get().format()));

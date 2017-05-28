@@ -44,7 +44,6 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
-import javax.swing.UIManager;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.EventListManager;
 import net.nikr.eve.jeveasset.data.Item;
@@ -99,7 +98,7 @@ public class LoadoutsTab extends JMainTab {
 	private final JSeparatorTable jTable;
 	private final JDropDownButton jExport;
 	private final LoadoutsExportDialog loadoutsExportDialog;
-	private JCustomFileChooser jXmlFileChooser;
+	private final JCustomFileChooser jXmlFileChooser;
 
 	//Table
 	private final EventList<Loadout> eventList;
@@ -121,21 +120,7 @@ public class LoadoutsTab extends JMainTab {
 
 		ListenerClass listener = new ListenerClass();
 
-		try {
-			jXmlFileChooser = new JCustomFileChooser(program.getMainWindow().getFrame(), "xml");
-		} catch (RuntimeException e) {
-			// Workaround for JRE bug 4711700. A NullPointer is thrown
-			// sometimes on the first construction under XP look and feel,
-			// but construction succeeds on successive attempts.
-			try {
-				jXmlFileChooser = new JCustomFileChooser(program.getMainWindow().getFrame(), "xml");
-			} catch (RuntimeException npe) {
-				// ok, now we use the metal file chooser, takes a long time to load
-				// but the user can still use the program
-				UIManager.getDefaults().put("FileChooserUI", "javax.swing.plaf.metal.MetalFileChooserUI");
-				jXmlFileChooser = new JCustomFileChooser(program.getMainWindow().getFrame(), "xml");
-			}
-		}
+		jXmlFileChooser = JCustomFileChooser.createFileChooser(program.getMainWindow().getFrame(), "xml");
 
 		JFixedToolBar jToolBarTop = new JFixedToolBar();
 

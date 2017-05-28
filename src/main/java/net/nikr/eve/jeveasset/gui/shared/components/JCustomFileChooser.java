@@ -25,6 +25,7 @@ import java.awt.Window;
 import java.io.File;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.UIManager;
 import javax.swing.filechooser.FileFilter;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 
@@ -34,7 +35,13 @@ public class JCustomFileChooser extends JFileChooser {
 	private final Window window;
 	private String extension;
 
-	public JCustomFileChooser(final Window window, final String extension) {
+	public static JCustomFileChooser createFileChooser(final Window window, final String extension) {
+		//XXX - Workaround for https://bugs.openjdk.java.net/browse/JDK-8179014
+		UIManager.put("FileChooser.useSystemExtensionHiding", false);
+		return new JCustomFileChooser(window, extension);
+	}
+
+	private JCustomFileChooser(final Window window, final String extension) {
 		this.window = window;
 		setExtension(extension);
 		this.setAcceptAllFileFilterUsed(false);
