@@ -150,7 +150,7 @@ public class StockpileTab extends JMainTab implements TagUpdate {
 
 		final ListenerClass listener = new ListenerClass();
 
-		jFileChooser = new JCustomFileChooser(program.getMainWindow().getFrame(), "xml");
+		jFileChooser = JCustomFileChooser.createFileChooser(program.getMainWindow().getFrame(), "xml");
 		jFileChooser.setMultiSelectionEnabled(false);
 		jFileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
 

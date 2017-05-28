@@ -66,16 +66,16 @@ public class JTextDialog extends JDialogCentered {
 	private final JButton jFromFile;
 	private final JButton jOK;
 	private final JButton jCancel;
-	private final JCustomFileChooser jFileChooser;
 	private final Color exportColor;
 	private final Color importColor;
+	private JCustomFileChooser jFileChooser;
 
 	private String returnValue = null;
 
 	public JTextDialog(Window window) {
 		super(null, "",  window, null);
 
-		jFileChooser = new JCustomFileChooser(window, "txt");
+		jFileChooser = JCustomFileChooser.createFileChooser(window, "txt");
 		jFileChooser.setMultiSelectionEnabled(false);
 		jFileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
 
