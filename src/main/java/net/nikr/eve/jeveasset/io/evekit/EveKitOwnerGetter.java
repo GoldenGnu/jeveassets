@@ -37,11 +37,12 @@ public class EveKitOwnerGetter extends AbstractEveKitGetter implements AccountAd
 	private boolean invalidPrivileges = false;
 	private boolean wrongEntry = false;
 
+	@Override
 	public void load(UpdateTask updateTask, EveKitOwner owner) {
 		limited = false;
 		invalidPrivileges = false;
 		wrongEntry = false;
-		super.loadOwner(updateTask, owner, null, false, true);
+		super.load(updateTask, owner);
 	}
 
 	@Override
@@ -117,7 +118,7 @@ public class EveKitOwnerGetter extends AbstractEveKitGetter implements AccountAd
 
 	@Override
 	protected String getTaskName() {
-		return "Owner";
+		return "Account";
 	}
 
 	@Override

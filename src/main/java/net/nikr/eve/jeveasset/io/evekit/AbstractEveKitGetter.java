@@ -57,6 +57,7 @@ public abstract class AbstractEveKitGetter {
 	}
 
 	private void load(UpdateTask updateTask, List<EveKitOwner> owners, Long at, boolean first) {
+		LOG.info("EveKit: " + getTaskName() + " updating:");
 		error = null;
 		invalid = false;
 		int progress = 0;
@@ -65,7 +66,7 @@ public abstract class AbstractEveKitGetter {
 		}
 		for (EveKitOwner owner : owners) {
 			if (owner.isShowOwner()) { //Ignore not shown owners
-				loadOwner(updateTask, owner, at, first, false);
+				loadApi(updateTask, owner, at, first, false);
 			}
 			if (updateTask != null) {
 				if (updateTask.isCancelled()) {
@@ -78,40 +79,41 @@ public abstract class AbstractEveKitGetter {
 		}
 	}
 
-	protected void loadOwner(UpdateTask updateTask, EveKitOwner owner, Long at, boolean first, boolean forceUpdate) {
+	protected void load(UpdateTask updateTask, EveKitOwner owner) {
+		LOG.info("EveKit: " + getTaskName() + " updating:");
 		error = null;
 		invalid = false;
-		loadApi(updateTask, owner, at, first, forceUpdate);
+		loadApi(updateTask, owner, null, false, true);
 	}
 
 	private boolean loadApi(UpdateTask updateTask, EveKitOwner owner, Long at, boolean first, boolean forceUpdate) {
 		try {
 			//Check if the Access Mask include this API
 			if ((owner.getAccessMask() & getAccessMask()) != getAccessMask()) {
-				addError("	" + getTaskName() + " failed to update for: " + owner.getOwnerName() + " (NOT ENOUGH ACCESS PRIVILEGES)");
+				addError("	EveKit: " + getTaskName() + " failed to update for: " + owner.getOwnerName() + " (NOT ENOUGH ACCESS PRIVILEGES)");
 				if (updateTask != null) {
-					updateTask.addError(owner.getOwnerName(), "Not enough access privileges.\r\n(Fix: Add " + getTaskName() + " to the API Key)");
+					updateTask.addError(owner.getOwnerName(), "EveKit: Not enough access privileges.\r\n(Fix: Add " + getTaskName() + " to the API Key)");
 				}
 				return false;
 			}
 			//Check if the Api Key is expired
 			if (owner.isExpired()) {
-				addError("	" + getTaskName() + " failed to update for: " + owner.getOwnerName() + " (API KEY EXPIRED)");
+				addError("	EveKit: " + getTaskName() + " failed to update for: " + owner.getOwnerName() + " (API KEY EXPIRED)");
 				if (updateTask != null) {
-					updateTask.addError(owner.getOwnerName(), "API Key expired");
+					updateTask.addError(owner.getOwnerName(), "EveKit: API Key expired");
 				}
 				return false;
 			}
 			//Check API cache time
 			if (!forceUpdate && !Settings.get().isUpdatable(getNextUpdate(owner), false)) {
-				addError("	" + getTaskName() + " failed to update for: " + owner.getOwnerName() + " (NOT ALLOWED YET)");
+				addError("	EveKit: " + getTaskName() + " failed to update for: " + owner.getOwnerName() + " (NOT ALLOWED YET)");
 				if (updateTask != null) {
-					updateTask.addError(owner.getOwnerName(), "Not allowed yet.\r\n(Fix: Just wait a bit)");
+					updateTask.addError(owner.getOwnerName(), "EveKit: Not allowed yet.\r\n(Fix: Just wait a bit)");
 				}
 				return false;
 			}
 			get(owner, at, first);
-			LOG.info("	EveKit " + getTaskName() + " updated for " + owner.getOwnerName());
+			LOG.info("	EveKit: " + getTaskName() + " updated for " + owner.getOwnerName());
 			List<String> expiryHeaders = getApiClient().getResponseHeaders().get("Expires");
 			if (expiryHeaders != null && !expiryHeaders.isEmpty()) {
 				setNextUpdate(owner, Formater.parseExpireDate(expiryHeaders.get(0)));
@@ -120,36 +122,36 @@ public abstract class AbstractEveKitGetter {
 		} catch (ApiException ex) {
 			switch (ex.getCode()) {
 				case 400:
-					addError("	" + getTaskName() + " failed to update for: " + owner.getOwnerName() + " (INVALID ATTRIBUTE SELECTOR)");
+					addError("	EveKit: " + getTaskName() + " failed to update for: " + owner.getOwnerName() + " (INVALID ATTRIBUTE SELECTOR)");
 					if (updateTask != null) {
-						updateTask.addError(owner.getOwnerName(), "Invalid attribute selector");
+						updateTask.addError(owner.getOwnerName(), "EveKit: Invalid attribute selector");
 					}
 					break;
 				case 401:
-					addError("	" + getTaskName() + " failed to update for: " + owner.getOwnerName() + " (INVALID CREDENTIAL)");
+					addError("	EveKit: " + getTaskName() + " failed to update for: " + owner.getOwnerName() + " (INVALID CREDENTIAL)");
 					if (updateTask != null) {
-						updateTask.addError(owner.getOwnerName(), "Access credential invalid");
+						updateTask.addError(owner.getOwnerName(), "EveKit: Access credential invalid");
 					}
 					invalid = true;
 					break;
 				case 403:
-					addError("	" + getTaskName() + " failed to update for: " + owner.getOwnerName() + " (INVALID ACCESS MASK)");
+					addError("	EveKit: " + getTaskName() + " failed to update for: " + owner.getOwnerName() + " (INVALID ACCESS MASK)");
 					if (updateTask != null) {
-						updateTask.addError(owner.getOwnerName(), "Not enough access privileges.\r\n(Fix: Add " + getTaskName() + " to the API Key)");
+						updateTask.addError(owner.getOwnerName(), "EveKit: Not enough access privileges.\r\n(Fix: Add " + getTaskName() + " to the API Key)");
 					}
 					invalid = true;
 					break;
 				case 404:
-					addError("	" + getTaskName() + " failed to update for: " + owner.getOwnerName() + " (INVALID ACCESS KEY ID)");
+					addError("	EveKit: " + getTaskName() + " failed to update for: " + owner.getOwnerName() + " (INVALID ACCESS KEY ID)");
 					if (updateTask != null) {
-						updateTask.addError(owner.getOwnerName(), "Access key with the given ID not found");
+						updateTask.addError(owner.getOwnerName(), "EveKit: Access key with the given ID not found");
 					}
 					invalid = true;
 					break;
 				default:
-					addError(ex.getMessage(), ex);
+					addError("EveKit: " + ex.getMessage(), ex);
 					if (updateTask != null) {
-						updateTask.addError(owner.getOwnerName(), "Unknown Error Code: " + ex.getCode());
+						updateTask.addError(owner.getOwnerName(), "EveKit: Unknown Error Code: " + ex.getCode());
 					}
 					break;
 			}

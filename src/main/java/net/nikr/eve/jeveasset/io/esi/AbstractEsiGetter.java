@@ -67,14 +67,17 @@ public abstract class AbstractEsiGetter {
 	}
 
 	protected void load(UpdateTask updateTask) {
+		LOG.info("ESI: " + getTaskName() + " updating:");
 		loadAPI(updateTask, null, false);
 	}
 
 	protected void load(EsiOwner owner) {
+		LOG.info("ESI: " + getTaskName() + " updating:");
 		loadAPI(null, owner, true);
 	}
 
 	protected void load(UpdateTask updateTask, List<EsiOwner> owners) {
+		LOG.info("ESI: " + getTaskName() + " updating:");
 		int progress = 0;
 		if (updateTask != null) {
 			updateTask.resetTaskProgress();
@@ -97,30 +100,30 @@ public abstract class AbstractEsiGetter {
 		try {
 			//Check if the Access Mask include this API
 			if (owner != null && !inScope(owner)) {
-				addError("	" + getTaskName() + " failed to update for: " + getOwnerName(owner) + " (NOT ENOUGH ACCESS PRIVILEGES)");
+				addError("	ESI: " + getTaskName() + " failed to update for: " + getOwnerName(owner) + " (NOT ENOUGH ACCESS PRIVILEGES)");
 				if (updateTask != null) {
-					updateTask.addError(getOwnerName(owner), "Not enough access privileges.\r\n(Fix: Add " + getTaskName() + " to the API Key)");
+					updateTask.addError(getOwnerName(owner), "ESI: Not enough access privileges.\r\n(Fix: Add " + getTaskName() + " to the API Key)");
 				}
 				return;
 			}
 			//Check if the Api Key is expired
 			if (!forceUpdate && owner != null && owner.isExpired()) {
-				addError("	" + getTaskName() + " failed to update for: " + getOwnerName(owner) + " (API KEY EXPIRED)");
+				addError("	ESI: " + getTaskName() + " failed to update for: " + getOwnerName(owner) + " (API KEY EXPIRED)");
 				if (updateTask != null) {
-					updateTask.addError(getOwnerName(owner), "API Key expired");
+					updateTask.addError(getOwnerName(owner), "ESI: API Key expired");
 				}
 				return;
 			}
 			//Check API cache time
 			if (!forceUpdate && owner != null && !Settings.get().isUpdatable(getNextUpdate(owner), false)) {
-				addError("	" + getTaskName() + " failed to update for: " + getOwnerName(owner) + " (NOT ALLOWED YET)");
+				addError("	ESI: " + getTaskName() + " failed to update for: " + getOwnerName(owner) + " (NOT ALLOWED YET)");
 				if (updateTask != null) {
-					updateTask.addError(getOwnerName(owner), "Not allowed yet.\r\n(Fix: Just wait a bit)");
+					updateTask.addError(getOwnerName(owner), "ESI: Not allowed yet.\r\n(Fix: Just wait a bit)");
 				}
 				return;
 			}
 			ApiClient client = get(owner);
-			LOG.info("	ESI " + getTaskName() + " updated for " +  getOwnerName(owner));
+			LOG.info("	ESI: " + getTaskName() + " updated for " +  getOwnerName(owner));
 			Map<String, List<String>> responseHeaders = client.getResponseHeaders();
 			if (responseHeaders != null) {
 				for (Map.Entry<String, List<String>> entry : responseHeaders.entrySet()) {
@@ -135,21 +138,33 @@ public abstract class AbstractEsiGetter {
 		} catch (ApiException ex) {
 			switch (ex.getCode()) {
 				case 403:
-					addError("	" + getTaskName() + " failed to update for: " + getOwnerName(owner) + " (FORBIDDEN)");
+					addError("	ESI: " + getTaskName() + " failed to update for: " + getOwnerName(owner) + " (FORBIDDEN)");
 					if (updateTask != null) {
-						updateTask.addError(getOwnerName(owner), "Forbidden");
+						updateTask.addError(getOwnerName(owner), "ESI: Forbidden");
 					}
 					break;
 				case 500:
-					addError("	" + getTaskName() + " failed to update for: " + getOwnerName(owner) + " (INTERNAL SERVER ERROR)");
+					addError("	ESI: " + getTaskName() + " failed to update for: " + getOwnerName(owner) + " (INTERNAL SERVER ERROR)");
 					if (updateTask != null) {
-						updateTask.addError(getOwnerName(owner), "Internal server error");
+						updateTask.addError(getOwnerName(owner), "ESI: Internal server error");
+					}
+					break;
+				case 502:
+					addError("	ESI: " + getTaskName() + " failed to update for: " + owner.getOwnerName() + " (SERVER OFFLINE)");
+					if (updateTask != null) {
+						updateTask.addError(owner.getOwnerName(), "ESI: Server offline");
+					}
+					break;
+				case 503:
+					addError("	ESI: " + getTaskName() + " failed to update for: " + owner.getOwnerName() + " (SERVER OFFLINE)");
+					if (updateTask != null) {
+						updateTask.addError(owner.getOwnerName(), "ESI: Server offline");
 					}
 					break;
 				default:
-					addError(ex.getMessage(), ex);
+					addError("ESI: " + ex.getMessage(), ex);
 					if (updateTask != null) {
-						updateTask.addError(getOwnerName(owner), "Unknown Error Code: " + ex.getCode());
+						updateTask.addError(getOwnerName(owner), "ESI: Unknown Error Code: " + ex.getCode());
 					}
 					break;
 			}
