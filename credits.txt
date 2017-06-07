@@ -134,6 +134,17 @@ License:
   GNU Lesser General Public License (http://www.gnu.org/copyleft/lesser.html)
 
 ________________________________________________________________________________
+_EVE-ESI________________________________________________________________________
+
+jEveAssets use eve-esi to get data from ESI
+
+Link:
+  https://github.com/burberius/eve-esi
+
+License:
+  Apache License (http://www.apache.org/licenses/LICENSE-2.0)
+
+________________________________________________________________________________
 _PRICING________________________________________________________________________
 
 jEveAssets use the Pricing library to get price data
