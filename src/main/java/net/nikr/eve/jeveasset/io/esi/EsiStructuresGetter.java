@@ -50,17 +50,21 @@ public class EsiStructuresGetter extends AbstractEsiGetter {
 
 	private static final Logger LOG = LoggerFactory.getLogger(EsiStructuresGetter.class);
 
-	private final Map<Long, Set<Long>> map = new HashMap<Long, Set<Long>>();
+	private final Map<Long, Set<Long>> mapLocationIDs = new HashMap<Long, Set<Long>>();
+	private final Map<Long, Set<Long>> mapItemIDs = new HashMap<Long, Set<Long>>();
 
 	public void load(UpdateTask updateTask, List<EsiOwner> owners, List<OwnerType> typeOwners) {
-		map.clear();
+		mapLocationIDs.clear();
+		mapItemIDs.clear();
 		for (EsiOwner owner : owners) {
-			map.put(owner.getOwnerID(), new HashSet<Long>());
+			mapLocationIDs.put(owner.getOwnerID(), new HashSet<Long>());
+			mapItemIDs.put(owner.getOwnerID(), new HashSet<Long>());
 		}
 		for (OwnerType owner : typeOwners) {
-			Set<Long> locationIDs = map.get(owner.getOwnerID());
+			Set<Long> locationIDs = mapLocationIDs.get(owner.getOwnerID());
+			Set<Long> itemIDs = mapItemIDs.get(owner.getOwnerID());
 			if (locationIDs != null) {
-				getIDs(locationIDs, owner);
+				getIDs(locationIDs, itemIDs, owner);
 			}
 		}
 		super.load(updateTask, owners);
@@ -69,7 +73,10 @@ public class EsiStructuresGetter extends AbstractEsiGetter {
 	@Override
 	protected ApiClient get(EsiOwner owner) throws ApiException {
 		List<Citadel> citadels = new ArrayList<>();
-		for (Long locationID : map.get(owner.getOwnerID())) {
+		Set<Long> locationIDs = mapLocationIDs.get(owner.getOwnerID());
+		Set<Long> itemIDs = mapItemIDs.get(owner.getOwnerID());
+		locationIDs.removeAll(itemIDs);
+		for (Long locationID : locationIDs) {
 			try {
 				StructureResponse response = getUniverseApiAuth().getUniverseStructuresStructureId(locationID, DATASOURCE, null, null, null);
 				citadels.add(ApiIdConverter.getCitadel(response, locationID));
@@ -105,14 +112,16 @@ public class EsiStructuresGetter extends AbstractEsiGetter {
 		return "Structures";
 	}
 
-	private void getIDs(Set<Long> locationIDs, OwnerType owner) {
+	private void getIDs(Set<Long> locationIDs, Set<Long> itemIDs, OwnerType owner) {
 		for (MyAsset asset : owner.getAssets()) {
+			itemIDs.add(asset.getItemID());
 			MyLocation location = asset.getLocation();
 			if (location.isEmpty() || location.isUserLocation() || location.isCitadel()) {
 				locationIDs.add(location.getLocationID());
 			}
 		}
 		for (Blueprint blueprint : owner.getBlueprints().values()) {
+			itemIDs.add(blueprint.getItemID());
 			MyLocation location = ApiIdConverter.getLocation(blueprint.getLocationID());
 			if (location.isEmpty() || location.isUserLocation() || location.isCitadel()) {
 				locationIDs.add(location.getLocationID());
