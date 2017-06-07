@@ -21,12 +21,14 @@
 package net.nikr.eve.jeveasset.io.esi;
 
 import com.beimin.eveapi.model.shared.Blueprint;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import net.nikr.eve.jeveasset.data.Citadel;
 import net.nikr.eve.jeveasset.data.MyLocation;
 import net.nikr.eve.jeveasset.data.api.OwnerType;
 import net.nikr.eve.jeveasset.data.esi.EsiOwner;
@@ -37,7 +39,6 @@ import net.nikr.eve.jeveasset.gui.tabs.jobs.MyIndustryJob;
 import net.nikr.eve.jeveasset.gui.tabs.orders.MyMarketOrder;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 import net.troja.eve.esi.ApiException;
-import net.troja.eve.esi.auth.SsoScopes;
 import net.troja.eve.esi.model.StructureResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,25 +48,32 @@ public class EsiStructuresGetter extends AbstractEsiGetter {
 
 	private static final Logger LOG = LoggerFactory.getLogger(EsiStructuresGetter.class);
 
-	Map<Long, Set<Long>> map = new HashMap<Long, Set<Long>>();
+	private final Map<Long, Set<Long>> mapLocationIDs = new HashMap<Long, Set<Long>>();
+	private final Map<Long, Set<Long>> mapItemIDs = new HashMap<Long, Set<Long>>();
 
 	public void load(UpdateTask updateTask, List<EsiOwner> owners, List<OwnerType> typeOwners) {
-		map.clear();
+		mapLocationIDs.clear();
+		mapItemIDs.clear();
 		for (EsiOwner owner : owners) {
-			map.put(owner.getOwnerID(), new HashSet<Long>());
+			mapLocationIDs.put(owner.getOwnerID(), new HashSet<Long>());
+			mapItemIDs.put(owner.getOwnerID(), new HashSet<Long>());
 		}
 		for (OwnerType owner : typeOwners) {
-			Set<Long> locationIDs = map.get(owner.getOwnerID());
+			Set<Long> locationIDs = mapLocationIDs.get(owner.getOwnerID());
+			Set<Long> itemIDs = mapItemIDs.get(owner.getOwnerID());
 			if (locationIDs != null) {
-				getIDs(locationIDs, owner);
+				getIDs(locationIDs, itemIDs, owner);
 			}
 		}
 		super.load(updateTask, owners);
 	}
-	
+
 	@Override
 	protected void get(EsiOwner owner) throws ApiException {
-		for (Long locationID : map.get(owner.getOwnerID())) {
+		Set<Long> locationIDs = mapLocationIDs.get(owner.getOwnerID());
+		Set<Long> itemIDs = mapItemIDs.get(owner.getOwnerID());
+		locationIDs.removeAll(itemIDs);
+		for (Long locationID : locationIDs) {
 			try {
 			StructureResponse response = getUniverseApi().getUniverseStructuresStructureId(locationID, DATASOURCE, null, null, null);
 			ApiIdConverter.addLocation(response, locationID);
@@ -91,7 +99,7 @@ public class EsiStructuresGetter extends AbstractEsiGetter {
 
 	@Override
 	protected boolean inScope(EsiOwner owner) {
-		return owner.getScopes().contains(SsoScopes.ESI_UNIVERSE_READ_STRUCTURES_V1);
+		return owner.isStructures();
 	}
 
 	@Override
@@ -99,14 +107,16 @@ public class EsiStructuresGetter extends AbstractEsiGetter {
 		return "Structures";
 	}
 
-	private void getIDs(Set<Long> locationIDs, OwnerType owner) {
+	private void getIDs(Set<Long> locationIDs, Set<Long> itemIDs, OwnerType owner) {
 		for (MyAsset asset : owner.getAssets()) {
+			itemIDs.add(asset.getItemID());
 			MyLocation location = asset.getLocation();
 			if (location.isEmpty() || location.isUserLocation() || location.isCitadel()) {
 				locationIDs.add(location.getLocationID());
 			}
 		}
 		for (Blueprint blueprint : owner.getBlueprints().values()) {
+			itemIDs.add(blueprint.getItemID());
 			MyLocation location = ApiIdConverter.getLocation(blueprint.getLocationID());
 			if (location.isEmpty() || location.isUserLocation() || location.isCitadel()) {
 				locationIDs.add(location.getLocationID());
