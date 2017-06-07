@@ -92,11 +92,13 @@ public abstract class AbstractApiAccountKeyGetter<T extends ApiListResponse<?>, 
 		fromID = 0;
 		while (rowCount >= ROW_COUNT) {
 			if (updateCorporation) {
-				updateName = updateName + " (division " + accountKey + " ";
+				updateName = updateName + " (division " + accountKey;
 			}
 			if (page > 1) {
 				if (!updateCorporation) {
 					updateName = updateName + " (";
+				} else {
+					updateName = updateName + " - ";
 				}
 				updateName = updateName + "page " + page;
 			}

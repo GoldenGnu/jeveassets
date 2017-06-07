@@ -100,7 +100,7 @@ public class EsiOwnerGetter extends AbstractEsiGetter implements AccountAdder{
 
 	@Override
 	protected String getTaskName() {
-		return "Owner";
+		return "Account";
 	}
 
 	@Override

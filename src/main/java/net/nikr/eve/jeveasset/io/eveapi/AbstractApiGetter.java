@@ -95,7 +95,7 @@ public abstract class AbstractApiGetter<T extends ApiResponse> {
 
 	protected void loadAccounts(final UpdateTask updateTask, final boolean forceUpdate, final List<EveApiAccount> accounts) {
 		init(updateTask, forceUpdate, null, null);
-		LOG.info("{} updating:", taskName);
+		LOG.info("EveApi: {} updating:", taskName);
 		//Calc size
 		int ownerSize = 0;
 		if (updateTask != null) { //Only relevant when tracking progress
@@ -147,11 +147,11 @@ public abstract class AbstractApiGetter<T extends ApiResponse> {
 			}
 		}
 		if (updated && updateTask != null && !updateTask.hasError()) {
-			LOG.info("	{} updated (ALL)", taskName);
+			LOG.info("	EveApi: {} updated (ALL)", taskName);
 		} else if (updated && updateTask != null && updateTask.hasError()) {
-			LOG.info("	{} updated (SOME)", taskName);
+			LOG.info("	EveApi: {} updated (SOME)", taskName);
 		} else {
-			LOG.info("	{} not updated (NONE)", taskName);
+			LOG.info("	EveApi: {} not updated (NONE)", taskName);
 		}
 	}
 
@@ -222,15 +222,15 @@ public abstract class AbstractApiGetter<T extends ApiResponse> {
 		}
 		//Check API cache time
 		if (!isUpdatable(nextUpdate)) {
-			addError(updateName, "Not allowed yet.\r\n(Fix: Just wait a bit)");
-			LOG.info("	{} failed to update for: {} (NOT ALLOWED YET)", taskName, updateName);
+			addError(updateName, "EveApi: Not allowed yet.\r\n(Fix: Just wait a bit)");
+			LOG.info("	EveApi: {} failed to update for: {} (NOT ALLOWED YET)", taskName, updateName);
 			return false;
 		}
 		try {
 			T response = getResponse(updateCorporation);
 			setNextUpdate(response.getCachedUntil());
 			if (!response.hasError()) { //OK
-				LOG.info("	{} updated for: {}", taskName, updateName);
+				LOG.info("	EveApi: {} updated for: {}", taskName, updateName);
 				this.updated = true;
 				setData(response);
 				notInvalid();
@@ -250,8 +250,8 @@ public abstract class AbstractApiGetter<T extends ApiResponse> {
 						errorExpired(updateName);
 						break;
 					default:
-						addError(updateName, "ApiError: " + apiError.getError() + " (Code: " + apiError.getCode() + ")");
-						LOG.info("	{} failed to update for: {} (API ERROR: code: {} :: {})", new Object[]{taskName, updateName, apiError.getCode(), apiError.getError()});
+						addError(updateName, "EveApi - Error: " + apiError.getError() + " (Code: " + apiError.getCode() + ")");
+						LOG.info("	EveApi: {} failed to update for: {} (API ERROR: code: {} :: {})", new Object[]{taskName, updateName, apiError.getCode(), apiError.getError()});
 						break;
 				}
 			}
@@ -261,8 +261,8 @@ public abstract class AbstractApiGetter<T extends ApiResponse> {
 			} else if (isExpired()) { //Expired
 				errorExpired(updateName);
 			} else {
-				addError(updateName, "ApiException: " + ex.getMessage()); //Real Error
-				LOG.error(taskName + " failed to update for: " + updateName + " (ApiException: " + ex.getMessage() + ")", ex);
+				addError(updateName, "EveApi - ApiException: " + ex.getMessage()); //Real Error
+				LOG.error("EveApi: " + taskName + " failed to update for: " + updateName + " (ApiException: " + ex.getMessage() + ")", ex);
 			}
 		}
 		return false;
@@ -331,23 +331,23 @@ public abstract class AbstractApiGetter<T extends ApiResponse> {
 		} else if (owner != null) {
 			owner.getParentAccount().setInvalid(true);
 		}
-		addError(updateName, "API Key invalid");
-		LOG.info("	{} failed to update for: {} (API KEY INVALID)", taskName, updateName);
+		addError(updateName, "EveApi: API Key invalid");
+		LOG.info("	EveApi: {} failed to update for: {} (API KEY INVALID)", taskName, updateName);
 	}
 
 	private void errorExpired(String updateName) {
-		addError(updateName, "API Key expired");
-		LOG.info("	{} failed to update for: {} (API KEY EXPIRED)", taskName, updateName);
+		addError(updateName, "EveApi: API Key expired");
+		LOG.info("	EveApi: {} failed to update for: {} (API KEY EXPIRED)", taskName, updateName);
 	}
 
 
 	private void errorAccessMask(String updateName) {
-		addError(updateName, "Not enough access privileges.\r\n(Fix: Add " + taskName + " to the API Key)");
-		LOG.info("	{} failed to update for: {} (NOT ENOUGH ACCESS PRIVILEGES)", taskName, updateName);
+		addError(updateName, "EveApi: Not enough access privileges.\r\n(Fix: Add " + taskName + " to the API Key)");
+		LOG.info("	EveApi: {} failed to update for: {} (NOT ENOUGH ACCESS PRIVILEGES)", taskName, updateName);
 	}
 
 	protected void errorWrongEntry() {
-		addError("", "Wrong Entry");
+		addError("", "EveApi: Wrong Entry");
 	}
 
 	protected void addError(final String owner, final String errorText) {
