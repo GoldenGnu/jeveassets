@@ -94,6 +94,7 @@ public class AboutDialog extends JDialogCentered {
 				+ "&nbsp;<a href=\"http://publicobject.com/glazedlists/\">Glazed Lists</a> (table sorting and filtering)<br> "
 				+ "&nbsp;<a href=\"http://super-csv.github.io/super-csv/\">Super CSV</a> (csv export)<br> "
 				+ "&nbsp;<a href=\"https://github.com/ZyorTaelon/eveapi\">eveapi</a> (parsing eve-online api)<br> "
+				+ "&nbsp;<a href=\"https://github.com/burberius/eve-esi\">eve-esi</a> (esi endpoints)<br> "
 				+ "&nbsp;<a href=\"https://github.com/LGoodDatePicker/LGoodDatePicker\">LGoodDatePicker</a> (date input)<br> "
 				+ "&nbsp;<a href=\"http://www.jfree.org/jfreechart/\">JFreeChart</a> (charts)<br> "
 				+ "&nbsp;<a href=\"http://junit.org\">JUnit</a> (unit testing)<br>"
