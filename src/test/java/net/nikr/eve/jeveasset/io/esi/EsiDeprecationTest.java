@@ -98,7 +98,7 @@ public class EsiDeprecationTest {
 	}
 
 	@Test
-	public void characterApi() {
+	public void blueprintsApi() {
 		CharacterApi api = new CharacterApi();
 		try {
 			api.getCharactersCharacterIdBlueprints(1, DATASOURCE, null, null, null);
