@@ -20,12 +20,12 @@
  */
 package net.nikr.eve.jeveasset.data.evekit;
 
-import net.nikr.eve.jeveasset.data.api.OwnerType;
-import net.nikr.eve.jeveasset.data.api.ApiType;
 import java.util.Date;
 import java.util.Objects;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.data.api.AbstractOwner;
+import net.nikr.eve.jeveasset.data.api.ApiType;
+import net.nikr.eve.jeveasset.data.api.OwnerType;
 
 
 public class EveKitOwner extends AbstractOwner implements OwnerType {
@@ -208,7 +208,7 @@ public class EveKitOwner extends AbstractOwner implements OwnerType {
 
 	@Override
 	public String getComparator() {
-		return "evekit" + getAccessKey();
+		return "evekit" + getAccountName() + getAccessKey();
 	}
 
 	@Override

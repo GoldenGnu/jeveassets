@@ -133,11 +133,14 @@ public class EsiOwner  extends AbstractOwner implements OwnerType {
 
 	@Override
 	public String getComparator() {
-		return  "esi" + getRefreshToken();
+		return  "esi" + getAccountName() + getRefreshToken();
 	}
 
 	@Override
 	public String getAccountName() {
+		if (accountName == null || accountName.isEmpty()) {
+			accountName = getOwnerName();
+		}
 		return accountName;
 	}
 

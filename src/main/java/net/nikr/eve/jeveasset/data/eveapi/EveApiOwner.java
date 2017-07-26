@@ -106,7 +106,7 @@ public class EveApiOwner extends AbstractOwner implements OwnerType {
 
 	@Override
 	public String getComparator() {
-		return "eveonline" + getParentAccount().getKeyID();
+		return "eveonline" + getAccountName() + getParentAccount().getKeyID();
 	}
 
 	@Override
