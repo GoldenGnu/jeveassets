@@ -148,6 +148,11 @@ public abstract class AbstractEsiGetter {
 					}
 					break;
 			}
+		} catch (Throwable ex) {
+			addError("	ESI: " + ex.getMessage(), ex);
+			if (updateTask != null) {
+				updateTask.addError(owner.getOwnerName(), "ESI: Unknown Error: " + ex.getMessage());
+			}
 		}
 	}
 
@@ -190,7 +195,7 @@ public abstract class AbstractEsiGetter {
 		return universeApi;
 	}
 
-	protected final void addError(String error, Exception ex) {
+	protected final void addError(String error, Throwable ex) {
 		this.error = error;
 		LOG.error(error, ex);
 	}
