@@ -28,13 +28,14 @@ import com.beimin.eveapi.response.calllist.CallListResponse;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import net.nikr.eve.jeveasset.TestUtil;
 import net.nikr.eve.jeveasset.data.eveapi.EveApiAccessMask;
-import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import org.junit.Test;
 
 
-public class AccessMaskOnlineTest {
+public class AccessMaskOnlineTest extends TestUtil {
 	@Test
 	public void testAccessMask() throws ApiException {
 		CallListParser callListParser = new CallListParser();

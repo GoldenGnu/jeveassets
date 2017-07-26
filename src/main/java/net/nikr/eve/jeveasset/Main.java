@@ -34,9 +34,10 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import static net.nikr.eve.jeveasset.Program.PROGRAM_NAME;
 import static net.nikr.eve.jeveasset.Program.PROGRAM_VERSION;
-import net.nikr.eve.jeveasset.io.online.Updater;
 import net.nikr.eve.jeveasset.io.local.FileLock;
+import net.nikr.eve.jeveasset.io.online.Updater;
 import net.nikr.eve.jeveasset.io.shared.FileUtil;
+import org.slf4j.bridge.SLF4JBridgeHandler;
 
 
 public final class Main {
@@ -130,7 +131,12 @@ public final class Main {
 			}
 		}
 		//Set format
-		System.setProperty("java.util.logging.SimpleFormatter.format", " %4$s: %2$s - %5$s%n");
+		System.setProperty("java.util.logging.SimpleFormatter.format", "%4$s: %2$s - %5$s%n");
+		try {
+			SLF4JBridgeHandler.install();
+		} catch (Throwable t) {
+			//This is ignored
+		}
 		log = Logger.getLogger(Main.class.getName());
 		//Add user agent to online requests
 		System.setProperty("http.agent", Program.PROGRAM_NAME + "/" + Program.PROGRAM_VERSION.replace(" ", "_"));
@@ -222,21 +228,22 @@ public final class Main {
 		files.add("guava-r09.jar");
 		files.add("jaxen-1.1.6.jar");
 		files.add("guava-r09.jar");
-		files.add("LGoodDatePicker-7.6.3.jar");
-		files.add("jcl-over-slf4j-1.6.1.jar");
+		files.add("LGoodDatePicker-10.2.3.jar");
 		files.add("jcommon-1.0.16.jar");
 		files.add("jfreechart-1.0.13.jar");
-		files.add("log4j-1.2.16.jar");
 		files.add("osxadapter-1.1.0.jar");
 		files.add("pricing-1.6.0.jar");
 		files.add("routing-1.5.0.jar");
-		files.add("slf4j-api-1.6.1.jar");
-		files.add("slf4j-log4j12-1.6.1.jar");
-		files.add("supercsv-1.52.jar");
+		files.add("slf4j-api-1.7.25.jar");
+		files.add("log4j-over-slf4j-1.7.25.jar");
+		files.add("jcl-over-slf4j-1.7.25.jar");
+		files.add("jul-to-slf4j-1.7.25.jar");
+		files.add("logback-core-1.2.3.jar");
+		files.add("logback-classic-1.2.3.jar");
+		files.add("super-csv-2.4.0.jar");
 		files.add("translations-2.2.0.jar");
-		files.add("jul-to-slf4j-1.6.1.jar");
 		files.add("jackson-core-2.8.6.jar");
-		files.add("jackson-databind-2.8.3.jar");
+		files.add("jackson-databind-2.8.8.1.jar");
 		files.add("jackson-annotations-2.8.6.jar");
 		files.add("aopalliance-repackaged-2.5.0-b32.jar");
 		files.add("jersey-guava-2.25.1.jar");

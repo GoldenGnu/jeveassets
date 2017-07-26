@@ -24,13 +24,12 @@ package net.nikr.eve.jeveasset.gui.images;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.net.URISyntaxException;
+import net.nikr.eve.jeveasset.TestUtil;
 import static org.junit.Assert.*;
 import org.junit.Test;
 
 
-public class ImagesTest {
-
-	public ImagesTest() { }
+public class ImagesTest extends TestUtil {
 
 	@Test
 	public void testExists() {

@@ -21,11 +21,12 @@
 package net.nikr.eve.jeveasset.gui.tabs.stockpile;
 
 import java.util.Map;
-import org.junit.Test;
+import net.nikr.eve.jeveasset.TestUtil;
 import static org.junit.Assert.*;
+import org.junit.Test;
 
 
-public class ImportIskPerHourTest {
+public class ImportIskPerHourTest extends TestUtil {
 
 	@Test
 	public void testCopyEveList() {

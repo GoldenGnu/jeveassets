@@ -20,26 +20,26 @@
  */
 package net.nikr.eve.jeveasset.data;
 
+import ch.qos.logback.classic.Level;
 import java.net.URISyntaxException;
 import java.util.List;
+import net.nikr.eve.jeveasset.TestUtil;
 import net.nikr.eve.jeveasset.data.BackwardCompatibilitySettings.Function;
 import net.nikr.eve.jeveasset.data.Settings.SettingFlag;
 import net.nikr.eve.jeveasset.io.local.SettingsReader;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
 import org.junit.*;
 import static org.junit.Assert.*;
 
-public class SettingsTest {
+public class SettingsTest extends TestUtil {
 
 	@BeforeClass
 	public static void setUpClass() throws Exception {
-		Logger.getRootLogger().setLevel(Level.OFF);
+		setLoggingLevel(Level.OFF);
 	}
 
 	@AfterClass
 	public static void tearDownClass() throws Exception {
-		Logger.getRootLogger().setLevel(Level.INFO);
+		setLoggingLevel(Level.INFO);
 	}
 	
 

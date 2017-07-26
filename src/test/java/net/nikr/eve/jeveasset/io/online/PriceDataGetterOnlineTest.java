@@ -20,6 +20,7 @@
  */
 package net.nikr.eve.jeveasset.io.online;
 
+import ch.qos.logback.classic.Level;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -30,16 +31,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import net.nikr.eve.jeveasset.TestUtil;
 import net.nikr.eve.jeveasset.data.Item;
 import net.nikr.eve.jeveasset.data.PriceData;
 import net.nikr.eve.jeveasset.data.PriceDataSettings.PriceSource;
 import net.nikr.eve.jeveasset.data.PriceDataSettings.RegionType;
 import net.nikr.eve.jeveasset.data.StaticData;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
 import org.junit.After;
 import org.junit.AfterClass;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -48,14 +50,12 @@ import uk.me.candle.eve.pricing.options.PricingFetch;
 import uk.me.candle.eve.pricing.options.PricingNumber;
 import uk.me.candle.eve.pricing.options.PricingOptions;
 import uk.me.candle.eve.pricing.options.PricingType;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 /**
  *
  * @author Niklas
  */
-public class PriceDataGetterOnlineTest {
+public class PriceDataGetterOnlineTest extends TestUtil {
 	private static final long REGION = 10000002L;  //The Forge (Jita region)
 	private static final long SYSTEM = 30000142L;  //Jita
 	private static final long STATION = 60003760L; //Jita 4 - 4
@@ -68,12 +68,12 @@ public class PriceDataGetterOnlineTest {
 	
 	@BeforeClass
 	public static void setUpClass() {
-		Logger.getRootLogger().setLevel(Level.OFF);
+		setLoggingLevel(Level.OFF);
 	}
 	
 	@AfterClass
 	public static void tearDownClass() {
-		Logger.getRootLogger().setLevel(Level.INFO);
+		setLoggingLevel(Level.INFO);
 	}
 	
 	@Before

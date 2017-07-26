@@ -21,30 +21,30 @@
 
 package net.nikr.eve.jeveasset.data;
 
-import net.nikr.eve.jeveasset.data.eveapi.EveApiAccount;
-import net.nikr.eve.jeveasset.data.eveapi.EveApiOwner;
+import ch.qos.logback.classic.Level;
 import java.io.File;
 import java.net.URISyntaxException;
 import java.net.URL;
+import net.nikr.eve.jeveasset.TestUtil;
+import net.nikr.eve.jeveasset.data.eveapi.EveApiAccount;
+import net.nikr.eve.jeveasset.data.eveapi.EveApiOwner;
 import net.nikr.eve.jeveasset.io.local.ProfileReader;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
 import org.junit.AfterClass;
 import static org.junit.Assert.*;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 
-public class ProfileTest {
+public class ProfileTest extends TestUtil {
 
 	@BeforeClass
 	public static void setUpClass() throws Exception {
-		Logger.getRootLogger().setLevel(Level.OFF);
+		setLoggingLevel(Level.OFF);
 	}
 
 	@AfterClass
 	public static void tearDownClass() throws Exception {
-		Logger.getRootLogger().setLevel(Level.INFO);
+		setLoggingLevel(Level.INFO);
 	}
 
 	private String getFilename(String name) throws URISyntaxException {

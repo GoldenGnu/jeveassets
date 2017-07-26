@@ -29,9 +29,10 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import net.nikr.eve.jeveasset.TestUtil;
 import net.nikr.eve.jeveasset.data.MyLocation;
-import net.nikr.eve.jeveasset.data.eveapi.EveApiOwner;
 import net.nikr.eve.jeveasset.data.api.OwnerType;
+import net.nikr.eve.jeveasset.data.eveapi.EveApiOwner;
 import net.nikr.eve.jeveasset.gui.tabs.contracts.MyContract;
 import net.nikr.eve.jeveasset.gui.tabs.contracts.MyContractItem;
 import net.nikr.eve.jeveasset.i18n.TabsValues;
@@ -42,7 +43,7 @@ import org.junit.Test;
  *
  * @author Niklas
  */
-public class DataSetCreatorTest {
+public class DataSetCreatorTest extends TestUtil {
 
 	private final Date now = new Date();
 	private final Date before = getBefore();

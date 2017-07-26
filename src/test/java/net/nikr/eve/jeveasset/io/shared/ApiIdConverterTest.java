@@ -22,38 +22,16 @@
 package net.nikr.eve.jeveasset.io.shared;
 
 import com.beimin.eveapi.model.eve.Station;
+import net.nikr.eve.jeveasset.TestUtil;
 import net.nikr.eve.jeveasset.data.MyLocation;
 import net.nikr.eve.jeveasset.data.StaticData;
-import org.junit.After;
-import org.junit.AfterClass;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 
-public class ApiIdConverterTest {
-
-	public ApiIdConverterTest() {
-	}
-
-	@BeforeClass
-	public static void setUpClass() throws Exception {
-	}
-
-	@AfterClass
-	public static void tearDownClass() throws Exception {
-	}
-
-	@Before
-	public void setUp() {
-	}
-
-	@After
-	public void tearDown() {
-	}
+public class ApiIdConverterTest extends TestUtil {
 
 	/**
 	 * Test of location method, of class ApiIdConverter.

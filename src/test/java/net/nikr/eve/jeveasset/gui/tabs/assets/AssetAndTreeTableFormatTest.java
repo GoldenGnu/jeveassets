@@ -20,13 +20,14 @@
  */
 package net.nikr.eve.jeveasset.gui.tabs.assets;
 
+import net.nikr.eve.jeveasset.TestUtil;
 import net.nikr.eve.jeveasset.gui.tabs.tree.TreeTableFormat;
-import org.junit.Test;
 import static org.junit.Assert.*;
+import org.junit.Test;
 
 
-public class AssetAndTreeTableFormatTest {
-	
+public class AssetAndTreeTableFormatTest extends TestUtil {
+
 	@Test
 	public void testColumns() {
 		assertEquals("A column is missing from TreeTableFormat or AssetTableFormat", TreeTableFormat.values().length, AssetTableFormat.values().length);

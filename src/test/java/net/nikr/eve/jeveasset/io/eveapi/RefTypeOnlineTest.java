@@ -25,30 +25,13 @@ import com.beimin.eveapi.exception.ApiException;
 import com.beimin.eveapi.response.eve.RefTypesResponse;
 import java.util.HashMap;
 import java.util.Map;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import net.nikr.eve.jeveasset.TestUtil;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
+import org.junit.Test;
 
-public class RefTypeOnlineTest {
-
-	public RefTypeOnlineTest() { }
-
-	@BeforeClass
-	public static void setUpClass() { }
-
-	@AfterClass
-	public static void tearDownClass() { }
-
-	@Before
-	public void setUp() { }
-
-	@After
-	public void tearDown() { }
+public class RefTypeOnlineTest extends TestUtil {
 
 	/**
 	 * Test of EVEAPI RefType enum (via the API - need to be online)

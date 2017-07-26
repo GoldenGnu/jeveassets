@@ -21,19 +21,14 @@
 
 package net.nikr.eve.jeveasset.io.local;
 
-import net.nikr.eve.jeveasset.io.local.FileLock;
+import ch.qos.logback.classic.Level;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import net.nikr.eve.jeveasset.TestUtil;
 import net.nikr.eve.jeveasset.data.ProfileManager;
 import net.nikr.eve.jeveasset.data.Settings;
-import net.nikr.eve.jeveasset.io.local.ProfileReader;
-import net.nikr.eve.jeveasset.io.local.ProfileWriter;
-import net.nikr.eve.jeveasset.io.local.SettingsReader;
-import net.nikr.eve.jeveasset.io.local.SettingsWriter;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
 import org.junit.AfterClass;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -41,15 +36,16 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 
-public class FileLockTest {
+public class FileLockTest extends TestUtil {
+
 	@BeforeClass
 	public static void setUpClass() throws Exception {
-		//Logger.getRootLogger().setLevel(Level.OFF);
+		setLoggingLevel(Level.OFF);
 	}
 
 	@AfterClass
 	public static void tearDownClass() throws Exception {
-		Logger.getRootLogger().setLevel(Level.INFO);
+		setLoggingLevel(Level.INFO);
 		//Cleanup
 		File settings = new File(FileLockSettings.getPathSettingsStatic());
 		File settingsBackup = new File(FileLockSettings.getPathSettingsBackup());

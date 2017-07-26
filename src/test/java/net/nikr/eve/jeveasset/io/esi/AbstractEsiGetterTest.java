@@ -22,18 +22,17 @@ package net.nikr.eve.jeveasset.io.esi;
 
 import java.util.List;
 import java.util.Map;
+import net.nikr.eve.jeveasset.TestUtil;
 import net.troja.eve.esi.ApiClient;
 import net.troja.eve.esi.ApiException;
 import net.troja.eve.esi.api.UniverseApi;
-import org.junit.Test;
 import static org.junit.Assert.*;
+import org.junit.Test;
 
 
-public class AbstractEsiGetterTest {
+public class AbstractEsiGetterTest extends TestUtil {
 
 	private final String DATASOURCE = "tranquility";
-
-	public AbstractEsiGetterTest() { }
 
 	@Test
 	public void universeApiStructures() {

@@ -779,7 +779,7 @@ public class ExportDialog<E> extends JDialogCentered {
 					rows,
 					headerStrings.toArray(new String[headerStrings.size()]),
 					headerKeys.toArray(new String[headerKeys.size()]),
-					new CsvPreference('\"', Settings.get().getExportSettings().getFieldDelimiter().getValue(), Settings.get().getExportSettings().getLineDelimiter().getValue()));
+					new CsvPreference.Builder('\"', Settings.get().getExportSettings().getFieldDelimiter().getValue(), Settings.get().getExportSettings().getLineDelimiter().getValue()).build());
 		} else if (jHtml.isSelected()) {
 	//HTML
 			//Create data

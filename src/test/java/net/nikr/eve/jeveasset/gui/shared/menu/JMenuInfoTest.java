@@ -24,19 +24,19 @@ package net.nikr.eve.jeveasset.gui.shared.menu;
 import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.SeparatorList;
+import ch.qos.logback.classic.Level;
 import java.util.ArrayList;
 import java.util.List;
+import net.nikr.eve.jeveasset.TestUtil;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo.MaterialTotal;
 import net.nikr.eve.jeveasset.gui.tabs.materials.Material;
 import net.nikr.eve.jeveasset.gui.tabs.materials.MaterialSeparatorComparator;
 import net.nikr.eve.jeveasset.i18n.TabsMaterials;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
 import org.junit.*;
 import static org.junit.Assert.assertEquals;
 
 
-public class JMenuInfoTest {
+public class JMenuInfoTest extends TestUtil {
 
 	private static Material summaryAll;
 	private static Material summaryTotal_group1;
@@ -74,7 +74,7 @@ public class JMenuInfoTest {
 
 	@BeforeClass
 	public static void setUpClass() throws Exception {
-		Logger.getRootLogger().setLevel(Level.OFF);
+		TestUtil.setLoggingLevel(Level.OFF);
 		summaryAll = new Material(Material.MaterialType.SUMMARY_ALL, null, TabsMaterials.get().summary(), "", "");
 		summaryAll.updateValue(1, 400);
 		ALL.add(summaryAll);
@@ -138,7 +138,7 @@ public class JMenuInfoTest {
 
 	@AfterClass
 	public static void tearDownClass() throws Exception {
-		Logger.getRootLogger().setLevel(Level.INFO);
+		TestUtil.setLoggingLevel(Level.INFO);
 	}
 
 	@Before

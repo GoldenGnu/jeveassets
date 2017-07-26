@@ -23,6 +23,7 @@ package net.nikr.eve.jeveasset.gui.tabs.routing;
 
 import java.util.Arrays;
 import java.util.Comparator;
+import net.nikr.eve.jeveasset.TestUtil;
 import static org.junit.Assert.assertEquals;
 import org.junit.Before;
 import org.junit.Test;
@@ -31,7 +32,7 @@ import org.junit.Test;
  *
  * @author Candle
  */
-public class TestMoveJList {
+public class TestMoveJList extends TestUtil {
 	private MoveJList<Something> a;
 	private MoveJList<Something> b;
 	private Something[] somethings;

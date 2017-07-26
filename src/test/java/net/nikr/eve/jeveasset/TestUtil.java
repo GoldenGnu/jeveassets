@@ -18,23 +18,21 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
  */
-package net.nikr.eve.jeveasset.io.eveapi;
+package net.nikr.eve.jeveasset;
 
-import net.nikr.eve.jeveasset.TestUtil;
-import net.nikr.eve.jeveasset.data.StaticData;
-import static org.junit.Assert.assertEquals;
-import org.junit.Test;
+import ch.qos.logback.classic.Level;
+import org.junit.BeforeClass;
 
-/**
- *
- * @author nkr
- */
-public class AssetsGetterTest extends TestUtil {
-	
-	@Test
-	public void testFlatListExclusions() {
-		assertEquals(StaticData.get().getItemFlags().get(7).getFlagName(), "Skill");
-		assertEquals(StaticData.get().getItemFlags().get(89).getFlagName(), "Implant");
-		assertEquals(StaticData.get().getItemFlags().get(61).getFlagName(), "Skill In Training");
+
+public class TestUtil {
+
+	@BeforeClass
+	public static void initLog() {
+		System.setProperty("log.home", "");
+	}
+
+	protected static void setLoggingLevel(Level level) {
+		ch.qos.logback.classic.Logger root = (ch.qos.logback.classic.Logger) org.slf4j.LoggerFactory.getLogger(ch.qos.logback.classic.Logger.ROOT_LOGGER_NAME);
+		root.setLevel(level);
 	}
 }
