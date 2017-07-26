@@ -55,8 +55,8 @@ import net.nikr.eve.jeveasset.io.esi.EsiIndustryJobsGetter;
 import net.nikr.eve.jeveasset.io.esi.EsiMarketOrdersGetter;
 import net.nikr.eve.jeveasset.io.esi.EsiNameGetter;
 import net.nikr.eve.jeveasset.io.esi.EsiOwnerGetter;
-import net.nikr.eve.jeveasset.io.esi.EsiStructuresGetter;
 import net.nikr.eve.jeveasset.io.esi.EsiScopes;
+import net.nikr.eve.jeveasset.io.esi.EsiStructuresGetter;
 import net.nikr.eve.jeveasset.io.eveapi.AccountBalanceGetter;
 import net.nikr.eve.jeveasset.io.eveapi.AccountGetter;
 import net.nikr.eve.jeveasset.io.eveapi.AssetsGetter;
@@ -991,10 +991,7 @@ public class UpdateDialog extends JDialogCentered {
 
 		@Override
 		public void update() {
-			switch (Settings.get().getPriceDataSettings().getSource()) {
-				case EVE_CENTRAL: setIcon(Images.LINK_EVE_CENTRAL.getIcon()); break;
-				case EVE_MARKETDATA: setIcon(Images.LINK_EVE_MARKETDATA.getIcon()); break;
-			}
+			setIcon(Settings.get().getPriceDataSettings().getSource().getIcon());
 			if (update) {
 				program.getPriceDataGetter().updateAll(program.getProfileData(), this);
 			} else {

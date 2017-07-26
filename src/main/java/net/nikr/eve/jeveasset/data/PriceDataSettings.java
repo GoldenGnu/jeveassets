@@ -23,6 +23,8 @@ package net.nikr.eve.jeveasset.data;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import javax.swing.Icon;
+import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.i18n.DataModelPriceDataSettings;
 import net.nikr.eve.jeveasset.i18n.DialoguesSettings;
 import uk.me.candle.eve.pricing.options.LocationType;
@@ -34,7 +36,7 @@ import uk.me.candle.eve.pricing.options.PricingType;
 public class PriceDataSettings {
 
 	public enum PriceSource {
-		EVE_CENTRAL(PricingFetch.EVE_CENTRAL, true, false, true, false, LocationType.REGION, Collections.singletonList(10000002L)) {
+		EVE_CENTRAL(PricingFetch.EVE_CENTRAL, true, false, true, false, LocationType.REGION, Collections.singletonList(10000002L), Images.LINK_EVE_CENTRAL.getIcon()) {
 			@Override public PriceMode[] getPriceTypes() {
 				return PriceMode.values();
 			}
@@ -42,7 +44,8 @@ public class PriceDataSettings {
 				return DataModelPriceDataSettings.get().sourceEveCentral();
 			}
 		},
-		EVE_MARKETDATA(PricingFetch.EVE_MARKETDATA, false, true, true, true, LocationType.REGION, Collections.singletonList(10000002L)) {
+		/*
+		EVE_MARKETDATA(PricingFetch.EVE_MARKETDATA, false, true, true, true, LocationType.REGION, Collections.singletonList(10000002L), Images.LINK_EVE_MARKETDATA.getIcon()) {
 			@Override public PriceMode[] getPriceTypes() {
 				return new PriceMode[]{PriceMode.PRICE_SELL_PERCENTILE, PriceMode.PRICE_MIDPOINT, PriceMode.PRICE_BUY_PERCENTILE};
 			}
@@ -50,6 +53,7 @@ public class PriceDataSettings {
 				return DataModelPriceDataSettings.get().sourceEveMarketdata();
 			}
 		},
+		*/
 		/*
 		EVEMARKETEER(PricingFetch.EVEMARKETEER, false, true, true, true) {
 			@Override public PriceMode[] getPriceTypes() {
@@ -78,6 +82,7 @@ public class PriceDataSettings {
 		private final boolean supportsStation;
 		private final LocationType defaultLocationType;
 		private final List<Long> defaultLocations;
+		private final Icon icon;
 
 		private PriceSource(final PricingFetch pricingFetch,
 				final boolean supportsMultipleRegions,
@@ -85,7 +90,8 @@ public class PriceDataSettings {
 				final boolean supportsSystem,
 				final boolean supportsStation,
 				final LocationType defaultLocationType,
-				final List<Long> defaultLocations) {
+				final List<Long> defaultLocations,
+				final Icon icon) {
 			this.pricingFetch = pricingFetch;
 			this.supportsMultipleRegions = supportsMultipleRegions;
 			this.supportsSingleRegion = supportsSingleRegion;
@@ -93,6 +99,7 @@ public class PriceDataSettings {
 			this.supportsStation = supportsStation;
 			this.defaultLocationType = defaultLocationType;
 			this.defaultLocations = defaultLocations;
+			this.icon = icon;
 		}
 
 		public abstract PriceMode[] getPriceTypes();
@@ -129,6 +136,11 @@ public class PriceDataSettings {
 		public boolean supportsSystem() {
 			return supportsSystem;
 		}
+
+		public Icon getIcon() {
+			return icon;
+		}
+
 		public boolean isValid(LocationType locationType, List<Long> locations) {
 			if (locationType == LocationType.REGION) {
 				if (locations.size() == 1) {
