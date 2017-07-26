@@ -150,15 +150,15 @@ public abstract class AbstractEsiGetter {
 					}
 					break;
 				case 502:
-					addError("	ESI: " + getTaskName() + " failed to update for: " + owner.getOwnerName() + " (SERVER OFFLINE)");
+					addError("	ESI: " + getTaskName() + " failed to update for: " + getOwnerName(owner) + " (SERVER OFFLINE)");
 					if (updateTask != null) {
-						updateTask.addError(owner.getOwnerName(), "ESI: Server offline");
+						updateTask.addError(getOwnerName(owner), "ESI: Server offline");
 					}
 					break;
 				case 503:
-					addError("	ESI: " + getTaskName() + " failed to update for: " + owner.getOwnerName() + " (SERVER OFFLINE)");
+					addError("	ESI: " + getTaskName() + " failed to update for: " + getOwnerName(owner) + " (SERVER OFFLINE)");
 					if (updateTask != null) {
-						updateTask.addError(owner.getOwnerName(), "ESI: Server offline");
+						updateTask.addError(getOwnerName(owner), "ESI: Server offline");
 					}
 					break;
 				default:
