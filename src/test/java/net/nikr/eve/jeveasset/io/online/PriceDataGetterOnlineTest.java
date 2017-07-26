@@ -42,7 +42,6 @@ import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import uk.me.candle.eve.pricing.options.LocationType;
 import uk.me.candle.eve.pricing.options.PricingFetch;
@@ -92,31 +91,7 @@ public class PriceDataGetterOnlineTest {
 		typeIDs.clear();
 	}
 
-	@Test @Ignore
-	public void testEveCentral() {
-		test(PriceSource.EVE_CENTRAL);
-	}
-
-	/*
-	//@Test
-	public void testEveAddicts() {
-		test(PriceSource.EVE_ADDICTS);
-	}
-	*/
-
-	//@Test
-	/*
-	public void testEveMarketeer() {
-		test(PriceSource.EVEMARKETEER);
-	}
-	*/
-
-	@Test @Ignore
-	public void testEveMarketdata() {
-		test(PriceSource.EVE_MARKETDATA);
-	}
-
-	@Test //@Ignore
+	@Test
 	public void testAll() {
 		long time = System.currentTimeMillis();
 		for (PriceSource source : PriceSource.values()) {
