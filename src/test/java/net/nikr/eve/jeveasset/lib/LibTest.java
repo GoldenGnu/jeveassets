@@ -24,10 +24,11 @@ import java.io.File;
 import java.util.HashSet;
 import java.util.Set;
 import net.nikr.eve.jeveasset.Main;
-import org.junit.Test;
+import net.nikr.eve.jeveasset.TestUtil;
 import static org.junit.Assert.assertTrue;
+import org.junit.Test;
 
-public class LibTest {
+public class LibTest extends TestUtil {
 
 	@Test
 	public void testLibs() {

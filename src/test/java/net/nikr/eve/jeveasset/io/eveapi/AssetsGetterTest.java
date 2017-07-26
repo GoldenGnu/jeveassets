@@ -20,6 +20,7 @@
  */
 package net.nikr.eve.jeveasset.io.eveapi;
 
+import net.nikr.eve.jeveasset.TestUtil;
 import net.nikr.eve.jeveasset.data.StaticData;
 import static org.junit.Assert.assertEquals;
 import org.junit.Test;
@@ -28,7 +29,7 @@ import org.junit.Test;
  *
  * @author nkr
  */
-public class AssetsGetterTest {
+public class AssetsGetterTest extends TestUtil {
 	
 	@Test
 	public void testFlatListExclusions() {

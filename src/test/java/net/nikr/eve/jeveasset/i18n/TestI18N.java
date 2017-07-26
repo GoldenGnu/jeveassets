@@ -22,6 +22,7 @@
 package net.nikr.eve.jeveasset.i18n;
 
 
+import net.nikr.eve.jeveasset.TestUtil;
 import static org.junit.Assert.assertNotNull;
 import org.junit.Test;
 
@@ -29,7 +30,7 @@ import org.junit.Test;
  *
  * @author Candle
  */
-public class TestI18N {
+public class TestI18N extends TestUtil {
 
 	@Test
 	public void testDataModelAssetBundle_en() throws Exception {

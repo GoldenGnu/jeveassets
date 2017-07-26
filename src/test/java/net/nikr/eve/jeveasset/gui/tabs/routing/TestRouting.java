@@ -21,13 +21,13 @@
 
 package net.nikr.eve.jeveasset.gui.tabs.routing;
 
+import ch.qos.logback.classic.Level;
 import java.util.ArrayList;
 import java.util.List;
+import net.nikr.eve.jeveasset.TestUtil;
 import net.nikr.eve.jeveasset.gui.tabs.routing.mocks.FakeRoutingTab;
 import net.nikr.eve.jeveasset.gui.tabs.routing.mocks.RoutingMockProgram;
 import net.nikr.eve.jeveasset.tests.mocks.FakeProgress;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
 import org.junit.AfterClass;
 import static org.junit.Assert.assertEquals;
 import org.junit.BeforeClass;
@@ -41,16 +41,16 @@ import uk.me.candle.eve.routing.RoutingAlgorithm;
  *
  * @author Candle
  */
-public class TestRouting {
+public class TestRouting extends TestUtil {
 
 	@BeforeClass
 	public static void setUpClass() throws Exception {
-		Logger.getRootLogger().setLevel(Level.OFF);
+		setLoggingLevel(Level.OFF);
 	}
 
 	@AfterClass
 	public static void tearDownClass() throws Exception {
-		Logger.getRootLogger().setLevel(Level.INFO);
+		setLoggingLevel(Level.INFO);
 	}
 
 	@Test

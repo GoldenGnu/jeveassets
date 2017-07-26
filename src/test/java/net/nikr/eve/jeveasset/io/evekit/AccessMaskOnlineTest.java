@@ -23,12 +23,14 @@ package net.nikr.eve.jeveasset.io.evekit;
 import enterprises.orbital.evekit.client.api.AccessKeyApi;
 import enterprises.orbital.evekit.client.invoker.ApiException;
 import enterprises.orbital.evekit.client.model.MaskList;
+import net.nikr.eve.jeveasset.TestUtil;
 import net.nikr.eve.jeveasset.data.evekit.EveKitAccessMask;
-import org.junit.Test;
 import static org.junit.Assert.assertEquals;
+import org.junit.Test;
 
 
-public class AccessMaskOnlineTest {
+public class AccessMaskOnlineTest extends TestUtil {
+
 	@Test
 	public void testAccessMask() throws ApiException {
 		AccessKeyApi accessKeyApi = new AccessKeyApi();

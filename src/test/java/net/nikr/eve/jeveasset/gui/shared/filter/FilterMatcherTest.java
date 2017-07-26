@@ -26,6 +26,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import net.nikr.eve.jeveasset.TestUtil;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter.AllColumn;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter.CompareType;
@@ -39,7 +40,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 
-public class FilterMatcherTest {
+public class FilterMatcherTest extends TestUtil {
 
 	public enum TestEnum implements EnumTableColumn<Item> {
 		TEXT(false, false),

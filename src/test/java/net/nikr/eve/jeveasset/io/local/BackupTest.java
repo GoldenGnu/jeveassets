@@ -25,6 +25,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import net.nikr.eve.jeveasset.TestUtil;
 import net.nikr.eve.jeveasset.io.shared.FileUtil;
 import org.junit.AfterClass;
 import static org.junit.Assert.assertFalse;
@@ -37,7 +38,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 
-public class BackupTest {
+public class BackupTest extends TestUtil {
 
 	private static final Logger LOG = LoggerFactory.getLogger(BackupTest.class);
 
@@ -48,6 +49,7 @@ public class BackupTest {
 	private static File getFile(String extension) {
 		return new File(new File(FileUtil.getPathRunJar()).getParentFile().getAbsolutePath() + File.separator + "test." + extension);
 	}
+
 	@BeforeClass
 	public static void setUpClass() {
 		targetFile = getFile("xml");

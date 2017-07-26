@@ -22,14 +22,12 @@
 
 package net.nikr.eve.jeveasset.data;
 
+import net.nikr.eve.jeveasset.TestUtil;
 import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 
 
-public class ReprocessSettingsTest {
-	
-	public ReprocessSettingsTest() {
-	}
+public class ReprocessSettingsTest extends TestUtil {
 
 	@Test
 	public void testSomeMethod() {

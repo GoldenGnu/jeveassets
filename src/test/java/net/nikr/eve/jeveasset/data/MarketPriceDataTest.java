@@ -22,11 +22,12 @@
 package net.nikr.eve.jeveasset.data;
 
 import java.util.Date;
+import net.nikr.eve.jeveasset.TestUtil;
 import static org.junit.Assert.*;
 import org.junit.Test;
 
 
-public class MarketPriceDataTest {
+public class MarketPriceDataTest extends TestUtil {
 
 	@Test
 	public void testUpdate() {

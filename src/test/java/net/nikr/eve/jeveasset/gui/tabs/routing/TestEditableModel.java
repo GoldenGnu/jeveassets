@@ -24,6 +24,7 @@ package net.nikr.eve.jeveasset.gui.tabs.routing;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import net.nikr.eve.jeveasset.TestUtil;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertSame;
 import org.junit.Before;
@@ -32,7 +33,7 @@ import org.junit.Test;
  *
  * @author Candle
  */
-public class TestEditableModel {
+public class TestEditableModel extends TestUtil {
 	private Comparator<ListContents> comp;
 	private List<ListContents> contents;
 
@@ -61,7 +62,7 @@ public class TestEditableModel {
 	}
 
 	class ListContents {
-		private String name;
+		private final String name;
 
 		public ListContents(final String name) {
 			this.name = name;

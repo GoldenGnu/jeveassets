@@ -21,30 +21,13 @@
 package net.nikr.eve.jeveasset.data;
 
 import java.util.List;
+import net.nikr.eve.jeveasset.TestUtil;
 import net.nikr.eve.jeveasset.data.PriceDataSettings.RegionType;
 import org.junit.*;
 import static org.junit.Assert.*;
 
 
-public class PriceDataSettingsTest {
-
-	public PriceDataSettingsTest() { }
-
-	@BeforeClass
-	public static void setUpClass() throws Exception {
-	}
-
-	@AfterClass
-	public static void tearDownClass() throws Exception {
-	}
-
-	@Before
-	public void setUp() {
-	}
-
-	@After
-	public void tearDown() {
-	}
+public class PriceDataSettingsTest extends TestUtil {
 
 	@Test
 	public void testGetRegion() {

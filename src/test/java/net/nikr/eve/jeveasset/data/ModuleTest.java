@@ -23,30 +23,12 @@ package net.nikr.eve.jeveasset.data;
 
 import java.util.ArrayList;
 import java.util.List;
+import net.nikr.eve.jeveasset.TestUtil;
 import net.nikr.eve.jeveasset.gui.tabs.loadout.Loadout.FlagType;
 import org.junit.*;
 import static org.junit.Assert.assertTrue;
 
-public class ModuleTest {
-
-	public ModuleTest() {
-	}
-
-	@BeforeClass
-	public static void setUpClass() throws Exception {
-	}
-
-	@AfterClass
-	public static void tearDownClass() throws Exception {
-	}
-
-	@Before
-	public void setUp() {
-	}
-
-	@After
-	public void tearDown() {
-	}
+public class ModuleTest extends TestUtil {
 
 	/**
 	 * Test of FlagType enum, of class Module.
