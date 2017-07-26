@@ -34,7 +34,6 @@ public class EsiOwner  extends AbstractOwner implements OwnerType {
 
 	private String accountName;
 	private String refreshToken;
-    private Date expire;
     private String scopes;
     private String tokenType;
     private String CharacterOwnerHash;
@@ -49,7 +48,6 @@ public class EsiOwner  extends AbstractOwner implements OwnerType {
 		super(esiOwner);
 		this.accountName = esiOwner.accountName;
 		this.refreshToken = esiOwner.refreshToken;
-		this.expire = esiOwner.expire;
 		this.scopes = esiOwner.scopes;
 		this.tokenType = esiOwner.tokenType;
 		this.CharacterOwnerHash = esiOwner.CharacterOwnerHash;
@@ -123,10 +121,6 @@ public class EsiOwner  extends AbstractOwner implements OwnerType {
 		this.callbackURL = callbackURL;
 	}
 
-	public void setExpire(Date expire) {
-		this.expire = expire;
-	}
-
 	@Override
 	public boolean isCorporation() {
 		return !tokenType.equals("Character");
@@ -134,7 +128,7 @@ public class EsiOwner  extends AbstractOwner implements OwnerType {
 
 	@Override
 	public Date getExpire() {
-		return expire;
+		return null;
 	}
 
 	@Override

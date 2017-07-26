@@ -67,7 +67,6 @@ public class EsiOwnerGetter extends AbstractEsiGetter implements AccountAdder{
 		owner.setOwnerID(characterInfo.getCharacterId());
 		owner.setOwnerName(characterInfo.getCharacterName());
 		owner.setCharacterOwnerHash(characterInfo.getCharacterOwnerHash());
-		owner.setExpire(characterInfo.getExpiresOn());
 		owner.setScopes(characterInfo.getScopes());
 		owner.setIntellectualProperty(characterInfo.getIntellectualProperty());
 		owner.setTokenType(characterInfo.getTokenType());

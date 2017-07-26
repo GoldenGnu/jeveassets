@@ -21,13 +21,13 @@
 
 package net.nikr.eve.jeveasset.io.local;
 
+import com.beimin.eveapi.model.shared.AccountBalance;
 import com.beimin.eveapi.model.shared.Blueprint;
 import com.beimin.eveapi.model.shared.Contract;
 import com.beimin.eveapi.model.shared.ContractAvailability;
 import com.beimin.eveapi.model.shared.ContractItem;
 import com.beimin.eveapi.model.shared.ContractStatus;
 import com.beimin.eveapi.model.shared.ContractType;
-import com.beimin.eveapi.model.shared.AccountBalance;
 import com.beimin.eveapi.model.shared.IndustryJob;
 import com.beimin.eveapi.model.shared.JournalEntry;
 import com.beimin.eveapi.model.shared.KeyType;
@@ -42,15 +42,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import net.nikr.eve.jeveasset.data.ItemFlag;
-import net.nikr.eve.jeveasset.data.eveapi.EveApiAccount;
 import net.nikr.eve.jeveasset.data.MyAccountBalance;
-import net.nikr.eve.jeveasset.data.eveapi.EveApiOwner;
 import net.nikr.eve.jeveasset.data.ProfileManager;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.data.StaticData;
-import net.nikr.eve.jeveasset.data.evekit.EveKitOwner;
 import net.nikr.eve.jeveasset.data.api.OwnerType;
 import net.nikr.eve.jeveasset.data.esi.EsiOwner;
+import net.nikr.eve.jeveasset.data.eveapi.EveApiAccount;
+import net.nikr.eve.jeveasset.data.eveapi.EveApiOwner;
+import net.nikr.eve.jeveasset.data.evekit.EveKitOwner;
 import net.nikr.eve.jeveasset.gui.tabs.assets.MyAsset;
 import net.nikr.eve.jeveasset.gui.tabs.journal.MyJournal;
 import net.nikr.eve.jeveasset.gui.tabs.transaction.MyTransaction;
@@ -119,7 +119,6 @@ public final class ProfileReader extends AbstractXmlReader {
 			Element currentNode = (Element) ownerNodes.item(i);
 			String accountName = AttributeGetters.getString(currentNode, "accountname");
 			String refreshToken = AttributeGetters.getString(currentNode, "refreshtoken");
-			Date expire = AttributeGetters.getDate(currentNode, "expire");
 			String scopes = AttributeGetters.getString(currentNode, "scopes");
 			String tokenType = AttributeGetters.getString(currentNode, "tokentype");
 			String characterOwnerHash = AttributeGetters.getString(currentNode, "characterownerhash");
@@ -131,7 +130,6 @@ public final class ProfileReader extends AbstractXmlReader {
 			EsiOwner owner = new EsiOwner();
 			owner.setAccountName(accountName);
 			owner.setRefreshToken(refreshToken);
-			owner.setExpire(expire);
 			owner.setScopes(scopes);
 			owner.setTokenType(tokenType);
 			owner.setCharacterOwnerHash(characterOwnerHash);
