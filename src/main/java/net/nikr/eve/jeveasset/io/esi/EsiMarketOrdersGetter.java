@@ -37,10 +37,9 @@ public class EsiMarketOrdersGetter extends AbstractEsiGetter {
 	}
 
 	@Override
-	protected ApiClient get(EsiOwner owner) throws ApiException {
+	protected void get(EsiOwner owner) throws ApiException {
 		List<CharacterOrdersResponse> marketOrders = getMarketApiAuth().getCharactersCharacterIdOrders((int)owner.getOwnerID(), DATASOURCE, null, null, null);
 		owner.setMarketOrders(EsiConverter.convertMarketOrders(owner, marketOrders));
-		return getMarketApiAuth().getApiClient();
 	}
 
 	@Override

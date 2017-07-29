@@ -56,12 +56,12 @@ public class EsiOwnerGetter extends AbstractEsiGetter implements AccountAdder{
 	}
 
 	@Override
-	protected ApiClient get(EsiOwner owner) throws ApiException {
-		CharacterInfo characterInfo = getSsoApiAuth(owner).getCharacterInfo();
+	protected void get(EsiOwner owner) throws ApiException {
+		CharacterInfo characterInfo = getSsoApiAuth().getCharacterInfo();
 		if (characterInfo.getCharacterId() != owner.getOwnerID() && owner.getOwnerID() != 0) {
 			addError("Wrong Entry");
 			wrongEntry = true;
-			return getSsoClient();
+			return;
 		}
 		owner.setAccountName(characterInfo.getCharacterName());
 		owner.setOwnerID(characterInfo.getCharacterId());
@@ -86,7 +86,6 @@ public class EsiOwnerGetter extends AbstractEsiGetter implements AccountAdder{
 		}
 		limited = (fails > 0 && fails < max);
 		invalidPrivileges = (fails >= max);
-		return getSsoClient();
 	}
 
 	@Override

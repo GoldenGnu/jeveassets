@@ -48,7 +48,7 @@ public class EsiConquerableStationsGetter extends AbstractEsiGetter {
 	}
 
 	@Override
-	protected ApiClient get(EsiOwner owner) throws ApiException {
+	protected void get(EsiOwner owner) throws ApiException {
 		List<SovereigntyStructuresResponse> structures = getSovereigntyApi().getSovereigntyStructures(DATASOURCE, System.getProperty("http.agent"), "");
 		Map<Integer, SovereigntyStructuresResponse> map = new HashMap<Integer, SovereigntyStructuresResponse>();
 		for (SovereigntyStructuresResponse structure : structures) {
@@ -77,7 +77,6 @@ public class EsiConquerableStationsGetter extends AbstractEsiGetter {
 			updateTask.setTaskProgress(batches.size(), progress, 0, 100);
 		}
 		CitadelGetter.set(citadels);
-		return getSovereigntyApi().getApiClient();
 	}
 
 	@Override

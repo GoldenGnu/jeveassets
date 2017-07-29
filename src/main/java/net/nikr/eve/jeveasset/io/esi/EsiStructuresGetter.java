@@ -71,7 +71,7 @@ public class EsiStructuresGetter extends AbstractEsiGetter {
 	}
 
 	@Override
-	protected ApiClient get(EsiOwner owner) throws ApiException {
+	protected void get(EsiOwner owner) throws ApiException {
 		List<Citadel> citadels = new ArrayList<>();
 		Set<Long> locationIDs = mapLocationIDs.get(owner.getOwnerID());
 		Set<Long> itemIDs = mapItemIDs.get(owner.getOwnerID());
@@ -89,7 +89,6 @@ public class EsiStructuresGetter extends AbstractEsiGetter {
 			}
 		}
 		CitadelGetter.set(citadels);
-		return getUniverseApiAuth().getApiClient();
 	}
 
 	@Override

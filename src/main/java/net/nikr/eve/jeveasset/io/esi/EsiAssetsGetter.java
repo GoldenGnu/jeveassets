@@ -38,10 +38,9 @@ public class EsiAssetsGetter extends AbstractEsiGetter {
 	}
 
 	@Override
-	protected ApiClient get(EsiOwner owner) throws ApiException {
+	protected void get(EsiOwner owner) throws ApiException {
 		List<CharacterAssetsResponse> responses = getAssetsApiAuth().getCharactersCharacterIdAssets((int)owner.getOwnerID(), DATASOURCE, null, null, null);
 		owner.setAssets(EsiConverter.convertAssets(owner, responses));
-		return getAssetsApiAuth().getApiClient();
 	}
 
 	@Override

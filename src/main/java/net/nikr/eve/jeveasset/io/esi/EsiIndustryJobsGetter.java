@@ -37,10 +37,9 @@ public class EsiIndustryJobsGetter extends AbstractEsiGetter {
 	}
 
 	@Override
-	protected ApiClient get(EsiOwner owner) throws ApiException {
+	protected void get(EsiOwner owner) throws ApiException {
 		List<CharacterIndustryJobsResponse> industryJobs = getIndustryApiAuth().getCharactersCharacterIdIndustryJobs((int)owner.getOwnerID(), DATASOURCE, true, null, null, null);
 		owner.setIndustryJobs(EsiConverter.convertIndustryJobs(owner, industryJobs));
-		return getIndustryApiAuth().getApiClient();
 	}
 
 	@Override

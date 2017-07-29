@@ -37,10 +37,9 @@ public class EsiBlueprintsGetter extends AbstractEsiGetter {
 	}
 
 	@Override
-	protected ApiClient get(EsiOwner owner) throws ApiException {
+	protected void get(EsiOwner owner) throws ApiException {
 		List<CharacterBlueprintsResponse> blueprints = getCharacterApiAuth().getCharactersCharacterIdBlueprints((int)owner.getOwnerID(), DATASOURCE, null, null, null);
 		owner.setBlueprints(EsiConverter.convertBlueprints(owner, blueprints));
-		return getCharacterApiAuth().getApiClient();
 	}
 
 	@Override

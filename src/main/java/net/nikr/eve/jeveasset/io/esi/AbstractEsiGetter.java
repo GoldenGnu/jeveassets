@@ -39,7 +39,6 @@ import net.troja.eve.esi.api.SovereigntyApi;
 import net.troja.eve.esi.api.SsoApi;
 import net.troja.eve.esi.api.UniverseApi;
 import net.troja.eve.esi.api.WalletApi;
-import net.troja.eve.esi.auth.OAuth;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,19 +50,28 @@ public abstract class AbstractEsiGetter {
 	protected final String DATASOURCE = "tranquility";
 	protected final int UNIVERSE_BATCH_SIZE = 100;
 	private String error = null;
-	private AssetsApi assetsApiAuth;
-	private WalletApi walletApiAuth;
-	private UniverseApi universeApiAuth;
-	private CharacterApi characterApiAuth;
-	private IndustryApi industryApiAuth;
-	private MarketApi marketApiAuth;
+	private final AssetsApi assetsApiAuth;
+	private final WalletApi walletApiAuth;
+	private final UniverseApi universeApiAuth;
+	private final CharacterApi characterApiAuth;
+	private final IndustryApi industryApiAuth;
+	private final MarketApi marketApiAuth;
 	private final UniverseApi universeApi;
 	private final SovereigntyApi sovereigntyApi;
-	private ApiClient ssoClient;
+	private final SsoApi ssoApi;
+	private final ApiClient unAuth;
 
 	protected AbstractEsiGetter() {
-		universeApi = new UniverseApi();
-		sovereigntyApi = new SovereigntyApi();
+		assetsApiAuth = new AssetsApi();
+		walletApiAuth = new WalletApi();
+		universeApiAuth = new UniverseApi();
+		characterApiAuth = new CharacterApi();
+		industryApiAuth = new IndustryApi();
+		marketApiAuth = new MarketApi();
+		unAuth = new ApiClient();
+		universeApi = new UniverseApi(unAuth);
+		sovereigntyApi = new SovereigntyApi(unAuth);
+		ssoApi = new SsoApi();
 	}
 
 	protected void load(UpdateTask updateTask) {
@@ -96,7 +104,7 @@ public abstract class AbstractEsiGetter {
 
 	private void loadAPI(UpdateTask updateTask, EsiOwner owner, boolean forceUpdate) {
 		error = null;
-		createClient(owner);
+		ApiClient client = client(owner);
 		try {
 			//Check if the Access Mask include this API
 			if (owner != null && !inScope(owner)) {
@@ -122,7 +130,7 @@ public abstract class AbstractEsiGetter {
 				}
 				return;
 			}
-			ApiClient client = get(owner);
+			get(owner);
 			LOG.info("	ESI: " + getTaskName() + " updated for " +  getOwnerName(owner));
 			Map<String, List<String>> responseHeaders = client.getResponseHeaders();
 			if (responseHeaders != null) {
@@ -176,7 +184,7 @@ public abstract class AbstractEsiGetter {
 		}
 	}
 
-	protected abstract ApiClient get(EsiOwner owner) throws ApiException;
+	protected abstract void get(EsiOwner owner) throws ApiException;
 	protected abstract String getTaskName();
 	protected abstract void setNextUpdate(EsiOwner owner, Date date);
 	protected abstract Date getNextUpdate(EsiOwner owner);
@@ -190,26 +198,19 @@ public abstract class AbstractEsiGetter {
 		}
 	}
 
-	private ApiClient getClient(EsiOwner owner) {
-		ApiClient apiClient = new ApiClient();
-		OAuth auth = (OAuth) apiClient.getAuthentication("evesso");
-		auth.setClientId(owner.getCallbackURL().getA());
-		auth.setClientSecret(owner.getCallbackURL().getB());
-		auth.setRefreshToken(owner.getRefreshToken());
-		return apiClient;
-	}
-
-	private void createClient(EsiOwner owner) {
+	private ApiClient client(EsiOwner owner) {
 		if (owner == null) {
-			return;
+			return unAuth;
 		}
-		ApiClient client = getClient(owner);
-		assetsApiAuth = new AssetsApi(client);
-		walletApiAuth = new WalletApi(client);
-		universeApiAuth = new UniverseApi(client);
-		characterApiAuth = new CharacterApi(client);
-		industryApiAuth = new IndustryApi(client);
-		marketApiAuth = new MarketApi(client);
+		ApiClient client = owner.getApiClient();
+		assetsApiAuth.setApiClient(client);
+		walletApiAuth.setApiClient(client);
+		universeApiAuth.setApiClient(client);
+		characterApiAuth.setApiClient(client);
+		industryApiAuth.setApiClient(client);
+		marketApiAuth.setApiClient(client);
+		ssoApi.setApiClient(client);
+		return client;
 	}
 
 	protected <T> List<List<T>> splitList(List<T> list, final int L) {
@@ -223,13 +224,9 @@ public abstract class AbstractEsiGetter {
 		return parts;
 	}
 
-	protected ApiClient getSsoClient() {
-		return ssoClient;
-	}
 
-	protected SsoApi getSsoApiAuth(EsiOwner owner) {
-		ssoClient = getClient(owner);
-		return new SsoApi(ssoClient);
+	protected SsoApi getSsoApiAuth() {
+		return ssoApi;
 	}
 
 	public MarketApi getMarketApiAuth() {

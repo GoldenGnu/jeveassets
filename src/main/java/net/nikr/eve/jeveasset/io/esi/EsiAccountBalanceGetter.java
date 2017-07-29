@@ -38,10 +38,9 @@ public class EsiAccountBalanceGetter extends AbstractEsiGetter {
 	}
 
 	@Override
-	protected ApiClient get(EsiOwner owner) throws ApiException {
+	protected void get(EsiOwner owner) throws ApiException {
 		List<CharacterWalletsResponse> response = getWalletApiAuth().getCharactersCharacterIdWallets((int)owner.getOwnerID(), DATASOURCE, null, null, null);
 		owner.setAccountBalances(EsiConverter.convertAccountBallances(owner, response));
-		return getWalletApiAuth().getApiClient();
 	}
 
 	@Override

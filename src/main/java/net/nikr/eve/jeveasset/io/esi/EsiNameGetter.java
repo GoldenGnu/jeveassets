@@ -44,7 +44,7 @@ public class EsiNameGetter extends AbstractEsiGetter {
 	}
 
 	@Override
-	protected ApiClient get(EsiOwner owner) throws ApiException {
+	protected void get(EsiOwner owner) throws ApiException {
 		List<List<Integer>> batches = splitList(ids, UNIVERSE_BATCH_SIZE);
 		int progress = 0;
 		for (List<Integer> batch : batches) {
@@ -55,7 +55,6 @@ public class EsiNameGetter extends AbstractEsiGetter {
 			progress++;
 			updateTask.setTaskProgress(batches.size(), progress, 0, 100);
 		}
-		return getUniverseApi().getApiClient();
 	}
 
 	@Override
