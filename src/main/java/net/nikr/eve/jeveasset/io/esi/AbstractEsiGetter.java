@@ -90,14 +90,6 @@ public abstract class AbstractEsiGetter {
 				}
 				return;
 			}
-			//Check if the Api Key is expired
-			if (!forceUpdate && owner.isExpired()) {
-				addError("	ESI: " + getTaskName() + " failed to update for: " + owner.getOwnerName() + " (API KEY EXPIRED)");
-				if (updateTask != null) {
-					updateTask.addError(owner.getOwnerName(), "ESI: API Key expired");
-				}
-				return;
-			}
 			//Check API cache time
 			if (!forceUpdate && !Settings.get().isUpdatable(getNextUpdate(owner), false)) {
 				addError("	ESI: " + getTaskName() + " failed to update for: " + owner.getOwnerName() + " (NOT ALLOWED YET)");
