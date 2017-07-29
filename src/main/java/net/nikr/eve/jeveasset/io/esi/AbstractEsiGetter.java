@@ -33,7 +33,6 @@ import net.troja.eve.esi.api.AssetsApi;
 import net.troja.eve.esi.api.SsoApi;
 import net.troja.eve.esi.api.UniverseApi;
 import net.troja.eve.esi.api.WalletApi;
-import net.troja.eve.esi.auth.OAuth;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,12 +43,17 @@ public abstract class AbstractEsiGetter {
 
 	protected final String DATASOURCE = "tranquility";
 	private String error = null;
-	private ApiClient client;
-	private AssetsApi assetsApi;
-	private WalletApi walletApi;
-	private UniverseApi universeApi;
+	private final AssetsApi assetsApi;
+	private final WalletApi walletApi;
+	private final UniverseApi universeApi;
+	private final SsoApi ssoApi;
 
-	protected AbstractEsiGetter() { }
+	protected AbstractEsiGetter() {
+		assetsApi = new AssetsApi();
+		walletApi = new WalletApi();
+		universeApi = new UniverseApi();
+		ssoApi = new SsoApi();
+	}
 
 	protected void load(EsiOwner owner) {
 		LOG.info("ESI: " + getTaskName() + " updating:");
@@ -76,7 +80,7 @@ public abstract class AbstractEsiGetter {
 
 	private void loadAPI(UpdateTask updateTask, EsiOwner owner, boolean forceUpdate) {
 		error = null;
-		createClient(owner);
+		ApiClient client = client(owner);
 		try {
 			//Check if the Access Mask include this API
 			if (!inScope(owner)) {
@@ -162,25 +166,17 @@ public abstract class AbstractEsiGetter {
 	protected abstract Date getNextUpdate(EsiOwner owner);
 	protected abstract boolean inScope(EsiOwner owner);
 
-	private ApiClient getClient(EsiOwner owner) {
-		ApiClient apiClient = new ApiClient();
-		OAuth auth = (OAuth) apiClient.getAuthentication("evesso");
-		auth.setClientId(owner.getCallbackURL().getA());
-		auth.setClientSecret(owner.getCallbackURL().getB());
-		auth.setRefreshToken(owner.getRefreshToken());
-		return apiClient;
+	private ApiClient client(EsiOwner owner) {
+		ApiClient client = owner.getApiClient();
+		assetsApi.setApiClient(client);
+		walletApi.setApiClient(client);
+		universeApi.setApiClient(client);
+		ssoApi.setApiClient(client);
+		return client;
 	}
 
-	private void createClient(EsiOwner owner) {
-		client = getClient(owner);
-		assetsApi = new AssetsApi(client);
-		walletApi = new WalletApi(client);
-		universeApi = new UniverseApi(client);
-	}
-
-	protected SsoApi getSsoApi(EsiOwner owner) {
-		client = getClient(owner);
-		return new SsoApi(client);
+	protected SsoApi getSsoApi() {
+		return ssoApi;
 	}
 
 	protected AssetsApi getAssetsApi() {

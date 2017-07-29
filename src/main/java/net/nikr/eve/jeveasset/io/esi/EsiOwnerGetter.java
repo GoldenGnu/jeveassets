@@ -56,7 +56,7 @@ public class EsiOwnerGetter extends AbstractEsiGetter implements AccountAdder{
 
 	@Override
 	protected void get(EsiOwner owner) throws ApiException {
-		CharacterInfo characterInfo = getSsoApi(owner).getCharacterInfo();
+		CharacterInfo characterInfo = getSsoApi().getCharacterInfo();
 		if (characterInfo.getCharacterId() != owner.getOwnerID() && owner.getOwnerID() != 0) {
 			addError("Wrong Entry");
 			wrongEntry = true;

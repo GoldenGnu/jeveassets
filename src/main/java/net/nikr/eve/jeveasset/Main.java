@@ -271,7 +271,7 @@ public final class Main {
 		files.add("swagger-annotations-1.5.12.jar");
 		files.add("jackson-datatype-jsr310-2.8.6.jar");
 		files.add("commons-lang3-3.5.jar");
-		files.add("eve-esi-1.1.1.jar");
+		files.add("eve-esi-1.2.3-SNAPSHOT.jar");
 		files.add("oauth2-client-2.25.1.jar");
 		return files;
 	}
