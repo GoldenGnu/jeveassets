@@ -70,6 +70,9 @@ public abstract class AbstractEsiGetter {
 			updateTask.resetTaskProgress();
 		}
 		for (EsiOwner owner : owners) {
+			if (!owner.isShowOwner()) {
+				continue;
+			}
 			loadAPI(updateTask, owner, false);
 			if (updateTask != null) {
 				if (updateTask.isCancelled()) {
