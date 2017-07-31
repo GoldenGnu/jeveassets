@@ -39,6 +39,7 @@ import net.troja.eve.esi.api.SovereigntyApi;
 import net.troja.eve.esi.api.SsoApi;
 import net.troja.eve.esi.api.UniverseApi;
 import net.troja.eve.esi.api.WalletApi;
+import net.troja.eve.esi.auth.OAuth;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,28 +51,31 @@ public abstract class AbstractEsiGetter {
 	protected final String DATASOURCE = "tranquility";
 	protected final int UNIVERSE_BATCH_SIZE = 100;
 	private String error = null;
+	private final ApiClient clientAuth;
 	private final AssetsApi assetsApiAuth;
 	private final WalletApi walletApiAuth;
 	private final UniverseApi universeApiAuth;
 	private final CharacterApi characterApiAuth;
 	private final IndustryApi industryApiAuth;
 	private final MarketApi marketApiAuth;
-	private final UniverseApi universeApi;
-	private final SovereigntyApi sovereigntyApi;
-	private final SsoApi ssoApi;
-	private final ApiClient unAuth;
+	private final SsoApi ssoApiAuth;
+	private final ApiClient clientOpen;
+	private final UniverseApi universeApiOpen;
+	private final SovereigntyApi sovereigntyApiOpen;
 
 	protected AbstractEsiGetter() {
-		assetsApiAuth = new AssetsApi();
-		walletApiAuth = new WalletApi();
-		universeApiAuth = new UniverseApi();
-		characterApiAuth = new CharacterApi();
-		industryApiAuth = new IndustryApi();
-		marketApiAuth = new MarketApi();
-		unAuth = new ApiClient();
-		universeApi = new UniverseApi(unAuth);
-		sovereigntyApi = new SovereigntyApi(unAuth);
-		ssoApi = new SsoApi();
+		clientAuth = new ApiClient();
+		assetsApiAuth = new AssetsApi(clientAuth);
+		walletApiAuth = new WalletApi(clientAuth);
+		universeApiAuth = new UniverseApi(clientAuth);
+		characterApiAuth = new CharacterApi(clientAuth);
+		industryApiAuth = new IndustryApi(clientAuth);
+		marketApiAuth = new MarketApi(clientAuth);
+		ssoApiAuth = new SsoApi(clientAuth);
+		clientOpen = new ApiClient();
+		universeApiOpen = new UniverseApi(clientOpen);
+		sovereigntyApiOpen = new SovereigntyApi(clientOpen);
+		
 	}
 
 	protected void load(UpdateTask updateTask) {
@@ -192,17 +196,13 @@ public abstract class AbstractEsiGetter {
 
 	private ApiClient client(EsiOwner owner) {
 		if (owner == null) {
-			return unAuth;
+			return clientOpen;
 		}
-		ApiClient client = owner.getApiClient();
-		assetsApiAuth.setApiClient(client);
-		walletApiAuth.setApiClient(client);
-		universeApiAuth.setApiClient(client);
-		characterApiAuth.setApiClient(client);
-		industryApiAuth.setApiClient(client);
-		marketApiAuth.setApiClient(client);
-		ssoApi.setApiClient(client);
-		return client;
+		OAuth auth = (OAuth) clientAuth.getAuthentication("evesso");
+		auth.setRefreshToken(owner.getRefreshToken());
+		auth.setClientId(owner.getCallbackURL().getA());
+		auth.setClientSecret(owner.getCallbackURL().getB());
+		return clientAuth;
 	}
 
 	protected <T> List<List<T>> splitList(List<T> list, final int L) {
@@ -218,7 +218,7 @@ public abstract class AbstractEsiGetter {
 
 
 	protected SsoApi getSsoApiAuth() {
-		return ssoApi;
+		return ssoApiAuth;
 	}
 
 	public MarketApi getMarketApiAuth() {
@@ -245,12 +245,12 @@ public abstract class AbstractEsiGetter {
 		return universeApiAuth;
 	}
 
-	public UniverseApi getUniverseApi() {
-		return universeApi;
+	public UniverseApi getUniverseApiOpen() {
+		return universeApiOpen;
 	}
 
-	public SovereigntyApi getSovereigntyApi() {
-		return sovereigntyApi;
+	public SovereigntyApi getSovereigntyApiOpen() {
+		return sovereigntyApiOpen;
 	}
 
 	protected final void addError(String error, Throwable ex) {

@@ -48,7 +48,7 @@ public class EsiNameGetter extends AbstractEsiGetter {
 		List<List<Integer>> batches = splitList(ids, UNIVERSE_BATCH_SIZE);
 		int progress = 0;
 		for (List<Integer> batch : batches) {
-			List<UniverseNamesResponse> names = getUniverseApi().postUniverseNames(batch, DATASOURCE, System.getProperty("http.agent"), null);
+			List<UniverseNamesResponse> names = getUniverseApiOpen().postUniverseNames(batch, DATASOURCE, System.getProperty("http.agent"), null);
 			for (UniverseNamesResponse lookup : names) {
 				Settings.get().getOwners().put((long)lookup.getId(), lookup.getName());
 			}
