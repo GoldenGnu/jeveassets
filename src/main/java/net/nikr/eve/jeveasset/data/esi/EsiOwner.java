@@ -27,8 +27,6 @@ import net.nikr.eve.jeveasset.data.api.AbstractOwner;
 import net.nikr.eve.jeveasset.data.api.ApiType;
 import net.nikr.eve.jeveasset.data.api.OwnerType;
 import net.nikr.eve.jeveasset.io.esi.EsiCallbackURL;
-import net.troja.eve.esi.ApiClient;
-import net.troja.eve.esi.auth.OAuth;
 import net.troja.eve.esi.auth.SsoScopes;
 
 
@@ -43,7 +41,6 @@ public class EsiOwner  extends AbstractOwner implements OwnerType {
     private Date structuresNextUpdate = Settings.getNow();
 	private Date accountNextUpdate = Settings.getNow();
 	private EsiCallbackURL callbackURL;
-	private final ApiClient apiClient = new ApiClient();
 
 	public EsiOwner() {}
 
@@ -58,10 +55,6 @@ public class EsiOwner  extends AbstractOwner implements OwnerType {
 		this.structuresNextUpdate = esiOwner.structuresNextUpdate;
 		this.accountNextUpdate = esiOwner.accountNextUpdate;
 		this.callbackURL = esiOwner.callbackURL;
-		OAuth auth = (OAuth) apiClient.getAuthentication("evesso");
-		auth.setRefreshToken(esiOwner.refreshToken);
-		auth.setClientId(esiOwner.callbackURL.getA());
-		auth.setClientSecret(esiOwner.callbackURL.getB());
 	}
 
 	public String getRefreshToken() {
@@ -70,8 +63,6 @@ public class EsiOwner  extends AbstractOwner implements OwnerType {
 
 	public void setRefreshToken(String refreshToken) {
 		this.refreshToken = refreshToken;
-		OAuth auth = (OAuth) apiClient.getAuthentication("evesso");
-		auth.setRefreshToken(refreshToken);
 	}
 
 	public String getScopes() {
@@ -128,13 +119,6 @@ public class EsiOwner  extends AbstractOwner implements OwnerType {
 
 	public void setCallbackURL(EsiCallbackURL callbackURL) {
 		this.callbackURL = callbackURL;
-		OAuth auth = (OAuth) apiClient.getAuthentication("evesso");
-		auth.setClientId(callbackURL.getA());
-		auth.setClientSecret(callbackURL.getB());
-	}
-
-	public ApiClient getApiClient() {
-		return apiClient;
 	}
 
 	@Override

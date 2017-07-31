@@ -33,6 +33,7 @@ import net.troja.eve.esi.api.AssetsApi;
 import net.troja.eve.esi.api.SsoApi;
 import net.troja.eve.esi.api.UniverseApi;
 import net.troja.eve.esi.api.WalletApi;
+import net.troja.eve.esi.auth.OAuth;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,16 +44,18 @@ public abstract class AbstractEsiGetter {
 
 	protected final String DATASOURCE = "tranquility";
 	private String error = null;
+	private final ApiClient client;
 	private final AssetsApi assetsApi;
 	private final WalletApi walletApi;
 	private final UniverseApi universeApi;
 	private final SsoApi ssoApi;
 
 	protected AbstractEsiGetter() {
-		assetsApi = new AssetsApi();
-		walletApi = new WalletApi();
-		universeApi = new UniverseApi();
-		ssoApi = new SsoApi();
+		client = new ApiClient();
+		assetsApi = new AssetsApi(client);
+		walletApi = new WalletApi(client);
+		universeApi = new UniverseApi(client);
+		ssoApi = new SsoApi(client);
 	}
 
 	protected void load(EsiOwner owner) {
@@ -159,11 +162,10 @@ public abstract class AbstractEsiGetter {
 	protected abstract boolean inScope(EsiOwner owner);
 
 	private ApiClient client(EsiOwner owner) {
-		ApiClient client = owner.getApiClient();
-		assetsApi.setApiClient(client);
-		walletApi.setApiClient(client);
-		universeApi.setApiClient(client);
-		ssoApi.setApiClient(client);
+		OAuth auth = (OAuth) client.getAuthentication("evesso");
+		auth.setRefreshToken(owner.getRefreshToken());
+		auth.setClientId(owner.getCallbackURL().getA());
+		auth.setClientSecret(owner.getCallbackURL().getB());
 		return client;
 	}
 
