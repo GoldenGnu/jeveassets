@@ -299,7 +299,7 @@ public class Program implements ActionListener {
 	}
 
 	private int calcButtonsHeight() {
-		int comboBox = new JComboBox<String>().getPreferredSize().height;
+		int comboBox = new JComboBox<Object>().getPreferredSize().height;
 		int textField = new JTextField().getPreferredSize().height;
 		int button = new JButton().getPreferredSize().height;
 		int buttonsHeight = 0;
@@ -341,7 +341,6 @@ public class Program implements ActionListener {
 			jMainTab.beforeUpdateData();
 		}
 		boolean saveSettings = profileData.updateEventLists();
-		System.gc(); //clean post-update mess :)
 		
 		for (JMainTab jMainTab : mainWindow.getTabs()) {
 			jMainTab.updateData();
