@@ -235,7 +235,7 @@ public class JMultiSelectionList<T> extends JList<T> {
 	private void updateList(final int index, final int fix) {
 		List<Integer> fixedIndices = new ArrayList<Integer>(selectedList.size());
 		for (int i = 0; i < selectedList.size(); i++) {
-			int item = selectedList.get(i).intValue();
+			int item = selectedList.get(i);
 			if (item >= index) {
 				item = item + fix;
 				fixedIndices.add(item);
@@ -263,7 +263,7 @@ public class JMultiSelectionList<T> extends JList<T> {
 		if (!isEnabled()) {
 			return;
 		} //Ingnore update when disabled
-		Integer indexObj = Integer.valueOf(index);
+		Integer indexObj = index;
 
 		//is this selected? if so remove it.
 		if (selectedList.contains(indexObj)) {
@@ -280,7 +280,7 @@ public class JMultiSelectionList<T> extends JList<T> {
 		//copy to an int array
 		int[] arr = new int[selectedList.size()];
 		for (int i = 0; i < arr.length; i++) {
-			int item = selectedList.get(i).intValue();
+			int item = selectedList.get(i);
 			arr[i] = item;
 		}
 		//set selected indices
