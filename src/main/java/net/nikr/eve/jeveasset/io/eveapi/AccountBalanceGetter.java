@@ -18,9 +18,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
  */
-
 package net.nikr.eve.jeveasset.io.eveapi;
-
 
 import com.beimin.eveapi.exception.ApiException;
 import com.beimin.eveapi.parser.character.CharAccountBalanceParser;
@@ -28,13 +26,11 @@ import com.beimin.eveapi.parser.corporation.CorpAccountBalanceParser;
 import com.beimin.eveapi.response.shared.AccountBalanceResponse;
 import java.util.Date;
 import java.util.List;
-import net.nikr.eve.jeveasset.data.eveapi.EveApiAccount;
-import net.nikr.eve.jeveasset.data.eveapi.EveApiOwner;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.data.eveapi.EveApiAccessMask;
+import net.nikr.eve.jeveasset.data.eveapi.EveApiAccount;
+import net.nikr.eve.jeveasset.data.eveapi.EveApiOwner;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
-import net.nikr.eve.jeveasset.io.shared.ApiConverter;
-
 
 public class AccountBalanceGetter extends AbstractApiGetter<AccountBalanceResponse> {
 
@@ -70,7 +66,7 @@ public class AccountBalanceGetter extends AbstractApiGetter<AccountBalanceRespon
 
 	@Override
 	protected void setData(final AccountBalanceResponse response) {
-		getOwner().setAccountBalances(ApiConverter.convertAccountBalance(response.getAll(), getOwner()));
+		getOwner().setAccountBalances(EveApiConverter.toAccountBalance(response.getAll(), getOwner()));
 	}
 
 	@Override

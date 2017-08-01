@@ -20,7 +20,6 @@
  */
 package net.nikr.eve.jeveasset.io.evekit;
 
-
 import enterprises.orbital.evekit.client.invoker.ApiClient;
 import enterprises.orbital.evekit.client.invoker.ApiException;
 import enterprises.orbital.evekit.client.model.Contract;
@@ -36,10 +35,11 @@ import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import net.nikr.eve.jeveasset.gui.tabs.contracts.MyContract;
 import net.nikr.eve.jeveasset.gui.tabs.contracts.MyContractItem;
 
-
 public class EveKitContractsGetter extends AbstractEveKitListGetter<Contract> {
 
-	private enum Runs { IN_PROGRESS, MONTHS, ALL} 
+	private enum Runs {
+		IN_PROGRESS, MONTHS, ALL
+	}
 
 	private Runs run;
 	private Map<EveKitOwner, Map<MyContract, List<MyContractItem>>> contracts;
@@ -76,7 +76,7 @@ public class EveKitContractsGetter extends AbstractEveKitListGetter<Contract> {
 	protected List<Contract> get(EveKitOwner owner, String at, Long contid) throws ApiException {
 		if (run == Runs.IN_PROGRESS) { //In-Progress
 			return getCommonApi().getContracts(owner.getAccessKey(), owner.getAccessCred(), null, contid, getMaxResults(), getReverse(),
-				null, null, null, null, null, null, null, null, contractsFilter(), null, null, null, null, null, null, null, null, null, null, null, null, null);
+					null, null, null, null, null, null, null, null, contractsFilter(), null, null, null, null, null, null, null, null, null, null, null, null, null);
 		}
 		if (run == Runs.MONTHS) { //months
 			return getCommonApi().getContracts(owner.getAccessKey(), owner.getAccessCred(), at, contid, getMaxResults(), getReverse(),
@@ -99,7 +99,7 @@ public class EveKitContractsGetter extends AbstractEveKitListGetter<Contract> {
 			}
 			contracts.put(owner, map);
 		}
-		map.putAll(EveKitConverter.convertContracts(data)); //New
+		map.putAll(EveKitConverter.toContracts(data, owner)); //New
 		owner.setContracts(map); //All
 	}
 
@@ -120,21 +120,29 @@ public class EveKitContractsGetter extends AbstractEveKitListGetter<Contract> {
 
 	@Override
 	protected int getProgressStart() {
-		switch(run) {
-			case IN_PROGRESS: return 0;
-			case MONTHS: return 15;
-			case ALL: return 0;
-			default: return 0;
+		switch (run) {
+			case IN_PROGRESS:
+				return 0;
+			case MONTHS:
+				return 15;
+			case ALL:
+				return 0;
+			default:
+				return 0;
 		}
 	}
 
 	@Override
 	protected int getProgressEnd() {
-		switch(run) {
-			case IN_PROGRESS: return 15;
-			case MONTHS: return 30;
-			case ALL: return 30;
-			default: return 30;
+		switch (run) {
+			case IN_PROGRESS:
+				return 15;
+			case MONTHS:
+				return 30;
+			case ALL:
+				return 30;
+			default:
+				return 30;
 		}
 	}
 

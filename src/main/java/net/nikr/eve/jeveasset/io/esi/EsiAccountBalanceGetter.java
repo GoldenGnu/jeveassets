@@ -20,15 +20,14 @@
  */
 package net.nikr.eve.jeveasset.io.esi;
 
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.data.esi.EsiOwner;
+import net.nikr.eve.jeveasset.data.raw.RawAccountBalance;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
-import net.troja.eve.esi.ApiClient;
 import net.troja.eve.esi.ApiException;
-import net.troja.eve.esi.model.CharacterWalletsResponse;
-
 
 public class EsiAccountBalanceGetter extends AbstractEsiGetter {
 
@@ -39,8 +38,8 @@ public class EsiAccountBalanceGetter extends AbstractEsiGetter {
 
 	@Override
 	protected void get(EsiOwner owner) throws ApiException {
-		List<CharacterWalletsResponse> response = getWalletApiAuth().getCharactersCharacterIdWallets((int)owner.getOwnerID(), DATASOURCE, null, null, null);
-		owner.setAccountBalances(EsiConverter.convertAccountBallances(owner, response));
+		Float response = getWalletApiAuth().getCharactersCharacterIdWallet((int) owner.getOwnerID(), DATASOURCE, null, null, null);
+		owner.setAccountBalances(EsiConverter.convertRawAccountBalance(Collections.singletonList(new RawAccountBalance(response, 1000)), owner));
 	}
 
 	@Override

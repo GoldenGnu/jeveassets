@@ -18,7 +18,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
  */
-
 package net.nikr.eve.jeveasset.io.eveapi;
 
 import com.beimin.eveapi.exception.ApiException;
@@ -28,18 +27,14 @@ import com.beimin.eveapi.parser.corporation.CorpAssetListParser;
 import com.beimin.eveapi.response.shared.AssetListResponse;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
-import net.nikr.eve.jeveasset.data.eveapi.EveApiAccount;
-import net.nikr.eve.jeveasset.data.eveapi.EveApiOwner;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.data.eveapi.EveApiAccessMask;
+import net.nikr.eve.jeveasset.data.eveapi.EveApiAccount;
+import net.nikr.eve.jeveasset.data.eveapi.EveApiOwner;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import net.nikr.eve.jeveasset.gui.tabs.assets.MyAsset;
-import net.nikr.eve.jeveasset.io.shared.ApiConverter;
-
 
 public class AssetsGetter extends AbstractApiGetter<AssetListResponse> {
 
@@ -85,28 +80,8 @@ public class AssetsGetter extends AbstractApiGetter<AssetListResponse> {
 
 	@Override
 	protected void setData(final AssetListResponse response) {
-		List<Asset> flatAssets = new ArrayList<Asset>(response.getAll()); // Get new asset from the flat list
-		Map<Long, Asset> lookupAssets = new HashMap<Long, Asset>();
-		for (Asset asset : flatAssets) { //Create Lookup table
-			lookupAssets.put(asset.getItemID(), asset);
-		}
-		List<Asset> treeAssets = new ArrayList<Asset>();
-		for (Asset asset : flatAssets) { //Make Tree
-			if (//Ignore:
-					asset.getFlag() != 7 //Skill
-					&& asset.getFlag() != 61 //Skill In Training
-					&& asset.getFlag() != 89 //Implant
-					) {
-				Asset parentAsset = lookupAssets.get(asset.getLocationID());
-				if (parentAsset != null) {
-					asset.setLocationID(0L);
-					parentAsset.add(asset);
-				} else {
-					treeAssets.add(asset);
-				}
-			}
-		}
-		getOwner().setAssets(ApiConverter.convertAsset(treeAssets, getOwner()));  //Convert and add MyAssets
+		List<Asset> assets = new ArrayList<Asset>(response.getAll()); // Get new asset from the flat list
+		getOwner().setAssets(EveApiConverter.toAssets(assets, getOwner()));
 	}
 
 	@Override

@@ -20,7 +20,6 @@
  */
 package net.nikr.eve.jeveasset.io.evekit;
 
-
 import enterprises.orbital.evekit.client.invoker.ApiClient;
 import enterprises.orbital.evekit.client.invoker.ApiException;
 import enterprises.orbital.evekit.client.model.IndustryJob;
@@ -37,11 +36,12 @@ import net.nikr.eve.jeveasset.data.evekit.EveKitOwner;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import net.nikr.eve.jeveasset.gui.tabs.jobs.MyIndustryJob;
 
-
 public class EveKitIndustryJobsGetter extends AbstractEveKitListGetter<IndustryJob> {
 
-	private enum Runs { ACTIVE_PAUSED_READY, MONTHS, ALL }
-	
+	private enum Runs {
+		ACTIVE_PAUSED_READY, MONTHS, ALL
+	}
+
 	private Runs run;
 	private Map<EveKitOwner, Set<MyIndustryJob>> industryJobs;
 
@@ -77,15 +77,15 @@ public class EveKitIndustryJobsGetter extends AbstractEveKitListGetter<IndustryJ
 	protected List<IndustryJob> get(EveKitOwner owner, String at, Long contid) throws ApiException {
 		if (run == Runs.ACTIVE_PAUSED_READY) { //Status 1,2,3 = Active, Paused, Ready
 			return getCommonApi().getIndustryJobs(owner.getAccessKey(), owner.getAccessCred(), null, contid, getMaxResults(), getReverse(),
-				null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, industryJobsFilter(), null, null, null, null, null, null, null);
+					null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, industryJobsFilter(), null, null, null, null, null, null, null);
 		}
 		if (run == Runs.MONTHS) { //months
 			return getCommonApi().getIndustryJobs(owner.getAccessKey(), owner.getAccessCred(), at, contid, getMaxResults(), getReverse(),
-				null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, dateFilter(Settings.get().getEveKitIndustryJobsHistory()), null, null);
+					null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, dateFilter(Settings.get().getEveKitIndustryJobsHistory()), null, null);
 		}
 		if (run == Runs.ALL) {
 			return getCommonApi().getIndustryJobs(owner.getAccessKey(), owner.getAccessCred(), at, contid, getMaxResults(), getReverse(),
-				null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+					null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
 		}
 		return new ArrayList<IndustryJob>();
 	}
@@ -100,7 +100,7 @@ public class EveKitIndustryJobsGetter extends AbstractEveKitListGetter<IndustryJ
 			}
 			industryJobs.put(owner, set);
 		}
-		set.addAll(EveKitConverter.convertIndustryJobs(data, owner)); //New
+		set.addAll(EveKitConverter.toIndustryJobs(data, owner)); //New
 		owner.setIndustryJobs(new ArrayList<MyIndustryJob>(set)); //All
 	}
 
@@ -108,7 +108,7 @@ public class EveKitIndustryJobsGetter extends AbstractEveKitListGetter<IndustryJ
 	protected long getCID(IndustryJob obj) {
 		return obj.getCid();
 	}
-	
+
 	@Override
 	protected Long getLifeStart(IndustryJob obj) {
 		return obj.getLifeStart();
@@ -122,20 +122,28 @@ public class EveKitIndustryJobsGetter extends AbstractEveKitListGetter<IndustryJ
 	@Override
 	protected int getProgressStart() {
 		switch (run) {
-			case ACTIVE_PAUSED_READY: return 0;
-			case MONTHS: return 50;
-			case ALL: return 0;
-			default: return 0;
+			case ACTIVE_PAUSED_READY:
+				return 0;
+			case MONTHS:
+				return 50;
+			case ALL:
+				return 0;
+			default:
+				return 0;
 		}
 	}
 
 	@Override
 	protected int getProgressEnd() {
 		switch (run) {
-			case ACTIVE_PAUSED_READY: return 50;
-			case MONTHS: return 100;
-			case ALL: return 100;
-			default: return 100;
+			case ACTIVE_PAUSED_READY:
+				return 50;
+			case MONTHS:
+				return 100;
+			case ALL:
+				return 100;
+			default:
+				return 100;
 		}
 	}
 

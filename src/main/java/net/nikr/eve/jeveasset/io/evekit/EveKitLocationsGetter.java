@@ -20,7 +20,6 @@
  */
 package net.nikr.eve.jeveasset.io.evekit;
 
-
 import enterprises.orbital.evekit.client.invoker.ApiClient;
 import enterprises.orbital.evekit.client.invoker.ApiException;
 import enterprises.orbital.evekit.client.model.Location;
@@ -34,7 +33,6 @@ import net.nikr.eve.jeveasset.data.evekit.EveKitAccessMask;
 import net.nikr.eve.jeveasset.data.evekit.EveKitOwner;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import net.nikr.eve.jeveasset.gui.tabs.assets.MyAsset;
-
 
 public class EveKitLocationsGetter extends AbstractEveKitListGetter<Location> {
 
@@ -58,10 +56,9 @@ public class EveKitLocationsGetter extends AbstractEveKitListGetter<Location> {
 
 	@Override
 	protected void set(EveKitOwner owner, List<Location> data) throws ApiException {
-		Map<Long, String> locations = EveKitConverter.convertLocations(data);
-		for (Map.Entry<Long, String> entry : locations.entrySet()) {
-			Long itemID = entry.getKey();
-			String eveName = entry.getValue();
+		for (Location location : data) {
+			Long itemID = location.getItemID();
+			String eveName = location.getItemName();
 			String typeName = itemMap.get(owner).get(itemID);
 			if (!eveName.equals(typeName)) {
 				eveNames.put(itemID, eveName);
@@ -131,7 +128,8 @@ public class EveKitLocationsGetter extends AbstractEveKitListGetter<Location> {
 	}
 
 	@Override
-	protected void saveCID(EveKitOwner owner, Long cid) { } //Always get all data
+	protected void saveCID(EveKitOwner owner, Long cid) {
+	} //Always get all data
 
 	@Override
 	protected Long loadCID(EveKitOwner owner) {

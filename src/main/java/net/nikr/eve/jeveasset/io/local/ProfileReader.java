@@ -18,21 +18,9 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
  */
-
 package net.nikr.eve.jeveasset.io.local;
 
-import com.beimin.eveapi.model.shared.AccountBalance;
-import com.beimin.eveapi.model.shared.Blueprint;
-import com.beimin.eveapi.model.shared.Contract;
-import com.beimin.eveapi.model.shared.ContractAvailability;
-import com.beimin.eveapi.model.shared.ContractItem;
-import com.beimin.eveapi.model.shared.ContractStatus;
-import com.beimin.eveapi.model.shared.ContractType;
-import com.beimin.eveapi.model.shared.IndustryJob;
-import com.beimin.eveapi.model.shared.JournalEntry;
 import com.beimin.eveapi.model.shared.KeyType;
-import com.beimin.eveapi.model.shared.MarketOrder;
-import com.beimin.eveapi.model.shared.WalletTransaction;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -44,30 +32,48 @@ import java.util.Set;
 import net.nikr.eve.jeveasset.data.ItemFlag;
 import net.nikr.eve.jeveasset.data.MyAccountBalance;
 import net.nikr.eve.jeveasset.data.ProfileManager;
-import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.data.StaticData;
 import net.nikr.eve.jeveasset.data.api.OwnerType;
 import net.nikr.eve.jeveasset.data.esi.EsiOwner;
 import net.nikr.eve.jeveasset.data.eveapi.EveApiAccount;
 import net.nikr.eve.jeveasset.data.eveapi.EveApiOwner;
 import net.nikr.eve.jeveasset.data.evekit.EveKitOwner;
+import net.nikr.eve.jeveasset.data.raw.RawAccountBalance;
+import net.nikr.eve.jeveasset.data.raw.RawAsset;
+import net.nikr.eve.jeveasset.data.raw.RawBlueprint;
+import net.nikr.eve.jeveasset.data.raw.RawContract;
+import net.nikr.eve.jeveasset.data.raw.RawContract.ContractAvailability;
+import net.nikr.eve.jeveasset.data.raw.RawContract.ContractStatus;
+import net.nikr.eve.jeveasset.data.raw.RawContract.ContractType;
+import net.nikr.eve.jeveasset.data.raw.RawContractItem;
+import net.nikr.eve.jeveasset.data.raw.RawIndustryJob;
+import net.nikr.eve.jeveasset.data.raw.RawJournal;
+import net.nikr.eve.jeveasset.data.raw.RawJournalExtraInfo;
+import net.nikr.eve.jeveasset.data.raw.RawMarketOrder;
+import net.nikr.eve.jeveasset.data.raw.RawTransaction;
 import net.nikr.eve.jeveasset.gui.tabs.assets.MyAsset;
+import net.nikr.eve.jeveasset.gui.tabs.contracts.MyContract;
+import net.nikr.eve.jeveasset.gui.tabs.contracts.MyContractItem;
+import net.nikr.eve.jeveasset.gui.tabs.jobs.MyIndustryJob;
 import net.nikr.eve.jeveasset.gui.tabs.journal.MyJournal;
+import net.nikr.eve.jeveasset.gui.tabs.orders.MyMarketOrder;
 import net.nikr.eve.jeveasset.gui.tabs.transaction.MyTransaction;
 import net.nikr.eve.jeveasset.io.esi.EsiCallbackURL;
-import net.nikr.eve.jeveasset.io.shared.ApiConverter;
+import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
+import net.nikr.eve.jeveasset.io.shared.DataConverter;
+import net.nikr.eve.jeveasset.io.shared.RawConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-
 public final class ProfileReader extends AbstractXmlReader {
 
 	private static final Logger LOG = LoggerFactory.getLogger(ProfileReader.class);
 
-	private ProfileReader() { }
+	private ProfileReader() {
+	}
 
 	public static boolean load(ProfileManager profileManager, final String filename) {
 		ProfileReader reader = new ProfileReader();
@@ -114,7 +120,7 @@ public final class ProfileReader extends AbstractXmlReader {
 	}
 
 	private void parseEsiOwners(final Element element, final List<EsiOwner> esiOwners) {
-		NodeList ownerNodes =  element.getElementsByTagName("esiowner");
+		NodeList ownerNodes = element.getElementsByTagName("esiowner");
 		for (int i = 0; i < ownerNodes.getLength(); i++) {
 			Element currentNode = (Element) ownerNodes.item(i);
 			String accountName = AttributeGetters.getString(currentNode, "accountname");
@@ -144,47 +150,23 @@ public final class ProfileReader extends AbstractXmlReader {
 	}
 
 	private void parseEveKitOwners(final Element element, final List<EveKitOwner> eveKitOwners) {
-		NodeList ownerNodes =  element.getElementsByTagName("evekitowner");
+		NodeList ownerNodes = element.getElementsByTagName("evekitowner");
 		for (int i = 0; i < ownerNodes.getLength(); i++) {
 			Element currentNode = (Element) ownerNodes.item(i);
 			int accessKey = AttributeGetters.getInt(currentNode, "accesskey");
 			String accessCred = AttributeGetters.getString(currentNode, "accesscred");
-			Date expire = null;
-			if (AttributeGetters.haveAttribute(currentNode, "expire")) {
-				expire = AttributeGetters.getDate(currentNode, "expire");
-			}
+			Date expire = AttributeGetters.getDateOptional(currentNode, "expire");
 			long accessmask = AttributeGetters.getLong(currentNode, "accessmask");
 			boolean corporation = AttributeGetters.getBoolean(currentNode, "corporation");
-			Date limit = null;
-			if (AttributeGetters.haveAttribute(currentNode, "limit")) {
-				limit = AttributeGetters.getDate(currentNode, "limit");
-			}
+			Date limit = AttributeGetters.getDateOptional(currentNode, "limit");
 			String accountName = AttributeGetters.getString(currentNode, "accountname");
 			//ContID
-			Long journalCID = null;
-			if (AttributeGetters.haveAttribute(currentNode, "journalcid")) {
-				journalCID = AttributeGetters.getLong(currentNode, "journalcid");
-			}
-			Long transactionsCID = null;
-			if (AttributeGetters.haveAttribute(currentNode, "transactionscid")) {
-				transactionsCID = AttributeGetters.getLong(currentNode, "transactionscid");
-			}
-			Long contractsCID = null;
-			if (AttributeGetters.haveAttribute(currentNode, "contractscid")) {
-				contractsCID = AttributeGetters.getLong(currentNode, "contractscid");
-			}
-			Long industryJobsCID = null;
-			if (AttributeGetters.haveAttribute(currentNode, "industryjobscid")) {
-				industryJobsCID = AttributeGetters.getLong(currentNode, "industryjobscid");
-			}
-			Long marketOrdersCID = null;
-			if (AttributeGetters.haveAttribute(currentNode, "marketorderscid")) {
-				marketOrdersCID = AttributeGetters.getLong(currentNode, "marketorderscid");
-			}
-			Date accountNextUpdate = Settings.getNow();
-			if (AttributeGetters.haveAttribute(currentNode, "accountnextupdate")) {
-				accountNextUpdate = AttributeGetters.getDate(currentNode, "accountnextupdate");
-			}
+			Long journalCID = AttributeGetters.getLongOptional(currentNode, "journalcid");
+			Long transactionsCID = AttributeGetters.getLongOptional(currentNode, "transactionscid");
+			Long contractsCID = AttributeGetters.getLongOptional(currentNode, "contractscid");
+			Long industryJobsCID = AttributeGetters.getLongOptional(currentNode, "industryjobscid");
+			Long marketOrdersCID = AttributeGetters.getLongOptional(currentNode, "marketorderscid");
+			Date accountNextUpdate = AttributeGetters.getDateOptional(currentNode, "accountnextupdate");
 			EveKitOwner owner = new EveKitOwner(accessKey, accessCred, expire, accessmask, corporation, limit, accountName);
 			owner.setJournalCID(journalCID);
 			owner.setTransactionsCID(transactionsCID);
@@ -248,7 +230,7 @@ public final class ProfileReader extends AbstractXmlReader {
 	}
 
 	private void parseOwners(final Element element, final EveApiAccount account) {
-		NodeList ownerNodes =  element.getElementsByTagName("human");
+		NodeList ownerNodes = element.getElementsByTagName("human");
 		for (int i = 0; i < ownerNodes.getLength(); i++) {
 			Element currentNode = (Element) ownerNodes.item(i);
 			EveApiOwner owner = new EveApiOwner(account);
@@ -260,54 +242,21 @@ public final class ProfileReader extends AbstractXmlReader {
 	private void parseOwnerType(final Element node, OwnerType owner) {
 		String ownerName = AttributeGetters.getString(node, "name");
 		long ownerID = AttributeGetters.getLong(node, "id");
-		Date assetsNextUpdate = Settings.getNow();
-		if (AttributeGetters.haveAttribute(node, "assetsnextupdate")) {
-			assetsNextUpdate = AttributeGetters.getDate(node, "assetsnextupdate");
-		}
-		Date assetsLastUpdate = null;
-		if (AttributeGetters.haveAttribute(node, "assetslastupdate")) {
-			assetsLastUpdate = AttributeGetters.getDate(node, "assetslastupdate");
-		}
-		Date balanceNextUpdate = Settings.getNow();
-		if (AttributeGetters.haveAttribute(node, "balancenextupdate")) {
-			balanceNextUpdate = AttributeGetters.getDate(node, "balancenextupdate");
-		}
-		Date balanceLastUpdate = null;
-		if (AttributeGetters.haveAttribute(node, "balancelastupdate")) {
-			balanceLastUpdate = AttributeGetters.getDate(node, "balancelastupdate");
-		}
+		Date assetsNextUpdate = AttributeGetters.getDateNotNull(node, "assetsnextupdate");
+		Date assetsLastUpdate = AttributeGetters.getDateOptional(node, "assetslastupdate");
+		Date balanceNextUpdate = AttributeGetters.getDateNotNull(node, "balancenextupdate");
+		Date balanceLastUpdate = AttributeGetters.getDateOptional(node, "balancelastupdate");
 		boolean showOwner = true;
 		if (AttributeGetters.haveAttribute(node, "show")) {
 			showOwner = AttributeGetters.getBoolean(node, "show");
 		}
-		Date marketOrdersNextUpdate = Settings.getNow();
-		if (AttributeGetters.haveAttribute(node, "marketordersnextupdate")) {
-			marketOrdersNextUpdate = AttributeGetters.getDate(node, "marketordersnextupdate");
-		}
-		Date journalNextUpdate = Settings.getNow();
-		if (AttributeGetters.haveAttribute(node, "journalnextupdate")) {
-			journalNextUpdate = AttributeGetters.getDate(node, "journalnextupdate");
-		}
-		Date transactionsNextUpdate = Settings.getNow();
-		if (AttributeGetters.haveAttribute(node, "wallettransactionsnextupdate")) {
-			transactionsNextUpdate =AttributeGetters.getDate(node, "wallettransactionsnextupdate");
-		}
-		Date industryJobsNextUpdate = Settings.getNow();
-		if (AttributeGetters.haveAttribute(node, "industryjobsnextupdate")) {
-			industryJobsNextUpdate = AttributeGetters.getDate(node, "industryjobsnextupdate");
-		}
-		Date contractsNextUpdate = Settings.getNow();
-		if (AttributeGetters.haveAttribute(node, "contractsnextupdate")) {
-			contractsNextUpdate = AttributeGetters.getDate(node, "contractsnextupdate");
-		}
-		Date locationsNextUpdate = Settings.getNow();
-		if (AttributeGetters.haveAttribute(node, "locationsnextupdate")) {
-			locationsNextUpdate = AttributeGetters.getDate(node, "locationsnextupdate");
-		}
-		Date blueprintsNextUpdate = Settings.getNow();
-		if (AttributeGetters.haveAttribute(node, "blueprintsnextupdate")) {
-			blueprintsNextUpdate = AttributeGetters.getDate(node, "blueprintsnextupdate");
-		}
+		Date marketOrdersNextUpdate = AttributeGetters.getDateNotNull(node, "marketordersnextupdate");
+		Date journalNextUpdate = AttributeGetters.getDateNotNull(node, "journalnextupdate");
+		Date transactionsNextUpdate = AttributeGetters.getDateNotNull(node, "wallettransactionsnextupdate");
+		Date industryJobsNextUpdate = AttributeGetters.getDateNotNull(node, "industryjobsnextupdate");
+		Date contractsNextUpdate = AttributeGetters.getDateNotNull(node, "contractsnextupdate");
+		Date locationsNextUpdate = AttributeGetters.getDateNotNull(node, "locationsnextupdate");
+		Date blueprintsNextUpdate = AttributeGetters.getDateNotNull(node, "blueprintsnextupdate");
 		owner.setOwnerName(ownerName);
 		owner.setOwnerID(ownerID);
 		owner.setAssetNextUpdate(assetsNextUpdate);
@@ -338,61 +287,53 @@ public final class ProfileReader extends AbstractXmlReader {
 
 	private void parseContracts(final Element element, final OwnerType owner) {
 		NodeList contractsNodes = element.getElementsByTagName("contracts");
-		Map<Contract, List<ContractItem>> eveContracts = new HashMap<Contract, List<ContractItem>>();
+		Map<MyContract, List<MyContractItem>> contracts = new HashMap<MyContract, List<MyContractItem>>();
 		for (int a = 0; a < contractsNodes.getLength(); a++) {
 			Element contractsNode = (Element) contractsNodes.item(a);
 			NodeList contractNodes = contractsNode.getElementsByTagName("contract");
 			for (int b = 0; b < contractNodes.getLength(); b++) {
 				Element contractNode = (Element) contractNodes.item(b);
-				Contract contract = parseContract(contractNode);
+				RawContract rawContract = parseContract(contractNode);
+				MyContract contract = DataConverter.toMyContract(rawContract);
 				NodeList itemNodes = contractNode.getElementsByTagName("contractitem");
-				List<ContractItem> contractItems = new ArrayList<ContractItem>();
+				List<MyContractItem> contractItems = new ArrayList<MyContractItem>();
 				for (int c = 0; c < itemNodes.getLength(); c++) {
 					Element currentNode = (Element) itemNodes.item(c);
-					ContractItem contractItem = parseContractItem(currentNode);
+					RawContractItem rawContractItem = parseContractItem(currentNode);
+					MyContractItem contractItem = DataConverter.toMyContractItem(rawContractItem, contract);
 					contractItems.add(contractItem);
 				}
-				eveContracts.put(contract, contractItems);
+
+				contracts.put(contract, contractItems);
 			}
 		}
-		owner.setContracts(ApiConverter.convertContracts(eveContracts));
+		owner.setContracts(contracts);
 	}
 
-	private Contract parseContract(final Element element) {
-		Contract contract = new Contract();
-		long acceptorID = AttributeGetters.getLong(element, "acceptorid");
-		long assigneeID = AttributeGetters.getLong(element, "assigneeid");
-		ContractAvailability availability
-				= ContractAvailability.valueOf(AttributeGetters.getString(element, "availability"));
-		double buyout = AttributeGetters.getDouble(element, "buyout");
-		double collateral = AttributeGetters.getDouble(element, "collateral");
-		long contractID = AttributeGetters.getLong(element, "contractid");
-		Date dateAccepted;
-		if (AttributeGetters.haveAttribute(element, "dateaccepted")) {
-			dateAccepted = AttributeGetters.getDate(element, "dateaccepted");
-		} else {
-			dateAccepted = null;
-		}
-		Date dateCompleted;
-		if (AttributeGetters.haveAttribute(element, "datecompleted")) {
-			dateCompleted = AttributeGetters.getDate(element, "datecompleted");
-		} else {
-			dateCompleted = null;
-		}
+	private RawContract parseContract(final Element element) {
+		RawContract contract = RawContract.create();
+		Integer acceptorID = AttributeGetters.getInt(element, "acceptorid");
+		Integer assigneeID = AttributeGetters.getInt(element, "assigneeid");
+		ContractAvailability availability = RawConverter.toContractAvailability(AttributeGetters.getString(element, "availability"));
+		Float buyout = AttributeGetters.getFloatOptional(element, "buyout");
+		Float collateral = AttributeGetters.getFloatOptional(element, "collateral");
+		Integer contractID = AttributeGetters.getInt(element, "contractid");
+		Date dateAccepted = AttributeGetters.getDateOptional(element, "dateaccepted");
+		Date dateCompleted = AttributeGetters.getDateOptional(element, "datecompleted");
 		Date dateExpired = AttributeGetters.getDate(element, "dateexpired");
 		Date dateIssued = AttributeGetters.getDate(element, "dateissued");
-		long endStationID = AttributeGetters.getLong(element, "endstationid");
-		long issuerCorpID = AttributeGetters.getLong(element, "issuercorpid");
-		long issuerID = AttributeGetters.getLong(element, "issuerid");
-		int numDays = AttributeGetters.getInt(element, "numdays");
-		double price = AttributeGetters.getDouble(element, "price");
-		double reward = AttributeGetters.getDouble(element, "reward");
-		long startStationID = AttributeGetters.getLong(element, "startstationid");
-		ContractStatus status = ContractStatus.valueOf(AttributeGetters.getString(element, "status"));
-		String title = AttributeGetters.getString(element, "title");
-		ContractType type = ContractType.valueOf(AttributeGetters.getString(element, "type"));
-		double volume = AttributeGetters.getDouble(element, "volume");
-		boolean forCorp = AttributeGetters.getBoolean(element, "forcorp");
+		Long endLocationID = AttributeGetters.getLongOptional(element, "endstationid");
+		Integer issuerCorporationID = AttributeGetters.getInt(element, "issuercorpid");
+		Integer issuerID = AttributeGetters.getInt(element, "issuerid");
+		Integer daysToComplete = AttributeGetters.getIntOptional(element, "numdays");
+		Float price = AttributeGetters.getFloatOptional(element, "price");
+		Float reward = AttributeGetters.getFloatOptional(element, "reward");
+		Long startLocationID = AttributeGetters.getLongOptional(element, "startstationid");
+		ContractStatus status = RawConverter.toContractStatus(AttributeGetters.getString(element, "status"));
+		String title = AttributeGetters.getStringOptional(element, "title");
+		ContractType type = RawConverter.toContractType(AttributeGetters.getString(element, "type"));
+		Float volume = AttributeGetters.getFloatOptional(element, "volume");
+		boolean forCorporation = AttributeGetters.getBoolean(element, "forcorp");
 
 		contract.setAcceptorID(acceptorID);
 		contract.setAssigneeID(assigneeID);
@@ -404,14 +345,14 @@ public final class ProfileReader extends AbstractXmlReader {
 		contract.setDateCompleted(dateCompleted);
 		contract.setDateExpired(dateExpired);
 		contract.setDateIssued(dateIssued);
-		contract.setEndStationID(endStationID);
-		contract.setForCorp(forCorp);
-		contract.setIssuerCorpID(issuerCorpID);
+		contract.setDaysToComplete(daysToComplete);
+		contract.setEndLocationID(endLocationID);
+		contract.setForCorporation(forCorporation);
+		contract.setIssuerCorporationID(issuerCorporationID);
 		contract.setIssuerID(issuerID);
-		contract.setNumDays(numDays);
 		contract.setPrice(price);
 		contract.setReward(reward);
-		contract.setStartStationID(startStationID);
+		contract.setStartLocationID(startLocationID);
 		contract.setStatus(status);
 		contract.setTitle(title);
 		contract.setType(type);
@@ -420,17 +361,14 @@ public final class ProfileReader extends AbstractXmlReader {
 		return contract;
 	}
 
-	private ContractItem parseContractItem(final Element element) {
-		ContractItem contractItem = new ContractItem();
+	private RawContractItem parseContractItem(final Element element) {
+		RawContractItem contractItem = RawContractItem.create();
 		boolean included = AttributeGetters.getBoolean(element, "included");
-		long quantity = AttributeGetters.getLong(element, "quantity");
+		Integer quantity = AttributeGetters.getInt(element, "quantity");
 		long recordID = AttributeGetters.getLong(element, "recordid");
 		boolean singleton = AttributeGetters.getBoolean(element, "singleton");
 		int typeID = AttributeGetters.getInt(element, "typeid");
-		Long rawQuantity = null;
-		if (AttributeGetters.haveAttribute(element, "rawquantity")) {
-			rawQuantity = AttributeGetters.getLong(element, "rawquantity");
-		}
+		Integer rawQuantity = AttributeGetters.getIntOptional(element, "rawquantity");
 		contractItem.setIncluded(included);
 		contractItem.setQuantity(quantity);
 		contractItem.setRecordID(recordID);
@@ -449,19 +387,18 @@ public final class ProfileReader extends AbstractXmlReader {
 			NodeList balanceNodes = currentBalancesNode.getElementsByTagName("balance");
 			for (int b = 0; b < balanceNodes.getLength(); b++) {
 				Element currentNode = (Element) balanceNodes.item(b);
-				AccountBalance accountBalance = parseBalance(currentNode);
-				accountBalances.add(new MyAccountBalance(accountBalance, owner));
+				RawAccountBalance rawAccountBalance = parseBalance(currentNode);
+				MyAccountBalance accountBalance = DataConverter.toMyAccountBalance(rawAccountBalance, owner);
+				accountBalances.add(accountBalance);
 			}
 		}
 		owner.setAccountBalances(accountBalances);
 	}
 
-	private AccountBalance parseBalance(final Element element) {
-		AccountBalance accountBalance = new AccountBalance();
-		int accountID = AttributeGetters.getInt(element, "accountid");
+	private RawAccountBalance parseBalance(final Element element) {
+		RawAccountBalance accountBalance = RawAccountBalance.create();
 		int accountKey = AttributeGetters.getInt(element, "accountkey");
-		double balance = AttributeGetters.getDouble(element, "balance");
-		accountBalance.setAccountID(accountID);
+		Float balance = AttributeGetters.getFloat(element, "balance");
 		accountBalance.setAccountKey(accountKey);
 		accountBalance.setBalance(balance);
 		return accountBalance;
@@ -469,51 +406,52 @@ public final class ProfileReader extends AbstractXmlReader {
 
 	private void parseMarketOrders(final Element element, final OwnerType owner) {
 		NodeList marketOrdersNodes = element.getElementsByTagName("markerorders");
-		List<MarketOrder> marketOrders = new ArrayList<MarketOrder>();
+		List<MyMarketOrder> marketOrders = new ArrayList<MyMarketOrder>();
 		for (int a = 0; a < marketOrdersNodes.getLength(); a++) {
 			Element currentMarketOrdersNode = (Element) marketOrdersNodes.item(a);
 			NodeList marketOrderNodes = currentMarketOrdersNode.getElementsByTagName("markerorder");
 			for (int b = 0; b < marketOrderNodes.getLength(); b++) {
 				Element currentNode = (Element) marketOrderNodes.item(b);
-				MarketOrder apiMarketOrder = parseMarketOrder(currentNode);
-				marketOrders.add(apiMarketOrder);
+				RawMarketOrder rawMarketOrder = parseMarketOrder(currentNode, owner);
+				MyMarketOrder marketOrder = DataConverter.toMyMarketOrder(rawMarketOrder, owner);
+				marketOrders.add(marketOrder);
 			}
 		}
-		owner.setMarketOrders(ApiConverter.convertMarketOrders(marketOrders, owner));
+		owner.setMarketOrders(marketOrders);
 	}
 
-	private MarketOrder parseMarketOrder(final Element element) {
-		MarketOrder apiMarketOrder = new MarketOrder();
+	private RawMarketOrder parseMarketOrder(final Element element, final OwnerType owner) {
+		RawMarketOrder apiMarketOrder = RawMarketOrder.create();
 		long orderID = AttributeGetters.getLong(element, "orderid");
-		long charID = AttributeGetters.getLong(element, "charid");
-		long stationID = AttributeGetters.getLong(element, "stationid");
+		long locationID = AttributeGetters.getLong(element, "stationid");
 		int volEntered = AttributeGetters.getInt(element, "volentered");
 		int volRemaining = AttributeGetters.getInt(element, "volremaining");
 		int minVolume = AttributeGetters.getInt(element, "minvolume");
-		int orderState = AttributeGetters.getInt(element, "orderstate");
+		int state = AttributeGetters.getInt(element, "orderstate");
 		int typeID = AttributeGetters.getInt(element, "typeid");
 		int range = AttributeGetters.getInt(element, "range");
-		int accountKey = AttributeGetters.getInt(element, "accountkey");
+		int accountID = AttributeGetters.getInt(element, "accountkey");
 		int duration = AttributeGetters.getInt(element, "duration");
-		double escrow = AttributeGetters.getDouble(element, "escrow");
-		double price = AttributeGetters.getDouble(element, "price");
+		Float escrow = AttributeGetters.getFloat(element, "escrow");
+		Float price = AttributeGetters.getFloat(element, "price");
 		int bid = AttributeGetters.getInt(element, "bid");
 		Date issued = AttributeGetters.getDate(element, "issued");
-		apiMarketOrder.setOrderID(orderID);
-		apiMarketOrder.setCharID(charID);
-		apiMarketOrder.setStationID(stationID);
-		apiMarketOrder.setVolEntered(volEntered);
-		apiMarketOrder.setVolRemaining(volRemaining);
-		apiMarketOrder.setMinVolume(minVolume);
-		apiMarketOrder.setOrderState(orderState);
-		apiMarketOrder.setTypeID(typeID);
-		apiMarketOrder.setRange(range);
-		apiMarketOrder.setAccountKey(accountKey);
+		apiMarketOrder.setAccountID(accountID);
 		apiMarketOrder.setDuration(duration);
 		apiMarketOrder.setEscrow(escrow);
-		apiMarketOrder.setPrice(price);
-		apiMarketOrder.setBid(bid);
+		apiMarketOrder.setBuyOrder(bid > 0);
+		apiMarketOrder.setCorp(owner.isCorporation());
 		apiMarketOrder.setIssued(issued);
+		apiMarketOrder.setLocationID(locationID);
+		apiMarketOrder.setMinVolume(minVolume);
+		apiMarketOrder.setOrderID(orderID);
+		apiMarketOrder.setPrice(price);
+		apiMarketOrder.setRange(RawConverter.toMarketOrderRange(range));
+		apiMarketOrder.setRegionID((int) ApiIdConverter.getLocation(locationID).getRegionID());
+		apiMarketOrder.setState(RawConverter.toMarketOrderState(state));
+		apiMarketOrder.setTypeID(typeID);
+		apiMarketOrder.setVolumeRemain(volRemaining);
+		apiMarketOrder.setVolumeTotal(volEntered);
 		return apiMarketOrder;
 	}
 
@@ -525,63 +463,50 @@ public final class ProfileReader extends AbstractXmlReader {
 			NodeList journalNodes = currentAalletJournalsNode.getElementsByTagName("journal");
 			for (int b = 0; b < journalNodes.getLength(); b++) {
 				Element currentNode = (Element) journalNodes.item(b);
-				MyJournal journal = parseJournal(currentNode, owner);
+				RawJournal rawJournal = parseJournal(currentNode);
+				MyJournal journal = DataConverter.toMyJournal(rawJournal, owner);
 				journals.add(journal);
 			}
 		}
 		owner.setJournal(journals);
 	}
 
-	private MyJournal parseJournal(final Element element, final OwnerType owner) {
+	private RawJournal parseJournal(final Element element) {
 		//Base
-		JournalEntry apiJournalEntry = new JournalEntry();
-		double amount = AttributeGetters.getDouble(element, "amount");
-		long argID1 = AttributeGetters.getLong(element, "argid1");
-		String argName1 = AttributeGetters.getString(element, "argname1");
-		double balance = AttributeGetters.getDouble(element, "balance");
+		RawJournal rawJournal = RawJournal.create();
+		Float amount = AttributeGetters.getFloatOptional(element, "amount");
+		Long argID = AttributeGetters.getLongOptional(element, "argid1");
+		String argName = AttributeGetters.getStringOptional(element, "argname1");
+		Float balance = AttributeGetters.getFloatOptional(element, "balance");
 		Date date = AttributeGetters.getDate(element, "date");
-		long ownerID1 = AttributeGetters.getLong(element, "ownerid1");
-		long ownerID2 = AttributeGetters.getLong(element, "ownerid2");
-		String ownerName1 = AttributeGetters.getString(element, "ownername1");
-		String ownerName2 = AttributeGetters.getString(element, "ownername2");
-		String reason = AttributeGetters.getString(element, "reason");
+		Integer firstPartyID = AttributeGetters.getIntOptional(element, "ownerid1");
+		Integer secondPartyID = AttributeGetters.getIntOptional(element, "ownerid2");
+		String reason = AttributeGetters.getStringOptional(element, "reason");
 		long refID = AttributeGetters.getLong(element, "refid");
-		int refTypeId = AttributeGetters.getInt(element, "reftypeid");
-		Double taxAmount = null;
-		if (AttributeGetters.haveAttribute(element, "taxamount")) {
-			taxAmount = AttributeGetters.getDouble(element, "taxamount");
-		}
-		Long taxReceiverID = null;
-		if (AttributeGetters.haveAttribute(element, "taxreceiverid")) {
-			taxReceiverID = AttributeGetters.getLong(element, "taxreceiverid");
-		}
+		int refTypeID = AttributeGetters.getInt(element, "reftypeid");
+		Float taxAmount = AttributeGetters.getFloatOptional(element, "taxamount");
+		Integer taxReceiverID = AttributeGetters.getIntOptional(element, "taxreceiverid");
 		//New
-		int owner1TypeID = 0;
-		if (AttributeGetters.haveAttribute(element, "owner1typeid")) {
-			owner1TypeID = AttributeGetters.getInt(element, "owner1typeid");
-		}
-		int owner2TypeID = 0;
-		if (AttributeGetters.haveAttribute(element, "owner2typeid")) {
-			owner2TypeID = AttributeGetters.getInt(element, "owner2typeid");
-		}
+		Integer firstPartyTypeID = AttributeGetters.getIntOptional(element, "owner1typeid");
+		Integer secondPartyTypeID = AttributeGetters.getIntOptional(element, "owner2typeid");
 		//Extra
 		int accountKey = AttributeGetters.getInt(element, "accountkey");
 
-		apiJournalEntry.setAmount(amount);
-		apiJournalEntry.setArgID1(argID1);
-		apiJournalEntry.setArgName1(argName1);
-		apiJournalEntry.setBalance(balance);
-		apiJournalEntry.setDate(date);
-		apiJournalEntry.setOwnerID1(ownerID1);
-		apiJournalEntry.setOwnerID2(ownerID2);
-		apiJournalEntry.setOwnerName1(ownerName1);
-		apiJournalEntry.setOwnerName2(ownerName2);
-		apiJournalEntry.setReason(reason);
-		apiJournalEntry.setRefID(refID);
-		apiJournalEntry.setRefTypeID(refTypeId);
-		apiJournalEntry.setTaxAmount(taxAmount);
-		apiJournalEntry.setTaxReceiverID(taxReceiverID);
-		return ApiConverter.convertJournal(apiJournalEntry, owner, accountKey);
+		rawJournal.setAmount(amount);
+		rawJournal.setBalance(balance);
+		rawJournal.setDate(date);
+		rawJournal.setFirstPartyID(firstPartyID);
+		rawJournal.setFirstPartyType(RawConverter.toJournalPartyType(firstPartyTypeID));
+		rawJournal.setReason(reason);
+		rawJournal.setRefID(refID);
+		rawJournal.setRefType(RawConverter.toJournalRefType(refTypeID));
+		rawJournal.setSecondPartyID(secondPartyID);
+		rawJournal.setSecondPartyType(RawConverter.toJournalPartyType(secondPartyTypeID));
+		rawJournal.setTax(taxAmount);
+		rawJournal.setTaxRecieverID(taxReceiverID);
+		rawJournal.setExtraInfo(new RawJournalExtraInfo(argID, argName, RawConverter.toJournalRefType(refTypeID)));
+		rawJournal.setAccountKey(accountKey);
+		return rawJournal;
 	}
 
 	private void parseTransactions(final Element element, final OwnerType owner) {
@@ -592,146 +517,119 @@ public final class ProfileReader extends AbstractXmlReader {
 			NodeList transactionNodes = currentTransactionsNode.getElementsByTagName("wallettransaction");
 			for (int b = 0; b < transactionNodes.getLength(); b++) {
 				Element currentNode = (Element) transactionNodes.item(b);
-				MyTransaction transaction = parseTransaction(currentNode, owner);
+				RawTransaction rawTransaction = parseTransaction(currentNode);
+				MyTransaction transaction = DataConverter.toMyTransaction(rawTransaction, owner);
 				transactions.add(transaction);
 			}
 		}
 		owner.setTransactions(transactions);
 	}
 
-	private MyTransaction parseTransaction(final Element element, final OwnerType owner) {
-		WalletTransaction apiTransaction = new WalletTransaction();
-		Date transactionDateTime = AttributeGetters.getDate(element, "transactiondatetime");
+	private RawTransaction parseTransaction(final Element element) {
+		RawTransaction rawTransaction = RawTransaction.create();
+		Date date = AttributeGetters.getDate(element, "transactiondatetime");
 		Long transactionID = AttributeGetters.getLong(element, "transactionid");
 		int quantity = AttributeGetters.getInt(element, "quantity");
-		String typeName = AttributeGetters.getString(element, "typename");
 		int typeID = AttributeGetters.getInt(element, "typeid");
 		Double price = AttributeGetters.getDouble(element, "price");
-		Long clientID = AttributeGetters.getLong(element, "clientid");
-		String clientName = AttributeGetters.getString(element, "clientname");
-		Long characterID = null;
-		if (AttributeGetters.haveAttribute(element, "characterid")) {
-			characterID = AttributeGetters.getLong(element, "characterid");
-		}
-		String characterName = null;
-		if (AttributeGetters.haveAttribute(element, "charactername")) {
-			characterName = AttributeGetters.getString(element, "charactername");
-		}
-		long stationID = AttributeGetters.getLong(element, "stationid");
-		String stationName = AttributeGetters.getString(element, "stationname");
+		Integer clientID = AttributeGetters.getInt(element, "clientid");
+		long locationID = AttributeGetters.getLong(element, "stationid");
 		String transactionType = AttributeGetters.getString(element, "transactiontype");
 		String transactionFor = AttributeGetters.getString(element, "transactionfor");
 
 		//New
-		long journalTransactionID = 0;
+		Long journalRefID;
 		if (AttributeGetters.haveAttribute(element, "journaltransactionid")) {
-			journalTransactionID = AttributeGetters.getLong(element, "journaltransactionid");
+			journalRefID = AttributeGetters.getLong(element, "journaltransactionid");
+		} else {
+			journalRefID = 0L; //Legacy support
 		}
-		int clientTypeID = 0;
-		if (AttributeGetters.haveAttribute(element, "clienttypeid")) {
-			clientTypeID = AttributeGetters.getInt(element, "clienttypeid");
-		}
+
 		//Extra
 		int accountKey = 1000;
 		if (AttributeGetters.haveAttribute(element, "accountkey")) {
 			accountKey = AttributeGetters.getInt(element, "accountkey");
 		}
-		
-		apiTransaction.setTransactionDateTime(transactionDateTime);
-		apiTransaction.setTransactionID(transactionID);
-		apiTransaction.setQuantity(quantity);
-		apiTransaction.setTypeName(typeName);
-		apiTransaction.setTypeID(typeID);
-		apiTransaction.setPrice(price);
-		apiTransaction.setClientID(clientID);
-		apiTransaction.setClientName(clientName);
-		apiTransaction.setCharacterID(characterID);
-		apiTransaction.setCharacterName(characterName);
-		apiTransaction.setStationID(stationID);
-		apiTransaction.setStationName(stationName);
-		apiTransaction.setTransactionType(transactionType);
-		apiTransaction.setTransactionFor(transactionFor);
-		apiTransaction.setTransactionID(journalTransactionID);
-		apiTransaction.setClientID(clientTypeID);
-		return ApiConverter.convertTransaction(apiTransaction, owner, accountKey);
+		rawTransaction.setClientID(clientID);
+		rawTransaction.setDate(date);
+		rawTransaction.setBuy(RawConverter.toTransactionIsBuy(transactionType));
+		rawTransaction.setPersonal(RawConverter.toTransactionIsPersonal(transactionFor));
+		rawTransaction.setJournalRefID(journalRefID);
+		rawTransaction.setLocationID(locationID);
+		rawTransaction.setQuantity(quantity);
+		rawTransaction.setTransactionID(transactionID);
+		rawTransaction.setTypeID(typeID);
+		rawTransaction.setUnitPrice(RawConverter.toInteger(price));
+		rawTransaction.setAccountKey(accountKey);
+		return rawTransaction;
 	}
 
 	private void parseIndustryJobs(final Element element, final OwnerType owner) {
 		NodeList industryJobsNodes = element.getElementsByTagName("industryjobs");
-		List<IndustryJob> industryJobs = new ArrayList<IndustryJob>();
+		List<MyIndustryJob> industryJobs = new ArrayList<MyIndustryJob>();
 		for (int a = 0; a < industryJobsNodes.getLength(); a++) {
 			Element currentIndustryJobsNode = (Element) industryJobsNodes.item(a);
 			NodeList industryJobNodes = currentIndustryJobsNode.getElementsByTagName("industryjob");
 			for (int b = 0; b < industryJobNodes.getLength(); b++) {
 				Element currentNode = (Element) industryJobNodes.item(b);
 				if (AttributeGetters.haveAttribute(currentNode, "blueprintid")) {
-					IndustryJob apiIndustryJob = parseIndustryJob(currentNode);
-					industryJobs.add(apiIndustryJob);
+					RawIndustryJob rawIndustryJob = parseIndustryJob(currentNode);
+					MyIndustryJob industryJob = DataConverter.toMyIndustryJob(rawIndustryJob, owner);
+					industryJobs.add(industryJob);
 				}
 			}
 		}
-		owner.setIndustryJobs(ApiConverter.convertIndustryJobs(industryJobs, owner));
+		owner.setIndustryJobs(industryJobs);
 	}
 
-	private IndustryJob parseIndustryJob(final Element element) {
-		IndustryJob apiIndustryJob = new IndustryJob();
-		long jobID = AttributeGetters.getLong(element, "jobid");
-		long installerID = AttributeGetters.getLong(element, "installerid");
-		String installerName = AttributeGetters.getString(element, "installername");
+	private RawIndustryJob parseIndustryJob(final Element element) {
+		RawIndustryJob rawIndustryJob = RawIndustryJob.create();
+		Integer jobID = AttributeGetters.getInt(element, "jobid");
+		Integer installerID = AttributeGetters.getInt(element, "installerid");
 		long facilityID = AttributeGetters.getLong(element, "facilityid");
-		long solarSystemID = AttributeGetters.getLong(element, "solarsystemid");
-		String solarSystemName = AttributeGetters.getString(element, "solarsystemname");
 		long stationID = AttributeGetters.getLong(element, "stationid");
 		int activityID = AttributeGetters.getInt(element, "activityid");
 		long blueprintID = AttributeGetters.getLong(element, "blueprintid");
 		int blueprintTypeID = AttributeGetters.getInt(element, "blueprinttypeid");
-		String blueprintTypeName = AttributeGetters.getString(element, "blueprinttypename");
 		long blueprintLocationID = AttributeGetters.getLong(element, "blueprintlocationid");
 		long outputLocationID = AttributeGetters.getLong(element, "outputlocationid");
 		int runs = AttributeGetters.getInt(element, "runs");
-		double cost = AttributeGetters.getDouble(element, "cost");
-		long teamID = AttributeGetters.getLong(element, "teamid");
-		int licensedRuns = AttributeGetters.getInt(element, "licensedruns");
-		double probability = AttributeGetters.getDouble(element, "probability");
-		int productTypeID = AttributeGetters.getInt(element, "producttypeid");
-		String productTypeName = AttributeGetters.getString(element, "producttypename");
+		Float cost = AttributeGetters.getFloatOptional(element, "cost");
+		Integer licensedRuns = AttributeGetters.getIntOptional(element, "licensedruns");
+		Float probability = AttributeGetters.getFloatOptional(element, "probability");
+		Integer productTypeID = AttributeGetters.getIntOptional(element, "producttypeid");
 		int status = AttributeGetters.getInt(element, "status");
-		int timeInSeconds = AttributeGetters.getInt(element, "timeinseconds");
+		int duration = AttributeGetters.getInt(element, "timeinseconds");
 		Date startDate = AttributeGetters.getDate(element, "startdate");
 		Date endDate = AttributeGetters.getDate(element, "enddate");
-		Date pauseDate = AttributeGetters.getDate(element, "pausedate");
-		Date completedDate = AttributeGetters.getDate(element, "completeddate");
-		long completedCharacterID = AttributeGetters.getLong(element, "completedcharacterid");
+		Date pauseDate = AttributeGetters.getDateOptional(element, "pausedate");
+		Date completedDate = AttributeGetters.getDateOptional(element, "completeddate");
+		Integer completedCharacterID = AttributeGetters.getIntOptional(element, "completedcharacterid");
+		Integer successfulRuns = AttributeGetters.getIntOptional(element, "successfulruns");
 
-		apiIndustryJob.setJobID(jobID);
-		apiIndustryJob.setInstallerID(installerID);
-		apiIndustryJob.setInstallerName(installerName);
-		apiIndustryJob.setFacilityID(facilityID);
-		apiIndustryJob.setSolarSystemID(solarSystemID);
-		apiIndustryJob.setSolarSystemName(solarSystemName);
-		apiIndustryJob.setStationID(stationID);
-		apiIndustryJob.setActivityID(activityID);
-		apiIndustryJob.setBlueprintID(blueprintID);
-		apiIndustryJob.setBlueprintTypeID(blueprintTypeID);
-		apiIndustryJob.setBlueprintTypeName(blueprintTypeName);
-		apiIndustryJob.setBlueprintLocationID(blueprintLocationID);
-		apiIndustryJob.setOutputLocationID(outputLocationID);
-		apiIndustryJob.setRuns(runs);
-		apiIndustryJob.setCost(cost);
-		apiIndustryJob.setTeamID(teamID);
-		apiIndustryJob.setLicensedRuns(licensedRuns);
-		apiIndustryJob.setProbability(probability);
-		apiIndustryJob.setProductTypeID(productTypeID);
-		apiIndustryJob.setProductTypeName(productTypeName);
-		apiIndustryJob.setStatus(status);
-		apiIndustryJob.setTimeInSeconds(timeInSeconds);
-		apiIndustryJob.setStartDate(startDate);
-		apiIndustryJob.setEndDate(endDate);
-		apiIndustryJob.setPauseDate(pauseDate);
-		apiIndustryJob.setCompletedDate(completedDate);
-		apiIndustryJob.setCompletedCharacterID(completedCharacterID);
-
-		return apiIndustryJob;
+		rawIndustryJob.setActivityID(activityID);
+		rawIndustryJob.setBlueprintID(blueprintID);
+		rawIndustryJob.setBlueprintLocationID(blueprintLocationID);
+		rawIndustryJob.setBlueprintTypeID(blueprintTypeID);
+		rawIndustryJob.setCompletedCharacterID(completedCharacterID);
+		rawIndustryJob.setCompletedDate(completedDate);
+		rawIndustryJob.setCost(cost);
+		rawIndustryJob.setDuration(duration);
+		rawIndustryJob.setEndDate(endDate);
+		rawIndustryJob.setFacilityID(facilityID);
+		rawIndustryJob.setInstallerID(installerID);
+		rawIndustryJob.setJobID(jobID);
+		rawIndustryJob.setLicensedRuns(licensedRuns);
+		rawIndustryJob.setOutputLocationID(outputLocationID);
+		rawIndustryJob.setPauseDate(pauseDate);
+		rawIndustryJob.setProbability(probability);
+		rawIndustryJob.setProductTypeID(productTypeID);
+		rawIndustryJob.setRuns(runs);
+		rawIndustryJob.setStartDate(startDate);
+		rawIndustryJob.setStationID(stationID);
+		rawIndustryJob.setStatus(RawConverter.toIndustryJobStatus(status));
+		rawIndustryJob.setSuccessfulRuns(successfulRuns);
+		return rawIndustryJob;
 	}
 
 	private void parseAssets(final Node node, final OwnerType owner, final List<MyAsset> assets, final MyAsset parentAsset) {
@@ -739,10 +637,19 @@ public final class ProfileReader extends AbstractXmlReader {
 		for (int i = 0; i < assetsNodes.getLength(); i++) {
 			Node currentNode = assetsNodes.item(i);
 			if (currentNode.getNodeName().equals("asset")) {
-				MyAsset asset = parseAsset(currentNode, owner, parentAsset);
-				if (parentAsset == null) {
+				RawAsset rawAsset = parseAsset(currentNode, parentAsset);
+				List<MyAsset> parents = new ArrayList<MyAsset>();
+				if (parentAsset != null) { //Child
+					parents.addAll(parentAsset.getParents());
+					parents.add(parentAsset);
+				}
+				MyAsset asset = DataConverter.toMyAsset(rawAsset, owner, parents);
+				if (asset == null) {
+					continue;
+				}
+				if (parentAsset == null) { //Root
 					assets.add(asset);
-				} else {
+				} else { //Child
 					parentAsset.addAsset(asset);
 				}
 				parseAssets(currentNode, owner, assets, asset);
@@ -750,19 +657,22 @@ public final class ProfileReader extends AbstractXmlReader {
 		}
 	}
 
-	private MyAsset parseAsset(final Node node, final OwnerType owner, final MyAsset parentAsset) {
-		long count = AttributeGetters.getLong(node, "count");
+	private RawAsset parseAsset(final Node node, final MyAsset parentAsset) {
+		RawAsset rawAsset = RawAsset.create();
+		Integer count = AttributeGetters.getInt(node, "count");
 
 		long itemId = AttributeGetters.getLong(node, "id");
 		int typeID = AttributeGetters.getInt(node, "typeid");
 		long locationID = AttributeGetters.getLong(node, "locationid");
 		if (locationID == 0 && parentAsset != null) {
-			locationID = parentAsset.getLocation().getLocationID();
+			locationID = parentAsset.getLocationID();
 		}
 		boolean singleton = AttributeGetters.getBoolean(node, "singleton");
-		int rawQuantity = 0;
+		Integer rawQuantity;
 		if (AttributeGetters.haveAttribute(node, "rawquantity")) {
 			rawQuantity = AttributeGetters.getInt(node, "rawquantity");
+		} else {
+			rawQuantity = null; //Legacy support
 		}
 		int flagID = 0;
 		if (AttributeGetters.haveAttribute(node, "flagid")) {
@@ -776,30 +686,36 @@ public final class ProfileReader extends AbstractXmlReader {
 				}
 			}
 		}
-		return ApiConverter.createAsset(parentAsset, owner, count, flagID, itemId, typeID, locationID, singleton, rawQuantity, null);
+		rawAsset.setItemFlag(ApiIdConverter.getFlag(flagID));
+		rawAsset.setItemID(itemId);
+		rawAsset.setLocationID(locationID);
+		rawAsset.setLocationType(RawConverter.toAssetLocationType(locationID));
+		rawAsset.setQuantity(RawConverter.toAssetQuantity(count, rawQuantity));
+		rawAsset.setSingleton(singleton);
+		rawAsset.setTypeID(typeID);
+		return rawAsset;
 	}
 
 	private void parseBlueprints(final Element element, final OwnerType owners) {
-		Map<Long, Blueprint> blueprints = new HashMap<Long, Blueprint>();
+		Map<Long, RawBlueprint> blueprints = new HashMap<Long, RawBlueprint>();
 		NodeList blueprintsNodes = element.getElementsByTagName("blueprints");
 		for (int a = 0; a < blueprintsNodes.getLength(); a++) {
 			Element currentBlueprintsNode = (Element) blueprintsNodes.item(a);
 			NodeList blueprintNodes = currentBlueprintsNode.getElementsByTagName("blueprint");
 			for (int b = 0; b < blueprintNodes.getLength(); b++) {
 				Element currentNode = (Element) blueprintNodes.item(b);
-				Blueprint blueprint = parseBlueprint(currentNode);
+				RawBlueprint blueprint = parseBlueprint(currentNode);
 				blueprints.put(blueprint.getItemID(), blueprint);
 			}
 		}
 		owners.setBlueprints(blueprints);
 	}
 
-	private Blueprint parseBlueprint(final Node node) {
-		Blueprint blueprint = new Blueprint();
+	private RawBlueprint parseBlueprint(final Node node) {
+		RawBlueprint blueprint = RawBlueprint.create();
 		long itemID = AttributeGetters.getLong(node, "itemid");
 		long locationID = AttributeGetters.getLong(node, "locationid");
 		int typeID = AttributeGetters.getInt(node, "typeid");
-		String typeName = AttributeGetters.getString(node, "typename");
 		int flagID = AttributeGetters.getInt(node, "flagid");
 		int quantity = AttributeGetters.getInt(node, "quantity");
 		int timeEfficiency = AttributeGetters.getInt(node, "timeefficiency");
@@ -807,15 +723,13 @@ public final class ProfileReader extends AbstractXmlReader {
 		int runs = AttributeGetters.getInt(node, "runs");
 
 		blueprint.setItemID(itemID);
+		blueprint.setItemFlag(ApiIdConverter.getFlag(flagID));
 		blueprint.setLocationID(locationID);
-		blueprint.setTypeID(typeID);
-		blueprint.setTypeName(typeName);
-		blueprint.setFlagID(flagID);
-		blueprint.setQuantity(quantity);
-		blueprint.setTimeEfficiency(timeEfficiency);
 		blueprint.setMaterialEfficiency(materialEfficiency);
+		blueprint.setQuantity(quantity);
 		blueprint.setRuns(runs);
-
+		blueprint.setTimeEfficiency(timeEfficiency);
+		blueprint.setTypeID(typeID);
 		return blueprint;
 	}
 }

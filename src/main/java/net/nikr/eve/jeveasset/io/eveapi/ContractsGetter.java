@@ -18,29 +18,20 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
  */
-
 package net.nikr.eve.jeveasset.io.eveapi;
 
 import com.beimin.eveapi.exception.ApiException;
-import com.beimin.eveapi.model.shared.Contract;
 import com.beimin.eveapi.parser.character.CharContractsParser;
 import com.beimin.eveapi.parser.corporation.CorpContractsParser;
 import com.beimin.eveapi.response.shared.ContractsResponse;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import net.nikr.eve.jeveasset.data.eveapi.EveApiAccessMask;
 import net.nikr.eve.jeveasset.data.eveapi.EveApiAccount;
 import net.nikr.eve.jeveasset.data.eveapi.EveApiOwner;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
-import net.nikr.eve.jeveasset.gui.tabs.contracts.MyContract;
-import net.nikr.eve.jeveasset.gui.tabs.contracts.MyContractItem;
-import net.nikr.eve.jeveasset.io.shared.ApiConverter;
 
-
-public class ContractsGetter extends AbstractApiGetter<ContractsResponse>{
+public class ContractsGetter extends AbstractApiGetter<ContractsResponse> {
 
 	public ContractsGetter() {
 		super("Contracts", true, false);
@@ -83,7 +74,8 @@ public class ContractsGetter extends AbstractApiGetter<ContractsResponse>{
 
 	@Override
 	protected void setData(ContractsResponse response) {
-		List<Contract> contracts = response.getAll();
+		getOwner().setContracts(EveApiConverter.toContracts(response.getAll(), getOwner()));
+		/*
 		//Create backup of existin contracts
 		//Map<MyContract, List<MyContractItem>> existingContract = new HashMap<MyContract, List<MyContractItem>>(getOwner().getContracts();
 		// XXX - Workaround for ConcurrentModificationException in HashMap constructor
@@ -111,6 +103,7 @@ public class ContractsGetter extends AbstractApiGetter<ContractsResponse>{
 			//Add
 			getOwner().getContracts().put(myContract, contractItems);
 		}
+		 */
 	}
 
 	@Override
@@ -130,5 +123,5 @@ public class ContractsGetter extends AbstractApiGetter<ContractsResponse>{
 			return EveApiAccessMask.CONTRACTS_CHAR.getAccessMask();
 		}
 	}
-	
+
 }

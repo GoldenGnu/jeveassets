@@ -18,53 +18,21 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
  */
-
 package net.nikr.eve.jeveasset.data;
 
-import com.beimin.eveapi.model.shared.AccountBalance;
 import net.nikr.eve.jeveasset.data.api.OwnerType;
+import net.nikr.eve.jeveasset.data.raw.RawAccountBalance;
 
+public class MyAccountBalance extends RawAccountBalance {
 
-public class MyAccountBalance extends AccountBalance {
-	private final AccountBalance eveAccountBalance;
 	private final OwnerType owner;
 
-	public MyAccountBalance(AccountBalance eveAccountBalance, OwnerType owner) {
-		this.eveAccountBalance = eveAccountBalance;
+	public MyAccountBalance(RawAccountBalance rawAccountBalance, OwnerType owner) {
+		super(rawAccountBalance);
 		this.owner = owner;
 	}
 
-	@Override
-	public int getAccountID() {
-		return eveAccountBalance.getAccountID();
-	}
-
-	@Override
-	public void setAccountID(int accountID) {
-		eveAccountBalance.setAccountID(accountID);
-	}
-
-	@Override
-	public int getAccountKey() {
-		return eveAccountBalance.getAccountKey();
-	}
-
-	@Override
-	public void setAccountKey(int accountKey) {
-		eveAccountBalance.setAccountKey(accountKey);
-	}
-
-	@Override
-	public double getBalance() {
-		return eveAccountBalance.getBalance();
-	}
-
-	@Override
-	public void setBalance(double balance) {
-		eveAccountBalance.setBalance(balance);
-	}
-
-	public String getOwner() {
+	public String getOwnerName() {
 		return owner.getOwnerName();
 	}
 

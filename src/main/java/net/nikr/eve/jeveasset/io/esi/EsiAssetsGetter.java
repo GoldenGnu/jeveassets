@@ -25,10 +25,8 @@ import java.util.List;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.data.esi.EsiOwner;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
-import net.troja.eve.esi.ApiClient;
 import net.troja.eve.esi.ApiException;
 import net.troja.eve.esi.model.CharacterAssetsResponse;
-
 
 public class EsiAssetsGetter extends AbstractEsiGetter {
 
@@ -39,8 +37,8 @@ public class EsiAssetsGetter extends AbstractEsiGetter {
 
 	@Override
 	protected void get(EsiOwner owner) throws ApiException {
-		List<CharacterAssetsResponse> responses = getAssetsApiAuth().getCharactersCharacterIdAssets((int)owner.getOwnerID(), DATASOURCE, null, null, null);
-		owner.setAssets(EsiConverter.convertAssets(owner, responses));
+		List<CharacterAssetsResponse> responses = getAssetsApiAuth().getCharactersCharacterIdAssets((int) owner.getOwnerID(), DATASOURCE, null, null, null);
+		owner.setAssets(EsiConverter.toAssets(responses, owner));
 	}
 
 	@Override

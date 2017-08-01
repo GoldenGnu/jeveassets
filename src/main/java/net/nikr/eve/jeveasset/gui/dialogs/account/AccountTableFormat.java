@@ -30,7 +30,7 @@ import net.nikr.eve.jeveasset.gui.shared.table.containers.YesNo;
 import net.nikr.eve.jeveasset.i18n.DialoguesAccount;
 
 
-enum AccountTableFormat implements EnumTableColumn<OwnerType> {
+public enum AccountTableFormat implements EnumTableColumn<OwnerType> {
 	SHOW_ASSETS(Boolean.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {

@@ -18,16 +18,16 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
  */
-
 package net.nikr.eve.jeveasset.gui.tabs.orders;
 
-import com.beimin.eveapi.model.shared.MarketOrder;
 import java.util.Date;
+import java.util.Objects;
 import javax.management.timer.Timer;
 import net.nikr.eve.jeveasset.data.Item;
 import net.nikr.eve.jeveasset.data.MarketPriceData;
 import net.nikr.eve.jeveasset.data.MyLocation;
 import net.nikr.eve.jeveasset.data.api.OwnerType;
+import net.nikr.eve.jeveasset.data.raw.RawMarketOrder;
 import net.nikr.eve.jeveasset.data.types.EditableLocationType;
 import net.nikr.eve.jeveasset.data.types.ItemType;
 import net.nikr.eve.jeveasset.data.types.PriceType;
@@ -35,8 +35,7 @@ import net.nikr.eve.jeveasset.gui.shared.table.containers.Percent;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.Quantity;
 import net.nikr.eve.jeveasset.i18n.TabsOrders;
 
-
-public class MyMarketOrder extends MarketOrder implements Comparable<MyMarketOrder>, EditableLocationType, ItemType, PriceType  {
+public class MyMarketOrder extends RawMarketOrder implements Comparable<MyMarketOrder>, EditableLocationType, ItemType, PriceType {
 
 	public enum OrderStatus {
 		ACTIVE() {
@@ -89,6 +88,7 @@ public class MyMarketOrder extends MarketOrder implements Comparable<MyMarketOrd
 		};
 
 		abstract String getI18N();
+
 		@Override
 		public String toString() {
 			return getI18N();
@@ -106,74 +106,61 @@ public class MyMarketOrder extends MarketOrder implements Comparable<MyMarketOrd
 	private double lastTransactionValue;
 	private Percent lastTransactionPercent;
 
-	public MyMarketOrder(final MarketOrder apiMarketOrder, final Item item, final MyLocation location, final OwnerType owner) {
-		this.setAccountKey(apiMarketOrder.getAccountKey());
-		this.setBid(apiMarketOrder.getBid());
-		this.setCharID(apiMarketOrder.getCharID());
-		this.setDuration(apiMarketOrder.getDuration());
-		this.setEscrow(apiMarketOrder.getEscrow());
-		this.setIssued(apiMarketOrder.getIssued());
-		this.setMinVolume(apiMarketOrder.getMinVolume());
-		this.setOrderID(apiMarketOrder.getOrderID());
-		this.setOrderState(apiMarketOrder.getOrderState());
-		this.setPrice(apiMarketOrder.getPrice());
-		this.setRange(apiMarketOrder.getRange());
-		this.setStationID(apiMarketOrder.getStationID());
-		this.setTypeID(apiMarketOrder.getTypeID());
-		this.setVolEntered(apiMarketOrder.getVolEntered());
-		this.setVolRemaining(apiMarketOrder.getVolRemaining());
+	public MyMarketOrder(final RawMarketOrder rawMarketOrder, final Item item, final OwnerType owner) {
+		super(rawMarketOrder);
 		this.item = item;
-		this.location = location;
 		this.owner = owner;
 		quantity = new Quantity(getVolEntered(), getVolRemaining());
 		rangeFormated = "";
-		if (this.getRange() == -1) {
-			rangeFormated = TabsOrders.get().rangeStation();
-		}
-		if (this.getRange() == 0) {
-			rangeFormated = TabsOrders.get().rangeSolarSystem();
-		}
-		if (this.getRange() == 32767) {
-			rangeFormated = TabsOrders.get().rangeRegion();
-		}
-		if (this.getRange() == 1) {
-			rangeFormated = TabsOrders.get().rangeJump();
-		}
-		if (this.getRange() > 1 && this.getRange() < 32767) {
-			rangeFormated = TabsOrders.get().rangeJumps(this.getRange());
+		switch (this.getRange()) {
+			case STATION:
+				rangeFormated = TabsOrders.get().rangeStation();
+				break;
+			case SOLARSYSTEM:
+				rangeFormated = TabsOrders.get().rangeSolarSystem();
+				break;
+			case REGION:
+				rangeFormated = TabsOrders.get().rangeRegion();
+				break;
+			case _1:
+				rangeFormated = TabsOrders.get().rangeJump();
+				break;
+			default:
+				rangeFormated = TabsOrders.get().rangeJumps(this.getRange().toString());
+				break;
 		}
 		if (isExpired()) { //expired (status may be out-of-date)
 			if (this.getVolRemaining() == 0) {
 				status = OrderStatus.FULFILLED;
-			} else if (this.getVolRemaining() == this.getVolEntered()) {
+			} else if (Objects.equals(this.getVolRemaining(), this.getVolEntered())) {
 				status = OrderStatus.EXPIRED;
 			} else {
 				status = OrderStatus.PARTIALLY_FULFILLED;
 			}
 		} else {
-			switch (this.getOrderState()) {
-				case 0: //open/active
+			switch (getState()) {
+				case OPEN: //open/active
 					status = OrderStatus.ACTIVE;
 					break;
-				case 1: //closed
+				case CLOSED: //closed
 					status = OrderStatus.CLOSED;
 					break;
-				case 2: //expired (or fulfilled)
+				case EXPIRED: //expired (or fulfilled)
 					if (this.getVolRemaining() == 0) {
 						status = OrderStatus.FULFILLED;
-					} else if (this.getVolRemaining() == this.getVolEntered()) {
+					} else if (Objects.equals(this.getVolRemaining(), this.getVolEntered())) {
 						status = OrderStatus.EXPIRED;
 					} else {
 						status = OrderStatus.PARTIALLY_FULFILLED;
 					}
 					break;
-				case 3: //cancelled
+				case CANCELLED: //cancelled
 					status = OrderStatus.CANCELLED;
 					break;
-				case 4: //pending
+				case PENDING: //pending
 					status = OrderStatus.PENDING;
 					break;
-				case 5: //character deleted
+				case CHARACTER_DELETED: //character deleted
 					status = OrderStatus.CHARACTER_DELETED;
 					break;
 			}
@@ -197,7 +184,7 @@ public class MyMarketOrder extends MarketOrder implements Comparable<MyMarketOrd
 	}
 
 	public boolean isActive() {
-		return getOrderState() == 0 && !isExpired();
+		return getState() == MarketOrderState.OPEN && !isExpired();
 	}
 
 	public void setDynamicPrice(double price) {
@@ -224,7 +211,7 @@ public class MyMarketOrder extends MarketOrder implements Comparable<MyMarketOrd
 	public void setLastTransaction(MarketPriceData lastTransaction) {
 		if (lastTransaction != null) {
 			this.lastTransactionPrice = lastTransaction.getLatest();
-			if (getBid() > 0) { //Buy
+			if (isBuyOrder()) { //Buy
 				this.lastTransactionValue = this.lastTransactionPrice - getPrice();
 				this.lastTransactionPercent = new Percent(this.lastTransactionPrice / getPrice());
 			} else { //Sell
@@ -304,9 +291,6 @@ public class MyMarketOrder extends MarketOrder implements Comparable<MyMarketOrd
 		if (this.owner.getOwnerID() != other.owner.getOwnerID()) {
 			return false;
 		}
-		if (this.getOrderID() != other.getOrderID()) {
-			return false;
-		}
-		return true;
+		return Objects.equals(this.getOrderID(), other.getOrderID());
 	}
 }

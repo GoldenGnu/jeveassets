@@ -18,7 +18,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
  */
-
 package net.nikr.eve.jeveasset.io.eveapi;
 
 import com.beimin.eveapi.exception.ApiException;
@@ -31,8 +30,6 @@ import net.nikr.eve.jeveasset.data.eveapi.EveApiAccessMask;
 import net.nikr.eve.jeveasset.data.eveapi.EveApiAccount;
 import net.nikr.eve.jeveasset.data.eveapi.EveApiOwner;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
-import net.nikr.eve.jeveasset.io.shared.ApiConverter;
-
 
 public class IndustryJobsGetter extends AbstractApiGetter<IndustryJobsResponse> {
 
@@ -52,7 +49,7 @@ public class IndustryJobsGetter extends AbstractApiGetter<IndustryJobsResponse> 
 		} else {
 			return new CharIndustryJobsParser()
 					.getResponse(EveApiOwner.getApiAuthorization(getOwner()));
-			}
+		}
 	}
 
 	@Override
@@ -67,7 +64,7 @@ public class IndustryJobsGetter extends AbstractApiGetter<IndustryJobsResponse> 
 
 	@Override
 	protected void setData(final IndustryJobsResponse response) {
-		getOwner().setIndustryJobs(ApiConverter.convertIndustryJobs(response.getAll(), getOwner()));
+		getOwner().setIndustryJobs(EveApiConverter.toIndustryJobs(response.getAll(), getOwner()));
 	}
 
 	@Override

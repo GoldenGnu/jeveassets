@@ -18,7 +18,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
  */
-
 package net.nikr.eve.jeveasset.io.shared;
 
 import com.beimin.eveapi.model.eve.Station;
@@ -39,7 +38,6 @@ import net.nikr.eve.jeveasset.gui.tabs.assets.MyAsset;
 import net.nikr.eve.jeveasset.io.online.CitadelGetter;
 import net.troja.eve.esi.model.SovereigntyStructuresResponse;
 import net.troja.eve.esi.model.StructureResponse;
-
 
 public final class ApiIdConverter {
 
@@ -99,15 +97,27 @@ public final class ApiIdConverter {
 		return "!" + flag;
 	}
 
-	public static double getPrice(final int typeID, final boolean isBlueprintCopy) {
+	public static ItemFlag getFlag(final int flag) {
+		ItemFlag itemFlag = StaticData.get().getItemFlags().get(flag);
+		if (itemFlag != null) {
+			return itemFlag;
+		} else {
+			return new ItemFlag(flag, "Unknown", "Unknown");
+		}
+	}
+
+	public static double getPrice(final Integer typeID, final boolean isBlueprintCopy) {
 		return getPriceType(typeID, isBlueprintCopy, false);
 	}
 
-	private static double getPriceReprocessed(final int typeID, final boolean isBlueprintCopy) {
+	private static double getPriceReprocessed(final Integer typeID, final boolean isBlueprintCopy) {
 		return getPriceType(typeID, isBlueprintCopy, true);
 	}
 
-	private static double getPriceType(final int typeID, final boolean isBlueprintCopy, boolean reprocessed) {
+	private static double getPriceType(final Integer typeID, final boolean isBlueprintCopy, boolean reprocessed) {
+		if (typeID == null) {
+			return 0;
+		}
 		UserItem<Integer, Double> userPrice;
 		if (isBlueprintCopy) { //Blueprint Copy
 			userPrice = Settings.get().getUserPrices().get(-typeID);
@@ -178,11 +188,11 @@ public final class ApiIdConverter {
 		return 0;
 	}
 
-	public static boolean isLocationOK(final long locationID) {
+	public static boolean isLocationOK(final Long locationID) {
 		return isLocationOK(locationID, null);
 	}
 
-	public static boolean isLocationOK(final long locationID, final MyAsset parentAsset) {
+	public static boolean isLocationOK(final Long locationID, final MyAsset parentAsset) {
 		MyLocation location = getLocation(locationID, parentAsset);
 		return location != null && !location.isEmpty();
 	}
@@ -196,8 +206,16 @@ public final class ApiIdConverter {
 		}
 	}
 
-	public static String getOwnerName(final long ownerID) {
-		if (ownerID == 0) { //0 (zero) is valid, but, should return empty string
+	public static String getOwnerName(final Integer ownerID) {
+		if (ownerID == null) {
+			return "";
+		} else {
+			return getOwnerName(Long.valueOf(ownerID));
+		}
+	}
+
+	public static String getOwnerName(final Long ownerID) {
+		if (ownerID == null || ownerID == 0) { //0 (zero) is valid, but, should return empty string
 			return "";
 		}
 		String owner = Settings.get().getOwners().get(ownerID);
@@ -215,19 +233,26 @@ public final class ApiIdConverter {
 		} else {
 			parents = new ArrayList<MyAsset>();
 		}
-		
+
 		return parents;
 	}
 
-	public static MyLocation getLocation(MyLocation location) {
-		return getLocation(location.getLocationID(), null);
+	public static MyLocation getLocation(Integer locationID) {
+		if (locationID == null) {
+			return new MyLocation(0);
+		} else {
+			return getLocation(Long.valueOf(locationID), null);
+		}
 	}
 
-	public static MyLocation getLocation(long locationID) {
+	public static MyLocation getLocation(Long locationID) {
 		return getLocation(locationID, null);
 	}
 
-	public static MyLocation getLocation(final long locationID, final MyAsset parentAsset) {
+	public static MyLocation getLocation(final Long locationID, final MyAsset parentAsset) {
+		if (locationID == null) {
+			return new MyLocation(0);
+		}
 		//Offices
 		long fixedLocationID = locationID;
 		if (fixedLocationID >= 66000000) {

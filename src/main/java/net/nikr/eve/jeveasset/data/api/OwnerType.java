@@ -20,12 +20,12 @@
  */
 package net.nikr.eve.jeveasset.data.api;
 
-import com.beimin.eveapi.model.shared.Blueprint;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import net.nikr.eve.jeveasset.data.MyAccountBalance;
+import net.nikr.eve.jeveasset.data.raw.RawBlueprint;
 import net.nikr.eve.jeveasset.gui.tabs.assets.MyAsset;
 import net.nikr.eve.jeveasset.gui.tabs.contracts.MyContract;
 import net.nikr.eve.jeveasset.gui.tabs.contracts.MyContractItem;
@@ -61,8 +61,8 @@ public interface OwnerType extends Comparable<OwnerType> {
 	public List<MyIndustryJob> getIndustryJobs();
 	public Map<MyContract, List<MyContractItem>> getContracts();
 	public List<MyAsset> getAssets();
-	public Map<Long, Blueprint> getBlueprints();
-	public void setBlueprints(Map<Long, Blueprint> blueprints);
+	public Map<Long, RawBlueprint> getBlueprints();
+	public void setBlueprints(Map<Long, RawBlueprint> blueprints);
 	public void setIndustryJobs(final List<MyIndustryJob> industryJobs);
 	public void setTransactions(final Set<MyTransaction> transactions);
 	public void setJournal(final Set<MyJournal> journal);

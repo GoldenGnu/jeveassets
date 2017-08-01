@@ -20,7 +20,6 @@
  */
 package net.nikr.eve.jeveasset.io.evekit;
 
-
 import enterprises.orbital.evekit.client.invoker.ApiClient;
 import enterprises.orbital.evekit.client.invoker.ApiException;
 import enterprises.orbital.evekit.client.model.MarketOrder;
@@ -35,13 +34,14 @@ import net.nikr.eve.jeveasset.data.evekit.EveKitOwner;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import net.nikr.eve.jeveasset.gui.tabs.orders.MyMarketOrder;
 
+public class EveKitMarketOrdersGetter extends AbstractEveKitListGetter<MarketOrder> {
 
-public class EveKitMarketOrdersGetter extends AbstractEveKitListGetter<MarketOrder>  {
-
-	private enum Runs { MONTHS, ALL }
+	private enum Runs {
+		MONTHS, ALL
+	}
 
 	private Runs run;
-	
+
 	@Override
 	public void load(UpdateTask updateTask, List<EveKitOwner> owners) {
 		run = Runs.MONTHS;
@@ -79,7 +79,7 @@ public class EveKitMarketOrdersGetter extends AbstractEveKitListGetter<MarketOrd
 		if (loadCID(owner) != null) { //Old
 			set.addAll(owner.getMarketOrders());
 		}
-		set.addAll(EveKitConverter.convertMarketOrders(data, owner)); //New
+		set.addAll(EveKitConverter.toMarketOrders(data, owner)); //New
 		owner.setMarketOrders(new ArrayList<MyMarketOrder>(set)); //New
 	}
 

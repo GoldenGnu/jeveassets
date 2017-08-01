@@ -20,7 +20,6 @@
  */
 package net.nikr.eve.jeveasset.io.evekit;
 
-
 import enterprises.orbital.evekit.client.invoker.ApiClient;
 import enterprises.orbital.evekit.client.invoker.ApiException;
 import enterprises.orbital.evekit.client.model.WalletJournal;
@@ -33,7 +32,6 @@ import net.nikr.eve.jeveasset.data.evekit.EveKitAccessMask;
 import net.nikr.eve.jeveasset.data.evekit.EveKitOwner;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import net.nikr.eve.jeveasset.gui.tabs.journal.MyJournal;
-
 
 public class EveKitJournalGetter extends AbstractEveKitListGetter<WalletJournal> {
 
@@ -55,7 +53,7 @@ public class EveKitJournalGetter extends AbstractEveKitListGetter<WalletJournal>
 		if (loadCID(owner) != null) { //Old
 			set.addAll(owner.getJournal());
 		}
-		set.addAll(EveKitConverter.convertJournals(data, owner)); //New
+		set.addAll(EveKitConverter.toJournals(data, owner)); //New
 		owner.setJournal(set); //All
 	}
 

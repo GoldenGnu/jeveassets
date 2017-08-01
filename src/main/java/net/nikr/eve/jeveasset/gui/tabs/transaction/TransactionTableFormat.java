@@ -36,7 +36,7 @@ public enum TransactionTableFormat implements EnumTableColumn<MyTransaction> {
 		}
 		@Override
 		public Object getColumnValue(final MyTransaction from) {
-			return from.getTransactionDateTime();
+			return from.getDate();
 		}
 	},
 	NAME(String.class, GlazedLists.comparableComparator()) {
@@ -96,7 +96,7 @@ public enum TransactionTableFormat implements EnumTableColumn<MyTransaction> {
 		}
 		@Override
 		public Object getColumnValue(final MyTransaction from) {
-			return from.getStationName();
+			return from.getLocation();
 		}
 	},
 	REGION(String.class, GlazedLists.comparableComparator()) {
@@ -149,8 +149,10 @@ public enum TransactionTableFormat implements EnumTableColumn<MyTransaction> {
 			return from.getAccountKeyFormated();
 		}
 	};
+
 	private final Class<?> type;
 	private final Comparator<?> comparator;
+
 	private TransactionTableFormat(final Class<?> type, final Comparator<?> comparator) {
 		this.type = type;
 		this.comparator = comparator;

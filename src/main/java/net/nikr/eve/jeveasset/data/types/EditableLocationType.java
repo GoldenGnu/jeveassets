@@ -22,7 +22,9 @@ package net.nikr.eve.jeveasset.data.types;
 
 import net.nikr.eve.jeveasset.data.MyLocation;
 
-
 public interface EditableLocationType extends LocationType {
+
 	public void setLocation(MyLocation location);
+
+	public long getLocationID();
 }

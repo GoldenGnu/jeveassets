@@ -24,10 +24,8 @@ import java.util.Date;
 import java.util.List;
 import net.nikr.eve.jeveasset.data.esi.EsiOwner;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
-import net.troja.eve.esi.ApiClient;
 import net.troja.eve.esi.ApiException;
 import net.troja.eve.esi.model.CharacterOrdersResponse;
-
 
 public class EsiMarketOrdersGetter extends AbstractEsiGetter {
 
@@ -38,8 +36,8 @@ public class EsiMarketOrdersGetter extends AbstractEsiGetter {
 
 	@Override
 	protected void get(EsiOwner owner) throws ApiException {
-		List<CharacterOrdersResponse> marketOrders = getMarketApiAuth().getCharactersCharacterIdOrders((int)owner.getOwnerID(), DATASOURCE, null, null, null);
-		owner.setMarketOrders(EsiConverter.convertMarketOrders(owner, marketOrders));
+		List<CharacterOrdersResponse> marketOrders = getMarketApiAuth().getCharactersCharacterIdOrders((int) owner.getOwnerID(), DATASOURCE, null, null, null);
+		owner.setMarketOrders(EsiConverter.toMarketOrders(marketOrders, owner));
 	}
 
 	@Override
@@ -61,5 +59,5 @@ public class EsiMarketOrdersGetter extends AbstractEsiGetter {
 	protected boolean inScope(EsiOwner owner) {
 		return owner.isMarketOrders();
 	}
-	
+
 }

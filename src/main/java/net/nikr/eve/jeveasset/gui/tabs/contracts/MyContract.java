@@ -18,36 +18,21 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
  */
-
 package net.nikr.eve.jeveasset.gui.tabs.contracts;
 
-import com.beimin.eveapi.model.shared.Contract;
-import static com.beimin.eveapi.model.shared.ContractStatus.COMPLETED;
-import static com.beimin.eveapi.model.shared.ContractStatus.COMPLETEDBYCONTRACTOR;
-import static com.beimin.eveapi.model.shared.ContractStatus.COMPLETEDBYISSUER;
-import static com.beimin.eveapi.model.shared.ContractStatus.DELETED;
-import static com.beimin.eveapi.model.shared.ContractStatus.FAILED;
-import static com.beimin.eveapi.model.shared.ContractStatus.INPROGRESS;
-import static com.beimin.eveapi.model.shared.ContractStatus.OUTSTANDING;
-import static com.beimin.eveapi.model.shared.ContractStatus.REJECTED;
-import static com.beimin.eveapi.model.shared.ContractStatus.REVERSED;
-import com.beimin.eveapi.model.shared.ContractType;
-import static com.beimin.eveapi.model.shared.ContractType.AUCTION;
-import static com.beimin.eveapi.model.shared.ContractType.COURIER;
-import static com.beimin.eveapi.model.shared.ContractType.ITEMEXCHANGE;
-import static com.beimin.eveapi.model.shared.ContractType.LOAN;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 import net.nikr.eve.jeveasset.data.MyLocation;
+import net.nikr.eve.jeveasset.data.raw.RawContract;
 import net.nikr.eve.jeveasset.data.types.LocationsType;
 import net.nikr.eve.jeveasset.i18n.TabsContracts;
 
+public class MyContract extends RawContract implements LocationsType {
 
-public class MyContract extends Contract implements LocationsType {
-
-	private MyLocation endStation;
-	private MyLocation startStation;
+	private MyLocation endLocation;
+	private MyLocation startLocation;
 	private String acceptor = "";
 	private String assignee = "";
 	private String issuerCorp = "";
@@ -56,40 +41,22 @@ public class MyContract extends Contract implements LocationsType {
 	private boolean issuerAfterAssets = false;
 	private boolean acceptorAfterAssets = false;
 
-	public MyContract(Contract contract, MyLocation startStation, MyLocation endStation) {
-		setEndStation(endStation);
-		setStartStation(startStation);
-		this.setAcceptorID(contract.getAcceptorID());
-		this.setAssigneeID(contract.getAssigneeID());
-		this.setAvailability(contract.getAvailability());
-		this.setBuyout(contract.getBuyout());
-		this.setCollateral(contract.getCollateral());
-		this.setContractID(contract.getContractID());
-		this.setDateAccepted(contract.getDateAccepted());
-		this.setDateCompleted(contract.getDateCompleted());
-		this.setDateExpired(contract.getDateExpired());
-		this.setDateIssued(contract.getDateIssued());
-		this.setEndStationID(contract.getEndStationID());
-		this.setForCorp(contract.isForCorp());
-		this.setIssuerCorpID(contract.getIssuerCorpID());
-		this.setIssuerID(contract.getIssuerID());
-		this.setNumDays(contract.getNumDays());
-		this.setPrice(contract.getPrice());
-		this.setReward(contract.getReward());
-		this.setStartStationID(contract.getStartStationID());
-		this.setStatus(contract.getStatus());
-		this.setTitle(contract.getTitle());
-		this.setType(contract.getType());
-		this.setVolume(contract.getVolume());
+	public MyContract(RawContract rawContract) {
+		super(rawContract);
 	}
 
 	public String getTypeName() {
 		switch (getType()) {
-			case AUCTION: return TabsContracts.get().auction();
-			case COURIER: return TabsContracts.get().courier();
-			case ITEMEXCHANGE: return TabsContracts.get().itemExchange();
-			case LOAN: return TabsContracts.get().loan();
-			default: return TabsContracts.get().unknown();
+			case AUCTION:
+				return TabsContracts.get().auction();
+			case COURIER:
+				return TabsContracts.get().courier();
+			case ITEM_EXCHANGE:
+				return TabsContracts.get().itemExchange();
+			case LOAN:
+				return TabsContracts.get().loan();
+			default:
+				return TabsContracts.get().unknown();
 		}
 	}
 
@@ -133,8 +100,8 @@ public class MyContract extends Contract implements LocationsType {
 		this.issuer = issuer;
 	}
 
-	public MyLocation getEndStation() {
-		return endStation;
+	public MyLocation getEndLocation() {
+		return endLocation;
 	}
 
 	public boolean isIssuerAfterAssets() {
@@ -164,21 +131,21 @@ public class MyContract extends Contract implements LocationsType {
 	@Override
 	public Set<MyLocation> getLocations() {
 		Set<MyLocation> locations = new HashSet<MyLocation>();
-		locations.add(startStation);
-		locations.add(endStation);
+		locations.add(startLocation);
+		locations.add(endLocation);
 		return locations;
 	}
 
-	public final void setEndStation(MyLocation endStation) {
-		this.endStation = endStation;
+	public final void setEndLocation(MyLocation endLocation) {
+		this.endLocation = endLocation;
 	}
 
-	public final void setStartStation(MyLocation startStation) {
-		this.startStation = startStation;
+	public final void setStartLocation(MyLocation startLocation) {
+		this.startLocation = startLocation;
 	}
 
-	public MyLocation getStartStation() {
-		return startStation;
+	public MyLocation getStartLocation() {
+		return startLocation;
 	}
 
 	public boolean isCourier() {
@@ -186,25 +153,36 @@ public class MyContract extends Contract implements LocationsType {
 	}
 
 	public String getStatusFormated() {
-		switch(super.getStatus()) {
-			case CANCELLED: return TabsContracts.get().statusCancelled();
-			case COMPLETED: return TabsContracts.get().statusCompleted();
-			case COMPLETEDBYCONTRACTOR: return TabsContracts.get().statusCompletedByContractor();
-			case COMPLETEDBYISSUER: return TabsContracts.get().statusCompletedByIssuer();
-			case DELETED: return TabsContracts.get().statusDeleted();
-			case FAILED: return TabsContracts.get().statusFailed();
-			case INPROGRESS: return TabsContracts.get().statusInProgress();
-			case OUTSTANDING: return TabsContracts.get().statusOutstanding();
-			case REJECTED: return TabsContracts.get().statusRejected();
-			case REVERSED: return TabsContracts.get().statusReversed();
-			default: return TabsContracts.get().statusUnknown();
+		switch (super.getStatus()) {
+			case CANCELLED:
+				return TabsContracts.get().statusCancelled();
+			case FINISHED:
+				return TabsContracts.get().statusCompleted();
+			case FINISHED_CONTRACTOR:
+				return TabsContracts.get().statusCompletedByContractor();
+			case FINISHED_ISSUER:
+				return TabsContracts.get().statusCompletedByIssuer();
+			case DELETED:
+				return TabsContracts.get().statusDeleted();
+			case FAILED:
+				return TabsContracts.get().statusFailed();
+			case IN_PROGRESS:
+				return TabsContracts.get().statusInProgress();
+			case OUTSTANDING:
+				return TabsContracts.get().statusOutstanding();
+			case REJECTED:
+				return TabsContracts.get().statusRejected();
+			case REVERSED:
+				return TabsContracts.get().statusReversed();
+			default:
+				return TabsContracts.get().statusUnknown();
 		}
 	}
 
 	@Override
 	public int hashCode() {
 		int hash = 7;
-		hash = 71 * hash + (int) (this.getContractID() ^ (this.getContractID() >>> 32));
+		hash = 71 * hash + Objects.hashCode(this.getContractID());
 		hash = 71 * hash + (int) (this.getIssuerID() ^ (this.getIssuerID() >>> 32));
 		return hash;
 	}
@@ -218,12 +196,9 @@ public class MyContract extends Contract implements LocationsType {
 			return false;
 		}
 		final MyContract other = (MyContract) obj;
-		if (this.getContractID() != other.getContractID()) {
+		if (!Objects.equals(this.getContractID(), other.getContractID())) {
 			return false;
 		}
-		if (this.getIssuerID() != other.getIssuerID()) {
-			return false;
-		}
-		return true;
+		return Objects.equals(this.getIssuerID(), other.getIssuerID());
 	}
 }

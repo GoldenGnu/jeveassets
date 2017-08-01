@@ -137,7 +137,7 @@ public enum ContractsTableFormat implements EnumTableColumn<MyContractItem> {
 		}
 		@Override
 		public Object getColumnValue(final MyContractItem from) {
-			return from.getContract().getNumDays();
+			return from.getContract().getDaysToComplete();
 		}
 	},
 	REWARD(Double.class, GlazedLists.comparableComparator()) {
@@ -207,7 +207,7 @@ public enum ContractsTableFormat implements EnumTableColumn<MyContractItem> {
 		}
 		@Override
 		public Object getColumnValue(final MyContractItem from) {
-			return from.getContract().getStartStation();
+			return from.getContract().getStartLocation();
 		}
 	},
 	END_STATION(String.class, GlazedLists.comparableComparator()) {
@@ -217,7 +217,7 @@ public enum ContractsTableFormat implements EnumTableColumn<MyContractItem> {
 		}
 		@Override
 		public Object getColumnValue(final MyContractItem from) {
-			return from.getContract().getEndStation();
+			return from.getContract().getEndLocation();
 		}
 	},
 	ISSUED_DATE(Date.class, GlazedLists.comparableComparator()) {

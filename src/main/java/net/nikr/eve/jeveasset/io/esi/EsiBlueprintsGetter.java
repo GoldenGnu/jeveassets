@@ -24,10 +24,8 @@ import java.util.Date;
 import java.util.List;
 import net.nikr.eve.jeveasset.data.esi.EsiOwner;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
-import net.troja.eve.esi.ApiClient;
 import net.troja.eve.esi.ApiException;
 import net.troja.eve.esi.model.CharacterBlueprintsResponse;
-
 
 public class EsiBlueprintsGetter extends AbstractEsiGetter {
 
@@ -38,8 +36,8 @@ public class EsiBlueprintsGetter extends AbstractEsiGetter {
 
 	@Override
 	protected void get(EsiOwner owner) throws ApiException {
-		List<CharacterBlueprintsResponse> blueprints = getCharacterApiAuth().getCharactersCharacterIdBlueprints((int)owner.getOwnerID(), DATASOURCE, null, null, null);
-		owner.setBlueprints(EsiConverter.convertBlueprints(owner, blueprints));
+		List<CharacterBlueprintsResponse> responses = getCharacterApiAuth().getCharactersCharacterIdBlueprints((int) owner.getOwnerID(), DATASOURCE, null, null, null);
+		owner.setBlueprints(EsiConverter.toBlueprints(responses));
 	}
 
 	@Override
@@ -61,5 +59,5 @@ public class EsiBlueprintsGetter extends AbstractEsiGetter {
 	protected boolean inScope(EsiOwner owner) {
 		return owner.isBlueprints();
 	}
-	
+
 }

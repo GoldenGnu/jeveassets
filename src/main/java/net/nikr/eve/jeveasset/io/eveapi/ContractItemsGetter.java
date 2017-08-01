@@ -18,17 +18,14 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
  */
-
 package net.nikr.eve.jeveasset.io.eveapi;
 
 import com.beimin.eveapi.exception.ApiException;
-import com.beimin.eveapi.model.shared.ContractItem;
-import com.beimin.eveapi.model.shared.ContractType;
 import com.beimin.eveapi.parser.character.CharContractItemsParser;
 import com.beimin.eveapi.parser.corporation.CorpContractItemsParser;
 import com.beimin.eveapi.response.shared.ContractItemsResponse;
+import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import net.nikr.eve.jeveasset.data.eveapi.EveApiAccessMask;
@@ -37,13 +34,10 @@ import net.nikr.eve.jeveasset.data.eveapi.EveApiOwner;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import net.nikr.eve.jeveasset.gui.tabs.contracts.MyContract;
 import net.nikr.eve.jeveasset.gui.tabs.contracts.MyContractItem;
-import net.nikr.eve.jeveasset.io.shared.ApiConverter;
-
 
 public class ContractItemsGetter extends AbstractApiGetter<ContractItemsResponse> {
 
 	private MyContract currentContract;
-	private Map<Long, List<ContractItem>> savedItems = new HashMap<Long, List<ContractItem>>();
 
 	public ContractItemsGetter() {
 		super("Contracts", false, false);
@@ -61,39 +55,39 @@ public class ContractItemsGetter extends AbstractApiGetter<ContractItemsResponse
 		int count = 0;
 		for (EveApiAccount account : accounts) {
 			for (EveApiOwner owner : account.getOwners()) {
+				List<MyContract> contracts = new ArrayList<MyContract>();
 				for (Map.Entry<MyContract, List<MyContractItem>> entry : owner.getContracts().entrySet()) {
 					MyContract contract = entry.getKey();
 					if (updateTask != null && updateTask.isCancelled()) {
 						return; //We are done here...
 					}
 					count++; //Also count COURIER
-					if (contract.getType() == ContractType.COURIER) {
+					if (contract.isCourier()) {
 						continue; //Ignore courier
 					}
 					if (!entry.getValue().isEmpty()) {
-							continue; //Ignore existing
- 					}
+						continue; //Ignore existing
+					}
 					///XXX - Workaround for alien contracts
 					if ((owner.getOwnerID() != contract.getAcceptorID()
 							&& owner.getOwnerID() != contract.getAssigneeID()
 							&& owner.getOwnerID() != contract.getIssuerID())
-							&& owner.getOwnerID() != contract.getIssuerCorpID()
-							) {
+							&& owner.getOwnerID() != contract.getIssuerCorpID()) {
 						continue; //Ignore not owned
 					}
 					if ((owner.getOwnerID() != contract.getAcceptorID()
 							&& owner.getOwnerID() != contract.getAssigneeID()
 							&& owner.getOwnerID() != contract.getIssuerID())
-							&& !contract.isForCorp()
-							) {
+							&& !contract.isForCorp()) {
 						continue; //Only IssuerCorpID match and is not for corp
 					}
-					List<ContractItem> items = savedItems.get(contract.getContractID());
-					if (items != null) { //Set already updated
-						owner.getContracts().put(contract, ApiConverter.convertContractItems(items, contract));
+					if (entry.getValue() != null && !entry.getValue().isEmpty()) { //Set already updated
 						continue; //Ignore already updated
 					}
-					this.setTaskName("Contract Item ("+contract.getContractID()+")");
+					contracts.add(contract);
+				}
+				for (MyContract contract : contracts) {
+					this.setTaskName("Contract Item (" + contract.getContractID() + ")");
 					currentContract = contract;
 					super.loadOwner(updateTask, forceUpdate, owner);
 					if (updateTask != null) {
@@ -137,9 +131,7 @@ public class ContractItemsGetter extends AbstractApiGetter<ContractItemsResponse
 
 	@Override
 	protected void setData(ContractItemsResponse response) {
-		List<ContractItem> contractItems = response.getAll();
-		getOwner().getContracts().put(currentContract, ApiConverter.convertContractItems(contractItems, currentContract));
-		savedItems.put(currentContract.getContractID(), contractItems);
+		getOwner().setContracts(EveApiConverter.toContractItems(currentContract, response.getAll(), getOwner()));
 	}
 
 	@Override
@@ -155,5 +147,5 @@ public class ContractItemsGetter extends AbstractApiGetter<ContractItemsResponse
 			return EveApiAccessMask.CONTRACTS_CHAR.getAccessMask();
 		}
 	}
-	
+
 }

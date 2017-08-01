@@ -18,7 +18,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
  */
-
 package net.nikr.eve.jeveasset.io.eveapi;
 
 import com.beimin.eveapi.exception.ApiException;
@@ -37,8 +36,6 @@ import net.nikr.eve.jeveasset.data.eveapi.EveApiAccount;
 import net.nikr.eve.jeveasset.data.eveapi.EveApiOwner;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import net.nikr.eve.jeveasset.gui.tabs.orders.MyMarketOrder;
-import net.nikr.eve.jeveasset.io.shared.ApiConverter;
-
 
 public class MarketOrdersGetter extends AbstractApiGetter<MarketOrdersResponse> {
 
@@ -46,7 +43,7 @@ public class MarketOrdersGetter extends AbstractApiGetter<MarketOrdersResponse> 
 	private final Map<Long, Set<Long>> updatedByOwner = new HashMap<Long, Set<Long>>();
 	private Long orderID;
 	private boolean ingoreNextUpdate;
-	
+
 	public MarketOrdersGetter() {
 		super("Market Orders", true, false);
 	}
@@ -58,9 +55,9 @@ public class MarketOrdersGetter extends AbstractApiGetter<MarketOrdersResponse> 
 		orderID = null;
 		//Default update - this will be enough if we don't save the history
 		super.loadAccounts(updateTask, forceUpdate, accounts);
-		
+
 		//If we save history we need to update none-completed orders in the history
-		if (saveHistory) { 
+		if (saveHistory) {
 			//Ignore nextUpdate value
 			ingoreNextUpdate = true;
 			int size = 0;
@@ -96,7 +93,7 @@ public class MarketOrdersGetter extends AbstractApiGetter<MarketOrdersResponse> 
 					//Set orderID to update
 					orderID = id;
 					//Set task name
-					this.setTaskName("Market Orders ("+id+")");
+					this.setTaskName("Market Orders (" + id + ")");
 					//Update from the API
 					super.loadOwner(updateTask, forceUpdate, entry.getKey());
 					count++;
@@ -145,7 +142,7 @@ public class MarketOrdersGetter extends AbstractApiGetter<MarketOrdersResponse> 
 
 	@Override
 	protected void setData(final MarketOrdersResponse response) {
-		List<MyMarketOrder> marketOrders = ApiConverter.convertMarketOrders(response.getAll(), getOwner());
+		List<MyMarketOrder> marketOrders = EveApiConverter.toMarketOrders(response.getAll(), getOwner());
 		if (saveHistory) {
 			Set<MyMarketOrder> marketOrdersUnique = new HashSet<MyMarketOrder>();
 			marketOrdersUnique.addAll(marketOrders); //Add new
@@ -156,7 +153,7 @@ public class MarketOrdersGetter extends AbstractApiGetter<MarketOrdersResponse> 
 			if (updated == null) {
 				updated = new HashSet<Long>();
 				updatedByOwner.put(getOwner().getOwnerID(), updated);
-			}	
+			}
 			for (MyMarketOrder marketOrder : marketOrders) {
 				updated.add(marketOrder.getOrderID());
 			}

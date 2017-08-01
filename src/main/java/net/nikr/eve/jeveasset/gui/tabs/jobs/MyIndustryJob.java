@@ -20,20 +20,21 @@
  */
 package net.nikr.eve.jeveasset.gui.tabs.jobs;
 
-import com.beimin.eveapi.model.shared.Blueprint;
-import com.beimin.eveapi.model.shared.IndustryJob;
+import java.util.Objects;
 import net.nikr.eve.jeveasset.data.Item;
 import net.nikr.eve.jeveasset.data.MyLocation;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.data.api.OwnerType;
+import net.nikr.eve.jeveasset.data.raw.RawBlueprint;
+import net.nikr.eve.jeveasset.data.raw.RawIndustryJob;
 import net.nikr.eve.jeveasset.data.types.BlueprintType;
 import net.nikr.eve.jeveasset.data.types.EditableLocationType;
 import net.nikr.eve.jeveasset.data.types.ItemType;
 import net.nikr.eve.jeveasset.data.types.PriceType;
 import net.nikr.eve.jeveasset.i18n.DataModelIndustryJob;
+import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 
-
-public class MyIndustryJob extends IndustryJob implements Comparable<MyIndustryJob>, EditableLocationType, ItemType, PriceType, BlueprintType {
+public class MyIndustryJob extends RawIndustryJob implements Comparable<MyIndustryJob>, EditableLocationType, ItemType, PriceType, BlueprintType {
 
 	public enum IndustryJobState {
 		STATE_ALL() {
@@ -78,8 +79,9 @@ public class MyIndustryJob extends IndustryJob implements Comparable<MyIndustryJ
 				return DataModelIndustryJob.get().stateReverted();
 			}
 		};
-		
+
 		abstract String getI18N();
+
 		@Override
 		public String toString() {
 			return getI18N();
@@ -128,6 +130,7 @@ public class MyIndustryJob extends IndustryJob implements Comparable<MyIndustryJ
 			String getI18N() {
 				return DataModelIndustryJob.get().activityCopying();
 			}
+
 			@Override
 			public String getDescriptionOf(final MyIndustryJob job) {
 				// "Copying: Xyz Blueprint making 5 copies with 1500 runs each."
@@ -135,7 +138,7 @@ public class MyIndustryJob extends IndustryJob implements Comparable<MyIndustryJ
 						String.valueOf(job.getBlueprintTypeID()),
 						job.getRuns(),
 						job.getLicensedRuns()
-						);
+				);
 			}
 		},
 		ACTIVITY_DUPLICATING() {
@@ -156,11 +159,14 @@ public class MyIndustryJob extends IndustryJob implements Comparable<MyIndustryJ
 				return DataModelIndustryJob.get().activityReverseInvention();
 			}
 		};
+
 		abstract String getI18N();
+
 		@Override
 		public String toString() {
 			return getI18N();
 		}
+
 		/**
 		 *
 		 * @param job
@@ -181,43 +187,16 @@ public class MyIndustryJob extends IndustryJob implements Comparable<MyIndustryJ
 	private double outputValue;
 	private int outputCount;
 	private String installer;
-	private Blueprint blueprint;
+	private RawBlueprint blueprint;
 	private MyLocation location;
 
-	public MyIndustryJob(final IndustryJob apiIndustryJob, final Item item, final MyLocation location, final OwnerType owner, final int portion, final int productTypeID) {
-		setJobID(apiIndustryJob.getJobID());
-		setInstallerID(apiIndustryJob.getInstallerID());
-		setInstallerName(apiIndustryJob.getInstallerName());
-		setFacilityID(apiIndustryJob.getFacilityID());
-		setSolarSystemID(apiIndustryJob.getSolarSystemID());
-		setSolarSystemName(apiIndustryJob.getSolarSystemName());
-		setStationID(apiIndustryJob.getStationID());
-		setActivityID(apiIndustryJob.getActivityID());
-		setBlueprintID(apiIndustryJob.getBlueprintID());
-		setBlueprintTypeID(apiIndustryJob.getBlueprintTypeID());
-		setBlueprintTypeName(apiIndustryJob.getBlueprintTypeName());
-		setBlueprintLocationID(apiIndustryJob.getBlueprintLocationID());
-		setOutputLocationID(apiIndustryJob.getOutputLocationID());
-		setRuns(apiIndustryJob.getRuns());
-		setCost(apiIndustryJob.getCost());
-		setTeamID(apiIndustryJob.getTeamID());
-		setLicensedRuns(apiIndustryJob.getLicensedRuns());
-		setProbability(apiIndustryJob.getProbability());
-		setProductTypeID(productTypeID);
-		setProductTypeName(apiIndustryJob.getProductTypeName());
-		setStatus(apiIndustryJob.getStatus());
-		setTimeInSeconds(apiIndustryJob.getTimeInSeconds());
-		setStartDate(apiIndustryJob.getStartDate());
-		setEndDate(apiIndustryJob.getEndDate());
-		setPauseDate(apiIndustryJob.getPauseDate());
-		setCompletedDate(apiIndustryJob.getCompletedDate());
-		setCompletedCharacterID(apiIndustryJob.getCompletedCharacterID());
+	public MyIndustryJob(final RawIndustryJob rawIndustryJob, final Item item, final OwnerType owner, final int portion) {
+		super(rawIndustryJob);
 		this.item = item;
-		this.location = location;
 		this.owner = owner;
 		this.portion = portion;
 
-		switch (this.getActivityID()) {
+		switch (getActivityID()) {
 			case 0:
 				activity = IndustryActivity.ACTIVITY_NONE;
 				break;
@@ -247,30 +226,30 @@ public class MyIndustryJob extends IndustryJob implements Comparable<MyIndustryJ
 				break;
 		}
 		switch (getStatus()) {
-			case 1: //Active
+			case ACTIVE: //Active
 				if (getEndDate().before(Settings.getNow())) {
 					state = IndustryJobState.STATE_DONE;
 				} else {
 					state = IndustryJobState.STATE_ACTIVE;
 				}
 				break;
-			case 2:
+			case PAUSED:
 				state = IndustryJobState.STATE_PAUSED;
 				break;
-			case 3:
+			case READY:
 				state = IndustryJobState.STATE_DONE;
 				break;
-			case 101:
+			case DELIVERED:
 				state = IndustryJobState.STATE_DELIVERED;
 				break;
-			case 102:
+			case CANCELLED:
 				state = IndustryJobState.STATE_CANCELLED;
 				break;
-			case 103:
+			case REVERTED:
 				state = IndustryJobState.STATE_REVERTED;
 				break;
 		}
-		switch(activity) {
+		switch (activity) {
 			case ACTIVITY_MANUFACTURING:
 				outputCount = getRuns() * portion;
 				break;
@@ -289,10 +268,9 @@ public class MyIndustryJob extends IndustryJob implements Comparable<MyIndustryJ
 		return 0;
 	}
 
-	public void setBlueprint(Blueprint blueprint) {
+	public void setBlueprint(RawBlueprint blueprint) {
 		this.blueprint = blueprint;
 	}
-
 
 	@Override
 	public boolean isBPO() {
@@ -347,7 +325,7 @@ public class MyIndustryJob extends IndustryJob implements Comparable<MyIndustryJ
 	public IndustryJobState getState() {
 		//Update STATE_DONE (may have changed after loading profile)
 		if (getEndDate().before(Settings.getNow()) && state == IndustryJobState.STATE_ACTIVE) {
-			state = IndustryJobState.STATE_DONE; 
+			state = IndustryJobState.STATE_DONE;
 		}
 		return state;
 	}
@@ -390,6 +368,23 @@ public class MyIndustryJob extends IndustryJob implements Comparable<MyIndustryJ
 	}
 
 	@Override
+	public long getLocationID() {
+		boolean found = ApiIdConverter.isLocationOK(getStationID());
+		if (found) {
+			return getStationID();
+		}
+		found = ApiIdConverter.isLocationOK(getBlueprintLocationID());
+		if (found) {
+			return getBlueprintLocationID();
+		}
+		found = ApiIdConverter.isLocationOK(getOutputLocationID());
+		if (found) {
+			return getOutputLocationID();
+		}
+		return -1;
+	}
+
+	@Override
 	public MyLocation getLocation() {
 		return location;
 	}
@@ -423,7 +418,7 @@ public class MyIndustryJob extends IndustryJob implements Comparable<MyIndustryJ
 	@Override
 	public int hashCode() {
 		int hash = 5;
-		hash = 37 * hash + (int) (this.getJobID() ^ (this.getJobID() >>> 32));
+		hash = 37 * hash + Objects.hashCode(this.getJobID());
 		hash = 37 * hash + (int) (this.owner.getOwnerID() ^ (this.owner.getOwnerID() >>> 32));
 		return hash;
 	}
@@ -440,12 +435,9 @@ public class MyIndustryJob extends IndustryJob implements Comparable<MyIndustryJ
 			return false;
 		}
 		final MyIndustryJob other = (MyIndustryJob) obj;
-		if (this.getJobID() != other.getJobID()) {
+		if (!Objects.equals(this.getJobID(), other.getJobID())) {
 			return false;
 		}
-		if (this.owner.getOwnerID() != other.owner.getOwnerID()) {
-			return false;
-		}
-		return true;
+		return this.owner.getOwnerID() == other.owner.getOwnerID();
 	}
 }

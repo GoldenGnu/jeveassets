@@ -20,48 +20,50 @@
  */
 package net.nikr.eve.jeveasset.gui.tabs.assets;
 
-import com.beimin.eveapi.model.shared.Blueprint;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import net.nikr.eve.jeveasset.data.Item;
 import net.nikr.eve.jeveasset.data.MarketPriceData;
 import net.nikr.eve.jeveasset.data.MyLocation;
 import net.nikr.eve.jeveasset.data.PriceData;
 import net.nikr.eve.jeveasset.data.UserItem;
+import net.nikr.eve.jeveasset.data.api.OwnerType;
+import net.nikr.eve.jeveasset.data.raw.RawAsset;
+import net.nikr.eve.jeveasset.data.raw.RawBlueprint;
 import net.nikr.eve.jeveasset.data.tag.TagID;
 import net.nikr.eve.jeveasset.data.tag.Tags;
 import net.nikr.eve.jeveasset.data.types.BlueprintType;
+import net.nikr.eve.jeveasset.data.types.EditableLocationType;
 import net.nikr.eve.jeveasset.data.types.ItemType;
 import net.nikr.eve.jeveasset.data.types.JumpType;
-import net.nikr.eve.jeveasset.data.api.OwnerType;
-import net.nikr.eve.jeveasset.data.types.EditableLocationType;
 import net.nikr.eve.jeveasset.data.types.PriceType;
 import net.nikr.eve.jeveasset.data.types.TagsType;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo.InfoItem;
+import net.nikr.eve.jeveasset.gui.tabs.contracts.MyContractItem;
+import net.nikr.eve.jeveasset.gui.tabs.jobs.MyIndustryJob;
+import net.nikr.eve.jeveasset.gui.tabs.orders.MyMarketOrder;
 import net.nikr.eve.jeveasset.i18n.DataModelAsset;
+import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
+import net.nikr.eve.jeveasset.io.shared.RawConverter;
 
-public class MyAsset implements Comparable<MyAsset>, InfoItem, JumpType, ItemType, BlueprintType, PriceType, TagsType, EditableLocationType {
+public class MyAsset extends RawAsset implements Comparable<MyAsset>, InfoItem, JumpType, ItemType, BlueprintType, PriceType, TagsType, EditableLocationType {
 
-	//Static values (set by constructor)
+//Static values (set by constructor)
 	private final List<MyAsset> assets = new ArrayList<MyAsset>();
-	private Item item;
-	private OwnerType owner;
-	private long count;
-	private List<MyAsset> parents;
-	private String flag;
-	private int flagID; //FlagID : int
-	private long itemID; //ItemID : long
-	private boolean singleton;
-	private int rawQuantity;
-	//Static values cache
+	private final RawAsset rawAsset;
+	private final Item item;
+	private final OwnerType owner;
+	private final List<MyAsset> parents;
+//Static values cache (set by constructor)
 	private String typeName;
 	private boolean bpo;
 	private boolean bpc;
-	//Dynamic values
+//Dynamic values
 	private String name;
 	private String container = "";
 	private PriceData priceData;
@@ -73,7 +75,7 @@ public class MyAsset implements Comparable<MyAsset>, InfoItem, JumpType, ItemTyp
 	private Date added;
 	private double price;
 	private Tags tags;
-	private Blueprint blueprint;
+	private RawBlueprint blueprint;
 	private MyLocation location;
 	//Dynamic values cache
 	private boolean userNameSet = false;
@@ -81,63 +83,60 @@ public class MyAsset implements Comparable<MyAsset>, InfoItem, JumpType, ItemTyp
 	private boolean userPriceSet = false;
 	private final Map<Long, Integer> jumpsList = new HashMap<Long, Integer>();
 
-	/**
-	 * For mockups...
-	 */
-	protected MyAsset() { }
-
 	protected MyAsset(MyAsset asset) {
-		this(asset.item,
-				asset.location,
+		this(asset.rawAsset,
+				asset.item,
 				asset.owner,
-				asset.count,
-				asset.parents,
-				asset.flag,
-				asset.flagID,
-				asset.itemID,
-				asset.singleton,
-				asset.rawQuantity);
-		//this.assets = asset.assets;
-		this.added = asset.added;
-		this.container = asset.container;
-		this.price = asset.price;
-		this.tags = asset.tags;
-		this.marketPriceData = asset.marketPriceData;
+				asset.parents);
 		this.name = asset.name;
+		this.container = asset.container;
 		this.priceData = asset.priceData;
-		this.priceReprocessed = asset.priceReprocessed;
-		this.typeCount = asset.typeCount;
 		this.userPrice = asset.userPrice;
 		this.volume = asset.volume;
+		this.typeCount = asset.typeCount;
+		this.priceReprocessed = asset.priceReprocessed;
+		this.marketPriceData = asset.marketPriceData;
+		this.added = asset.added;
+		this.price = asset.price;
+		this.tags = asset.tags;
 		this.blueprint = asset.blueprint;
+		this.location = asset.location;
 		this.userNameSet = asset.userNameSet;
-		this.userPriceSet = asset.userPriceSet;
 		this.eveNameSet = asset.eveNameSet;
+		this.userPriceSet = asset.userPriceSet;
 	}
 
-	public MyAsset(final Item item, final MyLocation location, final OwnerType owner, final long count, final List<MyAsset> parents, final String flag, final int flagID, final long itemID, final boolean singleton, final int rawQuantity) {
-		this.item = item;
+	public MyAsset(MyLocation location) {
+		super(RawAsset.create());
+		this.rawAsset = RawAsset.create();
+		this.item = new Item(0);
+		this.owner = null;
+		this.parents = null;
 		this.location = location;
+		setItemID(0L);
+		setItemFlag(ApiIdConverter.getFlag(0));
+		setLocationID(location.getLocationID());
+		setLocationType(RawConverter.toAssetLocationType(location.getLocationID()));
+	}
+
+	public MyAsset(final RawAsset rawAsset, final Item item, final OwnerType owner, final List<MyAsset> parents) {
+		super(rawAsset);
+		this.rawAsset = rawAsset;
+		this.item = item;
 		this.owner = owner;
-		this.count = count;
 		this.parents = parents;
-		this.flag = flag;
-		this.flagID = flagID;
-		this.itemID = itemID;
 		this.volume = item.getVolume();
-		this.singleton = singleton;
-		this.rawQuantity = rawQuantity;
 		//The order matter!
 		//1st
 		//rawQuantity: -1 = BPO. Only BPOs can be packaged (singleton == false). Only packaged items can be stacked (count > 1)
-		this.bpo = (item.isBlueprint() && (rawQuantity == -1 || !singleton || count > 1));
+		this.bpo = (item.isBlueprint() && (getQuantity() == -1 || !isSingleton() || getQuantity() > 1));
 		//rawQuantity: -2 = BPC
-		this.bpc = (item.isBlueprint() && rawQuantity == -2);
+		this.bpc = (item.isBlueprint() && getQuantity() == -2);
 		//2nd
 		if (item.isBlueprint()) {
 			if (isBPO()) {
 				this.typeName = item.getTypeName() + " (BPO)";
-			} else if (isBPC()){
+			} else if (isBPC()) {
 				this.typeName = item.getTypeName() + " (BPC)";
 			} else {
 				this.bpc = true;
@@ -148,6 +147,18 @@ public class MyAsset implements Comparable<MyAsset>, InfoItem, JumpType, ItemTyp
 		}
 		//3rd
 		this.name = getTypeName();
+	}
+
+	public MyAsset(MyIndustryJob industryJob) {
+		this(new RawAsset(industryJob), industryJob.getItem(), industryJob.getOwner(), new ArrayList<MyAsset>());
+	}
+
+	public MyAsset(MyMarketOrder marketOrder) {
+		this(new RawAsset(marketOrder), marketOrder.getItem(), marketOrder.getOwner(), new ArrayList<MyAsset>());
+	}
+
+	public MyAsset(MyContractItem contractItem, final OwnerType owner) {
+		this(new RawAsset(contractItem), contractItem.getItem(), owner, new ArrayList<MyAsset>());
 	}
 
 	public void addAsset(final MyAsset asset) {
@@ -168,19 +179,28 @@ public class MyAsset implements Comparable<MyAsset>, InfoItem, JumpType, ItemTyp
 
 	@Override
 	public long getCount() {
-		return count;
+		Integer quantity = super.getQuantity();
+		if (quantity == null || quantity <= 0) {
+			return 1;
+		} else {
+			return quantity;
+		}
 	}
 
 	public String getFlag() {
-		return flag;
+		if (getItemFlag() != null) {
+			return getItemFlag().getFlagName();
+		} else {
+			return null;
+		}
 	}
 
-	public int getFlagID() {
-		return flagID;
-	}
-
-	public long getItemID() {
-		return itemID;
+	public Integer getFlagID() {
+		if (getItemFlag() != null) {
+			return getItemFlag().getFlagID();
+		} else {
+			return null;
+		}
 	}
 
 	@Override
@@ -290,10 +310,6 @@ public class MyAsset implements Comparable<MyAsset>, InfoItem, JumpType, ItemTyp
 		return 0;
 	}
 
-	public int getRawQuantity() {
-		return rawQuantity;
-	}
-
 	@Override
 	public Tags getTags() {
 		return tags;
@@ -318,19 +334,19 @@ public class MyAsset implements Comparable<MyAsset>, InfoItem, JumpType, ItemTyp
 
 	@Override
 	public double getValue() {
-		return Formater.round(this.getDynamicPrice() * this.getCount(), 2);
+		return Formater.round(this.getDynamicPrice() * getCount(), 2);
 	}
 
 	@Override
 	public double getValueReprocessed() {
-		return Formater.round(this.getPriceReprocessed() * this.getCount(), 2);
+		return Formater.round(this.getPriceReprocessed() * getCount(), 2);
 	}
 
 	public float getVolume() {
 		return volume;
 	}
 
-	public double getValuePerVolume () {
+	public double getValuePerVolume() {
 		if (getVolume() > 0 && getDynamicPrice() > 0) {
 			return getDynamicPrice() / getVolume();
 		} else {
@@ -340,7 +356,7 @@ public class MyAsset implements Comparable<MyAsset>, InfoItem, JumpType, ItemTyp
 
 	@Override
 	public double getVolumeTotal() {
-		return volume * count;
+		return volume * getCount();
 	}
 
 	@Override
@@ -385,16 +401,8 @@ public class MyAsset implements Comparable<MyAsset>, InfoItem, JumpType, ItemTyp
 		return eveNameSet;
 	}
 
-	/**
-	 * Singleton: Unpackaged.
-	 *
-	 * @return true if unpackaged - false if packaged
-	 */
-	public boolean isSingleton() {
-		return singleton;
-	}
 	public String getSingleton() {
-		if (singleton) {
+		if (isSingleton()) {
 			return DataModelAsset.get().unpackaged();
 		} else {
 			return DataModelAsset.get().packaged();
@@ -413,7 +421,7 @@ public class MyAsset implements Comparable<MyAsset>, InfoItem, JumpType, ItemTyp
 		this.added = added;
 	}
 
-	public void setBlueprint(Blueprint blueprint) {
+	public void setBlueprint(RawBlueprint blueprint) {
 		this.blueprint = blueprint;
 	}
 
@@ -471,7 +479,7 @@ public class MyAsset implements Comparable<MyAsset>, InfoItem, JumpType, ItemTyp
 	public int hashCode() {
 		int hash = 7;
 		hash = 97 * hash + (this.owner != null ? this.owner.hashCode() : 0);
-		hash = 97 * hash + (int) (this.itemID ^ (this.itemID >>> 32));
+		hash = 97 * hash + (int) (this.getItemID() ^ (this.getItemID() >>> 32));
 		return hash;
 	}
 
@@ -487,6 +495,6 @@ public class MyAsset implements Comparable<MyAsset>, InfoItem, JumpType, ItemTyp
 		if (this.owner != other.owner && (this.owner == null || !this.owner.equals(other.owner))) {
 			return false;
 		}
-		return this.itemID == other.itemID;
+		return Objects.equals(this.getItemID(), other.getItemID());
 	}
 }

@@ -18,19 +18,16 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
  */
-
 package net.nikr.eve.jeveasset.gui.tabs.tree;
 
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.Icon;
-import net.nikr.eve.jeveasset.data.Item;
 import net.nikr.eve.jeveasset.data.MyLocation;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.Security;
 import net.nikr.eve.jeveasset.gui.tabs.assets.MyAsset;
 import net.nikr.eve.jeveasset.gui.tabs.tree.TreeTableFormat.HierarchyColumn;
-
 
 public class TreeAsset extends MyAsset {
 
@@ -61,7 +58,6 @@ public class TreeAsset extends MyAsset {
 	private double valueReprocessed = 0;
 	private double valueSellMin = 0;
 	private double volumnTotal = 0;
-	
 
 	public TreeAsset(final MyAsset asset, final TreeType treeType, final List<TreeAsset> tree, final String compare, final boolean parent) {
 		super(asset);
@@ -91,7 +87,7 @@ public class TreeAsset extends MyAsset {
 	}
 
 	public TreeAsset(final MyLocation location, final String treeName, final String compare, final Icon icon, List<TreeAsset> tree, final int depthOffset) {
-		super(new Item(0), location, null, 0, new ArrayList<MyAsset>(), "", 0, 0L, false, 0);
+		super(location);
 		this.treeName = createSpace(tree.size()) + treeName;
 		this.tree = new ArrayList<TreeAsset>(tree); //Copy
 		this.compare = compare;

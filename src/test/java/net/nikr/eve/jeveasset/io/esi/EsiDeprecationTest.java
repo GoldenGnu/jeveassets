@@ -20,112 +20,159 @@
  */
 package net.nikr.eve.jeveasset.io.esi;
 
+import static org.junit.Assert.*;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import net.nikr.eve.jeveasset.TestUtil;
 import net.troja.eve.esi.ApiClient;
 import net.troja.eve.esi.ApiException;
 import net.troja.eve.esi.api.AssetsApi;
 import net.troja.eve.esi.api.CharacterApi;
+import net.troja.eve.esi.api.ContractsApi;
 import net.troja.eve.esi.api.IndustryApi;
 import net.troja.eve.esi.api.MarketApi;
 import net.troja.eve.esi.api.SovereigntyApi;
 import net.troja.eve.esi.api.UniverseApi;
 import net.troja.eve.esi.api.WalletApi;
 import org.junit.Test;
-import static org.junit.Assert.*;
 
-
-public class EsiDeprecationTest {
+public class EsiDeprecationTest extends TestUtil {
 
 	private final String DATASOURCE = "tranquility";
 
-	public EsiDeprecationTest() { }
+	public EsiDeprecationTest() {
+	}
 
 	@Test
-	public void assetsApi() {
+	public void esiAssetsGetter() {
 		AssetsApi api = new AssetsApi();
 		try {
 			api.getCharactersCharacterIdAssets(1, DATASOURCE, null, null, null);
 		} catch (ApiException ex) {
-			
+
 		}
 		validate(api.getApiClient());
 	}
 
 	@Test
-	public void walletApi() {
+	public void esiAccountBalanceGetter() {
 		WalletApi api = new WalletApi();
 		try {
-			api.getCharactersCharacterIdWallets(1, DATASOURCE, null, null, null);
+			api.getCharactersCharacterIdWallet(1, DATASOURCE, null, null, null);
 		} catch (ApiException ex) {
-			
+
 		}
 		validate(api.getApiClient());
 	}
 
 	@Test
-	public void universeApiStructures() {
+	public void esiStructuresGetter() {
 		UniverseApi api = new UniverseApi();
 		try {
 			api.getUniverseStructuresStructureId(1L, DATASOURCE, null, null, null);
 		} catch (ApiException ex) {
-			
+
 		}
 		validate(api.getApiClient());
 	}
 
 	@Test
-	public void universeApiNames() {
+	public void esiConquerableStationsGetterEsiNameGetter() {
 		UniverseApi api = new UniverseApi();
 		try {
 			api.postUniverseNames(Collections.singletonList(1), DATASOURCE, null, null);
 		} catch (ApiException ex) {
-			
+
 		}
 		validate(api.getApiClient());
 	}
 
 	@Test
-	public void sovereigntyApi() {
+	public void esiConquerableStationsGetter() {
 		SovereigntyApi api = new SovereigntyApi();
 		try {
 			api.getSovereigntyStructures(DATASOURCE, null, null);
 		} catch (ApiException ex) {
-			
+
 		}
 		validate(api.getApiClient());
 	}
 
 	@Test
-	public void blueprintsApi() {
+	public void esiBlueprintsGetter() {
 		CharacterApi api = new CharacterApi();
 		try {
 			api.getCharactersCharacterIdBlueprints(1, DATASOURCE, null, null, null);
 		} catch (ApiException ex) {
-			
+
 		}
 		validate(api.getApiClient());
 	}
 
 	@Test
-	public void industryApi() {
+	public void esiIndustryJobsGetter() {
 		IndustryApi api = new IndustryApi();
 		try {
 			api.getCharactersCharacterIdIndustryJobs(1, DATASOURCE, true, null, null, null);
 		} catch (ApiException ex) {
-			
+
 		}
 		validate(api.getApiClient());
 	}
 
 	@Test
-	public void marketApi() {
+	public void esiMarketOrdersGetter() {
 		MarketApi api = new MarketApi();
 		try {
 			api.getCharactersCharacterIdOrders(1, DATASOURCE, null, null, null);
 		} catch (ApiException ex) {
-			
+
+		}
+		validate(api.getApiClient());
+	}
+
+	@Test
+	public void esiContractItemsGetter() {
+		ContractsApi api = new ContractsApi();
+		try {
+			api.getCharactersCharacterIdContractsContractIdItems(1, 1, DATASOURCE, null, null, null);
+		} catch (ApiException ex) {
+
+		}
+		validate(api.getApiClient());
+	}
+
+	@Test
+	public void esiContractsGetter() {
+		ContractsApi api = new ContractsApi();
+		try {
+			api.getCharactersCharacterIdContracts(1, DATASOURCE, null, null, null);
+		} catch (ApiException ex) {
+
+		}
+		validate(api.getApiClient());
+	}
+
+	@Test
+	public void esiJournalGetter() {
+		WalletApi api = new WalletApi();
+		try {
+			api.getCharactersCharacterIdWalletJournal(1, DATASOURCE, null, null, null, null);
+		} catch (ApiException ex) {
+
+		}
+		validate(api.getApiClient());
+	}
+
+	@Test
+	public void esiTransactionsGetter() {
+		WalletApi api = new WalletApi();
+		try {
+			api.getCharactersCharacterIdWalletTransactions(1, DATASOURCE, null, null, null, null);
+		} catch (ApiException ex) {
+
 		}
 		validate(api.getApiClient());
 	}
@@ -142,5 +189,5 @@ public class EsiDeprecationTest {
 			fail("No headers");
 		}
 	}
-	
+
 }

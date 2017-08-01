@@ -33,6 +33,7 @@ import net.troja.eve.esi.ApiClient;
 import net.troja.eve.esi.ApiException;
 import net.troja.eve.esi.api.AssetsApi;
 import net.troja.eve.esi.api.CharacterApi;
+import net.troja.eve.esi.api.ContractsApi;
 import net.troja.eve.esi.api.IndustryApi;
 import net.troja.eve.esi.api.MarketApi;
 import net.troja.eve.esi.api.SovereigntyApi;
@@ -42,7 +43,6 @@ import net.troja.eve.esi.api.WalletApi;
 import net.troja.eve.esi.auth.OAuth;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 
 public abstract class AbstractEsiGetter {
 
@@ -58,6 +58,7 @@ public abstract class AbstractEsiGetter {
 	private final CharacterApi characterApiAuth;
 	private final IndustryApi industryApiAuth;
 	private final MarketApi marketApiAuth;
+	private final ContractsApi contractsApiAuth;
 	private final SsoApi ssoApiAuth;
 	private final ApiClient clientOpen;
 	private final UniverseApi universeApiOpen;
@@ -71,11 +72,11 @@ public abstract class AbstractEsiGetter {
 		characterApiAuth = new CharacterApi(clientAuth);
 		industryApiAuth = new IndustryApi(clientAuth);
 		marketApiAuth = new MarketApi(clientAuth);
+		contractsApiAuth = new ContractsApi(clientAuth);
 		ssoApiAuth = new SsoApi(clientAuth);
 		clientOpen = new ApiClient();
 		universeApiOpen = new UniverseApi(clientOpen);
 		sovereigntyApiOpen = new SovereigntyApi(clientOpen);
-		
 	}
 
 	protected void load(UpdateTask updateTask) {
@@ -104,9 +105,17 @@ public abstract class AbstractEsiGetter {
 					return;
 				}
 				progress++;
-				updateTask.setTaskProgress(owners.size(), progress, 0, 100);
+				updateTask.setTaskProgress(owners.size(), progress, getProgressStart(), getProgressEnd());
 			}
 		}
+	}
+
+	protected int getProgressStart() {
+		return 0;
+	}
+
+	protected int getProgressEnd() {
+		return 100;
 	}
 
 	private void loadAPI(UpdateTask updateTask, EsiOwner owner, boolean forceUpdate) {
@@ -130,7 +139,7 @@ public abstract class AbstractEsiGetter {
 				return;
 			}
 			get(owner);
-			LOG.info("	ESI: " + getTaskName() + " updated for " +  getOwnerName(owner));
+			LOG.info("	ESI: " + getTaskName() + " updated for " + getOwnerName(owner));
 			Map<String, List<String>> responseHeaders = client.getResponseHeaders();
 			if (responseHeaders != null) {
 				for (Map.Entry<String, List<String>> entry : responseHeaders.entrySet()) {
@@ -184,9 +193,13 @@ public abstract class AbstractEsiGetter {
 	}
 
 	protected abstract void get(EsiOwner owner) throws ApiException;
+
 	protected abstract String getTaskName();
+
 	protected abstract void setNextUpdate(EsiOwner owner, Date date);
+
 	protected abstract Date getNextUpdate(EsiOwner owner);
+
 	protected abstract boolean inScope(EsiOwner owner);
 
 	private String getOwnerName(EsiOwner owner) {
@@ -213,12 +226,11 @@ public abstract class AbstractEsiGetter {
 		final int N = list.size();
 		for (int i = 0; i < N; i += L) {
 			parts.add(new ArrayList<T>(
-				list.subList(i, Math.min(N, i + L)))
+					list.subList(i, Math.min(N, i + L)))
 			);
 		}
 		return parts;
 	}
-
 
 	protected SsoApi getSsoApiAuth() {
 		return ssoApiAuth;
@@ -241,11 +253,15 @@ public abstract class AbstractEsiGetter {
 	}
 
 	protected WalletApi getWalletApiAuth() {
-		return  walletApiAuth;
+		return walletApiAuth;
 	}
 
 	protected UniverseApi getUniverseApiAuth() {
 		return universeApiAuth;
+	}
+
+	public ContractsApi getContractsApiAuth() {
+		return contractsApiAuth;
 	}
 
 	public UniverseApi getUniverseApiOpen() {

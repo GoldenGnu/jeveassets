@@ -20,16 +20,17 @@
  */
 package net.nikr.eve.jeveasset.io.evekit;
 
-
 import enterprises.orbital.evekit.client.invoker.ApiClient;
 import enterprises.orbital.evekit.client.invoker.ApiException;
 import enterprises.orbital.evekit.client.model.Blueprint;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import net.nikr.eve.jeveasset.data.evekit.EveKitAccessMask;
 import net.nikr.eve.jeveasset.data.evekit.EveKitOwner;
+import net.nikr.eve.jeveasset.data.raw.RawBlueprint;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
-
 
 public class EveKitBlueprintsGetter extends AbstractEveKitListGetter<Blueprint> {
 
@@ -56,7 +57,11 @@ public class EveKitBlueprintsGetter extends AbstractEveKitListGetter<Blueprint> 
 
 	@Override
 	protected void set(EveKitOwner owner, List<Blueprint> data) throws ApiException {
-		owner.setBlueprints(EveKitConverter.convertBlueprints(data));
+		Map<Long, RawBlueprint> blueprints = new HashMap<Long, RawBlueprint>();
+		for (Blueprint blueprint : data) {
+			blueprints.put(blueprint.getItemID(), new RawBlueprint(blueprint));
+		}
+		owner.setBlueprints(blueprints);
 	}
 
 	@Override

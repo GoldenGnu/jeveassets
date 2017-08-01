@@ -18,9 +18,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
  */
-
 package net.nikr.eve.jeveasset.io.eveapi;
-
 
 import com.beimin.eveapi.exception.ApiException;
 import com.beimin.eveapi.model.shared.Blueprint;
@@ -28,14 +26,11 @@ import com.beimin.eveapi.parser.character.CharBlueprintsParser;
 import com.beimin.eveapi.parser.corporation.CorpBlueprintsParser;
 import com.beimin.eveapi.response.shared.BlueprintsResponse;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import net.nikr.eve.jeveasset.data.eveapi.EveApiAccessMask;
 import net.nikr.eve.jeveasset.data.eveapi.EveApiAccount;
 import net.nikr.eve.jeveasset.data.eveapi.EveApiOwner;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
-
 
 public class BlueprintsGetter extends AbstractApiGetter<BlueprintsResponse> {
 
@@ -70,12 +65,8 @@ public class BlueprintsGetter extends AbstractApiGetter<BlueprintsResponse> {
 
 	@Override
 	protected void setData(final BlueprintsResponse response) {
-		List<Blueprint> blueprints = response.getAll();
-		Map<Long, Blueprint> blueprintsMap = new HashMap<Long, Blueprint>();
-		for (Blueprint blueprint : blueprints) {
-			blueprintsMap.put(blueprint.getItemID(), blueprint);
-		}
-		getOwner().setBlueprints(blueprintsMap);
+		List<Blueprint> responses = response.getAll();
+		getOwner().setBlueprints(EveApiConverter.toBlueprints(responses));
 	}
 
 	@Override

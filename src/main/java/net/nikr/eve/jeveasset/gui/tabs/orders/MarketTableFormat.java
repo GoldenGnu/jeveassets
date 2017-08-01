@@ -38,7 +38,7 @@ public enum MarketTableFormat implements EnumTableColumn<MyMarketOrder> {
 		}
 		@Override
 		public Object getColumnValue(final MyMarketOrder from) {
-			if (from.getBid() < 1) {
+			if (!from.isBuyOrder()) {
 				return TabsOrders.get().sell();
 			} else {
 				return TabsOrders.get().buy();
@@ -195,8 +195,10 @@ public enum MarketTableFormat implements EnumTableColumn<MyMarketOrder> {
 			return from.getLastTransactionPercent();
 		}
 	};
-	private Class<?> type;
-	private Comparator<?> comparator;
+
+	private final Class<?> type;
+	private final Comparator<?> comparator;
+
 	private MarketTableFormat(final Class<?> type, final Comparator<?> comparator) {
 		this.type = type;
 		this.comparator = comparator;

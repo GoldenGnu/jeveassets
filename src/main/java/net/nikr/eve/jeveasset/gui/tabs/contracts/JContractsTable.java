@@ -18,7 +18,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
  */
-
 package net.nikr.eve.jeveasset.gui.tabs.contracts;
 
 import ca.odell.glazedlists.SeparatorList;
@@ -28,7 +27,6 @@ import javax.swing.table.TableCellRenderer;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.gui.shared.Colors;
 import net.nikr.eve.jeveasset.gui.shared.table.JSeparatorTable;
-
 
 public class JContractsTable extends JSeparatorTable {
 
@@ -60,8 +58,8 @@ public class JContractsTable extends JSeparatorTable {
 				}
 			}
 			//User set location
-			if ((item.getContract().getStartStation().isUserLocation() && columnName.equals(ContractsTableFormat.START_STATION.getColumnName()))
-				|| (item.getContract().getEndStation().isUserLocation() && columnName.equals(ContractsTableFormat.END_STATION.getColumnName()))) {
+			if ((item.getContract().getStartLocation().isUserLocation() && columnName.equals(ContractsTableFormat.START_STATION.getColumnName()))
+					|| (item.getContract().getEndLocation().isUserLocation() && columnName.equals(ContractsTableFormat.END_STATION.getColumnName()))) {
 				if (!isSelected) {
 					component.setBackground(Colors.LIGHT_GRAY.getColor());
 				} else {

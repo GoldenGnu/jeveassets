@@ -20,7 +20,6 @@
  */
 package net.nikr.eve.jeveasset.gui.tabs.values;
 
-import com.beimin.eveapi.model.shared.ContractStatus;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -30,6 +29,7 @@ import net.nikr.eve.jeveasset.data.MyAccountBalance;
 import net.nikr.eve.jeveasset.data.ProfileData;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.data.api.OwnerType;
+import net.nikr.eve.jeveasset.data.raw.RawContract.ContractStatus;
 import net.nikr.eve.jeveasset.gui.tabs.assets.MyAsset;
 import net.nikr.eve.jeveasset.gui.tabs.contracts.MyContract;
 import net.nikr.eve.jeveasset.gui.tabs.contracts.MyContractItem;
@@ -38,7 +38,6 @@ import net.nikr.eve.jeveasset.gui.tabs.orders.MyMarketOrder;
 import net.nikr.eve.jeveasset.i18n.General;
 import net.nikr.eve.jeveasset.i18n.TabsValues;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
-
 
 public class DataSetCreator {
 
@@ -67,7 +66,7 @@ public class DataSetCreator {
 
 	private void createTrackerDataPointInner(ProfileData profileData, Date date) {
 		Map<String, Value> data = createDataSetInner(profileData, date);
-		
+
 		//Add everything
 		Settings.lock("Tracker Data (Create Point)");
 		for (Map.Entry<String, Value> entry : data.entrySet()) {
@@ -83,7 +82,7 @@ public class DataSetCreator {
 				Settings.get().getTrackerData().put(owner, list);
 			}
 			list.add(value);
-			
+
 		}
 		Settings.unlock("Tracker Data (Create Point)");
 	}
@@ -123,7 +122,7 @@ public class DataSetCreator {
 		try {
 			profileData.getAccountBalanceEventList().getReadWriteLock().readLock().lock();
 			for (MyAccountBalance accountBalance : profileData.getAccountBalanceEventList()) {
-				Value value = getValueInner(values, accountBalance.getOwner(), date);
+				Value value = getValueInner(values, accountBalance.getOwnerName(), date);
 				String id;
 				if (accountBalance.isCorporation()) { //Corporation Wallets
 					id = "" + (accountBalance.getAccountKey() - 999);
@@ -142,7 +141,7 @@ public class DataSetCreator {
 			for (MyMarketOrder marketOrder : profileData.getMarketOrdersEventList()) {
 				Value value = getValueInner(values, marketOrder.getOwnerName(), date);
 				if (marketOrder.isActive()) {
-					if (marketOrder.getBid() < 1) { //Sell Orders
+					if (!marketOrder.isBuyOrder()) { //Sell Orders
 						value.addSellOrders(marketOrder.getPrice() * marketOrder.getVolRemaining());
 						total.addSellOrders(marketOrder.getPrice() * marketOrder.getVolRemaining());
 					} else { //Buy Orders
@@ -207,7 +206,7 @@ public class DataSetCreator {
 					//OR
 					//Done & Assets not updated = Add Collateral
 					//If assets is updated, so are all the values
-					if (assetsUpdated(contract.getDateIssued(), issuer) && (contract.getStatus() == ContractStatus.INPROGRESS || contract.getStatus() == ContractStatus.OUTSTANDING)) {
+					if (assetsUpdated(contract.getDateIssued(), issuer) && (contract.getStatus() == ContractStatus.IN_PROGRESS || contract.getStatus() == ContractStatus.OUTSTANDING)) {
 						addContractCollateral(contract, values, total, date, issuer.getOwnerName()); //OK
 					} else if (AssetsNotUpdated(contract.getDateCompleted(), issuer)) {
 						addContractCollateral(contract, values, total, date, issuer.getOwnerName()); //NOT TESTED
@@ -217,7 +216,7 @@ public class DataSetCreator {
 				if (acceptor != null) {
 					//Not Done & Balance Updated = Add Collateral
 					//If ballance is not updated, there is nothing to counter...
-					if (balanceUpdated(contract.getDateIssued(), acceptor) && contract.getStatus() == ContractStatus.INPROGRESS) {
+					if (balanceUpdated(contract.getDateIssued(), acceptor) && contract.getStatus() == ContractStatus.IN_PROGRESS) {
 						addContractCollateral(contract, values, total, date, acceptor.getOwnerName()); //OK
 					}
 				}

@@ -23,20 +23,19 @@ package net.nikr.eve.jeveasset.io.esi;
 import net.nikr.eve.jeveasset.i18n.DialoguesAccount;
 import net.troja.eve.esi.auth.SsoScopes;
 
-
 public enum EsiScopes {
 	STRUCTURES(SsoScopes.ESI_UNIVERSE_READ_STRUCTURES_V1, DialoguesAccount.get().scopeStructures(), true),
-	ASSETS(SsoScopes.ESI_ASSETS_READ_ASSETS_V1, DialoguesAccount.get().scopeAssets(), false),
-	ACCOUNT_BALANCE(SsoScopes.ESI_WALLET_READ_CHARACTER_WALLET_V1, DialoguesAccount.get().scopeAccountBalance(), false),
-	INDUSTRY_JOBS(SsoScopes.ESI_INDUSTRY_READ_CHARACTER_JOBS_V1, DialoguesAccount.get().scopeIndustryJobs(), false),
-	MARKET_ORDERS(SsoScopes.ESI_MARKETS_READ_CHARACTER_ORDERS_V1, DialoguesAccount.get().scopeMarketOrders(), false),
-	BLUEPRINTS(SsoScopes.ESI_CHARACTERS_READ_BLUEPRINTS_V1, DialoguesAccount.get().scopeBlueprints(), false),
-	TRANSACTIONS("DO_NOT_MATCH", DialoguesAccount.get().scopeTransactions(), false),
-	JOURNAL("DO_NOT_MATCH", DialoguesAccount.get().scopeJournal(), false),
-	CONTRACTS("DO_NOT_MATCH", DialoguesAccount.get().scopeContracts(), false),
+	ASSETS(SsoScopes.ESI_ASSETS_READ_ASSETS_V1, DialoguesAccount.get().scopeAssets(), true),
+	ACCOUNT_BALANCE(SsoScopes.ESI_WALLET_READ_CHARACTER_WALLET_V1, DialoguesAccount.get().scopeAccountBalance(), true),
+	INDUSTRY_JOBS(SsoScopes.ESI_INDUSTRY_READ_CHARACTER_JOBS_V1, DialoguesAccount.get().scopeIndustryJobs(), true),
+	MARKET_ORDERS(SsoScopes.ESI_MARKETS_READ_CHARACTER_ORDERS_V1, DialoguesAccount.get().scopeMarketOrders(), true),
+	BLUEPRINTS(SsoScopes.ESI_CHARACTERS_READ_BLUEPRINTS_V1, DialoguesAccount.get().scopeBlueprints(), true),
+	TRANSACTIONS(SsoScopes.ESI_WALLET_READ_CHARACTER_WALLET_V1, DialoguesAccount.get().scopeTransactions(), true),
+	JOURNAL(SsoScopes.ESI_WALLET_READ_CHARACTER_WALLET_V1, DialoguesAccount.get().scopeJournal(), true),
+	CONTRACTS(SsoScopes.ESI_CONTRACTS_READ_CHARACTER_CONTRACTS_V1, DialoguesAccount.get().scopeContracts(), true),
 	LOCATIONS("DO_NOT_MATCH", DialoguesAccount.get().scopeLocations(), false),
-	NAMES("", "", true),
-	CONQUERABLE_STATIONS("", "", true),
+	NAMES("", "", true), //Public
+	CONQUERABLE_STATIONS("", "", true), //Public
 	;
 
 	private final String scope;
@@ -66,5 +65,4 @@ public enum EsiScopes {
 		return text;
 	}
 
-	
 }

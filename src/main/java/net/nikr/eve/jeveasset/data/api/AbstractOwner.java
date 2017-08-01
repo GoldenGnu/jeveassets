@@ -20,7 +20,6 @@
  */
 package net.nikr.eve.jeveasset.data.api;
 
-import com.beimin.eveapi.model.shared.Blueprint;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -30,6 +29,7 @@ import java.util.Map;
 import java.util.Set;
 import net.nikr.eve.jeveasset.data.MyAccountBalance;
 import net.nikr.eve.jeveasset.data.Settings;
+import net.nikr.eve.jeveasset.data.raw.RawBlueprint;
 import net.nikr.eve.jeveasset.gui.tabs.assets.MyAsset;
 import net.nikr.eve.jeveasset.gui.tabs.contracts.MyContract;
 import net.nikr.eve.jeveasset.gui.tabs.contracts.MyContractItem;
@@ -37,7 +37,6 @@ import net.nikr.eve.jeveasset.gui.tabs.jobs.MyIndustryJob;
 import net.nikr.eve.jeveasset.gui.tabs.journal.MyJournal;
 import net.nikr.eve.jeveasset.gui.tabs.orders.MyMarketOrder;
 import net.nikr.eve.jeveasset.gui.tabs.transaction.MyTransaction;
-
 
 public abstract class AbstractOwner implements OwnerType, Comparable<OwnerType> {
 
@@ -48,7 +47,7 @@ public abstract class AbstractOwner implements OwnerType, Comparable<OwnerType> 
 	private final List<MyIndustryJob> industryJobs = new ArrayList<MyIndustryJob>();
 	private final Map<MyContract, List<MyContractItem>> contracts = new HashMap<MyContract, List<MyContractItem>>();
 	private final List<MyAsset> assets = new ArrayList<MyAsset>();
-	private final Map<Long, Blueprint> blueprints = new HashMap<Long, Blueprint>();
+	private final Map<Long, RawBlueprint> blueprints = new HashMap<Long, RawBlueprint>();
 
 	private String ownerName;
 	private long ownerID;
@@ -243,7 +242,7 @@ public abstract class AbstractOwner implements OwnerType, Comparable<OwnerType> 
 	}
 
 	@Override
-	public final  boolean isShowOwner() {
+	public final boolean isShowOwner() {
 		return showOwner;
 	}
 
@@ -253,7 +252,7 @@ public abstract class AbstractOwner implements OwnerType, Comparable<OwnerType> 
 	}
 
 	@Override
-	public final  Date getBalanceLastUpdate() {
+	public final Date getBalanceLastUpdate() {
 		return balanceLastUpdate;
 	}
 
@@ -298,7 +297,7 @@ public abstract class AbstractOwner implements OwnerType, Comparable<OwnerType> 
 	}
 
 	@Override
-	public final Map<Long, Blueprint> getBlueprints() {
+	public final Map<Long, RawBlueprint> getBlueprints() {
 		return blueprints;
 	}
 
@@ -308,7 +307,7 @@ public abstract class AbstractOwner implements OwnerType, Comparable<OwnerType> 
 	}
 
 	@Override
-	public final void setBlueprints(Map<Long, Blueprint> blueprints) {
+	public final void setBlueprints(Map<Long, RawBlueprint> blueprints) {
 		this.blueprints.clear();
 		this.blueprints.putAll(blueprints);
 	}

@@ -18,7 +18,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
  */
-
 package net.nikr.eve.jeveasset.gui.tabs.transaction;
 
 import ca.odell.glazedlists.EventList;
@@ -57,7 +56,6 @@ import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
 import net.nikr.eve.jeveasset.gui.shared.table.JAutoColumnTable;
 import net.nikr.eve.jeveasset.gui.shared.table.PaddingTableCellRenderer;
 import net.nikr.eve.jeveasset.i18n.TabsTransaction;
-
 
 public class TransactionTab extends JMainTab {
 
@@ -119,10 +117,10 @@ public class TransactionTab extends JMainTab {
 		Map<String, List<Filter>> defaultFilters = new HashMap<String, List<Filter>>();
 		List<Filter> filter;
 		filter = new ArrayList<Filter>();
-		filter.add(new Filter(LogicType.AND, TransactionTableFormat.TYPE, CompareType.EQUALS,  TabsTransaction.get().buy()));
+		filter.add(new Filter(LogicType.AND, TransactionTableFormat.TYPE, CompareType.EQUALS, TabsTransaction.get().buy()));
 		defaultFilters.put(TabsTransaction.get().buy(), filter);
 		filter = new ArrayList<Filter>();
-		filter.add(new Filter(LogicType.AND, TransactionTableFormat.TYPE, CompareType.EQUALS,  TabsTransaction.get().sell()));
+		filter.add(new Filter(LogicType.AND, TransactionTableFormat.TYPE, CompareType.EQUALS, TabsTransaction.get().sell()));
 		defaultFilters.put(TabsTransaction.get().sell(), filter);
 		filterControl = new TransactionsFilterControl(
 				program.getMainWindow().getFrame(),
@@ -131,7 +129,7 @@ public class TransactionTab extends JMainTab {
 				filterList,
 				Settings.get().getTableFilters(NAME),
 				defaultFilters
-				);
+		);
 
 		//Menu
 		installMenu(program, new TransactionTableMenu(), jTable, MyTransaction.class);
@@ -159,7 +157,7 @@ public class TransactionTab extends JMainTab {
 		//Buy
 		jBuyOrders = StatusPanel.createLabel(TabsTransaction.get().buyTitle(), Images.ORDERS_BUY.getIcon());
 		this.addStatusbarLabel(jBuyOrders);
-		
+
 		jBuyOrdersTotal = StatusPanel.createLabel(TabsTransaction.get().buyTotal(), Images.TOOL_VALUES.getIcon());
 		this.addStatusbarLabel(jBuyOrdersTotal);
 
@@ -167,14 +165,14 @@ public class TransactionTab extends JMainTab {
 		this.addStatusbarLabel(jBuyOrdersAverage);
 
 		layout.setHorizontalGroup(
-			layout.createParallelGroup()
-				.addComponent(filterControl.getPanel())
-				.addComponent(jTableScroll, 0, 0, Short.MAX_VALUE)
+				layout.createParallelGroup()
+						.addComponent(filterControl.getPanel())
+						.addComponent(jTableScroll, 0, 0, Short.MAX_VALUE)
 		);
 		layout.setVerticalGroup(
-			layout.createSequentialGroup()
-				.addComponent(filterControl.getPanel())
-				.addComponent(jTableScroll, 0, 0, Short.MAX_VALUE)
+				layout.createSequentialGroup()
+						.addComponent(filterControl.getPanel())
+						.addComponent(jTableScroll, 0, 0, Short.MAX_VALUE)
 		);
 	}
 
@@ -182,6 +180,7 @@ public class TransactionTab extends JMainTab {
 	public void updateData() { }
 
 	private class TransactionTableMenu implements TableMenu<MyTransaction> {
+
 		@Override
 		public JMenu getFilterMenu() {
 			return filterControl.getMenu(jTable, selectionModel.getSelected());
@@ -203,10 +202,12 @@ public class TransactionTab extends JMainTab {
 		}
 
 		@Override
-		public void addToolMenu(JComponent jComponent) { }
+		public void addToolMenu(JComponent jComponent) {
+		}
 	}
 
 	private class ListenerClass implements ListEventListener<MyTransaction> {
+
 		@Override
 		public void listChanged(ListEvent<MyTransaction> listChanges) {
 			double sellTotal = 0;
@@ -214,7 +215,7 @@ public class TransactionTab extends JMainTab {
 			double sellCount = 0;
 			double buyCount = 0;
 			for (MyTransaction transaction : filterList) {
-				if (transaction.getTransactionType().equals("sell")) { //Sell
+				if (transaction.isSell()) { //Sell
 					sellTotal += transaction.getPrice() * transaction.getQuantity();
 					sellCount += transaction.getQuantity();
 				} else { //Buy

@@ -20,7 +20,6 @@
  */
 package net.nikr.eve.jeveasset.io.evekit;
 
-
 import enterprises.orbital.evekit.client.invoker.ApiClient;
 import enterprises.orbital.evekit.client.invoker.ApiException;
 import enterprises.orbital.evekit.client.model.AccountBalance;
@@ -29,7 +28,6 @@ import java.util.List;
 import net.nikr.eve.jeveasset.data.evekit.EveKitAccessMask;
 import net.nikr.eve.jeveasset.data.evekit.EveKitOwner;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
-
 
 public class EveKitAccountBalanceGetter extends AbstractEveKitListGetter<AccountBalance> {
 
@@ -62,7 +60,7 @@ public class EveKitAccountBalanceGetter extends AbstractEveKitListGetter<Account
 				balanceLastUpdate = new Date(balance.getLifeStart());
 			}
 		}
-		owner.setAccountBalances(EveKitConverter.convertAccountBalance(data, owner));
+		owner.setAccountBalances(EveKitConverter.toAccountBalance(data, owner));
 		owner.setBalanceLastUpdate(balanceLastUpdate);
 	}
 
@@ -102,7 +100,8 @@ public class EveKitAccountBalanceGetter extends AbstractEveKitListGetter<Account
 	}
 
 	@Override
-	protected void saveCID(EveKitOwner owner, Long cid) { } //Always get all data
+	protected void saveCID(EveKitOwner owner, Long cid) {
+	} //Always get all data
 
 	@Override
 	protected Long loadCID(EveKitOwner owner) {

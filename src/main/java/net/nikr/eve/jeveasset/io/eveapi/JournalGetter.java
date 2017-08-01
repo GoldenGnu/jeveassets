@@ -18,7 +18,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
  */
-
 package net.nikr.eve.jeveasset.io.eveapi;
 
 import com.beimin.eveapi.exception.ApiException;
@@ -34,8 +33,6 @@ import net.nikr.eve.jeveasset.data.eveapi.EveApiAccount;
 import net.nikr.eve.jeveasset.data.eveapi.EveApiOwner;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import net.nikr.eve.jeveasset.gui.tabs.journal.MyJournal;
-import net.nikr.eve.jeveasset.io.shared.ApiConverter;
-
 
 public class JournalGetter extends AbstractApiAccountKeyGetter<WalletJournalResponse, MyJournal> {
 
@@ -83,7 +80,7 @@ public class JournalGetter extends AbstractApiAccountKeyGetter<WalletJournalResp
 
 	@Override
 	protected Set<MyJournal> convertData(final WalletJournalResponse response, final int accountKey) {
-		return ApiConverter.convertJournals(response.getAll(), getOwner(), accountKey);
+		return EveApiConverter.toJournal(response.getAll(), getOwner(), accountKey);
 	}
 
 	@Override

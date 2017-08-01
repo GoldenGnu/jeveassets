@@ -18,7 +18,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
  */
-
 package net.nikr.eve.jeveasset.gui.tabs.contracts;
 
 import ca.odell.glazedlists.EventList;
@@ -57,7 +56,6 @@ import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
 import net.nikr.eve.jeveasset.gui.shared.table.JSeparatorTable;
 import net.nikr.eve.jeveasset.gui.shared.table.PaddingTableCellRenderer;
 import net.nikr.eve.jeveasset.i18n.TabsContracts;
-
 
 public class ContractsTab extends JMainTab {
 
@@ -144,29 +142,29 @@ public class ContractsTab extends JMainTab {
 				sortedListSeparator,
 				filterList,
 				Settings.get().getTableFilters(NAME)
-				);
+		);
 
 		//Menu
 		installMenu(program, new ContractsTableMenu(), jTable, MyContractItem.class);
 
 		layout.setHorizontalGroup(
-			layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
-				.addComponent(filterControl.getPanel())
-				.addGroup(layout.createSequentialGroup()
-					.addComponent(jToolBarLeft, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Integer.MAX_VALUE)
-					.addGap(0)
-					.addComponent(jToolBarRight)
-				)
-				.addComponent(jTableScroll, 0, 0, Short.MAX_VALUE)
+				layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
+						.addComponent(filterControl.getPanel())
+						.addGroup(layout.createSequentialGroup()
+								.addComponent(jToolBarLeft, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Integer.MAX_VALUE)
+								.addGap(0)
+								.addComponent(jToolBarRight)
+						)
+						.addComponent(jTableScroll, 0, 0, Short.MAX_VALUE)
 		);
 		layout.setVerticalGroup(
-			layout.createSequentialGroup()
-				.addComponent(filterControl.getPanel())
-				.addGroup(layout.createParallelGroup()
-					.addComponent(jToolBarLeft, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
-					.addComponent(jToolBarRight, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
-				)
-				.addComponent(jTableScroll, 0, 0, Short.MAX_VALUE)
+				layout.createSequentialGroup()
+						.addComponent(filterControl.getPanel())
+						.addGroup(layout.createParallelGroup()
+								.addComponent(jToolBarLeft, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+								.addComponent(jToolBarRight, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+						)
+						.addComponent(jTableScroll, 0, 0, Short.MAX_VALUE)
 		);
 	}
 
@@ -174,6 +172,7 @@ public class ContractsTab extends JMainTab {
 	public void updateData() { }
 
 	private class ContractsTableMenu implements TableMenu<MyContractItem> {
+
 		@Override
 		public MenuData<MyContractItem> getMenuData() {
 			return new MenuData<MyContractItem>(selectionModel.getSelected());
@@ -210,10 +209,11 @@ public class ContractsTab extends JMainTab {
 	}
 
 	public class SeparatorComparator implements Comparator<MyContractItem> {
+
 		@Override
 		public int compare(final MyContractItem o1, final MyContractItem o2) {
-			Long l1 = o1.getContract().getContractID();
-			Long l2 = o2.getContract().getContractID();
+			Integer l1 = o1.getContract().getContractID();
+			Integer l2 = o2.getContract().getContractID();
 			return l1.compareTo(l2);
 		}
 	}

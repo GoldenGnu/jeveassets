@@ -20,7 +20,6 @@
  */
 package net.nikr.eve.jeveasset.io.esi;
 
-import com.beimin.eveapi.model.shared.Blueprint;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -32,19 +31,18 @@ import net.nikr.eve.jeveasset.data.Citadel;
 import net.nikr.eve.jeveasset.data.MyLocation;
 import net.nikr.eve.jeveasset.data.api.OwnerType;
 import net.nikr.eve.jeveasset.data.esi.EsiOwner;
+import net.nikr.eve.jeveasset.data.raw.RawAsset;
+import net.nikr.eve.jeveasset.data.raw.RawBlueprint;
+import net.nikr.eve.jeveasset.data.raw.RawContract;
+import net.nikr.eve.jeveasset.data.raw.RawMarketOrder;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
-import net.nikr.eve.jeveasset.gui.tabs.assets.MyAsset;
-import net.nikr.eve.jeveasset.gui.tabs.contracts.MyContract;
 import net.nikr.eve.jeveasset.gui.tabs.jobs.MyIndustryJob;
-import net.nikr.eve.jeveasset.gui.tabs.orders.MyMarketOrder;
 import net.nikr.eve.jeveasset.io.online.CitadelGetter;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
-import net.troja.eve.esi.ApiClient;
 import net.troja.eve.esi.ApiException;
 import net.troja.eve.esi.model.StructureResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 
 public class EsiStructuresGetter extends AbstractEsiGetter {
 
@@ -72,7 +70,7 @@ public class EsiStructuresGetter extends AbstractEsiGetter {
 
 	@Override
 	protected void get(EsiOwner owner) throws ApiException {
-		List<Citadel> citadels = new ArrayList<>();
+		List<Citadel> citadels = new ArrayList<Citadel>();
 		Set<Long> locationIDs = mapLocationIDs.get(owner.getOwnerID());
 		Set<Long> itemIDs = mapItemIDs.get(owner.getOwnerID());
 		locationIDs.removeAll(itemIDs);
@@ -112,40 +110,45 @@ public class EsiStructuresGetter extends AbstractEsiGetter {
 	}
 
 	private void getIDs(Set<Long> locationIDs, Set<Long> itemIDs, OwnerType owner) {
-		for (MyAsset asset : owner.getAssets()) {
+		for (RawAsset asset : owner.getAssets()) {
 			itemIDs.add(asset.getItemID());
-			MyLocation location = asset.getLocation();
+			long locationID = asset.getLocationID();
+			MyLocation location = ApiIdConverter.getLocation(locationID);
 			if (location.isEmpty() || location.isUserLocation() || location.isCitadel()) {
 				locationIDs.add(location.getLocationID());
 			}
 		}
-		for (Blueprint blueprint : owner.getBlueprints().values()) {
+		for (RawBlueprint blueprint : owner.getBlueprints().values()) {
 			itemIDs.add(blueprint.getItemID());
 			MyLocation location = ApiIdConverter.getLocation(blueprint.getLocationID());
 			if (location.isEmpty() || location.isUserLocation() || location.isCitadel()) {
 				locationIDs.add(location.getLocationID());
 			}
 		}
-		for (MyContract contract : owner.getContracts().keySet()) {
-			MyLocation locationEnd = contract.getEndStation();
+		for (RawContract contract : owner.getContracts().keySet()) {
+			long locationEndID = contract.getEndLocationID();
+			MyLocation locationEnd = ApiIdConverter.getLocation(locationEndID);
 			if (locationEnd.isEmpty() || locationEnd.isUserLocation() || locationEnd.isCitadel()) {
 				locationIDs.add(locationEnd.getLocationID());
 			}
-			MyLocation locationStart = contract.getStartStation();
+			long locationStartID = contract.getStartLocationID();
+			MyLocation locationStart = ApiIdConverter.getLocation(locationStartID);
 			if (locationStart.isEmpty() || locationStart.isUserLocation() || locationStart.isCitadel()) {
 				locationIDs.add(locationStart.getLocationID());
 			}
 		}
 		for (MyIndustryJob industryJob : owner.getIndustryJobs()) {
-			MyLocation locationEnd = industryJob.getLocation();
-			if (locationEnd.isEmpty() || locationEnd.isUserLocation() || locationEnd.isCitadel()) {
-				locationIDs.add(locationEnd.getLocationID());
+			long locationID = industryJob.getLocationID();
+			MyLocation location = ApiIdConverter.getLocation(locationID);
+			if (location.isEmpty() || location.isUserLocation() || location.isCitadel()) {
+				locationIDs.add(location.getLocationID());
 			}
 		}
-		for (MyMarketOrder marketOrder : owner.getMarketOrders()) {
-			MyLocation locationEnd = marketOrder.getLocation();
-			if (locationEnd.isEmpty() || locationEnd.isUserLocation() || locationEnd.isCitadel()) {
-				locationIDs.add(locationEnd.getLocationID());
+		for (RawMarketOrder marketOrder : owner.getMarketOrders()) {
+			long locationID = marketOrder.getLocationID();
+			MyLocation location = ApiIdConverter.getLocation(locationID);
+			if (location.isEmpty() || location.isUserLocation() || location.isCitadel()) {
+				locationIDs.add(location.getLocationID());
 			}
 		}
 	}

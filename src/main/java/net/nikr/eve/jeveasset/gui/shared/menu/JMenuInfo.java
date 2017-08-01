@@ -18,7 +18,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
  */
-
 package net.nikr.eve.jeveasset.gui.shared.menu;
 
 import ca.odell.glazedlists.SeparatorList;
@@ -45,12 +44,12 @@ import net.nikr.eve.jeveasset.gui.tabs.tree.TreeAsset;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 import net.nikr.eve.jeveasset.i18n.TabsLoadout;
 
-
 public class JMenuInfo {
 
 	private static Border border = null;
 
-	private JMenuInfo() {}
+	private JMenuInfo() {
+	}
 
 	public static void treeAsset(final JComponent jComponent, final List<TreeAsset> list) {
 		List<InfoItem> items = new ArrayList<InfoItem>();
@@ -123,7 +122,7 @@ public class JMenuInfo {
 			double toCoverTotal = 0;
 			double escrowTotal = 0;
 			for (MyMarketOrder marketOrder : list) {
-				if (marketOrder.getBid() < 1) { //Sell
+				if (!marketOrder.isBuyOrder()) { //Sell
 					sellOrdersTotal += marketOrder.getPrice() * marketOrder.getVolRemaining();
 				} else { //Buy
 					buyOrdersTotal += marketOrder.getPrice() * marketOrder.getVolRemaining();
@@ -152,7 +151,7 @@ public class JMenuInfo {
 			double sellCount = 0;
 			double buyCount = 0;
 			for (MyTransaction transaction : transactions) {
-				if (transaction.getTransactionType().equals("sell")) { //Sell
+				if (transaction.isSell()) { //Sell
 					sellTotal += transaction.getPrice() * transaction.getQuantity();
 					sellCount += transaction.getQuantity();
 				} else { //Buy
@@ -408,9 +407,11 @@ public class JMenuInfo {
 		jMenuItem.setHorizontalAlignment(SwingConstants.RIGHT);
 		jPopupMenu.add(jMenuItem);
 	}
+
 	private static void createMenuItemGroup(final JPopupMenu jPopupMenu, final String text) {
 		createMenuItemGroup(jPopupMenu, text, null);
 	}
+
 	private static void createMenuItemGroup(final JPopupMenu jPopupMenu, final String text, final Icon icon) {
 		JMenuItem jMenuItem = new JMenuItem(text);
 		if (icon != null) {
@@ -419,12 +420,12 @@ public class JMenuInfo {
 		jMenuItem.setEnabled(false);
 		if (border == null) {
 			border = BorderFactory.createCompoundBorder(
-				BorderFactory.createCompoundBorder(
-					BorderFactory.createMatteBorder(1, 0, 0, 0, jMenuItem.getBackground().darker())
-					, BorderFactory.createMatteBorder(1, 0, 0, 0, jMenuItem.getBackground().brighter()))
-				, BorderFactory.createCompoundBorder(
-					BorderFactory.createMatteBorder(0, 0, 1, 0, jMenuItem.getBackground().brighter())
-					, BorderFactory.createMatteBorder(0, 0, 1, 0, jMenuItem.getBackground().darker())));
+					BorderFactory.createCompoundBorder(
+							BorderFactory.createMatteBorder(1, 0, 0, 0, jMenuItem.getBackground().darker()),
+							 BorderFactory.createMatteBorder(1, 0, 0, 0, jMenuItem.getBackground().brighter())),
+					 BorderFactory.createCompoundBorder(
+							BorderFactory.createMatteBorder(0, 0, 1, 0, jMenuItem.getBackground().brighter()),
+							 BorderFactory.createMatteBorder(0, 0, 1, 0, jMenuItem.getBackground().darker())));
 		}
 		jMenuItem.setForeground(Color.BLACK);
 		jMenuItem.setBorder(border);
@@ -452,6 +453,7 @@ public class JMenuInfo {
 	}
 
 	public static class MaterialTotal {
+
 		private final long totalCount;
 		private final double totalValue;
 		private final double averageValue;
@@ -476,9 +478,13 @@ public class JMenuInfo {
 	}
 
 	public interface InfoItem {
+
 		double getValue();
+
 		long getCount();
+
 		double getVolumeTotal();
+
 		double getValueReprocessed();
 	}
 }

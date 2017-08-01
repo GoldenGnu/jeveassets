@@ -20,7 +20,6 @@
  */
 package net.nikr.eve.jeveasset.io.evekit;
 
-
 import enterprises.orbital.evekit.client.invoker.ApiClient;
 import enterprises.orbital.evekit.client.invoker.ApiException;
 import enterprises.orbital.evekit.client.model.Asset;
@@ -29,7 +28,6 @@ import java.util.List;
 import net.nikr.eve.jeveasset.data.evekit.EveKitAccessMask;
 import net.nikr.eve.jeveasset.data.evekit.EveKitOwner;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
-
 
 public class EveKitAssetGetter extends AbstractEveKitListGetter<Asset> {
 
@@ -62,8 +60,8 @@ public class EveKitAssetGetter extends AbstractEveKitListGetter<Asset> {
 				assetLastUpdate = new Date(asset.getLifeStart());
 			}
 		}
-		owner.setAssets(EveKitConverter.convertAssets(data, owner));
 		owner.setAssetLastUpdate(assetLastUpdate);
+		owner.setAssets(EveKitConverter.toAssets(data, owner));
 	}
 
 	@Override
@@ -114,7 +112,8 @@ public class EveKitAssetGetter extends AbstractEveKitListGetter<Asset> {
 	}
 
 	@Override
-	protected void saveCID(EveKitOwner owner, Long cid) { } //Always get all data
+	protected void saveCID(EveKitOwner owner, Long cid) {
+	} //Always get all data
 
 	@Override
 	protected Long loadCID(EveKitOwner owner) {

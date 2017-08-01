@@ -31,7 +31,6 @@ import java.util.Set;
 import java.util.TimeZone;
 import net.nikr.eve.jeveasset.data.evekit.EveKitOwner;
 
-
 public abstract class AbstractEveKitListGetter<T> extends AbstractEveKitGetter {
 
 	private Date lifeStart = null;
@@ -105,14 +104,14 @@ public abstract class AbstractEveKitListGetter<T> extends AbstractEveKitGetter {
 		return encode("{ values: [\"InProgress\"] }");
 	}
 
-	protected final String valuesFilter(Set<Long> ids) {
+	protected final <E> String valuesFilter(Set<E> ids) {
 		StringBuilder builder = new StringBuilder();
 		builder.append("{ values: [");
 		if (ids.isEmpty()) {
 			builder.append("\"\"");
 		}
 		boolean first = true;
-		for (Long id : ids) {
+		for (E id : ids) {
 			if (first) {
 				first = false;
 			} else {
@@ -160,9 +159,14 @@ public abstract class AbstractEveKitListGetter<T> extends AbstractEveKitGetter {
 	}
 
 	protected abstract List<T> get(EveKitOwner owner, String at, Long cid) throws ApiException;
+
 	protected abstract long getCID(T obj);
+
 	protected abstract Long getLifeStart(T obj);
+
 	protected abstract void saveCID(EveKitOwner owner, Long cid);
+
 	protected abstract Long loadCID(EveKitOwner owner);
+
 	protected abstract void set(EveKitOwner owner, List<T> data) throws ApiException;
 }

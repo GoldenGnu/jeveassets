@@ -20,7 +20,6 @@
  */
 package net.nikr.eve.jeveasset.io.evekit;
 
-
 import enterprises.orbital.evekit.client.invoker.ApiClient;
 import enterprises.orbital.evekit.client.invoker.ApiException;
 import enterprises.orbital.evekit.client.model.WalletTransaction;
@@ -33,7 +32,6 @@ import net.nikr.eve.jeveasset.data.evekit.EveKitAccessMask;
 import net.nikr.eve.jeveasset.data.evekit.EveKitOwner;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import net.nikr.eve.jeveasset.gui.tabs.transaction.MyTransaction;
-
 
 public class EveKitTransactionsGetter extends AbstractEveKitListGetter<WalletTransaction> {
 
@@ -55,7 +53,7 @@ public class EveKitTransactionsGetter extends AbstractEveKitListGetter<WalletTra
 		if (loadCID(owner) != null) { //Old
 			set.addAll(owner.getTransactions());
 		}
-		set.addAll(EveKitConverter.convertTransactions(data, owner)); //New
+		set.addAll(EveKitConverter.toTransactions(data, owner)); //New
 		owner.setTransactions(set); //All
 	}
 

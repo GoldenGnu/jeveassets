@@ -18,76 +18,49 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
  */
-
 package net.nikr.eve.jeveasset.gui.tabs.transaction;
 
-import com.beimin.eveapi.model.shared.WalletTransaction;
 import java.util.Date;
+import java.util.Objects;
 import net.nikr.eve.jeveasset.data.Item;
 import net.nikr.eve.jeveasset.data.MyLocation;
 import net.nikr.eve.jeveasset.data.api.OwnerType;
+import net.nikr.eve.jeveasset.data.raw.RawTransaction;
 import net.nikr.eve.jeveasset.data.types.EditableLocationType;
 import net.nikr.eve.jeveasset.data.types.ItemType;
 import net.nikr.eve.jeveasset.i18n.TabsTransaction;
 
-public class MyTransaction extends WalletTransaction implements EditableLocationType, ItemType {
+public class MyTransaction extends RawTransaction implements EditableLocationType, ItemType, Comparable<MyTransaction> {
 
 	private final Item item;
 	private final OwnerType owner;
-	private final int accountKey;
 	private MyLocation location;
+	private String clientName;
 
-	public MyTransaction(final WalletTransaction apiTransaction, final Item item, final MyLocation location, final OwnerType owner, final int accountKey) {		
-		this.setTransactionDateTime(apiTransaction.getTransactionDateTime());
-		this.setTransactionID(apiTransaction.getTransactionID());
-		this.setQuantity(apiTransaction.getQuantity());
-		this.setTypeName(apiTransaction.getTypeName());
-		this.setTypeID(apiTransaction.getTypeID());
-		this.setPrice(apiTransaction.getPrice());
-		this.setClientID(apiTransaction.getClientID());
-		this.setClientName(apiTransaction.getClientName());
-		this.setCharacterID(apiTransaction.getCharacterID());
-		this.setCharacterName(apiTransaction.getCharacterName());
-		this.setStationID(apiTransaction.getStationID());
-		this.setStationName(apiTransaction.getStationName());
-		this.setTransactionType(apiTransaction.getTransactionType());
-		this.setTransactionFor(apiTransaction.getTransactionFor());
-		this.setJournalTransactionID(apiTransaction.getJournalTransactionID());
-		this.setClientTypeID(apiTransaction.getClientTypeID());
-
+	public MyTransaction(final RawTransaction rawTransaction, final Item item, final OwnerType owner) {
+		super(rawTransaction);
 		this.item = item;
-		this.location = location;
 		this.owner = owner;
-		this.accountKey = accountKey;
-	}
-
-	public int getAccountKey() {
-		return accountKey;
 	}
 
 	public int getAccountKeyFormated() {
-		return accountKey - 999;
+		return getAccountKey() - 999;
 	}
 
 	public String getTransactionTypeFormatted() {
 		if (isSell()) {
 			return TabsTransaction.get().sell();
-		}
-		if (isBuy()) {
+		} else {
 			return TabsTransaction.get().buy();
 		}
-		return getTransactionType();
 	}
 
-	
 	public String getTransactionForFormatted() {
-		if (isForPersonal()) {
+		if (isPersonal()) {
 			return TabsTransaction.get().personal();
-		}
-		if (isForCorporation()) {
+		} else {
 			return TabsTransaction.get().corporation();
 		}
-		return getTransactionFor();
 	}
 
 	@Override
@@ -109,6 +82,18 @@ public class MyTransaction extends WalletTransaction implements EditableLocation
 		return owner.getOwnerName();
 	}
 
+	public long getOwnerID() {
+		return owner.getOwnerID();
+	}
+
+	public String getClientName() {
+		return clientName;
+	}
+
+	public void setClientName(String clientName) {
+		this.clientName = clientName;
+	}
+
 	public double getValue() {
 		if (isSell()) {
 			return getQuantity() * getPrice();
@@ -120,31 +105,23 @@ public class MyTransaction extends WalletTransaction implements EditableLocation
 	public boolean isAfterAssets() {
 		Date date = owner.getAssetLastUpdate();
 		if (date != null) {
-			return getTransactionDateTime().after(date);
+			return getDate().after(date);
 		} else {
 			return false;
 		}
 	}
 
 	public boolean isSell() {
-		return getTransactionType().equals("sell");
+		return !isBuy();
 	}
 
-	public boolean isBuy() {
-		return getTransactionType().equals("buy");
-	}
-
-	public boolean isForPersonal() {
-		return getTransactionFor().equals("personal");
-	}
-
-	public boolean isForCorporation() {
-		return getTransactionFor().equals("corporation");
+	public boolean isCorporation() {
+		return !isPersonal();
 	}
 
 	@Override
-	public int compareTo(final WalletTransaction o) {
-		int compared = o.getTransactionDateTime().compareTo(this.getTransactionDateTime());
+	public int compareTo(final MyTransaction o) {
+		int compared = o.getDate().compareTo(this.getDate());
 		if (compared != 0) {
 			return compared;
 		} else {
@@ -155,10 +132,9 @@ public class MyTransaction extends WalletTransaction implements EditableLocation
 	@Override
 	public int hashCode() {
 		int hash = 7;
-		hash = 11 * hash + this.accountKey;
-		hash = 11 * hash + (int) (this.getTransactionID() ^ (this.getTransactionID() >>> 32));
-		hash = 11 * hash + (int) (this.owner.getOwnerID() ^ (this.owner.getOwnerID() >>> 32));
-		hash = 11 * hash + (int) (Double.doubleToLongBits(this.getPrice()) ^ (Double.doubleToLongBits(this.getPrice()) >>> 32));
+		hash = 11 * hash + (int) (getTransactionID() ^ (getTransactionID() >>> 32));
+		hash = 11 * hash + (int) (owner.getOwnerID() ^ (owner.getOwnerID() >>> 32));
+		hash = 11 * hash + (int) (Double.doubleToLongBits(getPrice()) ^ (Double.doubleToLongBits(getPrice()) >>> 32));
 		return hash;
 	}
 
@@ -174,18 +150,12 @@ public class MyTransaction extends WalletTransaction implements EditableLocation
 			return false;
 		}
 		final MyTransaction other = (MyTransaction) obj;
-		if (this.accountKey != other.accountKey) {
-			return false;
-		}
-		if (this.getTransactionID() != other.getTransactionID()) {
+		if (!Objects.equals(this.getTransactionID(), other.getTransactionID())) {
 			return false;
 		}
 		if (this.owner.getOwnerID() != other.owner.getOwnerID()) {
 			return false;
 		}
-		if (Double.doubleToLongBits(this.getPrice()) != Double.doubleToLongBits(other.getPrice())) {
-			return false;
-		}
-		return true;
+		return this.getPrice().equals(other.getPrice());
 	}
- }
+}

@@ -18,7 +18,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
  */
-
 package net.nikr.eve.jeveasset.gui.tabs.orders;
 
 import ca.odell.glazedlists.EventList;
@@ -58,7 +57,6 @@ import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
 import net.nikr.eve.jeveasset.gui.shared.table.JAutoColumnTable;
 import net.nikr.eve.jeveasset.gui.shared.table.PaddingTableCellRenderer;
 import net.nikr.eve.jeveasset.i18n.TabsOrders;
-
 
 public class MarketOrdersTab extends JMainTab {
 
@@ -115,12 +113,12 @@ public class MarketOrdersTab extends JMainTab {
 		Map<String, List<Filter>> defaultFilters = new HashMap<String, List<Filter>>();
 		List<Filter> filter;
 		filter = new ArrayList<Filter>();
-		filter.add(new Filter(LogicType.AND, MarketTableFormat.ORDER_TYPE, CompareType.EQUALS,  TabsOrders.get().buy()));
-		filter.add(new Filter(LogicType.AND, MarketTableFormat.STATUS, CompareType.EQUALS,  TabsOrders.get().statusActive()));
+		filter.add(new Filter(LogicType.AND, MarketTableFormat.ORDER_TYPE, CompareType.EQUALS, TabsOrders.get().buy()));
+		filter.add(new Filter(LogicType.AND, MarketTableFormat.STATUS, CompareType.EQUALS, TabsOrders.get().statusActive()));
 		defaultFilters.put(TabsOrders.get().activeBuyOrders(), filter);
 		filter = new ArrayList<Filter>();
-		filter.add(new Filter(LogicType.AND, MarketTableFormat.ORDER_TYPE, CompareType.EQUALS,  TabsOrders.get().sell()));
-		filter.add(new Filter(LogicType.AND, MarketTableFormat.STATUS, CompareType.EQUALS,  TabsOrders.get().statusActive()));
+		filter.add(new Filter(LogicType.AND, MarketTableFormat.ORDER_TYPE, CompareType.EQUALS, TabsOrders.get().sell()));
+		filter.add(new Filter(LogicType.AND, MarketTableFormat.STATUS, CompareType.EQUALS, TabsOrders.get().statusActive()));
 		defaultFilters.put(TabsOrders.get().activeSellOrders(), filter);
 		filterControl = new MarketOrdersFilterControl(
 				program.getMainWindow().getFrame(),
@@ -129,7 +127,7 @@ public class MarketOrdersTab extends JMainTab {
 				filterList,
 				Settings.get().getTableFilters(NAME),
 				defaultFilters
-				);
+		);
 
 		//Menu
 		installMenu(program, new OrdersTableMenu(), jTable, MyMarketOrder.class);
@@ -147,21 +145,23 @@ public class MarketOrdersTab extends JMainTab {
 		this.addStatusbarLabel(jToCoverTotal);
 
 		layout.setHorizontalGroup(
-			layout.createParallelGroup()
-				.addComponent(filterControl.getPanel())
-				.addComponent(jTableScroll, 0, 0, Short.MAX_VALUE)
+				layout.createParallelGroup()
+						.addComponent(filterControl.getPanel())
+						.addComponent(jTableScroll, 0, 0, Short.MAX_VALUE)
 		);
 		layout.setVerticalGroup(
-			layout.createSequentialGroup()
-				.addComponent(filterControl.getPanel())
-				.addComponent(jTableScroll, 0, 0, Short.MAX_VALUE)
+				layout.createSequentialGroup()
+						.addComponent(filterControl.getPanel())
+						.addComponent(jTableScroll, 0, 0, Short.MAX_VALUE)
 		);
 	}
 
 	@Override
-	public void updateData() { }
+	public void updateData() {
+	}
 
 	private class OrdersTableMenu implements TableMenu<MyMarketOrder> {
+
 		@Override
 		public MenuData<MyMarketOrder> getMenuData() {
 			return new MenuData<MyMarketOrder>(selectionModel.getSelected());
@@ -183,10 +183,12 @@ public class MarketOrdersTab extends JMainTab {
 		}
 
 		@Override
-		public void addToolMenu(JComponent jComponent) { }
+		public void addToolMenu(JComponent jComponent) {
+		}
 	}
 
 	private class ListenerClass implements ListEventListener<MyMarketOrder> {
+
 		@Override
 		public void listChanged(ListEvent<MyMarketOrder> listChanges) {
 			double sellOrdersTotal = 0;
@@ -194,7 +196,7 @@ public class MarketOrdersTab extends JMainTab {
 			double toCoverTotal = 0;
 			double escrowTotal = 0;
 			for (MyMarketOrder marketOrder : filterList) {
-				if (marketOrder.getBid() < 1) { //Sell
+				if (!marketOrder.isBuyOrder()) { //Sell
 					sellOrdersTotal += marketOrder.getPrice() * marketOrder.getVolRemaining();
 				} else { //Buy
 					buyOrdersTotal += marketOrder.getPrice() * marketOrder.getVolRemaining();

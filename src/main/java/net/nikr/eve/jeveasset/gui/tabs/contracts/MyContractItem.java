@@ -18,51 +18,51 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
  */
-
 package net.nikr.eve.jeveasset.gui.tabs.contracts;
 
-import com.beimin.eveapi.model.shared.ContractItem;
+import java.util.Objects;
 import java.util.Set;
 import net.nikr.eve.jeveasset.data.Item;
 import net.nikr.eve.jeveasset.data.MyLocation;
+import net.nikr.eve.jeveasset.data.raw.RawContractItem;
 import net.nikr.eve.jeveasset.data.types.BlueprintType;
 import net.nikr.eve.jeveasset.data.types.ItemType;
 import net.nikr.eve.jeveasset.data.types.LocationsType;
 import net.nikr.eve.jeveasset.data.types.PriceType;
 import net.nikr.eve.jeveasset.gui.shared.CopyHandler.CopySeparator;
 import net.nikr.eve.jeveasset.i18n.TabsContracts;
+import net.nikr.eve.jeveasset.io.shared.RawConverter;
 
+public class MyContractItem extends RawContractItem implements Comparable<MyContractItem>, LocationsType, ItemType, BlueprintType, PriceType, CopySeparator {
 
-public class MyContractItem extends ContractItem implements Comparable<MyContractItem>, LocationsType, ItemType, BlueprintType, PriceType, CopySeparator {
-
-	private final MyContract contract;
+	private MyContract contract;
 	private final Item item;
 	private double price;
 
 	public MyContractItem(MyContract contract) {
+		super(RawContractItem.create());
 		this.contract = contract;
 		this.item = new Item(0);
-		this.setIncluded(true);
-		this.setQuantity(0);
-		this.setRecordID(0);
-		this.setSingleton(false);
-		this.setTypeID(0);
-		this.setRawQuantity(0L);
+		setIncluded(true);
+		setQuantity(0);
+		setRecordID(RawConverter.toLong(contract.getContractID()));
+		setSingleton(false);
+		setTypeID(0);
+		setRawQuantity(0);
 	}
 
-	public MyContractItem(ContractItem contractItem, MyContract contract, Item item) {
+	public MyContractItem(RawContractItem rawContractItem, MyContract contract, Item item) {
+		super(rawContractItem);
 		this.contract = contract;
 		this.item = item;
-		this.setIncluded(contractItem.isIncluded());
-		this.setQuantity(contractItem.getQuantity());
-		this.setRecordID(contractItem.getRecordID());
-		this.setSingleton(contractItem.isSingleton());
-		this.setTypeID(contractItem.getTypeID());
-		this.setRawQuantity(contractItem.getRawQuantity());
 	}
 
 	public MyContract getContract() {
 		return contract;
+	}
+
+	public void setContract(MyContract contract) {
+		this.contract = contract;
 	}
 
 	public String getIncluded() {
@@ -85,7 +85,6 @@ public class MyContractItem extends ContractItem implements Comparable<MyContrac
 		}
 	}
 
-	
 	public String getName() {
 		if (item.isEmpty()) {
 			return contract.getTypeName();
@@ -141,7 +140,7 @@ public class MyContractItem extends ContractItem implements Comparable<MyContrac
 	public int hashCode() {
 		int hash = 3;
 		hash = 37 * hash + (this.contract != null ? this.contract.hashCode() : 0);
-		hash = 37 * hash + (int) (this.getRecordID() ^ (this.getRecordID() >>> 32));
+		hash = 37 * hash + (int) (getRecordID() ^ (getRecordID() >>> 32));
 		return hash;
 	}
 
@@ -157,9 +156,6 @@ public class MyContractItem extends ContractItem implements Comparable<MyContrac
 		if (this.contract != other.contract && (this.contract == null || !this.contract.equals(other.contract))) {
 			return false;
 		}
-		if (this.getRecordID() != other.getRecordID()) {
-			return false;
-		}
-		return true;
+		return Objects.equals(this.getRecordID(), other.getRecordID());
 	}
 }
