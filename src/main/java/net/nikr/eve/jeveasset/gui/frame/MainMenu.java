@@ -364,8 +364,8 @@ public class MainMenu extends JMenuBar {
 
 	@Override
 	public final JMenu add(JMenu c) {
-        return super.add(c);
-    }
+		return super.add(c);
+	}
 
 	public JMenu getTableMenu() {
 		return jTableMenu;

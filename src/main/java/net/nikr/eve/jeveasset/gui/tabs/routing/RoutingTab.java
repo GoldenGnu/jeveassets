@@ -754,7 +754,7 @@ public class RoutingTab extends JMainTab  {
 			@Override
 			public void propertyChange(PropertyChangeEvent evt) {
 				if ("progress".equals(evt.getPropertyName())) {
-		            int progress = (Integer) evt.getNewValue();
+					int progress = (Integer) evt.getNewValue();
 					if (jProgress.isIndeterminate() && progress > 0) {
 						jProgress.setIndeterminate(false);
 					}
