@@ -37,8 +37,8 @@ import net.nikr.eve.jeveasset.data.EventListManager;
 import net.nikr.eve.jeveasset.data.Item;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.data.StaticData;
-import net.nikr.eve.jeveasset.gui.shared.Colors;
 import net.nikr.eve.jeveasset.gui.images.Images;
+import net.nikr.eve.jeveasset.gui.shared.Colors;
 import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
@@ -228,8 +228,8 @@ public class StockpileItemDialog extends JDialogCentered {
 
 	private void autoValidate() {
 		boolean valid = true;
-		boolean color = false;
-		if (jItems.getSelectedItem() == null) {
+		boolean colorIsSet = false;
+		if (jItems.getSelectedItem() == null || !(jItems.getSelectedItem() instanceof Item)) {
 			valid = false;
 			jCopy.setEnabled(false);
 			jCopy.setSelected(false);
@@ -242,24 +242,24 @@ public class StockpileItemDialog extends JDialogCentered {
 			}
 		}
 		if (itemExist() || stockpileItem != null) {
-			color = true;
+			colorIsSet = true;
 			jCountMinimum.setBackground(Colors.LIGHT_YELLOW.getColor());
 		}
 		try {
 			double d = Double.valueOf(jCountMinimum.getText());
 			if (d <= 0) {
 				valid = false; //Negative and zero is not valid
-				color = true;
+				colorIsSet = true;
 				jCountMinimum.setBackground(Colors.LIGHT_RED.getColor());
 			}
 		} catch (NumberFormatException ex) {
 			valid = false; //Empty and NaN is not valid
 			if (!jCountMinimum.getText().isEmpty()) {
-				color = true;
+				colorIsSet = true;
 				jCountMinimum.setBackground(Colors.LIGHT_RED.getColor());
 			}
 		}
-		if (!color) {
+		if (!colorIsSet) {
 			jCountMinimum.setBackground(Color.WHITE);
 		}
 		jOK.setEnabled(valid);
