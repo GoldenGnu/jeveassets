@@ -34,11 +34,11 @@ public class EsiOwner  extends AbstractOwner implements OwnerType {
 
 	private String accountName;
 	private String refreshToken;
-    private String scopes;
-    private String tokenType;
-    private String CharacterOwnerHash;
-    private String intellectualProperty;
-    private Date structuresNextUpdate = Settings.getNow();
+	private String scopes;
+	private String tokenType;
+	private String CharacterOwnerHash;
+	private String intellectualProperty;
+	private Date structuresNextUpdate = Settings.getNow();
 	private Date accountNextUpdate = Settings.getNow();
 	private EsiCallbackURL callbackURL;
 

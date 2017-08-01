@@ -44,9 +44,9 @@ public class Updater {
 	private static final Logger LOG = Logger.getLogger(Updater.class.getName());
 
 	private static final String UPDATE_URL = "https://eve.nikr.net/jeveassets/update/";
-	private static final String PROGRAM =    UPDATE_URL + "program/";
-	private static final String DATA =       UPDATE_URL + "data/";
-	private static final String UPDATE =     UPDATE_URL + "jupdate.jar";
+	private static final String PROGRAM =	 UPDATE_URL + "program/";
+	private static final String DATA =		 UPDATE_URL + "data/";
+	private static final String UPDATE =	 UPDATE_URL + "jupdate.jar";
 
 	public void update(final String localProgram) {
 		LOG.info("Checking online version");

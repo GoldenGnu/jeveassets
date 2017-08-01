@@ -27,81 +27,81 @@ import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 
 
 public class UpdateTaskInputStream extends FilterInputStream {
-    private final long maxNumBytes;
+	private final long maxNumBytes;
 	private final UpdateTask updateTask;
 	private final int start;
 	private final int end;
 
-    private volatile long totalNumBytesRead;
+	private volatile long totalNumBytesRead;
 
-    public UpdateTaskInputStream(final InputStream in, final long maxNumBytes, final UpdateTask updateTask) {
+	public UpdateTaskInputStream(final InputStream in, final long maxNumBytes, final UpdateTask updateTask) {
 		this(in, maxNumBytes, updateTask, 0, 100);
 	}
 
-    public UpdateTaskInputStream(final InputStream in, final long maxNumBytes, final UpdateTask updateTask, int start, int end) {
-        super(in);
-        this.maxNumBytes = maxNumBytes;
+	public UpdateTaskInputStream(final InputStream in, final long maxNumBytes, final UpdateTask updateTask, int start, int end) {
+		super(in);
+		this.maxNumBytes = maxNumBytes;
 		this.updateTask = updateTask;
 		this.start = start;
 		this.end = end;
-    }
+	}
 
-    public long getMaxNumBytes() {
-        return maxNumBytes;
-    }
+	public long getMaxNumBytes() {
+		return maxNumBytes;
+	}
 
-    public long getTotalNumBytesRead() {
-        return totalNumBytesRead;
-    }
+	public long getTotalNumBytesRead() {
+		return totalNumBytesRead;
+	}
 
-    @Override
-    public int read() throws IOException {
-        return updateProgressInteger(super.read());
-    }
+	@Override
+	public int read() throws IOException {
+		return updateProgressInteger(super.read());
+	}
 
 	@Override
 	public int read(byte[] b) throws IOException {
 		return updateProgressInteger(super.read(b));
 	}
 
-    @Override
-    public int read(byte[] b, int off, int len) throws IOException {
-        return updateProgressInteger(super.read(b, off, len));
-    }
+	@Override
+	public int read(byte[] b, int off, int len) throws IOException {
+		return updateProgressInteger(super.read(b, off, len));
+	}
 
-    @Override
-    public long skip(long n) throws IOException {
-        return updateProgressLong(super.skip(n));
-    }
+	@Override
+	public long skip(long n) throws IOException {
+		return updateProgressLong(super.skip(n));
+	}
 
-    @Override
-    public void mark(int readlimit) {
-        throw new UnsupportedOperationException();
-    }
+	@Override
+	public void mark(int readlimit) {
+		throw new UnsupportedOperationException();
+	}
 
-    @Override
-    public void reset() throws IOException {
-        throw new UnsupportedOperationException();
-    }
+	@Override
+	public void reset() throws IOException {
+		throw new UnsupportedOperationException();
+	}
 
-    @Override
-    public boolean markSupported() {
-        return false;
-    }
+	@Override
+	public boolean markSupported() {
+		return false;
+	}
 
 	private int updateProgressInteger(final int numBytesRead) {
 		updateProgressLong(numBytesRead);
 		return numBytesRead;
 	}
 
-    private long updateProgressLong(final long numBytesRead) {
-        if (numBytesRead > 0) {
-            this.totalNumBytesRead += numBytesRead;
+	private long updateProgressLong(final long numBytesRead) {
+		if (numBytesRead > 0) {
+			this.totalNumBytesRead += numBytesRead;
 			if (updateTask != null) {
 				updateTask.setTaskProgress(maxNumBytes, totalNumBytesRead, start, end);
 			}
-        }
-        return numBytesRead;
-    }
+		}
+		return numBytesRead;
+	}
 
 }

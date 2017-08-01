@@ -118,17 +118,17 @@ public class PriceDataGetterOnlineTest extends TestUtil {
 	private void test(PriceSource source, LocationType locationType, List<Long> locations) {
 		TestPricingOptions options = new TestPricingOptions(source, locationType, locations);
 		System.out.println(source.toString()
-                + " ("
-                + (options.getLocations().size() == 1 ? "Single" : "Multi")
-                + " "
-                + options.getLocationType().name().toLowerCase()
-                + " - " +typeIDs.size() + " IDs)"
-                );
+				+ " ("
+				+ (options.getLocations().size() == 1 ? "Single" : "Multi")
+				+ " "
+				+ options.getLocationType().name().toLowerCase()
+				+ " - " +typeIDs.size() + " IDs)"
+				);
 		long start = System.currentTimeMillis();
 		Map<Integer, PriceData> process = getter.process(options, typeIDs, source);
 		long end = System.currentTimeMillis();
 		assertNotNull(process);
-        Set<Integer> failed = new TreeSet<Integer>(typeIDs);
+		Set<Integer> failed = new TreeSet<Integer>(typeIDs);
 		failed.removeAll(process.keySet());
 
 		Set<Integer> empty = new TreeSet<Integer>();
@@ -139,7 +139,7 @@ public class PriceDataGetterOnlineTest extends TestUtil {
 			}
 		}
 
-        System.out.println("    " + process.size() + " of " + typeIDs.size() + " done - " + empty.size() + " empty - " + failed.size() + " failed - completed in: " + Formater.milliseconds(end - start)); 
+		System.out.println("    " + process.size() + " of " + typeIDs.size() + " done - " + empty.size() + " empty - " + failed.size() + " failed - completed in: " + Formater.milliseconds(end - start)); 
 		assertTrue(failed.isEmpty());
 		assertTrue(process.size() >= typeIDs.size());
 	}
