@@ -367,15 +367,15 @@
 				</executions>
 			</plugin>
 			<plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.19.1</version>
-                <configuration>
-                    <excludes>
-                        <exclude>${tests.to.skip}</exclude>
-                    </excludes>
-                </configuration>
-            </plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>2.18.1</version>
+				<configuration>
+					<excludes>
+						<exclude>${tests.to.skip}</exclude>
+					</excludes>
+				</configuration>
+			</plugin>
 		</plugins>
 		<extensions>
 			<!-- Enabling the use of FTP -->
@@ -542,24 +542,24 @@
 
 	<profiles>
 		<profile>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <properties>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<properties>
 				<tests.to.skip>NOTHING</tests.to.skip>
-            </properties>
+			</properties>
 		</profile>
 		<profile>
-            <id>skip-online-tests</id>
-            <activation>
-                <property>
-                    <name>skip-online-tests</name>
-                    <value>true</value>
-                </property>
-            </activation>
-            <properties>
+			<id>skip-online-tests</id>
+			<activation>
+				<property>
+					<name>skip-online-tests</name>
+					<value>true</value>
+				</property>
+			</activation>
+			<properties>
 				<tests.to.skip>**/*OnlineTest.java</tests.to.skip>
-            </properties>
+			</properties>
 		</profile>
 		<profile>
 			<id>portable</id>
@@ -675,7 +675,7 @@
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>4.8.2</version>
+			<version>4.12</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
