@@ -32,8 +32,6 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
-import static net.nikr.eve.jeveasset.Program.PROGRAM_NAME;
-import static net.nikr.eve.jeveasset.Program.PROGRAM_VERSION;
 import net.nikr.eve.jeveasset.io.local.FileLock;
 import net.nikr.eve.jeveasset.io.online.Updater;
 import net.nikr.eve.jeveasset.io.shared.FileUtil;
@@ -58,7 +56,7 @@ public final class Main {
 		SplashUpdater splashUpdater = new SplashUpdater();
 		splashUpdater.start();
 		//Print program data
-		log.info("Starting " + PROGRAM_NAME + " " +PROGRAM_VERSION);
+		log.info("Starting " + Program.PROGRAM_NAME + " " + Program.PROGRAM_VERSION);
 		log.info("OS: " + System.getProperty("os.name") + " " + System.getProperty("os.version"));
 		log.info("Java: " + System.getProperty("java.vendor") + " " + System.getProperty("java.version"));
 		// variables to the main program and settings.
@@ -232,7 +230,7 @@ public final class Main {
 		files.add("jcommon-1.0.16.jar");
 		files.add("jfreechart-1.0.13.jar");
 		files.add("osxadapter-1.1.0.jar");
-		files.add("pricing-1.6.0.jar");
+		files.add("pricing-1.6.1.jar");
 		files.add("routing-1.5.0.jar");
 		files.add("slf4j-api-1.7.25.jar");
 		files.add("log4j-over-slf4j-1.7.25.jar");

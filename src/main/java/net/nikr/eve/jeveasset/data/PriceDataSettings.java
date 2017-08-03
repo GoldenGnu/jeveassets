@@ -44,7 +44,6 @@ public class PriceDataSettings {
 				return DataModelPriceDataSettings.get().sourceEveCentral();
 			}
 		},
-		/*
 		EVE_MARKETDATA(PricingFetch.EVE_MARKETDATA, false, true, true, true, LocationType.REGION, Collections.singletonList(10000002L), Images.LINK_EVE_MARKETDATA.getIcon()) {
 			@Override public PriceMode[] getPriceTypes() {
 				return new PriceMode[]{PriceMode.PRICE_SELL_PERCENTILE, PriceMode.PRICE_MIDPOINT, PriceMode.PRICE_BUY_PERCENTILE};
@@ -53,7 +52,6 @@ public class PriceDataSettings {
 				return DataModelPriceDataSettings.get().sourceEveMarketdata();
 			}
 		},
-		*/
 		/*
 		EVEMARKETEER(PricingFetch.EVEMARKETEER, false, true, true, true) {
 			@Override public PriceMode[] getPriceTypes() {
@@ -142,16 +140,19 @@ public class PriceDataSettings {
 		}
 
 		public boolean isValid(LocationType locationType, List<Long> locations) {
-			if (locationType == LocationType.REGION) {
-				if (locations.size() == 1) {
-					return supportsSingleRegion();
-				} else {
-					return supportsMultipleRegions();
+			if (null != locationType) {
+				switch (locationType) {
+					case REGION:
+						if (locations.size() == 1) {
+							return supportsSingleRegion();
+						} else {
+							return supportsMultipleRegions();
+						}
+					case SYSTEM:
+						return supportsSystem();
+					case STATION:
+						return supportsStation();
 				}
-			} else if (locationType == LocationType.SYSTEM) {
-				return supportsSystem();
-			} else if (locationType == LocationType.STATION) {
-				return supportsStation();
 			}
 			return false; //Should never happen
 		}

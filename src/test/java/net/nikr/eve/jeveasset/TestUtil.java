@@ -28,6 +28,7 @@ public class TestUtil {
 
 	@BeforeClass
 	public static void initLog() {
+		System.setProperty("http.agent", Program.PROGRAM_NAME + "/" + Program.PROGRAM_VERSION.replace(" ", "_"));
 		System.setProperty("log.home", "");
 	}
 
