@@ -73,7 +73,7 @@ public class PriceDataGetter implements PricingListener {
 	
 	private long nextUpdate = 0;
 
-	public PriceDataGetter() {
+	public void load() {
 		Map<Integer, PriceData> priceData = processLoad();
 		if (priceData != null) {
 			Settings.get().setPriceData(priceData);
@@ -391,7 +391,7 @@ public class PriceDataGetter implements PricingListener {
 
 		@Override
 		public Proxy getProxy() {
-			return Settings.get().getProxy();
+			return null;
 		}
 
 		@Override

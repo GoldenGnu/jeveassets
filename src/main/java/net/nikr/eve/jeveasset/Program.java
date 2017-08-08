@@ -146,14 +146,13 @@ public class Program implements ActionListener {
 	private final ProfileData profileData;
 	private final ProfileManager profileManager;
 	private final PriceDataGetter priceDataGetter;
+	private final String localData;
 
 	//Height
 	private static int height = 0;
 
 	public Program() {
 		height = calcButtonsHeight();
-		updater = new Updater();
-		updater.update(Program.PROGRAM_VERSION);
 		if (debug) {
 			LOG.debug("Force Update: {} Force No Update: {}", forceUpdate, forceNoUpdate);
 		}
@@ -166,12 +165,18 @@ public class Program implements ActionListener {
 		LOG.info("DATA Loading...");
 		StaticData.load();
 		Settings.load();
+
+		updater = new Updater();
+		localData = updater.getLocalData();
+		updater.update(Program.PROGRAM_VERSION, localData, Settings.get().getProxyData());
+
 		profileManager = new ProfileManager();
 		profileManager.searchProfile();
 		profileManager.loadActiveProfile();
 		profileData = new ProfileData(profileManager);
 		//Can not update profile data now - list needs to be empty doing creation...
 		priceDataGetter = new PriceDataGetter();
+		priceDataGetter.load();
 	//Timer
 		timer = new Timer(15000, this); //Once a minute
 		timer.setActionCommand(ProgramAction.TIMER.name());
@@ -292,6 +297,7 @@ public class Program implements ActionListener {
 		profileData = null;
 		profileManager = null;
 		priceDataGetter = null;
+		localData = null;
 	}
 
 	public static int getButtonsHeight() {
@@ -442,7 +448,7 @@ public class Program implements ActionListener {
 	}
 
 	public String getProgramDataVersion() {
-		return updater.getLocalData();
+		return localData;
 	}
 
 	private void macOsxCode() {

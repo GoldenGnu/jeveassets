@@ -41,15 +41,14 @@ public class SettingsTest extends TestUtil {
 	public static void tearDownClass() throws Exception {
 		setLoggingLevel(Level.INFO);
 	}
-	
 
-	private void test(BackwardCompatibilitySettings settings, Function function){
-		assertTrue(settings.getName()+" failed test for "+function.name(), settings.test(function));
+	private void test(BackwardCompatibilitySettings settings, Function function) {
+		assertTrue(settings.getName() + " failed test for " + function.name(), settings.test(function));
 	}
 
-	private void test(BackwardCompatibilitySettings settings){
+	private void test(BackwardCompatibilitySettings settings) {
 		List<Function> test = settings.test();
-		assertEquals(settings.getName()+" is missing tests for: "+test.toString(), 0, test.size());
+		assertEquals(settings.getName() + " is missing tests for: " + test.toString(), 0, test.size());
 	}
 
 	@Test
@@ -60,7 +59,6 @@ public class SettingsTest extends TestUtil {
 		}
 	}
 
-	
 	@Test
 	public void backwardCompatibility100() throws URISyntaxException {
 		BackwardCompatibilitySettings settings = new BackwardCompatibilitySettings("data-1-0-0");
@@ -72,7 +70,6 @@ public class SettingsTest extends TestUtil {
 		test(settings, Function.SET_API_PROXY);
 		test(settings, Function.SET_CONQUERABLE_STATIONS_NEXT_UPDATE);
 		test(settings, Function.SET_PRICE_DATA_SETTINGS);
-		test(settings, Function.SET_PROXY);
 		test(settings);
 	}
 
@@ -87,7 +84,6 @@ public class SettingsTest extends TestUtil {
 		test(settings, Function.SET_API_PROXY);
 		test(settings, Function.SET_CONQUERABLE_STATIONS_NEXT_UPDATE);
 		test(settings, Function.SET_PRICE_DATA_SETTINGS);
-		test(settings, Function.SET_PROXY);
 		test(settings);
 	}
 
@@ -102,7 +98,6 @@ public class SettingsTest extends TestUtil {
 		test(settings, Function.SET_API_PROXY);
 		test(settings, Function.SET_CONQUERABLE_STATIONS_NEXT_UPDATE);
 		test(settings, Function.SET_PRICE_DATA_SETTINGS);
-		test(settings, Function.SET_PROXY);
 		test(settings, Function.SET_WINDOW_ALWAYS_ON_TOP);
 		test(settings, Function.SET_WINDOW_AUTO_SAVE);
 		test(settings, Function.SET_WINDOW_LOCATION);
@@ -122,7 +117,6 @@ public class SettingsTest extends TestUtil {
 		test(settings, Function.SET_API_PROXY);
 		test(settings, Function.SET_CONQUERABLE_STATIONS_NEXT_UPDATE);
 		test(settings, Function.SET_PRICE_DATA_SETTINGS);
-		test(settings, Function.SET_PROXY);
 		test(settings, Function.SET_WINDOW_ALWAYS_ON_TOP);
 		test(settings, Function.SET_WINDOW_AUTO_SAVE);
 		test(settings, Function.SET_WINDOW_LOCATION);
@@ -142,7 +136,6 @@ public class SettingsTest extends TestUtil {
 		test(settings, Function.SET_API_PROXY);
 		test(settings, Function.SET_CONQUERABLE_STATIONS_NEXT_UPDATE);
 		test(settings, Function.SET_PRICE_DATA_SETTINGS);
-		test(settings, Function.SET_PROXY);
 		test(settings, Function.SET_WINDOW_ALWAYS_ON_TOP);
 		test(settings, Function.SET_WINDOW_AUTO_SAVE);
 		test(settings, Function.SET_WINDOW_LOCATION);
@@ -162,7 +155,6 @@ public class SettingsTest extends TestUtil {
 		test(settings, Function.SET_API_PROXY);
 		test(settings, Function.SET_CONQUERABLE_STATIONS_NEXT_UPDATE);
 		test(settings, Function.SET_PRICE_DATA_SETTINGS);
-		test(settings, Function.SET_PROXY);
 		test(settings, Function.SET_WINDOW_ALWAYS_ON_TOP);
 		test(settings, Function.SET_WINDOW_AUTO_SAVE);
 		test(settings, Function.SET_WINDOW_LOCATION);
@@ -182,7 +174,6 @@ public class SettingsTest extends TestUtil {
 		test(settings, Function.SET_API_PROXY);
 		test(settings, Function.SET_CONQUERABLE_STATIONS_NEXT_UPDATE);
 		test(settings, Function.SET_PRICE_DATA_SETTINGS);
-		test(settings, Function.SET_PROXY);
 		test(settings, Function.SET_WINDOW_ALWAYS_ON_TOP);
 		test(settings, Function.SET_WINDOW_AUTO_SAVE);
 		test(settings, Function.SET_WINDOW_LOCATION);
@@ -203,7 +194,6 @@ public class SettingsTest extends TestUtil {
 		test(settings, Function.SET_API_PROXY);
 		test(settings, Function.SET_CONQUERABLE_STATIONS_NEXT_UPDATE);
 		test(settings, Function.SET_PRICE_DATA_SETTINGS);
-		test(settings, Function.SET_PROXY);
 		test(settings, Function.SET_REPROCESS_SETTINGS);
 		test(settings, Function.SET_WINDOW_ALWAYS_ON_TOP);
 		test(settings, Function.SET_WINDOW_AUTO_SAVE);
@@ -225,7 +215,6 @@ public class SettingsTest extends TestUtil {
 		test(settings, Function.SET_API_PROXY);
 		test(settings, Function.SET_CONQUERABLE_STATIONS_NEXT_UPDATE);
 		test(settings, Function.SET_PRICE_DATA_SETTINGS);
-		test(settings, Function.SET_PROXY);
 		test(settings, Function.SET_REPROCESS_SETTINGS);
 		test(settings, Function.SET_WINDOW_ALWAYS_ON_TOP);
 		test(settings, Function.SET_WINDOW_AUTO_SAVE);
@@ -248,7 +237,6 @@ public class SettingsTest extends TestUtil {
 		test(settings, Function.SET_API_PROXY);
 		test(settings, Function.SET_CONQUERABLE_STATIONS_NEXT_UPDATE);
 		test(settings, Function.SET_PRICE_DATA_SETTINGS);
-		test(settings, Function.SET_PROXY);
 		test(settings, Function.SET_REPROCESS_SETTINGS);
 		test(settings, Function.SET_WINDOW_ALWAYS_ON_TOP);
 		test(settings, Function.SET_WINDOW_AUTO_SAVE);
@@ -271,7 +259,6 @@ public class SettingsTest extends TestUtil {
 		test(settings, Function.SET_API_PROXY);
 		test(settings, Function.SET_CONQUERABLE_STATIONS_NEXT_UPDATE);
 		test(settings, Function.SET_PRICE_DATA_SETTINGS);
-		test(settings, Function.SET_PROXY);
 		test(settings, Function.SET_REPROCESS_SETTINGS);
 		test(settings, Function.SET_WINDOW_ALWAYS_ON_TOP);
 		test(settings, Function.SET_WINDOW_AUTO_SAVE);
@@ -294,7 +281,6 @@ public class SettingsTest extends TestUtil {
 		test(settings, Function.SET_API_PROXY);
 		test(settings, Function.SET_CONQUERABLE_STATIONS_NEXT_UPDATE);
 		test(settings, Function.SET_PRICE_DATA_SETTINGS);
-		test(settings, Function.SET_PROXY);
 		test(settings, Function.SET_REPROCESS_SETTINGS);
 		test(settings, Function.SET_WINDOW_ALWAYS_ON_TOP);
 		test(settings, Function.SET_WINDOW_AUTO_SAVE);
@@ -317,7 +303,6 @@ public class SettingsTest extends TestUtil {
 		test(settings, Function.SET_API_PROXY);
 		test(settings, Function.SET_CONQUERABLE_STATIONS_NEXT_UPDATE);
 		test(settings, Function.SET_PRICE_DATA_SETTINGS);
-		test(settings, Function.SET_PROXY);
 		test(settings, Function.SET_REPROCESS_SETTINGS);
 		test(settings, Function.SET_WINDOW_ALWAYS_ON_TOP);
 		test(settings, Function.SET_WINDOW_AUTO_SAVE);
@@ -340,7 +325,6 @@ public class SettingsTest extends TestUtil {
 		test(settings, Function.SET_API_PROXY);
 		test(settings, Function.SET_CONQUERABLE_STATIONS_NEXT_UPDATE);
 		test(settings, Function.SET_PRICE_DATA_SETTINGS);
-		test(settings, Function.SET_PROXY);
 		test(settings, Function.SET_REPROCESS_SETTINGS);
 		test(settings, Function.SET_WINDOW_ALWAYS_ON_TOP);
 		test(settings, Function.SET_WINDOW_AUTO_SAVE);
@@ -363,7 +347,6 @@ public class SettingsTest extends TestUtil {
 		test(settings, Function.SET_API_PROXY);
 		test(settings, Function.SET_CONQUERABLE_STATIONS_NEXT_UPDATE);
 		test(settings, Function.SET_PRICE_DATA_SETTINGS);
-		test(settings, Function.SET_PROXY);
 		test(settings, Function.SET_REPROCESS_SETTINGS);
 		test(settings, Function.SET_WINDOW_ALWAYS_ON_TOP);
 		test(settings, Function.SET_WINDOW_AUTO_SAVE);
@@ -386,7 +369,6 @@ public class SettingsTest extends TestUtil {
 		test(settings, Function.SET_API_PROXY);
 		test(settings, Function.SET_CONQUERABLE_STATIONS_NEXT_UPDATE);
 		test(settings, Function.SET_PRICE_DATA_SETTINGS);
-		test(settings, Function.SET_PROXY);
 		test(settings, Function.SET_REPROCESS_SETTINGS);
 		test(settings, Function.SET_WINDOW_ALWAYS_ON_TOP);
 		test(settings, Function.SET_WINDOW_AUTO_SAVE);
@@ -409,7 +391,6 @@ public class SettingsTest extends TestUtil {
 		test(settings, Function.SET_API_PROXY);
 		test(settings, Function.SET_CONQUERABLE_STATIONS_NEXT_UPDATE);
 		test(settings, Function.SET_PRICE_DATA_SETTINGS);
-		test(settings, Function.SET_PROXY);
 		test(settings, Function.SET_REPROCESS_SETTINGS);
 		test(settings, Function.SET_WINDOW_ALWAYS_ON_TOP);
 		test(settings, Function.SET_WINDOW_AUTO_SAVE);
@@ -432,7 +413,6 @@ public class SettingsTest extends TestUtil {
 		test(settings, Function.SET_API_PROXY);
 		test(settings, Function.SET_CONQUERABLE_STATIONS_NEXT_UPDATE);
 		test(settings, Function.SET_PRICE_DATA_SETTINGS);
-		test(settings, Function.SET_PROXY);
 		test(settings, Function.SET_REPROCESS_SETTINGS);
 		test(settings, Function.SET_WINDOW_ALWAYS_ON_TOP);
 		test(settings, Function.SET_WINDOW_AUTO_SAVE);
@@ -455,7 +435,6 @@ public class SettingsTest extends TestUtil {
 		test(settings, Function.SET_API_PROXY);
 		test(settings, Function.SET_CONQUERABLE_STATIONS_NEXT_UPDATE);
 		test(settings, Function.SET_PRICE_DATA_SETTINGS);
-		test(settings, Function.SET_PROXY);
 		test(settings, Function.SET_REPROCESS_SETTINGS);
 		test(settings, Function.SET_WINDOW_ALWAYS_ON_TOP);
 		test(settings, Function.SET_WINDOW_AUTO_SAVE);
@@ -479,7 +458,6 @@ public class SettingsTest extends TestUtil {
 		test(settings, Function.SET_API_PROXY);
 		test(settings, Function.SET_CONQUERABLE_STATIONS_NEXT_UPDATE);
 		test(settings, Function.SET_PRICE_DATA_SETTINGS);
-		test(settings, Function.SET_PROXY);
 		test(settings, Function.SET_REPROCESS_SETTINGS);
 		test(settings, Function.SET_WINDOW_ALWAYS_ON_TOP);
 		test(settings, Function.SET_WINDOW_AUTO_SAVE);
@@ -503,7 +481,6 @@ public class SettingsTest extends TestUtil {
 		test(settings, Function.SET_API_PROXY);
 		test(settings, Function.SET_CONQUERABLE_STATIONS_NEXT_UPDATE);
 		test(settings, Function.SET_PRICE_DATA_SETTINGS);
-		test(settings, Function.SET_PROXY);
 		test(settings, Function.SET_REPROCESS_SETTINGS);
 		test(settings, Function.SET_WINDOW_ALWAYS_ON_TOP);
 		test(settings, Function.SET_WINDOW_AUTO_SAVE);
@@ -528,7 +505,6 @@ public class SettingsTest extends TestUtil {
 		test(settings, Function.SET_API_PROXY);
 		test(settings, Function.SET_CONQUERABLE_STATIONS_NEXT_UPDATE);
 		test(settings, Function.SET_PRICE_DATA_SETTINGS);
-		test(settings, Function.SET_PROXY);
 		test(settings, Function.SET_REPROCESS_SETTINGS);
 		test(settings, Function.SET_WINDOW_ALWAYS_ON_TOP);
 		test(settings, Function.SET_WINDOW_AUTO_SAVE);
@@ -553,7 +529,6 @@ public class SettingsTest extends TestUtil {
 		test(settings, Function.SET_API_PROXY);
 		test(settings, Function.SET_CONQUERABLE_STATIONS_NEXT_UPDATE);
 		test(settings, Function.SET_PRICE_DATA_SETTINGS);
-		test(settings, Function.SET_PROXY);
 		test(settings, Function.SET_REPROCESS_SETTINGS);
 		test(settings, Function.SET_WINDOW_ALWAYS_ON_TOP);
 		test(settings, Function.SET_WINDOW_AUTO_SAVE);
@@ -578,7 +553,6 @@ public class SettingsTest extends TestUtil {
 		test(settings, Function.SET_API_PROXY);
 		test(settings, Function.SET_CONQUERABLE_STATIONS_NEXT_UPDATE);
 		test(settings, Function.SET_PRICE_DATA_SETTINGS);
-		test(settings, Function.SET_PROXY);
 		test(settings, Function.SET_REPROCESS_SETTINGS);
 		test(settings, Function.SET_WINDOW_ALWAYS_ON_TOP);
 		test(settings, Function.SET_WINDOW_AUTO_SAVE);
@@ -604,7 +578,6 @@ public class SettingsTest extends TestUtil {
 		test(settings, Function.SET_API_PROXY);
 		test(settings, Function.SET_CONQUERABLE_STATIONS_NEXT_UPDATE);
 		test(settings, Function.SET_PRICE_DATA_SETTINGS);
-		test(settings, Function.SET_PROXY);
 		test(settings, Function.SET_REPROCESS_SETTINGS);
 		test(settings, Function.SET_WINDOW_ALWAYS_ON_TOP);
 		test(settings, Function.SET_WINDOW_AUTO_SAVE);
@@ -630,7 +603,6 @@ public class SettingsTest extends TestUtil {
 		test(settings, Function.SET_API_PROXY);
 		test(settings, Function.SET_CONQUERABLE_STATIONS_NEXT_UPDATE);
 		test(settings, Function.SET_PRICE_DATA_SETTINGS);
-		test(settings, Function.SET_PROXY);
 		test(settings, Function.SET_REPROCESS_SETTINGS);
 		test(settings, Function.SET_WINDOW_ALWAYS_ON_TOP);
 		test(settings, Function.SET_WINDOW_AUTO_SAVE);
@@ -656,7 +628,6 @@ public class SettingsTest extends TestUtil {
 		test(settings, Function.SET_API_PROXY);
 		test(settings, Function.SET_CONQUERABLE_STATIONS_NEXT_UPDATE);
 		test(settings, Function.SET_PRICE_DATA_SETTINGS);
-		test(settings, Function.SET_PROXY);
 		test(settings, Function.SET_REPROCESS_SETTINGS);
 		test(settings, Function.SET_WINDOW_ALWAYS_ON_TOP);
 		test(settings, Function.SET_WINDOW_AUTO_SAVE);
@@ -682,7 +653,6 @@ public class SettingsTest extends TestUtil {
 		test(settings, Function.SET_API_PROXY);
 		test(settings, Function.SET_CONQUERABLE_STATIONS_NEXT_UPDATE);
 		test(settings, Function.SET_PRICE_DATA_SETTINGS);
-		test(settings, Function.SET_PROXY);
 		test(settings, Function.SET_REPROCESS_SETTINGS);
 		test(settings, Function.SET_WINDOW_ALWAYS_ON_TOP);
 		test(settings, Function.SET_WINDOW_AUTO_SAVE);
@@ -709,7 +679,6 @@ public class SettingsTest extends TestUtil {
 		test(settings, Function.SET_API_PROXY);
 		test(settings, Function.SET_CONQUERABLE_STATIONS_NEXT_UPDATE);
 		test(settings, Function.SET_PRICE_DATA_SETTINGS);
-		test(settings, Function.SET_PROXY);
 		test(settings, Function.SET_REPROCESS_SETTINGS);
 		test(settings, Function.SET_WINDOW_ALWAYS_ON_TOP);
 		test(settings, Function.SET_WINDOW_AUTO_SAVE);
@@ -736,7 +705,6 @@ public class SettingsTest extends TestUtil {
 		test(settings, Function.SET_API_PROXY);
 		test(settings, Function.SET_CONQUERABLE_STATIONS_NEXT_UPDATE);
 		test(settings, Function.SET_PRICE_DATA_SETTINGS);
-		test(settings, Function.SET_PROXY);
 		test(settings, Function.SET_REPROCESS_SETTINGS);
 		test(settings, Function.SET_WINDOW_ALWAYS_ON_TOP);
 		test(settings, Function.SET_WINDOW_AUTO_SAVE);
@@ -765,7 +733,6 @@ public class SettingsTest extends TestUtil {
 		test(settings, Function.SET_CONQUERABLE_STATIONS_NEXT_UPDATE);
 		test(settings, Function.SET_MAXIMUM_PURCHASE_AGE);
 		test(settings, Function.SET_PRICE_DATA_SETTINGS);
-		test(settings, Function.SET_PROXY);
 		test(settings, Function.SET_REPROCESS_SETTINGS);
 		test(settings, Function.SET_WINDOW_ALWAYS_ON_TOP);
 		test(settings, Function.SET_WINDOW_AUTO_SAVE);
@@ -797,7 +764,6 @@ public class SettingsTest extends TestUtil {
 		test(settings, Function.SET_CONQUERABLE_STATIONS_NEXT_UPDATE);
 		test(settings, Function.SET_MAXIMUM_PURCHASE_AGE);
 		test(settings, Function.SET_PRICE_DATA_SETTINGS);
-		test(settings, Function.SET_PROXY);
 		test(settings, Function.SET_REPROCESS_SETTINGS);
 		test(settings, Function.SET_WINDOW_ALWAYS_ON_TOP);
 		test(settings, Function.SET_WINDOW_AUTO_SAVE);
@@ -829,7 +795,6 @@ public class SettingsTest extends TestUtil {
 		test(settings, Function.SET_CONQUERABLE_STATIONS_NEXT_UPDATE);
 		test(settings, Function.SET_MAXIMUM_PURCHASE_AGE);
 		test(settings, Function.SET_PRICE_DATA_SETTINGS);
-		test(settings, Function.SET_PROXY);
 		test(settings, Function.SET_REPROCESS_SETTINGS);
 		test(settings, Function.SET_WINDOW_ALWAYS_ON_TOP);
 		test(settings, Function.SET_WINDOW_AUTO_SAVE);
@@ -864,7 +829,7 @@ public class SettingsTest extends TestUtil {
 		test(settings, Function.SET_CONQUERABLE_STATIONS_NEXT_UPDATE);
 		test(settings, Function.SET_MAXIMUM_PURCHASE_AGE);
 		test(settings, Function.SET_PRICE_DATA_SETTINGS);
-		test(settings, Function.SET_PROXY);
+		test(settings, Function.SET_PROXY_DATA);
 		test(settings, Function.SET_REPROCESS_SETTINGS);
 		test(settings, Function.SET_WINDOW_ALWAYS_ON_TOP);
 		test(settings, Function.SET_WINDOW_AUTO_SAVE);

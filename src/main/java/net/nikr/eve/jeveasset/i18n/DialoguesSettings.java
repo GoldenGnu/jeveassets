@@ -101,6 +101,9 @@ public abstract class DialoguesSettings extends Bundle {
 	public abstract String port();
 	public abstract String enable();
 	public abstract String apiProxy();
+	public abstract String auth();
+	public abstract String username();
+	public abstract String password();
 
 	// used in ReprocessingSettingsPanel
 	public abstract String reprocessing();

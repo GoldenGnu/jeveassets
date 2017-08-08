@@ -37,6 +37,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
+import net.nikr.eve.jeveasset.data.ProxyData;
 import net.nikr.eve.jeveasset.io.shared.FileUtil;
 
 
@@ -48,17 +49,16 @@ public class Updater {
 	private static final String DATA =		 UPDATE_URL + "data/";
 	private static final String UPDATE =	 UPDATE_URL + "jupdate.jar";
 
-	public void update(final String localProgram) {
+	public void update(final String localProgram, String localData, ProxyData proxyData) {
 		LOG.info("Checking online version");
 		Getter getter = new Getter();
 		final String onlineProgram = getter.get(PROGRAM+"update_version.dat");
-		update("Program", onlineProgram, localProgram, PROGRAM);
+		update("Program", onlineProgram, localProgram, PROGRAM, proxyData);
 		final String onlineData = getter.get(DATA+"update_version.dat");
-		final String localData = getLocalData();
 		if (localData == null) {
 			fixData();
 		} else {
-			update("Static data", onlineData, localData, DATA);
+			update("Static data", onlineData, localData, DATA, proxyData);
 		}
 	}
 
@@ -74,7 +74,7 @@ public class Updater {
 			LOG.info("Updating data");
 			boolean download = downloadUpdater();
 			if (download) {
-				runUpdate(DATA);
+				runUpdate(DATA, null);
 			} else {
 				JOptionPane.showMessageDialog(null, "Auto update failed\r\nPlease, re-download jEveAssets and leave the unzipped directory intact\r\nPress OK to close jEveAssets", "Critical Error", JOptionPane.ERROR_MESSAGE);
 				System.exit(-1);
@@ -97,7 +97,7 @@ public class Updater {
 			LOG.info("Updating program");
 			boolean download = downloadUpdater();
 			if (download) {
-				runUpdate(PROGRAM);
+				runUpdate(PROGRAM, null);
 			} else {
 				JOptionPane.showMessageDialog(null, "Auto update failed\r\nPlease, re-download jEveAssets and leave the unzipped directory intact\r\nPress OK to close jEveAssets", "Critical Error", JOptionPane.ERROR_MESSAGE);
 				System.exit(-1);
@@ -120,7 +120,7 @@ public class Updater {
 			LOG.info("Updating program");
 			boolean download = downloadUpdater();
 			if (download) {
-				runUpdate(PROGRAM);
+				runUpdate(PROGRAM, null);
 			} else {
 				JOptionPane.showMessageDialog(null, "Auto update failed\r\nPlease, re-download jEveAssets and leave the unzipped directory intact\r\nPress OK to close jEveAssets", "Critical Error", JOptionPane.ERROR_MESSAGE);
 				System.exit(-1);
@@ -136,8 +136,8 @@ public class Updater {
 		return getter.get(new File(FileUtil.getPathDataVersion()));
 	}
 
-	private void update(String title, String online, String local, String link) {
-		LOG.info(title.toUpperCase() + " Online: " + online + " Local: " + local);
+	private void update(String title, String online, String local, String link, ProxyData proxyData) {
+		LOG.log(Level.INFO, "{0} Online: {1} Local: {2}", new Object[]{title.toUpperCase(), online, local});
 		if (online != null && !online.equals(local)) {
 			int value = JOptionPane.showConfirmDialog(null, 
 					title + " update available\r\n"
@@ -154,7 +154,7 @@ public class Updater {
 				LOG.log(Level.INFO, "Updating {0}", title);
 				boolean download = downloadUpdater();
 				if (download) {
-					runUpdate(link);
+					runUpdate(link, proxyData);
 				} else {
 					JOptionPane.showMessageDialog(null, "Auto update failed\r\nRestart jEveAssets to try again...", "Auto Update", JOptionPane.ERROR_MESSAGE);
 				}
@@ -162,10 +162,10 @@ public class Updater {
 		}
 	}
 
-	private void runUpdate(String link) {
+	private void runUpdate(String link, ProxyData proxyData) {
 		ProcessBuilder processBuilder = new ProcessBuilder();
 		processBuilder.directory(getJavaHome());
-		processBuilder.command(getArgsString(link));
+		processBuilder.command(getArgsString(link, proxyData));
 		try {
 			processBuilder.start();
 			System.exit(0);
@@ -178,9 +178,14 @@ public class Updater {
 		return new File(System.getProperty("java.home") + File.separator + "bin");
 	}
 
-	private List<String> getArgsString(String link) {
+	private List<String> getArgsString(String link, ProxyData proxyData) {
 		List<String> list = new ArrayList<String>();
 		list.add("java");
+		if (proxyData != null) {
+			list.addAll(proxyData.getArgs());
+		} else {
+			list.add("-Djava.net.useSystemProxies=true");
+		}
 		list.add("-jar");
 		list.add(FileUtil.getPathRunUpdate());
 		list.add(link);
