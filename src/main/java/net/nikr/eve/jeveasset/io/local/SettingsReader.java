@@ -25,6 +25,7 @@ import java.awt.Dimension;
 import java.awt.Point;
 import java.io.File;
 import java.io.IOException;
+import java.net.Proxy;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -44,6 +45,7 @@ import net.nikr.eve.jeveasset.data.PriceDataSettings;
 import net.nikr.eve.jeveasset.data.PriceDataSettings.PriceMode;
 import net.nikr.eve.jeveasset.data.PriceDataSettings.PriceSource;
 import net.nikr.eve.jeveasset.data.PriceDataSettings.RegionType;
+import net.nikr.eve.jeveasset.data.ProxyData;
 import net.nikr.eve.jeveasset.data.ReprocessSettings;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.data.Settings.SettingFlag;
@@ -794,16 +796,24 @@ public final class SettingsReader extends AbstractXmlReader {
 	}
 
 	private void parseProxy(final Element proxyElement, final Settings settings) {
-		String addrName = AttributeGetters.getString(proxyElement, "address");
-		String proxyType = AttributeGetters.getString(proxyElement, "type");
+		Proxy.Type type;
+		try {
+			type = Proxy.Type.valueOf(AttributeGetters.getString(proxyElement, "type"));
+		} catch (IllegalArgumentException  ex) {
+			type = null;
+		}
+		String address = AttributeGetters.getString(proxyElement, "address");
 		int port = AttributeGetters.getInt(proxyElement, "port");
-		if (addrName.length() > 0 && proxyType.length() > 0 && port >= 0) { // check the proxy attributes are all there.
-			// delegate to the utility method in the Settings.
-			try {
-				settings.setProxy(addrName, port, proxyType);
-			} catch (IllegalArgumentException iae) { //catch none valid proxt settings
-				settings.setProxy(null);
-			}
+		String username = null;
+		if (AttributeGetters.haveAttribute(proxyElement, "username")) {
+			username = AttributeGetters.getString(proxyElement, "username");
+		}
+		String password = null;
+		if (AttributeGetters.haveAttribute(proxyElement, "password")) {
+			password = AttributeGetters.getString(proxyElement, "password");
+		}
+		if (type != null && type != Proxy.Type.DIRECT && !address.isEmpty() && port != 0) { // check the proxy attributes are all there.
+			settings.setProxyData(new ProxyData(address, type, port, username, password));
 		}
 	}
 

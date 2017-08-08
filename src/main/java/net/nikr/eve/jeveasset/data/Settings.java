@@ -21,16 +21,10 @@
 package net.nikr.eve.jeveasset.data;
 
 import com.beimin.eveapi.connectors.ApiConnector;
-import com.beimin.eveapi.connectors.ProxyConnector;
 import com.beimin.eveapi.parser.shared.AbstractApiParser;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.io.File;
-import java.net.InetAddress;
-import java.net.InetSocketAddress;
-import java.net.Proxy;
-import java.net.SocketAddress;
-import java.net.UnknownHostException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -160,8 +154,8 @@ public class Settings {
 	//Price
 	private PriceDataSettings priceDataSettings = new PriceDataSettings();
 	//Proxy (API)
-	private Proxy proxy;
 	private String apiProxy;
+	private ProxyData proxyData = new ProxyData();
 	//FIXME - - > Settings: Create windows settings
 	//Window
 	//							Saved by MainWindow.ListenerClass.componentMoved() (on change)
@@ -425,75 +419,20 @@ public class Settings {
 		getJumpLocations(clazz).clear();
 	}
 
-	//@NotNull
-	public Proxy getProxy() {
-		if (proxy == null) {
-			return Proxy.NO_PROXY;
-		} else {
-			return proxy;
-		}
-	}
-
-	/**
-	 *
-	 * @param proxy passing 'null' removes proxying.
-	 */
-	public void setProxy(final Proxy proxy) {
-		this.proxy = proxy;
-		// pass the new proxy onto the API framework.
-		constructEveApiConnector();
-	}
-
-	/**
-	 * handles converting "basic" types to a Proxy type.
-	 *
-	 * @param host
-	 * @param port
-	 * @param type
-	 * @throws IllegalArgumentException
-	 */
-	public void setProxy(final String host, final int port, final String type) {
-		// Convert the proxy type. not using the "valueof()" method so that they can be case-insensitive.
-		Proxy.Type proxyType = Proxy.Type.DIRECT;
-		if ("http".equalsIgnoreCase(type)) {
-			proxyType = Proxy.Type.HTTP;
-		} else if ("socks".equalsIgnoreCase(type)) {
-			proxyType = Proxy.Type.SOCKS;
-		} else if ("direct".equalsIgnoreCase(type)) {
-			setProxy(Proxy.NO_PROXY);
-		}
-
-		setProxy(host, port, proxyType);
-	}
-
-	/**
-	 * handles converting "basic" types to a Proxy type.
-	 *
-	 * @param host
-	 * @param port
-	 * @param type
-	 * @throws IllegalArgumentException
-	 */
-	public void setProxy(final String host, final int port, final Proxy.Type type) {
-		// Convert it into something we can use.
-		InetAddress addr = null;
-		try {
-			addr = InetAddress.getByName(host);
-		} catch (UnknownHostException uhe) {
-			throw new IllegalArgumentException("unknown host: " + host, uhe);
-		}
-
-		SocketAddress proxyAddress = new InetSocketAddress(addr, port);
-
-		setProxy(new Proxy(type, proxyAddress));
-	}
-
 	public boolean isForceUpdate() {
 		return (apiProxy != null);
 	}
 
 	public String getApiProxy() {
 		return apiProxy;
+	}
+
+	public ProxyData getProxyData() {
+		return proxyData;
+	}
+
+	public void setProxyData(ProxyData proxyData) {
+		this.proxyData = proxyData;
 	}
 
 	/**
@@ -514,9 +453,6 @@ public class Settings {
 		ApiConnector connector = new ApiConnector(); //Default
 		if (apiProxy != null) { //API Proxy
 			connector = new ApiConnector(getApiProxy());
-		}
-		if (proxy != null) { //Real Proxy
-			connector = new ProxyConnector(getProxy(), connector);
 		}
 		AbstractApiParser.setConnector(connector);
 	}

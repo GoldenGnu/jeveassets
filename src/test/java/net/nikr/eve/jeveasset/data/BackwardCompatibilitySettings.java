@@ -64,7 +64,7 @@ public class BackwardCompatibilitySettings extends FakeSettings {
 		SET_CONQUERABLE_STATIONS_NEXT_UPDATE,
 		SET_MAXIMUM_PURCHASE_AGE,
 		SET_PRICE_DATA_SETTINGS,
-		SET_PROXY,
+		SET_PROXY_DATA,
 		SET_REPROCESS_SETTINGS,
 		SET_WINDOW_ALWAYS_ON_TOP,
 		SET_WINDOW_AUTO_SAVE,
@@ -271,8 +271,8 @@ public class BackwardCompatibilitySettings extends FakeSettings {
 	}
 
 	@Override
-	public void setProxy(final String host, final int port, final String type) {
-		ok.put(Function.SET_PROXY, true);
+	public void setProxyData(ProxyData proxyData) {
+		ok.put(Function.SET_PROXY_DATA, true);
 	}
 
 	@Override

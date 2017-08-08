@@ -21,7 +21,6 @@
 
 package net.nikr.eve.jeveasset.io.local;
 
-import java.net.InetSocketAddress;
 import java.net.Proxy;
 import java.util.Date;
 import java.util.List;
@@ -29,6 +28,7 @@ import java.util.Map;
 import java.util.Set;
 import net.nikr.eve.jeveasset.data.ExportSettings;
 import net.nikr.eve.jeveasset.data.PriceDataSettings;
+import net.nikr.eve.jeveasset.data.ProxyData;
 import net.nikr.eve.jeveasset.data.ReprocessSettings;
 import net.nikr.eve.jeveasset.data.RoutingSettings;
 import net.nikr.eve.jeveasset.data.Settings;
@@ -107,7 +107,7 @@ public class SettingsWriter extends AbstractXmlWriter {
 		writeOverviewGroups(xmldoc, settings.getOverviewGroups());
 		writeReprocessSettings(xmldoc, settings.getReprocessSettings());
 		writeWindow(xmldoc, settings);
-		writeProxy(xmldoc, settings.getProxy());
+		writeProxy(xmldoc, settings.getProxyData());
 		writeApiProxy(xmldoc, settings.getApiProxy());
 		writePriceDataSettings(xmldoc, settings.getPriceDataSettings());
 		writeFlags(xmldoc, settings.getFlags());
@@ -533,14 +533,15 @@ public class SettingsWriter extends AbstractXmlWriter {
 		}
 	}
 
-	private void writeProxy(final Document xmldoc, final Proxy proxy) {
-		if (proxy != null && !proxy.type().equals(Proxy.Type.DIRECT)) { // Only adds proxy tag if there is anything to save... (To prevent an error when the proxy tag doesn't have any attributes)
+	private void writeProxy(final Document xmldoc, final ProxyData proxy) {
+		if (proxy.getType() != Proxy.Type.DIRECT) { // Only adds proxy tag if there is anything to save... (To prevent an error when the proxy tag doesn't have any attributes)
 			Element node = xmldoc.createElementNS(null, "proxy");
-			if (proxy.address() instanceof InetSocketAddress) {
-				InetSocketAddress addr = (InetSocketAddress) proxy.address();
-				node.setAttributeNS(null, "address", String.valueOf(addr.getHostName()));
-				node.setAttributeNS(null, "port", String.valueOf(addr.getPort()));
-				node.setAttributeNS(null, "type", String.valueOf(proxy.type()));
+			node.setAttributeNS(null, "address", proxy.getAddress());
+			node.setAttributeNS(null, "port", String.valueOf(proxy.getPort()));
+			node.setAttributeNS(null, "type", proxy.getType().name());
+			if (proxy.isAuth()) {
+				node.setAttributeNS(null, "username", proxy.getUsername());
+				node.setAttributeNS(null, "password", proxy.getPassword());
 			}
 			xmldoc.getDocumentElement().appendChild(node);
 		}

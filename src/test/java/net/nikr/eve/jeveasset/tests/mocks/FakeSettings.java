@@ -23,8 +23,6 @@ package net.nikr.eve.jeveasset.tests.mocks;
 
 import java.awt.Dimension;
 import java.awt.Point;
-import java.net.Proxy;
-import java.net.Proxy.Type;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -32,6 +30,7 @@ import net.nikr.eve.jeveasset.data.ExportSettings;
 import net.nikr.eve.jeveasset.data.MyLocation;
 import net.nikr.eve.jeveasset.data.PriceData;
 import net.nikr.eve.jeveasset.data.PriceDataSettings;
+import net.nikr.eve.jeveasset.data.ProxyData;
 import net.nikr.eve.jeveasset.data.ReprocessSettings;
 import net.nikr.eve.jeveasset.data.RoutingSettings;
 import net.nikr.eve.jeveasset.data.Settings;
@@ -74,11 +73,6 @@ public abstract class FakeSettings extends Settings {
 
 	@Override
 	public PriceDataSettings getPriceDataSettings() {
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	@Override
-	public Proxy getProxy() {
 		throw new UnsupportedOperationException("not implemented");
 	}
 
@@ -174,21 +168,6 @@ public abstract class FakeSettings extends Settings {
 
 	@Override
 	public void setPriceDataSettings(final PriceDataSettings priceDataSettings) {
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	@Override
-	public void setProxy(final Proxy proxy) {
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	@Override
-	public void setProxy(final String host, final int port, final String type) {
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	@Override
-	public void setProxy(final String host, final int port, final Type type) {
 		throw new UnsupportedOperationException("not implemented");
 	}
 
@@ -604,6 +583,16 @@ public abstract class FakeSettings extends Settings {
 
 	@Override
 	public Map<TrackerDate, TrackerNote> getTrackerNotes() {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public void setProxyData(ProxyData proxyData) {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public ProxyData getProxyData() {
 		throw new UnsupportedOperationException("not implemented");
 	}
 }

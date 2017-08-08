@@ -24,10 +24,10 @@ package net.nikr.eve.jeveasset.gui.dialogs.settings;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.net.InetSocketAddress;
 import java.net.Proxy;
 import javax.swing.*;
 import net.nikr.eve.jeveasset.Program;
+import net.nikr.eve.jeveasset.data.ProxyData;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.ListComboBoxModel;
@@ -40,70 +40,90 @@ import net.nikr.eve.jeveasset.i18n.DialoguesSettings;
  */
 public class ProxySettingsPanel extends JSettingsPanel {
 
-	private JComboBox<Proxy.Type> proxyTypeField;
-	private JTextField proxyAddressField;
-	private JSpinner proxyPortField;
-	private JCheckBox enableApiProxy;
-	private JTextField apiProxyField;
+	private final JComboBox<Proxy.Type> jProxyType;
+	private final JTextField jProxyAddress;
+	private final JSpinner jProxyPort;
+	private final JCheckBox jEnableAuth;
+	private final JTextField jProxyUsername;
+	private final JPasswordField jProxyPassword;
+	private final JCheckBox jEnableApiProxy;
+	private final JTextField jApiProxy;
 
 	public ProxySettingsPanel(final Program program, final SettingsDialog optionsDialog) {
 		super(program, optionsDialog, DialoguesSettings.get().proxy(), Images.SETTINGS_PROXY.getIcon());
 
-		JLabel proxyTypeLabel = new JLabel(DialoguesSettings.get().type());
-		JLabel proxyAddressLabel = new JLabel(DialoguesSettings.get().address());
-		JLabel proxyPortLabel = new JLabel(DialoguesSettings.get().port());
-
-		JLabel enableApiLabel = new JLabel(DialoguesSettings.get().enable());
-		JLabel apiProxyLabel = new JLabel(DialoguesSettings.get().apiProxy());
-
-		proxyTypeField = new JComboBox<Proxy.Type>(new ListComboBoxModel<Proxy.Type>(Proxy.Type.values()));
-		proxyTypeField.setEnabled(true);
-		proxyTypeField.setPreferredSize(new Dimension(200, (int) proxyTypeField.getPreferredSize().getHeight()));
-		proxyTypeField.setSelectedItem(Proxy.Type.DIRECT);
-		proxyTypeField.addActionListener(new ActionListener() {
+		JLabel jProxyTypeLabel = new JLabel(DialoguesSettings.get().type());
+		jProxyType = new JComboBox<Proxy.Type>(new ListComboBoxModel<Proxy.Type>(Proxy.Type.values()));
+		jProxyType.setEnabled(true);
+		jProxyType.setPreferredSize(new Dimension(200, (int) jProxyType.getPreferredSize().getHeight()));
+		jProxyType.setSelectedItem(Proxy.Type.DIRECT);
+		jProxyType.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				boolean enabled = !proxyTypeField.getSelectedItem().equals(Proxy.Type.DIRECT);
-				proxyAddressField.setEnabled(enabled);
-				proxyPortField.setEnabled(enabled);
+				enableProxy(jProxyType.getSelectedItem() != Proxy.Type.DIRECT);
 			}
 		});
 
-		proxyAddressField = new JTextField();
-		proxyAddressField.setEnabled(false);
+		JLabel jProxyAddressLabel = new JLabel(DialoguesSettings.get().address());
+		jProxyAddress = new JTextField();
+		jProxyAddress.setEnabled(false);
 
-		proxyPortField = new JSpinner(new SpinnerNumberModel(0, 0, 65536, 1));
-		proxyPortField.setEnabled(false);
+		JLabel jProxyPortLabel = new JLabel(DialoguesSettings.get().port());
+		jProxyPort = new JSpinner(new SpinnerNumberModel(0, 0, 65536, 1));
+		jProxyPort.setEnabled(false);
 
-		enableApiProxy = new JCheckBox();
-		enableApiProxy.setSelected(false);
-		enableApiProxy.addActionListener(new ActionListener() {
+		jEnableAuth = new JCheckBox(DialoguesSettings.get().auth());
+		jEnableAuth.setSelected(false);
+		jEnableAuth.addActionListener(new ActionListener() {
 			@Override
-			public void actionPerformed(final ActionEvent e) {
-				apiProxyField.setEnabled(enableApiProxy.isSelected());
+			public void actionPerformed(ActionEvent e) {
+				jProxyUsername.setEnabled(jEnableAuth.isSelected());
+				jProxyPassword.setEnabled(jEnableAuth.isSelected());
 			}
 		});
 
-		apiProxyField = new JTextField();
+		JLabel jProxyUsernameLabel = new JLabel(DialoguesSettings.get().username());
+		jProxyUsername = new JTextField();
+		jProxyUsername.setEnabled(false);
+
+		JLabel jProxyPasswordLabel = new JLabel(DialoguesSettings.get().password());
+		jProxyPassword = new JPasswordField();
+		jProxyPassword.setEnabled(false);
+
+		jEnableApiProxy = new JCheckBox(DialoguesSettings.get().enable());
+		jEnableApiProxy.setSelected(false);
+		jEnableApiProxy.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(final ActionEvent e) {
+				jApiProxy.setEnabled(jEnableApiProxy.isSelected());
+			}
+		});
+
+		JLabel jApiProxyLabel = new JLabel(DialoguesSettings.get().apiProxy());
+		jApiProxy = new JTextField();
 
 		// note: the layout is defined in the super class.
 		layout.setHorizontalGroup(
 			layout.createParallelGroup(GroupLayout.Alignment.TRAILING).addGroup(
 				layout.createSequentialGroup()
 					.addGroup(layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
-						.addComponent(proxyTypeLabel)
-						.addComponent(proxyAddressLabel)
-						.addComponent(proxyPortLabel)
-						.addComponent(enableApiLabel)
-						.addComponent(apiProxyLabel)
+						.addComponent(jProxyTypeLabel)
+						.addComponent(jProxyAddressLabel)
+						.addComponent(jProxyPortLabel)
+						.addComponent(jProxyUsernameLabel)
+						.addComponent(jProxyPasswordLabel)
+						.addComponent(jApiProxyLabel)
 					)
 					.addGap(10)
 					.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-						.addComponent(proxyTypeField)
-						.addComponent(proxyAddressField)
-						.addComponent(proxyPortField)
-						.addComponent(enableApiProxy)
-						.addComponent(apiProxyField)
+						.addComponent(jProxyType)
+						.addComponent(jProxyAddress)
+						.addComponent(jProxyPort)
+						.addComponent(jEnableAuth)
+						.addComponent(jProxyUsername)
+						.addComponent(jProxyPassword)
+						.addComponent(jEnableApiProxy)
+						.addComponent(jApiProxy)
 					)
 				)
 			);
@@ -111,50 +131,80 @@ public class ProxySettingsPanel extends JSettingsPanel {
 		layout.setVerticalGroup(
 			layout.createSequentialGroup()
 				.addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-					.addComponent(proxyTypeLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-					.addComponent(proxyTypeField, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jProxyTypeLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jProxyType, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 				)
 				.addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-					.addComponent(proxyAddressLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-					.addComponent(proxyAddressField, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jProxyAddressLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jProxyAddress, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 				)
 				.addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-					.addComponent(proxyPortLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-					.addComponent(proxyPortField, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jProxyPortLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jProxyPort, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+				)
+				.addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+					.addComponent(jEnableAuth, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+				)
+				.addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+					.addComponent(jProxyUsernameLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jProxyUsername, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+				)
+				.addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+					.addComponent(jProxyPasswordLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jProxyPassword, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 				)
 				.addGap(10)
 				.addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-					.addComponent(enableApiLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-					.addComponent(enableApiProxy, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jEnableApiProxy, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 				)
 				.addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-					.addComponent(apiProxyLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-					.addComponent(apiProxyField, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jApiProxyLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jApiProxy, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 				)
 			);
 	}
 
 	private void enableProxy(final boolean b) {
-		proxyAddressField.setEnabled(b);
-		proxyPortField.setEnabled(b);
+		jProxyAddress.setEnabled(b);
+		jProxyPort.setEnabled(b);
+		if (b) {
+			jEnableAuth.setEnabled(true);
+			jEnableAuth.setSelected(false);
+			jProxyUsername.setEnabled(false);
+			jProxyPassword.setEnabled(false);
+		} else {
+			jEnableAuth.setEnabled(false);
+			jEnableAuth.setSelected(false);
+			jProxyUsername.setEnabled(false);
+			jProxyPassword.setEnabled(false);
+		}
 	}
 
 	@Override
 	public boolean save() {
-		if (proxyTypeField.getSelectedItem() != Proxy.Type.DIRECT) {
-			try {
-				Settings.get().setProxy(
-								proxyAddressField.getText(), (Integer) proxyPortField.getValue(), (Proxy.Type) proxyTypeField.getSelectedItem());
-			} catch (IllegalArgumentException iae) {
-				JOptionPane.showMessageDialog(parent, "There was an error with the proxy:\n" + iae.getMessage(), "Proxy Error", JOptionPane.ERROR_MESSAGE);
+		//Save proxy data
+		if (jProxyType.getSelectedItem() != Proxy.Type.DIRECT) {
+			String address = jProxyAddress.getText();
+			int port = (int) jProxyPort.getValue();
+			Proxy.Type type = (Proxy.Type) jProxyType.getSelectedItem();
+			String username;
+			String password;
+			if (jEnableAuth.isSelected()) {
+				username = jProxyUsername.getText();
+				char[] passwordChars = jProxyPassword.getPassword();
+				password = String.valueOf(passwordChars);
+			} else {
+				username = null;
+				password = null;
 			}
+			Settings.get().setProxyData(new ProxyData(address, type, port, username, password));
 		} else {
-			Settings.get().setProxy(null);
+			Settings.get().setProxyData(new ProxyData());
 		}
 
 		// save the API proxy.
-		if (enableApiProxy.isSelected()) {
-			Settings.get().setApiProxy(apiProxyField.getText());
+		if (jEnableApiProxy.isSelected()) {
+			Settings.get().setApiProxy(jApiProxy.getText());
 		} else {
 			Settings.get().setApiProxy(null);
 		}
@@ -163,27 +213,42 @@ public class ProxySettingsPanel extends JSettingsPanel {
 
 	@Override
 	public void load() {
-		Proxy proxy = Settings.get().getProxy();
-		if (proxy.type().equals(Proxy.Type.DIRECT)) {
-			proxyTypeField.setSelectedItem(Proxy.Type.DIRECT);
+		ProxyData proxyData = Settings.get().getProxyData();
+		if (proxyData.getType() == Proxy.Type.DIRECT) {
+			jProxyType.setSelectedItem(Proxy.Type.DIRECT);
+			jProxyAddress.setText("");
+			jProxyPort.setValue(0);
+			jProxyUsername.setText("");
+			jProxyPassword.setText("");
+			enableProxy(false);
 		} else {
-			proxyTypeField.setSelectedItem(proxy.type());
-			if (proxy.address() instanceof InetSocketAddress) {
-				InetSocketAddress addr = (InetSocketAddress) proxy.address();
-				proxyAddressField.setText(String.valueOf(addr.getHostName()));
-				proxyPortField.setValue(addr.getPort());
-			}
 			enableProxy(true);
+			jProxyType.setSelectedItem(proxyData.getType());
+			jProxyAddress.setText(proxyData.getAddress());
+			jProxyPort.setValue(proxyData.getPort());
+			if (proxyData.isAuth()) {
+				jEnableAuth.setSelected(true);
+				jProxyUsername.setEnabled(true);
+				jProxyUsername.setText(proxyData.getUsername());
+				jProxyPassword.setEnabled(true);
+				jProxyPassword.setText(proxyData.getPassword());
+			} else {
+				jEnableAuth.setSelected(false);
+				jProxyUsername.setEnabled(false);
+				jProxyUsername.setText("");
+				jProxyPassword.setEnabled(false);
+				jProxyPassword.setText("");
+			}
 		}
 
 		// set the API Proxy fields
 		String apiProxy = Settings.get().getApiProxy();
 		if (apiProxy == null) {
-			enableApiProxy.setSelected(false);
+			jEnableApiProxy.setSelected(false);
 		} else {
-			enableApiProxy.setSelected(true);
-			apiProxyField.setText(apiProxy);
+			jEnableApiProxy.setSelected(true);
+			jApiProxy.setText(apiProxy);
 		}
-		apiProxyField.setEnabled(enableApiProxy.isSelected());
+		jApiProxy.setEnabled(jEnableApiProxy.isSelected());
 	}
 }

@@ -156,6 +156,12 @@ public abstract class AbstractEveKitGetter {
 					break;
 			}
 			return false;
+		} catch (Throwable ex) {
+			addError("EveKit Unknown Error: " + ex.getMessage(), ex);
+			if (updateTask != null) {
+				updateTask.addError(owner.getOwnerName(), "EveKit: Unknown Error: " + ex.getMessage());
+			}
+			return false;
 		}
 	}
 
@@ -179,7 +185,7 @@ public abstract class AbstractEveKitGetter {
 		return 100;
 	}
 
-	protected final void addError(String error, Exception ex) {
+	protected final void addError(String error, Throwable ex) {
 		this.error = error;
 		LOG.error(error, ex);
 	}

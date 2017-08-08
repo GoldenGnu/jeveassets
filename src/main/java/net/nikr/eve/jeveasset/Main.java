@@ -57,8 +57,8 @@ public final class Main {
 		splashUpdater.start();
 		//Print program data
 		log.info("Starting " + Program.PROGRAM_NAME + " " + Program.PROGRAM_VERSION);
-		log.info("OS: " + System.getProperty("os.name") + " " + System.getProperty("os.version"));
-		log.info("Java: " + System.getProperty("java.vendor") + " " + System.getProperty("java.version"));
+		log.log(Level.INFO, "OS: {0} {1}", new Object[]{System.getProperty("os.name"), System.getProperty("os.version")});
+		log.log(Level.INFO, "Java: {0} {1}", new Object[]{System.getProperty("java.vendor"), System.getProperty("java.version")});
 		// variables to the main program and settings.
 		Program.setDebug(debug);
 		Program.setPortable(portable);
@@ -145,6 +145,10 @@ public final class Main {
 
 		//XXX - Workaround for Java Bug
 		System.setProperty("java.util.Arrays.useLegacyMergeSort", "true");
+
+		//XXX - Workaround: Allow basic proxy authorization
+		System.setProperty("jdk.http.auth.tunneling.disabledSchemes", "");
+		System.setProperty("jdk.http.auth.proxying.disabledSchemes", "");
 
 		javax.swing.SwingUtilities.invokeLater(
 			new Runnable() {
@@ -270,6 +274,7 @@ public final class Main {
 		files.add("jackson-datatype-jsr310-2.8.6.jar");
 		files.add("commons-lang3-3.5.jar");
 		files.add("eve-esi-1.2.3-SNAPSHOT.jar");
+		files.add("hamcrest-core-1.3.jar");
 		files.add("oauth2-client-2.25.1.jar");
 		return files;
 	}

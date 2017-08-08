@@ -35,9 +35,9 @@ import net.nikr.eve.jeveasset.data.CitadelSettings;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import net.nikr.eve.jeveasset.i18n.DialoguesUpdate;
+import net.nikr.eve.jeveasset.io.local.AbstractXmlWriter;
 import net.nikr.eve.jeveasset.io.local.CitadelReader;
 import net.nikr.eve.jeveasset.io.local.CitadelWriter;
-import net.nikr.eve.jeveasset.io.local.AbstractXmlWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,7 +51,7 @@ public class CitadelGetter extends AbstractXmlWriter {
 	private static CitadelGetter citadelGetter;
 	private CitadelSettings citadelSettings = new CitadelSettings();
 
-	private CitadelGetter() { }
+	protected CitadelGetter() { }
 
 	public static Citadel get(long locationID) {
 		return getCitadelGetter().getCitadel(locationID);
@@ -83,7 +83,7 @@ public class CitadelGetter extends AbstractXmlWriter {
 		citadelSettings = CitadelReader.load();
 	}
 
-	private boolean updateCache(UpdateTask updateTask, String hostUrl) {
+	protected boolean updateCache(UpdateTask updateTask, String hostUrl) {
 		LOG.info("Citadels updating from: " + hostUrl);
 		if (citadelSettings.getNextUpdate().after(new Date()) && !Settings.get().isForceUpdate() && !Program.isForceUpdate()) { //Check if we can update now
 			if (updateTask != null) {
