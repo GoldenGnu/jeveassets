@@ -176,7 +176,7 @@ public class RawAsset {
 		isSingleton = asset.getSingleton();
 		itemId = asset.getItemID();
 		itemFlag = ApiIdConverter.getFlag(asset.getFlag());
-		if (asset.getLocationID() == 0) {
+		if ((asset.getContainer() != null && asset.getContainer() != 0) || asset.getLocationID() == 0) {
 			locationId = asset.getContainer();
 		} else {
 			locationId = asset.getLocationID();

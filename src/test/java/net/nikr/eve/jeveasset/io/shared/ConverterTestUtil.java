@@ -20,9 +20,6 @@
  */
 package net.nikr.eve.jeveasset.io.shared;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
-
 import com.beimin.eveapi.model.shared.KeyType;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
@@ -87,6 +84,8 @@ import net.troja.eve.esi.model.CharacterWalletJournalResponse.RefTypeEnum;
 import net.troja.eve.esi.model.CharacterWalletJournalResponse.SecondPartyTypeEnum;
 import net.troja.eve.esi.model.CharacterWalletTransactionsResponse;
 import org.joda.time.DateTime;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 public class ConverterTestUtil {
 
@@ -399,6 +398,7 @@ public class ConverterTestUtil {
 			asset.setItemID(asset.getItemID() + 1); //Workaround for itemID == locationID
 			asset.setLocationID(options.getLocationTypeEveApi());
 			asset.setFlag(options.getLocationFlagEveApi());
+			asset.setContainer(0L);
 		}
 		//ESI
 		if (object instanceof CharacterAssetsResponse) {
@@ -664,6 +664,7 @@ public class ConverterTestUtil {
 			String methodName = method.getName();
 			String methodId = esi.getSimpleName() + "->" + methodName;
 			if (methodId.equals("CharacterAssetsResponse->getQuantity")
+					|| methodId.equals("CharacterContractsResponse->getStartLocationId")
 					|| methodId.equals("CharacterWalletJournalResponse->getExtraInfo")) {
 				continue;
 			}

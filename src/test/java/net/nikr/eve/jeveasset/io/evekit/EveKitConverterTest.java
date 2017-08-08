@@ -20,8 +20,6 @@
  */
 package net.nikr.eve.jeveasset.io.evekit;
 
-import static org.junit.Assert.assertEquals;
-
 import enterprises.orbital.evekit.client.model.AccountBalance;
 import enterprises.orbital.evekit.client.model.Asset;
 import enterprises.orbital.evekit.client.model.Blueprint;
@@ -49,6 +47,7 @@ import net.nikr.eve.jeveasset.gui.tabs.transaction.MyTransaction;
 import net.nikr.eve.jeveasset.io.shared.ConverterTestOptions;
 import net.nikr.eve.jeveasset.io.shared.ConverterTestOptionsGetter;
 import net.nikr.eve.jeveasset.io.shared.ConverterTestUtil;
+import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 
 public class EveKitConverterTest extends TestUtil {
@@ -78,7 +77,7 @@ public class EveKitConverterTest extends TestUtil {
 			assetsList.add(childAsset);
 			ConverterTestUtil.setValues(childAsset, options);
 			childAsset.setItemID(childAsset.getItemID() + 1);
-			childAsset.setLocationID(rootAsset.getItemID());
+			childAsset.setContainer(rootAsset.getItemID());
 
 			List<MyAsset> assets = EveKitConverter.toAssets(assetsList, ConverterTestUtil.getEveKitOwner(options));
 			if (rootAsset.getFlag() != 89) {
