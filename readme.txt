@@ -45,7 +45,7 @@ email:
   niklaskr@gmail.com
 
 Eve-Online forum thread:
-  https://forums.eveonline.com/default.aspx?g=posts&t=6419
+  https://forums.eveonline.com/t/jeveassets-4-1-2-2017-06-07/13255
 
 ________________________________________________________________________________
 ________________________________________________________________________________

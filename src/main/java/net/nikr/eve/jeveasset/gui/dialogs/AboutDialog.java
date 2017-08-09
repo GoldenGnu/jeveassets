@@ -76,7 +76,7 @@ public class AboutDialog extends JDialogCentered {
 				+ "<b>www</b><br>"
 				+ "&nbsp;<a href=\"" + Program.PROGRAM_HOMEPAGE + "\">Homepage</a> (download and source)<br>"
 				+ "&nbsp;<a href=\"https://github.com/GoldenGnu/jeveassets\">GitHub Project</a> (developers)<br>"
-				+ "&nbsp;<a href=\"https://forums.eveonline.com/default.aspx?g=posts&t=6419\">Forum Thread</a> (feedback)<br>"
+				+ "&nbsp;<a href=\"https://forums.eveonline.com/t/jeveassets-4-1-2-2017-06-07/13255\">Forum Thread</a> (feedback)<br>"
 				+ "<br>"
 				+ "<br>"
 				);
