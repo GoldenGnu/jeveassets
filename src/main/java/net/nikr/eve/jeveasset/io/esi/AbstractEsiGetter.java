@@ -29,10 +29,8 @@ import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.troja.eve.esi.ApiClient;
 import net.troja.eve.esi.ApiException;
-import net.troja.eve.esi.api.AssetsApi;
 import net.troja.eve.esi.api.SsoApi;
 import net.troja.eve.esi.api.UniverseApi;
-import net.troja.eve.esi.api.WalletApi;
 import net.troja.eve.esi.auth.OAuth;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,18 +42,14 @@ public abstract class AbstractEsiGetter {
 
 	protected final String DATASOURCE = "tranquility";
 	private String error = null;
-	private final ApiClient client;
-	private final AssetsApi assetsApi;
-	private final WalletApi walletApi;
+	private final ApiClient apiClient;
 	private final UniverseApi universeApi;
 	private final SsoApi ssoApi;
 
 	protected AbstractEsiGetter() {
-		client = new ApiClient();
-		assetsApi = new AssetsApi(client);
-		walletApi = new WalletApi(client);
-		universeApi = new UniverseApi(client);
-		ssoApi = new SsoApi(client);
+		apiClient = new ApiClient();
+		universeApi = new UniverseApi(apiClient);
+		ssoApi = new SsoApi(apiClient);
 	}
 
 	protected void load(EsiOwner owner) {
@@ -165,23 +159,15 @@ public abstract class AbstractEsiGetter {
 	protected abstract boolean inScope(EsiOwner owner);
 
 	private ApiClient client(EsiOwner owner) {
-		OAuth auth = (OAuth) client.getAuthentication("evesso");
+		OAuth auth = (OAuth) apiClient.getAuthentication("evesso");
 		auth.setRefreshToken(owner.getRefreshToken());
 		auth.setClientId(owner.getCallbackURL().getA());
 		auth.setClientSecret(owner.getCallbackURL().getB());
-		return client;
+		return apiClient;
 	}
 
 	protected SsoApi getSsoApi() {
 		return ssoApi;
-	}
-
-	protected AssetsApi getAssetsApi() {
-		return assetsApi;
-	}
-
-	protected WalletApi getWalletApi() {
-		return  walletApi;
 	}
 
 	protected UniverseApi getUniverseApi() {

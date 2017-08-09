@@ -47,11 +47,8 @@ import net.nikr.eve.jeveasset.gui.tabs.contracts.MyContract;
 import net.nikr.eve.jeveasset.gui.tabs.jobs.MyIndustryJob;
 import net.nikr.eve.jeveasset.i18n.DialoguesUpdate;
 import net.nikr.eve.jeveasset.i18n.General;
-import net.nikr.eve.jeveasset.io.esi.EsiAccountBalanceGetter;
-import net.nikr.eve.jeveasset.io.esi.EsiAssetsGetter;
 import net.nikr.eve.jeveasset.io.esi.EsiOwnerGetter;
 import net.nikr.eve.jeveasset.io.esi.EsiStructuresGetter;
-import net.nikr.eve.jeveasset.io.esi.Scopes;
 import net.nikr.eve.jeveasset.io.eveapi.AccountBalanceGetter;
 import net.nikr.eve.jeveasset.io.eveapi.AccountGetter;
 import net.nikr.eve.jeveasset.io.eveapi.AssetsGetter;
@@ -724,14 +721,6 @@ public class UpdateDialog extends JDialogCentered {
 			eveKitAssetGetter.load(this, program.getProfileManager().getEveKitOwners());
 			EveKitLocationsGetter eveKitLocationsGetter = new EveKitLocationsGetter();
 			eveKitLocationsGetter.load(this, program.getProfileManager().getEveKitOwners());
-			//Esi
-			if (!program.getProfileManager().getEsiOwners().isEmpty()) {
-				setIcon(Images.MISC_ESI.getIcon());
-			}
-			if (Scopes.ASSETS.isEnabled()) {
-				EsiAssetsGetter esiAssetsGetter = new EsiAssetsGetter();
-				esiAssetsGetter.load(this, program.getProfileManager().getEsiOwners());
-			}
 		}
 	}
 
@@ -755,14 +744,6 @@ public class UpdateDialog extends JDialogCentered {
 			}
 			EveKitAccountBalanceGetter eveKitAccountBalanceGetter = new EveKitAccountBalanceGetter();
 			eveKitAccountBalanceGetter.load(this, program.getProfileManager().getEveKitOwners());
-			//Esi
-			if (!program.getProfileManager().getEsiOwners().isEmpty()) {
-				setIcon(Images.MISC_ESI.getIcon());
-			}
-			if (Scopes.ACCOUNT_BALANCE.isEnabled()) {
-				EsiAccountBalanceGetter esiAccountBalanceGetter = new EsiAccountBalanceGetter();
-				esiAccountBalanceGetter.load(this, program.getProfileManager().getEsiOwners());
-			}
 		}
 	}
 
