@@ -27,7 +27,7 @@ import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.i18n.TabsMaterials;
 
 
-enum MaterialExtenedTableFormat implements EnumTableColumn<Material> {
+public enum MaterialExtenedTableFormat implements EnumTableColumn<Material> {
 	LOCATION(String.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
