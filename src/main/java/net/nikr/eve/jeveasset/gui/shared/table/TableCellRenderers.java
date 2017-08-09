@@ -22,6 +22,7 @@
 package net.nikr.eve.jeveasset.gui.shared.table;
 
 import java.awt.Component;
+import java.util.Date;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTable;
@@ -42,8 +43,10 @@ public class TableCellRenderers {
 		public void setValue(final Object value) {
 			if (value == null) {
 				setText("");
-			} else {
+			} else if (value instanceof Number) {
 				setText(Formater.longFormat(value));
+			} else {
+				setText(value.toString());
 			}
 		}
 	}
@@ -57,8 +60,10 @@ public class TableCellRenderers {
 		public void setValue(final Object value) {
 			if (value == null) {
 				setText("");
-			} else {
+			} else if (value instanceof Number) {
 				setText(Formater.doubleFormat(value));
+			} else {
+				setText(value.toString());
 			}
 		}
 	}
@@ -73,8 +78,10 @@ public class TableCellRenderers {
 		public void setValue(final Object value) {
 			if (value == null) {
 				setText("");
-			} else {
+			} else if (value instanceof Number) {
 				setText(Formater.integerFormat(value));
+			} else {
+				setText(value.toString());
 			}
 		}
 	}
@@ -88,8 +95,10 @@ public class TableCellRenderers {
 		public void setValue(final Object value) {
 			if (value == null) {
 				setText("");
-			} else {
+			} else if (value instanceof Number) {
 				setText(Formater.floatFormat(value));
+			} else {
+				setText(value.toString());
 			}
 		}
 	}
@@ -103,8 +112,10 @@ public class TableCellRenderers {
 		public void setValue(final Object value) {
 			if (value == null) {
 				setText("");
-			} else {
+			} else if (value instanceof Date) {
 				setText(Formater.columnDate(value));
+			} else {
+				setText(value.toString());
 			}
 		}
 	}
