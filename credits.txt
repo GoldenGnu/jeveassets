@@ -211,16 +211,15 @@ License:
   MIT License (http://en.wikipedia.org/wiki/MIT_License)
 
 ________________________________________________________________________________
-_LOG4J__________________________________________________________________________
+_LOGBACK________________________________________________________________________
 
-jEveAssets use Log4j to log events and errors
+jEveAssets use logback to log events and errors
 
 Link:
-  http://logging.apache.org/log4j/1.2/
+  https://logback.qos.ch/
 
 License:
-  The Apache Software License, Version 2.0
-  http://www.apache.org/licenses/LICENSE-2.0
+  LGPL 2.1 (https://www.gnu.org/licenses/old-licenses/lgpl-2.1.html)
 
 ________________________________________________________________________________
 _JUNIT__________________________________________________________________________
