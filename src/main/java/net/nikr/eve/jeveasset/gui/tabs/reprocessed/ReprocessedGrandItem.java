@@ -20,14 +20,14 @@
  */
 package net.nikr.eve.jeveasset.gui.tabs.reprocessed;
 
-import net.nikr.eve.jeveasset.data.Item;
+import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.i18n.TabsReprocessed;
 
 
 public class ReprocessedGrandItem extends ReprocessedTotal {
 
-	private ReprocessedItem reprocessedItem;
-	private ReprocessedGrandTotal grandTotal;
+	private final ReprocessedItem reprocessedItem;
+	private final ReprocessedGrandTotal grandTotal;
 
 	public ReprocessedGrandItem(final ReprocessedItem reprocessedItem, final Item item, final ReprocessedGrandTotal grandTotal) {
 		super(item, 0);

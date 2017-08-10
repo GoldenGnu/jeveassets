@@ -27,7 +27,7 @@ import java.util.Map;
 import javax.swing.JOptionPane;
 import javax.swing.table.AbstractTableModel;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.data.Settings;
+import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.shared.components.JManageDialog;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 

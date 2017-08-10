@@ -25,8 +25,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.*;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.data.ReprocessSettings;
-import net.nikr.eve.jeveasset.data.Settings;
+import net.nikr.eve.jeveasset.data.settings.ReprocessSettings;
+import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.DocumentFactory;
 import net.nikr.eve.jeveasset.gui.shared.components.JIntegerField;
@@ -42,12 +42,12 @@ public class ReprocessingSettingsPanel extends JSettingsPanel {
 	private static final int LEVEL4 = 4;
 	private static final int LEVEL5 = 5;
 
-	private JRadioButton jStation50;
-	private JRadioButton jStationOther;
-	private JTextField jStation;
-	private JRadioButton[] jReprocessing;
-	private JRadioButton[] jReprocessingEfficiency;
-	private JRadioButton[] jScrapmetalProcessing;
+	private final JRadioButton jStation50;
+	private final JRadioButton jStationOther;
+	private final JTextField jStation;
+	private final JRadioButton[] jReprocessing;
+	private final JRadioButton[] jReprocessingEfficiency;
+	private final JRadioButton[] jScrapmetalProcessing;
 
 	public ReprocessingSettingsPanel(final Program program, final SettingsDialog optionsDialog) {
 		super(program, optionsDialog, DialoguesSettings.get().reprocessing(), Images.SETTINGS_REPROCESSING.getIcon());

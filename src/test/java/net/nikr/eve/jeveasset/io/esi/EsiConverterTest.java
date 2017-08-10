@@ -28,15 +28,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import net.nikr.eve.jeveasset.TestUtil;
-import net.nikr.eve.jeveasset.data.MyAccountBalance;
-import net.nikr.eve.jeveasset.data.raw.RawBlueprint;
-import net.nikr.eve.jeveasset.gui.tabs.assets.MyAsset;
-import net.nikr.eve.jeveasset.gui.tabs.contracts.MyContract;
-import net.nikr.eve.jeveasset.gui.tabs.contracts.MyContractItem;
-import net.nikr.eve.jeveasset.gui.tabs.jobs.MyIndustryJob;
-import net.nikr.eve.jeveasset.gui.tabs.journal.MyJournal;
-import net.nikr.eve.jeveasset.gui.tabs.orders.MyMarketOrder;
-import net.nikr.eve.jeveasset.gui.tabs.transaction.MyTransaction;
+import net.nikr.eve.jeveasset.data.api.my.MyAccountBalance;
+import net.nikr.eve.jeveasset.data.api.my.MyAsset;
+import net.nikr.eve.jeveasset.data.api.my.MyContract;
+import net.nikr.eve.jeveasset.data.api.my.MyContractItem;
+import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob;
+import net.nikr.eve.jeveasset.data.api.my.MyJournal;
+import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder;
+import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
+import net.nikr.eve.jeveasset.data.api.raw.RawBlueprint;
 import net.nikr.eve.jeveasset.io.shared.ConverterTestOptions;
 import net.nikr.eve.jeveasset.io.shared.ConverterTestOptionsGetter;
 import net.nikr.eve.jeveasset.io.shared.ConverterTestUtil;
@@ -49,6 +49,7 @@ import net.troja.eve.esi.model.CharacterOrdersResponse;
 import net.troja.eve.esi.model.CharacterWalletJournalResponse;
 import net.troja.eve.esi.model.CharacterWalletTransactionsResponse;
 import org.junit.Test;
+
 
 public class EsiConverterTest extends TestUtil {
 

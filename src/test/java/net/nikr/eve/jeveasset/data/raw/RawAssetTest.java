@@ -21,10 +21,12 @@
 package net.nikr.eve.jeveasset.data.raw;
 
 import net.nikr.eve.jeveasset.TestUtil;
-import net.nikr.eve.jeveasset.data.raw.RawAsset.LocationType;
+import net.nikr.eve.jeveasset.data.api.raw.RawAsset;
+import net.nikr.eve.jeveasset.data.api.raw.RawAsset.LocationType;
 import net.troja.eve.esi.model.CharacterAssetsResponse;
 import net.troja.eve.esi.model.CharacterAssetsResponse.LocationTypeEnum;
 import org.junit.Test;
+
 
 public class RawAssetTest extends TestUtil {
 

@@ -25,8 +25,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.data.Settings;
-import net.nikr.eve.jeveasset.data.esi.EsiOwner;
+import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
+import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.troja.eve.esi.ApiClient;
@@ -43,6 +43,7 @@ import net.troja.eve.esi.api.WalletApi;
 import net.troja.eve.esi.auth.OAuth;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 
 public abstract class AbstractEsiGetter {
 

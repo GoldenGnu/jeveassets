@@ -21,9 +21,10 @@
 package net.nikr.eve.jeveasset.data.raw;
 
 import net.nikr.eve.jeveasset.TestUtil;
-import net.nikr.eve.jeveasset.data.raw.RawContract.ContractAvailability;
-import net.nikr.eve.jeveasset.data.raw.RawContract.ContractStatus;
-import net.nikr.eve.jeveasset.data.raw.RawContract.ContractType;
+import net.nikr.eve.jeveasset.data.api.raw.RawContract;
+import net.nikr.eve.jeveasset.data.api.raw.RawContract.ContractAvailability;
+import net.nikr.eve.jeveasset.data.api.raw.RawContract.ContractStatus;
+import net.nikr.eve.jeveasset.data.api.raw.RawContract.ContractType;
 import net.troja.eve.esi.model.CharacterContractsResponse;
 import net.troja.eve.esi.model.CharacterContractsResponse.AvailabilityEnum;
 import net.troja.eve.esi.model.CharacterContractsResponse.StatusEnum;

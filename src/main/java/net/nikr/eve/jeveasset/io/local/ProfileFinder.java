@@ -25,9 +25,9 @@ import java.io.File;
 import java.io.FileFilter;
 import java.util.ArrayList;
 import java.util.List;
-import net.nikr.eve.jeveasset.data.Profile;
-import net.nikr.eve.jeveasset.data.ProfileManager;
-import net.nikr.eve.jeveasset.data.Settings;
+import net.nikr.eve.jeveasset.data.profile.Profile;
+import net.nikr.eve.jeveasset.data.profile.ProfileManager;
+import net.nikr.eve.jeveasset.data.settings.Settings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

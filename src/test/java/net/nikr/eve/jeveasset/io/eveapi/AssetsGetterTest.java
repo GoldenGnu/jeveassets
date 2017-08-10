@@ -20,9 +20,10 @@
  */
 package net.nikr.eve.jeveasset.io.eveapi;
 
-import net.nikr.eve.jeveasset.TestUtil;
-import net.nikr.eve.jeveasset.data.StaticData;
 import static org.junit.Assert.assertEquals;
+
+import net.nikr.eve.jeveasset.TestUtil;
+import net.nikr.eve.jeveasset.data.sde.StaticData;
 import org.junit.Test;
 
 

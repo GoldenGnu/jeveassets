@@ -29,7 +29,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import java.util.TimeZone;
-import net.nikr.eve.jeveasset.data.evekit.EveKitOwner;
+import net.nikr.eve.jeveasset.data.api.accounts.EveKitOwner;
+
 
 public abstract class AbstractEveKitListGetter<T> extends AbstractEveKitGetter {
 

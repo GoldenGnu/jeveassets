@@ -21,6 +21,7 @@
 package net.nikr.eve.jeveasset.data.raw;
 
 import net.nikr.eve.jeveasset.TestUtil;
+import net.nikr.eve.jeveasset.data.api.raw.RawContractItem;
 import net.troja.eve.esi.model.CharacterContractsItemsResponse;
 import org.junit.Test;
 

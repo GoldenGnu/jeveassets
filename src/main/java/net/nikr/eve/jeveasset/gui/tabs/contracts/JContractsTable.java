@@ -25,8 +25,10 @@ import ca.odell.glazedlists.swing.DefaultEventTableModel;
 import java.awt.Component;
 import javax.swing.table.TableCellRenderer;
 import net.nikr.eve.jeveasset.Program;
+import net.nikr.eve.jeveasset.data.api.my.MyContractItem;
 import net.nikr.eve.jeveasset.gui.shared.Colors;
 import net.nikr.eve.jeveasset.gui.shared.table.JSeparatorTable;
+
 
 public class JContractsTable extends JSeparatorTable {
 

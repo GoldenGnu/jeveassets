@@ -24,10 +24,10 @@ package net.nikr.eve.jeveasset.io.eveapi;
 import com.beimin.eveapi.exception.ApiException;
 import com.beimin.eveapi.response.eve.StationListResponse;
 import java.util.Date;
-import net.nikr.eve.jeveasset.data.eveapi.EveApiOwner;
-import net.nikr.eve.jeveasset.data.Settings;
-import net.nikr.eve.jeveasset.data.StaticData;
-import net.nikr.eve.jeveasset.data.eveapi.EveApiAccessMask;
+import net.nikr.eve.jeveasset.data.api.accounts.EveApiAccessMask;
+import net.nikr.eve.jeveasset.data.api.accounts.EveApiOwner;
+import net.nikr.eve.jeveasset.data.sde.StaticData;
+import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 
 

@@ -31,9 +31,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.zip.GZIPInputStream;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.data.Citadel;
-import net.nikr.eve.jeveasset.data.CitadelSettings;
-import net.nikr.eve.jeveasset.data.Settings;
+import net.nikr.eve.jeveasset.data.settings.Citadel;
+import net.nikr.eve.jeveasset.data.settings.CitadelSettings;
+import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import net.nikr.eve.jeveasset.i18n.DialoguesUpdate;
 import net.nikr.eve.jeveasset.io.local.AbstractXmlWriter;
@@ -41,6 +41,7 @@ import net.nikr.eve.jeveasset.io.local.CitadelReader;
 import net.nikr.eve.jeveasset.io.local.CitadelWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 
 public class CitadelGetter extends AbstractXmlWriter {
 

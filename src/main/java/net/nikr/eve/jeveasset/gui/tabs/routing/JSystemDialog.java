@@ -27,7 +27,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.data.SolarSystem;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.JAutoCompleteDialog;
 import net.nikr.eve.jeveasset.i18n.TabsRouting;

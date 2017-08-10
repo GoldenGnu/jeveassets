@@ -25,7 +25,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.util.Base64;
 import java.util.Set;
-import net.nikr.eve.jeveasset.data.esi.EsiOwner;
+import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
 import net.troja.eve.esi.auth.OAuth;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

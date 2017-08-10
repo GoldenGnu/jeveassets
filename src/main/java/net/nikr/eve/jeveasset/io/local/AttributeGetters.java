@@ -23,8 +23,9 @@ package net.nikr.eve.jeveasset.io.local;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import net.nikr.eve.jeveasset.data.Settings;
+import net.nikr.eve.jeveasset.data.settings.Settings;
 import org.w3c.dom.Node;
+
 
 public final class AttributeGetters {
 

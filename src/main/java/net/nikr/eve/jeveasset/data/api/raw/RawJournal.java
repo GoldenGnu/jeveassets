@@ -1,0 +1,298 @@
+/*
+ * Copyright 2009-2017 Contributors (see credits.txt)
+ *
+ * This file is part of jEveAssets.
+ *
+ * jEveAssets is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * jEveAssets is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with jEveAssets; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ *
+ */
+package net.nikr.eve.jeveasset.data.api.raw;
+
+import java.util.Date;
+import net.nikr.eve.jeveasset.io.shared.RawConverter;
+import net.troja.eve.esi.model.CharacterWalletJournalResponse;
+
+public class RawJournal {
+
+	public enum JournalPartyType {
+		CHARACTER("character"),
+		CORPORATION("corporation"),
+		ALLIANCE("alliance"),
+		FACTION("faction");
+
+		private final String value;
+
+		JournalPartyType(String value) {
+			this.value = value;
+		}
+
+		@Override
+		public String toString() {
+			return String.valueOf(value);
+		}
+	}
+
+	public enum ArgName {
+		STATION_NAME,
+		NPC_NAME,
+		DESTROYED_SHIP_TYPE_ID,
+		PLAYER_NAME,
+		JOB_ID,
+		CONTRACT_ID,
+		TRANSACTION_ID,
+		CORPORATION_NAME,
+		ALLIANCE_NAME,
+		PLANET_NAME,
+	}
+
+	public enum ArgID {
+		STATION_ID,
+		NPC_ID,
+		PLAYER_ID,
+		SYSTEM_ID,
+		CORPORATION_ID,
+		ALLIANCE_ID,
+		PLANET_ID,
+	}
+
+	private Float amount = null;
+	private Float balance = null;
+	private Date date = null;
+	private RawJournalExtraInfo extraInfo = null;
+	private Integer firstPartyId = null;
+	private JournalPartyType firstPartyType = null;
+	private String reason = null;
+	private Long refId = null;
+	private RawJournalRefType refType = null;
+	private Integer secondPartyId = null;
+	private JournalPartyType secondPartyType = null;
+	private Float tax = null;
+	private Integer taxRecieverId = null;
+	private Integer accountKey = null;
+
+	/**
+	 * New
+	 */
+	private RawJournal() {
+	}
+
+	public static RawJournal create() {
+		return new RawJournal();
+	}
+
+	/**
+	 * Raw
+	 *
+	 * @param journal
+	 */
+	protected RawJournal(RawJournal journal) {
+		amount = journal.amount;
+		balance = journal.balance;
+		date = journal.date;
+		extraInfo = journal.extraInfo;
+		firstPartyId = journal.firstPartyId;
+		firstPartyType = journal.firstPartyType;
+		reason = journal.reason;
+		refId = journal.refId;
+		refType = journal.refType;
+		secondPartyId = journal.secondPartyId;
+		secondPartyType = journal.secondPartyType;
+		tax = journal.tax;
+		taxRecieverId = journal.taxRecieverId;
+		accountKey = journal.accountKey;
+	}
+
+	/**
+	 * ESI
+	 *
+	 * @param journal
+	 * @param accountKey
+	 */
+	public RawJournal(CharacterWalletJournalResponse journal, Integer accountKey) {
+		amount = journal.getAmount();
+		balance = journal.getBalance();
+		date = RawConverter.toDate(journal.getDate());
+		extraInfo = new RawJournalExtraInfo(journal.getExtraInfo());
+		firstPartyId = journal.getFirstPartyId();
+		firstPartyType = RawConverter.toJournalPartyType(journal.getFirstPartyType());
+		reason = journal.getReason();
+		refId = journal.getRefId();
+		refType = RawConverter.toJournalRefType(journal.getRefType());
+		secondPartyId = journal.getSecondPartyId();
+		secondPartyType = RawConverter.toJournalPartyType(journal.getSecondPartyType());
+		tax = journal.getTax();
+		taxRecieverId = journal.getTaxRecieverId();
+		this.accountKey = accountKey;
+	}
+
+	/**
+	 * EveKit
+	 *
+	 * @param journal
+	 */
+	public RawJournal(enterprises.orbital.evekit.client.model.WalletJournal journal) {
+		amount = RawConverter.toFloat(journal.getAmount());
+		balance = RawConverter.toFloat(journal.getBalance());
+		date = RawConverter.toDate(journal.getDateDate());
+		firstPartyId = RawConverter.toInteger(journal.getOwnerID1());
+		firstPartyType = RawConverter.toJournalPartyType(journal.getOwner1TypeID());
+		reason = journal.getReason();
+		refId = journal.getRefID();
+		refType = RawConverter.toJournalRefType(journal.getRefTypeID());
+		secondPartyId = RawConverter.toInteger(journal.getOwnerID1());
+		secondPartyType = RawConverter.toJournalPartyType(journal.getOwner2TypeID());
+		tax = RawConverter.toFloat(journal.getTaxAmount());
+		taxRecieverId = RawConverter.toInteger(journal.getTaxReceiverID());
+		//Must be set after refType
+		extraInfo = new RawJournalExtraInfo(journal, refType);
+		this.accountKey = journal.getAccountKey();
+	}
+
+	/**
+	 * EveAPI
+	 *
+	 * @param journal
+	 * @param accountKey
+	 */
+	public RawJournal(com.beimin.eveapi.model.shared.JournalEntry journal, Integer accountKey) {
+		amount = (float) journal.getAmount();
+		balance = (float) journal.getBalance();
+		date = journal.getDate();
+		firstPartyId = (int) journal.getOwnerID1();
+		firstPartyType = RawConverter.toJournalPartyType(RawConverter.toInteger(journal.getOwner1TypeID()));
+		reason = journal.getReason();
+		refId = journal.getRefID();
+		refType = RawConverter.toJournalRefType(journal.getRefTypeID());
+		secondPartyId = (int) journal.getOwnerID2();
+		secondPartyType = RawConverter.toJournalPartyType(RawConverter.toInteger(journal.getOwner2TypeID()));
+		tax = RawConverter.toFloat(journal.getTaxAmount());
+		taxRecieverId = RawConverter.toInteger(journal.getTaxReceiverID());
+		//Must be set after refType
+		extraInfo = new RawJournalExtraInfo(journal, refType);
+		this.accountKey = accountKey;
+	}
+
+	public Float getAmount() {
+		return amount;
+	}
+
+	public void setAmount(Float amount) {
+		this.amount = amount;
+	}
+
+	public Float getBalance() {
+		return balance;
+	}
+
+	public void setBalance(Float balance) {
+		this.balance = balance;
+	}
+
+	public Date getDate() {
+		return date;
+	}
+
+	public void setDate(Date date) {
+		this.date = date;
+	}
+
+	public RawJournalExtraInfo getExtraInfo() {
+		return extraInfo;
+	}
+
+	public void setExtraInfo(RawJournalExtraInfo extraInfo) {
+		this.extraInfo = extraInfo;
+	}
+
+	public Integer getFirstPartyID() {
+		return firstPartyId;
+	}
+
+	public void setFirstPartyID(Integer firstPartyId) {
+		this.firstPartyId = firstPartyId;
+	}
+
+	public JournalPartyType getFirstPartyType() {
+		return firstPartyType;
+	}
+
+	public void setFirstPartyType(JournalPartyType firstPartyType) {
+		this.firstPartyType = firstPartyType;
+	}
+
+	public String getReason() {
+		return reason;
+	}
+
+	public void setReason(String reason) {
+		this.reason = reason;
+	}
+
+	public Long getRefID() {
+		return refId;
+	}
+
+	public void setRefID(Long refId) {
+		this.refId = refId;
+	}
+
+	public RawJournalRefType getRefType() {
+		return refType;
+	}
+
+	public void setRefType(RawJournalRefType refType) {
+		this.refType = refType;
+	}
+
+	public Integer getSecondPartyID() {
+		return secondPartyId;
+	}
+
+	public void setSecondPartyID(Integer secondPartyId) {
+		this.secondPartyId = secondPartyId;
+	}
+
+	public JournalPartyType getSecondPartyType() {
+		return secondPartyType;
+	}
+
+	public void setSecondPartyType(JournalPartyType secondPartyType) {
+		this.secondPartyType = secondPartyType;
+	}
+
+	public Float getTaxAmount() {
+		return tax;
+	}
+
+	public void setTax(Float tax) {
+		this.tax = tax;
+	}
+
+	public Integer getTaxRecieverID() {
+		return taxRecieverId;
+	}
+
+	public void setTaxRecieverID(Integer taxRecieverId) {
+		this.taxRecieverId = taxRecieverId;
+	}
+
+	public Integer getAccountKey() {
+		return accountKey;
+	}
+
+	public void setAccountKey(Integer accountKey) {
+		this.accountKey = accountKey;
+	}
+}

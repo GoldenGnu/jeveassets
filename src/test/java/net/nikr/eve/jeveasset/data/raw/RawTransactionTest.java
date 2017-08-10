@@ -21,6 +21,7 @@
 package net.nikr.eve.jeveasset.data.raw;
 
 import net.nikr.eve.jeveasset.TestUtil;
+import net.nikr.eve.jeveasset.data.api.raw.RawTransaction;
 import net.troja.eve.esi.model.CharacterWalletTransactionsResponse;
 import org.junit.Test;
 

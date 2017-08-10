@@ -23,9 +23,9 @@ package net.nikr.eve.jeveasset.io.local;
 
 import java.io.IOException;
 import java.util.Map;
-import net.nikr.eve.jeveasset.data.ItemFlag;
-import net.nikr.eve.jeveasset.data.Settings;
-import net.nikr.eve.jeveasset.data.StaticData;
+import net.nikr.eve.jeveasset.data.sde.ItemFlag;
+import net.nikr.eve.jeveasset.data.sde.StaticData;
+import net.nikr.eve.jeveasset.data.settings.Settings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;

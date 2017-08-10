@@ -21,8 +21,9 @@
 package net.nikr.eve.jeveasset.data.raw;
 
 import net.nikr.eve.jeveasset.TestUtil;
-import net.nikr.eve.jeveasset.data.raw.RawMarketOrder.MarketOrderRange;
-import net.nikr.eve.jeveasset.data.raw.RawMarketOrder.MarketOrderState;
+import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder;
+import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder.MarketOrderRange;
+import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder.MarketOrderState;
 import net.troja.eve.esi.model.CharacterOrdersResponse;
 import net.troja.eve.esi.model.CharacterOrdersResponse.RangeEnum;
 import net.troja.eve.esi.model.CharacterOrdersResponse.StateEnum;

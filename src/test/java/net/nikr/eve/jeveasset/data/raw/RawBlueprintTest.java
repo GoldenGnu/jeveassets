@@ -21,6 +21,7 @@
 package net.nikr.eve.jeveasset.data.raw;
 
 import net.nikr.eve.jeveasset.TestUtil;
+import net.nikr.eve.jeveasset.data.api.raw.RawBlueprint;
 import net.troja.eve.esi.model.CharacterBlueprintsResponse;
 import org.junit.Test;
 

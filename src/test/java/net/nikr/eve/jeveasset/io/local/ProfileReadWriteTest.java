@@ -26,16 +26,17 @@ import static org.junit.Assert.assertTrue;
 import java.io.File;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.TestUtil;
-import net.nikr.eve.jeveasset.data.ProfileData;
-import net.nikr.eve.jeveasset.data.ProfileManager;
-import net.nikr.eve.jeveasset.data.esi.EsiOwner;
-import net.nikr.eve.jeveasset.data.eveapi.EveApiAccount;
-import net.nikr.eve.jeveasset.data.eveapi.EveApiOwner;
-import net.nikr.eve.jeveasset.data.evekit.EveKitOwner;
+import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
+import net.nikr.eve.jeveasset.data.api.accounts.EveApiAccount;
+import net.nikr.eve.jeveasset.data.api.accounts.EveApiOwner;
+import net.nikr.eve.jeveasset.data.api.accounts.EveKitOwner;
+import net.nikr.eve.jeveasset.data.profile.ProfileData;
+import net.nikr.eve.jeveasset.data.profile.ProfileManager;
 import net.nikr.eve.jeveasset.io.shared.ConverterTestOptions;
 import net.nikr.eve.jeveasset.io.shared.ConverterTestOptionsGetter;
 import net.nikr.eve.jeveasset.io.shared.ConverterTestUtil;
 import org.junit.Test;
+
 
 public class ProfileReadWriteTest extends TestUtil {
 

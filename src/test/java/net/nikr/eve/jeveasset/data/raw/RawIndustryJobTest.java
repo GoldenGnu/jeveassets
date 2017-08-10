@@ -21,7 +21,8 @@
 package net.nikr.eve.jeveasset.data.raw;
 
 import net.nikr.eve.jeveasset.TestUtil;
-import net.nikr.eve.jeveasset.data.raw.RawIndustryJob.IndustryJobStatus;
+import net.nikr.eve.jeveasset.data.api.raw.RawIndustryJob;
+import net.nikr.eve.jeveasset.data.api.raw.RawIndustryJob.IndustryJobStatus;
 import net.troja.eve.esi.model.CharacterIndustryJobsResponse;
 import net.troja.eve.esi.model.CharacterIndustryJobsResponse.StatusEnum;
 import org.junit.Test;

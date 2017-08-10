@@ -34,25 +34,26 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import net.nikr.eve.jeveasset.data.MyAccountBalance;
-import net.nikr.eve.jeveasset.data.api.OwnerType;
-import net.nikr.eve.jeveasset.data.raw.RawAccountBalance;
-import net.nikr.eve.jeveasset.data.raw.RawAsset;
-import net.nikr.eve.jeveasset.data.raw.RawBlueprint;
-import net.nikr.eve.jeveasset.data.raw.RawContract;
-import net.nikr.eve.jeveasset.data.raw.RawContractItem;
-import net.nikr.eve.jeveasset.data.raw.RawIndustryJob;
-import net.nikr.eve.jeveasset.data.raw.RawJournal;
-import net.nikr.eve.jeveasset.data.raw.RawMarketOrder;
-import net.nikr.eve.jeveasset.data.raw.RawTransaction;
-import net.nikr.eve.jeveasset.gui.tabs.assets.MyAsset;
-import net.nikr.eve.jeveasset.gui.tabs.contracts.MyContract;
-import net.nikr.eve.jeveasset.gui.tabs.contracts.MyContractItem;
-import net.nikr.eve.jeveasset.gui.tabs.jobs.MyIndustryJob;
-import net.nikr.eve.jeveasset.gui.tabs.journal.MyJournal;
-import net.nikr.eve.jeveasset.gui.tabs.orders.MyMarketOrder;
-import net.nikr.eve.jeveasset.gui.tabs.transaction.MyTransaction;
+import net.nikr.eve.jeveasset.data.api.accounts.OwnerType;
+import net.nikr.eve.jeveasset.data.api.my.MyAccountBalance;
+import net.nikr.eve.jeveasset.data.api.my.MyAsset;
+import net.nikr.eve.jeveasset.data.api.my.MyContract;
+import net.nikr.eve.jeveasset.data.api.my.MyContractItem;
+import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob;
+import net.nikr.eve.jeveasset.data.api.my.MyJournal;
+import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder;
+import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
+import net.nikr.eve.jeveasset.data.api.raw.RawAccountBalance;
+import net.nikr.eve.jeveasset.data.api.raw.RawAsset;
+import net.nikr.eve.jeveasset.data.api.raw.RawBlueprint;
+import net.nikr.eve.jeveasset.data.api.raw.RawContract;
+import net.nikr.eve.jeveasset.data.api.raw.RawContractItem;
+import net.nikr.eve.jeveasset.data.api.raw.RawIndustryJob;
+import net.nikr.eve.jeveasset.data.api.raw.RawJournal;
+import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder;
+import net.nikr.eve.jeveasset.data.api.raw.RawTransaction;
 import net.nikr.eve.jeveasset.io.shared.DataConverter;
+
 
 public class EveApiConverter extends DataConverter {
 

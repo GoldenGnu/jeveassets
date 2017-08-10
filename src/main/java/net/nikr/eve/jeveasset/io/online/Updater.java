@@ -37,7 +37,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
-import net.nikr.eve.jeveasset.data.ProxyData;
+import net.nikr.eve.jeveasset.data.settings.ProxyData;
 import net.nikr.eve.jeveasset.io.shared.FileUtil;
 
 

@@ -20,6 +20,9 @@
  */
 package net.nikr.eve.jeveasset.data.raw;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+
 import java.lang.reflect.Field;
 import java.time.OffsetDateTime;
 import java.util.Date;
@@ -27,9 +30,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import net.nikr.eve.jeveasset.data.api.raw.RawJournalExtraInfo;
 import net.troja.eve.esi.model.CharacterWalletJournalExtraInfoResponse;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
 
 
 public class RawUtil {

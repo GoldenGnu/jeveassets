@@ -21,7 +21,7 @@
 
 package net.nikr.eve.jeveasset.gui.tabs.reprocessed;
 
-import net.nikr.eve.jeveasset.data.Item;
+import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.i18n.TabsReprocessed;
 
 

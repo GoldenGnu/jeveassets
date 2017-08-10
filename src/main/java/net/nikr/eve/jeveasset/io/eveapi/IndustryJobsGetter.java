@@ -26,10 +26,11 @@ import com.beimin.eveapi.parser.corporation.CorpIndustryJobsParser;
 import com.beimin.eveapi.response.shared.IndustryJobsResponse;
 import java.util.Date;
 import java.util.List;
-import net.nikr.eve.jeveasset.data.eveapi.EveApiAccessMask;
-import net.nikr.eve.jeveasset.data.eveapi.EveApiAccount;
-import net.nikr.eve.jeveasset.data.eveapi.EveApiOwner;
+import net.nikr.eve.jeveasset.data.api.accounts.EveApiAccessMask;
+import net.nikr.eve.jeveasset.data.api.accounts.EveApiAccount;
+import net.nikr.eve.jeveasset.data.api.accounts.EveApiOwner;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
+
 
 public class IndustryJobsGetter extends AbstractApiGetter<IndustryJobsResponse> {
 

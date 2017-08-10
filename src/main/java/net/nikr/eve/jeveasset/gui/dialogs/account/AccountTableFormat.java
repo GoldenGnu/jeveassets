@@ -23,7 +23,7 @@ package net.nikr.eve.jeveasset.gui.dialogs.account;
 
 import ca.odell.glazedlists.GlazedLists;
 import java.util.Comparator;
-import net.nikr.eve.jeveasset.data.api.OwnerType;
+import net.nikr.eve.jeveasset.data.api.accounts.OwnerType;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.ExpirerDate;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.YesNo;

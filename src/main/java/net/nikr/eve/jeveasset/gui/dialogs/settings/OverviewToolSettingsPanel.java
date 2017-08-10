@@ -24,14 +24,14 @@ package net.nikr.eve.jeveasset.gui.dialogs.settings;
 import javax.swing.GroupLayout;
 import javax.swing.JCheckBox;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.data.Settings;
+import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.i18n.DialoguesSettings;
 
 
 public class OverviewToolSettingsPanel extends JSettingsPanel {
 
-	private JCheckBox jIgnoreSecureContainers;
+	private final JCheckBox jIgnoreSecureContainers;
 
 	public OverviewToolSettingsPanel(final Program program, final SettingsDialog settingsDialog) {
 		super(program, settingsDialog, DialoguesSettings.get().overview(), Images.TOOL_OVERVIEW.getIcon());

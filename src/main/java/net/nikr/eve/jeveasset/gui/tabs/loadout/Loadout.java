@@ -23,11 +23,11 @@
 package net.nikr.eve.jeveasset.gui.tabs.loadout;
 
 import ca.odell.glazedlists.matchers.Matcher;
-import net.nikr.eve.jeveasset.data.Item;
-import net.nikr.eve.jeveasset.data.MyLocation;
-import net.nikr.eve.jeveasset.data.types.ItemType;
-import net.nikr.eve.jeveasset.data.types.LocationType;
-import net.nikr.eve.jeveasset.data.types.PriceType;
+import net.nikr.eve.jeveasset.data.sde.Item;
+import net.nikr.eve.jeveasset.data.sde.MyLocation;
+import net.nikr.eve.jeveasset.data.settings.types.ItemType;
+import net.nikr.eve.jeveasset.data.settings.types.LocationType;
+import net.nikr.eve.jeveasset.data.settings.types.PriceType;
 import net.nikr.eve.jeveasset.gui.shared.CopyHandler.CopySeparator;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.ModulePriceValue;
 import net.nikr.eve.jeveasset.i18n.TabsLoadout;

@@ -23,7 +23,9 @@ package net.nikr.eve.jeveasset.data.raw;
 import static org.junit.Assert.assertEquals;
 
 import net.nikr.eve.jeveasset.TestUtil;
-import net.nikr.eve.jeveasset.data.raw.RawJournal.JournalPartyType;
+import net.nikr.eve.jeveasset.data.api.raw.RawJournal;
+import net.nikr.eve.jeveasset.data.api.raw.RawJournal.JournalPartyType;
+import net.nikr.eve.jeveasset.data.api.raw.RawJournalRefType;
 import net.nikr.eve.jeveasset.io.shared.RawConverter;
 import net.troja.eve.esi.model.CharacterWalletJournalResponse;
 import net.troja.eve.esi.model.CharacterWalletJournalResponse.FirstPartyTypeEnum;

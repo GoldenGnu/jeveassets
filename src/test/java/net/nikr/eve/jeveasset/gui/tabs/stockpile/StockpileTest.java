@@ -21,14 +21,15 @@
 
 package net.nikr.eve.jeveasset.gui.tabs.stockpile;
 
+import static org.junit.Assert.*;
+
 import java.util.Collections;
 import net.nikr.eve.jeveasset.TestUtil;
-import net.nikr.eve.jeveasset.data.Item;
-import net.nikr.eve.jeveasset.data.MyLocation;
+import net.nikr.eve.jeveasset.data.sde.Item;
+import net.nikr.eve.jeveasset.data.sde.MyLocation;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileFilter;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileTotal;
-import static org.junit.Assert.*;
 import org.junit.Test;
 
 

@@ -23,7 +23,7 @@ package net.nikr.eve.jeveasset.io.local;
 import static org.junit.Assert.assertEquals;
 
 import net.nikr.eve.jeveasset.TestUtil;
-import net.nikr.eve.jeveasset.data.StaticData;
+import net.nikr.eve.jeveasset.data.sde.StaticData;
 import org.junit.Test;
 
 public class ItemFlagsTest extends TestUtil {

@@ -20,6 +20,9 @@
  */
 package net.nikr.eve.jeveasset.io.online;
 
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import ch.qos.logback.classic.Level;
 import java.io.IOException;
 import java.io.InputStream;
@@ -32,16 +35,14 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import net.nikr.eve.jeveasset.TestUtil;
-import net.nikr.eve.jeveasset.data.Item;
-import net.nikr.eve.jeveasset.data.PriceData;
-import net.nikr.eve.jeveasset.data.PriceDataSettings.PriceSource;
-import net.nikr.eve.jeveasset.data.PriceDataSettings.RegionType;
-import net.nikr.eve.jeveasset.data.StaticData;
+import net.nikr.eve.jeveasset.data.sde.Item;
+import net.nikr.eve.jeveasset.data.sde.StaticData;
+import net.nikr.eve.jeveasset.data.settings.PriceData;
+import net.nikr.eve.jeveasset.data.settings.PriceDataSettings.PriceSource;
+import net.nikr.eve.jeveasset.data.settings.PriceDataSettings.RegionType;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import org.junit.After;
 import org.junit.AfterClass;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;

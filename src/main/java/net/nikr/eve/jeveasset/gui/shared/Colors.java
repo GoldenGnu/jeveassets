@@ -21,7 +21,7 @@
 package net.nikr.eve.jeveasset.gui.shared;
 
 import java.awt.Color;
-import net.nikr.eve.jeveasset.data.Settings;
+import net.nikr.eve.jeveasset.data.settings.Settings;
 
 
 public enum Colors {

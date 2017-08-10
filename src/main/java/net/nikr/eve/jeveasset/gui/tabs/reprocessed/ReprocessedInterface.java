@@ -21,8 +21,8 @@
 
 package net.nikr.eve.jeveasset.gui.tabs.reprocessed;
 
-import net.nikr.eve.jeveasset.data.types.ItemType;
-import net.nikr.eve.jeveasset.data.types.PriceType;
+import net.nikr.eve.jeveasset.data.settings.types.ItemType;
+import net.nikr.eve.jeveasset.data.settings.types.PriceType;
 import net.nikr.eve.jeveasset.gui.shared.CopyHandler.CopySeparator;
 
 

@@ -21,13 +21,14 @@
 
 package net.nikr.eve.jeveasset.io.shared;
 
-import com.beimin.eveapi.model.eve.Station;
-import net.nikr.eve.jeveasset.TestUtil;
-import net.nikr.eve.jeveasset.data.MyLocation;
-import net.nikr.eve.jeveasset.data.StaticData;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+
+import com.beimin.eveapi.model.eve.Station;
+import net.nikr.eve.jeveasset.TestUtil;
+import net.nikr.eve.jeveasset.data.sde.MyLocation;
+import net.nikr.eve.jeveasset.data.sde.StaticData;
 import org.junit.Test;
 
 

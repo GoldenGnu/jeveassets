@@ -26,9 +26,9 @@ import com.beimin.eveapi.parser.corporation.CorpContractsParser;
 import com.beimin.eveapi.response.shared.ContractsResponse;
 import java.util.Date;
 import java.util.List;
-import net.nikr.eve.jeveasset.data.eveapi.EveApiAccessMask;
-import net.nikr.eve.jeveasset.data.eveapi.EveApiAccount;
-import net.nikr.eve.jeveasset.data.eveapi.EveApiOwner;
+import net.nikr.eve.jeveasset.data.api.accounts.EveApiAccessMask;
+import net.nikr.eve.jeveasset.data.api.accounts.EveApiAccount;
+import net.nikr.eve.jeveasset.data.api.accounts.EveApiOwner;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 
 public class ContractsGetter extends AbstractApiGetter<ContractsResponse> {
