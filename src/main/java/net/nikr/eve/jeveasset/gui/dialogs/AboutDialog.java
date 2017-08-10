@@ -99,7 +99,7 @@ public class AboutDialog extends JDialogCentered {
 				+ "&nbsp;<a href=\"http://www.jfree.org/jfreechart/\">JFreeChart</a> (charts)<br> "
 				+ "&nbsp;<a href=\"http://junit.org\">JUnit</a> (unit testing)<br>"
 				+ "&nbsp;<a href=\"http://www.slf4j.org/\">slf4J</a> (logging)<br>"
-				+ "&nbsp;<a href=\"http://logging.apache.org/log4j/1.2/\">log4j</a> (logging)<br>"
+				+ "&nbsp;<a href=\"https://logback.qos.ch/\">logback</a> (logging)<br>"
 				+ "&nbsp;<a href=\"https://github.com/FasterXML/jackson-databind/\">Jackson</a> (parsing json)<br>"
 				+ "&nbsp;<a href=\"" + Program.PROGRAM_HOMEPAGE + "\">OSXAdapter</a> (native mac os x support)<br>"
 				+ "&nbsp;<a href=\"https://github.com/GoldenGnu/price\">Pricing</a> (parsing price data api)<br>"
