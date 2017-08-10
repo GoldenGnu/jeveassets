@@ -28,13 +28,12 @@ import com.beimin.eveapi.response.shared.AssetListResponse;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.data.eveapi.EveApiAccessMask;
 import net.nikr.eve.jeveasset.data.eveapi.EveApiAccount;
 import net.nikr.eve.jeveasset.data.eveapi.EveApiOwner;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
-import net.nikr.eve.jeveasset.gui.tabs.assets.MyAsset;
+
 
 public class AssetsGetter extends AbstractApiGetter<AssetListResponse> {
 
@@ -94,14 +93,5 @@ public class AssetsGetter extends AbstractApiGetter<AssetListResponse> {
 	@Override
 	protected long requestMask(boolean bCorp) {
 		return EveApiAccessMask.ASSET_LIST.getAccessMask();
-	}
-
-	private void deepAssets(List<MyAsset> assets, Set<Long> itemIDs) {
-		for (MyAsset myAsset : assets) {
-			itemIDs.add(myAsset.getItemID());
-			if (!myAsset.getAssets().isEmpty()) {
-				deepAssets(myAsset.getAssets(), itemIDs);
-			}
-		}
 	}
 }
