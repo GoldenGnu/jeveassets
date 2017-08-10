@@ -25,10 +25,7 @@ import net.nikr.eve.jeveasset.data.StaticData;
 import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 
-/**
- *
- * @author nkr
- */
+
 public class AssetsGetterTest extends TestUtil {
 	
 	@Test
@@ -36,5 +33,6 @@ public class AssetsGetterTest extends TestUtil {
 		assertEquals(StaticData.get().getItemFlags().get(7).getFlagName(), "Skill");
 		assertEquals(StaticData.get().getItemFlags().get(89).getFlagName(), "Implant");
 		assertEquals(StaticData.get().getItemFlags().get(61).getFlagName(), "Skill In Training");
+		assertEquals(StaticData.get().getItemFlags().get(88).getFlagName(), "Booster");
 	}
 }

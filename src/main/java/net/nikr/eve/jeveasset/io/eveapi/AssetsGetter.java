@@ -32,10 +32,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import net.nikr.eve.jeveasset.data.eveapi.EveApiAccount;
-import net.nikr.eve.jeveasset.data.eveapi.EveApiOwner;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.data.eveapi.EveApiAccessMask;
+import net.nikr.eve.jeveasset.data.eveapi.EveApiAccount;
+import net.nikr.eve.jeveasset.data.eveapi.EveApiOwner;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import net.nikr.eve.jeveasset.gui.tabs.assets.MyAsset;
 import net.nikr.eve.jeveasset.io.shared.ApiConverter;
@@ -96,6 +96,7 @@ public class AssetsGetter extends AbstractApiGetter<AssetListResponse> {
 					asset.getFlag() != 7 //Skill
 					&& asset.getFlag() != 61 //Skill In Training
 					&& asset.getFlag() != 89 //Implant
+					&& asset.getFlag() != 88 //Booster
 					) {
 				Asset parentAsset = lookupAssets.get(asset.getLocationID());
 				if (parentAsset != null) {

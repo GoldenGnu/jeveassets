@@ -80,7 +80,8 @@ public class EveKitAssetGetter extends AbstractEveKitListGetter<Asset> {
 	protected boolean isValid(Asset obj) {
 		return obj.getFlag() != 7 //Skill
 				&& obj.getFlag() != 61 //Skill In Training
-				&& obj.getFlag() != 89; //Implant;
+				&& obj.getFlag() != 89 //Implant
+				&& obj.getFlag() != 88; //Booster
 	}
 
 	@Override
