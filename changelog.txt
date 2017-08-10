@@ -16,6 +16,21 @@
                   #### #  # #  # #  # #### #### #### #### ####
 
 ________________________________________________________________________________
+_4.1.3__________________________________________________________________________
+
+New Features:
+-Added support for basic proxy authentication
+
+Changed:
+-New forum thread
+
+Bug Fixes:
+-Fixed proxy support (everything now use the proxy settings)
+-Fixed Eve-MarketData support
+-ESI accounts never expire
+-Fixed two crash bugs and a few of minor ones
+
+________________________________________________________________________________
 _4.1.2__________________________________________________________________________
 
 Bug Fixes:
