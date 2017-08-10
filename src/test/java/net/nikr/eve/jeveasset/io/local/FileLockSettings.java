@@ -22,6 +22,7 @@ package net.nikr.eve.jeveasset.io.local;
 
 import java.io.File;
 import java.net.URISyntaxException;
+import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Settings;
 
 
@@ -48,6 +49,9 @@ public class FileLockSettings extends Settings {
 		return getPath(SETTINGS+BAC); 
 	}
 
+	public static String getPathSettingsVersionBackup() {
+		return getVersionBackup(getPath(SETTINGS+XML));
+	}
 	
 	public static String getPathSettingsStatic() {
 		return getPath(SETTINGS+XML); 
@@ -65,12 +69,20 @@ public class FileLockSettings extends Settings {
 		return getPath(PROFILE+BAC); 
 	}
 
+	public static String getPathProfileVerionsBackup() {
+		return getVersionBackup(getPath(PROFILE+XML));
+	}
+
 	public static String getPathProfileError() {
 		return getPath(PROFILE+ERROR); 
 	}
 
 	public static String getPathTimeout() {
 		return getPath(TIMEOUT); 
+	}
+
+	private static String getVersionBackup(String filename) {
+		return filename.substring(0, filename.lastIndexOf(".")) + "_" + Program.PROGRAM_VERSION + ".backup";
 	}
 
 	private static String getPath(String filename) {

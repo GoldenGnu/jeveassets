@@ -49,16 +49,20 @@ public class FileLockTest extends TestUtil {
 		//Cleanup
 		File settings = new File(FileLockSettings.getPathSettingsStatic());
 		File settingsBackup = new File(FileLockSettings.getPathSettingsBackup());
+		File settingsVersionBackup = new File(FileLockSettings.getPathSettingsVersionBackup());
 		File settingsError = new File(FileLockSettings.getPathSettingsError());
 		File profile = new File(FileLockSettings.getPathProfile());
 		File profileBackup = new File(FileLockSettings.getPathProfileBackup());
+		File profileVersionBackup = new File(FileLockSettings.getPathProfileVerionsBackup());
 		File profileError = new File(FileLockSettings.getPathProfileError());
 		File timeout = new File(FileLockSettings.getPathTimeout());
 		settings.delete();
 		settingsBackup.delete();
+		settingsVersionBackup.delete();
 		settingsError.delete();
 		profile.delete();
 		profileBackup.delete();
+		profileVersionBackup.delete();
 		profileError.delete();
 		timeout.delete();
 	}
