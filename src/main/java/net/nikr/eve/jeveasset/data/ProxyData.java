@@ -67,22 +67,22 @@ public class ProxyData {
 		Authenticator.setDefault(null); //Auth
 		ProxySelector.setDefault(null); //Proxy
 		//Host
-		System.setProperty("http.proxyHost", ""); //http
-		System.setProperty("https.proxyHost", "");//https
-		System.setProperty("socksProxyHost", ""); //socks
+		System.clearProperty("http.proxyHost"); //http
+		System.clearProperty("https.proxyHost");//https
+		System.clearProperty("socksProxyHost"); //socks
 		//Port
-		System.setProperty("http.proxyPort", ""); //http
-		System.setProperty("https.proxyPort", "");//https
-		System.setProperty("socksProxyPort", ""); //socks
+		System.clearProperty("http.proxyPort"); //http
+		System.clearProperty("https.proxyPort");//https
+		System.clearProperty("socksProxyPort"); //socks
 		//Username
-		System.setProperty("http.proxyUser", ""); //http
-		System.setProperty("https.proxyUser", "");//https
-		System.setProperty("java.net.socks.username", ""); //socks
+		System.clearProperty("http.proxyUser"); //http
+		System.clearProperty("https.proxyUser");//https
+		System.clearProperty("java.net.socks.username"); //socks
 		//Password
-		System.setProperty("http.proxyPassword", ""); //http
-		System.setProperty("https.proxyPassword", "");//https
-		System.setProperty("java.net.socks.password", ""); //socks
-		if (type == Proxy.Type.HTTP) { // HTTP/HTTPS Proxy
+		System.clearProperty("http.proxyPassword"); //http
+		System.clearProperty("https.proxyPassword");//https
+		System.clearProperty("java.net.socks.password"); //socks
+		if (type == Proxy.Type.HTTP) { //HTTP/HTTPS Proxy
 			//Proxy
 			ProxySelector.setDefault(new ProxyHost(getProxy()));
 			//Address
@@ -102,8 +102,7 @@ public class ProxyData {
 				Authenticator.setDefault(new ProxyAuth(getUsername(), getPassword()));
 			}
 		}
-		//SOCKS Proxy
-		if (type == Proxy.Type.SOCKS) {
+		if (type == Proxy.Type.SOCKS) { //SOCKS Proxy
 			//Proxy
 			ProxySelector.setDefault(new ProxyHost(getProxy()));
 			//Address
