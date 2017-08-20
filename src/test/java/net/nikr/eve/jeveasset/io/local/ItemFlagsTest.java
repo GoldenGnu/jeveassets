@@ -20,16 +20,15 @@
  */
 package net.nikr.eve.jeveasset.io.local;
 
-import static org.junit.Assert.assertEquals;
-
 import net.nikr.eve.jeveasset.TestUtil;
 import net.nikr.eve.jeveasset.data.sde.StaticData;
+import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 
 public class ItemFlagsTest extends TestUtil {
 
 	@Test
 	public void testItemFlags() {
-		assertEquals(129, StaticData.get().getItemFlags().size());
+		assertEquals(131, StaticData.get().getItemFlags().size());
 	}
 }

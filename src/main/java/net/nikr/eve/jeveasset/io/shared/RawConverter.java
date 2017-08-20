@@ -580,7 +580,7 @@ public class RawConverter {
 		MODULE("Module", 0),
 		CORPSEBAY("CorpseBay", 0),
 		HANGARALL("HangarAll", 0),
-		SUBSYSTEMBAY("SubSystemBay", 0), //177
+		SUBSYSTEMBAY("SubSystemBay", 177),
 		WARDROBE("Wardrobe", 3),
 		HANGAR("Hangar", 4),
 		CARGO("Cargo", 5),
@@ -654,6 +654,7 @@ public class RawConverter {
 		FIGHTERTUBE3("FighterTube3", 162),
 		FIGHTERTUBE4("FighterTube4", 163),
 		DELIVERIES("Deliveries", 173);
+		//BOOSTERBAY(BoosterBay, 176)
 
 		private final String value;
 		private final int id;

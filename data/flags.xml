@@ -130,4 +130,6 @@
     <row flagid="172" flagname="StructureFuel" flagtext="Structure Fuel"/>
     <row flagid="173" flagname="Deliveries" flagtext="Deliveries"/>
     <row flagid="174" flagname="CrateLoot" flagtext="Crate Loot"/>
+    <row flagid="176" flagname="BoosterBay" flagtext="Booster Hold"/>
+    <row flagid="177" flagname="SubsystemBay" flagtext="Subsystem Hold"/>
 </rows>

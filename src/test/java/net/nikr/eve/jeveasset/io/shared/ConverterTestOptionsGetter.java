@@ -159,7 +159,7 @@ public class ConverterTestOptionsGetter {
 			ApiIdConverter.getFlag(148), //SPECIALIZEDCOMMANDCENTERHOLD,
 			ApiIdConverter.getFlag(149), //SPECIALIZEDPLANETARYCOMMODITIESHOLD,
 			ApiIdConverter.getFlag(151), //SPECIALIZEDMATERIALBAY,
-			ApiIdConverter.getFlag(RawConverter.LocationFlag.SUBSYSTEMBAY.getID()), //SUBSYSTEMBAY
+			ApiIdConverter.getFlag(177), //SUBSYSTEMBAY
 			ApiIdConverter.getFlag(125), //SUBSYSTEMSLOT0,
 			ApiIdConverter.getFlag(126), //SUBSYSTEMSLOT1,
 			ApiIdConverter.getFlag(127), //SUBSYSTEMSLOT2,
@@ -241,7 +241,7 @@ public class ConverterTestOptionsGetter {
 			148, //SPECIALIZEDCOMMANDCENTERHOLD,
 			149, //SPECIALIZEDPLANETARYCOMMODITIESHOLD,
 			151, //SPECIALIZEDMATERIALBAY,
-			RawConverter.LocationFlag.SUBSYSTEMBAY.getID(), //SUBSYSTEMBAY
+			177, //SUBSYSTEMBAY
 			125, //SUBSYSTEMSLOT0,
 			126, //SUBSYSTEMSLOT1,
 			127, //SUBSYSTEMSLOT2,
