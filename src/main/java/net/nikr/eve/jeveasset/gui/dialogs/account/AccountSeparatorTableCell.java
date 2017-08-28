@@ -16,6 +16,8 @@ import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import net.nikr.eve.jeveasset.Program;
+import net.nikr.eve.jeveasset.data.api.accounts.ApiType;
+import net.nikr.eve.jeveasset.data.api.accounts.EveApiOwner;
 import net.nikr.eve.jeveasset.data.api.accounts.OwnerType;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Colors;
@@ -31,15 +33,19 @@ public class AccountSeparatorTableCell extends SeparatorTableCell<OwnerType> {
 	public enum AccountCellAction {
 		ACCOUNT_NAME,
 		EDIT,
-		DELETE
+		DELETE,
+		MIGRATE
 	}
 
 	private final JTextField jAccountName;
 	private final JLabel jAccountType;
 	private final JButton jEdit;
 	private final JButton jDelete;
+	private final JButton jMigrate;
 	private final JLabel jInvalidLabel;
 	private final JLabel jExpiredLabel;
+	private final JLabel jMigratedLabel;
+	private final JLabel jCanMigrateLabel;
 	private final JLabel jSpaceLabel;
 
 	private final Color defaultColor;
@@ -58,6 +64,11 @@ public class AccountSeparatorTableCell extends SeparatorTableCell<OwnerType> {
 		jEdit.setActionCommand(AccountCellAction.EDIT.name());
 		jEdit.addActionListener(actionListener);
 
+		jMigrate = new JButton(DialoguesAccount.get().migrate());
+		jMigrate.setOpaque(false);
+		jMigrate.setActionCommand(AccountCellAction.MIGRATE.name());
+		jMigrate.addActionListener(actionListener);
+
 		jDelete = new JButton(DialoguesAccount.get().delete());
 		jDelete.setOpaque(false);
 		jDelete.setActionCommand(AccountCellAction.DELETE.name());
@@ -74,6 +85,10 @@ public class AccountSeparatorTableCell extends SeparatorTableCell<OwnerType> {
 
 		jExpiredLabel = new JLabel(DialoguesAccount.get().accountExpired());
 
+		jMigratedLabel = new JLabel(DialoguesAccount.get().accountMigrated());
+
+		jCanMigrateLabel = new JLabel(DialoguesAccount.get().accountCanMigrate());
+
 		jSpaceLabel = new JLabel();
 
 		layout.setHorizontalGroup(
@@ -81,6 +96,7 @@ public class AccountSeparatorTableCell extends SeparatorTableCell<OwnerType> {
 				.addComponent(jExpand)
 				.addGap(1)
 				.addComponent(jEdit, Program.getButtonsWidth(), Program.getButtonsWidth(), Program.getButtonsWidth())
+				.addComponent(jMigrate, Program.getButtonsWidth(), Program.getButtonsWidth(), Program.getButtonsWidth())
 				.addComponent(jDelete, Program.getButtonsWidth(), Program.getButtonsWidth(), Program.getButtonsWidth())
 				.addGap(5)
 				.addComponent(jAccountType)
@@ -89,6 +105,8 @@ public class AccountSeparatorTableCell extends SeparatorTableCell<OwnerType> {
 				.addGap(10)
 				.addComponent(jExpiredLabel)
 				.addComponent(jInvalidLabel)
+				.addComponent(jMigratedLabel)
+				.addComponent(jCanMigrateLabel)
 				.addComponent(jSpaceLabel, 20, 20, Integer.MAX_VALUE)
 		);
 		layout.setVerticalGroup(
@@ -98,10 +116,13 @@ public class AccountSeparatorTableCell extends SeparatorTableCell<OwnerType> {
 					.addComponent(jExpand, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 					.addComponent(jAccountType, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 					.addComponent(jEdit, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jMigrate, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 					.addComponent(jDelete, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 					.addComponent(jAccountName, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 					.addComponent(jInvalidLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 					.addComponent(jExpiredLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jMigratedLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jCanMigrateLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 					.addComponent(jSpaceLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 				)
 				.addGap(2)
@@ -113,6 +134,30 @@ public class AccountSeparatorTableCell extends SeparatorTableCell<OwnerType> {
 		OwnerType owner = (OwnerType) separator.first();
 		if (owner == null) { // handle 'late' rendering calls after this separator is invalid
 			return;
+		}
+		boolean allMigrated = false;
+		boolean canMigrate = false;
+		if (owner.getAccountAPI() == ApiType.EVE_ONLINE) {
+			boolean corp = false; //XXX - When we can migrate corporations to ESI: Remove variable
+			for (Object object : separator.getGroup()) {
+				if (object instanceof EveApiOwner) {
+					EveApiOwner eveApiOwner = (EveApiOwner) object;
+					if (eveApiOwner.isCorporation()) { //XXX - When we can migrate corporations to ESI: Remove
+						corp = true;
+					}
+					if (eveApiOwner.canMigrate()) {
+						canMigrate = true;
+						break;
+					}
+				}
+			}
+			allMigrated = !canMigrate && !corp; //XXX - When we can migrate corporations to ESI: Remove !corp
+			jMigrate.setVisible(!corp); //XXX - When we can migrate corporations to ESI: Set to true
+			jMigrate.setEnabled(canMigrate);
+			jEdit.setVisible(corp);  //XXX - When we can migrate corporations to ESI: Set to false
+		} else {
+			jMigrate.setVisible(false);
+			jEdit.setVisible(true);
 		}
 		switch (owner.getAccountAPI()) {
 			case EVE_ONLINE:
@@ -132,9 +177,15 @@ public class AccountSeparatorTableCell extends SeparatorTableCell<OwnerType> {
 		//Invalid
 		jInvalidLabel.setVisible(owner.isInvalid());
 
+		//All Migrated
+		jMigratedLabel.setVisible(allMigrated);
+
+		//Can Migrate
+		jCanMigrateLabel.setVisible(canMigrate);
+
 		//Invalid / Expired
-		jSpaceLabel.setVisible(owner.isInvalid() || owner.isExpired());
-		jPanel.setBackground(owner.isInvalid() || owner.isExpired() ? Colors.LIGHT_RED.getColor() : defaultColor);
+		jSpaceLabel.setVisible(owner.isInvalid() || owner.isExpired() || allMigrated || canMigrate);
+		jPanel.setBackground(owner.isInvalid() || owner.isExpired() ? Colors.LIGHT_RED.getColor() : allMigrated ? Colors.LIGHT_GREEN.getColor() : canMigrate ? Colors.LIGHT_YELLOW.getColor() : defaultColor);
 	}
 
 	private class ListenerClass implements FocusListener, ActionListener {

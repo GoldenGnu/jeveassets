@@ -27,23 +27,39 @@ import java.util.Date;
 
 public class EveApiOwner extends AbstractOwner implements OwnerType {
 	private final EveApiAccount parentAccount;
+	private boolean migrated;
 
-	public EveApiOwner(EveApiAccount parentAccount) {
+	public EveApiOwner(EveApiAccount parentAccount, boolean migrated) {
 		this.parentAccount = parentAccount;
+		this.migrated = migrated;
 	}
 
 	public EveApiOwner(final EveApiAccount parentAccount, final EveApiOwner owner) {
 		super(owner);
 		this.parentAccount = parentAccount;
+		this.migrated = owner.isMigrated();
 	}
 
 	public EveApiOwner(final EveApiAccount parentAccount, final String ownerName, final long ownerID) {
 		super(ownerName, ownerID);
 		this.parentAccount = parentAccount;
+		this.migrated = false;
 	}
 
 	public EveApiAccount getParentAccount() {
 		return parentAccount;
+	}
+
+	public boolean isMigrated() {
+		return migrated;
+	}
+
+	public void setMigrated(boolean migrated) {
+		this.migrated = migrated;
+	}
+
+	public boolean canMigrate() {
+		return !isCorporation() && !isMigrated(); //XXX - When we can migrate corporations to ESI: Remove !isCorporation()
 	}
 
 	@Override

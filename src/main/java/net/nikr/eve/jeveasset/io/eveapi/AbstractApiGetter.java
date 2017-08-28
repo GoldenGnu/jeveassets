@@ -179,8 +179,8 @@ public abstract class AbstractApiGetter<T extends ApiResponse> {
 	private void loadOwner() {
 		boolean updatedOK = false;
 		String name = owner.getOwnerName();
-		//Ignore hidden owners && don't update the same owner twice
-		if (owner.isShowOwner() && !owners.containsKey(name)) {
+		//Ignore hidden owners && don't update the same owner twice && Ignore migrated owners
+		if (owner.isShowOwner() && !owners.containsKey(name) && !owner.isMigrated()) {
 			updatedOK = load(getNextUpdate(), owner.isCorporation(), name); //Update...
 		}
 		if (updatedOK) {

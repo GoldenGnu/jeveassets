@@ -234,7 +234,11 @@ public final class ProfileReader extends AbstractXmlReader {
 		NodeList ownerNodes = element.getElementsByTagName("human");
 		for (int i = 0; i < ownerNodes.getLength(); i++) {
 			Element currentNode = (Element) ownerNodes.item(i);
-			EveApiOwner owner = new EveApiOwner(account);
+			boolean migrated = false;
+			if (AttributeGetters.haveAttribute(currentNode, "migrated")) {
+				migrated = AttributeGetters.getBoolean(currentNode, "migrated");
+			}
+			EveApiOwner owner = new EveApiOwner(account, migrated);
 			parseOwnerType(currentNode, owner);
 			account.getOwners().add(owner);
 		}

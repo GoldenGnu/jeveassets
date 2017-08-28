@@ -128,6 +128,7 @@ public class AccountGetter extends AbstractApiGetter<ApiKeyInfoResponse> impleme
 		invalidPrivileges = (fails >= max);
 
 		wrongEntry = !getAccount().getOwners().isEmpty();
+		boolean canMigrate = false;
 		for (Character apiCharacter : characters) {
 			boolean found = false;
 			for (EveApiOwner owner : getAccount().getOwners()) {
@@ -137,12 +138,18 @@ public class AccountGetter extends AbstractApiGetter<ApiKeyInfoResponse> impleme
 					owners.add(owner);
 					found = true;
 					wrongEntry = false;
+					if (owner.canMigrate()) {
+						canMigrate = true;
+					}
 					break;
 				}
 			}
 			if (!found) { //Add New
 				owners.add(new EveApiOwner(getAccount(), getName(apiCharacter), getID(apiCharacter)));
 			}
+		}
+		if (canMigrate) {
+			addError("EveApi", "Account can be migrated to ESI");
 		}
 		if (wrongEntry) {
 			errorWrongEntry();

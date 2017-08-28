@@ -143,6 +143,7 @@ public final class ProfileWriter extends AbstractXmlWriter {
 	private void writeOwners(final Document xmldoc, final Element parentNode, final List<EveApiOwner> owners) {
 		for (EveApiOwner owner : owners) {
 			Element node = xmldoc.createElementNS(null, "human");
+			setAttribute(node, "migrated", owner.isMigrated());
 			writeTypeOwner(xmldoc, node, owner);
 			parentNode.appendChild(node);
 		}

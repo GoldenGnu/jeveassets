@@ -96,7 +96,7 @@ public class ConverterTestUtil {
 	}
 
 	public static EveApiOwner getEveApiOwner(boolean data, boolean setNull, boolean setValues, ConverterTestOptions options) {
-		EveApiOwner owner = new EveApiOwner(null);
+		EveApiOwner owner = new EveApiOwner(null, false);
 		setValues(owner, options);
 		if (data) {
 			setData(owner, setNull, setValues, options);
