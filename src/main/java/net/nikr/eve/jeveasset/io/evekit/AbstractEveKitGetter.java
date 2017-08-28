@@ -70,8 +70,7 @@ public abstract class AbstractEveKitGetter {
 			}
 			if (updateTask != null) {
 				if (updateTask.isCancelled()) {
-					addError("Cancelled");
-					return;
+					updateTask.addError(owner.getOwnerName(), "EveKit: Cancelled");
 				}
 				progress++;
 				updateTask.setTaskProgress(owners.size(), progress, getProgressStart(), getProgressEnd());

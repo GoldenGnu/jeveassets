@@ -93,17 +93,16 @@ public abstract class AbstractEsiGetter {
 	protected void load(UpdateTask updateTask, List<EsiOwner> owners) {
 		LOG.info("ESI: " + getTaskName() + " updating:");
 		int progress = 0;
-		if (updateTask != null) {
+		if (updateTask != null && getProgressStart() == 0) {
 			updateTask.resetTaskProgress();
 		}
 		for (EsiOwner owner : owners) {
-			if (!owner.isShowOwner()) {
-				continue;
+			if (owner.isShowOwner()) { //Ignore not shown owners
+				loadAPI(updateTask, owner, false);
 			}
-			loadAPI(updateTask, owner, false);
 			if (updateTask != null) {
 				if (updateTask.isCancelled()) {
-					return;
+					updateTask.addError(owner.getOwnerName(), "ESI: Cancelled");
 				}
 				progress++;
 				updateTask.setTaskProgress(owners.size(), progress, getProgressStart(), getProgressEnd());

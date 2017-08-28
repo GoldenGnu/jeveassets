@@ -110,7 +110,7 @@ public abstract class AbstractApiGetter<T extends ApiResponse> {
 			if (updateAccount) {
 				if (updateTask != null) {
 					if (updateTask.isCancelled()) {
-						addError(String.valueOf(accountLoop.getKeyID()), "Cancelled");
+						addError(String.valueOf(accountLoop.getKeyID()), "EveApi: Cancelled");
 					} else {
 						loadAccount();
 					}
@@ -125,7 +125,7 @@ public abstract class AbstractApiGetter<T extends ApiResponse> {
 					this.owner = ownerLoop;
 					if (updateTask != null) {
 						if (updateTask.isCancelled()) {
-							addError(owner.getOwnerName(), "Cancelled");
+							addError(owner.getOwnerName(), "EveApi: Cancelled");
 						} else {
 							loadOwner();
 						}
