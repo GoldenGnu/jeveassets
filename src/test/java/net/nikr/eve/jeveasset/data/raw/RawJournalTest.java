@@ -30,7 +30,7 @@ import net.nikr.eve.jeveasset.io.shared.RawConverter;
 import net.troja.eve.esi.model.CharacterWalletJournalResponse;
 import net.troja.eve.esi.model.CharacterWalletJournalResponse.FirstPartyTypeEnum;
 import net.troja.eve.esi.model.CharacterWalletJournalResponse.RefTypeEnum;
-import net.troja.eve.esi.model.CharacterWalletsJournalResponse.SecondPartyTypeEnum;
+import net.troja.eve.esi.model.CharacterWalletJournalResponse.SecondPartyTypeEnum;
 import org.junit.Test;
 
 
