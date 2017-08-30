@@ -75,6 +75,9 @@ public class RawJournalExtraInfo {
 	 * @param journalExtraInfo
 	 */
 	public RawJournalExtraInfo(CharacterWalletJournalExtraInfoResponse journalExtraInfo) {
+		if (journalExtraInfo == null) { 
+			return;
+		}
 		allianceId = journalExtraInfo.getAllianceId();
 		characterId = journalExtraInfo.getCharacterId();
 		contractId = journalExtraInfo.getContractId();
