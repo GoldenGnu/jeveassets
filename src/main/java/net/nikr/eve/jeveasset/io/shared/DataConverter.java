@@ -228,10 +228,13 @@ public abstract class DataConverter {
 		return new MyIndustryJob(rawIndustryJob, item, owner, product.getPortion());
 	}
 
-	public static Set<MyJournal> convertRawJournals(List<RawJournal> rawJournals, OwnerType owner) {
+	public static Set<MyJournal> convertRawJournals(List<RawJournal> rawJournals, OwnerType owner, boolean saveHistory) {
 		Set<MyJournal> journals = new HashSet<MyJournal>();
 		for (RawJournal rawJournal : rawJournals) {
 			journals.add(toMyJournal(rawJournal, owner));
+		}
+		if (saveHistory) {
+			journals.addAll(owner.getJournal());
 		}
 		return journals;
 	}
@@ -240,10 +243,13 @@ public abstract class DataConverter {
 		return new MyJournal(rawJournal, owner);
 	}
 
-	public static List<MyMarketOrder> convertRawMarketOrders(List<RawMarketOrder> rawMarketOrders, OwnerType owner) {
-		List<MyMarketOrder> marketOrders = new ArrayList<MyMarketOrder>();
+	public static Set<MyMarketOrder> convertRawMarketOrders(List<RawMarketOrder> rawMarketOrders, OwnerType owner, boolean saveHistory) {
+		Set<MyMarketOrder> marketOrders = new HashSet<MyMarketOrder>();
 		for (RawMarketOrder rawMarketOrder : rawMarketOrders) {
 			marketOrders.add(toMyMarketOrder(rawMarketOrder, owner));
+		}
+		if (saveHistory) {
+			marketOrders.addAll(owner.getMarketOrders());
 		}
 		return marketOrders;
 	}
@@ -253,10 +259,13 @@ public abstract class DataConverter {
 		return new MyMarketOrder(rawMarketOrder, item, owner);
 	}
 
-	public static Set<MyTransaction> convertRawTransactions(List<RawTransaction> rawTransactions, OwnerType owner) {
+	public static Set<MyTransaction> convertRawTransactions(List<RawTransaction> rawTransactions, OwnerType owner, boolean saveHistory) {
 		Set<MyTransaction> myTransactions = new HashSet<MyTransaction>();
 		for (RawTransaction rawTransaction : rawTransactions) {
 			myTransactions.add(toMyTransaction(rawTransaction, owner));
+		}
+		if (saveHistory) {
+			myTransactions.addAll(owner.getTransactions());
 		}
 		return myTransactions;
 	}

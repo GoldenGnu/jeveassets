@@ -30,15 +30,17 @@ import net.troja.eve.esi.model.CharacterOrdersResponse;
 
 public class EsiMarketOrdersGetter extends AbstractEsiGetter {
 
-	@Override
-	public void load(UpdateTask updateTask, List<EsiOwner> owners) {
+	private boolean saveHistory;
+
+	public void load(UpdateTask updateTask, List<EsiOwner> owners, boolean saveHistory) {
+		this.saveHistory = saveHistory;
 		super.load(updateTask, owners);
 	}
 
 	@Override
 	protected void get(EsiOwner owner) throws ApiException {
 		List<CharacterOrdersResponse> marketOrders = getMarketApiAuth().getCharactersCharacterIdOrders((int) owner.getOwnerID(), DATASOURCE, null, null, null);
-		owner.setMarketOrders(EsiConverter.toMarketOrders(marketOrders, owner));
+		owner.setMarketOrders(EsiConverter.toMarketOrders(marketOrders, owner, saveHistory));
 	}
 
 	@Override

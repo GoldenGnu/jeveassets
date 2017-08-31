@@ -25,12 +25,9 @@ import enterprises.orbital.evekit.client.invoker.ApiException;
 import enterprises.orbital.evekit.client.model.MarketOrder;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import net.nikr.eve.jeveasset.data.api.accounts.EveKitAccessMask;
 import net.nikr.eve.jeveasset.data.api.accounts.EveKitOwner;
-import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 
@@ -76,12 +73,7 @@ public class EveKitMarketOrdersGetter extends AbstractEveKitListGetter<MarketOrd
 
 	@Override
 	protected void set(EveKitOwner owner, List<MarketOrder> data) throws ApiException {
-		Set<MyMarketOrder> set = new HashSet<MyMarketOrder>();
-		if (loadCID(owner) != null) { //Old
-			set.addAll(owner.getMarketOrders());
-		}
-		set.addAll(EveKitConverter.toMarketOrders(data, owner)); //New
-		owner.setMarketOrders(new ArrayList<MyMarketOrder>(set)); //New
+		owner.setMarketOrders(EveKitConverter.toMarketOrders(data, owner, loadCID(owner) != null));
 	}
 
 	@Override

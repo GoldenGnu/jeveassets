@@ -20,10 +20,10 @@
  */
 package net.nikr.eve.jeveasset.io.local;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
 import net.nikr.eve.jeveasset.data.api.accounts.EveApiAccount;
 import net.nikr.eve.jeveasset.data.api.accounts.EveApiOwner;
@@ -171,8 +171,8 @@ public final class ProfileWriter extends AbstractXmlWriter {
 		writeContractItems(xmldoc, node, owner.getContracts());
 		writeAccountBalances(xmldoc, node, owner.getAccountBalances(), owner.isCorporation());
 		writeMarketOrders(xmldoc, node, owner.getMarketOrders(), owner.isCorporation());
-		writeJournals(xmldoc, node, new ArrayList<MyJournal>(owner.getJournal()), owner.isCorporation());
-		writeTransactions(xmldoc, node, new ArrayList<MyTransaction>(owner.getTransactions()), owner.isCorporation());
+		writeJournals(xmldoc, node, owner.getJournal(), owner.isCorporation());
+		writeTransactions(xmldoc, node, owner.getTransactions(), owner.isCorporation());
 		writeIndustryJobs(xmldoc, node, owner.getIndustryJobs(), owner.isCorporation());
 		writeBlueprints(xmldoc, node, owner.getBlueprints(), owner.isCorporation());
 	}
@@ -258,7 +258,7 @@ public final class ProfileWriter extends AbstractXmlWriter {
 		}
 	}
 
-	private void writeMarketOrders(final Document xmldoc, final Element parentNode, final List<MyMarketOrder> marketOrders, final boolean bCorp) {
+	private void writeMarketOrders(final Document xmldoc, final Element parentNode, final Set<MyMarketOrder> marketOrders, final boolean bCorp) {
 		Element node = xmldoc.createElementNS(null, "markerorders");
 		if (!marketOrders.isEmpty()) {
 			setAttribute(node, "corp", bCorp);
@@ -284,7 +284,7 @@ public final class ProfileWriter extends AbstractXmlWriter {
 		}
 	}
 
-	private void writeJournals(final Document xmldoc, final Element parentNode, final List<MyJournal> journals, final boolean bCorp) {
+	private void writeJournals(final Document xmldoc, final Element parentNode, final Set<MyJournal> journals, final boolean bCorp) {
 		Element node = xmldoc.createElementNS(null, "journals");
 		if (!journals.isEmpty()) {
 			setAttribute(node, "corp", bCorp);
@@ -314,7 +314,7 @@ public final class ProfileWriter extends AbstractXmlWriter {
 		}
 	}
 
-	private void writeTransactions(final Document xmldoc, final Element parentNode, final List<MyTransaction> transactions, final boolean bCorp) {
+	private void writeTransactions(final Document xmldoc, final Element parentNode, final Set<MyTransaction> transactions, final boolean bCorp) {
 		Element node = xmldoc.createElementNS(null, "wallettransactions");
 		if (!transactions.isEmpty()) {
 			setAttribute(node, "corp", bCorp);

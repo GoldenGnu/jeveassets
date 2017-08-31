@@ -27,7 +27,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -348,10 +347,7 @@ public class JMigrateDialog extends JDialogCentered {
 			EsiOwner esiOwner = (EsiOwner) object;
 		//Migration data
 			//Market Orders
-			Set<MyMarketOrder> marketOrders = new HashSet<MyMarketOrder>();
-			marketOrders.addAll(owner.getMarketOrders());
-			marketOrders.addAll(esiOwner.getMarketOrders());
-			esiOwner.setMarketOrders(new ArrayList<MyMarketOrder>(marketOrders));
+			esiOwner.getMarketOrders().addAll(owner.getMarketOrders());
 			//Journal
 			esiOwner.getJournal().addAll(owner.getJournal());
 			//Transactions
@@ -363,7 +359,7 @@ public class JMigrateDialog extends JDialogCentered {
 			owner.setContracts(new HashMap<MyContract, List<MyContractItem>>());
 			owner.setIndustryJobs(new ArrayList<MyIndustryJob>());
 			owner.setJournal(new HashSet<MyJournal>());
-			owner.setMarketOrders(new ArrayList<MyMarketOrder>());
+			owner.setMarketOrders(new HashSet<MyMarketOrder>());
 			owner.setTransactions(new HashSet<MyTransaction>());
 		//Set Migrated
 			owner.setMigrated(true);

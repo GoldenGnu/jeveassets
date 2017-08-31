@@ -156,7 +156,7 @@ public class EsiConverterTest extends TestUtil {
 		for (ConverterTestOptions options : ConverterTestOptionsGetter.getConverterOptions()) {
 			CharacterWalletJournalResponse journalResponse = new CharacterWalletJournalResponse();
 			ConverterTestUtil.setValues(journalResponse, options, esi);
-			Set<MyJournal> journals = EsiConverter.toJournals(Collections.singletonList(journalResponse), ConverterTestUtil.getEsiOwner(options), options.getInteger());
+			Set<MyJournal> journals = EsiConverter.toJournals(Collections.singletonList(journalResponse), ConverterTestUtil.getEsiOwner(options), options.getInteger(), false);
 			ConverterTestUtil.testValues(journals.iterator().next(), options, esi);
 		}
 	}
@@ -213,8 +213,8 @@ public class EsiConverterTest extends TestUtil {
 		for (ConverterTestOptions options : ConverterTestOptionsGetter.getConverterOptions()) {
 			CharacterOrdersResponse ordersResponse = new CharacterOrdersResponse();
 			ConverterTestUtil.setValues(ordersResponse, options, esi);
-			List<MyMarketOrder> marketOrders = EsiConverter.toMarketOrders(Collections.singletonList(ordersResponse), ConverterTestUtil.getEsiOwner(options));
-			ConverterTestUtil.testValues(marketOrders.get(0), options, esi);
+			Set<MyMarketOrder> marketOrders = EsiConverter.toMarketOrders(Collections.singletonList(ordersResponse), ConverterTestUtil.getEsiOwner(options), false);
+			ConverterTestUtil.testValues(marketOrders.iterator().next(), options, esi);
 		}
 	}
 
@@ -232,7 +232,7 @@ public class EsiConverterTest extends TestUtil {
 		for (ConverterTestOptions options : ConverterTestOptionsGetter.getConverterOptions()) {
 			CharacterWalletTransactionsResponse transactionsResponse = new CharacterWalletTransactionsResponse();
 			ConverterTestUtil.setValues(transactionsResponse, options, esi);
-			Set<MyTransaction> transactions = EsiConverter.toTransaction(Collections.singletonList(transactionsResponse), ConverterTestUtil.getEsiOwner(options), options.getInteger());
+			Set<MyTransaction> transactions = EsiConverter.toTransaction(Collections.singletonList(transactionsResponse), ConverterTestUtil.getEsiOwner(options), options.getInteger(), false);
 			ConverterTestUtil.testValues(transactions.iterator().next(), options, esi);
 		}
 	}

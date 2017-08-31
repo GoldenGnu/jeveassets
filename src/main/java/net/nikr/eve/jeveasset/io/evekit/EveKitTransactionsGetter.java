@@ -24,12 +24,9 @@ import enterprises.orbital.evekit.client.invoker.ApiClient;
 import enterprises.orbital.evekit.client.invoker.ApiException;
 import enterprises.orbital.evekit.client.model.WalletTransaction;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import net.nikr.eve.jeveasset.data.api.accounts.EveKitAccessMask;
 import net.nikr.eve.jeveasset.data.api.accounts.EveKitOwner;
-import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 
@@ -50,12 +47,7 @@ public class EveKitTransactionsGetter extends AbstractEveKitListGetter<WalletTra
 
 	@Override
 	protected void set(EveKitOwner owner, List<WalletTransaction> data) throws ApiException {
-		Set<MyTransaction> set = new HashSet<MyTransaction>();
-		if (loadCID(owner) != null) { //Old
-			set.addAll(owner.getTransactions());
-		}
-		set.addAll(EveKitConverter.toTransactions(data, owner)); //New
-		owner.setTransactions(set); //All
+		owner.setTransactions(EveKitConverter.toTransactions(data, owner, loadCID(owner) != null));
 	}
 
 	@Override

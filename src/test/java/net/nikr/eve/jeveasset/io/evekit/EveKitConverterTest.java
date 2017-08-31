@@ -141,7 +141,7 @@ public class EveKitConverterTest extends TestUtil {
 		for (ConverterTestOptions options : ConverterTestOptionsGetter.getConverterOptions()) {
 			WalletJournal walletJournal = new WalletJournal();
 			ConverterTestUtil.setValues(walletJournal, options);
-			Set<MyJournal> journals = EveKitConverter.toJournals(Collections.singletonList(walletJournal), ConverterTestUtil.getEveKitOwner(options));
+			Set<MyJournal> journals = EveKitConverter.toJournals(Collections.singletonList(walletJournal), ConverterTestUtil.getEveKitOwner(options), false);
 			ConverterTestUtil.testValues(journals.iterator().next(), options);
 		}
 	}
@@ -151,8 +151,8 @@ public class EveKitConverterTest extends TestUtil {
 		for (ConverterTestOptions options : ConverterTestOptionsGetter.getConverterOptions()) {
 			MarketOrder marketOrder = new MarketOrder();
 			ConverterTestUtil.setValues(marketOrder, options);
-			List<MyMarketOrder> marketOrders = EveKitConverter.toMarketOrders(Collections.singletonList(marketOrder), ConverterTestUtil.getEveKitOwner(options));
-			ConverterTestUtil.testValues(marketOrders.get(0), options);
+			Set<MyMarketOrder> marketOrders = EveKitConverter.toMarketOrders(Collections.singletonList(marketOrder), ConverterTestUtil.getEveKitOwner(options), false);
+			ConverterTestUtil.testValues(marketOrders.iterator().next(), options);
 		}
 	}
 
@@ -161,7 +161,7 @@ public class EveKitConverterTest extends TestUtil {
 		for (ConverterTestOptions options : ConverterTestOptionsGetter.getConverterOptions()) {
 			WalletTransaction transaction = new WalletTransaction();
 			ConverterTestUtil.setValues(transaction, options);
-			Set<MyTransaction> transactions = EveKitConverter.toTransactions(Collections.singletonList(transaction), ConverterTestUtil.getEveKitOwner(options));
+			Set<MyTransaction> transactions = EveKitConverter.toTransactions(Collections.singletonList(transaction), ConverterTestUtil.getEveKitOwner(options), false);
 			ConverterTestUtil.testValues(transactions.iterator().next(), options);
 		}
 	}

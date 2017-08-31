@@ -55,7 +55,7 @@ public interface OwnerType extends Comparable<OwnerType> {
 	public void setAccountName(String accountName);
 	//Data
 	public List<MyAccountBalance> getAccountBalances();
-	public List<MyMarketOrder> getMarketOrders();
+	public Set<MyMarketOrder> getMarketOrders();
 	public Set<MyTransaction> getTransactions();
 	public Set<MyJournal> getJournal();
 	public List<MyIndustryJob> getIndustryJobs();
@@ -66,7 +66,7 @@ public interface OwnerType extends Comparable<OwnerType> {
 	public void setIndustryJobs(final List<MyIndustryJob> industryJobs);
 	public void setTransactions(final Set<MyTransaction> transactions);
 	public void setJournal(final Set<MyJournal> journal);
-	public void setMarketOrders(final List<MyMarketOrder> marketOrders);
+	public void setMarketOrders(final Set<MyMarketOrder> marketOrders);
 	public void setContracts(final Map<MyContract, List<MyContractItem>> contracts);
 	public void setAssets(final List<MyAsset> assets);
 	public void setAccountBalances(List<MyAccountBalance> accountBalances);

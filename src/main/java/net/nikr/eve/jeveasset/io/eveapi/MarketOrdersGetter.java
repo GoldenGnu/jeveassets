@@ -24,7 +24,6 @@ import com.beimin.eveapi.exception.ApiException;
 import com.beimin.eveapi.parser.character.CharMarketOrdersParser;
 import com.beimin.eveapi.parser.corporation.CorpMarketOrdersParser;
 import com.beimin.eveapi.response.shared.MarketOrdersResponse;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -143,23 +142,17 @@ public class MarketOrdersGetter extends AbstractApiGetter<MarketOrdersResponse> 
 
 	@Override
 	protected void setData(final MarketOrdersResponse response) {
-		List<MyMarketOrder> marketOrders = EveApiConverter.toMarketOrders(response.getAll(), getOwner());
+		getOwner().setMarketOrders(EveApiConverter.toMarketOrders(response.getAll(), getOwner(), saveHistory));
 		if (saveHistory) {
-			Set<MyMarketOrder> marketOrdersUnique = new HashSet<MyMarketOrder>();
-			marketOrdersUnique.addAll(marketOrders); //Add new
-			marketOrdersUnique.addAll(getOwner().getMarketOrders()); //Add old (Keep new, if equal to old)
-			getOwner().setMarketOrders(new ArrayList<MyMarketOrder>(marketOrdersUnique));
 			//Save updated market orders
 			Set<Long> updated = updatedByOwner.get(getOwner().getOwnerID());
 			if (updated == null) {
 				updated = new HashSet<Long>();
 				updatedByOwner.put(getOwner().getOwnerID(), updated);
 			}
-			for (MyMarketOrder marketOrder : marketOrders) {
+			for (MyMarketOrder marketOrder : getOwner().getMarketOrders()) {
 				updated.add(marketOrder.getOrderID());
 			}
-		} else {
-			getOwner().setMarketOrders(marketOrders);
 		}
 	}
 

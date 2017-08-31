@@ -25,7 +25,6 @@ import com.beimin.eveapi.parser.character.CharWalletJournalParser;
 import com.beimin.eveapi.parser.corporation.CorpWalletJournalParser;
 import com.beimin.eveapi.response.shared.WalletJournalResponse;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import net.nikr.eve.jeveasset.data.api.accounts.EveApiAccessMask;
@@ -55,15 +54,6 @@ public class JournalGetter extends AbstractApiAccountKeyGetter<WalletJournalResp
 	}
 
 	@Override
-	protected Set<MyJournal> get() {
-		if (saveHistory) {
-			return new HashSet<MyJournal>(getOwner().getJournal());
-		} else {
-			return new HashSet<MyJournal>();
-		}
-	}
-
-	@Override
 	protected WalletJournalResponse getResponse(final boolean bCorp, final int accountKey, final long fromID, final int rowCount) throws ApiException {
 		if (bCorp) {
 			return new CorpWalletJournalParser()
@@ -81,7 +71,7 @@ public class JournalGetter extends AbstractApiAccountKeyGetter<WalletJournalResp
 
 	@Override
 	protected Set<MyJournal> convertData(final WalletJournalResponse response, final int accountKey) {
-		return EveApiConverter.toJournal(response.getAll(), getOwner(), accountKey);
+		return EveApiConverter.toJournal(response.getAll(), getOwner(), accountKey, saveHistory);
 	}
 
 	@Override

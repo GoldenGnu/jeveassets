@@ -110,27 +110,27 @@ public final class EveKitConverter extends DataConverter {
 		return convertRawIndustryJobs(rawIndustryJobs, owner);
 	}
 
-	public static Set<MyJournal> toJournals(List<WalletJournal> responses, OwnerType owner) {
+	public static Set<MyJournal> toJournals(List<WalletJournal> responses, OwnerType owner, boolean saveHistory) {
 		List<RawJournal> rawIndustryJobs = new ArrayList<RawJournal>();
 		for (WalletJournal response : responses) {
 			rawIndustryJobs.add(new RawJournal(response));
 		}
-		return convertRawJournals(rawIndustryJobs, owner);
+		return convertRawJournals(rawIndustryJobs, owner, saveHistory);
 	}
 
-	public static List<MyMarketOrder> toMarketOrders(List<MarketOrder> responses, OwnerType owner) {
+	public static Set<MyMarketOrder> toMarketOrders(List<MarketOrder> responses, OwnerType owner, boolean saveHistory) {
 		List<RawMarketOrder> rawMarketOrders = new ArrayList<RawMarketOrder>();
 		for (MarketOrder response : responses) {
 			rawMarketOrders.add(new RawMarketOrder(response, owner.isCorporation()));
 		}
-		return convertRawMarketOrders(rawMarketOrders, owner);
+		return convertRawMarketOrders(rawMarketOrders, owner, saveHistory);
 	}
 
-	public static Set<MyTransaction> toTransactions(List<WalletTransaction> responses, OwnerType owner) {
+	public static Set<MyTransaction> toTransactions(List<WalletTransaction> responses, OwnerType owner, boolean saveHistory) {
 		List<RawTransaction> rawTransactions = new ArrayList<RawTransaction>();
 		for (WalletTransaction response : responses) {
 			rawTransactions.add(new RawTransaction(response));
 		}
-		return convertRawTransactions(rawTransactions, owner);
+		return convertRawTransactions(rawTransactions, owner, saveHistory);
 	}
 }

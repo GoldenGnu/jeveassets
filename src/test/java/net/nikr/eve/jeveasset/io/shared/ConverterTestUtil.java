@@ -157,7 +157,7 @@ public class ConverterTestUtil {
 
 		//MarketOrder
 		MyMarketOrder saveMyMarketOrder = getMyMarketOrder(owner, setNull, setValues, options);
-		owner.setMarketOrders(Collections.singletonList(saveMyMarketOrder));
+		owner.setMarketOrders(Collections.singleton(saveMyMarketOrder));
 
 		//Transaction
 		MyTransaction saveMyTransaction = getMyTransaction(owner, setNull, setValues, options);
@@ -347,7 +347,7 @@ public class ConverterTestUtil {
 
 		//MarketOrder
 		assertEquals(esiOwner.getMarketOrders().size(), 1);
-		MyMarketOrder loadMyMarketOrder = esiOwner.getMarketOrders().get(0);
+		MyMarketOrder loadMyMarketOrder = esiOwner.getMarketOrders().iterator().next();
 		testValues(loadMyMarketOrder, options, setNull ? CharacterOrdersResponse.class : null, false);
 
 		//MarketOrder

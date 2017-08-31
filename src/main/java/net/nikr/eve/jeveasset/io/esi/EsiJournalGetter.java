@@ -30,8 +30,10 @@ import net.troja.eve.esi.model.CharacterWalletJournalResponse;
 
 public class EsiJournalGetter extends AbstractEsiGetter {
 
-	@Override
-	public void load(UpdateTask updateTask, List<EsiOwner> owners) {
+	private boolean saveHistory;
+
+	public void load(UpdateTask updateTask, List<EsiOwner> owners, boolean saveHistory) {
+		this.saveHistory = saveHistory;
 		super.load(updateTask, owners);
 	}
 
@@ -39,7 +41,7 @@ public class EsiJournalGetter extends AbstractEsiGetter {
 	protected void get(EsiOwner owner) throws ApiException {
 		Long fromID = null;
 		List<CharacterWalletJournalResponse> journals = getWalletApiAuth().getCharactersCharacterIdWalletJournal((int) owner.getOwnerID(), DATASOURCE, fromID, null, null, null);
-		owner.setJournal(EsiConverter.toJournals(journals, owner, 1000));
+		owner.setJournal(EsiConverter.toJournals(journals, owner, 1000, saveHistory));
 	}
 
 	@Override

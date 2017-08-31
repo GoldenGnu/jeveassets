@@ -88,12 +88,12 @@ public class EsiConverter extends DataConverter {
 		return convertRawIndustryJobs(rawIndustryJobs, owner);
 	}
 
-	public static Set<MyJournal> toJournals(List<CharacterWalletJournalResponse> responses, OwnerType owner, Integer accountKey) {
+	public static Set<MyJournal> toJournals(List<CharacterWalletJournalResponse> responses, OwnerType owner, Integer accountKey, boolean saveHistory) {
 		List<RawJournal> rawIndustryJobs = new ArrayList<RawJournal>();
 		for (CharacterWalletJournalResponse response : responses) {
 			rawIndustryJobs.add(new RawJournal(response, accountKey));
 		}
-		return convertRawJournals(rawIndustryJobs, owner);
+		return convertRawJournals(rawIndustryJobs, owner, saveHistory);
 	}
 
 	public static Map<MyContract, List<MyContractItem>> toContracts(List<CharacterContractsResponse> responses, OwnerType owner) {
@@ -112,20 +112,20 @@ public class EsiConverter extends DataConverter {
 		return convertRawContractItems(contract, rawContractItems, owner);
 	}
 
-	public static List<MyMarketOrder> toMarketOrders(List<CharacterOrdersResponse> responses, OwnerType owner) {
+	public static Set<MyMarketOrder> toMarketOrders(List<CharacterOrdersResponse> responses, OwnerType owner, boolean saveHistory) {
 		List<RawMarketOrder> rawMarketOrders = new ArrayList<RawMarketOrder>();
 		for (CharacterOrdersResponse response : responses) {
 			rawMarketOrders.add(new RawMarketOrder(response));
 		}
-		return convertRawMarketOrders(rawMarketOrders, owner);
+		return convertRawMarketOrders(rawMarketOrders, owner, saveHistory);
 	}
 
-	public static Set<MyTransaction> toTransaction(List<CharacterWalletTransactionsResponse> responses, OwnerType owner, Integer accountKey) {
+	public static Set<MyTransaction> toTransaction(List<CharacterWalletTransactionsResponse> responses, OwnerType owner, Integer accountKey, boolean saveHistory) {
 		List<RawTransaction> rawTransactions = new ArrayList<RawTransaction>();
 		for (CharacterWalletTransactionsResponse response : responses) {
 			rawTransactions.add(new RawTransaction(response, accountKey));
 		}
-		return convertRawTransactions(rawTransactions, owner);
+		return convertRawTransactions(rawTransactions, owner, saveHistory);
 	}
 
 }

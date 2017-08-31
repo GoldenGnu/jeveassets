@@ -121,7 +121,7 @@ public class EveApiConverterTest extends TestUtil {
 		for (ConverterTestOptions options : ConverterTestOptionsGetter.getConverterOptions()) {
 			JournalEntry journalEntry = new JournalEntry();
 			ConverterTestUtil.setValues(journalEntry, options);
-			Set<MyJournal> journals = EveApiConverter.toJournal(Collections.singletonList(journalEntry), ConverterTestUtil.getEveApiOwner(options), options.getInteger());
+			Set<MyJournal> journals = EveApiConverter.toJournal(Collections.singletonList(journalEntry), ConverterTestUtil.getEveApiOwner(options), options.getInteger(), false);
 			ConverterTestUtil.testValues(journals.iterator().next(), options);
 		}
 	}
@@ -151,8 +151,8 @@ public class EveApiConverterTest extends TestUtil {
 		for (ConverterTestOptions options : ConverterTestOptionsGetter.getConverterOptions()) {
 			MarketOrder marketOrder = new MarketOrder();
 			ConverterTestUtil.setValues(marketOrder, options);
-			List<MyMarketOrder> marketOrders = EveApiConverter.toMarketOrders(Collections.singletonList(marketOrder), ConverterTestUtil.getEveApiOwner(options));
-			ConverterTestUtil.testValues(marketOrders.get(0), options);
+			Set<MyMarketOrder> marketOrders = EveApiConverter.toMarketOrders(Collections.singletonList(marketOrder), ConverterTestUtil.getEveApiOwner(options), false);
+			ConverterTestUtil.testValues(marketOrders.iterator().next(), options);
 		}
 	}
 
@@ -161,7 +161,7 @@ public class EveApiConverterTest extends TestUtil {
 		for (ConverterTestOptions options : ConverterTestOptionsGetter.getConverterOptions()) {
 			WalletTransaction transaction = new WalletTransaction();
 			ConverterTestUtil.setValues(transaction, options);
-			Set<MyTransaction> transactions = EveApiConverter.toTransactions(Collections.singletonList(transaction), ConverterTestUtil.getEveApiOwner(options), options.getInteger());
+			Set<MyTransaction> transactions = EveApiConverter.toTransactions(Collections.singletonList(transaction), ConverterTestUtil.getEveApiOwner(options), options.getInteger(), false);
 			ConverterTestUtil.testValues(transactions.iterator().next(), options);
 		}
 	}

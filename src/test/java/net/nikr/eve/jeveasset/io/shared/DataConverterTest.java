@@ -20,10 +20,12 @@
  */
 package net.nikr.eve.jeveasset.io.shared;
 
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
@@ -46,6 +48,9 @@ import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder;
 import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
 import net.nikr.eve.jeveasset.data.api.raw.RawAsset;
 import net.nikr.eve.jeveasset.data.api.raw.RawContract;
+import net.nikr.eve.jeveasset.data.api.raw.RawJournal;
+import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder;
+import net.nikr.eve.jeveasset.data.api.raw.RawTransaction;
 import net.nikr.eve.jeveasset.i18n.General;
 import org.junit.Test;
 
@@ -232,10 +237,40 @@ public class DataConverterTest extends TestUtil {
 	@Test
 	public void testConvertRawJournals() {
 		for (ConverterTestOptions options : ConverterTestOptionsGetter.getConverterOptions()) {
-			Set<MyJournal> journals = DataConverter.convertRawJournals(Collections.singletonList(ConverterTestUtil.getRawJournal(false, options)), ConverterTestUtil.getEsiOwner(options));
+			Set<MyJournal> journals = DataConverter.convertRawJournals(Collections.singletonList(ConverterTestUtil.getRawJournal(false, options)), ConverterTestUtil.getEsiOwner(options), false);
 			ConverterTestUtil.testValues(journals.iterator().next(), options);
 		}
+	}
 
+	@Test
+	public void testConvertRawJournalsHistory() {
+		testConvertRawJournalsHistory(true);
+		testConvertRawJournalsHistory(false);
+	}
+
+	public void testConvertRawJournalsHistory(boolean saveHistory) {
+		for (ConverterTestOptions options : ConverterTestOptionsGetter.getConverterOptions()) {
+			EsiOwner esiOwner = ConverterTestUtil.getEsiOwner(options);
+			for (long i = 1; i <= 10; i++) {
+				RawJournal rawJournal = ConverterTestUtil.getRawJournal(true, options);
+				MyJournal myJournal = DataConverter.toMyJournal(rawJournal, esiOwner);
+				myJournal.setRefID(i);
+				esiOwner.getJournal().add(myJournal);
+			}
+			List<RawJournal> rawJournals = new ArrayList<RawJournal>();
+			for (long i = 11; i <= 20; i++) {
+				RawJournal rawJournal = ConverterTestUtil.getRawJournal(true, options);
+				rawJournal.setRefID(i);
+				rawJournals.add(rawJournal);
+			}
+			esiOwner.setJournal(DataConverter.convertRawJournals(rawJournals, esiOwner, saveHistory));
+			if (saveHistory) {
+				assertThat(esiOwner.getJournal().size(), is(20));
+			} else {
+				assertThat(esiOwner.getJournal().size(), is(10));
+				assertTrue(esiOwner.getJournal().iterator().next().getRefID() > 10L);
+			}
+		}
 	}
 
 	@Test
@@ -249,8 +284,40 @@ public class DataConverterTest extends TestUtil {
 	@Test
 	public void testConvertRawMarketOrders() {
 		for (ConverterTestOptions options : ConverterTestOptionsGetter.getConverterOptions()) {
-			List<MyMarketOrder> marketOrders = DataConverter.convertRawMarketOrders(Collections.singletonList(ConverterTestUtil.getRawMarketOrder(false, options)), ConverterTestUtil.getEsiOwner(options));
-			ConverterTestUtil.testValues(marketOrders.get(0), options);
+			Set<MyMarketOrder> marketOrders = DataConverter.convertRawMarketOrders(Collections.singletonList(ConverterTestUtil.getRawMarketOrder(false, options)), ConverterTestUtil.getEsiOwner(options), false);
+			ConverterTestUtil.testValues(marketOrders.iterator().next(), options);
+		}
+	}
+
+	@Test
+	public void testConvertRawMarketOrdersHistory() {
+		testConvertRawMarketOrdersHistory(true);
+		testConvertRawMarketOrdersHistory(false);
+	}
+
+	public void testConvertRawMarketOrdersHistory(boolean saveHistory) {
+		for (ConverterTestOptions options : ConverterTestOptionsGetter.getConverterOptions()) {
+			EsiOwner esiOwner = ConverterTestUtil.getEsiOwner(options);
+			for (long i = 1; i <= 10; i++) {
+				RawMarketOrder rawMarketOrder = ConverterTestUtil.getRawMarketOrder(true, options);
+				MyMarketOrder myMarketOrder = DataConverter.toMyMarketOrder(rawMarketOrder, esiOwner);
+				myMarketOrder.setOrderID(i);
+				esiOwner.getMarketOrders().add(myMarketOrder);
+				
+			}
+			List<RawMarketOrder> rawMarketOrders = new ArrayList<RawMarketOrder>();
+			for (long i = 11; i <= 20; i++) {
+				RawMarketOrder rawMarketOrder = ConverterTestUtil.getRawMarketOrder(true, options);
+				rawMarketOrder.setOrderID(i);
+				rawMarketOrders.add(rawMarketOrder);
+			}
+			esiOwner.setMarketOrders(DataConverter.convertRawMarketOrders(rawMarketOrders, esiOwner, saveHistory));
+			if (saveHistory) {
+				assertThat(esiOwner.getMarketOrders().size(), is(20));
+			} else {
+				assertThat(esiOwner.getMarketOrders().size(), is(10));
+				assertTrue(esiOwner.getMarketOrders().iterator().next().getOrderID() > 10L);
+			}
 		}
 	}
 
@@ -266,8 +333,39 @@ public class DataConverterTest extends TestUtil {
 	@Test
 	public void testConvertRawTransactions() {
 		for (ConverterTestOptions options : ConverterTestOptionsGetter.getConverterOptions()) {
-			Set<MyTransaction> transactions = DataConverter.convertRawTransactions(Collections.singletonList(ConverterTestUtil.getRawTransaction(false, options)), ConverterTestUtil.getEsiOwner(options));
+			Set<MyTransaction> transactions = DataConverter.convertRawTransactions(Collections.singletonList(ConverterTestUtil.getRawTransaction(false, options)), ConverterTestUtil.getEsiOwner(options), false);
 			ConverterTestUtil.testValues(transactions.iterator().next(), options);
+		}
+	}
+
+	@Test
+	public void testConvertRawTransactionsHistory() {
+		testConvertRawTransactionsHistory(true);
+		testConvertRawTransactionsHistory(false);
+	}
+
+	public void testConvertRawTransactionsHistory(boolean saveHistory) {
+		for (ConverterTestOptions options : ConverterTestOptionsGetter.getConverterOptions()) {
+			EsiOwner esiOwner = ConverterTestUtil.getEsiOwner(options);
+			for (long i = 1; i <= 10; i++) {
+				RawTransaction rawTransaction = ConverterTestUtil.getRawTransaction(true, options);
+				MyTransaction myTransaction = DataConverter.toMyTransaction(rawTransaction, esiOwner);
+				myTransaction.setTransactionID(i);
+				esiOwner.getTransactions().add(myTransaction);
+			}
+			List<RawTransaction> rawTransactions = new ArrayList<RawTransaction>();
+			for (long i = 11; i <= 20; i++) {
+				RawTransaction rawTransaction = ConverterTestUtil.getRawTransaction(true, options);
+				rawTransaction.setTransactionID(i);
+				rawTransactions.add(rawTransaction);
+			}
+			esiOwner.setTransactions(DataConverter.convertRawTransactions(rawTransactions, esiOwner, saveHistory));
+			if (saveHistory) {
+				assertThat(esiOwner.getTransactions().size(), is(20));
+			} else {
+				assertThat(esiOwner.getTransactions().size(), is(10));
+				assertTrue(esiOwner.getTransactions().iterator().next().getTransactionID() > 10L);
+			}
 		}
 	}
 

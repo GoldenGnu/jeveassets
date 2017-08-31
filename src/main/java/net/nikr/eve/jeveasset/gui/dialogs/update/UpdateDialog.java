@@ -834,7 +834,7 @@ public class UpdateDialog extends JDialogCentered {
 			if (EsiScopes.MARKET_ORDERS.isEnabled() && !program.getProfileManager().getEsiOwners().isEmpty()) {
 				setIcon(Images.MISC_ESI.getIcon());
 				EsiMarketOrdersGetter esiMarketOrdersGetter = new EsiMarketOrdersGetter();
-				esiMarketOrdersGetter.load(this, program.getProfileManager().getEsiOwners());
+				esiMarketOrdersGetter.load(this, program.getProfileManager().getEsiOwners(), Settings.get().isMarketOrderHistory());
 			}
 		}
 	}
@@ -863,7 +863,7 @@ public class UpdateDialog extends JDialogCentered {
 			if (EsiScopes.JOURNAL.isEnabled() && !program.getProfileManager().getEsiOwners().isEmpty()) {
 				setIcon(Images.MISC_ESI.getIcon());
 				EsiJournalGetter esiJournalGetter = new EsiJournalGetter();
-				esiJournalGetter.load(this, program.getProfileManager().getEsiOwners());
+				esiJournalGetter.load(this, program.getProfileManager().getEsiOwners(), Settings.get().isJournalHistory());
 			}
 		}
 	}
@@ -892,7 +892,7 @@ public class UpdateDialog extends JDialogCentered {
 			if (EsiScopes.TRANSACTIONS.isEnabled() && !program.getProfileManager().getEsiOwners().isEmpty()) {
 				setIcon(Images.MISC_ESI.getIcon());
 				EsiTransactionsGetter esiTransactionsGetter = new EsiTransactionsGetter();
-				esiTransactionsGetter.load(this, program.getProfileManager().getEsiOwners());
+				esiTransactionsGetter.load(this, program.getProfileManager().getEsiOwners(), Settings.get().isTransactionHistory());
 			}
 		}
 	}

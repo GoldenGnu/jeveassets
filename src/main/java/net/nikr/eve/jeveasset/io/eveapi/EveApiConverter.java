@@ -89,12 +89,12 @@ public class EveApiConverter extends DataConverter {
 		return convertRawIndustryJobs(rawIndustryJobs, owner);
 	}
 
-	public static Set<MyJournal> toJournal(List<JournalEntry> responses, OwnerType owner, Integer accountKey) {
+	public static Set<MyJournal> toJournal(List<JournalEntry> responses, OwnerType owner, Integer accountKey, boolean saveHistory) {
 		List<RawJournal> rawIndustryJobs = new ArrayList<RawJournal>();
 		for (JournalEntry response : responses) {
 			rawIndustryJobs.add(new RawJournal(response, accountKey));
 		}
-		return convertRawJournals(rawIndustryJobs, owner);
+		return convertRawJournals(rawIndustryJobs, owner, saveHistory);
 	}
 
 	public static Map<MyContract, List<MyContractItem>> toContracts(List<Contract> responses, OwnerType owner) {
@@ -113,19 +113,19 @@ public class EveApiConverter extends DataConverter {
 		return convertRawContractItems(myContract, rawContracts, owner);
 	}
 
-	public static List<MyMarketOrder> toMarketOrders(List<MarketOrder> responses, OwnerType owner) {
+	public static Set<MyMarketOrder> toMarketOrders(List<MarketOrder> responses, OwnerType owner, boolean saveHistory) {
 		List<RawMarketOrder> marketOrders = new ArrayList<RawMarketOrder>();
 		for (MarketOrder response : responses) {
 			marketOrders.add(new RawMarketOrder(response, owner.isCorporation()));
 		}
-		return convertRawMarketOrders(marketOrders, owner);
+		return convertRawMarketOrders(marketOrders, owner, saveHistory);
 	}
 
-	public static Set<MyTransaction> toTransactions(List<WalletTransaction> responses, OwnerType owner, int accountKey) {
+	public static Set<MyTransaction> toTransactions(List<WalletTransaction> responses, OwnerType owner, int accountKey, boolean saveHistory) {
 		List<RawTransaction> transactions = new ArrayList<RawTransaction>();
 		for (WalletTransaction response : responses) {
 			transactions.add(new RawTransaction(response, accountKey));
 		}
-		return convertRawTransactions(transactions, owner);
+		return convertRawTransactions(transactions, owner, saveHistory);
 	}
 }

@@ -42,7 +42,7 @@ import net.nikr.eve.jeveasset.data.settings.Settings;
 public abstract class AbstractOwner implements OwnerType, Comparable<OwnerType> {
 
 	private final List<MyAccountBalance> accountBalances = new ArrayList<MyAccountBalance>();
-	private final List<MyMarketOrder> marketOrders = new ArrayList<MyMarketOrder>();
+	private final Set<MyMarketOrder> marketOrders = new HashSet<MyMarketOrder>();
 	private final Set<MyTransaction> transactions = new HashSet<MyTransaction>();
 	private final Set<MyJournal> journal = new HashSet<MyJournal>();
 	private final List<MyIndustryJob> industryJobs = new ArrayList<MyIndustryJob>();
@@ -268,7 +268,7 @@ public abstract class AbstractOwner implements OwnerType, Comparable<OwnerType> 
 	}
 
 	@Override
-	public final List<MyMarketOrder> getMarketOrders() {
+	public final Set<MyMarketOrder> getMarketOrders() {
 		return marketOrders;
 	}
 
@@ -332,7 +332,7 @@ public abstract class AbstractOwner implements OwnerType, Comparable<OwnerType> 
 	}
 
 	@Override
-	public final void setMarketOrders(List<MyMarketOrder> marketOrders) {
+	public final void setMarketOrders(Set<MyMarketOrder> marketOrders) {
 		this.marketOrders.clear();
 		this.marketOrders.addAll(marketOrders);
 	}

@@ -24,12 +24,9 @@ import enterprises.orbital.evekit.client.invoker.ApiClient;
 import enterprises.orbital.evekit.client.invoker.ApiException;
 import enterprises.orbital.evekit.client.model.WalletJournal;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import net.nikr.eve.jeveasset.data.api.accounts.EveKitAccessMask;
 import net.nikr.eve.jeveasset.data.api.accounts.EveKitOwner;
-import net.nikr.eve.jeveasset.data.api.my.MyJournal;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 
@@ -50,12 +47,7 @@ public class EveKitJournalGetter extends AbstractEveKitListGetter<WalletJournal>
 
 	@Override
 	protected void set(EveKitOwner owner, List<WalletJournal> data) throws ApiException {
-		Set<MyJournal> set = new HashSet<MyJournal>();
-		if (loadCID(owner) != null) { //Old
-			set.addAll(owner.getJournal());
-		}
-		set.addAll(EveKitConverter.toJournals(data, owner)); //New
-		owner.setJournal(set); //All
+		owner.setJournal(EveKitConverter.toJournals(data, owner, loadCID(owner) != null));
 	}
 
 	@Override

@@ -411,7 +411,7 @@ public final class ProfileReader extends AbstractXmlReader {
 
 	private void parseMarketOrders(final Element element, final OwnerType owner) {
 		NodeList marketOrdersNodes = element.getElementsByTagName("markerorders");
-		List<MyMarketOrder> marketOrders = new ArrayList<MyMarketOrder>();
+		Set<MyMarketOrder> marketOrders = new HashSet<MyMarketOrder>();
 		for (int a = 0; a < marketOrdersNodes.getLength(); a++) {
 			Element currentMarketOrdersNode = (Element) marketOrdersNodes.item(a);
 			NodeList marketOrderNodes = currentMarketOrdersNode.getElementsByTagName("markerorder");

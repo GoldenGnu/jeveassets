@@ -24,6 +24,7 @@ package net.nikr.eve.jeveasset.io.eveapi;
 import com.beimin.eveapi.exception.ApiException;
 import com.beimin.eveapi.response.ApiListResponse;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Set;
 
 
@@ -44,7 +45,6 @@ public abstract class AbstractApiAccountKeyGetter<T extends ApiListResponse<?>, 
 		super(taskName, true, false);
 	}
 
-	protected abstract Set<V> get();
 	protected abstract long getId(V v);
 	protected abstract void set(Set<V> values, Date nextUpdate);
 	protected abstract T getResponse(final boolean bCorp, final int accountKey, final long fromID, final int rowCount) throws ApiException;
@@ -53,7 +53,7 @@ public abstract class AbstractApiAccountKeyGetter<T extends ApiListResponse<?>, 
 	//Called for each owner by AbstractApiGetter
 	@Override
 	protected final boolean load(final Date nextUpdate, final boolean updateCorporation, final String updateName) {
-		values = get();
+		values = new HashSet<V>();
 		if (updateCorporation) {
 			boolean ok = false;
 			for (int i = 1000; i <= 1006; i++) { //For each wallet division
