@@ -41,14 +41,14 @@ import net.nikr.eve.jeveasset.data.settings.Settings;
 
 public abstract class AbstractOwner implements OwnerType, Comparable<OwnerType> {
 
-	private final List<MyAccountBalance> accountBalances = new ArrayList<MyAccountBalance>();
-	private final Set<MyMarketOrder> marketOrders = new HashSet<MyMarketOrder>();
-	private final Set<MyTransaction> transactions = new HashSet<MyTransaction>();
-	private final Set<MyJournal> journal = new HashSet<MyJournal>();
-	private final List<MyIndustryJob> industryJobs = new ArrayList<MyIndustryJob>();
-	private final Map<MyContract, List<MyContractItem>> contracts = new HashMap<MyContract, List<MyContractItem>>();
-	private final List<MyAsset> assets = new ArrayList<MyAsset>();
-	private final Map<Long, RawBlueprint> blueprints = new HashMap<Long, RawBlueprint>();
+	private List<MyAccountBalance> accountBalances = new ArrayList<MyAccountBalance>();
+	private Set<MyMarketOrder> marketOrders = new HashSet<MyMarketOrder>();
+	private Set<MyTransaction> transactions = new HashSet<MyTransaction>();
+	private Set<MyJournal> journal = new HashSet<MyJournal>();
+	private List<MyIndustryJob> industryJobs = new ArrayList<MyIndustryJob>();
+	private Map<MyContract, List<MyContractItem>> contracts = new HashMap<MyContract, List<MyContractItem>>();
+	private List<MyAsset> assets = new ArrayList<MyAsset>();
+	private Map<Long, RawBlueprint> blueprints = new HashMap<Long, RawBlueprint>();
 
 	private String ownerName;
 	private long ownerID;
@@ -309,50 +309,42 @@ public abstract class AbstractOwner implements OwnerType, Comparable<OwnerType> 
 
 	@Override
 	public final void setBlueprints(Map<Long, RawBlueprint> blueprints) {
-		this.blueprints.clear();
-		this.blueprints.putAll(blueprints);
+		this.blueprints = blueprints;
 	}
 
 	@Override
 	public final void setIndustryJobs(List<MyIndustryJob> industryJobs) {
-		this.industryJobs.clear();
-		this.industryJobs.addAll(industryJobs);
+		this.industryJobs = industryJobs;
 	}
 
 	@Override
 	public final void setTransactions(Set<MyTransaction> transactions) {
-		this.transactions.clear();
-		this.transactions.addAll(transactions);
+		this.transactions = transactions;
 	}
 
 	@Override
 	public final void setJournal(Set<MyJournal> journal) {
-		this.journal.clear();
-		this.journal.addAll(journal);
+		this.journal = journal;
 	}
 
 	@Override
 	public final void setMarketOrders(Set<MyMarketOrder> marketOrders) {
-		this.marketOrders.clear();
-		this.marketOrders.addAll(marketOrders);
+		this.marketOrders = marketOrders;
 	}
 
 	@Override
 	public final void setContracts(Map<MyContract, List<MyContractItem>> contracts) {
-		this.contracts.clear();
-		this.contracts.putAll(contracts);
+		this.contracts = contracts;
 	}
 
 	@Override
 	public final void setAssets(List<MyAsset> assets) {
-		this.assets.clear();
-		this.assets.addAll(assets);
+		this.assets = assets;
 	}
 
 	@Override
 	public final void setAccountBalances(List<MyAccountBalance> accountBalances) {
-		this.accountBalances.clear();
-		this.accountBalances.addAll(accountBalances);
+		this.accountBalances = accountBalances;
 	}
 
 	@Override
