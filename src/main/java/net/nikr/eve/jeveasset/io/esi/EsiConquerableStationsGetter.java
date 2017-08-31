@@ -52,8 +52,8 @@ public class EsiConquerableStationsGetter extends AbstractEsiGetter {
 		Map<Integer, SovereigntyStructuresResponse> map = new HashMap<Integer, SovereigntyStructuresResponse>();
 		for (SovereigntyStructuresResponse structure : structures) {
 			try {
-				if (structure.getStructureId() == 32226 //Territorial Claim Unit
-						|| structure.getStructureId() == 32458 //Infrastructure Hub
+				if (structure.getStructureTypeId() == 32226 //Territorial Claim Unit
+						|| structure.getStructureTypeId() == 32458 //Infrastructure Hub
 						) {
 					continue;
 				}
@@ -64,7 +64,7 @@ public class EsiConquerableStationsGetter extends AbstractEsiGetter {
 			}
 		}
 		List<Citadel> citadels = new ArrayList<>();
-		List<List<Integer>> batches = splitList(new ArrayList<Integer>(map.keySet()), UNIVERSE_BATCH_SIZE);
+		List<List<Integer>> batches = splitList(map.keySet(), UNIVERSE_BATCH_SIZE);
 		int progress = 0;
 		for (List<Integer> batch : batches) {
 			List<UniverseNamesResponse> stations = getUniverseApiOpen().postUniverseNames(batch, DATASOURCE, System.getProperty("http.agent"), null);

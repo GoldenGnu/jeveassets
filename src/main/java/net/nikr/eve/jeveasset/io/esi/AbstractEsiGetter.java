@@ -21,6 +21,7 @@
 package net.nikr.eve.jeveasset.io.esi;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -64,6 +65,7 @@ public abstract class AbstractEsiGetter {
 	private final ApiClient clientOpen;
 	private final UniverseApi universeApiOpen;
 	private final SovereigntyApi sovereigntyApiOpen;
+	private final CharacterApi characterApiOpen;
 
 	protected AbstractEsiGetter() {
 		clientAuth = new ApiClient();
@@ -78,6 +80,7 @@ public abstract class AbstractEsiGetter {
 		clientOpen = new ApiClient();
 		universeApiOpen = new UniverseApi(clientOpen);
 		sovereigntyApiOpen = new SovereigntyApi(clientOpen);
+		characterApiOpen = new CharacterApi(clientOpen);
 	}
 
 	protected void load(UpdateTask updateTask) {
@@ -221,7 +224,11 @@ public abstract class AbstractEsiGetter {
 		return clientAuth;
 	}
 
-	protected <T> List<List<T>> splitList(List<T> list, final int L) {
+	protected <T> List<List<T>> splitList(Collection<T> list, final int L) {
+		return splitList(new ArrayList<T>(list), L);
+	}
+
+	private <T> List<List<T>> splitList(List<T> list, final int L) {
 		List<List<T>> parts = new ArrayList<List<T>>();
 		final int N = list.size();
 		for (int i = 0; i < N; i += L) {
@@ -230,6 +237,10 @@ public abstract class AbstractEsiGetter {
 			);
 		}
 		return parts;
+	}
+
+	public boolean oneByOneNameRange(long id) {
+		return (id >= 100000000L && id <= 2099999999L) || (id >= 2100000000 && id <= 2112000000);
 	}
 
 	protected SsoApi getSsoApiAuth() {
@@ -266,6 +277,10 @@ public abstract class AbstractEsiGetter {
 
 	public UniverseApi getUniverseApiOpen() {
 		return universeApiOpen;
+	}
+
+	public CharacterApi getCharacterApiOpen() {
+		return characterApiOpen;
 	}
 
 	public SovereigntyApi getSovereigntyApiOpen() {
