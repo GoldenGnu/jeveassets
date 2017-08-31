@@ -139,17 +139,22 @@ public class AccountSeparatorTableCell extends SeparatorTableCell<OwnerType> {
 		boolean canMigrate = false;
 		if (owner.getAccountAPI() == ApiType.EVE_ONLINE) {
 			boolean corp = false; //XXX - When we can migrate corporations to ESI: Remove variable
-			for (Object object : separator.getGroup()) {
-				if (object instanceof EveApiOwner) {
-					EveApiOwner eveApiOwner = (EveApiOwner) object;
-					if (eveApiOwner.isCorporation()) { //XXX - When we can migrate corporations to ESI: Remove
-						corp = true;
-					}
-					if (eveApiOwner.canMigrate()) {
-						canMigrate = true;
-						break;
+			try {
+				separatorList.getReadWriteLock().readLock().lock();
+				for (Object object : separator.getGroup()) {
+					if (object instanceof EveApiOwner) {
+						EveApiOwner eveApiOwner = (EveApiOwner) object;
+						if (eveApiOwner.isCorporation()) { //XXX - When we can migrate corporations to ESI: Remove
+							corp = true;
+						}
+						if (eveApiOwner.canMigrate()) {
+							canMigrate = true;
+							break;
+						}
 					}
 				}
+			} finally {
+				separatorList.getReadWriteLock().readLock().unlock();
 			}
 			allMigrated = !canMigrate && !corp; //XXX - When we can migrate corporations to ESI: Remove !corp
 			jMigrate.setVisible(!corp); //XXX - When we can migrate corporations to ESI: Set to true
