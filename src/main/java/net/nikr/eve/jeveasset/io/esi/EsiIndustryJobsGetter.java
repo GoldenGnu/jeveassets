@@ -61,4 +61,13 @@ public class EsiIndustryJobsGetter extends AbstractEsiGetter {
 		return owner.isIndustryJobs();
 	}
 
+	@Override
+	protected boolean enabled(EsiOwner owner) {
+		if (owner.isCorporation()) {
+			return false;
+		} else {
+			return EsiScopes.CHARACTER_INDUSTRY_JOBS.isEnabled();
+		}
+	}
+
 }

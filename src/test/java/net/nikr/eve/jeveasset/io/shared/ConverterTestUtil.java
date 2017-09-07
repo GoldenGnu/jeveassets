@@ -71,6 +71,7 @@ import net.nikr.eve.jeveasset.data.settings.tag.Tags;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.Percent;
 import net.nikr.eve.jeveasset.io.esi.EsiCallbackURL;
 import net.troja.eve.esi.ApiClient;
+import net.troja.eve.esi.auth.SsoScopes;
 import net.troja.eve.esi.model.CharacterAssetsResponse;
 import net.troja.eve.esi.model.CharacterBlueprintsResponse;
 import net.troja.eve.esi.model.CharacterContractsItemsResponse;
@@ -126,6 +127,8 @@ public class ConverterTestUtil {
 		setValues(esiOwner, options);
 		if (data) {
 			setData(esiOwner, setNull, setValues, options);
+			esiOwner.setRoles(Collections.singleton("Director"));
+			esiOwner.setScopes(SsoScopes.ESI_CHARACTERS_READ_CORPORATION_ROLES_V1);
 		}
 		return esiOwner;
 	}

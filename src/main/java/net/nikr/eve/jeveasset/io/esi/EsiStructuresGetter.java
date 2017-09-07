@@ -105,6 +105,15 @@ public class EsiStructuresGetter extends AbstractEsiGetter {
 	}
 
 	@Override
+	protected boolean enabled(EsiOwner owner) {
+		if (owner.isCorporation()) {
+			return false;
+		} else {
+			return EsiScopes.CHARACTER_STRUCTURES.isEnabled();
+		}
+	}
+
+	@Override
 	protected String getTaskName() {
 		return "Structures";
 	}

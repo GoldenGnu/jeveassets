@@ -21,16 +21,18 @@
 package net.nikr.eve.jeveasset.data.raw;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import net.nikr.eve.jeveasset.TestUtil;
 import net.nikr.eve.jeveasset.data.api.raw.RawJournal;
 import net.nikr.eve.jeveasset.data.api.raw.RawJournal.JournalPartyType;
+import net.nikr.eve.jeveasset.data.api.raw.RawJournalExtraInfo;
 import net.nikr.eve.jeveasset.data.api.raw.RawJournalRefType;
 import net.nikr.eve.jeveasset.io.shared.RawConverter;
+import net.troja.eve.esi.model.CharacterWalletJournalExtraInfoResponse;
 import net.troja.eve.esi.model.CharacterWalletJournalResponse;
-import net.troja.eve.esi.model.CharacterWalletJournalResponse.FirstPartyTypeEnum;
-import net.troja.eve.esi.model.CharacterWalletJournalResponse.RefTypeEnum;
-import net.troja.eve.esi.model.CharacterWalletJournalResponse.SecondPartyTypeEnum;
+import net.troja.eve.esi.model.CorporationWalletJournalExtraInfoResponse;
+import net.troja.eve.esi.model.CorporationWalletJournalResponse;
 import org.junit.Test;
 
 
@@ -40,18 +42,36 @@ public class RawJournalTest extends TestUtil {
 	@Test
 	public void rawJournalTest() {
 		RawUtil.compare(RawJournal.class, CharacterWalletJournalResponse.class);
-		RawUtil.compare(JournalPartyType.values(), FirstPartyTypeEnum.values());
-		RawUtil.compare(JournalPartyType.values(), SecondPartyTypeEnum.values());
-		RefTypeEnum[] refTypes = RefTypeEnum.values();
-		assertEquals(29, refTypes.length);
-		int undefined = 0;
-		for (RefTypeEnum refType : refTypes) {
+		RawUtil.compare(JournalPartyType.values(), CharacterWalletJournalResponse.FirstPartyTypeEnum.values());
+		RawUtil.compare(JournalPartyType.values(), CharacterWalletJournalResponse.SecondPartyTypeEnum.values());
+		RawUtil.compare(RawJournalExtraInfo.class, CharacterWalletJournalExtraInfoResponse.class);
+		RawUtil.compare(JournalPartyType.values(), CorporationWalletJournalResponse.SecondPartyTypeEnum.values());
+		RawUtil.compare(JournalPartyType.values(), CorporationWalletJournalResponse.SecondPartyTypeEnum.values());
+		RawUtil.compare(RawJournalExtraInfo.class, CorporationWalletJournalExtraInfoResponse.class);
+
+		int undefined;
+		//Character RefType
+		assertEquals(29, CharacterWalletJournalResponse.RefTypeEnum.values().length);
+		undefined = 0;
+		for (CharacterWalletJournalResponse.RefTypeEnum refType : CharacterWalletJournalResponse.RefTypeEnum.values()) {
 			RawJournalRefType rawJournalRefType = RawConverter.toJournalRefType(refType);
+			assertNotNull("No value for: " + refType.name(), rawJournalRefType);
 			if (rawJournalRefType == RawJournalRefType.UNDEFINED) {
 				undefined++;
 			}
 		}
 		assertEquals(1, undefined);
+
+		//Corporation RefType
+		assertEquals(112, CorporationWalletJournalResponse.RefTypeEnum.values().length);
+		undefined = 0;
+		for (CorporationWalletJournalResponse.RefTypeEnum refType : CorporationWalletJournalResponse.RefTypeEnum.values()) {
+			RawJournalRefType rawJournalRefType = RawConverter.toJournalRefType(refType);
+			assertNotNull("No value for: " + refType.name(), rawJournalRefType);
+			if (rawJournalRefType == RawJournalRefType.UNDEFINED) {
+				undefined++;
+			}
+		}
+		assertEquals(0, undefined);
 	}
-	
 }

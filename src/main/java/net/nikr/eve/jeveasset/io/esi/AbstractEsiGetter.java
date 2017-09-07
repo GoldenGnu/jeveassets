@@ -128,6 +128,10 @@ public abstract class AbstractEsiGetter {
 		error = null;
 		ApiClient client = client(owner);
 		try {
+			//Siliently ignore disabled scopes
+			if (!enabled(owner)) {
+				return;
+			}
 			//Check if the Access Mask include this API
 			if (owner != null && !inScope(owner)) {
 				addError("	ESI: " + getTaskName() + " failed to update for: " + getOwnerName(owner) + " (NOT ENOUGH ACCESS PRIVILEGES)");
@@ -160,25 +164,25 @@ public abstract class AbstractEsiGetter {
 		} catch (ApiException ex) {
 			switch (ex.getCode()) {
 				case 403:
-					addError("	ESI: " + getTaskName() + " failed to update for: " + getOwnerName(owner) + " (FORBIDDEN)");
+					addError("	ESI: " + getTaskName() + " failed to update for: " + getOwnerName(owner) + " (403)");
 					if (updateTask != null) {
 						updateTask.addError(getOwnerName(owner), "ESI: Forbidden");
 					}
 					break;
 				case 500:
-					addError("	ESI: " + getTaskName() + " failed to update for: " + getOwnerName(owner) + " (INTERNAL SERVER ERROR)");
+					addError("	ESI: " + getTaskName() + " failed to update for: " + getOwnerName(owner) + " (500)");
 					if (updateTask != null) {
 						updateTask.addError(getOwnerName(owner), "ESI: Internal server error");
 					}
 					break;
 				case 502:
-					addError("	ESI: " + getTaskName() + " failed to update for: " + getOwnerName(owner) + " (SERVER OFFLINE)");
+					addError("	ESI: " + getTaskName() + " failed to update for: " + getOwnerName(owner) + " (502)");
 					if (updateTask != null) {
 						updateTask.addError(getOwnerName(owner), "ESI: Server offline");
 					}
 					break;
 				case 503:
-					addError("	ESI: " + getTaskName() + " failed to update for: " + getOwnerName(owner) + " (SERVER OFFLINE)");
+					addError("	ESI: " + getTaskName() + " failed to update for: " + getOwnerName(owner) + " (503)");
 					if (updateTask != null) {
 						updateTask.addError(getOwnerName(owner), "ESI: Server offline");
 					}
@@ -207,6 +211,8 @@ public abstract class AbstractEsiGetter {
 	protected abstract Date getNextUpdate(EsiOwner owner);
 
 	protected abstract boolean inScope(EsiOwner owner);
+
+	protected abstract boolean enabled(EsiOwner owner);
 
 	private String getOwnerName(EsiOwner owner) {
 		if (owner != null) {

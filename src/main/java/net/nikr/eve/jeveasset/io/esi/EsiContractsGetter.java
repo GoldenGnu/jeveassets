@@ -70,4 +70,13 @@ public class EsiContractsGetter extends AbstractEsiGetter {
 		return owner.isContracts();
 	}
 
+	@Override
+	protected boolean enabled(EsiOwner owner) {
+		if (owner.isCorporation()) {
+			return false;
+		} else {
+			return EsiScopes.CHARACTER_CONTRACTS.isEnabled();
+		}
+	}
+
 }

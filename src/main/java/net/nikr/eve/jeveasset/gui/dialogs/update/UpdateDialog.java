@@ -744,7 +744,7 @@ public class UpdateDialog extends JDialogCentered {
 				eveKitLocationsGetter.load(this, program.getProfileManager().getEveKitOwners());
 			}
 			//Esi
-			if (EsiScopes.ASSETS.isEnabled() && !program.getProfileManager().getEsiOwners().isEmpty()) {
+			if (EsiScopes.CHARACTER_ASSETS.isEnabled() && !program.getProfileManager().getEsiOwners().isEmpty()) {
 				setIcon(Images.MISC_ESI.getIcon());
 				EsiAssetsGetter esiAssetsGetter = new EsiAssetsGetter();
 				esiAssetsGetter.load(this, program.getProfileManager().getEsiOwners());
@@ -773,7 +773,7 @@ public class UpdateDialog extends JDialogCentered {
 				eveKitAccountBalanceGetter.load(this, program.getProfileManager().getEveKitOwners());
 			}
 			//Esi
-			if (EsiScopes.ACCOUNT_BALANCE.isEnabled() && !program.getProfileManager().getEsiOwners().isEmpty()) {
+			if ((EsiScopes.CHARACTER_WALLET.isEnabled() || EsiScopes.CORPORATION_WALLET.isEnabled()) && !program.getProfileManager().getEsiOwners().isEmpty()) {
 				setIcon(Images.MISC_ESI.getIcon());
 				EsiAccountBalanceGetter esiAccountBalanceGetter = new EsiAccountBalanceGetter();
 				esiAccountBalanceGetter.load(this, program.getProfileManager().getEsiOwners());
@@ -802,7 +802,7 @@ public class UpdateDialog extends JDialogCentered {
 				eveKitIndustryJobsGetter.load(this, program.getProfileManager().getEveKitOwners());
 			}
 			//Esi
-			if (EsiScopes.INDUSTRY_JOBS.isEnabled() && !program.getProfileManager().getEsiOwners().isEmpty()) {
+			if (EsiScopes.CHARACTER_INDUSTRY_JOBS.isEnabled() && !program.getProfileManager().getEsiOwners().isEmpty()) {
 				setIcon(Images.MISC_ESI.getIcon());
 				EsiIndustryJobsGetter esiIndustryJobsGetter = new EsiIndustryJobsGetter();
 				esiIndustryJobsGetter.load(this, program.getProfileManager().getEsiOwners());
@@ -831,7 +831,7 @@ public class UpdateDialog extends JDialogCentered {
 				eveKitMarketOrdersGetter.load(this, program.getProfileManager().getEveKitOwners());
 			}
 			//Esi
-			if (EsiScopes.MARKET_ORDERS.isEnabled() && !program.getProfileManager().getEsiOwners().isEmpty()) {
+			if (EsiScopes.CHARACTER_MARKET_ORDERS.isEnabled() && !program.getProfileManager().getEsiOwners().isEmpty()) {
 				setIcon(Images.MISC_ESI.getIcon());
 				EsiMarketOrdersGetter esiMarketOrdersGetter = new EsiMarketOrdersGetter();
 				esiMarketOrdersGetter.load(this, program.getProfileManager().getEsiOwners(), Settings.get().isMarketOrderHistory());
@@ -860,7 +860,7 @@ public class UpdateDialog extends JDialogCentered {
 				eveKitJournalGetter.load(this, program.getProfileManager().getEveKitOwners());
 			}
 			//Esi
-			if (EsiScopes.JOURNAL.isEnabled() && !program.getProfileManager().getEsiOwners().isEmpty()) {
+			if ((EsiScopes.CHARACTER_WALLET.isEnabled() || EsiScopes.CORPORATION_WALLET.isEnabled()) && !program.getProfileManager().getEsiOwners().isEmpty()) {
 				setIcon(Images.MISC_ESI.getIcon());
 				EsiJournalGetter esiJournalGetter = new EsiJournalGetter();
 				esiJournalGetter.load(this, program.getProfileManager().getEsiOwners(), Settings.get().isJournalHistory());
@@ -889,7 +889,8 @@ public class UpdateDialog extends JDialogCentered {
 				eveKitTransactionsGetter.load(this, program.getProfileManager().getEveKitOwners());
 			}
 			//Esi
-			if (EsiScopes.TRANSACTIONS.isEnabled() && !program.getProfileManager().getEsiOwners().isEmpty()) {
+			//if ((EsiScopes.CHARACTER_WALLET.isEnabled() || EsiScopes.CORPORATION_WALLET.isEnabled()) && !program.getProfileManager().getEsiOwners().isEmpty()) {
+			if (EsiScopes.CHARACTER_WALLET.isEnabled() && !program.getProfileManager().getEsiOwners().isEmpty()) {
 				setIcon(Images.MISC_ESI.getIcon());
 				EsiTransactionsGetter esiTransactionsGetter = new EsiTransactionsGetter();
 				esiTransactionsGetter.load(this, program.getProfileManager().getEsiOwners(), Settings.get().isTransactionHistory());
@@ -922,7 +923,7 @@ public class UpdateDialog extends JDialogCentered {
 				eveKitContractItemsGetter.load(this, program.getProfileManager().getEveKitOwners());
 			}
 			////Esi
-			if (EsiScopes.CONTRACTS.isEnabled() && !program.getProfileManager().getEsiOwners().isEmpty()) {
+			if (EsiScopes.CHARACTER_CONTRACTS.isEnabled() && !program.getProfileManager().getEsiOwners().isEmpty()) {
 				setIcon(Images.MISC_ESI.getIcon());
 				EsiContractsGetter esiContractsGetter = new EsiContractsGetter();
 				esiContractsGetter.load(this, program.getProfileManager().getEsiOwners());
@@ -953,7 +954,7 @@ public class UpdateDialog extends JDialogCentered {
 				eveKitBlueprintsGetter.load(this, program.getProfileManager().getEveKitOwners());
 			}
 			//Esi
-			if (EsiScopes.BLUEPRINTS.isEnabled() && !program.getProfileManager().getEsiOwners().isEmpty()) {
+			if (EsiScopes.CHARACTER_BLUEPRINTS.isEnabled() && !program.getProfileManager().getEsiOwners().isEmpty()) {
 				setIcon(Images.MISC_ESI.getIcon());
 				EsiBlueprintsGetter esiBlueprintsGetter = new EsiBlueprintsGetter();
 				esiBlueprintsGetter.load(this, program.getProfileManager().getEsiOwners());

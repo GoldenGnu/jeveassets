@@ -23,6 +23,7 @@ package net.nikr.eve.jeveasset.data.api.raw;
 import java.util.Objects;
 import net.nikr.eve.jeveasset.io.shared.RawConverter;
 import net.troja.eve.esi.model.CharacterWalletJournalExtraInfoResponse;
+import net.troja.eve.esi.model.CorporationWalletJournalExtraInfoResponse;
 
 public class RawJournalExtraInfo {
 
@@ -70,11 +71,34 @@ public class RawJournalExtraInfo {
 	}
 
 	/**
-	 * ESI
+	 * ESI Character
 	 *
 	 * @param journalExtraInfo
 	 */
 	public RawJournalExtraInfo(CharacterWalletJournalExtraInfoResponse journalExtraInfo) {
+		if (journalExtraInfo == null) { 
+			return;
+		}
+		allianceId = journalExtraInfo.getAllianceId();
+		characterId = journalExtraInfo.getCharacterId();
+		contractId = journalExtraInfo.getContractId();
+		corporationId = journalExtraInfo.getCorporationId();
+		destroyedShipTypeId = journalExtraInfo.getDestroyedShipTypeId();
+		jobId = journalExtraInfo.getJobId();
+		locationId = journalExtraInfo.getLocationId();
+		npcId = journalExtraInfo.getNpcId();
+		npcName = journalExtraInfo.getNpcName();
+		planetId = journalExtraInfo.getPlanetId();
+		systemId = journalExtraInfo.getSystemId();
+		transactionId = journalExtraInfo.getTransactionId();
+	}
+
+	/**
+	 * ESI Corporation
+	 *
+	 * @param journalExtraInfo
+	 */
+	public RawJournalExtraInfo(CorporationWalletJournalExtraInfoResponse journalExtraInfo) {
 		if (journalExtraInfo == null) { 
 			return;
 		}

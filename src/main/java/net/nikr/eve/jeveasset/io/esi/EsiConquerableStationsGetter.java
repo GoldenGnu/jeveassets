@@ -97,4 +97,10 @@ public class EsiConquerableStationsGetter extends AbstractEsiGetter {
 	protected boolean inScope(EsiOwner owner) {
 		return true;
 	}
+
+	@Override
+	protected boolean enabled(EsiOwner owner) {
+		return EsiScopes.CONQUERABLE_STATIONS.isEnabled();
+	}
+
 }

@@ -57,10 +57,21 @@ public class EsiDeprecationTest extends TestUtil {
 	}
 
 	@Test
-	public void esiAccountBalanceGetter() {
+	public void esiCharacterAccountBalanceGetter() {
 		WalletApi api = new WalletApi();
 		try {
 			api.getCharactersCharacterIdWallet(1, DATASOURCE, null, null, null);
+		} catch (ApiException ex) {
+
+		}
+		validate(api.getApiClient());
+	}
+
+	@Test
+	public void esiCorporationAccountBalanceGetter() {
+		WalletApi api = new WalletApi();
+		try {
+			api.getCorporationsCorporationIdWallets(1, DATASOURCE, null, null, null);
 		} catch (ApiException ex) {
 
 		}
@@ -156,10 +167,21 @@ public class EsiDeprecationTest extends TestUtil {
 	}
 
 	@Test
-	public void esiJournalGetter() {
+	public void esiCharacterJournalGetter() {
 		WalletApi api = new WalletApi();
 		try {
 			api.getCharactersCharacterIdWalletJournal(1, DATASOURCE, null, null, null, null);
+		} catch (ApiException ex) {
+
+		}
+		validate(api.getApiClient());
+	}
+
+	@Test
+	public void esiCorporationJournalGetter() {
+		WalletApi api = new WalletApi();
+		try {
+			api.getCorporationsCorporationIdWalletsDivisionJournal(1, 1, DATASOURCE, null, null, null, null);
 		} catch (ApiException ex) {
 
 		}

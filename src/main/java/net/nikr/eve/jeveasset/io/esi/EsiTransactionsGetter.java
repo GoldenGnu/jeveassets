@@ -64,4 +64,13 @@ public class EsiTransactionsGetter extends AbstractEsiGetter {
 		return owner.isTransactions();
 	}
 
+	@Override
+	protected boolean enabled(EsiOwner owner) {
+		if (owner.isCorporation()) {
+			return false;
+		} else {
+			return EsiScopes.CHARACTER_WALLET.isEnabled();
+		}
+	}
+
 }

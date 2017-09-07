@@ -46,6 +46,7 @@ import javax.swing.JComponent;
 import javax.swing.JEditorPane;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.SwingWorker;
@@ -114,6 +115,10 @@ public class AccountImportDialog extends JDialogCentered {
 
 	private JDropDownButton jScopes;
 	private JTextField jAuthCode;
+	private JRadioButtonMenuItem jCorporation;
+	private JRadioButtonMenuItem jCharacter;
+	private JDropDownButton jType;
+	private JButton jBrowse;
 	private JTextField jKeyID;
 	private JTextField jVCode;
 	private JTextField jAccessKey;
@@ -298,6 +303,20 @@ public class AccountImportDialog extends JDialogCentered {
 			jAccessKey.setText("");
 			jAccessCred.setText("");
 		}
+		if (editEsiOwner != null) { //Edit ESI
+			jType.setVisible(false);
+			if (editEsiOwner.isCorporation()) {
+				jCharacter.setSelected(false);
+				jCorporation.setSelected(true);
+			} else {
+				jCorporation.setSelected(false);
+				jCharacter.setSelected(true);
+			}
+		} else { //Add
+			jType.setVisible(true);
+			jCorporation.setSelected(false);
+			jCharacter.setSelected(true);
+		}
 		updateTab();
 		super.setVisible(true);
 	}
@@ -346,11 +365,55 @@ public class AccountImportDialog extends JDialogCentered {
 		jAuthCode.setText("");
 		jNext.setEnabled(false);
 		esiAuth.cancelImport();
-		for (JCheckBoxMenuItem menuItem : scopesMap.values()) {
-			menuItem.setSelected(true);
-		}
+		updateScopes();
 		jNext.setText(DialoguesAccount.get().nextArrow());
 		focus();
+	}
+
+	private void updateScopes() {
+		scopesMap.clear();
+		jScopes.removeAll();
+		if (jCharacter.isSelected()) {
+			jType.setText(DialoguesAccount.get().character());
+		} else {
+			jType.setText(DialoguesAccount.get().corporation());
+		}
+		boolean corporation = false;
+		for (EsiScopes scope : EsiScopes.values()) {
+			if (!scope.isEnabled() || scope.getScope().isEmpty()) {
+				continue;
+			}
+			if (scope.isCorporationScope()) {
+				corporation = true;
+			}
+			if (jCharacter.isSelected() && !scope.isCharacterScope()) {
+				continue;
+			}
+			if (jCorporation.isSelected() && !scope.isCorporationScope()) {
+				continue;
+			}
+			JCheckBoxMenuItem jCheckBoxMenuItem = new JCheckBoxMenuItem(scope.toString());
+			jCheckBoxMenuItem.setSelected(true);
+			jCheckBoxMenuItem.setEnabled(!scope.isForced());
+			jCheckBoxMenuItem.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					boolean enabled = false;
+					for (Map.Entry<EsiScopes, JCheckBoxMenuItem> entry : scopesMap.entrySet()) {
+						if (entry.getValue().isSelected() && !entry.getKey().isForced()) {
+							enabled = true;
+							break;
+						}
+					}
+					jBrowse.setEnabled(enabled);
+				}
+			});
+			jScopes.add(jCheckBoxMenuItem, true);
+			scopesMap.put(scope, jCheckBoxMenuItem);
+		}
+		if (editEsiOwner == null) {
+			jType.setVisible(corporation);
+		}
 	}
 
 	private void showValidateTab() {
@@ -775,8 +838,6 @@ public class AccountImportDialog extends JDialogCentered {
 
 	private class EsiPanel extends JCardPanel {
 
-		private final JButton jBrowse;
-
 		public EsiPanel() {
 			JLabel jAuthLabel = new JLabel(DialoguesAccount.get().authentication());
 			jBrowse = new JButton(DialoguesAccount.get().authorize());
@@ -805,24 +866,34 @@ public class AccountImportDialog extends JDialogCentered {
 				}
 			});
 
-			scopesMap.clear();
-			jScopes = new JDropDownButton(DialoguesAccount.get().scopes(), Images.MISC_ESI.getIcon(), JDropDownButton.LEFT, JDropDownButton.TOP);
-			for (EsiScopes scopes : EsiScopes.values()) {
-				if (!scopes.isEnabled() || scopes.getScope().isEmpty()) {
-					continue;
+			jType = new JDropDownButton(JDropDownButton.LEFT, JDropDownButton.TOP);
+			jType.setText(DialoguesAccount.get().character());
+
+			jCorporation = new JRadioButtonMenuItem(DialoguesAccount.get().corporation());
+			jCorporation.setSelected(false);
+			jCorporation.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					updateScopes();
 				}
-				JCheckBoxMenuItem jCheckBoxMenuItem = new JCheckBoxMenuItem(scopes.toString());
-				jCheckBoxMenuItem.setSelected(true);
-				jCheckBoxMenuItem.addActionListener(new ActionListener() {
-					@Override
-					public void actionPerformed(ActionEvent e) {
-						validateScopes();
-					}
-				});
-				
-				jScopes.add(jCheckBoxMenuItem, true);
-				scopesMap.put(scopes, jCheckBoxMenuItem);
-			}
+			});
+			jType.add(jCorporation);
+
+			jCharacter = new JRadioButtonMenuItem(DialoguesAccount.get().character());
+			jCharacter.setSelected(true);
+			jCharacter.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					updateScopes();
+				}
+			});
+			jType.add(jCharacter);
+
+			ButtonGroup buttonGroup = new ButtonGroup();
+			buttonGroup.add(jCorporation);
+			buttonGroup.add(jCharacter);
+
+			jScopes = new JDropDownButton(DialoguesAccount.get().scopes(), Images.MISC_ESI.getIcon(), JDropDownButton.LEFT, JDropDownButton.TOP);
 
 			JLabel jAuthCodeLabel = new JLabel(DialoguesAccount.get().authCode());
 			jAuthCode = new JTextField();
@@ -849,8 +920,9 @@ public class AccountImportDialog extends JDialogCentered {
 						)
 						.addGroup(cardLayout.createParallelGroup()
 							.addGroup(cardLayout.createSequentialGroup()
-								.addComponent(jScopes, 100, 100, 100)
-								.addComponent(jBrowse, 100, 100, 100)
+								.addComponent(jType, Program.getButtonsWidth(), Program.getButtonsWidth(), Program.getButtonsWidth())
+								.addComponent(jScopes, Program.getButtonsWidth(), Program.getButtonsWidth(), Program.getButtonsWidth())
+								.addComponent(jBrowse, Program.getButtonsWidth(), Program.getButtonsWidth(), Program.getButtonsWidth())
 							)
 							.addComponent(jAuthCode, 150, 150, Integer.MAX_VALUE)
 						)
@@ -862,6 +934,7 @@ public class AccountImportDialog extends JDialogCentered {
 				.addComponent(jHelp)
 				.addGroup(cardLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
 					.addComponent(jAuthLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jType, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 					.addComponent(jScopes, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 					.addComponent(jBrowse, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 				)
@@ -870,17 +943,6 @@ public class AccountImportDialog extends JDialogCentered {
 					.addComponent(jAuthCode, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 				)
 			);
-		}
-
-		private void validateScopes() {
-			boolean enabled = false;
-			for (JCheckBoxMenuItem checkBoxMenuItem : scopesMap.values()) {
-				if (checkBoxMenuItem.isSelected()) {
-					enabled = true;
-					break;
-				}
-			}
-			jBrowse.setEnabled(enabled);
 		}
 	}
 

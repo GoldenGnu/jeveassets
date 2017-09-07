@@ -20,13 +20,17 @@
  */
 package net.nikr.eve.jeveasset.io.esi;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import net.nikr.eve.jeveasset.io.shared.AccountAdder;
 import net.troja.eve.esi.ApiException;
 import net.troja.eve.esi.auth.CharacterInfo;
+import net.troja.eve.esi.model.CharacterResponse;
+import net.troja.eve.esi.model.CorporationResponse;
 
 
 public class EsiOwnerGetter extends AbstractEsiGetter implements AccountAdder{
@@ -57,24 +61,52 @@ public class EsiOwnerGetter extends AbstractEsiGetter implements AccountAdder{
 	@Override
 	protected void get(EsiOwner owner) throws ApiException {
 		CharacterInfo characterInfo = getSsoApiAuth().getCharacterInfo();
-		if (characterInfo.getCharacterId() != owner.getOwnerID() && owner.getOwnerID() != 0) {
+		List<String> roles = new ArrayList<String>();
+		Integer characterID = characterInfo.getCharacterId();
+		Integer corporationID = 0;
+		String corporationName = "";
+		boolean isCorporation = EsiScopes.CORPORATION_ROLES.isInScope(characterInfo.getScopes());
+		if (isCorporation) { //Corporation
+			//CharacterID to CorporationID
+			CharacterResponse character = getCharacterApiOpen().getCharactersCharacterId(characterID, DATASOURCE, null, null);
+			corporationID = character.getCorporationId();
+			//CorporationID to CorporationName
+			CorporationResponse corporation = getCorporationApiOpen().getCorporationsCorporationId(corporationID, DATASOURCE, null, null);
+			corporationName = corporation.getCorporationName();
+			//Updated Character Roles
+			roles = getCharacterApiAuth().getCharactersCharacterIdRoles(characterID, DATASOURCE, null, null, null);
+		}
+		if (((!isCorporation && characterID != owner.getOwnerID())
+				|| (isCorporation && corporationID != owner.getOwnerID()))
+				&& owner.getOwnerID() != 0) {
 			addError("Wrong Entry");
 			wrongEntry = true;
 			return;
 		}
-		owner.setAccountName(characterInfo.getCharacterName());
-		owner.setOwnerID(characterInfo.getCharacterId());
-		owner.setOwnerName(characterInfo.getCharacterName());
 		owner.setCharacterOwnerHash(characterInfo.getCharacterOwnerHash());
 		owner.setScopes(characterInfo.getScopes());
 		owner.setIntellectualProperty(characterInfo.getIntellectualProperty());
 		owner.setTokenType(characterInfo.getTokenType());
+		owner.setRoles(new HashSet<String>(roles));
+		if (owner.isCorporation()) {
+			owner.setOwnerID(corporationID);
+			owner.setOwnerName(corporationName);
+		} else {
+			owner.setOwnerID(characterInfo.getCharacterId());
+			owner.setOwnerName(characterInfo.getCharacterName());
+		}
 
 		int fails = 0;
 		int max = 0;
 		if (accountImport) {
 			for (EsiScopes scopes : EsiScopes.values()) {
 				if (!scopes.isEnabled()) {
+					continue;
+				}
+				if (!owner.isCorporation() && !scopes.isCharacterScope()) {
+					continue;
+				}
+				if (owner.isCorporation() && !scopes.isCorporationScope()) {
 					continue;
 				}
 				max++;
@@ -104,6 +136,11 @@ public class EsiOwnerGetter extends AbstractEsiGetter implements AccountAdder{
 
 	@Override
 	protected boolean inScope(EsiOwner owner) {
+		return true; //Always update accounts
+	}
+
+	@Override
+	protected boolean enabled(EsiOwner owner) {
 		return true; //Always update accounts
 	}
 

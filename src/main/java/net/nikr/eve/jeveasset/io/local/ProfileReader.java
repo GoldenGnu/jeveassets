@@ -23,6 +23,7 @@ package net.nikr.eve.jeveasset.io.local;
 import com.beimin.eveapi.model.shared.KeyType;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -133,8 +134,14 @@ public final class ProfileReader extends AbstractXmlReader {
 			Date structuresNextUpdate = AttributeGetters.getDate(currentNode, "structuresnextupdate");
 			Date accountNextUpdate = AttributeGetters.getDate(currentNode, "accountnextupdate");
 			EsiCallbackURL callbackURL = EsiCallbackURL.valueOf(AttributeGetters.getString(currentNode, "callbackurl"));
-
+			Set<String> roles;
+			if (AttributeGetters.haveAttribute(currentNode, "roles")) {
+				roles = new HashSet<String>(Arrays.asList(AttributeGetters.getString(currentNode, "roles").split(",")));
+			} else {
+				roles = new HashSet<String>();
+			}
 			EsiOwner owner = new EsiOwner();
+			owner.setRoles(roles);
 			owner.setAccountName(accountName);
 			owner.setRefreshToken(refreshToken);
 			owner.setScopes(scopes);

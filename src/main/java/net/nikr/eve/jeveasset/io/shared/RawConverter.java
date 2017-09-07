@@ -34,11 +34,12 @@ import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder;
 import net.nikr.eve.jeveasset.data.sde.ItemFlag;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
 import net.troja.eve.esi.model.CharacterWalletJournalResponse;
+import net.troja.eve.esi.model.CorporationWalletJournalResponse;
 import org.joda.time.DateTime;
 
 public class RawConverter {
 
-	private static Map<Integer, RawJournalRefType> journalRefTypes = null;
+	private static Map<Integer, RawJournalRefType> journalRefTypesIDs = null;
 
 	public static Long toLong(Number value) {
 		if (value != null) {
@@ -271,72 +272,64 @@ public class RawConverter {
 	}
 
 	public static RawJournalRefType toJournalRefType(int value) {
-		createCache();
-		return journalRefTypes.get(value);
+		if (journalRefTypesIDs == null) {
+			journalRefTypesIDs = new HashMap<Integer, RawJournalRefType>();
+			for (RawJournalRefType journalRefType : RawJournalRefType.values()) {
+				journalRefTypesIDs.put(journalRefType.getID(), journalRefType);
+			}
+		}
+		return journalRefTypesIDs.get(value);
 	}
 
 	public static RawJournalRefType toJournalRefType(CharacterWalletJournalResponse.RefTypeEnum value) {
-		switch (value) {
-			case ALLIANCE_MAINTENANCE_FEE:
-				return RawJournalRefType.ALLIANCE_MAINTAINANCE_FEE;			//OK
-			case BOUNTY_PRIZES:
-				return RawJournalRefType.BOUNTY_PRIZES;						//OK
-			case BOUNTY_PRIZE_HISTORICAL:
-				return RawJournalRefType.BOUNTY_PRIZE;						//??
-			case BROKER_FEE:
-				return RawJournalRefType.BROKERS_FEE;						//OK
-			case CONTRACT:
-				return RawJournalRefType.CONTRACT_BROKERS_FEE;				//FAIL
-			case CORPORATE_REWARD_PAYOUT:
-				return RawJournalRefType.CORPORATE_REWARD_PAYOUT;			//OK
-			case CORP_ACCOUNT_WITHDRAWAL:
-				return RawJournalRefType.CORPORATION_ACCOUNT_WITHDRAWAL;	//OK
-			case CSPA:
-				return RawJournalRefType.CSPA;								//OK
-			case CUSTOMS_OFFICE_EXPORT_DUTY:
-				return RawJournalRefType.PLANETARY_EXPORT_TAX;				//??
-			case CUSTOMS_OFFICE_IMPORT_DUTY:
-				return RawJournalRefType.PLANETARY_IMPORT_TAX;				//??
-			case INDUSTRY_FACILITY_TAX:
-				return RawJournalRefType.INDUSTRY_JOB_TAX;					//??
-			case INSURANCE:
-				return RawJournalRefType.INSURANCE;							//OK
-			case JUMP_CLONE_ACTIVATION_FEE:
-				return RawJournalRefType.JUMP_CLONE_ACTIVATION_FEE;			//OK
-			case JUMP_CLONE_INSTALLATION_FEE:
-				return RawJournalRefType.JUMP_CLONE_INSTALLATION_FEE;		//OK
-			case LOGO_CHANGE_FEE:
-				return RawJournalRefType.CORPORATION_LOGO_CHANGE_COST;		//??
-			case MANUFACTURING:
-				return RawJournalRefType.MANUFACTURING;						//OK
-			case MARKET_ESCROW:
-				return RawJournalRefType.MARKET_ESCROW;						//OK
-			case MARKET_TRANSACTION:
-				return RawJournalRefType.MARKET_TRANSACTION;				//OK
-			case MEDAL_CREATION_FEE:
-				return RawJournalRefType.MEDAL_CREATION;					//??
-			case MEDAL_ISSUING_FEE:
-				return RawJournalRefType.MEDAL_ISSUED;						//??
-			case MISSION_REWARD:
-				return RawJournalRefType.MISSION_REWARD;					//??
-			case MISSION_REWARD_BONUS:
-				return RawJournalRefType.AGENT_MISSION_TIME_BONUS_REWARD;	//??
-			case OFFICE_RENTAL_FEE:
-				return RawJournalRefType.OFFICE_RENTAL_FEE;					//OK
-			case PLAYER_DONATION:
-				return RawJournalRefType.PLAYER_DONATION;					//OK
-			case PLAYER_TRADING:
-				return RawJournalRefType.PLAYER_TRADING;					//OK
-			case PROJECT_DISCOVERY_REWARD:
-				return RawJournalRefType.PROJECT_DISCOVERY_REWARD;			//OK
-			case REPROCESSING_FEE:
-				return RawJournalRefType.REPROCESSING_TAX;					//??
-			case SALES_TAX:
-				return RawJournalRefType.TRANSACTION_TAX;					//??
-			case UNKNOWN:
-				return RawJournalRefType.UNDEFINED;							//??
-			default:
-				return RawJournalRefType.UNDEFINED;							//??
+		try {
+			return RawJournalRefType.valueOf(value.name());
+		} catch (IllegalArgumentException ex) {
+			switch (value) {
+				case BOUNTY_PRIZE_HISTORICAL:
+					return RawJournalRefType.BOUNTY_PRIZE;
+				case MISSION_REWARD_BONUS:
+					return RawJournalRefType.AGENT_MISSION_TIME_BONUS_REWARD;
+				case CORP_ACCOUNT_WITHDRAWAL:
+					return RawJournalRefType.CORPORATION_ACCOUNT_WITHDRAWAL;
+				case LOGO_CHANGE_FEE:
+					return RawJournalRefType.CORPORATION_LOGO_CHANGE_COST;
+				case BROKER_FEE:
+					return RawJournalRefType.BROKERS_FEE;
+				case ALLIANCE_MAINTENANCE_FEE:
+					return RawJournalRefType.ALLIANCE_MAINTAINANCE_FEE;
+				case SALES_TAX:
+					return RawJournalRefType.TRANSACTION_TAX;
+				case CONTRACT:
+					return RawJournalRefType.CONTRACT_BROKERS_FEE;
+				case MEDAL_CREATION_FEE:
+					return RawJournalRefType.MEDAL_CREATION;
+				case MEDAL_ISSUING_FEE:
+					return RawJournalRefType.MEDAL_ISSUED;
+				case CUSTOMS_OFFICE_IMPORT_DUTY:
+					return RawJournalRefType.PLANETARY_IMPORT_TAX;
+				case CUSTOMS_OFFICE_EXPORT_DUTY:
+					return RawJournalRefType.PLANETARY_EXPORT_TAX;
+				case INDUSTRY_FACILITY_TAX:
+					return RawJournalRefType.INDUSTRY_JOB_TAX;
+				case REPROCESSING_FEE:
+					return RawJournalRefType.REPROCESSING_TAX;
+				case UNKNOWN:
+					return RawJournalRefType.UNDEFINED;
+				default: return null;
+			}
+		}
+	}
+
+	public static RawJournalRefType toJournalRefType(CorporationWalletJournalResponse.RefTypeEnum value) {
+		try {
+			return RawJournalRefType.valueOf(value.name());
+		} catch (IllegalArgumentException ex) {
+			switch (value) {
+				case KILL_RIGHT_FEE:
+					return RawJournalRefType.KILL_RIGHT;
+				default: return null;
+			}
 		}
 	}
 
@@ -362,7 +355,23 @@ public class RawConverter {
 		}
 	}
 
+	public static RawJournal.JournalPartyType toJournalPartyType(CorporationWalletJournalResponse.FirstPartyTypeEnum value) {
+		if (value == null) {
+			return null;
+		} else {
+			return RawJournal.JournalPartyType.valueOf(value.name());
+		}
+	}
+
 	public static RawJournal.JournalPartyType toJournalPartyType(CharacterWalletJournalResponse.SecondPartyTypeEnum value) {
+		if (value == null) {
+			return null;
+		} else {
+			return RawJournal.JournalPartyType.valueOf(value.name());
+		}
+	}
+
+	public static RawJournal.JournalPartyType toJournalPartyType(CorporationWalletJournalResponse.SecondPartyTypeEnum value) {
 		if (value == null) {
 			return null;
 		} else {
@@ -535,16 +544,6 @@ public class RawConverter {
 			return "personal";
 		} else {
 			return "corporate";
-		}
-	}
-
-	private static void createCache() {
-		if (journalRefTypes == null) {
-			journalRefTypes = new HashMap<Integer, RawJournalRefType>();
-			for (RawJournalRefType journalRefType : RawJournalRefType.values()) {
-				journalRefTypes.put(journalRefType.getID(), journalRefType);
-			}
-
 		}
 	}
 

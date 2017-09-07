@@ -72,16 +72,17 @@ public abstract class DialoguesAccount extends Bundle {
 	public abstract String esiHelpText();
 	public abstract String validatingMessage();
 	public abstract String scopes();
-	public abstract String scopeStructures();
+	public abstract String corporation();
+	public abstract String character();
 	public abstract String scopeAssets();
-	public abstract String scopeAccountBalance();
+	public abstract String scopeWallet();
 	public abstract String scopeBlueprints();
 	public abstract String scopeIndustryJobs();
 	public abstract String scopeMarketOrders();
-	public abstract String scopeTransactions();
-	public abstract String scopeJournal();
 	public abstract String scopeContracts();
+	public abstract String scopeRoles();
 	public abstract String scopeLocations();
+	public abstract String scopeStructures();
 
 	public abstract String dialogueNameAccountManagement();
 

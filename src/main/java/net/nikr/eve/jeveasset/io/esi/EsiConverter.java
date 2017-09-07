@@ -53,6 +53,8 @@ import net.troja.eve.esi.model.CharacterIndustryJobsResponse;
 import net.troja.eve.esi.model.CharacterOrdersResponse;
 import net.troja.eve.esi.model.CharacterWalletJournalResponse;
 import net.troja.eve.esi.model.CharacterWalletTransactionsResponse;
+import net.troja.eve.esi.model.CorporationWalletJournalResponse;
+import net.troja.eve.esi.model.CorporationWalletsResponse;
 
 
 public class EsiConverter extends DataConverter {
@@ -62,6 +64,14 @@ public class EsiConverter extends DataConverter {
 
 	public static List<MyAccountBalance> toAccountBalance(Float responses, OwnerType owner, Integer accountKey) {
 		return convertRawAccountBalance(Collections.singletonList(new RawAccountBalance(responses, accountKey)), owner);
+	}
+
+	public static List<MyAccountBalance> toAccountBalance(List<CorporationWalletsResponse> responses, OwnerType owner) {
+		List<RawAccountBalance> rawAccountBalances = new ArrayList<RawAccountBalance>();
+		for (CorporationWalletsResponse response : responses) {
+			rawAccountBalances.add(new RawAccountBalance(response));
+		}
+		return convertRawAccountBalance(rawAccountBalances, owner);
 	}
 
 	public static List<MyAsset> toAssets(List<CharacterAssetsResponse> responses, OwnerType owner) {
@@ -91,6 +101,14 @@ public class EsiConverter extends DataConverter {
 	public static Set<MyJournal> toJournals(List<CharacterWalletJournalResponse> responses, OwnerType owner, Integer accountKey, boolean saveHistory) {
 		List<RawJournal> rawIndustryJobs = new ArrayList<RawJournal>();
 		for (CharacterWalletJournalResponse response : responses) {
+			rawIndustryJobs.add(new RawJournal(response, accountKey));
+		}
+		return convertRawJournals(rawIndustryJobs, owner, saveHistory);
+	}
+
+	public static Set<MyJournal> toJournalsCorporation(List<CorporationWalletJournalResponse> responses, OwnerType owner, Integer accountKey, boolean saveHistory) {
+		List<RawJournal> rawIndustryJobs = new ArrayList<RawJournal>();
+		for (CorporationWalletJournalResponse response : responses) {
 			rawIndustryJobs.add(new RawJournal(response, accountKey));
 		}
 		return convertRawJournals(rawIndustryJobs, owner, saveHistory);

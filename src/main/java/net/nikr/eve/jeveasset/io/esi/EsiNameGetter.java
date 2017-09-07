@@ -105,4 +105,10 @@ public class EsiNameGetter extends AbstractEsiGetter {
 	protected boolean inScope(EsiOwner owner) {
 		return true;
 	}
+
+	@Override
+	protected boolean enabled(EsiOwner owner) {
+		return EsiScopes.NAMES.isEnabled();
+	}
+
 }

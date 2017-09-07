@@ -26,6 +26,7 @@ import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import net.troja.eve.esi.ApiException;
 import net.troja.eve.esi.model.CharacterWalletJournalResponse;
+import net.troja.eve.esi.model.CorporationWalletJournalResponse;
 
 
 public class EsiJournalGetter extends AbstractEsiGetter {
@@ -39,9 +40,18 @@ public class EsiJournalGetter extends AbstractEsiGetter {
 
 	@Override
 	protected void get(EsiOwner owner) throws ApiException {
-		Long fromID = null;
-		List<CharacterWalletJournalResponse> journals = getWalletApiAuth().getCharactersCharacterIdWalletJournal((int) owner.getOwnerID(), DATASOURCE, fromID, null, null, null);
-		owner.setJournal(EsiConverter.toJournals(journals, owner, 1000, saveHistory));
+		if (owner.isCorporation()) {
+			for (int division = 1; division < 8; division++) {
+				Long fromID = null;
+				List<CorporationWalletJournalResponse> journals = getWalletApiAuth().getCorporationsCorporationIdWalletsDivisionJournal((int) owner.getOwnerID(), division, DATASOURCE, fromID, null, null, null);
+				int fixedDivision = division+999;
+				owner.setJournal(EsiConverter.toJournalsCorporation(journals, owner, fixedDivision, saveHistory));
+			}
+		} else {
+			Long fromID = null;
+			List<CharacterWalletJournalResponse> journals = getWalletApiAuth().getCharactersCharacterIdWalletJournal((int) owner.getOwnerID(), DATASOURCE, fromID, null, null, null);
+			owner.setJournal(EsiConverter.toJournals(journals, owner, 1000, saveHistory));
+		}
 	}
 
 	@Override
@@ -62,6 +72,15 @@ public class EsiJournalGetter extends AbstractEsiGetter {
 	@Override
 	protected boolean inScope(EsiOwner owner) {
 		return owner.isJournal();
+	}
+
+	@Override
+	protected boolean enabled(EsiOwner owner) {
+		if (owner.isCorporation()) {
+			return EsiScopes.CORPORATION_WALLET.isEnabled();
+		} else {
+			return EsiScopes.CHARACTER_WALLET.isEnabled();
+		}
 	}
 
 }

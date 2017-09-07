@@ -21,7 +21,9 @@
 package net.nikr.eve.jeveasset.data.api.accounts;
 
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.io.esi.EsiCallbackURL;
 import net.nikr.eve.jeveasset.io.esi.EsiScopes;
@@ -38,6 +40,7 @@ public class EsiOwner  extends AbstractOwner implements OwnerType {
 	private Date structuresNextUpdate = Settings.getNow();
 	private Date accountNextUpdate = Settings.getNow();
 	private EsiCallbackURL callbackURL;
+	private Set<String> roles = new HashSet<String>();
 
 	public EsiOwner() {}
 
@@ -118,9 +121,17 @@ public class EsiOwner  extends AbstractOwner implements OwnerType {
 		this.callbackURL = callbackURL;
 	}
 
+	public Set<String> getRoles() {
+		return roles;
+	}
+
+	public void setRoles(Set<String> roles) {
+		this.roles = roles;
+	}
+
 	@Override
 	public boolean isCorporation() {
-		return !tokenType.equals("Character");
+		return isRoles();
 	}
 
 	@Override
@@ -163,52 +174,68 @@ public class EsiOwner  extends AbstractOwner implements OwnerType {
 
 	@Override
 	public boolean isAssetList() {
-		return EsiScopes.ASSETS.isInScope(scopes);
+		return EsiScopes.CHARACTER_ASSETS.isInScope(scopes);
+	}
+
+	private boolean isWallet() {
+		if (isCorporation()) {
+			return EsiScopes.CORPORATION_WALLET.isInScope(scopes) 
+					&& (roles.contains("Junior_Accountant")
+					|| roles.contains("Accountant")
+					|| roles.contains("Director"));
+		} else {
+			return EsiScopes.CHARACTER_WALLET.isInScope(scopes);
+		}
 	}
 
 	@Override
 	public boolean isAccountBalance() {
-		return EsiScopes.ACCOUNT_BALANCE.isInScope(scopes);
+		return isWallet();
 	}
 
 	@Override
 	public boolean isBlueprints() {
-		return EsiScopes.BLUEPRINTS.isInScope(scopes);
+		return EsiScopes.CHARACTER_BLUEPRINTS.isInScope(scopes);
 	}
 
 	@Override
 	public boolean isIndustryJobs() {
-		return EsiScopes.INDUSTRY_JOBS.isInScope(scopes);
+		return EsiScopes.CHARACTER_INDUSTRY_JOBS.isInScope(scopes);
 	}
 
 	@Override
 	public boolean isMarketOrders() {
-		return EsiScopes.MARKET_ORDERS.isInScope(scopes);
+		return EsiScopes.CHARACTER_MARKET_ORDERS.isInScope(scopes);
 	}
 
 	@Override
 	public boolean isTransactions() {
-		return EsiScopes.TRANSACTIONS.isInScope(scopes);
+		//Can be changed to isWallet() when corporation endpoint is complated
+		return EsiScopes.CHARACTER_WALLET.isInScope(scopes);
 	}
 
 	@Override
 	public boolean isJournal() {
-		return EsiScopes.JOURNAL.isInScope(scopes);
+		return isWallet();
 	}
 
 	@Override
 	public boolean isContracts() {
-		return EsiScopes.CONTRACTS.isInScope(scopes);
+		return EsiScopes.CHARACTER_CONTRACTS.isInScope(scopes);
 	}
 
 	@Override
 	public boolean isLocations() {
-		return EsiScopes.LOCATIONS.isInScope(scopes);
+		return false;
 	}
 
 	@Override
 	public boolean isStructures() {
-		return EsiScopes.STRUCTURES.isInScope(scopes);
+		return EsiScopes.CHARACTER_STRUCTURES.isInScope(scopes);
+	}
+
+	public boolean isRoles() {
+		return EsiScopes.CORPORATION_ROLES.isInScope(scopes);
 	}
 
 	@Override

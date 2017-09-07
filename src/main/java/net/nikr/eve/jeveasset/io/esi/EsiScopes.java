@@ -24,28 +24,58 @@ import net.nikr.eve.jeveasset.i18n.DialoguesAccount;
 import net.troja.eve.esi.auth.SsoScopes;
 
 public enum EsiScopes {
-	STRUCTURES(SsoScopes.ESI_UNIVERSE_READ_STRUCTURES_V1, DialoguesAccount.get().scopeStructures(), true),
-	ASSETS(SsoScopes.ESI_ASSETS_READ_ASSETS_V1, DialoguesAccount.get().scopeAssets(), true),
-	ACCOUNT_BALANCE(SsoScopes.ESI_WALLET_READ_CHARACTER_WALLET_V1, DialoguesAccount.get().scopeAccountBalance(), true),
-	INDUSTRY_JOBS(SsoScopes.ESI_INDUSTRY_READ_CHARACTER_JOBS_V1, DialoguesAccount.get().scopeIndustryJobs(), true),
-	MARKET_ORDERS(SsoScopes.ESI_MARKETS_READ_CHARACTER_ORDERS_V1, DialoguesAccount.get().scopeMarketOrders(), true),
-	BLUEPRINTS(SsoScopes.ESI_CHARACTERS_READ_BLUEPRINTS_V1, DialoguesAccount.get().scopeBlueprints(), true),
-	TRANSACTIONS(SsoScopes.ESI_WALLET_READ_CHARACTER_WALLET_V1, DialoguesAccount.get().scopeTransactions(), true),
-	JOURNAL(SsoScopes.ESI_WALLET_READ_CHARACTER_WALLET_V1, DialoguesAccount.get().scopeJournal(), true),
-	CONTRACTS(SsoScopes.ESI_CONTRACTS_READ_CHARACTER_CONTRACTS_V1, DialoguesAccount.get().scopeContracts(), true),
-	LOCATIONS("DO_NOT_MATCH", DialoguesAccount.get().scopeLocations(), false),
-	NAMES("", "", true), //Public
-	CONQUERABLE_STATIONS("", "", true), //Public
+	
+	CHARACTER_ASSETS(SsoScopes.ESI_ASSETS_READ_ASSETS_V1, DialoguesAccount.get().scopeAssets(), ScopeType.CHARACTER, true),
+	CHARACTER_WALLET(SsoScopes.ESI_WALLET_READ_CHARACTER_WALLET_V1, DialoguesAccount.get().scopeWallet(), ScopeType.CHARACTER, true),
+	CHARACTER_INDUSTRY_JOBS(SsoScopes.ESI_INDUSTRY_READ_CHARACTER_JOBS_V1, DialoguesAccount.get().scopeIndustryJobs(), ScopeType.CHARACTER, true),
+	CHARACTER_MARKET_ORDERS(SsoScopes.ESI_MARKETS_READ_CHARACTER_ORDERS_V1, DialoguesAccount.get().scopeMarketOrders(), ScopeType.CHARACTER, true),
+	CHARACTER_BLUEPRINTS(SsoScopes.ESI_CHARACTERS_READ_BLUEPRINTS_V1, DialoguesAccount.get().scopeBlueprints(), ScopeType.CHARACTER, true),
+	CHARACTER_CONTRACTS(SsoScopes.ESI_CONTRACTS_READ_CHARACTER_CONTRACTS_V1, DialoguesAccount.get().scopeContracts(), ScopeType.CHARACTER, true),
+	CHARACTER_STRUCTURES(SsoScopes.ESI_UNIVERSE_READ_STRUCTURES_V1, DialoguesAccount.get().scopeStructures(), ScopeType.CHARACTER, true),
+	CORPORATION_ROLES(SsoScopes.ESI_CHARACTERS_READ_CORPORATION_ROLES_V1, DialoguesAccount.get().scopeRoles(), ScopeType.CORPORATION, false, true),
+	CORPORATION_WALLET(SsoScopes.ESI_WALLET_READ_CORPORATION_WALLETS_V1, DialoguesAccount.get().scopeWallet(), ScopeType.CORPORATION, false),
+	NAMES(true), //Public
+	CONQUERABLE_STATIONS(true), //Public
 	;
 
 	private final String scope;
 	private final String text;
+	private final ScopeType scopeType;
 	private final boolean enabled;
+	private final boolean forced;
 
-	private EsiScopes(String scope, String text, boolean enabled) {
+	/**
+	 * Public Scopes
+	 * @param enabled 
+	 */
+	private EsiScopes(boolean enabled) {
+		this("", "", ScopeType.PUBLIC, enabled, false);
+	}
+
+	/**
+	 * Corporation and Character Scopes
+	 * @param scope
+	 * @param text
+	 * @param scopeType
+	 * @param enabled
+	 */
+	private EsiScopes(String scope, String text, ScopeType scopeType, boolean enabled) {
+		this(scope, text, scopeType, enabled, false);
+	}
+	/**
+	 * Corporation and Character Scopes
+	 * @param scope
+	 * @param text
+	 * @param scopeType
+	 * @param enabled
+	 * @param forced 
+	 */
+	private EsiScopes(String scope, String text, ScopeType scopeType, boolean enabled, boolean forced) {
 		this.scope = scope;
 		this.text = text;
+		this.scopeType = scopeType;
 		this.enabled = enabled;
+		this.forced = forced;
 	}
 
 	public String getScope() {
@@ -60,9 +90,25 @@ public enum EsiScopes {
 		return enabled;
 	}
 
+	public boolean isCharacterScope() {
+		return scopeType == ScopeType.CHARACTER;
+	}
+
+	public boolean isCorporationScope() {
+		return scopeType == ScopeType.CORPORATION;
+	}
+
+	public boolean isForced() {
+		return forced;
+	}
+
 	@Override
 	public String toString() {
 		return text;
+	}
+
+	private static enum ScopeType {
+		CORPORATION, CHARACTER, PUBLIC
 	}
 
 }

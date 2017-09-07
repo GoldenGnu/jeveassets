@@ -23,6 +23,7 @@ package net.nikr.eve.jeveasset.data.api.raw;
 import java.util.Date;
 import net.nikr.eve.jeveasset.io.shared.RawConverter;
 import net.troja.eve.esi.model.CharacterWalletJournalResponse;
+import net.troja.eve.esi.model.CorporationWalletJournalResponse;
 
 public class RawJournal {
 
@@ -115,12 +116,35 @@ public class RawJournal {
 	}
 
 	/**
-	 * ESI
+	 * ESI Character
 	 *
 	 * @param journal
 	 * @param accountKey
 	 */
 	public RawJournal(CharacterWalletJournalResponse journal, Integer accountKey) {
+		amount = journal.getAmount();
+		balance = journal.getBalance();
+		date = RawConverter.toDate(journal.getDate());
+		extraInfo = new RawJournalExtraInfo(journal.getExtraInfo());
+		firstPartyId = journal.getFirstPartyId();
+		firstPartyType = RawConverter.toJournalPartyType(journal.getFirstPartyType());
+		reason = journal.getReason();
+		refId = journal.getRefId();
+		refType = RawConverter.toJournalRefType(journal.getRefType());
+		secondPartyId = journal.getSecondPartyId();
+		secondPartyType = RawConverter.toJournalPartyType(journal.getSecondPartyType());
+		tax = journal.getTax();
+		taxRecieverId = journal.getTaxRecieverId();
+		this.accountKey = accountKey;
+	}
+
+	/**
+	 * ESI Corporation
+	 *
+	 * @param journal
+	 * @param accountKey
+	 */
+	public RawJournal(CorporationWalletJournalResponse journal, Integer accountKey) {
 		amount = journal.getAmount();
 		balance = journal.getBalance();
 		date = RawConverter.toDate(journal.getDate());

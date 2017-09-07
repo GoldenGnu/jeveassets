@@ -92,6 +92,7 @@ public final class ProfileWriter extends AbstractXmlWriter {
 			setAttribute(node, "structuresnextupdate", owner.getStructuresNextUpdate());
 			setAttribute(node, "accountnextupdate", owner.getAccountNextUpdate());
 			setAttribute(node, "callbackurl", owner.getCallbackURL().name());
+			setAttribute(node, "roles", String.join(",", owner.getRoles()));
 			writeTypeOwner(xmldoc, node, owner);
 			parentNode.appendChild(node);
 		}
