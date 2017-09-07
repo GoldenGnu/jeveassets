@@ -35,6 +35,7 @@ import net.troja.eve.esi.ApiException;
 import net.troja.eve.esi.api.AssetsApi;
 import net.troja.eve.esi.api.CharacterApi;
 import net.troja.eve.esi.api.ContractsApi;
+import net.troja.eve.esi.api.CorporationApi;
 import net.troja.eve.esi.api.IndustryApi;
 import net.troja.eve.esi.api.MarketApi;
 import net.troja.eve.esi.api.SovereigntyApi;
@@ -66,6 +67,7 @@ public abstract class AbstractEsiGetter {
 	private final UniverseApi universeApiOpen;
 	private final SovereigntyApi sovereigntyApiOpen;
 	private final CharacterApi characterApiOpen;
+	private final CorporationApi corporationApiOpen;
 
 	protected AbstractEsiGetter() {
 		clientAuth = new ApiClient();
@@ -81,6 +83,7 @@ public abstract class AbstractEsiGetter {
 		universeApiOpen = new UniverseApi(clientOpen);
 		sovereigntyApiOpen = new SovereigntyApi(clientOpen);
 		characterApiOpen = new CharacterApi(clientOpen);
+		corporationApiOpen = new CorporationApi(clientOpen);
 	}
 
 	protected void load(UpdateTask updateTask) {
@@ -239,7 +242,7 @@ public abstract class AbstractEsiGetter {
 		return parts;
 	}
 
-	public boolean oneByOneNameRange(long id) {
+	protected boolean oneByOneNameRange(long id) {
 		return (id >= 100000000L && id <= 2099999999L) || (id >= 2100000000 && id <= 2112000000);
 	}
 
@@ -281,6 +284,10 @@ public abstract class AbstractEsiGetter {
 
 	public CharacterApi getCharacterApiOpen() {
 		return characterApiOpen;
+	}
+
+	public CorporationApi getCorporationApiOpen() {
+		return corporationApiOpen;
 	}
 
 	public SovereigntyApi getSovereigntyApiOpen() {
