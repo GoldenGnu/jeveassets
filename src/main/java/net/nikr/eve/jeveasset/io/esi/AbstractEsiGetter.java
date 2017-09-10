@@ -25,6 +25,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
 import net.nikr.eve.jeveasset.data.settings.Settings;
@@ -200,6 +201,32 @@ public abstract class AbstractEsiGetter {
 				updateTask.addError(getOwnerName(owner), "ESI: Unknown Error: " + ex.getMessage());
 			}
 		}
+	}
+
+	protected <T> List<T> getList(EsiOwner owner, Set<Long> existing, EsiListHandler<T> handler) throws ApiException {
+		List<T> list = new ArrayList<T>();
+		List<T> temp = null;
+		Long fromID = null;
+		boolean run = true;
+		while ((temp == null || !temp.isEmpty()) && run) { // (First run or Empty result) and not stopped
+			temp = handler.get(owner, fromID); //Get data from the API
+			if (!temp.isEmpty()) {
+				fromID = handler.getID(temp.get(temp.size() - 1)); //Get the last ID
+				list.addAll(temp); //Add new
+				for (T t : temp) { //Search for existing data
+					if (existing.contains(handler.getID(t))) { //Found existing data
+						run = false; //Stop
+						break; //no need to continue
+					}
+				}
+			}
+		}
+		return list;
+	}
+
+	protected interface EsiListHandler<T> {
+		public List<T> get(EsiOwner owner, Long fromID) throws ApiException;
+		public Long getID(T response);
 	}
 
 	protected abstract void get(EsiOwner owner) throws ApiException;

@@ -21,8 +21,11 @@
 package net.nikr.eve.jeveasset.io.esi;
 
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
+import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import net.troja.eve.esi.ApiException;
 import net.troja.eve.esi.model.CharacterWalletTransactionsResponse;
@@ -39,8 +42,23 @@ public class EsiTransactionsGetter extends AbstractEsiGetter {
 
 	@Override
 	protected void get(EsiOwner owner) throws ApiException {
-		Long fromId = null;
-		List<CharacterWalletTransactionsResponse> responses = getWalletApiAuth().getCharactersCharacterIdWalletTransactions((int) owner.getOwnerID(), DATASOURCE, fromId, null, null, null);
+		Set<Long> existing = new HashSet<Long>();
+		if (saveHistory) {
+			for (MyTransaction transaction : owner.getTransactions()) {
+				existing.add(transaction.getTransactionID());
+			}
+		}
+		List<CharacterWalletTransactionsResponse> responses = getList(owner, existing, new EsiListHandler<CharacterWalletTransactionsResponse>() {
+			@Override
+			public List<CharacterWalletTransactionsResponse> get(EsiOwner owner, Long fromID) throws ApiException {
+				return getWalletApiAuth().getCharactersCharacterIdWalletTransactions((int) owner.getOwnerID(), DATASOURCE, fromID, null, null, null);
+			}
+
+			@Override
+			public Long getID(CharacterWalletTransactionsResponse response) {
+				return response.getTransactionId();
+			}
+		});
 		owner.setTransactions(EsiConverter.toTransaction(responses, owner, 1000, saveHistory));
 	}
 
