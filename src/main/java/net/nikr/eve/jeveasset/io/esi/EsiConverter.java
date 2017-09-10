@@ -83,11 +83,11 @@ public class EsiConverter extends DataConverter {
 	}
 
 	public static Map<Long, RawBlueprint> toBlueprints(List<CharacterBlueprintsResponse> responses) {
-		Map<Long, RawBlueprint> blueprints = new HashMap<Long, RawBlueprint>();
+		Map<Long, RawBlueprint> rawBlueprints = new HashMap<Long, RawBlueprint>();
 		for (CharacterBlueprintsResponse blueprint : responses) {
-			blueprints.put(blueprint.getItemId(), new RawBlueprint(blueprint));
+			rawBlueprints.put(blueprint.getItemId(), new RawBlueprint(blueprint));
 		}
-		return blueprints;
+		return rawBlueprints;
 	}
 
 	public static List<MyIndustryJob> toIndustryJobs(List<CharacterIndustryJobsResponse> responses, OwnerType owner) {
@@ -99,19 +99,19 @@ public class EsiConverter extends DataConverter {
 	}
 
 	public static Set<MyJournal> toJournals(List<CharacterWalletJournalResponse> responses, OwnerType owner, Integer accountKey, boolean saveHistory) {
-		List<RawJournal> rawIndustryJobs = new ArrayList<RawJournal>();
+		List<RawJournal> rawJournals = new ArrayList<RawJournal>();
 		for (CharacterWalletJournalResponse response : responses) {
-			rawIndustryJobs.add(new RawJournal(response, accountKey));
+			rawJournals.add(new RawJournal(response, accountKey));
 		}
-		return convertRawJournals(rawIndustryJobs, owner, saveHistory);
+		return convertRawJournals(rawJournals, owner, saveHistory);
 	}
 
 	public static Set<MyJournal> toJournalsCorporation(List<CorporationWalletJournalResponse> responses, OwnerType owner, Integer accountKey, boolean saveHistory) {
-		List<RawJournal> rawIndustryJobs = new ArrayList<RawJournal>();
+		List<RawJournal> rawJournals = new ArrayList<RawJournal>();
 		for (CorporationWalletJournalResponse response : responses) {
-			rawIndustryJobs.add(new RawJournal(response, accountKey));
+			rawJournals.add(new RawJournal(response, accountKey));
 		}
-		return convertRawJournals(rawIndustryJobs, owner, saveHistory);
+		return convertRawJournals(rawJournals, owner, saveHistory);
 	}
 
 	public static Map<MyContract, List<MyContractItem>> toContracts(List<CharacterContractsResponse> responses, OwnerType owner) {
