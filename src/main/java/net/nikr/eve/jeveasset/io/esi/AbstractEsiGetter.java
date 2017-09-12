@@ -163,6 +163,7 @@ public abstract class AbstractEsiGetter {
 				}
 			}
 		} catch (ApiException ex) {
+			handleErrorLimit(client);
 			switch (ex.getCode()) {
 				case 403:
 					addError("	ESI: " + getTaskName() + " failed to update for: " + getOwnerName(owner) + " (403)");
@@ -246,6 +247,45 @@ public abstract class AbstractEsiGetter {
 			return owner.getOwnerName();
 		} else {
 			return Program.PROGRAM_NAME;
+		}
+	}
+
+	private void handleErrorLimit(ApiClient client) {
+		Map<String, List<String>> responseHeaders = client.getResponseHeaders();
+		if (responseHeaders != null) {
+			Integer errorLimit = null;
+			Integer errorReset = null;
+			for (Map.Entry<String, List<String>> entry : responseHeaders.entrySet()) {
+				if (entry.getKey().toLowerCase().equals("x-esi-error-limit-remain")) { //Case insensitive
+					List<String> errorLimitHeaders = entry.getValue();
+					if (errorLimitHeaders != null && !errorLimitHeaders.isEmpty()) {
+						try {
+							errorLimit = Integer.valueOf(errorLimitHeaders.get(0));
+						} catch (NumberFormatException ex) {
+							//No problem
+						}
+					}
+				}
+				if (entry.getKey().toLowerCase().equals("x-esi-error-limit-reset")) { //Case insensitive
+					List<String> errorLimitHeaders = entry.getValue();
+					if (errorLimitHeaders != null && !errorLimitHeaders.isEmpty()) {
+						try {
+							errorReset = Integer.valueOf(errorLimitHeaders.get(0));
+						} catch (NumberFormatException ex) {
+							//No problem
+						}
+					}
+				}
+			}
+			if (errorLimit != null && errorReset != null) {
+				if (errorLimit < 10) {
+					try {
+						Thread.sleep((errorReset + 1) * 1000); //Wait until the error window is reset
+					} catch (InterruptedException ex) {
+						//No problem
+					}
+				}
+			}
 		}
 	}
 
