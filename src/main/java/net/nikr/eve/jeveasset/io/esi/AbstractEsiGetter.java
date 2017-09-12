@@ -206,19 +206,26 @@ public abstract class AbstractEsiGetter {
 
 	protected <T> List<T> getList(EsiOwner owner, Set<Long> existing, EsiListHandler<T> handler) throws ApiException {
 		List<T> list = new ArrayList<T>();
-		List<T> temp = null;
 		Long fromID = null;
 		boolean run = true;
-		while ((temp == null || !temp.isEmpty()) && run) { // (First run or Empty result) and not stopped
-			temp = handler.get(owner, fromID); //Get data from the API
-			if (!temp.isEmpty()) {
-				fromID = handler.getID(temp.get(temp.size() - 1)); //Get the last ID
-				list.addAll(temp); //Add new
-				for (T t : temp) { //Search for existing data
-					if (existing.contains(handler.getID(t))) { //Found existing data
-						run = false; //Stop
-						break; //no need to continue
-					}
+		while (run) {
+			List<T> result = handler.get(owner, fromID); //Get data from ESI
+			if (result.isEmpty()) { //Nothing returned: we're done
+				break; //Stop updating
+			}
+
+			list.addAll(result); //Add new
+
+			Long lastID = handler.getID(result.get(result.size() - 1)); //Get the last ID
+			if (lastID.equals(fromID)) { //ID is the same as on last update: we're done
+				break; //Stop updating
+			}
+			fromID = lastID; //Set ID for next update
+
+			for (T t : result) { //Search for existing data
+				if (existing.contains(handler.getID(t))) { //Found existing data
+					run = false; //Stop updating
+					break; //no need to continue
 				}
 			}
 		}
