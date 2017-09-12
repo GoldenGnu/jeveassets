@@ -54,6 +54,7 @@ public abstract class AbstractEsiGetter {
 
 	protected final String DATASOURCE = "tranquility";
 	protected final int UNIVERSE_BATCH_SIZE = 100;
+	private final int RETRIES = 1;
 	private String error = null;
 	private final ApiClient clientAuth;
 	private final AssetsApi assetsApiAuth;
@@ -126,6 +127,10 @@ public abstract class AbstractEsiGetter {
 	}
 
 	private void loadAPI(UpdateTask updateTask, EsiOwner owner, boolean forceUpdate) {
+		loadAPI(updateTask, owner, forceUpdate, 0);
+	}
+
+	private void loadAPI(UpdateTask updateTask, EsiOwner owner, boolean forceUpdate, int retries) {
 		error = null;
 		ApiClient client = client(owner);
 		try {
@@ -164,37 +169,22 @@ public abstract class AbstractEsiGetter {
 			}
 		} catch (ApiException ex) {
 			handleErrorLimit(client);
-			switch (ex.getCode()) {
-				case 403:
-					addError("	ESI: " + getTaskName() + " failed to update for: " + getOwnerName(owner) + " (403)");
-					if (updateTask != null) {
-						updateTask.addError(getOwnerName(owner), "ESI: Forbidden");
-					}
-					break;
-				case 500:
-					addError("	ESI: " + getTaskName() + " failed to update for: " + getOwnerName(owner) + " (500)");
-					if (updateTask != null) {
-						updateTask.addError(getOwnerName(owner), "ESI: Internal server error");
-					}
-					break;
-				case 502:
-					addError("	ESI: " + getTaskName() + " failed to update for: " + getOwnerName(owner) + " (502)");
-					if (updateTask != null) {
-						updateTask.addError(getOwnerName(owner), "ESI: Server offline");
-					}
-					break;
-				case 503:
-					addError("	ESI: " + getTaskName() + " failed to update for: " + getOwnerName(owner) + " (503)");
-					if (updateTask != null) {
-						updateTask.addError(getOwnerName(owner), "ESI: Server offline");
-					}
-					break;
-				default:
-					addError("ESI: " + ex.getMessage(), ex);
-					if (updateTask != null) {
-						updateTask.addError(getOwnerName(owner), "ESI: Unknown Error Code: " + ex.getCode());
-					}
-					break;
+			if (ex.getCode() >= 500 && ex.getCode() < 600 //CCP error, Lets try again in a sec
+					&& ex.getCode() != 503 //Don't retry when it may be downtime
+					&& retries < RETRIES) { //Retries
+				retries++;
+				LOG.info("	Retrying: "  + retries + " of " + RETRIES);
+				try {
+					Thread.sleep(1000); //Wait a sec
+				} catch (InterruptedException ex1) {
+					//No problem
+				}
+				loadAPI(updateTask, owner, forceUpdate, retries);
+			} else {
+				addError("	ESI: " + getTaskName() + " failed to update for: " + getOwnerName(owner) + " (" + ex.getCode() + ")", ex);
+				if (updateTask != null) {
+					updateTask.addError(getOwnerName(owner), "ESI: Error " + ex.getCode());
+				}
 			}
 		} catch (Throwable ex) {
 			addError("	ESI: " + ex.getMessage(), ex);
