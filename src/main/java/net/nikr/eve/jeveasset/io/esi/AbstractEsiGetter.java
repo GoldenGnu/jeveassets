@@ -26,6 +26,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
 import net.nikr.eve.jeveasset.data.settings.Settings;
@@ -156,16 +157,9 @@ public abstract class AbstractEsiGetter {
 			}
 			get(owner);
 			LOG.info("	ESI: " + getTaskName() + " updated for " + getOwnerName(owner));
-			Map<String, List<String>> responseHeaders = client.getResponseHeaders();
-			if (responseHeaders != null) {
-				for (Map.Entry<String, List<String>> entry : responseHeaders.entrySet()) {
-					if (entry.getKey().toLowerCase().equals("expires")) { //Case insensitive
-						List<String> expiryHeaders = entry.getValue();
-						if (expiryHeaders != null && !expiryHeaders.isEmpty()) {
-							setNextUpdate(owner, Formater.parseExpireDate(expiryHeaders.get(0)));
-						}
-					}
-				}
+			String expiresHeader = getHeader(client, "expires");
+			if (expiresHeader != null) {
+				setNextUpdate(owner, Formater.parseExpireDate(expiresHeader));
 			}
 		} catch (ApiException ex) {
 			handleErrorLimit(client);
@@ -250,30 +244,8 @@ public abstract class AbstractEsiGetter {
 	private void handleErrorLimit(ApiClient client) {
 		Map<String, List<String>> responseHeaders = client.getResponseHeaders();
 		if (responseHeaders != null) {
-			Integer errorLimit = null;
-			Integer errorReset = null;
-			for (Map.Entry<String, List<String>> entry : responseHeaders.entrySet()) {
-				if (entry.getKey().toLowerCase().equals("x-esi-error-limit-remain")) { //Case insensitive
-					List<String> errorLimitHeaders = entry.getValue();
-					if (errorLimitHeaders != null && !errorLimitHeaders.isEmpty()) {
-						try {
-							errorLimit = Integer.valueOf(errorLimitHeaders.get(0));
-						} catch (NumberFormatException ex) {
-							//No problem
-						}
-					}
-				}
-				if (entry.getKey().toLowerCase().equals("x-esi-error-limit-reset")) { //Case insensitive
-					List<String> errorLimitHeaders = entry.getValue();
-					if (errorLimitHeaders != null && !errorLimitHeaders.isEmpty()) {
-						try {
-							errorReset = Integer.valueOf(errorLimitHeaders.get(0));
-						} catch (NumberFormatException ex) {
-							//No problem
-						}
-					}
-				}
-			}
+			Integer errorLimit = getHeaderInteger(client, "x-esi-error-limit-remain");
+			Integer errorReset = getHeaderInteger(client, "x-esi-error-limit-reset");
 			if (errorLimit != null && errorReset != null) {
 				if (errorLimit < 10) {
 					try {
@@ -284,6 +256,31 @@ public abstract class AbstractEsiGetter {
 				}
 			}
 		}
+	}
+
+	private Integer getHeaderInteger(ApiClient client, String headerName) {
+		String errorResetHeader = getHeader(client, headerName);
+		if (errorResetHeader != null) {
+			try {
+				return Integer.valueOf(errorResetHeader);
+			} catch (NumberFormatException ex) {
+				//No problem
+			}
+		}
+		return null;
+	}
+
+	private String getHeader(ApiClient client, String headerName) {
+		Map<String, List<String>> responseHeaders = client.getResponseHeaders();
+		if (responseHeaders != null) {
+			Map<String, List<String>> caseInsensitiveHeaders = new TreeMap<String, List<String>>(String.CASE_INSENSITIVE_ORDER);
+			caseInsensitiveHeaders.putAll(responseHeaders);
+			List<String> headers = caseInsensitiveHeaders.get(headerName.toLowerCase());
+			if (headers != null && !headers.isEmpty()) {
+				return headers.get(0);
+			}
+		}
+		return null;
 	}
 
 	private ApiClient client(EsiOwner owner) {
