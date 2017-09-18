@@ -21,45 +21,37 @@
 
 package net.nikr.eve.jeveasset.io.local;
 
-import java.io.IOException;
 import java.util.Map;
 import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.data.sde.ReprocessedMaterial;
 import net.nikr.eve.jeveasset.data.sde.StaticData;
 import net.nikr.eve.jeveasset.data.settings.Settings;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 
-public final class ItemsReader extends AbstractXmlReader {
-
-	private static final Logger LOG = LoggerFactory.getLogger(ItemsReader.class);
+public final class ItemsReader extends AbstractXmlReader<Boolean> {
 
 	private ItemsReader() { }
 
 	public static void load() {
 		ItemsReader reader = new ItemsReader();
-		reader.read();
+		reader.read("Items", Settings.getPathItems(), AbstractXmlReader.XmlType.STATIC);
 	}
 
-	private void read() {
-		try {
-			Element element = getDocumentElement(Settings.getPathItems(), false);
-			parseItems(element, StaticData.get().getItems());
-			LOG.info("Items loaded");
-		} catch (IOException ex) {
-			LOG.error("Items not loaded: " + ex.getMessage(), ex);
-			staticDataFix();
-		} catch (XmlException ex) {
-			LOG.error("Items not loaded: " + ex.getMessage(), ex);
-			staticDataFix();
-		}
+	@Override
+	protected Boolean parse(Element element) throws XmlException {
+		parseItems(element, StaticData.get().getItems());
+		return true;
 	}
 
-	private void parseItems(final Element element, final Map<Integer, Item> items) {
+	@Override
+	protected Boolean failValue() {
+		return false;
+	}
+
+	private void parseItems(final Element element, final Map<Integer, Item> items) throws XmlException {
 		NodeList nodes = element.getElementsByTagName("row");
 		Item item;
 		for (int i = 0; i < nodes.getLength(); i++) {
@@ -70,7 +62,7 @@ public final class ItemsReader extends AbstractXmlReader {
 		}
 	}
 
-	private Item parseItem(final Node node) {
+	private Item parseItem(final Node node) throws XmlException {
 		int id = AttributeGetters.getInt(node, "id");
 		String name = AttributeGetters.getString(node, "name");
 		String group = AttributeGetters.getString(node, "group");
@@ -91,14 +83,14 @@ public final class ItemsReader extends AbstractXmlReader {
 		return new Item(id, name, group, category, price, volume, meta, tech, marketGroup, piMaterial, portion, product);
 	}
 
-	private void parseMaterials(final Element element, final Item item) {
+	private void parseMaterials(final Element element, final Item item) throws XmlException {
 		NodeList nodes = element.getElementsByTagName("material");
 		for (int i = 0; i < nodes.getLength(); i++) {
 			parseMaterial(nodes.item(i), item);
 		}
 	}
 
-	private void parseMaterial(final Node node, final Item item) {
+	private void parseMaterial(final Node node, final Item item) throws XmlException {
 		int id = AttributeGetters.getInt(node, "id");
 		int quantity = AttributeGetters.getInt(node, "quantity");
 		int portionSize = AttributeGetters.getInt(node, "portionsize");

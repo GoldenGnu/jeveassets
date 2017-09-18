@@ -38,19 +38,15 @@ public final class AttributeGetters {
 		return attributeNode != null;
 	}
 
-	public static String getString(final Node node, final String attributeName) {
+	public static String getString(final Node node, final String attributeName) throws XmlException {
 		return getNodeValue(node, attributeName);
 	}
 
-	public static String getStringOptional(final Node node, final String attributeName) {
-		String value = getNodeValueOptional(node, attributeName);
-		if (value == null) {
-			return null;
-		}
-		return getNodeValue(node, attributeName);
+	public static String getStringOptional(final Node node, final String attributeName) throws XmlException {
+		return getNodeValueOptional(node, attributeName);
 	}
 
-	public static Date getDate(final Node node, final String attributeName) {
+	public static Date getDate(final Node node, final String attributeName) throws XmlException {
 		String value = getNodeValue(node, attributeName);
 		try {
 			return FORMAT.parse(value);
@@ -83,9 +79,13 @@ public final class AttributeGetters {
 		}
 	}
 
-	public static int getInt(final Node node, final String attributeName) {
+	public static int getInt(final Node node, final String attributeName) throws XmlException {
 		String value = getNodeValue(node, attributeName);
-		return Integer.parseInt(value);
+		try {
+			return Integer.parseInt(value);
+		} catch (NumberFormatException ex) {
+			throw new XmlException("Failed to convert value: " +value+ " to Integer form node: " + node.getNodeName() + " > " + attributeName);
+		}
 	}
 
 	public static Integer getIntOptional(final Node node, final String attributeName) {
@@ -96,9 +96,13 @@ public final class AttributeGetters {
 		return Integer.parseInt(value);
 	}
 
-	public static long getLong(final Node node, final String attributeName) {
+	public static long getLong(final Node node, final String attributeName) throws XmlException {
 		String value = getNodeValue(node, attributeName);
-		return safeStringToLong(value);
+		try {
+			return safeStringToLong(value);
+		} catch (NumberFormatException ex) {
+			throw new XmlException("Failed to convert value: " +value+ " to Long form node: " + node.getNodeName() + " > " + attributeName);
+		}
 	}
 
 	public static Long getLongOptional(final Node node, final String attributeName) {
@@ -109,14 +113,22 @@ public final class AttributeGetters {
 		return safeStringToLong(value);
 	}
 
-	public static double getDouble(final Node node, final String attributeName) {
+	public static double getDouble(final Node node, final String attributeName) throws XmlException {
 		String value = getNodeValue(node, attributeName);
-		return Double.valueOf(value);
+		try {
+			return Double.valueOf(value);
+		} catch (NumberFormatException ex) {
+			throw new XmlException("Failed to convert value: " +value+ " to Double form node: " + node.getNodeName() + " > " + attributeName);
+		}
 	}
 
-	public static float getFloat(final Node node, final String attributeName) {
+	public static float getFloat(final Node node, final String attributeName) throws XmlException {
 		String value = getNodeValue(node, attributeName);
-		return Float.valueOf(value);
+		try {
+			return Float.valueOf(value);
+		} catch (NumberFormatException ex) {
+			throw new XmlException("Failed to convert value: " +value+ " to Float form node: " + node.getNodeName() + " > " + attributeName);
+		}
 	}
 
 	public static Float getFloatOptional(final Node node, final String attributeName) {
@@ -127,7 +139,7 @@ public final class AttributeGetters {
 		return Float.valueOf(value);
 	}
 
-	public static boolean getBoolean(final Node node, final String attributeName) {
+	public static boolean getBoolean(final Node node, final String attributeName) throws XmlException {
 		String value = getNodeValue(node, attributeName);
 		return (value.equals("true") || value.equals("1"));
 	}
@@ -153,10 +165,10 @@ public final class AttributeGetters {
 		return nOutput;
 	}
 
-	private static String getNodeValue(final Node node, final String attributeName) {
+	private static String getNodeValue(final Node node, final String attributeName) throws XmlException {
 		Node attributeNode = node.getAttributes().getNamedItem(attributeName);
 		if (attributeNode == null) {
-			throw new RuntimeException("Failed to parse attribute from node: " + node.getNodeName() + " > " + attributeName);
+			throw new XmlException("Failed to parse attribute from node: " + node.getNodeName() + " > " + attributeName);
 		}
 		return attributeNode.getNodeValue();
 	}

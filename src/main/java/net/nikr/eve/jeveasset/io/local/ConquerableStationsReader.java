@@ -22,42 +22,34 @@
 package net.nikr.eve.jeveasset.io.local;
 
 import com.beimin.eveapi.model.eve.Station;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import net.nikr.eve.jeveasset.data.sde.StaticData;
 import net.nikr.eve.jeveasset.data.settings.Settings;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 
-public final class ConquerableStationsReader extends AbstractXmlReader {
-
-	private static final Logger LOG = LoggerFactory.getLogger(ConquerableStationsReader.class);
+public final class ConquerableStationsReader extends AbstractXmlReader<Boolean> {
 
 	private ConquerableStationsReader() { }
 
 	public static boolean load() {
 		ConquerableStationsReader reader = new ConquerableStationsReader();
-		return reader.read();
+		return reader.read("Conquerable stations", Settings.getPathConquerableStations(), AbstractXmlReader.XmlType.DYNAMIC);
 	}
 
-	private boolean read() {
-		try {
-			Element element = getDocumentElement(Settings.getPathConquerableStations(), true);
-			Map<Long, Station> conquerableStations = new HashMap<Long, Station>();
-			parseConquerableStations(element, conquerableStations);
-			StaticData.get().setConquerableStations(conquerableStations);
-		} catch (IOException ex) {
-			LOG.info("Conquerable stations not loaded");
-			return false;
-		} catch (XmlException ex) {
-			LOG.error("Conquerable stations not loaded: " + ex.getMessage(), ex);
-		}
-		LOG.info("Conquerable stations loaded");
+	@Override
+	protected Boolean parse(Element element) throws XmlException {
+		Map<Long, Station> conquerableStations = new HashMap<Long, Station>();
+		parseConquerableStations(element, conquerableStations);
+		StaticData.get().setConquerableStations(conquerableStations);
 		return true;
+	}
+
+	@Override
+	protected Boolean failValue() {
+		return false;
 	}
 
 	private void parseConquerableStations(final Element element, final Map<Long, Station> conquerableStations) throws XmlException {
@@ -67,7 +59,7 @@ public final class ConquerableStationsReader extends AbstractXmlReader {
 		parseStations(element, conquerableStations);
 	}
 
-	private void parseStations(final Element element, final Map<Long, Station> conquerableStations) {
+	private void parseStations(final Element element, final Map<Long, Station> conquerableStations) throws XmlException {
 		NodeList filterNodes = element.getElementsByTagName("station");
 		for (int i = 0; i < filterNodes.getLength(); i++) {
 			Element currentNode = (Element) filterNodes.item(i);
@@ -76,7 +68,7 @@ public final class ConquerableStationsReader extends AbstractXmlReader {
 		}
 	}
 
-	private Station parseStation(final Element element) {
+	private Station parseStation(final Element element) throws XmlException {
 		Station station = new Station();
 		station.setCorporationID(AttributeGetters.getInt(element, "corporationid"));
 		station.setCorporationName(AttributeGetters.getString(element, "corporationname"));

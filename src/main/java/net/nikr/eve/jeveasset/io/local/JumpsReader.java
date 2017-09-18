@@ -21,46 +21,38 @@
 
 package net.nikr.eve.jeveasset.io.local;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import net.nikr.eve.jeveasset.data.sde.Jump;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
 import net.nikr.eve.jeveasset.data.sde.StaticData;
 import net.nikr.eve.jeveasset.data.settings.Settings;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 
-public final class JumpsReader extends AbstractXmlReader {
-
-	private static final Logger LOG = LoggerFactory.getLogger(JumpsReader.class);
+public final class JumpsReader extends AbstractXmlReader<Boolean> {
 
 	private JumpsReader() { }
 
 	public static void load() {
 		JumpsReader reader = new JumpsReader();
-		reader.read();
+		reader.read("Jumps", Settings.getPathJumps(), AbstractXmlReader.XmlType.STATIC);
 	}
 
-	private void read() {
-		try {
-			Element element = getDocumentElement(Settings.getPathJumps(), false);
-			parseJumps(element, StaticData.get().getLocations(), StaticData.get().getJumps());
-			LOG.info("Jumps loaded");
-		} catch (IOException ex) {
-			LOG.error("Jumps not loaded: " + ex.getMessage(), ex);
-			staticDataFix();
-		} catch (XmlException ex) {
-			LOG.error("Jumps not loaded: " + ex.getMessage(), ex);
-			staticDataFix();
-		}
+	@Override
+	protected Boolean parse(Element element) throws XmlException {
+		parseJumps(element, StaticData.get().getLocations(), StaticData.get().getJumps());
+		return true;
 	}
 
-	private void parseJumps(final Element element, final Map<Long, MyLocation> locations, final List<Jump> jumps) {
+	@Override
+	protected Boolean failValue() {
+		return false;
+	}
+
+	private void parseJumps(final Element element, final Map<Long, MyLocation> locations, final List<Jump> jumps) throws XmlException {
 		NodeList nodes = element.getElementsByTagName("row");
 		Jump jump;
 		for (int i = 0; i < nodes.getLength(); i++) {
@@ -69,7 +61,7 @@ public final class JumpsReader extends AbstractXmlReader {
 		}
 	}
 
-	private Jump parseEdge(final Node node, final Map<Long, MyLocation> locations) {
+	private Jump parseEdge(final Node node, final Map<Long, MyLocation> locations) throws XmlException {
 		long from = AttributeGetters.getLong(node, "from");
 		long to = AttributeGetters.getLong(node, "to");
 		Jump j = new Jump(locations.get(from), locations.get(to));

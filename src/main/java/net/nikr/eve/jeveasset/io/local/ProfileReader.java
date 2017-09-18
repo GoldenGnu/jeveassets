@@ -21,7 +21,6 @@
 package net.nikr.eve.jeveasset.io.local;
 
 import com.beimin.eveapi.model.shared.KeyType;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -63,38 +62,30 @@ import net.nikr.eve.jeveasset.io.esi.EsiCallbackURL;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 import net.nikr.eve.jeveasset.io.shared.DataConverter;
 import net.nikr.eve.jeveasset.io.shared.RawConverter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 
-public final class ProfileReader extends AbstractXmlReader {
+public final class ProfileReader extends AbstractXmlReader<Boolean> {
 
-	private static final Logger LOG = LoggerFactory.getLogger(ProfileReader.class);
-
-	private ProfileReader() {
-	}
+	private ProfileManager profileManager;
 
 	public static boolean load(ProfileManager profileManager, final String filename) {
 		ProfileReader reader = new ProfileReader();
-		return reader.read(profileManager, filename);
+		reader.profileManager = profileManager;
+		return reader.read(filename, filename, XmlType.DYNAMIC_BACKUP);
 	}
 
-	private boolean read(ProfileManager profileManager, final String filename) {
-		try {
-			Element element = getDocumentElement(filename, true, true);
-			parseSettings(element, profileManager);
-		} catch (IOException ex) {
-			LOG.info("Profile not loaded");
-			return false;
-		} catch (XmlException ex) {
-			LOG.error("Profile not loaded: (" + filename + ") " + ex.getMessage(), ex);
-			return false;
-		}
-		LOG.info("Profile loaded");
+	@Override
+	protected Boolean parse(Element element) throws XmlException {
+		parseSettings(element, profileManager);
 		return true;
+	}
+
+	@Override
+	protected Boolean failValue() {
+		return false;
 	}
 
 	private void parseSettings(final Element element, ProfileManager profileManager) throws XmlException {
@@ -121,7 +112,7 @@ public final class ProfileReader extends AbstractXmlReader {
 		}
 	}
 
-	private void parseEsiOwners(final Element element, final List<EsiOwner> esiOwners) {
+	private void parseEsiOwners(final Element element, final List<EsiOwner> esiOwners) throws XmlException {
 		NodeList ownerNodes = element.getElementsByTagName("esiowner");
 		for (int i = 0; i < ownerNodes.getLength(); i++) {
 			Element currentNode = (Element) ownerNodes.item(i);
@@ -157,7 +148,7 @@ public final class ProfileReader extends AbstractXmlReader {
 		}
 	}
 
-	private void parseEveKitOwners(final Element element, final List<EveKitOwner> eveKitOwners) {
+	private void parseEveKitOwners(final Element element, final List<EveKitOwner> eveKitOwners) throws XmlException {
 		NodeList ownerNodes = element.getElementsByTagName("evekitowner");
 		for (int i = 0; i < ownerNodes.getLength(); i++) {
 			Element currentNode = (Element) ownerNodes.item(i);
@@ -187,7 +178,7 @@ public final class ProfileReader extends AbstractXmlReader {
 		}
 	}
 
-	private void parseAccounts(final Element element, final List<EveApiAccount> accounts) {
+	private void parseAccounts(final Element element, final List<EveApiAccount> accounts) throws XmlException {
 		NodeList accountNodes = element.getElementsByTagName("account");
 		for (int i = 0; i < accountNodes.getLength(); i++) {
 			Element currentNode = (Element) accountNodes.item(i);
@@ -197,7 +188,7 @@ public final class ProfileReader extends AbstractXmlReader {
 		}
 	}
 
-	private EveApiAccount parseAccount(final Node node) {
+	private EveApiAccount parseAccount(final Node node) throws XmlException {
 		int keyID;
 		if (AttributeGetters.haveAttribute(node, "keyid")) {
 			keyID = AttributeGetters.getInt(node, "keyid");
@@ -237,7 +228,7 @@ public final class ProfileReader extends AbstractXmlReader {
 		return new EveApiAccount(keyID, vCode, name, nextUpdate, accessMask, type, expires, invalid);
 	}
 
-	private void parseOwners(final Element element, final EveApiAccount account) {
+	private void parseOwners(final Element element, final EveApiAccount account) throws XmlException {
 		NodeList ownerNodes = element.getElementsByTagName("human");
 		for (int i = 0; i < ownerNodes.getLength(); i++) {
 			Element currentNode = (Element) ownerNodes.item(i);
@@ -251,7 +242,7 @@ public final class ProfileReader extends AbstractXmlReader {
 		}
 	}
 
-	private void parseOwnerType(final Element node, OwnerType owner) {
+	private void parseOwnerType(final Element node, OwnerType owner) throws XmlException {
 		String ownerName = AttributeGetters.getString(node, "name");
 		long ownerID = AttributeGetters.getLong(node, "id");
 		Date assetsNextUpdate = AttributeGetters.getDateNotNull(node, "assetsnextupdate");
@@ -297,7 +288,7 @@ public final class ProfileReader extends AbstractXmlReader {
 		parseBlueprints(node, owner);
 	}
 
-	private void parseContracts(final Element element, final OwnerType owner) {
+	private void parseContracts(final Element element, final OwnerType owner) throws XmlException {
 		NodeList contractsNodes = element.getElementsByTagName("contracts");
 		Map<MyContract, List<MyContractItem>> contracts = new HashMap<MyContract, List<MyContractItem>>();
 		for (int a = 0; a < contractsNodes.getLength(); a++) {
@@ -322,7 +313,7 @@ public final class ProfileReader extends AbstractXmlReader {
 		owner.setContracts(contracts);
 	}
 
-	private RawContract parseContract(final Element element) {
+	private RawContract parseContract(final Element element) throws XmlException {
 		RawContract contract = RawContract.create();
 		Integer acceptorID = AttributeGetters.getInt(element, "acceptorid");
 		Integer assigneeID = AttributeGetters.getInt(element, "assigneeid");
@@ -373,7 +364,7 @@ public final class ProfileReader extends AbstractXmlReader {
 		return contract;
 	}
 
-	private RawContractItem parseContractItem(final Element element) {
+	private RawContractItem parseContractItem(final Element element) throws XmlException {
 		RawContractItem contractItem = RawContractItem.create();
 		boolean included = AttributeGetters.getBoolean(element, "included");
 		Integer quantity = AttributeGetters.getInt(element, "quantity");
@@ -391,7 +382,7 @@ public final class ProfileReader extends AbstractXmlReader {
 		return contractItem;
 	}
 
-	private void parseBalances(final Element element, final OwnerType owner) {
+	private void parseBalances(final Element element, final OwnerType owner) throws XmlException {
 		List<MyAccountBalance> accountBalances = new ArrayList<MyAccountBalance>();
 		NodeList balancesNodes = element.getElementsByTagName("balances");
 		for (int a = 0; a < balancesNodes.getLength(); a++) {
@@ -407,7 +398,7 @@ public final class ProfileReader extends AbstractXmlReader {
 		owner.setAccountBalances(accountBalances);
 	}
 
-	private RawAccountBalance parseBalance(final Element element) {
+	private RawAccountBalance parseBalance(final Element element) throws XmlException {
 		RawAccountBalance accountBalance = RawAccountBalance.create();
 		int accountKey = AttributeGetters.getInt(element, "accountkey");
 		Float balance = AttributeGetters.getFloat(element, "balance");
@@ -416,7 +407,7 @@ public final class ProfileReader extends AbstractXmlReader {
 		return accountBalance;
 	}
 
-	private void parseMarketOrders(final Element element, final OwnerType owner) {
+	private void parseMarketOrders(final Element element, final OwnerType owner) throws XmlException {
 		NodeList marketOrdersNodes = element.getElementsByTagName("markerorders");
 		Set<MyMarketOrder> marketOrders = new HashSet<MyMarketOrder>();
 		for (int a = 0; a < marketOrdersNodes.getLength(); a++) {
@@ -432,7 +423,7 @@ public final class ProfileReader extends AbstractXmlReader {
 		owner.setMarketOrders(marketOrders);
 	}
 
-	private RawMarketOrder parseMarketOrder(final Element element, final OwnerType owner) {
+	private RawMarketOrder parseMarketOrder(final Element element, final OwnerType owner) throws XmlException {
 		RawMarketOrder apiMarketOrder = RawMarketOrder.create();
 		long orderID = AttributeGetters.getLong(element, "orderid");
 		long locationID = AttributeGetters.getLong(element, "stationid");
@@ -467,7 +458,7 @@ public final class ProfileReader extends AbstractXmlReader {
 		return apiMarketOrder;
 	}
 
-	private void parseJournals(final Element element, final OwnerType owner) {
+	private void parseJournals(final Element element, final OwnerType owner) throws XmlException {
 		NodeList journalsNodes = element.getElementsByTagName("journals");
 		Set<MyJournal> journals = new HashSet<MyJournal>();
 		for (int a = 0; a < journalsNodes.getLength(); a++) {
@@ -483,7 +474,7 @@ public final class ProfileReader extends AbstractXmlReader {
 		owner.setJournal(journals);
 	}
 
-	private RawJournal parseJournal(final Element element) {
+	private RawJournal parseJournal(final Element element) throws XmlException {
 		//Base
 		RawJournal rawJournal = RawJournal.create();
 		Float amount = AttributeGetters.getFloatOptional(element, "amount");
@@ -521,7 +512,7 @@ public final class ProfileReader extends AbstractXmlReader {
 		return rawJournal;
 	}
 
-	private void parseTransactions(final Element element, final OwnerType owner) {
+	private void parseTransactions(final Element element, final OwnerType owner) throws XmlException {
 		NodeList transactionsNodes = element.getElementsByTagName("wallettransactions");
 		Set<MyTransaction> transactions = new HashSet<MyTransaction>();
 		for (int a = 0; a < transactionsNodes.getLength(); a++) {
@@ -537,7 +528,7 @@ public final class ProfileReader extends AbstractXmlReader {
 		owner.setTransactions(transactions);
 	}
 
-	private RawTransaction parseTransaction(final Element element) {
+	private RawTransaction parseTransaction(final Element element) throws XmlException {
 		RawTransaction rawTransaction = RawTransaction.create();
 		Date date = AttributeGetters.getDate(element, "transactiondatetime");
 		Long transactionID = AttributeGetters.getLong(element, "transactionid");
@@ -576,7 +567,7 @@ public final class ProfileReader extends AbstractXmlReader {
 		return rawTransaction;
 	}
 
-	private void parseIndustryJobs(final Element element, final OwnerType owner) {
+	private void parseIndustryJobs(final Element element, final OwnerType owner) throws XmlException {
 		NodeList industryJobsNodes = element.getElementsByTagName("industryjobs");
 		List<MyIndustryJob> industryJobs = new ArrayList<MyIndustryJob>();
 		for (int a = 0; a < industryJobsNodes.getLength(); a++) {
@@ -594,7 +585,7 @@ public final class ProfileReader extends AbstractXmlReader {
 		owner.setIndustryJobs(industryJobs);
 	}
 
-	private RawIndustryJob parseIndustryJob(final Element element) {
+	private RawIndustryJob parseIndustryJob(final Element element) throws XmlException {
 		RawIndustryJob rawIndustryJob = RawIndustryJob.create();
 		Integer jobID = AttributeGetters.getInt(element, "jobid");
 		Integer installerID = AttributeGetters.getInt(element, "installerid");
@@ -644,7 +635,7 @@ public final class ProfileReader extends AbstractXmlReader {
 		return rawIndustryJob;
 	}
 
-	private void parseAssets(final Node node, final OwnerType owner, final List<MyAsset> assets, final MyAsset parentAsset) {
+	private void parseAssets(final Node node, final OwnerType owner, final List<MyAsset> assets, final MyAsset parentAsset) throws XmlException {
 		NodeList assetsNodes = node.getChildNodes();
 		for (int i = 0; i < assetsNodes.getLength(); i++) {
 			Node currentNode = assetsNodes.item(i);
@@ -669,7 +660,7 @@ public final class ProfileReader extends AbstractXmlReader {
 		}
 	}
 
-	private RawAsset parseAsset(final Node node, final MyAsset parentAsset) {
+	private RawAsset parseAsset(final Node node, final MyAsset parentAsset) throws XmlException {
 		RawAsset rawAsset = RawAsset.create();
 		Integer count = AttributeGetters.getInt(node, "count");
 
@@ -708,7 +699,7 @@ public final class ProfileReader extends AbstractXmlReader {
 		return rawAsset;
 	}
 
-	private void parseBlueprints(final Element element, final OwnerType owners) {
+	private void parseBlueprints(final Element element, final OwnerType owners) throws XmlException {
 		Map<Long, RawBlueprint> blueprints = new HashMap<Long, RawBlueprint>();
 		NodeList blueprintsNodes = element.getElementsByTagName("blueprints");
 		for (int a = 0; a < blueprintsNodes.getLength(); a++) {
@@ -723,7 +714,7 @@ public final class ProfileReader extends AbstractXmlReader {
 		owners.setBlueprints(blueprints);
 	}
 
-	private RawBlueprint parseBlueprint(final Node node) {
+	private RawBlueprint parseBlueprint(final Node node) throws XmlException {
 		RawBlueprint blueprint = RawBlueprint.create();
 		long itemID = AttributeGetters.getLong(node, "itemid");
 		long locationID = AttributeGetters.getLong(node, "locationid");

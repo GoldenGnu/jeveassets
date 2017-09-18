@@ -24,7 +24,6 @@ package net.nikr.eve.jeveasset.io.local;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
-import java.io.IOException;
 import net.nikr.eve.jeveasset.TestUtil;
 import net.nikr.eve.jeveasset.io.shared.FileUtil;
 import org.junit.AfterClass;
@@ -226,17 +225,19 @@ public class BackupTest extends TestUtil {
 		}
 	}
 
-	private static class SimpleReader extends AbstractXmlReader {
+	private static class SimpleReader extends AbstractXmlReader<Boolean> {
 
 		private boolean read(File file) {
-			try {
-				Element element = getDocumentElement(file.getAbsolutePath(), true);
-				return true;
-			} catch (IOException ex) {
-				
-			} catch (XmlException ex) {
-				
-			}
+			return read("Simple reader", file.getAbsolutePath(), AbstractXmlReader.XmlType.DYNAMIC);
+		}
+
+		@Override
+		protected Boolean parse(Element element) throws XmlException {
+			return true;
+		}
+
+		@Override
+		protected Boolean failValue() {
 			return false;
 		}
 	}

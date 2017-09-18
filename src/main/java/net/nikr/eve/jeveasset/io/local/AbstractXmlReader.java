@@ -35,27 +35,59 @@ import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
 
 
-public abstract class AbstractXmlReader extends AbstractXmlBackup {
+public abstract class AbstractXmlReader<T> extends AbstractXmlBackup {
 
 	private static final Logger LOG = LoggerFactory.getLogger(AbstractXmlReader.class);
 
-	protected void staticDataFix() {
+	public static enum XmlType {
+		DYNAMIC, STATIC, DYNAMIC_BACKUP, IMPORT
+	}
+
+	protected T read(final String name, final String filename, final XmlType xmlType) {
+		try {
+			Element element = getDocumentElement(filename, xmlType);
+			T t = parse(element);
+			LOG.info(name+ " loaded");
+			return t;
+		} catch (IOException ex) {
+			if (xmlType == XmlType.STATIC) {
+				staticDataFix();
+			}
+			LOG.info(name+ " not loaded");
+			return failValue();
+		} catch (XmlException ex) {
+			if (xmlType == XmlType.STATIC) { //Static data
+				staticDataFix();
+			} else if (xmlType == XmlType.DYNAMIC || xmlType == XmlType.DYNAMIC_BACKUP) { //Dynamic data
+				if (restoreNewFile(filename)) { //If possible restore from .new (Should be the newest)
+					return read(name, filename, xmlType);
+				} else if (restoreBackupFile(filename)) { //If possible restore from .bac (Should be the oldest, but, still worth trying)
+					return read(name, filename, xmlType);
+				} else { //Nothing left to try - throw error
+					restoreFailed(filename); //Backup error file
+				}
+			}
+			LOG.error(name+ " not loaded: " + ex.getMessage(), ex);
+			return failValue();
+		}
+	}
+
+	protected abstract T parse(Element element) throws XmlException;
+	protected abstract T failValue();
+
+	private void staticDataFix() {
 		Updater updater = new Updater();
 		updater.fixData();
 	}
 
-	protected Element getDocumentElement(final String filename, final boolean fileLock) throws XmlException, IOException {
-		return getDocumentElement(filename, fileLock, false);
-	}
-
-	protected Element getDocumentElement(final String filename, final boolean fileLock, final boolean backupOnNewProgramVersion) throws XmlException, IOException {
+	private Element getDocumentElement(final String filename, final XmlType xmlType) throws XmlException, IOException {
 		DocumentBuilderFactory factory;
 		DocumentBuilder builder;
 		Document doc;
 		FileInputStream is = null;
 		File file = new File(filename);
 		try {
-			if (fileLock) {
+			if (xmlType == XmlType.DYNAMIC || xmlType == XmlType.DYNAMIC_BACKUP) {
 				lock(filename);
 			}
 			is = new FileInputStream(file);
@@ -63,29 +95,19 @@ public abstract class AbstractXmlReader extends AbstractXmlBackup {
 			builder = factory.newDocumentBuilder();
 			doc = builder.parse(is);
 			Element element = doc.getDocumentElement();
-			if (backupOnNewProgramVersion) {
+			if (xmlType == XmlType.DYNAMIC_BACKUP) {
 				backup(filename, element);
 			}
 			return element;
 		} catch (SAXException ex) {
-			if (is != null) { //Close file - so we can delete it...
-				is.close();
-			}
-			if (restoreNewFile(filename)) { //If possible restore from .new (Should be the newest)
-				return getDocumentElement(filename, false); //File already locked
-			} else if (restoreBackupFile(filename)) { //If possible restore from .bac (Should be the oldes, but, still worth trying)
-				return getDocumentElement(filename, false); //File already locked
-			} else { //Nothing left to try - throw error
-				restoreFailed(filename); //Backup error file
-				throw new XmlException(ex.getMessage(), ex);
-			}
+			throw new XmlException(ex.getMessage(), ex);
 		} catch (ParserConfigurationException ex) {
 			throw new XmlException(ex.getMessage(), ex);
 		} finally {
 			if (is != null) {
 				is.close();
 			}
-			if (fileLock) {
+			if (xmlType == XmlType.DYNAMIC || xmlType == XmlType.DYNAMIC_BACKUP) {
 				unlock(filename); //Last thing to do
 			}
 		}

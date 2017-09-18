@@ -21,45 +21,36 @@
 
 package net.nikr.eve.jeveasset.io.local;
 
-import java.io.IOException;
 import java.util.Map;
 import net.nikr.eve.jeveasset.data.sde.ItemFlag;
 import net.nikr.eve.jeveasset.data.sde.StaticData;
 import net.nikr.eve.jeveasset.data.settings.Settings;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 
-public final class FlagsReader extends AbstractXmlReader {
-
-	private static final Logger LOG = LoggerFactory.getLogger(FlagsReader.class);
+public final class FlagsReader extends AbstractXmlReader<Boolean> {
 
 	private FlagsReader() { }
 
 	public static boolean load() {
 		FlagsReader reader = new FlagsReader();
-		return reader.read();
+		return reader.read("Flags", Settings.getPathFlags(), AbstractXmlReader.XmlType.STATIC);
 	}
 
-	private boolean read() {
-		try {
-			Element element = getDocumentElement(Settings.getPathFlags(), false);
-			parseFlags(element, StaticData.get().getItemFlags());
-			LOG.info("Flags loaded");
-		} catch (IOException ex) {
-			LOG.error("Flags not loaded: " + ex.getMessage(), ex);
-			staticDataFix();
-		} catch (XmlException ex) {
-			LOG.error("Flags not loaded: " + ex.getMessage(), ex);
-			staticDataFix();
-		}
+	@Override
+	protected Boolean parse(Element element) throws XmlException {
+		parseFlags(element, StaticData.get().getItemFlags());
 		return true;
 	}
 
-	private void parseFlags(final Element element, final Map<Integer, ItemFlag> flags) {
+	@Override
+	protected Boolean failValue() {
+		return false;
+	}
+
+	private void parseFlags(final Element element, final Map<Integer, ItemFlag> flags) throws XmlException {
 		NodeList nodes = element.getElementsByTagName("row");
 		ItemFlag itemFlag;
 		for (int i = 0; i < nodes.getLength(); i++) {
@@ -69,7 +60,7 @@ public final class FlagsReader extends AbstractXmlReader {
 		}
 	}
 
-	private ItemFlag parseFlag(final Node node) {
+	private ItemFlag parseFlag(final Node node) throws XmlException {
 		int flagID = AttributeGetters.getInt(node, "flagid");
 		String flagName = AttributeGetters.getString(node, "flagname");
 		String flagText = AttributeGetters.getString(node, "flagtext");

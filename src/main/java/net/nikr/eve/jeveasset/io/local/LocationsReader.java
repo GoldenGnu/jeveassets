@@ -21,44 +21,36 @@
 
 package net.nikr.eve.jeveasset.io.local;
 
-import java.io.IOException;
 import java.util.Map;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
 import net.nikr.eve.jeveasset.data.sde.StaticData;
 import net.nikr.eve.jeveasset.data.settings.Settings;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 
-public final class LocationsReader extends AbstractXmlReader {
-
-	private static final Logger LOG = LoggerFactory.getLogger(LocationsReader.class);
+public final class LocationsReader extends AbstractXmlReader<Boolean> {
 
 	private LocationsReader() { }
 
 	public static void load() {
 		LocationsReader reader = new LocationsReader();
-		reader.read();
+		reader.read("Locations loaded", Settings.getPathLocations(), AbstractXmlReader.XmlType.STATIC);
 	}
 
-	private void read() {
-		try {
-			Element element = getDocumentElement(Settings.getPathLocations(), false);
-			parseLocations(element, StaticData.get().getLocations());
-			LOG.info("Locations loaded");
-		} catch (IOException ex) {
-			LOG.error("Locations not loaded: " + ex.getMessage(), ex);
-			staticDataFix();
-		} catch (XmlException ex) {
-			LOG.error("Locations not loaded: " + ex.getMessage(), ex);
-			staticDataFix();
-		}
+	@Override
+	protected Boolean parse(Element element) throws XmlException {
+		parseLocations(element, StaticData.get().getLocations());
+		return true;
 	}
 
-	private void parseLocations(final Element element, final Map<Long, MyLocation> locations) {
+	@Override
+	protected Boolean failValue() {
+		return false;
+	}
+
+	private void parseLocations(final Element element, final Map<Long, MyLocation> locations) throws XmlException {
 		NodeList nodes = element.getElementsByTagName("row");
 		MyLocation location;
 		for (int i = 0; i < nodes.getLength(); i++) {
@@ -67,7 +59,7 @@ public final class LocationsReader extends AbstractXmlReader {
 		}
 	}
 
-	private MyLocation parseLocation(final Node node) {
+	private MyLocation parseLocation(final Node node) throws XmlException {
 		long stationID = AttributeGetters.getLong(node, "si");
 		String station = AttributeGetters.getString(node, "s");
 		long systemID = AttributeGetters.getLong(node, "syi");
