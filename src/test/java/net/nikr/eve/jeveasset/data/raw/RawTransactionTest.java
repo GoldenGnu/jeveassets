@@ -23,6 +23,7 @@ package net.nikr.eve.jeveasset.data.raw;
 import net.nikr.eve.jeveasset.TestUtil;
 import net.nikr.eve.jeveasset.data.api.raw.RawTransaction;
 import net.troja.eve.esi.model.CharacterWalletTransactionsResponse;
+import net.troja.eve.esi.model.CorporationTransactionsResponse;
 import org.junit.Test;
 
 
@@ -31,6 +32,7 @@ public class RawTransactionTest extends TestUtil {
 	@Test
 	public void rawTransactionTest() {
 		RawUtil.compare(RawTransaction.class, CharacterWalletTransactionsResponse.class);
+		RawUtil.compare(RawTransaction.class, CorporationTransactionsResponse.class);
 	}
 	
 }

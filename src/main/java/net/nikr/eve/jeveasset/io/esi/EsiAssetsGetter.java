@@ -27,6 +27,7 @@ import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import net.troja.eve.esi.ApiException;
 import net.troja.eve.esi.model.CharacterAssetsResponse;
+import net.troja.eve.esi.model.CorporationAssetsResponse;
 
 public class EsiAssetsGetter extends AbstractEsiGetter {
 
@@ -37,8 +38,23 @@ public class EsiAssetsGetter extends AbstractEsiGetter {
 
 	@Override
 	protected void get(EsiOwner owner) throws ApiException {
-		List<CharacterAssetsResponse> responses = getAssetsApiAuth().getCharactersCharacterIdAssets((int) owner.getOwnerID(), DATASOURCE, null, null, null);
-		owner.setAssets(EsiConverter.toAssets(responses, owner));
+		if (owner.isCorporation()) {
+			List<CorporationAssetsResponse> responses = updatePages(owner, new EsiPagesHandler<CorporationAssetsResponse>() {
+				@Override
+				public List<CorporationAssetsResponse> get(EsiOwner owner, Integer page) throws ApiException {
+					return getAssetsApiAuth().getCorporationsCorporationIdAssets((int) owner.getOwnerID(), DATASOURCE, page, null, null, null);
+				}
+			});
+			owner.setAssets(EsiConverter.toAssetsCorporation(responses, owner));
+		} else {
+			List<CharacterAssetsResponse> responses = updatePages(owner, new EsiPagesHandler<CharacterAssetsResponse>() {
+				@Override
+				public List<CharacterAssetsResponse> get(EsiOwner owner, Integer page) throws ApiException {
+					return getAssetsApiAuth().getCharactersCharacterIdAssets((int) owner.getOwnerID(), DATASOURCE, page, null, null, null);
+				}
+			});
+			owner.setAssets(EsiConverter.toAssets(responses, owner));
+		}
 	}
 
 	@Override
@@ -60,7 +76,7 @@ public class EsiAssetsGetter extends AbstractEsiGetter {
 	@Override
 	protected boolean enabled(EsiOwner owner) {
 		if (owner.isCorporation()) {
-			return false;
+			return EsiScopes.CORPORATION_ASSETS.isEnabled();
 		} else {
 			return EsiScopes.CHARACTER_ASSETS.isEnabled();
 		}

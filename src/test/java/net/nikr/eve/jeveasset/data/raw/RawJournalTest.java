@@ -45,6 +45,7 @@ public class RawJournalTest extends TestUtil {
 		RawUtil.compare(JournalPartyType.values(), CharacterWalletJournalResponse.FirstPartyTypeEnum.values());
 		RawUtil.compare(JournalPartyType.values(), CharacterWalletJournalResponse.SecondPartyTypeEnum.values());
 		RawUtil.compare(RawJournalExtraInfo.class, CharacterWalletJournalExtraInfoResponse.class);
+		RawUtil.compare(RawJournal.class, CorporationWalletJournalResponse.class);
 		RawUtil.compare(JournalPartyType.values(), CorporationWalletJournalResponse.SecondPartyTypeEnum.values());
 		RawUtil.compare(JournalPartyType.values(), CorporationWalletJournalResponse.SecondPartyTypeEnum.values());
 		RawUtil.compare(RawJournalExtraInfo.class, CorporationWalletJournalExtraInfoResponse.class);

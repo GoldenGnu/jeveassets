@@ -32,6 +32,7 @@ import java.util.Map;
 import java.util.Set;
 import net.nikr.eve.jeveasset.data.api.raw.RawJournalExtraInfo;
 import net.troja.eve.esi.model.CharacterWalletJournalExtraInfoResponse;
+import net.troja.eve.esi.model.CorporationWalletJournalExtraInfoResponse;
 
 
 public class RawUtil {
@@ -66,6 +67,9 @@ public class RawUtil {
 			if (value.getName().equals("accountKey")) { //Ignore enums
 				continue;
 			}
+			if (value.getName().equals("isPersonal")) { //Only in character endpoint
+				continue;
+			}
 			if (type.isEnum()) { //Ignore enums
 				continue;
 			}
@@ -79,6 +83,9 @@ public class RawUtil {
 				continue;
 			}
 			if (type.equals(CharacterWalletJournalExtraInfoResponse.class)) { //Ignore CharacterWalletJournalExtraInfoResponse
+				continue;
+			}
+			if (type.equals(CorporationWalletJournalExtraInfoResponse.class)) { //Ignore CorporationWalletJournalExtraInfoResponse
 				continue;
 			}
 			names.put(value.getName(), type.getName());
@@ -99,6 +106,9 @@ public class RawUtil {
 				continue;
 			}
 			if (value.getName().equals("accountKey")) { //Ignore enums
+				continue;
+			}
+			if (value.getName().equals("isPersonal")) { //Only in character endpoint
 				continue;
 			}
 			names.add(value.getName());
@@ -132,6 +142,9 @@ public class RawUtil {
 	private static void compareTypes(Map<String, String> raw, Map<String, String> esi) {
 		assertEquals(esi.size(), raw.size());
 		for (Map.Entry<String, String> entry : raw.entrySet()) {
+			assertEquals(entry.getValue(), esi.get(entry.getKey()));
+		}
+		for (Map.Entry<String, String> entry : esi.entrySet()) {
 			assertEquals(entry.getValue(), esi.get(entry.getKey()));
 		}
 	}

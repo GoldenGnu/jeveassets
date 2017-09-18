@@ -29,7 +29,7 @@ import net.nikr.eve.jeveasset.io.esi.EsiCallbackURL;
 import net.nikr.eve.jeveasset.io.esi.EsiScopes;
 
 
-public class EsiOwner  extends AbstractOwner implements OwnerType {
+public class EsiOwner extends AbstractOwner implements OwnerType {
 
 	private String accountName;
 	private String refreshToken;
@@ -174,7 +174,11 @@ public class EsiOwner  extends AbstractOwner implements OwnerType {
 
 	@Override
 	public boolean isAssetList() {
-		return EsiScopes.CHARACTER_ASSETS.isInScope(scopes);
+		if (isCorporation()) {
+			return EsiScopes.CORPORATION_ASSETS.isInScope(scopes) && roles.contains("Director");
+		} else {
+			return EsiScopes.CHARACTER_ASSETS.isInScope(scopes);
+		}
 	}
 
 	private boolean isWallet() {
@@ -210,8 +214,7 @@ public class EsiOwner  extends AbstractOwner implements OwnerType {
 
 	@Override
 	public boolean isTransactions() {
-		//Can be changed to isWallet() when corporation endpoint is complated
-		return EsiScopes.CHARACTER_WALLET.isInScope(scopes);
+		return isWallet();
 	}
 
 	@Override

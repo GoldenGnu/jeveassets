@@ -188,7 +188,7 @@ public abstract class AbstractEsiGetter {
 		}
 	}
 
-	protected <T> List<T> getList(EsiOwner owner, Set<Long> existing, EsiListHandler<T> handler) throws ApiException {
+	protected <T> List<T> updateIDs(EsiOwner owner, Set<Long> existing, EsiListHandler<T> handler) throws ApiException {
 		List<T> list = new ArrayList<T>();
 		Long fromID = null;
 		boolean run = true;
@@ -219,6 +219,23 @@ public abstract class AbstractEsiGetter {
 	protected interface EsiListHandler<T> {
 		public List<T> get(EsiOwner owner, Long fromID) throws ApiException;
 		public Long getID(T response);
+	}
+
+	protected <T> List<T> updatePages(EsiOwner owner, EsiPagesHandler<T> handler) throws ApiException {
+		List<T> list = new ArrayList<T>();
+		list.addAll(handler.get(owner, 1)); //Get data from ESI (to get pages header)
+		ApiClient client = client(owner); //Get ApiClient
+		Integer pages = getHeaderInteger(client, "x-pages"); //Get pages header
+		if (pages != null && pages > 1) { //More than one page
+			for (int i = 2; i <= pages; i++) { //Get the remaining pages (we already got page 1 so we start at page 2
+				list.addAll(handler.get(owner, i)); //Get data from ESI
+			}
+		}
+		return list;
+	}
+
+	protected interface EsiPagesHandler<T> {
+		public List<T> get(EsiOwner owner, Integer page) throws ApiException;
 	}
 
 	protected abstract void get(EsiOwner owner) throws ApiException;

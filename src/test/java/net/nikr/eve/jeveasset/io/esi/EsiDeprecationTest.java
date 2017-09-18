@@ -46,10 +46,21 @@ public class EsiDeprecationTest extends TestUtil {
 	}
 
 	@Test
-	public void esiAssetsGetter() {
+	public void esiCharactersAssetsGetter() {
 		AssetsApi api = new AssetsApi();
 		try {
-			api.getCharactersCharacterIdAssets(1, DATASOURCE, null, null, null);
+			api.getCharactersCharacterIdAssets(1, DATASOURCE, null, null, null, null);
+		} catch (ApiException ex) {
+
+		}
+		validate(api.getApiClient());
+	}
+
+	@Test
+	public void esiCorporationAssetsGetter() {
+		AssetsApi api = new AssetsApi();
+		try {
+			api.getCorporationsCorporationIdAssets(1, DATASOURCE, null, null, null, null);
 		} catch (ApiException ex) {
 
 		}
@@ -189,10 +200,21 @@ public class EsiDeprecationTest extends TestUtil {
 	}
 
 	@Test
-	public void esiTransactionsGetter() {
+	public void esiCharacterTransactionsGetter() {
 		WalletApi api = new WalletApi();
 		try {
 			api.getCharactersCharacterIdWalletTransactions(1, DATASOURCE, null, null, null, null);
+		} catch (ApiException ex) {
+
+		}
+		validate(api.getApiClient());
+	}
+
+	@Test
+	public void esiCorporationTransactionsGetter() {
+		WalletApi api = new WalletApi();
+		try {
+			api.getCorporationsCorporationIdWalletsDivisionTransactions(1, 1, DATASOURCE, null, null, null, null);
 		} catch (ApiException ex) {
 
 		}

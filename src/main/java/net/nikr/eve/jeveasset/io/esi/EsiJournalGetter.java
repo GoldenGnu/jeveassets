@@ -52,7 +52,7 @@ public class EsiJournalGetter extends AbstractEsiGetter {
 		if (owner.isCorporation()) {
 			for (int i = 1; i < 8; i++) { //Division 1-7
 				final int division = i;
-				List<CorporationWalletJournalResponse> journals = getList(owner, existing, new EsiListHandler<CorporationWalletJournalResponse>() {
+				List<CorporationWalletJournalResponse> journals = updateIDs(owner, existing, new EsiListHandler<CorporationWalletJournalResponse>() {
 					@Override
 					public List<CorporationWalletJournalResponse> get(EsiOwner owner, Long fromID) throws ApiException {
 						return getWalletApiAuth().getCorporationsCorporationIdWalletsDivisionJournal((int) owner.getOwnerID(), division, DATASOURCE, fromID, null, null, null);
@@ -67,7 +67,7 @@ public class EsiJournalGetter extends AbstractEsiGetter {
 				owner.setJournal(EsiConverter.toJournalsCorporation(journals, owner, fixedDivision, saveHistory));
 			}
 		} else {
-			List<CharacterWalletJournalResponse> journals = getList(owner, existing, new EsiListHandler<CharacterWalletJournalResponse>() {
+			List<CharacterWalletJournalResponse> journals = updateIDs(owner, existing, new EsiListHandler<CharacterWalletJournalResponse>() {
 				@Override
 				public List<CharacterWalletJournalResponse> get(EsiOwner owner, Long fromID) throws ApiException {
 					return getWalletApiAuth().getCharactersCharacterIdWalletJournal((int) owner.getOwnerID(), DATASOURCE, fromID, null, null, null);

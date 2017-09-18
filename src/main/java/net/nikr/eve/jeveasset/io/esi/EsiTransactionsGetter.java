@@ -29,6 +29,7 @@ import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import net.troja.eve.esi.ApiException;
 import net.troja.eve.esi.model.CharacterWalletTransactionsResponse;
+import net.troja.eve.esi.model.CorporationTransactionsResponse;
 
 
 public class EsiTransactionsGetter extends AbstractEsiGetter {
@@ -48,18 +49,37 @@ public class EsiTransactionsGetter extends AbstractEsiGetter {
 				existing.add(transaction.getTransactionID());
 			}
 		}
-		List<CharacterWalletTransactionsResponse> responses = getList(owner, existing, new EsiListHandler<CharacterWalletTransactionsResponse>() {
-			@Override
-			public List<CharacterWalletTransactionsResponse> get(EsiOwner owner, Long fromID) throws ApiException {
-				return getWalletApiAuth().getCharactersCharacterIdWalletTransactions((int) owner.getOwnerID(), DATASOURCE, fromID, null, null, null);
-			}
+		if (owner.isCorporation()) {
+			for (int i = 1; i < 8; i++) { //Division 1-7
+				final int division = i;
+				List<CorporationTransactionsResponse> responses = updateIDs(owner, existing, new EsiListHandler<CorporationTransactionsResponse>() {
+					@Override
+					public List<CorporationTransactionsResponse> get(EsiOwner owner, Long fromID) throws ApiException {
+						return getWalletApiAuth().getCorporationsCorporationIdWalletsDivisionTransactions((int) owner.getOwnerID(), division, DATASOURCE, fromID, null, null, null);
+					}
 
-			@Override
-			public Long getID(CharacterWalletTransactionsResponse response) {
-				return response.getTransactionId();
+					@Override
+					public Long getID(CorporationTransactionsResponse response) {
+						return response.getTransactionId();
+					}
+				});
+				int fixedDivision = division + 999;
+				owner.setTransactions(EsiConverter.toTransactionCorporation(responses, owner, fixedDivision, saveHistory));
 			}
-		});
-		owner.setTransactions(EsiConverter.toTransaction(responses, owner, 1000, saveHistory));
+		} else {
+			List<CharacterWalletTransactionsResponse> responses = updateIDs(owner, existing, new EsiListHandler<CharacterWalletTransactionsResponse>() {
+				@Override
+				public List<CharacterWalletTransactionsResponse> get(EsiOwner owner, Long fromID) throws ApiException {
+					return getWalletApiAuth().getCharactersCharacterIdWalletTransactions((int) owner.getOwnerID(), DATASOURCE, fromID, null, null, null);
+				}
+
+				@Override
+				public Long getID(CharacterWalletTransactionsResponse response) {
+					return response.getTransactionId();
+				}
+			});
+			owner.setTransactions(EsiConverter.toTransaction(responses, owner, 1000, saveHistory));
+		}
 	}
 
 	@Override
@@ -85,7 +105,7 @@ public class EsiTransactionsGetter extends AbstractEsiGetter {
 	@Override
 	protected boolean enabled(EsiOwner owner) {
 		if (owner.isCorporation()) {
-			return false;
+			return EsiScopes.CORPORATION_WALLET.isEnabled();
 		} else {
 			return EsiScopes.CHARACTER_WALLET.isEnabled();
 		}

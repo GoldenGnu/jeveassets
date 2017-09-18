@@ -53,6 +53,8 @@ import net.troja.eve.esi.model.CharacterIndustryJobsResponse;
 import net.troja.eve.esi.model.CharacterOrdersResponse;
 import net.troja.eve.esi.model.CharacterWalletJournalResponse;
 import net.troja.eve.esi.model.CharacterWalletTransactionsResponse;
+import net.troja.eve.esi.model.CorporationAssetsResponse;
+import net.troja.eve.esi.model.CorporationTransactionsResponse;
 import net.troja.eve.esi.model.CorporationWalletJournalResponse;
 import net.troja.eve.esi.model.CorporationWalletsResponse;
 
@@ -77,6 +79,14 @@ public class EsiConverter extends DataConverter {
 	public static List<MyAsset> toAssets(List<CharacterAssetsResponse> responses, OwnerType owner) {
 		List<RawAsset> rawAssets = new ArrayList<RawAsset>();
 		for (CharacterAssetsResponse response : responses) {
+			rawAssets.add(new RawAsset(response));
+		}
+		return convertRawAssets(rawAssets, owner);
+	}
+
+	public static List<MyAsset> toAssetsCorporation(List<CorporationAssetsResponse> responses, OwnerType owner) {
+		List<RawAsset> rawAssets = new ArrayList<RawAsset>();
+		for (CorporationAssetsResponse response : responses) {
 			rawAssets.add(new RawAsset(response));
 		}
 		return convertRawAssets(rawAssets, owner);
@@ -141,6 +151,14 @@ public class EsiConverter extends DataConverter {
 	public static Set<MyTransaction> toTransaction(List<CharacterWalletTransactionsResponse> responses, OwnerType owner, Integer accountKey, boolean saveHistory) {
 		List<RawTransaction> rawTransactions = new ArrayList<RawTransaction>();
 		for (CharacterWalletTransactionsResponse response : responses) {
+			rawTransactions.add(new RawTransaction(response, accountKey));
+		}
+		return convertRawTransactions(rawTransactions, owner, saveHistory);
+	}
+
+	public static Set<MyTransaction> toTransactionCorporation(List<CorporationTransactionsResponse> responses, OwnerType owner, Integer accountKey, boolean saveHistory) {
+		List<RawTransaction> rawTransactions = new ArrayList<RawTransaction>();
+		for (CorporationTransactionsResponse response : responses) {
 			rawTransactions.add(new RawTransaction(response, accountKey));
 		}
 		return convertRawTransactions(rawTransactions, owner, saveHistory);

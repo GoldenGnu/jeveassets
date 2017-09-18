@@ -24,7 +24,7 @@ import net.nikr.eve.jeveasset.TestUtil;
 import net.nikr.eve.jeveasset.data.api.raw.RawAsset;
 import net.nikr.eve.jeveasset.data.api.raw.RawAsset.LocationType;
 import net.troja.eve.esi.model.CharacterAssetsResponse;
-import net.troja.eve.esi.model.CharacterAssetsResponse.LocationTypeEnum;
+import net.troja.eve.esi.model.CorporationAssetsResponse;
 import org.junit.Test;
 
 
@@ -33,7 +33,9 @@ public class RawAssetTest extends TestUtil {
 	@Test
 	public void rawAssetTest() {
 		RawUtil.compare(RawAsset.class, CharacterAssetsResponse.class);
-		RawUtil.compare(LocationType.values(), LocationTypeEnum.values());
+		RawUtil.compare(LocationType.values(), CharacterAssetsResponse.LocationTypeEnum.values());
+		RawUtil.compare(RawAsset.class, CorporationAssetsResponse.class);
+		RawUtil.compare(LocationType.values(), CorporationAssetsResponse.LocationTypeEnum.values());
 	}
 
 }

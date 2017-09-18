@@ -86,6 +86,11 @@ public class RawConverter {
 		return ApiIdConverter.getFlag(locationFlag.getID());
 	}
 
+	public static ItemFlag toFlag(net.troja.eve.esi.model.CorporationAssetsResponse.LocationFlagEnum locationFlagEnum) {
+		LocationFlag locationFlag = LocationFlag.valueOf(locationFlagEnum.name());
+		return ApiIdConverter.getFlag(locationFlag.getID());
+	}
+
 	public static ItemFlag toFlag(net.troja.eve.esi.model.CharacterBlueprintsResponse.LocationFlagEnum locationFlagEnum) {
 		LocationFlag locationFlag = LocationFlag.valueOf(locationFlagEnum.name());
 		return ApiIdConverter.getFlag(locationFlag.getID());
@@ -579,10 +584,17 @@ public class RawConverter {
 		MODULE("Module", 0),
 		CORPSEBAY("CorpseBay", 0),
 		HANGARALL("HangarAll", 0),
-		SUBSYSTEMBAY("SubSystemBay", 177),
+		DUSTDATABANK("DustDatabank", 0),
+		DUSTBATTLE("DustBattle", 0),
+		HIDDENMODIFERS("HiddenModifers", 0),
+		WALLET("Wallet", 1),
+		OFFICEFOLDER("OfficeFolder", 2),
 		WARDROBE("Wardrobe", 3),
 		HANGAR("Hangar", 4),
 		CARGO("Cargo", 5),
+		IMPOUNDED("OfficeImpound", 6), //Impounded
+		SKILL("Skill", 7),
+		REWARD("Reward", 8),
 		LOSLOT0("LoSlot0", 11),
 		LOSLOT1("LoSlot1", 12),
 		LOSLOT2("LoSlot2", 13),
@@ -608,11 +620,18 @@ public class RawConverter {
 		HISLOT6("HiSlot6", 33),
 		HISLOT7("HiSlot7", 34),
 		ASSETSAFETY("AssetSafety", 36),
+		CAPSULE("Capsule", 56),
+		PILOT("Pilot", 57),
+		SKILLINTRAINING("SkillInTraining", 61),
+		CORPDELIVERIES("CorpMarket", 62), //CorpDeliveries
 		LOCKED("Locked", 63),
 		UNLOCKED("Unlocked", 64),
+		BONUS("Bonus", 86),
 		DRONEBAY("DroneBay", 87),
+		BOOSTER("Booster", 88),
 		IMPLANT("Implant", 89),
 		SHIPHANGAR("ShipHangar", 90),
+		SHIPOFFLINE("ShipOffline", 91),
 		RIGSLOT0("RigSlot0", 92),
 		RIGSLOT1("RigSlot1", 93),
 		RIGSLOT2("RigSlot2", 94),
@@ -621,6 +640,14 @@ public class RawConverter {
 		RIGSLOT5("RigSlot5", 97),
 		RIGSLOT6("RigSlot6", 98),
 		RIGSLOT7("RigSlot7", 99),
+		CORPSAG1("CorpSAG1", 115),
+        CORPSAG2("CorpSAG2", 116),
+        CORPSAG3("CorpSAG3", 117),
+        CORPSAG4("CorpSAG4", 118),
+        CORPSAG5("CorpSAG5", 119),
+        CORPSAG6("CorpSAG6", 120),
+        CORPSAG7("CorpSAG7", 121),
+		SECONDARYSTORAGE("SecondaryStorage", 122),
 		SUBSYSTEMSLOT0("SubSystemSlot0", 125),
 		SUBSYSTEMSLOT1("SubSystemSlot1", 126),
 		SUBSYSTEMSLOT2("SubSystemSlot2", 127),
@@ -640,20 +667,38 @@ public class RawConverter {
 		SPECIALIZEDLARGESHIPHOLD("SpecializedLargeShipHold", 141),
 		SPECIALIZEDINDUSTRIALSHIPHOLD("SpecializedIndustrialShipHold", 142),
 		SPECIALIZEDAMMOHOLD("SpecializedAmmoHold", 143),
+		STRUCTUREACTIVE("StructureActive", 144),
+		STRUCTUREINACTIVE("StructureInactive", 145),
+		JUNKYARDREPROCESSED("JunkyardReprocessed", 146),
+		JUNKYARDTRASHED("JunkyardTrashed", 147),
 		SPECIALIZEDCOMMANDCENTERHOLD("SpecializedCommandCenterHold", 148),
 		SPECIALIZEDPLANETARYCOMMODITIESHOLD("SpecializedPlanetaryCommoditiesHold", 149),
+		PLANETSURFACE("PlanetSurface", 150),
 		SPECIALIZEDMATERIALBAY("SpecializedMaterialBay", 151),
 		QUAFEBAY("QuafeBay", 154),
 		FLEETHANGAR("FleetHangar", 155),
 		HIDDENMODIFIERS("HiddenModifiers", 156),
+		STRUCTUREOFFLINE("StructureOffline", 157),
 		FIGHTERBAY("FighterBay", 158),
 		FIGHTERTUBE0("FighterTube0", 159),
 		FIGHTERTUBE1("FighterTube1", 160),
 		FIGHTERTUBE2("FighterTube2", 161),
 		FIGHTERTUBE3("FighterTube3", 162),
 		FIGHTERTUBE4("FighterTube4", 163),
-		DELIVERIES("Deliveries", 173);
-		//BOOSTERBAY(BoosterBay, 176)
+		SERVICESLOT0("StructureServiceSlot0", 164), //ServiceSlot0
+        SERVICESLOT1("StructureServiceSlot1", 165), //ServiceSlot1
+        SERVICESLOT2("StructureServiceSlot2", 166), //ServiceSlot2
+        SERVICESLOT3("StructureServiceSlot3", 167), //ServiceSlot3
+        SERVICESLOT4("StructureServiceSlot4", 168), //ServiceSlot4
+        SERVICESLOT5("StructureServiceSlot5", 169), //ServiceSlot5
+        SERVICESLOT6("StructureServiceSlot6", 170), //ServiceSlot6
+        SERVICESLOT7("StructureServiceSlot7", 171), //ServiceSlot7
+		STRUCTUREFUEL("StructureFuel", 172),
+		DELIVERIES("Deliveries", 173),
+		CRATELOOT("CrateLoot", 174),
+		BOOSTERBAY("BoosterBay", 176),
+		SUBSYSTEMBAY("SubSystemBay", 177),
+		;
 
 		private final String value;
 		private final int id;

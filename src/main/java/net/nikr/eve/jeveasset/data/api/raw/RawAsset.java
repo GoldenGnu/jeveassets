@@ -29,6 +29,7 @@ import net.nikr.eve.jeveasset.i18n.General;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 import net.nikr.eve.jeveasset.io.shared.RawConverter;
 import net.troja.eve.esi.model.CharacterAssetsResponse;
+import net.troja.eve.esi.model.CorporationAssetsResponse;
 
 public class RawAsset {
 
@@ -145,11 +146,34 @@ public class RawAsset {
 	}
 
 	/**
-	 * ESI
+	 * ESI Character
 	 *
 	 * @param asset
 	 */
 	public RawAsset(CharacterAssetsResponse asset) {
+		if (asset.getQuantity() != null && asset.getQuantity() < 0 && asset.getQuantity() == -2) { //rawQuantity: Quantity should tell us if it's a BPC or BPO
+			isSingleton = true;
+		} else {
+			isSingleton = asset.getIsSingleton();
+		}
+		itemId = asset.getItemId();
+		itemFlag = RawConverter.toFlag(asset.getLocationFlag());
+		locationId = asset.getLocationId();
+		locationType = LocationType.valueOf(asset.getLocationType().name());
+		if (asset.getQuantity() == null) {
+			quantity = 1;
+		} else {
+			quantity = asset.getQuantity();
+		}
+		typeId = asset.getTypeId();
+	}
+
+	/**
+	 * ESI Corporation
+	 *
+	 * @param asset
+	 */
+	public RawAsset(CorporationAssetsResponse asset) {
 		if (asset.getQuantity() != null && asset.getQuantity() < 0 && asset.getQuantity() == -2) { //rawQuantity: Quantity should tell us if it's a BPC or BPO
 			isSingleton = true;
 		} else {

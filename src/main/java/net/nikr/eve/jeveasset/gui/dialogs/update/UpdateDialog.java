@@ -744,7 +744,7 @@ public class UpdateDialog extends JDialogCentered {
 				eveKitLocationsGetter.load(this, program.getProfileManager().getEveKitOwners());
 			}
 			//Esi
-			if (EsiScopes.CHARACTER_ASSETS.isEnabled() && !program.getProfileManager().getEsiOwners().isEmpty()) {
+			if ((EsiScopes.CHARACTER_ASSETS.isEnabled() || EsiScopes.CORPORATION_ASSETS.isEnabled()) && !program.getProfileManager().getEsiOwners().isEmpty()) {
 				setIcon(Images.MISC_ESI.getIcon());
 				EsiAssetsGetter esiAssetsGetter = new EsiAssetsGetter();
 				esiAssetsGetter.load(this, program.getProfileManager().getEsiOwners());
@@ -889,8 +889,7 @@ public class UpdateDialog extends JDialogCentered {
 				eveKitTransactionsGetter.load(this, program.getProfileManager().getEveKitOwners());
 			}
 			//Esi
-			//if ((EsiScopes.CHARACTER_WALLET.isEnabled() || EsiScopes.CORPORATION_WALLET.isEnabled()) && !program.getProfileManager().getEsiOwners().isEmpty()) {
-			if (EsiScopes.CHARACTER_WALLET.isEnabled() && !program.getProfileManager().getEsiOwners().isEmpty()) {
+			if ((EsiScopes.CHARACTER_WALLET.isEnabled() || EsiScopes.CORPORATION_WALLET.isEnabled()) && !program.getProfileManager().getEsiOwners().isEmpty()) {
 				setIcon(Images.MISC_ESI.getIcon());
 				EsiTransactionsGetter esiTransactionsGetter = new EsiTransactionsGetter();
 				esiTransactionsGetter.load(this, program.getProfileManager().getEsiOwners(), Settings.get().isTransactionHistory());
