@@ -28,7 +28,6 @@ import java.util.List;
 import net.nikr.eve.jeveasset.io.local.update.updates.Update1To2;
 import net.nikr.eve.jeveasset.io.local.AbstractXmlReader;
 import net.nikr.eve.jeveasset.io.local.AttributeGetters;
-import net.nikr.eve.jeveasset.io.local.FileLock;
 import net.nikr.eve.jeveasset.io.local.XmlException;
 import org.dom4j.Attribute;
 import org.dom4j.Document;
@@ -48,20 +47,24 @@ import org.w3c.dom.Node;
  *
  * @author Candle
  */
-public class Update extends AbstractXmlReader {
+public class Update extends AbstractXmlReader<Integer> {
 	private static final Logger LOG = LoggerFactory.getLogger(Update.class);
 
-	int getVersion(final String filename) throws XmlException, IOException {
-		org.w3c.dom.Element element = getDocumentElement(filename, true);
+	@Override
+	protected Integer parse(org.w3c.dom.Element element) throws XmlException {
 		if (element.getNodeName().equals("settings")) {
 			if (AttributeGetters.haveAttribute((Node) element, "version")) {
 				return AttributeGetters.getInt((Node) element, "version");
-			} else {
-				return 1;
 			}
 		} else {
 			throw new XmlException("Wrong root element name.");
 		}
+		return 1;
+	}
+
+	@Override
+	protected Integer failValue() {
+		return 1;
 	}
 
 	void setVersion(final File xml, final int newVersion) throws DocumentException {
@@ -108,7 +111,7 @@ public class Update extends AbstractXmlReader {
 			return;
 		}
 		try {
-			int currentVersion = getVersion(path); //Got Its own lock...
+			int currentVersion = read("update settings", path, XmlType.DYNAMIC);
 			lock(path);
 			if (requiredVersion > currentVersion) {
 				LOG.info("settings.xml are out of date, updating.");
@@ -118,12 +121,6 @@ public class Update extends AbstractXmlReader {
 			} else {
 				LOG.info("settings.xml are up to date.");
 			}
-		} catch (XmlException ex) {
-			LOG.warn("Failed to update settings", ex);
-			throw new XmlException(ex);
-		} catch (IOException ex) {
-			LOG.warn("Failed to update settings", ex);
-			throw new XmlException(ex);
 		} catch (DocumentException ex) {
 			LOG.warn("Failed to update settings", ex);
 			throw new XmlException(ex);

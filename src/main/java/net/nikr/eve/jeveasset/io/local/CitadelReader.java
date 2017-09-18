@@ -21,40 +21,33 @@
 
 package net.nikr.eve.jeveasset.io.local;
 
-import java.io.IOException;
 import java.util.Date;
 import net.nikr.eve.jeveasset.data.Citadel;
 import net.nikr.eve.jeveasset.data.CitadelSettings;
 import net.nikr.eve.jeveasset.data.Settings;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 
-public final class CitadelReader extends AbstractXmlReader {
-
-	private static final Logger LOG = LoggerFactory.getLogger(CitadelReader.class);
+public final class CitadelReader extends AbstractXmlReader<CitadelSettings> {
 
 	private CitadelReader() { }
 
 	public static CitadelSettings load() {
 		CitadelReader reader = new CitadelReader();
-		return reader.read();
+		return reader.read("Citadels", Settings.getPathCitadel(), XmlType.DYNAMIC);
 	}
 
-	private CitadelSettings read() {
+	@Override
+	protected CitadelSettings parse(Element element) throws XmlException {
 		CitadelSettings settings = new CitadelSettings();
-		try {
-			Element element = getDocumentElement(Settings.getPathCitadel(), true);
-			parseCitadels(element, settings);
-			LOG.info("Citadels loaded");
-		} catch (IOException ex) {
-			LOG.info("Citadels not loaded");
-		} catch (XmlException ex) {
-			LOG.error("Citadels not loaded: " + ex.getMessage(), ex);
-		}
+		parseCitadels(element, settings);
 		return settings;
+	}
+
+	@Override
+	protected CitadelSettings failValue() {
+		return new CitadelSettings();
 	}
 
 	private void parseCitadels(final Element element, final CitadelSettings settings) throws XmlException {
@@ -65,7 +58,7 @@ public final class CitadelReader extends AbstractXmlReader {
 		parseSettings(element, settings);
 	}
 
-	private void parseCitadel(final Element element, final CitadelSettings settings) {
+	private void parseCitadel(final Element element, final CitadelSettings settings) throws XmlException {
 		NodeList filterNodes = element.getElementsByTagName("citadel");
 		for (int i = 0; i < filterNodes.getLength(); i++) {
 			Element currentNode = (Element) filterNodes.item(i);
@@ -84,7 +77,7 @@ public final class CitadelReader extends AbstractXmlReader {
 		}
 	}
 
-	private void parseSettings(final Element element, final CitadelSettings settings) {
+	private void parseSettings(final Element element, final CitadelSettings settings) throws XmlException {
 		NodeList filterNodes = element.getElementsByTagName("settings");
 		for (int i = 0; i < filterNodes.getLength(); i++) {
 			Element currentNode = (Element) filterNodes.item(i);

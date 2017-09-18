@@ -36,17 +36,14 @@ public final class AttributeGetters {
 
 	public static boolean haveAttribute(final Node node, final String attributeName) {
 		Node attributeNode = node.getAttributes().getNamedItem(attributeName);
-		if (attributeNode == null) {
-			return false;
-		}
-		return true;
+		return attributeNode != null;
 	}
 
-	public static String getString(final Node node, final String attributeName) {
+	public static String getString(final Node node, final String attributeName) throws XmlException {
 		return getNodeValue(node, attributeName);
 	}
 
-	public static Date getDate(final Node node, final String attributeName) {
+	public static Date getDate(final Node node, final String attributeName) throws XmlException {
 		String value = getNodeValue(node, attributeName);
 		try {
 			return FORMAT.parse(value);
@@ -55,27 +52,43 @@ public final class AttributeGetters {
 		}
 	}
 
-	public static int getInt(final Node node, final String attributeName) {
+	public static int getInt(final Node node, final String attributeName) throws XmlException {
 		String value = getNodeValue(node, attributeName);
-		return Integer.parseInt(value);
+		try {
+			return Integer.parseInt(value);
+		} catch (NumberFormatException ex) {
+			throw new XmlException("Failed to convert value: " +value+ " to Integer form node: " + node.getNodeName() + " > " + attributeName);
+		}
 	}
 
-	public static long getLong(final Node node, final String attributeName) {
+	public static long getLong(final Node node, final String attributeName) throws XmlException {
 		String value = getNodeValue(node, attributeName);
-		return safeStringToLong(value); //Long.parseLong(sTemp);
+		try {
+			return safeStringToLong(value);
+		} catch (NumberFormatException ex) {
+			throw new XmlException("Failed to convert value: " +value+ " to Long form node: " + node.getNodeName() + " > " + attributeName);
+		}
 	}
 
-	public static double getDouble(final Node node, final String attributeName) {
+	public static double getDouble(final Node node, final String attributeName) throws XmlException {
 		String value = getNodeValue(node, attributeName);
-		return Double.valueOf(value); //Long.parseLong(sTemp);
+		try {
+			return Double.valueOf(value);
+		} catch (NumberFormatException ex) {
+			throw new XmlException("Failed to convert value: " +value+ " to Double form node: " + node.getNodeName() + " > " + attributeName);
+		}
 	}
 
-	public static float getFloat(final Node node, final String attributeName) {
+	public static float getFloat(final Node node, final String attributeName) throws XmlException {
 		String value = getNodeValue(node, attributeName);
-		return Float.valueOf(value); //Long.parseLong(sTemp);
+		try {
+			return Float.valueOf(value);
+		} catch (NumberFormatException ex) {
+			throw new XmlException("Failed to convert value: " +value+ " to Float form node: " + node.getNodeName() + " > " + attributeName);
+		}
 	}
 
-	public static boolean getBoolean(final Node node, final String attributeName) {
+	public static boolean getBoolean(final Node node, final String attributeName) throws XmlException {
 		String value = getNodeValue(node, attributeName);
 		return (value.equals("true") || value.equals("1"));
 	}
@@ -101,10 +114,10 @@ public final class AttributeGetters {
 		return nOutput;
 	}
 
-	private static String getNodeValue(final Node node, final String attributeName) {
+	private static String getNodeValue(final Node node, final String attributeName) throws XmlException {
 		Node attributeNode = node.getAttributes().getNamedItem(attributeName);
 		if (attributeNode == null) {
-			throw new RuntimeException("Failed to parse attribute from node: " + node.getNodeName() + " > " + attributeName);
+			throw new XmlException("Failed to parse attribute from node: " + node.getNodeName() + " > " + attributeName);
 		}
 		return attributeNode.getNodeValue();
 	}
