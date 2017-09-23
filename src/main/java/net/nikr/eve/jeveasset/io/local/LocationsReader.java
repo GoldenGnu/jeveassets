@@ -50,6 +50,11 @@ public final class LocationsReader extends AbstractXmlReader<Boolean> {
 		return false;
 	}
 
+	@Override
+	protected Boolean doNotExistValue() {
+		return false;
+	}
+
 	private void parseLocations(final Element element, final Map<Long, MyLocation> locations) throws XmlException {
 		NodeList nodes = element.getElementsByTagName("row");
 		MyLocation location;

@@ -52,6 +52,11 @@ public final class ConquerableStationsReader extends AbstractXmlReader<Boolean> 
 		return false;
 	}
 
+	@Override
+	protected Boolean doNotExistValue() {
+		return true;
+	}
+
 	private void parseConquerableStations(final Element element, final Map<Long, Station> conquerableStations) throws XmlException {
 		if (!element.getNodeName().equals("stations")) {
 			throw new XmlException("Wrong root element name.");

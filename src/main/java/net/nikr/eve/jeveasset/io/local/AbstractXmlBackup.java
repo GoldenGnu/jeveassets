@@ -32,6 +32,12 @@ import org.w3c.dom.Element;
 
 public abstract class AbstractXmlBackup {
 	private static final Logger LOG = LoggerFactory.getLogger(AbstractXmlBackup.class);
+
+	protected boolean exist(final String filename) {
+		return new File(filename).exists() //.xml
+				|| getNewFile(filename).exists() //.new
+				|| getBackupFile(filename).exists(); //.bac
+	}
 	
 	protected boolean restoreBackupFile(final String filename) {
 		File targetFile = new File(filename);

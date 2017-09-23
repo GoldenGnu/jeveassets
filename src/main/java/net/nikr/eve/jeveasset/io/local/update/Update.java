@@ -25,10 +25,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
-import net.nikr.eve.jeveasset.io.local.update.updates.Update1To2;
 import net.nikr.eve.jeveasset.io.local.AbstractXmlReader;
 import net.nikr.eve.jeveasset.io.local.AttributeGetters;
+import net.nikr.eve.jeveasset.io.local.SettingsReader;
 import net.nikr.eve.jeveasset.io.local.XmlException;
+import net.nikr.eve.jeveasset.io.local.update.updates.Update1To2;
 import org.dom4j.Attribute;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
@@ -65,6 +66,11 @@ public class Update extends AbstractXmlReader<Integer> {
 	@Override
 	protected Integer failValue() {
 		return 1;
+	}
+
+	@Override
+	protected Integer doNotExistValue() {
+		return SettingsReader.SETTINGS_VERSION;
 	}
 
 	void setVersion(final File xml, final int newVersion) throws DocumentException {

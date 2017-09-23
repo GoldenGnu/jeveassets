@@ -50,6 +50,11 @@ public final class FlagsReader extends AbstractXmlReader<Boolean> {
 		return false;
 	}
 
+	@Override
+	protected Boolean doNotExistValue() {
+		return false;
+	}
+
 	private void parseFlags(final Element element, final Map<Integer, ItemFlag> flags) throws XmlException {
 		NodeList nodes = element.getElementsByTagName("row");
 		ItemFlag itemFlag;

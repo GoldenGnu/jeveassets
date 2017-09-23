@@ -240,5 +240,10 @@ public class BackupTest extends TestUtil {
 		protected Boolean failValue() {
 			return false;
 		}
+
+		@Override
+		protected Boolean doNotExistValue() {
+			return false;
+		}
 	}
 }
