@@ -16,6 +16,18 @@
                   #### #  # #  # #  # #### #### #### #### ####
 
 ________________________________________________________________________________
+_4.1.4__________________________________________________________________________
+
+Bug Fixes:
+-Failed price updates set all prices to zero (pricing library)
+-Better handling of corrupted setting/profile files
+
+Code:
+-Updated pricing library
+-Updated ESI library
+-Faster price updates (pricing library)
+
+________________________________________________________________________________
 _4.1.3__________________________________________________________________________
 
 New Features:
