@@ -99,6 +99,10 @@
 							<directory>src/main/izpack</directory>
 							<filtering>true</filtering>
 						</resource>
+						<resource>
+							<directory>src/main/resources</directory>
+							<filtering>false</filtering>
+						</resource>
 					</resources>
 				</configuration>
 			</plugin>
@@ -109,7 +113,7 @@
 					<!-- copy files to build directory -->
 					<execution>
 						<id>process-resources</id>
-						<phase>process-resources</phase>
+						<phase>clean</phase>
 						<configuration>
 							<target>
 								<mkdir dir="${project.build.directory}/data"/>
@@ -122,6 +126,7 @@
 									<fileset dir="tools" includes="jmemory.jar"/>
 									<fileset dir="tools" includes="jmemory.properties"/>
 								</copy>
+								<mkdir dir="${project.build.directory}/classes"/>
 								<copy todir="${project.build.directory}">
 									<fileset dir="${project.build.directory}/classes" includes="update_version.dat"/>
 								</copy>
@@ -211,7 +216,7 @@
 				<executions>
 					<execution>
 						<id>copy-dependencies</id>
-						<phase>process-test-resources</phase>
+						<phase>clean</phase>
 						<goals>
 							<goal>copy-dependencies</goal>
 						</goals>
@@ -234,7 +239,7 @@
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>exec-maven-plugin</artifactId>
-				<version>1.2.1</version>
+				<version>1.4.0</version>
 				<executions>
 					<execution>
 						<goals>
@@ -245,11 +250,8 @@
 				<configuration>
 					<executable>java</executable>
 					<arguments>
-						<argument>-classpath</argument>
-						<classpath/>
-						<argument>net.nikr.eve.jeveasset.Main</argument>
-						<argument>${arg1}</argument>
-						<argument>${arg2}</argument>
+						<argument>-jar</argument>
+						<argument>target/jeveassets.jar</argument>
 					</arguments>
 				</configuration>
 			</plugin>
@@ -617,7 +619,7 @@
 		<dependency>
 			<groupId>uk.me.candle</groupId>
 			<artifactId>pricing</artifactId>
-			<version>1.6.1</version>
+			<version>1.7.0</version>
 			<exclusions>
 				<exclusion>
 					<artifactId>xmlParserAPIs</artifactId>
