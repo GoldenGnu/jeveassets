@@ -190,18 +190,16 @@ public class PriceDataGetter implements PricingListener {
 
 		Pricing pricing = PricingFactory.getPricing(pricingOptions);
 
-		//Reset cache timers...
-		if (updateAll) {
-			for (int id : typeIDs) {
-				pricing.setPrice(id, -1.0);
-			}
-		}
 		pricing.addPricingListener(this);
 
-		//Load price data (Update as needed)
-		for (int id : typeIDs) {
-			createPriceData(id, pricing);
+		if (updateAll) { //Update all
+			pricing.updatePrices(typeIDs);
+		} else { //Update new
+			for (int id : typeIDs) {
+				createPriceData(id, pricing);
+			}
 		}
+
 		while (!queue.isEmpty()) {
 			try {
 				synchronized (this) {
@@ -219,7 +217,8 @@ public class PriceDataGetter implements PricingListener {
 				return null;
 			}
 		}
-		if (!failed.isEmpty()) {
+		boolean updated = (!okay.isEmpty() && (typeIDs.size() * 5 / 100) > failed.size()); //
+		if (updated && !failed.isEmpty()) {
 			StringBuilder errorString = new StringBuilder();
 			synchronized (failed) {
 				for (int typeID : failed) {
@@ -231,10 +230,9 @@ public class PriceDataGetter implements PricingListener {
 			}
 			LOG.error("Failed to update price data for the following typeIDs: " + errorString.toString());
 			if (updateTask != null) {
-				updateTask.addError("Price data", "Failed to update price data for " + failed.size() + " item types");
+				updateTask.addError("Price data", "Failed to update price data for " + failed.size() + " of " + typeIDs.size() + " item types");
 			}
 		}
-		boolean updated = (!okay.isEmpty() && (typeIDs.size() * 5 / 100) > failed.size()); //
 		if (updated) { //All Updated
 			if (updateAll) {
 				LOG.info("	Price data updated");

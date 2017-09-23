@@ -20,9 +20,6 @@
  */
 package net.nikr.eve.jeveasset.io.online;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
 import ch.qos.logback.classic.Level;
 import java.io.IOException;
 import java.io.InputStream;
@@ -43,6 +40,8 @@ import net.nikr.eve.jeveasset.data.settings.PriceDataSettings.RegionType;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import org.junit.After;
 import org.junit.AfterClass;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -60,13 +59,13 @@ public class PriceDataGetterOnlineTest extends TestUtil {
 	private static final long REGION = 10000002L;  //The Forge (Jita region)
 	private static final long SYSTEM = 30000142L;  //Jita
 	private static final long STATION = 60003760L; //Jita 4 - 4
-	private static final long MAX_RUNS = 250;
+	private static final long MAX_RUNS = 2500;
 
 	private final PriceGetter getter = new PriceGetter();
 	private final Set<Integer> typeIDs = new HashSet<Integer>();
 
 	public PriceDataGetterOnlineTest() { }
-	
+
 	@BeforeClass
 	public static void setUpClass() {
 		setLoggingLevel(Level.OFF);
