@@ -138,7 +138,6 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 	@Override
 	protected Boolean parse(Element element) throws XmlException {
 		if (settings == null) {
-			
 			stockpilesList = parseStockpile(element);
 		} else {
 			parseSettings(element, settings);
@@ -149,6 +148,11 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 	@Override
 	protected Boolean failValue() {
 		return false;
+	}
+
+	@Override
+	protected Boolean doNotExistValue() {
+		return true;
 	}
 
 	private List<Stockpile> parseStockpile(final Element element) throws XmlException {

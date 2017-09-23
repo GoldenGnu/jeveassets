@@ -44,6 +44,9 @@ public abstract class AbstractXmlReader<T> extends AbstractXmlBackup {
 	}
 
 	protected T read(final String name, final String filename, final XmlType xmlType) {
+		if (!exist(filename) && (xmlType == XmlType.DYNAMIC || xmlType == XmlType.DYNAMIC_BACKUP)) {
+			return doNotExistValue();
+		}
 		try {
 			Element element = getDocumentElement(filename, xmlType);
 			T t = parse(element);
@@ -74,6 +77,7 @@ public abstract class AbstractXmlReader<T> extends AbstractXmlBackup {
 
 	protected abstract T parse(Element element) throws XmlException;
 	protected abstract T failValue();
+	protected abstract T doNotExistValue();
 
 	private void staticDataFix() {
 		Updater updater = new Updater();

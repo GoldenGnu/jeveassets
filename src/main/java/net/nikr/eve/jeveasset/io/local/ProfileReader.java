@@ -83,6 +83,11 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 		return false;
 	}
 
+	@Override
+	protected Boolean doNotExistValue() {
+		return true;
+	}
+
 	private void parseSettings(final Element element, ProfileManager profileManager) throws XmlException {
 		if (!element.getNodeName().equals("assets")) {
 			throw new XmlException("Wrong root element name.");

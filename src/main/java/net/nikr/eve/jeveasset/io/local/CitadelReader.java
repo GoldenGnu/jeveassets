@@ -50,6 +50,11 @@ public final class CitadelReader extends AbstractXmlReader<CitadelSettings> {
 		return new CitadelSettings();
 	}
 
+	@Override
+	protected CitadelSettings doNotExistValue() {
+		return new CitadelSettings();
+	}
+
 	private void parseCitadels(final Element element, final CitadelSettings settings) throws XmlException {
 		if (!element.getNodeName().equals("citadels")) {
 			throw new XmlException("Wrong root element name.");

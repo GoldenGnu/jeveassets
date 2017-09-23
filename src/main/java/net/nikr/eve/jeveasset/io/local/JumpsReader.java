@@ -52,6 +52,11 @@ public final class JumpsReader extends AbstractXmlReader<Boolean> {
 		return false;
 	}
 
+	@Override
+	protected Boolean doNotExistValue() {
+		return false;
+	}
+
 	private void parseJumps(final Element element, final Map<Long, MyLocation> locations, final List<Jump> jumps) throws XmlException {
 		NodeList nodes = element.getElementsByTagName("row");
 		Jump jump;

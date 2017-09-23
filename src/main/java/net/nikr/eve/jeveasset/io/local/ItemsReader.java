@@ -51,6 +51,11 @@ public final class ItemsReader extends AbstractXmlReader<Boolean> {
 		return false;
 	}
 
+	@Override
+	protected Boolean doNotExistValue() {
+		return false;
+	}
+
 	private void parseItems(final Element element, final Map<Integer, Item> items) throws XmlException {
 		NodeList nodes = element.getElementsByTagName("row");
 		Item item;
