@@ -86,6 +86,11 @@ public class RawConverter {
 		return ApiIdConverter.getFlag(locationFlag.getID());
 	}
 
+	public static ItemFlag toFlag(net.troja.eve.esi.model.CorporationBlueprintsResponse.LocationFlagEnum locationFlagEnum) {
+		LocationFlag locationFlag = LocationFlag.valueOf(locationFlagEnum.name());
+		return ApiIdConverter.getFlag(locationFlag.getID());
+	}
+
 	public static ItemFlag toFlag(net.troja.eve.esi.model.CorporationAssetsResponse.LocationFlagEnum locationFlagEnum) {
 		LocationFlag locationFlag = LocationFlag.valueOf(locationFlagEnum.name());
 		return ApiIdConverter.getFlag(locationFlag.getID());

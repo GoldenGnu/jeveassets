@@ -183,13 +183,13 @@ public final class ProfileWriter extends AbstractXmlWriter {
 			Element node = xmldoc.createElementNS(null, "asset");
 			Integer quantity = asset.getQuantity();
 			int count;
-			int rawQuantity;
+			Integer rawQuantity;
 			if (quantity == null || quantity <= 0) {
 				count = 1;
-				rawQuantity = quantity;
+				rawQuantity = quantity; //Possible values: null, -1, -2
 			} else {
 				count = quantity;
-				rawQuantity = 0;
+				rawQuantity = null;
 			}
 			setAttribute(node, "count", count);
 			setAttribute(node, "flagid", asset.getFlagID());
@@ -197,7 +197,7 @@ public final class ProfileWriter extends AbstractXmlWriter {
 			setAttribute(node, "typeid", asset.getItem().getTypeID());
 			setAttribute(node, "locationid", asset.getLocationID());
 			setAttribute(node, "singleton", asset.isSingleton());
-			setAttribute(node, "rawquantity", rawQuantity);
+			setAttributeOptional(node, "rawquantity", rawQuantity);
 			parentNode.appendChild(node);
 			writeAssets(xmldoc, node, asset.getAssets());
 		}

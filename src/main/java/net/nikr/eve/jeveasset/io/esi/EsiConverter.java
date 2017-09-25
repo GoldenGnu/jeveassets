@@ -54,8 +54,9 @@ import net.troja.eve.esi.model.CharacterOrdersResponse;
 import net.troja.eve.esi.model.CharacterWalletJournalResponse;
 import net.troja.eve.esi.model.CharacterWalletTransactionsResponse;
 import net.troja.eve.esi.model.CorporationAssetsResponse;
-import net.troja.eve.esi.model.CorporationTransactionsResponse;
+import net.troja.eve.esi.model.CorporationBlueprintsResponse;
 import net.troja.eve.esi.model.CorporationWalletJournalResponse;
+import net.troja.eve.esi.model.CorporationWalletTransactionsResponse;
 import net.troja.eve.esi.model.CorporationWalletsResponse;
 
 
@@ -68,7 +69,7 @@ public class EsiConverter extends DataConverter {
 		return convertRawAccountBalance(Collections.singletonList(new RawAccountBalance(responses, accountKey)), owner);
 	}
 
-	public static List<MyAccountBalance> toAccountBalance(List<CorporationWalletsResponse> responses, OwnerType owner) {
+	public static List<MyAccountBalance> toAccountBalanceCorporation(List<CorporationWalletsResponse> responses, OwnerType owner) {
 		List<RawAccountBalance> rawAccountBalances = new ArrayList<RawAccountBalance>();
 		for (CorporationWalletsResponse response : responses) {
 			rawAccountBalances.add(new RawAccountBalance(response));
@@ -95,6 +96,14 @@ public class EsiConverter extends DataConverter {
 	public static Map<Long, RawBlueprint> toBlueprints(List<CharacterBlueprintsResponse> responses) {
 		Map<Long, RawBlueprint> rawBlueprints = new HashMap<Long, RawBlueprint>();
 		for (CharacterBlueprintsResponse blueprint : responses) {
+			rawBlueprints.put(blueprint.getItemId(), new RawBlueprint(blueprint));
+		}
+		return rawBlueprints;
+	}
+
+	public static Map<Long, RawBlueprint> toBlueprintsCorporation(List<CorporationBlueprintsResponse> responses) {
+		Map<Long, RawBlueprint> rawBlueprints = new HashMap<Long, RawBlueprint>();
+		for (CorporationBlueprintsResponse blueprint : responses) {
 			rawBlueprints.put(blueprint.getItemId(), new RawBlueprint(blueprint));
 		}
 		return rawBlueprints;
@@ -156,9 +165,9 @@ public class EsiConverter extends DataConverter {
 		return convertRawTransactions(rawTransactions, owner, saveHistory);
 	}
 
-	public static Set<MyTransaction> toTransactionCorporation(List<CorporationTransactionsResponse> responses, OwnerType owner, Integer accountKey, boolean saveHistory) {
+	public static Set<MyTransaction> toTransactionCorporation(List<CorporationWalletTransactionsResponse> responses, OwnerType owner, Integer accountKey, boolean saveHistory) {
 		List<RawTransaction> rawTransactions = new ArrayList<RawTransaction>();
-		for (CorporationTransactionsResponse response : responses) {
+		for (CorporationWalletTransactionsResponse response : responses) {
 			rawTransactions.add(new RawTransaction(response, accountKey));
 		}
 		return convertRawTransactions(rawTransactions, owner, saveHistory);

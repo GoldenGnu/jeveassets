@@ -49,6 +49,10 @@ import net.troja.eve.esi.model.CharacterIndustryJobsResponse;
 import net.troja.eve.esi.model.CharacterOrdersResponse;
 import net.troja.eve.esi.model.CharacterWalletJournalExtraInfoResponse;
 import net.troja.eve.esi.model.CharacterWalletJournalResponse;
+import net.troja.eve.esi.model.CorporationAssetsResponse;
+import net.troja.eve.esi.model.CorporationBlueprintsResponse;
+import net.troja.eve.esi.model.CorporationWalletJournalExtraInfoResponse;
+import net.troja.eve.esi.model.CorporationWalletJournalResponse;
 import org.joda.time.DateTime;
 
 public interface ConverterTestOptions {
@@ -88,19 +92,25 @@ public interface ConverterTestOptions {
 
 	public RawAsset.LocationType getLocationTypeRaw();
 
-	public CharacterAssetsResponse.LocationTypeEnum getLocationTypeEsi();
+	public CharacterAssetsResponse.LocationTypeEnum getLocationTypeEsiCharacter();
+
+	public CorporationAssetsResponse.LocationTypeEnum getLocationTypeEsiCorporation();
 
 	//LocationFlag
-	public CharacterBlueprintsResponse.LocationFlagEnum getLocationFlagEsiBlueprint();
+	public CharacterBlueprintsResponse.LocationFlagEnum getLocationFlagEsiBlueprintCharacter();
 
-	public CharacterAssetsResponse.LocationFlagEnum getLocationFlagEsiAssets();
+	public CorporationBlueprintsResponse.LocationFlagEnum getLocationFlagEsiBlueprintCorporation();
+
+	public CharacterAssetsResponse.LocationFlagEnum getLocationFlagEsiAssetsCharacter();
+
+	public CorporationAssetsResponse.LocationFlagEnum getLocationFlagEsiAssetsCorporation();
 
 	public int getLocationFlagEveApi();
 
 	//ContractAvailability
 	public RawContract.ContractAvailability getContractAvailabilityRaw();
 
-	public CharacterContractsResponse.AvailabilityEnum getContractAvailabilityEsi();
+	public CharacterContractsResponse.AvailabilityEnum getContractAvailabilityEsiCharacter();
 
 	public com.beimin.eveapi.model.shared.ContractAvailability getContractAvailabilityEveApi();
 
@@ -109,7 +119,7 @@ public interface ConverterTestOptions {
 	//ContractStatus
 	public RawContract.ContractStatus getContractStatusRaw();
 
-	public CharacterContractsResponse.StatusEnum getContractStatusEsi();
+	public CharacterContractsResponse.StatusEnum getContractStatusEsiCharacter();
 
 	public com.beimin.eveapi.model.shared.ContractStatus getContractStatusEveApi();
 
@@ -127,42 +137,50 @@ public interface ConverterTestOptions {
 	//IndustryJobStatus
 	public RawIndustryJob.IndustryJobStatus getIndustryJobStatusRaw();
 
-	public CharacterIndustryJobsResponse.StatusEnum getIndustryJobStatusEsi();
+	public CharacterIndustryJobsResponse.StatusEnum getIndustryJobStatusEsiCharacter();
 
 	public int getIndustryJobStatusEveApi();
 
 	//JournalExtraInfo
 	public RawJournalExtraInfo getJournalExtraInfoRaw();
 
-	public CharacterWalletJournalExtraInfoResponse getJournalExtraInfoEsi();
+	public CharacterWalletJournalExtraInfoResponse getJournalExtraInfoEsiCharacter();
+	
+	public CorporationWalletJournalExtraInfoResponse getJournalExtraInfoEsiCorporation();
 
 	//JournalPartyType
 	public RawJournal.JournalPartyType getJournalPartyTypeRaw();
 
-	public CharacterWalletJournalResponse.FirstPartyTypeEnum getJournalPartyTypeEsiFirst();
+	public CharacterWalletJournalResponse.FirstPartyTypeEnum getJournalPartyTypeEsiFirstCharacter();
 
-	public CharacterWalletJournalResponse.SecondPartyTypeEnum getJournalPartyTypeEsiSecond();
+	public CharacterWalletJournalResponse.SecondPartyTypeEnum getJournalPartyTypeEsiSecondCharacter();
+
+	public CorporationWalletJournalResponse.FirstPartyTypeEnum getJournalPartyTypeEsiFirstCorporation();
+
+	public CorporationWalletJournalResponse.SecondPartyTypeEnum getJournalPartyTypeEsiSecondCorporation();
 
 	public int getJournalPartyTypeEveApi();
 
 	//JournalRefType
 	public RawJournalRefType getJournalRefTypeRaw();
 
-	public CharacterWalletJournalResponse.RefTypeEnum getJournalRefTypeEsi();
+	public CharacterWalletJournalResponse.RefTypeEnum getJournalRefTypeEsiCharacter();
+	
+	public CorporationWalletJournalResponse.RefTypeEnum getJournalRefTypeEsiCorporation();
 
 	public com.beimin.eveapi.model.shared.RefType getJournalRefTypeEveApi();
 
 	//MarketOrderRange
 	public RawMarketOrder.MarketOrderRange getMarketOrderRangeRaw();
 
-	public CharacterOrdersResponse.RangeEnum getMarketOrderRangeEsi();
+	public CharacterOrdersResponse.RangeEnum getMarketOrderRangeEsiCharacter();
 
 	public int getMarketOrderRangeEveApi();
 
 	//MarketOrderState
 	public RawMarketOrder.MarketOrderState getMarketOrderStateRaw();
 
-	public CharacterOrdersResponse.StateEnum getMarketOrderStateEsi();
+	public CharacterOrdersResponse.StateEnum getMarketOrderStateEsiCharacter();
 
 	public int getMarketOrderStateEveApi();
 

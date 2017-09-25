@@ -48,6 +48,11 @@ import net.troja.eve.esi.model.CharacterIndustryJobsResponse;
 import net.troja.eve.esi.model.CharacterOrdersResponse;
 import net.troja.eve.esi.model.CharacterWalletJournalResponse;
 import net.troja.eve.esi.model.CharacterWalletTransactionsResponse;
+import net.troja.eve.esi.model.CorporationAssetsResponse;
+import net.troja.eve.esi.model.CorporationBlueprintsResponse;
+import net.troja.eve.esi.model.CorporationWalletJournalResponse;
+import net.troja.eve.esi.model.CorporationWalletTransactionsResponse;
+import net.troja.eve.esi.model.CorporationWalletsResponse;
 import org.junit.Test;
 
 
@@ -61,6 +66,25 @@ public class EsiConverterTest extends TestUtil {
 	public void testToAccountBalance(Class<?> esi) {
 		for (ConverterTestOptions options : ConverterTestOptionsGetter.getConverterOptions()) {
 			List<MyAccountBalance> accountBalances = EsiConverter.toAccountBalance(options.getFloat(), ConverterTestUtil.getEsiOwner(options), options.getInteger());
+			ConverterTestUtil.testValues(accountBalances.get(0), options, esi);
+		}
+	}
+
+	@Test
+	public void testToAccountBalanceCorporation() {
+		testToAccountBalanceCorporation(null);
+	}
+
+	@Test
+	public void testToAccountBalanceCorporationOptional() {
+		testToAccountBalanceCorporation(CorporationWalletsResponse.class);
+	}
+
+	public void testToAccountBalanceCorporation(Class<?> esi) {
+		for (ConverterTestOptions options : ConverterTestOptionsGetter.getConverterOptions()) {
+			CorporationWalletsResponse walletsResponse = new CorporationWalletsResponse();
+			ConverterTestUtil.setValues(walletsResponse, options, esi);
+			List<MyAccountBalance> accountBalances = EsiConverter.toAccountBalanceCorporation(Collections.singletonList(walletsResponse), ConverterTestUtil.getEsiOwner(options));
 			ConverterTestUtil.testValues(accountBalances.get(0), options, esi);
 		}
 	}
@@ -105,6 +129,45 @@ public class EsiConverterTest extends TestUtil {
 	}
 
 	@Test
+	public void testToAssetsCorporation() {
+		testToAssetsCorporation(null);
+	}
+
+	@Test
+	public void testToAssetsCorporationOptional() {
+		testToAssetsCorporation(CorporationAssetsResponse.class);
+	}
+
+	public void testToAssetsCorporation(Class<?> esi) {
+		for (ConverterTestOptions options : ConverterTestOptionsGetter.getConverterOptions()) {
+			List<CorporationAssetsResponse> assetsResponses = new ArrayList<CorporationAssetsResponse>();
+
+			CorporationAssetsResponse rootAssetsResponse = new CorporationAssetsResponse();
+			assetsResponses.add(rootAssetsResponse);
+			ConverterTestUtil.setValues(rootAssetsResponse, options, esi);
+
+			CorporationAssetsResponse childAssetsResponse = new CorporationAssetsResponse();
+			assetsResponses.add(childAssetsResponse);
+			ConverterTestUtil.setValues(childAssetsResponse, options, esi);
+			childAssetsResponse.setItemId(childAssetsResponse.getItemId() + 1);
+			childAssetsResponse.setLocationId(rootAssetsResponse.getItemId());
+
+			List<MyAsset> assets = EsiConverter.toAssetsCorporation(assetsResponses, ConverterTestUtil.getEsiOwner(options));
+			if (rootAssetsResponse.getLocationFlag() != CorporationAssetsResponse.LocationFlagEnum.IMPLANT) {
+				assertEquals("List empty @" + options.getIndex(), 1, assets.size());
+				ConverterTestUtil.testValues(assets.get(0), options, esi);
+
+				assertEquals("List empty @" + options.getIndex(), 1, assets.get(0).getAssets().size());
+				MyAsset childAsset = assets.get(0).getAssets().get(0);
+				childAsset.setItemID(childAsset.getItemID() - 1);
+				ConverterTestUtil.testValues(childAsset, options, esi);
+			} else {
+				assertEquals(assets.size(), 0);
+			}
+		}
+	}
+
+	@Test
 	public void testToBlueprints() {
 		testBlueprints(null);
 	}
@@ -119,6 +182,25 @@ public class EsiConverterTest extends TestUtil {
 			CharacterBlueprintsResponse blueprintsResponse = new CharacterBlueprintsResponse();
 			ConverterTestUtil.setValues(blueprintsResponse, options, esi);
 			Map<Long, RawBlueprint> blueprints = EsiConverter.toBlueprints(Collections.singletonList(blueprintsResponse));
+			ConverterTestUtil.testValues(blueprints.values().iterator().next(), options, esi);
+		}
+	}
+
+	@Test
+	public void testToBlueprintsCorporation() {
+		testToBlueprintsCorporation(null);
+	}
+
+	@Test
+	public void testToBlueprintsCorporationOptional() {
+		testToBlueprintsCorporation(CorporationBlueprintsResponse.class);
+	}
+
+	public void testToBlueprintsCorporation(Class<?> esi) {
+		for (ConverterTestOptions options : ConverterTestOptionsGetter.getConverterOptions()) {
+			CorporationBlueprintsResponse blueprintsResponse = new CorporationBlueprintsResponse();
+			ConverterTestUtil.setValues(blueprintsResponse, options, esi);
+			Map<Long, RawBlueprint> blueprints = EsiConverter.toBlueprintsCorporation(Collections.singletonList(blueprintsResponse));
 			ConverterTestUtil.testValues(blueprints.values().iterator().next(), options, esi);
 		}
 	}
@@ -157,6 +239,25 @@ public class EsiConverterTest extends TestUtil {
 			CharacterWalletJournalResponse journalResponse = new CharacterWalletJournalResponse();
 			ConverterTestUtil.setValues(journalResponse, options, esi);
 			Set<MyJournal> journals = EsiConverter.toJournals(Collections.singletonList(journalResponse), ConverterTestUtil.getEsiOwner(options), options.getInteger(), false);
+			ConverterTestUtil.testValues(journals.iterator().next(), options, esi);
+		}
+	}
+
+	@Test
+	public void testToJournalsCorporation() {
+		testToJournalsCorporation(null);
+	}
+
+	@Test
+	public void testToJournalsCorporationOptional() {
+		testToJournalsCorporation(CorporationWalletJournalResponse.class);
+	}
+
+	public void testToJournalsCorporation(Class<?> esi) {
+		for (ConverterTestOptions options : ConverterTestOptionsGetter.getConverterOptions()) {
+			CorporationWalletJournalResponse journalResponse = new CorporationWalletJournalResponse();
+			ConverterTestUtil.setValues(journalResponse, options, esi);
+			Set<MyJournal> journals = EsiConverter.toJournalsCorporation(Collections.singletonList(journalResponse), ConverterTestUtil.getEsiOwner(options), options.getInteger(), false);
 			ConverterTestUtil.testValues(journals.iterator().next(), options, esi);
 		}
 	}
@@ -233,6 +334,27 @@ public class EsiConverterTest extends TestUtil {
 			CharacterWalletTransactionsResponse transactionsResponse = new CharacterWalletTransactionsResponse();
 			ConverterTestUtil.setValues(transactionsResponse, options, esi);
 			Set<MyTransaction> transactions = EsiConverter.toTransaction(Collections.singletonList(transactionsResponse), ConverterTestUtil.getEsiOwner(options), options.getInteger(), false);
+			ConverterTestUtil.testValues(transactions.iterator().next(), options, esi);
+		}
+	}
+
+	@Test
+	public void testToTransactionCorporation() {
+		testToTransactionCorporation(null);
+	}
+
+	@Test
+	public void testToTransactionCorporationOptional() {
+		testToTransactionCorporation(CorporationWalletTransactionsResponse.class);
+	}
+
+	public void testToTransactionCorporation(Class<?> esi) {
+		for (ConverterTestOptions options : ConverterTestOptionsGetter.getConverterOptions()) {
+			CorporationWalletTransactionsResponse transactionsResponse = new CorporationWalletTransactionsResponse();
+			ConverterTestUtil.setValues(transactionsResponse, options, esi);
+			Set<MyTransaction> transactions = EsiConverter.toTransactionCorporation(Collections.singletonList(transactionsResponse), ConverterTestUtil.getEsiOwner(options), options.getInteger(), false);
+			MyTransaction myTransaction = transactions.iterator().next();
+			myTransaction.setPersonal(true);
 			ConverterTestUtil.testValues(transactions.iterator().next(), options, esi);
 		}
 	}

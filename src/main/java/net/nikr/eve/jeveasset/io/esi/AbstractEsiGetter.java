@@ -65,6 +65,7 @@ public abstract class AbstractEsiGetter {
 	private final IndustryApi industryApiAuth;
 	private final MarketApi marketApiAuth;
 	private final ContractsApi contractsApiAuth;
+	private final CorporationApi corporationApiAuth;
 	private final SsoApi ssoApiAuth;
 	private final ApiClient clientOpen;
 	private final UniverseApi universeApiOpen;
@@ -73,6 +74,7 @@ public abstract class AbstractEsiGetter {
 	private final CorporationApi corporationApiOpen;
 
 	protected AbstractEsiGetter() {
+		//Auth
 		clientAuth = new ApiClient();
 		assetsApiAuth = new AssetsApi(clientAuth);
 		walletApiAuth = new WalletApi(clientAuth);
@@ -81,7 +83,9 @@ public abstract class AbstractEsiGetter {
 		industryApiAuth = new IndustryApi(clientAuth);
 		marketApiAuth = new MarketApi(clientAuth);
 		contractsApiAuth = new ContractsApi(clientAuth);
+		corporationApiAuth = new CorporationApi(clientAuth);
 		ssoApiAuth = new SsoApi(clientAuth);
+		//Open
 		clientOpen = new ApiClient();
 		universeApiOpen = new UniverseApi(clientOpen);
 		sovereigntyApiOpen = new SovereigntyApi(clientOpen);
@@ -227,8 +231,10 @@ public abstract class AbstractEsiGetter {
 		ApiClient client = client(owner); //Get ApiClient
 		Integer pages = getHeaderInteger(client, "x-pages"); //Get pages header
 		if (pages != null && pages > 1) { //More than one page
+			LOG.info("	ESI: " + getTaskName() + " updated for " + getOwnerName(owner) + "(1 of " + pages + ")");
 			for (int i = 2; i <= pages; i++) { //Get the remaining pages (we already got page 1 so we start at page 2
 				list.addAll(handler.get(owner, i)); //Get data from ESI
+				LOG.info("	ESI: " + getTaskName() + " updated for " + getOwnerName(owner) + "("+ i + " of " + pages + ")");
 			}
 		}
 		return list;
@@ -360,6 +366,10 @@ public abstract class AbstractEsiGetter {
 
 	public ContractsApi getContractsApiAuth() {
 		return contractsApiAuth;
+	}
+
+	public CorporationApi getCorporationApiAuth() {
+		return corporationApiAuth;
 	}
 
 	public UniverseApi getUniverseApiOpen() {

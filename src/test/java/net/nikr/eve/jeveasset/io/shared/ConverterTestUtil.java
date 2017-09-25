@@ -76,17 +76,16 @@ import net.troja.eve.esi.model.CharacterAssetsResponse;
 import net.troja.eve.esi.model.CharacterBlueprintsResponse;
 import net.troja.eve.esi.model.CharacterContractsItemsResponse;
 import net.troja.eve.esi.model.CharacterContractsResponse;
-import net.troja.eve.esi.model.CharacterContractsResponse.AvailabilityEnum;
-import net.troja.eve.esi.model.CharacterContractsResponse.TypeEnum;
 import net.troja.eve.esi.model.CharacterIndustryJobsResponse;
 import net.troja.eve.esi.model.CharacterOrdersResponse;
-import net.troja.eve.esi.model.CharacterOrdersResponse.RangeEnum;
 import net.troja.eve.esi.model.CharacterWalletJournalExtraInfoResponse;
 import net.troja.eve.esi.model.CharacterWalletJournalResponse;
-import net.troja.eve.esi.model.CharacterWalletJournalResponse.FirstPartyTypeEnum;
-import net.troja.eve.esi.model.CharacterWalletJournalResponse.RefTypeEnum;
-import net.troja.eve.esi.model.CharacterWalletJournalResponse.SecondPartyTypeEnum;
 import net.troja.eve.esi.model.CharacterWalletTransactionsResponse;
+import net.troja.eve.esi.model.CorporationAssetsResponse;
+import net.troja.eve.esi.model.CorporationBlueprintsResponse;
+import net.troja.eve.esi.model.CorporationWalletJournalExtraInfoResponse;
+import net.troja.eve.esi.model.CorporationWalletJournalResponse;
+import net.troja.eve.esi.model.CorporationWalletsResponse;
 import org.joda.time.DateTime;
 
 
@@ -389,7 +388,13 @@ public class ConverterTestUtil {
 				fail(ex.getMessage());
 			}
 		}
-		//Assets
+	//Account Balance
+		//ESI
+		if (object instanceof CorporationWalletsResponse) {
+			CorporationWalletsResponse response = (CorporationWalletsResponse) object;
+			response.setDivision(response.getDivision() - 999);
+		}
+	//Assets
 		//EveAPI
 		if (object instanceof com.beimin.eveapi.model.shared.Asset) {
 			com.beimin.eveapi.model.shared.Asset asset = (com.beimin.eveapi.model.shared.Asset) object;
@@ -405,9 +410,15 @@ public class ConverterTestUtil {
 			asset.setFlag(options.getLocationFlagEveApi());
 			asset.setContainer(0L);
 		}
-		//ESI
+		//ESI Character
 		if (object instanceof CharacterAssetsResponse) {
 			CharacterAssetsResponse asset = (CharacterAssetsResponse) object;
+			asset.setItemId(asset.getItemId() + 1); //Workaround for itemID == locationID
+			asset.setLocationId(options.getLocationTypeEveApi());
+		}
+		//ESI Corporation
+		if (object instanceof CorporationAssetsResponse) {
+			CorporationAssetsResponse asset = (CorporationAssetsResponse) object;
 			asset.setItemId(asset.getItemId() + 1); //Workaround for itemID == locationID
 			asset.setLocationId(options.getLocationTypeEveApi());
 		}
@@ -417,7 +428,7 @@ public class ConverterTestUtil {
 			asset.setItemID(asset.getItemID() + 1); //Workaround for itemID == locationID
 			asset.setLocationID(options.getLocationTypeEveApi());
 		}
-		//Contracts
+	//Contracts
 		//EveKit
 		if (object instanceof enterprises.orbital.evekit.client.model.Contract) {
 			enterprises.orbital.evekit.client.model.Contract contract = (enterprises.orbital.evekit.client.model.Contract) object;
@@ -425,7 +436,7 @@ public class ConverterTestUtil {
 			contract.setStatus(options.getContractStatusEveKit());
 			contract.setType(options.getContractTypeEveKit());
 		}
-		//IndustryJobs
+	//IndustryJobs
 		//EveAPI
 		if (object instanceof com.beimin.eveapi.model.shared.IndustryJob) {
 			com.beimin.eveapi.model.shared.IndustryJob industryJob = (com.beimin.eveapi.model.shared.IndustryJob) object;
@@ -436,7 +447,7 @@ public class ConverterTestUtil {
 			enterprises.orbital.evekit.client.model.IndustryJob industryJob = (enterprises.orbital.evekit.client.model.IndustryJob) object;
 			industryJob.setStatus(options.getIndustryJobStatusEveApi()); //Workaround: Set valid value for status (PENDING)
 		}
-		//Journal
+	//Journal
 		//EveAPI
 		if (object instanceof com.beimin.eveapi.model.shared.JournalEntry) {
 			com.beimin.eveapi.model.shared.JournalEntry journalEntry = (com.beimin.eveapi.model.shared.JournalEntry) object;
@@ -455,7 +466,7 @@ public class ConverterTestUtil {
 			journalEntry.setArgID1(options.getLong());
 			journalEntry.setArgName1(String.valueOf(options.getLong()));
 		}
-		//Market Orders
+	//Market Orders
 		//EveAPI
 		if (object instanceof com.beimin.eveapi.model.shared.MarketOrder) {
 			com.beimin.eveapi.model.shared.MarketOrder marketOrder = (com.beimin.eveapi.model.shared.MarketOrder) object;
@@ -468,7 +479,7 @@ public class ConverterTestUtil {
 			marketOrder.setOrderRange(options.getMarketOrderRangeEveApi());
 			marketOrder.setOrderState(options.getMarketOrderStateEveApi());
 		}
-		//Transactions
+	//Transactions
 		//EveAPI
 		if (object instanceof com.beimin.eveapi.model.shared.WalletTransaction) {
 			com.beimin.eveapi.model.shared.WalletTransaction transaction = (com.beimin.eveapi.model.shared.WalletTransaction) object;
@@ -603,33 +614,47 @@ public class ConverterTestUtil {
 		} else if (type.equals(Percent.class)) {
 			return options.getPercent();
 		} else if (type.equals(CharacterBlueprintsResponse.LocationFlagEnum.class)) {
-			return options.getLocationFlagEsiBlueprint();
+			return options.getLocationFlagEsiBlueprintCharacter();
+		} else if (type.equals(CorporationBlueprintsResponse.LocationFlagEnum.class)) {
+			return options.getLocationFlagEsiBlueprintCorporation();
 		} else if (type.equals(OffsetDateTime.class)) {
 			return options.getOffsetDateTime();
 		} else if (type.equals(CharacterIndustryJobsResponse.StatusEnum.class)) {
-			return options.getIndustryJobStatusEsi();
+			return options.getIndustryJobStatusEsiCharacter();
 		} else if (type.equals(CharacterWalletJournalExtraInfoResponse.class)) {
-			return options.getJournalExtraInfoEsi();
-		} else if (type.equals(FirstPartyTypeEnum.class)) {
-			return options.getJournalPartyTypeEsiFirst();
-		} else if (type.equals(RefTypeEnum.class)) {
-			return options.getJournalRefTypeEsi();
-		} else if (type.equals(SecondPartyTypeEnum.class)) {
-			return options.getJournalPartyTypeEsiSecond();
-		} else if (type.equals(AvailabilityEnum.class)) {
-			return options.getContractAvailabilityEsi();
+			return options.getJournalExtraInfoEsiCharacter();
+		} else if (type.equals(CorporationWalletJournalExtraInfoResponse.class)) {
+			return options.getJournalExtraInfoEsiCorporation();
+		} else if (type.equals(CharacterWalletJournalResponse.FirstPartyTypeEnum.class)) {
+			return options.getJournalPartyTypeEsiFirstCharacter();
+		} else if (type.equals(CorporationWalletJournalResponse.FirstPartyTypeEnum.class)) {
+			return options.getJournalPartyTypeEsiFirstCorporation();
+		} else if (type.equals(CharacterWalletJournalResponse.RefTypeEnum.class)) {
+			return options.getJournalRefTypeEsiCharacter();
+		} else if (type.equals(CorporationWalletJournalResponse.RefTypeEnum.class)) {
+			return options.getJournalRefTypeEsiCorporation();
+		} else if (type.equals(CharacterWalletJournalResponse.SecondPartyTypeEnum.class)) {
+			return options.getJournalPartyTypeEsiSecondCharacter();
+		} else if (type.equals(CorporationWalletJournalResponse.SecondPartyTypeEnum.class)) {
+			return options.getJournalPartyTypeEsiSecondCorporation();
+		} else if (type.equals(CharacterContractsResponse.AvailabilityEnum.class)) {
+			return options.getContractAvailabilityEsiCharacter();
 		} else if (type.equals(CharacterContractsResponse.StatusEnum.class)) {
-			return options.getContractStatusEsi();
-		} else if (type.equals(TypeEnum.class)) {
+			return options.getContractStatusEsiCharacter();
+		} else if (type.equals(CharacterContractsResponse.TypeEnum.class)) {
 			return options.getContractTypeEsi();
-		} else if (type.equals(RangeEnum.class)) {
-			return options.getMarketOrderRangeEsi();
+		} else if (type.equals(CharacterOrdersResponse.RangeEnum.class)) {
+			return options.getMarketOrderRangeEsiCharacter();
 		} else if (type.equals(CharacterOrdersResponse.StateEnum.class)) {
-			return options.getMarketOrderStateEsi();
+			return options.getMarketOrderStateEsiCharacter();
 		} else if (type.equals(CharacterAssetsResponse.LocationFlagEnum.class)) {
-			return options.getLocationFlagEsiAssets();
+			return options.getLocationFlagEsiAssetsCharacter();
+		} else if (type.equals(CorporationAssetsResponse.LocationFlagEnum.class)) {
+			return options.getLocationFlagEsiAssetsCorporation();
 		} else if (type.equals(CharacterAssetsResponse.LocationTypeEnum.class)) {
-			return options.getLocationTypeEsi();
+			return options.getLocationTypeEsiCharacter();
+		} else if (type.equals(CorporationAssetsResponse.LocationTypeEnum.class)) {
+			return options.getLocationTypeEsiCorporation();
 		} else if (type.equals(com.beimin.eveapi.model.shared.RefType.class)) {
 			return options.getJournalRefTypeEveApi();
 		} else if (type.equals(com.beimin.eveapi.model.shared.ContractType.class)) {
@@ -668,9 +693,11 @@ public class ConverterTestUtil {
 		for (Method method : esi.getDeclaredMethods()) {
 			String methodName = method.getName();
 			String methodId = esi.getSimpleName() + "->" + methodName;
-			if (methodId.equals("CharacterAssetsResponse->getQuantity")
-					|| methodId.equals("CharacterContractsResponse->getStartLocationId")
-					|| methodId.equals("CharacterWalletJournalResponse->getExtraInfo")) {
+			if (methodId.equals("CharacterAssetsResponse->getQuantity") //Quantity is not optinal in RawAsset
+					|| methodId.equals("CorporationAssetsResponse->getQuantity") //Quantity is not optinal in RawAsset
+					|| methodId.equals("CharacterContractsResponse->getStartLocationId") //
+					|| methodId.equals("CharacterWalletJournalResponse->getExtraInfo") //RawJournalExtraInfo is not optinal RawJournal
+					|| methodId.equals("CorporationWalletJournalResponse->getExtraInfo")) { //RawJournalExtraInfo is not optinal RawJournal
 				continue;
 			}
 			if (methodName.startsWith("get")) {

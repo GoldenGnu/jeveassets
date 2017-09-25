@@ -199,7 +199,11 @@ public class EsiOwner extends AbstractOwner implements OwnerType {
 
 	@Override
 	public boolean isBlueprints() {
-		return EsiScopes.CHARACTER_BLUEPRINTS.isInScope(scopes);
+		if (isCorporation()) {
+			return EsiScopes.CORPORATION_WALLET.isInScope(scopes) && roles.contains("Director");
+		} else {
+			return EsiScopes.CHARACTER_BLUEPRINTS.isInScope(scopes);
+		}
 	}
 
 	@Override

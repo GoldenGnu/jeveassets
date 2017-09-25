@@ -24,6 +24,7 @@ import net.nikr.eve.jeveasset.data.sde.ItemFlag;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 import net.nikr.eve.jeveasset.io.shared.RawConverter;
 import net.troja.eve.esi.model.CharacterBlueprintsResponse;
+import net.troja.eve.esi.model.CorporationBlueprintsResponse;
 
 public class RawBlueprint {
 
@@ -63,11 +64,27 @@ public class RawBlueprint {
 	}
 
 	/**
-	 * ESI
+	 * ESI Character
 	 *
 	 * @param blueprint
 	 */
 	public RawBlueprint(CharacterBlueprintsResponse blueprint) {
+		itemId = blueprint.getItemId();
+		itemFlag = RawConverter.toFlag(blueprint.getLocationFlag());
+		locationId = blueprint.getLocationId();
+		materialEfficiency = blueprint.getMaterialEfficiency();
+		quantity = blueprint.getQuantity();
+		runs = blueprint.getRuns();
+		timeEfficiency = blueprint.getTimeEfficiency();
+		typeId = blueprint.getTypeId();
+	}
+
+	/**
+	 * ESI Corporation
+	 *
+	 * @param blueprint
+	 */
+	public RawBlueprint(CorporationBlueprintsResponse blueprint) {
 		itemId = blueprint.getItemId();
 		itemFlag = RawConverter.toFlag(blueprint.getLocationFlag());
 		locationId = blueprint.getLocationId();

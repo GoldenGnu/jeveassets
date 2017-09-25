@@ -45,6 +45,7 @@ import net.nikr.eve.jeveasset.data.sde.ItemFlag;
 import net.nikr.eve.jeveasset.data.sde.StaticData;
 import net.nikr.eve.jeveasset.io.shared.RawConverter.LocationFlag;
 import net.troja.eve.esi.model.CharacterWalletJournalResponse;
+import net.troja.eve.esi.model.CorporationWalletJournalResponse;
 import org.joda.time.DateTime;
 import org.junit.Test;
 
@@ -81,6 +82,29 @@ public class RawConverterTest extends TestUtil {
 	}
 
 	@Test
+	public void testToFlag_CorporationAssetsResponseLocationFlagEnum() {
+		for (net.troja.eve.esi.model.CorporationAssetsResponse.LocationFlagEnum locationFlagEnum : net.troja.eve.esi.model.CorporationAssetsResponse.LocationFlagEnum.values()) {
+			ItemFlag itemFlag = RawConverter.toFlag(locationFlagEnum);
+			assertNotNull(itemFlag);
+			assertTrue(locationFlagEnum.name() + " != " + itemFlag.getFlagName(),
+					itemFlag.getFlagID() == 0
+					|| locationFlagEnum.toString().toLowerCase().equals(itemFlag.getFlagText().toLowerCase().replace(" ", ""))
+					|| locationFlagEnum.toString().toLowerCase().equals(itemFlag.getFlagName().toLowerCase())
+					|| (locationFlagEnum.toString().equals("CorpDeliveries") && itemFlag.getFlagName().equals("CorpMarket"))
+					|| (locationFlagEnum.toString().equals("Impounded") && itemFlag.getFlagName().equals("OfficeImpound"))
+					|| (locationFlagEnum.toString().equals("ServiceSlot0") && itemFlag.getFlagName().equals("StructureServiceSlot0"))
+					|| (locationFlagEnum.toString().equals("ServiceSlot1") && itemFlag.getFlagName().equals("StructureServiceSlot1"))
+					|| (locationFlagEnum.toString().equals("ServiceSlot2") && itemFlag.getFlagName().equals("StructureServiceSlot2"))
+					|| (locationFlagEnum.toString().equals("ServiceSlot3") && itemFlag.getFlagName().equals("StructureServiceSlot3"))
+					|| (locationFlagEnum.toString().equals("ServiceSlot4") && itemFlag.getFlagName().equals("StructureServiceSlot4"))
+					|| (locationFlagEnum.toString().equals("ServiceSlot5") && itemFlag.getFlagName().equals("StructureServiceSlot5"))
+					|| (locationFlagEnum.toString().equals("ServiceSlot6") && itemFlag.getFlagName().equals("StructureServiceSlot6"))
+					|| (locationFlagEnum.toString().equals("ServiceSlot7") && itemFlag.getFlagName().equals("StructureServiceSlot7"))
+			);
+		}
+	}
+
+	@Test
 	public void testToFlag_CharacterBlueprintsResponseLocationFlagEnum() {
 		for (net.troja.eve.esi.model.CharacterBlueprintsResponse.LocationFlagEnum locationFlagEnum : net.troja.eve.esi.model.CharacterBlueprintsResponse.LocationFlagEnum.values()) {
 			ItemFlag itemFlag = RawConverter.toFlag(locationFlagEnum);
@@ -88,8 +112,31 @@ public class RawConverterTest extends TestUtil {
 			assertTrue(locationFlagEnum.name() + " != " + itemFlag.getFlagName(),
 					itemFlag.getFlagID() == 0
 					|| locationFlagEnum.toString().toLowerCase().equals(itemFlag.getFlagText().toLowerCase().replace(" ", ""))
-					|| locationFlagEnum.toString().toLowerCase().equals(itemFlag.getFlagName().toLowerCase()));
+					|| locationFlagEnum.toString().toLowerCase().equals(itemFlag.getFlagName().toLowerCase())
+			);
+		}
+	}
 
+	@Test
+	public void testToFlag_CorporationBlueprintsResponseLocationFlagEnum() {
+		for (net.troja.eve.esi.model.CorporationBlueprintsResponse.LocationFlagEnum locationFlagEnum : net.troja.eve.esi.model.CorporationBlueprintsResponse.LocationFlagEnum.values()) {
+			ItemFlag itemFlag = RawConverter.toFlag(locationFlagEnum);
+			assertNotNull(itemFlag);
+			assertTrue(locationFlagEnum.name() + " != " + itemFlag.getFlagName(),
+					itemFlag.getFlagID() == 0
+					|| locationFlagEnum.toString().toLowerCase().equals(itemFlag.getFlagText().toLowerCase().replace(" ", ""))
+					|| locationFlagEnum.toString().toLowerCase().equals(itemFlag.getFlagName().toLowerCase())
+					|| (locationFlagEnum.toString().equals("CorpDeliveries") && itemFlag.getFlagName().equals("CorpMarket"))
+					|| (locationFlagEnum.toString().equals("Impounded") && itemFlag.getFlagName().equals("OfficeImpound"))
+					|| (locationFlagEnum.toString().equals("ServiceSlot0") && itemFlag.getFlagName().equals("StructureServiceSlot0"))
+					|| (locationFlagEnum.toString().equals("ServiceSlot1") && itemFlag.getFlagName().equals("StructureServiceSlot1"))
+					|| (locationFlagEnum.toString().equals("ServiceSlot2") && itemFlag.getFlagName().equals("StructureServiceSlot2"))
+					|| (locationFlagEnum.toString().equals("ServiceSlot3") && itemFlag.getFlagName().equals("StructureServiceSlot3"))
+					|| (locationFlagEnum.toString().equals("ServiceSlot4") && itemFlag.getFlagName().equals("StructureServiceSlot4"))
+					|| (locationFlagEnum.toString().equals("ServiceSlot5") && itemFlag.getFlagName().equals("StructureServiceSlot5"))
+					|| (locationFlagEnum.toString().equals("ServiceSlot6") && itemFlag.getFlagName().equals("StructureServiceSlot6"))
+					|| (locationFlagEnum.toString().equals("ServiceSlot7") && itemFlag.getFlagName().equals("StructureServiceSlot7"))
+			);
 		}
 	}
 
@@ -245,40 +292,30 @@ public class RawConverterTest extends TestUtil {
 
 	@Test
 	public void testToJournalRefType_CharacterWalletJournalResponseRefTypeEnum() {
-		Map<CharacterWalletJournalResponse.RefTypeEnum, RawJournalRefType> map = new EnumMap<CharacterWalletJournalResponse.RefTypeEnum, RawJournalRefType>(CharacterWalletJournalResponse.RefTypeEnum.class);
-		map.put(CharacterWalletJournalResponse.RefTypeEnum.ALLIANCE_MAINTENANCE_FEE, RawJournalRefType.ALLIANCE_MAINTAINANCE_FEE);
-		map.put(CharacterWalletJournalResponse.RefTypeEnum.BOUNTY_PRIZES, RawJournalRefType.BOUNTY_PRIZES);
-		map.put(CharacterWalletJournalResponse.RefTypeEnum.BOUNTY_PRIZE_HISTORICAL, RawJournalRefType.BOUNTY_PRIZE);
-		map.put(CharacterWalletJournalResponse.RefTypeEnum.BROKER_FEE, RawJournalRefType.BROKERS_FEE);
-		map.put(CharacterWalletJournalResponse.RefTypeEnum.CONTRACT, RawJournalRefType.CONTRACT_BROKERS_FEE);
-		map.put(CharacterWalletJournalResponse.RefTypeEnum.CORPORATE_REWARD_PAYOUT, RawJournalRefType.CORPORATE_REWARD_PAYOUT);
-		map.put(CharacterWalletJournalResponse.RefTypeEnum.CORP_ACCOUNT_WITHDRAWAL, RawJournalRefType.CORPORATION_ACCOUNT_WITHDRAWAL);
-		map.put(CharacterWalletJournalResponse.RefTypeEnum.CSPA, RawJournalRefType.CSPA);
-		map.put(CharacterWalletJournalResponse.RefTypeEnum.CUSTOMS_OFFICE_EXPORT_DUTY, RawJournalRefType.PLANETARY_EXPORT_TAX);
-		map.put(CharacterWalletJournalResponse.RefTypeEnum.CUSTOMS_OFFICE_IMPORT_DUTY, RawJournalRefType.PLANETARY_IMPORT_TAX);
-		map.put(CharacterWalletJournalResponse.RefTypeEnum.INDUSTRY_FACILITY_TAX, RawJournalRefType.INDUSTRY_JOB_TAX);
-		map.put(CharacterWalletJournalResponse.RefTypeEnum.INSURANCE, RawJournalRefType.INSURANCE);
-		map.put(CharacterWalletJournalResponse.RefTypeEnum.JUMP_CLONE_ACTIVATION_FEE, RawJournalRefType.JUMP_CLONE_ACTIVATION_FEE);
-		map.put(CharacterWalletJournalResponse.RefTypeEnum.JUMP_CLONE_INSTALLATION_FEE, RawJournalRefType.JUMP_CLONE_INSTALLATION_FEE);
-		map.put(CharacterWalletJournalResponse.RefTypeEnum.LOGO_CHANGE_FEE, RawJournalRefType.CORPORATION_LOGO_CHANGE_COST);
-		map.put(CharacterWalletJournalResponse.RefTypeEnum.MANUFACTURING, RawJournalRefType.MANUFACTURING);
-		map.put(CharacterWalletJournalResponse.RefTypeEnum.MARKET_ESCROW, RawJournalRefType.MARKET_ESCROW);
-		map.put(CharacterWalletJournalResponse.RefTypeEnum.MARKET_TRANSACTION, RawJournalRefType.MARKET_TRANSACTION);
-		map.put(CharacterWalletJournalResponse.RefTypeEnum.MEDAL_CREATION_FEE, RawJournalRefType.MEDAL_CREATION);
-		map.put(CharacterWalletJournalResponse.RefTypeEnum.MEDAL_ISSUING_FEE, RawJournalRefType.MEDAL_ISSUED);
-		map.put(CharacterWalletJournalResponse.RefTypeEnum.MISSION_REWARD, RawJournalRefType.MISSION_REWARD);
-		map.put(CharacterWalletJournalResponse.RefTypeEnum.MISSION_REWARD_BONUS, RawJournalRefType.AGENT_MISSION_TIME_BONUS_REWARD);
-		map.put(CharacterWalletJournalResponse.RefTypeEnum.OFFICE_RENTAL_FEE, RawJournalRefType.OFFICE_RENTAL_FEE);
-		map.put(CharacterWalletJournalResponse.RefTypeEnum.PLAYER_DONATION, RawJournalRefType.PLAYER_DONATION);
-		map.put(CharacterWalletJournalResponse.RefTypeEnum.PLAYER_TRADING, RawJournalRefType.PLAYER_TRADING);
-		map.put(CharacterWalletJournalResponse.RefTypeEnum.PROJECT_DISCOVERY_REWARD, RawJournalRefType.PROJECT_DISCOVERY_REWARD);
-		map.put(CharacterWalletJournalResponse.RefTypeEnum.REPROCESSING_FEE, RawJournalRefType.REPROCESSING_TAX);
-		map.put(CharacterWalletJournalResponse.RefTypeEnum.SALES_TAX, RawJournalRefType.TRANSACTION_TAX);
-		map.put(CharacterWalletJournalResponse.RefTypeEnum.UNKNOWN, RawJournalRefType.UNDEFINED);
-		assertEquals(map.size(), CharacterWalletJournalResponse.RefTypeEnum.values().length);
-		for (Map.Entry<CharacterWalletJournalResponse.RefTypeEnum, RawJournalRefType> entry : map.entrySet()) {
-			assertEquals(entry.getValue(), RawConverter.toJournalRefType(entry.getKey()));
+		assertEquals(29, CharacterWalletJournalResponse.RefTypeEnum.values().length);
+		int undefined = 0;
+		for (CharacterWalletJournalResponse.RefTypeEnum refType : CharacterWalletJournalResponse.RefTypeEnum.values()) {
+			RawJournalRefType rawJournalRefType = RawConverter.toJournalRefType(refType);
+			assertNotNull("No value for: " + refType.name(), rawJournalRefType);
+			if (rawJournalRefType == RawJournalRefType.UNDEFINED) {
+				undefined++;
+			}
 		}
+		assertEquals(1, undefined);
+	}
+
+	@Test
+	public void testToJournalRefType_CorporationWalletJournalResponseRefTypeEnum() {
+		assertEquals(112, CorporationWalletJournalResponse.RefTypeEnum.values().length);
+		int undefined = 0;
+		for (CorporationWalletJournalResponse.RefTypeEnum refType : CorporationWalletJournalResponse.RefTypeEnum.values()) {
+			RawJournalRefType rawJournalRefType = RawConverter.toJournalRefType(refType);
+			assertNotNull("No value for: " + refType.name(), rawJournalRefType);
+			if (rawJournalRefType == RawJournalRefType.UNDEFINED) {
+				undefined++;
+			}
+		}
+		assertEquals(0, undefined);
 	}
 
 	@Test
@@ -317,6 +354,32 @@ public class RawConverterTest extends TestUtil {
 		map.put(CharacterWalletJournalResponse.SecondPartyTypeEnum.FACTION, RawJournal.JournalPartyType.FACTION);
 		assertEquals(map.size(), CharacterWalletJournalResponse.SecondPartyTypeEnum.values().length);
 		for (Map.Entry<CharacterWalletJournalResponse.SecondPartyTypeEnum, RawJournal.JournalPartyType> entry : map.entrySet()) {
+			assertEquals(entry.getValue(), RawConverter.toJournalPartyType(entry.getKey()));
+		}
+	}
+
+	@Test
+	public void testToJournalPartyType_CorporationWalletJournalResponseFirstPartyTypeEnum() {
+		Map<CorporationWalletJournalResponse.FirstPartyTypeEnum, RawJournal.JournalPartyType> map = new EnumMap<CorporationWalletJournalResponse.FirstPartyTypeEnum, RawJournal.JournalPartyType>(CorporationWalletJournalResponse.FirstPartyTypeEnum.class);
+		map.put(CorporationWalletJournalResponse.FirstPartyTypeEnum.ALLIANCE, RawJournal.JournalPartyType.ALLIANCE);
+		map.put(CorporationWalletJournalResponse.FirstPartyTypeEnum.CHARACTER, RawJournal.JournalPartyType.CHARACTER);
+		map.put(CorporationWalletJournalResponse.FirstPartyTypeEnum.CORPORATION, RawJournal.JournalPartyType.CORPORATION);
+		map.put(CorporationWalletJournalResponse.FirstPartyTypeEnum.FACTION, RawJournal.JournalPartyType.FACTION);
+		assertEquals(map.size(), CharacterWalletJournalResponse.FirstPartyTypeEnum.values().length);
+		for (Map.Entry<CorporationWalletJournalResponse.FirstPartyTypeEnum, RawJournal.JournalPartyType> entry : map.entrySet()) {
+			assertEquals(entry.getValue(), RawConverter.toJournalPartyType(entry.getKey()));
+		}
+	}
+
+	@Test
+	public void testToJournalPartyType_CorporationWalletJournalResponseSecondPartyTypeEnum() {
+		Map<CorporationWalletJournalResponse.SecondPartyTypeEnum, RawJournal.JournalPartyType> map = new EnumMap<CorporationWalletJournalResponse.SecondPartyTypeEnum, RawJournal.JournalPartyType>(CorporationWalletJournalResponse.SecondPartyTypeEnum.class);
+		map.put(CorporationWalletJournalResponse.SecondPartyTypeEnum.ALLIANCE, RawJournal.JournalPartyType.ALLIANCE);
+		map.put(CorporationWalletJournalResponse.SecondPartyTypeEnum.CHARACTER, RawJournal.JournalPartyType.CHARACTER);
+		map.put(CorporationWalletJournalResponse.SecondPartyTypeEnum.CORPORATION, RawJournal.JournalPartyType.CORPORATION);
+		map.put(CorporationWalletJournalResponse.SecondPartyTypeEnum.FACTION, RawJournal.JournalPartyType.FACTION);
+		assertEquals(map.size(), CharacterWalletJournalResponse.SecondPartyTypeEnum.values().length);
+		for (Map.Entry<CorporationWalletJournalResponse.SecondPartyTypeEnum, RawJournal.JournalPartyType> entry : map.entrySet()) {
 			assertEquals(entry.getValue(), RawConverter.toJournalPartyType(entry.getKey()));
 		}
 	}

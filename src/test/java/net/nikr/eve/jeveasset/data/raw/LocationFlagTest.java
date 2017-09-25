@@ -25,6 +25,7 @@ import net.nikr.eve.jeveasset.io.shared.RawConverter.LocationFlag;
 import net.troja.eve.esi.model.CharacterAssetsResponse;
 import net.troja.eve.esi.model.CharacterBlueprintsResponse;
 import net.troja.eve.esi.model.CorporationAssetsResponse;
+import net.troja.eve.esi.model.CorporationBlueprintsResponse;
 import org.junit.Test;
 
 
@@ -34,6 +35,7 @@ public class LocationFlagTest extends TestUtil {
 	public void locationFlagTest() {
 		RawUtil.compare(LocationFlag.values(),
 				CharacterBlueprintsResponse.LocationFlagEnum.values(),
+				CorporationBlueprintsResponse.LocationFlagEnum.values(),
 				CharacterAssetsResponse.LocationFlagEnum.values(),
 				CorporationAssetsResponse.LocationFlagEnum.values());
 	}

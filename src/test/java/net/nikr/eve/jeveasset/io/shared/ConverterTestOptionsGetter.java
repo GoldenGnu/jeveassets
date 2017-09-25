@@ -23,7 +23,11 @@ package net.nikr.eve.jeveasset.io.shared;
 import com.beimin.eveapi.model.shared.KeyType;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import net.nikr.eve.jeveasset.data.api.accounts.EveApiAccount;
 import net.nikr.eve.jeveasset.data.api.raw.RawAsset;
 import net.nikr.eve.jeveasset.data.api.raw.RawBlueprint;
@@ -49,6 +53,10 @@ import net.troja.eve.esi.model.CharacterIndustryJobsResponse;
 import net.troja.eve.esi.model.CharacterOrdersResponse;
 import net.troja.eve.esi.model.CharacterWalletJournalExtraInfoResponse;
 import net.troja.eve.esi.model.CharacterWalletJournalResponse;
+import net.troja.eve.esi.model.CorporationAssetsResponse;
+import net.troja.eve.esi.model.CorporationBlueprintsResponse;
+import net.troja.eve.esi.model.CorporationWalletJournalExtraInfoResponse;
+import net.troja.eve.esi.model.CorporationWalletJournalResponse;
 
 public class ConverterTestOptionsGetter {
 
@@ -78,206 +86,46 @@ public class ConverterTestOptionsGetter {
 	private static class IndexOptions implements ConverterTestOptions {
 
 		//Primitive
-		private final Integer[] integer = {5};
-		private final Float[] floats = {5.1f};
-		private final Boolean[] booleans = {true};
-		private final Long[] longs = {5L};
-		private final Double[] doubles = {5.1};
-		private final Date[] date = {new Date()};
-		private final String[] string = {"StringValue"};
+		private static final Integer[] INTEGER = {5};
+		private static final Float[] FLOAT = {5.1f};
+		private static final Boolean[] BOOLEAN = {true};
+		private static final Long[] LONG = {5L};
+		private static final Double[] DOUBLE = {5.1};
+		private static final Date[] DATE = {new Date()};
+		private static final String[] STRING = {"StringValue"};
 		//Data
-		private final MyLocation[] myLocation = {ApiIdConverter.getLocation(60003466)};
-		private final PriceData[] priceData = {new PriceData()};
-		private final MarketPriceData[] marketPriceData = {new MarketPriceData()};
-		private final Tags[] tags = {new Tags()};
-		private final Percent[] percent = {new Percent(5.1)};
-		private final UserPrice[] userItem = {new UserPrice(getDouble(), getInteger(), getString())};
+		private static final MyLocation[] MY_LOCATION = {ApiIdConverter.getLocation(60003466)};
+		private static final PriceData[] PRICE_DATA = {new PriceData()};
+		private static final MarketPriceData[] MARKET_PRICE_DATA = {new MarketPriceData()};
+		private static final Tags[] TAGS = {new Tags()};
+		private static final Percent[] PERCENT = {new Percent(5.1)};
+		private static final UserPrice[] USER_ITEM = {new UserPrice(DOUBLE[0], INTEGER[0], STRING[0])};
 		//LocationType
-		private final RawAsset.LocationType[] rawLocationType = RawAsset.LocationType.values();
-		private final CharacterAssetsResponse.LocationTypeEnum[] esiLocationType = CharacterAssetsResponse.LocationTypeEnum.values();
-		private final Long[] eveApiLocationType = {60003466L, 30000142L, 10000002L};
+		private static final RawAsset.LocationType[] RAW_LOCATION_TYPE = RawAsset.LocationType.values();
+		private static final CharacterAssetsResponse.LocationTypeEnum[] ESI_LOCATION_TYPE_CHARACTER = CharacterAssetsResponse.LocationTypeEnum.values();
+		private static final CorporationAssetsResponse.LocationTypeEnum[] ESI_LOCATION_TYPE_CORPORATION = CorporationAssetsResponse.LocationTypeEnum.values();
+		private static final Long[] EVE_API_LOCATION_TYPE = {60003466L, 30000142L, 10000002L};
 		//LocationFlag
-		private final ItemFlag[] itemFlag = {
-			ApiIdConverter.getFlag(36), //ASSETSAFETY,
-			ApiIdConverter.getFlag(RawConverter.LocationFlag.AUTOFIT.getID()), //AUTOFIT
-			ApiIdConverter.getFlag(5), //CARGO
-			ApiIdConverter.getFlag(RawConverter.LocationFlag.CORPSEBAY.getID()), //CORPSEBAY
-			ApiIdConverter.getFlag(173), //DELIVERIES,
-			ApiIdConverter.getFlag(87), //DRONEBAY
-			ApiIdConverter.getFlag(158), //FIGHTERBAY,
-			ApiIdConverter.getFlag(159), //FIGHTERTUBE0,
-			ApiIdConverter.getFlag(160), //FIGHTERTUBE1,
-			ApiIdConverter.getFlag(161), //FIGHTERTUBE2,
-			ApiIdConverter.getFlag(162), //FIGHTERTUBE3,
-			ApiIdConverter.getFlag(163), //FIGHTERTUBE4,
-			ApiIdConverter.getFlag(155), //FLEETHANGAR
-			ApiIdConverter.getFlag(4), //HANGAR,
-			ApiIdConverter.getFlag(RawConverter.LocationFlag.HANGARALL.getID()), //HANGARALL,
-			ApiIdConverter.getFlag(27), //HISLOT0,
-			ApiIdConverter.getFlag(28), //HISLOT1,
-			ApiIdConverter.getFlag(29), //HISLOT2,
-			ApiIdConverter.getFlag(30), //HISLOT3,
-			ApiIdConverter.getFlag(31), //HISLOT4,
-			ApiIdConverter.getFlag(32), //HISLOT5,
-			ApiIdConverter.getFlag(33), //HISLOT6,
-			ApiIdConverter.getFlag(34), //HISLOT7,
-			ApiIdConverter.getFlag(156), //HIDDENMODIFIERS,
-			ApiIdConverter.getFlag(89), //IMPLANT,
-			ApiIdConverter.getFlag(11), //LOSLOT0,
-			ApiIdConverter.getFlag(12), //LOSLOT1,
-			ApiIdConverter.getFlag(13), //LOSLOT2,
-			ApiIdConverter.getFlag(14), //LOSLOT3,
-			ApiIdConverter.getFlag(15), //LOSLOT4,
-			ApiIdConverter.getFlag(16), //LOSLOT5,
-			ApiIdConverter.getFlag(17), //LOSLOT6,
-			ApiIdConverter.getFlag(18), //LOSLOT7,
-			ApiIdConverter.getFlag(63), //LOCKED,
-			ApiIdConverter.getFlag(19), //MEDSLOT0,
-			ApiIdConverter.getFlag(20), //MEDSLOT1,
-			ApiIdConverter.getFlag(21), //MEDSLOT2,
-			ApiIdConverter.getFlag(22), //MEDSLOT3,
-			ApiIdConverter.getFlag(23), //MEDSLOT4,
-			ApiIdConverter.getFlag(24), //MEDSLOT5,
-			ApiIdConverter.getFlag(25), //MEDSLOT6,
-			ApiIdConverter.getFlag(26), //MEDSLOT7,
-			ApiIdConverter.getFlag(RawConverter.LocationFlag.MODULE.getID()), //MODULE
-			ApiIdConverter.getFlag(154), //QUAFEBAY,
-			ApiIdConverter.getFlag(92), //RIGSLOT0,
-			ApiIdConverter.getFlag(93), //RIGSLOT1,
-			ApiIdConverter.getFlag(94), //RIGSLOT2,
-			ApiIdConverter.getFlag(95), //RIGSLOT3,
-			ApiIdConverter.getFlag(96), //RIGSLOT4,
-			ApiIdConverter.getFlag(97), //RIGSLOT5,
-			ApiIdConverter.getFlag(98), //RIGSLOT6,
-			ApiIdConverter.getFlag(99), //RIGSLOT7,
-			ApiIdConverter.getFlag(90), //SHIPHANGAR,
-			ApiIdConverter.getFlag(143), //SPECIALIZEDAMMOHOLD,
-			ApiIdConverter.getFlag(148), //SPECIALIZEDCOMMANDCENTERHOLD,
-			ApiIdConverter.getFlag(133), //SPECIALIZEDFUELBAY,
-			ApiIdConverter.getFlag(135), //SPECIALIZEDGASHOLD,
-			ApiIdConverter.getFlag(142), //SPECIALIZEDINDUSTRIALSHIPHOLD,
-			ApiIdConverter.getFlag(141), //SPECIALIZEDLARGESHIPHOLD,
-			ApiIdConverter.getFlag(151), //SPECIALIZEDMATERIALBAY,
-			ApiIdConverter.getFlag(140), //SPECIALIZEDMEDIUMSHIPHOLD,
-			ApiIdConverter.getFlag(136), //SPECIALIZEDMINERALHOLD,
-			ApiIdConverter.getFlag(134), //SPECIALIZEDOREHOLD,
-			ApiIdConverter.getFlag(149), //SPECIALIZEDPLANETARYCOMMODITIESHOLD,
-			ApiIdConverter.getFlag(137), //SPECIALIZEDSALVAGEHOLD,
-			ApiIdConverter.getFlag(138), //SPECIALIZEDSHIPHOLD,
-			ApiIdConverter.getFlag(139), //SPECIALIZEDSMALLSHIPHOLD,
-			ApiIdConverter.getFlag(177), //SUBSYSTEMBAY
-			ApiIdConverter.getFlag(125), //SUBSYSTEMSLOT0,
-			ApiIdConverter.getFlag(126), //SUBSYSTEMSLOT1,
-			ApiIdConverter.getFlag(127), //SUBSYSTEMSLOT2,
-			ApiIdConverter.getFlag(128), //SUBSYSTEMSLOT3,
-			ApiIdConverter.getFlag(129), //SUBSYSTEMSLOT4,
-			ApiIdConverter.getFlag(130), //SUBSYSTEMSLOT5,
-			ApiIdConverter.getFlag(131), //SUBSYSTEMSLOT6,
-			ApiIdConverter.getFlag(132), //SUBSYSTEMSLOT7,
-			ApiIdConverter.getFlag(64), //UNLOCKED,
-			ApiIdConverter.getFlag(3), //WARDROBE
-		};
-		private final CharacterBlueprintsResponse.LocationFlagEnum[] locationFlagEsiBlueprints = CharacterBlueprintsResponse.LocationFlagEnum.values();
-		private final CharacterAssetsResponse.LocationFlagEnum[] locationFlagEsiAssets = CharacterAssetsResponse.LocationFlagEnum.values();
-		private final Integer[] locationFlagEveApi = {
-			36, //ASSETSAFETY,
-			RawConverter.LocationFlag.AUTOFIT.getID(), //AUTOFIT
-			5, //CARGO
-			RawConverter.LocationFlag.CORPSEBAY.getID(), //CORPSEBAY
-			173, //DELIVERIES,
-			87, //DRONEBAY
-			158, //FIGHTERBAY,
-			159, //FIGHTERTUBE0,
-			160, //FIGHTERTUBE1,
-			161, //FIGHTERTUBE2,
-			162, //FIGHTERTUBE3,
-			163, //FIGHTERTUBE4,
-			155, //FLEETHANGAR
-			4, //HANGAR,
-			RawConverter.LocationFlag.HANGARALL.getID(), //HANGARALL,
-			27, //HISLOT0,
-			28, //HISLOT1,
-			29, //HISLOT2,
-			30, //HISLOT3,
-			31, //HISLOT4,
-			32, //HISLOT5,
-			33, //HISLOT6, ---Index 31
-			34, //HISLOT7,
-			156, //HIDDENMODIFIERS,
-			89, //IMPLANT,
-			11, //LOSLOT0,
-			12, //LOSLOT1,
-			13, //LOSLOT2,
-			14, //LOSLOT3,
-			15, //LOSLOT4,
-			16, //LOSLOT5,
-			17, //LOSLOT6,
-			18, //LOSLOT7,
-			63, //LOCKED,
-			19, //MEDSLOT0,
-			20, //MEDSLOT1,
-			21, //MEDSLOT2,
-			22, //MEDSLOT3,
-			23, //MEDSLOT4,
-			24, //MEDSLOT5,
-			25, //MEDSLOT6,
-			26, //MEDSLOT7,
-			RawConverter.LocationFlag.MODULE.getID(), //MODULE
-			154, //QUAFEBAY,
-			92, //RIGSLOT0,
-			93, //RIGSLOT1,
-			94, //RIGSLOT2,
-			95, //RIGSLOT3,
-			96, //RIGSLOT4,
-			97, //RIGSLOT5,
-			98, //RIGSLOT6,
-			99, //RIGSLOT7,
-			90, //SHIPHANGAR,
-			143, //SPECIALIZEDAMMOHOLD,
-			148, //SPECIALIZEDCOMMANDCENTERHOLD,
-			133, //SPECIALIZEDFUELBAY,
-			135, //SPECIALIZEDGASHOLD,
-			142, //SPECIALIZEDINDUSTRIALSHIPHOLD,
-			141, //SPECIALIZEDLARGESHIPHOLD,
-			151, //SPECIALIZEDMATERIALBAY,
-			140, //SPECIALIZEDMEDIUMSHIPHOLD,
-			136, //SPECIALIZEDMINERALHOLD,
-			134, //SPECIALIZEDOREHOLD,
-			149, //SPECIALIZEDPLANETARYCOMMODITIESHOLD,
-			137, //SPECIALIZEDSALVAGEHOLD,
-			138, //SPECIALIZEDSHIPHOLD,
-			139, //SPECIALIZEDSMALLSHIPHOLD,
-			177, //SUBSYSTEMBAY
-			125, //SUBSYSTEMSLOT0,
-			126, //SUBSYSTEMSLOT1,
-			127, //SUBSYSTEMSLOT2,
-			128, //SUBSYSTEMSLOT3,
-			129, //SUBSYSTEMSLOT4,
-			130, //SUBSYSTEMSLOT5,
-			131, //SUBSYSTEMSLOT6,
-			132, //SUBSYSTEMSLOT7,
-			64, //UNLOCKED,
-			3, //WARDROBE
-		};
+		private static final List<LocationFlag> LOCATION_TYPE = createLocationTypes();
 		//ContractAvailability
-		private final RawContract.ContractAvailability[] rawContractAvailabilitys = RawContract.ContractAvailability.values();
-		private final CharacterContractsResponse.AvailabilityEnum[] esiContractsAvailability = CharacterContractsResponse.AvailabilityEnum.values();
-		private final com.beimin.eveapi.model.shared.ContractAvailability[] xmlContractAvailability = {
+		private static final RawContract.ContractAvailability[] RAW_CONTRACT_AVAILABILITY = RawContract.ContractAvailability.values();
+		private static final CharacterContractsResponse.AvailabilityEnum[] ESI_CONTRACTS_AVAILABILITY_CHARACTER = CharacterContractsResponse.AvailabilityEnum.values();
+		private static final com.beimin.eveapi.model.shared.ContractAvailability[] XML_CONTRACT_AVAILABILITY = {
 			com.beimin.eveapi.model.shared.ContractAvailability.PUBLIC,
 			com.beimin.eveapi.model.shared.ContractAvailability.PRIVATE,
 			com.beimin.eveapi.model.shared.ContractAvailability.PRIVATE,
 			com.beimin.eveapi.model.shared.ContractAvailability.PRIVATE
 		};
-		private final String[] eveKitContractAvailability = {
+		private static final String[] EVE_KIT_CONTRACT_AVAILABILITY = {
 			"public",
 			"private",
 			"private",
 			"private"
 		};
 		//ContractStatus
-		private final RawContract.ContractStatus[] rawContractStatuses = RawContract.ContractStatus.values();
-		private final CharacterContractsResponse.StatusEnum[] esiContractStatus = CharacterContractsResponse.StatusEnum.values();
-		private final com.beimin.eveapi.model.shared.ContractStatus[] xmlContractStatus = {
+		private static final RawContract.ContractStatus[] RAW_CONTRACT_STATUS = RawContract.ContractStatus.values();
+		private static final CharacterContractsResponse.StatusEnum[] ESI_CONTRACT_STATUS_CHARACTER = CharacterContractsResponse.StatusEnum.values();
+		private static final com.beimin.eveapi.model.shared.ContractStatus[] XML_CONTRACT_STATUS = {
 			com.beimin.eveapi.model.shared.ContractStatus.OUTSTANDING,
 			com.beimin.eveapi.model.shared.ContractStatus.INPROGRESS,
 			com.beimin.eveapi.model.shared.ContractStatus.COMPLETEDBYISSUER,
@@ -289,7 +137,7 @@ public class ConverterTestOptionsGetter {
 			com.beimin.eveapi.model.shared.ContractStatus.DELETED,
 			com.beimin.eveapi.model.shared.ContractStatus.REVERSED
 		};
-		private final String[] eveKitContractStatus = {
+		private static final String[] EVE_KIT_CONTRACT_STATUS = {
 			"outstanding",
 			"inprogress",
 			"completedbyissuer",
@@ -302,16 +150,16 @@ public class ConverterTestOptionsGetter {
 			"reversed"
 		};
 		//ContractType
-		private final RawContract.ContractType[] rawContractTypes = RawContract.ContractType.values();
-		private final CharacterContractsResponse.TypeEnum[] esiContractType = CharacterContractsResponse.TypeEnum.values();
-		private final com.beimin.eveapi.model.shared.ContractType[] xmlContractType = {
+		private static final RawContract.ContractType[] RAW_CONTRACT_TYPE = RawContract.ContractType.values();
+		private static final CharacterContractsResponse.TypeEnum[] ESI_CONTRACT_TYPE_CHARACTER = CharacterContractsResponse.TypeEnum.values();
+		private static final com.beimin.eveapi.model.shared.ContractType[] XML_CONTRACT_TYPE = {
 			null,
 			com.beimin.eveapi.model.shared.ContractType.ITEMEXCHANGE,
 			com.beimin.eveapi.model.shared.ContractType.AUCTION,
 			com.beimin.eveapi.model.shared.ContractType.COURIER,
 			com.beimin.eveapi.model.shared.ContractType.LOAN
 		};
-		private final String[] eveKitContractType = {
+		private static final String[] EVE_KIT_CONTRACT_TYPE = {
 			null,
 			"itemexchange",
 			"auction",
@@ -319,126 +167,76 @@ public class ConverterTestOptionsGetter {
 			"loan"
 		};
 		//IndustryJobStatus
-		private final RawIndustryJob.IndustryJobStatus[] rawIndustryJobStatus = RawIndustryJob.IndustryJobStatus.values();
-		private final CharacterIndustryJobsResponse.StatusEnum[] esiIndustryJobStatus = CharacterIndustryJobsResponse.StatusEnum.values();
-		private final Integer[] eveApiIndustryJobStatus = {1, 2, 3, 101, 102, 103};
+		private static final RawIndustryJob.IndustryJobStatus[] RAW_INDUSTRY_JOB_STATUS = RawIndustryJob.IndustryJobStatus.values();
+		private static final CharacterIndustryJobsResponse.StatusEnum[] ESI_INDUSTRY_JOB_STATUS_CHARACTER = CharacterIndustryJobsResponse.StatusEnum.values();
+		private static final Integer[] EVE_API_INDUSTRY_JOB_STATUS = {1, 2, 3, 101, 102, 103};
 		//JournalPartyType
-		private final RawJournal.JournalPartyType[] rawJournalPartyType = RawJournal.JournalPartyType.values();
-		private final CharacterWalletJournalResponse.FirstPartyTypeEnum[] esiJournalPartyTypeFirst = CharacterWalletJournalResponse.FirstPartyTypeEnum.values();
-		private final CharacterWalletJournalResponse.SecondPartyTypeEnum[] esiJournalPartyTypeSecond = CharacterWalletJournalResponse.SecondPartyTypeEnum.values();
-		private final Integer[] eveApiJournalPartyType = {1373, 2, 16159, 1};
+		private static final RawJournal.JournalPartyType[] RAW_JOURNAL_PARTY_TYPE = RawJournal.JournalPartyType.values();
+		private static final CharacterWalletJournalResponse.FirstPartyTypeEnum[] ESI_JOURNAL_PARTY_TYPE_FIRST_CHARACTER = CharacterWalletJournalResponse.FirstPartyTypeEnum.values();
+		private static final CharacterWalletJournalResponse.SecondPartyTypeEnum[] ESI_JOURNAL_PARTY_TYPE_SECOND_CHARACTER = CharacterWalletJournalResponse.SecondPartyTypeEnum.values();
+		private static final CorporationWalletJournalResponse.FirstPartyTypeEnum[] ESI_JOURNAL_PARTY_TYPE_FIRST_CORPORATION = CorporationWalletJournalResponse.FirstPartyTypeEnum.values();
+		private static final CorporationWalletJournalResponse.SecondPartyTypeEnum[] ESI_JOURNAL_PARTY_TYPE_SECOND_CORPORATION = CorporationWalletJournalResponse.SecondPartyTypeEnum.values();
+		private static final Integer[] EVE_API_JOURNAL_PARTY_TYPE = {1373, 2, 16159, 1};
+		//JournalRefType
+		private static final List<RefType> REF_TYPE = createRefTypes();
+		//MarketOrderRange
+		private static final RawMarketOrder.MarketOrderRange[] RAW_MARKET_ORDER_RANGE = RawMarketOrder.MarketOrderRange.values();
+		private static final CharacterOrdersResponse.RangeEnum[] ESI_MARKET_ORDER_RANGE_CHARACTER = CharacterOrdersResponse.RangeEnum.values();
+		private static final Integer[] EVE_API_MARKET_ORDER_RANGE = {-1, 32767, 0, 1, 2, 3, 4, 5, 10, 20, 30, 40};
+		//MarketOrderState
+		private static final RawMarketOrder.MarketOrderState[] RAW_MARKET_ORDER_STATE = RawMarketOrder.MarketOrderState.values();
+		private static final CharacterOrdersResponse.StateEnum[] ESI_MARKET_ORDER_STATE_CHARACTER = CharacterOrdersResponse.StateEnum.values();
+		private static final Integer[] EVE_API_MARKET_ORDER_STATE = {0, 1, 2, 3, 4, 5};
+		//Owners
+		private static final EsiCallbackURL[] ESI_CALLBACK_URL = EsiCallbackURL.values();
+		private static final KeyType[] KEY_TYPE = {KeyType.CORPORATION};
+		//Control
+		private static final int MAX = createMax();
+
 		//JournalExtraInfo
 		private final RawJournalExtraInfo[] rawJournalExtraInfo;
-		private final CharacterWalletJournalExtraInfoResponse[] esiJournalExtraInfo;
-
-		//JournalRefType
-		private final RawJournalRefType[] rawJournalRefType = {
-			RawJournalRefType.PLAYER_TRADING,
-			RawJournalRefType.MARKET_TRANSACTION,
-			RawJournalRefType.PLAYER_DONATION,
-			RawJournalRefType.OFFICE_RENTAL_FEE,
-			RawJournalRefType.BOUNTY_PRIZE,
-			RawJournalRefType.INSURANCE,
-			RawJournalRefType.MISSION_REWARD,
-			RawJournalRefType.AGENT_MISSION_TIME_BONUS_REWARD,
-			RawJournalRefType.CSPA,
-			RawJournalRefType.CORPORATION_ACCOUNT_WITHDRAWAL,
-			RawJournalRefType.CORPORATION_LOGO_CHANGE_COST,
-			RawJournalRefType.MARKET_ESCROW,
-			RawJournalRefType.BROKERS_FEE,
-			RawJournalRefType.ALLIANCE_MAINTAINANCE_FEE,
-			RawJournalRefType.TRANSACTION_TAX,
-			RawJournalRefType.JUMP_CLONE_INSTALLATION_FEE,
-			RawJournalRefType.MANUFACTURING,
-			RawJournalRefType.CONTRACT_BROKERS_FEE,
-			RawJournalRefType.BOUNTY_PRIZES,
-			RawJournalRefType.MEDAL_CREATION,
-			RawJournalRefType.MEDAL_ISSUED,
-			RawJournalRefType.PLANETARY_IMPORT_TAX,
-			RawJournalRefType.PLANETARY_EXPORT_TAX,
-			RawJournalRefType.CORPORATE_REWARD_PAYOUT,
-			RawJournalRefType.INDUSTRY_JOB_TAX,
-			RawJournalRefType.PROJECT_DISCOVERY_REWARD,
-			RawJournalRefType.REPROCESSING_TAX,
-			RawJournalRefType.JUMP_CLONE_ACTIVATION_FEE,
-			RawJournalRefType.UNDEFINED
-		};
-		private final CharacterWalletJournalResponse.RefTypeEnum[] esiJournalRefType = CharacterWalletJournalResponse.RefTypeEnum.values();
-		private final com.beimin.eveapi.model.shared.RefType[] xmlJournalRefType = {
-			com.beimin.eveapi.model.shared.RefType.PLAYER_TRADING,
-			com.beimin.eveapi.model.shared.RefType.MARKET_TRANSACTION,
-			com.beimin.eveapi.model.shared.RefType.PLAYER_DONATION,
-			com.beimin.eveapi.model.shared.RefType.OFFICE_RENTAL_FEE,
-			com.beimin.eveapi.model.shared.RefType.BOUNTY_PRIZE,
-			com.beimin.eveapi.model.shared.RefType.INSURANCE,
-			com.beimin.eveapi.model.shared.RefType.MISSION_REWARD,
-			com.beimin.eveapi.model.shared.RefType.AGENT_MISSION_TIME_BONUS_REWARD,
-			com.beimin.eveapi.model.shared.RefType.CSPA,
-			com.beimin.eveapi.model.shared.RefType.CORPORATION_ACCOUNT_WITHDRAWAL,
-			com.beimin.eveapi.model.shared.RefType.CORPORATION_LOGO_CHANGE_COST,
-			com.beimin.eveapi.model.shared.RefType.MARKET_ESCROW,
-			com.beimin.eveapi.model.shared.RefType.BROKERS_FEE,
-			com.beimin.eveapi.model.shared.RefType.ALLIANCE_MAINTAINANCE_FEE,
-			com.beimin.eveapi.model.shared.RefType.TRANSACTION_TAX,
-			com.beimin.eveapi.model.shared.RefType.JUMP_CLONE_INSTALLATION_FEE,
-			com.beimin.eveapi.model.shared.RefType.MANUFACTURING,
-			com.beimin.eveapi.model.shared.RefType.CONTRACT_BROKERS_FEE,
-			com.beimin.eveapi.model.shared.RefType.BOUNTY_PRIZES,
-			com.beimin.eveapi.model.shared.RefType.MEDAL_CREATION,
-			com.beimin.eveapi.model.shared.RefType.MEDAL_ISSUED,
-			com.beimin.eveapi.model.shared.RefType.PLANETARY_IMPORT_TAX,
-			com.beimin.eveapi.model.shared.RefType.PLANETARY_EXPORT_TAX,
-			com.beimin.eveapi.model.shared.RefType.CORPORATE_REWARD_PAYOUT,
-			com.beimin.eveapi.model.shared.RefType.INDUSTRY_JOB_TAX,
-			com.beimin.eveapi.model.shared.RefType.PROJECT_DISCOVERY_REWARD,
-			com.beimin.eveapi.model.shared.RefType.REPROCESSING_TAX,
-			com.beimin.eveapi.model.shared.RefType.JUMP_CLONE_ACTIVATION_FEE,
-			com.beimin.eveapi.model.shared.RefType.UNDEFINED
-		};
-		//MarketOrderRange
-		private final RawMarketOrder.MarketOrderRange[] rawMarketOrderRange = RawMarketOrder.MarketOrderRange.values();
-		private final CharacterOrdersResponse.RangeEnum[] esiMarketOrderRange = CharacterOrdersResponse.RangeEnum.values();
-		private final Integer[] eveApiMarketOrderRange = {-1, 32767, 0, 1, 2, 3, 4, 5, 10, 20, 30, 40};
-		//MarketOrderState
-		private final RawMarketOrder.MarketOrderState[] rawMarketOrderState = RawMarketOrder.MarketOrderState.values();
-		private final CharacterOrdersResponse.StateEnum[] esiMarketOrderState = CharacterOrdersResponse.StateEnum.values();
-		private final Integer[] eveApiMarketOrderState = {0, 1, 2, 3, 4, 5};
-		//Owners
-		private final EsiCallbackURL[] esiCallbackURLs = EsiCallbackURL.values();
-		private final KeyType[] keyTypes = {KeyType.CORPORATION};
-
+		private final CharacterWalletJournalExtraInfoResponse[] esiJournalExtraInfoCharacter;
+		private final CorporationWalletJournalExtraInfoResponse[] esiJournalExtraInfoCorporation;
+		
 		//Controls
 		private final int index;
-		private final int max;
 
 		public IndexOptions(int index) {
 			this.index = index;
-			int tempMax = 0;
+			RawJournalRefType refType = get(REF_TYPE, index).getRawJournalRefType();
 			rawJournalExtraInfo = new RawJournalExtraInfo[1];
-			rawJournalExtraInfo[0] = new RawJournalExtraInfo(getLong(), getLong().toString(), get(rawJournalRefType, index));
-			esiJournalExtraInfo = new CharacterWalletJournalExtraInfoResponse[1];
-			CharacterWalletJournalExtraInfoResponse journalExtraInfoResponse = new CharacterWalletJournalExtraInfoResponse();
-			RawJournalRefType refType = get(rawJournalRefType, index);
+			rawJournalExtraInfo[0] = new RawJournalExtraInfo(getLong(), getLong().toString(), refType);
+			esiJournalExtraInfoCharacter = new CharacterWalletJournalExtraInfoResponse[1];
+			CharacterWalletJournalExtraInfoResponse journalExtraInfoResponseCharacter = new CharacterWalletJournalExtraInfoResponse();
+			esiJournalExtraInfoCharacter[0] = journalExtraInfoResponseCharacter; //TODO set correct values
+			esiJournalExtraInfoCorporation = new CorporationWalletJournalExtraInfoResponse[1];
+			CorporationWalletJournalExtraInfoResponse journalExtraInfoResponseCorporation = new CorporationWalletJournalExtraInfoResponse();
+			esiJournalExtraInfoCorporation[0] = journalExtraInfoResponseCorporation; //TODO set correct values
 			if (refType.getArgName() != null) {
 				switch (refType.getArgName()) {
 					case CONTRACT_ID:
-						journalExtraInfoResponse.setContractId(getLong().intValue());
+						journalExtraInfoResponseCharacter.setContractId(getLong().intValue());
+						journalExtraInfoResponseCorporation.setContractId(getLong().intValue());
 						break;
 					case DESTROYED_SHIP_TYPE_ID:
-						journalExtraInfoResponse.setDestroyedShipTypeId(getLong().intValue());
+						journalExtraInfoResponseCharacter.setDestroyedShipTypeId(getLong().intValue());
+						journalExtraInfoResponseCorporation.setDestroyedShipTypeId(getLong().intValue());
 						break;
 					case JOB_ID:
-						journalExtraInfoResponse.setJobId(getLong().intValue());
+						journalExtraInfoResponseCharacter.setJobId(getLong().intValue());
+						journalExtraInfoResponseCorporation.setJobId(getLong().intValue());
 						break;
 					case NPC_NAME:
-						journalExtraInfoResponse.setNpcName(String.valueOf(getLong()));
+						journalExtraInfoResponseCharacter.setNpcName(String.valueOf(getLong()));
+						journalExtraInfoResponseCorporation.setNpcName(String.valueOf(getLong()));
 						break;
 					case PLAYER_NAME:
 						break;
 					case STATION_NAME:
 						break;
 					case TRANSACTION_ID:
-						journalExtraInfoResponse.setTransactionId(getLong());
+						journalExtraInfoResponseCharacter.setTransactionId(getLong());
+						journalExtraInfoResponseCorporation.setTransactionId(getLong());
 						break;
 					case CORPORATION_NAME:
 						break;
@@ -446,101 +244,210 @@ public class ConverterTestOptionsGetter {
 						break;
 					case PLANET_NAME:
 						break;
+					default:
+						throw new RuntimeException("RawJournal.ArgName switch incomplete");
 				}
 			}
 			if (refType.getArgID() != null) {
 				switch (refType.getArgID()) {
 					case NPC_ID:
-						journalExtraInfoResponse.setNpcId(getLong().intValue());
+						journalExtraInfoResponseCharacter.setNpcId(getLong().intValue());
+						journalExtraInfoResponseCorporation.setNpcId(getLong().intValue());
 						break;
 					case PLAYER_ID:
-						journalExtraInfoResponse.setCharacterId(getLong().intValue());
+						journalExtraInfoResponseCharacter.setCharacterId(getLong().intValue());
+						journalExtraInfoResponseCorporation.setCharacterId(getLong().intValue());
 						break;
 					case STATION_ID:
-						journalExtraInfoResponse.setLocationId(getLong());
+						journalExtraInfoResponseCharacter.setLocationId(getLong());
+						journalExtraInfoResponseCorporation.setLocationId(getLong());
 						break;
 					case SYSTEM_ID:
-						journalExtraInfoResponse.setSystemId(getLong().intValue());
+						journalExtraInfoResponseCharacter.setSystemId(getLong().intValue());
+						journalExtraInfoResponseCorporation.setSystemId(getLong().intValue());
 						break;
 					case CORPORATION_ID:
-						journalExtraInfoResponse.setCorporationId(getLong().intValue());
+						journalExtraInfoResponseCharacter.setCorporationId(getLong().intValue());
+						journalExtraInfoResponseCorporation.setCorporationId(getLong().intValue());
 						break;
 					case ALLIANCE_ID:
-						journalExtraInfoResponse.setAllianceId(getLong().intValue());
+						journalExtraInfoResponseCharacter.setAllianceId(getLong().intValue());
+						journalExtraInfoResponseCorporation.setAllianceId(getLong().intValue());
 						break;
 					case PLANET_ID:
-						journalExtraInfoResponse.setPlanetId(getLong().intValue());
+						journalExtraInfoResponseCharacter.setPlanetId(getLong().intValue());
+						journalExtraInfoResponseCorporation.setPlanetId(getLong().intValue());
 						break;
+					default:
+						throw new RuntimeException("RawJournal.ArgID switch incomplete");
 				}
 			}
-			//TODO set correct values
-			esiJournalExtraInfo[0] = journalExtraInfoResponse;
-			tempMax = Math.max(tempMax, integer.length);
-			tempMax = Math.max(tempMax, floats.length);
-			tempMax = Math.max(tempMax, booleans.length);
-			tempMax = Math.max(tempMax, longs.length);
-			tempMax = Math.max(tempMax, doubles.length);
-			tempMax = Math.max(tempMax, date.length);
-			tempMax = Math.max(tempMax, string.length);
+		}
 
-			tempMax = Math.max(tempMax, myLocation.length);
-			tempMax = Math.max(tempMax, priceData.length);
-			tempMax = Math.max(tempMax, marketPriceData.length);
-			tempMax = Math.max(tempMax, tags.length);
-			tempMax = Math.max(tempMax, percent.length);
-			tempMax = Math.max(tempMax, userItem.length);
+		private static List<LocationFlag> createLocationTypes() {
+			Map<Integer, LocationFlag> locationFlags = new HashMap<Integer, LocationFlag>();
+			//Character Blueprints
+			for (CharacterBlueprintsResponse.LocationFlagEnum locationFlagEnum : CharacterBlueprintsResponse.LocationFlagEnum.values()) {
+				ItemFlag itemFlag = RawConverter.toFlag(locationFlagEnum);
+				LocationFlag locationFlag = locationFlags.get(itemFlag.getFlagID());
+				if (locationFlag == null) {
+					locationFlag = new LocationFlag(itemFlag);
+					locationFlags.put(itemFlag.getFlagID(), locationFlag);
+				}
+				locationFlag.setLocationFlag(locationFlagEnum);
+			}
+			//Corporation Blueprints
+			for (CorporationBlueprintsResponse.LocationFlagEnum locationFlagEnum : CorporationBlueprintsResponse.LocationFlagEnum.values()) {
+				ItemFlag itemFlag = RawConverter.toFlag(locationFlagEnum);
+				LocationFlag locationFlag = locationFlags.get(itemFlag.getFlagID());
+				if (locationFlag == null) {
+					locationFlag = new LocationFlag(itemFlag);
+					locationFlags.put(itemFlag.getFlagID(), locationFlag);
+				}
+				locationFlag.setLocationFlag(locationFlagEnum);
+			}
+			//Character Assets
+			for (CharacterAssetsResponse.LocationFlagEnum locationFlagEnum : CharacterAssetsResponse.LocationFlagEnum.values()) {
+				ItemFlag itemFlag = RawConverter.toFlag(locationFlagEnum);
+				LocationFlag locationFlag = locationFlags.get(itemFlag.getFlagID());
+				if (locationFlag == null) {
+					locationFlag = new LocationFlag(itemFlag);
+					locationFlags.put(itemFlag.getFlagID(), locationFlag);
+				}
+				locationFlag.setLocationFlag(locationFlagEnum);
+			}
+			//Corporation Assets
+			for (CorporationAssetsResponse.LocationFlagEnum locationFlagEnum : CorporationAssetsResponse.LocationFlagEnum.values()) {
+				ItemFlag itemFlag = RawConverter.toFlag(locationFlagEnum);
+				LocationFlag locationFlag = locationFlags.get(itemFlag.getFlagID());
+				if (locationFlag == null) {
+					locationFlag = new LocationFlag(itemFlag);
+					locationFlags.put(itemFlag.getFlagID(), locationFlag);
+				}
+				locationFlag.setLocationFlag(locationFlagEnum);
+			}
+			Set<Integer> remove = new HashSet<Integer>();
+			for (LocationFlag locationType : locationFlags.values()) {
+				if (locationType.isEmpty()) {
+					remove.add(locationType.getItemFlag().getFlagID());
+				}
+			}
+			for (Integer index : remove) {
+				locationFlags.remove(index);
+			}
+			return new ArrayList<LocationFlag>(locationFlags.values());
+		}
+
+		private static List<RefType> createRefTypes() {
+			Map<Integer, RefType> refTypes = new HashMap<Integer, RefType>();
+			//EveAPI
+			for (com.beimin.eveapi.model.shared.RefType refTypeEnum : com.beimin.eveapi.model.shared.RefType.values()) {
+				RawJournalRefType rawJournalRefType = RawConverter.toJournalRefType(refTypeEnum.getId());
+				RefType refType = refTypes.get(rawJournalRefType.getID());
+				if (refType == null) {
+					refType = new RefType(rawJournalRefType);
+					refTypes.put(rawJournalRefType.getID(), refType);
+				}
+				refType.setRefType(refTypeEnum);
+			}
+			//ESI Character
+			for (CharacterWalletJournalResponse.RefTypeEnum refTypeEnum : CharacterWalletJournalResponse.RefTypeEnum.values()) {
+				RawJournalRefType rawJournalRefType = RawConverter.toJournalRefType(refTypeEnum);
+				RefType refType = refTypes.get(rawJournalRefType.getID());
+				if (refType == null) {
+					refType = new RefType(rawJournalRefType);
+					refTypes.put(rawJournalRefType.getID(), refType);
+				}
+				refType.setRefType(refTypeEnum);
+			}
+			//ESI Corporation
+			for (CorporationWalletJournalResponse.RefTypeEnum refTypeEnum : CorporationWalletJournalResponse.RefTypeEnum.values()) {
+				RawJournalRefType rawJournalRefType = RawConverter.toJournalRefType(refTypeEnum);
+				RefType refType = refTypes.get(rawJournalRefType.getID());
+				if (refType == null) {
+					refType = new RefType(rawJournalRefType);
+					refTypes.put(rawJournalRefType.getID(), refType);
+				}
+				refType.setRefType(refTypeEnum);
+			}
+			Set<Integer> remove = new HashSet<Integer>();
+			for (RefType refType : refTypes.values()) {
+				if (refType.isEmpty()) {
+					remove.add(refType.getRawJournalRefType().getID());
+				}
+			}
+			for (Integer index : remove) {
+				refTypes.remove(index);
+			}
+			return new ArrayList<RefType>(refTypes.values());
+		}
+
+		private static int createMax() {
+			int tempMax = 0;
+			tempMax = Math.max(tempMax, INTEGER.length);
+			tempMax = Math.max(tempMax, FLOAT.length);
+			tempMax = Math.max(tempMax, BOOLEAN.length);
+			tempMax = Math.max(tempMax, LONG.length);
+			tempMax = Math.max(tempMax, DOUBLE.length);
+			tempMax = Math.max(tempMax, DATE.length);
+			tempMax = Math.max(tempMax, STRING.length);
+
+			tempMax = Math.max(tempMax, MY_LOCATION.length);
+			tempMax = Math.max(tempMax, PRICE_DATA.length);
+			tempMax = Math.max(tempMax, MARKET_PRICE_DATA.length);
+			tempMax = Math.max(tempMax, TAGS.length);
+			tempMax = Math.max(tempMax, PERCENT.length);
+			tempMax = Math.max(tempMax, USER_ITEM.length);
 			//LocationType
-			tempMax = Math.max(tempMax, rawLocationType.length);
-			tempMax = Math.max(tempMax, esiLocationType.length);
-			tempMax = Math.max(tempMax, eveApiLocationType.length);
+			tempMax = Math.max(tempMax, RAW_LOCATION_TYPE.length);
+			tempMax = Math.max(tempMax, ESI_LOCATION_TYPE_CHARACTER.length);
+			tempMax = Math.max(tempMax, ESI_LOCATION_TYPE_CORPORATION.length);
+			tempMax = Math.max(tempMax, EVE_API_LOCATION_TYPE.length);
 			//LocationFlag
-			tempMax = Math.max(tempMax, itemFlag.length);
-			tempMax = Math.max(tempMax, locationFlagEsiBlueprints.length);
-			tempMax = Math.max(tempMax, locationFlagEsiAssets.length);
-			tempMax = Math.max(tempMax, locationFlagEveApi.length);
+			tempMax = Math.max(tempMax, LOCATION_TYPE.size());
 			//ContractAvailability
-			tempMax = Math.max(tempMax, rawContractAvailabilitys.length);
-			tempMax = Math.max(tempMax, esiContractsAvailability.length);
-			tempMax = Math.max(tempMax, xmlContractAvailability.length);
-			tempMax = Math.max(tempMax, eveKitContractAvailability.length);
+			tempMax = Math.max(tempMax, RAW_CONTRACT_AVAILABILITY.length);
+			tempMax = Math.max(tempMax, ESI_CONTRACTS_AVAILABILITY_CHARACTER.length);
+			tempMax = Math.max(tempMax, XML_CONTRACT_AVAILABILITY.length);
+			tempMax = Math.max(tempMax, EVE_KIT_CONTRACT_AVAILABILITY.length);
 			//ContractStatus
-			tempMax = Math.max(tempMax, rawContractStatuses.length);
-			tempMax = Math.max(tempMax, esiContractStatus.length);
-			tempMax = Math.max(tempMax, xmlContractStatus.length);
-			tempMax = Math.max(tempMax, eveKitContractStatus.length);
+			tempMax = Math.max(tempMax, RAW_CONTRACT_STATUS.length);
+			tempMax = Math.max(tempMax, ESI_CONTRACT_STATUS_CHARACTER.length);
+			tempMax = Math.max(tempMax, XML_CONTRACT_STATUS.length);
+			tempMax = Math.max(tempMax, EVE_KIT_CONTRACT_STATUS.length);
 			//ContractType
-			tempMax = Math.max(tempMax, rawContractTypes.length);
-			tempMax = Math.max(tempMax, esiContractType.length);
-			tempMax = Math.max(tempMax, xmlContractType.length);
-			tempMax = Math.max(tempMax, eveKitContractType.length);
+			tempMax = Math.max(tempMax, RAW_CONTRACT_TYPE.length);
+			tempMax = Math.max(tempMax, ESI_CONTRACT_TYPE_CHARACTER.length);
+			tempMax = Math.max(tempMax, XML_CONTRACT_TYPE.length);
+			tempMax = Math.max(tempMax, EVE_KIT_CONTRACT_TYPE.length);
 			//IndustryJobStatus
-			tempMax = Math.max(tempMax, rawIndustryJobStatus.length);
-			tempMax = Math.max(tempMax, esiIndustryJobStatus.length);
-			tempMax = Math.max(tempMax, eveApiIndustryJobStatus.length);
+			tempMax = Math.max(tempMax, RAW_INDUSTRY_JOB_STATUS.length);
+			tempMax = Math.max(tempMax, ESI_INDUSTRY_JOB_STATUS_CHARACTER.length);
+			tempMax = Math.max(tempMax, EVE_API_INDUSTRY_JOB_STATUS.length);
 			//JournalExtraInfo
-			tempMax = Math.max(tempMax, rawJournalExtraInfo.length);
-			tempMax = Math.max(tempMax, esiJournalExtraInfo.length);
+			//tempMax = Math.max(tempMax, rawJournalExtraInfo.length);
+			//tempMax = Math.max(tempMax, esiJournalExtraInfoCharacter.length);
 			//JournalPartyType
-			tempMax = Math.max(tempMax, rawJournalPartyType.length);
-			tempMax = Math.max(tempMax, esiJournalPartyTypeFirst.length);
-			tempMax = Math.max(tempMax, esiJournalPartyTypeSecond.length);
-			tempMax = Math.max(tempMax, eveApiJournalPartyType.length);
+			tempMax = Math.max(tempMax, RAW_JOURNAL_PARTY_TYPE.length);
+			tempMax = Math.max(tempMax, ESI_JOURNAL_PARTY_TYPE_FIRST_CHARACTER.length);
+			tempMax = Math.max(tempMax, ESI_JOURNAL_PARTY_TYPE_SECOND_CHARACTER.length);
+			tempMax = Math.max(tempMax, ESI_JOURNAL_PARTY_TYPE_FIRST_CORPORATION.length);
+			tempMax = Math.max(tempMax, ESI_JOURNAL_PARTY_TYPE_SECOND_CORPORATION.length);
+			tempMax = Math.max(tempMax, EVE_API_JOURNAL_PARTY_TYPE.length);
 			//JournalRefType
-			tempMax = Math.max(tempMax, rawJournalRefType.length);
-			tempMax = Math.max(tempMax, esiJournalRefType.length);
-			tempMax = Math.max(tempMax, xmlJournalRefType.length);
+			tempMax = Math.max(tempMax, REF_TYPE.size());
 			//MarketOrderRange
-			tempMax = Math.max(tempMax, rawMarketOrderRange.length);
-			tempMax = Math.max(tempMax, esiMarketOrderRange.length);
-			tempMax = Math.max(tempMax, eveApiMarketOrderRange.length);
+			tempMax = Math.max(tempMax, RAW_MARKET_ORDER_RANGE.length);
+			tempMax = Math.max(tempMax, ESI_MARKET_ORDER_RANGE_CHARACTER.length);
+			tempMax = Math.max(tempMax, EVE_API_MARKET_ORDER_RANGE.length);
 			//MarketOrderState
-			tempMax = Math.max(tempMax, rawMarketOrderState.length);
-			tempMax = Math.max(tempMax, esiMarketOrderState.length);
-			tempMax = Math.max(tempMax, eveApiMarketOrderState.length);
+			tempMax = Math.max(tempMax, RAW_MARKET_ORDER_STATE.length);
+			tempMax = Math.max(tempMax, ESI_MARKET_ORDER_STATE_CHARACTER.length);
+			tempMax = Math.max(tempMax, EVE_API_MARKET_ORDER_STATE.length);
 			//Owners
-			tempMax = Math.max(tempMax, esiCallbackURLs.length);
-			tempMax = Math.max(tempMax, keyTypes.length);
-			this.max = tempMax;
+			tempMax = Math.max(tempMax, ESI_CALLBACK_URL.length);
+			tempMax = Math.max(tempMax, KEY_TYPE.length);
+			return tempMax;
 		}
 
 		@Override
@@ -555,69 +462,76 @@ public class ConverterTestOptionsGetter {
 				return array[0];
 			}
 		}
+		private <E> E get(List<E> list, Integer index) {
+			if (index < list.size()) {
+				return list.get(index);
+			} else {
+				return list.get(0);
+			}
+		}
 
 		public boolean isMaxed() {
-			return index >= max;
+			return index >= MAX;
 		}
 
 		@Override
 		public Integer getInteger() {
-			return get(integer, index);
+			return get(INTEGER, index);
 		}
 
 		@Override
 		public Float getFloat() {
-			return get(floats, index);
+			return get(FLOAT, index);
 		}
 
 		@Override
 		public Boolean getBoolean() {
-			return get(booleans, index);
+			return get(BOOLEAN, index);
 		}
 
 		@Override
 		public final Long getLong() {
-			return get(longs, index);
+			return get(LONG, index);
 		}
 
 		@Override
 		public Double getDouble() {
-			return get(doubles, index);
+			return get(DOUBLE, index);
 		}
 
 		@Override
 		public Date getDate() {
-			return get(date, index);
+			return get(DATE, index);
 		}
 
 		@Override
 		public String getString() {
-			return get(string, index);
+			return get(STRING, index);
 		}
 
 		@Override
 		public MyLocation getMyLocation() {
-			return get(myLocation, index);
+			return get(MY_LOCATION, index);
 		}
 
 		@Override
 		public PriceData getPriceData() {
-			return get(priceData, index);
+			return get(PRICE_DATA, index);
 		}
 
 		@Override
 		public UserItem<Integer, Double> getUserPrice() {
-			return get(userItem, index);
+			return get(USER_ITEM, index);
 		}
 
 		@Override
 		public MarketPriceData getMarketPriceData() {
-			return get(marketPriceData, index);
+			return get(MARKET_PRICE_DATA, index);
 		}
 
 		@Override
 		public Tags getTags() {
-			return get(tags, index);
+			return get(TAGS, index);
 		}
 
 		@Override
@@ -627,123 +541,138 @@ public class ConverterTestOptionsGetter {
 
 		@Override
 		public Percent getPercent() {
-			return get(percent, index);
+			return get(PERCENT, index);
 		}
 
 //LocationType
 		@Override
 		public Long getLocationTypeEveApi() {
-			return get(eveApiLocationType, index);
+			return get(EVE_API_LOCATION_TYPE, index);
 		}
 
 		@Override
 		public RawAsset.LocationType getLocationTypeRaw() {
-			return get(rawLocationType, index);
+			return get(RAW_LOCATION_TYPE, index);
 		}
 
 		@Override
-		public CharacterAssetsResponse.LocationTypeEnum getLocationTypeEsi() {
-			return get(esiLocationType, index);
+		public CharacterAssetsResponse.LocationTypeEnum getLocationTypeEsiCharacter() {
+			return get(ESI_LOCATION_TYPE_CHARACTER, index);
+		}
+
+		@Override
+		public CorporationAssetsResponse.LocationTypeEnum getLocationTypeEsiCorporation() {
+			return get(ESI_LOCATION_TYPE_CORPORATION, index);
 		}
 
 //LocationFlag
 		@Override
-		public CharacterBlueprintsResponse.LocationFlagEnum getLocationFlagEsiBlueprint() {
-			return get(locationFlagEsiBlueprints, index);
+		public CharacterBlueprintsResponse.LocationFlagEnum getLocationFlagEsiBlueprintCharacter() {
+			return get(LOCATION_TYPE, index).getLocationFlagEsiBlueprintsCharacter();
 		}
 
 		@Override
-		public CharacterAssetsResponse.LocationFlagEnum getLocationFlagEsiAssets() {
-			return get(locationFlagEsiAssets, index);
+		public CorporationBlueprintsResponse.LocationFlagEnum getLocationFlagEsiBlueprintCorporation() {
+			return get(LOCATION_TYPE, index).getLocationFlagEsiBlueprintsCorporation();
+		}
+
+		@Override
+		public CharacterAssetsResponse.LocationFlagEnum getLocationFlagEsiAssetsCharacter() {
+			return get(LOCATION_TYPE, index).getLocationFlagEsiAssetsCharacter();
+		}
+
+		@Override
+		public CorporationAssetsResponse.LocationFlagEnum getLocationFlagEsiAssetsCorporation() {
+			return get(LOCATION_TYPE, index).getLocationFlagEsiAssetsCorporation();
 		}
 
 		@Override
 		public int getLocationFlagEveApi() {
-			return get(locationFlagEveApi, index);
+			return get(LOCATION_TYPE, index).getItemFlag().getFlagID();
 		}
 
 		@Override
 		public ItemFlag getItemFlag() {
-			return get(itemFlag, index);
+			return get(LOCATION_TYPE, index).getItemFlag();
 		}
 
 //ContractAvailability
 		@Override
 		public RawContract.ContractAvailability getContractAvailabilityRaw() {
-			return get(rawContractAvailabilitys, index);
+			return get(RAW_CONTRACT_AVAILABILITY, index);
 		}
 
 		@Override
-		public CharacterContractsResponse.AvailabilityEnum getContractAvailabilityEsi() {
-			return get(esiContractsAvailability, index);
+		public CharacterContractsResponse.AvailabilityEnum getContractAvailabilityEsiCharacter() {
+			return get(ESI_CONTRACTS_AVAILABILITY_CHARACTER, index);
 		}
 
 		@Override
 		public com.beimin.eveapi.model.shared.ContractAvailability getContractAvailabilityEveApi() {
-			return get(xmlContractAvailability, index);
+			return get(XML_CONTRACT_AVAILABILITY, index);
 		}
 
 		@Override
 		public String getContractAvailabilityEveKit() {
-			return get(eveKitContractAvailability, index);
+			return get(EVE_KIT_CONTRACT_AVAILABILITY, index);
 		}
 
 //ContractStatus
 		@Override
 		public RawContract.ContractStatus getContractStatusRaw() {
-			return get(rawContractStatuses, index);
+			return get(RAW_CONTRACT_STATUS, index);
 		}
 
 		@Override
-		public CharacterContractsResponse.StatusEnum getContractStatusEsi() {
-			return get(esiContractStatus, index);
+		public CharacterContractsResponse.StatusEnum getContractStatusEsiCharacter() {
+			return get(ESI_CONTRACT_STATUS_CHARACTER, index);
 		}
 
 		@Override
 		public com.beimin.eveapi.model.shared.ContractStatus getContractStatusEveApi() {
-			return get(xmlContractStatus, index);
+			return get(XML_CONTRACT_STATUS, index);
 		}
 
 		@Override
 		public String getContractStatusEveKit() {
-			return get(eveKitContractStatus, index);
+			return get(EVE_KIT_CONTRACT_STATUS, index);
 		}
 
 //ContractType
 		@Override
 		public RawContract.ContractType getContractTypeRaw() {
-			return get(rawContractTypes, index);
+			return get(RAW_CONTRACT_TYPE, index);
 		}
 
 		@Override
 		public com.beimin.eveapi.model.shared.ContractType getContractTypeEveApi() {
-			return get(xmlContractType, index);
+			return get(XML_CONTRACT_TYPE, index);
 		}
 
 		@Override
 		public CharacterContractsResponse.TypeEnum getContractTypeEsi() {
-			return get(esiContractType, index);
+			return get(ESI_CONTRACT_TYPE_CHARACTER, index);
 		}
 
 		@Override
 		public String getContractTypeEveKit() {
-			return get(eveKitContractType, index);
+			return get(EVE_KIT_CONTRACT_TYPE, index);
 		}
 
 //IndustryJobStatus
 		@Override
 		public RawIndustryJob.IndustryJobStatus getIndustryJobStatusRaw() {
-			return get(rawIndustryJobStatus, index);
+			return get(RAW_INDUSTRY_JOB_STATUS, index);
 		}
 
 		@Override
-		public CharacterIndustryJobsResponse.StatusEnum getIndustryJobStatusEsi() {
-			return get(esiIndustryJobStatus, index);
+		public CharacterIndustryJobsResponse.StatusEnum getIndustryJobStatusEsiCharacter() {
+			return get(ESI_INDUSTRY_JOB_STATUS_CHARACTER, index);
 		}
 
 		@Override
 		public int getIndustryJobStatusEveApi() {
-			return get(eveApiIndustryJobStatus, index);
+			return get(EVE_API_INDUSTRY_JOB_STATUS, index);
 		}
 
 //JournalExtraInfo
@@ -753,92 +682,216 @@ public class ConverterTestOptionsGetter {
 		}
 
 		@Override
-		public CharacterWalletJournalExtraInfoResponse getJournalExtraInfoEsi() {
-			return get(esiJournalExtraInfo, index);
+		public CharacterWalletJournalExtraInfoResponse getJournalExtraInfoEsiCharacter() {
+			return get(esiJournalExtraInfoCharacter, index);
+		}
+
+		@Override
+		public CorporationWalletJournalExtraInfoResponse getJournalExtraInfoEsiCorporation() {
+			return get(esiJournalExtraInfoCorporation, index);
 		}
 
 //JournalPartyType
 		@Override
 		public RawJournal.JournalPartyType getJournalPartyTypeRaw() {
-			return get(rawJournalPartyType, index);
+			return get(RAW_JOURNAL_PARTY_TYPE, index);
 		}
 
 		@Override
-		public CharacterWalletJournalResponse.FirstPartyTypeEnum getJournalPartyTypeEsiFirst() {
-			return get(esiJournalPartyTypeFirst, index);
+		public CharacterWalletJournalResponse.FirstPartyTypeEnum getJournalPartyTypeEsiFirstCharacter() {
+			return get(ESI_JOURNAL_PARTY_TYPE_FIRST_CHARACTER, index);
 		}
 
 		@Override
-		public CharacterWalletJournalResponse.SecondPartyTypeEnum getJournalPartyTypeEsiSecond() {
-			return get(esiJournalPartyTypeSecond, index);
+		public CharacterWalletJournalResponse.SecondPartyTypeEnum getJournalPartyTypeEsiSecondCharacter() {
+			return get(ESI_JOURNAL_PARTY_TYPE_SECOND_CHARACTER, index);
+		}
+
+		@Override
+		public CorporationWalletJournalResponse.FirstPartyTypeEnum getJournalPartyTypeEsiFirstCorporation() {
+			return get(ESI_JOURNAL_PARTY_TYPE_FIRST_CORPORATION, index);
+		}
+
+		@Override
+		public CorporationWalletJournalResponse.SecondPartyTypeEnum getJournalPartyTypeEsiSecondCorporation() {
+			return get(ESI_JOURNAL_PARTY_TYPE_SECOND_CORPORATION, index);
 		}
 
 		@Override
 		public int getJournalPartyTypeEveApi() {
-			return get(eveApiJournalPartyType, index);
+			return get(EVE_API_JOURNAL_PARTY_TYPE, index);
 		}
 
 //JournalRefType
 		@Override
 		public RawJournalRefType getJournalRefTypeRaw() {
-			return get(rawJournalRefType, index);
+			return get(REF_TYPE, index).getRawJournalRefType();
 		}
 
 		@Override
-		public CharacterWalletJournalResponse.RefTypeEnum getJournalRefTypeEsi() {
-			return get(esiJournalRefType, index);
+		public CharacterWalletJournalResponse.RefTypeEnum getJournalRefTypeEsiCharacter() {
+			return get(REF_TYPE, index).getEsiJournalRefTypeCharacter();
+		}
+
+		@Override
+		public CorporationWalletJournalResponse.RefTypeEnum getJournalRefTypeEsiCorporation() {
+			return get(REF_TYPE, index).getEsiJournalRefTypeCorporation();
 		}
 
 		@Override
 		public com.beimin.eveapi.model.shared.RefType getJournalRefTypeEveApi() {
-			return get(xmlJournalRefType, index);
+			return get(REF_TYPE, index).getXmlJournalRefType();
 		}
 
 //MarketOrderRange
 		@Override
 		public RawMarketOrder.MarketOrderRange getMarketOrderRangeRaw() {
-			return get(rawMarketOrderRange, index);
+			return get(RAW_MARKET_ORDER_RANGE, index);
 		}
 
 		@Override
-		public CharacterOrdersResponse.RangeEnum getMarketOrderRangeEsi() {
-			return get(esiMarketOrderRange, index);
+		public CharacterOrdersResponse.RangeEnum getMarketOrderRangeEsiCharacter() {
+			return get(ESI_MARKET_ORDER_RANGE_CHARACTER, index);
 		}
 
 		@Override
 		public int getMarketOrderRangeEveApi() {
-			return get(eveApiMarketOrderRange, index);
+			return get(EVE_API_MARKET_ORDER_RANGE, index);
 		}
 
 //MarketOrderState
 		@Override
 		public RawMarketOrder.MarketOrderState getMarketOrderStateRaw() {
-			return get(rawMarketOrderState, index);
+			return get(RAW_MARKET_ORDER_STATE, index);
 		}
 
 		@Override
-		public CharacterOrdersResponse.StateEnum getMarketOrderStateEsi() {
-			return get(esiMarketOrderState, index);
+		public CharacterOrdersResponse.StateEnum getMarketOrderStateEsiCharacter() {
+			return get(ESI_MARKET_ORDER_STATE_CHARACTER, index);
 		}
 
 		@Override
 		public int getMarketOrderStateEveApi() {
-			return get(eveApiMarketOrderState, index);
+			return get(EVE_API_MARKET_ORDER_STATE, index);
 		}
 
 		@Override
 		public EsiCallbackURL getEsiCallbackURL() {
-			return get(esiCallbackURLs, index);
+			return get(ESI_CALLBACK_URL, index);
 		}
 
 		@Override
 		public KeyType getKeyType() {
-			return get(keyTypes, index);
+			return get(KEY_TYPE, index);
 		}
 
 		@Override
 		public EveApiAccount getEveApiAccount() {
 			return ConverterTestUtil.getEveApiAccount(this);
 		}
+	}
+
+	private static class LocationFlag {
+		private CharacterBlueprintsResponse.LocationFlagEnum locationFlagEsiBlueprintsCharacter;
+		private CorporationBlueprintsResponse.LocationFlagEnum locationFlagEsiBlueprintsCorporation;
+		private CharacterAssetsResponse.LocationFlagEnum locationFlagEsiAssetsCharacter;
+		private CorporationAssetsResponse.LocationFlagEnum locationFlagEsiAssetsCorporation;
+		private final ItemFlag itemFlag;
+
+		public LocationFlag(ItemFlag itemFlag) {
+			this.itemFlag = itemFlag;
+		}
+
+		public boolean isEmpty() {
+			return locationFlagEsiBlueprintsCharacter == null
+					|| locationFlagEsiBlueprintsCorporation == null
+					|| locationFlagEsiAssetsCharacter == null
+					|| locationFlagEsiAssetsCorporation == null;
+		}
+
+		public ItemFlag getItemFlag() {
+			return itemFlag;
+		}
+
+		public CharacterBlueprintsResponse.LocationFlagEnum getLocationFlagEsiBlueprintsCharacter() {
+			return locationFlagEsiBlueprintsCharacter;
+		}
+
+		public CorporationBlueprintsResponse.LocationFlagEnum getLocationFlagEsiBlueprintsCorporation() {
+			return locationFlagEsiBlueprintsCorporation;
+		}
+
+		public CharacterAssetsResponse.LocationFlagEnum getLocationFlagEsiAssetsCharacter() {
+			return locationFlagEsiAssetsCharacter;
+		}
+
+		public CorporationAssetsResponse.LocationFlagEnum getLocationFlagEsiAssetsCorporation() {
+			return locationFlagEsiAssetsCorporation;
+		}
+
+		public void setLocationFlag(CharacterAssetsResponse.LocationFlagEnum locationFlagEsiAssetsCharacter) {
+			this.locationFlagEsiAssetsCharacter = locationFlagEsiAssetsCharacter;
+		}
+
+		public void setLocationFlag(CorporationAssetsResponse.LocationFlagEnum locationFlagEsiAssetsCorporation) {
+			this.locationFlagEsiAssetsCorporation = locationFlagEsiAssetsCorporation;
+		}
+
+		public void setLocationFlag(CorporationBlueprintsResponse.LocationFlagEnum locationFlagEsiBlueprintsCorporation) {
+			this.locationFlagEsiBlueprintsCorporation = locationFlagEsiBlueprintsCorporation;
+		}
+
+		public void setLocationFlag(CharacterBlueprintsResponse.LocationFlagEnum locationFlagEsiBlueprintsCharacter) {
+			this.locationFlagEsiBlueprintsCharacter = locationFlagEsiBlueprintsCharacter;
+		}
+	}
+
+	private static class RefType {
+		private CharacterWalletJournalResponse.RefTypeEnum EsiJournalRefTypeCharacter;
+		private CorporationWalletJournalResponse.RefTypeEnum EsiJournalRefTypeCorporation;
+		private com.beimin.eveapi.model.shared.RefType XmlJournalRefType;
+
+		private final RawJournalRefType rawJournalRefType;
+
+		public RefType(RawJournalRefType rawJournalRefType) {
+			this.rawJournalRefType = rawJournalRefType;
+		}
+
+		public boolean isEmpty() {
+			return EsiJournalRefTypeCharacter == null
+					|| EsiJournalRefTypeCorporation == null
+					|| XmlJournalRefType == null;
+		}
+
+		public RawJournalRefType getRawJournalRefType() {
+			return rawJournalRefType;
+		}
+
+		public CharacterWalletJournalResponse.RefTypeEnum getEsiJournalRefTypeCharacter() {
+			return EsiJournalRefTypeCharacter;
+		}
+
+		public CorporationWalletJournalResponse.RefTypeEnum getEsiJournalRefTypeCorporation() {
+			return EsiJournalRefTypeCorporation;
+		}
+
+		public com.beimin.eveapi.model.shared.RefType getXmlJournalRefType() {
+			return XmlJournalRefType;
+		}
+
+		public void setRefType(CharacterWalletJournalResponse.RefTypeEnum EsiJournalRefTypeCharacter) {
+			this.EsiJournalRefTypeCharacter = EsiJournalRefTypeCharacter;
+		}
+
+		public void setRefType(CorporationWalletJournalResponse.RefTypeEnum EsiJournalRefTypeCorporation) {
+			this.EsiJournalRefTypeCorporation = EsiJournalRefTypeCorporation;
+		}
+
+
+		public void setRefType(com.beimin.eveapi.model.shared.RefType XmlJournalRefType) {
+			this.XmlJournalRefType = XmlJournalRefType;
+		}
+
+		
 	}
 }

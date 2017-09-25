@@ -29,7 +29,7 @@ import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import net.troja.eve.esi.ApiException;
 import net.troja.eve.esi.model.CharacterWalletTransactionsResponse;
-import net.troja.eve.esi.model.CorporationTransactionsResponse;
+import net.troja.eve.esi.model.CorporationWalletTransactionsResponse;
 
 
 public class EsiTransactionsGetter extends AbstractEsiGetter {
@@ -52,14 +52,14 @@ public class EsiTransactionsGetter extends AbstractEsiGetter {
 		if (owner.isCorporation()) {
 			for (int i = 1; i < 8; i++) { //Division 1-7
 				final int division = i;
-				List<CorporationTransactionsResponse> responses = updateIDs(owner, existing, new EsiListHandler<CorporationTransactionsResponse>() {
+				List<CorporationWalletTransactionsResponse> responses = updateIDs(owner, existing, new EsiListHandler<CorporationWalletTransactionsResponse>() {
 					@Override
-					public List<CorporationTransactionsResponse> get(EsiOwner owner, Long fromID) throws ApiException {
+					public List<CorporationWalletTransactionsResponse> get(EsiOwner owner, Long fromID) throws ApiException {
 						return getWalletApiAuth().getCorporationsCorporationIdWalletsDivisionTransactions((int) owner.getOwnerID(), division, DATASOURCE, fromID, null, null, null);
 					}
 
 					@Override
-					public Long getID(CorporationTransactionsResponse response) {
+					public Long getID(CorporationWalletTransactionsResponse response) {
 						return response.getTransactionId();
 					}
 				});

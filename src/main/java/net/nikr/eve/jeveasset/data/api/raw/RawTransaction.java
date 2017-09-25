@@ -23,7 +23,7 @@ package net.nikr.eve.jeveasset.data.api.raw;
 import java.util.Date;
 import net.nikr.eve.jeveasset.io.shared.RawConverter;
 import net.troja.eve.esi.model.CharacterWalletTransactionsResponse;
-import net.troja.eve.esi.model.CorporationTransactionsResponse;
+import net.troja.eve.esi.model.CorporationWalletTransactionsResponse;
 
 public class RawTransaction {
 
@@ -94,7 +94,7 @@ public class RawTransaction {
 	 * @param transaction
 	 * @param accountKey
 	 */
-	public RawTransaction(CorporationTransactionsResponse transaction, Integer accountKey) {
+	public RawTransaction(CorporationWalletTransactionsResponse transaction, Integer accountKey) {
 		clientId = transaction.getClientId();
 		date = RawConverter.toDate(transaction.getDate());
 		isBuy = transaction.getIsBuy();

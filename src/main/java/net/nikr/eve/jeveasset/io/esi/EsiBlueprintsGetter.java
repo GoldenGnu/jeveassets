@@ -26,6 +26,7 @@ import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import net.troja.eve.esi.ApiException;
 import net.troja.eve.esi.model.CharacterBlueprintsResponse;
+import net.troja.eve.esi.model.CorporationBlueprintsResponse;
 
 
 public class EsiBlueprintsGetter extends AbstractEsiGetter {
@@ -37,8 +38,18 @@ public class EsiBlueprintsGetter extends AbstractEsiGetter {
 
 	@Override
 	protected void get(EsiOwner owner) throws ApiException {
-		List<CharacterBlueprintsResponse> responses = getCharacterApiAuth().getCharactersCharacterIdBlueprints((int) owner.getOwnerID(), DATASOURCE, null, null, null);
-		owner.setBlueprints(EsiConverter.toBlueprints(responses));
+		if (owner.isCorporation()) {
+			List<CorporationBlueprintsResponse> responses = updatePages(owner, new EsiPagesHandler<CorporationBlueprintsResponse>() {
+				@Override
+				public List<CorporationBlueprintsResponse> get(EsiOwner owner, Integer page) throws ApiException {
+					return getCorporationApiAuth().getCorporationsCorporationIdBlueprints((int) owner.getOwnerID(), DATASOURCE, page, null, null, null);
+				}
+			});
+			owner.setBlueprints(EsiConverter.toBlueprintsCorporation(responses));
+		} else {
+			List<CharacterBlueprintsResponse> responses = getCharacterApiAuth().getCharactersCharacterIdBlueprints((int) owner.getOwnerID(), DATASOURCE, null, null, null);
+			owner.setBlueprints(EsiConverter.toBlueprints(responses));
+		}
 	}
 
 	@Override
@@ -59,7 +70,7 @@ public class EsiBlueprintsGetter extends AbstractEsiGetter {
 	@Override
 	protected boolean enabled(EsiOwner owner) {
 		if (owner.isCorporation()) {
-			return false;
+			return EsiScopes.CORPORATION_BLUEPRINTS.isEnabled();
 		} else {
 			return EsiScopes.CHARACTER_BLUEPRINTS.isEnabled();
 		}
