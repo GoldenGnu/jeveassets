@@ -63,14 +63,18 @@ public class EsiNameGetter extends AbstractEsiGetter {
 				Settings.get().getOwners().put((long)lookup.getId(), lookup.getName());
 			}
 			progress++;
-			updateTask.setTaskProgress(size, progress, 0, 100);
+			if (updateTask != null) {
+				updateTask.setTaskProgress(size, progress, 0, 100);
+			}
 		}
 		for (Integer id : blocked) { //One by one we go
 			List<CharacterNamesResponse> names = getCharacterApiOpen().getCharactersNames(Collections.singletonList((long)id), DATASOURCE, System.getProperty("http.agent"), null);
 			for (CharacterNamesResponse lookup : names) {
 				Settings.get().getOwners().put(lookup.getCharacterId(), lookup.getCharacterName());
 				progress++;
-				updateTask.setTaskProgress(size, progress, 0, 100);
+				if (updateTask != null) {
+					updateTask.setTaskProgress(size, progress, 0, 100);
+				}
 			}
 		}
 		//Original code to return when universe/names is un-bitched
@@ -83,7 +87,9 @@ public class EsiNameGetter extends AbstractEsiGetter {
 				Settings.get().getOwners().put((long)lookup.getId(), lookup.getName());
 			}
 			progress++;
-			updateTask.setTaskProgress(batches.size(), progress, 0, 100);
+			if (updateTask != null) {
+				updateTask.setTaskProgress(batches.size(), progress, 0, 100);
+			}
 		}
 		*/
 	}
