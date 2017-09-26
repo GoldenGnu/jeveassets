@@ -55,6 +55,7 @@ public abstract class AbstractEsiGetter {
 
 	protected final String DATASOURCE = "tranquility";
 	protected final int UNIVERSE_BATCH_SIZE = 100;
+	protected final int LOCATIONS_BATCH_SIZE = 100;
 	private final int RETRIES = 1;
 	private String error = null;
 	private final ApiClient clientAuth;
@@ -333,7 +334,7 @@ public abstract class AbstractEsiGetter {
 	}
 
 	protected boolean oneByOneNameRange(long id) {
-		return (id >= 100000000L && id <= 2099999999L) || (id >= 2100000000 && id <= 2112000000);
+		return (id >= 100000000L && id <= 2099999999L) || (id >= 2100000000L && id <= 2147483647L);
 	}
 
 	protected SsoApi getSsoApiAuth() {

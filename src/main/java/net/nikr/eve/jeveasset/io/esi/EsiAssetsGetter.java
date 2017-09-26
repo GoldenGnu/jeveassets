@@ -58,6 +58,16 @@ public class EsiAssetsGetter extends AbstractEsiGetter {
 	}
 
 	@Override
+	protected int getProgressStart() {
+		return 0;
+	}
+
+	@Override
+	protected int getProgressEnd() {
+		return 80;
+	}
+
+	@Override
 	protected void setNextUpdate(EsiOwner owner, Date date) {
 		owner.setAssetNextUpdate(date);
 		owner.setAssetLastUpdate(Settings.getNow());

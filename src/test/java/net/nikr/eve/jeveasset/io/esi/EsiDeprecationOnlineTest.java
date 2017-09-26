@@ -178,6 +178,17 @@ public class EsiDeprecationOnlineTest extends TestUtil {
 	}
 
 	@Test
+	public void esiLocationsGetterCharacters() {
+		AssetsApi api = new AssetsApi();
+		try {
+			api.postCharactersCharacterIdAssetsLocations(1, Collections.singletonList(1L), DATASOURCE, null, null, null);
+		} catch (ApiException ex) {
+
+		}
+		validate(api.getApiClient());
+	}
+
+	@Test
 	public void esiMarketOrdersGetterCharacters() {
 		MarketApi api = new MarketApi();
 		try {

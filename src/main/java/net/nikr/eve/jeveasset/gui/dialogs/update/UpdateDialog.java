@@ -56,6 +56,7 @@ import net.nikr.eve.jeveasset.io.esi.EsiContractItemsGetter;
 import net.nikr.eve.jeveasset.io.esi.EsiContractsGetter;
 import net.nikr.eve.jeveasset.io.esi.EsiIndustryJobsGetter;
 import net.nikr.eve.jeveasset.io.esi.EsiJournalGetter;
+import net.nikr.eve.jeveasset.io.esi.EsiLocationsGetter;
 import net.nikr.eve.jeveasset.io.esi.EsiMarketOrdersGetter;
 import net.nikr.eve.jeveasset.io.esi.EsiNameGetter;
 import net.nikr.eve.jeveasset.io.esi.EsiOwnerGetter;
@@ -748,6 +749,8 @@ public class UpdateDialog extends JDialogCentered {
 				setIcon(Images.MISC_ESI.getIcon());
 				EsiAssetsGetter esiAssetsGetter = new EsiAssetsGetter();
 				esiAssetsGetter.load(this, program.getProfileManager().getEsiOwners());
+				EsiLocationsGetter esiLocationsGetter = new EsiLocationsGetter();
+				esiLocationsGetter.load(this, program.getProfileManager().getEsiOwners());
 			}
 		}
 	}

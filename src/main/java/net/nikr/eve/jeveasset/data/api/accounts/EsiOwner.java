@@ -233,7 +233,7 @@ public class EsiOwner extends AbstractOwner implements OwnerType {
 
 	@Override
 	public boolean isLocations() {
-		return false;
+		return isAssetList();
 	}
 
 	@Override
