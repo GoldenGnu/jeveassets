@@ -60,9 +60,7 @@ public class EsiLocationsGetter extends AbstractEsiGetter {
 				final long itemID = response.getItemId();
 				final String eveName = response.getName();
 				final String typeName = itemMap.get(itemID);
-				if (!eveName.isEmpty() //No name
-						&& !eveName.equals("None") //Packaged
-						&& !eveName.equals(typeName)) { //Legacy
+				if (!eveName.isEmpty() && !eveName.equals(typeName)) {
 					eveNames.put(itemID, eveName);
 				}
 			}
