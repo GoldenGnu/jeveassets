@@ -147,13 +147,13 @@ public class RawJournalExtraInfo {
 		if (refType.getArgName() != null) {
 			switch (refType.getArgName()) {
 				case CONTRACT_ID:
-					contractId = Integer.valueOf(argName);
+					contractId = RawConverter.toInteger(argName);
 					break;
 				case DESTROYED_SHIP_TYPE_ID:
-					destroyedShipTypeId = Integer.valueOf(argName);
+					destroyedShipTypeId = RawConverter.toInteger(argName);
 					break;
 				case JOB_ID:
-					jobId = Integer.valueOf(argName);
+					jobId = RawConverter.toInteger(argName);
 					break;
 				case NPC_NAME:
 					npcName = argName;
@@ -163,7 +163,7 @@ public class RawJournalExtraInfo {
 				case STATION_NAME:
 					break;
 				case TRANSACTION_ID:
-					transactionId = Long.valueOf(argName);
+					transactionId = RawConverter.toLong(argName);
 					break;
 				case CORPORATION_NAME:
 					break;
