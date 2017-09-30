@@ -110,7 +110,7 @@ public class EsiLocationsGetter extends AbstractEsiGetter {
 	@Override
 	protected boolean enabled(EsiOwner owner) {
 		if (owner.isCorporation()) {
-			return EsiScopes.CORPORATION_ASSETS.isEnabled();
+			return false; //EsiScopes.CORPORATION_ASSETS.isEnabled();
 		} else {
 			return EsiScopes.CHARACTER_ASSETS.isEnabled();
 		}
