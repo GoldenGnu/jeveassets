@@ -182,11 +182,11 @@ public class ConverterTestOptionsGetter {
 		//MarketOrderRange
 		private static final RawMarketOrder.MarketOrderRange[] RAW_MARKET_ORDER_RANGE = RawMarketOrder.MarketOrderRange.values();
 		private static final CharacterOrdersResponse.RangeEnum[] ESI_MARKET_ORDER_RANGE_CHARACTER = CharacterOrdersResponse.RangeEnum.values();
-		private static final Integer[] EVE_API_MARKET_ORDER_RANGE = {-1, 32767, 0, 1, 2, 3, 4, 5, 10, 20, 30, 40};
+		private static final Integer[] EVE_API_MARKET_ORDER_RANGE = {1, 10, 2, 20, 3, 30, 4, 40, 5, 32767, 0, -1};
 		//MarketOrderState
 		private static final RawMarketOrder.MarketOrderState[] RAW_MARKET_ORDER_STATE = RawMarketOrder.MarketOrderState.values();
 		private static final CharacterOrdersResponse.StateEnum[] ESI_MARKET_ORDER_STATE_CHARACTER = CharacterOrdersResponse.StateEnum.values();
-		private static final Integer[] EVE_API_MARKET_ORDER_STATE = {0, 1, 2, 3, 4, 5};
+		private static final Integer[] EVE_API_MARKET_ORDER_STATE = {3, 5, 1, 2, 0, 4};
 		//Owners
 		private static final EsiCallbackURL[] ESI_CALLBACK_URL = EsiCallbackURL.values();
 		private static final KeyType[] KEY_TYPE = {KeyType.CORPORATION};

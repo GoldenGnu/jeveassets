@@ -28,18 +28,18 @@ import net.troja.eve.esi.model.CharacterOrdersResponse;
 public class RawMarketOrder {
 
 	public enum MarketOrderRange {
-		STATION("station"),
+		_1("1"),
+		_10("10"),
+		_2("2"),
+		_20("20"),
+		_3("3"),
+		_30("30"),
+		_4("4"),
+		_40("40"),
+		_5("5"),
 		REGION("region"),
 		SOLARSYSTEM("solarsystem"),
-		_1("1"),
-		_2("2"),
-		_3("3"),
-		_4("4"),
-		_5("5"),
-		_10("10"),
-		_20("20"),
-		_30("30"),
-		_40("40");
+		STATION("station");
 
 		private final String value;
 
@@ -54,12 +54,12 @@ public class RawMarketOrder {
 	}
 
 	public enum MarketOrderState {
-		OPEN("open"),
+		CANCELLED("cancelled"),
+		CHARACTER_DELETED("character_deleted"),
 		CLOSED("closed"),
 		EXPIRED("expired"),
-		CANCELLED("cancelled"),
-		PENDING("pending"),
-		CHARACTER_DELETED("character_deleted");
+		OPEN("open"),
+		PENDING("pending");
 
 		private final String value;
 
