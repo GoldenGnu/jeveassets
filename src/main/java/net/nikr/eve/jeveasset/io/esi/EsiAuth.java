@@ -35,18 +35,18 @@ public class EsiAuth {
 
 	private static final Logger LOG = LoggerFactory.getLogger(EsiAuth.class);
 
-	private final OAuth oAuth;
+	private OAuth oAuth;
 	private final MicroServe microServe;
 	private EsiCallbackURL callbackURL;
 	
 	public EsiAuth() {
-		oAuth = new OAuth();
 		microServe = new MicroServe();
 		microServe.startServer();
 	}
 
 	public void cancelImport() {
 		microServe.stopListening();
+		clearOAuth();
 	}
 
 	public boolean isServerStarted() {
@@ -59,9 +59,9 @@ public class EsiAuth {
 				microServe.startListening();
 			}
 			this.callbackURL = callbackURL;
-			oAuth.setClientId(callbackURL.getA());
-			oAuth.setClientSecret(callbackURL.getB());
-			String authorizationUri = oAuth.getAuthorizationUri(callbackURL.getUrl(), scopes, "jeveassets");
+			getOAuth().setClientId(callbackURL.getA());
+			getOAuth().setClientSecret(callbackURL.getB());
+			String authorizationUri = getOAuth().getAuthorizationUri(callbackURL.getUrl(), scopes, "jeveassets");
 			Desktop.getDesktop().browse(new URI(authorizationUri));
 			return true;
 		} catch (Exception ex) {
@@ -85,13 +85,26 @@ public class EsiAuth {
 			}
 		}
 		try {
-			oAuth.finishFlow(code, "jeveassets");
+			getOAuth().finishFlow(code, "jeveassets");
 			esiOwner.setRefreshToken(oAuth.getRefreshToken());
 			esiOwner.setCallbackURL(callbackURL);
 			return true;
 		} catch (Exception ex) {
 			LOG.error(ex.getMessage(), ex);
 			return false;
+		} finally {
+			clearOAuth();
 		}
+	}
+
+	private OAuth getOAuth() {
+		if (oAuth == null) {
+			oAuth = new OAuth();
+		}
+		return oAuth;
+	}
+
+	private void clearOAuth() {
+		oAuth = null;
 	}
 }
