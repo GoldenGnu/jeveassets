@@ -5,7 +5,7 @@
 	<groupId>net.nikr</groupId>
 	<artifactId>jeveassets</artifactId>
 	<packaging>jar</packaging>
-	<version>4.1.5-SNAPSHOT</version>
+	<version>4.1.5</version>
 	<name>jeveassets</name>
 	<description>jEveAssets is an out-of-game asset manager for Eve-Online, written in Java</description>
 	<url>http://eve.nikr.net/jeveasset</url>
@@ -101,7 +101,7 @@
 						</resource>
 						<resource>
 							<directory>src/main/resources</directory>
-							<filtering>false</filtering>
+							<filtering>true</filtering>
 						</resource>
 					</resources>
 				</configuration>
@@ -125,10 +125,6 @@
 									<fileset dir="" includes="*.txt"/>
 									<fileset dir="tools" includes="jmemory.jar"/>
 									<fileset dir="tools" includes="jmemory.properties"/>
-								</copy>
-								<mkdir dir="${project.build.directory}/classes"/>
-								<copy todir="${project.build.directory}">
-									<fileset dir="${project.build.directory}/classes" includes="update_version.dat"/>
 								</copy>
 								<copy todir="${project.build.directory}">
 									<fileset dir="tools/update" includes="list.php"/>
@@ -158,6 +154,9 @@
 								</copy>
 								<copy todir="${project.build.directory}/install/izpack">
 									<fileset dir="src/main/izpack" includes="ProcessPanel.Spec.xml"/>
+								</copy>
+								<copy todir="${project.build.directory}">
+									<fileset dir="${project.build.directory}/classes" includes="update_version.dat"/>
 								</copy>
 							</target>
 						</configuration>

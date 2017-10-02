@@ -137,7 +137,7 @@ public class ProxyTest extends TestUtil {
 	private class PriceDataGetterMock extends PriceDataGetter {
 
 		protected void update() {
-			super.processUpdate(null, true, new TestPricingOptions(), TYPE_IDS, PriceSource.EVE_CENTRAL);
+			super.processUpdate(null, true, new TestPricingOptions(), TYPE_IDS, PriceSource.EVE_MARKETDATA);
 			//super.processUpdate(null, true, new TestPricingOptions(), Collections.singleton(1230), PriceSource.EVE_CENTRAL);
 		}
 
@@ -152,7 +152,7 @@ public class ProxyTest extends TestUtil {
 
 		@Override
 		public PricingFetch getPricingFetchImplementation() {
-			return PriceSource.EVE_CENTRAL.getPricingFetch();
+			return PriceSource.EVE_MARKETDATA.getPricingFetch();
 		}
 
 		@Override
