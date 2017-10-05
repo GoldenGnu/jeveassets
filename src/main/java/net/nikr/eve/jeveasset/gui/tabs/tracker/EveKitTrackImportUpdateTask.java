@@ -237,10 +237,11 @@ public class EveKitTrackImportUpdateTask extends UpdateTask {
 			manager.getEveKitOwners().addAll(updatedClones);
 			//Create Profile
 			ProfileData profile = new ProfileData(manager);
-			//Update data
-			//profile.updateEventLists();
 			//Update missing prices
-			program.getPriceDataGetter().updateNew(profile, null);
+			if (!program.getPriceDataGetter().updateNew(profile, null)) {
+				error = true;
+				break;
+			}
 			//Update data
 			profile.updateEventLists();
 			//Create Tracker point
