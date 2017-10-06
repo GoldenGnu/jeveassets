@@ -24,189 +24,281 @@ import enterprises.orbital.evekit.client.api.AccessKeyApi;
 import enterprises.orbital.evekit.client.api.CommonApi;
 import enterprises.orbital.evekit.client.invoker.ApiClient;
 import enterprises.orbital.evekit.client.invoker.ApiException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
+import java.util.TimeZone;
+import java.util.concurrent.Callable;
 import net.nikr.eve.jeveasset.data.api.accounts.EveKitOwner;
-import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import net.nikr.eve.jeveasset.io.shared.AbstractGetter;
 
 
-public abstract class AbstractEveKitGetter {
-
-	private static final Logger LOG = LoggerFactory.getLogger(AbstractEveKitGetter.class);
-
-	private final CommonApi commonApi = new CommonApi();
-	private final AccessKeyApi accessKeyApi = new AccessKeyApi();
+public abstract class AbstractEveKitGetter extends AbstractGetter<EveKitOwner, ApiClient, ApiException> {
 	
-	private String error = null;
 	private boolean invalid = false;
+	private Date lifeStart = null;
+	private final boolean first;
+	private final Long at;
 
-	protected void load(UpdateTask updateTask, List<EveKitOwner> owners) {
-		load(updateTask, owners, null, false);
+	public AbstractEveKitGetter(UpdateTask updateTask, EveKitOwner owner, boolean forceUpdate, Date nextUpdate, TaskType taskType, boolean first, Long at) {
+		super(updateTask, owner, forceUpdate, nextUpdate, taskType, "EveKit");
+		this.first = first;
+		this.at = at;
 	}
 
-	protected void load(UpdateTask updateTask, List<EveKitOwner> owners, Long at) {
-		load(updateTask, owners, at, false);
+	@Override
+	public Void call() throws Exception {
+		updateApi(new EveKitUpdater(), 0);
+		return null;
 	}
 
-	protected void load(UpdateTask updateTask, List<EveKitOwner> owners, boolean first) {
-		load(updateTask, owners, null, first);
-	}
-
-	private void load(UpdateTask updateTask, List<EveKitOwner> owners, Long at, boolean first) {
-		LOG.info("EveKit: " + getTaskName() + " updating:");
-		error = null;
-		invalid = false;
-		int progress = 0;
-		if (updateTask != null && getProgressStart() == 0) {
-			updateTask.resetTaskProgress();
+	@Override
+	public <R> R updateApi(Updater<R, ApiClient, ApiException> updater, int retries) {
+		//Check API cache time
+		if (!canUpdate(updater.getStatus())) {
+			return null;
 		}
-		for (EveKitOwner owner : owners) {
-			if (owner.isShowOwner()) { //Ignore not shown owners
-				loadApi(updateTask, owner, at, first, false);
-			}
-			if (updateTask != null) {
-				if (updateTask.isCancelled()) {
-					updateTask.addError(owner.getOwnerName(), "EveKit: Cancelled");
-				}
-				progress++;
-				updateTask.setTaskProgress(owners.size(), progress, getProgressStart(), getProgressEnd());
-			}
+		//Check if the Api Key is expired
+		if (owner.isExpired()) {
+			addError(updater.getStatus(), "API KEY EXPIRED", "API Key expired");
+			return null;
 		}
-	}
-
-	protected void load(UpdateTask updateTask, EveKitOwner owner) {
-		LOG.info("EveKit: " + getTaskName() + " updating:");
-		error = null;
-		invalid = false;
-		loadApi(updateTask, owner, null, false, true);
-	}
-
-	private boolean loadApi(UpdateTask updateTask, EveKitOwner owner, Long at, boolean first, boolean forceUpdate) {
+		
 		try {
-			//Check if the Access Mask include this API
-			if ((owner.getAccessMask() & getAccessMask()) != getAccessMask()) {
-				addError("	EveKit: " + getTaskName() + " failed to update for: " + owner.getOwnerName() + " (NOT ENOUGH ACCESS PRIVILEGES)");
-				if (updateTask != null) {
-					updateTask.addError(owner.getOwnerName(), "EveKit: Not enough access privileges.\r\n(Fix: Add " + getTaskName() + " to the API Key)");
-				}
-				return false;
+			final ApiClient client = new ApiClient();
+			R r = updater.update(client);
+			logInfo(updater.getStatus(), "Updated");
+			//LOG.info("	EveKit: " + getTaskName() + " updated for " + owner.getOwnerName() + " (" + updater.getStatus() + ")");
+			String expiresHeader = getHeader(client.getResponseHeaders(), "Expires");
+			if (expiresHeader != null) {
+				setNextUpdateSafe(Formater.parseExpireDate(expiresHeader));
 			}
-			//Check if the Api Key is expired
-			if (owner.isExpired()) {
-				addError("	EveKit: " + getTaskName() + " failed to update for: " + owner.getOwnerName() + " (API KEY EXPIRED)");
-				if (updateTask != null) {
-					updateTask.addError(owner.getOwnerName(), "EveKit: API Key expired");
-				}
-				return false;
-			}
-			//Check API cache time
-			if (!forceUpdate && !Settings.get().isUpdatable(getNextUpdate(owner), false)) {
-				addError("	EveKit: " + getTaskName() + " failed to update for: " + owner.getOwnerName() + " (NOT ALLOWED YET)");
-				if (updateTask != null) {
-					updateTask.addError(owner.getOwnerName(), "EveKit: Not allowed yet.\r\n(Fix: Just wait a bit)");
-				}
-				return false;
-			}
-			get(owner, at, first);
-			LOG.info("	EveKit: " + getTaskName() + " updated for " + owner.getOwnerName());
-			List<String> expiryHeaders = getApiClient().getResponseHeaders().get("Expires");
-			if (expiryHeaders != null && !expiryHeaders.isEmpty()) {
-				setNextUpdate(owner, Formater.parseExpireDate(expiryHeaders.get(0)));
-			}
-			return true;
+			return r;
 		} catch (ApiException ex) {
 			switch (ex.getCode()) {
 				case 400:
-					addError("	EveKit: " + getTaskName() + " failed to update for: " + owner.getOwnerName() + " (INVALID ATTRIBUTE SELECTOR)");
-					if (updateTask != null) {
-						updateTask.addError(owner.getOwnerName(), "EveKit: Invalid attribute selector");
-					}
+					addError(updater.getStatus(), "INVALID ATTRIBUTE SELECTOR", "Invalid attribute selector");
 					break;
 				case 401:
-					addError("	EveKit: " + getTaskName() + " failed to update for: " + owner.getOwnerName() + " (INVALID CREDENTIAL)");
-					if (updateTask != null) {
-						updateTask.addError(owner.getOwnerName(), "EveKit: Access credential invalid");
-					}
+					addError(updater.getStatus(), "INVALID CREDENTIAL", "Access credential invalid");
 					invalid = true;
 					break;
 				case 403:
-					addError("	EveKit: " + getTaskName() + " failed to update for: " + owner.getOwnerName() + " (INVALID ACCESS MASK)");
-					if (updateTask != null) {
-						updateTask.addError(owner.getOwnerName(), "EveKit: Not enough access privileges.\r\n(Fix: Add " + getTaskName() + " to the API Key)");
-					}
+					addError(updater.getStatus(), "INVALID ACCESS MASK", "Not enough access privileges.\r\n(Fix: Add " + getTaskName() + " to the API Key)");
 					invalid = true;
 					break;
 				case 404:
-					addError("	EveKit: " + getTaskName() + " failed to update for: " + owner.getOwnerName() + " (INVALID ACCESS KEY ID)");
-					if (updateTask != null) {
-						updateTask.addError(owner.getOwnerName(), "EveKit: Access key with the given ID not found");
-					}
+					addError(updater.getStatus(), "INVALID ACCESS KEY ID", "Access key with the given ID not found");
 					invalid = true;
 					break;
 				default:
-					addError("EveKit: " + ex.getMessage(), ex);
-					if (updateTask != null) {
-						updateTask.addError(owner.getOwnerName(), "EveKit: Unknown Error Code: " + ex.getCode());
-					}
+					addError(updater.getStatus(), ex.getMessage(), "Unknown Error Code: " + ex.getCode(), ex);
 					break;
 			}
-			return false;
 		} catch (Throwable ex) {
-			addError("EveKit Unknown Error: " + ex.getMessage(), ex);
-			if (updateTask != null) {
-				updateTask.addError(owner.getOwnerName(), "EveKit: Unknown Error: " + ex.getMessage());
-			}
-			return false;
+			addError(updater.getStatus(), ex.getMessage(), "Unknown Error: " + ex.getMessage(), ex);
 		}
+		return null;
 	}
 
-	public final boolean hasError() {
-		return error != null;
-	}
+	
 
-	public final String getError() {
-		return error;
+	@Override
+	protected boolean invalidAccessPrivileges() {
+		return (owner.getAccessMask() & getAccessMask()) != getAccessMask();
 	}
 
 	public final boolean isInvalid() {
 		return invalid;
 	}
 
-	protected int getProgressStart() {
-		return 0;
+	protected final CommonApi getCommonApi(ApiClient apiClient) {
+		return new CommonApi(apiClient);
 	}
 
-	protected int getProgressEnd() {
-		return 100;
+	protected final AccessKeyApi getAccessKeyApi(ApiClient apiClient) {
+		return new AccessKeyApi(apiClient);
 	}
 
-	protected final void addError(String error, Throwable ex) {
-		this.error = error;
-		LOG.error(error, ex);
+	public Date getLifeStart() {
+		return lifeStart;
 	}
 
-	protected final void addError(String error) {
-		this.error = error;
-		LOG.error(error);
+	protected final String industryJobsFilter() {
+		return encode("{ values: [\"1\", \"2\", \"3\"] }");
 	}
 
-	protected final CommonApi getCommonApi() {
-		return commonApi;
+	protected final String contractsFilter() {
+		return encode("{ values: [\"InProgress\"] }");
+	}
+	
+
+	protected final <E> String valuesFilter(Set<E> ids) {
+		StringBuilder builder = new StringBuilder();
+		builder.append("{ values: [");
+		if (ids.isEmpty()) {
+			builder.append("\"\"");
+		}
+		boolean firstRun = true;
+		for (E id : ids) {
+			if (firstRun) {
+				firstRun = false;
+			} else {
+				builder.append(", ");
+			}
+			builder.append("\"");
+			builder.append(id);
+			builder.append("\"");
+		}
+		builder.append("] }");
+		return encode(builder.toString());
 	}
 
-	protected final AccessKeyApi getAccessKeyApi() {
-		return accessKeyApi;
+	protected final String dateFilter(int months) {
+		if (months == 0) {
+			return encode("{ any: true }");
+		} else {
+			Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
+			calendar.add(Calendar.DAY_OF_MONTH, (-months * 30));
+			return encode("{ start: \"" + String.valueOf(calendar.getTime().getTime()) + "\", end: \"" + String.valueOf(Long.MAX_VALUE) + "\" }");
+		}
 	}
 
-	protected abstract void get(EveKitOwner owner, Long at, boolean first) throws ApiException;
-	protected abstract String getTaskName();
+	protected final String atFilter(Long at) {
+		if (at == null) {
+			return null;
+		}
+		StringBuilder builder = new StringBuilder();
+		builder.append("{ values: [\"");
+		builder.append(at);
+		builder.append("\"] }");
+		return encode(builder.toString());
+	}
+
+	protected final String atAny() {
+		return encode("{ any: true }");
+	}
+
+	protected String encode(String plane) {
+		try {
+			return URLEncoder.encode(plane, "UTF-8").replace("+", "%20");
+		} catch (UnsupportedEncodingException ex) {
+			return null;
+		}
+	}
+
+	protected abstract void get(ApiClient apiClient, Long at, boolean first) throws ApiException;
 	protected abstract long getAccessMask();
-	protected abstract void setNextUpdate(EveKitOwner owner, Date date);
-	protected abstract Date getNextUpdate(EveKitOwner owner);
-	protected abstract ApiClient getApiClient();
+
+	protected <K> List<K> updatePages(EveKitPagesHandler<K> handler) throws ApiException {
+		if (first) {
+			EveKitPageUpdater<K> updater = new EveKitPageUpdater<K>(handler, "", atAny(), null, 1);
+			List<K> results = updateApi(updater, 0);
+			if (results != null && !results.isEmpty()) {
+				Long l = handler.getLifeStart(results.get(0));
+				if (l != null) {
+					Date date = new Date(l);
+					if (lifeStart == null || date.before(lifeStart)) {
+						lifeStart = date;
+					}
+				}
+			}
+			return null;
+		} else {
+			List<K> results = new ArrayList<K>();
+			List<K> batch = null;
+			int count = 0;
+			while (batch == null || !batch.isEmpty()) {
+				count++;
+				Long cid = getCid(handler, batch);
+				EveKitPageUpdater<K> updater = new EveKitPageUpdater<K>(handler, count + " of ?", atFilter(at), getCid(handler, batch), Integer.MAX_VALUE);
+				batch = updateApi(updater, 0);
+				if (batch == null) {
+					break;
+				}
+				results.addAll(batch);
+			}
+			handler.saveCID(getCid(handler, results));
+			return results;
+		}
+	}
+
+	private <K> Long getCid(EveKitPagesHandler<K> handler, List<K> batch) {
+		if (batch == null || batch.isEmpty()) {
+			return handler.loadCID();
+		} else {
+			return handler.getCID(batch.get(batch.size() - 1));
+		}
+	}
+
+	public interface EveKitPagesHandler<K> {
+		public List<K> get(ApiClient apiClient, String at, Long cid, Integer maxResults) throws ApiException;
+		public long getCID(K k);
+		public Long getLifeStart(K obj);
+		/**
+		 * NOT THREAD SAFE!
+		 * We currently only use one thread, so, it's not a problem, yet
+		 * @param cid 
+		 */
+		public void saveCID(Long cid); 
+		/**
+		 * NOT THREAD SAFE!
+		 * We currently only use one thread, so, it's not a problem, yet
+		 * @return 
+		 */
+		public Long loadCID(); 
+	}
+
+	public class EveKitPageUpdater<K> implements Callable<List<K>>, Updater<List<K>, ApiClient, ApiException> {
+
+		private final EveKitPagesHandler<K> handler;
+		private final String status;
+		private final String at;
+		private final Long cid;
+		private final Integer maxResults;
+
+		public EveKitPageUpdater(EveKitPagesHandler<K> handler, String status, String at, Long cid, Integer maxResults) {
+			this.handler = handler;
+			this.status = status;
+			this.at = at;
+			this.cid = cid;
+			this.maxResults = maxResults;
+		}
+
+		@Override
+		public List<K> update(ApiClient client) throws ApiException {
+			return handler.get(client, at, cid, maxResults);
+		}
+
+		@Override
+		public List<K> call() throws Exception {
+			return updateApi(this, 0);
+		}
+
+		@Override
+		public String getStatus() {
+			return status;
+		}
+	}
+
+	public class EveKitUpdater implements Updater<Void, ApiClient, ApiException> {
+
+		@Override
+		public Void update(ApiClient client) throws ApiException {
+			get(client, at, first);
+			return null;
+		}
+
+		@Override
+		public String getStatus() {
+			return "Completed";
+		}
+	}
 
 }

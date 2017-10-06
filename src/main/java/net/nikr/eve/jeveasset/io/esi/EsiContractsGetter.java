@@ -24,54 +24,34 @@ import java.util.Date;
 import java.util.List;
 import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
+import net.troja.eve.esi.ApiClient;
 import net.troja.eve.esi.ApiException;
 import net.troja.eve.esi.model.CharacterContractsResponse;
 
 public class EsiContractsGetter extends AbstractEsiGetter {
 
-	@Override
-	public void load(UpdateTask updateTask, List<EsiOwner> owners) {
-		super.load(updateTask, owners);
+	public EsiContractsGetter(UpdateTask updateTask, EsiOwner owner) {
+		super(updateTask, owner, false,  owner.getContractsNextUpdate(), TaskType.CONTRACTS);
 	}
 
 	@Override
-	protected void get(EsiOwner owner) throws ApiException {
-		List<CharacterContractsResponse> contracts = getContractsApiAuth().getCharactersCharacterIdContracts((int) owner.getOwnerID(), DATASOURCE, null, null, null);
+	protected void get(ApiClient apiClient) throws ApiException {
+		List<CharacterContractsResponse> contracts = getContractsApiAuth(apiClient).getCharactersCharacterIdContracts((int) owner.getOwnerID(), DATASOURCE, null, null, null);
 		owner.setContracts(EsiConverter.toContracts(contracts, owner));
 	}
 
 	@Override
-	protected int getProgressStart() {
-		return 0;
-	}
-
-	@Override
-	protected int getProgressEnd() {
-		return 50;
-	}
-
-	@Override
-	protected String getTaskName() {
-		return "Contracts";
-	}
-
-	@Override
-	protected void setNextUpdate(EsiOwner owner, Date date) {
+	protected void setNextUpdate(Date date) {
 		owner.setContractsNextUpdate(date);
 	}
 
 	@Override
-	protected Date getNextUpdate(EsiOwner owner) {
-		return owner.getContractsNextUpdate();
-	}
-
-	@Override
-	protected boolean inScope(EsiOwner owner) {
+	protected boolean inScope() {
 		return owner.isContracts();
 	}
 
 	@Override
-	protected boolean enabled(EsiOwner owner) {
+	protected boolean enabled() {
 		if (owner.isCorporation()) {
 			return false;
 		} else {

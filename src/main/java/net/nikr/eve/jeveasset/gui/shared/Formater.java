@@ -109,7 +109,7 @@ public final class Formater {
 		}
 	}
 
-	public static Date parseExpireDate(String date) {
+	public static synchronized Date parseExpireDate(String date) {
 		initDate();
 		try {
 			return expireDate.parse(date);

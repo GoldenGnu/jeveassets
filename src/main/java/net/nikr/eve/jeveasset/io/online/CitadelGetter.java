@@ -55,21 +55,21 @@ public class CitadelGetter extends AbstractXmlWriter {
 
 	protected CitadelGetter() { }
 
-	public static Citadel get(long locationID) {
+	public synchronized static Citadel get(long locationID) {
 		return getCitadelGetter().getCitadel(locationID);
 	}
 
-	public static void update(UpdateTask updateTask) {
+	public synchronized static void update(UpdateTask updateTask) {
 		if (!getCitadelGetter().updateCache(updateTask, NIKR_URL)) { //Get the cached version
 			getCitadelGetter().updateCache(updateTask, HAMMERTI_URL); //Get it from the source
 		}
 	}
 
-	public static void set(Citadel citadel) {
+	public synchronized static void set(Citadel citadel) {
 		getCitadelGetter().setCitadel(citadel);
 	}
 
-	public static void set(List<Citadel> citadels) {
+	public synchronized static void set(List<Citadel> citadels) {
 		getCitadelGetter().setCitadels(citadels);
 	}
 

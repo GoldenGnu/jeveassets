@@ -106,13 +106,13 @@ public class ProxyTest extends TestUtil {
 		AccountGetter eveAPI = new AccountGetter();
 		eveAPI.load(null, false, new EveApiAccount(0, ""));
 		//ESI
-		EsiOwnerGetter esi = new EsiOwnerGetter();
 		EsiOwner esiOwner = new EsiOwner();
 		esiOwner.setCallbackURL(EsiCallbackURL.LOCALHOST);
-		esi.load(esiOwner);
+		EsiOwnerGetter esi = new EsiOwnerGetter(esiOwner, false);
+		esi.run();
 		//EveKit
-		EveKitOwnerGetter eveKit = new EveKitOwnerGetter();
-		eveKit.load(null, new EveKitOwner(0, ""));
+		EveKitOwnerGetter eveKit = new EveKitOwnerGetter(new EveKitOwner(0, ""), false);
+		eveKit.run();
 		//Citadels
 		CitadelGetterMock citadel = new CitadelGetterMock();
 		citadel.update();

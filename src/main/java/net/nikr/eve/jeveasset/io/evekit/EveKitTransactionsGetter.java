@@ -29,40 +29,40 @@ import net.nikr.eve.jeveasset.data.api.accounts.EveKitAccessMask;
 import net.nikr.eve.jeveasset.data.api.accounts.EveKitOwner;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
+import net.nikr.eve.jeveasset.io.evekit.AbstractEveKitGetter.EveKitPagesHandler;
 
 
-public class EveKitTransactionsGetter extends AbstractEveKitListGetter<WalletTransaction> {
+public class EveKitTransactionsGetter extends AbstractEveKitGetter implements EveKitPagesHandler<WalletTransaction> {
 
-	@Override
-	public void load(UpdateTask updateTask, List<EveKitOwner> owners) {
-		super.load(updateTask, owners);
+	public EveKitTransactionsGetter(UpdateTask updateTask, EveKitOwner owner) {
+		super(updateTask, owner, false, owner.getTransactionsNextUpdate(), TaskType.TRANSACTIONS, false, null);
 	}
 
 	@Override
-	protected List<WalletTransaction> get(EveKitOwner owner, String at, Long contid) throws ApiException {
-		//months
-		return getCommonApi().getWalletTransactions(owner.getAccessKey(), owner.getAccessCred(), null, contid, getMaxResults(), getReverse(),
+	protected void get(ApiClient apiClient, Long at, boolean first) throws ApiException {
+		List<WalletTransaction> data = updatePages(this);
+		if (data == null) {
+			return;
+		}
+		owner.setTransactions(EveKitConverter.toTransactions(data, owner, loadCID() != null));
+	}
+
+	
+
+	@Override
+	public List<WalletTransaction> get(ApiClient apiClient, String at, Long contid, Integer maxResults) throws ApiException {
+		return getCommonApi(apiClient).getWalletTransactions(owner.getAccessKey(), owner.getAccessCred(), at, contid, maxResults, false,
 				null, null, dateFilter(Settings.get().getEveKitTransactionsHistory()), null, null, null, null, null, null, null, null, null, null, null, null, null, null);
 	}
 
 	@Override
-	protected void set(EveKitOwner owner, List<WalletTransaction> data) throws ApiException {
-		owner.setTransactions(EveKitConverter.toTransactions(data, owner, loadCID(owner) != null));
-	}
-
-	@Override
-	protected long getCID(WalletTransaction obj) {
+	public long getCID(WalletTransaction obj) {
 		return obj.getCid();
 	}
 
 	@Override
-	protected Long getLifeStart(WalletTransaction obj) {
+	public Long getLifeStart(WalletTransaction obj) {
 		return obj.getLifeStart();
-	}
-
-	@Override
-	protected String getTaskName() {
-		return "Transactions";
 	}
 
 	@Override
@@ -71,27 +71,17 @@ public class EveKitTransactionsGetter extends AbstractEveKitListGetter<WalletTra
 	}
 
 	@Override
-	protected void setNextUpdate(EveKitOwner owner, Date date) {
+	protected void setNextUpdate(Date date) {
 		owner.setTransactionsNextUpdate(date);
 	}
 
 	@Override
-	protected Date getNextUpdate(EveKitOwner owner) {
-		return owner.getTransactionsNextUpdate();
-	}
-
-	@Override
-	protected ApiClient getApiClient() {
-		return getCommonApi().getApiClient();
-	}
-
-	@Override
-	protected void saveCID(EveKitOwner owner, Long contid) {
+	public void saveCID(Long contid) {
 		owner.setTransactionsCID(contid);
 	}
 
 	@Override
-	protected Long loadCID(EveKitOwner owner) {
+	public Long loadCID() {
 		return owner.getTransactionsCID();
 	}
 }

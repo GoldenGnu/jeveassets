@@ -25,7 +25,6 @@ import enterprises.orbital.evekit.client.invoker.ApiClient;
 import enterprises.orbital.evekit.client.invoker.ApiException;
 import enterprises.orbital.evekit.client.model.KeyInfo;
 import java.util.Date;
-import java.util.List;
 import net.nikr.eve.jeveasset.data.api.accounts.EveKitOwner;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import net.nikr.eve.jeveasset.io.shared.AccountAdder;
@@ -37,27 +36,19 @@ public class EveKitOwnerGetter extends AbstractEveKitGetter implements AccountAd
 	private boolean invalidPrivileges = false;
 	private boolean wrongEntry = false;
 
-	@Override
-	public void load(UpdateTask updateTask, EveKitOwner owner) {
-		limited = false;
-		invalidPrivileges = false;
-		wrongEntry = false;
-		super.load(updateTask, owner);
+	public EveKitOwnerGetter(EveKitOwner owner, boolean forceUpdate) {
+		super(null, owner, forceUpdate, owner.getAccountNextUpdate(), TaskType.OWNER, false, null);
+	}
+
+	public EveKitOwnerGetter(UpdateTask updateTask, EveKitOwner owner) {
+		super(updateTask, owner, false, owner.getAccountNextUpdate(), TaskType.OWNER, false, null);
 	}
 
 	@Override
-	public void load(UpdateTask updateTask, List<EveKitOwner> owners) {
-		limited = false;
-		invalidPrivileges = false;
-		wrongEntry = false;
-		super.load(updateTask, owners);
-	}
-
-	@Override
-	protected void get(EveKitOwner owner, Long at, boolean first) throws ApiException {
-		KeyInfo keyInfo = getAccessKeyApi().getKeyInfo(owner.getAccessKey(), owner.getAccessCred());
+	protected void get(ApiClient apiClient, Long at, boolean first) throws ApiException {
+		KeyInfo keyInfo = getAccessKeyApi(apiClient).getKeyInfo(owner.getAccessKey(), owner.getAccessCred());
 		if (owner.getOwnerID() != keyInfo.getEntityID() && owner.getOwnerID() != 0) {
-			addError("Wrong Entry");
+			addError(null, "Wrong Entry", null);
 			wrongEntry = true;
 			return;
 		}
@@ -117,11 +108,6 @@ public class EveKitOwnerGetter extends AbstractEveKitGetter implements AccountAd
 	}
 
 	@Override
-	protected String getTaskName() {
-		return "Account";
-	}
-
-	@Override
 	protected long getAccessMask() {
 		return 0;
 	}
@@ -142,18 +128,8 @@ public class EveKitOwnerGetter extends AbstractEveKitGetter implements AccountAd
 	}
 
 	@Override
-	protected void setNextUpdate(EveKitOwner owner, Date date) {
+	protected void setNextUpdate(Date date) {
 		owner.setAccountNextUpdate(date);
-	}
-
-	@Override
-	protected Date getNextUpdate(EveKitOwner owner) {
-		return owner.getAccountNextUpdate();
-	}
-
-	@Override
-	protected ApiClient getApiClient() {
-		return getAccessKeyApi().getApiClient();
 	}
 
 }

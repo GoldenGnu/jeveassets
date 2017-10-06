@@ -20,100 +20,90 @@
  */
 package net.nikr.eve.jeveasset.io.esi;
 
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
-import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
+import net.nikr.eve.jeveasset.data.api.accounts.OwnerType;
+import net.nikr.eve.jeveasset.data.api.my.MyContract;
+import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob;
+import net.nikr.eve.jeveasset.data.api.my.MyJournal;
+import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
+import net.troja.eve.esi.ApiClient;
 import net.troja.eve.esi.ApiException;
-import net.troja.eve.esi.model.CharacterNamesResponse;
 import net.troja.eve.esi.model.UniverseNamesResponse;
 
 
 public class EsiNameGetter extends AbstractEsiGetter {
 
-	private Set<Integer> ids;
-	private UpdateTask updateTask;
+	private final Set<Integer> ids = new HashSet<Integer>();
 
-	public void load(UpdateTask updateTask, Set<Integer> ids) {
-		this.ids = new HashSet<Integer>(ids);
-		this.updateTask = updateTask;
-		super.load(updateTask);
-	}
-
-	@Override
-	protected void get(EsiOwner owner) throws ApiException {
-		//XXX - Workaround for universe/names being a bitch
-		Set<Integer> blocked = new HashSet<Integer>();
-		for (Integer id : ids) {
-			if (oneByOneNameRange(id)) {
-				blocked.add(id);
+	public EsiNameGetter(UpdateTask updateTask, List<OwnerType> ownerTypes) {
+		super(updateTask, null, false, Settings.getNow(), TaskType.OWNER_ID_TO_NAME);
+		Set<Long> list = new HashSet<Long>();
+		for (OwnerType ownerType : ownerTypes) {
+			list.add(ownerType.getOwnerID()); //Just to be sure
+			for (MyIndustryJob myIndustryJob : ownerType.getIndustryJobs()) {
+				list.add(myIndustryJob.getInstallerID());
 			}
-		}
-		ids.removeAll(blocked);
-		List<List<Integer>> batches = splitList(ids, UNIVERSE_BATCH_SIZE);
-		int progress = 0;
-		final int size = batches.size() + blocked.size();
-		for (List<Integer> batch : batches) {
-			List<UniverseNamesResponse> names = getUniverseApiOpen().postUniverseNames(batch, DATASOURCE, System.getProperty("http.agent"), null);
-			for (UniverseNamesResponse lookup : names) {
-				Settings.get().getOwners().put((long)lookup.getId(), lookup.getName());
+			for (MyContract contract : ownerType.getContracts().keySet()) {
+				list.add(contract.getAcceptorID());
+				list.add(contract.getAssigneeID());
+				list.add(contract.getIssuerCorpID());
+				list.add(contract.getIssuerID());
 			}
-			progress++;
-			if (updateTask != null) {
-				updateTask.setTaskProgress(size, progress, 0, 100);
+			for (MyTransaction transaction : ownerType.getTransactions()) {
+				list.add(transaction.getClientID());
 			}
-		}
-		for (Integer id : blocked) { //One by one we go
-			List<CharacterNamesResponse> names = getCharacterApiOpen().getCharactersNames(Collections.singletonList((long)id), DATASOURCE, System.getProperty("http.agent"), null);
-			for (CharacterNamesResponse lookup : names) {
-				Settings.get().getOwners().put(lookup.getCharacterId(), lookup.getCharacterName());
-				progress++;
-				if (updateTask != null) {
-					updateTask.setTaskProgress(size, progress, 0, 100);
+			for (MyJournal journal : ownerType.getJournal()) {
+				if (journal.getFirstPartyID() != null) {
+					list.add((long) journal.getFirstPartyID());
+				}
+				if (journal.getSecondPartyID() != null) {
+					list.add((long) journal.getSecondPartyID());
 				}
 			}
 		}
-		//Original code to return when universe/names is un-bitched
-		/*
-		List<List<Integer>> batches = splitList(ids, UNIVERSE_BATCH_SIZE);
-		int progress = 0;
-		for (List<Integer> batch : batches) {
-			List<UniverseNamesResponse> names = getUniverseApiOpen().postUniverseNames(batch, DATASOURCE, System.getProperty("http.agent"), null);
-			for (UniverseNamesResponse lookup : names) {
-				Settings.get().getOwners().put((long)lookup.getId(), lookup.getName());
-			}
-			progress++;
-			if (updateTask != null) {
-				updateTask.setTaskProgress(batches.size(), progress, 0, 100);
+		for (long id : list) {
+			try {
+				ids.add(Math.toIntExact(id));
+			} catch (ArithmeticException ex) {
+				//Ignore...
 			}
 		}
-		*/
 	}
 
 	@Override
-	protected String getTaskName() {
-		return "OwnerID to Name";
+	protected void get(ApiClient apiClient) throws ApiException {
+		List<List<Integer>> batches = splitList(ids, UNIVERSE_BATCH_SIZE);
+
+		Map<List<Integer>, List<UniverseNamesResponse>> responses = updateList(batches, new ListHandler<List<Integer>, List<UniverseNamesResponse>>() {
+			@Override
+			public List<UniverseNamesResponse> get(ApiClient apiClient, List<Integer> t) throws ApiException {
+				return getUniverseApiOpen(apiClient).postUniverseNames(t, DATASOURCE, System.getProperty("http.agent"), null);
+			}
+		});
+
+		for (Map.Entry<List<Integer>, List<UniverseNamesResponse>> entry : responses.entrySet()) {
+			for (UniverseNamesResponse lookup : entry.getValue()) {
+				Settings.get().getOwners().put((long)lookup.getId(), lookup.getName());
+			}
+		}
 	}
 
 	@Override
-	protected void setNextUpdate(EsiOwner owner, Date date) { }
+	protected void setNextUpdate(Date date) { }
 
 	@Override
-	protected Date getNextUpdate(EsiOwner owner) {
-		return new Date();
-	}
-
-	@Override
-	protected boolean inScope(EsiOwner owner) {
+	protected boolean inScope() {
 		return true;
 	}
 
 	@Override
-	protected boolean enabled(EsiOwner owner) {
+	protected boolean enabled() {
 		return EsiScopes.NAMES.isEnabled();
 	}
 

@@ -25,12 +25,12 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
 import net.nikr.eve.jeveasset.data.settings.Citadel;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import net.nikr.eve.jeveasset.io.online.CitadelGetter;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
+import net.troja.eve.esi.ApiClient;
 import net.troja.eve.esi.ApiException;
 import net.troja.eve.esi.model.SovereigntyStructuresResponse;
 import net.troja.eve.esi.model.UniverseNamesResponse;
@@ -38,17 +38,13 @@ import net.troja.eve.esi.model.UniverseNamesResponse;
 
 public class EsiConquerableStationsGetter extends AbstractEsiGetter {
 
-	private UpdateTask updateTask;
-
-	@Override
-	public void load(UpdateTask updateTask) {
-		this.updateTask = updateTask;
-		super.load(updateTask);
+	public EsiConquerableStationsGetter(UpdateTask updateTask) {
+		super(updateTask, null, false, Settings.get().getConquerableStationsNextUpdate(), TaskType.CONQUERABLE_STATIONS);
 	}
 
 	@Override
-	protected void get(EsiOwner owner) throws ApiException {
-		List<SovereigntyStructuresResponse> structures = getSovereigntyApiOpen().getSovereigntyStructures(DATASOURCE, System.getProperty("http.agent"), "");
+	protected void get(ApiClient apiClient) throws ApiException {
+		List<SovereigntyStructuresResponse> structures = getSovereigntyApiOpen(apiClient).getSovereigntyStructures(DATASOURCE, System.getProperty("http.agent"), "");
 		Map<Integer, SovereigntyStructuresResponse> map = new HashMap<Integer, SovereigntyStructuresResponse>();
 		for (SovereigntyStructuresResponse structure : structures) {
 			try {
@@ -63,43 +59,36 @@ public class EsiConquerableStationsGetter extends AbstractEsiGetter {
 				//Outpost: No problem
 			}
 		}
-		List<Citadel> citadels = new ArrayList<>();
 		List<List<Integer>> batches = splitList(map.keySet(), UNIVERSE_BATCH_SIZE);
-		int progress = 0;
-		for (List<Integer> batch : batches) {
-			List<UniverseNamesResponse> stations = getUniverseApiOpen().postUniverseNames(batch, DATASOURCE, System.getProperty("http.agent"), null);
-			for (UniverseNamesResponse lookup : stations) {
+		Map<List<Integer>, List<UniverseNamesResponse>> responses = updateList(batches, new ListHandler<List<Integer>, List<UniverseNamesResponse>>() {
+			@Override
+			public List<UniverseNamesResponse> get(ApiClient apiClient, List<Integer> t) throws ApiException {
+				return getUniverseApiOpen(apiClient).postUniverseNames(t, DATASOURCE, System.getProperty("http.agent"), null);
+			}
+		});
+
+		List<Citadel> citadels = new ArrayList<>();
+		for (Map.Entry<List<Integer>, List<UniverseNamesResponse>> entry : responses.entrySet()) {
+			for (UniverseNamesResponse lookup : entry.getValue()) {
 				SovereigntyStructuresResponse station = map.get(lookup.getId());
 				citadels.add(ApiIdConverter.getCitadel(station, lookup.getName()));
 			}
-			progress++;
-			updateTask.setTaskProgress(batches.size(), progress, 0, 100);
 		}
 		CitadelGetter.set(citadels);
 	}
 
 	@Override
-	protected String getTaskName() {
-		return "Conquerable Stations";
-	}
-
-	@Override
-	protected void setNextUpdate(EsiOwner owner, Date date) {
+	protected void setNextUpdate(Date date) {
 		Settings.get().setConquerableStationsNextUpdate(date);
 	}
 
 	@Override
-	protected Date getNextUpdate(EsiOwner owner) {
-		return Settings.get().getConquerableStationsNextUpdate();
-	}
-
-	@Override
-	protected boolean inScope(EsiOwner owner) {
+	protected boolean inScope() {
 		return true;
 	}
 
 	@Override
-	protected boolean enabled(EsiOwner owner) {
+	protected boolean enabled() {
 		return EsiScopes.CONQUERABLE_STATIONS.isEnabled();
 	}
 

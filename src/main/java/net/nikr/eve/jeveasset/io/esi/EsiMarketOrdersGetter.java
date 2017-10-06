@@ -24,47 +24,38 @@ import java.util.Date;
 import java.util.List;
 import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
+import net.troja.eve.esi.ApiClient;
 import net.troja.eve.esi.ApiException;
 import net.troja.eve.esi.model.CharacterOrdersResponse;
 
 
 public class EsiMarketOrdersGetter extends AbstractEsiGetter {
 
-	private boolean saveHistory;
+	private final boolean saveHistory;
 
-	public void load(UpdateTask updateTask, List<EsiOwner> owners, boolean saveHistory) {
+	public EsiMarketOrdersGetter(UpdateTask updateTask, EsiOwner owner, boolean saveHistory) {
+		super(updateTask, owner, false, owner.getMarketOrdersNextUpdate(), TaskType.MARKET_ORDERS);
 		this.saveHistory = saveHistory;
-		super.load(updateTask, owners);
 	}
 
 	@Override
-	protected void get(EsiOwner owner) throws ApiException {
-		List<CharacterOrdersResponse> marketOrders = getMarketApiAuth().getCharactersCharacterIdOrders((int) owner.getOwnerID(), DATASOURCE, null, null, null);
+	protected void get(ApiClient apiClient) throws ApiException {
+		List<CharacterOrdersResponse> marketOrders = getMarketApiAuth(apiClient).getCharactersCharacterIdOrders((int) owner.getOwnerID(), DATASOURCE, null, null, null);
 		owner.setMarketOrders(EsiConverter.toMarketOrders(marketOrders, owner, saveHistory));
 	}
 
 	@Override
-	protected String getTaskName() {
-		return "Market Orders";
-	}
-
-	@Override
-	protected void setNextUpdate(EsiOwner owner, Date date) {
+	protected void setNextUpdate(Date date) {
 		owner.setMarketOrdersNextUpdate(date);
 	}
 
 	@Override
-	protected Date getNextUpdate(EsiOwner owner) {
-		return owner.getMarketOrdersNextUpdate();
-	}
-
-	@Override
-	protected boolean inScope(EsiOwner owner) {
+	protected boolean inScope() {
 		return owner.isMarketOrders();
 	}
 
 	@Override
-	protected boolean enabled(EsiOwner owner) {
+	protected boolean enabled() {
 		if (owner.isCorporation()) {
 			return false;
 		} else {

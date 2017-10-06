@@ -28,52 +28,41 @@ import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
 import net.nikr.eve.jeveasset.data.api.my.MyAsset;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
+import net.troja.eve.esi.ApiClient;
 import net.troja.eve.esi.ApiException;
 import net.troja.eve.esi.model.CharacterAssetsNamesResponse;
 
 
 public class EsiLocationsGetter extends AbstractEsiGetter {
 
-	private final Map<Long, String> eveNames = new HashMap<Long, String>();
-	private UpdateTask updateTask;
+	public EsiLocationsGetter(UpdateTask updateTask, EsiOwner owner) {
+		super(updateTask, owner, false, owner.getLocationsNextUpdate(), TaskType.LOCATIONS);
+	}
 
 	@Override
-	public void load(UpdateTask updateTask, List<EsiOwner> owners) {
-		this.updateTask = updateTask;
-		eveNames.clear();
-		super.load(updateTask, owners);
-		if (!hasError()) {
-			Settings.get().setEveNames(eveNames);
-		}
-	}
-	
-	@Override
-	protected void get(EsiOwner owner) throws ApiException {
+	protected void get(ApiClient apiClient) throws ApiException {
 		Map<Long, String> itemMap = new HashMap<Long, String>();
 		addItemIDs(itemMap, owner.getAssets());
 		List<List<Long>> batches = splitList(itemMap.keySet(), LOCATIONS_BATCH_SIZE);
-		int progress = 0;
-		final int size = batches.size();
-		for (List<Long> batch : batches) {
-			List<CharacterAssetsNamesResponse> responses = getAssetsApiAuth().postCharactersCharacterIdAssetsNames((int) owner.getOwnerID(), batch, DATASOURCE, null, null, null);
-			for (CharacterAssetsNamesResponse response : responses) {
+
+		Map<List<Long>, List<CharacterAssetsNamesResponse>> responses = updateList(batches, new ListHandler<List<Long>, List<CharacterAssetsNamesResponse>>() {
+			@Override
+			public List<CharacterAssetsNamesResponse> get(ApiClient apiClient, List<Long> t) throws ApiException {
+				return getAssetsApiAuth(apiClient).postCharactersCharacterIdAssetsNames((int) owner.getOwnerID(), t, DATASOURCE, null, null, null);
+			}
+		});
+
+		for (Map.Entry<List<Long>, List<CharacterAssetsNamesResponse>> entry : responses.entrySet()) {
+			for (CharacterAssetsNamesResponse response : entry.getValue()) {
 				final long itemID = response.getItemId();
 				final String eveName = response.getName();
-				final String typeName = itemMap.get(itemID);
-				if (!eveName.isEmpty() && !eveName.equals(typeName)) {
-					eveNames.put(itemID, eveName);
+				if (!eveName.isEmpty()) { //Set name
+					Settings.get().getEveNames().put(itemID, eveName);
+				} else { //Remove name (Empty)
+					Settings.get().getEveNames().remove(itemID);
 				}
 			}
-			progress++;
-			if (updateTask != null) {
-				updateTask.setTaskProgress(size, progress, 0, 100);
-			}
 		}
-	}
-
-	@Override
-	protected int getProgressStart() {
-		return 80;
 	}
 
 	private void addItemIDs(Map<Long, String> itemIDs, List<MyAsset> assets) {
@@ -88,27 +77,17 @@ public class EsiLocationsGetter extends AbstractEsiGetter {
 	}
 
 	@Override
-	protected String getTaskName() {
-		return "Locations";
+	protected void setNextUpdate(Date date) {
+		owner.setLocationsNextUpdate(date);
 	}
 
 	@Override
-	protected void setNextUpdate(EsiOwner owner, Date date) {
-		//Do nothing
-	}
-
-	@Override
-	protected Date getNextUpdate(EsiOwner owner) {
-		return new Date();
-	}
-
-	@Override
-	protected boolean inScope(EsiOwner owner) {
+	protected boolean inScope() {
 		return owner.isLocations();
 	}
 
 	@Override
-	protected boolean enabled(EsiOwner owner) {
+	protected boolean enabled() {
 		if (owner.isCorporation()) {
 			return false; //EsiScopes.CORPORATION_ASSETS.isEnabled();
 		} else {

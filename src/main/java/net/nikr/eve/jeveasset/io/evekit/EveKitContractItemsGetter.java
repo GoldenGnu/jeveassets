@@ -36,29 +36,28 @@ import net.nikr.eve.jeveasset.data.api.my.MyContract;
 import net.nikr.eve.jeveasset.data.api.my.MyContractItem;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
+import net.nikr.eve.jeveasset.io.evekit.AbstractEveKitGetter.EveKitPagesHandler;
 import net.nikr.eve.jeveasset.io.shared.RawConverter;
 
 
-public class EveKitContractItemsGetter extends AbstractEveKitListGetter<ContractItem> {
+public class EveKitContractItemsGetter extends AbstractEveKitGetter implements EveKitPagesHandler<ContractItem> {
 
-	private final Map<EveKitOwner, Set<Integer>> ids = new HashMap<EveKitOwner, Set<Integer>>();
-	private final Map<EveKitOwner, Map<Integer, MyContract>> contracts = new HashMap<EveKitOwner, Map<Integer, MyContract>>();
+	private final Map<Integer, MyContract> contracts = new HashMap<Integer, MyContract>();
 
-	@Override
-	public void load(UpdateTask updateTask, List<EveKitOwner> owners) {
-		ids.clear();
-		super.load(updateTask, owners);
+	public EveKitContractItemsGetter(UpdateTask updateTask, EveKitOwner owner, Long at) {
+		super(updateTask, owner, false, Settings.getNow(), TaskType.CONTRACT_ITEMS, false, at);
+	}
+
+	public EveKitContractItemsGetter(UpdateTask updateTask, EveKitOwner owner) {
+		super(updateTask, owner, false, Settings.getNow(), TaskType.CONTRACT_ITEMS, false, null);
 	}
 
 	@Override
-	protected List<ContractItem> get(EveKitOwner owner, String at, Long contid) throws ApiException {
-		//Get all items matching contractID
-		return getCommonApi().getContractItems(owner.getAccessKey(), owner.getAccessCred(), null, contid, getMaxResults(), getReverse(),
-				valuesFilter(getIDs(owner)), null, null, null, null, null, null);
-	}
-
-	@Override
-	protected void set(EveKitOwner owner, List<ContractItem> data) throws ApiException {
+	protected void get(ApiClient apiClient, Long at, boolean first) throws ApiException {
+		List<ContractItem> data = updatePages(this);
+		if (data == null) {
+			return;
+		}
 		Map<Long, List<ContractItem>> map = new HashMap<Long, List<ContractItem>>();
 		for (ContractItem contractItem : data) {
 			List<ContractItem> list = map.get(contractItem.getContractID());
@@ -69,47 +68,32 @@ public class EveKitContractItemsGetter extends AbstractEveKitListGetter<Contract
 			list.add(contractItem);
 		}
 		for (Map.Entry<Long, List<ContractItem>> entry : map.entrySet()) {
-			owner.setContracts(EveKitConverter.toContractItems(contracts.get(owner).get(RawConverter.toInteger(entry.getKey())), entry.getValue(), owner));
+			owner.setContracts(EveKitConverter.toContractItems(contracts.get(RawConverter.toInteger(entry.getKey())), entry.getValue(), owner));
 		}
-
+	}
+	
+	@Override
+	public List<ContractItem> get(ApiClient apiClient, String at, Long contid, Integer maxResults) throws ApiException {
+		//Get all items matching contractID
+		return getCommonApi(apiClient).getContractItems(owner.getAccessKey(), owner.getAccessCred(), null, contid, maxResults, false,
+				valuesFilter(getIDs(owner)), null, null, null, null, null, null);
 	}
 
 	protected Set<Integer> getIDs(EveKitOwner owner) throws ApiException {
-		Set<Integer> set = ids.get(owner);
-		if (set == null) {
-			set = new HashSet<Integer>();
-			Map<Integer, MyContract> map = new HashMap<Integer, MyContract>();
-			ids.put(owner, set);
-			contracts.put(owner, map);
-			for (Map.Entry<MyContract, List<MyContractItem>> entry : owner.getContracts().entrySet()) {
-				if (!entry.getKey().isCourier() //Do not get courier contracts
-						&& entry.getValue().isEmpty()) { //Only get items once (Contract items can not be changed)
-					set.add(entry.getKey().getContractID());
-					map.put(entry.getKey().getContractID(), entry.getKey());
-				}
+		Set<Integer> ids = new HashSet<Integer>();
+		for (Map.Entry<MyContract, List<MyContractItem>> entry : owner.getContracts().entrySet()) {
+			if (!entry.getKey().isCourier() //Do not get courier contracts
+					&& entry.getValue().isEmpty()) { //Only get items once (Contract items can not be changed)
+				ids.add(entry.getKey().getContractID());
+				contracts.put(entry.getKey().getContractID(), entry.getKey());
 			}
 		}
-		return set;
+		return ids;
 	}
 
 	@Override
-	protected Long getLifeStart(ContractItem obj) {
+	public Long getLifeStart(ContractItem obj) {
 		return obj.getLifeStart();
-	}
-
-	@Override
-	protected String getTaskName() {
-		return "Contract Items";
-	}
-
-	@Override
-	protected int getProgressStart() {
-		return 30;
-	}
-
-	@Override
-	protected int getProgressEnd() {
-		return 90;
 	}
 
 	@Override
@@ -118,30 +102,19 @@ public class EveKitContractItemsGetter extends AbstractEveKitListGetter<Contract
 	}
 
 	@Override
-	protected void setNextUpdate(EveKitOwner owner, Date date) {
+	protected void setNextUpdate(Date date) {
 	} //Only relevent for the Contracts API (Not contract items)
 
 	@Override
-	protected Date getNextUpdate(EveKitOwner owner) {
-		return Settings.getNow();
-	} //Only relevent for the Contracts API (Not contract items)
-
-	@Override
-	protected ApiClient getApiClient() {
-		return getCommonApi().getApiClient();
-	}
-
-	@Override
-	protected long getCID(ContractItem obj) {
+	public long getCID(ContractItem obj) {
 		return obj.getCid();
 	}
 
 	@Override
-	protected void saveCID(EveKitOwner owner, Long cid) {
-	} //Always get all data
+	public void saveCID(Long cid) { } //Always get all data
 
 	@Override
-	protected Long loadCID(EveKitOwner owner) {
+	public Long loadCID() {
 		return null; //Always get all data
 	}
 

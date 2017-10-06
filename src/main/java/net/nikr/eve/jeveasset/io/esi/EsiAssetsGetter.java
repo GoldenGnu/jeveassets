@@ -25,32 +25,32 @@ import java.util.List;
 import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
+import net.troja.eve.esi.ApiClient;
 import net.troja.eve.esi.ApiException;
 import net.troja.eve.esi.model.CharacterAssetsResponse;
 import net.troja.eve.esi.model.CorporationAssetsResponse;
 
 public class EsiAssetsGetter extends AbstractEsiGetter {
 
-	@Override
-	public void load(UpdateTask updateTask, List<EsiOwner> owners) {
-		super.load(updateTask, owners);
+	public EsiAssetsGetter(UpdateTask updateTask, EsiOwner owner) {
+		super(updateTask, owner, false, owner.getAssetNextUpdate(), TaskType.ASSETS);
 	}
 
 	@Override
-	protected void get(EsiOwner owner) throws ApiException {
+	protected void get(ApiClient apiClient) throws ApiException {
 		if (owner.isCorporation()) {
-			List<CorporationAssetsResponse> responses = updatePages(owner, new EsiPagesHandler<CorporationAssetsResponse>() {
+			List<CorporationAssetsResponse> responses = updatePages(new EsiPagesHandler<CorporationAssetsResponse>() {
 				@Override
-				public List<CorporationAssetsResponse> get(EsiOwner owner, Integer page) throws ApiException {
-					return getAssetsApiAuth().getCorporationsCorporationIdAssets((int) owner.getOwnerID(), DATASOURCE, page, null, null, null);
+				public List<CorporationAssetsResponse> get(ApiClient apiClient, Integer page) throws ApiException {
+					return getAssetsApiAuth(apiClient).getCorporationsCorporationIdAssets((int) owner.getOwnerID(), DATASOURCE, page, null, null, null);
 				}
 			});
 			owner.setAssets(EsiConverter.toAssetsCorporation(responses, owner));
 		} else {
-			List<CharacterAssetsResponse> responses = updatePages(owner, new EsiPagesHandler<CharacterAssetsResponse>() {
+			List<CharacterAssetsResponse> responses = updatePages(new EsiPagesHandler<CharacterAssetsResponse>() {
 				@Override
-				public List<CharacterAssetsResponse> get(EsiOwner owner, Integer page) throws ApiException {
-					return getAssetsApiAuth().getCharactersCharacterIdAssets((int) owner.getOwnerID(), DATASOURCE, page, null, null, null);
+				public List<CharacterAssetsResponse> get(ApiClient apiClient, Integer page) throws ApiException {
+					return getAssetsApiAuth(apiClient).getCharactersCharacterIdAssets((int) owner.getOwnerID(), DATASOURCE, page, null, null, null);
 				}
 			});
 			owner.setAssets(EsiConverter.toAssets(responses, owner));
@@ -58,42 +58,22 @@ public class EsiAssetsGetter extends AbstractEsiGetter {
 	}
 
 	@Override
-	protected int getProgressStart() {
-		return 0;
-	}
-
-	@Override
-	protected int getProgressEnd() {
-		return 80;
-	}
-
-	@Override
-	protected void setNextUpdate(EsiOwner owner, Date date) {
+	protected void setNextUpdate(Date date) {
 		owner.setAssetNextUpdate(date);
 		owner.setAssetLastUpdate(Settings.getNow());
 	}
 
 	@Override
-	protected Date getNextUpdate(EsiOwner owner) {
-		return owner.getAssetNextUpdate();
-	}
-
-	@Override
-	protected boolean inScope(EsiOwner owner) {
+	protected boolean inScope() {
 		return owner.isAssetList();
 	}
 
 	@Override
-	protected boolean enabled(EsiOwner owner) {
+	protected boolean enabled() {
 		if (owner.isCorporation()) {
 			return EsiScopes.CORPORATION_ASSETS.isEnabled();
 		} else {
 			return EsiScopes.CHARACTER_ASSETS.isEnabled();
 		}
-	}
-
-	@Override
-	protected String getTaskName() {
-		return "Assets";
 	}
 }

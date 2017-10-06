@@ -25,55 +25,45 @@ import java.util.List;
 import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
+import net.troja.eve.esi.ApiClient;
 import net.troja.eve.esi.ApiException;
 import net.troja.eve.esi.model.CorporationWalletsResponse;
 
 
 public class EsiAccountBalanceGetter extends AbstractEsiGetter {
 
-	@Override
-	public void load(UpdateTask updateTask, List<EsiOwner> owners) {
-		super.load(updateTask, owners);
+	public EsiAccountBalanceGetter(UpdateTask updateTask, EsiOwner owner) {
+		super(updateTask, owner, false, owner.getBalanceNextUpdate(), TaskType.ACCOUNT_BALANCE);
 	}
-
+	
 	@Override
-	protected void get(EsiOwner owner) throws ApiException {
+	protected void get(ApiClient apiClient) throws ApiException {
 		if (owner.isCorporation()) {
-			List<CorporationWalletsResponse> responses = getWalletApiAuth().getCorporationsCorporationIdWallets((int)owner.getOwnerID(), DATASOURCE, null, null, null);
+			List<CorporationWalletsResponse> responses = getWalletApiAuth(apiClient).getCorporationsCorporationIdWallets((int)owner.getOwnerID(), DATASOURCE, null, null, null);
 			owner.setAccountBalances(EsiConverter.toAccountBalanceCorporation(responses, owner));
 		} else {
-			Float response = getWalletApiAuth().getCharactersCharacterIdWallet((int) owner.getOwnerID(), DATASOURCE, null, null, null);
+			Float response = getWalletApiAuth(apiClient).getCharactersCharacterIdWallet((int) owner.getOwnerID(), DATASOURCE, null, null, null);
 			owner.setAccountBalances(EsiConverter.toAccountBalance(response, owner, 1000));
 		}
 	}
 
 	@Override
-	protected void setNextUpdate(EsiOwner owner, Date date) {
+	protected void setNextUpdate(Date date) {
 		owner.setBalanceNextUpdate(date);
 		owner.setBalanceLastUpdate(Settings.getNow());
 	}
 
 	@Override
-	protected Date getNextUpdate(EsiOwner owner) {
-		return owner.getBalanceNextUpdate();
-	}
-
-	@Override
-	protected boolean inScope(EsiOwner owner) {
+	protected boolean inScope() {
 		return owner.isAccountBalance();
 	}
 
 	@Override
-	protected boolean enabled(EsiOwner owner) {
+	protected boolean enabled() {
 		if (owner.isCorporation()) {
 			return EsiScopes.CORPORATION_WALLET.isEnabled();
 		} else {
 			return EsiScopes.CHARACTER_WALLET.isEnabled();
 		}
-	}
-
-	@Override
-	protected String getTaskName() {
-		return "Account Balance";
 	}
 }

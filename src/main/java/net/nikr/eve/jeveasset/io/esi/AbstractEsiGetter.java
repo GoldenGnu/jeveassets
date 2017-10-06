@@ -21,17 +21,18 @@
 package net.nikr.eve.jeveasset.io.esi;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
-import net.nikr.eve.jeveasset.Program;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
-import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
+import net.nikr.eve.jeveasset.io.shared.AbstractGetter;
+import net.nikr.eve.jeveasset.io.shared.ThreadWoker;
 import net.troja.eve.esi.ApiClient;
 import net.troja.eve.esi.ApiException;
 import net.troja.eve.esi.api.AssetsApi;
@@ -49,157 +50,236 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
-public abstract class AbstractEsiGetter {
+public abstract class AbstractEsiGetter extends AbstractGetter<EsiOwner, ApiClient, ApiException> {
 
 	private static final Logger LOG = LoggerFactory.getLogger(AbstractEsiGetter.class);
 
-	protected final String DATASOURCE = "tranquility";
-	protected final int UNIVERSE_BATCH_SIZE = 100;
-	protected final int LOCATIONS_BATCH_SIZE = 100;
-	private final int RETRIES = 1;
-	private String error = null;
-	private final ApiClient clientAuth;
-	private final AssetsApi assetsApiAuth;
-	private final WalletApi walletApiAuth;
-	private final UniverseApi universeApiAuth;
-	private final CharacterApi characterApiAuth;
-	private final IndustryApi industryApiAuth;
-	private final MarketApi marketApiAuth;
-	private final ContractsApi contractsApiAuth;
-	private final CorporationApi corporationApiAuth;
-	private final SsoApi ssoApiAuth;
-	private final ApiClient clientOpen;
-	private final UniverseApi universeApiOpen;
-	private final SovereigntyApi sovereigntyApiOpen;
-	private final CharacterApi characterApiOpen;
-	private final CorporationApi corporationApiOpen;
+	protected static final String DATASOURCE = "tranquility";
+	protected static final int UNIVERSE_BATCH_SIZE = 100;
+	protected static final int LOCATIONS_BATCH_SIZE = 100;
+	private static final int RETRIES = 1;
+	private static Integer errorLimit = null;
+	private static Date errorReset = new Date();
 
-	protected AbstractEsiGetter() {
-		//Auth
-		clientAuth = new ApiClient();
-		assetsApiAuth = new AssetsApi(clientAuth);
-		walletApiAuth = new WalletApi(clientAuth);
-		universeApiAuth = new UniverseApi(clientAuth);
-		characterApiAuth = new CharacterApi(clientAuth);
-		industryApiAuth = new IndustryApi(clientAuth);
-		marketApiAuth = new MarketApi(clientAuth);
-		contractsApiAuth = new ContractsApi(clientAuth);
-		corporationApiAuth = new CorporationApi(clientAuth);
-		ssoApiAuth = new SsoApi(clientAuth);
-		//Open
-		clientOpen = new ApiClient();
-		universeApiOpen = new UniverseApi(clientOpen);
-		sovereigntyApiOpen = new SovereigntyApi(clientOpen);
-		characterApiOpen = new CharacterApi(clientOpen);
-		corporationApiOpen = new CorporationApi(clientOpen);
+	public AbstractEsiGetter(UpdateTask updateTask, EsiOwner owner, boolean forceUpdate, Date nextUpdate, TaskType taskType) {
+		super(updateTask, owner, forceUpdate, nextUpdate, taskType, "ESI");
 	}
 
-	protected void load(UpdateTask updateTask) {
-		LOG.info("ESI: " + getTaskName() + " updating:");
-		loadAPI(updateTask, null, false);
+	@Override
+	public Void call() throws Exception {
+		updateApi(new EsiUpdater(), 0);
+		return null;
 	}
 
-	protected void load(EsiOwner owner) {
-		LOG.info("ESI: " + getTaskName() + " updating:");
-		loadAPI(null, owner, true);
-	}
-
-	protected void load(UpdateTask updateTask, List<EsiOwner> owners) {
-		LOG.info("ESI: " + getTaskName() + " updating:");
-		int progress = 0;
-		if (updateTask != null && getProgressStart() == 0) {
-			updateTask.resetTaskProgress();
+	@Override
+	public <R> R updateApi(Updater<R, ApiClient, ApiException> updater, int retries) {
+		//Silently ignore disabled endpoints
+		if (!enabled()) {
+			logInfo(updater.getStatus(), getTaskName() + " endpoint disabled");
+			return null;
 		}
-		for (EsiOwner owner : owners) {
-			if (owner.isShowOwner()) { //Ignore not shown owners
-				loadAPI(updateTask, owner, false);
-			}
-			if (updateTask != null) {
-				if (updateTask.isCancelled()) {
-					updateTask.addError(owner.getOwnerName(), "ESI: Cancelled");
-				}
-				progress++;
-				updateTask.setTaskProgress(owners.size(), progress, getProgressStart(), getProgressEnd());
+
+		if (!canUpdate(updater.getStatus())) {
+			return null;
+		}
+
+		ApiClient client = new ApiClient(); //Public
+		if (owner != null) { //Auth
+			OAuth auth = (OAuth) client.getAuthentication("evesso");
+			auth.setRefreshToken(owner.getRefreshToken());
+			auth.setClientId(owner.getCallbackURL().getA());
+			auth.setClientSecret(owner.getCallbackURL().getB());
+		}
+		updateErrorReset(); //Update timeframe as needed
+		if (getErrorLimit() != null && getErrorLimit() < 10) {
+			try {
+				Thread.sleep((getErrorReset().getTime() + 1000) - System.currentTimeMillis()); //Wait until the error window is reset
+			} catch (InterruptedException ex) {
+				//No problem
 			}
 		}
-	}
-
-	protected int getProgressStart() {
-		return 0;
-	}
-
-	protected int getProgressEnd() {
-		return 100;
-	}
-
-	private void loadAPI(UpdateTask updateTask, EsiOwner owner, boolean forceUpdate) {
-		loadAPI(updateTask, owner, forceUpdate, 0);
-	}
-
-	private void loadAPI(UpdateTask updateTask, EsiOwner owner, boolean forceUpdate, int retries) {
-		error = null;
-		ApiClient client = client(owner);
 		try {
-			//Siliently ignore disabled scopes
-			if (!enabled(owner)) {
-				return;
-			}
-			//Check if the Access Mask include this API
-			if (owner != null && !inScope(owner)) {
-				addError("	ESI: " + getTaskName() + " failed to update for: " + getOwnerName(owner) + " (NOT ENOUGH ACCESS PRIVILEGES)");
-				if (updateTask != null) {
-					updateTask.addError(getOwnerName(owner), "ESI: Not enough access privileges.\r\n(Fix: Add " + getTaskName() + " to the API Key)");
-				}
-				return;
-			}
-			//Check API cache time
-			if (!forceUpdate && owner != null && !Settings.get().isUpdatable(getNextUpdate(owner), false)) {
-				addError("	ESI: " + getTaskName() + " failed to update for: " + getOwnerName(owner) + " (NOT ALLOWED YET)");
-				if (updateTask != null) {
-					updateTask.addError(getOwnerName(owner), "ESI: Not allowed yet.\r\n(Fix: Just wait a bit)");
-				}
-				return;
-			}
-			get(owner);
-			LOG.info("	ESI: " + getTaskName() + " updated for " + getOwnerName(owner));
-			String expiresHeader = getHeader(client, "expires");
+			R t = updater.update(client);
+			String expiresHeader = getHeader(client.getResponseHeaders(), "expires");
 			if (expiresHeader != null) {
-				setNextUpdate(owner, Formater.parseExpireDate(expiresHeader));
+				setNextUpdateSafe(Formater.parseExpireDate(expiresHeader));
 			}
+			handleErrorLimit(client.getResponseHeaders());
+			logInfo(updater.getStatus(), "Updated");
+			//LOG.info("	ESI: " + getTaskName() + " updated for " + getOwnerName(owner) + " (" + updater.getStatus() + ")");
+			return t;
 		} catch (ApiException ex) {
-			handleErrorLimit(client);
 			if (ex.getCode() >= 500 && ex.getCode() < 600 //CCP error, Lets try again in a sec
 					&& ex.getCode() != 503 //Don't retry when it may be downtime
+					&& ex.getCode() != 502 //Don't retry when it may be downtime
 					&& retries < RETRIES) { //Retries
 				retries++;
-				LOG.info("	Retrying: "  + retries + " of " + RETRIES);
 				try {
 					Thread.sleep(1000); //Wait a sec
 				} catch (InterruptedException ex1) {
 					//No problem
 				}
-				loadAPI(updateTask, owner, forceUpdate, retries);
+				logInfo(updater.getStatus(), "Retrying "  + retries + " of " + RETRIES + ":");
+				return updateApi(updater, retries);
 			} else {
-				addError("	ESI: " + getTaskName() + " failed to update for: " + getOwnerName(owner) + " (" + ex.getCode() + ")", ex);
-				if (updateTask != null) {
-					updateTask.addError(getOwnerName(owner), "ESI: Error " + ex.getCode());
-				}
+				addError(updater.getStatus(), ex.getCode(), "Error Code: " + ex.getCode(), ex);
 			}
 		} catch (Throwable ex) {
-			addError("	ESI: " + ex.getMessage(), ex);
-			if (updateTask != null) {
-				updateTask.addError(getOwnerName(owner), "ESI: Unknown Error: " + ex.getMessage());
-			}
+			addError(updater.getStatus(), ex.getMessage(), "Unknown Error: " + ex.getMessage(), ex);
+		}
+		return null;
+	}
+
+	@Override
+	protected boolean invalidAccessPrivileges() {
+		return owner != null && !inScope();
+	}
+
+	protected abstract void get(ApiClient apiClient) throws ApiException;
+
+	protected abstract boolean inScope();
+
+	protected abstract boolean enabled();
+
+	private void handleErrorLimit(Map<String, List<String>> responseHeaders) {
+		if (responseHeaders != null) {
+			setErrorLimit(getHeaderInteger(responseHeaders, "x-esi-error-limit-remain"));
+			setErrorReset(getHeaderInteger(responseHeaders, "x-esi-error-limit-reset"));
 		}
 	}
 
-	protected <T> List<T> updateIDs(EsiOwner owner, Set<Long> existing, EsiListHandler<T> handler) throws ApiException {
-		List<T> list = new ArrayList<T>();
+	private synchronized static Integer getErrorLimit() {
+		return errorLimit;
+	}
+
+	private synchronized static void setErrorLimit(Integer errorLimit) {
+		AbstractEsiGetter.errorLimit = errorLimit;
+	}
+
+	private synchronized static Date getErrorReset() {
+		return errorReset;
+	}
+
+	private synchronized static void updateErrorReset() {
+		if (errorLimit != null && errorLimit < 100) {
+			LOG.warn("Error limit: " + errorLimit + " (resetting in " + errorReset + "sec");
+		}
+		
+		if (new Date().after(AbstractEsiGetter.errorReset)) {
+			AbstractEsiGetter.errorReset = new Date(); //New timeframe
+			AbstractEsiGetter.errorLimit = null;  //No errors in this timeframe (yet)
+		}
+	}
+
+	private synchronized static void setErrorReset(Integer errorReset) {
+		if (errorLimit != null) {
+			AbstractEsiGetter.errorReset = new Date(System.currentTimeMillis() + (errorReset * 1000));
+		}
+	}
+
+	protected SsoApi getSsoApiAuth(ApiClient apiClient) {
+		return new SsoApi(apiClient);
+	}
+
+	public MarketApi getMarketApiAuth(ApiClient apiClient) {
+		return new MarketApi(apiClient);
+	}
+
+	public IndustryApi getIndustryApiAuth(ApiClient apiClient) {
+		return new IndustryApi(apiClient);
+	}
+
+	protected CharacterApi getCharacterApiAuth(ApiClient apiClient) {
+		return new CharacterApi(apiClient);
+	}
+
+	protected AssetsApi getAssetsApiAuth(ApiClient apiClient) {
+		return new AssetsApi(apiClient);
+	}
+
+	protected WalletApi getWalletApiAuth(ApiClient apiClient) {
+		return new WalletApi(apiClient);
+	}
+
+	protected UniverseApi getUniverseApiAuth(ApiClient apiClient) {
+		return new UniverseApi(apiClient);
+	}
+
+	public ContractsApi getContractsApiAuth(ApiClient apiClient) {
+		return new ContractsApi(apiClient);
+	}
+
+	public CorporationApi getCorporationApiAuth(ApiClient apiClient) {
+		return new CorporationApi(apiClient);
+	}
+
+	public UniverseApi getUniverseApiOpen(ApiClient apiClient) {
+		return new UniverseApi();
+	}
+
+	public CharacterApi getCharacterApiOpen(ApiClient apiClient) {
+		return new CharacterApi();
+	}
+
+	public CorporationApi getCorporationApiOpen(ApiClient apiClient) {
+		return new CorporationApi();
+	}
+
+	public SovereigntyApi getSovereigntyApiOpen(ApiClient apiClient) {
+		return new SovereigntyApi();
+	}
+
+	protected <K> List<K> updatePages(EsiPagesHandler<K> handler) throws ApiException {
+		List<K> values = new ArrayList<K>();
+		EsiPageUpdater<K> pageUpdater = new EsiPageUpdater<K>(handler, 1, "1 of ?");
+		values.addAll(updateApi(pageUpdater, 0));
+		Integer pages = getHeaderInteger(pageUpdater.getClient().getResponseHeaders(), "x-pages"); //Get pages header
+		int count = 2;
+		if (pages != null && pages > 1) { //More than one page
+			List<EsiPageUpdater<K>> updaters = new ArrayList<EsiPageUpdater<K>>();
+			for (int i = 2; i <= pages; i++) { //Get the remaining pages (we already got page 1 so we start at page 2
+				updaters.add(new EsiPageUpdater<K>(handler, i, count + " of " + pages));
+				count++;
+			}
+			LOG.info("Starting " + updaters.size() + " pages threads");
+			List<Future<List<K>>> futures = ThreadWoker.startReturn(updaters);
+			for (Future<List<K>> future : futures) {
+				if (future.isDone()) {
+					try {
+						List<K> returnValue = future.get();
+						if (returnValue != null) {
+							values.addAll(returnValue);
+						}
+						values.addAll(future.get()); //Get data from ESI
+					} catch (InterruptedException ex) {
+						//No problem
+					} catch (ExecutionException ex) {
+						//No problem
+					}
+				}
+			}
+		}
+		return values;
+	}
+
+	public interface EsiPagesHandler<K> {
+		public List<K> get(ApiClient apiClient, Integer page) throws ApiException;
+	}
+
+	public <K> List<K> updateIDs(Set<Long> existing, IDsHandler<K> handler) throws ApiException {
+		List<K> list = new ArrayList<K>();
 		Long fromID = null;
 		boolean run = true;
+		int count = 0;
 		while (run) {
-			List<T> result = handler.get(owner, fromID); //Get data from ESI
-			if (result.isEmpty()) { //Nothing returned: we're done
+			count++;
+			List<K> result;
+			try {
+				result = updateApi(new EsiIdUpdater<K>(handler, fromID, count + " of ?"), 0);
+			} catch (Exception ex){
+				break;
+			}
+			if (result == null || result.isEmpty()) { //Nothing returned: we're done
 				break; //Stop updating
 			}
 
@@ -211,7 +291,7 @@ public abstract class AbstractEsiGetter {
 			}
 			fromID = lastID; //Set ID for next update
 
-			for (T t : result) { //Search for existing data
+			for (K t : result) { //Search for existing data
 				if (existing.contains(handler.getID(t))) { //Found existing data
 					run = false; //Stop updating
 					break; //no need to continue
@@ -221,189 +301,79 @@ public abstract class AbstractEsiGetter {
 		return list;
 	}
 
-	protected interface EsiListHandler<T> {
-		public List<T> get(EsiOwner owner, Long fromID) throws ApiException;
-		public Long getID(T response);
+	public interface IDsHandler<K> {
+		public List<K> get(ApiClient client, Long fromID) throws ApiException;
+		public Long getID(K response);
 	}
 
-	protected <T> List<T> updatePages(EsiOwner owner, EsiPagesHandler<T> handler) throws ApiException {
-		List<T> list = new ArrayList<T>();
-		list.addAll(handler.get(owner, 1)); //Get data from ESI (to get pages header)
-		ApiClient client = client(owner); //Get ApiClient
-		Integer pages = getHeaderInteger(client, "x-pages"); //Get pages header
-		if (pages != null && pages > 1) { //More than one page
-			LOG.info("	ESI: " + getTaskName() + " updated for " + getOwnerName(owner) + "(1 of " + pages + ")");
-			for (int i = 2; i <= pages; i++) { //Get the remaining pages (we already got page 1 so we start at page 2
-				list.addAll(handler.get(owner, i)); //Get data from ESI
-				LOG.info("	ESI: " + getTaskName() + " updated for " + getOwnerName(owner) + "("+ i + " of " + pages + ")");
-			}
+	public class EsiPageUpdater<T> implements Callable<List<T>>, Updater<List<T>, ApiClient, ApiException> {
+
+		private final EsiPagesHandler<T> handler;
+		private final int page;
+		private final String status;
+		private ApiClient client;
+
+		public EsiPageUpdater(EsiPagesHandler<T> handler, int page, String status) {
+			this.handler = handler;
+			this.page = page;
+			this.status = status;
 		}
-		return list;
-	}
 
-	protected interface EsiPagesHandler<T> {
-		public List<T> get(EsiOwner owner, Integer page) throws ApiException;
-	}
+		@Override
+		public List<T> update(ApiClient client) throws ApiException {
+			this.client = client;
+			return handler.get(client, page);
+		}
 
-	protected abstract void get(EsiOwner owner) throws ApiException;
+		@Override
+		public List<T> call() throws Exception {
+			return updateApi(this, 0);
+		}
 
-	protected abstract String getTaskName();
+		public ApiClient getClient() {
+			return client;
+		}
 
-	protected abstract void setNextUpdate(EsiOwner owner, Date date);
-
-	protected abstract Date getNextUpdate(EsiOwner owner);
-
-	protected abstract boolean inScope(EsiOwner owner);
-
-	protected abstract boolean enabled(EsiOwner owner);
-
-	private String getOwnerName(EsiOwner owner) {
-		if (owner != null) {
-			return owner.getOwnerName();
-		} else {
-			return Program.PROGRAM_NAME;
+		@Override
+		public String getStatus() {
+			return status;
 		}
 	}
 
-	private void handleErrorLimit(ApiClient client) {
-		Map<String, List<String>> responseHeaders = client.getResponseHeaders();
-		if (responseHeaders != null) {
-			Integer errorLimit = getHeaderInteger(client, "x-esi-error-limit-remain");
-			Integer errorReset = getHeaderInteger(client, "x-esi-error-limit-reset");
-			if (errorLimit != null && errorReset != null) {
-				if (errorLimit < 10) {
-					try {
-						Thread.sleep((errorReset + 1) * 1000); //Wait until the error window is reset
-					} catch (InterruptedException ex) {
-						//No problem
-					}
-				}
-			}
+	public class EsiIdUpdater<K> implements Updater<List<K>, ApiClient, ApiException> {
+
+		private final IDsHandler<K> handler;
+		private final Long fromID;
+		private final String status;
+
+		public EsiIdUpdater(IDsHandler<K> handler, Long fromID, String status) {
+			this.handler = handler;
+			this.fromID = fromID;
+			this.status = status;
+		}
+
+		@Override
+		public List<K> update(ApiClient client) throws ApiException {
+			return handler.get(client, fromID);
+		}
+
+		@Override
+		public String getStatus() {
+			return status;
 		}
 	}
 
-	private Integer getHeaderInteger(ApiClient client, String headerName) {
-		String errorResetHeader = getHeader(client, headerName);
-		if (errorResetHeader != null) {
-			try {
-				return Integer.valueOf(errorResetHeader);
-			} catch (NumberFormatException ex) {
-				//No problem
-			}
+	public class EsiUpdater implements Updater<Void, ApiClient, ApiException> {
+
+		@Override
+		public Void update(ApiClient client) throws ApiException {
+			get(client);
+			return null;
 		}
-		return null;
-	}
 
-	private String getHeader(ApiClient client, String headerName) {
-		Map<String, List<String>> responseHeaders = client.getResponseHeaders();
-		if (responseHeaders != null) {
-			Map<String, List<String>> caseInsensitiveHeaders = new TreeMap<String, List<String>>(String.CASE_INSENSITIVE_ORDER);
-			caseInsensitiveHeaders.putAll(responseHeaders);
-			List<String> headers = caseInsensitiveHeaders.get(headerName.toLowerCase());
-			if (headers != null && !headers.isEmpty()) {
-				return headers.get(0);
-			}
+		@Override
+		public String getStatus() {
+			return "Completed";
 		}
-		return null;
-	}
-
-	private ApiClient client(EsiOwner owner) {
-		if (owner == null) {
-			return clientOpen;
-		}
-		OAuth auth = (OAuth) clientAuth.getAuthentication("evesso");
-		auth.setRefreshToken(owner.getRefreshToken());
-		auth.setClientId(owner.getCallbackURL().getA());
-		auth.setClientSecret(owner.getCallbackURL().getB());
-		return clientAuth;
-	}
-
-	protected <T> List<List<T>> splitList(Collection<T> list, final int L) {
-		return splitList(new ArrayList<T>(list), L);
-	}
-
-	private <T> List<List<T>> splitList(List<T> list, final int L) {
-		List<List<T>> parts = new ArrayList<List<T>>();
-		final int N = list.size();
-		for (int i = 0; i < N; i += L) {
-			parts.add(new ArrayList<T>(
-					list.subList(i, Math.min(N, i + L)))
-			);
-		}
-		return parts;
-	}
-
-	protected boolean oneByOneNameRange(long id) {
-		return (id >= 100000000L && id <= 2099999999L) || (id >= 2100000000L && id <= 2147483647L);
-	}
-
-	protected SsoApi getSsoApiAuth() {
-		return ssoApiAuth;
-	}
-
-	public MarketApi getMarketApiAuth() {
-		return marketApiAuth;
-	}
-
-	public IndustryApi getIndustryApiAuth() {
-		return industryApiAuth;
-	}
-
-	protected CharacterApi getCharacterApiAuth() {
-		return characterApiAuth;
-	}
-
-	protected AssetsApi getAssetsApiAuth() {
-		return assetsApiAuth;
-	}
-
-	protected WalletApi getWalletApiAuth() {
-		return walletApiAuth;
-	}
-
-	protected UniverseApi getUniverseApiAuth() {
-		return universeApiAuth;
-	}
-
-	public ContractsApi getContractsApiAuth() {
-		return contractsApiAuth;
-	}
-
-	public CorporationApi getCorporationApiAuth() {
-		return corporationApiAuth;
-	}
-
-	public UniverseApi getUniverseApiOpen() {
-		return universeApiOpen;
-	}
-
-	public CharacterApi getCharacterApiOpen() {
-		return characterApiOpen;
-	}
-
-	public CorporationApi getCorporationApiOpen() {
-		return corporationApiOpen;
-	}
-
-	public SovereigntyApi getSovereigntyApiOpen() {
-		return sovereigntyApiOpen;
-	}
-
-	protected final void addError(String error, Throwable ex) {
-		this.error = error;
-		LOG.error(error, ex);
-	}
-
-	protected final void addError(String error) {
-		this.error = error;
-		LOG.error(error);
-	}
-
-	public final boolean hasError() {
-		return error != null;
-	}
-
-	public final String getError() {
-		return error;
 	}
 }

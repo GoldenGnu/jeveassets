@@ -23,72 +23,67 @@ package net.nikr.eve.jeveasset.io.evekit;
 import enterprises.orbital.evekit.client.invoker.ApiClient;
 import enterprises.orbital.evekit.client.invoker.ApiException;
 import enterprises.orbital.evekit.client.model.MarketOrder;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import net.nikr.eve.jeveasset.data.api.accounts.EveKitAccessMask;
 import net.nikr.eve.jeveasset.data.api.accounts.EveKitOwner;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
+import net.nikr.eve.jeveasset.io.evekit.AbstractEveKitGetter.EveKitPagesHandler;
 
 
-public class EveKitMarketOrdersGetter extends AbstractEveKitListGetter<MarketOrder> {
+public class EveKitMarketOrdersGetter extends AbstractEveKitGetter implements EveKitPagesHandler<MarketOrder> {
 
 	private enum Runs {
 		MONTHS, ALL
 	}
 
-	private Runs run;
+	private final Runs run;
 
-	@Override
-	public void load(UpdateTask updateTask, List<EveKitOwner> owners) {
+	public EveKitMarketOrdersGetter(UpdateTask updateTask, EveKitOwner owner, boolean first) {
+		super(updateTask, owner, false, owner.getMarketOrdersNextUpdate(), TaskType.MARKET_ORDERS, first, null);
+		run = Runs.ALL;
+	}
+	public EveKitMarketOrdersGetter(UpdateTask updateTask, EveKitOwner owner, Long at) {
+		super(updateTask, owner, false, owner.getMarketOrdersNextUpdate(), TaskType.MARKET_ORDERS, false, at);
+		run = Runs.ALL;
+	}
+	public EveKitMarketOrdersGetter(UpdateTask updateTask, EveKitOwner owner) {
+		super(updateTask, owner, false, owner.getMarketOrdersNextUpdate(), TaskType.MARKET_ORDERS, false, null);
 		run = Runs.MONTHS;
-		super.load(updateTask, owners);
 	}
 
 	@Override
-	public void load(UpdateTask updateTask, List<EveKitOwner> owners, boolean first) {
-		run = Runs.ALL;
-		super.load(updateTask, owners, first);
-	}
-
-	@Override
-	public void load(UpdateTask updateTask, List<EveKitOwner> owners, Long at) {
-		run = Runs.ALL;
-		super.load(updateTask, owners, at);
-	}
-
-	@Override
-	protected List<MarketOrder> get(EveKitOwner owner, String at, Long contid) throws ApiException {
-		if (run == Runs.MONTHS) { //months
-			return getCommonApi().getMarketOrders(owner.getAccessKey(), owner.getAccessCred(), at, contid, getMaxResults(), getReverse(),
-					null, null, null, null, null, null, dateFilter(Settings.get().getEveKitMarketOrdersHistory()), null, null, null, null, null, null, null, null);
+	protected void get(ApiClient apiClient, Long at, boolean first) throws ApiException {
+		List<MarketOrder> data = updatePages(this);
+		if (data == null) {
+			return;
 		}
-		if (run == Runs.ALL) {
-			return getCommonApi().getMarketOrders(owner.getAccessKey(), owner.getAccessCred(), at, contid, getMaxResults(), getReverse(),
+		owner.setMarketOrders(EveKitConverter.toMarketOrders(data, owner, loadCID() != null));
+	}
+
+	
+
+	@Override
+	public List<MarketOrder> get(ApiClient apiClient, String at, Long contid, Integer maxResults) throws ApiException {
+		switch (run) {
+			case MONTHS:
+				return getCommonApi(apiClient).getMarketOrders(owner.getAccessKey(), owner.getAccessCred(), at, contid, maxResults, false,
+						null, null, null, null, null, null, dateFilter(Settings.get().getEveKitMarketOrdersHistory()), null, null, null, null, null, null, null, null);
+			default: //ALL
+				return getCommonApi(apiClient).getMarketOrders(owner.getAccessKey(), owner.getAccessCred(), at, contid, maxResults, false,
 					null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
 		}
-		return new ArrayList<MarketOrder>();
 	}
 
 	@Override
-	protected void set(EveKitOwner owner, List<MarketOrder> data) throws ApiException {
-		owner.setMarketOrders(EveKitConverter.toMarketOrders(data, owner, loadCID(owner) != null));
-	}
-
-	@Override
-	protected long getCID(MarketOrder obj) {
+	public long getCID(MarketOrder obj) {
 		return obj.getCid();
 	}
 
 	@Override
-	protected Long getLifeStart(MarketOrder obj) {
+	public Long getLifeStart(MarketOrder obj) {
 		return obj.getLifeStart();
-	}
-
-	@Override
-	protected String getTaskName() {
-		return "Market Orders";
 	}
 
 	@Override
@@ -97,27 +92,17 @@ public class EveKitMarketOrdersGetter extends AbstractEveKitListGetter<MarketOrd
 	}
 
 	@Override
-	protected void setNextUpdate(EveKitOwner owner, Date date) {
+	protected void setNextUpdate(Date date) {
 		owner.setMarketOrdersNextUpdate(date);
 	}
 
 	@Override
-	protected Date getNextUpdate(EveKitOwner owner) {
-		return owner.getMarketOrdersNextUpdate();
-	}
-
-	@Override
-	protected ApiClient getApiClient() {
-		return getCommonApi().getApiClient();
-	}
-
-	@Override
-	protected void saveCID(EveKitOwner owner, Long contid) {
+	public void saveCID(Long contid) {
 		owner.setMarketOrdersCID(contid);
 	}
 
 	@Override
-	protected Long loadCID(EveKitOwner owner) {
+	public Long loadCID() {
 		return owner.getMarketOrdersCID();
 	}
 }

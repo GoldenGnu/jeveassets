@@ -24,45 +24,35 @@ import java.util.Date;
 import java.util.List;
 import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
+import net.troja.eve.esi.ApiClient;
 import net.troja.eve.esi.ApiException;
 import net.troja.eve.esi.model.CharacterIndustryJobsResponse;
 
 
 public class EsiIndustryJobsGetter extends AbstractEsiGetter {
 
-	@Override
-	public void load(UpdateTask updateTask, List<EsiOwner> owners) {
-		super.load(updateTask, owners);
+	public EsiIndustryJobsGetter(UpdateTask updateTask, EsiOwner owner) {
+		super(updateTask, owner, false, owner.getIndustryJobsNextUpdate(), TaskType.INDUSTRY_JOBS);
 	}
 
 	@Override
-	protected void get(EsiOwner owner) throws ApiException {
-		List<CharacterIndustryJobsResponse> industryJobs = getIndustryApiAuth().getCharactersCharacterIdIndustryJobs((int) owner.getOwnerID(), DATASOURCE, true, null, null, null);
+	protected void get(ApiClient apiClient) throws ApiException {
+		List<CharacterIndustryJobsResponse> industryJobs = getIndustryApiAuth(apiClient).getCharactersCharacterIdIndustryJobs((int) owner.getOwnerID(), DATASOURCE, true, null, null, null);
 		owner.setIndustryJobs(EsiConverter.toIndustryJobs(industryJobs, owner));
 	}
 
 	@Override
-	protected String getTaskName() {
-		return "Industry Jobs";
-	}
-
-	@Override
-	protected void setNextUpdate(EsiOwner owner, Date date) {
+	protected void setNextUpdate(Date date) {
 		owner.setIndustryJobsNextUpdate(date);
 	}
 
 	@Override
-	protected Date getNextUpdate(EsiOwner owner) {
-		return owner.getIndustryJobsNextUpdate();
-	}
-
-	@Override
-	protected boolean inScope(EsiOwner owner) {
+	protected boolean inScope() {
 		return owner.isIndustryJobs();
 	}
 
 	@Override
-	protected boolean enabled(EsiOwner owner) {
+	protected boolean enabled() {
 		if (owner.isCorporation()) {
 			return false;
 		} else {

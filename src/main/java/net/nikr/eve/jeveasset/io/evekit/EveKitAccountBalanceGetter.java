@@ -28,33 +28,29 @@ import java.util.List;
 import net.nikr.eve.jeveasset.data.api.accounts.EveKitAccessMask;
 import net.nikr.eve.jeveasset.data.api.accounts.EveKitOwner;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
+import net.nikr.eve.jeveasset.io.evekit.AbstractEveKitGetter.EveKitPagesHandler;
 
 
-public class EveKitAccountBalanceGetter extends AbstractEveKitListGetter<AccountBalance> {
+public class EveKitAccountBalanceGetter extends AbstractEveKitGetter implements EveKitPagesHandler<AccountBalance>{
 
-	@Override
-	public void load(UpdateTask updateTask, List<EveKitOwner> owners) {
-		super.load(updateTask, owners);
+	public EveKitAccountBalanceGetter(UpdateTask updateTask, EveKitOwner owner, boolean first) {
+		super(updateTask, owner, false, owner.getBalanceNextUpdate(), TaskType.ACCOUNT_BALANCE, first, null);
+	}
+
+	public EveKitAccountBalanceGetter(UpdateTask updateTask, EveKitOwner owner, Long at) {
+		super(updateTask, owner, false, owner.getBalanceNextUpdate(), TaskType.ACCOUNT_BALANCE, false, at);
+	}
+
+	public EveKitAccountBalanceGetter(UpdateTask updateTask, EveKitOwner owner) {
+		super(updateTask, owner, false, owner.getBalanceNextUpdate(), TaskType.ACCOUNT_BALANCE, false, null);
 	}
 
 	@Override
-	public void load(UpdateTask updateTask, List<EveKitOwner> owners, boolean first) {
-		super.load(updateTask, owners, first);
-	}
-
-	@Override
-	public void load(UpdateTask updateTask, List<EveKitOwner> owners, Long at) {
-		super.load(updateTask, owners, at);
-	}
-
-	@Override
-	protected List<AccountBalance> get(EveKitOwner owner, String at, Long contid) throws ApiException {
-		return getCommonApi().getAccountBalance(owner.getAccessKey(), owner.getAccessCred(), at, contid, getMaxResults(), getReverse(),
-				null, null);
-	}
-
-	@Override
-	protected void set(EveKitOwner owner, List<AccountBalance> data) throws ApiException {
+	protected void get(ApiClient apiClient, Long at, boolean first) throws ApiException {
+		List<AccountBalance> data = updatePages(this);
+		if (data == null) {
+			return;
+		}
 		Date balanceLastUpdate = null;
 		for (AccountBalance balance : data) {
 			if (balanceLastUpdate == null || balanceLastUpdate.getTime() < balance.getLifeStart()) { //Newer
@@ -66,46 +62,36 @@ public class EveKitAccountBalanceGetter extends AbstractEveKitListGetter<Account
 	}
 
 	@Override
-	protected long getCID(AccountBalance obj) {
+	public List<AccountBalance> get(ApiClient apiClient, String at, Long contid, Integer maxResults) throws ApiException {
+		return getCommonApi(apiClient).getAccountBalance(owner.getAccessKey(), owner.getAccessCred(), at, contid, maxResults, false,
+				null, null);
+	}
+
+	@Override
+	public long getCID(AccountBalance obj) {
 		return obj.getCid();
 	}
 
 	@Override
-	protected Long getLifeStart(AccountBalance obj) {
+	public Long getLifeStart(AccountBalance obj) {
 		return obj.getLifeStart();
 	}
 
 	@Override
-	protected String getTaskName() {
-		return "Account Balance";
-	}
-
-	@Override
-	protected long getAccessMask() {
+	public long getAccessMask() {
 		return EveKitAccessMask.ACCOUNT_BALANCE.getAccessMask();
 	}
 
 	@Override
-	protected void setNextUpdate(EveKitOwner owner, Date date) {
+	public void setNextUpdate(Date date) {
 		owner.setBalanceNextUpdate(date);
 	}
 
 	@Override
-	protected Date getNextUpdate(EveKitOwner owner) {
-		return owner.getBalanceNextUpdate();
-	}
+	public void saveCID(Long cid) {	} //Always get all data
 
 	@Override
-	protected ApiClient getApiClient() {
-		return getCommonApi().getApiClient();
-	}
-
-	@Override
-	protected void saveCID(EveKitOwner owner, Long cid) {
-	} //Always get all data
-
-	@Override
-	protected Long loadCID(EveKitOwner owner) {
+	public Long loadCID() {
 		return null; //Always get all data
 	}
 }

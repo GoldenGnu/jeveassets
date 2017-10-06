@@ -27,6 +27,7 @@ import java.util.Set;
 import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
 import net.nikr.eve.jeveasset.data.api.my.MyJournal;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
+import net.troja.eve.esi.ApiClient;
 import net.troja.eve.esi.ApiException;
 import net.troja.eve.esi.model.CharacterWalletJournalResponse;
 import net.troja.eve.esi.model.CorporationWalletJournalResponse;
@@ -34,15 +35,15 @@ import net.troja.eve.esi.model.CorporationWalletJournalResponse;
 
 public class EsiJournalGetter extends AbstractEsiGetter {
 
-	private boolean saveHistory;
+	private final boolean saveHistory;
 
-	public void load(UpdateTask updateTask, List<EsiOwner> owners, boolean saveHistory) {
+	public EsiJournalGetter(UpdateTask updateTask, EsiOwner owner, boolean saveHistory) {
+		super(updateTask, owner, false, owner.getJournalNextUpdate(), TaskType.JOURNAL);
 		this.saveHistory = saveHistory;
-		super.load(updateTask, owners);
 	}
 
 	@Override
-	protected void get(EsiOwner owner) throws ApiException {
+	protected void get(ApiClient apiClient) throws ApiException {
 		Set<Long> existing = new HashSet<Long>();
 		if (saveHistory) {
 			for (MyJournal journal : owner.getJournal()) {
@@ -52,10 +53,10 @@ public class EsiJournalGetter extends AbstractEsiGetter {
 		if (owner.isCorporation()) {
 			for (int i = 1; i < 8; i++) { //Division 1-7
 				final int division = i;
-				List<CorporationWalletJournalResponse> journals = updateIDs(owner, existing, new EsiListHandler<CorporationWalletJournalResponse>() {
+				List<CorporationWalletJournalResponse> journals = updateIDs(existing, new IDsHandler<CorporationWalletJournalResponse>() {
 					@Override
-					public List<CorporationWalletJournalResponse> get(EsiOwner owner, Long fromID) throws ApiException {
-						return getWalletApiAuth().getCorporationsCorporationIdWalletsDivisionJournal((int) owner.getOwnerID(), division, DATASOURCE, fromID, null, null, null);
+					public List<CorporationWalletJournalResponse> get(ApiClient apiClient, Long fromID) throws ApiException {
+						return getWalletApiAuth(apiClient).getCorporationsCorporationIdWalletsDivisionJournal((int) owner.getOwnerID(), division, DATASOURCE, fromID, null, null, null);
 					}
 
 					@Override
@@ -67,10 +68,10 @@ public class EsiJournalGetter extends AbstractEsiGetter {
 				owner.setJournal(EsiConverter.toJournalsCorporation(journals, owner, fixedDivision, saveHistory));
 			}
 		} else {
-			List<CharacterWalletJournalResponse> journals = updateIDs(owner, existing, new EsiListHandler<CharacterWalletJournalResponse>() {
+			List<CharacterWalletJournalResponse> journals = updateIDs(existing, new IDsHandler<CharacterWalletJournalResponse>() {
 				@Override
-				public List<CharacterWalletJournalResponse> get(EsiOwner owner, Long fromID) throws ApiException {
-					return getWalletApiAuth().getCharactersCharacterIdWalletJournal((int) owner.getOwnerID(), DATASOURCE, fromID, null, null, null);
+				public List<CharacterWalletJournalResponse> get(ApiClient apiClient, Long fromID) throws ApiException {
+					return getWalletApiAuth(apiClient).getCharactersCharacterIdWalletJournal((int) owner.getOwnerID(), DATASOURCE, fromID, null, null, null);
 				}
 
 				@Override
@@ -83,27 +84,17 @@ public class EsiJournalGetter extends AbstractEsiGetter {
 	}
 
 	@Override
-	protected String getTaskName() {
-		return "Journals";
-	}
-
-	@Override
-	protected void setNextUpdate(EsiOwner owner, Date date) {
+	protected void setNextUpdate(Date date) {
 		owner.setJournalNextUpdate(date);
 	}
 
 	@Override
-	protected Date getNextUpdate(EsiOwner owner) {
-		return owner.getJournalNextUpdate();
-	}
-
-	@Override
-	protected boolean inScope(EsiOwner owner) {
+	protected boolean inScope() {
 		return owner.isJournal();
 	}
 
 	@Override
-	protected boolean enabled(EsiOwner owner) {
+	protected boolean enabled() {
 		if (owner.isCorporation()) {
 			return EsiScopes.CORPORATION_WALLET.isEnabled();
 		} else {

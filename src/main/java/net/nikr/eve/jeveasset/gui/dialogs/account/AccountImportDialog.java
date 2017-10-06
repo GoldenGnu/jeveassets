@@ -1076,7 +1076,7 @@ public class AccountImportDialog extends JDialogCentered {
 
 	class EveKitTask extends AddTask {
 
-		private final EveKitOwnerGetter eveKitOwnerGetter = new EveKitOwnerGetter();
+		private final EveKitOwnerGetter eveKitOwnerGetter = new EveKitOwnerGetter(eveKitOwner, true);
 
 		@Override
 		public boolean exist() {
@@ -1085,7 +1085,7 @@ public class AccountImportDialog extends JDialogCentered {
 
 		@Override
 		public void load() {
-			eveKitOwnerGetter.load(null, eveKitOwner);
+			eveKitOwnerGetter.run();
 		}
 
 		@Override
@@ -1096,7 +1096,7 @@ public class AccountImportDialog extends JDialogCentered {
 
 	class EsiTask extends AddTask {
 
-		private final EsiOwnerGetter esiOwnerGetter = new EsiOwnerGetter();
+		private final EsiOwnerGetter esiOwnerGetter = new EsiOwnerGetter(esiOwner, true);
 		private AccountAdder accountAdder;
 
 		@Override
@@ -1122,7 +1122,7 @@ public class AccountImportDialog extends JDialogCentered {
 				return;
 			}
 			accountAdder = esiOwnerGetter;
-			esiOwnerGetter.load(esiOwner);
+			esiOwnerGetter.run();
 		}
 
 		@Override

@@ -24,6 +24,7 @@ import java.util.Date;
 import java.util.List;
 import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
+import net.troja.eve.esi.ApiClient;
 import net.troja.eve.esi.ApiException;
 import net.troja.eve.esi.model.CharacterBlueprintsResponse;
 import net.troja.eve.esi.model.CorporationBlueprintsResponse;
@@ -31,44 +32,33 @@ import net.troja.eve.esi.model.CorporationBlueprintsResponse;
 
 public class EsiBlueprintsGetter extends AbstractEsiGetter {
 
-	@Override
-	public void load(UpdateTask updateTask, List<EsiOwner> owners) {
-		super.load(updateTask, owners);
+	public EsiBlueprintsGetter(UpdateTask updateTask, EsiOwner owner) {
+		super(updateTask, owner, false, owner.getBlueprintsNextUpdate(), TaskType.BLUEPRINTS);
 	}
 
 	@Override
-	protected void get(EsiOwner owner) throws ApiException {
+	protected void get(ApiClient apiClient) throws ApiException {
 		if (owner.isCorporation()) {
-			List<CorporationBlueprintsResponse> responses = updatePages(owner, new EsiPagesHandler<CorporationBlueprintsResponse>() {
+			List<CorporationBlueprintsResponse> responses = updatePages(new EsiPagesHandler<CorporationBlueprintsResponse>() {
 				@Override
-				public List<CorporationBlueprintsResponse> get(EsiOwner owner, Integer page) throws ApiException {
-					return getCorporationApiAuth().getCorporationsCorporationIdBlueprints((int) owner.getOwnerID(), DATASOURCE, page, null, null, null);
+				public List<CorporationBlueprintsResponse> get(ApiClient apiClient, Integer page) throws ApiException {
+					return getCorporationApiAuth(apiClient).getCorporationsCorporationIdBlueprints((int) owner.getOwnerID(), DATASOURCE, page, null, null, null);
 				}
 			});
 			owner.setBlueprints(EsiConverter.toBlueprintsCorporation(responses));
 		} else {
-			List<CharacterBlueprintsResponse> responses = getCharacterApiAuth().getCharactersCharacterIdBlueprints((int) owner.getOwnerID(), DATASOURCE, null, null, null);
+			List<CharacterBlueprintsResponse> responses = getCharacterApiAuth(apiClient).getCharactersCharacterIdBlueprints((int) owner.getOwnerID(), DATASOURCE, null, null, null);
 			owner.setBlueprints(EsiConverter.toBlueprints(responses));
 		}
 	}
 
 	@Override
-	protected String getTaskName() {
-		return "Blueprints";
-	}
-
-	@Override
-	protected void setNextUpdate(EsiOwner owner, Date date) {
+	protected void setNextUpdate(Date date) {
 		owner.setBlueprintsNextUpdate(date);
 	}
 
 	@Override
-	protected Date getNextUpdate(EsiOwner owner) {
-		return owner.getBlueprintsNextUpdate();
-	}
-
-	@Override
-	protected boolean enabled(EsiOwner owner) {
+	protected boolean enabled() {
 		if (owner.isCorporation()) {
 			return EsiScopes.CORPORATION_BLUEPRINTS.isEnabled();
 		} else {
@@ -77,7 +67,7 @@ public class EsiBlueprintsGetter extends AbstractEsiGetter {
 	}
 
 	@Override
-	protected boolean inScope(EsiOwner owner) {
+	protected boolean inScope() {
 		return owner.isBlueprints();
 	}
 

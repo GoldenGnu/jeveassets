@@ -29,18 +29,18 @@ import net.nikr.eve.jeveasset.data.api.my.MyContract;
 import net.nikr.eve.jeveasset.data.api.my.MyContractItem;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
+import net.troja.eve.esi.ApiClient;
 import net.troja.eve.esi.ApiException;
 import net.troja.eve.esi.model.CharacterContractsItemsResponse;
 
 public class EsiContractItemsGetter extends AbstractEsiGetter {
 
-	@Override
-	public void load(UpdateTask updateTask, List<EsiOwner> owners) {
-		super.load(updateTask, owners);
+	public EsiContractItemsGetter(UpdateTask updateTask, EsiOwner owner) {
+		super(updateTask, owner, false, Settings.getNow(), TaskType.CONTRACT_ITEMS);
 	}
 
 	@Override
-	protected void get(EsiOwner owner) throws ApiException {
+	protected void get(ApiClient apiClient) throws ApiException {
 		List<MyContract> contracts = new ArrayList<MyContract>();
 		for (Map.Entry<MyContract, List<MyContractItem>> entry : owner.getContracts().entrySet()) {
 			if (entry.getKey().isCourier()) {
@@ -52,44 +52,29 @@ public class EsiContractItemsGetter extends AbstractEsiGetter {
 			contracts.add(entry.getKey());
 
 		}
-		for (MyContract contract : contracts) {
-			List<CharacterContractsItemsResponse> responses = getContractsApiAuth().getCharactersCharacterIdContractsContractIdItems((int) owner.getOwnerID(), contract.getContractID(), DATASOURCE, null, null, null);
-			owner.setContracts(EsiConverter.toContractItems(contract, responses, owner));
+		Map<MyContract, List<CharacterContractsItemsResponse>> responses = updateList(contracts, new ListHandler<MyContract, List<CharacterContractsItemsResponse>>() {
+			@Override
+			public List<CharacterContractsItemsResponse> get(ApiClient apiClient, MyContract t) throws ApiException {
+				return getContractsApiAuth(apiClient).getCharactersCharacterIdContractsContractIdItems((int) owner.getOwnerID(), t.getContractID(), DATASOURCE, null, null, null);
+			}
+		});
+		for (Map.Entry<MyContract, List<CharacterContractsItemsResponse>> entry : responses.entrySet()) {
+			owner.setContracts(EsiConverter.toContractItems(entry.getKey(), entry.getValue(), owner));
 		}
 	}
 
 	@Override
-	protected int getProgressStart() {
-		return 50;
-	}
-
-	@Override
-	protected int getProgressEnd() {
-		return 100;
-	}
-
-	@Override
-	protected String getTaskName() {
-		return "Contract Items";
-	}
-
-	@Override
-	protected void setNextUpdate(EsiOwner owner, Date date) {
+	protected void setNextUpdate(Date date) {
 		//We will never update again...
 	}
 
 	@Override
-	protected Date getNextUpdate(EsiOwner owner) {
-		return Settings.getNow();
-	}
-
-	@Override
-	protected boolean inScope(EsiOwner owner) {
+	protected boolean inScope() {
 		return owner.isContracts();
 	}
 
 	@Override
-	protected boolean enabled(EsiOwner owner) {
+	protected boolean enabled() {
 		if (owner.isCorporation()) {
 			return false;
 		} else {

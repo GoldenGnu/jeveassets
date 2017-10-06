@@ -27,6 +27,7 @@ import java.util.Set;
 import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
 import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
+import net.troja.eve.esi.ApiClient;
 import net.troja.eve.esi.ApiException;
 import net.troja.eve.esi.model.CharacterWalletTransactionsResponse;
 import net.troja.eve.esi.model.CorporationWalletTransactionsResponse;
@@ -34,15 +35,15 @@ import net.troja.eve.esi.model.CorporationWalletTransactionsResponse;
 
 public class EsiTransactionsGetter extends AbstractEsiGetter {
 
-	private boolean saveHistory;
+	private final boolean saveHistory;
 
-	public void load(UpdateTask updateTask, List<EsiOwner> owners, boolean saveHistory) {
+	public EsiTransactionsGetter(UpdateTask updateTask, EsiOwner owner, boolean saveHistory) {
+		super(updateTask, owner, false, owner.getTransactionsNextUpdate(), TaskType.TRANSACTIONS);
 		this.saveHistory = saveHistory;
-		super.load(updateTask, owners);
 	}
 
 	@Override
-	protected void get(EsiOwner owner) throws ApiException {
+	protected void get(ApiClient apiClient) throws ApiException {
 		Set<Long> existing = new HashSet<Long>();
 		if (saveHistory) {
 			for (MyTransaction transaction : owner.getTransactions()) {
@@ -52,10 +53,10 @@ public class EsiTransactionsGetter extends AbstractEsiGetter {
 		if (owner.isCorporation()) {
 			for (int i = 1; i < 8; i++) { //Division 1-7
 				final int division = i;
-				List<CorporationWalletTransactionsResponse> responses = updateIDs(owner, existing, new EsiListHandler<CorporationWalletTransactionsResponse>() {
+				List<CorporationWalletTransactionsResponse> responses = updateIDs(existing, new IDsHandler<CorporationWalletTransactionsResponse>() {
 					@Override
-					public List<CorporationWalletTransactionsResponse> get(EsiOwner owner, Long fromID) throws ApiException {
-						return getWalletApiAuth().getCorporationsCorporationIdWalletsDivisionTransactions((int) owner.getOwnerID(), division, DATASOURCE, fromID, null, null, null);
+					public List<CorporationWalletTransactionsResponse> get(ApiClient apiClient, Long fromID) throws ApiException {
+						return getWalletApiAuth(apiClient).getCorporationsCorporationIdWalletsDivisionTransactions((int) owner.getOwnerID(), division, DATASOURCE, fromID, null, null, null);
 					}
 
 					@Override
@@ -67,10 +68,10 @@ public class EsiTransactionsGetter extends AbstractEsiGetter {
 				owner.setTransactions(EsiConverter.toTransactionCorporation(responses, owner, fixedDivision, saveHistory));
 			}
 		} else {
-			List<CharacterWalletTransactionsResponse> responses = updateIDs(owner, existing, new EsiListHandler<CharacterWalletTransactionsResponse>() {
+			List<CharacterWalletTransactionsResponse> responses = updateIDs(existing, new IDsHandler<CharacterWalletTransactionsResponse>() {
 				@Override
-				public List<CharacterWalletTransactionsResponse> get(EsiOwner owner, Long fromID) throws ApiException {
-					return getWalletApiAuth().getCharactersCharacterIdWalletTransactions((int) owner.getOwnerID(), DATASOURCE, fromID, null, null, null);
+				public List<CharacterWalletTransactionsResponse> get(ApiClient apiClient, Long fromID) throws ApiException {
+					return getWalletApiAuth(apiClient).getCharactersCharacterIdWalletTransactions((int) owner.getOwnerID(), DATASOURCE, fromID, null, null, null);
 				}
 
 				@Override
@@ -83,27 +84,17 @@ public class EsiTransactionsGetter extends AbstractEsiGetter {
 	}
 
 	@Override
-	protected String getTaskName() {
-		return "Transactions";
-	}
-
-	@Override
-	protected void setNextUpdate(EsiOwner owner, Date date) {
+	protected void setNextUpdate(Date date) {
 		owner.setTransactionsNextUpdate(date);
 	}
 
 	@Override
-	protected Date getNextUpdate(EsiOwner owner) {
-		return owner.getTransactionsNextUpdate();
-	}
-
-	@Override
-	protected boolean inScope(EsiOwner owner) {
+	protected boolean inScope() {
 		return owner.isTransactions();
 	}
 
 	@Override
-	protected boolean enabled(EsiOwner owner) {
+	protected boolean enabled() {
 		if (owner.isCorporation()) {
 			return EsiScopes.CORPORATION_WALLET.isEnabled();
 		} else {
