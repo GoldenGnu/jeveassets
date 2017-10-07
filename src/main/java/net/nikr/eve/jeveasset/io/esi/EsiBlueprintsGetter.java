@@ -47,7 +47,13 @@ public class EsiBlueprintsGetter extends AbstractEsiGetter {
 			});
 			owner.setBlueprints(EsiConverter.toBlueprintsCorporation(responses));
 		} else {
-			List<CharacterBlueprintsResponse> responses = getCharacterApiAuth(apiClient).getCharactersCharacterIdBlueprints((int) owner.getOwnerID(), DATASOURCE, null, null, null);
+			List<CharacterBlueprintsResponse> responses = updatePages(new EsiPagesHandler<CharacterBlueprintsResponse>() {
+				@Override
+				public List<CharacterBlueprintsResponse> get(ApiClient apiClient, Integer page) throws ApiException {
+					return getCharacterApiAuth(apiClient).getCharactersCharacterIdBlueprints((int) owner.getOwnerID(), DATASOURCE, page, null, null, null);
+				}
+				
+			});
 			owner.setBlueprints(EsiConverter.toBlueprints(responses));
 		}
 	}

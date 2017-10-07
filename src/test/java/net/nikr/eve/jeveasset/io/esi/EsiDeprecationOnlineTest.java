@@ -93,7 +93,7 @@ public class EsiDeprecationOnlineTest extends TestUtil {
 	public void esiBlueprintsGetterCharacter() {
 		CharacterApi api = new CharacterApi();
 		try {
-			api.getCharactersCharacterIdBlueprints(1, DATASOURCE, null, null, null);
+			api.getCharactersCharacterIdBlueprints(1, DATASOURCE, null, null, null, null);
 		} catch (ApiException ex) {
 
 		}

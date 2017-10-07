@@ -318,36 +318,8 @@ public class RawConverter {
 			return RawJournalRefType.valueOf(value.name());
 		} catch (IllegalArgumentException ex) {
 			switch (value) {
-				case BOUNTY_PRIZE_HISTORICAL:
-					return RawJournalRefType.BOUNTY_PRIZE;
-				case MISSION_REWARD_BONUS:
-					return RawJournalRefType.AGENT_MISSION_TIME_BONUS_REWARD;
-				case CORP_ACCOUNT_WITHDRAWAL:
-					return RawJournalRefType.CORPORATION_ACCOUNT_WITHDRAWAL;
-				case LOGO_CHANGE_FEE:
-					return RawJournalRefType.CORPORATION_LOGO_CHANGE_COST;
-				case BROKER_FEE:
-					return RawJournalRefType.BROKERS_FEE;
-				case ALLIANCE_MAINTENANCE_FEE:
-					return RawJournalRefType.ALLIANCE_MAINTAINANCE_FEE;
-				case SALES_TAX:
-					return RawJournalRefType.TRANSACTION_TAX;
-				case CONTRACT:
-					return RawJournalRefType.CONTRACT_BROKERS_FEE;
-				case MEDAL_CREATION_FEE:
-					return RawJournalRefType.MEDAL_CREATION;
-				case MEDAL_ISSUING_FEE:
-					return RawJournalRefType.MEDAL_ISSUED;
-				case CUSTOMS_OFFICE_IMPORT_DUTY:
-					return RawJournalRefType.PLANETARY_IMPORT_TAX;
-				case CUSTOMS_OFFICE_EXPORT_DUTY:
-					return RawJournalRefType.PLANETARY_EXPORT_TAX;
-				case INDUSTRY_FACILITY_TAX:
-					return RawJournalRefType.INDUSTRY_JOB_TAX;
-				case REPROCESSING_FEE:
-					return RawJournalRefType.REPROCESSING_TAX;
-				case UNKNOWN:
-					return RawJournalRefType.UNDEFINED;
+				case KILL_RIGHT_FEE:
+					return RawJournalRefType.KILL_RIGHT;
 				default: return null;
 			}
 		}
