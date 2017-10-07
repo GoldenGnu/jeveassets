@@ -141,6 +141,7 @@
 						<phase>package</phase>
 						<configuration>
 							<target>
+								<mkdir dir="${project.build.directory}/install/lib"/>
 								<copy todir="${project.build.directory}/install/lib">
 									<fileset dir="${project.build.directory}/lib" includes="*.jar"/>
 								</copy>
@@ -149,6 +150,7 @@
 									<fileset dir="${project.build.directory}" includes="*.txt"/>
 									<fileset dir="${project.build.directory}" includes="*jmemory.properties"/>
 								</copy>
+								<mkdir dir="${project.build.directory}/install/izpack"/>
 								<copy todir="${project.build.directory}/install/izpack">
 									<fileset dir="tools" includes="izpack-util.jar"/>
 								</copy>
