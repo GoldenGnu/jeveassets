@@ -510,6 +510,11 @@ public class AccountImportDialog extends JDialogCentered {
 				showValidateTab();
 				break;
 			case DONE:
+				if (apiType == ApiType.ESI) {
+					//Move to front
+					getDialog().setAlwaysOnTop(true);
+					getDialog().setAlwaysOnTop(false);
+				}
 				showDoneTab();
 				break;
 			case EXIT:
