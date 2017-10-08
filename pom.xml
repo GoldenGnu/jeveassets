@@ -99,6 +99,10 @@
 							<directory>src/main/izpack</directory>
 							<filtering>true</filtering>
 						</resource>
+						<resource>
+							<directory>src/main/resources</directory>
+							<filtering>true</filtering>
+						</resource>
 					</resources>
 				</configuration>
 			</plugin>
@@ -121,9 +125,6 @@
 									<fileset dir="" includes="*.txt"/>
 									<fileset dir="tools" includes="jmemory.jar"/>
 									<fileset dir="tools" includes="jmemory.properties"/>
-								</copy>
-								<copy todir="${project.build.directory}">
-									<fileset dir="${project.build.directory}/classes" includes="update_version.dat"/>
 								</copy>
 								<copy todir="${project.build.directory}">
 									<fileset dir="tools/update" includes="list.php"/>
@@ -153,6 +154,9 @@
 								</copy>
 								<copy todir="${project.build.directory}/install/izpack">
 									<fileset dir="src/main/izpack" includes="ProcessPanel.Spec.xml"/>
+								</copy>
+								<copy todir="${project.build.directory}">
+									<fileset dir="${project.build.directory}/classes" includes="update_version.dat"/>
 								</copy>
 							</target>
 						</configuration>
@@ -234,7 +238,7 @@
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>exec-maven-plugin</artifactId>
-				<version>1.2.1</version>
+				<version>1.4.0</version>
 				<executions>
 					<execution>
 						<goals>
