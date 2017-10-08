@@ -1,7 +1,0 @@
-language: java
-jdk: oraclejdk8
-install: true
-script: mvn install -P skip-online-tests
-cache:
-  directories:
-  - $HOME/.m2
