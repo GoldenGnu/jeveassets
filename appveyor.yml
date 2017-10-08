@@ -1,0 +1,10 @@
+version: 1.0.{build}
+
+build_script:
+- cmd: mvn clean package -B -Dmaven.test.skip=true
+
+test_script:
+- cmd: mvn test -B -P skip-online-tests
+
+cache:
+  - C:\Users\appveyor\.m2\ -> pom.xml
