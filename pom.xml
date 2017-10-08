@@ -245,9 +245,8 @@
 				<configuration>
 					<executable>java</executable>
 					<arguments>
-						<argument>-classpath</argument>
-						<classpath/>
-						<argument>net.nikr.eve.jeveasset.Main</argument>
+						<argument>-jar</argument>
+						<argument>target/jeveassets.jar</argument>
 						<argument>${arg1}</argument>
 						<argument>${arg2}</argument>
 					</arguments>
@@ -607,7 +606,7 @@
 		<dependency>
 			<groupId>net.troja.eve</groupId>
 			<artifactId>eve-esi</artifactId>
-			<version>1.4.0</version>
+			<version>1.4.0.1</version>
 		</dependency>
 		<dependency>
 			<groupId>com.beimin</groupId>
