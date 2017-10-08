@@ -36,6 +36,7 @@ import uk.me.candle.eve.pricing.options.PricingType;
 public class PriceDataSettings {
 
 	public enum PriceSource {
+		/*
 		EVE_CENTRAL(PricingFetch.EVE_CENTRAL, true, false, true, false, LocationType.REGION, Collections.singletonList(10000002L), Images.LINK_EVE_CENTRAL.getIcon()) {
 			@Override public PriceMode[] getPriceTypes() {
 				return PriceMode.values();
@@ -44,6 +45,7 @@ public class PriceDataSettings {
 				return DataModelPriceDataSettings.get().sourceEveCentral();
 			}
 		},
+		*/
 		EVE_MARKETDATA(PricingFetch.EVE_MARKETDATA, false, true, true, true, LocationType.REGION, Collections.singletonList(10000002L), Images.LINK_EVE_MARKETDATA.getIcon()) {
 			@Override public PriceMode[] getPriceTypes() {
 				return new PriceMode[]{PriceMode.PRICE_SELL_PERCENTILE, PriceMode.PRICE_MIDPOINT, PriceMode.PRICE_BUY_PERCENTILE};
@@ -718,7 +720,7 @@ public class PriceDataSettings {
 	}
 
 	public static PriceSource getDefaultPriceSource() {
-		return PriceSource.EVE_CENTRAL;
+		return PriceSource.EVE_MARKETDATA;
 	}
 
 	public void setPriceType(final PriceMode priceSource) {
