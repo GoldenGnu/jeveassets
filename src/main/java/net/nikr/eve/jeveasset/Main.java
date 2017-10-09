@@ -234,7 +234,7 @@ public final class Main {
 		files.add("jcommon-1.0.16.jar");
 		files.add("jfreechart-1.0.13.jar");
 		files.add("osxadapter-1.1.0.jar");
-		files.add("pricing-1.7.0.jar");
+		files.add("pricing-1.7.1.jar");
 		files.add("routing-1.5.0.jar");
 		files.add("slf4j-api-1.7.25.jar");
 		files.add("log4j-over-slf4j-1.7.25.jar");

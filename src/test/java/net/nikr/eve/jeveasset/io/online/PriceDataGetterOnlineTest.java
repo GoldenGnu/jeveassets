@@ -20,6 +20,9 @@
  */
 package net.nikr.eve.jeveasset.io.online;
 
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import ch.qos.logback.classic.Level;
 import java.io.IOException;
 import java.io.InputStream;
@@ -40,8 +43,6 @@ import net.nikr.eve.jeveasset.data.settings.PriceDataSettings.RegionType;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import org.junit.After;
 import org.junit.AfterClass;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -221,6 +222,11 @@ public class PriceDataGetterOnlineTest extends TestUtil {
 		@Override
 		public boolean getUseBinaryErrorSearch() {
 			return false;
+		}
+
+		@Override
+		public int getTimeout() {
+			return 20000;
 		}
 	}
 }

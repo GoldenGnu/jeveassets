@@ -205,6 +205,10 @@ public class ProxyTest extends TestUtil {
 		public int getAttemptCount() {
 			return 2;
 		}
-		
+
+		@Override
+		public int getTimeout() {
+			return 20000;
+		}
 	}
 }

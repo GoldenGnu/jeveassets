@@ -401,5 +401,10 @@ public class PriceDataGetter implements PricingListener {
 		public boolean getUseBinaryErrorSearch() {
 			return false;
 		}
+
+		@Override
+		public int getTimeout() {
+			return 20000;
+		}
 	}
 }
