@@ -20,8 +20,12 @@
  */
 package net.nikr.eve.jeveasset.io.esi;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import net.troja.eve.esi.ApiClient;
@@ -37,7 +41,19 @@ public class EsiIndustryJobsGetter extends AbstractEsiGetter {
 
 	@Override
 	protected void get(ApiClient apiClient) throws ApiException {
-		List<CharacterIndustryJobsResponse> industryJobs = getIndustryApiAuth(apiClient).getCharactersCharacterIdIndustryJobs((int) owner.getOwnerID(), DATASOURCE, true, null, null, null);
+		Set<Boolean> completed = new HashSet<Boolean>();
+		completed.add(true);
+		completed.add(false);
+		Map<Boolean, List<CharacterIndustryJobsResponse>> updateList = updateList(completed, new ListHandler<Boolean, List<CharacterIndustryJobsResponse>>() {
+			@Override
+			protected List<CharacterIndustryJobsResponse> get(ApiClient client, Boolean k) throws ApiException {
+				return getIndustryApiAuth(apiClient).getCharactersCharacterIdIndustryJobs((int) owner.getOwnerID(), DATASOURCE, k, null, null, null);
+			}
+		});
+		List<CharacterIndustryJobsResponse> industryJobs = new ArrayList<>();
+		for (List<CharacterIndustryJobsResponse> list : updateList.values()) {
+			industryJobs.addAll(list);
+		}
 		owner.setIndustryJobs(EsiConverter.toIndustryJobs(industryJobs, owner));
 	}
 
