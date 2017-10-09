@@ -32,7 +32,7 @@ public class LibTest extends TestUtil {
 
 	@Test
 	public void testLibs() {
-		File folder = new File("target\\lib");
+		File folder = new File("target" + File.separator + "lib");
 		assertTrue(folder.exists());
 		File[] listOfFiles = folder.listFiles();
 
