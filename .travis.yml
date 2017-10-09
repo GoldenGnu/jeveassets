@@ -5,3 +5,9 @@ script: mvn install -P skip-online-tests
 cache:
   directories:
   - $HOME/.m2
+notifications:
+  email:
+    recipients:
+      - nkr@niklakr.dk
+    on_success: never
+    on_failure: always
