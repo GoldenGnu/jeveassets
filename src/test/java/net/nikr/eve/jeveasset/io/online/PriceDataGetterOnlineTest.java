@@ -20,6 +20,7 @@
  */
 package net.nikr.eve.jeveasset.io.online;
 
+
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -28,6 +29,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Proxy;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -60,7 +62,7 @@ public class PriceDataGetterOnlineTest extends TestUtil {
 	private static final long REGION = 10000002L;  //The Forge (Jita region)
 	private static final long SYSTEM = 30000142L;  //Jita
 	private static final long STATION = 60003760L; //Jita 4 - 4
-	private static final long MAX_RUNS = 2500;
+	private static final long MAX_RUNS = 5000;
 
 	private final PriceGetter getter = new PriceGetter();
 	private final Set<Integer> typeIDs = new HashSet<Integer>();
@@ -69,7 +71,7 @@ public class PriceDataGetterOnlineTest extends TestUtil {
 
 	@BeforeClass
 	public static void setUpClass() {
-		setLoggingLevel(Level.OFF);
+		setLoggingLevel(Level.ERROR);
 	}
 	
 	@AfterClass
@@ -79,11 +81,18 @@ public class PriceDataGetterOnlineTest extends TestUtil {
 	
 	@Before
 	public void setUp() {
+		Set<Integer> ids = new HashSet<Integer>();
 		for (Item item : StaticData.get().getItems().values()) {
-			if (typeIDs.size() >= MAX_RUNS && MAX_RUNS > 0) { break; }
 			if (item.isMarketGroup()) {
-				typeIDs.add(item.getTypeID());
+				ids.add(item.getTypeID());
 			}
+		}
+		if (MAX_RUNS > 0) {
+			List<Integer> list = new ArrayList<Integer>(ids);
+			Collections.shuffle(list); //Randomize
+			typeIDs.addAll(list.subList(0, (int)Math.min(MAX_RUNS, list.size())));
+		} else {
+			typeIDs.addAll(ids);
 		}
 	}
 	
