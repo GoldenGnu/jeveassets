@@ -25,7 +25,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
-import net.nikr.eve.jeveasset.data.api.my.MyAsset;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import net.troja.eve.esi.ApiClient;
@@ -35,17 +34,15 @@ import net.troja.eve.esi.model.CharacterAssetsNamesResponse;
 
 public class EsiLocationsGetter extends AbstractEsiGetter {
 
+	private final Map<Long, String> itemMap = new HashMap<Long, String>();
+
 	public EsiLocationsGetter(UpdateTask updateTask, EsiOwner owner) {
 		super(updateTask, owner, false, owner.getLocationsNextUpdate(), TaskType.LOCATIONS);
 	}
 
 	@Override
 	protected void get(ApiClient apiClient) throws ApiException {
-		Map<Long, String> itemMap = new HashMap<Long, String>();
-		addItemIDs(itemMap, owner.getAssets());
-		List<List<Long>> batches = splitList(itemMap.keySet(), LOCATIONS_BATCH_SIZE);
-
-		Map<List<Long>, List<CharacterAssetsNamesResponse>> responses = updateList(batches, new ListHandler<List<Long>, List<CharacterAssetsNamesResponse>>() {
+		Map<List<Long>, List<CharacterAssetsNamesResponse>> responses = updateList(splitList(getIDs(itemMap, owner), LOCATIONS_BATCH_SIZE), new ListHandler<List<Long>, List<CharacterAssetsNamesResponse>>() {
 			@Override
 			public List<CharacterAssetsNamesResponse> get(ApiClient apiClient, List<Long> t) throws ApiException {
 				return getAssetsApiAuth(apiClient).postCharactersCharacterIdAssetsNames((int) owner.getOwnerID(), t, DATASOURCE, null, null, null);
@@ -62,17 +59,6 @@ public class EsiLocationsGetter extends AbstractEsiGetter {
 					Settings.get().getEveNames().remove(itemID);
 				}
 			}
-		}
-	}
-
-	private void addItemIDs(Map<Long, String> itemIDs, List<MyAsset> assets) {
-		for (MyAsset asset : assets) {
-			if ((asset.getItem().getGroup().equals("Audit Log Secure Container")
-					|| asset.getItem().getCategory().equals("Ship"))
-					&& asset.isSingleton()) {
-				itemIDs.put(asset.getItemID(), asset.getItem().getTypeName());
-			}
-			addItemIDs(itemIDs, asset.getAssets());
 		}
 	}
 

@@ -21,62 +21,43 @@
 package net.nikr.eve.jeveasset.io.eveapi;
 
 import com.beimin.eveapi.exception.ApiException;
-import com.beimin.eveapi.model.shared.Blueprint;
 import com.beimin.eveapi.parser.character.CharBlueprintsParser;
 import com.beimin.eveapi.parser.corporation.CorpBlueprintsParser;
 import com.beimin.eveapi.response.shared.BlueprintsResponse;
 import java.util.Date;
-import java.util.List;
 import net.nikr.eve.jeveasset.data.api.accounts.EveApiAccessMask;
-import net.nikr.eve.jeveasset.data.api.accounts.EveApiAccount;
 import net.nikr.eve.jeveasset.data.api.accounts.EveApiOwner;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 
 public class BlueprintsGetter extends AbstractApiGetter<BlueprintsResponse> {
 
-	public BlueprintsGetter() {
-		super("Blueprints", true, false);
-	}
-
-	public void load(final UpdateTask updateTask, final boolean forceUpdate, final List<EveApiAccount> accounts) {
-		super.loadAccounts(updateTask, forceUpdate, accounts);
+	public BlueprintsGetter(UpdateTask updateTask, EveApiOwner owner) {
+		super(updateTask, owner, false, owner.getBlueprintsNextUpdate(), TaskType.BLUEPRINTS);
 	}
 
 	@Override
-	protected BlueprintsResponse getResponse(final boolean bCorp) throws ApiException {
-		if (bCorp) {
-			return new CorpBlueprintsParser()
-					.getResponse(EveApiOwner.getApiAuthorization(getOwner()));
+	protected void get(String updaterStatus) throws ApiException {
+		BlueprintsResponse response;
+		if (owner.isCorporation()) {
+			response = new CorpBlueprintsParser()
+					.getResponse(EveApiOwner.getApiAuthorization(owner));
 		} else {
-			return new CharBlueprintsParser()
-					.getResponse(EveApiOwner.getApiAuthorization(getOwner()));
+			response = new CharBlueprintsParser()
+					.getResponse(EveApiOwner.getApiAuthorization(owner));
 		}
+		if (!handle(response, updaterStatus)) {
+			return;
+		}
+		owner.setBlueprints(EveApiConverter.toBlueprints(response.getAll()));
 	}
 
 	@Override
 	protected void setNextUpdate(final Date nextUpdate) {
-		getOwner().setBlueprintsNextUpdate(nextUpdate);
+		owner.setBlueprintsNextUpdate(nextUpdate);
 	}
 
 	@Override
-	protected Date getNextUpdate() {
-		return getOwner().getBlueprintsNextUpdate();
-	}
-
-	@Override
-	protected void setData(final BlueprintsResponse response) {
-		List<Blueprint> responses = response.getAll();
-		getOwner().setBlueprints(EveApiConverter.toBlueprints(responses));
-	}
-
-	@Override
-	protected void updateFailed(final EveApiOwner ownerFrom, final EveApiOwner ownerTo) {
-		ownerTo.setBlueprints(ownerFrom.getBlueprints());
-		ownerTo.setBlueprintsNextUpdate(ownerFrom.getBlueprintsNextUpdate());
-	}
-
-	@Override
-	protected long requestMask(boolean bCorp) {
+	protected long requestMask() {
 		return EveApiAccessMask.ASSET_LIST.getAccessMask();
 	}
 }

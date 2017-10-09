@@ -1061,7 +1061,7 @@ public class AccountImportDialog extends JDialogCentered {
 
 	class EveApiTask extends AddTask {
 
-		private final AccountGetter accountGetter = new AccountGetter();
+		private final AccountGetter accountGetter = new AccountGetter(account, true);
 
 		@Override
 		public boolean exist() {
@@ -1070,7 +1070,7 @@ public class AccountImportDialog extends JDialogCentered {
 
 		@Override
 		public void load() {
-			accountGetter.load(null, true, account); //Update account
+			accountGetter.run(); //Update account
 		}
 
 		@Override

@@ -26,9 +26,9 @@ import com.beimin.eveapi.model.eve.CharacterLookup;
 import com.beimin.eveapi.response.eve.CharacterLookupResponse;
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 import net.nikr.eve.jeveasset.data.api.accounts.EveApiAccessMask;
-import net.nikr.eve.jeveasset.data.api.accounts.EveApiOwner;
+import net.nikr.eve.jeveasset.data.api.accounts.OwnerType;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 
@@ -36,43 +36,35 @@ import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 public class NameGetter extends AbstractApiGetter<CharacterLookupResponse> {
 
 	private final int MAX_SIZE = 200;
-	private long[][] ownerIDs;
-	private int group;
+	private final List<OwnerType> ownerTypes;
 
-	public NameGetter() {
-		super("OwnerID to Name", false, false);
+	public NameGetter(UpdateTask updateTask, List<OwnerType> ownerTypes) {
+		super(updateTask, null, false, Settings.getNow(), TaskType.OWNER_ID_TO_NAME);
+		this.ownerTypes = ownerTypes;
 	}
 
 	@Override
-	protected int getProgressStart() {
-		return 90;
-	}
-
-	@Override
-	protected int getProgressEnd() {
-		return 100;
-	}
-
-	public void load(UpdateTask updateTask, Set<Long> list) {
-		ownerIDs = convert(list);
-		for (int i = 0; i < ownerIDs.length; i++) {
-			group = i;
-			if (updateTask != null) {
-				updateTask.setTaskProgress(ownerIDs.length, (i + 1), getProgressStart(), getProgressEnd());
+	protected void get(String updaterStatus) throws ApiException {
+		Map<List<Long>, CharacterLookupResponse> updateList = updateList(splitList(getOwnerIDs(ownerTypes), MAX_SIZE), new ListHandler<List<Long>, CharacterLookupResponse>() {
+			@Override
+			public CharacterLookupResponse get(String updaterStatus, List<Long> t) throws ApiException {
+				long[] l = new long[t.size()];
+				for (int i = 0; 0 < i; i++) {
+					l[i] = t.get(i);
+				}
+				return com.beimin.eveapi.parser.eve.CharacterLookupParser.getId2NameInstance()
+						.getResponse(l);
 			}
-			super.loadEve(updateTask, true, "jEveAssets (Request " + (i + 1) + " of " + ownerIDs.length + ")");
+			
+		});
+		for (CharacterLookupResponse response : updateList.values()) {
+			if (!handle(response, updaterStatus)) {
+				return;
+			}
+			for (CharacterLookup lookup : response.getAll()) {
+				Settings.get().getOwners().put(lookup.getCharacterID(), lookup.getName());
+			}
 		}
-	}
-
-	@Override
-	protected CharacterLookupResponse getResponse(boolean bCorp) throws ApiException {
-		return com.beimin.eveapi.parser.eve.CharacterLookupParser.getId2NameInstance()
-				.getResponse(ownerIDs[group]);
-	}
-
-	@Override
-	protected Date getNextUpdate() {
-		return new Date();
 	}
 
 	@Override
@@ -81,50 +73,7 @@ public class NameGetter extends AbstractApiGetter<CharacterLookupResponse> {
 	}
 
 	@Override
-	protected void setData(CharacterLookupResponse response) {
-		List<CharacterLookup> lookups = response.getAll();
-		for (CharacterLookup lookup : lookups) {
-			Settings.get().getOwners().put(lookup.getCharacterID(), lookup.getName());
-		}
-	}
-
-	@Override
-	protected void updateFailed(EveApiOwner ownerFrom, EveApiOwner ownerTo) {
-		
-	}
-
-	@Override
-	protected long requestMask(boolean bCorp) {
+	protected long requestMask() {
 		return EveApiAccessMask.OPEN.getAccessMask();
 	}
-
-	protected long[][] convert(Set<Long> list){
-		if (list.contains(0L)) { //Remove 0 (zero)
-			list.remove(0L);
-		}
-		if (list.isEmpty()) { //Empty - we do nothing
-			return new long[0][];
-		}
-		int groupSize = (int)Math.ceil((double)list.size()/(double)MAX_SIZE);
-		long[][] arrayLong = new long[groupSize][];
-		int groupCount = 0;
-		int count = 0;
-		for (Long value : list) {
-			if (count == 0) {
-				if ((groupCount + 1) * MAX_SIZE > list.size()) {
-					arrayLong[groupCount] = new long[list.size() - (MAX_SIZE * groupCount)];
-				} else {
-					arrayLong[groupCount] = new long[MAX_SIZE];
-				}
-			}
-			arrayLong[groupCount][count] = value;
-			count++;
-			if (count >= MAX_SIZE) {
-				groupCount++;
-				count = 0;
-			}
-		}
-		return arrayLong;
-	}
-	
 }

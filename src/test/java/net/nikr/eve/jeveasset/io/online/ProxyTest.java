@@ -103,8 +103,8 @@ public class ProxyTest extends TestUtil {
 
 	private void testConnections() {
 		//EveAPI
-		AccountGetter eveAPI = new AccountGetter();
-		eveAPI.load(null, false, new EveApiAccount(0, ""));
+		AccountGetter eveAPI = new AccountGetter(new EveApiAccount(0, ""), false);
+		eveAPI.run();
 		//ESI
 		EsiOwner esiOwner = new EsiOwner();
 		esiOwner.setCallbackURL(EsiCallbackURL.LOCALHOST);

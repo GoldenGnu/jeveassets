@@ -26,10 +26,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import net.nikr.eve.jeveasset.data.api.accounts.OwnerType;
-import net.nikr.eve.jeveasset.data.api.my.MyContract;
-import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob;
-import net.nikr.eve.jeveasset.data.api.my.MyJournal;
-import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import net.troja.eve.esi.ApiClient;
@@ -39,48 +35,24 @@ import net.troja.eve.esi.model.UniverseNamesResponse;
 
 public class EsiNameGetter extends AbstractEsiGetter {
 
-	private final Set<Integer> ids = new HashSet<Integer>();
+	private final List<OwnerType> ownerTypes;
 
 	public EsiNameGetter(UpdateTask updateTask, List<OwnerType> ownerTypes) {
 		super(updateTask, null, false, Settings.getNow(), TaskType.OWNER_ID_TO_NAME);
-		Set<Long> list = new HashSet<Long>();
-		for (OwnerType ownerType : ownerTypes) {
-			list.add(ownerType.getOwnerID()); //Just to be sure
-			for (MyIndustryJob myIndustryJob : ownerType.getIndustryJobs()) {
-				list.add(myIndustryJob.getInstallerID());
-			}
-			for (MyContract contract : ownerType.getContracts().keySet()) {
-				list.add(contract.getAcceptorID());
-				list.add(contract.getAssigneeID());
-				list.add(contract.getIssuerCorpID());
-				list.add(contract.getIssuerID());
-			}
-			for (MyTransaction transaction : ownerType.getTransactions()) {
-				list.add(transaction.getClientID());
-			}
-			for (MyJournal journal : ownerType.getJournal()) {
-				if (journal.getFirstPartyID() != null) {
-					list.add((long) journal.getFirstPartyID());
-				}
-				if (journal.getSecondPartyID() != null) {
-					list.add((long) journal.getSecondPartyID());
-				}
-			}
-		}
-		for (long id : list) {
-			try {
-				ids.add(Math.toIntExact(id));
-			} catch (ArithmeticException ex) {
-				//Ignore...
-			}
-		}
+		this.ownerTypes = ownerTypes;
 	}
 
 	@Override
 	protected void get(ApiClient apiClient) throws ApiException {
-		List<List<Integer>> batches = splitList(ids, UNIVERSE_BATCH_SIZE);
-
-		Map<List<Integer>, List<UniverseNamesResponse>> responses = updateList(batches, new ListHandler<List<Integer>, List<UniverseNamesResponse>>() {
+		Set<Integer> ids = new HashSet<Integer>();
+		for (long id : getOwnerIDs(ownerTypes)) {
+			try {
+				ids.add(Math.toIntExact(id));
+			} catch (ArithmeticException ex) {
+				
+			}
+		}
+		Map<List<Integer>, List<UniverseNamesResponse>> responses = updateList(splitList(ids, UNIVERSE_BATCH_SIZE), new ListHandler<List<Integer>, List<UniverseNamesResponse>>() {
 			@Override
 			public List<UniverseNamesResponse> get(ApiClient apiClient, List<Integer> t) throws ApiException {
 				return getUniverseApiOpen(apiClient).postUniverseNames(t, DATASOURCE, System.getProperty("http.agent"), null);

@@ -25,14 +25,21 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.api.accounts.OwnerType;
+import net.nikr.eve.jeveasset.data.api.my.MyAsset;
+import net.nikr.eve.jeveasset.data.api.my.MyContract;
+import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob;
+import net.nikr.eve.jeveasset.data.api.my.MyJournal;
+import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import org.slf4j.Logger;
@@ -227,6 +234,50 @@ public abstract class AbstractGetter<O extends OwnerType, C, E extends Exception
 		return parts;
 	}
 
+	protected final Set<Long> getIDs(Map<Long, String> itemMap, OwnerType owner) {
+		addItemIDs(itemMap, owner.getAssets());
+		return itemMap.keySet();
+	}
+
+	private void addItemIDs(Map<Long, String> itemIDs, List<MyAsset> assets) {
+		for (MyAsset asset : assets) {
+			if ((asset.getItem().getGroup().equals("Audit Log Secure Container")
+					|| asset.getItem().getCategory().equals("Ship"))
+					&& asset.isSingleton()) {
+				itemIDs.put(asset.getItemID(), asset.getItem().getTypeName());
+			}
+			addItemIDs(itemIDs, asset.getAssets());
+		}
+	}
+
+	protected final Set<Long> getOwnerIDs(List<OwnerType> ownerTypes) {
+		Set<Long> list = new HashSet<Long>();
+		for (OwnerType ownerType : ownerTypes) {
+			list.add(ownerType.getOwnerID()); //Just to be sure
+			for (MyIndustryJob myIndustryJob : ownerType.getIndustryJobs()) {
+				list.add(myIndustryJob.getInstallerID());
+			}
+			for (MyContract contract : ownerType.getContracts().keySet()) {
+				list.add(contract.getAcceptorID());
+				list.add(contract.getAssigneeID());
+				list.add(contract.getIssuerCorpID());
+				list.add(contract.getIssuerID());
+			}
+			for (MyTransaction transaction : ownerType.getTransactions()) {
+				list.add(transaction.getClientID());
+			}
+			for (MyJournal journal : ownerType.getJournal()) {
+				if (journal.getFirstPartyID() != null) {
+					list.add((long) journal.getFirstPartyID());
+				}
+				if (journal.getSecondPartyID() != null) {
+					list.add((long) journal.getSecondPartyID());
+				}
+			}
+		}
+		return list;
+	}
+
 	protected synchronized Integer getHeaderInteger(Map<String, List<String>> responseHeaders, String headerName) {
 		String errorResetHeader = getHeader(responseHeaders, headerName);
 		if (errorResetHeader != null) {
@@ -286,7 +337,7 @@ public abstract class AbstractGetter<O extends OwnerType, C, E extends Exception
 
 
 	protected abstract class ListHandler<K, V> {
-		public abstract V get(C client, K t) throws E;
+		protected abstract V get(C client, K k) throws E;
 	}
 
 	private class ListUpdater<K, V> implements Updater<Map<K, V>, C, E>, Callable<Map<K, V>> {
@@ -314,6 +365,69 @@ public abstract class AbstractGetter<O extends OwnerType, C, E extends Exception
 		@Override
 		public Map<K, V> call() throws Exception {
 			return updateApi(this, 0);
+		}
+
+		@Override
+		public String getStatus() {
+			return status;
+		}
+	}
+
+	protected <K> List<K> updateIDs(Set<Long> existing, IDsHandler<K> handler) throws E {
+		List<K> list = new ArrayList<K>();
+		Long fromID = null;
+		boolean run = true;
+		int count = 0;
+		while (run) {
+			count++;
+			List<K> result;
+			try {
+				result = updateApi(new IdUpdater<K>(handler, fromID, count + " of ?"), 0);
+			} catch (Exception ex){
+				break;
+			}
+			if (result == null || result.isEmpty()) { //Nothing returned: we're done
+				break; //Stop updating
+			}
+
+			list.addAll(result); //Add new
+
+			Long lastID = handler.getID(result.get(result.size() - 1)); //Get the last ID
+			if (lastID.equals(fromID)) { //ID is the same as on last update: we're done
+				break; //Stop updating
+			}
+			fromID = lastID; //Set ID for next update
+
+			for (K t : result) { //Search for existing data
+				if (existing.contains(handler.getID(t))) { //Found existing data
+					run = false; //Stop updating
+					break; //no need to continue
+				}
+			}
+		}
+		return list;
+	}
+
+	public abstract class IDsHandler<K> {
+		protected abstract List<K> get(C client, Long fromID) throws E;
+		protected abstract Long getID(K response);
+	}
+
+	public class IdUpdater<K> implements Updater<List<K>, C, E> {
+
+		private final IDsHandler<K> handler;
+		private final Long fromID;
+		private final String status;
+
+		public IdUpdater(IDsHandler<K> handler, Long fromID, String status) {
+			this.handler = handler;
+			this.fromID = fromID;
+			this.status = status;
+		}
+
+		@Override
+		public List<K> update(C client) throws E {
+			return handler.get(client, fromID);
 		}
 
 		@Override

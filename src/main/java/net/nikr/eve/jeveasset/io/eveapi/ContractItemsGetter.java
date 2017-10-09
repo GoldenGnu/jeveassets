@@ -29,99 +29,65 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import net.nikr.eve.jeveasset.data.api.accounts.EveApiAccessMask;
-import net.nikr.eve.jeveasset.data.api.accounts.EveApiAccount;
 import net.nikr.eve.jeveasset.data.api.accounts.EveApiOwner;
 import net.nikr.eve.jeveasset.data.api.my.MyContract;
 import net.nikr.eve.jeveasset.data.api.my.MyContractItem;
+import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 
 public class ContractItemsGetter extends AbstractApiGetter<ContractItemsResponse> {
 
-	private MyContract currentContract;
-
-	public ContractItemsGetter() {
-		super("Contracts", false, false);
+	public ContractItemsGetter(UpdateTask updateTask, EveApiOwner owner) {
+		super(updateTask, owner, false, Settings.getNow(), TaskType.CONTRACT_ITEMS);
 	}
 
-	//FIXME - - > Move to overwrite load (See: JournalGetter)
-	public void load(UpdateTask updateTask, boolean forceUpdate, List<EveApiAccount> accounts) {
-		//Calc size
-		int size = 0;
-		for (EveApiAccount account : accounts) {
-			for (EveApiOwner owner : account.getOwners()) {
-				size = size + owner.getContracts().size();
+	@Override
+	protected void get(String updaterStatus) throws ApiException {
+		List<MyContract> contracts = new ArrayList<MyContract>();
+		for (Map.Entry<MyContract, List<MyContractItem>> entry : owner.getContracts().entrySet()) {
+			MyContract contract = entry.getKey();
+			if (contract.isCourier()) {
+				continue; //Ignore courier
 			}
+			if (!entry.getValue().isEmpty()) {
+				continue; //Ignore existing
+			}
+			///XXX - Workaround for alien contracts
+			if ((owner.getOwnerID() != contract.getAcceptorID()
+					&& owner.getOwnerID() != contract.getAssigneeID()
+					&& owner.getOwnerID() != contract.getIssuerID())
+					&& owner.getOwnerID() != contract.getIssuerCorpID()) {
+				continue; //Ignore not owned
+			}
+			if ((owner.getOwnerID() != contract.getAcceptorID()
+					&& owner.getOwnerID() != contract.getAssigneeID()
+					&& owner.getOwnerID() != contract.getIssuerID())
+					&& !contract.isForCorp()) {
+				continue; //Only IssuerCorpID match and is not for corp
+			}
+			if (entry.getValue() != null && !entry.getValue().isEmpty()) { //Set already updated
+				continue; //Ignore already updated
+			}
+			contracts.add(contract);
 		}
-		int count = 0;
-		for (EveApiAccount account : accounts) {
-			for (EveApiOwner owner : account.getOwners()) {
-				List<MyContract> contracts = new ArrayList<MyContract>();
-				for (Map.Entry<MyContract, List<MyContractItem>> entry : owner.getContracts().entrySet()) {
-					MyContract contract = entry.getKey();
-					if (updateTask != null && updateTask.isCancelled()) {
-						return; //We are done here...
-					}
-					count++; //Also count COURIER
-					if (contract.isCourier()) {
-						continue; //Ignore courier
-					}
-					if (!entry.getValue().isEmpty()) {
-						continue; //Ignore existing
-					}
-					///XXX - Workaround for alien contracts
-					if ((owner.getOwnerID() != contract.getAcceptorID()
-							&& owner.getOwnerID() != contract.getAssigneeID()
-							&& owner.getOwnerID() != contract.getIssuerID())
-							&& owner.getOwnerID() != contract.getIssuerCorpID()) {
-						continue; //Ignore not owned
-					}
-					if ((owner.getOwnerID() != contract.getAcceptorID()
-							&& owner.getOwnerID() != contract.getAssigneeID()
-							&& owner.getOwnerID() != contract.getIssuerID())
-							&& !contract.isForCorp()) {
-						continue; //Only IssuerCorpID match and is not for corp
-					}
-					if (entry.getValue() != null && !entry.getValue().isEmpty()) { //Set already updated
-						continue; //Ignore already updated
-					}
-					contracts.add(contract);
-				}
-				for (MyContract contract : contracts) {
-					this.setTaskName("Contract Item (" + contract.getContractID() + ")");
-					currentContract = contract;
-					super.loadOwner(updateTask, forceUpdate, owner);
-					if (updateTask != null) {
-						updateTask.setTaskProgress(size, count, getProgressStart(), getProgressEnd());
-					}
+		Map<MyContract, ContractItemsResponse> updateList = updateList(contracts, new ListHandler<MyContract, ContractItemsResponse>() {
+			@Override
+			public ContractItemsResponse get(String updaterStatus, MyContract t) throws ApiException {
+				if (owner.isCorporation()) {
+					return new CorpContractItemsParser()
+							.getResponse(EveApiOwner.getApiAuthorization(owner), t.getContractID());
+				} else {
+					return new CharContractItemsParser()
+							.getResponse(EveApiOwner.getApiAuthorization(owner), t.getContractID());
 				}
 			}
+		});
+		for (Map.Entry<MyContract, ContractItemsResponse> entry : updateList.entrySet()) {
+			if (!handle(entry.getValue(), updaterStatus)) {
+				continue;
+			}
+			owner.setContracts(EveApiConverter.toContractItems(entry.getKey(), entry.getValue().getAll(), owner));
 		}
-	}
-
-	@Override
-	protected int getProgressStart() {
-		return 30;
-	}
-
-	@Override
-	protected int getProgressEnd() {
-		return 90;
-	}
-
-	@Override
-	protected ContractItemsResponse getResponse(boolean bCorp) throws ApiException {
-		if (bCorp) {
-			return new CorpContractItemsParser()
-					.getResponse(EveApiOwner.getApiAuthorization(getOwner()), currentContract.getContractID());
-		} else {
-			return new CharContractItemsParser()
-					.getResponse(EveApiOwner.getApiAuthorization(getOwner()), currentContract.getContractID());
-		}
-	}
-
-	@Override
-	protected Date getNextUpdate() {
-		return new Date();
 	}
 
 	@Override
@@ -130,18 +96,8 @@ public class ContractItemsGetter extends AbstractApiGetter<ContractItemsResponse
 	}
 
 	@Override
-	protected void setData(ContractItemsResponse response) {
-		getOwner().setContracts(EveApiConverter.toContractItems(currentContract, response.getAll(), getOwner()));
-	}
-
-	@Override
-	protected void updateFailed(EveApiOwner ownerFrom, EveApiOwner ownerTo) {
-		//Never called
-	}
-
-	@Override
-	protected long requestMask(boolean bCorp) {
-		if (bCorp) {
+	protected long requestMask() {
+		if (owner.isCorporation()) {
 			return EveApiAccessMask.CONTRACTS_CORP.getAccessMask();
 		} else {
 			return EveApiAccessMask.CONTRACTS_CHAR.getAccessMask();

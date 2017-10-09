@@ -24,7 +24,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -266,46 +265,6 @@ public abstract class AbstractEsiGetter extends AbstractGetter<EsiOwner, ApiClie
 		public List<K> get(ApiClient apiClient, Integer page) throws ApiException;
 	}
 
-	public <K> List<K> updateIDs(Set<Long> existing, IDsHandler<K> handler) throws ApiException {
-		List<K> list = new ArrayList<K>();
-		Long fromID = null;
-		boolean run = true;
-		int count = 0;
-		while (run) {
-			count++;
-			List<K> result;
-			try {
-				result = updateApi(new EsiIdUpdater<K>(handler, fromID, count + " of ?"), 0);
-			} catch (Exception ex){
-				break;
-			}
-			if (result == null || result.isEmpty()) { //Nothing returned: we're done
-				break; //Stop updating
-			}
-
-			list.addAll(result); //Add new
-
-			Long lastID = handler.getID(result.get(result.size() - 1)); //Get the last ID
-			if (lastID.equals(fromID)) { //ID is the same as on last update: we're done
-				break; //Stop updating
-			}
-			fromID = lastID; //Set ID for next update
-
-			for (K t : result) { //Search for existing data
-				if (existing.contains(handler.getID(t))) { //Found existing data
-					run = false; //Stop updating
-					break; //no need to continue
-				}
-			}
-		}
-		return list;
-	}
-
-	public interface IDsHandler<K> {
-		public List<K> get(ApiClient client, Long fromID) throws ApiException;
-		public Long getID(K response);
-	}
-
 	public class EsiPageUpdater<T> implements Callable<List<T>>, Updater<List<T>, ApiClient, ApiException> {
 
 		private final EsiPagesHandler<T> handler;
@@ -332,29 +291,6 @@ public abstract class AbstractEsiGetter extends AbstractGetter<EsiOwner, ApiClie
 
 		public ApiClient getClient() {
 			return client;
-		}
-
-		@Override
-		public String getStatus() {
-			return status;
-		}
-	}
-
-	public class EsiIdUpdater<K> implements Updater<List<K>, ApiClient, ApiException> {
-
-		private final IDsHandler<K> handler;
-		private final Long fromID;
-		private final String status;
-
-		public EsiIdUpdater(IDsHandler<K> handler, Long fromID, String status) {
-			this.handler = handler;
-			this.fromID = fromID;
-			this.status = status;
-		}
-
-		@Override
-		public List<K> update(ApiClient client) throws ApiException {
-			return handler.get(client, fromID);
 		}
 
 		@Override

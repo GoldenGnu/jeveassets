@@ -25,59 +25,41 @@ import com.beimin.eveapi.parser.character.CharAccountBalanceParser;
 import com.beimin.eveapi.parser.corporation.CorpAccountBalanceParser;
 import com.beimin.eveapi.response.shared.AccountBalanceResponse;
 import java.util.Date;
-import java.util.List;
 import net.nikr.eve.jeveasset.data.api.accounts.EveApiAccessMask;
-import net.nikr.eve.jeveasset.data.api.accounts.EveApiAccount;
 import net.nikr.eve.jeveasset.data.api.accounts.EveApiOwner;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 
 public class AccountBalanceGetter extends AbstractApiGetter<AccountBalanceResponse> {
 
-	public AccountBalanceGetter() {
-		super("Account Balance", true, false);
-	}
-
-	public void load(final UpdateTask updateTask, final boolean forceUpdate, final List<EveApiAccount> accounts) {
-		super.loadAccounts(updateTask, forceUpdate, accounts);
+	public AccountBalanceGetter(UpdateTask updateTask, EveApiOwner owner) {
+		super(updateTask, owner, false, owner.getBalanceNextUpdate(), TaskType.ACCOUNT_BALANCE);
 	}
 
 	@Override
-	protected AccountBalanceResponse getResponse(final boolean bCorp) throws ApiException {
-		if (bCorp) {
-			return new CorpAccountBalanceParser()
-					.getResponse(EveApiOwner.getApiAuthorization(getOwner()));
+	protected void get(String updaterStatus) throws ApiException {
+		AccountBalanceResponse response;
+		if (owner.isCorporation()) {
+			response = new CorpAccountBalanceParser()
+					.getResponse(EveApiOwner.getApiAuthorization(owner));
 		} else {
-			return new CharAccountBalanceParser()
-					.getResponse(EveApiOwner.getApiAuthorization(getOwner()));
+			response = new CharAccountBalanceParser()
+					.getResponse(EveApiOwner.getApiAuthorization(owner));
 		}
+		if (!handle(response, updaterStatus)) {
+			return;
+		}
+		owner.setAccountBalances(EveApiConverter.toAccountBalance(response.getAll(), owner));
 	}
 
 	@Override
 	protected void setNextUpdate(final Date nextUpdate) {
-		getOwner().setBalanceNextUpdate(nextUpdate);
-		getOwner().setBalanceLastUpdate(Settings.getNow());
+		owner.setBalanceNextUpdate(nextUpdate);
+		owner.setBalanceLastUpdate(Settings.getNow());
 	}
 
 	@Override
-	protected Date getNextUpdate() {
-		return getOwner().getBalanceNextUpdate();
-	}
-
-	@Override
-	protected void setData(final AccountBalanceResponse response) {
-		getOwner().setAccountBalances(EveApiConverter.toAccountBalance(response.getAll(), getOwner()));
-	}
-
-	@Override
-	protected void updateFailed(final EveApiOwner ownerFrom, final EveApiOwner ownerTo) {
-		ownerTo.setAccountBalances(ownerFrom.getAccountBalances());
-		ownerTo.setBalanceNextUpdate(ownerFrom.getBalanceNextUpdate());
-		ownerTo.setBalanceLastUpdate(ownerFrom.getBalanceLastUpdate());
-	}
-
-	@Override
-	protected long requestMask(boolean bCorp) {
+	protected long requestMask() {
 		return EveApiAccessMask.ACCOUNT_BALANCE.getAccessMask();
 	}
 }

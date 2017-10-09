@@ -27,10 +27,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import net.nikr.eve.jeveasset.data.api.accounts.EveKitAccessMask;
 import net.nikr.eve.jeveasset.data.api.accounts.EveKitOwner;
-import net.nikr.eve.jeveasset.data.api.my.MyAsset;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import net.nikr.eve.jeveasset.io.evekit.AbstractEveKitGetter.EveKitPagesHandler;
@@ -65,23 +63,7 @@ public class EveKitLocationsGetter extends AbstractEveKitGetter implements EveKi
 	public List<Location> get(ApiClient apiClient, String at, Long contid, Integer maxResults) throws ApiException {
 		//Get all items matching itemID
 		return getCommonApi(apiClient).getLocations(owner.getAccessKey(), owner.getAccessCred(), at, contid, maxResults, false,
-				valuesFilter(getIDs(owner)), null, null, null, null);
-	}
-
-	private Set<Long> getIDs(EveKitOwner owner) throws ApiException {
-		addItemIDs(itemMap, owner.getAssets());
-		return itemMap.keySet();
-	}
-
-	private void addItemIDs(Map<Long, String> itemIDs, List<MyAsset> assets) {
-		for (MyAsset asset : assets) {
-			if ((asset.getItem().getGroup().equals("Audit Log Secure Container")
-					|| asset.getItem().getCategory().equals("Ship"))
-					&& asset.isSingleton()) {
-				itemIDs.put(asset.getItemID(), asset.getItem().getTypeName());
-			}
-			addItemIDs(itemIDs, asset.getAssets());
-		}
+				valuesFilter(getIDs(itemMap, owner)), null, null, null, null);
 	}
 
 	@Override

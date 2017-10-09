@@ -216,7 +216,6 @@ public abstract class AbstractEveKitGetter extends AbstractGetter<EveKitOwner, A
 			int count = 0;
 			while (batch == null || !batch.isEmpty()) {
 				count++;
-				Long cid = getCid(handler, batch);
 				EveKitPageUpdater<K> updater = new EveKitPageUpdater<K>(handler, count + " of ?", atFilter(at), getCid(handler, batch), Integer.MAX_VALUE);
 				batch = updateApi(updater, 0);
 				if (batch == null) {

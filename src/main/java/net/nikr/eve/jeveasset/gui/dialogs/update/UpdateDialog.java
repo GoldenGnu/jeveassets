@@ -24,9 +24,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.Callable;
 import javax.swing.ButtonGroup;
 import javax.swing.GroupLayout.Alignment;
@@ -39,12 +37,10 @@ import javax.swing.JToggleButton;
 import javax.swing.Timer;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
+import net.nikr.eve.jeveasset.data.api.accounts.EveApiAccount;
+import net.nikr.eve.jeveasset.data.api.accounts.EveApiOwner;
 import net.nikr.eve.jeveasset.data.api.accounts.EveKitOwner;
 import net.nikr.eve.jeveasset.data.api.accounts.OwnerType;
-import net.nikr.eve.jeveasset.data.api.my.MyContract;
-import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob;
-import net.nikr.eve.jeveasset.data.api.my.MyJournal;
-import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
@@ -90,7 +86,6 @@ import net.nikr.eve.jeveasset.io.evekit.EveKitLocationsGetter;
 import net.nikr.eve.jeveasset.io.evekit.EveKitMarketOrdersGetter;
 import net.nikr.eve.jeveasset.io.evekit.EveKitOwnerGetter;
 import net.nikr.eve.jeveasset.io.evekit.EveKitTransactionsGetter;
-import net.nikr.eve.jeveasset.io.local.ConquerableStationsWriter;
 import net.nikr.eve.jeveasset.io.online.CitadelGetter;
 import net.nikr.eve.jeveasset.io.shared.ThreadWoker;
 
@@ -576,61 +571,9 @@ public class UpdateDialog extends JDialogCentered {
 						|| jAccountBalance.isSelected()
 						|| jContracts.isSelected()
 						|| jAssets.isSelected()
-						|| jBlueprints.isSelected()) {
-					updateTasks.add(new CitadelTask()); //Should properly always be first
-				}
-				if (!program.getProfileManager().getAccounts().isEmpty()) { //EveAPI
-					if (jMarketOrders.isSelected()
-							|| jJournal.isSelected()
-							|| jTransactions.isSelected()
-							|| jIndustryJobs.isSelected()
-							|| jAccountBalance.isSelected()
-							|| jContracts.isSelected()
-							|| jAssets.isSelected()
-							|| jBlueprints.isSelected()) {
-						updateTasks.add(new ConquerableStationsTask());
-						updateTasks.add(new AccountsTask());
-					}
-					if (jMarketOrders.isSelected()) {
-						updateTasks.add(new MarketOrdersTask());
-					}
-					if (jJournal.isSelected()) {
-						updateTasks.add(new JournalTask());
-					}
-					if (jTransactions.isSelected()) {
-						updateTasks.add(new TransactionsTask());
-					}
-					if (jIndustryJobs.isSelected()) {
-						updateTasks.add(new IndustryJobsTask());
-					}
-					if (jAccountBalance.isSelected()) {
-						updateTasks.add(new BalanceTask());
-					}
-					if (jContracts.isSelected()) {
-						updateTasks.add(new ContractsTask());
-					}
-					if (jAssets.isSelected()) {
-						updateTasks.add(new AssetsTask());
-					}
-					if (jBlueprints.isSelected()) {
-						updateTasks.add(new BlueprintsTask());
-					}
-					if (jContracts.isSelected() || jIndustryJobs.isSelected()) {
-						updateTasks.add(new NameTask());
-					}
-				}
-				if ((jMarketOrders.isSelected()
-						|| jJournal.isSelected()
-						|| jTransactions.isSelected()
-						|| jIndustryJobs.isSelected()
-						|| jAccountBalance.isSelected()
-						|| jContracts.isSelected()
-						|| jAssets.isSelected()
 						|| jBlueprints.isSelected()
-						)
-						&& (!program.getProfileManager().getEsiOwners().isEmpty()
-						|| !program.getProfileManager().getEveKitOwners().isEmpty()
-						)) {
+						) {
+					updateTasks.add(new CitadelTask());
 					updateTasks.add(new Step1Task());
 					updateTasks.add(new Step2Task());
 					updateTasks.add(new Step3Task());
@@ -692,6 +635,9 @@ public class UpdateDialog extends JDialogCentered {
 			for (EsiOwner esiOwner : program.getProfileManager().getEsiOwners()) {
 				updates.add(new EsiOwnerGetter(this, esiOwner));
 			}
+			for (EveApiAccount account : program.getProfileManager().getAccounts()) {
+				updates.add(new AccountGetter(this, account));
+			}
 		}
 
 		@Override
@@ -708,6 +654,12 @@ public class UpdateDialog extends JDialogCentered {
 		public Step2Task() {
 			super(DialoguesUpdate.get().step2());
 			if (jAccountBalance.isSelected()) {
+				//EveApi
+				for (EveApiAccount account : program.getProfileManager().getAccounts()) {
+					for (EveApiOwner owner : account.getOwners()) {
+						updates.add(new AccountBalanceGetter(this, owner));
+					}
+				}
 				//EveKit
 				for (EveKitOwner eveKitOwner : program.getProfileManager().getEveKitOwners()) {
 					updates.add(new EveKitAccountBalanceGetter(this, eveKitOwner));
@@ -720,84 +672,126 @@ public class UpdateDialog extends JDialogCentered {
 				}
 			}
 			if (jAssets.isSelected()) {
+				//EveApi
+				for (EveApiAccount account : program.getProfileManager().getAccounts()) {
+					for (EveApiOwner owner : account.getOwners()) {
+						updates.add(new AssetsGetter(this, owner));
+					}
+				}
 				//EveKit
 				for (EveKitOwner eveKitOwner : program.getProfileManager().getEveKitOwners()) {
 					updates.add(new EveKitAssetGetter(this, eveKitOwner));
 				}
 				//Esi
-				if ((EsiScopes.CHARACTER_ASSETS.isEnabled() || EsiScopes.CORPORATION_ASSETS.isEnabled()) && !program.getProfileManager().getEsiOwners().isEmpty()) {
+				if (EsiScopes.CHARACTER_ASSETS.isEnabled() || EsiScopes.CORPORATION_ASSETS.isEnabled()) {
 					for (EsiOwner esiOwner : program.getProfileManager().getEsiOwners()) {
 						updates.add(new EsiAssetsGetter(this, esiOwner));
 					}
 				}
 			}
 			if (jIndustryJobs.isSelected()) {
+				//EveApi
+				for (EveApiAccount account : program.getProfileManager().getAccounts()) {
+					for (EveApiOwner owner : account.getOwners()) {
+						updates.add(new IndustryJobsGetter(this, owner));
+					}
+				}
 				//EveKit
 				for (EveKitOwner eveKitOwner : program.getProfileManager().getEveKitOwners()) {
 					updates.add(new EveKitIndustryJobsGetter(this, eveKitOwner));
 				}
 				//Esi
-				if (EsiScopes.CHARACTER_INDUSTRY_JOBS.isEnabled() && !program.getProfileManager().getEsiOwners().isEmpty()) {
+				if (EsiScopes.CHARACTER_INDUSTRY_JOBS.isEnabled()) {
 					for (EsiOwner esiOwner : program.getProfileManager().getEsiOwners()) {
 						updates.add(new EsiIndustryJobsGetter(this, esiOwner));
 					}
 				}
 			}
 			if (jMarketOrders.isSelected()) {
+				//EveApi
+				for (EveApiAccount account : program.getProfileManager().getAccounts()) {
+					for (EveApiOwner owner : account.getOwners()) {
+						updates.add(new MarketOrdersGetter(this, owner, Settings.get().isMarketOrderHistory()));
+					}
+				}
 				//EveKit
 				for (EveKitOwner eveKitOwner : program.getProfileManager().getEveKitOwners()) {
 					updates.add(new EveKitMarketOrdersGetter(this, eveKitOwner));
 				}
 				//Esi
-				if (EsiScopes.CHARACTER_MARKET_ORDERS.isEnabled() && !program.getProfileManager().getEsiOwners().isEmpty()) {
+				if (EsiScopes.CHARACTER_MARKET_ORDERS.isEnabled()) {
 					for (EsiOwner esiOwner : program.getProfileManager().getEsiOwners()) {
 						updates.add(new EsiMarketOrdersGetter(this, esiOwner, Settings.get().isMarketOrderHistory()));
 					}
 				}
 			}
 			if (jJournal.isSelected()) {
+				//EveApi
+				for (EveApiAccount account : program.getProfileManager().getAccounts()) {
+					for (EveApiOwner owner : account.getOwners()) {
+						updates.add(new JournalGetter(this, owner, Settings.get().isJournalHistory()));
+					}
+				}
 				//EveKit
 				for (EveKitOwner eveKitOwner : program.getProfileManager().getEveKitOwners()) {
 					updates.add(new EveKitJournalGetter(this, eveKitOwner));
 				}
 				//Esi
-				if ((EsiScopes.CHARACTER_WALLET.isEnabled() || EsiScopes.CORPORATION_WALLET.isEnabled()) && !program.getProfileManager().getEsiOwners().isEmpty()) {
+				if (EsiScopes.CHARACTER_WALLET.isEnabled() || EsiScopes.CORPORATION_WALLET.isEnabled()) {
 					for (EsiOwner esiOwner : program.getProfileManager().getEsiOwners()) {
 						updates.add(new EsiJournalGetter(this, esiOwner, Settings.get().isJournalHistory()));
 					}
 				}
 			}
 			if (jTransactions.isSelected()) {
+				//EveApi
+				for (EveApiAccount account : program.getProfileManager().getAccounts()) {
+					for (EveApiOwner owner : account.getOwners()) {
+						updates.add(new TransactionsGetter(this, owner, Settings.get().isTransactionHistory()));
+					}
+				}
 				//EveKit
 				for (EveKitOwner eveKitOwner : program.getProfileManager().getEveKitOwners()) {
 					updates.add(new EveKitTransactionsGetter(this, eveKitOwner));
 				}
 				//Esi
-				if ((EsiScopes.CHARACTER_WALLET.isEnabled() || EsiScopes.CORPORATION_WALLET.isEnabled()) && !program.getProfileManager().getEsiOwners().isEmpty()) {
+				if (EsiScopes.CHARACTER_WALLET.isEnabled() || EsiScopes.CORPORATION_WALLET.isEnabled()) {
 					for (EsiOwner esiOwner : program.getProfileManager().getEsiOwners()) {
 						updates.add(new EsiTransactionsGetter(this, esiOwner, Settings.get().isTransactionHistory()));
 					}
 				}
 			}
 			if (jContracts.isSelected()) {
+				//EveApi
+				for (EveApiAccount account : program.getProfileManager().getAccounts()) {
+					for (EveApiOwner owner : account.getOwners()) {
+						updates.add(new ContractsGetter(this, owner));
+					}
+				}
 				//EveKit
 				for (EveKitOwner eveKitOwner : program.getProfileManager().getEveKitOwners()) {
 					updates.add(new EveKitContractsGetter(this, eveKitOwner));
 				}
 				////Esi
-				if (EsiScopes.CHARACTER_CONTRACTS.isEnabled() && !program.getProfileManager().getEsiOwners().isEmpty()) {
+				if (EsiScopes.CHARACTER_CONTRACTS.isEnabled()) {
 					for (EsiOwner esiOwner : program.getProfileManager().getEsiOwners()) {
 						updates.add(new EsiContractsGetter(this, esiOwner));
 					}
 				}
 			}
-			//EveKit
 			if (jBlueprints.isSelected()) {
+				//EveApi
+				for (EveApiAccount account : program.getProfileManager().getAccounts()) {
+					for (EveApiOwner owner : account.getOwners()) {
+						updates.add(new BlueprintsGetter(this, owner));
+					}
+				}
+				//EveKit
 				for (EveKitOwner eveKitOwner : program.getProfileManager().getEveKitOwners()) {
 					updates.add(new EveKitBlueprintsGetter(this, eveKitOwner));
 				}
 				//Esi
-				if (EsiScopes.CHARACTER_BLUEPRINTS.isEnabled() && !program.getProfileManager().getEsiOwners().isEmpty()) {
+				if (EsiScopes.CHARACTER_BLUEPRINTS.isEnabled() || EsiScopes.CORPORATION_BLUEPRINTS.isEnabled()) {
 					for (EsiOwner esiOwner : program.getProfileManager().getEsiOwners()) {
 						updates.add(new EsiBlueprintsGetter(this, esiOwner));
 					}
@@ -822,22 +816,39 @@ public class UpdateDialog extends JDialogCentered {
 			if (EsiScopes.CONQUERABLE_STATIONS.isEnabled()) {
 				//ESI
 				updates.add(new EsiConquerableStationsGetter(this));
+			} else {
+				//EveApi
+				updates.add(new ConquerableStationsGetter(this));
 			}
+			//Contract Items
 			if (jContracts.isSelected()) {
+				//EveApi
+				for (EveApiAccount account : program.getProfileManager().getAccounts()) {
+					for (EveApiOwner owner : account.getOwners()) {
+						updates.add(new ContractItemsGetter(this, owner));
+					}
+				}
 				//EveKit
 				if (!program.getProfileManager().getEveKitOwners().isEmpty()) {
 					for (EveKitOwner eveKitOwner : program.getProfileManager().getEveKitOwners()) {
 						updates.add(new EveKitContractItemsGetter(this, eveKitOwner));
 					}
 				}
-				////Esi
+				//Esi
 				if (EsiScopes.CHARACTER_CONTRACTS.isEnabled() && !program.getProfileManager().getEsiOwners().isEmpty()) {
 					for (EsiOwner esiOwner : program.getProfileManager().getEsiOwners()) {
 						updates.add(new EsiContractItemsGetter(this, esiOwner));
 					}
 				}
 			}
+			//Locations
 			if (jAssets.isSelected()) {
+				//EveApi
+				for (EveApiAccount account : program.getProfileManager().getAccounts()) {
+					for (EveApiOwner owner : account.getOwners()) {
+						updates.add(new LocationsGetter(this, owner));
+					}
+				}
 				//EveKit
 				if (!program.getProfileManager().getEveKitOwners().isEmpty()) {
 					for (EveKitOwner eveKitOwner : program.getProfileManager().getEveKitOwners()) {
@@ -853,7 +864,11 @@ public class UpdateDialog extends JDialogCentered {
 			}
 			//IDs to name
 			if (EsiScopes.NAMES.isEnabled()) {
+				//ESI
 				updates.add(new EsiNameGetter(this, program.getOwnerTypes()));
+			} else {
+				//EveApi
+				updates.add(new NameGetter(this, program.getOwnerTypes()));
 			}
 			//Structures
 			if (EsiScopes.CHARACTER_STRUCTURES.isEnabled()) {
@@ -870,24 +885,6 @@ public class UpdateDialog extends JDialogCentered {
 		}
 	}
 
-	public class ConquerableStationsTask extends UpdateTask {
-
-		public ConquerableStationsTask() {
-			super(DialoguesUpdate.get().conqStations());
-		}
-
-		@Override
-		public void update() {
-			if (!EsiScopes.CONQUERABLE_STATIONS.isEnabled()) {
-				//EveAPI
-				setIcon(Images.MISC_EVE.getIcon());
-				ConquerableStationsGetter conquerableStationsGetter = new ConquerableStationsGetter();
-				conquerableStationsGetter.load(this);
-				ConquerableStationsWriter.save();
-			}
-		}
-	}
-
 	public class CitadelTask extends UpdateTask {
 
 		public CitadelTask() {
@@ -897,205 +894,6 @@ public class UpdateDialog extends JDialogCentered {
 		@Override
 		public void update() {
 			CitadelGetter.update(this);
-		}
-	}
-
-	public class AccountsTask extends UpdateTask {
-
-		public AccountsTask() {
-			super(DialoguesUpdate.get().accounts());
-		}
-
-		@Override
-		public void update() {
-			//EveAPI
-			if (!program.getProfileManager().getAccounts().isEmpty()) {
-				setIcon(Images.MISC_EVE.getIcon());
-				AccountGetter accountGetter = new AccountGetter();
-				accountGetter.load(this, Settings.get().isForceUpdate(), program.getProfileManager().getAccounts());
-			}
-		}
-	}
-
-	public class AssetsTask extends UpdateTask {
-
-		public AssetsTask() {
-			super(DialoguesUpdate.get().assets());
-		}
-
-		@Override
-		public void update() {
-			//EveApi
-			if (!program.getProfileManager().getAccounts().isEmpty()) {
-				setIcon(Images.MISC_EVE.getIcon());
-				AssetsGetter assetsGetter = new AssetsGetter();
-				assetsGetter.load(this, Settings.get().isForceUpdate(), program.getProfileManager().getAccounts());
-				LocationsGetter locationsGetter = new LocationsGetter();
-				locationsGetter.load(this, Settings.get().isForceUpdate(), program.getProfileManager().getAccounts());
-			}
-		}
-	}
-
-	public class BalanceTask extends UpdateTask {
-
-		public BalanceTask() {
-			super(DialoguesUpdate.get().balance());
-		}
-
-		@Override
-		public void update() {
-			//EveApi
-			if (!program.getProfileManager().getAccounts().isEmpty()) {
-				setIcon(Images.MISC_EVE.getIcon());
-				AccountBalanceGetter accountBalanceGetter = new AccountBalanceGetter();
-				accountBalanceGetter.load(this, Settings.get().isForceUpdate(), program.getProfileManager().getAccounts());
-			}
-		}
-	}
-
-	public class IndustryJobsTask extends UpdateTask {
-
-		public IndustryJobsTask() {
-			super(DialoguesUpdate.get().industryJobs());
-		}
-
-		@Override
-		public void update() {
-			//EveApi
-			if (!program.getProfileManager().getAccounts().isEmpty()) {
-				setIcon(Images.MISC_EVE.getIcon());
-				IndustryJobsGetter industryJobsGetter = new IndustryJobsGetter();
-				industryJobsGetter.load(this, Settings.get().isForceUpdate(), program.getProfileManager().getAccounts());
-			}
-		}
-	}
-
-	public class MarketOrdersTask extends UpdateTask {
-
-		public MarketOrdersTask() {
-			super(DialoguesUpdate.get().marketOrders());
-		}
-
-		@Override
-		public void update() {
-			//EveApi
-			if (!program.getProfileManager().getAccounts().isEmpty()) {
-				setIcon(Images.MISC_EVE.getIcon());
-				MarketOrdersGetter marketOrdersGetter = new MarketOrdersGetter();
-				marketOrdersGetter.load(this, Settings.get().isForceUpdate(), program.getProfileManager().getAccounts(), Settings.get().isMarketOrderHistory());
-			}
-		}
-	}
-
-	public class JournalTask extends UpdateTask {
-
-		public JournalTask() {
-			super(DialoguesUpdate.get().journal());
-		}
-
-		@Override
-		public void update() {
-			//EveApi
-			if (!program.getProfileManager().getAccounts().isEmpty()) {
-				setIcon(Images.MISC_EVE.getIcon());
-				JournalGetter journalGetter = new JournalGetter();
-				journalGetter.load(this, Settings.get().isForceUpdate(), program.getProfileManager().getAccounts(), Settings.get().isJournalHistory());
-			}
-		}
-	}
-
-	public class TransactionsTask extends UpdateTask {
-
-		public TransactionsTask() {
-			super(DialoguesUpdate.get().transactions());
-		}
-
-		@Override
-		public void update() {
-			//EveApi
-			if (!program.getProfileManager().getAccounts().isEmpty()) {
-				setIcon(Images.MISC_EVE.getIcon());
-				TransactionsGetter transactionsGetter = new TransactionsGetter();
-				transactionsGetter.load(this, Settings.get().isForceUpdate(), program.getProfileManager().getAccounts(), Settings.get().isTransactionHistory());
-			}
-		}
-	}
-
-	public class ContractsTask extends UpdateTask {
-
-		public ContractsTask() {
-			super(DialoguesUpdate.get().contracts());
-		}
-
-		@Override
-		public void update() {
-			//EveApi
-			if (!program.getProfileManager().getAccounts().isEmpty()) {
-				setIcon(Images.MISC_EVE.getIcon());
-				ContractsGetter contractsGetter = new ContractsGetter();
-				contractsGetter.load(this, Settings.get().isForceUpdate(), program.getProfileManager().getAccounts());
-				ContractItemsGetter itemsGetter = new ContractItemsGetter();
-				itemsGetter.load(this, Settings.get().isForceUpdate(), program.getProfileManager().getAccounts());
-			}
-		}
-	}
-
-	public class BlueprintsTask extends UpdateTask {
-
-		public BlueprintsTask() {
-			super(DialoguesUpdate.get().blueprints());
-		}
-
-		@Override
-		public void update() {
-			//EveApi
-			if (!program.getProfileManager().getAccounts().isEmpty()) {
-				setIcon(Images.MISC_EVE.getIcon());
-				BlueprintsGetter blueprintsGetter = new BlueprintsGetter();
-				blueprintsGetter.load(this, Settings.get().isForceUpdate(), program.getProfileManager().getAccounts());
-			}
-		}
-	}
-
-	public class NameTask extends UpdateTask {
-
-		public NameTask() {
-			super(DialoguesUpdate.get().names());
-		}
-
-		@Override
-		public void update() {
-			//Create list of needed Owner IDs
-			Set<Long> list = new HashSet<Long>();
-			for (OwnerType owner : program.getOwnerTypes()) {
-				list.add(owner.getOwnerID()); //Just to be sure
-				for (MyIndustryJob myIndustryJob : owner.getIndustryJobs()) {
-					list.add(myIndustryJob.getInstallerID());
-				}
-				for (MyContract contract : owner.getContracts().keySet()) {
-					list.add(contract.getAcceptorID());
-					list.add(contract.getAssigneeID());
-					list.add(contract.getIssuerCorpID());
-					list.add(contract.getIssuerID());
-				}
-				for (MyTransaction transaction : owner.getTransactions()) {
-					list.add(transaction.getClientID());
-				}
-				for (MyJournal journal : owner.getJournal()) {
-					if (journal.getFirstPartyID() != null) {
-						list.add((long) journal.getFirstPartyID());
-					}
-					if (journal.getSecondPartyID() != null) {
-						list.add((long) journal.getSecondPartyID());
-					}
-				}
-			}
-			if (!EsiScopes.NAMES.isEnabled()) {
-				//EveAPI
-				setIcon(Images.MISC_EVE.getIcon());
-				NameGetter nameGetter = new NameGetter();
-				nameGetter.load(this, list);
-			}
 		}
 	}
 
