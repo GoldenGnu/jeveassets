@@ -91,6 +91,7 @@ public enum Images {
 	LINK_EVE_ADDICTS ("link_eve_addicts.png"),
 	LINK_EVE_CENTRAL ("link_eve_central.png"),
 	LINK_EVEMARKETEER ("link_evemarketeer.png"),
+	LINK_EVEMARKETER ("link_evemarketer.png"),
 	LINK_EVE_MARKETDATA ("link_eve_marketdata.png"),
 	LINK_EVE_MARKETS ("link_eve_markets.png"),
 	LINK_DOTLAN_EVEMAPS ("link_dotlan_evemaps.png"),

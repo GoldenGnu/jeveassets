@@ -53,6 +53,14 @@ public class PriceDataSettings {
 				return DataModelPriceDataSettings.get().sourceEveMarketdata();
 			}
 		},
+		EVEMARKETER(PricingFetch.EVEMARKETER, false, true, true, false, LocationType.REGION, Collections.singletonList(10000002L), Images.LINK_EVEMARKETER.getIcon()) {
+			@Override public PriceMode[] getPriceTypes() {
+				return PriceMode.values();
+			}
+			@Override String getI18N() {
+				return DataModelPriceDataSettings.get().sourceEvemarketer();
+			}
+		},
 		/*
 		EVEMARKETEER(PricingFetch.EVEMARKETEER, false, true, true, true) {
 			@Override public PriceMode[] getPriceTypes() {
@@ -719,7 +727,7 @@ public class PriceDataSettings {
 	}
 
 	public static PriceSource getDefaultPriceSource() {
-		return PriceSource.EVE_MARKETDATA;
+		return PriceSource.EVEMARKETER;
 	}
 
 	public void setPriceType(final PriceMode priceSource) {
