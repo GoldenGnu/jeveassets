@@ -124,7 +124,7 @@ public abstract class AbstractApiGetter<T extends ApiResponse> extends AbstractG
 
 	protected boolean handle(ApiResponse response, String updaterStatus) {
 		if (!response.hasError()) { //OK
-			setNextUpdate(response.getCachedUntil());
+			setNextUpdateSafe(response.getCachedUntil());
 			notInvalid();
 			logInfo(updaterStatus, "Updated");
 			return true;
