@@ -594,9 +594,11 @@ public class RawConverterTest extends TestUtil {
 	}
 
 	@Test
-	public void testToLong() {
+	public void testToLong_Number() {
 		assertEquals(RawConverter.toLong(1L), (Long) 1L);
 		assertEquals(RawConverter.toLong(0), (Long) 0L);
+		assertEquals(RawConverter.toLong(0.0), (Long) 0L);
+		assertEquals(RawConverter.toLong(0.0f), (Long) 0L);
 		assertEquals((long) RawConverter.toLong(Long.MAX_VALUE), Long.MAX_VALUE);
 		assertEquals((long) RawConverter.toLong(Long.MIN_VALUE), Long.MIN_VALUE);
 		assertEquals((long) RawConverter.toLong(Integer.MAX_VALUE), (long) Integer.MAX_VALUE);
@@ -608,7 +610,23 @@ public class RawConverterTest extends TestUtil {
 	}
 
 	@Test
-	public void testToInteger() {
+	public void testToLong_String() {
+		assertEquals(RawConverter.toLong(String.valueOf(1L)), (Long) 1L);
+		assertEquals(RawConverter.toLong(String.valueOf(0)), (Long) 0L);
+		assertEquals((long) RawConverter.toLong(String.valueOf(Long.MAX_VALUE)), Long.MAX_VALUE);
+		assertEquals((long) RawConverter.toLong(String.valueOf(Long.MIN_VALUE)), Long.MIN_VALUE);
+		assertEquals((long) RawConverter.toLong(String.valueOf(Integer.MAX_VALUE)), (long) Integer.MAX_VALUE);
+		assertEquals((long) RawConverter.toLong(String.valueOf(Integer.MIN_VALUE)), (long) Integer.MIN_VALUE);
+		assertEquals(RawConverter.toLong((String)null), null);
+	}
+
+	
+	@Test
+	public void testToInteger_Number() {
+		assertEquals((int) RawConverter.toInteger(1L), 1);
+		assertEquals((int) RawConverter.toInteger(0), 0);
+		assertEquals((int) RawConverter.toInteger(0.0), 0);
+		assertEquals((int) RawConverter.toInteger(0.0f), 0);
 		assertEquals((int) RawConverter.toInteger(Long.MAX_VALUE), (int) Long.MAX_VALUE);
 		assertEquals((int) RawConverter.toInteger(Long.MIN_VALUE), (int) Long.MIN_VALUE);
 		assertEquals((int) RawConverter.toInteger(Integer.MAX_VALUE), Integer.MAX_VALUE);
@@ -617,6 +635,15 @@ public class RawConverterTest extends TestUtil {
 		assertEquals((int) RawConverter.toInteger(Double.MIN_VALUE), (int) Double.MIN_VALUE);
 		assertEquals((int) RawConverter.toInteger(Float.MAX_VALUE), (int) Float.MAX_VALUE);
 		assertEquals((int) RawConverter.toInteger(Float.MIN_VALUE), (int) Float.MIN_VALUE);
+	}
+
+	@Test
+	public void testToInteger_String() {
+		assertEquals((int) RawConverter.toInteger(String.valueOf(1L)), 1);
+		assertEquals((int) RawConverter.toInteger(String.valueOf(0)), 0);
+		assertEquals((int) RawConverter.toInteger(String.valueOf(Integer.MAX_VALUE)), Integer.MAX_VALUE);
+		assertEquals((int) RawConverter.toInteger(String.valueOf(Integer.MIN_VALUE)), Integer.MIN_VALUE);
+		assertEquals(RawConverter.toInteger((String)null), null);
 	}
 
 	@Test
