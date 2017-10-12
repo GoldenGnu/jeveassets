@@ -36,7 +36,7 @@ public class EsiContractsGetter extends AbstractEsiGetter {
 
 	@Override
 	protected void get(ApiClient apiClient) throws ApiException {
-		List<CharacterContractsResponse> contracts = getContractsApiAuth(apiClient).getCharactersCharacterIdContracts((int) owner.getOwnerID(), DATASOURCE, null, null, null);
+		List<CharacterContractsResponse> contracts = getContractsApiAuth(apiClient).getCharactersCharacterIdContracts((int) owner.getOwnerID(), DATASOURCE, null, USER_AGENT, null);
 		owner.setContracts(EsiConverter.toContracts(contracts, owner));
 	}
 

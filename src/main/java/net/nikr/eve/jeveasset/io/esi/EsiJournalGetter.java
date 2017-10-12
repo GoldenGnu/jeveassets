@@ -56,7 +56,7 @@ public class EsiJournalGetter extends AbstractEsiGetter {
 				List<CorporationWalletJournalResponse> journals = updateIDs(existing, new IDsHandler<CorporationWalletJournalResponse>() {
 					@Override
 					public List<CorporationWalletJournalResponse> get(ApiClient apiClient, Long fromID) throws ApiException {
-						return getWalletApiAuth(apiClient).getCorporationsCorporationIdWalletsDivisionJournal((int) owner.getOwnerID(), division, DATASOURCE, fromID, null, null, null);
+						return getWalletApiAuth(apiClient).getCorporationsCorporationIdWalletsDivisionJournal((int) owner.getOwnerID(), division, DATASOURCE, fromID, null, USER_AGENT, null);
 					}
 
 					@Override
@@ -71,7 +71,7 @@ public class EsiJournalGetter extends AbstractEsiGetter {
 			List<CharacterWalletJournalResponse> journals = updateIDs(existing, new IDsHandler<CharacterWalletJournalResponse>() {
 				@Override
 				public List<CharacterWalletJournalResponse> get(ApiClient apiClient, Long fromID) throws ApiException {
-					return getWalletApiAuth(apiClient).getCharactersCharacterIdWalletJournal((int) owner.getOwnerID(), DATASOURCE, fromID, null, null, null);
+					return getWalletApiAuth(apiClient).getCharactersCharacterIdWalletJournal((int) owner.getOwnerID(), DATASOURCE, fromID, null, USER_AGENT, null);
 				}
 
 				@Override

@@ -42,7 +42,7 @@ public class EsiBlueprintsGetter extends AbstractEsiGetter {
 			List<CorporationBlueprintsResponse> responses = updatePages(new EsiPagesHandler<CorporationBlueprintsResponse>() {
 				@Override
 				public List<CorporationBlueprintsResponse> get(ApiClient apiClient, Integer page) throws ApiException {
-					return getCorporationApiAuth(apiClient).getCorporationsCorporationIdBlueprints((int) owner.getOwnerID(), DATASOURCE, page, null, null, null);
+					return getCorporationApiAuth(apiClient).getCorporationsCorporationIdBlueprints((int) owner.getOwnerID(), DATASOURCE, page, null, USER_AGENT, null);
 				}
 			});
 			owner.setBlueprints(EsiConverter.toBlueprintsCorporation(responses));
@@ -50,7 +50,7 @@ public class EsiBlueprintsGetter extends AbstractEsiGetter {
 			List<CharacterBlueprintsResponse> responses = updatePages(new EsiPagesHandler<CharacterBlueprintsResponse>() {
 				@Override
 				public List<CharacterBlueprintsResponse> get(ApiClient apiClient, Integer page) throws ApiException {
-					return getCharacterApiAuth(apiClient).getCharactersCharacterIdBlueprints((int) owner.getOwnerID(), DATASOURCE, page, null, null, null);
+					return getCharacterApiAuth(apiClient).getCharactersCharacterIdBlueprints((int) owner.getOwnerID(), DATASOURCE, page, null, USER_AGENT, null);
 				}
 				
 			});

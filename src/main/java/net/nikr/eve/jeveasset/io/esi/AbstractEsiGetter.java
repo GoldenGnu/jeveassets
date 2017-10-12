@@ -54,6 +54,7 @@ public abstract class AbstractEsiGetter extends AbstractGetter<EsiOwner, ApiClie
 	private static final Logger LOG = LoggerFactory.getLogger(AbstractEsiGetter.class);
 
 	protected static final String DATASOURCE = "tranquility";
+	protected static final String USER_AGENT = System.getProperty("http.agent");
 	protected static final int UNIVERSE_BATCH_SIZE = 100;
 	protected static final int LOCATIONS_BATCH_SIZE = 100;
 	private static final int RETRIES = 1;

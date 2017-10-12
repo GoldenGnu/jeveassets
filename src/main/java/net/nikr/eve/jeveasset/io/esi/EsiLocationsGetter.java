@@ -45,7 +45,7 @@ public class EsiLocationsGetter extends AbstractEsiGetter {
 		Map<List<Long>, List<CharacterAssetsNamesResponse>> responses = updateList(splitList(getIDs(itemMap, owner), LOCATIONS_BATCH_SIZE), new ListHandler<List<Long>, List<CharacterAssetsNamesResponse>>() {
 			@Override
 			public List<CharacterAssetsNamesResponse> get(ApiClient apiClient, List<Long> t) throws ApiException {
-				return getAssetsApiAuth(apiClient).postCharactersCharacterIdAssetsNames((int) owner.getOwnerID(), t, DATASOURCE, null, null, null);
+				return getAssetsApiAuth(apiClient).postCharactersCharacterIdAssetsNames((int) owner.getOwnerID(), t, DATASOURCE, null, USER_AGENT, null);
 			}
 		});
 

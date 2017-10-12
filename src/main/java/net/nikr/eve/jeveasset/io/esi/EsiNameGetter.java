@@ -55,7 +55,7 @@ public class EsiNameGetter extends AbstractEsiGetter {
 		Map<List<Integer>, List<UniverseNamesResponse>> responses = updateList(splitList(ids, UNIVERSE_BATCH_SIZE), new ListHandler<List<Integer>, List<UniverseNamesResponse>>() {
 			@Override
 			public List<UniverseNamesResponse> get(ApiClient apiClient, List<Integer> t) throws ApiException {
-				return getUniverseApiOpen(apiClient).postUniverseNames(t, DATASOURCE, System.getProperty("http.agent"), null);
+				return getUniverseApiOpen(apiClient).postUniverseNames(t, DATASOURCE, USER_AGENT, null);
 			}
 		});
 

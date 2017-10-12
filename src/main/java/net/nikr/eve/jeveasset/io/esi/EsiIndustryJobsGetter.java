@@ -47,7 +47,7 @@ public class EsiIndustryJobsGetter extends AbstractEsiGetter {
 		Map<Boolean, List<CharacterIndustryJobsResponse>> updateList = updateList(completed, new ListHandler<Boolean, List<CharacterIndustryJobsResponse>>() {
 			@Override
 			protected List<CharacterIndustryJobsResponse> get(ApiClient client, Boolean k) throws ApiException {
-				return getIndustryApiAuth(apiClient).getCharactersCharacterIdIndustryJobs((int) owner.getOwnerID(), DATASOURCE, k, null, null, null);
+				return getIndustryApiAuth(apiClient).getCharactersCharacterIdIndustryJobs((int) owner.getOwnerID(), DATASOURCE, k, null, USER_AGENT, null);
 			}
 		});
 		List<CharacterIndustryJobsResponse> industryJobs = new ArrayList<>();

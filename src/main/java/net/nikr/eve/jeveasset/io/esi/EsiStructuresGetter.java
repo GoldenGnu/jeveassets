@@ -60,7 +60,7 @@ public class EsiStructuresGetter extends AbstractEsiGetter {
 			@Override
 			public StructureResponse get(ApiClient apiClient, Long t) throws ApiException {
 				try {
-					return getUniverseApiAuth(apiClient).getUniverseStructuresStructureId(t, DATASOURCE, null, null, null);
+					return getUniverseApiAuth(apiClient).getUniverseStructuresStructureId(t, DATASOURCE, null, USER_AGENT, null);
 				} catch (ApiException ex) {
 					if (ex.getCode() != 403 && ex.getCode() != 404) { //Ignore 403: Forbidden and 404: Structure not found
 						throw ex;

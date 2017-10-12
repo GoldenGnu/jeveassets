@@ -55,7 +55,7 @@ public class EsiContractItemsGetter extends AbstractEsiGetter {
 		Map<MyContract, List<CharacterContractsItemsResponse>> responses = updateList(contracts, new ListHandler<MyContract, List<CharacterContractsItemsResponse>>() {
 			@Override
 			public List<CharacterContractsItemsResponse> get(ApiClient apiClient, MyContract t) throws ApiException {
-				return getContractsApiAuth(apiClient).getCharactersCharacterIdContractsContractIdItems((int) owner.getOwnerID(), t.getContractID(), DATASOURCE, null, null, null);
+				return getContractsApiAuth(apiClient).getCharactersCharacterIdContractsContractIdItems((int) owner.getOwnerID(), t.getContractID(), DATASOURCE, null, USER_AGENT, null);
 			}
 		});
 		for (Map.Entry<MyContract, List<CharacterContractsItemsResponse>> entry : responses.entrySet()) {

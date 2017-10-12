@@ -58,13 +58,13 @@ public class EsiOwnerGetter extends AbstractEsiGetter implements AccountAdder{
 		boolean isCorporation = EsiScopes.CORPORATION_ROLES.isInScope(characterInfo.getScopes());
 		if (isCorporation) { //Corporation
 			//CharacterID to CorporationID
-			CharacterResponse character = getCharacterApiOpen(apiClient).getCharactersCharacterId(characterID, DATASOURCE, null, null);
+			CharacterResponse character = getCharacterApiOpen(apiClient).getCharactersCharacterId(characterID, DATASOURCE, USER_AGENT, null);
 			corporationID = character.getCorporationId();
 			//CorporationID to CorporationName
-			CorporationResponse corporation = getCorporationApiOpen(apiClient).getCorporationsCorporationId(corporationID, DATASOURCE, null, null);
+			CorporationResponse corporation = getCorporationApiOpen(apiClient).getCorporationsCorporationId(corporationID, DATASOURCE, USER_AGENT, null);
 			corporationName = corporation.getCorporationName();
 			//Updated Character Roles
-			roles = getCharacterApiAuth(apiClient).getCharactersCharacterIdRoles(characterID, DATASOURCE, null, null, null);
+			roles = getCharacterApiAuth(apiClient).getCharactersCharacterIdRoles(characterID, DATASOURCE, null, USER_AGENT, null);
 		}
 		if (((!isCorporation && characterID != owner.getOwnerID())
 				|| (isCorporation && corporationID != owner.getOwnerID()))

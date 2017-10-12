@@ -39,10 +39,10 @@ public class EsiAccountBalanceGetter extends AbstractEsiGetter {
 	@Override
 	protected void get(ApiClient apiClient) throws ApiException {
 		if (owner.isCorporation()) {
-			List<CorporationWalletsResponse> responses = getWalletApiAuth(apiClient).getCorporationsCorporationIdWallets((int)owner.getOwnerID(), DATASOURCE, null, null, null);
+			List<CorporationWalletsResponse> responses = getWalletApiAuth(apiClient).getCorporationsCorporationIdWallets((int)owner.getOwnerID(), DATASOURCE, null, USER_AGENT, null);
 			owner.setAccountBalances(EsiConverter.toAccountBalanceCorporation(responses, owner));
 		} else {
-			Float response = getWalletApiAuth(apiClient).getCharactersCharacterIdWallet((int) owner.getOwnerID(), DATASOURCE, null, null, null);
+			Float response = getWalletApiAuth(apiClient).getCharactersCharacterIdWallet((int) owner.getOwnerID(), DATASOURCE, null, USER_AGENT, null);
 			owner.setAccountBalances(EsiConverter.toAccountBalance(response, owner, 1000));
 		}
 	}

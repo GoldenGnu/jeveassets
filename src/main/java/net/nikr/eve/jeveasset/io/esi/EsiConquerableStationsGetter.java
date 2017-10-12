@@ -44,7 +44,7 @@ public class EsiConquerableStationsGetter extends AbstractEsiGetter {
 
 	@Override
 	protected void get(ApiClient apiClient) throws ApiException {
-		List<SovereigntyStructuresResponse> structures = getSovereigntyApiOpen(apiClient).getSovereigntyStructures(DATASOURCE, System.getProperty("http.agent"), "");
+		List<SovereigntyStructuresResponse> structures = getSovereigntyApiOpen(apiClient).getSovereigntyStructures(DATASOURCE, USER_AGENT, null);
 		Map<Integer, SovereigntyStructuresResponse> map = new HashMap<Integer, SovereigntyStructuresResponse>();
 		for (SovereigntyStructuresResponse structure : structures) {
 			try {
@@ -63,7 +63,7 @@ public class EsiConquerableStationsGetter extends AbstractEsiGetter {
 		Map<List<Integer>, List<UniverseNamesResponse>> responses = updateList(batches, new ListHandler<List<Integer>, List<UniverseNamesResponse>>() {
 			@Override
 			public List<UniverseNamesResponse> get(ApiClient apiClient, List<Integer> t) throws ApiException {
-				return getUniverseApiOpen(apiClient).postUniverseNames(t, DATASOURCE, System.getProperty("http.agent"), null);
+				return getUniverseApiOpen(apiClient).postUniverseNames(t, DATASOURCE, USER_AGENT, null);
 			}
 		});
 
