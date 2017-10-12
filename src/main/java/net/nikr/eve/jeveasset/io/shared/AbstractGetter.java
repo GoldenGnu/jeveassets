@@ -275,6 +275,7 @@ public abstract class AbstractGetter<O extends OwnerType, C, E extends Exception
 				}
 			}
 		}
+		list.remove(0L);
 		return list;
 	}
 
