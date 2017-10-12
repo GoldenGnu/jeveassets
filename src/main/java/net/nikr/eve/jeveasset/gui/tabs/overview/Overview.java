@@ -21,8 +21,8 @@
 
 package net.nikr.eve.jeveasset.gui.tabs.overview;
 
-import net.nikr.eve.jeveasset.data.MyLocation;
-import net.nikr.eve.jeveasset.data.types.LocationType;
+import net.nikr.eve.jeveasset.data.sde.MyLocation;
+import net.nikr.eve.jeveasset.data.settings.types.LocationType;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo;
 
 

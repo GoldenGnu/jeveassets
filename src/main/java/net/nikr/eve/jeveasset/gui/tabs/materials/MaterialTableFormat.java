@@ -29,7 +29,7 @@ import net.nikr.eve.jeveasset.gui.shared.table.containers.ISK;
 import net.nikr.eve.jeveasset.i18n.TabsMaterials;
 
 
-enum MaterialTableFormat implements EnumTableColumn<Material> {
+public enum MaterialTableFormat implements EnumTableColumn<Material> {
 	NAME(String.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {

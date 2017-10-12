@@ -25,7 +25,7 @@ import ca.odell.glazedlists.TextFilterator;
 import java.util.Comparator;
 import java.util.List;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.data.MyLocation;
+import net.nikr.eve.jeveasset.data.sde.MyLocation;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.JAutoCompleteDialog;
 import net.nikr.eve.jeveasset.i18n.GuiShared;

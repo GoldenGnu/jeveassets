@@ -70,6 +70,9 @@ public abstract class DialoguesUpdate extends Bundle {
 	public abstract String names();
 	public abstract String blueprints();
 	public abstract String structures();
+	public abstract String step1();
+	public abstract String step2();
+	public abstract String step3();
 
 	public abstract String clickToShow(String name);
 	public abstract String clickToHide(String name);

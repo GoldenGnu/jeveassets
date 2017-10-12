@@ -37,7 +37,7 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.data.EventListManager;
+import net.nikr.eve.jeveasset.gui.shared.table.EventListManager;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 

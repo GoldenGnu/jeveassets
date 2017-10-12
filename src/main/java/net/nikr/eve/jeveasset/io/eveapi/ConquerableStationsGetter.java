@@ -24,32 +24,26 @@ package net.nikr.eve.jeveasset.io.eveapi;
 import com.beimin.eveapi.exception.ApiException;
 import com.beimin.eveapi.response.eve.StationListResponse;
 import java.util.Date;
-import net.nikr.eve.jeveasset.data.eveapi.EveApiOwner;
-import net.nikr.eve.jeveasset.data.Settings;
-import net.nikr.eve.jeveasset.data.StaticData;
-import net.nikr.eve.jeveasset.data.eveapi.EveApiAccessMask;
+import net.nikr.eve.jeveasset.data.api.accounts.EveApiAccessMask;
+import net.nikr.eve.jeveasset.data.sde.StaticData;
+import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 
 
 public class ConquerableStationsGetter extends AbstractApiGetter<StationListResponse> {
 
-	public ConquerableStationsGetter() {
-		super("Conquerable Stations");
-	}
-
-	public void load(final UpdateTask updateTask) {
-		loadEve(updateTask, Settings.get().isForceUpdate(), "jEveAssets");
+	public ConquerableStationsGetter(UpdateTask updateTask) {
+		super(updateTask, null, false, Settings.get().getConquerableStationsNextUpdate(), TaskType.CONQUERABLE_STATIONS);
 	}
 
 	@Override
-	protected StationListResponse getResponse(final boolean bCorp) throws ApiException {
-		return new com.beimin.eveapi.parser.eve.ConquerableStationListParser()
+	protected void get(String updaterStatus) throws ApiException {
+		StationListResponse response = new com.beimin.eveapi.parser.eve.ConquerableStationListParser()
 				.getResponse();
-	}
-
-	@Override
-	protected Date getNextUpdate() {
-		return Settings.get().getConquerableStationsNextUpdate();
+		if (!handle(response, updaterStatus)) {
+			return;
+		}
+		StaticData.get().setConquerableStations(response.getStations());
 	}
 
 	@Override
@@ -58,15 +52,7 @@ public class ConquerableStationsGetter extends AbstractApiGetter<StationListResp
 	}
 
 	@Override
-	protected void setData(final StationListResponse response) {
-		StaticData.get().setConquerableStations(response.getStations());
-	}
-
-	@Override
-	protected void updateFailed(final EveApiOwner ownerFrom, final EveApiOwner ownerTo) { }
-
-	@Override
-	protected long requestMask(boolean bCorp) {
+	protected long requestMask() {
 		return EveApiAccessMask.OPEN.getAccessMask();
 	}
 }

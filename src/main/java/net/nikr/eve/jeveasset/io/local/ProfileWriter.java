@@ -18,27 +18,28 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
  */
-
 package net.nikr.eve.jeveasset.io.local;
 
-import com.beimin.eveapi.model.shared.Blueprint;
-import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import net.nikr.eve.jeveasset.data.MyAccountBalance;
-import net.nikr.eve.jeveasset.data.ProfileManager;
-import net.nikr.eve.jeveasset.data.api.OwnerType;
-import net.nikr.eve.jeveasset.data.esi.EsiOwner;
-import net.nikr.eve.jeveasset.data.eveapi.EveApiAccount;
-import net.nikr.eve.jeveasset.data.eveapi.EveApiOwner;
-import net.nikr.eve.jeveasset.data.evekit.EveKitOwner;
-import net.nikr.eve.jeveasset.gui.tabs.assets.MyAsset;
-import net.nikr.eve.jeveasset.gui.tabs.contracts.MyContract;
-import net.nikr.eve.jeveasset.gui.tabs.contracts.MyContractItem;
-import net.nikr.eve.jeveasset.gui.tabs.jobs.MyIndustryJob;
-import net.nikr.eve.jeveasset.gui.tabs.journal.MyJournal;
-import net.nikr.eve.jeveasset.gui.tabs.orders.MyMarketOrder;
-import net.nikr.eve.jeveasset.gui.tabs.transaction.MyTransaction;
+import java.util.Set;
+import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
+import net.nikr.eve.jeveasset.data.api.accounts.EveApiAccount;
+import net.nikr.eve.jeveasset.data.api.accounts.EveApiOwner;
+import net.nikr.eve.jeveasset.data.api.accounts.EveKitOwner;
+import net.nikr.eve.jeveasset.data.api.accounts.OwnerType;
+import net.nikr.eve.jeveasset.data.api.my.MyAccountBalance;
+import net.nikr.eve.jeveasset.data.api.my.MyAsset;
+import net.nikr.eve.jeveasset.data.api.my.MyContract;
+import net.nikr.eve.jeveasset.data.api.my.MyContractItem;
+import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob;
+import net.nikr.eve.jeveasset.data.api.my.MyJournal;
+import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder;
+import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
+import net.nikr.eve.jeveasset.data.api.raw.RawBlueprint;
+import net.nikr.eve.jeveasset.data.profile.ProfileManager;
+import net.nikr.eve.jeveasset.io.shared.RawConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -82,15 +83,16 @@ public final class ProfileWriter extends AbstractXmlWriter {
 		xmldoc.getDocumentElement().appendChild(parentNode);
 		for (EsiOwner owner : esiOwners) {
 			Element node = xmldoc.createElementNS(null, "esiowner");
-			node.setAttributeNS(null, "accountname", owner.getAccountName());
-			node.setAttributeNS(null, "refreshtoken", owner.getRefreshToken());
-			node.setAttributeNS(null, "scopes", owner.getScopes());
-			node.setAttributeNS(null, "tokentype", owner.getTokenType());
-			node.setAttributeNS(null, "characterownerhash", owner.getCharacterOwnerHash());
-			node.setAttributeNS(null, "intellectualproperty", owner.getIntellectualProperty());
-			node.setAttributeNS(null, "structuresnextupdate", String.valueOf(owner.getStructuresNextUpdate().getTime()));
-			node.setAttributeNS(null, "accountnextupdate", String.valueOf(owner.getAccountNextUpdate().getTime()));
-			node.setAttributeNS(null, "callbackurl", owner.getCallbackURL().name());
+			setAttribute(node, "accountname", owner.getAccountName());
+			setAttribute(node, "refreshtoken", owner.getRefreshToken());
+			setAttribute(node, "scopes", owner.getScopes());
+			setAttribute(node, "tokentype", owner.getTokenType());
+			setAttribute(node, "characterownerhash", owner.getCharacterOwnerHash());
+			setAttribute(node, "intellectualproperty", owner.getIntellectualProperty());
+			setAttribute(node, "structuresnextupdate", owner.getStructuresNextUpdate());
+			setAttribute(node, "accountnextupdate", owner.getAccountNextUpdate());
+			setAttribute(node, "callbackurl", owner.getCallbackURL().name());
+			setAttribute(node, "roles", String.join(",", owner.getRoles()));
 			writeTypeOwner(xmldoc, node, owner);
 			parentNode.appendChild(node);
 		}
@@ -101,36 +103,20 @@ public final class ProfileWriter extends AbstractXmlWriter {
 		xmldoc.getDocumentElement().appendChild(parentNode);
 		for (EveKitOwner owner : eveKitOwners) {
 			Element node = xmldoc.createElementNS(null, "evekitowner");
-			node.setAttributeNS(null, "accesskey", String.valueOf(owner.getAccessKey()));
-			node.setAttributeNS(null, "accesscred", owner.getAccessCred());
-			if (owner.getExpire() != null) {
-				node.setAttributeNS(null, "expire", String.valueOf(owner.getExpire().getTime()));
-			}
-			node.setAttributeNS(null, "accessmask", String.valueOf(owner.getAccessMask()));
-			node.setAttributeNS(null, "corporation", String.valueOf(owner.isCorporation()));
-			if (owner.getLimit() != null) {
-				node.setAttributeNS(null, "limit", String.valueOf(owner.getLimit().getTime()));
-			}
-			node.setAttributeNS(null, "accountname", owner.getAccountName());
+			setAttribute(node, "accesskey", owner.getAccessKey());
+			setAttribute(node, "accesscred", owner.getAccessCred());
+			setAttributeOptional(node, "expire", owner.getExpire());
+			setAttribute(node, "accessmask", owner.getAccessMask());
+			setAttribute(node, "corporation", owner.isCorporation());
+			setAttributeOptional(node, "limit", owner.getLimit());
+			setAttribute(node, "accountname", owner.getAccountName());
 			//ContID
-			if (owner.getJournalCID() != null) {
-				node.setAttributeNS(null, "journalcid", String.valueOf(owner.getJournalCID()));
-			}
-			if (owner.getTransactionsCID() != null) {
-				node.setAttributeNS(null, "transactionscid", String.valueOf(owner.getTransactionsCID()));
-			}
-			if (owner.getContractsCID()!= null) {
-				node.setAttributeNS(null, "contractscid", String.valueOf(owner.getContractsCID()));
-			}
-			if (owner.getIndustryJobsCID()!= null) {
-				node.setAttributeNS(null, "industryjobscid", String.valueOf(owner.getIndustryJobsCID()));
-			}
-			if (owner.getMarketOrdersCID()!= null) {
-				node.setAttributeNS(null, "marketorderscid", String.valueOf(owner.getMarketOrdersCID()));
-			}
-			if (owner.getAccountNextUpdate()!= null) {
-				node.setAttributeNS(null, "accountnextupdate", String.valueOf(owner.getAccountNextUpdate().getTime()));
-			}
+			setAttributeOptional(node, "journalcid", owner.getJournalCID());
+			setAttributeOptional(node, "transactionscid", owner.getTransactionsCID());
+			setAttributeOptional(node, "contractscid", owner.getContractsCID());
+			setAttributeOptional(node, "industryjobscid", owner.getIndustryJobsCID());
+			setAttributeOptional(node, "marketorderscid", owner.getMarketOrdersCID());
+			setAttributeOptional(node, "accountnextupdate", owner.getAccountNextUpdate());
 			writeTypeOwner(xmldoc, node, owner);
 			parentNode.appendChild(node);
 		}
@@ -142,16 +128,14 @@ public final class ProfileWriter extends AbstractXmlWriter {
 
 		for (EveApiAccount account : accounts) {
 			Element node = xmldoc.createElementNS(null, "account");
-			node.setAttributeNS(null, "keyid", String.valueOf(account.getKeyID()));
-			node.setAttributeNS(null, "vcode", account.getVCode());
-			node.setAttributeNS(null, "name", account.getName());
-			node.setAttributeNS(null, "charactersnextupdate", String.valueOf(account.getAccountNextUpdate().getTime()));
-			node.setAttributeNS(null, "accessmask", String.valueOf(account.getAccessMask()));
-			if (account.getType() != null) {
-				node.setAttributeNS(null, "type", account.getType().name());
-			}
-			node.setAttributeNS(null, "expires", account.getExpires() == null ? "0" : String.valueOf(account.getExpires().getTime()));
-			node.setAttributeNS(null, "invalid", String.valueOf(account.isInvalid()));
+			setAttribute(node, "keyid", account.getKeyID());
+			setAttribute(node, "vcode", account.getVCode());
+			setAttribute(node, "name", account.getName());
+			setAttribute(node, "charactersnextupdate", account.getAccountNextUpdate());
+			setAttribute(node, "accessmask", account.getAccessMask());
+			setAttributeOptional(node, "type", account.getType().name());
+			setAttribute(node, "expires", account.getExpires() == null ? "0" : account.getExpires());
+			setAttribute(node, "invalid", account.isInvalid());
 			parentNode.appendChild(node);
 			writeOwners(xmldoc, node, account.getOwners());
 		}
@@ -160,30 +144,27 @@ public final class ProfileWriter extends AbstractXmlWriter {
 	private void writeOwners(final Document xmldoc, final Element parentNode, final List<EveApiOwner> owners) {
 		for (EveApiOwner owner : owners) {
 			Element node = xmldoc.createElementNS(null, "human");
+			setAttribute(node, "migrated", owner.isMigrated());
 			writeTypeOwner(xmldoc, node, owner);
 			parentNode.appendChild(node);
 		}
 	}
 
 	private void writeTypeOwner(final Document xmldoc, final Element node, final OwnerType owner) {
-		node.setAttributeNS(null, "id", String.valueOf(owner.getOwnerID()));
-		node.setAttributeNS(null, "name", owner.getOwnerName());
-		node.setAttributeNS(null, "show", String.valueOf(owner.isShowOwner()));
-		if (owner.getAssetLastUpdate() != null) {
-			node.setAttributeNS(null, "assetslastupdate", String.valueOf(owner.getAssetLastUpdate().getTime()));
-		}
-		node.setAttributeNS(null, "assetsnextupdate", String.valueOf(owner.getAssetNextUpdate().getTime()));
-		if (owner.getBalanceLastUpdate() != null) {
-			node.setAttributeNS(null, "balancelastupdate", String.valueOf(owner.getBalanceLastUpdate().getTime()));
-		}
-		node.setAttributeNS(null, "balancenextupdate", String.valueOf(owner.getBalanceNextUpdate().getTime()));
-		node.setAttributeNS(null, "marketordersnextupdate", String.valueOf(owner.getMarketOrdersNextUpdate().getTime()));
-		node.setAttributeNS(null, "journalnextupdate", String.valueOf(owner.getJournalNextUpdate().getTime()));
-		node.setAttributeNS(null, "wallettransactionsnextupdate", String.valueOf(owner.getTransactionsNextUpdate().getTime()));
-		node.setAttributeNS(null, "industryjobsnextupdate", String.valueOf(owner.getIndustryJobsNextUpdate().getTime()));
-		node.setAttributeNS(null, "contractsnextupdate", String.valueOf(owner.getContractsNextUpdate().getTime()));
-		node.setAttributeNS(null, "locationsnextupdate", String.valueOf(owner.getLocationsNextUpdate().getTime()));
-		node.setAttributeNS(null, "blueprintsnextupdate", String.valueOf(owner.getBlueprintsNextUpdate().getTime()));
+		setAttribute(node, "id", owner.getOwnerID());
+		setAttribute(node, "name", owner.getOwnerName());
+		setAttribute(node, "show", owner.isShowOwner());
+		setAttributeOptional(node, "assetslastupdate", owner.getAssetLastUpdate());
+		setAttribute(node, "assetsnextupdate", owner.getAssetNextUpdate());
+		setAttributeOptional(node, "balancelastupdate", owner.getBalanceLastUpdate());
+		setAttribute(node, "balancenextupdate", owner.getBalanceNextUpdate());
+		setAttribute(node, "marketordersnextupdate", owner.getMarketOrdersNextUpdate());
+		setAttribute(node, "journalnextupdate", owner.getJournalNextUpdate());
+		setAttribute(node, "wallettransactionsnextupdate", owner.getTransactionsNextUpdate());
+		setAttribute(node, "industryjobsnextupdate", owner.getIndustryJobsNextUpdate());
+		setAttribute(node, "contractsnextupdate", owner.getContractsNextUpdate());
+		setAttribute(node, "locationsnextupdate", owner.getLocationsNextUpdate());
+		setAttribute(node, "blueprintsnextupdate", owner.getBlueprintsNextUpdate());
 
 		Element childNode = xmldoc.createElementNS(null, "assets");
 		node.appendChild(childNode);
@@ -191,8 +172,8 @@ public final class ProfileWriter extends AbstractXmlWriter {
 		writeContractItems(xmldoc, node, owner.getContracts());
 		writeAccountBalances(xmldoc, node, owner.getAccountBalances(), owner.isCorporation());
 		writeMarketOrders(xmldoc, node, owner.getMarketOrders(), owner.isCorporation());
-		writeJournals(xmldoc, node, new ArrayList<MyJournal>(owner.getJournal()), owner.isCorporation());
-		writeTransactions(xmldoc, node, new ArrayList<MyTransaction>(owner.getTransactions()), owner.isCorporation());
+		writeJournals(xmldoc, node, owner.getJournal(), owner.isCorporation());
+		writeTransactions(xmldoc, node, owner.getTransactions(), owner.isCorporation());
 		writeIndustryJobs(xmldoc, node, owner.getIndustryJobs(), owner.isCorporation());
 		writeBlueprints(xmldoc, node, owner.getBlueprints(), owner.isCorporation());
 	}
@@ -200,13 +181,23 @@ public final class ProfileWriter extends AbstractXmlWriter {
 	private void writeAssets(final Document xmldoc, final Element parentNode, final List<MyAsset> assets) {
 		for (MyAsset asset : assets) {
 			Element node = xmldoc.createElementNS(null, "asset");
-			node.setAttributeNS(null, "count", String.valueOf(asset.getCount()));
-			node.setAttributeNS(null, "flagid", String.valueOf(asset.getFlagID()));
-			node.setAttributeNS(null, "id", String.valueOf(asset.getItemID()));
-			node.setAttributeNS(null, "typeid", String.valueOf(asset.getItem().getTypeID()));
-			node.setAttributeNS(null, "locationid", String.valueOf(asset.getLocation().getLocationID()));
-			node.setAttributeNS(null, "singleton", String.valueOf(asset.isSingleton()));
-			node.setAttributeNS(null, "rawquantity", String.valueOf(asset.getRawQuantity()));
+			Integer quantity = asset.getQuantity();
+			int count;
+			Integer rawQuantity;
+			if (quantity == null || quantity <= 0) {
+				count = 1;
+				rawQuantity = quantity; //Possible values: null, -1, -2
+			} else {
+				count = quantity;
+				rawQuantity = null;
+			}
+			setAttribute(node, "count", count);
+			setAttribute(node, "flagid", asset.getFlagID());
+			setAttribute(node, "id", asset.getItemID());
+			setAttribute(node, "typeid", asset.getItem().getTypeID());
+			setAttribute(node, "locationid", asset.getLocationID());
+			setAttribute(node, "singleton", asset.isSingleton());
+			setAttributeOptional(node, "rawquantity", rawQuantity);
 			parentNode.appendChild(node);
 			writeAssets(xmldoc, node, asset.getAssets());
 		}
@@ -218,43 +209,37 @@ public final class ProfileWriter extends AbstractXmlWriter {
 		for (Map.Entry<MyContract, List<MyContractItem>> entry : contractItems.entrySet()) {
 			MyContract contract = entry.getKey();
 			Element contractNode = xmldoc.createElementNS(null, "contract");
-			contractNode.setAttributeNS(null, "acceptorid", String.valueOf(contract.getAcceptorID()));
-			contractNode.setAttributeNS(null, "assigneeid", String.valueOf(contract.getAssigneeID()));
-			contractNode.setAttributeNS(null, "availability", contract.getAvailability().name());
-			contractNode.setAttributeNS(null, "buyout", String.valueOf(contract.getBuyout()));
-			contractNode.setAttributeNS(null, "collateral", String.valueOf(contract.getCollateral()));
-			contractNode.setAttributeNS(null, "contractid", String.valueOf(contract.getContractID()));
-			if (contract.getDateAccepted() != null) {
-				contractNode.setAttributeNS(null, "dateaccepted", String.valueOf(contract.getDateAccepted().getTime()));
-			}
-			if (contract.getDateCompleted() != null) {
-				contractNode.setAttributeNS(null, "datecompleted", String.valueOf(contract.getDateCompleted().getTime()));
-			}
-			contractNode.setAttributeNS(null, "dateexpired", String.valueOf(contract.getDateExpired().getTime()));
-			contractNode.setAttributeNS(null, "dateissued", String.valueOf(contract.getDateIssued().getTime()));
-			contractNode.setAttributeNS(null, "endstationid", String.valueOf(contract.getEndStationID()));
-			contractNode.setAttributeNS(null, "issuercorpid", String.valueOf(contract.getIssuerCorpID()));
-			contractNode.setAttributeNS(null, "issuerid", String.valueOf(contract.getIssuerID()));
-			contractNode.setAttributeNS(null, "numdays", String.valueOf(contract.getNumDays()));
-			contractNode.setAttributeNS(null, "price", String.valueOf(contract.getPrice()));
-			contractNode.setAttributeNS(null, "reward", String.valueOf(contract.getReward()));
-			contractNode.setAttributeNS(null, "startstationid", String.valueOf(contract.getStartStationID()));
-			contractNode.setAttributeNS(null, "status", contract.getStatus().name());
-			contractNode.setAttributeNS(null, "title", String.valueOf(contract.getTitle()));
-			contractNode.setAttributeNS(null, "type", contract.getType().name());
-			contractNode.setAttributeNS(null, "volume", String.valueOf(contract.getVolume()));
-			contractNode.setAttributeNS(null, "forcorp", String.valueOf(contract.isForCorp()));
+			setAttribute(contractNode, "acceptorid", contract.getAcceptorID());
+			setAttribute(contractNode, "assigneeid", contract.getAssigneeID());
+			setAttribute(contractNode, "availability", contract.getAvailability().name());
+			setAttributeOptional(contractNode, "buyout", contract.getBuyout());
+			setAttributeOptional(contractNode, "collateral", contract.getCollateral());
+			setAttribute(contractNode, "contractid", contract.getContractID());
+			setAttributeOptional(contractNode, "dateaccepted", contract.getDateAccepted());
+			setAttributeOptional(contractNode, "datecompleted", contract.getDateCompleted());
+			setAttribute(contractNode, "dateexpired", contract.getDateExpired());
+			setAttribute(contractNode, "dateissued", contract.getDateIssued());
+			setAttributeOptional(contractNode, "endstationid", contract.getEndLocationID());
+			setAttribute(contractNode, "issuercorpid", contract.getIssuerCorpID());
+			setAttribute(contractNode, "issuerid", contract.getIssuerID());
+			setAttributeOptional(contractNode, "numdays", contract.getDaysToComplete());
+			setAttributeOptional(contractNode, "price", contract.getPrice());
+			setAttributeOptional(contractNode, "reward", contract.getReward());
+			setAttributeOptional(contractNode, "startstationid", contract.getStartLocationID());
+			setAttribute(contractNode, "status", contract.getStatus().name());
+			setAttributeOptional(contractNode, "title", contract.getTitle());
+			setAttribute(contractNode, "type", contract.getType().name());
+			setAttributeOptional(contractNode, "volume", contract.getVolume());
+			setAttribute(contractNode, "forcorp", contract.isForCorp());
 			contractsNode.appendChild(contractNode);
 			for (MyContractItem contractItem : entry.getValue()) {
 				Element itemNode = xmldoc.createElementNS(null, "contractitem");
-				itemNode.setAttributeNS(null, "included", String.valueOf(contractItem.isIncluded()));
-				itemNode.setAttributeNS(null, "quantity", String.valueOf(contractItem.getQuantity()));
-				itemNode.setAttributeNS(null, "recordid", String.valueOf(contractItem.getRecordID()));
-				itemNode.setAttributeNS(null, "singleton", String.valueOf(contractItem.isSingleton()));
-				itemNode.setAttributeNS(null, "typeid", String.valueOf(contractItem.getTypeID()));
-				if (contractItem.getRawQuantity() != null) {
-					itemNode.setAttributeNS(null, "rawquantity", String.valueOf(contractItem.getRawQuantity()));
-				}
+				setAttribute(itemNode, "included", contractItem.isIncluded());
+				setAttribute(itemNode, "quantity", contractItem.getQuantity());
+				setAttribute(itemNode, "recordid", contractItem.getRecordID());
+				setAttribute(itemNode, "singleton", contractItem.isSingleton());
+				setAttribute(itemNode, "typeid", contractItem.getTypeID());
+				setAttributeOptional(itemNode, "rawquantity", contractItem.getRawQuantity());
 				contractNode.appendChild(itemNode);
 			}
 		}
@@ -263,109 +248,96 @@ public final class ProfileWriter extends AbstractXmlWriter {
 	private void writeAccountBalances(final Document xmldoc, final Element parentNode, final List<MyAccountBalance> accountBalances, final boolean bCorp) {
 		Element node = xmldoc.createElementNS(null, "balances");
 		if (!accountBalances.isEmpty()) {
-			node.setAttributeNS(null, "corp", String.valueOf(bCorp));
+			setAttribute(node, "corp", bCorp);
 			parentNode.appendChild(node);
 		}
 		for (MyAccountBalance accountBalance : accountBalances) {
 			Element childNode = xmldoc.createElementNS(null, "balance");
-			childNode.setAttributeNS(null, "accountid", String.valueOf(accountBalance.getAccountID()));
-			childNode.setAttributeNS(null, "accountkey", String.valueOf(accountBalance.getAccountKey()));
-			childNode.setAttributeNS(null, "balance", String.valueOf(accountBalance.getBalance()));
+			setAttribute(childNode, "accountkey", accountBalance.getAccountKey());
+			setAttribute(childNode, "balance", accountBalance.getBalance());
 			node.appendChild(childNode);
 		}
 	}
 
-	private void writeMarketOrders(final Document xmldoc, final Element parentNode, final List<MyMarketOrder> marketOrders, final boolean bCorp) {
+	private void writeMarketOrders(final Document xmldoc, final Element parentNode, final Set<MyMarketOrder> marketOrders, final boolean bCorp) {
 		Element node = xmldoc.createElementNS(null, "markerorders");
 		if (!marketOrders.isEmpty()) {
-			node.setAttributeNS(null, "corp", String.valueOf(bCorp));
+			setAttribute(node, "corp", bCorp);
 			parentNode.appendChild(node);
 		}
 		for (MyMarketOrder marketOrder : marketOrders) {
 			Element childNode = xmldoc.createElementNS(null, "markerorder");
-			childNode.setAttributeNS(null, "orderid", String.valueOf(marketOrder.getOrderID()));
-			childNode.setAttributeNS(null, "charid", String.valueOf(marketOrder.getCharID()));
-			childNode.setAttributeNS(null, "stationid", String.valueOf(marketOrder.getStationID()));
-			childNode.setAttributeNS(null, "volentered", String.valueOf(marketOrder.getVolEntered()));
-			childNode.setAttributeNS(null, "volremaining", String.valueOf(marketOrder.getVolRemaining()));
-			childNode.setAttributeNS(null, "minvolume", String.valueOf(marketOrder.getMinVolume()));
-			childNode.setAttributeNS(null, "orderstate", String.valueOf(marketOrder.getOrderState()));
-			childNode.setAttributeNS(null, "typeid", String.valueOf(marketOrder.getTypeID()));
-			childNode.setAttributeNS(null, "range", String.valueOf(marketOrder.getRange()));
-			childNode.setAttributeNS(null, "accountkey", String.valueOf(marketOrder.getAccountKey()));
-			childNode.setAttributeNS(null, "duration", String.valueOf(marketOrder.getDuration()));
-			childNode.setAttributeNS(null, "escrow", String.valueOf(marketOrder.getEscrow()));
-			childNode.setAttributeNS(null, "price", String.valueOf(marketOrder.getPrice()));
-			childNode.setAttributeNS(null, "bid", String.valueOf(marketOrder.getBid()));
-			childNode.setAttributeNS(null, "issued", String.valueOf(marketOrder.getIssued().getTime()));
+			setAttribute(childNode, "orderid", marketOrder.getOrderID());
+			setAttribute(childNode, "stationid", marketOrder.getLocationID());
+			setAttribute(childNode, "volentered", marketOrder.getVolEntered());
+			setAttribute(childNode, "volremaining", marketOrder.getVolRemaining());
+			setAttribute(childNode, "minvolume", marketOrder.getMinVolume());
+			setAttribute(childNode, "orderstate", RawConverter.fromMarketOrderState(marketOrder.getState()));
+			setAttribute(childNode, "typeid", marketOrder.getTypeID());
+			setAttribute(childNode, "range", RawConverter.fromMarketOrderRange(marketOrder.getRange()));
+			setAttribute(childNode, "accountkey", marketOrder.getAccountID());
+			setAttribute(childNode, "duration", marketOrder.getDuration());
+			setAttribute(childNode, "escrow", marketOrder.getEscrow());
+			setAttribute(childNode, "price", marketOrder.getPrice());
+			setAttribute(childNode, "bid", RawConverter.fromMarketOrderIsBuyOrder(marketOrder.isBuyOrder()));
+			setAttribute(childNode, "issued", marketOrder.getIssued());
 			node.appendChild(childNode);
 		}
 	}
 
-	private void writeJournals(final Document xmldoc, final Element parentNode, final List<MyJournal> journals, final boolean bCorp) {
+	private void writeJournals(final Document xmldoc, final Element parentNode, final Set<MyJournal> journals, final boolean bCorp) {
 		Element node = xmldoc.createElementNS(null, "journals");
 		if (!journals.isEmpty()) {
-			node.setAttributeNS(null, "corp", String.valueOf(bCorp));
+			setAttribute(node, "corp", bCorp);
 			parentNode.appendChild(node);
 		}
 		for (MyJournal journal : journals) {
 			Element childNode = xmldoc.createElementNS(null, "journal");
 			//Base
-			childNode.setAttributeNS(null, "amount", String.valueOf(journal.getAmount()));
-			childNode.setAttributeNS(null, "argid1", String.valueOf(journal.getArgID1()));
-			childNode.setAttributeNS(null, "argname1", String.valueOf(journal.getArgName1()));
-			childNode.setAttributeNS(null, "balance", String.valueOf(journal.getBalance()));
-			childNode.setAttributeNS(null, "date", String.valueOf(journal.getDate().getTime()));
-			childNode.setAttributeNS(null, "ownerid1", String.valueOf(journal.getOwnerID1()));
-			childNode.setAttributeNS(null, "ownerid2", String.valueOf(journal.getOwnerID2()));
-			childNode.setAttributeNS(null, "ownername1", journal.getOwnerName1());
-			childNode.setAttributeNS(null, "ownername2", journal.getOwnerName2());
-			childNode.setAttributeNS(null, "reason", journal.getReason());
-			childNode.setAttributeNS(null, "refid", String.valueOf(journal.getRefID()));
-			childNode.setAttributeNS(null, "reftypeid", String.valueOf(journal.getRefTypeID()));
-			if (journal.getTaxAmount() != null) {
-				childNode.setAttributeNS(null, "taxamount", String.valueOf(journal.getTaxAmount()));
-			}
-			if (journal.getTaxReceiverID() != null) {
-				childNode.setAttributeNS(null, "taxreceiverid", String.valueOf(journal.getTaxReceiverID()));
-			}
+			setAttributeOptional(childNode, "amount", journal.getAmount());
+			setAttributeOptional(childNode, "argid1", RawConverter.fromRawJournalExtraInfoArgID(journal.getExtraInfo()));
+			setAttributeOptional(childNode, "argname1", RawConverter.fromRawJournalExtraInfoArgName(journal.getExtraInfo()));
+			setAttributeOptional(childNode, "balance", journal.getBalance());
+			setAttribute(childNode, "date", journal.getDate());
+			setAttributeOptional(childNode, "ownerid1", journal.getFirstPartyID());
+			setAttributeOptional(childNode, "ownerid2", journal.getSecondPartyID());
+			setAttributeOptional(childNode, "reason", journal.getReason());
+			setAttribute(childNode, "refid", journal.getRefID());
+			setAttribute(childNode, "reftypeid", journal.getRefType().getID());
+			setAttributeOptional(childNode, "taxamount", journal.getTaxAmount());
+			setAttributeOptional(childNode, "taxreceiverid", journal.getTaxRecieverID());
+			//New
+			setAttributeOptional(childNode, "owner1typeid", RawConverter.fromJournalPartyType(journal.getFirstPartyType()));
+			setAttributeOptional(childNode, "owner2typeid", RawConverter.fromJournalPartyType(journal.getSecondPartyType()));
 			//Extra
-			childNode.setAttributeNS(null, "accountkey", String.valueOf(journal.getAccountKey()));
+			setAttribute(childNode, "accountkey", journal.getAccountKey());
 			node.appendChild(childNode);
 		}
 	}
 
-	private void writeTransactions(final Document xmldoc, final Element parentNode, final List<MyTransaction> transactions, final boolean bCorp) {
+	private void writeTransactions(final Document xmldoc, final Element parentNode, final Set<MyTransaction> transactions, final boolean bCorp) {
 		Element node = xmldoc.createElementNS(null, "wallettransactions");
 		if (!transactions.isEmpty()) {
-			node.setAttributeNS(null, "corp", String.valueOf(bCorp));
+			setAttribute(node, "corp", bCorp);
 			parentNode.appendChild(node);
 		}
 		for (MyTransaction transaction : transactions) {
 			Element childNode = xmldoc.createElementNS(null, "wallettransaction");
-			childNode.setAttributeNS(null, "transactiondatetime", String.valueOf(transaction.getTransactionDateTime().getTime()));
-			childNode.setAttributeNS(null, "transactionid", String.valueOf(transaction.getTransactionID()));
-			childNode.setAttributeNS(null, "quantity", String.valueOf(transaction.getQuantity()));
-			childNode.setAttributeNS(null, "typename", String.valueOf(transaction.getTypeName()));
-			childNode.setAttributeNS(null, "typeid", String.valueOf(transaction.getTypeID()));
-			childNode.setAttributeNS(null, "price", String.valueOf(transaction.getPrice()));
-			childNode.setAttributeNS(null, "clientid", String.valueOf(transaction.getClientID()));
-			childNode.setAttributeNS(null, "clientname", String.valueOf(transaction.getClientName()));
-			if (transaction.getCharacterID() != null) {
-				childNode.setAttributeNS(null, "characterid", String.valueOf(transaction.getCharacterID()));
-			}
-			if (transaction.getCharacterName() != null) {
-				childNode.setAttributeNS(null, "charactername", String.valueOf(transaction.getCharacterName()));
-			}
-			childNode.setAttributeNS(null, "stationid", String.valueOf(transaction.getStationID()));
-			childNode.setAttributeNS(null, "stationname", String.valueOf(transaction.getStationName()));
-			childNode.setAttributeNS(null, "transactiontype", String.valueOf(transaction.getTransactionType()));
-			childNode.setAttributeNS(null, "transactionfor", String.valueOf(transaction.getTransactionFor()));
+			setAttribute(childNode, "transactiondatetime", transaction.getDate());
+			setAttribute(childNode, "transactionid", transaction.getTransactionID());
+			setAttribute(childNode, "quantity", transaction.getQuantity());
+			setAttribute(childNode, "typeid", transaction.getTypeID());
+			setAttribute(childNode, "price", transaction.getPrice());
+			setAttribute(childNode, "clientid", transaction.getClientID());
+			setAttribute(childNode, "clientname", transaction.getClientName());
+			setAttribute(childNode, "stationid", transaction.getLocationID());
+			setAttribute(childNode, "transactiontype", RawConverter.fromTransactionIsBuy(transaction.isBuy()));
+			setAttribute(childNode, "transactionfor", RawConverter.fromTransactionIsPersonal(transaction.isPersonal()));
 			//New
-			childNode.setAttributeNS(null, "journaltransactionid", String.valueOf(transaction.getTransactionID()));
-			childNode.setAttributeNS(null, "clienttypeid", String.valueOf(transaction.getClientID()));
+			setAttribute(childNode, "journaltransactionid", transaction.getTransactionID());
+			setAttribute(childNode, "clienttypeid", transaction.getClientID());
 			//Extra
-			childNode.setAttributeNS(null, "accountkey", String.valueOf(transaction.getAccountKey()));
+			setAttribute(childNode, "accountkey", transaction.getAccountKey());
 			node.appendChild(childNode);
 		}
 	}
@@ -373,60 +345,81 @@ public final class ProfileWriter extends AbstractXmlWriter {
 	private void writeIndustryJobs(final Document xmldoc, final Element parentNode, final List<MyIndustryJob> industryJobs, final boolean bCorp) {
 		Element node = xmldoc.createElementNS(null, "industryjobs");
 		if (!industryJobs.isEmpty()) {
-			node.setAttributeNS(null, "corp", String.valueOf(bCorp));
+			setAttribute(node, "corp", bCorp);
 			parentNode.appendChild(node);
 		}
 		for (MyIndustryJob industryJob : industryJobs) {
 			Element childNode = xmldoc.createElementNS(null, "industryjob");
-			childNode.setAttributeNS(null, "jobid", String.valueOf(industryJob.getJobID()));
-			childNode.setAttributeNS(null, "installerid", String.valueOf(industryJob.getInstallerID()));
-			childNode.setAttributeNS(null, "installername", industryJob.getInstallerName());
-			childNode.setAttributeNS(null, "facilityid", String.valueOf(industryJob.getFacilityID()));
-			childNode.setAttributeNS(null, "solarsystemid", String.valueOf(industryJob.getSolarSystemID()));
-			childNode.setAttributeNS(null, "solarsystemname", industryJob.getSolarSystemName());
-			childNode.setAttributeNS(null, "stationid", String.valueOf(industryJob.getStationID()));
-			childNode.setAttributeNS(null, "activityid", String.valueOf(industryJob.getActivityID()));
-			childNode.setAttributeNS(null, "blueprintid", String.valueOf(industryJob.getBlueprintID()));
-			childNode.setAttributeNS(null, "blueprinttypeid", String.valueOf(industryJob.getBlueprintTypeID()));
-			childNode.setAttributeNS(null, "blueprinttypename", industryJob.getBlueprintTypeName());
-			childNode.setAttributeNS(null, "blueprintlocationid", String.valueOf(industryJob.getBlueprintLocationID()));
-			childNode.setAttributeNS(null, "outputlocationid", String.valueOf(industryJob.getOutputLocationID()));
-			childNode.setAttributeNS(null, "runs", String.valueOf(industryJob.getRuns()));
-			childNode.setAttributeNS(null, "cost", String.valueOf(industryJob.getCost()));
-			childNode.setAttributeNS(null, "teamid", String.valueOf(industryJob.getTeamID()));
-			childNode.setAttributeNS(null, "licensedruns", String.valueOf(industryJob.getLicensedRuns()));
-			childNode.setAttributeNS(null, "probability", String.valueOf(industryJob.getProbability()));
-			childNode.setAttributeNS(null, "producttypeid", String.valueOf(industryJob.getProductTypeID()));
-			childNode.setAttributeNS(null, "producttypename", industryJob.getProductTypeName());
-			childNode.setAttributeNS(null, "status", String.valueOf(industryJob.getStatus()));
-			childNode.setAttributeNS(null, "timeinseconds", String.valueOf(industryJob.getTimeInSeconds()));
-			childNode.setAttributeNS(null, "startdate", String.valueOf(industryJob.getStartDate().getTime()));
-			childNode.setAttributeNS(null, "enddate", String.valueOf(industryJob.getEndDate().getTime()));
-			childNode.setAttributeNS(null, "pausedate", String.valueOf(industryJob.getPauseDate().getTime()));
-			childNode.setAttributeNS(null, "completeddate", String.valueOf(industryJob.getCompletedDate().getTime()));
-			childNode.setAttributeNS(null, "completedcharacterid", String.valueOf(industryJob.getCompletedCharacterID()));
+			setAttribute(childNode, "jobid", industryJob.getJobID());
+			setAttribute(childNode, "installerid", industryJob.getInstallerID());
+			setAttribute(childNode, "facilityid", industryJob.getFacilityID());
+			setAttribute(childNode, "stationid", industryJob.getStationID());
+			setAttribute(childNode, "activityid", industryJob.getActivityID());
+			setAttribute(childNode, "blueprintid", industryJob.getBlueprintID());
+			setAttribute(childNode, "blueprinttypeid", industryJob.getBlueprintTypeID());
+			setAttribute(childNode, "blueprintlocationid", industryJob.getBlueprintLocationID());
+			setAttribute(childNode, "outputlocationid", industryJob.getOutputLocationID());
+			setAttribute(childNode, "runs", industryJob.getRuns());
+			setAttributeOptional(childNode, "cost", industryJob.getCost());
+			setAttributeOptional(childNode, "licensedruns", industryJob.getLicensedRuns());
+			setAttributeOptional(childNode, "probability", industryJob.getProbability());
+			setAttributeOptional(childNode, "producttypeid", industryJob.getProductTypeID());
+			setAttribute(childNode, "status", RawConverter.fromIndustryJobStatus(industryJob.getStatus()));
+			setAttribute(childNode, "timeinseconds", industryJob.getDuration());
+			setAttribute(childNode, "startdate", industryJob.getStartDate());
+			setAttribute(childNode, "enddate", industryJob.getEndDate());
+			setAttributeOptional(childNode, "pausedate", industryJob.getPauseDate());
+			setAttributeOptional(childNode, "completeddate", industryJob.getCompletedDate());
+			setAttributeOptional(childNode, "completedcharacterid", industryJob.getCompletedCharacterID());
+			setAttributeOptional(childNode, "successfulruns", industryJob.getSuccessfulRuns());
 			node.appendChild(childNode);
 		}
 	}
 
-	private void writeBlueprints(final Document xmldoc, final Element parentNode, final Map<Long, Blueprint> blueprints, final boolean bCorp) {
+	private void writeBlueprints(final Document xmldoc, final Element parentNode, final Map<Long, RawBlueprint> blueprints, final boolean bCorp) {
 		Element node = xmldoc.createElementNS(null, "blueprints");
 		if (!blueprints.isEmpty()) {
-			node.setAttributeNS(null, "corp", String.valueOf(bCorp));
+			setAttribute(node, "corp", bCorp);
 			parentNode.appendChild(node);
 		}
-		for (Blueprint blueprint : blueprints.values()) {
+		for (RawBlueprint blueprint : blueprints.values()) {
 			Element childNode = xmldoc.createElementNS(null, "blueprint");
-			childNode.setAttributeNS(null, "itemid", String.valueOf(blueprint.getItemID()));
-			childNode.setAttributeNS(null, "locationid", String.valueOf(blueprint.getLocationID()));
-			childNode.setAttributeNS(null, "typeid", String.valueOf(blueprint.getTypeID()));
-			childNode.setAttributeNS(null, "typename", String.valueOf(blueprint.getTypeName()));
-			childNode.setAttributeNS(null, "flagid", String.valueOf(blueprint.getFlagID()));
-			childNode.setAttributeNS(null, "quantity", String.valueOf(blueprint.getQuantity()));
-			childNode.setAttributeNS(null, "timeefficiency", String.valueOf(blueprint.getTimeEfficiency()));
-			childNode.setAttributeNS(null, "materialefficiency", String.valueOf(blueprint.getMaterialEfficiency()));
-			childNode.setAttributeNS(null, "runs", String.valueOf(blueprint.getRuns()));
+			setAttribute(childNode, "itemid", blueprint.getItemID());
+			setAttribute(childNode, "locationid", blueprint.getLocationID());
+			setAttribute(childNode, "typeid", blueprint.getTypeID());
+			setAttribute(childNode, "flagid", blueprint.getFlagID());
+			setAttribute(childNode, "quantity", blueprint.getQuantity());
+			setAttribute(childNode, "timeefficiency", blueprint.getTimeEfficiency());
+			setAttribute(childNode, "materialefficiency", blueprint.getMaterialEfficiency());
+			setAttribute(childNode, "runs", blueprint.getRuns());
 			node.appendChild(childNode);
+		}
+	}
+
+	private void setAttribute(Element node, String qualifiedName, Object value) {
+		node.setAttributeNS(null, qualifiedName, valueOf(value));
+	}
+
+	private void setAttributeOptional(Element node, String qualifiedName, Object value) {
+		if (value != null) {
+			node.setAttributeNS(null, qualifiedName, valueOf(value));
+		}
+	}
+
+	private void setAttribute(Element node, String qualifiedName, String value) {
+		node.setAttributeNS(null, qualifiedName, value);
+	}
+
+	private String valueOf(Object object) {
+		if (object == null) {
+			throw new RuntimeException("Can't save null");
+		} else if (object instanceof Date) {
+			Date date = (Date) object;
+			return String.valueOf(date.getTime());
+		} else if (object instanceof Enum) {
+			throw new RuntimeException("That is not the right way to save an enum...");
+		} else {
+			return String.valueOf(object);
 		}
 	}
 }

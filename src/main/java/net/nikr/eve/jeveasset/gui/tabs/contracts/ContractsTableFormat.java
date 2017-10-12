@@ -24,6 +24,7 @@ package net.nikr.eve.jeveasset.gui.tabs.contracts;
 import ca.odell.glazedlists.GlazedLists;
 import java.util.Comparator;
 import java.util.Date;
+import net.nikr.eve.jeveasset.data.api.my.MyContractItem;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.YesNo;
 import net.nikr.eve.jeveasset.i18n.TabsContracts;
@@ -137,7 +138,7 @@ public enum ContractsTableFormat implements EnumTableColumn<MyContractItem> {
 		}
 		@Override
 		public Object getColumnValue(final MyContractItem from) {
-			return from.getContract().getNumDays();
+			return from.getContract().getDaysToComplete();
 		}
 	},
 	REWARD(Double.class, GlazedLists.comparableComparator()) {
@@ -207,7 +208,7 @@ public enum ContractsTableFormat implements EnumTableColumn<MyContractItem> {
 		}
 		@Override
 		public Object getColumnValue(final MyContractItem from) {
-			return from.getContract().getStartStation();
+			return from.getContract().getStartLocation();
 		}
 	},
 	END_STATION(String.class, GlazedLists.comparableComparator()) {
@@ -217,7 +218,7 @@ public enum ContractsTableFormat implements EnumTableColumn<MyContractItem> {
 		}
 		@Override
 		public Object getColumnValue(final MyContractItem from) {
-			return from.getContract().getEndStation();
+			return from.getContract().getEndLocation();
 		}
 	},
 	ISSUED_DATE(Date.class, GlazedLists.comparableComparator()) {

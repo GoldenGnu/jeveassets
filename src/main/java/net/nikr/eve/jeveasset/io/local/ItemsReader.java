@@ -22,10 +22,10 @@
 package net.nikr.eve.jeveasset.io.local;
 
 import java.util.Map;
-import net.nikr.eve.jeveasset.data.Item;
-import net.nikr.eve.jeveasset.data.ReprocessedMaterial;
-import net.nikr.eve.jeveasset.data.Settings;
-import net.nikr.eve.jeveasset.data.StaticData;
+import net.nikr.eve.jeveasset.data.sde.Item;
+import net.nikr.eve.jeveasset.data.sde.ReprocessedMaterial;
+import net.nikr.eve.jeveasset.data.sde.StaticData;
+import net.nikr.eve.jeveasset.data.settings.Settings;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -37,7 +37,7 @@ public final class ItemsReader extends AbstractXmlReader<Boolean> {
 
 	public static void load() {
 		ItemsReader reader = new ItemsReader();
-		reader.read("Items", Settings.getPathItems(), XmlType.STATIC);
+		reader.read("Items", Settings.getPathItems(), AbstractXmlReader.XmlType.STATIC);
 	}
 
 	@Override

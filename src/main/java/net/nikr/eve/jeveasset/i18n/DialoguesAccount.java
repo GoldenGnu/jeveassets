@@ -72,14 +72,24 @@ public abstract class DialoguesAccount extends Bundle {
 	public abstract String esiHelpText();
 	public abstract String validatingMessage();
 	public abstract String scopes();
-	public abstract String scopeStructures();
+	public abstract String corporation();
+	public abstract String character();
 	public abstract String scopeAssets();
-	public abstract String scopeAccountBalance();
+	public abstract String scopeWallet();
+	public abstract String scopeBlueprints();
+	public abstract String scopeIndustryJobs();
+	public abstract String scopeMarketOrders();
+	public abstract String scopeContracts();
+	public abstract String scopeRoles();
+	public abstract String scopeLocations();
+	public abstract String scopeStructures();
 
 	public abstract String dialogueNameAccountManagement();
 
 	public abstract String accountExpired();
 	public abstract String accountInvalid();
+	public abstract String accountMigrated();
+	public abstract String accountCanMigrate();
 	public abstract String add();
 	public abstract String eveapi();
 	public abstract String evekit();
@@ -95,12 +105,20 @@ public abstract class DialoguesAccount extends Bundle {
 	public abstract String close();
 	public abstract String noOwners();
 
+	public abstract String migrateTitle();
+	public abstract String migrateDone();
+	public abstract String migrateEsiEmpty(String ownerName);
+	public abstract String migrateEsiSelect();
+	public abstract String migrateOk();
+	public abstract String migrateAll();
+	public abstract String migrateEsiAccountName(String name, int included, int total);
 
 	public abstract String deleteAccountQuestion();
 	public abstract String deleteAccount();
 
 	public abstract String delete();
 	public abstract String edit();
+	public abstract String migrate();
 
 	public abstract String tableFormatName();
 	public abstract String tableFormatCorporation();
@@ -113,6 +131,7 @@ public abstract class DialoguesAccount extends Bundle {
 	public abstract String tableFormatContracts();
 	public abstract String tableFormatLocations();
 	public abstract String tableFormatStructures();
+	public abstract String tableFormatBlueprints();
 	public abstract String tableFormatYes();
 	public abstract String tableFormatNo();
 	public abstract String tableFormatExpires();

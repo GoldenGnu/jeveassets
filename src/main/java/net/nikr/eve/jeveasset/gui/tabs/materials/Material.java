@@ -22,14 +22,14 @@
 
 package net.nikr.eve.jeveasset.gui.tabs.materials;
 
-import net.nikr.eve.jeveasset.data.Item;
-import net.nikr.eve.jeveasset.data.MyLocation;
-import net.nikr.eve.jeveasset.data.types.ItemType;
-import net.nikr.eve.jeveasset.data.types.LocationType;
-import net.nikr.eve.jeveasset.data.types.PriceType;
+import net.nikr.eve.jeveasset.data.api.my.MyAsset;
+import net.nikr.eve.jeveasset.data.sde.Item;
+import net.nikr.eve.jeveasset.data.sde.MyLocation;
+import net.nikr.eve.jeveasset.data.settings.types.ItemType;
+import net.nikr.eve.jeveasset.data.settings.types.LocationType;
+import net.nikr.eve.jeveasset.data.settings.types.PriceType;
 import net.nikr.eve.jeveasset.gui.shared.CopyHandler.CopySeparator;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
-import net.nikr.eve.jeveasset.gui.tabs.assets.MyAsset;
 
 
 public class Material implements Comparable<Material>, LocationType, ItemType, PriceType, CopySeparator {

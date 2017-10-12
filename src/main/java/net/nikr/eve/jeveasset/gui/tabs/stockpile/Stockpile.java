@@ -20,7 +20,6 @@
  */
 package net.nikr.eve.jeveasset.gui.tabs.stockpile;
 
-import com.beimin.eveapi.model.shared.ContractStatus;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -29,22 +28,24 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
-import net.nikr.eve.jeveasset.data.Item;
-import net.nikr.eve.jeveasset.data.MyLocation;
-import net.nikr.eve.jeveasset.data.Settings;
-import net.nikr.eve.jeveasset.data.tag.TagID;
-import net.nikr.eve.jeveasset.data.tag.Tags;
-import net.nikr.eve.jeveasset.data.types.BlueprintType;
-import net.nikr.eve.jeveasset.data.types.ItemType;
-import net.nikr.eve.jeveasset.data.types.LocationsType;
-import net.nikr.eve.jeveasset.data.types.PriceType;
-import net.nikr.eve.jeveasset.data.types.TagsType;
+import net.nikr.eve.jeveasset.data.api.my.MyAsset;
+import net.nikr.eve.jeveasset.data.api.my.MyContractItem;
+import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob;
+import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder;
+import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
+import net.nikr.eve.jeveasset.data.api.raw.RawContract.ContractStatus;
+import net.nikr.eve.jeveasset.data.api.raw.RawIndustryJob;
+import net.nikr.eve.jeveasset.data.sde.Item;
+import net.nikr.eve.jeveasset.data.sde.MyLocation;
+import net.nikr.eve.jeveasset.data.settings.Settings;
+import net.nikr.eve.jeveasset.data.settings.tag.TagID;
+import net.nikr.eve.jeveasset.data.settings.tag.Tags;
+import net.nikr.eve.jeveasset.data.settings.types.BlueprintType;
+import net.nikr.eve.jeveasset.data.settings.types.ItemType;
+import net.nikr.eve.jeveasset.data.settings.types.LocationsType;
+import net.nikr.eve.jeveasset.data.settings.types.PriceType;
+import net.nikr.eve.jeveasset.data.settings.types.TagsType;
 import net.nikr.eve.jeveasset.gui.shared.CopyHandler.CopySeparator;
-import net.nikr.eve.jeveasset.gui.tabs.assets.MyAsset;
-import net.nikr.eve.jeveasset.gui.tabs.contracts.MyContractItem;
-import net.nikr.eve.jeveasset.gui.tabs.jobs.MyIndustryJob;
-import net.nikr.eve.jeveasset.gui.tabs.orders.MyMarketOrder;
-import net.nikr.eve.jeveasset.gui.tabs.transaction.MyTransaction;
 import net.nikr.eve.jeveasset.i18n.General;
 import net.nikr.eve.jeveasset.i18n.TabsStockpile;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
@@ -400,10 +401,7 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType {
 			return false;
 		}
 		final Stockpile other = (Stockpile) obj;
-		if ((this.name == null) ? (other.name != null) : !this.name.equals(other.name)) {
-			return false;
-		}
-		return true;
+		return !((this.name == null) ? (other.name != null) : !this.name.equals(other.name));
 	}
 
 	@Override
@@ -562,7 +560,7 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType {
 
 		private Long matchesTransaction(MyTransaction transaction, boolean add) {
 			if (transaction != null) { //better safe then sorry
-				return matches(add, transaction.getTypeID(), transaction.getCharacterID(), null, null, transaction.getLocation(), null, null, null, transaction, null);
+				return matches(add, transaction.getTypeID(), transaction.getOwnerID(), null, null, transaction.getLocation(), null, null, null, transaction, null);
 			} else {
 				return null;
 			}
@@ -657,7 +655,10 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType {
 				} else if (industryJob != null) {
 					if (industryJob.getActivityID() == 1  //Manufacturing
 							//&& industryJob.getStatus() == 1 //Inprogress AKA not delivered (Old)
-							&& industryJob.getStatus() <= 3 //Inprogress AKA not delivered (1 = Active, 2 = Paused (Facility Offline), 3 = Ready)
+							&& (industryJob.getStatus() == RawIndustryJob.IndustryJobStatus.ACTIVE //Inprogress AKA not delivered (1 = Active, 2 = Paused (Facility Offline), 3 = Ready)
+								|| industryJob.getStatus() == RawIndustryJob.IndustryJobStatus.PAUSED
+								|| industryJob.getStatus() == RawIndustryJob.IndustryJobStatus.READY
+							)
 							&& filter.isJobs()) {
 						if (add) { //Match
 							jobsCountNow = jobsCountNow + (industryJob.getRuns() * industryJob.getPortion());
@@ -669,13 +670,13 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType {
 					}
 			//Orders
 				} else if (marketOrder != null) {
-					if (marketOrder.getBid() < 1 && marketOrder.isActive() && filter.isSellOrders()) {
+					if (!marketOrder.isBuyOrder() && marketOrder.isActive() && filter.isSellOrders()) {
 						if (add) { //Open/Active sell order - match
 							sellOrdersCountNow = sellOrdersCountNow + marketOrder.getVolRemaining();
 						} else {
 							count = count + marketOrder.getVolRemaining();
 						}
-					} else if (marketOrder.getBid() > 0 && marketOrder.isActive() && filter.isBuyOrders()) {
+					} else if (marketOrder.isBuyOrder() && marketOrder.isActive() && filter.isBuyOrders()) {
 						if (add) { //Open/Active buy order - match
 							buyOrdersCountNow = buyOrdersCountNow + marketOrder.getVolRemaining();
 						} else {

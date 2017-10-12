@@ -38,7 +38,7 @@ import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.data.Settings;
+import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.CheckBoxNode;
 import net.nikr.eve.jeveasset.gui.shared.components.CheckBoxNodeEditor;

@@ -20,78 +20,61 @@
  */
 package net.nikr.eve.jeveasset.io.evekit;
 
-
-import enterprises.orbital.evekit.client.invoker.ApiClient;
-import enterprises.orbital.evekit.client.invoker.ApiException;
+import enterprises.orbital.evekit.client.ApiClient;
+import enterprises.orbital.evekit.client.ApiException;
 import enterprises.orbital.evekit.client.model.Asset;
 import java.util.Date;
 import java.util.List;
-import net.nikr.eve.jeveasset.data.evekit.EveKitAccessMask;
-import net.nikr.eve.jeveasset.data.evekit.EveKitOwner;
+import net.nikr.eve.jeveasset.data.api.accounts.EveKitAccessMask;
+import net.nikr.eve.jeveasset.data.api.accounts.EveKitOwner;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
+import net.nikr.eve.jeveasset.io.evekit.AbstractEveKitGetter.EveKitPagesHandler;
 
 
-public class EveKitAssetGetter extends AbstractEveKitListGetter<Asset> {
+public class EveKitAssetGetter extends AbstractEveKitGetter implements EveKitPagesHandler<Asset> {
 
-	@Override
-	public void load(UpdateTask updateTask, List<EveKitOwner> owners) {
-		super.load(updateTask, owners);
+	public EveKitAssetGetter(UpdateTask updateTask, EveKitOwner owner, boolean first) {
+		super(updateTask, owner, false, owner.getAssetNextUpdate(), TaskType.ASSETS, first, null);
+	}
+
+	public EveKitAssetGetter(UpdateTask updateTask, EveKitOwner owner, Long at) {
+		super(updateTask, owner, false, owner.getAssetNextUpdate(), TaskType.ASSETS, false, at);
+	}
+
+	public EveKitAssetGetter(UpdateTask updateTask, EveKitOwner owner) {
+		super(updateTask, owner, false, owner.getAssetNextUpdate(), TaskType.ASSETS, false, null);
 	}
 
 	@Override
-	public void load(UpdateTask updateTask, List<EveKitOwner> owners, boolean first) {
-		super.load(updateTask, owners, first);
-	}
-
-	@Override
-	public void load(UpdateTask updateTask, List<EveKitOwner> owners, Long at) {
-		super.load(updateTask, owners, at);
-	}
-
-	@Override
-	protected List<Asset> get(EveKitOwner owner, String at, Long contid) throws ApiException {
-		return getCommonApi().getAssets(owner.getAccessKey(), owner.getAccessCred(), at, contid, getMaxResults(), getReverse(),
-				null, null, null, null, null, null, null, null);
-	}
-
-	@Override
-	protected void set(EveKitOwner owner, List<Asset> data) throws ApiException {
+	protected void get(ApiClient apiClient, Long at, boolean first) throws ApiException {
+		List<Asset> data = updatePages(this);
+		if (data == null) {
+			return;
+		}
 		Date assetLastUpdate = null;
 		for (Asset asset : data) {
 			if (assetLastUpdate == null || assetLastUpdate.getTime() < asset.getLifeStart()) { //Newer
 				assetLastUpdate = new Date(asset.getLifeStart());
 			}
 		}
-		owner.setAssets(EveKitConverter.convertAssets(data, owner));
 		owner.setAssetLastUpdate(assetLastUpdate);
+		owner.setAssets(EveKitConverter.toAssets(data, owner));
 	}
 
 	@Override
-	protected long getCID(Asset obj) {
+	public List<Asset> get(ApiClient apiClient, String at, Long contid, Integer maxResults) throws ApiException {
+		return getCommonApi(apiClient).getAssets(owner.getAccessKey(), owner.getAccessCred(), at, contid, maxResults, false,
+				null, null, null, null, null, null, null, null);
+	}
+
+	@Override
+	public long getCID(Asset obj) {
 		return obj.getCid();
 	}
 
 	@Override
-	protected Long getLifeStart(Asset obj) {
+	public Long getLifeStart(Asset obj) {
 		return obj.getLifeStart();
-	}
-
-	@Override
-	protected boolean isValid(Asset obj) {
-		return obj.getFlag() != 7 //Skill
-				&& obj.getFlag() != 61 //Skill In Training
-				&& obj.getFlag() != 89 //Implant
-				&& obj.getFlag() != 88; //Booster
-	}
-
-	@Override
-	protected String getTaskName() {
-		return "Assets";
-	}
-
-	@Override
-	protected int getProgressEnd() {
-		return 50;
 	}
 
 	@Override
@@ -100,25 +83,15 @@ public class EveKitAssetGetter extends AbstractEveKitListGetter<Asset> {
 	}
 
 	@Override
-	protected void setNextUpdate(EveKitOwner owner, Date date) {
+	protected void setNextUpdate(Date date) {
 		owner.setAssetNextUpdate(date);
 	}
 
 	@Override
-	protected Date getNextUpdate(EveKitOwner owner) {
-		return owner.getAssetNextUpdate();
-	}
+	public void saveCID(Long cid) { } //Always get all data
 
 	@Override
-	protected ApiClient getApiClient() {
-		return getCommonApi().getApiClient();
-	}
-
-	@Override
-	protected void saveCID(EveKitOwner owner, Long cid) { } //Always get all data
-
-	@Override
-	protected Long loadCID(EveKitOwner owner) {
+	public Long loadCID() {
 		return null; //Always get all data
 	}
 }

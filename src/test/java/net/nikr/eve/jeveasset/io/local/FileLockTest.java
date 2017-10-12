@@ -21,17 +21,18 @@
 
 package net.nikr.eve.jeveasset.io.local;
 
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import ch.qos.logback.classic.Level;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import net.nikr.eve.jeveasset.TestUtil;
-import net.nikr.eve.jeveasset.data.ProfileManager;
-import net.nikr.eve.jeveasset.data.Settings;
+import net.nikr.eve.jeveasset.data.profile.ProfileManager;
+import net.nikr.eve.jeveasset.data.settings.Settings;
 import org.junit.AfterClass;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 import org.junit.BeforeClass;
 import org.junit.Test;
 

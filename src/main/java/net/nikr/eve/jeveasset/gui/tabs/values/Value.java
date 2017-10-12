@@ -24,8 +24,8 @@ package net.nikr.eve.jeveasset.gui.tabs.values;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import net.nikr.eve.jeveasset.data.api.my.MyAsset;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
-import net.nikr.eve.jeveasset.gui.tabs.assets.MyAsset;
 import net.nikr.eve.jeveasset.i18n.TabsValues;
 
 

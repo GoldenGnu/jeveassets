@@ -23,9 +23,9 @@ package net.nikr.eve.jeveasset.gui.shared;
 
 import java.util.Date;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.data.eveapi.EveApiAccount;
-import net.nikr.eve.jeveasset.data.Settings;
-import net.nikr.eve.jeveasset.data.api.OwnerType;
+import net.nikr.eve.jeveasset.data.api.accounts.EveApiAccount;
+import net.nikr.eve.jeveasset.data.api.accounts.OwnerType;
+import net.nikr.eve.jeveasset.data.settings.Settings;
 
 
 public class Updatable {

@@ -16,6 +16,17 @@
                   #### #  # #  # #  # #### #### #### #### ####
 
 ________________________________________________________________________________
+_4.5.0_________________________________________________________________________
+
+New Features:
+-Support for ESI characters (shorter cache times, with a few exceptions)
+-Update ESI/EveKit/EveAPI in threads (faster updates)
+-Added support for evemarketer.com as a price source
+
+Code:
+-Completely new data backend with support for EveAPI/EveKit/ESI
+
+________________________________________________________________________________
 _4.1.5__________________________________________________________________________
 
 Bug Fixes:

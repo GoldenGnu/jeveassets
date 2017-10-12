@@ -228,7 +228,7 @@ public class BackupTest extends TestUtil {
 	private static class SimpleReader extends AbstractXmlReader<Boolean> {
 
 		private boolean read(File file) {
-			return read("Simple reader", file.getAbsolutePath(), XmlType.DYNAMIC);
+			return read("Simple reader", file.getAbsolutePath(), AbstractXmlReader.XmlType.DYNAMIC);
 		}
 
 		@Override

@@ -20,89 +20,55 @@
  */
 package net.nikr.eve.jeveasset.io.evekit;
 
-
-import enterprises.orbital.evekit.client.invoker.ApiClient;
-import enterprises.orbital.evekit.client.invoker.ApiException;
+import enterprises.orbital.evekit.client.ApiClient;
+import enterprises.orbital.evekit.client.ApiException;
 import enterprises.orbital.evekit.client.model.Location;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import net.nikr.eve.jeveasset.data.Settings;
-import net.nikr.eve.jeveasset.data.evekit.EveKitAccessMask;
-import net.nikr.eve.jeveasset.data.evekit.EveKitOwner;
+import net.nikr.eve.jeveasset.data.api.accounts.EveKitAccessMask;
+import net.nikr.eve.jeveasset.data.api.accounts.EveKitOwner;
+import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
-import net.nikr.eve.jeveasset.gui.tabs.assets.MyAsset;
+import net.nikr.eve.jeveasset.io.evekit.AbstractEveKitGetter.EveKitPagesHandler;
 
+public class EveKitLocationsGetter extends AbstractEveKitGetter implements EveKitPagesHandler<Location> {
 
-public class EveKitLocationsGetter extends AbstractEveKitListGetter<Location> {
+	private final Map<Long, String> itemMap = new HashMap<Long, String>();
 
-	private final Map<Long, String> eveNames = new HashMap<Long, String>();
-	private final Map<EveKitOwner, Map<Long, String>> itemMap = new HashMap<EveKitOwner, Map<Long, String>>();
-
-	@Override
-	public void load(UpdateTask updateTask, List<EveKitOwner> owners) {
-		eveNames.clear();
-		itemMap.clear();
-		super.load(updateTask, owners);
-		Settings.get().setEveNames(eveNames);
+	public EveKitLocationsGetter(UpdateTask updateTask, EveKitOwner owner) {
+		super(updateTask, owner, false, owner.getLocationsNextUpdate(), TaskType.LOCATIONS, false, null);
 	}
 
 	@Override
-	protected List<Location> get(EveKitOwner owner, String at, Long contid) throws ApiException {
-		//Get all items matching itemID
-		return getCommonApi().getLocations(owner.getAccessKey(), owner.getAccessCred(), null, contid, getMaxResults(), getReverse(),
-				valuesFilter(getIDs(owner)), null, null, null, null);
-	}
-
-	@Override
-	protected void set(EveKitOwner owner, List<Location> data) throws ApiException {
-		Map<Long, String> locations = EveKitConverter.convertLocations(data);
-		for (Map.Entry<Long, String> entry : locations.entrySet()) {
-			Long itemID = entry.getKey();
-			String eveName = entry.getValue();
-			String typeName = itemMap.get(owner).get(itemID);
+	protected void get(ApiClient apiClient, Long at, boolean first) throws ApiException {
+		List<Location> data = updatePages(this);
+		if (data == null) {
+			return;
+		}
+		for (Location location : data) {
+			Long itemID = location.getItemID();
+			String eveName = location.getItemName();
+			String typeName = itemMap.get(itemID);
 			if (!eveName.equals(typeName)) {
-				eveNames.put(itemID, eveName);
+				Settings.get().getEveNames().put(itemID, eveName);
+			} else {
+				Settings.get().getEveNames().remove(itemID);
 			}
-		}
-	}
-
-	private Set<Long> getIDs(EveKitOwner owner) throws ApiException {
-		Map<Long, String> map = itemMap.get(owner);
-		if (map == null) {
-			map = new HashMap<Long, String>();
-			itemMap.put(owner, map);
-			getItemID(map, owner.getAssets());
-		}
-		return map.keySet();
-	}
-
-	private void getItemID(Map<Long, String> itemIDs, List<MyAsset> assets) {
-		for (MyAsset asset : assets) {
-			if ((asset.getItem().getGroup().equals("Audit Log Secure Container")
-					|| asset.getItem().getCategory().equals("Ship"))
-					&& asset.isSingleton()) {
-				itemIDs.put(asset.getItemID(), asset.getItem().getTypeName());
-			}
-			getItemID(itemIDs, asset.getAssets());
 		}
 	}
 
 	@Override
-	protected Long getLifeStart(Location obj) {
+	public List<Location> get(ApiClient apiClient, String at, Long contid, Integer maxResults) throws ApiException {
+		//Get all items matching itemID
+		return getCommonApi(apiClient).getLocations(owner.getAccessKey(), owner.getAccessCred(), at, contid, maxResults, false,
+				valuesFilter(getIDs(itemMap, owner)), null, null, null, null);
+	}
+
+	@Override
+	public Long getLifeStart(Location obj) {
 		return obj.getLifeStart();
-	}
-
-	@Override
-	protected String getTaskName() {
-		return "Locations";
-	}
-
-	@Override
-	protected int getProgressStart() {
-		return 50;
 	}
 
 	@Override
@@ -111,30 +77,20 @@ public class EveKitLocationsGetter extends AbstractEveKitListGetter<Location> {
 	}
 
 	@Override
-	protected void setNextUpdate(EveKitOwner owner, Date date) {
+	protected void setNextUpdate(Date date) {
 		owner.setLocationsNextUpdate(date);
 	}
 
 	@Override
-	protected Date getNextUpdate(EveKitOwner owner) {
-		return owner.getLocationsNextUpdate();
-	}
-
-	@Override
-	protected ApiClient getApiClient() {
-		return getCommonApi().getApiClient();
-	}
-
-	@Override
-	protected long getCID(Location obj) {
+	public long getCID(Location obj) {
 		return obj.getCid();
 	}
 
 	@Override
-	protected void saveCID(EveKitOwner owner, Long cid) { } //Always get all data
+	public void saveCID(Long cid) {	} //Always get all data
 
 	@Override
-	protected Long loadCID(EveKitOwner owner) {
+	public Long loadCID() {
 		return null; //Always get all data
 	}
 

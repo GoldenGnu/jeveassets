@@ -31,7 +31,7 @@ import net.nikr.eve.jeveasset.i18n.TabsLoadout;
  *
  * @author Candle
  */
-enum LoadoutTableFormat implements EnumTableColumn<Loadout> {
+public enum LoadoutTableFormat implements EnumTableColumn<Loadout> {
 	NAME(String.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {

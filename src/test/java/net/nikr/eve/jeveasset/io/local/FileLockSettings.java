@@ -23,7 +23,7 @@ package net.nikr.eve.jeveasset.io.local;
 import java.io.File;
 import java.net.URISyntaxException;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.data.Settings;
+import net.nikr.eve.jeveasset.data.settings.Settings;
 
 
 public class FileLockSettings extends Settings {

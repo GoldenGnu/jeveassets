@@ -30,7 +30,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.plaf.basic.BasicButtonUI;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.data.Settings;
+import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
 import net.nikr.eve.jeveasset.i18n.GuiFrame;

@@ -18,13 +18,12 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
  */
-
 package net.nikr.eve.jeveasset.io.local;
-
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import net.nikr.eve.jeveasset.data.settings.Settings;
 import org.w3c.dom.Node;
 
 
@@ -43,8 +42,36 @@ public final class AttributeGetters {
 		return getNodeValue(node, attributeName);
 	}
 
+	public static String getStringOptional(final Node node, final String attributeName) throws XmlException {
+		return getNodeValueOptional(node, attributeName);
+	}
+
 	public static Date getDate(final Node node, final String attributeName) throws XmlException {
 		String value = getNodeValue(node, attributeName);
+		try {
+			return FORMAT.parse(value);
+		} catch (ParseException ex) {
+			return new Date(Long.parseLong(value));
+		}
+	}
+
+	public static Date getDateNotNull(final Node node, final String attributeName) {
+		String value = getNodeValueNotNull(node, attributeName);
+		if (value == null) {
+			return Settings.getNow();
+		}
+		try {
+			return FORMAT.parse(value);
+		} catch (ParseException ex) {
+			return new Date(Long.parseLong(value));
+		}
+	}
+
+	public static Date getDateOptional(final Node node, final String attributeName) {
+		String value = getNodeValueOptional(node, attributeName);
+		if (value == null) {
+			return null;
+		}
 		try {
 			return FORMAT.parse(value);
 		} catch (ParseException ex) {
@@ -61,6 +88,14 @@ public final class AttributeGetters {
 		}
 	}
 
+	public static Integer getIntOptional(final Node node, final String attributeName) {
+		String value = getNodeValueOptional(node, attributeName);
+		if (value == null) {
+			return null;
+		}
+		return Integer.parseInt(value);
+	}
+
 	public static long getLong(final Node node, final String attributeName) throws XmlException {
 		String value = getNodeValue(node, attributeName);
 		try {
@@ -68,6 +103,14 @@ public final class AttributeGetters {
 		} catch (NumberFormatException ex) {
 			throw new XmlException("Failed to convert value: " +value+ " to Long form node: " + node.getNodeName() + " > " + attributeName);
 		}
+	}
+
+	public static Long getLongOptional(final Node node, final String attributeName) {
+		String value = getNodeValueOptional(node, attributeName);
+		if (value == null) {
+			return null;
+		}
+		return safeStringToLong(value);
 	}
 
 	public static double getDouble(final Node node, final String attributeName) throws XmlException {
@@ -86,6 +129,14 @@ public final class AttributeGetters {
 		} catch (NumberFormatException ex) {
 			throw new XmlException("Failed to convert value: " +value+ " to Float form node: " + node.getNodeName() + " > " + attributeName);
 		}
+	}
+
+	public static Float getFloatOptional(final Node node, final String attributeName) {
+		String value = getNodeValueOptional(node, attributeName);
+		if (value == null) {
+			return null;
+		}
+		return Float.valueOf(value);
 	}
 
 	public static boolean getBoolean(final Node node, final String attributeName) throws XmlException {
@@ -120,5 +171,23 @@ public final class AttributeGetters {
 			throw new XmlException("Failed to parse attribute from node: " + node.getNodeName() + " > " + attributeName);
 		}
 		return attributeNode.getNodeValue();
+	}
+
+	private static String getNodeValueOptional(final Node node, final String attributeName) {
+		Node attributeNode = node.getAttributes().getNamedItem(attributeName);
+		if (attributeNode == null) {
+			return null;
+		} else {
+			return attributeNode.getNodeValue();
+		}
+	}
+
+	private static String getNodeValueNotNull(final Node node, final String attributeName) {
+		Node attributeNode = node.getAttributes().getNamedItem(attributeName);
+		if (attributeNode == null) {
+			return null;
+		} else {
+			return attributeNode.getNodeValue();
+		}
 	}
 }

@@ -23,7 +23,7 @@ package net.nikr.eve.jeveasset.gui.tabs.items;
 
 import ca.odell.glazedlists.GlazedLists;
 import java.util.Comparator;
-import net.nikr.eve.jeveasset.data.Item;
+import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.i18n.TabsItems;
 

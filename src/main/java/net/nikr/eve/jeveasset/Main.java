@@ -18,7 +18,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
  */
-
 package net.nikr.eve.jeveasset;
 
 import java.io.File;
@@ -37,8 +36,8 @@ import net.nikr.eve.jeveasset.io.online.Updater;
 import net.nikr.eve.jeveasset.io.shared.FileUtil;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 
-
 public final class Main {
+
 	private static boolean debug = false;
 	private static boolean portable = false;
 	private static boolean forceNoUpdate = false;
@@ -76,6 +75,7 @@ public final class Main {
 
 	/**
 	 * Entry point for jEveAssets.
+	 *
 	 * @param args the command line arguments
 	 */
 	public static void main(final String[] args) {
@@ -141,7 +141,7 @@ public final class Main {
 
 		//XXX - Workaround for IPv6 fail (force IPv4)
 		//eveonline.com is not IPv6 ready...
-		System.setProperty("java.net.preferIPv4Stack" , "true");
+		System.setProperty("java.net.preferIPv4Stack", "true");
 
 		//XXX - Workaround for Java Bug
 		System.setProperty("java.util.Arrays.useLegacyMergeSort", "true");
@@ -153,10 +153,10 @@ public final class Main {
 		javax.swing.SwingUtilities.invokeLater(
 			new Runnable() {
 				@Override
-				public void run() {
-					createAndShowGUI();
-				}
-			});
+			public void run() {
+				createAndShowGUI();
+			}
+		});
 	}
 
 	private static void createAndShowGUI() {
@@ -234,7 +234,7 @@ public final class Main {
 		files.add("jcommon-1.0.16.jar");
 		files.add("jfreechart-1.0.13.jar");
 		files.add("osxadapter-1.1.0.jar");
-		files.add("pricing-1.7.0.jar");
+		files.add("pricing-1.7.2.jar");
 		files.add("routing-1.5.0.jar");
 		files.add("slf4j-api-1.7.25.jar");
 		files.add("log4j-over-slf4j-1.7.25.jar");
@@ -263,7 +263,7 @@ public final class Main {
 		files.add("javax.ws.rs-api-2.0.1.jar");
 		files.add("jersey-media-json-jackson-2.25.1.jar");
 		files.add("osgi-resource-locator-1.0.1.jar");
-		files.add("evekit-3.0.0.jar");
+		files.add("evekit-3.1.0.1.jar");
 		files.add("javax.annotation-api-1.2.jar");
 		files.add("hk2-api-2.5.0-b32.jar");
 		files.add("jersey-common-2.25.1.jar");
@@ -273,7 +273,8 @@ public final class Main {
 		files.add("swagger-annotations-1.5.12.jar");
 		files.add("jackson-datatype-jsr310-2.8.6.jar");
 		files.add("commons-lang3-3.5.jar");
-		files.add("eve-esi-1.3.1.jar");
+		files.add("hamcrest-core-1.3.jar");
+		files.add("eve-esi-1.4.0.1.jar");
 		files.add("hamcrest-core-1.3.jar");
 		files.add("oauth2-client-2.25.1.jar");
 		return files;

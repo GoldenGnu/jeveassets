@@ -29,13 +29,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import net.nikr.eve.jeveasset.TestUtil;
-import net.nikr.eve.jeveasset.data.Item;
-import net.nikr.eve.jeveasset.data.PriceDataSettings.PriceSource;
-import net.nikr.eve.jeveasset.data.ProxyData;
-import net.nikr.eve.jeveasset.data.StaticData;
-import net.nikr.eve.jeveasset.data.esi.EsiOwner;
-import net.nikr.eve.jeveasset.data.eveapi.EveApiAccount;
-import net.nikr.eve.jeveasset.data.evekit.EveKitOwner;
+import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
+import net.nikr.eve.jeveasset.data.api.accounts.EveApiAccount;
+import net.nikr.eve.jeveasset.data.api.accounts.EveKitOwner;
+import net.nikr.eve.jeveasset.data.sde.Item;
+import net.nikr.eve.jeveasset.data.sde.StaticData;
+import net.nikr.eve.jeveasset.data.settings.PriceDataSettings.PriceSource;
+import net.nikr.eve.jeveasset.data.settings.ProxyData;
 import net.nikr.eve.jeveasset.io.esi.EsiCallbackURL;
 import net.nikr.eve.jeveasset.io.esi.EsiOwnerGetter;
 import net.nikr.eve.jeveasset.io.eveapi.AccountGetter;
@@ -103,16 +103,16 @@ public class ProxyTest extends TestUtil {
 
 	private void testConnections() {
 		//EveAPI
-		AccountGetter eveAPI = new AccountGetter();
-		eveAPI.load(null, false, new EveApiAccount(0, ""));
+		AccountGetter eveAPI = new AccountGetter(new EveApiAccount(0, ""), false);
+		eveAPI.run();
 		//ESI
-		EsiOwnerGetter esi = new EsiOwnerGetter();
 		EsiOwner esiOwner = new EsiOwner();
 		esiOwner.setCallbackURL(EsiCallbackURL.LOCALHOST);
-		esi.load(esiOwner);
+		EsiOwnerGetter esi = new EsiOwnerGetter(esiOwner, false);
+		esi.run();
 		//EveKit
-		EveKitOwnerGetter eveKit = new EveKitOwnerGetter();
-		eveKit.load(null, new EveKitOwner(0, ""));
+		EveKitOwnerGetter eveKit = new EveKitOwnerGetter(new EveKitOwner(0, ""), false);
+		eveKit.run();
 		//Citadels
 		CitadelGetterMock citadel = new CitadelGetterMock();
 		citadel.update();
@@ -137,8 +137,8 @@ public class ProxyTest extends TestUtil {
 	private class PriceDataGetterMock extends PriceDataGetter {
 
 		protected void update() {
-			super.processUpdate(null, true, new TestPricingOptions(), TYPE_IDS, PriceSource.EVE_MARKETDATA);
-			//super.processUpdate(null, true, new TestPricingOptions(), Collections.singleton(1230), PriceSource.EVE_CENTRAL);
+			super.processUpdate(null, true, new TestPricingOptions(), TYPE_IDS, PriceSource.EVEMARKETER);
+			//super.processUpdate(null, true, new TestPricingOptions(), TYPE_IDS, PriceSource.EVE_CENTRAL);
 		}
 
 	}
@@ -152,7 +152,8 @@ public class ProxyTest extends TestUtil {
 
 		@Override
 		public PricingFetch getPricingFetchImplementation() {
-			return PriceSource.EVE_MARKETDATA.getPricingFetch();
+			return PriceSource.EVEMARKETER.getPricingFetch();
+			//return PriceSource.EVE_CENTRAL.getPricingFetch();
 		}
 
 		@Override
@@ -204,6 +205,10 @@ public class ProxyTest extends TestUtil {
 		public int getAttemptCount() {
 			return 2;
 		}
-		
+
+		@Override
+		public int getTimeout() {
+			return 20000;
+		}
 	}
 }

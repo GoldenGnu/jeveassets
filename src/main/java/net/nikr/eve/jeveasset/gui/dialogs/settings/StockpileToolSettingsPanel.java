@@ -41,9 +41,9 @@ import javax.swing.JRadioButton;
 import javax.swing.SwingUtilities;
 import javax.swing.text.JTextComponent;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.data.Settings;
-import net.nikr.eve.jeveasset.gui.shared.Colors;
+import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
+import net.nikr.eve.jeveasset.gui.shared.Colors;
 import net.nikr.eve.jeveasset.i18n.DialoguesSettings;
 
 

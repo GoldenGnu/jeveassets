@@ -39,7 +39,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.table.AbstractTableModel;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.data.Settings;
+import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 import org.slf4j.Logger;

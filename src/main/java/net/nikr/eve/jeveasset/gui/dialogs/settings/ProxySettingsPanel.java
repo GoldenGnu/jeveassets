@@ -20,20 +20,18 @@
  */
 package net.nikr.eve.jeveasset.gui.dialogs.settings;
 
-// <editor-fold defaultstate="collapsed" desc="imports">
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.net.Proxy;
 import javax.swing.*;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.data.ProxyData;
-import net.nikr.eve.jeveasset.data.Settings;
+import net.nikr.eve.jeveasset.data.settings.ProxyData;
+import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.ListComboBoxModel;
 import net.nikr.eve.jeveasset.i18n.DialoguesSettings;
 
-// </editor-fold>
 /**
  *
  * @author Flaming Candle

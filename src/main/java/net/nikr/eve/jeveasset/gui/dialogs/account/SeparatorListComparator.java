@@ -22,7 +22,7 @@
 package net.nikr.eve.jeveasset.gui.dialogs.account;
 
 import java.util.Comparator;
-import net.nikr.eve.jeveasset.data.api.OwnerType;
+import net.nikr.eve.jeveasset.data.api.accounts.OwnerType;
 
 
 public class SeparatorListComparator implements Comparator<OwnerType> {

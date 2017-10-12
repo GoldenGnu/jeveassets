@@ -3,11 +3,18 @@
 define("FILE", "citadel.json");
 
 function fetchURL() {
-	if (!file_exists(FILE)) { //New
+	//Update
+	if (isset($_GET["update"])) { //Cron job
+		logToFile("Updating CRON");
 		downloadPage();
-	} elseif (file_exists(FILE) && ((filemtime(FILE) + 3600) < time())) { // Update every 3600 seconds (1 hour)
+	} elseif (!file_exists(FILE)) { //New
+		logToFile("Updating NEW");
+		downloadPage();
+	} elseif (file_exists(FILE) && ((filemtime(FILE) + 4500) < time())) { // Update every 4500 seconds (1 hour and 15 minutes)
+		logToFile("Updating CACHE");
 		downloadPage();
 	}
+	//Serve
 	if (file_exists(FILE)) { // If cache exist
 		ob_start(); //Object: start
 		ob_start("ob_gzhandler"); //GZip: start
@@ -24,10 +31,15 @@ function downloadPage() {
 	$url = "https://stop.hammerti.me.uk/api/citadel/all";
 	$file = file_get_contents($url); // Fetch the file
 	if ($file !== false) { //Download successful 
+		logToFile("Update SUCCESSFUL");
 		file_put_contents(FILE, $file, LOCK_EX); // Save the cache
 	} else { //Download failed
-		touch(FILE); //Let try again in an hour...
+		logToFile("Update FAILED");
+		touch(FILE); //Lets try again later
 	}
+}
+function logToFile($log) {
+	file_put_contents('log-'.date("Y-m-d").'.txt', date("Y-m-d H:i").": ".$log.PHP_EOL, FILE_APPEND);
 }
 
 fetchURL(); // Execute the function

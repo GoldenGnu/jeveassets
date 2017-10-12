@@ -24,6 +24,7 @@ package net.nikr.eve.jeveasset.gui.tabs.transaction;
 import ca.odell.glazedlists.GlazedLists;
 import java.util.Comparator;
 import java.util.Date;
+import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.i18n.TabsTransaction;
 
@@ -36,7 +37,7 @@ public enum TransactionTableFormat implements EnumTableColumn<MyTransaction> {
 		}
 		@Override
 		public Object getColumnValue(final MyTransaction from) {
-			return from.getTransactionDateTime();
+			return from.getDate();
 		}
 	},
 	NAME(String.class, GlazedLists.comparableComparator()) {
@@ -96,7 +97,7 @@ public enum TransactionTableFormat implements EnumTableColumn<MyTransaction> {
 		}
 		@Override
 		public Object getColumnValue(final MyTransaction from) {
-			return from.getStationName();
+			return from.getLocation();
 		}
 	},
 	REGION(String.class, GlazedLists.comparableComparator()) {
@@ -149,8 +150,10 @@ public enum TransactionTableFormat implements EnumTableColumn<MyTransaction> {
 			return from.getAccountKeyFormated();
 		}
 	};
+
 	private final Class<?> type;
 	private final Comparator<?> comparator;
+
 	private TransactionTableFormat(final Class<?> type, final Comparator<?> comparator) {
 		this.type = type;
 		this.comparator = comparator;

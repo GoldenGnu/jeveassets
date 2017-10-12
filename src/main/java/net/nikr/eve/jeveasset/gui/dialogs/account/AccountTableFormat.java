@@ -23,14 +23,14 @@ package net.nikr.eve.jeveasset.gui.dialogs.account;
 
 import ca.odell.glazedlists.GlazedLists;
 import java.util.Comparator;
-import net.nikr.eve.jeveasset.data.api.OwnerType;
+import net.nikr.eve.jeveasset.data.api.accounts.OwnerType;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.ExpirerDate;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.YesNo;
 import net.nikr.eve.jeveasset.i18n.DialoguesAccount;
 
 
-enum AccountTableFormat implements EnumTableColumn<OwnerType> {
+public enum AccountTableFormat implements EnumTableColumn<OwnerType> {
 	SHOW_ASSETS(Boolean.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
@@ -168,6 +168,16 @@ enum AccountTableFormat implements EnumTableColumn<OwnerType> {
 		@Override
 		public Object getColumnValue(final OwnerType from) {
 			return new YesNo(from.isStructures());
+		}
+	},
+	BLUEPRINTS(YesNo.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return DialoguesAccount.get().tableFormatBlueprints();
+		}
+		@Override
+		public Object getColumnValue(final OwnerType from) {
+			return new YesNo(from.isBlueprints());
 		}
 	},
 	EXPIRES(ExpirerDate.class, GlazedLists.comparableComparator()) {

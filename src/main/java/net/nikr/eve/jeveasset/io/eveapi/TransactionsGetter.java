@@ -18,92 +18,102 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
  */
-
 package net.nikr.eve.jeveasset.io.eveapi;
 
 import com.beimin.eveapi.exception.ApiException;
+import com.beimin.eveapi.model.shared.WalletTransaction;
 import com.beimin.eveapi.parser.character.CharWalletTransactionsParser;
 import com.beimin.eveapi.parser.corporation.CorpWalletTransactionsParser;
 import com.beimin.eveapi.response.shared.WalletTransactionsResponse;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
-import net.nikr.eve.jeveasset.data.eveapi.EveApiAccessMask;
-import net.nikr.eve.jeveasset.data.eveapi.EveApiAccount;
-import net.nikr.eve.jeveasset.data.eveapi.EveApiOwner;
+import net.nikr.eve.jeveasset.data.api.accounts.EveApiAccessMask;
+import net.nikr.eve.jeveasset.data.api.accounts.EveApiOwner;
+import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
-import net.nikr.eve.jeveasset.gui.tabs.transaction.MyTransaction;
-import net.nikr.eve.jeveasset.io.shared.ApiConverter;
 
 
-public class TransactionsGetter extends AbstractApiAccountKeyGetter<WalletTransactionsResponse, MyTransaction> {
+public class TransactionsGetter extends AbstractApiGetter<WalletTransactionsResponse> {
 
-	private boolean saveHistory;
+	private static final int ROW_COUNT = 1000;
 
-	public TransactionsGetter() {
-		super("Wallet Transactions");
-	}
+	private final boolean saveHistory;
 
-	public void load(final UpdateTask updateTask, final boolean forceUpdate, final List<EveApiAccount> accounts, final boolean saveHistory) {
+	public TransactionsGetter(UpdateTask updateTask, EveApiOwner owner, boolean saveHistory) {
+		super(updateTask, owner, false, owner.getTransactionsNextUpdate(), TaskType.TRANSACTIONS);
 		this.saveHistory = saveHistory;
-		super.loadAccounts(updateTask, forceUpdate, accounts);
 	}
 
 	@Override
-	protected Set<MyTransaction> get() {
-		if (saveHistory) {
-			return new HashSet<MyTransaction>(getOwner().getTransactions());
+	protected void get(String updaterStatus) throws ApiException {
+		Set<Integer> accountKeys = new HashSet<>();
+		if (owner.isCorporation()) {
+			for (int i = 1000; i <= 1006; i++) { //For each wallet division
+				accountKeys.add(i);
+			}
 		} else {
-			return new HashSet<MyTransaction>();
+			accountKeys.add(1000);
 		}
-	}
+		//for each account key
+		Map<Integer, List<WalletTransaction>> updateList = updateList(accountKeys, new ListHandler<Integer, List<WalletTransaction>>() {
+			@Override
+			public List<WalletTransaction> get(String listUpdaterStatus, Integer t) throws ApiException {
+				return updateIDs(new HashSet<Long>(), new IDsHandler<WalletTransaction>() {
+					@Override
+					protected List<WalletTransaction> get(String idUpdaterStatus, Long fromID) throws ApiException {
+						if (fromID == null) {
+							fromID = 0L;
+						}
+						if (owner.isCorporation()) {
+							WalletTransactionsResponse response = new CorpWalletTransactionsParser()
+									.getResponse(EveApiOwner.getApiAuthorization(owner), t, fromID, ROW_COUNT);
+							if (!handle(response, listUpdaterStatus + " " + idUpdaterStatus)) {
+								return null;
+							}
+							return response.getAll();
+						} else {
+							WalletTransactionsResponse response = new CharWalletTransactionsParser()
+									.getTransactionsResponse(EveApiOwner.getApiAuthorization(owner), fromID, ROW_COUNT);
+							if (!handle(response, listUpdaterStatus + " " + idUpdaterStatus)) {
+								return null;
+							}
+							return response.getAll();
+						}
+					}
 
-	@Override
-	protected void set(Set<MyTransaction> values, Date nextUpdate) {
-		getOwner().setTransactions(values);
-		getOwner().setTransactionsNextUpdate(nextUpdate);
-	}
+					@Override
+					protected Long getID(WalletTransaction response) {
+						return response.getTransactionID();
+					}
 
-	@Override
-	protected WalletTransactionsResponse getResponse(boolean bCorp, int accountKey, long fromID, int rowCount) throws ApiException {
-		if (bCorp) {
-			return new CorpWalletTransactionsParser()
-					.getResponse(EveApiOwner.getApiAuthorization(getOwner()), accountKey, fromID, rowCount);
-		} else {
-			return new CharWalletTransactionsParser()
-					.getTransactionsResponse(EveApiOwner.getApiAuthorization(getOwner()), fromID, rowCount);
+				});
+			}
+		});
+		Set<MyTransaction> transactions = new HashSet<MyTransaction>();
+		for (Map.Entry<Integer, List<WalletTransaction>> entry : updateList.entrySet()) {
+			if (entry.getValue() == null) {
+				continue;
+			}
+			transactions.addAll(EveApiConverter.toTransactions(entry.getValue(), owner, entry.getKey(), saveHistory));
+			
 		}
+		owner.setTransactions(transactions);
 	}
 
 	@Override
-	protected Set<MyTransaction> convertData(WalletTransactionsResponse response, int accountKey) {
-		return ApiConverter.convertTransactions(response.getAll(), getOwner(), accountKey);
+	protected void setNextUpdate(Date date) {
+		owner.setTransactionsNextUpdate(date);
 	}
 
 	@Override
-	protected Date getNextUpdate() {
-		return getOwner().getTransactionsNextUpdate();
-	}
-
-	@Override
-	protected void updateFailed(final EveApiOwner ownerFrom, final EveApiOwner ownerTo) {
-		ownerTo.setTransactions(ownerFrom.getTransactions());
-		ownerTo.setTransactionsNextUpdate(ownerFrom.getTransactionsNextUpdate());
-	}
-
-	@Override
-	protected long requestMask(boolean bCorp) {
-		if (bCorp) {
+	protected long requestMask() {
+		if (owner.isCorporation()) {
 			return EveApiAccessMask.TRANSACTIONS_CORP.getAccessMask();
 		} else {
 			return EveApiAccessMask.TRANSACTIONS_CHAR.getAccessMask();
 		}
 	}
-
-	@Override
-	protected long getId(MyTransaction v) {
-		return v.getTransactionID();
-	}
-
 }

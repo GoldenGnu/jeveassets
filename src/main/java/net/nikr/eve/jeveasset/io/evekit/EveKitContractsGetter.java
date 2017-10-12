@@ -20,122 +20,95 @@
  */
 package net.nikr.eve.jeveasset.io.evekit;
 
-
-import enterprises.orbital.evekit.client.invoker.ApiClient;
-import enterprises.orbital.evekit.client.invoker.ApiException;
+import enterprises.orbital.evekit.client.ApiClient;
+import enterprises.orbital.evekit.client.ApiException;
 import enterprises.orbital.evekit.client.model.Contract;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import net.nikr.eve.jeveasset.data.Settings;
-import net.nikr.eve.jeveasset.data.evekit.EveKitAccessMask;
-import net.nikr.eve.jeveasset.data.evekit.EveKitOwner;
+import net.nikr.eve.jeveasset.data.api.accounts.EveKitAccessMask;
+import net.nikr.eve.jeveasset.data.api.accounts.EveKitOwner;
+import net.nikr.eve.jeveasset.data.api.my.MyContract;
+import net.nikr.eve.jeveasset.data.api.my.MyContractItem;
+import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
-import net.nikr.eve.jeveasset.gui.tabs.contracts.MyContract;
-import net.nikr.eve.jeveasset.gui.tabs.contracts.MyContractItem;
+import net.nikr.eve.jeveasset.io.evekit.AbstractEveKitGetter.EveKitPagesHandler;
 
 
-public class EveKitContractsGetter extends AbstractEveKitListGetter<Contract> {
+public class EveKitContractsGetter extends AbstractEveKitGetter implements EveKitPagesHandler<Contract> {
 
-	private enum Runs { IN_PROGRESS, MONTHS, ALL} 
+	private enum Runs {
+		IN_PROGRESS, MONTHS, ALL
+	}
 
+	private final List<Runs> runs = new ArrayList<Runs>();
 	private Runs run;
-	private Map<EveKitOwner, Map<MyContract, List<MyContractItem>>> contracts;
 
-	@Override
-	public void load(UpdateTask updateTask, List<EveKitOwner> owners) {
-		contracts = new HashMap<EveKitOwner, Map<MyContract, List<MyContractItem>>>();
+	public EveKitContractsGetter(UpdateTask updateTask, EveKitOwner owner, boolean first) {
+		super(updateTask, owner, false, owner.getContractsNextUpdate(), TaskType.CONTRACTS, first, null);
+		runs.add(Runs.ALL);
+	}
+
+	public EveKitContractsGetter(UpdateTask updateTask, EveKitOwner owner, Long at) {
+		super(updateTask, owner, false, owner.getContractsNextUpdate(), TaskType.CONTRACTS, false, at);
+		runs.add(Runs.ALL);
+	}
+
+	public EveKitContractsGetter(UpdateTask updateTask, EveKitOwner owner) {
+		super(updateTask, owner, false, owner.getContractsNextUpdate(), TaskType.CONTRACTS, false, null);
 		if (Settings.get().getEveKitContractsHistory() == 0) {
-			run = Runs.ALL;
-			super.load(updateTask, owners);
+			runs.add(Runs.ALL);
 		} else {
-			run = Runs.IN_PROGRESS;
-			super.load(updateTask, owners);
-			run = Runs.MONTHS;
-			super.load(updateTask, owners);
+			runs.add(Runs.IN_PROGRESS);
+			runs.add(Runs.MONTHS);
 		}
 	}
 
 	@Override
-	public void load(UpdateTask updateTask, List<EveKitOwner> owners, Long at) {
-		contracts = new HashMap<EveKitOwner, Map<MyContract, List<MyContractItem>>>();
-		run = Runs.ALL;
-		super.load(updateTask, owners, at);
-	}
-
-	@Override
-	public void load(UpdateTask updateTask, List<EveKitOwner> owners, boolean first) {
-		contracts = new HashMap<EveKitOwner, Map<MyContract, List<MyContractItem>>>();
-		run = Runs.ALL;
-		super.load(updateTask, owners, first);
-	}
-
-	@Override
-	protected List<Contract> get(EveKitOwner owner, String at, Long contid) throws ApiException {
-		if (run == Runs.IN_PROGRESS) { //In-Progress
-			return getCommonApi().getContracts(owner.getAccessKey(), owner.getAccessCred(), null, contid, getMaxResults(), getReverse(),
-				null, null, null, null, null, null, null, null, contractsFilter(), null, null, null, null, null, null, null, null, null, null, null, null, null);
-		}
-		if (run == Runs.MONTHS) { //months
-			return getCommonApi().getContracts(owner.getAccessKey(), owner.getAccessCred(), at, contid, getMaxResults(), getReverse(),
-					null, null, null, null, null, null, null, null, null, null, null, null, null, dateFilter(Settings.get().getEveKitContractsHistory()), null, null, null, null, null, null, null, null);
-		}
-		if (run == Runs.ALL) {
-			return getCommonApi().getContracts(owner.getAccessKey(), owner.getAccessCred(), at, contid, getMaxResults(), getReverse(),
-					null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
-		}
-		return new ArrayList<Contract>();
-	}
-
-	@Override
-	protected void set(EveKitOwner owner, List<Contract> data) throws ApiException {
-		Map<MyContract, List<MyContractItem>> map = contracts.get(owner);
-		if (map == null) { //New owner
-			map = new HashMap<MyContract, List<MyContractItem>>();
-			if (loadCID(owner) != null) { //Old
-				map.putAll(owner.getContracts());
+	protected void get(ApiClient apiClient, Long at, boolean first) throws ApiException {
+		ArrayList<Contract> data = new ArrayList<Contract>();
+		for (Runs r : runs) {
+			run = r;
+			List<Contract> list = updatePages(this);
+			if (list == null) {
+				return;
 			}
-			contracts.put(owner, map);
+			data.addAll(list);
 		}
-		map.putAll(EveKitConverter.convertContracts(data)); //New
+		Map<MyContract, List<MyContractItem>> map = new HashMap<MyContract, List<MyContractItem>>();
+		if (loadCID() != null) { //Old
+			map.putAll(owner.getContracts());
+		}
+		map.putAll(EveKitConverter.toContracts(data, owner)); //New
 		owner.setContracts(map); //All
 	}
 
 	@Override
-	protected long getCID(Contract obj) {
+	public List<Contract> get(ApiClient apiClient, String at, Long contid, Integer maxResults) throws ApiException {
+		switch (run) {
+			case IN_PROGRESS:
+				return getCommonApi(apiClient).getContracts(owner.getAccessKey(), owner.getAccessCred(), at, contid, maxResults, false,
+						null, null, null, null, null, null, null, null, contractsFilter(), null, null, null, null, null, null, null, null, null, null, null, null, null);
+			case MONTHS:
+				return getCommonApi(apiClient).getContracts(owner.getAccessKey(), owner.getAccessCred(), at, contid, maxResults, false,
+						null, null, null, null, null, null, null, null, null, null, null, null, null, dateFilter(Settings.get().getEveKitContractsHistory()), null, null, null, null, null, null, null, null);
+			default: //ALL
+				return getCommonApi(apiClient).getContracts(owner.getAccessKey(), owner.getAccessCred(), at, contid, maxResults, false,
+						null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+				
+		}
+	}
+
+	@Override
+	public long getCID(Contract obj) {
 		return obj.getCid();
 	}
 
 	@Override
-	protected Long getLifeStart(Contract obj) {
+	public Long getLifeStart(Contract obj) {
 		return obj.getLifeStart();
-	}
-
-	@Override
-	protected String getTaskName() {
-		return "Contracts";
-	}
-
-	@Override
-	protected int getProgressStart() {
-		switch(run) {
-			case IN_PROGRESS: return 0;
-			case MONTHS: return 15;
-			case ALL: return 0;
-			default: return 0;
-		}
-	}
-
-	@Override
-	protected int getProgressEnd() {
-		switch(run) {
-			case IN_PROGRESS: return 15;
-			case MONTHS: return 30;
-			case ALL: return 30;
-			default: return 30;
-		}
 	}
 
 	@Override
@@ -144,32 +117,22 @@ public class EveKitContractsGetter extends AbstractEveKitListGetter<Contract> {
 	}
 
 	@Override
-	protected void setNextUpdate(EveKitOwner owner, Date date) {
+	protected void setNextUpdate(Date date) {
 		if (run == Runs.MONTHS || run == Runs.ALL) { //Ignore first update...
 			owner.setContractsNextUpdate(date);
 		}
 	}
 
 	@Override
-	protected Date getNextUpdate(EveKitOwner owner) {
-		return owner.getContractsNextUpdate();
-	}
-
-	@Override
-	protected ApiClient getApiClient() {
-		return getCommonApi().getApiClient();
-	}
-
-	@Override
-	protected void saveCID(EveKitOwner owner, Long cid) {
-		if (run == Runs.MONTHS || run == Runs.ALL) {
+	public void saveCID(Long cid) {
+		if (run == Runs.MONTHS || run == Runs.ALL) { //Ignore first update...
 			owner.setContractsCID(cid);
 		}
 	}
 
 	@Override
-	protected Long loadCID(EveKitOwner owner) {
-		if (run == Runs.MONTHS || run == Runs.ALL) {
+	public Long loadCID() {
+		if (run == Runs.MONTHS || run == Runs.ALL) { //Ignore first update...
 			return owner.getContractsCID();
 		} else {
 			return null;

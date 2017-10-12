@@ -18,7 +18,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
  */
-
 package net.nikr.eve.jeveasset.io.eveapi;
 
 import com.beimin.eveapi.exception.ApiException;
@@ -26,58 +25,40 @@ import com.beimin.eveapi.parser.character.CharIndustryJobsParser;
 import com.beimin.eveapi.parser.corporation.CorpIndustryJobsParser;
 import com.beimin.eveapi.response.shared.IndustryJobsResponse;
 import java.util.Date;
-import java.util.List;
-import net.nikr.eve.jeveasset.data.eveapi.EveApiAccessMask;
-import net.nikr.eve.jeveasset.data.eveapi.EveApiAccount;
-import net.nikr.eve.jeveasset.data.eveapi.EveApiOwner;
+import net.nikr.eve.jeveasset.data.api.accounts.EveApiAccessMask;
+import net.nikr.eve.jeveasset.data.api.accounts.EveApiOwner;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
-import net.nikr.eve.jeveasset.io.shared.ApiConverter;
 
 
 public class IndustryJobsGetter extends AbstractApiGetter<IndustryJobsResponse> {
 
-	public IndustryJobsGetter() {
-		super("Industry Jobs", true, false);
-	}
-
-	public void load(final UpdateTask updateTask, final boolean forceUpdate, final List<EveApiAccount> accounts) {
-		super.loadAccounts(updateTask, forceUpdate, accounts);
+	public IndustryJobsGetter(UpdateTask updateTask, EveApiOwner owner) {
+		super(updateTask, owner, false, owner.getIndustryJobsNextUpdate(), TaskType.INDUSTRY_JOBS);
 	}
 
 	@Override
-	protected IndustryJobsResponse getResponse(final boolean bCorp) throws ApiException {
-		if (bCorp) {
-			return new CorpIndustryJobsParser()
-					.getResponse(EveApiOwner.getApiAuthorization(getOwner()));
+	protected void get(String updaterStatus) throws ApiException {
+		IndustryJobsResponse response;
+		if (owner.isCorporation()) {
+			response = new CorpIndustryJobsParser()
+					.getResponse(EveApiOwner.getApiAuthorization(owner));
 		} else {
-			return new CharIndustryJobsParser()
-					.getResponse(EveApiOwner.getApiAuthorization(getOwner()));
-			}
-	}
-
-	@Override
-	protected Date getNextUpdate() {
-		return getOwner().getIndustryJobsNextUpdate();
+			response = new CharIndustryJobsParser()
+					.getResponse(EveApiOwner.getApiAuthorization(owner));
+		}
+		if (!handle(response, updaterStatus)) {
+			return;
+		}
+		owner.setIndustryJobs(EveApiConverter.toIndustryJobs(response.getAll(), owner));
 	}
 
 	@Override
 	protected void setNextUpdate(final Date nextUpdate) {
-		getOwner().setIndustryJobsNextUpdate(nextUpdate);
+		owner.setIndustryJobsNextUpdate(nextUpdate);
 	}
 
 	@Override
-	protected void setData(final IndustryJobsResponse response) {
-		getOwner().setIndustryJobs(ApiConverter.convertIndustryJobs(response.getAll(), getOwner()));
-	}
-
-	@Override
-	protected void updateFailed(final EveApiOwner ownerFrom, final EveApiOwner ownerTo) {
-		ownerTo.setIndustryJobs(ownerFrom.getIndustryJobs());
-		ownerTo.setIndustryJobsNextUpdate(ownerFrom.getIndustryJobsNextUpdate());
-	}
-
-	@Override
-	protected long requestMask(boolean bCorp) {
+	protected long requestMask() {
 		return EveApiAccessMask.INDUSTRY_JOBS.getAccessMask();
 	}
 }

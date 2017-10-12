@@ -20,129 +20,136 @@
  */
 package net.nikr.eve.jeveasset.io.esi;
 
-import com.beimin.eveapi.model.shared.Blueprint;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import net.nikr.eve.jeveasset.data.Citadel;
-import net.nikr.eve.jeveasset.data.MyLocation;
-import net.nikr.eve.jeveasset.data.api.OwnerType;
-import net.nikr.eve.jeveasset.data.esi.EsiOwner;
+import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
+import net.nikr.eve.jeveasset.data.api.accounts.OwnerType;
+import net.nikr.eve.jeveasset.data.api.my.MyAsset;
+import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob;
+import net.nikr.eve.jeveasset.data.api.raw.RawAsset;
+import net.nikr.eve.jeveasset.data.api.raw.RawBlueprint;
+import net.nikr.eve.jeveasset.data.api.raw.RawContract;
+import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder;
+import net.nikr.eve.jeveasset.data.sde.MyLocation;
+import net.nikr.eve.jeveasset.data.settings.Citadel;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
-import net.nikr.eve.jeveasset.gui.tabs.assets.MyAsset;
-import net.nikr.eve.jeveasset.gui.tabs.contracts.MyContract;
-import net.nikr.eve.jeveasset.gui.tabs.jobs.MyIndustryJob;
-import net.nikr.eve.jeveasset.gui.tabs.orders.MyMarketOrder;
+import net.nikr.eve.jeveasset.io.online.CitadelGetter;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
+import net.troja.eve.esi.ApiClient;
 import net.troja.eve.esi.ApiException;
 import net.troja.eve.esi.model.StructureResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 public class EsiStructuresGetter extends AbstractEsiGetter {
 
 	private static final Logger LOG = LoggerFactory.getLogger(EsiStructuresGetter.class);
 
-	private final Map<Long, Set<Long>> mapLocationIDs = new HashMap<Long, Set<Long>>();
-	private final Map<Long, Set<Long>> mapItemIDs = new HashMap<Long, Set<Long>>();
-
-	public void load(UpdateTask updateTask, List<EsiOwner> owners, List<OwnerType> typeOwners) {
-		mapLocationIDs.clear();
-		mapItemIDs.clear();
-		for (EsiOwner owner : owners) {
-			mapLocationIDs.put(owner.getOwnerID(), new HashSet<Long>());
-			mapItemIDs.put(owner.getOwnerID(), new HashSet<Long>());
-		}
-		for (OwnerType owner : typeOwners) {
-			Set<Long> locationIDs = mapLocationIDs.get(owner.getOwnerID());
-			Set<Long> itemIDs = mapItemIDs.get(owner.getOwnerID());
-			if (locationIDs != null) {
-				getIDs(locationIDs, itemIDs, owner);
-			}
-		}
-		super.load(updateTask, owners);
+	public EsiStructuresGetter(UpdateTask updateTask, EsiOwner owner) {
+		super(updateTask, owner, false, owner.getStructuresNextUpdate(), TaskType.STRUCTURES);
 	}
 
 	@Override
-	protected void get(EsiOwner owner) throws ApiException {
-		Set<Long> locationIDs = mapLocationIDs.get(owner.getOwnerID());
-		Set<Long> itemIDs = mapItemIDs.get(owner.getOwnerID());
-		locationIDs.removeAll(itemIDs);
-		for (Long locationID : locationIDs) {
-			try {
-			StructureResponse response = getUniverseApi().getUniverseStructuresStructureId(locationID, DATASOURCE, null, null, null);
-			ApiIdConverter.addLocation(response, locationID);
-			} catch (ApiException ex) {
-				if (ex.getCode() != 403 && ex.getCode() != 404) { //Ignore 403: Forbidden and 404: Structure not found
-					throw ex;
-				} else {
-					LOG.info("Failed to find locationID: " + locationID);
+	protected void get(ApiClient apiClient) throws ApiException {
+
+		Map<Long, StructureResponse> responses = updateList(getIDs(owner), new ListHandler<Long, StructureResponse>() {
+			@Override
+			public StructureResponse get(ApiClient apiClient, Long t) throws ApiException {
+				try {
+					return getUniverseApiAuth(apiClient).getUniverseStructuresStructureId(t, DATASOURCE, null, USER_AGENT, null);
+				} catch (ApiException ex) {
+					if (ex.getCode() != 403 && ex.getCode() != 404) { //Ignore 403: Forbidden and 404: Structure not found
+						throw ex;
+					} else { //Ignore error, but, still handle error limit
+						LOG.warn("Failed to find locationID: " + t);
+					}
 				}
+				return null;
 			}
+		});
+
+		List<Citadel> citadels = new ArrayList<Citadel>();
+		for (Map.Entry<Long, StructureResponse> entry : responses.entrySet()) {
+			citadels.add(ApiIdConverter.getCitadel(entry.getValue(), entry.getKey()));
 		}
+		CitadelGetter.set(citadels);
 	}
 
 	@Override
-	protected void setNextUpdate(EsiOwner owner, Date date) {
+	protected void setNextUpdate(Date date) {
 		owner.setStructuresNextUpdate(date);
 	}
 
 	@Override
-	protected Date getNextUpdate(EsiOwner owner) {
-		return owner.getStructuresNextUpdate();
-	}
-
-	@Override
-	protected boolean inScope(EsiOwner owner) {
+	protected boolean inScope() {
 		return owner.isStructures();
 	}
 
 	@Override
-	protected String getTaskName() {
-		return "Structures";
+	protected boolean enabled() {
+		if (owner.isCorporation()) {
+			return false;
+		} else {
+			return EsiScopes.CHARACTER_STRUCTURES.isEnabled();
+		}
 	}
 
-	private void getIDs(Set<Long> locationIDs, Set<Long> itemIDs, OwnerType owner) {
-		for (MyAsset asset : owner.getAssets()) {
-			itemIDs.add(asset.getItemID());
-			MyLocation location = asset.getLocation();
+	private Set<Long> getIDs(OwnerType owner) {
+		Set<Long> itemIDs = new HashSet<Long>();
+		Set<Long> locationIDs = new HashSet<Long>();
+		for (RawAsset asset : owner.getAssets()) {
+			long locationID = asset.getLocationID();
+			MyLocation location = ApiIdConverter.getLocation(locationID);
 			if (location.isEmpty() || location.isUserLocation() || location.isCitadel()) {
 				locationIDs.add(location.getLocationID());
 			}
 		}
-		for (Blueprint blueprint : owner.getBlueprints().values()) {
+		getAssetItemIDs(itemIDs, owner.getAssets());
+		for (RawBlueprint blueprint : owner.getBlueprints().values()) {
 			itemIDs.add(blueprint.getItemID());
 			MyLocation location = ApiIdConverter.getLocation(blueprint.getLocationID());
 			if (location.isEmpty() || location.isUserLocation() || location.isCitadel()) {
 				locationIDs.add(location.getLocationID());
 			}
 		}
-		for (MyContract contract : owner.getContracts().keySet()) {
-			MyLocation locationEnd = contract.getEndStation();
+		for (RawContract contract : owner.getContracts().keySet()) {
+			long locationEndID = contract.getEndLocationID();
+			MyLocation locationEnd = ApiIdConverter.getLocation(locationEndID);
 			if (locationEnd.isEmpty() || locationEnd.isUserLocation() || locationEnd.isCitadel()) {
 				locationIDs.add(locationEnd.getLocationID());
 			}
-			MyLocation locationStart = contract.getStartStation();
+			long locationStartID = contract.getStartLocationID();
+			MyLocation locationStart = ApiIdConverter.getLocation(locationStartID);
 			if (locationStart.isEmpty() || locationStart.isUserLocation() || locationStart.isCitadel()) {
 				locationIDs.add(locationStart.getLocationID());
 			}
 		}
 		for (MyIndustryJob industryJob : owner.getIndustryJobs()) {
-			MyLocation locationEnd = industryJob.getLocation();
-			if (locationEnd.isEmpty() || locationEnd.isUserLocation() || locationEnd.isCitadel()) {
-				locationIDs.add(locationEnd.getLocationID());
+			long locationID = industryJob.getLocationID();
+			MyLocation location = ApiIdConverter.getLocation(locationID);
+			if (location.isEmpty() || location.isUserLocation() || location.isCitadel()) {
+				locationIDs.add(location.getLocationID());
 			}
 		}
-		for (MyMarketOrder marketOrder : owner.getMarketOrders()) {
-			MyLocation locationEnd = marketOrder.getLocation();
-			if (locationEnd.isEmpty() || locationEnd.isUserLocation() || locationEnd.isCitadel()) {
-				locationIDs.add(locationEnd.getLocationID());
+		for (RawMarketOrder marketOrder : owner.getMarketOrders()) {
+			long locationID = marketOrder.getLocationID();
+			MyLocation location = ApiIdConverter.getLocation(locationID);
+			if (location.isEmpty() || location.isUserLocation() || location.isCitadel()) {
+				locationIDs.add(location.getLocationID());
 			}
+		}
+		locationIDs.removeAll(itemIDs);
+		return locationIDs;
+	}
+
+	private void getAssetItemIDs(Set<Long> itemIDs, List<MyAsset> assets) {
+		for (MyAsset asset : assets) {
+			itemIDs.add(asset.getItemID());
+			getAssetItemIDs(itemIDs, asset.getAssets());
 		}
 	}
 }

@@ -18,116 +18,76 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
  */
-
 package net.nikr.eve.jeveasset.io.eveapi;
 
 import com.beimin.eveapi.exception.ApiException;
-import com.beimin.eveapi.model.shared.ContractItem;
-import com.beimin.eveapi.model.shared.ContractType;
 import com.beimin.eveapi.parser.character.CharContractItemsParser;
 import com.beimin.eveapi.parser.corporation.CorpContractItemsParser;
 import com.beimin.eveapi.response.shared.ContractItemsResponse;
+import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import net.nikr.eve.jeveasset.data.eveapi.EveApiAccessMask;
-import net.nikr.eve.jeveasset.data.eveapi.EveApiAccount;
-import net.nikr.eve.jeveasset.data.eveapi.EveApiOwner;
+import net.nikr.eve.jeveasset.data.api.accounts.EveApiAccessMask;
+import net.nikr.eve.jeveasset.data.api.accounts.EveApiOwner;
+import net.nikr.eve.jeveasset.data.api.my.MyContract;
+import net.nikr.eve.jeveasset.data.api.my.MyContractItem;
+import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
-import net.nikr.eve.jeveasset.gui.tabs.contracts.MyContract;
-import net.nikr.eve.jeveasset.gui.tabs.contracts.MyContractItem;
-import net.nikr.eve.jeveasset.io.shared.ApiConverter;
-
 
 public class ContractItemsGetter extends AbstractApiGetter<ContractItemsResponse> {
 
-	private MyContract currentContract;
-	private Map<Long, List<ContractItem>> savedItems = new HashMap<Long, List<ContractItem>>();
-
-	public ContractItemsGetter() {
-		super("Contracts", false, false);
+	public ContractItemsGetter(UpdateTask updateTask, EveApiOwner owner) {
+		super(updateTask, owner, false, Settings.getNow(), TaskType.CONTRACT_ITEMS);
 	}
 
-	//FIXME - - > Move to overwrite load (See: JournalGetter)
-	public void load(UpdateTask updateTask, boolean forceUpdate, List<EveApiAccount> accounts) {
-		//Calc size
-		int size = 0;
-		for (EveApiAccount account : accounts) {
-			for (EveApiOwner owner : account.getOwners()) {
-				size = size + owner.getContracts().size();
+	@Override
+	protected void get(String updaterStatus) throws ApiException {
+		List<MyContract> contracts = new ArrayList<MyContract>();
+		for (Map.Entry<MyContract, List<MyContractItem>> entry : owner.getContracts().entrySet()) {
+			MyContract contract = entry.getKey();
+			if (contract.isCourier()) {
+				continue; //Ignore courier
 			}
+			if (!entry.getValue().isEmpty()) {
+				continue; //Ignore existing
+			}
+			///XXX - Workaround for alien contracts
+			if ((owner.getOwnerID() != contract.getAcceptorID()
+					&& owner.getOwnerID() != contract.getAssigneeID()
+					&& owner.getOwnerID() != contract.getIssuerID())
+					&& owner.getOwnerID() != contract.getIssuerCorpID()) {
+				continue; //Ignore not owned
+			}
+			if ((owner.getOwnerID() != contract.getAcceptorID()
+					&& owner.getOwnerID() != contract.getAssigneeID()
+					&& owner.getOwnerID() != contract.getIssuerID())
+					&& !contract.isForCorp()) {
+				continue; //Only IssuerCorpID match and is not for corp
+			}
+			if (entry.getValue() != null && !entry.getValue().isEmpty()) { //Set already updated
+				continue; //Ignore already updated
+			}
+			contracts.add(contract);
 		}
-		int count = 0;
-		for (EveApiAccount account : accounts) {
-			for (EveApiOwner owner : account.getOwners()) {
-				for (Map.Entry<MyContract, List<MyContractItem>> entry : owner.getContracts().entrySet()) {
-					MyContract contract = entry.getKey();
-					if (updateTask != null && updateTask.isCancelled()) {
-						return; //We are done here...
-					}
-					count++; //Also count COURIER
-					if (contract.getType() == ContractType.COURIER) {
-						continue; //Ignore courier
-					}
-					if (!entry.getValue().isEmpty()) {
-							continue; //Ignore existing
- 					}
-					///XXX - Workaround for alien contracts
-					if ((owner.getOwnerID() != contract.getAcceptorID()
-							&& owner.getOwnerID() != contract.getAssigneeID()
-							&& owner.getOwnerID() != contract.getIssuerID())
-							&& owner.getOwnerID() != contract.getIssuerCorpID()
-							) {
-						continue; //Ignore not owned
-					}
-					if ((owner.getOwnerID() != contract.getAcceptorID()
-							&& owner.getOwnerID() != contract.getAssigneeID()
-							&& owner.getOwnerID() != contract.getIssuerID())
-							&& !contract.isForCorp()
-							) {
-						continue; //Only IssuerCorpID match and is not for corp
-					}
-					List<ContractItem> items = savedItems.get(contract.getContractID());
-					if (items != null) { //Set already updated
-						owner.getContracts().put(contract, ApiConverter.convertContractItems(items, contract));
-						continue; //Ignore already updated
-					}
-					this.setTaskName("Contract Item ("+contract.getContractID()+")");
-					currentContract = contract;
-					super.loadOwner(updateTask, forceUpdate, owner);
-					if (updateTask != null) {
-						updateTask.setTaskProgress(size, count, getProgressStart(), getProgressEnd());
-					}
+		Map<MyContract, ContractItemsResponse> updateList = updateList(contracts, new ListHandler<MyContract, ContractItemsResponse>() {
+			@Override
+			public ContractItemsResponse get(String updaterStatus, MyContract t) throws ApiException {
+				if (owner.isCorporation()) {
+					return new CorpContractItemsParser()
+							.getResponse(EveApiOwner.getApiAuthorization(owner), t.getContractID());
+				} else {
+					return new CharContractItemsParser()
+							.getResponse(EveApiOwner.getApiAuthorization(owner), t.getContractID());
 				}
 			}
+		});
+		for (Map.Entry<MyContract, ContractItemsResponse> entry : updateList.entrySet()) {
+			if (!handle(entry.getValue(), updaterStatus)) {
+				continue;
+			}
+			owner.setContracts(EveApiConverter.toContractItems(entry.getKey(), entry.getValue().getAll(), owner));
 		}
-	}
-
-	@Override
-	protected int getProgressStart() {
-		return 30;
-	}
-
-	@Override
-	protected int getProgressEnd() {
-		return 90;
-	}
-
-	@Override
-	protected ContractItemsResponse getResponse(boolean bCorp) throws ApiException {
-		if (bCorp) {
-			return new CorpContractItemsParser()
-					.getResponse(EveApiOwner.getApiAuthorization(getOwner()), currentContract.getContractID());
-		} else {
-			return new CharContractItemsParser()
-					.getResponse(EveApiOwner.getApiAuthorization(getOwner()), currentContract.getContractID());
-		}
-	}
-
-	@Override
-	protected Date getNextUpdate() {
-		return new Date();
 	}
 
 	@Override
@@ -136,24 +96,12 @@ public class ContractItemsGetter extends AbstractApiGetter<ContractItemsResponse
 	}
 
 	@Override
-	protected void setData(ContractItemsResponse response) {
-		List<ContractItem> contractItems = response.getAll();
-		getOwner().getContracts().put(currentContract, ApiConverter.convertContractItems(contractItems, currentContract));
-		savedItems.put(currentContract.getContractID(), contractItems);
-	}
-
-	@Override
-	protected void updateFailed(EveApiOwner ownerFrom, EveApiOwner ownerTo) {
-		//Never called
-	}
-
-	@Override
-	protected long requestMask(boolean bCorp) {
-		if (bCorp) {
+	protected long requestMask() {
+		if (owner.isCorporation()) {
 			return EveApiAccessMask.CONTRACTS_CORP.getAccessMask();
 		} else {
 			return EveApiAccessMask.CONTRACTS_CHAR.getAccessMask();
 		}
 	}
-	
+
 }

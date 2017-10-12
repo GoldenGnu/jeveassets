@@ -21,7 +21,7 @@
 package net.nikr.eve.jeveasset.gui.shared.table.containers;
 
 import java.util.Date;
-import net.nikr.eve.jeveasset.data.Settings;
+import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 
 

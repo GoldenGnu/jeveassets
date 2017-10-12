@@ -20,9 +20,6 @@
  */
 package net.nikr.eve.jeveasset.gui.tabs.values;
 
-import com.beimin.eveapi.model.shared.Contract;
-import com.beimin.eveapi.model.shared.ContractItem;
-import com.beimin.eveapi.model.shared.ContractStatus;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -30,26 +27,25 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import net.nikr.eve.jeveasset.TestUtil;
-import net.nikr.eve.jeveasset.data.MyLocation;
-import net.nikr.eve.jeveasset.data.api.OwnerType;
-import net.nikr.eve.jeveasset.data.eveapi.EveApiOwner;
-import net.nikr.eve.jeveasset.gui.tabs.contracts.MyContract;
-import net.nikr.eve.jeveasset.gui.tabs.contracts.MyContractItem;
+import net.nikr.eve.jeveasset.data.api.accounts.EveApiOwner;
+import net.nikr.eve.jeveasset.data.api.accounts.OwnerType;
+import net.nikr.eve.jeveasset.data.api.my.MyContract;
+import net.nikr.eve.jeveasset.data.api.my.MyContractItem;
+import net.nikr.eve.jeveasset.data.api.raw.RawContract;
+import net.nikr.eve.jeveasset.data.api.raw.RawContract.ContractStatus;
+import net.nikr.eve.jeveasset.data.api.raw.RawContractItem;
 import net.nikr.eve.jeveasset.i18n.TabsValues;
 import org.junit.Assert;
 import org.junit.Test;
 
-/**
- *
- * @author Niklas
- */
+
 public class DataSetCreatorTest extends TestUtil {
 
 	private final Date now = new Date();
 	private final Date before = getBefore();
 	private final Date after = getAfter();
 	private final DataSetCreatorTester creator = new DataSetCreatorTester();
-	
+
 	public DataSetCreatorTest() {
 	}
 
@@ -77,7 +73,7 @@ public class DataSetCreatorTest extends TestUtil {
 		MyContract contract = getContract(issuer, acceptor, ContractStatus.OUTSTANDING, 0, 0, 0, null, now);
 		MyContractItem contractItem = getContractItem(contract, 10, true);
 		contractItems.add(contractItem);
-		
+
 		creator.addContractItems(contractItems, values, owners, total, now);
 		Assert.assertEquals(1, values.size());
 		Assert.assertEquals(10, values.get(issuer.getOwnerName()).getContractValue(), 0.0001);
@@ -99,7 +95,7 @@ public class DataSetCreatorTest extends TestUtil {
 		MyContract contract = getContract(issuer, acceptor, ContractStatus.OUTSTANDING, 0, 0, 0, null, now);
 		MyContractItem contractItem = getContractItem(contract, 10, true);
 		contractItems.add(contractItem);
-		
+
 		creator.addContractItems(contractItems, values, owners, total, now);
 		Assert.assertEquals(1, values.size());
 		Assert.assertEquals(10, values.get(issuer.getOwnerName()).getContractValue(), 0.0001);
@@ -116,22 +112,22 @@ public class DataSetCreatorTest extends TestUtil {
 		return owner;
 	}
 
-	private MyContract getContract(EveApiOwner issuer, EveApiOwner acceptor, ContractStatus status, double collateral, double price, double reward, Date completed, Date issued) {
-		Contract contract = new Contract();
+	private MyContract getContract(EveApiOwner issuer, EveApiOwner acceptor, ContractStatus status, float collateral, float price, float reward, Date completed, Date issued) {
+		RawContract contract = RawContract.create();
 		contract.setCollateral(collateral);
 		contract.setDateCompleted(completed);
 		contract.setDateIssued(issued);
 		contract.setPrice(price);
 		contract.setReward(reward);
 		contract.setStatus(status);
-		contract.setForCorp(false);
+		contract.setForCorporation(false);
 		if (issuer != null) {
-			contract.setIssuerID(issuer.getOwnerID());
+			contract.setIssuerID((int) issuer.getOwnerID());
 		}
 		if (acceptor != null) {
-			contract.setAcceptorID(acceptor.getOwnerID());
+			contract.setAcceptorID((int) acceptor.getOwnerID());
 		}
-		MyContract myContract = new MyContract(contract, new MyLocation(0), new MyLocation(0));
+		MyContract myContract = new MyContract(contract);
 		if (issuer != null) {
 			myContract.setIssuer(issuer.getOwnerName());
 		}
@@ -142,7 +138,7 @@ public class DataSetCreatorTest extends TestUtil {
 	}
 
 	private MyContractItem getContractItem(MyContract contract, int quantity, boolean included) {
-		ContractItem item = new ContractItem();
+		RawContractItem item = RawContractItem.create();
 		item.setQuantity(quantity);
 		item.setIncluded(included);
 		MyContractItem contractItem = new MyContractItem(item, contract, null);
@@ -170,7 +166,8 @@ public class DataSetCreatorTest extends TestUtil {
 
 	private static class DataSetCreatorTester extends DataSetCreator {
 
-		public DataSetCreatorTester() {}
+		public DataSetCreatorTester() {
+		}
 
 		@Override
 		public void addContractItems(List<MyContractItem> contractItems, Map<String, Value> values, Map<Long, OwnerType> owners, Value total, Date date) {
@@ -182,6 +179,5 @@ public class DataSetCreatorTest extends TestUtil {
 			super.addContracts(contractItems, values, owners, total, date);
 		}
 
-		
 	}
 }

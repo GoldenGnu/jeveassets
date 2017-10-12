@@ -26,15 +26,16 @@ import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.data.ProfileData;
-import net.nikr.eve.jeveasset.data.ProfileManager;
-import net.nikr.eve.jeveasset.data.Settings;
-import net.nikr.eve.jeveasset.data.evekit.EveKitOwner;
+import net.nikr.eve.jeveasset.data.api.accounts.EveKitOwner;
+import net.nikr.eve.jeveasset.data.profile.ProfileData;
+import net.nikr.eve.jeveasset.data.profile.ProfileManager;
+import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.tabs.values.DataSetCreator;
 import net.nikr.eve.jeveasset.gui.tabs.values.Value;
 import net.nikr.eve.jeveasset.i18n.TabsTracker;
+import net.nikr.eve.jeveasset.io.evekit.AbstractEveKitGetter;
 import net.nikr.eve.jeveasset.io.evekit.EveKitAccountBalanceGetter;
 import net.nikr.eve.jeveasset.io.evekit.EveKitAssetGetter;
 import net.nikr.eve.jeveasset.io.evekit.EveKitBlueprintsGetter;
@@ -43,6 +44,7 @@ import net.nikr.eve.jeveasset.io.evekit.EveKitContractsGetter;
 import net.nikr.eve.jeveasset.io.evekit.EveKitIndustryJobsGetter;
 import net.nikr.eve.jeveasset.io.evekit.EveKitMarketOrdersGetter;
 import net.nikr.eve.jeveasset.io.online.CitadelGetter;
+import net.nikr.eve.jeveasset.io.shared.ThreadWoker;
 
 
 public class EveKitTrackImportUpdateTask extends UpdateTask {
@@ -131,81 +133,73 @@ public class EveKitTrackImportUpdateTask extends UpdateTask {
 			//Update from EveKit at date
 			long at = date.getTime();
 
-			EveKitAssetGetter eveKitAssetGetter = new EveKitAssetGetter();
-			eveKitAssetGetter.load(null, clones, at);
-			if (eveKitAssetGetter.hasError()) {
-				error = true;
-				break;
-			}
-			if (isCancelled()) { //No data return by the API OR Task is cancelled
-				break;
-			}
-			setProgress(15);
+			List<AbstractEveKitGetter> updatersStep1 = new ArrayList<AbstractEveKitGetter>();
 
-			EveKitAccountBalanceGetter eveKitAccountBalanceGetter = new EveKitAccountBalanceGetter();
-			eveKitAccountBalanceGetter.load(null, clones, at);
-			if (eveKitAccountBalanceGetter.hasError()) {
-				error = true;
-				break;
+			for (EveKitOwner owner : clones) { //Step 2
+				updatersStep1.add(new EveKitAssetGetter(this, owner, at));
+				updatersStep1.add(new EveKitAccountBalanceGetter(this, owner, at));
+				updatersStep1.add(new EveKitBlueprintsGetter(this, owner, at));
+				updatersStep1.add(new EveKitContractsGetter(this, owner, at));
+				updatersStep1.add(new EveKitIndustryJobsGetter(this, owner, at));
+				updatersStep1.add(new EveKitMarketOrdersGetter(this, owner, at));
 			}
-			if (isCancelled()) { //No data return by the API OR Task is cancelled
-				break;
-			}
-			setProgress(30);
 
-			EveKitBlueprintsGetter eveKitBlueprintsGetter = new EveKitBlueprintsGetter();
-			eveKitBlueprintsGetter.load(null, clones, at);
-			if (eveKitBlueprintsGetter.hasError()) {
-				error = true;
-				break;
-			}
 			if (isCancelled()) { //No data return by the API OR Task is cancelled
 				break;
 			}
-			setProgress(45);
 
-			EveKitContractsGetter eveKitContractsGetter = new EveKitContractsGetter();
-			eveKitContractsGetter.load(null, clones, at);
-			if (eveKitContractsGetter.hasError()) {
-				error = true;
-				break;
-			}
-			if (isCancelled()) { //No data return by the API OR Task is cancelled
-				break;
-			}
-			setProgress(60);
-			EveKitContractItemsGetter eveKitContractItemsGetter = new EveKitContractItemsGetter();
-			eveKitContractItemsGetter.load(null, clones);
-			if (eveKitContractItemsGetter.hasError()) {
-				error = true;
-				break;
-			}
-			if (isCancelled()) { //No data return by the API OR Task is cancelled
-				break;
-			}
-			setProgress(75);
+			ThreadWoker.start(this, updatersStep1);
 
-			EveKitIndustryJobsGetter eveKitIndustryJobsGetter = new EveKitIndustryJobsGetter();
-			eveKitIndustryJobsGetter.load(null, clones, at);
-			if (eveKitIndustryJobsGetter.hasError()) {
-				error = true;
-				break;
-			}
 			if (isCancelled()) { //No data return by the API OR Task is cancelled
 				break;
 			}
-			setProgress(90);
 
-			EveKitMarketOrdersGetter eveKitMarketOrdersGetter = new EveKitMarketOrdersGetter();
-			eveKitMarketOrdersGetter.load(null, clones, at);
-			if (eveKitMarketOrdersGetter.hasError()) {
-				error = true;
+			for (AbstractEveKitGetter getter : updatersStep1) {
+				if (getter.hasError()) {
+					error = true;
+					break;
+				}
+			}
+			if (error) {
 				break;
 			}
+
 			if (isCancelled()) { //No data return by the API OR Task is cancelled
 				break;
 			}
-			setProgress(100);
+
+			List<AbstractEveKitGetter> updatersStep2 = new ArrayList<AbstractEveKitGetter>();
+
+			if (isCancelled()) { //No data return by the API OR Task is cancelled
+				break;
+			}
+
+			for (EveKitOwner owner : clones) { //Step 3
+				updatersStep2.add(new EveKitContractItemsGetter(this, owner, at));
+			}
+
+			if (isCancelled()) { //No data return by the API OR Task is cancelled
+				break;
+			}
+
+			if (isCancelled()) { //No data return by the API OR Task is cancelled
+				break;
+			}
+
+			ThreadWoker.start(this, updatersStep2);
+			for (AbstractEveKitGetter getter : updatersStep2) {
+				if (getter.hasError()) {
+					error = true;
+					break;
+				}
+			}
+			if (error) {
+				break;
+			}
+
+			if (isCancelled()) { //No data return by the API OR Task is cancelled
+				break;
+			}
 
 			//Check if we're still getting data from the API
 			boolean end = true;
@@ -302,73 +296,39 @@ public class EveKitTrackImportUpdateTask extends UpdateTask {
 		if (isCancelled()) { //No data return by the API OR Task is cancelled
 			return null;
 		}
+		List<AbstractEveKitGetter> updaters = new ArrayList<AbstractEveKitGetter>();
 		Date date = null;
-		EveKitAssetGetter eveKitAssetGetter = new EveKitAssetGetter();
-		eveKitAssetGetter.load(null, clones, true);
-		date = frist(date, eveKitAssetGetter.getLifeStart());
-		if (eveKitAssetGetter.hasError()) {
-			return null;
+		for (EveKitOwner owner : clones) {
+			updaters.add(new EveKitAssetGetter(this, owner, true));
+			updaters.add(new EveKitAccountBalanceGetter(this, owner, true));
+			updaters.add(new EveKitBlueprintsGetter(this, owner, true));
+			updaters.add(new EveKitContractsGetter(this, owner, true));
+			updaters.add(new EveKitIndustryJobsGetter(this, owner, true));
+			updaters.add(new EveKitMarketOrdersGetter(this, owner, true));
+			
 		}
-		if (isCancelled()) { //No data return by the API OR Task is cancelled
-			return null;
-		}
-		setProgress(15);
 
-		EveKitAccountBalanceGetter eveKitAccountBalanceGetter = new EveKitAccountBalanceGetter();
-		eveKitAccountBalanceGetter.load(null, clones, true);
-		date = frist(date, eveKitAccountBalanceGetter.getLifeStart());
-		if (eveKitAccountBalanceGetter.hasError()) {
-			return null;
-		}
 		if (isCancelled()) { //No data return by the API OR Task is cancelled
 			return null;
 		}
-		setProgress(30);
 
-		EveKitBlueprintsGetter eveKitBlueprintsGetter = new EveKitBlueprintsGetter();
-		eveKitBlueprintsGetter.load(null, clones, true);
-		date = frist(date, eveKitBlueprintsGetter.getLifeStart());
-		if (eveKitBlueprintsGetter.hasError()) {
-			return null;
-		}
-		if (isCancelled()) { //No data return by the API OR Task is cancelled
-			return null;
-		}
-		setProgress(45);
+		ThreadWoker.start(this, updaters);
 
-		EveKitContractsGetter eveKitContractsGetter = new EveKitContractsGetter();
-		eveKitContractsGetter.load(null, clones, true);
-		date = frist(date, eveKitContractsGetter.getLifeStart());
-		if (eveKitContractsGetter.hasError()) {
-			return null;
-		}
 		if (isCancelled()) { //No data return by the API OR Task is cancelled
 			return null;
 		}
-		setProgress(60);
-		setProgress(75);
 
-		EveKitIndustryJobsGetter eveKitIndustryJobsGetter = new EveKitIndustryJobsGetter();
-		eveKitIndustryJobsGetter.load(null, clones, true);
-		date = frist(date, eveKitIndustryJobsGetter.getLifeStart());
-		if (eveKitIndustryJobsGetter.hasError()) {
-			return null;
+		for (AbstractEveKitGetter getter : updaters) {
+			if (getter.hasError()) {
+				return null;
+			}
+			date = frist(date, getter.getLifeStart());
 		}
+		
 		if (isCancelled()) { //No data return by the API OR Task is cancelled
 			return null;
 		}
-		setProgress(90);
 
-		EveKitMarketOrdersGetter eveKitMarketOrdersGetter = new EveKitMarketOrdersGetter();
-		eveKitMarketOrdersGetter.load(null, clones, true);
-		date = frist(date, eveKitMarketOrdersGetter.getLifeStart());
-		if (eveKitMarketOrdersGetter.hasError()) {
-			return null;
-		}
-		if (isCancelled()) { //No data return by the API OR Task is cancelled
-			return null;
-		}
-		setProgress(100);
 		return date;
 	}
 

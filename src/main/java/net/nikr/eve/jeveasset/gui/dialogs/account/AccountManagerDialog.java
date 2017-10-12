@@ -29,7 +29,9 @@ import ca.odell.glazedlists.swing.DefaultEventTableModel;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JButton;
@@ -38,17 +40,17 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.data.EventListManager;
-import net.nikr.eve.jeveasset.data.eveapi.EveApiAccount;
-import net.nikr.eve.jeveasset.data.eveapi.EveApiOwner;
-import net.nikr.eve.jeveasset.data.evekit.EveKitOwner;
-import net.nikr.eve.jeveasset.data.api.OwnerType;
-import net.nikr.eve.jeveasset.data.esi.EsiOwner;
+import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
+import net.nikr.eve.jeveasset.data.api.accounts.EveApiAccount;
+import net.nikr.eve.jeveasset.data.api.accounts.EveApiOwner;
+import net.nikr.eve.jeveasset.data.api.accounts.EveKitOwner;
+import net.nikr.eve.jeveasset.data.api.accounts.OwnerType;
 import net.nikr.eve.jeveasset.gui.dialogs.account.AccountSeparatorTableCell.AccountCellAction;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
 import net.nikr.eve.jeveasset.gui.shared.components.JDropDownButton;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
+import net.nikr.eve.jeveasset.gui.shared.table.EventListManager;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
 import net.nikr.eve.jeveasset.gui.shared.table.JSeparatorTable;
 import net.nikr.eve.jeveasset.i18n.DialoguesAccount;
@@ -81,6 +83,7 @@ public class AccountManagerDialog extends JDialogCentered {
 	private final DefaultEventTableModel<OwnerType> tableModel;
 	private final SeparatorList<OwnerType> separatorList;
 	private final DefaultEventSelectionModel<OwnerType> selectionModel;
+	private final JMigrateDialog jMigrateDialog;
 
 	private Map<OwnerType, Boolean> ownerShows;
 	private Map<String, String> accountNames;
@@ -90,6 +93,9 @@ public class AccountManagerDialog extends JDialogCentered {
 		super(program, DialoguesAccount.get().dialogueNameAccountManagement(), Images.DIALOG_ACCOUNTS.getImage());
 
 		accountImportDialog = new AccountImportDialog(this, program);
+
+		jMigrateDialog = new JMigrateDialog(program, this);
+
 		ListenerClass listener = new ListenerClass();
 
 		eventList = new EventListManager<OwnerType>().create();
@@ -379,6 +385,23 @@ public class AccountManagerDialog extends JDialogCentered {
 							forceUpdate();
 							updateTable();
 						}
+					}
+				}
+			} else if (AccountCellAction.MIGRATE.name().equals(e.getActionCommand())) {
+				int index = jTable.getSelectedRow();
+				Object o = tableModel.getElementAt(index);
+				if (o instanceof SeparatorList.Separator<?>) {
+					SeparatorList.Separator<?> separator = (SeparatorList.Separator<?>) o;
+					List<EveApiOwner> owners = new ArrayList<EveApiOwner>();
+					for (Object object : separator.getGroup()) {
+						if (object instanceof EveApiOwner) { //Eve Api
+							owners.add((EveApiOwner) object);
+						}
+					}
+					boolean updated = jMigrateDialog.show(owners);
+					if (updated) {
+						forceUpdate();
+						updateTable();
 					}
 				}
 			} else if (AccountManagerAction.CHECK_ALL.name().equals(e.getActionCommand())) {

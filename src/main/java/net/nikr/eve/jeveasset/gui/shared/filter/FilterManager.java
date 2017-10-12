@@ -27,7 +27,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
-import net.nikr.eve.jeveasset.data.Settings;
+import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.shared.components.JManageDialog;
 import net.nikr.eve.jeveasset.gui.shared.components.JTextDialog;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;

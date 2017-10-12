@@ -18,8 +18,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
  */
-
-
 package net.nikr.eve.jeveasset.gui.tabs.routing;
 
 import java.util.ArrayList;
@@ -27,7 +25,7 @@ import java.util.Collections;
 import java.util.List;
 import javax.swing.JOptionPane;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.data.Settings;
+import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.shared.components.JManageDialog;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 import net.nikr.eve.jeveasset.i18n.TabsRouting;

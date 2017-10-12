@@ -58,7 +58,7 @@ public abstract class TabsOrders extends Bundle {
 	public abstract String rangeSolarSystem();
 	public abstract String rangeRegion();
 	public abstract String rangeJump();
-	public abstract String rangeJumps(int range);
+	public abstract String rangeJumps(String range);
 	public abstract String sell();
 	public abstract String statusActive();
 	public abstract String statusClosed();

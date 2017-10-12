@@ -117,7 +117,7 @@ public class Update extends AbstractXmlReader<Integer> {
 			return;
 		}
 		try {
-			int currentVersion = read("update settings", path, XmlType.DYNAMIC);
+			int currentVersion = read("update settings", path, AbstractXmlReader.XmlType.DYNAMIC);
 			lock(path);
 			if (requiredVersion > currentVersion) {
 				LOG.info("settings.xml are out of date, updating.");

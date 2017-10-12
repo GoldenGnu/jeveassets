@@ -5,7 +5,7 @@
 	<groupId>net.nikr</groupId>
 	<artifactId>jeveassets</artifactId>
 	<packaging>jar</packaging>
-	<version>4.1.6-SNAPSHOT</version>
+	<version>4.5.0</version>
 	<name>jeveassets</name>
 	<description>jEveAssets is an out-of-game asset manager for Eve-Online, written in Java</description>
 	<url>http://eve.nikr.net/jeveasset</url>
@@ -610,7 +610,7 @@
 		<dependency>
 			<groupId>net.troja.eve</groupId>
 			<artifactId>eve-esi</artifactId>
-			<version>1.3.1</version>
+			<version>1.4.0.1</version>
 		</dependency>
 		<dependency>
 			<groupId>com.beimin</groupId>
@@ -618,9 +618,14 @@
 			<version>7.0.1</version>
 		</dependency>
 		<dependency>
+			<groupId>enterprises.orbital.evekit</groupId>
+			<artifactId>evekit</artifactId>
+			<version>3.1.0.1</version>
+		</dependency>
+		<dependency>
 			<groupId>uk.me.candle</groupId>
 			<artifactId>pricing</artifactId>
-			<version>1.7.0</version>
+			<version>1.7.2</version>
 			<exclusions>
 				<exclusion>
 					<artifactId>xmlParserAPIs</artifactId>
@@ -731,11 +736,6 @@
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-databind</artifactId>
 			<version>2.8.8.1</version>
-		</dependency>
-		<dependency>
-			<groupId>enterprises.orbital.evekit</groupId>
-			<artifactId>evekit</artifactId>
-			<version>3.0.0</version>
 		</dependency>
 	</dependencies>
 

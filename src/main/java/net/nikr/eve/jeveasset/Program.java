@@ -32,13 +32,20 @@ import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.Timer;
-import net.nikr.eve.jeveasset.data.MyAccountBalance;
-import net.nikr.eve.jeveasset.data.ProfileData;
-import net.nikr.eve.jeveasset.data.ProfileManager;
-import net.nikr.eve.jeveasset.data.Settings;
-import net.nikr.eve.jeveasset.data.StaticData;
-import net.nikr.eve.jeveasset.data.api.OwnerType;
-import net.nikr.eve.jeveasset.data.tag.TagUpdate;
+import net.nikr.eve.jeveasset.data.api.accounts.OwnerType;
+import net.nikr.eve.jeveasset.data.api.my.MyAccountBalance;
+import net.nikr.eve.jeveasset.data.api.my.MyAsset;
+import net.nikr.eve.jeveasset.data.api.my.MyContract;
+import net.nikr.eve.jeveasset.data.api.my.MyContractItem;
+import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob;
+import net.nikr.eve.jeveasset.data.api.my.MyJournal;
+import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder;
+import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
+import net.nikr.eve.jeveasset.data.profile.ProfileData;
+import net.nikr.eve.jeveasset.data.profile.ProfileManager;
+import net.nikr.eve.jeveasset.data.sde.StaticData;
+import net.nikr.eve.jeveasset.data.settings.Settings;
+import net.nikr.eve.jeveasset.data.settings.tag.TagUpdate;
 import net.nikr.eve.jeveasset.gui.dialogs.AboutDialog;
 import net.nikr.eve.jeveasset.gui.dialogs.account.AccountManagerDialog;
 import net.nikr.eve.jeveasset.gui.dialogs.bugs.BugsDialog;
@@ -54,25 +61,18 @@ import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Updatable;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
 import net.nikr.eve.jeveasset.gui.tabs.assets.AssetsTab;
-import net.nikr.eve.jeveasset.gui.tabs.assets.MyAsset;
 import net.nikr.eve.jeveasset.gui.tabs.contracts.ContractsTab;
-import net.nikr.eve.jeveasset.gui.tabs.contracts.MyContract;
-import net.nikr.eve.jeveasset.gui.tabs.contracts.MyContractItem;
 import net.nikr.eve.jeveasset.gui.tabs.items.ItemsTab;
 import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustryJobsTab;
-import net.nikr.eve.jeveasset.gui.tabs.jobs.MyIndustryJob;
 import net.nikr.eve.jeveasset.gui.tabs.journal.JournalTab;
-import net.nikr.eve.jeveasset.gui.tabs.journal.MyJournal;
 import net.nikr.eve.jeveasset.gui.tabs.loadout.LoadoutsTab;
 import net.nikr.eve.jeveasset.gui.tabs.materials.MaterialsTab;
 import net.nikr.eve.jeveasset.gui.tabs.orders.MarketOrdersTab;
-import net.nikr.eve.jeveasset.gui.tabs.orders.MyMarketOrder;
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewTab;
 import net.nikr.eve.jeveasset.gui.tabs.reprocessed.ReprocessedTab;
 import net.nikr.eve.jeveasset.gui.tabs.routing.RoutingTab;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.StockpileTab;
 import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerTab;
-import net.nikr.eve.jeveasset.gui.tabs.transaction.MyTransaction;
 import net.nikr.eve.jeveasset.gui.tabs.transaction.TransactionTab;
 import net.nikr.eve.jeveasset.gui.tabs.tree.TreeTab;
 import net.nikr.eve.jeveasset.gui.tabs.values.DataSetCreator;
@@ -86,6 +86,7 @@ import net.nikr.eve.jeveasset.io.shared.FileUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+
 public class Program implements ActionListener {
 	private static final Logger LOG = LoggerFactory.getLogger(Program.class);
 
@@ -93,7 +94,7 @@ public class Program implements ActionListener {
 		TIMER
 	}
 	//Major.Minor.Bugfix [Release Candidate n] [BETA n] [DEV BUILD #n];
-	public static final String PROGRAM_VERSION = "4.1.6 DEV BUILD 1";
+	public static final String PROGRAM_VERSION = "4.5.0";
 	public static final String PROGRAM_NAME = "jEveAssets";
 	public static final String PROGRAM_HOMEPAGE = "https://eve.nikr.net/jeveasset";
 	public static final boolean PROGRAM_FORCE_PORTABLE = false;

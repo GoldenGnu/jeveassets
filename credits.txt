@@ -77,6 +77,14 @@ Link:
   http://eve-marketdata.com/
 
 ________________________________________________________________________________
+_EVEMARKETER____________________________________________________________________
+
+jEveAssets evemarketer.com API to get price data
+
+Link:
+  https://evemarketer.com/
+
+________________________________________________________________________________
 _STOP.HAMMERTI.ME.UK____________________________________________________________
 
 jEveAssets use stop.hammerti.me.uk API to get citadel names and locations

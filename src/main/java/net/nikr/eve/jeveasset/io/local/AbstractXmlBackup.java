@@ -38,7 +38,7 @@ public abstract class AbstractXmlBackup {
 				|| getNewFile(filename).exists() //.new
 				|| getBackupFile(filename).exists(); //.bac
 	}
-
+	
 	protected boolean restoreBackupFile(final String filename) {
 		File targetFile = new File(filename);
 		renameFile(targetFile, getCorruptFile(filename)); //Backup corrupted file

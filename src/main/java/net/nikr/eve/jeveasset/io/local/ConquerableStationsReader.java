@@ -24,8 +24,8 @@ package net.nikr.eve.jeveasset.io.local;
 import com.beimin.eveapi.model.eve.Station;
 import java.util.HashMap;
 import java.util.Map;
-import net.nikr.eve.jeveasset.data.Settings;
-import net.nikr.eve.jeveasset.data.StaticData;
+import net.nikr.eve.jeveasset.data.sde.StaticData;
+import net.nikr.eve.jeveasset.data.settings.Settings;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
@@ -36,7 +36,7 @@ public final class ConquerableStationsReader extends AbstractXmlReader<Boolean> 
 
 	public static boolean load() {
 		ConquerableStationsReader reader = new ConquerableStationsReader();
-		return reader.read("Conquerable stations", Settings.getPathConquerableStations(), XmlType.DYNAMIC);
+		return reader.read("Conquerable stations", Settings.getPathConquerableStations(), AbstractXmlReader.XmlType.DYNAMIC);
 	}
 
 	@Override

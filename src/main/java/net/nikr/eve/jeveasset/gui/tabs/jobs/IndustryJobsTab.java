@@ -40,7 +40,9 @@ import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JScrollPane;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.data.Settings;
+import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob;
+import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob.IndustryJobState;
+import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
@@ -57,7 +59,6 @@ import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
 import net.nikr.eve.jeveasset.gui.shared.table.JAutoColumnTable;
 import net.nikr.eve.jeveasset.gui.shared.table.PaddingTableCellRenderer;
-import net.nikr.eve.jeveasset.gui.tabs.jobs.MyIndustryJob.IndustryJobState;
 import net.nikr.eve.jeveasset.i18n.TabsJobs;
 
 

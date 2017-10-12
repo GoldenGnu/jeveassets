@@ -24,6 +24,7 @@ package net.nikr.eve.jeveasset.gui.tabs.orders;
 import ca.odell.glazedlists.GlazedLists;
 import java.util.Comparator;
 import java.util.Date;
+import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.Percent;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.Quantity;
@@ -38,7 +39,7 @@ public enum MarketTableFormat implements EnumTableColumn<MyMarketOrder> {
 		}
 		@Override
 		public Object getColumnValue(final MyMarketOrder from) {
-			if (from.getBid() < 1) {
+			if (!from.isBuyOrder()) {
 				return TabsOrders.get().sell();
 			} else {
 				return TabsOrders.get().buy();
@@ -195,8 +196,10 @@ public enum MarketTableFormat implements EnumTableColumn<MyMarketOrder> {
 			return from.getLastTransactionPercent();
 		}
 	};
-	private Class<?> type;
-	private Comparator<?> comparator;
+
+	private final Class<?> type;
+	private final Comparator<?> comparator;
+
 	private MarketTableFormat(final Class<?> type, final Comparator<?> comparator) {
 		this.type = type;
 		this.comparator = comparator;

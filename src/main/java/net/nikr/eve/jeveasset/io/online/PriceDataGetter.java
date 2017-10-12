@@ -36,13 +36,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import net.nikr.eve.jeveasset.SplashUpdater;
-import net.nikr.eve.jeveasset.data.Item;
-import net.nikr.eve.jeveasset.data.PriceData;
-import net.nikr.eve.jeveasset.data.PriceDataSettings.PriceMode;
-import net.nikr.eve.jeveasset.data.PriceDataSettings.PriceSource;
-import net.nikr.eve.jeveasset.data.ProfileData;
-import net.nikr.eve.jeveasset.data.Settings;
-import net.nikr.eve.jeveasset.data.StaticData;
+import net.nikr.eve.jeveasset.data.profile.ProfileData;
+import net.nikr.eve.jeveasset.data.sde.Item;
+import net.nikr.eve.jeveasset.data.sde.StaticData;
+import net.nikr.eve.jeveasset.data.settings.PriceData;
+import net.nikr.eve.jeveasset.data.settings.PriceDataSettings.PriceMode;
+import net.nikr.eve.jeveasset.data.settings.PriceDataSettings.PriceSource;
+import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -400,6 +400,11 @@ public class PriceDataGetter implements PricingListener {
 		@Override
 		public boolean getUseBinaryErrorSearch() {
 			return false;
+		}
+
+		@Override
+		public int getTimeout() {
+			return 20000;
 		}
 	}
 }

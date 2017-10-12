@@ -20,58 +20,50 @@
  */
 package net.nikr.eve.jeveasset.io.evekit;
 
-
-import enterprises.orbital.evekit.client.invoker.ApiClient;
-import enterprises.orbital.evekit.client.invoker.ApiException;
+import enterprises.orbital.evekit.client.ApiClient;
+import enterprises.orbital.evekit.client.ApiException;
 import enterprises.orbital.evekit.client.model.WalletJournal;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
-import net.nikr.eve.jeveasset.data.Settings;
-import net.nikr.eve.jeveasset.data.evekit.EveKitAccessMask;
-import net.nikr.eve.jeveasset.data.evekit.EveKitOwner;
+import net.nikr.eve.jeveasset.data.api.accounts.EveKitAccessMask;
+import net.nikr.eve.jeveasset.data.api.accounts.EveKitOwner;
+import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
-import net.nikr.eve.jeveasset.gui.tabs.journal.MyJournal;
+import net.nikr.eve.jeveasset.io.evekit.AbstractEveKitGetter.EveKitPagesHandler;
 
 
-public class EveKitJournalGetter extends AbstractEveKitListGetter<WalletJournal> {
+public class EveKitJournalGetter extends AbstractEveKitGetter implements EveKitPagesHandler<WalletJournal> {
 
-	@Override
-	public void load(UpdateTask updateTask, List<EveKitOwner> owners) {
-		super.load(updateTask, owners);
+	public EveKitJournalGetter(UpdateTask updateTask, EveKitOwner owner) {
+		super(updateTask, owner, false, owner.getJournalNextUpdate(), TaskType.JOURNAL, false, null);
 	}
 
 	@Override
-	protected List<WalletJournal> get(EveKitOwner owner, String at, Long contid) throws ApiException {
+	protected void get(ApiClient apiClient, Long at, boolean first) throws ApiException {
+		List<WalletJournal> data = updatePages(this);
+		if (data == null) {
+			return;
+		}
+		owner.setJournal(EveKitConverter.toJournals(data, owner, loadCID() != null));
+	}
+
+	
+
+	@Override
+	public List<WalletJournal> get(ApiClient apiClient, String at, Long contid, Integer maxResults) throws ApiException {
 		//months
-		return getCommonApi().getJournalEntries(owner.getAccessKey(), owner.getAccessCred(), null, contid, getMaxResults(), getReverse(),
+		return getCommonApi(apiClient).getJournalEntries(owner.getAccessKey(), owner.getAccessCred(), at, contid, maxResults, false,
 				null, null, dateFilter(Settings.get().getEveKitJournalHistory()), null, null, null, null, null, null, null, null, null, null, null, null, null, null);
 	}
 
 	@Override
-	protected void set(EveKitOwner owner, List<WalletJournal> data) throws ApiException {
-		Set<MyJournal> set = new HashSet<MyJournal>();
-		if (loadCID(owner) != null) { //Old
-			set.addAll(owner.getJournal());
-		}
-		set.addAll(EveKitConverter.convertJournals(data, owner)); //New
-		owner.setJournal(set); //All
-	}
-
-	@Override
-	protected long getCID(WalletJournal obj) {
+	public long getCID(WalletJournal obj) {
 		return obj.getCid();
 	}
 
 	@Override
-	protected Long getLifeStart(WalletJournal obj) {
+	public Long getLifeStart(WalletJournal obj) {
 		return obj.getLifeStart();
-	}
-
-	@Override
-	protected String getTaskName() {
-		return "Journal";
 	}
 
 	@Override
@@ -80,27 +72,17 @@ public class EveKitJournalGetter extends AbstractEveKitListGetter<WalletJournal>
 	}
 
 	@Override
-	protected void setNextUpdate(EveKitOwner owner, Date date) {
+	protected void setNextUpdate(Date date) {
 		owner.setJournalNextUpdate(date);
 	}
 
 	@Override
-	protected Date getNextUpdate(EveKitOwner owner) {
-		return owner.getJournalNextUpdate();
-	}
-
-	@Override
-	protected ApiClient getApiClient() {
-		return getCommonApi().getApiClient();
-	}
-
-	@Override
-	protected void saveCID(EveKitOwner owner, Long contid) {
+	public void saveCID(Long contid) {
 		owner.setJournalCID(contid);
 	}
 
 	@Override
-	protected Long loadCID(EveKitOwner owner) {
+	public Long loadCID() {
 		return owner.getJournalCID();
 	}
 }

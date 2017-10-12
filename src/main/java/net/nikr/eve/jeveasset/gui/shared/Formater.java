@@ -32,7 +32,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
-import net.nikr.eve.jeveasset.data.Settings;
+import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterMatcher;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 
@@ -109,7 +109,7 @@ public final class Formater {
 		}
 	}
 
-	public static Date parseExpireDate(String date) {
+	public static synchronized Date parseExpireDate(String date) {
 		initDate();
 		try {
 			return expireDate.parse(date);

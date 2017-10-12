@@ -22,9 +22,9 @@
 package net.nikr.eve.jeveasset.io.local;
 
 import java.util.Map;
-import net.nikr.eve.jeveasset.data.ItemFlag;
-import net.nikr.eve.jeveasset.data.Settings;
-import net.nikr.eve.jeveasset.data.StaticData;
+import net.nikr.eve.jeveasset.data.sde.ItemFlag;
+import net.nikr.eve.jeveasset.data.sde.StaticData;
+import net.nikr.eve.jeveasset.data.settings.Settings;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -36,7 +36,7 @@ public final class FlagsReader extends AbstractXmlReader<Boolean> {
 
 	public static boolean load() {
 		FlagsReader reader = new FlagsReader();
-		return reader.read("Flags", Settings.getPathFlags(), XmlType.STATIC);
+		return reader.read("Flags", Settings.getPathFlags(), AbstractXmlReader.XmlType.STATIC);
 	}
 
 	@Override

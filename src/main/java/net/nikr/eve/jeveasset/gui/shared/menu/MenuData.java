@@ -28,15 +28,16 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import net.nikr.eve.jeveasset.data.*;
-import net.nikr.eve.jeveasset.data.tag.Tag;
-import net.nikr.eve.jeveasset.data.types.BlueprintType;
-import net.nikr.eve.jeveasset.data.types.ItemType;
-import net.nikr.eve.jeveasset.data.types.LocationType;
-import net.nikr.eve.jeveasset.data.types.LocationsType;
-import net.nikr.eve.jeveasset.data.types.PriceType;
-import net.nikr.eve.jeveasset.data.types.TagsType;
-import net.nikr.eve.jeveasset.gui.tabs.assets.MyAsset;
+import net.nikr.eve.jeveasset.data.api.my.MyAsset;
+import net.nikr.eve.jeveasset.data.sde.Item;
+import net.nikr.eve.jeveasset.data.sde.MyLocation;
+import net.nikr.eve.jeveasset.data.settings.tag.Tag;
+import net.nikr.eve.jeveasset.data.settings.types.BlueprintType;
+import net.nikr.eve.jeveasset.data.settings.types.ItemType;
+import net.nikr.eve.jeveasset.data.settings.types.LocationType;
+import net.nikr.eve.jeveasset.data.settings.types.LocationsType;
+import net.nikr.eve.jeveasset.data.settings.types.PriceType;
+import net.nikr.eve.jeveasset.data.settings.types.TagsType;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 
 

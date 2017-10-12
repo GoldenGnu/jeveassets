@@ -27,12 +27,13 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.zip.GZIPInputStream;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.data.Citadel;
-import net.nikr.eve.jeveasset.data.CitadelSettings;
-import net.nikr.eve.jeveasset.data.Settings;
+import net.nikr.eve.jeveasset.data.settings.Citadel;
+import net.nikr.eve.jeveasset.data.settings.CitadelSettings;
+import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import net.nikr.eve.jeveasset.i18n.DialoguesUpdate;
 import net.nikr.eve.jeveasset.io.local.AbstractXmlWriter;
@@ -40,6 +41,7 @@ import net.nikr.eve.jeveasset.io.local.CitadelReader;
 import net.nikr.eve.jeveasset.io.local.CitadelWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 
 public class CitadelGetter extends AbstractXmlWriter {
 
@@ -53,18 +55,22 @@ public class CitadelGetter extends AbstractXmlWriter {
 
 	protected CitadelGetter() { }
 
-	public static Citadel get(long locationID) {
+	public synchronized static Citadel get(long locationID) {
 		return getCitadelGetter().getCitadel(locationID);
 	}
 
-	public static void update(UpdateTask updateTask) {
+	public synchronized static void update(UpdateTask updateTask) {
 		if (!getCitadelGetter().updateCache(updateTask, NIKR_URL)) { //Get the cached version
 			getCitadelGetter().updateCache(updateTask, HAMMERTI_URL); //Get it from the source
 		}
 	}
 
-	public static void set(Citadel citadel) {
+	public synchronized static void set(Citadel citadel) {
 		getCitadelGetter().setCitadel(citadel);
+	}
+
+	public synchronized static void set(List<Citadel> citadels) {
+		getCitadelGetter().setCitadels(citadels);
 	}
 
 	private static CitadelGetter getCitadelGetter() {
@@ -142,13 +148,18 @@ public class CitadelGetter extends AbstractXmlWriter {
 		saveXml();
 	}
 
+	private void setCitadels(List<Citadel> citadels) {
+		for (Citadel citadel : citadels) {
+			citadelSettings.put(citadel.id, citadel);
+		}
+		saveXml();
+	}
+
 	private Citadel getCitadel(long locationID) {
 		Citadel citadel = citadelSettings.get(locationID);
 		if (citadel == null) { //Location not found in cache -> add placeholder for future updates
 			citadel = new Citadel();
-			citadel.id = locationID; //Save locationID
-			citadelSettings.put(locationID, citadel);
-			saveXml();
+			citadel.id = locationID; //Set locationID
 		}
 		return citadel;
 	}

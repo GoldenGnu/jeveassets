@@ -29,7 +29,7 @@ import net.nikr.eve.jeveasset.gui.shared.table.containers.Security;
 import net.nikr.eve.jeveasset.i18n.TabsOverview;
 
 
-enum OverviewTableFormat implements EnumTableColumn<Overview> {
+public enum OverviewTableFormat implements EnumTableColumn<Overview> {
 	NAME(String.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {

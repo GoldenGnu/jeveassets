@@ -20,6 +20,9 @@
  */
 package net.nikr.eve.jeveasset.io.eveapi;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
 import com.beimin.eveapi.exception.ApiException;
 import com.beimin.eveapi.model.calllist.Call;
 import com.beimin.eveapi.model.shared.KeyType;
@@ -29,9 +32,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import net.nikr.eve.jeveasset.TestUtil;
-import net.nikr.eve.jeveasset.data.eveapi.EveApiAccessMask;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import net.nikr.eve.jeveasset.data.api.accounts.EveApiAccessMask;
 import org.junit.Test;
 
 
