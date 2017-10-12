@@ -263,7 +263,7 @@ public final class Main {
 		files.add("javax.ws.rs-api-2.0.1.jar");
 		files.add("jersey-media-json-jackson-2.25.1.jar");
 		files.add("osgi-resource-locator-1.0.1.jar");
-		files.add("evekit-3.0.0.jar");
+		files.add("evekit-3.1.0.1.jar");
 		files.add("javax.annotation-api-1.2.jar");
 		files.add("hk2-api-2.5.0-b32.jar");
 		files.add("jersey-common-2.25.1.jar");

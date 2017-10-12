@@ -22,8 +22,8 @@ package net.nikr.eve.jeveasset.io.evekit;
 
 import static org.junit.Assert.assertEquals;
 
+import enterprises.orbital.evekit.client.ApiException;
 import enterprises.orbital.evekit.client.api.AccessKeyApi;
-import enterprises.orbital.evekit.client.invoker.ApiException;
 import enterprises.orbital.evekit.client.model.MaskList;
 import net.nikr.eve.jeveasset.TestUtil;
 import net.nikr.eve.jeveasset.data.api.accounts.EveKitAccessMask;

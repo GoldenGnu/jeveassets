@@ -20,10 +20,10 @@
  */
 package net.nikr.eve.jeveasset.io.evekit;
 
+import enterprises.orbital.evekit.client.ApiClient;
+import enterprises.orbital.evekit.client.ApiException;
 import enterprises.orbital.evekit.client.api.AccessKeyApi;
 import enterprises.orbital.evekit.client.api.CommonApi;
-import enterprises.orbital.evekit.client.invoker.ApiClient;
-import enterprises.orbital.evekit.client.invoker.ApiException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;

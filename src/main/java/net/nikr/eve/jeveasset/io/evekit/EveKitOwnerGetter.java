@@ -21,8 +21,8 @@
 package net.nikr.eve.jeveasset.io.evekit;
 
 
-import enterprises.orbital.evekit.client.invoker.ApiClient;
-import enterprises.orbital.evekit.client.invoker.ApiException;
+import enterprises.orbital.evekit.client.ApiClient;
+import enterprises.orbital.evekit.client.ApiException;
 import enterprises.orbital.evekit.client.model.KeyInfo;
 import java.util.Date;
 import net.nikr.eve.jeveasset.data.api.accounts.EveKitOwner;
