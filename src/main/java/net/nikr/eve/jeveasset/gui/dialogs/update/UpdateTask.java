@@ -31,6 +31,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.CancellationException;
@@ -65,7 +66,7 @@ public abstract class UpdateTask extends SwingWorker<Void, Void> {
 		jText = new JLabel(name);
 		jText.setIcon(Images.UPDATE_NOT_STARTED.getIcon());
 
-		errors = new ArrayList<ErrorClass>();
+		errors = Collections.synchronizedList(new ArrayList<ErrorClass>());
 	}
 
 	public Integer getTotalProgress() {
@@ -142,14 +143,16 @@ public abstract class UpdateTask extends SwingWorker<Void, Void> {
 
 			try {
 				boolean first = true;
-				for (ErrorClass errorClass : errors) {
-					if (first) {
-						first = false;
-					} else {
-						doc.insertString(doc.getLength(), "\n\r", null);
+				synchronized (errors) {
+					for (ErrorClass errorClass : errors) {
+						if (first) {
+							first = false;
+						} else {
+							doc.insertString(doc.getLength(), "\n\r", null);
+						}
+						doc.insertString(doc.getLength(), errorClass.getOwner(), null);
+						doc.insertString(doc.getLength(), "\r\n" + processError(errorClass.getError()), errorAttributeSet);
 					}
-					doc.insertString(doc.getLength(), errorClass.getOwner(), null);
-					doc.insertString(doc.getLength(), "\r\n" + processError(errorClass.getError()), errorAttributeSet);
 				}
 			} catch (BadLocationException ex) {
 				LOG.warn("Ignoring exception: " + ex.getMessage(), ex);
