@@ -23,11 +23,11 @@ package net.nikr.eve.jeveasset.data.api.my;
 import java.util.Date;
 import java.util.Objects;
 import javax.management.timer.Timer;
-import net.nikr.eve.jeveasset.data.sde.Item;
-import net.nikr.eve.jeveasset.data.settings.MarketPriceData;
-import net.nikr.eve.jeveasset.data.sde.MyLocation;
 import net.nikr.eve.jeveasset.data.api.accounts.OwnerType;
 import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder;
+import net.nikr.eve.jeveasset.data.sde.Item;
+import net.nikr.eve.jeveasset.data.sde.MyLocation;
+import net.nikr.eve.jeveasset.data.settings.MarketPriceData;
 import net.nikr.eve.jeveasset.data.settings.types.EditableLocationType;
 import net.nikr.eve.jeveasset.data.settings.types.ItemType;
 import net.nikr.eve.jeveasset.data.settings.types.PriceType;
@@ -271,8 +271,7 @@ public class MyMarketOrder extends RawMarketOrder implements Comparable<MyMarket
 	@Override
 	public int hashCode() {
 		int hash = 3;
-		hash = 13 * hash + (int) (this.owner.getOwnerID() ^ (this.owner.getOwnerID() >>> 32));
-		hash = 13 * hash + (int) (this.getOrderID() ^ (this.getOrderID() >>> 32));
+		hash = 13 * hash + (int) (this.getOrderID() ^ (this.getOrderID() >>> 32)); //OrderID is globaly unique, right...? 
 		return hash;
 	}
 
@@ -288,9 +287,6 @@ public class MyMarketOrder extends RawMarketOrder implements Comparable<MyMarket
 			return false;
 		}
 		final MyMarketOrder other = (MyMarketOrder) obj;
-		if (this.owner.getOwnerID() != other.owner.getOwnerID()) {
-			return false;
-		}
-		return Objects.equals(this.getOrderID(), other.getOrderID());
+		return Objects.equals(this.getOrderID(), other.getOrderID()); //OrderID is globaly unique, right...? 
 	}
 }
