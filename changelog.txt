@@ -16,7 +16,22 @@
                   #### #  # #  # #  # #### #### #### #### ####
 
 ________________________________________________________________________________
-_4.5.0_________________________________________________________________________
+_4.5.1__________________________________________________________________________
+
+Bug Fixes:
+-Fixed Market orders duplicates
+-Fixed transactions fail to convert float to integer
+-Fixed NPE in ProfileWriter (BugID: 539)
+-Fixed NPE in AbstractEsiGetter 
+-Fixed NPE in MyIndustryJob (BugID: 541)
+-Possible fix to NPE in UpdateTask (BugID: 540)
+-Possible fix for universe/names errors (BugID: 542)
+
+Code:
+-Updated eve-esi library to 1.4.1
+
+________________________________________________________________________________
+_4.5.0__________________________________________________________________________
 
 New Features:
 -Support for ESI characters (shorter cache times, with a few exceptions)
