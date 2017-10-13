@@ -58,6 +58,7 @@ public class JMigrateDialog extends JDialogCentered {
 	private final JButton jOK;
 	private final JButton jCancel;
 	private final JCheckBox jAll;
+	private final JLabel jHelp;
 	private final List<OwnerContainer> containers = new ArrayList<OwnerContainer>();
 	private boolean returnValue = false;
 
@@ -91,6 +92,7 @@ public class JMigrateDialog extends JDialogCentered {
 				}
 			}
 		});
+		jHelp = new JLabel(DialoguesAccount.get().migrateHelp());
 	}
 
 	private void validateAll() {
@@ -154,15 +156,21 @@ public class JMigrateDialog extends JDialogCentered {
 		GroupLayout.ParallelGroup horizontalCheckBox = layout.createParallelGroup();
 		horizontalContainer.addGroup(horizontalCheckBox);
 		GroupLayout.ParallelGroup horizontalComboBox = layout.createParallelGroup();
-		horizontalContainer.addGroup(horizontalComboBox);
 		GroupLayout.ParallelGroup horizontalButton = layout.createParallelGroup();
-		horizontalContainer.addGroup(horizontalButton);
 		GroupLayout.ParallelGroup horizontalLabel = layout.createParallelGroup();
-		horizontalContainer.addGroup(horizontalLabel);
-
+		horizontalContainer.addGroup(layout.createParallelGroup()
+				.addComponent(jHelp)
+				.addGroup(layout.createSequentialGroup()
+					.addGroup(horizontalComboBox)
+					.addGroup(horizontalButton)
+					.addGroup(horizontalLabel)
+				)
+		);
 		horizontalCheckBox.addComponent(jAll);
-		verticalGroup.addComponent(jAll);
-
+		verticalGroup.addGroup(layout.createParallelGroup()
+			.addComponent(jAll)
+			.addComponent(jHelp)
+		);
 		for (OwnerContainer container : containers) {
 			horizontalCheckBox.addComponent(container.getCheckBox());
 			horizontalComboBox.addComponent(container.getComboBox());
