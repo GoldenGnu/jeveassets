@@ -20,6 +20,7 @@
  */
 package net.nikr.eve.jeveasset.io.esi;
 
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -59,11 +60,27 @@ public class EsiNameGetter extends AbstractEsiGetter {
 			}
 		});
 
+		Set<Integer> retries = new HashSet<Integer>(ids);
 		for (Map.Entry<List<Integer>, List<UniverseNamesResponse>> entry : responses.entrySet()) {
 			for (UniverseNamesResponse lookup : entry.getValue()) {
 				Settings.get().getOwners().put((long)lookup.getId(), lookup.getName());
 			}
+			retries.removeAll(entry.getKey());
 		}
+		//Retries one by one
+		Map<Integer, List<UniverseNamesResponse>> retriesResponses = updateList(retries, new ListHandler<Integer, List<UniverseNamesResponse>>() {
+			@Override
+			public List<UniverseNamesResponse> get(ApiClient apiClient, Integer t) throws ApiException {
+				return getUniverseApiOpen(apiClient).postUniverseNames(Collections.singletonList(t), DATASOURCE, USER_AGENT, null);
+			}
+		});
+		for (Map.Entry<Integer, List<UniverseNamesResponse>> entry : retriesResponses.entrySet()) {
+			for (UniverseNamesResponse lookup : entry.getValue()) {
+				Settings.get().getOwners().put((long)lookup.getId(), lookup.getName());
+			}
+		}
+		
+		
 	}
 
 	@Override
