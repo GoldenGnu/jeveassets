@@ -255,28 +255,32 @@ public abstract class AbstractGetter<O extends OwnerType, C, E extends Exception
 		for (OwnerType ownerType : ownerTypes) {
 			list.add(ownerType.getOwnerID()); //Just to be sure
 			for (MyIndustryJob myIndustryJob : ownerType.getIndustryJobs()) {
-				list.add(myIndustryJob.getInstallerID());
+				addOwnerID(list, myIndustryJob.getInstallerID());
 			}
 			for (MyContract contract : ownerType.getContracts().keySet()) {
-				list.add(contract.getAcceptorID());
-				list.add(contract.getAssigneeID());
-				list.add(contract.getIssuerCorpID());
-				list.add(contract.getIssuerID());
+				addOwnerID(list, contract.getAcceptorID());
+				addOwnerID(list, contract.getAssigneeID());
+				addOwnerID(list, contract.getIssuerCorpID());
+				addOwnerID(list, contract.getIssuerID());
 			}
 			for (MyTransaction transaction : ownerType.getTransactions()) {
-				list.add(transaction.getClientID());
+				addOwnerID(list, transaction.getClientID());
 			}
 			for (MyJournal journal : ownerType.getJournal()) {
-				if (journal.getFirstPartyID() != null) {
-					list.add((long) journal.getFirstPartyID());
-				}
-				if (journal.getSecondPartyID() != null) {
-					list.add((long) journal.getSecondPartyID());
-				}
+				addOwnerID(list, journal.getFirstPartyID());
 			}
 		}
-		list.remove(0L);
 		return list;
+	}
+
+	private void addOwnerID(Set<Long> list, Number number) {
+		if (number == null) {
+			return;
+		}
+		long l = number.longValue();
+		if (l >= 100 && l <= 210000000) { //Valid ownerIDs range?
+			list.add(l);
+		}
 	}
 
 	protected synchronized Integer getHeaderInteger(Map<String, List<String>> responseHeaders, String headerName) {
