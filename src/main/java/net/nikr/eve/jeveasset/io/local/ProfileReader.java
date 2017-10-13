@@ -567,7 +567,7 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 		rawTransaction.setQuantity(quantity);
 		rawTransaction.setTransactionID(transactionID);
 		rawTransaction.setTypeID(typeID);
-		rawTransaction.setUnitPrice(RawConverter.toInteger(price));
+		rawTransaction.setUnitPrice(RawConverter.toFloat(price));
 		rawTransaction.setAccountKey(accountKey);
 		return rawTransaction;
 	}
