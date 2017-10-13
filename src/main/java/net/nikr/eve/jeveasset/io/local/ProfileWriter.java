@@ -91,7 +91,7 @@ public final class ProfileWriter extends AbstractXmlWriter {
 			setAttribute(node, "intellectualproperty", owner.getIntellectualProperty());
 			setAttribute(node, "structuresnextupdate", owner.getStructuresNextUpdate());
 			setAttribute(node, "accountnextupdate", owner.getAccountNextUpdate());
-			setAttribute(node, "callbackurl", owner.getCallbackURL().name());
+			setAttribute(node, "callbackurl", owner.getCallbackURL());
 			setAttribute(node, "roles", String.join(",", owner.getRoles()));
 			writeTypeOwner(xmldoc, node, owner);
 			parentNode.appendChild(node);
@@ -133,7 +133,7 @@ public final class ProfileWriter extends AbstractXmlWriter {
 			setAttribute(node, "name", account.getName());
 			setAttribute(node, "charactersnextupdate", account.getAccountNextUpdate());
 			setAttribute(node, "accessmask", account.getAccessMask());
-			setAttributeOptional(node, "type", account.getType().name());
+			setAttributeOptional(node, "type", account.getType());
 			setAttribute(node, "expires", account.getExpires() == null ? "0" : account.getExpires());
 			setAttribute(node, "invalid", account.isInvalid());
 			parentNode.appendChild(node);
@@ -211,7 +211,7 @@ public final class ProfileWriter extends AbstractXmlWriter {
 			Element contractNode = xmldoc.createElementNS(null, "contract");
 			setAttribute(contractNode, "acceptorid", contract.getAcceptorID());
 			setAttribute(contractNode, "assigneeid", contract.getAssigneeID());
-			setAttribute(contractNode, "availability", contract.getAvailability().name());
+			setAttribute(contractNode, "availability", contract.getAvailability());
 			setAttributeOptional(contractNode, "buyout", contract.getBuyout());
 			setAttributeOptional(contractNode, "collateral", contract.getCollateral());
 			setAttribute(contractNode, "contractid", contract.getContractID());
@@ -226,9 +226,9 @@ public final class ProfileWriter extends AbstractXmlWriter {
 			setAttributeOptional(contractNode, "price", contract.getPrice());
 			setAttributeOptional(contractNode, "reward", contract.getReward());
 			setAttributeOptional(contractNode, "startstationid", contract.getStartLocationID());
-			setAttribute(contractNode, "status", contract.getStatus().name());
+			setAttribute(contractNode, "status", contract.getStatus());
 			setAttributeOptional(contractNode, "title", contract.getTitle());
-			setAttribute(contractNode, "type", contract.getType().name());
+			setAttribute(contractNode, "type", contract.getType());
 			setAttributeOptional(contractNode, "volume", contract.getVolume());
 			setAttribute(contractNode, "forcorp", contract.isForCorp());
 			contractsNode.appendChild(contractNode);
@@ -417,7 +417,7 @@ public final class ProfileWriter extends AbstractXmlWriter {
 			Date date = (Date) object;
 			return String.valueOf(date.getTime());
 		} else if (object instanceof Enum) {
-			throw new RuntimeException("That is not the right way to save an enum...");
+			return ((Enum)object).name();
 		} else {
 			return String.valueOf(object);
 		}
