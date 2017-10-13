@@ -232,7 +232,10 @@ public abstract class AbstractEsiGetter extends AbstractGetter<EsiOwner, ApiClie
 	protected <K> List<K> updatePages(EsiPagesHandler<K> handler) throws ApiException {
 		List<K> values = new ArrayList<K>();
 		EsiPageUpdater<K> pageUpdater = new EsiPageUpdater<K>(handler, 1, "1 of ?");
-		values.addAll(updateApi(pageUpdater, 0));
+		List<K> returnValue = updateApi(pageUpdater, 0);
+		if (returnValue != null) {
+			values.addAll(returnValue);
+		}
 		Integer pages = getHeaderInteger(pageUpdater.getClient().getResponseHeaders(), "x-pages"); //Get pages header
 		int count = 2;
 		if (pages != null && pages > 1) { //More than one page
@@ -246,7 +249,7 @@ public abstract class AbstractEsiGetter extends AbstractGetter<EsiOwner, ApiClie
 			for (Future<List<K>> future : futures) {
 				if (future.isDone()) {
 					try {
-						List<K> returnValue = future.get();
+						returnValue = future.get();
 						if (returnValue != null) {
 							values.addAll(returnValue);
 						}
