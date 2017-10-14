@@ -28,6 +28,7 @@ import java.util.Date;
 import net.nikr.eve.jeveasset.data.api.accounts.EveApiOwner;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import net.nikr.eve.jeveasset.io.shared.AbstractGetter;
+import net.nikr.eve.jeveasset.io.shared.ThreadWoker.TaskCancelledException;
 
 
 public abstract class AbstractApiGetter<T extends ApiResponse> extends AbstractGetter<EveApiOwner, String, ApiException> {
@@ -63,6 +64,8 @@ public abstract class AbstractApiGetter<T extends ApiResponse> extends AbstractG
 			} else {
 				addError(null, "ApiException: " + ex.getMessage(), "ApiException: " + ex.getMessage(), ex);
 			}
+		} catch (TaskCancelledException ex) {
+			logInfo(null, "Cancelled");
 		} catch (Throwable ex) {
 			addError(null, ex.getMessage(), "Unknown Error: " + ex.getMessage(), ex);
 		}
@@ -70,6 +73,7 @@ public abstract class AbstractApiGetter<T extends ApiResponse> extends AbstractG
 
 	@Override
 	protected <R> R updateApi(Updater<R, String, ApiException> updater, int retries) throws ApiException {
+		checkCancelled();
 		return updater.update(updater.getStatus());
 	}
 

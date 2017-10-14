@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -58,10 +59,10 @@ public class ThreadWoker {
 					}
 				}
 				if (updateTask != null) {
-					updateTask.setTaskProgress(updaters.size(), progress, 0, 100);
 					if (updateTask.isCancelled()) {
 						threadPool.shutdownNow();
-						updateTask.addError("", "Cancelled");
+					} else {
+						updateTask.setTaskProgress(updaters.size(), progress, 0, 100);
 					}
 				}
 			}
@@ -70,7 +71,37 @@ public class ThreadWoker {
 		}
 	}
 
-	public static <K> List<Future<K>> startReturn(Collection<? extends Callable<K>> updaters) throws InterruptedException{
-		return RETURN_THREAD_POOL.invokeAll(updaters);
+	public static <K> List<Future<K>> startReturn(UpdateTask updateTask, Collection<? extends Callable<K>> updaters) throws InterruptedException, ExecutionException {
+		if (updateTask != null && updateTask.isCancelled()) {
+			throw new TaskCancelledException();
+		}
+		LOG.info("Starting " + updaters.size() + " main threads");
+		List<Future<K>> futures = new ArrayList<Future<K>>();
+		for (Callable<K> callable : updaters) {
+			futures.add(RETURN_THREAD_POOL.submit(callable));
+		}
+		int done = 0;
+		while (done < futures.size()) {
+			done = 0;
+			for (Future<?> future : futures) {
+				if (future.isDone()) {
+					done++;
+				}
+			}
+			if (updateTask != null) {
+				if (updateTask.isCancelled()) { //If task is cancelled
+					for (Future<?> future : futures) { //cancel all threads
+						future.cancel(true);
+					}
+					throw new TaskCancelledException(); //Stop parent Task
+				}
+			}
+			Thread.sleep(500);
+		}
+		return futures;
+	}
+
+	public static class TaskCancelledException extends RuntimeException {
+		
 	}
 }
