@@ -20,7 +20,7 @@
  */
 package net.nikr.eve.jeveasset.io.esi;
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -31,6 +31,7 @@ import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import net.troja.eve.esi.ApiClient;
 import net.troja.eve.esi.ApiException;
+import net.troja.eve.esi.model.CharacterNamesResponse;
 import net.troja.eve.esi.model.UniverseNamesResponse;
 
 
@@ -68,19 +69,22 @@ public class EsiNameGetter extends AbstractEsiGetter {
 			retries.removeAll(entry.getKey());
 		}
 		//Retries one by one
-		Map<Integer, List<UniverseNamesResponse>> retriesResponses = updateList(retries, new ListHandler<Integer, List<UniverseNamesResponse>>() {
+		Map<List<Integer>, List<CharacterNamesResponse>> retriesResponses = updateList(splitList(retries, UNIVERSE_BATCH_SIZE), new ListHandler<List<Integer>, List<CharacterNamesResponse>>() {
 			@Override
-			public List<UniverseNamesResponse> get(ApiClient apiClient, Integer t) throws ApiException {
-				return getUniverseApiOpen(apiClient).postUniverseNames(Collections.singletonList(t), DATASOURCE, USER_AGENT, null);
+			public List<CharacterNamesResponse> get(ApiClient apiClient, List<Integer> t) throws ApiException {
+				List<Long> list = new ArrayList<Long>();
+				for (Integer i : t) {
+					list.add(i.longValue());
+				}
+				return getCharacterApiOpen(apiClient).getCharactersNames(list, DATASOURCE, USER_AGENT, null);
+				//return getUniverseApiOpen(apiClient).postUniverseNames(t, DATASOURCE, USER_AGENT, null);
 			}
 		});
-		for (Map.Entry<Integer, List<UniverseNamesResponse>> entry : retriesResponses.entrySet()) {
-			for (UniverseNamesResponse lookup : entry.getValue()) {
-				Settings.get().getOwners().put((long)lookup.getId(), lookup.getName());
+		for (Map.Entry<List<Integer>, List<CharacterNamesResponse>> entry : retriesResponses.entrySet()) {
+			for (CharacterNamesResponse lookup : entry.getValue()) {
+				Settings.get().getOwners().put((long)lookup.getCharacterId(), lookup.getCharacterName());
 			}
 		}
-		
-		
 	}
 
 	@Override
