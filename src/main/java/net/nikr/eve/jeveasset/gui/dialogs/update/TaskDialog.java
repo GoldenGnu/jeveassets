@@ -223,6 +223,7 @@ public class TaskDialog {
 	private void cancelUpdate() {
 		int cancelledIndex = index;
 		index = updateTasks.size();
+		updateTask.addError("Update", "Cancelled");
 		updateTask.cancel(true);
 		for (int i = cancelledIndex; i < updateTasks.size(); i++) {
 			updateTasks.get(i).cancelled();

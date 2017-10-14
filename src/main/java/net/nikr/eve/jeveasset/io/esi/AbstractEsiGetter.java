@@ -31,7 +31,7 @@ import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.io.shared.AbstractGetter;
-import net.nikr.eve.jeveasset.io.shared.ThreadWoker;
+import net.nikr.eve.jeveasset.io.shared.ThreadWoker.TaskCancelledException;
 import net.troja.eve.esi.ApiClient;
 import net.troja.eve.esi.ApiException;
 import net.troja.eve.esi.api.AssetsApi;
@@ -58,7 +58,13 @@ public abstract class AbstractEsiGetter extends AbstractGetter<EsiOwner, ApiClie
 	protected static final int UNIVERSE_BATCH_SIZE = 100;
 	protected static final int LOCATIONS_BATCH_SIZE = 100;
 	private static final int RETRIES = 1;
+	/**
+	 * Errors left in in this error limit time frame (can be null)
+	 */
 	private static Integer errorLimit = null;
+	/**
+	 * Date when the error limit will be reset (never null)
+	 */
 	private static Date errorReset = new Date();
 
 	public AbstractEsiGetter(UpdateTask updateTask, EsiOwner owner, boolean forceUpdate, Date nextUpdate, TaskType taskType) {
@@ -79,6 +85,8 @@ public abstract class AbstractEsiGetter extends AbstractGetter<EsiOwner, ApiClie
 			updateApi(new EsiUpdater(), 0);
 		} catch (ApiException ex) {
 			addError(null, ex.getCode(), "Error Code: " + ex.getCode(), ex);
+		} catch (TaskCancelledException ex) {
+			logInfo(null, "Cancelled");
 		} catch (Throwable ex) {
 			addError(null, ex.getMessage(), "Unknown Error: " + ex.getMessage(), ex);
 		}
@@ -93,21 +101,14 @@ public abstract class AbstractEsiGetter extends AbstractGetter<EsiOwner, ApiClie
 			auth.setClientId(owner.getCallbackURL().getA());
 			auth.setClientSecret(owner.getCallbackURL().getB());
 		}
-		updateErrorReset(); //Update timeframe as needed
-		if (getErrorLimit() != null && getErrorLimit() < 10) {
-			try {
-				Thread.sleep((getErrorReset().getTime() + 1000) - System.currentTimeMillis()); //Wait until the error window is reset
-			} catch (InterruptedException ex) {
-				//No problem
-			}
-		}
+		checkErrors(); //Update timeframe as needed
+		checkCancelled();
 		try {
 			R t = updater.update(client);
 			String expiresHeader = getHeader(client.getResponseHeaders(), "expires");
 			if (expiresHeader != null) {
 				setNextUpdateSafe(Formater.parseExpireDate(expiresHeader));
 			}
-			handleErrorLimit(client.getResponseHeaders());
 			logInfo(updater.getStatus(), "Updated");
 			return t;
 		} catch (ApiException ex) {
@@ -126,6 +127,8 @@ public abstract class AbstractEsiGetter extends AbstractGetter<EsiOwner, ApiClie
 			} else {
 				throw ex;
 			}
+		} finally {
+			setErrorLimit(client.getResponseHeaders()); //Always save error limit header
 		}
 	}
 
@@ -154,39 +157,42 @@ public abstract class AbstractEsiGetter extends AbstractGetter<EsiOwner, ApiClie
 
 	protected abstract boolean enabled();
 
-	private void handleErrorLimit(Map<String, List<String>> responseHeaders) {
+	private void setErrorLimit(Map<String, List<String>> responseHeaders) {
 		if (responseHeaders != null) {
 			setErrorLimit(getHeaderInteger(responseHeaders, "x-esi-error-limit-remain"));
 			setErrorReset(getHeaderInteger(responseHeaders, "x-esi-error-limit-reset"));
 		}
 	}
 
-	private synchronized static Integer getErrorLimit() {
-		return errorLimit;
-	}
-
 	private synchronized static void setErrorLimit(Integer errorLimit) {
-		AbstractEsiGetter.errorLimit = errorLimit;
-	}
-
-	private synchronized static Date getErrorReset() {
-		return errorReset;
-	}
-
-	private synchronized static void updateErrorReset() {
-		if (errorLimit != null && errorLimit < 100) {
-			LOG.warn("Error limit: " + errorLimit + " (resetting in " + errorReset + "sec");
-		}
-		
-		if (new Date().after(AbstractEsiGetter.errorReset)) {
-			AbstractEsiGetter.errorReset = new Date(); //New timeframe
-			AbstractEsiGetter.errorLimit = null;  //No errors in this timeframe (yet)
+		if (AbstractEsiGetter.errorLimit != null && errorLimit != null) {
+			AbstractEsiGetter.errorLimit = Math.min(AbstractEsiGetter.errorLimit, errorLimit);
+		} else {
+			AbstractEsiGetter.errorLimit = errorLimit;
 		}
 	}
 
 	private synchronized static void setErrorReset(Integer errorReset) {
-		if (errorLimit != null) {
+		if (errorReset != null) {
 			AbstractEsiGetter.errorReset = new Date(System.currentTimeMillis() + (errorReset * 1000));
+		}
+	}
+
+	private synchronized static void checkErrors() {
+		if (new Date().after(AbstractEsiGetter.errorReset)) { //Reset timeframe if needed
+			AbstractEsiGetter.errorReset = new Date(); //New timeframe
+			AbstractEsiGetter.errorLimit = null;  //No errors in this timeframe (yet)
+		}
+		if (errorLimit != null && errorLimit < 10) { //Error limit reached
+			try {
+				long wait = (errorReset.getTime() + 1000) - System.currentTimeMillis();
+				LOG.warn("Error limit reached waiting: " + Formater.milliseconds(wait, false, false));
+				Thread.sleep(wait); //Wait until the error window is reset
+			} catch (InterruptedException ex) {
+				//No problem
+			}
+		} else if (errorLimit != null && errorLimit < 100) { //At least one error
+			LOG.warn("Error limit: " + errorLimit);
 		}
 	}
 
@@ -259,7 +265,7 @@ public abstract class AbstractEsiGetter extends AbstractGetter<EsiOwner, ApiClie
 			}
 			LOG.info("Starting " + updaters.size() + " pages threads");
 			try {
-				List<Future<List<K>>> futures = ThreadWoker.startReturn(updaters);
+				List<Future<List<K>>> futures = startSubThreads(updaters);
 				for (Future<List<K>> future : futures) {
 					if (future.isDone()) {
 						returnValue = future.get();

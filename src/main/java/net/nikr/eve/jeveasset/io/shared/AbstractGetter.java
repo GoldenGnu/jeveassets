@@ -42,6 +42,7 @@ import net.nikr.eve.jeveasset.data.api.my.MyJournal;
 import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
+import net.nikr.eve.jeveasset.io.shared.ThreadWoker.TaskCancelledException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -327,7 +328,7 @@ public abstract class AbstractGetter<O extends OwnerType, C, E extends Exception
 		}
 		LOG.info("Starting " + updaters.size() + " list threads");
 		try {
-			List<Future<Map<K, V>>> futures = ThreadWoker.startReturn(updaters);
+			List<Future<Map<K, V>>> futures = startSubThreads(updaters);
 			for (Future<Map<K, V>> future : futures) {
 				Map<K, V> returnValue = future.get();
 				if (returnValue != null) {
@@ -340,6 +341,15 @@ public abstract class AbstractGetter<O extends OwnerType, C, E extends Exception
 		return values;
 	}
 
+	protected <K> List<Future<K>> startSubThreads(Collection<? extends Callable<K>> updaters) throws InterruptedException, ExecutionException {
+		return ThreadWoker.startReturn(updateTask, updaters);
+	}
+
+	protected void checkCancelled() {
+		if (updateTask != null && updateTask.isCancelled()) {
+			throw new TaskCancelledException();
+		}
+	}
 
 	protected abstract class ListHandler<K, V> {
 		protected abstract V get(C client, K k) throws E;
