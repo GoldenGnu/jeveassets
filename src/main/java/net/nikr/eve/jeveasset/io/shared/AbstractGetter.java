@@ -192,6 +192,10 @@ public abstract class AbstractGetter<O extends OwnerType, C, E extends Exception
 		}
 	}
 
+	protected final void addMigrationWarning() {
+		updateTask.addError("EveApi characters can be migrated to ESI", "Add ESI characters in the account manager:\r\nOptions > Accounts... > Add > ESI");
+	}
+
 	protected final void logInfo(String update, String msg) {
 		StringBuilder builder = new StringBuilder();
 		if (msg != null) {

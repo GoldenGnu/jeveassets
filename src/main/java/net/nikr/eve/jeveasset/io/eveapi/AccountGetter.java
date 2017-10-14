@@ -129,7 +129,7 @@ public class AccountGetter extends AbstractApiGetter<ApiKeyInfoResponse> impleme
 			}
 		}
 		if (canMigrate) {
-			addError(null, null, "EveApi character accounts can be migrated to ESI");
+			addMigrationWarning();
 		}
 		if (wrongEntry) {
 			addError(null, "Wrong Entry", null);
