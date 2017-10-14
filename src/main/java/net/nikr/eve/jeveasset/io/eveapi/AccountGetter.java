@@ -49,6 +49,12 @@ public class AccountGetter extends AbstractApiGetter<ApiKeyInfoResponse> impleme
 	public AccountGetter(UpdateTask updateTask, EveApiAccount apiAccount) {
 		super(updateTask, null, false, apiAccount.getAccountNextUpdate(), TaskType.OWNER);
 		this.apiAccount = apiAccount;
+		for (EveApiOwner eveApiOwner : apiAccount.getOwners()) {
+			if (eveApiOwner.canMigrate()) {
+				addMigrationWarning();
+				break;
+			}
+		}
 	}
 
 	@Override
@@ -108,28 +114,21 @@ public class AccountGetter extends AbstractApiGetter<ApiKeyInfoResponse> impleme
 		invalidPrivileges = (fails >= max);
 
 		wrongEntry = !apiAccount.getOwners().isEmpty();
-		boolean canMigrate = false;
 		for (Character apiCharacter : characters) {
 			boolean found = false;
-			for (EveApiOwner owner : apiAccount.getOwners()) {
-				if ((owner.getOwnerID() == apiCharacter.getCharacterID() || owner.getOwnerID() == apiCharacter.getCorporationID()) && !typeChanged) {
-					owner.setOwnerName(getName(apiCharacter));
-					owner.setOwnerID(getID(apiCharacter));
-					owners.add(owner);
+			for (EveApiOwner eveApiOwner : apiAccount.getOwners()) {
+				if ((eveApiOwner.getOwnerID() == apiCharacter.getCharacterID() || eveApiOwner.getOwnerID() == apiCharacter.getCorporationID()) && !typeChanged) {
+					eveApiOwner.setOwnerName(getName(apiCharacter));
+					eveApiOwner.setOwnerID(getID(apiCharacter));
+					owners.add(eveApiOwner);
 					found = true;
 					wrongEntry = false;
-					if (owner.canMigrate()) {
-						canMigrate = true;
-					}
 					break;
 				}
 			}
 			if (!found) { //Add New
 				owners.add(new EveApiOwner(apiAccount, getName(apiCharacter), getID(apiCharacter)));
 			}
-		}
-		if (canMigrate) {
-			addMigrationWarning();
 		}
 		if (wrongEntry) {
 			addError(null, "Wrong Entry", null);
