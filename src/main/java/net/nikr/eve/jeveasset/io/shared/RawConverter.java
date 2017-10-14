@@ -41,6 +41,15 @@ public class RawConverter {
 
 	private static Map<Integer, RawJournalRefType> journalRefTypesIDs = null;
 
+	private static synchronized void createJournalRefTypesIDs() {
+		if (journalRefTypesIDs == null) {
+			journalRefTypesIDs = new HashMap<Integer, RawJournalRefType>();
+			for (RawJournalRefType journalRefType : RawJournalRefType.values()) {
+				journalRefTypesIDs.put(journalRefType.getID(), journalRefType);
+			}
+		}
+	}
+
 	public static Long toLong(Number value) {
 		if (value != null) {
 			return value.longValue();
@@ -304,12 +313,7 @@ public class RawConverter {
 	}
 
 	public static RawJournalRefType toJournalRefType(int value) {
-		if (journalRefTypesIDs == null) {
-			journalRefTypesIDs = new HashMap<Integer, RawJournalRefType>();
-			for (RawJournalRefType journalRefType : RawJournalRefType.values()) {
-				journalRefTypesIDs.put(journalRefType.getID(), journalRefType);
-			}
-		}
+		createJournalRefTypesIDs();
 		return journalRefTypesIDs.get(value);
 	}
 
