@@ -26,14 +26,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import net.nikr.eve.jeveasset.data.sde.Item;
-import net.nikr.eve.jeveasset.data.settings.MarketPriceData;
-import net.nikr.eve.jeveasset.data.sde.MyLocation;
-import net.nikr.eve.jeveasset.data.settings.PriceData;
-import net.nikr.eve.jeveasset.data.settings.UserItem;
 import net.nikr.eve.jeveasset.data.api.accounts.OwnerType;
 import net.nikr.eve.jeveasset.data.api.raw.RawAsset;
 import net.nikr.eve.jeveasset.data.api.raw.RawBlueprint;
+import net.nikr.eve.jeveasset.data.sde.Item;
+import net.nikr.eve.jeveasset.data.sde.MyLocation;
+import net.nikr.eve.jeveasset.data.settings.MarketPriceData;
+import net.nikr.eve.jeveasset.data.settings.PriceData;
+import net.nikr.eve.jeveasset.data.settings.UserItem;
 import net.nikr.eve.jeveasset.data.settings.tag.TagID;
 import net.nikr.eve.jeveasset.data.settings.tag.Tags;
 import net.nikr.eve.jeveasset.data.settings.types.BlueprintType;
@@ -124,27 +124,35 @@ public class MyAsset extends RawAsset implements Comparable<MyAsset>, InfoItem, 
 		this.owner = owner;
 		this.parents = parents;
 		this.volume = item.getVolume();
-		//The order matter!
-		//1st
-		//rawQuantity: -1 = BPO. Only BPOs can be packaged (singleton == false). Only packaged items can be stacked (count > 1)
-		this.bpo = (item.isBlueprint() && (getQuantity() == -1 || !isSingleton() || getQuantity() > 1));
-		//rawQuantity: -2 = BPC
-		this.bpc = (item.isBlueprint() && getQuantity() == -2);
-		//2nd
-		if (item.isBlueprint()) {
-			if (isBPO()) {
+		this.typeName = item.getTypeName();
+		this.name = item.getTypeName();
+		updateBlueprint();
+	}
+
+	private void updateBlueprint() {
+		if (item.isBlueprint()) { //if this is a blueprint
+			//Try to figure out if it's a copy (BPC) or a original (BPO)
+			if (blueprint != null) { //Best
+				this.bpo = blueprint.getRuns() <= 0;
+				this.bpc = blueprint.getRuns() > 0;
+			} else { //2nd best
+				//rawQuantity: -1 = BPO. Only BPOs can be packaged (singleton == false). Only packaged items can be stacked (count > 1)
+				this.bpo = (item.isBlueprint() && (getQuantity() == -1 || !isSingleton() || getQuantity() > 1));
+				//rawQuantity: -2 = BPC
+				this.bpc = (item.isBlueprint() && getQuantity() == -2);
+			}
+			if (bpo) { //Found BPO
 				this.typeName = item.getTypeName() + " (BPO)";
-			} else if (isBPC()) {
+			} else if (bpc) { //Found BPC
 				this.typeName = item.getTypeName() + " (BPC)";
-			} else {
+			} else { //Could not figure it out, assume copy
 				this.bpc = true;
 				this.typeName = item.getTypeName() + " (BP)";
 			}
-		} else {
-			this.typeName = item.getTypeName();
+			if (!userNameSet || !eveNameSet) { //No other name set, update name
+				this.name = this.typeName;
+			}
 		}
-		//3rd
-		this.name = getTypeName();
 	}
 
 	public MyAsset(MyIndustryJob industryJob) {
@@ -421,6 +429,7 @@ public class MyAsset extends RawAsset implements Comparable<MyAsset>, InfoItem, 
 
 	public void setBlueprint(RawBlueprint blueprint) {
 		this.blueprint = blueprint;
+		updateBlueprint();
 	}
 
 	public void setContainer(final String container) {
