@@ -46,7 +46,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
-public abstract class AbstractGetter<O extends OwnerType, C, E extends Exception> implements Callable<Void> {
+public abstract class AbstractGetter<O extends OwnerType, C, E extends Exception> implements Runnable {
 
 	private static final Logger LOG = LoggerFactory.getLogger(AbstractGetter.class);
 
@@ -101,7 +101,7 @@ public abstract class AbstractGetter<O extends OwnerType, C, E extends Exception
 		this.apiName = ApiName;
 	}
 
-	public void run() {
+	public void start() {
 		ThreadWoker.start(updateTask, Collections.singletonList(this));
 	}
 
@@ -121,20 +121,20 @@ public abstract class AbstractGetter<O extends OwnerType, C, E extends Exception
 		return taskName;
 	}
 
-	protected boolean canUpdate(String updaterStatus) {
+	protected boolean canUpdate() {
 		//Silently ignore disabled owners
 		if (owner != null && (!owner.isShowOwner() && !forceUpdate)) {
-			logInfo(updaterStatus, "Owner disabled");
+			logInfo(null, "Owner disabled");
 			return false; 
 		}
 		//Check API cache time
 		if (!forceUpdate && owner != null && !Settings.get().isUpdatable(nextUpdate, false)) {
-			addError(updaterStatus, "NOT ALLOWED YET", "Not allowed yet.\r\n(Fix: Just wait a bit)");
+			addError(null, "NOT ALLOWED YET", "Not allowed yet.\r\n(Fix: Just wait a bit)");
 			return false;
 		}
 		//Check if the owner have accesss to the endpoint 
 		if (invalidAccessPrivileges()) {
-			addError(updaterStatus, "NOT ENOUGH ACCESS PRIVILEGES", "Not enough access privileges.\r\n(Fix: Add " + getTaskName() + " to the API Key)");
+			addError(null, "NOT ENOUGH ACCESS PRIVILEGES", "Not enough access privileges.\r\n(Fix: Add " + getTaskName() + " to the API Key)");
 			return false;
 		}
 		return true;
@@ -151,7 +151,7 @@ public abstract class AbstractGetter<O extends OwnerType, C, E extends Exception
 	 */
 	protected abstract void setNextUpdate(Date date);
 	protected abstract boolean invalidAccessPrivileges();
-	protected abstract <R> R updateApi(Updater<R, C, E> updater, int retries);
+	protected abstract <R> R updateApi(Updater<R, C, E> updater, int retries) throws E;
 
 	protected final void addError(String update, String logMsg, String taskMsg) {
 		addError(update, logMsg, taskMsg, null);
@@ -278,7 +278,7 @@ public abstract class AbstractGetter<O extends OwnerType, C, E extends Exception
 			return;
 		}
 		long l = number.longValue();
-		if (l >= 100 && l <= 210000000) { //Valid ownerIDs range?
+		if (l >= 100) {
 			list.add(l);
 		}
 	}
@@ -310,6 +310,8 @@ public abstract class AbstractGetter<O extends OwnerType, C, E extends Exception
 		return null;
 	}
 
+	protected abstract void throwApiException(Exception ex) throws E;
+
 	protected interface Updater<R, C, E extends Throwable> {
 		public R update(final C client) throws E;
 		public String getStatus();
@@ -324,18 +326,16 @@ public abstract class AbstractGetter<O extends OwnerType, C, E extends Exception
 			count++;
 		}
 		LOG.info("Starting " + updaters.size() + " list threads");
-		List<Future<Map<K, V>>> futures = ThreadWoker.startReturn(updaters);
-		for (Future<Map<K, V>> future : futures) {
-			try {
+		try {
+			List<Future<Map<K, V>>> futures = ThreadWoker.startReturn(updaters);
+			for (Future<Map<K, V>> future : futures) {
 				Map<K, V> returnValue = future.get();
 				if (returnValue != null) {
 					values.putAll(returnValue);
 				}
-			} catch (InterruptedException ex) {
-				//No problem
-			} catch (ExecutionException ex) {
-				//No problem
 			}
+		} catch (InterruptedException | ExecutionException ex) {
+			throwApiException(ex);
 		}
 		return values;
 	}

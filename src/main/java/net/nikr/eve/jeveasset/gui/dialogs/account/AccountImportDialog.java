@@ -1070,7 +1070,7 @@ public class AccountImportDialog extends JDialogCentered {
 
 		@Override
 		public void load() {
-			accountGetter.run(); //Update account
+			accountGetter.start(); //Update account
 		}
 
 		@Override
@@ -1090,7 +1090,7 @@ public class AccountImportDialog extends JDialogCentered {
 
 		@Override
 		public void load() {
-			eveKitOwnerGetter.run();
+			eveKitOwnerGetter.start();
 		}
 
 		@Override
@@ -1127,7 +1127,7 @@ public class AccountImportDialog extends JDialogCentered {
 				return;
 			}
 			accountAdder = esiOwnerGetter;
-			esiOwnerGetter.run();
+			esiOwnerGetter.start();
 		}
 
 		@Override

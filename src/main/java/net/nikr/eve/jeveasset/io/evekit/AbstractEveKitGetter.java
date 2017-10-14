@@ -53,61 +53,69 @@ public abstract class AbstractEveKitGetter extends AbstractGetter<EveKitOwner, A
 	}
 
 	@Override
-	public Void call() throws Exception {
-		updateApi(new EveKitUpdater(), 0);
-		return null;
-	}
-
-	@Override
-	public <R> R updateApi(Updater<R, ApiClient, ApiException> updater, int retries) {
+	public void run() {
 		//Check API cache time
-		if (!canUpdate(updater.getStatus())) {
-			return null;
+		if (!canUpdate()) {
+			return;
 		}
 		//Check if the Api Key is expired
 		if (owner.isExpired()) {
-			addError(updater.getStatus(), "API KEY EXPIRED", "API Key expired");
-			return null;
+			addError(null, "API KEY EXPIRED", "API Key expired");
+			return;
 		}
-		
 		try {
-			final ApiClient client = new ApiClient();
-			R r = updater.update(client);
-			logInfo(updater.getStatus(), "Updated");
-			//LOG.info("	EveKit: " + getTaskName() + " updated for " + owner.getOwnerName() + " (" + updater.getStatus() + ")");
-			String expiresHeader = getHeader(client.getResponseHeaders(), "Expires");
-			if (expiresHeader != null) {
-				setNextUpdateSafe(Formater.parseExpireDate(expiresHeader));
-			}
-			return r;
+			updateApi(new EveKitUpdater(), 0);
 		} catch (ApiException ex) {
 			switch (ex.getCode()) {
 				case 400:
-					addError(updater.getStatus(), "INVALID ATTRIBUTE SELECTOR", "Invalid attribute selector");
+					addError(null, "INVALID ATTRIBUTE SELECTOR", "Invalid attribute selector");
 					break;
 				case 401:
-					addError(updater.getStatus(), "INVALID CREDENTIAL", "Access credential invalid");
+					addError(null, "INVALID CREDENTIAL", "Access credential invalid");
 					invalid = true;
 					break;
 				case 403:
-					addError(updater.getStatus(), "INVALID ACCESS MASK", "Not enough access privileges.\r\n(Fix: Add " + getTaskName() + " to the API Key)");
+					addError(null, "INVALID ACCESS MASK", "Not enough access privileges.\r\n(Fix: Add " + getTaskName() + " to the API Key)");
 					invalid = true;
 					break;
 				case 404:
-					addError(updater.getStatus(), "INVALID ACCESS KEY ID", "Access key with the given ID not found");
+					addError(null, "INVALID ACCESS KEY ID", "Access key with the given ID not found");
 					invalid = true;
 					break;
 				default:
-					addError(updater.getStatus(), ex.getMessage(), "Unknown Error Code: " + ex.getCode(), ex);
+					addError(null, ex.getMessage(), "Unknown Error Code: " + ex.getCode(), ex);
 					break;
 			}
 		} catch (Throwable ex) {
-			addError(updater.getStatus(), ex.getMessage(), "Unknown Error: " + ex.getMessage(), ex);
+			addError(null, ex.getMessage(), "Unknown Error: " + ex.getMessage(), ex);
 		}
-		return null;
 	}
 
-	
+	@Override
+	public <R> R updateApi(Updater<R, ApiClient, ApiException> updater, int retries) throws ApiException {
+		final ApiClient client = new ApiClient();
+		R r = updater.update(client);
+		logInfo(updater.getStatus(), "Updated");
+		String expiresHeader = getHeader(client.getResponseHeaders(), "Expires");
+		if (expiresHeader != null) {
+			setNextUpdateSafe(Formater.parseExpireDate(expiresHeader));
+		}
+		return r;
+	}
+
+	@Override
+	protected void throwApiException(Exception ex) throws ApiException {
+		Throwable cause = ex.getCause();
+		if (cause instanceof ApiException) {
+			ApiException apiException = (ApiException) cause;
+			throw apiException;
+		} else if (cause instanceof RuntimeException) {
+			RuntimeException runtimeException = (RuntimeException) cause;
+			throw runtimeException;
+		} else {
+			throw new RuntimeException(cause);
+		}
+	}
 
 	@Override
 	protected boolean invalidAccessPrivileges() {

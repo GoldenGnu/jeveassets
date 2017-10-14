@@ -66,24 +66,27 @@ public abstract class AbstractEsiGetter extends AbstractGetter<EsiOwner, ApiClie
 	}
 
 	@Override
-	public Void call() throws Exception {
-		updateApi(new EsiUpdater(), 0);
-		return null;
+	public void run() {
+		//Silently ignore disabled endpoints
+		if (!enabled()) {
+			logInfo(null, getTaskName() + " endpoint disabled");
+			return;
+		}
+		if (!canUpdate()) {
+			return;
+		}
+		try {
+			updateApi(new EsiUpdater(), 0);
+		} catch (ApiException ex) {
+			addError(null, ex.getCode(), "Error Code: " + ex.getCode(), ex);
+		} catch (Throwable ex) {
+			addError(null, ex.getMessage(), "Unknown Error: " + ex.getMessage(), ex);
+		}
 	}
 
 	@Override
-	public <R> R updateApi(Updater<R, ApiClient, ApiException> updater, int retries) {
-		//Silently ignore disabled endpoints
-		if (!enabled()) {
-			logInfo(updater.getStatus(), getTaskName() + " endpoint disabled");
-			return null;
-		}
-
-		if (!canUpdate(updater.getStatus())) {
-			return null;
-		}
-
-		ApiClient client = new ApiClient(); //Public
+	public <R> R updateApi(Updater<R, ApiClient, ApiException> updater, int retries) throws ApiException {
+		final ApiClient client = new ApiClient(); //Public
 		if (owner != null) { //Auth
 			OAuth auth = (OAuth) client.getAuthentication("evesso");
 			auth.setRefreshToken(owner.getRefreshToken());
@@ -106,12 +109,11 @@ public abstract class AbstractEsiGetter extends AbstractGetter<EsiOwner, ApiClie
 			}
 			handleErrorLimit(client.getResponseHeaders());
 			logInfo(updater.getStatus(), "Updated");
-			//LOG.info("	ESI: " + getTaskName() + " updated for " + getOwnerName(owner) + " (" + updater.getStatus() + ")");
 			return t;
 		} catch (ApiException ex) {
 			if (ex.getCode() >= 500 && ex.getCode() < 600 //CCP error, Lets try again in a sec
 					&& ex.getCode() != 503 //Don't retry when it may be downtime
-					&& ex.getCode() != 502 //Don't retry when it may be downtime
+					&& (ex.getCode() != 502 ||ex.getMessage().toLowerCase().contains("no reply within 10 seconds")) //Don't retry when it may be downtime, unless it's "no reply within 10 seconds"
 					&& retries < RETRIES) { //Retries
 				retries++;
 				try {
@@ -122,12 +124,23 @@ public abstract class AbstractEsiGetter extends AbstractGetter<EsiOwner, ApiClie
 				logInfo(updater.getStatus(), "Retrying "  + retries + " of " + RETRIES + ":");
 				return updateApi(updater, retries);
 			} else {
-				addError(updater.getStatus(), ex.getCode(), "Error Code: " + ex.getCode(), ex);
+				throw ex;
 			}
-		} catch (Throwable ex) {
-			addError(updater.getStatus(), ex.getMessage(), "Unknown Error: " + ex.getMessage(), ex);
 		}
-		return null;
+	}
+
+	@Override
+	protected void throwApiException(Exception ex) throws ApiException {
+		Throwable cause = ex.getCause();
+		if (cause instanceof ApiException) {
+			ApiException apiException = (ApiException) cause;
+			throw apiException;
+		} else if (cause instanceof RuntimeException) {
+			RuntimeException runtimeException = (RuntimeException) cause;
+			throw runtimeException;
+		} else {
+			throw new RuntimeException(cause);
+		}
 	}
 
 	@Override
@@ -245,21 +258,19 @@ public abstract class AbstractEsiGetter extends AbstractGetter<EsiOwner, ApiClie
 				count++;
 			}
 			LOG.info("Starting " + updaters.size() + " pages threads");
-			List<Future<List<K>>> futures = ThreadWoker.startReturn(updaters);
-			for (Future<List<K>> future : futures) {
-				if (future.isDone()) {
-					try {
+			try {
+				List<Future<List<K>>> futures = ThreadWoker.startReturn(updaters);
+				for (Future<List<K>> future : futures) {
+					if (future.isDone()) {
 						returnValue = future.get();
 						if (returnValue != null) {
 							values.addAll(returnValue);
 						}
 						values.addAll(future.get()); //Get data from ESI
-					} catch (InterruptedException ex) {
-						//No problem
-					} catch (ExecutionException ex) {
-						//No problem
 					}
 				}
+			} catch (InterruptedException | ExecutionException ex) {
+				throwApiException(ex);
 			}
 		}
 		return values;
