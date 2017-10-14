@@ -104,15 +104,15 @@ public class ProxyTest extends TestUtil {
 	private void testConnections() {
 		//EveAPI
 		AccountGetter eveAPI = new AccountGetter(new EveApiAccount(0, ""), false);
-		eveAPI.run();
+		eveAPI.start();
 		//ESI
 		EsiOwner esiOwner = new EsiOwner();
 		esiOwner.setCallbackURL(EsiCallbackURL.LOCALHOST);
 		EsiOwnerGetter esi = new EsiOwnerGetter(esiOwner, false);
-		esi.run();
+		esi.start();
 		//EveKit
 		EveKitOwnerGetter eveKit = new EveKitOwnerGetter(new EveKitOwner(0, ""), false);
-		eveKit.run();
+		eveKit.start();
 		//Citadels
 		CitadelGetterMock citadel = new CitadelGetterMock();
 		citadel.update();

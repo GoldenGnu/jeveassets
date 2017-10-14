@@ -41,18 +41,18 @@ public class ThreadWoker {
 
 	private static final Logger LOG = LoggerFactory.getLogger(ThreadWoker.class);
 
-	public static void start(UpdateTask updateTask, Collection<? extends Callable<Void>> updaters) {
+	public static void start(UpdateTask updateTask, Collection<? extends Runnable> updaters) {
 		ExecutorService threadPool = Executors.newFixedThreadPool(MAIN_THREADS);
 		try {
 			LOG.info("Starting " + updaters.size() + " main threads");
-			List<Future<Void>> futures = new ArrayList<Future<Void>>();
-			for (Callable<Void> callable : updaters) {
-				futures.add(threadPool.submit(callable));
+			List<Future<?>> futures = new ArrayList<Future<?>>();
+			for (Runnable runnable : updaters) {
+				futures.add(threadPool.submit(runnable));
 			}
 			threadPool.shutdown();
 			while (!threadPool.awaitTermination(500, TimeUnit.MICROSECONDS)) {
 				int progress = 0;
-				for (Future<Void> future : futures) {
+				for (Future<?> future : futures) {
 					if (future.isDone()) {
 						progress++;
 					}
@@ -70,11 +70,7 @@ public class ThreadWoker {
 		}
 	}
 
-	public static <K> List<Future<K>> startReturn(Collection<? extends Callable<K>> updaters) {
-		try {
-			return RETURN_THREAD_POOL.invokeAll(updaters);
-		} catch (InterruptedException ex) {
-			return null;
-		}
+	public static <K> List<Future<K>> startReturn(Collection<? extends Callable<K>> updaters) throws InterruptedException{
+		return RETURN_THREAD_POOL.invokeAll(updaters);
 	}
 }

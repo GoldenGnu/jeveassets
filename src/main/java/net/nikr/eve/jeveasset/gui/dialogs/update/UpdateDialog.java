@@ -25,7 +25,6 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.Callable;
 import javax.swing.ButtonGroup;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JButton;
@@ -623,7 +622,7 @@ public class UpdateDialog extends JDialogCentered {
 
 	public class Step1Task extends UpdateTask {
 
-		private final List<Callable<Void>> updates = new ArrayList<Callable<Void>>();
+		private final List<Runnable> updates = new ArrayList<Runnable>();
 
 		public Step1Task() {
 			super(DialoguesUpdate.get().step1());
@@ -649,7 +648,7 @@ public class UpdateDialog extends JDialogCentered {
 
 	public class Step2Task extends UpdateTask {
 
-		private final List<Callable<Void>> updates = new ArrayList<Callable<Void>>();
+		private final List<Runnable> updates = new ArrayList<Runnable>();
 
 		public Step2Task() {
 			super(DialoguesUpdate.get().step2());
@@ -808,7 +807,7 @@ public class UpdateDialog extends JDialogCentered {
 
 	public class Step3Task extends UpdateTask {
 
-		private final List<Callable<Void>> updates = new ArrayList<Callable<Void>>();
+		private final List<Runnable> updates = new ArrayList<Runnable>();
 
 		public Step3Task() {
 			super(DialoguesUpdate.get().step3());

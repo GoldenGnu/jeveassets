@@ -39,39 +39,52 @@ public abstract class AbstractApiGetter<T extends ApiResponse> extends AbstractG
 	}
 
 	@Override
-	public Void call() throws Exception {
-		updateApi(new EveApiUpdater(), 0);
-		return null;
-	}
-
-	@Override
-	protected <R> R updateApi(Updater<R, String, ApiException> updater, int retries) {
+	public void run() {
 		//Check if API key is invalid (still update when editing account AKA forceUpdate)
-		if (!canUpdate(updater.getStatus())) {
-			return null;
+		if (!canUpdate()) {
+			return;
 		}
 		if (isInvalid()) {
-			errorInvalid(updater.getStatus());
-			return null;
+			errorInvalid();
+			return;
 		}
 		//Check if API key is expired (still update when editing account AKA forceUpdate)
 		if (isExpired()) {
-			errorExpired(updater.getStatus());
-			return null;
+			errorExpired();
+			return;
 		}
-
 		try {
-			return updater.update(null);
+			updateApi(new EveApiUpdater(), 0);
 		} catch (ApiException ex) { //Real Error
 			if (ex.getMessage().contains(INVALID_ACCOUNT) && !isExpired()) { //Invalid
-				errorInvalid(updater.getStatus());
+				errorInvalid();
 			} else if (isExpired()) { //Expired
-				errorExpired(updater.getStatus());
+				errorExpired();
 			} else {
-				addError(updater.getStatus(), "ApiException: " + ex.getMessage(), "ApiException: " + ex.getMessage(), ex);
+				addError(null, "ApiException: " + ex.getMessage(), "ApiException: " + ex.getMessage(), ex);
 			}
+		} catch (Throwable ex) {
+			addError(null, ex.getMessage(), "Unknown Error: " + ex.getMessage(), ex);
 		}
-		return null;
+	}
+
+	@Override
+	protected <R> R updateApi(Updater<R, String, ApiException> updater, int retries) throws ApiException {
+		return updater.update(updater.getStatus());
+	}
+
+	@Override
+	protected void throwApiException(Exception ex) throws ApiException {
+		Throwable cause = ex.getCause();
+		if (cause instanceof ApiException) {
+			ApiException apiException = (ApiException) cause;
+			throw apiException;
+		} else if (cause instanceof RuntimeException) {
+			RuntimeException runtimeException = (RuntimeException) cause;
+			throw runtimeException;
+		} else {
+			throw new RuntimeException(cause);
+		}
 	}
 
 	@Override
@@ -108,18 +121,18 @@ public abstract class AbstractApiGetter<T extends ApiResponse> extends AbstractG
 		}
 	}
 
-	private void errorInvalid(String updaterStatus) {
+	private void errorInvalid() {
 		if (owner != null) {
 			owner.getParentAccount().setInvalid(true);
 		}
-		addError(updaterStatus, "API KEY INVALID", "API Key invalid");
+		addError(null, "API KEY INVALID", "API Key invalid");
 	}
 
-	private void errorExpired(String updaterStatus) {
+	private void errorExpired() {
 		if (owner != null) {
 			owner.getParentAccount().setExpires(new Date(1));
 		}
-		addError(updaterStatus, "API KEY EXPIRE", "API Key expired");
+		addError(null, "API KEY EXPIRE", "API Key expired");
 	}
 
 	protected boolean handle(ApiResponse response, String updaterStatus) {
@@ -132,10 +145,10 @@ public abstract class AbstractApiGetter<T extends ApiResponse> extends AbstractG
 			ApiError apiError = response.getError();
 			switch (apiError.getCode()) {
 				case 203: //Invalid
-					errorInvalid(null);
+					errorInvalid();
 					break;
 				case 222: //Expired 
-					errorExpired(null);
+					errorExpired();
 					break;
 				default:
 					addError(null, "API Error: " + apiError.getCode() + " :: " + apiError.getError(), "API Error: " + apiError.getCode() + " :: " + apiError.getError());
