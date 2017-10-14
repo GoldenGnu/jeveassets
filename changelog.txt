@@ -16,6 +16,18 @@
                   #### #  # #  # #  # #### #### #### #### ####
 
 ________________________________________________________________________________
+_4.5.2__________________________________________________________________________
+
+Bug Fixes:
+-Fixed missing names
+-Updated BPO/BPC detection code
+-Better error handling for update threads
+-Better handling of cancel while updating
+-Better ESI error limit support
+-Made RawConverter thread safe
+-Better ESI migration warning
+
+________________________________________________________________________________
 _4.5.1__________________________________________________________________________
 
 Bug Fixes:
