@@ -24,7 +24,7 @@ import net.nikr.eve.jeveasset.TestUtil;
 import net.nikr.eve.jeveasset.data.api.raw.RawIndustryJob;
 import net.nikr.eve.jeveasset.data.api.raw.RawIndustryJob.IndustryJobStatus;
 import net.troja.eve.esi.model.CharacterIndustryJobsResponse;
-import net.troja.eve.esi.model.CharacterIndustryJobsResponse.StatusEnum;
+import net.troja.eve.esi.model.CorporationIndustryJobsResponse;
 import org.junit.Test;
 
 
@@ -33,7 +33,9 @@ public class RawIndustryJobTest extends TestUtil {
 	@Test
 	public void rawIndustryJobTest() {
 		RawUtil.compare(RawIndustryJob.class, CharacterIndustryJobsResponse.class);
-		RawUtil.compare(IndustryJobStatus.values(), StatusEnum.values());
+		RawUtil.compare(IndustryJobStatus.values(), CharacterIndustryJobsResponse.StatusEnum.values());
+		RawUtil.compare(RawIndustryJob.class, CorporationIndustryJobsResponse.class);
+		RawUtil.compare(IndustryJobStatus.values(), CorporationIndustryJobsResponse.StatusEnum.values());
 
 	}
 

@@ -57,6 +57,7 @@ import net.troja.eve.esi.model.CorporationAssetsResponse;
 import net.troja.eve.esi.model.CorporationBlueprintsResponse;
 import net.troja.eve.esi.model.CorporationContractsItemsResponse;
 import net.troja.eve.esi.model.CorporationContractsResponse;
+import net.troja.eve.esi.model.CorporationIndustryJobsResponse;
 import net.troja.eve.esi.model.CorporationWalletJournalResponse;
 import net.troja.eve.esi.model.CorporationWalletTransactionsResponse;
 import net.troja.eve.esi.model.CorporationWalletsResponse;
@@ -114,6 +115,14 @@ public class EsiConverter extends DataConverter {
 	public static List<MyIndustryJob> toIndustryJobs(List<CharacterIndustryJobsResponse> responses, OwnerType owner) {
 		List<RawIndustryJob> rawIndustryJobs = new ArrayList<RawIndustryJob>();
 		for (CharacterIndustryJobsResponse response : responses) {
+			rawIndustryJobs.add(new RawIndustryJob(response));
+		}
+		return convertRawIndustryJobs(rawIndustryJobs, owner);
+	}
+
+	public static List<MyIndustryJob> toIndustryJobsCorporation(List<CorporationIndustryJobsResponse> responses, OwnerType owner) {
+		List<RawIndustryJob> rawIndustryJobs = new ArrayList<RawIndustryJob>();
+		for (CorporationIndustryJobsResponse response : responses) {
 			rawIndustryJobs.add(new RawIndustryJob(response));
 		}
 		return convertRawIndustryJobs(rawIndustryJobs, owner);

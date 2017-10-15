@@ -30,7 +30,12 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import net.nikr.eve.jeveasset.data.api.raw.RawAsset;
+import net.nikr.eve.jeveasset.data.api.raw.RawBlueprint;
+import net.nikr.eve.jeveasset.data.api.raw.RawIndustryJob;
+import net.nikr.eve.jeveasset.data.api.raw.RawJournal;
 import net.nikr.eve.jeveasset.data.api.raw.RawJournalExtraInfo;
+import net.nikr.eve.jeveasset.data.api.raw.RawTransaction;
 import net.troja.eve.esi.model.CharacterWalletJournalExtraInfoResponse;
 import net.troja.eve.esi.model.CorporationWalletJournalExtraInfoResponse;
 
@@ -38,8 +43,8 @@ import net.troja.eve.esi.model.CorporationWalletJournalExtraInfoResponse;
 public class RawUtil {
 
 	public static void compare(Class<?> raw, Class<?> esi) {
-		compare(getNames(raw.getDeclaredFields()), getNames(esi.getDeclaredFields()));
-		compareTypes(getTypes(raw.getDeclaredFields()), getTypes(esi.getDeclaredFields()));
+		compare(getNames(raw, raw.getDeclaredFields()), getNames(raw, esi.getDeclaredFields()));
+		compareTypes(getTypes(raw, raw.getDeclaredFields()), getTypes(raw, esi.getDeclaredFields()));
 	}
 
 	public static void compare(Enum<?>[] raw, Enum<?>[] esi) {
@@ -50,24 +55,30 @@ public class RawUtil {
 		compare(getNames(raw), getNames(esi));
 	}
 
-	private static Map<String, String> getTypes(Field[] values) {
+	private static Map<String, String> getTypes(Class<?> raw, Field[] values) {
 		Map<String, String> names = new HashMap<String, String>();
 		for (Field value : values) {
 			Class<?> type = value.getType();
 			
-			if (value.getName().equals("serialVersionUID")) { //Ignore enums
+			if (value.getName().equals("serialVersionUID")) { //serialVersionUID
 				continue;
 			}
-			if (value.getName().equals("itemFlag")) { //Ignore enums
+			if (value.getName().equals("itemFlag") && (raw.equals(RawAsset.class) || raw.equals(RawBlueprint.class))) {
 				continue;
 			}
-			if (value.getName().equals("locationFlag")) { //Ignore enums
+			if (value.getName().equals("locationFlag") && (raw.equals(RawAsset.class) || raw.equals(RawBlueprint.class))) {
 				continue;
 			}
-			if (value.getName().equals("accountKey")) { //Ignore enums
+			if (value.getName().equals("accountKey") && (raw.equals(RawTransaction.class) || raw.equals(RawJournal.class))) {
 				continue;
 			}
-			if (value.getName().equals("isPersonal")) { //Only in character endpoint
+			if (value.getName().equals("isPersonal") && raw.equals(RawTransaction.class)) { //Only in character endpoint
+				continue;
+			}
+			if (value.getName().equals("stationId") && raw.equals(RawIndustryJob.class)) { //stationId in character endpoint / locationId in corporation endpoint
+				continue;
+			}
+			if (value.getName().equals("locationId") && raw.equals(RawIndustryJob.class)) { //stationId in character endpoint / locationId in corporation endpoint
 				continue;
 			}
 			if (type.isEnum()) { //Ignore enums
@@ -93,22 +104,28 @@ public class RawUtil {
 		return names;
 	}
 
-	private static Set<String> getNames(Field[] values) {
+	private static Set<String> getNames(Class<?> raw, Field[] values) {
 		Set<String> names = new HashSet<String>();
 		for (Field value : values) {
-			if (value.getName().equals("serialVersionUID")) { //Ignore enums
+			if (value.getName().equals("serialVersionUID")) { //serialVersionUID
 				continue;
 			}
-			if (value.getName().equals("itemFlag")) { //Ignore enums
+			if (value.getName().equals("itemFlag") && (raw.equals(RawAsset.class) || raw.equals(RawBlueprint.class))) {
 				continue;
 			}
-			if (value.getName().equals("locationFlag")) { //Ignore enums
+			if (value.getName().equals("locationFlag") && (raw.equals(RawAsset.class) || raw.equals(RawBlueprint.class))) {
 				continue;
 			}
-			if (value.getName().equals("accountKey")) { //Ignore enums
+			if (value.getName().equals("accountKey") && (raw.equals(RawTransaction.class) || raw.equals(RawJournal.class))) {
 				continue;
 			}
-			if (value.getName().equals("isPersonal")) { //Only in character endpoint
+			if (value.getName().equals("isPersonal") && raw.equals(RawTransaction.class)) { //Only in character endpoint
+				continue;
+			}
+			if (value.getName().equals("stationId") && raw.equals(RawIndustryJob.class)) { //stationId in character endpoint / locationId in corporation endpoint
+				continue;
+			}
+			if (value.getName().equals("locationId") && raw.equals(RawIndustryJob.class)) { //stationId in character endpoint / locationId in corporation endpoint
 				continue;
 			}
 			names.add(value.getName());

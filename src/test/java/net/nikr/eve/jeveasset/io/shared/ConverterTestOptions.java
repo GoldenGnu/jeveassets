@@ -52,6 +52,7 @@ import net.troja.eve.esi.model.CharacterWalletJournalResponse;
 import net.troja.eve.esi.model.CorporationAssetsResponse;
 import net.troja.eve.esi.model.CorporationBlueprintsResponse;
 import net.troja.eve.esi.model.CorporationContractsResponse;
+import net.troja.eve.esi.model.CorporationIndustryJobsResponse;
 import net.troja.eve.esi.model.CorporationWalletJournalExtraInfoResponse;
 import net.troja.eve.esi.model.CorporationWalletJournalResponse;
 import org.joda.time.DateTime;
@@ -145,6 +146,8 @@ public interface ConverterTestOptions {
 	public RawIndustryJob.IndustryJobStatus getIndustryJobStatusRaw();
 
 	public CharacterIndustryJobsResponse.StatusEnum getIndustryJobStatusEsiCharacter();
+
+	public CorporationIndustryJobsResponse.StatusEnum getIndustryJobStatusEsiCorporation();
 
 	public int getIndustryJobStatusEveApi();
 

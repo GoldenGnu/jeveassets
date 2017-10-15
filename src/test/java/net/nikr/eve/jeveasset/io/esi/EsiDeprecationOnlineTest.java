@@ -68,7 +68,7 @@ public class EsiDeprecationOnlineTest extends TestUtil {
 	}
 
 	@Test
-	public void esiAssetsGetterCharacters() {
+	public void esiAssetsGetterCharacter() {
 		AssetsApi api = new AssetsApi();
 		try {
 			api.getCharactersCharacterIdAssets(1, DATASOURCE, null, null, null, null);
@@ -123,7 +123,7 @@ public class EsiDeprecationOnlineTest extends TestUtil {
 	}
 
 	@Test
-	public void esiContractItemsGetterCharacters() {
+	public void esiContractItemsGetterCharacter() {
 		ContractsApi api = new ContractsApi();
 		try {
 			api.getCharactersCharacterIdContractsContractIdItems(1, 1, DATASOURCE, null, null, null);
@@ -145,7 +145,7 @@ public class EsiDeprecationOnlineTest extends TestUtil {
 	}
 
 	@Test
-	public void esiContractsGetterCharacters() {
+	public void esiContractsGetterCharacter() {
 		ContractsApi api = new ContractsApi();
 		try {
 			api.getCharactersCharacterIdContracts(1, DATASOURCE, null, null, null);
@@ -167,10 +167,21 @@ public class EsiDeprecationOnlineTest extends TestUtil {
 	}
 
 	@Test
-	public void esiIndustryJobsGetterCharacters() {
+	public void esiIndustryJobsGetterCharacter() {
 		IndustryApi api = new IndustryApi();
 		try {
 			api.getCharactersCharacterIdIndustryJobs(1, DATASOURCE, true, null, null, null);
+		} catch (ApiException ex) {
+
+		}
+		validate(api.getApiClient());
+	}
+
+	@Test
+	public void esiIndustryJobsGetterCorporation() {
+		IndustryApi api = new IndustryApi();
+		try {
+			api.getCorporationsCorporationIdIndustryJobs(1, DATASOURCE, true, null, null, null, null);
 		} catch (ApiException ex) {
 
 		}
@@ -200,7 +211,7 @@ public class EsiDeprecationOnlineTest extends TestUtil {
 	}
 
 	@Test
-	public void esiLocationsGetterCharacters() {
+	public void esiLocationsGetterCharacter() {
 		AssetsApi api = new AssetsApi();
 		try {
 			api.postCharactersCharacterIdAssetsLocations(1, Collections.singletonList(1L), DATASOURCE, null, null, null);
@@ -211,7 +222,7 @@ public class EsiDeprecationOnlineTest extends TestUtil {
 	}
 
 	@Test
-	public void esiMarketOrdersGetterCharacters() {
+	public void esiMarketOrdersGetterCharacter() {
 		MarketApi api = new MarketApi();
 		try {
 			api.getCharactersCharacterIdOrders(1, DATASOURCE, null, null, null);

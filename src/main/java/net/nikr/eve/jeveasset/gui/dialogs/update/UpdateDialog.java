@@ -700,7 +700,7 @@ public class UpdateDialog extends JDialogCentered {
 					updates.add(new EveKitIndustryJobsGetter(this, eveKitOwner));
 				}
 				//Esi
-				if (EsiScopes.CHARACTER_INDUSTRY_JOBS.isEnabled()) {
+				if (EsiScopes.CHARACTER_INDUSTRY_JOBS.isEnabled() || EsiScopes.CORPORATION_INDUSTRY_JOBS.isEnabled()) {
 					for (EsiOwner esiOwner : program.getProfileManager().getEsiOwners()) {
 						updates.add(new EsiIndustryJobsGetter(this, esiOwner));
 					}
@@ -772,7 +772,7 @@ public class UpdateDialog extends JDialogCentered {
 					updates.add(new EveKitContractsGetter(this, eveKitOwner));
 				}
 				////Esi
-				if (EsiScopes.CHARACTER_CONTRACTS.isEnabled()) {
+				if (EsiScopes.CHARACTER_CONTRACTS.isEnabled() || EsiScopes.CORPORATION_CONTRACTS.isEnabled()) {
 					for (EsiOwner esiOwner : program.getProfileManager().getEsiOwners()) {
 						updates.add(new EsiContractsGetter(this, esiOwner));
 					}
@@ -828,13 +828,11 @@ public class UpdateDialog extends JDialogCentered {
 					}
 				}
 				//EveKit
-				if (!program.getProfileManager().getEveKitOwners().isEmpty()) {
-					for (EveKitOwner eveKitOwner : program.getProfileManager().getEveKitOwners()) {
-						updates.add(new EveKitContractItemsGetter(this, eveKitOwner));
-					}
+				for (EveKitOwner eveKitOwner : program.getProfileManager().getEveKitOwners()) {
+					updates.add(new EveKitContractItemsGetter(this, eveKitOwner));
 				}
 				//Esi
-				if (EsiScopes.CHARACTER_CONTRACTS.isEnabled() && !program.getProfileManager().getEsiOwners().isEmpty()) {
+				if (EsiScopes.CHARACTER_CONTRACTS.isEnabled() || EsiScopes.CORPORATION_CONTRACTS.isEnabled()) {
 					for (EsiOwner esiOwner : program.getProfileManager().getEsiOwners()) {
 						updates.add(new EsiContractItemsGetter(this, esiOwner));
 					}
@@ -849,13 +847,11 @@ public class UpdateDialog extends JDialogCentered {
 					}
 				}
 				//EveKit
-				if (!program.getProfileManager().getEveKitOwners().isEmpty()) {
-					for (EveKitOwner eveKitOwner : program.getProfileManager().getEveKitOwners()) {
-						updates.add(new EveKitLocationsGetter(this, eveKitOwner));
-					}
+				for (EveKitOwner eveKitOwner : program.getProfileManager().getEveKitOwners()) {
+					updates.add(new EveKitLocationsGetter(this, eveKitOwner));
 				}
 				//Esi
-				if ((EsiScopes.CHARACTER_ASSETS.isEnabled() || EsiScopes.CORPORATION_ASSETS.isEnabled()) && !program.getProfileManager().getEsiOwners().isEmpty()) {
+				if ((EsiScopes.CHARACTER_ASSETS.isEnabled() || EsiScopes.CORPORATION_ASSETS.isEnabled())) {
 					for (EsiOwner esiOwner : program.getProfileManager().getEsiOwners()) {
 						updates.add(new EsiLocationsGetter(this, esiOwner));
 					}

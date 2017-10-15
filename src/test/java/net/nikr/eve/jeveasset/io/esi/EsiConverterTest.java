@@ -52,6 +52,7 @@ import net.troja.eve.esi.model.CorporationAssetsResponse;
 import net.troja.eve.esi.model.CorporationBlueprintsResponse;
 import net.troja.eve.esi.model.CorporationContractsItemsResponse;
 import net.troja.eve.esi.model.CorporationContractsResponse;
+import net.troja.eve.esi.model.CorporationIndustryJobsResponse;
 import net.troja.eve.esi.model.CorporationWalletJournalResponse;
 import net.troja.eve.esi.model.CorporationWalletTransactionsResponse;
 import net.troja.eve.esi.model.CorporationWalletsResponse;
@@ -222,6 +223,24 @@ public class EsiConverterTest extends TestUtil {
 			CharacterIndustryJobsResponse industryJobsResponse = new CharacterIndustryJobsResponse();
 			ConverterTestUtil.setValues(industryJobsResponse, options, esi);
 			List<MyIndustryJob> industryJobs = EsiConverter.toIndustryJobs(Collections.singletonList(industryJobsResponse), ConverterTestUtil.getEsiOwner(options));
+			ConverterTestUtil.testValues(industryJobs.get(0), options, esi);
+		}
+	}
+	@Test
+	public void testToIndustryJobsCorporation() {
+		testToIndustryJobsCorporation(null);
+	}
+
+	@Test
+	public void testToIndustryJobsCorporationOptional() {
+		testToIndustryJobsCorporation(CorporationIndustryJobsResponse.class);
+	}
+
+	private void testToIndustryJobsCorporation(Class<?> esi) {
+		for (ConverterTestOptions options : ConverterTestOptionsGetter.getConverterOptions()) {
+			CorporationIndustryJobsResponse industryJobsResponse = new CorporationIndustryJobsResponse();
+			ConverterTestUtil.setValues(industryJobsResponse, options, esi);
+			List<MyIndustryJob> industryJobs = EsiConverter.toIndustryJobsCorporation(Collections.singletonList(industryJobsResponse), ConverterTestUtil.getEsiOwner(options));
 			ConverterTestUtil.testValues(industryJobs.get(0), options, esi);
 		}
 	}

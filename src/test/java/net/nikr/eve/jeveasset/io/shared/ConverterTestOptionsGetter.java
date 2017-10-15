@@ -56,6 +56,7 @@ import net.troja.eve.esi.model.CharacterWalletJournalResponse;
 import net.troja.eve.esi.model.CorporationAssetsResponse;
 import net.troja.eve.esi.model.CorporationBlueprintsResponse;
 import net.troja.eve.esi.model.CorporationContractsResponse;
+import net.troja.eve.esi.model.CorporationIndustryJobsResponse;
 import net.troja.eve.esi.model.CorporationWalletJournalExtraInfoResponse;
 import net.troja.eve.esi.model.CorporationWalletJournalResponse;
 
@@ -173,6 +174,7 @@ public class ConverterTestOptionsGetter {
 		//IndustryJobStatus
 		private static final RawIndustryJob.IndustryJobStatus[] RAW_INDUSTRY_JOB_STATUS = RawIndustryJob.IndustryJobStatus.values();
 		private static final CharacterIndustryJobsResponse.StatusEnum[] ESI_INDUSTRY_JOB_STATUS_CHARACTER = CharacterIndustryJobsResponse.StatusEnum.values();
+		private static final CorporationIndustryJobsResponse.StatusEnum[] ESI_INDUSTRY_JOB_STATUS_CORPORATION = CorporationIndustryJobsResponse.StatusEnum.values();
 		private static final Integer[] EVE_API_INDUSTRY_JOB_STATUS = {1, 2, 3, 101, 102, 103};
 		//JournalPartyType
 		private static final RawJournal.JournalPartyType[] RAW_JOURNAL_PARTY_TYPE = RawJournal.JournalPartyType.values();
@@ -430,6 +432,7 @@ public class ConverterTestOptionsGetter {
 			//IndustryJobStatus
 			tempMax = Math.max(tempMax, RAW_INDUSTRY_JOB_STATUS.length);
 			tempMax = Math.max(tempMax, ESI_INDUSTRY_JOB_STATUS_CHARACTER.length);
+			tempMax = Math.max(tempMax, ESI_INDUSTRY_JOB_STATUS_CORPORATION.length);
 			tempMax = Math.max(tempMax, EVE_API_INDUSTRY_JOB_STATUS.length);
 			//JournalExtraInfo
 			//tempMax = Math.max(tempMax, rawJournalExtraInfo.length);
@@ -690,6 +693,11 @@ public class ConverterTestOptionsGetter {
 		@Override
 		public CharacterIndustryJobsResponse.StatusEnum getIndustryJobStatusEsiCharacter() {
 			return get(ESI_INDUSTRY_JOB_STATUS_CHARACTER, index);
+		}
+
+		@Override
+		public CorporationIndustryJobsResponse.StatusEnum getIndustryJobStatusEsiCorporation() {
+			return get(ESI_INDUSTRY_JOB_STATUS_CORPORATION, index);
 		}
 
 		@Override

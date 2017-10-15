@@ -84,6 +84,7 @@ import net.troja.eve.esi.model.CharacterWalletTransactionsResponse;
 import net.troja.eve.esi.model.CorporationAssetsResponse;
 import net.troja.eve.esi.model.CorporationBlueprintsResponse;
 import net.troja.eve.esi.model.CorporationContractsResponse;
+import net.troja.eve.esi.model.CorporationIndustryJobsResponse;
 import net.troja.eve.esi.model.CorporationWalletJournalExtraInfoResponse;
 import net.troja.eve.esi.model.CorporationWalletJournalResponse;
 import net.troja.eve.esi.model.CorporationWalletsResponse;
@@ -622,6 +623,8 @@ public class ConverterTestUtil {
 			return options.getOffsetDateTime();
 		} else if (type.equals(CharacterIndustryJobsResponse.StatusEnum.class)) {
 			return options.getIndustryJobStatusEsiCharacter();
+		} else if (type.equals(CorporationIndustryJobsResponse.StatusEnum.class)) {
+			return options.getIndustryJobStatusEsiCorporation();
 		} else if (type.equals(CharacterWalletJournalExtraInfoResponse.class)) {
 			return options.getJournalExtraInfoEsiCharacter();
 		} else if (type.equals(CorporationWalletJournalExtraInfoResponse.class)) {
