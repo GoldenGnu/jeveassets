@@ -55,6 +55,7 @@ import net.troja.eve.esi.model.CharacterWalletJournalResponse;
 import net.troja.eve.esi.model.CharacterWalletTransactionsResponse;
 import net.troja.eve.esi.model.CorporationAssetsResponse;
 import net.troja.eve.esi.model.CorporationBlueprintsResponse;
+import net.troja.eve.esi.model.CorporationContractsItemsResponse;
 import net.troja.eve.esi.model.CorporationContractsResponse;
 import net.troja.eve.esi.model.CorporationWalletJournalResponse;
 import net.troja.eve.esi.model.CorporationWalletTransactionsResponse;
@@ -153,6 +154,14 @@ public class EsiConverter extends DataConverter {
 	public static Map<MyContract, List<MyContractItem>> toContractItems(MyContract contract, List<CharacterContractsItemsResponse> responses, OwnerType owner) {
 		List<RawContractItem> rawContractItems = new ArrayList<RawContractItem>();
 		for (CharacterContractsItemsResponse response : responses) {
+			rawContractItems.add(new RawContractItem(response));
+		}
+		return convertRawContractItems(contract, rawContractItems, owner);
+	}
+
+	public static Map<MyContract, List<MyContractItem>> toContractItemsCorporation(MyContract contract, List<CorporationContractsItemsResponse> responses, OwnerType owner) {
+		List<RawContractItem> rawContractItems = new ArrayList<RawContractItem>();
+		for (CorporationContractsItemsResponse response : responses) {
 			rawContractItems.add(new RawContractItem(response));
 		}
 		return convertRawContractItems(contract, rawContractItems, owner);

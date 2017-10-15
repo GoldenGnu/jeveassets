@@ -134,6 +134,17 @@ public class EsiDeprecationOnlineTest extends TestUtil {
 	}
 
 	@Test
+	public void esiContractItemsGetterCorporation() {
+		ContractsApi api = new ContractsApi();
+		try {
+			api.getCorporationsCorporationIdContractsContractIdItems(1, 1, DATASOURCE, null, null, null);
+		} catch (ApiException ex) {
+
+		}
+		validate(api.getApiClient());
+	}
+
+	@Test
 	public void esiContractsGetterCharacters() {
 		ContractsApi api = new ContractsApi();
 		try {

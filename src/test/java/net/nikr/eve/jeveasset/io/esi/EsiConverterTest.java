@@ -50,6 +50,7 @@ import net.troja.eve.esi.model.CharacterWalletJournalResponse;
 import net.troja.eve.esi.model.CharacterWalletTransactionsResponse;
 import net.troja.eve.esi.model.CorporationAssetsResponse;
 import net.troja.eve.esi.model.CorporationBlueprintsResponse;
+import net.troja.eve.esi.model.CorporationContractsItemsResponse;
 import net.troja.eve.esi.model.CorporationContractsResponse;
 import net.troja.eve.esi.model.CorporationWalletJournalResponse;
 import net.troja.eve.esi.model.CorporationWalletTransactionsResponse;
@@ -316,6 +317,25 @@ public class EsiConverterTest extends TestUtil {
 			CharacterContractsItemsResponse contractsItemsResponse = new CharacterContractsItemsResponse();
 			ConverterTestUtil.setValues(contractsItemsResponse, options, esi);
 			Map<MyContract, List<MyContractItem>> contractItems = EsiConverter.toContractItems(ConverterTestUtil.getMyContract(false, true, options), Collections.singletonList(contractsItemsResponse), ConverterTestUtil.getEsiOwner(options));
+			ConverterTestUtil.testValues(contractItems.values().iterator().next().get(0), options, esi);
+		}
+	}
+
+	@Test
+	public void testToContractItemsCorporation() {
+		testToContractItemsCorporation(null);
+	}
+
+	@Test
+	public void testToContractItemsCorporationOptional() {
+		testToContractItemsCorporation(CorporationContractsItemsResponse.class);
+	}
+
+	public void testToContractItemsCorporation(Class<?> esi) {
+		for (ConverterTestOptions options : ConverterTestOptionsGetter.getConverterOptions()) {
+			CorporationContractsItemsResponse contractsItemsResponse = new CorporationContractsItemsResponse();
+			ConverterTestUtil.setValues(contractsItemsResponse, options, esi);
+			Map<MyContract, List<MyContractItem>> contractItems = EsiConverter.toContractItemsCorporation(ConverterTestUtil.getMyContract(false, true, options), Collections.singletonList(contractsItemsResponse), ConverterTestUtil.getEsiOwner(options));
 			ConverterTestUtil.testValues(contractItems.values().iterator().next().get(0), options, esi);
 		}
 	}
