@@ -113,6 +113,8 @@ public abstract class DialoguesAccount extends Bundle {
 	public abstract String migrateAll();
 	public abstract String migrateEsiAccountName(String name, int included, int total);
 	public abstract String migrateHelp();
+	public abstract String accountMigratedDoneMsg();
+	public abstract String accountMigratedDoneTitle();
 
 	public abstract String deleteAccountQuestion();
 	public abstract String deleteAccount();

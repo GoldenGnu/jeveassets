@@ -320,9 +320,11 @@ public class JMigrateDialog extends JDialogCentered {
 			builder.append("Market Orders");
 			builder.append(getPost());
 
-			builder.append(getPre(esiOwner.isStructures()));
-			builder.append("Structures");
-			builder.append(getPost());
+			if (!esiOwner.isCorporation()) {
+				builder.append(getPre(esiOwner.isStructures()));
+				builder.append("Structures");
+				builder.append(getPost());
+			}
 
 			builder.append(getPre(esiOwner.isTransactions()));
 			builder.append("Transactions");
@@ -440,9 +442,11 @@ public class JMigrateDialog extends JDialogCentered {
 				if (value.isMarketOrders()) {
 					included++;
 				}
-				total++;
-				if (value.isStructures()) {
-					included++;
+				if (!value.isCorporation()) {
+					total++;
+					if (value.isStructures()) {
+						included++;
+					}
 				}
 				total++;
 				if (value.isTransactions()) {

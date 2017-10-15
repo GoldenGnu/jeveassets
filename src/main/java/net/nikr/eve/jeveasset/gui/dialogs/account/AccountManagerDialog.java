@@ -400,6 +400,16 @@ public class AccountManagerDialog extends JDialogCentered {
 					}
 					boolean updated = jMigrateDialog.show(owners);
 					if (updated) {
+						boolean allMigrated = true;
+						for (EveApiOwner owner : owners) {
+							if (!owner.isMigrated()) {
+								allMigrated = false;
+								break;
+							}
+						}
+						if (allMigrated) {
+							JOptionPane.showMessageDialog(getDialog(), DialoguesAccount.get().accountMigratedDoneMsg(), DialoguesAccount.get().accountMigratedDoneTitle(), JOptionPane.PLAIN_MESSAGE);
+						}
 						forceUpdate();
 						updateTable();
 					}

@@ -59,7 +59,7 @@ public class EveApiOwner extends AbstractOwner implements OwnerType {
 	}
 
 	public boolean canMigrate() {
-		return !isCorporation() && !isMigrated(); //XXX - When we can migrate corporations to ESI: Remove !isCorporation()
+		return !isMigrated();
 	}
 
 	@Override

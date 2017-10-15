@@ -124,7 +124,7 @@ public abstract class AbstractGetter<O extends OwnerType, C, E extends Exception
 
 	protected boolean canUpdate() {
 		//Silently ignore disabled owners
-		if (owner != null && (!owner.isShowOwner() && !forceUpdate)) {
+		if (!forceUpdate && owner != null && !owner.isShowOwner()) {
 			logInfo(null, "Owner disabled");
 			return false; 
 		}
@@ -139,6 +139,10 @@ public abstract class AbstractGetter<O extends OwnerType, C, E extends Exception
 			return false;
 		}
 		return true;
+	}
+
+	protected boolean isForceUpdate() {
+		return forceUpdate;
 	}
 
 	protected synchronized void setNextUpdateSafe(Date date) {
@@ -194,7 +198,7 @@ public abstract class AbstractGetter<O extends OwnerType, C, E extends Exception
 
 	protected final void addMigrationWarning() {
 		if (updateTask != null) {
-			updateTask.addError("EveApi characters can be migrated to ESI", "Add ESI characters in the account manager:\r\nOptions > Accounts... > Add > ESI");
+			updateTask.addError("EveApi accounts can be migrated to ESI", "Add ESI accounts in the account manager:\r\nOptions > Accounts... > Add > ESI");
 		}
 	}
 
