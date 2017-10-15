@@ -36,6 +36,7 @@ public enum EsiScopes {
 	CORPORATION_ASSETS(SsoScopes.ESI_ASSETS_READ_CORPORATION_ASSETS_V1, DialoguesAccount.get().scopeAssets(), ScopeType.CORPORATION, false),
 	CORPORATION_WALLET(SsoScopes.ESI_WALLET_READ_CORPORATION_WALLETS_V1, DialoguesAccount.get().scopeWallet(), ScopeType.CORPORATION, false),
 	CORPORATION_BLUEPRINTS(SsoScopes.ESI_CORPORATIONS_READ_BLUEPRINTS_V1, DialoguesAccount.get().scopeBlueprints(), ScopeType.CORPORATION, false),
+	CORPORATION_CONTRACTS(SsoScopes.ESI_CONTRACTS_READ_CORPORATION_CONTRACTS_V1, DialoguesAccount.get().scopeContracts(), ScopeType.CORPORATION, false),
 	NAMES(true), //Public
 	CONQUERABLE_STATIONS(true), //Public
 	;

@@ -83,6 +83,7 @@ import net.troja.eve.esi.model.CharacterWalletJournalResponse;
 import net.troja.eve.esi.model.CharacterWalletTransactionsResponse;
 import net.troja.eve.esi.model.CorporationAssetsResponse;
 import net.troja.eve.esi.model.CorporationBlueprintsResponse;
+import net.troja.eve.esi.model.CorporationContractsResponse;
 import net.troja.eve.esi.model.CorporationWalletJournalExtraInfoResponse;
 import net.troja.eve.esi.model.CorporationWalletJournalResponse;
 import net.troja.eve.esi.model.CorporationWalletsResponse;
@@ -639,10 +640,16 @@ public class ConverterTestUtil {
 			return options.getJournalPartyTypeEsiSecondCorporation();
 		} else if (type.equals(CharacterContractsResponse.AvailabilityEnum.class)) {
 			return options.getContractAvailabilityEsiCharacter();
+		} else if (type.equals(CorporationContractsResponse.AvailabilityEnum.class)) {
+			return options.getContractAvailabilityEsiCorporation();
 		} else if (type.equals(CharacterContractsResponse.StatusEnum.class)) {
 			return options.getContractStatusEsiCharacter();
+		} else if (type.equals(CorporationContractsResponse.StatusEnum.class)) {
+			return options.getContractStatusEsiCorporation();
 		} else if (type.equals(CharacterContractsResponse.TypeEnum.class)) {
-			return options.getContractTypeEsi();
+			return options.getContractTypeEsiCharacter();
+		} else if (type.equals(CorporationContractsResponse.TypeEnum.class)) {
+			return options.getContractTypeEsiCorporation();
 		} else if (type.equals(CharacterOrdersResponse.RangeEnum.class)) {
 			return options.getMarketOrderRangeEsiCharacter();
 		} else if (type.equals(CharacterOrdersResponse.StateEnum.class)) {

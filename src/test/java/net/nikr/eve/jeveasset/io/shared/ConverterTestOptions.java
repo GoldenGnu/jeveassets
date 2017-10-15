@@ -51,6 +51,7 @@ import net.troja.eve.esi.model.CharacterWalletJournalExtraInfoResponse;
 import net.troja.eve.esi.model.CharacterWalletJournalResponse;
 import net.troja.eve.esi.model.CorporationAssetsResponse;
 import net.troja.eve.esi.model.CorporationBlueprintsResponse;
+import net.troja.eve.esi.model.CorporationContractsResponse;
 import net.troja.eve.esi.model.CorporationWalletJournalExtraInfoResponse;
 import net.troja.eve.esi.model.CorporationWalletJournalResponse;
 import org.joda.time.DateTime;
@@ -112,6 +113,8 @@ public interface ConverterTestOptions {
 
 	public CharacterContractsResponse.AvailabilityEnum getContractAvailabilityEsiCharacter();
 
+	public CorporationContractsResponse.AvailabilityEnum getContractAvailabilityEsiCorporation();
+
 	public com.beimin.eveapi.model.shared.ContractAvailability getContractAvailabilityEveApi();
 
 	public String getContractAvailabilityEveKit();
@@ -120,6 +123,8 @@ public interface ConverterTestOptions {
 	public RawContract.ContractStatus getContractStatusRaw();
 
 	public CharacterContractsResponse.StatusEnum getContractStatusEsiCharacter();
+
+	public CorporationContractsResponse.StatusEnum getContractStatusEsiCorporation();
 
 	public com.beimin.eveapi.model.shared.ContractStatus getContractStatusEveApi();
 
@@ -130,7 +135,9 @@ public interface ConverterTestOptions {
 
 	public com.beimin.eveapi.model.shared.ContractType getContractTypeEveApi();
 
-	public CharacterContractsResponse.TypeEnum getContractTypeEsi();
+	public CharacterContractsResponse.TypeEnum getContractTypeEsiCharacter();
+
+	public CorporationContractsResponse.TypeEnum getContractTypeEsiCorporation();
 
 	public String getContractTypeEveKit();
 

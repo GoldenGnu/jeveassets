@@ -50,6 +50,7 @@ import net.troja.eve.esi.model.CharacterWalletJournalResponse;
 import net.troja.eve.esi.model.CharacterWalletTransactionsResponse;
 import net.troja.eve.esi.model.CorporationAssetsResponse;
 import net.troja.eve.esi.model.CorporationBlueprintsResponse;
+import net.troja.eve.esi.model.CorporationContractsResponse;
 import net.troja.eve.esi.model.CorporationWalletJournalResponse;
 import net.troja.eve.esi.model.CorporationWalletTransactionsResponse;
 import net.troja.eve.esi.model.CorporationWalletsResponse;
@@ -277,6 +278,25 @@ public class EsiConverterTest extends TestUtil {
 			CharacterContractsResponse contractsResponse = new CharacterContractsResponse();
 			ConverterTestUtil.setValues(contractsResponse, options, esi);
 			Map<MyContract, List<MyContractItem>> contracts = EsiConverter.toContracts(Collections.singletonList(contractsResponse), ConverterTestUtil.getEsiOwner(options));
+			ConverterTestUtil.testValues(contracts.keySet().iterator().next(), options, esi);
+		}
+	}
+
+	@Test
+	public void testToContractsCorporation() {
+		testToContractsCorporation(null);
+	}
+
+	@Test
+	public void testToContractsCorporationOptional() {
+		testToContractsCorporation(CorporationContractsResponse.class);
+	}
+
+	public void testToContractsCorporation(Class<?> esi) {
+		for (ConverterTestOptions options : ConverterTestOptionsGetter.getConverterOptions()) {
+			CorporationContractsResponse contractsResponse = new CorporationContractsResponse();
+			ConverterTestUtil.setValues(contractsResponse, options, esi);
+			Map<MyContract, List<MyContractItem>> contracts = EsiConverter.toContractsCorporation(Collections.singletonList(contractsResponse), ConverterTestUtil.getEsiOwner(options));
 			ConverterTestUtil.testValues(contracts.keySet().iterator().next(), options, esi);
 		}
 	}

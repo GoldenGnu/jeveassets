@@ -23,6 +23,7 @@ package net.nikr.eve.jeveasset.data.api.raw;
 import java.util.Date;
 import net.nikr.eve.jeveasset.io.shared.RawConverter;
 import net.troja.eve.esi.model.CharacterContractsResponse;
+import net.troja.eve.esi.model.CorporationContractsResponse;
 
 public class RawContract {
 
@@ -102,11 +103,41 @@ public class RawContract {
 	}
 
 	/**
-	 * ESI
+	 * ESI Character
 	 *
 	 * @param contract
 	 */
 	public RawContract(CharacterContractsResponse contract) {
+		acceptorId = contract.getAcceptorId();
+		assigneeId = contract.getAssigneeId();
+		availability = ContractAvailability.valueOf(contract.getAvailability().name());
+		buyout = contract.getBuyout();
+		collateral = contract.getCollateral();
+		contractId = contract.getContractId();
+		dateAccepted = RawConverter.toDate(contract.getDateAccepted());
+		dateCompleted = RawConverter.toDate(contract.getDateCompleted());
+		dateExpired = RawConverter.toDate(contract.getDateExpired());
+		dateIssued = RawConverter.toDate(contract.getDateIssued());
+		daysToComplete = contract.getDaysToComplete();
+		endLocationId = contract.getEndLocationId();
+		forCorporation = contract.getForCorporation();
+		issuerCorporationId = contract.getIssuerCorporationId();
+		issuerId = contract.getIssuerId();
+		price = contract.getPrice();
+		reward = contract.getReward();
+		startLocationId = contract.getStartLocationId();
+		status = ContractStatus.valueOf(contract.getStatus().name());
+		title = contract.getTitle();
+		type = ContractType.valueOf(contract.getType().name());
+		volume = contract.getVolume();
+	}
+
+	/**
+	 * ESI Corporation
+	 *
+	 * @param contract
+	 */
+	public RawContract(CorporationContractsResponse contract) {
 		acceptorId = contract.getAcceptorId();
 		assigneeId = contract.getAssigneeId();
 		availability = ContractAvailability.valueOf(contract.getAvailability().name());

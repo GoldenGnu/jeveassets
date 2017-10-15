@@ -228,7 +228,11 @@ public class EsiOwner extends AbstractOwner implements OwnerType {
 
 	@Override
 	public boolean isContracts() {
-		return EsiScopes.CHARACTER_CONTRACTS.isInScope(scopes);
+		if (isCorporation()) {
+			return EsiScopes.CORPORATION_CONTRACTS.isInScope(scopes);
+		} else {
+			return EsiScopes.CHARACTER_CONTRACTS.isInScope(scopes);
+		}
 	}
 
 	@Override

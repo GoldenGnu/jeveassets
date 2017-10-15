@@ -55,6 +55,7 @@ import net.troja.eve.esi.model.CharacterWalletJournalExtraInfoResponse;
 import net.troja.eve.esi.model.CharacterWalletJournalResponse;
 import net.troja.eve.esi.model.CorporationAssetsResponse;
 import net.troja.eve.esi.model.CorporationBlueprintsResponse;
+import net.troja.eve.esi.model.CorporationContractsResponse;
 import net.troja.eve.esi.model.CorporationWalletJournalExtraInfoResponse;
 import net.troja.eve.esi.model.CorporationWalletJournalResponse;
 
@@ -110,6 +111,7 @@ public class ConverterTestOptionsGetter {
 		//ContractAvailability
 		private static final RawContract.ContractAvailability[] RAW_CONTRACT_AVAILABILITY = RawContract.ContractAvailability.values();
 		private static final CharacterContractsResponse.AvailabilityEnum[] ESI_CONTRACTS_AVAILABILITY_CHARACTER = CharacterContractsResponse.AvailabilityEnum.values();
+		private static final CorporationContractsResponse.AvailabilityEnum[] ESI_CONTRACTS_AVAILABILITY_CORPORATION = CorporationContractsResponse.AvailabilityEnum.values();
 		private static final com.beimin.eveapi.model.shared.ContractAvailability[] XML_CONTRACT_AVAILABILITY = {
 			com.beimin.eveapi.model.shared.ContractAvailability.PUBLIC,
 			com.beimin.eveapi.model.shared.ContractAvailability.PRIVATE,
@@ -125,6 +127,7 @@ public class ConverterTestOptionsGetter {
 		//ContractStatus
 		private static final RawContract.ContractStatus[] RAW_CONTRACT_STATUS = RawContract.ContractStatus.values();
 		private static final CharacterContractsResponse.StatusEnum[] ESI_CONTRACT_STATUS_CHARACTER = CharacterContractsResponse.StatusEnum.values();
+		private static final CorporationContractsResponse.StatusEnum[] ESI_CONTRACT_STATUS_CORPORATION = CorporationContractsResponse.StatusEnum.values();
 		private static final com.beimin.eveapi.model.shared.ContractStatus[] XML_CONTRACT_STATUS = {
 			com.beimin.eveapi.model.shared.ContractStatus.OUTSTANDING,
 			com.beimin.eveapi.model.shared.ContractStatus.INPROGRESS,
@@ -152,6 +155,7 @@ public class ConverterTestOptionsGetter {
 		//ContractType
 		private static final RawContract.ContractType[] RAW_CONTRACT_TYPE = RawContract.ContractType.values();
 		private static final CharacterContractsResponse.TypeEnum[] ESI_CONTRACT_TYPE_CHARACTER = CharacterContractsResponse.TypeEnum.values();
+		private static final CorporationContractsResponse.TypeEnum[] ESI_CONTRACT_TYPE_CORPORATION = CorporationContractsResponse.TypeEnum.values();
 		private static final com.beimin.eveapi.model.shared.ContractType[] XML_CONTRACT_TYPE = {
 			null,
 			com.beimin.eveapi.model.shared.ContractType.ITEMEXCHANGE,
@@ -408,16 +412,19 @@ public class ConverterTestOptionsGetter {
 			//ContractAvailability
 			tempMax = Math.max(tempMax, RAW_CONTRACT_AVAILABILITY.length);
 			tempMax = Math.max(tempMax, ESI_CONTRACTS_AVAILABILITY_CHARACTER.length);
+			tempMax = Math.max(tempMax, ESI_CONTRACTS_AVAILABILITY_CORPORATION.length);
 			tempMax = Math.max(tempMax, XML_CONTRACT_AVAILABILITY.length);
 			tempMax = Math.max(tempMax, EVE_KIT_CONTRACT_AVAILABILITY.length);
 			//ContractStatus
 			tempMax = Math.max(tempMax, RAW_CONTRACT_STATUS.length);
 			tempMax = Math.max(tempMax, ESI_CONTRACT_STATUS_CHARACTER.length);
+			tempMax = Math.max(tempMax, ESI_CONTRACT_STATUS_CORPORATION.length);
 			tempMax = Math.max(tempMax, XML_CONTRACT_STATUS.length);
 			tempMax = Math.max(tempMax, EVE_KIT_CONTRACT_STATUS.length);
 			//ContractType
 			tempMax = Math.max(tempMax, RAW_CONTRACT_TYPE.length);
 			tempMax = Math.max(tempMax, ESI_CONTRACT_TYPE_CHARACTER.length);
+			tempMax = Math.max(tempMax, ESI_CONTRACT_TYPE_CORPORATION.length);
 			tempMax = Math.max(tempMax, XML_CONTRACT_TYPE.length);
 			tempMax = Math.max(tempMax, EVE_KIT_CONTRACT_TYPE.length);
 			//IndustryJobStatus
@@ -608,6 +615,11 @@ public class ConverterTestOptionsGetter {
 		}
 
 		@Override
+		public CorporationContractsResponse.AvailabilityEnum getContractAvailabilityEsiCorporation() {
+			return get(ESI_CONTRACTS_AVAILABILITY_CORPORATION, index);
+		}
+
+		@Override
 		public com.beimin.eveapi.model.shared.ContractAvailability getContractAvailabilityEveApi() {
 			return get(XML_CONTRACT_AVAILABILITY, index);
 		}
@@ -626,6 +638,11 @@ public class ConverterTestOptionsGetter {
 		@Override
 		public CharacterContractsResponse.StatusEnum getContractStatusEsiCharacter() {
 			return get(ESI_CONTRACT_STATUS_CHARACTER, index);
+		}
+
+		@Override
+		public CorporationContractsResponse.StatusEnum getContractStatusEsiCorporation() {
+			return get(ESI_CONTRACT_STATUS_CORPORATION, index);
 		}
 
 		@Override
@@ -650,8 +667,13 @@ public class ConverterTestOptionsGetter {
 		}
 
 		@Override
-		public CharacterContractsResponse.TypeEnum getContractTypeEsi() {
+		public CharacterContractsResponse.TypeEnum getContractTypeEsiCharacter() {
 			return get(ESI_CONTRACT_TYPE_CHARACTER, index);
+		}
+
+		@Override
+		public CorporationContractsResponse.TypeEnum getContractTypeEsiCorporation() {
+			return get(ESI_CONTRACT_TYPE_CORPORATION, index);
 		}
 
 		@Override
