@@ -35,6 +35,7 @@ import net.nikr.eve.jeveasset.data.api.raw.RawBlueprint;
 import net.nikr.eve.jeveasset.data.api.raw.RawIndustryJob;
 import net.nikr.eve.jeveasset.data.api.raw.RawJournal;
 import net.nikr.eve.jeveasset.data.api.raw.RawJournalExtraInfo;
+import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder;
 import net.nikr.eve.jeveasset.data.api.raw.RawTransaction;
 import net.troja.eve.esi.model.CharacterWalletJournalExtraInfoResponse;
 import net.troja.eve.esi.model.CorporationWalletJournalExtraInfoResponse;
@@ -79,6 +80,15 @@ public class RawUtil {
 				continue;
 			}
 			if (value.getName().equals("locationId") && raw.equals(RawIndustryJob.class)) { //stationId in character endpoint / locationId in corporation endpoint
+				continue;
+			}
+			if (value.getName().equals("accountId") && raw.equals(RawMarketOrder.class)) { //accountId in character endpoint / walletDivision in corporation endpoint
+				continue;
+			}
+			if (value.getName().equals("walletDivision") && raw.equals(RawMarketOrder.class)) { //accountId in character endpoint / walletDivision in corporation endpoint
+				continue;
+			}
+			if (value.getName().equals("isCorp") && raw.equals(RawMarketOrder.class)) { //Only in character endpoint
 				continue;
 			}
 			if (type.isEnum()) { //Ignore enums
@@ -126,6 +136,15 @@ public class RawUtil {
 				continue;
 			}
 			if (value.getName().equals("locationId") && raw.equals(RawIndustryJob.class)) { //stationId in character endpoint / locationId in corporation endpoint
+				continue;
+			}
+			if (value.getName().equals("accountId") && raw.equals(RawMarketOrder.class)) { //accountId in character endpoint / walletDivision in corporation endpoint
+				continue;
+			}
+			if (value.getName().equals("walletDivision") && raw.equals(RawMarketOrder.class)) { //accountId in character endpoint / walletDivision in corporation endpoint
+				continue;
+			}
+			if (value.getName().equals("isCorp") && raw.equals(RawMarketOrder.class)) { //Only in character endpoint
 				continue;
 			}
 			names.add(value.getName());

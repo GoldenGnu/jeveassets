@@ -24,6 +24,7 @@ import java.util.Date;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 import net.nikr.eve.jeveasset.io.shared.RawConverter;
 import net.troja.eve.esi.model.CharacterOrdersResponse;
+import net.troja.eve.esi.model.CorporationOrdersResponse;
 
 public class RawMarketOrder {
 
@@ -126,7 +127,7 @@ public class RawMarketOrder {
 	}
 
 	/**
-	 * ESI
+	 * ESI Character
 	 *
 	 * @param marketOrder
 	 */
@@ -136,6 +137,30 @@ public class RawMarketOrder {
 		escrow = marketOrder.getEscrow();
 		isBuyOrder = marketOrder.getIsBuyOrder();
 		isCorp = marketOrder.getIsCorp();
+		issued = RawConverter.toDate(marketOrder.getIssued());
+		locationId = marketOrder.getLocationId();
+		minVolume = marketOrder.getMinVolume();
+		orderId = marketOrder.getOrderId();
+		price = marketOrder.getPrice();
+		range = MarketOrderRange.valueOf(marketOrder.getRange().name());
+		regionId = marketOrder.getRegionId();
+		state = MarketOrderState.valueOf(marketOrder.getState().name());
+		typeId = marketOrder.getTypeId();
+		volumeRemain = marketOrder.getVolumeRemain();
+		volumeTotal = marketOrder.getVolumeTotal();
+	}
+
+	/**
+	 * ESI Corporation
+	 *
+	 * @param marketOrder
+	 */
+	public RawMarketOrder(CorporationOrdersResponse marketOrder) {
+		accountId = marketOrder.getWalletDivision();
+		duration = marketOrder.getDuration();
+		escrow = marketOrder.getEscrow();
+		isBuyOrder = marketOrder.getIsBuyOrder();
+		isCorp = true;
 		issued = RawConverter.toDate(marketOrder.getIssued());
 		locationId = marketOrder.getLocationId();
 		minVolume = marketOrder.getMinVolume();

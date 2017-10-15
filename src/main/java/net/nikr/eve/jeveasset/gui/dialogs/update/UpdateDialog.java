@@ -718,7 +718,7 @@ public class UpdateDialog extends JDialogCentered {
 					updates.add(new EveKitMarketOrdersGetter(this, eveKitOwner));
 				}
 				//Esi
-				if (EsiScopes.CHARACTER_MARKET_ORDERS.isEnabled()) {
+				if (EsiScopes.CHARACTER_MARKET_ORDERS.isEnabled() || EsiScopes.CORPORATION_MARKET_ORDERS.isEnabled()) {
 					for (EsiOwner esiOwner : program.getProfileManager().getEsiOwners()) {
 						updates.add(new EsiMarketOrdersGetter(this, esiOwner, Settings.get().isMarketOrderHistory()));
 					}

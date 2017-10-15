@@ -85,6 +85,7 @@ import net.troja.eve.esi.model.CorporationAssetsResponse;
 import net.troja.eve.esi.model.CorporationBlueprintsResponse;
 import net.troja.eve.esi.model.CorporationContractsResponse;
 import net.troja.eve.esi.model.CorporationIndustryJobsResponse;
+import net.troja.eve.esi.model.CorporationOrdersResponse;
 import net.troja.eve.esi.model.CorporationWalletJournalExtraInfoResponse;
 import net.troja.eve.esi.model.CorporationWalletJournalResponse;
 import net.troja.eve.esi.model.CorporationWalletsResponse;
@@ -655,8 +656,12 @@ public class ConverterTestUtil {
 			return options.getContractTypeEsiCorporation();
 		} else if (type.equals(CharacterOrdersResponse.RangeEnum.class)) {
 			return options.getMarketOrderRangeEsiCharacter();
+		} else if (type.equals(CorporationOrdersResponse.RangeEnum.class)) {//
+			return options.getMarketOrderRangeEsiCorporation();
 		} else if (type.equals(CharacterOrdersResponse.StateEnum.class)) {
 			return options.getMarketOrderStateEsiCharacter();
+		} else if (type.equals(CorporationOrdersResponse.StateEnum.class)) {
+			return options.getMarketOrderStateEsiCorporation();
 		} else if (type.equals(CharacterAssetsResponse.LocationFlagEnum.class)) {
 			return options.getLocationFlagEsiAssetsCharacter();
 		} else if (type.equals(CorporationAssetsResponse.LocationFlagEnum.class)) {

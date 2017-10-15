@@ -53,6 +53,7 @@ import net.troja.eve.esi.model.CorporationBlueprintsResponse;
 import net.troja.eve.esi.model.CorporationContractsItemsResponse;
 import net.troja.eve.esi.model.CorporationContractsResponse;
 import net.troja.eve.esi.model.CorporationIndustryJobsResponse;
+import net.troja.eve.esi.model.CorporationOrdersResponse;
 import net.troja.eve.esi.model.CorporationWalletJournalResponse;
 import net.troja.eve.esi.model.CorporationWalletTransactionsResponse;
 import net.troja.eve.esi.model.CorporationWalletsResponse;
@@ -374,6 +375,24 @@ public class EsiConverterTest extends TestUtil {
 			CharacterOrdersResponse ordersResponse = new CharacterOrdersResponse();
 			ConverterTestUtil.setValues(ordersResponse, options, esi);
 			Set<MyMarketOrder> marketOrders = EsiConverter.toMarketOrders(Collections.singletonList(ordersResponse), ConverterTestUtil.getEsiOwner(options), false);
+			ConverterTestUtil.testValues(marketOrders.iterator().next(), options, esi);
+		}
+	}
+	@Test
+	public void testToMarketOrdersCorporation() {
+		testToMarketOrdersCorporation(null);
+	}
+
+	@Test
+	public void testToMarketOrdersCorporationOptional() {
+		testToMarketOrdersCorporation(CorporationOrdersResponse.class);
+	}
+
+	public void testToMarketOrdersCorporation(Class<?> esi) {
+		for (ConverterTestOptions options : ConverterTestOptionsGetter.getConverterOptions()) {
+			CorporationOrdersResponse ordersResponse = new CorporationOrdersResponse();
+			ConverterTestUtil.setValues(ordersResponse, options, esi);
+			Set<MyMarketOrder> marketOrders = EsiConverter.toMarketOrdersCorporation(Collections.singletonList(ordersResponse), ConverterTestUtil.getEsiOwner(options), false);
 			ConverterTestUtil.testValues(marketOrders.iterator().next(), options, esi);
 		}
 	}

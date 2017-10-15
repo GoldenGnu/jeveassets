@@ -53,6 +53,7 @@ import net.troja.eve.esi.model.CorporationAssetsResponse;
 import net.troja.eve.esi.model.CorporationBlueprintsResponse;
 import net.troja.eve.esi.model.CorporationContractsResponse;
 import net.troja.eve.esi.model.CorporationIndustryJobsResponse;
+import net.troja.eve.esi.model.CorporationOrdersResponse;
 import net.troja.eve.esi.model.CorporationWalletJournalExtraInfoResponse;
 import net.troja.eve.esi.model.CorporationWalletJournalResponse;
 import org.joda.time.DateTime;
@@ -185,12 +186,16 @@ public interface ConverterTestOptions {
 
 	public CharacterOrdersResponse.RangeEnum getMarketOrderRangeEsiCharacter();
 
+	public CorporationOrdersResponse.RangeEnum getMarketOrderRangeEsiCorporation();
+
 	public int getMarketOrderRangeEveApi();
 
 	//MarketOrderState
 	public RawMarketOrder.MarketOrderState getMarketOrderStateRaw();
 
 	public CharacterOrdersResponse.StateEnum getMarketOrderStateEsiCharacter();
+
+	public CorporationOrdersResponse.StateEnum getMarketOrderStateEsiCorporation();
 
 	public int getMarketOrderStateEveApi();
 

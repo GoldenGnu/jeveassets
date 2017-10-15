@@ -233,6 +233,17 @@ public class EsiDeprecationOnlineTest extends TestUtil {
 	}
 
 	@Test
+	public void esiMarketOrdersGetterCorporation() {
+		MarketApi api = new MarketApi();
+		try {
+			api.getCorporationsCorporationIdOrders(1, DATASOURCE, 1, null, null, null);
+		} catch (ApiException ex) {
+
+		}
+		validate(api.getApiClient());
+	}
+
+	@Test
 	public void esiNameGetter() {
 		UniverseApi api = new UniverseApi();
 		try {
