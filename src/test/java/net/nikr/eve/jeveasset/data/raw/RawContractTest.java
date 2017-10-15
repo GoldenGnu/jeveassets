@@ -26,9 +26,7 @@ import net.nikr.eve.jeveasset.data.api.raw.RawContract.ContractAvailability;
 import net.nikr.eve.jeveasset.data.api.raw.RawContract.ContractStatus;
 import net.nikr.eve.jeveasset.data.api.raw.RawContract.ContractType;
 import net.troja.eve.esi.model.CharacterContractsResponse;
-import net.troja.eve.esi.model.CharacterContractsResponse.AvailabilityEnum;
-import net.troja.eve.esi.model.CharacterContractsResponse.StatusEnum;
-import net.troja.eve.esi.model.CharacterContractsResponse.TypeEnum;
+import net.troja.eve.esi.model.CorporationContractsResponse;
 import org.junit.Test;
 
 
@@ -37,8 +35,12 @@ public class RawContractTest extends TestUtil {
 	@Test
 	public void rawContractTest() {
 		RawUtil.compare(RawContract.class, CharacterContractsResponse.class);
-		RawUtil.compare(ContractAvailability.values(), AvailabilityEnum.values());
-		RawUtil.compare(ContractStatus.values(), StatusEnum.values());
-		RawUtil.compare(ContractType.values(), TypeEnum.values());
+		RawUtil.compare(ContractAvailability.values(), CharacterContractsResponse.AvailabilityEnum.values());
+		RawUtil.compare(ContractStatus.values(), CharacterContractsResponse.StatusEnum.values());
+		RawUtil.compare(ContractType.values(), CharacterContractsResponse.TypeEnum.values());
+		RawUtil.compare(RawContract.class, CorporationContractsResponse.class);
+		RawUtil.compare(ContractAvailability.values(), CorporationContractsResponse.AvailabilityEnum.values());
+		RawUtil.compare(ContractStatus.values(), CorporationContractsResponse.StatusEnum.values());
+		RawUtil.compare(ContractType.values(), CorporationContractsResponse.TypeEnum.values());
 	}
 }
