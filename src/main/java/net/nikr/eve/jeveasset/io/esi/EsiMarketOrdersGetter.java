@@ -65,13 +65,4 @@ public class EsiMarketOrdersGetter extends AbstractEsiGetter {
 		return owner.isMarketOrders();
 	}
 
-	@Override
-	protected boolean enabled() {
-		if (owner.isCorporation()) {
-			return EsiScopes.CORPORATION_MARKET_ORDERS.isEnabled();
-		} else {
-			return EsiScopes.CHARACTER_MARKET_ORDERS.isEnabled();
-		}
-	}
-
 }

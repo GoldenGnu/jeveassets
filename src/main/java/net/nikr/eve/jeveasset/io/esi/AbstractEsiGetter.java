@@ -73,11 +73,6 @@ public abstract class AbstractEsiGetter extends AbstractGetter<EsiOwner, ApiClie
 
 	@Override
 	public void run() {
-		//Silently ignore disabled endpoints
-		if (!enabled()) {
-			logInfo(null, getTaskName() + " endpoint disabled");
-			return;
-		}
 		if (!canUpdate()) {
 			return;
 		}
@@ -154,8 +149,6 @@ public abstract class AbstractEsiGetter extends AbstractGetter<EsiOwner, ApiClie
 	protected abstract void get(ApiClient apiClient) throws ApiException;
 
 	protected abstract boolean inScope();
-
-	protected abstract boolean enabled();
 
 	private void setErrorLimit(Map<String, List<String>> responseHeaders) {
 		if (responseHeaders != null) {

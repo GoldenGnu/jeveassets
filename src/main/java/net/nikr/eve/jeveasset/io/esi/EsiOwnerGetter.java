@@ -89,9 +89,6 @@ public class EsiOwnerGetter extends AbstractEsiGetter implements AccountAdder{
 		int fails = 0;
 		int max = 0;
 		for (EsiScopes scopes : EsiScopes.values()) {
-			if (!scopes.isEnabled()) {
-				continue;
-			}
 			if (!owner.isCorporation() && !scopes.isCharacterScope()) {
 				continue;
 			}
@@ -114,11 +111,6 @@ public class EsiOwnerGetter extends AbstractEsiGetter implements AccountAdder{
 
 	@Override
 	protected boolean inScope() {
-		return true; //Always update accounts
-	}
-
-	@Override
-	protected boolean enabled() {
 		return true; //Always update accounts
 	}
 

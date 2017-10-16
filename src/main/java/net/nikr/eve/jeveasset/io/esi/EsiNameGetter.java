@@ -95,9 +95,4 @@ public class EsiNameGetter extends AbstractEsiGetter {
 		return true;
 	}
 
-	@Override
-	protected boolean enabled() {
-		return EsiScopes.NAMES.isEnabled();
-	}
-
 }

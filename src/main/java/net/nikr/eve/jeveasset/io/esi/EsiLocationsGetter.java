@@ -94,13 +94,4 @@ public class EsiLocationsGetter extends AbstractEsiGetter {
 		return owner.isLocations();
 	}
 
-	@Override
-	protected boolean enabled() {
-		if (owner.isCorporation()) {
-			return EsiScopes.CORPORATION_ASSETS.isEnabled();
-		} else {
-			return EsiScopes.CHARACTER_ASSETS.isEnabled();
-		}
-	}
-	
 }

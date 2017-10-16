@@ -89,15 +89,6 @@ public class EsiStructuresGetter extends AbstractEsiGetter {
 		return owner.isStructures();
 	}
 
-	@Override
-	protected boolean enabled() {
-		if (owner.isCorporation()) {
-			return false;
-		} else {
-			return EsiScopes.CHARACTER_STRUCTURES.isEnabled();
-		}
-	}
-
 	private Set<Long> getIDs(OwnerType owner) {
 		Set<Long> itemIDs = new HashSet<Long>();
 		Set<Long> locationIDs = new HashSet<Long>();

@@ -378,13 +378,9 @@ public class AccountImportDialog extends JDialogCentered {
 		} else {
 			jType.setText(DialoguesAccount.get().corporation());
 		}
-		boolean corporation = false;
 		for (EsiScopes scope : EsiScopes.values()) {
-			if (!scope.isEnabled() || scope.getScope().isEmpty()) {
+			if (scope.isPublicScope()) {
 				continue;
-			}
-			if (scope.isCorporationScope()) {
-				corporation = true;
 			}
 			if (jCharacter.isSelected() && !scope.isCharacterScope()) {
 				continue;
@@ -410,9 +406,6 @@ public class AccountImportDialog extends JDialogCentered {
 			});
 			jScopes.add(jCheckBoxMenuItem, true);
 			scopesMap.put(scope, jCheckBoxMenuItem);
-		}
-		if (editEsiOwner == null) {
-			jType.setVisible(corporation);
 		}
 	}
 

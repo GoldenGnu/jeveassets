@@ -86,13 +86,4 @@ public class EsiContractItemsGetter extends AbstractEsiGetter {
 		return owner.isContracts();
 	}
 
-	@Override
-	protected boolean enabled() {
-		if (owner.isCorporation()) {
-			return EsiScopes.CORPORATION_CONTRACTS.isEnabled();
-		} else {
-			return EsiScopes.CHARACTER_CONTRACTS.isEnabled();
-		}
-	}
-
 }

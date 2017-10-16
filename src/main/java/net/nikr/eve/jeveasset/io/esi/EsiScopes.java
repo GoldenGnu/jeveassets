@@ -25,36 +25,34 @@ import net.troja.eve.esi.auth.SsoScopes;
 
 public enum EsiScopes {
 	
-	CHARACTER_ASSETS(SsoScopes.ESI_ASSETS_READ_ASSETS_V1, DialoguesAccount.get().scopeAssets(), ScopeType.CHARACTER, true),
-	CHARACTER_WALLET(SsoScopes.ESI_WALLET_READ_CHARACTER_WALLET_V1, DialoguesAccount.get().scopeWallet(), ScopeType.CHARACTER, true),
-	CHARACTER_INDUSTRY_JOBS(SsoScopes.ESI_INDUSTRY_READ_CHARACTER_JOBS_V1, DialoguesAccount.get().scopeIndustryJobs(), ScopeType.CHARACTER, true),
-	CHARACTER_MARKET_ORDERS(SsoScopes.ESI_MARKETS_READ_CHARACTER_ORDERS_V1, DialoguesAccount.get().scopeMarketOrders(), ScopeType.CHARACTER, true),
-	CHARACTER_BLUEPRINTS(SsoScopes.ESI_CHARACTERS_READ_BLUEPRINTS_V1, DialoguesAccount.get().scopeBlueprints(), ScopeType.CHARACTER, true),
-	CHARACTER_CONTRACTS(SsoScopes.ESI_CONTRACTS_READ_CHARACTER_CONTRACTS_V1, DialoguesAccount.get().scopeContracts(), ScopeType.CHARACTER, true),
-	CHARACTER_STRUCTURES(SsoScopes.ESI_UNIVERSE_READ_STRUCTURES_V1, DialoguesAccount.get().scopeStructures(), ScopeType.CHARACTER, true),
-	CORPORATION_ROLES(SsoScopes.ESI_CHARACTERS_READ_CORPORATION_ROLES_V1, DialoguesAccount.get().scopeRoles(), ScopeType.CORPORATION, false, true),
-	CORPORATION_ASSETS(SsoScopes.ESI_ASSETS_READ_CORPORATION_ASSETS_V1, DialoguesAccount.get().scopeAssets(), ScopeType.CORPORATION, false),
-	CORPORATION_WALLET(SsoScopes.ESI_WALLET_READ_CORPORATION_WALLETS_V1, DialoguesAccount.get().scopeWallet(), ScopeType.CORPORATION, false),
-	CORPORATION_INDUSTRY_JOBS(SsoScopes.ESI_INDUSTRY_READ_CORPORATION_JOBS_V1, DialoguesAccount.get().scopeIndustryJobs(), ScopeType.CORPORATION, false),
-	CORPORATION_MARKET_ORDERS(SsoScopes.ESI_MARKETS_READ_CORPORATION_ORDERS_V1, DialoguesAccount.get().scopeMarketOrders(), ScopeType.CORPORATION, false),
-	CORPORATION_BLUEPRINTS(SsoScopes.ESI_CORPORATIONS_READ_BLUEPRINTS_V1, DialoguesAccount.get().scopeBlueprints(), ScopeType.CORPORATION, false),
-	CORPORATION_CONTRACTS(SsoScopes.ESI_CONTRACTS_READ_CORPORATION_CONTRACTS_V1, DialoguesAccount.get().scopeContracts(), ScopeType.CORPORATION, false),
-	NAMES(true), //Public
-	CONQUERABLE_STATIONS(true), //Public
+	CHARACTER_ASSETS(SsoScopes.ESI_ASSETS_READ_ASSETS_V1, DialoguesAccount.get().scopeAssets(), ScopeType.CHARACTER),
+	CHARACTER_WALLET(SsoScopes.ESI_WALLET_READ_CHARACTER_WALLET_V1, DialoguesAccount.get().scopeWallet(), ScopeType.CHARACTER),
+	CHARACTER_INDUSTRY_JOBS(SsoScopes.ESI_INDUSTRY_READ_CHARACTER_JOBS_V1, DialoguesAccount.get().scopeIndustryJobs(), ScopeType.CHARACTER),
+	CHARACTER_MARKET_ORDERS(SsoScopes.ESI_MARKETS_READ_CHARACTER_ORDERS_V1, DialoguesAccount.get().scopeMarketOrders(), ScopeType.CHARACTER),
+	CHARACTER_BLUEPRINTS(SsoScopes.ESI_CHARACTERS_READ_BLUEPRINTS_V1, DialoguesAccount.get().scopeBlueprints(), ScopeType.CHARACTER),
+	CHARACTER_CONTRACTS(SsoScopes.ESI_CONTRACTS_READ_CHARACTER_CONTRACTS_V1, DialoguesAccount.get().scopeContracts(), ScopeType.CHARACTER),
+	CHARACTER_STRUCTURES(SsoScopes.ESI_UNIVERSE_READ_STRUCTURES_V1, DialoguesAccount.get().scopeStructures(), ScopeType.CHARACTER),
+	CORPORATION_ROLES(SsoScopes.ESI_CHARACTERS_READ_CORPORATION_ROLES_V1, DialoguesAccount.get().scopeRoles(), ScopeType.CORPORATION, true),
+	CORPORATION_ASSETS(SsoScopes.ESI_ASSETS_READ_CORPORATION_ASSETS_V1, DialoguesAccount.get().scopeAssets(), ScopeType.CORPORATION),
+	CORPORATION_WALLET(SsoScopes.ESI_WALLET_READ_CORPORATION_WALLETS_V1, DialoguesAccount.get().scopeWallet(), ScopeType.CORPORATION),
+	CORPORATION_INDUSTRY_JOBS(SsoScopes.ESI_INDUSTRY_READ_CORPORATION_JOBS_V1, DialoguesAccount.get().scopeIndustryJobs(), ScopeType.CORPORATION),
+	CORPORATION_MARKET_ORDERS(SsoScopes.ESI_MARKETS_READ_CORPORATION_ORDERS_V1, DialoguesAccount.get().scopeMarketOrders(), ScopeType.CORPORATION),
+	CORPORATION_BLUEPRINTS(SsoScopes.ESI_CORPORATIONS_READ_BLUEPRINTS_V1, DialoguesAccount.get().scopeBlueprints(), ScopeType.CORPORATION),
+	CORPORATION_CONTRACTS(SsoScopes.ESI_CONTRACTS_READ_CORPORATION_CONTRACTS_V1, DialoguesAccount.get().scopeContracts(), ScopeType.CORPORATION),
+	NAMES(), //Public
+	CONQUERABLE_STATIONS(), //Public
 	;
 
 	private final String scope;
 	private final String text;
 	private final ScopeType scopeType;
-	private final boolean enabled;
 	private final boolean forced;
 
 	/**
 	 * Public Scopes
-	 * @param enabled 
 	 */
-	private EsiScopes(boolean enabled) {
-		this("", "", ScopeType.PUBLIC, enabled, false);
+	private EsiScopes() {
+		this("", "", ScopeType.PUBLIC, false);
 	}
 
 	/**
@@ -62,24 +60,21 @@ public enum EsiScopes {
 	 * @param scope
 	 * @param text
 	 * @param scopeType
-	 * @param enabled
 	 */
-	private EsiScopes(String scope, String text, ScopeType scopeType, boolean enabled) {
-		this(scope, text, scopeType, enabled, false);
+	private EsiScopes(String scope, String text, ScopeType scopeType) {
+		this(scope, text, scopeType, false);
 	}
 	/**
-	 * Corporation and Character Scopes
+	 * Forced Corporation and Character Scopes
 	 * @param scope
 	 * @param text
 	 * @param scopeType
-	 * @param enabled
-	 * @param forced 
+	 * @param forced
 	 */
-	private EsiScopes(String scope, String text, ScopeType scopeType, boolean enabled, boolean forced) {
+	private EsiScopes(String scope, String text, ScopeType scopeType, boolean forced) {
 		this.scope = scope;
 		this.text = text;
 		this.scopeType = scopeType;
-		this.enabled = enabled;
 		this.forced = forced;
 	}
 
@@ -91,16 +86,16 @@ public enum EsiScopes {
 		return scopes.contains(scope);
 	}
 
-	public boolean isEnabled() {
-		return enabled;
-	}
-
 	public boolean isCharacterScope() {
 		return scopeType == ScopeType.CHARACTER;
 	}
 
 	public boolean isCorporationScope() {
 		return scopeType == ScopeType.CORPORATION;
+	}
+
+	public boolean isPublicScope() {
+		return scopeType == ScopeType.PUBLIC;
 	}
 
 	public boolean isForced() {

@@ -664,10 +664,8 @@ public class UpdateDialog extends JDialogCentered {
 					updates.add(new EveKitAccountBalanceGetter(this, eveKitOwner));
 				}
 				//Esi
-				if ((EsiScopes.CHARACTER_WALLET.isEnabled() || EsiScopes.CORPORATION_WALLET.isEnabled())) {
-					for (EsiOwner esiOwner : program.getProfileManager().getEsiOwners()) {
-						updates.add(new EsiAccountBalanceGetter(this, esiOwner));
-					}
+				for (EsiOwner esiOwner : program.getProfileManager().getEsiOwners()) {
+					updates.add(new EsiAccountBalanceGetter(this, esiOwner));
 				}
 			}
 			if (jAssets.isSelected()) {
@@ -682,10 +680,8 @@ public class UpdateDialog extends JDialogCentered {
 					updates.add(new EveKitAssetGetter(this, eveKitOwner));
 				}
 				//Esi
-				if (EsiScopes.CHARACTER_ASSETS.isEnabled() || EsiScopes.CORPORATION_ASSETS.isEnabled()) {
-					for (EsiOwner esiOwner : program.getProfileManager().getEsiOwners()) {
-						updates.add(new EsiAssetsGetter(this, esiOwner));
-					}
+				for (EsiOwner esiOwner : program.getProfileManager().getEsiOwners()) {
+					updates.add(new EsiAssetsGetter(this, esiOwner));
 				}
 			}
 			if (jIndustryJobs.isSelected()) {
@@ -700,10 +696,8 @@ public class UpdateDialog extends JDialogCentered {
 					updates.add(new EveKitIndustryJobsGetter(this, eveKitOwner));
 				}
 				//Esi
-				if (EsiScopes.CHARACTER_INDUSTRY_JOBS.isEnabled() || EsiScopes.CORPORATION_INDUSTRY_JOBS.isEnabled()) {
-					for (EsiOwner esiOwner : program.getProfileManager().getEsiOwners()) {
-						updates.add(new EsiIndustryJobsGetter(this, esiOwner));
-					}
+				for (EsiOwner esiOwner : program.getProfileManager().getEsiOwners()) {
+					updates.add(new EsiIndustryJobsGetter(this, esiOwner));
 				}
 			}
 			if (jMarketOrders.isSelected()) {
@@ -718,10 +712,8 @@ public class UpdateDialog extends JDialogCentered {
 					updates.add(new EveKitMarketOrdersGetter(this, eveKitOwner));
 				}
 				//Esi
-				if (EsiScopes.CHARACTER_MARKET_ORDERS.isEnabled() || EsiScopes.CORPORATION_MARKET_ORDERS.isEnabled()) {
-					for (EsiOwner esiOwner : program.getProfileManager().getEsiOwners()) {
-						updates.add(new EsiMarketOrdersGetter(this, esiOwner, Settings.get().isMarketOrderHistory()));
-					}
+				for (EsiOwner esiOwner : program.getProfileManager().getEsiOwners()) {
+					updates.add(new EsiMarketOrdersGetter(this, esiOwner, Settings.get().isMarketOrderHistory()));
 				}
 			}
 			if (jJournal.isSelected()) {
@@ -736,10 +728,8 @@ public class UpdateDialog extends JDialogCentered {
 					updates.add(new EveKitJournalGetter(this, eveKitOwner));
 				}
 				//Esi
-				if (EsiScopes.CHARACTER_WALLET.isEnabled() || EsiScopes.CORPORATION_WALLET.isEnabled()) {
-					for (EsiOwner esiOwner : program.getProfileManager().getEsiOwners()) {
-						updates.add(new EsiJournalGetter(this, esiOwner, Settings.get().isJournalHistory()));
-					}
+				for (EsiOwner esiOwner : program.getProfileManager().getEsiOwners()) {
+					updates.add(new EsiJournalGetter(this, esiOwner, Settings.get().isJournalHistory()));
 				}
 			}
 			if (jTransactions.isSelected()) {
@@ -754,10 +744,8 @@ public class UpdateDialog extends JDialogCentered {
 					updates.add(new EveKitTransactionsGetter(this, eveKitOwner));
 				}
 				//Esi
-				if (EsiScopes.CHARACTER_WALLET.isEnabled() || EsiScopes.CORPORATION_WALLET.isEnabled()) {
-					for (EsiOwner esiOwner : program.getProfileManager().getEsiOwners()) {
-						updates.add(new EsiTransactionsGetter(this, esiOwner, Settings.get().isTransactionHistory()));
-					}
+				for (EsiOwner esiOwner : program.getProfileManager().getEsiOwners()) {
+					updates.add(new EsiTransactionsGetter(this, esiOwner, Settings.get().isTransactionHistory()));
 				}
 			}
 			if (jContracts.isSelected()) {
@@ -772,10 +760,8 @@ public class UpdateDialog extends JDialogCentered {
 					updates.add(new EveKitContractsGetter(this, eveKitOwner));
 				}
 				////Esi
-				if (EsiScopes.CHARACTER_CONTRACTS.isEnabled() || EsiScopes.CORPORATION_CONTRACTS.isEnabled()) {
-					for (EsiOwner esiOwner : program.getProfileManager().getEsiOwners()) {
-						updates.add(new EsiContractsGetter(this, esiOwner));
-					}
+				for (EsiOwner esiOwner : program.getProfileManager().getEsiOwners()) {
+					updates.add(new EsiContractsGetter(this, esiOwner));
 				}
 			}
 			if (jBlueprints.isSelected()) {
@@ -790,10 +776,8 @@ public class UpdateDialog extends JDialogCentered {
 					updates.add(new EveKitBlueprintsGetter(this, eveKitOwner));
 				}
 				//Esi
-				if (EsiScopes.CHARACTER_BLUEPRINTS.isEnabled() || EsiScopes.CORPORATION_BLUEPRINTS.isEnabled()) {
-					for (EsiOwner esiOwner : program.getProfileManager().getEsiOwners()) {
-						updates.add(new EsiBlueprintsGetter(this, esiOwner));
-					}
+				for (EsiOwner esiOwner : program.getProfileManager().getEsiOwners()) {
+					updates.add(new EsiBlueprintsGetter(this, esiOwner));
 				}
 			}
 		}
@@ -812,7 +796,7 @@ public class UpdateDialog extends JDialogCentered {
 		public Step3Task() {
 			super(DialoguesUpdate.get().step3());
 			//Conquerable Stations
-			if (EsiScopes.CONQUERABLE_STATIONS.isEnabled()) {
+			if (Program.USE_ESI_CONQUERABLE_STATIONS_GETTER) {
 				//ESI
 				updates.add(new EsiConquerableStationsGetter(this));
 			} else {
@@ -832,10 +816,8 @@ public class UpdateDialog extends JDialogCentered {
 					updates.add(new EveKitContractItemsGetter(this, eveKitOwner));
 				}
 				//Esi
-				if (EsiScopes.CHARACTER_CONTRACTS.isEnabled() || EsiScopes.CORPORATION_CONTRACTS.isEnabled()) {
-					for (EsiOwner esiOwner : program.getProfileManager().getEsiOwners()) {
-						updates.add(new EsiContractItemsGetter(this, esiOwner));
-					}
+				for (EsiOwner esiOwner : program.getProfileManager().getEsiOwners()) {
+					updates.add(new EsiContractItemsGetter(this, esiOwner));
 				}
 			}
 			//Locations
@@ -851,14 +833,12 @@ public class UpdateDialog extends JDialogCentered {
 					updates.add(new EveKitLocationsGetter(this, eveKitOwner));
 				}
 				//Esi
-				if ((EsiScopes.CHARACTER_ASSETS.isEnabled() || EsiScopes.CORPORATION_ASSETS.isEnabled())) {
-					for (EsiOwner esiOwner : program.getProfileManager().getEsiOwners()) {
-						updates.add(new EsiLocationsGetter(this, esiOwner));
-					}
+				for (EsiOwner esiOwner : program.getProfileManager().getEsiOwners()) {
+					updates.add(new EsiLocationsGetter(this, esiOwner));
 				}
 			}
 			//IDs to name
-			if (EsiScopes.NAMES.isEnabled()) {
+			if (Program.USE_ESI_NAME_GETTER) {
 				//ESI
 				updates.add(new EsiNameGetter(this, program.getOwnerTypes()));
 			} else {
@@ -866,10 +846,8 @@ public class UpdateDialog extends JDialogCentered {
 				updates.add(new NameGetter(this, program.getOwnerTypes()));
 			}
 			//Structures
-			if (EsiScopes.CHARACTER_STRUCTURES.isEnabled()) {
-				for (EsiOwner esiOwner : program.getProfileManager().getEsiOwners()) {
-					updates.add(new EsiStructuresGetter(this, esiOwner));
-				}
+			for (EsiOwner esiOwner : program.getProfileManager().getEsiOwners()) {
+				updates.add(new EsiStructuresGetter(this, esiOwner));
 			}
 		}
 
