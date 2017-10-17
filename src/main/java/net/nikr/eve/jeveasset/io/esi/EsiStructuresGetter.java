@@ -55,7 +55,9 @@ public class EsiStructuresGetter extends AbstractEsiGetter {
 
 	@Override
 	protected void get(ApiClient apiClient) throws ApiException {
-
+		if (owner.isCorporation()) {
+			return; //Corporation accounts don't get structures
+		}
 		Map<Long, StructureResponse> responses = updateList(getIDs(owner), new ListHandler<Long, StructureResponse>() {
 			@Override
 			public StructureResponse get(ApiClient apiClient, Long t) throws ApiException {
