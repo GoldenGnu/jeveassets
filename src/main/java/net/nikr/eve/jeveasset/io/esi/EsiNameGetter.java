@@ -57,7 +57,15 @@ public class EsiNameGetter extends AbstractEsiGetter {
 		Map<List<Integer>, List<UniverseNamesResponse>> responses = updateList(splitList(ids, UNIVERSE_BATCH_SIZE), new ListHandler<List<Integer>, List<UniverseNamesResponse>>() {
 			@Override
 			public List<UniverseNamesResponse> get(ApiClient apiClient, List<Integer> t) throws ApiException {
-				return getUniverseApiOpen(apiClient).postUniverseNames(t, DATASOURCE, USER_AGENT, null);
+				try {
+					return getUniverseApiOpen(apiClient).postUniverseNames(t, DATASOURCE, USER_AGENT, null);
+				} catch (ApiException ex) {
+					if (ex.getCode() == 404 && ex.getResponseBody().toLowerCase().contains("ensure all ids are valid before resolving")) {
+						return null; //Ignore this error we will use another endpoint instead
+					} else {
+						throw ex;
+					}
+				}
 			}
 		});
 
@@ -68,7 +76,6 @@ public class EsiNameGetter extends AbstractEsiGetter {
 			}
 			retries.removeAll(entry.getKey());
 		}
-		//Retries one by one
 		Map<List<Integer>, List<CharacterNamesResponse>> retriesResponses = updateList(splitList(retries, UNIVERSE_BATCH_SIZE), new ListHandler<List<Integer>, List<CharacterNamesResponse>>() {
 			@Override
 			public List<CharacterNamesResponse> get(ApiClient apiClient, List<Integer> t) throws ApiException {
@@ -77,7 +84,6 @@ public class EsiNameGetter extends AbstractEsiGetter {
 					list.add(i.longValue());
 				}
 				return getCharacterApiOpen(apiClient).getCharactersNames(list, DATASOURCE, USER_AGENT, null);
-				//return getUniverseApiOpen(apiClient).postUniverseNames(t, DATASOURCE, USER_AGENT, null);
 			}
 		});
 		for (Map.Entry<List<Integer>, List<CharacterNamesResponse>> entry : retriesResponses.entrySet()) {
