@@ -402,11 +402,7 @@ public abstract class AbstractGetter<O extends OwnerType, C, E extends Exception
 		while (run) {
 			count++;
 			List<K> result;
-			try {
-				result = updateApi(new IdUpdater<K>(handler, fromID, count + " of ?"), 0);
-			} catch (Exception ex){
-				break;
-			}
+			result = updateApi(new IdUpdater<K>(handler, fromID, count + " of ?"), 0);
 			if (result == null || result.isEmpty()) { //Nothing returned: we're done
 				break; //Stop updating
 			}
