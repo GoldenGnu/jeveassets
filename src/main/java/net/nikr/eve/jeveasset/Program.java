@@ -99,8 +99,6 @@ public class Program implements ActionListener {
 	public static final String PROGRAM_HOMEPAGE = "https://eve.nikr.net/jeveasset";
 	public static final boolean PROGRAM_FORCE_PORTABLE = false;
 	public static final boolean PROGRAM_SHOW_FEEDBACK_MSG = false;
-	public static final boolean USE_ESI_NAME_GETTER = true;
-	public static final boolean USE_ESI_CONQUERABLE_STATIONS_GETTER = true;
 
 	private static boolean debug = false;
 	private static boolean forceUpdate = false;

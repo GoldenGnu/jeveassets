@@ -58,21 +58,18 @@ import net.nikr.eve.jeveasset.io.esi.EsiLocationsGetter;
 import net.nikr.eve.jeveasset.io.esi.EsiMarketOrdersGetter;
 import net.nikr.eve.jeveasset.io.esi.EsiNameGetter;
 import net.nikr.eve.jeveasset.io.esi.EsiOwnerGetter;
-import net.nikr.eve.jeveasset.io.esi.EsiScopes;
 import net.nikr.eve.jeveasset.io.esi.EsiStructuresGetter;
 import net.nikr.eve.jeveasset.io.esi.EsiTransactionsGetter;
 import net.nikr.eve.jeveasset.io.eveapi.AccountBalanceGetter;
 import net.nikr.eve.jeveasset.io.eveapi.AccountGetter;
 import net.nikr.eve.jeveasset.io.eveapi.AssetsGetter;
 import net.nikr.eve.jeveasset.io.eveapi.BlueprintsGetter;
-import net.nikr.eve.jeveasset.io.eveapi.ConquerableStationsGetter;
 import net.nikr.eve.jeveasset.io.eveapi.ContractItemsGetter;
 import net.nikr.eve.jeveasset.io.eveapi.ContractsGetter;
 import net.nikr.eve.jeveasset.io.eveapi.IndustryJobsGetter;
 import net.nikr.eve.jeveasset.io.eveapi.JournalGetter;
 import net.nikr.eve.jeveasset.io.eveapi.LocationsGetter;
 import net.nikr.eve.jeveasset.io.eveapi.MarketOrdersGetter;
-import net.nikr.eve.jeveasset.io.eveapi.NameGetter;
 import net.nikr.eve.jeveasset.io.eveapi.TransactionsGetter;
 import net.nikr.eve.jeveasset.io.evekit.EveKitAccountBalanceGetter;
 import net.nikr.eve.jeveasset.io.evekit.EveKitAssetGetter;
@@ -795,14 +792,8 @@ public class UpdateDialog extends JDialogCentered {
 
 		public Step3Task() {
 			super(DialoguesUpdate.get().step3());
-			//Conquerable Stations
-			if (Program.USE_ESI_CONQUERABLE_STATIONS_GETTER) {
-				//ESI
-				updates.add(new EsiConquerableStationsGetter(this));
-			} else {
-				//EveApi
-				updates.add(new ConquerableStationsGetter(this));
-			}
+			//Conquerable Stations (ESI)
+			updates.add(new EsiConquerableStationsGetter(this));
 			//Contract Items
 			if (jContracts.isSelected()) {
 				//EveApi
@@ -837,14 +828,8 @@ public class UpdateDialog extends JDialogCentered {
 					updates.add(new EsiLocationsGetter(this, esiOwner));
 				}
 			}
-			//IDs to name
-			if (Program.USE_ESI_NAME_GETTER) {
-				//ESI
-				updates.add(new EsiNameGetter(this, program.getOwnerTypes()));
-			} else {
-				//EveApi
-				updates.add(new NameGetter(this, program.getOwnerTypes()));
-			}
+			//char/corp/alliance IDs to names (ESI)
+			updates.add(new EsiNameGetter(this, program.getOwnerTypes()));
 			//Structures
 			for (EsiOwner esiOwner : program.getProfileManager().getEsiOwners()) {
 				updates.add(new EsiStructuresGetter(this, esiOwner));
