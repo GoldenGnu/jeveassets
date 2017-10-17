@@ -259,18 +259,6 @@ public class AccountImportDialog extends JDialogCentered {
 		show(true, AccountImportCard.TYPE, null, null, null);
 	}
 
-	public void addEveKit() {
-		show(false, AccountImportCard.ADD_EVEKIT, null, null, null);
-	}
-
-	public void addEveApi() {
-		show(false, AccountImportCard.ADD_EVEAPI, null, null, null);
-	}
-
-	public void addEsi() {
-		show(false, AccountImportCard.ADD_ESI, null, null, null);
-	}
-
 	public void editEveKit(final EveKitOwner editEveKitOwner) {
 		show(false, AccountImportCard.ADD_EVEKIT, null, editEveKitOwner, null);
 	}
@@ -538,6 +526,9 @@ public class AccountImportDialog extends JDialogCentered {
 					case ADD_EVEKIT: //Previous: Type
 						currentCard = AccountImportCard.TYPE;
 						break;
+					case ADD_ESI: //Previous: Type
+						currentCard = AccountImportCard.TYPE;
+						break;
 					case VALIDATE: //Previous: Add
 						if (apiType == ApiType.EVEKIT) {
 							currentCard = AccountImportCard.ADD_EVEKIT;
@@ -683,14 +674,16 @@ public class AccountImportDialog extends JDialogCentered {
 	private class TypePanel extends JCardPanel {
 
 		public TypePanel() {
-			JButton jEveApi = new JButton(DialoguesAccount.get().eveapi(), Images.MISC_EVE.getIcon());
-			Font font = new Font(jEveApi.getFont().getName(), Font.BOLD, jEveApi.getFont().getSize() + 5);
-			jEveApi.setActionCommand(AccountImportAction.ADD_EVEAPI.name());
-			jEveApi.addActionListener(listener);
-			jEveApi.setIconTextGap(20);
-			jEveApi.setFont(font);
-			jEveApi.setHorizontalAlignment(JButton.LEADING);
+			JLabel jEsiLabel = new JLabel(DialoguesAccount.get().esiDescription());
+			JButton jEsi = new JButton(DialoguesAccount.get().esi(), Images.MISC_ESI.getIcon());
+			Font font = new Font(jEsi.getFont().getName(), Font.BOLD, jEsi.getFont().getSize() + 5);
+			jEsi.setActionCommand(AccountImportAction.ADD_ESI.name());
+			jEsi.addActionListener(listener);
+			jEsi.setIconTextGap(20);
+			jEsi.setFont(font);
+			jEsi.setHorizontalAlignment(JButton.LEADING);
 
+			JLabel jEveKitLabel = new JLabel(DialoguesAccount.get().evekitDescription());
 			JButton jEveKit = new JButton(DialoguesAccount.get().evekit(), Images.MISC_EVEKIT.getIcon());
 			jEveKit.setActionCommand(AccountImportAction.ADD_EVEKIT.name());
 			jEveKit.addActionListener(listener);
@@ -698,12 +691,13 @@ public class AccountImportDialog extends JDialogCentered {
 			jEveKit.setFont(font);
 			jEveKit.setHorizontalAlignment(JButton.LEADING);
 
-			JButton jEsi = new JButton(DialoguesAccount.get().esi(), Images.MISC_ESI.getIcon());
-			jEsi.setActionCommand(AccountImportAction.ADD_ESI.name());
-			jEsi.addActionListener(listener);
-			jEsi.setIconTextGap(20);
-			jEsi.setFont(font);
-			jEsi.setHorizontalAlignment(JButton.LEADING);
+			JLabel jEveApiLabel = new JLabel(DialoguesAccount.get().eveapiDescription());
+			JButton jEveApi = new JButton(DialoguesAccount.get().eveapi(), Images.MISC_EVE.getIcon());
+			jEveApi.setActionCommand(AccountImportAction.ADD_EVEAPI.name());
+			jEveApi.addActionListener(listener);
+			jEveApi.setIconTextGap(20);
+			jEveApi.setFont(font);
+			jEveApi.setHorizontalAlignment(JButton.LEADING);
 
 			ButtonGroup buttonGroup = new ButtonGroup();
 			buttonGroup.add(jEveApi);
@@ -712,15 +706,34 @@ public class AccountImportDialog extends JDialogCentered {
 
 			cardLayout.setHorizontalGroup(
 				cardLayout.createParallelGroup()
-					.addComponent(jEveApi, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Integer.MAX_VALUE)
-					.addComponent(jEveKit, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Integer.MAX_VALUE)
-					.addComponent(jEsi, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Integer.MAX_VALUE)
+					.addGroup(cardLayout.createSequentialGroup()
+						.addGroup(cardLayout.createParallelGroup()
+							.addComponent(jEsi, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Integer.MAX_VALUE)
+							.addComponent(jEveKit, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Integer.MAX_VALUE)
+							.addComponent(jEveApi, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Integer.MAX_VALUE)
+						)
+						.addGap(10)
+						.addGroup(cardLayout.createParallelGroup()
+							.addComponent(jEsiLabel, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Integer.MAX_VALUE)
+							.addComponent(jEveKitLabel, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Integer.MAX_VALUE)
+							.addComponent(jEveApiLabel, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Integer.MAX_VALUE)
+						)
+					)
 			);
 			cardLayout.setVerticalGroup(
 				cardLayout.createSequentialGroup()
-				.addComponent(jEveApi, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
-				.addComponent(jEveKit, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
-				.addComponent(jEsi, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+					.addGroup(cardLayout.createParallelGroup()
+						.addComponent(jEsi, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Integer.MAX_VALUE)
+						.addComponent(jEsiLabel, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Integer.MAX_VALUE)
+					)
+					.addGroup(cardLayout.createParallelGroup()
+						.addComponent(jEveKit, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Integer.MAX_VALUE)
+						.addComponent(jEveKitLabel, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Integer.MAX_VALUE)
+					)
+					.addGroup(cardLayout.createParallelGroup()
+						.addComponent(jEveApi, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Integer.MAX_VALUE)
+						.addComponent(jEveApiLabel, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Integer.MAX_VALUE)
+					)
 			);
 		}
 		
