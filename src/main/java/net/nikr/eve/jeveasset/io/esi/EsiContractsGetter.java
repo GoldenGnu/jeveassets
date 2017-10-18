@@ -27,6 +27,7 @@ import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import net.troja.eve.esi.ApiClient;
 import net.troja.eve.esi.ApiException;
 import net.troja.eve.esi.model.CharacterContractsResponse;
+import net.troja.eve.esi.model.CorporationContractsResponse;
 
 public class EsiContractsGetter extends AbstractEsiGetter {
 
@@ -36,8 +37,13 @@ public class EsiContractsGetter extends AbstractEsiGetter {
 
 	@Override
 	protected void get(ApiClient apiClient) throws ApiException {
-		List<CharacterContractsResponse> contracts = getContractsApiAuth(apiClient).getCharactersCharacterIdContracts((int) owner.getOwnerID(), DATASOURCE, null, USER_AGENT, null);
-		owner.setContracts(EsiConverter.toContracts(contracts, owner));
+		if (owner.isCorporation()) {
+			List<CorporationContractsResponse> contracts = getContractsApiAuth(apiClient).getCorporationsCorporationIdContracts((int) owner.getOwnerID(), DATASOURCE, null, USER_AGENT, null);
+			owner.setContracts(EsiConverter.toContractsCorporation(contracts, owner));
+		} else {
+			List<CharacterContractsResponse> contracts = getContractsApiAuth(apiClient).getCharactersCharacterIdContracts((int) owner.getOwnerID(), DATASOURCE, null, USER_AGENT, null);
+			owner.setContracts(EsiConverter.toContracts(contracts, owner));
+		}
 	}
 
 	@Override
@@ -48,15 +54,6 @@ public class EsiContractsGetter extends AbstractEsiGetter {
 	@Override
 	protected boolean inScope() {
 		return owner.isContracts();
-	}
-
-	@Override
-	protected boolean enabled() {
-		if (owner.isCorporation()) {
-			return false;
-		} else {
-			return EsiScopes.CHARACTER_CONTRACTS.isEnabled();
-		}
 	}
 
 }

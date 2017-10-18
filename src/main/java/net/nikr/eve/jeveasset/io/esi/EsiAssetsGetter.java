@@ -68,12 +68,4 @@ public class EsiAssetsGetter extends AbstractEsiGetter {
 		return owner.isAssetList();
 	}
 
-	@Override
-	protected boolean enabled() {
-		if (owner.isCorporation()) {
-			return EsiScopes.CORPORATION_ASSETS.isEnabled();
-		} else {
-			return EsiScopes.CHARACTER_ASSETS.isEnabled();
-		}
-	}
 }

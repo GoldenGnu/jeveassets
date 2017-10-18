@@ -22,6 +22,7 @@ package net.nikr.eve.jeveasset.data.api.raw;
 
 import net.nikr.eve.jeveasset.io.shared.RawConverter;
 import net.troja.eve.esi.model.CharacterContractsItemsResponse;
+import net.troja.eve.esi.model.CorporationContractsItemsResponse;
 
 public class RawContractItem {
 
@@ -57,11 +58,25 @@ public class RawContractItem {
 	}
 
 	/**
-	 * ESI
+	 * ESI Character
 	 *
 	 * @param contractItem
 	 */
 	public RawContractItem(CharacterContractsItemsResponse contractItem) {
+		isIncluded = contractItem.getIsIncluded();
+		isSingleton = contractItem.getIsSingleton();
+		quantity = contractItem.getQuantity();
+		rawQuantity = contractItem.getRawQuantity();
+		recordId = contractItem.getRecordId();
+		typeId = contractItem.getTypeId();
+	}
+
+	/**
+	 * ESI Corporation
+	 *
+	 * @param contractItem
+	 */
+	public RawContractItem(CorporationContractsItemsResponse contractItem) {
 		isIncluded = contractItem.getIsIncluded();
 		isSingleton = contractItem.getIsSingleton();
 		quantity = contractItem.getQuantity();

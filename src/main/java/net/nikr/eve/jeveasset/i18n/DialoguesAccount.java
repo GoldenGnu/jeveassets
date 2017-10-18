@@ -91,6 +91,9 @@ public abstract class DialoguesAccount extends Bundle {
 	public abstract String accountMigrated();
 	public abstract String accountCanMigrate();
 	public abstract String add();
+	public abstract String eveapiDescription();
+	public abstract String evekitDescription();
+	public abstract String esiDescription();
 	public abstract String eveapi();
 	public abstract String evekit();
 	public abstract String esi();
@@ -113,6 +116,8 @@ public abstract class DialoguesAccount extends Bundle {
 	public abstract String migrateAll();
 	public abstract String migrateEsiAccountName(String name, int included, int total);
 	public abstract String migrateHelp();
+	public abstract String accountMigratedDoneMsg();
+	public abstract String accountMigratedDoneTitle();
 
 	public abstract String deleteAccountQuestion();
 	public abstract String deleteAccount();

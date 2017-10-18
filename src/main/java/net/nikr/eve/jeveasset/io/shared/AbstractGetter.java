@@ -106,25 +106,35 @@ public abstract class AbstractGetter<O extends OwnerType, C, E extends Exception
 		ThreadWoker.start(updateTask, Collections.singletonList(this));
 	}
 
-	public synchronized final boolean hasError() {
+	public final synchronized boolean hasError() {
 		return error != null;
 	}
 
-	public synchronized final String getError() {
+	public final synchronized String getError() {
 		return error;
 	}
 
-	public synchronized final void setError(String error) {
+	public final synchronized void setError(String error) {
 		this.error = error;
 	}
+
+	/**
+	 * NOT THREAD SAFE!
+	 * use setNextUpdateSafe(Date date)
+	 * @param date 
+	 */
+	protected abstract void setNextUpdate(Date date);
+	protected abstract boolean invalidAccessPrivileges();
+	protected abstract <R> R updateApi(Updater<R, C, E> updater, int retries) throws E;
+	protected abstract void throwApiException(Exception ex) throws E;
 
 	protected final String getTaskName() {
 		return taskName;
 	}
 
-	protected boolean canUpdate() {
+	protected final boolean canUpdate() {
 		//Silently ignore disabled owners
-		if (owner != null && (!owner.isShowOwner() && !forceUpdate)) {
+		if (!forceUpdate && owner != null && !owner.isShowOwner()) {
 			logInfo(null, "Owner disabled");
 			return false; 
 		}
@@ -141,18 +151,28 @@ public abstract class AbstractGetter<O extends OwnerType, C, E extends Exception
 		return true;
 	}
 
-	protected synchronized void setNextUpdateSafe(Date date) {
+	protected final boolean isForceUpdate() {
+		return forceUpdate;
+	}
+
+	protected final synchronized void setNextUpdateSafe(Date date) {
 		setNextUpdate(date);
 	}
 
-	/**
-	 * NOT THREAD SAFE!
-	 * use setNextUpdateSafe(Date date)
-	 * @param date 
-	 */
-	protected abstract void setNextUpdate(Date date);
-	protected abstract boolean invalidAccessPrivileges();
-	protected abstract <R> R updateApi(Updater<R, C, E> updater, int retries) throws E;
+	protected interface Updater<R, C, E extends Throwable> {
+		public R update(final C client) throws E;
+		public String getStatus();
+	}
+
+	protected final <K> List<Future<K>> startSubThreads(Collection<? extends Callable<K>> updaters) throws InterruptedException, ExecutionException {
+		return ThreadWoker.startReturn(updateTask, updaters);
+	}
+
+	protected final void checkCancelled() {
+		if (updateTask != null && updateTask.isCancelled()) {
+			throw new TaskCancelledException();
+		}
+	}
 
 	protected final void addError(String update, String logMsg, String taskMsg) {
 		addError(update, logMsg, taskMsg, null);
@@ -194,7 +214,7 @@ public abstract class AbstractGetter<O extends OwnerType, C, E extends Exception
 
 	protected final void addMigrationWarning() {
 		if (updateTask != null) {
-			updateTask.addError("EveApi characters can be migrated to ESI", "Add ESI characters in the account manager:\r\nOptions > Accounts... > Add > ESI");
+			updateTask.addError("EveApi accounts can be migrated to ESI", "Add ESI accounts in the account manager:\r\nOptions > Accounts... > Add > ESI");
 		}
 	}
 
@@ -218,9 +238,7 @@ public abstract class AbstractGetter<O extends OwnerType, C, E extends Exception
 		LOG.info(builder.toString());
 	}
 
-	
-
-	protected String getOwnerName(O owner) {
+	protected final String getOwnerName(O owner) {
 		if (owner != null) {
 			return owner.getOwnerName();
 		} else {
@@ -228,7 +246,7 @@ public abstract class AbstractGetter<O extends OwnerType, C, E extends Exception
 		}
 	}
 
-	protected <T> List<List<T>> splitList(Collection<T> list, final int L) {
+	protected final <T> List<List<T>> splitList(Collection<T> list, final int L) {
 		return splitList(new ArrayList<T>(list), L);
 	}
 
@@ -290,7 +308,7 @@ public abstract class AbstractGetter<O extends OwnerType, C, E extends Exception
 		}
 	}
 
-	protected synchronized Integer getHeaderInteger(Map<String, List<String>> responseHeaders, String headerName) {
+	protected final  synchronized Integer getHeaderInteger(Map<String, List<String>> responseHeaders, String headerName) {
 		String errorResetHeader = getHeader(responseHeaders, headerName);
 		if (errorResetHeader != null) {
 			try {
@@ -302,7 +320,7 @@ public abstract class AbstractGetter<O extends OwnerType, C, E extends Exception
 		return null;
 	}
 
-	protected synchronized String getHeader(Map<String, List<String>> responseHeaders, String headerName) {
+	protected final synchronized String getHeader(Map<String, List<String>> responseHeaders, String headerName) {
 		if (responseHeaders != null) {
 			Map<String, List<String>> caseInsensitiveHeaders = new TreeMap<String, List<String>>(String.CASE_INSENSITIVE_ORDER);
 			caseInsensitiveHeaders.putAll(responseHeaders);
@@ -317,14 +335,7 @@ public abstract class AbstractGetter<O extends OwnerType, C, E extends Exception
 		return null;
 	}
 
-	protected abstract void throwApiException(Exception ex) throws E;
-
-	protected interface Updater<R, C, E extends Throwable> {
-		public R update(final C client) throws E;
-		public String getStatus();
-	}
-
-	protected <K, V> Map<K, V> updateList(Collection<K> list, ListHandler<K, V> handler) throws E {
+	protected final <K, V> Map<K, V> updateList(Collection<K> list, ListHandler<K, V> handler) throws E {
 		Map<K, V> values = new HashMap<K, V>();
 		List<ListUpdater<K, V>> updaters = new ArrayList<ListUpdater<K, V>>();
 		int count = 1;
@@ -347,16 +358,6 @@ public abstract class AbstractGetter<O extends OwnerType, C, E extends Exception
 		return values;
 	}
 
-	protected <K> List<Future<K>> startSubThreads(Collection<? extends Callable<K>> updaters) throws InterruptedException, ExecutionException {
-		return ThreadWoker.startReturn(updateTask, updaters);
-	}
-
-	protected void checkCancelled() {
-		if (updateTask != null && updateTask.isCancelled()) {
-			throw new TaskCancelledException();
-		}
-	}
-
 	protected abstract class ListHandler<K, V> {
 		protected abstract V get(C client, K k) throws E;
 	}
@@ -375,12 +376,14 @@ public abstract class AbstractGetter<O extends OwnerType, C, E extends Exception
 
 		@Override
 		public Map<K, V> update(C client) throws E {
-			Map<K, V> map = new HashMap<K, V>();
 			V v = handler.get(client, k);
 			if (v != null) {
+				Map<K, V> map = new HashMap<K, V>();
 				map.put(k, v);
+				return map;
+			} else {
+				return null;
 			}
-			return map;
 		}
 
 		@Override
@@ -394,7 +397,7 @@ public abstract class AbstractGetter<O extends OwnerType, C, E extends Exception
 		}
 	}
 
-	protected <K> List<K> updateIDs(Set<Long> existing, IDsHandler<K> handler) throws E {
+	protected final <K> List<K> updateIDs(Set<Long> existing, IDsHandler<K> handler) throws E {
 		List<K> list = new ArrayList<K>();
 		Long fromID = null;
 		boolean run = true;

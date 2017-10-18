@@ -87,9 +87,4 @@ public class EsiConquerableStationsGetter extends AbstractEsiGetter {
 		return true;
 	}
 
-	@Override
-	protected boolean enabled() {
-		return EsiScopes.CONQUERABLE_STATIONS.isEnabled();
-	}
-
 }

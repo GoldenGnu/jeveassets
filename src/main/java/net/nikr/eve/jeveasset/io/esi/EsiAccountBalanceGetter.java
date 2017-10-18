@@ -58,12 +58,4 @@ public class EsiAccountBalanceGetter extends AbstractEsiGetter {
 		return owner.isAccountBalance();
 	}
 
-	@Override
-	protected boolean enabled() {
-		if (owner.isCorporation()) {
-			return EsiScopes.CORPORATION_WALLET.isEnabled();
-		} else {
-			return EsiScopes.CHARACTER_WALLET.isEnabled();
-		}
-	}
 }

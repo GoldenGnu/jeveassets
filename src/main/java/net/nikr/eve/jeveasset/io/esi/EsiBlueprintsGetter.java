@@ -64,15 +64,6 @@ public class EsiBlueprintsGetter extends AbstractEsiGetter {
 	}
 
 	@Override
-	protected boolean enabled() {
-		if (owner.isCorporation()) {
-			return EsiScopes.CORPORATION_BLUEPRINTS.isEnabled();
-		} else {
-			return EsiScopes.CHARACTER_BLUEPRINTS.isEnabled();
-		}
-	}
-
-	@Override
 	protected boolean inScope() {
 		return owner.isBlueprints();
 	}

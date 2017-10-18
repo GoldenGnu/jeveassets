@@ -23,6 +23,7 @@ package net.nikr.eve.jeveasset.data.api.raw;
 import java.util.Date;
 import net.nikr.eve.jeveasset.io.shared.RawConverter;
 import net.troja.eve.esi.model.CharacterIndustryJobsResponse;
+import net.troja.eve.esi.model.CorporationIndustryJobsResponse;
 
 public class RawIndustryJob {
 
@@ -110,7 +111,7 @@ public class RawIndustryJob {
 	}
 
 	/**
-	 * ESI
+	 * ESI Character
 	 *
 	 * @param industryJob
 	 */
@@ -135,6 +136,36 @@ public class RawIndustryJob {
 		runs = industryJob.getRuns();
 		startDate = RawConverter.toDate(industryJob.getStartDate());
 		stationId = industryJob.getStationId();
+		status = IndustryJobStatus.valueOf(industryJob.getStatus().name());
+		successfulRuns = industryJob.getSuccessfulRuns();
+	}
+
+	/**
+	 * ESI Corporation
+	 *
+	 * @param industryJob
+	 */
+	public RawIndustryJob(CorporationIndustryJobsResponse industryJob) {
+		activityId = industryJob.getActivityId();
+		blueprintId = industryJob.getBlueprintId();
+		blueprintLocationId = industryJob.getBlueprintLocationId();
+		blueprintTypeId = industryJob.getBlueprintTypeId();
+		completedCharacterId = industryJob.getCompletedCharacterId();
+		completedDate = RawConverter.toDate(industryJob.getCompletedDate());
+		cost = industryJob.getCost();
+		duration = industryJob.getDuration();
+		endDate = RawConverter.toDate(industryJob.getEndDate());
+		facilityId = industryJob.getFacilityId();
+		installerId = industryJob.getInstallerId();
+		jobId = industryJob.getJobId();
+		licensedRuns = industryJob.getLicensedRuns();
+		outputLocationId = industryJob.getOutputLocationId();
+		pauseDate = RawConverter.toDate(industryJob.getPauseDate());
+		probability = industryJob.getProbability();
+		productTypeId = industryJob.getProductTypeId();
+		runs = industryJob.getRuns();
+		startDate = RawConverter.toDate(industryJob.getStartDate());
+		stationId = industryJob.getLocationId();
 		status = IndustryJobStatus.valueOf(industryJob.getStatus().name());
 		successfulRuns = industryJob.getSuccessfulRuns();
 	}

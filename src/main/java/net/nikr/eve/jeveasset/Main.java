@@ -277,6 +277,7 @@ public final class Main {
 		files.add("eve-esi-1.4.1.jar");
 		files.add("hamcrest-core-1.3.jar");
 		files.add("oauth2-client-2.25.1.jar");
+		files.add("jaxb-api-2.3.0.jar");
 		return files;
 	}
 }

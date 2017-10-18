@@ -55,6 +55,9 @@ import net.troja.eve.esi.model.CharacterWalletJournalExtraInfoResponse;
 import net.troja.eve.esi.model.CharacterWalletJournalResponse;
 import net.troja.eve.esi.model.CorporationAssetsResponse;
 import net.troja.eve.esi.model.CorporationBlueprintsResponse;
+import net.troja.eve.esi.model.CorporationContractsResponse;
+import net.troja.eve.esi.model.CorporationIndustryJobsResponse;
+import net.troja.eve.esi.model.CorporationOrdersResponse;
 import net.troja.eve.esi.model.CorporationWalletJournalExtraInfoResponse;
 import net.troja.eve.esi.model.CorporationWalletJournalResponse;
 
@@ -110,6 +113,7 @@ public class ConverterTestOptionsGetter {
 		//ContractAvailability
 		private static final RawContract.ContractAvailability[] RAW_CONTRACT_AVAILABILITY = RawContract.ContractAvailability.values();
 		private static final CharacterContractsResponse.AvailabilityEnum[] ESI_CONTRACTS_AVAILABILITY_CHARACTER = CharacterContractsResponse.AvailabilityEnum.values();
+		private static final CorporationContractsResponse.AvailabilityEnum[] ESI_CONTRACTS_AVAILABILITY_CORPORATION = CorporationContractsResponse.AvailabilityEnum.values();
 		private static final com.beimin.eveapi.model.shared.ContractAvailability[] XML_CONTRACT_AVAILABILITY = {
 			com.beimin.eveapi.model.shared.ContractAvailability.PUBLIC,
 			com.beimin.eveapi.model.shared.ContractAvailability.PRIVATE,
@@ -125,6 +129,7 @@ public class ConverterTestOptionsGetter {
 		//ContractStatus
 		private static final RawContract.ContractStatus[] RAW_CONTRACT_STATUS = RawContract.ContractStatus.values();
 		private static final CharacterContractsResponse.StatusEnum[] ESI_CONTRACT_STATUS_CHARACTER = CharacterContractsResponse.StatusEnum.values();
+		private static final CorporationContractsResponse.StatusEnum[] ESI_CONTRACT_STATUS_CORPORATION = CorporationContractsResponse.StatusEnum.values();
 		private static final com.beimin.eveapi.model.shared.ContractStatus[] XML_CONTRACT_STATUS = {
 			com.beimin.eveapi.model.shared.ContractStatus.OUTSTANDING,
 			com.beimin.eveapi.model.shared.ContractStatus.INPROGRESS,
@@ -152,6 +157,7 @@ public class ConverterTestOptionsGetter {
 		//ContractType
 		private static final RawContract.ContractType[] RAW_CONTRACT_TYPE = RawContract.ContractType.values();
 		private static final CharacterContractsResponse.TypeEnum[] ESI_CONTRACT_TYPE_CHARACTER = CharacterContractsResponse.TypeEnum.values();
+		private static final CorporationContractsResponse.TypeEnum[] ESI_CONTRACT_TYPE_CORPORATION = CorporationContractsResponse.TypeEnum.values();
 		private static final com.beimin.eveapi.model.shared.ContractType[] XML_CONTRACT_TYPE = {
 			null,
 			com.beimin.eveapi.model.shared.ContractType.ITEMEXCHANGE,
@@ -169,6 +175,7 @@ public class ConverterTestOptionsGetter {
 		//IndustryJobStatus
 		private static final RawIndustryJob.IndustryJobStatus[] RAW_INDUSTRY_JOB_STATUS = RawIndustryJob.IndustryJobStatus.values();
 		private static final CharacterIndustryJobsResponse.StatusEnum[] ESI_INDUSTRY_JOB_STATUS_CHARACTER = CharacterIndustryJobsResponse.StatusEnum.values();
+		private static final CorporationIndustryJobsResponse.StatusEnum[] ESI_INDUSTRY_JOB_STATUS_CORPORATION = CorporationIndustryJobsResponse.StatusEnum.values();
 		private static final Integer[] EVE_API_INDUSTRY_JOB_STATUS = {1, 2, 3, 101, 102, 103};
 		//JournalPartyType
 		private static final RawJournal.JournalPartyType[] RAW_JOURNAL_PARTY_TYPE = RawJournal.JournalPartyType.values();
@@ -182,10 +189,12 @@ public class ConverterTestOptionsGetter {
 		//MarketOrderRange
 		private static final RawMarketOrder.MarketOrderRange[] RAW_MARKET_ORDER_RANGE = RawMarketOrder.MarketOrderRange.values();
 		private static final CharacterOrdersResponse.RangeEnum[] ESI_MARKET_ORDER_RANGE_CHARACTER = CharacterOrdersResponse.RangeEnum.values();
+		private static final CorporationOrdersResponse.RangeEnum[] ESI_MARKET_ORDER_RANGE_CORPORATION = CorporationOrdersResponse.RangeEnum.values();
 		private static final Integer[] EVE_API_MARKET_ORDER_RANGE = {1, 10, 2, 20, 3, 30, 4, 40, 5, 32767, 0, -1};
 		//MarketOrderState
 		private static final RawMarketOrder.MarketOrderState[] RAW_MARKET_ORDER_STATE = RawMarketOrder.MarketOrderState.values();
 		private static final CharacterOrdersResponse.StateEnum[] ESI_MARKET_ORDER_STATE_CHARACTER = CharacterOrdersResponse.StateEnum.values();
+		private static final CorporationOrdersResponse.StateEnum[] ESI_MARKET_ORDER_STATE_CORPORATION = CorporationOrdersResponse.StateEnum.values();
 		private static final Integer[] EVE_API_MARKET_ORDER_STATE = {3, 5, 1, 2, 0, 4};
 		//Owners
 		private static final EsiCallbackURL[] ESI_CALLBACK_URL = EsiCallbackURL.values();
@@ -408,21 +417,25 @@ public class ConverterTestOptionsGetter {
 			//ContractAvailability
 			tempMax = Math.max(tempMax, RAW_CONTRACT_AVAILABILITY.length);
 			tempMax = Math.max(tempMax, ESI_CONTRACTS_AVAILABILITY_CHARACTER.length);
+			tempMax = Math.max(tempMax, ESI_CONTRACTS_AVAILABILITY_CORPORATION.length);
 			tempMax = Math.max(tempMax, XML_CONTRACT_AVAILABILITY.length);
 			tempMax = Math.max(tempMax, EVE_KIT_CONTRACT_AVAILABILITY.length);
 			//ContractStatus
 			tempMax = Math.max(tempMax, RAW_CONTRACT_STATUS.length);
 			tempMax = Math.max(tempMax, ESI_CONTRACT_STATUS_CHARACTER.length);
+			tempMax = Math.max(tempMax, ESI_CONTRACT_STATUS_CORPORATION.length);
 			tempMax = Math.max(tempMax, XML_CONTRACT_STATUS.length);
 			tempMax = Math.max(tempMax, EVE_KIT_CONTRACT_STATUS.length);
 			//ContractType
 			tempMax = Math.max(tempMax, RAW_CONTRACT_TYPE.length);
 			tempMax = Math.max(tempMax, ESI_CONTRACT_TYPE_CHARACTER.length);
+			tempMax = Math.max(tempMax, ESI_CONTRACT_TYPE_CORPORATION.length);
 			tempMax = Math.max(tempMax, XML_CONTRACT_TYPE.length);
 			tempMax = Math.max(tempMax, EVE_KIT_CONTRACT_TYPE.length);
 			//IndustryJobStatus
 			tempMax = Math.max(tempMax, RAW_INDUSTRY_JOB_STATUS.length);
 			tempMax = Math.max(tempMax, ESI_INDUSTRY_JOB_STATUS_CHARACTER.length);
+			tempMax = Math.max(tempMax, ESI_INDUSTRY_JOB_STATUS_CORPORATION.length);
 			tempMax = Math.max(tempMax, EVE_API_INDUSTRY_JOB_STATUS.length);
 			//JournalExtraInfo
 			//tempMax = Math.max(tempMax, rawJournalExtraInfo.length);
@@ -439,10 +452,12 @@ public class ConverterTestOptionsGetter {
 			//MarketOrderRange
 			tempMax = Math.max(tempMax, RAW_MARKET_ORDER_RANGE.length);
 			tempMax = Math.max(tempMax, ESI_MARKET_ORDER_RANGE_CHARACTER.length);
+			tempMax = Math.max(tempMax, ESI_MARKET_ORDER_RANGE_CORPORATION.length);
 			tempMax = Math.max(tempMax, EVE_API_MARKET_ORDER_RANGE.length);
 			//MarketOrderState
 			tempMax = Math.max(tempMax, RAW_MARKET_ORDER_STATE.length);
 			tempMax = Math.max(tempMax, ESI_MARKET_ORDER_STATE_CHARACTER.length);
+			tempMax = Math.max(tempMax, ESI_MARKET_ORDER_STATE_CORPORATION.length);
 			tempMax = Math.max(tempMax, EVE_API_MARKET_ORDER_STATE.length);
 			//Owners
 			tempMax = Math.max(tempMax, ESI_CALLBACK_URL.length);
@@ -608,6 +623,11 @@ public class ConverterTestOptionsGetter {
 		}
 
 		@Override
+		public CorporationContractsResponse.AvailabilityEnum getContractAvailabilityEsiCorporation() {
+			return get(ESI_CONTRACTS_AVAILABILITY_CORPORATION, index);
+		}
+
+		@Override
 		public com.beimin.eveapi.model.shared.ContractAvailability getContractAvailabilityEveApi() {
 			return get(XML_CONTRACT_AVAILABILITY, index);
 		}
@@ -626,6 +646,11 @@ public class ConverterTestOptionsGetter {
 		@Override
 		public CharacterContractsResponse.StatusEnum getContractStatusEsiCharacter() {
 			return get(ESI_CONTRACT_STATUS_CHARACTER, index);
+		}
+
+		@Override
+		public CorporationContractsResponse.StatusEnum getContractStatusEsiCorporation() {
+			return get(ESI_CONTRACT_STATUS_CORPORATION, index);
 		}
 
 		@Override
@@ -650,8 +675,13 @@ public class ConverterTestOptionsGetter {
 		}
 
 		@Override
-		public CharacterContractsResponse.TypeEnum getContractTypeEsi() {
+		public CharacterContractsResponse.TypeEnum getContractTypeEsiCharacter() {
 			return get(ESI_CONTRACT_TYPE_CHARACTER, index);
+		}
+
+		@Override
+		public CorporationContractsResponse.TypeEnum getContractTypeEsiCorporation() {
+			return get(ESI_CONTRACT_TYPE_CORPORATION, index);
 		}
 
 		@Override
@@ -668,6 +698,11 @@ public class ConverterTestOptionsGetter {
 		@Override
 		public CharacterIndustryJobsResponse.StatusEnum getIndustryJobStatusEsiCharacter() {
 			return get(ESI_INDUSTRY_JOB_STATUS_CHARACTER, index);
+		}
+
+		@Override
+		public CorporationIndustryJobsResponse.StatusEnum getIndustryJobStatusEsiCorporation() {
+			return get(ESI_INDUSTRY_JOB_STATUS_CORPORATION, index);
 		}
 
 		@Override
@@ -755,6 +790,11 @@ public class ConverterTestOptionsGetter {
 		}
 
 		@Override
+		public CorporationOrdersResponse.RangeEnum getMarketOrderRangeEsiCorporation() {
+			return get(ESI_MARKET_ORDER_RANGE_CORPORATION, index);
+		}
+
+		@Override
 		public int getMarketOrderRangeEveApi() {
 			return get(EVE_API_MARKET_ORDER_RANGE, index);
 		}
@@ -768,6 +808,11 @@ public class ConverterTestOptionsGetter {
 		@Override
 		public CharacterOrdersResponse.StateEnum getMarketOrderStateEsiCharacter() {
 			return get(ESI_MARKET_ORDER_STATE_CHARACTER, index);
+		}
+
+		@Override
+		public CorporationOrdersResponse.StateEnum getMarketOrderStateEsiCorporation() {
+			return get(ESI_MARKET_ORDER_STATE_CORPORATION, index);
 		}
 
 		@Override

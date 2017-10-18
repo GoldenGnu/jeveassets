@@ -41,16 +41,21 @@ public abstract class AbstractApiGetter<T extends ApiResponse> extends AbstractG
 
 	@Override
 	public void run() {
-		//Check if API key is invalid (still update when editing account AKA forceUpdate)
+		//Ignore migrated accounts
+		if (owner != null && owner.isMigrated()) {
+			logInfo(null, "Skipping migrated EveApi owner: "  + getOwnerName(owner));
+			return;
+		}
 		if (!canUpdate()) {
 			return;
 		}
-		if (isInvalid()) {
+		//Check if API key is invalid (still update when editing account AKA forceUpdate)
+		if (!isForceUpdate() && isInvalid()) {
 			errorInvalid();
 			return;
 		}
 		//Check if API key is expired (still update when editing account AKA forceUpdate)
-		if (isExpired()) {
+		if (!isForceUpdate() && isExpired()) {
 			errorExpired();
 			return;
 		}

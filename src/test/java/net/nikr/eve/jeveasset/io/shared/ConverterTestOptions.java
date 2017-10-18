@@ -51,6 +51,9 @@ import net.troja.eve.esi.model.CharacterWalletJournalExtraInfoResponse;
 import net.troja.eve.esi.model.CharacterWalletJournalResponse;
 import net.troja.eve.esi.model.CorporationAssetsResponse;
 import net.troja.eve.esi.model.CorporationBlueprintsResponse;
+import net.troja.eve.esi.model.CorporationContractsResponse;
+import net.troja.eve.esi.model.CorporationIndustryJobsResponse;
+import net.troja.eve.esi.model.CorporationOrdersResponse;
 import net.troja.eve.esi.model.CorporationWalletJournalExtraInfoResponse;
 import net.troja.eve.esi.model.CorporationWalletJournalResponse;
 import org.joda.time.DateTime;
@@ -112,6 +115,8 @@ public interface ConverterTestOptions {
 
 	public CharacterContractsResponse.AvailabilityEnum getContractAvailabilityEsiCharacter();
 
+	public CorporationContractsResponse.AvailabilityEnum getContractAvailabilityEsiCorporation();
+
 	public com.beimin.eveapi.model.shared.ContractAvailability getContractAvailabilityEveApi();
 
 	public String getContractAvailabilityEveKit();
@@ -120,6 +125,8 @@ public interface ConverterTestOptions {
 	public RawContract.ContractStatus getContractStatusRaw();
 
 	public CharacterContractsResponse.StatusEnum getContractStatusEsiCharacter();
+
+	public CorporationContractsResponse.StatusEnum getContractStatusEsiCorporation();
 
 	public com.beimin.eveapi.model.shared.ContractStatus getContractStatusEveApi();
 
@@ -130,7 +137,9 @@ public interface ConverterTestOptions {
 
 	public com.beimin.eveapi.model.shared.ContractType getContractTypeEveApi();
 
-	public CharacterContractsResponse.TypeEnum getContractTypeEsi();
+	public CharacterContractsResponse.TypeEnum getContractTypeEsiCharacter();
+
+	public CorporationContractsResponse.TypeEnum getContractTypeEsiCorporation();
 
 	public String getContractTypeEveKit();
 
@@ -138,6 +147,8 @@ public interface ConverterTestOptions {
 	public RawIndustryJob.IndustryJobStatus getIndustryJobStatusRaw();
 
 	public CharacterIndustryJobsResponse.StatusEnum getIndustryJobStatusEsiCharacter();
+
+	public CorporationIndustryJobsResponse.StatusEnum getIndustryJobStatusEsiCorporation();
 
 	public int getIndustryJobStatusEveApi();
 
@@ -175,12 +186,16 @@ public interface ConverterTestOptions {
 
 	public CharacterOrdersResponse.RangeEnum getMarketOrderRangeEsiCharacter();
 
+	public CorporationOrdersResponse.RangeEnum getMarketOrderRangeEsiCorporation();
+
 	public int getMarketOrderRangeEveApi();
 
 	//MarketOrderState
 	public RawMarketOrder.MarketOrderState getMarketOrderStateRaw();
 
 	public CharacterOrdersResponse.StateEnum getMarketOrderStateEsiCharacter();
+
+	public CorporationOrdersResponse.StateEnum getMarketOrderStateEsiCorporation();
 
 	public int getMarketOrderStateEveApi();
 

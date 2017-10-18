@@ -31,6 +31,7 @@ import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import net.troja.eve.esi.ApiClient;
 import net.troja.eve.esi.ApiException;
 import net.troja.eve.esi.model.CharacterIndustryJobsResponse;
+import net.troja.eve.esi.model.CorporationIndustryJobsResponse;
 
 
 public class EsiIndustryJobsGetter extends AbstractEsiGetter {
@@ -44,17 +45,36 @@ public class EsiIndustryJobsGetter extends AbstractEsiGetter {
 		Set<Boolean> completed = new HashSet<Boolean>();
 		completed.add(true);
 		completed.add(false);
-		Map<Boolean, List<CharacterIndustryJobsResponse>> updateList = updateList(completed, new ListHandler<Boolean, List<CharacterIndustryJobsResponse>>() {
-			@Override
-			protected List<CharacterIndustryJobsResponse> get(ApiClient client, Boolean k) throws ApiException {
-				return getIndustryApiAuth(apiClient).getCharactersCharacterIdIndustryJobs((int) owner.getOwnerID(), DATASOURCE, k, null, USER_AGENT, null);
+		if (owner.isCorporation()) {
+			Map<Boolean, List<CorporationIndustryJobsResponse>> updateList = updateList(completed, new ListHandler<Boolean, List<CorporationIndustryJobsResponse>>() {
+				@Override
+				protected List<CorporationIndustryJobsResponse> get(ApiClient client, Boolean k) throws ApiException {
+					return updatePages(new EsiPagesHandler<CorporationIndustryJobsResponse>() {
+						@Override
+						public List<CorporationIndustryJobsResponse> get(ApiClient apiClient, Integer page) throws ApiException {
+							return getIndustryApiAuth(apiClient).getCorporationsCorporationIdIndustryJobs((int) owner.getOwnerID(), DATASOURCE, k, page, null, USER_AGENT, null);
+						}
+					});
+				}
+			});
+			List<CorporationIndustryJobsResponse> industryJobs = new ArrayList<>();
+			for (List<CorporationIndustryJobsResponse> list : updateList.values()) {
+				industryJobs.addAll(list);
 			}
-		});
-		List<CharacterIndustryJobsResponse> industryJobs = new ArrayList<>();
-		for (List<CharacterIndustryJobsResponse> list : updateList.values()) {
-			industryJobs.addAll(list);
+			owner.setIndustryJobs(EsiConverter.toIndustryJobsCorporation(industryJobs, owner));
+		} else {
+			Map<Boolean, List<CharacterIndustryJobsResponse>> updateList = updateList(completed, new ListHandler<Boolean, List<CharacterIndustryJobsResponse>>() {
+				@Override
+				protected List<CharacterIndustryJobsResponse> get(ApiClient client, Boolean k) throws ApiException {
+					return getIndustryApiAuth(apiClient).getCharactersCharacterIdIndustryJobs((int) owner.getOwnerID(), DATASOURCE, k, null, USER_AGENT, null);
+				}
+			});
+			List<CharacterIndustryJobsResponse> industryJobs = new ArrayList<>();
+			for (List<CharacterIndustryJobsResponse> list : updateList.values()) {
+				industryJobs.addAll(list);
+			}
+			owner.setIndustryJobs(EsiConverter.toIndustryJobs(industryJobs, owner));
 		}
-		owner.setIndustryJobs(EsiConverter.toIndustryJobs(industryJobs, owner));
 	}
 
 	@Override
@@ -65,15 +85,6 @@ public class EsiIndustryJobsGetter extends AbstractEsiGetter {
 	@Override
 	protected boolean inScope() {
 		return owner.isIndustryJobs();
-	}
-
-	@Override
-	protected boolean enabled() {
-		if (owner.isCorporation()) {
-			return false;
-		} else {
-			return EsiScopes.CHARACTER_INDUSTRY_JOBS.isEnabled();
-		}
 	}
 
 }

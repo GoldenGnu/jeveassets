@@ -20,9 +20,6 @@
  */
 package net.nikr.eve.jeveasset.data.settings;
 
-import net.nikr.eve.jeveasset.data.settings.ProxyData;
-import net.nikr.eve.jeveasset.data.settings.PriceDataSettings;
-import net.nikr.eve.jeveasset.data.settings.ExportSettings;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
 import com.beimin.eveapi.connectors.ApiConnector;
 import com.beimin.eveapi.parser.shared.AbstractApiParser;
@@ -260,7 +257,7 @@ public class Settings {
 		LOCK.saveEnd();
 	}
 
-	public static void load() {
+	public synchronized static void load() {
 		if (settings == null) {
 			settings = new Settings();
 			boolean imported = autoImportSettings();

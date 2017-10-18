@@ -55,6 +55,10 @@ import net.troja.eve.esi.model.CharacterWalletJournalResponse;
 import net.troja.eve.esi.model.CharacterWalletTransactionsResponse;
 import net.troja.eve.esi.model.CorporationAssetsResponse;
 import net.troja.eve.esi.model.CorporationBlueprintsResponse;
+import net.troja.eve.esi.model.CorporationContractsItemsResponse;
+import net.troja.eve.esi.model.CorporationContractsResponse;
+import net.troja.eve.esi.model.CorporationIndustryJobsResponse;
+import net.troja.eve.esi.model.CorporationOrdersResponse;
 import net.troja.eve.esi.model.CorporationWalletJournalResponse;
 import net.troja.eve.esi.model.CorporationWalletTransactionsResponse;
 import net.troja.eve.esi.model.CorporationWalletsResponse;
@@ -117,6 +121,14 @@ public class EsiConverter extends DataConverter {
 		return convertRawIndustryJobs(rawIndustryJobs, owner);
 	}
 
+	public static List<MyIndustryJob> toIndustryJobsCorporation(List<CorporationIndustryJobsResponse> responses, OwnerType owner) {
+		List<RawIndustryJob> rawIndustryJobs = new ArrayList<RawIndustryJob>();
+		for (CorporationIndustryJobsResponse response : responses) {
+			rawIndustryJobs.add(new RawIndustryJob(response));
+		}
+		return convertRawIndustryJobs(rawIndustryJobs, owner);
+	}
+
 	public static Set<MyJournal> toJournals(List<CharacterWalletJournalResponse> responses, OwnerType owner, Integer accountKey, boolean saveHistory) {
 		List<RawJournal> rawJournals = new ArrayList<RawJournal>();
 		for (CharacterWalletJournalResponse response : responses) {
@@ -141,6 +153,14 @@ public class EsiConverter extends DataConverter {
 		return convertRawContracts(rawContracts, owner);
 	}
 
+	public static Map<MyContract, List<MyContractItem>> toContractsCorporation(List<CorporationContractsResponse> responses, OwnerType owner) {
+		List<RawContract> rawContracts = new ArrayList<RawContract>();
+		for (CorporationContractsResponse response : responses) {
+			rawContracts.add(new RawContract(response));
+		}
+		return convertRawContracts(rawContracts, owner);
+	}
+
 	public static Map<MyContract, List<MyContractItem>> toContractItems(MyContract contract, List<CharacterContractsItemsResponse> responses, OwnerType owner) {
 		List<RawContractItem> rawContractItems = new ArrayList<RawContractItem>();
 		for (CharacterContractsItemsResponse response : responses) {
@@ -149,9 +169,25 @@ public class EsiConverter extends DataConverter {
 		return convertRawContractItems(contract, rawContractItems, owner);
 	}
 
+	public static Map<MyContract, List<MyContractItem>> toContractItemsCorporation(MyContract contract, List<CorporationContractsItemsResponse> responses, OwnerType owner) {
+		List<RawContractItem> rawContractItems = new ArrayList<RawContractItem>();
+		for (CorporationContractsItemsResponse response : responses) {
+			rawContractItems.add(new RawContractItem(response));
+		}
+		return convertRawContractItems(contract, rawContractItems, owner);
+	}
+
 	public static Set<MyMarketOrder> toMarketOrders(List<CharacterOrdersResponse> responses, OwnerType owner, boolean saveHistory) {
 		List<RawMarketOrder> rawMarketOrders = new ArrayList<RawMarketOrder>();
 		for (CharacterOrdersResponse response : responses) {
+			rawMarketOrders.add(new RawMarketOrder(response));
+		}
+		return convertRawMarketOrders(rawMarketOrders, owner, saveHistory);
+	}
+
+	public static Set<MyMarketOrder> toMarketOrdersCorporation(List<CorporationOrdersResponse> responses, OwnerType owner, boolean saveHistory) {
+		List<RawMarketOrder> rawMarketOrders = new ArrayList<RawMarketOrder>();
+		for (CorporationOrdersResponse response : responses) {
 			rawMarketOrders.add(new RawMarketOrder(response));
 		}
 		return convertRawMarketOrders(rawMarketOrders, owner, saveHistory);

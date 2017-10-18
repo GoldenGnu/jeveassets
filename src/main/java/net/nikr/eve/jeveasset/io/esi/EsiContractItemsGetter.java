@@ -32,6 +32,7 @@ import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import net.troja.eve.esi.ApiClient;
 import net.troja.eve.esi.ApiException;
 import net.troja.eve.esi.model.CharacterContractsItemsResponse;
+import net.troja.eve.esi.model.CorporationContractsItemsResponse;
 
 public class EsiContractItemsGetter extends AbstractEsiGetter {
 
@@ -52,14 +53,26 @@ public class EsiContractItemsGetter extends AbstractEsiGetter {
 			contracts.add(entry.getKey());
 
 		}
-		Map<MyContract, List<CharacterContractsItemsResponse>> responses = updateList(contracts, new ListHandler<MyContract, List<CharacterContractsItemsResponse>>() {
-			@Override
-			public List<CharacterContractsItemsResponse> get(ApiClient apiClient, MyContract t) throws ApiException {
-				return getContractsApiAuth(apiClient).getCharactersCharacterIdContractsContractIdItems((int) owner.getOwnerID(), t.getContractID(), DATASOURCE, null, USER_AGENT, null);
+		if (owner.isCorporation()) {
+			Map<MyContract, List<CorporationContractsItemsResponse>> responses = updateList(contracts, new ListHandler<MyContract, List<CorporationContractsItemsResponse>>() {
+				@Override
+				public List<CorporationContractsItemsResponse> get(ApiClient apiClient, MyContract t) throws ApiException {
+					return getContractsApiAuth(apiClient).getCorporationsCorporationIdContractsContractIdItems(t.getContractID(), (int) owner.getOwnerID(), DATASOURCE, null, USER_AGENT, null);
+				}
+			});
+			for (Map.Entry<MyContract, List<CorporationContractsItemsResponse>> entry : responses.entrySet()) {
+				owner.setContracts(EsiConverter.toContractItemsCorporation(entry.getKey(), entry.getValue(), owner));
 			}
-		});
-		for (Map.Entry<MyContract, List<CharacterContractsItemsResponse>> entry : responses.entrySet()) {
-			owner.setContracts(EsiConverter.toContractItems(entry.getKey(), entry.getValue(), owner));
+		} else {
+			Map<MyContract, List<CharacterContractsItemsResponse>> responses = updateList(contracts, new ListHandler<MyContract, List<CharacterContractsItemsResponse>>() {
+				@Override
+				public List<CharacterContractsItemsResponse> get(ApiClient apiClient, MyContract t) throws ApiException {
+					return getContractsApiAuth(apiClient).getCharactersCharacterIdContractsContractIdItems((int) owner.getOwnerID(), t.getContractID(), DATASOURCE, null, USER_AGENT, null);
+				}
+			});
+			for (Map.Entry<MyContract, List<CharacterContractsItemsResponse>> entry : responses.entrySet()) {
+				owner.setContracts(EsiConverter.toContractItems(entry.getKey(), entry.getValue(), owner));
+			}
 		}
 	}
 
@@ -71,15 +84,6 @@ public class EsiContractItemsGetter extends AbstractEsiGetter {
 	@Override
 	protected boolean inScope() {
 		return owner.isContracts();
-	}
-
-	@Override
-	protected boolean enabled() {
-		if (owner.isCorporation()) {
-			return false;
-		} else {
-			return EsiScopes.CHARACTER_CONTRACTS.isEnabled();
-		}
 	}
 
 }

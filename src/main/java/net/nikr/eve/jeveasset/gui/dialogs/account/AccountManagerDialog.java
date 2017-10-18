@@ -59,9 +59,7 @@ import net.nikr.eve.jeveasset.i18n.DialoguesAccount;
 public class AccountManagerDialog extends JDialogCentered {
 
 	private enum AccountManagerAction {
-		ADD_EVEAPI,
-		ADD_EVEKIT,
-		ADD_ESI,
+		ADD,
 		CLOSE,
 		COLLAPSE,
 		EXPAND,
@@ -74,7 +72,7 @@ public class AccountManagerDialog extends JDialogCentered {
 	//GUI
 	private final AccountImportDialog accountImportDialog;
 	private final JSeparatorTable jTable;
-	private final JDropDownButton jAdd;
+	private final JButton jAdd;
 	private final JButton jExpand;
 	private final JButton jCollapse;
 	private final JDropDownButton jAssets;
@@ -118,23 +116,10 @@ public class AccountManagerDialog extends JDialogCentered {
 		jTable.setSelectionModel(selectionModel);
 
 		//Add Button
-		jAdd = new JDropDownButton(DialoguesAccount.get().add());
-		
-		JMenuItem jEveApi = new JMenuItem(DialoguesAccount.get().eveapi(), Images.MISC_EVE.getIcon());
-		jEveApi.setActionCommand(AccountManagerAction.ADD_EVEAPI.name());
-		jEveApi.addActionListener(listener);
-		jAdd.add(jEveApi);
+		jAdd = new JButton(DialoguesAccount.get().add());
+		jAdd.setActionCommand(AccountManagerAction.ADD.name());
+		jAdd.addActionListener(listener);
 
-		JMenuItem jEveKit = new JMenuItem(DialoguesAccount.get().evekit(), Images.MISC_EVEKIT.getIcon());
-		jEveKit.setActionCommand(AccountManagerAction.ADD_EVEKIT.name());
-		jEveKit.addActionListener(listener);
-		jAdd.add(jEveKit);
-
-		JMenuItem jEsi = new JMenuItem(DialoguesAccount.get().esi(), Images.MISC_ESI.getIcon());
-		jEsi.setActionCommand(AccountManagerAction.ADD_ESI.name());
-		jEsi.addActionListener(listener);
-		jAdd.add(jEsi);
-		
 		jCollapse = new JButton(DialoguesAccount.get().collapse());
 		jCollapse.setActionCommand(AccountManagerAction.COLLAPSE.name());
 		jCollapse.addActionListener(listener);
@@ -322,12 +307,8 @@ public class AccountManagerDialog extends JDialogCentered {
 	private class ListenerClass implements ActionListener {
 		@Override
 		public void actionPerformed(final ActionEvent e) {
-			if (AccountManagerAction.ADD_EVEAPI.name().equals(e.getActionCommand())) {
-				accountImportDialog.addEveApi();
-			} else if (AccountManagerAction.ADD_EVEKIT.name().equals(e.getActionCommand())) {
-				accountImportDialog.addEveKit();
-			} else if (AccountManagerAction.ADD_ESI.name().equals(e.getActionCommand())) {
-				accountImportDialog.addEsi();
+			if (AccountManagerAction.ADD.name().equals(e.getActionCommand())) {
+				accountImportDialog.add();
 			} else if (AccountManagerAction.COLLAPSE.name().equals(e.getActionCommand())) {
 				jTable.expandSeparators(false);
 			} else if (AccountManagerAction.EXPAND.name().equals(e.getActionCommand())) {
@@ -400,6 +381,16 @@ public class AccountManagerDialog extends JDialogCentered {
 					}
 					boolean updated = jMigrateDialog.show(owners);
 					if (updated) {
+						boolean allMigrated = true;
+						for (EveApiOwner owner : owners) {
+							if (!owner.isMigrated()) {
+								allMigrated = false;
+								break;
+							}
+						}
+						if (allMigrated) {
+							JOptionPane.showMessageDialog(getDialog(), DialoguesAccount.get().accountMigratedDoneMsg(), DialoguesAccount.get().accountMigratedDoneTitle(), JOptionPane.PLAIN_MESSAGE);
+						}
 						forceUpdate();
 						updateTable();
 					}

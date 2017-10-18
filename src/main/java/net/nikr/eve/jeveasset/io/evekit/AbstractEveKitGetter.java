@@ -60,7 +60,7 @@ public abstract class AbstractEveKitGetter extends AbstractGetter<EveKitOwner, A
 			return;
 		}
 		//Check if the Api Key is expired
-		if (owner.isExpired()) {
+		if (!isForceUpdate() && owner.isExpired()) {
 			addError(null, "API KEY EXPIRED", "API Key expired");
 			return;
 		}

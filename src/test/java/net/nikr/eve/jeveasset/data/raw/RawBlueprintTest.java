@@ -23,6 +23,7 @@ package net.nikr.eve.jeveasset.data.raw;
 import net.nikr.eve.jeveasset.TestUtil;
 import net.nikr.eve.jeveasset.data.api.raw.RawBlueprint;
 import net.troja.eve.esi.model.CharacterBlueprintsResponse;
+import net.troja.eve.esi.model.CorporationBlueprintsResponse;
 import org.junit.Test;
 
 
@@ -31,5 +32,6 @@ public class RawBlueprintTest extends TestUtil {
 	@Test
 	public void rawBlueprintTest() {
 		RawUtil.compare(RawBlueprint.class, CharacterBlueprintsResponse.class);
+		RawUtil.compare(RawBlueprint.class, CorporationBlueprintsResponse.class);
 	}
 }

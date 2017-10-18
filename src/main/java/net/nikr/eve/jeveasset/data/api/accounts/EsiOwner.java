@@ -208,12 +208,25 @@ public class EsiOwner extends AbstractOwner implements OwnerType {
 
 	@Override
 	public boolean isIndustryJobs() {
-		return EsiScopes.CHARACTER_INDUSTRY_JOBS.isInScope(scopes);
+		if (isCorporation()) {
+			return EsiScopes.CORPORATION_INDUSTRY_JOBS.isInScope(scopes) 
+					&& (roles.contains("FactoryManager")
+					|| roles.contains("Director"));
+		} else {
+			return EsiScopes.CHARACTER_INDUSTRY_JOBS.isInScope(scopes);
+		}
 	}
 
 	@Override
 	public boolean isMarketOrders() {
-		return EsiScopes.CHARACTER_MARKET_ORDERS.isInScope(scopes);
+		if (isCorporation()) {
+			return EsiScopes.CORPORATION_MARKET_ORDERS.isInScope(scopes)
+					&& (roles.contains("Accountant")
+					|| roles.contains("Trader")
+					|| roles.contains("Director"));
+		} else {
+			return EsiScopes.CHARACTER_MARKET_ORDERS.isInScope(scopes);
+		}
 	}
 
 	@Override
@@ -228,7 +241,11 @@ public class EsiOwner extends AbstractOwner implements OwnerType {
 
 	@Override
 	public boolean isContracts() {
-		return EsiScopes.CHARACTER_CONTRACTS.isInScope(scopes);
+		if (isCorporation()) {
+			return EsiScopes.CORPORATION_CONTRACTS.isInScope(scopes);
+		} else {
+			return EsiScopes.CHARACTER_CONTRACTS.isInScope(scopes);
+		}
 	}
 
 	@Override
@@ -238,7 +255,11 @@ public class EsiOwner extends AbstractOwner implements OwnerType {
 
 	@Override
 	public boolean isStructures() {
-		return EsiScopes.CHARACTER_STRUCTURES.isInScope(scopes);
+		if (isCorporation()) {
+			return false; //Corporation don't get structures (It's a character endpoint)
+		} else {
+			return EsiScopes.CHARACTER_STRUCTURES.isInScope(scopes);
+		}
 	}
 
 	public boolean isRoles() {

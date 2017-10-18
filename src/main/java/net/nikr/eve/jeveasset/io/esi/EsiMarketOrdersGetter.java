@@ -27,6 +27,7 @@ import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import net.troja.eve.esi.ApiClient;
 import net.troja.eve.esi.ApiException;
 import net.troja.eve.esi.model.CharacterOrdersResponse;
+import net.troja.eve.esi.model.CorporationOrdersResponse;
 
 
 public class EsiMarketOrdersGetter extends AbstractEsiGetter {
@@ -40,8 +41,18 @@ public class EsiMarketOrdersGetter extends AbstractEsiGetter {
 
 	@Override
 	protected void get(ApiClient apiClient) throws ApiException {
-		List<CharacterOrdersResponse> marketOrders = getMarketApiAuth(apiClient).getCharactersCharacterIdOrders((int) owner.getOwnerID(), DATASOURCE, null, USER_AGENT, null);
-		owner.setMarketOrders(EsiConverter.toMarketOrders(marketOrders, owner, saveHistory));
+		if (owner.isCorporation()) {
+			List<CorporationOrdersResponse> marketOrders = updatePages(new EsiPagesHandler<CorporationOrdersResponse>() {
+				@Override
+				public List<CorporationOrdersResponse> get(ApiClient apiClient, Integer page) throws ApiException {
+					return getMarketApiAuth(apiClient).getCorporationsCorporationIdOrders((int) owner.getOwnerID(), DATASOURCE, page, null, USER_AGENT, null);
+				}
+			});
+			owner.setMarketOrders(EsiConverter.toMarketOrdersCorporation(marketOrders, owner, saveHistory));
+		} else {
+			List<CharacterOrdersResponse> marketOrders = getMarketApiAuth(apiClient).getCharactersCharacterIdOrders((int) owner.getOwnerID(), DATASOURCE, null, USER_AGENT, null);
+			owner.setMarketOrders(EsiConverter.toMarketOrders(marketOrders, owner, saveHistory));
+		}
 	}
 
 	@Override
@@ -52,15 +63,6 @@ public class EsiMarketOrdersGetter extends AbstractEsiGetter {
 	@Override
 	protected boolean inScope() {
 		return owner.isMarketOrders();
-	}
-
-	@Override
-	protected boolean enabled() {
-		if (owner.isCorporation()) {
-			return false;
-		} else {
-			return EsiScopes.CHARACTER_MARKET_ORDERS.isEnabled();
-		}
 	}
 
 }

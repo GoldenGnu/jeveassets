@@ -55,7 +55,9 @@ public class EsiStructuresGetter extends AbstractEsiGetter {
 
 	@Override
 	protected void get(ApiClient apiClient) throws ApiException {
-
+		if (owner.isCorporation()) {
+			return; //Corporation accounts don't get structures
+		}
 		Map<Long, StructureResponse> responses = updateList(getIDs(owner), new ListHandler<Long, StructureResponse>() {
 			@Override
 			public StructureResponse get(ApiClient apiClient, Long t) throws ApiException {
@@ -86,15 +88,10 @@ public class EsiStructuresGetter extends AbstractEsiGetter {
 
 	@Override
 	protected boolean inScope() {
-		return owner.isStructures();
-	}
-
-	@Override
-	protected boolean enabled() {
 		if (owner.isCorporation()) {
-			return false;
+			return true; //Overwrite the default, so, we don't get errors
 		} else {
-			return EsiScopes.CHARACTER_STRUCTURES.isEnabled();
+			return owner.isStructures();
 		}
 	}
 

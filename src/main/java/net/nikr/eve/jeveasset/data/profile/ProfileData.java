@@ -334,7 +334,7 @@ public class ProfileData {
 		Set<MyTransaction> transactions = new HashSet<MyTransaction>();
 		Set<MyIndustryJob> industryJobs = new HashSet<MyIndustryJob>();
 		Set<MyContractItem> contractItems = new HashSet<MyContractItem>();
-		Set<MyContract> contracts = new HashSet<MyContract>();
+		List<MyContract> contractsList = new ArrayList<MyContract>();
 		Map<Long, Map<Long, RawBlueprint>> blueprintsMap = new HashMap<Long, Map<Long, RawBlueprint>>();
 		Map<Long, RawBlueprint> blueprints = new HashMap<Long, RawBlueprint>();
 
@@ -370,12 +370,12 @@ public class ProfileData {
 						|| uniqueOwners.containsKey(contract.getAssigneeID())
 						|| uniqueOwners.containsKey(contract.getIssuerID())
 						|| (contract.isForCorp() && uniqueOwners.containsKey(contract.getIssuerCorpID())))) {
-					//Add contracts and ContractItems (Overwrite duplicates)
-					contracts.add(contract);
+					//Add contracts and ContractItems
+					contractsList.add(contract);
 					contractItems.add(new MyContractItem(contract));
 				} else if (!entry.getValue().isEmpty()) {
-					//Add contracts and ContractItems (Overwrite duplicates)
-					contracts.add(contract);
+					//Add contracts and ContractItems
+					contractsList.add(contract);
 					contractItems.addAll(entry.getValue());
 				}
 			}
@@ -453,7 +453,7 @@ public class ProfileData {
 		}
 
 		//Update Contracts dynamic values
-		for (MyContract contract : contracts) {
+		for (MyContract contract : contractsList) {
 			OwnerType issuer = uniqueOwners.get(contract.getIssuerID());
 			OwnerType acceptor = uniqueOwners.get(contract.getAcceptorID());
 			if (issuer != null) {
@@ -513,6 +513,7 @@ public class ProfileData {
 		//Update Jumps (Must be updated after locations!)
 		updateJumps(new ArrayList<JumpType>(assets), MyAsset.class);
 
+		Set<MyContract> contracts = new HashSet<MyContract>(contractsList);
 		assetsList.clear();
 		assetsList.addAll(assets);
 		marketOrdersList.clear();
