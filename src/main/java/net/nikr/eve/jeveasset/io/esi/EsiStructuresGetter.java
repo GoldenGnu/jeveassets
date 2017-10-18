@@ -88,7 +88,11 @@ public class EsiStructuresGetter extends AbstractEsiGetter {
 
 	@Override
 	protected boolean inScope() {
-		return owner.isStructures();
+		if (owner.isCorporation()) {
+			return true; //Overwrite the default, so, we don't get errors
+		} else {
+			return owner.isStructures();
+		}
 	}
 
 	private Set<Long> getIDs(OwnerType owner) {

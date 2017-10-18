@@ -256,7 +256,7 @@ public class EsiOwner extends AbstractOwner implements OwnerType {
 	@Override
 	public boolean isStructures() {
 		if (isCorporation()) {
-			return true;
+			return false; //Corporation don't get structures (It's a character endpoint)
 		} else {
 			return EsiScopes.CHARACTER_STRUCTURES.isInScope(scopes);
 		}
