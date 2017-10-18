@@ -16,6 +16,21 @@
                   #### #  # #  # #  # #### #### #### #### ####
 
 ________________________________________________________________________________
+_5.0.0__________________________________________________________________________
+
+New Feature:
+-Support for ESI Corporation accounts
+
+Bug Fix;
+-Fixed missing names (BugID: 542, 544, 546)
+-Fixed the compatibility issue with Java 9 (BugID: 545, 547)
+-Possible fixed for NPE in JContractsTable (BugID: 551)
+-A few minor bug fixes
+
+Code:
+-Better error handling (again)
+
+________________________________________________________________________________
 _4.5.2__________________________________________________________________________
 
 Bug Fixes:
