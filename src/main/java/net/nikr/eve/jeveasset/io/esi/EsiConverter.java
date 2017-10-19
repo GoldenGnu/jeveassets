@@ -182,6 +182,16 @@ public class EsiConverter extends DataConverter {
 		for (CharacterOrdersResponse response : responses) {
 			rawMarketOrders.add(new RawMarketOrder(response));
 		}
+		if (saveHistory) { //XXX - Workaround for ESI only including active orders
+			Set<MyMarketOrder> marketOrders = convertRawMarketOrders(rawMarketOrders, owner, false);
+			for (MyMarketOrder myMarketOrder : owner.getMarketOrders()) {
+				if (!marketOrders.contains(myMarketOrder)) {
+					myMarketOrder.closeOrder();
+					marketOrders.add(myMarketOrder);
+				}
+			}
+			return marketOrders;
+		}
 		return convertRawMarketOrders(rawMarketOrders, owner, saveHistory);
 	}
 
@@ -189,6 +199,16 @@ public class EsiConverter extends DataConverter {
 		List<RawMarketOrder> rawMarketOrders = new ArrayList<RawMarketOrder>();
 		for (CorporationOrdersResponse response : responses) {
 			rawMarketOrders.add(new RawMarketOrder(response));
+		}
+		if (saveHistory) { //XXX - Workaround for ESI only including active orders
+			Set<MyMarketOrder> marketOrders = convertRawMarketOrders(rawMarketOrders, owner, false);
+			for (MyMarketOrder myMarketOrder : owner.getMarketOrders()) {
+				if (!marketOrders.contains(myMarketOrder)) {
+					myMarketOrder.closeOrder();
+					marketOrders.add(myMarketOrder);
+				}
+			}
+			return marketOrders;
 		}
 		return convertRawMarketOrders(rawMarketOrders, owner, saveHistory);
 	}
