@@ -293,6 +293,7 @@ public abstract class AbstractGetter<O extends OwnerType, C, E extends Exception
 			}
 			for (MyJournal journal : ownerType.getJournal()) {
 				addOwnerID(list, journal.getFirstPartyID());
+				addOwnerID(list, journal.getSecondPartyID());
 			}
 		}
 		return list;
