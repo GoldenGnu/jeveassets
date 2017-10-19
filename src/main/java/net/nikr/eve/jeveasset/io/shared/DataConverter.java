@@ -172,7 +172,8 @@ public abstract class DataConverter {
 		if (rawAsset.getItemFlag().getFlagID() == 7 //Skill
 				|| rawAsset.getItemFlag().getFlagID() == 61 //Skill In Training
 				|| rawAsset.getItemFlag().getFlagID() == 88 //Booster
-				|| rawAsset.getItemFlag().getFlagID() == 89) { //Implant
+				|| rawAsset.getItemFlag().getFlagID() == 89 //Implant
+				|| rawAsset.getLocationID() == owner.getOwnerID()) { //Other stuff
 			return null;
 		}
 		return new MyAsset(rawAsset, item, owner, parents);
