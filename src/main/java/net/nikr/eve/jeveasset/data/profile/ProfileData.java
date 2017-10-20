@@ -20,9 +20,6 @@
  */
 package net.nikr.eve.jeveasset.data.profile;
 
-import net.nikr.eve.jeveasset.data.settings.PriceData;
-import net.nikr.eve.jeveasset.data.settings.MarketPriceData;
-import net.nikr.eve.jeveasset.gui.tabs.routing.SolarSystem;
 import ca.odell.glazedlists.EventList;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -46,18 +43,20 @@ import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder;
 import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
 import net.nikr.eve.jeveasset.data.api.raw.RawBlueprint;
 import net.nikr.eve.jeveasset.data.api.raw.RawContract.ContractType;
-import net.nikr.eve.jeveasset.data.profile.ProfileManager;
 import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.data.sde.Jump;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
 import net.nikr.eve.jeveasset.data.sde.ReprocessedMaterial;
 import net.nikr.eve.jeveasset.data.sde.StaticData;
+import net.nikr.eve.jeveasset.data.settings.MarketPriceData;
+import net.nikr.eve.jeveasset.data.settings.PriceData;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.data.settings.tag.Tags;
 import net.nikr.eve.jeveasset.data.settings.types.EditableLocationType;
 import net.nikr.eve.jeveasset.data.settings.types.JumpType;
 import net.nikr.eve.jeveasset.gui.shared.CaseInsensitiveComparator;
 import net.nikr.eve.jeveasset.gui.shared.table.EventListManager;
+import net.nikr.eve.jeveasset.gui.tabs.routing.SolarSystem;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
 import net.nikr.eve.jeveasset.i18n.General;
@@ -353,6 +352,10 @@ public class ProfileData {
 				continue;
 			}
 			//Marker Orders
+			//If owner is corporation overwrite the character orders (to use the "right" owner)
+			if (owner.isCorporation()) {
+				marketOrders.removeAll(owner.getMarketOrders());
+			}
 			marketOrders.addAll(owner.getMarketOrders());
 			//Journal
 			journals.addAll(owner.getJournal());
