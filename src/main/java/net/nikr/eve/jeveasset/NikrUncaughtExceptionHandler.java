@@ -96,6 +96,16 @@ public class NikrUncaughtExceptionHandler implements Thread.UncaughtExceptionHan
 				} catch (Throwable ex) { //Better safe than sorry...
 					JOptionPane.showMessageDialog(null, "Please, re-download jEveAssets and leave the unzipped directory intact\r\nPress OK to close jEveAssets", "Critical Error", JOptionPane.ERROR_MESSAGE);
 				}
+			} else if (t instanceof UnsatisfiedLinkError && t.getMessage().contains("splashscreen")) { //Headless Java
+				System.err.println("ERROR: Your version of java does not support a GUI");
+				System.err.println("       Please, install in non-headless version of " + JAVA + " (or later) to run jEveAssets");
+				System.out.println("ERROR: Your version of java does not support a GUI");
+				System.out.println("       Please, install in non-headless version of " + JAVA + " (or later) to run jEveAssets");
+				try {
+					JOptionPane.showMessageDialog(null, "Your version of java does not support a GUI\r\nPlease, install in non-headless version of " + JAVA + " (or later) to run jEveAssets", "Critical Error", JOptionPane.ERROR_MESSAGE);
+				} catch (Throwable ex) {
+					//We tried our best, nothing more to do now...
+				}
 			} else { //Bug
 				if (isJavaBug(t)) { //Java Bug
 					JOptionPane.showMessageDialog(null,
