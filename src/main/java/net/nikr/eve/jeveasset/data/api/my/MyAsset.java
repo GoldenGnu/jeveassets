@@ -137,7 +137,8 @@ public class MyAsset extends RawAsset implements Comparable<MyAsset>, InfoItem, 
 				this.bpc = blueprint.getRuns() > 0;
 			} else { //2nd best
 				//rawQuantity: -1 = BPO. Only BPOs can be packaged (singleton == false). Only packaged items can be stacked (count > 1)
-				this.bpo = (item.isBlueprint() && (getQuantity() == -1 || !isSingleton() || getQuantity() > 1));
+				//this.bpo = (item.isBlueprint() && (getQuantity() == -1 || !isSingleton() || getQuantity() > 1));
+				this.bpo = (item.isBlueprint() && (getQuantity() == -1 || getQuantity() > 1));
 				//rawQuantity: -2 = BPC
 				this.bpc = (item.isBlueprint() && getQuantity() == -2);
 			}
