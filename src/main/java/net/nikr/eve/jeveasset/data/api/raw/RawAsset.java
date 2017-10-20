@@ -21,10 +21,10 @@
 package net.nikr.eve.jeveasset.data.api.raw;
 
 import java.util.Objects;
-import net.nikr.eve.jeveasset.data.sde.ItemFlag;
 import net.nikr.eve.jeveasset.data.api.my.MyContractItem;
 import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob;
 import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder;
+import net.nikr.eve.jeveasset.data.sde.ItemFlag;
 import net.nikr.eve.jeveasset.i18n.General;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 import net.nikr.eve.jeveasset.io.shared.RawConverter;
@@ -121,12 +121,7 @@ public class RawAsset {
 		}
 		locationId = contractItem.getContract().getStartLocationID();
 		locationType = RawConverter.toAssetLocationType(locationId);
-		Integer rawQuantity = contractItem.getRawQuantity();
-		if (rawQuantity != null && rawQuantity <= 0) {
-			quantity = rawQuantity;
-		} else {
-			quantity = contractItem.getQuantity();
-		}
+		quantity = RawConverter.toAssetQuantity(contractItem.getQuantity(), contractItem.getRawQuantity());
 		typeId = contractItem.getTypeID();
 	}
 
