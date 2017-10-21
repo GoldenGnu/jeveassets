@@ -20,12 +20,12 @@
  */
 package net.nikr.eve.jeveasset.io.esi;
 
-import java.awt.Desktop;
+import java.awt.Window;
 import java.io.UnsupportedEncodingException;
-import java.net.URI;
 import java.util.Base64;
 import java.util.Set;
 import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
+import net.nikr.eve.jeveasset.io.shared.DesktopUtil;
 import net.troja.eve.esi.auth.OAuth;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,24 +46,23 @@ public class EsiAuth {
 
 	public void cancelImport() {
 		microServe.stopListening();
-		clearOAuth();
 	}
 
 	public boolean isServerStarted() {
 		return microServe.isServerStarted();
 	}
 
-	public boolean openWebpage(EsiCallbackURL callbackURL, Set<String> scopes) {
+	public boolean openWebpage(EsiCallbackURL callbackURL, Set<String> scopes, Window window) {
 		try {
 			if (callbackURL == EsiCallbackURL.LOCALHOST) {
 				microServe.startListening();
 			}
+			oAuth = new OAuth(); //We always need a new oAuth to start a new flow
 			this.callbackURL = callbackURL;
-			getOAuth().setClientId(callbackURL.getA());
-			getOAuth().setClientSecret(callbackURL.getB());
-			String authorizationUri = getOAuth().getAuthorizationUri(callbackURL.getUrl(), scopes, "jeveassets");
-			Desktop.getDesktop().browse(new URI(authorizationUri));
-			return true;
+			oAuth.setClientId(callbackURL.getA());
+			oAuth.setClientSecret(callbackURL.getB());
+			String authorizationUri = oAuth.getAuthorizationUri(callbackURL.getUrl(), scopes, "jeveassets");
+			return DesktopUtil.browse(authorizationUri, window);
 		} catch (Exception ex) {
 			LOG.error(ex.getMessage(), ex);
 			return false;
@@ -71,6 +70,9 @@ public class EsiAuth {
 	}
 
 	public boolean finishFlow(EsiOwner esiOwner, String authCode) {
+		if (oAuth == null) {
+			return false;
+		}
 		String code;
 		if (callbackURL == EsiCallbackURL.LOCALHOST) {
 			code = microServe.getAuthCode();
@@ -85,26 +87,13 @@ public class EsiAuth {
 			}
 		}
 		try {
-			getOAuth().finishFlow(code, "jeveassets");
+			oAuth.finishFlow(code, "jeveassets");
 			esiOwner.setRefreshToken(oAuth.getRefreshToken());
 			esiOwner.setCallbackURL(callbackURL);
 			return true;
 		} catch (Exception ex) {
 			LOG.error(ex.getMessage(), ex);
 			return false;
-		} finally {
-			clearOAuth();
 		}
-	}
-
-	private OAuth getOAuth() {
-		if (oAuth == null) {
-			oAuth = new OAuth();
-		}
-		return oAuth;
-	}
-
-	private void clearOAuth() {
-		oAuth = null;
 	}
 }

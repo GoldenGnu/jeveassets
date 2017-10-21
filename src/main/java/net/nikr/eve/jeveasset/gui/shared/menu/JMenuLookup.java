@@ -27,7 +27,6 @@ import java.util.HashSet;
 import java.util.Set;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.JAutoMenu;
@@ -44,6 +43,7 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 		EVE_CENTRAL,
 		EVE_MARKETDATA,
 		EVE_MARKETS,
+		EVEMARKETER,
 		GAMES_CHRUKER,
 		//EVE_ITEM_DATABASE,
 		EVEMAPS_DOTLAN_STATION,
@@ -60,6 +60,7 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 	private final JMenuItem jDotlanLocations;
 	private final JMenuItem jEveCentral;
 	private final JMenuItem jEveMarketdata;
+	private final JMenuItem jEveMarketer;
 	//Dead
 	//private final JMenuItem jEveMarketeer;
 	private final JMenuItem jEveMarkets;
@@ -132,6 +133,13 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 		jEveMarkets.addActionListener(listener);
 		add(jEveMarkets);
 
+		
+		jEveMarketer = new JMenuItem(GuiShared.get().eveMarketer());
+		jEveMarketer.setIcon(Images.LINK_EVEMARKETER.getIcon());
+		jEveMarketer.setActionCommand(MenuLookupAction.EVEMARKETER.name());
+		jEveMarketer.addActionListener(listener);
+		add(jEveMarketer);
+
 		//Dead
 		/*
 		jEveAddicts = new JMenuItem(GuiShared.get().eveAddicts());
@@ -168,6 +176,7 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 		jDotlanRegion.setEnabled(!menuData.getRegions().isEmpty());
 		jEveCentral.setEnabled(!menuData.getMarketTypeIDs().isEmpty());
 		jEveMarketdata.setEnabled(!menuData.getMarketTypeIDs().isEmpty());
+		jEveMarketer.setEnabled(!menuData.getMarketTypeIDs().isEmpty());
 		//Dead
 		//jEveMarketeer.setEnabled(!menuData.getMarketTypeIDs().isEmpty());
 		jEveMarkets.setEnabled(!menuData.getMarketTypeIDs().isEmpty());
@@ -196,36 +205,24 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 		}
 	}
 
-	protected static boolean confirmOpenLinks(final Program program, final int size) {
-		if (size <= 1) {
-			return true;
-		}
-		int value = JOptionPane.showConfirmDialog(program.getMainWindow().getFrame(), GuiShared.get().openLinks(size), GuiShared.get().openLinksTitle(), JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
-		return (value == JOptionPane.OK_OPTION);
-	}
-
 	public static void browseDotlan(final Program program, Set<String> stations, Set<String> systems, Set<String> regions) {
-		if (stations == null) {
-			stations = new HashSet<String>();
+		Set<String> urls = new HashSet<String>();
+		if (stations != null) {
+			for (String station : stations) {
+				urls.add("http://evemaps.dotlan.net/outpost/" + station.replace(" ", "_"));
+			}
 		}
-		if (systems == null) {
-			systems = new HashSet<String>();
+		if (systems != null) {
+			for (String system : systems) {
+				urls.add("http://evemaps.dotlan.net/system/" + system.replace(" ", "_"));
+			}
 		}
-		if (regions == null) {
-			regions = new HashSet<String>();
+		if (regions != null) {
+			for (String region : regions) {
+				urls.add("http://evemaps.dotlan.net/map/" + region.replace(" ", "_"));
+			}
 		}
-		if (!confirmOpenLinks(program, stations.size() + systems.size() + regions.size())) {
-			return;
-		}
-		for (String station : stations) {
-			DesktopUtil.browse("http://evemaps.dotlan.net/outpost/" + station.replace(" ", "_"), program);
-		}
-		for (String system : systems) {
-			DesktopUtil.browse("http://evemaps.dotlan.net/system/" + system.replace(" ", "_"), program);
-		}
-		for (String region : regions) {
-			DesktopUtil.browse("http://evemaps.dotlan.net/map/" + region.replace(" ", "_"), program);
-		}
+		DesktopUtil.browse(urls, program);
 	}
 
 	private class ListenerClass implements ActionListener {
@@ -241,20 +238,25 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 				browseDotlan(program, null, null, menuData.getRegions());
 			}
 			if (MenuLookupAction.EVE_CENTRAL.name().equals(e.getActionCommand())) {
-				if (!confirmOpenLinks(program, menuData.getMarketTypeIDs().size())) {
-					return;
-				}
+				Set<String> urls = new HashSet<String>();
 				for (int marketTypeID : menuData.getMarketTypeIDs()) {
-					DesktopUtil.browse("http://www.eve-central.com/home/quicklook.html?typeid=" + marketTypeID, program);
+					urls.add("http://www.eve-central.com/home/quicklook.html?typeid=" + marketTypeID);
 				}
+				DesktopUtil.browse(urls, program);
 			}
 			if (MenuLookupAction.EVE_MARKETDATA.name().equals(e.getActionCommand())) {
-				if (!confirmOpenLinks(program, menuData.getMarketTypeIDs().size())) {
-					return;
-				}
+				Set<String> urls = new HashSet<String>();
 				for (int marketTypeID : menuData.getMarketTypeIDs()) {
-					DesktopUtil.browse("http://eve-marketdata.com/price_check.php?type_id=" + marketTypeID, program);
+					urls.add("http://eve-marketdata.com/price_check.php?type_id=" + marketTypeID);
 				}
+				DesktopUtil.browse(urls, program);
+			}
+			if (MenuLookupAction.EVEMARKETER.name().equals(e.getActionCommand())) {
+				Set<String> urls = new HashSet<String>();
+				for (int marketTypeID : menuData.getMarketTypeIDs()) {
+					urls.add("https://evemarketer.com/types/" + marketTypeID);
+				}
+				DesktopUtil.browse(urls, program);
 			}
 			//Dead
 			/*
@@ -268,12 +270,11 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 			}
 			*/
 			if (MenuLookupAction.EVE_MARKETS.name().equals(e.getActionCommand())) {
-				if (!confirmOpenLinks(program, menuData.getMarketTypeIDs().size())) {
-					return;
-				}
+				Set<String> urls = new HashSet<String>();
 				for (int marketTypeID : menuData.getMarketTypeIDs()) {
-					DesktopUtil.browse("http://www.eve-markets.net/detail.php?typeid=" + marketTypeID, program);
+					urls.add("http://www.eve-markets.net/detail.php?typeid=" + marketTypeID);
 				}
+				DesktopUtil.browse(urls, program);
 			}
 			//Dead
 			/*
@@ -287,12 +288,11 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 			}
 			*/
 			if (MenuLookupAction.GAMES_CHRUKER.name().equals(e.getActionCommand())) {
-				if (!confirmOpenLinks(program, menuData.getTypeIDs().size())) {
-					return;
-				}
+				Set<String> urls = new HashSet<String>();
 				for (int typeID : menuData.getTypeIDs()) {
-					DesktopUtil.browse("http://games.chruker.dk/eve_online/item.php?type_id=" + typeID, program);
+					urls.add("http://games.chruker.dk/eve_online/item.php?type_id=" + typeID);
 				}
+				DesktopUtil.browse(urls, program);
 			}
 			//Dead
 			/*

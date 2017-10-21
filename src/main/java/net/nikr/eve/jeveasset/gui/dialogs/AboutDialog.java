@@ -161,7 +161,7 @@ public class AboutDialog extends JDialogCentered {
 				);
 		jEditorPane.setEditable(false);
 		jEditorPane.setOpaque(false);
-		jEditorPane.addHyperlinkListener(DesktopUtil.getHyperlinkListener(program));
+		jEditorPane.addHyperlinkListener(DesktopUtil.getHyperlinkListener(getDialog()));
 		if (addBorder) {
 			jEditorPane.setBorder(BorderFactory.createCompoundBorder(
 					BorderFactory.createLineBorder(jPanel.getBackground().darker(), 1),

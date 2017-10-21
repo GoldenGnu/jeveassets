@@ -760,7 +760,7 @@ public class AccountImportDialog extends JDialogCentered {
 			jHelp.setEditable(false);
 			jHelp.setFocusable(false);
 			jHelp.setOpaque(false);
-			jHelp.addHyperlinkListener(DesktopUtil.getHyperlinkListener(program));
+			jHelp.addHyperlinkListener(DesktopUtil.getHyperlinkListener(getDialog()));
 
 			cardLayout.setHorizontalGroup(
 				cardLayout.createSequentialGroup()
@@ -814,7 +814,7 @@ public class AccountImportDialog extends JDialogCentered {
 			jHelp.setEditable(false);
 			jHelp.setFocusable(false);
 			jHelp.setOpaque(false);
-			jHelp.addHyperlinkListener(DesktopUtil.getHyperlinkListener(program));
+			jHelp.addHyperlinkListener(DesktopUtil.getHyperlinkListener(getDialog()));
 
 			cardLayout.setHorizontalGroup(
 				cardLayout.createSequentialGroup()
@@ -862,13 +862,13 @@ public class AccountImportDialog extends JDialogCentered {
 						}
 					}
 					if (esiAuth.isServerStarted()) { //Localhost
-						boolean ok = esiAuth.openWebpage(EsiCallbackURL.LOCALHOST, scopes);
+						boolean ok = esiAuth.openWebpage(EsiCallbackURL.LOCALHOST, scopes, getDialog());
 						if (ok) { //Wait for response
 							currentCard = AccountImportCard.VALIDATE;
 							updateTab();
 						}
 					} else {
-						boolean ok = esiAuth.openWebpage(EsiCallbackURL.EVE_NIKR_NET, scopes);
+						boolean ok = esiAuth.openWebpage(EsiCallbackURL.EVE_NIKR_NET, scopes, getDialog());
 						if (ok) {
 							jAuthCode.setEnabled(true);
 							jNext.setEnabled(true);
@@ -918,7 +918,7 @@ public class AccountImportDialog extends JDialogCentered {
 			jHelp.setEditable(false);
 			jHelp.setFocusable(false);
 			jHelp.setOpaque(false);
-			jHelp.addHyperlinkListener(DesktopUtil.getHyperlinkListener(program));
+			jHelp.addHyperlinkListener(DesktopUtil.getHyperlinkListener(getDialog()));
 
 			cardLayout.setHorizontalGroup(
 				cardLayout.createSequentialGroup()
@@ -1000,7 +1000,7 @@ public class AccountImportDialog extends JDialogCentered {
 			jHelp = new JEditorPane("text/html", "");
 			//jHelp.setLineWrap(true);
 			//jHelp.setWrapStyleWord(true);
-			jHelp.addHyperlinkListener(DesktopUtil.getHyperlinkListener(program));
+			jHelp.addHyperlinkListener(DesktopUtil.getHyperlinkListener(getDialog()));
 			jHelp.setFont(this.getFont());
 			jHelp.setEditable(false);
 			jHelp.setOpaque(false);
