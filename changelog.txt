@@ -21,7 +21,7 @@ _5.0.1__________________________________________________________________________
 New Feature:
 -Added EveMarketer to lookup menu
 
-Bug Fix:
+Bug Fixes:
 -Ignore trained skill
 -Missing names (again and again)
 -Manually close ESI orders when they're removed from the return (Workaround)
@@ -40,7 +40,7 @@ _5.0.0__________________________________________________________________________
 New Feature:
 -Support for ESI Corporation accounts
 
-Bug Fix:
+Bug Fixes:
 -Fixed missing names (BugID: 542, 544, 546)
 -Fixed the compatibility issue with Java 9 (BugID: 545, 547)
 -Possible fixed for NPE in JContractsTable (BugID: 551)
