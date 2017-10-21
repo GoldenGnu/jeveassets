@@ -46,7 +46,7 @@ public class ContractItemsGetter extends AbstractApiGetter<ContractItemsResponse
 		List<MyContract> contracts = new ArrayList<MyContract>();
 		for (Map.Entry<MyContract, List<MyContractItem>> entry : owner.getContracts().entrySet()) {
 			MyContract contract = entry.getKey();
-			if (contract.isCourier()) {
+			if (contract.isIgnoreContract()) {
 				continue; //Ignore courier
 			}
 			if (!entry.getValue().isEmpty()) {

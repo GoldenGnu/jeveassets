@@ -51,7 +51,7 @@ public class JContractsTable extends JSeparatorTable {
 			if (columnName.equals(ContractsTableFormat.NAME.getColumnName())) {
 				if (isSelected) {
 					component.setBackground(this.getSelectionBackground().darker());
-				} else if (item.getContract().isCourier()) {
+				} else if (item.getContract().isCourierContract()) {
 					component.setBackground(Colors.LIGHT_YELLOW.getColor());
 				} else if (item.isIncluded()) {
 					component.setBackground(Colors.LIGHT_GREEN.getColor());

@@ -92,7 +92,7 @@ public abstract class DataConverter {
 					//Owned
 					&& issuer != null
 					//Not courier
-					&& !contractItem.getContract().isCourier()
+					&& contractItem.getContract().isItemContract()
 					//Sell
 					&& ((contractItem.isIncluded() && includeSellContracts)
 					//Buy

@@ -24,8 +24,8 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
-import net.nikr.eve.jeveasset.data.sde.MyLocation;
 import net.nikr.eve.jeveasset.data.api.raw.RawContract;
+import net.nikr.eve.jeveasset.data.sde.MyLocation;
 import net.nikr.eve.jeveasset.data.settings.types.LocationsType;
 import net.nikr.eve.jeveasset.i18n.TabsContracts;
 
@@ -148,8 +148,16 @@ public class MyContract extends RawContract implements LocationsType {
 		return startLocation;
 	}
 
-	public boolean isCourier() {
-		return (getType() == ContractType.COURIER);
+	public boolean isCourierContract() {
+		return getType() == ContractType.COURIER;
+	}
+
+	public boolean isItemContract() {
+		return getType() == ContractType.AUCTION || getType() == ContractType.ITEM_EXCHANGE;
+	}
+
+	public boolean isIgnoreContract() {
+		return getType() != ContractType.AUCTION && getType() != ContractType.ITEM_EXCHANGE;
 	}
 
 	public String getStatusFormated() {

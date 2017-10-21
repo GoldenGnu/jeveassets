@@ -197,7 +197,7 @@ public class DataSetCreator {
 			}
 			OwnerType acceptor = owners.get(contract.getAcceptorID());
 			//Contract Collateral
-			if (contract.isCourier()) {
+			if (contract.isCourierContract()) {
 				//Shipping cargo (will get collateral or cargo back)
 				//We can not get the assets in courier contracts, so we use only available value: collateral
 				if (issuer != null) { //Issuer
@@ -258,7 +258,7 @@ public class DataSetCreator {
 		//Contract Items
 		for (MyContractItem contractItem : contractItems) {
 			MyContract contract = contractItem.getContract();
-			if (contract.isCourier()) {
+			if (contract.isIgnoreContract()) {
 				continue; //Ignore courier contracts
 			}
 			if (contractItem.getItem() != null && contractItem.getItem().isBlueprint()) {
