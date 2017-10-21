@@ -42,7 +42,6 @@ import net.nikr.eve.jeveasset.data.api.my.MyJournal;
 import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder;
 import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
 import net.nikr.eve.jeveasset.data.api.raw.RawBlueprint;
-import net.nikr.eve.jeveasset.data.api.raw.RawContract.ContractType;
 import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.data.sde.Jump;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
@@ -367,7 +366,7 @@ public class ProfileData {
 			for (Map.Entry<MyContract, List<MyContractItem>> entry : owner.getContracts().entrySet()) {
 				MyContract contract = entry.getKey();
 				if (entry.getValue().isEmpty()
-						&& contract.getType() == ContractType.COURIER
+						&& contract.isCourierContract()
 						&& ( //XXX - Workaround for alien contracts
 						uniqueOwners.containsKey(contract.getAcceptorID())
 						|| uniqueOwners.containsKey(contract.getAssigneeID())
