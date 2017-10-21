@@ -261,11 +261,10 @@ public abstract class AbstractEsiGetter extends AbstractGetter<EsiOwner, ApiClie
 				List<Future<List<K>>> futures = startSubThreads(updaters);
 				for (Future<List<K>> future : futures) {
 					if (future.isDone()) {
-						returnValue = future.get();
+						returnValue = future.get(); //Get data from ESI
 						if (returnValue != null) {
 							values.addAll(returnValue);
 						}
-						values.addAll(future.get()); //Get data from ESI
 					}
 				}
 			} catch (InterruptedException | ExecutionException ex) {
