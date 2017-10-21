@@ -16,12 +16,31 @@
                   #### #  # #  # #  # #### #### #### #### ####
 
 ________________________________________________________________________________
+_5.0.1__________________________________________________________________________
+
+New Feature:
+-Added EveMarketer to lookup menu
+
+Bug Fixes:
+-Ignore trained skill
+-Missing names (again and again)
+-Manually close ESI orders when they're removed from the return (Workaround)
+-Contract Items and Assets incorrectly marked as BPO (Workaround)
+-Orders have wrong owner (when both character and corporation order is present)
+-Better handling of headless Java
+-Workaround for Desktop.browse
+-Fixed another issue with adding ESI accounts
+-Duplicate assets
+-Possible fix for errors when updating ESI Contract Items
+-Possible fix for 502 in ESI Structure endpoint
+
+________________________________________________________________________________
 _5.0.0__________________________________________________________________________
 
 New Feature:
 -Support for ESI Corporation accounts
 
-Bug Fix;
+Bug Fixes:
 -Fixed missing names (BugID: 542, 544, 546)
 -Fixed the compatibility issue with Java 9 (BugID: 545, 547)
 -Possible fixed for NPE in JContractsTable (BugID: 551)
