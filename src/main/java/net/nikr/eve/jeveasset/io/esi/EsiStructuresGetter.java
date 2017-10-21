@@ -99,45 +99,22 @@ public class EsiStructuresGetter extends AbstractEsiGetter {
 		Set<Long> itemIDs = new HashSet<Long>();
 		Set<Long> locationIDs = new HashSet<Long>();
 		for (RawAsset asset : owner.getAssets()) {
-			long locationID = asset.getLocationID();
-			MyLocation location = ApiIdConverter.getLocation(locationID);
-			if (location.isEmpty() || location.isUserLocation() || location.isCitadel()) {
-				locationIDs.add(location.getLocationID());
-			}
+			add(locationIDs, asset.getLocationID());
 		}
 		getAssetItemIDs(itemIDs, owner.getAssets());
 		for (RawBlueprint blueprint : owner.getBlueprints().values()) {
 			itemIDs.add(blueprint.getItemID());
-			MyLocation location = ApiIdConverter.getLocation(blueprint.getLocationID());
-			if (location.isEmpty() || location.isUserLocation() || location.isCitadel()) {
-				locationIDs.add(location.getLocationID());
-			}
+			add(locationIDs, blueprint.getLocationID());
 		}
 		for (RawContract contract : owner.getContracts().keySet()) {
-			long locationEndID = contract.getEndLocationID();
-			MyLocation locationEnd = ApiIdConverter.getLocation(locationEndID);
-			if (locationEnd.isEmpty() || locationEnd.isUserLocation() || locationEnd.isCitadel()) {
-				locationIDs.add(locationEnd.getLocationID());
-			}
-			long locationStartID = contract.getStartLocationID();
-			MyLocation locationStart = ApiIdConverter.getLocation(locationStartID);
-			if (locationStart.isEmpty() || locationStart.isUserLocation() || locationStart.isCitadel()) {
-				locationIDs.add(locationStart.getLocationID());
-			}
+			add(locationIDs, contract.getEndLocationID());
+			add(locationIDs, contract.getStartLocationID());
 		}
 		for (MyIndustryJob industryJob : owner.getIndustryJobs()) {
-			long locationID = industryJob.getLocationID();
-			MyLocation location = ApiIdConverter.getLocation(locationID);
-			if (location.isEmpty() || location.isUserLocation() || location.isCitadel()) {
-				locationIDs.add(location.getLocationID());
-			}
+			add(locationIDs, industryJob.getLocationID());
 		}
 		for (RawMarketOrder marketOrder : owner.getMarketOrders()) {
-			long locationID = marketOrder.getLocationID();
-			MyLocation location = ApiIdConverter.getLocation(locationID);
-			if (location.isEmpty() || location.isUserLocation() || location.isCitadel()) {
-				locationIDs.add(location.getLocationID());
-			}
+			add(locationIDs, marketOrder.getLocationID());
 		}
 		locationIDs.removeAll(itemIDs);
 		return locationIDs;
@@ -147,6 +124,19 @@ public class EsiStructuresGetter extends AbstractEsiGetter {
 		for (MyAsset asset : assets) {
 			itemIDs.add(asset.getItemID());
 			getAssetItemIDs(itemIDs, asset.getAssets());
+		}
+	}
+
+	private void add(Set<Long> locationIDs, Long locationID) {
+		if (locationID == null) {
+			return;
+		}
+		if (locationID < 100000000) {
+			return;
+		}
+		MyLocation locationEnd = ApiIdConverter.getLocation(locationID);
+		if (locationEnd.isEmpty() || locationEnd.isUserLocation() || locationEnd.isCitadel()) {
+			locationIDs.add(locationEnd.getLocationID());
 		}
 	}
 }
