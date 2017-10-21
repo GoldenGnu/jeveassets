@@ -247,7 +247,7 @@ class StockpileShoppingListDialog extends JDialogCentered {
 		}
 		//ContractItems
 		for (MyContractItem contractItem : program.getContractItemList()) {
-			if (contractItem.getContract().isCourier()) {
+			if (contractItem.getContract().isIgnoreContract()) {
 				continue;
 			}
 			add(contractItem.getTypeID(), contractItem, claims, items);

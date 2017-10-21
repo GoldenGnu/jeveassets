@@ -22,9 +22,9 @@ package net.nikr.eve.jeveasset.data.api.my;
 
 import java.util.Objects;
 import java.util.Set;
+import net.nikr.eve.jeveasset.data.api.raw.RawContractItem;
 import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
-import net.nikr.eve.jeveasset.data.api.raw.RawContractItem;
 import net.nikr.eve.jeveasset.data.settings.types.BlueprintType;
 import net.nikr.eve.jeveasset.data.settings.types.ItemType;
 import net.nikr.eve.jeveasset.data.settings.types.LocationsType;
@@ -66,7 +66,7 @@ public class MyContractItem extends RawContractItem implements Comparable<MyCont
 	}
 
 	public String getIncluded() {
-		if (getContract().isCourier()) {
+		if (getContract().isCourierContract()) {
 			return TabsContracts.get().courier();
 		} else if (isIncluded()) {
 			return TabsContracts.get().included();
@@ -76,7 +76,7 @@ public class MyContractItem extends RawContractItem implements Comparable<MyCont
 	}
 
 	public String getSingleton() {
-		if (getContract().isCourier()) {
+		if (getContract().isCourierContract()) {
 			return TabsContracts.get().courier();
 		} else if (isSingleton()) {
 			return TabsContracts.get().unpackaged();

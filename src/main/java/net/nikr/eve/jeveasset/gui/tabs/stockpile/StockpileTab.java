@@ -525,7 +525,7 @@ public class StockpileTab extends JMainTab implements TagUpdate {
 		Map<Integer, List<MyContractItem>> contractItems = new HashMap<Integer, List<MyContractItem>>();
 		if (stockpile.isContracts()) {
 			for (MyContractItem contractItem : program.getContractItemList()) {
-				if (contractItem.getContract().isCourier()) {
+				if (contractItem.getContract().isIgnoreContract()) {
 					continue;
 				}
 				int typeID = contractItem.getItem().getTypeID();

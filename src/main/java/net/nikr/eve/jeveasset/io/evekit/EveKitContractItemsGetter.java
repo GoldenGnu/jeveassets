@@ -82,7 +82,7 @@ public class EveKitContractItemsGetter extends AbstractEveKitGetter implements E
 	protected Set<Integer> getIDs(EveKitOwner owner) throws ApiException {
 		Set<Integer> ids = new HashSet<Integer>();
 		for (Map.Entry<MyContract, List<MyContractItem>> entry : owner.getContracts().entrySet()) {
-			if (!entry.getKey().isCourier() //Do not get courier contracts
+			if (entry.getKey().isItemContract() //Do not get courier contracts
 					&& entry.getValue().isEmpty()) { //Only get items once (Contract items can not be changed)
 				ids.add(entry.getKey().getContractID());
 				contracts.put(entry.getKey().getContractID(), entry.getKey());

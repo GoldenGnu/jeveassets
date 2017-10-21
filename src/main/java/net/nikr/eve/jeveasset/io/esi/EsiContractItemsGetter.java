@@ -44,7 +44,7 @@ public class EsiContractItemsGetter extends AbstractEsiGetter {
 	protected void get(ApiClient apiClient) throws ApiException {
 		List<MyContract> contracts = new ArrayList<MyContract>();
 		for (Map.Entry<MyContract, List<MyContractItem>> entry : owner.getContracts().entrySet()) {
-			if (entry.getKey().isCourier()) {
+			if (entry.getKey().isIgnoreContract()) {
 				continue;
 			}
 			if (entry.getValue() != null && !entry.getValue().isEmpty()) { //Not null and not empty

@@ -20,14 +20,6 @@
  */
 package net.nikr.eve.jeveasset.io.shared;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -52,6 +44,13 @@ import net.nikr.eve.jeveasset.data.api.raw.RawJournal;
 import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder;
 import net.nikr.eve.jeveasset.data.api.raw.RawTransaction;
 import net.nikr.eve.jeveasset.i18n.General;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
 
@@ -116,7 +115,7 @@ public class DataConverterTest extends TestUtil {
 			if (assets.isEmpty()) {
 				assertTrue((contractItem.getContract().getStatus() != RawContract.ContractStatus.OUTSTANDING
 						&& contractItem.getContract().getStatus() != RawContract.ContractStatus.IN_PROGRESS)
-						|| contractItem.getContract().isCourier());
+						|| contractItem.getContract().isIgnoreContract());
 
 			} else {
 				MyAsset asset = assets.get(0);
