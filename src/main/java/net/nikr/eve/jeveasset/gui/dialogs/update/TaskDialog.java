@@ -188,9 +188,20 @@ public class TaskDialog {
 			updateTask.execute();
 		} else { //Done
 			jIcon.setIcon(new UpdateTask.EmptyIcon());
-			completed.tasksCompleted(this);
-			jOK.setEnabled(true);
 			jCancel.setEnabled(false);
+			Thread thread = new Thread(new Runnable() {
+				@Override
+				public void run() {
+					completed.tasksCompleted(TaskDialog.this);
+					SwingUtilities.invokeLater(new Runnable() {
+						@Override
+						public void run() {
+							jOK.setEnabled(true);
+						}
+					});
+				}
+			});
+			thread.start();
 		}
 	}
 
@@ -252,7 +263,7 @@ public class TaskDialog {
 				jProgressBar.setIndeterminate(false);
 				index++;
 				update();
-			} else if (value > 0) {
+			} else if (value > 1) {
 				jProgressBar.setIndeterminate(false);
 				jProgressBar.setValue(value);
 			} else {
