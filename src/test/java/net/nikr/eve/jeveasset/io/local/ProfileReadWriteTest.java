@@ -20,9 +20,6 @@
  */
 package net.nikr.eve.jeveasset.io.local;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
 import java.io.File;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.TestUtil;
@@ -35,6 +32,8 @@ import net.nikr.eve.jeveasset.data.profile.ProfileManager;
 import net.nikr.eve.jeveasset.io.shared.ConverterTestOptions;
 import net.nikr.eve.jeveasset.io.shared.ConverterTestOptionsGetter;
 import net.nikr.eve.jeveasset.io.shared.ConverterTestUtil;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
 
@@ -76,18 +75,18 @@ public class ProfileReadWriteTest extends TestUtil {
 			profileData.updateEventLists();
 
 			//ESI
-			assertEquals(loadManager.getEsiOwners().size(), 1);
+			assertEquals(1, loadManager.getEsiOwners().size());
 			EsiOwner esiOwner = loadManager.getEsiOwners().get(0);
 			ConverterTestUtil.testOwner(esiOwner, setNull, options);
 			//EveAPI
-			assertEquals(loadManager.getAccounts().size(), 1);
+			assertEquals(1, loadManager.getAccounts().size());
 			EveApiAccount loadEveApiAccount = loadManager.getAccounts().get(0);
 			ConverterTestUtil.testValues(loadEveApiAccount, options);
-			assertEquals(loadEveApiAccount.getOwners().size(), 1);
+			assertEquals(1, loadEveApiAccount.getOwners().size());
 			EveApiOwner eveApiOwner = loadEveApiAccount.getOwners().get(0);
 			ConverterTestUtil.testOwner(eveApiOwner, setNull, options);
 			//EveKit
-			assertEquals(loadManager.getEveKitOwners().size(), 1);
+			assertEquals(1, loadManager.getEveKitOwners().size());
 			EveKitOwner eveKitOwner = loadManager.getEveKitOwners().get(0);
 			ConverterTestUtil.testOwner(eveKitOwner, setNull, options);
 
