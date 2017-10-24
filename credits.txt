@@ -20,6 +20,11 @@ _CONTRIBUTORS___________________________________________________________________
 
 Developers:
   Niklas Kyster Rasmussen (Golden Gnu*)
+
+Testers:
+  Johann Hemphill
+
+Retired Developers:
   Flaming Candle*
   Jochen Bedersdorfer
   TryfanMan*
@@ -27,7 +32,7 @@ Developers:
   Ima Sohmbadi*
   Saulvin
 
-Testers:
+Retired Testers:
   Varo Jan*
   Scrapyard Bob*
 
