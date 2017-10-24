@@ -116,11 +116,13 @@ public class CitadelGetter extends AbstractXmlWriter {
 			}
 			Map<Long, Citadel> results = mapper.readValue(in, new TypeReference<Map<Long, Citadel>>() {
 			});
-			if (results != null) { //Updated OK
-				for (Map.Entry<Long, Citadel> entry : results.entrySet()) {
-					entry.getValue().id = entry.getKey(); //Update locationID
-					citadelSettings.put(entry.getKey(), entry.getValue());
-				}
+			if (results == null) { 
+				return false;
+			}
+			//Updated OK
+			for (Map.Entry<Long, Citadel> entry : results.entrySet()) {
+				entry.getValue().id = entry.getKey(); //Update locationID
+				citadelSettings.put(entry.getKey(), entry.getValue());
 			}
 			citadelSettings.setNextUpdate();
 			saveXml();
