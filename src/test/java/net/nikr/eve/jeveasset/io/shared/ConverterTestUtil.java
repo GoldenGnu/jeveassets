@@ -710,7 +710,6 @@ public class ConverterTestUtil {
 			String methodId = esi.getSimpleName() + "->" + methodName;
 			if (methodId.equals("CharacterAssetsResponse->getQuantity") //Quantity is not optinal in RawAsset
 					|| methodId.equals("CorporationAssetsResponse->getQuantity") //Quantity is not optinal in RawAsset
-					|| methodId.equals("CharacterContractsResponse->getStartLocationId") //
 					|| methodId.equals("CharacterWalletJournalResponse->getExtraInfo") //RawJournalExtraInfo is not optinal RawJournal
 					|| methodId.equals("CorporationWalletJournalResponse->getExtraInfo")) { //RawJournalExtraInfo is not optinal RawJournal
 				continue;

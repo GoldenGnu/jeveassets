@@ -119,7 +119,11 @@ public class RawAsset {
 		} else { //Buy
 			itemFlag = new ItemFlag(0, General.get().contractExcluded(), General.get().contractExcluded());
 		}
-		locationId = contractItem.getContract().getStartLocationID();
+		if (contractItem.getContract().getStartLocationID() != null) {
+			locationId = contractItem.getContract().getStartLocationID();
+		} else {
+			locationId = 0L;
+		}
 		locationType = RawConverter.toAssetLocationType(locationId);
 		quantity = RawConverter.toAssetQuantity(contractItem.getQuantity(), contractItem.getRawQuantity());
 		typeId = contractItem.getTypeID();
