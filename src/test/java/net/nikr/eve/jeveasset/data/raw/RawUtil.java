@@ -36,6 +36,7 @@ import net.nikr.eve.jeveasset.data.api.raw.RawIndustryJob;
 import net.nikr.eve.jeveasset.data.api.raw.RawJournal;
 import net.nikr.eve.jeveasset.data.api.raw.RawJournalExtraInfo;
 import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder;
+import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder.MarketOrderState;
 import net.nikr.eve.jeveasset.data.api.raw.RawTransaction;
 import net.troja.eve.esi.model.CharacterWalletJournalExtraInfoResponse;
 import net.troja.eve.esi.model.CorporationWalletJournalExtraInfoResponse;
@@ -156,6 +157,9 @@ public class RawUtil {
 		Set<String> names = new HashSet<String>();
 		for (Enum<?>[] value : values) {
 			for (Enum<?> e : value) {
+				if (e.equals(MarketOrderState.UNKNOWN)) { //jEveAssets value
+					continue;
+				}
 				names.add(e.name());
 			}
 		}

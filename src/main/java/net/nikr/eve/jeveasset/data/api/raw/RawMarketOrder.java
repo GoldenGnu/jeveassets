@@ -60,7 +60,8 @@ public class RawMarketOrder {
 		CLOSED("closed"),
 		EXPIRED("expired"),
 		OPEN("open"),
-		PENDING("pending");
+		PENDING("pending"),
+		UNKNOWN("Unknown");
 
 		private final String value;
 

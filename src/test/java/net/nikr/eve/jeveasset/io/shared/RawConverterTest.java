@@ -474,6 +474,7 @@ public class RawConverterTest extends TestUtil {
 		map.put(3, RawMarketOrder.MarketOrderState.CANCELLED);
 		map.put(4, RawMarketOrder.MarketOrderState.PENDING);
 		map.put(5, RawMarketOrder.MarketOrderState.CHARACTER_DELETED);
+		map.put(-100, RawMarketOrder.MarketOrderState.UNKNOWN);
 		assertEquals(map.size(), RawMarketOrder.MarketOrderState.values().length);
 		for (Map.Entry<Integer, RawMarketOrder.MarketOrderState> entry : map.entrySet()) {
 			assertEquals(entry.getValue(), RawConverter.toMarketOrderState(entry.getKey()));
@@ -489,6 +490,7 @@ public class RawConverterTest extends TestUtil {
 		map.put(RawMarketOrder.MarketOrderState.CANCELLED, 3);
 		map.put(RawMarketOrder.MarketOrderState.PENDING, 4);
 		map.put(RawMarketOrder.MarketOrderState.CHARACTER_DELETED, 5);
+		map.put(RawMarketOrder.MarketOrderState.UNKNOWN, -100);
 		assertEquals(map.size(), RawMarketOrder.MarketOrderState.values().length);
 		for (Map.Entry<RawMarketOrder.MarketOrderState, Integer> entry : map.entrySet()) {
 			assertEquals(entry.getValue(), (Integer) RawConverter.fromMarketOrderState(entry.getKey()));

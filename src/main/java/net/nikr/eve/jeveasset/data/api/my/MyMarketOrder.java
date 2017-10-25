@@ -85,6 +85,12 @@ public class MyMarketOrder extends RawMarketOrder implements Comparable<MyMarket
 			String getI18N() {
 				return TabsOrders.get().statusCharacterDeleted();
 			}
+		},
+		UNKNOWN() {
+			@Override
+			String getI18N() {
+				return TabsOrders.get().statusUnknown();
+			}
 		};
 
 		abstract String getI18N();
@@ -163,6 +169,9 @@ public class MyMarketOrder extends RawMarketOrder implements Comparable<MyMarket
 				case CHARACTER_DELETED: //character deleted
 					status = OrderStatus.CHARACTER_DELETED;
 					break;
+				case UNKNOWN: //character deleted
+					status = OrderStatus.UNKNOWN;
+					break;
 			}
 		}
 	}
@@ -171,6 +180,9 @@ public class MyMarketOrder extends RawMarketOrder implements Comparable<MyMarket
 		if (getState() == MarketOrderState.OPEN) {
 			setState(MarketOrderState.CLOSED);
 			status = OrderStatus.CLOSED;
+		} else if (getState() == MarketOrderState.CLOSED) {
+			setState(MarketOrderState.UNKNOWN);
+			status = OrderStatus.UNKNOWN;
 		}
 	}
 
@@ -277,8 +289,8 @@ public class MyMarketOrder extends RawMarketOrder implements Comparable<MyMarket
 
 	@Override
 	public int hashCode() {
-		int hash = 3;
-		hash = 13 * hash + (int) (this.getOrderID() ^ (this.getOrderID() >>> 32)); //OrderID is globaly unique, right...? 
+		int hash = 7;
+		hash = 89 * hash + Objects.hashCode(this.getOrderID()); //OrderID is globaly unique
 		return hash;
 	}
 
@@ -294,6 +306,6 @@ public class MyMarketOrder extends RawMarketOrder implements Comparable<MyMarket
 			return false;
 		}
 		final MyMarketOrder other = (MyMarketOrder) obj;
-		return Objects.equals(this.getOrderID(), other.getOrderID()); //OrderID is globaly unique, right...? 
+		return Objects.equals(this.getOrderID(), other.getOrderID()); //OrderID is globaly unique
 	}
 }
