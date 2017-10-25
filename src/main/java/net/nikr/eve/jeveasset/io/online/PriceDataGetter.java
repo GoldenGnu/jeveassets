@@ -203,7 +203,7 @@ public class PriceDataGetter implements PricingListener {
 		while (!queue.isEmpty()) {
 			try {
 				synchronized (this) {
-					wait();
+					wait(1000);
 				}
 			} catch (InterruptedException ex) {
 				LOG.info("Failed to update price");
