@@ -60,8 +60,8 @@ public class JContractsTable extends JSeparatorTable {
 				}
 			}
 			//User set location
-			if ((item.getContract().getStartLocation().isUserLocation() && columnName.equals(ContractsTableFormat.START_STATION.getColumnName()))
-					|| (item.getContract().getEndLocation().isUserLocation() && columnName.equals(ContractsTableFormat.END_STATION.getColumnName()))) {
+			if ((item.getContract().getStartLocation() != null && item.getContract().getStartLocation().isUserLocation() && columnName.equals(ContractsTableFormat.START_STATION.getColumnName()))
+					|| (item.getContract().getEndLocation() != null && item.getContract().getEndLocation().isUserLocation() && columnName.equals(ContractsTableFormat.END_STATION.getColumnName()))) {
 				if (!isSelected) {
 					component.setBackground(Colors.LIGHT_GRAY.getColor());
 				} else {

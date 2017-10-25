@@ -131,8 +131,12 @@ public class MyContract extends RawContract implements LocationsType {
 	@Override
 	public Set<MyLocation> getLocations() {
 		Set<MyLocation> locations = new HashSet<MyLocation>();
-		locations.add(startLocation);
-		locations.add(endLocation);
+		if (startLocation != null) {
+			locations.add(startLocation);
+		}
+		if (endLocation != null) {
+			locations.add(endLocation);
+		}
 		return locations;
 	}
 
