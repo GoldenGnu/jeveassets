@@ -73,7 +73,7 @@ public class MarketOrdersGetter extends AbstractApiGetter<MarketOrdersResponse> 
 				}
 				orderIDs.add(myMarketOrder.getOrderID());
 			}
-			Map<Long, MarketOrdersResponse> updateList = updateList(orderIDs, new ListHandler<Long, MarketOrdersResponse>() {
+			Map<Long, MarketOrdersResponse> updateList = updateList(orderIDs, NO_RETRIES, new ListHandler<Long, MarketOrdersResponse>() {
 				@Override
 				protected MarketOrdersResponse get(String updaterStatus, Long k) throws ApiException {
 					if (owner.isCorporation()) {

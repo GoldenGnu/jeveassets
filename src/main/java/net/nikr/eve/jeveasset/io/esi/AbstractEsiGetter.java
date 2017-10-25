@@ -21,7 +21,9 @@
 package net.nikr.eve.jeveasset.io.esi;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
@@ -57,7 +59,8 @@ public abstract class AbstractEsiGetter extends AbstractGetter<EsiOwner, ApiClie
 	protected static final String USER_AGENT = System.getProperty("http.agent");
 	protected static final int UNIVERSE_BATCH_SIZE = 100;
 	protected static final int LOCATIONS_BATCH_SIZE = 100;
-	private static final int RETRIES = 1;
+	protected static final int DEFAULT_RETRIES = 1;
+	private final int maxRetries;
 	/**
 	 * Errors left in in this error limit time frame (can be null)
 	 */
@@ -67,8 +70,10 @@ public abstract class AbstractEsiGetter extends AbstractGetter<EsiOwner, ApiClie
 	 */
 	private static Date errorReset = new Date();
 
-	public AbstractEsiGetter(UpdateTask updateTask, EsiOwner owner, boolean forceUpdate, Date nextUpdate, TaskType taskType) {
+
+	public AbstractEsiGetter(UpdateTask updateTask, EsiOwner owner, boolean forceUpdate, Date nextUpdate, TaskType taskType, int maxRetries) {
 		super(updateTask, owner, forceUpdate, nextUpdate, taskType, "ESI");
+		this.maxRetries = maxRetries;
 	}
 
 	@Override
@@ -77,7 +82,7 @@ public abstract class AbstractEsiGetter extends AbstractGetter<EsiOwner, ApiClie
 			return;
 		}
 		try {
-			updateApi(new EsiUpdater(), 0);
+			updateApi(new EsiUpdater(maxRetries), 0);
 		} catch (ApiException ex) {
 			addError(null, ex.getCode(), "Error Code: " + ex.getCode(), ex);
 		} catch (TaskCancelledException ex) {
@@ -107,17 +112,18 @@ public abstract class AbstractEsiGetter extends AbstractGetter<EsiOwner, ApiClie
 			logInfo(updater.getStatus(), "Updated");
 			return t;
 		} catch (ApiException ex) {
+			logError(updater.getStatus(), ex.getMessage(), ex.getMessage());
 			if (ex.getCode() >= 500 && ex.getCode() < 600 //CCP error, Lets try again in a sec
 					&& ex.getCode() != 503 //Don't retry when it may be downtime
-					&& (ex.getCode() != 502 ||ex.getMessage().toLowerCase().contains("no reply within 10 seconds")) //Don't retry when it may be downtime, unless it's "no reply within 10 seconds"
-					&& retries < RETRIES) { //Retries
+					&& (ex.getCode() != 502 || ex.getMessage().toLowerCase().contains("no reply within 10 seconds")) //Don't retry when it may be downtime, unless it's "no reply within 10 seconds"
+					&& retries < updater.getMaxRetries()) { //Retries
 				retries++;
 				try {
 					Thread.sleep(1000); //Wait a sec
 				} catch (InterruptedException ex1) {
 					//No problem
 				}
-				logInfo(updater.getStatus(), "Retrying "  + retries + " of " + RETRIES + ":");
+				logInfo(updater.getStatus(), "Retrying "  + retries + " of " + updater.getMaxRetries() + ":");
 				return updateApi(updater, retries);
 			} else {
 				throw ex;
@@ -172,15 +178,14 @@ public abstract class AbstractEsiGetter extends AbstractGetter<EsiOwner, ApiClie
 	}
 
 	private synchronized static void checkErrors() {
-		if (new Date().after(AbstractEsiGetter.errorReset)) { //Reset timeframe if needed
-			AbstractEsiGetter.errorReset = new Date(); //New timeframe
-			AbstractEsiGetter.errorLimit = null;  //No errors in this timeframe (yet)
-		}
 		if (errorLimit != null && errorLimit < 10) { //Error limit reached
 			try {
 				long wait = (errorReset.getTime() + 1000) - System.currentTimeMillis();
 				LOG.warn("Error limit reached waiting: " + Formater.milliseconds(wait, false, false));
 				Thread.sleep(wait); //Wait until the error window is reset
+				//Reset
+				AbstractEsiGetter.errorReset = new Date(); //New timeframe
+				AbstractEsiGetter.errorLimit = null;  //No errors in this timeframe (yet)
 			} catch (InterruptedException ex) {
 				//No problem
 			}
@@ -241,9 +246,34 @@ public abstract class AbstractEsiGetter extends AbstractGetter<EsiOwner, ApiClie
 		return new SovereigntyApi();
 	}
 
-	protected <K> List<K> updatePages(EsiPagesHandler<K> handler) throws ApiException {
+	protected final <K, V> Map<K, V> updateListSlow(Collection<K> list, boolean trackProgress, int maxRetries, ListHandlerSlow<K, V> handler) throws ApiException {
+		Map<K, V> values = new HashMap<K, V>();
+		int count = 1;
+		for (K k : list) {
+			ListUpdater<K, V> listUpdater = new ListUpdater<K, V>(handler, k, count + " of " + list.size(), maxRetries);
+			try {
+				if (trackProgress) {
+					setProgress(list.size(), count, 0, 100);
+				}
+				Map<K, V> returnValue = listUpdater.go();
+				if (returnValue != null) {
+					values.putAll(returnValue);
+				}
+			} catch (ApiException ex) {
+				handler.handle(ex, k);
+			}
+			count++;
+		}
+		return values;
+	}
+
+	protected abstract class ListHandlerSlow<K, V> extends ListHandler<K, V> {
+		protected abstract void handle(ApiException ex, K k) throws ApiException;
+	}
+
+	protected <K> List<K> updatePages(int maxRetries, EsiPagesHandler<K> handler) throws ApiException {
 		List<K> values = new ArrayList<K>();
-		EsiPageUpdater<K> pageUpdater = new EsiPageUpdater<K>(handler, 1, "1 of ?");
+		EsiPageUpdater<K> pageUpdater = new EsiPageUpdater<K>(handler, 1, "1 of ?", maxRetries);
 		List<K> returnValue = updateApi(pageUpdater, 0);
 		if (returnValue != null) {
 			values.addAll(returnValue);
@@ -253,7 +283,7 @@ public abstract class AbstractEsiGetter extends AbstractGetter<EsiOwner, ApiClie
 		if (pages != null && pages > 1) { //More than one page
 			List<EsiPageUpdater<K>> updaters = new ArrayList<EsiPageUpdater<K>>();
 			for (int i = 2; i <= pages; i++) { //Get the remaining pages (we already got page 1 so we start at page 2
-				updaters.add(new EsiPageUpdater<K>(handler, i, count + " of " + pages));
+				updaters.add(new EsiPageUpdater<K>(handler, i, count + " of " + pages, maxRetries));
 				count++;
 			}
 			LOG.info("Starting " + updaters.size() + " pages threads");
@@ -284,11 +314,13 @@ public abstract class AbstractEsiGetter extends AbstractGetter<EsiOwner, ApiClie
 		private final int page;
 		private final String status;
 		private ApiClient client;
+		private final int maxRetries;
 
-		public EsiPageUpdater(EsiPagesHandler<T> handler, int page, String status) {
+		public EsiPageUpdater(EsiPagesHandler<T> handler, int page, String status, int maxRetries) {
 			this.handler = handler;
 			this.page = page;
 			this.status = status;
+			this.maxRetries = maxRetries;
 		}
 
 		@Override
@@ -310,10 +342,21 @@ public abstract class AbstractEsiGetter extends AbstractGetter<EsiOwner, ApiClie
 		public String getStatus() {
 			return status;
 		}
+
+		@Override
+		public int getMaxRetries() {
+			return maxRetries;
+		}
 	}
 
 	public class EsiUpdater implements Updater<Void, ApiClient, ApiException> {
 
+		private final int maxRetries;
+
+		public EsiUpdater(int maxRetries) {
+			this.maxRetries = maxRetries;
+		}
+		
 		@Override
 		public Void update(ApiClient client) throws ApiException {
 			get(client);
@@ -323,6 +366,11 @@ public abstract class AbstractEsiGetter extends AbstractGetter<EsiOwner, ApiClie
 		@Override
 		public String getStatus() {
 			return "Completed";
+		}
+
+		@Override
+		public int getMaxRetries() {
+			return maxRetries;
 		}
 	}
 }

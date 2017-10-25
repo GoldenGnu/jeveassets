@@ -47,7 +47,7 @@ public class LocationsGetter extends AbstractApiGetter<LocationsResponse> {
 
 	@Override
 	protected void get(String updaterStatus) throws ApiException {
-		Map<List<Long>, LocationsResponse> updateList = updateList(splitList(getIDs(itemMap, owner), MAX_SIZE), new ListHandler<List<Long>, LocationsResponse>() {
+		Map<List<Long>, LocationsResponse> updateList = updateList(splitList(getIDs(itemMap, owner), MAX_SIZE), NO_RETRIES, new ListHandler<List<Long>, LocationsResponse>() {
 			@Override
 			public LocationsResponse get(String updaterStatus, List<Long> t) throws ApiException {
 				if (owner.isCorporation()) {

@@ -32,7 +32,7 @@ import net.troja.eve.esi.model.CorporationContractsResponse;
 public class EsiContractsGetter extends AbstractEsiGetter {
 
 	public EsiContractsGetter(UpdateTask updateTask, EsiOwner owner) {
-		super(updateTask, owner, false,  owner.getContractsNextUpdate(), TaskType.CONTRACTS);
+		super(updateTask, owner, false,  owner.getContractsNextUpdate(), TaskType.CONTRACTS, DEFAULT_RETRIES);
 	}
 
 	@Override

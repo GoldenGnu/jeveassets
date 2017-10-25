@@ -37,7 +37,7 @@ import net.troja.eve.esi.model.CorporationIndustryJobsResponse;
 public class EsiIndustryJobsGetter extends AbstractEsiGetter {
 
 	public EsiIndustryJobsGetter(UpdateTask updateTask, EsiOwner owner) {
-		super(updateTask, owner, false, owner.getIndustryJobsNextUpdate(), TaskType.INDUSTRY_JOBS);
+		super(updateTask, owner, false, owner.getIndustryJobsNextUpdate(), TaskType.INDUSTRY_JOBS, NO_RETRIES);
 	}
 
 	@Override
@@ -46,10 +46,10 @@ public class EsiIndustryJobsGetter extends AbstractEsiGetter {
 		completed.add(true);
 		completed.add(false);
 		if (owner.isCorporation()) {
-			Map<Boolean, List<CorporationIndustryJobsResponse>> updateList = updateList(completed, new ListHandler<Boolean, List<CorporationIndustryJobsResponse>>() {
+			Map<Boolean, List<CorporationIndustryJobsResponse>> updateList = updateList(completed, NO_RETRIES, new ListHandler<Boolean, List<CorporationIndustryJobsResponse>>() {
 				@Override
 				protected List<CorporationIndustryJobsResponse> get(ApiClient client, Boolean k) throws ApiException {
-					return updatePages(new EsiPagesHandler<CorporationIndustryJobsResponse>() {
+					return updatePages(DEFAULT_RETRIES, new EsiPagesHandler<CorporationIndustryJobsResponse>() {
 						@Override
 						public List<CorporationIndustryJobsResponse> get(ApiClient apiClient, Integer page) throws ApiException {
 							return getIndustryApiAuth(apiClient).getCorporationsCorporationIdIndustryJobs((int) owner.getOwnerID(), DATASOURCE, k, page, null, USER_AGENT, null);
@@ -63,7 +63,7 @@ public class EsiIndustryJobsGetter extends AbstractEsiGetter {
 			}
 			owner.setIndustryJobs(EsiConverter.toIndustryJobsCorporation(industryJobs, owner));
 		} else {
-			Map<Boolean, List<CharacterIndustryJobsResponse>> updateList = updateList(completed, new ListHandler<Boolean, List<CharacterIndustryJobsResponse>>() {
+			Map<Boolean, List<CharacterIndustryJobsResponse>> updateList = updateList(completed, DEFAULT_RETRIES, new ListHandler<Boolean, List<CharacterIndustryJobsResponse>>() {
 				@Override
 				protected List<CharacterIndustryJobsResponse> get(ApiClient client, Boolean k) throws ApiException {
 					return getIndustryApiAuth(apiClient).getCharactersCharacterIdIndustryJobs((int) owner.getOwnerID(), DATASOURCE, k, null, USER_AGENT, null);

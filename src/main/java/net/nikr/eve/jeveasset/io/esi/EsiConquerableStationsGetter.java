@@ -39,7 +39,7 @@ import net.troja.eve.esi.model.UniverseNamesResponse;
 public class EsiConquerableStationsGetter extends AbstractEsiGetter {
 
 	public EsiConquerableStationsGetter(UpdateTask updateTask) {
-		super(updateTask, null, false, Settings.get().getConquerableStationsNextUpdate(), TaskType.CONQUERABLE_STATIONS);
+		super(updateTask, null, false, Settings.get().getConquerableStationsNextUpdate(), TaskType.CONQUERABLE_STATIONS, NO_RETRIES);
 	}
 
 	@Override
@@ -60,7 +60,7 @@ public class EsiConquerableStationsGetter extends AbstractEsiGetter {
 			}
 		}
 		List<List<Integer>> batches = splitList(map.keySet(), UNIVERSE_BATCH_SIZE);
-		Map<List<Integer>, List<UniverseNamesResponse>> responses = updateList(batches, new ListHandler<List<Integer>, List<UniverseNamesResponse>>() {
+		Map<List<Integer>, List<UniverseNamesResponse>> responses = updateList(batches, DEFAULT_RETRIES, new ListHandler<List<Integer>, List<UniverseNamesResponse>>() {
 			@Override
 			public List<UniverseNamesResponse> get(ApiClient apiClient, List<Integer> t) throws ApiException {
 				return getUniverseApiOpen(apiClient).postUniverseNames(t, DATASOURCE, USER_AGENT, null);

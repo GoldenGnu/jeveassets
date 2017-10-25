@@ -38,13 +38,13 @@ public class EsiLocationsGetter extends AbstractEsiGetter {
 	private final Map<Long, String> itemMap = new HashMap<Long, String>();
 
 	public EsiLocationsGetter(UpdateTask updateTask, EsiOwner owner) {
-		super(updateTask, owner, false, owner.getLocationsNextUpdate(), TaskType.LOCATIONS);
+		super(updateTask, owner, false, owner.getLocationsNextUpdate(), TaskType.LOCATIONS, NO_RETRIES);
 	}
 
 	@Override
 	protected void get(ApiClient apiClient) throws ApiException {
 		if (owner.isCorporation()) {
-			Map<List<Long>, List<CorporationAssetsNamesResponse>> responses = updateList(splitList(getIDs(itemMap, owner), LOCATIONS_BATCH_SIZE), new ListHandler<List<Long>, List<CorporationAssetsNamesResponse>>() {
+			Map<List<Long>, List<CorporationAssetsNamesResponse>> responses = updateList(splitList(getIDs(itemMap, owner), LOCATIONS_BATCH_SIZE), DEFAULT_RETRIES, new ListHandler<List<Long>, List<CorporationAssetsNamesResponse>>() {
 				@Override
 				public List<CorporationAssetsNamesResponse> get(ApiClient apiClient, List<Long> t) throws ApiException {
 					return getAssetsApiAuth(apiClient).postCorporationsCorporationIdAssetsNames((int) owner.getOwnerID(), t, DATASOURCE, null, USER_AGENT, null);
@@ -63,7 +63,7 @@ public class EsiLocationsGetter extends AbstractEsiGetter {
 				}
 			}
 		} else {
-			Map<List<Long>, List<CharacterAssetsNamesResponse>> responses = updateList(splitList(getIDs(itemMap, owner), LOCATIONS_BATCH_SIZE), new ListHandler<List<Long>, List<CharacterAssetsNamesResponse>>() {
+			Map<List<Long>, List<CharacterAssetsNamesResponse>> responses = updateList(splitList(getIDs(itemMap, owner), LOCATIONS_BATCH_SIZE), DEFAULT_RETRIES, new ListHandler<List<Long>, List<CharacterAssetsNamesResponse>>() {
 				@Override
 				public List<CharacterAssetsNamesResponse> get(ApiClient apiClient, List<Long> t) throws ApiException {
 					return getAssetsApiAuth(apiClient).postCharactersCharacterIdAssetsNames((int) owner.getOwnerID(), t, DATASOURCE, null, USER_AGENT, null);

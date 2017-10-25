@@ -33,7 +33,7 @@ import net.troja.eve.esi.model.CorporationWalletsResponse;
 public class EsiAccountBalanceGetter extends AbstractEsiGetter {
 
 	public EsiAccountBalanceGetter(UpdateTask updateTask, EsiOwner owner) {
-		super(updateTask, owner, false, owner.getBalanceNextUpdate(), TaskType.ACCOUNT_BALANCE);
+		super(updateTask, owner, false, owner.getBalanceNextUpdate(), TaskType.ACCOUNT_BALANCE, DEFAULT_RETRIES);
 	}
 	
 	@Override

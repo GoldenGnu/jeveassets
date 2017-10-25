@@ -35,14 +35,14 @@ public class EsiMarketOrdersGetter extends AbstractEsiGetter {
 	private final boolean saveHistory;
 
 	public EsiMarketOrdersGetter(UpdateTask updateTask, EsiOwner owner, boolean saveHistory) {
-		super(updateTask, owner, false, owner.getMarketOrdersNextUpdate(), TaskType.MARKET_ORDERS);
+		super(updateTask, owner, false, owner.getMarketOrdersNextUpdate(), TaskType.MARKET_ORDERS, owner.isCorporation() ? NO_RETRIES : DEFAULT_RETRIES);
 		this.saveHistory = saveHistory;
 	}
 
 	@Override
 	protected void get(ApiClient apiClient) throws ApiException {
 		if (owner.isCorporation()) {
-			List<CorporationOrdersResponse> marketOrders = updatePages(new EsiPagesHandler<CorporationOrdersResponse>() {
+			List<CorporationOrdersResponse> marketOrders = updatePages(DEFAULT_RETRIES, new EsiPagesHandler<CorporationOrdersResponse>() {
 				@Override
 				public List<CorporationOrdersResponse> get(ApiClient apiClient, Integer page) throws ApiException {
 					return getMarketApiAuth(apiClient).getCorporationsCorporationIdOrders((int) owner.getOwnerID(), DATASOURCE, page, null, USER_AGENT, null);

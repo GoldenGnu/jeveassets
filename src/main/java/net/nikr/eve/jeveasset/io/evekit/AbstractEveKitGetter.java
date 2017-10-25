@@ -96,15 +96,20 @@ public abstract class AbstractEveKitGetter extends AbstractGetter<EveKitOwner, A
 
 	@Override
 	public <R> R updateApi(Updater<R, ApiClient, ApiException> updater, int retries) throws ApiException {
-		checkCancelled();
-		final ApiClient client = new ApiClient();
-		R r = updater.update(client);
-		logInfo(updater.getStatus(), "Updated");
-		String expiresHeader = getHeader(client.getResponseHeaders(), "Expires");
-		if (expiresHeader != null) {
-			setNextUpdateSafe(Formater.parseExpireDate(expiresHeader));
+		try {
+			checkCancelled();
+			final ApiClient client = new ApiClient();
+			R r = updater.update(client);
+			logInfo(updater.getStatus(), "Updated");
+			String expiresHeader = getHeader(client.getResponseHeaders(), "Expires");
+			if (expiresHeader != null) {
+				setNextUpdateSafe(Formater.parseExpireDate(expiresHeader));
+			}
+			return r;
+		} catch (ApiException ex) {
+			logError(updater.getStatus(), ex.getMessage(), ex.getMessage());
+			throw ex;
 		}
-		return r;
 	}
 
 	@Override
@@ -296,6 +301,11 @@ public abstract class AbstractEveKitGetter extends AbstractGetter<EveKitOwner, A
 		public String getStatus() {
 			return status;
 		}
+
+		@Override
+		public int getMaxRetries() {
+			return NO_RETRIES;
+		}
 	}
 
 	public class EveKitUpdater implements Updater<Void, ApiClient, ApiException> {
@@ -309,6 +319,11 @@ public abstract class AbstractEveKitGetter extends AbstractGetter<EveKitOwner, A
 		@Override
 		public String getStatus() {
 			return "Completed";
+		}
+
+		@Override
+		public int getMaxRetries() {
+			return NO_RETRIES;
 		}
 	}
 

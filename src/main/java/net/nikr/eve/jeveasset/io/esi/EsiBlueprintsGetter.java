@@ -33,13 +33,13 @@ import net.troja.eve.esi.model.CorporationBlueprintsResponse;
 public class EsiBlueprintsGetter extends AbstractEsiGetter {
 
 	public EsiBlueprintsGetter(UpdateTask updateTask, EsiOwner owner) {
-		super(updateTask, owner, false, owner.getBlueprintsNextUpdate(), TaskType.BLUEPRINTS);
+		super(updateTask, owner, false, owner.getBlueprintsNextUpdate(), TaskType.BLUEPRINTS, NO_RETRIES);
 	}
 
 	@Override
 	protected void get(ApiClient apiClient) throws ApiException {
 		if (owner.isCorporation()) {
-			List<CorporationBlueprintsResponse> responses = updatePages(new EsiPagesHandler<CorporationBlueprintsResponse>() {
+			List<CorporationBlueprintsResponse> responses = updatePages(DEFAULT_RETRIES, new EsiPagesHandler<CorporationBlueprintsResponse>() {
 				@Override
 				public List<CorporationBlueprintsResponse> get(ApiClient apiClient, Integer page) throws ApiException {
 					return getCorporationApiAuth(apiClient).getCorporationsCorporationIdBlueprints((int) owner.getOwnerID(), DATASOURCE, page, null, USER_AGENT, null);
@@ -47,7 +47,7 @@ public class EsiBlueprintsGetter extends AbstractEsiGetter {
 			});
 			owner.setBlueprints(EsiConverter.toBlueprintsCorporation(responses));
 		} else {
-			List<CharacterBlueprintsResponse> responses = updatePages(new EsiPagesHandler<CharacterBlueprintsResponse>() {
+			List<CharacterBlueprintsResponse> responses = updatePages(DEFAULT_RETRIES, new EsiPagesHandler<CharacterBlueprintsResponse>() {
 				@Override
 				public List<CharacterBlueprintsResponse> get(ApiClient apiClient, Integer page) throws ApiException {
 					return getCharacterApiAuth(apiClient).getCharactersCharacterIdBlueprints((int) owner.getOwnerID(), DATASOURCE, page, null, USER_AGENT, null);

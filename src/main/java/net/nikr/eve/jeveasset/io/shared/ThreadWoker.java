@@ -24,7 +24,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -71,7 +70,7 @@ public class ThreadWoker {
 		}
 	}
 
-	public static <K> List<Future<K>> startReturn(UpdateTask updateTask, Collection<? extends Callable<K>> updaters) throws InterruptedException, ExecutionException {
+	public static <K> List<Future<K>> startReturn(UpdateTask updateTask, Collection<? extends Callable<K>> updaters) throws InterruptedException {
 		if (updateTask != null && updateTask.isCancelled()) {
 			throw new TaskCancelledException();
 		}

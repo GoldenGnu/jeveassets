@@ -78,8 +78,13 @@ public abstract class AbstractApiGetter<T extends ApiResponse> extends AbstractG
 
 	@Override
 	protected <R> R updateApi(Updater<R, String, ApiException> updater, int retries) throws ApiException {
-		checkCancelled();
-		return updater.update(updater.getStatus());
+		try {
+			checkCancelled();
+			return updater.update(updater.getStatus());
+		} catch (ApiException ex) {
+			logError(updater.getStatus(), ex.getMessage(), ex.getMessage());
+			throw ex;
+		}
 	}
 
 	@Override
@@ -181,6 +186,11 @@ public abstract class AbstractApiGetter<T extends ApiResponse> extends AbstractG
 		@Override
 		public String getStatus() {
 			return "Completed";
+		}
+
+		@Override
+		public int getMaxRetries() {
+			return NO_RETRIES;
 		}
 	}
 }

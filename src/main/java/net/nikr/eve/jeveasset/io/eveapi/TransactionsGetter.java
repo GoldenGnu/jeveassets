@@ -58,10 +58,10 @@ public class TransactionsGetter extends AbstractApiGetter<WalletTransactionsResp
 			accountKeys.add(1000);
 		}
 		//for each account key
-		Map<Integer, List<WalletTransaction>> updateList = updateList(accountKeys, new ListHandler<Integer, List<WalletTransaction>>() {
+		Map<Integer, List<WalletTransaction>> updateList = updateList(accountKeys, NO_RETRIES, new ListHandler<Integer, List<WalletTransaction>>() {
 			@Override
 			public List<WalletTransaction> get(String listUpdaterStatus, Integer t) throws ApiException {
-				return updateIDs(new HashSet<Long>(), new IDsHandler<WalletTransaction>() {
+				return updateIDs(new HashSet<Long>(), NO_RETRIES, new IDsHandler<WalletTransaction>() {
 					@Override
 					protected List<WalletTransaction> get(String idUpdaterStatus, Long fromID) throws ApiException {
 						if (fromID == null) {

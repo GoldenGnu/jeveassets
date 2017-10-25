@@ -48,9 +48,16 @@ import org.slf4j.LoggerFactory;
 public class EsiStructuresGetter extends AbstractEsiGetter {
 
 	private static final Logger LOG = LoggerFactory.getLogger(EsiStructuresGetter.class);
+	private static Set<Long> IDS;
+	private final List<OwnerType> ownerTypes;
+	
+	public EsiStructuresGetter(UpdateTask updateTask, EsiOwner owner, List<OwnerType> ownerTypes) {
+		super(updateTask, owner, false, owner.getStructuresNextUpdate(), TaskType.STRUCTURES, NO_RETRIES);
+		this.ownerTypes = ownerTypes;
+	}
 
-	public EsiStructuresGetter(UpdateTask updateTask, EsiOwner owner) {
-		super(updateTask, owner, false, owner.getStructuresNextUpdate(), TaskType.STRUCTURES);
+	public static void reset() {
+		IDS = null;
 	}
 
 	@Override
@@ -58,19 +65,22 @@ public class EsiStructuresGetter extends AbstractEsiGetter {
 		if (owner.isCorporation()) {
 			return; //Corporation accounts don't get structures
 		}
-		Map<Long, StructureResponse> responses = updateList(getIDs(owner), new ListHandler<Long, StructureResponse>() {
+		buildIDs(ownerTypes);
+		Map<Long, StructureResponse> responses = updateListSlow(IDS, true, DEFAULT_RETRIES, new ListHandlerSlow<Long, StructureResponse>() {
 			@Override
-			public StructureResponse get(ApiClient apiClient, Long t) throws ApiException {
-				try {
-					return getUniverseApiAuth(apiClient).getUniverseStructuresStructureId(t, DATASOURCE, null, USER_AGENT, null);
-				} catch (ApiException ex) {
-					if (ex.getCode() != 403 && ex.getCode() != 404) { //Ignore 403: Forbidden and 404: Structure not found
-						throw ex;
-					} else { //Ignore error, but, still handle error limit
-						LOG.warn("Failed to find locationID: " + t);
-					}
+			public StructureResponse get(ApiClient apiClient, Long k) throws ApiException {
+				return getUniverseApiAuth(apiClient).getUniverseStructuresStructureId(k, DATASOURCE, null, USER_AGENT, null);
+			}
+			@Override
+			protected void handle(ApiException ex, Long k) throws ApiException {
+				if ((ex.getCode() == 403 && ex.getMessage().toLowerCase().contains("forbidden"))
+						|| (ex.getCode() == 404 && ex.getMessage().toLowerCase().contains("structure not found"))
+						|| (ex.getCode() == 502 && ex.getMessage().toLowerCase().contains("could not determine docking access"))) {
+					LOG.warn("Failed to find locationID: " + k);
+				} else {
+					LOG.error("Failed to find locationID: " + k, ex);
+					throw ex;
 				}
-				return null;
 			}
 		});
 
@@ -95,39 +105,43 @@ public class EsiStructuresGetter extends AbstractEsiGetter {
 		}
 	}
 
-	private Set<Long> getIDs(OwnerType owner) {
-		Set<Long> itemIDs = new HashSet<Long>();
-		Set<Long> locationIDs = new HashSet<Long>();
-		for (RawAsset asset : owner.getAssets()) {
-			add(locationIDs, asset.getLocationID());
+	private static synchronized void buildIDs(List<OwnerType> ownerTypes) {
+		if (IDS == null) {
+			Set<Long> itemIDs = new HashSet<Long>();
+			Set<Long> locationIDs = new HashSet<Long>();
+			for (OwnerType ownerType : ownerTypes) {
+				for (RawAsset asset : ownerType.getAssets()) {
+					add(locationIDs, asset.getLocationID());
+				}
+				getAssetItemIDs(itemIDs, ownerType.getAssets());
+				for (RawBlueprint blueprint : ownerType.getBlueprints().values()) {
+					itemIDs.add(blueprint.getItemID());
+					add(locationIDs, blueprint.getLocationID());
+				}
+				for (RawContract contract : ownerType.getContracts().keySet()) {
+					add(locationIDs, contract.getEndLocationID());
+					add(locationIDs, contract.getStartLocationID());
+				}
+				for (MyIndustryJob industryJob : ownerType.getIndustryJobs()) {
+					add(locationIDs, industryJob.getLocationID());
+				}
+				for (RawMarketOrder marketOrder : ownerType.getMarketOrders()) {
+					add(locationIDs, marketOrder.getLocationID());
+				}
+			}
+			locationIDs.removeAll(itemIDs);
+			IDS = locationIDs;
 		}
-		getAssetItemIDs(itemIDs, owner.getAssets());
-		for (RawBlueprint blueprint : owner.getBlueprints().values()) {
-			itemIDs.add(blueprint.getItemID());
-			add(locationIDs, blueprint.getLocationID());
-		}
-		for (RawContract contract : owner.getContracts().keySet()) {
-			add(locationIDs, contract.getEndLocationID());
-			add(locationIDs, contract.getStartLocationID());
-		}
-		for (MyIndustryJob industryJob : owner.getIndustryJobs()) {
-			add(locationIDs, industryJob.getLocationID());
-		}
-		for (RawMarketOrder marketOrder : owner.getMarketOrders()) {
-			add(locationIDs, marketOrder.getLocationID());
-		}
-		locationIDs.removeAll(itemIDs);
-		return locationIDs;
 	}
 
-	private void getAssetItemIDs(Set<Long> itemIDs, List<MyAsset> assets) {
+	private static void getAssetItemIDs(Set<Long> itemIDs, List<MyAsset> assets) {
 		for (MyAsset asset : assets) {
 			itemIDs.add(asset.getItemID());
 			getAssetItemIDs(itemIDs, asset.getAssets());
 		}
 	}
 
-	private void add(Set<Long> locationIDs, Long locationID) {
+	private static void add(Set<Long> locationIDs, Long locationID) {
 		if (locationID == null) {
 			return;
 		}

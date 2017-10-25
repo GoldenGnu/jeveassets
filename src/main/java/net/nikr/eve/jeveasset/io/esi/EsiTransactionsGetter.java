@@ -38,7 +38,7 @@ public class EsiTransactionsGetter extends AbstractEsiGetter {
 	private final boolean saveHistory;
 
 	public EsiTransactionsGetter(UpdateTask updateTask, EsiOwner owner, boolean saveHistory) {
-		super(updateTask, owner, false, owner.getTransactionsNextUpdate(), TaskType.TRANSACTIONS);
+		super(updateTask, owner, false, owner.getTransactionsNextUpdate(), TaskType.TRANSACTIONS, NO_RETRIES);
 		this.saveHistory = saveHistory;
 	}
 
@@ -53,7 +53,7 @@ public class EsiTransactionsGetter extends AbstractEsiGetter {
 		if (owner.isCorporation()) {
 			for (int i = 1; i < 8; i++) { //Division 1-7
 				final int division = i;
-				List<CorporationWalletTransactionsResponse> responses = updateIDs(existing, new IDsHandler<CorporationWalletTransactionsResponse>() {
+				List<CorporationWalletTransactionsResponse> responses = updateIDs(existing, DEFAULT_RETRIES, new IDsHandler<CorporationWalletTransactionsResponse>() {
 					@Override
 					public List<CorporationWalletTransactionsResponse> get(ApiClient apiClient, Long fromID) throws ApiException {
 						return getWalletApiAuth(apiClient).getCorporationsCorporationIdWalletsDivisionTransactions((int) owner.getOwnerID(), division, DATASOURCE, fromID, null, USER_AGENT, null);
@@ -68,7 +68,7 @@ public class EsiTransactionsGetter extends AbstractEsiGetter {
 				owner.setTransactions(EsiConverter.toTransactionCorporation(responses, owner, fixedDivision, saveHistory));
 			}
 		} else {
-			List<CharacterWalletTransactionsResponse> responses = updateIDs(existing, new IDsHandler<CharacterWalletTransactionsResponse>() {
+			List<CharacterWalletTransactionsResponse> responses = updateIDs(existing, DEFAULT_RETRIES, new IDsHandler<CharacterWalletTransactionsResponse>() {
 				@Override
 				public List<CharacterWalletTransactionsResponse> get(ApiClient apiClient, Long fromID) throws ApiException {
 					return getWalletApiAuth(apiClient).getCharactersCharacterIdWalletTransactions((int) owner.getOwnerID(), DATASOURCE, fromID, null, USER_AGENT, null);

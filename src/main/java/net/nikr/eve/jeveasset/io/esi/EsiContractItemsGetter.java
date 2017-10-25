@@ -22,8 +22,11 @@ package net.nikr.eve.jeveasset.io.esi;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
 import net.nikr.eve.jeveasset.data.api.my.MyContract;
 import net.nikr.eve.jeveasset.data.api.my.MyContractItem;
@@ -36,25 +39,23 @@ import net.troja.eve.esi.model.CorporationContractsItemsResponse;
 
 public class EsiContractItemsGetter extends AbstractEsiGetter {
 
-	public EsiContractItemsGetter(UpdateTask updateTask, EsiOwner owner) {
-		super(updateTask, owner, false, Settings.getNow(), TaskType.CONTRACT_ITEMS);
+	private final List<EsiOwner> owners;
+	private static Map<Long, List<MyContract>> contracts;
+
+	public EsiContractItemsGetter(UpdateTask updateTask, EsiOwner owner, List<EsiOwner> owners) {
+		super(updateTask, owner, false, Settings.getNow(), TaskType.CONTRACT_ITEMS, NO_RETRIES);
+		this.owners = owners;
+	}
+
+	public static void reset() {
+		contracts = null;
 	}
 
 	@Override
 	protected void get(ApiClient apiClient) throws ApiException {
-		List<MyContract> contracts = new ArrayList<MyContract>();
-		for (Map.Entry<MyContract, List<MyContractItem>> entry : owner.getContracts().entrySet()) {
-			if (entry.getKey().isIgnoreContract()) {
-				continue;
-			}
-			if (entry.getValue() != null && !entry.getValue().isEmpty()) { //Not null and not empty
-				continue;
-			}
-			contracts.add(entry.getKey());
-
-		}
+		createContracts(owners);
 		if (owner.isCorporation()) {
-			Map<MyContract, List<CorporationContractsItemsResponse>> responses = updateList(contracts, new ListHandler<MyContract, List<CorporationContractsItemsResponse>>() {
+			Map<MyContract, List<CorporationContractsItemsResponse>> responses = updateList(contracts.get(owner.getOwnerID()), DEFAULT_RETRIES, new ListHandler<MyContract, List<CorporationContractsItemsResponse>>() {
 				@Override
 				public List<CorporationContractsItemsResponse> get(ApiClient apiClient, MyContract t) throws ApiException {
 					return getContractsApiAuth(apiClient).getCorporationsCorporationIdContractsContractIdItems(t.getContractID(), (int) owner.getOwnerID(), DATASOURCE, null, USER_AGENT, null);
@@ -64,7 +65,7 @@ public class EsiContractItemsGetter extends AbstractEsiGetter {
 				owner.setContracts(EsiConverter.toContractItemsCorporation(entry.getKey(), entry.getValue(), owner));
 			}
 		} else {
-			Map<MyContract, List<CharacterContractsItemsResponse>> responses = updateList(contracts, new ListHandler<MyContract, List<CharacterContractsItemsResponse>>() {
+			Map<MyContract, List<CharacterContractsItemsResponse>> responses = updateList(contracts.get(owner.getOwnerID()), DEFAULT_RETRIES, new ListHandler<MyContract, List<CharacterContractsItemsResponse>>() {
 				@Override
 				public List<CharacterContractsItemsResponse> get(ApiClient apiClient, MyContract t) throws ApiException {
 					return getContractsApiAuth(apiClient).getCharactersCharacterIdContractsContractIdItems((int) owner.getOwnerID(), t.getContractID(), DATASOURCE, null, USER_AGENT, null);
@@ -72,6 +73,39 @@ public class EsiContractItemsGetter extends AbstractEsiGetter {
 			});
 			for (Map.Entry<MyContract, List<CharacterContractsItemsResponse>> entry : responses.entrySet()) {
 				owner.setContracts(EsiConverter.toContractItems(entry.getKey(), entry.getValue(), owner));
+			}
+		}
+	}
+
+	private static synchronized void createContracts(List<EsiOwner> owners) {
+		if (contracts == null) {
+			contracts = new HashMap<Long, List<MyContract>>();
+			Set<MyContract> uniqueContacts = new HashSet<MyContract>();
+			Map<Long, EsiOwner> uniqueOwners = new HashMap<Long, EsiOwner>();
+			for (EsiOwner esiOwner : owners) {
+				uniqueOwners.put(esiOwner.getOwnerID(), esiOwner);
+				contracts.put(esiOwner.getOwnerID(), new ArrayList<MyContract>());
+				for (Map.Entry<MyContract, List<MyContractItem>> entry : esiOwner.getContracts().entrySet()) {
+					MyContract contract = entry.getKey();
+					if (contract.isIgnoreContract()) {
+						continue; //Ignore contracts without items
+					}
+					if (entry.getValue() != null && !entry.getValue().isEmpty()) { 
+						continue; //Ignore contracts that have been already updated
+					}
+					uniqueContacts.add(contract);
+				}
+			}
+			for (MyContract contract : uniqueContacts) {
+				if (uniqueOwners.containsKey(contract.getIssuerID())) {
+					contracts.get(contract.getIssuerID()).add(contract);
+				} else if (uniqueOwners.containsKey(contract.getIssuerCorpID())) {
+					contracts.get(contract.getIssuerCorpID()).add(contract);
+				} else if (uniqueOwners.containsKey(contract.getAssigneeID())) {
+					contracts.get(contract.getAssigneeID()).add(contract);
+				} else if (uniqueOwners.containsKey(contract.getAcceptorID())) {
+					contracts.get(contract.getAcceptorID()).add(contract);
+				}
 			}
 		}
 	}
