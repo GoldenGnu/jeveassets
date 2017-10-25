@@ -124,7 +124,7 @@
 								<copy todir="${project.build.directory}">
 									<fileset dir="" includes="*.txt"/>
 									<fileset dir="tools" includes="jmemory.jar"/>
-									<fileset dir="tools" includes="jmemory.properties"/>
+									<fileset dir="tools" includes="jarfile.properties"/>
 								</copy>
 								<copy todir="${project.build.directory}">
 									<fileset dir="tools/update" includes="list.php"/>
