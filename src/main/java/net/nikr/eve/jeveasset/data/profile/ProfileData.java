@@ -328,6 +328,7 @@ public class ProfileData {
 		Map<Long, List<MyAsset>> assetsMap = new HashMap<Long, List<MyAsset>>();
 		Map<Long, List<MyAccountBalance>> accountBalanceMap = new HashMap<Long, List<MyAccountBalance>>();
 		Set<MyMarketOrder> marketOrders = new HashSet<MyMarketOrder>();
+		Set<MyMarketOrder> charMarketOrders = new HashSet<MyMarketOrder>();
 		Set<MyJournal> journals = new HashSet<MyJournal>();
 		Set<MyTransaction> transactions = new HashSet<MyTransaction>();
 		Set<MyIndustryJob> industryJobs = new HashSet<MyIndustryJob>();
@@ -353,9 +354,10 @@ public class ProfileData {
 			//Marker Orders
 			//If owner is corporation overwrite the character orders (to use the "right" owner)
 			if (owner.isCorporation()) {
-				marketOrders.removeAll(owner.getMarketOrders());
+				marketOrders.addAll(owner.getMarketOrders());
+			} else {
+				charMarketOrders.addAll(owner.getMarketOrders());
 			}
-			marketOrders.addAll(owner.getMarketOrders());
 			//Journal
 			journals.addAll(owner.getJournal());
 			//Transactions
@@ -415,6 +417,13 @@ public class ProfileData {
 		//Fill blueprints
 		for (Map<Long, RawBlueprint> map : blueprintsMap.values()) {
 			blueprints.putAll(map);
+		}
+
+		for (MyMarketOrder marketOrder : charMarketOrders) {
+			if (!marketOrder.isCorp()) { //Remove non-corporation orders
+				marketOrders.remove(marketOrder);
+			}
+			marketOrders.add(marketOrder);
 		}
 
 		//Update MarketOrders dynamic values

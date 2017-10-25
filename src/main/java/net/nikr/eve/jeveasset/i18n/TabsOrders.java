@@ -68,6 +68,7 @@ public abstract class TabsOrders extends Bundle {
 	public abstract String statusCancelled();
 	public abstract String statusPending();
 	public abstract String statusCharacterDeleted();
+	public abstract String statusUnknown();
 	public abstract String totalSellOrders();
 	public abstract String totalBuyOrders();
 	public abstract String totalEscrow();

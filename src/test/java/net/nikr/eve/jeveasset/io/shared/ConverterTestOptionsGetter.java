@@ -192,7 +192,15 @@ public class ConverterTestOptionsGetter {
 		private static final CorporationOrdersResponse.RangeEnum[] ESI_MARKET_ORDER_RANGE_CORPORATION = CorporationOrdersResponse.RangeEnum.values();
 		private static final Integer[] EVE_API_MARKET_ORDER_RANGE = {1, 10, 2, 20, 3, 30, 4, 40, 5, 32767, 0, -1};
 		//MarketOrderState
-		private static final RawMarketOrder.MarketOrderState[] RAW_MARKET_ORDER_STATE = RawMarketOrder.MarketOrderState.values();
+		private static final RawMarketOrder.MarketOrderState[] RAW_MARKET_ORDER_STATE = {
+			RawMarketOrder.MarketOrderState.CANCELLED,
+			RawMarketOrder.MarketOrderState.CHARACTER_DELETED,
+			RawMarketOrder.MarketOrderState.CLOSED,
+			RawMarketOrder.MarketOrderState.EXPIRED,
+			RawMarketOrder.MarketOrderState.OPEN,
+			RawMarketOrder.MarketOrderState.PENDING,
+			//UNKNOWN("Unknown");  //Ignored: jEveAssets value
+		};
 		private static final CharacterOrdersResponse.StateEnum[] ESI_MARKET_ORDER_STATE_CHARACTER = CharacterOrdersResponse.StateEnum.values();
 		private static final CorporationOrdersResponse.StateEnum[] ESI_MARKET_ORDER_STATE_CORPORATION = CorporationOrdersResponse.StateEnum.values();
 		private static final Integer[] EVE_API_MARKET_ORDER_STATE = {3, 5, 1, 2, 0, 4};

@@ -503,6 +503,8 @@ public class RawConverter {
 				return RawMarketOrder.MarketOrderState.PENDING;
 			case 5:
 				return RawMarketOrder.MarketOrderState.CHARACTER_DELETED;
+			case -100:
+				return RawMarketOrder.MarketOrderState.UNKNOWN;
 			default:
 				throw new RuntimeException("Can't convert: " + value + " to MarketOrderState");
 		}
@@ -522,6 +524,8 @@ public class RawConverter {
 				return 4;
 			case CHARACTER_DELETED:
 				return 5;
+			case UNKNOWN:
+				return -100;
 			default:
 				throw new RuntimeException("Can't convert: " + value + " to MarketOrderState");
 		}
