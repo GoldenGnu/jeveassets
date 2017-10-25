@@ -33,13 +33,13 @@ import net.troja.eve.esi.model.CorporationAssetsResponse;
 public class EsiAssetsGetter extends AbstractEsiGetter {
 
 	public EsiAssetsGetter(UpdateTask updateTask, EsiOwner owner) {
-		super(updateTask, owner, false, owner.getAssetNextUpdate(), TaskType.ASSETS);
+		super(updateTask, owner, false, owner.getAssetNextUpdate(), TaskType.ASSETS, NO_RETRIES);
 	}
 
 	@Override
 	protected void get(ApiClient apiClient) throws ApiException {
 		if (owner.isCorporation()) {
-			List<CorporationAssetsResponse> responses = updatePages(new EsiPagesHandler<CorporationAssetsResponse>() {
+			List<CorporationAssetsResponse> responses = updatePages(DEFAULT_RETRIES, new EsiPagesHandler<CorporationAssetsResponse>() {
 				@Override
 				public List<CorporationAssetsResponse> get(ApiClient apiClient, Integer page) throws ApiException {
 					return getAssetsApiAuth(apiClient).getCorporationsCorporationIdAssets((int) owner.getOwnerID(), DATASOURCE, page, null, USER_AGENT, null);
@@ -47,7 +47,7 @@ public class EsiAssetsGetter extends AbstractEsiGetter {
 			});
 			owner.setAssets(EsiConverter.toAssetsCorporation(responses, owner));
 		} else {
-			List<CharacterAssetsResponse> responses = updatePages(new EsiPagesHandler<CharacterAssetsResponse>() {
+			List<CharacterAssetsResponse> responses = updatePages(DEFAULT_RETRIES, new EsiPagesHandler<CharacterAssetsResponse>() {
 				@Override
 				public List<CharacterAssetsResponse> get(ApiClient apiClient, Integer page) throws ApiException {
 					return getAssetsApiAuth(apiClient).getCharactersCharacterIdAssets((int) owner.getOwnerID(), DATASOURCE, page, null, USER_AGENT, null);

@@ -40,7 +40,7 @@ public class EsiNameGetter extends AbstractEsiGetter {
 	private final List<OwnerType> ownerTypes;
 
 	public EsiNameGetter(UpdateTask updateTask, List<OwnerType> ownerTypes) {
-		super(updateTask, null, false, Settings.getNow(), TaskType.OWNER_ID_TO_NAME);
+		super(updateTask, null, false, Settings.getNow(), TaskType.OWNER_ID_TO_NAME, NO_RETRIES);
 		this.ownerTypes = ownerTypes;
 	}
 
@@ -54,7 +54,7 @@ public class EsiNameGetter extends AbstractEsiGetter {
 				
 			}
 		}
-		Map<List<Integer>, List<UniverseNamesResponse>> responses = updateList(splitList(ids, UNIVERSE_BATCH_SIZE), new ListHandler<List<Integer>, List<UniverseNamesResponse>>() {
+		Map<List<Integer>, List<UniverseNamesResponse>> responses = updateList(splitList(ids, UNIVERSE_BATCH_SIZE), NO_RETRIES, new ListHandler<List<Integer>, List<UniverseNamesResponse>>() {
 			@Override
 			public List<UniverseNamesResponse> get(ApiClient apiClient, List<Integer> t) throws ApiException {
 				try {
@@ -76,11 +76,11 @@ public class EsiNameGetter extends AbstractEsiGetter {
 			}
 			retries.removeAll(entry.getKey());
 		}
-		Map<List<Integer>, List<CharacterNamesResponse>> retriesResponses = updateList(splitList(retries, UNIVERSE_BATCH_SIZE), new ListHandler<List<Integer>, List<CharacterNamesResponse>>() {
+		Map<List<Integer>, List<CharacterNamesResponse>> retriesResponses = updateList(splitList(retries, UNIVERSE_BATCH_SIZE), DEFAULT_RETRIES, new ListHandler<List<Integer>, List<CharacterNamesResponse>>() {
 			@Override
-			public List<CharacterNamesResponse> get(ApiClient apiClient, List<Integer> t) throws ApiException {
+			public List<CharacterNamesResponse> get(ApiClient apiClient, List<Integer> k) throws ApiException {
 				List<Long> list = new ArrayList<Long>();
-				for (Integer i : t) {
+				for (Integer i : k) {
 					list.add(i.longValue());
 				}
 				return getCharacterApiOpen(apiClient).getCharactersNames(list, DATASOURCE, USER_AGENT, null);

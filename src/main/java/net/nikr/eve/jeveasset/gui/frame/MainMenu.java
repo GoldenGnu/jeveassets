@@ -59,6 +59,7 @@ public class MainMenu extends JMenuBar {
 		ROUTING,
 		STOCKPILE,
 		UPDATE,
+		UPDATE_STRUCTURE,
 		ITEMS,
 		TREE,
 		TRACKER,
@@ -68,6 +69,7 @@ public class MainMenu extends JMenuBar {
 	}
 
 	private final JMenuItem jUpdateMenu;
+	private final JMenuItem jStructureMenu;
 	private final JMenu jTableMenu;
 
 	public MainMenu(final Program program) {
@@ -206,11 +208,18 @@ public class MainMenu extends JMenuBar {
 		this.add(menu);
 
 		jUpdateMenu = new JMenuItem(GuiFrame.get().update1());
-		//jUpdateMenu.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.ALT_MASK));
 		jUpdateMenu.setIcon(Images.DIALOG_UPDATE.getIcon());
 		jUpdateMenu.setActionCommand(MainMenuAction.UPDATE.name());
 		jUpdateMenu.addActionListener(program);
 		menu.add(jUpdateMenu);
+
+		menu.addSeparator();
+
+		jStructureMenu = new JMenuItem(GuiFrame.get().updateStructure());
+		jStructureMenu.setIcon(Images.DIALOG_UPDATE.getIcon());
+		jStructureMenu.setActionCommand(MainMenuAction.UPDATE_STRUCTURE.name());
+		jStructureMenu.addActionListener(program);
+		menu.add(jStructureMenu);
 
 //TABLE
 		jTableMenu = new JMenu(GuiFrame.get().table());
@@ -371,7 +380,7 @@ public class MainMenu extends JMenuBar {
 		return jTableMenu;
 	}
 
-	public void timerTicked(final boolean updatable) {
+	public void timerTicked(final boolean updatable, final boolean structure) {
 		if (updatable) {
 			jUpdateMenu.setIcon(Images.DIALOG_UPDATE.getIcon());
 			jUpdateMenu.setToolTipText(GuiFrame.get().updatable());
@@ -379,5 +388,13 @@ public class MainMenu extends JMenuBar {
 			jUpdateMenu.setIcon(Images.DIALOG_UPDATE_DISABLED.getIcon());
 			jUpdateMenu.setToolTipText(GuiFrame.get().not());
 		}
+		if (structure) {
+			jStructureMenu.setIcon(Images.DIALOG_UPDATE.getIcon());
+			jStructureMenu.setToolTipText(GuiFrame.get().updatable());
+		} else {
+			jStructureMenu.setIcon(Images.DIALOG_UPDATE_DISABLED.getIcon());
+			jStructureMenu.setToolTipText(GuiFrame.get().not());
+		}
+		
 	}
 }

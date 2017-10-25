@@ -25,6 +25,7 @@ import apple.dts.samplecode.osxadapter.OSXAdapter;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import javax.swing.JButton;
@@ -32,6 +33,7 @@ import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.Timer;
+import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
 import net.nikr.eve.jeveasset.data.api.accounts.OwnerType;
 import net.nikr.eve.jeveasset.data.api.my.MyAccountBalance;
 import net.nikr.eve.jeveasset.data.api.my.MyAsset;
@@ -53,7 +55,9 @@ import net.nikr.eve.jeveasset.gui.dialogs.profile.ProfileDialog;
 import net.nikr.eve.jeveasset.gui.dialogs.settings.SettingsDialog;
 import net.nikr.eve.jeveasset.gui.dialogs.settings.UserNameSettingsPanel;
 import net.nikr.eve.jeveasset.gui.dialogs.settings.UserPriceSettingsPanel;
+import net.nikr.eve.jeveasset.gui.dialogs.update.TaskDialog;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateDialog;
+import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import net.nikr.eve.jeveasset.gui.frame.MainMenu.MainMenuAction;
 import net.nikr.eve.jeveasset.gui.frame.MainWindow;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
@@ -78,7 +82,10 @@ import net.nikr.eve.jeveasset.gui.tabs.tree.TreeTab;
 import net.nikr.eve.jeveasset.gui.tabs.values.DataSetCreator;
 import net.nikr.eve.jeveasset.gui.tabs.values.ValueRetroTab;
 import net.nikr.eve.jeveasset.gui.tabs.values.ValueTableTab;
+import net.nikr.eve.jeveasset.i18n.DialoguesUpdate;
+import net.nikr.eve.jeveasset.i18n.GuiFrame;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
+import net.nikr.eve.jeveasset.io.esi.EsiStructuresGetter;
 import net.nikr.eve.jeveasset.io.online.PriceDataGetter;
 import net.nikr.eve.jeveasset.io.online.Updater;
 import net.nikr.eve.jeveasset.io.shared.DesktopUtil;
@@ -339,7 +346,19 @@ public class Program implements ActionListener {
 		}
 		boolean isUpdatable = updatable.isUpdatable();
 		this.getStatusPanel().timerTicked(isUpdatable);
-		this.getMainWindow().getMenu().timerTicked(isUpdatable);
+		boolean structure = true;
+		boolean found = false;
+		for (EsiOwner esiOwner : getProfileManager().getEsiOwners()) {
+			if (esiOwner.isShowOwner() && esiOwner.isStructures()) {
+				found = true;
+				if (esiOwner.getStructuresNextUpdate() != null
+						&& !Settings.get().isUpdatable(esiOwner.getStructuresNextUpdate(), false)) {
+					structure = false;
+					break;
+				}
+			}
+		}
+		this.getMainWindow().getMenu().timerTicked(isUpdatable, structure && found);
 	}
 
 	public final void updateEventLists() {
@@ -636,99 +655,83 @@ public class Program implements ActionListener {
 	//Tools
 		if (MainMenuAction.VALUES.name().equals(e.getActionCommand())) {
 			mainWindow.addTab(valueRetroTab);
-		}
-		if (MainMenuAction.VALUE_TABLE.name().equals(e.getActionCommand())) {
+		} else if (MainMenuAction.VALUE_TABLE.name().equals(e.getActionCommand())) {
 			mainWindow.addTab(valueTableTab);
-		}
-		if (MainMenuAction.MATERIALS.name().equals(e.getActionCommand())) {
+		} else if (MainMenuAction.MATERIALS.name().equals(e.getActionCommand())) {
 			mainWindow.addTab(materialsTab);
-		}
-		if (MainMenuAction.LOADOUTS.name().equals(e.getActionCommand())) {
+		} else if (MainMenuAction.LOADOUTS.name().equals(e.getActionCommand())) {
 			mainWindow.addTab(loadoutsTab);
-		}
-		if (MainMenuAction.MARKET_ORDERS.name().equals(e.getActionCommand())) {
+		} else if (MainMenuAction.MARKET_ORDERS.name().equals(e.getActionCommand())) {
 			mainWindow.addTab(marketOrdersTab);
-		}
-		if (MainMenuAction.JOURNAL.name().equals(e.getActionCommand())) {
+		} else if (MainMenuAction.JOURNAL.name().equals(e.getActionCommand())) {
 			mainWindow.addTab(journalTab);
-		}
-		if (MainMenuAction.TRANSACTION.name().equals(e.getActionCommand())) {
+		} else if (MainMenuAction.TRANSACTION.name().equals(e.getActionCommand())) {
 			mainWindow.addTab(transactionsTab);
-		}
-		if (MainMenuAction.INDUSTRY_JOBS.name().equals(e.getActionCommand())) {
+		} else if (MainMenuAction.INDUSTRY_JOBS.name().equals(e.getActionCommand())) {
 			mainWindow.addTab(industryJobsTab);
-		}
-		if (MainMenuAction.OVERVIEW.name().equals(e.getActionCommand())) {
+		} else if (MainMenuAction.OVERVIEW.name().equals(e.getActionCommand())) {
 			mainWindow.addTab(overviewTab);
 			overviewTab.resetViews();
-		}
-		if (MainMenuAction.ROUTING.name().equals(e.getActionCommand())) {
+		} else if (MainMenuAction.ROUTING.name().equals(e.getActionCommand())) {
 			mainWindow.addTab(routingTab);
-		}
-		if (MainMenuAction.STOCKPILE.name().equals(e.getActionCommand())) {
+		} else if (MainMenuAction.STOCKPILE.name().equals(e.getActionCommand())) {
 			mainWindow.addTab(stockpileTab);
-		}
-		if (MainMenuAction.ITEMS.name().equals(e.getActionCommand())) {
+		} else if (MainMenuAction.ITEMS.name().equals(e.getActionCommand())) {
 			mainWindow.addTab(itemsTab);
-		}
-		if (MainMenuAction.TRACKER.name().equals(e.getActionCommand())) {
+		} else if (MainMenuAction.TRACKER.name().equals(e.getActionCommand())) {
 			mainWindow.addTab(trackerTab);
-		}
-		if (MainMenuAction.REPROCESSED.name().equals(e.getActionCommand())) {
+		} else if (MainMenuAction.REPROCESSED.name().equals(e.getActionCommand())) {
 			mainWindow.addTab(reprocessedTab);
-		}
-		if (MainMenuAction.CONTRACTS.name().equals(e.getActionCommand())) {
+		} else if (MainMenuAction.CONTRACTS.name().equals(e.getActionCommand())) {
 			mainWindow.addTab(contractsTab);
-		}
-		if (MainMenuAction.TREE.name().equals(e.getActionCommand())) {
+		} else if (MainMenuAction.TREE.name().equals(e.getActionCommand())) {
 			mainWindow.addTab(treeTab);
-		}
-	//Settings
-		if (MainMenuAction.ACCOUNT_MANAGER.name().equals(e.getActionCommand())) {
+		} else if (MainMenuAction.ACCOUNT_MANAGER.name().equals(e.getActionCommand())) { //Settings
 			accountManagerDialog.setVisible(true);
-		}
-		if (MainMenuAction.PROFILES.name().equals(e.getActionCommand())) {
+		} else if (MainMenuAction.PROFILES.name().equals(e.getActionCommand())) {
 			profileDialog.setVisible(true);
-		}
-		if (MainMenuAction.OPTIONS.name().equals(e.getActionCommand())) {
+		} else if (MainMenuAction.OPTIONS.name().equals(e.getActionCommand())) {
 			showSettings();
-		}
-	//Others
-		if (MainMenuAction.ABOUT.name().equals(e.getActionCommand())) {
+		} else if (MainMenuAction.ABOUT.name().equals(e.getActionCommand())) { //Others
 			showAbout();
-		}
-		if (MainMenuAction.UPDATE.name().equals(e.getActionCommand())) {
+		} else if (MainMenuAction.UPDATE.name().equals(e.getActionCommand())) {
 			updateDialog.setVisible(true);
-		}
-		if (MainMenuAction.SEND_BUG_REPORT.name().equals(e.getActionCommand())) {
+		} else if (MainMenuAction.UPDATE_STRUCTURE.name().equals(e.getActionCommand())) {
+			List<EsiOwner> owners = new ArrayList<EsiOwner>();
+			for (EsiOwner esiOwner : getProfileManager().getEsiOwners()) {
+				if (esiOwner.isShowOwner() && esiOwner.isStructures()) {
+					owners.add(esiOwner);
+				}
+			}
+			Object returnValue = JOptionPane.showInputDialog(getMainWindow().getFrame(), GuiFrame.get().updateStructureMsg(), GuiFrame.get().updateStructureTitle(), JOptionPane.PLAIN_MESSAGE, null, owners.toArray(new EsiOwner[owners.size()]), owners.get(0));
+			if (returnValue != null && returnValue instanceof EsiOwner) {
+				EsiOwner esiOwner = (EsiOwner) returnValue;
+				TaskDialog taskDialog = new TaskDialog(this, Collections.singletonList(new Structures(esiOwner, getOwnerTypes())), false, new TaskDialog.TasksCompleted() {
+					@Override
+					public void tasksCompleted(TaskDialog taskDialog) {
+						updateEventLists();
+						//Save settings after updating (if we crash later)
+						saveSettingsAndProfile();
+					}
+				});
+			}
+		} else if (MainMenuAction.SEND_BUG_REPORT.name().equals(e.getActionCommand())) {
 			bugsDialog.setVisible(true);
-		}
-	//External Files
-		if (MainMenuAction.README.name().equals(e.getActionCommand())) {
+		} else if (MainMenuAction.README.name().equals(e.getActionCommand())) { //External Files
 			DesktopUtil.open(Settings.getPathReadme(), this);
-		}
-		if (MainMenuAction.LICENSE.name().equals(e.getActionCommand())) {
+		} else if (MainMenuAction.LICENSE.name().equals(e.getActionCommand())) {
 			DesktopUtil.open(Settings.getPathLicense(), this);
-		}
-		if (MainMenuAction.CREDITS.name().equals(e.getActionCommand())) {
+		} else if (MainMenuAction.CREDITS.name().equals(e.getActionCommand())) {
 			DesktopUtil.open(Settings.getPathCredits(), this);
-		}
-		if (MainMenuAction.CHANGELOG.name().equals(e.getActionCommand())) {
+		} else if (MainMenuAction.CHANGELOG.name().equals(e.getActionCommand())) {
 			DesktopUtil.open(Settings.getPathChangeLog(), this);
-		}
-	//Links
-		if (MainMenuAction.LINK_FEATURES.name().equals(e.getActionCommand())) {
+		} else if (MainMenuAction.LINK_FEATURES.name().equals(e.getActionCommand())) { //Links
 			DesktopUtil.browse("http://jeveassets.uservoice.com/", this);
-		}
-		if (MainMenuAction.LINK_HELP.name().equals(e.getActionCommand())) {
+		} else if (MainMenuAction.LINK_HELP.name().equals(e.getActionCommand())) {
 			DesktopUtil.browse("https://github.com/GoldenGnu/jeveassets/wiki/ReadMe", this);
-		}
-	//Exit
-		if (MainMenuAction.EXIT_PROGRAM.name().equals(e.getActionCommand())) {
+		} else if (MainMenuAction.EXIT_PROGRAM.name().equals(e.getActionCommand())) { //Exit
 			exit();
-		}
-	//Ticker
-		if (ProgramAction.TIMER.name().equals(e.getActionCommand())) {
+		} else if (ProgramAction.TIMER.name().equals(e.getActionCommand())) { //Ticker
 			timerTicked();
 		}
 	}
@@ -778,6 +781,26 @@ public class Program implements ActionListener {
 			}
 			final SaveSettings other = (SaveSettings) obj;
 			return this.id == other.id;
+		}
+	}
+
+	private static class Structures extends UpdateTask {
+
+		private final EsiOwner owner;
+		private final List<OwnerType> owners;
+
+		public Structures(EsiOwner owner, List<OwnerType> owners) {
+			super(DialoguesUpdate.get().structures());
+			this.owner = owner;
+			this.owners = owners;
+		}
+
+		@Override
+		public void update() {
+			setIcon(Images.MISC_ESI.getIcon());
+			EsiStructuresGetter.reset();
+			EsiStructuresGetter esiStructuresGetter = new EsiStructuresGetter(this, owner, owners);
+			esiStructuresGetter.run();
 		}
 	}
 }

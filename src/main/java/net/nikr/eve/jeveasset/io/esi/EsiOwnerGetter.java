@@ -41,11 +41,11 @@ public class EsiOwnerGetter extends AbstractEsiGetter implements AccountAdder{
 	private boolean wrongEntry = false;
 
 	public EsiOwnerGetter(EsiOwner owner, boolean forceUpdate) {
-		super(null, owner, forceUpdate, owner.getAccountNextUpdate(), TaskType.OWNER);
+		super(null, owner, forceUpdate, owner.getAccountNextUpdate(), TaskType.OWNER, NO_RETRIES);
 	}
 
 	public EsiOwnerGetter(UpdateTask updateTask, EsiOwner owner) {
-		super(updateTask, owner, false, owner.getAccountNextUpdate(), TaskType.OWNER);
+		super(updateTask, owner, false, owner.getAccountNextUpdate(), TaskType.OWNER, NO_RETRIES);
 	}
 
 	@Override

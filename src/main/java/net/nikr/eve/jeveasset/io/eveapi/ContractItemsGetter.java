@@ -70,7 +70,7 @@ public class ContractItemsGetter extends AbstractApiGetter<ContractItemsResponse
 			}
 			contracts.add(contract);
 		}
-		Map<MyContract, ContractItemsResponse> updateList = updateList(contracts, new ListHandler<MyContract, ContractItemsResponse>() {
+		Map<MyContract, ContractItemsResponse> updateList = updateList(contracts, NO_RETRIES, new ListHandler<MyContract, ContractItemsResponse>() {
 			@Override
 			public ContractItemsResponse get(String updaterStatus, MyContract t) throws ApiException {
 				if (owner.isCorporation()) {

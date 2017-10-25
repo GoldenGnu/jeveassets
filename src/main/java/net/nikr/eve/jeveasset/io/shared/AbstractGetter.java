@@ -51,6 +51,8 @@ public abstract class AbstractGetter<O extends OwnerType, C, E extends Exception
 
 	private static final Logger LOG = LoggerFactory.getLogger(AbstractGetter.class);
 
+	protected static final int NO_RETRIES = 0;
+
 	protected enum TaskType {
 		ASSETS,
 		ACCOUNT_BALANCE,
@@ -162,9 +164,16 @@ public abstract class AbstractGetter<O extends OwnerType, C, E extends Exception
 	protected interface Updater<R, C, E extends Throwable> {
 		public R update(final C client) throws E;
 		public String getStatus();
+		public int getMaxRetries();
 	}
 
-	protected final <K> List<Future<K>> startSubThreads(Collection<? extends Callable<K>> updaters) throws InterruptedException, ExecutionException {
+	protected final void setProgress(final float progressEnd, final float progressNow, final int minimum, final int maximum) {
+		if (updateTask != null) {
+			updateTask.setTaskProgress(progressEnd, progressNow, minimum, maximum);
+		}
+	}
+
+	protected final <K> List<Future<K>> startSubThreads(Collection<? extends Callable<K>> updaters) throws InterruptedException {
 		return ThreadWoker.startReturn(updateTask, updaters);
 	}
 
@@ -179,6 +188,28 @@ public abstract class AbstractGetter<O extends OwnerType, C, E extends Exception
 	}
 
 	protected final void addError(String update, Object logMsg, Object taskMsg, Throwable ex) {
+		logError(update, logMsg, taskMsg, ex);
+		if (updateTask != null && taskMsg != null) {
+			StringBuilder ownerBuilder = new StringBuilder();
+			ownerBuilder.append(apiName);
+			ownerBuilder.append(" > ");
+			ownerBuilder.append(taskName);
+			ownerBuilder.append(" > ");
+			ownerBuilder.append(getOwnerName(owner));
+			updateTask.addError(ownerBuilder.toString(), taskMsg.toString());
+		}
+	}
+
+	protected final void addMigrationWarning() {
+		if (updateTask != null) {
+			updateTask.addError("EveApi accounts can be migrated to ESI", "Add ESI accounts in the account manager:\r\nOptions > Accounts... > Add > ESI");
+		}
+	}
+
+	protected final void logError(String update, Object logMsg, Object taskMsg) {
+		logError(update, logMsg, taskMsg, null);
+	}
+	protected final void logError(String update, Object logMsg, Object taskMsg, Throwable ex) {
 		StringBuilder builder = new StringBuilder();
 		builder.append(apiName);
 		builder.append(" ");
@@ -200,21 +231,6 @@ public abstract class AbstractGetter<O extends OwnerType, C, E extends Exception
 			LOG.error(e, ex);
 		} else {
 			LOG.error(e);
-		}
-		if (updateTask != null && taskMsg != null) {
-			StringBuilder ownerBuilder = new StringBuilder();
-			ownerBuilder.append(apiName);
-			ownerBuilder.append(" > ");
-			ownerBuilder.append(taskName);
-			ownerBuilder.append(" > ");
-			ownerBuilder.append(getOwnerName(owner));
-			updateTask.addError(ownerBuilder.toString(), taskMsg.toString());
-		}
-	}
-
-	protected final void addMigrationWarning() {
-		if (updateTask != null) {
-			updateTask.addError("EveApi accounts can be migrated to ESI", "Add ESI accounts in the account manager:\r\nOptions > Accounts... > Add > ESI");
 		}
 	}
 
@@ -336,12 +352,12 @@ public abstract class AbstractGetter<O extends OwnerType, C, E extends Exception
 		return null;
 	}
 
-	protected final <K, V> Map<K, V> updateList(Collection<K> list, ListHandler<K, V> handler) throws E {
+	protected final <K, V> Map<K, V> updateList(Collection<K> list, int maxRetries, ListHandler<K, V> handler) throws E {
 		Map<K, V> values = new HashMap<K, V>();
 		List<ListUpdater<K, V>> updaters = new ArrayList<ListUpdater<K, V>>();
 		int count = 1;
 		for (K k : list) {
-			updaters.add(new ListUpdater<K, V>(handler, k, count + " of " + list.size()));
+			updaters.add(new ListUpdater<K, V>(handler, k, count + " of " + list.size(), maxRetries));
 			count++;
 		}
 		LOG.info("Starting " + updaters.size() + " list threads");
@@ -363,16 +379,18 @@ public abstract class AbstractGetter<O extends OwnerType, C, E extends Exception
 		protected abstract V get(C client, K k) throws E;
 	}
 
-	private class ListUpdater<K, V> implements Updater<Map<K, V>, C, E>, Callable<Map<K, V>> {
+	protected class ListUpdater<K, V> implements Updater<Map<K, V>, C, E>, Callable<Map<K, V>> {
 
 		private final ListHandler<K, V> handler;
 		private final K k;
 		private final String status;
+		private final int maxRetries;
 
-		public ListUpdater(ListHandler<K, V> handler, K k, String status) {
+		public ListUpdater(ListHandler<K, V> handler, K k, String status, int maxRetries) {
 			this.handler = handler;
 			this.k = k;
 			this.status = status;
+			this.maxRetries = maxRetries;
 		}
 
 		@Override
@@ -387,6 +405,10 @@ public abstract class AbstractGetter<O extends OwnerType, C, E extends Exception
 			}
 		}
 
+		public Map<K, V> go() throws E {
+			return updateApi(this, 0);
+		}
+
 		@Override
 		public Map<K, V> call() throws Exception {
 			return updateApi(this, 0);
@@ -396,9 +418,14 @@ public abstract class AbstractGetter<O extends OwnerType, C, E extends Exception
 		public String getStatus() {
 			return status;
 		}
+
+		@Override
+		public int getMaxRetries() {
+			return maxRetries;
+		}
 	}
 
-	protected final <K> List<K> updateIDs(Set<Long> existing, IDsHandler<K> handler) throws E {
+	protected final <K> List<K> updateIDs(Set<Long> existing, int maxRetries, IDsHandler<K> handler) throws E {
 		List<K> list = new ArrayList<K>();
 		Long fromID = null;
 		boolean run = true;
@@ -406,7 +433,7 @@ public abstract class AbstractGetter<O extends OwnerType, C, E extends Exception
 		while (run) {
 			count++;
 			List<K> result;
-			result = updateApi(new IdUpdater<K>(handler, fromID, count + " of ?"), 0);
+			result = updateApi(new IdUpdater<K>(handler, fromID, count + " of ?", maxRetries), 0);
 			if (result == null || result.isEmpty()) { //Nothing returned: we're done
 				break; //Stop updating
 			}
@@ -439,11 +466,13 @@ public abstract class AbstractGetter<O extends OwnerType, C, E extends Exception
 		private final IDsHandler<K> handler;
 		private final Long fromID;
 		private final String status;
+		private final int maxRetries;
 
-		public IdUpdater(IDsHandler<K> handler, Long fromID, String status) {
+		public IdUpdater(IDsHandler<K> handler, Long fromID, String status, int maxRetries) {
 			this.handler = handler;
 			this.fromID = fromID;
 			this.status = status;
+			this.maxRetries = maxRetries;
 		}
 
 		@Override
@@ -454,6 +483,11 @@ public abstract class AbstractGetter<O extends OwnerType, C, E extends Exception
 		@Override
 		public String getStatus() {
 			return status;
+		}
+
+		@Override
+		public int getMaxRetries() {
+			return maxRetries;
 		}
 	}
 }

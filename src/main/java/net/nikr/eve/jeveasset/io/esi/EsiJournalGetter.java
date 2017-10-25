@@ -38,7 +38,7 @@ public class EsiJournalGetter extends AbstractEsiGetter {
 	private final boolean saveHistory;
 
 	public EsiJournalGetter(UpdateTask updateTask, EsiOwner owner, boolean saveHistory) {
-		super(updateTask, owner, false, owner.getJournalNextUpdate(), TaskType.JOURNAL);
+		super(updateTask, owner, false, owner.getJournalNextUpdate(), TaskType.JOURNAL, NO_RETRIES);
 		this.saveHistory = saveHistory;
 	}
 
@@ -53,7 +53,7 @@ public class EsiJournalGetter extends AbstractEsiGetter {
 		if (owner.isCorporation()) {
 			for (int i = 1; i < 8; i++) { //Division 1-7
 				final int division = i;
-				List<CorporationWalletJournalResponse> journals = updateIDs(existing, new IDsHandler<CorporationWalletJournalResponse>() {
+				List<CorporationWalletJournalResponse> journals = updateIDs(existing, DEFAULT_RETRIES, new IDsHandler<CorporationWalletJournalResponse>() {
 					@Override
 					public List<CorporationWalletJournalResponse> get(ApiClient apiClient, Long fromID) throws ApiException {
 						return getWalletApiAuth(apiClient).getCorporationsCorporationIdWalletsDivisionJournal((int) owner.getOwnerID(), division, DATASOURCE, fromID, null, USER_AGENT, null);
@@ -68,7 +68,7 @@ public class EsiJournalGetter extends AbstractEsiGetter {
 				owner.setJournal(EsiConverter.toJournalsCorporation(journals, owner, fixedDivision, saveHistory));
 			}
 		} else {
-			List<CharacterWalletJournalResponse> journals = updateIDs(existing, new IDsHandler<CharacterWalletJournalResponse>() {
+			List<CharacterWalletJournalResponse> journals = updateIDs(existing, DEFAULT_RETRIES, new IDsHandler<CharacterWalletJournalResponse>() {
 				@Override
 				public List<CharacterWalletJournalResponse> get(ApiClient apiClient, Long fromID) throws ApiException {
 					return getWalletApiAuth(apiClient).getCharactersCharacterIdWalletJournal((int) owner.getOwnerID(), DATASOURCE, fromID, null, USER_AGENT, null);
