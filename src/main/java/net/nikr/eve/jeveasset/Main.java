@@ -223,7 +223,7 @@ public final class Main {
 	public static Set<String> getLibFiles() {
 		Set<String> files = new HashSet<String>();
 		files.add("asm-5.0.4.jar");
-		files.add("dom4j-1.6.1.jar");
+		files.add("dom4j-2.1.0.jar");
 		files.add("eveapi-7.0.2.jar");
 		files.add("glazedlists_java16-1.10.0.jar");
 		files.add("graph-1.5.0.jar");
@@ -234,7 +234,7 @@ public final class Main {
 		files.add("jcommon-1.0.16.jar");
 		files.add("jfreechart-1.0.13.jar");
 		files.add("osxadapter-1.1.0.jar");
-		files.add("pricing-1.7.3.jar");
+		files.add("pricing-1.8.0.jar");
 		files.add("routing-1.5.0.jar");
 		files.add("slf4j-api-1.7.25.jar");
 		files.add("log4j-over-slf4j-1.7.25.jar");
