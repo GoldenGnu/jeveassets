@@ -16,6 +16,31 @@
                   #### #  # #  # #  # #### #### #### #### ####
 
 ________________________________________________________________________________
+_5.0.2__________________________________________________________________________
+
+New Feature:
+-Now shows an animation while doing lengthy tasks
+
+Bug Fixes:
+-Fixed CtD when changing profile
+-Fixed a few bugs related to price updates (BugID: 559, 558)
+-Possible fix for XML loading bugs (BugID: 548,  564, 563)
+-Fixed contracts NPE (BugID: 561, 557, 561, 560)
+-Fixed ESI corporation contract items update failure (BugID: 555, 565)
+-Fixed ESI structure update failure
+-Could not reset user locations
+
+Changed:
+-Now mark ESI market orders no longer in the return as Unknown
+-ESI Structure updates have been move to Its own update window
+
+Code:
+-Increased the maximum log size
+-Updated EveAPI library to 7.0.2
+-Updated Pricing library 1.8.0
+-Update jmemory to 3.0.0
+
+________________________________________________________________________________
 _5.0.1__________________________________________________________________________
 
 New Feature:
