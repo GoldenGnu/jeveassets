@@ -49,7 +49,9 @@ import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
+import net.nikr.eve.jeveasset.gui.shared.components.JLockWindow;
 import net.nikr.eve.jeveasset.i18n.DialoguesSettings;
+import net.nikr.eve.jeveasset.i18n.GuiShared;
 
 
 public class SettingsDialog extends JDialogCentered {
@@ -69,6 +71,7 @@ public class SettingsDialog extends JDialogCentered {
 
 	private final UserPriceSettingsPanel userPriceSettingsPanel;
 	private final UserNameSettingsPanel userNameSettingsPanel;
+	private final JLockWindow jLockWindow;;
 
 	private boolean tabSelected = false;
 
@@ -76,6 +79,8 @@ public class SettingsDialog extends JDialogCentered {
 		super(program, DialoguesSettings.get().settings(Program.PROGRAM_NAME), Images.DIALOG_SETTINGS.getImage());
 
 		ListenerClass listener = new ListenerClass();
+
+		jLockWindow = new JLockWindow(program.getMainWindow().getFrame());
 
 		settingsPanels = new HashMap<String, JSettingsPanel>();
 		icons = new HashMap<Object, Icon>();
@@ -256,8 +261,9 @@ public class SettingsDialog extends JDialogCentered {
 			}
 		}
 		Settings.unlock("Settings Dialog"); //Unlock for Settings Dialog
+		setVisible(false);
 		if (update) { //Update
-			program.updateEventLists();
+			program.updateEventListsWithProgress();
 		}
 		program.saveSettings("Settings Dialog"); //Save Settings Dialog
 	}
@@ -288,7 +294,6 @@ public class SettingsDialog extends JDialogCentered {
 		public void actionPerformed(final ActionEvent e) {
 			if (SettingsDialogAction.OK.name().equals(e.getActionCommand())) {
 				save();
-				setVisible(false);
 			}
 			if (SettingsDialogAction.CANCEL.name().equals(e.getActionCommand())) {
 				setVisible(false);

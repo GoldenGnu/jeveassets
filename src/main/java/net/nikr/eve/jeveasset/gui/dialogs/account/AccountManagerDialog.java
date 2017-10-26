@@ -30,9 +30,7 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -49,11 +47,13 @@ import net.nikr.eve.jeveasset.gui.dialogs.account.AccountSeparatorTableCell.Acco
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
 import net.nikr.eve.jeveasset.gui.shared.components.JDropDownButton;
+import net.nikr.eve.jeveasset.gui.shared.components.JLockWindow;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.EventListManager;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
 import net.nikr.eve.jeveasset.gui.shared.table.JSeparatorTable;
 import net.nikr.eve.jeveasset.i18n.DialoguesAccount;
+import net.nikr.eve.jeveasset.i18n.GuiShared;
 
 
 public class AccountManagerDialog extends JDialogCentered {
@@ -82,10 +82,9 @@ public class AccountManagerDialog extends JDialogCentered {
 	private final SeparatorList<OwnerType> separatorList;
 	private final DefaultEventSelectionModel<OwnerType> selectionModel;
 	private final JMigrateDialog jMigrateDialog;
+	private final JLockWindow jLockWindow;
 
-	private Map<OwnerType, Boolean> ownerShows;
-	private Map<String, String> accountNames;
-	private boolean forceUpdate = false;
+	private boolean updated = false;
 
 	public AccountManagerDialog(final Program program) {
 		super(program, DialoguesAccount.get().dialogueNameAccountManagement(), Images.DIALOG_ACCOUNTS.getImage());
@@ -93,6 +92,8 @@ public class AccountManagerDialog extends JDialogCentered {
 		accountImportDialog = new AccountImportDialog(this, program);
 
 		jMigrateDialog = new JMigrateDialog(program, this);
+
+		jLockWindow = new JLockWindow(program.getMainWindow().getFrame());
 
 		ListenerClass listener = new ListenerClass();
 
@@ -106,8 +107,8 @@ public class AccountManagerDialog extends JDialogCentered {
 		tableModel = EventModels.createTableModel(separatorList, tableFormat);
 		jTable = new JAccountTable(program, tableModel, separatorList);
 		jTable.getTableHeader().setReorderingAllowed(false);
-		jTable.setSeparatorRenderer(new AccountSeparatorTableCell(listener, jTable, separatorList));
-		jTable.setSeparatorEditor(new AccountSeparatorTableCell(listener, jTable, separatorList));
+		jTable.setSeparatorRenderer(new AccountSeparatorTableCell(this, listener, jTable, separatorList));
+		jTable.setSeparatorEditor(new AccountSeparatorTableCell(this, listener, jTable, separatorList));
 
 		JScrollPane jTableScroll = new JScrollPane(jTable);
 
@@ -192,7 +193,7 @@ public class AccountManagerDialog extends JDialogCentered {
 	}
 
 	public void forceUpdate() {
-		forceUpdate = true;
+		updated = true;
 	}
 
 	public void updateTable() {
@@ -270,39 +271,28 @@ public class AccountManagerDialog extends JDialogCentered {
 
 	@Override
 	protected void save() {
-		if (forceUpdate || isChanged()) {
-			program.updateEventLists();
-			program.saveProfile();
+		super.setVisible(false);
+		if (updated) {
+			jLockWindow.show(GuiShared.get().updating(), new Runnable() {
+				@Override
+				public void run() {
+					program.updateEventLists();
+					program.saveProfile();
+				}
+			});
 		}
-	}
-
-	private boolean isChanged() {
-		for (OwnerType owner  : program.getOwnerTypes()) {
-			if (!owner.getAccountName().equals(accountNames.get(owner.getComparator()))) {
-				return true;
-			}
-			if (owner.isShowOwner() != ownerShows.get(owner)) { //Owner show changed
-				return true;
-			}
-		}
-		return false;
 	}
 
 	@Override
 	public void setVisible(final boolean b) {
 		if (b) {
-			forceUpdate = false;
+			updated = false;
 			updateTable();
-			ownerShows = new HashMap<OwnerType, Boolean>();
-			accountNames = new HashMap<String, String>();
-			for (OwnerType owner  : program.getOwnerTypes()) {
-				accountNames.put(owner.getComparator(), owner.getAccountName());
-				ownerShows.put(owner, owner.isShowOwner());
-			}
+			super.setVisible(b);
 		} else {
 			save();
 		}
-		super.setVisible(b);
+		
 	}
 	private class ListenerClass implements ActionListener {
 		@Override
@@ -314,7 +304,7 @@ public class AccountManagerDialog extends JDialogCentered {
 			} else if (AccountManagerAction.EXPAND.name().equals(e.getActionCommand())) {
 				jTable.expandSeparators(true);
 			} else if (AccountManagerAction.CLOSE.name().equals(e.getActionCommand())) {
-				setVisible(false);
+				save();
 			} else if (AccountCellAction.EDIT.name().equals(e.getActionCommand())) {
 				int index = jTable.getSelectedRow();
 				Object o = tableModel.getElementAt(index);

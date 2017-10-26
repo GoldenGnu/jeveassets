@@ -145,7 +145,7 @@ public class ProfileDialog extends JDialogCentered {
 					DialoguesProfiles.get().loadProfile(),
 					JOptionPane.INFORMATION_MESSAGE);
 		} else {
-			jLockWindow.show(new LoadProfile(profile), DialoguesProfiles.get().loadingProfile());
+			jLockWindow.show(DialoguesProfiles.get().loadingProfile(), new LoadProfile(profile));
 		}
 	}
 
@@ -225,7 +225,7 @@ public class ProfileDialog extends JDialogCentered {
 								DialoguesProfiles.get().newProfile(),
 								JOptionPane.INFORMATION_MESSAGE);
 					} else {
-						jLockWindow.show(new NewProfile(s), DialoguesProfiles.get().creatingProfile());
+						jLockWindow.show(DialoguesProfiles.get().creatingProfile(), new NewProfile(s));
 					}
 				}
 			}

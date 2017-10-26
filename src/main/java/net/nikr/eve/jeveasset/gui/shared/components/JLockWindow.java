@@ -23,19 +23,29 @@ package net.nikr.eve.jeveasset.gui.shared.components;
 
 import java.awt.Dimension;
 import java.awt.Window;
-import java.lang.reflect.InvocationTargetException;
-import javax.swing.*;
+import java.util.concurrent.ExecutionException;
+import javax.swing.BorderFactory;
+import javax.swing.GroupLayout;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JProgressBar;
+import javax.swing.JWindow;
+import javax.swing.SwingUtilities;
+import javax.swing.SwingWorker;
 
 
 public class JLockWindow {
 
-	private JWindow jWindow;
-	private JLabel jLabel;
-	private Window parent;
+	private final JWindow jWindow;
+	private final JLabel jLabel;
+	private final Window parent;
+	private final JProgressBar jProgress;
 
 	public JLockWindow(final Window parent) {
 		this.parent = parent;
 		jWindow = new JWindow(parent);
+
+		jProgress = new JProgressBar(0, 100);
 
 		JPanel jPanel = new JPanel();
 		jPanel.setBorder(BorderFactory.createRaisedBevelBorder());
@@ -50,15 +60,17 @@ public class JLockWindow {
 
 		layout.setHorizontalGroup(
 			layout.createParallelGroup(GroupLayout.Alignment.CENTER)
+				.addComponent(jProgress)
 				.addComponent(jLabel)
 		);
 		layout.setVerticalGroup(
 			layout.createSequentialGroup()
+				.addComponent(jProgress)
 				.addComponent(jLabel)
 		);
 	}
 
-	public void show(final Runnable runnable, final String text) {
+	public void show(final String text, final Runnable runnable) {
 		jLabel.setText(text);
 		jWindow.pack();
 		//Get the parent size
@@ -72,9 +84,11 @@ public class JLockWindow {
 		jWindow.setLocation(x, y);
 		jWindow.setLocationRelativeTo(parent);
 		parent.setEnabled(false);
-		jWindow.setVisible(true);
-		Thread thread = new Thread(new Wait(runnable));
-		thread.start();
+		jProgress.setIndeterminate(false);
+		jProgress.setIndeterminate(true);
+		jWindow.setVisible(true); //Does not block!
+		Wait wait = new Wait(runnable);
+		wait.execute();
 	}
 
 	private void hide() {
@@ -82,26 +96,37 @@ public class JLockWindow {
 		jWindow.setVisible(false);
 	}
 
-	class Wait implements Runnable {
+	class Wait extends SwingWorker<Void, Void>{
 
-		private Runnable runnable;
+		private final Runnable runnable;
 
 		public Wait(Runnable runnable) {
 			this.runnable = runnable;
 		}
 
 		@Override
-		public void run() {
+		protected Void doInBackground() throws Exception {
 			try {
-			//SwingUtilities.invokeLater(runnable);
-				SwingUtilities.invokeAndWait(runnable);
-			} catch (InterruptedException ex) {
-
-			} catch (InvocationTargetException ex) {
-
+				runnable.run();
+				return null;
+			} finally { //Always hide dialog
+				SwingUtilities.invokeLater(new Runnable() {
+					@Override
+					public void run() {
+						
+					}
+				});
 			}
-			hide();
 		}
-		
+
+		@Override
+		protected void done() {
+			hide();
+			try {
+				get();
+			} catch (InterruptedException | ExecutionException ex) {
+				throw new RuntimeException(ex);
+			}
+		}
 	}
 }

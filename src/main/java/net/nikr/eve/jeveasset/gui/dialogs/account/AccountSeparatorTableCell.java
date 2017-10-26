@@ -49,9 +49,11 @@ public class AccountSeparatorTableCell extends SeparatorTableCell<OwnerType> {
 	private final JLabel jSpaceLabel;
 
 	private final Color defaultColor;
+	private final AccountManagerDialog accountManagerDialog;
 
-	public AccountSeparatorTableCell(final ActionListener actionListener, final JTable jTable, final SeparatorList<OwnerType> separatorList) {
+	public AccountSeparatorTableCell(final AccountManagerDialog accountManagerDialog, final ActionListener actionListener, final JTable jTable, final SeparatorList<OwnerType> separatorList) {
 		super(jTable, separatorList);
+		this.accountManagerDialog = accountManagerDialog;
 
 		defaultColor = jPanel.getBackground();
 
@@ -200,6 +202,7 @@ public class AccountSeparatorTableCell extends SeparatorTableCell<OwnerType> {
 					owner.setAccountName(jAccountName.getText());
 				}
 				jAccountName.transferFocus();
+				accountManagerDialog.forceUpdate();
 				expandSeparator(true);
 				int index = jTable.getSelectedRow() + 1;
 				if (jTable.getRowCount() >= index) {
