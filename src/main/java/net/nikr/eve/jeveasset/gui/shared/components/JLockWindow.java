@@ -70,7 +70,7 @@ public class JLockWindow {
 		);
 	}
 
-	public void show(final String text, final Runnable runnable) {
+	public void show(final String text, final Runnable lockWorker) {
 		jLabel.setText(text);
 		jWindow.pack();
 		//Get the parent size
@@ -87,7 +87,7 @@ public class JLockWindow {
 		jProgress.setIndeterminate(false);
 		jProgress.setIndeterminate(true);
 		jWindow.setVisible(true); //Does not block!
-		Wait wait = new Wait(runnable);
+		Wait wait = new Wait(lockWorker);
 		wait.execute();
 	}
 
@@ -106,21 +106,15 @@ public class JLockWindow {
 
 		@Override
 		protected Void doInBackground() throws Exception {
-			try {
-				runnable.run();
-				return null;
-			} finally { //Always hide dialog
-				SwingUtilities.invokeLater(new Runnable() {
-					@Override
-					public void run() {
-						
-					}
-				});
-			}
+			runnable.run();
+			return null;
 		}
 
 		@Override
 		protected void done() {
+			if (runnable instanceof LockWorker) {
+				((LockWorker)runnable).done();
+			}
 			hide();
 			try {
 				get();
@@ -128,5 +122,9 @@ public class JLockWindow {
 				throw new RuntimeException(ex);
 			}
 		}
+	}
+
+	public static interface LockWorker extends Runnable {
+		public void done();
 	}
 }

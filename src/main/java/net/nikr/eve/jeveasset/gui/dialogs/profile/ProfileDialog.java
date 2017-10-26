@@ -35,6 +35,7 @@ import net.nikr.eve.jeveasset.data.profile.Profile;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
 import net.nikr.eve.jeveasset.gui.shared.components.JLockWindow;
+import net.nikr.eve.jeveasset.gui.shared.components.JLockWindow.LockWorker;
 import net.nikr.eve.jeveasset.i18n.DialoguesProfiles;
 
 
@@ -149,7 +150,7 @@ public class ProfileDialog extends JDialogCentered {
 		}
 	}
 
-	private void loadProfile(final Profile profile) {
+	private void loadProfileWork(final Profile profile) {
 		if (profile != null && !profile.isActiveProfile()) {
 			//Clear active profile flag (from all profiles)
 			for (Profile profileLoop : program.getProfileManager().getProfiles()) {
@@ -160,6 +161,7 @@ public class ProfileDialog extends JDialogCentered {
 			//Clear accounts
 			program.getProfileManager().getAccounts().clear();
 			program.getProfileManager().getEveKitOwners().clear();
+			program.getProfileManager().getEsiOwners().clear();
 			//Clear data
 			program.updateEventLists();
 			//Set active profile
@@ -167,25 +169,28 @@ public class ProfileDialog extends JDialogCentered {
 			profile.setActiveProfile(true);
 			//Load new profile
 			program.getProfileManager().loadActiveProfile();
-			//Update EveKit Import
-			program.profilesChanged();
 			//Update data
 			program.updateEventLists();
-			//Update GUI (this dialog)
-			updateProfiles();
-			jProfiles.updateUI();
-			//Update window title
-			program.getMainWindow().updateTitle();
-			//Ask to clear filters - if needed
-			if (!program.getAssetsTab().isFiltersEmpty()) {
-				int value = JOptionPane.showConfirmDialog(this.getDialog(),
-						DialoguesProfiles.get().clearFilter(),
-						DialoguesProfiles.get().profileLoadedMsg(),
-						JOptionPane.YES_NO_OPTION,
-						JOptionPane.QUESTION_MESSAGE);
-				if (value == JOptionPane.YES_OPTION) {
-					program.getAssetsTab().clearFilters();
-				}
+		}
+	}
+
+	private void loadProfileGui() {
+		//Update EveKit Import
+		program.profilesChanged();
+		//Update GUI (this dialog)
+		updateProfiles();
+		jProfiles.updateUI();
+		//Update window title
+		program.getMainWindow().updateTitle();
+		//Ask to clear filters - if needed
+		if (!program.getAssetsTab().isFiltersEmpty()) {
+			int value = JOptionPane.showConfirmDialog(this.getDialog(),
+					DialoguesProfiles.get().clearFilter(),
+					DialoguesProfiles.get().profileLoadedMsg(),
+					JOptionPane.YES_NO_OPTION,
+					JOptionPane.QUESTION_MESSAGE);
+			if (value == JOptionPane.YES_OPTION) {
+				program.getAssetsTab().clearFilters();
 			}
 		}
 	}
@@ -338,7 +343,7 @@ public class ProfileDialog extends JDialogCentered {
 
 
 
-	private class NewProfile implements Runnable {
+	private class NewProfile implements LockWorker {
 
 		private final String profileName;
 
@@ -350,12 +355,17 @@ public class ProfileDialog extends JDialogCentered {
 		public void run() {
 			Profile profile = new Profile(profileName, false, false);
 			program.getProfileManager().getProfiles().add(profile);
-			loadProfile(profile);
 			program.saveProfile();
+			loadProfileWork(profile);
+		}
+
+		@Override
+		public void done() {
+			loadProfileGui();
 		}
 	}
 
-	private class LoadProfile implements Runnable {
+	private class LoadProfile implements LockWorker {
 
 		private final Profile profile;
 
@@ -365,8 +375,12 @@ public class ProfileDialog extends JDialogCentered {
 
 		@Override
 		public void run() {
-			loadProfile(profile);
+			loadProfileWork(profile);
 		}
 
+		@Override
+		public void done() {
+			loadProfileGui();
+		}
 	}
 }
