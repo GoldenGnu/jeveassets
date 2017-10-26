@@ -178,9 +178,6 @@ public class MyMarketOrder extends RawMarketOrder implements Comparable<MyMarket
 
 	public void closeOrder() {
 		if (getState() == MarketOrderState.OPEN) {
-			setState(MarketOrderState.CLOSED);
-			status = OrderStatus.CLOSED;
-		} else if (getState() == MarketOrderState.CLOSED) {
 			setState(MarketOrderState.UNKNOWN);
 			status = OrderStatus.UNKNOWN;
 		}
