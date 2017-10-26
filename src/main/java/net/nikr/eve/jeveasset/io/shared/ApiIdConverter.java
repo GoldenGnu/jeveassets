@@ -286,6 +286,10 @@ public final class ApiIdConverter {
 		}
 	}
 
+	public static void removeLocation(final long locationID) {
+		StaticData.get().getLocations().remove(locationID);
+	}
+
 	public static void addLocation(final Station station) {
 		MyLocation system = getLocation(station.getSolarSystemID());
 		MyLocation location = new MyLocation(station.getStationID(),

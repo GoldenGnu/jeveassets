@@ -65,6 +65,10 @@ public class CitadelGetter extends AbstractXmlWriter {
 		}
 	}
 
+	public synchronized static void remove(long locationID) {
+		getCitadelGetter().removeCitadel(locationID);
+	}
+
 	public synchronized static void set(Citadel citadel) {
 		getCitadelGetter().setCitadel(citadel);
 	}
@@ -143,6 +147,11 @@ public class CitadelGetter extends AbstractXmlWriter {
 				}
 			}
 		}
+	}
+
+	private void removeCitadel(long locationID) {
+		citadelSettings.remove(locationID);
+		saveXml();
 	}
 
 	private void setCitadel(Citadel citadel) {
