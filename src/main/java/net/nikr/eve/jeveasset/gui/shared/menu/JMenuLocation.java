@@ -99,9 +99,7 @@ public class JMenuLocation<T> extends MenuManager.JAutoMenu<T> {
 	}
 
 	private void deleteLocation(MyLocation location) {
-		Citadel citadel = new Citadel();
-		citadel.id = location.getLocationID();
-		CitadelGetter.set(citadel);
+		CitadelGetter.remove(location.getLocationID());
 	}
 
 	private class ListenerClass implements ActionListener {

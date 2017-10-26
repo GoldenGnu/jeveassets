@@ -45,6 +45,11 @@ public class CitadelSettings {
 		ApiIdConverter.addLocation(citadel, locationID);
 	}
 
+	public void remove(long locationID) {
+		cache.remove(locationID);
+		ApiIdConverter.removeLocation(locationID);
+	}
+
 	public Date getNextUpdate() {
 		return nextUpdate;
 	}
