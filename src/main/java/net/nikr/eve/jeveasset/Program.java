@@ -63,6 +63,7 @@ import net.nikr.eve.jeveasset.gui.frame.MainWindow;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Updatable;
+import net.nikr.eve.jeveasset.gui.shared.components.JLockWindow;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
 import net.nikr.eve.jeveasset.gui.tabs.assets.AssetsTab;
 import net.nikr.eve.jeveasset.gui.tabs.contracts.ContractsTab;
@@ -361,13 +362,23 @@ public class Program implements ActionListener {
 		this.getMainWindow().getMenu().timerTicked(isUpdatable, structure && found);
 	}
 
+	public final void updateEventListsWithProgress() {
+		JLockWindow jLockWindow = new JLockWindow(getMainWindow().getFrame());
+		jLockWindow.show(GuiShared.get().updating(), new Runnable() {
+			@Override
+			public void run() {
+				updateEventLists();
+			}
+		});
+	}
+
 	public final void updateEventLists() {
 		LOG.info("Updating EventList");
 		for (JMainTab jMainTab : mainWindow.getTabs()) {
 			jMainTab.beforeUpdateData();
 		}
 		boolean saveSettings = profileData.updateEventLists();
-		
+
 		for (JMainTab jMainTab : mainWindow.getTabs()) {
 			jMainTab.updateData();
 		}

@@ -130,6 +130,7 @@ public abstract class GuiShared extends Bundle {
 	public abstract String tagsNew();
 	public abstract String tagsNewMsg();
 	public abstract String tagsNewTitle();
+	public abstract String updating();
 
 	public abstract String today(Object arg0);
 	public abstract String whitespace37(Object arg0, Object arg1);

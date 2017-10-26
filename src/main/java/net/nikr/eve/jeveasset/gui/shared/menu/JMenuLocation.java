@@ -111,7 +111,7 @@ public class JMenuLocation<T> extends MenuManager.JAutoMenu<T> {
 					int value = JOptionPane.showConfirmDialog(program.getMainWindow().getFrame(), GuiShared.get().locationClearConfirm(location.getLocation()), GuiShared.get().locationClear(), JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
 					if (value == JOptionPane.OK_OPTION) {
 						deleteLocation(location);
-						program.updateEventLists();
+						program.updateEventListsWithProgress();
 					}
 				} else {
 					int value = JOptionPane.showConfirmDialog(program.getMainWindow().getFrame(), GuiShared.get().locationClearConfirmAll(menuData.getUserStations().size()), GuiShared.get().locationClear(), JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
@@ -119,7 +119,7 @@ public class JMenuLocation<T> extends MenuManager.JAutoMenu<T> {
 						for (MyLocation location : menuData.getUserStations()) {
 							deleteLocation(location);
 						}
-						program.updateEventLists();
+						program.updateEventListsWithProgress();
 					} else { //Single
 						MyLocation location = jLocationDialog.show(GuiShared.get().locationID(), menuData.getUserStations());
 						if (location == null) { //Cancel
@@ -128,7 +128,7 @@ public class JMenuLocation<T> extends MenuManager.JAutoMenu<T> {
 						int value2 = JOptionPane.showConfirmDialog(program.getMainWindow().getFrame(), GuiShared.get().locationClearConfirm(location.getLocation()), GuiShared.get().locationClear(), JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
 						if (value2 == JOptionPane.OK_OPTION) {
 							deleteLocation(location);
-							program.updateEventLists();
+							program.updateEventListsWithProgress();
 						}
 					}
 				}
@@ -170,7 +170,7 @@ public class JMenuLocation<T> extends MenuManager.JAutoMenu<T> {
 				}
 				Citadel citadel = new Citadel(renameLocation.getLocationID(), locationName, system.getSystemID(), system.getSystem(), system.getRegionID(), system.getRegion());
 				CitadelGetter.set(citadel);
-				program.updateEventLists();
+				program.updateEventListsWithProgress();
 			}
 		}
 	}

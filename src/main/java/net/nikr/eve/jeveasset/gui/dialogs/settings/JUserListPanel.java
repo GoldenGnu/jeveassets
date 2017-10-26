@@ -167,7 +167,7 @@ public abstract class JUserListPanel<K, V extends Comparable<V>> extends JSettin
 					Settings.unlock("Custom Price/Name (Edit)"); //Unlock for Custom Price/Name (Edit)
 					if (update) {
 						//FIXME - - - > Price/Name: Update Price/Name (no need to update all date - just need to update the data in tags column)
-						program.updateEventLists();
+						program.updateEventListsWithProgress();
 					}
 					program.saveSettings("Custom Price/Name (Edit)"); //Save Custom Price/Name (Edit)
 				}
@@ -215,7 +215,7 @@ public abstract class JUserListPanel<K, V extends Comparable<V>> extends JSettin
 				boolean update = save();
 				Settings.unlock("Custom Price/Name (Delete)"); //Unlock for Custom Price/Name (Delete)
 				if (update) {
-					program.updateEventLists();
+					program.updateEventListsWithProgress();
 				}
 				program.saveSettings("Custom Price/Name (Delete)"); //Save Custom Price/Name (Delete)
 			}
