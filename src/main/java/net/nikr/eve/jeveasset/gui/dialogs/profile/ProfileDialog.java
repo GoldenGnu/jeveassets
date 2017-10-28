@@ -352,7 +352,7 @@ public class ProfileDialog extends JDialogCentered {
 		}
 
 		@Override
-		public void run() {
+		public void task() {
 			Profile profile = new Profile(profileName, false, false);
 			program.getProfileManager().getProfiles().add(profile);
 			program.saveProfile();
@@ -360,7 +360,7 @@ public class ProfileDialog extends JDialogCentered {
 		}
 
 		@Override
-		public void done() {
+		public void gui() {
 			loadProfileGui();
 		}
 	}
@@ -374,12 +374,12 @@ public class ProfileDialog extends JDialogCentered {
 		}
 
 		@Override
-		public void run() {
+		public void task() {
 			loadProfileWork(profile);
 		}
 
 		@Override
-		public void done() {
+		public void gui() {
 			loadProfileGui();
 		}
 	}

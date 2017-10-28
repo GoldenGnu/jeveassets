@@ -273,12 +273,14 @@ public class AccountManagerDialog extends JDialogCentered {
 	protected void save() {
 		super.setVisible(false);
 		if (updated) {
-			jLockWindow.show(GuiShared.get().updating(), new Runnable() {
+			jLockWindow.show(GuiShared.get().updating(), new JLockWindow.LockWorker() {
 				@Override
-				public void run() {
-					program.updateEventLists();
+				public void task() {
 					program.saveProfile();
+					program.updateEventLists();
 				}
+				@Override
+				public void gui() { }
 			});
 		}
 	}

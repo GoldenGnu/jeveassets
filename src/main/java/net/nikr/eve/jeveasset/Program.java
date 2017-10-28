@@ -24,6 +24,7 @@ package net.nikr.eve.jeveasset;
 import apple.dts.samplecode.osxadapter.OSXAdapter;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -32,6 +33,7 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
 import net.nikr.eve.jeveasset.data.api.accounts.OwnerType;
@@ -164,6 +166,7 @@ public class Program implements ActionListener {
 		height = calcButtonsHeight();
 		if (debug) {
 			LOG.debug("Force Update: {} Force No Update: {}", forceUpdate, forceNoUpdate);
+			DetectEdtViolationRepaintManager.install();
 		}
 		if (PROGRAM_FORCE_PORTABLE) {
 			portable = true;
@@ -364,34 +367,82 @@ public class Program implements ActionListener {
 
 	public final void updateEventListsWithProgress() {
 		JLockWindow jLockWindow = new JLockWindow(getMainWindow().getFrame());
-		jLockWindow.show(GuiShared.get().updating(), new Runnable() {
+		jLockWindow.show(GuiShared.get().updating(), new JLockWindow.LockWorker() {
 			@Override
-			public void run() {
+			public void task() {
 				updateEventLists();
 			}
+
+			@Override
+			public void gui() { }
 		});
 	}
 
 	public final void updateEventLists() {
 		LOG.info("Updating EventList");
 		for (JMainTab jMainTab : mainWindow.getTabs()) {
-			jMainTab.beforeUpdateData();
+			ensureEDT(new Runnable() {
+				@Override
+				public void run() {
+					jMainTab.beforeUpdateData();
+				}
+			});
 		}
+
 		boolean saveSettings = profileData.updateEventLists();
 
 		for (JMainTab jMainTab : mainWindow.getTabs()) {
-			jMainTab.updateData();
+			ensureEDT(new Runnable() {
+				@Override
+				public void run() {
+					jMainTab.updateData();
+				}
+			});
 		}
 		for (JMainTab jMainTab : mainWindow.getTabs()) {
-			jMainTab.afterUpdateData();
+			ensureEDT(new Runnable() {
+				@Override
+				public void run() {
+					jMainTab.afterUpdateData();
+				}
+			});
 		}
-		if (stockpileTab != null) {
-			stockpileTab.updateStockpileDialog();
-		}
-		timerTicked();
-		updateTableMenu();
+		ensureEDT(new Runnable() {
+			@Override
+			public void run() {
+				if (stockpileTab != null) {
+					stockpileTab.updateStockpileDialog();
+				}
+			}
+		});
+		
+		ensureEDT(new Runnable() {
+			@Override
+			public void run() {
+				timerTicked();
+			}
+		});
+		ensureEDT(new Runnable() {
+			@Override
+			public void run() {
+				updateTableMenu();
+			}
+		});
+		
 		if (saveSettings) {
 			saveSettings("Asset Added Date"); //Save Asset Added Date
+		}
+	}
+
+	public static void ensureEDT(Runnable runnable) {
+		if (SwingUtilities.isEventDispatchThread()) {
+			runnable.run();
+		} else {
+			try {
+				SwingUtilities.invokeAndWait(runnable);
+			} catch (InterruptedException | InvocationTargetException ex) {
+				throw new RuntimeException(ex);
+			}
 		}
 	}
 
@@ -713,6 +764,9 @@ public class Program implements ActionListener {
 				if (esiOwner.isShowOwner() && esiOwner.isStructures()) {
 					owners.add(esiOwner);
 				}
+			}
+			if (owners.isEmpty()) {
+				return;
 			}
 			Object returnValue = JOptionPane.showInputDialog(getMainWindow().getFrame(), GuiFrame.get().updateStructureMsg(), GuiFrame.get().updateStructureTitle(), JOptionPane.PLAIN_MESSAGE, null, owners.toArray(new EsiOwner[owners.size()]), owners.get(0));
 			if (returnValue != null && returnValue instanceof EsiOwner) {

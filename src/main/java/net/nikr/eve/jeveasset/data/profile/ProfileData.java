@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.SplashUpdater;
 import net.nikr.eve.jeveasset.data.api.accounts.OwnerType;
 import net.nikr.eve.jeveasset.data.api.my.MyAccountBalance;
@@ -541,62 +542,102 @@ public class ProfileData {
 		contractList.addAll(contracts);
 		accountBalanceList.clear();
 		accountBalanceList.addAll(accountBalance);
-		try {
-			assetsEventList.getReadWriteLock().writeLock().lock();
-			assetsEventList.clear();
-			assetsEventList.addAll(assets);
-		} finally {
-			assetsEventList.getReadWriteLock().writeLock().unlock();
-		}
-		try {
-			marketOrdersEventList.getReadWriteLock().writeLock().lock();
-			marketOrdersEventList.clear();
-			marketOrdersEventList.addAll(marketOrders);
-		} finally {
-			marketOrdersEventList.getReadWriteLock().writeLock().unlock();
-		}
-		try {
-			journalEventList.getReadWriteLock().writeLock().lock();
-			journalEventList.clear();
-			journalEventList.addAll(journals);
-		} finally {
-			journalEventList.getReadWriteLock().writeLock().unlock();
-		}
-		try {
-			transactionsEventList.getReadWriteLock().writeLock().lock();
-			transactionsEventList.clear();
-			transactionsEventList.addAll(transactions);
-		} finally {
-			transactionsEventList.getReadWriteLock().writeLock().unlock();
-		}
-		try {
-			industryJobsEventList.getReadWriteLock().writeLock().lock();
-			industryJobsEventList.clear();
-			industryJobsEventList.addAll(industryJobs);
-		} finally {
-			industryJobsEventList.getReadWriteLock().writeLock().unlock();
-		}
-		try {
-			contractItemEventList.getReadWriteLock().writeLock().lock();
-			contractItemEventList.clear();
-			contractItemEventList.addAll(contractItems);
-		} finally {
-			contractItemEventList.getReadWriteLock().writeLock().unlock();
-		}
-		try {
-			contractEventList.getReadWriteLock().writeLock().lock();
-			contractEventList.clear();
-			contractEventList.addAll(contracts);
-		} finally {
-			contractEventList.getReadWriteLock().writeLock().unlock();
-		}
-		try {
-			accountBalanceEventList.getReadWriteLock().writeLock().lock();
-			accountBalanceEventList.clear();
-			accountBalanceEventList.addAll(accountBalance);
-		} finally {
-			accountBalanceEventList.getReadWriteLock().writeLock().unlock();
-		}
+		Program.ensureEDT(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					assetsEventList.getReadWriteLock().writeLock().lock();
+					assetsEventList.clear();
+					assetsEventList.addAll(assets);
+				} finally {
+					assetsEventList.getReadWriteLock().writeLock().unlock();
+				}
+			}
+		});
+		Program.ensureEDT(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					marketOrdersEventList.getReadWriteLock().writeLock().lock();
+					marketOrdersEventList.clear();
+					marketOrdersEventList.addAll(marketOrders);
+				} finally {
+					marketOrdersEventList.getReadWriteLock().writeLock().unlock();
+				}
+			}
+		});
+		Program.ensureEDT(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					journalEventList.getReadWriteLock().writeLock().lock();
+					journalEventList.clear();
+					journalEventList.addAll(journals);
+				} finally {
+					journalEventList.getReadWriteLock().writeLock().unlock();
+				}
+			}
+		});
+		Program.ensureEDT(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					transactionsEventList.getReadWriteLock().writeLock().lock();
+					transactionsEventList.clear();
+					transactionsEventList.addAll(transactions);
+				} finally {
+					transactionsEventList.getReadWriteLock().writeLock().unlock();
+				}
+			}
+		});
+		Program.ensureEDT(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					industryJobsEventList.getReadWriteLock().writeLock().lock();
+					industryJobsEventList.clear();
+					industryJobsEventList.addAll(industryJobs);
+				} finally {
+					industryJobsEventList.getReadWriteLock().writeLock().unlock();
+				}
+			}
+		});
+		Program.ensureEDT(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					contractItemEventList.getReadWriteLock().writeLock().lock();
+					contractItemEventList.clear();
+					contractItemEventList.addAll(contractItems);
+				} finally {
+					contractItemEventList.getReadWriteLock().writeLock().unlock();
+				}
+			}
+		});
+		Program.ensureEDT(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					contractEventList.getReadWriteLock().writeLock().lock();
+					contractEventList.clear();
+					contractEventList.addAll(contracts);
+				} finally {
+					contractEventList.getReadWriteLock().writeLock().unlock();
+				}
+			}
+		});
+		Program.ensureEDT(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					accountBalanceEventList.getReadWriteLock().writeLock().lock();
+					accountBalanceEventList.clear();
+					accountBalanceEventList.addAll(accountBalance);
+				} finally {
+					accountBalanceEventList.getReadWriteLock().writeLock().unlock();
+				}
+			}
+		});
 		//Sort Owners
 		ownerNames.clear();
 		ownerNames.addAll(uniqueOwnerNames);
