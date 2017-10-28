@@ -30,7 +30,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JWindow;
-import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 
 
@@ -60,17 +59,17 @@ public class JLockWindow {
 
 		layout.setHorizontalGroup(
 			layout.createParallelGroup(GroupLayout.Alignment.CENTER)
-				.addComponent(jProgress)
 				.addComponent(jLabel)
+				.addComponent(jProgress)
 		);
 		layout.setVerticalGroup(
 			layout.createSequentialGroup()
-				.addComponent(jProgress)
 				.addComponent(jLabel)
+				.addComponent(jProgress)
 		);
 	}
 
-	public void show(final String text, final Runnable lockWorker) {
+	public void show(final String text, final LockWorker lockWorker) {
 		jLabel.setText(text);
 		jWindow.pack();
 		//Get the parent size
@@ -98,23 +97,21 @@ public class JLockWindow {
 
 	class Wait extends SwingWorker<Void, Void>{
 
-		private final Runnable runnable;
+		private final LockWorker worker;
 
-		public Wait(Runnable runnable) {
-			this.runnable = runnable;
+		public Wait(LockWorker worker) {
+			this.worker = worker;
 		}
 
 		@Override
 		protected Void doInBackground() throws Exception {
-			runnable.run();
+			worker.task();
 			return null;
 		}
 
 		@Override
 		protected void done() {
-			if (runnable instanceof LockWorker) {
-				((LockWorker)runnable).done();
-			}
+			worker.gui();
 			hide();
 			try {
 				get();
@@ -124,7 +121,8 @@ public class JLockWindow {
 		}
 	}
 
-	public static interface LockWorker extends Runnable {
-		public void done();
+	public static interface LockWorker {
+		public void task();
+		public void gui();
 	}
 }
