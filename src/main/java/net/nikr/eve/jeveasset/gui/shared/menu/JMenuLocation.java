@@ -23,6 +23,7 @@ package net.nikr.eve.jeveasset.gui.shared.menu;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -111,15 +112,17 @@ public class JMenuLocation<T> extends MenuManager.JAutoMenu<T> {
 					int value = JOptionPane.showConfirmDialog(program.getMainWindow().getFrame(), GuiShared.get().locationClearConfirm(location.getLocation()), GuiShared.get().locationClear(), JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
 					if (value == JOptionPane.OK_OPTION) {
 						deleteLocation(location);
-						program.updateEventListsWithProgress();
+						program.updateLocations(Collections.singleton(location.getLocationID()));
 					}
 				} else {
 					int value = JOptionPane.showConfirmDialog(program.getMainWindow().getFrame(), GuiShared.get().locationClearConfirmAll(menuData.getUserStations().size()), GuiShared.get().locationClear(), JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
 					if (value == JOptionPane.OK_OPTION) { //All
+						Set<Long> locationIDs = new HashSet<>();
 						for (MyLocation location : menuData.getUserStations()) {
 							deleteLocation(location);
+							locationIDs.add(location.getLocationID());
 						}
-						program.updateEventListsWithProgress();
+						program.updateLocations(locationIDs);
 					} else { //Single
 						MyLocation location = jLocationDialog.show(GuiShared.get().locationID(), menuData.getUserStations());
 						if (location == null) { //Cancel
@@ -128,7 +131,7 @@ public class JMenuLocation<T> extends MenuManager.JAutoMenu<T> {
 						int value2 = JOptionPane.showConfirmDialog(program.getMainWindow().getFrame(), GuiShared.get().locationClearConfirm(location.getLocation()), GuiShared.get().locationClear(), JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
 						if (value2 == JOptionPane.OK_OPTION) {
 							deleteLocation(location);
-							program.updateEventListsWithProgress();
+							program.updateLocations(Collections.singleton(location.getLocationID()));
 						}
 					}
 				}
@@ -170,7 +173,7 @@ public class JMenuLocation<T> extends MenuManager.JAutoMenu<T> {
 				}
 				Citadel citadel = new Citadel(renameLocation.getLocationID(), locationName, system.getSystemID(), system.getSystem(), system.getRegionID(), system.getRegion());
 				CitadelGetter.set(citadel);
-				program.updateEventListsWithProgress();
+				program.updateLocations(Collections.singleton(renameLocation.getLocationID()));
 			}
 		}
 	}

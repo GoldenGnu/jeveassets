@@ -53,7 +53,10 @@ import net.nikr.eve.jeveasset.data.settings.PriceData;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.data.settings.tag.Tags;
 import net.nikr.eve.jeveasset.data.settings.types.EditableLocationType;
+import net.nikr.eve.jeveasset.data.settings.types.EditablePriceType;
+import net.nikr.eve.jeveasset.data.settings.types.ItemType;
 import net.nikr.eve.jeveasset.data.settings.types.JumpType;
+import net.nikr.eve.jeveasset.data.settings.types.LocationsType;
 import net.nikr.eve.jeveasset.gui.shared.CaseInsensitiveComparator;
 import net.nikr.eve.jeveasset.gui.shared.table.EventListManager;
 import net.nikr.eve.jeveasset.gui.tabs.routing.SolarSystem;
@@ -314,6 +317,46 @@ public class ProfileData {
 		}
 	}
 
+	public void updateLocations(Set<Long> locationIDs) {
+		if (locationIDs == null || locationIDs.isEmpty()) {
+			return;
+		}
+		//Update Contracts locations
+		try {
+			contractEventList.getReadWriteLock().readLock().lock();
+			for (MyContract contract : contractEventList) {
+				//Update Locations
+				contract.setStartLocation(ApiIdConverter.getLocation(contract.getStartLocationID()));
+				contract.setEndLocation(ApiIdConverter.getLocation(contract.getEndLocationID()));
+			}
+		} finally {
+			contractEventList.getReadWriteLock().readLock().unlock();
+		}
+		updateLocation(transactionsEventList, locationIDs);
+		updateLocation(marketOrdersEventList, locationIDs);
+		updateLocation(assetsEventList, locationIDs);
+		updateLocation(industryJobsEventList, locationIDs);
+		updateLocations(contractItemEventList, locationIDs);
+		updateLocations(contractEventList, locationIDs);
+	}
+
+	public void updateNames(Set<Long> itemIDs) {
+		if (itemIDs == null || itemIDs.isEmpty()) {
+			return;
+		}
+		updateNames(assetsEventList, itemIDs);
+	}
+
+	public void updatePrice(Set<Integer> typeIDs) {
+		if (typeIDs == null || typeIDs.isEmpty()) {
+			return;
+		}
+		updatePrices(marketOrdersEventList, typeIDs);
+		updatePrices(contractItemEventList, typeIDs);
+		updateAssetPrices(assetsEventList, typeIDs);
+		updateIndustryJobPrices(industryJobsEventList, typeIDs);
+	}
+
 	public boolean updateEventLists() {
 		saveSettings = false;
 		uniqueAssetsDuplicates = new HashMap<Integer, List<MyAsset>>();
@@ -429,10 +472,6 @@ public class ProfileData {
 
 		//Update MarketOrders dynamic values
 		for (MyMarketOrder order : marketOrders) {
-			Item item = order.getItem();
-			//Price
-			double price = ApiIdConverter.getPrice(item.getTypeID(), false);
-			order.setDynamicPrice(price);
 			//Last Transaction
 			if (order.isBuyOrder()) { //Buy
 				order.setLastTransaction(transactionPriceDataSell.get(order.getTypeID()));
@@ -443,27 +482,14 @@ public class ProfileData {
 
 		//Update IndustryJobs dynamic values
 		for (MyIndustryJob industryJob : industryJobs) {
-			Item itemType = industryJob.getItem();
 			//Update Owners
 			industryJob.setInstaller(ApiIdConverter.getOwnerName(industryJob.getInstallerID()));
 			//Update BPO/BPC status
 			RawBlueprint blueprint = blueprints.get(industryJob.getBlueprintID());
 			industryJob.setBlueprint(blueprint);
 			//Price
-			double price = ApiIdConverter.getPrice(itemType.getTypeID(), true);
-			industryJob.setDynamicPrice(price);
-			double outputPrice = ApiIdConverter.getPrice(industryJob.getProductTypeID(), false);
-			industryJob.setOutputPrice(outputPrice);
+			updatePrice(industryJob);
 		}
-
-		//Update Contracts Items dynamic values
-		for (MyContractItem contractItem : contractItems) {
-			Item item = contractItem.getItem();
-			//Price
-			double price = ApiIdConverter.getPrice(item.getTypeID(), contractItem.isBPC());
-			contractItem.setDynamicPrice(price);
-		}
-
 		//Update Contracts dynamic values
 		for (MyContract contract : contractsList) {
 			OwnerType issuer = uniqueOwners.get(contract.getIssuerID());
@@ -521,6 +547,13 @@ public class ProfileData {
 		editableLocationTypes.addAll(industryJobs);
 		for (EditableLocationType editableLocationType : editableLocationTypes) {
 			editableLocationType.setLocation(ApiIdConverter.getLocation(editableLocationType.getLocationID()));
+		}
+		//Update Prices
+		List<EditablePriceType> editablePriceTypes = new ArrayList<EditablePriceType>();
+		editablePriceTypes.addAll(marketOrders);
+		editablePriceTypes.addAll(contractItems);
+		for (EditablePriceType editablePriceType : editablePriceTypes) {
+			editablePriceType.setDynamicPrice(ApiIdConverter.getPrice(editablePriceType.getItem().getTypeID(), editablePriceType.isBPC()));
 		}
 		//Update Jumps (Must be updated after locations!)
 		updateJumps(new ArrayList<JumpType>(assets), MyAsset.class);
@@ -647,6 +680,156 @@ public class ProfileData {
 		return saveSettings;
 	}
 
+	public static <T extends MyAsset> void updateNames(EventList<T> eventList, Set<Long> itemIDs) {
+		if (itemIDs == null || itemIDs.isEmpty()) {
+			return;
+		}
+		List<T> found = new ArrayList<T>();
+		try {
+			eventList.getReadWriteLock().readLock().lock();
+			for (T asset : eventList) {
+				if (itemIDs.contains(asset.getItemID())) {
+					found.add(asset); //Save for update
+					updateName(asset); //Update data
+				}
+			}
+		} finally {
+			eventList.getReadWriteLock().readLock().unlock();
+		}
+		updateList(eventList, found);
+	}
+
+	public static <T extends ItemType & EditablePriceType> void updatePrices(EventList<T> eventList, Set<Integer> typeIDs) {
+		if (typeIDs == null || typeIDs.isEmpty()) {
+			return;
+		}
+		List<T> found = new ArrayList<T>();
+		try {
+			eventList.getReadWriteLock().readLock().lock();
+			for (T t : eventList) {
+				if (typeIDs.contains(t.getItem().getTypeID())) {
+					found.add(t); //Save for update
+					t.setDynamicPrice(ApiIdConverter.getPrice(t.getItem().getTypeID(), t.isBPC())); //Update data
+				}
+			}
+		} finally {
+			eventList.getReadWriteLock().readLock().unlock();
+		}
+		updateList(eventList, found);
+	}
+
+	private void updateIndustryJobPrices(EventList<MyIndustryJob> eventList, Set<Integer> typeIDs) {
+		if (typeIDs == null || typeIDs.isEmpty()) {
+			return;
+		}
+		List<MyIndustryJob> found = new ArrayList<MyIndustryJob>();
+		try {
+			eventList.getReadWriteLock().readLock().lock();
+			for (MyIndustryJob industryJob : eventList) {
+				if (typeIDs.contains(industryJob.getItem().getTypeID())) {
+					found.add(industryJob); //Save for update
+					updatePrice(industryJob); //Update data
+				}
+			}
+		} finally {
+			eventList.getReadWriteLock().readLock().unlock();
+		}
+		updateList(eventList, found);
+	}
+
+	private void updateAssetPrices(EventList<MyAsset> eventList, Set<Integer> typeIDs) {
+		if (typeIDs == null || typeIDs.isEmpty()) {
+			return;
+		}
+		List<MyAsset> found = new ArrayList<MyAsset>();
+		try {
+			eventList.getReadWriteLock().readLock().lock();
+			for (MyAsset asset : eventList) {
+				if (typeIDs.contains(asset.getItem().getTypeID())) {
+					found.add(asset); //Save for update
+					updatePrice(asset);
+				}
+			}
+		} finally {
+			eventList.getReadWriteLock().readLock().unlock();
+		}
+		updateList(eventList, found);
+	}
+
+	public static <T extends EditableLocationType> void updateLocation(EventList<T> eventList, Set<Long> locationIDs) {
+		if (locationIDs == null || locationIDs.isEmpty()) {
+			return;
+		}
+		List<T> found = new ArrayList<T>();
+		try {
+			eventList.getReadWriteLock().readLock().lock();
+			for (T t : eventList) {
+				if (locationIDs.contains(t.getLocationID())) {
+					found.add(t); //Save for update
+					t.setLocation(ApiIdConverter.getLocation(t.getLocationID())); //Update data
+				}
+			}
+		} finally {
+			eventList.getReadWriteLock().readLock().unlock();
+		}
+		updateList(eventList, found);
+	}
+
+	private <T extends LocationsType> void updateLocations(EventList<T> eventList, Set<Long> locationIDs) {
+		if (locationIDs == null || locationIDs.isEmpty()) {
+			return;
+		}
+		List<T> found = new ArrayList<T>();
+		try {
+			eventList.getReadWriteLock().readLock().lock();
+			for (T t : eventList) {
+				for (MyLocation location : t.getLocations()) {
+					if (locationIDs.contains(location.getLocationID())) {
+						found.add(t); //Save for update
+						break; //Item already added
+					}
+				}
+			}
+		} finally {
+			eventList.getReadWriteLock().readLock().unlock();
+		}
+		updateList(eventList, found);
+	}
+
+	private static <T> void updateList(EventList<T> eventList, List<T> found) {
+		if (found.isEmpty()) {
+			return;
+		}
+		if (found.size() > 2) {
+			Program.ensureEDT(new Runnable() {
+				@Override
+				public void run() {
+					try {
+						eventList.getReadWriteLock().writeLock().lock();
+						List<T> cache = new ArrayList<T>(eventList);
+						eventList.clear();
+						eventList.addAll(cache);
+					} finally {
+						eventList.getReadWriteLock().writeLock().unlock();
+					}
+				}
+			});
+		} else {
+			Program.ensureEDT(new Runnable() {
+				@Override
+				public void run() {
+					try {
+						eventList.getReadWriteLock().writeLock().lock();
+						eventList.removeAll(found);
+						eventList.addAll(found);
+					} finally {
+						eventList.getReadWriteLock().writeLock().unlock();
+					}
+				}
+			});
+		}
+	}
+
 	private void maximumPurchaseAge() {
 		//Create Market Price Data
 		marketPriceData = new HashMap<Integer, MarketPriceData>();
@@ -715,26 +898,12 @@ public class ProfileData {
 				saveSettings = true;
 				asset.setAdded(date);
 			}
-			//User price
-			if (asset.getItem().isBlueprint() && !asset.isBPO()) { //Blueprint Copy
-				asset.setUserPrice(Settings.get().getUserPrices().get(-asset.getItem().getTypeID()));
-			} else { //All other
-				asset.setUserPrice(Settings.get().getUserPrices().get(asset.getItem().getTypeID()));
-			}
-			//Dynamic Price
-			double dynamicPrice = ApiIdConverter.getPrice(asset.getItem().getTypeID(), asset.isBPC());
-			asset.setDynamicPrice(dynamicPrice);
+			//Price
+			updatePrice(asset);
 			//Market price
 			asset.setMarketPriceData(marketPriceData.get(asset.getItem().getTypeID()));
 			//User Item Names
-			if (Settings.get().getUserItemNames().containsKey(asset.getItemID())) {
-				asset.setName(Settings.get().getUserItemNames().get(asset.getItemID()).getValue(), true, false);
-			} else if (Settings.get().getEveNames().containsKey(asset.getItemID())) {
-				String eveName = Settings.get().getEveNames().get(asset.getItemID());
-				asset.setName(eveName + " (" + asset.getTypeName() + ")", false, true);
-			} else {
-				asset.setName(asset.getTypeName(), false, false);
-			}
+			updateName(asset);
 			//Contaioner
 			String sContainer = "";
 			for (MyAsset parentAsset : asset.getParents()) {
@@ -759,10 +928,6 @@ public class ProfileData {
 			} else { //No Price :(
 				asset.setPriceData(null);
 			}
-
-			//Reprocessed price
-			asset.setPriceReprocessed(ApiIdConverter.getPriceReprocessed(asset.getItem()));
-
 			//Type Count
 			int typeID;
 			if (asset.isBPC()) {
@@ -791,6 +956,35 @@ public class ProfileData {
 			addTo.add(asset);
 			//Add sub-assets
 			addAssets(asset.getAssets(), addTo, blueprints);
+		}
+	}
+
+	private static void updatePrice(MyIndustryJob industryJob) {
+		industryJob.setOutputPrice(ApiIdConverter.getPrice(industryJob.getProductTypeID(), false));
+		industryJob.setDynamicPrice(ApiIdConverter.getPrice(industryJob.getItem().getTypeID(), industryJob.isBPC()));
+	}
+
+	private static void updatePrice(MyAsset asset) {
+		//User price
+		if (asset.getItem().isBlueprint() && !asset.isBPO()) { //Blueprint Copy
+			asset.setUserPrice(Settings.get().getUserPrices().get(-asset.getItem().getTypeID()));
+		} else { //All other
+			asset.setUserPrice(Settings.get().getUserPrices().get(asset.getItem().getTypeID()));
+		}
+		//Reprocessed price
+		asset.setPriceReprocessed(ApiIdConverter.getPriceReprocessed(asset.getItem()));
+		//Dynamic Price
+		asset.setDynamicPrice(ApiIdConverter.getPrice(asset.getItem().getTypeID(), asset.isBPC())); //Update data
+	}
+
+	private static void updateName(MyAsset asset) {
+		if (Settings.get().getUserItemNames().containsKey(asset.getItemID())) {
+			asset.setName(Settings.get().getUserItemNames().get(asset.getItemID()).getValue(), true, false);
+		} else if (Settings.get().getEveNames().containsKey(asset.getItemID())) {
+			String eveName = Settings.get().getEveNames().get(asset.getItemID());
+			asset.setName(eveName + " (" + asset.getTypeName() + ")", false, true);
+		} else {
+			asset.setName(asset.getTypeName(), false, false);
 		}
 	}
 }

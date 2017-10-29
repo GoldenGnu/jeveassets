@@ -26,6 +26,7 @@ import ca.odell.glazedlists.swing.DefaultEventSelectionModel;
 import ca.odell.glazedlists.swing.DefaultEventTableModel;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import javax.swing.GroupLayout;
 import javax.swing.Icon;
 import javax.swing.JComponent;
@@ -57,7 +58,7 @@ public abstract class JMainTab {
 	private JAutoColumnTable jTable;
 	private DefaultEventSelectionModel<?> eventSelectionModel;
 	private DefaultEventTableModel<?> eventTableModel;
-	private List<?> selected;
+	private List<Object> selected;
 	private int[] selectedColumns;
 	private String toolName;
 	private Class<?> clazz;
@@ -159,6 +160,9 @@ public abstract class JMainTab {
 		}
 	}
 
+	public abstract void updateNames(Set<Long> itemIDs);
+	public abstract void updateLocations(Set<Long> locationIDs);
+	public abstract void updatePrices(Set<Integer> typeIDs);
 	public abstract void updateData();
 	public void clearData() { }
 

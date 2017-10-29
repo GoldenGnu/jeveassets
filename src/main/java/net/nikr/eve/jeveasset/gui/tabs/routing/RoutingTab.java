@@ -69,7 +69,7 @@ import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.components.JDropDownButton;
 import net.nikr.eve.jeveasset.gui.shared.components.JFixedToolBar;
-import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
+import net.nikr.eve.jeveasset.gui.shared.components.JMainTabSecondary;
 import net.nikr.eve.jeveasset.gui.shared.components.ListComboBoxModel;
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewGroup;
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewLocation;
@@ -92,7 +92,7 @@ import uk.me.candle.eve.routing.cancel.CancelService;
  *
  * @author Candle
  */
-public class RoutingTab extends JMainTab  {
+public class RoutingTab extends JMainTabSecondary {
 
 	private static final  Logger LOG = LoggerFactory.getLogger(RoutingTab.class);
 

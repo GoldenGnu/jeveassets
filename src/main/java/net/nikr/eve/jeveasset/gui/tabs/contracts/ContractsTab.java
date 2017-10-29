@@ -46,7 +46,7 @@ import net.nikr.eve.jeveasset.data.api.my.MyContractItem;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.JFixedToolBar;
-import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
+import net.nikr.eve.jeveasset.gui.shared.components.JMainTabPrimary;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuData;
@@ -59,7 +59,7 @@ import net.nikr.eve.jeveasset.gui.shared.table.PaddingTableCellRenderer;
 import net.nikr.eve.jeveasset.i18n.TabsContracts;
 
 
-public class ContractsTab extends JMainTab {
+public class ContractsTab extends JMainTabPrimary {
 
 	private enum ContractsAction {
 		COLLAPSE, EXPAND
@@ -169,9 +169,6 @@ public class ContractsTab extends JMainTab {
 						.addComponent(jTableScroll, 0, 0, Short.MAX_VALUE)
 		);
 	}
-
-	@Override
-	public void updateData() { }
 
 	private class ContractsTableMenu implements TableMenu<MyContractItem> {
 

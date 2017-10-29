@@ -26,14 +26,14 @@ import net.nikr.eve.jeveasset.data.api.raw.RawContractItem;
 import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
 import net.nikr.eve.jeveasset.data.settings.types.BlueprintType;
+import net.nikr.eve.jeveasset.data.settings.types.EditablePriceType;
 import net.nikr.eve.jeveasset.data.settings.types.ItemType;
 import net.nikr.eve.jeveasset.data.settings.types.LocationsType;
-import net.nikr.eve.jeveasset.data.settings.types.PriceType;
 import net.nikr.eve.jeveasset.gui.shared.CopyHandler.CopySeparator;
 import net.nikr.eve.jeveasset.i18n.TabsContracts;
 import net.nikr.eve.jeveasset.io.shared.RawConverter;
 
-public class MyContractItem extends RawContractItem implements Comparable<MyContractItem>, LocationsType, ItemType, BlueprintType, PriceType, CopySeparator {
+public class MyContractItem extends RawContractItem implements Comparable<MyContractItem>, LocationsType, ItemType, BlueprintType, EditablePriceType, CopySeparator {
 
 	private MyContract contract;
 	private final Item item;
@@ -93,6 +93,7 @@ public class MyContractItem extends RawContractItem implements Comparable<MyCont
 		}
 	}
 
+	@Override
 	public void setDynamicPrice(double price) {
 		this.price = price;
 	}

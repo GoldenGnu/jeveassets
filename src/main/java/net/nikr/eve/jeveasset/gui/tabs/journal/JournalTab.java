@@ -36,7 +36,7 @@ import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.api.my.MyJournal;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
-import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
+import net.nikr.eve.jeveasset.gui.shared.components.JMainTabPrimary;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
 import net.nikr.eve.jeveasset.gui.shared.menu.*;
@@ -49,7 +49,7 @@ import net.nikr.eve.jeveasset.gui.shared.table.PaddingTableCellRenderer;
 import net.nikr.eve.jeveasset.i18n.TabsJournal;
 
 
-public class JournalTab extends JMainTab {
+public class JournalTab extends JMainTabPrimary {
 
 	private final JAutoColumnTable jTable;
 
@@ -118,9 +118,6 @@ public class JournalTab extends JMainTab {
 				.addComponent(jTableScroll, 0, 0, Short.MAX_VALUE)
 		);
 	}
-
-	@Override
-	public void updateData() { }
 
 	private class JournalTableMenu implements TableMenu<MyJournal> {
 		@Override

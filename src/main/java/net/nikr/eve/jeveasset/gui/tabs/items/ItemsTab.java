@@ -40,7 +40,7 @@ import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.data.sde.StaticData;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
-import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
+import net.nikr.eve.jeveasset.gui.shared.components.JMainTabPrimary;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuData;
@@ -53,7 +53,7 @@ import net.nikr.eve.jeveasset.gui.shared.table.JAutoColumnTable;
 import net.nikr.eve.jeveasset.i18n.TabsItems;
 
 
-public class ItemsTab extends JMainTab {
+public class ItemsTab extends JMainTabPrimary {
 
 	private final JAutoColumnTable jTable;
 
@@ -129,9 +129,6 @@ public class ItemsTab extends JMainTab {
 			eventList.getReadWriteLock().writeLock().unlock();
 		}
 	}
-
-	@Override
-	public void updateData() { }
 
 	private class ItemTableMenu implements TableMenu<Item> {
 		@Override

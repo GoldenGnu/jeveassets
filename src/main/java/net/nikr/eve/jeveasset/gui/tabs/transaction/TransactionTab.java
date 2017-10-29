@@ -44,7 +44,7 @@ import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
-import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
+import net.nikr.eve.jeveasset.gui.shared.components.JMainTabPrimary;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter.CompareType;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter.LogicType;
@@ -58,7 +58,7 @@ import net.nikr.eve.jeveasset.gui.shared.table.JAutoColumnTable;
 import net.nikr.eve.jeveasset.gui.shared.table.PaddingTableCellRenderer;
 import net.nikr.eve.jeveasset.i18n.TabsTransaction;
 
-public class TransactionTab extends JMainTab {
+public class TransactionTab extends JMainTabPrimary {
 
 	private final JAutoColumnTable jTable;
 	private final JLabel jSellOrders;
@@ -176,9 +176,6 @@ public class TransactionTab extends JMainTab {
 						.addComponent(jTableScroll, 0, 0, Short.MAX_VALUE)
 		);
 	}
-
-	@Override
-	public void updateData() { }
 
 	private class TransactionTableMenu implements TableMenu<MyTransaction> {
 

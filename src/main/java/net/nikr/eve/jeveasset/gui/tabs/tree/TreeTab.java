@@ -72,7 +72,8 @@ import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.components.JFixedToolBar;
-import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
+import net.nikr.eve.jeveasset.gui.shared.components.JMainTabSecondary;
+import net.nikr.eve.jeveasset.gui.shared.components.JMainTabSecondary.NamesUpdater;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo;
@@ -91,7 +92,7 @@ import net.nikr.eve.jeveasset.i18n.TabsTree;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 
 
-public class TreeTab extends JMainTab implements TagUpdate {
+public class TreeTab extends JMainTabSecondary implements TagUpdate, NamesUpdater<TreeAsset> {
 
 	private enum TreeAction {
 		UPDATE,
@@ -378,6 +379,7 @@ public class TreeTab extends JMainTab implements TagUpdate {
 		filterControl.setColumns(tableFormat.getOrderColumns());
 	}
 
+	@Override
 	public EventList<TreeAsset> getEventList() {
 		return eventList;
 	}

@@ -90,6 +90,7 @@ public abstract class JUserListPanel<K, V extends Comparable<V>> extends JSettin
 	protected abstract void setItems(Map<K, UserItem<K, V>> items);
 	protected abstract V valueOf(String value);
 	protected abstract UserItem<K, V> newUserItem(UserItem<K, V> userItem);
+	protected abstract void updateEventList(List<K> keys);
 
 	private void setEnabledAll(final boolean b) {
 		jItems.setEnabled(b);
@@ -150,14 +151,16 @@ public abstract class JUserListPanel<K, V extends Comparable<V>> extends JSettin
 		if (value != null) {
 			V v = valueOf(value);
 			if (v != null) { //Update value
+				List<K> containedKeys = new ArrayList<K>();
 				for (UserItem<K, V> userItem : userItems) {
-					if (!items.containsKey(userItem.getKey())) { //Add if needed
+					UserItem<K, V> userItemExisting = items.get(userItem.getKey());;
+					if (userItemExisting == null) { //Add new
+						userItemExisting = userItem;
 						items.put(userItem.getKey(), userItem);
-					} else { //Get from items list
-						userItem = items.get(userItem.getKey());
 					}
+					containedKeys.add(userItem.getKey());
 					//Update Value
-					userItem.setValue(v);
+					userItemExisting.setValue(v);
 				}
 				//Update GUI
 				updateGUI();
@@ -167,7 +170,7 @@ public abstract class JUserListPanel<K, V extends Comparable<V>> extends JSettin
 					Settings.unlock("Custom Price/Name (Edit)"); //Unlock for Custom Price/Name (Edit)
 					if (update) {
 						//FIXME - - - > Price/Name: Update Price/Name (no need to update all date - just need to update the data in tags column)
-						program.updateEventListsWithProgress();
+						updateEventList(containedKeys);
 					}
 					program.saveSettings("Custom Price/Name (Edit)"); //Save Custom Price/Name (Edit)
 				}
@@ -215,7 +218,7 @@ public abstract class JUserListPanel<K, V extends Comparable<V>> extends JSettin
 				boolean update = save();
 				Settings.unlock("Custom Price/Name (Delete)"); //Unlock for Custom Price/Name (Delete)
 				if (update) {
-					program.updateEventListsWithProgress();
+					updateEventList(containedKeys);
 				}
 				program.saveSettings("Custom Price/Name (Delete)"); //Save Custom Price/Name (Delete)
 			}
