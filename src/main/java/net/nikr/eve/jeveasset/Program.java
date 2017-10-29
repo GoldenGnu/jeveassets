@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
@@ -365,6 +366,45 @@ public class Program implements ActionListener {
 		this.getMainWindow().getMenu().timerTicked(isUpdatable, structure && found);
 	}
 
+	public final void updateLocations(Set<Long> locationIDs) {
+		JLockWindow jLockWindow = new JLockWindow(getMainWindow().getFrame());
+		jLockWindow.show(GuiShared.get().updating(), new JLockWindow.LockWorker() {
+			@Override
+			public void task() {
+				updateEventLists(null, locationIDs, null);
+			}
+
+			@Override
+			public void gui() { }
+		});
+	}
+
+	public final void updatePrices(Set<Integer> typeIDs) {
+		JLockWindow jLockWindow = new JLockWindow(getMainWindow().getFrame());
+		jLockWindow.show(GuiShared.get().updating(), new JLockWindow.LockWorker() {
+			@Override
+			public void task() {
+				updateEventLists(null, null, typeIDs);
+			}
+
+			@Override
+			public void gui() { }
+		});
+	}
+
+	public final void updateNames(Set<Long> itemIDs) {
+		JLockWindow jLockWindow = new JLockWindow(getMainWindow().getFrame());
+		jLockWindow.show(GuiShared.get().updating(), new JLockWindow.LockWorker() {
+			@Override
+			public void task() {
+				updateEventLists(itemIDs, null, null);
+			}
+
+			@Override
+			public void gui() { }
+		});
+	}
+
 	public final void updateEventListsWithProgress() {
 		JLockWindow jLockWindow = new JLockWindow(getMainWindow().getFrame());
 		jLockWindow.show(GuiShared.get().updating(), new JLockWindow.LockWorker() {
@@ -379,6 +419,10 @@ public class Program implements ActionListener {
 	}
 
 	public final void updateEventLists() {
+		updateEventLists(null, null, null);
+	}
+
+	public final void updateEventLists(Set<Long> itemIDs, Set<Long> locationIDs, Set<Integer> typeIDs) {
 		LOG.info("Updating EventList");
 		for (JMainTab jMainTab : mainWindow.getTabs()) {
 			ensureEDT(new Runnable() {
@@ -388,16 +432,52 @@ public class Program implements ActionListener {
 				}
 			});
 		}
-
-		boolean saveSettings = profileData.updateEventLists();
-
-		for (JMainTab jMainTab : mainWindow.getTabs()) {
-			ensureEDT(new Runnable() {
-				@Override
-				public void run() {
-					jMainTab.updateData();
-				}
-			});
+		boolean saveSettings = false;
+		if (itemIDs != null) {
+			profileData.updateNames(itemIDs);
+		} else if (locationIDs != null) {
+			profileData.updateLocations(locationIDs);
+		} else if (typeIDs != null) {
+			profileData.updatePrice(typeIDs);
+		} else {
+			saveSettings = profileData.updateEventLists();
+		}
+		if (locationIDs != null) { //Update locations
+			for (JMainTab jMainTab : mainWindow.getTabs()) {
+				ensureEDT(new Runnable() {
+					@Override
+					public void run() {
+						jMainTab.updateLocations(locationIDs);
+					}
+				});
+			}
+		} else if (typeIDs != null) { //Update prices
+			for (JMainTab jMainTab : mainWindow.getTabs()) {
+				ensureEDT(new Runnable() {
+					@Override
+					public void run() {
+						jMainTab.updatePrices(typeIDs);
+					}
+				});
+			}
+		} else if (itemIDs != null) { //Update names
+			for (JMainTab jMainTab : mainWindow.getTabs()) {
+				ensureEDT(new Runnable() {
+					@Override
+					public void run() {
+						jMainTab.updateNames(itemIDs);
+					}
+				});
+			}
+		} else { //Full update
+			for (JMainTab jMainTab : mainWindow.getTabs()) {
+				ensureEDT(new Runnable() {
+					@Override
+					public void run() {
+						jMainTab.updateData();
+					}
+				});
+			}
 		}
 		for (JMainTab jMainTab : mainWindow.getTabs()) {
 			ensureEDT(new Runnable() {
@@ -428,7 +508,6 @@ public class Program implements ActionListener {
 				updateTableMenu();
 			}
 		});
-		
 		if (saveSettings) {
 			saveSettings("Asset Added Date"); //Save Asset Added Date
 		}

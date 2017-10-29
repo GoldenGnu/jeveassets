@@ -46,7 +46,7 @@ import net.nikr.eve.jeveasset.data.settings.tag.TagUpdate;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
-import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
+import net.nikr.eve.jeveasset.gui.shared.components.JMainTabPrimary;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterLogicalMatcher;
@@ -62,7 +62,7 @@ import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
 import net.nikr.eve.jeveasset.i18n.TabsAssets;
 
 
-public class AssetsTab extends JMainTab implements TagUpdate {
+public class AssetsTab extends JMainTabPrimary implements TagUpdate {
 
 	//GUI
 	private final JAssetTable jTable;
@@ -165,9 +165,6 @@ public class AssetsTab extends JMainTab implements TagUpdate {
 		tableModel.fireTableDataChanged();
 		afterUpdateData();
 	}
-
-	@Override
-	public void updateData() { }
 
 	public boolean isFiltersEmpty() {
 		return getFilters().isEmpty();

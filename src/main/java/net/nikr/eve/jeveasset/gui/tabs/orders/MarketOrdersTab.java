@@ -44,7 +44,7 @@ import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
-import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
+import net.nikr.eve.jeveasset.gui.shared.components.JMainTabPrimary;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter.CompareType;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter.LogicType;
@@ -60,7 +60,7 @@ import net.nikr.eve.jeveasset.gui.shared.table.PaddingTableCellRenderer;
 import net.nikr.eve.jeveasset.i18n.TabsOrders;
 
 
-public class MarketOrdersTab extends JMainTab {
+public class MarketOrdersTab extends JMainTabPrimary {
 
 	private final JAutoColumnTable jTable;
 	private final JLabel jSellOrdersTotal;
@@ -156,10 +156,6 @@ public class MarketOrdersTab extends JMainTab {
 						.addComponent(filterControl.getPanel())
 						.addComponent(jTableScroll, 0, 0, Short.MAX_VALUE)
 		);
-	}
-
-	@Override
-	public void updateData() {
 	}
 
 	private class OrdersTableMenu implements TableMenu<MyMarketOrder> {

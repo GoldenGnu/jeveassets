@@ -23,6 +23,8 @@ package net.nikr.eve.jeveasset.gui.dialogs.settings;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import net.nikr.eve.jeveasset.Program;
@@ -40,6 +42,11 @@ public class UserPriceSettingsPanel extends JUserListPanel<Integer, Double> {
 				DialoguesSettings.get().pricePrice(),
 				DialoguesSettings.get().priceInstructions()
 				);
+	}
+
+	@Override
+	protected void updateEventList(List<Integer> keys) {
+		program.updatePrices(new HashSet<Integer>(keys));
 	}
 
 	@Override

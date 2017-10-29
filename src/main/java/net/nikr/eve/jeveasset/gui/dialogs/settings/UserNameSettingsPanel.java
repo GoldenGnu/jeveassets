@@ -20,6 +20,8 @@
  */
 package net.nikr.eve.jeveasset.gui.dialogs.settings;
 
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.api.my.MyAsset;
@@ -37,6 +39,11 @@ public class UserNameSettingsPanel extends JUserListPanel<Long, String> {
 				DialoguesSettings.get().name(),
 				DialoguesSettings.get().namesInstruction()
 				);
+	}
+
+	@Override
+	protected void updateEventList(List<Long> keys) {
+		program.updateNames(new HashSet<Long>(keys));
 	}
 
 	@Override

@@ -39,8 +39,6 @@ public class TreeAsset extends MyAsset {
 
 	public static final String SPACE = "    ";
 	private final Security EMPTY_SECURITY = new Security("");
-
-	private final String treeName;
 	private final List<TreeAsset> tree;
 	private final String compare;
 	private final String ownerName;
@@ -48,7 +46,6 @@ public class TreeAsset extends MyAsset {
 	private final boolean item;
 	private final int depthOffset;
 	private final Icon icon;
-	private final HierarchyColumn hierarchyColumn;
 
 	private boolean expanded;
 
@@ -59,6 +56,8 @@ public class TreeAsset extends MyAsset {
 	private double valueReprocessed = 0;
 	private double valueSellMin = 0;
 	private double volumnTotal = 0;
+	private String treeName;
+	private HierarchyColumn hierarchyColumn;
 
 	public TreeAsset(final MyAsset asset, final TreeType treeType, final List<TreeAsset> tree, final String compare, final boolean parent) {
 		super(asset);
@@ -142,6 +141,13 @@ public class TreeAsset extends MyAsset {
 
 	public boolean isParent() {
 		return parent;
+	}
+
+	@Override
+	public void setName(String name, boolean userNameSet, boolean eveNameSet) {
+		super.setName(name, userNameSet, eveNameSet);
+		this.treeName = createSpace(tree.size()) + name;
+		this.hierarchyColumn = new HierarchyColumn(this.treeName, this.parent);
 	}
 
 	public void setExpanded(boolean expanded) {

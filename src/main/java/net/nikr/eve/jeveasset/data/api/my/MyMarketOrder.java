@@ -29,13 +29,13 @@ import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
 import net.nikr.eve.jeveasset.data.settings.MarketPriceData;
 import net.nikr.eve.jeveasset.data.settings.types.EditableLocationType;
+import net.nikr.eve.jeveasset.data.settings.types.EditablePriceType;
 import net.nikr.eve.jeveasset.data.settings.types.ItemType;
-import net.nikr.eve.jeveasset.data.settings.types.PriceType;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.Percent;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.Quantity;
 import net.nikr.eve.jeveasset.i18n.TabsOrders;
 
-public class MyMarketOrder extends RawMarketOrder implements Comparable<MyMarketOrder>, EditableLocationType, ItemType, PriceType {
+public class MyMarketOrder extends RawMarketOrder implements Comparable<MyMarketOrder>, EditableLocationType, ItemType, EditablePriceType {
 
 	public enum OrderStatus {
 		ACTIVE() {
@@ -203,6 +203,12 @@ public class MyMarketOrder extends RawMarketOrder implements Comparable<MyMarket
 		return getState() == MarketOrderState.OPEN && !isExpired();
 	}
 
+	@Override
+	public boolean isBPC() {
+		return false; //Market Orders are always BPO
+	}
+
+	@Override
 	public void setDynamicPrice(double price) {
 		this.price = price;
 	}
