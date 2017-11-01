@@ -151,6 +151,9 @@ public abstract class DialoguesSettings extends Bundle {
 	public abstract String pricePrice();
 	public abstract String priceInstructions();
 
+	// used  in UserLocationSettingsPanel
+	public abstract String locationsInstructions();
+
 	// used in WindowSettingsPanel
 	public abstract String windowWindow();
 	public abstract String windowSaveOnExit();

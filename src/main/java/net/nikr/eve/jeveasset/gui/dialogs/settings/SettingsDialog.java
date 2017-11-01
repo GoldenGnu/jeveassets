@@ -49,9 +49,7 @@ import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
-import net.nikr.eve.jeveasset.gui.shared.components.JLockWindow;
 import net.nikr.eve.jeveasset.i18n.DialoguesSettings;
-import net.nikr.eve.jeveasset.i18n.GuiShared;
 
 
 public class SettingsDialog extends JDialogCentered {
@@ -71,16 +69,13 @@ public class SettingsDialog extends JDialogCentered {
 
 	private final UserPriceSettingsPanel userPriceSettingsPanel;
 	private final UserNameSettingsPanel userNameSettingsPanel;
-	private final JLockWindow jLockWindow;;
-
+	private final UserLocationSettingsPanel locationSettingsPanel;
 	private boolean tabSelected = false;
 
 	public SettingsDialog(final Program program) {
 		super(program, DialoguesSettings.get().settings(Program.PROGRAM_NAME), Images.DIALOG_SETTINGS.getImage());
 
 		ListenerClass listener = new ListenerClass();
-
-		jLockWindow = new JLockWindow(program.getMainWindow().getFrame());
 
 		settingsPanels = new HashMap<String, JSettingsPanel>();
 		icons = new HashMap<Object, Icon>();
@@ -128,6 +123,8 @@ public class SettingsDialog extends JDialogCentered {
 		add(userPriceSettingsPanel, valuesNode);
 		userNameSettingsPanel = new UserNameSettingsPanel(program, this);
 		add(userNameSettingsPanel, valuesNode);
+		locationSettingsPanel = new UserLocationSettingsPanel(program, this);
+		add(locationSettingsPanel, valuesNode);
 		TagsSettingsPanel tagsSettingsPanel = new TagsSettingsPanel(program, this);
 		add(tagsSettingsPanel, valuesNode);
 
@@ -220,6 +217,10 @@ public class SettingsDialog extends JDialogCentered {
 
 	public UserPriceSettingsPanel getUserPriceSettingsPanel() {
 		return userPriceSettingsPanel;
+	}
+
+	public UserLocationSettingsPanel getUserLocationSettingsPanel() {
+		return locationSettingsPanel;
 	}
 
 	private void expandAll(final TreePath parent, final boolean expand) {

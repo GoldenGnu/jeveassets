@@ -56,6 +56,7 @@ import net.nikr.eve.jeveasset.gui.dialogs.account.AccountManagerDialog;
 import net.nikr.eve.jeveasset.gui.dialogs.bugs.BugsDialog;
 import net.nikr.eve.jeveasset.gui.dialogs.profile.ProfileDialog;
 import net.nikr.eve.jeveasset.gui.dialogs.settings.SettingsDialog;
+import net.nikr.eve.jeveasset.gui.dialogs.settings.UserLocationSettingsPanel;
 import net.nikr.eve.jeveasset.gui.dialogs.settings.UserNameSettingsPanel;
 import net.nikr.eve.jeveasset.gui.dialogs.settings.UserPriceSettingsPanel;
 import net.nikr.eve.jeveasset.gui.dialogs.update.TaskDialog;
@@ -664,6 +665,15 @@ public class Program implements ActionListener {
 			return null;
 		}
 	}
+
+	public UserLocationSettingsPanel getUserLocationSettingsPanel() {
+		if (settingsDialog != null) {
+			return settingsDialog.getUserLocationSettingsPanel();
+		} else {
+			return null;
+		}
+	}
+
 	public StockpileTab getStockpileTool() {
 		return stockpileTab;
 	}
