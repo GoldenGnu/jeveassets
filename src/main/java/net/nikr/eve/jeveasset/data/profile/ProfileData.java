@@ -726,7 +726,7 @@ public class ProfileData {
 		try {
 			eventList.getReadWriteLock().readLock().lock();
 			for (MyIndustryJob industryJob : eventList) {
-				if (typeIDs.contains(industryJob.getItem().getTypeID())) {
+				if (typeIDs.contains(industryJob.getItem().getTypeID()) || typeIDs.contains(industryJob.getProductTypeID())) {
 					found.add(industryJob); //Save for update
 					updatePrice(industryJob); //Update data
 				}
@@ -745,9 +745,25 @@ public class ProfileData {
 		try {
 			eventList.getReadWriteLock().readLock().lock();
 			for (MyAsset asset : eventList) {
-				if (typeIDs.contains(asset.getItem().getTypeID())) {
+				//Reprocessed price
+				boolean reprocessed = false;
+				for (ReprocessedMaterial material : asset.getItem().getReprocessedMaterial()) {
+					if (typeIDs.contains(material.getTypeID())) {
+						reprocessed = true;
+						break;
+					}
+				}
+				if (reprocessed) {
+					asset.setPriceReprocessed(ApiIdConverter.getPriceReprocessed(asset.getItem())); //Update data
+				}
+				//Dynamic Price
+				boolean dynamic = typeIDs.contains(asset.getItem().getTypeID());
+				if (dynamic) {
+					updatePrice(asset); //Update data
+				}
+				//Update
+				if (reprocessed || dynamic) { //If changed
 					found.add(asset); //Save for update
-					updatePrice(asset);
 				}
 			}
 		} finally {
@@ -900,6 +916,8 @@ public class ProfileData {
 			}
 			//Price
 			updatePrice(asset);
+			//Reprocessed price
+			asset.setPriceReprocessed(ApiIdConverter.getPriceReprocessed(asset.getItem()));
 			//Market price
 			asset.setMarketPriceData(marketPriceData.get(asset.getItem().getTypeID()));
 			//User Item Names
@@ -971,8 +989,6 @@ public class ProfileData {
 		} else { //All other
 			asset.setUserPrice(Settings.get().getUserPrices().get(asset.getItem().getTypeID()));
 		}
-		//Reprocessed price
-		asset.setPriceReprocessed(ApiIdConverter.getPriceReprocessed(asset.getItem()));
 		//Dynamic Price
 		asset.setDynamicPrice(ApiIdConverter.getPrice(asset.getItem().getTypeID(), asset.isBPC())); //Update data
 	}
