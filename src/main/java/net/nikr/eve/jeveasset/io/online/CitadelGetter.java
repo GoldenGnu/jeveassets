@@ -29,6 +29,7 @@ import java.net.URL;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.zip.GZIPInputStream;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.settings.Citadel;
@@ -59,6 +60,10 @@ public class CitadelGetter extends AbstractXmlWriter {
 		return getCitadelGetter().getCitadel(locationID);
 	}
 
+	public synchronized static Iterable<Map.Entry<Long, Citadel>> getAll() {
+		return getCitadelGetter().getCitadelAll();
+	}
+
 	public synchronized static void update(UpdateTask updateTask) {
 		if (!getCitadelGetter().updateCache(updateTask, NIKR_URL)) { //Get the cached version
 			getCitadelGetter().updateCache(updateTask, HAMMERTI_URL); //Get it from the source
@@ -67,6 +72,10 @@ public class CitadelGetter extends AbstractXmlWriter {
 
 	public synchronized static void remove(long locationID) {
 		getCitadelGetter().removeCitadel(locationID);
+	}
+
+	public synchronized static void remove(Set<Long> locationIDs) {
+		getCitadelGetter().removeCitadels(locationIDs);
 	}
 
 	public synchronized static void set(Citadel citadel) {
@@ -154,6 +163,15 @@ public class CitadelGetter extends AbstractXmlWriter {
 		saveXml();
 	}
 
+	private void removeCitadels(Set<Long> locationIDs) {
+		for (long locationID : locationIDs) {
+			citadelSettings.remove(locationID);
+		}
+		if (!locationIDs.isEmpty()) {
+			saveXml();
+		}
+	}
+
 	private void setCitadel(Citadel citadel) {
 		citadelSettings.put(citadel.id, citadel);
 		saveXml();
@@ -163,7 +181,9 @@ public class CitadelGetter extends AbstractXmlWriter {
 		for (Citadel citadel : citadels) {
 			citadelSettings.put(citadel.id, citadel);
 		}
-		saveXml();
+		if (!citadels.isEmpty()) {
+			saveXml();
+		}
 	}
 
 	private Citadel getCitadel(long locationID) {
@@ -173,5 +193,9 @@ public class CitadelGetter extends AbstractXmlWriter {
 			citadel.id = locationID; //Set locationID
 		}
 		return citadel;
+	}
+
+	private Iterable<Map.Entry<Long, Citadel>> getCitadelAll() {
+		return citadelSettings.getCache();
 	}
 }

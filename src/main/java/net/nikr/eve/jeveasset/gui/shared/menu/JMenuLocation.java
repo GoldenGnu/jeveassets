@@ -22,22 +22,18 @@ package net.nikr.eve.jeveasset.gui.shared.menu;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
-import net.nikr.eve.jeveasset.data.sde.StaticData;
 import net.nikr.eve.jeveasset.data.settings.Citadel;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.JSelectionDialog;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 import net.nikr.eve.jeveasset.io.online.CitadelGetter;
-import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 
 
 public class JMenuLocation<T> extends MenuManager.JAutoMenu<T> {
@@ -49,7 +45,6 @@ public class JMenuLocation<T> extends MenuManager.JAutoMenu<T> {
 	private final JMenuItem jEdit;
 	private final JMenuItem jReset;
 	private final JSelectionDialog<MyLocation> jLocationDialog;
-	private final JSystemDialog jSystemDialog;
 
 	private MenuData<T> menuData;
 
@@ -60,7 +55,6 @@ public class JMenuLocation<T> extends MenuManager.JAutoMenu<T> {
 		ListenerClass listener = new ListenerClass();
 
 		jLocationDialog = new JSelectionDialog<MyLocation>(program);
-		jSystemDialog = new JSystemDialog(program);
 
 		jEdit = new JMenuItem(GuiShared.get().itemEdit());
 		jEdit.setIcon(Images.EDIT_EDIT.getIcon());
@@ -87,31 +81,15 @@ public class JMenuLocation<T> extends MenuManager.JAutoMenu<T> {
 		
 	}
 
-	private String getLocationName(String text) {
-		text = (String) JOptionPane.showInputDialog(program.getMainWindow().getFrame(), GuiShared.get().locationName(), GuiShared.get().locationRename(), JOptionPane.PLAIN_MESSAGE, null, null, text);
-		if (text == null) {
-			return null;
-		}
-		if (text.isEmpty()) {
-			JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), GuiShared.get().locationEmpty(), GuiShared.get().locationRename(), JOptionPane.WARNING_MESSAGE);
-			return getLocationName(text);
-		}
-		return text;
-	}
-
-	private void deleteLocation(MyLocation location) {
-		CitadelGetter.remove(location.getLocationID());
-	}
-
 	private class ListenerClass implements ActionListener {
 		@Override
 		public void actionPerformed(final ActionEvent e) {
 			if (MenuLocationAction.CLEAR.name().equals(e.getActionCommand())) {
 				if (menuData.getUserStations().size() == 1) { //Single
 					MyLocation location = menuData.getUserStations().iterator().next();
-					int value = JOptionPane.showConfirmDialog(program.getMainWindow().getFrame(), GuiShared.get().locationClearConfirm(location.getLocation()), GuiShared.get().locationClear(), JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
-					if (value == JOptionPane.OK_OPTION) {
-						deleteLocation(location);
+					Long locationID = program.getUserLocationSettingsPanel().deleteLocation(location);
+					if (locationID != null) {
+						CitadelGetter.remove(locationID);
 						program.updateLocations(Collections.singleton(location.getLocationID()));
 					}
 				} else {
@@ -119,18 +97,15 @@ public class JMenuLocation<T> extends MenuManager.JAutoMenu<T> {
 					if (value == JOptionPane.OK_OPTION) { //All
 						Set<Long> locationIDs = new HashSet<>();
 						for (MyLocation location : menuData.getUserStations()) {
-							deleteLocation(location);
 							locationIDs.add(location.getLocationID());
 						}
+						CitadelGetter.remove(locationIDs);
 						program.updateLocations(locationIDs);
 					} else { //Single
 						MyLocation location = jLocationDialog.show(GuiShared.get().locationID(), menuData.getUserStations());
-						if (location == null) { //Cancel
-							return;
-						}
-						int value2 = JOptionPane.showConfirmDialog(program.getMainWindow().getFrame(), GuiShared.get().locationClearConfirm(location.getLocation()), GuiShared.get().locationClear(), JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
-						if (value2 == JOptionPane.OK_OPTION) {
-							deleteLocation(location);
+						Long locationID = program.getUserLocationSettingsPanel().deleteLocation(location);
+						if (locationID != null) {
+							CitadelGetter.remove(locationID);
 							program.updateLocations(Collections.singleton(location.getLocationID()));
 						}
 					}
@@ -140,40 +115,11 @@ public class JMenuLocation<T> extends MenuManager.JAutoMenu<T> {
 				emptyAndUserStations.addAll(menuData.getEmptyStations());
 				emptyAndUserStations.addAll(menuData.getUserStations());
 				MyLocation renameLocation = jLocationDialog.show(GuiShared.get().locationID(), emptyAndUserStations);
-				if (renameLocation == null) { //Cancel
-					return;
+				Citadel citadel = program.getUserLocationSettingsPanel().editLocation(renameLocation);
+				if (citadel != null) {
+					CitadelGetter.set(citadel);
+					program.updateLocations(Collections.singleton(renameLocation.getLocationID()));
 				}
-				String locationName;
-				if (renameLocation.isUserLocation()) { //Input previous value
-					locationName = getLocationName(CitadelGetter.get(renameLocation.getLocationID()).getName());
-				} else {
-					locationName = getLocationName("");
-				}
-				
-				if (locationName == null) { //Cancel
-					return;
-				}
-				//Create data for the system dialog
-				List<MyLocation> locations = new ArrayList<MyLocation>(); 
-				for (MyLocation system : StaticData.get().getLocations().values()) {
-					if (system.isSystem()) {
-						locations.add(system);
-					}
-				}
-				jSystemDialog.updateData(locations);
-				MyLocation system;
-				if (renameLocation.isUserLocation()) { //Input previous value
-					MyLocation renameSystem = ApiIdConverter.getLocation(renameLocation.getSystemID());
-					system = jSystemDialog.show(renameSystem);
-				} else {
-					system = jSystemDialog.show();
-				}
-				if (system == null) { //Cancel
-					return;
-				}
-				Citadel citadel = new Citadel(renameLocation.getLocationID(), locationName, system.getSystemID(), system.getSystem(), system.getRegionID(), system.getRegion());
-				CitadelGetter.set(citadel);
-				program.updateLocations(Collections.singleton(renameLocation.getLocationID()));
 			}
 		}
 	}
