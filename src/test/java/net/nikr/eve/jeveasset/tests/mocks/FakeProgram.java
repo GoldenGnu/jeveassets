@@ -36,6 +36,7 @@ import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder;
 import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
 import net.nikr.eve.jeveasset.data.profile.ProfileData;
 import net.nikr.eve.jeveasset.data.profile.ProfileManager;
+import net.nikr.eve.jeveasset.gui.dialogs.settings.UserLocationSettingsPanel;
 import net.nikr.eve.jeveasset.gui.dialogs.settings.UserNameSettingsPanel;
 import net.nikr.eve.jeveasset.gui.dialogs.settings.UserPriceSettingsPanel;
 import net.nikr.eve.jeveasset.gui.frame.MainWindow;
@@ -257,6 +258,11 @@ public abstract class FakeProgram extends Program {
 
 	@Override
 	public List<MyJournal> getJournalList() {
+		throw new UnsupportedOperationException("Not implemented");
+	}
+
+	@Override
+	public UserLocationSettingsPanel getUserLocationSettingsPanel() {
 		throw new UnsupportedOperationException("Not implemented");
 	}
 }
