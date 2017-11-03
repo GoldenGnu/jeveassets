@@ -38,6 +38,7 @@ public abstract class DialoguesAccount extends Bundle {
 		super(locale);
 	}
 
+	public abstract String dialogueNameAccountExport();
 	public abstract String dialogueNameAccountImport();
 
 	public abstract String previousArrow();
@@ -104,6 +105,16 @@ public abstract class DialoguesAccount extends Bundle {
 	public abstract String uncheckAll();
 	public abstract String checkSelected();
 	public abstract String uncheckSelected();
+	public abstract String share();
+	public abstract String shareExport();
+	public abstract String shareExportClipboard();
+	public abstract String shareExportFail();
+	public abstract String shareExportFile();
+	public abstract String shareExportHelp();
+	public abstract String shareImport();
+	public abstract String shareImportClipboard();
+	public abstract String shareImportFile();
+	public abstract String shareImportHelp();
 	public abstract String showCorp();
 	public abstract String close();
 	public abstract String noOwners();

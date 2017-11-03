@@ -60,6 +60,8 @@ public class AccountManagerDialog extends JDialogCentered {
 
 	private enum AccountManagerAction {
 		ADD,
+		SHARE_EXPORT,
+		SHARE_IMPORT,
 		CLOSE,
 		COLLAPSE,
 		EXPAND,
@@ -116,10 +118,22 @@ public class AccountManagerDialog extends JDialogCentered {
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
 		jTable.setSelectionModel(selectionModel);
 
-		//Add Button
+		//Buttons
 		jAdd = new JButton(DialoguesAccount.get().add());
 		jAdd.setActionCommand(AccountManagerAction.ADD.name());
 		jAdd.addActionListener(listener);
+
+		JDropDownButton jShare = new JDropDownButton(DialoguesAccount.get().share());
+		
+		JMenuItem jExport = new JMenuItem(DialoguesAccount.get().shareExport(), Images.MISC_ESI.getIcon());
+		jExport.setActionCommand(AccountManagerAction.SHARE_EXPORT.name());
+		jExport.addActionListener(listener);
+		jShare.add(jExport);
+
+		JMenuItem jImport = new JMenuItem(DialoguesAccount.get().shareImport(), Images.TOOL_ASSETS.getIcon());
+		jImport.setActionCommand(AccountManagerAction.SHARE_IMPORT.name());
+		jImport.addActionListener(listener);
+		jShare.add(jImport);
 
 		jCollapse = new JButton(DialoguesAccount.get().collapse());
 		jCollapse.setActionCommand(AccountManagerAction.COLLAPSE.name());
@@ -168,6 +182,7 @@ public class AccountManagerDialog extends JDialogCentered {
 				)
 				.addGroup(layout.createSequentialGroup()
 					.addComponent(jAdd, Program.getButtonsWidth(), Program.getButtonsWidth(), Program.getButtonsWidth())
+					.addComponent(jShare, Program.getButtonsWidth(), Program.getButtonsWidth(), Program.getButtonsWidth())
 					.addComponent(jCollapse, Program.getButtonsWidth(), Program.getButtonsWidth(), Program.getButtonsWidth())
 					.addComponent(jExpand, Program.getButtonsWidth(), Program.getButtonsWidth(), Program.getButtonsWidth())
 					.addGap(0, 0, Short.MAX_VALUE)
@@ -178,6 +193,7 @@ public class AccountManagerDialog extends JDialogCentered {
 			layout.createSequentialGroup()
 				.addGroup(layout.createParallelGroup()
 					.addComponent(jAdd, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jShare, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 					.addComponent(jCollapse, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 					.addComponent(jExpand, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 					.addComponent(jAssets, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
@@ -301,6 +317,10 @@ public class AccountManagerDialog extends JDialogCentered {
 		public void actionPerformed(final ActionEvent e) {
 			if (AccountManagerAction.ADD.name().equals(e.getActionCommand())) {
 				accountImportDialog.add();
+			} else if (AccountManagerAction.SHARE_EXPORT.name().equals(e.getActionCommand())) {
+				accountImportDialog.shareExport();
+			} else if (AccountManagerAction.SHARE_IMPORT.name().equals(e.getActionCommand())) {
+				accountImportDialog.shareImport();
 			} else if (AccountManagerAction.COLLAPSE.name().equals(e.getActionCommand())) {
 				jTable.expandSeparators(false);
 			} else if (AccountManagerAction.EXPAND.name().equals(e.getActionCommand())) {
