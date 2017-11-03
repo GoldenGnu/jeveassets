@@ -16,9 +16,22 @@
                   #### #  # #  # #  # #### #### #### #### ####
 
 ________________________________________________________________________________
+_5.0.3__________________________________________________________________________
+
+New Features:
+-Location Settings
+-Export/Import ESI Keys
+
+Bug Fixes:
+-Fixed the bugs introduced in 5.0.2
+
+Code:
+-Optimized update of dynamic values (Asset Names/Prices/Locations)
+
+________________________________________________________________________________
 _5.0.2__________________________________________________________________________
 
-New Feature:
+New Features:
 -Now shows an animation while doing lengthy tasks
 
 Bug Fixes:
@@ -43,7 +56,7 @@ Code:
 ________________________________________________________________________________
 _5.0.1__________________________________________________________________________
 
-New Feature:
+New Features:
 -Added EveMarketer to lookup menu
 
 Bug Fixes:
@@ -62,7 +75,7 @@ Bug Fixes:
 ________________________________________________________________________________
 _5.0.0__________________________________________________________________________
 
-New Feature:
+New Features:
 -Support for ESI Corporation accounts
 
 Bug Fixes:
@@ -250,7 +263,7 @@ _3.1.2__________________________________________________________________________
 New Features:
 -Enabled GZip support for the pricing library (faster price update)
 
-Bug Fix:
+Bug Fixes:
 -Better error handling for the the stop.hammerti.me.uk citadel API
 
 Known issues:
@@ -259,7 +272,7 @@ Known issues:
 ________________________________________________________________________________
 _3.1.1__________________________________________________________________________
 
-Bug Fix:
+Bug Fixes:
 -Better integration of the stop.hammerti.me.uk citadel API
 
 Known issues:
@@ -279,7 +292,7 @@ Changed
 -Removed eve-online wiki from lookup menu
 -Updated credits.txt and about dialog
 
-Bug Fix:
+Bug Fixes:
 -Bought contracts always included in stockpile
 
 Known issues:
@@ -340,7 +353,7 @@ Known issues:
 ________________________________________________________________________________
 _3.0.1__________________________________________________________________________
 
-Bug Fix:
+Bug Fixes:
 -Possible fix for bugID: 397 (ArrayIndexOutOfBoundsException)
 -Bug Fix: Journal and Transaction were missing valid duplicates
 
@@ -368,7 +381,7 @@ Changed:
 -Use the latest version of EVEAPI
 -Moved to Java 8: require Java 8 to run (will still compile on Java 7 JDK)
 
-Bug Fix:
+Bug Fixes:
 -Contracts: kept old data after updating from the API
 -Fixed a lot of GUI problems on Linux (Unity/GNOME/KDE)
 -File locks was not working correctly
@@ -383,7 +396,7 @@ Changed:
 -Don't update missing prices on startup (price 1.4.0)
 -Changed jUpdate download location (To make sure we have write access)
 
-Bug Fix:
+Bug Fixes:
 -AIOOB EnumTableFormatAdaptor (Critical)
 -FilterSave deadlock read lock (Critical)
 -IllegalArgumentException in SeparatorList (Critical)
@@ -397,7 +410,7 @@ Bug Fix:
 ________________________________________________________________________________
 _2.10.4_________________________________________________________________________
 
-Bug Fix:
+Bug Fixes:
 -Possible fix for IllegalArgument in getLocalFile() (BugID: 284 and 179)
 -ConcurrentModificationException in HashMap constructor (BugID: 202 and 282)
 -NullPointerException in ProfileWriter (BugID: 285)
@@ -411,7 +424,7 @@ Changed:
 -Updated Glazed Lists library to 1.9.1
 -Removed eve.addicts.nl
 
-Bug Fix:
+Bug Fixes:
 -Added Glazed list read locks (could fix some bugs or not)
 -Save eve fittings (wrong type name)
 -Race condition when updating (tracker point creation)
@@ -421,14 +434,14 @@ Bug Fix:
 ________________________________________________________________________________
 _2.10.2_________________________________________________________________________
 
-Bug Fix:
+Bug Fixes:
 -Saving Journal/Transactions history didn't work
 -Profile was not always saved when changed in Account Manager
 
 ________________________________________________________________________________
 _2.10.1_________________________________________________________________________
 
-Bug Fix:
+Bug Fixes:
 -Possible fix for Update/ISK/Tracker/Values bug
 
 ________________________________________________________________________________
@@ -444,7 +457,7 @@ Changed:
 -Changed the font and formating of the Tracker tool chart
 -Now remove owner from the Tracker when the last data point is deleted
 
-Bug Fix:
+Bug Fixes:
 -Fixed date format in the Tracker Tool
 
 ________________________________________________________________________________
@@ -457,7 +470,7 @@ Bug Fixes:
 ________________________________________________________________________________
 _2.9.0__________________________________________________________________________
 
-New Feature:
+New Features:
 -Stockpile: Adjustable percentage grouping
 -Tracker: Multiple characters select
 -Date filter: Last X Days
@@ -500,7 +513,7 @@ Bug Fixes:
 ________________________________________________________________________________
 _2.8.4__________________________________________________________________________
 
-New Feature:
+New Features:
 -New bug report dialog
 -Added new column: 'Installer' to the Industry Job Tool
 
@@ -617,7 +630,7 @@ Changed:
 -Export greatly improved
 -Table Copy: Now use the shown value
 
-Bug Fix:
+Bug Fixes:
 -Stockpile shopping list could count the same item multiple times
 -Stockpile: Editing items would leave duplicate items
 
