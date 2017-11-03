@@ -25,12 +25,27 @@ import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.LayoutManager;
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.StringSelection;
+import java.awt.datatransfer.Transferable;
+import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.EnumMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -44,10 +59,13 @@ import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComponent;
 import javax.swing.JEditorPane;
+import javax.swing.JFileChooser;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingWorker;
 import javax.swing.text.html.HTMLDocument;
@@ -59,11 +77,13 @@ import net.nikr.eve.jeveasset.data.api.accounts.EveKitOwner;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.DocumentFactory;
 import net.nikr.eve.jeveasset.gui.shared.components.JCopyPopup;
+import net.nikr.eve.jeveasset.gui.shared.components.JCustomFileChooser;
 import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
 import net.nikr.eve.jeveasset.gui.shared.components.JDropDownButton;
 import net.nikr.eve.jeveasset.gui.shared.components.JIntegerField;
 import net.nikr.eve.jeveasset.gui.shared.components.JWorking;
 import net.nikr.eve.jeveasset.i18n.DialoguesAccount;
+import net.nikr.eve.jeveasset.i18n.GuiShared;
 import net.nikr.eve.jeveasset.io.esi.EsiAuth;
 import net.nikr.eve.jeveasset.io.esi.EsiCallbackURL;
 import net.nikr.eve.jeveasset.io.esi.EsiOwnerGetter;
@@ -86,6 +106,10 @@ public class AccountImportDialog extends JDialogCentered {
 		ADD_EVEAPI,
 		ADD_EVEKIT,
 		ADD_KEY_CANCEL,
+		SHARE_TO_CLIPBOARD,
+		SHARE_TO_FILE,
+		SHARE_FROM_CLIPBOARD,
+		SHARE_FROM_FILE,
 		NEXT,
 		PREVIOUS
 	}
@@ -93,6 +117,8 @@ public class AccountImportDialog extends JDialogCentered {
 	private enum AccountImportCard {
 		TYPE,
 		ADD_ESI,
+		SHARE_EXPORT,
+		SHARE_IMPORT,
 		ADD_EVEAPI,
 		ADD_EVEKIT,
 		VALIDATE,
@@ -113,6 +139,10 @@ public class AccountImportDialog extends JDialogCentered {
 		OK_ACCOUNT_VALID //OK
 	}
 
+	private enum Share {
+		IMPORT, EXPORT
+	}
+
 	private JDropDownButton jScopes;
 	private JTextField jAuthCode;
 	private JRadioButtonMenuItem jCorporation;
@@ -123,6 +153,12 @@ public class AccountImportDialog extends JDialogCentered {
 	private JTextField jVCode;
 	private JTextField jAccessKey;
 	private JTextField jAccessCred;
+	private JTextArea jExport;
+	private JButton jExportClipboard;
+	private JButton jExportFile;
+	private JTextArea jImport;
+	private JButton jImportClipboard;
+	private JButton jImportFile;
 	private final JButton jNext;
 	private final JButton jPrevious;
 	private final JButton jCancel;
@@ -130,6 +166,7 @@ public class AccountImportDialog extends JDialogCentered {
 	private final JPanel jContent;
 	private final ListenerClass listener = new ListenerClass();
 	private final EsiAuth esiAuth = new EsiAuth();
+	private final JCustomFileChooser jFileChooser;
 
 	private final DonePanel donePanel;
 
@@ -141,7 +178,8 @@ public class AccountImportDialog extends JDialogCentered {
 	private EsiOwner editEsiOwner;
 	private AccountImportCard currentCard;
 	private ApiType apiType;
-	private boolean changeType;
+	private boolean enableTypeCard;
+	private Share share;
 	private AddTask addTask;
 	private final Map<EsiScopes, JCheckBoxMenuItem> scopesMap = new EnumMap<EsiScopes, JCheckBoxMenuItem>(EsiScopes.class);
 
@@ -153,13 +191,19 @@ public class AccountImportDialog extends JDialogCentered {
 
 		this.getDialog().addWindowFocusListener(listener);
 
+		jFileChooser = JCustomFileChooser.createFileChooser(getDialog(), "txt");
+		jFileChooser.setMultiSelectionEnabled(false);
+		jFileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+
 		cardLayout = new CardLayout();
 		jContent = new JPanel(cardLayout);
 		jContent.add(new TypePanel(), AccountImportCard.TYPE.name());
+		jContent.add(new ImportPanel(), AccountImportCard.SHARE_IMPORT.name());
 		jContent.add(new EveApiPanel(), AccountImportCard.ADD_EVEAPI.name());
 		jContent.add(new EveKitPanel(), AccountImportCard.ADD_EVEKIT.name());
 		jContent.add(new EsiPanel(), AccountImportCard.ADD_ESI.name());
 		jContent.add(new ValidatePanel(), AccountImportCard.VALIDATE.name());
+		jContent.add(new ExportPanel(), AccountImportCard.SHARE_EXPORT.name());
 		jContent.add(donePanel, AccountImportCard.DONE.name());
 
 		jPrevious = new JButton(DialoguesAccount.get().previousArrow());
@@ -256,24 +300,33 @@ public class AccountImportDialog extends JDialogCentered {
 	protected void save() { }
 
 	public void add() {
-		show(true, AccountImportCard.TYPE, null, null, null);
+		show(true, null, AccountImportCard.TYPE, null, null, null);
+	}
+
+	public void shareExport() {
+		show(false, Share.EXPORT, AccountImportCard.ADD_ESI, null, null, null);
+	}
+
+	public void shareImport() {
+		show(false, Share.IMPORT, AccountImportCard.SHARE_IMPORT, null, null, null);
 	}
 
 	public void editEveKit(final EveKitOwner editEveKitOwner) {
-		show(false, AccountImportCard.ADD_EVEKIT, null, editEveKitOwner, null);
+		show(false, null, AccountImportCard.ADD_EVEKIT, null, editEveKitOwner, null);
 	}
 
 	public void editEveApi(final EveApiAccount editAccount) {
-		show(false, AccountImportCard.ADD_EVEAPI, editAccount, null, null);
+		show(false, null, AccountImportCard.ADD_EVEAPI, editAccount, null, null);
 	}
 
 	public void editEsi(final EsiOwner editEsiOwner) {
-		show(false, AccountImportCard.ADD_ESI, null, null, editEsiOwner);
+		show(false, null, AccountImportCard.ADD_ESI, null, null, editEsiOwner);
 	}
 
-	private void show(boolean apiTypeEdit, AccountImportCard accountImportCard, final EveApiAccount editAccount, final EveKitOwner editEveKitOwner, final EsiOwner editEsiOwner) {
+	private void show(boolean enableTypeCard, Share share, AccountImportCard accountImportCard, final EveApiAccount editAccount, final EveKitOwner editEveKitOwner, final EsiOwner editEsiOwner) {
 		currentCard = accountImportCard;
-		this.changeType = apiTypeEdit;
+		this.enableTypeCard = enableTypeCard;
+		this.share = share;
 		this.editAccount = editAccount;
 		this.editEveKitOwner = editEveKitOwner;
 		this.editEsiOwner = editEsiOwner;
@@ -301,6 +354,7 @@ public class AccountImportDialog extends JDialogCentered {
 				jCharacter.setSelected(true);
 			}
 		} else { //Add
+			jImport.setText("");
 			jType.setVisible(true);
 			jCorporation.setSelected(false);
 			jCharacter.setSelected(true);
@@ -321,6 +375,7 @@ public class AccountImportDialog extends JDialogCentered {
 	private void showTypeTap() {
 		cardLayout.show(jContent, AccountImportCard.TYPE.name());
 		this.getDialog().setIconImage(Images.EDIT_ADD.getImage());
+		this.getDialog().setTitle(DialoguesAccount.get().dialogueNameAccountImport());
 		jPrevious.setEnabled(false);
 		jNext.setEnabled(false);
 		jNext.setText(DialoguesAccount.get().nextArrow());
@@ -330,7 +385,8 @@ public class AccountImportDialog extends JDialogCentered {
 	private void showEveKitTap() {
 		cardLayout.show(jContent, AccountImportCard.ADD_EVEKIT.name());
 		this.getDialog().setIconImage(Images.MISC_EVEKIT.getImage());
-		jPrevious.setEnabled(changeType);
+		this.getDialog().setTitle(DialoguesAccount.get().dialogueNameAccountImport());
+		jPrevious.setEnabled(enableTypeCard);
 		jNext.setEnabled(true);
 		jNext.setText(DialoguesAccount.get().nextArrow());
 		focus();
@@ -339,7 +395,8 @@ public class AccountImportDialog extends JDialogCentered {
 	private void showEveApiTap() {
 		cardLayout.show(jContent, AccountImportCard.ADD_EVEAPI.name());
 		this.getDialog().setIconImage(Images.MISC_EVE.getImage());
-		jPrevious.setEnabled(changeType);
+		this.getDialog().setTitle(DialoguesAccount.get().dialogueNameAccountImport());
+		jPrevious.setEnabled(enableTypeCard);
 		jNext.setEnabled(true);
 		jNext.setText(DialoguesAccount.get().nextArrow());
 		focus();
@@ -348,7 +405,12 @@ public class AccountImportDialog extends JDialogCentered {
 	private void showEsiTap() {
 		cardLayout.show(jContent, AccountImportCard.ADD_ESI.name());
 		this.getDialog().setIconImage(Images.MISC_ESI.getImage());
-		jPrevious.setEnabled(changeType);
+		if (share == Share.EXPORT) {
+			this.getDialog().setTitle(DialoguesAccount.get().dialogueNameAccountExport());
+		} else {
+			this.getDialog().setTitle(DialoguesAccount.get().dialogueNameAccountImport());
+		}
+		jPrevious.setEnabled(enableTypeCard);
 		jAuthCode.setEnabled(false);
 		jAuthCode.setText("");
 		jNext.setEnabled(false);
@@ -356,6 +418,165 @@ public class AccountImportDialog extends JDialogCentered {
 		updateScopes();
 		jNext.setText(DialoguesAccount.get().nextArrow());
 		focus();
+	}
+
+	private void showImportTap() {
+		cardLayout.show(jContent, AccountImportCard.SHARE_IMPORT.name());
+		this.getDialog().setIconImage(Images.MISC_ESI.getImage());
+		this.getDialog().setTitle(DialoguesAccount.get().dialogueNameAccountImport());
+		jPrevious.setEnabled(false);
+		jNext.setEnabled(true);
+		jNext.setText(DialoguesAccount.get().nextArrow());
+	}
+
+	private void showExportTap() {
+		cardLayout.show(jContent, AccountImportCard.SHARE_EXPORT.name());
+		jPrevious.setEnabled(true);
+		jNext.setEnabled(true);
+		jNext.setText(DialoguesAccount.get().ok());
+		try {
+			String value = esiOwner.getCallbackURL().name() + " " + esiOwner.getRefreshToken();
+			String code = new String(Base64.getUrlEncoder().encode(value.getBytes(StandardCharsets.UTF_8)), "UTF-8").replace("=", "");
+			jExport.setText(code);
+			jExport.setFocusable(true);
+			jExportClipboard.setEnabled(true);
+			jExportFile.setEnabled(true);
+		} catch (UnsupportedEncodingException ex) {
+			jExport.setText(DialoguesAccount.get().shareExportFail());
+			jExport.setFocusable(false);
+			jExportClipboard.setEnabled(false);
+			jExportFile.setEnabled(false);
+		}
+	}
+
+	private void showValidateTab() {
+		cardLayout.show(jContent, AccountImportCard.VALIDATE.name());
+		jPrevious.setEnabled(true);
+		jNext.setEnabled(false);
+		jNext.setText(DialoguesAccount.get().nextArrow());
+		if (share == Share.IMPORT) {
+			esiOwner = new EsiOwner();
+			try {
+				String code = new String(Base64.getUrlDecoder().decode(jImport.getText().trim()), "UTF-8");
+				System.out.println("code: " + code);
+				String[] codes = code.split(" ");
+				esiOwner.setCallbackURL(EsiCallbackURL.valueOf(codes[0]));
+				esiOwner.setRefreshToken(codes[1]);
+			} catch (UnsupportedEncodingException | IllegalArgumentException | ArrayIndexOutOfBoundsException ex) {
+				LOG.error("Failed to import jEveAssets ESI Key", ex); //Will fail the update, so, we just ignore it here
+			}
+			addTask = new ImportTask();
+			addTask.addPropertyChangeListener(listener);
+			addTask.execute();
+		} else if (apiType == ApiType.EVE_ONLINE) {
+			if (editAccount == null) { //Add
+				account = new EveApiAccount(getKeyID(), getVCode());
+			} else { //Edit
+				account = new EveApiAccount(editAccount);
+				account.setKeyID(getKeyID());
+				account.setvCode(getVCode());
+			}
+			addTask = new EveApiTask();
+			addTask.addPropertyChangeListener(listener);
+			addTask.execute();
+		} else if (apiType == ApiType.EVEKIT) {
+			if (editEveKitOwner == null) { //Add
+				eveKitOwner = new EveKitOwner(getAccessKey(), getAccessCred());
+			} else { //Edit
+				eveKitOwner = new EveKitOwner(getAccessKey(), getAccessCred(), editEveKitOwner);
+			}
+			addTask = new EveKitTask();
+			addTask.addPropertyChangeListener(listener);
+			addTask.execute();
+		} else if (apiType == ApiType.ESI) {
+			if (editEsiOwner == null) { //Add
+				esiOwner = new EsiOwner();
+			} else { //Edit
+				esiOwner = new EsiOwner(editEsiOwner);
+			}
+			addTask = new EsiTask();
+			addTask.addPropertyChangeListener(listener);
+			addTask.execute();
+		}
+	}
+
+	private void showDoneTab() {
+		jPrevious.setEnabled(true);
+		if (share == Share.EXPORT) {
+			jNext.setText(DialoguesAccount.get().nextArrow());
+		} else {
+			jNext.setText(DialoguesAccount.get().ok());
+		}
+		cardLayout.show(jContent, AccountImportCard.DONE.name());
+	}
+
+	private void done() {
+		if (apiType == ApiType.EVE_ONLINE) {
+			if (editAccount != null) { //Edit
+				program.getProfileManager().getAccounts().remove(editAccount);
+			}
+			apiManager.forceUpdate();
+			program.getProfileManager().getAccounts().add(account);
+			apiManager.updateTable();
+		}
+		if (apiType == ApiType.EVEKIT) {
+			if (editEveKitOwner != null) { //Edit
+				program.getProfileManager().getEveKitOwners().remove(editEveKitOwner);
+			}
+			apiManager.forceUpdate();
+			program.getProfileManager().getEveKitOwners().add(eveKitOwner);
+			apiManager.updateTable();
+		}
+		if (apiType == ApiType.ESI && share != Share.EXPORT) {
+			if (editEsiOwner != null) { //Edit
+				program.getProfileManager().getEsiOwners().remove(editEsiOwner);
+			}
+			apiManager.forceUpdate();
+			program.getProfileManager().getEsiOwners().add(esiOwner);
+			apiManager.updateTable();
+		}
+		this.setVisible(false);
+	}
+
+	private void updateTab() {
+		switch (currentCard) {
+			case TYPE:
+				showTypeTap();
+				break;
+			case ADD_EVEKIT:
+				apiType = ApiType.EVEKIT;
+				showEveKitTap();
+				break;
+			case ADD_EVEAPI:
+				apiType = ApiType.EVE_ONLINE;
+				showEveApiTap();
+				break;
+			case ADD_ESI:
+				apiType = ApiType.ESI;
+				showEsiTap();
+				break;
+			case VALIDATE:
+				showValidateTab();
+				break;
+			case DONE:
+				if (apiType == ApiType.ESI) {
+					//Move to front
+					getDialog().setAlwaysOnTop(true);
+					getDialog().setAlwaysOnTop(false);
+				}
+				showDoneTab();
+				break;
+			case SHARE_IMPORT:
+				apiType = ApiType.ESI;
+				showImportTap();
+				break;
+			case SHARE_EXPORT:
+				showExportTap();
+				break;
+			case EXIT:
+				done();
+				break;
+		}
 	}
 
 	private void updateScopes() {
@@ -397,113 +618,6 @@ public class AccountImportDialog extends JDialogCentered {
 		}
 	}
 
-	private void showValidateTab() {
-		cardLayout.show(jContent, AccountImportCard.VALIDATE.name());
-		jPrevious.setEnabled(true);
-		jNext.setEnabled(false);
-		jNext.setText(DialoguesAccount.get().nextArrow());
-		if (apiType == ApiType.EVE_ONLINE) {
-			if (editAccount == null) { //Add
-				account = new EveApiAccount(getKeyID(), getVCode());
-			} else { //Edit
-				account = new EveApiAccount(editAccount);
-				account.setKeyID(getKeyID());
-				account.setvCode(getVCode());
-			}
-			addTask = new EveApiTask();
-			addTask.addPropertyChangeListener(listener);
-			addTask.execute();
-		}
-		if (apiType == ApiType.EVEKIT) {
-			if (editEveKitOwner == null) { //Add
-				eveKitOwner = new EveKitOwner(getAccessKey(), getAccessCred());
-			} else { //Edit
-				eveKitOwner = new EveKitOwner(getAccessKey(), getAccessCred(), editEveKitOwner);
-			}
-			addTask = new EveKitTask();
-			addTask.addPropertyChangeListener(listener);
-			addTask.execute();
-		}
-		if (apiType == ApiType.ESI) {
-			if (editEsiOwner == null) { //Add
-				esiOwner = new EsiOwner();
-			} else { //Edit
-				esiOwner = new EsiOwner(editEsiOwner);
-			}
-			addTask = new EsiTask();
-			addTask.addPropertyChangeListener(listener);
-			addTask.execute();
-		}
-	}
-
-	private void showDoneTab() {
-		jPrevious.setEnabled(true);
-		jNext.setText(DialoguesAccount.get().ok());
-		cardLayout.show(jContent, AccountImportCard.DONE.name());
-	}
-
-	private void done() {
-		if (apiType == ApiType.EVE_ONLINE) {
-			if (editAccount != null) { //Edit
-				program.getProfileManager().getAccounts().remove(editAccount);
-			}
-			apiManager.forceUpdate();
-			program.getProfileManager().getAccounts().add(account);
-			apiManager.updateTable();
-		}
-		if (apiType == ApiType.EVEKIT) {
-			if (editEveKitOwner != null) { //Edit
-				program.getProfileManager().getEveKitOwners().remove(editEveKitOwner);
-			}
-			apiManager.forceUpdate();
-			program.getProfileManager().getEveKitOwners().add(eveKitOwner);
-			apiManager.updateTable();
-		}
-		if (apiType == ApiType.ESI) {
-			if (editEsiOwner != null) { //Edit
-				program.getProfileManager().getEsiOwners().remove(editEsiOwner);
-			}
-			apiManager.forceUpdate();
-			program.getProfileManager().getEsiOwners().add(esiOwner);
-			apiManager.updateTable();
-		}
-		this.setVisible(false);
-	}
-
-	private void updateTab() {
-		switch (currentCard) {
-			case TYPE:
-				showTypeTap();
-				break;
-			case ADD_EVEKIT:
-				apiType = ApiType.EVEKIT;
-				showEveKitTap();
-				break;
-			case ADD_EVEAPI:
-				apiType = ApiType.EVE_ONLINE;
-				showEveApiTap();
-				break;
-			case ADD_ESI:
-				apiType = ApiType.ESI;
-				showEsiTap();
-				break;
-			case VALIDATE:
-				showValidateTab();
-				break;
-			case DONE:
-				if (apiType == ApiType.ESI) {
-					//Move to front
-					getDialog().setAlwaysOnTop(true);
-					getDialog().setAlwaysOnTop(false);
-				}
-				showDoneTab();
-				break;
-			case EXIT:
-				done();
-				break;
-		}
-	}
-
 	private class ListenerClass implements ActionListener, PropertyChangeListener,
 											WindowFocusListener {
 
@@ -530,27 +644,30 @@ public class AccountImportDialog extends JDialogCentered {
 						currentCard = AccountImportCard.TYPE;
 						break;
 					case VALIDATE: //Previous: Add
-						if (apiType == ApiType.EVEKIT) {
+						if (share == Share.IMPORT) {
+							currentCard = AccountImportCard.SHARE_IMPORT;
+						} else if (apiType == ApiType.EVEKIT) {
 							currentCard = AccountImportCard.ADD_EVEKIT;
-						}
-						if (apiType == ApiType.EVE_ONLINE) {
+						} else if (apiType == ApiType.EVE_ONLINE) {
 							currentCard = AccountImportCard.ADD_EVEAPI;
-						}
-						if (apiType == ApiType.ESI) {
+						} else if (apiType == ApiType.ESI) {
 							currentCard = AccountImportCard.ADD_ESI;
 						}
 						addTask.cancel(true);
 						break;
 					case DONE: //Previous: Add
-						if (apiType == ApiType.EVEKIT) {
+						if (share == Share.IMPORT) {
+							currentCard = AccountImportCard.SHARE_IMPORT;
+						} else if (apiType == ApiType.EVEKIT) {
 							currentCard = AccountImportCard.ADD_EVEKIT;
-						}
-						if (apiType == ApiType.EVE_ONLINE) {
+						} else if (apiType == ApiType.EVE_ONLINE) {
 							currentCard = AccountImportCard.ADD_EVEAPI;
-						}
-						if (apiType == ApiType.ESI) {
+						} else if (apiType == ApiType.ESI) {
 							currentCard = AccountImportCard.ADD_ESI;
 						}
+						break;
+					case SHARE_EXPORT:
+						currentCard = AccountImportCard.DONE;
 						break;
 					case EXIT: //Previous: Exit
 						currentCard = AccountImportCard.EXIT;
@@ -570,10 +687,20 @@ public class AccountImportDialog extends JDialogCentered {
 					case ADD_ESI: //Next: Validate
 						currentCard = AccountImportCard.VALIDATE;
 						break;
+					case SHARE_IMPORT: //Next: Validate
+						currentCard = AccountImportCard.VALIDATE;
+						break;
 					case VALIDATE: //Next Done
 						currentCard = AccountImportCard.DONE;
 						break;
 					case DONE: //Next Exit
+						if (share == Share.EXPORT) {
+							currentCard = AccountImportCard.SHARE_EXPORT;
+						} else {
+							currentCard = AccountImportCard.EXIT;
+						}						
+						break;
+					case SHARE_EXPORT:
 						currentCard = AccountImportCard.EXIT;
 						break;
 					case EXIT: //Next Exit
@@ -590,6 +717,76 @@ public class AccountImportDialog extends JDialogCentered {
 			} else if (AccountImportAction.ADD_EVEKIT.name().equals(e.getActionCommand())) {
 				currentCard = AccountImportCard.ADD_EVEKIT;
 				updateTab();
+			} else if (AccountImportAction.SHARE_TO_CLIPBOARD.name().equals(e.getActionCommand())) {
+				Toolkit tk = Toolkit.getDefaultToolkit();
+				StringSelection data = new StringSelection(jExport.getText());
+				Clipboard cp = tk.getSystemClipboard();
+				cp.setContents(data, null);
+			} else if (AccountImportAction.SHARE_TO_FILE.name().equals(e.getActionCommand())) {
+				File file = jFileChooser.getSelectedFile();
+				if (file != null)  {
+					jFileChooser.setSelectedFile(new File(""));
+					jFileChooser.setCurrentDirectory(file.getParentFile());
+				}
+				int showSaveDialog = jFileChooser.showSaveDialog(getDialog());
+				if (showSaveDialog == JCustomFileChooser.APPROVE_OPTION) {
+					BufferedWriter writer = null;
+					try {
+						writer = new BufferedWriter(new FileWriter(jFileChooser.getSelectedFile()));
+						writer.write(jExport.getText());
+						writer.close();
+					} catch (IOException ex) {
+						JOptionPane.showMessageDialog(getDialog(), GuiShared.get().textSaveFailMsg(), GuiShared.get().textSaveFailTitle(), JOptionPane.WARNING_MESSAGE);
+					} finally {
+						if (writer != null) {
+							try {
+								writer.close();
+							} catch (IOException ex) {
+								//Ohh well we tried our best
+							}
+						}
+					}
+				}
+			} else if (AccountImportAction.SHARE_FROM_CLIPBOARD.name().equals(e.getActionCommand())) {
+				Toolkit tk = Toolkit.getDefaultToolkit();
+				Clipboard clipboard = tk.getSystemClipboard();
+				Transferable transferable = clipboard.getContents(this);
+				try {
+					String s = (String) transferable.getTransferData(DataFlavor.stringFlavor);
+					jImport.setText(s);
+				} catch (UnsupportedFlavorException | IOException ex) {
+
+				}
+			} else if (AccountImportAction.SHARE_FROM_FILE.name().equals(e.getActionCommand())) {
+				File file = jFileChooser.getSelectedFile();
+				if (file != null)  {
+					jFileChooser.setSelectedFile(new File(""));
+					jFileChooser.setCurrentDirectory(file.getParentFile());
+				}
+				int showSaveDialog = jFileChooser.showOpenDialog(getDialog());
+				if (showSaveDialog == JCustomFileChooser.APPROVE_OPTION) {
+					BufferedReader reader = null;
+					try {
+						reader = new BufferedReader(new FileReader(jFileChooser.getSelectedFile()));
+						String line;
+						StringBuilder builder = new StringBuilder();
+						while ((line = reader.readLine()) != null) {
+							builder.append(line);
+							builder.append("\r\n");
+						}
+						jImport.setText(builder.toString());
+					} catch (IOException ex) {
+						JOptionPane.showMessageDialog(getDialog(), GuiShared.get().textLoadFailMsg(),  GuiShared.get().textLoadFailTitle(), JOptionPane.WARNING_MESSAGE);
+					} finally {
+						try {
+							if (reader != null) {
+								reader.close();
+							}
+						} catch (IOException ex) {
+							//Ohh well we tried our best
+						}
+					}
+				}
 			}
 		}
 
@@ -1037,6 +1234,112 @@ public class AccountImportDialog extends JDialogCentered {
 
 	}
 
+	private class ImportPanel extends JCardPanel {
+
+		public ImportPanel() {
+			JEditorPane jHelp = new JEditorPane("text/html", "<html><body style=\"font-family: " + getFont().getName() + "; font-size: " + getFont().getSize() + "pt\">"
+				+ DialoguesAccount.get().shareImportHelp() + "</body></html>");
+			((HTMLDocument) jHelp.getDocument()).getStyleSheet().addRule("body { font-family: " + getFont().getFamily() + "; " + "font-size: " + this.getFont().getSize() + "pt; }");
+			jHelp.setFont(getFont());
+			jHelp.setEditable(false);
+			jHelp.setFocusable(false);
+			jHelp.setOpaque(false);
+
+			jImportClipboard = new JButton(DialoguesAccount.get().shareImportClipboard() , Images.EDIT_PASTE.getIcon());
+			jImportClipboard.setActionCommand(AccountImportAction.SHARE_FROM_CLIPBOARD.name());
+			jImportClipboard.addActionListener(listener);
+
+			jImportFile= new JButton(DialoguesAccount.get().shareImportFile(), Images.FILTER_LOAD.getIcon());
+			jImportFile.setActionCommand(AccountImportAction.SHARE_FROM_FILE.name());
+			jImportFile.addActionListener(listener);
+
+			jImport = new JTextArea();
+			jImport.setFont(getFont());
+			jImport.setEditable(true);
+			jImport.setFocusable(true);
+			jImport.setOpaque(true);
+			jImport.setLineWrap(true);
+			jImport.setWrapStyleWord(false);
+
+			JScrollPane jScroll = new JScrollPane(jImport, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+			jScroll.setBorder(BorderFactory.createLineBorder(this.getBackground().darker(), 1));
+
+			cardLayout.setHorizontalGroup(
+				cardLayout.createParallelGroup()
+					.addComponent(jHelp)
+					.addGroup(cardLayout.createSequentialGroup()
+						.addComponent(jScroll)
+						.addGroup(cardLayout.createParallelGroup()
+							.addComponent(jImportClipboard, Program.getButtonsWidth(), Program.getButtonsWidth(), Program.getButtonsWidth())
+							.addComponent(jImportFile, Program.getButtonsWidth(), Program.getButtonsWidth(), Program.getButtonsWidth())
+						)
+					)
+			);
+			cardLayout.setVerticalGroup(
+				cardLayout.createSequentialGroup()
+					.addComponent(jHelp)
+					.addGroup(cardLayout.createParallelGroup()
+						.addComponent(jScroll)
+						.addGroup(cardLayout.createSequentialGroup()
+							.addComponent(jImportClipboard, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+							.addComponent(jImportFile, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+						)
+					)
+			);
+		}
+		
+	}
+
+	private class ExportPanel extends JCardPanel {
+
+		public ExportPanel() {
+			JLabel jHelp = new JLabel(DialoguesAccount.get().shareExportHelp() );
+
+			jExportClipboard = new JButton(DialoguesAccount.get().shareExportClipboard(), Images.EDIT_COPY.getIcon());
+			jExportClipboard.setActionCommand(AccountImportAction.SHARE_TO_CLIPBOARD.name());
+			jExportClipboard.addActionListener(listener);
+
+			jExportFile = new JButton(DialoguesAccount.get().shareExportFile(), Images.FILTER_SAVE.getIcon());
+			jExportFile.setActionCommand(AccountImportAction.SHARE_TO_FILE.name());
+			jExportFile.addActionListener(listener);
+
+			jExport = new JTextArea();
+			jExport.setFont(getFont());
+			jExport.setEditable(false);
+			jExport.setFocusable(true);
+			jExport.setOpaque(false);
+			jExport.setLineWrap(true);
+			jExport.setWrapStyleWord(false);
+
+			JScrollPane jScroll = new JScrollPane(jExport, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+			jScroll.setBorder(BorderFactory.createLineBorder(this.getBackground().darker(), 1));
+
+			cardLayout.setHorizontalGroup(
+				cardLayout.createParallelGroup()
+					.addComponent(jHelp)
+					.addGroup(cardLayout.createSequentialGroup()
+						.addComponent(jScroll)
+						.addGroup(cardLayout.createParallelGroup()
+							.addComponent(jExportClipboard, Program.getButtonsWidth(), Program.getButtonsWidth(), Program.getButtonsWidth())
+							.addComponent(jExportFile, Program.getButtonsWidth(), Program.getButtonsWidth(), Program.getButtonsWidth())
+						)
+					)
+			);
+			cardLayout.setVerticalGroup(
+				cardLayout.createSequentialGroup()
+					.addComponent(jHelp)
+					.addGroup(cardLayout.createParallelGroup()
+						.addComponent(jScroll)
+						.addGroup(cardLayout.createSequentialGroup()
+							.addComponent(jExportClipboard, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+							.addComponent(jExportFile, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+						)
+					)
+			);
+		}
+		
+	}
+
 	private abstract class JCardPanel extends JPanel {
 
 		protected GroupLayout cardLayout;
@@ -1102,6 +1405,26 @@ public class AccountImportDialog extends JDialogCentered {
 		@Override
 		public AccountAdder getAccountAdder() {
 			return eveKitOwnerGetter;
+		}
+	}
+
+	class ImportTask extends AddTask {
+
+		private final EsiOwnerGetter esiOwnerGetter = new EsiOwnerGetter(esiOwner, true);
+
+		@Override
+		public boolean exist() {
+			return false; //Each ESI account are unique
+		}
+
+		@Override
+		public void load() {
+			esiOwnerGetter.start();
+		}
+
+		@Override
+		public AccountAdder getAccountAdder() {
+			return esiOwnerGetter;
 		}
 	}
 
@@ -1188,10 +1511,7 @@ public class AccountImportDialog extends JDialogCentered {
 				get();
 			} catch (CancellationException ex) {
 				result = Result.FAIL_CANCEL;
-			} catch (InterruptedException ex) {
-				LOG.error(ex.getMessage(), ex);
-				throw new RuntimeException(ex);
-			} catch (ExecutionException ex) {
+			} catch (InterruptedException | ExecutionException ex) {
 				LOG.error(ex.getMessage(), ex);
 				throw new RuntimeException(ex);
 			}
