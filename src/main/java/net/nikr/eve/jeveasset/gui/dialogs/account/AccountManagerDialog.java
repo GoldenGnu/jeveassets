@@ -30,7 +30,9 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -87,6 +89,7 @@ public class AccountManagerDialog extends JDialogCentered {
 	private final JLockWindow jLockWindow;
 
 	private boolean updated = false;
+	private Map<OwnerType, Boolean> ownersShownCache = new HashMap<OwnerType, Boolean>();
 
 	public AccountManagerDialog(final Program program) {
 		super(program, DialoguesAccount.get().dialogueNameAccountManagement(), Images.DIALOG_ACCOUNTS.getImage());
@@ -288,6 +291,13 @@ public class AccountManagerDialog extends JDialogCentered {
 	@Override
 	protected void save() {
 		super.setVisible(false);
+		if (!updated) {
+			Map<OwnerType, Boolean> ownersShownNow = new HashMap<OwnerType, Boolean>();
+			for (OwnerType ownerType : program.getProfileManager().getOwnerTypes()) {
+				ownersShownNow.put(ownerType, ownerType.isShowOwner());
+			}
+			updated = !ownersShownNow.equals(ownersShownCache);
+		}
 		if (updated) {
 			jLockWindow.show(GuiShared.get().updating(), new JLockWindow.LockWorker() {
 				@Override
@@ -305,6 +315,9 @@ public class AccountManagerDialog extends JDialogCentered {
 	public void setVisible(final boolean b) {
 		if (b) {
 			updated = false;
+			for (OwnerType ownerType : program.getProfileManager().getOwnerTypes()) {
+				ownersShownCache.put(ownerType, ownerType.isShowOwner());
+			}
 			updateTable();
 			super.setVisible(b);
 		} else {
