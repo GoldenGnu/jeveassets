@@ -20,6 +20,7 @@
  */
 package net.nikr.eve.jeveasset;
 
+import java.awt.IllegalComponentStateException;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -65,7 +66,13 @@ public class NikrUncaughtExceptionHandler implements Thread.UncaughtExceptionHan
 		if (!error) {
 			error = true;
 			LOG.error("Uncaught Exception (" + s + "): " + t.getMessage(), t);
-			if (t instanceof UnsupportedClassVersionError) { //Old Java
+			if (t instanceof IllegalComponentStateException
+					&& t.getMessage().toLowerCase().contains("component must be showing on the screen to determine its location")
+					) { //XXX - Workaround for Java bug: https://bugs.openjdk.java.net/browse/JDK-8179665 (Ignore error)
+				LOG.warn("Ignoring: component must be showing on the screen to determine its location");
+				error = false;
+				return;
+			} else if (t instanceof UnsupportedClassVersionError) { //Old Java
 				JOptionPane.showMessageDialog(null,
 						"Please update Java to the latest version.\r\n"
 						+ "The minimum supported version is " + JAVA + "\r\n"
