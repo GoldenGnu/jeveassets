@@ -229,6 +229,7 @@ public final class Main {
 		files.add("graph-1.5.0.jar");
 		files.add("guava-r09.jar");
 		files.add("jaxen-1.1.6.jar");
+		files.add("javax.activation-1.2.0.jar");
 		files.add("guava-r09.jar");
 		files.add("LGoodDatePicker-10.2.3.jar");
 		files.add("jcommon-1.0.23.jar");
