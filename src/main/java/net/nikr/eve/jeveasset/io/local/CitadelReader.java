@@ -67,18 +67,21 @@ public final class CitadelReader extends AbstractXmlReader<CitadelSettings> {
 		NodeList filterNodes = element.getElementsByTagName("citadel");
 		for (int i = 0; i < filterNodes.getLength(); i++) {
 			Element currentNode = (Element) filterNodes.item(i);
-			Citadel citadel = new Citadel();
-			long stationid = AttributeGetters.getLong(currentNode, "stationid");
-			citadel.id = stationid;
-			citadel.systemId = AttributeGetters.getLong(currentNode, "systemid");
-			citadel.name = AttributeGetters.getString(currentNode, "name");
-			citadel.systemName = AttributeGetters.getString(currentNode, "systemname");
-			citadel.regionId = AttributeGetters.getLong(currentNode, "regionid");
-			citadel.regionName = AttributeGetters.getString(currentNode, "regionname");
+			long id = AttributeGetters.getLong(currentNode, "stationid");
+			String name = AttributeGetters.getString(currentNode, "name");
+			long systemId = AttributeGetters.getLong(currentNode, "systemid");
+			String systemName = AttributeGetters.getString(currentNode, "systemname");
+			long regionId = AttributeGetters.getLong(currentNode, "regionid");
+			String regionName = AttributeGetters.getString(currentNode, "regionname");
+			boolean userLocation = false;
 			if (AttributeGetters.haveAttribute(currentNode, "userlocation")) {
-				citadel.userLocation = AttributeGetters.getBoolean(currentNode, "userlocation");
+				userLocation = AttributeGetters.getBoolean(currentNode, "userlocation");
 			}
-			settings.put(stationid, citadel);
+			boolean citadel = true;
+			if (AttributeGetters.haveAttribute(currentNode, "citadel")) {
+				citadel = AttributeGetters.getBoolean(currentNode, "citadel");
+			}
+			settings.put(id, new Citadel(id, name, systemId, systemName, regionId, regionName, userLocation, citadel));
 		}
 	}
 

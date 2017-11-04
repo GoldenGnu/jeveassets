@@ -33,19 +33,22 @@ public class Citadel {
 	public String systemName;
 	public long regionId;
 	public String regionName;
-	public boolean userLocation;
-	public boolean citadel;
+	public final boolean userLocation;
+	public final boolean citadel;
 
+	/**
+	 * Used by hammerti.me.uk API
+	 */
 	public Citadel() {
-		userLocation = false;
+		this(0, "", 0, "", 0, "", false, true);
 	}
 
-	public Citadel(long id, String name, long systemId, String systemName, long regionId, String regionName) {
-		this(id, name, systemId, systemName, regionId, regionName, true);
-	}
-
-	public Citadel(long id, String name, long systemId, String systemName, long regionId, String regionName, boolean userLocation) {
-		this(id, name, systemId, systemName, regionId, regionName, userLocation, true);
+	/**
+	 * Blank location
+	 * @param id locationID
+	 */
+	public Citadel(long id) {
+		this(id, "", 0, "", 0, "", false, true);
 	}
 
 	public Citadel(long id, String name, long systemId, String systemName, long regionId, String regionName, boolean userLocation, boolean citadel) {
@@ -64,22 +67,7 @@ public class Citadel {
 	}
 
 	private boolean isEmpty() {
-		if (name == null) {
-			return true;
-		}
-		if (systemId == 0) {
-			return true;
-		}
-		if (systemName == null) {
-			return true;
-		}
-		if (regionId == 0) {
-			return true;
-		}
-		if (regionName == null) {
-			return true;
-		}
-		return false;
+		return systemId == 0 || regionId == 0;
 	}
 
 	public MyLocation getLocation() {
