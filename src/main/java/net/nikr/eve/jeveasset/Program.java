@@ -27,6 +27,7 @@ import java.awt.event.ActionListener;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -66,6 +67,7 @@ import net.nikr.eve.jeveasset.gui.frame.MainMenu.MainMenuAction;
 import net.nikr.eve.jeveasset.gui.frame.MainWindow;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
 import net.nikr.eve.jeveasset.gui.images.Images;
+import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.Updatable;
 import net.nikr.eve.jeveasset.gui.shared.components.JLockWindow;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
@@ -854,12 +856,30 @@ public class Program implements ActionListener {
 			updateDialog.setVisible(true);
 		} else if (MainMenuAction.UPDATE_STRUCTURE.name().equals(e.getActionCommand())) {
 			List<EsiOwner> owners = new ArrayList<EsiOwner>();
+			Date structuresNextUpdate = null;
 			for (EsiOwner esiOwner : getProfileManager().getEsiOwners()) {
 				if (esiOwner.isShowOwner() && esiOwner.isStructures()) {
+					if (esiOwner.getStructuresNextUpdate() != null && (structuresNextUpdate == null || esiOwner.getStructuresNextUpdate().after(structuresNextUpdate))) {
+						structuresNextUpdate = esiOwner.getStructuresNextUpdate();
+					}
 					owners.add(esiOwner);
 				}
 			}
-			if (owners.isEmpty()) {
+			if (structuresNextUpdate == null) {
+				JOptionPane.showMessageDialog(getMainWindow().getFrame(), GuiFrame.get().updateStructureInvalid(), GuiFrame.get().updateStructureTitle(), JOptionPane.PLAIN_MESSAGE);
+				return;
+			}
+			if (!Settings.get().isUpdatable(structuresNextUpdate, false)) {
+				long time = structuresNextUpdate.getTime() - Settings.getNow().getTime();
+				String updatableIn;
+				if (time <= 1000) { //less than 1 second
+					updatableIn = "seconds";
+				} else if (time < (60 * 1000)) { //less than 1 minute
+					updatableIn = Formater.milliseconds(time, false, true, false, true);
+				} else {
+					updatableIn = Formater.milliseconds(time, false, true, true, true, true, false);
+				}
+				JOptionPane.showMessageDialog(getMainWindow().getFrame(), GuiFrame.get().updateStructureWait(updatableIn), GuiFrame.get().updateStructureTitle(), JOptionPane.PLAIN_MESSAGE);
 				return;
 			}
 			Object returnValue = JOptionPane.showInputDialog(getMainWindow().getFrame(), GuiFrame.get().updateStructureMsg(), GuiFrame.get().updateStructureTitle(), JOptionPane.PLAIN_MESSAGE, null, owners.toArray(new EsiOwner[owners.size()]), owners.get(0));
