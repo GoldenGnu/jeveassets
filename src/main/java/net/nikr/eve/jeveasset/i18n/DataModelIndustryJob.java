@@ -55,5 +55,7 @@ public abstract class DataModelIndustryJob extends Bundle {
 	public abstract String activityDuplicating();
 	public abstract String activityReverseEngineering();
 	public abstract String activityReverseInvention();
+	public abstract String activityReactions();
+	public abstract String activityUnknown();
 	public abstract String descriptionCopying(String blueprintName, int copyCount, int copyRuns);
 }

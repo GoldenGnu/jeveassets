@@ -158,6 +158,18 @@ public class MyIndustryJob extends RawIndustryJob implements Comparable<MyIndust
 			String getI18N() {
 				return DataModelIndustryJob.get().activityReverseInvention();
 			}
+		},
+		ACTIVITY_REACTIONS() {
+			@Override
+			String getI18N() {
+				return DataModelIndustryJob.get().activityReactions();
+			}
+		},
+		ACTIVITY_UNKNOWN() {
+			@Override
+			String getI18N() {
+				return DataModelIndustryJob.get().activityUnknown();
+			}
 		};
 
 		abstract String getI18N();
@@ -223,6 +235,12 @@ public class MyIndustryJob extends RawIndustryJob implements Comparable<MyIndust
 				break;
 			case 8:
 				activity = IndustryActivity.ACTIVITY_REVERSE_INVENTION;
+				break;
+			case 11:
+				activity = IndustryActivity.ACTIVITY_REVERSE_INVENTION;
+				break;
+			default:
+				activity = IndustryActivity.ACTIVITY_UNKNOWN;
 				break;
 		}
 		switch (getStatus()) {
