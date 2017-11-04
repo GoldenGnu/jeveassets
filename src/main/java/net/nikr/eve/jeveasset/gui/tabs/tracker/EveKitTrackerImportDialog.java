@@ -268,22 +268,27 @@ public class EveKitTrackerImportDialog extends JDialogCentered {
 			@Override
 			public void tasksCompleted(TaskDialog taskDialog) {
 				program.saveSettings("Import EveKit Tracker Points");
-				program.getTrackerTab().updateData();
-				taskDialog.hide();
-				switch (updateTask.getReturnValue()) {
-					case CANCELLED:
-						JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), TabsTracker.get().eveKitImportCancelledMsg(), TabsTracker.get().eveKitImportTitle(), JOptionPane.INFORMATION_MESSAGE);
-						break;
-					case COMPLETED:
-						JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), TabsTracker.get().eveKitImportCompletedMsg(), TabsTracker.get().eveKitImportTitle(), JOptionPane.INFORMATION_MESSAGE);
-						break;
-					case NOTHING_NEW:
-						JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), TabsTracker.get().eveKitImportNothingNewMsg(), TabsTracker.get().eveKitImportTitle(), JOptionPane.INFORMATION_MESSAGE);
-						break;
-					case ERROR:
-						JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), TabsTracker.get().eveKitImportErrorMsg(), TabsTracker.get().eveKitImportTitle(), JOptionPane.INFORMATION_MESSAGE);
-						break;
-				}
+				Program.ensureEDT(new Runnable() {
+					@Override
+					public void run() {
+						program.getTrackerTab().updateData();
+						taskDialog.hide();
+						switch (updateTask.getReturnValue()) {
+							case CANCELLED:
+								JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), TabsTracker.get().eveKitImportCancelledMsg(), TabsTracker.get().eveKitImportTitle(), JOptionPane.INFORMATION_MESSAGE);
+								break;
+							case COMPLETED:
+								JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), TabsTracker.get().eveKitImportCompletedMsg(), TabsTracker.get().eveKitImportTitle(), JOptionPane.INFORMATION_MESSAGE);
+								break;
+							case NOTHING_NEW:
+								JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), TabsTracker.get().eveKitImportNothingNewMsg(), TabsTracker.get().eveKitImportTitle(), JOptionPane.INFORMATION_MESSAGE);
+								break;
+							case ERROR:
+								JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), TabsTracker.get().eveKitImportErrorMsg(), TabsTracker.get().eveKitImportTitle(), JOptionPane.INFORMATION_MESSAGE);
+								break;
+						}
+					}
+				});
 			}
 		});
 	}
