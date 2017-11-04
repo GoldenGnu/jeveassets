@@ -189,8 +189,7 @@ public class CitadelGetter extends AbstractXmlWriter {
 	private Citadel getCitadel(long locationID) {
 		Citadel citadel = citadelSettings.get(locationID);
 		if (citadel == null) { //Location not found in cache -> add placeholder for future updates
-			citadel = new Citadel();
-			citadel.id = locationID; //Set locationID
+			citadel = new Citadel(locationID);
 		}
 		return citadel;
 	}

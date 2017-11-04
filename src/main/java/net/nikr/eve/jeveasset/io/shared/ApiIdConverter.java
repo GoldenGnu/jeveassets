@@ -309,6 +309,6 @@ public final class ApiIdConverter {
 
 	public static Citadel getCitadel(final StructureResponse response, final long locationID) {
 		MyLocation system = getLocation(response.getSolarSystemId());
-		return new Citadel(locationID, response.getName(), response.getSolarSystemId(), system.getSystem(), system.getRegionID(), system.getRegion(), false);
+		return new Citadel(locationID, response.getName(), response.getSolarSystemId(), system.getSystem(), system.getRegionID(), system.getRegion(), false, true);
 	}
 }
