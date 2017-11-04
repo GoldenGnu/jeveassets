@@ -729,7 +729,12 @@ public class Program implements ActionListener {
 	}
 	public void createTrackerDataPoint() {
 		DataSetCreator.createTrackerDataPoint(profileData, Settings.getNow());
-		trackerTab.updateData();
+		ensureEDT(new Runnable() {
+			@Override
+			public void run() {
+				trackerTab.updateData();
+			}
+		});
 	}
 
 	public static boolean isDebug() {
