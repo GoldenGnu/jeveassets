@@ -388,19 +388,16 @@ public class MyIndustryJob extends RawIndustryJob implements Comparable<MyIndust
 
 	@Override
 	public long getLocationID() {
-		boolean found = ApiIdConverter.isLocationOK(getStationID());
-		if (found) {
+		if (ApiIdConverter.isLocationOK(getStationID())) {
 			return getStationID();
 		}
-		found = ApiIdConverter.isLocationOK(getBlueprintLocationID());
-		if (found) {
+		if (ApiIdConverter.isLocationOK(getBlueprintLocationID())) {
 			return getBlueprintLocationID();
 		}
-		found = ApiIdConverter.isLocationOK(getOutputLocationID());
-		if (found) {
+		if (ApiIdConverter.isLocationOK(getOutputLocationID())) {
 			return getOutputLocationID();
 		}
-		return -1;
+		return getStationID();
 	}
 
 	@Override
