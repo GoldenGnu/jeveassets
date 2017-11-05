@@ -188,15 +188,6 @@ public final class ApiIdConverter {
 		return 0;
 	}
 
-	public static boolean isLocationOK(final Long locationID) {
-		return isLocationOK(locationID, null);
-	}
-
-	public static boolean isLocationOK(final Long locationID, final MyAsset parentAsset) {
-		MyLocation location = getLocation(locationID, parentAsset);
-		return location != null && !location.isEmpty();
-	}
-
 	public static Item getItem(final int typeID) {
 		Item item = StaticData.get().getItems().get(typeID);
 		if (item != null) {
@@ -235,6 +226,10 @@ public final class ApiIdConverter {
 		}
 
 		return parents;
+	}
+
+	public static boolean isLocationOK(final Long locationID) {
+		return !getLocation(locationID, null).isEmpty();
 	}
 
 	public static MyLocation getLocation(Integer locationID) {

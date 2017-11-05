@@ -123,7 +123,9 @@ public class EsiStructuresGetter extends AbstractEsiGetter {
 					add(locationIDs, contract.getStartLocationID());
 				}
 				for (MyIndustryJob industryJob : ownerType.getIndustryJobs()) {
-					add(locationIDs, industryJob.getLocationID());
+					add(locationIDs, industryJob.getStationID());
+					add(locationIDs, industryJob.getBlueprintLocationID());
+					add(locationIDs, industryJob.getOutputLocationID());
 				}
 				for (RawMarketOrder marketOrder : ownerType.getMarketOrders()) {
 					add(locationIDs, marketOrder.getLocationID());
