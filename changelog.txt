@@ -16,6 +16,24 @@
                   #### #  # #  # #  # #### #### #### #### ####
 
 ________________________________________________________________________________
+_5.0.4__________________________________________________________________________
+
+Bug Fixes:
+-Industry jobs was missing reactions activity (Failed update)
+-Tracker related crash bugs
+-Structure update failed on Java 9
+-Citadels was being incorrectly marked
+-Profiles was not being saved on shown change
+-Workaround for crash bug with BugID: 492 (Java Bug)
+-Fixed problem with Industry Jobs locations
+
+Changed:
+-Better GUI for the structure update
+
+Code:
+-Update jFreeChart to 1.0.19
+
+________________________________________________________________________________
 _5.0.3__________________________________________________________________________
 
 New Features:
