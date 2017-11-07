@@ -636,7 +636,7 @@
 		<dependency>
 			<groupId>net.troja.eve</groupId>
 			<artifactId>eve-esi</artifactId>
-			<version>1.4.1</version>
+			<version>1.4.4</version>
 		</dependency>
 		<dependency>
 			<groupId>com.beimin</groupId>
