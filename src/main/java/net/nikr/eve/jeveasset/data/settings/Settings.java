@@ -26,6 +26,15 @@ import com.beimin.eveapi.parser.shared.AbstractApiParser;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.FileSystems;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.PathMatcher;
+import java.nio.file.Paths;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -147,7 +156,6 @@ public class Settings {
 	private boolean trackerSelectNew = true;
 //Runtime flags					Is not saved to file
 	private boolean settingsLoadError;
-	private boolean settingsImported;
 //Settings Dialog:				Saved by SettingsDialog.save()
 	//Lock OK
 	//Mixed boolean flags
@@ -260,34 +268,79 @@ public class Settings {
 	public synchronized static void load() {
 		if (settings == null) {
 			settings = new Settings();
-			boolean imported = autoImportSettings();
-			if (!imported) {
-				settings.loadSettings();
-			}
-			settings.setSettingsImported(imported);
+			autoImportSettings();
+			settings.loadSettings();
 		}
 	}
 
-	private static boolean autoImportSettings() {
-		if (Program.PROGRAM_FORCE_PORTABLE && !new File(Settings.get().getPathSettings()).exists()) { //Need import
-			//Overwrite default
+	private static void autoImportSettings() {
+		if (Program.PROGRAM_DEV_BUILD) { //Need import
 			Program.setPortable(false);
-			//Settings import
-			if (new File(Settings.get().getPathSettings()).exists()) { //Can import
-				LOG.info("Importing settings (from default to portable)");
-				//Import
-				settings.loadSettings();
-				//Restore default
-				Program.setPortable(true);
-				//Save
-				Settings.saveSettings();
-				return true;
-			} else {
-				//Restore default
-				Program.setPortable(true);
+			Path settingsFrom = Paths.get(settings.getPathSettings());
+			Path citadelFrom = Paths.get(Settings.getPathCitadel());
+			Path priceFrom = Paths.get(Settings.getPathPriceData());
+			Path profilesFrom = Paths.get(Settings.getPathProfilesDirectory());
+			Program.setPortable(true);
+			Path settingsTo = Paths.get(Settings.get().getPathSettings());
+			Path citadelTo = Paths.get(Settings.getPathCitadel());
+			Path priceTo = Paths.get(Settings.getPathPriceData());
+			Path profilesTo = Paths.get(Settings.getPathProfilesDirectory());
+			if (Files.exists(settingsFrom) && !Files.exists(settingsTo)) {
+				LOG.info("Importing settings");
+				try {
+					Files.copy(settingsFrom, settingsTo);
+					LOG.info("	OK");
+				} catch (IOException ex) {
+					LOG.info("	FAILED");
+				}
+			}
+			if (Files.exists(citadelFrom) && !Files.exists(citadelTo)) {
+				LOG.info("Importing citadels");
+				try {
+					Files.copy(citadelFrom, citadelTo);
+					LOG.info("	OK");
+				} catch (IOException ex) {
+					LOG.info("	FAILED");
+				}
+			}
+			if (Files.exists(priceFrom) && !Files.exists(priceTo)) {
+				LOG.info("Importing prices");
+				try {
+					Files.copy(priceFrom, priceTo);
+					LOG.info("	OK");
+				} catch (IOException ex) {
+					LOG.info("	FAILED");
+				}
+			}
+			if (Files.exists(profilesFrom) && !Files.exists(profilesTo)) {
+				PathMatcher matcher = FileSystems.getDefault().getPathMatcher("glob:*.xml");
+				try {
+					LOG.info("Importing profiles");
+					Files.walkFileTree(profilesFrom, new SimpleFileVisitor<Path>() {
+						@Override
+						public FileVisitResult preVisitDirectory(final Path dir, final BasicFileAttributes attrs) throws IOException {
+							if (dir.equals(profilesFrom)) {
+								Files.createDirectories(profilesTo.resolve(profilesFrom.relativize(dir)));
+								return FileVisitResult.CONTINUE;
+							} else {
+								return FileVisitResult.SKIP_SUBTREE;
+							}
+						}
+
+						@Override
+						public FileVisitResult visitFile(final Path file, final BasicFileAttributes attrs) throws IOException {
+							if (matcher.matches(file.getFileName())) {
+								Files.copy(file, profilesTo.resolve(profilesFrom.relativize(file)));
+							}
+							return FileVisitResult.CONTINUE;
+						}
+					});
+					LOG.info("	OK");
+				} catch (IOException ex) {
+					LOG.info("	FAILED");
+				}
 			}
 		}
-		return false;
 	}
 
 	public ExportSettings getExportSettings() {
@@ -720,14 +773,6 @@ public class Settings {
 
 	public boolean isSettingsLoadError() {
 		return settingsLoadError;
-	}
-
-	public boolean isSettingsImported() {
-		return settingsImported;
-	}
-
-	public void setSettingsImported(boolean settingsImported) {
-		this.settingsImported = settingsImported;
 	}
 
 	public Map<String, OverviewGroup> getOverviewGroups() {
