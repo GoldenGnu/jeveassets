@@ -105,7 +105,7 @@ public class DataConverterTest extends TestUtil {
 	public void testAssetContracts() {
 		for (ConverterTestOptions options : ConverterTestOptionsGetter.getConverterOptions()) {
 			MyContractItem contractItem = ConverterTestUtil.getMyContractItem(ConverterTestUtil.getMyContract(false, true, options), false, true, options);
-			contractItem.getContract().setContractID(contractItem.getContract().getContractID() + 1);
+			contractItem.setRecordID(contractItem.getRecordID() + 1);
 			contractItem.getContract().setStartLocationID(options.getLocationTypeEveApi());
 			contractItem.getContract().setEndLocationID(options.getLocationTypeEveApi());
 			final Map<Long, OwnerType> owners = new HashMap<>();

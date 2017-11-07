@@ -113,7 +113,7 @@ public class RawAsset {
 	 */
 	public RawAsset(MyContractItem contractItem) {
 		isSingleton = contractItem.isSingleton();
-		itemId = RawConverter.toLong(contractItem.getContract().getContractID());
+		itemId = RawConverter.toLong(contractItem.getRecordID());
 		if (contractItem.isIncluded()) { //Sell
 			itemFlag = new ItemFlag(0, General.get().contractIncluded(), General.get().contractIncluded());
 		} else { //Buy
