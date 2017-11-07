@@ -372,16 +372,6 @@ public abstract class FakeSettings extends Settings {
 	}
 
 	@Override
-	public boolean isSettingsImported() {
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	@Override
-	public void setSettingsImported(boolean settingsImported) {
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	@Override
 	public boolean isBlueprintBasePriceTech1() {
 		throw new UnsupportedOperationException("not implemented");
 	}

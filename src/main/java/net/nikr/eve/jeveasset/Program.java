@@ -111,8 +111,7 @@ public class Program implements ActionListener {
 	public static final String PROGRAM_VERSION = "5.0.5 DEV BUILD 1";
 	public static final String PROGRAM_NAME = "jEveAssets";
 	public static final String PROGRAM_HOMEPAGE = "https://eve.nikr.net/jeveasset";
-	public static final boolean PROGRAM_FORCE_PORTABLE = false;
-	public static final boolean PROGRAM_SHOW_FEEDBACK_MSG = false;
+	public static final boolean PROGRAM_DEV_BUILD = false;
 
 	private static boolean debug = false;
 	private static boolean forceUpdate = false;
@@ -172,7 +171,7 @@ public class Program implements ActionListener {
 			LOG.debug("Force Update: {} Force No Update: {}", forceUpdate, forceNoUpdate);
 			DetectEdtViolationRepaintManager.install();
 		}
-		if (PROGRAM_FORCE_PORTABLE) {
+		if (PROGRAM_DEV_BUILD) {
 			portable = true;
 		}
 
@@ -184,7 +183,9 @@ public class Program implements ActionListener {
 
 		updater = new Updater();
 		localData = updater.getLocalData();
-		updater.update(Program.PROGRAM_VERSION, localData, Settings.get().getProxyData());
+		if (!PROGRAM_DEV_BUILD) {
+			updater.update(Program.PROGRAM_VERSION, localData, Settings.get().getProxyData());
+		}
 
 		profileManager = new ProfileManager();
 		profileManager.searchProfile();
@@ -295,6 +296,9 @@ public class Program implements ActionListener {
 		if (debug) {
 			LOG.info("Show Debug Warning");
 			JOptionPane.showMessageDialog(mainWindow.getFrame(), "WARNING: Debug is enabled", "Debug", JOptionPane.WARNING_MESSAGE);
+		}
+		if (PROGRAM_DEV_BUILD) {
+			JOptionPane.showMessageDialog(mainWindow.getFrame(), "WARNING: This is a dev build\r\n\r\nNotes:\r\n- Always run portable\r\n- Settings and profiles are cloned\r\n- Does not check for updates\r\n- Expect bugs!", "DEV BUILD", JOptionPane.WARNING_MESSAGE);
 		}
 		if (Settings.get().isSettingsLoadError()) {
 			JOptionPane.showMessageDialog(mainWindow.getFrame(), GuiShared.get().errorLoadingSettingsMsg(), GuiShared.get().errorLoadingSettingsTitle(), JOptionPane.ERROR_MESSAGE);
