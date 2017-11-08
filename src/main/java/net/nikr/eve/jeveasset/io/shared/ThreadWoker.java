@@ -42,6 +42,9 @@ public class ThreadWoker {
 	private static final Logger LOG = LoggerFactory.getLogger(ThreadWoker.class);
 
 	public static void start(UpdateTask updateTask, Collection<? extends Runnable> updaters) {
+		start(updateTask, true, updaters);
+	}
+	public static void start(UpdateTask updateTask, boolean updateProgress, Collection<? extends Runnable> updaters) {
 		ExecutorService threadPool = Executors.newFixedThreadPool(MAIN_THREADS);
 		try {
 			LOG.info("Starting " + updaters.size() + " main threads");
@@ -51,16 +54,16 @@ public class ThreadWoker {
 			}
 			threadPool.shutdown();
 			while (!threadPool.awaitTermination(500, TimeUnit.MICROSECONDS)) {
-				int progress = 0;
-				for (Future<?> future : futures) {
-					if (future.isDone()) {
-						progress++;
-					}
-				}
 				if (updateTask != null) {
 					if (updateTask.isCancelled()) {
 						threadPool.shutdownNow();
-					} else {
+					} else if (updateProgress) {
+						int progress = 0;
+						for (Future<?> future : futures) {
+							if (future.isDone()) {
+								progress++;
+							}
+						}
 						updateTask.setTaskProgress(updaters.size(), progress, 0, 100);
 					}
 				}

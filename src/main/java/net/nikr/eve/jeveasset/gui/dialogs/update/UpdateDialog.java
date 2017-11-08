@@ -573,6 +573,9 @@ public class UpdateDialog extends JDialogCentered {
 					updateTasks.add(new Step2Task());
 					updateTasks.add(new Step3Task());
 				}
+				if (jContracts.isSelected()) {
+					updateTasks.add(new Step4Task());
+				}
 				if (jPriceDataAll.isSelected() || jPriceDataNew.isSelected()) {
 					updateTasks.add(new PriceDataTask(jPriceDataAll.isSelected()));
 				}
@@ -805,11 +808,6 @@ public class UpdateDialog extends JDialogCentered {
 				for (EveKitOwner eveKitOwner : program.getProfileManager().getEveKitOwners()) {
 					updates.add(new EveKitContractItemsGetter(this, eveKitOwner));
 				}
-				//Esi
-				EsiContractItemsGetter.reset();
-				for (EsiOwner esiOwner : program.getProfileManager().getEsiOwners()) {
-					updates.add(new EsiContractItemsGetter(this, esiOwner, program.getProfileManager().getEsiOwners()));
-				}
 			}
 			//Locations
 			if (jAssets.isSelected()) {
@@ -836,6 +834,29 @@ public class UpdateDialog extends JDialogCentered {
 		public void update() {
 			setIcon(null);
 			ThreadWoker.start(this, updates);
+		}
+	}
+	
+	public class Step4Task extends UpdateTask {
+
+		private final List<Runnable> updates = new ArrayList<Runnable>();
+
+		public Step4Task() {
+			super(DialoguesUpdate.get().step4());
+			//Contract Items
+			if (jContracts.isSelected()) {
+				//Esi
+				EsiContractItemsGetter.reset();
+				for (EsiOwner esiOwner : program.getProfileManager().getEsiOwners()) {
+					updates.add(new EsiContractItemsGetter(this, esiOwner, program.getProfileManager().getEsiOwners()));
+				}
+			}
+		}
+
+		@Override
+		public void update() {
+			setIcon(null);
+			ThreadWoker.start(this, false, updates);
 		}
 	}
 
