@@ -124,8 +124,9 @@ public class TransactionTab extends JMainTabPrimary {
 		filter.add(new Filter(LogicType.AND, TransactionTableFormat.TYPE, CompareType.EQUALS, TabsTransaction.get().sell()));
 		defaultFilters.put(TabsTransaction.get().sell(), filter);
 		filterControl = new TransactionsFilterControl(
-				program.getMainWindow().getFrame(),
 				tableFormat,
+				program.getMainWindow().getFrame(),
+				eventList,
 				sortedList,
 				filterList,
 				Settings.get().getTableFilters(NAME),
@@ -248,8 +249,8 @@ public class TransactionTab extends JMainTabPrimary {
 
 		private final EnumTableFormatAdaptor<TransactionTableFormat, MyTransaction> tableFormat;
 
-		public TransactionsFilterControl(final JFrame jFrame, final EnumTableFormatAdaptor<TransactionTableFormat, MyTransaction> tableFormat, final EventList<MyTransaction> eventList, final FilterList<MyTransaction> filterList, final Map<String, List<Filter>> filters, final Map<String, List<Filter>> defaultFilters) {
-			super(jFrame, NAME, eventList, filterList, filters, defaultFilters);
+		public TransactionsFilterControl(EnumTableFormatAdaptor<TransactionTableFormat, MyTransaction> tableFormat, JFrame jFrame, EventList<MyTransaction> eventList, EventList<MyTransaction> exportEventList, FilterList<MyTransaction> filterList, Map<String, List<Filter>> filters, Map<String, List<Filter>> defaultFilters) {
+			super(jFrame, NAME, eventList, exportEventList, filterList, filters, defaultFilters);
 			this.tableFormat = tableFormat;
 		}
 

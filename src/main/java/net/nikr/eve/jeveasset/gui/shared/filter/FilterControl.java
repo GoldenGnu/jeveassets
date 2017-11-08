@@ -28,7 +28,6 @@ import ca.odell.glazedlists.event.ListEvent;
 import ca.odell.glazedlists.event.ListEventListener;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -40,15 +39,15 @@ import javax.swing.JPanel;
 import javax.swing.JTable;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter.AllColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
-import net.nikr.eve.jeveasset.gui.shared.table.EventListManager;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.NumberValue;
 
 
 public abstract class FilterControl<E> extends ExportFilterControl<E> {
 
 	private final String name;
-	private final List<EventList<E>> eventLists;
-	private final List<FilterList<E>> filterLists;
+	private final EventList<E> eventList;
+	private final EventList<E> exportEventList;
+	private final FilterList<E> filterList;
 	private final Map<String, List<Filter>> filters;
 	private final Map<String, List<Filter>> defaultFilters;
 	private final FilterGui<E> gui;
@@ -56,40 +55,68 @@ public abstract class FilterControl<E> extends ExportFilterControl<E> {
 	/** Do not use this constructor - it's here only for test purposes. */
 	protected FilterControl() {
 		name = null;
-		eventLists = null;
-		filterLists = null;
+		eventList = null;
+		exportEventList = null;
+		filterList = null;
 		filters = null;
 		defaultFilters = null;
 		gui = null;
 	}
 
-	protected FilterControl(final JFrame jFrame, final String name, final EventList<E> eventList, final FilterList<E> filterList, final Map<String, List<Filter>> filters) {
-		this(jFrame, name, Collections.singletonList(eventList), Collections.singletonList(filterList), filters);
+	protected FilterControl(final JFrame jFrame, final String name, final EventList<E> eventList, final EventList<E> exportEventList, final FilterList<E> filterList, final Map<String, List<Filter>> filters) {
+		this(jFrame, name, eventList, exportEventList, filterList, filters, new HashMap<String, List<Filter>>());
 	}
-
-	protected FilterControl(final JFrame jFrame, final String name, final List<EventList<E>> eventLists, final List<FilterList<E>> filterLists, final Map<String, List<Filter>> filters) {
-		this(jFrame, name, eventLists, filterLists, filters, new HashMap<String, List<Filter>>());
-	}
-
-	protected FilterControl(final JFrame jFrame, final String name, final EventList<E> eventList, final FilterList<E> filterList, final Map<String, List<Filter>> filters, final Map<String, List<Filter>> defaultFilters) {
-		this(jFrame, name, Collections.singletonList(eventList), Collections.singletonList(filterList), filters, defaultFilters);
-	}
-
-	protected FilterControl(final JFrame jFrame, final String name, final List<EventList<E>> eventLists, final List<FilterList<E>> filterLists, final Map<String, List<Filter>> filters, final Map<String, List<Filter>> defaultFilters) {
+	protected FilterControl(final JFrame jFrame, final String name, final EventList<E> eventList, final EventList<E> exportEventList, final FilterList<E> filterList, final Map<String, List<Filter>> filters, final Map<String, List<Filter>> defaultFilters) {
 		this.name = name;
-		this.eventLists = eventLists;
-		this.filterLists = filterLists;
+		this.eventList = eventList;
+		this.exportEventList = exportEventList;
+		this.filterList = filterList;
+		eventList.addListEventListener(new ListEventListener<E>() {
+			@Override
+			public void listChanged(ListEvent<E> listChanges) {
+				try {
+					eventList.getReadWriteLock().readLock().lock();
+					List<E> delete = new ArrayList<E>();
+					List<E> insert = new ArrayList<E>();
+					List<E> update = new ArrayList<E>();
+					while(listChanges.next()) {
+						int index = listChanges.getIndex();
+						switch (listChanges.getType()) {
+							case ListEvent.DELETE:
+								addSafe(eventList, delete, index);
+								break;
+							case ListEvent.INSERT:
+								addSafe(eventList, insert, index);
+								break;
+							case ListEvent.UPDATE:
+								addSafe(eventList, update, index);
+								break;
+						}
+					}
+					FilterMatcher.cacheDelete(FilterControl.this, delete);
+					FilterMatcher.cacheInsert(FilterControl.this, insert);
+					FilterMatcher.cacheUpdate(FilterControl.this, update);
+				} finally {
+					eventList.getReadWriteLock().readLock().unlock();
+				}
+			}
+		});
 		this.filters = filters;
 		this.defaultFilters = defaultFilters;
 		ListenerClass listener = new ListenerClass();
-		for (FilterList<E> filterList : filterLists) {
-			filterList.addListEventListener(listener);
-		}
+		filterList.addListEventListener(listener);
 		gui = new FilterGui<E>(jFrame, this);
+	}
+
+	private void addSafe(final EventList<E> eventList, List<E> list, int index) {
+		if (index >= 0 && index < eventList.size()) {
+			list.add(eventList.get(index));
+		}
 	}
 
 	public void setColumns(final List<EnumTableColumn<E>> enumColumns) {
 		gui.setColumns(enumColumns);
+		FilterMatcher.cacheRebuild(this); //Add or Remove column means everything have to be rebuild...
 	}
 
 	@Override
@@ -136,7 +163,7 @@ public abstract class FilterControl<E> extends ExportFilterControl<E> {
 			column = getShownColumns().get(columnIndex);
 			isNumeric = isNumeric(column);
 			isDate = isDate(column);
-			text = FilterMatcher.format(getColumnValue(items.get(0), column.name()), false, false);
+			text = FilterMatcher.format(getColumnValue(items.get(0), column.name()), false);
 		}
 		return new FilterMenu<E>(gui, column, text, isNumeric, isDate);
 	}
@@ -145,12 +172,16 @@ public abstract class FilterControl<E> extends ExportFilterControl<E> {
 		return name;
 	}
 
-	List<EventList<E>> getEventLists() {
-		return eventLists;
+	public EventList<E> getEventList() {
+		return eventList;
 	}
 
-	List<FilterList<E>> getFilterLists() {
-		return filterLists;
+	public EventList<E> getExportEventList() {
+		return exportEventList;
+	}
+
+	public FilterList<E> getFilterList() {
+		return filterList;
 	}
 
 	Map<String, List<Filter>> getFilters() {
@@ -168,14 +199,6 @@ public abstract class FilterControl<E> extends ExportFilterControl<E> {
 
 	Map<String, List<Filter>> getDefaultFilters() {
 		return defaultFilters;
-	}
-
-	int getTotalSize() {
-		int totalSize = 0;
-		for (EventList<E> eventList : eventLists) {
-			totalSize = totalSize + EventListManager.size(eventList);
-		}
-		return totalSize;
 	}
 
 	protected abstract List<EnumTableColumn<E>> getColumns();

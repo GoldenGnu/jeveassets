@@ -103,19 +103,24 @@ public class JMenuJumps<T> extends MenuManager.JAutoMenu<T> {
 				public void actionPerformed(ActionEvent e) {
 					//Remove from settings
 					Settings.get().removeJumpLocation(clazz, location);
+					//Update Data
+					updateJumpsData();
 					//Remove from asset tab
 					removeColumn(location);
-					//Update
-					updateJumps();
+					//Update GUI
+					updateJumpsGUI();
 				}
 			});
 			add(jMenuItem);
 		}
 	}
 
-	private void updateJumps() {
+	private void updateJumpsData() {
 		program.getProfileData().updateJumps(new ArrayList<JumpType>(program.getProfileData().getAssetsEventList()), MyAsset.class);
 		program.getProfileData().updateJumps(new ArrayList<JumpType>(program.getTreeTab().getEventList()), TreeAsset.class);
+	}
+
+	private void updateJumpsGUI() {
 		program.getTreeTab().tableStructureChanged();
 		program.getAssetsTab().tableStructureChanged();
 	}
@@ -140,24 +145,30 @@ public class JMenuJumps<T> extends MenuManager.JAutoMenu<T> {
 		@Override
 		public void actionPerformed(final ActionEvent e) {
 			if (MenuJumpsAction.ADD_SELECTED.name().equals(e.getActionCommand())) {
+				//Add to settings
 				for (final MyLocation location : menuData.getSystemLocations()) {
-					//Add to settings
 					Settings.get().addJumpLocation(clazz, location);
-					//Add to tab
+				}
+				//Update Data
+				updateJumpsData();
+				//Add to tab
+				for (final MyLocation location : menuData.getSystemLocations()) {
 					addColumn(location);
 				}
-				//Update
-				updateJumps();
+				//Update GUI
+				updateJumpsGUI();
 			}
 			if (MenuJumpsAction.CLEAR.name().equals(e.getActionCommand())) {
+				//Clear settings
+				Settings.get().clearJumpLocations(clazz);
+				//Update Data
+				updateJumpsData();
 				//Clear tab
 				for (MyLocation location : Settings.get().getJumpLocations(clazz)) {
 					removeColumn(location);
 				}
-				//Clear settings
-				Settings.get().clearJumpLocations(clazz);
-				//Update
-				updateJumps();
+				//Update GUI
+				updateJumpsGUI();
 			}
 			if (MenuJumpsAction.ADD_OTHER.name().equals(e.getActionCommand())) {
 				//Clear tab
@@ -167,10 +178,12 @@ public class JMenuJumps<T> extends MenuManager.JAutoMenu<T> {
 					if (location != null) {
 						//Add to settings
 						Settings.get().addJumpLocation(clazz, location);
+						//Update Data
+						updateJumpsData();
 						//Add to tab
 						addColumn(location);
-						//Update
-						updateJumps();
+						//Update GUI
+						updateJumpsGUI();
 					}
 				}
 			}
@@ -185,7 +198,7 @@ public class JMenuJumps<T> extends MenuManager.JAutoMenu<T> {
 		public Column(String systemName, long systemID) {
 			this.systemName = systemName;
 			this.systemID = systemID;
-			
+
 		}
 
 		@Override

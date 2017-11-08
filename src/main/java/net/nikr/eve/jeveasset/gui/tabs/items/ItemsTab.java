@@ -100,8 +100,9 @@ public class ItemsTab extends JMainTabPrimary {
 		JScrollPane jTableScroll = new JScrollPane(jTable);
 		//Table Filter
 		filterControl = new ItemsFilterControl(
-				program.getMainWindow().getFrame(),
 				tableFormat,
+				program.getMainWindow().getFrame(),
+				eventList,
 				sortedList,
 				filterList,
 				Settings.get().getTableFilters(NAME)
@@ -157,8 +158,8 @@ public class ItemsTab extends JMainTabPrimary {
 
 		private final EnumTableFormatAdaptor<ItemTableFormat, Item> tableFormat;
 
-		public ItemsFilterControl(final JFrame jFrame, final EnumTableFormatAdaptor<ItemTableFormat, Item> tableFormat, final EventList<Item> eventList, final FilterList<Item> filterList, final Map<String, List<Filter>> filters) {
-			super(jFrame, NAME, eventList, filterList, filters);
+		public ItemsFilterControl(EnumTableFormatAdaptor<ItemTableFormat, Item> tableFormat, JFrame jFrame, EventList<Item> eventList, SortedList<Item> sortedList, FilterList<Item> filterList, Map<String, List<Filter>> filters) {
+			super(jFrame, NAME, eventList, sortedList, filterList, filters);
 			this.tableFormat = tableFormat;
 		}
 

@@ -139,8 +139,9 @@ public class ContractsTab extends JMainTabPrimary {
 		JScrollPane jTableScroll = new JScrollPane(jTable);
 		//Table Filter
 		filterControl = new ContractsFilterControl(
-				program.getMainWindow().getFrame(),
 				tableFormat,
+				program.getMainWindow().getFrame(),
+				eventList,
 				sortedListSeparator,
 				filterList,
 				Settings.get().getTableFilters(NAME)
@@ -222,8 +223,8 @@ public class ContractsTab extends JMainTabPrimary {
 		private List<EnumTableColumn<MyContractItem>> columns = null;
 		private final EnumTableFormatAdaptor<ContractsTableFormat, MyContractItem> tableFormat;
 
-		public ContractsFilterControl(final JFrame jFrame, final EnumTableFormatAdaptor<ContractsTableFormat, MyContractItem> tableFormat, final EventList<MyContractItem> eventList, final FilterList<MyContractItem> filterList, final Map<String, List<Filter>> filters) {
-			super(jFrame, NAME, eventList, filterList, filters);
+		public ContractsFilterControl(EnumTableFormatAdaptor<ContractsTableFormat, MyContractItem> tableFormat, JFrame jFrame, EventList<MyContractItem> eventList, EventList<MyContractItem> exportEventList, FilterList<MyContractItem> filterList, Map<String, List<Filter>> filters) {
+			super(jFrame, NAME, eventList, exportEventList, filterList, filters);
 			this.tableFormat = tableFormat;
 		}
 

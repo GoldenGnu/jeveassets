@@ -124,6 +124,7 @@ public class AssetsTab extends JMainTabPrimary implements TagUpdate {
 		//Table Filter
 		filterControl = new AssetFilterControl(
 				program.getMainWindow().getFrame(),
+				eventList,
 				sortedList,
 				filterList,
 				Settings.get().getTableFilters(NAME)
@@ -269,8 +270,8 @@ public class AssetsTab extends JMainTabPrimary implements TagUpdate {
 
 	private class AssetFilterControl extends FilterControl<MyAsset> {
 
-		public AssetFilterControl(final JFrame jFrame, final EventList<MyAsset> eventList, final FilterList<MyAsset> filterList, final Map<String, List<Filter>> filters) {
-			super(jFrame, NAME, eventList, filterList, filters);
+		public AssetFilterControl(JFrame jFrame, EventList<MyAsset> eventList, EventList<MyAsset> exportEventList, FilterList<MyAsset> filterList, Map<String, List<Filter>> filters) {
+			super(jFrame, NAME, eventList, exportEventList, filterList, filters);
 		}
 
 		@Override
