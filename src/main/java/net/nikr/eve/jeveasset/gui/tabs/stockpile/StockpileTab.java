@@ -251,8 +251,9 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 		JScrollPane jTableScroll = new JScrollPane(jTable);
 		//Filter GUI
 		filterControl = new StockpileFilterControl(
-				program.getMainWindow().getFrame(),
 				tableFormat,
+				program.getMainWindow().getFrame(),
+				eventList,
 				sortedListTotal,
 				filterList,
 				Settings.get().getTableFilters(NAME)
@@ -1139,8 +1140,8 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 		private List<EnumTableColumn<StockpileItem>> columns = null;
 		private final EnumTableFormatAdaptor<StockpileTableFormat, StockpileItem> tableFormat;
 
-		public StockpileFilterControl(final JFrame jFrame, final EnumTableFormatAdaptor<StockpileTableFormat, StockpileItem> tableFormat, final EventList<StockpileItem> eventList, final FilterList<StockpileItem> filterList, final Map<String, List<Filter>> filters) {
-			super(jFrame, NAME, eventList, filterList, filters);
+		public StockpileFilterControl(EnumTableFormatAdaptor<StockpileTableFormat, StockpileItem> tableFormat, JFrame jFrame, EventList<StockpileItem> eventList, EventList<StockpileItem> exportEventList, FilterList<StockpileItem> filterList, Map<String, List<Filter>> filters) {
+			super(jFrame, NAME, eventList, exportEventList, filterList, filters);
 			this.tableFormat = tableFormat;
 		}
 

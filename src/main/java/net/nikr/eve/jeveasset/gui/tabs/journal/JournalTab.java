@@ -97,8 +97,9 @@ public class JournalTab extends JMainTabPrimary {
 		JScrollPane jTableScroll = new JScrollPane(jTable);
 		//Table Filter
 		filterControl = new JournalFilterControl(
-				program.getMainWindow().getFrame(),
 				tableFormat,
+				program.getMainWindow().getFrame(),
+				eventList,
 				sortedList,
 				filterList,
 				Settings.get().getTableFilters(NAME)
@@ -149,8 +150,8 @@ public class JournalTab extends JMainTabPrimary {
 
 		private final EnumTableFormatAdaptor<JournalTableFormat, MyJournal> tableFormat;
 
-		public JournalFilterControl(final JFrame jFrame, final EnumTableFormatAdaptor<JournalTableFormat, MyJournal> tableFormat, final EventList<MyJournal> eventList, final FilterList<MyJournal> filterList, final Map<String, List<Filter>> filters) {
-			super(jFrame, NAME, eventList, filterList, filters);
+		public JournalFilterControl(EnumTableFormatAdaptor<JournalTableFormat, MyJournal> tableFormat, JFrame jFrame, EventList<MyJournal> eventList, SortedList<MyJournal> sortedList, FilterList<MyJournal> filterList, Map<String, List<Filter>> filters) {
+			super(jFrame, NAME, eventList, sortedList, filterList, filters);
 			this.tableFormat = tableFormat;
 		}
 

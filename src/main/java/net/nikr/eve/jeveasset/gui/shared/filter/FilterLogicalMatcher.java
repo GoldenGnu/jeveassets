@@ -28,38 +28,53 @@ import java.util.List;
 
 public class FilterLogicalMatcher<E> implements Matcher<E> {
 
-	private final List<FilterMatcher<E>> matchers;
+	private final List<FilterMatcher<E>> and = new ArrayList<FilterMatcher<E>>();
+	private final List<FilterMatcher<E>> or = new ArrayList<FilterMatcher<E>>();
+	private final boolean orEmpty;
 
 	public FilterLogicalMatcher(final List<FilterMatcher<E>> matchers) {
-		this.matchers = matchers;
+		for (FilterMatcher<E> matcher : matchers) {
+			if (!matcher.isEmpty()) {
+				if (matcher.isAnd()) { //And
+					and.add(matcher);
+				} else {
+					or.add(matcher);
+				}
+			}
+		}
+		orEmpty = or.isEmpty();
 	}
 
 	public FilterLogicalMatcher(final FilterControl<E> filterControl, final List<Filter> filters) {
-		this.matchers = new ArrayList<FilterMatcher<E>>();
 		for (Filter filter : filters) {
-			this.matchers.add(new FilterMatcher<E>(filterControl, filter));
+			FilterMatcher<E> matcher = new FilterMatcher<E>(filterControl, filter);
+			if (!matcher.isEmpty()) {
+				if (matcher.isAnd()) { //And
+					and.add(matcher);
+				} else {
+					or.add(matcher);
+				}
+			}
 		}
+		orEmpty = or.isEmpty();
 	}
 
 	@Override
 	public boolean matches(final E item) {
-		boolean bOr = false;
-		boolean bAnyOrs = false;
-		for (FilterMatcher<E> matcher : matchers) {
-			if (!matcher.isEmpty()) {
-				boolean matches = matcher.matches(item);
-				if (matcher.isAnd()) { //And
-					if (!matches) { //if just one don't match, none match
-						return false;
-					}
-				} else { //Or
-					bAnyOrs = true;
-					if (matches) { //if just one is true all is true
-						bOr = true;
-					}
-				}
+		for (FilterMatcher<E> matcher : and) {
+			boolean matches = matcher.matches(item);
+			if (!matches) { //if just one don't match, none match
+				return false;
 			}
 		}
-		return (bOr || !bAnyOrs);
+		//All ANDs matches
+		for (FilterMatcher<E> matcher : or) {
+			boolean matches = matcher.matches(item);
+			if (matches) { //if just one is true all is true
+				return true;
+			}
+		}
+		//NO ORs mached
+		return orEmpty; //no ORs return true, otherwise return false
 	}
 }

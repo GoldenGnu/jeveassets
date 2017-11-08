@@ -26,7 +26,10 @@ import java.text.NumberFormat;
 import java.text.ParsePosition;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.TimeZone;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter.CompareType;
@@ -42,13 +45,16 @@ public class FilterMatcher<E> implements Matcher<E> {
 	public static final Locale LOCALE = Locale.ENGLISH; //Use english AKA US_EN
 	private static final NumberFormat NUMBER_FORMAT = NumberFormat.getInstance(LOCALE);
 	private static final NumberFormat PERCENT_FORMAT = NumberFormat.getPercentInstance(LOCALE);
+	private static final  Map<String, Map<Object, String>> CACHE = new HashMap<String, Map<Object, String>>();
 
 	private final FilterControl<E> filterControl;
 	private final Filter.LogicType logic;
+	private final boolean and;
 	private final EnumTableColumn<?> enumColumn;
 	private final CompareType compare;
 	private final String text;
 	private final boolean enabled;
+	private final Map<Object, String> cache;
 
 	FilterMatcher(final FilterControl<E> filterControl, final Filter filter) {
 		this(filterControl, filter.getLogic(), filter.getColumn(), filter.getCompareType(), filter.getText(), true);
@@ -62,13 +68,15 @@ public class FilterMatcher<E> implements Matcher<E> {
 		if (CompareType.isColumnCompare(compare)) {
 			this.text = text;
 		} else {
-			this.text = format(text, true);
+			this.text = format(text, true).toLowerCase();
 		}
 		this.enabled = enabled;
+		cache = getCache(filterControl.getName());
+		and = logic == Filter.LogicType.AND;
 	}
 
 	boolean isAnd() {
-		return logic == Filter.LogicType.AND;
+		return and;
 	}
 
 	public boolean isEmpty() {
@@ -84,63 +92,142 @@ public class FilterMatcher<E> implements Matcher<E> {
 		if (column == null) {
 			return false;
 		}
-		if (compare == Filter.CompareType.CONTAINS) {
-			return contains(column, text);
-		} else if (compare == Filter.CompareType.CONTAINS_NOT) {
-			return !contains(column, text);
-		} else if (compare == Filter.CompareType.EQUALS || compare == Filter.CompareType.EQUALS_DATE) {
-			return equals(column, text);
-		} else if (compare == Filter.CompareType.EQUALS_NOT || compare == Filter.CompareType.EQUALS_NOT_DATE) {
-			return !equals(column, text);
-		} else if (compare == Filter.CompareType.GREATER_THAN) {
-			return great(column, text);
-		} else if (compare == Filter.CompareType.LESS_THAN) {
-			return less(column, text);
-		} else if (compare == Filter.CompareType.BEFORE) {
-			return before(column, text);
-		} else if (compare == Filter.CompareType.AFTER) {
-			return after(column, text);
-		} else if (compare == Filter.CompareType.GREATER_THAN_COLUMN) {
-			return great(column, filterControl.getColumnValue(item, text));
-		} else if (compare == Filter.CompareType.LESS_THAN_COLUMN) {
-			return less(column, filterControl.getColumnValue(item, text));
-		} else if (compare == Filter.CompareType.EQUALS_COLUMN) {
-			return equals(column, format(filterControl.getColumnValue(item, text)));
-		} else if (compare == Filter.CompareType.EQUALS_NOT_COLUMN) {
-			return !equals(column, format(filterControl.getColumnValue(item, text)));
-		} else if (compare == Filter.CompareType.CONTAINS_COLUMN) {
-			return contains(column, format(filterControl.getColumnValue(item, text)));
-		} else if (compare == Filter.CompareType.CONTAINS_NOT_COLUMN) {
-			return !contains(column, format(filterControl.getColumnValue(item, text)));
-		} else if (compare == Filter.CompareType.BEFORE_COLUMN) {
-			return before(column, filterControl.getColumnValue(item, text));
-		} else if (compare == Filter.CompareType.AFTER_COLUMN) {
-			return after(column, filterControl.getColumnValue(item, text));
-		} else if (compare == Filter.CompareType.LAST_DAYS) {
-			return lastDays(column, text);
-		} else { //Fallback: show all...
+		if (null == compare) { //Fallback: show all...
 			return true;
+		} else switch (compare) {
+			case CONTAINS:
+				return contains(column, text);
+			case CONTAINS_NOT:
+				return !contains(column, text);
+			case EQUALS:
+				return equals(column, text);
+			case EQUALS_DATE:
+				return equals(column, text);
+			case EQUALS_NOT:
+				return !equals(column, text);
+			case EQUALS_NOT_DATE:
+				return !equals(column, text);
+			case GREATER_THAN:
+				return great(column, text);
+			case LESS_THAN:
+				return less(column, text);
+			case BEFORE:
+				return before(column, text);
+			case AFTER:
+				return after(column, text);
+			case GREATER_THAN_COLUMN:
+				return great(column, filterControl.getColumnValue(item, text));
+			case LESS_THAN_COLUMN:
+				return less(column, filterControl.getColumnValue(item, text));
+			case EQUALS_COLUMN:
+				return equals(column, format(filterControl.getColumnValue(item, text), false).toLowerCase());
+			case EQUALS_NOT_COLUMN:
+				return !equals(column, format(filterControl.getColumnValue(item, text), false).toLowerCase());
+			case CONTAINS_COLUMN:
+				return contains(column, format(filterControl.getColumnValue(item, text), false).toLowerCase());
+			case CONTAINS_NOT_COLUMN:
+				return !contains(column, format(filterControl.getColumnValue(item, text), false).toLowerCase());
+			case BEFORE_COLUMN:
+				return before(column, filterControl.getColumnValue(item, text));
+			case AFTER_COLUMN:
+				return after(column, filterControl.getColumnValue(item, text));
+			case LAST_DAYS:
+				return lastDays(column, text);
+			default:
+				//Fallback: show all...
+				return true;
 		}
 	}
 
-	private boolean matchesAll(final E item, final Filter.CompareType compareType, final String formatedText) {
-		String haystack = "";
+	private static Map<Object, String> getCache(String name) {
+		Map<Object, String> cache = CACHE.get(name);
+		if (cache == null) {
+			cache = new HashMap<Object, String>();
+			CACHE.put(name, cache);
+		}
+		return cache;
+	}
+
+	public static <E> void cacheDelete(FilterControl<E> filterControl, List<E> delete) {
+		if (delete.isEmpty()) {
+			return;
+		}
+		Map<Object, String> cache = getCache(filterControl.getName());
+		for (E e : delete) {
+			cache.remove(e);
+		}
+	}
+
+	public static <E> void cacheInsert(FilterControl<E> filterControl, List<E> insert) {
+		if (insert.isEmpty()) {
+			return;
+		}
+		Map<Object, String> cache = getCache(filterControl.getName());
+		for (E e : insert) {
+			String s = buildItemCache(filterControl, e);
+			cache.put(e, s);
+		}
+	}
+
+	public static <E> void cacheUpdate(FilterControl<E> filterControl, List<E> update) {
+		if (update.isEmpty()) {
+			return;
+		}
+		System.out.println("Updated " + update.size() + " items");
+		cacheInsert(filterControl, update);
+	}
+
+	public static <E> void cacheRebuild(FilterControl<E> filterControl) {
+		Map<Object, String> cache = getCache(filterControl.getName());
+		cache.clear();
+		try {
+			filterControl.getEventList().getReadWriteLock().readLock().lock();
+			for (E e : filterControl.getEventList()) {
+				String s = buildItemCache(filterControl, e);
+				cache.put(e, s);
+			}
+		} finally {
+			filterControl.getEventList().getReadWriteLock().readLock().unlock();
+		}
+	}
+
+	private static <E> String buildItemCache(FilterControl<E> filterControl, E e) {
+		StringBuilder builder = new StringBuilder();
 		for (EnumTableColumn<E> testColumn : filterControl.getColumns()) {
-			Object columnValue = filterControl.getColumnValue(item, testColumn.name());
+			Object columnValue = filterControl.getColumnValue(e, testColumn.name());
 			if (columnValue != null) {
-				haystack = haystack + "\n" + format(columnValue) + "\r";
+				builder.append("\n");
+				builder.append(format(columnValue, false));
+				builder.append("\r");
 			}
 		}
-		if (compareType == Filter.CompareType.CONTAINS) {
-			return haystack.contains(formatedText);
-		} else if (compareType == Filter.CompareType.CONTAINS_NOT) {
-			return !haystack.contains(formatedText);
-		} else if (compareType == Filter.CompareType.EQUALS || compareType == Filter.CompareType.EQUALS_DATE) {
-			return haystack.contains("\n" + formatedText + "\r");
-		} else if (compareType == Filter.CompareType.EQUALS_NOT || compareType == Filter.CompareType.EQUALS_NOT_DATE) {
-			return !haystack.contains("\n" + formatedText + "\r");
-		} else {
+		return builder.toString().toLowerCase();
+	}
+
+	private boolean matchesAll(final E item, final Filter.CompareType compareType, final String formatedText) {
+		String haystack = cache.get(item);
+		if (haystack == null) { //Will be build on update if any filter is set
+			haystack = buildItemCache(filterControl, item);
+			cache.put(item, haystack);
+			throw new RuntimeException("Cache not updated in advance: " + item.getClass() + " " + item.toString());
+		}
+		if (null == compareType) {
 			return true;
+		} else switch (compareType) {
+			case CONTAINS:
+				return haystack.contains(formatedText);
+			case CONTAINS_NOT:
+				return !haystack.contains(formatedText);
+			case EQUALS:
+				return haystack.contains("\n" + formatedText + "\r");
+			case EQUALS_DATE:
+				return haystack.contains("\n" + formatedText + "\r");
+			case EQUALS_NOT:
+				return !haystack.contains("\n" + formatedText + "\r");
+			case EQUALS_NOT_DATE:
+				return !haystack.contains("\n" + formatedText + "\r");
+			default:
+				return true;
 		}
 	}
 
@@ -151,7 +238,7 @@ public class FilterMatcher<E> implements Matcher<E> {
 		}
 
 		//Equals (case insentive)
-		return format(object1).equals(formatedText);
+		return format(object1, false).toLowerCase().equals(formatedText);
 	}
 
 	private boolean contains(final Object object1, final String formatedText) {
@@ -161,7 +248,7 @@ public class FilterMatcher<E> implements Matcher<E> {
 		}
 
 		//Contains (case insentive)
-		return format(object1).contains(formatedText);
+		return format(object1, false).toLowerCase().contains(formatedText);
 	}
 
 	private boolean less(final Object object1, final Object object2) {
@@ -238,8 +325,7 @@ public class FilterMatcher<E> implements Matcher<E> {
 	}
 
 	private static Number getNumber(final Object obj, final boolean userInput) {
-		if ((obj instanceof Long) || (obj instanceof Integer)
-				|| (obj instanceof Double) || (obj instanceof Float)) {
+		if (obj instanceof Number) {
 			return (Number) obj;
 		} else if (obj instanceof NumberValue) {
 			return ((NumberValue) obj).getNumber();
@@ -323,15 +409,7 @@ public class FilterMatcher<E> implements Matcher<E> {
 		}
 	}
 
-	private static String format(final Object object) {
-		return format(object, false, true);
-	}
-
-	private static String format(final Object object, final boolean userInput) {
-		return format(object, userInput, true);
-	}
-
-	static String format(final Object object, final boolean userInput, final boolean toLowerCase) {
+	static String format(final Object object, final boolean userInput) {
 		if (object == null) {
 			return null;
 		}
@@ -339,24 +417,16 @@ public class FilterMatcher<E> implements Matcher<E> {
 		//Number
 		Number number = getNumber(object, userInput);
 		if (number != null) {
-			return toLowerCase(Formater.compareFormat(number), toLowerCase);
+			return Formater.compareFormat(number);
 		}
 
 		//Date
 		Date date = getDate(object, userInput);
 		if (date != null) {
-			return toLowerCase(Formater.columnDate(date), toLowerCase);
+			return Formater.columnDate(date);
 		}
 
 		//String
-		return toLowerCase(object.toString(), toLowerCase);
-	}
-
-	private static String toLowerCase(final String s, final boolean toLowerCase) {
-		if (toLowerCase) {
-			return s.toLowerCase();
-		} else {
-			return s;
-		}
+		return object.toString();
 	}
 }

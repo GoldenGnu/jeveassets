@@ -168,8 +168,9 @@ public class ReprocessedTab extends JMainTabSecondary {
 		JScrollPane jTableScroll = new JScrollPane(jTable);
 		//Table Filter
 		filterControl = new ReprocessedFilterControl(
-				program.getMainWindow().getFrame(),
 				tableFormat,
+				program.getMainWindow().getFrame(),
+				eventList,
 				sortedListTotal,
 				filterList,
 				Settings.get().getTableFilters(NAME)
@@ -270,7 +271,7 @@ public class ReprocessedTab extends JMainTabSecondary {
 		if (program.getMainWindow().isOpen(this)) {
 			updateData(); //Also update data when already open
 		}
-		program.getMainWindow().addTab(this, true);	
+		program.getMainWindow().addTab(this);	
 	}
 
 	private class ReprocessedTableMenu implements TableMenu<ReprocessedInterface> {
@@ -360,8 +361,8 @@ public class ReprocessedTab extends JMainTabSecondary {
 		private List<EnumTableColumn<ReprocessedInterface>> columns = null;
 		private final EnumTableFormatAdaptor<ReprocessedTableFormat, ReprocessedInterface> tableFormat;
 
-		public ReprocessedFilterControl(final JFrame jFrame, final EnumTableFormatAdaptor<ReprocessedTableFormat, ReprocessedInterface> tableFormat, final EventList<ReprocessedInterface> eventList, final FilterList<ReprocessedInterface> filterList, final Map<String, List<Filter>> filters) {
-			super(jFrame, NAME, eventList, filterList, filters);
+		public ReprocessedFilterControl(EnumTableFormatAdaptor<ReprocessedTableFormat, ReprocessedInterface> tableFormat, JFrame jFrame, EventList<ReprocessedInterface> eventList, EventList<ReprocessedInterface> exportEventList, FilterList<ReprocessedInterface> filterList, Map<String, List<Filter>> filters) {
+			super(jFrame, NAME, eventList, exportEventList, filterList, filters);
 			this.tableFormat = tableFormat;
 		}
 

@@ -21,7 +21,6 @@
 
 package net.nikr.eve.jeveasset.gui.shared.filter;
 
-import ca.odell.glazedlists.FilterList;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -83,7 +82,7 @@ class FilterGui<E> {
 		this.jFrame = jFrame;
 		this.filterControl = filterControl;
 
-		exportDialog = new ExportDialog<E>(jFrame, filterControl.getName(), filterControl, filterControl, filterControl.getEventLists(), filterControl.getColumns());
+		exportDialog = new ExportDialog<E>(jFrame, filterControl.getName(), filterControl, filterControl, Collections.singletonList(filterControl.getExportEventList()), filterControl.getColumns());
 
 		jPanel = new JPanel();
 
@@ -187,11 +186,7 @@ class FilterGui<E> {
 	}
 
 	void updateShowing() {
-		int showing = 0;
-		for (FilterList<E> filterList : filterControl.getFilterLists()) {
-			showing = showing + EventListManager.size(filterList);
-		}
-		jShowing.setText(GuiShared.get().filterShowing(showing, filterControl.getTotalSize(), getCurrentFilterName()));
+		jShowing.setText(GuiShared.get().filterShowing(EventListManager.size(filterControl.getFilterList()), EventListManager.size(filterControl.getExportEventList()), getCurrentFilterName()));
 	}
 
 	String getCurrentFilterName() {
@@ -376,14 +371,17 @@ class FilterGui<E> {
 	void refilter() {
 		filterControl.beforeFilter();
 		List<FilterMatcher<E>> matchers = getMatchers();
-		if (matchers.isEmpty()) {
-			for (FilterList<E> filterList : filterControl.getFilterLists()) {
-				filterList.setMatcher(null);
+		boolean empty = true;
+		for (FilterMatcher<E> matcher : matchers) {
+			if (!matcher.isEmpty()) {
+				empty = false;
+				break;
 			}
+		}
+		if (empty) {
+			filterControl.getFilterList().setMatcher(null);
 		} else {
-			for (FilterList<E> filterList : filterControl.getFilterLists()) {
-				filterList.setMatcher(new FilterLogicalMatcher<E>(matchers));
-			}
+			filterControl.getFilterList().setMatcher(new FilterLogicalMatcher<E>(matchers));
 		}
 
 		filterControl.afterFilter();

@@ -123,8 +123,9 @@ public class MarketOrdersTab extends JMainTabPrimary {
 		filter.add(new Filter(LogicType.AND, MarketTableFormat.STATUS, CompareType.EQUALS, TabsOrders.get().statusActive()));
 		defaultFilters.put(TabsOrders.get().activeSellOrders(), filter);
 		filterControl = new MarketOrdersFilterControl(
-				program.getMainWindow().getFrame(),
 				tableFormat,
+				program.getMainWindow().getFrame(),
+				eventList,
 				sortedList,
 				filterList,
 				Settings.get().getTableFilters(NAME),
@@ -213,8 +214,8 @@ public class MarketOrdersTab extends JMainTabPrimary {
 
 		private final EnumTableFormatAdaptor<MarketTableFormat, MyMarketOrder> tableFormat;
 
-		public MarketOrdersFilterControl(final JFrame jFrame, final EnumTableFormatAdaptor<MarketTableFormat, MyMarketOrder> tableFormat, final EventList<MyMarketOrder> eventList, final FilterList<MyMarketOrder> filterList, final Map<String, List<Filter>> filters, final Map<String, List<Filter>> defaultFilters) {
-			super(jFrame, NAME, eventList, filterList, filters, defaultFilters);
+		public MarketOrdersFilterControl(EnumTableFormatAdaptor<MarketTableFormat, MyMarketOrder> tableFormat, JFrame jFrame, EventList<MyMarketOrder> eventList, EventList<MyMarketOrder> exportEventList, FilterList<MyMarketOrder> filterList, Map<String, List<Filter>> filters, Map<String, List<Filter>> defaultFilters) {
+			super(jFrame, NAME, eventList, exportEventList, filterList, filters, defaultFilters);
 			this.tableFormat = tableFormat;
 		}
 

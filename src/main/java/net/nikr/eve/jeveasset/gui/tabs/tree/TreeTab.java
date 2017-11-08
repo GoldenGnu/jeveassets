@@ -216,6 +216,7 @@ public class TreeTab extends JMainTabSecondary implements TagUpdate, NamesUpdate
 		//Table Filter
 		filterControl = new AssetFilterControl(
 				program.getMainWindow().getFrame(),
+				eventList,
 				exportEventList,
 				filterList,
 				Settings.get().getTableFilters(NAME)
@@ -691,8 +692,8 @@ public class TreeTab extends JMainTabSecondary implements TagUpdate, NamesUpdate
 
 	private class AssetFilterControl extends FilterControl<TreeAsset> {
 
-		public AssetFilterControl(final JFrame jFrame, final EventList<TreeAsset> eventList, final FilterList<TreeAsset> filterList, final Map<String, List<Filter>> filters) {
-			super(jFrame, NAME, eventList, filterList, filters);
+		public AssetFilterControl(JFrame jFrame, EventList<TreeAsset> eventList, EventList<TreeAsset> exportEventList, FilterList<TreeAsset> filterList, Map<String, List<Filter>> filters) {
+			super(jFrame, NAME, eventList, exportEventList, filterList, filters);
 		}
 
 		@Override

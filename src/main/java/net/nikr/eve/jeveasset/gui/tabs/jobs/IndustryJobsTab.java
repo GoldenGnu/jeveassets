@@ -123,8 +123,9 @@ public class IndustryJobsTab extends JMainTabPrimary {
 		filter.add(new Filter(LogicType.AND, IndustryJobTableFormat.STATE, CompareType.EQUALS, IndustryJobState.STATE_DELIVERED.toString()));
 		defaultFilters.put(TabsJobs.get().completed(), filter);
 		filterControl = new IndustryJobsFilterControl(
-				program.getMainWindow().getFrame(),
 				tableFormat,
+				program.getMainWindow().getFrame(),
+				eventList,
 				sortedList,
 				filterList,
 				Settings.get().getTableFilters(NAME),
@@ -211,8 +212,8 @@ public class IndustryJobsTab extends JMainTabPrimary {
 
 		private final EnumTableFormatAdaptor<IndustryJobTableFormat, MyIndustryJob> tableFormat;
 
-		public IndustryJobsFilterControl(final JFrame jFrame, final EnumTableFormatAdaptor<IndustryJobTableFormat, MyIndustryJob> tableFormat, final EventList<MyIndustryJob> eventList, final FilterList<MyIndustryJob> filterList, final Map<String, List<Filter>> filters, final Map<String, List<Filter>> defaultFilters) {
-			super(jFrame, NAME, eventList, filterList, filters, defaultFilters);
+		public IndustryJobsFilterControl(EnumTableFormatAdaptor<IndustryJobTableFormat, MyIndustryJob> tableFormat, JFrame jFrame, EventList<MyIndustryJob> eventList, EventList<MyIndustryJob> exportEventList, FilterList<MyIndustryJob> filterList, Map<String, List<Filter>> filters, Map<String, List<Filter>> defaultFilters) {
+			super(jFrame, NAME, eventList, exportEventList, filterList, filters, defaultFilters);
 			this.tableFormat = tableFormat;
 		}
 

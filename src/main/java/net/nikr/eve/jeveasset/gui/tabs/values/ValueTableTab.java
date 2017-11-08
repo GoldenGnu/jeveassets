@@ -106,8 +106,9 @@ public class ValueTableTab extends JMainTabSecondary {
 		JScrollPane jTableScroll = new JScrollPane(jTable);
 		//Table Filter
 		filterControl = new ValueFilterControl(
-				program.getMainWindow().getFrame(),
 				tableFormat,
+				program.getMainWindow().getFrame(),
+				eventList,
 				totalSortedList,
 				filterList,
 				Settings.get().getTableFilters(NAME)
@@ -166,8 +167,8 @@ public class ValueTableTab extends JMainTabSecondary {
 
 		private final EnumTableFormatAdaptor<ValueTableFormat, Value> tableFormat;
 
-		public ValueFilterControl(final JFrame jFrame, final EnumTableFormatAdaptor<ValueTableFormat, Value> tableFormat, final EventList<Value> eventList, final FilterList<Value> filterList, final Map<String, List<Filter>> filters) {
-			super(jFrame, NAME, eventList, filterList, filters);
+		public ValueFilterControl(EnumTableFormatAdaptor<ValueTableFormat, Value> tableFormat, JFrame jFrame, EventList<Value> eventList, EventList<Value> exportEventList, FilterList<Value> filterList, Map<String, List<Filter>> filters) {
+			super(jFrame, NAME, eventList, exportEventList, filterList, filters);
 			this.tableFormat = tableFormat;
 		}
 
