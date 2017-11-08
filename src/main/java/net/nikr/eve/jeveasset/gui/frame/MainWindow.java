@@ -112,29 +112,19 @@ public class MainWindow {
 	}
 
 	public void addTab(final JMainTab jMainTab) {
-		addTab(jMainTab, true, false);
+		addTab(jMainTab, true);
 	}
 
 	public void addTab(final JMainTab jMainTab, final boolean focus) {
-		addTab(jMainTab, focus, false) ;
-	}
-
-	public void addTab(final JMainTab jMainTab, final boolean focus, final boolean alwaysUpdate) {
 		if (!tabs.contains(jMainTab)) {
 			LOG.info("Opening tab: " + jMainTab.getTitle());
 			jMainTab.updateDataTableLock();
 			tabs.add(jMainTab);
 			jTabbedPane.addTab(jMainTab.getTitle(), jMainTab.getIcon(), jMainTab.getPanel());
 			jTabbedPane.setTabComponentAt(jTabbedPane.getTabCount() - 1, new TabCloseButton(jMainTab));
-		} else {
-			if (alwaysUpdate) {
-				LOG.info("Focusing and updating tab: " + jMainTab.getTitle());
-				jMainTab.updateDataTableLock();
-			} else {
-				LOG.info("Focusing tab: " + jMainTab.getTitle());
-			}
 		}
 		if (focus) {
+			LOG.info("Focusing tab: " + jMainTab.getTitle());
 			jTabbedPane.setSelectedComponent(jMainTab.getPanel());
 		}
 	}
