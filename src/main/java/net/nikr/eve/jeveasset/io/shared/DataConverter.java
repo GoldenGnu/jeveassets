@@ -191,6 +191,7 @@ public abstract class DataConverter {
 					contractItem.setContract(myContract);
 				}
 			}
+			contracts.remove(myContract); //Remove old value
 			contracts.put(myContract, contractItems);
 		}
 		return contracts;
@@ -202,6 +203,7 @@ public abstract class DataConverter {
 		for (RawContractItem rawContract : rawContractItems) {
 			contractItems.add(toMyContractItem(rawContract, contract));
 		}
+		contracts.remove(contract);
 		contracts.put(contract, contractItems);
 		return contracts;
 	}
