@@ -209,7 +209,6 @@ public class FilterMatcher<E> implements Matcher<E> {
 		if (haystack == null) { //Will be build on update if any filter is set
 			haystack = buildItemCache(filterControl, item);
 			cache.put(item, haystack);
-			throw new RuntimeException("Cache not updated in advance: " + item.getClass() + " " + item.toString());
 		}
 		if (null == compareType) {
 			return true;
