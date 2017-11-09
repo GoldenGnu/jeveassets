@@ -64,7 +64,17 @@ public class EsiContractItemsGetter extends AbstractEsiGetter {
 		if (owner.isCorporation()) {
 			List<List<MyContract>> updates = splitList(contracts.get(owner.getOwnerID()), BATCH_SIZE);
 			Map<MyContract, List<CorporationContractsItemsResponse>> responseList = new HashMap<MyContract, List<CorporationContractsItemsResponse>>();
+			boolean first = true;
 			for (List<MyContract> list : updates) {
+				if (first) {
+					first = false;
+				} else {
+					try {
+						Thread.sleep(10000);
+					} catch (InterruptedException ex) {
+						throw new RuntimeException(ex);
+					}
+				}
 				Map<MyContract, List<CorporationContractsItemsResponse>> responses = updateList(list, DEFAULT_RETRIES, new ListHandler<MyContract, List<CorporationContractsItemsResponse>>() {
 					@Override
 					public List<CorporationContractsItemsResponse> get(ApiClient apiClient, MyContract t) throws ApiException {
@@ -74,11 +84,6 @@ public class EsiContractItemsGetter extends AbstractEsiGetter {
 				responseList.putAll(responses);
 				PROGRESS.getAndAdd(list.size());
 				setProgress(SIZE.get(), PROGRESS.get(), 0, 100);
-				try {
-					Thread.sleep(10000);
-				} catch (InterruptedException ex) {
-					throw new RuntimeException(ex);
-				}
 			}
 			for (Map.Entry<MyContract, List<CorporationContractsItemsResponse>> entry : responseList.entrySet()) {
 				owner.setContracts(EsiConverter.toContractItemsCorporation(entry.getKey(), entry.getValue(), owner));
