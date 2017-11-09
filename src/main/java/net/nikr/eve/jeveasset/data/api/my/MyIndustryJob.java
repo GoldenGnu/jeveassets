@@ -236,7 +236,7 @@ public class MyIndustryJob extends RawIndustryJob implements Comparable<MyIndust
 			case 8:
 				activity = IndustryActivity.ACTIVITY_REVERSE_INVENTION;
 				break;
-			case 11:
+			case 9:
 				activity = IndustryActivity.ACTIVITY_REVERSE_INVENTION;
 				break;
 			default:
