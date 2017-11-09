@@ -29,18 +29,25 @@ if (empty($foundRow)) { //New bug report
 
 	print $id;
 
-	$to      = 'nkr@niklaskr.dk';
-	$subject = "New " . name() . " bug report";
-	$message = name() . " bug report\r\n"
+	$to_nkr      = 'nkr@niklaskr.dk';
+	$subject_nkr = "New " . name() . " bug report";
+	$message_nkr = name() . " bug report\r\n"
 				."BugID: " . $id . "\r\n"
 				.buglink()."#bugid".$id."\r\n"
 				."\r\n"
 				.$log_in
 				;
+	$to_zapie      = 'jeveassets.oae2vi@zapiermail.com';
+	$subject_zapie = "New " . name() . " bug report (BugID: " . $id . ")";
+	$message_zapie = name() . " bug report\r\n"
+				."BugID: " . $id . "\r\n"
+				.buglink()."#bugid".$id."\r\n"
+				;
 	$headers = 'From: nkr@niklaskr.dk' . "\r\n" .
 			 'X-Mailer: PHP/' . phpversion();
 	
-	mail($to, $subject, $message, $headers);
+	mail($to_nkr, $subject_nkr, $message_nkr, $headers);
+	mail($to_zapie, $subject_zapie, $message_zapie, $headers);
 } else { //Old bug report - Add: count, os, java, version - Update: status
 	$count = $foundRow['count'];
 	$count++;
