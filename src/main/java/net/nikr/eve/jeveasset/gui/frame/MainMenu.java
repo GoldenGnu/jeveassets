@@ -54,8 +54,9 @@ public class MainMenu extends JMenuBar {
 		README,
 		CHANGELOG,
 		SEND_BUG_REPORT,
-		LINK_FEATURES,
-		LINK_HELP,
+		LINK_FORUM,
+		LINK_GITHUB,
+		LINK_FAQ,
 		ROUTING,
 		STOCKPILE,
 		UPDATE,
@@ -230,7 +231,6 @@ public class MainMenu extends JMenuBar {
 		this.add(menu);
 
 		menuItem = new JMenuItem(GuiFrame.get().accounts());
-		//menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.ALT_MASK));
 		menuItem.setIcon(Images.DIALOG_ACCOUNTS.getIcon());
 		menuItem.setActionCommand(MainMenuAction.ACCOUNT_MANAGER.name());
 		menuItem.addActionListener(program);
@@ -238,7 +238,6 @@ public class MainMenu extends JMenuBar {
 
 
 		menuItem = new JMenuItem(GuiFrame.get().profiles());
-		//menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.ALT_MASK));
 		menuItem.setIcon(Images.DIALOG_PROFILES.getIcon());
 		menuItem.setActionCommand(MainMenuAction.PROFILES.name());
 		menuItem.addActionListener(program);
@@ -247,7 +246,6 @@ public class MainMenu extends JMenuBar {
 		menu.addSeparator();
 
 		menuItem = new JMenuItem(GuiFrame.get().options1());
-		//menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.ALT_MASK));
 		menuItem.setIcon(Images.DIALOG_SETTINGS.getIcon());
 		menuItem.setActionCommand(MainMenuAction.OPTIONS.name());
 		menuItem.addActionListener(program);
@@ -257,22 +255,25 @@ public class MainMenu extends JMenuBar {
 		menu = new JMenu(GuiFrame.get().help());
 		this.add(menu);
 
-		menuItem = new JMenuItem(GuiFrame.get().linkHelp());
-		//menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.ALT_MASK));
+		menuItem = new JMenuItem(GuiFrame.get().linkFaq());
 		menuItem.setIcon(Images.MISC_HELP.getIcon());
-		menuItem.setActionCommand(MainMenuAction.LINK_HELP.name());
+		menuItem.setActionCommand(MainMenuAction.LINK_FAQ.name());
 		menuItem.addActionListener(program);
 		menu.add(menuItem);
 
-		menuItem = new JMenuItem(GuiFrame.get().linkFeatures());
-		//menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.ALT_MASK));
+		menuItem = new JMenuItem(GuiFrame.get().linkForum());
+		menuItem.setIcon(Images.MISC_EVE.getIcon());
+		menuItem.setActionCommand(MainMenuAction.LINK_FORUM.name());
+		menuItem.addActionListener(program);
+		menu.add(menuItem);
+
+		menuItem = new JMenuItem(GuiFrame.get().linkGitHub());
 		menuItem.setIcon(Images.JOBS_INVENTION_SUCCESS.getIcon());
-		menuItem.setActionCommand(MainMenuAction.LINK_FEATURES.name());
+		menuItem.setActionCommand(MainMenuAction.LINK_GITHUB.name());
 		menuItem.addActionListener(program);
 		menu.add(menuItem);
 
 		menuItem = new JMenuItem(GuiFrame.get().sendBugReport());
-		//menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.ALT_MASK));
 		menuItem.setIcon(Images.MISC_DEBUG.getIcon());
 		menuItem.setActionCommand(MainMenuAction.SEND_BUG_REPORT.name());
 		menuItem.addActionListener(program);
@@ -282,25 +283,21 @@ public class MainMenu extends JMenuBar {
 		menu.addSeparator();
 
 		menuItem = new JMenuItem(GuiFrame.get().readme());
-		//menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.ALT_MASK));
 		menuItem.setActionCommand(MainMenuAction.README.name());
 		menuItem.addActionListener(program);
 		menu.add(menuItem);
 
 		menuItem = new JMenuItem(GuiFrame.get().credits());
-		//menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.ALT_MASK));
 		menuItem.setActionCommand(MainMenuAction.CREDITS.name());
 		menuItem.addActionListener(program);
 		menu.add(menuItem);
 
 		menuItem = new JMenuItem(GuiFrame.get().license());
-		//menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.ALT_MASK));
 		menuItem.setActionCommand(MainMenuAction.LICENSE.name());
 		menuItem.addActionListener(program);
 		menu.add(menuItem);
 
 		menuItem = new JMenuItem(GuiFrame.get().change());
-		//menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.ALT_MASK));
 		menuItem.setActionCommand(MainMenuAction.CHANGELOG.name());
 		menuItem.addActionListener(program);
 		menu.add(menuItem);
@@ -308,7 +305,6 @@ public class MainMenu extends JMenuBar {
 		menu.addSeparator();
 
 		menuItem = new JMenuItem(GuiFrame.get().about());
-		//menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.ALT_MASK));
 		menuItem.setIcon(Images.DIALOG_ABOUT.getIcon());
 		menuItem.setActionCommand(MainMenuAction.ABOUT.name());
 		menuItem.addActionListener(program);
