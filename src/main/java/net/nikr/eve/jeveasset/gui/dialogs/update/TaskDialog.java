@@ -31,7 +31,9 @@ import javax.swing.*;
 import javax.swing.GroupLayout.ParallelGroup;
 import javax.swing.GroupLayout.SequentialGroup;
 import net.nikr.eve.jeveasset.Program;
+import net.nikr.eve.jeveasset.gui.shared.components.JLockWindow;
 import net.nikr.eve.jeveasset.i18n.DialoguesUpdate;
+import net.nikr.eve.jeveasset.i18n.GuiShared;
 
 
 public class TaskDialog {
@@ -51,6 +53,7 @@ public class TaskDialog {
 	private JTextPane jErrorMessage;
 	private JLabel jErrorName;
 	private JScrollPane jErrorScroll;
+	private final JLockWindow jLockWindow;
 
 	private ListenerClass listener;
 
@@ -77,6 +80,8 @@ public class TaskDialog {
 		jWindow.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 		jWindow.setResizable(false);
 		jWindow.addWindowListener(listener);
+
+		jLockWindow = new JLockWindow(jWindow);
 
 		JPanel jPanel = new JPanel();
 
@@ -189,19 +194,16 @@ public class TaskDialog {
 		} else { //Done
 			jIcon.setIcon(new UpdateTask.EmptyIcon());
 			jCancel.setEnabled(false);
-			Thread thread = new Thread(new Runnable() {
+			jLockWindow.show(GuiShared.get().updating(), new JLockWindow.LockWorker() {
 				@Override
-				public void run() {
+				public void task() {
 					completed.tasksCompleted(TaskDialog.this);
-					SwingUtilities.invokeLater(new Runnable() {
-						@Override
-						public void run() {
-							jOK.setEnabled(true);
-						}
-					});
+				}
+				@Override
+				public void gui() {
+					jOK.setEnabled(true);
 				}
 			});
-			thread.start();
 		}
 	}
 
