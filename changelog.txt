@@ -16,6 +16,21 @@
                   #### #  # #  # #  # #### #### #### #### ####
 
 ________________________________________________________________________________
+_5.0.5__________________________________________________________________________
+
+Bug Fixes:
+-Contracts was missing names/locations after update
+-420 in corporation contract items (rate limit)
+-Industry Job reactions was not being marked correctly
+
+Changed:
+-Updated the help menu to be more helpful
+
+Code:
+-Updated eve-esi to 1.4.4
+-Optimized filtering (with cache)
+
+________________________________________________________________________________
 _5.0.4__________________________________________________________________________
 
 Bug Fixes:
