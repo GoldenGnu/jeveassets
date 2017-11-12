@@ -66,13 +66,18 @@ public class NikrUncaughtExceptionHandler implements Thread.UncaughtExceptionHan
 		if (!error) {
 			error = true;
 			LOG.error("Uncaught Exception (" + s + "): " + t.getMessage(), t);
-			if (t instanceof IllegalComponentStateException
+			//Get root cause
+			Throwable cause = t;
+			while (cause.getCause() != null) {
+				cause = cause.getCause();
+			}
+			if (cause instanceof IllegalComponentStateException
 					&& t.getMessage().toLowerCase().contains("component must be showing on the screen to determine its location")
 					) { //XXX - Workaround for Java bug: https://bugs.openjdk.java.net/browse/JDK-8179665 (Ignore error)
 				LOG.warn("Ignoring: component must be showing on the screen to determine its location");
 				error = false;
 				return;
-			} else if (t instanceof UnsupportedClassVersionError) { //Old Java
+			} else if (cause instanceof UnsupportedClassVersionError) { //Old Java
 				JOptionPane.showMessageDialog(null,
 						"Please update Java to the latest version.\r\n"
 						+ "The minimum supported version is " + JAVA + "\r\n"
@@ -81,7 +86,7 @@ public class NikrUncaughtExceptionHandler implements Thread.UncaughtExceptionHan
 						+ "\r\n"
 						+ "\r\n",
 						"Critical Error", JOptionPane.ERROR_MESSAGE);
-			} else if (t instanceof OutOfMemoryError) { //Out of memory
+			} else if (cause instanceof OutOfMemoryError) { //Out of memory
 				JOptionPane.showMessageDialog(null,
 						"Java has run out of memory\r\n"
 						+ "\r\n"
@@ -96,14 +101,14 @@ public class NikrUncaughtExceptionHandler implements Thread.UncaughtExceptionHan
 						+ "\r\n"
 						+ "\r\n",
 						"Critical Error", JOptionPane.ERROR_MESSAGE);
-			} else if (t instanceof NoClassDefFoundError) { //Corrupted class files
+			} else if (cause instanceof NoClassDefFoundError) { //Corrupted class files
 				try {
 					Updater updater = new Updater();
 					updater.fixMissingClasses();
 				} catch (Throwable ex) { //Better safe than sorry...
 					JOptionPane.showMessageDialog(null, "Please, re-download jEveAssets and leave the unzipped directory intact\r\nPress OK to close jEveAssets", "Critical Error", JOptionPane.ERROR_MESSAGE);
 				}
-			} else if (t instanceof UnsatisfiedLinkError && t.getMessage().contains("splashscreen")) { //Headless Java
+			} else if (cause instanceof UnsatisfiedLinkError && t.getMessage().contains("splashscreen")) { //Headless Java
 				System.err.println("ERROR: Your version of java does not support a GUI");
 				System.err.println("       Please, install in non-headless version of " + JAVA + " (or later) to run jEveAssets");
 				System.out.println("ERROR: Your version of java does not support a GUI");

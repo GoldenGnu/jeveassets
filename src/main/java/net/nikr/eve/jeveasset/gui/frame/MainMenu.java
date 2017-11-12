@@ -23,6 +23,7 @@ package net.nikr.eve.jeveasset.gui.frame;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.concurrent.ExecutionException;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -330,6 +331,18 @@ public class MainMenu extends JMenuBar {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					program.createTrackerDataPoint();
+				}
+			});
+			menu.add(menuItem);
+
+			menuItem = new JMenuItem("Throw out of memory", Images.MISC_DEBUG.getIcon());
+			menuItem.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					OutOfMemoryError oome = new OutOfMemoryError();
+					ExecutionException ee = new ExecutionException(oome);
+					RuntimeException re = new RuntimeException(ee);
+					throw re;
 				}
 			});
 			menu.add(menuItem);
