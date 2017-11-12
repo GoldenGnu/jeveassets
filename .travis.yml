@@ -8,6 +8,6 @@ cache:
 notifications:
   email:
     recipients:
-      - nkr@niklakr.dk
+      - nkr@niklaskr.dk
     on_success: never
     on_failure: always
