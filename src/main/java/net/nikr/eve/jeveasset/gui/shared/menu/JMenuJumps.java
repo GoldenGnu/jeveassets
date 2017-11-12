@@ -26,6 +26,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.List;
 import javax.swing.JMenuItem;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.api.my.MyAsset;
@@ -159,12 +160,14 @@ public class JMenuJumps<T> extends MenuManager.JAutoMenu<T> {
 				updateJumpsGUI();
 			}
 			if (MenuJumpsAction.CLEAR.name().equals(e.getActionCommand())) {
+				//Save locations for removal
+				List<MyLocation> locations = new ArrayList<>(Settings.get().getJumpLocations(clazz));
 				//Clear settings
 				Settings.get().clearJumpLocations(clazz);
 				//Update Data
 				updateJumpsData();
 				//Clear tab
-				for (MyLocation location : Settings.get().getJumpLocations(clazz)) {
+				for (MyLocation location : locations) {
 					removeColumn(location);
 				}
 				//Update GUI
