@@ -41,6 +41,7 @@ import net.troja.eve.esi.api.CharacterApi;
 import net.troja.eve.esi.api.ContractsApi;
 import net.troja.eve.esi.api.CorporationApi;
 import net.troja.eve.esi.api.IndustryApi;
+import net.troja.eve.esi.api.LocationApi;
 import net.troja.eve.esi.api.MarketApi;
 import net.troja.eve.esi.api.SovereigntyApi;
 import net.troja.eve.esi.api.SsoApi;
@@ -228,6 +229,10 @@ public abstract class AbstractEsiGetter extends AbstractGetter<EsiOwner, ApiClie
 
 	public CorporationApi getCorporationApiAuth(ApiClient apiClient) {
 		return new CorporationApi(apiClient);
+	}
+
+	public LocationApi getLocationApiAuth(ApiClient apiClient) {
+		return new LocationApi(apiClient);
 	}
 
 	public UniverseApi getUniverseApiOpen(ApiClient apiClient) {

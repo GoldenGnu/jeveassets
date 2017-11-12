@@ -21,8 +21,8 @@
 package net.nikr.eve.jeveasset.io.esi;
 
 import net.nikr.eve.jeveasset.TestUtil;
-import org.junit.Test;
 import static org.junit.Assert.*;
+import org.junit.Test;
 
 
 public class EsiScopesTest extends TestUtil {
@@ -32,22 +32,7 @@ public class EsiScopesTest extends TestUtil {
 
 	@Test
 	public void testLocalhost() {
-		String s = 
-		"    esi-wallet.read_character_wallet.v1\n" +
-		"    esi-universe.read_structures.v1\n" +
-		"    esi-assets.read_assets.v1\n" +
-		"    esi-industry.read_character_jobs.v1\n" +
-		"    esi-markets.read_character_orders.v1\n" +
-		"    esi-characters.read_blueprints.v1\n" +
-		"    esi-characters.read_corporation_roles.v1\n" +
-		"    esi-contracts.read_character_contracts.v1\n" +
-		"    esi-wallet.read_corporation_wallets.v1\n" +
-		"    esi-corporations.read_divisions.v1\n" +
-		"    esi-assets.read_corporation_assets.v1\n" +
-		"    esi-corporations.read_blueprints.v1\n" +
-		"    esi-contracts.read_corporation_contracts.v1\n" +
-		"    esi-industry.read_corporation_jobs.v1\n" +
-		"    esi-markets.read_corporation_orders.v1";
+		String s = "esi-location.read_location.v1 esi-location.read_ship_type.v1 esi-wallet.read_character_wallet.v1 esi-universe.read_structures.v1 esi-assets.read_assets.v1 esi-ui.open_window.v1 esi-ui.write_waypoint.v1 esi-industry.read_character_jobs.v1 esi-markets.read_character_orders.v1 esi-characters.read_blueprints.v1 esi-characters.read_corporation_roles.v1 esi-contracts.read_character_contracts.v1 esi-wallet.read_corporation_wallets.v1 esi-corporations.read_divisions.v1 esi-assets.read_corporation_assets.v1 esi-corporations.read_blueprints.v1 esi-contracts.read_corporation_contracts.v1 esi-industry.read_corporation_jobs.v1 esi-markets.read_corporation_orders.v1";
 		for (EsiScopes scope : EsiScopes.values()) {
 			assertTrue(scope.getScope() + " not included", s.contains(scope.getScope()));
 		}
@@ -55,22 +40,7 @@ public class EsiScopesTest extends TestUtil {
 
 	@Test
 	public void testNiKR() {
-		String s = 
-		"    esi-wallet.read_character_wallet.v1\n" +
-		"    esi-universe.read_structures.v1\n" +
-		"    esi-assets.read_assets.v1\n" +
-		"    esi-industry.read_character_jobs.v1\n" +
-		"    esi-markets.read_character_orders.v1\n" +
-		"    esi-characters.read_blueprints.v1\n" +
-		"    esi-characters.read_corporation_roles.v1\n" +
-		"    esi-contracts.read_character_contracts.v1\n" +
-		"    esi-wallet.read_corporation_wallets.v1\n" +
-		"    esi-corporations.read_divisions.v1\n" +
-		"    esi-assets.read_corporation_assets.v1\n" +
-		"    esi-corporations.read_blueprints.v1\n" +
-		"    esi-contracts.read_corporation_contracts.v1\n" +
-		"    esi-industry.read_corporation_jobs.v1\n" +
-		"    esi-markets.read_corporation_orders.v1";
+		String s = "esi-location.read_location.v1 esi-location.read_ship_type.v1 esi-wallet.read_character_wallet.v1 esi-universe.read_structures.v1 esi-assets.read_assets.v1 esi-ui.open_window.v1 esi-ui.write_waypoint.v1 esi-industry.read_character_jobs.v1 esi-markets.read_character_orders.v1 esi-characters.read_blueprints.v1 esi-characters.read_corporation_roles.v1 esi-contracts.read_character_contracts.v1 esi-wallet.read_corporation_wallets.v1 esi-corporations.read_divisions.v1 esi-assets.read_corporation_assets.v1 esi-corporations.read_blueprints.v1 esi-contracts.read_corporation_contracts.v1 esi-industry.read_corporation_jobs.v1 esi-markets.read_corporation_orders.v1";
 		for (EsiScopes scope : EsiScopes.values()) {
 			assertTrue(scope.getScope() + " not included", s.contains(scope.getScope()));
 		}

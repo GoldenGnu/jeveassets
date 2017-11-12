@@ -58,6 +58,7 @@ import net.nikr.eve.jeveasset.io.esi.EsiLocationsGetter;
 import net.nikr.eve.jeveasset.io.esi.EsiMarketOrdersGetter;
 import net.nikr.eve.jeveasset.io.esi.EsiNameGetter;
 import net.nikr.eve.jeveasset.io.esi.EsiOwnerGetter;
+import net.nikr.eve.jeveasset.io.esi.EsiShipGetter;
 import net.nikr.eve.jeveasset.io.esi.EsiTransactionsGetter;
 import net.nikr.eve.jeveasset.io.eveapi.AccountBalanceGetter;
 import net.nikr.eve.jeveasset.io.eveapi.AccountGetter;
@@ -824,6 +825,7 @@ public class UpdateDialog extends JDialogCentered {
 				//Esi
 				for (EsiOwner esiOwner : program.getProfileManager().getEsiOwners()) {
 					updates.add(new EsiLocationsGetter(this, esiOwner));
+					updates.add(new EsiShipGetter(this, esiOwner));
 				}
 			}
 			//char/corp/alliance IDs to names (ESI)
