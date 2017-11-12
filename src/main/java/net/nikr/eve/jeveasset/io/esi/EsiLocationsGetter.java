@@ -51,17 +51,23 @@ public class EsiLocationsGetter extends AbstractEsiGetter {
 				}
 			});
 
-			for (Map.Entry<List<Long>, List<CorporationAssetsNamesResponse>> entry : responses.entrySet()) {
-				for (CorporationAssetsNamesResponse response : entry.getValue()) {
-					final long itemID = response.getItemId();
-					final String eveName = response.getName();
-					if (!eveName.isEmpty()) { //Set name
-						Settings.get().getEveNames().put(itemID, eveName);
-					} else { //Remove name (Empty)
-						Settings.get().getEveNames().remove(itemID);
+			try {
+				Settings.lock("Ship/Container Names");
+				for (Map.Entry<List<Long>, List<CorporationAssetsNamesResponse>> entry : responses.entrySet()) {
+					for (CorporationAssetsNamesResponse response : entry.getValue()) {
+						final long itemID = response.getItemId();
+						final String eveName = response.getName();
+						if (!eveName.isEmpty()) { //Set name
+							Settings.get().getEveNames().put(itemID, eveName);
+						} else { //Remove name (Empty)
+							Settings.get().getEveNames().remove(itemID);
+						}
 					}
 				}
+			} finally {
+				Settings.unlock("Ship/Container Names");
 			}
+			
 		} else {
 			Map<List<Long>, List<CharacterAssetsNamesResponse>> responses = updateList(splitList(getIDs(itemMap, owner), LOCATIONS_BATCH_SIZE), DEFAULT_RETRIES, new ListHandler<List<Long>, List<CharacterAssetsNamesResponse>>() {
 				@Override
@@ -69,17 +75,21 @@ public class EsiLocationsGetter extends AbstractEsiGetter {
 					return getAssetsApiAuth(apiClient).postCharactersCharacterIdAssetsNames((int) owner.getOwnerID(), t, DATASOURCE, null, USER_AGENT, null);
 				}
 			});
-
-			for (Map.Entry<List<Long>, List<CharacterAssetsNamesResponse>> entry : responses.entrySet()) {
-				for (CharacterAssetsNamesResponse response : entry.getValue()) {
-					final long itemID = response.getItemId();
-					final String eveName = response.getName();
-					if (!eveName.isEmpty()) { //Set name
-						Settings.get().getEveNames().put(itemID, eveName);
-					} else { //Remove name (Empty)
-						Settings.get().getEveNames().remove(itemID);
+			try {
+				Settings.lock("Ship/Container Names");
+				for (Map.Entry<List<Long>, List<CharacterAssetsNamesResponse>> entry : responses.entrySet()) {
+					for (CharacterAssetsNamesResponse response : entry.getValue()) {
+						final long itemID = response.getItemId();
+						final String eveName = response.getName();
+						if (!eveName.isEmpty()) { //Set name
+							Settings.get().getEveNames().put(itemID, eveName);
+						} else { //Remove name (Empty)
+							Settings.get().getEveNames().remove(itemID);
+						}
 					}
 				}
+			} finally {
+				Settings.unlock("Ship/Container Names");
 			}
 		}
 	}

@@ -20,8 +20,6 @@
  */
 package net.nikr.eve.jeveasset.io.esi;
 
-import static org.junit.Assert.*;
-
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -33,10 +31,12 @@ import net.troja.eve.esi.api.CharacterApi;
 import net.troja.eve.esi.api.ContractsApi;
 import net.troja.eve.esi.api.CorporationApi;
 import net.troja.eve.esi.api.IndustryApi;
+import net.troja.eve.esi.api.LocationApi;
 import net.troja.eve.esi.api.MarketApi;
 import net.troja.eve.esi.api.SovereigntyApi;
 import net.troja.eve.esi.api.UniverseApi;
 import net.troja.eve.esi.api.WalletApi;
+import static org.junit.Assert.*;
 import org.junit.Test;
 
 public class EsiDeprecationOnlineTest extends TestUtil {
@@ -280,6 +280,28 @@ public class EsiDeprecationOnlineTest extends TestUtil {
 		CorporationApi api = new CorporationApi();
 		try {
 			api.getCorporationsCorporationId(1, DATASOURCE, null, null);
+		} catch (ApiException ex) {
+
+		}
+		validate(api.getApiClient());
+	}
+
+	@Test
+	public void esiShipLocationGetter() {
+		LocationApi api = new LocationApi();
+		try {
+			api.getCharactersCharacterIdLocation(1, DATASOURCE, null, null, null);
+		} catch (ApiException ex) {
+
+		}
+		validate(api.getApiClient());
+	}
+
+	@Test
+	public void esiShipTypeGetter() {
+		LocationApi api = new LocationApi();
+		try {
+			api.getCharactersCharacterIdShip(1, DATASOURCE, null, null, null);
 		} catch (ApiException ex) {
 
 		}
