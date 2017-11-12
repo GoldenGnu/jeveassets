@@ -375,17 +375,21 @@ public class OverviewTab extends JMainTabSecondary {
 			if (!view.equals(TabsOverview.get().groups())) { //Locations
 				String locationName = TabsOverview.get().whitespace();
 				MyLocation location = asset.getLocation();
-				if (view.equals(TabsOverview.get().regions())) {
-					locationName = asset.getLocation().getRegion();
-					location = ApiIdConverter.getLocation(asset.getLocation().getRegionID());
-				}
-				if (view.equals(TabsOverview.get().systems())) {
-					locationName = asset.getLocation().getSystem();
-					location = ApiIdConverter.getLocation(asset.getLocation().getSystemID());
-				}
-				if (view.equals(TabsOverview.get().stations())) {
-					locationName = asset.getLocation().getLocation();
-					location = ApiIdConverter.getLocation(asset.getLocation().getStationID());
+				if (!location.isEmpty()) { //Always use the default location for empty locations
+					if (view.equals(TabsOverview.get().regions())) {
+						locationName = asset.getLocation().getRegion();
+						location = ApiIdConverter.getLocation(asset.getLocation().getRegionID());
+					}
+					if (view.equals(TabsOverview.get().systems())) {
+						locationName = asset.getLocation().getSystem();
+						location = ApiIdConverter.getLocation(asset.getLocation().getSystemID());
+					}
+					if (view.equals(TabsOverview.get().stations())) {
+						locationName = asset.getLocation().getLocation();
+						location = ApiIdConverter.getLocation(asset.getLocation().getStationID());
+					}
+				} else {
+					locationName = location.getLocation();
 				}
 				if (locationsMap.containsKey(locationName)) { //Update existing overview
 					Overview overview = locationsMap.get(locationName);
