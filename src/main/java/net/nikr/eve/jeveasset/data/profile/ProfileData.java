@@ -211,7 +211,7 @@ public class ProfileData {
 			jumpType.clearJumps(); //Clear old
 			long systemID = jumpType.getLocation().getSystemID();
 			if (systemID <= 0) {
-				return;
+				continue;
 			}
 			for (MyLocation jumpLocation : Settings.get().getJumpLocations(clazz)) {
 				long jumpSystemID = jumpLocation.getSystemID();
