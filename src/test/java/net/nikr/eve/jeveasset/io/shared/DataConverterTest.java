@@ -64,7 +64,9 @@ public class DataConverterTest extends TestUtil {
 			industryJob.setStationID(options.getLocationTypeEveApi());
 			List<MyAsset> assets = DataConverter.assetIndustryJob(Collections.singletonList(industryJob));
 			if (assets.isEmpty()) {
-				assertEquals(industryJob.getState(), IndustryJobState.STATE_DELIVERED);
+				assertTrue(industryJob.getState() == IndustryJobState.STATE_DELIVERED
+				|| industryJob.getState() == IndustryJobState.STATE_CANCELLED
+				|| industryJob.getState() == IndustryJobState.STATE_REVERTED);
 			} else {
 				MyAsset asset = assets.get(0);
 				//Quantity

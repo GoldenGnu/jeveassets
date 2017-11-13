@@ -328,7 +328,10 @@ public class MyIndustryJob extends RawIndustryJob implements Comparable<MyIndust
 	}
 
 	public final boolean isDelivered() {
-		return getState() == IndustryJobState.STATE_DELIVERED;
+		return getState() == IndustryJobState.STATE_DELIVERED
+				|| getState() == IndustryJobState.STATE_CANCELLED
+				|| getState() == IndustryJobState.STATE_REVERTED
+				;
 	}
 
 	public final boolean isManufacturing() {
