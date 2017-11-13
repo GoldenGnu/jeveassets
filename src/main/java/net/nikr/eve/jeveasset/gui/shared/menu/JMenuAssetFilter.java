@@ -95,9 +95,9 @@ public class JMenuAssetFilter<T> extends JAutoMenu<T> {
 	public void setMenuData(MenuData<T> menuData) {
 		this.menuData = menuData;
 		jTypeID.setEnabled(!menuData.getTypeIDs().isEmpty());
-		jStation.setEnabled(!menuData.getStationsAndCitadels().isEmpty());
-		jSystem.setEnabled(!menuData.getSystems().isEmpty());
-		jRegion.setEnabled(!menuData.getRegions().isEmpty());
+		jStation.setEnabled(!menuData.getStationAndCitadelNames().isEmpty());
+		jSystem.setEnabled(!menuData.getSystemNames().isEmpty());
+		jRegion.setEnabled(!menuData.getRegionNames().isEmpty());
 	}
 
 	public void setTool(Object object) {
@@ -120,21 +120,21 @@ public class JMenuAssetFilter<T> extends JAutoMenu<T> {
 		@Override
 		public void actionPerformed(final ActionEvent e) {
 			if (MenuAssetFilterAction.STATION_FILTER.name().equals(e.getActionCommand())) {
-				for (String station : menuData.getStationsAndCitadels()) {
+				for (String station : menuData.getStationAndCitadelNames()) {
 					Filter filter = new Filter(LogicType.AND, AssetTableFormat.LOCATION, CompareType.EQUALS, station);
 					program.getAssetsTab().addFilter(filter);
 				}
 				program.getMainWindow().addTab(program.getAssetsTab());
 			}
 			if (MenuAssetFilterAction.SYSTEM_FILTER.name().equals(e.getActionCommand())) {
-				for (String system : menuData.getSystems()) {
+				for (String system : menuData.getSystemNames()) {
 					Filter filter = new Filter(LogicType.AND, AssetTableFormat.LOCATION, CompareType.CONTAINS, system);
 					program.getAssetsTab().addFilter(filter);
 				}
 				program.getMainWindow().addTab(program.getAssetsTab());
 			}
 			if (MenuAssetFilterAction.REGION_FILTER.name().equals(e.getActionCommand())) {
-				for (String region : menuData.getRegions()) {
+				for (String region : menuData.getRegionNames()) {
 					Filter filter = new Filter(LogicType.AND, AssetTableFormat.REGION, CompareType.EQUALS, region);
 					program.getAssetsTab().addFilter(filter);
 				}

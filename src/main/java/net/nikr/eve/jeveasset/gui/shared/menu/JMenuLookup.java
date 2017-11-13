@@ -170,10 +170,10 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 	@Override
 	public void setMenuData(MenuData<T> menuData) {
 		this.menuData = menuData;
-		jDotlan.setEnabled(!menuData.getStationsOnly().isEmpty() || !menuData.getSystems().isEmpty() || !menuData.getRegions().isEmpty());
-		jDotlanStation.setEnabled(!menuData.getStationsOnly().isEmpty());
-		jDotlanSystem.setEnabled(!menuData.getSystems().isEmpty());
-		jDotlanRegion.setEnabled(!menuData.getRegions().isEmpty());
+		jDotlan.setEnabled(!menuData.getStationNames().isEmpty() || !menuData.getSystemNames().isEmpty() || !menuData.getRegionNames().isEmpty());
+		jDotlanStation.setEnabled(!menuData.getStationNames().isEmpty());
+		jDotlanSystem.setEnabled(!menuData.getSystemNames().isEmpty());
+		jDotlanRegion.setEnabled(!menuData.getRegionNames().isEmpty());
 		jEveCentral.setEnabled(!menuData.getMarketTypeIDs().isEmpty());
 		jEveMarketdata.setEnabled(!menuData.getMarketTypeIDs().isEmpty());
 		jEveMarketer.setEnabled(!menuData.getMarketTypeIDs().isEmpty());
@@ -229,13 +229,13 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 		@Override
 		public void actionPerformed(final ActionEvent e) {
 			if (MenuLookupAction.EVEMAPS_DOTLAN_STATION.name().equals(e.getActionCommand())) {
-				browseDotlan(program, menuData.getStationsOnly(), null, null);
+				browseDotlan(program, menuData.getStationNames(), null, null);
 			}
 			if (MenuLookupAction.EVEMAPS_DOTLAN_SYSTEM.name().equals(e.getActionCommand())) {
-				browseDotlan(program, null, menuData.getSystems(), null);
+				browseDotlan(program, null, menuData.getSystemNames(), null);
 			}
 			if (MenuLookupAction.EVEMAPS_DOTLAN_REGION.name().equals(e.getActionCommand())) {
-				browseDotlan(program, null, null, menuData.getRegions());
+				browseDotlan(program, null, null, menuData.getRegionNames());
 			}
 			if (MenuLookupAction.EVE_CENTRAL.name().equals(e.getActionCommand())) {
 				Set<String> urls = new HashSet<String>();
