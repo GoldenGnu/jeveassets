@@ -296,9 +296,9 @@ public class MyIndustryJob extends RawIndustryJob implements Comparable<MyIndust
 	@Override
 	public boolean isBPO() {
 		if (blueprint != null) {
-			return blueprint.getQuantity() > -2;
+			return blueprint.getRuns() <= 0;
 		} else {
-			return false;
+			return getLicensedRuns() == null || getLicensedRuns() <= 0;
 		}
 	}
 
