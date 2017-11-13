@@ -155,27 +155,27 @@ public class MenuData<T> {
 				userLocations.add(location);
 			}
 			if (location.getLocationID() != 0) { //Anything with a locationID
-				stationsAndCitadelsNames.add(location.getStation()); //Assets
+				stationsAndCitadelsNames.add(location.getStation()); //Assets Station
 			}
 			if (location.isEmpty()) {
 				continue; //Ignore empty locations for the rest of the loop
 			}
 			//Staion
 			if (location.isStation()) {
-				if (!location.isCitadel()) { //Dotlan Station (does not support citadels)
-					stationNames.add(location.getStation());
+				if (!location.isCitadel()) {
+					stationNames.add(location.getStation()); //Dotlan Station (does not support citadels)
 				}
 				systemNames.add(location.getSystem()); //Dotlan System
 				//Jumps
 				MyLocation system = ApiIdConverter.getLocation(location.getSystemID());
 				if (!system.isEmpty()) {
-					jumpLocations.add(system);
+					jumpLocations.add(system); //Jumps System 
 				}
 			}
 			//System
 			if (location.isSystem()) {
 				systemNames.add(location.getSystem()); //Dotlan System
-				jumpLocations.add(location); //Jumps
+				jumpLocations.add(location); //Jumps System 
 			}
 			//Staion, System, or Region
 			if (location.isStation() || location.isSystem() || location.isRegion()) {
