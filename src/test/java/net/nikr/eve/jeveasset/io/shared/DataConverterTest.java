@@ -70,7 +70,7 @@ public class DataConverterTest extends TestUtil {
 			} else {
 				MyAsset asset = assets.get(0);
 				//Quantity
-				assertEquals((Object) asset.getQuantity(), -1);
+				assertEquals((Object) asset.getQuantity(), -2);
 				asset.setQuantity(options.getInteger());
 				assertEquals(asset.getItemFlag(), ApiIdConverter.getFlag(0));
 				//ItemFlag
