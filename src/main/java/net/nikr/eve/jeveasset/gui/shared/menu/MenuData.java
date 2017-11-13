@@ -44,15 +44,15 @@ import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 public class MenuData<T> {
 
 	private final Set<Integer> typeIDs = new HashSet<Integer>();
-	private final Set<MyLocation> systemLocations = new HashSet<MyLocation>();
+	private final Set<MyLocation> jumpLocations = new HashSet<MyLocation>();
+	private final Set<MyLocation> editableCitadelLocations = new HashSet<MyLocation>();
+	private final Set<MyLocation> userLocations = new HashSet<MyLocation>();
 	private final Map<Integer, Double> prices = new HashMap<Integer, Double>();
 	private final Set<String> typeNames = new HashSet<String>();
-	private final Set<String> stationsAndCitadels = new HashSet<String>();
-	private final Set<MyLocation> emptyStations = new HashSet<MyLocation>();
-	private final Set<MyLocation> userStations = new HashSet<MyLocation>();
-	private final Set<String> stations = new HashSet<String>();
-	private final Set<String> systems = new HashSet<String>();
-	private final Set<String> regions = new HashSet<String>();
+	private final Set<String> stationsAndCitadelsNames = new HashSet<String>();
+	private final Set<String> stationNames = new HashSet<String>();
+	private final Set<String> systemNames = new HashSet<String>();
+	private final Set<String> regionNames = new HashSet<String>();
 	private final Set<Integer> marketTypeIDs = new HashSet<Integer>();
 	private final Set<Integer> blueprintTypeIDs = new HashSet<Integer>();
 	private final Map<Tag, Integer> tagCount = new HashMap<Tag, Integer>();
@@ -145,26 +145,41 @@ public class MenuData<T> {
 		}
 		//Locations
 		for (MyLocation location : locations) {
-			if (location != null && !location.isEmpty()) {
-				if (location.isStation()) { //Ignore citadels stations as they're not supported by dotlan
-					if (!location.isCitadel()) {
-						stations.add(location.getStation());
-					}
-					stationsAndCitadels.add(location.getStation());
-					systemLocations.add(location);
+			if (location == null) {
+				continue;
+			}
+			if ((location.isEmpty() && location.getLocationID() != 0) || location.isUserLocation()){ //Empty with locationID or user
+				editableCitadelLocations.add(location);
+			}
+			if (location.isUserLocation()) { //User
+				userLocations.add(location);
+			}
+			if (location.getLocationID() != 0) { //Anything with a locationID
+				stationsAndCitadelsNames.add(location.getStation()); //Assets
+			}
+			if (location.isEmpty()) {
+				continue; //Ignore empty locations for the rest of the loop
+			}
+			//Staion
+			if (location.isStation()) {
+				if (!location.isCitadel()) { //Dotlan Station (does not support citadels)
+					stationNames.add(location.getStation());
 				}
-				if (location.isStation() || location.isSystem()) {
-					systems.add(location.getSystem());
-				}
-				if (location.isStation() || location.isSystem() || location.isRegion()) {
-					regions.add(location.getRegion());
+				systemNames.add(location.getSystem()); //Dotlan System
+				//Jumps
+				MyLocation system = ApiIdConverter.getLocation(location.getSystemID());
+				if (!system.isEmpty()) {
+					jumpLocations.add(system);
 				}
 			}
-			if (location != null && location.isEmpty()) {
-				emptyStations.add(location);
+			//System
+			if (location.isSystem()) {
+				systemNames.add(location.getSystem()); //Dotlan System
+				jumpLocations.add(location); //Jumps
 			}
-			if (location != null && location.isUserLocation()) {
-				userStations.add(location);
+			//Staion, System, or Region
+			if (location.isStation() || location.isSystem() || location.isRegion()) {
+				regionNames.add(location.getRegion()); //Dotlan Region
 			}
 		}
 		//Tags
@@ -202,32 +217,39 @@ public class MenuData<T> {
 		return typeNames;
 	}
 
-	public Set<String> getStationsOnly() {
-		return stations;
+	//JMenuAssetFilter
+	public Set<String> getStationAndCitadelNames() {
+		return stationsAndCitadelsNames;
 	}
 
-	public Set<MyLocation> getEmptyStations() {
-		return emptyStations;
+	//JMenuLookup
+	public Set<String> getStationNames() {
+		return stationNames;
 	}
 
-	public Set<MyLocation> getUserStations() {
-		return userStations;
+	//JMenuLookup
+	public Set<String> getSystemNames() {
+		return systemNames;
 	}
 
-	public Set<String> getStationsAndCitadels() {
-		return stationsAndCitadels;
+	//JMenuLookup
+	public Set<String> getRegionNames() {
+		return regionNames;
 	}
 
-	public Set<String> getSystems() {
-		return systems;
+	//JMenuJumps
+	public Set<MyLocation> getJumpLocations() {
+		return jumpLocations;
 	}
 
-	public Set<MyLocation> getSystemLocations() {
-		return systemLocations;
+	//JMenuLocation
+	public Set<MyLocation> getUserLocations() {
+		return userLocations;
 	}
 
-	public Set<String> getRegions() {
-		return regions;
+	//JMenuLocation
+	public Set<MyLocation> getEditableCitadelLocations() {
+		return editableCitadelLocations;
 	}
 
 	public Set<Integer> getMarketTypeIDs() {
