@@ -29,10 +29,10 @@ public class RawIndustryJob {
 
 	public enum IndustryJobStatus {
 		ACTIVE("active"),
+		CANCELLED("cancelled"),
+		DELIVERED("delivered"),
 		PAUSED("paused"),
 		READY("ready"),
-		DELIVERED("delivered"),
-		CANCELLED("cancelled"),
 		REVERTED("reverted");
 
 		private final String value;

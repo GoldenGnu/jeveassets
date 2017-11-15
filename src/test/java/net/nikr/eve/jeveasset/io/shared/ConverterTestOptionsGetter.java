@@ -176,7 +176,7 @@ public class ConverterTestOptionsGetter {
 		private static final RawIndustryJob.IndustryJobStatus[] RAW_INDUSTRY_JOB_STATUS = RawIndustryJob.IndustryJobStatus.values();
 		private static final CharacterIndustryJobsResponse.StatusEnum[] ESI_INDUSTRY_JOB_STATUS_CHARACTER = CharacterIndustryJobsResponse.StatusEnum.values();
 		private static final CorporationIndustryJobsResponse.StatusEnum[] ESI_INDUSTRY_JOB_STATUS_CORPORATION = CorporationIndustryJobsResponse.StatusEnum.values();
-		private static final Integer[] EVE_API_INDUSTRY_JOB_STATUS = {1, 2, 3, 101, 102, 103};
+		private static final Integer[] EVE_API_INDUSTRY_JOB_STATUS = {1, 102, 101, 2, 3, 103};
 		//JournalPartyType
 		private static final RawJournal.JournalPartyType[] RAW_JOURNAL_PARTY_TYPE = RawJournal.JournalPartyType.values();
 		private static final CharacterWalletJournalResponse.FirstPartyTypeEnum[] ESI_JOURNAL_PARTY_TYPE_FIRST_CHARACTER = CharacterWalletJournalResponse.FirstPartyTypeEnum.values();
