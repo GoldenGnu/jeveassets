@@ -20,6 +20,8 @@
  */
 package net.nikr.eve.jeveasset.io.esi;
 
+import static org.junit.Assert.*;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -35,8 +37,8 @@ import net.troja.eve.esi.api.LocationApi;
 import net.troja.eve.esi.api.MarketApi;
 import net.troja.eve.esi.api.SovereigntyApi;
 import net.troja.eve.esi.api.UniverseApi;
+import net.troja.eve.esi.api.UserInterfaceApi;
 import net.troja.eve.esi.api.WalletApi;
-import static org.junit.Assert.*;
 import org.junit.Test;
 
 public class EsiDeprecationOnlineTest extends TestUtil {
@@ -335,6 +337,50 @@ public class EsiDeprecationOnlineTest extends TestUtil {
 		WalletApi api = new WalletApi();
 		try {
 			api.getCorporationsCorporationIdWalletsDivisionTransactions(1, 1, DATASOURCE, null, null, null, null);
+		} catch (ApiException ex) {
+
+		}
+		validate(api.getApiClient());
+	}
+
+	@Test
+	public void esiUiAutopilot() {
+		UserInterfaceApi api = new UserInterfaceApi();
+		try {
+			api.postUiAutopilotWaypoint(false, false, 1L, DATASOURCE, null, null, null);
+		} catch (ApiException ex) {
+
+		}
+		validate(api.getApiClient());
+	}
+
+	@Test
+	public void esiUiOpenWindowContract() {
+		UserInterfaceApi api = new UserInterfaceApi();
+		try {
+			api.postUiOpenwindowContract(1, DATASOURCE, null, null, null);
+		} catch (ApiException ex) {
+
+		}
+		validate(api.getApiClient());
+	}
+
+	@Test
+	public void esiUiOpenWindowInformation() {
+		UserInterfaceApi api = new UserInterfaceApi();
+		try {
+			api.postUiOpenwindowInformation(1, DATASOURCE, null, null, null);
+		} catch (ApiException ex) {
+
+		}
+		validate(api.getApiClient());
+	}
+
+	@Test
+	public void esiUiOpenWindowMarketDetails() {
+		UserInterfaceApi api = new UserInterfaceApi();
+		try {
+			api.postUiOpenwindowMarketdetails(1, DATASOURCE, null, null, null);
 		} catch (ApiException ex) {
 
 		}

@@ -84,7 +84,7 @@ public class JMenuJumps<T> extends MenuManager.JAutoMenu<T> {
 		removeAll();
 
 		add(jAddSelected);
-		jAddSelected.setEnabled(!menuData.getJumpLocations().isEmpty());
+		jAddSelected.setEnabled(!menuData.getSystemLocations().isEmpty());
 
 		add(jAddOther);
 
@@ -147,13 +147,13 @@ public class JMenuJumps<T> extends MenuManager.JAutoMenu<T> {
 		public void actionPerformed(final ActionEvent e) {
 			if (MenuJumpsAction.ADD_SELECTED.name().equals(e.getActionCommand())) {
 				//Add to settings
-				for (final MyLocation location : menuData.getJumpLocations()) {
+				for (final MyLocation location : menuData.getSystemLocations()) {
 					Settings.get().addJumpLocation(clazz, location);
 				}
 				//Update Data
 				updateJumpsData();
 				//Add to tab
-				for (final MyLocation location : menuData.getJumpLocations()) {
+				for (final MyLocation location : menuData.getSystemLocations()) {
 					addColumn(location);
 				}
 				//Update GUI

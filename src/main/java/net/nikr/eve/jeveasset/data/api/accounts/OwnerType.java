@@ -83,6 +83,8 @@ public interface OwnerType extends Comparable<OwnerType> {
 	public boolean isStructures();
 	public boolean isBlueprints();
 	public boolean isShip();
+	public boolean isOpenWindows();
+	public boolean isAutopilot();
 	//Last Update
 	public Date getAssetLastUpdate();
 	public Date getBalanceLastUpdate();

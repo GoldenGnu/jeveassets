@@ -130,6 +130,26 @@ public abstract class GuiShared extends Bundle {
 	public abstract String tagsNew();
 	public abstract String tagsNewMsg();
 	public abstract String tagsNewTitle();
+	public abstract String ui();
+	public abstract String uiAutopilot();
+	public abstract String uiAutopilotBeginning();
+	public abstract String uiAutopilotClear();
+	public abstract String uiAutopilotFail();
+	public abstract String uiAutopilotOk();
+	public abstract String uiAutopilotTitle();
+	public abstract String uiCharacterInvalidMsg();
+	public abstract String uiCharacterTitle();
+	public abstract String uiContract();
+	public abstract String uiContractFail();
+	public abstract String uiContractOk();
+	public abstract String uiContractTitle();
+	public abstract String uiLocationTitle();
+	public abstract String uiMarket();
+	public abstract String uiMarketFail();
+	public abstract String uiMarketOk();
+	public abstract String uiMarketTitle();
+	public abstract String uiStation();
+	public abstract String uiSystem();
 	public abstract String updating();
 
 	public abstract String today(Object arg0);

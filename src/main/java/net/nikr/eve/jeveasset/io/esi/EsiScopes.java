@@ -34,6 +34,8 @@ public enum EsiScopes {
 	CHARACTER_STRUCTURES(SsoScopes.ESI_UNIVERSE_READ_STRUCTURES_V1, DialoguesAccount.get().scopeStructures(), ScopeType.CHARACTER),
 	CHARACTER_SHIP_TYPE(SsoScopes.ESI_LOCATION_READ_SHIP_TYPE_V1, DialoguesAccount.get().scopeShipType(), ScopeType.CHARACTER),
 	CHARACTER_SHIP_LOCATION(SsoScopes.ESI_LOCATION_READ_LOCATION_V1, DialoguesAccount.get().scopeShipLocation(), ScopeType.CHARACTER),
+	CHARACTER_OPEN_WINDOWS(SsoScopes.ESI_UI_OPEN_WINDOW_V1, DialoguesAccount.get().scopeOpenWindows(), ScopeType.CHARACTER),
+	CHARACTER_AUTOPILOT(SsoScopes.ESI_UI_WRITE_WAYPOINT_V1, DialoguesAccount.get().scopeAutopilot(), ScopeType.CHARACTER),
 	CORPORATION_ROLES(SsoScopes.ESI_CHARACTERS_READ_CORPORATION_ROLES_V1, DialoguesAccount.get().scopeRoles(), ScopeType.CORPORATION, true),
 	CORPORATION_ASSETS(SsoScopes.ESI_ASSETS_READ_CORPORATION_ASSETS_V1, DialoguesAccount.get().scopeAssets(), ScopeType.CORPORATION),
 	CORPORATION_WALLET(SsoScopes.ESI_WALLET_READ_CORPORATION_WALLETS_V1, DialoguesAccount.get().scopeWallet(), ScopeType.CORPORATION),
