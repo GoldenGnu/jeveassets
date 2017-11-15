@@ -64,6 +64,10 @@ public abstract class TabsRouting extends Bundle {
 	public abstract String overviewGroup(Object arg0);
 	public abstract String remove();
 	public abstract String resultArrow();
+	public abstract String resultUi();
+	public abstract String resultUiFail();
+	public abstract String resultUiOk();
+	public abstract String resultUiWaypoints();
 	public abstract String resultOverwrite();
 	public abstract String resultTabFull();
 	public abstract String resultTabInfo();

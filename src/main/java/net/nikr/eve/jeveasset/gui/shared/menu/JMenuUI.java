@@ -57,7 +57,7 @@ public class JMenuUI <T> extends MenuManager.JAutoMenu<T> {
 		CONTRACTS
 	}
 
-	private enum EsiOwnerRequirement {
+	public static enum EsiOwnerRequirement {
 		AUTOPILOT,
 		OPEN_WINDOW,
 	}
@@ -117,15 +117,21 @@ public class JMenuUI <T> extends MenuManager.JAutoMenu<T> {
 	}
 
 	private JLockWindow getLockWindow() {
+		return getLockWindow(program);
+	}
+
+	public static JLockWindow getLockWindow(Program program) {
 		if (jLockWindow == null) {
 			jLockWindow = new JLockWindow(program.getMainWindow().getFrame());
 		}
 		return jLockWindow;
 	}
 
-	
-
 	private EsiOwner selectOwner(EsiOwnerRequirement requirement) {
+		return selectOwner(program, requirement);
+	}
+
+	public static EsiOwner selectOwner(Program program, EsiOwnerRequirement requirement) {
 		List<EsiOwner> owners = new ArrayList<EsiOwner>();
 		for (EsiOwner owner : program.getProfileManager().getEsiOwners()) {
 			if (requirement == EsiOwnerRequirement.OPEN_WINDOW && owner.isOpenWindows()) {
@@ -274,7 +280,7 @@ public class JMenuUI <T> extends MenuManager.JAutoMenu<T> {
 		}
 	}
 
-	private abstract class EsiUpdate implements JLockWindow.LockWorker {
+	public static abstract class EsiUpdate implements JLockWindow.LockWorker {
 
 		private boolean ok;
 
