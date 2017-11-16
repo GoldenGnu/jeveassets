@@ -85,7 +85,11 @@ public final class ItemsReader extends AbstractXmlReader<Boolean> {
 		} else {
 			product = 0;
 		}
-		return new Item(id, name, group, category, price, volume, meta, tech, marketGroup, piMaterial, portion, product);
+		int productQuantity = 1;
+		if (AttributeGetters.haveAttribute(node, "productquantity")) {
+			productQuantity = AttributeGetters.getInt(node, "productquantity");
+		}
+		return new Item(id, name, group, category, price, volume, meta, tech, marketGroup, piMaterial, portion, product, productQuantity);
 	}
 
 	private void parseMaterials(final Element element, final Item item) throws XmlException {

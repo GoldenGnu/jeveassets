@@ -661,9 +661,9 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType {
 							)
 							&& filter.isJobs()) {
 						if (add) { //Match
-							jobsCountNow = jobsCountNow + (industryJob.getRuns() * industryJob.getPortion());
+							jobsCountNow = jobsCountNow + (industryJob.getRuns() * industryJob.getProductQuantity());
 						} else {
-							count = count + (industryJob.getRuns() * industryJob.getPortion());
+							count = count + (industryJob.getRuns() * industryJob.getProductQuantity());
 						}
 					} else {
 						continue; //Do not match - try next filter
