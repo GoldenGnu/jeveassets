@@ -131,12 +131,12 @@ public abstract class GuiShared extends Bundle {
 	public abstract String tagsNewMsg();
 	public abstract String tagsNewTitle();
 	public abstract String ui();
-	public abstract String uiAutopilot();
-	public abstract String uiAutopilotBeginning();
-	public abstract String uiAutopilotClear();
-	public abstract String uiAutopilotFail();
-	public abstract String uiAutopilotOk();
-	public abstract String uiAutopilotTitle();
+	public abstract String uiWaypoint();
+	public abstract String uiWaypointBeginning();
+	public abstract String uiWaypointClear();
+	public abstract String uiWaypointFail();
+	public abstract String uiWaypointOk();
+	public abstract String uiWaypointTitle();
 	public abstract String uiCharacterInvalidMsg();
 	public abstract String uiCharacterTitle();
 	public abstract String uiContract();

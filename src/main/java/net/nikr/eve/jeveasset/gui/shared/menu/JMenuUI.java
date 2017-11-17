@@ -62,7 +62,7 @@ public class JMenuUI <T> extends MenuManager.JAutoMenu<T> {
 		OPEN_WINDOW,
 	}
 	
-	private final JMenu jAutopilot;
+	private final JMenu jWaypoints;
 	private final JMenuItem jSystem;
 	private final JMenuItem jStation;
 	private final JMenuItem jMarket;
@@ -77,21 +77,21 @@ public class JMenuUI <T> extends MenuManager.JAutoMenu<T> {
 
 		ListenerClass listener = new ListenerClass();
 
-		jAutopilot = new JMenu(GuiShared.get().uiAutopilot());
-		jAutopilot.setIcon(Images.TOOL_ROUTING.getIcon());
-		add(jAutopilot);
+		jWaypoints = new JMenu(GuiShared.get().uiWaypoint());
+		jWaypoints.setIcon(Images.TOOL_ROUTING.getIcon());
+		add(jWaypoints);
 
 		jStation = new JMenuItem(GuiShared.get().uiStation());
 		jStation.setIcon(Images.LOC_STATION.getIcon());
 		jStation.setActionCommand(MenuUIAction.AUTOPILOT_STATION.name());
 		jStation.addActionListener(listener);
-		jAutopilot.add(jStation);
+		jWaypoints.add(jStation);
 
 		jSystem = new JMenuItem(GuiShared.get().uiSystem());
 		jSystem.setIcon(Images.LOC_SYSTEM.getIcon());
 		jSystem.setActionCommand(MenuUIAction.AUTOPILOT_SYSTEM.name());
 		jSystem.addActionListener(listener);
-		jAutopilot.add(jSystem);
+		jWaypoints.add(jSystem);
 
 		jMarket = new JMenuItem(GuiShared.get().uiMarket());
 		jMarket.setIcon(Images.TOOL_MARKET_ORDERS.getIcon());
@@ -109,7 +109,7 @@ public class JMenuUI <T> extends MenuManager.JAutoMenu<T> {
 	@Override
 	public void setMenuData(MenuData<T> menuData) {
 		this.menuData = menuData;
-		jAutopilot.setEnabled(menuData.getSystemLocations().size() == 1 || menuData.getAutopilotStationLocations().size() == 1 || menuData.getContracts().size() == 1);
+		jWaypoints.setEnabled(menuData.getSystemLocations().size() == 1 || menuData.getAutopilotStationLocations().size() == 1 || menuData.getContracts().size() == 1);
 		jStation.setEnabled(menuData.getAutopilotStationLocations().size() == 1 || menuData.getContracts().size() == 1);
 		jSystem.setEnabled(menuData.getSystemLocations().size() == 1 || menuData.getContracts().size() == 1);
 		jMarket.setEnabled(menuData.getMarketTypeIDs().size() == 1);
@@ -175,12 +175,12 @@ public class JMenuUI <T> extends MenuManager.JAutoMenu<T> {
 	private void setAutopilot(Long locationID, EsiOwner owner) {
 		boolean addToBeginning;
 		boolean clearOtherWaypoints;
-		int clearValue = JOptionPane.showConfirmDialog(program.getMainWindow().getFrame(), GuiShared.get().uiAutopilotClear(), GuiShared.get().uiAutopilotTitle(), JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE);
+		int clearValue = JOptionPane.showConfirmDialog(program.getMainWindow().getFrame(), GuiShared.get().uiWaypointClear(), GuiShared.get().uiWaypointTitle(), JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE);
 		clearOtherWaypoints = clearValue == JOptionPane.YES_OPTION;
 		if (clearOtherWaypoints) {
 			addToBeginning = false;
 		} else {
-			int beginningValue = JOptionPane.showConfirmDialog(program.getMainWindow().getFrame(), GuiShared.get().uiAutopilotBeginning(), GuiShared.get().uiAutopilotTitle(), JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE);
+			int beginningValue = JOptionPane.showConfirmDialog(program.getMainWindow().getFrame(), GuiShared.get().uiWaypointBeginning(), GuiShared.get().uiWaypointTitle(), JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE);
 			addToBeginning = beginningValue == JOptionPane.YES_OPTION;
 		}
 		getLockWindow().show(GuiShared.get().updating(), new EsiUpdate() {
@@ -190,11 +190,11 @@ public class JMenuUI <T> extends MenuManager.JAutoMenu<T> {
 			}
 			@Override
 			protected void ok() {
-				JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), GuiShared.get().uiAutopilotOk(), GuiShared.get().uiAutopilotTitle(), JOptionPane.PLAIN_MESSAGE);
+				JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), GuiShared.get().uiWaypointOk(), GuiShared.get().uiWaypointTitle(), JOptionPane.PLAIN_MESSAGE);
 			}
 			@Override
 			protected void fail() {
-				JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), GuiShared.get().uiAutopilotFail(), GuiShared.get().uiAutopilotTitle(), JOptionPane.PLAIN_MESSAGE);
+				JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), GuiShared.get().uiWaypointFail(), GuiShared.get().uiWaypointTitle(), JOptionPane.PLAIN_MESSAGE);
 			}
 		});
 	}

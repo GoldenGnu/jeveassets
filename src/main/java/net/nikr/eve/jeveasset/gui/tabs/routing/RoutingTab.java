@@ -1250,11 +1250,11 @@ public class RoutingTab extends JMainTabSecondary {
 					}
 					@Override
 					protected void ok() {
-						JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), TabsRouting.get().resultUiOk(), GuiShared.get().uiAutopilotTitle(), JOptionPane.PLAIN_MESSAGE);
+						JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), TabsRouting.get().resultUiOk(), GuiShared.get().uiWaypointTitle(), JOptionPane.PLAIN_MESSAGE);
 					}
 					@Override
 					protected void fail() {
-						JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), TabsRouting.get().resultUiFail(), GuiShared.get().uiAutopilotTitle(), JOptionPane.PLAIN_MESSAGE);
+						JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), TabsRouting.get().resultUiFail(), GuiShared.get().uiWaypointTitle(), JOptionPane.PLAIN_MESSAGE);
 					}
 				});
 			}
