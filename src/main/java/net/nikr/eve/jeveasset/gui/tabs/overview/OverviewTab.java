@@ -223,7 +223,7 @@ public class OverviewTab extends JMainTabSecondary {
 		enumColumns.addAll(Arrays.asList(OverviewTableFormat.values()));
 		List<EventList<Overview>> eventLists = new ArrayList<EventList<Overview>>();
 		eventLists.add(sortedList);
-		exportDialog = new ExportDialog<Overview>(program.getMainWindow().getFrame(), NAME, null, new MaterialsFilterControl(), eventLists, enumColumns);
+		exportDialog = new ExportDialog<Overview>(program.getMainWindow().getFrame(), NAME, null, new OverviewFilterControl(), eventLists, enumColumns);
 
 		jVolume = StatusPanel.createLabel(TabsOverview.get().totalVolume(), Images.ASSETS_VOLUME.getIcon());
 		this.addStatusbarLabel(jVolume);
@@ -651,7 +651,7 @@ public class OverviewTab extends JMainTabSecondary {
 		}
 	}
 
-	private class MaterialsFilterControl extends ExportFilterControl<Overview> {
+	private class OverviewFilterControl extends ExportFilterControl<Overview> {
 
 		@Override
 		protected EnumTableColumn<?> valueOf(final String column) {
