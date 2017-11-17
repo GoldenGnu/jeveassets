@@ -87,9 +87,9 @@ public class AccountManagerDialog extends JDialogCentered {
 	private final DefaultEventSelectionModel<OwnerType> selectionModel;
 	private final JMigrateDialog jMigrateDialog;
 	private final JLockWindow jLockWindow;
+	private final Map<OwnerType, Boolean> ownersShownCache = new HashMap<OwnerType, Boolean>();
 
 	private boolean updated = false;
-	private Map<OwnerType, Boolean> ownersShownCache = new HashMap<OwnerType, Boolean>();
 
 	public AccountManagerDialog(final Program program) {
 		super(program, DialoguesAccount.get().dialogueNameAccountManagement(), Images.DIALOG_ACCOUNTS.getImage());
@@ -116,6 +116,7 @@ public class AccountManagerDialog extends JDialogCentered {
 		jTable.setSeparatorEditor(new AccountSeparatorTableCell(this, listener, jTable, separatorList));
 
 		JScrollPane jTableScroll = new JScrollPane(jTable);
+		jTableScroll.getVerticalScrollBar().setUnitIncrement(19);
 
 		selectionModel = EventModels.createSelectionModel(separatorList);
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
@@ -147,7 +148,6 @@ public class AccountManagerDialog extends JDialogCentered {
 		jExpand.addActionListener(listener);
 
 		jAssets = new JDropDownButton(DialoguesAccount.get().showAssets());
-		//jAssets.setIcon( ImageGetter.getIcon( "database_edit.png"));
 		JMenuItem menuItem;
 
 		menuItem = new JMenuItem(DialoguesAccount.get().checkAll());
@@ -180,7 +180,7 @@ public class AccountManagerDialog extends JDialogCentered {
 		layout.setHorizontalGroup(
 			layout.createParallelGroup()
 				.addGroup(layout.createParallelGroup(Alignment.TRAILING)
-					.addComponent(jTableScroll, 700, 700, Short.MAX_VALUE)
+					.addComponent(jTableScroll, 750, 750, Short.MAX_VALUE)
 					.addComponent(jClose, Program.getButtonsWidth(), Program.getButtonsWidth(), Program.getButtonsWidth())
 				)
 				.addGroup(layout.createSequentialGroup()
@@ -201,7 +201,7 @@ public class AccountManagerDialog extends JDialogCentered {
 					.addComponent(jExpand, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 					.addComponent(jAssets, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 				)
-				.addComponent(jTableScroll, 300, 300, Short.MAX_VALUE)
+				.addComponent(jTableScroll, 450, 450, Short.MAX_VALUE)
 				.addComponent(jClose, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 		);
 		// Pack then take the dialog dimensions to use as the minimun dimension.
@@ -315,6 +315,7 @@ public class AccountManagerDialog extends JDialogCentered {
 	public void setVisible(final boolean b) {
 		if (b) {
 			updated = false;
+			ownersShownCache.clear();
 			for (OwnerType ownerType : program.getProfileManager().getOwnerTypes()) {
 				ownersShownCache.put(ownerType, ownerType.isShowOwner());
 			}
