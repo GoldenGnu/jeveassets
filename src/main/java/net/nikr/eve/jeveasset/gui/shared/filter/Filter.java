@@ -285,20 +285,26 @@ public class Filter {
 		}
 	}
 
-	private LogicType logic;
-	private EnumTableColumn<?> column;
-	private CompareType compare;
-	private String text;
+	private final LogicType logic;
+	private final EnumTableColumn<?> column;
+	private final CompareType compare;
+	private final String text;
+	private final boolean enabled;
 
 	public Filter(final String logic, final EnumTableColumn<?> column, final String compare, final String text) {
-		this(LogicType.valueOf(logic), column, CompareType.valueOf(compare), text);
+		this(LogicType.valueOf(logic), column, CompareType.valueOf(compare), text, true);
 	}
 
 	public Filter(final LogicType logic, final EnumTableColumn<?> column, final CompareType compare, final String text) {
+		this(logic, column, compare, text, true);
+	}
+
+	public Filter(final LogicType logic, final EnumTableColumn<?> column, final CompareType compare, final String text, final boolean enabled) {
 		this.logic = logic;
 		this.column = column;
 		this.compare = compare;
 		this.text = text;
+		this.enabled = enabled;
 	}
 
 	public EnumTableColumn<?> getColumn() {
@@ -319,6 +325,10 @@ public class Filter {
 
 	public boolean isEmpty() {
 		return text.isEmpty();
+	}
+
+	public boolean isEnabled() {
+		return enabled;
 	}
 
 	public String getText() {
