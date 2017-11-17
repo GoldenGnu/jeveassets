@@ -74,5 +74,6 @@ public abstract class DialoguesExport extends Bundle {
 	public abstract String viewCurrent();
 	public abstract String viewSaved();
 	public abstract String viewSelect();
+	public abstract String viewSelectAll();
 	public abstract String viewNoSaved();
 }

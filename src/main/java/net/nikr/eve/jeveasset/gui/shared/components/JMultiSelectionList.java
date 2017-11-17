@@ -286,7 +286,8 @@ public class JMultiSelectionList<T> extends JList<T> {
 		//set selected indices
 		setSelectedIndices(arr);
 	}
-	private void toggleSelectAll() {
+
+	public void toggleSelectAll() {
 		if (!isEnabled()) {
 			return;
 		} //Ingnore update when disabled

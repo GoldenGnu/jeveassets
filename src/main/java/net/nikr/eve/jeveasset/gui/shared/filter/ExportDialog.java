@@ -110,6 +110,7 @@ public class ExportDialog<E> extends JDialogCentered {
 	private final JRadioButton jViewSaved;
 	private final JComboBox<String> jViews;
 	private final JMultiSelectionList<EnumTableColumn<E>> jColumnSelection;
+	private final JButton jViewSelectAll;
 	//Format
 	private final JRadioButton jCsv;
 	private final JRadioButton jHtml;
@@ -328,8 +329,17 @@ public class ExportDialog<E> extends JDialogCentered {
 			columns.put(column.name(), column);
 		}
 
+		jViewSelectAll = new JButton(DialoguesExport.get().viewSelectAll());
+		jViewSelectAll.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				jColumnSelection.toggleSelectAll();
+			}
+		});
+		jViewSelectAll.setEnabled(false);
+
 		jColumnSelection = new JMultiSelectionList<EnumTableColumn<E>>(columnIndex);
-		jColumnSelection.selectAll();
+		jColumnSelection.clearSelection();
 		jColumnSelection.setEnabled(false);
 
 		JScrollPane jColumnSelectionPanel = new JScrollPane(jColumnSelection);
@@ -343,17 +353,16 @@ public class ExportDialog<E> extends JDialogCentered {
 			columnLayout.createParallelGroup()
 					.addComponent(jViewCurrent)
 					.addComponent(jViewSaved)
-					.addGroup(columnLayout.createParallelGroup(GroupLayout.Alignment.TRAILING)
-						.addGroup(columnLayout.createSequentialGroup()
-							.addGap(20)
-							.addComponent(jViews, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Integer.MAX_VALUE)
-						)
-					)
 					.addComponent(jViewSelect)
 					.addGroup(columnLayout.createParallelGroup(GroupLayout.Alignment.TRAILING)
 						.addGroup(columnLayout.createSequentialGroup()
 							.addGap(20)
-							.addComponent(jColumnSelectionPanel, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Integer.MAX_VALUE)
+							.addGroup(columnLayout.createParallelGroup(GroupLayout.Alignment.TRAILING)
+								.addComponent(jViews, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Integer.MAX_VALUE)
+								.addComponent(jViewSelectAll, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Integer.MAX_VALUE)
+								.addComponent(jColumnSelectionPanel, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Integer.MAX_VALUE)
+								
+							)
 						)
 					)
 		);
@@ -364,6 +373,7 @@ public class ExportDialog<E> extends JDialogCentered {
 					.addComponent(jViews, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 					.addComponent(jViewSelect, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 					.addComponent(jColumnSelectionPanel, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Integer.MAX_VALUE)
+					.addComponent(jViewSelectAll, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 		);
 	//Buttons
 		JSeparator jButtonSeparator = new JSeparator();
@@ -552,7 +562,7 @@ public class ExportDialog<E> extends JDialogCentered {
 		jColumnSelection.clearSelection();
 		List<String> list = Settings.get().getExportSettings().getTableExportColumns(toolName);
 		if (list == null) {
-			jColumnSelection.selectAll();
+			jColumnSelection.clearSelection();
 		} else {
 			List<Integer> selections = new ArrayList<Integer>();
 			for (String column : list) {
@@ -862,6 +872,7 @@ public class ExportDialog<E> extends JDialogCentered {
 			} else if (ExportAction.VIEW_CHANGED.name().equals(e.getActionCommand())) {
 				jViews.setEnabled(jViewSaved.isSelected());
 				jColumnSelection.setEnabled(jViewSelect.isSelected());
+				jViewSelectAll.setEnabled(jViewSelect.isSelected());
 			}
 		}
 	}
