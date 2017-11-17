@@ -191,12 +191,13 @@ class FilterGui<E> {
 
 	String getCurrentFilterName() {
 		String filterName = GuiShared.get().filterUntitled();
-		if (getFilters().isEmpty()) {
+		List<Filter> filters = getFilters(true);
+		if (filters.isEmpty()) {
 			filterName = GuiShared.get().filterEmpty();
 		} else {
-			if (filterControl.getAllFilters().containsValue(getFilters())) {
+			if (filterControl.getAllFilters().containsValue(filters)) {
 				for (Map.Entry<String, List<Filter>> entry : filterControl.getAllFilters().entrySet()) {
-					if (entry.getValue().equals(getFilters())) {
+					if (entry.getValue().equals(filters)) {
 						filterName = entry.getKey();
 						break;
 					}
@@ -206,11 +207,11 @@ class FilterGui<E> {
 		return filterName;
 	}
 
-	List<Filter> getFilters() {
+	List<Filter> getFilters(boolean includeDisabled) {
 		List<Filter> filters = new ArrayList<Filter>();
 		for (FilterPanel<E> filterPanel : filterPanels) {
 			Filter filter = filterPanel.getFilter();
-			if (!filter.isEmpty()) {
+			if (!filter.isEmpty() && (filter.isEnabled() || includeDisabled)) {
 				filters.add(filter);
 			}
 		}
@@ -413,13 +414,14 @@ class FilterGui<E> {
 				return;
 			}
 			if (FilterGuiAction.SAVE.name().equals(e.getActionCommand())) {
-				if (getMatchers().isEmpty()) {
+				List<Filter> filters = getFilters(true);
+				if (filters.isEmpty()) {
 					JOptionPane.showMessageDialog(jFrame, GuiShared.get().nothingToSave(), GuiShared.get().saveFilter(), JOptionPane.PLAIN_MESSAGE);
 				} else {
 					String name = filterSave.show(new ArrayList<String>(filterControl.getFilters().keySet()), new ArrayList<String>(filterControl.getDefaultFilters().keySet()));
 					if (name != null && !name.isEmpty()) {
 						Settings.lock("Filter (New)"); //Lock for Filter (New)
-						filterControl.getFilters().put(name, getFilters());
+						filterControl.getFilters().put(name, filters);
 						Settings.unlock("Filter (New)"); //Unlock for Filter (New)
 						saveSettings("Filter (New)"); //Save Filter (New)
 						updateFilters();

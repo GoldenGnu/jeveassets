@@ -223,6 +223,7 @@ class FilterPanel<E> {
 	}
 
 	Filter getFilter() {
+		boolean enabled = jEnabled.isSelected();
 		LogicType logic = (LogicType) jLogic.getSelectedItem();
 		EnumTableColumn<?> column = (EnumTableColumn<?>) jColumn.getSelectedItem();
 		CompareType compare = (CompareType) jCompare.getSelectedItem();
@@ -235,7 +236,7 @@ class FilterPanel<E> {
 		} else {
 			text = jText.getText();
 		}
-		return new Filter(logic, column, compare, text);
+		return new Filter(logic, column, compare, text, enabled);
 	}
 
 	void setFilter(final Filter filter) {
