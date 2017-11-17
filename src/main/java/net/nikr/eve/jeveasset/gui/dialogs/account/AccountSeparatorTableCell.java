@@ -11,6 +11,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JTable;
@@ -47,6 +48,7 @@ public class AccountSeparatorTableCell extends SeparatorTableCell<OwnerType> {
 	private final JLabel jMigratedLabel;
 	private final JLabel jCanMigrateLabel;
 	private final JLabel jSpaceLabel;
+	private final JLabel jSeparatorLabel;
 
 	private final Color defaultColor;
 	private final AccountManagerDialog accountManagerDialog;
@@ -59,6 +61,10 @@ public class AccountSeparatorTableCell extends SeparatorTableCell<OwnerType> {
 
 		ListenerClass listener = new ListenerClass();
 
+		jSeparatorLabel = new JLabel();
+		jSeparatorLabel.setBackground(jTable.getBackground());
+		jSeparatorLabel.setOpaque(true);
+		jSeparatorLabel.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, jTable.getGridColor()));
 		jAccountType = new JLabel();
 
 		jEdit = new JButton(DialoguesAccount.get().edit());
@@ -94,25 +100,29 @@ public class AccountSeparatorTableCell extends SeparatorTableCell<OwnerType> {
 		jSpaceLabel = new JLabel();
 
 		layout.setHorizontalGroup(
-			layout.createSequentialGroup()
-				.addComponent(jExpand)
-				.addGap(1)
-				.addComponent(jEdit, Program.getButtonsWidth(), Program.getButtonsWidth(), Program.getButtonsWidth())
-				.addComponent(jMigrate, Program.getButtonsWidth(), Program.getButtonsWidth(), Program.getButtonsWidth())
-				.addComponent(jDelete, Program.getButtonsWidth(), Program.getButtonsWidth(), Program.getButtonsWidth())
-				.addGap(5)
-				.addComponent(jAccountType)
-				.addGap(5)
-				.addComponent(jAccountName, 20, 20, Integer.MAX_VALUE)
-				.addGap(10)
-				.addComponent(jExpiredLabel)
-				.addComponent(jInvalidLabel)
-				.addComponent(jMigratedLabel)
-				.addComponent(jCanMigrateLabel)
-				.addComponent(jSpaceLabel, 20, 20, Integer.MAX_VALUE)
+			layout.createParallelGroup()
+				.addComponent(jSeparatorLabel, 0, 0, Integer.MAX_VALUE)
+				.addGroup(layout.createSequentialGroup()
+					.addComponent(jExpand)
+					.addGap(1)
+					.addComponent(jEdit, Program.getButtonsWidth(), Program.getButtonsWidth(), Program.getButtonsWidth())
+					.addComponent(jMigrate, Program.getButtonsWidth(), Program.getButtonsWidth(), Program.getButtonsWidth())
+					.addComponent(jDelete, Program.getButtonsWidth(), Program.getButtonsWidth(), Program.getButtonsWidth())
+					.addGap(5)
+					.addComponent(jAccountType)
+					.addGap(5)
+					.addComponent(jAccountName, 20, 20, Integer.MAX_VALUE)
+					.addGap(10)
+					.addComponent(jExpiredLabel)
+					.addComponent(jInvalidLabel)
+					.addComponent(jMigratedLabel)
+					.addComponent(jCanMigrateLabel)
+					.addComponent(jSpaceLabel, 20, 20, Integer.MAX_VALUE)
+				)
 		);
 		layout.setVerticalGroup(
 			layout.createSequentialGroup()
+				.addComponent(jSeparatorLabel, jTable.getRowHeight(), jTable.getRowHeight(), jTable.getRowHeight())
 				.addGap(1)
 				.addGroup(layout.createParallelGroup()
 					.addComponent(jExpand, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
@@ -137,6 +147,7 @@ public class AccountSeparatorTableCell extends SeparatorTableCell<OwnerType> {
 		if (owner == null) { // handle 'late' rendering calls after this separator is invalid
 			return;
 		}
+		jSeparatorLabel.setVisible(currentRow != 0);
 		boolean allMigrated = false;
 		boolean canMigrate = false;
 		if (owner.getAccountAPI() == ApiType.EVE_ONLINE) {
