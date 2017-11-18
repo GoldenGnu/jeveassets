@@ -60,6 +60,7 @@ import net.troja.eve.esi.model.CorporationIndustryJobsResponse;
 import net.troja.eve.esi.model.CorporationOrdersResponse;
 import net.troja.eve.esi.model.CorporationWalletJournalExtraInfoResponse;
 import net.troja.eve.esi.model.CorporationWalletJournalResponse;
+import static org.junit.Assert.fail;
 
 public class ConverterTestOptionsGetter {
 
@@ -370,6 +371,10 @@ public class ConverterTestOptionsGetter {
 			//ESI Character
 			for (CharacterWalletJournalResponse.RefTypeEnum refTypeEnum : CharacterWalletJournalResponse.RefTypeEnum.values()) {
 				RawJournalRefType rawJournalRefType = RawConverter.toJournalRefType(refTypeEnum);
+				if (rawJournalRefType == null) {
+					fail(refTypeEnum.name() + " not found");
+					continue;
+				}
 				RefType refType = refTypes.get(rawJournalRefType.getID());
 				if (refType == null) {
 					refType = new RefType(rawJournalRefType);
@@ -380,6 +385,10 @@ public class ConverterTestOptionsGetter {
 			//ESI Corporation
 			for (CorporationWalletJournalResponse.RefTypeEnum refTypeEnum : CorporationWalletJournalResponse.RefTypeEnum.values()) {
 				RawJournalRefType rawJournalRefType = RawConverter.toJournalRefType(refTypeEnum);
+				if (rawJournalRefType == null) {
+					fail(refTypeEnum.name() + " not found");
+					continue;
+				}
 				RefType refType = refTypes.get(rawJournalRefType.getID());
 				if (refType == null) {
 					refType = new RefType(rawJournalRefType);
