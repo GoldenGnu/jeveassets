@@ -324,6 +324,10 @@ public class RawConverter {
 			switch (value) {
 				case KILL_RIGHT_FEE:
 					return RawJournalRefType.KILL_RIGHT;
+				case RESOURCE_WARS_REWARD:
+					return RawJournalRefType.RESOURCE_WARS_SITE_COMPLETION;
+				case REACTION:
+					return RawJournalRefType.REACTIONS;
 				default: return null;
 			}
 		}
@@ -336,6 +340,10 @@ public class RawConverter {
 			switch (value) {
 				case KILL_RIGHT_FEE:
 					return RawJournalRefType.KILL_RIGHT;
+				case RESOURCE_WARS_REWARD:
+					return RawJournalRefType.RESOURCE_WARS_SITE_COMPLETION;
+				case REACTION:
+					return RawJournalRefType.REACTIONS;
 				default: return null;
 			}
 		}
