@@ -27,6 +27,7 @@ import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
 import net.nikr.eve.jeveasset.data.api.my.MyAsset;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
+import net.nikr.eve.jeveasset.io.shared.RawConverter;
 import net.troja.eve.esi.ApiClient;
 import net.troja.eve.esi.ApiException;
 import net.troja.eve.esi.api.LocationApi;
@@ -63,11 +64,14 @@ public class EsiShipGetter extends AbstractEsiGetter {
 		//Update Assets (if active ship is not found)
 		if (!activeShipInAssets) {
 			List<MyAsset> activeShipChildren = new ArrayList<MyAsset>();
-			for (MyAsset asset : owner.getAssets()) {
+			for (MyAsset asset : owner.getAssets()) { //Root assets only
 				if (asset.getParents().isEmpty() && activeShip.getItemID().equals(asset.getLocationID())) { //Found Child
 					//Add asset to active ship
 					activeShip.addAsset(asset);
-					//asset needs to be removed from the root
+					//Update locationID from ItemID to locationID
+					asset.setLocationID(activeShip.getLocationID());
+					asset.setLocationType(RawConverter.toAssetLocationType(activeShip.getLocationID()));
+					//Add assets that needs to be removed from the root
 					activeShipChildren.add(asset);
 					//Set active ship as parent
 					asset.getParents().add(activeShip);
