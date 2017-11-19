@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import net.nikr.eve.jeveasset.data.api.my.MyAsset;
+import net.nikr.eve.jeveasset.data.api.my.MyContract;
 import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
 import net.nikr.eve.jeveasset.data.settings.tag.Tag;
@@ -44,7 +45,8 @@ import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 public class MenuData<T> {
 
 	private final Set<Integer> typeIDs = new HashSet<Integer>();
-	private final Set<MyLocation> jumpLocations = new HashSet<MyLocation>();
+	private final Set<MyLocation> autopilotStationLocations = new HashSet<MyLocation>();
+	private final Set<MyLocation> systemLocations = new HashSet<MyLocation>();
 	private final Set<MyLocation> editableCitadelLocations = new HashSet<MyLocation>();
 	private final Set<MyLocation> userLocations = new HashSet<MyLocation>();
 	private final Map<Integer, Double> prices = new HashMap<Integer, Double>();
@@ -58,6 +60,7 @@ public class MenuData<T> {
 	private final Map<Tag, Integer> tagCount = new HashMap<Tag, Integer>();
 	private final List<TagsType> tags = new ArrayList<TagsType>();
 	private final List<MyAsset> assets = new ArrayList<MyAsset>();
+	private final Set<MyContract> contracts = new HashSet<MyContract>();
 
 	public MenuData() { }
 
@@ -156,6 +159,7 @@ public class MenuData<T> {
 			}
 			if (location.getLocationID() != 0) { //Anything with a locationID
 				stationsAndCitadelsNames.add(location.getStation()); //Assets Station
+				autopilotStationLocations.add(location); //Autopilot Station
 			}
 			if (location.isEmpty()) {
 				continue; //Ignore empty locations for the rest of the loop
@@ -169,13 +173,13 @@ public class MenuData<T> {
 				//Jumps
 				MyLocation system = ApiIdConverter.getLocation(location.getSystemID());
 				if (!system.isEmpty()) {
-					jumpLocations.add(system); //Jumps System 
+					systemLocations.add(system); //Jumps and Autopilot System 
 				}
 			}
 			//System
 			if (location.isSystem()) {
 				systemNames.add(location.getSystem()); //Dotlan System
-				jumpLocations.add(location); //Jumps System 
+				systemLocations.add(location); //Jumps and Autopilot System 
 			}
 			//Staion, System, or Region
 			if (location.isStation() || location.isSystem() || location.isRegion()) {
@@ -237,9 +241,14 @@ public class MenuData<T> {
 		return regionNames;
 	}
 
-	//JMenuJumps
-	public Set<MyLocation> getJumpLocations() {
-		return jumpLocations;
+	//JMenuJumps and JMenuUI
+	public Set<MyLocation> getSystemLocations() {
+		return systemLocations;
+	}
+
+	//JMenuUI
+	public Set<MyLocation> getAutopilotStationLocations() {
+		return autopilotStationLocations;
 	}
 
 	//JMenuLocation
@@ -267,5 +276,14 @@ public class MenuData<T> {
 
 	public List<MyAsset> getAssets() {
 		return assets;
+	}
+
+	public Set<MyContract> getContracts() {
+		return contracts;
+	}
+
+	public void setContracts(Set<MyContract> contracts) {
+		this.contracts.clear();
+		this.contracts.addAll(contracts);
 	}
 }

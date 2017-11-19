@@ -53,7 +53,6 @@ public class EveKitTrackImportUpdateTask extends UpdateTask {
 	private final List<EveKitOwner> owners;
 	private final DateInterval dateInterval;
 	private final Merge merge;
-	private int totalProgress;
 	private ReturnValue returnValue;
 
 	public EveKitTrackImportUpdateTask(Program program, List<EveKitOwner> owners, DateInterval dateInterval, Merge merge) {
@@ -63,7 +62,6 @@ public class EveKitTrackImportUpdateTask extends UpdateTask {
 		this.owners = owners;
 		this.dateInterval = dateInterval;
 		this.merge = merge;
-		this.totalProgress = 0;
 	}
 
 	@Override
@@ -251,23 +249,6 @@ public class EveKitTrackImportUpdateTask extends UpdateTask {
 			}
 		}
 		setProgress(100);
-	}
-
-	public void setTotalProgress(final float end, final float done, final int start, final int max) {
-		int progress = Math.round(((done / end) * (max - start)) + start);
-		if (progress > 100) {
-			progress = 100;
-		} else if (progress < 0) {
-			progress = 0;
-		}
-		if (progress != getTotalProgress()) {
-			totalProgress = progress;
-		}
-	}
-
-	@Override
-	public Integer getTotalProgress() {
-		return totalProgress;
 	}
 
 	private boolean isEmpty(EveKitOwner owner) {

@@ -57,6 +57,7 @@ public class MenuManager<Q> {
 		STOCKPILE,
 		LOOKUP,
 		LOCATION,
+		UI,
 		PRICE,
 		NAME,
 		REPROCESSED,
@@ -154,6 +155,9 @@ public class MenuManager<Q> {
 		if (locationSupported) {
 			menus.put(MenuEnum.LOCATION, new JMenuLocation<Q>(program));
 		}
+		if (locationSupported || priceSupported || itemSupported) {
+			menus.put(MenuEnum.UI, new JMenuUI<Q>(program));
+		}
 	}
 
 	private void createMenu(JPopupMenu jPopupMenu) {
@@ -244,6 +248,11 @@ public class MenuManager<Q> {
 		JAutoMenu<Q> jLocation = menus.get(MenuEnum.LOCATION);
 		if (jLocation != null) {
 			jComponent.add(jLocation);
+			notEmpty = true;
+		}
+		JAutoMenu<Q> jUi = menus.get(MenuEnum.UI);
+		if (jUi != null) {
+			jComponent.add(jUi);
 			notEmpty = true;
 		}
 	//COLUMNS

@@ -193,7 +193,6 @@ public class MyIndustryJob extends RawIndustryJob implements Comparable<MyIndust
 	private IndustryJobState state;
 	private final Item item;
 	private final OwnerType owner;
-	private final int portion;
 	private final String name;
 	private double price;
 	private double outputValue;
@@ -202,11 +201,10 @@ public class MyIndustryJob extends RawIndustryJob implements Comparable<MyIndust
 	private RawBlueprint blueprint;
 	private MyLocation location;
 
-	public MyIndustryJob(final RawIndustryJob rawIndustryJob, final Item item, final OwnerType owner, final int portion) {
+	public MyIndustryJob(final RawIndustryJob rawIndustryJob, final Item item, final OwnerType owner) {
 		super(rawIndustryJob);
 		this.item = item;
 		this.owner = owner;
-		this.portion = portion;
 
 		switch (getActivityID()) {
 			case 0:
@@ -272,7 +270,10 @@ public class MyIndustryJob extends RawIndustryJob implements Comparable<MyIndust
 		}
 		switch (activity) {
 			case ACTIVITY_MANUFACTURING:
-				outputCount = getRuns() * portion;
+				outputCount = getRuns() * item.getProductQuantity();
+				break;
+			case ACTIVITY_REACTIONS:
+				outputCount = getRuns() * item.getProductQuantity();
 				break;
 			case ACTIVITY_COPYING:
 				outputCount = getRuns();
@@ -335,7 +336,7 @@ public class MyIndustryJob extends RawIndustryJob implements Comparable<MyIndust
 	}
 
 	public final boolean isManufacturing() {
-		return getActivity() == IndustryActivity.ACTIVITY_MANUFACTURING;
+		return getActivity() == IndustryActivity.ACTIVITY_MANUFACTURING || getActivity() == IndustryActivity.ACTIVITY_REACTIONS;
 	}
 
 	public final boolean isInvention() {
@@ -374,7 +375,7 @@ public class MyIndustryJob extends RawIndustryJob implements Comparable<MyIndust
 
 	public void setOutputPrice(double outputPrice) {
 		if (isManufacturing() && !isDelivered()) {
-			this.outputValue = outputPrice * getRuns() * getPortion();
+			this.outputValue = outputPrice * getRuns() * getProductQuantity();
 		} else {
 			this.outputValue = 0;
 		}
@@ -428,8 +429,8 @@ public class MyIndustryJob extends RawIndustryJob implements Comparable<MyIndust
 		return owner.getOwnerID();
 	}
 
-	public int getPortion() {
-		return portion;
+	public int getProductQuantity() {
+		return item.getProductQuantity();
 	}
 
 	@Override

@@ -256,7 +256,7 @@ public class ConverterTestUtil {
 	}
 
 	public static MyIndustryJob getMyIndustryJob(OwnerType owner, boolean setNull, boolean setValues, ConverterTestOptions options) {
-		MyIndustryJob industryJob = new MyIndustryJob(getRawIndustryJob(setNull, options), getItem(options), owner, 100);
+		MyIndustryJob industryJob = new MyIndustryJob(getRawIndustryJob(setNull, options), getItem(options), owner);
 		if (setValues) {
 			setValues(industryJob, options, null, false);
 		}

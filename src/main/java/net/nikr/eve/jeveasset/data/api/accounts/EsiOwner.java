@@ -271,6 +271,24 @@ public class EsiOwner extends AbstractOwner implements OwnerType {
 		}
 	}
 
+	@Override
+	public boolean isOpenWindows() {
+		if (isCorporation()) {
+			return false; //Character Endpoint
+		} else {
+			return EsiScopes.CHARACTER_OPEN_WINDOWS.isInScope(scopes);
+		}
+	}
+
+	@Override
+	public boolean isAutopilot() {
+		if (isCorporation()) {
+			return false; //Character Endpoint
+		} else {
+			return EsiScopes.CHARACTER_AUTOPILOT.isInScope(scopes);
+		}
+	}
+
 	public boolean isRoles() {
 		return EsiScopes.CORPORATION_ROLES.isInScope(scopes);
 	}

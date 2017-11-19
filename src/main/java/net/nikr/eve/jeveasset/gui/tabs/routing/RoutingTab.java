@@ -60,6 +60,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.SplashUpdater;
+import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
 import net.nikr.eve.jeveasset.data.api.my.MyAsset;
 import net.nikr.eve.jeveasset.data.sde.Jump;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
@@ -71,11 +72,14 @@ import net.nikr.eve.jeveasset.gui.shared.components.JDropDownButton;
 import net.nikr.eve.jeveasset.gui.shared.components.JFixedToolBar;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTabSecondary;
 import net.nikr.eve.jeveasset.gui.shared.components.ListComboBoxModel;
+import net.nikr.eve.jeveasset.gui.shared.menu.JMenuUI;
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewGroup;
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewLocation;
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewLocation.LocationType;
 import net.nikr.eve.jeveasset.i18n.General;
+import net.nikr.eve.jeveasset.i18n.GuiShared;
 import net.nikr.eve.jeveasset.i18n.TabsRouting;
+import net.nikr.eve.jeveasset.io.esi.AbstractEsiGetter;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -104,6 +108,7 @@ public class RoutingTab extends JMainTabSecondary {
 		ALGORITHM,
 		ALGORITHM_HELP,
 		CALCULATE,
+		EVE_UI,
 		AVOID_ADD,
 		AVOID_REMOVE,
 		AVOID_CLEAR,
@@ -151,6 +156,7 @@ public class RoutingTab extends JMainTabSecondary {
 	private JTextArea jResult;
 	private JTextArea jFullResult;
 	private JTextArea jInfo;
+	private JButton jEveUiSetRoute;
 	//Dialogs
 	private JSystemDialog jSystemDialog;
 	private JSaveSystemList jSaveSystemList;
@@ -165,6 +171,7 @@ public class RoutingTab extends JMainTabSecondary {
 	private double lastSecMax = 1.0;
 	private List<Long> lastAvoid = new ArrayList<Long>();
 	private boolean uiEnabled = true;
+	private List<SolarSystem> result = null;
 	/**
 	 *
 	 * @param load does nothing except change the signature.
@@ -467,6 +474,27 @@ public class RoutingTab extends JMainTabSecondary {
 		jInfo.setEditable(false);
 		jInfo.setFont(jPanel.getFont());
 
+		JPanel jEveUi = new JPanel();
+		GroupLayout eveUiLayout = new GroupLayout(jEveUi);
+		jEveUi.setLayout(eveUiLayout);
+		eveUiLayout.setAutoCreateGaps(true);
+		eveUiLayout.setAutoCreateContainerGaps(true);
+		
+
+		jEveUiSetRoute = new JButton(TabsRouting.get().resultUiWaypoints(), Images.MISC_EVE.getIcon());
+		jEveUiSetRoute.setActionCommand(RoutingAction.EVE_UI.name());
+		jEveUiSetRoute.addActionListener(listener);
+		jEveUiSetRoute.setEnabled(false);
+
+		eveUiLayout.setHorizontalGroup(
+			eveUiLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
+				.addComponent(jEveUiSetRoute)
+		);
+		eveUiLayout.setVerticalGroup(
+			eveUiLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
+				.addComponent(jEveUiSetRoute)
+		);
+
 		final JScrollPane jResultScroll = new JScrollPane(jResult, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
 		JScrollPane jFullResultScroll = new JScrollPane(jFullResult, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
 		jFullResultScroll.getVerticalScrollBar().setModel(jResultScroll.getVerticalScrollBar().getModel());
@@ -483,6 +511,7 @@ public class RoutingTab extends JMainTabSecondary {
 		jResultTabs.addTab(TabsRouting.get().resultTabShort(), jResultScroll);
 		jResultTabs.addTab(TabsRouting.get().resultTabFull(), jFullResultScroll);
 		jResultTabs.addTab(TabsRouting.get().resultTabInfo(), jInfoScroll);
+		jResultTabs.addTab(TabsRouting.get().resultUi(), jEveUi);
 
 		JTabbedPane jSystemTabs = new JTabbedPane();
 		jSystemTabs.addTab(TabsRouting.get().routingTab(), jRoutingPanel);
@@ -715,10 +744,10 @@ public class RoutingTab extends JMainTabSecondary {
 			}
 		}
 		MyLocation location = ApiIdConverter.getLocation(locationID);
-		if (location != null) {
+		if (!location.isEmpty()) {
 			location = ApiIdConverter.getLocation(location.getSystemID());
 		}
-		if (location != null) {
+		if (!location.isEmpty()) {
 			return new SolarSystem(location);
 		} else {
 			return null;
@@ -792,6 +821,8 @@ public class RoutingTab extends JMainTabSecondary {
 			jInfo.setText(TabsRouting.get().emptyResult());
 			jInfo.setCaretPosition(0);
 			jInfo.setEnabled(false);
+			jEveUiSetRoute.setEnabled(false);
+			result = null;
 			//Update all SolarSystem with the latest from the new Graph
 			//This is needed to get the proper Edge(s) parsed to the routing Algorithm
 			List<Node> inputWaypoints = new ArrayList<Node>();
@@ -824,6 +855,12 @@ public class RoutingTab extends JMainTabSecondary {
 				return;
 			} else { //Completed!
 				jProgress.setValue(jProgress.getMaximum());
+			}
+			result = new ArrayList<SolarSystem>();
+			for (Node node : route) {
+				if (node instanceof SolarSystem) {
+					result.add((SolarSystem) node);
+				}
 			}
 		//Info Result
 			final StringBuilder infoString = new StringBuilder();
@@ -901,6 +938,7 @@ public class RoutingTab extends JMainTabSecondary {
 					jFullResult.setCaretPosition(0);
 					jInfo.setText(infoString.toString());
 					jInfo.setEnabled(true);
+					jEveUiSetRoute.setEnabled(result.size() == route.size());
 				}
 			});
 		} catch (DisconnectedGraphException dce) {
@@ -1194,6 +1232,31 @@ public class RoutingTab extends JMainTabSecondary {
 					} //Else: Already in waypoints - do nothing
 					updateRemaining();
 				}
+			} else if (RoutingAction.EVE_UI.name().equals(e.getActionCommand())) {
+				EsiOwner owner = JMenuUI.selectOwner(program, JMenuUI.EsiOwnerRequirement.AUTOPILOT);
+				if (owner == null) {
+					return;
+				}
+				JMenuUI.getLockWindow(program).show(GuiShared.get().updating(), new JMenuUI.EsiUpdate() {
+					@Override
+					protected void updateESI() throws Throwable {
+						boolean clear = true;
+						for (SolarSystem system : result) {
+							getApi(owner).postUiAutopilotWaypoint(false, clear, system.getSystemID(), AbstractEsiGetter.DATASOURCE, null, null, null);
+							if (clear) {
+								clear = false;
+							}
+						}
+					}
+					@Override
+					protected void ok() {
+						JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), TabsRouting.get().resultUiOk(), GuiShared.get().uiWaypointTitle(), JOptionPane.PLAIN_MESSAGE);
+					}
+					@Override
+					protected void fail() {
+						JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), TabsRouting.get().resultUiFail(), GuiShared.get().uiWaypointTitle(), JOptionPane.PLAIN_MESSAGE);
+					}
+				});
 			}
 		}
 

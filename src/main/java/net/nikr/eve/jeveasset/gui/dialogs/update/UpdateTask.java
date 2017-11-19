@@ -56,6 +56,7 @@ public abstract class UpdateTask extends SwingWorker<Void, Void> {
 	private final JLabel jText;
 	private final List<ErrorClass> errors;
 	private final String name;
+	private Integer totalProgress = null;
 
 	private boolean errorShown = false;
 	private boolean taskDone = false;
@@ -69,8 +70,22 @@ public abstract class UpdateTask extends SwingWorker<Void, Void> {
 		errors = Collections.synchronizedList(new ArrayList<ErrorClass>());
 	}
 
+	public void setTotalProgress(final float end, final float done, final int start, final int max) {
+		int progress = Math.round(((done / end) * (max - start)) + start);
+		if (progress > 100) {
+			progress = 100;
+		} else if (progress < 0) {
+			progress = 0;
+		}
+		if (totalProgress == null || totalProgress != progress) {
+			Integer oldValue = totalProgress;
+			totalProgress = progress;
+			firePropertyChange("TotalProgress", oldValue, progress);
+		}
+	}
+
 	public Integer getTotalProgress() {
-		return null;
+		return totalProgress;
 	}
 
 	public String getName() {

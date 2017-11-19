@@ -49,6 +49,7 @@ import net.nikr.eve.jeveasset.gui.shared.components.JFixedToolBar;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTabPrimary;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
+import net.nikr.eve.jeveasset.gui.shared.menu.JMenuUI.ContractMenuData;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuData;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.TableMenu;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
@@ -175,7 +176,7 @@ public class ContractsTab extends JMainTabPrimary {
 
 		@Override
 		public MenuData<MyContractItem> getMenuData() {
-			return new MenuData<MyContractItem>(selectionModel.getSelected());
+			return new ContractMenuData(selectionModel.getSelected());
 		}
 
 		@Override

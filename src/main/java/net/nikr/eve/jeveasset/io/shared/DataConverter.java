@@ -227,8 +227,7 @@ public abstract class DataConverter {
 
 	public static MyIndustryJob toMyIndustryJob(RawIndustryJob rawIndustryJob, OwnerType owner) {
 		Item item = ApiIdConverter.getItem(rawIndustryJob.getBlueprintTypeID());
-		Item product = ApiIdConverter.getItem(item.getProduct());
-		return new MyIndustryJob(rawIndustryJob, item, owner, product.getPortion());
+		return new MyIndustryJob(rawIndustryJob, item, owner);
 	}
 
 	public static Set<MyJournal> convertRawJournals(List<RawJournal> rawJournals, OwnerType owner, boolean saveHistory) {

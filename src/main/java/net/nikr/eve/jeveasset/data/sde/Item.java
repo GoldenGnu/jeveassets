@@ -28,27 +28,28 @@ import net.nikr.eve.jeveasset.data.settings.types.ItemType;
 
 public class Item implements Comparable<Item>, ItemType {
 
-	private int typeID; //TypeID : int
-	private String name;
-	private String group;
-	private String category;
-	private long price;
-	private float volume;
-	private int meta;
-	private String tech;
-	private boolean marketGroup;
-	private boolean piMaterial;
-	private int portion;
-	private int product;
-	private boolean blueprint;
-	private List<ReprocessedMaterial> reprocessedMaterials = new ArrayList<ReprocessedMaterial>();
+	private final int typeID; //TypeID : int
+	private final String name;
+	private final String group;
+	private final String category;
+	private final long price;
+	private final float volume;
+	private final int meta;
+	private final String tech;
+	private final boolean marketGroup;
+	private final boolean piMaterial;
+	private final int portion;
+	private final int product;
+	private final int productQuantity;
+	private final boolean blueprint;
+	private final List<ReprocessedMaterial> reprocessedMaterials = new ArrayList<ReprocessedMaterial>();
 	private double priceReprocessed;
 
 	public Item(int typeID) {
-		this(typeID, emptyType(typeID), "", "", -1, -1, -1, "", false, false, 0, 0);
+		this(typeID, emptyType(typeID), "", "", -1, -1, -1, "", false, false, 0, 0, 1);
 	}
 
-	public Item(final int typeID, final String name, final String group, final String category, final long price, final float volume, final int meta, final String tech, final boolean marketGroup, final boolean piMaterial, final int portion, final int product) {
+	public Item(final int typeID, final String name, final String group, final String category, final long price, final float volume, final int meta, final String tech, final boolean marketGroup, final boolean piMaterial, final int portion, final int product, final int productQuantity) {
 		this.typeID = typeID;
 		this.name = name;
 		this.group = group;
@@ -61,6 +62,7 @@ public class Item implements Comparable<Item>, ItemType {
 		this.piMaterial = piMaterial;
 		this.portion = portion;
 		this.product = product;
+		this.productQuantity = productQuantity;
 		this.blueprint = (name.toLowerCase().contains("blueprint"));
 	}
 
@@ -130,6 +132,10 @@ public class Item implements Comparable<Item>, ItemType {
 
 	public int getProduct() {
 		return product;
+	}
+
+	public int getProductQuantity() {
+		return productQuantity;
 	}
 
 	public boolean isEmpty() {
