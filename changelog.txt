@@ -16,6 +16,35 @@
                   #### #  # #  # #  # #### #### #### #### ####
 
 ________________________________________________________________________________
+_5.1.0__________________________________________________________________________
+
+New Features:
+-Assets: Include active ship in space (ESI)
+-Table Menu: Open in-game market/contract windows and set waypoint
+-Routing Tool: Set in-game waypoints
+-Support reactions in Industry Jobs and Stockpile (counted as manufacturing)
+-Added more options to the structure update
+
+Bug Fixes:
+-Jumps menu clear was not working
+-Jump columns was sometimes empty
+-Editing unknown locations in the overview tool did not work
+-Fixed a lot of issues with menus that use locations
+-Industry Jobs Reactions was marked incorrectly
+-Industry Jobs now count canceled and reverted as delivered
+-Better BPO detection for Industry Jobs
+-Disabled filter was included when exporting
+-Fixed Journal update errors (ESI bug fix)
+
+Changed
+-Better Account Manager user interface
+-Better column selection in the export dialog
+
+Code:
+-Better uncaught exception handling
+-Update eve-esi to 1.4.6
+
+________________________________________________________________________________
 _5.0.5__________________________________________________________________________
 
 Bug Fixes:
