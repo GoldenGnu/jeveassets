@@ -78,10 +78,6 @@ public abstract class GuiFrame extends Bundle {
 	public abstract String update();
 	public abstract String update1();
 	public abstract String updateStructure();
-	public abstract String updateStructureMsg();
-	public abstract String updateStructureWait(String updatableIn);
-	public abstract String updateStructureInvalid();
-	public abstract String updateStructureTitle();
 	public abstract String values();
 	public abstract String valueTable();
 	public abstract String windowTitle(String programName, String programVersion, int portable, int profileCount, String activeProfileName);

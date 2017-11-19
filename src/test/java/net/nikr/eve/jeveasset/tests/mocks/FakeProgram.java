@@ -24,6 +24,7 @@ package net.nikr.eve.jeveasset.tests.mocks;
 import java.awt.event.ActionEvent;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.api.accounts.OwnerType;
 import net.nikr.eve.jeveasset.data.api.my.MyAccountBalance;
@@ -36,6 +37,7 @@ import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder;
 import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
 import net.nikr.eve.jeveasset.data.profile.ProfileData;
 import net.nikr.eve.jeveasset.data.profile.ProfileManager;
+import net.nikr.eve.jeveasset.data.sde.MyLocation;
 import net.nikr.eve.jeveasset.gui.dialogs.settings.UserLocationSettingsPanel;
 import net.nikr.eve.jeveasset.gui.dialogs.settings.UserNameSettingsPanel;
 import net.nikr.eve.jeveasset.gui.dialogs.settings.UserPriceSettingsPanel;
@@ -263,6 +265,11 @@ public abstract class FakeProgram extends Program {
 
 	@Override
 	public UserLocationSettingsPanel getUserLocationSettingsPanel() {
+		throw new UnsupportedOperationException("Not implemented");
+	}
+
+	@Override
+	public void updateStructures(Set<MyLocation> locations) {
 		throw new UnsupportedOperationException("Not implemented");
 	}
 }

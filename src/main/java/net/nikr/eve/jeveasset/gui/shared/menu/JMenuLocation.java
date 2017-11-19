@@ -30,8 +30,10 @@ import javax.swing.JOptionPane;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
 import net.nikr.eve.jeveasset.data.settings.Citadel;
+import net.nikr.eve.jeveasset.gui.dialogs.update.StructureUpdateDialog;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.JSelectionDialog;
+import net.nikr.eve.jeveasset.i18n.GuiFrame;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 import net.nikr.eve.jeveasset.io.online.CitadelGetter;
 
@@ -40,8 +42,11 @@ public class JMenuLocation<T> extends MenuManager.JAutoMenu<T> {
 
 	private enum MenuLocationAction {
 		EDIT,
-		CLEAR
+		CLEAR,
+		UPDATE
 	}
+
+	private final JMenuItem jUpdate;
 	private final JMenuItem jEdit;
 	private final JMenuItem jReset;
 	private final JSelectionDialog<MyLocation> jLocationDialog;
@@ -64,6 +69,14 @@ public class JMenuLocation<T> extends MenuManager.JAutoMenu<T> {
 
 		addSeparator();
 
+		jUpdate = new JMenuItem(GuiShared.get().updateStructures());
+		jUpdate.setIcon(Images.DIALOG_UPDATE.getIcon());
+		jUpdate.setActionCommand(MenuLocationAction.UPDATE.name());
+		jUpdate.addActionListener(listener);
+		add(jUpdate);
+
+		addSeparator();
+
 		jReset = new JMenuItem(GuiShared.get().itemDelete());
 		jReset.setIcon(Images.EDIT_DELETE.getIcon());
 		jReset.setActionCommand(MenuLocationAction.CLEAR.name());
@@ -71,12 +84,18 @@ public class JMenuLocation<T> extends MenuManager.JAutoMenu<T> {
 		add(jReset);
 	}
 
-	
-	
 	@Override
 	public void setMenuData(MenuData<T> menuData) {
 		this.menuData = menuData;
 		jEdit.setEnabled(!menuData.getEditableCitadelLocations().isEmpty());
+		jUpdate.setEnabled(!menuData.getEditableCitadelLocations().isEmpty());
+		if (StructureUpdateDialog.structuresUpdatable(program)) {
+			jUpdate.setIcon(Images.DIALOG_UPDATE.getIcon());
+			jUpdate.setToolTipText(GuiFrame.get().updatable());
+		} else {
+			jUpdate.setIcon(Images.DIALOG_UPDATE_DISABLED.getIcon());
+			jUpdate.setToolTipText(GuiFrame.get().not());
+		}
 		jReset.setEnabled(!menuData.getUserLocations().isEmpty());
 	}
 
@@ -116,6 +135,8 @@ public class JMenuLocation<T> extends MenuManager.JAutoMenu<T> {
 					CitadelGetter.set(citadel);
 					program.updateLocations(Collections.singleton(renameLocation.getLocationID()));
 				}
+			} else if (MenuLocationAction.UPDATE.name().equals(e.getActionCommand())) {
+				program.updateStructures(menuData.getEditableCitadelLocations());
 			}
 		}
 	}

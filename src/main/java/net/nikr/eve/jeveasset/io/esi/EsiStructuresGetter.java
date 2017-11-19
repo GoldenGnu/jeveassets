@@ -21,6 +21,7 @@
 package net.nikr.eve.jeveasset.io.esi;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -37,6 +38,7 @@ import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
 import net.nikr.eve.jeveasset.data.settings.Citadel;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
+import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.io.online.CitadelGetter;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 import net.troja.eve.esi.ApiClient;
@@ -48,16 +50,46 @@ import org.slf4j.LoggerFactory;
 public class EsiStructuresGetter extends AbstractEsiGetter {
 
 	private static final Logger LOG = LoggerFactory.getLogger(EsiStructuresGetter.class);
-	private static Set<Long> IDS;
-	private final List<OwnerType> ownerTypes;
-	
-	public EsiStructuresGetter(UpdateTask updateTask, EsiOwner owner, List<OwnerType> ownerTypes) {
+	private final static Set<Long> IDS = new HashSet<Long>();
+	private final static Set<Long> DONE = new HashSet<Long>();
+
+	public EsiStructuresGetter(UpdateTask updateTask, EsiOwner owner) {
 		super(updateTask, owner, false, owner.getStructuresNextUpdate(), TaskType.STRUCTURES, NO_RETRIES);
-		this.ownerTypes = ownerTypes;
 	}
 
-	public static void reset() {
-		IDS = null;
+	public static String estimate(List<EsiOwner> esiOwners,  List<OwnerType> ownerTypes, Set<MyLocation> locations) {
+		int total = 0;
+		if (locations != null) {
+			EsiStructuresGetter.createIDsFromLocations(locations);
+			total = IDS.size() * esiOwners.size();
+		} else if (ownerTypes != null) {
+			EsiStructuresGetter.createIDsFromOwners(ownerTypes);
+			total = IDS.size() * esiOwners.size();
+		} else {
+			DONE.clear();
+			for (EsiOwner esiOwner : esiOwners) {
+				total = total + buildIDs(esiOwner).size();
+			}
+		}
+		total = (int)(total / 100.0 * 60.0 * 1000.0); //100 errors a minute to ms
+		return Formater.milliseconds(total, true, true);
+	}
+
+	public static void createIDsFromOwners(List<OwnerType> ownerTypes) {
+		IDS.clear();
+		DONE.clear();
+		IDS.addAll(buildIDs(ownerTypes));
+	}
+
+	public static void createIDsFromLocations(Set<MyLocation> locations) {
+		IDS.clear();
+		DONE.clear();
+		IDS.addAll(buildIDs(locations));
+	}
+
+	public static void createIDsFromOwner() {
+		IDS.clear();
+		DONE.clear();
 	}
 
 	@Override
@@ -65,7 +97,10 @@ public class EsiStructuresGetter extends AbstractEsiGetter {
 		if (owner.isCorporation()) {
 			return; //Corporation accounts don't get structures
 		}
-		buildIDs(ownerTypes);
+		boolean ownerUpdate = IDS.isEmpty();
+		if (ownerUpdate) {
+			IDS.addAll(buildIDs(owner));
+		}
 		Map<Long, StructureResponse> responses = updateListSlow(IDS, true, DEFAULT_RETRIES, new ListHandlerSlow<Long, StructureResponse>() {
 			@Override
 			public StructureResponse get(ApiClient apiClient, Long k) throws ApiException {
@@ -88,6 +123,12 @@ public class EsiStructuresGetter extends AbstractEsiGetter {
 		for (Map.Entry<Long, StructureResponse> entry : responses.entrySet()) {
 			citadels.add(ApiIdConverter.getCitadel(entry.getValue(), entry.getKey()));
 		}
+		if (ownerUpdate) {
+			DONE.addAll(responses.keySet()); //Add Completed
+			IDS.clear();
+		} else {
+			IDS.removeAll(responses.keySet()); //Remove completed structures
+		}
 		CitadelGetter.set(citadels);
 	}
 
@@ -105,35 +146,49 @@ public class EsiStructuresGetter extends AbstractEsiGetter {
 		}
 	}
 
-	private static synchronized void buildIDs(List<OwnerType> ownerTypes) {
-		if (IDS == null) {
-			Set<Long> itemIDs = new HashSet<Long>();
-			Set<Long> locationIDs = new HashSet<Long>();
-			for (OwnerType ownerType : ownerTypes) {
-				for (RawAsset asset : ownerType.getAssets()) {
-					add(locationIDs, asset.getLocationID());
-				}
-				getAssetItemIDs(itemIDs, ownerType.getAssets());
-				for (RawBlueprint blueprint : ownerType.getBlueprints().values()) {
-					itemIDs.add(blueprint.getItemID());
-					add(locationIDs, blueprint.getLocationID());
-				}
-				for (RawContract contract : ownerType.getContracts().keySet()) {
-					add(locationIDs, contract.getEndLocationID());
-					add(locationIDs, contract.getStartLocationID());
-				}
-				for (MyIndustryJob industryJob : ownerType.getIndustryJobs()) {
-					add(locationIDs, industryJob.getStationID());
-					add(locationIDs, industryJob.getBlueprintLocationID());
-					add(locationIDs, industryJob.getOutputLocationID());
-				}
-				for (RawMarketOrder marketOrder : ownerType.getMarketOrders()) {
-					add(locationIDs, marketOrder.getLocationID());
-				}
+	private static Set<Long> buildIDs(EsiOwner esiOwner) {
+		Set<Long> locationIDs = buildIDs(Collections.singletonList(esiOwner));
+		locationIDs.removeAll(DONE);
+		return locationIDs;
+	}
+
+	private static Set<Long> buildIDs(Set<MyLocation> locations) {
+		Set<Long> locationIDs = new HashSet<Long>();
+		for (MyLocation locationEnd : locations) {
+			if (locationEnd.isEmpty() || locationEnd.isUserLocation() || locationEnd.isCitadel()) {
+				locationIDs.add(locationEnd.getLocationID());
 			}
-			locationIDs.removeAll(itemIDs);
-			IDS = locationIDs;
 		}
+		return locationIDs;
+	}
+
+	private static Set<Long> buildIDs(List<OwnerType> ownerTypes) {
+		Set<Long> itemIDs = new HashSet<Long>();
+		Set<Long> locationIDs = new HashSet<Long>();
+		for (OwnerType ownerType : ownerTypes) {
+			for (RawAsset asset : ownerType.getAssets()) {
+				add(locationIDs, asset.getLocationID());
+			}
+			getAssetItemIDs(itemIDs, ownerType.getAssets());
+			for (RawBlueprint blueprint : ownerType.getBlueprints().values()) {
+				itemIDs.add(blueprint.getItemID());
+				add(locationIDs, blueprint.getLocationID());
+			}
+			for (RawContract contract : ownerType.getContracts().keySet()) {
+				add(locationIDs, contract.getEndLocationID());
+				add(locationIDs, contract.getStartLocationID());
+			}
+			for (MyIndustryJob industryJob : ownerType.getIndustryJobs()) {
+				add(locationIDs, industryJob.getStationID());
+				add(locationIDs, industryJob.getBlueprintLocationID());
+				add(locationIDs, industryJob.getOutputLocationID());
+			}
+			for (RawMarketOrder marketOrder : ownerType.getMarketOrders()) {
+				add(locationIDs, marketOrder.getLocationID());
+			}
+		}
+		locationIDs.removeAll(itemIDs);
+		return locationIDs;
 	}
 
 	private static void getAssetItemIDs(Set<Long> itemIDs, List<MyAsset> assets) {
@@ -150,9 +205,9 @@ public class EsiStructuresGetter extends AbstractEsiGetter {
 		if (locationID < 100000000) {
 			return;
 		}
-		MyLocation locationEnd = ApiIdConverter.getLocation(locationID);
-		if (locationEnd.isEmpty() || locationEnd.isUserLocation() || locationEnd.isCitadel()) {
-			locationIDs.add(locationEnd.getLocationID());
+		MyLocation location = ApiIdConverter.getLocation(locationID);
+		if (location.isEmpty() || location.isUserLocation() || location.isCitadel()) {
+			locationIDs.add(location.getLocationID());
 		}
 	}
 }

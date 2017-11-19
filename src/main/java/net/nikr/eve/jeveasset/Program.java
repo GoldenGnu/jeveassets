@@ -26,8 +26,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -37,7 +35,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
-import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
 import net.nikr.eve.jeveasset.data.api.accounts.OwnerType;
 import net.nikr.eve.jeveasset.data.api.my.MyAccountBalance;
 import net.nikr.eve.jeveasset.data.api.my.MyAsset;
@@ -49,6 +46,7 @@ import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder;
 import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
 import net.nikr.eve.jeveasset.data.profile.ProfileData;
 import net.nikr.eve.jeveasset.data.profile.ProfileManager;
+import net.nikr.eve.jeveasset.data.sde.MyLocation;
 import net.nikr.eve.jeveasset.data.sde.StaticData;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.data.settings.tag.TagUpdate;
@@ -60,14 +58,12 @@ import net.nikr.eve.jeveasset.gui.dialogs.settings.SettingsDialog;
 import net.nikr.eve.jeveasset.gui.dialogs.settings.UserLocationSettingsPanel;
 import net.nikr.eve.jeveasset.gui.dialogs.settings.UserNameSettingsPanel;
 import net.nikr.eve.jeveasset.gui.dialogs.settings.UserPriceSettingsPanel;
-import net.nikr.eve.jeveasset.gui.dialogs.update.TaskDialog;
+import net.nikr.eve.jeveasset.gui.dialogs.update.StructureUpdateDialog;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateDialog;
-import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import net.nikr.eve.jeveasset.gui.frame.MainMenu.MainMenuAction;
 import net.nikr.eve.jeveasset.gui.frame.MainWindow;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
 import net.nikr.eve.jeveasset.gui.images.Images;
-import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.Updatable;
 import net.nikr.eve.jeveasset.gui.shared.components.JLockWindow;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
@@ -89,10 +85,7 @@ import net.nikr.eve.jeveasset.gui.tabs.tree.TreeTab;
 import net.nikr.eve.jeveasset.gui.tabs.values.DataSetCreator;
 import net.nikr.eve.jeveasset.gui.tabs.values.ValueRetroTab;
 import net.nikr.eve.jeveasset.gui.tabs.values.ValueTableTab;
-import net.nikr.eve.jeveasset.i18n.DialoguesUpdate;
-import net.nikr.eve.jeveasset.i18n.GuiFrame;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
-import net.nikr.eve.jeveasset.io.esi.EsiStructuresGetter;
 import net.nikr.eve.jeveasset.io.online.PriceDataGetter;
 import net.nikr.eve.jeveasset.io.online.Updater;
 import net.nikr.eve.jeveasset.io.shared.DesktopUtil;
@@ -148,6 +141,7 @@ public class Program implements ActionListener {
 	private ReprocessedTab reprocessedTab;
 	private ContractsTab contractsTab;
 	private TreeTab treeTab;
+	private StructureUpdateDialog structureUpdateDialog;
 
 	//Misc
 	private Updater updater;
@@ -279,6 +273,7 @@ public class Program implements ActionListener {
 		LOG.info("Loading: Options Dialog");
 		settingsDialog = new SettingsDialog(this);
 		SplashUpdater.setProgress(96);
+		structureUpdateDialog = new StructureUpdateDialog(this);
 	//GUI Done
 		LOG.info("GUI loaded");
 	//Updating data...
@@ -358,19 +353,7 @@ public class Program implements ActionListener {
 		}
 		boolean isUpdatable = updatable.isUpdatable();
 		this.getStatusPanel().timerTicked(isUpdatable);
-		boolean structure = true;
-		boolean found = false;
-		for (EsiOwner esiOwner : getProfileManager().getEsiOwners()) {
-			if (esiOwner.isShowOwner() && esiOwner.isStructures()) {
-				found = true;
-				if (esiOwner.getStructuresNextUpdate() != null
-						&& !Settings.get().isUpdatable(esiOwner.getStructuresNextUpdate(), false)) {
-					structure = false;
-					break;
-				}
-			}
-		}
-		this.getMainWindow().getMenu().timerTicked(isUpdatable, structure && found);
+		this.getMainWindow().getMenu().timerTicked(isUpdatable, StructureUpdateDialog.structuresUpdatable(this));
 	}
 
 	public final void updateLocations(Set<Long> locationIDs) {
@@ -779,6 +762,10 @@ public class Program implements ActionListener {
 		return portable;
 	}
 
+	public void updateStructures(Set<MyLocation> locations) {
+		structureUpdateDialog.show(locations);
+	}
+
 	/**
 	 * Called when Tags are changed.
 	 */
@@ -859,45 +846,7 @@ public class Program implements ActionListener {
 		} else if (MainMenuAction.UPDATE.name().equals(e.getActionCommand())) {
 			updateDialog.setVisible(true);
 		} else if (MainMenuAction.UPDATE_STRUCTURE.name().equals(e.getActionCommand())) {
-			List<EsiOwner> owners = new ArrayList<EsiOwner>();
-			Date structuresNextUpdate = null;
-			for (EsiOwner esiOwner : getProfileManager().getEsiOwners()) {
-				if (esiOwner.isShowOwner() && esiOwner.isStructures()) {
-					if (esiOwner.getStructuresNextUpdate() != null && (structuresNextUpdate == null || esiOwner.getStructuresNextUpdate().after(structuresNextUpdate))) {
-						structuresNextUpdate = esiOwner.getStructuresNextUpdate();
-					}
-					owners.add(esiOwner);
-				}
-			}
-			if (structuresNextUpdate == null) {
-				JOptionPane.showMessageDialog(getMainWindow().getFrame(), GuiFrame.get().updateStructureInvalid(), GuiFrame.get().updateStructureTitle(), JOptionPane.PLAIN_MESSAGE);
-				return;
-			}
-			if (!Settings.get().isUpdatable(structuresNextUpdate, false)) {
-				long time = structuresNextUpdate.getTime() - Settings.getNow().getTime();
-				String updatableIn;
-				if (time <= 1000) { //less than 1 second
-					updatableIn = "seconds";
-				} else if (time < (60 * 1000)) { //less than 1 minute
-					updatableIn = Formater.milliseconds(time, false, true, false, true);
-				} else {
-					updatableIn = Formater.milliseconds(time, false, true, true, true, true, false);
-				}
-				JOptionPane.showMessageDialog(getMainWindow().getFrame(), GuiFrame.get().updateStructureWait(updatableIn), GuiFrame.get().updateStructureTitle(), JOptionPane.PLAIN_MESSAGE);
-				return;
-			}
-			Object returnValue = JOptionPane.showInputDialog(getMainWindow().getFrame(), GuiFrame.get().updateStructureMsg(), GuiFrame.get().updateStructureTitle(), JOptionPane.PLAIN_MESSAGE, null, owners.toArray(new EsiOwner[owners.size()]), owners.get(0));
-			if (returnValue != null && returnValue instanceof EsiOwner) {
-				EsiOwner esiOwner = (EsiOwner) returnValue;
-				TaskDialog taskDialog = new TaskDialog(this, Collections.singletonList(new Structures(esiOwner, getOwnerTypes())), false, new TaskDialog.TasksCompleted() {
-					@Override
-					public void tasksCompleted(TaskDialog taskDialog) {
-						updateEventLists();
-						//Save settings after updating (if we crash later)
-						saveSettingsAndProfile();
-					}
-				});
-			}
+			updateStructures(null);
 		} else if (MainMenuAction.SEND_BUG_REPORT.name().equals(e.getActionCommand())) {
 			bugsDialog.setVisible(true);
 		} else if (MainMenuAction.README.name().equals(e.getActionCommand())) { //External Files
@@ -966,26 +915,6 @@ public class Program implements ActionListener {
 			}
 			final SaveSettings other = (SaveSettings) obj;
 			return this.id == other.id;
-		}
-	}
-
-	private static class Structures extends UpdateTask {
-
-		private final EsiOwner owner;
-		private final List<OwnerType> owners;
-
-		public Structures(EsiOwner owner, List<OwnerType> owners) {
-			super(DialoguesUpdate.get().structures());
-			this.owner = owner;
-			this.owners = owners;
-		}
-
-		@Override
-		public void update() {
-			setIcon(Images.MISC_ESI.getIcon());
-			EsiStructuresGetter.reset();
-			EsiStructuresGetter esiStructuresGetter = new EsiStructuresGetter(this, owner, owners);
-			esiStructuresGetter.run();
 		}
 	}
 }
