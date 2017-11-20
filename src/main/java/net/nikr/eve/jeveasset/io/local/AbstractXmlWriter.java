@@ -21,7 +21,12 @@
 
 package net.nikr.eve.jeveasset.io.local;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -49,11 +54,15 @@ public abstract class AbstractXmlWriter extends AbstractXmlBackup {
 		}
 	}
 
-	protected void writeXmlFile(final Document doc, final String filename, final boolean createBackup) throws XmlException {
-		writeXmlFile(doc, filename, "UTF-16", createBackup);
+	protected void writeXmlFileFitting(final Document doc, final String filename, final boolean createBackup) throws XmlException {
+		writeXmlFile(doc, filename, "UTF-8", createBackup, true);
 	}
 
-	private void writeXmlFile(final Document doc, final String filename, final String encoding, boolean createBackup) throws XmlException {
+	protected void writeXmlFile(final Document doc, final String filename, final boolean createBackup) throws XmlException {
+		writeXmlFile(doc, filename, "UTF-16", createBackup, false);
+	}
+
+	private void writeXmlFile(final Document doc, final String filename, final String encoding, boolean createBackup, boolean fitting) throws XmlException {
 		DOMSource source = new DOMSource(doc);
 		FileOutputStream outputStream = null;
 		File file;
@@ -67,6 +76,9 @@ public abstract class AbstractXmlWriter extends AbstractXmlBackup {
 			//Save file
 			outputStream = new FileOutputStream(file);
 			OutputStreamWriter outputStreamWriter = new OutputStreamWriter(outputStream, encoding);
+			if (fitting) {
+				outputStreamWriter.append("<?xml version=\"1.0\" ?>\r\n");
+			}
 			// result
 			Result result = new StreamResult(outputStreamWriter);
 
@@ -78,6 +90,9 @@ public abstract class AbstractXmlWriter extends AbstractXmlBackup {
 			transformer.setOutputProperty(OutputKeys.STANDALONE, "yes");
 			transformer.setOutputProperty("{http://xml.apache.org/xalan}indent-amount", "4");
 			transformer.setOutputProperty(OutputKeys.ENCODING, encoding);
+			if (fitting) {
+				transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+			}
 			transformer.transform(source, result);
 		} catch (FileNotFoundException ex) {
 			throw new XmlException(ex.getMessage(), ex);
@@ -86,6 +101,8 @@ public abstract class AbstractXmlWriter extends AbstractXmlBackup {
 		} catch (TransformerException ex) {
 			throw new XmlException(ex.getMessage(), ex);
 		} catch (UnsupportedEncodingException ex) {
+			throw new XmlException(ex.getMessage(), ex);
+		} catch (IOException ex) {
 			throw new XmlException(ex.getMessage(), ex);
 		} finally {
 			if (outputStream != null) {
