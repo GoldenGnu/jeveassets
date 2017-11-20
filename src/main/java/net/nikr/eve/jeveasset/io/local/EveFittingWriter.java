@@ -68,8 +68,7 @@ public final class EveFittingWriter extends AbstractXmlWriter {
 			writeFitting(xmldoc, asset, setupName, description);
 		}
 		try {
-			//writeXmlFile(xmldoc, filename, "UTF-8");
-			writeXmlFile(xmldoc, filename, false);
+			writeXmlFileFitting(xmldoc, filename, false);
 		} catch (XmlException ex) {
 			LOG.error("Eve fitting not saved " + ex.getMessage(), ex);
 		}
