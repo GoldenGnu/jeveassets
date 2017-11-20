@@ -45,6 +45,7 @@ public abstract class TabsLoadout extends Bundle {
 	public abstract String empty();
 	public abstract String expand();
 	public abstract String export();
+	public abstract String exportEft();
 	public abstract String exportEveXml();
 	public abstract String exportEveXmlAll();
 	public abstract String exportEveXmlSelected();

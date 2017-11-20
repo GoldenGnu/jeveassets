@@ -131,7 +131,7 @@ public class LoadoutsExportDialog extends JDialogCentered {
 
 	@Override
 	protected void save() {
-		loadoutsDialog.export();
+		loadoutsDialog.exportXml();
 	}
 
 	@Override
