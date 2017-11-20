@@ -214,13 +214,22 @@ public class StockpileItemDialog extends JDialogCentered {
 	}
 
 	private StockpileItem getExistingItem() {
-		Item typeItem = (Item) jItems.getSelectedItem();
+		Object object = jItems.getSelectedItem();
+		if (object == null) {
+			return null;
+		}
+		if (!(object instanceof Item)) {
+			return null;
+		}
+		Item typeItem = (Item) object;
+		Stockpile existing = getStockpile();
+		if (existing == null) {
+			return null;
+		}
 		boolean copy = jCopy.isSelected();
-		if (getStockpile() != null && typeItem != null) {
-			for (StockpileItem item : getStockpile().getItems()) {
-				if (item.getTypeID() == typeItem.getTypeID() && (copy == item.isBPC())) {
-					return item;
-				}
+		for (StockpileItem item : existing.getItems()) {
+			if (item.getTypeID() == typeItem.getTypeID() && (copy == item.isBPC())) {
+				return item;
 			}
 		}
 		return null;
@@ -241,7 +250,7 @@ public class StockpileItemDialog extends JDialogCentered {
 				jCopy.setSelected(blueprint);
 			}
 		}
-		if (itemExist() || stockpileItem != null) {
+		if (itemExist()) { //Editing existing item
 			colorIsSet = true;
 			jCountMinimum.setBackground(Colors.LIGHT_YELLOW.getColor());
 		}
