@@ -426,7 +426,6 @@ public class TreeTab extends JMainTabSecondary implements TagUpdate, NamesUpdate
 			} finally {
 				filterList.getReadWriteLock().readLock().unlock();
 			}
-			
 		} else {
 			for (TreeAsset treeAsset : locationsExport) {
 				treeAsset.resetValues();
@@ -447,10 +446,6 @@ public class TreeTab extends JMainTabSecondary implements TagUpdate, NamesUpdate
 				}
 			} finally {
 				filterList.getReadWriteLock().readLock().unlock();
-			}
-			//Update containers
-			for (TreeAsset treeAsset : parentItems) {
-				treeAsset.updateParents();
 			}
 		}
 		jTable.unlock();
