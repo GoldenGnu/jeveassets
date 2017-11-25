@@ -20,8 +20,10 @@
  */
 package net.nikr.eve.jeveasset.data.api.my;
 
+import java.util.Collections;
 import java.util.Date;
 import java.util.Objects;
+import java.util.Set;
 import javax.management.timer.Timer;
 import net.nikr.eve.jeveasset.data.api.accounts.OwnerType;
 import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder;
@@ -31,11 +33,12 @@ import net.nikr.eve.jeveasset.data.settings.MarketPriceData;
 import net.nikr.eve.jeveasset.data.settings.types.EditableLocationType;
 import net.nikr.eve.jeveasset.data.settings.types.EditablePriceType;
 import net.nikr.eve.jeveasset.data.settings.types.ItemType;
+import net.nikr.eve.jeveasset.data.settings.types.OwnersType;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.Percent;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.Quantity;
 import net.nikr.eve.jeveasset.i18n.TabsOrders;
 
-public class MyMarketOrder extends RawMarketOrder implements Comparable<MyMarketOrder>, EditableLocationType, ItemType, EditablePriceType {
+public class MyMarketOrder extends RawMarketOrder implements Comparable<MyMarketOrder>, EditableLocationType, ItemType, EditablePriceType, OwnersType {
 
 	public enum OrderStatus {
 		ACTIVE() {
@@ -101,6 +104,7 @@ public class MyMarketOrder extends RawMarketOrder implements Comparable<MyMarket
 		}
 	}
 
+	private final Set<Long> owners;
 	private Item item;
 	private MyLocation location;
 	private String rangeFormated;
@@ -116,6 +120,7 @@ public class MyMarketOrder extends RawMarketOrder implements Comparable<MyMarket
 		super(rawMarketOrder);
 		this.item = item;
 		this.owner = owner;
+		this.owners = Collections.singleton(owner.getOwnerID());
 		quantity = new Quantity(getVolEntered(), getVolRemaining());
 		rangeFormated = "";
 		switch (this.getRange()) {
@@ -255,6 +260,11 @@ public class MyMarketOrder extends RawMarketOrder implements Comparable<MyMarket
 	@Override
 	public MyLocation getLocation() {
 		return location;
+	}
+
+	@Override
+	public Set<Long> getOwners() {
+		return owners;
 	}
 
 	@Override

@@ -21,19 +21,23 @@
 package net.nikr.eve.jeveasset.data.api.my;
 
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
 import net.nikr.eve.jeveasset.data.api.accounts.OwnerType;
 import net.nikr.eve.jeveasset.data.api.raw.RawTransaction;
 import net.nikr.eve.jeveasset.data.settings.types.EditableLocationType;
 import net.nikr.eve.jeveasset.data.settings.types.ItemType;
+import net.nikr.eve.jeveasset.data.settings.types.OwnersType;
 import net.nikr.eve.jeveasset.i18n.TabsTransaction;
 
-public class MyTransaction extends RawTransaction implements EditableLocationType, ItemType, Comparable<MyTransaction> {
+public class MyTransaction extends RawTransaction implements EditableLocationType, ItemType, Comparable<MyTransaction>, OwnersType {
 
 	private final Item item;
 	private final OwnerType owner;
+	private final Set<Long> owners = new HashSet<Long>();
 	private MyLocation location;
 	private String clientName;
 
@@ -41,6 +45,8 @@ public class MyTransaction extends RawTransaction implements EditableLocationTyp
 		super(rawTransaction);
 		this.item = item;
 		this.owner = owner;
+		owners.add(getClientID());
+		owners.add(owner.getOwnerID());
 	}
 
 	public int getAccountKeyFormated() {
@@ -66,6 +72,11 @@ public class MyTransaction extends RawTransaction implements EditableLocationTyp
 	@Override
 	public MyLocation getLocation() {
 		return location;
+	}
+
+	@Override
+	public Set<Long> getOwners() {
+		return owners;
 	}
 
 	@Override

@@ -87,7 +87,7 @@ public enum JournalTableFormat implements EnumTableColumn<MyJournal> {
 		}
 		@Override
 		public Object getColumnValue(final MyJournal from) {
-			return from.getOwnerName1();
+			return from.getFirstPartyName();
 		}
 	},
 	OWNER_NAME_2(String.class, GlazedLists.comparableComparator()) {
@@ -97,7 +97,7 @@ public enum JournalTableFormat implements EnumTableColumn<MyJournal> {
 		}
 		@Override
 		public Object getColumnValue(final MyJournal from) {
-			return from.getOwnerName2();
+			return from.getSecondPartyName();
 		}
 	},
 	ACCOUNT_KEY(Integer.class, GlazedLists.comparableComparator()) {

@@ -55,7 +55,7 @@ public enum LoadoutExtendedTableFormat implements EnumTableColumn<Loadout> {
 		}
 		@Override
 		public Object getColumnValue(final Loadout from) {
-			return from.getOwner();
+			return from.getOwnerName();
 		}
 	};
 

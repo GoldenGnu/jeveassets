@@ -83,7 +83,7 @@ public enum AssetTableFormat implements EnumTableColumn<MyAsset> {
 		}
 		@Override
 		public Object getColumnValue(final MyAsset from) {
-			return from.getOwner();
+			return from.getOwnerName();
 		}
 	},
 	LOCATION(String.class, GlazedLists.comparableComparator()) {

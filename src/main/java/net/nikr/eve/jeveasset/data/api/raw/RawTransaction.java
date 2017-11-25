@@ -147,7 +147,7 @@ public class RawTransaction {
 		this.accountKey = accountKey;
 	}
 
-	public long getClientID() {
+	public final long getClientID() {
 		return clientId;
 	}
 

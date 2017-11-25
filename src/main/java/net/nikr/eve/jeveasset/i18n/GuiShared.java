@@ -139,6 +139,7 @@ public abstract class GuiShared extends Bundle {
 	public abstract String uiWaypointOk();
 	public abstract String uiWaypointTitle();
 	public abstract String uiCharacterInvalidMsg();
+	public abstract String uiCharacterMsg();
 	public abstract String uiCharacterTitle();
 	public abstract String uiContract();
 	public abstract String uiContractFail();
@@ -149,6 +150,11 @@ public abstract class GuiShared extends Bundle {
 	public abstract String uiMarketFail();
 	public abstract String uiMarketOk();
 	public abstract String uiMarketTitle();
+	public abstract String uiOwner();
+	public abstract String uiOwnerFail();
+	public abstract String uiOwnerMsg();
+	public abstract String uiOwnerOk();
+	public abstract String uiOwnerTitle();
 	public abstract String uiStation();
 	public abstract String uiSystem();
 	public abstract String updating();

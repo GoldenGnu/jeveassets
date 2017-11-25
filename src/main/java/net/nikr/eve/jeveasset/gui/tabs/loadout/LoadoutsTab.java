@@ -533,7 +533,7 @@ public class LoadoutsTab extends JMainTabSecondary {
 					if (!asset.getItem().getCategory().equals(SHIP_CATEGORY) || !asset.isSingleton()) {
 						continue;
 					}
-					if (!owner.equals(asset.getOwner()) && !owner.equals(General.get().all())) {
+					if (!owner.equals(asset.getOwnerName()) && !owner.equals(General.get().all())) {
 						continue;
 					}
 					charShips.add(key);

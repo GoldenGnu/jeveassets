@@ -109,7 +109,7 @@ public class DataSetCreator {
 				if (asset.getFlag().equals(General.get().contractExcluded())) {
 					continue; //Ignore contracts excluded
 				}
-				Value value = getValueInner(values, asset.getOwner(), date);
+				Value value = getValueInner(values, asset.getOwnerName(), date);
 				//Location/Flag logic
 				String id = createAssetID(asset);
 				value.addAssets(id, asset);

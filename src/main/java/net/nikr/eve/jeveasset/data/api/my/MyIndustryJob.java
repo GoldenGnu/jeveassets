@@ -20,7 +20,9 @@
  */
 package net.nikr.eve.jeveasset.data.api.my;
 
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 import net.nikr.eve.jeveasset.data.api.accounts.OwnerType;
 import net.nikr.eve.jeveasset.data.api.raw.RawBlueprint;
 import net.nikr.eve.jeveasset.data.api.raw.RawIndustryJob;
@@ -31,10 +33,11 @@ import net.nikr.eve.jeveasset.data.settings.types.BlueprintType;
 import net.nikr.eve.jeveasset.data.settings.types.EditableLocationType;
 import net.nikr.eve.jeveasset.data.settings.types.EditablePriceType;
 import net.nikr.eve.jeveasset.data.settings.types.ItemType;
+import net.nikr.eve.jeveasset.data.settings.types.OwnersType;
 import net.nikr.eve.jeveasset.i18n.DataModelIndustryJob;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 
-public class MyIndustryJob extends RawIndustryJob implements Comparable<MyIndustryJob>, EditableLocationType, ItemType, EditablePriceType, BlueprintType {
+public class MyIndustryJob extends RawIndustryJob implements Comparable<MyIndustryJob>, EditableLocationType, ItemType, EditablePriceType, BlueprintType, OwnersType {
 
 	public enum IndustryJobState {
 		STATE_ALL() {
@@ -194,10 +197,11 @@ public class MyIndustryJob extends RawIndustryJob implements Comparable<MyIndust
 	private final Item item;
 	private final OwnerType owner;
 	private final String name;
+	private final Set<Long> owners = new HashSet<Long>();
 	private double price;
 	private double outputValue;
 	private int outputCount;
-	private String installer;
+	private String installer = "";
 	private RawBlueprint blueprint;
 	private MyLocation location;
 
@@ -205,6 +209,8 @@ public class MyIndustryJob extends RawIndustryJob implements Comparable<MyIndust
 		super(rawIndustryJob);
 		this.item = item;
 		this.owner = owner;
+		owners.add(getInstallerID());
+		owners.add(owner.getOwnerID());
 
 		switch (getActivityID()) {
 			case 0:
@@ -391,6 +397,11 @@ public class MyIndustryJob extends RawIndustryJob implements Comparable<MyIndust
 
 	public void setInstaller(String installer) {
 		this.installer = installer;
+	}
+
+	@Override
+	public Set<Long> getOwners() {
+		return owners;
 	}
 
 	@Override

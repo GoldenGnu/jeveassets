@@ -27,9 +27,10 @@ import java.util.Set;
 import net.nikr.eve.jeveasset.data.api.raw.RawContract;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
 import net.nikr.eve.jeveasset.data.settings.types.LocationsType;
+import net.nikr.eve.jeveasset.data.settings.types.OwnersType;
 import net.nikr.eve.jeveasset.i18n.TabsContracts;
 
-public class MyContract extends RawContract implements LocationsType {
+public class MyContract extends RawContract implements LocationsType, OwnersType {
 
 	private MyLocation endLocation;
 	private MyLocation startLocation;
@@ -37,12 +38,17 @@ public class MyContract extends RawContract implements LocationsType {
 	private String assignee = "";
 	private String issuerCorp = "";
 	private String issuer = "";
+	private final Set<Long> owners = new HashSet<Long>();
 
 	private boolean issuerAfterAssets = false;
 	private boolean acceptorAfterAssets = false;
 
 	public MyContract(RawContract rawContract) {
 		super(rawContract);
+		owners.add(getIssuerID());
+		owners.add(getIssuerCorpID());
+		owners.add(getAssigneeID());
+		owners.add(getAcceptorID());
 	}
 
 	public String getTypeName() {
@@ -138,6 +144,11 @@ public class MyContract extends RawContract implements LocationsType {
 			locations.add(endLocation);
 		}
 		return locations;
+	}
+
+	@Override
+	public Set<Long> getOwners() {
+		return owners;
 	}
 
 	public final void setEndLocation(MyLocation endLocation) {

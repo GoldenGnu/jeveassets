@@ -362,7 +362,7 @@ public class OverviewTab extends JMainTabSecondary {
 				continue;
 			}
 			//Filters
-			if (!owner.equals(asset.getOwner()) && !owner.equals(General.get().all())) {
+			if (!owner.equals(asset.getOwnerName()) && !owner.equals(General.get().all())) {
 				continue;
 			}
 

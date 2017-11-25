@@ -240,7 +240,7 @@ public class RawJournal {
 		this.extraInfo = extraInfo;
 	}
 
-	public Integer getFirstPartyID() {
+	public final Integer getFirstPartyID() {
 		return firstPartyId;
 	}
 
@@ -280,7 +280,7 @@ public class RawJournal {
 		this.refType = refType;
 	}
 
-	public Integer getSecondPartyID() {
+	public final Integer getSecondPartyID() {
 		return secondPartyId;
 	}
 

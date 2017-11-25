@@ -23,6 +23,7 @@ package net.nikr.eve.jeveasset.gui.shared.menu;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -35,6 +36,7 @@ import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
 import net.nikr.eve.jeveasset.data.api.my.MyContract;
 import net.nikr.eve.jeveasset.data.api.my.MyContractItem;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
+import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.JLockWindow;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
@@ -54,6 +56,7 @@ public class JMenuUI <T> extends MenuManager.JAutoMenu<T> {
 		AUTOPILOT_SYSTEM,
 		AUTOPILOT_STATION,
 		MARKET,
+		OWNER,
 		CONTRACTS
 	}
 
@@ -66,6 +69,7 @@ public class JMenuUI <T> extends MenuManager.JAutoMenu<T> {
 	private final JMenuItem jSystem;
 	private final JMenuItem jStation;
 	private final JMenuItem jMarket;
+	private final JMenuItem jOwner;
 	private final JMenuItem jContracts;
 
 	private MenuData<T> menuData;
@@ -99,6 +103,12 @@ public class JMenuUI <T> extends MenuManager.JAutoMenu<T> {
 		jMarket.addActionListener(listener);
 		add(jMarket);
 
+		jOwner = new JMenuItem(GuiShared.get().uiOwner());
+		jOwner.setIcon(Images.DIALOG_PROFILES.getIcon());
+		jOwner.setActionCommand(MenuUIAction.OWNER.name());
+		jOwner.addActionListener(listener);
+		add(jOwner);
+
 		jContracts = new JMenuItem(GuiShared.get().uiContract());
 		jContracts.setIcon(Images.TOOL_CONTRACTS.getIcon());
 		jContracts.setActionCommand(MenuUIAction.CONTRACTS.name());
@@ -113,6 +123,7 @@ public class JMenuUI <T> extends MenuManager.JAutoMenu<T> {
 		jStation.setEnabled(menuData.getAutopilotStationLocations().size() == 1 || menuData.getContracts().size() == 1);
 		jSystem.setEnabled(menuData.getSystemLocations().size() == 1 || menuData.getContracts().size() == 1);
 		jMarket.setEnabled(menuData.getMarketTypeIDs().size() == 1);
+		jOwner.setEnabled(!menuData.getOwnerIDs().isEmpty());
 		jContracts.setEnabled(menuData.getContracts().size() == 1);
 	}
 
@@ -145,7 +156,7 @@ public class JMenuUI <T> extends MenuManager.JAutoMenu<T> {
 			JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), GuiShared.get().uiCharacterInvalidMsg(), GuiShared.get().uiCharacterTitle(), JOptionPane.PLAIN_MESSAGE);
 			return null;
 		}
-		Object object = JOptionPane.showInputDialog(program.getMainWindow().getFrame(), null, GuiShared.get().uiCharacterTitle(), JOptionPane.PLAIN_MESSAGE, null, owners.toArray(new EsiOwner[owners.size()]), owners.get(0));
+		Object object = JOptionPane.showInputDialog(program.getMainWindow().getFrame(), GuiShared.get().uiCharacterMsg(), GuiShared.get().uiCharacterTitle(), JOptionPane.PLAIN_MESSAGE, null, owners.toArray(new EsiOwner[owners.size()]), owners.get(0));
 		if (object == null) {
 			return null; //Cancel
 		} else if (object instanceof EsiOwner) {
@@ -256,6 +267,47 @@ public class JMenuUI <T> extends MenuManager.JAutoMenu<T> {
 						JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), GuiShared.get().uiMarketFail(), GuiShared.get().uiMarketTitle(), JOptionPane.PLAIN_MESSAGE);
 					}
 				});
+			} else if (MenuUIAction.OWNER.name().equals(e.getActionCommand())) {
+				EsiOwner esiOwner = selectOwner(EsiOwnerRequirement.OPEN_WINDOW);
+				if (esiOwner == null) {
+					return;
+				}
+				List<Owner> owners = new ArrayList<Owner>();
+				for (long ownerID : menuData.getOwnerIDs()) {
+					if (ownerID > 0) {
+						String name = Settings.get().getOwners().get(ownerID);
+						owners.add(new Owner(ownerID, name));
+					}
+				}
+				Owner owner;
+				if (owners.size() > 1) {
+					Collections.sort(owners);
+					Object object = JOptionPane.showInputDialog(program.getMainWindow().getFrame(), GuiShared.get().uiOwnerMsg(), GuiShared.get().uiOwnerTitle(), JOptionPane.PLAIN_MESSAGE, null, owners.toArray(new Owner[owners.size()]), owners.get(0));
+					if (object == null) {
+						return; //Cancel
+					}
+					if (object instanceof Owner) {
+						owner = (Owner) object;
+					} else {
+						return;
+					}
+				} else {
+					owner = owners.get(0);
+				}
+				getLockWindow().show(GuiShared.get().updating(), new EsiUpdate() {
+					@Override
+					protected void updateESI() throws Throwable {
+						getApi(esiOwner).postUiOpenwindowInformation((int)owner.getId(), AbstractEsiGetter.DATASOURCE, null, null, null);
+					}
+					@Override
+					protected void ok() {
+						JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), GuiShared.get().uiOwnerOk(), GuiShared.get().uiOwnerTitle(), JOptionPane.PLAIN_MESSAGE);
+					}
+					@Override
+					protected void fail() {
+						JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), GuiShared.get().uiOwnerFail(), GuiShared.get().uiOwnerTitle(), JOptionPane.PLAIN_MESSAGE);
+					}
+				});
 			} else if (MenuUIAction.CONTRACTS.name().equals(e.getActionCommand())) {
 				EsiOwner owner = selectOwner(EsiOwnerRequirement.OPEN_WINDOW);
 				if (owner == null) {
@@ -277,6 +329,30 @@ public class JMenuUI <T> extends MenuManager.JAutoMenu<T> {
 					}
 				});
 			}
+		}
+	}
+
+	private static class Owner implements Comparable<Owner> {
+		private final long id;
+		private final String name;
+
+		public Owner(long id, String name) {
+			this.id = id;
+			this.name = name;
+		}
+
+		public long getId() {
+			return id;
+		}
+
+		@Override
+		public String toString() {
+			return name;
+		}
+
+		@Override
+		public int compareTo(Owner o) {
+			return this.name.compareTo(o.name);
 		}
 	}
 

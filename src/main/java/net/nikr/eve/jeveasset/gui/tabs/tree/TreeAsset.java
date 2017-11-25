@@ -64,7 +64,7 @@ public class TreeAsset extends MyAsset {
 		this.treeName = createSpace(tree.size()) + asset.getName();
 		this.tree = new ArrayList<TreeAsset>(tree); //Copy
 		this.compare = compare + asset.getName() + " #" + asset.getItemID();
-		this.ownerName = asset.getOwner();
+		this.ownerName = asset.getOwnerName();
 		this.parent = parent;
 		this.item = true;
 		this.depthOffset = 0;
@@ -181,7 +181,7 @@ public class TreeAsset extends MyAsset {
 	}
 
 	@Override
-	public String getOwner() {
+	public String getOwnerName() {
 		return ownerName;
 	}
 

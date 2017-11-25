@@ -310,7 +310,7 @@ public class RawIndustryJob {
 		this.facilityId = facilityId;
 	}
 
-	public long getInstallerID() {
+	public final long getInstallerID() {
 		return installerId;
 	}
 
