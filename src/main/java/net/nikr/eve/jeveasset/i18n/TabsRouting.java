@@ -35,6 +35,9 @@ public abstract class TabsRouting extends Bundle {
 	}
 
 	public abstract String add();
+	public abstract String addStation();
+	public abstract String addStationSelect();
+	public abstract String addStationTitle();
 	public abstract String addSystem();
 	public abstract String addSystemCancel();
 	public abstract String addSystemOK();
@@ -82,6 +85,8 @@ public abstract class TabsRouting extends Bundle {
 	public abstract String startEmptyAuto(Object arg0);
 	public abstract String startEmpty();
 	public abstract String startSystem();
+	public abstract String stations();
+	public abstract String systems();
 	public abstract String total(Object arg0, Object arg1);
 	
 	

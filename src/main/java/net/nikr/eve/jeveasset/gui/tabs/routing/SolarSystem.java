@@ -29,11 +29,16 @@ import uk.me.candle.eve.graph.Node;
  * @author Candle
  */
 public class SolarSystem extends Node {
+
 	private final MyLocation location;
 
 	public SolarSystem(final MyLocation location) {
 		super(location.getLocation());
 		this.location = location;
+	}
+
+	public final boolean isStation() {
+		return location.isStation();
 	}
 
 	public String getSecurity() {
@@ -50,6 +55,10 @@ public class SolarSystem extends Node {
 
 	public long getSystemID() {
 		return location.getSystemID();
+	}
+
+	public String getSystem() {
+		return location.getSystem();
 	}
 
 	@Override
