@@ -1242,7 +1242,7 @@ public class RoutingTab extends JMainTabSecondary {
 					protected void updateESI() throws Throwable {
 						boolean clear = true;
 						for (SolarSystem system : result) {
-							getApi(owner).postUiAutopilotWaypoint(false, clear, system.getSystemID(), AbstractEsiGetter.DATASOURCE, null, null, null);
+							getApi(owner).postUiAutopilotWaypoint(false, clear, system.getSystemID(), AbstractEsiGetter.DATASOURCE, null, AbstractEsiGetter.USER_AGENT, null);
 							if (clear) {
 								clear = false;
 							}
