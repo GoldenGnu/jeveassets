@@ -186,7 +186,7 @@ public class JMenuUI <T> extends MenuManager.JAutoMenu<T> {
 		getLockWindow().show(GuiShared.get().updating(), new EsiUpdate() {
 			@Override
 			protected void updateESI() throws Throwable {
-				getApi(owner).postUiAutopilotWaypoint(addToBeginning, clearOtherWaypoints, locationID, AbstractEsiGetter.DATASOURCE, null, null, null);
+				getApi(owner).postUiAutopilotWaypoint(addToBeginning, clearOtherWaypoints, locationID, AbstractEsiGetter.DATASOURCE, null, AbstractEsiGetter.USER_AGENT, null);
 			}
 			@Override
 			protected void ok() {
@@ -245,7 +245,7 @@ public class JMenuUI <T> extends MenuManager.JAutoMenu<T> {
 				getLockWindow().show(GuiShared.get().updating(), new EsiUpdate() {
 					@Override
 					protected void updateESI() throws Throwable {
-						getApi(owner).postUiOpenwindowMarketdetails(typeID, AbstractEsiGetter.DATASOURCE, null, null, null);
+						getApi(owner).postUiOpenwindowMarketdetails(typeID, AbstractEsiGetter.DATASOURCE, null, AbstractEsiGetter.USER_AGENT, null);
 					}
 					@Override
 					protected void ok() {
@@ -265,7 +265,7 @@ public class JMenuUI <T> extends MenuManager.JAutoMenu<T> {
 				getLockWindow().show(GuiShared.get().updating(), new EsiUpdate() {
 					@Override
 					protected void updateESI() throws Throwable {
-						getApi(owner).postUiOpenwindowContract(contract.getContractID(), AbstractEsiGetter.DATASOURCE, null, null, null);
+						getApi(owner).postUiOpenwindowContract(contract.getContractID(), AbstractEsiGetter.DATASOURCE, null, AbstractEsiGetter.USER_AGENT, null);
 					}
 					@Override
 					protected void ok() {
