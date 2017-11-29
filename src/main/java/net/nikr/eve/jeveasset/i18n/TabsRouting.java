@@ -55,6 +55,7 @@ public abstract class TabsRouting extends Bundle {
 	public abstract String avoidSave();
 	public abstract String calculate();
 	public abstract String cancel();
+	public abstract String checked();
 	public abstract String emptyResult();
 	public abstract String error();
 	public abstract String filteredAssets();
@@ -85,9 +86,8 @@ public abstract class TabsRouting extends Bundle {
 	public abstract String startEmptyAuto(Object arg0);
 	public abstract String startEmpty();
 	public abstract String startSystem();
-	public abstract String stations();
-	public abstract String systems();
 	public abstract String total(Object arg0, Object arg1);
+	public abstract String unchecked();
 	
 	
 	

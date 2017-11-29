@@ -51,11 +51,11 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
-import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.JToggleButton;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import javax.swing.event.ListSelectionEvent;
@@ -131,8 +131,8 @@ public class RoutingTab extends JMainTabSecondary {
 	private JLabel jFilterSystem;
 	private JLabel jSourceLabel;
 	private JComboBox<SourceItem> jSource;
-	private JRadioButton jSystems;
-	private JRadioButton jStations;
+	private JToggleButton jSystems;
+	private JToggleButton jStations;
 	private JLabel jStartLabel;
 	private JTextField jStart;
 	private MoveJList<SolarSystem> jAvailable;
@@ -231,11 +231,13 @@ public class RoutingTab extends JMainTabSecondary {
 		jSource.addActionListener(listener);
 
 		ButtonGroup buttonGroup = new ButtonGroup();
-		jStations = new JRadioButton(TabsRouting.get().stations());
+		jStations = new JToggleButton(Images.LOC_STATION.getIcon());
+		jStations.setHorizontalAlignment(JToggleButton.LEFT);
 		jStations.setActionCommand(RoutingAction.SOURCE.name());
 		jStations.addActionListener(listener);
 		buttonGroup.add(jStations);
-		jSystems = new JRadioButton(TabsRouting.get().systems());
+		jSystems = new JToggleButton(Images.LOC_SYSTEM.getIcon());
+		jSystems.setHorizontalAlignment(JToggleButton.LEFT);
 		jSystems.setSelected(true);
 		jSystems.setActionCommand(RoutingAction.SOURCE.name());
 		jSystems.addActionListener(listener);
@@ -271,10 +273,12 @@ public class RoutingTab extends JMainTabSecondary {
 		jRemove.addActionListener(listener);
 
 		jAddSystem = new JButton(TabsRouting.get().addSystem(), Images.LOC_SYSTEM.getIcon());
+		jAddSystem.setHorizontalAlignment(JToggleButton.LEFT);
 		jAddSystem.setActionCommand(RoutingAction.ADD_SYSTEM.name());
 		jAddSystem.addActionListener(listener);
 
 		jAddStation = new JButton(TabsRouting.get().addStation(), Images.LOC_STATION.getIcon());
+		jAddStation.setHorizontalAlignment(JToggleButton.LEFT);
 		jAddStation.setActionCommand(RoutingAction.ADD_STATION.name());
 		jAddStation.addActionListener(listener);
 
@@ -308,15 +312,13 @@ public class RoutingTab extends JMainTabSecondary {
 					.addComponent(jAvailableScroll, 300, 300, Short.MAX_VALUE)
 					.addGroup(routingLayout.createSequentialGroup()
 						.addComponent(jAvailableRemaining, 0, 0, Short.MAX_VALUE)
-						.addComponent(jSystems)
-						.addComponent(jStations)
+						.addComponent(jSystems, 65, 65, 65)
+						.addComponent(jStations, 65, 65, 65)
 					)
 				)
 				.addGroup(routingLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
 					.addComponent(jAdd, 80, 80, 80)
 					.addComponent(jRemove, 80, 80, 80)
-					.addComponent(jAddStation, 80, 80, 80)
-					.addComponent(jAddSystem, 80, 80, 80)
 				)
 				.addGroup(routingLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
 					.addGroup(routingLayout.createSequentialGroup()
@@ -338,7 +340,11 @@ public class RoutingTab extends JMainTabSecondary {
 						)
 					)
 					.addComponent(jWaypointsScroll, 300, 300, Integer.MAX_VALUE)
-					.addComponent(jWaypointsRemaining, 300, 300, Integer.MAX_VALUE)
+					.addGroup(routingLayout.createSequentialGroup()
+						.addComponent(jWaypointsRemaining, 0, 0, Integer.MAX_VALUE)
+						.addComponent(jAddSystem, 65, 65, 65)
+						.addComponent(jAddStation, 65, 65, 65)
+					)
 				)
 		);
 		routingLayout.setVerticalGroup(
@@ -365,8 +371,6 @@ public class RoutingTab extends JMainTabSecondary {
 					.addGroup(routingLayout.createSequentialGroup()
 						.addComponent(jAdd, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 						.addComponent(jRemove, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-						.addComponent(jAddStation, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-						.addComponent(jAddSystem, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 					)
 				)
 				.addGroup(routingLayout.createParallelGroup(GroupLayout.Alignment.LEADING, false)
@@ -374,6 +378,8 @@ public class RoutingTab extends JMainTabSecondary {
 					.addComponent(jSystems, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 					.addComponent(jStations, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 					.addComponent(jWaypointsRemaining, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jAddStation, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jAddSystem, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 				)
 		);
 	//Filters
@@ -740,6 +746,13 @@ public class RoutingTab extends JMainTabSecondary {
 		available.clear();
 		available.addAll(allLocs);
 		jAvailable.getEditableModel().addAll(allLocs);
+		if (jSystems.isSelected()) {
+			jSystems.setText(TabsRouting.get().checked());
+			jStations.setText(TabsRouting.get().unchecked());
+		} else {
+			jSystems.setText(TabsRouting.get().unchecked());
+			jStations.setText(TabsRouting.get().checked());
+		}
 		updateRemaining();
 	}
 
