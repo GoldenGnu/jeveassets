@@ -253,6 +253,19 @@ public class LoadoutsTab extends JMainTabSecondary {
 		updateTable();
 	}
 
+	@Override
+	public void clearData() {
+		try {
+			eventList.getReadWriteLock().writeLock().lock();
+			eventList.clear();
+		} finally {
+			eventList.getReadWriteLock().writeLock().unlock();
+		}
+	}
+
+	@Override
+	public void updateCache() { }
+
 	private String browse() {
 		File windows = new File(javax.swing.filechooser.FileSystemView.getFileSystemView().getDefaultDirectory()
 							+ File.separator + "EVE"

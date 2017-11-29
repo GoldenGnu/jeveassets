@@ -323,6 +323,22 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 		jTable.loadExpandedState();
 	}
 
+	@Override
+	public void clearData() {
+		try {
+			eventList.getReadWriteLock().writeLock().lock();
+			eventList.clear();
+		} finally {
+			eventList.getReadWriteLock().writeLock().unlock();
+		}
+		filterControl.clearCache();
+	}
+
+	@Override
+	public void updateCache() {
+		filterControl.createCache();
+	}
+
 	/**
 	 * Needs to be updated before the stockpile tab is shown (for TableMenu > Add
 	 */

@@ -120,6 +120,16 @@ public class JournalTab extends JMainTabPrimary {
 		);
 	}
 
+	@Override
+	public void clearData() {
+		filterControl.clearCache();
+	}
+
+	@Override
+	public void updateCache() {
+		filterControl.createCache();
+	}
+
 	private class JournalTableMenu implements TableMenu<MyJournal> {
 		@Override
 		public JMenu getFilterMenu() {

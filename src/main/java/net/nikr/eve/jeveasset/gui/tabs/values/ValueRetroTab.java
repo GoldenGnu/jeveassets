@@ -195,6 +195,12 @@ public class ValueRetroTab extends JMainTabSecondary {
 		setData(jTotal, total);
 	}
 
+	@Override
+	public void clearData() { }
+
+	@Override
+	public void updateCache() {}
+
 	private boolean calcTotal() {
 		Date date = Settings.getNow();
 		Map<String, Value> values = DataSetCreator.createDataSet(program.getProfileData(), Settings.getNow());

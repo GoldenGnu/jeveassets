@@ -27,7 +27,6 @@ import java.text.ParsePosition;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
@@ -54,7 +53,6 @@ public class FilterMatcher<E> implements Matcher<E> {
 	private final CompareType compare;
 	private final String text;
 	private final boolean enabled;
-	private final Map<Object, String> cache;
 
 	FilterMatcher(final FilterControl<E> filterControl, final Filter filter) {
 		this(filterControl, filter.getLogic(), filter.getColumn(), filter.getCompareType(), filter.getText(), true);
@@ -71,7 +69,6 @@ public class FilterMatcher<E> implements Matcher<E> {
 			this.text = format(text, true).toLowerCase();
 		}
 		this.enabled = enabled;
-		cache = getCache(filterControl.getName());
 		and = logic == Filter.LogicType.AND;
 	}
 
@@ -139,59 +136,7 @@ public class FilterMatcher<E> implements Matcher<E> {
 		}
 	}
 
-	private static Map<Object, String> getCache(String name) {
-		Map<Object, String> cache = CACHE.get(name);
-		if (cache == null) {
-			cache = new HashMap<Object, String>();
-			CACHE.put(name, cache);
-		}
-		return cache;
-	}
-
-	public static <E> void cacheDelete(FilterControl<E> filterControl, List<E> delete) {
-		if (delete.isEmpty()) {
-			return;
-		}
-		Map<Object, String> cache = getCache(filterControl.getName());
-		for (E e : delete) {
-			cache.remove(e);
-		}
-	}
-
-	public static <E> void cacheInsert(FilterControl<E> filterControl, List<E> insert) {
-		if (insert.isEmpty()) {
-			return;
-		}
-		Map<Object, String> cache = getCache(filterControl.getName());
-		for (E e : insert) {
-			String s = buildItemCache(filterControl, e);
-			cache.put(e, s);
-		}
-	}
-
-	public static <E> void cacheUpdate(FilterControl<E> filterControl, List<E> update) {
-		if (update.isEmpty()) {
-			return;
-		}
-		System.out.println("Updated " + update.size() + " items");
-		cacheInsert(filterControl, update);
-	}
-
-	public static <E> void cacheRebuild(FilterControl<E> filterControl) {
-		Map<Object, String> cache = getCache(filterControl.getName());
-		cache.clear();
-		try {
-			filterControl.getEventList().getReadWriteLock().readLock().lock();
-			for (E e : filterControl.getEventList()) {
-				String s = buildItemCache(filterControl, e);
-				cache.put(e, s);
-			}
-		} finally {
-			filterControl.getEventList().getReadWriteLock().readLock().unlock();
-		}
-	}
-
-	private static <E> String buildItemCache(FilterControl<E> filterControl, E e) {
+	public static <E> String buildItemCache(FilterControl<E> filterControl, E e) {
 		StringBuilder builder = new StringBuilder();
 		for (EnumTableColumn<E> testColumn : filterControl.getColumns()) {
 			Object columnValue = filterControl.getColumnValue(e, testColumn.name());
@@ -205,10 +150,10 @@ public class FilterMatcher<E> implements Matcher<E> {
 	}
 
 	private boolean matchesAll(final E item, final Filter.CompareType compareType, final String formatedText) {
-		String haystack = cache.get(item);
+		String haystack = filterControl.getCache().get(item);
 		if (haystack == null) { //Will be build on update if any filter is set
 			haystack = buildItemCache(filterControl, item);
-			cache.put(item, haystack);
+			filterControl.addCache(item, haystack);
 		}
 		if (null == compareType) {
 			return true;

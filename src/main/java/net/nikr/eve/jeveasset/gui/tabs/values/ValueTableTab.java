@@ -140,6 +140,22 @@ public class ValueTableTab extends JMainTabSecondary {
 		}
 	}
 
+	@Override
+	public void clearData() {
+		try {
+			eventList.getReadWriteLock().writeLock().lock();
+			eventList.clear();
+		} finally {
+			eventList.getReadWriteLock().writeLock().unlock();
+		}
+		filterControl.clearCache();
+	}
+
+	@Override
+	public void updateCache() {
+		filterControl.createCache();
+	}
+
 	private class ValueTableMenu implements TableMenu<Value> {
 		@Override
 		public MenuData<Value> getMenuData() {

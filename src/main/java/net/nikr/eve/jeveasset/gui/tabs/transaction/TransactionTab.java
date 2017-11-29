@@ -178,6 +178,16 @@ public class TransactionTab extends JMainTabPrimary {
 		);
 	}
 
+	@Override
+	public void clearData() {
+		filterControl.clearCache();
+	}
+
+	@Override
+	public void updateCache() {
+		filterControl.createCache();
+	}
+
 	private class TransactionTableMenu implements TableMenu<MyTransaction> {
 
 		@Override

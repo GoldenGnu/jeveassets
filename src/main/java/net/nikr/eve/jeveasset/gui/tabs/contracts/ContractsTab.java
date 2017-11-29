@@ -172,6 +172,16 @@ public class ContractsTab extends JMainTabPrimary {
 		);
 	}
 
+	@Override
+	public void clearData() {
+		filterControl.clearCache();
+	}
+
+	@Override
+	public void updateCache() {
+		filterControl.createCache();
+	}
+
 	private class ContractsTableMenu implements TableMenu<MyContractItem> {
 
 		@Override

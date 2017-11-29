@@ -167,6 +167,14 @@ public class AssetsTab extends JMainTabPrimary implements TagUpdate {
 		afterUpdateData();
 	}
 
+	@Override
+	public void clearData() { }
+
+	@Override
+	public void updateCache() {
+		filterControl.createCache();
+	}
+
 	public boolean isFiltersEmpty() {
 		return getFilters().isEmpty();
 	}

@@ -156,6 +156,16 @@ public class IndustryJobsTab extends JMainTabPrimary {
 		);
 	}
 
+	@Override
+	public void clearData() {
+		filterControl.clearCache();
+	}
+
+	@Override
+	public void updateCache() {
+		filterControl.createCache();
+	}
+
 	private class JobsTableMenu implements TableMenu<MyIndustryJob> {
 		@Override
 		public MenuData<MyIndustryJob> getMenuData() {

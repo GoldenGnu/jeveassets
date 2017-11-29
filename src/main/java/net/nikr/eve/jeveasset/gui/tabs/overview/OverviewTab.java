@@ -259,15 +259,24 @@ public class OverviewTab extends JMainTabSecondary {
 		);
 	}
 
-	private OverviewTab getThis() {
-		return this;
-	}
-
 	@Override
 	public void updateData() {
 		jOwner.setModel(new ListComboBoxModel<String>(program.getOwnerNames(true)));
 		updateTable();
 	}
+
+	@Override
+	public void clearData() {
+		try {
+			eventList.getReadWriteLock().writeLock().lock();
+			eventList.clear();
+		} finally {
+			eventList.getReadWriteLock().writeLock().unlock();
+		}
+	}
+
+	@Override
+	public void updateCache() { }
 
 	public ActionListener getListenerClass() {
 		return listener;
@@ -556,7 +565,7 @@ public class OverviewTab extends JMainTabSecondary {
 
 		@Override
 		public void addToolMenu(JComponent jComponent) {
-			jComponent.add(new JOverviewMenu(program, getThis(), selectionModel.getSelected()));
+			jComponent.add(new JOverviewMenu(program, OverviewTab.this, selectionModel.getSelected()));
 			MenuManager.addSeparator(jComponent);
 		}
 	}
