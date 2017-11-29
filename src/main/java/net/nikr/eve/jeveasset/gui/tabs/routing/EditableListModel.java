@@ -88,7 +88,9 @@ public class EditableListModel<T> extends AbstractListModel<T> {
 	public boolean remove(final T o) {
 		int index = backed.indexOf(o);
 		boolean b = backed.remove(o);
-		fireRemoved(index, index);
+		if (b) {
+			fireRemoved(index, index);
+		}
 		return b;
 	}
 

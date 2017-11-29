@@ -746,6 +746,9 @@ public class RoutingTab extends JMainTabSecondary {
 		available.clear();
 		available.addAll(allLocs);
 		jAvailable.getEditableModel().addAll(allLocs);
+		for (SolarSystem system : jWaypoints.getEditableModel().getAll()) {
+			jAvailable.getEditableModel().remove(system);
+		}
 		if (jSystems.isSelected()) {
 			jSystems.setText(TabsRouting.get().checked());
 			jStations.setText(TabsRouting.get().unchecked());
