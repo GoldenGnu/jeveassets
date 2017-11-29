@@ -146,9 +146,17 @@ public class WindowSettingsPanel extends JSettingsPanel {
 	private void setValuesFromSettings() {
 		jWidth.setText(String.valueOf(program.getMainWindow().getFrame().getSize().width));
 		jHeight.setText(String.valueOf(program.getMainWindow().getFrame().getSize().height));
-		jX.setText(String.valueOf(program.getMainWindow().getFrame().getLocation().x));
-		jY.setText(String.valueOf(program.getMainWindow().getFrame().getLocation().y));
+		jX.setText(String.valueOf(fixValue(program.getMainWindow().getFrame().getLocation().x)));
+		jY.setText(String.valueOf(fixValue(program.getMainWindow().getFrame().getLocation().y)));
 		jMaximized.setSelected(program.getMainWindow().getFrame().getState() == JFrame.MAXIMIZED_BOTH);
+	}
+
+	private int fixValue(int i) {
+		if (i < 0) {
+			return 0;
+		} else {
+			return i;
+		}
 	}
 
 	private void setValuesFromWindow() {
