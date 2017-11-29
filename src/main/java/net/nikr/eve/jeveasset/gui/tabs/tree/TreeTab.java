@@ -370,6 +370,22 @@ public class TreeTab extends JMainTabSecondary implements TagUpdate, NamesUpdate
 		updateTable();
 	}
 
+	@Override
+	public void clearData() {
+		try {
+			eventList.getReadWriteLock().writeLock().lock();
+			eventList.clear();
+		} finally {
+			eventList.getReadWriteLock().writeLock().unlock();
+		}
+		filterControl.clearCache();
+	}
+
+	@Override
+	public void updateCache() {
+		filterControl.createCache();
+	}
+
 	public void addColumn(MyLocation location) {
 		tableFormat.addColumn(new JMenuJumps.Column<TreeAsset>(location.getSystem(), location.getSystemID()));
 		filterControl.setColumns(tableFormat.getOrderColumns());

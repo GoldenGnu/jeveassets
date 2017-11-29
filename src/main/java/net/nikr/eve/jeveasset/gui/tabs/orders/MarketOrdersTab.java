@@ -159,6 +159,16 @@ public class MarketOrdersTab extends JMainTabPrimary {
 		);
 	}
 
+	@Override
+	public void clearData() {
+		filterControl.clearCache();
+	}
+
+	@Override
+	public void updateCache() {
+		filterControl.createCache();
+	}
+
 	private class OrdersTableMenu implements TableMenu<MyMarketOrder> {
 
 		@Override

@@ -131,6 +131,16 @@ public class ItemsTab extends JMainTabPrimary {
 		}
 	}
 
+	@Override
+	public void clearData() {
+		filterControl.clearCache();
+	}
+
+	@Override
+	public void updateCache() {
+		filterControl.createCache();
+	}
+
 	private class ItemTableMenu implements TableMenu<Item> {
 		@Override
 		public MenuData<Item> getMenuData() {

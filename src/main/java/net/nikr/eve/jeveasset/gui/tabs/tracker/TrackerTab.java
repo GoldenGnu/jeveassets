@@ -545,6 +545,12 @@ public class TrackerTab extends JMainTabSecondary {
 		updateFilterButtons();
 	}
 
+	@Override
+	public void clearData() { }
+
+	@Override
+	public void updateCache() { }
+
 	private JDateChooser createDateChooser() {
 		JDateChooser jDate = new JDateChooser(true);
 		jDate.addDateChangeListener(listener);

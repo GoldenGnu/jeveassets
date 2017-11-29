@@ -79,10 +79,10 @@ public final class ProfileWriter extends AbstractXmlWriter {
 	}
 
 	private void writeEsiOwners(final Document xmldoc, final List<EsiOwner> esiOwners) {
-		Element parentNode = xmldoc.createElementNS(null, "esiowners");
+		Element parentNode = xmldoc.createElement("esiowners");
 		xmldoc.getDocumentElement().appendChild(parentNode);
 		for (EsiOwner owner : esiOwners) {
-			Element node = xmldoc.createElementNS(null, "esiowner");
+			Element node = xmldoc.createElement("esiowner");
 			setAttribute(node, "accountname", owner.getAccountName());
 			setAttribute(node, "refreshtoken", owner.getRefreshToken());
 			setAttribute(node, "scopes", owner.getScopes());
@@ -99,10 +99,10 @@ public final class ProfileWriter extends AbstractXmlWriter {
 	}
 
 	private void writeEveKitOwners(final Document xmldoc, final List<EveKitOwner> eveKitOwners) {
-		Element parentNode = xmldoc.createElementNS(null, "evekitowners");
+		Element parentNode = xmldoc.createElement("evekitowners");
 		xmldoc.getDocumentElement().appendChild(parentNode);
 		for (EveKitOwner owner : eveKitOwners) {
-			Element node = xmldoc.createElementNS(null, "evekitowner");
+			Element node = xmldoc.createElement("evekitowner");
 			setAttribute(node, "accesskey", owner.getAccessKey());
 			setAttribute(node, "accesscred", owner.getAccessCred());
 			setAttributeOptional(node, "expire", owner.getExpire());
@@ -123,11 +123,11 @@ public final class ProfileWriter extends AbstractXmlWriter {
 	}
 
 	private void writeAccounts(final Document xmldoc, final List<EveApiAccount> accounts) {
-		Element parentNode = xmldoc.createElementNS(null, "accounts");
+		Element parentNode = xmldoc.createElement("accounts");
 		xmldoc.getDocumentElement().appendChild(parentNode);
 
 		for (EveApiAccount account : accounts) {
-			Element node = xmldoc.createElementNS(null, "account");
+			Element node = xmldoc.createElement("account");
 			setAttribute(node, "keyid", account.getKeyID());
 			setAttribute(node, "vcode", account.getVCode());
 			setAttribute(node, "name", account.getName());
@@ -143,7 +143,7 @@ public final class ProfileWriter extends AbstractXmlWriter {
 
 	private void writeOwners(final Document xmldoc, final Element parentNode, final List<EveApiOwner> owners) {
 		for (EveApiOwner owner : owners) {
-			Element node = xmldoc.createElementNS(null, "human");
+			Element node = xmldoc.createElement("human");
 			setAttribute(node, "migrated", owner.isMigrated());
 			writeTypeOwner(xmldoc, node, owner);
 			parentNode.appendChild(node);
@@ -166,7 +166,7 @@ public final class ProfileWriter extends AbstractXmlWriter {
 		setAttribute(node, "locationsnextupdate", owner.getLocationsNextUpdate());
 		setAttribute(node, "blueprintsnextupdate", owner.getBlueprintsNextUpdate());
 
-		Element childNode = xmldoc.createElementNS(null, "assets");
+		Element childNode = xmldoc.createElement("assets");
 		node.appendChild(childNode);
 		writeAssets(xmldoc, childNode, owner.getAssets());
 		writeContractItems(xmldoc, node, owner.getContracts());
@@ -180,7 +180,7 @@ public final class ProfileWriter extends AbstractXmlWriter {
 
 	private void writeAssets(final Document xmldoc, final Element parentNode, final List<MyAsset> assets) {
 		for (MyAsset asset : assets) {
-			Element node = xmldoc.createElementNS(null, "asset");
+			Element node = xmldoc.createElement("asset");
 			Integer quantity = asset.getQuantity();
 			int count;
 			Integer rawQuantity;
@@ -204,11 +204,11 @@ public final class ProfileWriter extends AbstractXmlWriter {
 	}
 
 	private void writeContractItems(Document xmldoc, Element parentNode, Map<MyContract, List<MyContractItem>> contractItems) {
-		Element contractsNode = xmldoc.createElementNS(null, "contracts");
+		Element contractsNode = xmldoc.createElement("contracts");
 		parentNode.appendChild(contractsNode);
 		for (Map.Entry<MyContract, List<MyContractItem>> entry : contractItems.entrySet()) {
 			MyContract contract = entry.getKey();
-			Element contractNode = xmldoc.createElementNS(null, "contract");
+			Element contractNode = xmldoc.createElement("contract");
 			setAttribute(contractNode, "acceptorid", contract.getAcceptorID());
 			setAttribute(contractNode, "assigneeid", contract.getAssigneeID());
 			setAttribute(contractNode, "availability", contract.getAvailability());
@@ -233,7 +233,7 @@ public final class ProfileWriter extends AbstractXmlWriter {
 			setAttribute(contractNode, "forcorp", contract.isForCorp());
 			contractsNode.appendChild(contractNode);
 			for (MyContractItem contractItem : entry.getValue()) {
-				Element itemNode = xmldoc.createElementNS(null, "contractitem");
+				Element itemNode = xmldoc.createElement("contractitem");
 				setAttribute(itemNode, "included", contractItem.isIncluded());
 				setAttribute(itemNode, "quantity", contractItem.getQuantity());
 				setAttribute(itemNode, "recordid", contractItem.getRecordID());
@@ -246,13 +246,13 @@ public final class ProfileWriter extends AbstractXmlWriter {
 	}
 
 	private void writeAccountBalances(final Document xmldoc, final Element parentNode, final List<MyAccountBalance> accountBalances, final boolean bCorp) {
-		Element node = xmldoc.createElementNS(null, "balances");
+		Element node = xmldoc.createElement("balances");
 		if (!accountBalances.isEmpty()) {
 			setAttribute(node, "corp", bCorp);
 			parentNode.appendChild(node);
 		}
 		for (MyAccountBalance accountBalance : accountBalances) {
-			Element childNode = xmldoc.createElementNS(null, "balance");
+			Element childNode = xmldoc.createElement("balance");
 			setAttribute(childNode, "accountkey", accountBalance.getAccountKey());
 			setAttribute(childNode, "balance", accountBalance.getBalance());
 			node.appendChild(childNode);
@@ -260,13 +260,13 @@ public final class ProfileWriter extends AbstractXmlWriter {
 	}
 
 	private void writeMarketOrders(final Document xmldoc, final Element parentNode, final Set<MyMarketOrder> marketOrders, final boolean bCorp) {
-		Element node = xmldoc.createElementNS(null, "markerorders");
+		Element node = xmldoc.createElement("markerorders");
 		if (!marketOrders.isEmpty()) {
 			setAttribute(node, "corp", bCorp);
 			parentNode.appendChild(node);
 		}
 		for (MyMarketOrder marketOrder : marketOrders) {
-			Element childNode = xmldoc.createElementNS(null, "markerorder");
+			Element childNode = xmldoc.createElement("markerorder");
 			setAttribute(childNode, "orderid", marketOrder.getOrderID());
 			setAttribute(childNode, "stationid", marketOrder.getLocationID());
 			setAttribute(childNode, "volentered", marketOrder.getVolEntered());
@@ -286,13 +286,13 @@ public final class ProfileWriter extends AbstractXmlWriter {
 	}
 
 	private void writeJournals(final Document xmldoc, final Element parentNode, final Set<MyJournal> journals, final boolean bCorp) {
-		Element node = xmldoc.createElementNS(null, "journals");
+		Element node = xmldoc.createElement("journals");
 		if (!journals.isEmpty()) {
 			setAttribute(node, "corp", bCorp);
 			parentNode.appendChild(node);
 		}
 		for (MyJournal journal : journals) {
-			Element childNode = xmldoc.createElementNS(null, "journal");
+			Element childNode = xmldoc.createElement("journal");
 			//Base
 			setAttributeOptional(childNode, "amount", journal.getAmount());
 			setAttributeOptional(childNode, "argid1", RawConverter.fromRawJournalExtraInfoArgID(journal.getExtraInfo()));
@@ -316,13 +316,13 @@ public final class ProfileWriter extends AbstractXmlWriter {
 	}
 
 	private void writeTransactions(final Document xmldoc, final Element parentNode, final Set<MyTransaction> transactions, final boolean bCorp) {
-		Element node = xmldoc.createElementNS(null, "wallettransactions");
+		Element node = xmldoc.createElement("wallettransactions");
 		if (!transactions.isEmpty()) {
 			setAttribute(node, "corp", bCorp);
 			parentNode.appendChild(node);
 		}
 		for (MyTransaction transaction : transactions) {
-			Element childNode = xmldoc.createElementNS(null, "wallettransaction");
+			Element childNode = xmldoc.createElement("wallettransaction");
 			setAttribute(childNode, "transactiondatetime", transaction.getDate());
 			setAttribute(childNode, "transactionid", transaction.getTransactionID());
 			setAttribute(childNode, "quantity", transaction.getQuantity());
@@ -343,13 +343,13 @@ public final class ProfileWriter extends AbstractXmlWriter {
 	}
 
 	private void writeIndustryJobs(final Document xmldoc, final Element parentNode, final List<MyIndustryJob> industryJobs, final boolean bCorp) {
-		Element node = xmldoc.createElementNS(null, "industryjobs");
+		Element node = xmldoc.createElement("industryjobs");
 		if (!industryJobs.isEmpty()) {
 			setAttribute(node, "corp", bCorp);
 			parentNode.appendChild(node);
 		}
 		for (MyIndustryJob industryJob : industryJobs) {
-			Element childNode = xmldoc.createElementNS(null, "industryjob");
+			Element childNode = xmldoc.createElement("industryjob");
 			setAttribute(childNode, "jobid", industryJob.getJobID());
 			setAttribute(childNode, "installerid", industryJob.getInstallerID());
 			setAttribute(childNode, "facilityid", industryJob.getFacilityID());
@@ -377,13 +377,13 @@ public final class ProfileWriter extends AbstractXmlWriter {
 	}
 
 	private void writeBlueprints(final Document xmldoc, final Element parentNode, final Map<Long, RawBlueprint> blueprints, final boolean bCorp) {
-		Element node = xmldoc.createElementNS(null, "blueprints");
+		Element node = xmldoc.createElement("blueprints");
 		if (!blueprints.isEmpty()) {
 			setAttribute(node, "corp", bCorp);
 			parentNode.appendChild(node);
 		}
 		for (RawBlueprint blueprint : blueprints.values()) {
-			Element childNode = xmldoc.createElementNS(null, "blueprint");
+			Element childNode = xmldoc.createElement("blueprint");
 			setAttribute(childNode, "itemid", blueprint.getItemID());
 			setAttribute(childNode, "locationid", blueprint.getLocationID());
 			setAttribute(childNode, "typeid", blueprint.getTypeID());
@@ -396,21 +396,21 @@ public final class ProfileWriter extends AbstractXmlWriter {
 		}
 	}
 
-	private void setAttribute(Element node, String qualifiedName, Object value) {
-		node.setAttributeNS(null, qualifiedName, valueOf(value));
+	private void setAttribute(final Element node, final String qualifiedName, final Object value) {
+		node.setAttribute(qualifiedName, valueOf(value));
 	}
 
-	private void setAttributeOptional(Element node, String qualifiedName, Object value) {
+	private void setAttributeOptional(final Element node, final String qualifiedName, final Object value) {
 		if (value != null) {
-			node.setAttributeNS(null, qualifiedName, valueOf(value));
+			node.setAttribute(qualifiedName, valueOf(value));
 		}
 	}
 
-	private void setAttribute(Element node, String qualifiedName, String value) {
-		node.setAttributeNS(null, qualifiedName, value);
+	private void setAttribute(final Element node, final String qualifiedName, final String value) {
+		node.setAttribute(qualifiedName, value);
 	}
 
-	private String valueOf(Object object) {
+	private String valueOf(final Object object) {
 		if (object == null) {
 			throw new RuntimeException("Can't save null");
 		} else if (object instanceof Date) {

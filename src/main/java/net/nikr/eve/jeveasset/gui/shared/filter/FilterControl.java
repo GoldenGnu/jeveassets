@@ -37,6 +37,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JTable;
+import net.nikr.eve.jeveasset.gui.shared.components.JLockWindow;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter.AllColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.NumberValue;
@@ -51,6 +52,8 @@ public abstract class FilterControl<E> extends ExportFilterControl<E> {
 	private final Map<String, List<Filter>> filters;
 	private final Map<String, List<Filter>> defaultFilters;
 	private final FilterGui<E> gui;
+	private final Map<E, String> cache;
+	private final JLockWindow jLockWindow;
 
 	/** Do not use this constructor - it's here only for test purposes. */
 	protected FilterControl() {
@@ -61,6 +64,8 @@ public abstract class FilterControl<E> extends ExportFilterControl<E> {
 		filters = null;
 		defaultFilters = null;
 		gui = null;
+		cache = new HashMap<E, String>();
+		jLockWindow = null;
 	}
 
 	protected FilterControl(final JFrame jFrame, final String name, final EventList<E> eventList, final EventList<E> exportEventList, final FilterList<E> filterList, final Map<String, List<Filter>> filters) {
@@ -72,30 +77,24 @@ public abstract class FilterControl<E> extends ExportFilterControl<E> {
 		this.exportEventList = exportEventList;
 		this.filterList = filterList;
 		eventList.addListEventListener(new ListEventListener<E>() {
-			@Override
+			@Override @SuppressWarnings("deprecation")
 			public void listChanged(ListEvent<E> listChanges) {
 				try {
 					eventList.getReadWriteLock().readLock().lock();
 					List<E> delete = new ArrayList<E>();
-					List<E> insert = new ArrayList<E>();
 					List<E> update = new ArrayList<E>();
 					while(listChanges.next()) {
-						int index = listChanges.getIndex();
 						switch (listChanges.getType()) {
 							case ListEvent.DELETE:
-								addSafe(eventList, delete, index);
-								break;
-							case ListEvent.INSERT:
-								addSafe(eventList, insert, index);
+								addSafe(delete, listChanges.getOldValue());
 								break;
 							case ListEvent.UPDATE:
-								addSafe(eventList, update, index);
+								addSafe(eventList, update, listChanges.getIndex());
 								break;
 						}
 					}
-					FilterMatcher.cacheDelete(FilterControl.this, delete);
-					FilterMatcher.cacheInsert(FilterControl.this, insert);
-					FilterMatcher.cacheUpdate(FilterControl.this, update);
+					cacheDelete(delete);
+					cacheUpdate(update);
 				} finally {
 					eventList.getReadWriteLock().readLock().unlock();
 				}
@@ -106,6 +105,63 @@ public abstract class FilterControl<E> extends ExportFilterControl<E> {
 		ListenerClass listener = new ListenerClass();
 		filterList.addListEventListener(listener);
 		gui = new FilterGui<E>(jFrame, this);
+		cache = new HashMap<E, String>();
+		jLockWindow = new JLockWindow(jFrame);
+	}
+
+	public void clearCache() {
+		cache.clear();
+	}
+
+	public void createCache() {
+		jLockWindow.show(name, new JLockWindow.LockWorker() {
+			@Override
+			public void task() {
+				cacheRebuild();
+			}
+
+			@Override
+			public void gui() { }
+		});
+	}
+
+	Map<E, String> getCache() {
+		return cache;
+	}
+
+	void addCache(E e, String haystack) {
+		cache.put(e, haystack);
+	}
+
+	private void cacheDelete(List<E> update) {
+		if (update.isEmpty()) {
+			return;
+		}
+		for (E e : update) {
+			cache.remove(e); //Remove deleted cache
+		}
+	}
+
+	private void cacheUpdate(List<E> update) {
+		if (update.isEmpty()) {
+			return;
+		}
+		for (E e : update) {
+			cache.put(e, FilterMatcher.buildItemCache(this, e)); //Update outdated cache
+		}
+	}
+
+	private void cacheRebuild() {
+		cache.clear();
+		try {
+			getEventList().getReadWriteLock().readLock().lock();
+			for (E e : getEventList()) {
+				String s = FilterMatcher.buildItemCache(this, e);
+				cache.put(e, s);
+			}
+		} finally {
+			getEventList().getReadWriteLock().readLock().unlock();
+		}
 	}
 
 	private void addSafe(final EventList<E> eventList, List<E> list, int index) {
@@ -114,9 +170,15 @@ public abstract class FilterControl<E> extends ExportFilterControl<E> {
 		}
 	}
 
+	private void addSafe(List<E> list, E e) {
+		if (e != null) {
+			list.add(e);
+		}
+	}
+
 	public void setColumns(final List<EnumTableColumn<E>> enumColumns) {
 		gui.setColumns(enumColumns);
-		FilterMatcher.cacheRebuild(this); //Add or Remove column means everything have to be rebuild...
+		cacheRebuild(); //Add or Remove column means everything have to be rebuild...
 	}
 
 	@Override

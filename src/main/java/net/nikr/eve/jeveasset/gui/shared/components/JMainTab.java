@@ -164,12 +164,14 @@ public abstract class JMainTab {
 	public abstract void updateLocations(Set<Long> locationIDs);
 	public abstract void updatePrices(Set<Integer> typeIDs);
 	public abstract void updateData();
-	public void clearData() { }
+	public abstract void updateCache();
+	public abstract void clearData();
 
 	public void updateDataTableLock() {
 		beforeUpdateData();
 		updateData();
 		afterUpdateData();
+		updateCache();
 	}
 
 	public Icon getIcon() {

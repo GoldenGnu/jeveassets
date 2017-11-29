@@ -474,6 +474,7 @@ public class Program implements ActionListener {
 				@Override
 				public void run() {
 					jMainTab.afterUpdateData();
+					jMainTab.updateCache();
 				}
 			});
 		}

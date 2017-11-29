@@ -582,11 +582,6 @@ public class RoutingTab extends JMainTabSecondary {
 	}
 
 	@Override
-	public void clearData() {
-		RoutingAlgorithm.setCache(false); //Clear cache
-	}
-
-	@Override
 	public void updateData() {
 		//Do everything the constructor does...
 		jAvailable.getEditableModel().clear();
@@ -621,6 +616,14 @@ public class RoutingTab extends JMainTabSecondary {
 		updateRemaining();
 		processFilteredAssets();
 	}
+
+	@Override
+	public void clearData() {
+		RoutingAlgorithm.setCache(false); //Clear cache
+	}
+
+	@Override
+	public void updateCache() {}
 
 	public SolarSystem getSolarSystem() {
 		return jSystemDialog.show();

@@ -257,6 +257,16 @@ public class ReprocessedTab extends JMainTabSecondary {
 		jTable.loadExpandedState();
 	}
 
+	@Override
+	public void clearData() {
+		filterControl.clearCache();
+	}
+
+	@Override
+	public void updateCache() {
+		filterControl.createCache();
+	}
+
 	public void set(final Set<Integer> newTypeIDs) {
 		typeIDs.clear();
 		add(newTypeIDs);

@@ -209,6 +209,19 @@ public class MaterialsTab extends JMainTabSecondary {
 		}
 	}
 
+	@Override
+	public void clearData() {
+		try {
+			eventList.getReadWriteLock().writeLock().lock();
+			eventList.clear();
+		} finally {
+			eventList.getReadWriteLock().writeLock().unlock();
+		}
+	}
+
+	@Override
+	public void updateCache() { }
+
 	private void updateTable() {
 		beforeUpdateData();
 		String owner = (String) jOwners.getSelectedItem();

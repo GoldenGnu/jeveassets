@@ -30,28 +30,37 @@ import java.io.UnsupportedEncodingException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.*;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Result;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Document;
 
 
 public abstract class AbstractXmlWriter extends AbstractXmlBackup {
 
-	private static final Logger LOG = LoggerFactory.getLogger(AbstractXmlWriter.class);
+	private static DocumentBuilderFactory factory = null;
 
 	protected Document getXmlDocument(final String rootname) throws XmlException {
 		try {
-			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-			DocumentBuilder builder = factory.newDocumentBuilder();
+			DocumentBuilder builder = getFactory().newDocumentBuilder();
 			DOMImplementation impl = builder.getDOMImplementation();
 			return impl.createDocument(null, rootname, null);
 		} catch (ParserConfigurationException ex) {
 			throw new XmlException(ex.getMessage(), ex);
 		}
+	}
+
+	private synchronized static DocumentBuilderFactory getFactory() {
+		if (factory == null) {
+			factory = DocumentBuilderFactory.newInstance();
+		}
+		return factory;
 	}
 
 	protected void writeXmlFileFitting(final Document doc, final String filename, final boolean createBackup) throws XmlException {
