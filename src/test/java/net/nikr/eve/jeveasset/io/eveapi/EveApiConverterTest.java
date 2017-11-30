@@ -20,8 +20,6 @@
  */
 package net.nikr.eve.jeveasset.io.eveapi;
 
-import static org.junit.Assert.assertEquals;
-
 import com.beimin.eveapi.model.shared.AccountBalance;
 import com.beimin.eveapi.model.shared.Asset;
 import com.beimin.eveapi.model.shared.Blueprint;
@@ -37,6 +35,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import net.nikr.eve.jeveasset.TestUtil;
+import net.nikr.eve.jeveasset.data.api.accounts.EveApiOwner;
 import net.nikr.eve.jeveasset.data.api.my.MyAccountBalance;
 import net.nikr.eve.jeveasset.data.api.my.MyAsset;
 import net.nikr.eve.jeveasset.data.api.my.MyContract;
@@ -45,10 +44,14 @@ import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob;
 import net.nikr.eve.jeveasset.data.api.my.MyJournal;
 import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder;
 import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
+import net.nikr.eve.jeveasset.data.api.raw.RawAsset;
 import net.nikr.eve.jeveasset.data.api.raw.RawBlueprint;
 import net.nikr.eve.jeveasset.io.shared.ConverterTestOptions;
 import net.nikr.eve.jeveasset.io.shared.ConverterTestOptionsGetter;
 import net.nikr.eve.jeveasset.io.shared.ConverterTestUtil;
+import net.nikr.eve.jeveasset.io.shared.DataConverter;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
 
@@ -81,8 +84,9 @@ public class EveApiConverterTest extends TestUtil {
 			childAsset.setItemID(childAsset.getItemID() + 1);
 			childAsset.setLocationID(rootAsset.getItemID());
 
-			List<MyAsset> assets = EveApiConverter.toAssets(assetsList, ConverterTestUtil.getEveApiOwner(options));
-			if (rootAsset.getFlag() != 89) {
+			EveApiOwner owner = ConverterTestUtil.getEveApiOwner(options);
+			List<MyAsset> assets = EveApiConverter.toAssets(assetsList, owner);
+			if (!assets.isEmpty()) {
 				assertEquals("List empty @" + options.getIndex(), 1, assets.size());
 				ConverterTestUtil.testValues(assets.get(0), options);
 
@@ -92,6 +96,7 @@ public class EveApiConverterTest extends TestUtil {
 				ConverterTestUtil.testValues(childMyAsset, options);
 			} else {
 				assertEquals(assets.size(), 0);
+				assertTrue(DataConverter.ignoreAsset(new RawAsset(rootAsset), owner));
 			}
 		}
 	}

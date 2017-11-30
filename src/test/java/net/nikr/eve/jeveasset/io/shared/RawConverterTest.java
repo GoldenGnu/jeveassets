@@ -20,8 +20,6 @@
  */
 package net.nikr.eve.jeveasset.io.shared;
 
-import static org.junit.Assert.*;
-
 import com.beimin.eveapi.exception.ApiException;
 import com.beimin.eveapi.model.eve.RefType;
 import com.beimin.eveapi.response.eve.RefTypesResponse;
@@ -47,6 +45,10 @@ import net.nikr.eve.jeveasset.io.shared.RawConverter.LocationFlag;
 import net.troja.eve.esi.model.CharacterWalletJournalResponse;
 import net.troja.eve.esi.model.CorporationWalletJournalResponse;
 import org.joda.time.DateTime;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import org.junit.Test;
 
 public class RawConverterTest extends TestUtil {
@@ -72,10 +74,12 @@ public class RawConverterTest extends TestUtil {
 		for (net.troja.eve.esi.model.CharacterAssetsResponse.LocationFlagEnum locationFlagEnum : net.troja.eve.esi.model.CharacterAssetsResponse.LocationFlagEnum.values()) {
 			ItemFlag itemFlag = RawConverter.toFlag(locationFlagEnum);
 			assertNotNull(itemFlag);
-			assertTrue(locationFlagEnum.name() + " != " + itemFlag.getFlagName(),
+			assertTrue(locationFlagEnum.name() + " (" + locationFlagEnum.toString() + ") != " + itemFlag.getFlagName(),
 					itemFlag.getFlagID() == 0
 					|| locationFlagEnum.toString().toLowerCase().equals(itemFlag.getFlagText().toLowerCase().replace(" ", ""))
 					|| locationFlagEnum.toString().toLowerCase().equals(itemFlag.getFlagName().toLowerCase())
+					|| (locationFlagEnum.toString().equals("CorpseBay") && itemFlag.getFlagName().equals("CrateLoot"))
+					|| (locationFlagEnum.toString().equals("Module") && itemFlag.getFlagName().equals("Skill"))
 			);
 
 		}
@@ -86,7 +90,7 @@ public class RawConverterTest extends TestUtil {
 		for (net.troja.eve.esi.model.CorporationAssetsResponse.LocationFlagEnum locationFlagEnum : net.troja.eve.esi.model.CorporationAssetsResponse.LocationFlagEnum.values()) {
 			ItemFlag itemFlag = RawConverter.toFlag(locationFlagEnum);
 			assertNotNull(itemFlag);
-			assertTrue(locationFlagEnum.name() + " != " + itemFlag.getFlagName(),
+			assertTrue(locationFlagEnum.name() + " (" + locationFlagEnum.toString() + ") != " + itemFlag.getFlagName(),
 					itemFlag.getFlagID() == 0
 					|| locationFlagEnum.toString().toLowerCase().equals(itemFlag.getFlagText().toLowerCase().replace(" ", ""))
 					|| locationFlagEnum.toString().toLowerCase().equals(itemFlag.getFlagName().toLowerCase())
@@ -100,6 +104,9 @@ public class RawConverterTest extends TestUtil {
 					|| (locationFlagEnum.toString().equals("ServiceSlot5") && itemFlag.getFlagName().equals("StructureServiceSlot5"))
 					|| (locationFlagEnum.toString().equals("ServiceSlot6") && itemFlag.getFlagName().equals("StructureServiceSlot6"))
 					|| (locationFlagEnum.toString().equals("ServiceSlot7") && itemFlag.getFlagName().equals("StructureServiceSlot7"))
+					|| (locationFlagEnum.toString().equals("DustBattle") && itemFlag.getFlagName().equals("DustCharacterBattle"))
+					|| (locationFlagEnum.toString().equals("DustDatabank") && itemFlag.getFlagName().equals("DustCharacterDatabank"))
+					|| (locationFlagEnum.toString().equals("HiddenModifers") && itemFlag.getFlagName().equals("HiddenModifiers"))
 			);
 		}
 	}
@@ -109,10 +116,12 @@ public class RawConverterTest extends TestUtil {
 		for (net.troja.eve.esi.model.CharacterBlueprintsResponse.LocationFlagEnum locationFlagEnum : net.troja.eve.esi.model.CharacterBlueprintsResponse.LocationFlagEnum.values()) {
 			ItemFlag itemFlag = RawConverter.toFlag(locationFlagEnum);
 			assertNotNull(itemFlag);
-			assertTrue(locationFlagEnum.name() + " != " + itemFlag.getFlagName(),
+			assertTrue(locationFlagEnum.name() + " (" + locationFlagEnum.toString() + ") != " + itemFlag.getFlagName(),
 					itemFlag.getFlagID() == 0
 					|| locationFlagEnum.toString().toLowerCase().equals(itemFlag.getFlagText().toLowerCase().replace(" ", ""))
 					|| locationFlagEnum.toString().toLowerCase().equals(itemFlag.getFlagName().toLowerCase())
+					|| (locationFlagEnum.toString().equals("CorpseBay") && itemFlag.getFlagName().equals("CrateLoot"))
+					|| (locationFlagEnum.toString().equals("Module") && itemFlag.getFlagName().equals("Skill"))
 			);
 		}
 	}
@@ -122,7 +131,7 @@ public class RawConverterTest extends TestUtil {
 		for (net.troja.eve.esi.model.CorporationBlueprintsResponse.LocationFlagEnum locationFlagEnum : net.troja.eve.esi.model.CorporationBlueprintsResponse.LocationFlagEnum.values()) {
 			ItemFlag itemFlag = RawConverter.toFlag(locationFlagEnum);
 			assertNotNull(itemFlag);
-			assertTrue(locationFlagEnum.name() + " != " + itemFlag.getFlagName(),
+			assertTrue(locationFlagEnum.name() + " (" + locationFlagEnum.toString() + ") != " + itemFlag.getFlagName(),
 					itemFlag.getFlagID() == 0
 					|| locationFlagEnum.toString().toLowerCase().equals(itemFlag.getFlagText().toLowerCase().replace(" ", ""))
 					|| locationFlagEnum.toString().toLowerCase().equals(itemFlag.getFlagName().toLowerCase())
@@ -136,6 +145,9 @@ public class RawConverterTest extends TestUtil {
 					|| (locationFlagEnum.toString().equals("ServiceSlot5") && itemFlag.getFlagName().equals("StructureServiceSlot5"))
 					|| (locationFlagEnum.toString().equals("ServiceSlot6") && itemFlag.getFlagName().equals("StructureServiceSlot6"))
 					|| (locationFlagEnum.toString().equals("ServiceSlot7") && itemFlag.getFlagName().equals("StructureServiceSlot7"))
+					|| (locationFlagEnum.toString().equals("DustBattle") && itemFlag.getFlagName().equals("DustCharacterBattle"))
+					|| (locationFlagEnum.toString().equals("DustDatabank") && itemFlag.getFlagName().equals("DustCharacterDatabank"))
+					|| (locationFlagEnum.toString().equals("HiddenModifers") && itemFlag.getFlagName().equals("HiddenModifiers"))
 			);
 		}
 	}

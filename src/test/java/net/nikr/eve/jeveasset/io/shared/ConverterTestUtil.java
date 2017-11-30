@@ -20,9 +20,6 @@
  */
 package net.nikr.eve.jeveasset.io.shared;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
-
 import com.beimin.eveapi.model.shared.KeyType;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
@@ -90,6 +87,9 @@ import net.troja.eve.esi.model.CorporationWalletJournalExtraInfoResponse;
 import net.troja.eve.esi.model.CorporationWalletJournalResponse;
 import net.troja.eve.esi.model.CorporationWalletsResponse;
 import org.joda.time.DateTime;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 
 public class ConverterTestUtil {
@@ -318,7 +318,7 @@ public class ConverterTestUtil {
 		testValues(loadAccountBalance, options, null, false);
 
 		//Asset
-		if (options.getItemFlag().getFlagID() != 89) {
+		if (!esiOwner.getAssets().isEmpty()) {
 			assertEquals("List empty @" + options.getIndex(), 1, esiOwner.getAssets().size());
 			MyAsset rootMyAsset = esiOwner.getAssets().get(0);
 			testValues(rootMyAsset, options, setNull ? CharacterAssetsResponse.class : null, false);
@@ -327,6 +327,7 @@ public class ConverterTestUtil {
 			testValues(childMyAsset, options, setNull ? CharacterAssetsResponse.class : null, false);
 		} else {
 			assertEquals(esiOwner.getAssets().size(), 0);
+			assertTrue(DataConverter.ignoreAsset(ConverterTestUtil.getRawAsset(setNull, options), esiOwner));
 		}
 
 		//Blueprint

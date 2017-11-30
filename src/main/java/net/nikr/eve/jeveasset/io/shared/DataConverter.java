@@ -169,14 +169,18 @@ public abstract class DataConverter {
 			rawAsset.setLocationType(RawConverter.toAssetLocationType(rootAsset.getLocationID()));
 		}
 		//Ignore some stuff
-		if (rawAsset.getItemFlag().getFlagID() == 7 //Skill
-				|| rawAsset.getItemFlag().getFlagID() == 61 //Skill In Training
-				|| rawAsset.getItemFlag().getFlagID() == 88 //Booster
-				|| rawAsset.getItemFlag().getFlagID() == 89 //Implant
-				|| rawAsset.getLocationID() == owner.getOwnerID()) { //Other stuff
+		if (ignoreAsset(rawAsset, owner)) {
 			return null;
 		}
 		return new MyAsset(rawAsset, item, owner, parents);
+	}
+
+	public static boolean ignoreAsset(RawAsset rawAsset, OwnerType owner) {
+		return rawAsset.getItemFlag().getFlagID() == 7 //Skill
+				|| rawAsset.getItemFlag().getFlagID() == 61 //Skill In Training
+				|| rawAsset.getItemFlag().getFlagID() == 88 //Booster
+				|| rawAsset.getItemFlag().getFlagID() == 89 //Implant
+				|| rawAsset.getLocationID() == owner.getOwnerID();  //Other stuff
 	}
 
 	public static Map<MyContract, List<MyContractItem>> convertRawContracts(List<RawContract> rawContracts, OwnerType owner) {
