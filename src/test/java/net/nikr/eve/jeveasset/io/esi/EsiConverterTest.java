@@ -20,14 +20,13 @@
  */
 package net.nikr.eve.jeveasset.io.esi;
 
-import static org.junit.Assert.assertEquals;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import net.nikr.eve.jeveasset.TestUtil;
+import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
 import net.nikr.eve.jeveasset.data.api.my.MyAccountBalance;
 import net.nikr.eve.jeveasset.data.api.my.MyAsset;
 import net.nikr.eve.jeveasset.data.api.my.MyContract;
@@ -36,10 +35,12 @@ import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob;
 import net.nikr.eve.jeveasset.data.api.my.MyJournal;
 import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder;
 import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
+import net.nikr.eve.jeveasset.data.api.raw.RawAsset;
 import net.nikr.eve.jeveasset.data.api.raw.RawBlueprint;
 import net.nikr.eve.jeveasset.io.shared.ConverterTestOptions;
 import net.nikr.eve.jeveasset.io.shared.ConverterTestOptionsGetter;
 import net.nikr.eve.jeveasset.io.shared.ConverterTestUtil;
+import net.nikr.eve.jeveasset.io.shared.DataConverter;
 import net.troja.eve.esi.model.CharacterAssetsResponse;
 import net.troja.eve.esi.model.CharacterBlueprintsResponse;
 import net.troja.eve.esi.model.CharacterContractsItemsResponse;
@@ -57,6 +58,8 @@ import net.troja.eve.esi.model.CorporationOrdersResponse;
 import net.troja.eve.esi.model.CorporationWalletJournalResponse;
 import net.troja.eve.esi.model.CorporationWalletTransactionsResponse;
 import net.troja.eve.esi.model.CorporationWalletsResponse;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
 
@@ -117,8 +120,9 @@ public class EsiConverterTest extends TestUtil {
 			childAssetsResponse.setItemId(childAssetsResponse.getItemId() + 1);
 			childAssetsResponse.setLocationId(rootAssetsResponse.getItemId());
 
-			List<MyAsset> assets = EsiConverter.toAssets(assetsResponses, ConverterTestUtil.getEsiOwner(options));
-			if (rootAssetsResponse.getLocationFlag() != CharacterAssetsResponse.LocationFlagEnum.IMPLANT) {
+			EsiOwner owner = ConverterTestUtil.getEsiOwner(options);
+			List<MyAsset> assets = EsiConverter.toAssets(assetsResponses, owner);
+			if (!assets.isEmpty()) {
 				assertEquals("List empty @" + options.getIndex(), 1, assets.size());
 				ConverterTestUtil.testValues(assets.get(0), options, esi);
 
@@ -128,6 +132,7 @@ public class EsiConverterTest extends TestUtil {
 				ConverterTestUtil.testValues(childAsset, options, esi);
 			} else {
 				assertEquals(assets.size(), 0);
+				assertTrue(DataConverter.ignoreAsset(new RawAsset(rootAssetsResponse), owner));
 			}
 		}
 	}
@@ -156,8 +161,9 @@ public class EsiConverterTest extends TestUtil {
 			childAssetsResponse.setItemId(childAssetsResponse.getItemId() + 1);
 			childAssetsResponse.setLocationId(rootAssetsResponse.getItemId());
 
-			List<MyAsset> assets = EsiConverter.toAssetsCorporation(assetsResponses, ConverterTestUtil.getEsiOwner(options));
-			if (rootAssetsResponse.getLocationFlag() != CorporationAssetsResponse.LocationFlagEnum.IMPLANT) {
+			EsiOwner owner = ConverterTestUtil.getEsiOwner(options);
+			List<MyAsset> assets = EsiConverter.toAssetsCorporation(assetsResponses, owner);
+			if (!assets.isEmpty()) {
 				assertEquals("List empty @" + options.getIndex(), 1, assets.size());
 				ConverterTestUtil.testValues(assets.get(0), options, esi);
 
@@ -167,6 +173,7 @@ public class EsiConverterTest extends TestUtil {
 				ConverterTestUtil.testValues(childAsset, options, esi);
 			} else {
 				assertEquals(assets.size(), 0);
+				assertTrue(DataConverter.ignoreAsset(new RawAsset(rootAssetsResponse), owner));
 			}
 		}
 	}

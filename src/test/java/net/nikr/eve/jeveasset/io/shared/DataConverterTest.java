@@ -157,8 +157,9 @@ public class DataConverterTest extends TestUtil {
 			childRawAsset.setItemID(childRawAsset.getItemID() + 1);
 			childRawAsset.setLocationID(rootRawAsset.getItemID());
 
-			List<MyAsset> assets = DataConverter.convertRawAssets(rawAssets, ConverterTestUtil.getEsiOwner(options));
-			if (rootRawAsset.getItemFlag().getFlagID() != 89) {
+			EsiOwner owner = ConverterTestUtil.getEsiOwner(options);
+			List<MyAsset> assets = DataConverter.convertRawAssets(rawAssets, owner);
+			if (!assets.isEmpty()) {
 				assertEquals("List empty @" + options.getIndex(), 1, assets.size());
 				ConverterTestUtil.testValues(assets.get(0), options);
 
@@ -168,6 +169,7 @@ public class DataConverterTest extends TestUtil {
 				ConverterTestUtil.testValues(childMyAsset, options);
 			} else {
 				assertEquals(assets.size(), 0);
+				assertTrue(DataConverter.ignoreAsset(rootRawAsset, owner));
 			}
 		}
 	}
@@ -176,12 +178,14 @@ public class DataConverterTest extends TestUtil {
 	public void testToMyAsset() {
 		for (ConverterTestOptions options : ConverterTestOptionsGetter.getConverterOptions()) {
 			RawAsset rawAsset = ConverterTestUtil.getRawAsset(false, options);
-			MyAsset asset = DataConverter.toMyAsset(rawAsset, ConverterTestUtil.getEsiOwner(options), new ArrayList<MyAsset>());
-			if (rawAsset.getItemFlag().getFlagID() != 89) {
+			EsiOwner owner = ConverterTestUtil.getEsiOwner(options);
+			MyAsset asset = DataConverter.toMyAsset(rawAsset, owner, new ArrayList<MyAsset>());
+			if (asset != null) {
 				assertNotNull("Object null @" + options.getIndex(), asset);
 				ConverterTestUtil.testValues(asset, options);
 			} else {
 				assertNull(asset);
+				assertTrue(DataConverter.ignoreAsset(rawAsset, owner));
 			}
 		}
 	}

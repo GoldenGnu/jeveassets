@@ -596,18 +596,14 @@ public class RawConverter {
 
 	public enum LocationFlag {
 		AUTOFIT("AutoFit", 0),
-		MODULE("Module", 0),
-		CORPSEBAY("CorpseBay", 0),
-		HANGARALL("HangarAll", 0),
-		DUSTDATABANK("DustDatabank", 0),
-		DUSTBATTLE("DustBattle", 0),
-		HIDDENMODIFERS("HiddenModifers", 0),
+		HANGARALL("HangarAll", 0), //1000
 		WALLET("Wallet", 1),
 		OFFICEFOLDER("OfficeFolder", 2),
 		WARDROBE("Wardrobe", 3),
 		HANGAR("Hangar", 4),
 		CARGO("Cargo", 5),
 		IMPOUNDED("OfficeImpound", 6), //Impounded
+		MODULE("Skill", 7), //Module
 		SKILL("Skill", 7),
 		REWARD("Reward", 8),
 		LOSLOT0("LoSlot0", 11),
@@ -690,8 +686,11 @@ public class RawConverter {
 		SPECIALIZEDPLANETARYCOMMODITIESHOLD("SpecializedPlanetaryCommoditiesHold", 149),
 		PLANETSURFACE("PlanetSurface", 150),
 		SPECIALIZEDMATERIALBAY("SpecializedMaterialBay", 151),
+		DUSTDATABANK("DustCharacterDatabank", 152), //DustDatabank
+		DUSTBATTLE("DustCharacterBattle", 153), //DustBattle
 		QUAFEBAY("QuafeBay", 154),
 		FLEETHANGAR("FleetHangar", 155),
+		HIDDENMODIFERS("HiddenModifiers", 156), //HiddenModifers
 		HIDDENMODIFIERS("HiddenModifiers", 156),
 		STRUCTUREOFFLINE("StructureOffline", 157),
 		FIGHTERBAY("FighterBay", 158),
@@ -711,18 +710,17 @@ public class RawConverter {
 		STRUCTUREFUEL("StructureFuel", 172),
 		DELIVERIES("Deliveries", 173),
 		CRATELOOT("CrateLoot", 174),
+		CORPSEBAY("CrateLoot", 174), //CorpseBay
 		BOOSTERBAY("BoosterBay", 176),
 		SUBSYSTEMBAY("SubSystemBay", 177),
 		;
 
 		private final String value;
 		private final int id;
-		private final ItemFlag itemFlag;
 
 		LocationFlag(String value, int id) {
 			this.value = value;
 			this.id = id;
-			this.itemFlag = null;
 		}
 
 		public int getID() {
