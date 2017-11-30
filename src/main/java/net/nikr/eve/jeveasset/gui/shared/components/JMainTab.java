@@ -167,13 +167,6 @@ public abstract class JMainTab {
 	public abstract void updateCache();
 	public abstract void clearData();
 
-	public void updateDataTableLock() {
-		beforeUpdateData();
-		updateData();
-		afterUpdateData();
-		updateCache();
-	}
-
 	public Icon getIcon() {
 		return icon;
 	}
