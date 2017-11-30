@@ -32,8 +32,10 @@ import javax.swing.plaf.basic.BasicButtonUI;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
+import net.nikr.eve.jeveasset.gui.shared.components.JLockWindow;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
 import net.nikr.eve.jeveasset.i18n.GuiFrame;
+import net.nikr.eve.jeveasset.i18n.GuiShared;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,6 +49,7 @@ public class MainWindow {
 	private final JFrame jFrame;
 	private final JTabbedPane jTabbedPane;
 	private final StatusPanel statusPanel;
+	private final JLockWindow jLockWindow;
 
 	private final Timer timer;
 
@@ -74,6 +77,8 @@ public class MainWindow {
 		jFrame.addWindowListener(listener);
 		jFrame.addComponentListener(listener);
 		jFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+
+		jLockWindow = new JLockWindow(jFrame);
 
 		JPanel jPanel = new JPanel();
 		GroupLayout layout = new GroupLayout(jPanel);
@@ -118,7 +123,17 @@ public class MainWindow {
 	public void addTab(final JMainTab jMainTab, final boolean focus) {
 		if (!tabs.contains(jMainTab)) {
 			LOG.info("Opening tab: " + jMainTab.getTitle());
-			jMainTab.updateDataTableLock();
+			jMainTab.beforeUpdateData();
+			jMainTab.updateData();
+			jMainTab.afterUpdateData();
+			jLockWindow.show(GuiShared.get().updating(), new JLockWindow.LockWorker() {
+				@Override
+				public void task() {
+					jMainTab.updateCache();
+				}
+				@Override
+				public void gui() { }
+			});
 			tabs.add(jMainTab);
 			jTabbedPane.addTab(jMainTab.getTitle(), jMainTab.getIcon(), jMainTab.getPanel());
 			jTabbedPane.setTabComponentAt(jTabbedPane.getTabCount() - 1, new TabCloseButton(jMainTab));

@@ -37,7 +37,6 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JTable;
-import net.nikr.eve.jeveasset.gui.shared.components.JLockWindow;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter.AllColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.NumberValue;
@@ -53,7 +52,6 @@ public abstract class FilterControl<E> extends ExportFilterControl<E> {
 	private final Map<String, List<Filter>> defaultFilters;
 	private final FilterGui<E> gui;
 	private final Map<E, String> cache;
-	private final JLockWindow jLockWindow;
 
 	/** Do not use this constructor - it's here only for test purposes. */
 	protected FilterControl() {
@@ -65,7 +63,6 @@ public abstract class FilterControl<E> extends ExportFilterControl<E> {
 		defaultFilters = null;
 		gui = null;
 		cache = new HashMap<E, String>();
-		jLockWindow = null;
 	}
 
 	protected FilterControl(final JFrame jFrame, final String name, final EventList<E> eventList, final EventList<E> exportEventList, final FilterList<E> filterList, final Map<String, List<Filter>> filters) {
@@ -106,7 +103,6 @@ public abstract class FilterControl<E> extends ExportFilterControl<E> {
 		filterList.addListEventListener(listener);
 		gui = new FilterGui<E>(jFrame, this);
 		cache = new HashMap<E, String>();
-		jLockWindow = new JLockWindow(jFrame);
 	}
 
 	public void clearCache() {
@@ -114,15 +110,7 @@ public abstract class FilterControl<E> extends ExportFilterControl<E> {
 	}
 
 	public void createCache() {
-		jLockWindow.show(name, new JLockWindow.LockWorker() {
-			@Override
-			public void task() {
-				cacheRebuild();
-			}
-
-			@Override
-			public void gui() { }
-		});
+		cacheRebuild();
 	}
 
 	Map<E, String> getCache() {
