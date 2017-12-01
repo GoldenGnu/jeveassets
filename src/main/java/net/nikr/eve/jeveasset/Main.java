@@ -96,6 +96,9 @@ public final class Main {
 				lazySave = true;
 			}
 		}
+		//Force UTF-8 File system
+		System.setProperty("sun.jnu.encoding", "UTF-8"); 
+		System.setProperty("file.encoding", "UTF-8");
 
 		// the tests for null indicate that the property is not set
 		// It is possible to set properties using the -Dlog.home=foo/bar
