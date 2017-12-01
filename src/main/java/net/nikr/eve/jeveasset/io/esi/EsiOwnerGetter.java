@@ -20,10 +20,8 @@
  */
 package net.nikr.eve.jeveasset.io.esi;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.EnumSet;
-import java.util.List;
 import java.util.Set;
 import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
