@@ -358,8 +358,10 @@ public class RawConverter {
 			return RawJournal.JournalPartyType.CHARACTER;
 		} else if (value == 16159) {
 			return RawJournal.JournalPartyType.ALLIANCE;
-		} else {
+		} else if (value > 500000 && value < 500025) {
 			return RawJournal.JournalPartyType.FACTION;
+		} else {
+			return RawJournal.JournalPartyType.SYSTEM;
 		}
 	}
 
@@ -587,7 +589,9 @@ public class RawConverter {
 				case CORPORATION:
 					return 2;
 				case FACTION:
-					return 1;
+					return 500001;
+				case SYSTEM:
+					return 30000142;
 				default:
 					return 0;
 			}

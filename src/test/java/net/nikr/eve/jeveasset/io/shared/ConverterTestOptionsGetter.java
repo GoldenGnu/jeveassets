@@ -184,7 +184,7 @@ public class ConverterTestOptionsGetter {
 		private static final CharacterWalletJournalResponse.SecondPartyTypeEnum[] ESI_JOURNAL_PARTY_TYPE_SECOND_CHARACTER = CharacterWalletJournalResponse.SecondPartyTypeEnum.values();
 		private static final CorporationWalletJournalResponse.FirstPartyTypeEnum[] ESI_JOURNAL_PARTY_TYPE_FIRST_CORPORATION = CorporationWalletJournalResponse.FirstPartyTypeEnum.values();
 		private static final CorporationWalletJournalResponse.SecondPartyTypeEnum[] ESI_JOURNAL_PARTY_TYPE_SECOND_CORPORATION = CorporationWalletJournalResponse.SecondPartyTypeEnum.values();
-		private static final Integer[] EVE_API_JOURNAL_PARTY_TYPE = {1373, 2, 16159, 1};
+		private static final Integer[] EVE_API_JOURNAL_PARTY_TYPE = {1373, 2, 16159, 500001, 30000142};
 		//JournalRefType
 		private static final List<RefType> REF_TYPE = createRefTypes();
 		//MarketOrderRange

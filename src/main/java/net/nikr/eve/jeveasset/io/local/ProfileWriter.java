@@ -21,6 +21,7 @@
 package net.nikr.eve.jeveasset.io.local;
 
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -40,6 +41,7 @@ import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
 import net.nikr.eve.jeveasset.data.api.raw.RawBlueprint;
 import net.nikr.eve.jeveasset.data.profile.ProfileManager;
 import net.nikr.eve.jeveasset.io.shared.RawConverter;
+import net.troja.eve.esi.model.CharacterRolesResponse.RolesEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -92,7 +94,11 @@ public final class ProfileWriter extends AbstractXmlWriter {
 			setAttribute(node, "structuresnextupdate", owner.getStructuresNextUpdate());
 			setAttribute(node, "accountnextupdate", owner.getAccountNextUpdate());
 			setAttribute(node, "callbackurl", owner.getCallbackURL());
-			setAttribute(node, "roles", String.join(",", owner.getRoles()));
+			Set<String> roles = new HashSet<String>();
+			for (RolesEnum role : owner.getRoles()) {
+				roles.add(role.name());
+			}
+			setAttribute(node, "characterroles", String.join(",", roles));
 			writeTypeOwner(xmldoc, node, owner);
 			parentNode.appendChild(node);
 		}
@@ -305,7 +311,7 @@ public final class ProfileWriter extends AbstractXmlWriter {
 			setAttribute(childNode, "refid", journal.getRefID());
 			setAttribute(childNode, "reftypeid", journal.getRefType().getID());
 			setAttributeOptional(childNode, "taxamount", journal.getTaxAmount());
-			setAttributeOptional(childNode, "taxreceiverid", journal.getTaxRecieverID());
+			setAttributeOptional(childNode, "taxreceiverid", journal.getTaxReceiverId());
 			//New
 			setAttributeOptional(childNode, "owner1typeid", RawConverter.fromJournalPartyType(journal.getFirstPartyType()));
 			setAttributeOptional(childNode, "owner2typeid", RawConverter.fromJournalPartyType(journal.getSecondPartyType()));

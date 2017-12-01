@@ -21,12 +21,13 @@
 package net.nikr.eve.jeveasset.data.api.accounts;
 
 import java.util.Date;
-import java.util.HashSet;
+import java.util.EnumSet;
 import java.util.Objects;
 import java.util.Set;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.io.esi.EsiCallbackURL;
 import net.nikr.eve.jeveasset.io.esi.EsiScopes;
+import net.troja.eve.esi.model.CharacterRolesResponse.RolesEnum;
 
 
 public class EsiOwner extends AbstractOwner implements OwnerType {
@@ -40,7 +41,7 @@ public class EsiOwner extends AbstractOwner implements OwnerType {
 	private Date structuresNextUpdate = Settings.getNow();
 	private Date accountNextUpdate = Settings.getNow();
 	private EsiCallbackURL callbackURL;
-	private Set<String> roles = new HashSet<String>();
+	private Set<RolesEnum> roles = EnumSet.noneOf(RolesEnum.class);
 
 	public EsiOwner() {}
 
@@ -121,11 +122,11 @@ public class EsiOwner extends AbstractOwner implements OwnerType {
 		this.callbackURL = callbackURL;
 	}
 
-	public Set<String> getRoles() {
+	public Set<RolesEnum> getRoles() {
 		return roles;
 	}
 
-	public void setRoles(Set<String> roles) {
+	public void setRoles(Set<RolesEnum> roles) {
 		this.roles = roles;
 	}
 
@@ -175,7 +176,7 @@ public class EsiOwner extends AbstractOwner implements OwnerType {
 	@Override
 	public boolean isAssetList() {
 		if (isCorporation()) {
-			return EsiScopes.CORPORATION_ASSETS.isInScope(scopes) && roles.contains("Director");
+			return EsiScopes.CORPORATION_ASSETS.isInScope(scopes) && roles.contains(RolesEnum.DIRECTOR);
 		} else {
 			return EsiScopes.CHARACTER_ASSETS.isInScope(scopes);
 		}
@@ -184,9 +185,9 @@ public class EsiOwner extends AbstractOwner implements OwnerType {
 	private boolean isWallet() {
 		if (isCorporation()) {
 			return EsiScopes.CORPORATION_WALLET.isInScope(scopes) 
-					&& (roles.contains("Junior_Accountant")
-					|| roles.contains("Accountant")
-					|| roles.contains("Director"));
+					&& (roles.contains(RolesEnum.JUNIOR_ACCOUNTANT)
+					|| roles.contains(RolesEnum.ACCOUNTANT)
+					|| roles.contains(RolesEnum.DIRECTOR));
 		} else {
 			return EsiScopes.CHARACTER_WALLET.isInScope(scopes);
 		}
@@ -200,7 +201,7 @@ public class EsiOwner extends AbstractOwner implements OwnerType {
 	@Override
 	public boolean isBlueprints() {
 		if (isCorporation()) {
-			return EsiScopes.CORPORATION_WALLET.isInScope(scopes) && roles.contains("Director");
+			return EsiScopes.CORPORATION_WALLET.isInScope(scopes) && roles.contains(RolesEnum.DIRECTOR);
 		} else {
 			return EsiScopes.CHARACTER_BLUEPRINTS.isInScope(scopes);
 		}
@@ -210,8 +211,8 @@ public class EsiOwner extends AbstractOwner implements OwnerType {
 	public boolean isIndustryJobs() {
 		if (isCorporation()) {
 			return EsiScopes.CORPORATION_INDUSTRY_JOBS.isInScope(scopes) 
-					&& (roles.contains("FactoryManager")
-					|| roles.contains("Director"));
+					&& (roles.contains(RolesEnum.FACTORY_MANAGER)
+					|| roles.contains(RolesEnum.DIRECTOR));
 		} else {
 			return EsiScopes.CHARACTER_INDUSTRY_JOBS.isInScope(scopes);
 		}
@@ -221,9 +222,9 @@ public class EsiOwner extends AbstractOwner implements OwnerType {
 	public boolean isMarketOrders() {
 		if (isCorporation()) {
 			return EsiScopes.CORPORATION_MARKET_ORDERS.isInScope(scopes)
-					&& (roles.contains("Accountant")
-					|| roles.contains("Trader")
-					|| roles.contains("Director"));
+					&& (roles.contains(RolesEnum.ACCOUNTANT)
+					|| roles.contains(RolesEnum.TRADER)
+					|| roles.contains(RolesEnum.DIRECTOR));
 		} else {
 			return EsiScopes.CHARACTER_MARKET_ORDERS.isInScope(scopes);
 		}
