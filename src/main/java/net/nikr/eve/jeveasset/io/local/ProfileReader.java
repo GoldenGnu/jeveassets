@@ -22,8 +22,8 @@ package net.nikr.eve.jeveasset.io.local;
 
 import com.beimin.eveapi.model.shared.KeyType;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -62,6 +62,8 @@ import net.nikr.eve.jeveasset.io.esi.EsiCallbackURL;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 import net.nikr.eve.jeveasset.io.shared.DataConverter;
 import net.nikr.eve.jeveasset.io.shared.RawConverter;
+import net.troja.eve.esi.model.CharacterRolesResponse;
+import net.troja.eve.esi.model.CharacterRolesResponse.RolesEnum;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -130,11 +132,15 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 			Date structuresNextUpdate = AttributeGetters.getDate(currentNode, "structuresnextupdate");
 			Date accountNextUpdate = AttributeGetters.getDate(currentNode, "accountnextupdate");
 			EsiCallbackURL callbackURL = EsiCallbackURL.valueOf(AttributeGetters.getString(currentNode, "callbackurl"));
-			Set<String> roles;
-			if (AttributeGetters.haveAttribute(currentNode, "roles")) {
-				roles = new HashSet<String>(Arrays.asList(AttributeGetters.getString(currentNode, "roles").split(",")));
-			} else {
-				roles = new HashSet<String>();
+			Set<RolesEnum> roles = EnumSet.noneOf(RolesEnum.class);
+			if (AttributeGetters.haveAttribute(currentNode, "characterroles")) {
+				for (String role : AttributeGetters.getString(currentNode, "characterroles").split(",")) {
+					try {
+						roles.add(RolesEnum.valueOf(role));
+					} catch (IllegalArgumentException ex) {
+						
+					}
+				}
 			}
 			EsiOwner owner = new EsiOwner();
 			owner.setRoles(roles);
@@ -511,7 +517,7 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 		rawJournal.setSecondPartyID(secondPartyID);
 		rawJournal.setSecondPartyType(RawConverter.toJournalPartyType(secondPartyTypeID));
 		rawJournal.setTax(taxAmount);
-		rawJournal.setTaxRecieverID(taxReceiverID);
+		rawJournal.setTaxReceiverId(taxReceiverID);
 		rawJournal.setExtraInfo(new RawJournalExtraInfo(argID, argName, RawConverter.toJournalRefType(refTypeID)));
 		rawJournal.setAccountKey(accountKey);
 		return rawJournal;

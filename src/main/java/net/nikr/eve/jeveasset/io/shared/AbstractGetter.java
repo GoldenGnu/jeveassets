@@ -40,6 +40,7 @@ import net.nikr.eve.jeveasset.data.api.my.MyContract;
 import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob;
 import net.nikr.eve.jeveasset.data.api.my.MyJournal;
 import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
+import net.nikr.eve.jeveasset.data.api.raw.RawJournal;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import net.nikr.eve.jeveasset.io.shared.ThreadWoker.TaskCancelledException;
@@ -310,8 +311,12 @@ public abstract class AbstractGetter<O extends OwnerType, C, E extends Exception
 				addOwnerID(list, transaction.getClientID());
 			}
 			for (MyJournal journal : ownerType.getJournal()) {
-				addOwnerID(list, journal.getFirstPartyID());
-				addOwnerID(list, journal.getSecondPartyID());
+				if (journal.getFirstPartyType() != RawJournal.JournalPartyType.SYSTEM) {
+					addOwnerID(list, journal.getFirstPartyID());
+				}
+				if (journal.getSecondPartyType() != RawJournal.JournalPartyType.SYSTEM) {
+					addOwnerID(list, journal.getSecondPartyID());
+				}
 			}
 		}
 		return list;

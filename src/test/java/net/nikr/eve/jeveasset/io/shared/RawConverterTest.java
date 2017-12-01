@@ -338,7 +338,9 @@ public class RawConverterTest extends TestUtil {
 			map.put(i, RawJournal.JournalPartyType.CHARACTER);
 		}
 		map.put(16159, RawJournal.JournalPartyType.ALLIANCE);
-		map.put(1, RawJournal.JournalPartyType.FACTION);
+		map.put(500001, RawJournal.JournalPartyType.FACTION);
+		map.put(30000142, RawJournal.JournalPartyType.SYSTEM);
+		assertEquals(5, RawJournal.JournalPartyType.values().length);
 		for (Map.Entry<Integer, RawJournal.JournalPartyType> entry : map.entrySet()) {
 			assertEquals(entry.getValue(), RawConverter.toJournalPartyType(entry.getKey()));
 		}
@@ -351,6 +353,7 @@ public class RawConverterTest extends TestUtil {
 		map.put(CharacterWalletJournalResponse.FirstPartyTypeEnum.CHARACTER, RawJournal.JournalPartyType.CHARACTER);
 		map.put(CharacterWalletJournalResponse.FirstPartyTypeEnum.CORPORATION, RawJournal.JournalPartyType.CORPORATION);
 		map.put(CharacterWalletJournalResponse.FirstPartyTypeEnum.FACTION, RawJournal.JournalPartyType.FACTION);
+		map.put(CharacterWalletJournalResponse.FirstPartyTypeEnum.SYSTEM, RawJournal.JournalPartyType.SYSTEM);
 		assertEquals(map.size(), CharacterWalletJournalResponse.FirstPartyTypeEnum.values().length);
 		for (Map.Entry<CharacterWalletJournalResponse.FirstPartyTypeEnum, RawJournal.JournalPartyType> entry : map.entrySet()) {
 			assertEquals(entry.getValue(), RawConverter.toJournalPartyType(entry.getKey()));
@@ -364,6 +367,7 @@ public class RawConverterTest extends TestUtil {
 		map.put(CharacterWalletJournalResponse.SecondPartyTypeEnum.CHARACTER, RawJournal.JournalPartyType.CHARACTER);
 		map.put(CharacterWalletJournalResponse.SecondPartyTypeEnum.CORPORATION, RawJournal.JournalPartyType.CORPORATION);
 		map.put(CharacterWalletJournalResponse.SecondPartyTypeEnum.FACTION, RawJournal.JournalPartyType.FACTION);
+		map.put(CharacterWalletJournalResponse.SecondPartyTypeEnum.SYSTEM, RawJournal.JournalPartyType.SYSTEM);
 		assertEquals(map.size(), CharacterWalletJournalResponse.SecondPartyTypeEnum.values().length);
 		for (Map.Entry<CharacterWalletJournalResponse.SecondPartyTypeEnum, RawJournal.JournalPartyType> entry : map.entrySet()) {
 			assertEquals(entry.getValue(), RawConverter.toJournalPartyType(entry.getKey()));
@@ -377,6 +381,7 @@ public class RawConverterTest extends TestUtil {
 		map.put(CorporationWalletJournalResponse.FirstPartyTypeEnum.CHARACTER, RawJournal.JournalPartyType.CHARACTER);
 		map.put(CorporationWalletJournalResponse.FirstPartyTypeEnum.CORPORATION, RawJournal.JournalPartyType.CORPORATION);
 		map.put(CorporationWalletJournalResponse.FirstPartyTypeEnum.FACTION, RawJournal.JournalPartyType.FACTION);
+		map.put(CorporationWalletJournalResponse.FirstPartyTypeEnum.SYSTEM, RawJournal.JournalPartyType.SYSTEM);
 		assertEquals(map.size(), CharacterWalletJournalResponse.FirstPartyTypeEnum.values().length);
 		for (Map.Entry<CorporationWalletJournalResponse.FirstPartyTypeEnum, RawJournal.JournalPartyType> entry : map.entrySet()) {
 			assertEquals(entry.getValue(), RawConverter.toJournalPartyType(entry.getKey()));
@@ -390,6 +395,7 @@ public class RawConverterTest extends TestUtil {
 		map.put(CorporationWalletJournalResponse.SecondPartyTypeEnum.CHARACTER, RawJournal.JournalPartyType.CHARACTER);
 		map.put(CorporationWalletJournalResponse.SecondPartyTypeEnum.CORPORATION, RawJournal.JournalPartyType.CORPORATION);
 		map.put(CorporationWalletJournalResponse.SecondPartyTypeEnum.FACTION, RawJournal.JournalPartyType.FACTION);
+		map.put(CorporationWalletJournalResponse.SecondPartyTypeEnum.SYSTEM, RawJournal.JournalPartyType.SYSTEM);
 		assertEquals(map.size(), CharacterWalletJournalResponse.SecondPartyTypeEnum.values().length);
 		for (Map.Entry<CorporationWalletJournalResponse.SecondPartyTypeEnum, RawJournal.JournalPartyType> entry : map.entrySet()) {
 			assertEquals(entry.getValue(), RawConverter.toJournalPartyType(entry.getKey()));
@@ -402,7 +408,8 @@ public class RawConverterTest extends TestUtil {
 		map.put(RawJournal.JournalPartyType.ALLIANCE, 16159);
 		map.put(RawJournal.JournalPartyType.CHARACTER, 1373);
 		map.put(RawJournal.JournalPartyType.CORPORATION, 2);
-		map.put(RawJournal.JournalPartyType.FACTION, 1);
+		map.put(RawJournal.JournalPartyType.FACTION, 500001);
+		map.put(RawJournal.JournalPartyType.SYSTEM, 30000142);
 		assertEquals(map.size(), RawJournal.JournalPartyType.values().length);
 		for (Map.Entry<RawJournal.JournalPartyType, Integer> entry : map.entrySet()) {
 			assertEquals(entry.getValue(), RawConverter.fromJournalPartyType(entry.getKey()));

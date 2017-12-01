@@ -212,6 +212,11 @@ public final class ApiIdConverter {
 		String owner = Settings.get().getOwners().get(ownerID);
 		if (owner != null) {
 			return owner;
+		} else { // OwnerIDs from the journal can be a system ID
+			MyLocation location = getLocation(ownerID);
+			if (!location.isEmpty()) {
+				return location.getLocation();
+			}
 		}
 		return "!" + String.valueOf(ownerID);
 	}

@@ -75,6 +75,7 @@ import net.troja.eve.esi.model.CharacterContractsItemsResponse;
 import net.troja.eve.esi.model.CharacterContractsResponse;
 import net.troja.eve.esi.model.CharacterIndustryJobsResponse;
 import net.troja.eve.esi.model.CharacterOrdersResponse;
+import net.troja.eve.esi.model.CharacterRolesResponse.RolesEnum;
 import net.troja.eve.esi.model.CharacterWalletJournalExtraInfoResponse;
 import net.troja.eve.esi.model.CharacterWalletJournalResponse;
 import net.troja.eve.esi.model.CharacterWalletTransactionsResponse;
@@ -129,7 +130,7 @@ public class ConverterTestUtil {
 		setValues(esiOwner, options);
 		if (data) {
 			setData(esiOwner, setNull, setValues, options);
-			esiOwner.setRoles(Collections.singleton("Director"));
+			esiOwner.setRoles(Collections.singleton(RolesEnum.DIRECTOR));
 			esiOwner.setScopes(SsoScopes.ESI_CHARACTERS_READ_CORPORATION_ROLES_V1);
 		}
 		return esiOwner;

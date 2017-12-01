@@ -22,7 +22,7 @@ package net.nikr.eve.jeveasset.io.esi;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
+import java.util.EnumSet;
 import java.util.List;
 import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
@@ -31,6 +31,8 @@ import net.troja.eve.esi.ApiClient;
 import net.troja.eve.esi.ApiException;
 import net.troja.eve.esi.auth.CharacterInfo;
 import net.troja.eve.esi.model.CharacterResponse;
+import net.troja.eve.esi.model.CharacterRolesResponse;
+import net.troja.eve.esi.model.CharacterRolesResponse.RolesEnum;
 import net.troja.eve.esi.model.CorporationResponse;
 
 
@@ -51,7 +53,7 @@ public class EsiOwnerGetter extends AbstractEsiGetter implements AccountAdder{
 	@Override
 	protected void get(ApiClient apiClient) throws ApiException {
 		CharacterInfo characterInfo = getSsoApiAuth(apiClient).getCharacterInfo();
-		List<String> roles = new ArrayList<String>();
+		List<RolesEnum> roles = new ArrayList<RolesEnum>();
 		Integer characterID = characterInfo.getCharacterId();
 		Integer corporationID = 0;
 		String corporationName = "";
@@ -62,9 +64,10 @@ public class EsiOwnerGetter extends AbstractEsiGetter implements AccountAdder{
 			corporationID = character.getCorporationId();
 			//CorporationID to CorporationName
 			CorporationResponse corporation = getCorporationApiOpen(apiClient).getCorporationsCorporationId(corporationID, DATASOURCE, USER_AGENT, null);
-			corporationName = corporation.getCorporationName();
+			corporationName = corporation.getName();
 			//Updated Character Roles
-			roles = getCharacterApiAuth(apiClient).getCharactersCharacterIdRoles(characterID, DATASOURCE, null, USER_AGENT, null);
+			CharacterRolesResponse characterRolesResponse = getCharacterApiAuth(apiClient).getCharactersCharacterIdRoles(characterID, DATASOURCE, null, USER_AGENT, null);
+			roles = characterRolesResponse.getRoles();
 		}
 		if (((!isCorporation && characterID != owner.getOwnerID())
 				|| (isCorporation && corporationID != owner.getOwnerID()))
@@ -77,7 +80,7 @@ public class EsiOwnerGetter extends AbstractEsiGetter implements AccountAdder{
 		owner.setScopes(characterInfo.getScopes());
 		owner.setIntellectualProperty(characterInfo.getIntellectualProperty());
 		owner.setTokenType(characterInfo.getTokenType());
-		owner.setRoles(new HashSet<String>(roles));
+		owner.setRoles(EnumSet.copyOf(roles));
 		if (owner.isCorporation()) {
 			owner.setOwnerID(corporationID);
 			owner.setOwnerName(corporationName);

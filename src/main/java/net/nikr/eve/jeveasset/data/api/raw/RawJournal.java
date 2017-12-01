@@ -31,7 +31,8 @@ public class RawJournal {
 		CHARACTER("character"),
 		CORPORATION("corporation"),
 		ALLIANCE("alliance"),
-		FACTION("faction");
+		FACTION("faction"),
+		SYSTEM("system");
 
 		private final String value;
 
@@ -80,7 +81,7 @@ public class RawJournal {
 	private Integer secondPartyId = null;
 	private JournalPartyType secondPartyType = null;
 	private Float tax = null;
-	private Integer taxRecieverId = null;
+	private Integer taxReceiverId = null;
 	private Integer accountKey = null;
 
 	/**
@@ -111,7 +112,7 @@ public class RawJournal {
 		secondPartyId = journal.secondPartyId;
 		secondPartyType = journal.secondPartyType;
 		tax = journal.tax;
-		taxRecieverId = journal.taxRecieverId;
+		taxReceiverId = journal.taxReceiverId;
 		accountKey = journal.accountKey;
 	}
 
@@ -134,7 +135,7 @@ public class RawJournal {
 		secondPartyId = journal.getSecondPartyId();
 		secondPartyType = RawConverter.toJournalPartyType(journal.getSecondPartyType());
 		tax = journal.getTax();
-		taxRecieverId = journal.getTaxRecieverId();
+		taxReceiverId = journal.getTaxReceiverId();
 		this.accountKey = accountKey;
 	}
 
@@ -157,7 +158,7 @@ public class RawJournal {
 		secondPartyId = journal.getSecondPartyId();
 		secondPartyType = RawConverter.toJournalPartyType(journal.getSecondPartyType());
 		tax = journal.getTax();
-		taxRecieverId = journal.getTaxRecieverId();
+		taxReceiverId = journal.getTaxReceiverId();
 		this.accountKey = accountKey;
 	}
 
@@ -178,7 +179,7 @@ public class RawJournal {
 		secondPartyId = RawConverter.toInteger(journal.getOwnerID1());
 		secondPartyType = RawConverter.toJournalPartyType(journal.getOwner2TypeID());
 		tax = RawConverter.toFloat(journal.getTaxAmount());
-		taxRecieverId = RawConverter.toInteger(journal.getTaxReceiverID());
+		taxReceiverId = RawConverter.toInteger(journal.getTaxReceiverID());
 		//Must be set after refType
 		extraInfo = new RawJournalExtraInfo(journal, refType);
 		this.accountKey = journal.getAccountKey();
@@ -202,7 +203,7 @@ public class RawJournal {
 		secondPartyId = (int) journal.getOwnerID2();
 		secondPartyType = RawConverter.toJournalPartyType(RawConverter.toInteger(journal.getOwner2TypeID()));
 		tax = RawConverter.toFloat(journal.getTaxAmount());
-		taxRecieverId = RawConverter.toInteger(journal.getTaxReceiverID());
+		taxReceiverId = RawConverter.toInteger(journal.getTaxReceiverID());
 		//Must be set after refType
 		extraInfo = new RawJournalExtraInfo(journal, refType);
 		this.accountKey = accountKey;
@@ -304,12 +305,12 @@ public class RawJournal {
 		this.tax = tax;
 	}
 
-	public Integer getTaxRecieverID() {
-		return taxRecieverId;
+	public Integer getTaxReceiverId() {
+		return taxReceiverId;
 	}
 
-	public void setTaxRecieverID(Integer taxRecieverId) {
-		this.taxRecieverId = taxRecieverId;
+	public void setTaxReceiverId(Integer taxRecieverId) {
+		this.taxReceiverId = taxRecieverId;
 	}
 
 	public Integer getAccountKey() {
