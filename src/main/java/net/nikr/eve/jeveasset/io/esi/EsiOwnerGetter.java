@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.Set;
 import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import net.nikr.eve.jeveasset.io.shared.AccountAdder;
@@ -53,7 +54,7 @@ public class EsiOwnerGetter extends AbstractEsiGetter implements AccountAdder{
 	@Override
 	protected void get(ApiClient apiClient) throws ApiException {
 		CharacterInfo characterInfo = getSsoApiAuth(apiClient).getCharacterInfo();
-		List<RolesEnum> roles = new ArrayList<RolesEnum>();
+		Set<RolesEnum> roles = EnumSet.noneOf(RolesEnum.class);
 		Integer characterID = characterInfo.getCharacterId();
 		Integer corporationID = 0;
 		String corporationName = "";
@@ -67,7 +68,7 @@ public class EsiOwnerGetter extends AbstractEsiGetter implements AccountAdder{
 			corporationName = corporation.getName();
 			//Updated Character Roles
 			CharacterRolesResponse characterRolesResponse = getCharacterApiAuth(apiClient).getCharactersCharacterIdRoles(characterID, DATASOURCE, null, USER_AGENT, null);
-			roles = characterRolesResponse.getRoles();
+			roles.addAll(characterRolesResponse.getRoles());
 		}
 		if (((!isCorporation && characterID != owner.getOwnerID())
 				|| (isCorporation && corporationID != owner.getOwnerID()))
@@ -80,7 +81,7 @@ public class EsiOwnerGetter extends AbstractEsiGetter implements AccountAdder{
 		owner.setScopes(characterInfo.getScopes());
 		owner.setIntellectualProperty(characterInfo.getIntellectualProperty());
 		owner.setTokenType(characterInfo.getTokenType());
-		owner.setRoles(EnumSet.copyOf(roles));
+		owner.setRoles(roles);
 		if (owner.isCorporation()) {
 			owner.setOwnerID(corporationID);
 			owner.setOwnerName(corporationName);
