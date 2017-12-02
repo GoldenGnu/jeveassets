@@ -29,7 +29,7 @@ if (empty($foundRow)) { //New bug report
 
 	print $id;
 
-	$to_nkr      = 'nkr@niklaskr.dk';
+	$to_nkr      = "nkr@niklaskr.dk";
 	$subject_nkr = "New " . name() . " bug report (BugID: " . $id . ")";
 	$message_nkr = name() . " bug report\r\n"
 				. "BugID: " . $id . "\r\n"
@@ -37,17 +37,17 @@ if (empty($foundRow)) { //New bug report
 				. "\r\n"
 				. $log_in
 				;
-	$log_fixed = str_replace(array("\r\n", "\r"), '\n', $log_in);
-	$log_first_line = strstr($log_fixed, '\n', true);
-	$to_zapie      = 'jeveassets.oae2vi@zapiermail.com';
-	$subject_zapie = $log_first_line . ' (BugID: ' . $id . ')';
+	$log_fixed = str_replace(array("\r\n", "\r", "\n"), "\n", $log_in);
+	$log_first_line = strstr($log_fixed, "\n", true);
+	$to_zapie      = "jeveassets.oae2vi@zapiermail.com";
+	$subject_zapie = $log_first_line . " (BugID: " . $id . ")";
 	$message_zapie = name() . " bug report\r\n"
 				. $log_first_line. "\r\n"
 				. "BugID: " . $id . "\r\n"
 				. buglink() . "#bugid" . $id . "\r\n"
 				;
-	$headers = 'From: nkr@niklaskr.dk' . "\r\n" .
-			 'X-Mailer: PHP/' . phpversion();
+	$headers = "From: nkr@niklaskr.dk" . "\r\n" .
+			 "X-Mailer: PHP/" . phpversion();
 	
 	mail($to_nkr, $subject_nkr, $message_nkr, $headers);
 	mail($to_zapie, $subject_zapie, $message_zapie, $headers);
