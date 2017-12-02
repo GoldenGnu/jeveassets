@@ -898,10 +898,8 @@ public class RoutingTab extends JMainTabSecondary {
 						stationsMap.put(solarSystem.getSystemID(), stations);
 					}
 					stations.add(solarSystem);
-					waypoints.add(findNodeForLocation(filteredGraph, solarSystem.getSystemID()));
-				} else {
-					waypoints.add(solarSystem);
 				}
+				waypoints.add(findNodeForLocation(filteredGraph, solarSystem.getSystemID()));
 			}
 			List<Node> inputWaypoints = new ArrayList<Node>(waypoints);
 			//Move frist system to the top....
