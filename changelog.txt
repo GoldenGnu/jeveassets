@@ -16,6 +16,22 @@
                   #### #  # #  # #  # #### #### #### #### ####
 
 ________________________________________________________________________________
+_5.1.1__________________________________________________________________________
+
+Bug Fixes:
+-ClassCastException in StockpileItemDialog (BugID: 615)
+-Fixed Eve XML fittings export format to be compatible with pyfa
+-Tree Tool locations values was wrong
+-Fixed minor issue with the window settings
+-Possible fix for Issue #24 (BugID: 616)
+-Journal error code 500 (ESI Bug FIx)
+-ESI singleton bug (missing: container/ship names, fittings - ESI Bug FIx)
+
+Code:
+-Memory Optimization
+-Use the dev version of ESI (eve-esi-dev - fix the singleton bug)
+
+________________________________________________________________________________
 _5.1.0__________________________________________________________________________
 
 New Features:
