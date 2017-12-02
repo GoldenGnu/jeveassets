@@ -126,14 +126,18 @@ public class MainWindow {
 			jMainTab.beforeUpdateData();
 			jMainTab.updateData();
 			jMainTab.afterUpdateData();
-			jLockWindow.show(GuiShared.get().updating(), new JLockWindow.LockWorker() {
-				@Override
-				public void task() {
-					jMainTab.updateCache();
-				}
-				@Override
-				public void gui() { }
-			});
+			if (jFrame.isVisible()) {
+				jLockWindow.show(GuiShared.get().updating(), new JLockWindow.LockWorker() {
+					@Override
+					public void task() {
+						jMainTab.updateCache();
+					}
+					@Override
+					public void gui() { }
+				});
+			} else {
+				jMainTab.updateCache();
+			}
 			tabs.add(jMainTab);
 			jTabbedPane.addTab(jMainTab.getTitle(), jMainTab.getIcon(), jMainTab.getPanel());
 			jTabbedPane.setTabComponentAt(jTabbedPane.getTabCount() - 1, new TabCloseButton(jMainTab));
