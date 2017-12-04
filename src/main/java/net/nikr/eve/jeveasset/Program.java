@@ -22,6 +22,7 @@
 package net.nikr.eve.jeveasset;
 
 import apple.dts.samplecode.osxadapter.OSXAdapter;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.lang.reflect.InvocationTargetException;
@@ -396,7 +397,11 @@ public class Program implements ActionListener {
 	}
 
 	public final void updateEventListsWithProgress() {
-		JLockWindow jLockWindow = new JLockWindow(getMainWindow().getFrame());
+		updateEventListsWithProgress(getMainWindow().getFrame());
+	}
+
+	public final void updateEventListsWithProgress(final Window parent) {
+		JLockWindow jLockWindow = new JLockWindow(parent);
 		jLockWindow.show(GuiShared.get().updating(), new JLockWindow.LockWorker() {
 			@Override
 			public void task() {

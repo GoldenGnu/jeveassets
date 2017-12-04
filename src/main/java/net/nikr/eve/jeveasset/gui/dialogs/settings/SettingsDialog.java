@@ -254,6 +254,10 @@ public class SettingsDialog extends JDialogCentered {
 
 	@Override
 	protected void save() {
+		save(true);
+	}
+
+	private void save(boolean hideWindow) {
 		boolean update = false;
 		Settings.lock("Settings Dialog"); //Lock for Settings Dialog
 		for (Map.Entry<String, JSettingsPanel> entry : settingsPanels.entrySet()) {
@@ -262,9 +266,15 @@ public class SettingsDialog extends JDialogCentered {
 			}
 		}
 		Settings.unlock("Settings Dialog"); //Unlock for Settings Dialog
-		setVisible(false);
+		if (hideWindow) {
+			setVisible(false);
+		}
 		if (update) { //Update
-			program.updateEventListsWithProgress();
+			if (hideWindow) {
+				program.updateEventListsWithProgress();
+			} else {
+				program.updateEventListsWithProgress(getDialog());
+			}
 		}
 		program.saveSettings("Settings Dialog"); //Save Settings Dialog
 	}
@@ -294,13 +304,13 @@ public class SettingsDialog extends JDialogCentered {
 		@Override
 		public void actionPerformed(final ActionEvent e) {
 			if (SettingsDialogAction.OK.name().equals(e.getActionCommand())) {
-				save();
+				save(true);
 			}
 			if (SettingsDialogAction.CANCEL.name().equals(e.getActionCommand())) {
 				setVisible(false);
 			}
 			if (SettingsDialogAction.APPLY.name().equals(e.getActionCommand())) {
-				save();
+				save(false);
 			}
 		}
 
