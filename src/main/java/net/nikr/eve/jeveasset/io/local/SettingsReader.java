@@ -45,6 +45,7 @@ import net.nikr.eve.jeveasset.data.settings.PriceDataSettings.PriceSource;
 import net.nikr.eve.jeveasset.data.settings.PriceDataSettings.RegionType;
 import net.nikr.eve.jeveasset.data.settings.ProxyData;
 import net.nikr.eve.jeveasset.data.settings.ReprocessSettings;
+import net.nikr.eve.jeveasset.data.settings.RouteResult;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.data.settings.Settings.SettingFlag;
 import net.nikr.eve.jeveasset.data.settings.UserItem;
@@ -722,6 +723,43 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 				systemIDs.add(systemID);
 			}
 			Settings.get().getRoutingSettings().getPresets().put(name, systemIDs);
+		}
+		NodeList routeNodes = routingElement.getElementsByTagName("route");
+		for (int a = 0; a < routeNodes.getLength(); a++) {
+			Element routeNode = (Element) routeNodes.item(a);
+			String name = AttributeGetters.getString(routeNode, "name");
+			String algorithmName = AttributeGetters.getString(routeNode, "algorithmname");
+			long algorithmTime = AttributeGetters.getLong(routeNode, "algorithmtime");
+			int jumps = AttributeGetters.getInt(routeNode, "jumps");
+			int waypoints = AttributeGetters.getInt(routeNode, "waypoints");
+			NodeList routeSystemsNodes = routeNode.getElementsByTagName("routesystems");
+			List<List<SolarSystem>> route = new ArrayList<List<SolarSystem>>();
+			Map<Long, List<SolarSystem>> stationsMap = new HashMap<Long, List<SolarSystem>>();
+			for (int b = 0; b < routeSystemsNodes.getLength(); b++) {
+				Element routeStartSystemNode = (Element) routeSystemsNodes.item(b);
+				NodeList routeSystemNodes = routeStartSystemNode.getElementsByTagName("routesystem");
+				List<SolarSystem> systems = new ArrayList<SolarSystem>();
+				for (int c = 0; c < routeSystemNodes.getLength(); c++) {
+					Element routeSystemNode = (Element) routeSystemNodes.item(c);
+					long systemID = AttributeGetters.getLong(routeSystemNode, "systemid");
+					SolarSystem system = new SolarSystem(ApiIdConverter.getLocation(systemID));
+					systems.add(system);
+				}
+				route.add(systems);
+				NodeList routeStationNodes = routeStartSystemNode.getElementsByTagName("routestation");
+				for (int c = 0; c < routeStationNodes.getLength(); c++) {
+					Element routeStationNode = (Element) routeStationNodes.item(c);
+					long stationID = AttributeGetters.getLong(routeStationNode, "stationid");
+					SolarSystem station = new SolarSystem(ApiIdConverter.getLocation(stationID));
+					List<SolarSystem> stationsList = stationsMap.get(systems.get(0).getSystemID());
+					if (stationsList == null) {
+						stationsList = new ArrayList<>();
+						stationsMap.put(systems.get(0).getSystemID(), stationsList);
+					}
+					stationsList.add(station);
+				}
+			}
+			settings.getRoutingSettings().getRoutes().put(name, new RouteResult(route, stationsMap, waypoints, algorithmName, algorithmTime, jumps));
 		}
 	}
 

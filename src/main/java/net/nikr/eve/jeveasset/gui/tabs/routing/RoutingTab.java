@@ -21,6 +21,7 @@
 package net.nikr.eve.jeveasset.gui.tabs.routing;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -56,6 +57,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JToggleButton;
+import javax.swing.JToolBar;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import javax.swing.event.ListSelectionEvent;
@@ -67,6 +69,7 @@ import net.nikr.eve.jeveasset.data.api.my.MyAsset;
 import net.nikr.eve.jeveasset.data.sde.Jump;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
 import net.nikr.eve.jeveasset.data.sde.StaticData;
+import net.nikr.eve.jeveasset.data.settings.RouteResult;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
@@ -112,6 +115,8 @@ public class RoutingTab extends JMainTabSecondary {
 		ALGORITHM_HELP,
 		CALCULATE,
 		EVE_UI,
+		ROUTE_SAVE,
+		ROUTE_MANAGE,
 		AVOID_ADD,
 		AVOID_REMOVE,
 		AVOID_CLEAR,
@@ -162,25 +167,26 @@ public class RoutingTab extends JMainTabSecondary {
 	private JTextArea jResult;
 	private JTextArea jFullResult;
 	private JTextArea jInfo;
-	private JButton jEveUiSetRoute;
+	private List<ResultToolbar> resultToolbars = new ArrayList<ResultToolbar>();
 	//Dialogs
 	private JStationDialog jStationDialog ;
 	private JSystemDialog jSystemDialog;
-	private JSaveSystemList jSaveSystemList;
-	private JManageSystemList jManageSystemList;
+	private JSaveAvoidDialog jSaveSystemDialog;
+	private JManageAvoidDialog jManageAvoidDialog;
+	private JRouteSaveDialog jSaveRouteDialog;
+	private JRouteManageDialog jManageRoutesDialog;
 
 	private ListenerClass listener;
 	private RouteFind routeFind;
 
 	//Data
+	private final Set<SolarSystem> available = new HashSet<>();
 	protected Graph filteredGraph;
 	private double lastSecMin = 0.0;
 	private double lastSecMax = 1.0;
 	private List<Long> lastAvoid = new ArrayList<Long>();
 	private boolean uiEnabled = true;
-	private List<SolarSystem> result = null;
-	private final Set<SolarSystem> available = new HashSet<>();
-	private Map<Long, List<SolarSystem>> stationsMap;
+	private RouteResult routeResult = null;
 	/**
 	 *
 	 * @param load does nothing except change the signature.
@@ -196,8 +202,10 @@ public class RoutingTab extends JMainTabSecondary {
 
 		jStationDialog = new JStationDialog(program);
 		jSystemDialog = new JSystemDialog(program);
-		jSaveSystemList = new JSaveSystemList(program);
-		jManageSystemList = new JManageSystemList(this, program);
+		jSaveSystemDialog = new JSaveAvoidDialog(program);
+		jManageAvoidDialog = new JManageAvoidDialog(this, program);
+		jSaveRouteDialog = new JRouteSaveDialog(program);
+		jManageRoutesDialog = new JRouteManageDialog(this, program);
 
 	//Routing
 		JPanel jRoutingPanel = new JPanel();
@@ -501,38 +509,44 @@ public class RoutingTab extends JMainTabSecondary {
 		jCalculate.setActionCommand(RoutingAction.CALCULATE.name());
 		jCalculate.addActionListener(listener);
 	//Result
+		JPanel jResultPanel = new JPanel();
+		GroupLayout resultLayout = new GroupLayout(jResultPanel);
+		jResultPanel.setLayout(resultLayout);
+		resultLayout.setAutoCreateGaps(true);
+		resultLayout.setAutoCreateContainerGaps(false);
+
+		JPanel jFullResultPanel = new JPanel();
+		GroupLayout fullResultLayout = new GroupLayout(jFullResultPanel);
+		jFullResultPanel.setLayout(fullResultLayout);
+		fullResultLayout.setAutoCreateGaps(true);
+		fullResultLayout.setAutoCreateContainerGaps(false);
+
+		JPanel jInfoPanel = new JPanel();
+		GroupLayout infoLayout = new GroupLayout(jInfoPanel);
+		jInfoPanel.setLayout(infoLayout);
+		infoLayout.setAutoCreateGaps(true);
+		infoLayout.setAutoCreateContainerGaps(false);
+
+		ResultToolbar jResultPanelToolBar = new ResultToolbar();
+		resultToolbars.add(jResultPanelToolBar);
+
 		jResult = new JTextArea();
 		jResult.setEditable(false);
 		jResult.setFont(jPanel.getFont());
+
+		ResultToolbar jFullResultToolBar = new ResultToolbar();
+		resultToolbars.add(jFullResultToolBar);
 
 		jFullResult = new JTextArea();
 		jFullResult.setEditable(false);
 		jFullResult.setFont(jPanel.getFont());
 
+		ResultToolbar jInfoToolBar  = new ResultToolbar();
+		resultToolbars.add(jInfoToolBar);
+
 		jInfo = new JTextArea();
 		jInfo.setEditable(false);
 		jInfo.setFont(jPanel.getFont());
-
-		JPanel jEveUi = new JPanel();
-		GroupLayout eveUiLayout = new GroupLayout(jEveUi);
-		jEveUi.setLayout(eveUiLayout);
-		eveUiLayout.setAutoCreateGaps(true);
-		eveUiLayout.setAutoCreateContainerGaps(true);
-		
-
-		jEveUiSetRoute = new JButton(TabsRouting.get().resultUiWaypoints(), Images.MISC_EVE.getIcon());
-		jEveUiSetRoute.setActionCommand(RoutingAction.EVE_UI.name());
-		jEveUiSetRoute.addActionListener(listener);
-		jEveUiSetRoute.setEnabled(false);
-
-		eveUiLayout.setHorizontalGroup(
-			eveUiLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
-				.addComponent(jEveUiSetRoute)
-		);
-		eveUiLayout.setVerticalGroup(
-			eveUiLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
-				.addComponent(jEveUiSetRoute)
-		);
 
 		final JScrollPane jResultScroll = new JScrollPane(jResult, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
 		JScrollPane jFullResultScroll = new JScrollPane(jFullResult, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
@@ -546,11 +560,43 @@ public class RoutingTab extends JMainTabSecondary {
 		});
 		JScrollPane jInfoScroll = new JScrollPane(jInfo);
 
+		resultLayout.setHorizontalGroup(
+			resultLayout.createParallelGroup(GroupLayout.Alignment.TRAILING)
+				.addComponent(jResultPanelToolBar.getComponent())
+				.addComponent(jResultScroll)
+		);
+		resultLayout.setVerticalGroup(
+			resultLayout.createSequentialGroup()
+				.addComponent(jResultPanelToolBar.getComponent())
+				.addComponent(jResultScroll)
+		);
+
+		fullResultLayout.setHorizontalGroup(
+			fullResultLayout.createParallelGroup(GroupLayout.Alignment.TRAILING)
+				.addComponent(jFullResultToolBar.getComponent())
+				.addComponent(jFullResultScroll)
+		);
+		fullResultLayout.setVerticalGroup(
+			fullResultLayout.createSequentialGroup()
+				.addComponent(jFullResultToolBar.getComponent())
+				.addComponent(jFullResultScroll)
+		);
+
+		infoLayout.setHorizontalGroup(
+			infoLayout.createParallelGroup(GroupLayout.Alignment.TRAILING)
+				.addComponent(jInfoToolBar.getComponent())
+				.addComponent(jInfoScroll)
+		);
+		infoLayout.setVerticalGroup(
+			infoLayout.createSequentialGroup()
+				.addComponent(jInfoToolBar.getComponent())
+				.addComponent(jInfoScroll)
+		);
+
 		JTabbedPane jResultTabs = new JTabbedPane();
-		jResultTabs.addTab(TabsRouting.get().resultTabShort(), jResultScroll);
-		jResultTabs.addTab(TabsRouting.get().resultTabFull(), jFullResultScroll);
-		jResultTabs.addTab(TabsRouting.get().resultTabInfo(), jInfoScroll);
-		jResultTabs.addTab(TabsRouting.get().resultUi(), jEveUi);
+		jResultTabs.addTab(TabsRouting.get().resultTabShort(), jResultPanel);
+		jResultTabs.addTab(TabsRouting.get().resultTabFull(), jFullResultPanel);
+		jResultTabs.addTab(TabsRouting.get().resultTabInfo(), jInfoPanel);
 
 		JTabbedPane jSystemTabs = new JTabbedPane();
 		jSystemTabs.addTab(TabsRouting.get().routingTab(), jRoutingPanel);
@@ -615,6 +661,7 @@ public class RoutingTab extends JMainTabSecondary {
 
 		updateRemaining();
 		processFilteredAssets();
+		updateRoutes();
 	}
 
 	@Override
@@ -624,6 +671,14 @@ public class RoutingTab extends JMainTabSecondary {
 
 	@Override
 	public void updateCache() {}
+
+	public void updateRoutes() {
+		for (ResultToolbar resultToolbar : resultToolbars) {
+			resultToolbar.update();
+		}
+		jManageRoutesDialog.updateData();
+		jSaveRouteDialog.updateData(Settings.get().getRoutingSettings().getRoutes().keySet());
+	}
 
 	public SolarSystem getSolarSystem() {
 		return jSystemDialog.show();
@@ -874,6 +929,7 @@ public class RoutingTab extends JMainTabSecondary {
 				return;
 			}
 			//Clear previous results
+			routeResult = null;
 			jResult.setText(TabsRouting.get().emptyResult());
 			jResult.setCaretPosition(0);
 			jResult.setEnabled(false);
@@ -884,11 +940,13 @@ public class RoutingTab extends JMainTabSecondary {
 			jInfo.setText(TabsRouting.get().emptyResult());
 			jInfo.setCaretPosition(0);
 			jInfo.setEnabled(false);
-			jEveUiSetRoute.setEnabled(false);
-			result = null;
+			for (ResultToolbar resultToolbar : resultToolbars) {
+				resultToolbar.setEnabledResult(false);
+				resultToolbar.update();
+			}
 			//Update all SolarSystem with the latest from the new Graph
 			//This is needed to get the proper Edge(s) parsed to the routing Algorithm
-			stationsMap = new HashMap<Long, List<SolarSystem>>();
+			Map<Long, List<SolarSystem>> stationsMap = new HashMap<Long, List<SolarSystem>>();
 			Set<Node> waypoints = new HashSet<Node>();
 			for (SolarSystem solarSystem : jWaypoints.getEditableModel().getAll()) {
 				if (solarSystem.isStation()) {
@@ -922,125 +980,128 @@ public class RoutingTab extends JMainTabSecondary {
 			}
 			//Start route finding:
 			RoutingAlgorithmContainer algorithm = (RoutingAlgorithmContainer) jAlgorithm.getSelectedItem();
-			List<Node> route = executeRouteFinding(inputWaypoints, algorithm);
-			if (route.isEmpty()) { //Cancelled
+			List<Node> nodeRoute = executeRouteFinding(inputWaypoints, algorithm);
+			if (nodeRoute.isEmpty()) { //Cancelled
 				algorithm.resetCancelService();
 				return;
 			} else { //Completed!
 				jProgress.setValue(jProgress.getMaximum());
 			}
-			result = new ArrayList<SolarSystem>();
-			for (Node node : route) {
-				if (node instanceof SolarSystem) {
-					result.add((SolarSystem) node);
-				}
+			Node last = null;
+			List<List<SolarSystem>> route = new ArrayList<List<SolarSystem>>();
+			for (Node current : nodeRoute) {
+				add(route, last, current);
+				last = current;
 			}
-		//Info Result
-			final StringBuilder infoString = new StringBuilder();
-			//algorithm name
-			String name = algorithm.getName();
-			//generation time
-			String time = Formater.milliseconds(algorithm.getLastTimeTaken());
-			//jumps
-			int jumps = algorithm.getLastDistance();
-			//avoding systems
-			final StringBuilder avoidingString = new StringBuilder();
-			for (SolarSystem avoidSystem : Settings.get().getRoutingSettings().getAvoid().values()) {
-				if (!avoidingString.toString().isEmpty()) {
-					avoidingString.append(", ");
-				}
-				avoidingString.append(avoidSystem.getName());
-			}
-			if (avoidingString.toString().isEmpty()) {
-				avoidingString.append(TabsRouting.get().avoidNone());
-			}
-			//security
-			final StringBuilder securityString = new StringBuilder();
-			securityString.append(Formater.securityFormat(jSecurityMinimum.getSelectedItem()));
-			securityString.append(" - ");
-			securityString.append(Formater.securityFormat(jSecurityMaximum.getSelectedItem()));
-			//Done
-			infoString.append(TabsRouting.get().resultText(name,
-					jumps,
-					inputWaypoints.size(),
-					securityString.toString(),
-					avoidingString.toString(),
-					time));
-		//Route Result
-			SolarSystem lastSystem = null;
-			final StringBuilder fullRouteString = new StringBuilder();
-			final StringBuilder routeString = new StringBuilder();
-			for (SolarSystem system : result) {
-				if (lastSystem != null) {
-					boolean first = true;
-					for (Node subNode : filteredGraph.routeBetween(lastSystem, system)) {
-						if (first) {
-							first = false;
-							fullRouteString.append(subNode.getName());
-						} else {
-							fullRouteString.append(TabsRouting.get().resultArrow());
-							fullRouteString.append(subNode.getName());
-						}
-					}
-					List<SolarSystem> stations = stationsMap.get(lastSystem.getSystemID());
-					if (stations != null) {
-						for (SolarSystem station : stations) {
-							fullRouteString.append("\n    • ");
-							fullRouteString.append(station.getName());
-						}
-					}
-					fullRouteString.append('\n');
-					routeString.append('\n');
-				}
-				routeString.append(system.getName());
-				List<SolarSystem> stations = stationsMap.get(system.getSystemID());
-				if (stations != null) {
-					for (SolarSystem station : stations) {
-						routeString.append("\n    • ");
-						routeString.append(station.getName());
-					}
-				}
-				lastSystem = system;
-			}
-			//last node to first node
-			boolean first = true;
-			for (Node subNode : filteredGraph.routeBetween(lastSystem, route.get(0))) {
-				if (first) {
-					first = false;
-					fullRouteString.append(subNode.getName());
-				} else {
-					fullRouteString.append(TabsRouting.get().resultArrow());
-					fullRouteString.append(subNode.getName());
-				}
-			}
-			List<SolarSystem> stations = stationsMap.get(lastSystem.getSystemID());
-			if (stations != null) {
-				for (SolarSystem station : stations) {
-					fullRouteString.append("\n    • ");
-					fullRouteString.append(station.getName());
-				}
-			}
-			//Set results
-			SwingUtilities.invokeLater(new Runnable() {
-				@Override
-				public void run() {
-					jResult.setText(routeString.toString());
-					jResult.setEnabled(true);
-					jResult.setCaretPosition(0);
-					jFullResult.setText(fullRouteString.toString());
-					jFullResult.setEnabled(true);
-					jFullResult.setCaretPosition(0);
-					jInfo.setText(infoString.toString());
-					jInfo.setEnabled(true);
-					jEveUiSetRoute.setEnabled(result.size() == route.size());
-				}
-			});
+			add(route, last, nodeRoute.get(0));
+			setRouteResult(new RouteResult(route, stationsMap, inputWaypoints.size(), algorithm.getName(), algorithm.getLastTimeTaken(), algorithm.getLastDistance()));
 		} catch (DisconnectedGraphException dce) {
 			JOptionPane.showMessageDialog(program.getMainWindow().getFrame()
 							, dce.getMessage()
 							, TabsRouting.get().error()
 							, JOptionPane.ERROR_MESSAGE);
 		}
+	}
+
+	private void add(List<List<SolarSystem>> route, Node last, Node current) {
+		if (last != null) {
+			List<SolarSystem> fullRoute = new ArrayList<SolarSystem>();
+			for (Node node : filteredGraph.routeBetween(last, current)) {
+				if (node instanceof SolarSystem) {
+					SolarSystem routeSystem = (SolarSystem) node;
+					fullRoute.add(routeSystem);
+				}
+			}
+			if (last instanceof SolarSystem) {
+				route.add(fullRoute);
+			}
+		}
+	}
+
+	public void setRouteResult(RouteResult routeResult) {
+		this.routeResult = routeResult;
+		//Info Result
+		final StringBuilder infoString = new StringBuilder();
+		//algorithm name
+		String name = routeResult.getAlgorithmName();
+		//generation time
+		String time = Formater.milliseconds(routeResult.getAlgorithmTime());
+		//jumps
+		int jumps = routeResult.getJumps();
+		//avoding systems
+		final StringBuilder avoidingString = new StringBuilder();
+		for (SolarSystem avoidSystem : Settings.get().getRoutingSettings().getAvoid().values()) {
+			if (!avoidingString.toString().isEmpty()) {
+				avoidingString.append(", ");
+			}
+			avoidingString.append(avoidSystem.getName());
+		}
+		if (avoidingString.toString().isEmpty()) {
+			avoidingString.append(TabsRouting.get().avoidNone());
+		}
+		//security
+		final StringBuilder securityString = new StringBuilder();
+		securityString.append(Formater.securityFormat(jSecurityMinimum.getSelectedItem()));
+		securityString.append(" - ");
+		securityString.append(Formater.securityFormat(jSecurityMaximum.getSelectedItem()));
+		//Done
+		infoString.append(TabsRouting.get().resultText(name,
+				jumps,
+				routeResult.getWaypoints(),
+				securityString.toString(),
+				avoidingString.toString(),
+				time));
+	//Route Result
+		final StringBuilder fullRouteString = new StringBuilder();
+		final StringBuilder routeString = new StringBuilder();
+		boolean first = true;
+		for (List<SolarSystem> systems : routeResult.getRoute()) {
+			if (first) {
+				first = false;
+			} else {
+				fullRouteString.append('\n');
+				routeString.append('\n');
+			}
+			boolean firstFull = true;
+			for (SolarSystem routeSystem : systems) {
+				if (firstFull) {
+					firstFull = false;
+					fullRouteString.append(routeSystem.getName());
+				} else {
+					fullRouteString.append(TabsRouting.get().resultArrow());
+					fullRouteString.append(routeSystem.getName());
+				}
+			}
+			routeString.append(systems.get(0).getName());
+			List<SolarSystem> stations = routeResult.getStations().get(systems.get(0).getSystemID());
+			if (stations != null) {
+				for (SolarSystem station : stations) {
+					fullRouteString.append("\n    • ");
+					fullRouteString.append(station.getName());
+					routeString.append("\n    • ");
+					routeString.append(station.getName());
+				}
+			}
+		}
+		//Set results
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				jResult.setText(routeString.toString());
+				jResult.setEnabled(true);
+				jResult.setCaretPosition(0);
+				jFullResult.setText(fullRouteString.toString());
+				jFullResult.setEnabled(true);
+				jFullResult.setCaretPosition(0);
+				jInfo.setText(infoString.toString());
+				jInfo.setEnabled(true);
+				jInfo.setCaretPosition(0);
+				for (ResultToolbar resultToolbar : resultToolbars) {
+					resultToolbar.setEnabledResult(true);
+					resultToolbar.update();
+				}
+			}
+		});
 	}
 
 	protected Graph getGraph() {
@@ -1095,6 +1156,9 @@ public class RoutingTab extends JMainTabSecondary {
 		jSecurityMinimum.setEnabled(b);
 		jSecuritySeparatorLabel.setEnabled(b);
 		jSecurityMaximum.setEnabled(b);
+		for (ResultToolbar resultToolbar : resultToolbars) {
+			resultToolbar.setEnabled(b);
+		}
 		//Process
 		if (b) {
 			jCalculate.setText(TabsRouting.get().calculate());
@@ -1180,7 +1244,7 @@ public class RoutingTab extends JMainTabSecondary {
 			jAvoidLoad.add(jMenuItem);
 		}
 		jAvoidLoad.setEnabled(!Settings.get().getRoutingSettings().getPresets().isEmpty());
-		jManageSystemList.updateData();
+		jManageAvoidDialog.updateData();
 	}
 
 	public void loadFilter(Set<Long> systemIds) {
@@ -1289,8 +1353,8 @@ public class RoutingTab extends JMainTabSecondary {
 					updateFilterLabels();
 				}
 			} else if (RoutingAction.AVOID_SAVE.name().equals(e.getActionCommand())) {
-				jSaveSystemList.updateData(new ArrayList<String>(Settings.get().getRoutingSettings().getPresets().keySet()));
-				String name = jSaveSystemList.show();
+				jSaveSystemDialog.updateData(new ArrayList<String>(Settings.get().getRoutingSettings().getPresets().keySet()));
+				String name = jSaveSystemDialog.show();
 				if (name != null) {
 					Settings.lock("Routing (Save Filter)");
 					Set<Long> systemIDs = new HashSet<Long>();
@@ -1309,8 +1373,8 @@ public class RoutingTab extends JMainTabSecondary {
 					loadFilter(menuItem.getSystemIDs());
 				}
 			} else if (RoutingAction.AVOID_MANAGE.name().equals(e.getActionCommand())) {
-				jManageSystemList.updateData();
-				jManageSystemList.setVisible(true);
+				jManageAvoidDialog.updateData();
+				jManageAvoidDialog.setVisible(true);
 			} else if (RoutingAction.SAVE.name().equals(e.getActionCommand())) {
 				double min = (Double) jSecurityMinimum.getSelectedItem();
 				double max = (Double) jSecurityMaximum.getSelectedItem();
@@ -1369,8 +1433,9 @@ public class RoutingTab extends JMainTabSecondary {
 					@Override
 					protected void updateESI() throws Throwable {
 						boolean clear = true;
-						for (SolarSystem system : result) {
-							List<SolarSystem> stations = stationsMap.get(system.getSystemID());
+						for (List<SolarSystem> systems : routeResult.getRoute()) {
+							SolarSystem system = systems.get(0);
+							List<SolarSystem> stations = routeResult.getStations().get(system.getSystemID());
 							if (stations != null && !stations.isEmpty()) { //Station(s)
 								for (SolarSystem station : stations) {
 									getApi(owner).postUiAutopilotWaypoint(false, clear, station.getLocationID(), AbstractEsiGetter.DATASOURCE, null, AbstractEsiGetter.USER_AGENT, null);
@@ -1392,6 +1457,19 @@ public class RoutingTab extends JMainTabSecondary {
 						JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), TabsRouting.get().resultUiFail(), GuiShared.get().uiWaypointTitle(), JOptionPane.PLAIN_MESSAGE);
 					}
 				});
+			} else if (RoutingAction.ROUTE_SAVE.name().equals(e.getActionCommand())) {
+				String name = jSaveRouteDialog.show();
+				if (name == null) {
+					return; //Cancel
+				}
+				Settings.lock("Routing (Save Route)");
+				Settings.get().getRoutingSettings().getRoutes().put(name, routeResult);
+				Settings.unlock("Routing (Save Route)");
+				program.saveSettings("Routing (Save Route)");
+				updateRoutes();
+			} else if (RoutingAction.ROUTE_MANAGE.name().equals(e.getActionCommand())) {
+				jManageRoutesDialog.updateData();
+				jManageRoutesDialog.setVisible(true);
 			}
 		}
 
@@ -1418,6 +1496,130 @@ public class RoutingTab extends JMainTabSecondary {
 				validateLists();
 			} else if (e.getSource().equals(jAvoid)) {
 				jAvoidRemove.setEnabled(jAvoid.getSelectedIndices().length > 0);
+			}
+		}
+	}
+
+	private class ResultToolbar {
+
+		private final JToolBar jToolBar;
+		private final JLabel jName;
+		private final JButton jEveUiSetRoute;
+		private final JButton jSaveRoute;
+		private final JDropDownButton jLoadRoute;
+		private final JMenuItem jManageRoutes;
+		private final Font plain;
+		private final Font italic;
+
+		public ResultToolbar() {
+			jToolBar = new JToolBar();
+			GroupLayout layout = new GroupLayout(jToolBar);
+			jToolBar.setLayout(layout);
+			layout.setAutoCreateGaps(true);
+			layout.setAutoCreateContainerGaps(false);
+
+			jToolBar.setFloatable(false);
+			jToolBar.setRollover(true);
+			
+			jName = new JLabel();
+			plain = jName.getFont();
+			italic = new Font(plain.getName(), Font.ITALIC, plain.getSize());
+
+			jEveUiSetRoute = new JButton(TabsRouting.get().resultUiWaypoints(), Images.MISC_EVE.getIcon());
+			jEveUiSetRoute.setActionCommand(RoutingAction.EVE_UI.name());
+			jEveUiSetRoute.addActionListener(listener);
+			jEveUiSetRoute.setEnabled(false);
+
+			jSaveRoute = new JButton(TabsRouting.get().resultSave(), Images.FILTER_SAVE.getIcon());
+			jSaveRoute.setActionCommand(RoutingAction.ROUTE_SAVE.name());
+			jSaveRoute.addActionListener(listener);
+			jSaveRoute.setEnabled(false);
+
+			jLoadRoute = new JDropDownButton(TabsRouting.get().resultLoad(), Images.FILTER_LOAD.getIcon());
+
+			layout.setHorizontalGroup(
+				layout.createSequentialGroup()
+					.addContainerGap()
+					.addComponent(jName, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Integer.MAX_VALUE)
+					.addGap(0, 0, Integer.MAX_VALUE)
+					.addComponent(jEveUiSetRoute)
+					.addComponent(jSaveRoute, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, 100)
+					.addComponent(jLoadRoute, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, 100)
+					.addContainerGap()
+			);
+			layout.setVerticalGroup(
+				layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
+					.addComponent(jName)
+					.addComponent(jEveUiSetRoute)
+					.addComponent(jSaveRoute)
+					.addComponent(jLoadRoute)
+			);
+
+			jManageRoutes = new JMenuItem(TabsRouting.get().resultManage(), Images.DIALOG_SETTINGS.getIcon());
+			jManageRoutes.setActionCommand(RoutingAction.ROUTE_MANAGE.name());
+			jManageRoutes.addActionListener(listener);
+		}
+
+		public JToolBar getComponent() {
+			return jToolBar;
+		}
+
+		public void update() {
+			jLoadRoute.removeAll();
+
+			jLoadRoute.setEnabled(!Settings.get().getRoutingSettings().getRoutes().isEmpty());
+
+			if (!Settings.get().getRoutingSettings().getRoutes().isEmpty()) {
+				jLoadRoute.add(jManageRoutes);
+				jLoadRoute.addSeparator();
+			}
+
+			if (routeResult != null) {
+				String name = null;
+				for (Map.Entry<String, RouteResult> entry : Settings.get().getRoutingSettings().getRoutes().entrySet()) {
+					if (entry.getValue().equals(routeResult)) {
+						name = entry.getKey();
+						break;
+					}
+				}
+				if (name == null) {
+					name = TabsRouting.get().resultUntitled();
+					jName.setFont(italic);
+					jName.setEnabled(false);
+				} else {
+					jName.setFont(plain);
+					jName.setEnabled(true);
+				}
+				jName.setText(name);
+			} else {
+				jName.setText(TabsRouting.get().resultEmpty());
+				jName.setFont(italic);
+				jName.setEnabled(false);
+			}
+
+			for (Map.Entry<String, RouteResult> entry : Settings.get().getRoutingSettings().getRoutes().entrySet()) {
+				JMenuItem jMenuItem = new JMenuItem(entry.getKey(), Images.FILTER_LOAD.getIcon());
+				jMenuItem.addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						setRouteResult(entry.getValue());
+						updateRoutes();
+					}
+				});
+				jLoadRoute.add(jMenuItem);
+			}
+		}
+
+		public void setEnabledResult(boolean b) {
+			jEveUiSetRoute.setEnabled(b);
+			jSaveRoute.setEnabled(b);
+		}
+
+		public void setEnabled(boolean b) {
+			if (b) {
+				jLoadRoute.setEnabled(!Settings.get().getRoutingSettings().getRoutes().isEmpty());
+			} else {
+				jLoadRoute.setEnabled(b);
 			}
 		}
 	}

@@ -30,6 +30,7 @@ import net.nikr.eve.jeveasset.data.settings.ExportSettings;
 import net.nikr.eve.jeveasset.data.settings.PriceDataSettings;
 import net.nikr.eve.jeveasset.data.settings.ProxyData;
 import net.nikr.eve.jeveasset.data.settings.ReprocessSettings;
+import net.nikr.eve.jeveasset.data.settings.RouteResult;
 import net.nikr.eve.jeveasset.data.settings.RoutingSettings;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.data.settings.Settings.SettingFlag;
@@ -42,6 +43,7 @@ import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.SimpleColu
 import net.nikr.eve.jeveasset.gui.shared.table.View;
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewGroup;
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewLocation;
+import net.nikr.eve.jeveasset.gui.tabs.routing.SolarSystem;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileFilter;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
@@ -167,6 +169,33 @@ public class SettingsWriter extends AbstractXmlWriter {
 				Element systemNode = xmldoc.createElementNS(null, "presetsystem");
 				systemNode.setAttributeNS(null, "id", String.valueOf(systemID));
 				presetNode.appendChild(systemNode);
+			}
+		}
+		for (Map.Entry<String, RouteResult> entry : routingSettings.getRoutes().entrySet()) {
+			Element routeNode = xmldoc.createElementNS(null, "route");
+			RouteResult routeResult = entry.getValue();
+			routeNode.setAttributeNS(null, "name", entry.getKey());
+			routeNode.setAttributeNS(null, "algorithmname", routeResult.getAlgorithmName());
+			routeNode.setAttributeNS(null, "algorithmtime", String.valueOf(routeResult.getAlgorithmTime()));
+			routeNode.setAttributeNS(null, "jumps", String.valueOf(routeResult.getJumps()));
+			routeNode.setAttributeNS(null, "waypoints", String.valueOf(routeResult.getWaypoints()));
+			routingNode.appendChild(routeNode);
+			for (List<SolarSystem> systems : routeResult.getRoute()) {
+				Element systemsNode = xmldoc.createElementNS(null, "routesystems");
+				for (SolarSystem system : systems) {
+					Element systemNode = xmldoc.createElementNS(null, "routesystem");
+					systemNode.setAttributeNS(null, "systemid", String.valueOf(system.getSystemID()));
+					systemsNode.appendChild(systemNode);
+				}
+				List<SolarSystem> stations = routeResult.getStations().get(systems.get(0).getSystemID());
+				if (stations != null) {
+					for (SolarSystem station : stations) {
+						Element stationNode = xmldoc.createElementNS(null, "routestation");
+						stationNode.setAttributeNS(null, "stationid", String.valueOf(station.getLocationID()));
+						systemsNode.appendChild(stationNode);
+					}
+				}
+				routeNode.appendChild(systemsNode);
 			}
 		}
 	}

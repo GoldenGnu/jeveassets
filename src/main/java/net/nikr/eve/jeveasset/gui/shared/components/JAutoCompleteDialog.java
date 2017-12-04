@@ -28,8 +28,8 @@ import ca.odell.glazedlists.swing.AutoCompleteSupport;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Collection;
 import java.util.Comparator;
-import java.util.List;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -111,7 +111,7 @@ public abstract class JAutoCompleteDialog<T> extends JDialogCentered {
 	protected abstract TextFilterator<T> getFilterator();
 	protected abstract T getValue(Object object);
 
-	public final void updateData(List<T> list) {
+	public final void updateData(Collection<T> list) {
 		try {
 			eventList.getReadWriteLock().writeLock().lock();
 			eventList.clear();
