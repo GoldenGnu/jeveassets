@@ -586,7 +586,7 @@ public class LoadoutsTab extends JMainTabSecondary {
 				String filename = browse();
 				List<MyAsset> ships = new ArrayList<MyAsset>();
 				for (MyAsset asset : program.getAssetList()) {
-					if (!asset.getItem().getCategory().equals(SHIP_CATEGORY) || !asset.isSingleton()) {
+					if (!asset.getItem().getCategory().equals(SHIP_CATEGORY) || !asset.isSingleton() || asset.getAssets().isEmpty()) {
 						continue;
 					}
 					ships.add(asset);
