@@ -176,5 +176,27 @@ public final class EveFittingWriter extends AbstractXmlWriter {
 				fittingNode.appendChild(hardwareNode);
 			}
 		}
+		//Cargo
+		if (modules.containsKey("Cargo")) {
+			Map<String, Long> moduleCount = new HashMap<String, Long>();
+			List<MyAsset> subModules = modules.get("Cargo");
+			for (MyAsset subModule : subModules) {
+				if (moduleCount.containsKey(subModule.getName())) {
+					long count = moduleCount.get(subModule.getName());
+					moduleCount.remove(subModule.getName());
+					count = count +  subModule.getCount();
+					moduleCount.put(subModule.getName(), count);
+				} else {
+					moduleCount.put(subModule.getName(), subModule.getCount());
+				}
+			}
+			for (Map.Entry<String, Long> entry : moduleCount.entrySet()) {
+				hardwareNode = xmldoc.createElementNS(null, "hardware");
+				hardwareNode.setAttributeNS(null, "qty", String.valueOf(entry.getValue()));
+				hardwareNode.setAttributeNS(null, "slot", "cargo");
+				hardwareNode.setAttributeNS(null, "type", entry.getKey());
+				fittingNode.appendChild(hardwareNode);
+			}
+		}
 	}
 }
