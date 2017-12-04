@@ -62,7 +62,6 @@ import net.nikr.eve.jeveasset.io.esi.EsiCallbackURL;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 import net.nikr.eve.jeveasset.io.shared.DataConverter;
 import net.nikr.eve.jeveasset.io.shared.RawConverter;
-import net.troja.eve.esi.model.CharacterRolesResponse;
 import net.troja.eve.esi.model.CharacterRolesResponse.RolesEnum;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -450,11 +449,15 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 		Float price = AttributeGetters.getFloat(element, "price");
 		int bid = AttributeGetters.getInt(element, "bid");
 		Date issued = AttributeGetters.getDate(element, "issued");
+		boolean corp = owner.isCorporation();
+		if (AttributeGetters.haveAttribute(element, "corp")) {
+			corp = AttributeGetters.getBoolean(element, "corp");
+		}
 		apiMarketOrder.setAccountID(accountID);
 		apiMarketOrder.setDuration(duration);
 		apiMarketOrder.setEscrow(escrow);
 		apiMarketOrder.setBuyOrder(bid > 0);
-		apiMarketOrder.setCorp(owner.isCorporation());
+		apiMarketOrder.setCorp(corp);
 		apiMarketOrder.setIssued(issued);
 		apiMarketOrder.setLocationID(locationID);
 		apiMarketOrder.setMinVolume(minVolume);
