@@ -62,6 +62,20 @@ public class Updater {
 		}
 	}
 
+	public boolean checkProgramUpdate(final String localProgram) {
+		LOG.info("Checking online version");
+		Getter getter = new Getter();
+		final String onlineProgram = getter.get(PROGRAM+"update_version.dat");
+		return onlineProgram != null && !onlineProgram.equals(localProgram);
+	}
+
+	public boolean checkDataUpdate(String localData) {
+		LOG.info("Checking online version");
+		Getter getter = new Getter();
+		final String onlineData = getter.get(DATA+"update_version.dat");
+		return onlineData != null && !onlineData.equals(localData);
+	}
+
 	public void fixData() {
 		int value = JOptionPane.showConfirmDialog(null, 
 				"One of the data files in the data folder is corrupted or missing\r\n"

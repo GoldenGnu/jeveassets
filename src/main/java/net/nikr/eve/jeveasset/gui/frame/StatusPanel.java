@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.swing.GroupLayout;
 import javax.swing.Icon;
+import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.Timer;
 import net.nikr.eve.jeveasset.Program;
@@ -42,10 +43,12 @@ import net.nikr.eve.jeveasset.i18n.GuiFrame;
 public class StatusPanel extends JGroupLayoutPanel {
 
 	//GUI
+	private final JButton jUpdate;
 	private final JLabel jEveTime;
-	private final JLabel jUpdatable;
+	private final JLabel jApiUpdate;
 	private final JFixedToolBar jToolBar;
 	private final Timer eveTimer;
+	private final Timer updateTimer;
 
 
 	private final List<JLabel> programStatus = new ArrayList<JLabel>();
@@ -60,8 +63,33 @@ public class StatusPanel extends JGroupLayoutPanel {
 
 		jToolBar = new JFixedToolBar();
 
-		jUpdatable = createIcon(Images.DIALOG_UPDATE.getIcon(), GuiFrame.get().updatable());
-		programStatus.add(jUpdatable);
+		boolean update = canUpdate();
+		jUpdate = new JButton(GuiFrame.get().programUpdateText(), Images.MISC_UPDATE.getIcon());
+		jUpdate.setToolTipText(GuiFrame.get().programUpdateTip());
+		jUpdate.setVisible(update);
+		jUpdate.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				program.update();
+			}
+		});
+		updateTimer = new Timer(3600000, new ActionListener() { //Check for updates once an hour
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				boolean update = canUpdate();
+				jUpdate.setVisible(update);
+				if (update) {
+					doLayout();
+					updateTimer.stop(); //Update found, no reason to keep checking for updates
+				}
+			}
+		});
+		if (!update) { //Update found, no reason to keep checking for updates
+			updateTimer.start();
+		}
+
+		jApiUpdate = createIcon(Images.DIALOG_UPDATE.getIcon(), GuiFrame.get().updatable());
+		programStatus.add(jApiUpdate);
 
 		jEveTime = createLabel(GuiFrame.get().eve(),  Images.MISC_EVE.getIcon());
 		programStatus.add(jEveTime);
@@ -83,9 +111,16 @@ public class StatusPanel extends JGroupLayoutPanel {
 		doLayout();
 	}
 
+	private boolean canUpdate() {
+		return (program.checkProgramUpdate() || program.checkDataUpdate()) && !Program.PROGRAM_DEV_BUILD;
+	}
+
 	private void doLayout() {
 		jToolBar.removeAll();
 		addSpace(5);
+		if (jUpdate.isVisible()) {
+			jToolBar.add(jUpdate);
+		}
 		for (JLabel jLabel : programStatus) {
 			jToolBar.add(jLabel);
 			addSpace(10);
@@ -101,11 +136,11 @@ public class StatusPanel extends JGroupLayoutPanel {
 
 	public void timerTicked(final boolean updatable) {
 		if (updatable) {
-			jUpdatable.setIcon(Images.DIALOG_UPDATE.getIcon());
-			jUpdatable.setToolTipText(GuiFrame.get().updatable());
+			jApiUpdate.setIcon(Images.DIALOG_UPDATE.getIcon());
+			jApiUpdate.setToolTipText(GuiFrame.get().updatable());
 		} else {
-			jUpdatable.setIcon(Images.DIALOG_UPDATE_DISABLED.getIcon());
-			jUpdatable.setToolTipText(GuiFrame.get().not());
+			jApiUpdate.setIcon(Images.DIALOG_UPDATE_DISABLED.getIcon());
+			jApiUpdate.setToolTipText(GuiFrame.get().not());
 		}
 	}
 
