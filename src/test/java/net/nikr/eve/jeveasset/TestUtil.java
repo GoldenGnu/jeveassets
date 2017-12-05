@@ -21,6 +21,7 @@
 package net.nikr.eve.jeveasset;
 
 import ch.qos.logback.classic.Level;
+import net.nikr.eve.jeveasset.data.settings.Settings;
 import org.junit.BeforeClass;
 
 
@@ -30,6 +31,7 @@ public class TestUtil {
 	public static void initLog() {
 		System.setProperty("http.agent", Program.PROGRAM_NAME + "/" + Program.PROGRAM_VERSION.replace(" ", "_"));
 		System.setProperty("log.home", "");
+		Settings.setTestMode(true);
 	}
 
 	protected static void setLoggingLevel(Level level) {
