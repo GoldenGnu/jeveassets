@@ -105,8 +105,9 @@ public class Settings {
 		FLAG_STRONG_COLORS
 	}
 
-	private static Settings settings;
 	private static final SettingsLock LOCK = new SettingsLock();
+	private static Settings settings;
+	private static boolean testMode = false;
 
 	private int eveKitTransactionsHistory = 3;
 	private int eveKitJournalHistory = 3;
@@ -241,6 +242,10 @@ public class Settings {
 		return settings;
 	}
 
+	public static void setTestMode(boolean testMode) {
+		Settings.testMode = testMode;
+	}
+
 	public static void lock(String msg) {
 		LOCK.lock(msg);
 	}
@@ -274,7 +279,7 @@ public class Settings {
 	}
 
 	private static void autoImportSettings() {
-		if (Program.PROGRAM_DEV_BUILD) { //Need import
+		if (Program.PROGRAM_DEV_BUILD && !testMode) { //Need import
 			Program.setPortable(false);
 			Path settingsFrom = Paths.get(settings.getPathSettings());
 			Path citadelFrom = Paths.get(Settings.getPathCitadel());
