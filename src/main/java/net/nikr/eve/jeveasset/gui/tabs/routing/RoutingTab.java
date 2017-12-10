@@ -1292,6 +1292,27 @@ public class RoutingTab extends JMainTabSecondary {
 		updateSavedFilters();
 	}
 
+	public void addLocation(MyLocation location) {
+		if (location == null) {
+			return; //Cancel
+		}
+		SolarSystem system = findNodeForLocation(filteredGraph, location.getSystemID());
+		if (system == null) {
+			return; //Ignore system that was not found
+		}
+		SolarSystem solarSystem = new SolarSystem(location);
+		if (!jWaypoints.getEditableModel().contains(solarSystem)
+			&& !jAvailable.getEditableModel().contains(solarSystem)) {
+			//New
+			jWaypoints.getEditableModel().add(solarSystem);
+		} else if (jAvailable.getEditableModel().contains(solarSystem)) {
+			//In available: moving to waypoints
+			jAvailable.getEditableModel().remove(solarSystem);
+			jWaypoints.getEditableModel().add(solarSystem);
+		} //Else: Already in waypoints - do nothing
+		updateRemaining();
+	}
+
 	private void removeSystems() {
 		Settings.lock("Routing (Delete Systems)");
 		for (SolarSystem system : jAvoid.getSelectedValuesList()) {
@@ -1391,25 +1412,7 @@ public class RoutingTab extends JMainTabSecondary {
 				
 			} else if (RoutingAction.ADD_STATION.name().equals(e.getActionCommand())) {
 				MyLocation station = jStationDialog.show();
-				if (station == null) {
-					return; //Cancel
-				}
-				SolarSystem system = findNodeForLocation(filteredGraph, station.getSystemID());
-				if (system == null) {
-					//SHOW WARNING
-					return;
-				}
-				SolarSystem solarSystem = new SolarSystem(station);
-				if (!jWaypoints.getEditableModel().contains(solarSystem)
-					&& !jAvailable.getEditableModel().contains(solarSystem)) {
-					//New
-					jWaypoints.getEditableModel().add(solarSystem);
-				} else if (jAvailable.getEditableModel().contains(solarSystem)) {
-					//In available: moving to waypoints
-					jAvailable.getEditableModel().remove(solarSystem);
-					jWaypoints.getEditableModel().add(solarSystem);
-				} //Else: Already in waypoints - do nothing
-				updateRemaining();
+				addLocation(station);
 			} else if (RoutingAction.ADD_SYSTEM.name().equals(e.getActionCommand())) {
 				SolarSystem system = jSystemDialog.show();
 				if (system != null ) {

@@ -167,6 +167,10 @@ public class JMenuUI <T> extends MenuManager.JAutoMenu<T> {
 	}
 
 	private MyLocation selectLocation(Set<MyLocation> locations) {
+		return selectLocation(program, locations);
+	}
+
+	public static MyLocation selectLocation(Program program, Set<MyLocation> locations) {
 		if (locations.isEmpty()) {
 			return null;
 		} else if (locations.size() == 1) {
