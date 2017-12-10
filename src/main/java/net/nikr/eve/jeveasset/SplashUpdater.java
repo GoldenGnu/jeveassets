@@ -120,13 +120,13 @@ public class SplashUpdater {
 		}
 	}
 
-	private synchronized static void update() {
+	private static void update() {
 		synchronized (PAINT_LOCK) {
 			PAINT_LOCK.notify();
 		}
 	}
 
-	private synchronized static void repaint() {
+	private static void repaint() {
 		if (isVisible()) {
 			try {
 				Graphics2D g = splash.createGraphics();
@@ -178,8 +178,8 @@ public class SplashUpdater {
 					} catch (InterruptedException ex) {
 						
 					}
+					repaint();
 				}
-				repaint();
 			}
 		}
 	}
