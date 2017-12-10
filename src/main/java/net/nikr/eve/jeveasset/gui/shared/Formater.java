@@ -58,71 +58,28 @@ public final class Formater {
 	public static final NumberFormat BILLIONS_FORMAT  = new FixedFormat(1000000000.0, "B");
 	public static final NumberFormat TRILLIONS_FORMAT  = new FixedFormat(1000000000000.0, "T");
 
-	private static DateFormat expireDate1 = null;
-	private static DateFormat expireDate2 = null;
-	private static DateFormat columnDate = null;
-	private static DateFormat columnDatetime = null;
-	private static DateFormat todaysDate = null;
-	private static DateFormat timeOnly = null;
-	private static DateFormat eveTime = null;
-	private static DateFormat weekdayAndTime = null;
-	private static DateFormat simpleDate = null;
-	private static DateFormat dateOnly = null;
-
-	private static boolean initDate = false;
+	private static final DateFormatThreadSafe EXPIRE_DATE1 = new DateFormatThreadSafe("EEE, dd MMM yyyy kk:mm:ss zzz"); //Tue, 04 Oct 2016 18:21:28 GMT
+	private static final DateFormatThreadSafe EXPIRE_DATE2 = new DateFormatThreadSafe("dd MMM yyyy kk:mm:ss zzz");
+	private static final DateFormatThreadSafe COLUMN_DATE_FORMAT = new DateFormatThreadSafe(COLUMN_DATE);
+	private static final DateFormatThreadSafe COLUMN_DATETIME_FORMAT = new DateFormatThreadSafe(COLUMN_DATETIME);
+	private static final DateFormatThreadSafe TODAYS_DATE = new DateFormatThreadSafe("yyyyMMdd");
+	private static final DateFormatThreadSafe TIME_ONLY = new DateFormatThreadSafe("HH:mm z");
+	private static final DateFormatThreadSafe WEEKDAY_AND_TIME = new DateFormatThreadSafe("EEEEE HH:mm");
+	private static final DateFormatThreadSafe SIMPLE_DATE = new DateFormatThreadSafe("yyyyMMddHHmm");
+	private static final DateFormatThreadSafe DATE_ONLY = new DateFormatThreadSafe("yyyy-MM-dd");
 
 	private Formater() { }
 
-	private static void initDate() {
-		if (!initDate) {
-			initDate = true;
-			//TODO - consider using local time in GUI
-			TimeZone timeZone = TimeZone.getTimeZone("GMT");
-
-			columnDatetime = new SimpleDateFormat(COLUMN_DATETIME, new Locale("en")); //Must not be changed! please see: FilterControl
-			columnDatetime.setTimeZone(timeZone);
-
-			columnDate = new SimpleDateFormat(COLUMN_DATE, new Locale("en"));
-			columnDate.setTimeZone(timeZone);
-
-			todaysDate = new SimpleDateFormat("yyyyMMdd", new Locale("en"));
-			todaysDate.setTimeZone(timeZone);
-
-			timeOnly = new SimpleDateFormat("HH:mm z", new Locale("en"));
-			timeOnly.setTimeZone(timeZone);
-
-			weekdayAndTime = new SimpleDateFormat("EEEEE HH:mm", new Locale("en"));
-			weekdayAndTime.setTimeZone(timeZone);
-
-			simpleDate = new SimpleDateFormat("yyyyMMddHHmm", new Locale("en"));
-			simpleDate.setTimeZone(timeZone);
-
-			dateOnly = new SimpleDateFormat("yyyy-MM-dd", new Locale("en"));
-			dateOnly.setTimeZone(timeZone);
-
-			//Always GMT
-			eveTime = new SimpleDateFormat("HH:mm z", new Locale("en"));
-			eveTime.setTimeZone(timeZone);
-
-			//Tue, 04 Oct 2016 18:21:28 GMT
-			expireDate1 = new SimpleDateFormat("EEE, dd MMM yyyy kk:mm:ss zzz", new Locale("en"));
-			expireDate1.setTimeZone(timeZone);
-
-			expireDate2 = new SimpleDateFormat("dd MMM yyyy kk:mm:ss zzz", new Locale("en"));
-			expireDate2.setTimeZone(timeZone);
-		}
-	}
-
-	public static synchronized Date parseExpireDate(String date) {
-		initDate();
+	public static Date parseExpireDate(String date) {
 		try {
-			return expireDate1.parse(date);
-		} catch (ParseException ex1) {
-			try {
-				return expireDate2.parse(date);
-			} catch (ParseException ex2) {
-				return new Date();
-			}
+			return EXPIRE_DATE1.parse(date);
+		} catch (ParseException ex) {
+			
+		}
+		try {
+			return EXPIRE_DATE2.parse(date);
+		} catch (ParseException ex) {
+			return new Date();
 		}
 	}
 
@@ -180,62 +137,50 @@ public final class Formater {
 //DATE
 
 	public static String weekdayAndTime(final Date date) {
-		initDate();
 		if (today(date)) {
-			return GuiShared.get().today(timeOnly.format(date));
+			return GuiShared.get().today(TIME_ONLY.format(date));
 		} else {
-			return weekdayAndTime.format(date);
+			return WEEKDAY_AND_TIME.format(date);
 		}
 	}
 
 	public static String columnDate(final Object date) {
-		initDate();
-		return columnDatetime.format(date);
+		return COLUMN_DATETIME_FORMAT.format(date);
 	}
 
 	public static Date columnStringToDate(final String date) {
-		initDate();
 		try {
-			return columnDatetime.parse(date);
+			return COLUMN_DATETIME_FORMAT.parse(date);
 		} catch (ParseException ex) {
 			
 		}
 		try {
-			return columnDate.parse(date);
+			return COLUMN_DATE_FORMAT.parse(date);
 		} catch (ParseException ex) {
 			
 		}
 		return null;
 	}
 	public static String timeOnly(final Date date) {
-		initDate();
-		return timeOnly.format(date);
+		return TIME_ONLY.format(date);
 	}
 
 	public static String eveTime(final Date date) {
-		initDate();
-		return timeOnly.format(date);
+		return TIME_ONLY.format(date);
 	}
 
 	public static String simpleDate(final Date date) {
-		initDate();
-		return simpleDate.format(date);
+		return SIMPLE_DATE.format(date);
 	}
 
 	public static String dateOnly(final Object date) {
-		initDate();
-		return dateOnly.format(date);
+		return DATE_ONLY.format(date);
 	}
 
 	private static boolean today(final Date date) {
-		initDate();
-		String sDate = todaysDate.format(date);
-		String sNow = todaysDate.format(Settings.getNow());
+		String sDate = TODAYS_DATE.format(date);
+		String sNow = TODAYS_DATE.format(Settings.getNow());
 		return sDate.equals(sNow);
-	}
-
-	public static DateFormat getDefaultDate() {
-		return columnDatetime;
 	}
 
 	public static String milliseconds(long time) {
@@ -405,6 +350,34 @@ public final class Formater {
 		@Override
 		public Number parse(String source, ParsePosition parsePosition) {
 			return format.parse(source, parsePosition);
+		}
+
+	}
+
+	public static class DateFormatThreadSafe {
+
+		private static final TimeZone TIME_ZONE = TimeZone.getTimeZone("GMT");
+
+		private final String format;
+		private final ThreadLocal<DateFormat> df = new ThreadLocal<DateFormat>() {
+			@Override
+			protected DateFormat initialValue() {
+				SimpleDateFormat value = new SimpleDateFormat(format, new Locale("en"));
+				value.setTimeZone(TIME_ZONE);
+				return value;
+			}
+		};
+
+		public DateFormatThreadSafe(String format) {
+			this.format = format;
+		}
+
+		public Date parse(String dateString) throws ParseException {
+			return df.get().parse(dateString);
+		}
+
+		public String format(final Object date) {
+			return df.get().format(date);
 		}
 
 	}
