@@ -854,24 +854,12 @@ public class RoutingTab extends JMainTabSecondary {
 	 * @param limit
 	 * @return true if all the items were moved.
 	 */
-	private void move(final MoveJList<SolarSystem> from, final MoveJList<SolarSystem> to, final int limit) {
-		Set<Long> count = new HashSet<Long>();
-		for (SolarSystem ss : to.getEditableModel().getAll()) {
-			count.add(ss.getSystemID());
-		}
-		if (count.size() >= limit) {
-			return; //Already full - do nothing
-		}
+	private void move(final MoveJList<SolarSystem> from, final MoveJList<SolarSystem> to) {
 		for (SolarSystem ss : from.getSelectedValuesList()) {
 			if (from.getEditableModel().contains(ss)) {
-				if (count.size() < limit) {
-					LOG.debug("Moving {}", ss);
-					if (from.getEditableModel().remove(ss)) {
-						to.getEditableModel().add(ss);
-						count.add(ss.getSystemID());
-					}
-				} else {
-					break;
+				LOG.debug("Moving {}", ss);
+				if (from.getEditableModel().remove(ss)) {
+					to.getEditableModel().add(ss);
 				}
 			}
 		}
@@ -1183,9 +1171,7 @@ public class RoutingTab extends JMainTabSecondary {
 		int waypointsSize = getWaypointsSize();
 		if (uiEnabled) {
 			jRemove.setEnabled(jWaypoints.getSelectedIndices().length > 0);
-			jAdd.setEnabled(jAvailable.getSelectedIndices().length > 0 && getWaypointsSize() < ((RoutingAlgorithmContainer) jAlgorithm.getSelectedItem()).getWaypointLimit());
-			jAddSystem.setEnabled(waypointsSize< ((RoutingAlgorithmContainer) jAlgorithm.getSelectedItem()).getWaypointLimit());
-			jAddStation.setEnabled(waypointsSize < ((RoutingAlgorithmContainer) jAlgorithm.getSelectedItem()).getWaypointLimit());
+			jAdd.setEnabled(jAvailable.getSelectedIndices().length > 0);
 		}
 		jCalculate.setEnabled(waypointsSize <= ((RoutingAlgorithmContainer) jAlgorithm.getSelectedItem()).getWaypointLimit());
 		if (jWaypoints.getSelectedIndices().length == 1) { //Selected OK
@@ -1330,9 +1316,9 @@ public class RoutingTab extends JMainTabSecondary {
 		public void actionPerformed(final ActionEvent e) {
 			LOG.debug(e.getActionCommand());
 			if (RoutingAction.ADD.name().equals(e.getActionCommand())) {
-				move(jAvailable, jWaypoints, ((RoutingAlgorithmContainer) jAlgorithm.getSelectedItem()).getWaypointLimit());
+				move(jAvailable, jWaypoints);
 			} else if (RoutingAction.REMOVE.name().equals(e.getActionCommand())) {
-				move(jWaypoints, jAvailable, Integer.MAX_VALUE);
+				move(jWaypoints, jAvailable);
 			} else if (RoutingAction.CALCULATE.name().equals(e.getActionCommand())) {
 				if (jCalculate.getText().equals(TabsRouting.get().cancel())) {
 					cancelProcessing();
@@ -1484,9 +1470,9 @@ public class RoutingTab extends JMainTabSecondary {
 						&& !e.isShiftDown()
 						) {
 				if (e.getSource().equals(jAvailable) && jAvailable.isEnabled()) {
-					move(jAvailable, jWaypoints, ((RoutingAlgorithmContainer) jAlgorithm.getSelectedItem()).getWaypointLimit());
+					move(jAvailable, jWaypoints);
 				} else if (e.getSource().equals(jWaypoints) && jWaypoints.isEnabled()) {
-					move(jWaypoints, jAvailable, Integer.MAX_VALUE);
+					move(jWaypoints, jAvailable);
 				} else if (e.getSource().equals(jAvoid) && jAvoid.isEnabled()) {
 					removeSystems();
 				}
