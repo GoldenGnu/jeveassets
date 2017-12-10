@@ -417,7 +417,7 @@ public class Program implements ActionListener {
 		updateEventLists(null, null, null);
 	}
 
-	public final void updateEventLists(Set<Long> itemIDs, Set<Long> locationIDs, Set<Integer> typeIDs) {
+	public final synchronized void updateEventLists(Set<Long> itemIDs, Set<Long> locationIDs, Set<Integer> typeIDs) {
 		LOG.info("Updating EventList");
 		for (JMainTab jMainTab : mainWindow.getTabs()) {
 			ensureEDT(new Runnable() {
