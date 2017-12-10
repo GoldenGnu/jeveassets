@@ -789,10 +789,10 @@ public class RoutingTab extends JMainTabSecondary {
 			}
 		});
 		for (MyAsset ea : assets) {
-			SolarSystem loc;
-			if (jSystems.isSelected()) {
+			SolarSystem loc = null;
+			if (jSystems.isSelected()) { //System
 				loc = findNodeForLocation(filteredGraph, ea.getLocation().getSystemID());
-			} else {
+			} else if (ea.getLocation().isStation()) { //Station
 				loc = new SolarSystem(ea.getLocation());
 			}
 			if (loc != null) {
