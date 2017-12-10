@@ -168,7 +168,7 @@ public class MenuData<T> {
 			if (location.isUserLocation()) { //User
 				userLocations.add(location);
 			}
-			if (location.getLocationID() != 0) { //Anything with a locationID
+			if (location.getLocationID() != 0 && (location.isStation() || location.isEmpty())) { //Any station with a locationID
 				stationsAndCitadelsNames.add(location.getStation()); //Assets Station
 				autopilotStationLocations.add(location); //Autopilot Station
 			}
