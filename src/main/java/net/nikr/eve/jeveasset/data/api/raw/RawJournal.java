@@ -69,8 +69,8 @@ public class RawJournal {
 		PLANET_ID,
 	}
 
-	private Float amount = null;
-	private Float balance = null;
+	private Double amount = null;
+	private Double balance = null;
 	private Date date = null;
 	private RawJournalExtraInfo extraInfo = null;
 	private Integer firstPartyId = null;
@@ -80,7 +80,7 @@ public class RawJournal {
 	private RawJournalRefType refType = null;
 	private Integer secondPartyId = null;
 	private JournalPartyType secondPartyType = null;
-	private Float tax = null;
+	private Double tax = null;
 	private Integer taxReceiverId = null;
 	private Integer accountKey = null;
 
@@ -168,8 +168,8 @@ public class RawJournal {
 	 * @param journal
 	 */
 	public RawJournal(enterprises.orbital.evekit.client.model.WalletJournal journal) {
-		amount = RawConverter.toFloat(journal.getAmount());
-		balance = RawConverter.toFloat(journal.getBalance());
+		amount = RawConverter.toDouble(journal.getAmount());
+		balance = RawConverter.toDouble(journal.getBalance());
 		date = RawConverter.toDate(journal.getDateDate());
 		firstPartyId = RawConverter.toInteger(journal.getOwnerID1());
 		firstPartyType = RawConverter.toJournalPartyType(journal.getOwner1TypeID());
@@ -178,7 +178,7 @@ public class RawJournal {
 		refType = RawConverter.toJournalRefType(journal.getRefTypeID());
 		secondPartyId = RawConverter.toInteger(journal.getOwnerID1());
 		secondPartyType = RawConverter.toJournalPartyType(journal.getOwner2TypeID());
-		tax = RawConverter.toFloat(journal.getTaxAmount());
+		tax = RawConverter.toDouble(journal.getTaxAmount());
 		taxReceiverId = RawConverter.toInteger(journal.getTaxReceiverID());
 		//Must be set after refType
 		extraInfo = new RawJournalExtraInfo(journal, refType);
@@ -192,8 +192,8 @@ public class RawJournal {
 	 * @param accountKey
 	 */
 	public RawJournal(com.beimin.eveapi.model.shared.JournalEntry journal, Integer accountKey) {
-		amount = (float) journal.getAmount();
-		balance = (float) journal.getBalance();
+		amount = journal.getAmount();
+		balance = journal.getBalance();
 		date = journal.getDate();
 		firstPartyId = (int) journal.getOwnerID1();
 		firstPartyType = RawConverter.toJournalPartyType(RawConverter.toInteger(journal.getOwner1TypeID()));
@@ -202,26 +202,26 @@ public class RawJournal {
 		refType = RawConverter.toJournalRefType(journal.getRefTypeID());
 		secondPartyId = (int) journal.getOwnerID2();
 		secondPartyType = RawConverter.toJournalPartyType(RawConverter.toInteger(journal.getOwner2TypeID()));
-		tax = RawConverter.toFloat(journal.getTaxAmount());
+		tax = journal.getTaxAmount();
 		taxReceiverId = RawConverter.toInteger(journal.getTaxReceiverID());
 		//Must be set after refType
 		extraInfo = new RawJournalExtraInfo(journal, refType);
 		this.accountKey = accountKey;
 	}
 
-	public Float getAmount() {
+	public Double getAmount() {
 		return amount;
 	}
 
-	public void setAmount(Float amount) {
+	public void setAmount(Double amount) {
 		this.amount = amount;
 	}
 
-	public Float getBalance() {
+	public Double getBalance() {
 		return balance;
 	}
 
-	public void setBalance(Float balance) {
+	public void setBalance(Double balance) {
 		this.balance = balance;
 	}
 
@@ -297,11 +297,11 @@ public class RawJournal {
 		this.secondPartyType = secondPartyType;
 	}
 
-	public Float getTaxAmount() {
+	public Double getTaxAmount() {
 		return tax;
 	}
 
-	public void setTax(Float tax) {
+	public void setTax(Double tax) {
 		this.tax = tax;
 	}
 

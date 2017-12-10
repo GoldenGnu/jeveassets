@@ -25,7 +25,7 @@ import net.troja.eve.esi.model.CorporationWalletsResponse;
 
 public class RawAccountBalance {
 
-	private Float balance;
+	private Double balance;
 	private Integer accountKey;
 
 	/**
@@ -54,7 +54,7 @@ public class RawAccountBalance {
 	 * @param balance
 	 * @param accountKey
 	 */
-	public RawAccountBalance(Float balance, Integer accountKey) {
+	public RawAccountBalance(Double balance, Integer accountKey) {
 		this.balance = balance;
 		this.accountKey = accountKey;
 	}
@@ -75,7 +75,7 @@ public class RawAccountBalance {
 	 * @param balance
 	 */
 	public RawAccountBalance(com.beimin.eveapi.model.shared.AccountBalance balance) {
-		this.balance = (float) balance.getBalance();
+		this.balance = balance.getBalance();
 		this.accountKey = balance.getAccountKey();
 	}
 
@@ -85,15 +85,15 @@ public class RawAccountBalance {
 	 * @param balance
 	 */
 	public RawAccountBalance(enterprises.orbital.evekit.client.model.AccountBalance balance) {
-		this.balance = RawConverter.toFloat(balance.getBalance());
+		this.balance = RawConverter.toDouble(balance.getBalance());
 		this.accountKey = balance.getAccountKey();
 	}
 
-	public Float getBalance() {
+	public Double getBalance() {
 		return balance;
 	}
 
-	public void setBalance(Float balance) {
+	public void setBalance(Double balance) {
 		this.balance = balance;
 	}
 

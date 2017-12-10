@@ -411,7 +411,7 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 	private RawAccountBalance parseBalance(final Element element) throws XmlException {
 		RawAccountBalance accountBalance = RawAccountBalance.create();
 		int accountKey = AttributeGetters.getInt(element, "accountkey");
-		Float balance = AttributeGetters.getFloat(element, "balance");
+		Double balance = AttributeGetters.getDouble(element, "balance");
 		accountBalance.setAccountKey(accountKey);
 		accountBalance.setBalance(balance);
 		return accountBalance;
@@ -446,7 +446,7 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 		int accountID = AttributeGetters.getInt(element, "accountkey");
 		int duration = AttributeGetters.getInt(element, "duration");
 		Float escrow = AttributeGetters.getFloat(element, "escrow");
-		Float price = AttributeGetters.getFloat(element, "price");
+		Double price = AttributeGetters.getDouble(element, "price");
 		int bid = AttributeGetters.getInt(element, "bid");
 		Date issued = AttributeGetters.getDate(element, "issued");
 		boolean corp = owner.isCorporation();
@@ -491,17 +491,17 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 	private RawJournal parseJournal(final Element element) throws XmlException {
 		//Base
 		RawJournal rawJournal = RawJournal.create();
-		Float amount = AttributeGetters.getFloatOptional(element, "amount");
+		Double amount = AttributeGetters.getDoubleOptional(element, "amount");
 		Long argID = AttributeGetters.getLongOptional(element, "argid1");
 		String argName = AttributeGetters.getStringOptional(element, "argname1");
-		Float balance = AttributeGetters.getFloatOptional(element, "balance");
+		Double balance = AttributeGetters.getDoubleOptional(element, "balance");
 		Date date = AttributeGetters.getDate(element, "date");
 		Integer firstPartyID = AttributeGetters.getIntOptional(element, "ownerid1");
 		Integer secondPartyID = AttributeGetters.getIntOptional(element, "ownerid2");
 		String reason = AttributeGetters.getStringOptional(element, "reason");
 		long refID = AttributeGetters.getLong(element, "refid");
 		int refTypeID = AttributeGetters.getInt(element, "reftypeid");
-		Float taxAmount = AttributeGetters.getFloatOptional(element, "taxamount");
+		Double taxAmount = AttributeGetters.getDoubleOptional(element, "taxamount");
 		Integer taxReceiverID = AttributeGetters.getIntOptional(element, "taxreceiverid");
 		//New
 		Integer firstPartyTypeID = AttributeGetters.getIntOptional(element, "owner1typeid");
@@ -576,7 +576,7 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 		rawTransaction.setQuantity(quantity);
 		rawTransaction.setTransactionID(transactionID);
 		rawTransaction.setTypeID(typeID);
-		rawTransaction.setUnitPrice(RawConverter.toFloat(price));
+		rawTransaction.setUnitPrice(price);
 		rawTransaction.setAccountKey(accountKey);
 		return rawTransaction;
 	}

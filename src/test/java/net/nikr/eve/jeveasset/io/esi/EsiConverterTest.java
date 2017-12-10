@@ -72,7 +72,7 @@ public class EsiConverterTest extends TestUtil {
 
 	public void testToAccountBalance(Class<?> esi) {
 		for (ConverterTestOptions options : ConverterTestOptionsGetter.getConverterOptions()) {
-			List<MyAccountBalance> accountBalances = EsiConverter.toAccountBalance(options.getFloat(), ConverterTestUtil.getEsiOwner(options), options.getInteger());
+			List<MyAccountBalance> accountBalances = EsiConverter.toAccountBalance(options.getDouble(), ConverterTestUtil.getEsiOwner(options), options.getInteger());
 			ConverterTestUtil.testValues(accountBalances.get(0), options, esi);
 		}
 	}

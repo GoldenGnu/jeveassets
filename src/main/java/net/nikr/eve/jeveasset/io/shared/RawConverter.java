@@ -96,6 +96,14 @@ public class RawConverter {
 		}
 	}
 
+	public static Double toDouble(Number value) {
+		if (value != null) {
+			return value.doubleValue();
+		} else {
+			return null;
+		}
+	}
+
 	public static Date toDate(OffsetDateTime dateTime) {
 		if (dateTime == null) {
 			return null;

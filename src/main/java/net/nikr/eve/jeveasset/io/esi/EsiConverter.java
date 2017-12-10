@@ -71,7 +71,7 @@ public class EsiConverter extends DataConverter {
 	private EsiConverter() {
 	}
 
-	public static List<MyAccountBalance> toAccountBalance(Float responses, OwnerType owner, Integer accountKey) {
+	public static List<MyAccountBalance> toAccountBalance(Double responses, OwnerType owner, Integer accountKey) {
 		return convertRawAccountBalance(Collections.singletonList(new RawAccountBalance(responses, accountKey)), owner);
 	}
 

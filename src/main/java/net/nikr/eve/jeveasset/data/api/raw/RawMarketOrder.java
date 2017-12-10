@@ -85,7 +85,7 @@ public class RawMarketOrder {
 	private Long locationId = null;
 	private Integer minVolume = null;
 	private Long orderId = null;
-	private Float price = null;
+	private Double price = null;
 	private MarketOrderRange range = null;
 	private Integer regionId = null;
 	private MarketOrderState state = null;
@@ -191,7 +191,7 @@ public class RawMarketOrder {
 		locationId = marketOrder.getStationID();
 		minVolume = marketOrder.getMinVolume();
 		orderId = marketOrder.getOrderID();
-		price = RawConverter.toFloat(marketOrder.getPrice());
+		price = RawConverter.toDouble(marketOrder.getPrice());
 		range = RawConverter.toMarketOrderRange(marketOrder.getOrderRange());
 		regionId = (int) ApiIdConverter.getLocation(marketOrder.getStationID()).getRegionID();
 		state = RawConverter.toMarketOrderState(marketOrder.getOrderState());
@@ -216,7 +216,7 @@ public class RawMarketOrder {
 		locationId = marketOrder.getStationID();
 		minVolume = marketOrder.getMinVolume();
 		orderId = marketOrder.getOrderID();
-		price = (float) marketOrder.getPrice();
+		price = marketOrder.getPrice();
 		range = RawConverter.toMarketOrderRange(marketOrder.getRange());
 		regionId = (int) ApiIdConverter.getLocation(marketOrder.getStationID()).getRegionID();
 		state = RawConverter.toMarketOrderState(marketOrder.getOrderState());
@@ -297,11 +297,11 @@ public class RawMarketOrder {
 		this.orderId = orderId;
 	}
 
-	public Float getPrice() {
+	public Double getPrice() {
 		return price;
 	}
 
-	public void setPrice(Float price) {
+	public void setPrice(Double price) {
 		this.price = price;
 	}
 

@@ -122,6 +122,14 @@ public final class AttributeGetters {
 		}
 	}
 
+	public static Double getDoubleOptional(final Node node, final String attributeName) {
+		String value = getNodeValueOptional(node, attributeName);
+		if (value == null) {
+			return null;
+		}
+		return Double.valueOf(value);
+	}
+
 	public static float getFloat(final Node node, final String attributeName) throws XmlException {
 		String value = getNodeValue(node, attributeName);
 		try {

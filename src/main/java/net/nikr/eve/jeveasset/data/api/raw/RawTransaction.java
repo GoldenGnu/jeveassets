@@ -36,7 +36,7 @@ public class RawTransaction {
 	private Integer quantity = null;
 	private Long transactionId = null;
 	private Integer typeId = null;
-	private Float unitPrice = null;
+	private Double unitPrice = null;
 	private Integer accountKey = null;
 
 	/**
@@ -123,7 +123,7 @@ public class RawTransaction {
 		quantity = transaction.getQuantity();
 		transactionId = transaction.getTransactionID();
 		typeId = transaction.getTypeID();
-		unitPrice = RawConverter.toFloat(transaction.getPrice());
+		unitPrice = RawConverter.toDouble(transaction.getPrice());
 		accountKey = transaction.getAccountKey();
 	}
 
@@ -143,7 +143,7 @@ public class RawTransaction {
 		quantity = transaction.getQuantity();
 		transactionId = transaction.getTransactionID();
 		typeId = transaction.getTypeID();
-		unitPrice = RawConverter.toFloat(transaction.getPrice());
+		unitPrice = transaction.getPrice();
 		this.accountKey = accountKey;
 	}
 
@@ -219,11 +219,11 @@ public class RawTransaction {
 		this.typeId = typeId;
 	}
 
-	public Float getPrice() {
+	public Double getPrice() {
 		return unitPrice;
 	}
 
-	public void setUnitPrice(Float unitPrice) {
+	public void setUnitPrice(Double unitPrice) {
 		this.unitPrice = unitPrice;
 	}
 
