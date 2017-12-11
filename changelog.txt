@@ -16,6 +16,34 @@
                   #### #  # #  # #  # #### #### #### #### ####
 
 ________________________________________________________________________________
+_5.2.0__________________________________________________________________________
+
+New Features:
+-Added Export in EFT format in Ship Fittings Tool
+-ESI UI: Lookup owners in-game
+-Routing: Added stations
+-Routing: Save/Load calculated routes
+-Routing: Add locations from other tools
+-Check for program/data updates once an hour and show result on the statusbar
+
+Bug Fixes:
+-Splash screen disappear before frame is shown
+-Market Orders missing from Stockpile
+-Settings closed when pressing Apply
+-Ignore empty fittings when exporting all fittings to Eve XML fittings format
+-Fixed locations menus (again)
+-Fixed BugID: 620
+-Possible fix for BugID: 622 621
+-Possible fix for BugID 326
+
+Changed:
+-A few Routing GUI improvements
+-Added Cargo to Eve XML Fittings export
+
+Code:
+-Updated eve-esi-dev to 1.4.9 (use Double for ISK values)
+
+________________________________________________________________________________
 _5.1.1__________________________________________________________________________
 
 Bug Fixes:
