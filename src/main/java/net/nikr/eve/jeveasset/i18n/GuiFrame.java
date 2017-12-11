@@ -63,6 +63,8 @@ public abstract class GuiFrame extends Bundle {
 	public abstract String options1();
 	public abstract String overview();
 	public abstract String profiles();
+	public abstract String programUpdateText();
+	public abstract String programUpdateTip();
 	public abstract String readme();
 	public abstract String reprocessed();
 	public abstract String routing();

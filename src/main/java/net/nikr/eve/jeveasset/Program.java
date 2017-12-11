@@ -102,7 +102,7 @@ public class Program implements ActionListener {
 		TIMER
 	}
 	//Major.Minor.Bugfix [Release Candidate n] [BETA n] [DEV BUILD #n];
-	public static final String PROGRAM_VERSION = "5.1.2 DEV BUILD 1";
+	public static final String PROGRAM_VERSION = "5.2.0";
 	public static final String PROGRAM_NAME = "jEveAssets";
 	public static final String PROGRAM_HOMEPAGE = "https://eve.nikr.net/jeveasset";
 	public static final boolean PROGRAM_DEV_BUILD = false;
@@ -179,7 +179,7 @@ public class Program implements ActionListener {
 		updater = new Updater();
 		localData = updater.getLocalData();
 		if (!PROGRAM_DEV_BUILD) {
-			updater.update(Program.PROGRAM_VERSION, localData, Settings.get().getProxyData());
+			update();
 		}
 
 		profileManager = new ProfileManager();
@@ -355,6 +355,18 @@ public class Program implements ActionListener {
 		boolean isUpdatable = updatable.isUpdatable();
 		this.getStatusPanel().timerTicked(isUpdatable);
 		this.getMainWindow().getMenu().timerTicked(isUpdatable, StructureUpdateDialog.structuresUpdatable(this));
+	}
+
+	public final void update() {
+		updater.update(Program.PROGRAM_VERSION, localData, Settings.get().getProxyData());
+	}
+
+	public boolean checkProgramUpdate() {
+		return updater.checkProgramUpdate(Program.PROGRAM_VERSION);
+	}
+
+	public boolean checkDataUpdate() {
+		return updater.checkDataUpdate(localData);
 	}
 
 	public final void updateLocations(Set<Long> locationIDs) {

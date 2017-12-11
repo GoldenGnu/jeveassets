@@ -37,6 +37,7 @@ import net.nikr.eve.jeveasset.data.settings.types.BlueprintType;
 import net.nikr.eve.jeveasset.data.settings.types.ItemType;
 import net.nikr.eve.jeveasset.data.settings.types.LocationType;
 import net.nikr.eve.jeveasset.data.settings.types.LocationsType;
+import net.nikr.eve.jeveasset.data.settings.types.OwnersType;
 import net.nikr.eve.jeveasset.data.settings.types.PriceType;
 import net.nikr.eve.jeveasset.data.settings.types.TagsType;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
@@ -57,6 +58,7 @@ public class MenuData<T> {
 	private final Set<String> regionNames = new HashSet<String>();
 	private final Set<Integer> marketTypeIDs = new HashSet<Integer>();
 	private final Set<Integer> blueprintTypeIDs = new HashSet<Integer>();
+	private final Set<Long> ownerIDs = new HashSet<Long>();
 	private final Map<Tag, Integer> tagCount = new HashMap<Tag, Integer>();
 	private final List<TagsType> tags = new ArrayList<TagsType>();
 	private final List<MyAsset> assets = new ArrayList<MyAsset>();
@@ -83,6 +85,12 @@ public class MenuData<T> {
 			if (t instanceof LocationsType) {
 				LocationsType type = (LocationsType) t;
 				locations.addAll(type.getLocations());
+			}
+
+			Set<Long> owners = new HashSet<Long>();
+			if (t instanceof OwnersType) {
+				OwnersType ownersType = (OwnersType) t;
+				owners.addAll(ownersType.getOwners());
 			}
 
 			Item itemType = null;
@@ -117,11 +125,11 @@ public class MenuData<T> {
 				}
 			}
 
-			add(itemType, locations, price, blueprint, tagsType);
+			add(itemType, locations, price, blueprint, tagsType, owners);
 		}
 	}
 
-	private void add(final Item item, final Collection<MyLocation> locations, final Double price, final BlueprintType blueprintType, final TagsType tagsType) {
+	private void add(final Item item, final Collection<MyLocation> locations, final Double price, final BlueprintType blueprintType, final TagsType tagsType, Set<Long> owners) {
 		if (item != null && !item.isEmpty()) {
 			//Type Name
 			typeNames.add(item.getTypeName());
@@ -146,6 +154,9 @@ public class MenuData<T> {
 				prices.put(blueprintTypeID, price);
 			}
 		}
+
+		ownerIDs.addAll(owners);
+
 		//Locations
 		for (MyLocation location : locations) {
 			if (location == null) {
@@ -267,6 +278,10 @@ public class MenuData<T> {
 
 	public Set<Integer> getBlueprintTypeIDs() {
 		return blueprintTypeIDs;
+	}
+
+	public Set<Long> getOwnerIDs() {
+		return ownerIDs;
 	}
 
 	public void setAssets(List<MyAsset> assets) {

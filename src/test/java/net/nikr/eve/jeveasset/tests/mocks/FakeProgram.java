@@ -272,4 +272,14 @@ public abstract class FakeProgram extends Program {
 	public void updateStructures(Set<MyLocation> locations) {
 		throw new UnsupportedOperationException("Not implemented");
 	}
+
+	@Override
+	public boolean checkDataUpdate() {
+		throw new UnsupportedOperationException("Not implemented");
+	}
+
+	@Override
+	public boolean checkProgramUpdate() {
+		throw new UnsupportedOperationException("Not implemented");
+	}
 }

@@ -33,7 +33,9 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -54,6 +56,7 @@ import net.nikr.eve.jeveasset.gui.shared.components.JCustomFileChooser;
 import net.nikr.eve.jeveasset.gui.shared.components.JDropDownButton;
 import net.nikr.eve.jeveasset.gui.shared.components.JFixedToolBar;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTabSecondary;
+import net.nikr.eve.jeveasset.gui.shared.components.JTextDialog;
 import net.nikr.eve.jeveasset.gui.shared.components.ListComboBoxModel;
 import net.nikr.eve.jeveasset.gui.shared.filter.ExportDialog;
 import net.nikr.eve.jeveasset.gui.shared.filter.ExportFilterControl;
@@ -82,8 +85,9 @@ public class LoadoutsTab extends JMainTabSecondary {
 		FILTER,
 		OWNERS,
 		EXPORT,
-		EXPORT_LOADOUT_SELECTED,
-		EXPORT_LOADOUT_ALL,
+		EXPORT_EVE_SELECTED,
+		EXPORT_EVE_ALL,
+		EXPORT_EFT,
 		COLLAPSE,
 		EXPAND
 	}
@@ -99,6 +103,7 @@ public class LoadoutsTab extends JMainTabSecondary {
 	private final JDropDownButton jExport;
 	private final LoadoutsExportDialog loadoutsExportDialog;
 	private final JCustomFileChooser jXmlFileChooser;
+	private final JTextDialog jEftDialog;
 
 	//Table
 	private final EventList<Loadout> eventList;
@@ -121,6 +126,8 @@ public class LoadoutsTab extends JMainTabSecondary {
 		ListenerClass listener = new ListenerClass();
 
 		jXmlFileChooser = JCustomFileChooser.createFileChooser(program.getMainWindow().getFrame(), "xml");
+
+		jEftDialog = new JTextDialog(program.getMainWindow().getFrame());
 
 		JFixedToolBar jToolBarTop = new JFixedToolBar();
 
@@ -155,14 +162,20 @@ public class LoadoutsTab extends JMainTabSecondary {
 		jExport.add(jMenu);
 		
 		JMenuItem jExportEveXml = new JMenuItem(TabsLoadout.get().exportEveXmlSelected());
-		jExportEveXml.setActionCommand(LoadoutsAction.EXPORT_LOADOUT_SELECTED.name());
+		jExportEveXml.setActionCommand(LoadoutsAction.EXPORT_EVE_SELECTED.name());
 		jExportEveXml.addActionListener(listener);
 		jMenu.add(jExportEveXml);
 
 		JMenuItem jExportEveXmlAll = new JMenuItem(TabsLoadout.get().exportEveXmlAll());
-		jExportEveXmlAll.setActionCommand(LoadoutsAction.EXPORT_LOADOUT_ALL.name());
+		jExportEveXmlAll.setActionCommand(LoadoutsAction.EXPORT_EVE_ALL.name());
 		jExportEveXmlAll.addActionListener(listener);
 		jMenu.add(jExportEveXmlAll);
+
+		JMenuItem jExportEft = new JMenuItem(TabsLoadout.get().exportEft());
+		jExportEft.setActionCommand(LoadoutsAction.EXPORT_EFT.name());
+		jExportEft.addActionListener(listener);
+		jExportEft.setIcon(Images.TOOL_SHIP_LOADOUTS.getIcon());
+		jExport.add(jExportEft);
 
 		JFixedToolBar jToolBarRight = new JFixedToolBar();
 
@@ -299,7 +312,7 @@ public class LoadoutsTab extends JMainTabSecondary {
 		}
 	}
 
-	public void export() {
+	public void exportXml() {
 		String fitName = loadoutsExportDialog.getFittingName();
 		String fitDescription = loadoutsExportDialog.getFittingDescription();
 		if (!fitName.isEmpty()) {
@@ -325,6 +338,119 @@ public class LoadoutsTab extends JMainTabSecondary {
 					TabsLoadout.get().name1(),
 					TabsLoadout.get().empty(),
 					JOptionPane.PLAIN_MESSAGE);
+		}
+	}
+
+	private void exportEFT() {
+		String selectedShip = (String) jShips.getSelectedItem();
+		MyAsset exportAsset = null;
+		for (MyAsset asset : program.getAssetList()) {
+				String key = asset.getName() + " #" + asset.getItemID();
+				if (selectedShip.equals(key)) {
+					exportAsset = asset;
+					break;
+				}
+			}
+		if (exportAsset == null) {
+			return;
+		}
+		String buildName = getBuildName();
+		if (buildName == null) {
+			return; //Cancel
+		}
+		Map<String, Long> droneBay = new HashMap<String, Long>();
+		Map<String, Long> cargo = new HashMap<String, Long>();
+		Map<String, Map<Integer, String>> modulesByFlag = new HashMap<String, Map<Integer, String>>();
+		for (MyAsset asset : exportAsset.getAssets()) {
+			if (asset.getFlag().equals("DroneBay")) {
+				Long count = droneBay.get(asset.getTypeName());
+				if (count == null) {
+					count = 0L;
+				}
+				droneBay.put(asset.getTypeName(), count + asset.getCount());
+			} else if (asset.getFlag().equals("Cargo")) {
+				Long count = cargo.get(asset.getTypeName());
+				if (count == null) {
+					count = 0L;
+				}
+				cargo.put(asset.getTypeName(), count + asset.getCount());
+			} else {
+				String flag = asset.getFlag().replaceAll("\\d", "");
+				int index;
+				try {
+					index = Integer.valueOf(asset.getFlag().replaceAll("\\D", ""));
+				} catch (NumberFormatException ex) {
+					continue;
+				}
+				Map<Integer, String> modules = modulesByFlag.get(flag);
+				if (modules == null) {
+					modules = new HashMap<Integer, String>();
+					modulesByFlag.put(flag, modules);
+				}
+				if (asset.getCount() > 1) {
+					modules.put(index, asset.getTypeName() + " x" + asset.getCount() + "\r\n");
+				} else {
+					modules.put(index, asset.getTypeName() + "\r\n");
+				}
+			}
+		}
+		StringBuilder builder = new StringBuilder();
+		//Type and Name
+		builder.append("[");
+		builder.append(exportAsset.getTypeName());
+		builder.append(", ");
+		builder.append(buildName);
+		builder.append("]\r\n");
+		writeModuls(builder, modulesByFlag.get("LoSlot"));
+		writeModuls(builder, modulesByFlag.get("MedSlot"));
+		writeModuls(builder, modulesByFlag.get("HiSlot"));
+		writeModuls(builder, modulesByFlag.get("RigSlot"));
+		writeModuls(builder, modulesByFlag.get("SubSystem"));
+		writeCount(builder, droneBay);
+		writeCount(builder, cargo);
+
+		jEftDialog.exportText(builder.toString());
+		
+	}
+
+	private void writeModuls(StringBuilder builder, Map<Integer, String> modules) {
+		if (modules == null || modules.isEmpty()) {
+			return;
+		}
+		builder.append("\r\n");
+		for (String module : modules.values()) {
+			builder.append(module);
+		}
+	}
+	private void writeCount(StringBuilder builder, Map<String, Long> modules) {
+		if (modules == null || modules.isEmpty()) {
+			return;
+		}
+		builder.append("\r\n");
+		for (Map.Entry<String, Long> entry : modules.entrySet()) {
+			if (entry.getValue() > 1) {
+				builder.append(entry.getKey());
+				builder.append(" x");
+				builder.append(entry.getValue());
+				builder.append("\r\n");
+			} else {
+				builder.append(entry.getKey());
+			}
+		}
+	}
+
+	private String getBuildName() {
+		String buildName = JOptionPane.showInputDialog(program.getMainWindow().getFrame(), "Enter Build Name", "Export EFT", JOptionPane.PLAIN_MESSAGE);
+		if (buildName == null) {
+			return null; //Cancel
+		} else if (buildName.isEmpty()) {
+			JOptionPane.showMessageDialog(program.getMainWindow().getFrame(),
+					TabsLoadout.get().name1(),
+					TabsLoadout.get().empty(),
+					JOptionPane.PLAIN_MESSAGE);
+			return getBuildName();
+		} else {
+			return buildName;
 		}
 	}
 
@@ -420,7 +546,7 @@ public class LoadoutsTab extends JMainTabSecondary {
 					if (!asset.getItem().getCategory().equals(SHIP_CATEGORY) || !asset.isSingleton()) {
 						continue;
 					}
-					if (!owner.equals(asset.getOwner()) && !owner.equals(General.get().all())) {
+					if (!owner.equals(asset.getOwnerName()) && !owner.equals(General.get().all())) {
 						continue;
 					}
 					charShips.add(key);
@@ -447,21 +573,16 @@ public class LoadoutsTab extends JMainTabSecondary {
 					jShips.setModel(new ListComboBoxModel<String>());
 					jShips.getModel().setSelectedItem(TabsLoadout.get().no1());
 				}
-			}
-			if (LoadoutsAction.FILTER.name().equals(e.getActionCommand())) {
+			} else if (LoadoutsAction.FILTER.name().equals(e.getActionCommand())) {
 				String selectedShip = (String) jShips.getSelectedItem();
 				filterList.setMatcher(new Loadout.LoadoutMatcher(selectedShip));
-			}
-			if (LoadoutsAction.COLLAPSE.name().equals(e.getActionCommand())) {
+			} else if (LoadoutsAction.COLLAPSE.name().equals(e.getActionCommand())) {
 				jTable.expandSeparators(false);
-			}
-			if (LoadoutsAction.EXPAND.name().equals(e.getActionCommand())) {
+			} else if (LoadoutsAction.EXPAND.name().equals(e.getActionCommand())) {
 				jTable.expandSeparators(true);
-			}
-			if (LoadoutsAction.EXPORT_LOADOUT_SELECTED.name().equals(e.getActionCommand())) {
+			} else if (LoadoutsAction.EXPORT_EVE_SELECTED.name().equals(e.getActionCommand())) {
 				loadoutsExportDialog.setVisible(true);
-			}
-			if (LoadoutsAction.EXPORT_LOADOUT_ALL.name().equals(e.getActionCommand())) {
+			} else if (LoadoutsAction.EXPORT_EVE_ALL.name().equals(e.getActionCommand())) {
 				String filename = browse();
 				List<MyAsset> ships = new ArrayList<MyAsset>();
 				for (MyAsset asset : program.getAssetList()) {
@@ -473,10 +594,11 @@ public class LoadoutsTab extends JMainTabSecondary {
 				if (filename != null) {
 					EveFittingWriter.save(new ArrayList<MyAsset>(ships), filename);
 				}
-			}
-			if (LoadoutsAction.EXPORT.name().equals(e.getActionCommand())) {
+			} else if (LoadoutsAction.EXPORT_EFT.name().equals(e.getActionCommand())) {
+				exportEFT();
+			} else if (LoadoutsAction.EXPORT.name().equals(e.getActionCommand())) {
 				exportDialog.setVisible(true);
-			}
+			} 
 		}
 	}
 

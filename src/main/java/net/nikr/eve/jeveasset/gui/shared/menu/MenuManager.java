@@ -61,7 +61,8 @@ public class MenuManager<Q> {
 		PRICE,
 		NAME,
 		REPROCESSED,
-		JUMPS
+		JUMPS,
+		ROUTING
 	}
 
 	private boolean priceSupported = false;
@@ -150,6 +151,9 @@ public class MenuManager<Q> {
 	//JUMPS
 		if (jumpsSupported) {
 			menus.put(MenuEnum.JUMPS, new JMenuJumps<Q>(program, clazz));
+		}
+		if (locationSupported) {
+			menus.put(MenuEnum.ROUTING, new JMenuRouting<Q>(program));
 		}
 	//LOCATION
 		if (locationSupported) {
@@ -242,6 +246,11 @@ public class MenuManager<Q> {
 		JAutoMenu<Q> jJumps = menus.get(MenuEnum.JUMPS);
 		if (jJumps != null) {
 			jComponent.add(jJumps);
+			notEmpty = true;
+		}
+		JAutoMenu<Q> jRouting = menus.get(MenuEnum.ROUTING);
+		if (jRouting != null) {
+			jComponent.add(jRouting);
 			notEmpty = true;
 		}
 	//LOCATION

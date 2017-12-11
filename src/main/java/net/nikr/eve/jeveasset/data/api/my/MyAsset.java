@@ -21,11 +21,14 @@
 package net.nikr.eve.jeveasset.data.api.my;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import net.nikr.eve.jeveasset.data.api.accounts.OwnerType;
 import net.nikr.eve.jeveasset.data.api.raw.RawAsset;
 import net.nikr.eve.jeveasset.data.api.raw.RawBlueprint;
@@ -41,6 +44,7 @@ import net.nikr.eve.jeveasset.data.settings.types.EditableLocationType;
 import net.nikr.eve.jeveasset.data.settings.types.EditablePriceType;
 import net.nikr.eve.jeveasset.data.settings.types.ItemType;
 import net.nikr.eve.jeveasset.data.settings.types.JumpType;
+import net.nikr.eve.jeveasset.data.settings.types.OwnersType;
 import net.nikr.eve.jeveasset.data.settings.types.TagsType;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo.InfoItem;
@@ -49,7 +53,7 @@ import net.nikr.eve.jeveasset.i18n.DataModelAsset;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 import net.nikr.eve.jeveasset.io.shared.RawConverter;
 
-public class MyAsset extends RawAsset implements Comparable<MyAsset>, InfoItem, JumpType, ItemType, BlueprintType, EditablePriceType, TagsType, EditableLocationType {
+public class MyAsset extends RawAsset implements Comparable<MyAsset>, InfoItem, JumpType, ItemType, BlueprintType, EditablePriceType, TagsType, EditableLocationType, OwnersType {
 
 //Static values (set by constructor)
 	private final List<MyAsset> assets = new ArrayList<MyAsset>();
@@ -57,6 +61,7 @@ public class MyAsset extends RawAsset implements Comparable<MyAsset>, InfoItem, 
 	private final Item item;
 	private final OwnerType owner;
 	private final List<MyAsset> parents;
+	private final Set<Long> owners;
 //Static values cache (set by constructor)
 	private String typeName;
 	private boolean bpo;
@@ -111,6 +116,7 @@ public class MyAsset extends RawAsset implements Comparable<MyAsset>, InfoItem, 
 		this.owner = null;
 		this.parents = null;
 		this.location = location;
+		this.owners = new HashSet<Long>();
 		setItemID(0L);
 		setItemFlag(ApiIdConverter.getFlag(0));
 		setLocationID(location.getLocationID());
@@ -126,6 +132,7 @@ public class MyAsset extends RawAsset implements Comparable<MyAsset>, InfoItem, 
 		this.volume = item.getVolume();
 		this.typeName = item.getTypeName();
 		this.name = item.getTypeName();
+		this.owners = Collections.singleton(owner.getOwnerID());
 		updateBlueprint();
 	}
 
@@ -252,8 +259,17 @@ public class MyAsset extends RawAsset implements Comparable<MyAsset>, InfoItem, 
 		return name;
 	}
 
-	public String getOwner() {
+	public String getOwnerName() {
 		return owner.getOwnerName();
+	}
+
+	public OwnerType getOwner() {
+		return owner;
+	}
+
+	@Override
+	public Set<Long> getOwners() {
+		return owners;
 	}
 
 	public long getOwnerID() {

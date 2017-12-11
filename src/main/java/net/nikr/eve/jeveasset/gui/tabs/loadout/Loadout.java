@@ -23,17 +23,21 @@
 package net.nikr.eve.jeveasset.gui.tabs.loadout;
 
 import ca.odell.glazedlists.matchers.Matcher;
+import java.util.Collections;
+import java.util.Set;
+import net.nikr.eve.jeveasset.data.api.accounts.OwnerType;
 import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
 import net.nikr.eve.jeveasset.data.settings.types.ItemType;
 import net.nikr.eve.jeveasset.data.settings.types.LocationType;
+import net.nikr.eve.jeveasset.data.settings.types.OwnersType;
 import net.nikr.eve.jeveasset.data.settings.types.PriceType;
 import net.nikr.eve.jeveasset.gui.shared.CopyHandler.CopySeparator;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.ModulePriceValue;
 import net.nikr.eve.jeveasset.i18n.TabsLoadout;
 
 
-public class Loadout implements Comparable<Loadout>, LocationType, ItemType, PriceType, CopySeparator {
+public class Loadout implements Comparable<Loadout>, LocationType, ItemType, PriceType, CopySeparator, OwnersType {
 
 	public enum FlagType {
 		TOTAL_VALUE("Total Value", 1) {
@@ -110,13 +114,14 @@ public class Loadout implements Comparable<Loadout>, LocationType, ItemType, Pri
 	private final String name;
 	private final String key;
 	private final FlagType flag;
-	private final String owner;
+	private final OwnerType owner;
 	private final Double price;
+	private final Set<Long> owners;
 	private double value;
 	private long count;
 	private boolean first = false;
 
-	public Loadout(final Item item, final MyLocation location, final String owner, final String name, final String key, final String flag, final Double price, final double value, final long count) {
+	public Loadout(final Item item, final MyLocation location, final OwnerType owner, final String name, final String key, final String flag, final Double price, final double value, final long count) {
 		this.item = item;
 		this.location = location;
 		this.owner = owner;
@@ -126,6 +131,7 @@ public class Loadout implements Comparable<Loadout>, LocationType, ItemType, Pri
 		this.price = price;
 		this.value = value;
 		this.count = count;
+		this.owners = Collections.singleton(owner.getOwnerID());
 	}
 
 	private FlagType convertFlag(final String s) {
@@ -191,8 +197,13 @@ public class Loadout implements Comparable<Loadout>, LocationType, ItemType, Pri
 		return location;
 	}
 
-	public String getOwner() {
-		return owner;
+	@Override
+	public Set<Long> getOwners() {
+		return owners;
+	}
+
+	public String getOwnerName() {
+		return owner.getOwnerName();
 	}
 
 	public ModulePriceValue getModulePriceValue() {

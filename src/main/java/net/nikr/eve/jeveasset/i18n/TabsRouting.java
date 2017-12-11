@@ -35,6 +35,9 @@ public abstract class TabsRouting extends Bundle {
 	}
 
 	public abstract String add();
+	public abstract String addStation();
+	public abstract String addStationSelect();
+	public abstract String addStationTitle();
 	public abstract String addSystem();
 	public abstract String addSystemCancel();
 	public abstract String addSystemOK();
@@ -52,6 +55,7 @@ public abstract class TabsRouting extends Bundle {
 	public abstract String avoidSave();
 	public abstract String calculate();
 	public abstract String cancel();
+	public abstract String checked();
 	public abstract String emptyResult();
 	public abstract String error();
 	public abstract String filteredAssets();
@@ -64,15 +68,25 @@ public abstract class TabsRouting extends Bundle {
 	public abstract String overviewGroup(Object arg0);
 	public abstract String remove();
 	public abstract String resultArrow();
-	public abstract String resultUi();
-	public abstract String resultUiFail();
-	public abstract String resultUiOk();
-	public abstract String resultUiWaypoints();
+	public abstract String resultEmpty();
+	public abstract String resultLoad();
+	public abstract String resultManage();
+	public abstract String resultManageTitle();
 	public abstract String resultOverwrite();
+	public abstract String resultSave();
 	public abstract String resultTabFull();
 	public abstract String resultTabInfo();
 	public abstract String resultTabShort();
 	public abstract String resultText(String name, int jumps, int waypoints, String security, String avoid, String time);
+	public abstract String resultUiFail();
+	public abstract String resultUiOk();
+	public abstract String resultUiWaypoints();
+	public abstract String resultUntitled();
+	public abstract String routeDeleteMsg(int size);
+	public abstract String routeDeleteTitle();
+	public abstract String routeRenameTitle();
+	public abstract String routeSaveTitle();
+	public abstract String routeSaveMsg();
 	public abstract String routingTab();
 	public abstract String routingTitle();
 	public abstract String saveFilterMsg();
@@ -83,6 +97,7 @@ public abstract class TabsRouting extends Bundle {
 	public abstract String startEmpty();
 	public abstract String startSystem();
 	public abstract String total(Object arg0, Object arg1);
+	public abstract String unchecked();
 	
 	
 	

@@ -29,11 +29,12 @@ import net.nikr.eve.jeveasset.data.settings.types.BlueprintType;
 import net.nikr.eve.jeveasset.data.settings.types.EditablePriceType;
 import net.nikr.eve.jeveasset.data.settings.types.ItemType;
 import net.nikr.eve.jeveasset.data.settings.types.LocationsType;
+import net.nikr.eve.jeveasset.data.settings.types.OwnersType;
 import net.nikr.eve.jeveasset.gui.shared.CopyHandler.CopySeparator;
 import net.nikr.eve.jeveasset.i18n.TabsContracts;
 import net.nikr.eve.jeveasset.io.shared.RawConverter;
 
-public class MyContractItem extends RawContractItem implements Comparable<MyContractItem>, LocationsType, ItemType, BlueprintType, EditablePriceType, CopySeparator {
+public class MyContractItem extends RawContractItem implements Comparable<MyContractItem>, LocationsType, ItemType, BlueprintType, EditablePriceType, CopySeparator, OwnersType {
 
 	private MyContract contract;
 	private final Item item;
@@ -116,6 +117,11 @@ public class MyContractItem extends RawContractItem implements Comparable<MyCont
 	@Override
 	public Set<MyLocation> getLocations() {
 		return getContract().getLocations();
+	}
+
+	@Override
+	public Set<Long> getOwners() {
+		return getContract().getOwners();
 	}
 
 	@Override

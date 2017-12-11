@@ -21,7 +21,6 @@
 package net.nikr.eve.jeveasset.gui.tabs.routing;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import javax.swing.JOptionPane;
 import net.nikr.eve.jeveasset.Program;
@@ -31,19 +30,17 @@ import net.nikr.eve.jeveasset.i18n.GuiShared;
 import net.nikr.eve.jeveasset.i18n.TabsRouting;
 
 
-public class JManageSystemList extends JManageDialog {
+public class JManageAvoidDialog extends JManageDialog {
 
 	private final RoutingTab routingTab;
 
-	public JManageSystemList(RoutingTab routingTab, Program program) {
+	public JManageAvoidDialog(RoutingTab routingTab, Program program) {
 		super(program, program.getMainWindow().getFrame(), TabsRouting.get().manageFiltersTitle(), true, false);
 		this.routingTab = routingTab;
 	}
 
 	public void updateData() {
-		ArrayList<String> presets = new ArrayList<String>(Settings.get().getRoutingSettings().getPresets().keySet());
-		Collections.sort(presets);
-		super.update(presets);
+		super.update(new ArrayList<String>(Settings.get().getRoutingSettings().getPresets().keySet()));
 	}
 
 	@Override

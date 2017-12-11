@@ -222,7 +222,7 @@ public class RawContract {
 		volume = (float) contract.getVolume();
 	}
 
-	public long getAcceptorID() {
+	public final long getAcceptorID() {
 		return acceptorId;
 	}
 
@@ -230,7 +230,7 @@ public class RawContract {
 		this.acceptorId = acceptorId;
 	}
 
-	public long getAssigneeID() {
+	public final long getAssigneeID() {
 		return assigneeId;
 	}
 
@@ -326,7 +326,7 @@ public class RawContract {
 		this.forCorporation = forCorporation;
 	}
 
-	public long getIssuerCorpID() {
+	public final long getIssuerCorpID() {
 		return issuerCorporationId;
 	}
 
@@ -334,7 +334,7 @@ public class RawContract {
 		this.issuerCorporationId = issuerCorporationId;
 	}
 
-	public long getIssuerID() {
+	public final long getIssuerID() {
 		return issuerId;
 	}
 

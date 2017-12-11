@@ -239,7 +239,7 @@ public class MaterialsTab extends JMainTabSecondary {
 				continue;
 			}
 			//Skip not selected owners
-			if (!owner.equals(asset.getOwner()) && !owner.equals(General.get().all())) {
+			if (!owner.equals(asset.getOwnerName()) && !owner.equals(General.get().all())) {
 				continue;
 			}
 

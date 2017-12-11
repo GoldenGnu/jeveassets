@@ -20,21 +20,29 @@
  */
 package net.nikr.eve.jeveasset.data.api.my;
 
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 import net.nikr.eve.jeveasset.data.api.accounts.OwnerType;
 import net.nikr.eve.jeveasset.data.api.raw.RawJournal;
 import net.nikr.eve.jeveasset.data.api.raw.RawJournalRefType;
+import net.nikr.eve.jeveasset.data.settings.types.OwnersType;
+import net.nikr.eve.jeveasset.io.shared.RawConverter;
 
-public class MyJournal extends RawJournal implements Comparable<MyJournal> {
+public class MyJournal extends RawJournal implements Comparable<MyJournal>, OwnersType {
 
 	private final String corp = "(Corporation)";
 	private final OwnerType owner;
-	private String firstPartyName = null;
-	private String secondPartyName = null;
+	private String firstPartyName = "";
+	private String secondPartyName = "";
+	private final Set<Long> owners = new HashSet<Long>();
 
 	public MyJournal(RawJournal rawJournal, OwnerType owner) {
 		super(rawJournal);
 		this.owner = owner;
+		owners.add(owner.getOwnerID());
+		owners.add(RawConverter.toLong(getFirstPartyID()));
+		owners.add(RawConverter.toLong(getSecondPartyID()));
 	}
 
 	public int getAccountKeyFormated() {
@@ -54,7 +62,7 @@ public class MyJournal extends RawJournal implements Comparable<MyJournal> {
 		}
 	}
 
-	public String getOwnerName1() {
+	public String getFirstPartyName() {
 		return firstPartyName;
 	}
 
@@ -62,7 +70,7 @@ public class MyJournal extends RawJournal implements Comparable<MyJournal> {
 		this.firstPartyName = firstPartyName;
 	}
 
-	public String getOwnerName2() {
+	public String getSecondPartyName() {
 		return secondPartyName;
 	}
 
@@ -78,6 +86,11 @@ public class MyJournal extends RawJournal implements Comparable<MyJournal> {
 			return s;
 		}
 		return s.substring(0, 1).toUpperCase() + s.substring(1).toLowerCase();
+	}
+
+	@Override
+	public Set<Long> getOwners() {
+		return owners;
 	}
 
 	private String capitalizeAll(String in) {

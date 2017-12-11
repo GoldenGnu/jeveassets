@@ -30,10 +30,15 @@ public class RoutingSettings {
 	private double secMax;
 	private final Map<Long, SolarSystem> avoid = new HashMap<Long, SolarSystem>();
 	private final Map<String, Set<Long>> presets = new HashMap<String, Set<Long>>();
+	private final Map<String, RouteResult> routes = new HashMap<String, RouteResult>();
 
 	public RoutingSettings() {
 		secMin = 0.0;
 		secMax = 1.0;
+	}
+
+	public Map<String, RouteResult> getRoutes() {
+		return routes;
 	}
 
 	public double getSecMin() {

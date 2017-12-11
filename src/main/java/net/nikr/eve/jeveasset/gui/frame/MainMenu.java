@@ -346,37 +346,6 @@ public class MainMenu extends JMenuBar {
 				}
 			});
 			menu.add(menuItem);
-
-			submenu = new JMenu("Add systems to routing");
-			menu.add(submenu);
-
-			menuItem = new JMenuItem("10", Images.MISC_DEBUG.getIcon());
-			menuItem.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					program.getRoutingTab().addSystems(10);
-				}
-			});
-			submenu.add(menuItem);
-
-			menuItem = new JMenuItem("50", Images.MISC_DEBUG.getIcon());
-			menuItem.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					program.getRoutingTab().addSystems(50);
-				}
-			});
-			submenu.add(menuItem);
-
-			menuItem = new JMenuItem("100", Images.MISC_DEBUG.getIcon());
-			menuItem.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					program.getRoutingTab().addSystems(100);
-				}
-			});
-			submenu.add(menuItem);
-
 		}
 	}
 

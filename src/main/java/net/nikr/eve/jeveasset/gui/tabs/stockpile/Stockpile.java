@@ -43,6 +43,7 @@ import net.nikr.eve.jeveasset.data.settings.tag.Tags;
 import net.nikr.eve.jeveasset.data.settings.types.BlueprintType;
 import net.nikr.eve.jeveasset.data.settings.types.ItemType;
 import net.nikr.eve.jeveasset.data.settings.types.LocationsType;
+import net.nikr.eve.jeveasset.data.settings.types.OwnersType;
 import net.nikr.eve.jeveasset.data.settings.types.PriceType;
 import net.nikr.eve.jeveasset.data.settings.types.TagsType;
 import net.nikr.eve.jeveasset.gui.shared.CopyHandler.CopySeparator;
@@ -51,7 +52,7 @@ import net.nikr.eve.jeveasset.i18n.TabsStockpile;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 
 
-public class Stockpile implements Comparable<Stockpile>, LocationsType {
+public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersType {
 	private String name;
 	private String ownerName;
 	private String flagName;
@@ -350,6 +351,17 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType {
 		return locations;
 	}
 
+	@Override
+	public Set<Long> getOwners() {
+		Set<Long> owners = new HashSet<Long>();
+		for (StockpileFilter filter : filters) {
+			if (!filter.getOwnerIDs().isEmpty()) {
+				owners.addAll(filter.getOwnerIDs());
+			}
+		}
+		return owners;
+	}
+
 	public List<StockpileFilter> getFilters() {
 		return filters;
 	}
@@ -421,7 +433,7 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType {
 		return this.getName().compareToIgnoreCase(o.getName());
 	}
 
-	public static class StockpileItem implements Comparable<StockpileItem>, LocationsType, ItemType, BlueprintType, PriceType, CopySeparator, TagsType {
+	public static class StockpileItem implements Comparable<StockpileItem>, LocationsType, ItemType, BlueprintType, PriceType, CopySeparator, TagsType, OwnersType {
 		private static final AtomicLong TS = new AtomicLong();
 		//Constructor
 		private final long id;
@@ -1039,6 +1051,11 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType {
 		@Override
 		public Set<MyLocation> getLocations() {
 			return stockpile.getLocations();
+		}
+
+		@Override
+		public Set<Long> getOwners() {
+			return stockpile.getOwners();
 		}
 
 		@Override

@@ -81,7 +81,7 @@ public enum TreeTableFormat implements EnumTableColumn<TreeAsset> {
 		}
 		@Override
 		public Object getColumnValue(final TreeAsset from) {
-			return from.getOwner();
+			return from.getOwnerName();
 		}
 	},
 	LOCATION(String.class, GlazedLists.comparableComparator()) {

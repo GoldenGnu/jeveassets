@@ -129,6 +129,7 @@ public enum Images {
 	MISC_ASSETS_32 ("misc_assets_32.png"),
 	MISC_ASSETS_64 ("misc_assets_64.png"),
 	MISC_DEBUG ("misc_debug.png"),
+	MISC_UPDATE ("misc_update.png"),
 
 	SETTINGS_TOOLS ("settings_tools.png"),
 	SETTINGS_PRICE_DATA ("settings_price_data.png"),

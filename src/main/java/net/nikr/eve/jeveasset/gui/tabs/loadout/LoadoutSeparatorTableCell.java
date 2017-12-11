@@ -89,7 +89,7 @@ public class LoadoutSeparatorTableCell extends SeparatorTableCell<Loadout> {
 		jLocation.setVisible(module.isFirst());
 		jLocation.setText(TabsLoadout.get().whitespace10(module.getLocation().getLocation()));
 		jOwner.setVisible(module.isFirst());
-		jOwner.setText(TabsLoadout.get().whitespace10(module.getOwner()));
+		jOwner.setText(TabsLoadout.get().whitespace10(module.getOwnerName()));
 		jFlag.setText(module.getFlag());
 	}
 

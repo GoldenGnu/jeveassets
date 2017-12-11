@@ -124,10 +124,16 @@ public class DataSetCreatorTest extends TestUtil {
 		contract.setType(RawContract.ContractType.ITEM_EXCHANGE);
 		if (issuer != null) {
 			contract.setIssuerID((int) issuer.getOwnerID());
+		} else {
+			contract.setIssuerID(0);
 		}
 		if (acceptor != null) {
 			contract.setAcceptorID((int) acceptor.getOwnerID());
+		} else {
+			contract.setIssuerID(0);
 		}
+		contract.setIssuerCorporationID(0);
+		contract.setAssigneeID(0);
 		MyContract myContract = new MyContract(contract);
 		if (issuer != null) {
 			myContract.setIssuer(issuer.getOwnerName());
