@@ -139,8 +139,8 @@ public class DataSetCreator {
 		try {
 			profileData.getMarketOrdersEventList().getReadWriteLock().readLock().lock();
 			for (MyMarketOrder marketOrder : profileData.getMarketOrdersEventList()) {
-				Value value = getValueInner(values, marketOrder.getOwnerName(), date);
 				if (marketOrder.isActive()) {
+					Value value = getValueInner(values, marketOrder.getOwnerName(), date);
 					if (!marketOrder.isBuyOrder()) { //Sell Orders
 						value.addSellOrders(marketOrder.getPrice() * marketOrder.getVolRemaining());
 						total.addSellOrders(marketOrder.getPrice() * marketOrder.getVolRemaining());
@@ -159,9 +159,9 @@ public class DataSetCreator {
 		try {
 			profileData.getIndustryJobsEventList().getReadWriteLock().readLock().lock();
 			for (MyIndustryJob industryJob : profileData.getIndustryJobsEventList()) {
-				Value value = getValueInner(values, industryJob.getOwnerName(), date);
 				//Manufacturing and not completed
 				if (industryJob.isManufacturing() && !industryJob.isDelivered()) {
+					Value value = getValueInner(values, industryJob.getOwnerName(), date);
 					double manufacturingTotal = industryJob.getProductQuantity() * industryJob.getRuns() * ApiIdConverter.getPrice(industryJob.getProductTypeID(), false);
 					value.addManufacturing(manufacturingTotal);
 					total.addManufacturing(manufacturingTotal);
