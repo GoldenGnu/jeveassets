@@ -164,6 +164,7 @@ public class AssetsTab extends JMainTabPrimary implements TagUpdate {
 	public void updateTags() {
 		beforeUpdateData();
 		tableModel.fireTableDataChanged();
+		filterControl.refilter();
 		afterUpdateData();
 	}
 

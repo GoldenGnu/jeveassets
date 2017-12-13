@@ -113,6 +113,10 @@ public abstract class FilterControl<E> extends ExportFilterControl<E> {
 		cacheRebuild();
 	}
 
+	public void refilter() {
+		gui.refilter();
+	}
+
 	Map<E, String> getCache() {
 		return cache;
 	}
