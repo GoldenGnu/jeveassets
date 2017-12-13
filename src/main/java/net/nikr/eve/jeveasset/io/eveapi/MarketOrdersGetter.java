@@ -21,11 +21,14 @@
 package net.nikr.eve.jeveasset.io.eveapi;
 
 import com.beimin.eveapi.exception.ApiException;
+import com.beimin.eveapi.model.shared.MarketOrder;
 import com.beimin.eveapi.parser.character.CharMarketOrdersParser;
 import com.beimin.eveapi.parser.corporation.CorpMarketOrdersParser;
 import com.beimin.eveapi.response.shared.MarketOrdersResponse;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import net.nikr.eve.jeveasset.data.api.accounts.EveApiAccessMask;
@@ -56,11 +59,10 @@ public class MarketOrdersGetter extends AbstractApiGetter<MarketOrdersResponse> 
 		if (!handle(response, updaterStatus)) {
 			return;
 		}
-		Set<MyMarketOrder> marketOrders = new HashSet<MyMarketOrder>();
-		marketOrders.addAll(EveApiConverter.toMarketOrders(response.getAll() , owner, saveHistory));
+		List<MarketOrder> marketOrders = new ArrayList<MarketOrder>(response.getAll());
 		if (saveHistory) { //update old orders
 			Set<Long> updated = new HashSet<Long>();
-			for (MyMarketOrder marketOrder : marketOrders) {
+			for (MarketOrder marketOrder : marketOrders) {
 				updated.add(marketOrder.getOrderID());
 			}
 			Set<Long> orderIDs = new HashSet<Long>();
@@ -89,10 +91,10 @@ public class MarketOrdersGetter extends AbstractApiGetter<MarketOrdersResponse> 
 				if (!handle(response, updaterStatus)) {
 					continue;
 				}
-				marketOrders.addAll(EveApiConverter.toMarketOrders(ordersResponse.getAll() , owner, saveHistory));
+				marketOrders.addAll(ordersResponse.getAll());
 			}
 		}
-		owner.setMarketOrders(marketOrders);
+		owner.setMarketOrders(EveApiConverter.toMarketOrders(marketOrders , owner, saveHistory));
 	}
 
 	@Override
