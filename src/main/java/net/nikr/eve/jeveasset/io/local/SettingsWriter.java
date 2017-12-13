@@ -81,7 +81,7 @@ public class SettingsWriter extends AbstractXmlWriter {
 			return false;
 		}
 
-		writeStockpiles(xmldoc, stockpiles);
+		writeStockpiles(xmldoc, stockpiles, true);
 		try {
 			writeXmlFile(xmldoc, filename, false);
 		} catch (XmlException ex) {
@@ -105,7 +105,7 @@ public class SettingsWriter extends AbstractXmlWriter {
 
 		writeAssetSettings(xmldoc, settings);
 		writeStockpileGroups(xmldoc, settings);
-		writeStockpiles(xmldoc, settings.getStockpiles());
+		writeStockpiles(xmldoc, settings.getStockpiles(), false);
 		writeOverviewGroups(xmldoc, settings.getOverviewGroups());
 		writeReprocessSettings(xmldoc, settings.getReprocessSettings());
 		writeWindow(xmldoc, settings);
@@ -388,7 +388,7 @@ public class SettingsWriter extends AbstractXmlWriter {
 		parentNode.setAttributeNS(null, "stockpilegroup3", String.valueOf(settings.getStockpileColorGroup3()));
 	}
 
-	private void writeStockpiles(final Document xmldoc, final List<Stockpile> stockpiles) {
+	private void writeStockpiles(final Document xmldoc, final List<Stockpile> stockpiles, boolean export) {
 		Element parentNode = xmldoc.createElementNS(null, "stockpiles");
 		xmldoc.getDocumentElement().appendChild(parentNode);
 		for (Stockpile strockpile : stockpiles) {
@@ -398,7 +398,9 @@ public class SettingsWriter extends AbstractXmlWriter {
 			for (StockpileItem item : strockpile.getItems()) {
 				if (item.getItemTypeID() != 0) { //Ignore Total
 					Element itemNode = xmldoc.createElementNS(null, "item");
-					itemNode.setAttributeNS(null, "id", String.valueOf(item.getID()));
+					if (!export) { //Risk of collision, better to generate a new one on import
+						itemNode.setAttributeNS(null, "id", String.valueOf(item.getID()));
+					}
 					itemNode.setAttributeNS(null, "typeid", String.valueOf(item.getItemTypeID()));
 					itemNode.setAttributeNS(null, "minimum", String.valueOf(item.getCountMinimum()));
 					strockpileNode.appendChild(itemNode);
