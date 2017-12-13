@@ -265,6 +265,7 @@ public class TreeTab extends JMainTabSecondary implements TagUpdate, NamesUpdate
 	public void updateTags() {
 		beforeUpdateData();
 		tableModel.fireTableDataChanged();
+		filterControl.refilter();
 		afterUpdateData();
 	}
 
