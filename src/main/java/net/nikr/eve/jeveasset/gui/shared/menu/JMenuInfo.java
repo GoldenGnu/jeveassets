@@ -155,8 +155,8 @@ public class JMenuInfo {
 
 			double sellTotal = 0;
 			double buyTotal = 0;
-			double sellCount = 0;
-			double buyCount = 0;
+			long sellCount = 0;
+			long buyCount = 0;
 			for (MyTransaction transaction : transactions) {
 				if (transaction.isSell()) { //Sell
 					sellTotal += transaction.getPrice() * transaction.getQuantity();
@@ -182,14 +182,17 @@ public class JMenuInfo {
 			}
 			//Sell
 			createMenuItemGroup(jPopupMenu, GuiShared.get().selectionTitleSell(), Images.ORDERS_SELL.getIcon());
+			createMenuItem(jPopupMenu, Formater.itemsFormat(sellCount), GuiShared.get().selectionOrdersSellCount(), Images.EDIT_ADD.getIcon());
 			createMenuItem(jPopupMenu, Formater.iskFormat(sellTotal), GuiShared.get().selectionOrdersSell(), Images.TOOL_VALUES.getIcon());
 			createMenuItem(jPopupMenu, Formater.iskFormat(sellAvg), GuiShared.get().selectionOrdersSellAvg(), Images.ASSETS_AVERAGE.getIcon());
 			//Both
 			createMenuItemGroup(jPopupMenu, GuiShared.get().selectionTitleBoth(), Images.TOOL_TRANSACTION.getIcon());
+			createMenuItem(jPopupMenu, Formater.itemsFormat(sellCount + buyCount), GuiShared.get().selectionOrdersBothCount(), Images.EDIT_ADD.getIcon());
 			createMenuItem(jPopupMenu, Formater.iskFormat(bothTotal), GuiShared.get().selectionOrdersBoth(), Images.TOOL_VALUES.getIcon());
 			createMenuItem(jPopupMenu, Formater.iskFormat(bothAvg), GuiShared.get().selectionOrdersBothAvg(), Images.ASSETS_AVERAGE.getIcon());
 			//Buy
 			createMenuItemGroup(jPopupMenu, GuiShared.get().selectionTitleBuy(), Images.ORDERS_BUY.getIcon());
+			createMenuItem(jPopupMenu, Formater.itemsFormat(buyCount), GuiShared.get().selectionOrdersBuyCount(), Images.EDIT_ADD.getIcon());
 			createMenuItem(jPopupMenu, Formater.iskFormat(buyTotal), GuiShared.get().selectionOrdersBuy(), Images.TOOL_VALUES.getIcon());
 			createMenuItem(jPopupMenu, Formater.iskFormat(buyAvg), GuiShared.get().selectionOrdersBuyAvg(), Images.ASSETS_AVERAGE.getIcon());
 		}

@@ -94,11 +94,14 @@ public abstract class GuiShared extends Bundle {
 	public abstract String selectionManufactureJobsValue();
 	public abstract String selectionOrdersBoth();
 	public abstract String selectionOrdersBothAvg();
+	public abstract String selectionOrdersBothCount();
 	public abstract String selectionOrdersBuy();
 	public abstract String selectionOrdersBuyAvg();
+	public abstract String selectionOrdersBuyCount();
 	public abstract String selectionOrdersEscrow();
 	public abstract String selectionOrdersSell();
 	public abstract String selectionOrdersSellAvg();
+	public abstract String selectionOrdersSellCount();
 	public abstract String selectionOrdersToCover();
 	public abstract String selectionTitle();
 	public abstract String selectionTitleBoth();
