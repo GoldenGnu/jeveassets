@@ -98,12 +98,12 @@ import org.jfree.chart.labels.XYToolTipGenerator;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
-import org.jfree.data.general.DatasetUtilities;
+import org.jfree.chart.ui.RectangleEdge;
+import org.jfree.data.general.DatasetUtils;
 import org.jfree.data.time.SimpleTimePeriod;
 import org.jfree.data.time.TimePeriodValues;
 import org.jfree.data.time.TimePeriodValuesCollection;
 import org.jfree.data.xy.XYDataset;
-import org.jfree.ui.RectangleEdge;
 
 
 public class TrackerTab extends JMainTabSecondary {
@@ -374,7 +374,7 @@ public class TrackerTab extends JMainTabSecondary {
 		plot.setBackgroundPaint(Color.WHITE);
 		plot.setRangeGridlinePaint(Color.LIGHT_GRAY);
 		plot.setDomainGridlinePaint(Color.LIGHT_GRAY);
-		plot.getRenderer().setBaseToolTipGenerator(new XYToolTipGenerator() {
+		plot.getRenderer().setDefaultToolTipGenerator(new XYToolTipGenerator() {
 			@Override
 			public String generateToolTip(XYDataset dataset, int series, int item)	{
 				Date date = new Date(dataset.getX(series, item).longValue());
@@ -931,7 +931,7 @@ public class TrackerTab extends JMainTabSecondary {
 		}
 		jNextChart.getXYPlot().getRangeAxis().setAutoRange(true);
 		jNextChart.getXYPlot().getDomainAxis().setAutoRange(true);
-		Number maxNumber = DatasetUtilities.findMaximumRangeValue(dataset);
+		Number maxNumber = DatasetUtils.findMaximumRangeValue(dataset);
 		NumberAxis rangeAxis = (NumberAxis) jNextChart.getXYPlot().getRangeAxis();
 		rangeAxis.setNumberFormatOverride(Formater.LONG_FORMAT); //Default
 		if (maxNumber != null && (maxNumber instanceof Double)) {
