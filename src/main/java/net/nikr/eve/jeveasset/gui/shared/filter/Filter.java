@@ -132,6 +132,9 @@ public class Filter {
 		LAST_DAYS(Images.FILTER_LAST_DAYS.getIcon()) {
 			@Override String getI18N() { return GuiShared.get().filterLastDays(); }
 		},
+		LAST_HOURS(Images.FILTER_LAST_HOURS.getIcon()) {
+			@Override String getI18N() { return GuiShared.get().filterLastHours(); }
+		},
 		CONTAINS_COLUMN(Images.FILTER_CONTAIN_COLUMN.getIcon()) {
 			@Override String getI18N() { return GuiShared.get().filterContainsColumn(); }
 		},
@@ -197,6 +200,7 @@ public class Filter {
 			BEFORE,
 			AFTER,
 			LAST_DAYS,
+			LAST_HOURS,
 			//CONTAINS_COLUMN,
 			//CONTAINS_NOT_COLUMN,
 			EQUALS_COLUMN,
