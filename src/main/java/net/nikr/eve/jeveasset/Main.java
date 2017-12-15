@@ -235,8 +235,7 @@ public final class Main {
 		files.add("javax.activation-1.2.0.jar");
 		files.add("guava-r09.jar");
 		files.add("LGoodDatePicker-10.2.3.jar");
-		files.add("jcommon-1.0.23.jar");
-		files.add("jfreechart-1.0.19.jar");
+		files.add("jfreechart-1.5.0.jar");
 		files.add("osxadapter-1.1.0.jar");
 		files.add("pricing-1.8.0.jar");
 		files.add("routing-1.5.0.jar");
