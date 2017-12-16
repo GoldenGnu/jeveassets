@@ -78,7 +78,7 @@ public class RawMarketOrder {
 
 	private Integer accountId = null;
 	private Integer duration = null;
-	private Float escrow = null;
+	private Double escrow = null;
 	private Boolean isBuyOrder = null;
 	private Boolean isCorp = null;
 	private Date issued = null;
@@ -184,7 +184,7 @@ public class RawMarketOrder {
 	public RawMarketOrder(enterprises.orbital.evekit.client.model.MarketOrder marketOrder, boolean isCorp) {
 		accountId = marketOrder.getAccountKey();
 		duration = marketOrder.getDuration();
-		escrow = RawConverter.toFloat(marketOrder.getEscrow());
+		escrow = RawConverter.toDouble(marketOrder.getEscrow());
 		isBuyOrder = marketOrder.getBid();
 		this.isCorp = isCorp;
 		issued = RawConverter.toDate(marketOrder.getIssuedDate());
@@ -209,7 +209,7 @@ public class RawMarketOrder {
 	public RawMarketOrder(com.beimin.eveapi.model.shared.MarketOrder marketOrder, boolean isCorp) {
 		accountId = marketOrder.getAccountKey();
 		duration = marketOrder.getDuration();
-		escrow = (float) marketOrder.getEscrow();
+		escrow = marketOrder.getEscrow();
 		isBuyOrder = marketOrder.getBid() > 0;
 		this.isCorp = isCorp;
 		issued = marketOrder.getIssued();
@@ -241,11 +241,11 @@ public class RawMarketOrder {
 		this.duration = duration;
 	}
 
-	public Float getEscrow() {
+	public Double getEscrow() {
 		return escrow;
 	}
 
-	public void setEscrow(Float escrow) {
+	public void setEscrow(Double escrow) {
 		this.escrow = escrow;
 	}
 

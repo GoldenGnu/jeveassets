@@ -42,8 +42,8 @@ public class RawContract {
 	private Integer acceptorId = null;
 	private Integer assigneeId = null;
 	private ContractAvailability availability = null;
-	private Float buyout = null;
-	private Float collateral = null;
+	private Double buyout = null;
+	private Double collateral = null;
 	private Integer contractId = null;
 	private Date dateAccepted = null;
 	private Date dateCompleted = null;
@@ -54,8 +54,8 @@ public class RawContract {
 	private Boolean forCorporation = null;
 	private Integer issuerCorporationId = null;
 	private Integer issuerId = null;
-	private Float price = null;
-	private Float reward = null;
+	private Double price = null;
+	private Double reward = null;
 	private Long startLocationId = null;
 	private ContractStatus status = null;
 	private String title = null;
@@ -171,8 +171,8 @@ public class RawContract {
 		acceptorId = RawConverter.toInteger(contract.getAcceptorID());
 		assigneeId = RawConverter.toInteger(contract.getAssigneeID());
 		availability = RawConverter.toContractAvailability(contract.getAvailability());
-		buyout = RawConverter.toFloat(contract.getBuyout());
-		collateral = RawConverter.toFloat(contract.getCollateral());
+		buyout = RawConverter.toDouble(contract.getBuyout());
+		collateral = RawConverter.toDouble(contract.getCollateral());
 		contractId = RawConverter.toInteger(contract.getContractID());
 		dateAccepted = RawConverter.toDate(contract.getDateAcceptedDate());
 		dateCompleted = RawConverter.toDate(contract.getDateCompletedDate());
@@ -183,8 +183,8 @@ public class RawContract {
 		forCorporation = contract.getForCorp();
 		issuerCorporationId = RawConverter.toInteger(contract.getIssuerCorpID());
 		issuerId = RawConverter.toInteger(contract.getIssuerID());
-		price = RawConverter.toFloat(contract.getPrice());
-		reward = RawConverter.toFloat(contract.getReward());
+		price = RawConverter.toDouble(contract.getPrice());
+		reward = RawConverter.toDouble(contract.getReward());
 		startLocationId = contract.getStartStationID();
 		status = RawConverter.toContractStatus(contract.getStatus());
 		title = contract.getTitle();
@@ -201,8 +201,8 @@ public class RawContract {
 		acceptorId = (int) contract.getAcceptorID();
 		assigneeId = (int) contract.getAssigneeID();
 		availability = RawConverter.toContractAvailability(contract.getAvailability());
-		buyout = (float) contract.getBuyout();
-		collateral = (float) contract.getCollateral();
+		buyout = contract.getBuyout();
+		collateral = contract.getCollateral();
 		contractId = (int) contract.getContractID();
 		dateAccepted = contract.getDateAccepted();
 		dateCompleted = contract.getDateCompleted();
@@ -213,8 +213,8 @@ public class RawContract {
 		forCorporation = contract.isForCorp();
 		issuerCorporationId = (int) contract.getIssuerCorpID();
 		issuerId = (int) contract.getIssuerID();
-		price = (float) contract.getPrice();
-		reward = (float) contract.getReward();
+		price = contract.getPrice();
+		reward = contract.getReward();
 		startLocationId = contract.getStartStationID();
 		status = RawConverter.toContractStatus(contract.getStatus());
 		title = contract.getTitle();
@@ -246,19 +246,19 @@ public class RawContract {
 		this.availability = availability;
 	}
 
-	public Float getBuyout() {
+	public Double getBuyout() {
 		return buyout;
 	}
 
-	public void setBuyout(Float buyout) {
+	public void setBuyout(Double buyout) {
 		this.buyout = buyout;
 	}
 
-	public Float getCollateral() {
+	public Double getCollateral() {
 		return collateral;
 	}
 
-	public void setCollateral(Float collateral) {
+	public void setCollateral(Double collateral) {
 		this.collateral = collateral;
 	}
 
@@ -342,19 +342,19 @@ public class RawContract {
 		this.issuerId = issuerId;
 	}
 
-	public Float getPrice() {
+	public Double getPrice() {
 		return price;
 	}
 
-	public void setPrice(Float price) {
+	public void setPrice(Double price) {
 		this.price = price;
 	}
 
-	public Float getReward() {
+	public Double getReward() {
 		return reward;
 	}
 
-	public void setReward(Float reward) {
+	public void setReward(Double reward) {
 		this.reward = reward;
 	}
 

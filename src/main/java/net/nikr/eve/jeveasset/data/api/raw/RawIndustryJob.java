@@ -53,7 +53,7 @@ public class RawIndustryJob {
 	private Integer blueprintTypeId = null;
 	private Integer completedCharacterId = null;
 	private Date completedDate = null;
-	private Float cost = null;
+	private Double cost = null;
 	private Integer duration = null;
 	private Date endDate = null;
 	private Long facilityId = null;
@@ -182,7 +182,7 @@ public class RawIndustryJob {
 		blueprintTypeId = industryJob.getBlueprintTypeID();
 		completedCharacterId = RawConverter.toInteger(industryJob.getCompletedCharacterID());
 		completedDate = RawConverter.toDate(industryJob.getCompletedDateDate());
-		cost = RawConverter.toFloat(industryJob.getCost());
+		cost = RawConverter.toDouble(industryJob.getCost());
 		duration = industryJob.getTimeInSeconds();
 		endDate = RawConverter.toDate(industryJob.getEndDateDate());
 		facilityId = industryJob.getFacilityID();
@@ -212,7 +212,7 @@ public class RawIndustryJob {
 		blueprintTypeId = industryJob.getBlueprintTypeID();
 		completedCharacterId = (int) industryJob.getCompletedCharacterID();
 		completedDate = industryJob.getCompletedDate();
-		cost = (float) industryJob.getCost();
+		cost = industryJob.getCost();
 		duration = industryJob.getTimeInSeconds();
 		endDate = industryJob.getEndDate();
 		facilityId = industryJob.getFacilityID();
@@ -278,11 +278,11 @@ public class RawIndustryJob {
 		this.completedDate = completedDate;
 	}
 
-	public Float getCost() {
+	public Double getCost() {
 		return cost;
 	}
 
-	public void setCost(Float cost) {
+	public void setCost(Double cost) {
 		this.cost = cost;
 	}
 
