@@ -70,7 +70,7 @@ public class DataSetCreatorTest extends TestUtil {
 		owners.put(acceptor.getOwnerID(), acceptor);
 		//Contacts Items
 		List<MyContractItem> contractItems = new ArrayList<MyContractItem>();
-		MyContract contract = getContract(issuer, acceptor, ContractStatus.OUTSTANDING, 0, 0, 0, null, now);
+		MyContract contract = getContract(issuer, acceptor, ContractStatus.OUTSTANDING, 0.0, 0.0, 0.0, null, now);
 		MyContractItem contractItem = getContractItem(contract, 10, true);
 		contractItems.add(contractItem);
 
@@ -92,7 +92,7 @@ public class DataSetCreatorTest extends TestUtil {
 		owners.put(acceptor.getOwnerID(), acceptor);
 		//Contacts Items
 		List<MyContractItem> contractItems = new ArrayList<MyContractItem>();
-		MyContract contract = getContract(issuer, acceptor, ContractStatus.OUTSTANDING, 0, 0, 0, null, now);
+		MyContract contract = getContract(issuer, acceptor, ContractStatus.OUTSTANDING, 0.0, 0.0, 0.0, null, now);
 		MyContractItem contractItem = getContractItem(contract, 10, true);
 		contractItems.add(contractItem);
 
@@ -112,7 +112,7 @@ public class DataSetCreatorTest extends TestUtil {
 		return owner;
 	}
 
-	private MyContract getContract(EveApiOwner issuer, EveApiOwner acceptor, ContractStatus status, float collateral, float price, float reward, Date completed, Date issued) {
+	private MyContract getContract(EveApiOwner issuer, EveApiOwner acceptor, ContractStatus status, Double collateral, Double price, Double reward, Date completed, Date issued) {
 		RawContract contract = RawContract.create();
 		contract.setCollateral(collateral);
 		contract.setDateCompleted(completed);

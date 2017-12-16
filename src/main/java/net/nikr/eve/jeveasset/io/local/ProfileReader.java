@@ -328,8 +328,8 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 		Integer acceptorID = AttributeGetters.getInt(element, "acceptorid");
 		Integer assigneeID = AttributeGetters.getInt(element, "assigneeid");
 		ContractAvailability availability = RawConverter.toContractAvailability(AttributeGetters.getString(element, "availability"));
-		Float buyout = AttributeGetters.getFloatOptional(element, "buyout");
-		Float collateral = AttributeGetters.getFloatOptional(element, "collateral");
+		Double buyout = AttributeGetters.getDoubleOptional(element, "buyout");
+		Double collateral = AttributeGetters.getDoubleOptional(element, "collateral");
 		Integer contractID = AttributeGetters.getInt(element, "contractid");
 		Date dateAccepted = AttributeGetters.getDateOptional(element, "dateaccepted");
 		Date dateCompleted = AttributeGetters.getDateOptional(element, "datecompleted");
@@ -339,8 +339,8 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 		Integer issuerCorporationID = AttributeGetters.getInt(element, "issuercorpid");
 		Integer issuerID = AttributeGetters.getInt(element, "issuerid");
 		Integer daysToComplete = AttributeGetters.getIntOptional(element, "numdays");
-		Float price = AttributeGetters.getFloatOptional(element, "price");
-		Float reward = AttributeGetters.getFloatOptional(element, "reward");
+		Double price = AttributeGetters.getDoubleOptional(element, "price");
+		Double reward = AttributeGetters.getDoubleOptional(element, "reward");
 		Long startLocationID = AttributeGetters.getLongOptional(element, "startstationid");
 		ContractStatus status = RawConverter.toContractStatus(AttributeGetters.getString(element, "status"));
 		String title = AttributeGetters.getStringOptional(element, "title");
@@ -445,7 +445,7 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 		int range = AttributeGetters.getInt(element, "range");
 		int accountID = AttributeGetters.getInt(element, "accountkey");
 		int duration = AttributeGetters.getInt(element, "duration");
-		Float escrow = AttributeGetters.getFloat(element, "escrow");
+		Double escrow = AttributeGetters.getDouble(element, "escrow");
 		Double price = AttributeGetters.getDouble(element, "price");
 		int bid = AttributeGetters.getInt(element, "bid");
 		Date issued = AttributeGetters.getDate(element, "issued");
@@ -611,7 +611,7 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 		long blueprintLocationID = AttributeGetters.getLong(element, "blueprintlocationid");
 		long outputLocationID = AttributeGetters.getLong(element, "outputlocationid");
 		int runs = AttributeGetters.getInt(element, "runs");
-		Float cost = AttributeGetters.getFloatOptional(element, "cost");
+		Double cost = AttributeGetters.getDoubleOptional(element, "cost");
 		Integer licensedRuns = AttributeGetters.getIntOptional(element, "licensedruns");
 		Float probability = AttributeGetters.getFloatOptional(element, "probability");
 		Integer productTypeID = AttributeGetters.getIntOptional(element, "producttypeid");
