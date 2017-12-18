@@ -20,9 +20,6 @@
  */
 package net.nikr.eve.jeveasset.data.sde;
 
-import net.nikr.eve.jeveasset.data.sde.ItemFlag;
-import net.nikr.eve.jeveasset.data.sde.Jump;
-import net.nikr.eve.jeveasset.data.sde.Item;
 import com.beimin.eveapi.model.eve.Station;
 import java.util.ArrayList;
 import java.util.HashMap;
