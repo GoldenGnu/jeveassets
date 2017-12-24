@@ -635,8 +635,8 @@
 	<dependencies>
 		<dependency>
 			<groupId>net.troja.eve</groupId>
-			<artifactId>eve-esi-dev</artifactId>
-			<version>1.5.0</version>
+			<artifactId>eve-esi</artifactId>
+			<version>1.5.1</version>
 		</dependency>
 		<dependency>
 			<groupId>com.beimin</groupId>
