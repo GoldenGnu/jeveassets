@@ -37,8 +37,11 @@ import net.nikr.eve.jeveasset.data.api.raw.RawContract;
 import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
 import net.nikr.eve.jeveasset.data.settings.Citadel;
+import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
+import net.nikr.eve.jeveasset.gui.tabs.values.Value;
+import net.nikr.eve.jeveasset.gui.tabs.values.Value.AssetValue;
 import net.nikr.eve.jeveasset.io.online.CitadelGetter;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 import net.troja.eve.esi.ApiClient;
@@ -52,33 +55,35 @@ public class EsiStructuresGetter extends AbstractEsiGetter {
 	private static final Logger LOG = LoggerFactory.getLogger(EsiStructuresGetter.class);
 	private final static Set<Long> IDS = new HashSet<Long>();
 	private final static Set<Long> DONE = new HashSet<Long>();
+	private final boolean tracker;
 
-	public EsiStructuresGetter(UpdateTask updateTask, EsiOwner owner) {
+	public EsiStructuresGetter(UpdateTask updateTask, EsiOwner owner, boolean tracker) {
 		super(updateTask, owner, false, owner.getStructuresNextUpdate(), TaskType.STRUCTURES, NO_RETRIES);
+		this.tracker = tracker;
 	}
 
-	public static String estimate(List<EsiOwner> esiOwners,  List<OwnerType> ownerTypes, Set<MyLocation> locations) {
+	public static String estimate(List<EsiOwner> esiOwners,  List<OwnerType> ownerTypes, Set<MyLocation> locations, boolean tracker) {
 		int total = 0;
-		if (locations != null) {
+		if (locations != null) { //Locations
 			EsiStructuresGetter.createIDsFromLocations(locations);
 			total = IDS.size() * esiOwners.size();
-		} else if (ownerTypes != null) {
-			EsiStructuresGetter.createIDsFromOwners(ownerTypes);
+		} else if (ownerTypes != null) { 
+			EsiStructuresGetter.createIDsFromOwners(ownerTypes, tracker);
 			total = IDS.size() * esiOwners.size();
 		} else {
 			DONE.clear();
 			for (EsiOwner esiOwner : esiOwners) {
-				total = total + buildIDs(esiOwner).size();
+				total = total + buildIDs(esiOwner, tracker).size();
 			}
 		}
 		total = (int)(total / 100.0 * 60.0 * 1000.0); //100 errors a minute to ms
 		return Formater.milliseconds(total, true, true);
 	}
 
-	public static void createIDsFromOwners(List<OwnerType> ownerTypes) {
+	public static void createIDsFromOwners(List<OwnerType> ownerTypes, boolean tracker) {
 		IDS.clear();
 		DONE.clear();
-		IDS.addAll(buildIDs(ownerTypes));
+		IDS.addAll(buildIDs(ownerTypes, tracker));
 	}
 
 	public static void createIDsFromLocations(Set<MyLocation> locations) {
@@ -99,7 +104,7 @@ public class EsiStructuresGetter extends AbstractEsiGetter {
 		}
 		boolean ownerUpdate = IDS.isEmpty();
 		if (ownerUpdate) {
-			IDS.addAll(buildIDs(owner));
+			IDS.addAll(buildIDs(owner, tracker));
 		}
 		Map<Long, StructureResponse> responses = updateListSlow(IDS, true, DEFAULT_RETRIES, new ListHandlerSlow<Long, StructureResponse>() {
 			@Override
@@ -146,8 +151,8 @@ public class EsiStructuresGetter extends AbstractEsiGetter {
 		}
 	}
 
-	private static Set<Long> buildIDs(EsiOwner esiOwner) {
-		Set<Long> locationIDs = buildIDs(Collections.singletonList(esiOwner));
+	private static Set<Long> buildIDs(EsiOwner esiOwner, boolean tracker) {
+		Set<Long> locationIDs = buildIDs(Collections.singletonList(esiOwner), tracker);
 		locationIDs.removeAll(DONE);
 		return locationIDs;
 	}
@@ -162,9 +167,18 @@ public class EsiStructuresGetter extends AbstractEsiGetter {
 		return locationIDs;
 	}
 
-	private static Set<Long> buildIDs(List<OwnerType> ownerTypes) {
+	private static Set<Long> buildIDs(List<OwnerType> ownerTypes, boolean tracker) {
 		Set<Long> itemIDs = new HashSet<Long>();
 		Set<Long> locationIDs = new HashSet<Long>();
+		if (tracker) {
+			for (List<Value> values : Settings.get().getTrackerData().values()) {
+				for (Value value : values) {
+					for (AssetValue assetValue : value.getAssetsFilter().keySet()) {
+						add(locationIDs, assetValue.getLocationID());
+					}
+				}
+			}
+		}
 		for (OwnerType ownerType : ownerTypes) {
 			for (RawAsset asset : ownerType.getAssets()) {
 				add(locationIDs, asset.getLocationID());

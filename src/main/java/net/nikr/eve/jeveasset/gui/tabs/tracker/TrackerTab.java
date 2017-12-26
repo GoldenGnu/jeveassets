@@ -87,6 +87,7 @@ import net.nikr.eve.jeveasset.gui.shared.components.JMultiSelectionList;
 import net.nikr.eve.jeveasset.gui.shared.components.JSelectionDialog;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo;
 import net.nikr.eve.jeveasset.gui.tabs.values.Value;
+import net.nikr.eve.jeveasset.gui.tabs.values.Value.AssetValue;
 import net.nikr.eve.jeveasset.i18n.General;
 import net.nikr.eve.jeveasset.i18n.TabsTracker;
 import org.jfree.chart.ChartMouseEvent;
@@ -576,7 +577,7 @@ public class TrackerTab extends JMainTabSecondary {
 
 	@Override
 	public void updateData() {
-		createNodes(); //Must be first or NPE!
+		updateNodes(); //Must be first or NPE!
 		updateButtonIcons();
 		updateOwners();
 		createData();
@@ -597,18 +598,14 @@ public class TrackerTab extends JMainTabSecondary {
 
 	private void updateFilterButtons() {
 		Set<String> walletIDs = new TreeSet<String>();
-		Set<String> assetsIDs = new TreeSet<String>();
+		Set<AssetValue> assetsIDs = new TreeSet<AssetValue>();
 		List<String> owners = jOwners.getSelectedValuesList();
 		for (String owner : owners) {
 			for (Value data : Settings.get().getTrackerData().get(owner)) {
 				//Get all account wallet account keys
-				for (String id : data.getBalanceFilter().keySet()) {
-					walletIDs.add(id);
-				}
+				walletIDs.addAll(data.getBalanceFilter().keySet());
 				//Get all asset IDs
-				for (String id : data.getAssetsFilter().keySet()) {
-					assetsIDs.add(id);
-				}
+				assetsIDs.addAll(data.getAssetsFilter().keySet());
 			}
 		}
 		jWalletBalanceFilters.setEnabled(!walletIDs.isEmpty());
@@ -660,10 +657,12 @@ public class TrackerTab extends JMainTabSecondary {
 		updateLock = false;
 	}
 
-	private void createNodes() {
+	private void updateNodes() {
+		accountNodes.clear();
+		assetNodes.clear();
 	//Find all saved Keys/IDs
 		Set<String> walletIDs = new TreeSet<String>();
-		Set<String> assetsIDs = new TreeSet<String>();
+		Set<AssetValue> assetsIDs = new TreeSet<AssetValue>();
 		for (List<Value> values : Settings.get().getTrackerData().values()) {
 			for (Value data : values) {
 				//Get all account wallet account keys
@@ -686,19 +685,10 @@ public class TrackerTab extends JMainTabSecondary {
 		CheckBoxNode assetNode = new CheckBoxNode(null, TabsTracker.get().assets(), TabsTracker.get().assets(), false);
 		
 		Map<String, CheckBoxNode> nodeCache = new HashMap<String, CheckBoxNode>();
-		for (String id : assetsIDs) {
-			String[] ids = id.split(" > ");
-			String location;
-			String flag;
-			if (ids.length == 2) {
-				//Location
-				location = ids[0];
-				//Flag
-				flag = ids[1];
-			} else {
-				location = id;
-				flag = null; //Never used
-			}
+		for (AssetValue assetValue : assetsIDs) {
+			String location = assetValue.getLocation();
+			String flag = assetValue.getFlag();
+			String id = assetValue.getID();
 			CheckBoxNode locationNode = nodeCache.get(location);
 			if (locationNode == null) {
 				locationNode = new CheckBoxNode(assetNode, location, location, selectNode(location));
@@ -773,8 +763,8 @@ public class TrackerTab extends JMainTabSecondary {
 							value.addAssets(data.getAssetsTotal());
 						} else {
 							assetColumns.put(data.getDate(), true);
-							for (Map.Entry<String, Double> entry : data.getAssetsFilter().entrySet()) {
-								if (assetNodes.get(entry.getKey()).isSelected()) {
+							for (Map.Entry<AssetValue, Double> entry : data.getAssetsFilter().entrySet()) {
+								if (assetNodes.get(entry.getKey().getID()).isSelected()) {
 									value.addAssets(entry.getKey(), entry.getValue());
 								}
 							}
@@ -1326,13 +1316,11 @@ public class TrackerTab extends JMainTabSecondary {
 						//Remove empty owner
 						if (Settings.get().getTrackerData().get(entry.getKey()).isEmpty()) {
 							Settings.get().getTrackerData().remove(entry.getKey());
-							updateOwners();
 						} 
 					}
 					Settings.unlock("Tracker Data (Delete)");
 					program.saveSettings("Tracker Data (Delete)");
-					createData();
-					updateFilterButtons();
+					updateData();
 				}
 				jNextChart.getXYPlot().setDomainCrosshairVisible(false);
 			} else if (TrackerAction.NOTE_DELETE.name().equals(e.getActionCommand())) {

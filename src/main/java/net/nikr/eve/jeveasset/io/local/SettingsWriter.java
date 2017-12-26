@@ -50,6 +50,7 @@ import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
 import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerDate;
 import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerNote;
 import net.nikr.eve.jeveasset.gui.tabs.values.Value;
+import net.nikr.eve.jeveasset.gui.tabs.values.Value.AssetValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -266,9 +267,15 @@ public class SettingsWriter extends AbstractXmlWriter {
 					balanceNode.setAttributeNS(null, "value", String.valueOf(balanceEntry.getValue()));
 					dataNode.appendChild(balanceNode);
 				}
-				for (Map.Entry<String, Double> assetEntry : value.getAssetsFilter().entrySet()) {
+				for (Map.Entry<AssetValue, Double> assetEntry : value.getAssetsFilter().entrySet()) {
 					Element assetNode = xmldoc.createElementNS(null, "asset");
-					assetNode.setAttributeNS(null, "id", assetEntry.getKey());
+					assetNode.setAttributeNS(null, "location", assetEntry.getKey().getLocation());
+					if (assetEntry.getKey().getLocationID() != null) {
+						assetNode.setAttributeNS(null, "locationid", String.valueOf(assetEntry.getKey().getLocationID()));
+					}
+					if (assetEntry.getKey().getFlag() != null) {
+						assetNode.setAttributeNS(null, "flag", assetEntry.getKey().getFlag());
+					}
 					assetNode.setAttributeNS(null, "value", String.valueOf(assetEntry.getValue()));
 					dataNode.appendChild(assetNode);
 				}

@@ -48,6 +48,7 @@ import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
 import net.nikr.eve.jeveasset.gui.shared.components.JSelectionDialog;
 import net.nikr.eve.jeveasset.gui.tabs.values.Value;
+import net.nikr.eve.jeveasset.gui.tabs.values.Value.AssetValue;
 import net.nikr.eve.jeveasset.i18n.TabsTracker;
 
 
@@ -323,15 +324,16 @@ public class JTrackerEditDialog extends JDialogCentered {
 			if (value.getAssetsFilter().isEmpty()) {
 				value.setAssetsTotal(assets);
 			} else if (value.getAssetsFilter().size() == 1) {
-				for (Map.Entry<String, Double> entry : value.getAssetsFilter().entrySet()) {
+				for (Map.Entry<AssetValue, Double> entry : value.getAssetsFilter().entrySet()) {
 					//Just done once...
 					value.removeAssets(entry.getKey()); //Remove old value
 					value.addAssets(entry.getKey(), walletBalanc); //Add new value
 				}
 			} else {
 				for (FilterUpdate filterUpdate : assetUpdates) {
-					value.removeAssets(filterUpdate.getKey());
-					value.addAssets(filterUpdate.getKey(), filterUpdate.getValue());
+					AssetValue assetValue = new AssetValue(filterUpdate.getKey());
+					value.removeAssets(assetValue);
+					value.addAssets(assetValue, filterUpdate.getValue());
 				}
 			}
 			value.setSellOrders(sellOrders);
@@ -412,26 +414,18 @@ public class JTrackerEditDialog extends JDialogCentered {
 			} else if (TrackerEditAction.EDIT_ASSETS.name().equals(e.getActionCommand())) {
 				//Create values for selection dialog
 				Map<String, Set<String>> values = new TreeMap<String, Set<String>>();
-				for (String id : value.getAssetsFilter().keySet()) {
-					String[] ids = id.split(" > ");
-					if (ids.length == 2) {
-						String location = ids[0];
-						Set<String> flags = values.get(location);
-						if (flags == null) {
-							flags = new TreeSet<String>();
-							values.put(location, flags);
-						}
-						String flag = ids[1];
-						flags.add(flag);
-					} else {
-						String location = id;
-						Set<String> flags = values.get(location);
-						if (flags == null) {
-							flags = new TreeSet<String>();
-							values.put(location, flags);
-						}
-						flags.add(TabsTracker.get().other());
+				for (AssetValue assetValue : value.getAssetsFilter().keySet()) {
+					String location = assetValue.getLocation();
+					Set<String> flags = values.get(location);
+					if (flags == null) {
+						flags = new TreeSet<String>();
+						values.put(location, flags);
 					}
+					String flag = assetValue.getFlag();
+					if (flag == null) {
+						flag = TabsTracker.get().other();
+					}
+					flags.add(flag);
 				}
 				//Select Location
 				String returnLocation = null;
@@ -456,19 +450,23 @@ public class JTrackerEditDialog extends JDialogCentered {
 						return; //Cancel
 					}
 				}
+				AssetValue assetValue;
 				if (returnFlag.equals(TabsTracker.get().other())) {
-					id = returnLocation;
+					assetValue = new AssetValue(returnLocation);
 				} else {
-					id = returnLocation + " > " + returnFlag;
+					assetValue = new AssetValue(returnLocation + " > " + returnFlag);
 				}
-				Double asset = value.getAssetsFilter().get(id);
+				Double asset = value.getAssetsFilter().get(assetValue);
 				if (asset != null) { //Item found
 					asset = getValue(asset); //Get new value
 					if (asset != null) { //Update number
-						assetUpdates.add(new FilterUpdate(id, asset)); //Add update to queue (will only be executed if this dialog closed by pressing OK)
+						assetUpdates.add(new FilterUpdate(assetValue.getID(), asset)); //Add update to queue (will only be executed if this dialog closed by pressing OK)
 						
 						//Update displayed total - only a GUI thing, the textfield is never used when getAssetsFilter is not empty
-						Map<String, Double> map = new HashMap<String, Double>(value.getAssetsFilter());
+						Map<String, Double> map = new HashMap<String, Double>();
+						for (Map.Entry<AssetValue, Double> entry : value.getAssetsFilter().entrySet()) {
+							map.put(entry.getKey().getID(), entry.getValue());
+						}
 						for (FilterUpdate filterUpdate : assetUpdates) {
 							map.put(filterUpdate.getKey(), filterUpdate.getValue());
 						}

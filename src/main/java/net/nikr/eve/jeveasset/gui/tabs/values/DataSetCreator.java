@@ -35,6 +35,7 @@ import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder;
 import net.nikr.eve.jeveasset.data.api.raw.RawContract.ContractStatus;
 import net.nikr.eve.jeveasset.data.profile.ProfileData;
 import net.nikr.eve.jeveasset.data.settings.Settings;
+import net.nikr.eve.jeveasset.gui.tabs.values.Value.AssetValue;
 import net.nikr.eve.jeveasset.i18n.General;
 import net.nikr.eve.jeveasset.i18n.TabsValues;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
@@ -111,7 +112,7 @@ public class DataSetCreator {
 				}
 				Value value = getValueInner(values, asset.getOwnerName(), date);
 				//Location/Flag logic
-				String id = createAssetID(asset);
+				AssetValue id = createAssetID(asset);
 				value.addAssets(id, asset);
 				total.addAssets(id, asset);
 			}
@@ -365,7 +366,7 @@ public class DataSetCreator {
 		total.addContractValue(change);
 	}
 
-	private String createAssetID(MyAsset asset) {
+	private AssetValue createAssetID(MyAsset asset) {
 		String flagID = null;
 		String[] flags = asset.getFlag().split(" > ");
 		for (String flag : flags) {
@@ -378,11 +379,7 @@ public class DataSetCreator {
 				break;
 			}
 		}
-		if (flagID != null) {
-			return asset.getLocation().getLocation() + " > " + flagID;
-		} else {
-			return asset.getLocation().getLocation();
-		}
+		return new AssetValue(asset.getLocation().getLocation(), flagID, asset.getLocation().getLocationID());
 	}
 
 	private Value getValueInner(Map<String, Value> values, String owner, Date date) {

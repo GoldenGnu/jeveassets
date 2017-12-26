@@ -23,10 +23,17 @@ package net.nikr.eve.jeveasset.gui.tabs.values;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import net.nikr.eve.jeveasset.data.api.my.MyAsset;
+import net.nikr.eve.jeveasset.data.sde.MyLocation;
+import net.nikr.eve.jeveasset.data.sde.StaticData;
+import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
+import net.nikr.eve.jeveasset.i18n.General;
 import net.nikr.eve.jeveasset.i18n.TabsValues;
+import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 
 
 public class Value implements Comparable<Value> {
@@ -34,7 +41,7 @@ public class Value implements Comparable<Value> {
 	private final Date date;
 	private final String compare;
 	private double assets = 0;
-	private final Map<String, Double> assetsFilter = new HashMap<String, Double>();
+	private final Map<AssetValue, Double> assetsFilter = new HashMap<AssetValue, Double>();
 	private double sellOrders = 0;
 	private double escrows = 0;
 	private double escrowsToCover = 0;
@@ -62,7 +69,7 @@ public class Value implements Comparable<Value> {
 		this.assets = this.assets + assets;
 	}
 
-	public void addAssets(String id, double assets) {
+	public void addAssets(AssetValue id, double assets) {
 		this.assets = this.assets + assets;
 		Double now = this.assetsFilter.get(id);
 		if (now == null) {
@@ -71,7 +78,7 @@ public class Value implements Comparable<Value> {
 		this.assetsFilter.put(id, now + assets);
 	}
 
-	public void addAssets(String id, MyAsset asset) {
+	public void addAssets(AssetValue id, MyAsset asset) {
 		double total = asset.getDynamicPrice() * asset.getCount();
 		addAssets(id, total);
 		setBestAsset(asset);
@@ -80,7 +87,7 @@ public class Value implements Comparable<Value> {
 		setBestModule(asset);
 	}
 
-	public void removeAssets(String id) {
+	public void removeAssets(AssetValue id) {
 		Double oldAssets = this.assetsFilter.get(id); //Get value
 		this.assets = this.assets - oldAssets; //Removing value from total
 		this.assetsFilter.remove(id); //Removing item
@@ -137,7 +144,7 @@ public class Value implements Comparable<Value> {
 		return name;
 	}
 
-	public Map<String, Double> getAssetsFilter() {
+	public Map<AssetValue, Double> getAssetsFilter() {
 		return assetsFilter;
 	}
 
@@ -220,6 +227,7 @@ public class Value implements Comparable<Value> {
 			return TabsValues.get().none();
 		}
 	}
+
 	private double getDynamicPrice(MyAsset asset) {
 		if (asset != null) {
 			return asset.getDynamicPrice();
@@ -317,6 +325,26 @@ public class Value implements Comparable<Value> {
 		return value;
 	}
 
+	public static void update() {
+		for (List<Value> values : Settings.get().getTrackerData().values()) {
+			for (Value value : values) {
+				Map<AssetValue, Double> update = new HashMap<>();
+				for (Map.Entry<AssetValue, Double> entry : value.getAssetsFilter().entrySet()) {
+					if (entry.getKey().update()) {
+						update.put(entry.getKey(), entry.getValue());
+					}
+				}
+				for (Map.Entry<AssetValue, Double> entry : update.entrySet()) {
+					value.getAssetsFilter().remove(entry.getKey());
+					AssetValue assetValue = new AssetValue(entry.getKey());
+					value.getAssetsFilter().put(assetValue, entry.getValue());
+					Boolean remove = Settings.get().getTrackerFilters().remove(entry.getKey().getID());
+					Settings.get().getTrackerFilters().put(assetValue.getID(), remove);
+				}
+			}
+		}
+	}
+
 	@Override
 	public int hashCode() {
 		int hash = 7;
@@ -342,5 +370,151 @@ public class Value implements Comparable<Value> {
 	@Override
 	public int compareTo(Value o) {
 		return this.getName().compareToIgnoreCase(o.getName());
+	}
+
+	public static class AssetValue implements Comparable<AssetValue> {
+		private static final String UNKNOWN_LOCATION = General.get().emptyLocation("(\\d+)").replace("[", "\\[").replace("]", "\\]");
+		private static final String CITADEL_MATCH = "\\[Citadel #(\\d+)\\]";
+		private static final String CITADEL_REPLACE = General.get().emptyLocation("$1").replace("[", "\\[").replace("]", "\\]");
+		private final String location;
+		private final String flag;
+		private final Long locationID;
+
+		public AssetValue(String id) {
+			String[] ids = id.split(" > ");
+			String locationName;
+			if (ids.length == 2) {
+				//Location
+				locationName = ids[0];
+				//Flag
+				flag = ids[1];
+			} else {
+				locationName = id;
+				flag = null; //Never used
+			}
+			locationID = updateLocationID(locationName);
+			location = updateLocationName(locationName, locationID);
+		}
+
+		public AssetValue(AssetValue assetValue) {
+			this(assetValue.getLocation(), assetValue.getFlag(), assetValue.getLocationID());
+		}
+
+		public AssetValue(String location, String flag, Long locationID) {
+			if (locationID == null) {
+				this.locationID = updateLocationID(location);
+			} else {
+				this.locationID = locationID;
+			}
+			this.location = updateLocationName(location, this.locationID);
+			this.flag = flag;
+		}
+
+		public String getLocation() {
+			return location;
+		}
+
+		public String getFlag() {
+			return flag;
+		}
+
+		public Long getLocationID() {
+			return locationID;
+		}
+
+		public String getID() {
+			if (flag != null) {
+				return location + " > " + flag;
+			} else {
+				return location;
+			}
+		}
+
+		public boolean update() {
+			return !updateLocationName(location, locationID).equals(location);
+		}
+
+		private Long updateLocationID(String name) {
+			//Unknown Locations
+			Long id = resolveUnknownLocationID(name, UNKNOWN_LOCATION);
+			//Citadel
+			if (id == null) {
+				id = resolveUnknownLocationID(name.replace(",", ""), CITADEL_MATCH);
+			}
+			//Existing Locations
+			if (id == null) {
+				id = resolveExistingLocationID(name);
+			}
+			return id;
+		}
+
+		private String updateLocationName(String locationValue, Long locationIDvalue) {
+			if (locationIDvalue == null) {
+				return locationValue;
+			} else {
+				 MyLocation myLocation = ApiIdConverter.getLocation(locationIDvalue);
+				 if (!myLocation.isEmpty()) {
+					 return myLocation.getLocation();
+				 } else {
+					 if (locationValue.replace(",", "").matches(CITADEL_MATCH)) {
+						 return locationValue.replace(",", "").replaceAll(CITADEL_MATCH, CITADEL_REPLACE);
+					 } else {
+						 return locationValue;
+					 }
+				 }
+			}
+		}
+
+		private Long resolveExistingLocationID(String locationValue) {
+			for (MyLocation myLocation : StaticData.get().getLocations().values()) {
+				if (myLocation.getLocation().equals(locationValue)) {
+					return myLocation.getLocationID();
+				}
+			}
+			return null;
+		}
+
+		private Long resolveUnknownLocationID(String locationValue, String match) {
+			String number = locationValue.replaceAll(match, "$1"); //Try to resovle unknown location
+			try {
+				return Long.valueOf(number);
+			} catch (NumberFormatException ex) {
+				return null;
+			}
+		}
+
+		@Override
+		public int hashCode() {
+			int hash = 3;
+			hash = 29 * hash + Objects.hashCode(this.location);
+			hash = 29 * hash + Objects.hashCode(this.flag);
+			return hash;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj) {
+				return true;
+			}
+			if (obj == null) {
+				return false;
+			}
+			if (getClass() != obj.getClass()) {
+				return false;
+			}
+			final AssetValue other = (AssetValue) obj;
+			if (!Objects.equals(this.location, other.location)) {
+				return false;
+			}
+			if (!Objects.equals(this.flag, other.flag)) {
+				return false;
+			}
+			return true;
+		}
+
+		@Override
+		public int compareTo(AssetValue o) {
+			return this.getID().compareTo(o.getID());
+		}
 	}
 }
