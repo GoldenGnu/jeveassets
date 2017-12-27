@@ -98,7 +98,7 @@ public class EsiOwnerGetter extends AbstractEsiGetter implements AccountAdder{
 				continue;
 			}
 			max++;
-			if (!owner.getScopes().contains(scopes.getScope())) {
+			if (!scopes.isInScope(owner.getScopes())) {
 				fails++;
 			}
 		}
