@@ -87,7 +87,7 @@ public final class ProfileWriter extends AbstractXmlWriter {
 			Element node = xmldoc.createElement("esiowner");
 			setAttribute(node, "accountname", owner.getAccountName());
 			setAttribute(node, "refreshtoken", owner.getRefreshToken());
-			setAttribute(node, "scopes", owner.getScopes());
+			setAttribute(node, "scopes", String.join(" ", owner.getScopes()));
 			setAttribute(node, "tokentype", owner.getTokenType());
 			setAttribute(node, "characterownerhash", owner.getCharacterOwnerHash());
 			setAttribute(node, "intellectualproperty", owner.getIntellectualProperty());

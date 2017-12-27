@@ -20,6 +20,7 @@
  */
 package net.nikr.eve.jeveasset.io.esi;
 
+import java.util.Set;
 import net.nikr.eve.jeveasset.i18n.DialoguesAccount;
 import net.troja.eve.esi.auth.SsoScopes;
 
@@ -87,7 +88,19 @@ public enum EsiScopes {
 	}
 
 	public boolean isInScope(String scopes) {
-		return scopes.contains(scope);
+		if (scopes != null) {
+			return scopes.contains(scope);
+		} else {
+			return false;
+		}
+	}
+
+	public boolean isInScope(Set<String> scopes) {
+		if (scopes != null) {
+			return scopes.contains(scope);
+		} else {
+			return false;
+		}
 	}
 
 	public boolean isCharacterScope() {

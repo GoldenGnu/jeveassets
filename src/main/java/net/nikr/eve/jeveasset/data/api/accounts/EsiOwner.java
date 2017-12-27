@@ -20,8 +20,10 @@
  */
 package net.nikr.eve.jeveasset.data.api.accounts;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.EnumSet;
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 import net.nikr.eve.jeveasset.data.settings.Settings;
@@ -34,7 +36,7 @@ public class EsiOwner extends AbstractOwner implements OwnerType {
 
 	private String accountName;
 	private String refreshToken;
-	private String scopes;
+	private Set<String> scopes = new HashSet<String>();
 	private String tokenType;
 	private String CharacterOwnerHash;
 	private String intellectualProperty;
@@ -66,12 +68,24 @@ public class EsiOwner extends AbstractOwner implements OwnerType {
 		this.refreshToken = refreshToken;
 	}
 
-	public String getScopes() {
+	public Set<String> getScopes() {
 		return scopes;
 	}
 
 	public void setScopes(String scopes) {
-		this.scopes = scopes;
+		if (scopes != null) {
+			this.scopes = new HashSet<>(Arrays.asList(scopes.split(" ")));
+		} else {
+			this.scopes = new HashSet<String>();
+		}
+	}
+
+	public final void setScopes(Set<String> scopes) {
+		if (scopes != null) {
+			this.scopes = scopes;
+		} else {
+			this.scopes = new HashSet<String>();
+		}
 	}
 
 	public String getTokenType() {
