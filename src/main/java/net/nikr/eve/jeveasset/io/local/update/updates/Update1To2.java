@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import net.nikr.eve.jeveasset.data.settings.PriceDataSettings.PriceMode;
+import net.nikr.eve.jeveasset.io.local.XmlException;
 import net.nikr.eve.jeveasset.io.local.update.LocalUpdate;
 import org.dom4j.Attribute;
 import org.dom4j.Document;
@@ -49,7 +50,7 @@ public class Update1To2 implements LocalUpdate {
 	private static final Logger LOG = LoggerFactory.getLogger(Update1To2.class);
 
 	@Override
-	public void performUpdate(final String path) {
+	public void performUpdate(final String path) throws XmlException {
 		LOG.info("Performing update from v1 to v2");
 		LOG.info(" - modifies files:");
 		LOG.info("  - settings.xml");
@@ -75,10 +76,10 @@ public class Update1To2 implements LocalUpdate {
 			writer.flush();
 		} catch (IOException ex) {
 			LOG.error("", ex);
-			throw new RuntimeException(ex);
+			throw new XmlException(ex);
 		} catch (DocumentException ex) {
 			LOG.error("", ex);
-			throw new RuntimeException(ex);
+			throw new XmlException(ex);
 		}
 	}
 

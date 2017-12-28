@@ -20,13 +20,15 @@
  */
 package net.nikr.eve.jeveasset.io.local.update;
 
+import net.nikr.eve.jeveasset.io.local.XmlException;
+
 /**
  *
  * @author Candle
  */
 public interface LocalUpdate {
 
-	void performUpdate(String path);
+	void performUpdate(String path) throws XmlException;
 	int getStart();
 	int getEnd();
 }
