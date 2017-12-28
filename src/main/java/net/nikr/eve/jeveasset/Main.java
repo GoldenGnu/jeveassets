@@ -258,15 +258,13 @@ public final class Main {
 		files.add("javassist-3.20.0-GA.jar");
 		files.add("jackson-jaxrs-json-provider-2.8.4.jar");
 		files.add("mimepull-1.9.6.jar");
-		files.add("joda-time-2.9.4.jar");
 		files.add("jersey-media-multipart-2.25.1.jar");
 		files.add("jersey-entity-filtering-2.25.1.jar");
-		files.add("jackson-datatype-joda-2.7.5.jar");
 		files.add("jackson-jaxrs-base-2.8.4.jar");
 		files.add("javax.ws.rs-api-2.0.1.jar");
 		files.add("jersey-media-json-jackson-2.25.1.jar");
 		files.add("osgi-resource-locator-1.0.1.jar");
-		files.add("evekit-3.1.0.1.jar");
+		files.add("evekit-4.0.2.jar");
 		files.add("javax.annotation-api-1.2.jar");
 		files.add("hk2-api-2.5.0-b32.jar");
 		files.add("jersey-common-2.25.1.jar");

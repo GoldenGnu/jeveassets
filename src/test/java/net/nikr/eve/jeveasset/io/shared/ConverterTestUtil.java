@@ -87,7 +87,6 @@ import net.troja.eve.esi.model.CorporationOrdersResponse;
 import net.troja.eve.esi.model.CorporationWalletJournalExtraInfoResponse;
 import net.troja.eve.esi.model.CorporationWalletJournalResponse;
 import net.troja.eve.esi.model.CorporationWalletsResponse;
-import org.joda.time.DateTime;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -682,8 +681,6 @@ public class ConverterTestUtil {
 			return options.getContractAvailabilityEveApi();
 		} else if (type.equals(BigDecimal.class)) {
 			return options.getBigDecimal();
-		} else if (type.equals(DateTime.class)) {
-			return options.getDateTime();
 		} else if (type.equals(EsiCallbackURL.class)) {
 			return options.getEsiCallbackURL();
 		} else if (type.equals(KeyType.class)) {

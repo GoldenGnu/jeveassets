@@ -35,7 +35,6 @@ import net.nikr.eve.jeveasset.data.sde.ItemFlag;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
 import net.troja.eve.esi.model.CharacterWalletJournalResponse;
 import net.troja.eve.esi.model.CorporationWalletJournalResponse;
-import org.joda.time.DateTime;
 
 public class RawConverter {
 
@@ -109,14 +108,6 @@ public class RawConverter {
 			return null;
 		} else {
 			return Date.from(dateTime.toInstant());
-		}
-	}
-
-	public static Date toDate(DateTime dateTime) {
-		if (dateTime == null) {
-			return null;
-		} else {
-			return dateTime.toDate();
 		}
 	}
 

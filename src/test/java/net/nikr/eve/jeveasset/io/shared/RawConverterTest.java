@@ -44,7 +44,6 @@ import net.nikr.eve.jeveasset.data.sde.StaticData;
 import net.nikr.eve.jeveasset.io.shared.RawConverter.LocationFlag;
 import net.troja.eve.esi.model.CharacterWalletJournalResponse;
 import net.troja.eve.esi.model.CorporationWalletJournalResponse;
-import org.joda.time.DateTime;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -58,14 +57,6 @@ public class RawConverterTest extends TestUtil {
 		Date from = new Date();
 		OffsetDateTime offsetDateTime = from.toInstant().atOffset(ZoneOffset.UTC);
 		Date to = RawConverter.toDate(offsetDateTime);
-		assertEquals(from, to);
-	}
-
-	@Test
-	public void testToDate_DateTime() {
-		Date from = new Date();
-		DateTime dateTime = new DateTime(from);
-		Date to = RawConverter.toDate(dateTime);
 		assertEquals(from, to);
 	}
 
