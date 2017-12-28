@@ -183,7 +183,9 @@ public abstract class AbstractEsiGetter extends AbstractGetter<EsiOwner, ApiClie
 			try {
 				long wait = (errorReset.getTime() + 1000) - System.currentTimeMillis();
 				LOG.warn("Error limit reached waiting: " + Formater.milliseconds(wait, false, false));
-				Thread.sleep(wait); //Wait until the error window is reset
+				if (wait > 0) { //Negative values throws an Exception
+					Thread.sleep(wait); //Wait until the error window is reset
+				}
 				//Reset
 				AbstractEsiGetter.errorReset = new Date(); //New timeframe
 				AbstractEsiGetter.errorLimit = null;  //No errors in this timeframe (yet)
