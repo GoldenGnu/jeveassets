@@ -56,7 +56,6 @@ import net.troja.eve.esi.model.CorporationIndustryJobsResponse;
 import net.troja.eve.esi.model.CorporationOrdersResponse;
 import net.troja.eve.esi.model.CorporationWalletJournalExtraInfoResponse;
 import net.troja.eve.esi.model.CorporationWalletJournalResponse;
-import org.joda.time.DateTime;
 
 public interface ConverterTestOptions {
 
@@ -214,10 +213,6 @@ public interface ConverterTestOptions {
 
 	default Object getNull() {
 		return null;
-	}
-
-	default DateTime getDateTime() {
-		return new DateTime(getDate());
 	}
 
 	default BigDecimal getBigDecimal() {
