@@ -525,19 +525,24 @@ public class ProfileData {
 			item.setPriceReprocessed(ApiIdConverter.getPriceReprocessed(item));
 		}
 
-		//Add Market Orders to Assets
-		addAssets(DataConverter.assetMarketOrder(marketOrders, Settings.get().isIncludeSellOrders(), Settings.get().isIncludeBuyOrders()), assets, blueprints);
+		Program.ensureEDT(new Runnable() {
+			@Override
+			public void run() {
+				//Add Market Orders to Assets
+				addAssets(DataConverter.assetMarketOrder(marketOrders, Settings.get().isIncludeSellOrders(), Settings.get().isIncludeBuyOrders()), assets, blueprints);
 
-		//Add Industry Jobs to Assets
-		addAssets(DataConverter.assetIndustryJob(industryJobs), assets, blueprints);
+				//Add Industry Jobs to Assets
+				addAssets(DataConverter.assetIndustryJob(industryJobs), assets, blueprints);
 
-		//Add Contract Items to Assets
-		addAssets(DataConverter.assetContracts(contractItems, uniqueOwners, Settings.get().isIncludeSellContracts(), Settings.get().isIncludeBuyContracts()), assets, blueprints);
+				//Add Contract Items to Assets
+				addAssets(DataConverter.assetContracts(contractItems, uniqueOwners, Settings.get().isIncludeSellContracts(), Settings.get().isIncludeBuyContracts()), assets, blueprints);
 
-		//Add Assets to Assets
-		for (List<MyAsset> list : assetsMap.values()) {
-			addAssets(list, assets, blueprints);
-		}
+				//Add Assets to Assets
+				for (List<MyAsset> list : assetsMap.values()) {
+					addAssets(list, assets, blueprints);
+				}
+			}
+		});
 
 		//Update Locations
 		List<EditableLocationType> editableLocationTypes = new ArrayList<EditableLocationType>();
