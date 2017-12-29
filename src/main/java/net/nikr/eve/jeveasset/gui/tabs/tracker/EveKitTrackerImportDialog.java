@@ -264,7 +264,7 @@ public class EveKitTrackerImportDialog extends JDialogCentered {
 		}
 		setVisible(false);
 		EveKitTrackImportUpdateTask updateTask = new EveKitTrackImportUpdateTask(program, selectedOwners, dateInterval, merge);
-		TaskDialog taskDialog = new TaskDialog(program, updateTask, true, new TaskDialog.TasksCompleted() {
+		TaskDialog taskDialog = new TaskDialog(program, updateTask, true, TabsTracker.get().updateTitle(), new TaskDialog.TasksCompleted() {
 			@Override
 			public void tasksCompleted(TaskDialog taskDialog) {
 				program.saveSettings("Import EveKit Tracker Points");

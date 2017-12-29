@@ -119,6 +119,7 @@ public enum Images {
 	INCLUDE_ORDERS ("include_orders.png"),
 	MISC_EVE ("misc_eve.png"),
 	MISC_EVEKIT ("misc_evekit.png"),
+	MISC_EVEKIT_DISABLED ("misc_evekit_disabled.png"),
 	MISC_ESI ("misc_esi.png"),
 	MISC_EXIT ("misc_exit.png"),
 	MISC_HELP ("misc_help.png"),

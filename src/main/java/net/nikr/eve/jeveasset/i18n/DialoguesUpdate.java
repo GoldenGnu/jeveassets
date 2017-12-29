@@ -44,6 +44,7 @@ public abstract class DialoguesUpdate extends Bundle {
 	public abstract String cancelQuestion();
 	public abstract String cancelQuestionTitle();
 	public abstract String errors(String mouseTask);
+	public abstract String minimize();
 
 	// used in UpdateDialog
 	public abstract String firstAccount();

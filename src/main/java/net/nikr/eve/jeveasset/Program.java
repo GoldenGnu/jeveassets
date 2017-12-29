@@ -80,13 +80,16 @@ import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewTab;
 import net.nikr.eve.jeveasset.gui.tabs.reprocessed.ReprocessedTab;
 import net.nikr.eve.jeveasset.gui.tabs.routing.RoutingTab;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.StockpileTab;
+import net.nikr.eve.jeveasset.gui.tabs.tracker.EveKitTrackerImportDialog;
 import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerTab;
 import net.nikr.eve.jeveasset.gui.tabs.transaction.TransactionTab;
 import net.nikr.eve.jeveasset.gui.tabs.tree.TreeTab;
 import net.nikr.eve.jeveasset.gui.tabs.values.DataSetCreator;
 import net.nikr.eve.jeveasset.gui.tabs.values.ValueRetroTab;
 import net.nikr.eve.jeveasset.gui.tabs.values.ValueTableTab;
+import net.nikr.eve.jeveasset.i18n.GuiFrame;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
+import net.nikr.eve.jeveasset.i18n.TabsTracker;
 import net.nikr.eve.jeveasset.io.online.PriceDataGetter;
 import net.nikr.eve.jeveasset.io.online.Updater;
 import net.nikr.eve.jeveasset.io.shared.DesktopUtil;
@@ -143,6 +146,7 @@ public class Program implements ActionListener {
 	private ContractsTab contractsTab;
 	private TreeTab treeTab;
 	private StructureUpdateDialog structureUpdateDialog;
+	private EveKitTrackerImportDialog eveKitTrackerImportDialog;
 
 	//Misc
 	private Updater updater;
@@ -275,6 +279,7 @@ public class Program implements ActionListener {
 		settingsDialog = new SettingsDialog(this);
 		SplashUpdater.setProgress(96);
 		structureUpdateDialog = new StructureUpdateDialog(this);
+		eveKitTrackerImportDialog = new EveKitTrackerImportDialog(this);
 	//GUI Done
 		LOG.info("GUI loaded");
 	//Updating data...
@@ -303,6 +308,12 @@ public class Program implements ActionListener {
 			LOG.info("Show Account Manager");
 			accountManagerDialog.setVisible(true);
 		}
+		Runtime.getRuntime().addShutdownHook(new Thread() {
+			@Override
+			public void run() {
+				getStatusPanel().cancelUpdates();
+			}
+		});
 	}
 
 	/**
@@ -578,13 +589,19 @@ public class Program implements ActionListener {
 	}
 
 	public final void profilesChanged() {
-		trackerTab.profilesChanged();
+		getMainWindow().getMenu().eveKitImport(!getProfileManager().getEveKitOwners().isEmpty());
 	}
 
 	/**
 	 * Used by macOsxCode() - should not be changed
 	 */
 	public void exit() {
+		if (getStatusPanel().updateInProgress() > 0) {
+			int value = JOptionPane.showConfirmDialog(getMainWindow().getFrame(),  GuiFrame.get().exitMsg(getStatusPanel().updateInProgress()), GuiFrame.get().exitTitle(getStatusPanel().updateInProgress()), JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+			if (value != JOptionPane.OK_OPTION) {
+				return;
+			}
+		}
 		saveExit();
 		LOG.info("Running shutdown hook(s) and exiting...");
 		System.exit(0);
@@ -873,12 +890,18 @@ public class Program implements ActionListener {
 			profileDialog.setVisible(true);
 		} else if (MainMenuAction.OPTIONS.name().equals(e.getActionCommand())) {
 			showSettings();
-		} else if (MainMenuAction.ABOUT.name().equals(e.getActionCommand())) { //Others
-			showAbout();
-		} else if (MainMenuAction.UPDATE.name().equals(e.getActionCommand())) {
+		} else if (MainMenuAction.UPDATE.name().equals(e.getActionCommand())) { //Update
 			updateDialog.setVisible(true);
 		} else if (MainMenuAction.UPDATE_STRUCTURE.name().equals(e.getActionCommand())) {
 			updateStructures(null);
+		} else if (MainMenuAction.UPDATE_EVEKIT.name().equals(e.getActionCommand())) {
+			if (getProfileManager().getEveKitOwners().isEmpty()) {
+				JOptionPane.showMessageDialog(getMainWindow().getFrame(), TabsTracker.get().eveKitImportNoOwners(), TabsTracker.get().eveKitImportTitle(), JOptionPane.PLAIN_MESSAGE);
+			} else {
+				eveKitTrackerImportDialog.setVisible(true);
+			}
+		} else if (MainMenuAction.ABOUT.name().equals(e.getActionCommand())) { //Others
+			showAbout();
 		} else if (MainMenuAction.SEND_BUG_REPORT.name().equals(e.getActionCommand())) {
 			bugsDialog.setVisible(true);
 		} else if (MainMenuAction.README.name().equals(e.getActionCommand())) { //External Files

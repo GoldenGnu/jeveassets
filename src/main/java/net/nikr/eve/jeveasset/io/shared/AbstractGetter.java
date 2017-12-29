@@ -170,6 +170,12 @@ public abstract class AbstractGetter<O extends OwnerType, C, E extends Exception
 		public int getMaxRetries();
 	}
 
+	protected final void pause() {
+		if (updateTask != null) {
+			updateTask.pause(); //Pause
+		}
+	}
+
 	protected final void setProgress(final float progressEnd, final float progressNow, final int minimum, final int maximum) {
 		if (updateTask != null) {
 			updateTask.setTaskProgress(progressEnd, progressNow, minimum, maximum);

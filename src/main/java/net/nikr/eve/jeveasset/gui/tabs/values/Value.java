@@ -334,6 +334,7 @@ public class Value implements Comparable<Value> {
 						update.put(entry.getKey(), entry.getValue());
 					}
 				}
+				Settings.lock("Tracker Data (Updating Locations)");
 				for (Map.Entry<AssetValue, Double> entry : update.entrySet()) {
 					value.getAssetsFilter().remove(entry.getKey());
 					AssetValue assetValue = new AssetValue(entry.getKey());
@@ -341,6 +342,7 @@ public class Value implements Comparable<Value> {
 					Boolean remove = Settings.get().getTrackerFilters().remove(entry.getKey().getID());
 					Settings.get().getTrackerFilters().put(assetValue.getID(), remove);
 				}
+				Settings.unlock("Tracker Data (Updating Locations)");
 			}
 		}
 	}

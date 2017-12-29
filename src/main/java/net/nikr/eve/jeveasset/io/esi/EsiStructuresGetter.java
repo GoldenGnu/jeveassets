@@ -109,6 +109,7 @@ public class EsiStructuresGetter extends AbstractEsiGetter {
 		Map<Long, StructureResponse> responses = updateListSlow(IDS, true, DEFAULT_RETRIES, new ListHandlerSlow<Long, StructureResponse>() {
 			@Override
 			public StructureResponse get(ApiClient apiClient, Long k) throws ApiException {
+				pause();
 				return getUniverseApiAuth(apiClient).getUniverseStructuresStructureId(k, DATASOURCE, null, USER_AGENT, null);
 			}
 			@Override

@@ -62,6 +62,7 @@ public class MainMenu extends JMenuBar {
 		STOCKPILE,
 		UPDATE,
 		UPDATE_STRUCTURE,
+		UPDATE_EVEKIT,
 		ITEMS,
 		TREE,
 		TRACKER,
@@ -72,6 +73,7 @@ public class MainMenu extends JMenuBar {
 
 	private final JMenuItem jUpdateMenu;
 	private final JMenuItem jStructureMenu;
+	private final JMenuItem jEveKitImport;
 	private final JMenu jTableMenu;
 
 	public MainMenu(final Program program) {
@@ -223,6 +225,13 @@ public class MainMenu extends JMenuBar {
 		jStructureMenu.addActionListener(program);
 		menu.add(jStructureMenu);
 
+		menu.addSeparator();
+
+		jEveKitImport = new JMenuItem(GuiFrame.get().updateEveKit());
+		jEveKitImport.setActionCommand(MainMenuAction.UPDATE_EVEKIT.name());
+		jEveKitImport.addActionListener(program);
+		menu.add(jEveKitImport);
+
 //TABLE
 		jTableMenu = new JMenu(GuiFrame.get().table());
 		this.add(jTableMenu);
@@ -356,6 +365,16 @@ public class MainMenu extends JMenuBar {
 
 	public JMenu getTableMenu() {
 		return jTableMenu;
+	}
+
+	public void eveKitImport(final boolean evekit) {
+		if (evekit) {
+			jEveKitImport.setIcon(Images.MISC_EVEKIT.getIcon());
+			jEveKitImport.setToolTipText(GuiFrame.get().updatable());
+		} else {
+			jEveKitImport.setIcon(Images.MISC_EVEKIT_DISABLED.getIcon());
+			jEveKitImport.setToolTipText(GuiFrame.get().not());
+		}
 	}
 
 	public void timerTicked(final boolean updatable, final boolean structure) {

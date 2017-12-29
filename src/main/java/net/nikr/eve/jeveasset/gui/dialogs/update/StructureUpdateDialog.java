@@ -232,15 +232,18 @@ public class StructureUpdateDialog extends JDialogCentered {
 		} else {
 			ownerTypes = null;
 		}
-		TaskDialog taskDialog = new TaskDialog(program, new StructureUpdateTask(esiOwners, ownerTypes, locations, jTrackerLocations.isSelected()), esiOwners.size() > 1, new TaskDialog.TasksCompleted() {
+		setVisible(false);
+		TaskDialog taskDialog = new TaskDialog(program, new StructureUpdateTask(esiOwners, ownerTypes, locations, jTrackerLocations.isSelected()), esiOwners.size() > 1, DialoguesStructure.get().updateTitle(), new TaskDialog.TasksCompleted() {
 			@Override
 			public void tasksCompleted(TaskDialog taskDialog) {
+				//Update tracker locations
+				Value.update();
+				//Update eventlists
 				program.updateEventLists();
 				//Save settings after updating (if we crash later)
 				program.saveSettingsAndProfile();
 			}
 		});
-		setVisible(false);
 	}
 
 	public void show(Set<MyLocation> locations) {
@@ -362,7 +365,6 @@ public class StructureUpdateDialog extends JDialogCentered {
 			for (EsiOwner owner : owners) {
 				EsiStructuresGetter esiStructuresGetter = new EsiStructuresGetter(this, owner, tracker);
 				esiStructuresGetter.run();
-				Value.update();
 				progress++;
 				setTotalProgress(owners.size(), progress, 0, 100);
 			}

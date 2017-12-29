@@ -75,6 +75,7 @@ public abstract class TabsTracker extends Bundle {
 	public abstract String eveKitImportMergeOverwrite();
 	public abstract String eveKitImportMergeOverwriteInfo();
 	public abstract String eveKitImportMergeOverwriteWarning();
+	public abstract String eveKitImportNoOwners();
 	public abstract String eveKitImportNothingNewMsg();
 	public abstract String eveKitImportTaskTitle(String interval, String merge);
 	public abstract String eveKitImportTimeInterval();
@@ -124,6 +125,7 @@ public abstract class TabsTracker extends Bundle {
 	public abstract String to();
 	public abstract String today();
 	public abstract String total();
+	public abstract String updateTitle();
 	public abstract String walletBalance();
 	public abstract String week1();
 	public abstract String week2();

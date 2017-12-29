@@ -43,4 +43,5 @@ public abstract class DialoguesStructure extends Bundle {
 	public abstract String ownersAll();
 	public abstract String ownersSingle();
 	public abstract String title();
+	public abstract String updateTitle();
 }

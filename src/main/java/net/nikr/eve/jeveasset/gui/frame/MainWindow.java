@@ -76,7 +76,7 @@ public class MainWindow {
 		jFrame.setIconImages(icons);
 		jFrame.addWindowListener(listener);
 		jFrame.addComponentListener(listener);
-		jFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		jFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 
 		jLockWindow = new JLockWindow(jFrame);
 
@@ -217,15 +217,6 @@ public class MainWindow {
 		}
 	}
 
-	public void setEnabled(final boolean b) {
-		if (b) {
-			jFrame.setCursor(null);
-		} else {
-			jFrame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-		}
-		jFrame.setEnabled(b);
-	}
-
 	public JFrame getFrame() {
 		return jFrame;
 	}
@@ -256,12 +247,12 @@ public class MainWindow {
 		public void windowOpened(final WindowEvent e) { }
 
 		@Override
-		public void windowClosing(final WindowEvent e) { }
-
-		@Override
-		public void windowClosed(final WindowEvent e) {
+		public void windowClosing(final WindowEvent e) {
 			program.exit();
 		}
+
+		@Override
+		public void windowClosed(final WindowEvent e) { }
 
 		@Override
 		public void windowIconified(final WindowEvent e) { }
