@@ -53,7 +53,6 @@ import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.data.settings.tag.TagUpdate;
 import net.nikr.eve.jeveasset.gui.dialogs.AboutDialog;
 import net.nikr.eve.jeveasset.gui.dialogs.account.AccountManagerDialog;
-import net.nikr.eve.jeveasset.gui.dialogs.bugs.BugsDialog;
 import net.nikr.eve.jeveasset.gui.dialogs.profile.ProfileDialog;
 import net.nikr.eve.jeveasset.gui.dialogs.settings.SettingsDialog;
 import net.nikr.eve.jeveasset.gui.dialogs.settings.UserLocationSettingsPanel;
@@ -125,7 +124,6 @@ public class Program implements ActionListener {
 	private ProfileDialog profileDialog;
 	private SettingsDialog settingsDialog;
 	private UpdateDialog updateDialog;
-	private BugsDialog bugsDialog;
 
 	//Tabs
 	private ValueRetroTab valueRetroTab;
@@ -272,13 +270,13 @@ public class Program implements ActionListener {
 		SplashUpdater.setProgress(88);
 		LOG.info("Loading: Update Dialog");
 		updateDialog = new UpdateDialog(this);
-		LOG.info("Loading: Bugs Dialog");
-		bugsDialog = new BugsDialog(this);
 		SplashUpdater.setProgress(90);
 		LOG.info("Loading: Options Dialog");
 		settingsDialog = new SettingsDialog(this);
 		SplashUpdater.setProgress(96);
+		LOG.info("Loading: Structure UpdateDialog");
 		structureUpdateDialog = new StructureUpdateDialog(this);
+		LOG.info("Loading: EveKit Tracker Import Dialog");
 		eveKitTrackerImportDialog = new EveKitTrackerImportDialog(this);
 	//GUI Done
 		LOG.info("GUI loaded");
@@ -903,7 +901,7 @@ public class Program implements ActionListener {
 		} else if (MainMenuAction.ABOUT.name().equals(e.getActionCommand())) { //Others
 			showAbout();
 		} else if (MainMenuAction.SEND_BUG_REPORT.name().equals(e.getActionCommand())) {
-			bugsDialog.setVisible(true);
+			DesktopUtil.browse("https://github.com/GoldenGnu/jeveassets/issues/new", this);
 		} else if (MainMenuAction.README.name().equals(e.getActionCommand())) { //External Files
 			DesktopUtil.open(Settings.getPathReadme(), this);
 		} else if (MainMenuAction.LICENSE.name().equals(e.getActionCommand())) {
