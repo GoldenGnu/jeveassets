@@ -44,7 +44,16 @@ public class ThreadWoker {
 	public static void start(UpdateTask updateTask, Collection<? extends Runnable> updaters) {
 		start(updateTask, true, updaters);
 	}
+
+	public static void start(UpdateTask updateTask, Collection<? extends Runnable> updaters, int start, int end) {
+		start(updateTask, true, updaters, start, end);
+	}
+
 	public static void start(UpdateTask updateTask, boolean updateProgress, Collection<? extends Runnable> updaters) {
+		start(updateTask, updateProgress, updaters, 0, 100);
+	}
+
+	public static void start(UpdateTask updateTask, boolean updateProgress, Collection<? extends Runnable> updaters, int start, int end) {
 		ExecutorService threadPool = Executors.newFixedThreadPool(MAIN_THREADS);
 		try {
 			LOG.info("Starting " + updaters.size() + " main threads");
@@ -64,7 +73,7 @@ public class ThreadWoker {
 								progress++;
 							}
 						}
-						updateTask.setTaskProgress(updaters.size(), progress, 0, 100);
+						updateTask.setTaskProgress(updaters.size(), progress, start, end);
 					}
 				}
 			}

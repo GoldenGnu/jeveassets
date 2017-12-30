@@ -100,16 +100,18 @@ public class EveKitTrackImportUpdateTask extends UpdateTask {
 				break;
 		}
 		date = calendar.getTime();
-		long days = daysBetween(date, lifeStart);
+		long days = daysBetween(date, lifeStart) + dateInterval.getUpdatesDays();
 		long day = 0;
 
 		CitadelGetter.update(null); //Need location names before we update
 
 		while (true) {
-			date = updateDate(date); //Get next date
+			if (day != 0) { //Ignore first update
+				//Get next date 
+				date = updateDate(date);
+			}
 			//Update total progress
 			day = day + dateInterval.getUpdatesDays();
-			setTotalProgress(days, day, 0, 100);
 			setProgress(0);
 			List<EveKitOwner> clones = new ArrayList<EveKitOwner>();
 			for (EveKitOwner owner : owners) { //Find owners without data
@@ -122,6 +124,8 @@ public class EveKitTrackImportUpdateTask extends UpdateTask {
 				}
 			}
 			if (clones.isEmpty()) { //All owners have data, try next date
+				//Update Progress
+				setTotalProgress(days, day, 0, 100);
 				continue;
 			}
 			if (isCancelled()) { //No data return by the API OR Task is cancelled
@@ -146,7 +150,7 @@ public class EveKitTrackImportUpdateTask extends UpdateTask {
 				break;
 			}
 
-			ThreadWoker.start(this, updatersStep1);
+			ThreadWoker.start(this, updatersStep1, 0, 70);
 
 			if (isCancelled()) { //No data return by the API OR Task is cancelled
 				break;
@@ -184,7 +188,8 @@ public class EveKitTrackImportUpdateTask extends UpdateTask {
 				break;
 			}
 
-			ThreadWoker.start(this, updatersStep2);
+			setProgress(0);
+			ThreadWoker.start(this, updatersStep2, 70, 100);
 			for (AbstractEveKitGetter getter : updatersStep2) {
 				if (getter.hasError()) {
 					error = true;
@@ -238,10 +243,13 @@ public class EveKitTrackImportUpdateTask extends UpdateTask {
 			profile.updateEventLists();
 			//Create Tracker point
 			DataSetCreator.createTrackerDataPoint(profile, date);
+			//Update Progress
+			setTotalProgress(days, day, 0, 100);
 		}
 		if (error) {
 			returnValue = ReturnValue.ERROR;
 		} else if (completed) {
+			setTotalProgress(days, days, 0, 100);
 			if (imported) {
 				returnValue = ReturnValue.COMPLETED;
 			} else {
