@@ -87,20 +87,8 @@ public enum EsiScopes {
 		return scope;
 	}
 
-	public boolean isInScope(String scopes) {
-		if (scopes != null) {
-			return scopes.contains(scope);
-		} else {
-			return false;
-		}
-	}
-
 	public boolean isInScope(Set<String> scopes) {
-		if (scopes != null) {
-			return scopes.contains(scope);
-		} else {
-			return false;
-		}
+		return scopes.contains(scope);
 	}
 
 	public boolean isCharacterScope() {
