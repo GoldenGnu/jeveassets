@@ -90,15 +90,15 @@ public class EsiOwnerGetter extends AbstractEsiGetter implements AccountAdder{
 
 		int fails = 0;
 		int max = 0;
-		for (EsiScopes scopes : EsiScopes.values()) {
-			if (!owner.isCorporation() && !scopes.isCharacterScope()) {
+		for (EsiScopes scope : EsiScopes.values()) {
+			if (!owner.isCorporation() && !scope.isCharacterScope()) {
 				continue;
 			}
-			if (owner.isCorporation() && !scopes.isCorporationScope()) {
+			if (owner.isCorporation() && !scope.isCorporationScope()) {
 				continue;
 			}
 			max++;
-			if (!scopes.isInScope(owner.getScopes())) {
+			if (!scope.isInScope(owner.getScopes())) {
 				fails++;
 			}
 		}

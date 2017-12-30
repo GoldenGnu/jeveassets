@@ -73,19 +73,11 @@ public class EsiOwner extends AbstractOwner implements OwnerType {
 	}
 
 	public void setScopes(String scopes) {
-		if (scopes != null) {
-			this.scopes = new HashSet<>(Arrays.asList(scopes.split(" ")));
-		} else {
-			this.scopes = new HashSet<String>();
-		}
+		this.scopes = new HashSet<>(Arrays.asList(scopes.split(" ")));
 	}
 
 	public final void setScopes(Set<String> scopes) {
-		if (scopes != null) {
-			this.scopes = scopes;
-		} else {
-			this.scopes = new HashSet<String>();
-		}
+		this.scopes = scopes;
 	}
 
 	public String getTokenType() {
