@@ -40,7 +40,9 @@ import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.components.JFixedToolBar;
 import net.nikr.eve.jeveasset.gui.shared.components.JGroupLayoutPanel;
+import net.nikr.eve.jeveasset.i18n.DialoguesStructure;
 import net.nikr.eve.jeveasset.i18n.GuiFrame;
+import net.nikr.eve.jeveasset.i18n.TabsTracker;
 
 
 public class StatusPanel extends JGroupLayoutPanel {
@@ -110,10 +112,19 @@ public class StatusPanel extends JGroupLayoutPanel {
 		);
 	}
 
-	public Progress addProgress(String text, ProgressControl progressShow) {
-		Progress progress = new Progress(text, progressShow);
+	public Progress addProgress(UpdateType updateType, ProgressControl progressShow) {
+		Progress progress = new Progress(updateType, progressShow);
 		progressStatus.add(progress);
 		return progress;
+	}
+
+	public boolean updateing(UpdateType updateType) {
+		for (Progress progress : progressStatus) {
+			if (progress.getTaskType() == updateType) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	public int updateInProgress() {
@@ -216,15 +227,26 @@ public class StatusPanel extends JGroupLayoutPanel {
 
 	public class Progress {
 
+		private final UpdateType updateType;
 		private final String text;
 		private final ProgressControl progressControl;
 		private final JProgressBar jProgress;
 		private final long id = System.currentTimeMillis();
 		private boolean done = false;
 
-		public Progress(String text, ProgressControl progressShow) {
-			this.text = text;
+		public Progress(UpdateType updateType, ProgressControl progressShow) {
+			this.updateType = updateType;
 			this.progressControl = progressShow;
+			switch (updateType) {
+				case EVEKIT:
+					text = TabsTracker.get().updateTitle();
+					break;
+				case STRUCTURE:
+					text = DialoguesStructure.get().updateTitle();
+					break;
+				default:
+					text = "";
+			}
 			jProgress = new JProgressBar(0, 100);
 			Dimension size = new Dimension(Program.getButtonsWidth() * 2, Program.getButtonsHeight());
 			jProgress.setMinimumSize(size);
@@ -270,7 +292,10 @@ public class StatusPanel extends JGroupLayoutPanel {
 			jProgress.setValue(n);
 		}
 
-		
+		private UpdateType getTaskType() {
+			return updateType;
+		}
+
 		private void cancel() {
 			progressControl.cancel();
 		}
@@ -313,5 +338,9 @@ public class StatusPanel extends JGroupLayoutPanel {
 		public void show();
 		public void cancel();
 		public void setPause(boolean pause);
+	}
+
+	public static enum UpdateType {
+		STRUCTURE, EVEKIT
 	}
 }

@@ -63,6 +63,7 @@ import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateDialog;
 import net.nikr.eve.jeveasset.gui.frame.MainMenu.MainMenuAction;
 import net.nikr.eve.jeveasset.gui.frame.MainWindow;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
+import net.nikr.eve.jeveasset.gui.frame.StatusPanel.UpdateType;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Updatable;
 import net.nikr.eve.jeveasset.gui.shared.components.JLockWindow;
@@ -891,12 +892,20 @@ public class Program implements ActionListener {
 		} else if (MainMenuAction.UPDATE.name().equals(e.getActionCommand())) { //Update
 			updateDialog.setVisible(true);
 		} else if (MainMenuAction.UPDATE_STRUCTURE.name().equals(e.getActionCommand())) {
-			updateStructures(null);
+			if (getStatusPanel().updateing(UpdateType.STRUCTURE)) {
+				JOptionPane.showMessageDialog(getMainWindow().getFrame(), GuiFrame.get().updatingInProgressMsg(), GuiFrame.get().updatingInProgressTitle(), JOptionPane.PLAIN_MESSAGE);
+			} else {
+				updateStructures(null);
+			}
 		} else if (MainMenuAction.UPDATE_EVEKIT.name().equals(e.getActionCommand())) {
 			if (getProfileManager().getEveKitOwners().isEmpty()) {
 				JOptionPane.showMessageDialog(getMainWindow().getFrame(), TabsTracker.get().eveKitImportNoOwners(), TabsTracker.get().eveKitImportTitle(), JOptionPane.PLAIN_MESSAGE);
 			} else {
-				eveKitTrackerImportDialog.setVisible(true);
+				if (getStatusPanel().updateing(UpdateType.EVEKIT)) {
+					JOptionPane.showMessageDialog(getMainWindow().getFrame(), GuiFrame.get().updatingInProgressMsg(), GuiFrame.get().updatingInProgressTitle(), JOptionPane.PLAIN_MESSAGE);
+				} else {
+					eveKitTrackerImportDialog.setVisible(true);
+				}
 			}
 		} else if (MainMenuAction.ABOUT.name().equals(e.getActionCommand())) { //Others
 			showAbout();

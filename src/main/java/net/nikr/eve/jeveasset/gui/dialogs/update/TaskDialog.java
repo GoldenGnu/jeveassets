@@ -33,6 +33,7 @@ import javax.swing.GroupLayout.SequentialGroup;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel.Progress;
+import net.nikr.eve.jeveasset.gui.frame.StatusPanel.UpdateType;
 import net.nikr.eve.jeveasset.gui.shared.components.JLockWindow;
 import net.nikr.eve.jeveasset.i18n.DialoguesUpdate;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
@@ -68,11 +69,11 @@ public class TaskDialog {
 	private Progress progress;
 	private final TasksCompleted completed;
 
-	public TaskDialog(final Program program, final UpdateTask updateTask, boolean totalProgress, String background, TasksCompleted completed) {
-		this(program, Collections.singletonList(updateTask), totalProgress, background, completed);
+	public TaskDialog(final Program program, final UpdateTask updateTask, boolean totalProgress, UpdateType updateType, TasksCompleted completed) {
+		this(program, Collections.singletonList(updateTask), totalProgress, updateType, completed);
 	}
 
-	public TaskDialog(final Program program, final List<UpdateTask> updateTasks, boolean totalProgress, String background, TasksCompleted completed) {
+	public TaskDialog(final Program program, final List<UpdateTask> updateTasks, boolean totalProgress, UpdateType updateType, TasksCompleted completed) {
 		this.program = program;
 		this.updateTasks = updateTasks;
 		this.completed = completed;
@@ -101,9 +102,9 @@ public class TaskDialog {
 		JButton jMinimize = new JButton(DialoguesUpdate.get().minimize());
 		jMinimize.setActionCommand(TaskAction.MINIMIZE.name());
 		jMinimize.addActionListener(listener);
-		jMinimize.setVisible(background != null);
-		if (background != null) {
-			progress = program.getStatusPanel().addProgress(background, new StatusPanel.ProgressControl() {
+		jMinimize.setVisible(updateType != null);
+		if (updateType != null) {
+			progress = program.getStatusPanel().addProgress(updateType, new StatusPanel.ProgressControl() {
 				@Override
 				public void show() {
 					progress.setVisible(false);

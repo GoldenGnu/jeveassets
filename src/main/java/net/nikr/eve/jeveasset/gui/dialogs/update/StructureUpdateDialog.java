@@ -41,6 +41,7 @@ import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
 import net.nikr.eve.jeveasset.data.api.accounts.OwnerType;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
 import net.nikr.eve.jeveasset.data.settings.Settings;
+import net.nikr.eve.jeveasset.gui.frame.StatusPanel.UpdateType;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
@@ -233,7 +234,7 @@ public class StructureUpdateDialog extends JDialogCentered {
 			ownerTypes = null;
 		}
 		setVisible(false);
-		TaskDialog taskDialog = new TaskDialog(program, new StructureUpdateTask(esiOwners, ownerTypes, locations, jTrackerLocations.isSelected()), esiOwners.size() > 1, DialoguesStructure.get().updateTitle(), new TaskDialog.TasksCompleted() {
+		TaskDialog taskDialog = new TaskDialog(program, new StructureUpdateTask(esiOwners, ownerTypes, locations, jTrackerLocations.isSelected()), esiOwners.size() > 1, UpdateType.STRUCTURE, new TaskDialog.TasksCompleted() {
 			@Override
 			public void tasksCompleted(TaskDialog taskDialog) {
 				//Update tracker locations
