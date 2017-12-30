@@ -107,9 +107,20 @@ public class TaskDialog {
 				@Override
 				public void show() {
 					progress.setVisible(false);
-					jWindow.setVisible(true);
+					SwingUtilities.invokeLater(new Runnable() {
+						@Override
+						public void run() {
+							jWindow.setVisible(true); //Blocking - do later
+						}
+					});
 					if (progress.isDone()) {
-						done();
+						jMinimize.setEnabled(false); //Should not minimize after completed
+						SwingUtilities.invokeLater(new Runnable() {
+							@Override
+							public void run() {
+								done(); //Needs to be done after showing the dialog (add to EDT queue)
+							}
+						});
 					}
 				}
 				@Override
@@ -216,8 +227,8 @@ public class TaskDialog {
 		}
 	}
 
-	public void hide() {
-		setVisible(false);
+	public JDialog getDialog() {
+		return jWindow;
 	}
 
 	private void update() {
@@ -238,7 +249,7 @@ public class TaskDialog {
 	}
 
 	private void done() {
-		jLockWindow.show(GuiShared.get().updating(), new JLockWindow.LockWorker() {
+		jLockWindow.show(GuiShared.get().updating(), new JLockWindow.LockWorkerAdvanced() {
 			@Override
 			public void task() {
 				completed.tasksCompleted(TaskDialog.this);
@@ -246,6 +257,12 @@ public class TaskDialog {
 			@Override
 			public void gui() {
 				jOK.setEnabled(true);
+			}
+			@Override
+			public void hidden() {
+				if (completed instanceof TasksCompletedAdvanced) {
+					((TasksCompletedAdvanced) completed).tasksHidden(TaskDialog.this);
+				}
 			}
 		});
 	}
@@ -258,10 +275,6 @@ public class TaskDialog {
 	private void setVisible(final boolean b) {
 		if (b) {
 			centerWindow();
-		}
-		jWindow.setVisible(b);
-		if (b) {
-			jWindow.requestFocus();
 		} else { //Memory
 			for (UpdateTask task : updateTasks) {
 				for (MouseListener mouseListener : task.getTextLabel().getMouseListeners()) {
@@ -276,6 +289,7 @@ public class TaskDialog {
 				program.getStatusPanel().removeProgress(progress);
 			}
 		}
+		jWindow.setVisible(b);
 	}
 
 	private void cancelUpdate() {
@@ -419,5 +433,9 @@ public class TaskDialog {
 
 	public static interface TasksCompleted {
 		public void tasksCompleted(TaskDialog taskDialog);
+	}
+
+	public static interface TasksCompletedAdvanced extends TasksCompleted {
+		public void tasksHidden(TaskDialog taskDialog);
 	}
 }
