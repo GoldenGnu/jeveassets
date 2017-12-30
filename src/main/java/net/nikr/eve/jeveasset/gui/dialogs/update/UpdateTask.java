@@ -60,6 +60,7 @@ public abstract class UpdateTask extends SwingWorker<Void, Void> {
 
 	private boolean errorShown = false;
 	private boolean taskDone = false;
+	private boolean pause = false;
 
 	public UpdateTask(final String name) {
 		this.name = name;
@@ -82,6 +83,27 @@ public abstract class UpdateTask extends SwingWorker<Void, Void> {
 			totalProgress = progress;
 			firePropertyChange("TotalProgress", oldValue, progress);
 		}
+	}
+
+	public void pause() {
+		while (isPause()) {
+			synchronized(this) {
+				try {
+					wait();
+				} catch (InterruptedException ex) {
+					//No problem
+				}
+			}
+		}
+	}
+
+	public synchronized boolean isPause() {
+		return pause;
+	}
+
+	public synchronized void setPause(boolean pause) {
+		this.pause = pause;
+		notifyAll();
 	}
 
 	public Integer getTotalProgress() {

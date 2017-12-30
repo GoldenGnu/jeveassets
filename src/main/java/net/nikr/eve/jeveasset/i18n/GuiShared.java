@@ -60,6 +60,7 @@ public abstract class GuiShared extends Bundle {
 	public abstract String eveMarkets();
 	public abstract String eveOnline();
 	public abstract String foreground();
+	public abstract String fuzzwork();
 	public abstract String item();
 	public abstract String itemDelete();
 	public abstract String itemEdit();
@@ -94,11 +95,14 @@ public abstract class GuiShared extends Bundle {
 	public abstract String selectionManufactureJobsValue();
 	public abstract String selectionOrdersBoth();
 	public abstract String selectionOrdersBothAvg();
+	public abstract String selectionOrdersBothCount();
 	public abstract String selectionOrdersBuy();
 	public abstract String selectionOrdersBuyAvg();
+	public abstract String selectionOrdersBuyCount();
 	public abstract String selectionOrdersEscrow();
 	public abstract String selectionOrdersSell();
 	public abstract String selectionOrdersSellAvg();
+	public abstract String selectionOrdersSellCount();
 	public abstract String selectionOrdersToCover();
 	public abstract String selectionTitle();
 	public abstract String selectionTitleBoth();
@@ -225,6 +229,7 @@ public abstract class GuiShared extends Bundle {
 	public abstract String filterEqualsNot();
 	public abstract String filterGreaterThan();
 	public abstract String filterLastDays();
+	public abstract String filterLastHours();
 	public abstract String filterLessThan();
 	public abstract String filterBefore();
 	public abstract String filterAfter();

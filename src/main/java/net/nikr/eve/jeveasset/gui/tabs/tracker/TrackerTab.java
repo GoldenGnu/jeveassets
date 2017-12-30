@@ -76,6 +76,7 @@ import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.settings.Settings;
+import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.components.CheckBoxNode;
@@ -86,6 +87,7 @@ import net.nikr.eve.jeveasset.gui.shared.components.JMultiSelectionList;
 import net.nikr.eve.jeveasset.gui.shared.components.JSelectionDialog;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo;
 import net.nikr.eve.jeveasset.gui.tabs.values.Value;
+import net.nikr.eve.jeveasset.gui.tabs.values.Value.AssetValue;
 import net.nikr.eve.jeveasset.i18n.General;
 import net.nikr.eve.jeveasset.i18n.TabsTracker;
 import org.jfree.chart.ChartMouseEvent;
@@ -113,7 +115,6 @@ public class TrackerTab extends JMainTabSecondary {
 		UPDATE_DATA,
 		UPDATE_SHOWN,
 		INCLUDE_ZERO,
-		IMPORT_EVEKIT,
 		ALL,
 		EDIT,
 		DELETE,
@@ -158,12 +159,20 @@ public class TrackerTab extends JMainTabSecondary {
 	private final ChartPanel jChartPanel;
 	private final TrackerFilterDialog filterDialog;
 	private final MyRender render;
-	private final EveKitTrackerImportDialog eveKitTrackerImportDialog;
-	private final JMenuItem jEveKitImport;
 	private final Shape NO_FILTER = new Rectangle(-3, -3, 6, 6);
 	private final Shape FILTER_AND_DEFAULT = new Ellipse2D.Float(-3.0f, -3.0f, 6.0f, 6.0f);
 	private final JMenuItem jAddNote;
 	private final JMenu jEditNote;
+
+	private final JLabel jTotalStatus;
+	private final JLabel jWalletBalanceStatus;
+	private final JLabel jAssetsStatus;
+	private final JLabel jSellOrdersStatus;
+	private final JLabel jEscrowsStatus;
+	private final JLabel jEscrowsToCoverStatus;
+	private final JLabel jManufacturingStatus;
+	private final JLabel jContractCollateralStatus;
+	private final JLabel jContractValueStatus;
 
 	private final ListenerClass listener = new ListenerClass();
 
@@ -187,8 +196,6 @@ public class TrackerTab extends JMainTabSecondary {
 		super(program, TabsTracker.get().title(), Images.TOOL_TRACKER.getIcon(), true);
 
 		filterDialog = new TrackerFilterDialog(program);
-
-		eveKitTrackerImportDialog = new EveKitTrackerImportDialog(program);
 
 		jPopupMenu = new JPopupMenu();
 		jPopupMenu.addPopupMenuListener(listener);
@@ -332,6 +339,33 @@ public class TrackerTab extends JMainTabSecondary {
 		jOwners.getSelectionModel().addListSelectionListener(listener);
 		JScrollPane jOwnersScroll = new JScrollPane(jOwners);
 
+		jTotalStatus = StatusPanel.createLabel(TabsTracker.get().statusTotal(), new ColorIcon(Color.RED.darker()));
+		this.addStatusbarLabel(jTotalStatus);
+
+		jWalletBalanceStatus = StatusPanel.createLabel(TabsTracker.get().statusBalance(), new ColorIcon(Color.BLUE.darker()));
+		this.addStatusbarLabel(jWalletBalanceStatus);
+
+		jAssetsStatus = StatusPanel.createLabel(TabsTracker.get().statusAssets(), new ColorIcon(Color.GREEN.darker().darker()));
+		this.addStatusbarLabel(jAssetsStatus);
+
+		jSellOrdersStatus = StatusPanel.createLabel(TabsTracker.get().statusSellOrders(), new ColorIcon(Color.CYAN.darker()));
+		this.addStatusbarLabel(jSellOrdersStatus);
+
+		jEscrowsStatus = StatusPanel.createLabel(TabsTracker.get().statusEscrows(), new ColorIcon(Color.BLACK));
+		this.addStatusbarLabel(jEscrowsStatus);
+
+		jEscrowsToCoverStatus = StatusPanel.createLabel(TabsTracker.get().statusEscrowsToCover(), new ColorIcon(Color.GRAY));
+		this.addStatusbarLabel(jEscrowsToCoverStatus);
+
+		jManufacturingStatus = StatusPanel.createLabel(TabsTracker.get().statusManufacturing(), new ColorIcon(Color.MAGENTA));
+		this.addStatusbarLabel(jManufacturingStatus);
+
+		jContractCollateralStatus = StatusPanel.createLabel(TabsTracker.get().statusContractCollateral(), new ColorIcon(Color.PINK));
+		this.addStatusbarLabel(jContractCollateralStatus);
+
+		jContractValueStatus = StatusPanel.createLabel(TabsTracker.get().statusContractValue(), new ColorIcon(Color.ORANGE));
+		this.addStatusbarLabel(jContractValueStatus);
+
 		JLabel jHelp = new JLabel(TabsTracker.get().help());
 		jHelp.setIcon(Images.MISC_HELP.getIcon());
 
@@ -348,13 +382,6 @@ public class TrackerTab extends JMainTabSecondary {
 		jIncludeZero.setActionCommand(TrackerAction.INCLUDE_ZERO.name());
 		jIncludeZero.addActionListener(listener);
 		jSettings.add(jIncludeZero);
-
-		JDropDownButton jImport = new JDropDownButton(Images.EDIT_IMPORT.getIcon());
-
-		jEveKitImport = new JMenuItem(TabsTracker.get().eveKitImportTitle(), Images.MISC_EVEKIT.getIcon());
-		jEveKitImport.setActionCommand(TrackerAction.IMPORT_EVEKIT.name());
-		jEveKitImport.addActionListener(listener);
-		jImport.add(jEveKitImport);
 
 		DateAxis domainAxis = new DateAxis();
 		domainAxis.setDateFormatOverride(dateFormat);
@@ -443,7 +470,6 @@ public class TrackerTab extends JMainTabSecondary {
 						.addGap(20)
 						.addComponent(jFilter)
 						.addGap(20, 20, Integer.MAX_VALUE)
-						.addComponent(jImport)
 						.addComponent(jSettings)
 						.addGap(6)
 					)
@@ -494,7 +520,6 @@ public class TrackerTab extends JMainTabSecondary {
 							.addComponent(jNoFilter, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 							.addComponent(jFilter, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 							.addComponent(jSettings, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-							.addComponent(jImport, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 					)
 					.addComponent(jChartPanel)
 				)
@@ -532,13 +557,9 @@ public class TrackerTab extends JMainTabSecondary {
 		);
 	}
 
-	public void profilesChanged() {
-		jEveKitImport.setEnabled(!program.getProfileManager().getEveKitOwners().isEmpty());
-	}
-
 	@Override
 	public void updateData() {
-		createNodes(); //Must be first or NPE!
+		updateNodes(); //Must be first or NPE!
 		updateButtonIcons();
 		updateOwners();
 		createData();
@@ -559,18 +580,14 @@ public class TrackerTab extends JMainTabSecondary {
 
 	private void updateFilterButtons() {
 		Set<String> walletIDs = new TreeSet<String>();
-		Set<String> assetsIDs = new TreeSet<String>();
+		Set<AssetValue> assetsIDs = new TreeSet<AssetValue>();
 		List<String> owners = jOwners.getSelectedValuesList();
 		for (String owner : owners) {
 			for (Value data : Settings.get().getTrackerData().get(owner)) {
 				//Get all account wallet account keys
-				for (String id : data.getBalanceFilter().keySet()) {
-					walletIDs.add(id);
-				}
+				walletIDs.addAll(data.getBalanceFilter().keySet());
 				//Get all asset IDs
-				for (String id : data.getAssetsFilter().keySet()) {
-					assetsIDs.add(id);
-				}
+				assetsIDs.addAll(data.getAssetsFilter().keySet());
 			}
 		}
 		jWalletBalanceFilters.setEnabled(!walletIDs.isEmpty());
@@ -622,10 +639,12 @@ public class TrackerTab extends JMainTabSecondary {
 		updateLock = false;
 	}
 
-	private void createNodes() {
+	private void updateNodes() {
+		accountNodes.clear();
+		assetNodes.clear();
 	//Find all saved Keys/IDs
 		Set<String> walletIDs = new TreeSet<String>();
-		Set<String> assetsIDs = new TreeSet<String>();
+		Set<AssetValue> assetsIDs = new TreeSet<AssetValue>();
 		for (List<Value> values : Settings.get().getTrackerData().values()) {
 			for (Value data : values) {
 				//Get all account wallet account keys
@@ -648,19 +667,10 @@ public class TrackerTab extends JMainTabSecondary {
 		CheckBoxNode assetNode = new CheckBoxNode(null, TabsTracker.get().assets(), TabsTracker.get().assets(), false);
 		
 		Map<String, CheckBoxNode> nodeCache = new HashMap<String, CheckBoxNode>();
-		for (String id : assetsIDs) {
-			String[] ids = id.split(" > ");
-			String location;
-			String flag;
-			if (ids.length == 2) {
-				//Location
-				location = ids[0];
-				//Flag
-				flag = ids[1];
-			} else {
-				location = id;
-				flag = null; //Never used
-			}
+		for (AssetValue assetValue : assetsIDs) {
+			String location = assetValue.getLocation();
+			String flag = assetValue.getFlag();
+			String id = assetValue.getID();
 			CheckBoxNode locationNode = nodeCache.get(location);
 			if (locationNode == null) {
 				locationNode = new CheckBoxNode(assetNode, location, location, selectNode(location));
@@ -735,8 +745,8 @@ public class TrackerTab extends JMainTabSecondary {
 							value.addAssets(data.getAssetsTotal());
 						} else {
 							assetColumns.put(data.getDate(), true);
-							for (Map.Entry<String, Double> entry : data.getAssetsFilter().entrySet()) {
-								if (assetNodes.get(entry.getKey()).isSelected()) {
+							for (Map.Entry<AssetValue, Double> entry : data.getAssetsFilter().entrySet()) {
+								if (assetNodes.get(entry.getKey().getID()).isSelected()) {
 									value.addAssets(entry.getKey(), entry.getValue());
 								}
 							}
@@ -840,39 +850,104 @@ public class TrackerTab extends JMainTabSecondary {
 			dataset.removeSeries(0);
 		}
 		render.clear();
-		if (jTotal.isSelected()) { //Update total
-			TimePeriodValues total = new TimePeriodValues(TabsTracker.get().total());
-			for (Map.Entry<SimpleTimePeriod, Value> entry : cache.entrySet()) {
-				double t = 0;
-				if (jWalletBalance.isSelected() && walletBalance != null) {
-					t += entry.getValue().getBalanceTotal();
-				}
-				if (jAssets.isSelected() && assets != null) {
-					t += entry.getValue().getAssetsTotal();
-				}
-				if (jSellOrders.isSelected() && sellOrders != null) {
-					t += entry.getValue().getSellOrders();
-				}
-				if (jEscrows.isSelected() && escrows != null) {
-					t += entry.getValue().getEscrows();
-				}
-				//Escrows To Cover is not money you own, It's technically money you owe
-				//Therefor it's not included in the total
-				//See: https://forums.eveonline.com/default.aspx?g=posts&m=6607898#post6607898
-				//if (jEscrowsToCover.isSelected() && escrowsToCover != null) {
-				//	t += entry.getValue().getEscrowsToCover();
-				//}
-				if (jManufacturing.isSelected() && manufacturing != null) {
-					t += entry.getValue().getManufacturing();
-				}
-				if (jContractCollateral.isSelected() && contractCollateral != null) {
-					t += entry.getValue().getContractCollateral();
-				}
-				if (jContractValue.isSelected() && contractValue != null) {
-					t += entry.getValue().getContractValue();
-				}
-				total.add(entry.getKey(), t);
+		TimePeriodValues total = new TimePeriodValues(TabsTracker.get().total());
+		Value first = null;
+		Value last = null;
+		Double firstTotal = null;
+		Double lastTotal = null;
+		for (Map.Entry<SimpleTimePeriod, Value> entry : cache.entrySet()) {
+			double t = 0;
+			if (jWalletBalance.isSelected() && walletBalance != null) {
+				t += entry.getValue().getBalanceTotal();
 			}
+			if (jAssets.isSelected() && assets != null) {
+				t += entry.getValue().getAssetsTotal();
+			}
+			if (jSellOrders.isSelected() && sellOrders != null) {
+				t += entry.getValue().getSellOrders();
+			}
+			if (jEscrows.isSelected() && escrows != null) {
+				t += entry.getValue().getEscrows();
+			}
+			//Escrows To Cover is not money you own, It's technically money you owe
+			//Therefor it's not included in the total
+			//See: https://forums.eveonline.com/default.aspx?g=posts&m=6607898#post6607898
+			//if (jEscrowsToCover.isSelected() && escrowsToCover != null) {
+			//	t += entry.getValue().getEscrowsToCover();
+			//}
+			if (jManufacturing.isSelected() && manufacturing != null) {
+				t += entry.getValue().getManufacturing();
+			}
+			if (jContractCollateral.isSelected() && contractCollateral != null) {
+				t += entry.getValue().getContractCollateral();
+			}
+			if (jContractValue.isSelected() && contractValue != null) {
+				t += entry.getValue().getContractValue();
+			}
+			total.add(entry.getKey(), t);
+			if (firstTotal == null) {
+				firstTotal = t;
+			}
+			lastTotal = t;
+			if (first == null) {
+				first = entry.getValue();
+			}
+			last = entry.getValue();
+		}
+		if (firstTotal != null && lastTotal != null) {
+			jTotalStatus.setText(Formater.iskFormat(lastTotal - firstTotal));
+		} else {
+			jTotalStatus.setText(Formater.iskFormat(0.0));
+		}
+		jWalletBalanceStatus.setVisible(jWalletBalance.isSelected());
+		if (first != null && last != null) {
+			jWalletBalanceStatus.setText(Formater.iskFormat(last.getBalanceTotal() - first.getBalanceTotal()));
+		} else {
+			jWalletBalanceStatus.setText(Formater.iskFormat(0.0));
+		}
+		jAssetsStatus.setVisible(jAssets.isSelected());
+		if (first != null && last != null) {
+			jAssetsStatus.setText(Formater.iskFormat(last.getAssetsTotal() - first.getAssetsTotal()));
+		} else {
+			jAssetsStatus.setText(Formater.iskFormat(0.0));
+		}
+		jSellOrdersStatus.setVisible(jSellOrders.isSelected());
+		if (first != null && last != null) {
+			jSellOrdersStatus.setText(Formater.iskFormat(last.getSellOrders() - first.getSellOrders()));
+		} else {
+			jSellOrdersStatus.setText(Formater.iskFormat(0.0));
+		}
+		jEscrowsStatus.setVisible(jEscrows.isSelected());
+		if (first != null && last != null) {
+			jEscrowsStatus.setText(Formater.iskFormat(last.getEscrows() - first.getEscrows()));
+		} else {
+			jEscrowsStatus.setText(Formater.iskFormat(0.0));
+		}
+		jEscrowsToCoverStatus.setVisible(jEscrowsToCover.isSelected());
+		if (first != null && last != null) {
+			jEscrowsToCoverStatus.setText(Formater.iskFormat(last.getEscrowsToCover() - first.getEscrowsToCover()));
+		} else {
+			jEscrowsToCoverStatus.setText(Formater.iskFormat(0.0));
+		}
+		jManufacturingStatus.setVisible(jManufacturing.isSelected());
+		if (first != null && last != null) {
+			jManufacturingStatus.setText(Formater.iskFormat(last.getManufacturing() - first.getManufacturing()));
+		} else {
+			jManufacturingStatus.setText(Formater.iskFormat(0.0));
+		}
+		jContractCollateralStatus.setVisible(jContractCollateral.isSelected());
+		if (first != null && last != null) {
+			jContractCollateralStatus.setText(Formater.iskFormat(last.getContractCollateral() - first.getContractCollateral()));
+		} else {
+			jContractCollateralStatus.setText(Formater.iskFormat(0.0));
+		}
+		jContractValueStatus.setVisible(jContractValue.isSelected());
+		if (first != null && last != null) {
+			jContractValueStatus.setText(Formater.iskFormat(last.getContractValue() - first.getContractValue()));
+		} else {
+			jContractValueStatus.setText(Formater.iskFormat(0.0));
+		}
+		if (jTotal.isSelected()) { //Update total
 			dataset.addSeries(total);
 			Integer minColumn = null;
 			if (jWalletBalance.isSelected() && walletColumn != null) {
@@ -1223,13 +1298,11 @@ public class TrackerTab extends JMainTabSecondary {
 						//Remove empty owner
 						if (Settings.get().getTrackerData().get(entry.getKey()).isEmpty()) {
 							Settings.get().getTrackerData().remove(entry.getKey());
-							updateOwners();
 						} 
 					}
 					Settings.unlock("Tracker Data (Delete)");
 					program.saveSettings("Tracker Data (Delete)");
-					createData();
-					updateFilterButtons();
+					updateData();
 				}
 				jNextChart.getXYPlot().setDomainCrosshairVisible(false);
 			} else if (TrackerAction.NOTE_DELETE.name().equals(e.getActionCommand())) {
@@ -1257,8 +1330,6 @@ public class TrackerTab extends JMainTabSecondary {
 					createData();
 					updateButtonIcons();
 				}
-			} else if (TrackerAction.IMPORT_EVEKIT.name().equals(e.getActionCommand())) {
-				eveKitTrackerImportDialog.setVisible(true);
 			}
 		}
 
@@ -1337,6 +1408,42 @@ public class TrackerTab extends JMainTabSecondary {
 		public void valueChanged(ListSelectionEvent e) {
 			updateFilterButtons();
 			createData();
+		}
+	}
+
+	public static class ColorIcon implements Icon {
+
+		private final Color color;
+
+		public ColorIcon(Color color) {
+			this.color = color;
+		}
+
+		@Override
+		public void paintIcon(Component c, Graphics g, int x, int y) {
+			Graphics2D g2d = (Graphics2D) g;
+			//Render settings
+			//g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
+			g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+			g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+			//Border
+			g2d.setColor(Color.BLACK);
+			g2d.fillOval(x + 2, y + 2, getIconWidth() - 4, getIconHeight() - 4);
+
+			//Background
+			g2d.setColor(color);
+			g2d.fillOval(x + 3, y + 3, getIconWidth() - 6, getIconHeight() - 6);
+		}
+
+		@Override
+		public int getIconWidth() {
+			return 16;
+		}
+
+		@Override
+		public int getIconHeight() {
+			return 16;
 		}
 	}
 }

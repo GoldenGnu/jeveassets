@@ -30,6 +30,7 @@ import java.util.Set;
 import javax.swing.ButtonGroup;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -40,10 +41,12 @@ import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
 import net.nikr.eve.jeveasset.data.api.accounts.OwnerType;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
 import net.nikr.eve.jeveasset.data.settings.Settings;
+import net.nikr.eve.jeveasset.gui.frame.StatusPanel.UpdateType;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
 import net.nikr.eve.jeveasset.gui.shared.components.ListComboBoxModel;
+import net.nikr.eve.jeveasset.gui.tabs.values.Value;
 import net.nikr.eve.jeveasset.i18n.DialoguesStructure;
 import net.nikr.eve.jeveasset.i18n.DialoguesUpdate;
 import net.nikr.eve.jeveasset.io.esi.EsiStructuresGetter;
@@ -56,6 +59,7 @@ public class StructureUpdateDialog extends JDialogCentered {
 	private final JRadioButton jLocationsAll;
 	private final JRadioButton jLocationsOwned;
 	private final JRadioButton jLocationsSelected;
+	private final JCheckBox jTrackerLocations;
 	private final JLabel jTime;
 	private final JComboBox<EsiOwner> jOwners;
 	private final JButton jOk;
@@ -121,6 +125,14 @@ public class StructureUpdateDialog extends JDialogCentered {
 		});
 		LocationsGroup.add(jLocationsSelected);
 
+		jTrackerLocations = new JCheckBox(DialoguesStructure.get().locationsTracker());
+		jTrackerLocations.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				updateETA();
+			}
+		});
+
 		jOk = new JButton(DialoguesUpdate.get().ok());
 		jOk.addActionListener(new ActionListener() {
 			@Override
@@ -155,6 +167,7 @@ public class StructureUpdateDialog extends JDialogCentered {
 						.addComponent(jLocationsAll)
 						.addComponent(jLocationsOwned)
 						.addComponent(jLocationsSelected)
+						.addComponent(jTrackerLocations)
 					)
 				)
 				.addGroup(layout.createSequentialGroup()
@@ -179,6 +192,7 @@ public class StructureUpdateDialog extends JDialogCentered {
 						.addComponent(jLocationsAll, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 						.addComponent(jLocationsOwned, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 						.addComponent(jLocationsSelected, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+						.addComponent(jTrackerLocations, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 					)
 				)
 				.addComponent(jTime, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
@@ -219,15 +233,18 @@ public class StructureUpdateDialog extends JDialogCentered {
 		} else {
 			ownerTypes = null;
 		}
-		TaskDialog taskDialog = new TaskDialog(program, new StructureUpdateTask(esiOwners, ownerTypes, locations), esiOwners.size() > 1, new TaskDialog.TasksCompleted() {
+		setVisible(false);
+		TaskDialog taskDialog = new TaskDialog(program, new StructureUpdateTask(esiOwners, ownerTypes, locations, jTrackerLocations.isSelected()), esiOwners.size() > 1, UpdateType.STRUCTURE, new TaskDialog.TasksCompleted() {
 			@Override
 			public void tasksCompleted(TaskDialog taskDialog) {
+				//Update tracker locations
+				Value.update();
+				//Update eventlists
 				program.updateEventLists();
 				//Save settings after updating (if we crash later)
 				program.saveSettingsAndProfile();
 			}
 		});
-		setVisible(false);
 	}
 
 	public void show(Set<MyLocation> locations) {
@@ -271,12 +288,16 @@ public class StructureUpdateDialog extends JDialogCentered {
 				jLocationsSelected.setEnabled(true);
 				jLocationsAll.setEnabled(false);
 				jLocationsOwned.setEnabled(false);
+				jTrackerLocations.setEnabled(false);
+				jTrackerLocations.setSelected(false);
 				jLocationsSelected.setSelected(true);
 			} else {
 				jLocationsSelected.setEnabled(false);
 				jLocationsAll.setEnabled(true);
 				jLocationsOwned.setEnabled(true);
 				jLocationsAll.setSelected(true);
+				jTrackerLocations.setEnabled(true);
+				jTrackerLocations.setSelected(true);
 			}
 			updateETA();
 		}
@@ -297,7 +318,7 @@ public class StructureUpdateDialog extends JDialogCentered {
 		} else {
 			ownerTypes = null;
 		}
-		jTime.setText(DialoguesStructure.get().eta(EsiStructuresGetter.estimate(esiOwners, ownerTypes, locations)));
+		jTime.setText(DialoguesStructure.get().eta(EsiStructuresGetter.estimate(esiOwners, ownerTypes, locations, jTrackerLocations.isSelected())));
 	}
 
 	public static boolean structuresUpdatable(Program program) {
@@ -321,12 +342,14 @@ public class StructureUpdateDialog extends JDialogCentered {
 		private final List<EsiOwner> owners;
 		private final List<OwnerType> ownerTypes;
 		private final Set<MyLocation> locations;
+		private final boolean tracker;
 
-		public StructureUpdateTask(List<EsiOwner> owners, List<OwnerType> ownerTypes, Set<MyLocation> locations) {
+		public StructureUpdateTask(List<EsiOwner> owners, List<OwnerType> ownerTypes, Set<MyLocation> locations, boolean tracker) {
 			super(DialoguesUpdate.get().structures());
 			this.owners = owners;
 			this.ownerTypes = ownerTypes;
 			this.locations = locations;
+			this.tracker = tracker;
 		}
 
 		@Override
@@ -335,13 +358,13 @@ public class StructureUpdateDialog extends JDialogCentered {
 			if (locations != null) {
 				EsiStructuresGetter.createIDsFromLocations(locations);
 			} else if (ownerTypes != null) {
-				EsiStructuresGetter.createIDsFromOwners(ownerTypes);
+				EsiStructuresGetter.createIDsFromOwners(ownerTypes, tracker);
 			} else {
 				EsiStructuresGetter.createIDsFromOwner();
 			}
 			int progress = 0;
 			for (EsiOwner owner : owners) {
-				EsiStructuresGetter esiStructuresGetter = new EsiStructuresGetter(this, owner);
+				EsiStructuresGetter esiStructuresGetter = new EsiStructuresGetter(this, owner, tracker);
 				esiStructuresGetter.run();
 				progress++;
 				setTotalProgress(owners.size(), progress, 0, 100);

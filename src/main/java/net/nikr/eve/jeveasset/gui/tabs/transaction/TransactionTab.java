@@ -61,13 +61,13 @@ import net.nikr.eve.jeveasset.i18n.TabsTransaction;
 public class TransactionTab extends JMainTabPrimary {
 
 	private final JAutoColumnTable jTable;
-	private final JLabel jSellOrders;
+	private final JLabel jSellOrdersCount;
 	private final JLabel jSellOrdersTotal;
 	private final JLabel jSellOrdersAverage;
-	private final JLabel jBothOrders;
+	private final JLabel jBothOrdersCount;
 	private final JLabel jBothOrdersTotal;
 	private final JLabel jBothOrdersAverage;
-	private final JLabel jBuyOrders;
+	private final JLabel jBuyOrdersCount;
 	private final JLabel jBuyOrdersTotal;
 	private final JLabel jBuyOrdersAverage;
 
@@ -137,18 +137,24 @@ public class TransactionTab extends JMainTabPrimary {
 		installMenu(program, new TransactionTableMenu(), jTable, MyTransaction.class);
 
 		//Sell
-		jSellOrders = StatusPanel.createLabel(TabsTransaction.get().sellTitle(), Images.ORDERS_SELL.getIcon());
+		JLabel jSellOrders = StatusPanel.createLabel(TabsTransaction.get().sellTitle(), Images.ORDERS_SELL.getIcon());
 		this.addStatusbarLabel(jSellOrders);
 
 		jSellOrdersTotal = StatusPanel.createLabel(TabsTransaction.get().sellTotal(), Images.TOOL_VALUES.getIcon());
 		this.addStatusbarLabel(jSellOrdersTotal);
 
+		jSellOrdersCount = StatusPanel.createLabel(TabsTransaction.get().sellCount(), Images.EDIT_ADD.getIcon());
+		this.addStatusbarLabel(jSellOrdersCount);
+
 		jSellOrdersAverage = StatusPanel.createLabel(TabsTransaction.get().sellAvg(), Images.ASSETS_AVERAGE.getIcon());
 		this.addStatusbarLabel(jSellOrdersAverage);
 
 		//Both
-		jBothOrders = StatusPanel.createLabel(TabsTransaction.get().bothTitle(), Images.TOOL_TRANSACTION.getIcon());
+		JLabel jBothOrders = StatusPanel.createLabel(TabsTransaction.get().bothTitle(), Images.TOOL_TRANSACTION.getIcon());
 		this.addStatusbarLabel(jBothOrders);
+
+		jBothOrdersCount = StatusPanel.createLabel(TabsTransaction.get().bothCount(), Images.EDIT_ADD.getIcon());
+		this.addStatusbarLabel(jBothOrdersCount);
 
 		jBothOrdersTotal = StatusPanel.createLabel(TabsTransaction.get().bothTotal(), Images.TOOL_VALUES.getIcon());
 		this.addStatusbarLabel(jBothOrdersTotal);
@@ -157,8 +163,11 @@ public class TransactionTab extends JMainTabPrimary {
 		this.addStatusbarLabel(jBothOrdersAverage);
 
 		//Buy
-		jBuyOrders = StatusPanel.createLabel(TabsTransaction.get().buyTitle(), Images.ORDERS_BUY.getIcon());
+		JLabel jBuyOrders = StatusPanel.createLabel(TabsTransaction.get().buyTitle(), Images.ORDERS_BUY.getIcon());
 		this.addStatusbarLabel(jBuyOrders);
+
+		jBuyOrdersCount = StatusPanel.createLabel(TabsTransaction.get().buyCount(), Images.EDIT_ADD.getIcon());
+		this.addStatusbarLabel(jBuyOrdersCount);
 
 		jBuyOrdersTotal = StatusPanel.createLabel(TabsTransaction.get().buyTotal(), Images.TOOL_VALUES.getIcon());
 		this.addStatusbarLabel(jBuyOrdersTotal);
@@ -221,8 +230,8 @@ public class TransactionTab extends JMainTabPrimary {
 		public void listChanged(ListEvent<MyTransaction> listChanges) {
 			double sellTotal = 0;
 			double buyTotal = 0;
-			double sellCount = 0;
-			double buyCount = 0;
+			long sellCount = 0;
+			long buyCount = 0;
 			for (MyTransaction transaction : filterList) {
 				if (transaction.isSell()) { //Sell
 					sellTotal += transaction.getPrice() * transaction.getQuantity();
@@ -246,10 +255,13 @@ public class TransactionTab extends JMainTabPrimary {
 			if (bothTotal > 0 && bothCount > 0) {
 				bothAvg = bothTotal / bothCount;
 			}
+			jSellOrdersCount.setText(Formater.itemsFormat(sellCount));
 			jSellOrdersTotal.setText(Formater.iskFormat(sellTotal));
 			jSellOrdersAverage.setText(Formater.iskFormat(sellAvg));
+			jBothOrdersCount.setText(Formater.itemsFormat(sellCount + buyCount));
 			jBothOrdersTotal.setText(Formater.iskFormat(bothTotal));
 			jBothOrdersAverage.setText(Formater.iskFormat(bothAvg));
+			jBuyOrdersCount.setText(Formater.itemsFormat(buyCount));
 			jBuyOrdersTotal.setText(Formater.iskFormat(buyTotal));
 			jBuyOrdersAverage.setText(Formater.iskFormat(buyAvg));
 		}

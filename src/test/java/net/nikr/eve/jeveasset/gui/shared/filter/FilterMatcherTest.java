@@ -23,20 +23,18 @@ package net.nikr.eve.jeveasset.gui.shared.filter;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 import net.nikr.eve.jeveasset.TestUtil;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter.AllColumn;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter.CompareType;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.Percent;
-import org.junit.After;
-import org.junit.AfterClass;
 import static org.junit.Assert.assertEquals;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 
@@ -50,6 +48,7 @@ public class FilterMatcherTest extends TestUtil {
 		FLOAT(true, false),
 		PERCENT(true, false),
 		DATE(false, true),
+		DATE_LAST(false, true),
 		COLUMN_TEXT(false, false),
 		COLUMN_NUMBER(true, false),
 		COLUMN_PERCENT(true, false),
@@ -130,22 +129,6 @@ public class FilterMatcherTest extends TestUtil {
 
 	private final TestFilterControl filterControl = new TestFilterControl();
 	private final Item item = new Item();
-
-	@BeforeClass
-	public static void setUpClass() throws Exception {
-	}
-
-	@AfterClass
-	public static void tearDownClass() throws Exception {
-	}
-
-	@Before
-	public void setUp() {
-	}
-
-	@After
-	public void tearDown() {
-	}
 
 	@Test
 	public void testTime() {
@@ -240,6 +223,12 @@ public class FilterMatcherTest extends TestUtil {
 		matches(false, item, TestEnum.DATE, Filter.CompareType.AFTER, DATE);
 		matches(true,  item, TestEnum.DATE, Filter.CompareType.AFTER, DATE_AFTER);
 		matches(false, item, TestEnum.DATE, Filter.CompareType.AFTER, DATE_BEFORE);
+		//Last X Days
+		matches(false, item, TestEnum.DATE_LAST, Filter.CompareType.LAST_DAYS, "1"); //Last 1 days
+		matches(true,  item, TestEnum.DATE_LAST, Filter.CompareType.LAST_DAYS, "2"); //Last 2 days
+		//Last X Hours
+		matches(false, item, TestEnum.DATE_LAST, Filter.CompareType.LAST_HOURS, "24"); //Last 24 hours
+		matches(true,  item, TestEnum.DATE_LAST, Filter.CompareType.LAST_HOURS, "48"); //Last 48 hours
 
 		//Equals column
 		matches(true,  item, TestEnum.DATE, Filter.CompareType.EQUALS_COLUMN, TestEnum.COLUMN_DATE.name(), Formater.columnStringToDate(DATE));
@@ -588,28 +577,37 @@ public class FilterMatcherTest extends TestUtil {
 			EnumTableColumn<?> column = valueOf(columnString);
 			if (column instanceof TestEnum) {
 				TestEnum format = (TestEnum) column;
-				if (format.equals(TestEnum.TEXT)) {
-					return TEXT;
-				} else if (format.equals(TestEnum.DOUBLE)) {
-					return NUMBER_DOUBLE;
-				} else if (format.equals(TestEnum.FLOAT)) {
-					return NUMBER_FLOAT;
-				} else if (format.equals(TestEnum.LONG)) {
-					return NUMBER_LONG;
-				} else if (format.equals(TestEnum.INTEGER)) {
-					return NUMBER_INTEGER;
-				} else if (format.equals(TestEnum.PERCENT)) {
-					return PERCENT;
-				} else if (format.equals(TestEnum.DATE)) {
-					return Formater.columnStringToDate(DATE);
-				} else if (format.equals(TestEnum.COLUMN_TEXT)) {
-					return textColumn;
-				} else if (format.equals(TestEnum.COLUMN_NUMBER)) {
-					return numberColumn;
-				} else if (format.equals(TestEnum.COLUMN_PERCENT)) {
-					return percentColumn;
-				} else if (format.equals(TestEnum.COLUMN_DATE)) {
-					return dateColumn;
+				switch (format) {
+					case TEXT:
+						return TEXT;
+					case DOUBLE:
+						return NUMBER_DOUBLE;
+					case FLOAT:
+						return NUMBER_FLOAT;
+					case LONG:
+						return NUMBER_LONG;
+					case INTEGER:
+						return NUMBER_INTEGER;
+					case PERCENT:
+						return PERCENT;
+					case DATE:
+						return Formater.columnStringToDate(DATE);
+					case DATE_LAST:
+						Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
+						//minus 47 hours
+						calendar.add(Calendar.HOUR_OF_DAY, +1);
+						calendar.add(Calendar.DAY_OF_MONTH, -2);
+						return calendar.getTime();
+					case COLUMN_TEXT:
+						return textColumn;
+					case COLUMN_NUMBER:
+						return numberColumn;
+					case COLUMN_PERCENT:
+						return percentColumn;
+					case COLUMN_DATE:
+						return dateColumn;
+					default:
+						break;
 				}
 			}
 			return null;

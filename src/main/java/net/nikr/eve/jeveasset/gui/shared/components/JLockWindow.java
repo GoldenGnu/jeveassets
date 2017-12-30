@@ -113,6 +113,9 @@ public class JLockWindow {
 		protected void done() {
 			worker.gui();
 			hide();
+			if (worker instanceof LockWorkerAdvanced) {
+				((LockWorkerAdvanced) worker).hidden();
+			}
 			try {
 				get();
 			} catch (InterruptedException | ExecutionException ex) {
@@ -124,5 +127,9 @@ public class JLockWindow {
 	public static interface LockWorker {
 		public void task();
 		public void gui();
+	}
+
+	public static interface LockWorkerAdvanced extends LockWorker {
+		public void hidden();
 	}
 }

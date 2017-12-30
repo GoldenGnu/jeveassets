@@ -38,8 +38,10 @@ public abstract class DialoguesStructure extends Bundle {
 	public abstract String locationsAll();
 	public abstract String locationsItem();
 	public abstract String locationsSelected();
+	public abstract String locationsTracker();
 	public abstract String nextUpdate(String updatableIn);
 	public abstract String ownersAll();
 	public abstract String ownersSingle();
 	public abstract String title();
+	public abstract String updateTitle();
 }

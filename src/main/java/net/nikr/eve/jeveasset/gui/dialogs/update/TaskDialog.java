@@ -31,6 +31,9 @@ import javax.swing.*;
 import javax.swing.GroupLayout.ParallelGroup;
 import javax.swing.GroupLayout.SequentialGroup;
 import net.nikr.eve.jeveasset.Program;
+import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
+import net.nikr.eve.jeveasset.gui.frame.StatusPanel.Progress;
+import net.nikr.eve.jeveasset.gui.frame.StatusPanel.UpdateType;
 import net.nikr.eve.jeveasset.gui.shared.components.JLockWindow;
 import net.nikr.eve.jeveasset.i18n.DialoguesUpdate;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
@@ -39,7 +42,7 @@ import net.nikr.eve.jeveasset.i18n.GuiShared;
 public class TaskDialog {
 
 	private enum TaskAction {
-		OK, CANCEL
+		OK, CANCEL, MINIMIZE
 	}
 	public static final int WIDTH = 260;
 
@@ -63,20 +66,21 @@ public class TaskDialog {
 	private List<UpdateTask> updateTasks;
 	private int index;
 	private UpdateTask updateTask;
+	private Progress progress;
 	private final TasksCompleted completed;
 
-	public TaskDialog(final Program program, final UpdateTask updateTask, boolean totalProgress, TasksCompleted completed) {
-		this(program, Collections.singletonList(updateTask), totalProgress, completed);
+	public TaskDialog(final Program program, final UpdateTask updateTask, boolean totalProgress, UpdateType updateType, TasksCompleted completed) {
+		this(program, Collections.singletonList(updateTask), totalProgress, updateType, completed);
 	}
 
-	public TaskDialog(final Program program, final List<UpdateTask> updateTasks, boolean totalProgress, TasksCompleted completed) {
+	public TaskDialog(final Program program, final List<UpdateTask> updateTasks, boolean totalProgress, UpdateType updateType, TasksCompleted completed) {
 		this.program = program;
 		this.updateTasks = updateTasks;
 		this.completed = completed;
 
 		listener = new ListenerClass();
 
-		jWindow = new JDialog(program.getMainWindow().getFrame());
+		jWindow = new JDialog(program.getMainWindow().getFrame(), JDialog.DEFAULT_MODALITY_TYPE);
 		jWindow.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 		jWindow.setResizable(false);
 		jWindow.addWindowListener(listener);
@@ -94,6 +98,42 @@ public class TaskDialog {
 
 		JLabel jUpdate = new JLabel(DialoguesUpdate.get().updating());
 		jUpdate.setFont(new Font(jUpdate.getFont().getName(), Font.BOLD, jUpdate.getFont().getSize() + 4));
+
+		JButton jMinimize = new JButton(DialoguesUpdate.get().minimize());
+		jMinimize.setActionCommand(TaskAction.MINIMIZE.name());
+		jMinimize.addActionListener(listener);
+		jMinimize.setVisible(updateType != null);
+		if (updateType != null) {
+			progress = program.getStatusPanel().addProgress(updateType, new StatusPanel.ProgressControl() {
+				@Override
+				public void show() {
+					progress.setVisible(false);
+					SwingUtilities.invokeLater(new Runnable() {
+						@Override
+						public void run() {
+							jWindow.setVisible(true); //Blocking - do later
+						}
+					});
+					if (progress.isDone()) {
+						jMinimize.setEnabled(false); //Should not minimize after completed
+						SwingUtilities.invokeLater(new Runnable() {
+							@Override
+							public void run() {
+								done(); //Needs to be done after showing the dialog (add to EDT queue)
+							}
+						});
+					}
+				}
+				@Override
+				public void cancel() {
+					cancelUpdate();
+				}
+				@Override
+				public void setPause(boolean pause) {
+					updateTask.setPause(pause);
+				}
+			});
+		}
 
 		jIcon = new JLabel(new UpdateTask.EmptyIcon());
 		
@@ -123,7 +163,11 @@ public class TaskDialog {
 		jErrorScroll.setVisible(false);
 
 		ParallelGroup horizontalGroup = layout.createParallelGroup(GroupLayout.Alignment.CENTER);
-		horizontalGroup.addComponent(jUpdate, WIDTH, WIDTH, WIDTH);
+		horizontalGroup.addGroup(layout.createSequentialGroup()
+				.addComponent(jUpdate)
+				.addGap(0, 0, Integer.MAX_VALUE)
+				.addComponent(jMinimize)
+		);
 		for (UpdateTask updateTaskLoop : updateTasks) {
 			horizontalGroup.addComponent(updateTaskLoop.getTextLabel(), WIDTH, WIDTH, WIDTH);
 			updateTaskLoop.getTextLabel().addMouseListener(new ErrorMouseListener(updateTaskLoop));
@@ -150,7 +194,10 @@ public class TaskDialog {
 		);
 
 		SequentialGroup verticalGroup = layout.createSequentialGroup();
-		verticalGroup.addComponent(jUpdate, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight());
+		verticalGroup.addGroup(layout.createParallelGroup()
+				.addComponent(jUpdate, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+				.addComponent(jMinimize, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+		);
 		for (UpdateTask updateTaskLoop : updateTasks) {
 			verticalGroup.addComponent(updateTaskLoop.getTextLabel(), Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight());
 		}
@@ -181,8 +228,8 @@ public class TaskDialog {
 		}
 	}
 
-	public void hide() {
-		setVisible(false);
+	public JDialog getDialog() {
+		return jWindow;
 	}
 
 	private void update() {
@@ -194,17 +241,31 @@ public class TaskDialog {
 		} else { //Done
 			jIcon.setIcon(new UpdateTask.EmptyIcon());
 			jCancel.setEnabled(false);
-			jLockWindow.show(GuiShared.get().updating(), new JLockWindow.LockWorker() {
-				@Override
-				public void task() {
-					completed.tasksCompleted(TaskDialog.this);
-				}
-				@Override
-				public void gui() {
-					jOK.setEnabled(true);
-				}
-			});
+			if (progress != null && progress.isVisible()) {
+				progress.setDone(true);
+			} else {
+				done();
+			}
 		}
+	}
+
+	private void done() {
+		jLockWindow.show(GuiShared.get().updating(), new JLockWindow.LockWorkerAdvanced() {
+			@Override
+			public void task() {
+				completed.tasksCompleted(TaskDialog.this);
+			}
+			@Override
+			public void gui() {
+				jOK.setEnabled(true);
+			}
+			@Override
+			public void hidden() {
+				if (completed instanceof TasksCompletedAdvanced) {
+					((TasksCompletedAdvanced) completed).tasksHidden(TaskDialog.this);
+				}
+			}
+		});
 	}
 
 	private void centerWindow() {
@@ -213,13 +274,8 @@ public class TaskDialog {
 	}
 
 	private void setVisible(final boolean b) {
-		program.getMainWindow().setEnabled(!b);
 		if (b) {
 			centerWindow();
-		}
-		jWindow.setVisible(b);
-		if (b) {
-			jWindow.requestFocus();
 		} else { //Memory
 			for (UpdateTask task : updateTasks) {
 				for (MouseListener mouseListener : task.getTextLabel().getMouseListeners()) {
@@ -230,7 +286,11 @@ public class TaskDialog {
 			jOK.removeActionListener(listener);
 			jCancel.removeActionListener(listener);
 			updateTask.removePropertyChangeListener(listener);
+			if (progress != null) {
+				program.getStatusPanel().removeProgress(progress);
+			}
 		}
+		jWindow.setVisible(b);
 	}
 
 	private void cancelUpdate() {
@@ -257,6 +317,14 @@ public class TaskDialog {
 			} else {
 				jTotalProgressBar.setIndeterminate(true);
 			}
+			if (progress != null) {
+				if (totalProgress != null && totalProgress > 0 && totalProgress <= 100) {
+					progress.setValue(totalProgress);
+					progress.setIndeterminate(false);
+				} else {
+					progress.setIndeterminate(true);
+				}
+			}
 			int value = updateTask.getProgress();
 			jIcon.setIcon(updateTask.getIcon());
 			if (value == 100 && updateTask.isTaskDone()) {
@@ -277,9 +345,11 @@ public class TaskDialog {
 		public void actionPerformed(final ActionEvent e) {
 			if (TaskAction.OK.name().equals(e.getActionCommand())) {
 				setVisible(false);
-			}
-			if (TaskAction.CANCEL.name().equals(e.getActionCommand())) {
+			} else if (TaskAction.CANCEL.name().equals(e.getActionCommand())) {
 				cancelUpdate();
+			} else if (TaskAction.MINIMIZE.name().equals(e.getActionCommand())) {
+				progress.setVisible(true);
+				jWindow.setVisible(false);
 			}
 		}
 
@@ -364,5 +434,9 @@ public class TaskDialog {
 
 	public static interface TasksCompleted {
 		public void tasksCompleted(TaskDialog taskDialog);
+	}
+
+	public static interface TasksCompletedAdvanced extends TasksCompleted {
+		public void tasksHidden(TaskDialog taskDialog);
 	}
 }

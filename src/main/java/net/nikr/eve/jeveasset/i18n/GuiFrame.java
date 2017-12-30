@@ -38,11 +38,15 @@ public abstract class GuiFrame extends Bundle {
 	public abstract String accounts();
 	public abstract String business();
 	public abstract String change();
+	public abstract String clickToShow(String text);
+	public abstract String clickToApply(String text);
 	public abstract String close();
 	public abstract String contracts();
 	public abstract String credits();
 	public abstract String eve();
 	public abstract String exit();
+	public abstract String exitMsg(int size);
+	public abstract String exitTitle(int size);
 	public abstract String file();
 	public abstract String help();
 	public abstract String inventory();
@@ -79,7 +83,10 @@ public abstract class GuiFrame extends Bundle {
 	public abstract String updatable();
 	public abstract String update();
 	public abstract String update1();
+	public abstract String updateEveKit();
 	public abstract String updateStructure();
+	public abstract String updatingInProgressMsg();
+	public abstract String updatingInProgressTitle();
 	public abstract String values();
 	public abstract String valueTable();
 	public abstract String windowTitle(String programName, String programVersion, int portable, int profileCount, String activeProfileName);

@@ -130,6 +130,8 @@ public class FilterMatcher<E> implements Matcher<E> {
 				return after(column, filterControl.getColumnValue(item, text));
 			case LAST_DAYS:
 				return lastDays(column, text);
+			case LAST_HOURS:
+				return lastHours(column, text);
 			default:
 				//Fallback: show all...
 				return true;
@@ -263,6 +265,17 @@ public class FilterMatcher<E> implements Matcher<E> {
 			calendar.set(Calendar.SECOND, 0);
 			calendar.set(Calendar.MILLISECOND, 0);
 			calendar.add(Calendar.DAY_OF_MONTH, -days.intValue());  
+			return date.after(calendar.getTime());
+		}
+		return false;
+	}
+
+	private boolean lastHours(final Object object1, final Object object2) {
+		Date date = getDate(object1, false);
+		Number hours = createNumber(object2);
+		if (date != null && hours != null) {
+			Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
+			calendar.add(Calendar.HOUR_OF_DAY, -hours.intValue());  
 			return date.after(calendar.getTime());
 		}
 		return false;

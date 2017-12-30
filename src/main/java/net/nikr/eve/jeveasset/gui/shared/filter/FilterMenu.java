@@ -82,6 +82,8 @@ class FilterMenu<E> extends JMenu {
 				gui.addFilter(new Filter(LogicType.AND, column, compareType, column.name()));
 			} else if (compareType == CompareType.LAST_DAYS) {
 				gui.addFilter(new Filter(LogicType.AND, column, compareType, daysBetween()));
+			} else if (compareType == CompareType.LAST_HOURS) {
+				gui.addFilter(new Filter(LogicType.AND, column, compareType, hoursBetween()));
 			} else {
 				gui.addFilter(new Filter(LogicType.AND, column, compareType, text));
 			}
@@ -97,8 +99,14 @@ class FilterMenu<E> extends JMenu {
 		calendar.set(Calendar.MINUTE, 0);
 		calendar.set(Calendar.SECOND, 0);
 		calendar.set(Calendar.MILLISECOND, 0);
-		
+
 		int days = (int)( (new Date().getTime() - calendar.getTime().getTime()) / (1000 * 60 * 60 * 24));
 		return String.valueOf(days);
+	}
+
+	public String hoursBetween(){
+		Date date = Formater.columnStringToDate(text);
+		int hours = (int)((new Date().getTime() - date.getTime()) / (1000 * 60 * 60)) + 1;
+		return String.valueOf(hours);
 	}
 }

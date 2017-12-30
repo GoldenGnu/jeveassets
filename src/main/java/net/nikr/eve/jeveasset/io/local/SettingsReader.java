@@ -92,6 +92,7 @@ import net.nikr.eve.jeveasset.gui.tabs.transaction.TransactionTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.tree.TreeTab;
 import net.nikr.eve.jeveasset.gui.tabs.tree.TreeTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.values.Value;
+import net.nikr.eve.jeveasset.gui.tabs.values.Value.AssetValue;
 import net.nikr.eve.jeveasset.gui.tabs.values.ValueTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.values.ValueTableTab;
 import net.nikr.eve.jeveasset.i18n.General;
@@ -454,9 +455,9 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 				NodeList assetNodeList = dataNode.getElementsByTagName("asset");
 				for (int c = 0; c < assetNodeList.getLength(); c++) { //New data
 					Element assetNode = (Element) assetNodeList.item(c);
-					String id = AttributeGetters.getString(assetNode, "id");
+					AssetValue assetValue = parseAssetValue(assetNode);
 					double assets = AttributeGetters.getDouble(assetNode, "value");
-					value.addAssets(id, assets);
+					value.addAssets(assetValue, assets);
 				}
 				if (assetNodeList.getLength() == 0) { //Old data
 					value.setAssetsTotal(assetsTotal);
@@ -473,6 +474,18 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 			if (settings.getTrackerData().get(owner).isEmpty()) {
 				settings.getTrackerData().remove(owner);
 			}
+		}
+	}
+
+	private AssetValue parseAssetValue(Element node) throws XmlException {
+		if (AttributeGetters.haveAttribute(node, "id")) {
+			String id = AttributeGetters.getString(node, "id");
+			return new AssetValue(id);
+		} else {
+			String location = AttributeGetters.getString(node, "location");
+			Long locationID = AttributeGetters.getLongOptional(node, "locationid");
+			String flag = AttributeGetters.getStringOptional(node, "flag");
+			return new AssetValue(location, flag, locationID);
 		}
 	}
 

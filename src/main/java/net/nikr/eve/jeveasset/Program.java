@@ -53,7 +53,6 @@ import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.data.settings.tag.TagUpdate;
 import net.nikr.eve.jeveasset.gui.dialogs.AboutDialog;
 import net.nikr.eve.jeveasset.gui.dialogs.account.AccountManagerDialog;
-import net.nikr.eve.jeveasset.gui.dialogs.bugs.BugsDialog;
 import net.nikr.eve.jeveasset.gui.dialogs.profile.ProfileDialog;
 import net.nikr.eve.jeveasset.gui.dialogs.settings.SettingsDialog;
 import net.nikr.eve.jeveasset.gui.dialogs.settings.UserLocationSettingsPanel;
@@ -64,6 +63,7 @@ import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateDialog;
 import net.nikr.eve.jeveasset.gui.frame.MainMenu.MainMenuAction;
 import net.nikr.eve.jeveasset.gui.frame.MainWindow;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
+import net.nikr.eve.jeveasset.gui.frame.StatusPanel.UpdateType;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Updatable;
 import net.nikr.eve.jeveasset.gui.shared.components.JLockWindow;
@@ -80,13 +80,16 @@ import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewTab;
 import net.nikr.eve.jeveasset.gui.tabs.reprocessed.ReprocessedTab;
 import net.nikr.eve.jeveasset.gui.tabs.routing.RoutingTab;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.StockpileTab;
+import net.nikr.eve.jeveasset.gui.tabs.tracker.EveKitTrackerImportDialog;
 import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerTab;
 import net.nikr.eve.jeveasset.gui.tabs.transaction.TransactionTab;
 import net.nikr.eve.jeveasset.gui.tabs.tree.TreeTab;
 import net.nikr.eve.jeveasset.gui.tabs.values.DataSetCreator;
 import net.nikr.eve.jeveasset.gui.tabs.values.ValueRetroTab;
 import net.nikr.eve.jeveasset.gui.tabs.values.ValueTableTab;
+import net.nikr.eve.jeveasset.i18n.GuiFrame;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
+import net.nikr.eve.jeveasset.i18n.TabsTracker;
 import net.nikr.eve.jeveasset.io.online.PriceDataGetter;
 import net.nikr.eve.jeveasset.io.online.Updater;
 import net.nikr.eve.jeveasset.io.shared.DesktopUtil;
@@ -102,7 +105,7 @@ public class Program implements ActionListener {
 		TIMER
 	}
 	//Major.Minor.Bugfix [Release Candidate n] [BETA n] [DEV BUILD #n];
-	public static final String PROGRAM_VERSION = "5.2.1 DEV BUILD 1";
+	public static final String PROGRAM_VERSION = "5.3.0";
 	public static final String PROGRAM_NAME = "jEveAssets";
 	public static final String PROGRAM_HOMEPAGE = "https://eve.nikr.net/jeveasset";
 	public static final boolean PROGRAM_DEV_BUILD = false;
@@ -122,7 +125,6 @@ public class Program implements ActionListener {
 	private ProfileDialog profileDialog;
 	private SettingsDialog settingsDialog;
 	private UpdateDialog updateDialog;
-	private BugsDialog bugsDialog;
 
 	//Tabs
 	private ValueRetroTab valueRetroTab;
@@ -143,6 +145,7 @@ public class Program implements ActionListener {
 	private ContractsTab contractsTab;
 	private TreeTab treeTab;
 	private StructureUpdateDialog structureUpdateDialog;
+	private EveKitTrackerImportDialog eveKitTrackerImportDialog;
 
 	//Misc
 	private Updater updater;
@@ -268,13 +271,14 @@ public class Program implements ActionListener {
 		SplashUpdater.setProgress(88);
 		LOG.info("Loading: Update Dialog");
 		updateDialog = new UpdateDialog(this);
-		LOG.info("Loading: Bugs Dialog");
-		bugsDialog = new BugsDialog(this);
 		SplashUpdater.setProgress(90);
 		LOG.info("Loading: Options Dialog");
 		settingsDialog = new SettingsDialog(this);
 		SplashUpdater.setProgress(96);
+		LOG.info("Loading: Structure UpdateDialog");
 		structureUpdateDialog = new StructureUpdateDialog(this);
+		LOG.info("Loading: EveKit Tracker Import Dialog");
+		eveKitTrackerImportDialog = new EveKitTrackerImportDialog(this);
 	//GUI Done
 		LOG.info("GUI loaded");
 	//Updating data...
@@ -303,6 +307,12 @@ public class Program implements ActionListener {
 			LOG.info("Show Account Manager");
 			accountManagerDialog.setVisible(true);
 		}
+		Runtime.getRuntime().addShutdownHook(new Thread() {
+			@Override
+			public void run() {
+				getStatusPanel().cancelUpdates();
+			}
+		});
 	}
 
 	/**
@@ -578,13 +588,19 @@ public class Program implements ActionListener {
 	}
 
 	public final void profilesChanged() {
-		trackerTab.profilesChanged();
+		getMainWindow().getMenu().eveKitImport(!getProfileManager().getEveKitOwners().isEmpty());
 	}
 
 	/**
 	 * Used by macOsxCode() - should not be changed
 	 */
 	public void exit() {
+		if (getStatusPanel().updateInProgress() > 0) {
+			int value = JOptionPane.showConfirmDialog(getMainWindow().getFrame(),  GuiFrame.get().exitMsg(getStatusPanel().updateInProgress()), GuiFrame.get().exitTitle(getStatusPanel().updateInProgress()), JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+			if (value != JOptionPane.OK_OPTION) {
+				return;
+			}
+		}
 		saveExit();
 		LOG.info("Running shutdown hook(s) and exiting...");
 		System.exit(0);
@@ -873,14 +889,28 @@ public class Program implements ActionListener {
 			profileDialog.setVisible(true);
 		} else if (MainMenuAction.OPTIONS.name().equals(e.getActionCommand())) {
 			showSettings();
-		} else if (MainMenuAction.ABOUT.name().equals(e.getActionCommand())) { //Others
-			showAbout();
-		} else if (MainMenuAction.UPDATE.name().equals(e.getActionCommand())) {
+		} else if (MainMenuAction.UPDATE.name().equals(e.getActionCommand())) { //Update
 			updateDialog.setVisible(true);
 		} else if (MainMenuAction.UPDATE_STRUCTURE.name().equals(e.getActionCommand())) {
-			updateStructures(null);
+			if (getStatusPanel().updateing(UpdateType.STRUCTURE)) {
+				JOptionPane.showMessageDialog(getMainWindow().getFrame(), GuiFrame.get().updatingInProgressMsg(), GuiFrame.get().updatingInProgressTitle(), JOptionPane.PLAIN_MESSAGE);
+			} else {
+				updateStructures(null);
+			}
+		} else if (MainMenuAction.UPDATE_EVEKIT.name().equals(e.getActionCommand())) {
+			if (getProfileManager().getEveKitOwners().isEmpty()) {
+				JOptionPane.showMessageDialog(getMainWindow().getFrame(), TabsTracker.get().eveKitImportNoOwners(), TabsTracker.get().eveKitImportTitle(), JOptionPane.PLAIN_MESSAGE);
+			} else {
+				if (getStatusPanel().updateing(UpdateType.EVEKIT)) {
+					JOptionPane.showMessageDialog(getMainWindow().getFrame(), GuiFrame.get().updatingInProgressMsg(), GuiFrame.get().updatingInProgressTitle(), JOptionPane.PLAIN_MESSAGE);
+				} else {
+					eveKitTrackerImportDialog.setVisible(true);
+				}
+			}
+		} else if (MainMenuAction.ABOUT.name().equals(e.getActionCommand())) { //Others
+			showAbout();
 		} else if (MainMenuAction.SEND_BUG_REPORT.name().equals(e.getActionCommand())) {
-			bugsDialog.setVisible(true);
+			DesktopUtil.browse("https://github.com/GoldenGnu/jeveassets/issues/new", this);
 		} else if (MainMenuAction.README.name().equals(e.getActionCommand())) { //External Files
 			DesktopUtil.open(Settings.getPathReadme(), this);
 		} else if (MainMenuAction.LICENSE.name().equals(e.getActionCommand())) {

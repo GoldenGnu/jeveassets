@@ -44,6 +44,7 @@ import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
+import net.nikr.eve.jeveasset.gui.tabs.values.Value;
 import net.nikr.eve.jeveasset.i18n.DialoguesUpdate;
 import net.nikr.eve.jeveasset.i18n.General;
 import net.nikr.eve.jeveasset.io.esi.EsiAccountBalanceGetter;
@@ -581,14 +582,21 @@ public class UpdateDialog extends JDialogCentered {
 					updateTasks.add(new PriceDataTask(jPriceDataAll.isSelected()));
 				}
 				if (!updateTasks.isEmpty()) {
-					TaskDialog taskDialog = new TaskDialog(program, updateTasks, false, new TaskDialog.TasksCompleted() {
+					//Pause structure update
+					program.getStatusPanel().setPauseUpdates(true);
+					TaskDialog taskDialog = new TaskDialog(program, updateTasks, false, null, new TaskDialog.TasksCompleted() {
 						@Override
 						public void tasksCompleted(TaskDialog taskDialog) {
+							//Update tracker locations
+							Value.update();
+							//Update eventlists
 							program.updateEventLists();
 							//Create value tracker point
 							program.createTrackerDataPoint();
 							//Save settings after updating (if we crash later)
 							program.saveSettingsAndProfile();
+							//Resume structure update
+							program.getStatusPanel().setPauseUpdates(false);
 						}
 					});
 				}
