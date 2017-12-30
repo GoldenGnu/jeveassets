@@ -16,6 +16,30 @@
                   #### #  # #  # #  # #### #### #### #### ####
 
 ________________________________________________________________________________
+_5.3.0__________________________________________________________________________
+
+New Features:
+-Added count to Transactions statusbar and popup menu.
+-Added difference between start and end date to the Tracker tool statusbar 
+-Last X Hours filter
+-Unknown locations in the tracker are now resolved by citadel/structure updates
+-Lookup for fuzzwork item database
+-Structure update and EveKit tracker import can now be done in the background
+
+Bug Fixes:
+-Old Market Orders from the XmlAPI was never marked as done
+-ESI error limit did not handle negative wait values
+-Filter cache was not updated after adding/removing Tags
+-Stockpile Export/Import could duplicate Tags
+
+Code:
+-Warn about assets with bugged locations
+-Better handling of settings update failure
+-Updated JFreeChart to version 1.5.0 (Fix a few problems)
+-Updated EveKit library to 4.0.2
+-Updated eve-esi to 2.0.0
+
+________________________________________________________________________________
 _5.2.0__________________________________________________________________________
 
 New Features:
