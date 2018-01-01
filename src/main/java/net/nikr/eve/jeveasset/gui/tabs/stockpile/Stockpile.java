@@ -536,7 +536,7 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 
 		private Long matchesAsset(MyAsset asset, boolean add) {
 			if (asset != null) { //better safe then sorry
-				return matches(add, asset.isBPC() ? -asset.getItem().getTypeID() : asset.getItem().getTypeID(), asset.getOwnerID(), asset.getContainer(), null, asset.getLocation(), asset, null, null, null, null);
+				return matches(add, asset.isBPC() ? -asset.getTypeID() : asset.getTypeID(), asset.getOwnerID(), asset.getContainer(), null, asset.getLocation(), asset, null, null, null, null);
 			} else {
 				return null;
 			}
@@ -584,7 +584,7 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 
 		private Long matchesContract(MyContractItem contractItem, boolean add) {
 			if (contractItem != null) { //better safe then sorry
-				return matches(add, contractItem.getTypeID(), contractItem.getContract().isForCorp() ? contractItem.getContract().getIssuerCorpID() : contractItem.getContract().getIssuerID(), null, null, contractItem.getContract().getLocations(), null, null, null, null, contractItem);
+				return matches(add, contractItem.isBPC() ? -contractItem.getTypeID() : contractItem.getTypeID(), contractItem.getContract().isForCorp() ? contractItem.getContract().getIssuerCorpID() : contractItem.getContract().getIssuerID(), null, null, contractItem.getContract().getLocations(), null, null, null, null, contractItem);
 			} else {
 				return null;
 			}

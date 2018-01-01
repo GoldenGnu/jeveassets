@@ -535,7 +535,7 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 	//Create lookup set of TypeIDs
 		Set<Integer> typeIDs = new HashSet<Integer>();
 		for (StockpileItem item : stockpile.getItems()) {
-			typeIDs.add(item.getTypeID());
+			typeIDs.add(item.getItemTypeID());
 		}
 	//Create lookup maps of Items
 		//ContractItems
@@ -545,7 +545,7 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 				if (contractItem.getContract().isIgnoreContract()) {
 					continue;
 				}
-				int typeID = contractItem.getItem().getTypeID();
+				int typeID = contractItem.isBPC() ? -contractItem.getTypeID() : contractItem.getTypeID(); //BPC has negative value
 				if (!typeIDs.contains(typeID)) {
 					continue; //Ignore wrong typeID
 				}
@@ -565,7 +565,7 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 				if (asset.isGenerated()) { //Skip generated assets
 					continue;
 				}
-				int typeID = asset.getItem().getTypeID();
+				int typeID = asset.isBPC() ? -asset.getTypeID() : asset.getTypeID(); //BPC has negative value
 				if (!typeIDs.contains(typeID)) {
 					continue; //Ignore wrong typeID
 				}
@@ -633,7 +633,7 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 				if (item instanceof Stockpile.StockpileTotal) {
 					continue;
 				}
-				final int TYPE_ID = item.getTypeID();
+				final int TYPE_ID = item.getItemTypeID();
 				double price = ApiIdConverter.getPrice(TYPE_ID, item.isBPC());
 				float volume = ApiIdConverter.getVolume(TYPE_ID, true);
 				item.updateValues(price, volume);

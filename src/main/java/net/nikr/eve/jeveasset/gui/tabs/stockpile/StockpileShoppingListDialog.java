@@ -219,7 +219,7 @@ class StockpileShoppingListDialog extends JDialogCentered {
 			if (asset.isGenerated()) { //Skip generated assets
 				continue;
 			}
-			add(asset.getItem().getTypeID(), asset, claims, items);
+			add(asset.isBPC() ? -asset.getTypeID() : asset.getTypeID(), asset, claims, items);
 		}
 		//Market Orders
 		for (MyMarketOrder marketOrder : program.getMarketOrdersList()) {
@@ -238,7 +238,7 @@ class StockpileShoppingListDialog extends JDialogCentered {
 			if (contractItem.getContract().isIgnoreContract()) {
 				continue;
 			}
-			add(contractItem.getTypeID(), contractItem, claims, items);
+			add(contractItem.isBPC() ? -contractItem.getTypeID() : contractItem.getTypeID(), contractItem, claims, items);
 		}
 
 	//Claim items
@@ -249,11 +249,20 @@ class StockpileShoppingListDialog extends JDialogCentered {
 		}
 
 	//Show missing
-		String s = "";
+		StringBuilder builder = new StringBuilder();
 		double volume = 0;
 		double value = 0;
 		for (Map.Entry<Integer, List<StockClaim>> entry : claims.entrySet()) {
-			Item item = ApiIdConverter.getItem(entry.getKey());
+			boolean bpc = false;
+			boolean bpo = false;
+			Item item;
+			if (entry.getKey() < 0) {
+				item = ApiIdConverter.getItem(Math.abs(entry.getKey()));
+				bpc = true;
+			} else {
+				item = ApiIdConverter.getItem(entry.getKey());
+				bpo = item.isBlueprint();
+			}
 			long countMinimum = 0;
 			for (StockClaim stockClaim : entry.getValue()) {
 				if (stockClaim.getPercentFull() > hide) {
@@ -267,9 +276,18 @@ class StockpileShoppingListDialog extends JDialogCentered {
 				value = value + (stockClaim.getCountMinimum() * stockClaim.getDynamicPrice());
 			}
 			if (countMinimum > 0) { //Add type string (if anything is needed)
-				s = s + Formater.longFormat(countMinimum) + "x " + item.getTypeName() + "\r\n";
+				builder.append(Formater.longFormat(countMinimum));
+				builder.append("x ");
+				builder.append(item.getTypeName());
+				if (bpc) {
+					builder.append(" (BPC)");
+				} else if (bpo) {
+					builder.append(" (BPO)");
+				}
+				builder.append("\r\n");
 			}
 		}
+		String s = builder.toString();
 		if (s.isEmpty()) { //if string is empty, nothing is needed
 			s = TabsStockpile.get().nothingNeeded();
 		} else { //Add total volume and value
