@@ -49,12 +49,16 @@ import net.nikr.eve.jeveasset.data.sde.Item;
 
 public abstract class DataConverter {
 
-	public static List<MyAsset> assetIndustryJob(final Collection<MyIndustryJob> industryJobs) {
+	public static List<MyAsset> assetIndustryJob(final Collection<MyIndustryJob> industryJobs, boolean includeManufacturing) {
 		List<MyAsset> assets = new ArrayList<MyAsset>();
 		for (MyIndustryJob industryJob : industryJobs) {
 			if (!industryJob.isDelivered()) {
-				MyAsset asset = new MyAsset(industryJob);
+				MyAsset asset = new MyAsset(industryJob, false);
 				assets.add(asset);
+				if (includeManufacturing && industryJob.isManufacturing()) {
+					MyAsset product = new MyAsset(industryJob, true);
+					assets.add(product);
+				}
 			}
 		}
 		return assets;

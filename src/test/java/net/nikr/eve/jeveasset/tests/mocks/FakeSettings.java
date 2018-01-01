@@ -585,4 +585,14 @@ public abstract class FakeSettings extends Settings {
 	public ProxyData getProxyData() {
 		throw new UnsupportedOperationException("not implemented");
 	}
+
+	@Override
+	public boolean setIncludeManufacturing(boolean includeManufacturing) {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public boolean isIncludeManufacturing() {
+		throw new UnsupportedOperationException("not implemented");
+	}
 }

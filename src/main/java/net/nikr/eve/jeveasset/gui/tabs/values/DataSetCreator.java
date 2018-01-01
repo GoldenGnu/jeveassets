@@ -36,7 +36,6 @@ import net.nikr.eve.jeveasset.data.api.raw.RawContract.ContractStatus;
 import net.nikr.eve.jeveasset.data.profile.ProfileData;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.tabs.values.Value.AssetValue;
-import net.nikr.eve.jeveasset.i18n.General;
 import net.nikr.eve.jeveasset.i18n.TabsValues;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 
@@ -96,19 +95,8 @@ public class DataSetCreator {
 		try {
 			profileData.getAssetsEventList().getReadWriteLock().readLock().lock();
 			for (MyAsset asset : profileData.getAssetsEventList()) {
-				//Skip market orders
-				if (asset.getFlag().equals(General.get().marketOrderSellFlag())) {
-					continue; //Ignore market sell orders
-				}
-				if (asset.getFlag().equals(General.get().marketOrderBuyFlag())) {
-					continue; //Ignore market buy orders
-				}
-				//Skip contracts
-				if (asset.getFlag().equals(General.get().contractIncluded())) {
-					continue; //Ignore contracts included
-				}
-				if (asset.getFlag().equals(General.get().contractExcluded())) {
-					continue; //Ignore contracts excluded
+				if (asset.isGenerated()) { //Skip generated assets
+					continue;
 				}
 				Value value = getValueInner(values, asset.getOwnerName(), date);
 				//Location/Flag logic

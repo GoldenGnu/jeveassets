@@ -97,7 +97,6 @@ import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileTotal;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.StockpileImportDialog.ImportReturn;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.StockpileSeparatorTableCell.StockpileCellAction;
-import net.nikr.eve.jeveasset.i18n.General;
 import net.nikr.eve.jeveasset.i18n.TabsStockpile;
 import net.nikr.eve.jeveasset.io.local.SettingsReader;
 import net.nikr.eve.jeveasset.io.local.SettingsWriter;
@@ -561,25 +560,10 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 
 		//Inventory AKA Assets
 		Map<Integer, List<MyAsset>> assets = new HashMap<Integer, List<MyAsset>>();
-		String marketOrderSellFlag = General.get().marketOrderSellFlag();
-		String marketOrderBuyFlag = General.get().marketOrderBuyFlag();
-		String contractIncluded = General.get().contractIncluded();
-		String contractExcluded = General.get().contractExcluded();
 		if (stockpile.isAssets()) {
 			for (MyAsset asset : program.getAssetList()) {
-				//Skip market orders
-				if (asset.getFlag().equals(marketOrderSellFlag)) {
-					continue; //Ignore market sell orders
-				}
-				if (asset.getFlag().equals(marketOrderBuyFlag)) {
-					continue; //Ignore market buy orders
-				}
-				//Skip contracts
-				if (asset.getFlag().equals(contractIncluded)) {
-					continue; //Ignore contracts included
-				}
-				if (asset.getFlag().equals(contractExcluded)) {
-					continue; //Ignore contracts excluded
+				if (asset.isGenerated()) { //Skip generated assets
+					continue;
 				}
 				int typeID = asset.getItem().getTypeID();
 				if (!typeIDs.contains(typeID)) {
