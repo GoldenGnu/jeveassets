@@ -45,8 +45,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -110,6 +108,8 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 		SHOPPING_LIST_MULTI,
 		IMPORT_EFT,
 		IMPORT_ISK_PER_HOUR,
+		IMPORT_MULTIBUY,
+		IMPORT_SHOPPING_LIST,
 		IMPORT_XML,
 		EXPORT_XML,
 		COLLAPSE,
@@ -189,14 +189,24 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 		jImportIskPerHour.addActionListener(listener);
 		jImport.add(jImportIskPerHour);
 
-		JMenuItem jEveAssets = new JMenuItem(TabsStockpile.get().exportStockpiles(), Images.TOOL_STOCKPILE.getIcon());
-		jEveAssets.setActionCommand(StockpileAction.IMPORT_XML.name());
-		jEveAssets.addActionListener(listener);
-		jImport.add(jEveAssets);
+		JMenuItem jImportEve = new JMenuItem(TabsStockpile.get().importEveMultibuy(), Images.MISC_EVE.getIcon());
+		jImportEve.setActionCommand(StockpileAction.IMPORT_MULTIBUY.name());
+		jImportEve.addActionListener(listener);
+		jImport.add(jImportEve);
 
-		JMenuItem jExport = new JMenuItem(TabsStockpile.get().importStockpiles(), Images.TOOL_STOCKPILE.getIcon());
-		jExport.setActionCommand(StockpileAction.EXPORT_XML.name());
-		jExport.addActionListener(listener);
+		JMenuItem jImportShoppingList = new JMenuItem(TabsStockpile.get().importShoppingList(), Images.STOCKPILE_SHOPPING_LIST.getIcon());
+		jImportShoppingList.setActionCommand(StockpileAction.IMPORT_SHOPPING_LIST.name());
+		jImportShoppingList.addActionListener(listener);
+		jImport.add(jImportShoppingList);
+
+		JMenuItem jImportXml = new JMenuItem(TabsStockpile.get().importStockpiles(), Images.TOOL_STOCKPILE.getIcon());
+		jImportXml.setActionCommand(StockpileAction.IMPORT_XML.name());
+		jImportXml.addActionListener(listener);
+		jImport.add(jImportXml);
+
+		JMenuItem jExportXml = new JMenuItem(TabsStockpile.get().exportStockpiles(), Images.TOOL_STOCKPILE.getIcon());
+		jExportXml.setActionCommand(StockpileAction.EXPORT_XML.name());
+		jExportXml.addActionListener(listener);
 
 		JFixedToolBar jToolBarRight = new JFixedToolBar();
 
@@ -258,7 +268,7 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 				Settings.get().getTableFilters(NAME)
 				);
 
-		filterControl.addExportOption(jExport);
+		filterControl.addExportOption(jExportXml);
 		//Menu
 		installMenu(program, new StockpileTableMenu(), jTable, StockpileItem.class);
 
@@ -687,131 +697,39 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 		stockpile.updateTotal();
 	}
 
-	private void importEFT() {
+	private void importText(StockpileImport stockpileImport) {
 		//Get string from clipboard
-		String fit = jTextDialog.importText();
-		if (fit == null) {
+		String text = jTextDialog.importText();
+		if (text == null) {
 			return; //Cancelled
 		}
 
-		//Validate
-		fit = fit.trim();
-		if (fit.isEmpty()) { //Empty sting
-			JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), TabsStockpile.get().importEmpty(), TabsStockpile.get().importEftTitle(), JOptionPane.PLAIN_MESSAGE);
+		//Validate Input
+		text = text.trim();
+		if (text.isEmpty()) { //Empty sting
+			JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), TabsStockpile.get().importEmpty(), stockpileImport.getTitle(), JOptionPane.PLAIN_MESSAGE);
 			return;
 		}
 
-		String[] split = fit.split("[\r\n]");
-		if (split.length < 1) { //Malformed
-			JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), TabsStockpile.get().importEftHelp(), TabsStockpile.get().importEftTitle(), JOptionPane.PLAIN_MESSAGE);
+		Map<Integer, Double> data = stockpileImport.importText(text);
+		//Validate Output
+		if (data == null || data.isEmpty()) {
+			JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), stockpileImport.getHelp(), stockpileImport.getTitle(), JOptionPane.PLAIN_MESSAGE);
 			return;
 		}
-		//Malformed
-		if (!split[0].startsWith("[") || !split[0].contains(",") || !split[0].endsWith("]")) {
-			JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), TabsStockpile.get().importEftHelp(), TabsStockpile.get().importEftTitle(), JOptionPane.PLAIN_MESSAGE);
-			return;
-		}
-
-		//Format and split
-		fit = fit.replace("[", "").replace("]", "");
-		List<String> modules = new ArrayList<String>(Arrays.asList(fit.split("[\r\n,]")));
-
-		//Get name of fit
-		String name;
-		if (modules.size() > 1) {
-			name = modules.get(1).trim();
-			modules.remove(1);
-		} else {
-			JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), TabsStockpile.get().importEftHelp(), TabsStockpile.get().importEftTitle(), JOptionPane.PLAIN_MESSAGE);
-			return;
-		}
-
 		//Create Stockpile
-		Stockpile stockpile = stockpileDialog.showAdd(name);
+		Stockpile stockpile = stockpileDialog.showAdd(stockpileImport.getName());
 		if (stockpile == null) { //Dialog cancelled
 			return;
 		}
-
-		Settings.lock("Stockpile (EFT import)"); //Lock for Stockpile (EFT import)
-		//Add modules
-		Map<Integer, StockpileItem> items = new HashMap<Integer, StockpileItem>();
-		for (String module : modules) {
-			module = module.trim().toLowerCase(); //Format line
-			//Find x[Number] - used for drones and cargo
-			Pattern p = Pattern.compile("x\\d+$");
-			Matcher m = p.matcher(module);
-			long count = 0;
-			while (m.find()) {
-				String group = m.group().replace("x", "");
-				count = count + Long.valueOf(group);
-			}
-			if (count == 0) {
-				count = 1;
-			}
-			module = module.replaceAll("x\\d+$", "").trim();
-			if (module.isEmpty()) { //Skip empty lines
-				continue;
-			}
-			//Search for item name
-			for (Item item : StaticData.get().getItems().values()) {
-				if (item.getTypeName().toLowerCase().equals(module)) { //Found item
-					int typeID = item.getTypeID();
-					if (!items.containsKey(typeID)) { //Add new item
-						StockpileItem stockpileItem = new StockpileItem(stockpile, item, item.getTypeID(), 0);
-						stockpile.add(stockpileItem);
-						items.put(typeID, stockpileItem);
-					}
-					//Update item count
-					StockpileItem stockpileItem = items.get(typeID);
-					stockpileItem.addCountMinimum(count);
-					break; //search done
-				}
-			}
+		Settings.lock("Stockpile (Import)"); //Lock for Stockpile (Import)
+		for (Map.Entry<Integer, Double> entry : data.entrySet()) {
+			Item item = ApiIdConverter.getItem(entry.getKey());
+			StockpileItem stockpileItem = new StockpileItem(stockpile, item, entry.getKey(), entry.getValue());
+			stockpile.add(stockpileItem);
 		}
-		Settings.unlock("Stockpile (EFT import)"); //Unlock for Stockpile (EFT import)
-		program.saveSettings("Stockpile (EFT import)"); //Save Stockpile (EFT import)
-		//Update stockpile data
-		addStockpile(stockpile);
-		scrollToSctockpile(stockpile);
-	}
-
-	private void importIskPerHour() {
-		String shoppingList = jTextDialog.importText();
-		if (shoppingList == null) {
-			return; //Cancelled
-		}
-
-		//Validate
-		shoppingList = shoppingList.trim();
-		if (shoppingList.isEmpty()) { //Empty sting
-			JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), TabsStockpile.get().importEmpty(), TabsStockpile.get().importIskPerHourTitle(), JOptionPane.PLAIN_MESSAGE);
-			return;
-		}
-		Map<String, Double> data = ImportIskPerHour.importIskPerHour(shoppingList);
-
-		if (data == null || data.isEmpty()) { //Validate
-			JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), TabsStockpile.get().importIskPerHourHelp(), TabsStockpile.get().importIskPerHourTitle(), JOptionPane.PLAIN_MESSAGE);
-			return;
-		}
-
-		//Create Stockpile
-		Stockpile stockpile = stockpileDialog.showAdd("");
-		if (stockpile == null) { //Dialog cancelled
-			return;
-		}
-		Settings.lock("Stockpile (IskPerHour import)"); //Lock for Stockpile (IskPerHour import)
-		//Search for item names
-		for (Map.Entry<String, Double> entry : data.entrySet()) {
-			for (Item item : StaticData.get().getItems().values()) {
-				if (item.getTypeName().toLowerCase().equals(entry.getKey().toLowerCase())) { //Found item
-					StockpileItem stockpileItem = new StockpileItem(stockpile, item, item.getTypeID(), entry.getValue());
-					stockpile.add(stockpileItem);
-					break; //search done
-				}
-			}
-		}
-		Settings.unlock("Stockpile (IskPerHour import)"); //Unlock for Stockpile (IskPerHour import)
-		program.saveSettings("Stockpile (IskPerHour import)"); //Save Stockpile (EFT import)
+		Settings.unlock("Stockpile (Import)"); //Unlock for Stockpile (Import)
+		program.saveSettings("Stockpile (Import)"); //Save Stockpile (Import)
 		//Update stockpile data
 		addStockpile(stockpile);
 		scrollToSctockpile(stockpile);
@@ -986,8 +904,7 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 
 		@Override
 		public void actionPerformed(final ActionEvent e) {
-			//Shopping list single
-			if (StockpileCellAction.SHOPPING_LIST_SINGLE.name().equals(e.getActionCommand())) {
+			if (StockpileCellAction.SHOPPING_LIST_SINGLE.name().equals(e.getActionCommand())) { //Shopping list single
 				int index = jTable.getSelectedRow();
 				Object o = tableModel.getElementAt(index);
 				if (o instanceof SeparatorList.Separator<?>) {
@@ -995,24 +912,16 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 					StockpileItem item = (StockpileItem) separator.first();
 					stockpileShoppingListDialog.show(item.getStockpile());
 				}
-			}
-			//Shopping list multi
-			if (StockpileAction.SHOPPING_LIST_MULTI.name().equals(e.getActionCommand())) {
+			} else if (StockpileAction.SHOPPING_LIST_MULTI.name().equals(e.getActionCommand())) { //Shopping list multi
 				List<Stockpile> stockpiles = stockpileSelectionDialog.show(Settings.get().getStockpiles());
 				if (stockpiles != null) {
 					stockpileShoppingListDialog.show(stockpiles);
 				}
-			}
-			//Collapse all
-			if (StockpileAction.COLLAPSE.name().equals(e.getActionCommand())) {
+			} else if (StockpileAction.COLLAPSE.name().equals(e.getActionCommand())) { //Collapse all
 				jTable.expandSeparators(false);
-			}
-			//Expand all
-			if (StockpileAction.EXPAND.name().equals(e.getActionCommand())) {
+			} else if (StockpileAction.EXPAND.name().equals(e.getActionCommand())) { //Expand all
 				jTable.expandSeparators(true);
-			}
-			//Multiplier
-			if (StockpileCellAction.UPDATE_MULTIPLIER.name().equals(e.getActionCommand())) {
+			} else if (StockpileCellAction.UPDATE_MULTIPLIER.name().equals(e.getActionCommand())) { //Multiplier
 				Object source = e.getSource();
 				EventList<StockpileItem> selected = selectionModel.getSelected();
 				Object sep = null;
@@ -1036,31 +945,25 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 					}
 					tableModel.fireTableDataChanged();
 				}
-			}
-			//Add stockpile (EFT Import)
-			if (StockpileAction.IMPORT_EFT.name().equals(e.getActionCommand())) {
-				importEFT();
-			}
-			//Add stockpile (EFT Import)
-			if (StockpileAction.IMPORT_ISK_PER_HOUR.name().equals(e.getActionCommand())) {
-				importIskPerHour();
-			}
-			if (StockpileAction.IMPORT_XML.name().equals(e.getActionCommand())) {
+			} else if (StockpileAction.IMPORT_EFT.name().equals(e.getActionCommand())) { //Add stockpile (EFT Import)
+				importText(new ImportEft());
+			} else if (StockpileAction.IMPORT_ISK_PER_HOUR.name().equals(e.getActionCommand())) { //Add stockpile (Isk Per Hour)
+				importText(new ImportIskPerHour());
+			} else if (StockpileAction.IMPORT_MULTIBUY.name().equals(e.getActionCommand())) { //Add stockpile (Eve Multibuy)
+				importText(new ImportEveMultibuy());
+			} else if (StockpileAction.IMPORT_SHOPPING_LIST.name().equals(e.getActionCommand())) { //Add stockpile (Shopping List)
+				importText(new ImportShoppingList());
+			} else if (StockpileAction.IMPORT_XML.name().equals(e.getActionCommand())) { //Add stockpile (Xml)
 				importXml();
-			}
-			if (StockpileAction.EXPORT_XML.name().equals(e.getActionCommand())) {
+			} else if (StockpileAction.EXPORT_XML.name().equals(e.getActionCommand())) { //Export XML
 				exportXml();
-			}
-			//Add stockpile
-			if (StockpileAction.ADD_STOCKPILE.name().equals(e.getActionCommand())) {
+			} else if (StockpileAction.ADD_STOCKPILE.name().equals(e.getActionCommand())) { //Add stockpile
 				Stockpile stockpile = stockpileDialog.showAdd();
 				if (stockpile != null) {
 					addStockpile(stockpile);
 					scrollToSctockpile(stockpile);
 				}
-			}
-			//Edit stockpile
-			if (StockpileCellAction.EDIT_STOCKPILE.name().equals(e.getActionCommand())) {
+			} else if (StockpileCellAction.EDIT_STOCKPILE.name().equals(e.getActionCommand())) { //Edit stockpile
 				int index = jTable.getSelectedRow();
 				Object o = tableModel.getElementAt(index);
 				if (o instanceof SeparatorList.Separator<?>) {
@@ -1074,9 +977,7 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 						addStockpile(stockpile);
 					}
 				}
-			}
-			//Clone stockpile
-			if (StockpileCellAction.CLONE_STOCKPILE.name().equals(e.getActionCommand())) {
+			} else if (StockpileCellAction.CLONE_STOCKPILE.name().equals(e.getActionCommand())) { //Clone stockpile
 				int index = jTable.getSelectedRow();
 				Object o = tableModel.getElementAt(index);
 				if (o instanceof SeparatorList.Separator<?>) {
@@ -1088,9 +989,7 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 						addStockpile(cloneStockpile);
 					}
 				}
-			}
-			//Delete stockpile
-			if (StockpileCellAction.DELETE_STOCKPILE.name().equals(e.getActionCommand())) {
+			} else if (StockpileCellAction.DELETE_STOCKPILE.name().equals(e.getActionCommand())) { //Delete stockpile
 				int index = jTable.getSelectedRow();
 				Object o = tableModel.getElementAt(index);
 				if (o instanceof SeparatorList.Separator<?>) {
@@ -1106,9 +1005,7 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 						removeStockpile(stockpile);
 					}
 				}
-			}
-			//Add item
-			if (StockpileCellAction.ADD_ITEM.name().equals(e.getActionCommand())) {
+			} else if (StockpileCellAction.ADD_ITEM.name().equals(e.getActionCommand())) { //Add item
 				int index = jTable.getSelectedRow();
 				Object o = tableModel.getElementAt(index);
 				if (o instanceof SeparatorList.Separator<?>) {
@@ -1237,5 +1134,5 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 				}
 			}
 		}
-	}	
+	}
 }

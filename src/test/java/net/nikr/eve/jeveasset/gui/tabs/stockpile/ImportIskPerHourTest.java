@@ -28,6 +28,23 @@ import org.junit.Test;
 
 public class ImportIskPerHourTest extends TestUtil {
 
+	private final ImportIskPerHour importIskPerHour = new ImportIskPerHour();
+
+	private Map<String, Double> test(String text, int size) {
+		return test(text, size, true);
+	}
+
+	private Map<String, Double> test(String text, int size, boolean tritanium) {
+		Map<String, Double> data = importIskPerHour.doImport(text);
+		assertNotNull(data);
+		assertEquals(size, data.size());
+		if (tritanium) {
+			assertEquals(2932280, data.get("Tritanium"), 0.1);
+		}
+		assertEquals(data.size(), importIskPerHour.importText(text).size());
+		return data;
+	}
+
 	@Test
 	public void testCopyEveList() {
 		String eveListFormat = "Tritanium 2932280\n" +
@@ -59,9 +76,7 @@ public class ImportIskPerHourTest extends TestUtil {
 					"Fusion Reactor Unit 32\n" +
 					"R.A.M.- Starship Tech 9\n" +
 					"Procurer 1";
-		Map<String, Double> data = ImportIskPerHour.importIskPerHour(eveListFormat);
-		assertEquals(29, data.size());
-		assertEquals(2932280, data.get("Tritanium"), 0.1);
+		test(eveListFormat, 29);
 	}
 
 	@Test
@@ -130,9 +145,7 @@ public class ImportIskPerHourTest extends TestUtil {
 					"Total Volume of Materials: 62,519.89 m3\n" +
 					"Total Cost of Materials: 273,043,780.28 ISK\n" +
 					"Total Volume of Built Item(s): 359,000.00 m3";
-		Map<String, Double> data = ImportIskPerHour.importIskPerHour(plainFormat);
-		assertEquals(32, data.size());
-		assertEquals(2932280, data.get("Tritanium"), 0.1);
+		test(plainFormat, 32);
 	}
 
 	@Test
@@ -187,9 +200,7 @@ public class ImportIskPerHourTest extends TestUtil {
 					"Algos|1.00|0|1|Raw Mats|||Station|Jita IV - Moon 4 - Caldari Navy Assembly Plant|0|0|0|0|0|0\n" +
 					"Skiff|1.00|2|1|Raw Mats|None||Station|Jita IV - Moon 4 - Caldari Navy Assembly Plant|0|0|0|0|0|0\n" +
 					"Skiff|2.00|2|2|Components|None||Station|Jita IV - Moon 4 - Caldari Navy Assembly Plant|0|0|0|0|0|0";
-		Map<String, Double> data = ImportIskPerHour.importIskPerHour(plainFormat);
-		assertEquals(32, data.size());
-		assertEquals(2932280, data.get("Tritanium"), 0.1);
+		test(plainFormat, 32);
 	}
 
 	@Test
@@ -254,9 +265,7 @@ public class ImportIskPerHourTest extends TestUtil {
 					"Total Volume of Materials:,62519.89,m3\n" +
 					"Total Cost of Materials:,273043780.28,ISK\n" +
 					"Total Volume of Built Item(s):,359000,m3";
-		Map<String, Double> data = ImportIskPerHour.importIskPerHour(csvFormat);
-		assertEquals(32, data.size());
-		assertEquals(2932280, data.get("Tritanium"), 0.1);
+		test(csvFormat, 32);
 	}
 
 	@Test
@@ -311,9 +320,7 @@ public class ImportIskPerHourTest extends TestUtil {
 					"Algos,1.00,0,1,Raw Mats,,,Station,Jita IV - Moon 4 - Caldari Navy Assembly Plant,0,0,0,0,0,0\n" +
 					"Skiff,1.00,2,1,Raw Mats,None,,Station,Jita IV - Moon 4 - Caldari Navy Assembly Plant,0,0,0,0,0,0\n" +
 					"Skiff,2.00,2,2,Components,None,,Station,Jita IV - Moon 4 - Caldari Navy Assembly Plant,0,0,0,0,0,0";
-		Map<String, Double> data = ImportIskPerHour.importIskPerHour(csvFormat);
-		assertEquals(32, data.size());
-		assertEquals(2932280, data.get("Tritanium"), 0.1);
+		test(csvFormat, 32);
 	}
 
 	@Test
@@ -378,9 +385,7 @@ public class ImportIskPerHourTest extends TestUtil {
 					"Total Volume of Materials:;62519,89;m3\n" +
 					"Total Cost of Materials:;273043780,28;ISK\n" +
 					"Total Volume of Built Item(s):;359000;m3";
-		Map<String, Double> data = ImportIskPerHour.importIskPerHour(ssvFormat);
-		assertEquals(32, data.size());
-		assertEquals(2932280, data.get("Tritanium"), 0.1);
+		test(ssvFormat, 32);
 	}
 
 	@Test
@@ -435,9 +440,7 @@ public class ImportIskPerHourTest extends TestUtil {
 					"Algos;1;0;1;Raw Mats;;;Station;Jita IV - Moon 4 - Caldari Navy Assembly Plant;0;0;0;0;0;0\n" +
 					"Skiff;1;2;1;Raw Mats;None;;Station;Jita IV - Moon 4 - Caldari Navy Assembly Plant;0;0;0;0;0;0\n" +
 					"Skiff;2;2;2;Components;None;;Station;Jita IV - Moon 4 - Caldari Navy Assembly Plant;0;0;0;0;0;0";
-		Map<String, Double> data = ImportIskPerHour.importIskPerHour(ssvFormat);
-		assertEquals(32, data.size());
-		assertEquals(2932280, data.get("Tritanium"), 0.1);
+		test(ssvFormat, 32);
 	}
 
 	@Test
@@ -455,8 +458,7 @@ public class ImportIskPerHourTest extends TestUtil {
 					"Single-crystal Superalloy I-beam, 32, 112135.02, 3588320.64\n" +
 					"Intact Armor Plates, 4, 3041000.02, 12164000.08\n" +
 					"R.A.M.- Ammunition Tech, 2, 193.89, 387.78";
-		Map<String, Double> data = ImportIskPerHour.importIskPerHour(ssvFormat);
-		assertEquals(11, data.size());
+		Map<String, Double> data = test(ssvFormat, 11, false);
 		assertEquals(1520, data.get("Drone Transceiver"), 0.1);
 	}
 	

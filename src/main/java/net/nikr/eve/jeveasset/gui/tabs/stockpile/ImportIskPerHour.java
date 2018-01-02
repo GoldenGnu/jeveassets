@@ -24,22 +24,32 @@ package net.nikr.eve.jeveasset.gui.tabs.stockpile;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
+import net.nikr.eve.jeveasset.i18n.TabsStockpile;
 
 
-public class ImportIskPerHour {
+public class ImportIskPerHour extends StockpileImport{
 	private static final Integer MATERIAL = 0;
 	private static final Integer QUANTITY = 1;
-	public static Map<String, Double> importIskPerHour(String shoppingList) {
-		if (shoppingList == null) {
-			return null; //Cancelled
-		}
+
+	@Override
+	public String getTitle() {
+		return TabsStockpile.get().importIskPerHourTitle();
+	}
+
+	@Override
+	public String getHelp() {
+		return TabsStockpile.get().importIskPerHourHelp();
+	}
+	
+	@Override
+	protected Map<String, Double> doImport(String text) {
 		//Get lines:
-		String[] lines = shoppingList.split("[\r\n]+");
+		String[] lines = text.split("[\r\n]+");
 		//Find format
-		boolean defaultCopy = shoppingList.contains("Material - Quantity");
-		boolean defaultFile = shoppingList.contains("Material|");
-		boolean csv = shoppingList.contains("Material,");
-		boolean ssv = shoppingList.contains("Material;");
+		boolean defaultCopy = text.contains("Material - Quantity");
+		boolean defaultFile = text.contains("Material|");
+		boolean csv = text.contains("Material,");
+		boolean ssv = text.contains("Material;");
 
 		if (defaultCopy) {
 			return processDefaultCopy(lines);
@@ -54,7 +64,7 @@ public class ImportIskPerHour {
 		}
 	}
 
-	private static Map<String, Double> processDefaultCopy(String[] lines) {
+	private Map<String, Double> processDefaultCopy(String[] lines) {
 		Map<String, Double> data = new HashMap<String, Double>();
 		for (String line : lines) {
 			if (line.trim().isEmpty() || (line.contains(":") && !line.contains(" (") && !line.contains(") ")) || line.contains("Material - Quantity")) {
@@ -82,7 +92,7 @@ public class ImportIskPerHour {
 		return data;
 	}
 
-	private static Map<String, Double> processCsv(String[] lines, String separator, boolean decimalComma) {
+	private Map<String, Double> processCsv(String[] lines, String separator, boolean decimalComma) {
 		Map<String, Double> data = new HashMap<String, Double>();
 		for (String line : lines) {
 			if (line.trim().isEmpty() || line.contains(":") || !Pattern.compile(separator).matcher(line).find() || line.startsWith("Material") || line.startsWith("Item") || line.startsWith("Build Item")) {
@@ -109,7 +119,7 @@ public class ImportIskPerHour {
 		return data;
 	}
 
-	private static Map<String, Double> processEveList(String[] lines) {
+	private Map<String, Double> processEveList(String[] lines) {
 		Map<String, Double> data = new HashMap<String, Double>();
 		for (String line : lines) {
 			if (line.trim().isEmpty()) {
