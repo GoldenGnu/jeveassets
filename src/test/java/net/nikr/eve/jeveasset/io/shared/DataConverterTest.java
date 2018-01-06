@@ -72,7 +72,8 @@ public class DataConverterTest extends TestUtil {
 				//Quantity
 				assertEquals((Object) asset.getQuantity(), -2);
 				asset.setQuantity(options.getInteger());
-				assertEquals(asset.getItemFlag(), ApiIdConverter.getFlag(0));
+				assertEquals(asset.getItemFlag().getFlagName(), General.get().industryJobFlag());
+				assertEquals(asset.getItemFlag().getFlagText(), General.get().industryJobFlag());
 				//ItemFlag
 				asset.setItemFlag(options.getItemFlag());
 				ConverterTestUtil.testValues(assets.get(0), options);
