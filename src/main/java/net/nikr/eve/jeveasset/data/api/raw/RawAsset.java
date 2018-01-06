@@ -78,7 +78,7 @@ public class RawAsset {
 	public RawAsset(MyIndustryJob industryJob) {
 		isSingleton = true;
 		itemId = industryJob.getBlueprintID();
-		itemFlag = ApiIdConverter.getFlag(0);
+		itemFlag = new ItemFlag(0, General.get().industryJobFlag(), General.get().industryJobFlag());
 		locationId = industryJob.getLocationID();
 		locationType = RawConverter.toAssetLocationType(locationId);
 		if (industryJob.isBPO()) {
