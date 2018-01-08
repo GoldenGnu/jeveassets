@@ -560,6 +560,18 @@ public class UpdateDialog extends JDialogCentered {
 		public void actionPerformed(final ActionEvent e) {
 			if (UpdateDialogAction.UPDATE.name().equals(e.getActionCommand())) {
 				setVisible(false);
+				Date lastUpdate = null;
+				for (OwnerType ownerType : program.getProfileManager().getOwnerTypes()) {
+					Date update = ownerType.getAssetLastUpdate();
+					if (lastUpdate == null) {
+						lastUpdate = update;
+					} if (update != null) {
+						if (lastUpdate.after(update)) {
+							lastUpdate = update;
+						}
+					}
+				}
+				final Date start = lastUpdate;
 				List<UpdateTask> updateTasks = new ArrayList<UpdateTask>();
 				if (jMarketOrders.isSelected()
 						|| jJournal.isSelected()
@@ -590,7 +602,7 @@ public class UpdateDialog extends JDialogCentered {
 							//Update tracker locations
 							Value.update();
 							//Update eventlists
-							program.updateEventLists();
+							program.updateEventLists(start);
 							//Create value tracker point
 							program.createTrackerDataPoint();
 							//Save settings after updating (if we crash later)

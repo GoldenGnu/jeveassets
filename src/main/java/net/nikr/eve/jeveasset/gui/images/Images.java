@@ -168,6 +168,7 @@ public enum Images {
 	TOOL_TRANSACTION ("tool_transaction.png"),
 	TOOL_JOURNAL ("tool_journal.png"),
 	TOOL_TREE ("tool_tree.png"),
+	TOOL_LOG ("tool_log.png"),
 
 	UPDATE_NOT_STARTED ("update_not_started.png"),
 	UPDATE_WORKING ("update_working.png"),

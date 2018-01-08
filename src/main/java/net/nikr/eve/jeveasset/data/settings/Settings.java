@@ -77,6 +77,7 @@ public class Settings {
 	private static final String PATH_PRICE_DATA = "data" + File.separator + "pricedata.dat";
 	private static final String PATH_ASSETS = "data" + File.separator + "assets.xml";
 	private static final String PATH_CONQUERABLE_STATIONS = "data" + File.separator + "conquerable_stations.xml";
+	private static final String PATH_LOGS = "data" + File.separator + "asset_logs.xml";
 	private static final String PATH_CITADEL = "data" + File.separator + "citadel.xml";
 	private static final String PATH_README = "readme.txt";
 	private static final String PATH_LICENSE = "license.txt";
@@ -840,6 +841,10 @@ public class Settings {
 
 	public static String getPathConquerableStations() {
 		return FileUtil.getLocalFile(Settings.PATH_CONQUERABLE_STATIONS, !Program.isPortable());
+	}
+
+	public static String getPathLogs() {
+		return FileUtil.getLocalFile(Settings.PATH_LOGS, !Program.isPortable());
 	}
 
 	public static String getPathCitadel() {

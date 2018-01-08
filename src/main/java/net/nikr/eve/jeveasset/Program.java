@@ -27,6 +27,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -49,6 +50,7 @@ import net.nikr.eve.jeveasset.data.profile.ProfileData;
 import net.nikr.eve.jeveasset.data.profile.ProfileManager;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
 import net.nikr.eve.jeveasset.data.sde.StaticData;
+import net.nikr.eve.jeveasset.data.settings.LogManager;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.data.settings.tag.TagUpdate;
 import net.nikr.eve.jeveasset.gui.dialogs.AboutDialog;
@@ -74,6 +76,7 @@ import net.nikr.eve.jeveasset.gui.tabs.items.ItemsTab;
 import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustryJobsTab;
 import net.nikr.eve.jeveasset.gui.tabs.journal.JournalTab;
 import net.nikr.eve.jeveasset.gui.tabs.loadout.LoadoutsTab;
+import net.nikr.eve.jeveasset.gui.tabs.log.LogTab;
 import net.nikr.eve.jeveasset.gui.tabs.materials.MaterialsTab;
 import net.nikr.eve.jeveasset.gui.tabs.orders.MarketOrdersTab;
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewTab;
@@ -144,6 +147,7 @@ public class Program implements ActionListener {
 	private ReprocessedTab reprocessedTab;
 	private ContractsTab contractsTab;
 	private TreeTab treeTab;
+	private LogTab logTab;
 	private StructureUpdateDialog structureUpdateDialog;
 	private EveKitTrackerImportDialog eveKitTrackerImportDialog;
 
@@ -258,6 +262,9 @@ public class Program implements ActionListener {
 		SplashUpdater.setProgress(80);
 		LOG.info("Loading: Contracts Tab");
 		contractsTab = new ContractsTab(this);
+		SplashUpdater.setProgress(82);
+		LOG.info("Loading: Log Tab");
+		logTab = new LogTab(this);
 		SplashUpdater.setProgress(82);
 	//Dialogs
 		LOG.info("Loading: Account Manager Dialog");
@@ -384,7 +391,7 @@ public class Program implements ActionListener {
 		jLockWindow.show(GuiShared.get().updating(), new JLockWindow.LockWorker() {
 			@Override
 			public void task() {
-				updateEventLists(null, locationIDs, null);
+				updateEventLists(null, locationIDs, null, null);
 			}
 
 			@Override
@@ -397,7 +404,7 @@ public class Program implements ActionListener {
 		jLockWindow.show(GuiShared.get().updating(), new JLockWindow.LockWorker() {
 			@Override
 			public void task() {
-				updateEventLists(null, null, typeIDs);
+				updateEventLists(null, null, typeIDs, null);
 			}
 
 			@Override
@@ -410,7 +417,7 @@ public class Program implements ActionListener {
 		jLockWindow.show(GuiShared.get().updating(), new JLockWindow.LockWorker() {
 			@Override
 			public void task() {
-				updateEventLists(itemIDs, null, null);
+				updateEventLists(itemIDs, null, null, null);
 			}
 
 			@Override
@@ -436,10 +443,14 @@ public class Program implements ActionListener {
 	}
 
 	public final void updateEventLists() {
-		updateEventLists(null, null, null);
+		updateEventLists(null, null, null, null);
 	}
 
-	public final synchronized void updateEventLists(Set<Long> itemIDs, Set<Long> locationIDs, Set<Integer> typeIDs) {
+	public final void updateEventLists(Date start) {
+		updateEventLists(null, null, null, start);
+	}
+
+	private synchronized void updateEventLists(Set<Long> itemIDs, Set<Long> locationIDs, Set<Integer> typeIDs, Date start) {
 		LOG.info("Updating EventList");
 		for (JMainTab jMainTab : mainWindow.getTabs()) {
 			ensureEDT(new Runnable() {
@@ -457,7 +468,11 @@ public class Program implements ActionListener {
 		} else if (typeIDs != null) {
 			profileData.updatePrice(typeIDs);
 		} else {
+			List<MyAsset> oldAsset = new ArrayList<MyAsset>(getAssetList()); //Copy
 			saveSettings = profileData.updateEventLists();
+			if (start != null) {
+				LogManager.createLog(oldAsset, start, profileData);
+			}
 		}
 		if (locationIDs != null) { //Update locations
 			for (JMainTab jMainTab : mainWindow.getTabs()) {
@@ -883,6 +898,8 @@ public class Program implements ActionListener {
 			mainWindow.addTab(contractsTab);
 		} else if (MainMenuAction.TREE.name().equals(e.getActionCommand())) {
 			mainWindow.addTab(treeTab);
+		} else if (MainMenuAction.LOG.name().equals(e.getActionCommand())) {
+			mainWindow.addTab(logTab);
 		} else if (MainMenuAction.ACCOUNT_MANAGER.name().equals(e.getActionCommand())) { //Settings
 			accountManagerDialog.setVisible(true);
 		} else if (MainMenuAction.PROFILES.name().equals(e.getActionCommand())) {

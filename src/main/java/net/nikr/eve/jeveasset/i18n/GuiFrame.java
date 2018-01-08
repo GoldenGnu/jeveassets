@@ -58,6 +58,7 @@ public abstract class GuiFrame extends Bundle {
 	public abstract String linkFaq();
 	public abstract String linkForum();
 	public abstract String linkGitHub();
+	public abstract String log();
 	public abstract String market();
 	public abstract String materials();
 	public abstract String misc();

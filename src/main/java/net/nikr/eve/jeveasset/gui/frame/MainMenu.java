@@ -46,6 +46,7 @@ public class MainMenu extends JMenuBar {
 		INDUSTRY_JOBS,
 		OVERVIEW,
 		MATERIALS,
+		LOG,
 		ACCOUNT_MANAGER,
 		PROFILES,
 		OPTIONS,
@@ -136,6 +137,12 @@ public class MainMenu extends JMenuBar {
 		menuItem = new JMenuItem(GuiFrame.get().overview());
 		menuItem.setIcon(Images.TOOL_OVERVIEW.getIcon());
 		menuItem.setActionCommand(MainMenuAction.OVERVIEW.name());
+		menuItem.addActionListener(program);
+		submenu.add(menuItem);
+
+		menuItem = new JMenuItem(GuiFrame.get().log());
+		menuItem.setIcon(Images.TOOL_LOG.getIcon());
+		menuItem.setActionCommand(MainMenuAction.LOG.name());
 		menuItem.addActionListener(program);
 		submenu.add(menuItem);
 
