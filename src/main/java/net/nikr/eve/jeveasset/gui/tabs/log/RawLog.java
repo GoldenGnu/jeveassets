@@ -36,6 +36,7 @@ public class RawLog implements Comparable<RawLog> {
 	private final Date date;
 	private final Long itemID;
 	private final Integer typeID;
+	private final Long count;
 	private final LogData oldData;
 	private final LogData newData;
 	private final Map<LogChangeType, Set<LogType>> logTypes;
@@ -48,6 +49,7 @@ public class RawLog implements Comparable<RawLog> {
 		this.date = rawLog.date;
 		this.itemID = rawLog.itemID;
 		this.typeID = rawLog.typeID;
+		this.count = rawLog.count;
 		this.oldData = rawLog.oldData;
 		this.newData = rawLog.newData;
 		this.logTypes = rawLog.logTypes;
@@ -62,10 +64,11 @@ public class RawLog implements Comparable<RawLog> {
 	 * @param newData 
 	 * @param logTypes 
 	 */
-	public RawLog(Date date, Long itemID, Integer typeID, LogData oldData, LogData newData, Map<LogChangeType, Set<LogType>> logTypes) {
+	public RawLog(Date date, Long itemID, Integer typeID, Long count, LogData oldData, LogData newData, Map<LogChangeType, Set<LogType>> logTypes) {
 		this.date = date;
 		this.itemID = itemID;
 		this.typeID = typeID;
+		this.count = count;
 		this.oldData = oldData;
 		this.newData = newData;
 		this.logTypes = logTypes;
@@ -81,6 +84,10 @@ public class RawLog implements Comparable<RawLog> {
 
 	public Integer getTypeID() {
 		return typeID;
+	}
+
+	public Long getCount() {
+		return count;
 	}
 
 	public LogData getOldData() {

@@ -48,6 +48,16 @@ public enum LogTableFormat implements EnumTableColumn<MyLog> {
 			return from.getTypeName();
 		}
 	},
+	COUNT(Long.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsLog.get().columnCount();
+		}
+		@Override
+		public Object getColumnValue(final MyLog from) {
+			return from.getCount();
+		}
+	},
 	ACTION(String.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {

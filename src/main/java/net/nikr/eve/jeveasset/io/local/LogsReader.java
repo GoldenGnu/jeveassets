@@ -66,6 +66,7 @@ public class LogsReader extends AbstractXmlReader<Boolean> {
 		for (int a = 0; a < logNodes.getLength(); a++) {
 			Element logNode = (Element) logNodes.item(a);
 			int typeID = AttributeGetters.getInt(logNode, "typeid");
+			long count = AttributeGetters.getLong(logNode, "count");
 			Date date = AttributeGetters.getDate(logNode, "date");
 			long itemID = AttributeGetters.getLong(logNode, "itemid");
 			LogData newData = parseLogData(logNode, "new");
@@ -92,7 +93,7 @@ public class LogsReader extends AbstractXmlReader<Boolean> {
 					//No problem...
 				}
 			}
-			logset.add(new RawLog(date, itemID, typeID, oldData, newData, logTypes));
+			logset.add(new RawLog(date, itemID, typeID, count, oldData, newData, logTypes));
 		}
 	}
 

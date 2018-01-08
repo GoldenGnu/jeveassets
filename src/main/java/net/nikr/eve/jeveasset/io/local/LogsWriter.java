@@ -66,6 +66,7 @@ public class LogsWriter extends AbstractXmlWriter {
 			for (RawLog log : logset) {
 				Element logNode = xmldoc.createElementNS(null, "log");
 				logNode.setAttributeNS(null, "typeid", String.valueOf(log.getTypeID()));
+				logNode.setAttributeNS(null, "count", String.valueOf(log.getCount()));
 				logNode.setAttributeNS(null, "date", String.valueOf(log.getDate().getTime()));
 				logNode.setAttributeNS(null, "itemid", String.valueOf(log.getItemID()));
 				writeLogData(logNode, "old",  log.getOldData());
