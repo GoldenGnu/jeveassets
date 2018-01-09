@@ -21,6 +21,7 @@
 package net.nikr.eve.jeveasset.io.local;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import net.nikr.eve.jeveasset.data.settings.Settings;
@@ -74,7 +75,7 @@ public class LogsWriter extends AbstractXmlWriter {
 				writeLogData(logNode, "new",  log.getNewData());
 				StringBuilder builder = new StringBuilder();
 				boolean first = true;
-				for (Set<LogType> logTypes : log.getLogTypes().values()) {
+				for (List<LogType> logTypes : log.getLogTypes().values()) {
 					for (LogType logType : logTypes) {
 						if (first) {
 							first = false;

@@ -20,8 +20,7 @@
  */
 package net.nikr.eve.jeveasset.gui.tabs.log;
 
-import java.util.Map;
-import java.util.Set;
+import java.util.List;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 
 
@@ -65,16 +64,16 @@ public class MyLog extends RawLog {
 	private String createAction(RawLog rawLog) {
 		StringBuilder builder = new StringBuilder();
 		boolean first = true;
-		for (Map.Entry<LogChangeType, Set<LogType>> entry : rawLog.getLogTypes().entrySet()) {
-			if (first) {
-				first = false;
-			} else {
-				builder.append(" + ");
-			}
-			Integer min = null;
-			Integer max = null;
-			Integer count = null;
-			for (LogType logType : entry.getValue()) {
+		for (List<LogType> values : rawLog.getLogTypes().values()) {
+			for (LogType logType : values) {
+				if (first) {
+					first = false;
+				} else {
+					builder.append(" + ");
+				}
+				Integer min = null;
+				Integer max = null;
+				Integer count = null;
 				if (min == null) {
 					min = logType.getPercent();
 				} else {
@@ -90,70 +89,71 @@ public class MyLog extends RawLog {
 				} else {
 					count = count + logType.getCount();
 				}
+				switch (logType.getChangeType()) {
+					case MOVED_CONTAINER:
+						builder.append("Moved: Container Changed");
+						break;
+					case MOVED_FLAG: 
+						builder.append("Moved: Flag Changed");
+						break;
+					case MOVED_LOCATION: 
+						builder.append("Moved: Location Changed");
+						break;
+					case MOVED_OWNER: 
+						builder.append("Moved: Owner Changed");
+						break;
+					case MOVED_SAME:
+						builder.append("Moved: Stack Changed");
+						break;
+					case MOVED_UNKNOWN:
+						builder.append("Moved: Unknown");
+						break;
+					case ADDED_UNKNOWN: 
+						builder.append("New: Unknown");
+						break;
+					case ADDED_TRANSACTIONS_BOUGHT:
+						builder.append("New: Bought");
+						break;
+					case ADDED_CONTRACT_ACCEPTED:
+						builder.append("New: Contract Accepted");
+						break;
+					case ADDED_INDUSTRY_JOB_DELIVERED:
+						builder.append("New: Industry Job Delivered");
+						break;
+					case ADDED_LOOT:
+						builder.append("New: Loot");
+						break;
+					case REMOVED_UNKNOWN: 
+						builder.append("Removed: Unknown");
+						break;
+					case REMOVED_MARKET_ORDER_CREATED: 
+						builder.append("Removed: Sell Market Order Created");
+						break;
+					case REMOVED_INDUSTRY_JOB_CREATED: 
+						builder.append("Removed: Industry Job Created");
+						break;
+					case REMOVED_CONTRACT_CREATED:
+						builder.append("Removed: Contract Created");
+						break;
+					case REMOVED_CONTRACT_ACCEPTED:
+						builder.append("Removed: Contract Accepted");
+						break;
+				}
+				builder.append(" x");
+				builder.append(count);
+				builder.append(" (");
+				if (max == null || min == null) {
+					builder.append(0);
+				} else if (max.equals(min)) {
+					builder.append(min);
+				} else {
+					builder.append(min);
+					builder.append("-");
+					builder.append(max);
+				}
+				builder.append("%)");
 			}
-			switch (entry.getKey()) {
-				case MOVED_CONTAINER:
-					builder.append("Moved: Container Changed");
-					break;
-				case MOVED_FLAG: 
-					builder.append("Moved: Flag Changed");
-					break;
-				case MOVED_LOCATION: 
-					builder.append("Moved: Location Changed");
-					break;
-				case MOVED_OWNER: 
-					builder.append("Moved: Owner Changed");
-					break;
-				case MOVED_SAME:
-					builder.append("Moved: Stack Changed");
-					break;
-				case MOVED_UNKNOWN:
-					builder.append("Moved: Unknown");
-					break;
-				case ADDED_UNKNOWN: 
-					builder.append("New: Unknown");
-					break;
-				case ADDED_TRANSACTIONS_BOUGHT:
-					builder.append("New: Bought");
-					break;
-				case ADDED_CONTRACT_ACCEPTED:
-					builder.append("New: Contract Accepted");
-					break;
-				case ADDED_INDUSTRY_JOB_DELIVERED:
-					builder.append("New: Industry Job Delivered");
-					break;
-				case ADDED_LOOT:
-					builder.append("New: Loot");
-					break;
-				case REMOVED_UNKNOWN: 
-					builder.append("Removed: Unknown");
-					break;
-				case REMOVED_MARKET_ORDER_CREATED: 
-					builder.append("Removed: Sell Market Order Created");
-					break;
-				case REMOVED_INDUSTRY_JOB_CREATED: 
-					builder.append("Removed: Industry Job Created");
-					break;
-				case REMOVED_CONTRACT_CREATED:
-					builder.append("Removed: Contract Created");
-					break;
-				case REMOVED_CONTRACT_ACCEPTED:
-					builder.append("Removed: Contract Accepted");
-					break;
-			}
-			builder.append(" x");
-			builder.append(count);
-			builder.append(" (");
-			if (max == null || min == null) {
-				builder.append(0);
-			} else if (max.equals(min)) {
-				builder.append(min);
-			} else {
-				builder.append(min);
-				builder.append("-");
-				builder.append(max);
-			}
-			builder.append("%)");
+			
 		}
 		String s = builder.toString();
 		if (s.isEmpty()) {

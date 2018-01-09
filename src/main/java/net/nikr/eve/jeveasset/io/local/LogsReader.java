@@ -78,7 +78,7 @@ public class LogsReader extends AbstractXmlReader<Boolean> {
 				logs.put(date, logset);
 			}
 			String change = AttributeGetters.getString(logNode, "change");
-			Map<LogChangeType, Set<LogType>> logTypes = new HashMap<>();
+			Map<LogChangeType, List<LogType>> logTypes = new HashMap<>();
 			for (String s : change.split(",")) {
 				try {
 					
@@ -90,7 +90,7 @@ public class LogsReader extends AbstractXmlReader<Boolean> {
 					int percent = Integer.valueOf(array[1]);
 					Date typeDate = new Date(Long.valueOf(array[2]));
 					int count2 = Integer.valueOf(array[3]);
-					LogManager.putSet(logTypes, changeType, new LogType(typeDate, changeType, percent, count2));
+					LogManager.put(logTypes, changeType, new LogType(typeDate, changeType, percent, count2));
 				} catch (IllegalArgumentException ex) {
 					//No problem...
 				}

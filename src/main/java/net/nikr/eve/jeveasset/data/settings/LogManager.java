@@ -116,7 +116,7 @@ public class LogManager {
 			if (asset.getFlag().equals(General.get().industryJobFlag())) {
 				continue;
 			}
-			oldMap.put(asset.getItemID(), new LogAsset(asset));
+			oldMap.put(asset.getItemID(), new LogAsset(asset, end));
 		}
 		for (MyAsset asset : newAssets) {
 			if (asset.isGenerated()) {
@@ -125,7 +125,7 @@ public class LogManager {
 			if (asset.getFlag().equals(General.get().industryJobFlag())) {
 				continue;
 			}
-			newMap.put(asset.getItemID(), new LogAsset(asset));
+			newMap.put(asset.getItemID(), new LogAsset(asset, end));
 		}
 		Set<RawLog> newLogs = new HashSet<RawLog>();
 	//New
@@ -160,10 +160,11 @@ public class LogManager {
 				newLogs.add(new RawLog(oldAsset, end, oldData, newData, LogData.changed(end, oldData, newData, 100, newAsset.getNeed(), LogChangeType.MOVED_UNKNOWN)));
 			}
 			if (oldAsset.getCount() > newAsset.getCount()) {
-				removed.put(oldAsset.getItemID(), new LogAsset(oldAsset, oldAsset.getCount() - newAsset.getCount()));
-			} else if (oldAsset.getCount() < newAsset.getCount()) {
-				added.put(newAsset.getItemID(), new LogAsset(newAsset, newAsset.getCount() - oldAsset.getCount()));
+				removed.put(oldAsset.getItemID(), new LogAsset(oldAsset, oldAsset.getCount() - newAsset.getCount(), end));
+			} /*else if (oldAsset.getCount() < newAsset.getCount()) {
+				added.put(newAsset.getItemID(), new LogAsset(newAsset, newAsset.getCount() - oldAsset.getCount(), end));
 			}
+			*/
 		}
 		//Added Assets
 		List<LogAsset> unknownAdded = new ArrayList<>();
@@ -187,19 +188,19 @@ public class LogManager {
 			put(claims, asset.getTypeID(), asset);
 		}
 		//Add Sources
-		Map<Integer, List<SourceAsset>> sources = new HashMap<>();
+		Map<Integer, List<LogAsset>> sources = new HashMap<>();
 		for (LogAsset asset : removed) {
 			int typeID = asset.getTypeID();
 			if (!typeIDs.contains(typeID)) { //TypeID does not match - Remain Unknown
-				Map<LogChangeType, Set<LogType>> logTypes = Collections.singletonMap(LogChangeType.REMOVED_UNKNOWN, Collections.singleton(new LogType(end, LogChangeType.REMOVED_UNKNOWN, 0, asset.getNeed())));
+				Map<LogChangeType, List<LogType>> logTypes = Collections.singletonMap(LogChangeType.REMOVED_UNKNOWN, Collections.singletonList(new LogType(end, LogChangeType.REMOVED_UNKNOWN, 0, asset.getNeed())));
 				newLogs.add(new RawLog(asset, end, new LogData(asset), null, logTypes));
 				continue;
 			}
-			put(sources, typeID, new SourceAsset(asset, end));
+			put(sources, typeID, asset);
 		}
 		//Resolve claims
 		for (Map.Entry<Integer, List<LogAsset>> entry : claims.entrySet()) {
-			List<SourceAsset> soruceList = sources.get(entry.getKey());
+			List<LogAsset> soruceList = sources.get(entry.getKey());
 			if (soruceList == null) {
 				continue;
 			}
@@ -214,10 +215,11 @@ public class LogManager {
 		}
 		for (List<LogAsset> list : claims.values()) {
 			for (LogAsset claim : list) {
-				Map<LogChangeType, Set<LogType>> logTypes = claim.getLogTypes();
+				Map<LogChangeType, List<LogType>> logTypes = claim.getLogTypes();
 				LogAsset fromAsset = null;
 				for (LogTypeAsset logTypeAsset : claim.getLogTypeAssets()) {
-					logTypes.putAll(LogData.changed(end, new LogData(logTypeAsset.getAsset()), new LogData(claim), logTypeAsset.getPercent(), logTypeAsset.getCount(), LogChangeType.MOVED_SAME));
+					LogType logType = LogData.getLogType(end, new LogData(logTypeAsset.getAsset()), new LogData(claim), logTypeAsset.getPercent(), logTypeAsset.getCount(), LogChangeType.MOVED_SAME);
+					put(logTypes, logType.getChangeType(), logType);
 					fromAsset = logTypeAsset.getAsset();
 				}
 				if (logTypes.isEmpty() || claim.getNeed() > 0) {
@@ -225,20 +227,29 @@ public class LogManager {
 							|| claim.getItem().getCategory().equals("Commodity")
 							|| claim.getItem().getCategory().equals("Module")
 							|| claim.getItem().getCategory().equals("Charge"))) {
-						logTypes.put(LogChangeType.ADDED_LOOT, Collections.singleton(new LogType(end, LogChangeType.ADDED_LOOT, 25, claim.getNeed())));
+						logTypes.put(LogChangeType.ADDED_LOOT, Collections.singletonList(new LogType(end, LogChangeType.ADDED_LOOT, 25, claim.getNeed())));
 					} else {
-						logTypes.put(LogChangeType.ADDED_UNKNOWN, Collections.singleton(new LogType(end, LogChangeType.ADDED_UNKNOWN, 0, claim.getNeed())));
+						logTypes.put(LogChangeType.ADDED_UNKNOWN, Collections.singletonList(new LogType(end, LogChangeType.ADDED_UNKNOWN, 0, claim.getNeed())));
 					}
 				}
 				newLogs.add(new RawLog(claim, end, fromAsset == null ? null : new LogData(fromAsset), new LogData(claim), logTypes));
 			}
 		}
-		for (List<SourceAsset> sourceAssets : sources.values()) {
-			for (SourceAsset sourceAsset : sourceAssets) {
-				LogAsset asset = sourceAsset.getAsset();
-				Map<LogChangeType, Set<LogType>> logTypes = asset.getLogTypes();
-				logTypes.put(LogChangeType.REMOVED_UNKNOWN, Collections.singleton(new LogType(end, LogChangeType.REMOVED_UNKNOWN, 0, asset.getNeed())));
-				newLogs.add(new RawLog(asset, end, new LogData(asset), null, logTypes));
+		for (List<LogAsset> sourceAssets : sources.values()) {
+			for (LogAsset source : sourceAssets) {
+				Map<LogChangeType, List<LogType>> logTypes = source.getLogTypes();
+				LogAsset fromAsset = null;
+				for (LogTypeAsset logTypeAsset : source.getLogTypeAssets()) {
+					LogType logType = LogData.getLogType(end, new LogData(logTypeAsset.getAsset()), new LogData(source), logTypeAsset.getPercent(), logTypeAsset.getCount(), LogChangeType.MOVED_SAME);
+					put(logTypes, logType.getChangeType(), logType);
+					fromAsset = logTypeAsset.getAsset();
+				}
+				if (logTypes.isEmpty() || source.getAvailable() > 0) {
+					logTypes.put(LogChangeType.REMOVED_UNKNOWN, Collections.singletonList(new LogType(end, LogChangeType.REMOVED_UNKNOWN, 0, source.getAvailable())));
+				}
+				newLogs.add(new RawLog(source, end, fromAsset == null ? null : new LogData(fromAsset), new LogData(source), logTypes));
+				//Map<LogChangeType, Set<LogType>> logTypes = asset.getLogTypes();
+				//newLogs.add(new RawLog(asset, end, new LogData(asset), null, logTypes));
 			}
 		}
 	}
@@ -254,7 +265,7 @@ public class LogManager {
 		//Add Sources
 		Map<Integer, List<Source>> sources = new HashMap<>();
 		addedTransactionsBought(sources, start, end, profileData.getTransactionsList(), typeIDs);
-		addedContractAccepted(sources, start, end, profileData.getContractItemList(), typeIDs);
+		addedContracts(sources, start, end, profileData.getContractItemList(), typeIDs);
 		addedIndustryJobsDelivered(sources, start, end, profileData.getIndustryJobsList(), typeIDs);
 		//Resolve claims
 		for (Map.Entry<Integer, List<LogAsset>> entry : claims.entrySet()) {
@@ -273,7 +284,7 @@ public class LogManager {
 		}
 		for (List<LogAsset> list : claims.values()) {
 			for (LogAsset claim : list) {
-				Map<LogChangeType, Set<LogType>> logTypes = claim.getLogTypes();
+				Map<LogChangeType, List<LogType>> logTypes = claim.getLogTypes();
 				if (logTypes.isEmpty() || claim.getNeed() > 0) {
 					unknown.add(claim);
 					continue;
@@ -294,8 +305,7 @@ public class LogManager {
 		//Add Sources
 		Map<Integer, List<Source>> removedSources = new HashMap<>();
 		removedSellMarketOrderCreated(removedSources, start, end, profileData.getMarketOrdersList(), typeIDs);
-		removedContractCreated(removedSources, start, end, profileData.getContractItemList(), typeIDs);
-		removedContractAccepted(removedSources, start, end, profileData.getContractItemList(), typeIDs);
+		removedContracts(removedSources, start, end, profileData.getContractItemList(), typeIDs);
 		removedIndustryJobsCreated(removedSources, start, end, profileData.getIndustryJobsList(), typeIDs);
 		//Resolve claims
 		for (Map.Entry<Integer, List<LogAsset>> entry : claims.entrySet()) {
@@ -315,7 +325,7 @@ public class LogManager {
 		//Create Logs from Claims
 		for (List<LogAsset> list : claims.values()) {
 			for (LogAsset claim : list) {
-				Map<LogChangeType, Set<LogType>> logTypes = claim.getLogTypes();
+				Map<LogChangeType, List<LogType>> logTypes = claim.getLogTypes();
 				if (logTypes.isEmpty() || claim.getNeed() > 0) {
 					unknown.add(claim);
 					continue;
@@ -325,7 +335,7 @@ public class LogManager {
 		}
 	}
 
-	private static <K, V> void put(Map<K, List<V>> map, K k, V v) {
+	public static <K, V> void put(Map<K, List<V>> map, K k, V v) {
 		List<V> list = map.get(k);
 		if (list == null) {
 			list = new ArrayList<V>();
@@ -367,36 +377,14 @@ public class LogManager {
 		}
 	}
 
-	private static void removedContractCreated(Map<Integer, List<Source>> sources, Date start, Date end, List<MyContractItem> contractItems, Set<Integer> typeIDs) {
+	private static void removedContracts(Map<Integer, List<Source>> sources, Date start, Date end, List<MyContractItem> contractItems, Set<Integer> typeIDs) {
 		for (MyContractItem contractItem : contractItems) {
-			Date date = contractItem.getContract().getDateIssued();
-			int typeID = contractItem.getTypeID();
-			if (start != null && date.before(start)) { //Outside Date range
-				continue;
+			Date date;
+			if (contractItem.isIncluded()) { //Item being sold by the issuer (Removed on creating contract)
+				date = contractItem.getContract().getDateIssued();
+			} else { //Item being sold by the acceptor (Removed on completing contract) 
+				date = contractItem.getContract().getDateCompleted();
 			}
-			if (date.after(end)) { //Outside Date range
-				continue;
-			}
-			if (contractItem.getContract().isIgnoreContract()) { //Wrong contract type
-				continue;
-			}
-			if (!contractItem.isIncluded()) { //Ignore items being bought
-				continue;
-			}
-			if (!typeIDs.contains(typeID)) { //TypeID does not match
-				continue;
-			}
-			long ownerID = contractItem.getContract().getIssuerID();
-			long locationID = contractItem.getContract().getStartLocationID();
-			int quantity = contractItem.getQuantity();
-			LogChangeType changeType = LogChangeType.REMOVED_CONTRACT_CREATED;
-			put(sources, typeID, new Source(ownerID, locationID, typeID, quantity, date, changeType));
-		}
-	}
-
-	private static void removedContractAccepted(Map<Integer, List<Source>> sources, Date start, Date end, List<MyContractItem> contractItems, Set<Integer> typeIDs) {
-		for (MyContractItem contractItem : contractItems) {
-			Date date = contractItem.getContract().getDateCompleted();
 			int typeID = contractItem.getTypeID();
 			if (date == null) { //Not Completed
 				continue;
@@ -416,11 +404,19 @@ public class LogManager {
 			if (!typeIDs.contains(typeID)) { //TypeID does not match
 				continue;
 			}
-			long ownerID = contractItem.getContract().getAcceptorID();
-			long locationID = contractItem.getContract().getStartLocationID();
-			int quantity = contractItem.getQuantity();
-			LogChangeType changeType = LogChangeType.REMOVED_CONTRACT_ACCEPTED;
-			put(sources, typeID, new Source(ownerID, locationID, typeID, quantity, date, changeType));
+			if (contractItem.isIncluded()) { //Item being sold by the issuer
+				long ownerID = contractItem.getContract().getIssuerID();
+				long locationID = contractItem.getContract().getStartLocationID();
+				int quantity = contractItem.getQuantity();
+				LogChangeType changeType = LogChangeType.REMOVED_CONTRACT_CREATED;
+				put(sources, typeID, new Source(ownerID, locationID, typeID, quantity, date, changeType));
+			} else { //Item being sold by the acceptor
+				long ownerID = contractItem.getContract().getAcceptorID();
+				long locationID = contractItem.getContract().getStartLocationID();
+				int quantity = contractItem.getQuantity();
+				LogChangeType changeType = LogChangeType.REMOVED_CONTRACT_ACCEPTED;
+				put(sources, typeID, new Source(ownerID, locationID, typeID, quantity, date, changeType));
+			}
 		}
 	}
 
@@ -487,7 +483,7 @@ public class LogManager {
 		return false;
 	}
 
-	private static void addedContractAccepted(Map<Integer, List<Source>> sources, Date start, Date end, List<MyContractItem> contractItems, Set<Integer> typeIDs) {
+	private static void addedContracts(Map<Integer, List<Source>> sources, Date start, Date end, List<MyContractItem> contractItems, Set<Integer> typeIDs) {
 		for (MyContractItem contractItem : contractItems) {
 			Date date = contractItem.getContract().getDateCompleted();
 			int typeID = contractItem.getTypeID();
@@ -503,17 +499,28 @@ public class LogManager {
 			if (contractItem.getContract().isIgnoreContract()) { //Wrong contract type
 				continue;
 			}
-			if (!contractItem.isIncluded()) { //Ignore sold items
-				continue;
-			}
 			if (!typeIDs.contains(typeID)) { //TypeID does not match
 				continue;
 			}
-			long ownerID = contractItem.getContract().getAcceptorID();
-			long locationID = contractItem.getContract().getStartLocationID();
-			int quantity = contractItem.getQuantity();
-			LogChangeType changeType = LogChangeType.ADDED_CONTRACT_ACCEPTED;
-			put(sources, typeID, new Source(ownerID, locationID, typeID, quantity, date, changeType));
+			if (contractItem.isIncluded()) { //Item being bought by the acceptor
+				long ownerID = contractItem.getContract().getAcceptorID();
+				long locationID = contractItem.getContract().getStartLocationID();
+				int quantity = contractItem.getQuantity();
+				LogChangeType changeType = LogChangeType.ADDED_CONTRACT_ACCEPTED;
+				put(sources, typeID, new Source(ownerID, locationID, typeID, quantity, date, changeType));
+			} else { //Item being bought by the issuer
+				long ownerID;
+				if (contractItem.getContract().isForCorp()) {
+					ownerID = contractItem.getContract().getIssuerCorpID();
+				} else {
+					ownerID = contractItem.getContract().getIssuerID();
+				}
+				long locationID = contractItem.getContract().getStartLocationID();
+				int quantity = contractItem.getQuantity();
+				LogChangeType changeType = LogChangeType.ADDED_CONTRACT_ACCEPTED;
+				put(sources, typeID, new Source(ownerID, locationID, typeID, quantity, date, changeType));
+			}
+			
 		}
 	}
 
@@ -551,21 +558,17 @@ public class LogManager {
 	}
 
 	private static class LogTypeAsset {
-		private final SourceAsset asset;
+		private final LogAsset asset;
 		private final int percent;
 		private final int count;
 
-		public LogTypeAsset(SourceAsset asset, int percent, int count) {
+		public LogTypeAsset(LogAsset asset, int percent, int count) {
 			this.asset = asset;
 			this.percent = percent;
 			this.count = count;
 		}
 
 		public LogAsset getAsset() {
-			return asset.getAsset();
-		}
-
-		public SourceAsset getSourceAsset() {
 			return asset;
 		}
 
@@ -575,19 +578,6 @@ public class LogManager {
 
 		public int getCount() {
 			return count;
-		}
-	}
-
-	private static class SourceAsset extends Source {
-
-		private final LogAsset asset;
-		public SourceAsset(LogAsset asset, Date date) {
-			super(asset.getOwnerID(), asset.getLocationID(), asset.getTypeID(), (int) asset.getCount(), date, LogChangeType.MOVED_UNKNOWN);
-			this.asset = asset;
-		}
-
-		public LogAsset getAsset() {
-			return asset;
 		}
 	}
 
@@ -680,9 +670,6 @@ public class LogManager {
 				Match match = entry.getKey();
 				Collections.sort(claimList, new ClaimComparator(getAvailable())); //Sort by need
 				for (LogAsset claim : claimList) {
-					if (getAvailable() == 0) {
-						return; //Nothing left...
-					}
 					if (claim.getNeed() >= getAvailable()) { //Add all
 						claim.addCount(this, match.getPercent(), getAvailable());
 						takeAll();
@@ -762,10 +749,7 @@ public class LogManager {
 		}
 	}
 
-	public static class LogAsset {
-		private final long ownerID;
-		private final long locationID;
-		private final Integer typeID;
+	public static class LogAsset extends Source {
 		private final long count;
 		private final Long itemID;
 		private final Integer flagID;
@@ -773,13 +757,11 @@ public class LogManager {
 		private final List<MyAsset> parents;
 		private final Item item;
 		private int needed;
-		private final Map<LogChangeType, Set<LogType>> logType = new HashMap<>();
+		private final Map<LogChangeType, List<LogType>> logType = new HashMap<>();
 		private final List<LogTypeAsset> logTypeAssets = new ArrayList<>();
 
-		public LogAsset(MyAsset asset) {
-			this.ownerID = asset.getOwnerID();
-			this.locationID = asset.getLocationID();
-			this.typeID = asset.getTypeID();
+		public LogAsset(MyAsset asset, Date date) {
+			super(asset.getOwnerID(), asset.getLocationID(), asset.getTypeID(), (int) asset.getCount(), date, LogChangeType.MOVED_UNKNOWN);
 			this.count = asset.getCount();
 			this.itemID = asset.getItemID();
 			this.flagID = asset.getFlagID();
@@ -788,28 +770,14 @@ public class LogManager {
 			this.needed = (int) asset.getCount();
 		}
 
-		public LogAsset(LogAsset asset, long count) {
-			this.ownerID = asset.getOwnerID();
-			this.locationID = asset.getLocationID();
-			this.typeID = asset.getTypeID();
+		public LogAsset(LogAsset asset, long count, Date date) {
+			super(asset.getOwnerID(), asset.getLocationID(), asset.getTypeID(), (int) count, date, LogChangeType.MOVED_UNKNOWN);
 			this.count = count;
 			this.itemID = asset.getItemID();
 			this.flagID = asset.getFlagID();
 			this.parents = asset.getParents();
 			this.item = asset.getItem();
 			this.needed = (int) count;
-		}
-
-		public long getOwnerID() {
-			return ownerID;
-		}
-
-		public long getLocationID() {
-			return locationID;
-		}
-
-		public Integer getTypeID() {
-			return typeID;
 		}
 
 		public long getCount() {
@@ -836,7 +804,7 @@ public class LogManager {
 			return item;
 		}
 
-		public Map<LogChangeType, Set<LogType>> getLogTypes() {
+		public Map<LogChangeType, List<LogType>> getLogTypes() {
 			return logType;
 		}
 
@@ -845,16 +813,18 @@ public class LogManager {
 		}
 
 		private void addCount(Source source, int percent, int count) {
-			if (source instanceof SourceAsset) {
-				logTypeAssets.add(new LogTypeAsset((SourceAsset)source, percent, count));
+			if (source instanceof LogAsset) {
+				LogAsset asset = (LogAsset) source;
+				logTypeAssets.add(new LogTypeAsset(asset, percent, count));
+				asset.getLogTypeAssets().add(new LogTypeAsset(this, percent, count));
 			} else {
-				putSet(logType, source.getChangeType(), new LogType(source.getDate(), source.getChangeType(), percent, count));
+				put(logType, source.getChangeType(), new LogType(source.getDate(), source.getChangeType(), percent, count));
 			}
 			needed = needed - count;
 			
 		}
 
-		private int getNeed() { //Claim optimization
+		private int getNeed() {
 			return needed;
 		}
 	}

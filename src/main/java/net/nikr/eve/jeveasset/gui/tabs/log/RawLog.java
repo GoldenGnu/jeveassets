@@ -26,7 +26,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 import net.nikr.eve.jeveasset.data.api.my.MyAsset;
 import net.nikr.eve.jeveasset.data.settings.LogManager.LogAsset;
 
@@ -40,7 +39,7 @@ public class RawLog implements Comparable<RawLog> {
 	private final Long ownerID;
 	private final LogData oldData;
 	private final LogData newData;
-	private final Map<LogChangeType, Set<LogType>> logTypes;
+	private final Map<LogChangeType, List<LogType>> logTypes;
 
 	/**
 	 * Parent
@@ -65,7 +64,7 @@ public class RawLog implements Comparable<RawLog> {
 	 * @param newData 
 	 * @param logTypes 
 	 */
-	public RawLog(LogAsset asset, Date date, LogData oldData, LogData newData, Map<LogChangeType, Set<LogType>> logTypes) {
+	public RawLog(LogAsset asset, Date date, LogData oldData, LogData newData, Map<LogChangeType, List<LogType>> logTypes) {
 		this.date = date;
 		this.itemID = asset.getItemID();
 		this.typeID = asset.getTypeID();
@@ -87,7 +86,7 @@ public class RawLog implements Comparable<RawLog> {
 	 * @param newData 
 	 * @param logTypes 
 	 */
-	public RawLog(Date date, Long itemID, Integer typeID, Long count, Long ownerID, LogData oldData, LogData newData, Map<LogChangeType, Set<LogType>> logTypes) {
+	public RawLog(Date date, Long itemID, Integer typeID, Long count, Long ownerID, LogData oldData, LogData newData, Map<LogChangeType, List<LogType>> logTypes) {
 		this.date = date;
 		this.itemID = itemID;
 		this.typeID = typeID;
@@ -126,7 +125,7 @@ public class RawLog implements Comparable<RawLog> {
 		return newData;
 	}
 
-	public Map<LogChangeType, Set<LogType>> getLogTypes() {
+	public Map<LogChangeType, List<LogType>> getLogTypes() {
 		return logTypes;
 	}
 
@@ -222,17 +221,31 @@ public class RawLog implements Comparable<RawLog> {
 			return parentIDs;
 		}
 
-		public static Map<LogChangeType, Set<LogType>> changed(Date date, LogData oldData, LogData newData, int percent, int count, LogChangeType defaultChangeType) {
+		public static Map<LogChangeType, List<LogType>> changed(Date date, LogData oldData, LogData newData, int percent, int count, LogChangeType defaultChangeType) {
 			if (oldData.ownerID != newData.ownerID) {
-				return Collections.singletonMap(LogChangeType.MOVED_OWNER, Collections.singleton(new LogType(date, LogChangeType.MOVED_OWNER, percent, count)));
+				return Collections.singletonMap(LogChangeType.MOVED_OWNER, Collections.singletonList(new LogType(date, LogChangeType.MOVED_OWNER, percent, count)));
 			} else if (oldData.locationID != newData.locationID) {
-				return Collections.singletonMap(LogChangeType.MOVED_LOCATION, Collections.singleton(new LogType(date, LogChangeType.MOVED_LOCATION, percent, count)));
+				return Collections.singletonMap(LogChangeType.MOVED_LOCATION, Collections.singletonList(new LogType(date, LogChangeType.MOVED_LOCATION, percent, count)));
 			} else if (oldData.flagID != newData.flagID) {
-				return Collections.singletonMap(LogChangeType.MOVED_FLAG, Collections.singleton(new LogType(date, LogChangeType.MOVED_FLAG, percent, count)));
+				return Collections.singletonMap(LogChangeType.MOVED_FLAG, Collections.singletonList(new LogType(date, LogChangeType.MOVED_FLAG, percent, count)));
 			} else if (oldData.parentIDs.equals(newData.parentIDs)) {
-				return Collections.singletonMap(LogChangeType.MOVED_CONTAINER, Collections.singleton(new LogType(date, LogChangeType.MOVED_CONTAINER, percent, count)));
+				return Collections.singletonMap(LogChangeType.MOVED_CONTAINER, Collections.singletonList(new LogType(date, LogChangeType.MOVED_CONTAINER, percent, count)));
 			} else {
-				return Collections.singletonMap(defaultChangeType, Collections.singleton(new LogType(date, defaultChangeType, percent, count)));
+				return Collections.singletonMap(defaultChangeType, Collections.singletonList(new LogType(date, defaultChangeType, percent, count)));
+			}
+		}
+
+		public static LogType getLogType(Date date, LogData oldData, LogData newData, int percent, int count, LogChangeType defaultChangeType) {
+			if (oldData.ownerID != newData.ownerID) {
+				return new LogType(date, LogChangeType.MOVED_OWNER, percent, count);
+			} else if (oldData.locationID != newData.locationID) {
+				return new LogType(date, LogChangeType.MOVED_LOCATION, percent, count);
+			} else if (oldData.flagID != newData.flagID) {
+				return new LogType(date, LogChangeType.MOVED_FLAG, percent, count);
+			} else if (oldData.parentIDs.equals(newData.parentIDs)) {
+				return new LogType(date, LogChangeType.MOVED_CONTAINER, percent, count);
+			} else {
+				return new LogType(date, defaultChangeType, percent, count);
 			}
 		}
 
