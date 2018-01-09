@@ -37,6 +37,7 @@ public class RawLog implements Comparable<RawLog> {
 	private final Long itemID;
 	private final Integer typeID;
 	private final Long count;
+	private final Long ownerID;
 	private final LogData oldData;
 	private final LogData newData;
 	private final Map<LogChangeType, Set<LogType>> logTypes;
@@ -50,6 +51,7 @@ public class RawLog implements Comparable<RawLog> {
 		this.itemID = rawLog.itemID;
 		this.typeID = rawLog.typeID;
 		this.count = rawLog.count;
+		this.ownerID = rawLog.ownerID;
 		this.oldData = rawLog.oldData;
 		this.newData = rawLog.newData;
 		this.logTypes = rawLog.logTypes;
@@ -57,18 +59,40 @@ public class RawLog implements Comparable<RawLog> {
 
 	/**
 	 * Load
+	 * @param asset
 	 * @param date
-	 * @param itemID
-	 * @param typeID
 	 * @param oldData
 	 * @param newData 
 	 * @param logTypes 
 	 */
-	public RawLog(Date date, Long itemID, Integer typeID, Long count, LogData oldData, LogData newData, Map<LogChangeType, Set<LogType>> logTypes) {
+	public RawLog(LogAsset asset, Date date, LogData oldData, LogData newData, Map<LogChangeType, Set<LogType>> logTypes) {
+		this.date = date;
+		this.itemID = asset.getItemID();
+		this.typeID = asset.getTypeID();
+		this.count = asset.getCount();
+		this.ownerID = asset.getOwnerID();
+		this.oldData = oldData;
+		this.newData = newData;
+		this.logTypes = logTypes;
+	}
+
+	/**
+	 * Load
+	 * @param date
+	 * @param itemID
+	 * @param typeID
+	 * @param count
+	 * @param ownerID
+	 * @param oldData
+	 * @param newData 
+	 * @param logTypes 
+	 */
+	public RawLog(Date date, Long itemID, Integer typeID, Long count, Long ownerID, LogData oldData, LogData newData, Map<LogChangeType, Set<LogType>> logTypes) {
 		this.date = date;
 		this.itemID = itemID;
 		this.typeID = typeID;
 		this.count = count;
+		this.ownerID = ownerID;
 		this.oldData = oldData;
 		this.newData = newData;
 		this.logTypes = logTypes;
@@ -88,6 +112,10 @@ public class RawLog implements Comparable<RawLog> {
 
 	public Long getCount() {
 		return count;
+	}
+
+	public Long getOwnerID() {
+		return ownerID;
 	}
 
 	public LogData getOldData() {
@@ -194,17 +222,17 @@ public class RawLog implements Comparable<RawLog> {
 			return parentIDs;
 		}
 
-		public static Map<LogChangeType, Set<LogType>> changed(Date date, LogData oldData, LogData newData, int percent, LogChangeType defaultChangeType) {
+		public static Map<LogChangeType, Set<LogType>> changed(Date date, LogData oldData, LogData newData, int percent, int count, LogChangeType defaultChangeType) {
 			if (oldData.ownerID != newData.ownerID) {
-				return Collections.singletonMap(LogChangeType.MOVED_OWNER, Collections.singleton(new LogType(date, LogChangeType.MOVED_OWNER, percent)));
+				return Collections.singletonMap(LogChangeType.MOVED_OWNER, Collections.singleton(new LogType(date, LogChangeType.MOVED_OWNER, percent, count)));
 			} else if (oldData.locationID != newData.locationID) {
-				return Collections.singletonMap(LogChangeType.MOVED_LOCATION, Collections.singleton(new LogType(date, LogChangeType.MOVED_LOCATION, percent)));
+				return Collections.singletonMap(LogChangeType.MOVED_LOCATION, Collections.singleton(new LogType(date, LogChangeType.MOVED_LOCATION, percent, count)));
 			} else if (oldData.flagID != newData.flagID) {
-				return Collections.singletonMap(LogChangeType.MOVED_FLAG, Collections.singleton(new LogType(date, LogChangeType.MOVED_FLAG, percent)));
+				return Collections.singletonMap(LogChangeType.MOVED_FLAG, Collections.singleton(new LogType(date, LogChangeType.MOVED_FLAG, percent, count)));
 			} else if (oldData.parentIDs.equals(newData.parentIDs)) {
-				return Collections.singletonMap(LogChangeType.MOVED_CONTAINER, Collections.singleton(new LogType(date, LogChangeType.MOVED_CONTAINER, percent)));
+				return Collections.singletonMap(LogChangeType.MOVED_CONTAINER, Collections.singleton(new LogType(date, LogChangeType.MOVED_CONTAINER, percent, count)));
 			} else {
-				return Collections.singletonMap(defaultChangeType, Collections.singleton(new LogType(date, defaultChangeType, percent)));
+				return Collections.singletonMap(defaultChangeType, Collections.singleton(new LogType(date, defaultChangeType, percent, count)));
 			}
 		}
 

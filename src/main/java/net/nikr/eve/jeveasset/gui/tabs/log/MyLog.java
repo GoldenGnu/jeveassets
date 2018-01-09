@@ -28,6 +28,7 @@ import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 public class MyLog extends RawLog {
 
 	private final String typeName;
+	private final String ownerName;
 	private final String action;
 	private final String from;
 	private final String to;
@@ -35,6 +36,7 @@ public class MyLog extends RawLog {
 	public MyLog(RawLog rawLog) {
 		super(rawLog);
 		typeName = ApiIdConverter.getItem(rawLog.getTypeID()).getTypeName();
+		ownerName = ApiIdConverter.getOwnerName(rawLog.getOwnerID());
 		action = createAction(rawLog);
 		from = createFrom(rawLog);
 		to = createTo(rawLog);
@@ -42,6 +44,10 @@ public class MyLog extends RawLog {
 
 	public String getTypeName() {
 		return typeName;
+	}
+
+	public String getOwnerName() {
+		return ownerName;
 	}
 
 	public String getAction() {
@@ -67,6 +73,7 @@ public class MyLog extends RawLog {
 			}
 			Integer min = null;
 			Integer max = null;
+			Integer count = null;
 			for (LogType logType : entry.getValue()) {
 				if (min == null) {
 					min = logType.getPercent();
@@ -77,6 +84,11 @@ public class MyLog extends RawLog {
 					max = logType.getPercent();
 				} else {
 					max = Math.max(max, logType.getPercent());
+				}
+				if (count == null) {
+					count = logType.getCount();
+				} else {
+					count = count + logType.getCount();
 				}
 			}
 			switch (entry.getKey()) {
@@ -129,6 +141,8 @@ public class MyLog extends RawLog {
 					builder.append("Removed: Contract Accepted");
 					break;
 			}
+			builder.append(" x");
+			builder.append(count);
 			builder.append(" (");
 			if (max == null || min == null) {
 				builder.append(0);

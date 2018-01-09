@@ -28,11 +28,13 @@ public class LogType {
 	private final Date date;
 	private final LogChangeType changeType;
 	private final int percent;
+	private final int count;
 
-	public LogType(Date date, LogChangeType changeType, int percent) {
+	public LogType(Date date, LogChangeType changeType, int percent, int count) {
 		this.date = date;
 		this.changeType = changeType;
 		this.percent = percent;
+		this.count = count;
 	}
 
 	public Date getDate() {
@@ -45,6 +47,10 @@ public class LogType {
 
 	public int getPercent() {
 		return percent;
+	}
+
+	public int getCount() {
+		return count;
 	}
 
 	@Override

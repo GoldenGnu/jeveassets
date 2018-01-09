@@ -37,6 +37,7 @@ public abstract class TabsLog extends Bundle {
 	public abstract String toolTitle();
 	public abstract String columnDate();
 	public abstract String columnType();
+	public abstract String columnOwner();
 	public abstract String columnCount();
 	public abstract String columnAction();
 	public abstract String columnFrom();

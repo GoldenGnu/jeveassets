@@ -68,6 +68,7 @@ public class LogsWriter extends AbstractXmlWriter {
 				logNode.setAttributeNS(null, "typeid", String.valueOf(log.getTypeID()));
 				logNode.setAttributeNS(null, "count", String.valueOf(log.getCount()));
 				logNode.setAttributeNS(null, "date", String.valueOf(log.getDate().getTime()));
+				logNode.setAttributeNS(null, "owner", String.valueOf(log.getOwnerID()));
 				logNode.setAttributeNS(null, "itemid", String.valueOf(log.getItemID()));
 				writeLogData(logNode, "old",  log.getOldData());
 				writeLogData(logNode, "new",  log.getNewData());
@@ -85,6 +86,8 @@ public class LogsWriter extends AbstractXmlWriter {
 						builder.append(logType.getPercent());
 						builder.append(":");
 						builder.append(logType.getDate().getTime());
+						builder.append(":");
+						builder.append(logType.getCount());
 					}
 				}
 				logNode.setAttributeNS(null, "change", builder.toString());

@@ -68,6 +68,7 @@ public class LogsReader extends AbstractXmlReader<Boolean> {
 			int typeID = AttributeGetters.getInt(logNode, "typeid");
 			long count = AttributeGetters.getLong(logNode, "count");
 			Date date = AttributeGetters.getDate(logNode, "date");
+			long ownerID = AttributeGetters.getLong(logNode, "owner");
 			long itemID = AttributeGetters.getLong(logNode, "itemid");
 			LogData newData = parseLogData(logNode, "new");
 			LogData oldData = parseLogData(logNode, "old");
@@ -82,18 +83,19 @@ public class LogsReader extends AbstractXmlReader<Boolean> {
 				try {
 					
 					String[] array = s.split(":");
-					if (array.length != 3) {
+					if (array.length != 4) {
 						continue;
 					}
 					LogChangeType changeType = LogChangeType.valueOf(array[0]);
 					int percent = Integer.valueOf(array[1]);
 					Date typeDate = new Date(Long.valueOf(array[2]));
-					LogManager.putSet(logTypes, changeType, new LogType(typeDate, changeType, percent));
+					int count2 = Integer.valueOf(array[3]);
+					LogManager.putSet(logTypes, changeType, new LogType(typeDate, changeType, percent, count2));
 				} catch (IllegalArgumentException ex) {
 					//No problem...
 				}
 			}
-			logset.add(new RawLog(date, itemID, typeID, count, oldData, newData, logTypes));
+			logset.add(new RawLog(date, itemID, typeID, count, ownerID, oldData, newData, logTypes));
 		}
 	}
 
