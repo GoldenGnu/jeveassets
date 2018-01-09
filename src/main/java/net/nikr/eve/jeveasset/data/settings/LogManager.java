@@ -107,8 +107,8 @@ public class LogManager {
 		}
 		List<MyAsset> newAssets = profileData.getAssetsList();
 		Date end = new Date();
-		Map<Long, LogAssetType> oldMap = new HashMap<Long, LogAssetType>();
-		Map<Long, LogAssetType> newMap = new HashMap<Long, LogAssetType>();
+		Map<Long, LogAsset> oldMap = new HashMap<Long, LogAsset>();
+		Map<Long, LogAsset> newMap = new HashMap<Long, LogAsset>();
 		for (MyAsset asset : oldAssets) {
 			if (asset.isGenerated()) {
 				continue;
@@ -116,7 +116,7 @@ public class LogManager {
 			if (asset.getFlag().equals(General.get().industryJobFlag())) {
 				continue;
 			}
-			oldMap.put(asset.getItemID(), asset);
+			oldMap.put(asset.getItemID(), new LogAsset(asset));
 		}
 		for (MyAsset asset : newAssets) {
 			if (asset.isGenerated()) {
@@ -125,35 +125,35 @@ public class LogManager {
 			if (asset.getFlag().equals(General.get().industryJobFlag())) {
 				continue;
 			}
-			newMap.put(asset.getItemID(), asset);
+			newMap.put(asset.getItemID(), new LogAsset(asset));
 		}
 		Set<RawLog> newLogs = new HashSet<RawLog>();
 	//New
 		//Added Assets
-		Map<Long, LogAssetType> added = new HashMap<Long, LogAssetType>(newMap); //New Assets
+		Map<Long, LogAsset> added = new HashMap<Long, LogAsset>(newMap); //New Assets
 		added.keySet().removeAll(oldMap.keySet()); //Removed Old Assets
-		List<LogAssetType> unknownAdded = new ArrayList<>();
+		List<LogAsset> unknownAdded = new ArrayList<>();
 		added(profileData, start, end, unknownAdded, newLogs, added.values());
 
 		//Removed Assets
-		Map<Long, LogAssetType> removed = new HashMap<Long, LogAssetType>(oldMap); //Old Assets
+		Map<Long, LogAsset> removed = new HashMap<Long, LogAsset>(oldMap); //Old Assets
 		removed.keySet().removeAll(newMap.keySet()); //Remove New Assets
-		List<LogAssetType> unknownRemoved = new ArrayList<>();
+		List<LogAsset> unknownRemoved = new ArrayList<>();
 		removed(profileData, start, end, unknownRemoved, newLogs, removed.values());
 
 		//Moved
-		Map<Long, LogAssetType> same = new HashMap<Long, LogAssetType>(oldMap); //Old Assets
+		Map<Long, LogAsset> same = new HashMap<Long, LogAsset>(oldMap); //Old Assets
 		same.keySet().retainAll(newMap.keySet()); //Assets in both New and Old (retain)
 		//Moved: Same itemID
 		for (Long itemID : same.keySet()) {
-			LogAssetType oldAsset = oldMap.get(itemID);
-			LogAssetType newAsset = newMap.get(itemID);
+			LogAsset oldAsset = oldMap.get(itemID);
+			LogAsset newAsset = newMap.get(itemID);
 			List<Long> oldParents = new ArrayList<>();
 			List<Long> newParents = new ArrayList<>();
-			for (LogAssetType asset : oldAsset.getParents()) {
+			for (MyAsset asset : oldAsset.getParents()) {
 				oldParents.add(asset.getItemID());
 			}
-			for (LogAssetType asset : newAsset.getParents()) {
+			for (MyAsset asset : newAsset.getParents()) {
 				newParents.add(asset.getItemID());
 			}
 			boolean owner = oldAsset.getOwnerID() != newAsset.getOwnerID(); //New Owner
@@ -163,10 +163,9 @@ public class LogManager {
 			if (location || flag || container || owner) {
 				LogData oldData = new LogData(oldAsset);
 				LogData newData = new LogData(newAsset);
-				newLogs.add(new RawLog(end, oldAsset.getItemID(), oldAsset.getTypeID(), oldAsset.getCount(), oldData, newData, LogData.changed(end, oldData, newData, 100)));
-			}
-			if (oldAsset.getCount() > newAsset.getCount()) {
-				unknownRemoved.add(new LogAsset(newAsset, oldAsset.getCount() - newAsset.getCount()));
+				newLogs.add(new RawLog(end, oldAsset.getItemID(), oldAsset.getTypeID(), oldAsset.getCount(), oldData, newData, LogData.changed(end, oldData, newData, 100, LogChangeType.MOVED_UNKNOWN)));
+			} else if (oldAsset.getCount() > newAsset.getCount()) {
+				unknownRemoved.add(new LogAsset(oldAsset, oldAsset.getCount() - newAsset.getCount()));
 			}
 		}
 		//Moved: new itemID
@@ -176,30 +175,32 @@ public class LogManager {
 		add(end, newLogs);
 	}
 
-	private static void moved(Date end, Set<RawLog> newLogs, Collection<LogAssetType> added, Collection<LogAssetType> removed, boolean loot) {
+	private static void moved(Date end, Set<RawLog> newLogs, Collection<LogAsset> added, Collection<LogAsset> removed, boolean loot) {
 		//Add Claims
 		Set<Integer> typeIDs = new HashSet<>();
-		Map<Integer, List<ClaimAsset>> claims = new HashMap<>();
-		for (LogAssetType asset : added) {
+		Map<Integer, List<LogAsset>> claims = new HashMap<>();
+		for (LogAsset asset : added) {
 			typeIDs.add(asset.getTypeID());
-			put(claims, asset.getTypeID(), new ClaimAsset(asset, asset.getOwnerID(), asset.getLocationID(), asset.getTypeID(), asset.getCount()));
+			put(claims, asset.getTypeID(), asset);
 		}
 		//Add Sources
 		Map<Integer, List<SourceAsset>> sources = new HashMap<>();
-		for (LogAssetType asset : removed) {
+		for (LogAsset asset : removed) {
 			int typeID = asset.getTypeID();
 			if (!typeIDs.contains(typeID)) { //TypeID does not match - Remain Unknown
+				Map<LogChangeType, Set<LogType>> logTypes = Collections.singletonMap(LogChangeType.REMOVED_UNKNOWN, Collections.singleton(new LogType(end, LogChangeType.REMOVED_UNKNOWN, 0)));
+				newLogs.add(new RawLog(end, asset.getItemID(), asset.getTypeID(), asset.getCount(), new LogData(asset), null, logTypes));
 				continue;
 			}
 			put(sources, typeID, new SourceAsset(asset, end));
 		}
 		//Resolve claims
-		for (Map.Entry<Integer, List<ClaimAsset>> entry : claims.entrySet()) {
+		for (Map.Entry<Integer, List<LogAsset>> entry : claims.entrySet()) {
 			List<SourceAsset> soruceList = sources.get(entry.getKey());
 			if (soruceList == null) {
 				continue;
 			}
-			for (Claim claim : entry.getValue()) {
+			for (LogAsset claim : entry.getValue()) {
 				for (Source source : soruceList) {
 					source.addClaim(claim);
 				}
@@ -208,41 +209,45 @@ public class LogManager {
 				source.claim();
 			}
 		}
-		for (List<ClaimAsset> list : claims.values()) {
-			for (ClaimAsset claim : list) {
-				Map<LogChangeType, Set<LogType>> logTypes = new HashMap<>();
-				LogAssetType fromAsset = null;
-				for (LogTypeAsset logTypeAsset : claim.getSourceAssets()) {
-					removed.remove(logTypeAsset.getAsset()); //Remove Assets that was moved
-					logTypes.putAll(LogData.changed(end, new LogData(logTypeAsset.getAsset()), new LogData(claim.getAsset()), logTypeAsset.getPercent()));
+		for (List<LogAsset> list : claims.values()) {
+			for (LogAsset claim : list) {
+				Map<LogChangeType, Set<LogType>> logTypes = claim.getLogTypes();
+				LogAsset fromAsset = null;
+				for (LogTypeAsset logTypeAsset : claim.getLogTypeAssets()) {
+					logTypes.putAll(LogData.changed(end, new LogData(logTypeAsset.getAsset()), new LogData(claim), logTypeAsset.getPercent(), LogChangeType.MOVED_SAME));
 					fromAsset = logTypeAsset.getAsset();
 				}
 				if (logTypes.isEmpty()) {
-					if (loot && (claim.getAsset().getItem().getCategory().equals("Drone") 
-							|| claim.getAsset().getItem().getCategory().equals("Commodity")
-							|| claim.getAsset().getItem().getCategory().equals("Module")
-							|| claim.getAsset().getItem().getCategory().equals("Charge"))) {
+					if (loot && (claim.getItem().getCategory().equals("Drone") 
+							|| claim.getItem().getCategory().equals("Commodity")
+							|| claim.getItem().getCategory().equals("Module")
+							|| claim.getItem().getCategory().equals("Charge"))) {
 						logTypes.put(LogChangeType.ADDED_LOOT, Collections.singleton(new LogType(end, LogChangeType.ADDED_LOOT, 25)));
 					} else {
 						logTypes.put(LogChangeType.ADDED_UNKNOWN, Collections.singleton(new LogType(end, LogChangeType.ADDED_UNKNOWN, 0)));
 					}
 				}
-				newLogs.add(new RawLog(end, claim.getAsset().getItemID(), claim.getAsset().getTypeID(), claim.getAsset().getCount(), fromAsset == null ? null : new LogData(fromAsset), new LogData(claim.getAsset()), logTypes));
+				newLogs.add(new RawLog(end, claim.getItemID(), claim.getTypeID(), claim.getCount(), fromAsset == null ? null : new LogData(fromAsset), new LogData(claim), logTypes));
 			}
 		}
-		for (LogAssetType asset : removed) {
-			Map<LogChangeType, Set<LogType>> logTypes = Collections.singletonMap(LogChangeType.REMOVED_UNKNOWN, Collections.singleton(new LogType(end, LogChangeType.REMOVED_UNKNOWN, 0)));
-			newLogs.add(new RawLog(end, asset.getItemID(), asset.getTypeID(), asset.getCount(), new LogData(asset), null, logTypes));
+		for (List<SourceAsset> sourceAssets : sources.values()) {
+			for (SourceAsset sourceAsset : sourceAssets) {
+				if (sourceAsset.getAvailable() > 0) {
+					LogAsset asset = sourceAsset.getAsset();
+					Map<LogChangeType, Set<LogType>> logTypes = Collections.singletonMap(LogChangeType.REMOVED_UNKNOWN, Collections.singleton(new LogType(end, LogChangeType.REMOVED_UNKNOWN, 0)));
+					newLogs.add(new RawLog(end, asset.getItemID(), asset.getTypeID(), asset.getCount(), new LogData(asset), null, logTypes));
+				}
+			}
 		}
 	}
 
-	private static void added(ProfileData profileData, Date start, Date end, List<LogAssetType> unknown, Set<RawLog> newLogs, Collection<LogAssetType> added) {
+	private static void added(ProfileData profileData, Date start, Date end, List<LogAsset> unknown, Set<RawLog> newLogs, Collection<LogAsset> added) {
 		//Add Claims
 		Set<Integer> typeIDs = new HashSet<>();
-		Map<Integer, List<Claim>> claims = new HashMap<>();
-		for (LogAssetType asset : added) {
+		Map<Integer, List<LogAsset>> claims = new HashMap<>();
+		for (LogAsset asset : added) {
 			typeIDs.add(asset.getTypeID());
-			put(claims, asset.getTypeID(), new Claim(asset, asset.getOwnerID(), asset.getLocationID(), asset.getTypeID(), asset.getCount()));
+			put(claims, asset.getTypeID(), asset);
 		}
 		//Add Sources
 		Map<Integer, List<Source>> sources = new HashMap<>();
@@ -250,12 +255,12 @@ public class LogManager {
 		addedContractAccepted(sources, start, end, profileData.getContractItemList(), typeIDs);
 		addedIndustryJobsDelivered(sources, start, end, profileData.getIndustryJobsList(), typeIDs);
 		//Resolve claims
-		for (Map.Entry<Integer, List<Claim>> entry : claims.entrySet()) {
+		for (Map.Entry<Integer, List<LogAsset>> entry : claims.entrySet()) {
 			List<Source> soruceList = sources.get(entry.getKey());
 			if (soruceList == null) {
 				continue;
 			}
-			for (Claim claim : entry.getValue()) {
+			for (LogAsset claim : entry.getValue()) {
 				for (Source source : soruceList) {
 					source.addClaim(claim);
 				}
@@ -264,28 +269,25 @@ public class LogManager {
 				source.claim();
 			}
 		}
-		for (List<Claim> list : claims.values()) {
-			for (Claim claim : list) {
-				Map<LogChangeType, Set<LogType>> logTypes = claim.getLogType();
-				if (logTypes.isEmpty()) {
-					unknown.add(claim.getAsset());
+		for (List<LogAsset> list : claims.values()) {
+			for (LogAsset claim : list) {
+				Map<LogChangeType, Set<LogType>> logTypes = claim.getLogTypes();
+				if (logTypes.isEmpty() || claim.getNeed() > 0) {
+					unknown.add(claim);
 					continue;
 				}
-				if (claim.getNeed() > 0) {
-					unknown.add(claim.getAsset());
-				}
-				newLogs.add(new RawLog(end, claim.getAsset().getItemID(), claim.getAsset().getTypeID(), claim.getAsset().getCount(), null, new LogData(claim.getAsset()), logTypes));
+				newLogs.add(new RawLog(end, claim.getItemID(), claim.getTypeID(), claim.getCount(), null, new LogData(claim), logTypes));
 			}
 		}
 	}
 
-	private static void removed(ProfileData profileData, Date start, Date end, List<LogAssetType> unknown, Set<RawLog> newLogs, Collection<LogAssetType> removed) {
+	private static void removed(ProfileData profileData, Date start, Date end, List<LogAsset> unknown, Set<RawLog> newLogs, Collection<LogAsset> removed) {
 		//Add Claims
 		Set<Integer> typeIDs = new HashSet<>();
-		Map<Integer, List<Claim>> claims = new HashMap<>();
-		for (LogAssetType asset : removed) {
+		Map<Integer, List<LogAsset>> claims = new HashMap<>();
+		for (LogAsset asset : removed) {
 			typeIDs.add(asset.getTypeID());
-			put(claims, asset.getTypeID(), new Claim(asset, asset.getOwnerID(), asset.getLocationID(), asset.getTypeID(), asset.getCount()));
+			put(claims, asset.getTypeID(), asset);
 		}
 		//Add Sources
 		Map<Integer, List<Source>> removedSources = new HashMap<>();
@@ -294,12 +296,12 @@ public class LogManager {
 		removedContractAccepted(removedSources, start, end, profileData.getContractItemList(), typeIDs);
 		removedIndustryJobsCreated(removedSources, start, end, profileData.getIndustryJobsList(), typeIDs);
 		//Resolve claims
-		for (Map.Entry<Integer, List<Claim>> entry : claims.entrySet()) {
+		for (Map.Entry<Integer, List<LogAsset>> entry : claims.entrySet()) {
 			List<Source> soruceList = removedSources.get(entry.getKey());
 			if (soruceList == null) {
 				continue;
 			}
-			for (Claim claim : entry.getValue()) {
+			for (LogAsset claim : entry.getValue()) {
 				for (Source source : soruceList) {
 					source.addClaim(claim);
 				}
@@ -309,17 +311,14 @@ public class LogManager {
 			}
 		}
 		//Create Logs from Claims
-		for (List<Claim> list : claims.values()) {
-			for (Claim claim : list) {
-				Map<LogChangeType, Set<LogType>> logTypes = claim.getLogType();
-				if (logTypes.isEmpty()) {
-					unknown.add(claim.getAsset());
+		for (List<LogAsset> list : claims.values()) {
+			for (LogAsset claim : list) {
+				Map<LogChangeType, Set<LogType>> logTypes = claim.getLogTypes();
+				if (logTypes.isEmpty() || claim.getNeed() > 0) {
+					unknown.add(claim);
 					continue;
 				}
-				if (claim.getNeed() > 0) {
-					unknown.add(claim.getAsset());
-				}
-				newLogs.add(new RawLog(end, claim.getAsset().getItemID(), claim.getAsset().getTypeID(), claim.getAsset().getCount(), new LogData(claim.getAsset()), null, logTypes));
+				newLogs.add(new RawLog(end, claim.getItemID(), claim.getTypeID(), claim.getCount(), new LogData(claim), null, logTypes));
 			}
 		}
 	}
@@ -550,15 +549,19 @@ public class LogManager {
 	}
 
 	private static class LogTypeAsset {
-		private final LogAssetType asset;
+		private final SourceAsset asset;
 		private final int percent;
 
-		public LogTypeAsset(LogAssetType asset, int percent) {
+		public LogTypeAsset(SourceAsset asset, int percent) {
 			this.asset = asset;
 			this.percent = percent;
 		}
 
-		public LogAssetType getAsset() {
+		public LogAsset getAsset() {
+			return asset.getAsset();
+		}
+
+		public SourceAsset getSourceAsset() {
 			return asset;
 		}
 
@@ -567,99 +570,19 @@ public class LogManager {
 		}
 	}
 
-	private static class ClaimAsset extends Claim {
-
-		private final List<LogTypeAsset> sourceAssets = new ArrayList<>();
-
-		public ClaimAsset(LogAssetType asset, long ownerID, long locationID, int typeID, Long quantity) {
-			super(asset, ownerID, locationID, typeID, quantity);
-		}
-
-		@Override
-		public void addCount(Source source, int percent, int count) {
-			super.addCount(source, percent, count);
-			sourceAssets.add(new LogTypeAsset(((SourceAsset)source).getAsset(), percent));
-		}
-
-		public List<LogTypeAsset> getSourceAssets() {
-			return sourceAssets;
-		}
-	}
-	private static class Claim implements Comparable<Claim> {
-		private final LogAssetType asset;
-		private final long ownerID;
-		private final long locationID;
-		private final int typeID;
-		private final int quantity;
-		private int needed;
-		private final Map<LogChangeType, Set<LogType>> logType = new HashMap<>();
-
-		public Claim(LogAssetType asset, long ownerID, long locationID, int typeID, Long quantity) {
-			this.asset = asset;
-			this.ownerID = ownerID;
-			this.locationID = locationID;
-			this.typeID = typeID;
-			this.quantity = quantity.intValue();
-			this.needed = quantity.intValue();
-		}
-
-		public LogAssetType getAsset() {
-			return asset;
-		}
-
-		public long getOwnerID() {
-			return ownerID;
-		}
-
-		public long getLocationID() {
-			return locationID;
-		}
-
-		public int getTypeID() {
-			return typeID;
-		}
-
-		public int getQuantity() {
-			return quantity;
-		}
-
-		public Map<LogChangeType, Set<LogType>> getLogType() {
-			return logType;
-		}
-
-		public void addCount(Source source, int percent, int count) {
-			putSet(logType, source.getChangeType(), new LogType(source.getDate(), source.getChangeType(), percent));
-			needed = needed - count;
-		}
-
-		private int getNeed() { //Claim optimization
-			return needed;
-		}
-
-		@Override
-		public int compareTo(Claim o) {
-			if (this.getNeed() > o.getNeed()) {
-				return 1;
-			} else if  (this.getNeed() < o.getNeed()){
-				return -1;
-			} else {
-				return 0;
-			}
-		}
-	}
-
 	private static class SourceAsset extends Source {
 
-		private final LogAssetType asset;
-		public SourceAsset(LogAssetType asset, Date date) {
+		private final LogAsset asset;
+		public SourceAsset(LogAsset asset, Date date) {
 			super(asset.getOwnerID(), asset.getLocationID(), asset.getTypeID(), (int) asset.getCount(), date, LogChangeType.MOVED_UNKNOWN);
 			this.asset = asset;
 		}
 
-		public LogAssetType getAsset() {
+		public LogAsset getAsset() {
 			return asset;
 		}
 	}
+
 	private static class Source  {
 		private final long ownerID;
 		private final long locationID;
@@ -667,16 +590,16 @@ public class LogManager {
 		private final int quantity;
 		private final Date date;
 		private final LogChangeType changeType;
-		private final Map<Match, List<Claim>> claims = new TreeMap<>();
-		private int count;
+		private final Map<Match, List<LogAsset>> claims = new TreeMap<>();
+		private int available;
 
 		public Source(long ownerID, long locationID, int typeID, int quantity, Date date, LogChangeType changeType) {
 			this.ownerID = ownerID;
 			this.locationID = locationID;
 			this.typeID = typeID;
 			this.quantity = quantity;
-			this.count = quantity;
-			this.date = date;
+			this.available = quantity
+;			this.date = date;
 			this.changeType = changeType;
 		}
 
@@ -705,23 +628,23 @@ public class LogManager {
 		}
 
 		public void takeAll() {
-			count = 0;
+			available = 0;
 		}
 
 		public void take(int missing) {
-			count = count - missing;
+			available = available - missing;
 		}
 
-		public int getCount() {
-			return count;
+		public int getAvailable() {
+			return available;
 		}
 
-		private int match(Claim claim) {
+		private int match(LogAsset claim) {
 			int match = 25; //Match TypeID
 			if (claim.getLocationID() == getLocationID()) {
 				match = match + 50;
 			}
-			if (claim.getQuantity()== getQuantity()) {
+			if (claim.getCount() == getQuantity()) {
 				match = match + 25;
 			}
 			if (match == 100) {
@@ -730,30 +653,30 @@ public class LogManager {
 			return match;
 		}
 
-		public void addClaim(Claim claim) {
+		public void addClaim(LogAsset claim) {
 			if (claim.getOwnerID() != getOwnerID()) {
 				return; //Wrong owner
 			}
 			Match match = new Match(match(claim));
-			List<Claim> claimList = claims.get(match);
+			List<LogAsset> claimList = claims.get(match);
 			if (claimList == null) {
-				claimList = new ArrayList<Claim>();
+				claimList = new ArrayList<LogAsset>();
 				claims.put(match, claimList);
 			}
 			claimList.add(claim);
 		}
 
 		public void claim() {
-			for (Map.Entry<Match, List<Claim>> entry : claims.entrySet()) {
-				List<Claim> claimList = entry.getValue();
+			for (Map.Entry<Match, List<LogAsset>> entry : claims.entrySet()) {
+				List<LogAsset> claimList = entry.getValue();
 				Match match = entry.getKey();
-				Collections.sort(claimList, new ClaimComparator(getCount())); //Sort by need
-				for (Claim claim : claimList) {
-					if (getCount() == 0) {
+				Collections.sort(claimList, new ClaimComparator(getAvailable())); //Sort by need
+				for (LogAsset claim : claimList) {
+					if (getAvailable() == 0) {
 						return; //Nothing left...
 					}
-					if (claim.getNeed() >= getCount()) { //Add all
-						claim.addCount(this, match.getPercent(), getCount());
+					if (claim.getNeed() >= getAvailable()) { //Add all
+						claim.addCount(this, match.getPercent(), getAvailable());
 						takeAll();
 						return; //Nothing left...
 					} else { //Add part of the count
@@ -766,7 +689,7 @@ public class LogManager {
 		}
 	}
 
-	private static class ClaimComparator implements Comparator<Claim> {
+	private static class ClaimComparator implements Comparator<LogAsset> {
 
 		private final int target;
 
@@ -775,7 +698,7 @@ public class LogManager {
 		}
 
 		@Override
-		public int compare(Claim o1, Claim o2) {
+		public int compare(LogAsset o1, LogAsset o2) {
 			int t1 = target - o1.getNeed();
 			int t2 = target - o2.getNeed();
 			if (t1 < t2) {
@@ -831,19 +754,7 @@ public class LogManager {
 		}
 	}
 
-	public static interface LogAssetType {
-		public long getOwnerID();
-		public long getLocationID();
-		public Integer getTypeID();
-		public long getCount();
-		public Long getItemID();
-		public Integer getFlagID();
-		public String getContainer();
-		public List<MyAsset> getParents();
-		public Item getItem();
-	}
-
-	private static class LogAsset implements LogAssetType {
+	public static class LogAsset {
 		private final long ownerID;
 		private final long locationID;
 		private final Integer typeID;
@@ -853,8 +764,23 @@ public class LogManager {
 		private final String container = "";
 		private final List<MyAsset> parents;
 		private final Item item;
+		private int needed;
+		private final Map<LogChangeType, Set<LogType>> logType = new HashMap<>();
+		private final List<LogTypeAsset> logTypeAssets = new ArrayList<>();
 
-		public LogAsset(LogAssetType asset, long count) {
+		public LogAsset(MyAsset asset) {
+			this.ownerID = asset.getOwnerID();
+			this.locationID = asset.getLocationID();
+			this.typeID = asset.getTypeID();
+			this.count = asset.getCount();
+			this.itemID = asset.getItemID();
+			this.flagID = asset.getFlagID();
+			this.parents = asset.getParents();
+			this.item = asset.getItem();
+			this.needed = (int) asset.getCount();
+		}
+
+		public LogAsset(LogAsset asset, long count) {
 			this.ownerID = asset.getOwnerID();
 			this.locationID = asset.getLocationID();
 			this.typeID = asset.getTypeID();
@@ -863,51 +789,63 @@ public class LogManager {
 			this.flagID = asset.getFlagID();
 			this.parents = asset.getParents();
 			this.item = asset.getItem();
+			this.needed = (int) count;
 		}
 
-		@Override
 		public long getOwnerID() {
 			return ownerID;
 		}
 
-		@Override
 		public long getLocationID() {
 			return locationID;
 		}
 
-		@Override
 		public Integer getTypeID() {
 			return typeID;
 		}
 
-		@Override
 		public long getCount() {
 			return count;
 		}
 
-		@Override
 		public Long getItemID() {
 			return itemID;
 		}
 
-		@Override
 		public Integer getFlagID() {
 			return flagID;
 		}
 
-		@Override
 		public String getContainer() {
 			return container;
 		}
 
-		@Override
 		public List<MyAsset> getParents() {
 			return parents;
 		}
 
-		@Override
 		public Item getItem() {
 			return item;
+		}
+
+		public Map<LogChangeType, Set<LogType>> getLogTypes() {
+			return logType;
+		}
+
+		public List<LogTypeAsset> getLogTypeAssets() {
+			return logTypeAssets;
+		}
+
+		public void addCount(Source source, int percent, int count) {
+			putSet(logType, source.getChangeType(), new LogType(source.getDate(), source.getChangeType(), percent));
+			needed = needed - count;
+			if (source instanceof SourceAsset) {
+				logTypeAssets.add(new LogTypeAsset((SourceAsset)source, percent));
+			}
+		}
+
+		private int getNeed() { //Claim optimization
+			return needed;
 		}
 	}
 }

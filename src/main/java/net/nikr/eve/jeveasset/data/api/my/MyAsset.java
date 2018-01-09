@@ -35,7 +35,6 @@ import net.nikr.eve.jeveasset.data.api.raw.RawAsset;
 import net.nikr.eve.jeveasset.data.api.raw.RawBlueprint;
 import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
-import net.nikr.eve.jeveasset.data.settings.LogManager;
 import net.nikr.eve.jeveasset.data.settings.MarketPriceData;
 import net.nikr.eve.jeveasset.data.settings.PriceData;
 import net.nikr.eve.jeveasset.data.settings.UserItem;
@@ -56,7 +55,7 @@ import net.nikr.eve.jeveasset.i18n.General;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 import net.nikr.eve.jeveasset.io.shared.RawConverter;
 
-public class MyAsset extends RawAsset implements Comparable<MyAsset>, InfoItem, JumpType, ItemType, BlueprintType, EditablePriceType, TagsType, EditableLocationType, OwnersType, LogManager.LogAssetType {
+public class MyAsset extends RawAsset implements Comparable<MyAsset>, InfoItem, JumpType, ItemType, BlueprintType, EditablePriceType, TagsType, EditableLocationType, OwnersType {
 
 //Static values (set by constructor)
 	private final List<MyAsset> assets = new ArrayList<MyAsset>();
@@ -199,7 +198,6 @@ public class MyAsset extends RawAsset implements Comparable<MyAsset>, InfoItem, 
 		return assets;
 	}
 
-	@Override
 	public String getContainer() {
 		return container;
 	}
@@ -226,7 +224,6 @@ public class MyAsset extends RawAsset implements Comparable<MyAsset>, InfoItem, 
 		}
 	}
 
-	@Override
 	public Integer getFlagID() {
 		if (getItemFlag() != null) {
 			return getItemFlag().getFlagID();
@@ -290,12 +287,10 @@ public class MyAsset extends RawAsset implements Comparable<MyAsset>, InfoItem, 
 		return owners;
 	}
 
-	@Override
 	public long getOwnerID() {
 		return owner.getOwnerID();
 	}
 
-	@Override
 	public List<MyAsset> getParents() {
 		return parents;
 	}

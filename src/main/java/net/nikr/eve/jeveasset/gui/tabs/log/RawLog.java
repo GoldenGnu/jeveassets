@@ -28,7 +28,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import net.nikr.eve.jeveasset.data.api.my.MyAsset;
-import net.nikr.eve.jeveasset.data.settings.LogManager.LogAssetType;
+import net.nikr.eve.jeveasset.data.settings.LogManager.LogAsset;
 
 
 public class RawLog implements Comparable<RawLog> {
@@ -155,7 +155,7 @@ public class RawLog implements Comparable<RawLog> {
 		private final String container;
 		private final List<Long> parentIDs;
 
-		public LogData(LogAssetType asset) {
+		public LogData(LogAsset asset) {
 			this.ownerID = asset.getOwnerID();
 			this.locationID = asset.getLocationID();
 			this.flagID = asset.getFlagID();
@@ -194,7 +194,7 @@ public class RawLog implements Comparable<RawLog> {
 			return parentIDs;
 		}
 
-		public static Map<LogChangeType, Set<LogType>> changed(Date date, LogData oldData, LogData newData, int percent) {
+		public static Map<LogChangeType, Set<LogType>> changed(Date date, LogData oldData, LogData newData, int percent, LogChangeType defaultChangeType) {
 			if (oldData.ownerID != newData.ownerID) {
 				return Collections.singletonMap(LogChangeType.MOVED_OWNER, Collections.singleton(new LogType(date, LogChangeType.MOVED_OWNER, percent)));
 			} else if (oldData.locationID != newData.locationID) {
@@ -204,7 +204,7 @@ public class RawLog implements Comparable<RawLog> {
 			} else if (oldData.parentIDs.equals(newData.parentIDs)) {
 				return Collections.singletonMap(LogChangeType.MOVED_CONTAINER, Collections.singleton(new LogType(date, LogChangeType.MOVED_CONTAINER, percent)));
 			} else {
-				return Collections.singletonMap(LogChangeType.MOVED_UNKNOWN, Collections.singleton(new LogType(date, LogChangeType.MOVED_UNKNOWN, percent)));
+				return Collections.singletonMap(defaultChangeType, Collections.singleton(new LogType(date, defaultChangeType, percent)));
 			}
 		}
 

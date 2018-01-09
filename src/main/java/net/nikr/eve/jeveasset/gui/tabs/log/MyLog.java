@@ -92,6 +92,9 @@ public class MyLog extends RawLog {
 				case MOVED_OWNER: 
 					builder.append("Moved: Owner Changed");
 					break;
+				case MOVED_SAME:
+					builder.append("Moved: Stack Changed");
+					break;
 				case MOVED_UNKNOWN:
 					builder.append("Moved: Unknown");
 					break;
