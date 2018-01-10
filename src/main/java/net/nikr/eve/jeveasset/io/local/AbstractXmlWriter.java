@@ -27,6 +27,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
+import java.util.Date;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -40,6 +41,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 
 public abstract class AbstractXmlWriter extends AbstractXmlBackup {
@@ -126,6 +128,34 @@ public abstract class AbstractXmlWriter extends AbstractXmlBackup {
 				backupFile(filename); //Rename .xml => .bac (.new is safe) and .new => .xml (.bac is safe). That way we always have at least one safe file
 			}
 			unlock(filename); //Last thing to do
+		}
+	}
+
+	
+	protected void setAttribute(final Element node, final String qualifiedName, final Object value) {
+		node.setAttribute(qualifiedName, valueOf(value));
+	}
+
+	protected void setAttributeOptional(final Element node, final String qualifiedName, final Object value) {
+		if (value != null) {
+			node.setAttribute(qualifiedName, valueOf(value));
+		}
+	}
+
+	protected void setAttribute(final Element node, final String qualifiedName, final String value) {
+		node.setAttribute(qualifiedName, value);
+	}
+
+	private String valueOf(final Object object) {
+		if (object == null) {
+			throw new RuntimeException("Can't save null");
+		} else if (object instanceof Date) {
+			Date date = (Date) object;
+			return String.valueOf(date.getTime());
+		} else if (object instanceof Enum) {
+			return ((Enum)object).name();
+		} else {
+			return String.valueOf(object);
 		}
 	}
 }

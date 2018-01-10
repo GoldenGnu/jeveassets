@@ -22,17 +22,14 @@ package net.nikr.eve.jeveasset.io.local;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import net.nikr.eve.jeveasset.data.settings.LogManager;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.tabs.log.LogChangeType;
 import net.nikr.eve.jeveasset.gui.tabs.log.LogType;
 import net.nikr.eve.jeveasset.gui.tabs.log.RawLog;
-import net.nikr.eve.jeveasset.gui.tabs.log.RawLog.LogData;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
@@ -70,52 +67,32 @@ public class LogsReader extends AbstractXmlReader<Boolean> {
 			Date date = AttributeGetters.getDate(logNode, "date");
 			long ownerID = AttributeGetters.getLong(logNode, "owner");
 			long itemID = AttributeGetters.getLong(logNode, "itemid");
-			LogData newData = parseLogData(logNode, "new");
-			LogData oldData = parseLogData(logNode, "old");
 			Set<RawLog> logset = logs.get(date);
 			if (logset == null) {
 				logset = new HashSet<>();
 				logs.put(date, logset);
 			}
-			String change = AttributeGetters.getString(logNode, "change");
-			Map<LogChangeType, List<LogType>> logTypes = new HashMap<>();
-			for (String s : change.split(",")) {
-				try {
-					
-					String[] array = s.split(":");
-					if (array.length != 4) {
-						continue;
-					}
-					LogChangeType changeType = LogChangeType.valueOf(array[0]);
-					int percent = Integer.valueOf(array[1]);
-					Date typeDate = new Date(Long.valueOf(array[2]));
-					int count2 = Integer.valueOf(array[3]);
-					LogManager.put(logTypes, changeType, new LogType(typeDate, changeType, percent, count2));
-				} catch (IllegalArgumentException ex) {
-					//No problem...
-				}
+			List<LogType> logTypes = new ArrayList<>();
+			NodeList sourceNodes = logNode.getElementsByTagName("source");
+			for (int b = 0; b < sourceNodes.getLength(); b++) {
+				Element sourceNode = (Element) sourceNodes.item(b);
+				LogType logType = parseLogType(sourceNode);
+				logTypes.add(logType);
 			}
-			logset.add(new RawLog(date, itemID, typeID, count, ownerID, oldData, newData, logTypes));
+			logset.add(new RawLog(date, itemID, typeID, count, ownerID, logTypes));
 		}
 	}
 
-	private LogData parseLogData(Element logNode, String type) throws XmlException {
-		Long ownerID = AttributeGetters.getLongOptional(logNode, "owner"+type);
-		if (ownerID == null) {
-			return null;
-		}
-		Long locationID = AttributeGetters.getLongOptional(logNode, "location"+type);
-		if (locationID == null) {
-			return null;
-		}
-		Integer flagID = AttributeGetters.getIntOptional(logNode, "flag"+type);
-		if (flagID == null) {
-			return null;
-		}
-		String parents = AttributeGetters.getStringOptional(logNode, "parents"+type);
-		if (parents == null) {
-			return null;
-		}
+	private LogType parseLogType(Element sourceNode) throws XmlException {
+		LogChangeType changeType = LogChangeType.valueOf(AttributeGetters.getString(sourceNode, "type"));
+		long count = AttributeGetters.getLong(sourceNode, "count");
+		Date date = AttributeGetters.getDate(sourceNode, "date");
+		int percent = AttributeGetters.getInt(sourceNode, "percent");
+		String container = AttributeGetters.getStringOptional(sourceNode, "container");
+		Integer flag = AttributeGetters.getIntOptional(sourceNode, "flag");
+		Long location = AttributeGetters.getLongOptional(sourceNode, "location");
+		Long owner = AttributeGetters.getLongOptional(sourceNode, "owner");
+		String parents = AttributeGetters.getString(sourceNode, "parents");
 		List<Long> parentIDs = new ArrayList<>();
 		for (String s : parents.split(",")) {
 			try {
@@ -124,13 +101,7 @@ public class LogsReader extends AbstractXmlReader<Boolean> {
 				//No problem...
 			}
 		}
-		String container = AttributeGetters.getStringOptional(logNode, "container"+type);
-		if (container == null) {
-			return null;
-		}
-		return new LogData(ownerID, locationID, flagID, container, parentIDs);
-		
-		
+		return new LogType(date, owner, location, flag, container, parentIDs, changeType, percent, count);
 	}
 
 	@Override

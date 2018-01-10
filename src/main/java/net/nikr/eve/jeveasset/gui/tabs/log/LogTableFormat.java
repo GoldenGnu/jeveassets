@@ -77,26 +77,6 @@ public enum LogTableFormat implements EnumTableColumn<MyLog> {
 		public Object getColumnValue(final MyLog from) {
 			return from.getAction();
 		}
-	},
-	FROM(String.class, GlazedLists.comparableComparator()) {
-		@Override
-		public String getColumnName() {
-			return TabsLog.get().columnFrom();
-		}
-		@Override
-		public Object getColumnValue(final MyLog from) {
-			return from.getFrom();
-		}
-	},
-	TO(String.class, GlazedLists.comparableComparator()) {
-		@Override
-		public String getColumnName() {
-			return TabsLog.get().columnTo();
-		}
-		@Override
-		public Object getColumnValue(final MyLog from) {
-			return from.getTo();
-		}
 	};
 
 	private final Class<?> type;

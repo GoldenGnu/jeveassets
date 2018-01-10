@@ -21,13 +21,11 @@
 package net.nikr.eve.jeveasset.io.local;
 
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.tabs.log.LogType;
 import net.nikr.eve.jeveasset.gui.tabs.log.RawLog;
-import net.nikr.eve.jeveasset.gui.tabs.log.RawLog.LogData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -66,55 +64,36 @@ public class LogsWriter extends AbstractXmlWriter {
 		for (Set<RawLog> logset : logs.values()) {
 			for (RawLog log : logset) {
 				Element logNode = xmldoc.createElementNS(null, "log");
-				logNode.setAttributeNS(null, "typeid", String.valueOf(log.getTypeID()));
-				logNode.setAttributeNS(null, "count", String.valueOf(log.getCount()));
-				logNode.setAttributeNS(null, "date", String.valueOf(log.getDate().getTime()));
-				logNode.setAttributeNS(null, "owner", String.valueOf(log.getOwnerID()));
-				logNode.setAttributeNS(null, "itemid", String.valueOf(log.getItemID()));
-				writeLogData(logNode, "old",  log.getOldData());
-				writeLogData(logNode, "new",  log.getNewData());
-				StringBuilder builder = new StringBuilder();
-				boolean first = true;
-				for (List<LogType> logTypes : log.getLogTypes().values()) {
-					for (LogType logType : logTypes) {
+				setAttribute(logNode, "typeid",  log.getTypeID());
+				setAttribute(logNode, "count", log.getCount());
+				setAttribute(logNode, "date", log.getDate());
+				setAttribute(logNode, "owner", log.getOwnerID());
+				setAttribute(logNode, "itemid", log.getItemID());
+				xmldoc.getDocumentElement().appendChild(logNode);
+				for (LogType logType : log.getLogTypes()) {
+					Element sourceNode = xmldoc.createElementNS(null, "source");
+					setAttribute(sourceNode, "type", logType.getChangeType());
+					setAttribute(sourceNode, "count", logType.getCount());
+					setAttribute(sourceNode, "date", logType.getDate());
+					setAttribute(sourceNode, "percent", logType.getPercent());
+					setAttributeOptional(sourceNode, "container", logType.getContainer());
+					setAttributeOptional(sourceNode, "flag", logType.getFlagID());
+					setAttributeOptional(sourceNode, "location", logType.getLocationID());
+					setAttributeOptional(sourceNode, "owner", logType.getOwnerID());
+					StringBuilder builder = new StringBuilder();
+					boolean first = true;
+					for (long itemID : logType.getParentIDs()) {
 						if (first) {
 							first = false;
 						} else {
 							builder.append(",");
 						}
-						builder.append(logType.getChangeType());
-						builder.append(":");
-						builder.append(logType.getPercent());
-						builder.append(":");
-						builder.append(logType.getDate().getTime());
-						builder.append(":");
-						builder.append(logType.getCount());
+						builder.append(itemID);
 					}
+					setAttribute(sourceNode, "parents", builder.toString());
+					logNode.appendChild(sourceNode);
 				}
-				logNode.setAttributeNS(null, "change", builder.toString());
-				xmldoc.getDocumentElement().appendChild(logNode);
 			}
 		}
-	}
-
-	private <E> void writeLogData(Element logNode, String type, LogData logData) {
-		if (logData == null) {
-			return;
-		}
-		logNode.setAttributeNS(null, "owner"+type, String.valueOf(logData.getOwnerID()));
-		logNode.setAttributeNS(null, "location"+type, String.valueOf(logData.getLocationID()));
-		logNode.setAttributeNS(null, "flag"+type, String.valueOf(logData.getFlagID()));
-		StringBuilder builder = new StringBuilder();
-		boolean first = true;
-		for (long l : logData.getParentIDs()) {
-			if (first) {
-				first = false;
-			} else {
-				builder.append(",");
-			}
-			builder.append(l);
-		}
-		logNode.setAttributeNS(null, "parents"+type, builder.toString());
-		logNode.setAttributeNS(null, "container"+type, String.valueOf(logData.getContainer()));
 	}
 }

@@ -20,25 +20,94 @@
  */
 package net.nikr.eve.jeveasset.gui.tabs.log;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
+import net.nikr.eve.jeveasset.data.settings.LogManager.Source;
 
 
 public class LogType {
 	private final Date date;
+	private final Long ownerID;
+	private final Long locationID;
+	private final Integer flagID;
+	private final String container;
+	private final List<Long> parentIDs;
 	private final LogChangeType changeType;
 	private final int percent;
-	private final int count;
+	private final long count;
 
-	public LogType(Date date, LogChangeType changeType, int percent, int count) {
+	public LogType(Date date, Long ownerID, Long locationID, Integer flagID, String container, List<Long> parentIDs, LogChangeType changeType, int percent, long count) {
 		this.date = date;
+		this.ownerID = ownerID;
+		this.locationID = locationID;
+		this.flagID = flagID;
+		this.container = container;
+		this.parentIDs = parentIDs;
 		this.changeType = changeType;
+		this.percent = percent;
+		this.count = count;
+	}
+
+	public LogType(LogChangeType changeType, Date date, int percent, long count) {
+		this.date = date;
+		this.ownerID = null;
+		this.locationID = null;
+		this.flagID = null;
+		this.container = null;
+		this.parentIDs = new ArrayList<>();
+		this.changeType = changeType;
+		this.percent = percent;
+		this.count = count;
+	}
+
+	public LogType(Source source, LogChangeType changeType, int percent, long count) {
+		this.date = source.getDate();
+		this.ownerID = source.getOwnerID();
+		this.locationID = source.getLocationID();
+		this.flagID = source.getFlagID();
+		this.container = source.getContainer();
+		this.parentIDs = source.getParentIDs();
+		this.changeType = changeType;
+		this.percent = percent;
+		this.count = count;
+	}
+
+	public LogType(Source source, int percent, long count) {
+		this.date = source.getDate();
+		this.ownerID = source.getOwnerID();
+		this.locationID = source.getLocationID();
+		this.flagID = source.getFlagID();
+		this.container = source.getContainer();
+		this.parentIDs = source.getParentIDs();
+		this.changeType = source.getChangeType();
 		this.percent = percent;
 		this.count = count;
 	}
 
 	public Date getDate() {
 		return date;
+	}
+
+	public Long getOwnerID() {
+		return ownerID;
+	}
+
+	public Long getLocationID() {
+		return locationID;
+	}
+
+	public Integer getFlagID() {
+		return flagID;
+	}
+
+	public String getContainer() {
+		return container;
+	}
+
+	public List<Long> getParentIDs() {
+		return parentIDs;
 	}
 
 	public LogChangeType getChangeType() {
@@ -49,7 +118,7 @@ public class LogType {
 		return percent;
 	}
 
-	public int getCount() {
+	public long getCount() {
 		return count;
 	}
 
