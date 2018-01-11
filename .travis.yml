@@ -1,4 +1,7 @@
 language: java
+os:
+  - linux
+  - osx
 jdk: oraclejdk8
 install: true
 script: mvn install -P skip-online-tests
