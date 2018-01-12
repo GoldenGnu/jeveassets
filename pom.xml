@@ -679,9 +679,9 @@
 			<version>1.1.0</version>
 		</dependency>
 		<dependency>
-			<groupId>net.java.dev.glazedlists</groupId>
-			<artifactId>glazedlists_java16</artifactId>
-			<version>1.10.0</version>
+			<groupId>com.glazedlists</groupId>
+			<artifactId>glazedlists</artifactId>
+			<version>1.11.0</version>
 		</dependency>
 		<dependency>
 			<groupId>net.sf.supercsv</groupId>
