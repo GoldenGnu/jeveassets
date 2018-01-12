@@ -144,20 +144,15 @@ public class RawLog implements Comparable<RawLog> {
 		return date.compareTo(o.date);
 	}
 
-	public static List<LogType> getLogTypes(Date date, LogAsset oldData, LogAsset newData, int percent, long count, LogChangeType defaultChangeType) {
-		return Collections.singletonList(getLogType(date, oldData, newData, percent, count, defaultChangeType));
+	public static List<LogType> getLogTypes(Date date, LogAsset oldData, LogAsset newData, int percent, long count, boolean to) {
+		return Collections.singletonList(getLogType(date, oldData, newData, percent, count, to));
 	}
-	public static LogType getLogType(Date date, LogAsset oldData, LogAsset newData, int percent, long count, LogChangeType defaultChangeType) {
-		if (!Objects.equals(oldData.getOwnerID(), newData.getOwnerID())) {
-			return new LogType(oldData, LogChangeType.MOVED_OWNER, percent, count);
-		} else if (!Objects.equals(oldData.getLocationID(), newData.getLocationID())) {
-			return new LogType(oldData, LogChangeType.MOVED_LOCATION, percent, count);
-		} else if (!Objects.equals(oldData.getFlagID(), newData.getFlagID())) {
-			return new LogType(oldData, LogChangeType.MOVED_FLAG, percent, count);
-		} else if (!Objects.equals(oldData.getParentIDs(), newData.getParentIDs())) {
-			return new LogType(oldData, LogChangeType.MOVED_CONTAINER, percent, count);
+
+	public static LogType getLogType(Date date, LogAsset oldData, LogAsset newData, int percent, long count, boolean to) {
+		if (to) {
+			return new LogType(newData, LogChangeType.MOVED_TO, percent, count);
 		} else {
-			return new LogType(oldData, defaultChangeType, percent, count);
+			return new LogType(oldData, LogChangeType.MOVED_FROM, percent, count);
 		}
 	}
 }

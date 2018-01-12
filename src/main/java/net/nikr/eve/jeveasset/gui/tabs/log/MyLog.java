@@ -57,43 +57,7 @@ public class MyLog extends RawLog {
 			} else {
 				builder.append(" + ");
 			}
-			Integer min = null;
-			Integer max = null;
-			Long count = null;
-			if (min == null) {
-				min = logType.getPercent();
-			} else {
-				min = Math.min(min, logType.getPercent());
-			}
-			if (max == null) {
-				max = logType.getPercent();
-			} else {
-				max = Math.max(max, logType.getPercent());
-			}
-			if (count == null) {
-				count = logType.getCount();
-			} else {
-				count = count + logType.getCount();
-			}
 			switch (logType.getChangeType()) {
-				case MOVED_CONTAINER:
-					builder.append("Moved: Container Changed");
-					break;
-				case MOVED_FLAG: 
-					builder.append("Moved: Flag Changed");
-					break;
-				case MOVED_LOCATION: 
-					builder.append("Moved: Location Changed");
-					break;
-				case MOVED_OWNER: 
-					builder.append("Moved: Owner Changed");
-					break;
-				case MOVED_SAME:
-					builder.append("Moved: Stack Changed");
-					break;
-				case MOVED_UNKNOWN:
-					builder.append("Moved: Unknown");
-					break;
 				case ADDED_UNKNOWN: 
 					builder.append("New: Unknown");
 					break;
@@ -124,19 +88,22 @@ public class MyLog extends RawLog {
 				case REMOVED_CONTRACT_ACCEPTED:
 					builder.append("Removed: Contract Accepted");
 					break;
+				case MOVED_FROM:
+					builder.append("Moved From: ");
+					addLocation(builder, logType);
+					break;
+				case MOVED_TO:
+					builder.append("Moved To: ");
+					addLocation(builder, logType);
+					break;
+				case UNKNOWN:
+					builder.append("Unknown");
+					break;
 			}
 			builder.append(" x");
-			builder.append(count);
+			builder.append(logType.getCount());
 			builder.append(" (");
-			if (max == null || min == null) {
-				builder.append(0);
-			} else if (max.equals(min)) {
-				builder.append(min);
-			} else {
-				builder.append(min);
-				builder.append("-");
-				builder.append(max);
-			}
+			builder.append(logType.getPercent());
 			builder.append("%)");
 		}
 		String s = builder.toString();
@@ -144,6 +111,34 @@ public class MyLog extends RawLog {
 			return "Unknown";
 		} else {
 			return s;
+		}
+	}
+
+	private void addLocation(StringBuilder builder, LogType logType) {
+		boolean added = false;
+		if (logType.getOwnerID() != null) {
+			builder.append(ApiIdConverter.getOwnerName(logType.getOwnerID()));
+			added = true;
+		}
+		if (logType.getLocationID() != null) {
+			if (added) {
+				builder.append(" > ");
+			}
+			builder.append(ApiIdConverter.getLocation(logType.getLocationID()).getLocation());
+			added = true;
+		}
+		if (logType.getFlagID() != null) {
+			if (added) {
+				builder.append(" > ");
+			}
+			builder.append(ApiIdConverter.getFlag(logType.getFlagID()).getFlagName());
+			added = true;
+		}
+		if (logType.getContainer() != null) {
+			if (added) {
+				builder.append(" > ");
+			}
+			builder.append(logType.getContainer());
 		}
 	}
 }

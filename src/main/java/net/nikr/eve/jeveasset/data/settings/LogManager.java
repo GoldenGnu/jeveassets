@@ -146,7 +146,7 @@ public class LogManager {
 			boolean flag =  !oldAsset.getFlagID().equals(newAsset.getFlagID()); //New Flag
 			boolean container = !oldAsset.getParentIDs().equals(newAsset.getParentIDs()); //New Container
 			if (location || flag || container || owner) {
-				newLogs.add(new RawLog(newAsset, end, RawLog.getLogTypes(end, oldAsset, newAsset, 100, newAsset.getNeed(), LogChangeType.MOVED_UNKNOWN)));
+				newLogs.add(new RawLog(newAsset, end, RawLog.getLogTypes(end, oldAsset, newAsset, 100, newAsset.getNeed(), false)));
 			}
 			if (oldAsset.getCount() > newAsset.getCount()) {
 				removed.put(oldAsset.getItemID(), new LogAsset(oldAsset, oldAsset.getCount() - newAsset.getCount(), end));
@@ -203,7 +203,7 @@ public class LogManager {
 			for (LogAsset claim : list) {
 				List<LogType> logTypes = claim.getLogTypes();
 				for (LogTypeAsset logTypeAsset : claim.getLogTypeAssets()) {
-					logTypes.add(RawLog.getLogType(end, logTypeAsset.getAsset(), claim, logTypeAsset.getPercent(), logTypeAsset.getCount(), LogChangeType.MOVED_SAME));
+					logTypes.add(RawLog.getLogType(end, logTypeAsset.getAsset(), claim, logTypeAsset.getPercent(), logTypeAsset.getCount(), false));
 				}
 				if (logTypes.isEmpty() || claim.getNeed() > 0) {
 					if (loot && (claim.getItem().getCategory().equals("Drone") 
@@ -222,14 +222,12 @@ public class LogManager {
 			for (LogAsset source : sourceAssets) {
 				List<LogType> logTypes = source.getLogTypes();
 				for (LogTypeAsset logTypeAsset : source.getLogTypeAssets()) {
-					logTypes.add(RawLog.getLogType(end, logTypeAsset.getAsset(), source, logTypeAsset.getPercent(), logTypeAsset.getCount(), LogChangeType.MOVED_SAME));
+					logTypes.add(RawLog.getLogType(end, source, logTypeAsset.getAsset(), logTypeAsset.getPercent(), logTypeAsset.getCount(), true));
 				}
 				if (logTypes.isEmpty() || source.getAvailable() > 0) {
 					logTypes.add(new LogType(LogChangeType.REMOVED_UNKNOWN, end, 0, source.getAvailable()));
 				}
 				newLogs.add(new RawLog(source, end, logTypes));
-				//Map<LogChangeType, Set<LogType>> logTypes = asset.getLogTypes();
-				//newLogs.add(new RawLog(asset, end, new LogData(asset), null, logTypes));
 			}
 		}
 	}
@@ -782,7 +780,7 @@ public class LogManager {
 		private final List<LogTypeAsset> logTypeAssets = new ArrayList<>();
 
 		public LogAsset(MyAsset asset, Date date) {
-			super(asset, date, LogChangeType.MOVED_UNKNOWN);
+			super(asset, date, LogChangeType.UNKNOWN);
 			this.count = asset.getCount();
 			this.itemID = asset.getItemID();
 			this.item = asset.getItem();
@@ -790,7 +788,7 @@ public class LogManager {
 		}
 
 		public LogAsset(LogAsset asset, long count, Date date) {
-			super(asset, count, date, LogChangeType.MOVED_UNKNOWN);
+			super(asset, count, date, LogChangeType.UNKNOWN);
 			this.count = count;
 			this.itemID = asset.getItemID();
 			this.item = asset.getItem();
