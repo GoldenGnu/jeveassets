@@ -150,7 +150,7 @@ public class EsiDeprecationOnlineTest extends TestUtil {
 	public void esiContractsGetterCharacter() {
 		ContractsApi api = new ContractsApi();
 		try {
-			api.getCharactersCharacterIdContracts(1, DATASOURCE, null, null, null);
+			api.getCharactersCharacterIdContracts(1, DATASOURCE, null, null, null, null);
 		} catch (ApiException ex) {
 
 		}
@@ -161,7 +161,7 @@ public class EsiDeprecationOnlineTest extends TestUtil {
 	public void esiContractsGetterCorporation() {
 		ContractsApi api = new ContractsApi();
 		try {
-			api.getCorporationsCorporationIdContracts(1, DATASOURCE, null, null, null);
+			api.getCorporationsCorporationIdContracts(1, DATASOURCE, null, null, null, null);
 		} catch (ApiException ex) {
 
 		}
