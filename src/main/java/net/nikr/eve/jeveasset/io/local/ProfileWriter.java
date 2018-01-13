@@ -20,7 +20,6 @@
  */
 package net.nikr.eve.jeveasset.io.local;
 
-import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;

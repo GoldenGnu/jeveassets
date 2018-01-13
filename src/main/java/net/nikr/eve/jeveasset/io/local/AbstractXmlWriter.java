@@ -93,9 +93,9 @@ public abstract class AbstractXmlWriter extends AbstractXmlBackup {
 			// result
 			Result result = new StreamResult(outputStreamWriter);
 
-			TransformerFactory factory = TransformerFactory.newInstance();
+			TransformerFactory transformerFactory = TransformerFactory.newInstance();
 			Transformer transformer;
-			transformer = factory.newTransformer();
+			transformer = transformerFactory.newTransformer();
 			transformer.setOutputProperty(OutputKeys.METHOD, "xml");
 			transformer.setOutputProperty(OutputKeys.INDENT, "yes");
 			transformer.setOutputProperty(OutputKeys.STANDALONE, "yes");
@@ -131,7 +131,6 @@ public abstract class AbstractXmlWriter extends AbstractXmlBackup {
 		}
 	}
 
-	
 	protected void setAttribute(final Element node, final String qualifiedName, final Object value) {
 		node.setAttribute(qualifiedName, valueOf(value));
 	}
