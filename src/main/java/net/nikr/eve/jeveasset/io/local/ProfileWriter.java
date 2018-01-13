@@ -20,7 +20,6 @@
  */
 package net.nikr.eve.jeveasset.io.local;
 
-import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -400,33 +399,6 @@ public final class ProfileWriter extends AbstractXmlWriter {
 			setAttribute(childNode, "materialefficiency", blueprint.getMaterialEfficiency());
 			setAttribute(childNode, "runs", blueprint.getRuns());
 			node.appendChild(childNode);
-		}
-	}
-
-	private void setAttribute(final Element node, final String qualifiedName, final Object value) {
-		node.setAttribute(qualifiedName, valueOf(value));
-	}
-
-	private void setAttributeOptional(final Element node, final String qualifiedName, final Object value) {
-		if (value != null) {
-			node.setAttribute(qualifiedName, valueOf(value));
-		}
-	}
-
-	private void setAttribute(final Element node, final String qualifiedName, final String value) {
-		node.setAttribute(qualifiedName, value);
-	}
-
-	private String valueOf(final Object object) {
-		if (object == null) {
-			throw new RuntimeException("Can't save null");
-		} else if (object instanceof Date) {
-			Date date = (Date) object;
-			return String.valueOf(date.getTime());
-		} else if (object instanceof Enum) {
-			return ((Enum)object).name();
-		} else {
-			return String.valueOf(object);
 		}
 	}
 }
