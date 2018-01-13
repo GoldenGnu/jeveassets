@@ -345,7 +345,7 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 		ContractStatus status = RawConverter.toContractStatus(AttributeGetters.getString(element, "status"));
 		String title = AttributeGetters.getStringOptional(element, "title");
 		ContractType type = RawConverter.toContractType(AttributeGetters.getString(element, "type"));
-		Float volume = AttributeGetters.getFloatOptional(element, "volume");
+		Double volume = AttributeGetters.getDoubleOptional(element, "volume");
 		boolean forCorporation = AttributeGetters.getBoolean(element, "forcorp");
 
 		contract.setAcceptorID(acceptorID);

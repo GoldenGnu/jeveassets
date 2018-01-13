@@ -60,7 +60,7 @@ public class RawContract {
 	private ContractStatus status = null;
 	private String title = null;
 	private ContractType type = null;
-	private Float volume = null;
+	private Double volume = null;
 
 	/**
 	 * New
@@ -189,7 +189,7 @@ public class RawContract {
 		status = RawConverter.toContractStatus(contract.getStatus());
 		title = contract.getTitle();
 		type = RawConverter.toContractType(contract.getType());
-		volume = RawConverter.toFloat(contract.getVolume());
+		volume = contract.getVolume();
 	}
 
 	/**
@@ -219,7 +219,7 @@ public class RawContract {
 		status = RawConverter.toContractStatus(contract.getStatus());
 		title = contract.getTitle();
 		type = RawConverter.toContractType(contract.getType());
-		volume = (float) contract.getVolume();
+		volume = contract.getVolume();
 	}
 
 	public final long getAcceptorID() {
@@ -390,11 +390,11 @@ public class RawContract {
 		this.type = type;
 	}
 
-	public Float getVolume() {
+	public Double getVolume() {
 		return volume;
 	}
 
-	public void setVolume(Float volume) {
+	public void setVolume(Double volume) {
 		this.volume = volume;
 	}
 }
