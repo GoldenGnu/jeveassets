@@ -21,19 +21,20 @@
 
 package net.nikr.eve.jeveasset.gui.tabs.log;
 
+import ca.odell.glazedlists.SeparatorList;
 import ca.odell.glazedlists.swing.DefaultEventTableModel;
 import java.awt.Component;
 import javax.swing.table.TableCellRenderer;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.gui.shared.table.JAutoColumnTable;
+import net.nikr.eve.jeveasset.gui.shared.table.JSeparatorTable;
 
 
-public class JLogTable extends JAutoColumnTable {
+public class JLogTable extends JSeparatorTable {
 
-	private final DefaultEventTableModel<MyLog> tableModel;
+	private final DefaultEventTableModel<AssetLogSource> tableModel;
 
-	public JLogTable(final Program program, final DefaultEventTableModel<MyLog> tableModel) {
-		super(program, tableModel);
+	public JLogTable(Program program, DefaultEventTableModel<AssetLogSource> tableModel, SeparatorList<AssetLogSource> separatorList) {
+		super(program, tableModel, separatorList);
 		this.tableModel = tableModel;
 	}
 

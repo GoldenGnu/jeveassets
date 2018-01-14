@@ -21,17 +21,76 @@
 package net.nikr.eve.jeveasset.gui.tabs.log;
 
 public enum LogChangeType {
-	ADDED_UNKNOWN,
-	ADDED_LOOT,
-	ADDED_TRANSACTIONS_BOUGHT,
-	ADDED_CONTRACT_ACCEPTED,
-	ADDED_INDUSTRY_JOB_DELIVERED,
-	MOVED_TO,
-	MOVED_FROM,
-	REMOVED_UNKNOWN,
-	REMOVED_MARKET_ORDER_CREATED,
-	REMOVED_CONTRACT_CREATED,
-	REMOVED_INDUSTRY_JOB_CREATED,
-	REMOVED_CONTRACT_ACCEPTED,
-	UNKNOWN,
+	ADDED_UNKNOWN {
+		@Override protected String getName() {
+			return "New: Unknown";
+		}
+	},
+	ADDED_LOOT {
+		@Override protected String getName() {
+			return "New: Loot";
+		}
+	},
+	ADDED_TRANSACTIONS_BOUGHT {
+		@Override protected String getName() {
+			return "New: Bought";
+		}
+	},
+	ADDED_CONTRACT_ACCEPTED {
+		@Override protected String getName() {
+			return "New: Contract Accepted";
+		}
+	},
+	ADDED_INDUSTRY_JOB_DELIVERED {
+		@Override protected String getName() {
+			return "New: Industry Job Delivered";
+		}
+	},
+	MOVED_TO {
+		@Override protected String getName() {
+			return "Moved To:";
+		}
+	},
+	MOVED_FROM {
+		@Override protected String getName() {
+			return "Moved From: ";
+		}
+	},
+	REMOVED_UNKNOWN {
+		@Override protected String getName() {
+			return "Removed: Unknown";
+		}
+	},
+	REMOVED_MARKET_ORDER_CREATED {
+		@Override protected String getName() {
+			return "Removed: Sell Market Order Created";
+		}
+	},
+	REMOVED_CONTRACT_CREATED {
+		@Override protected String getName() {
+			return "Removed: Contract Created";
+		}
+	},
+	REMOVED_INDUSTRY_JOB_CREATED {
+		@Override protected String getName() {
+			return "Removed: Industry Job Created";
+		}
+	},
+	REMOVED_CONTRACT_ACCEPTED {
+		@Override protected String getName() {
+			return "Removed: Contract Accepted";
+		}
+	},
+	UNKNOWN {
+		@Override protected String getName() {
+			return "Unknown";
+		}
+	};
+
+	@Override
+	public String toString() {
+		return getName();
+	}
+
+	protected abstract String getName();
 }

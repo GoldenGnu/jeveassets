@@ -23,6 +23,7 @@ package net.nikr.eve.jeveasset.gui.tabs.log;
 import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.FilterList;
 import ca.odell.glazedlists.ListSelection;
+import ca.odell.glazedlists.SeparatorList;
 import ca.odell.glazedlists.SortedList;
 import ca.odell.glazedlists.swing.DefaultEventSelectionModel;
 import ca.odell.glazedlists.swing.DefaultEventTableModel;
@@ -47,6 +48,7 @@ import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.EventListManager;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
+import net.nikr.eve.jeveasset.gui.shared.table.PaddingTableCellRenderer;
 import net.nikr.eve.jeveasset.i18n.TabsLog;
 
 
@@ -56,12 +58,13 @@ public class LogTab extends JMainTabSecondary {
 	private final JLogTable jTable;
 
 	//Table
-	private final DefaultEventTableModel<MyLog> tableModel;
-	private final EventList<MyLog> eventList;
-	private final FilterList<MyLog> filterList;
+	private final DefaultEventTableModel<AssetLogSource> tableModel;
+	private final EventList<AssetLogSource> eventList;
+	private final FilterList<AssetLogSource> filterList;
+	private final SeparatorList<AssetLogSource> separatorList;
 	private final LogFilterControl filterControl;
-	private final EnumTableFormatAdaptor<LogTableFormat, MyLog> tableFormat;
-	private final DefaultEventSelectionModel<MyLog> selectionModel;
+	private final EnumTableFormatAdaptor<LogTableFormat, AssetLogSource> tableFormat;
+	private final DefaultEventSelectionModel<AssetLogSource> selectionModel;
 
 	public static final String NAME = "log"; //Not to be changed!
 
@@ -71,29 +74,36 @@ public class LogTab extends JMainTabSecondary {
 		layout.setAutoCreateGaps(true);
 
 		//Table Format
-		tableFormat = new EnumTableFormatAdaptor<LogTableFormat, MyLog>(LogTableFormat.class);
+		tableFormat = new EnumTableFormatAdaptor<LogTableFormat, AssetLogSource>(LogTableFormat.class);
 		//Backend
-		eventList = new EventListManager<MyLog>().create();
+		eventList = new EventListManager<AssetLogSource>().create();
 		//Sorting (per column)
 		eventList.getReadWriteLock().readLock().lock();
-		SortedList<MyLog> sortedList = new SortedList<MyLog>(eventList);
+		SortedList<AssetLogSource> sortedList = new SortedList<AssetLogSource>(eventList);
 		eventList.getReadWriteLock().readLock().unlock();
 
 		//Filter
 		eventList.getReadWriteLock().readLock().lock();
-		filterList = new FilterList<MyLog>(sortedList);
+		filterList = new FilterList<AssetLogSource>(sortedList);
+		eventList.getReadWriteLock().readLock().unlock();
+		//Separator
+		eventList.getReadWriteLock().readLock().lock();
+		separatorList = new SeparatorList<AssetLogSource>(filterList, new LogSeparatorComparator(), 1, Integer.MAX_VALUE);
 		eventList.getReadWriteLock().readLock().unlock();
 		//Table Model
-		tableModel = EventModels.createTableModel(filterList, tableFormat);
+		tableModel = EventModels.createTableModel(separatorList, tableFormat);
 		//Table
-		jTable = new JLogTable(program, tableModel);
+		jTable = new JLogTable(program, tableModel, separatorList);
+		jTable.setSeparatorRenderer(new LogSeparatorTableCell(jTable, separatorList));
+		jTable.setSeparatorEditor(new LogSeparatorTableCell(jTable, separatorList));
+		PaddingTableCellRenderer.install(jTable, 3);
 		jTable.setCellSelectionEnabled(true);
 		jTable.setRowSelectionAllowed(true);
 		jTable.setColumnSelectionAllowed(true);
 		//Sorting
 		TableComparatorChooser.install(jTable, sortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, tableFormat);
 		//Selection Model
-		selectionModel = EventModels.createSelectionModel(filterList);
+		selectionModel = EventModels.createSelectionModel(separatorList);
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
 		jTable.setSelectionModel(selectionModel);
 		
@@ -111,7 +121,7 @@ public class LogTab extends JMainTabSecondary {
 				);
 
 		//Menu
-		installMenu(program, new LogTableMenu(), jTable, MyLog.class);
+		installMenu(program, new LogTableMenu(), jTable, AssetLogSource.class);
 
 		layout.setHorizontalGroup(
 			layout.createParallelGroup()
@@ -151,10 +161,10 @@ public class LogTab extends JMainTabSecondary {
 		}
 	}
 
-	private class LogTableMenu implements MenuManager.TableMenu<MyLog> {
+	private class LogTableMenu implements MenuManager.TableMenu<AssetLogSource> {
 		@Override
-		public MenuData<MyLog> getMenuData() {
-			return new MenuData<MyLog>(selectionModel.getSelected());
+		public MenuData<AssetLogSource> getMenuData() {
+			return new MenuData<AssetLogSource>(selectionModel.getSelected());
 		}
 
 		@Override
@@ -174,14 +184,14 @@ public class LogTab extends JMainTabSecondary {
 		public void addToolMenu(JComponent jComponent) { }
 	}
 
-	private class LogFilterControl extends FilterControl<MyLog> {
+	private class LogFilterControl extends FilterControl<AssetLogSource> {
 
-		public LogFilterControl(JFrame jFrame, EventList<MyLog> eventList, EventList<MyLog> exportEventList, FilterList<MyLog> filterList, Map<String, List<Filter>> filters) {
+		public LogFilterControl(JFrame jFrame, EventList<AssetLogSource> eventList, EventList<AssetLogSource> exportEventList, FilterList<AssetLogSource> filterList, Map<String, List<Filter>> filters) {
 			super(jFrame, NAME, eventList, exportEventList, filterList, filters);
 		}
 
 		@Override
-		protected Object getColumnValue(final MyLog item, final String column) {
+		protected Object getColumnValue(final AssetLogSource item, final String column) {
 			return tableFormat.getColumnValue(item, column);
 		}
 
@@ -191,13 +201,13 @@ public class LogTab extends JMainTabSecondary {
 		}
 
 		@Override
-		protected List<EnumTableColumn<MyLog>> getColumns() {
-			return new ArrayList<EnumTableColumn<MyLog>>(tableFormat.getOrderColumns());
+		protected List<EnumTableColumn<AssetLogSource>> getColumns() {
+			return new ArrayList<EnumTableColumn<AssetLogSource>>(tableFormat.getOrderColumns());
 		}
 
 		@Override
-		protected List<EnumTableColumn<MyLog>> getShownColumns() {
-			return new ArrayList<EnumTableColumn<MyLog>>(tableFormat.getShownColumns());
+		protected List<EnumTableColumn<AssetLogSource>> getShownColumns() {
+			return new ArrayList<EnumTableColumn<AssetLogSource>>(tableFormat.getShownColumns());
 		}
 
 		@Override

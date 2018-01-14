@@ -24,38 +24,19 @@ import ca.odell.glazedlists.GlazedLists;
 import java.util.Comparator;
 import java.util.Date;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
+import net.nikr.eve.jeveasset.gui.shared.table.containers.Percent;
 import net.nikr.eve.jeveasset.i18n.TabsLog;
 
 
-public enum LogTableFormat implements EnumTableColumn<MyLog> {
+public enum LogTableFormat implements EnumTableColumn<AssetLogSource> {
 	DATE(Date.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
 			return TabsLog.get().columnDate();
 		}
 		@Override
-		public Object getColumnValue(final MyLog from) {
+		public Object getColumnValue(final AssetLogSource from) {
 			return from.getDate();
-		}
-	},
-	TYPE(String.class, GlazedLists.comparableComparator()) {
-		@Override
-		public String getColumnName() {
-			return TabsLog.get().columnType();
-		}
-		@Override
-		public Object getColumnValue(final MyLog from) {
-			return from.getTypeName();
-		}
-	},
-	OWNER(String.class, GlazedLists.comparableComparator()) {
-		@Override
-		public String getColumnName() {
-			return TabsLog.get().columnOwner();
-		}
-		@Override
-		public Object getColumnValue(final MyLog from) {
-			return from.getOwnerName();
 		}
 	},
 	COUNT(Long.class, GlazedLists.comparableComparator()) {
@@ -64,7 +45,7 @@ public enum LogTableFormat implements EnumTableColumn<MyLog> {
 			return TabsLog.get().columnCount();
 		}
 		@Override
-		public Object getColumnValue(final MyLog from) {
+		public Object getColumnValue(final AssetLogSource from) {
 			return from.getCount();
 		}
 	},
@@ -74,8 +55,28 @@ public enum LogTableFormat implements EnumTableColumn<MyLog> {
 			return TabsLog.get().columnAction();
 		}
 		@Override
-		public Object getColumnValue(final MyLog from) {
-			return from.getAction();
+		public Object getColumnValue(final AssetLogSource from) {
+			return from.getChangeTypeName();
+		}
+	},
+	FROM(String.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsLog.get().columnFrom();
+		}
+		@Override
+		public Object getColumnValue(final AssetLogSource from) {
+			return from.getLocation();
+		}
+	},
+	MATCH(Percent.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsLog.get().columnMatch();
+		}
+		@Override
+		public Object getColumnValue(final AssetLogSource from) {
+			return new Percent(from.getPercent() / 100.0);
 		}
 	};
 
@@ -111,7 +112,7 @@ public enum LogTableFormat implements EnumTableColumn<MyLog> {
 		return getColumnName();
 	}
 	//XXX - TableFormat.getColumnValue(...) Workaround
-	@Override public abstract Object getColumnValue(final MyLog from);
+	@Override public abstract Object getColumnValue(final AssetLogSource from);
 	//XXX - TableFormat.getColumnName() Workaround
 	@Override public abstract String getColumnName();
 }
