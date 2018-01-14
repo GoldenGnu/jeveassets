@@ -16,6 +16,21 @@
                   #### #  # #  # #  # #### #### #### #### ####
 
 ________________________________________________________________________________
+_5.4.0__________________________________________________________________________
+
+New Features:
+-Added Manufacturing/Reactions output to the Assets tool (Optional)
+-Added shopping list and eve multibuy import to the stockpile
+
+Bug Fixes:
+-Stockpile Shopping List did not distinguish between BPC and BPO
+-Industry Jobs in the assets list now have the correct flag
+
+Code:
+-Updated glazedlists to 1.11.0
+-Updated eve-esi to 2.0.2 (fix missing contracts - x-pages)
+
+________________________________________________________________________________
 _5.3.0__________________________________________________________________________
 
 New Features:
