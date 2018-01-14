@@ -94,6 +94,7 @@ public class Settings {
 		FLAG_INCLUDE_BUY_ORDERS,
 		FLAG_INCLUDE_SELL_CONTRACTS,
 		FLAG_INCLUDE_BUY_CONTRACTS,
+		FLAG_INCLUDE_MANUFACTURING,
 		FLAG_HIGHLIGHT_SELECTED_ROWS,
 		FLAG_STOCKPILE_FOCUS_TAB,
 		FLAG_STOCKPILE_HALF_COLORS,
@@ -228,6 +229,7 @@ public class Settings {
 		flags.put(SettingFlag.FLAG_INCLUDE_BUY_ORDERS, false);
 		flags.put(SettingFlag.FLAG_INCLUDE_SELL_CONTRACTS, false);
 		flags.put(SettingFlag.FLAG_INCLUDE_BUY_CONTRACTS, false);
+		flags.put(SettingFlag.FLAG_INCLUDE_MANUFACTURING, false);
 		flags.put(SettingFlag.FLAG_BLUEPRINT_BASE_PRICE_TECH_1, true);
 		flags.put(SettingFlag.FLAG_BLUEPRINT_BASE_PRICE_TECH_2, false);
 		flags.put(SettingFlag.FLAG_TRANSACTION_HISTORY, true);
@@ -656,16 +658,24 @@ public class Settings {
 		return flags.get(SettingFlag.FLAG_INCLUDE_BUY_CONTRACTS);
 	}
 
-	public void setIncludeBuyContracts(final boolean includeBuyOrders) {
-		flags.put(SettingFlag.FLAG_INCLUDE_BUY_CONTRACTS, includeBuyOrders);
+	public void setIncludeBuyContracts(final boolean includeBuyContracts) {
+		flags.put(SettingFlag.FLAG_INCLUDE_BUY_CONTRACTS, includeBuyContracts);
 	}
 
 	public boolean isIncludeSellContracts() {
 		return flags.get(SettingFlag.FLAG_INCLUDE_SELL_CONTRACTS);
 	}
 
-	public void setIncludeSellContracts(final boolean includeBuyOrders) {
-		flags.put(SettingFlag.FLAG_INCLUDE_SELL_CONTRACTS, includeBuyOrders);
+	public void setIncludeSellContracts(final boolean includeSellContracts) {
+		flags.put(SettingFlag.FLAG_INCLUDE_SELL_CONTRACTS, includeSellContracts);
+	}
+
+	public boolean isIncludeManufacturing() {
+		return flags.get(SettingFlag.FLAG_INCLUDE_MANUFACTURING);
+	}
+
+	public boolean setIncludeManufacturing(final boolean includeManufacturing) {
+		return flags.put(SettingFlag.FLAG_INCLUDE_MANUFACTURING, includeManufacturing);
 	}
 
 	public boolean isBlueprintBasePriceTech1() {

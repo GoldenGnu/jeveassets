@@ -23,6 +23,7 @@ package net.nikr.eve.jeveasset.data.api.raw;
 import java.util.Objects;
 import net.nikr.eve.jeveasset.data.api.my.MyContractItem;
 import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob;
+import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob.IndustryActivity;
 import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder;
 import net.nikr.eve.jeveasset.data.sde.ItemFlag;
 import net.nikr.eve.jeveasset.i18n.General;
@@ -74,19 +75,39 @@ public class RawAsset {
 	 * IndustryJob
 	 *
 	 * @param industryJob
+	 * @param manufacturing
 	 */
-	public RawAsset(MyIndustryJob industryJob) {
-		isSingleton = true;
-		itemId = industryJob.getBlueprintID();
-		itemFlag = new ItemFlag(0, General.get().industryJobFlag(), General.get().industryJobFlag());
-		locationId = industryJob.getLocationID();
-		locationType = RawConverter.toAssetLocationType(locationId);
-		if (industryJob.isBPO()) {
-			quantity = -1;
+	public RawAsset(MyIndustryJob industryJob, boolean manufacturing) {
+		if (manufacturing) {
+			isSingleton = false;
+			itemId = industryJob.getBlueprintID() + industryJob.getOutputCount();
+			switch (industryJob.getActivity()) { //Can not be null
+				case ACTIVITY_MANUFACTURING: //Manufacturing
+					itemFlag = new ItemFlag(0, IndustryActivity.ACTIVITY_MANUFACTURING.toString(), IndustryActivity.ACTIVITY_MANUFACTURING.toString());
+					break;
+				case ACTIVITY_REACTIONS: //Reactions
+					itemFlag = new ItemFlag(0, IndustryActivity.ACTIVITY_REACTIONS.toString(), IndustryActivity.ACTIVITY_REACTIONS.toString());
+					break;
+				default:
+					itemFlag = ApiIdConverter.getFlag(0); //Should never happen, but, better safe than sorry...
+			}
+			locationId = industryJob.getOutputLocationID();
+			locationType = RawConverter.toAssetLocationType(locationId);
+			quantity = industryJob.getOutputCount();
+			typeId = industryJob.getProductTypeID();
 		} else {
-			quantity = -2;
+			isSingleton = true;
+			itemId = industryJob.getBlueprintID();
+			itemFlag = new ItemFlag(0, General.get().industryJobFlag(), General.get().industryJobFlag());
+			locationId = industryJob.getLocationID();
+			locationType = RawConverter.toAssetLocationType(locationId);
+			if (industryJob.isBPO()) {
+				quantity = -1;
+			} else {
+				quantity = -2;
+			}
+			typeId = industryJob.getBlueprintTypeID();
 		}
-		typeId = industryJob.getBlueprintTypeID();
 	}
 
 	/**

@@ -30,6 +30,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import net.nikr.eve.jeveasset.data.api.accounts.OwnerType;
+import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob.IndustryActivity;
 import net.nikr.eve.jeveasset.data.api.raw.RawAsset;
 import net.nikr.eve.jeveasset.data.api.raw.RawBlueprint;
 import net.nikr.eve.jeveasset.data.sde.Item;
@@ -50,6 +51,7 @@ import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo.InfoItem;
 import net.nikr.eve.jeveasset.gui.tabs.assets.AssetsTab;
 import net.nikr.eve.jeveasset.i18n.DataModelAsset;
+import net.nikr.eve.jeveasset.i18n.General;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 import net.nikr.eve.jeveasset.io.shared.RawConverter;
 
@@ -62,6 +64,7 @@ public class MyAsset extends RawAsset implements Comparable<MyAsset>, InfoItem, 
 	private final OwnerType owner;
 	private final List<MyAsset> parents;
 	private final Set<Long> owners;
+	private final boolean generated;
 //Static values cache (set by constructor)
 	private String typeName;
 	private boolean bpo;
@@ -117,6 +120,7 @@ public class MyAsset extends RawAsset implements Comparable<MyAsset>, InfoItem, 
 		this.parents = null;
 		this.location = location;
 		this.owners = new HashSet<Long>();
+		this.generated = true;
 		setItemID(0L);
 		setItemFlag(ApiIdConverter.getFlag(0));
 		setLocationID(location.getLocationID());
@@ -133,6 +137,13 @@ public class MyAsset extends RawAsset implements Comparable<MyAsset>, InfoItem, 
 		this.typeName = item.getTypeName();
 		this.name = item.getTypeName();
 		this.owners = Collections.singleton(owner.getOwnerID());
+		this.generated = getFlag().equals(General.get().marketOrderSellFlag()) //market sell orders
+						|| getFlag().equals(General.get().marketOrderBuyFlag()) //market buy orders
+						|| getFlag().equals(General.get().contractIncluded()) //contracts included
+						|| getFlag().equals(General.get().contractExcluded()) //contracts excluded
+						|| getFlag().equals(IndustryActivity.ACTIVITY_MANUFACTURING.toString()) //industry job manufacturing
+						|| getFlag().equals(IndustryActivity.ACTIVITY_REACTIONS.toString()) //industry job reactions
+						;
 		updateBlueprint();
 	}
 
@@ -163,8 +174,8 @@ public class MyAsset extends RawAsset implements Comparable<MyAsset>, InfoItem, 
 		}
 	}
 
-	public MyAsset(MyIndustryJob industryJob) {
-		this(new RawAsset(industryJob), industryJob.getItem(), industryJob.getOwner(), new ArrayList<MyAsset>());
+	public MyAsset(MyIndustryJob industryJob, boolean manufacturing) {
+		this(new RawAsset(industryJob, manufacturing), manufacturing ? ApiIdConverter.getItem(industryJob.getProductTypeID()) : industryJob.getItem(), industryJob.getOwner(), new ArrayList<MyAsset>());
 	}
 
 	public MyAsset(MyMarketOrder marketOrder) {
@@ -191,6 +202,10 @@ public class MyAsset extends RawAsset implements Comparable<MyAsset>, InfoItem, 
 		return container;
 	}
 
+	public boolean isGenerated() {
+		return generated;
+	}
+
 	@Override
 	public long getCount() {
 		Integer quantity = super.getQuantity();
@@ -201,7 +216,7 @@ public class MyAsset extends RawAsset implements Comparable<MyAsset>, InfoItem, 
 		}
 	}
 
-	public String getFlag() {
+	public final String getFlag() {
 		if (getItemFlag() != null) {
 			return getItemFlag().getFlagName();
 		} else {
