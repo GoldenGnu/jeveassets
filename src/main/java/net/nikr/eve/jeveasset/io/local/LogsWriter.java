@@ -20,13 +20,15 @@
  */
 package net.nikr.eve.jeveasset.io.local;
 
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.tabs.log.AssetLog;
 import net.nikr.eve.jeveasset.gui.tabs.log.AssetLogData;
-import net.nikr.eve.jeveasset.gui.tabs.log.AssetLogSource;
+import net.nikr.eve.jeveasset.gui.tabs.log.LogData;
+import net.nikr.eve.jeveasset.gui.tabs.log.LogSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -37,12 +39,12 @@ public class LogsWriter extends AbstractXmlWriter {
 
 	private static final Logger LOG = LoggerFactory.getLogger(LogsWriter.class);
 
-	public static boolean save(Map<Date, Map<AssetLog, List<AssetLogSource>>> logs) {
+	public static boolean save(LogData logData) {
 		LogsWriter reader = new LogsWriter();
-		return reader.write(logs);
+		return reader.write(logData);
 	}
 
-	private boolean write(Map<Date, Map<AssetLog, List<AssetLogSource>>> logs) {
+	private boolean write(LogData logData) {
 		Document xmldoc;
 		try {
 			xmldoc = getXmlDocument("logs");
@@ -50,7 +52,7 @@ public class LogsWriter extends AbstractXmlWriter {
 			LOG.error("Logs not saved " + ex.getMessage(), ex);
 			return false;
 		}
-		writeLogs(xmldoc, logs);
+		writeLogData(xmldoc, logData);
 		try {
 			writeXmlFile(xmldoc, Settings.getPathLogs(), true);
 		} catch (XmlException ex) {
@@ -61,26 +63,53 @@ public class LogsWriter extends AbstractXmlWriter {
 		return true;
 	}
 
-	private void writeLogs(Document xmldoc, Map<Date, Map<AssetLog, List<AssetLogSource>>> logs) {
-		for (Map.Entry<Date, Map<AssetLog, List<AssetLogSource>>> update : logs.entrySet()) {
-			Element updateNode = xmldoc.createElementNS(null, "update");
-			setAttribute(updateNode, "date", update.getKey());
-			xmldoc.getDocumentElement().appendChild(updateNode);
-			for (Map.Entry<AssetLog, List<AssetLogSource>> entry : update.getValue().entrySet()) {
-				AssetLog assetLog = entry.getKey();
-				Element logNode = xmldoc.createElementNS(null, "log");
-				writeData(logNode, assetLog);
-				setAttribute(logNode, "itemid", assetLog.getItemID());
-				setAttribute(logNode, "need", assetLog.getNeed());
-				updateNode.appendChild(logNode);
-				for (AssetLogSource source : assetLog.getSources()) {
-					Element sourceNode = xmldoc.createElementNS(null, "source");
-					writeData(sourceNode, source);
-					setAttribute(sourceNode, "changetype", source.getChangeType());
-					setAttribute(sourceNode, "count", source.getCount());
-					setAttribute(sourceNode, "percent", source.getPercent());
-					logNode.appendChild(sourceNode);
-				}
+	private void writeLogData(Document xmldoc, LogData logData) {
+		Element claimsNode = xmldoc.createElementNS(null, "claims");
+		xmldoc.getDocumentElement().appendChild(claimsNode);
+		for (Date date : logData.getAddedClaims().keySet()) {
+			Element claimsetNode = xmldoc.createElementNS(null, "claimset");
+			setAttribute(claimsetNode, "date", date);
+			claimsNode.appendChild(claimsetNode);
+			//Added
+			Element addedClaimsNode = xmldoc.createElementNS(null, "added");
+			claimsetNode.appendChild(addedClaimsNode);
+			writeClaims(addedClaimsNode, xmldoc, logData.getAddedClaims().get(date).values());
+			//Removed
+			Element removedClaimsNode = xmldoc.createElementNS(null, "removed");
+			claimsetNode.appendChild(removedClaimsNode);
+			writeClaims(removedClaimsNode, xmldoc, logData.getRemovedClaims().get(date).values());
+		}
+		Element sourcesNode = xmldoc.createElementNS(null, "sources");
+		xmldoc.getDocumentElement().appendChild(sourcesNode);
+
+		Element addedSourcesNode = xmldoc.createElementNS(null, "added");
+		sourcesNode.appendChild(addedSourcesNode);
+		writeSources(addedSourcesNode, xmldoc, logData.getAddedSources().values());
+
+		Element removedSourcesNode = xmldoc.createElementNS(null, "removed");
+		sourcesNode.appendChild(removedSourcesNode);
+		writeSources(removedSourcesNode, xmldoc, logData.getRemovedSources().values());
+	}
+
+	private void writeClaims(Element parentNode, Document xmldoc, Collection<List<AssetLog>> lists) {
+		for (List<AssetLog> list : lists) {
+			for (AssetLog assetLog : list) {
+				Element claimNode = xmldoc.createElementNS(null, "claim");
+				writeData(claimNode, assetLog);
+				setAttribute(claimNode, "itemid", assetLog.getItemID());
+				parentNode.appendChild(claimNode);
+			}
+		}
+	}
+
+	private void writeSources(Element parentNode, Document xmldoc, Collection<Set<LogSource>> lists) {
+		for (Set<LogSource> list : lists) {
+			for (LogSource source : list) {
+				Element sourceNode = xmldoc.createElementNS(null, "source");
+				writeData(sourceNode, source);
+				setAttribute(sourceNode, "changetype", source.getChangeType());
+				parentNode.appendChild(sourceNode);
+
 			}
 		}
 	}
@@ -91,6 +120,7 @@ public class LogsWriter extends AbstractXmlWriter {
 		setAttribute(node, "date", data.getDate());
 		setAttribute(node, "locationid", data.getLocationID());
 		setAttribute(node, "ownerid", data.getOwnerID());
+		setAttribute(node, "count", data.getCount());
 		setAttribute(node, "id", data.getID());
 		setAttribute(node, "type", data.getLogType());
 		StringBuilder builder = new StringBuilder();

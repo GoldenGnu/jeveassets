@@ -391,7 +391,7 @@ public class Program implements ActionListener {
 		jLockWindow.show(GuiShared.get().updating(), new JLockWindow.LockWorker() {
 			@Override
 			public void task() {
-				updateEventLists(null, locationIDs, null, null);
+				updateEventLists(null, locationIDs, null);
 			}
 
 			@Override
@@ -404,7 +404,7 @@ public class Program implements ActionListener {
 		jLockWindow.show(GuiShared.get().updating(), new JLockWindow.LockWorker() {
 			@Override
 			public void task() {
-				updateEventLists(null, null, typeIDs, null);
+				updateEventLists(null, null, typeIDs);
 			}
 
 			@Override
@@ -417,7 +417,7 @@ public class Program implements ActionListener {
 		jLockWindow.show(GuiShared.get().updating(), new JLockWindow.LockWorker() {
 			@Override
 			public void task() {
-				updateEventLists(itemIDs, null, null, null);
+				updateEventLists(itemIDs, null, null);
 			}
 
 			@Override
@@ -443,11 +443,15 @@ public class Program implements ActionListener {
 	}
 
 	public final void updateEventLists() {
-		updateEventLists(null, null, null, null);
+		updateEventLists(null, null, null);
 	}
 
-	public final void updateEventLists(Date start) {
-		updateEventLists(null, null, null, start);
+	public final void updateEventLists(Date updateLog) {
+		updateEventLists(null, null, null, updateLog);
+	}
+
+	private void updateEventLists(Set<Long> itemIDs, Set<Long> locationIDs, Set<Integer> typeIDs) {
+		updateEventLists(itemIDs, locationIDs, typeIDs, null);
 	}
 
 	private synchronized void updateEventLists(Set<Long> itemIDs, Set<Long> locationIDs, Set<Integer> typeIDs, Date start) {

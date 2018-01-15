@@ -40,12 +40,13 @@ public class AssetLogData {
 	private final Integer flagID;
 	private final String container;
 	private final List<Long> parentIDs;
+	private final long count;
 	private final LogType logType;
 	private final long id;
 	private final String location;
 	private final Item item;
 
-	public AssetLogData(int typeID, Date date, long ownerID, long locationID, Integer flagID, String container, List<Long> parentIDs, LogType logType, long id) {
+	public AssetLogData(int typeID, Date date, long ownerID, long locationID, Integer flagID, String container, List<Long> parentIDs, long count, LogType logType, long id) {
 		this.typeID = typeID;
 		this.date = date;
 		this.ownerID = ownerID;
@@ -53,13 +54,14 @@ public class AssetLogData {
 		this.flagID = flagID;
 		this.container = container;
 		this.parentIDs = parentIDs;
+		this.count = count;
 		this.logType = logType;
 		this.id = id;
 		this.location = createLocation();
 		this.item = ApiIdConverter.getItem(typeID);
 	}
 
-	public AssetLogData(int typeID, Date date, long ownerID, long locationID, LogType logType, long id) {
+	public AssetLogData(int typeID, Date date, long ownerID, long locationID, long count, LogType logType, long id) {
 		this.typeID = typeID;
 		this.date = date;
 		this.ownerID = ownerID;
@@ -67,13 +69,14 @@ public class AssetLogData {
 		this.flagID = null;
 		this.container = null;
 		this.parentIDs = new ArrayList<>();
+		this.count = count;
 		this.logType = logType;
 		this.id = id;
 		this.location = createLocation();
 		this.item = ApiIdConverter.getItem(typeID);
 	}
 
-	public AssetLogData(AssetLogData data) {
+	public AssetLogData(AssetLogData data, long count) {
 		this.typeID = data.getTypeID();
 		this.date = data.getDate();
 		this.ownerID = data.getOwnerID();
@@ -81,6 +84,7 @@ public class AssetLogData {
 		this.flagID = data.getFlagID();
 		this.container = data.getContainer();
 		this.parentIDs = data.getParentIDs();
+		this.count = count;
 		this.logType = data.getLogType();
 		this.id = data.getID();
 		this.location = createLocation();
@@ -98,13 +102,14 @@ public class AssetLogData {
 		for (MyAsset parent : asset.getParents()) {
 			parentIDs.add(parent.getItemID());
 		}
+		this.count = asset.getCount();
 		this.logType = LogType.ASSET;
 		this.id = asset.getItemID();
 		this.location = createLocation();
 		this.item = ApiIdConverter.getItem(typeID);
 	}
 
-	public AssetLogData(AssetLog asset, Date date) {
+	public AssetLogData(AssetLog asset, Date date, long count) {
 		this.typeID = asset.getTypeID();
 		this.date = date;
 		this.ownerID = asset.getOwnerID();
@@ -112,6 +117,7 @@ public class AssetLogData {
 		this.flagID = asset.getFlagID();
 		this.container = asset.getContainer();
 		this.parentIDs = asset.getParentIDs();
+		this.count = count;
 		this.logType = asset.getLogType();
 		this.id = asset.getID();
 		this.location = createLocation();
@@ -144,6 +150,10 @@ public class AssetLogData {
 
 	public List<Long> getParentIDs() {
 		return parentIDs;
+	}
+
+	public long getCount() {
+		return count;
 	}
 
 	public LogType getLogType() {

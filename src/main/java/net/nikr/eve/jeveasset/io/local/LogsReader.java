@@ -25,26 +25,29 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import net.nikr.eve.jeveasset.data.settings.LogManager;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.tabs.log.AssetLog;
 import net.nikr.eve.jeveasset.gui.tabs.log.AssetLogData;
 import net.nikr.eve.jeveasset.gui.tabs.log.AssetLogData.LogType;
-import net.nikr.eve.jeveasset.gui.tabs.log.AssetLogSource;
 import net.nikr.eve.jeveasset.gui.tabs.log.LogChangeType;
+import net.nikr.eve.jeveasset.gui.tabs.log.LogData;
+import net.nikr.eve.jeveasset.gui.tabs.log.LogSource;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 
 public class LogsReader extends AbstractXmlReader<Boolean> {
 
-	private final Map<Date, Map<AssetLog, List<AssetLogSource>>> logs;
+	private final LogData logData;
 
-	private LogsReader(Map<Date, Map<AssetLog, List<AssetLogSource>>> logs) {
-		this.logs = logs;
+	private LogsReader(LogData logData) {
+		this.logData = logData;
 	}
 
-	public static boolean load(Map<Date, Map<AssetLog, List<AssetLogSource>>> logs) {
-		LogsReader reader = new LogsReader(logs);
+	public static boolean load(LogData logData) {
+		LogsReader reader = new LogsReader(logData);
 		return reader.read("Logs", Settings.getPathLogs(), XmlType.DYNAMIC_BACKUP);
 	}
 	
@@ -54,50 +57,86 @@ public class LogsReader extends AbstractXmlReader<Boolean> {
 			throw new XmlException("Wrong root element name.");
 		}
 
-		parseUpdates(element);
+		//Claims
+		NodeList claimsNodes = element.getElementsByTagName("claims");
+		if (claimsNodes.getLength() == 1) {
+			Element claimsElement = (Element) claimsNodes.item(0);
+			parseClaims(claimsElement);
+		}
+
+		//Sources
+		NodeList sourcesNodes = element.getElementsByTagName("sources");
+		if (sourcesNodes.getLength() == 1) {
+			Element sourcesElement = (Element) sourcesNodes.item(0);
+			parseSources(sourcesElement);
+		}
 
 		return true;
 	}
 
-	private void parseUpdates(Element rootElement) throws XmlException {
-		NodeList updateNodes = rootElement.getElementsByTagName("update");
-		for (int a = 0; a < updateNodes.getLength(); a++) {
-			Element updateNode = (Element) updateNodes.item(a);
-			Date date = AttributeGetters.getDate(updateNode, "date");
-			Map<AssetLog, List<AssetLogSource>> map = parseLogs(updateNode);
-			logs.put(date, map);
+	private void parseClaims(Element element) throws XmlException {
+		logData.getAddedClaims().clear();
+		logData.getRemovedClaims().clear();
+		NodeList claimSetNodes = element.getElementsByTagName("claimset");
+		for (int a = 0; a < claimSetNodes.getLength(); a++) {
+			Element claimSetNode = (Element) claimSetNodes.item(a);
+			Date date = AttributeGetters.getDate(claimSetNode, "date");
+			NodeList addedNodes = claimSetNode.getElementsByTagName("added");
+			if (addedNodes.getLength() == 1) {
+				Element addedElement = (Element) addedNodes.item(0);
+				Map<Integer, List<AssetLog>> added = parseClaimsSet(addedElement);
+				logData.getAddedClaims().put(date, added);
+			}
+			NodeList removedNodes = claimSetNode.getElementsByTagName("removed");
+			if (removedNodes.getLength() == 1) {
+				Element removedElement = (Element) removedNodes.item(0);
+				Map<Integer, List<AssetLog>> removed = parseClaimsSet(removedElement);
+				logData.getRemovedClaims().put(date, removed);
+			}
 		}
 	}
 
-	private Map<AssetLog, List<AssetLogSource>> parseLogs(Element element) throws XmlException {
-		NodeList logNodes = element.getElementsByTagName("log");
-		Map<AssetLog, List<AssetLogSource>> map = new HashMap<>();
-		for (int a = 0; a < logNodes.getLength(); a++) {
-			Element logNode = (Element) logNodes.item(a);
-			AssetLogData data = parseData(logNode);
-			long itemID = AttributeGetters.getLong(logNode, "itemid");
-			long need = AttributeGetters.getLong(logNode, "need");
-			AssetLog assetLog = new AssetLog(data, itemID, need);
-			List<AssetLogSource> list = parseSources(logNode, assetLog);
-			map.put(assetLog, list);
+	private Map<Integer, List<AssetLog>> parseClaimsSet(Element element) throws XmlException {
+		NodeList claimNodes = element.getElementsByTagName("claim");
+		Map<Integer, List<AssetLog>> map = new HashMap<>();
+		for (int a = 0; a < claimNodes.getLength(); a++) {
+			Element claimNode = (Element) claimNodes.item(a);
+			AssetLogData data = parseData(claimNode);
+			long itemID = AttributeGetters.getLong(claimNode, "itemid");
+			AssetLog assetLog = new AssetLog(data, itemID);
+			LogManager.put(map, assetLog.getTypeID(), assetLog);
 		}
 		return map;
 	}
 
-	private List<AssetLogSource> parseSources(Element logNode, AssetLog parent) throws XmlException {
-		NodeList sourceNodes = logNode.getElementsByTagName("source");
-		List<AssetLogSource> list = new ArrayList<>();
+	private void parseSources(Element element) throws XmlException {
+		logData.getAddedSources().clear();
+		logData.getRemovedSources().clear();
+		NodeList addedNodes = element.getElementsByTagName("added");
+		if (addedNodes.getLength() == 1) {
+			Element addedElement = (Element) addedNodes.item(0);
+			Map<Integer, Set<LogSource>> added = parseSource(addedElement);
+			logData.getAddedSources().putAll(added);
+		}
+		NodeList removedNodes = element.getElementsByTagName("removed");
+		if (removedNodes.getLength() == 1) {
+			Element removedElement = (Element) removedNodes.item(0);
+			Map<Integer, Set<LogSource>> removed = parseSource(removedElement);
+			logData.getRemovedSources().putAll(removed);
+		}
+	}
+
+	private Map<Integer, Set<LogSource>> parseSource(Element element) throws XmlException {
+		NodeList sourceNodes = element.getElementsByTagName("source");
+		Map<Integer, Set<LogSource>> map = new HashMap<>();
 		for (int a = 0; a < sourceNodes.getLength(); a++) {
 			Element sourceNode = (Element) sourceNodes.item(a);
 			AssetLogData data = parseData(sourceNode);
 			LogChangeType changeType = LogChangeType.valueOf(AttributeGetters.getString(sourceNode, "changetype"));
-			int percent = AttributeGetters.getInt(sourceNode, "percent");
-			long count = AttributeGetters.getLong(sourceNode, "count");
-			AssetLogSource source = new AssetLogSource(data, parent, changeType, percent, count);
-			parent.add(source, false);
-			list.add(source);
+			LogSource source = new LogSource(data, changeType);
+			LogManager.putSet(map, source.getTypeID(), source);
 		}
-		return list;
+		return map;
 	}
 
 	private AssetLogData parseData(Element node) throws XmlException {
@@ -108,6 +147,7 @@ public class LogsReader extends AbstractXmlReader<Boolean> {
 		Integer flagID = AttributeGetters.getIntOptional(node, "flagid");
 		String container = AttributeGetters.getStringOptional(node, "container");
 		String parents = AttributeGetters.getString(node, "parentids");
+		long count = AttributeGetters.getLong(node, "count");
 		long id = AttributeGetters.getLong(node, "id");
 		LogType logType = LogType.valueOf(AttributeGetters.getString(node, "type"));
 		List<Long> parentIDs = new ArrayList<>();
@@ -118,7 +158,7 @@ public class LogsReader extends AbstractXmlReader<Boolean> {
 				//No problem...
 			}
 		}
-		return new AssetLogData(typeID, date, ownerID, locationID, flagID, container, parentIDs, logType, id);
+		return new AssetLogData(typeID, date, ownerID, locationID, flagID, container, parentIDs, count, logType, id);
 	}
 
 	@Override

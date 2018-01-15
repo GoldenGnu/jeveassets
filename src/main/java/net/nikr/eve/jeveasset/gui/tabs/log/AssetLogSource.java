@@ -25,15 +25,12 @@ public class AssetLogSource extends AssetLogData implements Comparable<AssetLogS
 	private final AssetLog parent;
 	private final LogChangeType changeType;
 	private final int percent;
-	private final long count;
 
 	public AssetLogSource(AssetLogData data, AssetLog parent, LogChangeType changeType, int percent, long count) {
-		super(data);
+		super(data, count);
 		this.parent = parent;
 		this.changeType = changeType;
 		this.percent = percent;
-		this.count = count;
-		
 	}
 
 	public AssetLog getParent() {
@@ -46,10 +43,6 @@ public class AssetLogSource extends AssetLogData implements Comparable<AssetLogS
 
 	public int getPercent() {
 		return percent;
-	}
-
-	public long getCount() {
-		return count;
 	}
 
 	public String getChangeTypeName() {

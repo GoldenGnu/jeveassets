@@ -37,17 +37,29 @@ public class LogSource extends AssetLogData {
 	private final AssetLog sourceAssetLog;
 	private long available;
 
-	public LogSource(LogChangeType changeType, long available, AssetLog assetLog) {
-		super(assetLog);
+	/**
+	 * Load
+	 * @param data
+	 * @param changeType 
+	 */
+	public LogSource(AssetLogData data, LogChangeType changeType) {
+		super(data, data.getCount());
 		this.changeType = changeType;
-		this.available = available;
+		this.available = data.getCount();
+		this.sourceAssetLog = null;
+	}
+
+	public LogSource(LogChangeType changeType, long count, AssetLog assetLog) {
+		super(assetLog, count);
+		this.changeType = changeType;
+		this.available = count;
 		this.sourceAssetLog = assetLog;
 	}
 
-	public LogSource(LogChangeType changeType, long available, int typeID, Date date, Long ownerID, Long locationID, LogType logType, long id) {
-		super(typeID, date, ownerID, locationID, logType, id);
+	public LogSource(LogChangeType changeType, long count, int typeID, Date date, Long ownerID, Long locationID, LogType logType, long id) {
+		super(typeID, date, ownerID, locationID, count, logType, id);
 		this.changeType = changeType;
-		this.available = available;
+		this.available = count;
 		this.sourceAssetLog = null;
 	}
 
@@ -91,6 +103,11 @@ public class LogSource extends AssetLogData {
 		}
 	}
 
+	public void reset() {
+		available = getCount();
+		claims.clear();
+	}
+
 	public AssetLog getAssetLog() {
 		return sourceAssetLog;
 	}
@@ -123,6 +140,40 @@ public class LogSource extends AssetLogData {
 
 	private void take(long missing) {
 		available = available - missing;
+	}
+
+
+	@Override
+	public int hashCode() {
+		int hash = 3;
+		hash = 67 * hash + java.util.Objects.hashCode(this.changeType);
+		hash = 67 * hash + java.util.Objects.hashCode(this.getLogType());
+		hash = 67 * hash + (int) (this.getID() ^ (this.getID() >>> 32));
+		return hash;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		final LogSource other = (LogSource) obj;
+		if (this.getID() != other.getID()) {
+			return false;
+		}
+		if (this.getLogType() != other.getLogType()) {
+			return false;
+		}
+		if (this.changeType != other.changeType) {
+			return false;
+		}
+		return true;
 	}
 
 	private static class AssetLogComparator implements Comparator<AssetLog> {

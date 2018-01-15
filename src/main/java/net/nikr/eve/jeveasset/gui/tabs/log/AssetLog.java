@@ -36,18 +36,34 @@ public class AssetLog extends AssetLogData implements Comparable<AssetLog> {
 	private boolean removed = false;
 	private boolean moved = false;
 
-	public AssetLog(AssetLogData data, long itemID, long need) {
-		super(data);
+	/**
+	 * Load
+	 * @param data
+	 * @param itemID 
+	 */
+	public AssetLog(AssetLogData data, long itemID) {
+		super(data, data.getCount());
 		this.itemID = itemID;
-		this.need = need;
+		this.need = data.getCount();
 	}
 
-	public AssetLog(AssetLog assetLog, Date date, long need) {
-		super(assetLog, date);
-		this.need = need;
+	/**
+	 * Removed
+	 * @param assetLog
+	 * @param date
+	 * @param count 
+	 */
+	public AssetLog(AssetLog assetLog, Date date, long count) {
+		super(assetLog, date, count);
+		this.need = count;
 		this.itemID = assetLog.getItemID();
 	}
 
+	/**
+	 * New
+	 * @param asset
+	 * @param date 
+	 */
 	public AssetLog(MyAsset asset, Date date) {
 		super(asset, date);
 		this.need = asset.getCount();
@@ -56,6 +72,11 @@ public class AssetLog extends AssetLogData implements Comparable<AssetLog> {
 
 	public List<AssetLogSource> getSources() {
 		return Collections.unmodifiableList(sources);
+	}
+
+	public void reset() {
+		need = getCount();
+		sources.clear();
 	}
 
 	public long getItemID() {

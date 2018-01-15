@@ -36,7 +36,12 @@ public enum LogChangeType {
 			return "Added: Bought";
 		}
 	},
-	ADDED_CONTRACT_ACCEPTED(true, false, false) {
+	ADDED_CONTRACT_ACCEPTED_ACCEPTOR(true, false, false) {
+		@Override protected String getName() {
+			return "Added: Contract Accepted";
+		}
+	},
+	ADDED_CONTRACT_ACCEPTED_ISSUER(true, false, false) {
 		@Override protected String getName() {
 			return "Added: Contract Accepted";
 		}
