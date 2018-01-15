@@ -28,6 +28,7 @@ import java.util.Map;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.tabs.log.AssetLog;
 import net.nikr.eve.jeveasset.gui.tabs.log.AssetLogData;
+import net.nikr.eve.jeveasset.gui.tabs.log.AssetLogData.LogType;
 import net.nikr.eve.jeveasset.gui.tabs.log.AssetLogSource;
 import net.nikr.eve.jeveasset.gui.tabs.log.LogChangeType;
 import org.w3c.dom.Element;
@@ -107,6 +108,8 @@ public class LogsReader extends AbstractXmlReader<Boolean> {
 		Integer flagID = AttributeGetters.getIntOptional(node, "flagid");
 		String container = AttributeGetters.getStringOptional(node, "container");
 		String parents = AttributeGetters.getString(node, "parentids");
+		long id = AttributeGetters.getLong(node, "id");
+		LogType logType = LogType.valueOf(AttributeGetters.getString(node, "type"));
 		List<Long> parentIDs = new ArrayList<>();
 		for (String s : parents.split(",")) {
 			try {
@@ -115,7 +118,7 @@ public class LogsReader extends AbstractXmlReader<Boolean> {
 				//No problem...
 			}
 		}
-		return new AssetLogData(typeID, date, ownerID, locationID, flagID, container, parentIDs);
+		return new AssetLogData(typeID, date, ownerID, locationID, flagID, container, parentIDs, logType, id);
 	}
 
 	@Override

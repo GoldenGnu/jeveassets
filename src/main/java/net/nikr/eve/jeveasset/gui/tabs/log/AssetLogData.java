@@ -29,6 +29,10 @@ import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 
 
 public class AssetLogData {
+	public static enum LogType {
+		ASSET, MARKET_ORDER, CONTRACT, INDUSTRY_JOB, TRANSACTION
+	}
+	
 	private final int typeID;
 	private final Date date;
 	private final long ownerID;
@@ -36,10 +40,12 @@ public class AssetLogData {
 	private final Integer flagID;
 	private final String container;
 	private final List<Long> parentIDs;
+	private final LogType logType;
+	private final long id;
 	private final String location;
 	private final Item item;
 
-	public AssetLogData(int typeID, Date date, long ownerID, long locationID, Integer flagID, String container, List<Long> parentIDs) {
+	public AssetLogData(int typeID, Date date, long ownerID, long locationID, Integer flagID, String container, List<Long> parentIDs, LogType logType, long id) {
 		this.typeID = typeID;
 		this.date = date;
 		this.ownerID = ownerID;
@@ -47,11 +53,13 @@ public class AssetLogData {
 		this.flagID = flagID;
 		this.container = container;
 		this.parentIDs = parentIDs;
+		this.logType = logType;
+		this.id = id;
 		this.location = createLocation();
 		this.item = ApiIdConverter.getItem(typeID);
 	}
 
-	public AssetLogData(int typeID, Date date, long ownerID, long locationID) {
+	public AssetLogData(int typeID, Date date, long ownerID, long locationID, LogType logType, long id) {
 		this.typeID = typeID;
 		this.date = date;
 		this.ownerID = ownerID;
@@ -59,6 +67,8 @@ public class AssetLogData {
 		this.flagID = null;
 		this.container = null;
 		this.parentIDs = new ArrayList<>();
+		this.logType = logType;
+		this.id = id;
 		this.location = createLocation();
 		this.item = ApiIdConverter.getItem(typeID);
 	}
@@ -71,6 +81,8 @@ public class AssetLogData {
 		this.flagID = data.getFlagID();
 		this.container = data.getContainer();
 		this.parentIDs = data.getParentIDs();
+		this.logType = data.getLogType();
+		this.id = data.getID();
 		this.location = createLocation();
 		this.item = ApiIdConverter.getItem(typeID);
 	}
@@ -86,6 +98,8 @@ public class AssetLogData {
 		for (MyAsset parent : asset.getParents()) {
 			parentIDs.add(parent.getItemID());
 		}
+		this.logType = LogType.ASSET;
+		this.id = asset.getItemID();
 		this.location = createLocation();
 		this.item = ApiIdConverter.getItem(typeID);
 	}
@@ -98,6 +112,8 @@ public class AssetLogData {
 		this.flagID = asset.getFlagID();
 		this.container = asset.getContainer();
 		this.parentIDs = asset.getParentIDs();
+		this.logType = asset.getLogType();
+		this.id = asset.getID();
 		this.location = createLocation();
 		this.item = ApiIdConverter.getItem(typeID);
 	}
@@ -128,6 +144,14 @@ public class AssetLogData {
 
 	public List<Long> getParentIDs() {
 		return parentIDs;
+	}
+
+	public LogType getLogType() {
+		return logType;
+	}
+
+	public long getID() {
+		return id;
 	}
 
 	public String getLocation() {

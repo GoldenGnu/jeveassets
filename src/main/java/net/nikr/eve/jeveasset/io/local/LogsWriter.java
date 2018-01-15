@@ -91,6 +91,8 @@ public class LogsWriter extends AbstractXmlWriter {
 		setAttribute(node, "date", data.getDate());
 		setAttribute(node, "locationid", data.getLocationID());
 		setAttribute(node, "ownerid", data.getOwnerID());
+		setAttribute(node, "id", data.getID());
+		setAttribute(node, "type", data.getLogType());
 		StringBuilder builder = new StringBuilder();
 		boolean first = true;
 		for (long itemID : data.getParentIDs()) {

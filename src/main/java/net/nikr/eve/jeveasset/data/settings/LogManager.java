@@ -40,6 +40,7 @@ import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
 import net.nikr.eve.jeveasset.data.api.raw.RawJournalRefType;
 import net.nikr.eve.jeveasset.data.profile.ProfileData;
 import net.nikr.eve.jeveasset.gui.tabs.log.AssetLog;
+import net.nikr.eve.jeveasset.gui.tabs.log.AssetLogData.LogType;
 import net.nikr.eve.jeveasset.gui.tabs.log.AssetLogSource;
 import net.nikr.eve.jeveasset.gui.tabs.log.LogChangeType;
 import net.nikr.eve.jeveasset.gui.tabs.log.LogSource;
@@ -335,7 +336,9 @@ public class LogManager {
 			long locationID = marketOrder.getLocationID();
 			int quantity = marketOrder.getVolEntered();
 			LogChangeType changeType = LogChangeType.REMOVED_MARKET_ORDER_CREATED;
-			put(sources, typeID, new LogSource(changeType, quantity, typeID, date, ownerID, locationID));
+			LogType logType = LogType.MARKET_ORDER;
+			long id = marketOrder.getOrderID();
+			put(sources, typeID, new LogSource(changeType, quantity, typeID, date, ownerID, locationID, logType, id));
 		}
 	}
 
@@ -368,13 +371,17 @@ public class LogManager {
 				long locationID = contractItem.getContract().getStartLocationID();
 				int quantity = contractItem.getQuantity();
 				LogChangeType changeType = LogChangeType.REMOVED_CONTRACT_CREATED;
-				put(sources, typeID, new LogSource(changeType, quantity, typeID, date, ownerID, locationID));
+				LogType logType = LogType.CONTRACT;
+				long id = contractItem.getRecordID();
+				put(sources, typeID, new LogSource(changeType, quantity, typeID, date, ownerID, locationID, logType, id));
 			} else { //Item being sold by the acceptor
 				long ownerID = contractItem.getContract().getAcceptorID();
 				long locationID = contractItem.getContract().getStartLocationID();
 				int quantity = contractItem.getQuantity();
 				LogChangeType changeType = LogChangeType.REMOVED_CONTRACT_ACCEPTED;
-				put(sources, typeID, new LogSource(changeType, quantity, typeID, date, ownerID, locationID));
+				LogType logType = LogType.CONTRACT;
+				long id = contractItem.getRecordID();
+				put(sources, typeID, new LogSource(changeType, quantity, typeID, date, ownerID, locationID, logType, id));
 			}
 		}
 	}
@@ -399,7 +406,9 @@ public class LogManager {
 			long locationID = industryJob.getBlueprintLocationID();
 			int quantity = 1;
 			LogChangeType changeType = LogChangeType.REMOVED_INDUSTRY_JOB_CREATED;
-			put(sources, typeID, new LogSource(changeType, quantity, typeID, date, ownerID, locationID));
+			LogType logType = LogType.INDUSTRY_JOB;
+			long id = industryJob.getJobID();
+			put(sources, typeID, new LogSource(changeType, quantity, typeID, date, ownerID, locationID, logType, id));
 		}
 	}
 
@@ -423,7 +432,9 @@ public class LogManager {
 			long locationID = transaction.getLocationID();
 			int quantity = transaction.getQuantity();
 			LogChangeType changeType = LogChangeType.ADDED_TRANSACTIONS_BOUGHT;
-			put(sources, typeID, new LogSource(changeType, quantity, typeID, date, ownerID, locationID));
+			LogType logType = LogType.TRANSACTION;
+			long id = transaction.getTransactionID();
+			put(sources, typeID, new LogSource(changeType, quantity, typeID, date, ownerID, locationID, logType, id));
 		}
 	}
 
@@ -467,7 +478,9 @@ public class LogManager {
 				long locationID = contractItem.getContract().getStartLocationID();
 				int quantity = contractItem.getQuantity();
 				LogChangeType changeType = LogChangeType.ADDED_CONTRACT_ACCEPTED;
-				put(sources, typeID, new LogSource(changeType, quantity, typeID, date, ownerID, locationID));
+				LogType logType = LogType.CONTRACT;
+				long id = contractItem.getRecordID();
+				put(sources, typeID, new LogSource(changeType, quantity, typeID, date, ownerID, locationID, logType, id));
 			} else { //Item being bought by the issuer
 				long ownerID;
 				if (contractItem.getContract().isForCorp()) {
@@ -478,7 +491,9 @@ public class LogManager {
 				long locationID = contractItem.getContract().getStartLocationID();
 				int quantity = contractItem.getQuantity();
 				LogChangeType changeType = LogChangeType.ADDED_CONTRACT_ACCEPTED;
-				put(sources, typeID, new LogSource(changeType, quantity, typeID, date, ownerID, locationID));
+				LogType logType = LogType.CONTRACT;
+				long id = contractItem.getRecordID();
+				put(sources, typeID, new LogSource(changeType, quantity, typeID, date, ownerID, locationID, logType, id));
 			}
 			
 		}
@@ -508,11 +523,15 @@ public class LogManager {
 			long blueprintLocationID = industryJob.getBlueprintLocationID();
 			int blueprintQuantity = 1;
 			LogChangeType changeType = LogChangeType.ADDED_INDUSTRY_JOB_DELIVERED;
-			put(sources, blueprintTypeID, new LogSource(changeType, blueprintQuantity, blueprintTypeID, date, ownerID, blueprintLocationID));
+			LogType logType = LogType.INDUSTRY_JOB;
+			long id = industryJob.getJobID();
+			put(sources, blueprintTypeID, new LogSource(changeType, blueprintQuantity, blueprintTypeID, date, ownerID, blueprintLocationID, logType, id));
 			if (industryJob.isManufacturing() && industryJob.getState() == IndustryJobState.STATE_DELIVERED) {
 				long productLocationID = industryJob.getOutputLocationID();
 				int productQuantity = industryJob.getOutputCount();
-				put(sources, productTypeID, new LogSource(changeType, productQuantity, productTypeID, date, ownerID, productLocationID));
+				LogType productLogType = LogType.INDUSTRY_JOB;
+				long productID = industryJob.getJobID();
+				put(sources, productTypeID, new LogSource(changeType, productQuantity, productTypeID, date, ownerID, productLocationID, productLogType, productID));
 			}
 		}
 	}

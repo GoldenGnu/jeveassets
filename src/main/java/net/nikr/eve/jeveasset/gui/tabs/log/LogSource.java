@@ -44,8 +44,8 @@ public class LogSource extends AssetLogData {
 		this.sourceAssetLog = assetLog;
 	}
 
-	public LogSource(LogChangeType changeType, long available, int typeID, Date date, Long ownerID, Long locationID) {
-		super(typeID, date, ownerID, locationID);
+	public LogSource(LogChangeType changeType, long available, int typeID, Date date, Long ownerID, Long locationID, LogType logType, long id) {
+		super(typeID, date, ownerID, locationID, logType, id);
 		this.changeType = changeType;
 		this.available = available;
 		this.sourceAssetLog = null;
