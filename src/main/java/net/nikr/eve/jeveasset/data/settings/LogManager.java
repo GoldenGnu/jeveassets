@@ -117,7 +117,6 @@ public class LogManager {
 			}
 			newMap.put(asset.getItemID(), new AssetLog(asset, end));
 		}
-		Map<AssetLog, List<AssetLogSource>> newLogs = new HashMap<>();
 	//New
 		//Added Assets
 		Map<Long, AssetLog> added = new HashMap<Long, AssetLog>(newMap); //New Assets
@@ -128,7 +127,10 @@ public class LogManager {
 		//Moved
 		Map<Long, AssetLog> same = new HashMap<Long, AssetLog>(oldMap); //Old Assets
 		same.keySet().retainAll(newMap.keySet()); //Assets in both New and Old (retain)
-		//Moved: Same itemID
+
+		Map<Integer, List<LogSource>> addedSources = new HashMap<>();
+
+		//Moved Claims/Soruces
 		for (Long itemID : same.keySet()) {
 			AssetLog from = oldMap.get(itemID);
 			AssetLog to = newMap.get(itemID);
@@ -136,29 +138,57 @@ public class LogManager {
 			boolean location = !Objects.equal(from.getLocationID(), to.getLocationID());  //New Location
 			boolean flag =  !Objects.equal(from.getFlagID(), to.getFlagID()); //New Flag
 			boolean container = !Objects.equal(from.getParentIDs(), to.getParentIDs()); //New Container
-			if (location || flag || container || owner) {
-				AssetLogSource assetLogSource = new AssetLogSource(from, to, LogChangeType.MOVED_FROM, 100, to.getNeed());
-				to.add(assetLogSource, false);
-				put(newLogs, to, assetLogSource);
+			if (location || flag || container || owner) { //Moved same itemID
+				put(addedSources, from.getTypeID(), new LogSource(LogChangeType.MOVED_FROM, from.getNeed(), from));
+				added.put(to.getItemID(), to);
 			}
-			if (from.getNeed() > to.getNeed()) {
+			if (from.getNeed() > to.getNeed()) { //Removed from stack
 				removed.put(from.getItemID(), new AssetLog(from, end, from.getNeed() - to.getNeed()));
 			}
 		}
-		//Added Assets
-		List<AssetLog> unknownAdded = new ArrayList<>();
-		added(profileData, start, end, unknownAdded, newLogs, added.values());
-		//Removed Assets
-		List<AssetLog> unknownRemoved = new ArrayList<>();
-		removed(profileData, start, end, unknownRemoved, newLogs, removed.values());
-		//Moved: new itemID
-		boolean loot = canBeLoot(start, end, profileData.getJournalList());
-		moved(end, newLogs, unknownAdded, unknownRemoved, loot);
+
+		//Added Claims
+		Set<Integer> addedTypeIDs = new HashSet<>();
+		Map<Integer, List<AssetLog>> addedClaims = new HashMap<>();
+		for (AssetLog asset : added.values()) {
+			addedTypeIDs.add(asset.getTypeID());
+			put(addedClaims, asset.getTypeID(), asset);
+		}
+		//Added Sources
+		addedTransactionsBought(addedSources, start, end, profileData.getTransactionsList(), addedTypeIDs);
+		addedContracts(addedSources, start, end, profileData.getContractItemList(), addedTypeIDs);
+		addedIndustryJobsDelivered(addedSources, start, end, profileData.getIndustryJobsList(), addedTypeIDs);
+
+		//Removed Claims
+		Set<Integer> removedTypeIDs = new HashSet<>();
+		Map<Integer, List<AssetLog>> removedClaims = new HashMap<>();
+		for (AssetLog asset : removed.values()) {
+			removedTypeIDs.add(asset.getTypeID());
+			put(removedClaims, asset.getTypeID(), asset);
+		}
+		//Removed Sources
+		Map<Integer, List<LogSource>> removedSources = new HashMap<>();
+		removedSellMarketOrderCreated(removedSources, start, end, profileData.getMarketOrdersList(), removedTypeIDs);
+		removedContracts(removedSources, start, end, profileData.getContractItemList(), removedTypeIDs);
+		removedIndustryJobsCreated(removedSources, start, end, profileData.getIndustryJobsList(), removedTypeIDs);
+		calculateLog(start, end, addedClaims, addedSources, removedClaims, removedSources);
+	}
+
+	private static void calculateLog(Date start, Date end, Map<Integer, List<AssetLog>> addedClaims, Map<Integer, List<LogSource>> addedSources, Map<Integer, List<AssetLog>> removedClaims, Map<Integer, List<LogSource>> removedSources) {
+		Map<AssetLog, List<AssetLogSource>> newLogs = new HashMap<>();
+		//Added
+		List<AssetLog> addedUnknown = new ArrayList<>();
+		calc(start, end, addedSources, addedClaims, addedUnknown, newLogs);
+		//Removed
+		List<AssetLog> removedUnknown = new ArrayList<>();
+		calc(start, end, removedSources, removedClaims, removedUnknown, newLogs);
+		//boolean loot = canBeLoot(start, end, profileData.getJournalList());
+		calcUnresolved(newLogs, addedUnknown, removedUnknown, true);
 
 		add(end, newLogs);
 	}
 
-	private static void moved(Date end, Map<AssetLog, List<AssetLogSource>> newLogs, Collection<AssetLog> added, Collection<AssetLog> removed, boolean loot) {
+	private static void calcUnresolved(Map<AssetLog, List<AssetLogSource>> newLogs, Collection<AssetLog> added, Collection<AssetLog> removed, boolean loot) {
 		//Add Claims
 		Set<Integer> typeIDs = new HashSet<>();
 		Map<Integer, List<AssetLog>> claims = new HashMap<>();
@@ -219,19 +249,7 @@ public class LogManager {
 		}
 	}
 
-	private static void added(ProfileData profileData, Date start, Date end, List<AssetLog> unknown, Map<AssetLog, List<AssetLogSource>> newLogs, Collection<AssetLog> added) {
-		//Add Claims
-		Set<Integer> typeIDs = new HashSet<>();
-		Map<Integer, List<AssetLog>> claims = new HashMap<>();
-		for (AssetLog asset : added) {
-			typeIDs.add(asset.getTypeID());
-			put(claims, asset.getTypeID(), asset);
-		}
-		//Add Sources
-		Map<Integer, List<LogSource>> sources = new HashMap<>();
-		addedTransactionsBought(sources, start, end, profileData.getTransactionsList(), typeIDs);
-		addedContracts(sources, start, end, profileData.getContractItemList(), typeIDs);
-		addedIndustryJobsDelivered(sources, start, end, profileData.getIndustryJobsList(), typeIDs);
+	private static void calc(Date start, Date end, Map<Integer, List<LogSource>> sources, Map<Integer, List<AssetLog>> claims, List<AssetLog> unknown, Map<AssetLog, List<AssetLogSource>> newLogs) {
 		//Resolve claims
 		for (Map.Entry<Integer, List<AssetLog>> entry : claims.entrySet()) {
 			List<LogSource> soruceList = sources.get(entry.getKey());
@@ -239,7 +257,13 @@ public class LogManager {
 				continue;
 			}
 			for (AssetLog claim : entry.getValue()) {
+				if (!isValidDate(start, end, claim.getDate())) {
+					continue;
+				}
 				for (LogSource source : soruceList) {
+					if (!isValidDate(start, end, source.getDate())) {
+						continue;
+					}
 					source.addClaim(claim);
 				}
 			}
@@ -258,44 +282,14 @@ public class LogManager {
 		}
 	}
 
-	private static void removed(ProfileData profileData, Date start, Date end, List<AssetLog> unknown, Map<AssetLog, List<AssetLogSource>> newLogs, Collection<AssetLog> removed) {
-		//Add Claims
-		Set<Integer> typeIDs = new HashSet<>();
-		Map<Integer, List<AssetLog>> claims = new HashMap<>();
-		for (AssetLog asset : removed) {
-			typeIDs.add(asset.getTypeID());
-			put(claims, asset.getTypeID(), asset);
+	private static boolean isValidDate(Date start, Date end, Date date) {
+		if (start != null && date.before(start)) { //Outside Date range
+			return false;
 		}
-		//Add Sources
-		Map<Integer, List<LogSource>> removedSources = new HashMap<>();
-		removedSellMarketOrderCreated(removedSources, start, end, profileData.getMarketOrdersList(), typeIDs);
-		removedContracts(removedSources, start, end, profileData.getContractItemList(), typeIDs);
-		removedIndustryJobsCreated(removedSources, start, end, profileData.getIndustryJobsList(), typeIDs);
-		//Resolve claims
-		for (Map.Entry<Integer, List<AssetLog>> entry : claims.entrySet()) {
-			List<LogSource> soruceList = removedSources.get(entry.getKey());
-			if (soruceList == null) {
-				continue;
-			}
-			for (AssetLog claim : entry.getValue()) {
-				for (LogSource source : soruceList) {
-					source.addClaim(claim);
-				}
-			}
-			for (LogSource source : soruceList) {
-				source.claim();
-			}
+		if (date.after(end)) { //Outside Date range
+			return false;
 		}
-		//Create Logs from Claims
-		for (List<AssetLog> list : claims.values()) {
-			for (AssetLog claim : list) {
-				if (claim.getSources().isEmpty() || claim.getNeed() > 0) {
-					unknown.add(claim);
-					continue;
-				}
-				newLogs.put(claim, claim.getSources());
-			}
-		}
+		return true;
 	}
 
 	public static <K, V> void put(Map<K, List<V>> map, K k, V v) {

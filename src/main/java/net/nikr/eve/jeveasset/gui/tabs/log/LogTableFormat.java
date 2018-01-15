@@ -39,16 +39,6 @@ public enum LogTableFormat implements EnumTableColumn<AssetLogSource> {
 			return from.getDate();
 		}
 	},
-	COUNT(Long.class, GlazedLists.comparableComparator()) {
-		@Override
-		public String getColumnName() {
-			return TabsLog.get().columnCount();
-		}
-		@Override
-		public Object getColumnValue(final AssetLogSource from) {
-			return from.getCount();
-		}
-	},
 	ACTION(String.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
@@ -59,16 +49,6 @@ public enum LogTableFormat implements EnumTableColumn<AssetLogSource> {
 			return from.getChangeTypeName();
 		}
 	},
-	FROM(String.class, GlazedLists.comparableComparator()) {
-		@Override
-		public String getColumnName() {
-			return TabsLog.get().columnFrom();
-		}
-		@Override
-		public Object getColumnValue(final AssetLogSource from) {
-			return from.getLocation();
-		}
-	},
 	MATCH(Percent.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
@@ -77,6 +57,26 @@ public enum LogTableFormat implements EnumTableColumn<AssetLogSource> {
 		@Override
 		public Object getColumnValue(final AssetLogSource from) {
 			return new Percent(from.getPercent() / 100.0);
+		}
+	},
+	COUNT(Long.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsLog.get().columnCount();
+		}
+		@Override
+		public Object getColumnValue(final AssetLogSource from) {
+			return from.getCount();
+		}
+	},
+	FROM(String.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsLog.get().columnFrom();
+		}
+		@Override
+		public Object getColumnValue(final AssetLogSource from) {
+			return from.getLocation();
 		}
 	};
 

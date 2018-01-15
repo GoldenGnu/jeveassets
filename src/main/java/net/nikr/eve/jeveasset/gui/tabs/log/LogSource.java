@@ -111,8 +111,8 @@ public class LogSource extends AssetLogData {
 		if (assetLog.getNeed() == getAvailable()) {
 			match = match + 25;
 		}
-		if (match == 100) {
-			match--; //99% is max
+		if (match == 100 && (assetLog.getID() != getID() || assetLog.getLogType() != getLogType())) {
+			match--; //99% is max (if itemID is not the same)
 		}
 		return match;
 	}
