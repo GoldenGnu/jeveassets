@@ -32,6 +32,9 @@ public class AssetLog extends AssetLogData implements Comparable<AssetLog> {
 	private final long itemID;
 	private final List<AssetLogSource> sources = new ArrayList<>();
 	private long need;
+	private boolean added = false;
+	private boolean removed = false;
+	private boolean moved = false;
 
 	public AssetLog(AssetLogData data, long itemID, long need) {
 		super(data);
@@ -63,15 +66,34 @@ public class AssetLog extends AssetLogData implements Comparable<AssetLog> {
 		return need;
 	}
 
-	public void add(AssetLogSource assetLogSource, boolean claim) {
+	public boolean isAdded() {
+		return added;
+	}
+
+	public boolean isRemoved() {
+		return removed;
+	}
+
+	public boolean isMoved() {
+		return moved;
+	}
+
+	private void add(AssetLogSource assetLogSource) {
 		sources.add(assetLogSource);
+		added = added || assetLogSource.getChangeType().isAdded();
+		removed = removed || assetLogSource.getChangeType().isRemoved();
+		moved = moved || assetLogSource.getChangeType().isMoved();
+	}
+
+	public void add(AssetLogSource assetLogSource, boolean claim) {
+		add(assetLogSource);
 		if (claim) {
 			need = need - assetLogSource.getCount();
 		}
 	}
 
 	void add(AssetLog assetLog, int percent, long remove) {
-		sources.add(new AssetLogSource(assetLog, this, LogChangeType.MOVED_FROM, percent, remove));
+		add(new AssetLogSource(assetLog, this, LogChangeType.MOVED_FROM, percent, remove));
 		assetLog.add(new AssetLogSource(this, assetLog, LogChangeType.MOVED_TO, percent, remove), true);
 		need = need - remove;
 	}

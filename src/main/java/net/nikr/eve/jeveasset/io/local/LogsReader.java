@@ -93,6 +93,7 @@ public class LogsReader extends AbstractXmlReader<Boolean> {
 			int percent = AttributeGetters.getInt(sourceNode, "percent");
 			long count = AttributeGetters.getLong(sourceNode, "count");
 			AssetLogSource source = new AssetLogSource(data, parent, changeType, percent, count);
+			parent.add(source, false);
 			list.add(source);
 		}
 		return list;

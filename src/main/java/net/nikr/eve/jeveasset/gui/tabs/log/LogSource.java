@@ -108,9 +108,6 @@ public class LogSource extends AssetLogData {
 		if (Objects.equal(assetLog.getLocationID(), getLocationID())) {
 			match = match + 50;
 		}
-		if (Objects.equal(assetLog.getLocationID(), getLocationID())) {
-			match = match + 25;
-		}
 		if (assetLog.getNeed() == getAvailable()) {
 			match = match + 25;
 		}

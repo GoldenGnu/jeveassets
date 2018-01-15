@@ -28,9 +28,13 @@ import ca.odell.glazedlists.SortedList;
 import ca.odell.glazedlists.swing.DefaultEventSelectionModel;
 import ca.odell.glazedlists.swing.DefaultEventTableModel;
 import ca.odell.glazedlists.swing.TableComparatorChooser;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import javax.swing.GroupLayout;
+import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -39,6 +43,7 @@ import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.settings.LogManager;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
+import net.nikr.eve.jeveasset.gui.shared.components.JFixedToolBar;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTabSecondary;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
@@ -54,6 +59,10 @@ import net.nikr.eve.jeveasset.i18n.TabsLog;
 
 public class LogTab extends JMainTabSecondary {
 
+	private enum LogAction {
+		COLLAPSE,
+		EXPAND,
+	}
 	//GUI
 	private final JLogTable jTable;
 
@@ -72,6 +81,8 @@ public class LogTab extends JMainTabSecondary {
 		super(program, TabsLog.get().toolTitle(), Images.TOOL_LOG.getIcon(), true);
 
 		layout.setAutoCreateGaps(true);
+
+		ListenerClass listener = new ListenerClass();
 
 		//Table Format
 		tableFormat = new EnumTableFormatAdaptor<LogTableFormat, AssetLogSource>(LogTableFormat.class);
@@ -120,17 +131,31 @@ public class LogTab extends JMainTabSecondary {
 				Settings.get().getTableFilters(NAME)
 				);
 
+		JFixedToolBar jToolBar = new JFixedToolBar();
+
+		JButton jCollapse = new JButton(TabsLog.get().collapse(), Images.MISC_COLLAPSED.getIcon());
+		jCollapse.setActionCommand(LogAction.COLLAPSE.name());
+		jCollapse.addActionListener(listener);
+		jToolBar.addButton(jCollapse);
+
+		JButton jExpand = new JButton(TabsLog.get().expand(), Images.MISC_EXPANDED.getIcon());
+		jExpand.setActionCommand(LogAction.EXPAND.name());
+		jExpand.addActionListener(listener);
+		jToolBar.addButton(jExpand);
+
 		//Menu
 		installMenu(program, new LogTableMenu(), jTable, AssetLogSource.class);
 
 		layout.setHorizontalGroup(
 			layout.createParallelGroup()
 				.addComponent(filterControl.getPanel())
+				.addComponent(jToolBar, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Integer.MAX_VALUE)
 				.addComponent(jTableScroll, 0, 0, Short.MAX_VALUE)
 		);
 		layout.setVerticalGroup(
 			layout.createSequentialGroup()
 				.addComponent(filterControl.getPanel())
+				.addComponent(jToolBar, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
 				.addComponent(jTableScroll, 0, 0, Short.MAX_VALUE)
 		);
 	}
@@ -158,6 +183,18 @@ public class LogTab extends JMainTabSecondary {
 			eventList.addAll(LogManager.getList());
 		} finally {
 			eventList.getReadWriteLock().writeLock().unlock();
+		}
+	}
+
+	private class ListenerClass implements ActionListener {
+		@Override
+		public void actionPerformed(final ActionEvent e) {
+			if (LogAction.COLLAPSE.name().equals(e.getActionCommand())) {
+				jTable.expandSeparators(false);
+			}
+			if (LogAction.EXPAND.name().equals(e.getActionCommand())) {
+				jTable.expandSeparators(true);
+			}
 		}
 	}
 

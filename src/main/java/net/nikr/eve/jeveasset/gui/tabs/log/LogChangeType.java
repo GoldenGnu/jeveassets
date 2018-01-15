@@ -21,67 +21,67 @@
 package net.nikr.eve.jeveasset.gui.tabs.log;
 
 public enum LogChangeType {
-	ADDED_UNKNOWN {
+	ADDED_UNKNOWN(true, false, false) {
 		@Override protected String getName() {
-			return "New: Unknown";
+			return "Added: Unknown";
 		}
 	},
-	ADDED_LOOT {
+	ADDED_LOOT(true, false, false) {
 		@Override protected String getName() {
-			return "New: Loot";
+			return "Added: Loot";
 		}
 	},
-	ADDED_TRANSACTIONS_BOUGHT {
+	ADDED_TRANSACTIONS_BOUGHT(true, false, false) {
 		@Override protected String getName() {
-			return "New: Bought";
+			return "Added: Bought";
 		}
 	},
-	ADDED_CONTRACT_ACCEPTED {
+	ADDED_CONTRACT_ACCEPTED(true, false, false) {
 		@Override protected String getName() {
-			return "New: Contract Accepted";
+			return "Added: Contract Accepted";
 		}
 	},
-	ADDED_INDUSTRY_JOB_DELIVERED {
+	ADDED_INDUSTRY_JOB_DELIVERED(true, false, false) {
 		@Override protected String getName() {
-			return "New: Industry Job Delivered";
+			return "Added: Industry Job Delivered";
 		}
 	},
-	MOVED_TO {
+	MOVED_TO(false, false, true) {
 		@Override protected String getName() {
 			return "Moved To:";
 		}
 	},
-	MOVED_FROM {
+	MOVED_FROM(false, false, true) {
 		@Override protected String getName() {
 			return "Moved From: ";
 		}
 	},
-	REMOVED_UNKNOWN {
+	REMOVED_UNKNOWN(false, true, false) {
 		@Override protected String getName() {
 			return "Removed: Unknown";
 		}
 	},
-	REMOVED_MARKET_ORDER_CREATED {
+	REMOVED_MARKET_ORDER_CREATED(false, true, false) {
 		@Override protected String getName() {
 			return "Removed: Sell Market Order Created";
 		}
 	},
-	REMOVED_CONTRACT_CREATED {
+	REMOVED_CONTRACT_CREATED(false, true, false) {
 		@Override protected String getName() {
 			return "Removed: Contract Created";
 		}
 	},
-	REMOVED_INDUSTRY_JOB_CREATED {
+	REMOVED_INDUSTRY_JOB_CREATED(false, true, false) {
 		@Override protected String getName() {
 			return "Removed: Industry Job Created";
 		}
 	},
-	REMOVED_CONTRACT_ACCEPTED {
+	REMOVED_CONTRACT_ACCEPTED(false, true, false) {
 		@Override protected String getName() {
 			return "Removed: Contract Accepted";
 		}
 	},
-	UNKNOWN {
+	UNKNOWN(false, false, false) {
 		@Override protected String getName() {
 			return "Unknown";
 		}
@@ -90,6 +90,28 @@ public enum LogChangeType {
 	@Override
 	public String toString() {
 		return getName();
+	}
+
+	private final boolean added;
+	private final boolean removed;
+	private final boolean moved;
+
+	private LogChangeType(boolean added, boolean removed, boolean moved) {
+		this.added = added;
+		this.removed = removed;
+		this.moved = moved;
+	}
+
+	public boolean isAdded() {
+		return added;
+	}
+
+	public boolean isRemoved() {
+		return removed;
+	}
+
+	public boolean isMoved() {
+		return moved;
 	}
 
 	protected abstract String getName();
