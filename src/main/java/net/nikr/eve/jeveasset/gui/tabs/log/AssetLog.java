@@ -101,9 +101,9 @@ public class AssetLog extends AssetLogData implements Comparable<AssetLog> {
 
 	private void add(AssetLogSource assetLogSource) {
 		sources.add(assetLogSource);
-		added = added || assetLogSource.getChangeType().isAdded();
-		removed = removed || assetLogSource.getChangeType().isRemoved();
-		moved = moved || assetLogSource.getChangeType().isMoved();
+		added = added || assetLogSource.getSourceType().isAdded();
+		removed = removed || assetLogSource.getSourceType().isRemoved();
+		moved = moved || assetLogSource.getSourceType().isMoved();
 	}
 
 	public void add(AssetLogSource assetLogSource, boolean claim) {
@@ -114,8 +114,8 @@ public class AssetLog extends AssetLogData implements Comparable<AssetLog> {
 	}
 
 	void add(AssetLog assetLog, int percent, long remove) {
-		add(new AssetLogSource(assetLog, this, LogChangeType.MOVED_FROM, percent, remove));
-		assetLog.add(new AssetLogSource(this, assetLog, LogChangeType.MOVED_TO, percent, remove), true);
+		add(new AssetLogSource(assetLog, this, LogSourceType.MOVED_FROM, percent, remove));
+		assetLog.add(new AssetLogSource(this, assetLog, LogSourceType.MOVED_TO, percent, remove), true);
 		need = need - remove;
 	}
 

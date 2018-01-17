@@ -20,88 +20,83 @@
  */
 package net.nikr.eve.jeveasset.gui.tabs.log;
 
-public enum LogChangeType {
+public enum LogSourceType {
 	ADDED_UNKNOWN(true, false, false) {
-		@Override protected String getName() {
-			return "Added: Unknown";
+		@Override protected String getSource() {
+			return "Unknown";
 		}
 	},
 	ADDED_LOOT(true, false, false) {
-		@Override protected String getName() {
-			return "Added: Loot";
+		@Override protected String getSource() {
+			return "Loot";
 		}
 	},
 	ADDED_TRANSACTIONS_BOUGHT(true, false, false) {
-		@Override protected String getName() {
-			return "Added: Bought";
+		@Override protected String getSource() {
+			return "Bought";
 		}
 	},
-	ADDED_CONTRACT_ACCEPTED_ACCEPTOR(true, false, false) {
-		@Override protected String getName() {
-			return "Added: Contract Accepted";
-		}
-	},
-	ADDED_CONTRACT_ACCEPTED_ISSUER(true, false, false) {
-		@Override protected String getName() {
-			return "Added: Contract Accepted";
+	ADDED_CONTRACT_ACCEPTED(true, false, false) {
+		@Override protected String getSource() {
+			return "Contract Accepted";
 		}
 	},
 	ADDED_INDUSTRY_JOB_DELIVERED(true, false, false) {
-		@Override protected String getName() {
-			return "Added: Industry Job Delivered";
+		@Override protected String getSource() {
+			return "Industry Job Delivered";
 		}
 	},
 	MOVED_TO(false, false, true) {
-		@Override protected String getName() {
-			return "Moved To:";
+		@Override protected String getSource() {
+			return "Moved To";
 		}
 	},
 	MOVED_FROM(false, false, true) {
-		@Override protected String getName() {
-			return "Moved From: ";
+		@Override protected String getSource() {
+			return "Moved From";
 		}
 	},
 	REMOVED_UNKNOWN(false, true, false) {
-		@Override protected String getName() {
-			return "Removed: Unknown";
+		@Override protected String getSource() {
+			return "Unknown";
 		}
 	},
 	REMOVED_MARKET_ORDER_CREATED(false, true, false) {
-		@Override protected String getName() {
-			return "Removed: Sell Market Order Created";
+		@Override protected String getSource() {
+			return "Sell Market Order Created";
 		}
 	},
 	REMOVED_CONTRACT_CREATED(false, true, false) {
-		@Override protected String getName() {
-			return "Removed: Contract Created";
+		@Override protected String getSource() {
+			return "Contract Created";
 		}
 	},
 	REMOVED_INDUSTRY_JOB_CREATED(false, true, false) {
-		@Override protected String getName() {
-			return "Removed: Industry Job Created";
+		@Override protected String getSource() {
+			return "Industry Job Created";
 		}
 	},
 	REMOVED_CONTRACT_ACCEPTED(false, true, false) {
-		@Override protected String getName() {
-			return "Removed: Contract Accepted";
+		@Override protected String getSource() {
+			return "Contract Accepted";
 		}
 	},
 	UNKNOWN(false, false, false) {
-		@Override protected String getName() {
+		@Override protected String getSource() {
 			return "Unknown";
 		}
 	};
 
 	@Override
 	public String toString() {
-		return getName();
+		return getAction() + ": " + getSource();
 	}
 
 	private final boolean added;
 	private final boolean removed;
 	private final boolean moved;
 
-	private LogChangeType(boolean added, boolean removed, boolean moved) {
+	private LogSourceType(boolean added, boolean removed, boolean moved) {
 		this.added = added;
 		this.removed = removed;
 		this.moved = moved;
@@ -119,5 +114,16 @@ public enum LogChangeType {
 		return moved;
 	}
 
-	protected abstract String getName();
+	protected abstract String getSource();
+	protected String getAction() {
+		if (added) {
+			return "Added";
+		} else if (removed) {
+			return "Removed";
+		} else if (moved) {
+			return "Moved";
+		} else {
+			return "Unknown";
+		}
+	}
 }

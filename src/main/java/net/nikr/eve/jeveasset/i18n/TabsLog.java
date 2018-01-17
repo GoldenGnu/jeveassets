@@ -40,6 +40,7 @@ public abstract class TabsLog extends Bundle {
 	public abstract String columnDate();
 	public abstract String columnCount();
 	public abstract String columnAction();
-	public abstract String columnFrom();
+	public abstract String columnSource();
+	public abstract String columnLocation();
 	public abstract String columnMatch();
 }

@@ -33,32 +33,32 @@ import java.util.TreeMap;
 public class LogSource extends AssetLogData {
 
 	private final Map<Match, List<AssetLog>> claims = new TreeMap<>();
-	private final LogChangeType changeType;
+	private final LogSourceType sourceType;
 	private final AssetLog sourceAssetLog;
 	private long available;
 
 	/**
 	 * Load
 	 * @param data
-	 * @param changeType 
+	 * @param sourceType 
 	 */
-	public LogSource(AssetLogData data, LogChangeType changeType) {
+	public LogSource(AssetLogData data, LogSourceType sourceType) {
 		super(data, data.getCount());
-		this.changeType = changeType;
+		this.sourceType = sourceType;
 		this.available = data.getCount();
 		this.sourceAssetLog = null;
 	}
 
-	public LogSource(LogChangeType changeType, long count, AssetLog assetLog) {
+	public LogSource(LogSourceType sourceType, long count, AssetLog assetLog) {
 		super(assetLog, count);
-		this.changeType = changeType;
+		this.sourceType = sourceType;
 		this.available = count;
 		this.sourceAssetLog = assetLog;
 	}
 
-	public LogSource(LogChangeType changeType, long count, int typeID, Date date, Long ownerID, Long locationID, LogType logType, long id) {
+	public LogSource(LogSourceType sourceType, long count, int typeID, Date date, Long ownerID, Long locationID, LogType logType, long id) {
 		super(typeID, date, ownerID, locationID, count, logType, id);
-		this.changeType = changeType;
+		this.sourceType = sourceType;
 		this.available = count;
 		this.sourceAssetLog = null;
 	}
@@ -86,7 +86,7 @@ public class LogSource extends AssetLogData {
 					if (sourceAssetLog != null) {
 						assetLog.add(sourceAssetLog, match.getPercent(), getAvailable());
 					} else {
-						assetLog.add(new AssetLogSource(this, assetLog, getChangeType(), match.getPercent(), getAvailable()), true);
+						assetLog.add(new AssetLogSource(this, assetLog, getSourceType(), match.getPercent(), getAvailable()), true);
 					}
 					takeAll();
 					return; //Nothing left...
@@ -95,7 +95,7 @@ public class LogSource extends AssetLogData {
 					if (sourceAssetLog != null) {
 						assetLog.add(sourceAssetLog, match.getPercent(), missing);
 					} else {
-						assetLog.add(new AssetLogSource(this, assetLog, getChangeType(), match.getPercent(), missing), true);
+						assetLog.add(new AssetLogSource(this, assetLog, getSourceType(), match.getPercent(), missing), true);
 					}
 					take(missing);
 				}
@@ -116,8 +116,8 @@ public class LogSource extends AssetLogData {
 		return available;
 	}
 
-	public LogChangeType getChangeType() {
-		return changeType;
+	public LogSourceType getSourceType() {
+		return sourceType;
 	}
 
 	private int match(AssetLog assetLog) {
@@ -146,7 +146,7 @@ public class LogSource extends AssetLogData {
 	@Override
 	public int hashCode() {
 		int hash = 3;
-		hash = 67 * hash + java.util.Objects.hashCode(this.changeType);
+		hash = 67 * hash + java.util.Objects.hashCode(this.sourceType);
 		hash = 67 * hash + java.util.Objects.hashCode(this.getLogType());
 		hash = 67 * hash + (int) (this.getID() ^ (this.getID() >>> 32));
 		return hash;
@@ -170,7 +170,7 @@ public class LogSource extends AssetLogData {
 		if (this.getLogType() != other.getLogType()) {
 			return false;
 		}
-		if (this.changeType != other.changeType) {
+		if (this.sourceType != other.sourceType) {
 			return false;
 		}
 		return true;

@@ -107,7 +107,7 @@ public class LogsWriter extends AbstractXmlWriter {
 			for (LogSource source : list) {
 				Element sourceNode = xmldoc.createElementNS(null, "source");
 				writeData(sourceNode, source);
-				setAttribute(sourceNode, "changetype", source.getChangeType());
+				setAttribute(sourceNode, "sourcetype", source.getSourceType());
 				parentNode.appendChild(sourceNode);
 
 			}

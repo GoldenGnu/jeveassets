@@ -46,7 +46,17 @@ public enum LogTableFormat implements EnumTableColumn<AssetLogSource> {
 		}
 		@Override
 		public Object getColumnValue(final AssetLogSource from) {
-			return from.getChangeTypeName();
+			return from.getSourceType().getAction();
+		}
+	},
+	SOURCE(String.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsLog.get().columnSource();
+		}
+		@Override
+		public Object getColumnValue(final AssetLogSource from) {
+			return from.getSourceType().getSource();
 		}
 	},
 	MATCH(Percent.class, GlazedLists.comparableComparator()) {
@@ -69,10 +79,10 @@ public enum LogTableFormat implements EnumTableColumn<AssetLogSource> {
 			return from.getCount();
 		}
 	},
-	FROM(String.class, GlazedLists.comparableComparator()) {
+	LOCATION(String.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
-			return TabsLog.get().columnFrom();
+			return TabsLog.get().columnLocation();
 		}
 		@Override
 		public Object getColumnValue(final AssetLogSource from) {

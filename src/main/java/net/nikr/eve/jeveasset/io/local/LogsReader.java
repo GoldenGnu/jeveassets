@@ -31,7 +31,7 @@ import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.tabs.log.AssetLog;
 import net.nikr.eve.jeveasset.gui.tabs.log.AssetLogData;
 import net.nikr.eve.jeveasset.gui.tabs.log.AssetLogData.LogType;
-import net.nikr.eve.jeveasset.gui.tabs.log.LogChangeType;
+import net.nikr.eve.jeveasset.gui.tabs.log.LogSourceType;
 import net.nikr.eve.jeveasset.gui.tabs.log.LogData;
 import net.nikr.eve.jeveasset.gui.tabs.log.LogSource;
 import org.w3c.dom.Element;
@@ -132,8 +132,8 @@ public class LogsReader extends AbstractXmlReader<Boolean> {
 		for (int a = 0; a < sourceNodes.getLength(); a++) {
 			Element sourceNode = (Element) sourceNodes.item(a);
 			AssetLogData data = parseData(sourceNode);
-			LogChangeType changeType = LogChangeType.valueOf(AttributeGetters.getString(sourceNode, "changetype"));
-			LogSource source = new LogSource(data, changeType);
+			LogSourceType sourceType = LogSourceType.valueOf(AttributeGetters.getString(sourceNode, "sourcetype"));
+			LogSource source = new LogSource(data, sourceType);
 			LogManager.putSet(map, source.getTypeID(), source);
 		}
 		return map;

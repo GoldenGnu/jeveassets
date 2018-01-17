@@ -22,7 +22,6 @@ package net.nikr.eve.jeveasset.data.settings;
 
 import com.google.common.base.Objects;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -42,7 +41,7 @@ import net.nikr.eve.jeveasset.data.profile.ProfileData;
 import net.nikr.eve.jeveasset.gui.tabs.log.AssetLog;
 import net.nikr.eve.jeveasset.gui.tabs.log.AssetLogData.LogType;
 import net.nikr.eve.jeveasset.gui.tabs.log.AssetLogSource;
-import net.nikr.eve.jeveasset.gui.tabs.log.LogChangeType;
+import net.nikr.eve.jeveasset.gui.tabs.log.LogSourceType;
 import net.nikr.eve.jeveasset.gui.tabs.log.LogData;
 import net.nikr.eve.jeveasset.gui.tabs.log.LogSource;
 import net.nikr.eve.jeveasset.i18n.General;
@@ -130,7 +129,7 @@ public class LogManager {
 			boolean flag =  !Objects.equal(from.getFlagID(), to.getFlagID()); //New Flag
 			boolean container = !Objects.equal(from.getParentIDs(), to.getParentIDs()); //New Container
 			if (location || flag || container || owner) { //Moved same itemID
-				putSet(addedSources, from.getTypeID(), new LogSource(LogChangeType.MOVED_FROM, from.getNeed(), from));
+				putSet(addedSources, from.getTypeID(), new LogSource(LogSourceType.MOVED_FROM, from.getNeed(), from));
 				added.put(to.getItemID(), to);
 			}
 			if (from.getNeed() > to.getNeed()) { //Removed from stack
@@ -158,9 +157,10 @@ public class LogManager {
 		removedIndustryJobsCreated(removedSources, profileData.getIndustryJobsList());
 
 		//Add claim data
-		getLogData().getAddedClaims().put(end, addedClaims);
-		getLogData().getRemovedClaims().put(end, removedClaims);
-
+		if (!addedClaims.isEmpty() || !removedClaims.isEmpty()) { //Only add claim point if something was changed
+			getLogData().getAddedClaims().put(end, addedClaims);
+			getLogData().getRemovedClaims().put(end, removedClaims);
+		}
 		save(); //Save data
 		calculateLog(); //Re-calculate with new data
 	}
@@ -168,14 +168,14 @@ public class LogManager {
 	private static void calculateLog() {
 		Date start = null;
 		logs = new ArrayList<>();
-		LogData logData = getLogData();
-		for (Date end : logData.getAddedClaims().keySet()) {
+		LogData data = getLogData();
+		for (Date end : data.getAddedClaims().keySet()) {
 			//Added
 			List<AssetLog> addedUnknown = new ArrayList<>();
-			calc(start, end, logData.getAddedSources(), logData.getAddedClaims().get(end), addedUnknown, logs);
+			calc(start, end, data.getAddedSources(), data.getAddedClaims().get(end), addedUnknown, logs);
 			//Removed
 			List<AssetLog> removedUnknown = new ArrayList<>();
-			calc(start, end, logData.getRemovedSources(), logData.getRemovedClaims().get(end), removedUnknown, logs);
+			calc(start, end, data.getRemovedSources(), data.getRemovedClaims().get(end), removedUnknown, logs);
 			//boolean loot = canBeLoot(start, end, profileData.getJournalList());
 			calcUnresolved(addedUnknown, removedUnknown, logs, true);
 
@@ -196,12 +196,12 @@ public class LogManager {
 		for (AssetLog asset : removed) {
 			int typeID = asset.getTypeID();
 			if (!typeIDs.contains(typeID)) { //TypeID does not match - Remain Unknown
-				AssetLogSource soruce = new AssetLogSource(asset, asset, LogChangeType.REMOVED_UNKNOWN, 0, asset.getNeed());
+				AssetLogSource soruce = new AssetLogSource(asset, asset, LogSourceType.REMOVED_UNKNOWN, 0, asset.getNeed());
 				asset.add(soruce, true);
 				newLogs.add(soruce);
 				continue;
 			}
-			put(sources, typeID, new LogSource(LogChangeType.UNKNOWN, asset.getNeed(), asset));
+			put(sources, typeID, new LogSource(LogSourceType.UNKNOWN, asset.getNeed(), asset));
 		}
 		//Resolve claims
 		for (Map.Entry<Integer, List<AssetLog>> entry : claims.entrySet()) {
@@ -225,9 +225,9 @@ public class LogManager {
 							|| claim.getItem().getCategory().equals("Commodity")
 							|| claim.getItem().getCategory().equals("Module")
 							|| claim.getItem().getCategory().equals("Charge"))) {
-						claim.add(new AssetLogSource(claim, claim, LogChangeType.ADDED_LOOT, 25, claim.getNeed()), true);
+						claim.add(new AssetLogSource(claim, claim, LogSourceType.ADDED_LOOT, 25, claim.getNeed()), true);
 					} else {
-						claim.add(new AssetLogSource(claim, claim, LogChangeType.ADDED_UNKNOWN, 0, claim.getNeed()), true);
+						claim.add(new AssetLogSource(claim, claim, LogSourceType.ADDED_UNKNOWN, 0, claim.getNeed()), true);
 					}
 				}
 				newLogs.addAll(claim.getSources());
@@ -237,7 +237,7 @@ public class LogManager {
 			for (LogSource source : sourceAssets) {
 				AssetLog assetLog = source.getAssetLog();
 				if (assetLog.getSources().isEmpty() || source.getAvailable() > 0) {
-					assetLog.add(new AssetLogSource(source, assetLog, LogChangeType.REMOVED_UNKNOWN, 0, source.getAvailable()), true);
+					assetLog.add(new AssetLogSource(source, assetLog, LogSourceType.REMOVED_UNKNOWN, 0, source.getAvailable()), true);
 				}
 				newLogs.addAll(assetLog.getSources());
 			}
@@ -341,10 +341,10 @@ public class LogManager {
 			long ownerID = marketOrder.getOwnerID();
 			long locationID = marketOrder.getLocationID();
 			int quantity = marketOrder.getVolEntered();
-			LogChangeType changeType = LogChangeType.REMOVED_MARKET_ORDER_CREATED;
+			LogSourceType sourceType = LogSourceType.REMOVED_MARKET_ORDER_CREATED;
 			LogType logType = LogType.MARKET_ORDER;
 			long id = marketOrder.getOrderID();
-			putSet(sources, typeID, new LogSource(changeType, quantity, typeID, date, ownerID, locationID, logType, id));
+			putSet(sources, typeID, new LogSource(sourceType, quantity, typeID, date, ownerID, locationID, logType, id));
 		}
 	}
 
@@ -367,18 +367,18 @@ public class LogManager {
 				long ownerID = contractItem.getContract().getIssuerID();
 				long locationID = contractItem.getContract().getStartLocationID();
 				int quantity = contractItem.getQuantity();
-				LogChangeType changeType = LogChangeType.REMOVED_CONTRACT_CREATED;
+				LogSourceType sourceType = LogSourceType.REMOVED_CONTRACT_CREATED;
 				LogType logType = LogType.CONTRACT;
 				long id = contractItem.getRecordID();
-				putSet(sources, typeID, new LogSource(changeType, quantity, typeID, date, ownerID, locationID, logType, id));
+				putSet(sources, typeID, new LogSource(sourceType, quantity, typeID, date, ownerID, locationID, logType, id));
 			} else { //Item being sold by the acceptor
 				long ownerID = contractItem.getContract().getAcceptorID();
 				long locationID = contractItem.getContract().getStartLocationID();
 				int quantity = contractItem.getQuantity();
-				LogChangeType changeType = LogChangeType.REMOVED_CONTRACT_ACCEPTED;
+				LogSourceType sourceType = LogSourceType.REMOVED_CONTRACT_ACCEPTED;
 				LogType logType = LogType.CONTRACT;
 				long id = contractItem.getRecordID();
-				putSet(sources, typeID, new LogSource(changeType, quantity, typeID, date, ownerID, locationID, logType, id));
+				putSet(sources, typeID, new LogSource(sourceType, quantity, typeID, date, ownerID, locationID, logType, id));
 			}
 		}
 	}
@@ -393,10 +393,10 @@ public class LogManager {
 			long ownerID = industryJob.getOwnerID();
 			long locationID = industryJob.getBlueprintLocationID();
 			int quantity = 1;
-			LogChangeType changeType = LogChangeType.REMOVED_INDUSTRY_JOB_CREATED;
+			LogSourceType sourceType = LogSourceType.REMOVED_INDUSTRY_JOB_CREATED;
 			LogType logType = LogType.INDUSTRY_JOB;
 			long id = industryJob.getJobID();
-			putSet(sources, typeID, new LogSource(changeType, quantity, typeID, date, ownerID, locationID, logType, id));
+			putSet(sources, typeID, new LogSource(sourceType, quantity, typeID, date, ownerID, locationID, logType, id));
 		}
 	}
 
@@ -410,10 +410,10 @@ public class LogManager {
 			long ownerID = transaction.getOwnerID();
 			long locationID = transaction.getLocationID();
 			int quantity = transaction.getQuantity();
-			LogChangeType changeType = LogChangeType.ADDED_TRANSACTIONS_BOUGHT;
+			LogSourceType sourceType = LogSourceType.ADDED_TRANSACTIONS_BOUGHT;
 			LogType logType = LogType.TRANSACTION;
 			long id = transaction.getTransactionID();
-			putSet(sources, typeID, new LogSource(changeType, quantity, typeID, date, ownerID, locationID, logType, id));
+			putSet(sources, typeID, new LogSource(sourceType, quantity, typeID, date, ownerID, locationID, logType, id));
 		}
 	}
 
@@ -431,10 +431,10 @@ public class LogManager {
 				long ownerID = contractItem.getContract().getAcceptorID();
 				long locationID = contractItem.getContract().getStartLocationID();
 				int quantity = contractItem.getQuantity();
-				LogChangeType changeType = LogChangeType.ADDED_CONTRACT_ACCEPTED_ACCEPTOR;
+				LogSourceType sourceType = LogSourceType.ADDED_CONTRACT_ACCEPTED;
 				LogType logType = LogType.CONTRACT;
 				long id = contractItem.getRecordID();
-				putSet(sources, typeID, new LogSource(changeType, quantity, typeID, date, ownerID, locationID, logType, id));
+				putSet(sources, typeID, new LogSource(sourceType, quantity, typeID, date, ownerID, locationID, logType, id));
 			} else { //Item being bought by the issuer
 				long ownerID;
 				if (contractItem.getContract().isForCorp()) {
@@ -444,10 +444,10 @@ public class LogManager {
 				}
 				long locationID = contractItem.getContract().getStartLocationID();
 				int quantity = contractItem.getQuantity();
-				LogChangeType changeType = LogChangeType.ADDED_CONTRACT_ACCEPTED_ISSUER;
+				LogSourceType sourceType = LogSourceType.ADDED_CONTRACT_ACCEPTED;
 				LogType logType = LogType.CONTRACT;
 				long id = contractItem.getRecordID();
-				putSet(sources, typeID, new LogSource(changeType, quantity, typeID, date, ownerID, locationID, logType, id));
+				putSet(sources, typeID, new LogSource(sourceType, quantity, typeID, date, ownerID, locationID, logType, id));
 			}
 			
 		}
@@ -467,16 +467,16 @@ public class LogManager {
 			long ownerID = industryJob.getOwnerID();
 			long blueprintLocationID = industryJob.getBlueprintLocationID();
 			int blueprintQuantity = 1;
-			LogChangeType changeType = LogChangeType.ADDED_INDUSTRY_JOB_DELIVERED;
+			LogSourceType sourceType = LogSourceType.ADDED_INDUSTRY_JOB_DELIVERED;
 			LogType logType = LogType.INDUSTRY_JOB;
 			long id = industryJob.getJobID();
-			putSet(sources, blueprintTypeID, new LogSource(changeType, blueprintQuantity, blueprintTypeID, date, ownerID, blueprintLocationID, logType, id));
+			putSet(sources, blueprintTypeID, new LogSource(sourceType, blueprintQuantity, blueprintTypeID, date, ownerID, blueprintLocationID, logType, id));
 			if (industryJob.isManufacturing() && industryJob.getState() == IndustryJobState.STATE_DELIVERED) {
 				long productLocationID = industryJob.getOutputLocationID();
 				int productQuantity = industryJob.getOutputCount();
 				LogType productLogType = LogType.INDUSTRY_JOB;
 				long productID = industryJob.getJobID();
-				putSet(sources, productTypeID, new LogSource(changeType, productQuantity, productTypeID, date, ownerID, productLocationID, productLogType, productID));
+				putSet(sources, productTypeID, new LogSource(sourceType, productQuantity, productTypeID, date, ownerID, productLocationID, productLogType, productID));
 			}
 		}
 	}

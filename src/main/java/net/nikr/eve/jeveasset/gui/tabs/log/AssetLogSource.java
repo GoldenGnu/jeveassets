@@ -23,13 +23,13 @@ package net.nikr.eve.jeveasset.gui.tabs.log;
 
 public class AssetLogSource extends AssetLogData implements Comparable<AssetLogSource> {
 	private final AssetLog parent;
-	private final LogChangeType changeType;
+	private final LogSourceType sourceType;
 	private final int percent;
 
-	public AssetLogSource(AssetLogData data, AssetLog parent, LogChangeType changeType, int percent, long count) {
+	public AssetLogSource(AssetLogData data, AssetLog parent, LogSourceType sourceType, int percent, long count) {
 		super(data, count);
 		this.parent = parent;
-		this.changeType = changeType;
+		this.sourceType = sourceType;
 		this.percent = percent;
 	}
 
@@ -37,16 +37,12 @@ public class AssetLogSource extends AssetLogData implements Comparable<AssetLogS
 		return parent;
 	}
 	
-	public LogChangeType getChangeType() {
-		return changeType;
+	public LogSourceType getSourceType() {
+		return sourceType;
 	}
 
 	public int getPercent() {
 		return percent;
-	}
-
-	public String getChangeTypeName() {
-		return getChangeType().toString();
 	}
 
 	@Override
