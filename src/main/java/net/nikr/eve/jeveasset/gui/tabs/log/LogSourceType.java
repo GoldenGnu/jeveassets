@@ -41,9 +41,19 @@ public enum LogSourceType {
 			return "Contract Accepted";
 		}
 	},
+	ADDED_CONTRACT_CANCELLED(true, false, false) {
+		@Override protected String getSource() {
+			return "Contract Cancelled";
+		}
+	},
 	ADDED_INDUSTRY_JOB_DELIVERED(true, false, false) {
 		@Override protected String getSource() {
 			return "Industry Job Delivered";
+		}
+	},
+	ADDED_MARKET_ORDER_CANCELLED(true, false, false) {
+		@Override protected String getSource() {
+			return "Market Order Cancelled";
 		}
 	},
 	MOVED_TO(false, false, true) {

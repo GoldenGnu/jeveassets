@@ -192,8 +192,10 @@ public class EsiConverter extends DataConverter {
 			Set<MyMarketOrder> marketOrders = convertRawMarketOrders(rawMarketOrders, owner, false);
 			for (MyMarketOrder myMarketOrder : owner.getMarketOrders()) {
 				if (!marketOrders.contains(myMarketOrder)) {
-					myMarketOrder.closeOrder();
-					marketOrders.add(myMarketOrder);
+					//Add copy
+					MyMarketOrder marketOrder = new MyMarketOrder(myMarketOrder, myMarketOrder.getItem(), myMarketOrder.getOwner());
+					marketOrder.closeOrder();
+					marketOrders.add(marketOrder);
 				}
 			}
 			return marketOrders;
@@ -210,8 +212,10 @@ public class EsiConverter extends DataConverter {
 			Set<MyMarketOrder> marketOrders = convertRawMarketOrders(rawMarketOrders, owner, false);
 			for (MyMarketOrder myMarketOrder : owner.getMarketOrders()) {
 				if (!marketOrders.contains(myMarketOrder)) {
-					myMarketOrder.closeOrder();
-					marketOrders.add(myMarketOrder);
+					//Add copy
+					MyMarketOrder marketOrder = new MyMarketOrder(myMarketOrder, myMarketOrder.getItem(), myMarketOrder.getOwner());
+					marketOrder.closeOrder();
+					marketOrders.add(marketOrder);
 				}
 			}
 			return marketOrders;

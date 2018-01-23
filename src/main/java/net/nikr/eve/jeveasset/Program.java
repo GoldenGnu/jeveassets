@@ -472,10 +472,13 @@ public class Program implements ActionListener {
 		} else if (typeIDs != null) {
 			profileData.updatePrice(typeIDs);
 		} else {
+			List<MyContract> oldContracts = new ArrayList<MyContract>(getContractList()); //Copy
+			List<MyIndustryJob> oldIndustryJobs = new ArrayList<MyIndustryJob>(getIndustryJobsList()); //Copy
+			List<MyMarketOrder> oldMarketOrders = new ArrayList<MyMarketOrder>(getMarketOrdersList()); //Copy
 			List<MyAsset> oldAsset = new ArrayList<MyAsset>(getAssetList()); //Copy
 			saveSettings = profileData.updateEventLists();
 			if (start != null) {
-				LogManager.createLog(oldAsset, start, profileData);
+				LogManager.createLog(oldContracts, oldIndustryJobs, oldMarketOrders, oldAsset, start, profileData);
 			}
 		}
 		if (locationIDs != null) { //Update locations

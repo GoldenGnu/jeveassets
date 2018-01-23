@@ -30,12 +30,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import net.nikr.eve.jeveasset.data.api.my.MyAsset;
+import net.nikr.eve.jeveasset.data.api.my.MyContract;
 import net.nikr.eve.jeveasset.data.api.my.MyContractItem;
 import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob;
 import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob.IndustryJobState;
 import net.nikr.eve.jeveasset.data.api.my.MyJournal;
 import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder;
 import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
+import net.nikr.eve.jeveasset.data.api.raw.RawContract;
 import net.nikr.eve.jeveasset.data.api.raw.RawJournalRefType;
 import net.nikr.eve.jeveasset.data.profile.ProfileData;
 import net.nikr.eve.jeveasset.gui.tabs.log.AssetLog;
@@ -74,7 +76,7 @@ public class LogManager {
 		LogsWriter.save(getLogData());
 	}
 
-	public static void createLog(List<MyAsset> oldAssets, Date start, ProfileData profileData) {
+	public static void createLog(List<MyContract> oldContracts, List<MyIndustryJob> oldIndustryJobs, List<MyMarketOrder> oldMarketOrders, List<MyAsset> oldAssets, Date start, ProfileData profileData) {
 		if (oldAssets.isEmpty()) {
 			return;
 		}
@@ -82,10 +84,13 @@ public class LogManager {
 			getLogData().getAddedClaims().put(start, new HashMap<>());
 			getLogData().getRemovedClaims().put(start, new HashMap<>());
 		}
-		List<MyAsset> newAssets = profileData.getAssetsList();
 		Date end = new Date();
-		Map<Long, AssetLog> oldMap = new HashMap<Long, AssetLog>();
-		Map<Long, AssetLog> newMap = new HashMap<Long, AssetLog>();
+	//Lookup tables
+		Map<Long, AssetLog> oldAssetsMap = new HashMap<>();
+		Map<Long, AssetLog> newAssetsMap = new HashMap<>();
+		Map<Integer, MyContract> oldContractMap = new HashMap<>();
+		Map<Integer, MyIndustryJob> oldIndustryJobsMap = new HashMap<>();
+		Map<Long, MyMarketOrder> oldMarketOrdersMap = new HashMap<>();
 		for (MyAsset asset : oldAssets) {
 			if (asset.isGenerated()) {
 				continue;
@@ -93,27 +98,37 @@ public class LogManager {
 			if (asset.getFlag().equals(General.get().industryJobFlag())) {
 				continue;
 			}
-			oldMap.put(asset.getItemID(), new AssetLog(asset, end));
+			oldAssetsMap.put(asset.getItemID(), new AssetLog(asset, end));
 		}
-		for (MyAsset asset : newAssets) {
+		for (MyAsset asset : profileData.getAssetsList()) {
 			if (asset.isGenerated()) {
 				continue;
 			}
 			if (asset.getFlag().equals(General.get().industryJobFlag())) {
 				continue;
 			}
-			newMap.put(asset.getItemID(), new AssetLog(asset, end));
+			newAssetsMap.put(asset.getItemID(), new AssetLog(asset, end));
+		}
+		
+		for (MyContract contract : oldContracts) {
+			oldContractMap.put(contract.getContractID(), contract);
+		}
+		for (MyIndustryJob myIndustryJob : oldIndustryJobs) {
+			oldIndustryJobsMap.put(myIndustryJob.getJobID(), myIndustryJob);
+		}
+		for (MyMarketOrder myMarketOrder : oldMarketOrders) {
+			oldMarketOrdersMap.put(myMarketOrder.getOrderID(), myMarketOrder);
 		}
 	//New
 		//Added Assets
-		Map<Long, AssetLog> added = new HashMap<Long, AssetLog>(newMap); //New Assets
-		added.keySet().removeAll(oldMap.keySet()); //Removed Old Assets
+		Map<Long, AssetLog> added = new HashMap<Long, AssetLog>(newAssetsMap); //New Assets
+		added.keySet().removeAll(oldAssetsMap.keySet()); //Removed Old Assets
 		//Removed Assets
-		Map<Long, AssetLog> removed = new HashMap<Long, AssetLog>(oldMap); //Old Assets
-		removed.keySet().removeAll(newMap.keySet()); //Remove New Assets
+		Map<Long, AssetLog> removed = new HashMap<Long, AssetLog>(oldAssetsMap); //Old Assets
+		removed.keySet().removeAll(newAssetsMap.keySet()); //Remove New Assets
 		//Moved
-		Map<Long, AssetLog> same = new HashMap<Long, AssetLog>(oldMap); //Old Assets
-		same.keySet().retainAll(newMap.keySet()); //Assets in both New and Old (retain)
+		Map<Long, AssetLog> same = new HashMap<Long, AssetLog>(oldAssetsMap); //Old Assets
+		same.keySet().retainAll(newAssetsMap.keySet()); //Assets in both New and Old (retain)
 
 		Map<Integer, Set<LogSource>> addedSources = getLogData().getAddedSources();
 		Map<Integer, List<AssetLog>> addedClaims = new HashMap<>();
@@ -122,8 +137,8 @@ public class LogManager {
 
 		//Moved Claims/Soruces
 		for (Long itemID : same.keySet()) {
-			AssetLog from = oldMap.get(itemID);
-			AssetLog to = newMap.get(itemID);
+			AssetLog from = oldAssetsMap.get(itemID);
+			AssetLog to = newAssetsMap.get(itemID);
 			boolean owner = !Objects.equal(from.getOwnerID(), to.getOwnerID()) ; //New Owner
 			boolean location = !Objects.equal(from.getLocationID(), to.getLocationID());  //New Location
 			boolean flag =  !Objects.equal(from.getFlagID(), to.getFlagID()); //New Flag
@@ -138,14 +153,15 @@ public class LogManager {
 		}
 
 		//Added Claims
-		
 		for (AssetLog asset : added.values()) {
 			put(addedClaims, asset.getTypeID(), asset);
 		}
 		//Added Sources
+		addedMarketOrderCancelled(addedSources, end, profileData.getMarketOrdersList(), oldMarketOrdersMap);
+		addedContractsCancelled(addedSources, end, profileData.getContractItemList(), oldContractMap);
+		addedIndustryJobsDelivered(addedSources, end, profileData.getIndustryJobsList(), oldIndustryJobsMap);
 		addedTransactionsBought(addedSources, profileData.getTransactionsList());
 		addedContracts(addedSources, profileData.getContractItemList());
-		addedIndustryJobsDelivered(addedSources, profileData.getIndustryJobsList());
 
 		//Removed Claims
 		for (AssetLog asset : removed.values()) {
@@ -452,32 +468,85 @@ public class LogManager {
 			
 		}
 	}
+	private static void addedContractsCancelled(Map<Integer, Set<LogSource>> sources, Date date, List<MyContractItem> newContractItems, Map<Integer, MyContract> oldContracts) {
+		for (MyContractItem newContractItem : newContractItems) {
+			MyContract oldContract = oldContracts.get(newContractItem.getContract().getContractID());
+			if (oldContract == null) {
+				continue;
+			}
+			if (oldContract.getStatus().equals(newContractItem.getContract().getStatus())) {
+				continue;
+			}
+			if (newContractItem.getContract().getStatus() != RawContract.ContractStatus.CANCELLED 
+					&& newContractItem.getContract().getStatus() != RawContract.ContractStatus.DELETED
+					&& newContractItem.getContract().getStatus() != RawContract.ContractStatus.REVERSED) {
+				continue;
+			}
+			if (!newContractItem.isIncluded()) {
+				continue;
+			}
+			int typeID = newContractItem.getTypeID();
+			long ownerID = newContractItem.getContract().getIssuerID();
+			long locationID = newContractItem.getContract().getStartLocationID();
+			int quantity = newContractItem.getQuantity();
+			LogSourceType sourceType = LogSourceType.ADDED_CONTRACT_CANCELLED;
+			LogType logType = LogType.CONTRACT;
+			long id = newContractItem.getRecordID();
+			putSet(sources, typeID, new LogSource(sourceType, quantity, typeID, date, ownerID, locationID, logType, id));
+		}
+	}
 
-	private static void addedIndustryJobsDelivered(Map<Integer, Set<LogSource>> sources, List<MyIndustryJob> industryJobs) {
-		for (MyIndustryJob industryJob : industryJobs) {
-			Date date = industryJob.getCompletedDate();
-			int blueprintTypeID = industryJob.getBlueprintTypeID();
-			int productTypeID = industryJob.getProductTypeID();
-			if (date == null) { //Not completed yet
+	private static void addedIndustryJobsDelivered(Map<Integer, Set<LogSource>> sources, Date date, List<MyIndustryJob> newIndustryJobs, Map<Integer, MyIndustryJob> oldIndustryJobs) {
+		for (MyIndustryJob newIndustryJob : newIndustryJobs) {
+			MyIndustryJob oldIndustryJob = oldIndustryJobs.get(newIndustryJob.getJobID());
+			if (oldIndustryJob == null) {
 				continue;
 			}
-			if (!industryJob.isDelivered()) { //Not delivered AKA not in assets yet
+			if (oldIndustryJob.getState().equals(newIndustryJob.getState())) {
 				continue;
 			}
-			long ownerID = industryJob.getOwnerID();
-			long blueprintLocationID = industryJob.getBlueprintLocationID();
+			if (!newIndustryJob.isDelivered()) { //Not delivered AKA not in assets yet
+				continue;
+			}
+			int blueprintTypeID = newIndustryJob.getBlueprintTypeID();
+			int productTypeID = newIndustryJob.getProductTypeID();
+			long ownerID = newIndustryJob.getOwnerID();
+			long blueprintLocationID = newIndustryJob.getBlueprintLocationID();
 			int blueprintQuantity = 1;
 			LogSourceType sourceType = LogSourceType.ADDED_INDUSTRY_JOB_DELIVERED;
 			LogType logType = LogType.INDUSTRY_JOB;
-			long id = industryJob.getJobID();
+			long id = newIndustryJob.getJobID();
 			putSet(sources, blueprintTypeID, new LogSource(sourceType, blueprintQuantity, blueprintTypeID, date, ownerID, blueprintLocationID, logType, id));
-			if (industryJob.isManufacturing() && industryJob.getState() == IndustryJobState.STATE_DELIVERED) {
-				long productLocationID = industryJob.getOutputLocationID();
-				int productQuantity = industryJob.getOutputCount();
+			if (newIndustryJob.isManufacturing() && newIndustryJob.getState() == IndustryJobState.STATE_DELIVERED) {
+				long productLocationID = newIndustryJob.getOutputLocationID();
+				int productQuantity = newIndustryJob.getOutputCount();
 				LogType productLogType = LogType.INDUSTRY_JOB;
-				long productID = industryJob.getJobID();
+				long productID = newIndustryJob.getJobID();
 				putSet(sources, productTypeID, new LogSource(sourceType, productQuantity, productTypeID, date, ownerID, productLocationID, productLogType, productID));
 			}
+		}
+	}
+
+	private static void addedMarketOrderCancelled(Map<Integer, Set<LogSource>> sources, Date date, List<MyMarketOrder> newMarketOrders, Map<Long, MyMarketOrder> oldMarketOrders) {
+		for (MyMarketOrder newMarketOrder : newMarketOrders) {
+			MyMarketOrder oldMarketOrder = oldMarketOrders.get(newMarketOrder.getOrderID());
+			if (oldMarketOrder == null) {
+				continue;
+			}
+			if (oldMarketOrder.getStatus().equals(newMarketOrder.getStatus())) {
+				continue;
+			}
+			if (newMarketOrder.getStatus() != MyMarketOrder.OrderStatus.UNKNOWN) {
+				continue;
+			}
+			int typeID = newMarketOrder.getTypeID();
+			long ownerID = newMarketOrder.getOwnerID();
+			long locationID = newMarketOrder.getLocationID();
+			int quantity = newMarketOrder.getVolRemaining();
+			LogSourceType sourceType = LogSourceType.ADDED_MARKET_ORDER_CANCELLED;
+			LogType logType = LogType.MARKET_ORDER;
+			long id = newMarketOrder.getOrderID();
+			putSet(sources, typeID, new LogSource(sourceType, quantity, typeID, date, ownerID, locationID, logType, id));
 		}
 	}
 }
