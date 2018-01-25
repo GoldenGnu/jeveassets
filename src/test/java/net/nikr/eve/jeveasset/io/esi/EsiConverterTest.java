@@ -46,7 +46,9 @@ import net.troja.eve.esi.model.CharacterBlueprintsResponse;
 import net.troja.eve.esi.model.CharacterContractsItemsResponse;
 import net.troja.eve.esi.model.CharacterContractsResponse;
 import net.troja.eve.esi.model.CharacterIndustryJobsResponse;
+import net.troja.eve.esi.model.CharacterLocationResponse;
 import net.troja.eve.esi.model.CharacterOrdersResponse;
+import net.troja.eve.esi.model.CharacterShipResponse;
 import net.troja.eve.esi.model.CharacterWalletJournalResponse;
 import net.troja.eve.esi.model.CharacterWalletTransactionsResponse;
 import net.troja.eve.esi.model.CorporationAssetsResponse;
@@ -441,6 +443,29 @@ public class EsiConverterTest extends TestUtil {
 			MyTransaction myTransaction = transactions.iterator().next();
 			myTransaction.setPersonal(true);
 			ConverterTestUtil.testValues(transactions.iterator().next(), options, esi);
+		}
+	}
+
+	@Test
+	public void testToAssetsShip() {
+		testToAssetsShip(null, null);
+	}
+
+	@Test
+	public void testToAssetsShipOptional() {
+		testToAssetsShip(CharacterShipResponse.class, CharacterLocationResponse.class);
+	}
+
+	public void testToAssetsShip(Class<?> esiShip, Class<?> esiLocation) {
+		for (ConverterTestOptions options : ConverterTestOptionsGetter.getConverterOptions()) {
+			CharacterShipResponse shipType = new CharacterShipResponse();
+			ConverterTestUtil.setValues(shipType, options, esiShip);
+			CharacterLocationResponse shipLocation = new CharacterLocationResponse();
+			ConverterTestUtil.setValues(shipLocation, options, esiLocation);
+			MyAsset asset = EsiConverter.toAssetsShip(shipType, shipLocation, ConverterTestUtil.getEsiOwner(options));
+			asset.setQuantity(options.getInteger()); //Always 1 -> set to 5 to pass test
+			asset.setItemFlag(options.getItemFlag()); //Always "None" -> set to option value to pass test
+			ConverterTestUtil.testValues(asset, options, null);
 		}
 	}
 }

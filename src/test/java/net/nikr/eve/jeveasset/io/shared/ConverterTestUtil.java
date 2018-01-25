@@ -74,8 +74,10 @@ import net.troja.eve.esi.model.CharacterBlueprintsResponse;
 import net.troja.eve.esi.model.CharacterContractsItemsResponse;
 import net.troja.eve.esi.model.CharacterContractsResponse;
 import net.troja.eve.esi.model.CharacterIndustryJobsResponse;
+import net.troja.eve.esi.model.CharacterLocationResponse;
 import net.troja.eve.esi.model.CharacterOrdersResponse;
 import net.troja.eve.esi.model.CharacterRolesResponse.RolesEnum;
+import net.troja.eve.esi.model.CharacterShipResponse;
 import net.troja.eve.esi.model.CharacterWalletJournalExtraInfoResponse;
 import net.troja.eve.esi.model.CharacterWalletJournalResponse;
 import net.troja.eve.esi.model.CharacterWalletTransactionsResponse;
@@ -425,6 +427,29 @@ public class ConverterTestUtil {
 			CorporationAssetsResponse asset = (CorporationAssetsResponse) object;
 			asset.setItemId(asset.getItemId() + 1); //Workaround for itemID == locationID
 			asset.setLocationId(options.getLocationTypeEveApi());
+		}
+		//ESI Ship
+		if (object instanceof CharacterShipResponse) {
+			CharacterShipResponse asset = (CharacterShipResponse) object;
+			asset.setShipItemId(asset.getShipItemId()+ 1); //Workaround for itemID == locationID
+		}
+		//ESI Location
+		if (object instanceof CharacterLocationResponse) {
+			CharacterLocationResponse asset = (CharacterLocationResponse) object;
+			long locationID = options.getLocationTypeEveApi();
+			if (locationID >= 30000000 && locationID <= 32000000) { //System
+				asset.setSolarSystemId((int)locationID);
+				asset.setStationId(null);
+				asset.setStructureId(null);
+			} else if (locationID >= 60000000 && locationID <= 64000000) { //Station
+				asset.setSolarSystemId(null);
+				asset.setStationId((int)locationID);
+				asset.setStructureId(null);
+			} else { //Other
+				asset.setSolarSystemId(null);
+				asset.setStationId(null);
+				asset.setStructureId(locationID);
+			}
 		}
 		//Raw
 		if (object instanceof RawAsset) {
