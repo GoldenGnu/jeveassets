@@ -53,7 +53,7 @@ import org.junit.Test;
 public class RawConverterTest extends TestUtil {
 
 	@Test
-	public void testToDate_OffsetDateTime() {
+	public void testToDate() {
 		Date from = new Date();
 		OffsetDateTime offsetDateTime = from.toInstant().atOffset(ZoneOffset.UTC);
 		Date to = RawConverter.toDate(offsetDateTime);
@@ -661,13 +661,26 @@ public class RawConverterTest extends TestUtil {
 	@Test
 	public void testToFloat() {
 		float delta = 0;
-		assertEquals((float) RawConverter.toFloat(Long.MAX_VALUE), (float) Long.MAX_VALUE, delta);
-		assertEquals((float) RawConverter.toFloat(Long.MIN_VALUE), (float) Long.MIN_VALUE, delta);
-		assertEquals((float) RawConverter.toFloat(Integer.MAX_VALUE), (float) Integer.MAX_VALUE, delta);
-		assertEquals((float) RawConverter.toFloat(Integer.MIN_VALUE), (float) Integer.MIN_VALUE, delta);
+		assertEquals(RawConverter.toFloat(Long.MAX_VALUE), Long.MAX_VALUE, delta);
+		assertEquals(RawConverter.toFloat(Long.MIN_VALUE), Long.MIN_VALUE, delta);
+		assertEquals(RawConverter.toFloat(Integer.MAX_VALUE), Integer.MAX_VALUE, delta);
+		assertEquals(RawConverter.toFloat(Integer.MIN_VALUE), Integer.MIN_VALUE, delta);
 		assertEquals((float) RawConverter.toFloat(Double.MAX_VALUE), (float) Double.MAX_VALUE, delta);
 		assertEquals((float) RawConverter.toFloat(Double.MIN_VALUE), (float) Double.MIN_VALUE, delta);
-		assertEquals((float) RawConverter.toFloat(Float.MAX_VALUE), Float.MAX_VALUE, delta);
-		assertEquals((float) RawConverter.toFloat(Float.MIN_VALUE), Float.MIN_VALUE, delta);
+		assertEquals(RawConverter.toFloat(Float.MAX_VALUE), Float.MAX_VALUE, delta);
+		assertEquals(RawConverter.toFloat(Float.MIN_VALUE), Float.MIN_VALUE, delta);
+	}
+
+	@Test
+	public void testToDouble() {
+		float delta = 0;
+		assertEquals(RawConverter.toDouble(Long.MAX_VALUE), Long.MAX_VALUE, delta);
+		assertEquals(RawConverter.toDouble(Long.MIN_VALUE), Long.MIN_VALUE, delta);
+		assertEquals(RawConverter.toDouble(Integer.MAX_VALUE), Integer.MAX_VALUE, delta);
+		assertEquals(RawConverter.toDouble(Integer.MIN_VALUE), Integer.MIN_VALUE, delta);
+		assertEquals(RawConverter.toDouble(Double.MAX_VALUE), Double.MAX_VALUE, delta);
+		assertEquals(RawConverter.toDouble(Double.MIN_VALUE), Double.MIN_VALUE, delta);
+		assertEquals(RawConverter.toDouble(Float.MAX_VALUE), Float.MAX_VALUE, delta);
+		assertEquals(RawConverter.toDouble(Float.MIN_VALUE), Float.MIN_VALUE, delta);
 	}
 }
