@@ -230,6 +230,7 @@ public class RawAsset {
 		} else {
 			locationId = RawConverter.toLong(shipLocation.getSolarSystemId());
 		}
+		locationType = RawConverter.toAssetLocationType(locationId);
 		quantity = 1; //Unpacked AKA always 1
 		typeId = shipType.getShipTypeId();
 	}
