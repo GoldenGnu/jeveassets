@@ -274,8 +274,8 @@ public final class ProfileWriter extends AbstractXmlWriter {
 			Element childNode = xmldoc.createElement("markerorder");
 			setAttribute(childNode, "orderid", marketOrder.getOrderID());
 			setAttribute(childNode, "stationid", marketOrder.getLocationID());
-			setAttribute(childNode, "volentered", marketOrder.getVolEntered());
-			setAttribute(childNode, "volremaining", marketOrder.getVolRemaining());
+			setAttribute(childNode, "volentered", marketOrder.getVolumeTotal());
+			setAttribute(childNode, "volremaining", marketOrder.getVolumeRemain());
 			setAttribute(childNode, "minvolume", marketOrder.getMinVolume());
 			setAttribute(childNode, "orderstate", RawConverter.fromMarketOrderState(marketOrder.getState()));
 			setAttribute(childNode, "typeid", marketOrder.getTypeID());

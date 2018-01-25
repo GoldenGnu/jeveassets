@@ -859,7 +859,7 @@ public class ProfileData {
 			for (MyMarketOrder marketOrder : owner.getMarketOrders()) {
 				if (marketOrder.isBuyOrder() //Buy orders only
 						//at least one bought
-						&& !Objects.equals(marketOrder.getVolRemaining(), marketOrder.getVolEntered())
+						&& !Objects.equals(marketOrder.getVolumeRemain(), marketOrder.getVolumeTotal())
 						//Date in range or unlimited
 						&& (marketOrder.getIssued().after(maxAge) || Settings.get().getMaximumPurchaseAge() == 0)) {
 					int typeID = marketOrder.getTypeID();

@@ -35,7 +35,6 @@ import net.nikr.eve.jeveasset.data.settings.types.EditablePriceType;
 import net.nikr.eve.jeveasset.data.settings.types.ItemType;
 import net.nikr.eve.jeveasset.data.settings.types.OwnersType;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.Percent;
-import net.nikr.eve.jeveasset.gui.shared.table.containers.Quantity;
 import net.nikr.eve.jeveasset.i18n.TabsOrders;
 
 public class MyMarketOrder extends RawMarketOrder implements Comparable<MyMarketOrder>, EditableLocationType, ItemType, EditablePriceType, OwnersType {
@@ -110,7 +109,6 @@ public class MyMarketOrder extends RawMarketOrder implements Comparable<MyMarket
 	private String rangeFormated;
 	private OrderStatus status;
 	private OwnerType owner;
-	private Quantity quantity;
 	private double price;
 	private double lastTransactionPrice;
 	private double lastTransactionValue;
@@ -121,7 +119,6 @@ public class MyMarketOrder extends RawMarketOrder implements Comparable<MyMarket
 		this.item = item;
 		this.owner = owner;
 		this.owners = Collections.singleton(owner.getOwnerID());
-		quantity = new Quantity(getVolEntered(), getVolRemaining());
 		rangeFormated = "";
 		switch (this.getRange()) {
 			case STATION:
@@ -141,9 +138,9 @@ public class MyMarketOrder extends RawMarketOrder implements Comparable<MyMarket
 				break;
 		}
 		if (isExpired()) { //expired (status may be out-of-date)
-			if (this.getVolRemaining() == 0) {
+			if (this.getVolumeRemain() == 0) {
 				status = OrderStatus.FULFILLED;
-			} else if (Objects.equals(this.getVolRemaining(), this.getVolEntered())) {
+			} else if (Objects.equals(this.getVolumeRemain(), this.getVolumeTotal())) {
 				status = OrderStatus.EXPIRED;
 			} else {
 				status = OrderStatus.PARTIALLY_FULFILLED;
@@ -157,9 +154,9 @@ public class MyMarketOrder extends RawMarketOrder implements Comparable<MyMarket
 					status = OrderStatus.CLOSED;
 					break;
 				case EXPIRED: //expired (or fulfilled)
-					if (this.getVolRemaining() == 0) {
+					if (this.getVolumeRemain() == 0) {
 						status = OrderStatus.FULFILLED;
-					} else if (Objects.equals(this.getVolRemaining(), this.getVolEntered())) {
+					} else if (Objects.equals(this.getVolumeRemain(), this.getVolumeTotal())) {
 						status = OrderStatus.EXPIRED;
 					} else {
 						status = OrderStatus.PARTIALLY_FULFILLED;
@@ -286,10 +283,6 @@ public class MyMarketOrder extends RawMarketOrder implements Comparable<MyMarket
 
 	public long getOwnerID() {
 		return owner.getOwnerID();
-	}
-
-	public Quantity getQuantity() {
-		return quantity;
 	}
 
 	public OrderStatus getStatus() {
