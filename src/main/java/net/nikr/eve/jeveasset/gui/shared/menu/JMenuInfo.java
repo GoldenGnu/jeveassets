@@ -130,11 +130,11 @@ public class JMenuInfo {
 			double escrowTotal = 0;
 			for (MyMarketOrder marketOrder : list) {
 				if (!marketOrder.isBuyOrder()) { //Sell
-					sellOrdersTotal += marketOrder.getPrice() * marketOrder.getVolRemaining();
+					sellOrdersTotal += marketOrder.getPrice() * marketOrder.getVolumeRemain();
 				} else { //Buy
-					buyOrdersTotal += marketOrder.getPrice() * marketOrder.getVolRemaining();
+					buyOrdersTotal += marketOrder.getPrice() * marketOrder.getVolumeRemain();
 					escrowTotal += marketOrder.getEscrow();
-					toCoverTotal += (marketOrder.getPrice() * marketOrder.getVolRemaining()) - marketOrder.getEscrow();
+					toCoverTotal += (marketOrder.getPrice() * marketOrder.getVolumeRemain()) - marketOrder.getEscrow();
 				}
 			}
 			createMenuItem(jPopupMenu, Formater.iskFormat(sellOrdersTotal), GuiShared.get().selectionOrdersSell(), Images.ORDERS_SELL.getIcon());

@@ -684,15 +684,15 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 				} else if (marketOrder != null) {
 					if (!marketOrder.isBuyOrder() && marketOrder.isActive() && filter.isSellOrders()) {
 						if (add) { //Open/Active sell order - match
-							sellOrdersCountNow = sellOrdersCountNow + marketOrder.getVolRemaining();
+							sellOrdersCountNow = sellOrdersCountNow + marketOrder.getVolumeRemain();
 						} else {
-							count = count + marketOrder.getVolRemaining();
+							count = count + marketOrder.getVolumeRemain();
 						}
 					} else if (marketOrder.isBuyOrder() && marketOrder.isActive() && filter.isBuyOrders()) {
 						if (add) { //Open/Active buy order - match
-							buyOrdersCountNow = buyOrdersCountNow + marketOrder.getVolRemaining();
+							buyOrdersCountNow = buyOrdersCountNow + marketOrder.getVolumeRemain();
 						} else {
-							count = count + marketOrder.getVolRemaining();
+							count = count + marketOrder.getVolumeRemain();
 						}
 					} else {
 						continue; //Do not match - try next filter

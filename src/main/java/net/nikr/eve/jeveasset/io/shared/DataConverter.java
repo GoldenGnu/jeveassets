@@ -67,7 +67,7 @@ public abstract class DataConverter {
 	public static List<MyAsset> assetMarketOrder(final Collection<MyMarketOrder> marketOrders, boolean includeSellOrders, boolean includeBuyOrders) {
 		List<MyAsset> assets = new ArrayList<MyAsset>();
 		for (MyMarketOrder marketOrder : marketOrders) {
-			if (marketOrder.isActive() && marketOrder.getVolRemaining() > 0
+			if (marketOrder.isActive() && marketOrder.getVolumeRemain() > 0
 					&& ((!marketOrder.isBuyOrder() && includeSellOrders)
 					|| (marketOrder.isBuyOrder() && includeBuyOrders))) {
 				MyAsset asset = new MyAsset(marketOrder);

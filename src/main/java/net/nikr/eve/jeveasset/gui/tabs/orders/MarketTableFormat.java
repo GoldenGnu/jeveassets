@@ -27,7 +27,6 @@ import java.util.Date;
 import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.Percent;
-import net.nikr.eve.jeveasset.gui.shared.table.containers.Quantity;
 import net.nikr.eve.jeveasset.i18n.TabsOrders;
 
 
@@ -56,14 +55,24 @@ public enum MarketTableFormat implements EnumTableColumn<MyMarketOrder> {
 			return from.getItem().getTypeName();
 		}
 	},
-	QUANTITY(Quantity.class, GlazedLists.comparableComparator()) {
+	QUANTITY(Integer.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
-			return TabsOrders.get().columnQuantity();
+			return TabsOrders.get().columnVolumeRemain();
 		}
 		@Override
 		public Object getColumnValue(final MyMarketOrder from) {
-			return from.getQuantity();
+			return from.getVolumeRemain();
+		}
+	},
+	QUANTITY_ENTERED(Integer.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsOrders.get().columnVolumeTotal();
+		}
+		@Override
+		public Object getColumnValue(final MyMarketOrder from) {
+			return from.getVolumeTotal();
 		}
 	},
 	PRICE(Double.class, GlazedLists.comparableComparator()) {
@@ -163,7 +172,7 @@ public enum MarketTableFormat implements EnumTableColumn<MyMarketOrder> {
 		}
 		@Override
 		public Object getColumnValue(final MyMarketOrder from) {
-			return Double.valueOf(from.getQuantity().getQuantityRemaining() * from.getPrice());
+			return from.getVolumeRemain() * from.getPrice();
 		}
 	},
 	LAST_TRANSACTION_PRICE(Double.class, GlazedLists.comparableComparator()) {

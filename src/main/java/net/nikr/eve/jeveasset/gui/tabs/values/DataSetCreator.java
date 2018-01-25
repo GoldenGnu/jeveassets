@@ -131,13 +131,13 @@ public class DataSetCreator {
 				if (marketOrder.isActive()) {
 					Value value = getValueInner(values, marketOrder.getOwnerName(), date);
 					if (!marketOrder.isBuyOrder()) { //Sell Orders
-						value.addSellOrders(marketOrder.getPrice() * marketOrder.getVolRemaining());
-						total.addSellOrders(marketOrder.getPrice() * marketOrder.getVolRemaining());
+						value.addSellOrders(marketOrder.getPrice() * marketOrder.getVolumeRemain());
+						total.addSellOrders(marketOrder.getPrice() * marketOrder.getVolumeRemain());
 					} else { //Buy Orders
 						value.addEscrows(marketOrder.getEscrow());
-						value.addEscrowsToCover((marketOrder.getPrice() * marketOrder.getVolRemaining()) - marketOrder.getEscrow());
+						value.addEscrowsToCover((marketOrder.getPrice() * marketOrder.getVolumeRemain()) - marketOrder.getEscrow());
 						total.addEscrows(marketOrder.getEscrow());
-						total.addEscrowsToCover((marketOrder.getPrice() * marketOrder.getVolRemaining()) - marketOrder.getEscrow());
+						total.addEscrowsToCover((marketOrder.getPrice() * marketOrder.getVolumeRemain()) - marketOrder.getEscrow());
 					}
 				}
 			}

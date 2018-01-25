@@ -206,11 +206,11 @@ public class MarketOrdersTab extends JMainTabPrimary {
 			double escrowTotal = 0;
 			for (MyMarketOrder marketOrder : filterList) {
 				if (!marketOrder.isBuyOrder()) { //Sell
-					sellOrdersTotal += marketOrder.getPrice() * marketOrder.getVolRemaining();
+					sellOrdersTotal += marketOrder.getPrice() * marketOrder.getVolumeRemain();
 				} else { //Buy
-					buyOrdersTotal += marketOrder.getPrice() * marketOrder.getVolRemaining();
+					buyOrdersTotal += marketOrder.getPrice() * marketOrder.getVolumeRemain();
 					escrowTotal += marketOrder.getEscrow();
-					toCoverTotal += (marketOrder.getPrice() * marketOrder.getVolRemaining()) - marketOrder.getEscrow();
+					toCoverTotal += (marketOrder.getPrice() * marketOrder.getVolumeRemain()) - marketOrder.getEscrow();
 				}
 			}
 			jSellOrdersTotal.setText(Formater.iskFormat(sellOrdersTotal));
