@@ -337,7 +337,7 @@ public class RawMarketOrder {
 		this.typeId = typeId;
 	}
 
-	public final Integer getVolRemaining() {
+	public final Integer getVolumeRemain() {
 		return volumeRemain;
 	}
 
@@ -345,7 +345,7 @@ public class RawMarketOrder {
 		this.volumeRemain = volumeRemain;
 	}
 
-	public final Integer getVolEntered() {
+	public final Integer getVolumeTotal() {
 		return volumeTotal;
 	}
 

@@ -125,7 +125,7 @@ public class RawAsset {
 		}
 		locationId = marketOrder.getLocationID();
 		locationType = RawConverter.toAssetLocationType(locationId);
-		quantity = marketOrder.getVolRemaining();
+		quantity = marketOrder.getVolumeRemain();
 		typeId = marketOrder.getTypeID();
 	}
 
