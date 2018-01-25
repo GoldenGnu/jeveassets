@@ -356,7 +356,7 @@ public class LogManager {
 			}
 			long ownerID = marketOrder.getOwnerID();
 			long locationID = marketOrder.getLocationID();
-			int quantity = marketOrder.getVolEntered();
+			int quantity = marketOrder.getVolumeTotal();
 			LogSourceType sourceType = LogSourceType.REMOVED_MARKET_ORDER_CREATED;
 			LogType logType = LogType.MARKET_ORDER;
 			long id = marketOrder.getOrderID();
@@ -542,7 +542,7 @@ public class LogManager {
 			int typeID = newMarketOrder.getTypeID();
 			long ownerID = newMarketOrder.getOwnerID();
 			long locationID = newMarketOrder.getLocationID();
-			int quantity = newMarketOrder.getVolRemaining();
+			int quantity = newMarketOrder.getVolumeRemain();
 			LogSourceType sourceType = LogSourceType.ADDED_MARKET_ORDER_CANCELLED;
 			LogType logType = LogType.MARKET_ORDER;
 			long id = newMarketOrder.getOrderID();
