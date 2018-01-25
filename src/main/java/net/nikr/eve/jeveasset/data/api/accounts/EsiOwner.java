@@ -44,6 +44,7 @@ public class EsiOwner extends AbstractOwner implements OwnerType {
 	private Date accountNextUpdate = Settings.getNow();
 	private EsiCallbackURL callbackURL;
 	private Set<RolesEnum> roles = EnumSet.noneOf(RolesEnum.class);
+	private boolean invalid = false;
 
 	public EsiOwner() {}
 
@@ -58,6 +59,8 @@ public class EsiOwner extends AbstractOwner implements OwnerType {
 		this.structuresNextUpdate = esiOwner.structuresNextUpdate;
 		this.accountNextUpdate = esiOwner.accountNextUpdate;
 		this.callbackURL = esiOwner.callbackURL;
+		this.roles = esiOwner.roles;
+		this.invalid = esiOwner.invalid;
 	}
 
 	public String getRefreshToken() {
@@ -160,8 +163,12 @@ public class EsiOwner extends AbstractOwner implements OwnerType {
 	}
 
 	@Override
-	public boolean isInvalid() {
-		return false;
+	public synchronized boolean isInvalid() {
+		return invalid;
+	}
+
+	public synchronized void setInvalid(boolean invalid) {
+		this.invalid = invalid;
 	}
 
 	@Override

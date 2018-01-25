@@ -82,6 +82,11 @@ public abstract class AbstractEsiGetter extends AbstractGetter<EsiOwner, ApiClie
 		if (!canUpdate()) {
 			return;
 		}
+		//Check if API key is invalid (still update when editing account AKA forceUpdate)
+		if (!isForceUpdate() && owner.isInvalid()) {
+			addError(null, "REFRESH TOKEN INVALID", "Auth invalid\r\n(Fix: Options > Accounts... > Edit)");
+			return;
+		}
 		try {
 			updateApi(new EsiUpdater(maxRetries), 0);
 		} catch (ApiException ex) {
@@ -111,10 +116,16 @@ public abstract class AbstractEsiGetter extends AbstractGetter<EsiOwner, ApiClie
 				setNextUpdateSafe(Formater.parseExpireDate(expiresHeader));
 			}
 			logInfo(updater.getStatus(), "Updated");
+			owner.setInvalid(false);
 			return t;
 		} catch (ApiException ex) {
 			logError(updater.getStatus(), ex.getMessage(), ex.getMessage());
-			if (ex.getCode() >= 500 && ex.getCode() < 600 //CCP error, Lets try again in a sec
+			if (ex.getCode() == 400 && ex.getMessage().toLowerCase().contains("invalid_token")
+					&& (ex.getMessage().toLowerCase().contains("the refresh token is expired")
+					|| ex.getMessage().toLowerCase().contains("token is no longer valid"))) {
+				owner.setInvalid(true);
+				throw ex;
+			} else if (ex.getCode() >= 500 && ex.getCode() < 600 //CCP error, Lets try again in a sec
 					&& ex.getCode() != 503 //Don't retry when it may be downtime
 					&& (ex.getCode() != 502 || ex.getMessage().toLowerCase().contains("no reply within 10 seconds")) //Don't retry when it may be downtime, unless it's "no reply within 10 seconds"
 					&& retries < updater.getMaxRetries()) { //Retries
