@@ -74,7 +74,6 @@ public class EveKitTrackImportUpdateTask extends UpdateTask {
 		Date date;
 		Date lifeStart = getLifeStart();
 		if (lifeStart == null) {
-			returnValue = ReturnValue.ERROR;
 			return;
 		}
 		Calendar calendar = Calendar.getInstance(); 
@@ -283,7 +282,8 @@ public class EveKitTrackImportUpdateTask extends UpdateTask {
 			eveKitOwner.setShowOwner(true);
 			clones.add(eveKitOwner);
 		}
-		if (clones.isEmpty()) { //All owners have data, try next date
+		if (clones.isEmpty()) { //No clones found
+			returnValue = ReturnValue.ERROR;
 			return null;
 		}
 		if (isCancelled()) { //No data return by the API OR Task is cancelled
@@ -313,6 +313,7 @@ public class EveKitTrackImportUpdateTask extends UpdateTask {
 
 		for (AbstractEveKitGetter getter : updaters) {
 			if (getter.hasError()) {
+				returnValue = ReturnValue.ERROR;
 				return null;
 			}
 			date = frist(date, getter.getLifeStart());
