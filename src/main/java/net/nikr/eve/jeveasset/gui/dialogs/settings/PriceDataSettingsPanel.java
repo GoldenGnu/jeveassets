@@ -252,20 +252,28 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 	@Override
 	public boolean save() {
 		Object object;
-		List<Long> locations = null;
+		List<Long> locations;
 		LocationType locationType = null;
+		Object location = null;
 		if (jRadioRegions.isSelected()) {
 			locationType = LocationType.REGION;
-			RegionType regionType = (RegionType) jRegions.getSelectedItem();
-			locations = regionType.getRegions();
+			location = jRegions.getSelectedItem();
 		} else if (jRadioSystems.isSelected()) {
 			locationType = LocationType.SYSTEM;
-			MyLocation location = (MyLocation) jSystems.getSelectedItem();
-			locations = Collections.singletonList(location.getLocationID());
+			location = jSystems.getSelectedItem();
 		} else if (jRadioStations.isSelected()) {
 			locationType = LocationType.STATION;
-			MyLocation location = (MyLocation) jStations.getSelectedItem();
-			locations = Collections.singletonList(location.getLocationID());
+			location = jStations.getSelectedItem();
+		}
+		if (location instanceof RegionType) {
+			RegionType regionType = (RegionType) location;
+			locations = regionType.getRegions();
+		} else if (location instanceof MyLocation) {
+			MyLocation myLocation = (MyLocation) location;
+			locations = Collections.singletonList(myLocation.getLocationID());
+		} else { //XXX - Workaround for invalid locations: https://eve.nikr.net/jeveassets/bugs/#bugid631
+			locations = Settings.get().getPriceDataSettings().getLocations();
+			locationType = Settings.get().getPriceDataSettings().getLocationType();
 		}
 
 		//Price Type (can be a String)
