@@ -73,6 +73,10 @@ public class EveKitTrackImportUpdateTask extends UpdateTask {
 		returnValue = ReturnValue.CANCELLED;
 		Date date;
 		Date lifeStart = getLifeStart();
+		if (lifeStart == null) {
+			returnValue = ReturnValue.ERROR;
+			return;
+		}
 		Calendar calendar = Calendar.getInstance(); 
 		switch (dateInterval) {
 			case DAY:
