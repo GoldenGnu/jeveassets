@@ -588,7 +588,12 @@ public class Program implements ActionListener {
 	}
 
 	public final void profilesChanged() {
-		getMainWindow().getMenu().eveKitImport(!getProfileManager().getEveKitOwners().isEmpty());
+		ensureEDT(new Runnable() {
+			@Override
+			public void run() {
+				getMainWindow().getMenu().eveKitImport(!getProfileManager().getEveKitOwners().isEmpty());
+			}
+		});
 	}
 
 	/**
