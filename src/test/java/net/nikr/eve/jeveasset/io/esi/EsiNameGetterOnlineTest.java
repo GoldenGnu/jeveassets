@@ -39,7 +39,7 @@ public class EsiNameGetterOnlineTest extends TestUtil {
 		Set<Long> ids = new HashSet<Long>();
 		ids.add(1232111352L);
 		ids.add(2112730710L);
-		ids.add(500016L);
+		//ids.add(500016L);
 		ids.add(93678202L);
 		ids.add(96503035L);
 
@@ -53,7 +53,7 @@ public class EsiNameGetterOnlineTest extends TestUtil {
 		Settings.get().getOwners().clear();
 
 		EsiNameGetter esiNameGetter = new EsiNameGetter(null, owners);
-		esiNameGetter.start();
+		esiNameGetter.run();
 
 		for (Long id : ids) {
 			Assert.assertNotNull(Settings.get().getOwners().get(id));
