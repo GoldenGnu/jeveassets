@@ -400,10 +400,15 @@ public class AccountManagerDialog extends JDialogCentered {
 				if (o instanceof SeparatorList.Separator<?>) {
 					SeparatorList.Separator<?> separator = (SeparatorList.Separator<?>) o;
 					List<EveApiOwner> owners = new ArrayList<EveApiOwner>();
-					for (Object object : separator.getGroup()) {
-						if (object instanceof EveApiOwner) { //Eve Api
-							owners.add((EveApiOwner) object);
+					try {
+						separatorList.getReadWriteLock().readLock().lock();
+						for (Object object : separator.getGroup()) {
+							if (object instanceof EveApiOwner) { //Eve Api
+								owners.add((EveApiOwner) object);
+							}
 						}
+					} finally {
+						separatorList.getReadWriteLock().readLock().unlock();
 					}
 					boolean updated = jMigrateDialog.show(owners);
 					if (updated) {
