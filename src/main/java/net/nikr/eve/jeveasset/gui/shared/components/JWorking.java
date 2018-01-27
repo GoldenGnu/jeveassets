@@ -28,6 +28,7 @@ import java.awt.image.BufferedImage;
 import javax.swing.JPanel;
 import javax.swing.event.AncestorEvent;
 import javax.swing.event.AncestorListener;
+import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.gui.images.Images;
 
 
@@ -125,7 +126,12 @@ public class JWorking extends JPanel {
 				if (currentLoadingImage >= IMG_FRAMES) {
 					currentLoadingImage = 0;
 				}
-				jWorking.repaint();
+				Program.ensureEDT(new Runnable() {
+					@Override
+					public void run() {
+						jWorking.repaint();
+					}
+				});
 				try {
 					synchronized(this) {
 						wait(UPDATE_DELAY);
