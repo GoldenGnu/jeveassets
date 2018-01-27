@@ -56,7 +56,7 @@ public final class AttributeGetters {
 	}
 
 	public static Date getDateNotNull(final Node node, final String attributeName) {
-		String value = getNodeValueNotNull(node, attributeName);
+		String value = getNodeValueOptional(node, attributeName);
 		if (value == null) {
 			return Settings.getNow();
 		}
@@ -182,15 +182,6 @@ public final class AttributeGetters {
 	}
 
 	private static String getNodeValueOptional(final Node node, final String attributeName) {
-		Node attributeNode = node.getAttributes().getNamedItem(attributeName);
-		if (attributeNode == null) {
-			return null;
-		} else {
-			return attributeNode.getNodeValue();
-		}
-	}
-
-	private static String getNodeValueNotNull(final Node node, final String attributeName) {
 		Node attributeNode = node.getAttributes().getNamedItem(attributeName);
 		if (attributeNode == null) {
 			return null;

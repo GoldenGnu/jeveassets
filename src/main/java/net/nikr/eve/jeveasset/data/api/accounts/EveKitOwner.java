@@ -224,6 +224,11 @@ public class EveKitOwner extends AbstractOwner implements OwnerType {
 	}
 
 	@Override
+	public boolean isContainerLogs() {
+		return false; //Not supported by the EveKit, Yet?
+	}
+
+	@Override
 	public String getComparator() {
 		return "evekit" + getAccountName() + getAccessKey();
 	}

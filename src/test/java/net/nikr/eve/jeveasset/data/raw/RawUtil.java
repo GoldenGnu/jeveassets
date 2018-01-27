@@ -32,6 +32,7 @@ import java.util.Map;
 import java.util.Set;
 import net.nikr.eve.jeveasset.data.api.raw.RawAsset;
 import net.nikr.eve.jeveasset.data.api.raw.RawBlueprint;
+import net.nikr.eve.jeveasset.data.api.raw.RawContainerLog;
 import net.nikr.eve.jeveasset.data.api.raw.RawIndustryJob;
 import net.nikr.eve.jeveasset.data.api.raw.RawJournal;
 import net.nikr.eve.jeveasset.data.api.raw.RawJournalExtraInfo;
@@ -65,10 +66,10 @@ public class RawUtil {
 			if (value.getName().equals("serialVersionUID")) { //serialVersionUID
 				continue;
 			}
-			if (value.getName().equals("itemFlag") && (raw.equals(RawAsset.class) || raw.equals(RawBlueprint.class))) {
+			if (value.getName().equals("itemFlag") && (raw.equals(RawAsset.class) || raw.equals(RawBlueprint.class) || raw.equals(RawContainerLog.class))) {
 				continue;
 			}
-			if (value.getName().equals("locationFlag") && (raw.equals(RawAsset.class) || raw.equals(RawBlueprint.class))) {
+			if (value.getName().equals("locationFlag") && (raw.equals(RawAsset.class) || raw.equals(RawBlueprint.class) || raw.equals(RawContainerLog.class))) {
 				continue;
 			}
 			if (value.getName().equals("accountKey") && (raw.equals(RawTransaction.class) || raw.equals(RawJournal.class))) {
@@ -124,10 +125,10 @@ public class RawUtil {
 			if (value.getName().equals("serialVersionUID")) { //serialVersionUID
 				continue;
 			}
-			if (value.getName().equals("itemFlag") && (raw.equals(RawAsset.class) || raw.equals(RawBlueprint.class))) {
+			if (value.getName().equals("itemFlag") && (raw.equals(RawAsset.class) || raw.equals(RawBlueprint.class) || raw.equals(RawContainerLog.class))) {
 				continue;
 			}
-			if (value.getName().equals("locationFlag") && (raw.equals(RawAsset.class) || raw.equals(RawBlueprint.class))) {
+			if (value.getName().equals("locationFlag") && (raw.equals(RawAsset.class) || raw.equals(RawBlueprint.class) || raw.equals(RawContainerLog.class))) {
 				continue;
 			}
 			if (value.getName().equals("accountKey") && (raw.equals(RawTransaction.class) || raw.equals(RawJournal.class))) {

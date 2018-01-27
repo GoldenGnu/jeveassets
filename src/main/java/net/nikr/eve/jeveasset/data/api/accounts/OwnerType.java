@@ -33,15 +33,16 @@ import net.nikr.eve.jeveasset.data.api.my.MyJournal;
 import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder;
 import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
 import net.nikr.eve.jeveasset.data.api.raw.RawBlueprint;
+import net.nikr.eve.jeveasset.data.api.raw.RawContainerLog;
 
 
 public interface OwnerType extends Comparable<OwnerType> {
 
 	//Info
 	public String getOwnerName();
-	public void setOwnerName(String ownerName);
+	public void setOwnerName(final String ownerName);
 	public long getOwnerID();
-	public void setOwnerID(long ownerID);
+	public void setOwnerID(final long ownerID);
 	public boolean isCorporation();
 	public boolean isShowOwner();
 	public Date getExpire();
@@ -52,7 +53,7 @@ public interface OwnerType extends Comparable<OwnerType> {
 	public ApiType getAccountAPI();
 	public void setShowOwner(final boolean showOwner);
 	public void setResetAccountName();
-	public void setAccountName(String accountName);
+	public void setAccountName(final String accountName);
 	//Data
 	public List<MyAccountBalance> getAccountBalances();
 	public Set<MyMarketOrder> getMarketOrders();
@@ -62,14 +63,16 @@ public interface OwnerType extends Comparable<OwnerType> {
 	public Map<MyContract, List<MyContractItem>> getContracts();
 	public List<MyAsset> getAssets();
 	public Map<Long, RawBlueprint> getBlueprints();
-	public void setBlueprints(Map<Long, RawBlueprint> blueprints);
+	public List<RawContainerLog> getContainerLogs();
+	public void setBlueprints(final Map<Long, RawBlueprint> blueprints);
 	public void setIndustryJobs(final List<MyIndustryJob> industryJobs);
 	public void setTransactions(final Set<MyTransaction> transactions);
 	public void setJournal(final Set<MyJournal> journal);
 	public void setMarketOrders(final Set<MyMarketOrder> marketOrders);
 	public void setContracts(final Map<MyContract, List<MyContractItem>> contracts);
 	public void setAssets(final List<MyAsset> assets);
-	public void setAccountBalances(List<MyAccountBalance> accountBalances);
+	public void setAccountBalances(final List<MyAccountBalance> accountBalances);
+	public void setContainerLogs(final List<RawContainerLog> containersLogs);
 	//Account Mask
 	public boolean isCharacter();
 	public boolean isAssetList();
@@ -85,21 +88,23 @@ public interface OwnerType extends Comparable<OwnerType> {
 	public boolean isShip();
 	public boolean isOpenWindows();
 	public boolean isAutopilot();
+	public boolean isContainerLogs();
 	//Last Update
 	public Date getAssetLastUpdate();
 	public Date getBalanceLastUpdate();
-	public void setAssetLastUpdate(Date assetLastUpdate);
-	public void setBalanceLastUpdate(Date balanceLastUpdate);
+	public void setAssetLastUpdate(final Date assetLastUpdate);
+	public void setBalanceLastUpdate(final Date balanceLastUpdate);
 	//Next Update
 	public void setAssetNextUpdate(final Date nextUpdate);
 	public void setBalanceNextUpdate(final Date balanceNextUpdate);
 	public void setBlueprintsNextUpdate(Date blueprintsNextUpdate);
 	public void setContractsNextUpdate(final Date contractsNextUpdate);
 	public void setIndustryJobsNextUpdate(final Date industryJobsNextUpdate);
-	public void setLocationsNextUpdate(Date locationsNextUpdate);
+	public void setLocationsNextUpdate(final Date locationsNextUpdate);
 	public void setMarketOrdersNextUpdate(final Date marketOrdersNextUpdate);
-	public void setJournalNextUpdate(Date journalNextUpdate);
+	public void setJournalNextUpdate(final Date journalNextUpdate);
 	public void setTransactionsNextUpdate(final Date transactionsNextUpdate);
+	public void setContainerLogsNextUpdate(final Date containerLogsNextUpdate);
 	public Date getTransactionsNextUpdate();
 	public Date getAssetNextUpdate();
 	public Date getBalanceNextUpdate();
@@ -109,4 +114,5 @@ public interface OwnerType extends Comparable<OwnerType> {
 	public Date getLocationsNextUpdate();
 	public Date getMarketOrdersNextUpdate();
 	public Date getJournalNextUpdate();
+	public Date getContainerLogsNextUpdate();
 }

@@ -25,6 +25,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import net.nikr.eve.jeveasset.data.api.raw.RawAsset;
+import net.nikr.eve.jeveasset.data.api.raw.RawContainerLog;
 import net.nikr.eve.jeveasset.data.api.raw.RawContract;
 import net.nikr.eve.jeveasset.data.api.raw.RawIndustryJob;
 import net.nikr.eve.jeveasset.data.api.raw.RawJournal;
@@ -34,6 +35,7 @@ import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder;
 import net.nikr.eve.jeveasset.data.sde.ItemFlag;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
 import net.troja.eve.esi.model.CharacterWalletJournalResponse;
+import net.troja.eve.esi.model.CorporationContainersLogsResponse;
 import net.troja.eve.esi.model.CorporationWalletJournalResponse;
 
 public class RawConverter {
@@ -155,6 +157,11 @@ public class RawConverter {
 		return ApiIdConverter.getFlag(locationFlag.getID());
 	}
 
+	public static ItemFlag toFlag(net.troja.eve.esi.model.CorporationContainersLogsResponse.LocationFlagEnum locationFlagEnum) {
+		LocationFlag locationFlag = LocationFlag.valueOf(locationFlagEnum.name());
+		return ApiIdConverter.getFlag(locationFlag.getID());
+	}
+
 	public static RawAsset.LocationType toAssetLocationType(Long locationID) {
 		MyLocation location = ApiIdConverter.getLocation(locationID);
 		if (location.isStation()) {
@@ -164,6 +171,17 @@ public class RawConverter {
 		} else {
 			return RawAsset.LocationType.OTHER;
 		}
+	}
+
+	public static RawContainerLog.ContainerAction toContainerLogAction(CorporationContainersLogsResponse.ActionEnum actionEnum) {
+		return RawContainerLog.ContainerAction.valueOf(actionEnum.name());
+	}
+
+	public static RawContainerLog.ContainerPasswordType toContainerLogPasswordType(CorporationContainersLogsResponse.PasswordTypeEnum passwordTypeEnum) {
+		if (passwordTypeEnum == null) {
+			return null;
+		}
+		return RawContainerLog.ContainerPasswordType.valueOf(passwordTypeEnum.name());
 	}
 
 	public static RawContract.ContractAvailability toContractAvailability(String value) {

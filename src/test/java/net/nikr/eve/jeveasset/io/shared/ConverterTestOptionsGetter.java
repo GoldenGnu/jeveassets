@@ -31,6 +31,7 @@ import java.util.Set;
 import net.nikr.eve.jeveasset.data.api.accounts.EveApiAccount;
 import net.nikr.eve.jeveasset.data.api.raw.RawAsset;
 import net.nikr.eve.jeveasset.data.api.raw.RawBlueprint;
+import net.nikr.eve.jeveasset.data.api.raw.RawContainerLog;
 import net.nikr.eve.jeveasset.data.api.raw.RawContract;
 import net.nikr.eve.jeveasset.data.api.raw.RawIndustryJob;
 import net.nikr.eve.jeveasset.data.api.raw.RawJournal;
@@ -56,6 +57,7 @@ import net.troja.eve.esi.model.CharacterWalletJournalExtraInfoResponse;
 import net.troja.eve.esi.model.CharacterWalletJournalResponse;
 import net.troja.eve.esi.model.CorporationAssetsResponse;
 import net.troja.eve.esi.model.CorporationBlueprintsResponse;
+import net.troja.eve.esi.model.CorporationContainersLogsResponse;
 import net.troja.eve.esi.model.CorporationContractsResponse;
 import net.troja.eve.esi.model.CorporationIndustryJobsResponse;
 import net.troja.eve.esi.model.CorporationOrdersHistoryResponse;
@@ -211,6 +213,11 @@ public class ConverterTestOptionsGetter {
 		private static final CorporationOrdersResponse.StateEnum[] ESI_MARKET_ORDER_STATE_CORPORATION = CorporationOrdersResponse.StateEnum.values();
 		private static final CorporationOrdersHistoryResponse.StateEnum[] ESI_MARKET_ORDER_STATE_CORPORATION_HISTORY = CorporationOrdersHistoryResponse.StateEnum.values();
 		private static final Integer[] EVE_API_MARKET_ORDER_STATE = {3, 5, 1, 2, 0, 4};
+		//ContainerLog
+		private static final RawContainerLog.ContainerAction[] RAW_CONTAINER_ACTION = RawContainerLog.ContainerAction.values();
+		private static final CorporationContainersLogsResponse.ActionEnum[] ESI_CONTAINER_ACTION = CorporationContainersLogsResponse.ActionEnum.values();
+		private static final RawContainerLog.ContainerPasswordType[] RAW_CONTAINER_PASSWORD_TYPE = RawContainerLog.ContainerPasswordType.values();
+		private static final CorporationContainersLogsResponse.PasswordTypeEnum[] ESI_CONTAINER_PASSWORD_TYPE = CorporationContainersLogsResponse.PasswordTypeEnum.values();
 		//Owners
 		private static final EsiCallbackURL[] ESI_CALLBACK_URL = EsiCallbackURL.values();
 		private static final KeyType[] KEY_TYPE = {KeyType.CORPORATION};
@@ -342,6 +349,16 @@ public class ConverterTestOptionsGetter {
 			}
 			//Corporation Assets
 			for (CorporationAssetsResponse.LocationFlagEnum locationFlagEnum : CorporationAssetsResponse.LocationFlagEnum.values()) {
+				ItemFlag itemFlag = RawConverter.toFlag(locationFlagEnum);
+				LocationFlag locationFlag = locationFlags.get(itemFlag.getFlagID());
+				if (locationFlag == null) {
+					locationFlag = new LocationFlag(itemFlag);
+					locationFlags.put(itemFlag.getFlagID(), locationFlag);
+				}
+				locationFlag.setLocationFlag(locationFlagEnum);
+			}
+			//Corporation Containers Logs
+			for (CorporationContainersLogsResponse.LocationFlagEnum locationFlagEnum : CorporationContainersLogsResponse.LocationFlagEnum.values()) {
 				ItemFlag itemFlag = RawConverter.toFlag(locationFlagEnum);
 				LocationFlag locationFlag = locationFlags.get(itemFlag.getFlagID());
 				if (locationFlag == null) {
@@ -625,6 +642,11 @@ public class ConverterTestOptionsGetter {
 		}
 
 		@Override
+		public CorporationContainersLogsResponse.LocationFlagEnum getLocationFlagEsiContainersLogsCorporation() {
+			return get(LOCATION_TYPE, index).getLocationFlagEsiContainersLogsCorporation();
+		}
+
+		@Override
 		public int getLocationFlagEveApi() {
 			return get(LOCATION_TYPE, index).getItemFlag().getFlagID();
 		}
@@ -863,6 +885,27 @@ public class ConverterTestOptionsGetter {
 			return get(EVE_API_MARKET_ORDER_STATE, index);
 		}
 
+//ContainerLog
+		@Override
+		public RawContainerLog.ContainerAction getContainerActionRaw() {
+			return get(RAW_CONTAINER_ACTION, index);
+		}
+
+		@Override
+		public CorporationContainersLogsResponse.ActionEnum getContainerActionEsi() {
+			return get(ESI_CONTAINER_ACTION, index);
+		}
+
+		@Override
+		public RawContainerLog.ContainerPasswordType getContainerPasswordTypeRaw() {
+			return get(RAW_CONTAINER_PASSWORD_TYPE, index);
+		}
+
+		@Override
+		public CorporationContainersLogsResponse.PasswordTypeEnum getContainerPasswordTypeEsi() {
+			return get(ESI_CONTAINER_PASSWORD_TYPE, index);
+		}
+//Owner
 		@Override
 		public EsiCallbackURL getEsiCallbackURL() {
 			return get(ESI_CALLBACK_URL, index);
@@ -884,6 +927,7 @@ public class ConverterTestOptionsGetter {
 		private CorporationBlueprintsResponse.LocationFlagEnum locationFlagEsiBlueprintsCorporation;
 		private CharacterAssetsResponse.LocationFlagEnum locationFlagEsiAssetsCharacter;
 		private CorporationAssetsResponse.LocationFlagEnum locationFlagEsiAssetsCorporation;
+		private CorporationContainersLogsResponse.LocationFlagEnum locationFlagEsiContainersLogsCorporation;
 		private final ItemFlag itemFlag;
 
 		public LocationFlag(ItemFlag itemFlag) {
@@ -917,6 +961,10 @@ public class ConverterTestOptionsGetter {
 			return locationFlagEsiAssetsCorporation;
 		}
 
+		public CorporationContainersLogsResponse.LocationFlagEnum getLocationFlagEsiContainersLogsCorporation() {
+			return locationFlagEsiContainersLogsCorporation;
+		}
+
 		public void setLocationFlag(CharacterAssetsResponse.LocationFlagEnum locationFlagEsiAssetsCharacter) {
 			this.locationFlagEsiAssetsCharacter = locationFlagEsiAssetsCharacter;
 		}
@@ -931,6 +979,10 @@ public class ConverterTestOptionsGetter {
 
 		public void setLocationFlag(CharacterBlueprintsResponse.LocationFlagEnum locationFlagEsiBlueprintsCharacter) {
 			this.locationFlagEsiBlueprintsCharacter = locationFlagEsiBlueprintsCharacter;
+		}
+
+		public void setLocationFlag(CorporationContainersLogsResponse.LocationFlagEnum locationFlagEsiContainersLogsCorporation) {
+			this.locationFlagEsiContainersLogsCorporation = locationFlagEsiContainersLogsCorporation;
 		}
 	}
 
@@ -975,11 +1027,8 @@ public class ConverterTestOptionsGetter {
 			this.EsiJournalRefTypeCorporation = EsiJournalRefTypeCorporation;
 		}
 
-
 		public void setRefType(com.beimin.eveapi.model.shared.RefType XmlJournalRefType) {
 			this.XmlJournalRefType = XmlJournalRefType;
 		}
-
-		
 	}
 }

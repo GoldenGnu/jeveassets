@@ -38,6 +38,7 @@ import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
 import net.nikr.eve.jeveasset.data.api.raw.RawAccountBalance;
 import net.nikr.eve.jeveasset.data.api.raw.RawAsset;
 import net.nikr.eve.jeveasset.data.api.raw.RawBlueprint;
+import net.nikr.eve.jeveasset.data.api.raw.RawContainerLog;
 import net.nikr.eve.jeveasset.data.api.raw.RawContract;
 import net.nikr.eve.jeveasset.data.api.raw.RawContractItem;
 import net.nikr.eve.jeveasset.data.api.raw.RawIndustryJob;
@@ -58,6 +59,7 @@ import net.troja.eve.esi.model.CharacterWalletJournalResponse;
 import net.troja.eve.esi.model.CharacterWalletTransactionsResponse;
 import net.troja.eve.esi.model.CorporationAssetsResponse;
 import net.troja.eve.esi.model.CorporationBlueprintsResponse;
+import net.troja.eve.esi.model.CorporationContainersLogsResponse;
 import net.troja.eve.esi.model.CorporationContractsItemsResponse;
 import net.troja.eve.esi.model.CorporationContractsResponse;
 import net.troja.eve.esi.model.CorporationIndustryJobsResponse;
@@ -223,4 +225,11 @@ public class EsiConverter extends DataConverter {
 		return convertRawTransactions(rawTransactions, owner, saveHistory);
 	}
 
+	public static List<RawContainerLog> toContainersLogCorporation(List<CorporationContainersLogsResponse> responses, OwnerType owner) {
+		List<RawContainerLog> rawContainersLogs = new ArrayList<RawContainerLog>();
+		for (CorporationContainersLogsResponse response : responses) {
+			rawContainersLogs.add(new RawContainerLog(response, owner));
+		}
+		return rawContainersLogs;
+	}
 }

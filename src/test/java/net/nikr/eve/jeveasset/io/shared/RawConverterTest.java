@@ -33,6 +33,7 @@ import java.util.Map;
 import java.util.Set;
 import net.nikr.eve.jeveasset.TestUtil;
 import net.nikr.eve.jeveasset.data.api.raw.RawAsset;
+import net.nikr.eve.jeveasset.data.api.raw.RawContainerLog;
 import net.nikr.eve.jeveasset.data.api.raw.RawContract;
 import net.nikr.eve.jeveasset.data.api.raw.RawIndustryJob;
 import net.nikr.eve.jeveasset.data.api.raw.RawJournal;
@@ -43,6 +44,7 @@ import net.nikr.eve.jeveasset.data.sde.ItemFlag;
 import net.nikr.eve.jeveasset.data.sde.StaticData;
 import net.nikr.eve.jeveasset.io.shared.RawConverter.LocationFlag;
 import net.troja.eve.esi.model.CharacterWalletJournalResponse;
+import net.troja.eve.esi.model.CorporationContainersLogsResponse;
 import net.troja.eve.esi.model.CorporationWalletJournalResponse;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -120,6 +122,32 @@ public class RawConverterTest extends TestUtil {
 	@Test
 	public void testToFlag_CorporationBlueprintsResponseLocationFlagEnum() {
 		for (net.troja.eve.esi.model.CorporationBlueprintsResponse.LocationFlagEnum locationFlagEnum : net.troja.eve.esi.model.CorporationBlueprintsResponse.LocationFlagEnum.values()) {
+			ItemFlag itemFlag = RawConverter.toFlag(locationFlagEnum);
+			assertNotNull(itemFlag);
+			assertTrue(locationFlagEnum.name() + " (" + locationFlagEnum.toString() + ") != " + itemFlag.getFlagName(),
+					itemFlag.getFlagID() == 0
+					|| locationFlagEnum.toString().toLowerCase().equals(itemFlag.getFlagText().toLowerCase().replace(" ", ""))
+					|| locationFlagEnum.toString().toLowerCase().equals(itemFlag.getFlagName().toLowerCase())
+					|| (locationFlagEnum.toString().equals("CorpDeliveries") && itemFlag.getFlagName().equals("CorpMarket"))
+					|| (locationFlagEnum.toString().equals("Impounded") && itemFlag.getFlagName().equals("OfficeImpound"))
+					|| (locationFlagEnum.toString().equals("ServiceSlot0") && itemFlag.getFlagName().equals("StructureServiceSlot0"))
+					|| (locationFlagEnum.toString().equals("ServiceSlot1") && itemFlag.getFlagName().equals("StructureServiceSlot1"))
+					|| (locationFlagEnum.toString().equals("ServiceSlot2") && itemFlag.getFlagName().equals("StructureServiceSlot2"))
+					|| (locationFlagEnum.toString().equals("ServiceSlot3") && itemFlag.getFlagName().equals("StructureServiceSlot3"))
+					|| (locationFlagEnum.toString().equals("ServiceSlot4") && itemFlag.getFlagName().equals("StructureServiceSlot4"))
+					|| (locationFlagEnum.toString().equals("ServiceSlot5") && itemFlag.getFlagName().equals("StructureServiceSlot5"))
+					|| (locationFlagEnum.toString().equals("ServiceSlot6") && itemFlag.getFlagName().equals("StructureServiceSlot6"))
+					|| (locationFlagEnum.toString().equals("ServiceSlot7") && itemFlag.getFlagName().equals("StructureServiceSlot7"))
+					|| (locationFlagEnum.toString().equals("DustBattle") && itemFlag.getFlagName().equals("DustCharacterBattle"))
+					|| (locationFlagEnum.toString().equals("DustDatabank") && itemFlag.getFlagName().equals("DustCharacterDatabank"))
+					|| (locationFlagEnum.toString().equals("HiddenModifers") && itemFlag.getFlagName().equals("HiddenModifiers"))
+			);
+		}
+	}
+
+	@Test
+	public void testToFlag_CorporationContainersLogsResponseLocationFlagEnum() {
+		for (net.troja.eve.esi.model.CorporationContainersLogsResponse.LocationFlagEnum locationFlagEnum : net.troja.eve.esi.model.CorporationContainersLogsResponse.LocationFlagEnum.values()) {
 			ItemFlag itemFlag = RawConverter.toFlag(locationFlagEnum);
 			assertNotNull(itemFlag);
 			assertTrue(locationFlagEnum.name() + " (" + locationFlagEnum.toString() + ") != " + itemFlag.getFlagName(),
@@ -724,4 +752,33 @@ public class RawConverterTest extends TestUtil {
 		assertEquals(RawConverter.toBoolean(true), true);
 	}
 
+	@Test
+	public void testToContainerLogAction() {
+		Map<CorporationContainersLogsResponse.ActionEnum, RawContainerLog.ContainerAction> map = new HashMap<>();
+		map.put(CorporationContainersLogsResponse.ActionEnum.ADD, RawContainerLog.ContainerAction.ADD);
+		map.put(CorporationContainersLogsResponse.ActionEnum.ASSEMBLE, RawContainerLog.ContainerAction.ASSEMBLE);
+		map.put(CorporationContainersLogsResponse.ActionEnum.CONFIGURE, RawContainerLog.ContainerAction.CONFIGURE);
+		map.put(CorporationContainersLogsResponse.ActionEnum.ENTER_PASSWORD, RawContainerLog.ContainerAction.ENTER_PASSWORD);
+		map.put(CorporationContainersLogsResponse.ActionEnum.LOCK, RawContainerLog.ContainerAction.LOCK);
+		map.put(CorporationContainersLogsResponse.ActionEnum.MOVE, RawContainerLog.ContainerAction.MOVE);
+		map.put(CorporationContainersLogsResponse.ActionEnum.REPACKAGE, RawContainerLog.ContainerAction.REPACKAGE);
+		map.put(CorporationContainersLogsResponse.ActionEnum.SET_NAME, RawContainerLog.ContainerAction.SET_NAME);
+		map.put(CorporationContainersLogsResponse.ActionEnum.SET_PASSWORD, RawContainerLog.ContainerAction.SET_PASSWORD);
+		map.put(CorporationContainersLogsResponse.ActionEnum.UNLOCK, RawContainerLog.ContainerAction.UNLOCK);
+		assertEquals(map.size(), CorporationContainersLogsResponse.ActionEnum.values().length);
+		for (Map.Entry<CorporationContainersLogsResponse.ActionEnum, RawContainerLog.ContainerAction> entry : map.entrySet()) {
+			assertEquals(entry.getValue(), RawConverter.toContainerLogAction(entry.getKey()));
+		}
+	}
+
+	@Test
+	public void testToContainerLogPasswordType() {
+		Map<CorporationContainersLogsResponse.PasswordTypeEnum, RawContainerLog.ContainerPasswordType> map = new HashMap<>();
+		map.put(CorporationContainersLogsResponse.PasswordTypeEnum.CONFIG, RawContainerLog.ContainerPasswordType.CONFIG);
+		map.put(CorporationContainersLogsResponse.PasswordTypeEnum.GENERAL, RawContainerLog.ContainerPasswordType.GENERAL);
+		assertEquals(map.size(), CorporationContainersLogsResponse.PasswordTypeEnum.values().length);
+		for (Map.Entry<CorporationContainersLogsResponse.PasswordTypeEnum, RawContainerLog.ContainerPasswordType> entry : map.entrySet()) {
+			assertEquals(entry.getValue(), RawConverter.toContainerLogPasswordType(entry.getKey()));
+		}
+	}
 }

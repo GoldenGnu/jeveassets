@@ -50,6 +50,7 @@ import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
 import net.nikr.eve.jeveasset.data.api.raw.RawAccountBalance;
 import net.nikr.eve.jeveasset.data.api.raw.RawAsset;
 import net.nikr.eve.jeveasset.data.api.raw.RawBlueprint;
+import net.nikr.eve.jeveasset.data.api.raw.RawContainerLog;
 import net.nikr.eve.jeveasset.data.api.raw.RawContract;
 import net.nikr.eve.jeveasset.data.api.raw.RawContractItem;
 import net.nikr.eve.jeveasset.data.api.raw.RawIndustryJob;
@@ -84,6 +85,7 @@ import net.troja.eve.esi.model.CharacterWalletJournalResponse;
 import net.troja.eve.esi.model.CharacterWalletTransactionsResponse;
 import net.troja.eve.esi.model.CorporationAssetsResponse;
 import net.troja.eve.esi.model.CorporationBlueprintsResponse;
+import net.troja.eve.esi.model.CorporationContainersLogsResponse;
 import net.troja.eve.esi.model.CorporationContractsResponse;
 import net.troja.eve.esi.model.CorporationIndustryJobsResponse;
 import net.troja.eve.esi.model.CorporationOrdersHistoryResponse;
@@ -171,6 +173,10 @@ public class ConverterTestUtil {
 		//Transaction
 		MyTransaction saveMyTransaction = getMyTransaction(owner, setNull, setValues, options);
 		owner.setTransactions(Collections.singleton(saveMyTransaction));
+
+		//ConatinerLog
+		RawContainerLog saveRawContainerLog = getRawContainerLog(setNull, options);
+		owner.setContainerLogs(Collections.singletonList(saveRawContainerLog));
 	}
 
 	private static Item getItem(ConverterTestOptions options) {
@@ -307,6 +313,12 @@ public class ConverterTestUtil {
 			setValues(transaction, options, null, false);
 		}
 		return transaction;
+	}
+
+	public static RawContainerLog getRawContainerLog(boolean setNull, ConverterTestOptions options) {
+		RawContainerLog containerLog = RawContainerLog.create();
+		setValues(containerLog, options, setNull ? CorporationContainersLogsResponse.class : null);
+		return containerLog;
 	}
 
 	static EveApiAccount getEveApiAccount(ConverterTestOptions options) {
@@ -719,6 +731,16 @@ public class ConverterTestUtil {
 			return options.getKeyType();
 		} else if (type.equals(EveApiAccount.class)) {
 			return options.getEveApiAccount();
+		} else if (type.equals(RawContainerLog.ContainerAction.class)) {
+			return options.getContainerActionRaw();
+		} else if (type.equals(RawContainerLog.ContainerPasswordType.class)) {
+			return options.getContainerPasswordTypeRaw();
+		} else if (type.equals(CorporationContainersLogsResponse.LocationFlagEnum.class)) {
+			return options.getLocationFlagEsiContainersLogsCorporation();
+		} else if (type.equals(CorporationContainersLogsResponse.ActionEnum.class)) {
+			return options.getContainerActionEsi();
+		} else if (type.equals(CorporationContainersLogsResponse.PasswordTypeEnum.class)) {
+			return options.getContainerPasswordTypeEsi();
 		} else if (type.equals(ApiClient.class)) {
 			return new ApiClient();
 		} else if (type.equals(CorporationOrdersHistoryResponse.RangeEnum.class)) {

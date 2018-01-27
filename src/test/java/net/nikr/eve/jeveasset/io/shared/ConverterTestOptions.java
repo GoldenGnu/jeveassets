@@ -28,6 +28,7 @@ import java.util.Date;
 import net.nikr.eve.jeveasset.data.api.accounts.EveApiAccount;
 import net.nikr.eve.jeveasset.data.api.raw.RawAsset;
 import net.nikr.eve.jeveasset.data.api.raw.RawBlueprint;
+import net.nikr.eve.jeveasset.data.api.raw.RawContainerLog;
 import net.nikr.eve.jeveasset.data.api.raw.RawContract;
 import net.nikr.eve.jeveasset.data.api.raw.RawIndustryJob;
 import net.nikr.eve.jeveasset.data.api.raw.RawJournal;
@@ -52,6 +53,7 @@ import net.troja.eve.esi.model.CharacterWalletJournalExtraInfoResponse;
 import net.troja.eve.esi.model.CharacterWalletJournalResponse;
 import net.troja.eve.esi.model.CorporationAssetsResponse;
 import net.troja.eve.esi.model.CorporationBlueprintsResponse;
+import net.troja.eve.esi.model.CorporationContainersLogsResponse;
 import net.troja.eve.esi.model.CorporationContractsResponse;
 import net.troja.eve.esi.model.CorporationIndustryJobsResponse;
 import net.troja.eve.esi.model.CorporationOrdersHistoryResponse;
@@ -108,6 +110,8 @@ public interface ConverterTestOptions {
 	public CharacterAssetsResponse.LocationFlagEnum getLocationFlagEsiAssetsCharacter();
 
 	public CorporationAssetsResponse.LocationFlagEnum getLocationFlagEsiAssetsCorporation();
+
+	public CorporationContainersLogsResponse.LocationFlagEnum getLocationFlagEsiContainersLogsCorporation();
 
 	public int getLocationFlagEveApi();
 
@@ -210,6 +214,16 @@ public interface ConverterTestOptions {
 
 	public int getIndex();
 
+	//ContainerLog
+
+	public RawContainerLog.ContainerAction getContainerActionRaw();
+
+	public CorporationContainersLogsResponse.ActionEnum getContainerActionEsi();
+
+	public RawContainerLog.ContainerPasswordType getContainerPasswordTypeRaw();
+
+	public CorporationContainersLogsResponse.PasswordTypeEnum getContainerPasswordTypeEsi();
+
 	//Owner
 	public EsiCallbackURL getEsiCallbackURL();
 
@@ -217,6 +231,7 @@ public interface ConverterTestOptions {
 
 	public EveApiAccount getEveApiAccount();
 
+	//Default
 	default OffsetDateTime getOffsetDateTime() {
 		return getDate().toInstant().atOffset(ZoneOffset.UTC);
 	}

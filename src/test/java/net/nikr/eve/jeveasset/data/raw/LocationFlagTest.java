@@ -26,6 +26,7 @@ import net.troja.eve.esi.model.CharacterAssetsResponse;
 import net.troja.eve.esi.model.CharacterBlueprintsResponse;
 import net.troja.eve.esi.model.CorporationAssetsResponse;
 import net.troja.eve.esi.model.CorporationBlueprintsResponse;
+import net.troja.eve.esi.model.CorporationContainersLogsResponse;
 import org.junit.Test;
 
 
@@ -37,7 +38,8 @@ public class LocationFlagTest extends TestUtil {
 				CharacterBlueprintsResponse.LocationFlagEnum.values(),
 				CorporationBlueprintsResponse.LocationFlagEnum.values(),
 				CharacterAssetsResponse.LocationFlagEnum.values(),
-				CorporationAssetsResponse.LocationFlagEnum.values());
+				CorporationAssetsResponse.LocationFlagEnum.values(),
+				CorporationContainersLogsResponse.LocationFlagEnum.values());
 	}
 	
 }

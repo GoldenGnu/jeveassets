@@ -43,6 +43,7 @@ import net.nikr.eve.jeveasset.data.api.my.MyJournal;
 import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder;
 import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
 import net.nikr.eve.jeveasset.data.api.raw.RawBlueprint;
+import net.nikr.eve.jeveasset.data.api.raw.RawContainerLog;
 import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.data.sde.Jump;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
@@ -89,6 +90,7 @@ public class ProfileData {
 	private final List<MyAsset> assetsList = new ArrayList<MyAsset>();
 	private final List<MyAccountBalance> accountBalanceList = new ArrayList<MyAccountBalance>();
 	private final List<MyContract> contractList = new ArrayList<MyContract>();
+	private final List<RawContainerLog> containerLogsList = new ArrayList<RawContainerLog>();
 	private Map<Integer, List<MyAsset>> uniqueAssetsDuplicates = null; //TypeID : int
 	private Map<Integer, MarketPriceData> marketPriceData; //TypeID : int
 	private Map<Integer, MarketPriceData> transactionPriceDataSell; //TypeID : int
@@ -192,6 +194,10 @@ public class ProfileData {
 
 	public List<MyContract> getContractList() {
 		return contractList;
+	}
+
+	public List<RawContainerLog> getContainerLogsList() {
+		return containerLogsList;
 	}
 
 	public List<String> getOwnerNames(boolean all) {
@@ -378,6 +384,7 @@ public class ProfileData {
 		Set<MyIndustryJob> industryJobs = new HashSet<MyIndustryJob>();
 		Set<MyContractItem> contractItems = new HashSet<MyContractItem>();
 		Set<MyContract> contracts = new HashSet<MyContract>();
+		Set<RawContainerLog> containerLogs = new HashSet<RawContainerLog>();
 		Map<Long, Map<Long, RawBlueprint>> blueprintsMap = new HashMap<Long, Map<Long, RawBlueprint>>();
 		Map<Long, RawBlueprint> blueprints = new HashMap<Long, RawBlueprint>();
 
@@ -451,6 +458,8 @@ public class ProfileData {
 					accountBalanceNewest = owner.getBalanceNextUpdate();
 				}
 			}
+			//Container Logs
+			containerLogs.addAll(owner.getContainerLogs());
 		}
 
 		//Fill accountBalance
@@ -577,6 +586,8 @@ public class ProfileData {
 		contractItemList.addAll(contractItems);
 		contractList.clear();
 		contractList.addAll(contracts);
+		containerLogsList.clear();
+		containerLogsList.addAll(containerLogs);
 		accountBalanceList.clear();
 		accountBalanceList.addAll(accountBalance);
 		Program.ensureEDT(new Runnable() {

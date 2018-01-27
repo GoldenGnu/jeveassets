@@ -303,6 +303,15 @@ public class EsiOwner extends AbstractOwner implements OwnerType {
 		}
 	}
 
+	@Override
+	public boolean isContainerLogs() {
+		if (isCorporation()) {
+			return EsiScopes.CORPORATION_CONTAINER_LOGS.isInScope(scopes) && roles.contains(RolesEnum.DIRECTOR);
+		} else {
+			return false; //Corporation Endpoint
+		}
+	}
+
 	public boolean isRoles() {
 		return EsiScopes.CORPORATION_ROLES.isInScope(scopes);
 	}

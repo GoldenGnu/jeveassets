@@ -36,6 +36,7 @@ import net.nikr.eve.jeveasset.data.api.my.MyJournal;
 import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder;
 import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
 import net.nikr.eve.jeveasset.data.api.raw.RawBlueprint;
+import net.nikr.eve.jeveasset.data.api.raw.RawContainerLog;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 
 
@@ -49,6 +50,7 @@ public abstract class AbstractOwner implements OwnerType, Comparable<OwnerType> 
 	private Map<MyContract, List<MyContractItem>> contracts = new HashMap<MyContract, List<MyContractItem>>();
 	private List<MyAsset> assets = new ArrayList<MyAsset>();
 	private Map<Long, RawBlueprint> blueprints = new HashMap<Long, RawBlueprint>();
+	private List<RawContainerLog> containerLogs = new ArrayList<>();
 
 	private String ownerName;
 	private long ownerID;
@@ -65,6 +67,7 @@ public abstract class AbstractOwner implements OwnerType, Comparable<OwnerType> 
 	private Date contractsNextUpdate = Settings.getNow();
 	private Date locationsNextUpdate = Settings.getNow();
 	private Date blueprintsNextUpdate = Settings.getNow();
+	private Date containerLogsNextUpdate = Settings.getNow();
 
 	public AbstractOwner() { }
 
@@ -74,14 +77,15 @@ public abstract class AbstractOwner implements OwnerType, Comparable<OwnerType> 
 	}
 
 	public AbstractOwner(AbstractOwner abstractOwner) {
-		accountBalances.addAll(abstractOwner.accountBalances);
-		marketOrders.addAll(abstractOwner.marketOrders);
-		transactions.addAll(abstractOwner.transactions);
-		journal.addAll(abstractOwner.journal);
-		industryJobs.addAll(abstractOwner.industryJobs);
-		contracts.putAll(abstractOwner.contracts);
-		assets.addAll(abstractOwner.assets);
-		blueprints.putAll(abstractOwner.blueprints);
+		this.accountBalances = abstractOwner.accountBalances;
+		this.marketOrders = abstractOwner.marketOrders;
+		this.transactions = abstractOwner.transactions;
+		this.journal = abstractOwner.journal;
+		this.industryJobs = abstractOwner.industryJobs;
+		this.contracts = abstractOwner.contracts;
+		this.assets = abstractOwner.assets;
+		this.blueprints = abstractOwner.blueprints;
+		this.containerLogs = abstractOwner.containerLogs;
 		this.ownerName = abstractOwner.ownerName;
 		this.ownerID = abstractOwner.ownerID;
 		this.showOwner = abstractOwner.showOwner;
@@ -96,6 +100,7 @@ public abstract class AbstractOwner implements OwnerType, Comparable<OwnerType> 
 		this.contractsNextUpdate = abstractOwner.contractsNextUpdate;
 		this.locationsNextUpdate = abstractOwner.locationsNextUpdate;
 		this.blueprintsNextUpdate = abstractOwner.blueprintsNextUpdate;
+		this.containerLogsNextUpdate = abstractOwner.containerLogsNextUpdate;
 	}
 
 	@Override
@@ -109,7 +114,7 @@ public abstract class AbstractOwner implements OwnerType, Comparable<OwnerType> 
 	}
 
 	@Override
-	public void setBlueprintsNextUpdate(Date blueprintsNextUpdate) {
+	public void setBlueprintsNextUpdate(final Date blueprintsNextUpdate) {
 		this.blueprintsNextUpdate = blueprintsNextUpdate;
 	}
 
@@ -124,7 +129,7 @@ public abstract class AbstractOwner implements OwnerType, Comparable<OwnerType> 
 	}
 
 	@Override
-	public void setLocationsNextUpdate(Date locationsNextUpdate) {
+	public void setLocationsNextUpdate(final Date locationsNextUpdate) {
 		this.locationsNextUpdate = locationsNextUpdate;
 	}
 
@@ -134,7 +139,7 @@ public abstract class AbstractOwner implements OwnerType, Comparable<OwnerType> 
 	}
 
 	@Override
-	public void setJournalNextUpdate(Date journalNextUpdate) {
+	public void setJournalNextUpdate(final Date journalNextUpdate) {
 		this.journalNextUpdate = journalNextUpdate;
 	}
 
@@ -189,28 +194,38 @@ public abstract class AbstractOwner implements OwnerType, Comparable<OwnerType> 
 	}
 
 	@Override
+	public Date getContainerLogsNextUpdate() {
+		return containerLogsNextUpdate;
+	}
+
+	@Override
+	public void setContainerLogsNextUpdate(final Date containerLogsNextUpdate) {
+		this.containerLogsNextUpdate = containerLogsNextUpdate;
+	}
+
+	@Override
 	public abstract int hashCode();
 
 	@Override
 	public abstract boolean equals(Object obj);
 
 	@Override
-	public final void setOwnerName(String ownerName) {
+	public final void setOwnerName(final String ownerName) {
 		this.ownerName = ownerName;
 	}
 
 	@Override
-	public final void setAssetLastUpdate(Date assetLastUpdate) {
+	public final void setAssetLastUpdate(final Date assetLastUpdate) {
 		this.assetLastUpdate = assetLastUpdate;
 	}
 
 	@Override
-	public final void setBalanceLastUpdate(Date balanceLastUpdate) {
+	public final void setBalanceLastUpdate(final Date balanceLastUpdate) {
 		this.balanceLastUpdate = balanceLastUpdate;
 	}
 
 	@Override
-	public final void setOwnerID(long ownerID) {
+	public final void setOwnerID(final long ownerID) {
 		this.ownerID = ownerID;
 	}
 
@@ -303,48 +318,58 @@ public abstract class AbstractOwner implements OwnerType, Comparable<OwnerType> 
 	}
 
 	@Override
-	public final void setShowOwner(boolean showOwner) {
+	public final void setShowOwner(final boolean showOwner) {
 		this.showOwner = showOwner;
 	}
 
 	@Override
-	public final void setBlueprints(Map<Long, RawBlueprint> blueprints) {
+	public final void setBlueprints(final Map<Long, RawBlueprint> blueprints) {
 		this.blueprints = blueprints;
 	}
 
 	@Override
-	public final void setIndustryJobs(List<MyIndustryJob> industryJobs) {
+	public final void setIndustryJobs(final List<MyIndustryJob> industryJobs) {
 		this.industryJobs = industryJobs;
 	}
 
 	@Override
-	public final void setTransactions(Set<MyTransaction> transactions) {
+	public final void setTransactions(final Set<MyTransaction> transactions) {
 		this.transactions = transactions;
 	}
 
 	@Override
-	public final void setJournal(Set<MyJournal> journal) {
+	public final void setJournal(final Set<MyJournal> journal) {
 		this.journal = journal;
 	}
 
 	@Override
-	public final void setMarketOrders(Set<MyMarketOrder> marketOrders) {
+	public final void setMarketOrders(final Set<MyMarketOrder> marketOrders) {
 		this.marketOrders = marketOrders;
 	}
 
 	@Override
-	public final void setContracts(Map<MyContract, List<MyContractItem>> contracts) {
+	public final void setContracts(final Map<MyContract, List<MyContractItem>> contracts) {
 		this.contracts = contracts;
 	}
 
 	@Override
-	public final void setAssets(List<MyAsset> assets) {
+	public final void setAssets(final List<MyAsset> assets) {
 		this.assets = assets;
 	}
 
 	@Override
-	public final void setAccountBalances(List<MyAccountBalance> accountBalances) {
+	public final void setAccountBalances(final List<MyAccountBalance> accountBalances) {
 		this.accountBalances = accountBalances;
+	}
+
+	@Override
+	public List<RawContainerLog> getContainerLogs() {
+		return containerLogs;
+	}
+
+	@Override
+	public void setContainerLogs(final List<RawContainerLog> containersLogs) {
+		this.containerLogs = containersLogs;
 	}
 
 	@Override

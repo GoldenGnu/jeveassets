@@ -69,7 +69,8 @@ public abstract class AbstractGetter<O extends OwnerType, C, E extends Exception
 		OWNER,
 		STRUCTURES,
 		TRANSACTIONS,
-		SHIP
+		SHIP,
+		CONTAINER_LOGS
 	}
 
 	private final UpdateTask updateTask;
@@ -101,6 +102,7 @@ public abstract class AbstractGetter<O extends OwnerType, C, E extends Exception
 			case TRANSACTIONS: taskName = "Transactions"; break;
 			case STRUCTURES: taskName = "Structures"; break;
 			case SHIP: taskName = "Active Ship"; break;
+			case CONTAINER_LOGS: taskName = "Container Logs"; break;
 			default: taskName = "Unknown"; break;
 		}
 		//this.taskName = taskType;

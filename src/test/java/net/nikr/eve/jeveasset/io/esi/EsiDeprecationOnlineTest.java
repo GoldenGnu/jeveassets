@@ -344,6 +344,17 @@ public class EsiDeprecationOnlineTest extends TestUtil {
 	}
 
 	@Test
+	public void esiContainersLogsGetterCorporation() {
+		CorporationApi api = new CorporationApi();
+		try {
+			api.getCorporationsCorporationIdContainersLogs(1, DATASOURCE, null, null, null, null);
+		} catch (ApiException ex) {
+
+		}
+		validate(api.getApiClient());
+	}
+
+	@Test
 	public void esiTransactionsGetterCharacter() {
 		WalletApi api = new WalletApi();
 		try {

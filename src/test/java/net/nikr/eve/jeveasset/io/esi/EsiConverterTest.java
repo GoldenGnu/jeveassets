@@ -37,6 +37,7 @@ import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder;
 import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
 import net.nikr.eve.jeveasset.data.api.raw.RawAsset;
 import net.nikr.eve.jeveasset.data.api.raw.RawBlueprint;
+import net.nikr.eve.jeveasset.data.api.raw.RawContainerLog;
 import net.nikr.eve.jeveasset.io.shared.ConverterTestOptions;
 import net.nikr.eve.jeveasset.io.shared.ConverterTestOptionsGetter;
 import net.nikr.eve.jeveasset.io.shared.ConverterTestUtil;
@@ -54,6 +55,7 @@ import net.troja.eve.esi.model.CharacterWalletJournalResponse;
 import net.troja.eve.esi.model.CharacterWalletTransactionsResponse;
 import net.troja.eve.esi.model.CorporationAssetsResponse;
 import net.troja.eve.esi.model.CorporationBlueprintsResponse;
+import net.troja.eve.esi.model.CorporationContainersLogsResponse;
 import net.troja.eve.esi.model.CorporationContractsItemsResponse;
 import net.troja.eve.esi.model.CorporationContractsResponse;
 import net.troja.eve.esi.model.CorporationIndustryJobsResponse;
@@ -486,7 +488,7 @@ public class EsiConverterTest extends TestUtil {
 			ConverterTestUtil.testValues(transactions.iterator().next(), options, esi);
 		}
 	}
-
+	
 	@Test
 	public void testToAssetsShip() {
 		testToAssetsShip(null, null);
@@ -507,6 +509,25 @@ public class EsiConverterTest extends TestUtil {
 			asset.setQuantity(options.getInteger()); //Always 1 -> set to 5 to pass test
 			asset.setItemFlag(options.getItemFlag()); //Always "None" -> set to option value to pass test
 			ConverterTestUtil.testValues(asset, options, null);
+		}
+	}
+
+	@Test
+	public void testToContainersLogCorporation() {
+		testToContainersLogCorporation(null);
+	}
+
+	@Test
+	public void testToContainersLogCorporationOptional() {
+		testToContainersLogCorporation(CorporationContainersLogsResponse.class);
+	}
+
+	public void testToContainersLogCorporation(Class<?> esi) {
+		for (ConverterTestOptions options : ConverterTestOptionsGetter.getConverterOptions()) {
+			CorporationContainersLogsResponse containersLogsResponse = new CorporationContainersLogsResponse();
+			ConverterTestUtil.setValues(containersLogsResponse, options, esi);
+			List<RawContainerLog> containerLogs = EsiConverter.toContainersLogCorporation(Collections.singletonList(containersLogsResponse), ConverterTestUtil.getEsiOwner(options));
+			ConverterTestUtil.testValues(containerLogs.iterator().next(), options, esi);
 		}
 	}
 }
