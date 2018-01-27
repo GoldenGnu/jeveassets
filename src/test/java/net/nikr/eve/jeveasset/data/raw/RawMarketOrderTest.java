@@ -24,7 +24,9 @@ import net.nikr.eve.jeveasset.TestUtil;
 import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder;
 import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder.MarketOrderRange;
 import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder.MarketOrderState;
+import net.troja.eve.esi.model.CharacterOrdersHistoryResponse;
 import net.troja.eve.esi.model.CharacterOrdersResponse;
+import net.troja.eve.esi.model.CorporationOrdersHistoryResponse;
 import net.troja.eve.esi.model.CorporationOrdersResponse;
 import org.junit.Test;
 
@@ -34,11 +36,16 @@ public class RawMarketOrderTest extends TestUtil {
 	@Test
 	public void rawMarketOrderTest() {
 		RawUtil.compare(RawMarketOrder.class, CharacterOrdersResponse.class);
-		RawUtil.compare(MarketOrderRange.values(), CharacterOrdersResponse.RangeEnum.values());
-		RawUtil.compare(MarketOrderState.values(), CharacterOrdersResponse.StateEnum.values());
+		RawUtil.compare(RawMarketOrder.class, CharacterOrdersHistoryResponse.class);
 		RawUtil.compare(RawMarketOrder.class, CorporationOrdersResponse.class);
-		RawUtil.compare(MarketOrderRange.values(), CorporationOrdersResponse.RangeEnum.values());
-		RawUtil.compare(MarketOrderState.values(), CorporationOrdersResponse.StateEnum.values());
+		RawUtil.compare(RawMarketOrder.class, CorporationOrdersHistoryResponse.class);
+		RawUtil.compare(MarketOrderRange.values(), CharacterOrdersResponse.RangeEnum.values(),
+				CharacterOrdersHistoryResponse.RangeEnum.values(),
+				CorporationOrdersResponse.RangeEnum.values(),
+				CorporationOrdersHistoryResponse.RangeEnum.values());
+		RawUtil.compare(MarketOrderState.values(), CharacterOrdersResponse.StateEnum.values(),
+				CharacterOrdersHistoryResponse.StateEnum.values(),
+				CorporationOrdersResponse.StateEnum.values(),
+				CorporationOrdersHistoryResponse.StateEnum.values());
 	}
-	
 }

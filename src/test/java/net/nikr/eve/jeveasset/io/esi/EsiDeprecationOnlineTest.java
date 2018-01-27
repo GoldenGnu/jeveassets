@@ -246,10 +246,32 @@ public class EsiDeprecationOnlineTest extends TestUtil {
 	}
 
 	@Test
+	public void esiMarketOrdersHistoryGetterCharacter() {
+		MarketApi api = new MarketApi();
+		try {
+			api.getCharactersCharacterIdOrdersHistory(1, DATASOURCE, null, null, null, null);
+		} catch (ApiException ex) {
+
+		}
+		validate(api.getApiClient());
+	}
+
+	@Test
 	public void esiMarketOrdersGetterCorporation() {
 		MarketApi api = new MarketApi();
 		try {
 			api.getCorporationsCorporationIdOrders(1, DATASOURCE, 1, null, null, null);
+		} catch (ApiException ex) {
+
+		}
+		validate(api.getApiClient());
+	}
+
+	@Test
+	public void esiMarketOrdersHistoryGetterCorporation() {
+		MarketApi api = new MarketApi();
+		try {
+			api.getCorporationsCorporationIdOrdersHistory(1, DATASOURCE, null, null, null, null);
 		} catch (ApiException ex) {
 
 		}

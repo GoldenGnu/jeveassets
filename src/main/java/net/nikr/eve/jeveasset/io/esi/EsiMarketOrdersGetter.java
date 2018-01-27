@@ -26,7 +26,9 @@ import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import net.troja.eve.esi.ApiClient;
 import net.troja.eve.esi.ApiException;
+import net.troja.eve.esi.model.CharacterOrdersHistoryResponse;
 import net.troja.eve.esi.model.CharacterOrdersResponse;
+import net.troja.eve.esi.model.CorporationOrdersHistoryResponse;
 import net.troja.eve.esi.model.CorporationOrdersResponse;
 
 
@@ -48,10 +50,22 @@ public class EsiMarketOrdersGetter extends AbstractEsiGetter {
 					return getMarketApiAuth(apiClient).getCorporationsCorporationIdOrders((int) owner.getOwnerID(), DATASOURCE, page, null, USER_AGENT, null);
 				}
 			});
-			owner.setMarketOrders(EsiConverter.toMarketOrdersCorporation(marketOrders, owner, saveHistory));
+			List<CorporationOrdersHistoryResponse> marketOrdersHistory = updatePages(DEFAULT_RETRIES, new EsiPagesHandler<CorporationOrdersHistoryResponse>() {
+				@Override
+				public List<CorporationOrdersHistoryResponse> get(ApiClient apiClient, Integer page) throws ApiException {
+					return getMarketApiAuth(apiClient).getCorporationsCorporationIdOrdersHistory((int) owner.getOwnerID(), DATASOURCE, page, null, USER_AGENT, null);
+				}
+			});
+			owner.setMarketOrders(EsiConverter.toMarketOrdersCorporation(marketOrders, marketOrdersHistory, owner, saveHistory));
 		} else {
 			List<CharacterOrdersResponse> marketOrders = getMarketApiAuth(apiClient).getCharactersCharacterIdOrders((int) owner.getOwnerID(), DATASOURCE, null, USER_AGENT, null);
-			owner.setMarketOrders(EsiConverter.toMarketOrders(marketOrders, owner, saveHistory));
+			List<CharacterOrdersHistoryResponse> marketOrdersHistory = updatePages(DEFAULT_RETRIES, new EsiPagesHandler<CharacterOrdersHistoryResponse>() {
+				@Override
+				public List<CharacterOrdersHistoryResponse> get(ApiClient apiClient, Integer page) throws ApiException {
+					return getMarketApiAuth(apiClient).getCharactersCharacterIdOrdersHistory((int) owner.getOwnerID(), DATASOURCE, page, null, USER_AGENT, null);
+				}
+			});
+			owner.setMarketOrders(EsiConverter.toMarketOrders(marketOrders, marketOrdersHistory, owner, saveHistory));
 		}
 	}
 

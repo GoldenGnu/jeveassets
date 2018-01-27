@@ -51,6 +51,7 @@ import net.troja.eve.esi.model.CharacterContractsItemsResponse;
 import net.troja.eve.esi.model.CharacterContractsResponse;
 import net.troja.eve.esi.model.CharacterIndustryJobsResponse;
 import net.troja.eve.esi.model.CharacterLocationResponse;
+import net.troja.eve.esi.model.CharacterOrdersHistoryResponse;
 import net.troja.eve.esi.model.CharacterOrdersResponse;
 import net.troja.eve.esi.model.CharacterShipResponse;
 import net.troja.eve.esi.model.CharacterWalletJournalResponse;
@@ -60,6 +61,7 @@ import net.troja.eve.esi.model.CorporationBlueprintsResponse;
 import net.troja.eve.esi.model.CorporationContractsItemsResponse;
 import net.troja.eve.esi.model.CorporationContractsResponse;
 import net.troja.eve.esi.model.CorporationIndustryJobsResponse;
+import net.troja.eve.esi.model.CorporationOrdersHistoryResponse;
 import net.troja.eve.esi.model.CorporationOrdersResponse;
 import net.troja.eve.esi.model.CorporationWalletJournalResponse;
 import net.troja.eve.esi.model.CorporationWalletTransactionsResponse;
@@ -183,42 +185,24 @@ public class EsiConverter extends DataConverter {
 		return convertRawContractItems(contract, rawContractItems, owner);
 	}
 
-	public static Set<MyMarketOrder> toMarketOrders(List<CharacterOrdersResponse> responses, OwnerType owner, boolean saveHistory) {
+	public static Set<MyMarketOrder> toMarketOrders(List<CharacterOrdersResponse> responses, List<CharacterOrdersHistoryResponse> responsesHistory, OwnerType owner, boolean saveHistory) {
 		List<RawMarketOrder> rawMarketOrders = new ArrayList<RawMarketOrder>();
 		for (CharacterOrdersResponse response : responses) {
 			rawMarketOrders.add(new RawMarketOrder(response));
 		}
-		if (saveHistory) { //XXX - Workaround for ESI only including active orders
-			Set<MyMarketOrder> marketOrders = convertRawMarketOrders(rawMarketOrders, owner, false);
-			for (MyMarketOrder myMarketOrder : owner.getMarketOrders()) {
-				if (!marketOrders.contains(myMarketOrder)) {
-					//Add copy
-					MyMarketOrder marketOrder = new MyMarketOrder(myMarketOrder, myMarketOrder.getItem(), myMarketOrder.getOwner());
-					marketOrder.closeOrder();
-					marketOrders.add(marketOrder);
-				}
-			}
-			return marketOrders;
+		for (CharacterOrdersHistoryResponse response : responsesHistory) {
+			rawMarketOrders.add(new RawMarketOrder(response));
 		}
 		return convertRawMarketOrders(rawMarketOrders, owner, saveHistory);
 	}
 
-	public static Set<MyMarketOrder> toMarketOrdersCorporation(List<CorporationOrdersResponse> responses, OwnerType owner, boolean saveHistory) {
+	public static Set<MyMarketOrder> toMarketOrdersCorporation(List<CorporationOrdersResponse> responses, List<CorporationOrdersHistoryResponse> responsesHistory, OwnerType owner, boolean saveHistory) {
 		List<RawMarketOrder> rawMarketOrders = new ArrayList<RawMarketOrder>();
 		for (CorporationOrdersResponse response : responses) {
 			rawMarketOrders.add(new RawMarketOrder(response));
 		}
-		if (saveHistory) { //XXX - Workaround for ESI only including active orders
-			Set<MyMarketOrder> marketOrders = convertRawMarketOrders(rawMarketOrders, owner, false);
-			for (MyMarketOrder myMarketOrder : owner.getMarketOrders()) {
-				if (!marketOrders.contains(myMarketOrder)) {
-					//Add copy
-					MyMarketOrder marketOrder = new MyMarketOrder(myMarketOrder, myMarketOrder.getItem(), myMarketOrder.getOwner());
-					marketOrder.closeOrder();
-					marketOrders.add(marketOrder);
-				}
-			}
-			return marketOrders;
+		for (CorporationOrdersHistoryResponse response : responsesHistory) {
+			rawMarketOrders.add(new RawMarketOrder(response));
 		}
 		return convertRawMarketOrders(rawMarketOrders, owner, saveHistory);
 	}
