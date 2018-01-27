@@ -50,6 +50,7 @@ import net.troja.eve.esi.model.CharacterAssetsResponse;
 import net.troja.eve.esi.model.CharacterBlueprintsResponse;
 import net.troja.eve.esi.model.CharacterContractsResponse;
 import net.troja.eve.esi.model.CharacterIndustryJobsResponse;
+import net.troja.eve.esi.model.CharacterOrdersHistoryResponse;
 import net.troja.eve.esi.model.CharacterOrdersResponse;
 import net.troja.eve.esi.model.CharacterWalletJournalExtraInfoResponse;
 import net.troja.eve.esi.model.CharacterWalletJournalResponse;
@@ -57,6 +58,7 @@ import net.troja.eve.esi.model.CorporationAssetsResponse;
 import net.troja.eve.esi.model.CorporationBlueprintsResponse;
 import net.troja.eve.esi.model.CorporationContractsResponse;
 import net.troja.eve.esi.model.CorporationIndustryJobsResponse;
+import net.troja.eve.esi.model.CorporationOrdersHistoryResponse;
 import net.troja.eve.esi.model.CorporationOrdersResponse;
 import net.troja.eve.esi.model.CorporationWalletJournalExtraInfoResponse;
 import net.troja.eve.esi.model.CorporationWalletJournalResponse;
@@ -190,7 +192,9 @@ public class ConverterTestOptionsGetter {
 		//MarketOrderRange
 		private static final RawMarketOrder.MarketOrderRange[] RAW_MARKET_ORDER_RANGE = RawMarketOrder.MarketOrderRange.values();
 		private static final CharacterOrdersResponse.RangeEnum[] ESI_MARKET_ORDER_RANGE_CHARACTER = CharacterOrdersResponse.RangeEnum.values();
+		private static final CharacterOrdersHistoryResponse.RangeEnum[] ESI_MARKET_ORDER_RANGE_CHARACTER_HISTORY = CharacterOrdersHistoryResponse.RangeEnum.values();
 		private static final CorporationOrdersResponse.RangeEnum[] ESI_MARKET_ORDER_RANGE_CORPORATION = CorporationOrdersResponse.RangeEnum.values();
+		private static final CorporationOrdersHistoryResponse.RangeEnum[] ESI_MARKET_ORDER_RANGE_CORPORATION_HISTORY = CorporationOrdersHistoryResponse.RangeEnum.values();
 		private static final Integer[] EVE_API_MARKET_ORDER_RANGE = {1, 10, 2, 20, 3, 30, 4, 40, 5, 32767, 0, -1};
 		//MarketOrderState
 		private static final RawMarketOrder.MarketOrderState[] RAW_MARKET_ORDER_STATE = {
@@ -203,7 +207,9 @@ public class ConverterTestOptionsGetter {
 			//UNKNOWN("Unknown");  //Ignored: jEveAssets value
 		};
 		private static final CharacterOrdersResponse.StateEnum[] ESI_MARKET_ORDER_STATE_CHARACTER = CharacterOrdersResponse.StateEnum.values();
+		private static final CharacterOrdersHistoryResponse.StateEnum[] ESI_MARKET_ORDER_STATE_CHARACTER_HISTORY = CharacterOrdersHistoryResponse.StateEnum.values();
 		private static final CorporationOrdersResponse.StateEnum[] ESI_MARKET_ORDER_STATE_CORPORATION = CorporationOrdersResponse.StateEnum.values();
+		private static final CorporationOrdersHistoryResponse.StateEnum[] ESI_MARKET_ORDER_STATE_CORPORATION_HISTORY = CorporationOrdersHistoryResponse.StateEnum.values();
 		private static final Integer[] EVE_API_MARKET_ORDER_STATE = {3, 5, 1, 2, 0, 4};
 		//Owners
 		private static final EsiCallbackURL[] ESI_CALLBACK_URL = EsiCallbackURL.values();
@@ -807,8 +813,18 @@ public class ConverterTestOptionsGetter {
 		}
 
 		@Override
+		public CharacterOrdersHistoryResponse.RangeEnum getMarketOrderRangeEsiCharacterHistory() {
+			return get(ESI_MARKET_ORDER_RANGE_CHARACTER_HISTORY, index);
+		}
+
+		@Override
 		public CorporationOrdersResponse.RangeEnum getMarketOrderRangeEsiCorporation() {
 			return get(ESI_MARKET_ORDER_RANGE_CORPORATION, index);
+		}
+
+		@Override
+		public CorporationOrdersHistoryResponse.RangeEnum getMarketOrderRangeEsiCorporationHistory() {
+			return get(ESI_MARKET_ORDER_RANGE_CORPORATION_HISTORY, index);
 		}
 
 		@Override
@@ -828,8 +844,18 @@ public class ConverterTestOptionsGetter {
 		}
 
 		@Override
+		public CharacterOrdersHistoryResponse.StateEnum getMarketOrderStateEsiCharacterHistory() {
+			return get(ESI_MARKET_ORDER_STATE_CHARACTER_HISTORY, index);
+		}
+
+		@Override
 		public CorporationOrdersResponse.StateEnum getMarketOrderStateEsiCorporation() {
 			return get(ESI_MARKET_ORDER_STATE_CORPORATION, index);
+		}
+
+		@Override
+		public CorporationOrdersHistoryResponse.StateEnum getMarketOrderStateEsiCorporationHistory() {
+			return get(ESI_MARKET_ORDER_STATE_CORPORATION_HISTORY, index);
 		}
 
 		@Override

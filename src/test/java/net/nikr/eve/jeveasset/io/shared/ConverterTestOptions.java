@@ -46,6 +46,7 @@ import net.troja.eve.esi.model.CharacterAssetsResponse;
 import net.troja.eve.esi.model.CharacterBlueprintsResponse;
 import net.troja.eve.esi.model.CharacterContractsResponse;
 import net.troja.eve.esi.model.CharacterIndustryJobsResponse;
+import net.troja.eve.esi.model.CharacterOrdersHistoryResponse;
 import net.troja.eve.esi.model.CharacterOrdersResponse;
 import net.troja.eve.esi.model.CharacterWalletJournalExtraInfoResponse;
 import net.troja.eve.esi.model.CharacterWalletJournalResponse;
@@ -53,6 +54,7 @@ import net.troja.eve.esi.model.CorporationAssetsResponse;
 import net.troja.eve.esi.model.CorporationBlueprintsResponse;
 import net.troja.eve.esi.model.CorporationContractsResponse;
 import net.troja.eve.esi.model.CorporationIndustryJobsResponse;
+import net.troja.eve.esi.model.CorporationOrdersHistoryResponse;
 import net.troja.eve.esi.model.CorporationOrdersResponse;
 import net.troja.eve.esi.model.CorporationWalletJournalExtraInfoResponse;
 import net.troja.eve.esi.model.CorporationWalletJournalResponse;
@@ -185,7 +187,11 @@ public interface ConverterTestOptions {
 
 	public CharacterOrdersResponse.RangeEnum getMarketOrderRangeEsiCharacter();
 
+	public CharacterOrdersHistoryResponse.RangeEnum getMarketOrderRangeEsiCharacterHistory();
+
 	public CorporationOrdersResponse.RangeEnum getMarketOrderRangeEsiCorporation();
+
+	public CorporationOrdersHistoryResponse.RangeEnum getMarketOrderRangeEsiCorporationHistory();
 
 	public int getMarketOrderRangeEveApi();
 
@@ -194,7 +200,11 @@ public interface ConverterTestOptions {
 
 	public CharacterOrdersResponse.StateEnum getMarketOrderStateEsiCharacter();
 
+	public CharacterOrdersHistoryResponse.StateEnum getMarketOrderStateEsiCharacterHistory();
+
 	public CorporationOrdersResponse.StateEnum getMarketOrderStateEsiCorporation();
+
+	public CorporationOrdersHistoryResponse.StateEnum getMarketOrderStateEsiCorporationHistory();
 
 	public int getMarketOrderStateEveApi();
 

@@ -75,6 +75,7 @@ import net.troja.eve.esi.model.CharacterContractsItemsResponse;
 import net.troja.eve.esi.model.CharacterContractsResponse;
 import net.troja.eve.esi.model.CharacterIndustryJobsResponse;
 import net.troja.eve.esi.model.CharacterLocationResponse;
+import net.troja.eve.esi.model.CharacterOrdersHistoryResponse;
 import net.troja.eve.esi.model.CharacterOrdersResponse;
 import net.troja.eve.esi.model.CharacterRolesResponse.RolesEnum;
 import net.troja.eve.esi.model.CharacterShipResponse;
@@ -85,6 +86,7 @@ import net.troja.eve.esi.model.CorporationAssetsResponse;
 import net.troja.eve.esi.model.CorporationBlueprintsResponse;
 import net.troja.eve.esi.model.CorporationContractsResponse;
 import net.troja.eve.esi.model.CorporationIndustryJobsResponse;
+import net.troja.eve.esi.model.CorporationOrdersHistoryResponse;
 import net.troja.eve.esi.model.CorporationOrdersResponse;
 import net.troja.eve.esi.model.CorporationWalletJournalExtraInfoResponse;
 import net.troja.eve.esi.model.CorporationWalletJournalResponse;
@@ -358,7 +360,7 @@ public class ConverterTestUtil {
 		MyMarketOrder loadMyMarketOrder = esiOwner.getMarketOrders().iterator().next();
 		testValues(loadMyMarketOrder, options, setNull ? CharacterOrdersResponse.class : null, false);
 
-		//MarketOrder
+		//Transactions
 		assertEquals(esiOwner.getTransactions().size(), 1);
 		MyTransaction loadMyTransaction = esiOwner.getTransactions().iterator().next();
 		testValues(loadMyTransaction, options, setNull ? CharacterWalletTransactionsResponse.class : null, false);
@@ -545,6 +547,11 @@ public class ConverterTestUtil {
 				myContract.setAvailability(options.getContractAvailabilityRaw());
 			}
 		}
+		if (object instanceof MyMarketOrder) {
+			MyMarketOrder marketOrder = (MyMarketOrder) object;
+			marketOrder.setWalletDivision(options.getInteger());
+			marketOrder.setState(options.getMarketOrderStateRaw());
+		}
 		for (Field field : getField(object, true)) {
 			Class<?> type = field.getType();
 			if (ignore(object, field, type)) {
@@ -714,6 +721,14 @@ public class ConverterTestUtil {
 			return options.getEveApiAccount();
 		} else if (type.equals(ApiClient.class)) {
 			return new ApiClient();
+		} else if (type.equals(CorporationOrdersHistoryResponse.RangeEnum.class)) {
+			return options.getMarketOrderRangeEsiCorporationHistory();
+		} else if (type.equals(CorporationOrdersHistoryResponse.StateEnum.class)) {
+			return options.getMarketOrderStateEsiCorporationHistory();
+		} else if (type.equals(CharacterOrdersHistoryResponse.RangeEnum.class)) {
+			return options.getMarketOrderRangeEsiCharacterHistory();
+		} else if (type.equals(CharacterOrdersHistoryResponse.StateEnum.class)) {
+			return options.getMarketOrderStateEsiCharacterHistory();
 		} else {
 			fail("No test value for: " + type.getSimpleName());
 			return null;
@@ -735,7 +750,13 @@ public class ConverterTestUtil {
 			if (methodId.equals("CharacterAssetsResponse->getQuantity") //Quantity is not optinal in RawAsset
 					|| methodId.equals("CorporationAssetsResponse->getQuantity") //Quantity is not optinal in RawAsset
 					|| methodId.equals("CharacterWalletJournalResponse->getExtraInfo") //RawJournalExtraInfo is not optinal RawJournal
-					|| methodId.equals("CorporationWalletJournalResponse->getExtraInfo")) { //RawJournalExtraInfo is not optinal RawJournal
+					|| methodId.equals("CorporationWalletJournalResponse->getExtraInfo") //RawJournalExtraInfo is not optinal RawJournal
+					|| methodId.equals("CharacterOrdersHistoryResponse->getEscrow") //escrow is not optinal RawMarketOrder
+					|| methodId.equals("CorporationOrdersHistoryResponse->getEscrow") //escrow is not optinal RawMarketOrder
+					|| methodId.equals("CharacterOrdersHistoryResponse->getIsBuyOrder") //isBuyOrder is not optinal RawMarketOrder
+					|| methodId.equals("CorporationOrdersHistoryResponse->getIsBuyOrder") //isBuyOrder is not optinal RawMarketOrder
+					|| methodId.equals("CharacterOrdersHistoryResponse->getMinVolume") //minVolume is not optinal RawMarketOrder
+					|| methodId.equals("CorporationOrdersHistoryResponse->getMinVolume")) { //minVolume is not optinal RawMarketOrder
 				continue;
 			}
 			if (methodName.startsWith("get")) {

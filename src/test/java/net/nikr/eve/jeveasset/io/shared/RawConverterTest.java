@@ -373,7 +373,7 @@ public class RawConverterTest extends TestUtil {
 		map.put(CorporationWalletJournalResponse.FirstPartyTypeEnum.CORPORATION, RawJournal.JournalPartyType.CORPORATION);
 		map.put(CorporationWalletJournalResponse.FirstPartyTypeEnum.FACTION, RawJournal.JournalPartyType.FACTION);
 		map.put(CorporationWalletJournalResponse.FirstPartyTypeEnum.SYSTEM, RawJournal.JournalPartyType.SYSTEM);
-		assertEquals(map.size(), CharacterWalletJournalResponse.FirstPartyTypeEnum.values().length);
+		assertEquals(map.size(), CorporationWalletJournalResponse.FirstPartyTypeEnum.values().length);
 		for (Map.Entry<CorporationWalletJournalResponse.FirstPartyTypeEnum, RawJournal.JournalPartyType> entry : map.entrySet()) {
 			assertEquals(entry.getValue(), RawConverter.toJournalPartyType(entry.getKey()));
 		}
@@ -387,7 +387,7 @@ public class RawConverterTest extends TestUtil {
 		map.put(CorporationWalletJournalResponse.SecondPartyTypeEnum.CORPORATION, RawJournal.JournalPartyType.CORPORATION);
 		map.put(CorporationWalletJournalResponse.SecondPartyTypeEnum.FACTION, RawJournal.JournalPartyType.FACTION);
 		map.put(CorporationWalletJournalResponse.SecondPartyTypeEnum.SYSTEM, RawJournal.JournalPartyType.SYSTEM);
-		assertEquals(map.size(), CharacterWalletJournalResponse.SecondPartyTypeEnum.values().length);
+		assertEquals(map.size(), CorporationWalletJournalResponse.SecondPartyTypeEnum.values().length);
 		for (Map.Entry<CorporationWalletJournalResponse.SecondPartyTypeEnum, RawJournal.JournalPartyType> entry : map.entrySet()) {
 			assertEquals(entry.getValue(), RawConverter.toJournalPartyType(entry.getKey()));
 		}
@@ -650,6 +650,24 @@ public class RawConverterTest extends TestUtil {
 	}
 
 	@Test
+	public void testToInteger_Number_int() {
+		assertEquals(RawConverter.toInteger(1L, 0), 1);
+		assertEquals(RawConverter.toInteger(0, 1), 0);
+		assertEquals(RawConverter.toInteger(0.0, 0), 0);
+		assertEquals(RawConverter.toInteger(0.0f, 0), 0);
+		assertEquals(RawConverter.toInteger(Long.MAX_VALUE, 0), (int) Long.MAX_VALUE);
+		assertEquals(RawConverter.toInteger(Long.MIN_VALUE, 0), (int) Long.MIN_VALUE);
+		assertEquals(RawConverter.toInteger(Integer.MAX_VALUE, 0), Integer.MAX_VALUE);
+		assertEquals(RawConverter.toInteger(Integer.MIN_VALUE, 0), Integer.MIN_VALUE);
+		assertEquals(RawConverter.toInteger(Double.MAX_VALUE, 0), (int) Double.MAX_VALUE);
+		assertEquals(RawConverter.toInteger(Double.MIN_VALUE, 0), (int) Double.MIN_VALUE);
+		assertEquals(RawConverter.toInteger(Float.MAX_VALUE, 0), (int) Float.MAX_VALUE);
+		assertEquals(RawConverter.toInteger(Float.MIN_VALUE, 0), (int) Float.MIN_VALUE);
+		assertEquals(RawConverter.toInteger(null, 0), 0);
+		assertEquals(RawConverter.toInteger(null, 1), 1);
+	}
+
+	@Test
 	public void testToInteger_String() {
 		assertEquals((int) RawConverter.toInteger(String.valueOf(1L)), 1);
 		assertEquals((int) RawConverter.toInteger(String.valueOf(0)), 0);
@@ -672,7 +690,7 @@ public class RawConverterTest extends TestUtil {
 	}
 
 	@Test
-	public void testToDouble() {
+	public void testToDouble_Number() {
 		float delta = 0;
 		assertEquals(RawConverter.toDouble(Long.MAX_VALUE), Long.MAX_VALUE, delta);
 		assertEquals(RawConverter.toDouble(Long.MIN_VALUE), Long.MIN_VALUE, delta);
@@ -683,4 +701,27 @@ public class RawConverterTest extends TestUtil {
 		assertEquals(RawConverter.toDouble(Float.MAX_VALUE), Float.MAX_VALUE, delta);
 		assertEquals(RawConverter.toDouble(Float.MIN_VALUE), Float.MIN_VALUE, delta);
 	}
+
+	@Test
+	public void testToDouble_Number_double() {
+		float delta = 0;
+		assertEquals(RawConverter.toDouble(Long.MAX_VALUE, 0), Long.MAX_VALUE, delta);
+		assertEquals(RawConverter.toDouble(Long.MIN_VALUE, 0), Long.MIN_VALUE, delta);
+		assertEquals(RawConverter.toDouble(Integer.MAX_VALUE, 0), Integer.MAX_VALUE, delta);
+		assertEquals(RawConverter.toDouble(Integer.MIN_VALUE, 0), Integer.MIN_VALUE, delta);
+		assertEquals(RawConverter.toDouble(Double.MAX_VALUE, 0), Double.MAX_VALUE, delta);
+		assertEquals(RawConverter.toDouble(Double.MIN_VALUE, 0), Double.MIN_VALUE, delta);
+		assertEquals(RawConverter.toDouble(Float.MAX_VALUE, 0), Float.MAX_VALUE, delta);
+		assertEquals(RawConverter.toDouble(Float.MIN_VALUE, 0), Float.MIN_VALUE, delta);
+		assertEquals(RawConverter.toDouble(null, 0), 0, delta);
+		assertEquals(RawConverter.toDouble(null, 1), 1, delta);
+	}
+
+	@Test
+	public void testToBoolean() {
+		assertEquals(RawConverter.toBoolean(null), false);
+		assertEquals(RawConverter.toBoolean(false), false);
+		assertEquals(RawConverter.toBoolean(true), true);
+	}
+
 }
