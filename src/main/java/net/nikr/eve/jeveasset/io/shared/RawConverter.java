@@ -49,6 +49,14 @@ public class RawConverter {
 		}
 	}
 
+	public static boolean toBoolean(Boolean value) {
+		if (value == null) {
+			return false;
+		} else {
+			return value;
+		}
+	}
+
 	public static Long toLong(Number value) {
 		if (value != null) {
 			return value.longValue();
@@ -76,6 +84,14 @@ public class RawConverter {
 		}
 	}
 
+	public static int toInteger(Number value, int nullValue) {
+		if (value != null) {
+			return value.intValue();
+		} else {
+			return nullValue;
+		}
+	}
+
 	public static Integer toInteger(String value) {
 		if (value != null) {
 			try {
@@ -100,6 +116,14 @@ public class RawConverter {
 			return value.doubleValue();
 		} else {
 			return null;
+		}
+	}
+
+	public static double toDouble(Number value, double nullValue) {
+		if (value != null) {
+			return value.doubleValue();
+		} else {
+			return nullValue;
 		}
 	}
 

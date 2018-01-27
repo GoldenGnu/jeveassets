@@ -47,6 +47,7 @@ import net.troja.eve.esi.model.CharacterContractsItemsResponse;
 import net.troja.eve.esi.model.CharacterContractsResponse;
 import net.troja.eve.esi.model.CharacterIndustryJobsResponse;
 import net.troja.eve.esi.model.CharacterLocationResponse;
+import net.troja.eve.esi.model.CharacterOrdersHistoryResponse;
 import net.troja.eve.esi.model.CharacterOrdersResponse;
 import net.troja.eve.esi.model.CharacterShipResponse;
 import net.troja.eve.esi.model.CharacterWalletJournalResponse;
@@ -56,6 +57,7 @@ import net.troja.eve.esi.model.CorporationBlueprintsResponse;
 import net.troja.eve.esi.model.CorporationContractsItemsResponse;
 import net.troja.eve.esi.model.CorporationContractsResponse;
 import net.troja.eve.esi.model.CorporationIndustryJobsResponse;
+import net.troja.eve.esi.model.CorporationOrdersHistoryResponse;
 import net.troja.eve.esi.model.CorporationOrdersResponse;
 import net.troja.eve.esi.model.CorporationWalletJournalResponse;
 import net.troja.eve.esi.model.CorporationWalletTransactionsResponse;
@@ -383,10 +385,30 @@ public class EsiConverterTest extends TestUtil {
 		for (ConverterTestOptions options : ConverterTestOptionsGetter.getConverterOptions()) {
 			CharacterOrdersResponse ordersResponse = new CharacterOrdersResponse();
 			ConverterTestUtil.setValues(ordersResponse, options, esi);
-			Set<MyMarketOrder> marketOrders = EsiConverter.toMarketOrders(Collections.singletonList(ordersResponse), ConverterTestUtil.getEsiOwner(options), false);
+			Set<MyMarketOrder> marketOrders = EsiConverter.toMarketOrders(Collections.singletonList(ordersResponse), new ArrayList<CharacterOrdersHistoryResponse>(), ConverterTestUtil.getEsiOwner(options), false);
 			ConverterTestUtil.testValues(marketOrders.iterator().next(), options, esi);
 		}
 	}
+
+	@Test
+	public void testToMarketOrdersHistory() {
+		testToMarketOrdersHistory(null);
+	}
+
+	@Test
+	public void testToMarketOrdersHistoryOptional() {
+		testToMarketOrdersHistory(CharacterOrdersHistoryResponse.class);
+	}
+
+	public void testToMarketOrdersHistory(Class<?> esi) {
+		for (ConverterTestOptions options : ConverterTestOptionsGetter.getConverterOptions()) {
+			CharacterOrdersHistoryResponse ordersHistoryResponse = new CharacterOrdersHistoryResponse();
+			ConverterTestUtil.setValues(ordersHistoryResponse, options, esi);
+			Set<MyMarketOrder> marketOrders = EsiConverter.toMarketOrders(new ArrayList<CharacterOrdersResponse>(), Collections.singletonList(ordersHistoryResponse), ConverterTestUtil.getEsiOwner(options), false);
+			ConverterTestUtil.testValues(marketOrders.iterator().next(), options, esi);
+		}
+	}
+
 	@Test
 	public void testToMarketOrdersCorporation() {
 		testToMarketOrdersCorporation(null);
@@ -401,7 +423,26 @@ public class EsiConverterTest extends TestUtil {
 		for (ConverterTestOptions options : ConverterTestOptionsGetter.getConverterOptions()) {
 			CorporationOrdersResponse ordersResponse = new CorporationOrdersResponse();
 			ConverterTestUtil.setValues(ordersResponse, options, esi);
-			Set<MyMarketOrder> marketOrders = EsiConverter.toMarketOrdersCorporation(Collections.singletonList(ordersResponse), ConverterTestUtil.getEsiOwner(options), false);
+			Set<MyMarketOrder> marketOrders = EsiConverter.toMarketOrdersCorporation(Collections.singletonList(ordersResponse), new ArrayList<CorporationOrdersHistoryResponse>(), ConverterTestUtil.getEsiOwner(options), false);
+			ConverterTestUtil.testValues(marketOrders.iterator().next(), options, esi);
+		}
+	}
+
+	@Test
+	public void testToMarketOrdersHistoryCorporation() {
+		testToMarketOrdersHistoryCorporation(null);
+	}
+
+	@Test
+	public void testToMarketOrdersHistoryCorporationOptional() {
+		testToMarketOrdersHistoryCorporation(CorporationOrdersHistoryResponse.class);
+	}
+
+	public void testToMarketOrdersHistoryCorporation(Class<?> esi) {
+		for (ConverterTestOptions options : ConverterTestOptionsGetter.getConverterOptions()) {
+			CorporationOrdersHistoryResponse ordersHistoryResponse = new CorporationOrdersHistoryResponse();
+			ConverterTestUtil.setValues(ordersHistoryResponse, options, esi);
+			Set<MyMarketOrder> marketOrders = EsiConverter.toMarketOrdersCorporation(new ArrayList<CorporationOrdersResponse>(), Collections.singletonList(ordersHistoryResponse), ConverterTestUtil.getEsiOwner(options), false);
 			ConverterTestUtil.testValues(marketOrders.iterator().next(), options, esi);
 		}
 	}

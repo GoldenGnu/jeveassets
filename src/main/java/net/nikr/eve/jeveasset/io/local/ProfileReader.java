@@ -453,7 +453,7 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 		if (AttributeGetters.haveAttribute(element, "corp")) {
 			corp = AttributeGetters.getBoolean(element, "corp");
 		}
-		apiMarketOrder.setAccountID(accountID);
+		apiMarketOrder.setWalletDivision(accountID);
 		apiMarketOrder.setDuration(duration);
 		apiMarketOrder.setEscrow(escrow);
 		apiMarketOrder.setBuyOrder(bid > 0);

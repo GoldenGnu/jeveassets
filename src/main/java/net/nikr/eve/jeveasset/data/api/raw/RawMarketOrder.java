@@ -23,7 +23,9 @@ package net.nikr.eve.jeveasset.data.api.raw;
 import java.util.Date;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 import net.nikr.eve.jeveasset.io.shared.RawConverter;
+import net.troja.eve.esi.model.CharacterOrdersHistoryResponse;
 import net.troja.eve.esi.model.CharacterOrdersResponse;
+import net.troja.eve.esi.model.CorporationOrdersHistoryResponse;
 import net.troja.eve.esi.model.CorporationOrdersResponse;
 
 public class RawMarketOrder {
@@ -76,7 +78,7 @@ public class RawMarketOrder {
 
 	}
 
-	private Integer accountId = null;
+	private Integer walletDivision = null;
 	private Integer duration = null;
 	private Double escrow = null;
 	private Boolean isBuyOrder = null;
@@ -109,7 +111,7 @@ public class RawMarketOrder {
 	 * @param marketOrder
 	 */
 	protected RawMarketOrder(RawMarketOrder marketOrder) {
-		accountId = marketOrder.accountId;
+		walletDivision = marketOrder.walletDivision;
 		duration = marketOrder.duration;
 		escrow = marketOrder.escrow;
 		isBuyOrder = marketOrder.isBuyOrder;
@@ -133,14 +135,38 @@ public class RawMarketOrder {
 	 * @param marketOrder
 	 */
 	public RawMarketOrder(CharacterOrdersResponse marketOrder) {
-		accountId = marketOrder.getAccountId();
+		walletDivision = 1;
 		duration = marketOrder.getDuration();
-		escrow = marketOrder.getEscrow();
-		isBuyOrder = marketOrder.getIsBuyOrder();
+		escrow = RawConverter.toDouble(marketOrder.getEscrow(), 0);
+		isBuyOrder = RawConverter.toBoolean(marketOrder.getIsBuyOrder());
 		isCorp = marketOrder.getIsCorp();
 		issued = RawConverter.toDate(marketOrder.getIssued());
 		locationId = marketOrder.getLocationId();
-		minVolume = marketOrder.getMinVolume();
+		minVolume = RawConverter.toInteger(marketOrder.getMinVolume(), 0);
+		orderId = marketOrder.getOrderId();
+		price = marketOrder.getPrice();
+		range = MarketOrderRange.valueOf(marketOrder.getRange().name());
+		regionId = marketOrder.getRegionId();
+		state = MarketOrderState.valueOf(marketOrder.getState().name());
+		typeId = marketOrder.getTypeId();
+		volumeRemain = marketOrder.getVolumeRemain();
+		volumeTotal = marketOrder.getVolumeTotal();
+	}
+
+	/**
+	 * ESI Character History
+	 *
+	 * @param marketOrder
+	 */
+	public RawMarketOrder(CharacterOrdersHistoryResponse marketOrder) {
+		walletDivision = 1;
+		duration = marketOrder.getDuration();
+		escrow = RawConverter.toDouble(marketOrder.getEscrow(), 0);
+		isBuyOrder = RawConverter.toBoolean(marketOrder.getIsBuyOrder());
+		isCorp = marketOrder.getIsCorporation();
+		issued = RawConverter.toDate(marketOrder.getIssued());
+		locationId = marketOrder.getLocationId();
+		minVolume = RawConverter.toInteger(marketOrder.getMinVolume(), 0);
 		orderId = marketOrder.getOrderId();
 		price = marketOrder.getPrice();
 		range = MarketOrderRange.valueOf(marketOrder.getRange().name());
@@ -157,14 +183,38 @@ public class RawMarketOrder {
 	 * @param marketOrder
 	 */
 	public RawMarketOrder(CorporationOrdersResponse marketOrder) {
-		accountId = marketOrder.getWalletDivision();
+		walletDivision = marketOrder.getWalletDivision();
 		duration = marketOrder.getDuration();
-		escrow = marketOrder.getEscrow();
-		isBuyOrder = marketOrder.getIsBuyOrder();
+		escrow = RawConverter.toDouble(marketOrder.getEscrow(), 0);
+		isBuyOrder = RawConverter.toBoolean(marketOrder.getIsBuyOrder());
 		isCorp = true;
 		issued = RawConverter.toDate(marketOrder.getIssued());
 		locationId = marketOrder.getLocationId();
-		minVolume = marketOrder.getMinVolume();
+		minVolume = RawConverter.toInteger(marketOrder.getMinVolume(), 0);
+		orderId = marketOrder.getOrderId();
+		price = marketOrder.getPrice();
+		range = MarketOrderRange.valueOf(marketOrder.getRange().name());
+		regionId = marketOrder.getRegionId();
+		state = MarketOrderState.valueOf(marketOrder.getState().name());
+		typeId = marketOrder.getTypeId();
+		volumeRemain = marketOrder.getVolumeRemain();
+		volumeTotal = marketOrder.getVolumeTotal();
+	}
+	
+	/**
+	 * ESI Corporation History
+	 *
+	 * @param marketOrder
+	 */
+	public RawMarketOrder(CorporationOrdersHistoryResponse marketOrder) {
+		walletDivision = marketOrder.getWalletDivision();
+		duration = marketOrder.getDuration();
+		escrow = RawConverter.toDouble(marketOrder.getEscrow(), 0);
+		isBuyOrder = RawConverter.toBoolean(marketOrder.getIsBuyOrder());
+		isCorp = true;
+		issued = RawConverter.toDate(marketOrder.getIssued());
+		locationId = marketOrder.getLocationId();
+		minVolume = RawConverter.toInteger(marketOrder.getMinVolume(), 0);
 		orderId = marketOrder.getOrderId();
 		price = marketOrder.getPrice();
 		range = MarketOrderRange.valueOf(marketOrder.getRange().name());
@@ -182,7 +232,7 @@ public class RawMarketOrder {
 	 * @param isCorp
 	 */
 	public RawMarketOrder(enterprises.orbital.evekit.client.model.MarketOrder marketOrder, boolean isCorp) {
-		accountId = marketOrder.getAccountKey();
+		walletDivision = marketOrder.getAccountKey();
 		duration = marketOrder.getDuration();
 		escrow = RawConverter.toDouble(marketOrder.getEscrow());
 		isBuyOrder = marketOrder.getBid();
@@ -207,7 +257,7 @@ public class RawMarketOrder {
 	 * @param isCorp
 	 */
 	public RawMarketOrder(com.beimin.eveapi.model.shared.MarketOrder marketOrder, boolean isCorp) {
-		accountId = marketOrder.getAccountKey();
+		walletDivision = marketOrder.getAccountKey();
 		duration = marketOrder.getDuration();
 		escrow = marketOrder.getEscrow();
 		isBuyOrder = marketOrder.getBid() > 0;
@@ -225,12 +275,12 @@ public class RawMarketOrder {
 		volumeTotal = marketOrder.getVolEntered();
 	}
 
-	public Integer getAccountID() {
-		return accountId;
+	public Integer getWalletDivision() {
+		return walletDivision;
 	}
 
-	public void setAccountID(Integer accountId) {
-		this.accountId = accountId;
+	public void setWalletDivision(Integer walletDivision) {
+		this.walletDivision = walletDivision;
 	}
 
 	public Integer getDuration() {
