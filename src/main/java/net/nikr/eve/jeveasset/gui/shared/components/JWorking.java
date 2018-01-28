@@ -61,24 +61,16 @@ public class JWorking extends JPanel {
 		addAncestorListener(listenerClass);
 	}
 
-	private void auto() {
-		if (isShowing()) {
-			start();
-		} else {
-			end();
-		}
-	}
-
 	private void start() {
-		end();
-		worker = new Worker(this);
-		worker.start();
+		if (worker == null || worker.isStopped()) { //Only start if not already running
+			worker = new Worker(this);
+			worker.start();
+		}
 	}
 
 	private void end() {
 		if (worker != null) {
-			worker.interrupt();
-			worker = null;
+			worker.stopASAP();
 		}
 	}
 
@@ -92,27 +84,26 @@ public class JWorking extends JPanel {
 	}
 
 	private class ListenerClass implements AncestorListener {
-
+	
 		@Override
 		public void ancestorAdded(AncestorEvent event) {
-			auto();
+			start();
 		}
 
 		@Override
 		public void ancestorRemoved(AncestorEvent event) {
-			auto();
+			 end();
 		}
 
 		@Override
-		public void ancestorMoved(AncestorEvent event) {
-			auto();
-		}
+		public void ancestorMoved(AncestorEvent event) { }
 	}
 
 	public class Worker extends Thread {
 
 		private static final int UPDATE_DELAY = 100;
 		private final JWorking jWorking;
+		private boolean run = true;
 
 		public Worker(final JWorking jWorking) {
 			this.jWorking = jWorking;
@@ -121,17 +112,21 @@ public class JWorking extends JPanel {
 
 		@Override
 		public void run() {
-			while (true) {
+			while (isRun()) {
 				currentLoadingImage++;
 				if (currentLoadingImage >= IMG_FRAMES) {
 					currentLoadingImage = 0;
 				}
-				Program.ensureEDT(new Runnable() {
-					@Override
-					public void run() {
-						jWorking.repaint();
-					}
-				});
+				try {
+					Program.ensureEDT(new Runnable() {
+						@Override
+						public void run() {
+							jWorking.repaint();
+						}
+					});
+				} catch (RuntimeException e) {
+					break;
+				}
 				try {
 					synchronized(this) {
 						wait(UPDATE_DELAY);
@@ -140,6 +135,18 @@ public class JWorking extends JPanel {
 					break;
 				}
 			}
+		}
+
+		private synchronized boolean isRun() {
+			return run;
+		}
+
+		public synchronized void stopASAP() {
+			run = false;
+		}
+
+		public synchronized boolean isStopped() {
+			return !run;
 		}
 	}
 
