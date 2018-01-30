@@ -75,7 +75,8 @@ public abstract class AbstractGetter<O extends OwnerType, C, E extends Exception
 
 	private final UpdateTask updateTask;
 	private final boolean forceUpdate;
-	private final Date nextUpdate;
+	private final boolean disabled;
+	private final boolean wait;
 	private final String taskName;
 	private final String apiName;
 	protected final O owner;
@@ -85,7 +86,8 @@ public abstract class AbstractGetter<O extends OwnerType, C, E extends Exception
 		this.updateTask = updateTask;
 		this.owner = owner;
 		this.forceUpdate = forceUpdate;
-		this.nextUpdate = nextUpdate;
+		this.disabled = !forceUpdate && owner != null && !owner.isShowOwner();
+		this.wait = !forceUpdate && !Settings.get().isUpdatable(nextUpdate, false);
 		switch (taskType) {
 			case ACCOUNT_BALANCE: taskName = "Account Balance"; break;
 			case ASSETS: taskName = "Assets"; break;
@@ -141,12 +143,12 @@ public abstract class AbstractGetter<O extends OwnerType, C, E extends Exception
 
 	protected final boolean canUpdate() {
 		//Silently ignore disabled owners
-		if (!forceUpdate && owner != null && !owner.isShowOwner()) {
+		if (disabled) {
 			logInfo(null, "Owner disabled");
 			return false; 
 		}
 		//Check API cache time
-		if (!forceUpdate && !Settings.get().isUpdatable(nextUpdate, false)) {
+		if (wait) {
 			addError(null, "NOT ALLOWED YET", "Not allowed yet.\r\n(Fix: Just wait a bit)");
 			return false;
 		}
