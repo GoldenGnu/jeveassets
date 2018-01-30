@@ -180,7 +180,7 @@ public class EveKitTrackImportUpdateTask extends UpdateTask {
 			}
 
 			for (EveKitOwner owner : clones) { //Step 3
-				updatersStep2.add(new EveKitContractItemsGetter(this, owner, at));
+				updatersStep2.add(new EveKitContractItemsGetter(this, owner));
 			}
 
 			if (isCancelled()) { //No data return by the API OR Task is cancelled

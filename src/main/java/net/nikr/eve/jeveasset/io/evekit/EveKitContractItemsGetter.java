@@ -44,10 +44,6 @@ public class EveKitContractItemsGetter extends AbstractEveKitGetter implements E
 
 	private final Map<Integer, MyContract> contracts = new HashMap<Integer, MyContract>();
 
-	public EveKitContractItemsGetter(UpdateTask updateTask, EveKitOwner owner, Long at) {
-		super(updateTask, owner, false, Settings.getNow(), TaskType.CONTRACT_ITEMS, false, at);
-	}
-
 	public EveKitContractItemsGetter(UpdateTask updateTask, EveKitOwner owner) {
 		super(updateTask, owner, false, Settings.getNow(), TaskType.CONTRACT_ITEMS, false, null);
 	}
@@ -74,9 +70,13 @@ public class EveKitContractItemsGetter extends AbstractEveKitGetter implements E
 	
 	@Override
 	public List<ContractItem> get(ApiClient apiClient, String at, Long contid, Integer maxResults) throws ApiException {
-		//Get all items matching contractID
+		Set<Integer> ids = getIDs(owner);
+		if (ids.isEmpty()) { //No items to get, return empty list
+			return new ArrayList<>();
+		}
+		//Get all items matching contractIDs
 		return getCommonApi(apiClient).getContractItems(owner.getAccessKey(), owner.getAccessCred(), null, contid, maxResults, false,
-				valuesFilter(getIDs(owner)), null, null, null, null, null, null);
+				valuesFilter(ids), null, null, null, null, null, null);
 	}
 
 	protected Set<Integer> getIDs(EveKitOwner owner) throws ApiException {
