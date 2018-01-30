@@ -23,7 +23,6 @@ package net.nikr.eve.jeveasset.gui.shared;
 
 import java.util.Date;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.data.api.accounts.EveApiAccount;
 import net.nikr.eve.jeveasset.data.api.accounts.OwnerType;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 
@@ -37,36 +36,33 @@ public class Updatable {
 	}
 
 	public boolean isUpdatable() {
-		if (isUpdatable(program.getPriceDataGetter().getNextUpdate(), false)) {
+		if (isUpdatable(program.getPriceDataGetter().getNextUpdate())) {
 			return true;
-		}
-		for (EveApiAccount account : program.getProfileManager().getAccounts()) {
-			//Account
-			if (isUpdatable(account.getAccountNextUpdate())) {
-				return true;
-			}
 		}
 		for (OwnerType owner : program.getOwnerTypes()) {
 			if (owner.isShowOwner()) {
-				if (isUpdatable(owner.getIndustryJobsNextUpdate())){
-					return true;
-				}
-				if (isUpdatable(owner.getMarketOrdersNextUpdate())){
-					return true;
-				}
 				if (isUpdatable(owner.getAssetNextUpdate())){
 					return true;
 				}
 				if (isUpdatable(owner.getBalanceNextUpdate())){
 					return true;
 				}
+				if (isUpdatable(owner.getBlueprintsNextUpdate())){
+					return true;
+				}
 				if (isUpdatable(owner.getContractsNextUpdate())){
 					return true;
 				}
-				if (isUpdatable(owner.getTransactionsNextUpdate())){
+				if (isUpdatable(owner.getIndustryJobsNextUpdate())){
 					return true;
 				}
-				if (isUpdatable(owner.getBlueprintsNextUpdate())){
+				if (isUpdatable(owner.getJournalNextUpdate())){
+					return true;
+				}
+				if (isUpdatable(owner.getMarketOrdersNextUpdate())){
+					return true;
+				}
+				if (isUpdatable(owner.getTransactionsNextUpdate())){
 					return true;
 				}
 			}
@@ -74,18 +70,10 @@ public class Updatable {
 		return false;
 	}
 
-	private boolean isUpdatable(final Date nextUpdate) {
-		return isUpdatable(nextUpdate, true);
-	}
-
-	private boolean isUpdatable(Date nextUpdate, final boolean ignoreOnProxy) {
+	private boolean isUpdatable(Date nextUpdate) {
 		if (nextUpdate == null) {
 			return false;
 		}
-		if (Settings.get().isUpdatable(nextUpdate, ignoreOnProxy)) {
-			return true;
-		} else {
-			return false;
-		}
+		return Settings.get().isUpdatable(nextUpdate, false);
 	}
 }

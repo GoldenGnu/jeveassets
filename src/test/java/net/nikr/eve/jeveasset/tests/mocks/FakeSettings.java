@@ -122,11 +122,6 @@ public abstract class FakeSettings extends Settings {
 	}
 
 	@Override
-	public boolean isUpdatable(final Date date) {
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	@Override
 	public boolean isUpdatable(final Date date, final boolean ignoreOnProxy) {
 		throw new UnsupportedOperationException("not implemented");
 	}
