@@ -916,10 +916,6 @@ public class Settings {
 		return new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
 	}
 
-	public boolean isUpdatable(final Date date) {
-		return isUpdatable(date, true);
-	}
-
 	public boolean isUpdatable(final Date date, final boolean ignoreOnProxy) {
 		return ((Settings.getNow().after(date)
 				|| Settings.getNow().equals(date)
