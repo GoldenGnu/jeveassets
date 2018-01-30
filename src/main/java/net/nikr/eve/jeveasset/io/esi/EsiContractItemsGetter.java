@@ -110,6 +110,9 @@ public class EsiContractItemsGetter extends AbstractEsiGetter {
 			Set<MyContract> uniqueContacts = new HashSet<MyContract>();
 			Map<Long, EsiOwner> uniqueOwners = new HashMap<Long, EsiOwner>();
 			for (EsiOwner esiOwner : owners) {
+				if (!esiOwner.isShowOwner()) {
+					continue;
+				}
 				uniqueOwners.put(esiOwner.getOwnerID(), esiOwner);
 				contracts.put(esiOwner.getOwnerID(), new ArrayList<MyContract>());
 				for (Map.Entry<MyContract, List<MyContractItem>> entry : esiOwner.getContracts().entrySet()) {
