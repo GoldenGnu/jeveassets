@@ -80,7 +80,7 @@ public class RawAsset {
 	public RawAsset(MyIndustryJob industryJob, boolean manufacturing) {
 		if (manufacturing) {
 			isSingleton = false;
-			itemId = industryJob.getBlueprintID() + industryJob.getOutputCount();
+			itemId = RawConverter.toLong(industryJob.getJobID());
 			switch (industryJob.getActivity()) { //Can not be null
 				case ACTIVITY_MANUFACTURING: //Manufacturing
 					itemFlag = new ItemFlag(0, IndustryActivity.ACTIVITY_MANUFACTURING.toString(), IndustryActivity.ACTIVITY_MANUFACTURING.toString());
@@ -97,7 +97,7 @@ public class RawAsset {
 			typeId = industryJob.getProductTypeID();
 		} else {
 			isSingleton = true;
-			itemId = industryJob.getBlueprintID();
+			itemId = RawConverter.toLong(industryJob.getJobID());
 			itemFlag = new ItemFlag(0, General.get().industryJobFlag(), General.get().industryJobFlag());
 			locationId = industryJob.getLocationID();
 			locationType = RawConverter.toAssetLocationType(locationId);
