@@ -25,7 +25,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -36,11 +35,6 @@ import java.util.concurrent.Future;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.api.accounts.OwnerType;
 import net.nikr.eve.jeveasset.data.api.my.MyAsset;
-import net.nikr.eve.jeveasset.data.api.my.MyContract;
-import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob;
-import net.nikr.eve.jeveasset.data.api.my.MyJournal;
-import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
-import net.nikr.eve.jeveasset.data.api.raw.RawJournal;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import net.nikr.eve.jeveasset.io.shared.ThreadWoker.TaskCancelledException;
@@ -299,44 +293,6 @@ public abstract class AbstractGetter<O extends OwnerType, C, E extends Exception
 				itemIDs.put(asset.getItemID(), asset.getItem().getTypeName());
 			}
 			addItemIDs(itemIDs, asset.getAssets());
-		}
-	}
-
-	protected final Set<Long> getOwnerIDs(List<OwnerType> ownerTypes) {
-		Set<Long> list = new HashSet<Long>();
-		for (OwnerType ownerType : ownerTypes) {
-			list.add(ownerType.getOwnerID()); //Just to be sure
-			for (MyIndustryJob myIndustryJob : ownerType.getIndustryJobs()) {
-				addOwnerID(list, myIndustryJob.getInstallerID());
-			}
-			for (MyContract contract : ownerType.getContracts().keySet()) {
-				addOwnerID(list, contract.getAcceptorID());
-				addOwnerID(list, contract.getAssigneeID());
-				addOwnerID(list, contract.getIssuerCorpID());
-				addOwnerID(list, contract.getIssuerID());
-			}
-			for (MyTransaction transaction : ownerType.getTransactions()) {
-				addOwnerID(list, transaction.getClientID());
-			}
-			for (MyJournal journal : ownerType.getJournal()) {
-				if (journal.getFirstPartyType() != RawJournal.JournalPartyType.SYSTEM) {
-					addOwnerID(list, journal.getFirstPartyID());
-				}
-				if (journal.getSecondPartyType() != RawJournal.JournalPartyType.SYSTEM) {
-					addOwnerID(list, journal.getSecondPartyID());
-				}
-			}
-		}
-		return list;
-	}
-
-	private void addOwnerID(Set<Long> list, Number number) {
-		if (number == null) {
-			return;
-		}
-		long l = number.longValue();
-		if (l >= 100) {
-			list.add(l);
 		}
 	}
 
