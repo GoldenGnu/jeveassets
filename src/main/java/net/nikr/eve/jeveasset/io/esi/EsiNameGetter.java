@@ -27,8 +27,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import net.nikr.eve.jeveasset.data.api.accounts.OwnerType;
+import net.nikr.eve.jeveasset.data.api.my.MyContract;
+import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob;
+import net.nikr.eve.jeveasset.data.api.my.MyJournal;
+import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
+import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 import net.troja.eve.esi.ApiClient;
 import net.troja.eve.esi.ApiException;
 import net.troja.eve.esi.model.CharacterNamesResponse;
@@ -46,14 +51,7 @@ public class EsiNameGetter extends AbstractEsiGetter {
 
 	@Override
 	protected void get(ApiClient apiClient) throws ApiException {
-		Set<Integer> ids = new HashSet<Integer>();
-		for (long id : getOwnerIDs(ownerTypes)) {
-			try {
-				ids.add(Math.toIntExact(id));
-			} catch (ArithmeticException ex) {
-				
-			}
-		}
+		Set<Integer> ids = getOwnerIDs(ownerTypes);
 		Map<List<Integer>, List<UniverseNamesResponse>> responses = updateList(splitList(ids, UNIVERSE_BATCH_SIZE), NO_RETRIES, new ListHandler<List<Integer>, List<UniverseNamesResponse>>() {
 			@Override
 			public List<UniverseNamesResponse> get(ApiClient apiClient, List<Integer> t) throws ApiException {
@@ -90,6 +88,45 @@ public class EsiNameGetter extends AbstractEsiGetter {
 			for (CharacterNamesResponse lookup : entry.getValue()) {
 				Settings.get().getOwners().put((long)lookup.getCharacterId(), lookup.getCharacterName());
 			}
+		}
+	}
+
+	private Set<Integer> getOwnerIDs(List<OwnerType> ownerTypes) {
+		Set<Integer> list = new HashSet<Integer>();
+		for (OwnerType ownerType : ownerTypes) {
+			addOwnerID(list, ownerType.getOwnerID());
+			for (MyIndustryJob myIndustryJob : ownerType.getIndustryJobs()) {
+				addOwnerID(list, myIndustryJob.getInstallerID());
+			}
+			for (MyContract contract : ownerType.getContracts().keySet()) {
+				addOwnerID(list, contract.getAcceptorID());
+				addOwnerID(list, contract.getAssigneeID());
+				addOwnerID(list, contract.getIssuerCorpID());
+				addOwnerID(list, contract.getIssuerID());
+			}
+			for (MyTransaction transaction : ownerType.getTransactions()) {
+				addOwnerID(list, transaction.getClientID());
+			}
+			for (MyJournal journal : ownerType.getJournal()) {
+				addOwnerID(list, journal.getFirstPartyID());
+				addOwnerID(list, journal.getSecondPartyID());
+			}
+		}
+		return list;
+	}
+
+	private void addOwnerID(Set<Integer> list, Number number) {
+		//Ignore null
+		if (number == null) {
+			return;
+		}
+		//Ignore Locations
+		if (!ApiIdConverter.getLocation(number.longValue()).isEmpty()) {
+			return;
+		}
+		int l = number.intValue();
+		if (l >= 100) {
+			list.add(l);
 		}
 	}
 
