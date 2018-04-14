@@ -202,11 +202,7 @@ public interface ConverterTestOptions {
 	//MarketOrderState
 	public RawMarketOrder.MarketOrderState getMarketOrderStateRaw();
 
-	public CharacterOrdersResponse.StateEnum getMarketOrderStateEsiCharacter();
-
 	public CharacterOrdersHistoryResponse.StateEnum getMarketOrderStateEsiCharacterHistory();
-
-	public CorporationOrdersResponse.StateEnum getMarketOrderStateEsiCorporation();
 
 	public CorporationOrdersHistoryResponse.StateEnum getMarketOrderStateEsiCorporationHistory();
 

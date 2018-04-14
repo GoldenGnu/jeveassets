@@ -155,6 +155,9 @@ public class RawUtil {
 			if (value.getName().equals("isCorporation") && raw.equals(RawMarketOrder.class)) { //Only in character endpoint
 				continue;
 			}
+			if (value.getName().equals("state") && raw.equals(RawMarketOrder.class)) { //Only in history endpoints
+				continue;
+			}
 			names.add(value.getName());
 		}
 		return names;
@@ -165,6 +168,18 @@ public class RawUtil {
 		for (Enum<?>[] value : values) {
 			for (Enum<?> e : value) {
 				if (e.equals(MarketOrderState.UNKNOWN)) { //jEveAssets value
+					continue;
+				}
+				if (e.equals(MarketOrderState.OPEN)) { //jEveAssets value
+					continue;
+				}
+				if (e.equals(MarketOrderState.CLOSED)) { //Only in XML
+					continue;
+				}
+				if (e.equals(MarketOrderState.CHARACTER_DELETED)) { //Only in XML
+					continue;
+				}
+				if (e.equals(MarketOrderState.PENDING)) { //Only in XML
 					continue;
 				}
 				names.add(e.name());

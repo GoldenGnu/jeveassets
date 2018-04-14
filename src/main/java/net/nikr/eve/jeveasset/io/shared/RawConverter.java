@@ -735,7 +735,6 @@ public class RawConverter {
 		DUSTBATTLE("DustCharacterBattle", 153), //DustBattle
 		QUAFEBAY("QuafeBay", 154),
 		FLEETHANGAR("FleetHangar", 155),
-		HIDDENMODIFERS("HiddenModifiers", 156), //HiddenModifers
 		HIDDENMODIFIERS("HiddenModifiers", 156),
 		STRUCTUREOFFLINE("StructureOffline", 157),
 		FIGHTERBAY("FighterBay", 158),

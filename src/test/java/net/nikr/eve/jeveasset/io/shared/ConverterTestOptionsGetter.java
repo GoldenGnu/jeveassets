@@ -208,9 +208,7 @@ public class ConverterTestOptionsGetter {
 			RawMarketOrder.MarketOrderState.PENDING,
 			//UNKNOWN("Unknown");  //Ignored: jEveAssets value
 		};
-		private static final CharacterOrdersResponse.StateEnum[] ESI_MARKET_ORDER_STATE_CHARACTER = CharacterOrdersResponse.StateEnum.values();
 		private static final CharacterOrdersHistoryResponse.StateEnum[] ESI_MARKET_ORDER_STATE_CHARACTER_HISTORY = CharacterOrdersHistoryResponse.StateEnum.values();
-		private static final CorporationOrdersResponse.StateEnum[] ESI_MARKET_ORDER_STATE_CORPORATION = CorporationOrdersResponse.StateEnum.values();
 		private static final CorporationOrdersHistoryResponse.StateEnum[] ESI_MARKET_ORDER_STATE_CORPORATION_HISTORY = CorporationOrdersHistoryResponse.StateEnum.values();
 		private static final Integer[] EVE_API_MARKET_ORDER_STATE = {3, 5, 1, 2, 0, 4};
 		//ContainerLog
@@ -496,8 +494,6 @@ public class ConverterTestOptionsGetter {
 			tempMax = Math.max(tempMax, EVE_API_MARKET_ORDER_RANGE.length);
 			//MarketOrderState
 			tempMax = Math.max(tempMax, RAW_MARKET_ORDER_STATE.length);
-			tempMax = Math.max(tempMax, ESI_MARKET_ORDER_STATE_CHARACTER.length);
-			tempMax = Math.max(tempMax, ESI_MARKET_ORDER_STATE_CORPORATION.length);
 			tempMax = Math.max(tempMax, EVE_API_MARKET_ORDER_STATE.length);
 			//Owners
 			tempMax = Math.max(tempMax, ESI_CALLBACK_URL.length);
@@ -861,18 +857,8 @@ public class ConverterTestOptionsGetter {
 		}
 
 		@Override
-		public CharacterOrdersResponse.StateEnum getMarketOrderStateEsiCharacter() {
-			return get(ESI_MARKET_ORDER_STATE_CHARACTER, index);
-		}
-
-		@Override
 		public CharacterOrdersHistoryResponse.StateEnum getMarketOrderStateEsiCharacterHistory() {
 			return get(ESI_MARKET_ORDER_STATE_CHARACTER_HISTORY, index);
-		}
-
-		@Override
-		public CorporationOrdersResponse.StateEnum getMarketOrderStateEsiCorporation() {
-			return get(ESI_MARKET_ORDER_STATE_CORPORATION, index);
 		}
 
 		@Override

@@ -703,10 +703,6 @@ public class ConverterTestUtil {
 			return options.getMarketOrderRangeEsiCharacter();
 		} else if (type.equals(CorporationOrdersResponse.RangeEnum.class)) {//
 			return options.getMarketOrderRangeEsiCorporation();
-		} else if (type.equals(CharacterOrdersResponse.StateEnum.class)) {
-			return options.getMarketOrderStateEsiCharacter();
-		} else if (type.equals(CorporationOrdersResponse.StateEnum.class)) {
-			return options.getMarketOrderStateEsiCorporation();
 		} else if (type.equals(CharacterAssetsResponse.LocationFlagEnum.class)) {
 			return options.getLocationFlagEsiAssetsCharacter();
 		} else if (type.equals(CorporationAssetsResponse.LocationFlagEnum.class)) {
@@ -771,14 +767,25 @@ public class ConverterTestUtil {
 			String methodId = esi.getSimpleName() + "->" + methodName;
 			if (methodId.equals("CharacterAssetsResponse->getQuantity") //Quantity is not optinal in RawAsset
 					|| methodId.equals("CorporationAssetsResponse->getQuantity") //Quantity is not optinal in RawAsset
-					|| methodId.equals("CharacterWalletJournalResponse->getExtraInfo") //RawJournalExtraInfo is not optinal RawJournal
-					|| methodId.equals("CorporationWalletJournalResponse->getExtraInfo") //RawJournalExtraInfo is not optinal RawJournal
-					|| methodId.equals("CharacterOrdersHistoryResponse->getEscrow") //escrow is not optinal RawMarketOrder
-					|| methodId.equals("CorporationOrdersHistoryResponse->getEscrow") //escrow is not optinal RawMarketOrder
-					|| methodId.equals("CharacterOrdersHistoryResponse->getIsBuyOrder") //isBuyOrder is not optinal RawMarketOrder
-					|| methodId.equals("CorporationOrdersHistoryResponse->getIsBuyOrder") //isBuyOrder is not optinal RawMarketOrder
-					|| methodId.equals("CharacterOrdersHistoryResponse->getMinVolume") //minVolume is not optinal RawMarketOrder
-					|| methodId.equals("CorporationOrdersHistoryResponse->getMinVolume")) { //minVolume is not optinal RawMarketOrder
+					//RawJournalExtraInfo is not optinal in RawJournal
+					|| methodId.equals("CharacterWalletJournalResponse->getExtraInfo")
+					|| methodId.equals("CorporationWalletJournalResponse->getExtraInfo")
+					//escrow is not optinal in RawMarketOrder
+					|| methodId.equals("CharacterOrdersHistoryResponse->getEscrow") 
+					|| methodId.equals("CorporationOrdersHistoryResponse->getEscrow")
+					|| methodId.equals("CharacterOrdersResponse->getEscrow")
+					|| methodId.equals("CorporationOrdersResponse->getEscrow")
+					//isBuyOrder is not optinal in RawMarketOrder
+					|| methodId.equals("CharacterOrdersHistoryResponse->getIsBuyOrder")
+					|| methodId.equals("CorporationOrdersHistoryResponse->getIsBuyOrder")
+					|| methodId.equals("CharacterOrdersResponse->getIsBuyOrder")
+					|| methodId.equals("CorporationOrdersResponse->getIsBuyOrder")
+					//minVolume is not optinal in RawMarketOrder
+					|| methodId.equals("CharacterOrdersHistoryResponse->getMinVolume")
+					|| methodId.equals("CorporationOrdersHistoryResponse->getMinVolume")
+					|| methodId.equals("CharacterOrdersResponse->getMinVolume")
+					|| methodId.equals("CorporationOrdersResponse->getMinVolume") 
+					) { 
 				continue;
 			}
 			if (methodName.startsWith("get")) {
