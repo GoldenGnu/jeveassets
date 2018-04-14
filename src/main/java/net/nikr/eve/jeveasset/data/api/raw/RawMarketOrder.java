@@ -139,7 +139,7 @@ public class RawMarketOrder {
 		duration = marketOrder.getDuration();
 		escrow = RawConverter.toDouble(marketOrder.getEscrow(), 0);
 		isBuyOrder = RawConverter.toBoolean(marketOrder.getIsBuyOrder());
-		isCorp = marketOrder.getIsCorp();
+		isCorp = marketOrder.getIsCorporation();
 		issued = RawConverter.toDate(marketOrder.getIssued());
 		locationId = marketOrder.getLocationId();
 		minVolume = RawConverter.toInteger(marketOrder.getMinVolume(), 0);
@@ -147,7 +147,7 @@ public class RawMarketOrder {
 		price = marketOrder.getPrice();
 		range = MarketOrderRange.valueOf(marketOrder.getRange().name());
 		regionId = marketOrder.getRegionId();
-		state = MarketOrderState.valueOf(marketOrder.getState().name());
+		state = MarketOrderState.OPEN;
 		typeId = marketOrder.getTypeId();
 		volumeRemain = marketOrder.getVolumeRemain();
 		volumeTotal = marketOrder.getVolumeTotal();
@@ -195,7 +195,7 @@ public class RawMarketOrder {
 		price = marketOrder.getPrice();
 		range = MarketOrderRange.valueOf(marketOrder.getRange().name());
 		regionId = marketOrder.getRegionId();
-		state = MarketOrderState.valueOf(marketOrder.getState().name());
+		state = MarketOrderState.OPEN;
 		typeId = marketOrder.getTypeId();
 		volumeRemain = marketOrder.getVolumeRemain();
 		volumeTotal = marketOrder.getVolumeTotal();
@@ -234,7 +234,7 @@ public class RawMarketOrder {
 	public RawMarketOrder(enterprises.orbital.evekit.client.model.MarketOrder marketOrder, boolean isCorp) {
 		walletDivision = marketOrder.getAccountKey();
 		duration = marketOrder.getDuration();
-		escrow = RawConverter.toDouble(marketOrder.getEscrow());
+		escrow = RawConverter.toDouble(marketOrder.getEscrow(), 0);
 		isBuyOrder = marketOrder.getBid();
 		this.isCorp = isCorp;
 		issued = RawConverter.toDate(marketOrder.getIssuedDate());

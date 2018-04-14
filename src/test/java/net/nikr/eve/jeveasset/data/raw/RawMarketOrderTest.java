@@ -43,9 +43,8 @@ public class RawMarketOrderTest extends TestUtil {
 				CharacterOrdersHistoryResponse.RangeEnum.values(),
 				CorporationOrdersResponse.RangeEnum.values(),
 				CorporationOrdersHistoryResponse.RangeEnum.values());
-		RawUtil.compare(MarketOrderState.values(), CharacterOrdersResponse.StateEnum.values(),
+		RawUtil.compare(MarketOrderState.values(),
 				CharacterOrdersHistoryResponse.StateEnum.values(),
-				CorporationOrdersResponse.StateEnum.values(),
 				CorporationOrdersHistoryResponse.StateEnum.values());
 	}
 }
