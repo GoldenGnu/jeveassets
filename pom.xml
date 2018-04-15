@@ -641,7 +641,7 @@
 		<dependency>
 			<groupId>com.beimin</groupId>
 			<artifactId>eveapi</artifactId>
-			<version>7.0.3</version>
+			<version>7.0.4</version>
 		</dependency>
 		<dependency>
 			<groupId>enterprises.orbital.evekit</groupId>
