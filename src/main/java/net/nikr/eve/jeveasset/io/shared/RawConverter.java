@@ -32,6 +32,8 @@ import net.nikr.eve.jeveasset.data.api.raw.RawJournal;
 import net.nikr.eve.jeveasset.data.api.raw.RawJournalExtraInfo;
 import net.nikr.eve.jeveasset.data.api.raw.RawJournalRefType;
 import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder;
+import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder.MarketOrderRange;
+import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder.MarketOrderState;
 import net.nikr.eve.jeveasset.data.sde.ItemFlag;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
 import net.troja.eve.esi.model.CharacterWalletJournalResponse;
@@ -113,14 +115,6 @@ public class RawConverter {
 		}
 	}
 
-	public static Double toDouble(Number value) {
-		if (value != null) {
-			return value.doubleValue();
-		} else {
-			return null;
-		}
-	}
-
 	public static double toDouble(Number value, double nullValue) {
 		if (value != null) {
 			return value.doubleValue();
@@ -160,6 +154,14 @@ public class RawConverter {
 	public static ItemFlag toFlag(net.troja.eve.esi.model.CorporationContainersLogsResponse.LocationFlagEnum locationFlagEnum) {
 		LocationFlag locationFlag = LocationFlag.valueOf(locationFlagEnum.name());
 		return ApiIdConverter.getFlag(locationFlag.getID());
+	}
+
+	public static ItemFlag toFlag(String locationFlag) {
+		LocationFlag locationFlagEnum = LocationFlag.valueOf(locationFlag.toUpperCase());
+		if (locationFlagEnum == null) {
+			return ApiIdConverter.getFlag(0);
+		}
+		return ApiIdConverter.getFlag(locationFlagEnum.getID());
 	}
 
 	public static RawAsset.LocationType toAssetLocationType(Long locationID) {
@@ -334,6 +336,10 @@ public class RawConverter {
 		}
 	}
 
+	public static RawIndustryJob.IndustryJobStatus toIndustryJobStatus(String value) {
+		return RawIndustryJob.IndustryJobStatus.fromValue(value);
+	}
+
 	public static int fromIndustryJobStatus(RawIndustryJob.IndustryJobStatus value) {
 		switch (value) {
 			case ACTIVE:
@@ -356,6 +362,18 @@ public class RawConverter {
 	public static RawJournalRefType toJournalRefType(int value) {
 		createJournalRefTypesIDs();
 		return journalRefTypesIDs.get(value);
+	}
+
+	public static RawJournalRefType toJournalRefType(String value) {
+		CharacterWalletJournalResponse.RefTypeEnum charValue = CharacterWalletJournalResponse.RefTypeEnum.fromValue(value);
+		if (charValue != null) {
+			return toJournalRefType(charValue);
+		}
+		CorporationWalletJournalResponse.RefTypeEnum corpValue = CorporationWalletJournalResponse.RefTypeEnum.fromValue(value);
+		if (corpValue != null) {
+			return toJournalRefType(corpValue);
+		}
+		return null;
 	}
 
 	public static RawJournalRefType toJournalRefType(CharacterWalletJournalResponse.RefTypeEnum value) {
@@ -388,6 +406,10 @@ public class RawConverter {
 				default: return null;
 			}
 		}
+	}
+
+	public static RawJournal.JournalPartyType toJournalPartyType(String value) {
+		return RawJournal.JournalPartyType.fromValue(value);
 	}
 
 	public static RawJournal.JournalPartyType toJournalPartyType(Integer value) {
@@ -436,6 +458,10 @@ public class RawConverter {
 		} else {
 			return RawJournal.JournalPartyType.valueOf(value.name());
 		}
+	}
+
+	public static RawMarketOrder.MarketOrderRange toMarketOrderRange(String value) {
+		return MarketOrderRange.fromValue(value);
 	}
 
 	public static RawMarketOrder.MarketOrderRange toMarketOrderRange(int value) {
@@ -538,6 +564,10 @@ public class RawConverter {
 			default:
 				throw new RuntimeException("Can't convert: " + value + " to MarketOrderRange");
 		}
+	}
+
+	public static RawMarketOrder.MarketOrderState toMarketOrderState(String value) {
+		return MarketOrderState.fromValue(value);
 	}
 
 	public static RawMarketOrder.MarketOrderState toMarketOrderState(int value) {

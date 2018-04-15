@@ -69,10 +69,10 @@ public class EveKitMarketOrdersGetter extends AbstractEveKitGetter implements Ev
 		switch (run) {
 			case MONTHS:
 				return getCommonApi(apiClient).getMarketOrders(owner.getAccessKey(), owner.getAccessCred(), at, contid, maxResults, false,
-						null, null, null, null, null, null, dateFilter(Settings.get().getEveKitMarketOrdersHistory()), null, null, null, null, null, null, null, null);
+						null, null, null, null, null, null, dateFilter(Settings.get().getEveKitMarketOrdersHistory()), null, null, null, null, null, null, null, null, null, null);
 			default: //ALL
 				return getCommonApi(apiClient).getMarketOrders(owner.getAccessKey(), owner.getAccessCred(), at, contid, maxResults, false,
-					null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+						null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
 		}
 	}
 

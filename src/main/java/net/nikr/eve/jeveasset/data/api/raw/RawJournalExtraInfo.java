@@ -124,6 +124,42 @@ public class RawJournalExtraInfo {
 	 */
 	public RawJournalExtraInfo(enterprises.orbital.evekit.client.model.WalletJournal journalExtraInfo, RawJournalRefType refType) {
 		this(journalExtraInfo.getArgID1(), journalExtraInfo.getArgName1(), refType);
+		if (journalExtraInfo.getAllianceID() != null && allianceId == null) {
+			allianceId = journalExtraInfo.getAllianceID();
+		}
+		if (journalExtraInfo.getCharacterID() != null && characterId == null) {
+			characterId = journalExtraInfo.getCharacterID();
+		}
+		if (journalExtraInfo.getContractID() != null && contractId == null) {
+			contractId = journalExtraInfo.getContractID();
+		}
+		if (journalExtraInfo.getCorporationID() != null && corporationId == null) {
+			corporationId = journalExtraInfo.getCorporationID();
+		}
+		if (journalExtraInfo.getDestroyedShipTypeID() != null && destroyedShipTypeId == null) {
+			destroyedShipTypeId = journalExtraInfo.getDestroyedShipTypeID();
+		}
+		if (journalExtraInfo.getJobID() != null && jobId == null) {
+			jobId = journalExtraInfo.getJobID();
+		}
+		if (journalExtraInfo.getLocationID() != null && locationId == null) {
+			locationId = journalExtraInfo.getLocationID();
+		}
+		if (journalExtraInfo.getNpcID() != null && npcId == null) {
+			npcId = journalExtraInfo.getNpcID();
+		}
+		if (journalExtraInfo.getNpcName() != null && npcName == null) {
+			npcName = journalExtraInfo.getNpcName();
+		}
+		if (journalExtraInfo.getPlanetID() != null && planetId == null) {
+			planetId = journalExtraInfo.getPlanetID();
+		}
+		if (journalExtraInfo.getSystemID() != null && systemId == null) {
+			systemId = journalExtraInfo.getSystemID();
+		}
+		if (journalExtraInfo.getTransactionID() != null && transactionId == null) {
+			transactionId = journalExtraInfo.getTransactionID();
+		}
 	}
 
 	/**

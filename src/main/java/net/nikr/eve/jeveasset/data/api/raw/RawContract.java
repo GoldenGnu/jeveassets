@@ -168,12 +168,12 @@ public class RawContract {
 	 * @param contract
 	 */
 	public RawContract(enterprises.orbital.evekit.client.model.Contract contract) {
-		acceptorId = RawConverter.toInteger(contract.getAcceptorID());
-		assigneeId = RawConverter.toInteger(contract.getAssigneeID());
+		acceptorId = contract.getAcceptorID();
+		assigneeId = contract.getAssigneeID();
 		availability = RawConverter.toContractAvailability(contract.getAvailability());
-		buyout = RawConverter.toDouble(contract.getBuyout());
-		collateral = RawConverter.toDouble(contract.getCollateral());
-		contractId = RawConverter.toInteger(contract.getContractID());
+		buyout = contract.getBuyout();
+		collateral = contract.getCollateral();
+		contractId = contract.getContractID();
 		dateAccepted = RawConverter.toDate(contract.getDateAcceptedDate());
 		dateCompleted = RawConverter.toDate(contract.getDateCompletedDate());
 		dateExpired = RawConverter.toDate(contract.getDateExpiredDate());
@@ -181,10 +181,10 @@ public class RawContract {
 		daysToComplete = contract.getNumDays();
 		endLocationId = contract.getEndStationID();
 		forCorporation = contract.getForCorp();
-		issuerCorporationId = RawConverter.toInteger(contract.getIssuerCorpID());
-		issuerId = RawConverter.toInteger(contract.getIssuerID());
-		price = RawConverter.toDouble(contract.getPrice());
-		reward = RawConverter.toDouble(contract.getReward());
+		issuerCorporationId = contract.getIssuerCorpID();
+		issuerId = contract.getIssuerID();
+		price = contract.getPrice();
+		reward = contract.getReward();
 		startLocationId = contract.getStartStationID();
 		status = RawConverter.toContractStatus(contract.getStatus());
 		title = contract.getTitle();

@@ -102,7 +102,7 @@ public class RawBlueprint {
 	 */
 	public RawBlueprint(enterprises.orbital.evekit.client.model.Blueprint blueprint) {
 		itemId = blueprint.getItemID();
-		itemFlag = ApiIdConverter.getFlag(blueprint.getFlagID());
+		itemFlag = RawConverter.toFlag(blueprint.getLocationFlag());
 		locationId = blueprint.getLocationID();
 		materialEfficiency = blueprint.getMaterialEfficiency();
 		quantity = blueprint.getQuantity();

@@ -324,6 +324,7 @@ public class ConverterTestOptionsGetter {
 					locationFlags.put(itemFlag.getFlagID(), locationFlag);
 				}
 				locationFlag.setLocationFlag(locationFlagEnum);
+				locationFlag.setLocationFlag(locationFlagEnum.toString());
 			}
 			//Corporation Blueprints
 			for (CorporationBlueprintsResponse.LocationFlagEnum locationFlagEnum : CorporationBlueprintsResponse.LocationFlagEnum.values()) {
@@ -334,6 +335,7 @@ public class ConverterTestOptionsGetter {
 					locationFlags.put(itemFlag.getFlagID(), locationFlag);
 				}
 				locationFlag.setLocationFlag(locationFlagEnum);
+				locationFlag.setLocationFlag(locationFlagEnum.toString());
 			}
 			//Character Assets
 			for (CharacterAssetsResponse.LocationFlagEnum locationFlagEnum : CharacterAssetsResponse.LocationFlagEnum.values()) {
@@ -344,6 +346,7 @@ public class ConverterTestOptionsGetter {
 					locationFlags.put(itemFlag.getFlagID(), locationFlag);
 				}
 				locationFlag.setLocationFlag(locationFlagEnum);
+				locationFlag.setLocationFlag(locationFlagEnum.toString());
 			}
 			//Corporation Assets
 			for (CorporationAssetsResponse.LocationFlagEnum locationFlagEnum : CorporationAssetsResponse.LocationFlagEnum.values()) {
@@ -364,6 +367,7 @@ public class ConverterTestOptionsGetter {
 					locationFlags.put(itemFlag.getFlagID(), locationFlag);
 				}
 				locationFlag.setLocationFlag(locationFlagEnum);
+				locationFlag.setLocationFlag(locationFlagEnum.toString());
 			}
 			Set<Integer> remove = new HashSet<Integer>();
 			for (LocationFlag locationType : locationFlags.values()) {
@@ -648,6 +652,11 @@ public class ConverterTestOptionsGetter {
 		}
 
 		@Override
+		public String getLocationFlagEveKit() {
+			return get(LOCATION_TYPE, index).getLocationFlagEveKit();
+		}
+
+		@Override
 		public ItemFlag getItemFlag() {
 			return get(LOCATION_TYPE, index).getItemFlag();
 		}
@@ -749,6 +758,11 @@ public class ConverterTestOptionsGetter {
 		@Override
 		public int getIndustryJobStatusEveApi() {
 			return get(EVE_API_INDUSTRY_JOB_STATUS, index);
+		}
+
+		@Override
+		public String getIndustryJobStatusEveKit() {
+			return get(ESI_INDUSTRY_JOB_STATUS_CHARACTER, index).toString();
 		}
 
 //JournalExtraInfo
@@ -909,6 +923,7 @@ public class ConverterTestOptionsGetter {
 	}
 
 	private static class LocationFlag {
+		private String locationFlagEveKit;
 		private CharacterBlueprintsResponse.LocationFlagEnum locationFlagEsiBlueprintsCharacter;
 		private CorporationBlueprintsResponse.LocationFlagEnum locationFlagEsiBlueprintsCorporation;
 		private CharacterAssetsResponse.LocationFlagEnum locationFlagEsiAssetsCharacter;
@@ -924,7 +939,8 @@ public class ConverterTestOptionsGetter {
 			return locationFlagEsiBlueprintsCharacter == null
 					|| locationFlagEsiBlueprintsCorporation == null
 					|| locationFlagEsiAssetsCharacter == null
-					|| locationFlagEsiAssetsCorporation == null;
+					|| locationFlagEsiAssetsCorporation == null
+					|| locationFlagEveKit == null;
 		}
 
 		public ItemFlag getItemFlag() {
@@ -951,6 +967,10 @@ public class ConverterTestOptionsGetter {
 			return locationFlagEsiContainersLogsCorporation;
 		}
 
+		public String getLocationFlagEveKit() {
+			return locationFlagEveKit;
+		}
+
 		public void setLocationFlag(CharacterAssetsResponse.LocationFlagEnum locationFlagEsiAssetsCharacter) {
 			this.locationFlagEsiAssetsCharacter = locationFlagEsiAssetsCharacter;
 		}
@@ -969,6 +989,10 @@ public class ConverterTestOptionsGetter {
 
 		public void setLocationFlag(CorporationContainersLogsResponse.LocationFlagEnum locationFlagEsiContainersLogsCorporation) {
 			this.locationFlagEsiContainersLogsCorporation = locationFlagEsiContainersLogsCorporation;
+		}
+
+		public void setLocationFlag(String locationFlagEveKit) {
+			this.locationFlagEveKit = locationFlagEveKit;
 		}
 	}
 

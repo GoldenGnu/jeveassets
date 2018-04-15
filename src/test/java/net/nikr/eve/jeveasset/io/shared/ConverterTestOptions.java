@@ -113,6 +113,8 @@ public interface ConverterTestOptions {
 
 	public CorporationContainersLogsResponse.LocationFlagEnum getLocationFlagEsiContainersLogsCorporation();
 
+	public String getLocationFlagEveKit();
+
 	public int getLocationFlagEveApi();
 
 	//ContractAvailability
@@ -156,6 +158,8 @@ public interface ConverterTestOptions {
 	public CorporationIndustryJobsResponse.StatusEnum getIndustryJobStatusEsiCorporation();
 
 	public int getIndustryJobStatusEveApi();
+
+	public String getIndustryJobStatusEveKit();
 
 	//JournalExtraInfo
 	public RawJournalExtraInfo getJournalExtraInfoRaw();

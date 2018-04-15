@@ -52,7 +52,7 @@ public class EveKitTransactionsGetter extends AbstractEveKitGetter implements Ev
 	@Override
 	public List<WalletTransaction> get(ApiClient apiClient, String at, Long contid, Integer maxResults) throws ApiException {
 		return getCommonApi(apiClient).getWalletTransactions(owner.getAccessKey(), owner.getAccessCred(), at, contid, maxResults, false,
-				null, null, dateFilter(Settings.get().getEveKitTransactionsHistory()), null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+				null, null , dateFilter(Settings.get().getEveKitTransactionsHistory()), null, null, null, null, null, null, null, null);
 	}
 
 	@Override

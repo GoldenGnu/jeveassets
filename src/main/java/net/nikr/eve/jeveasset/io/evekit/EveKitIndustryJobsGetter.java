@@ -87,13 +87,13 @@ public class EveKitIndustryJobsGetter extends AbstractEveKitGetter implements Ev
 		switch (run) {
 			case ACTIVE_PAUSED_READY:
 				return getCommonApi(apiClient).getIndustryJobs(owner.getAccessKey(), owner.getAccessCred(), at, contid, maxResults, false,
-						null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, industryJobsFilter(), null, null, null, null, null, null, null);
+						null, null, null, null, null, null, null, null, null, null, null, null, null, null, industryJobsFilter(), null, null, null, null, null, null, null);
 			case MONTHS:
 				return getCommonApi(apiClient).getIndustryJobs(owner.getAccessKey(), owner.getAccessCred(), at, contid, maxResults, false,
-						null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, dateFilter(Settings.get().getEveKitIndustryJobsHistory()), null, null);
+						null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, dateFilter(Settings.get().getEveKitIndustryJobsHistory()), null, null);
 			default: //ALL
 				return getCommonApi(apiClient).getIndustryJobs(owner.getAccessKey(), owner.getAccessCred(), at, contid, maxResults, false,
-						null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+						null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
 		}
 	}
 

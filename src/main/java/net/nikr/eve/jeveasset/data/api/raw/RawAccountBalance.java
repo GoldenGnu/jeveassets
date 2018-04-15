@@ -20,7 +20,6 @@
  */
 package net.nikr.eve.jeveasset.data.api.raw;
 
-import net.nikr.eve.jeveasset.io.shared.RawConverter;
 import net.troja.eve.esi.model.CorporationWalletsResponse;
 
 public class RawAccountBalance {
@@ -70,13 +69,13 @@ public class RawAccountBalance {
 	}
 
 	/**
-	 * EveAPI
+	 * EveKit
 	 *
 	 * @param balance
 	 */
-	public RawAccountBalance(com.beimin.eveapi.model.shared.AccountBalance balance) {
+	public RawAccountBalance(enterprises.orbital.evekit.client.model.AccountBalance balance) {
 		this.balance = balance.getBalance();
-		this.accountKey = balance.getAccountKey();
+		this.accountKey = balance.getDivision() + 999;
 	}
 
 	/**
@@ -84,8 +83,8 @@ public class RawAccountBalance {
 	 *
 	 * @param balance
 	 */
-	public RawAccountBalance(enterprises.orbital.evekit.client.model.AccountBalance balance) {
-		this.balance = RawConverter.toDouble(balance.getBalance());
+	public RawAccountBalance(com.beimin.eveapi.model.shared.AccountBalance balance) {
+		this.balance = balance.getBalance();
 		this.accountKey = balance.getAccountKey();
 	}
 
