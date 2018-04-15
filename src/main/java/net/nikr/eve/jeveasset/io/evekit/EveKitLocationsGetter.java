@@ -47,15 +47,19 @@ public class EveKitLocationsGetter extends AbstractEveKitGetter implements EveKi
 		if (data == null) {
 			return;
 		}
-		for (Location location : data) {
-			Long itemID = location.getItemID();
-			String eveName = location.getItemName();
-			String typeName = itemMap.get(itemID);
-			if (!eveName.equals(typeName)) {
-				Settings.get().getEveNames().put(itemID, eveName);
-			} else {
-				Settings.get().getEveNames().remove(itemID);
+		try {
+			Settings.lock("Ship/Container Names");
+			for (Location location : data) {
+				Long itemID = location.getItemID();
+				String eveName = location.getItemName();
+				if (!eveName.isEmpty()) {
+					Settings.get().getEveNames().put(itemID, eveName);
+				} else {
+					Settings.get().getEveNames().remove(itemID);
+				}
 			}
+		} finally {
+			Settings.unlock("Ship/Container Names");
 		}
 	}
 

@@ -82,6 +82,7 @@ import net.nikr.eve.jeveasset.io.evekit.EveKitJournalGetter;
 import net.nikr.eve.jeveasset.io.evekit.EveKitLocationsGetter;
 import net.nikr.eve.jeveasset.io.evekit.EveKitMarketOrdersGetter;
 import net.nikr.eve.jeveasset.io.evekit.EveKitOwnerGetter;
+import net.nikr.eve.jeveasset.io.evekit.EveKitShipGetter;
 import net.nikr.eve.jeveasset.io.evekit.EveKitTransactionsGetter;
 import net.nikr.eve.jeveasset.io.online.CitadelGetter;
 import net.nikr.eve.jeveasset.io.shared.ThreadWoker;
@@ -829,6 +830,7 @@ public class UpdateDialog extends JDialogCentered {
 				//EveKit
 				for (EveKitOwner eveKitOwner : program.getProfileManager().getEveKitOwners()) {
 					updates.add(new EveKitLocationsGetter(this, eveKitOwner));
+					updates.add(new EveKitShipGetter(this, eveKitOwner));
 				}
 				//Esi
 				for (EsiOwner esiOwner : program.getProfileManager().getEsiOwners()) {

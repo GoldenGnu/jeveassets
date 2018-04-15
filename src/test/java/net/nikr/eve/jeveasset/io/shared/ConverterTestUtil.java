@@ -21,6 +21,7 @@
 package net.nikr.eve.jeveasset.io.shared;
 
 import com.beimin.eveapi.model.shared.KeyType;
+import enterprises.orbital.evekit.client.model.CharacterShip;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -402,6 +403,11 @@ public class ConverterTestUtil {
 			CorporationWalletsResponse response = (CorporationWalletsResponse) object;
 			response.setDivision(response.getDivision() - 999);
 		}
+		//EveKit
+		if (object instanceof enterprises.orbital.evekit.client.model.AccountBalance) {
+			enterprises.orbital.evekit.client.model.AccountBalance response = (enterprises.orbital.evekit.client.model.AccountBalance) object;
+			response.setDivision(response.getDivision() - 999);
+		}
 	//Assets
 		//EveAPI
 		if (object instanceof com.beimin.eveapi.model.shared.Asset) {
@@ -410,13 +416,35 @@ public class ConverterTestUtil {
 			asset.setLocationID(options.getLocationTypeEveApi());
 			asset.setFlag(options.getLocationFlagEveApi());
 		}
-		//EveKit
+		//EveKit Asset
 		if (object instanceof enterprises.orbital.evekit.client.model.Asset) {
 			enterprises.orbital.evekit.client.model.Asset asset = (enterprises.orbital.evekit.client.model.Asset) object;
 			asset.setItemID(asset.getItemID() + 1); //Workaround for itemID == locationID
 			asset.setLocationID(options.getLocationTypeEveApi());
-			asset.setFlag(options.getLocationFlagEveApi());
-			asset.setContainer(0L);
+			asset.setLocationFlag(options.getLocationFlagEveKit());
+		}
+		//EveKit Ship
+		if (object instanceof  enterprises.orbital.evekit.client.model.CharacterShip) {
+			enterprises.orbital.evekit.client.model.CharacterShip asset = (enterprises.orbital.evekit.client.model.CharacterShip) object;
+			asset.setShipItemID(asset.getShipItemID()+ 1); //Workaround for itemID == locationID
+		}
+		//EveKit Location
+		if (object instanceof enterprises.orbital.evekit.client.model.CharacterLocation) {
+			enterprises.orbital.evekit.client.model.CharacterLocation asset = (enterprises.orbital.evekit.client.model.CharacterLocation) object;
+			long locationID = options.getLocationTypeEveApi();
+			if (locationID >= 30000000 && locationID <= 32000000) { //System
+				asset.setSolarSystemID((int)locationID);
+				asset.setStationID(null);
+				asset.setStructureID(null);
+			} else if (locationID >= 60000000 && locationID <= 64000000) { //Station
+				asset.setSolarSystemID(null);
+				asset.setStationID((int)locationID);
+				asset.setStructureID(null);
+			} else { //Other
+				asset.setSolarSystemID(null);
+				asset.setStationID(null);
+				asset.setStructureID(locationID);
+			}
 		}
 		//ESI Character
 		if (object instanceof CharacterAssetsResponse) {
@@ -459,6 +487,11 @@ public class ConverterTestUtil {
 			asset.setItemID(asset.getItemID() + 1); //Workaround for itemID == locationID
 			asset.setLocationID(options.getLocationTypeEveApi());
 		}
+	//Blueprints
+		if (object instanceof enterprises.orbital.evekit.client.model.Blueprint) {
+			enterprises.orbital.evekit.client.model.Blueprint blueprint = (enterprises.orbital.evekit.client.model.Blueprint) object;
+			blueprint.setLocationFlag(options.getLocationFlagEveKit());
+		}
 	//Contracts
 		//EveKit
 		if (object instanceof enterprises.orbital.evekit.client.model.Contract) {
@@ -476,7 +509,7 @@ public class ConverterTestUtil {
 		//EveKit
 		if (object instanceof enterprises.orbital.evekit.client.model.IndustryJob) {
 			enterprises.orbital.evekit.client.model.IndustryJob industryJob = (enterprises.orbital.evekit.client.model.IndustryJob) object;
-			industryJob.setStatus(options.getIndustryJobStatusEveApi()); //Workaround: Set valid value for status (PENDING)
+			industryJob.setStatus(options.getIndustryJobStatusEveKit()); //Workaround: Set valid value for status (PENDING)
 		}
 	//Journal
 		//EveAPI
@@ -491,11 +524,24 @@ public class ConverterTestUtil {
 		//EveKit
 		if (object instanceof enterprises.orbital.evekit.client.model.WalletJournal) {
 			enterprises.orbital.evekit.client.model.WalletJournal journalEntry = (enterprises.orbital.evekit.client.model.WalletJournal) object;
-			journalEntry.setRefTypeID(options.getJournalRefTypeRaw().getID());
-			journalEntry.setOwner1TypeID(options.getJournalPartyTypeEveApi());
-			journalEntry.setOwner2TypeID(options.getJournalPartyTypeEveApi());
+			journalEntry.setRefType(options.getJournalRefTypeEsiCharacter().toString());
+			journalEntry.setFirstPartyType(options.getJournalPartyTypeEsiFirstCharacter().toString());
+			journalEntry.setSecondPartyType(options.getJournalPartyTypeEsiSecondCharacter().toString());
+			journalEntry.setDivision(journalEntry.getDivision() - 999);
 			journalEntry.setArgID1(options.getLong());
 			journalEntry.setArgName1(String.valueOf(options.getLong()));
+			journalEntry.setAllianceID(null);
+			journalEntry.setCharacterID(null);
+			journalEntry.setContractID(null);
+			journalEntry.setCorporationID(null);
+			journalEntry.setDestroyedShipTypeID(null);
+			journalEntry.setJobID(null);
+			journalEntry.setLocationID(null);
+			journalEntry.setNpcID(null);
+			journalEntry.setNpcName(null);
+			journalEntry.setPlanetID(null);
+			journalEntry.setSystemID(null);
+			journalEntry.setTransactionID(null);
 		}
 	//Market Orders
 		//EveAPI
@@ -507,8 +553,8 @@ public class ConverterTestUtil {
 		//EveKit
 		if (object instanceof enterprises.orbital.evekit.client.model.MarketOrder) {
 			enterprises.orbital.evekit.client.model.MarketOrder marketOrder = (enterprises.orbital.evekit.client.model.MarketOrder) object;
-			marketOrder.setOrderRange(options.getMarketOrderRangeEveApi());
-			marketOrder.setOrderState(options.getMarketOrderStateEveApi());
+			marketOrder.setOrderRange(options.getMarketOrderRangeEsiCharacter().toString());
+			marketOrder.setOrderState(options.getMarketOrderStateEsiCharacterHistory().toString());
 		}
 	//Transactions
 		//EveAPI
@@ -520,8 +566,7 @@ public class ConverterTestUtil {
 		//EveKit
 		if (object instanceof enterprises.orbital.evekit.client.model.WalletTransaction) {
 			enterprises.orbital.evekit.client.model.WalletTransaction transaction = (enterprises.orbital.evekit.client.model.WalletTransaction) object;
-			transaction.setTransactionType("buy");
-			transaction.setTransactionFor("personal");
+			transaction.setDivision(transaction.getDivision() - 999);
 		}
 	}
 

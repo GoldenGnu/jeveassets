@@ -66,7 +66,7 @@ public class EveKitBlueprintsGetter extends AbstractEveKitGetter implements EveK
 	@Override
 	public List<Blueprint> get(ApiClient apiClient, String at, Long contid, Integer maxResults) throws ApiException {
 		return getCommonApi(apiClient).getBlueprints(owner.getAccessKey(), owner.getAccessCred(), at, contid, maxResults, false,
-				null, null, null, null, null, null, null, null, null);
+				null, null, null, null, null, null, null, null);
 	}
 
 	@Override

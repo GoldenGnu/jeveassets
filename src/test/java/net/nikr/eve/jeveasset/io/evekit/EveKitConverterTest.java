@@ -23,6 +23,8 @@ package net.nikr.eve.jeveasset.io.evekit;
 import enterprises.orbital.evekit.client.model.AccountBalance;
 import enterprises.orbital.evekit.client.model.Asset;
 import enterprises.orbital.evekit.client.model.Blueprint;
+import enterprises.orbital.evekit.client.model.CharacterLocation;
+import enterprises.orbital.evekit.client.model.CharacterShip;
 import enterprises.orbital.evekit.client.model.Contract;
 import enterprises.orbital.evekit.client.model.ContractItem;
 import enterprises.orbital.evekit.client.model.IndustryJob;
@@ -82,7 +84,7 @@ public class EveKitConverterTest extends TestUtil {
 			assetsList.add(childAsset);
 			ConverterTestUtil.setValues(childAsset, options);
 			childAsset.setItemID(childAsset.getItemID() + 1);
-			childAsset.setContainer(rootAsset.getItemID());
+			childAsset.setLocationID(rootAsset.getItemID());
 
 			EveKitOwner owner = ConverterTestUtil.getEveKitOwner(options);
 			List<MyAsset> assets = EveKitConverter.toAssets(assetsList, owner);
@@ -98,6 +100,21 @@ public class EveKitConverterTest extends TestUtil {
 				assertEquals(assets.size(), 0);
 				assertTrue(DataConverter.ignoreAsset(new RawAsset(rootAsset), owner));
 			}
+		}
+	}
+
+	
+	@Test
+	public void testToAssetsShip() {
+		for (ConverterTestOptions options : ConverterTestOptionsGetter.getConverterOptions()) {
+			CharacterShip shipType = new CharacterShip();
+			ConverterTestUtil.setValues(shipType, options);
+			CharacterLocation shipLocation = new CharacterLocation();
+			ConverterTestUtil.setValues(shipLocation, options);
+			MyAsset asset = EveKitConverter.toAssetsShip(shipType, shipLocation, ConverterTestUtil.getEveKitOwner(options));
+			asset.setQuantity(options.getInteger()); //Always 1 -> set to 5 to pass test
+			asset.setItemFlag(options.getItemFlag()); //Always "None" -> set to option value to pass test
+			ConverterTestUtil.testValues(asset, options, null);
 		}
 	}
 

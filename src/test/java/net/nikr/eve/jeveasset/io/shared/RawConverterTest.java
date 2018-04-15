@@ -61,6 +61,10 @@ public class RawConverterTest extends TestUtil {
 	}
 
 	@Test
+	public void testToFlag_String() {
+	}
+
+	@Test
 	public void testToFlag_CharacterAssetsResponseLocationFlagEnum() {
 		for (net.troja.eve.esi.model.CharacterAssetsResponse.LocationFlagEnum locationFlagEnum : net.troja.eve.esi.model.CharacterAssetsResponse.LocationFlagEnum.values()) {
 			ItemFlag itemFlag = RawConverter.toFlag(locationFlagEnum);
@@ -256,7 +260,7 @@ public class RawConverterTest extends TestUtil {
 	}
 
 	@Test
-	public void testToIndustryJobStatus() {
+	public void testToIndustryJobStatus_int() {
 		Map<Integer, RawIndustryJob.IndustryJobStatus> map = new HashMap<Integer, RawIndustryJob.IndustryJobStatus>();
 		map.put(1, RawIndustryJob.IndustryJobStatus.ACTIVE);
 		map.put(2, RawIndustryJob.IndustryJobStatus.PAUSED);
@@ -266,6 +270,21 @@ public class RawConverterTest extends TestUtil {
 		map.put(103, RawIndustryJob.IndustryJobStatus.REVERTED);
 		assertEquals(map.size(), RawIndustryJob.IndustryJobStatus.values().length);
 		for (Map.Entry<Integer, RawIndustryJob.IndustryJobStatus> entry : map.entrySet()) {
+			assertEquals(entry.getValue(), RawConverter.toIndustryJobStatus(entry.getKey()));
+		}
+	}
+
+	@Test
+	public void testToIndustryJobStatus_String() {
+		Map<String, RawIndustryJob.IndustryJobStatus> map = new HashMap<String, RawIndustryJob.IndustryJobStatus>();
+		map.put("active", RawIndustryJob.IndustryJobStatus.ACTIVE);
+		map.put("paused", RawIndustryJob.IndustryJobStatus.PAUSED);
+		map.put("ready", RawIndustryJob.IndustryJobStatus.READY);
+		map.put("delivered", RawIndustryJob.IndustryJobStatus.DELIVERED);
+		map.put("cancelled", RawIndustryJob.IndustryJobStatus.CANCELLED);
+		map.put("reverted", RawIndustryJob.IndustryJobStatus.REVERTED);
+		assertEquals(map.size(), RawIndustryJob.IndustryJobStatus.values().length);
+		for (Map.Entry<String, RawIndustryJob.IndustryJobStatus> entry : map.entrySet()) {
 			assertEquals(entry.getValue(), RawConverter.toIndustryJobStatus(entry.getKey()));
 		}
 	}
@@ -289,6 +308,36 @@ public class RawConverterTest extends TestUtil {
 	public void testToJournalRefType_int() {
 		for (com.beimin.eveapi.model.shared.RefType refType : com.beimin.eveapi.model.shared.RefType.values()) {
 			RawJournalRefType type = RawConverter.toJournalRefType(refType.getId());
+			assertEquals(type.name(), refType.name());
+		}
+	}
+
+	@Test
+	public void testToJournalRefType_String() {
+		for (CharacterWalletJournalResponse.RefTypeEnum refType : CharacterWalletJournalResponse.RefTypeEnum.values()) {
+			RawJournalRefType type = RawConverter.toJournalRefType(refType.toString());
+			if (type == RawJournalRefType.KILL_RIGHT && refType == CharacterWalletJournalResponse.RefTypeEnum.KILL_RIGHT_FEE) {
+				continue;
+			}
+			if (type == RawJournalRefType.RESOURCE_WARS_SITE_COMPLETION && refType == CharacterWalletJournalResponse.RefTypeEnum.RESOURCE_WARS_REWARD) {
+				continue;
+			}
+			if (type == RawJournalRefType.REACTIONS && refType == CharacterWalletJournalResponse.RefTypeEnum.REACTION) {
+				continue;
+			}
+			assertEquals(type.name(), refType.name());
+		}
+		for (CorporationWalletJournalResponse.RefTypeEnum refType : CorporationWalletJournalResponse.RefTypeEnum.values()) {
+			RawJournalRefType type = RawConverter.toJournalRefType(refType.toString());
+			if (type == RawJournalRefType.KILL_RIGHT && refType == CorporationWalletJournalResponse.RefTypeEnum.KILL_RIGHT_FEE) {
+				continue;
+			}
+			if (type == RawJournalRefType.RESOURCE_WARS_SITE_COMPLETION && refType == CorporationWalletJournalResponse.RefTypeEnum.RESOURCE_WARS_REWARD) {
+				continue;
+			}
+			if (type == RawJournalRefType.REACTIONS && refType == CorporationWalletJournalResponse.RefTypeEnum.REACTION) {
+				continue;
+			}
 			assertEquals(type.name(), refType.name());
 		}
 	}
@@ -333,6 +382,20 @@ public class RawConverterTest extends TestUtil {
 		map.put(30000142, RawJournal.JournalPartyType.SYSTEM);
 		assertEquals(5, RawJournal.JournalPartyType.values().length);
 		for (Map.Entry<Integer, RawJournal.JournalPartyType> entry : map.entrySet()) {
+			assertEquals(entry.getValue(), RawConverter.toJournalPartyType(entry.getKey()));
+		}
+	}
+
+	@Test
+	public void testToJournalPartyType_String() {
+		Map<String, RawJournal.JournalPartyType> map = new HashMap<String, RawJournal.JournalPartyType>();
+		map.put("character", RawJournal.JournalPartyType.CHARACTER);
+		map.put("corporation", RawJournal.JournalPartyType.CORPORATION);
+		map.put("alliance", RawJournal.JournalPartyType.ALLIANCE);
+		map.put("faction", RawJournal.JournalPartyType.FACTION);
+		map.put("system", RawJournal.JournalPartyType.SYSTEM);
+		assertEquals(5, RawJournal.JournalPartyType.values().length);
+		for (Map.Entry<String, RawJournal.JournalPartyType> entry : map.entrySet()) {
 			assertEquals(entry.getValue(), RawConverter.toJournalPartyType(entry.getKey()));
 		}
 	}
@@ -408,7 +471,7 @@ public class RawConverterTest extends TestUtil {
 	}
 
 	@Test
-	public void testToMarketOrderRange() {
+	public void testToMarketOrderRange_int() {
 		Map<Integer, RawMarketOrder.MarketOrderRange> map = new HashMap<Integer, RawMarketOrder.MarketOrderRange>();
 		map.put(-1, RawMarketOrder.MarketOrderRange.STATION);
 		map.put(0, RawMarketOrder.MarketOrderRange.SOLARSYSTEM);
@@ -424,6 +487,27 @@ public class RawConverterTest extends TestUtil {
 		map.put(32767, RawMarketOrder.MarketOrderRange.REGION);
 		assertEquals(map.size(), RawMarketOrder.MarketOrderRange.values().length);
 		for (Map.Entry<Integer, RawMarketOrder.MarketOrderRange> entry : map.entrySet()) {
+			assertEquals(entry.getValue(), RawConverter.toMarketOrderRange(entry.getKey()));
+		}
+	}
+
+	@Test
+	public void testToMarketOrderRange_String() {
+		Map<String, RawMarketOrder.MarketOrderRange> map = new HashMap<String, RawMarketOrder.MarketOrderRange>();
+		map.put("station", RawMarketOrder.MarketOrderRange.STATION);
+		map.put("solarsystem", RawMarketOrder.MarketOrderRange.SOLARSYSTEM);
+		map.put("1", RawMarketOrder.MarketOrderRange._1);
+		map.put("2", RawMarketOrder.MarketOrderRange._2);
+		map.put("3", RawMarketOrder.MarketOrderRange._3);
+		map.put("4", RawMarketOrder.MarketOrderRange._4);
+		map.put("5", RawMarketOrder.MarketOrderRange._5);
+		map.put("10", RawMarketOrder.MarketOrderRange._10);
+		map.put("20", RawMarketOrder.MarketOrderRange._20);
+		map.put("30", RawMarketOrder.MarketOrderRange._30);
+		map.put("40", RawMarketOrder.MarketOrderRange._40);
+		map.put("region", RawMarketOrder.MarketOrderRange.REGION);
+		assertEquals(map.size(), RawMarketOrder.MarketOrderRange.values().length);
+		for (Map.Entry<String, RawMarketOrder.MarketOrderRange> entry : map.entrySet()) {
 			assertEquals(entry.getValue(), RawConverter.toMarketOrderRange(entry.getKey()));
 		}
 	}
@@ -476,7 +560,7 @@ public class RawConverterTest extends TestUtil {
 	}
 
 	@Test
-	public void testToMarketOrderState() {
+	public void testToMarketOrderState_int() {
 		Map<Integer, RawMarketOrder.MarketOrderState> map = new HashMap<Integer, RawMarketOrder.MarketOrderState>();
 		map.put(0, RawMarketOrder.MarketOrderState.OPEN);
 		map.put(1, RawMarketOrder.MarketOrderState.CLOSED);
@@ -487,6 +571,22 @@ public class RawConverterTest extends TestUtil {
 		map.put(-100, RawMarketOrder.MarketOrderState.UNKNOWN);
 		assertEquals(map.size(), RawMarketOrder.MarketOrderState.values().length);
 		for (Map.Entry<Integer, RawMarketOrder.MarketOrderState> entry : map.entrySet()) {
+			assertEquals(entry.getValue(), RawConverter.toMarketOrderState(entry.getKey()));
+		}
+	}
+
+	@Test
+	public void testToMarketOrderState_String() {
+		Map<String, RawMarketOrder.MarketOrderState> map = new HashMap<String, RawMarketOrder.MarketOrderState>();
+		map.put("open", RawMarketOrder.MarketOrderState.OPEN);
+		map.put("closed", RawMarketOrder.MarketOrderState.CLOSED);
+		map.put("expired", RawMarketOrder.MarketOrderState.EXPIRED);
+		map.put("cancelled", RawMarketOrder.MarketOrderState.CANCELLED);
+		map.put("pending", RawMarketOrder.MarketOrderState.PENDING);
+		map.put("character_deleted", RawMarketOrder.MarketOrderState.CHARACTER_DELETED);
+		map.put("Unknown", RawMarketOrder.MarketOrderState.UNKNOWN);
+		assertEquals(map.size(), RawMarketOrder.MarketOrderState.values().length);
+		for (Map.Entry<String, RawMarketOrder.MarketOrderState> entry : map.entrySet()) {
 			assertEquals(entry.getValue(), RawConverter.toMarketOrderState(entry.getKey()));
 		}
 	}
@@ -690,20 +790,7 @@ public class RawConverterTest extends TestUtil {
 	}
 
 	@Test
-	public void testToDouble_Number() {
-		float delta = 0;
-		assertEquals(RawConverter.toDouble(Long.MAX_VALUE), Long.MAX_VALUE, delta);
-		assertEquals(RawConverter.toDouble(Long.MIN_VALUE), Long.MIN_VALUE, delta);
-		assertEquals(RawConverter.toDouble(Integer.MAX_VALUE), Integer.MAX_VALUE, delta);
-		assertEquals(RawConverter.toDouble(Integer.MIN_VALUE), Integer.MIN_VALUE, delta);
-		assertEquals(RawConverter.toDouble(Double.MAX_VALUE), Double.MAX_VALUE, delta);
-		assertEquals(RawConverter.toDouble(Double.MIN_VALUE), Double.MIN_VALUE, delta);
-		assertEquals(RawConverter.toDouble(Float.MAX_VALUE), Float.MAX_VALUE, delta);
-		assertEquals(RawConverter.toDouble(Float.MIN_VALUE), Float.MIN_VALUE, delta);
-	}
-
-	@Test
-	public void testToDouble_Number_double() {
+	public void testToDouble() {
 		float delta = 0;
 		assertEquals(RawConverter.toDouble(Long.MAX_VALUE, 0), Long.MAX_VALUE, delta);
 		assertEquals(RawConverter.toDouble(Long.MIN_VALUE, 0), Long.MIN_VALUE, delta);

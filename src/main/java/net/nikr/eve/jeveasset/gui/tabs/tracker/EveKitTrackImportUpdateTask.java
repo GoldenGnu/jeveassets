@@ -43,6 +43,7 @@ import net.nikr.eve.jeveasset.io.evekit.EveKitContractItemsGetter;
 import net.nikr.eve.jeveasset.io.evekit.EveKitContractsGetter;
 import net.nikr.eve.jeveasset.io.evekit.EveKitIndustryJobsGetter;
 import net.nikr.eve.jeveasset.io.evekit.EveKitMarketOrdersGetter;
+import net.nikr.eve.jeveasset.io.evekit.EveKitShipGetter;
 import net.nikr.eve.jeveasset.io.online.CitadelGetter;
 import net.nikr.eve.jeveasset.io.shared.ThreadWoker;
 
@@ -138,8 +139,9 @@ public class EveKitTrackImportUpdateTask extends UpdateTask {
 			//Update from EveKit at date
 			long at = date.getTime();
 
+			//Create Tasks
 			List<AbstractEveKitGetter> updatersStep1 = new ArrayList<AbstractEveKitGetter>();
-
+			List<AbstractEveKitGetter> updatersStep2 = new ArrayList<AbstractEveKitGetter>();
 			for (EveKitOwner owner : clones) { //Step 2
 				updatersStep1.add(new EveKitAssetGetter(this, owner, at));
 				updatersStep1.add(new EveKitAccountBalanceGetter(this, owner, at));
@@ -147,18 +149,22 @@ public class EveKitTrackImportUpdateTask extends UpdateTask {
 				updatersStep1.add(new EveKitContractsGetter(this, owner, at));
 				updatersStep1.add(new EveKitIndustryJobsGetter(this, owner, at));
 				updatersStep1.add(new EveKitMarketOrdersGetter(this, owner, at));
+				updatersStep2.add(new EveKitContractItemsGetter(this, owner));
+				updatersStep2.add(new EveKitShipGetter(this, owner, at));
 			}
 
 			if (isCancelled()) { //No data return by the API OR Task is cancelled
 				break;
 			}
 
+			//Running Step 1 tasks
 			ThreadWoker.start(this, updatersStep1, 0, 70);
 
 			if (isCancelled()) { //No data return by the API OR Task is cancelled
 				break;
 			}
 
+			//Checking Step 1 for errors
 			for (AbstractEveKitGetter getter : updatersStep1) {
 				if (getter.hasError()) {
 					error = true;
@@ -173,26 +179,14 @@ public class EveKitTrackImportUpdateTask extends UpdateTask {
 				break;
 			}
 
-			List<AbstractEveKitGetter> updatersStep2 = new ArrayList<AbstractEveKitGetter>();
-
-			if (isCancelled()) { //No data return by the API OR Task is cancelled
-				break;
-			}
-
-			for (EveKitOwner owner : clones) { //Step 3
-				updatersStep2.add(new EveKitContractItemsGetter(this, owner));
-			}
-
-			if (isCancelled()) { //No data return by the API OR Task is cancelled
-				break;
-			}
-
-			if (isCancelled()) { //No data return by the API OR Task is cancelled
-				break;
-			}
-
-			setProgress(0);
+			//Running Step 2 tasks
 			ThreadWoker.start(this, updatersStep2, 70, 100);
+
+			if (isCancelled()) { //No data return by the API OR Task is cancelled
+				break;
+			}
+
+			//Checking Step 2 for errors
 			for (AbstractEveKitGetter getter : updatersStep2) {
 				if (getter.hasError()) {
 					error = true;

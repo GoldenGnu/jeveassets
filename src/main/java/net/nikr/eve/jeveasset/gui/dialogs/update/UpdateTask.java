@@ -133,7 +133,7 @@ public abstract class UpdateTask extends SwingWorker<Void, Void> {
 		return icon;
 	}
 
-	public void setIcon(Icon icon) {
+	public final void setIcon(Icon icon) {
 		this.icon = icon;
 	}
 

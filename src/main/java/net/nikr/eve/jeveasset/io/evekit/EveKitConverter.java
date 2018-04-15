@@ -25,6 +25,8 @@ import static net.nikr.eve.jeveasset.io.shared.DataConverter.convertRawAccountBa
 import enterprises.orbital.evekit.client.model.AccountBalance;
 import enterprises.orbital.evekit.client.model.Asset;
 import enterprises.orbital.evekit.client.model.Blueprint;
+import enterprises.orbital.evekit.client.model.CharacterLocation;
+import enterprises.orbital.evekit.client.model.CharacterShip;
 import enterprises.orbital.evekit.client.model.Contract;
 import enterprises.orbital.evekit.client.model.ContractItem;
 import enterprises.orbital.evekit.client.model.IndustryJob;
@@ -78,6 +80,10 @@ public final class EveKitConverter extends DataConverter {
 		return convertRawAssets(rawAssets, owner);
 	}
 
+	public static MyAsset toAssetsShip(CharacterShip shipType, CharacterLocation shipLocation, OwnerType owner) {
+		return toMyAsset(new RawAsset(shipType, shipLocation), owner, new ArrayList<MyAsset>());
+	}
+
 	public static Map<Long, RawBlueprint> toBlueprints(List<Blueprint> responses) {
 		Map<Long, RawBlueprint> blueprints = new HashMap<Long, RawBlueprint>();
 		for (Blueprint blueprint : responses) {
@@ -121,7 +127,7 @@ public final class EveKitConverter extends DataConverter {
 	public static Set<MyMarketOrder> toMarketOrders(List<MarketOrder> responses, OwnerType owner, boolean saveHistory) {
 		List<RawMarketOrder> rawMarketOrders = new ArrayList<RawMarketOrder>();
 		for (MarketOrder response : responses) {
-			rawMarketOrders.add(new RawMarketOrder(response, owner.isCorporation()));
+			rawMarketOrders.add(new RawMarketOrder(response));
 		}
 		return convertRawMarketOrders(rawMarketOrders, owner, saveHistory);
 	}

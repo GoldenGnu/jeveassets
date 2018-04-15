@@ -23,6 +23,7 @@ package net.nikr.eve.jeveasset.io.evekit;
 import enterprises.orbital.evekit.client.ApiClient;
 import enterprises.orbital.evekit.client.ApiException;
 import enterprises.orbital.evekit.client.api.AccessKeyApi;
+import enterprises.orbital.evekit.client.api.CharacterApi;
 import enterprises.orbital.evekit.client.api.CommonApi;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -137,6 +138,10 @@ public abstract class AbstractEveKitGetter extends AbstractGetter<EveKitOwner, A
 
 	protected final CommonApi getCommonApi(ApiClient apiClient) {
 		return new CommonApi(apiClient);
+	}
+
+	protected final CharacterApi getCharacterApi(ApiClient apiClient) {
+		return new CharacterApi(apiClient);
 	}
 
 	protected final AccessKeyApi getAccessKeyApi(ApiClient apiClient) {
