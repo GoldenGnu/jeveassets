@@ -45,6 +45,15 @@ public class RawIndustryJob {
 		public String toString() {
 			return String.valueOf(value);
 		}
+
+		public static IndustryJobStatus fromValue(String text) {
+            for (IndustryJobStatus b : IndustryJobStatus.values()) {
+                if (String.valueOf(b.value).equals(text)) {
+                    return b;
+                }
+            }
+            return null;
+        }
 	}
 
 	private Integer activityId = null;
@@ -180,14 +189,14 @@ public class RawIndustryJob {
 		blueprintId = industryJob.getBlueprintID();
 		blueprintLocationId = industryJob.getBlueprintLocationID();
 		blueprintTypeId = industryJob.getBlueprintTypeID();
-		completedCharacterId = RawConverter.toInteger(industryJob.getCompletedCharacterID());
+		completedCharacterId = industryJob.getCompletedCharacterID();
 		completedDate = RawConverter.toDate(industryJob.getCompletedDateDate());
-		cost = RawConverter.toDouble(industryJob.getCost());
+		cost = industryJob.getCost();
 		duration = industryJob.getTimeInSeconds();
 		endDate = RawConverter.toDate(industryJob.getEndDateDate());
 		facilityId = industryJob.getFacilityID();
-		installerId = RawConverter.toInteger(industryJob.getInstallerID());
-		jobId = RawConverter.toInteger(industryJob.getJobID());
+		installerId = industryJob.getInstallerID();
+		jobId = industryJob.getJobID();
 		licensedRuns = industryJob.getLicensedRuns();
 		outputLocationId = industryJob.getOutputLocationID();
 		pauseDate = RawConverter.toDate(industryJob.getPauseDateDate());

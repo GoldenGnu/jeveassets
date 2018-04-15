@@ -210,7 +210,7 @@ public class EveKitOwner extends AbstractOwner implements OwnerType {
 
 	@Override
 	public boolean isShip() {
-		return false; //Not supported by the EveKit, Yet?
+		return isAssetList() && isCharacter();
 	}
 
 	@Override

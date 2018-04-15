@@ -227,7 +227,7 @@ public final class Main {
 		Set<String> files = new HashSet<String>();
 		files.add("asm-5.0.4.jar");
 		files.add("dom4j-2.1.0.jar");
-		files.add("eveapi-7.0.3.jar");
+		files.add("eveapi-7.0.4-SNAPSHOT.jar");
 		files.add("glazedlists-1.11.0.jar");
 		files.add("graph-1.5.0.jar");
 		files.add("guava-r09.jar");
@@ -264,7 +264,7 @@ public final class Main {
 		files.add("javax.ws.rs-api-2.0.1.jar");
 		files.add("jersey-media-json-jackson-2.25.1.jar");
 		files.add("osgi-resource-locator-1.0.1.jar");
-		files.add("evekit-4.0.2.jar");
+		files.add("evekit-4.2.0.jar");
 		files.add("javax.annotation-api-1.2.jar");
 		files.add("hk2-api-2.5.0-b32.jar");
 		files.add("jersey-common-2.25.1.jar");

@@ -37,7 +37,6 @@ import net.nikr.eve.jeveasset.data.api.my.MyContractItem;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import net.nikr.eve.jeveasset.io.evekit.AbstractEveKitGetter.EveKitPagesHandler;
-import net.nikr.eve.jeveasset.io.shared.RawConverter;
 
 
 public class EveKitContractItemsGetter extends AbstractEveKitGetter implements EveKitPagesHandler<ContractItem> {
@@ -54,7 +53,7 @@ public class EveKitContractItemsGetter extends AbstractEveKitGetter implements E
 		if (data == null) {
 			return;
 		}
-		Map<Long, List<ContractItem>> map = new HashMap<Long, List<ContractItem>>();
+		Map<Integer, List<ContractItem>> map = new HashMap<Integer, List<ContractItem>>();
 		for (ContractItem contractItem : data) {
 			List<ContractItem> list = map.get(contractItem.getContractID());
 			if (list == null) {
@@ -63,11 +62,11 @@ public class EveKitContractItemsGetter extends AbstractEveKitGetter implements E
 			}
 			list.add(contractItem);
 		}
-		for (Map.Entry<Long, List<ContractItem>> entry : map.entrySet()) {
-			owner.setContracts(EveKitConverter.toContractItems(contracts.get(RawConverter.toInteger(entry.getKey())), entry.getValue(), owner));
+		for (Map.Entry<Integer, List<ContractItem>> entry : map.entrySet()) {
+			owner.setContracts(EveKitConverter.toContractItems(contracts.get(entry.getKey()), entry.getValue(), owner));
 		}
 	}
-	
+
 	@Override
 	public List<ContractItem> get(ApiClient apiClient, String at, Long contid, Integer maxResults) throws ApiException {
 		Set<Integer> ids = getIDs(owner);
@@ -102,8 +101,7 @@ public class EveKitContractItemsGetter extends AbstractEveKitGetter implements E
 	}
 
 	@Override
-	protected void setNextUpdate(Date date) {
-	} //Only relevent for the Contracts API (Not contract items)
+	protected void setNextUpdate(Date date) { } //Only relevent for the Contracts API (Not contract items)
 
 	@Override
 	public long getCID(ContractItem obj) {

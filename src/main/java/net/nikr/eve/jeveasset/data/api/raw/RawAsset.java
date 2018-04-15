@@ -20,6 +20,8 @@
  */
 package net.nikr.eve.jeveasset.data.api.raw;
 
+import enterprises.orbital.evekit.client.model.CharacterLocation;
+import enterprises.orbital.evekit.client.model.CharacterShip;
 import java.util.Objects;
 import net.nikr.eve.jeveasset.data.api.my.MyContractItem;
 import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob;
@@ -243,15 +245,37 @@ public class RawAsset {
 	public RawAsset(enterprises.orbital.evekit.client.model.Asset asset) {
 		isSingleton = asset.getSingleton();
 		itemId = asset.getItemID();
-		itemFlag = ApiIdConverter.getFlag(asset.getFlag());
-		if ((asset.getContainer() != null && asset.getContainer() > 0) || asset.getLocationID() <= 0) {
-			locationId = asset.getContainer();
-		} else {
-			locationId = asset.getLocationID();
-		}
+		itemFlag = RawConverter.toFlag(asset.getLocationFlag());
+		locationId = asset.getLocationID();
 		locationType = RawConverter.toAssetLocationType(asset.getLocationID());
-		quantity = RawConverter.toAssetQuantity(RawConverter.toInteger(asset.getQuantity()), RawConverter.toInteger(asset.getRawQuantity()));
+		if (asset.getQuantity() == null) {
+			quantity = 1;
+		} else {
+			quantity = asset.getQuantity();
+		}
 		typeId = asset.getTypeID();
+	}
+
+	/**
+	 * EveKit Ship
+	 *
+	 * @param shipType
+	 * @param shipLocation
+	 */
+	public RawAsset(CharacterShip shipType, CharacterLocation shipLocation) {
+		isSingleton = true; //Unpacked
+		itemId = shipType.getShipItemID();
+		itemFlag = ApiIdConverter.getFlag(0); //None
+		if (shipLocation.getStationID() != null) {
+			locationId = RawConverter.toLong(shipLocation.getStationID());
+		} else if (shipLocation.getStructureID() != null) {
+			locationId = shipLocation.getStructureID();
+		} else {
+			locationId = RawConverter.toLong(shipLocation.getSolarSystemID());
+		}
+		locationType = RawConverter.toAssetLocationType(locationId);
+		quantity = 1; //Unpacked AKA always 1
+		typeId = shipType.getShipTypeID();
 	}
 
 	/**

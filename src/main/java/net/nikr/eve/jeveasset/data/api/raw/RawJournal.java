@@ -44,6 +44,15 @@ public class RawJournal {
 		public String toString() {
 			return String.valueOf(value);
 		}
+
+		public static JournalPartyType fromValue(String text) {
+            for (JournalPartyType b : JournalPartyType.values()) {
+                if (String.valueOf(b.value).equals(text)) {
+                    return b;
+                }
+            }
+            return null;
+        }
 	}
 
 	public enum ArgName {
@@ -168,21 +177,21 @@ public class RawJournal {
 	 * @param journal
 	 */
 	public RawJournal(enterprises.orbital.evekit.client.model.WalletJournal journal) {
-		amount = RawConverter.toDouble(journal.getAmount());
-		balance = RawConverter.toDouble(journal.getBalance());
+		amount = journal.getAmount();
+		balance = journal.getBalance();
 		date = RawConverter.toDate(journal.getDateDate());
-		firstPartyId = RawConverter.toInteger(journal.getOwnerID1());
-		firstPartyType = RawConverter.toJournalPartyType(journal.getOwner1TypeID());
+		firstPartyId = journal.getFirstPartyID();
+		firstPartyType = RawConverter.toJournalPartyType(journal.getFirstPartyType());
 		reason = journal.getReason();
 		refId = journal.getRefID();
-		refType = RawConverter.toJournalRefType(journal.getRefTypeID());
-		secondPartyId = RawConverter.toInteger(journal.getOwnerID1());
-		secondPartyType = RawConverter.toJournalPartyType(journal.getOwner2TypeID());
-		tax = RawConverter.toDouble(journal.getTaxAmount());
-		taxReceiverId = RawConverter.toInteger(journal.getTaxReceiverID());
+		refType = RawConverter.toJournalRefType(journal.getRefType());
+		secondPartyId = journal.getSecondPartyID();
+		secondPartyType = RawConverter.toJournalPartyType(journal.getSecondPartyType());
+		tax = journal.getTaxAmount();
+		taxReceiverId = journal.getTaxReceiverID();
 		//Must be set after refType
 		extraInfo = new RawJournalExtraInfo(journal, refType);
-		this.accountKey = journal.getAccountKey();
+		this.accountKey = journal.getDivision() + 999;
 	}
 
 	/**

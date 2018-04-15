@@ -54,6 +54,15 @@ public class RawMarketOrder {
 		public String toString() {
 			return String.valueOf(value);
 		}
+
+		public static MarketOrderRange fromValue(String text) {
+            for (MarketOrderRange b : MarketOrderRange.values()) {
+                if (String.valueOf(b.value).equals(text)) {
+                    return b;
+                }
+            }
+            return null;
+        }
 	}
 
 	public enum MarketOrderState {
@@ -76,6 +85,14 @@ public class RawMarketOrder {
 			return String.valueOf(value);
 		}
 
+		public static MarketOrderState fromValue(String text) {
+            for (MarketOrderState b : MarketOrderState.values()) {
+                if (String.valueOf(b.value).equals(text)) {
+                    return b;
+                }
+            }
+            return null;
+        }
 	}
 
 	private Integer walletDivision = null;
@@ -229,21 +246,20 @@ public class RawMarketOrder {
 	 * EveKit
 	 *
 	 * @param marketOrder
-	 * @param isCorp
 	 */
-	public RawMarketOrder(enterprises.orbital.evekit.client.model.MarketOrder marketOrder, boolean isCorp) {
-		walletDivision = marketOrder.getAccountKey();
+	public RawMarketOrder(enterprises.orbital.evekit.client.model.MarketOrder marketOrder) {
+		walletDivision = marketOrder.getWalletDivision() + 999;
 		duration = marketOrder.getDuration();
 		escrow = RawConverter.toDouble(marketOrder.getEscrow(), 0);
 		isBuyOrder = marketOrder.getBid();
-		this.isCorp = isCorp;
+		isCorp = marketOrder.getCorp();
 		issued = RawConverter.toDate(marketOrder.getIssuedDate());
-		locationId = marketOrder.getStationID();
-		minVolume = marketOrder.getMinVolume();
+		locationId = marketOrder.getLocationID();
+		minVolume = RawConverter.toInteger(marketOrder.getMinVolume(), 0);
 		orderId = marketOrder.getOrderID();
-		price = RawConverter.toDouble(marketOrder.getPrice());
+		price = marketOrder.getPrice();
 		range = RawConverter.toMarketOrderRange(marketOrder.getOrderRange());
-		regionId = (int) ApiIdConverter.getLocation(marketOrder.getStationID()).getRegionID();
+		regionId = marketOrder.getRegionID();
 		state = RawConverter.toMarketOrderState(marketOrder.getOrderState());
 		typeId = marketOrder.getTypeID();
 		volumeRemain = marketOrder.getVolRemaining();
