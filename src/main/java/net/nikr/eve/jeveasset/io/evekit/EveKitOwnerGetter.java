@@ -52,6 +52,9 @@ public class EveKitOwnerGetter extends AbstractEveKitGetter implements AccountAd
 			wrongEntry = true;
 			return;
 		}
+		if (!keyInfo.getTokenValid()) {
+			addError(null, "EVEKIT ESI TOKEN INVALID", "EveKit's ESI token is invalid\r\n(Fix: Update your SSO auth on the EveKit website)");
+		}
 		owner.setOwnerID(keyInfo.getEntityID());
 		owner.setOwnerName(keyInfo.getEntityName());
 		owner.setCorporation(keyInfo.getKeyType().equals("corporation"));
