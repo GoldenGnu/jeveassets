@@ -912,6 +912,10 @@ public class ProfileData {
 
 	private void addAssets(final List<MyAsset> assets, List<MyAsset> addTo, Map<Long, RawBlueprint> blueprints) {
 		for (MyAsset asset : assets) {
+			//XXX Ignore 9e18 locations: https://github.com/ccpgames/esi-issues/issues/684
+			if (asset.getLocationID() > 9000000000000000000L) {
+				continue;
+			}
 			//Blueprint
 			RawBlueprint blueprint = blueprints.get(asset.getItemID());
 			asset.setBlueprint(blueprint);
