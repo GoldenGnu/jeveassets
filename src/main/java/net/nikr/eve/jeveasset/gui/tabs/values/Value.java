@@ -328,19 +328,27 @@ public class Value implements Comparable<Value> {
 	public static void update() {
 		for (List<Value> values : Settings.get().getTrackerData().values()) {
 			for (Value value : values) {
+				//Save old values
 				Map<AssetValue, Double> update = new HashMap<>();
 				for (Map.Entry<AssetValue, Double> entry : value.getAssetsFilter().entrySet()) {
 					if (entry.getKey().update()) {
 						update.put(entry.getKey(), entry.getValue());
 					}
 				}
+				//Update
 				Settings.lock("Tracker Data (Updating Locations)");
 				for (Map.Entry<AssetValue, Double> entry : update.entrySet()) {
-					value.getAssetsFilter().remove(entry.getKey());
-					AssetValue assetValue = new AssetValue(entry.getKey());
-					value.getAssetsFilter().put(assetValue, entry.getValue());
-					Boolean remove = Settings.get().getTrackerFilters().remove(entry.getKey().getID());
-					Settings.get().getTrackerFilters().put(assetValue.getID(), remove);
+					value.getAssetsFilter().remove(entry.getKey()); //Remove old key
+					AssetValue assetValue = new AssetValue(entry.getKey()); //Create new key
+					Double existing = value.getAssetsFilter().get(assetValue); //Get existing value
+					if (existing != null) { //Add value to existing
+						value.getAssetsFilter().put(assetValue, entry.getValue() + existing); //Add value
+					} else { //Set value with new key
+						value.getAssetsFilter().put(assetValue, entry.getValue()); //Set value
+						//Update filters (Only do this if the value does not already exist)
+						Boolean remove = Settings.get().getTrackerFilters().remove(entry.getKey().getID());
+						Settings.get().getTrackerFilters().put(assetValue.getID(), remove);
+					}
 				}
 				Settings.unlock("Tracker Data (Updating Locations)");
 			}
