@@ -44,7 +44,7 @@ public class EsiConquerableStationsGetter extends AbstractEsiGetter {
 
 	@Override
 	protected void get(ApiClient apiClient) throws ApiException {
-		List<SovereigntyStructuresResponse> structures = getSovereigntyApiOpen(apiClient).getSovereigntyStructures(DATASOURCE, USER_AGENT, null);
+		List<SovereigntyStructuresResponse> structures = getSovereigntyApiOpen(apiClient).getSovereigntyStructures(DATASOURCE, null, USER_AGENT, null);
 		Map<Integer, SovereigntyStructuresResponse> map = new HashMap<Integer, SovereigntyStructuresResponse>();
 		for (SovereigntyStructuresResponse structure : structures) {
 			try {

@@ -30,8 +30,7 @@ import net.nikr.eve.jeveasset.data.api.raw.RawAsset;
 import net.nikr.eve.jeveasset.data.api.raw.RawBlueprint;
 import net.nikr.eve.jeveasset.data.api.raw.RawContract;
 import net.nikr.eve.jeveasset.data.api.raw.RawIndustryJob;
-import net.nikr.eve.jeveasset.data.api.raw.RawJournal;
-import net.nikr.eve.jeveasset.data.api.raw.RawJournalExtraInfo;
+import net.nikr.eve.jeveasset.data.api.raw.RawJournal.ContextType;
 import net.nikr.eve.jeveasset.data.api.raw.RawJournalRefType;
 import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder;
 import net.nikr.eve.jeveasset.data.sde.ItemFlag;
@@ -48,7 +47,6 @@ import net.troja.eve.esi.model.CharacterContractsResponse;
 import net.troja.eve.esi.model.CharacterIndustryJobsResponse;
 import net.troja.eve.esi.model.CharacterOrdersHistoryResponse;
 import net.troja.eve.esi.model.CharacterOrdersResponse;
-import net.troja.eve.esi.model.CharacterWalletJournalExtraInfoResponse;
 import net.troja.eve.esi.model.CharacterWalletJournalResponse;
 import net.troja.eve.esi.model.CorporationAssetsResponse;
 import net.troja.eve.esi.model.CorporationBlueprintsResponse;
@@ -56,7 +54,6 @@ import net.troja.eve.esi.model.CorporationContractsResponse;
 import net.troja.eve.esi.model.CorporationIndustryJobsResponse;
 import net.troja.eve.esi.model.CorporationOrdersHistoryResponse;
 import net.troja.eve.esi.model.CorporationOrdersResponse;
-import net.troja.eve.esi.model.CorporationWalletJournalExtraInfoResponse;
 import net.troja.eve.esi.model.CorporationWalletJournalResponse;
 
 public interface ConverterTestOptions {
@@ -157,25 +154,12 @@ public interface ConverterTestOptions {
 
 	public String getIndustryJobStatusEveKit();
 
-	//JournalExtraInfo
-	public RawJournalExtraInfo getJournalExtraInfoRaw();
+	//JournalContextType
+	public ContextType getJournalContextTypeRaw();
 
-	public CharacterWalletJournalExtraInfoResponse getJournalExtraInfoEsiCharacter();
+	public CharacterWalletJournalResponse.ContextIdTypeEnum getJournalContextTypeEsiCharacter();
 	
-	public CorporationWalletJournalExtraInfoResponse getJournalExtraInfoEsiCorporation();
-
-	//JournalPartyType
-	public RawJournal.JournalPartyType getJournalPartyTypeRaw();
-
-	public CharacterWalletJournalResponse.FirstPartyTypeEnum getJournalPartyTypeEsiFirstCharacter();
-
-	public CharacterWalletJournalResponse.SecondPartyTypeEnum getJournalPartyTypeEsiSecondCharacter();
-
-	public CorporationWalletJournalResponse.FirstPartyTypeEnum getJournalPartyTypeEsiFirstCorporation();
-
-	public CorporationWalletJournalResponse.SecondPartyTypeEnum getJournalPartyTypeEsiSecondCorporation();
-
-	public int getJournalPartyTypeEveApi();
+	public CorporationWalletJournalResponse.ContextIdTypeEnum getJournalContextTypeEsiCorporation();
 
 	//JournalRefType
 	public RawJournalRefType getJournalRefTypeRaw();

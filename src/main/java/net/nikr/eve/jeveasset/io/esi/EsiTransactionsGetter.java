@@ -56,7 +56,7 @@ public class EsiTransactionsGetter extends AbstractEsiGetter {
 				List<CorporationWalletTransactionsResponse> responses = updateIDs(existing, DEFAULT_RETRIES, new IDsHandler<CorporationWalletTransactionsResponse>() {
 					@Override
 					public List<CorporationWalletTransactionsResponse> get(ApiClient apiClient, Long fromID) throws ApiException {
-						return getWalletApiAuth(apiClient).getCorporationsCorporationIdWalletsDivisionTransactions((int) owner.getOwnerID(), division, DATASOURCE, fromID, null, USER_AGENT, null);
+						return getWalletApiAuth(apiClient).getCorporationsCorporationIdWalletsDivisionTransactions((int) owner.getOwnerID(), division, DATASOURCE, fromID, null, null, USER_AGENT, null);
 					}
 
 					@Override
@@ -71,7 +71,7 @@ public class EsiTransactionsGetter extends AbstractEsiGetter {
 			List<CharacterWalletTransactionsResponse> responses = updateIDs(existing, DEFAULT_RETRIES, new IDsHandler<CharacterWalletTransactionsResponse>() {
 				@Override
 				public List<CharacterWalletTransactionsResponse> get(ApiClient apiClient, Long fromID) throws ApiException {
-					return getWalletApiAuth(apiClient).getCharactersCharacterIdWalletTransactions((int) owner.getOwnerID(), DATASOURCE, fromID, null, USER_AGENT, null);
+					return getWalletApiAuth(apiClient).getCharactersCharacterIdWalletTransactions((int) owner.getOwnerID(), DATASOURCE, fromID, null, null, USER_AGENT, null);
 				}
 
 				@Override

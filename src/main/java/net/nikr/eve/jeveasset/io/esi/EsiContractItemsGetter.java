@@ -78,7 +78,7 @@ public class EsiContractItemsGetter extends AbstractEsiGetter {
 				Map<MyContract, List<CorporationContractsItemsResponse>> responses = updateList(list, DEFAULT_RETRIES, new ListHandler<MyContract, List<CorporationContractsItemsResponse>>() {
 					@Override
 					public List<CorporationContractsItemsResponse> get(ApiClient apiClient, MyContract t) throws ApiException {
-						return getContractsApiAuth(apiClient).getCorporationsCorporationIdContractsContractIdItems(t.getContractID(), (int) owner.getOwnerID(), DATASOURCE, null, USER_AGENT, null);
+						return getContractsApiAuth(apiClient).getCorporationsCorporationIdContractsContractIdItems(t.getContractID(), (int) owner.getOwnerID(), DATASOURCE, null, null, USER_AGENT, null);
 					}
 				});
 				responseList.putAll(responses);
@@ -92,7 +92,7 @@ public class EsiContractItemsGetter extends AbstractEsiGetter {
 			Map<MyContract, List<CharacterContractsItemsResponse>> responses = updateList(contracts.get(owner.getOwnerID()), DEFAULT_RETRIES, new ListHandler<MyContract, List<CharacterContractsItemsResponse>>() {
 				@Override
 				public List<CharacterContractsItemsResponse> get(ApiClient apiClient, MyContract t) throws ApiException {
-					List<CharacterContractsItemsResponse> response = getContractsApiAuth(apiClient).getCharactersCharacterIdContractsContractIdItems((int) owner.getOwnerID(), t.getContractID(), DATASOURCE, null, USER_AGENT, null);
+					List<CharacterContractsItemsResponse> response = getContractsApiAuth(apiClient).getCharactersCharacterIdContractsContractIdItems((int) owner.getOwnerID(), t.getContractID(), DATASOURCE, null, null, USER_AGENT, null);
 					PROGRESS.getAndAdd(1);
 					setProgress(SIZE.get(), PROGRESS.get(), 0, 100);
 					return response;

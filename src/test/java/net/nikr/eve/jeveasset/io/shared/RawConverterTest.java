@@ -22,7 +22,9 @@ package net.nikr.eve.jeveasset.io.shared;
 
 import com.beimin.eveapi.exception.ApiException;
 import com.beimin.eveapi.model.eve.RefType;
+import com.beimin.eveapi.model.shared.JournalEntry;
 import com.beimin.eveapi.response.eve.RefTypesResponse;
+import enterprises.orbital.evekit.client.model.WalletJournal;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.Date;
@@ -35,8 +37,7 @@ import net.nikr.eve.jeveasset.TestUtil;
 import net.nikr.eve.jeveasset.data.api.raw.RawAsset;
 import net.nikr.eve.jeveasset.data.api.raw.RawContract;
 import net.nikr.eve.jeveasset.data.api.raw.RawIndustryJob;
-import net.nikr.eve.jeveasset.data.api.raw.RawJournal;
-import net.nikr.eve.jeveasset.data.api.raw.RawJournalExtraInfo;
+import net.nikr.eve.jeveasset.data.api.raw.RawJournal.ContextType;
 import net.nikr.eve.jeveasset.data.api.raw.RawJournalRefType;
 import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder;
 import net.nikr.eve.jeveasset.data.sde.ItemFlag;
@@ -371,102 +372,177 @@ public class RawConverterTest extends TestUtil {
 	}
 
 	@Test
-	public void testToJournalPartyType_Integer() {
-		Map<Integer, RawJournal.JournalPartyType> map = new HashMap<Integer, RawJournal.JournalPartyType>();
-		map.put(2, RawJournal.JournalPartyType.CORPORATION);
-		for (int i = 1373; i <= 1386; i++) {
-			map.put(i, RawJournal.JournalPartyType.CHARACTER);
-		}
-		map.put(16159, RawJournal.JournalPartyType.ALLIANCE);
-		map.put(500001, RawJournal.JournalPartyType.FACTION);
-		map.put(30000142, RawJournal.JournalPartyType.SYSTEM);
-		assertEquals(5, RawJournal.JournalPartyType.values().length);
-		for (Map.Entry<Integer, RawJournal.JournalPartyType> entry : map.entrySet()) {
-			assertEquals(entry.getValue(), RawConverter.toJournalPartyType(entry.getKey()));
-		}
-	}
-
-	@Test
-	public void testToJournalPartyType_String() {
-		Map<String, RawJournal.JournalPartyType> map = new HashMap<String, RawJournal.JournalPartyType>();
-		map.put("character", RawJournal.JournalPartyType.CHARACTER);
-		map.put("corporation", RawJournal.JournalPartyType.CORPORATION);
-		map.put("alliance", RawJournal.JournalPartyType.ALLIANCE);
-		map.put("faction", RawJournal.JournalPartyType.FACTION);
-		map.put("system", RawJournal.JournalPartyType.SYSTEM);
-		assertEquals(5, RawJournal.JournalPartyType.values().length);
-		for (Map.Entry<String, RawJournal.JournalPartyType> entry : map.entrySet()) {
-			assertEquals(entry.getValue(), RawConverter.toJournalPartyType(entry.getKey()));
+	public void testToJournalContextType_CharacterWalletJournalResponseContextIdTypeEnum() {
+		Map<CharacterWalletJournalResponse.ContextIdTypeEnum, ContextType> map = new EnumMap<>(CharacterWalletJournalResponse.ContextIdTypeEnum.class);
+		map.put(CharacterWalletJournalResponse.ContextIdTypeEnum.ALLIANCE_ID, ContextType.ALLIANCE_ID);
+		map.put(CharacterWalletJournalResponse.ContextIdTypeEnum.CHARACTER_ID, ContextType.CHARACTER_ID);
+		map.put(CharacterWalletJournalResponse.ContextIdTypeEnum.CONTRACT_ID, ContextType.CONTRACT_ID);
+		map.put(CharacterWalletJournalResponse.ContextIdTypeEnum.CORPORATION_ID, ContextType.CORPORATION_ID);
+		map.put(CharacterWalletJournalResponse.ContextIdTypeEnum.EVE_SYSTEM, ContextType.EVE_SYSTEM);
+		map.put(CharacterWalletJournalResponse.ContextIdTypeEnum.INDUSTRY_JOB_ID, ContextType.INDUSTRY_JOB_ID);
+		map.put(CharacterWalletJournalResponse.ContextIdTypeEnum.MARKET_TRANSACTION_ID, ContextType.MARKET_TRANSACTION_ID);
+		map.put(CharacterWalletJournalResponse.ContextIdTypeEnum.PLANET_ID, ContextType.PLANET_ID);
+		map.put(CharacterWalletJournalResponse.ContextIdTypeEnum.STATION_ID, ContextType.STATION_ID);
+		map.put(CharacterWalletJournalResponse.ContextIdTypeEnum.STRUCTURE_ID, ContextType.STRUCTURE_ID);
+		map.put(CharacterWalletJournalResponse.ContextIdTypeEnum.SYSTEM_ID, ContextType.SYSTEM_ID);
+		map.put(CharacterWalletJournalResponse.ContextIdTypeEnum.TYPE_ID, ContextType.TYPE_ID);
+		assertEquals(map.size(), CharacterWalletJournalResponse.ContextIdTypeEnum.values().length);
+		for (Map.Entry<CharacterWalletJournalResponse.ContextIdTypeEnum, ContextType> entry : map.entrySet()) {
+			assertEquals(entry.getValue(), RawConverter.toJournalContextType(entry.getKey()));
 		}
 	}
 
 	@Test
-	public void testToJournalPartyType_CharacterWalletJournalResponseFirstPartyTypeEnum() {
-		Map<CharacterWalletJournalResponse.FirstPartyTypeEnum, RawJournal.JournalPartyType> map = new EnumMap<CharacterWalletJournalResponse.FirstPartyTypeEnum, RawJournal.JournalPartyType>(CharacterWalletJournalResponse.FirstPartyTypeEnum.class);
-		map.put(CharacterWalletJournalResponse.FirstPartyTypeEnum.ALLIANCE, RawJournal.JournalPartyType.ALLIANCE);
-		map.put(CharacterWalletJournalResponse.FirstPartyTypeEnum.CHARACTER, RawJournal.JournalPartyType.CHARACTER);
-		map.put(CharacterWalletJournalResponse.FirstPartyTypeEnum.CORPORATION, RawJournal.JournalPartyType.CORPORATION);
-		map.put(CharacterWalletJournalResponse.FirstPartyTypeEnum.FACTION, RawJournal.JournalPartyType.FACTION);
-		map.put(CharacterWalletJournalResponse.FirstPartyTypeEnum.SYSTEM, RawJournal.JournalPartyType.SYSTEM);
-		assertEquals(map.size(), CharacterWalletJournalResponse.FirstPartyTypeEnum.values().length);
-		for (Map.Entry<CharacterWalletJournalResponse.FirstPartyTypeEnum, RawJournal.JournalPartyType> entry : map.entrySet()) {
-			assertEquals(entry.getValue(), RawConverter.toJournalPartyType(entry.getKey()));
+	public void testToJournalContextType_CorporationWalletJournalResponseContextIdTypeEnum() {
+		Map<CorporationWalletJournalResponse.ContextIdTypeEnum, ContextType> map = new EnumMap<>(CorporationWalletJournalResponse.ContextIdTypeEnum.class);
+		map.put(CorporationWalletJournalResponse.ContextIdTypeEnum.ALLIANCE_ID, ContextType.ALLIANCE_ID);
+		map.put(CorporationWalletJournalResponse.ContextIdTypeEnum.CHARACTER_ID, ContextType.CHARACTER_ID);
+		map.put(CorporationWalletJournalResponse.ContextIdTypeEnum.CONTRACT_ID, ContextType.CONTRACT_ID);
+		map.put(CorporationWalletJournalResponse.ContextIdTypeEnum.CORPORATION_ID, ContextType.CORPORATION_ID);
+		map.put(CorporationWalletJournalResponse.ContextIdTypeEnum.EVE_SYSTEM, ContextType.EVE_SYSTEM);
+		map.put(CorporationWalletJournalResponse.ContextIdTypeEnum.INDUSTRY_JOB_ID, ContextType.INDUSTRY_JOB_ID);
+		map.put(CorporationWalletJournalResponse.ContextIdTypeEnum.MARKET_TRANSACTION_ID, ContextType.MARKET_TRANSACTION_ID);
+		map.put(CorporationWalletJournalResponse.ContextIdTypeEnum.PLANET_ID, ContextType.PLANET_ID);
+		map.put(CorporationWalletJournalResponse.ContextIdTypeEnum.STATION_ID, ContextType.STATION_ID);
+		map.put(CorporationWalletJournalResponse.ContextIdTypeEnum.STRUCTURE_ID, ContextType.STRUCTURE_ID);
+		map.put(CorporationWalletJournalResponse.ContextIdTypeEnum.SYSTEM_ID, ContextType.SYSTEM_ID);
+		map.put(CorporationWalletJournalResponse.ContextIdTypeEnum.TYPE_ID, ContextType.TYPE_ID);
+		assertEquals(map.size(), CorporationWalletJournalResponse.ContextIdTypeEnum.values().length);
+		for (Map.Entry<CorporationWalletJournalResponse.ContextIdTypeEnum, ContextType> entry : map.entrySet()) {
+			assertEquals(entry.getValue(), RawConverter.toJournalContextType(entry.getKey()));
 		}
 	}
 
 	@Test
-	public void testToJournalPartyType_CharacterWalletJournalResponseSecondPartyTypeEnum() {
-		Map<CharacterWalletJournalResponse.SecondPartyTypeEnum, RawJournal.JournalPartyType> map = new EnumMap<CharacterWalletJournalResponse.SecondPartyTypeEnum, RawJournal.JournalPartyType>(CharacterWalletJournalResponse.SecondPartyTypeEnum.class);
-		map.put(CharacterWalletJournalResponse.SecondPartyTypeEnum.ALLIANCE, RawJournal.JournalPartyType.ALLIANCE);
-		map.put(CharacterWalletJournalResponse.SecondPartyTypeEnum.CHARACTER, RawJournal.JournalPartyType.CHARACTER);
-		map.put(CharacterWalletJournalResponse.SecondPartyTypeEnum.CORPORATION, RawJournal.JournalPartyType.CORPORATION);
-		map.put(CharacterWalletJournalResponse.SecondPartyTypeEnum.FACTION, RawJournal.JournalPartyType.FACTION);
-		map.put(CharacterWalletJournalResponse.SecondPartyTypeEnum.SYSTEM, RawJournal.JournalPartyType.SYSTEM);
-		assertEquals(map.size(), CharacterWalletJournalResponse.SecondPartyTypeEnum.values().length);
-		for (Map.Entry<CharacterWalletJournalResponse.SecondPartyTypeEnum, RawJournal.JournalPartyType> entry : map.entrySet()) {
-			assertEquals(entry.getValue(), RawConverter.toJournalPartyType(entry.getKey()));
+	public void testToJournalContextType_String() {
+		Map<String, ContextType> map = new HashMap<>();
+		map.put("ALLIANCE_ID", ContextType.ALLIANCE_ID);
+		map.put("CHARACTER_ID", ContextType.CHARACTER_ID);
+		map.put("CONTRACT_ID", ContextType.CONTRACT_ID);
+		map.put("CORPORATION_ID", ContextType.CORPORATION_ID);
+		map.put("EVE_SYSTEM", ContextType.EVE_SYSTEM);
+		map.put("INDUSTRY_JOB_ID", ContextType.INDUSTRY_JOB_ID);
+		map.put("MARKET_TRANSACTION_ID", ContextType.MARKET_TRANSACTION_ID);
+		map.put("PLANET_ID", ContextType.PLANET_ID);
+		map.put("STATION_ID", ContextType.STATION_ID);
+		map.put("STRUCTURE_ID", ContextType.STRUCTURE_ID);
+		map.put("SYSTEM_ID", ContextType.SYSTEM_ID);
+		map.put("TYPE_ID", ContextType.TYPE_ID);
+		assertEquals(map.size(), ContextType.values().length);
+		for (Map.Entry<String, ContextType> entry : map.entrySet()) {
+			assertEquals(entry.getValue(), RawConverter.toJournalContextType(entry.getKey()));
 		}
 	}
 
 	@Test
-	public void testToJournalPartyType_CorporationWalletJournalResponseFirstPartyTypeEnum() {
-		Map<CorporationWalletJournalResponse.FirstPartyTypeEnum, RawJournal.JournalPartyType> map = new EnumMap<CorporationWalletJournalResponse.FirstPartyTypeEnum, RawJournal.JournalPartyType>(CorporationWalletJournalResponse.FirstPartyTypeEnum.class);
-		map.put(CorporationWalletJournalResponse.FirstPartyTypeEnum.ALLIANCE, RawJournal.JournalPartyType.ALLIANCE);
-		map.put(CorporationWalletJournalResponse.FirstPartyTypeEnum.CHARACTER, RawJournal.JournalPartyType.CHARACTER);
-		map.put(CorporationWalletJournalResponse.FirstPartyTypeEnum.CORPORATION, RawJournal.JournalPartyType.CORPORATION);
-		map.put(CorporationWalletJournalResponse.FirstPartyTypeEnum.FACTION, RawJournal.JournalPartyType.FACTION);
-		map.put(CorporationWalletJournalResponse.FirstPartyTypeEnum.SYSTEM, RawJournal.JournalPartyType.SYSTEM);
-		assertEquals(map.size(), CorporationWalletJournalResponse.FirstPartyTypeEnum.values().length);
-		for (Map.Entry<CorporationWalletJournalResponse.FirstPartyTypeEnum, RawJournal.JournalPartyType> entry : map.entrySet()) {
-			assertEquals(entry.getValue(), RawConverter.toJournalPartyType(entry.getKey()));
+	public void testToJournalContextType_RawJournalRefType() {
+		Map<RawJournalRefType, ContextType> map = new EnumMap<>(RawJournalRefType.class);
+		map.put(RawJournalRefType.ALLIANCE_MAINTAINANCE_FEE, ContextType.ALLIANCE_ID);
+		map.put(RawJournalRefType.MISSION_REWARD, ContextType.CHARACTER_ID);
+		map.put(RawJournalRefType.CONTRACT_AUCTION_BID, ContextType.CONTRACT_ID);
+		map.put(RawJournalRefType.CORPORATION_LOGO_CHANGE_COST, ContextType.CORPORATION_ID);
+		//map.put(RawJournalRefType., ContextType.EVE_SYSTEM);
+		map.put(RawJournalRefType.MANUFACTURING, ContextType.INDUSTRY_JOB_ID);
+		map.put(RawJournalRefType.MARKET_TRANSACTION, ContextType.MARKET_TRANSACTION_ID);
+		map.put(RawJournalRefType.PLANETARY_IMPORT_TAX, ContextType.PLANET_ID);
+		map.put(RawJournalRefType.INDUSTRY_JOB_TAX, ContextType.STATION_ID);
+		//map.put(RawJournalRefType., ContextType.STRUCTURE_ID);
+		map.put(RawJournalRefType.BOUNTY_PRIZES, ContextType.SYSTEM_ID);
+		map.put(RawJournalRefType.BOUNTY_PRIZE, ContextType.TYPE_ID);
+		assertEquals(map.size(), ContextType.values().length - 2);
+		for (Map.Entry<RawJournalRefType, ContextType> entry : map.entrySet()) {
+			assertEquals(entry.getValue(), RawConverter.toJournalContextType(entry.getKey()));
 		}
 	}
 
 	@Test
-	public void testToJournalPartyType_CorporationWalletJournalResponseSecondPartyTypeEnum() {
-		Map<CorporationWalletJournalResponse.SecondPartyTypeEnum, RawJournal.JournalPartyType> map = new EnumMap<CorporationWalletJournalResponse.SecondPartyTypeEnum, RawJournal.JournalPartyType>(CorporationWalletJournalResponse.SecondPartyTypeEnum.class);
-		map.put(CorporationWalletJournalResponse.SecondPartyTypeEnum.ALLIANCE, RawJournal.JournalPartyType.ALLIANCE);
-		map.put(CorporationWalletJournalResponse.SecondPartyTypeEnum.CHARACTER, RawJournal.JournalPartyType.CHARACTER);
-		map.put(CorporationWalletJournalResponse.SecondPartyTypeEnum.CORPORATION, RawJournal.JournalPartyType.CORPORATION);
-		map.put(CorporationWalletJournalResponse.SecondPartyTypeEnum.FACTION, RawJournal.JournalPartyType.FACTION);
-		map.put(CorporationWalletJournalResponse.SecondPartyTypeEnum.SYSTEM, RawJournal.JournalPartyType.SYSTEM);
-		assertEquals(map.size(), CorporationWalletJournalResponse.SecondPartyTypeEnum.values().length);
-		for (Map.Entry<CorporationWalletJournalResponse.SecondPartyTypeEnum, RawJournal.JournalPartyType> entry : map.entrySet()) {
-			assertEquals(entry.getValue(), RawConverter.toJournalPartyType(entry.getKey()));
+	public void testToJournalContextType_WalletJournal_RawJournalRefType() {
+		Map<RawJournalRefType, ContextType> map = new EnumMap<>(RawJournalRefType.class);
+		map.put(RawJournalRefType.ALLIANCE_MAINTAINANCE_FEE, ContextType.ALLIANCE_ID);
+		map.put(RawJournalRefType.MISSION_REWARD, ContextType.CHARACTER_ID);
+		map.put(RawJournalRefType.CONTRACT_AUCTION_BID, ContextType.CONTRACT_ID);
+		map.put(RawJournalRefType.CORPORATION_LOGO_CHANGE_COST, ContextType.CORPORATION_ID);
+		//map.put(RawJournalRefType., ContextType.EVE_SYSTEM);
+		map.put(RawJournalRefType.MANUFACTURING, ContextType.INDUSTRY_JOB_ID);
+		map.put(RawJournalRefType.MARKET_TRANSACTION, ContextType.MARKET_TRANSACTION_ID);
+		map.put(RawJournalRefType.PLANETARY_IMPORT_TAX, ContextType.PLANET_ID);
+		map.put(RawJournalRefType.INDUSTRY_JOB_TAX, ContextType.STATION_ID);
+		//map.put(RawJournalRefType., ContextType.STRUCTURE_ID);
+		map.put(RawJournalRefType.BOUNTY_PRIZES, ContextType.SYSTEM_ID);
+		map.put(RawJournalRefType.BOUNTY_PRIZE, ContextType.TYPE_ID);
+		assertEquals(map.size(), ContextType.values().length - 2);
+		WalletJournal journal = new WalletJournal();
+		for (Map.Entry<RawJournalRefType, ContextType> entry : map.entrySet()) {
+			assertEquals(entry.getValue(), RawConverter.toJournalContextType(journal, entry.getKey()));
 		}
 	}
 
 	@Test
-	public void testFromJournalPartyType() {
-		Map<RawJournal.JournalPartyType, Integer> map = new EnumMap<RawJournal.JournalPartyType, Integer>(RawJournal.JournalPartyType.class);
-		map.put(RawJournal.JournalPartyType.ALLIANCE, 16159);
-		map.put(RawJournal.JournalPartyType.CHARACTER, 1373);
-		map.put(RawJournal.JournalPartyType.CORPORATION, 2);
-		map.put(RawJournal.JournalPartyType.FACTION, 500001);
-		map.put(RawJournal.JournalPartyType.SYSTEM, 30000142);
-		assertEquals(map.size(), RawJournal.JournalPartyType.values().length);
-		for (Map.Entry<RawJournal.JournalPartyType, Integer> entry : map.entrySet()) {
-			assertEquals(entry.getValue(), RawConverter.fromJournalPartyType(entry.getKey()));
+	public void testToJournalContextID_WalletJournal_RawJournalRefType() {
+		Map<RawJournalRefType, Long> map = new EnumMap<>(RawJournalRefType.class);
+		map.put(RawJournalRefType.ALLIANCE_MAINTAINANCE_FEE, 1L);
+		map.put(RawJournalRefType.MISSION_REWARD, 1L);
+		map.put(RawJournalRefType.CONTRACT_AUCTION_BID, 1L);
+		map.put(RawJournalRefType.CORPORATION_LOGO_CHANGE_COST, 1L);
+		//map.put(RawJournalRefType., ContextType.EVE_SYSTEM);
+		map.put(RawJournalRefType.MANUFACTURING, 1L);
+		map.put(RawJournalRefType.MARKET_TRANSACTION, 1L);
+		map.put(RawJournalRefType.PLANETARY_IMPORT_TAX, 1L);
+		map.put(RawJournalRefType.INDUSTRY_JOB_TAX, 1L);
+		//map.put(RawJournalRefType., ContextType.STRUCTURE_ID);
+		map.put(RawJournalRefType.BOUNTY_PRIZES, 1L);
+		map.put(RawJournalRefType.BOUNTY_PRIZE, 1L);
+		assertEquals(map.size(), ContextType.values().length - 2);
+		WalletJournal journal = new WalletJournal();
+		journal.setArgName1("1");
+		journal.setArgID1(1L);
+		for (Map.Entry<RawJournalRefType, Long> entry : map.entrySet()) {
+			assertEquals(entry.getValue(), RawConverter.toJournalContextID(journal, entry.getKey()));
+		}
+	}
+
+	@Test
+	public void testToJournalContextID_JournalEntry_RawJournalRefType() {
+		Map<RawJournalRefType, Long> map = new EnumMap<>(RawJournalRefType.class);
+		map.put(RawJournalRefType.ALLIANCE_MAINTAINANCE_FEE, 1L);
+		map.put(RawJournalRefType.MISSION_REWARD, 1L);
+		map.put(RawJournalRefType.CONTRACT_AUCTION_BID, 1L);
+		map.put(RawJournalRefType.CORPORATION_LOGO_CHANGE_COST, 1L);
+		//map.put(RawJournalRefType., ContextType.EVE_SYSTEM);
+		map.put(RawJournalRefType.MANUFACTURING, 1L);
+		map.put(RawJournalRefType.MARKET_TRANSACTION, 1L);
+		map.put(RawJournalRefType.PLANETARY_IMPORT_TAX, 1L);
+		map.put(RawJournalRefType.INDUSTRY_JOB_TAX, 1L);
+		//map.put(RawJournalRefType., ContextType.STRUCTURE_ID);
+		map.put(RawJournalRefType.BOUNTY_PRIZES, 1L);
+		map.put(RawJournalRefType.BOUNTY_PRIZE, 1L);
+		assertEquals(map.size(), ContextType.values().length - 2);
+		JournalEntry journal = new JournalEntry();
+		journal.setArgName1("1");
+		journal.setArgID1(1L);
+		for (Map.Entry<RawJournalRefType, Long> entry : map.entrySet()) {
+			assertEquals(entry.getValue(), RawConverter.toJournalContextID(journal, entry.getKey()));
+		}
+	}
+
+	@Test
+	public void testToJournalContextID_3args() {
+		Map<RawJournalRefType, Long> map = new EnumMap<>(RawJournalRefType.class);
+		map.put(RawJournalRefType.ALLIANCE_MAINTAINANCE_FEE, 1L);
+		map.put(RawJournalRefType.MISSION_REWARD, 1L);
+		map.put(RawJournalRefType.CONTRACT_AUCTION_BID, 1L);
+		map.put(RawJournalRefType.CORPORATION_LOGO_CHANGE_COST, 1L);
+		//map.put(RawJournalRefType., ContextType.EVE_SYSTEM);
+		map.put(RawJournalRefType.MANUFACTURING, 1L);
+		map.put(RawJournalRefType.MARKET_TRANSACTION, 1L);
+		map.put(RawJournalRefType.PLANETARY_IMPORT_TAX, 1L);
+		map.put(RawJournalRefType.INDUSTRY_JOB_TAX, 1L);
+		//map.put(RawJournalRefType., ContextType.STRUCTURE_ID);
+		map.put(RawJournalRefType.BOUNTY_PRIZES, 1L);
+		map.put(RawJournalRefType.BOUNTY_PRIZE, 1L);
+		assertEquals(map.size(), ContextType.values().length - 2);
+		for (Map.Entry<RawJournalRefType, Long> entry : map.entrySet()) {
+			assertEquals(entry.getValue(), RawConverter.toJournalContextID(1L, "1", entry.getKey()));
 		}
 	}
 
@@ -509,32 +585,6 @@ public class RawConverterTest extends TestUtil {
 		assertEquals(map.size(), RawMarketOrder.MarketOrderRange.values().length);
 		for (Map.Entry<String, RawMarketOrder.MarketOrderRange> entry : map.entrySet()) {
 			assertEquals(entry.getValue(), RawConverter.toMarketOrderRange(entry.getKey()));
-		}
-	}
-
-	@Test
-	public void testFromRawJournalExtraInfoArgID() {
-		String stringValue = String.valueOf(Integer.MAX_VALUE);
-		Long longValue = Long.valueOf(Integer.MAX_VALUE);
-		for (RawJournalRefType journalRefType : RawJournalRefType.values()) {
-			if (journalRefType.getArgID() != null) {
-				assertEquals("ArgID: " + journalRefType.name() + "->" + journalRefType.getArgID().name(), longValue, RawConverter.fromRawJournalExtraInfoArgID(new RawJournalExtraInfo(longValue, stringValue, journalRefType)));
-			}
-		}
-	}
-
-	@Test
-	public void testFromRawJournalExtraInfoArgName() {
-		String stringValue = String.valueOf(Integer.MAX_VALUE);
-		long longValue = Integer.MAX_VALUE;
-		for (RawJournalRefType journalRefType : RawJournalRefType.values()) {
-			if (journalRefType.getArgName() != null
-					&& journalRefType.getArgName() != RawJournal.ArgName.STATION_NAME
-					&& journalRefType.getArgName() != RawJournal.ArgName.CORPORATION_NAME
-					&& journalRefType.getArgName() != RawJournal.ArgName.ALLIANCE_NAME
-					&& journalRefType.getArgName() != RawJournal.ArgName.PLANET_NAME) {
-				assertEquals("ArgName: " + journalRefType.name() + "->" + journalRefType.getArgName().name(), stringValue, RawConverter.fromRawJournalExtraInfoArgName(new RawJournalExtraInfo(longValue, stringValue, journalRefType)));
-			}
 		}
 	}
 
