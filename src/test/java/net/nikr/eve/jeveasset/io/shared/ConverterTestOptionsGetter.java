@@ -856,10 +856,6 @@ public class ConverterTestOptionsGetter {
 			this.EsiJournalRefTypeCorporation = EsiJournalRefTypeCorporation;
 		}
 
-		public void setRefType(com.beimin.eveapi.model.shared.RefType XmlJournalRefType) {
-			this.XmlJournalRefType = XmlJournalRefType;
-		}
-
 		public void setContextType(ContextType rawJournalContextType) {
 			this.rawJournalContextType = rawJournalContextType;
 		}
