@@ -48,9 +48,9 @@ public class EsiShipGetter extends AbstractEsiGetter {
 		}
 		LocationApi locationApi = getLocationApiAuth(apiClient);
 		//Get Ship
-		CharacterShipResponse shipType = locationApi.getCharactersCharacterIdShip((int)owner.getOwnerID(), DATASOURCE, null, null, null);
+		CharacterShipResponse shipType = locationApi.getCharactersCharacterIdShip((int)owner.getOwnerID(), DATASOURCE, null, null, null, null);
 		//Get Location
-		CharacterLocationResponse shipLocation = locationApi.getCharactersCharacterIdLocation((int)owner.getOwnerID(), DATASOURCE, null, null, null);
+		CharacterLocationResponse shipLocation = locationApi.getCharactersCharacterIdLocation((int)owner.getOwnerID(), DATASOURCE, null, null, null, null);
 		//Create assets
 		MyAsset activeShip = EsiConverter.toAssetsShip(shipType, shipLocation, owner);
 		//Search for active ship

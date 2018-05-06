@@ -81,7 +81,7 @@ public class EsiNameGetter extends AbstractEsiGetter {
 				for (Integer i : k) {
 					list.add(i.longValue());
 				}
-				return getCharacterApiOpen(apiClient).getCharactersNames(list, DATASOURCE, USER_AGENT, null);
+				return getCharacterApiOpen(apiClient).getCharactersNames(list, DATASOURCE, null, USER_AGENT, null);
 			}
 		});
 		for (Map.Entry<List<Integer>, List<CharacterNamesResponse>> entry : retriesResponses.entrySet()) {
