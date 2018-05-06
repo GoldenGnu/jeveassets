@@ -143,9 +143,8 @@ public class MyTransaction extends RawTransaction implements EditableLocationTyp
 	@Override
 	public int hashCode() {
 		int hash = 7;
-		hash = 11 * hash + (int) (getTransactionID() ^ (getTransactionID() >>> 32));
-		hash = 11 * hash + (int) (owner.getOwnerID() ^ (owner.getOwnerID() >>> 32));
-		hash = 11 * hash + (int) (Double.doubleToLongBits(getPrice()) ^ (Double.doubleToLongBits(getPrice()) >>> 32));
+		hash = 67 * hash + Objects.hashCode(this.getTransactionID());
+		hash = 67 * hash + Objects.hashCode(this.getPrice());
 		return hash;
 	}
 
@@ -160,13 +159,13 @@ public class MyTransaction extends RawTransaction implements EditableLocationTyp
 		if (getClass() != obj.getClass()) {
 			return false;
 		}
-		final MyTransaction other = (MyTransaction) obj;
+		final RawTransaction other = (RawTransaction) obj;
 		if (!Objects.equals(this.getTransactionID(), other.getTransactionID())) {
 			return false;
 		}
-		if (this.owner.getOwnerID() != other.owner.getOwnerID()) {
+		if (!Objects.equals(this.getPrice(), other.getPrice())) {
 			return false;
 		}
-		return this.getPrice().equals(other.getPrice());
+		return true;
 	}
 }

@@ -118,10 +118,9 @@ public class MyJournal extends RawJournal implements Comparable<MyJournal>, Owne
 
 	@Override
 	public int hashCode() {
-		int hash = 3;
-		hash = 41 * hash + Objects.hashCode(this.getRefID());
-		hash = 41 * hash + Objects.hashCode(this.getAccountKey());
-		hash = 41 * hash + Objects.hashCode(owner.getOwnerID());
+		int hash = 7;
+		hash = 83 * hash + Objects.hashCode(this.getAmount());
+		hash = 83 * hash + Objects.hashCode(this.getRefID());
 		return hash;
 	}
 
@@ -136,13 +135,13 @@ public class MyJournal extends RawJournal implements Comparable<MyJournal>, Owne
 		if (getClass() != obj.getClass()) {
 			return false;
 		}
-		final MyJournal other = (MyJournal) obj;
-		if (!Objects.equals(this.owner.getOwnerID(), other.owner.getOwnerID())) {
+		final RawJournal other = (RawJournal) obj;
+		if (!Objects.equals(this.getAmount(), other.getAmount())) {
 			return false;
 		}
 		if (!Objects.equals(this.getRefID(), other.getRefID())) {
 			return false;
 		}
-		return Objects.equals(this.getAccountKey(), other.getAccountKey());
+		return true;
 	}
 }
