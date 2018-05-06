@@ -60,7 +60,7 @@ public abstract class AbstractEsiGetter extends AbstractGetter<EsiOwner, ApiClie
 	public static final String USER_AGENT = System.getProperty("http.agent");
 	protected static final int UNIVERSE_BATCH_SIZE = 100;
 	protected static final int LOCATIONS_BATCH_SIZE = 100;
-	protected static final int DEFAULT_RETRIES = 1;
+	protected static final int DEFAULT_RETRIES = 3;
 	private final int maxRetries;
 	/**
 	 * Errors left in in this error limit time frame (can be null)
