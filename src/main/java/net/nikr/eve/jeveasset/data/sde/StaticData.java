@@ -20,18 +20,15 @@
  */
 package net.nikr.eve.jeveasset.data.sde;
 
-import com.beimin.eveapi.model.eve.Station;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import net.nikr.eve.jeveasset.SplashUpdater;
-import net.nikr.eve.jeveasset.io.local.ConquerableStationsReader;
 import net.nikr.eve.jeveasset.io.local.FlagsReader;
 import net.nikr.eve.jeveasset.io.local.ItemsReader;
 import net.nikr.eve.jeveasset.io.local.JumpsReader;
 import net.nikr.eve.jeveasset.io.local.LocationsReader;
-import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 
 
 public class StaticData {
@@ -40,8 +37,6 @@ public class StaticData {
 	private final Map<Integer, ItemFlag> itemFlags = new HashMap<Integer, ItemFlag>(); //FlagID : int
 	private final Map<Long, MyLocation> locations = new HashMap<Long, MyLocation>(); //LocationID : long
 	private final List<Jump> jumps = new ArrayList<Jump>(); //LocationID : long
-	//XXX - Integer locationID
-	private final Map<Long, Station> conquerableStations = new HashMap<Long, Station>(); //LocationID : long
 
 	private static StaticData staticData = null;
 
@@ -68,7 +63,6 @@ public class StaticData {
 		JumpsReader.load(); //Jumps
 		SplashUpdater.setProgress(20);
 		FlagsReader.load(); //Item Flags
-		ConquerableStationsReader.load(); //Conquerable Stations
 		SplashUpdater.setProgress(25);
 	}
 
@@ -86,17 +80,5 @@ public class StaticData {
 
 	public Map<Long, MyLocation> getLocations() {
 		return locations;
-	}
-
-	public Map<Long, Station> getConquerableStations() {
-		return conquerableStations;
-	}
-
-	public void setConquerableStations(final Map<Long, Station> conquerableStations) {
-		this.conquerableStations.clear();
-		this.conquerableStations.putAll(conquerableStations);
-		for (Station station : conquerableStations.values()) {
-			ApiIdConverter.addLocation(station);
-		}
 	}
 }

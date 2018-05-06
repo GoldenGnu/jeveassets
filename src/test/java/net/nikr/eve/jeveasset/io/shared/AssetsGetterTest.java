@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
  */
-package net.nikr.eve.jeveasset.io.eveapi;
+package net.nikr.eve.jeveasset.io.shared;
 
 import static org.junit.Assert.assertEquals;
 

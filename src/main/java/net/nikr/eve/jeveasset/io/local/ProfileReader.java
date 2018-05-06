@@ -20,7 +20,6 @@
  */
 package net.nikr.eve.jeveasset.io.local;
 
-import com.beimin.eveapi.model.shared.KeyType;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.EnumSet;
@@ -31,6 +30,7 @@ import java.util.Map;
 import java.util.Set;
 import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
 import net.nikr.eve.jeveasset.data.api.accounts.EveApiAccount;
+import net.nikr.eve.jeveasset.data.api.accounts.EveApiAccount.KeyType;
 import net.nikr.eve.jeveasset.data.api.accounts.EveApiOwner;
 import net.nikr.eve.jeveasset.data.api.accounts.EveKitOwner;
 import net.nikr.eve.jeveasset.data.api.accounts.OwnerType;

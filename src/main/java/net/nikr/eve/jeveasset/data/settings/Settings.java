@@ -21,8 +21,6 @@
 package net.nikr.eve.jeveasset.data.settings;
 
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
-import com.beimin.eveapi.connectors.ApiConnector;
-import com.beimin.eveapi.parser.shared.AbstractApiParser;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.io.File;
@@ -166,7 +164,6 @@ public class Settings {
 	//Price
 	private PriceDataSettings priceDataSettings = new PriceDataSettings();
 	//Proxy (API)
-	private String apiProxy;
 	private ProxyData proxyData = new ProxyData();
 	//FIXME - - > Settings: Create windows settings
 	//Window
@@ -368,7 +365,6 @@ public class Settings {
 		//Load data and overwite default values
 		settingsLoadError = !SettingsReader.load(this);
 		SplashUpdater.setProgress(35);
-		constructEveApiConnector();
 	}
 
 	public Map<String, List<Value>> getTrackerData() {
@@ -481,42 +477,12 @@ public class Settings {
 		getJumpLocations(clazz).clear();
 	}
 
-	public boolean isForceUpdate() {
-		return (apiProxy != null);
-	}
-
-	public String getApiProxy() {
-		return apiProxy;
-	}
-
 	public ProxyData getProxyData() {
 		return proxyData;
 	}
 
 	public void setProxyData(ProxyData proxyData) {
 		this.proxyData = proxyData;
-	}
-
-	/**
-	 * Set API Proxy.
-	 *
-	 * @param apiProxy pass null to disable any API proxy, and use the default:
-	 * http://api.eve-online.com
-	 */
-	public void setApiProxy(final String apiProxy) {
-		this.apiProxy = apiProxy;
-		constructEveApiConnector();
-	}
-
-	/**
-	 * build the API Connector and set it in the library.
-	 */
-	private void constructEveApiConnector() {
-		ApiConnector connector = new ApiConnector(); //Default
-		if (apiProxy != null) { //API Proxy
-			connector = new ApiConnector(getApiProxy());
-		}
-		AbstractApiParser.setConnector(connector);
 	}
 
 	public Map<Long, String> getOwners() {
@@ -916,11 +882,10 @@ public class Settings {
 		return new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
 	}
 
-	public boolean isUpdatable(final Date date, final boolean ignoreOnProxy) {
+	public boolean isUpdatable(final Date date) {
 		return ((Settings.getNow().after(date)
 				|| Settings.getNow().equals(date)
-				|| Program.isForceUpdate()
-				|| (getApiProxy() != null && ignoreOnProxy))
+				|| Program.isForceUpdate())
 				&& !Program.isForceNoUpdate());
 	}
 

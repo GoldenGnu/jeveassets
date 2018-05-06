@@ -74,6 +74,6 @@ public class Updatable {
 		if (nextUpdate == null) {
 			return false;
 		}
-		return Settings.get().isUpdatable(nextUpdate, false);
+		return Settings.get().isUpdatable(nextUpdate);
 	}
 }

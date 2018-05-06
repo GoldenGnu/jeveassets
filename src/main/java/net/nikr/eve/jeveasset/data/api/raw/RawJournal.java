@@ -202,30 +202,6 @@ public class RawJournal {
 		contextIdType = RawConverter.toJournalContextType(journal, refType);
 	}
 
-	/**
-	 * EveAPI
-	 *
-	 * @param journal
-	 * @param accountKey
-	 */
-	public RawJournal(com.beimin.eveapi.model.shared.JournalEntry journal, Integer accountKey) {
-		amount = journal.getAmount();
-		balance = journal.getBalance();
-		date = journal.getDate();
-		description = journal.getArgName1();
-		firstPartyId = (int) journal.getOwnerID1();
-		reason = journal.getReason();
-		id = journal.getRefID();
-		refType = RawConverter.toJournalRefType(journal.getRefTypeID());
-		secondPartyId = (int) journal.getOwnerID2();
-		tax = journal.getTaxAmount();
-		taxReceiverId = RawConverter.toInteger(journal.getTaxReceiverID());
-		this.accountKey = accountKey;
-		//Must be set after refType
-		contextId = RawConverter.toJournalContextID(journal, refType);
-		contextIdType = RawConverter.toJournalContextType(refType);
-	}
-
 	public Double getAmount() {
 		return amount;
 	}

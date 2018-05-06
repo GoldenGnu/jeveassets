@@ -21,7 +21,6 @@
 
 package net.nikr.eve.jeveasset.data.api.accounts;
 
-import com.beimin.eveapi.parser.ApiAuthorization;
 import java.util.Date;
 
 
@@ -200,15 +199,5 @@ public class EveApiOwner extends AbstractOwner implements OwnerType {
 		hash = 89 * hash + (int) (this.getOwnerID() ^ (this.getOwnerID() >>> 32));
 		hash = 89 * hash + (this.parentAccount != null ? this.parentAccount.hashCode() : 0);
 		return hash;
-	}
-
-	public static ApiAuthorization getApiAuthorization(final EveApiAccount account) {
-		return new ApiAuthorization(account.getKeyID(), account.getVCode());
-	}
-	public static ApiAuthorization getApiAuthorization(final EveApiOwner owner) {
-		return getApiAuthorization(owner.getParentAccount(), owner.getOwnerID());
-	}
-	private static ApiAuthorization getApiAuthorization(final EveApiAccount account, final long ownerID) {
-		return new ApiAuthorization(account.getKeyID(), ownerID, account.getVCode());
 	}
 }

@@ -20,19 +20,13 @@
  */
 package net.nikr.eve.jeveasset.io.shared;
 
-import com.beimin.eveapi.exception.ApiException;
-import com.beimin.eveapi.model.eve.RefType;
-import com.beimin.eveapi.model.shared.JournalEntry;
-import com.beimin.eveapi.response.eve.RefTypesResponse;
 import enterprises.orbital.evekit.client.model.WalletJournal;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.Date;
 import java.util.EnumMap;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 import net.nikr.eve.jeveasset.TestUtil;
 import net.nikr.eve.jeveasset.data.api.raw.RawAsset;
 import net.nikr.eve.jeveasset.data.api.raw.RawContainerLog;
@@ -50,8 +44,8 @@ import net.troja.eve.esi.model.CorporationWalletJournalResponse;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 import org.junit.Test;
+
 
 public class RawConverterTest extends TestUtil {
 
@@ -189,7 +183,7 @@ public class RawConverterTest extends TestUtil {
 	}
 
 	@Test
-	public void testToContractAvailability_String() {
+	public void testToContractAvailability() {
 		Map<String, RawContract.ContractAvailability> map = new HashMap<String, RawContract.ContractAvailability>();
 		map.put(RawContract.ContractAvailability.ALLIANCE.name(), RawContract.ContractAvailability.ALLIANCE);
 		map.put(RawContract.ContractAvailability.CORPORATION.name(), RawContract.ContractAvailability.CORPORATION);
@@ -204,18 +198,7 @@ public class RawConverterTest extends TestUtil {
 	}
 
 	@Test
-	public void testToContractAvailability_ContractAvailability() {
-		Map<com.beimin.eveapi.model.shared.ContractAvailability, RawContract.ContractAvailability> map = new EnumMap<com.beimin.eveapi.model.shared.ContractAvailability, RawContract.ContractAvailability>(com.beimin.eveapi.model.shared.ContractAvailability.class);
-		map.put(com.beimin.eveapi.model.shared.ContractAvailability.PUBLIC, RawContract.ContractAvailability.PUBLIC);
-		map.put(com.beimin.eveapi.model.shared.ContractAvailability.PRIVATE, RawContract.ContractAvailability.PERSONAL);
-		assertEquals(map.size(), com.beimin.eveapi.model.shared.ContractAvailability.values().length);
-		for (Map.Entry<com.beimin.eveapi.model.shared.ContractAvailability, RawContract.ContractAvailability> entry : map.entrySet()) {
-			assertEquals(entry.getValue(), RawConverter.toContractAvailability(entry.getKey()));
-		}
-	}
-
-	@Test
-	public void testToContractStatus_String() {
+	public void testToContractStatus() {
 		Map<String, RawContract.ContractStatus> map = new HashMap<String, RawContract.ContractStatus>();
 		map.put("CANCELLED", RawContract.ContractStatus.CANCELLED);
 		map.put("DELETED", RawContract.ContractStatus.DELETED);
@@ -239,26 +222,7 @@ public class RawConverterTest extends TestUtil {
 	}
 
 	@Test
-	public void testToContractStatus_ContractStatus() {
-		Map<com.beimin.eveapi.model.shared.ContractStatus, RawContract.ContractStatus> map = new EnumMap<com.beimin.eveapi.model.shared.ContractStatus, RawContract.ContractStatus>(com.beimin.eveapi.model.shared.ContractStatus.class);
-		map.put(com.beimin.eveapi.model.shared.ContractStatus.CANCELLED, RawContract.ContractStatus.CANCELLED);
-		map.put(com.beimin.eveapi.model.shared.ContractStatus.DELETED, RawContract.ContractStatus.DELETED);
-		map.put(com.beimin.eveapi.model.shared.ContractStatus.FAILED, RawContract.ContractStatus.FAILED);
-		map.put(com.beimin.eveapi.model.shared.ContractStatus.COMPLETED, RawContract.ContractStatus.FINISHED);
-		map.put(com.beimin.eveapi.model.shared.ContractStatus.COMPLETEDBYCONTRACTOR, RawContract.ContractStatus.FINISHED_CONTRACTOR);
-		map.put(com.beimin.eveapi.model.shared.ContractStatus.COMPLETEDBYISSUER, RawContract.ContractStatus.FINISHED_ISSUER);
-		map.put(com.beimin.eveapi.model.shared.ContractStatus.INPROGRESS, RawContract.ContractStatus.IN_PROGRESS);
-		map.put(com.beimin.eveapi.model.shared.ContractStatus.OUTSTANDING, RawContract.ContractStatus.OUTSTANDING);
-		map.put(com.beimin.eveapi.model.shared.ContractStatus.REJECTED, RawContract.ContractStatus.REJECTED);
-		map.put(com.beimin.eveapi.model.shared.ContractStatus.REVERSED, RawContract.ContractStatus.REVERSED);
-		assertEquals(map.size(), com.beimin.eveapi.model.shared.ContractStatus.values().length);
-		for (Map.Entry<com.beimin.eveapi.model.shared.ContractStatus, RawContract.ContractStatus> entry : map.entrySet()) {
-			assertEquals(entry.getValue(), RawConverter.toContractStatus(entry.getKey()));
-		}
-	}
-
-	@Test
-	public void testToContractType_String() {
+	public void testToContractType() {
 		Map<String, RawContract.ContractType> map = new HashMap<String, RawContract.ContractType>();
 		map.put(RawContract.ContractType.AUCTION.name(), RawContract.ContractType.AUCTION);
 		map.put(RawContract.ContractType.COURIER.name(), RawContract.ContractType.COURIER);
@@ -271,19 +235,6 @@ public class RawConverterTest extends TestUtil {
 		map.put("Loan", RawContract.ContractType.LOAN);
 		assertEquals(map.size(), RawContract.ContractType.values().length + 4);
 		for (Map.Entry<String, RawContract.ContractType> entry : map.entrySet()) {
-			assertEquals(entry.getValue(), RawConverter.toContractType(entry.getKey()));
-		}
-	}
-
-	@Test
-	public void testToContractType_ContractType() {
-		Map<com.beimin.eveapi.model.shared.ContractType, RawContract.ContractType> map = new EnumMap<com.beimin.eveapi.model.shared.ContractType, RawContract.ContractType>(com.beimin.eveapi.model.shared.ContractType.class);
-		map.put(com.beimin.eveapi.model.shared.ContractType.AUCTION, RawContract.ContractType.AUCTION);
-		map.put(com.beimin.eveapi.model.shared.ContractType.COURIER, RawContract.ContractType.COURIER);
-		map.put(com.beimin.eveapi.model.shared.ContractType.ITEMEXCHANGE, RawContract.ContractType.ITEM_EXCHANGE);
-		map.put(com.beimin.eveapi.model.shared.ContractType.LOAN, RawContract.ContractType.LOAN);
-		assertEquals(map.size(), com.beimin.eveapi.model.shared.ContractType.values().length);
-		for (Map.Entry<com.beimin.eveapi.model.shared.ContractType, RawContract.ContractType> entry : map.entrySet()) {
 			assertEquals(entry.getValue(), RawConverter.toContractType(entry.getKey()));
 		}
 	}
@@ -335,8 +286,8 @@ public class RawConverterTest extends TestUtil {
 
 	@Test
 	public void testToJournalRefType_int() {
-		for (com.beimin.eveapi.model.shared.RefType refType : com.beimin.eveapi.model.shared.RefType.values()) {
-			RawJournalRefType type = RawConverter.toJournalRefType(refType.getId());
+		for (RawJournalRefType refType : RawJournalRefType.values()) {
+			RawJournalRefType type = RawConverter.toJournalRefType(refType.getID());
 			assertEquals(type.name(), refType.name());
 		}
 	}
@@ -522,30 +473,6 @@ public class RawConverterTest extends TestUtil {
 		map.put(RawJournalRefType.BOUNTY_PRIZE, 1L);
 		assertEquals(map.size(), ContextType.values().length - 2);
 		WalletJournal journal = new WalletJournal();
-		journal.setArgName1("1");
-		journal.setArgID1(1L);
-		for (Map.Entry<RawJournalRefType, Long> entry : map.entrySet()) {
-			assertEquals(entry.getValue(), RawConverter.toJournalContextID(journal, entry.getKey()));
-		}
-	}
-
-	@Test
-	public void testToJournalContextID_JournalEntry_RawJournalRefType() {
-		Map<RawJournalRefType, Long> map = new EnumMap<>(RawJournalRefType.class);
-		map.put(RawJournalRefType.ALLIANCE_MAINTAINANCE_FEE, 1L);
-		map.put(RawJournalRefType.MISSION_REWARD, 1L);
-		map.put(RawJournalRefType.CONTRACT_AUCTION_BID, 1L);
-		map.put(RawJournalRefType.CORPORATION_LOGO_CHANGE_COST, 1L);
-		//map.put(RawJournalRefType., ContextType.EVE_SYSTEM);
-		map.put(RawJournalRefType.MANUFACTURING, 1L);
-		map.put(RawJournalRefType.MARKET_TRANSACTION, 1L);
-		map.put(RawJournalRefType.PLANETARY_IMPORT_TAX, 1L);
-		map.put(RawJournalRefType.INDUSTRY_JOB_TAX, 1L);
-		//map.put(RawJournalRefType., ContextType.STRUCTURE_ID);
-		map.put(RawJournalRefType.BOUNTY_PRIZES, 1L);
-		map.put(RawJournalRefType.BOUNTY_PRIZE, 1L);
-		assertEquals(map.size(), ContextType.values().length - 2);
-		JournalEntry journal = new JournalEntry();
 		journal.setArgName1("1");
 		journal.setArgID1(1L);
 		for (Map.Entry<RawJournalRefType, Long> entry : map.entrySet()) {
@@ -753,33 +680,6 @@ public class RawConverterTest extends TestUtil {
 					itemFlag.getFlagID() == 0
 					|| locationFlag.toString().toLowerCase().equals(itemFlag.getFlagText().toLowerCase().replace(" ", ""))
 					|| locationFlag.toString().toLowerCase().equals(itemFlag.getFlagName().toLowerCase()));
-		}
-	}
-
-	@Test
-	public void testEnum() {
-		try {
-			Map<Integer, com.beimin.eveapi.model.eve.RefType> refTypes = new HashMap<Integer, com.beimin.eveapi.model.eve.RefType>();
-			Map<Integer, RawJournalRefType> journalRefTypes = new HashMap<Integer, RawJournalRefType>();
-			Set<Integer> ids = new HashSet<Integer>();
-			RefTypesResponse response = new com.beimin.eveapi.parser.eve.RefTypesParser().getResponse();
-			for (com.beimin.eveapi.model.eve.RefType apiRefType : response.getAll()) {
-				refTypes.put(apiRefType.getRefTypeID(), apiRefType);
-				ids.add(apiRefType.getRefTypeID());
-			}
-			for (RawJournalRefType journalRefType : RawJournalRefType.values()) {
-				journalRefTypes.put(journalRefType.getID(), journalRefType);
-				ids.add(journalRefType.getID());
-			}
-			for (Integer id : ids) {
-				RefType refType = refTypes.get(id);
-				assertNotNull(refType);
-				RawJournalRefType journalRefType = journalRefTypes.get(id);
-				assertNotNull(journalRefType);
-				assertEquals(refType.getRefTypeName(), journalRefType.toString());
-			}
-		} catch (ApiException ex) {
-			fail("Fail to get RefTypes");
 		}
 	}
 

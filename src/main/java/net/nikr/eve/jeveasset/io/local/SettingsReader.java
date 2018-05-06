@@ -378,19 +378,6 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		} else if (proxyNodes.getLength() > 1) {
 			throw new XmlException("Wrong proxy element count.");
 		}
-
-		// API Proxy; 0 or 1 elements.
-		NodeList apiProxyNodes = element.getElementsByTagName("apiProxy");
-		switch (apiProxyNodes.getLength()) { // I think the 'switch' is a lot neater then the if/elseif blocks. - Candle
-			case 0:
-				break;
-			case 1:
-				Element apiProxyElement = (Element) apiProxyNodes.item(0);
-				parseApiProxy(apiProxyElement, settings);
-				break;
-			default:
-				throw new XmlException("Wrong apiProxy element count.");
-		}
 	}
 
 	private void parseOwners(final Element element, final Settings settings) throws XmlException {
@@ -1271,11 +1258,6 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		if (compare.equals("MODE_GREATER_THAN_COLUMN")) { return CompareType.GREATER_THAN_COLUMN; }
 		if (compare.equals("MODE_LESS_THAN_COLUMN")) { return CompareType.LESS_THAN_COLUMN; }
 		return CompareType.CONTAINS;
-	}
-
-	private void parseApiProxy(final Element apiProxyElement, final Settings settings) throws XmlException {
-		String proxyURL = AttributeGetters.getString(apiProxyElement, "url");
-		settings.setApiProxy(proxyURL);
 	}
 
 	private void parseExportSettings(final Element element, final Settings settings) throws XmlException {

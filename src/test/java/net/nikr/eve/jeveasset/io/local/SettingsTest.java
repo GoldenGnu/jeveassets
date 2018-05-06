@@ -69,7 +69,6 @@ public class SettingsTest extends TestUtil {
 		test(settings, Function.GET_PRICE_DATA_SETTINGS);
 		test(settings, Function.GET_TABLE_FILTERS_KEY);
 		test(settings, Function.GET_USER_PRICES);
-		test(settings, Function.SET_API_PROXY);
 		test(settings, Function.SET_CONQUERABLE_STATIONS_NEXT_UPDATE);
 		test(settings, Function.SET_PRICE_DATA_SETTINGS);
 		test(settings);
@@ -83,7 +82,6 @@ public class SettingsTest extends TestUtil {
 		test(settings, Function.GET_PRICE_DATA_SETTINGS);
 		test(settings, Function.GET_TABLE_FILTERS_KEY);
 		test(settings, Function.GET_USER_PRICES);
-		test(settings, Function.SET_API_PROXY);
 		test(settings, Function.SET_CONQUERABLE_STATIONS_NEXT_UPDATE);
 		test(settings, Function.SET_PRICE_DATA_SETTINGS);
 		test(settings);
@@ -97,7 +95,6 @@ public class SettingsTest extends TestUtil {
 		test(settings, Function.GET_PRICE_DATA_SETTINGS);
 		test(settings, Function.GET_TABLE_FILTERS_KEY);
 		test(settings, Function.GET_USER_PRICES);
-		test(settings, Function.SET_API_PROXY);
 		test(settings, Function.SET_CONQUERABLE_STATIONS_NEXT_UPDATE);
 		test(settings, Function.SET_PRICE_DATA_SETTINGS);
 		test(settings, Function.SET_WINDOW_ALWAYS_ON_TOP);
@@ -116,7 +113,6 @@ public class SettingsTest extends TestUtil {
 		test(settings, Function.GET_PRICE_DATA_SETTINGS);
 		test(settings, Function.GET_TABLE_FILTERS_KEY);
 		test(settings, Function.GET_USER_PRICES);
-		test(settings, Function.SET_API_PROXY);
 		test(settings, Function.SET_CONQUERABLE_STATIONS_NEXT_UPDATE);
 		test(settings, Function.SET_PRICE_DATA_SETTINGS);
 		test(settings, Function.SET_WINDOW_ALWAYS_ON_TOP);
@@ -135,7 +131,6 @@ public class SettingsTest extends TestUtil {
 		test(settings, Function.GET_PRICE_DATA_SETTINGS);
 		test(settings, Function.GET_TABLE_FILTERS_KEY);
 		test(settings, Function.GET_USER_PRICES);
-		test(settings, Function.SET_API_PROXY);
 		test(settings, Function.SET_CONQUERABLE_STATIONS_NEXT_UPDATE);
 		test(settings, Function.SET_PRICE_DATA_SETTINGS);
 		test(settings, Function.SET_WINDOW_ALWAYS_ON_TOP);
@@ -154,7 +149,6 @@ public class SettingsTest extends TestUtil {
 		test(settings, Function.GET_PRICE_DATA_SETTINGS);
 		test(settings, Function.GET_TABLE_FILTERS_KEY);
 		test(settings, Function.GET_USER_PRICES);
-		test(settings, Function.SET_API_PROXY);
 		test(settings, Function.SET_CONQUERABLE_STATIONS_NEXT_UPDATE);
 		test(settings, Function.SET_PRICE_DATA_SETTINGS);
 		test(settings, Function.SET_WINDOW_ALWAYS_ON_TOP);
@@ -173,7 +167,6 @@ public class SettingsTest extends TestUtil {
 		test(settings, Function.GET_PRICE_DATA_SETTINGS);
 		test(settings, Function.GET_TABLE_FILTERS_KEY);
 		test(settings, Function.GET_USER_PRICES);
-		test(settings, Function.SET_API_PROXY);
 		test(settings, Function.SET_CONQUERABLE_STATIONS_NEXT_UPDATE);
 		test(settings, Function.SET_PRICE_DATA_SETTINGS);
 		test(settings, Function.SET_WINDOW_ALWAYS_ON_TOP);
@@ -193,7 +186,6 @@ public class SettingsTest extends TestUtil {
 		test(settings, Function.GET_TABLE_FILTERS_KEY);
 		test(settings, Function.GET_USER_ITEM_NAMES);
 		test(settings, Function.GET_USER_PRICES);
-		test(settings, Function.SET_API_PROXY);
 		test(settings, Function.SET_CONQUERABLE_STATIONS_NEXT_UPDATE);
 		test(settings, Function.SET_PRICE_DATA_SETTINGS);
 		test(settings, Function.SET_REPROCESS_SETTINGS);
@@ -214,7 +206,6 @@ public class SettingsTest extends TestUtil {
 		test(settings, Function.GET_TABLE_FILTERS_KEY);
 		test(settings, Function.GET_USER_ITEM_NAMES);
 		test(settings, Function.GET_USER_PRICES);
-		test(settings, Function.SET_API_PROXY);
 		test(settings, Function.SET_CONQUERABLE_STATIONS_NEXT_UPDATE);
 		test(settings, Function.SET_PRICE_DATA_SETTINGS);
 		test(settings, Function.SET_REPROCESS_SETTINGS);
@@ -236,7 +227,6 @@ public class SettingsTest extends TestUtil {
 		test(settings, Function.GET_TABLE_FILTERS_KEY);
 		test(settings, Function.GET_USER_ITEM_NAMES);
 		test(settings, Function.GET_USER_PRICES);
-		test(settings, Function.SET_API_PROXY);
 		test(settings, Function.SET_CONQUERABLE_STATIONS_NEXT_UPDATE);
 		test(settings, Function.SET_PRICE_DATA_SETTINGS);
 		test(settings, Function.SET_REPROCESS_SETTINGS);
@@ -258,7 +248,6 @@ public class SettingsTest extends TestUtil {
 		test(settings, Function.GET_TABLE_FILTERS_KEY);
 		test(settings, Function.GET_USER_ITEM_NAMES);
 		test(settings, Function.GET_USER_PRICES);
-		test(settings, Function.SET_API_PROXY);
 		test(settings, Function.SET_CONQUERABLE_STATIONS_NEXT_UPDATE);
 		test(settings, Function.SET_PRICE_DATA_SETTINGS);
 		test(settings, Function.SET_REPROCESS_SETTINGS);
@@ -280,7 +269,6 @@ public class SettingsTest extends TestUtil {
 		test(settings, Function.GET_TABLE_FILTERS_KEY);
 		test(settings, Function.GET_USER_ITEM_NAMES);
 		test(settings, Function.GET_USER_PRICES);
-		test(settings, Function.SET_API_PROXY);
 		test(settings, Function.SET_CONQUERABLE_STATIONS_NEXT_UPDATE);
 		test(settings, Function.SET_PRICE_DATA_SETTINGS);
 		test(settings, Function.SET_REPROCESS_SETTINGS);
@@ -302,7 +290,6 @@ public class SettingsTest extends TestUtil {
 		test(settings, Function.GET_TABLE_FILTERS_KEY);
 		test(settings, Function.GET_USER_ITEM_NAMES);
 		test(settings, Function.GET_USER_PRICES);
-		test(settings, Function.SET_API_PROXY);
 		test(settings, Function.SET_CONQUERABLE_STATIONS_NEXT_UPDATE);
 		test(settings, Function.SET_PRICE_DATA_SETTINGS);
 		test(settings, Function.SET_REPROCESS_SETTINGS);
@@ -324,7 +311,6 @@ public class SettingsTest extends TestUtil {
 		test(settings, Function.GET_TABLE_FILTERS_KEY);
 		test(settings, Function.GET_USER_ITEM_NAMES);
 		test(settings, Function.GET_USER_PRICES);
-		test(settings, Function.SET_API_PROXY);
 		test(settings, Function.SET_CONQUERABLE_STATIONS_NEXT_UPDATE);
 		test(settings, Function.SET_PRICE_DATA_SETTINGS);
 		test(settings, Function.SET_REPROCESS_SETTINGS);
@@ -346,7 +332,6 @@ public class SettingsTest extends TestUtil {
 		test(settings, Function.GET_TABLE_FILTERS_KEY);
 		test(settings, Function.GET_USER_ITEM_NAMES);
 		test(settings, Function.GET_USER_PRICES);
-		test(settings, Function.SET_API_PROXY);
 		test(settings, Function.SET_CONQUERABLE_STATIONS_NEXT_UPDATE);
 		test(settings, Function.SET_PRICE_DATA_SETTINGS);
 		test(settings, Function.SET_REPROCESS_SETTINGS);
@@ -368,7 +353,6 @@ public class SettingsTest extends TestUtil {
 		test(settings, Function.GET_TABLE_FILTERS_KEY);
 		test(settings, Function.GET_USER_ITEM_NAMES);
 		test(settings, Function.GET_USER_PRICES);
-		test(settings, Function.SET_API_PROXY);
 		test(settings, Function.SET_CONQUERABLE_STATIONS_NEXT_UPDATE);
 		test(settings, Function.SET_PRICE_DATA_SETTINGS);
 		test(settings, Function.SET_REPROCESS_SETTINGS);
@@ -390,7 +374,6 @@ public class SettingsTest extends TestUtil {
 		test(settings, Function.GET_TABLE_FILTERS_KEY);
 		test(settings, Function.GET_USER_ITEM_NAMES);
 		test(settings, Function.GET_USER_PRICES);
-		test(settings, Function.SET_API_PROXY);
 		test(settings, Function.SET_CONQUERABLE_STATIONS_NEXT_UPDATE);
 		test(settings, Function.SET_PRICE_DATA_SETTINGS);
 		test(settings, Function.SET_REPROCESS_SETTINGS);
@@ -412,7 +395,6 @@ public class SettingsTest extends TestUtil {
 		test(settings, Function.GET_TABLE_FILTERS_KEY);
 		test(settings, Function.GET_USER_ITEM_NAMES);
 		test(settings, Function.GET_USER_PRICES);
-		test(settings, Function.SET_API_PROXY);
 		test(settings, Function.SET_CONQUERABLE_STATIONS_NEXT_UPDATE);
 		test(settings, Function.SET_PRICE_DATA_SETTINGS);
 		test(settings, Function.SET_REPROCESS_SETTINGS);
@@ -434,7 +416,6 @@ public class SettingsTest extends TestUtil {
 		test(settings, Function.GET_TABLE_FILTERS_KEY);
 		test(settings, Function.GET_USER_ITEM_NAMES);
 		test(settings, Function.GET_USER_PRICES);
-		test(settings, Function.SET_API_PROXY);
 		test(settings, Function.SET_CONQUERABLE_STATIONS_NEXT_UPDATE);
 		test(settings, Function.SET_PRICE_DATA_SETTINGS);
 		test(settings, Function.SET_REPROCESS_SETTINGS);
@@ -457,7 +438,6 @@ public class SettingsTest extends TestUtil {
 		test(settings, Function.GET_TABLE_FILTERS_KEY);
 		test(settings, Function.GET_USER_ITEM_NAMES);
 		test(settings, Function.GET_USER_PRICES);
-		test(settings, Function.SET_API_PROXY);
 		test(settings, Function.SET_CONQUERABLE_STATIONS_NEXT_UPDATE);
 		test(settings, Function.SET_PRICE_DATA_SETTINGS);
 		test(settings, Function.SET_REPROCESS_SETTINGS);
@@ -480,7 +460,6 @@ public class SettingsTest extends TestUtil {
 		test(settings, Function.GET_TABLE_FILTERS_KEY);
 		test(settings, Function.GET_USER_ITEM_NAMES);
 		test(settings, Function.GET_USER_PRICES);
-		test(settings, Function.SET_API_PROXY);
 		test(settings, Function.SET_CONQUERABLE_STATIONS_NEXT_UPDATE);
 		test(settings, Function.SET_PRICE_DATA_SETTINGS);
 		test(settings, Function.SET_REPROCESS_SETTINGS);
@@ -504,7 +483,6 @@ public class SettingsTest extends TestUtil {
 		test(settings, Function.GET_TABLE_FILTERS_KEY);
 		test(settings, Function.GET_USER_ITEM_NAMES);
 		test(settings, Function.GET_USER_PRICES);
-		test(settings, Function.SET_API_PROXY);
 		test(settings, Function.SET_CONQUERABLE_STATIONS_NEXT_UPDATE);
 		test(settings, Function.SET_PRICE_DATA_SETTINGS);
 		test(settings, Function.SET_REPROCESS_SETTINGS);
@@ -528,7 +506,6 @@ public class SettingsTest extends TestUtil {
 		test(settings, Function.GET_TABLE_FILTERS_KEY);
 		test(settings, Function.GET_USER_ITEM_NAMES);
 		test(settings, Function.GET_USER_PRICES);
-		test(settings, Function.SET_API_PROXY);
 		test(settings, Function.SET_CONQUERABLE_STATIONS_NEXT_UPDATE);
 		test(settings, Function.SET_PRICE_DATA_SETTINGS);
 		test(settings, Function.SET_REPROCESS_SETTINGS);
@@ -552,7 +529,6 @@ public class SettingsTest extends TestUtil {
 		test(settings, Function.GET_TABLE_FILTERS_KEY);
 		test(settings, Function.GET_USER_ITEM_NAMES);
 		test(settings, Function.GET_USER_PRICES);
-		test(settings, Function.SET_API_PROXY);
 		test(settings, Function.SET_CONQUERABLE_STATIONS_NEXT_UPDATE);
 		test(settings, Function.SET_PRICE_DATA_SETTINGS);
 		test(settings, Function.SET_REPROCESS_SETTINGS);
@@ -577,7 +553,6 @@ public class SettingsTest extends TestUtil {
 		test(settings, Function.GET_TABLE_FILTERS);
 		test(settings, Function.GET_USER_ITEM_NAMES);
 		test(settings, Function.GET_USER_PRICES);
-		test(settings, Function.SET_API_PROXY);
 		test(settings, Function.SET_CONQUERABLE_STATIONS_NEXT_UPDATE);
 		test(settings, Function.SET_PRICE_DATA_SETTINGS);
 		test(settings, Function.SET_REPROCESS_SETTINGS);
@@ -602,7 +577,6 @@ public class SettingsTest extends TestUtil {
 		test(settings, Function.GET_TABLE_FILTERS);
 		test(settings, Function.GET_USER_ITEM_NAMES);
 		test(settings, Function.GET_USER_PRICES);
-		test(settings, Function.SET_API_PROXY);
 		test(settings, Function.SET_CONQUERABLE_STATIONS_NEXT_UPDATE);
 		test(settings, Function.SET_PRICE_DATA_SETTINGS);
 		test(settings, Function.SET_REPROCESS_SETTINGS);
@@ -627,7 +601,6 @@ public class SettingsTest extends TestUtil {
 		test(settings, Function.GET_TABLE_FILTERS);
 		test(settings, Function.GET_USER_ITEM_NAMES);
 		test(settings, Function.GET_USER_PRICES);
-		test(settings, Function.SET_API_PROXY);
 		test(settings, Function.SET_CONQUERABLE_STATIONS_NEXT_UPDATE);
 		test(settings, Function.SET_PRICE_DATA_SETTINGS);
 		test(settings, Function.SET_REPROCESS_SETTINGS);
@@ -652,7 +625,6 @@ public class SettingsTest extends TestUtil {
 		test(settings, Function.GET_TABLE_FILTERS);
 		test(settings, Function.GET_USER_ITEM_NAMES);
 		test(settings, Function.GET_USER_PRICES);
-		test(settings, Function.SET_API_PROXY);
 		test(settings, Function.SET_CONQUERABLE_STATIONS_NEXT_UPDATE);
 		test(settings, Function.SET_PRICE_DATA_SETTINGS);
 		test(settings, Function.SET_REPROCESS_SETTINGS);
@@ -678,7 +650,6 @@ public class SettingsTest extends TestUtil {
 		test(settings, Function.GET_TABLE_RESIZE);
 		test(settings, Function.GET_USER_ITEM_NAMES);
 		test(settings, Function.GET_USER_PRICES);
-		test(settings, Function.SET_API_PROXY);
 		test(settings, Function.SET_CONQUERABLE_STATIONS_NEXT_UPDATE);
 		test(settings, Function.SET_PRICE_DATA_SETTINGS);
 		test(settings, Function.SET_REPROCESS_SETTINGS);
@@ -704,7 +675,6 @@ public class SettingsTest extends TestUtil {
 		test(settings, Function.GET_TABLE_RESIZE);
 		test(settings, Function.GET_USER_ITEM_NAMES);
 		test(settings, Function.GET_USER_PRICES);
-		test(settings, Function.SET_API_PROXY);
 		test(settings, Function.SET_CONQUERABLE_STATIONS_NEXT_UPDATE);
 		test(settings, Function.SET_PRICE_DATA_SETTINGS);
 		test(settings, Function.SET_REPROCESS_SETTINGS);
@@ -731,7 +701,6 @@ public class SettingsTest extends TestUtil {
 		test(settings, Function.GET_TABLE_RESIZE);
 		test(settings, Function.GET_USER_ITEM_NAMES);
 		test(settings, Function.GET_USER_PRICES);
-		test(settings, Function.SET_API_PROXY);
 		test(settings, Function.SET_CONQUERABLE_STATIONS_NEXT_UPDATE);
 		test(settings, Function.SET_MAXIMUM_PURCHASE_AGE);
 		test(settings, Function.SET_PRICE_DATA_SETTINGS);
@@ -762,7 +731,6 @@ public class SettingsTest extends TestUtil {
 		test(settings, Function.GET_TRACKER_DATA);
 		test(settings, Function.GET_USER_ITEM_NAMES);
 		test(settings, Function.GET_USER_PRICES);
-		test(settings, Function.SET_API_PROXY);
 		test(settings, Function.SET_CONQUERABLE_STATIONS_NEXT_UPDATE);
 		test(settings, Function.SET_MAXIMUM_PURCHASE_AGE);
 		test(settings, Function.SET_PRICE_DATA_SETTINGS);
@@ -793,7 +761,6 @@ public class SettingsTest extends TestUtil {
 		test(settings, Function.GET_TRACKER_DATA);
 		test(settings, Function.GET_USER_ITEM_NAMES);
 		test(settings, Function.GET_USER_PRICES);
-		test(settings, Function.SET_API_PROXY);
 		test(settings, Function.SET_CONQUERABLE_STATIONS_NEXT_UPDATE);
 		test(settings, Function.SET_MAXIMUM_PURCHASE_AGE);
 		test(settings, Function.SET_PRICE_DATA_SETTINGS);
@@ -827,7 +794,6 @@ public class SettingsTest extends TestUtil {
 		test(settings, Function.GET_TRACKER_DATA);
 		test(settings, Function.GET_USER_ITEM_NAMES);
 		test(settings, Function.GET_USER_PRICES);
-		test(settings, Function.SET_API_PROXY);
 		test(settings, Function.SET_CONQUERABLE_STATIONS_NEXT_UPDATE);
 		test(settings, Function.SET_MAXIMUM_PURCHASE_AGE);
 		test(settings, Function.SET_PRICE_DATA_SETTINGS);

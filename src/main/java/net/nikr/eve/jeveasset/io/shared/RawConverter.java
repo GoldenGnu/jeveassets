@@ -20,7 +20,6 @@
  */
 package net.nikr.eve.jeveasset.io.shared;
 
-import com.beimin.eveapi.model.shared.JournalEntry;
 import enterprises.orbital.evekit.client.model.WalletJournal;
 import java.time.OffsetDateTime;
 import java.util.Date;
@@ -204,17 +203,6 @@ public class RawConverter {
 		}
 	}
 
-	public static RawContract.ContractAvailability toContractAvailability(com.beimin.eveapi.model.shared.ContractAvailability value) {
-		switch (value) {
-			case PRIVATE:
-				return RawContract.ContractAvailability.PERSONAL;
-			case PUBLIC:
-				return RawContract.ContractAvailability.PUBLIC;
-			default:
-				throw new RuntimeException("Can't convert: " + value + " to ContractAvailability");
-		}
-	}
-
 	public static RawContract.ContractStatus toContractStatus(String value) {
 		switch (value.toUpperCase()) {
 			case "CANCELLED":
@@ -250,34 +238,6 @@ public class RawConverter {
 		}
 	}
 
-	public static RawContract.ContractStatus toContractStatus(com.beimin.eveapi.model.shared.ContractStatus value) {
-		switch (value) {
-			case OUTSTANDING:
-				return RawContract.ContractStatus.OUTSTANDING;
-			case DELETED:
-				return RawContract.ContractStatus.DELETED;
-			case COMPLETED:
-				return RawContract.ContractStatus.FINISHED;
-			case FAILED:
-				return RawContract.ContractStatus.FAILED;
-			case COMPLETEDBYISSUER:
-				return RawContract.ContractStatus.FINISHED_ISSUER;
-			case COMPLETEDBYCONTRACTOR:
-				return RawContract.ContractStatus.FINISHED_CONTRACTOR;
-			case CANCELLED:
-				return RawContract.ContractStatus.CANCELLED;
-			case REJECTED:
-				return RawContract.ContractStatus.REJECTED;
-			case REVERSED:
-				return RawContract.ContractStatus.REVERSED;
-			case INPROGRESS:
-				return RawContract.ContractStatus.IN_PROGRESS;
-			default:
-				throw new RuntimeException("Can't convert: " + value + " to ContractStatus");
-		}
-
-	}
-
 	public static RawContract.ContractType toContractType(String value) {
 		if (value == null) {
 			return RawContract.ContractType.UNKNOWN;
@@ -292,25 +252,6 @@ public class RawConverter {
 				case "loan":
 					return RawContract.ContractType.LOAN;
 				case "auction":
-					return RawContract.ContractType.AUCTION;
-				default:
-					return RawContract.ContractType.UNKNOWN;
-			}
-		}
-	}
-
-	public static RawContract.ContractType toContractType(com.beimin.eveapi.model.shared.ContractType value) {
-		if (value == null) {
-			return RawContract.ContractType.UNKNOWN;
-		} else {
-			switch (value) {
-				case ITEMEXCHANGE:
-					return RawContract.ContractType.ITEM_EXCHANGE;
-				case COURIER:
-					return RawContract.ContractType.COURIER;
-				case LOAN:
-					return RawContract.ContractType.LOAN;
-				case AUCTION:
 					return RawContract.ContractType.AUCTION;
 				default:
 					return RawContract.ContractType.UNKNOWN;
@@ -536,10 +477,6 @@ public class RawConverter {
 			return RawConverter.toLong(journal.getTransactionID());
 		}
 		return null;
-	}
-
-	public static Long toJournalContextID(JournalEntry journal, RawJournalRefType refType) {
-		return toJournalContextID(journal.getArgID1(), journal.getArgName1(), refType);
 	}
 
 	public static Long toJournalContextID(Long argID, String argName, RawJournalRefType refType) {

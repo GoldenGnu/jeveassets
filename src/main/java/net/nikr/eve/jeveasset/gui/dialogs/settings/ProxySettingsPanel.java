@@ -44,8 +44,6 @@ public class ProxySettingsPanel extends JSettingsPanel {
 	private final JCheckBox jEnableAuth;
 	private final JTextField jProxyUsername;
 	private final JPasswordField jProxyPassword;
-	private final JCheckBox jEnableApiProxy;
-	private final JTextField jApiProxy;
 
 	public ProxySettingsPanel(final Program program, final SettingsDialog optionsDialog) {
 		super(program, optionsDialog, DialoguesSettings.get().proxy(), Images.SETTINGS_PROXY.getIcon());
@@ -88,18 +86,6 @@ public class ProxySettingsPanel extends JSettingsPanel {
 		jProxyPassword = new JPasswordField();
 		jProxyPassword.setEnabled(false);
 
-		jEnableApiProxy = new JCheckBox(DialoguesSettings.get().enable());
-		jEnableApiProxy.setSelected(false);
-		jEnableApiProxy.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(final ActionEvent e) {
-				jApiProxy.setEnabled(jEnableApiProxy.isSelected());
-			}
-		});
-
-		JLabel jApiProxyLabel = new JLabel(DialoguesSettings.get().apiProxy());
-		jApiProxy = new JTextField();
-
 		// note: the layout is defined in the super class.
 		layout.setHorizontalGroup(
 			layout.createParallelGroup(GroupLayout.Alignment.TRAILING).addGroup(
@@ -110,7 +96,6 @@ public class ProxySettingsPanel extends JSettingsPanel {
 						.addComponent(jProxyPortLabel)
 						.addComponent(jProxyUsernameLabel)
 						.addComponent(jProxyPasswordLabel)
-						.addComponent(jApiProxyLabel)
 					)
 					.addGap(10)
 					.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
@@ -120,8 +105,6 @@ public class ProxySettingsPanel extends JSettingsPanel {
 						.addComponent(jEnableAuth)
 						.addComponent(jProxyUsername)
 						.addComponent(jProxyPassword)
-						.addComponent(jEnableApiProxy)
-						.addComponent(jApiProxy)
 					)
 				)
 			);
@@ -150,14 +133,6 @@ public class ProxySettingsPanel extends JSettingsPanel {
 				.addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
 					.addComponent(jProxyPasswordLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 					.addComponent(jProxyPassword, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-				)
-				.addGap(10)
-				.addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-					.addComponent(jEnableApiProxy, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-				)
-				.addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-					.addComponent(jApiProxyLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-					.addComponent(jApiProxy, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 				)
 			);
 	}
@@ -199,13 +174,6 @@ public class ProxySettingsPanel extends JSettingsPanel {
 		} else {
 			Settings.get().setProxyData(new ProxyData());
 		}
-
-		// save the API proxy.
-		if (jEnableApiProxy.isSelected()) {
-			Settings.get().setApiProxy(jApiProxy.getText());
-		} else {
-			Settings.get().setApiProxy(null);
-		}
 		return false;
 	}
 
@@ -238,15 +206,5 @@ public class ProxySettingsPanel extends JSettingsPanel {
 				jProxyPassword.setText("");
 			}
 		}
-
-		// set the API Proxy fields
-		String apiProxy = Settings.get().getApiProxy();
-		if (apiProxy == null) {
-			jEnableApiProxy.setSelected(false);
-		} else {
-			jEnableApiProxy.setSelected(true);
-			jApiProxy.setText(apiProxy);
-		}
-		jApiProxy.setEnabled(jEnableApiProxy.isSelected());
 	}
 }

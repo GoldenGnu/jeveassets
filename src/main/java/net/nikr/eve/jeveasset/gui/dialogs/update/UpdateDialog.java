@@ -62,17 +62,6 @@ import net.nikr.eve.jeveasset.io.esi.EsiNameGetter;
 import net.nikr.eve.jeveasset.io.esi.EsiOwnerGetter;
 import net.nikr.eve.jeveasset.io.esi.EsiShipGetter;
 import net.nikr.eve.jeveasset.io.esi.EsiTransactionsGetter;
-import net.nikr.eve.jeveasset.io.eveapi.AccountBalanceGetter;
-import net.nikr.eve.jeveasset.io.eveapi.AccountGetter;
-import net.nikr.eve.jeveasset.io.eveapi.AssetsGetter;
-import net.nikr.eve.jeveasset.io.eveapi.BlueprintsGetter;
-import net.nikr.eve.jeveasset.io.eveapi.ContractItemsGetter;
-import net.nikr.eve.jeveasset.io.eveapi.ContractsGetter;
-import net.nikr.eve.jeveasset.io.eveapi.IndustryJobsGetter;
-import net.nikr.eve.jeveasset.io.eveapi.JournalGetter;
-import net.nikr.eve.jeveasset.io.eveapi.LocationsGetter;
-import net.nikr.eve.jeveasset.io.eveapi.MarketOrdersGetter;
-import net.nikr.eve.jeveasset.io.eveapi.TransactionsGetter;
 import net.nikr.eve.jeveasset.io.evekit.EveKitAccountBalanceGetter;
 import net.nikr.eve.jeveasset.io.evekit.EveKitAssetGetter;
 import net.nikr.eve.jeveasset.io.evekit.EveKitBlueprintsGetter;
@@ -444,7 +433,7 @@ public class UpdateDialog extends JDialogCentered {
 			jPriceDataNone.setEnabled(true);
 			jPriceDataNew.setEnabled(true);
 			jPriceDataAll.setEnabled(true);
-			setUpdateLabel(null, jPriceDataLeftLast, jPriceDataAll, priceData, priceData, false);
+			setUpdateLabel(null, jPriceDataLeftLast, jPriceDataAll, priceData, priceData);
 			if (!jPriceDataAll.isEnabled() && jPriceDataNew.isEnabled() && !jPriceDataNone.isSelected()) {
 				jPriceDataNew.setSelected(true);
 			}
@@ -463,12 +452,8 @@ public class UpdateDialog extends JDialogCentered {
 	}
 
 	private void setUpdateLabel(final JLabel jFirst, final JLabel jAll, final JToggleButton jCheckBox, final Date first, final Date last) {
-		this.setUpdateLabel(jFirst, jAll, jCheckBox, first, last, true);
-	}
-
-	private void setUpdateLabel(final JLabel jFirst, final JLabel jAll, final JToggleButton jCheckBox, final Date first, final Date last, final boolean ignoreOnProxy) {
-		if (first != null && Settings.get().isUpdatable(first, ignoreOnProxy)) {
-			if (last != null && Settings.get().isUpdatable(last, ignoreOnProxy)) {
+		if (first != null && Settings.get().isUpdatable(first)) {
+			if (last != null && Settings.get().isUpdatable(last)) {
 				if (jFirst != null) {
 					jFirst.setText("");
 				}
@@ -681,14 +666,21 @@ public class UpdateDialog extends JDialogCentered {
 			for (EsiOwner esiOwner : program.getProfileManager().getEsiOwners()) {
 				updates.add(new EsiOwnerGetter(this, esiOwner));
 			}
-			for (EveApiAccount account : program.getProfileManager().getAccounts()) {
-				updates.add(new AccountGetter(this, account));
-			}
 		}
 
 		@Override
 		public void update() {
 			setIcon(null);
+			for (EveApiAccount account : program.getProfileManager().getAccounts()) {
+				for (EveApiOwner eveApiOwner : account.getOwners()) {
+					if (eveApiOwner.canMigrate()) {
+						addError("EveApi accounts must be migrated to ESI", "Add ESI accounts in the account manager:\r\nOptions > Accounts... > Add > ESI");
+						break;
+					} else {
+						addError("Migrated EveApi accounts can safely be deleted", "Delete EveApi accounts in the account manager:\r\nOptions > Accounts... > Edit");
+					}
+				}
+			}
 			ThreadWoker.start(this, updates);
 		}
 	}
@@ -700,12 +692,6 @@ public class UpdateDialog extends JDialogCentered {
 		public Step2Task() {
 			super(DialoguesUpdate.get().step2());
 			if (jAccountBalance.isSelected()) {
-				//EveApi
-				for (EveApiAccount account : program.getProfileManager().getAccounts()) {
-					for (EveApiOwner owner : account.getOwners()) {
-						updates.add(new AccountBalanceGetter(this, owner));
-					}
-				}
 				//EveKit
 				for (EveKitOwner eveKitOwner : program.getProfileManager().getEveKitOwners()) {
 					updates.add(new EveKitAccountBalanceGetter(this, eveKitOwner));
@@ -716,12 +702,6 @@ public class UpdateDialog extends JDialogCentered {
 				}
 			}
 			if (jAssets.isSelected()) {
-				//EveApi
-				for (EveApiAccount account : program.getProfileManager().getAccounts()) {
-					for (EveApiOwner owner : account.getOwners()) {
-						updates.add(new AssetsGetter(this, owner));
-					}
-				}
 				//EveKit
 				for (EveKitOwner eveKitOwner : program.getProfileManager().getEveKitOwners()) {
 					updates.add(new EveKitAssetGetter(this, eveKitOwner));
@@ -732,12 +712,6 @@ public class UpdateDialog extends JDialogCentered {
 				}
 			}
 			if (jIndustryJobs.isSelected()) {
-				//EveApi
-				for (EveApiAccount account : program.getProfileManager().getAccounts()) {
-					for (EveApiOwner owner : account.getOwners()) {
-						updates.add(new IndustryJobsGetter(this, owner));
-					}
-				}
 				//EveKit
 				for (EveKitOwner eveKitOwner : program.getProfileManager().getEveKitOwners()) {
 					updates.add(new EveKitIndustryJobsGetter(this, eveKitOwner));
@@ -748,12 +722,6 @@ public class UpdateDialog extends JDialogCentered {
 				}
 			}
 			if (jMarketOrders.isSelected()) {
-				//EveApi
-				for (EveApiAccount account : program.getProfileManager().getAccounts()) {
-					for (EveApiOwner owner : account.getOwners()) {
-						updates.add(new MarketOrdersGetter(this, owner, Settings.get().isMarketOrderHistory()));
-					}
-				}
 				//EveKit
 				for (EveKitOwner eveKitOwner : program.getProfileManager().getEveKitOwners()) {
 					updates.add(new EveKitMarketOrdersGetter(this, eveKitOwner));
@@ -764,12 +732,6 @@ public class UpdateDialog extends JDialogCentered {
 				}
 			}
 			if (jJournal.isSelected()) {
-				//EveApi
-				for (EveApiAccount account : program.getProfileManager().getAccounts()) {
-					for (EveApiOwner owner : account.getOwners()) {
-						updates.add(new JournalGetter(this, owner, Settings.get().isJournalHistory()));
-					}
-				}
 				//EveKit
 				for (EveKitOwner eveKitOwner : program.getProfileManager().getEveKitOwners()) {
 					updates.add(new EveKitJournalGetter(this, eveKitOwner));
@@ -780,12 +742,6 @@ public class UpdateDialog extends JDialogCentered {
 				}
 			}
 			if (jTransactions.isSelected()) {
-				//EveApi
-				for (EveApiAccount account : program.getProfileManager().getAccounts()) {
-					for (EveApiOwner owner : account.getOwners()) {
-						updates.add(new TransactionsGetter(this, owner, Settings.get().isTransactionHistory()));
-					}
-				}
 				//EveKit
 				for (EveKitOwner eveKitOwner : program.getProfileManager().getEveKitOwners()) {
 					updates.add(new EveKitTransactionsGetter(this, eveKitOwner));
@@ -796,12 +752,6 @@ public class UpdateDialog extends JDialogCentered {
 				}
 			}
 			if (jContracts.isSelected()) {
-				//EveApi
-				for (EveApiAccount account : program.getProfileManager().getAccounts()) {
-					for (EveApiOwner owner : account.getOwners()) {
-						updates.add(new ContractsGetter(this, owner));
-					}
-				}
 				//EveKit
 				for (EveKitOwner eveKitOwner : program.getProfileManager().getEveKitOwners()) {
 					updates.add(new EveKitContractsGetter(this, eveKitOwner));
@@ -812,12 +762,6 @@ public class UpdateDialog extends JDialogCentered {
 				}
 			}
 			if (jBlueprints.isSelected()) {
-				//EveApi
-				for (EveApiAccount account : program.getProfileManager().getAccounts()) {
-					for (EveApiOwner owner : account.getOwners()) {
-						updates.add(new BlueprintsGetter(this, owner));
-					}
-				}
 				//EveKit
 				for (EveKitOwner eveKitOwner : program.getProfileManager().getEveKitOwners()) {
 					updates.add(new EveKitBlueprintsGetter(this, eveKitOwner));
@@ -852,12 +796,6 @@ public class UpdateDialog extends JDialogCentered {
 			updates.add(new EsiConquerableStationsGetter(this));
 			//Contract Items
 			if (jContracts.isSelected()) {
-				//EveApi
-				for (EveApiAccount account : program.getProfileManager().getAccounts()) {
-					for (EveApiOwner owner : account.getOwners()) {
-						updates.add(new ContractItemsGetter(this, owner));
-					}
-				}
 				//EveKit
 				for (EveKitOwner eveKitOwner : program.getProfileManager().getEveKitOwners()) {
 					updates.add(new EveKitContractItemsGetter(this, eveKitOwner));
@@ -865,12 +803,6 @@ public class UpdateDialog extends JDialogCentered {
 			}
 			//Locations
 			if (jAssets.isSelected()) {
-				//EveApi
-				for (EveApiAccount account : program.getProfileManager().getAccounts()) {
-					for (EveApiOwner owner : account.getOwners()) {
-						updates.add(new LocationsGetter(this, owner));
-					}
-				}
 				//EveKit
 				for (EveKitOwner eveKitOwner : program.getProfileManager().getEveKitOwners()) {
 					updates.add(new EveKitLocationsGetter(this, eveKitOwner));

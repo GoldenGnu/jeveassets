@@ -111,7 +111,6 @@ public class SettingsWriter extends AbstractXmlWriter {
 		writeReprocessSettings(xmldoc, settings.getReprocessSettings());
 		writeWindow(xmldoc, settings);
 		writeProxy(xmldoc, settings.getProxyData());
-		writeApiProxy(xmldoc, settings.getApiProxy());
 		writePriceDataSettings(xmldoc, settings.getPriceDataSettings());
 		writeFlags(xmldoc, settings.getFlags());
 		writeUserPrices(xmldoc, settings.getUserPrices());
@@ -561,14 +560,6 @@ public class SettingsWriter extends AbstractXmlWriter {
 		node.setAttributeNS(null, "name", "conquerable station");
 		node.setAttributeNS(null, "nextupdate", String.valueOf(settings.getConquerableStationsNextUpdate().getTime()));
 		parentNode.appendChild(node);
-	}
-
-	private void writeApiProxy(final Document xmldoc, final String apiProxy) {
-		if (apiProxy != null) {
-			Element node = xmldoc.createElementNS(null, "apiProxy");
-			node.setAttributeNS(null, "url", String.valueOf(apiProxy));
-			xmldoc.getDocumentElement().appendChild(node);
-		}
 	}
 
 	private void writeProxy(final Document xmldoc, final ProxyData proxy) {

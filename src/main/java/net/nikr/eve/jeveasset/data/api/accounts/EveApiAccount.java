@@ -21,7 +21,6 @@
 
 package net.nikr.eve.jeveasset.data.api.accounts;
 
-import com.beimin.eveapi.model.shared.KeyType;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -29,6 +28,10 @@ import net.nikr.eve.jeveasset.data.settings.Settings;
 
 
 public class EveApiAccount {
+
+	public enum KeyType {
+		CHARACTER, CORPORATION, ACCOUNT;
+	}
 
 	private int keyID;
 	private String vCode;

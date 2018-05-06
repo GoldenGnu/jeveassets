@@ -99,20 +99,6 @@ public class RawContractItem {
 		typeId = contractItem.getTypeID();
 	}
 
-	/**
-	 * EveAPI
-	 *
-	 * @param contractItem
-	 */
-	public RawContractItem(com.beimin.eveapi.model.shared.ContractItem contractItem) {
-		isIncluded = contractItem.isIncluded();
-		isSingleton = contractItem.isSingleton();
-		quantity = (int) contractItem.getQuantity();
-		rawQuantity = RawConverter.toInteger(contractItem.getRawQuantity());
-		recordId = contractItem.getRecordID();
-		typeId = contractItem.getTypeID();
-	}
-
 	public Boolean isIncluded() {
 		return isIncluded;
 	}

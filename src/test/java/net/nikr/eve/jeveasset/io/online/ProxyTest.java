@@ -30,7 +30,6 @@ import java.util.List;
 import java.util.Set;
 import net.nikr.eve.jeveasset.TestUtil;
 import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
-import net.nikr.eve.jeveasset.data.api.accounts.EveApiAccount;
 import net.nikr.eve.jeveasset.data.api.accounts.EveKitOwner;
 import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.data.sde.StaticData;
@@ -38,13 +37,10 @@ import net.nikr.eve.jeveasset.data.settings.PriceDataSettings.PriceSource;
 import net.nikr.eve.jeveasset.data.settings.ProxyData;
 import net.nikr.eve.jeveasset.io.esi.EsiCallbackURL;
 import net.nikr.eve.jeveasset.io.esi.EsiOwnerGetter;
-import net.nikr.eve.jeveasset.io.eveapi.AccountGetter;
 import net.nikr.eve.jeveasset.io.evekit.EveKitOwnerGetter;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
-import org.junit.Test;
 import uk.me.candle.eve.pricing.options.LocationType;
 import uk.me.candle.eve.pricing.options.PricingFetch;
 import uk.me.candle.eve.pricing.options.PricingNumber;
@@ -77,34 +73,27 @@ public class ProxyTest extends TestUtil {
 		System.setProperty("jdk.http.auth.proxying.disabledSchemes", "");
 	}
 
-	@Test @Ignore("Need CCProxy running for this test")
 	public void testHTTP() {
 		proxyData = new ProxyData("0.0.0.0", Proxy.Type.HTTP, 808, "root", "haha");
 		testConnections();
 	}
 
-	@Test @Ignore("Need CCProxy running for this test")
 	public void testSOCKS() {
 		proxyData = new ProxyData("0.0.0.0", Proxy.Type.SOCKS, 1080, "root", "haha");
 		testConnections();
 	}
 
-	@Test @Ignore("Need CCProxy running for this test")
 	public void testUpdateHTTP() {
 		proxyData = new ProxyData("0.0.0.0", Proxy.Type.HTTP, 808, "root", "haha");
 		testUpdate();
 	}
 
-	@Test @Ignore("Need CCProxy running for this test")
 	public void testUpdateSOCKS() {
 		proxyData = new ProxyData("0.0.0.0", Proxy.Type.SOCKS, 1080, "root", "haha");
 		testUpdate();
 	}
 
 	private void testConnections() {
-		//EveAPI
-		AccountGetter eveAPI = new AccountGetter(new EveApiAccount(0, ""), false);
-		eveAPI.start();
 		//ESI
 		EsiOwner esiOwner = new EsiOwner();
 		esiOwner.setCallbackURL(EsiCallbackURL.LOCALHOST);

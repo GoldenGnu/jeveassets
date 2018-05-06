@@ -20,7 +20,6 @@
  */
 package net.nikr.eve.jeveasset.io.shared;
 
-import com.beimin.eveapi.model.eve.Station;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -288,18 +287,6 @@ public final class ApiIdConverter {
 
 	public static void removeLocation(final long locationID) {
 		StaticData.get().getLocations().remove(locationID);
-	}
-
-	public static void addLocation(final Station station) {
-		MyLocation system = getLocation(station.getSolarSystemID());
-		MyLocation location = new MyLocation(station.getStationID(),
-				station.getStationName(),
-				system.getSystemID(),
-				system.getSystem(),
-				system.getRegionID(),
-				system.getRegion(),
-				system.getSecurity());
-		StaticData.get().getLocations().put(location.getLocationID(), location);
 	}
 
 	public static Citadel getCitadel(final SovereigntyStructuresResponse station, String name) {

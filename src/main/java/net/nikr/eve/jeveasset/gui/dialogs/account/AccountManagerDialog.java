@@ -347,11 +347,6 @@ public class AccountManagerDialog extends JDialogCentered {
 				if (o instanceof SeparatorList.Separator<?>) {
 					SeparatorList.Separator<?> separator = (SeparatorList.Separator<?>) o;
 					Object object = separator.first();
-					if (object instanceof EveApiOwner) { //Eve Api
-						EveApiOwner owner = (EveApiOwner) object;
-						EveApiAccount account = owner.getParentAccount();
-						accountImportDialog.editEveApi(account);
-					}
 					if (object instanceof EveKitOwner) {
 						EveKitOwner eveKitOwner = (EveKitOwner) object;
 						accountImportDialog.editEveKit(eveKitOwner);

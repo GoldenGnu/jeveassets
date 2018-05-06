@@ -209,36 +209,6 @@ public class RawIndustryJob {
 		successfulRuns = industryJob.getSuccessfulRuns();
 	}
 
-	/**
-	 * EveAPI
-	 *
-	 * @param industryJob
-	 */
-	public RawIndustryJob(com.beimin.eveapi.model.shared.IndustryJob industryJob) {
-		activityId = industryJob.getActivityID();
-		blueprintId = industryJob.getBlueprintID();
-		blueprintLocationId = industryJob.getBlueprintLocationID();
-		blueprintTypeId = industryJob.getBlueprintTypeID();
-		completedCharacterId = (int) industryJob.getCompletedCharacterID();
-		completedDate = industryJob.getCompletedDate();
-		cost = industryJob.getCost();
-		duration = industryJob.getTimeInSeconds();
-		endDate = industryJob.getEndDate();
-		facilityId = industryJob.getFacilityID();
-		installerId = (int) industryJob.getInstallerID();
-		jobId = (int) industryJob.getJobID();
-		licensedRuns = industryJob.getLicensedRuns();
-		outputLocationId = industryJob.getOutputLocationID();
-		pauseDate = industryJob.getPauseDate();
-		probability = (float) industryJob.getProbability();
-		productTypeId = industryJob.getProductTypeID();
-		runs = industryJob.getRuns();
-		startDate = industryJob.getStartDate();
-		stationId = industryJob.getStationID();
-		status = RawConverter.toIndustryJobStatus(industryJob.getStatus());
-		successfulRuns = industryJob.getSuccessfulRuns();
-	}
-
 	public final Integer getActivityID() {
 		return activityId;
 	}
