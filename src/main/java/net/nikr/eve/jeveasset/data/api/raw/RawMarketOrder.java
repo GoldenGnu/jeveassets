@@ -21,7 +21,6 @@
 package net.nikr.eve.jeveasset.data.api.raw;
 
 import java.util.Date;
-import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 import net.nikr.eve.jeveasset.io.shared.RawConverter;
 import net.troja.eve.esi.model.CharacterOrdersHistoryResponse;
 import net.troja.eve.esi.model.CharacterOrdersResponse;
@@ -260,31 +259,6 @@ public class RawMarketOrder {
 		price = marketOrder.getPrice();
 		range = RawConverter.toMarketOrderRange(marketOrder.getOrderRange());
 		regionId = marketOrder.getRegionID();
-		state = RawConverter.toMarketOrderState(marketOrder.getOrderState());
-		typeId = marketOrder.getTypeID();
-		volumeRemain = marketOrder.getVolRemaining();
-		volumeTotal = marketOrder.getVolEntered();
-	}
-
-	/**
-	 * EveAPI
-	 *
-	 * @param marketOrder
-	 * @param isCorp
-	 */
-	public RawMarketOrder(com.beimin.eveapi.model.shared.MarketOrder marketOrder, boolean isCorp) {
-		walletDivision = marketOrder.getAccountKey();
-		duration = marketOrder.getDuration();
-		escrow = marketOrder.getEscrow();
-		isBuyOrder = marketOrder.getBid() > 0;
-		this.isCorp = isCorp;
-		issued = marketOrder.getIssued();
-		locationId = marketOrder.getStationID();
-		minVolume = marketOrder.getMinVolume();
-		orderId = marketOrder.getOrderID();
-		price = marketOrder.getPrice();
-		range = RawConverter.toMarketOrderRange(marketOrder.getRange());
-		regionId = (int) ApiIdConverter.getLocation(marketOrder.getStationID()).getRegionID();
 		state = RawConverter.toMarketOrderState(marketOrder.getOrderState());
 		typeId = marketOrder.getTypeID();
 		volumeRemain = marketOrder.getVolRemaining();

@@ -269,7 +269,7 @@ public class StructureUpdateDialog extends JDialogCentered {
 				JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), DialoguesStructure.get().invalid(), DialoguesStructure.get().title(), JOptionPane.PLAIN_MESSAGE);
 				return; //Do not show
 			}
-			if (!Settings.get().isUpdatable(structuresNextUpdate, false)) { //Update not allowed yet...
+			if (!Settings.get().isUpdatable(structuresNextUpdate)) { //Update not allowed yet...
 				long time = structuresNextUpdate.getTime() - Settings.getNow().getTime();
 				String updatableIn;
 				if (time <= 1000) { //less than 1 second
@@ -328,7 +328,7 @@ public class StructureUpdateDialog extends JDialogCentered {
 			if (esiOwner.isShowOwner() && esiOwner.isStructures()) {
 				structures = true;
 				if (esiOwner.getStructuresNextUpdate() != null
-						&& !Settings.get().isUpdatable(esiOwner.getStructuresNextUpdate(), false)) {
+						&& !Settings.get().isUpdatable(esiOwner.getStructuresNextUpdate())) {
 					updatable = false;
 					break;
 				}

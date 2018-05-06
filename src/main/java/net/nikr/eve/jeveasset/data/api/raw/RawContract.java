@@ -192,36 +192,6 @@ public class RawContract {
 		volume = contract.getVolume();
 	}
 
-	/**
-	 * EveAPI
-	 *
-	 * @param contract
-	 */
-	public RawContract(com.beimin.eveapi.model.shared.Contract contract) {
-		acceptorId = (int) contract.getAcceptorID();
-		assigneeId = (int) contract.getAssigneeID();
-		availability = RawConverter.toContractAvailability(contract.getAvailability());
-		buyout = contract.getBuyout();
-		collateral = contract.getCollateral();
-		contractId = (int) contract.getContractID();
-		dateAccepted = contract.getDateAccepted();
-		dateCompleted = contract.getDateCompleted();
-		dateExpired = contract.getDateExpired();
-		dateIssued = contract.getDateIssued();
-		daysToComplete = contract.getNumDays();
-		endLocationId = contract.getEndStationID();
-		forCorporation = contract.isForCorp();
-		issuerCorporationId = (int) contract.getIssuerCorpID();
-		issuerId = (int) contract.getIssuerID();
-		price = contract.getPrice();
-		reward = contract.getReward();
-		startLocationId = contract.getStartStationID();
-		status = RawConverter.toContractStatus(contract.getStatus());
-		title = contract.getTitle();
-		type = RawConverter.toContractType(contract.getType());
-		volume = contract.getVolume();
-	}
-
 	public final long getAcceptorID() {
 		return acceptorId;
 	}
