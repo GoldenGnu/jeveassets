@@ -23,11 +23,8 @@ package net.nikr.eve.jeveasset.data.raw;
 
 import net.nikr.eve.jeveasset.TestUtil;
 import net.nikr.eve.jeveasset.data.api.raw.RawJournal;
-import net.nikr.eve.jeveasset.data.api.raw.RawJournal.JournalPartyType;
-import net.nikr.eve.jeveasset.data.api.raw.RawJournalExtraInfo;
-import net.troja.eve.esi.model.CharacterWalletJournalExtraInfoResponse;
+import net.nikr.eve.jeveasset.data.api.raw.RawJournal.ContextType;
 import net.troja.eve.esi.model.CharacterWalletJournalResponse;
-import net.troja.eve.esi.model.CorporationWalletJournalExtraInfoResponse;
 import net.troja.eve.esi.model.CorporationWalletJournalResponse;
 import org.junit.Test;
 
@@ -38,12 +35,7 @@ public class RawJournalTest extends TestUtil {
 	@Test
 	public void rawJournalTest() {
 		RawUtil.compare(RawJournal.class, CharacterWalletJournalResponse.class);
-		RawUtil.compare(JournalPartyType.values(), CharacterWalletJournalResponse.FirstPartyTypeEnum.values());
-		RawUtil.compare(JournalPartyType.values(), CharacterWalletJournalResponse.SecondPartyTypeEnum.values());
-		RawUtil.compare(RawJournalExtraInfo.class, CharacterWalletJournalExtraInfoResponse.class);
 		RawUtil.compare(RawJournal.class, CorporationWalletJournalResponse.class);
-		RawUtil.compare(JournalPartyType.values(), CorporationWalletJournalResponse.SecondPartyTypeEnum.values());
-		RawUtil.compare(JournalPartyType.values(), CorporationWalletJournalResponse.SecondPartyTypeEnum.values());
-		RawUtil.compare(RawJournalExtraInfo.class, CorporationWalletJournalExtraInfoResponse.class);
+		RawUtil.compare(ContextType.values(), CharacterWalletJournalResponse.ContextIdTypeEnum.values(), CorporationWalletJournalResponse.ContextIdTypeEnum.values());
 	}
 }

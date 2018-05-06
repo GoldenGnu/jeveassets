@@ -20,6 +20,8 @@
  */
 package net.nikr.eve.jeveasset.io.shared;
 
+import com.beimin.eveapi.model.shared.JournalEntry;
+import enterprises.orbital.evekit.client.model.WalletJournal;
 import java.time.OffsetDateTime;
 import java.util.Date;
 import java.util.HashMap;
@@ -28,8 +30,7 @@ import net.nikr.eve.jeveasset.data.api.raw.RawAsset;
 import net.nikr.eve.jeveasset.data.api.raw.RawContainerLog;
 import net.nikr.eve.jeveasset.data.api.raw.RawContract;
 import net.nikr.eve.jeveasset.data.api.raw.RawIndustryJob;
-import net.nikr.eve.jeveasset.data.api.raw.RawJournal;
-import net.nikr.eve.jeveasset.data.api.raw.RawJournalExtraInfo;
+import net.nikr.eve.jeveasset.data.api.raw.RawJournal.ContextType;
 import net.nikr.eve.jeveasset.data.api.raw.RawJournalRefType;
 import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder;
 import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder.MarketOrderRange;
@@ -408,56 +409,153 @@ public class RawConverter {
 		}
 	}
 
-	public static RawJournal.JournalPartyType toJournalPartyType(String value) {
-		return RawJournal.JournalPartyType.fromValue(value);
-	}
-
-	public static RawJournal.JournalPartyType toJournalPartyType(Integer value) {
+	public static ContextType toJournalContextType(CharacterWalletJournalResponse.ContextIdTypeEnum value) {
 		if (value == null) {
 			return null;
-		} else if (value == 2) {
-			return RawJournal.JournalPartyType.CORPORATION;
-		} else if (value >= 1373 && value <= 1386) {
-			return RawJournal.JournalPartyType.CHARACTER;
-		} else if (value == 16159) {
-			return RawJournal.JournalPartyType.ALLIANCE;
-		} else if (value > 500000 && value < 500025) {
-			return RawJournal.JournalPartyType.FACTION;
-		} else {
-			return RawJournal.JournalPartyType.SYSTEM;
+		}
+		try {
+			return ContextType.valueOf(value.name());
+		} catch (IllegalArgumentException ex) {
+			return null;
 		}
 	}
 
-	public static RawJournal.JournalPartyType toJournalPartyType(CharacterWalletJournalResponse.FirstPartyTypeEnum value) {
+	public static ContextType toJournalContextType(CorporationWalletJournalResponse.ContextIdTypeEnum value) {
 		if (value == null) {
 			return null;
-		} else {
-			return RawJournal.JournalPartyType.valueOf(value.name());
+		}
+		try {
+			return ContextType.valueOf(value.name());
+		} catch (IllegalArgumentException ex) {
+			return null;
 		}
 	}
 
-	public static RawJournal.JournalPartyType toJournalPartyType(CorporationWalletJournalResponse.FirstPartyTypeEnum value) {
+	public static ContextType toJournalContextType(String value) {
 		if (value == null) {
 			return null;
-		} else {
-			return RawJournal.JournalPartyType.valueOf(value.name());
+		}
+		try {
+			return ContextType.valueOf(value);
+		} catch (IllegalArgumentException ex) {
+			return null;
 		}
 	}
 
-	public static RawJournal.JournalPartyType toJournalPartyType(CharacterWalletJournalResponse.SecondPartyTypeEnum value) {
-		if (value == null) {
-			return null;
-		} else {
-			return RawJournal.JournalPartyType.valueOf(value.name());
+	public static ContextType toJournalContextType(WalletJournal journal, RawJournalRefType refType) {
+		ContextType contextType = toJournalContextType(refType);
+		if (contextType != null) {
+			return contextType;
 		}
+		if (journal.getAllianceID() != null) {
+			return ContextType.ALLIANCE_ID;
+		} else if (journal.getCharacterID() != null) {
+			return ContextType.CHARACTER_ID;
+		} else if (journal.getContractID() != null) {
+			return ContextType.CONTRACT_ID;
+		} else if (journal.getCorporationID() != null) {
+			return ContextType.CORPORATION_ID;
+		} else if (journal.getDestroyedShipTypeID() != null) {
+			return ContextType.TYPE_ID;
+		} else if (journal.getJobID() != null) {
+			return ContextType.INDUSTRY_JOB_ID;
+		} else if (journal.getLocationID() != null) {
+			return ContextType.STRUCTURE_ID;
+		} else if (journal.getNpcID() != null) {
+			return ContextType.TYPE_ID;
+		} else if (journal.getPlanetID() != null) {
+			return ContextType.PLANET_ID;
+		} else if (journal.getSystemID() != null) {
+			return ContextType.SYSTEM_ID;
+		} else if (journal.getTransactionID() != null) {
+			return ContextType.MARKET_TRANSACTION_ID;
+		}
+		return null;
 	}
 
-	public static RawJournal.JournalPartyType toJournalPartyType(CorporationWalletJournalResponse.SecondPartyTypeEnum value) {
-		if (value == null) {
-			return null;
-		} else {
-			return RawJournal.JournalPartyType.valueOf(value.name());
+	public static ContextType toJournalContextType(RawJournalRefType refType) {
+		if (refType.getArgName() != null) {
+			switch (refType.getArgName()) {
+				case CONTRACT_ID:
+					return ContextType.CONTRACT_ID;
+				case DESTROYED_SHIP_TYPE_ID:
+					return ContextType.TYPE_ID;
+				case JOB_ID:
+					return ContextType.INDUSTRY_JOB_ID;
+				case TRANSACTION_ID:
+					return ContextType.MARKET_TRANSACTION_ID;
+			}
 		}
+		if (refType.getArgID() != null) {
+			switch (refType.getArgID()) {
+				case NPC_ID:
+					return ContextType.TYPE_ID;
+				case PLAYER_ID:
+					return ContextType.CHARACTER_ID;
+				case STATION_ID:
+					return ContextType.STATION_ID;
+				case SYSTEM_ID:
+					return ContextType.SYSTEM_ID;
+				case CORPORATION_ID:
+					return ContextType.CORPORATION_ID;
+				case ALLIANCE_ID:
+					return ContextType.ALLIANCE_ID;
+				case PLANET_ID:
+					return ContextType.PLANET_ID;
+			}
+		}
+		return null;
+	}
+
+	public static Long toJournalContextID(WalletJournal journal, RawJournalRefType refType) {
+		Long contextID = toJournalContextID(journal.getArgID1(), journal.getArgName1(), refType);
+		if (contextID != null) {
+			return contextID;
+		}
+		if (journal.getAllianceID() != null) {
+			return RawConverter.toLong(journal.getAllianceID());
+		} else if (journal.getCharacterID() != null) {
+			return RawConverter.toLong(journal.getCharacterID());
+		} else if (journal.getContractID() != null) {
+			return RawConverter.toLong(journal.getContractID());
+		} else if (journal.getCorporationID() != null) {
+			return RawConverter.toLong(journal.getCorporationID());
+		} else if (journal.getDestroyedShipTypeID() != null) {
+			return RawConverter.toLong(journal.getDestroyedShipTypeID());
+		} else if (journal.getJobID() != null) {
+			return RawConverter.toLong(journal.getJobID());
+		} else if (journal.getLocationID() != null) {
+			return RawConverter.toLong(journal.getLocationID());
+		} else if (journal.getNpcID() != null) {
+			return RawConverter.toLong(journal.getNpcID());
+		} else if (journal.getPlanetID() != null) {
+			return RawConverter.toLong(journal.getPlanetID());
+		} else if (journal.getSystemID() != null) {
+			return RawConverter.toLong(journal.getSystemID());
+		} else if (journal.getTransactionID() != null) {
+			return RawConverter.toLong(journal.getTransactionID());
+		}
+		return null;
+	}
+
+	public static Long toJournalContextID(JournalEntry journal, RawJournalRefType refType) {
+		return toJournalContextID(journal.getArgID1(), journal.getArgName1(), refType);
+	}
+
+	public static Long toJournalContextID(Long argID, String argName, RawJournalRefType refType) {
+		if (refType.getArgName() != null) {
+			switch (refType.getArgName()) {
+				case CONTRACT_ID:
+					return RawConverter.toLong(argName);
+				case DESTROYED_SHIP_TYPE_ID:
+					return RawConverter.toLong(argName);
+				case JOB_ID:
+					return RawConverter.toLong(argName);
+				case TRANSACTION_ID:
+					return RawConverter.toLong(argName);
+			}
+		}
+		return argID;
 	}
 
 	public static RawMarketOrder.MarketOrderRange toMarketOrderRange(String value) {
@@ -492,46 +590,6 @@ public class RawConverter {
 				return RawMarketOrder.MarketOrderRange.REGION;
 			default:
 				throw new RuntimeException("Can't convert: " + value + " to MarketOrderRange");
-		}
-	}
-
-	public static Long fromRawJournalExtraInfoArgID(RawJournalExtraInfo journalExtraInfo) {
-		if (journalExtraInfo.getAllianceId() != null) {
-			return RawConverter.toLong(journalExtraInfo.getAllianceId());
-		} else if (journalExtraInfo.getCharacterId() != null) {
-			return RawConverter.toLong(journalExtraInfo.getCharacterId());
-		} else if (journalExtraInfo.getLocationId() != null) {
-			return RawConverter.toLong(journalExtraInfo.getLocationId());
-		} else if (journalExtraInfo.getNpcId() != null) {
-			return RawConverter.toLong(journalExtraInfo.getNpcId());
-		} else if (journalExtraInfo.getPlanetId() != null) {
-			return RawConverter.toLong(journalExtraInfo.getPlanetId());
-		} else if (journalExtraInfo.getSystemId() != null) {
-			return RawConverter.toLong(journalExtraInfo.getSystemId());
-		} else if (journalExtraInfo.getCorporationId() != null) {
-			return RawConverter.toLong(journalExtraInfo.getCorporationId());
-		} else {
-			return null;
-		}
-	}
-
-	public static String fromRawJournalExtraInfoArgName(RawJournalExtraInfo journalExtraInfo) {
-		if (journalExtraInfo.getCharacterId() != null) {
-			return journalExtraInfo.getCharacterId().toString();
-		} else if (journalExtraInfo.getContractId() != null) {
-			return journalExtraInfo.getContractId().toString();
-		} else if (journalExtraInfo.getDestroyedShipTypeId() != null) {
-			return journalExtraInfo.getDestroyedShipTypeId().toString();
-		} else if (journalExtraInfo.getJobId() != null) {
-			return journalExtraInfo.getJobId().toString();
-		} else if (journalExtraInfo.getNpcName() != null) {
-			return journalExtraInfo.getNpcName();
-		} else if (journalExtraInfo.getSystemId() != null) {
-			return journalExtraInfo.getSystemId().toString();
-		} else if (journalExtraInfo.getTransactionId() != null) {
-			return journalExtraInfo.getTransactionId().toString();
-		} else {
-			return null;
 		}
 	}
 
@@ -645,27 +703,6 @@ public class RawConverter {
 			return rawQuantity;
 		} else {
 			return quantity;
-		}
-	}
-
-	public static Integer fromJournalPartyType(RawJournal.JournalPartyType value) {
-		if (value == null) {
-			return null;
-		} else {
-			switch (value) {
-				case ALLIANCE:
-					return 16159;
-				case CHARACTER:
-					return 1373;
-				case CORPORATION:
-					return 2;
-				case FACTION:
-					return 500001;
-				case SYSTEM:
-					return 30000142;
-				default:
-					return 0;
-			}
 		}
 	}
 

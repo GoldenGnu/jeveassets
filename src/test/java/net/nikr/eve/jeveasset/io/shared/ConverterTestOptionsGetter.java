@@ -34,8 +34,7 @@ import net.nikr.eve.jeveasset.data.api.raw.RawBlueprint;
 import net.nikr.eve.jeveasset.data.api.raw.RawContainerLog;
 import net.nikr.eve.jeveasset.data.api.raw.RawContract;
 import net.nikr.eve.jeveasset.data.api.raw.RawIndustryJob;
-import net.nikr.eve.jeveasset.data.api.raw.RawJournal;
-import net.nikr.eve.jeveasset.data.api.raw.RawJournalExtraInfo;
+import net.nikr.eve.jeveasset.data.api.raw.RawJournal.ContextType;
 import net.nikr.eve.jeveasset.data.api.raw.RawJournalRefType;
 import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder;
 import net.nikr.eve.jeveasset.data.sde.ItemFlag;
@@ -53,7 +52,6 @@ import net.troja.eve.esi.model.CharacterContractsResponse;
 import net.troja.eve.esi.model.CharacterIndustryJobsResponse;
 import net.troja.eve.esi.model.CharacterOrdersHistoryResponse;
 import net.troja.eve.esi.model.CharacterOrdersResponse;
-import net.troja.eve.esi.model.CharacterWalletJournalExtraInfoResponse;
 import net.troja.eve.esi.model.CharacterWalletJournalResponse;
 import net.troja.eve.esi.model.CorporationAssetsResponse;
 import net.troja.eve.esi.model.CorporationBlueprintsResponse;
@@ -62,7 +60,6 @@ import net.troja.eve.esi.model.CorporationContractsResponse;
 import net.troja.eve.esi.model.CorporationIndustryJobsResponse;
 import net.troja.eve.esi.model.CorporationOrdersHistoryResponse;
 import net.troja.eve.esi.model.CorporationOrdersResponse;
-import net.troja.eve.esi.model.CorporationWalletJournalExtraInfoResponse;
 import net.troja.eve.esi.model.CorporationWalletJournalResponse;
 import static org.junit.Assert.fail;
 
@@ -182,15 +179,8 @@ public class ConverterTestOptionsGetter {
 		private static final CharacterIndustryJobsResponse.StatusEnum[] ESI_INDUSTRY_JOB_STATUS_CHARACTER = CharacterIndustryJobsResponse.StatusEnum.values();
 		private static final CorporationIndustryJobsResponse.StatusEnum[] ESI_INDUSTRY_JOB_STATUS_CORPORATION = CorporationIndustryJobsResponse.StatusEnum.values();
 		private static final Integer[] EVE_API_INDUSTRY_JOB_STATUS = {1, 102, 101, 2, 3, 103};
-		//JournalPartyType
-		private static final RawJournal.JournalPartyType[] RAW_JOURNAL_PARTY_TYPE = RawJournal.JournalPartyType.values();
-		private static final CharacterWalletJournalResponse.FirstPartyTypeEnum[] ESI_JOURNAL_PARTY_TYPE_FIRST_CHARACTER = CharacterWalletJournalResponse.FirstPartyTypeEnum.values();
-		private static final CharacterWalletJournalResponse.SecondPartyTypeEnum[] ESI_JOURNAL_PARTY_TYPE_SECOND_CHARACTER = CharacterWalletJournalResponse.SecondPartyTypeEnum.values();
-		private static final CorporationWalletJournalResponse.FirstPartyTypeEnum[] ESI_JOURNAL_PARTY_TYPE_FIRST_CORPORATION = CorporationWalletJournalResponse.FirstPartyTypeEnum.values();
-		private static final CorporationWalletJournalResponse.SecondPartyTypeEnum[] ESI_JOURNAL_PARTY_TYPE_SECOND_CORPORATION = CorporationWalletJournalResponse.SecondPartyTypeEnum.values();
-		private static final Integer[] EVE_API_JOURNAL_PARTY_TYPE = {1373, 2, 16159, 500001, 30000142};
-		//JournalRefType
-		private static final List<RefType> REF_TYPE = createRefTypes();
+		//Journal RefType and ContextType
+		private static final List<JournalData> JOURNAL_DATA = createJournalData();
 		//MarketOrderRange
 		private static final RawMarketOrder.MarketOrderRange[] RAW_MARKET_ORDER_RANGE = RawMarketOrder.MarketOrderRange.values();
 		private static final CharacterOrdersResponse.RangeEnum[] ESI_MARKET_ORDER_RANGE_CHARACTER = CharacterOrdersResponse.RangeEnum.values();
@@ -222,95 +212,11 @@ public class ConverterTestOptionsGetter {
 		//Control
 		private static final int MAX = createMax();
 
-		//JournalExtraInfo
-		private final RawJournalExtraInfo[] rawJournalExtraInfo;
-		private final CharacterWalletJournalExtraInfoResponse[] esiJournalExtraInfoCharacter;
-		private final CorporationWalletJournalExtraInfoResponse[] esiJournalExtraInfoCorporation;
-		
 		//Controls
 		private final int index;
 
 		public IndexOptions(int index) {
 			this.index = index;
-			RawJournalRefType refType = get(REF_TYPE, index).getRawJournalRefType();
-			rawJournalExtraInfo = new RawJournalExtraInfo[1];
-			rawJournalExtraInfo[0] = new RawJournalExtraInfo(getLong(), getLong().toString(), refType);
-			esiJournalExtraInfoCharacter = new CharacterWalletJournalExtraInfoResponse[1];
-			CharacterWalletJournalExtraInfoResponse journalExtraInfoResponseCharacter = new CharacterWalletJournalExtraInfoResponse();
-			esiJournalExtraInfoCharacter[0] = journalExtraInfoResponseCharacter; //TODO set correct values
-			esiJournalExtraInfoCorporation = new CorporationWalletJournalExtraInfoResponse[1];
-			CorporationWalletJournalExtraInfoResponse journalExtraInfoResponseCorporation = new CorporationWalletJournalExtraInfoResponse();
-			esiJournalExtraInfoCorporation[0] = journalExtraInfoResponseCorporation; //TODO set correct values
-			if (refType.getArgName() != null) {
-				switch (refType.getArgName()) {
-					case CONTRACT_ID:
-						journalExtraInfoResponseCharacter.setContractId(getLong().intValue());
-						journalExtraInfoResponseCorporation.setContractId(getLong().intValue());
-						break;
-					case DESTROYED_SHIP_TYPE_ID:
-						journalExtraInfoResponseCharacter.setDestroyedShipTypeId(getLong().intValue());
-						journalExtraInfoResponseCorporation.setDestroyedShipTypeId(getLong().intValue());
-						break;
-					case JOB_ID:
-						journalExtraInfoResponseCharacter.setJobId(getLong().intValue());
-						journalExtraInfoResponseCorporation.setJobId(getLong().intValue());
-						break;
-					case NPC_NAME:
-						journalExtraInfoResponseCharacter.setNpcName(String.valueOf(getLong()));
-						journalExtraInfoResponseCorporation.setNpcName(String.valueOf(getLong()));
-						break;
-					case PLAYER_NAME:
-						break;
-					case STATION_NAME:
-						break;
-					case TRANSACTION_ID:
-						journalExtraInfoResponseCharacter.setTransactionId(getLong());
-						journalExtraInfoResponseCorporation.setTransactionId(getLong());
-						break;
-					case CORPORATION_NAME:
-						break;
-					case ALLIANCE_NAME:
-						break;
-					case PLANET_NAME:
-						break;
-					default:
-						throw new RuntimeException("RawJournal.ArgName switch incomplete");
-				}
-			}
-			if (refType.getArgID() != null) {
-				switch (refType.getArgID()) {
-					case NPC_ID:
-						journalExtraInfoResponseCharacter.setNpcId(getLong().intValue());
-						journalExtraInfoResponseCorporation.setNpcId(getLong().intValue());
-						break;
-					case PLAYER_ID:
-						journalExtraInfoResponseCharacter.setCharacterId(getLong().intValue());
-						journalExtraInfoResponseCorporation.setCharacterId(getLong().intValue());
-						break;
-					case STATION_ID:
-						journalExtraInfoResponseCharacter.setLocationId(getLong());
-						journalExtraInfoResponseCorporation.setLocationId(getLong());
-						break;
-					case SYSTEM_ID:
-						journalExtraInfoResponseCharacter.setSystemId(getLong().intValue());
-						journalExtraInfoResponseCorporation.setSystemId(getLong().intValue());
-						break;
-					case CORPORATION_ID:
-						journalExtraInfoResponseCharacter.setCorporationId(getLong().intValue());
-						journalExtraInfoResponseCorporation.setCorporationId(getLong().intValue());
-						break;
-					case ALLIANCE_ID:
-						journalExtraInfoResponseCharacter.setAllianceId(getLong().intValue());
-						journalExtraInfoResponseCorporation.setAllianceId(getLong().intValue());
-						break;
-					case PLANET_ID:
-						journalExtraInfoResponseCharacter.setPlanetId(getLong().intValue());
-						journalExtraInfoResponseCorporation.setPlanetId(getLong().intValue());
-						break;
-					default:
-						throw new RuntimeException("RawJournal.ArgID switch incomplete");
-				}
-			}
 		}
 
 		private static List<LocationFlag> createLocationTypes() {
@@ -381,17 +287,18 @@ public class ConverterTestOptionsGetter {
 			return new ArrayList<LocationFlag>(locationFlags.values());
 		}
 
-		private static List<RefType> createRefTypes() {
-			Map<Integer, RefType> refTypes = new HashMap<Integer, RefType>();
+		private static List<JournalData> createJournalData() {
+			Map<Integer, JournalData> journalDatas = new HashMap<Integer, JournalData>();
 			//EveAPI
 			for (com.beimin.eveapi.model.shared.RefType refTypeEnum : com.beimin.eveapi.model.shared.RefType.values()) {
 				RawJournalRefType rawJournalRefType = RawConverter.toJournalRefType(refTypeEnum.getId());
-				RefType refType = refTypes.get(rawJournalRefType.getID());
-				if (refType == null) {
-					refType = new RefType(rawJournalRefType);
-					refTypes.put(rawJournalRefType.getID(), refType);
+				JournalData journalData = journalDatas.get(rawJournalRefType.getID());
+				if (journalData == null) {
+					journalData = new JournalData(rawJournalRefType);
+					journalDatas.put(rawJournalRefType.getID(), journalData);
 				}
-				refType.setRefType(refTypeEnum);
+				journalData.setRefType(refTypeEnum);
+				journalData.setContextType(RawConverter.toJournalContextType(rawJournalRefType));
 			}
 			//ESI Character
 			for (CharacterWalletJournalResponse.RefTypeEnum refTypeEnum : CharacterWalletJournalResponse.RefTypeEnum.values()) {
@@ -400,12 +307,13 @@ public class ConverterTestOptionsGetter {
 					fail(refTypeEnum.name() + " not found");
 					continue;
 				}
-				RefType refType = refTypes.get(rawJournalRefType.getID());
-				if (refType == null) {
-					refType = new RefType(rawJournalRefType);
-					refTypes.put(rawJournalRefType.getID(), refType);
+				JournalData journalData = journalDatas.get(rawJournalRefType.getID());
+				if (journalData == null) {
+					journalData = new JournalData(rawJournalRefType);
+					journalDatas.put(rawJournalRefType.getID(), journalData);
 				}
-				refType.setRefType(refTypeEnum);
+				journalData.setRefType(refTypeEnum);
+				journalData.setContextType(RawConverter.toJournalContextType(rawJournalRefType));
 			}
 			//ESI Corporation
 			for (CorporationWalletJournalResponse.RefTypeEnum refTypeEnum : CorporationWalletJournalResponse.RefTypeEnum.values()) {
@@ -414,23 +322,24 @@ public class ConverterTestOptionsGetter {
 					fail(refTypeEnum.name() + " not found");
 					continue;
 				}
-				RefType refType = refTypes.get(rawJournalRefType.getID());
-				if (refType == null) {
-					refType = new RefType(rawJournalRefType);
-					refTypes.put(rawJournalRefType.getID(), refType);
+				JournalData journalData = journalDatas.get(rawJournalRefType.getID());
+				if (journalData == null) {
+					journalData = new JournalData(rawJournalRefType);
+					journalDatas.put(rawJournalRefType.getID(), journalData);
 				}
-				refType.setRefType(refTypeEnum);
+				journalData.setRefType(refTypeEnum);
+				journalData.setContextType(RawConverter.toJournalContextType(rawJournalRefType));
 			}
 			Set<Integer> remove = new HashSet<Integer>();
-			for (RefType refType : refTypes.values()) {
+			for (JournalData refType : journalDatas.values()) {
 				if (refType.isEmpty()) {
 					remove.add(refType.getRawJournalRefType().getID());
 				}
 			}
 			for (Integer index : remove) {
-				refTypes.remove(index);
+				journalDatas.remove(index);
 			}
-			return new ArrayList<RefType>(refTypes.values());
+			return new ArrayList<JournalData>(journalDatas.values());
 		}
 
 		private static int createMax() {
@@ -479,18 +388,8 @@ public class ConverterTestOptionsGetter {
 			tempMax = Math.max(tempMax, ESI_INDUSTRY_JOB_STATUS_CHARACTER.length);
 			tempMax = Math.max(tempMax, ESI_INDUSTRY_JOB_STATUS_CORPORATION.length);
 			tempMax = Math.max(tempMax, EVE_API_INDUSTRY_JOB_STATUS.length);
-			//JournalExtraInfo
-			//tempMax = Math.max(tempMax, rawJournalExtraInfo.length);
-			//tempMax = Math.max(tempMax, esiJournalExtraInfoCharacter.length);
-			//JournalPartyType
-			tempMax = Math.max(tempMax, RAW_JOURNAL_PARTY_TYPE.length);
-			tempMax = Math.max(tempMax, ESI_JOURNAL_PARTY_TYPE_FIRST_CHARACTER.length);
-			tempMax = Math.max(tempMax, ESI_JOURNAL_PARTY_TYPE_SECOND_CHARACTER.length);
-			tempMax = Math.max(tempMax, ESI_JOURNAL_PARTY_TYPE_FIRST_CORPORATION.length);
-			tempMax = Math.max(tempMax, ESI_JOURNAL_PARTY_TYPE_SECOND_CORPORATION.length);
-			tempMax = Math.max(tempMax, EVE_API_JOURNAL_PARTY_TYPE.length);
 			//JournalRefType
-			tempMax = Math.max(tempMax, REF_TYPE.size());
+			tempMax = Math.max(tempMax, JOURNAL_DATA.size());
 			//MarketOrderRange
 			tempMax = Math.max(tempMax, RAW_MARKET_ORDER_RANGE.length);
 			tempMax = Math.max(tempMax, ESI_MARKET_ORDER_RANGE_CHARACTER.length);
@@ -764,73 +663,40 @@ public class ConverterTestOptionsGetter {
 		public String getIndustryJobStatusEveKit() {
 			return get(ESI_INDUSTRY_JOB_STATUS_CHARACTER, index).toString();
 		}
-
-//JournalExtraInfo
+//JournalContextType
 		@Override
-		public RawJournalExtraInfo getJournalExtraInfoRaw() {
-			return get(rawJournalExtraInfo, index);
+		public ContextType getJournalContextTypeRaw() {
+			return get(JOURNAL_DATA, index).getRawJournalContextType();
 		}
 
 		@Override
-		public CharacterWalletJournalExtraInfoResponse getJournalExtraInfoEsiCharacter() {
-			return get(esiJournalExtraInfoCharacter, index);
+		public CharacterWalletJournalResponse.ContextIdTypeEnum getJournalContextTypeEsiCharacter() {
+			return get(JOURNAL_DATA, index).getEsiJournalContextTypeCharacter();
 		}
 
 		@Override
-		public CorporationWalletJournalExtraInfoResponse getJournalExtraInfoEsiCorporation() {
-			return get(esiJournalExtraInfoCorporation, index);
+		public CorporationWalletJournalResponse.ContextIdTypeEnum getJournalContextTypeEsiCorporation() {
+			return get(JOURNAL_DATA, index).getEsiJournalContextTypeCorporation();
 		}
-
-//JournalPartyType
-		@Override
-		public RawJournal.JournalPartyType getJournalPartyTypeRaw() {
-			return get(RAW_JOURNAL_PARTY_TYPE, index);
-		}
-
-		@Override
-		public CharacterWalletJournalResponse.FirstPartyTypeEnum getJournalPartyTypeEsiFirstCharacter() {
-			return get(ESI_JOURNAL_PARTY_TYPE_FIRST_CHARACTER, index);
-		}
-
-		@Override
-		public CharacterWalletJournalResponse.SecondPartyTypeEnum getJournalPartyTypeEsiSecondCharacter() {
-			return get(ESI_JOURNAL_PARTY_TYPE_SECOND_CHARACTER, index);
-		}
-
-		@Override
-		public CorporationWalletJournalResponse.FirstPartyTypeEnum getJournalPartyTypeEsiFirstCorporation() {
-			return get(ESI_JOURNAL_PARTY_TYPE_FIRST_CORPORATION, index);
-		}
-
-		@Override
-		public CorporationWalletJournalResponse.SecondPartyTypeEnum getJournalPartyTypeEsiSecondCorporation() {
-			return get(ESI_JOURNAL_PARTY_TYPE_SECOND_CORPORATION, index);
-		}
-
-		@Override
-		public int getJournalPartyTypeEveApi() {
-			return get(EVE_API_JOURNAL_PARTY_TYPE, index);
-		}
-
 //JournalRefType
 		@Override
 		public RawJournalRefType getJournalRefTypeRaw() {
-			return get(REF_TYPE, index).getRawJournalRefType();
+			return get(JOURNAL_DATA, index).getRawJournalRefType();
 		}
 
 		@Override
 		public CharacterWalletJournalResponse.RefTypeEnum getJournalRefTypeEsiCharacter() {
-			return get(REF_TYPE, index).getEsiJournalRefTypeCharacter();
+			return get(JOURNAL_DATA, index).getEsiJournalRefTypeCharacter();
 		}
 
 		@Override
 		public CorporationWalletJournalResponse.RefTypeEnum getJournalRefTypeEsiCorporation() {
-			return get(REF_TYPE, index).getEsiJournalRefTypeCorporation();
+			return get(JOURNAL_DATA, index).getEsiJournalRefTypeCorporation();
 		}
 
 		@Override
 		public com.beimin.eveapi.model.shared.RefType getJournalRefTypeEveApi() {
-			return get(REF_TYPE, index).getXmlJournalRefType();
+			return get(JOURNAL_DATA, index).getXmlJournalRefType();
 		}
 
 //MarketOrderRange
@@ -996,14 +862,15 @@ public class ConverterTestOptionsGetter {
 		}
 	}
 
-	private static class RefType {
+	private static class JournalData {
 		private CharacterWalletJournalResponse.RefTypeEnum EsiJournalRefTypeCharacter;
 		private CorporationWalletJournalResponse.RefTypeEnum EsiJournalRefTypeCorporation;
 		private com.beimin.eveapi.model.shared.RefType XmlJournalRefType;
+		private ContextType rawJournalContextType;
 
 		private final RawJournalRefType rawJournalRefType;
 
-		public RefType(RawJournalRefType rawJournalRefType) {
+		public JournalData(RawJournalRefType rawJournalRefType) {
 			this.rawJournalRefType = rawJournalRefType;
 		}
 
@@ -1029,6 +896,24 @@ public class ConverterTestOptionsGetter {
 			return XmlJournalRefType;
 		}
 
+		public ContextType getRawJournalContextType() {
+			return rawJournalContextType;
+		}
+
+		public CharacterWalletJournalResponse.ContextIdTypeEnum getEsiJournalContextTypeCharacter() {
+			if (rawJournalContextType == null) {
+				return null;
+			}
+			return CharacterWalletJournalResponse.ContextIdTypeEnum.valueOf(rawJournalContextType.name());
+		}
+
+		public CorporationWalletJournalResponse.ContextIdTypeEnum getEsiJournalContextTypeCorporation() {
+			if (rawJournalContextType == null) {
+				return null;
+			}
+			return CorporationWalletJournalResponse.ContextIdTypeEnum.valueOf(rawJournalContextType.name());
+		}
+
 		public void setRefType(CharacterWalletJournalResponse.RefTypeEnum EsiJournalRefTypeCharacter) {
 			this.EsiJournalRefTypeCharacter = EsiJournalRefTypeCharacter;
 		}
@@ -1039,6 +924,10 @@ public class ConverterTestOptionsGetter {
 
 		public void setRefType(com.beimin.eveapi.model.shared.RefType XmlJournalRefType) {
 			this.XmlJournalRefType = XmlJournalRefType;
+		}
+
+		public void setContextType(ContextType rawJournalContextType) {
+			this.rawJournalContextType = rawJournalContextType;
 		}
 	}
 }

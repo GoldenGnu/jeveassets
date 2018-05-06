@@ -21,7 +21,6 @@
 package net.nikr.eve.jeveasset.io.shared;
 
 import com.beimin.eveapi.model.shared.KeyType;
-import enterprises.orbital.evekit.client.model.CharacterShip;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -56,7 +55,7 @@ import net.nikr.eve.jeveasset.data.api.raw.RawContract;
 import net.nikr.eve.jeveasset.data.api.raw.RawContractItem;
 import net.nikr.eve.jeveasset.data.api.raw.RawIndustryJob;
 import net.nikr.eve.jeveasset.data.api.raw.RawJournal;
-import net.nikr.eve.jeveasset.data.api.raw.RawJournalExtraInfo;
+import net.nikr.eve.jeveasset.data.api.raw.RawJournal.ContextType;
 import net.nikr.eve.jeveasset.data.api.raw.RawJournalRefType;
 import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder;
 import net.nikr.eve.jeveasset.data.api.raw.RawTransaction;
@@ -81,7 +80,6 @@ import net.troja.eve.esi.model.CharacterOrdersHistoryResponse;
 import net.troja.eve.esi.model.CharacterOrdersResponse;
 import net.troja.eve.esi.model.CharacterRolesResponse.RolesEnum;
 import net.troja.eve.esi.model.CharacterShipResponse;
-import net.troja.eve.esi.model.CharacterWalletJournalExtraInfoResponse;
 import net.troja.eve.esi.model.CharacterWalletJournalResponse;
 import net.troja.eve.esi.model.CharacterWalletTransactionsResponse;
 import net.troja.eve.esi.model.CorporationAssetsResponse;
@@ -91,7 +89,6 @@ import net.troja.eve.esi.model.CorporationContractsResponse;
 import net.troja.eve.esi.model.CorporationIndustryJobsResponse;
 import net.troja.eve.esi.model.CorporationOrdersHistoryResponse;
 import net.troja.eve.esi.model.CorporationOrdersResponse;
-import net.troja.eve.esi.model.CorporationWalletJournalExtraInfoResponse;
 import net.troja.eve.esi.model.CorporationWalletJournalResponse;
 import net.troja.eve.esi.model.CorporationWalletsResponse;
 import static org.junit.Assert.assertEquals;
@@ -528,8 +525,6 @@ public class ConverterTestUtil {
 		if (object instanceof com.beimin.eveapi.model.shared.JournalEntry) {
 			com.beimin.eveapi.model.shared.JournalEntry journalEntry = (com.beimin.eveapi.model.shared.JournalEntry) object;
 			journalEntry.setRefTypeID(journalEntry.getRefType().getId());
-			journalEntry.setOwner1TypeID(options.getJournalPartyTypeEveApi());
-			journalEntry.setOwner2TypeID(options.getJournalPartyTypeEveApi());
 			journalEntry.setArgID1(options.getLong());
 			journalEntry.setArgName1(String.valueOf(options.getLong()));
 		}
@@ -537,8 +532,6 @@ public class ConverterTestUtil {
 		if (object instanceof enterprises.orbital.evekit.client.model.WalletJournal) {
 			enterprises.orbital.evekit.client.model.WalletJournal journalEntry = (enterprises.orbital.evekit.client.model.WalletJournal) object;
 			journalEntry.setRefType(options.getJournalRefTypeEsiCharacter().toString());
-			journalEntry.setFirstPartyType(options.getJournalPartyTypeEsiFirstCharacter().toString());
-			journalEntry.setSecondPartyType(options.getJournalPartyTypeEsiSecondCharacter().toString());
 			journalEntry.setDivision(journalEntry.getDivision() - 999);
 			journalEntry.setArgID1(options.getLong());
 			journalEntry.setArgName1(String.valueOf(options.getLong()));
@@ -608,6 +601,10 @@ public class ConverterTestUtil {
 			MyMarketOrder marketOrder = (MyMarketOrder) object;
 			marketOrder.setWalletDivision(options.getInteger());
 			marketOrder.setState(options.getMarketOrderStateRaw());
+		}
+		if (object instanceof MyJournal) {
+			MyJournal journal = (MyJournal) object;
+			journal.setDescription(options.getString());
 		}
 		for (Field field : getField(object, true)) {
 			Class<?> type = field.getType();
@@ -682,10 +679,6 @@ public class ConverterTestUtil {
 			return options.getContractTypeRaw();
 		} else if (type.equals(RawIndustryJob.IndustryJobStatus.class)) {
 			return options.getIndustryJobStatusRaw();
-		} else if (type.equals(RawJournalExtraInfo.class)) {
-			return options.getJournalExtraInfoRaw();
-		} else if (type.equals(RawJournal.JournalPartyType.class)) {
-			return options.getJournalPartyTypeRaw();
 		} else if (type.equals(RawJournalRefType.class)) {
 			return options.getJournalRefTypeRaw();
 		} else if (type.equals(RawMarketOrder.MarketOrderRange.class)) {
@@ -716,22 +709,16 @@ public class ConverterTestUtil {
 			return options.getIndustryJobStatusEsiCharacter();
 		} else if (type.equals(CorporationIndustryJobsResponse.StatusEnum.class)) {
 			return options.getIndustryJobStatusEsiCorporation();
-		} else if (type.equals(CharacterWalletJournalExtraInfoResponse.class)) {
-			return options.getJournalExtraInfoEsiCharacter();
-		} else if (type.equals(CorporationWalletJournalExtraInfoResponse.class)) {
-			return options.getJournalExtraInfoEsiCorporation();
-		} else if (type.equals(CharacterWalletJournalResponse.FirstPartyTypeEnum.class)) {
-			return options.getJournalPartyTypeEsiFirstCharacter();
-		} else if (type.equals(CorporationWalletJournalResponse.FirstPartyTypeEnum.class)) {
-			return options.getJournalPartyTypeEsiFirstCorporation();
 		} else if (type.equals(CharacterWalletJournalResponse.RefTypeEnum.class)) {
 			return options.getJournalRefTypeEsiCharacter();
+		} else if (type.equals(CharacterWalletJournalResponse.ContextIdTypeEnum.class)) {
+			return options.getJournalContextTypeEsiCharacter();
 		} else if (type.equals(CorporationWalletJournalResponse.RefTypeEnum.class)) {
 			return options.getJournalRefTypeEsiCorporation();
-		} else if (type.equals(CharacterWalletJournalResponse.SecondPartyTypeEnum.class)) {
-			return options.getJournalPartyTypeEsiSecondCharacter();
-		} else if (type.equals(CorporationWalletJournalResponse.SecondPartyTypeEnum.class)) {
-			return options.getJournalPartyTypeEsiSecondCorporation();
+		} else if (type.equals(CorporationWalletJournalResponse.ContextIdTypeEnum.class)) {
+			return options.getJournalContextTypeEsiCorporation();
+		} else if (type.equals(ContextType.class)) {
+			return options.getJournalContextTypeRaw();
 		} else if (type.equals(CharacterContractsResponse.AvailabilityEnum.class)) {
 			return options.getContractAvailabilityEsiCharacter();
 		} else if (type.equals(CorporationContractsResponse.AvailabilityEnum.class)) {

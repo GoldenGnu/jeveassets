@@ -35,12 +35,9 @@ import net.nikr.eve.jeveasset.data.api.raw.RawBlueprint;
 import net.nikr.eve.jeveasset.data.api.raw.RawContainerLog;
 import net.nikr.eve.jeveasset.data.api.raw.RawIndustryJob;
 import net.nikr.eve.jeveasset.data.api.raw.RawJournal;
-import net.nikr.eve.jeveasset.data.api.raw.RawJournalExtraInfo;
 import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder;
 import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder.MarketOrderState;
 import net.nikr.eve.jeveasset.data.api.raw.RawTransaction;
-import net.troja.eve.esi.model.CharacterWalletJournalExtraInfoResponse;
-import net.troja.eve.esi.model.CorporationWalletJournalExtraInfoResponse;
 
 
 public class RawUtil {
@@ -103,15 +100,6 @@ public class RawUtil {
 				continue;
 			}
 			if (type.equals(OffsetDateTime.class)) { //Ignore date formats
-				continue;
-			}
-			if (type.equals(RawJournalExtraInfo.class)) { //Ignore RawJournalExtraInfo
-				continue;
-			}
-			if (type.equals(CharacterWalletJournalExtraInfoResponse.class)) { //Ignore CharacterWalletJournalExtraInfoResponse
-				continue;
-			}
-			if (type.equals(CorporationWalletJournalExtraInfoResponse.class)) { //Ignore CorporationWalletJournalExtraInfoResponse
 				continue;
 			}
 			names.put(value.getName(), type.getName());

@@ -304,10 +304,11 @@ public final class ProfileWriter extends AbstractXmlWriter {
 			Element childNode = xmldoc.createElement("journal");
 			//Base
 			setAttributeOptional(childNode, "amount", journal.getAmount());
-			setAttributeOptional(childNode, "argid1", RawConverter.fromRawJournalExtraInfoArgID(journal.getExtraInfo()));
-			setAttributeOptional(childNode, "argname1", RawConverter.fromRawJournalExtraInfoArgName(journal.getExtraInfo()));
 			setAttributeOptional(childNode, "balance", journal.getBalance());
+			setAttributeOptional(childNode, "contextid", journal.getContextId());
+			setAttributeOptional(childNode, "contexttype", journal.getContextType());
 			setAttribute(childNode, "date", journal.getDate());
+			setAttribute(childNode, "description", journal.getDescription());
 			setAttributeOptional(childNode, "ownerid1", journal.getFirstPartyID());
 			setAttributeOptional(childNode, "ownerid2", journal.getSecondPartyID());
 			setAttributeOptional(childNode, "reason", journal.getReason());
@@ -315,9 +316,6 @@ public final class ProfileWriter extends AbstractXmlWriter {
 			setAttribute(childNode, "reftypeid", journal.getRefType().getID());
 			setAttributeOptional(childNode, "taxamount", journal.getTaxAmount());
 			setAttributeOptional(childNode, "taxreceiverid", journal.getTaxReceiverId());
-			//New
-			setAttributeOptional(childNode, "owner1typeid", RawConverter.fromJournalPartyType(journal.getFirstPartyType()));
-			setAttributeOptional(childNode, "owner2typeid", RawConverter.fromJournalPartyType(journal.getSecondPartyType()));
 			//Extra
 			setAttribute(childNode, "accountkey", journal.getAccountKey());
 			node.appendChild(childNode);

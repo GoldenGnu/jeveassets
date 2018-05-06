@@ -42,7 +42,7 @@ public class EsiAssetsGetter extends AbstractEsiGetter {
 			List<CorporationAssetsResponse> responses = updatePages(DEFAULT_RETRIES, new EsiPagesHandler<CorporationAssetsResponse>() {
 				@Override
 				public List<CorporationAssetsResponse> get(ApiClient apiClient, Integer page) throws ApiException {
-					return getAssetsApiAuth(apiClient).getCorporationsCorporationIdAssets((int) owner.getOwnerID(), DATASOURCE, page, null, USER_AGENT, null);
+					return getAssetsApiAuth(apiClient).getCorporationsCorporationIdAssets((int) owner.getOwnerID(), DATASOURCE, null, page, null, USER_AGENT, null);
 				}
 			});
 			owner.setAssets(EsiConverter.toAssetsCorporation(responses, owner));
@@ -50,7 +50,7 @@ public class EsiAssetsGetter extends AbstractEsiGetter {
 			List<CharacterAssetsResponse> responses = updatePages(DEFAULT_RETRIES, new EsiPagesHandler<CharacterAssetsResponse>() {
 				@Override
 				public List<CharacterAssetsResponse> get(ApiClient apiClient, Integer page) throws ApiException {
-					return getAssetsApiAuth(apiClient).getCharactersCharacterIdAssets((int) owner.getOwnerID(), DATASOURCE, page, null, USER_AGENT, null);
+					return getAssetsApiAuth(apiClient).getCharactersCharacterIdAssets((int) owner.getOwnerID(), DATASOURCE, null, page, null, USER_AGENT, null);
 				}
 			});
 			owner.setAssets(EsiConverter.toAssets(responses, owner));

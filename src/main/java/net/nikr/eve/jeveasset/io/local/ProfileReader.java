@@ -55,7 +55,7 @@ import net.nikr.eve.jeveasset.data.api.raw.RawContract.ContractType;
 import net.nikr.eve.jeveasset.data.api.raw.RawContractItem;
 import net.nikr.eve.jeveasset.data.api.raw.RawIndustryJob;
 import net.nikr.eve.jeveasset.data.api.raw.RawJournal;
-import net.nikr.eve.jeveasset.data.api.raw.RawJournalExtraInfo;
+import net.nikr.eve.jeveasset.data.api.raw.RawJournalRefType;
 import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder;
 import net.nikr.eve.jeveasset.data.api.raw.RawTransaction;
 import net.nikr.eve.jeveasset.data.profile.ProfileManager;
@@ -501,7 +501,15 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 		Long argID = AttributeGetters.getLongOptional(element, "argid1");
 		String argName = AttributeGetters.getStringOptional(element, "argname1");
 		Double balance = AttributeGetters.getDoubleOptional(element, "balance");
+		Long contextID = AttributeGetters.getLongOptional(element, "contextid");
+		String contextType = AttributeGetters.getStringOptional(element, "contexttype");
 		Date date = AttributeGetters.getDate(element, "date");
+		String description;
+		if (AttributeGetters.haveAttribute(element, "description")) {
+			description = AttributeGetters.getString(element, "description");
+		} else {
+			description = argName;
+		}
 		Integer firstPartyID = AttributeGetters.getIntOptional(element, "ownerid1");
 		Integer secondPartyID = AttributeGetters.getIntOptional(element, "ownerid2");
 		String reason = AttributeGetters.getStringOptional(element, "reason");
@@ -509,25 +517,28 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 		int refTypeID = AttributeGetters.getInt(element, "reftypeid");
 		Double taxAmount = AttributeGetters.getDoubleOptional(element, "taxamount");
 		Integer taxReceiverID = AttributeGetters.getIntOptional(element, "taxreceiverid");
-		//New
-		Integer firstPartyTypeID = AttributeGetters.getIntOptional(element, "owner1typeid");
-		Integer secondPartyTypeID = AttributeGetters.getIntOptional(element, "owner2typeid");
 		//Extra
 		int accountKey = AttributeGetters.getInt(element, "accountkey");
 
 		rawJournal.setAmount(amount);
 		rawJournal.setBalance(balance);
 		rawJournal.setDate(date);
+		rawJournal.setDescription(description);
 		rawJournal.setFirstPartyID(firstPartyID);
-		rawJournal.setFirstPartyType(RawConverter.toJournalPartyType(firstPartyTypeID));
 		rawJournal.setReason(reason);
 		rawJournal.setRefID(refID);
-		rawJournal.setRefType(RawConverter.toJournalRefType(refTypeID));
+		RawJournalRefType refType = RawConverter.toJournalRefType(refTypeID);
+		rawJournal.setRefType(refType);
 		rawJournal.setSecondPartyID(secondPartyID);
-		rawJournal.setSecondPartyType(RawConverter.toJournalPartyType(secondPartyTypeID));
 		rawJournal.setTax(taxAmount);
 		rawJournal.setTaxReceiverId(taxReceiverID);
-		rawJournal.setExtraInfo(new RawJournalExtraInfo(argID, argName, RawConverter.toJournalRefType(refTypeID)));
+		if (argID != null || argName != null) {
+			rawJournal.setContextId(RawConverter.toJournalContextID(argID, argName, refType));
+			rawJournal.setContextType(RawConverter.toJournalContextType(refType));
+		} else {
+			rawJournal.setContextId(contextID);
+			rawJournal.setContextType(RawConverter.toJournalContextType(contextType));
+		}
 		rawJournal.setAccountKey(accountKey);
 		return rawJournal;
 	}

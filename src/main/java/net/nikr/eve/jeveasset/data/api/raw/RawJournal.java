@@ -27,34 +27,6 @@ import net.troja.eve.esi.model.CorporationWalletJournalResponse;
 
 public class RawJournal {
 
-	public enum JournalPartyType {
-		CHARACTER("character"),
-		CORPORATION("corporation"),
-		ALLIANCE("alliance"),
-		FACTION("faction"),
-		SYSTEM("system");
-
-		private final String value;
-
-		JournalPartyType(String value) {
-			this.value = value;
-		}
-
-		@Override
-		public String toString() {
-			return String.valueOf(value);
-		}
-
-		public static JournalPartyType fromValue(String text) {
-            for (JournalPartyType b : JournalPartyType.values()) {
-                if (String.valueOf(b.value).equals(text)) {
-                    return b;
-                }
-            }
-            return null;
-        }
-	}
-
 	public enum ArgName {
 		STATION_NAME,
 		NPC_NAME,
@@ -78,17 +50,52 @@ public class RawJournal {
 		PLANET_ID,
 	}
 
+	public enum ContextType {
+        STRUCTURE_ID("structure_id"),
+        STATION_ID("station_id"),
+        MARKET_TRANSACTION_ID("market_transaction_id"),
+        CHARACTER_ID("character_id"),
+        CORPORATION_ID("corporation_id"),
+        ALLIANCE_ID("alliance_id"),
+        EVE_SYSTEM("eve_system"),
+        INDUSTRY_JOB_ID("industry_job_id"),
+        CONTRACT_ID("contract_id"),
+        PLANET_ID("planet_id"),
+        SYSTEM_ID("system_id"),
+        TYPE_ID("type_id");
+
+        private final String value;
+
+        ContextType(String value) {
+            this.value = value;
+        }
+
+        @Override
+        public String toString() {
+            return String.valueOf(value);
+        }
+
+        public static ContextType fromValue(String text) {
+            for (ContextType b : ContextType.values()) {
+                if (String.valueOf(b.value).equals(text)) {
+                    return b;
+                }
+            }
+            return null;
+        }
+    }
+
 	private Double amount = null;
 	private Double balance = null;
+	private Long contextId;
+	private ContextType contextIdType;
 	private Date date = null;
-	private RawJournalExtraInfo extraInfo = null;
+	private String description;
 	private Integer firstPartyId = null;
-	private JournalPartyType firstPartyType = null;
 	private String reason = null;
-	private Long refId = null;
+	private Long id = null;
 	private RawJournalRefType refType = null;
 	private Integer secondPartyId = null;
-	private JournalPartyType secondPartyType = null;
 	private Double tax = null;
 	private Integer taxReceiverId = null;
 	private Integer accountKey = null;
@@ -112,14 +119,14 @@ public class RawJournal {
 		amount = journal.amount;
 		balance = journal.balance;
 		date = journal.date;
-		extraInfo = journal.extraInfo;
+		description = journal.description;
+		contextId = journal.contextId;
+		contextIdType = journal.contextIdType;
 		firstPartyId = journal.firstPartyId;
-		firstPartyType = journal.firstPartyType;
 		reason = journal.reason;
-		refId = journal.refId;
+		id = journal.id;
 		refType = journal.refType;
 		secondPartyId = journal.secondPartyId;
-		secondPartyType = journal.secondPartyType;
 		tax = journal.tax;
 		taxReceiverId = journal.taxReceiverId;
 		accountKey = journal.accountKey;
@@ -134,15 +141,15 @@ public class RawJournal {
 	public RawJournal(CharacterWalletJournalResponse journal, Integer accountKey) {
 		amount = journal.getAmount();
 		balance = journal.getBalance();
+		contextId = journal.getContextId();
+		contextIdType = RawConverter.toJournalContextType(journal.getContextIdType());
 		date = RawConverter.toDate(journal.getDate());
-		extraInfo = new RawJournalExtraInfo(journal.getExtraInfo());
+		description = journal.getDescription();
 		firstPartyId = journal.getFirstPartyId();
-		firstPartyType = RawConverter.toJournalPartyType(journal.getFirstPartyType());
 		reason = journal.getReason();
-		refId = journal.getRefId();
+		id = journal.getId();
 		refType = RawConverter.toJournalRefType(journal.getRefType());
 		secondPartyId = journal.getSecondPartyId();
-		secondPartyType = RawConverter.toJournalPartyType(journal.getSecondPartyType());
 		tax = journal.getTax();
 		taxReceiverId = journal.getTaxReceiverId();
 		this.accountKey = accountKey;
@@ -157,18 +164,19 @@ public class RawJournal {
 	public RawJournal(CorporationWalletJournalResponse journal, Integer accountKey) {
 		amount = journal.getAmount();
 		balance = journal.getBalance();
+		contextId = journal.getContextId();
+		contextIdType = RawConverter.toJournalContextType(journal.getContextIdType());
 		date = RawConverter.toDate(journal.getDate());
-		extraInfo = new RawJournalExtraInfo(journal.getExtraInfo());
+		description = journal.getDescription();
 		firstPartyId = journal.getFirstPartyId();
-		firstPartyType = RawConverter.toJournalPartyType(journal.getFirstPartyType());
 		reason = journal.getReason();
-		refId = journal.getRefId();
+		id = journal.getId();
 		refType = RawConverter.toJournalRefType(journal.getRefType());
 		secondPartyId = journal.getSecondPartyId();
-		secondPartyType = RawConverter.toJournalPartyType(journal.getSecondPartyType());
 		tax = journal.getTax();
 		taxReceiverId = journal.getTaxReceiverId();
 		this.accountKey = accountKey;
+		
 	}
 
 	/**
@@ -180,18 +188,18 @@ public class RawJournal {
 		amount = journal.getAmount();
 		balance = journal.getBalance();
 		date = RawConverter.toDate(journal.getDateDate());
+		description = journal.getArgName1();
 		firstPartyId = journal.getFirstPartyID();
-		firstPartyType = RawConverter.toJournalPartyType(journal.getFirstPartyType());
 		reason = journal.getReason();
-		refId = journal.getRefID();
+		id = journal.getRefID();
 		refType = RawConverter.toJournalRefType(journal.getRefType());
 		secondPartyId = journal.getSecondPartyID();
-		secondPartyType = RawConverter.toJournalPartyType(journal.getSecondPartyType());
 		tax = journal.getTaxAmount();
 		taxReceiverId = journal.getTaxReceiverID();
-		//Must be set after refType
-		extraInfo = new RawJournalExtraInfo(journal, refType);
 		this.accountKey = journal.getDivision() + 999;
+		//Must be set after refType
+		contextId = RawConverter.toJournalContextID(journal, refType);
+		contextIdType = RawConverter.toJournalContextType(journal, refType);
 	}
 
 	/**
@@ -204,18 +212,18 @@ public class RawJournal {
 		amount = journal.getAmount();
 		balance = journal.getBalance();
 		date = journal.getDate();
+		description = journal.getArgName1();
 		firstPartyId = (int) journal.getOwnerID1();
-		firstPartyType = RawConverter.toJournalPartyType(RawConverter.toInteger(journal.getOwner1TypeID()));
 		reason = journal.getReason();
-		refId = journal.getRefID();
+		id = journal.getRefID();
 		refType = RawConverter.toJournalRefType(journal.getRefTypeID());
 		secondPartyId = (int) journal.getOwnerID2();
-		secondPartyType = RawConverter.toJournalPartyType(RawConverter.toInteger(journal.getOwner2TypeID()));
 		tax = journal.getTaxAmount();
 		taxReceiverId = RawConverter.toInteger(journal.getTaxReceiverID());
-		//Must be set after refType
-		extraInfo = new RawJournalExtraInfo(journal, refType);
 		this.accountKey = accountKey;
+		//Must be set after refType
+		contextId = RawConverter.toJournalContextID(journal, refType);
+		contextIdType = RawConverter.toJournalContextType(refType);
 	}
 
 	public Double getAmount() {
@@ -234,6 +242,22 @@ public class RawJournal {
 		this.balance = balance;
 	}
 
+	public Long getContextId() {
+		return contextId;
+	}
+
+	public void setContextId(Long contextId) {
+		this.contextId = contextId;
+	}
+
+	public ContextType getContextType() {
+		return contextIdType;
+	}
+
+	public void setContextType(ContextType contextType) {
+		this.contextIdType = contextType;
+	}
+
 	public Date getDate() {
 		return date;
 	}
@@ -242,12 +266,12 @@ public class RawJournal {
 		this.date = date;
 	}
 
-	public RawJournalExtraInfo getExtraInfo() {
-		return extraInfo;
+	public String getDescription() {
+		return description;
 	}
 
-	public void setExtraInfo(RawJournalExtraInfo extraInfo) {
-		this.extraInfo = extraInfo;
+	public void setDescription(String description) {
+		this.description = description;
 	}
 
 	public final Integer getFirstPartyID() {
@@ -256,14 +280,6 @@ public class RawJournal {
 
 	public void setFirstPartyID(Integer firstPartyId) {
 		this.firstPartyId = firstPartyId;
-	}
-
-	public JournalPartyType getFirstPartyType() {
-		return firstPartyType;
-	}
-
-	public void setFirstPartyType(JournalPartyType firstPartyType) {
-		this.firstPartyType = firstPartyType;
 	}
 
 	public String getReason() {
@@ -275,11 +291,11 @@ public class RawJournal {
 	}
 
 	public Long getRefID() {
-		return refId;
+		return id;
 	}
 
 	public void setRefID(Long refId) {
-		this.refId = refId;
+		this.id = refId;
 	}
 
 	public RawJournalRefType getRefType() {
@@ -296,14 +312,6 @@ public class RawJournal {
 
 	public void setSecondPartyID(Integer secondPartyId) {
 		this.secondPartyId = secondPartyId;
-	}
-
-	public JournalPartyType getSecondPartyType() {
-		return secondPartyType;
-	}
-
-	public void setSecondPartyType(JournalPartyType secondPartyType) {
-		this.secondPartyType = secondPartyType;
 	}
 
 	public Double getTaxAmount() {

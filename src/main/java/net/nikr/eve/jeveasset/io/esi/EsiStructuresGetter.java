@@ -110,7 +110,7 @@ public class EsiStructuresGetter extends AbstractEsiGetter {
 			@Override
 			public StructureResponse get(ApiClient apiClient, Long k) throws ApiException {
 				pause();
-				return getUniverseApiAuth(apiClient).getUniverseStructuresStructureId(k, DATASOURCE, null, USER_AGENT, null);
+				return getUniverseApiAuth(apiClient).getUniverseStructuresStructureId(k, DATASOURCE, null, null, USER_AGENT, null);
 			}
 			@Override
 			protected void handle(ApiException ex, Long k) throws ApiException {
