@@ -141,7 +141,7 @@ public abstract class AbstractGetter<O extends OwnerType, C, E extends Exception
 		}
 		//Check API cache time
 		if (wait) {
-			addError(null, "NOT ALLOWED YET", "Not allowed yet.\r\n(Fix: Just wait a bit)");
+			addError(null, "NOT ALLOWED YET", "Waiting for cache to expire.\r\n(Fix: Just wait a bit)");
 			return false;
 		}
 		//Check if the owner have accesss to the endpoint 
