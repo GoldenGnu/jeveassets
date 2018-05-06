@@ -72,7 +72,6 @@ import javax.swing.text.html.HTMLDocument;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.api.accounts.ApiType;
 import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
-import net.nikr.eve.jeveasset.data.api.accounts.EveApiAccount;
 import net.nikr.eve.jeveasset.data.api.accounts.EveKitOwner;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.DocumentFactory;
@@ -88,7 +87,6 @@ import net.nikr.eve.jeveasset.io.esi.EsiAuth;
 import net.nikr.eve.jeveasset.io.esi.EsiCallbackURL;
 import net.nikr.eve.jeveasset.io.esi.EsiOwnerGetter;
 import net.nikr.eve.jeveasset.io.esi.EsiScopes;
-import net.nikr.eve.jeveasset.io.eveapi.AccountGetter;
 import net.nikr.eve.jeveasset.io.evekit.EveKitOwnerGetter;
 import net.nikr.eve.jeveasset.io.shared.AccountAdder;
 import net.nikr.eve.jeveasset.io.shared.AccountAdderAdapter;
@@ -103,7 +101,6 @@ public class AccountImportDialog extends JDialogCentered {
 
 	private enum AccountImportAction {
 		ADD_ESI,
-		ADD_EVEAPI,
 		ADD_EVEKIT,
 		ADD_KEY_CANCEL,
 		SHARE_TO_CLIPBOARD,
@@ -119,7 +116,6 @@ public class AccountImportDialog extends JDialogCentered {
 		ADD_ESI,
 		SHARE_EXPORT,
 		SHARE_IMPORT,
-		ADD_EVEAPI,
 		ADD_EVEKIT,
 		VALIDATE,
 		DONE,
@@ -149,8 +145,6 @@ public class AccountImportDialog extends JDialogCentered {
 	private JRadioButtonMenuItem jCharacter;
 	private JDropDownButton jType;
 	private JButton jBrowse;
-	private JTextField jKeyID;
-	private JTextField jVCode;
 	private JTextField jAccessKey;
 	private JTextField jAccessCred;
 	private JTextArea jExport;
@@ -170,8 +164,6 @@ public class AccountImportDialog extends JDialogCentered {
 
 	private final DonePanel donePanel;
 
-	private EveApiAccount account;
-	private EveApiAccount editAccount;
 	private EveKitOwner eveKitOwner;
 	private EveKitOwner editEveKitOwner;
 	private EsiOwner esiOwner;
@@ -199,7 +191,6 @@ public class AccountImportDialog extends JDialogCentered {
 		jContent = new JPanel(cardLayout);
 		jContent.add(new TypePanel(), AccountImportCard.TYPE.name());
 		jContent.add(new ImportPanel(), AccountImportCard.SHARE_IMPORT.name());
-		jContent.add(new EveApiPanel(), AccountImportCard.ADD_EVEAPI.name());
 		jContent.add(new EveKitPanel(), AccountImportCard.ADD_EVEKIT.name());
 		jContent.add(new EsiPanel(), AccountImportCard.ADD_ESI.name());
 		jContent.add(new ValidatePanel(), AccountImportCard.VALIDATE.name());
@@ -239,18 +230,6 @@ public class AccountImportDialog extends JDialogCentered {
 		);
 	}
 
-	private int getKeyID() {
-		try {
-			return Integer.valueOf(jKeyID.getText());
-		} catch (NumberFormatException ex) {
-			return 0;
-		}
-	}
-
-	private String getVCode() {
-		return jVCode.getText();
-	}
-
 	private String getAuthCode() {
 		return jAuthCode.getText().trim();
 	}
@@ -268,11 +247,6 @@ public class AccountImportDialog extends JDialogCentered {
 	}
 
 	private void focus() {
-		if (jKeyID.getText().isEmpty() && currentCard == AccountImportCard.ADD_EVEAPI) {
-			jKeyID.requestFocusInWindow();
-		} else if (jVCode.getText().isEmpty() && currentCard == AccountImportCard.ADD_EVEAPI) {
-			jVCode.requestFocusInWindow();
-		}
 		if (jAccessKey.getText().isEmpty() && currentCard == AccountImportCard.ADD_EVEKIT) {
 			jAccessKey.requestFocusInWindow();
 		} else if (jAccessCred.getText().isEmpty() && currentCard == AccountImportCard.ADD_EVEKIT) {
@@ -285,7 +259,7 @@ public class AccountImportDialog extends JDialogCentered {
 
 	@Override
 	protected JComponent getDefaultFocus() {
-		return jKeyID;
+		return jNext;
 	}
 
 	@Override
@@ -300,43 +274,31 @@ public class AccountImportDialog extends JDialogCentered {
 	protected void save() { }
 
 	public void add() {
-		show(true, null, AccountImportCard.TYPE, null, null, null);
+		show(true, null, AccountImportCard.TYPE, null, null);
 	}
 
 	public void shareExport() {
-		show(false, Share.EXPORT, AccountImportCard.ADD_ESI, null, null, null);
+		show(false, Share.EXPORT, AccountImportCard.ADD_ESI, null, null);
 	}
 
 	public void shareImport() {
-		show(false, Share.IMPORT, AccountImportCard.SHARE_IMPORT, null, null, null);
+		show(false, Share.IMPORT, AccountImportCard.SHARE_IMPORT, null, null);
 	}
 
 	public void editEveKit(final EveKitOwner editEveKitOwner) {
-		show(false, null, AccountImportCard.ADD_EVEKIT, null, editEveKitOwner, null);
-	}
-
-	public void editEveApi(final EveApiAccount editAccount) {
-		show(false, null, AccountImportCard.ADD_EVEAPI, editAccount, null, null);
+		show(false, null, AccountImportCard.ADD_EVEKIT, editEveKitOwner, null);
 	}
 
 	public void editEsi(final EsiOwner editEsiOwner) {
-		show(false, null, AccountImportCard.ADD_ESI, null, null, editEsiOwner);
+		show(false, null, AccountImportCard.ADD_ESI, null, editEsiOwner);
 	}
 
-	private void show(boolean enableTypeCard, Share share, AccountImportCard accountImportCard, final EveApiAccount editAccount, final EveKitOwner editEveKitOwner, final EsiOwner editEsiOwner) {
+	private void show(boolean enableTypeCard, Share share, AccountImportCard accountImportCard, final EveKitOwner editEveKitOwner, final EsiOwner editEsiOwner) {
 		currentCard = accountImportCard;
 		this.enableTypeCard = enableTypeCard;
 		this.share = share;
-		this.editAccount = editAccount;
 		this.editEveKitOwner = editEveKitOwner;
 		this.editEsiOwner = editEsiOwner;
-		if (editAccount != null) { //Edit EveApi
-			jKeyID.setText(String.valueOf(editAccount.getKeyID()));
-			jVCode.setText(editAccount.getVCode());
-		} else { //New
-			jKeyID.setText("");
-			jVCode.setText("");
-		}
 		if (editEveKitOwner != null) { //Edit EveKit
 			jAccessKey.setText(String.valueOf(editEveKitOwner.getAccessKey()));
 			jAccessCred.setText(editEveKitOwner.getAccessCred());
@@ -385,16 +347,6 @@ public class AccountImportDialog extends JDialogCentered {
 	private void showEveKitTap() {
 		cardLayout.show(jContent, AccountImportCard.ADD_EVEKIT.name());
 		this.getDialog().setIconImage(Images.MISC_EVEKIT.getImage());
-		this.getDialog().setTitle(DialoguesAccount.get().dialogueNameAccountImport());
-		jPrevious.setEnabled(enableTypeCard);
-		jNext.setEnabled(true);
-		jNext.setText(DialoguesAccount.get().nextArrow());
-		focus();
-	}
-
-	private void showEveApiTap() {
-		cardLayout.show(jContent, AccountImportCard.ADD_EVEAPI.name());
-		this.getDialog().setIconImage(Images.MISC_EVE.getImage());
 		this.getDialog().setTitle(DialoguesAccount.get().dialogueNameAccountImport());
 		jPrevious.setEnabled(enableTypeCard);
 		jNext.setEnabled(true);
@@ -468,17 +420,6 @@ public class AccountImportDialog extends JDialogCentered {
 			addTask = new ImportTask();
 			addTask.addPropertyChangeListener(listener);
 			addTask.execute();
-		} else if (apiType == ApiType.EVE_ONLINE) {
-			if (editAccount == null) { //Add
-				account = new EveApiAccount(getKeyID(), getVCode());
-			} else { //Edit
-				account = new EveApiAccount(editAccount);
-				account.setKeyID(getKeyID());
-				account.setvCode(getVCode());
-			}
-			addTask = new EveApiTask();
-			addTask.addPropertyChangeListener(listener);
-			addTask.execute();
 		} else if (apiType == ApiType.EVEKIT) {
 			if (editEveKitOwner == null) { //Add
 				eveKitOwner = new EveKitOwner(getAccessKey(), getAccessCred());
@@ -511,14 +452,6 @@ public class AccountImportDialog extends JDialogCentered {
 	}
 
 	private void done() {
-		if (apiType == ApiType.EVE_ONLINE) {
-			if (editAccount != null) { //Edit
-				program.getProfileManager().getAccounts().remove(editAccount);
-			}
-			apiManager.forceUpdate();
-			program.getProfileManager().getAccounts().add(account);
-			apiManager.updateTable();
-		}
 		if (apiType == ApiType.EVEKIT) {
 			if (editEveKitOwner != null) { //Edit
 				program.getProfileManager().getEveKitOwners().remove(editEveKitOwner);
@@ -546,10 +479,6 @@ public class AccountImportDialog extends JDialogCentered {
 			case ADD_EVEKIT:
 				apiType = ApiType.EVEKIT;
 				showEveKitTap();
-				break;
-			case ADD_EVEAPI:
-				apiType = ApiType.EVE_ONLINE;
-				showEveApiTap();
 				break;
 			case ADD_ESI:
 				apiType = ApiType.ESI;
@@ -634,9 +563,6 @@ public class AccountImportDialog extends JDialogCentered {
 					case TYPE: //Previous: Type
 						currentCard = AccountImportCard.TYPE;
 						break;
-					case ADD_EVEAPI: //Previous: Type
-						currentCard = AccountImportCard.TYPE;
-						break;
 					case ADD_EVEKIT: //Previous: Type
 						currentCard = AccountImportCard.TYPE;
 						break;
@@ -648,8 +574,6 @@ public class AccountImportDialog extends JDialogCentered {
 							currentCard = AccountImportCard.SHARE_IMPORT;
 						} else if (apiType == ApiType.EVEKIT) {
 							currentCard = AccountImportCard.ADD_EVEKIT;
-						} else if (apiType == ApiType.EVE_ONLINE) {
-							currentCard = AccountImportCard.ADD_EVEAPI;
 						} else if (apiType == ApiType.ESI) {
 							currentCard = AccountImportCard.ADD_ESI;
 						}
@@ -660,8 +584,6 @@ public class AccountImportDialog extends JDialogCentered {
 							currentCard = AccountImportCard.SHARE_IMPORT;
 						} else if (apiType == ApiType.EVEKIT) {
 							currentCard = AccountImportCard.ADD_EVEKIT;
-						} else if (apiType == ApiType.EVE_ONLINE) {
-							currentCard = AccountImportCard.ADD_EVEAPI;
 						} else if (apiType == ApiType.ESI) {
 							currentCard = AccountImportCard.ADD_ESI;
 						}
@@ -677,9 +599,6 @@ public class AccountImportDialog extends JDialogCentered {
 			} else if (AccountImportAction.NEXT.name().equals(e.getActionCommand())) {
 				switch (currentCard) {
 					case TYPE: //Never Used
-						break;
-					case ADD_EVEAPI: //Next: Validate
-						currentCard = AccountImportCard.VALIDATE;
 						break;
 					case ADD_EVEKIT: //Next: Validate
 						currentCard = AccountImportCard.VALIDATE;
@@ -710,9 +629,6 @@ public class AccountImportDialog extends JDialogCentered {
 				updateTab();
 			} else if (AccountImportAction.ADD_ESI.name().equals(e.getActionCommand())) {
 				currentCard = AccountImportCard.ADD_ESI;
-				updateTab();
-			} else if (AccountImportAction.ADD_EVEAPI.name().equals(e.getActionCommand())) {
-				currentCard = AccountImportCard.ADD_EVEAPI;
 				updateTab();
 			} else if (AccountImportAction.ADD_EVEKIT.name().equals(e.getActionCommand())) {
 				currentCard = AccountImportCard.ADD_EVEKIT;
@@ -830,9 +746,6 @@ public class AccountImportDialog extends JDialogCentered {
 							break;
 						case FAIL_CANCEL:
 							switch(apiType) {
-								case EVE_ONLINE:
-									currentCard = AccountImportCard.ADD_EVEAPI;
-									break;
 								case EVEKIT:
 									currentCard = AccountImportCard.ADD_EVEKIT;
 									break;
@@ -872,7 +785,7 @@ public class AccountImportDialog extends JDialogCentered {
 
 		public TypePanel() {
 			JLabel jEsiLabel = new JLabel(DialoguesAccount.get().esiDescription());
-			JButton jEsi = new JButton(DialoguesAccount.get().esi(), Images.MISC_ESI.getIcon());
+			JButton jEsi = new JButton(DialoguesAccount.get().esi(), Images.MISC_ESI_32.getIcon());
 			Font font = new Font(jEsi.getFont().getName(), Font.BOLD, jEsi.getFont().getSize() + 5);
 			jEsi.setActionCommand(AccountImportAction.ADD_ESI.name());
 			jEsi.addActionListener(listener);
@@ -881,23 +794,14 @@ public class AccountImportDialog extends JDialogCentered {
 			jEsi.setHorizontalAlignment(JButton.LEADING);
 
 			JLabel jEveKitLabel = new JLabel(DialoguesAccount.get().evekitDescription());
-			JButton jEveKit = new JButton(DialoguesAccount.get().evekit(), Images.MISC_EVEKIT.getIcon());
+			JButton jEveKit = new JButton(DialoguesAccount.get().evekit(), Images.MISC_EVEKIT_32.getIcon());
 			jEveKit.setActionCommand(AccountImportAction.ADD_EVEKIT.name());
 			jEveKit.addActionListener(listener);
 			jEveKit.setIconTextGap(20);
 			jEveKit.setFont(font);
 			jEveKit.setHorizontalAlignment(JButton.LEADING);
 
-			JLabel jEveApiLabel = new JLabel(DialoguesAccount.get().eveapiDescription());
-			JButton jEveApi = new JButton(DialoguesAccount.get().eveapi(), Images.MISC_EVE.getIcon());
-			jEveApi.setActionCommand(AccountImportAction.ADD_EVEAPI.name());
-			jEveApi.addActionListener(listener);
-			jEveApi.setIconTextGap(20);
-			jEveApi.setFont(font);
-			jEveApi.setHorizontalAlignment(JButton.LEADING);
-
 			ButtonGroup buttonGroup = new ButtonGroup();
-			buttonGroup.add(jEveApi);
 			buttonGroup.add(jEveKit);
 			buttonGroup.add(jEsi);
 
@@ -907,13 +811,11 @@ public class AccountImportDialog extends JDialogCentered {
 						.addGroup(cardLayout.createParallelGroup()
 							.addComponent(jEsi, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Integer.MAX_VALUE)
 							.addComponent(jEveKit, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Integer.MAX_VALUE)
-							.addComponent(jEveApi, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Integer.MAX_VALUE)
 						)
 						.addGap(10)
 						.addGroup(cardLayout.createParallelGroup()
 							.addComponent(jEsiLabel, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Integer.MAX_VALUE)
 							.addComponent(jEveKitLabel, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Integer.MAX_VALUE)
-							.addComponent(jEveApiLabel, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Integer.MAX_VALUE)
 						)
 					)
 			);
@@ -926,10 +828,6 @@ public class AccountImportDialog extends JDialogCentered {
 					.addGroup(cardLayout.createParallelGroup()
 						.addComponent(jEveKit, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Integer.MAX_VALUE)
 						.addComponent(jEveKitLabel, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Integer.MAX_VALUE)
-					)
-					.addGroup(cardLayout.createParallelGroup()
-						.addComponent(jEveApi, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Integer.MAX_VALUE)
-						.addComponent(jEveApiLabel, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Integer.MAX_VALUE)
 					)
 			);
 		}
@@ -985,60 +883,6 @@ public class AccountImportDialog extends JDialogCentered {
 				.addGroup(cardLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
 					.addComponent(jApiKeyLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 					.addComponent(jAccessCred, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-				)
-			);
-		}
-	}
-
-	private class EveApiPanel extends JCardPanel {
-
-		public EveApiPanel() {
-			JLabel jUserIdLabel = new JLabel(DialoguesAccount.get().keyId());
-			jUserIdLabel.setHorizontalAlignment(JLabel.RIGHT);
-
-			jKeyID = new JIntegerField("", DocumentFactory.ValueFlag.POSITIVE_AND_ZERO);
-			JCopyPopup.install(jKeyID);
-
-			JLabel jApiKeyLabel = new JLabel(DialoguesAccount.get().vCode());
-
-			jVCode = new JTextField();
-			JCopyPopup.install(jVCode);
-			JEditorPane jHelp = new JEditorPane(
-					"text/html", "<html><body style=\"font-family: " + jUserIdLabel.getFont().getName() + "; font-size: " + jUserIdLabel.getFont().getSize() + "pt\">"
-				+ DialoguesAccount.get().eveApiHelpText() + "</body></html>");
-			((HTMLDocument) jHelp.getDocument()).getStyleSheet().addRule("body { font-family: " + this.getFont().getFamily() + "; " + "font-size: " + this.getFont().getSize() + "pt; }");
-			jHelp.setFont(getFont());
-			jHelp.setEditable(false);
-			jHelp.setFocusable(false);
-			jHelp.setOpaque(false);
-			jHelp.addHyperlinkListener(DesktopUtil.getHyperlinkListener(getDialog()));
-
-			cardLayout.setHorizontalGroup(
-				cardLayout.createSequentialGroup()
-				.addGroup(cardLayout.createParallelGroup()
-					.addComponent(jHelp)
-					.addGroup(cardLayout.createSequentialGroup()
-						.addGroup(cardLayout.createParallelGroup(GroupLayout.Alignment.TRAILING)
-							.addComponent(jUserIdLabel)
-							.addComponent(jApiKeyLabel)
-						)
-						.addGroup(cardLayout.createParallelGroup()
-							.addComponent(jKeyID, 100, 100, 100)
-							.addComponent(jVCode, 150, 150, Integer.MAX_VALUE)
-						)
-					)
-				)
-			);
-			cardLayout.setVerticalGroup(
-				cardLayout.createSequentialGroup()
-				.addComponent(jHelp)
-				.addGroup(cardLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-					.addComponent(jUserIdLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-					.addComponent(jKeyID, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-				)
-				.addGroup(cardLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-					.addComponent(jApiKeyLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-					.addComponent(jVCode, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 				)
 			);
 		}
@@ -1366,26 +1210,6 @@ public class AccountImportDialog extends JDialogCentered {
 			super.setLayout(mgr);
 		}
 
-	}
-
-	class EveApiTask extends AddTask {
-
-		private final AccountGetter accountGetter = new AccountGetter(account, true);
-
-		@Override
-		public boolean exist() {
-			return program.getProfileManager().getAccounts().contains(account) && !account.isExpired();
-		}
-
-		@Override
-		public void load() {
-			accountGetter.start(); //Update account
-		}
-
-		@Override
-		public AccountAdder getAccountAdder() {
-			return accountGetter;
-		}
 	}
 
 	class EveKitTask extends AddTask {

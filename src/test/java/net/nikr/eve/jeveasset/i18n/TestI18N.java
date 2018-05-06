@@ -59,7 +59,7 @@ public class TestI18N extends TestUtil {
 	@Test
 	public void testDialoguesAccount_en() throws Exception {
 		DialoguesAccount g = BundleServiceFactory.getBundleService().get(DialoguesAccount.class);
-		assertNotNull(g.eveApiHelpText());
+		assertNotNull(g.accessKey());
 	}
 
 	@Test

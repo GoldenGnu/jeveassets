@@ -57,11 +57,6 @@ public abstract class FakeSettings extends Settings {
 	public FakeSettings() { }
 
 	@Override
-	public String getApiProxy() {
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	@Override
 	public Date getConquerableStationsNextUpdate() {
 		throw new UnsupportedOperationException("not implemented");
 	}
@@ -102,11 +97,6 @@ public abstract class FakeSettings extends Settings {
 	}
 
 	@Override
-	public boolean isForceUpdate() {
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	@Override
 	public boolean isHighlightSelectedRows() {
 		throw new UnsupportedOperationException("not implemented");
 	}
@@ -122,7 +112,7 @@ public abstract class FakeSettings extends Settings {
 	}
 
 	@Override
-	public boolean isUpdatable(final Date date, final boolean ignoreOnProxy) {
+	public boolean isUpdatable(final Date date) {
 		throw new UnsupportedOperationException("not implemented");
 	}
 
@@ -133,11 +123,6 @@ public abstract class FakeSettings extends Settings {
 
 	@Override
 	public boolean isWindowMaximized() {
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	@Override
-	public void setApiProxy(final String apiProxy) {
 		throw new UnsupportedOperationException("not implemented");
 	}
 

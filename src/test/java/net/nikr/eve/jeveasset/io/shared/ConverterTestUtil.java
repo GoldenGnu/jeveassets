@@ -20,7 +20,6 @@
  */
 package net.nikr.eve.jeveasset.io.shared;
 
-import com.beimin.eveapi.model.shared.KeyType;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -36,6 +35,7 @@ import java.util.Map;
 import java.util.Set;
 import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
 import net.nikr.eve.jeveasset.data.api.accounts.EveApiAccount;
+import net.nikr.eve.jeveasset.data.api.accounts.EveApiAccount.KeyType;
 import net.nikr.eve.jeveasset.data.api.accounts.EveApiOwner;
 import net.nikr.eve.jeveasset.data.api.accounts.EveKitOwner;
 import net.nikr.eve.jeveasset.data.api.accounts.OwnerType;
@@ -406,13 +406,6 @@ public class ConverterTestUtil {
 			response.setDivision(response.getDivision() - 999);
 		}
 	//Assets
-		//EveAPI
-		if (object instanceof com.beimin.eveapi.model.shared.Asset) {
-			com.beimin.eveapi.model.shared.Asset asset = (com.beimin.eveapi.model.shared.Asset) object;
-			asset.setItemID(asset.getItemID() + 1); //Workaround for itemID == locationID
-			asset.setLocationID(options.getLocationTypeEveApi());
-			asset.setFlag(options.getLocationFlagEveApi());
-		}
 		//EveKit Asset
 		if (object instanceof enterprises.orbital.evekit.client.model.Asset) {
 			enterprises.orbital.evekit.client.model.Asset asset = (enterprises.orbital.evekit.client.model.Asset) object;
@@ -498,24 +491,12 @@ public class ConverterTestUtil {
 			contract.setType(options.getContractTypeEveKit());
 		}
 	//IndustryJobs
-		//EveAPI
-		if (object instanceof com.beimin.eveapi.model.shared.IndustryJob) {
-			com.beimin.eveapi.model.shared.IndustryJob industryJob = (com.beimin.eveapi.model.shared.IndustryJob) object;
-			industryJob.setStatus(options.getIndustryJobStatusEveApi()); //Workaround: Set valid value for status (PENDING)
-		}
 		//EveKit
 		if (object instanceof enterprises.orbital.evekit.client.model.IndustryJob) {
 			enterprises.orbital.evekit.client.model.IndustryJob industryJob = (enterprises.orbital.evekit.client.model.IndustryJob) object;
 			industryJob.setStatus(options.getIndustryJobStatusEveKit()); //Workaround: Set valid value for status (PENDING)
 		}
 	//Journal
-		//EveAPI
-		if (object instanceof com.beimin.eveapi.model.shared.JournalEntry) {
-			com.beimin.eveapi.model.shared.JournalEntry journalEntry = (com.beimin.eveapi.model.shared.JournalEntry) object;
-			journalEntry.setRefTypeID(journalEntry.getRefType().getId());
-			journalEntry.setArgID1(options.getLong());
-			journalEntry.setArgName1(String.valueOf(options.getLong()));
-		}
 		//EveKit
 		if (object instanceof enterprises.orbital.evekit.client.model.WalletJournal) {
 			enterprises.orbital.evekit.client.model.WalletJournal journalEntry = (enterprises.orbital.evekit.client.model.WalletJournal) object;
@@ -537,12 +518,6 @@ public class ConverterTestUtil {
 			journalEntry.setTransactionID(null);
 		}
 	//Market Orders
-		//EveAPI
-		if (object instanceof com.beimin.eveapi.model.shared.MarketOrder) {
-			com.beimin.eveapi.model.shared.MarketOrder marketOrder = (com.beimin.eveapi.model.shared.MarketOrder) object;
-			marketOrder.setRange(options.getMarketOrderRangeEveApi());
-			marketOrder.setOrderState(options.getMarketOrderStateEveApi());
-		}
 		//EveKit
 		if (object instanceof enterprises.orbital.evekit.client.model.MarketOrder) {
 			enterprises.orbital.evekit.client.model.MarketOrder marketOrder = (enterprises.orbital.evekit.client.model.MarketOrder) object;
@@ -550,12 +525,6 @@ public class ConverterTestUtil {
 			marketOrder.setOrderState(options.getMarketOrderStateEsiCharacterHistory().toString());
 		}
 	//Transactions
-		//EveAPI
-		if (object instanceof com.beimin.eveapi.model.shared.WalletTransaction) {
-			com.beimin.eveapi.model.shared.WalletTransaction transaction = (com.beimin.eveapi.model.shared.WalletTransaction) object;
-			transaction.setTransactionType("buy");
-			transaction.setTransactionFor("personal");
-		}
 		//EveKit
 		if (object instanceof enterprises.orbital.evekit.client.model.WalletTransaction) {
 			enterprises.orbital.evekit.client.model.WalletTransaction transaction = (enterprises.orbital.evekit.client.model.WalletTransaction) object;
@@ -731,14 +700,6 @@ public class ConverterTestUtil {
 			return options.getLocationTypeEsiCharacter();
 		} else if (type.equals(CorporationAssetsResponse.LocationTypeEnum.class)) {
 			return options.getLocationTypeEsiCorporation();
-		} else if (type.equals(com.beimin.eveapi.model.shared.RefType.class)) {
-			return options.getJournalRefTypeEveApi();
-		} else if (type.equals(com.beimin.eveapi.model.shared.ContractType.class)) {
-			return options.getContractTypeEveApi();
-		} else if (type.equals(com.beimin.eveapi.model.shared.ContractStatus.class)) {
-			return options.getContractStatusEveApi();
-		} else if (type.equals(com.beimin.eveapi.model.shared.ContractAvailability.class)) {
-			return options.getContractAvailabilityEveApi();
 		} else if (type.equals(BigDecimal.class)) {
 			return options.getBigDecimal();
 		} else if (type.equals(EsiCallbackURL.class)) {

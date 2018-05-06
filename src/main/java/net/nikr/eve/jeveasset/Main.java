@@ -227,7 +227,6 @@ public final class Main {
 		Set<String> files = new HashSet<String>();
 		files.add("asm-5.0.4.jar");
 		files.add("dom4j-2.1.0.jar");
-		files.add("eveapi-7.0.4.jar");
 		files.add("glazedlists-1.11.0.jar");
 		files.add("graph-1.5.0.jar");
 		files.add("guava-r09.jar");

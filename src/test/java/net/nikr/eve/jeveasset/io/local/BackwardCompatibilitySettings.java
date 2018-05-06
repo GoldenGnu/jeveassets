@@ -65,7 +65,6 @@ public class BackwardCompatibilitySettings extends FakeSettings {
 		GET_TRACKER_DATA,
 		GET_USER_ITEM_NAMES,
 		GET_USER_PRICES,
-		SET_API_PROXY,
 		SET_CONQUERABLE_STATIONS_NEXT_UPDATE,
 		SET_MAXIMUM_PURCHASE_AGE,
 		SET_PRICE_DATA_SETTINGS,
@@ -253,11 +252,6 @@ public class BackwardCompatibilitySettings extends FakeSettings {
 	public Map<Integer, UserItem<Integer, Double>> getUserPrices() {
 		ok.put(Function.GET_USER_PRICES, true);
 		return new HashMap<Integer, UserItem<Integer, Double>>();
-	}
-
-	@Override
-	public void setApiProxy(final String apiProxy) {
-		ok.put(Function.SET_API_PROXY, true);
 	}
 
 	@Override

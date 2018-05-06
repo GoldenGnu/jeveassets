@@ -127,26 +127,6 @@ public class RawTransaction {
 		accountKey = transaction.getDivision() + 999;
 	}
 
-	/**
-	 * EveAPI
-	 *
-	 * @param transaction
-	 * @param accountKey
-	 */
-	public RawTransaction(com.beimin.eveapi.model.shared.WalletTransaction transaction, int accountKey) {
-		clientId = (int) transaction.getClientID();
-		date = transaction.getTransactionDateTime();
-		isBuy = RawConverter.toTransactionIsBuy(transaction.getTransactionType());
-		isPersonal = RawConverter.toTransactionIsPersonal(transaction.getTransactionFor());
-		journalRefId = transaction.getJournalTransactionID();
-		locationId = transaction.getStationID();
-		quantity = transaction.getQuantity();
-		transactionId = transaction.getTransactionID();
-		typeId = transaction.getTypeID();
-		unitPrice = transaction.getPrice();
-		this.accountKey = accountKey;
-	}
-
 	public final long getClientID() {
 		return clientId;
 	}

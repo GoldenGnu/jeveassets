@@ -23,9 +23,6 @@ package net.nikr.eve.jeveasset.io.shared;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
-import com.beimin.eveapi.model.eve.Station;
 import net.nikr.eve.jeveasset.TestUtil;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
 import net.nikr.eve.jeveasset.data.sde.StaticData;
@@ -83,10 +80,6 @@ public class ApiIdConverterTest extends TestUtil {
 				assertFalse(o1.getRegion().equals(""));
 				assertFalse(o1.getRegionID() == 0);
 			}
-		}
-		for (Station apiStation : StaticData.get().getConquerableStations().values()) {
-			String system = ApiIdConverter.getLocation(apiStation.getSolarSystemID()).getSystem();
-			assertTrue("Station name: " + apiStation.getStationName() + " System name: " + system,  apiStation.getStationName().contains(system) || apiStation.getStationName().equals("C C P S U C K S"));
 		}
 	}
 }

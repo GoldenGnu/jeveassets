@@ -21,7 +21,6 @@
 package net.nikr.eve.jeveasset.data.api.raw;
 
 import net.nikr.eve.jeveasset.data.sde.ItemFlag;
-import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 import net.nikr.eve.jeveasset.io.shared.RawConverter;
 import net.troja.eve.esi.model.CharacterBlueprintsResponse;
 import net.troja.eve.esi.model.CorporationBlueprintsResponse;
@@ -103,22 +102,6 @@ public class RawBlueprint {
 	public RawBlueprint(enterprises.orbital.evekit.client.model.Blueprint blueprint) {
 		itemId = blueprint.getItemID();
 		itemFlag = RawConverter.toFlag(blueprint.getLocationFlag());
-		locationId = blueprint.getLocationID();
-		materialEfficiency = blueprint.getMaterialEfficiency();
-		quantity = blueprint.getQuantity();
-		runs = blueprint.getRuns();
-		timeEfficiency = blueprint.getTimeEfficiency();
-		typeId = blueprint.getTypeID();
-	}
-
-	/**
-	 * EveAPI
-	 *
-	 * @param blueprint
-	 */
-	public RawBlueprint(com.beimin.eveapi.model.shared.Blueprint blueprint) {
-		itemId = blueprint.getItemID();
-		itemFlag = ApiIdConverter.getFlag(blueprint.getFlagID());
 		locationId = blueprint.getLocationID();
 		materialEfficiency = blueprint.getMaterialEfficiency();
 		quantity = blueprint.getQuantity();

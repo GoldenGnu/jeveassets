@@ -80,7 +80,7 @@ public abstract class AbstractGetter<O extends OwnerType, C, E extends Exception
 		this.owner = owner;
 		this.forceUpdate = forceUpdate;
 		this.disabled = !forceUpdate && owner != null && !owner.isShowOwner();
-		this.wait = !forceUpdate && !Settings.get().isUpdatable(nextUpdate, false);
+		this.wait = !forceUpdate && !Settings.get().isUpdatable(nextUpdate);
 		switch (taskType) {
 			case ACCOUNT_BALANCE: taskName = "Account Balance"; break;
 			case ASSETS: taskName = "Assets"; break;

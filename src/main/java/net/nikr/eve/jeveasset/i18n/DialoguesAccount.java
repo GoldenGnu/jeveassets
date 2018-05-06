@@ -61,14 +61,11 @@ public abstract class DialoguesAccount extends Bundle {
 	public abstract String okValid();
 	public abstract String okValidText();
 
-	public abstract String keyId();
-	public abstract String vCode();
 	public abstract String authCode();
 	public abstract String authentication();
 	public abstract String authorize();
 	public abstract String accessKey();
 	public abstract String credential();
-	public abstract String eveApiHelpText();
 	public abstract String eveKitHelpText();
 	public abstract String esiHelpText();
 	public abstract String validatingMessage();
@@ -96,10 +93,8 @@ public abstract class DialoguesAccount extends Bundle {
 	public abstract String accountMigrated();
 	public abstract String accountCanMigrate();
 	public abstract String add();
-	public abstract String eveapiDescription();
 	public abstract String evekitDescription();
 	public abstract String esiDescription();
-	public abstract String eveapi();
 	public abstract String evekit();
 	public abstract String esi();
 	public abstract String collapse();

@@ -34,7 +34,6 @@ import java.util.zip.GZIPInputStream;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.settings.Citadel;
 import net.nikr.eve.jeveasset.data.settings.CitadelSettings;
-import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import net.nikr.eve.jeveasset.i18n.DialoguesUpdate;
 import net.nikr.eve.jeveasset.io.local.AbstractXmlWriter;
@@ -104,7 +103,7 @@ public class CitadelGetter extends AbstractXmlWriter {
 
 	protected boolean updateCache(UpdateTask updateTask, String hostUrl) {
 		LOG.info("Citadels updating from: " + hostUrl);
-		if (citadelSettings.getNextUpdate().after(new Date()) && !Settings.get().isForceUpdate() && !Program.isForceUpdate()) { //Check if we can update now
+		if (citadelSettings.getNextUpdate().after(new Date()) && !Program.isForceUpdate()) { //Check if we can update now
 			if (updateTask != null) {
 				updateTask.addError(DialoguesUpdate.get().citadel(), "Not allowed yet.\r\n(Fix: Just wait a bit)");
 			}

@@ -46,7 +46,7 @@ public class RawAccountBalance {
 		this.balance = balance.balance;
 		this.accountKey = balance.accountKey;
 	}
-
+	
 	/**
 	 * ESI Character
 	 *
@@ -76,16 +76,6 @@ public class RawAccountBalance {
 	public RawAccountBalance(enterprises.orbital.evekit.client.model.AccountBalance balance) {
 		this.balance = balance.getBalance();
 		this.accountKey = balance.getDivision() + 999;
-	}
-
-	/**
-	 * EveAPI
-	 *
-	 * @param balance
-	 */
-	public RawAccountBalance(com.beimin.eveapi.model.shared.AccountBalance balance) {
-		this.balance = balance.getBalance();
-		this.accountKey = balance.getAccountKey();
 	}
 
 	public Double getBalance() {

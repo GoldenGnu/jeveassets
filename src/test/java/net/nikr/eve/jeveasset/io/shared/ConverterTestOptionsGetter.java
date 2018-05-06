@@ -20,7 +20,6 @@
  */
 package net.nikr.eve.jeveasset.io.shared;
 
-import com.beimin.eveapi.model.shared.KeyType;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -29,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import net.nikr.eve.jeveasset.data.api.accounts.EveApiAccount;
+import net.nikr.eve.jeveasset.data.api.accounts.EveApiAccount.KeyType;
 import net.nikr.eve.jeveasset.data.api.raw.RawAsset;
 import net.nikr.eve.jeveasset.data.api.raw.RawBlueprint;
 import net.nikr.eve.jeveasset.data.api.raw.RawContract;
@@ -114,12 +114,6 @@ public class ConverterTestOptionsGetter {
 		private static final RawContract.ContractAvailability[] RAW_CONTRACT_AVAILABILITY = RawContract.ContractAvailability.values();
 		private static final CharacterContractsResponse.AvailabilityEnum[] ESI_CONTRACTS_AVAILABILITY_CHARACTER = CharacterContractsResponse.AvailabilityEnum.values();
 		private static final CorporationContractsResponse.AvailabilityEnum[] ESI_CONTRACTS_AVAILABILITY_CORPORATION = CorporationContractsResponse.AvailabilityEnum.values();
-		private static final com.beimin.eveapi.model.shared.ContractAvailability[] XML_CONTRACT_AVAILABILITY = {
-			com.beimin.eveapi.model.shared.ContractAvailability.PUBLIC,
-			com.beimin.eveapi.model.shared.ContractAvailability.PRIVATE,
-			com.beimin.eveapi.model.shared.ContractAvailability.PRIVATE,
-			com.beimin.eveapi.model.shared.ContractAvailability.PRIVATE
-		};
 		private static final String[] EVE_KIT_CONTRACT_AVAILABILITY = {
 			"public",
 			"private",
@@ -130,18 +124,6 @@ public class ConverterTestOptionsGetter {
 		private static final RawContract.ContractStatus[] RAW_CONTRACT_STATUS = RawContract.ContractStatus.values();
 		private static final CharacterContractsResponse.StatusEnum[] ESI_CONTRACT_STATUS_CHARACTER = CharacterContractsResponse.StatusEnum.values();
 		private static final CorporationContractsResponse.StatusEnum[] ESI_CONTRACT_STATUS_CORPORATION = CorporationContractsResponse.StatusEnum.values();
-		private static final com.beimin.eveapi.model.shared.ContractStatus[] XML_CONTRACT_STATUS = {
-			com.beimin.eveapi.model.shared.ContractStatus.OUTSTANDING,
-			com.beimin.eveapi.model.shared.ContractStatus.INPROGRESS,
-			com.beimin.eveapi.model.shared.ContractStatus.COMPLETEDBYISSUER,
-			com.beimin.eveapi.model.shared.ContractStatus.COMPLETEDBYCONTRACTOR,
-			com.beimin.eveapi.model.shared.ContractStatus.COMPLETED,
-			com.beimin.eveapi.model.shared.ContractStatus.CANCELLED,
-			com.beimin.eveapi.model.shared.ContractStatus.REJECTED,
-			com.beimin.eveapi.model.shared.ContractStatus.FAILED,
-			com.beimin.eveapi.model.shared.ContractStatus.DELETED,
-			com.beimin.eveapi.model.shared.ContractStatus.REVERSED
-		};
 		private static final String[] EVE_KIT_CONTRACT_STATUS = {
 			"outstanding",
 			"inprogress",
@@ -158,13 +140,6 @@ public class ConverterTestOptionsGetter {
 		private static final RawContract.ContractType[] RAW_CONTRACT_TYPE = RawContract.ContractType.values();
 		private static final CharacterContractsResponse.TypeEnum[] ESI_CONTRACT_TYPE_CHARACTER = CharacterContractsResponse.TypeEnum.values();
 		private static final CorporationContractsResponse.TypeEnum[] ESI_CONTRACT_TYPE_CORPORATION = CorporationContractsResponse.TypeEnum.values();
-		private static final com.beimin.eveapi.model.shared.ContractType[] XML_CONTRACT_TYPE = {
-			null,
-			com.beimin.eveapi.model.shared.ContractType.ITEMEXCHANGE,
-			com.beimin.eveapi.model.shared.ContractType.AUCTION,
-			com.beimin.eveapi.model.shared.ContractType.COURIER,
-			com.beimin.eveapi.model.shared.ContractType.LOAN
-		};
 		private static final String[] EVE_KIT_CONTRACT_TYPE = {
 			null,
 			"itemexchange",
@@ -272,17 +247,6 @@ public class ConverterTestOptionsGetter {
 
 		private static List<JournalData> createJournalData() {
 			Map<Integer, JournalData> journalDatas = new HashMap<Integer, JournalData>();
-			//EveAPI
-			for (com.beimin.eveapi.model.shared.RefType refTypeEnum : com.beimin.eveapi.model.shared.RefType.values()) {
-				RawJournalRefType rawJournalRefType = RawConverter.toJournalRefType(refTypeEnum.getId());
-				JournalData journalData = journalDatas.get(rawJournalRefType.getID());
-				if (journalData == null) {
-					journalData = new JournalData(rawJournalRefType);
-					journalDatas.put(rawJournalRefType.getID(), journalData);
-				}
-				journalData.setRefType(refTypeEnum);
-				journalData.setContextType(RawConverter.toJournalContextType(rawJournalRefType));
-			}
 			//ESI Character
 			for (CharacterWalletJournalResponse.RefTypeEnum refTypeEnum : CharacterWalletJournalResponse.RefTypeEnum.values()) {
 				RawJournalRefType rawJournalRefType = RawConverter.toJournalRefType(refTypeEnum);
@@ -352,19 +316,16 @@ public class ConverterTestOptionsGetter {
 			tempMax = Math.max(tempMax, RAW_CONTRACT_AVAILABILITY.length);
 			tempMax = Math.max(tempMax, ESI_CONTRACTS_AVAILABILITY_CHARACTER.length);
 			tempMax = Math.max(tempMax, ESI_CONTRACTS_AVAILABILITY_CORPORATION.length);
-			tempMax = Math.max(tempMax, XML_CONTRACT_AVAILABILITY.length);
 			tempMax = Math.max(tempMax, EVE_KIT_CONTRACT_AVAILABILITY.length);
 			//ContractStatus
 			tempMax = Math.max(tempMax, RAW_CONTRACT_STATUS.length);
 			tempMax = Math.max(tempMax, ESI_CONTRACT_STATUS_CHARACTER.length);
 			tempMax = Math.max(tempMax, ESI_CONTRACT_STATUS_CORPORATION.length);
-			tempMax = Math.max(tempMax, XML_CONTRACT_STATUS.length);
 			tempMax = Math.max(tempMax, EVE_KIT_CONTRACT_STATUS.length);
 			//ContractType
 			tempMax = Math.max(tempMax, RAW_CONTRACT_TYPE.length);
 			tempMax = Math.max(tempMax, ESI_CONTRACT_TYPE_CHARACTER.length);
 			tempMax = Math.max(tempMax, ESI_CONTRACT_TYPE_CORPORATION.length);
-			tempMax = Math.max(tempMax, XML_CONTRACT_TYPE.length);
 			tempMax = Math.max(tempMax, EVE_KIT_CONTRACT_TYPE.length);
 			//IndustryJobStatus
 			tempMax = Math.max(tempMax, RAW_INDUSTRY_JOB_STATUS.length);
@@ -555,11 +516,6 @@ public class ConverterTestOptionsGetter {
 		}
 
 		@Override
-		public com.beimin.eveapi.model.shared.ContractAvailability getContractAvailabilityEveApi() {
-			return get(XML_CONTRACT_AVAILABILITY, index);
-		}
-
-		@Override
 		public String getContractAvailabilityEveKit() {
 			return get(EVE_KIT_CONTRACT_AVAILABILITY, index);
 		}
@@ -581,11 +537,6 @@ public class ConverterTestOptionsGetter {
 		}
 
 		@Override
-		public com.beimin.eveapi.model.shared.ContractStatus getContractStatusEveApi() {
-			return get(XML_CONTRACT_STATUS, index);
-		}
-
-		@Override
 		public String getContractStatusEveKit() {
 			return get(EVE_KIT_CONTRACT_STATUS, index);
 		}
@@ -594,11 +545,6 @@ public class ConverterTestOptionsGetter {
 		@Override
 		public RawContract.ContractType getContractTypeRaw() {
 			return get(RAW_CONTRACT_TYPE, index);
-		}
-
-		@Override
-		public com.beimin.eveapi.model.shared.ContractType getContractTypeEveApi() {
-			return get(XML_CONTRACT_TYPE, index);
 		}
 
 		@Override
@@ -670,11 +616,6 @@ public class ConverterTestOptionsGetter {
 		@Override
 		public CorporationWalletJournalResponse.RefTypeEnum getJournalRefTypeEsiCorporation() {
 			return get(JOURNAL_DATA, index).getEsiJournalRefTypeCorporation();
-		}
-
-		@Override
-		public com.beimin.eveapi.model.shared.RefType getJournalRefTypeEveApi() {
-			return get(JOURNAL_DATA, index).getXmlJournalRefType();
 		}
 
 //MarketOrderRange
@@ -813,7 +754,6 @@ public class ConverterTestOptionsGetter {
 	private static class JournalData {
 		private CharacterWalletJournalResponse.RefTypeEnum EsiJournalRefTypeCharacter;
 		private CorporationWalletJournalResponse.RefTypeEnum EsiJournalRefTypeCorporation;
-		private com.beimin.eveapi.model.shared.RefType XmlJournalRefType;
 		private ContextType rawJournalContextType;
 
 		private final RawJournalRefType rawJournalRefType;
@@ -823,9 +763,7 @@ public class ConverterTestOptionsGetter {
 		}
 
 		public boolean isEmpty() {
-			return EsiJournalRefTypeCharacter == null
-					|| EsiJournalRefTypeCorporation == null
-					|| XmlJournalRefType == null;
+			return EsiJournalRefTypeCharacter == null || EsiJournalRefTypeCorporation == null;
 		}
 
 		public RawJournalRefType getRawJournalRefType() {
@@ -838,10 +776,6 @@ public class ConverterTestOptionsGetter {
 
 		public CorporationWalletJournalResponse.RefTypeEnum getEsiJournalRefTypeCorporation() {
 			return EsiJournalRefTypeCorporation;
-		}
-
-		public com.beimin.eveapi.model.shared.RefType getXmlJournalRefType() {
-			return XmlJournalRefType;
 		}
 
 		public ContextType getRawJournalContextType() {
@@ -868,11 +802,6 @@ public class ConverterTestOptionsGetter {
 
 		public void setRefType(CorporationWalletJournalResponse.RefTypeEnum EsiJournalRefTypeCorporation) {
 			this.EsiJournalRefTypeCorporation = EsiJournalRefTypeCorporation;
-		}
-
-
-		public void setRefType(com.beimin.eveapi.model.shared.RefType XmlJournalRefType) {
-			this.XmlJournalRefType = XmlJournalRefType;
 		}
 
 		public void setContextType(ContextType rawJournalContextType) {

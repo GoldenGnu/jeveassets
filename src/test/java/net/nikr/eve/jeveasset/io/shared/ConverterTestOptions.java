@@ -20,12 +20,12 @@
  */
 package net.nikr.eve.jeveasset.io.shared;
 
-import com.beimin.eveapi.model.shared.KeyType;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.Date;
 import net.nikr.eve.jeveasset.data.api.accounts.EveApiAccount;
+import net.nikr.eve.jeveasset.data.api.accounts.EveApiAccount.KeyType;
 import net.nikr.eve.jeveasset.data.api.raw.RawAsset;
 import net.nikr.eve.jeveasset.data.api.raw.RawBlueprint;
 import net.nikr.eve.jeveasset.data.api.raw.RawContract;
@@ -117,8 +117,6 @@ public interface ConverterTestOptions {
 
 	public CorporationContractsResponse.AvailabilityEnum getContractAvailabilityEsiCorporation();
 
-	public com.beimin.eveapi.model.shared.ContractAvailability getContractAvailabilityEveApi();
-
 	public String getContractAvailabilityEveKit();
 
 	//ContractStatus
@@ -128,14 +126,10 @@ public interface ConverterTestOptions {
 
 	public CorporationContractsResponse.StatusEnum getContractStatusEsiCorporation();
 
-	public com.beimin.eveapi.model.shared.ContractStatus getContractStatusEveApi();
-
 	public String getContractStatusEveKit();
 
 	//ContractType
 	public RawContract.ContractType getContractTypeRaw();
-
-	public com.beimin.eveapi.model.shared.ContractType getContractTypeEveApi();
 
 	public CharacterContractsResponse.TypeEnum getContractTypeEsiCharacter();
 
@@ -167,8 +161,6 @@ public interface ConverterTestOptions {
 	public CharacterWalletJournalResponse.RefTypeEnum getJournalRefTypeEsiCharacter();
 	
 	public CorporationWalletJournalResponse.RefTypeEnum getJournalRefTypeEsiCorporation();
-
-	public com.beimin.eveapi.model.shared.RefType getJournalRefTypeEveApi();
 
 	//MarketOrderRange
 	public RawMarketOrder.MarketOrderRange getMarketOrderRangeRaw();

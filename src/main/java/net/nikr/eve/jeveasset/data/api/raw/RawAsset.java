@@ -279,21 +279,6 @@ public class RawAsset {
 	}
 
 	/**
-	 * EveAPI
-	 *
-	 * @param asset
-	 */
-	public RawAsset(com.beimin.eveapi.model.shared.Asset asset) {
-		isSingleton = asset.getSingleton();
-		itemId = asset.getItemID();
-		itemFlag = ApiIdConverter.getFlag(asset.getFlag());
-		locationId = asset.getLocationID();
-		locationType = RawConverter.toAssetLocationType(asset.getLocationID());
-		quantity = RawConverter.toAssetQuantity(asset.getQuantity(), asset.getRawQuantity());
-		typeId = asset.getTypeID();
-	}
-
-	/**
 	 * Singleton: Unpackaged.
 	 *
 	 * @return true if unpackaged - false if packaged

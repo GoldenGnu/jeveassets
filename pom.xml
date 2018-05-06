@@ -639,11 +639,6 @@
 			<version>2.1.8</version>
 		</dependency>
 		<dependency>
-			<groupId>com.beimin</groupId>
-			<artifactId>eveapi</artifactId>
-			<version>7.0.4</version>
-		</dependency>
-		<dependency>
 			<groupId>enterprises.orbital.evekit</groupId>
 			<artifactId>evekit</artifactId>
 			<version>4.2.0.1</version>
