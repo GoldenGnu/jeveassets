@@ -23,6 +23,7 @@ package net.nikr.eve.jeveasset.gui.shared;
 
 import java.util.Date;
 import net.nikr.eve.jeveasset.Program;
+import net.nikr.eve.jeveasset.data.api.accounts.ApiType;
 import net.nikr.eve.jeveasset.data.api.accounts.OwnerType;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 
@@ -40,6 +41,9 @@ public class Updatable {
 			return true;
 		}
 		for (OwnerType owner : program.getOwnerTypes()) {
+			if (owner.getAccountAPI() == ApiType.EVE_ONLINE) {
+				continue;
+			}
 			if (owner.isShowOwner()) {
 				if (isUpdatable(owner.getAssetNextUpdate())){
 					return true;

@@ -35,6 +35,7 @@ import javax.swing.JRadioButton;
 import javax.swing.JToggleButton;
 import javax.swing.Timer;
 import net.nikr.eve.jeveasset.Program;
+import net.nikr.eve.jeveasset.data.api.accounts.ApiType;
 import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
 import net.nikr.eve.jeveasset.data.api.accounts.EveApiAccount;
 import net.nikr.eve.jeveasset.data.api.accounts.EveApiOwner;
@@ -385,6 +386,9 @@ public class UpdateDialog extends JDialogCentered {
 		Date priceData = program.getPriceDataGetter().getNextUpdate();
 		for (OwnerType owner : program.getOwnerTypes()) {
 			if (owner.isShowOwner() && !owner.isInvalid() && !owner.isExpired()) {
+				if (owner.getAccountAPI() == ApiType.EVE_ONLINE) {
+					continue;
+				}
 				if (owner.isIndustryJobs()) {
 					industryJobsFirst = updateFirst(industryJobsFirst, owner.getIndustryJobsNextUpdate());
 					industryJobsLast = updateLast(industryJobsLast, owner.getIndustryJobsNextUpdate());
