@@ -514,20 +514,6 @@ public class ConverterTestUtil {
 			enterprises.orbital.evekit.client.model.WalletJournal journalEntry = (enterprises.orbital.evekit.client.model.WalletJournal) object;
 			journalEntry.setRefType(options.getJournalRefTypeEsiCharacter().toString());
 			journalEntry.setDivision(journalEntry.getDivision() - 999);
-			journalEntry.setArgID1(options.getLong());
-			journalEntry.setArgName1(String.valueOf(options.getLong()));
-			journalEntry.setAllianceID(null);
-			journalEntry.setCharacterID(null);
-			journalEntry.setContractID(null);
-			journalEntry.setCorporationID(null);
-			journalEntry.setDestroyedShipTypeID(null);
-			journalEntry.setJobID(null);
-			journalEntry.setLocationID(null);
-			journalEntry.setNpcID(null);
-			journalEntry.setNpcName(null);
-			journalEntry.setPlanetID(null);
-			journalEntry.setSystemID(null);
-			journalEntry.setTransactionID(null);
 		}
 	//Market Orders
 		//EveKit
