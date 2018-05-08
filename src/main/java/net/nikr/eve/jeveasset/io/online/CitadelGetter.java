@@ -105,7 +105,7 @@ public class CitadelGetter extends AbstractXmlWriter {
 		LOG.info("Citadels updating from: " + hostUrl);
 		if (citadelSettings.getNextUpdate().after(new Date()) && !Program.isForceUpdate()) { //Check if we can update now
 			if (updateTask != null) {
-				updateTask.addError(DialoguesUpdate.get().citadel(), "Not allowed yet.\r\n(Fix: Just wait a bit)");
+				updateTask.addError(DialoguesUpdate.get().citadel(), "Waiting for cache to expire.\r\n(Fix: Just wait a bit)");
 			}
 			LOG.info("	Citadels failed to update (NOT ALLOWED YET)");
 			return false;
