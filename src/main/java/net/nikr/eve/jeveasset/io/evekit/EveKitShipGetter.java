@@ -47,6 +47,9 @@ public class EveKitShipGetter extends AbstractEveKitGetter {
 
 	@Override
 	protected void get(ApiClient apiClient, Long at, boolean first) throws ApiException {
+		if (owner.isCorporation()) { //Corporation can't have an active ship
+			return;
+		}
 		//Get Ship
 		List<CharacterShip> characterShips = getCharacterApi(apiClient).getShipType(owner.getAccessKey(), owner.getAccessCred(), atFilter(at), null, null, false, null, null, null);
 		//Get Location
