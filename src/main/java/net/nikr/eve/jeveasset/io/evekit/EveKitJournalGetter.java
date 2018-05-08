@@ -51,7 +51,7 @@ public class EveKitJournalGetter extends AbstractEveKitGetter implements EveKitP
 	public List<WalletJournal> get(ApiClient apiClient, String at, Long contid, Integer maxResults) throws ApiException {
 		//months
 		return getCommonApi(apiClient).getJournalEntries(owner.getAccessKey(), owner.getAccessCred(), at, contid, maxResults, false,
-				null, null, dateFilter(Settings.get().getEveKitJournalHistory()), null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+				null, null, dateFilter(Settings.get().getEveKitJournalHistory()), null, null, null, null, null, null, null, null, null, null, null, null, null);
 	}
 
 	@Override

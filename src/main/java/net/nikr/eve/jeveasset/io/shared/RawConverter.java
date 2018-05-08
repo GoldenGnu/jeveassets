@@ -366,34 +366,11 @@ public class RawConverter {
 	}
 
 	public static ContextType toJournalContextType(WalletJournal journal, RawJournalRefType refType) {
-		ContextType contextType = toJournalContextType(refType);
+		ContextType contextType = toJournalContextType(journal.getContextType());
 		if (contextType != null) {
 			return contextType;
 		}
-		if (journal.getAllianceID() != null) {
-			return ContextType.ALLIANCE_ID;
-		} else if (journal.getCharacterID() != null) {
-			return ContextType.CHARACTER_ID;
-		} else if (journal.getContractID() != null) {
-			return ContextType.CONTRACT_ID;
-		} else if (journal.getCorporationID() != null) {
-			return ContextType.CORPORATION_ID;
-		} else if (journal.getDestroyedShipTypeID() != null) {
-			return ContextType.TYPE_ID;
-		} else if (journal.getJobID() != null) {
-			return ContextType.INDUSTRY_JOB_ID;
-		} else if (journal.getLocationID() != null) {
-			return ContextType.STRUCTURE_ID;
-		} else if (journal.getNpcID() != null) {
-			return ContextType.TYPE_ID;
-		} else if (journal.getPlanetID() != null) {
-			return ContextType.PLANET_ID;
-		} else if (journal.getSystemID() != null) {
-			return ContextType.SYSTEM_ID;
-		} else if (journal.getTransactionID() != null) {
-			return ContextType.MARKET_TRANSACTION_ID;
-		}
-		return null;
+		return toJournalContextType(refType);
 	}
 
 	public static ContextType toJournalContextType(RawJournalRefType refType) {
@@ -431,32 +408,14 @@ public class RawConverter {
 	}
 
 	public static Long toJournalContextID(WalletJournal journal, RawJournalRefType refType) {
-		Long contextID = toJournalContextID(journal.getArgID1(), journal.getArgName1(), refType);
-		if (contextID != null) {
+		Long contextID;
+		contextID = journal.getContextID();
+		if (contextID != null && contextID != 0) {
 			return contextID;
 		}
-		if (journal.getAllianceID() != null) {
-			return RawConverter.toLong(journal.getAllianceID());
-		} else if (journal.getCharacterID() != null) {
-			return RawConverter.toLong(journal.getCharacterID());
-		} else if (journal.getContractID() != null) {
-			return RawConverter.toLong(journal.getContractID());
-		} else if (journal.getCorporationID() != null) {
-			return RawConverter.toLong(journal.getCorporationID());
-		} else if (journal.getDestroyedShipTypeID() != null) {
-			return RawConverter.toLong(journal.getDestroyedShipTypeID());
-		} else if (journal.getJobID() != null) {
-			return RawConverter.toLong(journal.getJobID());
-		} else if (journal.getLocationID() != null) {
-			return RawConverter.toLong(journal.getLocationID());
-		} else if (journal.getNpcID() != null) {
-			return RawConverter.toLong(journal.getNpcID());
-		} else if (journal.getPlanetID() != null) {
-			return RawConverter.toLong(journal.getPlanetID());
-		} else if (journal.getSystemID() != null) {
-			return RawConverter.toLong(journal.getSystemID());
-		} else if (journal.getTransactionID() != null) {
-			return RawConverter.toLong(journal.getTransactionID());
+		contextID = toJournalContextID(journal.getArgID1(), journal.getArgName1(), refType);
+		if (contextID != null && contextID != 0) {
+			return contextID;
 		}
 		return null;
 	}
