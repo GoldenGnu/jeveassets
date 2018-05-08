@@ -16,6 +16,25 @@
                   #### #  # #  # #  # #### #### #### #### ####
 
 ________________________________________________________________________________
+_5.5.0__________________________________________________________________________
+
+Bug Fixes:
+-New logic to ensure uniqueness of Journal and Transactions
+-Possible fix for tracker problems
+-Don't try to update active ship via EveKit for corporations
+
+Changed:
+-Removed support for the now dead XmlAPI
+-Increased the amount of times ESI retries from 1 to 3
+-Update error message from "Not allowed yet" to "Waiting for cache to expire"
+-Added warning when EveKit accounts have invalid ESI auth
+-Workaround for 9e18 locations
+
+Code:
+-Updated eve-esi to 2.1.8
+-Updated EveKit to 2.4.0.2
+
+________________________________________________________________________________
 _5.4.3__________________________________________________________________________
 
 Code:
