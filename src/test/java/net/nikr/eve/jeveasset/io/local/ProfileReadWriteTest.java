@@ -94,7 +94,7 @@ public class ProfileReadWriteTest extends TestUtil {
 			File file = new File(FILENAME);
 			assertTrue(file.delete());
 
-			File backupFile = new File(FILENAME.substring(0, FILENAME.lastIndexOf(".")) + "_" + Program.PROGRAM_VERSION + ".backup");
+			File backupFile = new File(FILENAME.substring(0, FILENAME.lastIndexOf(".")) + "_" + Program.PROGRAM_VERSION.replace(" ", "_") + "_backup.zip");
 			assertTrue(backupFile.delete());
 		}
 	}
