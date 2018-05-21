@@ -22,8 +22,12 @@
 package net.nikr.eve.jeveasset.io.local;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.file.Files;
+import java.io.InputStream;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 import net.nikr.eve.jeveasset.Program;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -69,18 +73,44 @@ public abstract class AbstractXmlBackup {
 	}
 
 	private File getProgramBackup(final String filename) {
-		return new File(filename.substring(0, filename.lastIndexOf(".")) + "_" + Program.PROGRAM_VERSION + ".backup");
+		return new File(filename.substring(0, filename.lastIndexOf(".")) + "_" + Program.PROGRAM_VERSION.replace(" ", "_") + "_backup.zip");
 	}
-
+	
 	protected void backup(final String filename, final Element element) {
-		getProgramBackup(filename);
 		File backupFile = getProgramBackup(filename);
 		if (!backupFile.exists()) {
+			ZipOutputStream out = null;
+			InputStream in = null;
 			try {
-				Files.copy(new File(filename).toPath(), backupFile.toPath());
+				File sourceFile = new File(filename);
+				out = new ZipOutputStream(new FileOutputStream(backupFile));
+				in = new FileInputStream(sourceFile);
+				ZipEntry e = new ZipEntry(sourceFile.getName());
+				out.putNextEntry(e);
+				byte[] buffer = new byte[8192];
+				int len;
+				while ((len = in.read(buffer)) != -1) {
+					out.write(buffer, 0, len);
+				}
+				out.closeEntry();
 				LOG.info("Backup Created: " + backupFile.getName());
 			} catch (IOException ex) {
 				LOG.error("Failed to create backup for new program version", ex);
+			} finally {
+				try {
+					if (out != null) {
+						out.close();
+					}
+				} catch (IOException ex) {
+					//No problem
+				}
+				try {
+					if (in != null) {
+						in.close();
+					}
+				} catch (IOException ex) {
+					//No problem
+				}
 			}
 		}
 	}
