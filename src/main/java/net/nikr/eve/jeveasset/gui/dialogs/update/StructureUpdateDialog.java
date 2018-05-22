@@ -364,18 +364,14 @@ public class StructureUpdateDialog extends JDialogCentered {
 			}
 			int progress = 0;
 			for (EsiOwner owner : owners) {
+				if (isCancelled()) {
+					return;
+				}
 				EsiStructuresGetter esiStructuresGetter = new EsiStructuresGetter(this, owner, tracker);
 				esiStructuresGetter.run();
 				progress++;
 				setTotalProgress(owners.size(), progress, 0, 100);
 			}
 		}
-
-		@Override
-		protected void setTaskProgress(int progress) {
-			super.setTaskProgress(progress); //To change body of generated methods, choose Tools | Templates.
-		}
-
-		
 	}
 }
