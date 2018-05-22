@@ -47,20 +47,21 @@ public class TaskDialog {
 	public static final int WIDTH = 260;
 
 	//GUI
-	private JDialog jWindow;
-	private JLabel jIcon;
-	private JProgressBar jProgressBar;
-	private JProgressBar jTotalProgressBar;
-	private JButton jOK;
-	private JButton jCancel;
-	private JTextPane jErrorMessage;
-	private JLabel jErrorName;
-	private JScrollPane jErrorScroll;
+	private final JDialog jWindow;
+	private final JLabel jIcon;
+	private final JProgressBar jProgressBar;
+	private final JProgressBar jTotalProgressBar;
+	private final JButton jOK;
+	private final JButton jCancel;
+	private final JButton jMinimize;
+	private final JTextPane jErrorMessage;
+	private final JLabel jErrorName;
+	private final JScrollPane jErrorScroll;
 	private final JLockWindow jLockWindow;
 
-	private ListenerClass listener;
+	private final ListenerClass listener;
 
-	private Program program;
+	private final Program program;
 
 	//Data
 	private List<UpdateTask> updateTasks;
@@ -99,7 +100,7 @@ public class TaskDialog {
 		JLabel jUpdate = new JLabel(DialoguesUpdate.get().updating());
 		jUpdate.setFont(new Font(jUpdate.getFont().getName(), Font.BOLD, jUpdate.getFont().getSize() + 4));
 
-		JButton jMinimize = new JButton(DialoguesUpdate.get().minimize());
+		jMinimize = new JButton(DialoguesUpdate.get().minimize());
 		jMinimize.setActionCommand(TaskAction.MINIMIZE.name());
 		jMinimize.addActionListener(listener);
 		jMinimize.setVisible(updateType != null);
@@ -115,7 +116,6 @@ public class TaskDialog {
 						}
 					});
 					if (progress.isDone()) {
-						jMinimize.setEnabled(false); //Should not minimize after completed
 						SwingUtilities.invokeLater(new Runnable() {
 							@Override
 							public void run() {
@@ -258,6 +258,7 @@ public class TaskDialog {
 			@Override
 			public void gui() {
 				jOK.setEnabled(true);
+				jMinimize.setEnabled(false); //Should not minimize after completed
 			}
 			@Override
 			public void hidden() {
@@ -304,6 +305,7 @@ public class TaskDialog {
 		jProgressBar.setIndeterminate(false);
 		jProgressBar.setValue(0);
 		jIcon.setIcon(new UpdateTask.EmptyIcon());
+		jMinimize.setEnabled(false); //Should not minimize after cancel
 	}
 
 	private class ListenerClass implements PropertyChangeListener, ActionListener, WindowListener {
