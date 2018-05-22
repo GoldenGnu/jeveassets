@@ -314,12 +314,6 @@ public class Program implements ActionListener {
 			LOG.info("Show Account Manager");
 			accountManagerDialog.setVisible(true);
 		}
-		Runtime.getRuntime().addShutdownHook(new Thread() {
-			@Override
-			public void run() {
-				getStatusPanel().cancelUpdates();
-			}
-		});
 	}
 
 	/**
@@ -628,6 +622,7 @@ public class Program implements ActionListener {
 				return;
 			}
 		}
+		getStatusPanel().cancelUpdates();
 		saveExit();
 		LOG.info("Running shutdown hook(s) and exiting...");
 		System.exit(0);
