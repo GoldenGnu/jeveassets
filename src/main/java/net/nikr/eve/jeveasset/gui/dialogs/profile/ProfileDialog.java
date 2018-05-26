@@ -156,8 +156,6 @@ public class ProfileDialog extends JDialogCentered {
 			for (Profile profileLoop : program.getProfileManager().getProfiles()) {
 				profileLoop.setActiveProfile(false);
 			}
-			//Save old profile
-			program.getProfileManager().saveProfile();
 			//Clear accounts
 			program.getProfileManager().getAccounts().clear();
 			program.getProfileManager().getEveKitOwners().clear();
@@ -355,8 +353,8 @@ public class ProfileDialog extends JDialogCentered {
 		public void task() {
 			Profile profile = new Profile(profileName, false, false);
 			program.getProfileManager().getProfiles().add(profile);
-			program.saveProfile();
 			loadProfileWork(profile);
+			program.saveProfile();
 		}
 
 		@Override
