@@ -665,8 +665,7 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 					}
 			 //Jobs
 				} else if (industryJob != null) {
-					if (industryJob.getActivityID() == 1  //Manufacturing
-							//&& industryJob.getStatus() == 1 //Inprogress AKA not delivered (Old)
+					if (industryJob.isManufacturing()  //Manufacturing
 							&& (industryJob.getStatus() == RawIndustryJob.IndustryJobStatus.ACTIVE //Inprogress AKA not delivered (1 = Active, 2 = Paused (Facility Offline), 3 = Ready)
 								|| industryJob.getStatus() == RawIndustryJob.IndustryJobStatus.PAUSED
 								|| industryJob.getStatus() == RawIndustryJob.IndustryJobStatus.READY
