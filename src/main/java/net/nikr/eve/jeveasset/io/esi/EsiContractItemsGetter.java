@@ -123,8 +123,8 @@ public class EsiContractItemsGetter extends AbstractEsiGetter {
 					if (entry.getValue() != null && !entry.getValue().isEmpty()) {
 						continue; //Ignore contracts that have been already updated
 					}
-					if (contract.getStatus() == ContractStatus.DELETED) {
-						continue; //Ignore deleted contracts
+					if (esiOwner.isCorporation() && contract.getStatus() == ContractStatus.DELETED) {
+						continue; //Ignore deleted corporation contracts
 					}
 					uniqueContacts.add(contract);
 				}
@@ -133,14 +133,14 @@ public class EsiContractItemsGetter extends AbstractEsiGetter {
 				if (uniqueOwners.containsKey(contract.getIssuerID())) {
 					contracts.get(contract.getIssuerID()).add(contract);
 					SIZE.getAndIncrement();
-				} else if (uniqueOwners.containsKey(contract.getIssuerCorpID())) {
-					contracts.get(contract.getIssuerCorpID()).add(contract);
-					SIZE.getAndIncrement();
 				} else if (uniqueOwners.containsKey(contract.getAssigneeID())) {
 					contracts.get(contract.getAssigneeID()).add(contract);
 					SIZE.getAndIncrement();
 				} else if (uniqueOwners.containsKey(contract.getAcceptorID())) {
 					contracts.get(contract.getAcceptorID()).add(contract);
+					SIZE.getAndIncrement();
+				} else if (uniqueOwners.containsKey(contract.getIssuerCorpID())) { //Last resort (Rate limited and access to less contract items)
+					contracts.get(contract.getIssuerCorpID()).add(contract);
 					SIZE.getAndIncrement();
 				}
 			}
