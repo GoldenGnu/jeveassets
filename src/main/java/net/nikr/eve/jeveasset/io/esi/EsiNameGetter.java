@@ -120,6 +120,10 @@ public class EsiNameGetter extends AbstractEsiGetter {
 		if (number == null) {
 			return;
 		}
+		///XXX - Workaround for universe/names not supporting factions
+		if (number.longValue() >= 500001 && number.longValue() <= 500024) {
+			return;
+		}
 		//Ignore Locations
 		if (!ApiIdConverter.getLocation(number.longValue()).isEmpty()) {
 			return;
