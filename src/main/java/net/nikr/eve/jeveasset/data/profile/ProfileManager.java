@@ -51,7 +51,10 @@ public class ProfileManager {
 
 	public void searchProfile() {
 		//Find profiles
-		ProfileFinder.load(this);
+		boolean found = ProfileFinder.load(this);
+		if (!found) { //No profiles found, using default
+			saveProfile(); //Saving new default profile
+		}
 	}
 
 	public List<Profile> getProfiles() {

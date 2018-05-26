@@ -76,15 +76,14 @@ public final class ProfileFinder {
 				profiles.get(0).setActiveProfile(true);
 				profileManager.setActiveProfile(profiles.get(0));
 			} else if (!defaultProfileFound && profiles.isEmpty()) {
-				LOG.info("No default profile found: Using default settings");
+				LOG.info("No default profile found: Using default profile");
 			}
-			if (!profiles.isEmpty()) {
+			if (!profiles.isEmpty()) { //At least one profile file found
 				profileManager.setProfiles(profiles);
+				return true;
 			}
-			return true;
-		} else {
-			return false;
 		}
+		return false;
 	}
 
 	private void backwardCompatibility() {

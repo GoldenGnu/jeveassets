@@ -591,9 +591,7 @@ public class Program implements ActionListener {
 			saveSettings("API Update");
 			Settings.waitForEmptySaveQueue();
 		}
-		//Update EveKit Import
-		profilesChanged();
-		profileManager.saveProfile();
+		saveProfile();
 	}
 
 	public void saveProfile() {
