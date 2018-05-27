@@ -16,6 +16,19 @@
                   #### #  # #  # #  # #### #### #### #### ####
 
 ________________________________________________________________________________
+_5.5.1__________________________________________________________________________
+
+New Features:
+-Backup files are now zipped
+
+Bug Fixes:
+-Failed to exit when a minimized update was running
+-ESI Contract Items failed with 404
+-Stockpile manufacturing did not include reactions
+-Workaround for ESI universe/names not supporting factions
+-Better handling of profiles (including a bug fix and optimization)
+
+________________________________________________________________________________
 _5.5.0__________________________________________________________________________
 
 Bug Fixes:
