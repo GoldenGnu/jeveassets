@@ -40,15 +40,18 @@ import net.nikr.eve.jeveasset.io.shared.DesktopUtil;
 public class JMenuLookup<T> extends JAutoMenu<T> {
 
 	private enum MenuLookupAction {
-		EVE_CENTRAL,
+		//EVE_CENTRAL,
 		EVE_MARKETDATA,
 		EVE_MARKETS,
 		EVEMARKETER,
 		GAMES_CHRUKER,
-		FUZZWORK,
+		FUZZWORK_ITEMS,
+		FUZZWORK_BLUEPRINTS,
+		FUZZWORK_MARKET,
 		EVEMAPS_DOTLAN_STATION,
 		EVEMAPS_DOTLAN_SYSTEM,
 		EVEMAPS_DOTLAN_REGION,
+		EVE_INFO,
 	}
 
 	private final JMenu jDotlan;
@@ -56,12 +59,18 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 	private final JMenuItem jDotlanSystem;
 	private final JMenuItem jDotlanRegion;
 	private final JMenuItem jDotlanLocations;
-	private final JMenuItem jEveCentral;
+	//private final JMenuItem jEveCentral;
+	private final JMenu jMarket;
 	private final JMenuItem jEveMarketdata;
 	private final JMenuItem jEveMarketer;
 	private final JMenuItem jEveMarkets;
+	private final JMenuItem jFuzzworkMarket;
+	private final JMenu jItemDatabase;
+	private final JMenuItem jFuzzworkItems;
 	private final JMenuItem jChruker;
-	private final JMenuItem jFuzzwork;
+	private final JMenuItem jEveInfo;
+	private final JMenu jIndustry;
+	private final JMenuItem jFuzzworkBlueprints;
 
 	private MenuData<T> menuData;
 
@@ -97,46 +106,73 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 		jDotlanLocations = new JMenuItem(TabsOverview.get().locations());
 		jDotlanLocations.setIcon(Images.LOC_LOCATIONS.getIcon());
 
-		addSeparator();
-
+		jMarket = new JMenu(GuiShared.get().market());
+		jMarket.setIcon(Images.ORDERS_SELL.getIcon());
+		add(jMarket);
+		
+		/*
 		jEveCentral = new JMenuItem(GuiShared.get().eveCentral());
 		jEveCentral.setIcon(Images.LINK_EVE_CENTRAL.getIcon());
 		jEveCentral.setActionCommand(MenuLookupAction.EVE_CENTRAL.name());
 		jEveCentral.addActionListener(listener);
 		add(jEveCentral);
+		*/
 
 		jEveMarketdata = new JMenuItem(GuiShared.get().eveMarketdata());
 		jEveMarketdata.setIcon(Images.LINK_EVE_MARKETDATA.getIcon());
 		jEveMarketdata.setActionCommand(MenuLookupAction.EVE_MARKETDATA.name());
 		jEveMarketdata.addActionListener(listener);
-		add(jEveMarketdata);
+		jMarket.add(jEveMarketdata);
 
 		jEveMarkets = new JMenuItem(GuiShared.get().eveMarkets());
 		jEveMarkets.setIcon(Images.LINK_EVE_MARKETS.getIcon());
 		jEveMarkets.setActionCommand(MenuLookupAction.EVE_MARKETS.name());
 		jEveMarkets.addActionListener(listener);
-		add(jEveMarkets);
+		jMarket.add(jEveMarkets);
 
-		
 		jEveMarketer = new JMenuItem(GuiShared.get().eveMarketer());
 		jEveMarketer.setIcon(Images.LINK_EVEMARKETER.getIcon());
 		jEveMarketer.setActionCommand(MenuLookupAction.EVEMARKETER.name());
 		jEveMarketer.addActionListener(listener);
-		add(jEveMarketer);
+		jMarket.add(jEveMarketer);
 
-		addSeparator();
+		jFuzzworkMarket = new JMenuItem(GuiShared.get().fuzzworkMarket());
+		jFuzzworkMarket.setIcon(Images.LINK_FUZZWORK.getIcon());
+		jFuzzworkMarket.setActionCommand(MenuLookupAction.FUZZWORK_MARKET.name());
+		jFuzzworkMarket.addActionListener(listener);
+		jMarket.add(jFuzzworkMarket);
 
-		jFuzzwork = new JMenuItem(GuiShared.get().fuzzwork());
-		jFuzzwork.setIcon(Images.LINK_FUZZWORK.getIcon());
-		jFuzzwork.setActionCommand(MenuLookupAction.FUZZWORK.name());
-		jFuzzwork.addActionListener(listener);
-		add(jFuzzwork);
+		jItemDatabase = new JMenu(GuiShared.get().itemDatabase());
+		jItemDatabase.setIcon(Images.TOOL_ASSETS.getIcon());
+		add(jItemDatabase);
 
 		jChruker = new JMenuItem(GuiShared.get().chruker());
 		jChruker.setIcon(Images.LINK_CHRUKER.getIcon());
 		jChruker.setActionCommand(MenuLookupAction.GAMES_CHRUKER.name());
 		jChruker.addActionListener(listener);
-		add(jChruker);
+		jItemDatabase.add(jChruker);
+
+		jEveInfo = new JMenuItem(GuiShared.get().eveInfo());
+		jEveInfo.setIcon(Images.LINK_EVEINFO.getIcon());
+		jEveInfo.setActionCommand(MenuLookupAction.EVE_INFO.name());
+		jEveInfo.addActionListener(listener);
+		jItemDatabase.add(jEveInfo);
+
+		jFuzzworkItems = new JMenuItem(GuiShared.get().fuzzworkItems());
+		jFuzzworkItems.setIcon(Images.LINK_FUZZWORK.getIcon());
+		jFuzzworkItems.setActionCommand(MenuLookupAction.FUZZWORK_ITEMS.name());
+		jFuzzworkItems.addActionListener(listener);
+		jItemDatabase.add(jFuzzworkItems);
+
+		jIndustry = new JMenu(GuiShared.get().industry());
+		jIndustry.setIcon(Images.TOOL_INDUSTRY_JOBS.getIcon());
+		add(jIndustry);
+
+		jFuzzworkBlueprints = new JMenuItem(GuiShared.get().fuzzworkBlueprints());
+		jFuzzworkBlueprints.setIcon(Images.LINK_FUZZWORK.getIcon());
+		jFuzzworkBlueprints.setActionCommand(MenuLookupAction.FUZZWORK_BLUEPRINTS.name());
+		jFuzzworkBlueprints.addActionListener(listener);
+		jIndustry.add(jFuzzworkBlueprints);
 
 	}
 
@@ -147,12 +183,18 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 		jDotlanStation.setEnabled(!menuData.getStationNames().isEmpty());
 		jDotlanSystem.setEnabled(!menuData.getSystemNames().isEmpty());
 		jDotlanRegion.setEnabled(!menuData.getRegionNames().isEmpty());
-		jEveCentral.setEnabled(!menuData.getMarketTypeIDs().isEmpty());
+		jMarket.setEnabled(!menuData.getMarketTypeIDs().isEmpty());
+		//jEveCentral.setEnabled(!menuData.getMarketTypeIDs().isEmpty());
 		jEveMarketdata.setEnabled(!menuData.getMarketTypeIDs().isEmpty());
 		jEveMarketer.setEnabled(!menuData.getMarketTypeIDs().isEmpty());
 		jEveMarkets.setEnabled(!menuData.getMarketTypeIDs().isEmpty());
-		jFuzzwork.setEnabled(!menuData.getTypeIDs().isEmpty());
+		jFuzzworkMarket.setEnabled(!menuData.getMarketTypeIDs().isEmpty());
+		jItemDatabase.setEnabled(!menuData.getTypeIDs().isEmpty());
+		jFuzzworkItems.setEnabled(!menuData.getTypeIDs().isEmpty());
 		jChruker.setEnabled(!menuData.getTypeIDs().isEmpty());
+		jIndustry.setEnabled(!menuData.getTypeIDs().isEmpty());
+		jFuzzworkBlueprints.setEnabled(!menuData.getTypeIDs().isEmpty());
+		jEveInfo.setEnabled(!menuData.getTypeIDs().isEmpty());
 	}
 
 	public void setTool(Object object) {
@@ -202,12 +244,14 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 				browseDotlan(program, null, menuData.getSystemNames(), null);
 			} else if (MenuLookupAction.EVEMAPS_DOTLAN_REGION.name().equals(e.getActionCommand())) {
 				browseDotlan(program, null, null, menuData.getRegionNames());
+			/*
 			} else if (MenuLookupAction.EVE_CENTRAL.name().equals(e.getActionCommand())) {
 				Set<String> urls = new HashSet<String>();
 				for (int marketTypeID : menuData.getMarketTypeIDs()) {
 					urls.add("http://www.eve-central.com/home/quicklook.html?typeid=" + marketTypeID);
 				}
 				DesktopUtil.browse(urls, program);
+			*/
 			} else if (MenuLookupAction.EVE_MARKETDATA.name().equals(e.getActionCommand())) {
 				Set<String> urls = new HashSet<String>();
 				for (int marketTypeID : menuData.getMarketTypeIDs()) {
@@ -232,10 +276,28 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 					urls.add("http://games.chruker.dk/eve_online/item.php?type_id=" + typeID);
 				}
 				DesktopUtil.browse(urls, program);
-			} else if (MenuLookupAction.FUZZWORK.name().equals(e.getActionCommand())) {
+			} else if (MenuLookupAction.FUZZWORK_ITEMS.name().equals(e.getActionCommand())) {
 				Set<String> urls = new HashSet<String>();
 				for (int typeID : menuData.getTypeIDs()) {
 					urls.add("https://www.fuzzwork.co.uk/info/?typeid=" + typeID);
+				}
+				DesktopUtil.browse(urls, program);
+			} else if (MenuLookupAction.FUZZWORK_BLUEPRINTS.name().equals(e.getActionCommand())) {
+				Set<String> urls = new HashSet<String>();
+				for (int typeID : menuData.getTypeIDs()) {
+					urls.add("https://www.fuzzwork.co.uk/blueprint/?typeid=" + typeID);
+				}
+				DesktopUtil.browse(urls, program);
+			} else if (MenuLookupAction.FUZZWORK_MARKET.name().equals(e.getActionCommand())) {
+				Set<String> urls = new HashSet<String>();
+				for (int typeID : menuData.getTypeIDs()) {
+					urls.add("https://market.fuzzwork.co.uk/hub/type/" + typeID + "/");
+				}
+				DesktopUtil.browse(urls, program);
+			} else if (MenuLookupAction.EVE_INFO.name().equals(e.getActionCommand())) {
+				Set<String> urls = new HashSet<String>();
+				for (int typeID : menuData.getTypeIDs()) {
+					urls.add("https://eveinfo.com/item/" + typeID);
 				}
 				DesktopUtil.browse(urls, program);
 			}
