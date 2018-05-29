@@ -54,14 +54,19 @@ public abstract class GuiShared extends Bundle {
 	public abstract String errorLoadingSettingsTitle();
 	public abstract String eveAddicts();
 	public abstract String eveCentral();
+	public abstract String eveInfo();
 	public abstract String eveMarketdata();
 	public abstract String eveMarketeer();
 	public abstract String eveMarketer();
 	public abstract String eveMarkets();
 	public abstract String eveOnline();
 	public abstract String foreground();
-	public abstract String fuzzwork();
+	public abstract String fuzzworkBlueprints();
+	public abstract String fuzzworkItems();
+	public abstract String fuzzworkMarket();
+	public abstract String industry();
 	public abstract String item();
+	public abstract String itemDatabase();
 	public abstract String itemDelete();
 	public abstract String itemEdit();
 	public abstract String itemNameTitle();
@@ -81,6 +86,7 @@ public abstract class GuiShared extends Bundle {
 	public abstract String locationRename();
 	public abstract String locationSystem();
 	public abstract String lookup();
+	public abstract String market();
 	public abstract String newStockpile();
 	public abstract String ok();
 	public abstract String openLinks(int size);
