@@ -27,6 +27,7 @@ import ch.qos.logback.classic.Level;
 import java.io.File;
 import java.net.URISyntaxException;
 import java.net.URL;
+import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.TestUtil;
 import net.nikr.eve.jeveasset.data.api.accounts.EveApiAccount;
 import net.nikr.eve.jeveasset.data.api.accounts.EveApiOwner;
@@ -70,7 +71,8 @@ public class ProfileTest extends TestUtil {
 
 	private void test(String name, boolean supportContracts, boolean supportTransactions, boolean supportJournal) throws URISyntaxException {
 		ProfileManager profileManager = new ProfileManager();
-		boolean load = ProfileReader.load(profileManager, getFilename(name));
+		String filename = getFilename(name);
+		boolean load = ProfileReader.load(profileManager, filename);
 		assertEquals(name+" fail to load", load, true);
 		assertEquals(name+" had no accounts", profileManager.getAccounts().isEmpty(), false);
 		boolean marketOrders = false;
@@ -106,6 +108,8 @@ public class ProfileTest extends TestUtil {
 		if (supportJournal) {
 			assertEquals(name+" had no journal", true, journal);
 		}
+		File file = new File(filename.substring(0, filename.lastIndexOf(".")) + "_" + Program.PROGRAM_VERSION.replaceAll(" ", "_") + "_backup.zip");
+		assertTrue(file.delete());
 	}
 
 	@Test
