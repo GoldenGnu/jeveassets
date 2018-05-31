@@ -61,6 +61,7 @@ public class DataConverterTest extends TestUtil {
 		for (ConverterTestOptions options : ConverterTestOptionsGetter.getConverterOptions()) {
 			MyIndustryJob industryJob = ConverterTestUtil.getMyIndustryJob(ConverterTestUtil.getEsiOwner(options), false, true, options);
 			industryJob.setJobID(industryJob.getJobID() + 1);
+			industryJob.setBlueprintID(industryJob.getBlueprintID() + 1);
 			industryJob.setStationID(options.getLocationTypeEveApi());
 			List<MyAsset> assets = DataConverter.assetIndustryJob(Collections.singletonList(industryJob), true);
 			if (assets.isEmpty()) {
