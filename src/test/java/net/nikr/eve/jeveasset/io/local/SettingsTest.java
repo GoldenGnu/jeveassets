@@ -23,8 +23,10 @@ package net.nikr.eve.jeveasset.io.local;
 import static org.junit.Assert.*;
 
 import ch.qos.logback.classic.Level;
+import java.io.File;
 import java.net.URISyntaxException;
 import java.util.List;
+import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.TestUtil;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.data.settings.Settings.SettingFlag;
@@ -51,6 +53,9 @@ public class SettingsTest extends TestUtil {
 	private void test(BackwardCompatibilitySettings settings) {
 		List<Function> test = settings.test();
 		assertEquals(settings.getName() + " is missing tests for: " + test.toString(), 0, test.size());
+		String filename = settings.getPathSettings();
+		File file = new File(filename.substring(0, filename.lastIndexOf(".")) + "_" + Program.PROGRAM_VERSION.replaceAll(" ", "_") + "_backup.zip");
+		assertTrue(file.delete());
 	}
 
 	@Test

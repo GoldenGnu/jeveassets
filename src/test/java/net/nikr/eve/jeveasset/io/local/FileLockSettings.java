@@ -82,7 +82,7 @@ public class FileLockSettings extends Settings {
 	}
 
 	private static String getVersionBackup(String filename) {
-		return filename.substring(0, filename.lastIndexOf(".")) + "_" + Program.PROGRAM_VERSION + ".backup";
+		return filename.substring(0, filename.lastIndexOf(".")) + "_" + Program.PROGRAM_VERSION.replaceAll(" ", "_") + "_backup.zip";
 	}
 
 	private static String getPath(String filename) {
