@@ -52,6 +52,5 @@ public abstract class General extends Bundle {
 	public abstract String singleInstanceTitle();
 	public abstract String singleInstanceMsg();
 	public abstract String emptyLocation(String location);
-	public abstract String buggedLocation();
 	
 }
