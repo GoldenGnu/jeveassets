@@ -41,17 +41,10 @@ public class MyLocation implements Comparable<MyLocation> {
 	private final boolean userLocation;
 
 	public MyLocation(long locationID) {
-		if (locationID > 9000000000000000000L) {
-			this.location = General.get().buggedLocation();
-			this.station = General.get().buggedLocation();
-			this.system = General.get().buggedLocation();
-			this.region = General.get().buggedLocation();
-		} else {
-			this.location = General.get().emptyLocation(String.valueOf(locationID));
-			this.station = General.get().emptyLocation(String.valueOf(locationID));
-			this.system = General.get().emptyLocation(String.valueOf(locationID));
-			this.region = General.get().emptyLocation(String.valueOf(locationID));
-		}
+		this.location = General.get().emptyLocation(String.valueOf(locationID));
+		this.station = General.get().emptyLocation(String.valueOf(locationID));
+		this.system = General.get().emptyLocation(String.valueOf(locationID));
+		this.region = General.get().emptyLocation(String.valueOf(locationID));
 		this.locationID = locationID;
 		this.stationID = 0;
 		this.systemID = 0;
