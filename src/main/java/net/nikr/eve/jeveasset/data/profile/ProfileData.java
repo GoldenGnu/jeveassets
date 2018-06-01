@@ -916,6 +916,10 @@ public class ProfileData {
 			if (asset.getLocationID() > 9000000000000000000L) {
 				continue;
 			}
+			//XXX Ignore deleted PI structures: https://github.com/esi/esi-issues/issues/943
+			if (asset.getLocationID() > 40000000 && asset.getLocationID() < 50000000) {
+				continue;
+			}
 			//Blueprint
 			RawBlueprint blueprint = blueprints.get(asset.getItemID());
 			asset.setBlueprint(blueprint);
