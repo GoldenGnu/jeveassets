@@ -38,7 +38,7 @@ public class TreeAsset extends MyAsset {
 	}
 
 	public static final String SPACE = "    ";
-	private final Security EMPTY_SECURITY = new Security("");
+	private final Security EMPTY_SECURITY = Security.create("");
 	private final List<TreeAsset> tree;
 	private final String compare;
 	private final String ownerName;

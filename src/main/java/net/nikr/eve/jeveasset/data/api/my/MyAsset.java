@@ -65,6 +65,7 @@ public class MyAsset extends RawAsset implements Comparable<MyAsset>, InfoItem, 
 	private final List<MyAsset> parents;
 	private final Set<Long> owners;
 	private final boolean generated;
+	private final long count;
 //Static values cache (set by constructor)
 	private String typeName;
 	private boolean bpo;
@@ -121,6 +122,11 @@ public class MyAsset extends RawAsset implements Comparable<MyAsset>, InfoItem, 
 		this.location = location;
 		this.owners = new HashSet<Long>();
 		this.generated = true;
+		if (getQuantity() == null || getQuantity() <= 0) {
+			this.count = 1;
+		} else {
+			this.count = getQuantity();
+		}
 		setItemID(0L);
 		setItemFlag(ApiIdConverter.getFlag(0));
 		setLocationID(location.getLocationID());
@@ -144,6 +150,11 @@ public class MyAsset extends RawAsset implements Comparable<MyAsset>, InfoItem, 
 						|| getFlag().equals(IndustryActivity.ACTIVITY_MANUFACTURING.toString()) //industry job manufacturing
 						|| getFlag().equals(IndustryActivity.ACTIVITY_REACTIONS.toString()) //industry job reactions
 						;
+		if (getQuantity() == null || getQuantity() <= 0) {
+			this.count = 1;
+		} else {
+			this.count = getQuantity();
+		}
 		updateBlueprint();
 	}
 
@@ -208,12 +219,7 @@ public class MyAsset extends RawAsset implements Comparable<MyAsset>, InfoItem, 
 
 	@Override
 	public long getCount() {
-		Integer quantity = super.getQuantity();
-		if (quantity == null || quantity <= 0) {
-			return 1;
-		} else {
-			return quantity;
-		}
+		return count;
 	}
 
 	public final String getFlag() {

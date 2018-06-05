@@ -21,6 +21,7 @@
 
 package net.nikr.eve.jeveasset.gui.tabs.routing;
 
+import java.util.Map;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
 import uk.me.candle.eve.graph.Node;
 
@@ -31,6 +32,15 @@ import uk.me.candle.eve.graph.Node;
 public class SolarSystem extends Node {
 
 	private final MyLocation location;
+
+	public static SolarSystem create(Map<Long, SolarSystem> systemCache, final MyLocation location) {
+		SolarSystem cached = systemCache.get(location.getSystemID());
+		if (cached == null) {
+			cached = new SolarSystem(location);
+			systemCache.put(location.getSystemID(), cached);
+		}
+		return cached;
+	}
 
 	public SolarSystem(final MyLocation location) {
 		super(location.getLocation());

@@ -321,7 +321,6 @@ public class StockpileItemDialog extends JDialogCentered {
 			stockpile.add(stockpileItem);
 		}
 		Settings.unlock("Stockpile (Items Dialog)"); //Unlock for Stockpile (Items Dialog)
-		program.saveSettings("Stockpile (Items Dialog)"); //Save Stockpile (Items Dialog)
 		super.setVisible(false);
 	}
 

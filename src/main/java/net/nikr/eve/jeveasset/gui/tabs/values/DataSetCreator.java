@@ -35,7 +35,6 @@ import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder;
 import net.nikr.eve.jeveasset.data.api.raw.RawContract.ContractStatus;
 import net.nikr.eve.jeveasset.data.profile.ProfileData;
 import net.nikr.eve.jeveasset.data.settings.Settings;
-import net.nikr.eve.jeveasset.gui.tabs.values.Value.AssetValue;
 import net.nikr.eve.jeveasset.i18n.TabsValues;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 
@@ -367,7 +366,7 @@ public class DataSetCreator {
 				break;
 			}
 		}
-		return new AssetValue(asset.getLocation().getLocation(), flagID, asset.getLocation().getLocationID());
+		return AssetValue.create(asset.getLocation().getLocation(), flagID, asset.getLocation().getLocationID());
 	}
 
 	private Value getValueInner(Map<String, Value> values, String owner, Date date) {

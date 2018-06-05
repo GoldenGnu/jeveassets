@@ -1244,7 +1244,7 @@ public class StockpileDialog extends JDialogCentered {
 			if (object instanceof MyLocation) {
 				location = (MyLocation) object;
 			} else {
-				location = new MyLocation(0);
+				location = MyLocation.create(0);
 			}
 			return new StockpileFilter(location, flagIDs, containers, ownerIDs
 					,jMatchExclude.isSelected()

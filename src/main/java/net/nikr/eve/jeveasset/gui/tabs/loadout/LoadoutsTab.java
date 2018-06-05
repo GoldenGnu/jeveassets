@@ -461,24 +461,26 @@ public class LoadoutsTab extends JMainTabSecondary {
 			if (!asset.getItem().getCategory().equals(SHIP_CATEGORY) || !asset.isSingleton()) {
 				continue;
 			}
-			Loadout moduleShip = new Loadout(asset.getItem(), asset.getLocation(), asset.getOwner(), TabsLoadout.get().totalShip(), key, TabsLoadout.get().flagTotalValue(), null, asset.getDynamicPrice(), 1);
-			Loadout moduleModules = new Loadout(new Item(0), asset.getLocation(), asset.getOwner(), TabsLoadout.get().totalModules(), key, TabsLoadout.get().flagTotalValue(), null, 0, 0);
-			Loadout moduleTotal = new Loadout(new Item(0), asset.getLocation(), asset.getOwner(), TabsLoadout.get().totalAll(), key, TabsLoadout.get().flagTotalValue(), null, asset.getDynamicPrice(), 1);
+			Loadout moduleShip = new Loadout(asset.getItem(), asset.getLocation(), asset.getOwner(), TabsLoadout.get().totalShip(), key, TabsLoadout.get().flagTotalValue(), null, asset.getDynamicPrice(), 1, true);
+			Loadout moduleModules = new Loadout(new Item(0), asset.getLocation(), asset.getOwner(), TabsLoadout.get().totalModules(), key, TabsLoadout.get().flagTotalValue(), null, 0, 0, false);
+			Loadout moduleTotal = new Loadout(new Item(0), asset.getLocation(), asset.getOwner(), TabsLoadout.get().totalAll(), key, TabsLoadout.get().flagTotalValue(), null, asset.getDynamicPrice(), 1, false);
 			ship.add(moduleShip);
 			ship.add(moduleModules);
 			ship.add(moduleTotal);
+			Map<Integer, Loadout> modules = new HashMap<>();
 			for (MyAsset assetModule : asset.getAssets()) {
-				Loadout module = new Loadout(assetModule.getItem(), assetModule.getLocation(), assetModule.getOwner(), assetModule.getName(), key, assetModule.getFlag(), assetModule.getDynamicPrice(), (assetModule.getDynamicPrice() * assetModule.getCount()), assetModule.getCount());
-				if (!ship.contains(module)
+				Loadout module = modules.get(assetModule.getTypeID());
+				if (module == null //New
 						|| assetModule.getFlag().contains(FlagType.HIGH_SLOT.getFlag())
 						|| assetModule.getFlag().contains(FlagType.MEDIUM_SLOT.getFlag())
 						|| assetModule.getFlag().contains(FlagType.LOW_SLOT.getFlag())
 						|| assetModule.getFlag().contains(FlagType.RIG_SLOTS.getFlag())
 						|| assetModule.getFlag().contains(FlagType.SUB_SYSTEMS.getFlag())
 						) {
+					module = new Loadout(assetModule.getItem(), assetModule.getLocation(), assetModule.getOwner(), assetModule.getName(), key, assetModule.getFlag(), assetModule.getDynamicPrice(), (assetModule.getDynamicPrice() * assetModule.getCount()), assetModule.getCount(), false);
+					modules.put(assetModule.getTypeID(), module);
 					ship.add(module);
-				} else {
-					module = ship.get(ship.indexOf(module));
+				} else { //Add count
 					module.addCount(assetModule.getCount());
 					module.addValue(assetModule.getDynamicPrice() * assetModule.getCount());
 				}
@@ -486,14 +488,6 @@ public class LoadoutsTab extends JMainTabSecondary {
 				moduleModules.addCount(assetModule.getCount());
 				moduleTotal.addValue(assetModule.getDynamicPrice() * assetModule.getCount());
 				moduleTotal.addCount(assetModule.getCount());
-			}
-		}
-		Collections.sort(ship);
-		String key = "";
-		for (Loadout module : ship) {
-			if (!key.equals(module.getKey())) {
-				module.first();
-				key = module.getKey();
 			}
 		}
 		//Save separator expanded/collapsed state

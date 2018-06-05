@@ -230,15 +230,15 @@ public class MyMarketOrder extends RawMarketOrder implements Comparable<MyMarket
 			this.lastTransactionPrice = lastTransaction.getLatest();
 			if (isBuyOrder()) { //Buy
 				this.lastTransactionValue = this.lastTransactionPrice - getPrice();
-				this.lastTransactionPercent = new Percent(this.lastTransactionPrice / getPrice());
+				this.lastTransactionPercent = Percent.create(this.lastTransactionPrice / getPrice());
 			} else { //Sell
 				this.lastTransactionValue = getPrice() - this.lastTransactionPrice;
-				this.lastTransactionPercent = new Percent(getPrice() / this.lastTransactionPrice);
+				this.lastTransactionPercent = Percent.create(getPrice() / this.lastTransactionPrice);
 			}
 		} else {
 			this.lastTransactionPrice = 0;
 			this.lastTransactionValue = 0;
-			this.lastTransactionPercent = new Percent(0);
+			this.lastTransactionPercent = Percent.create(0);
 		}
 	}
 

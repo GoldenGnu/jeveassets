@@ -231,6 +231,27 @@ public class JMultiSelectionList<T> extends JList<T> {
 		updateSelections();
 		setAnchor(index);
 	}
+	public void toggleSelectAll() {
+		if (!isEnabled()) {
+			return;
+		} //Ingnore update when disabled
+		if (selectedList.size() != this.getModel().getSize()) {
+			selectAll();
+		} else {
+			clearSelection();
+		}
+	}
+
+	public void selectAll() {
+		setValueIsAdjusting(true);
+		ListModel<T> lm = this.getModel();
+		selectedList.clear();
+		for (Integer i = 0; i < lm.getSize(); i++) {
+			selectedList.add(i);
+		}
+		setSelectionInterval(0, lm.getSize() - 1);
+		setAnchor(0);
+	}
 	//Private Methods
 	private void updateList(final int index, final int fix) {
 		List<Integer> fixedIndices = new ArrayList<Integer>(selectedList.size());
@@ -246,6 +267,7 @@ public class JMultiSelectionList<T> extends JList<T> {
 		selectedList = fixedIndices;
 	}
 	private void setAnchor(final int nAnchor) {
+		setValueIsAdjusting(true);
 		ListSelectionModel sm = this.getSelectionModel();
 		ListModel<T> lm = this.getModel();
 		if (nAnchor >= 0 && nAnchor < lm.getSize()) {
@@ -258,6 +280,7 @@ public class JMultiSelectionList<T> extends JList<T> {
 			}
 			ensureIndexIsVisible(nAnchor);
 		}
+		setValueIsAdjusting(false);
 	}
 	private void toggleSelectedIndex(final int index) {
 		if (!isEnabled()) {
@@ -285,30 +308,5 @@ public class JMultiSelectionList<T> extends JList<T> {
 		}
 		//set selected indices
 		setSelectedIndices(arr);
-	}
-
-	public void toggleSelectAll() {
-		if (!isEnabled()) {
-			return;
-		} //Ingnore update when disabled
-		ListModel<T> lm = this.getModel();
-		int size = selectedList.size();
-		selectedList.clear();
-		if (size != lm.getSize()) {
-			for (Integer i = 0; i < lm.getSize(); i++) {
-				selectedList.add(i);
-			}
-		}
-		updateSelections();
-		setAnchor(0);
-	}
-	public void selectAll() {
-		ListModel<T> lm = this.getModel();
-		selectedList.clear();
-		for (Integer i = 0; i < lm.getSize(); i++) {
-			selectedList.add(i);
-		}
-		updateSelections();
-		setAnchor(0);
 	}
 }

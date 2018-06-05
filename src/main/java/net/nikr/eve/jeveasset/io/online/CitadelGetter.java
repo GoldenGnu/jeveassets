@@ -133,7 +133,7 @@ public class CitadelGetter extends AbstractXmlWriter {
 			}
 			//Updated OK
 			for (Map.Entry<Long, Citadel> entry : results.entrySet()) {
-				entry.getValue().id = entry.getKey(); //Update locationID
+				entry.getValue().setID(entry.getKey()); //Update locationID
 				citadelSettings.put(entry.getKey(), entry.getValue());
 			}
 			citadelSettings.setNextUpdate();

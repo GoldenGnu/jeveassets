@@ -21,11 +21,16 @@
 
 package net.nikr.eve.jeveasset.data.sde;
 
+import java.util.HashMap;
+import java.util.Map;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.Security;
 import net.nikr.eve.jeveasset.i18n.General;
 
 
 public class MyLocation implements Comparable<MyLocation> {
+
+	private final static Map<Long, MyLocation> CACHE = new HashMap<>();
+
 	private final long locationID; //LocationID : long
 	private final String location;
 	private final long stationID; //LocationID : long
@@ -40,7 +45,16 @@ public class MyLocation implements Comparable<MyLocation> {
 	private final boolean empty;
 	private final boolean userLocation;
 
-	public MyLocation(long locationID) {
+	public static MyLocation create(long locationID) {
+		MyLocation cached = CACHE.get(locationID);
+		if (cached == null) {
+			cached = new MyLocation(locationID);
+			CACHE.put(locationID, cached);
+		}
+		return cached;
+	}
+
+	private MyLocation(long locationID) {
 		this.location = General.get().emptyLocation(String.valueOf(locationID));
 		this.station = General.get().emptyLocation(String.valueOf(locationID));
 		this.system = General.get().emptyLocation(String.valueOf(locationID));
@@ -50,7 +64,7 @@ public class MyLocation implements Comparable<MyLocation> {
 		this.systemID = 0;
 		this.regionID = 0;
 		this.security = "0.0";
-		this.securityObject = new Security(security);
+		this.securityObject = Security.create(security);
 		this.citadel = false;
 		this.empty = true;
 		this.userLocation = false;
@@ -72,7 +86,7 @@ public class MyLocation implements Comparable<MyLocation> {
 		this.regionID = regionID;
 		this.region = region;
 		this.security = security;
-		this.securityObject = new Security(security);
+		this.securityObject = Security.create(security);
 		if (isStation()) {
 			empty = false;
 			this.locationID = stationID;

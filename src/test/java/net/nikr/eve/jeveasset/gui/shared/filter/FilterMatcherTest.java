@@ -125,7 +125,7 @@ public class FilterMatcherTest extends TestUtil {
 	private static final float NUMBER_FLOAT = 222.0f;
 	private static final long NUMBER_LONG = 222L;
 	private static final int NUMBER_INTEGER = 222;
-	private static final Percent PERCENT = new Percent(2.22);
+	private static final Percent PERCENT = Percent.create(2.22);
 
 	private final TestFilterControl filterControl = new TestFilterControl();
 	private final Item item = new Item();
@@ -452,45 +452,45 @@ public class FilterMatcherTest extends TestUtil {
 		matches(false, item, TestEnum.PERCENT, Filter.CompareType.LESS_THAN, "221.9");
 		matches(false, item, TestEnum.PERCENT, Filter.CompareType.LESS_THAN, "221");
 		//Equals column
-		matches(true,  item, TestEnum.PERCENT, Filter.CompareType.EQUALS_COLUMN, TestEnum.COLUMN_PERCENT.name(), new Percent(2.22));
-		matches(true,  item, TestEnum.PERCENT, Filter.CompareType.EQUALS_COLUMN, TestEnum.COLUMN_PERCENT.name(), new Percent(2.220));
-		matches(false, item, TestEnum.PERCENT, Filter.CompareType.EQUALS_COLUMN, TestEnum.COLUMN_PERCENT.name(), new Percent(2.23));
-		matches(false, item, TestEnum.PERCENT, Filter.CompareType.EQUALS_COLUMN, TestEnum.COLUMN_PERCENT.name(), new Percent(2.231));
-		matches(false, item, TestEnum.PERCENT, Filter.CompareType.EQUALS_COLUMN, TestEnum.COLUMN_PERCENT.name(), new Percent(2.221));
+		matches(true,  item, TestEnum.PERCENT, Filter.CompareType.EQUALS_COLUMN, TestEnum.COLUMN_PERCENT.name(), Percent.create(2.22));
+		matches(true,  item, TestEnum.PERCENT, Filter.CompareType.EQUALS_COLUMN, TestEnum.COLUMN_PERCENT.name(), Percent.create(2.220));
+		matches(false, item, TestEnum.PERCENT, Filter.CompareType.EQUALS_COLUMN, TestEnum.COLUMN_PERCENT.name(), Percent.create(2.23));
+		matches(false, item, TestEnum.PERCENT, Filter.CompareType.EQUALS_COLUMN, TestEnum.COLUMN_PERCENT.name(), Percent.create(2.231));
+		matches(false, item, TestEnum.PERCENT, Filter.CompareType.EQUALS_COLUMN, TestEnum.COLUMN_PERCENT.name(), Percent.create(2.221));
 		//Equals not column
-		matches(true,  item, TestEnum.PERCENT, Filter.CompareType.EQUALS_NOT_COLUMN, TestEnum.COLUMN_PERCENT.name(), new Percent(2.23));
-		matches(true,  item, TestEnum.PERCENT, Filter.CompareType.EQUALS_NOT_COLUMN, TestEnum.COLUMN_PERCENT.name(), new Percent(2.231));
-		matches(true,  item, TestEnum.PERCENT, Filter.CompareType.EQUALS_NOT_COLUMN, TestEnum.COLUMN_PERCENT.name(), new Percent(2.221));
-		matches(false, item, TestEnum.PERCENT, Filter.CompareType.EQUALS_NOT_COLUMN, TestEnum.COLUMN_PERCENT.name(), new Percent(2.22));
-		matches(false, item, TestEnum.PERCENT, Filter.CompareType.EQUALS_NOT_COLUMN, TestEnum.COLUMN_PERCENT.name(), new Percent(2.220));
+		matches(true,  item, TestEnum.PERCENT, Filter.CompareType.EQUALS_NOT_COLUMN, TestEnum.COLUMN_PERCENT.name(), Percent.create(2.23));
+		matches(true,  item, TestEnum.PERCENT, Filter.CompareType.EQUALS_NOT_COLUMN, TestEnum.COLUMN_PERCENT.name(), Percent.create(2.231));
+		matches(true,  item, TestEnum.PERCENT, Filter.CompareType.EQUALS_NOT_COLUMN, TestEnum.COLUMN_PERCENT.name(), Percent.create(2.221));
+		matches(false, item, TestEnum.PERCENT, Filter.CompareType.EQUALS_NOT_COLUMN, TestEnum.COLUMN_PERCENT.name(), Percent.create(2.22));
+		matches(false, item, TestEnum.PERCENT, Filter.CompareType.EQUALS_NOT_COLUMN, TestEnum.COLUMN_PERCENT.name(), Percent.create(2.220));
 		//Contains column
-		matches(true,  item, TestEnum.PERCENT, Filter.CompareType.CONTAINS_COLUMN, TestEnum.COLUMN_PERCENT.name(), new Percent(2.22));
-		matches(true,  item, TestEnum.PERCENT, Filter.CompareType.CONTAINS_COLUMN, TestEnum.COLUMN_PERCENT.name(), new Percent(2.220));
-		matches(false, item, TestEnum.PERCENT, Filter.CompareType.CONTAINS_COLUMN, TestEnum.COLUMN_PERCENT.name(), new Percent(2.23));
-		matches(false, item, TestEnum.PERCENT, Filter.CompareType.CONTAINS_COLUMN, TestEnum.COLUMN_PERCENT.name(), new Percent(2.231));
-		matches(false, item, TestEnum.PERCENT, Filter.CompareType.CONTAINS_COLUMN, TestEnum.COLUMN_PERCENT.name(), new Percent(2.221));
+		matches(true,  item, TestEnum.PERCENT, Filter.CompareType.CONTAINS_COLUMN, TestEnum.COLUMN_PERCENT.name(), Percent.create(2.22));
+		matches(true,  item, TestEnum.PERCENT, Filter.CompareType.CONTAINS_COLUMN, TestEnum.COLUMN_PERCENT.name(), Percent.create(2.220));
+		matches(false, item, TestEnum.PERCENT, Filter.CompareType.CONTAINS_COLUMN, TestEnum.COLUMN_PERCENT.name(), Percent.create(2.23));
+		matches(false, item, TestEnum.PERCENT, Filter.CompareType.CONTAINS_COLUMN, TestEnum.COLUMN_PERCENT.name(), Percent.create(2.231));
+		matches(false, item, TestEnum.PERCENT, Filter.CompareType.CONTAINS_COLUMN, TestEnum.COLUMN_PERCENT.name(), Percent.create(2.221));
 		//Contains not column
-		matches(true,  item, TestEnum.PERCENT, Filter.CompareType.CONTAINS_NOT_COLUMN, TestEnum.COLUMN_PERCENT.name(), new Percent(2.23));
-		matches(true,  item, TestEnum.PERCENT, Filter.CompareType.CONTAINS_NOT_COLUMN, TestEnum.COLUMN_PERCENT.name(), new Percent(2.231));
-		matches(true,  item, TestEnum.PERCENT, Filter.CompareType.CONTAINS_NOT_COLUMN, TestEnum.COLUMN_PERCENT.name(), new Percent(2.221));
-		matches(false, item, TestEnum.PERCENT, Filter.CompareType.CONTAINS_NOT_COLUMN, TestEnum.COLUMN_PERCENT.name(), new Percent(2.22));
-		matches(false, item, TestEnum.PERCENT, Filter.CompareType.CONTAINS_NOT_COLUMN, TestEnum.COLUMN_PERCENT.name(), new Percent(2.220));
+		matches(true,  item, TestEnum.PERCENT, Filter.CompareType.CONTAINS_NOT_COLUMN, TestEnum.COLUMN_PERCENT.name(), Percent.create(2.23));
+		matches(true,  item, TestEnum.PERCENT, Filter.CompareType.CONTAINS_NOT_COLUMN, TestEnum.COLUMN_PERCENT.name(), Percent.create(2.231));
+		matches(true,  item, TestEnum.PERCENT, Filter.CompareType.CONTAINS_NOT_COLUMN, TestEnum.COLUMN_PERCENT.name(), Percent.create(2.221));
+		matches(false, item, TestEnum.PERCENT, Filter.CompareType.CONTAINS_NOT_COLUMN, TestEnum.COLUMN_PERCENT.name(), Percent.create(2.22));
+		matches(false, item, TestEnum.PERCENT, Filter.CompareType.CONTAINS_NOT_COLUMN, TestEnum.COLUMN_PERCENT.name(), Percent.create(2.220));
 		//Great than column
-		matches(false, item, TestEnum.PERCENT, Filter.CompareType.GREATER_THAN_COLUMN, TestEnum.COLUMN_PERCENT.name(), new Percent(2.220));
-		matches(false, item, TestEnum.PERCENT, Filter.CompareType.GREATER_THAN_COLUMN, TestEnum.COLUMN_PERCENT.name(), new Percent(2.22));
-		matches(false, item, TestEnum.PERCENT, Filter.CompareType.GREATER_THAN_COLUMN, TestEnum.COLUMN_PERCENT.name(), new Percent(2.221));
-		matches(false, item, TestEnum.PERCENT, Filter.CompareType.GREATER_THAN_COLUMN, TestEnum.COLUMN_PERCENT.name(), new Percent(2.23));
-		matches(true,  item, TestEnum.PERCENT, Filter.CompareType.GREATER_THAN_COLUMN, TestEnum.COLUMN_PERCENT.name(), new Percent(2.210));
-		matches(true,  item, TestEnum.PERCENT, Filter.CompareType.GREATER_THAN_COLUMN, TestEnum.COLUMN_PERCENT.name(), new Percent(2.219));
-		matches(true,  item, TestEnum.PERCENT, Filter.CompareType.GREATER_THAN_COLUMN, TestEnum.COLUMN_PERCENT.name(), new Percent(2.21));
+		matches(false, item, TestEnum.PERCENT, Filter.CompareType.GREATER_THAN_COLUMN, TestEnum.COLUMN_PERCENT.name(), Percent.create(2.220));
+		matches(false, item, TestEnum.PERCENT, Filter.CompareType.GREATER_THAN_COLUMN, TestEnum.COLUMN_PERCENT.name(), Percent.create(2.22));
+		matches(false, item, TestEnum.PERCENT, Filter.CompareType.GREATER_THAN_COLUMN, TestEnum.COLUMN_PERCENT.name(), Percent.create(2.221));
+		matches(false, item, TestEnum.PERCENT, Filter.CompareType.GREATER_THAN_COLUMN, TestEnum.COLUMN_PERCENT.name(), Percent.create(2.23));
+		matches(true,  item, TestEnum.PERCENT, Filter.CompareType.GREATER_THAN_COLUMN, TestEnum.COLUMN_PERCENT.name(), Percent.create(2.210));
+		matches(true,  item, TestEnum.PERCENT, Filter.CompareType.GREATER_THAN_COLUMN, TestEnum.COLUMN_PERCENT.name(), Percent.create(2.219));
+		matches(true,  item, TestEnum.PERCENT, Filter.CompareType.GREATER_THAN_COLUMN, TestEnum.COLUMN_PERCENT.name(), Percent.create(2.21));
 		//Less than column
-		matches(false, item, TestEnum.PERCENT, Filter.CompareType.LESS_THAN_COLUMN, TestEnum.COLUMN_PERCENT.name(), new Percent(2.220));
-		matches(false, item, TestEnum.PERCENT, Filter.CompareType.LESS_THAN_COLUMN, TestEnum.COLUMN_PERCENT.name(), new Percent(2.22));
-		matches(true,  item, TestEnum.PERCENT, Filter.CompareType.LESS_THAN_COLUMN, TestEnum.COLUMN_PERCENT.name(), new Percent(2.221));
-		matches(true,  item, TestEnum.PERCENT, Filter.CompareType.LESS_THAN_COLUMN, TestEnum.COLUMN_PERCENT.name(), new Percent(2.23));
-		matches(false, item, TestEnum.PERCENT, Filter.CompareType.LESS_THAN_COLUMN, TestEnum.COLUMN_PERCENT.name(), new Percent(2.210));
-		matches(false, item, TestEnum.PERCENT, Filter.CompareType.LESS_THAN_COLUMN, TestEnum.COLUMN_PERCENT.name(), new Percent(2.219));
-		matches(false, item, TestEnum.PERCENT, Filter.CompareType.LESS_THAN_COLUMN, TestEnum.COLUMN_PERCENT.name(), new Percent(2.21));
+		matches(false, item, TestEnum.PERCENT, Filter.CompareType.LESS_THAN_COLUMN, TestEnum.COLUMN_PERCENT.name(), Percent.create(2.220));
+		matches(false, item, TestEnum.PERCENT, Filter.CompareType.LESS_THAN_COLUMN, TestEnum.COLUMN_PERCENT.name(), Percent.create(2.22));
+		matches(true,  item, TestEnum.PERCENT, Filter.CompareType.LESS_THAN_COLUMN, TestEnum.COLUMN_PERCENT.name(), Percent.create(2.221));
+		matches(true,  item, TestEnum.PERCENT, Filter.CompareType.LESS_THAN_COLUMN, TestEnum.COLUMN_PERCENT.name(), Percent.create(2.23));
+		matches(false, item, TestEnum.PERCENT, Filter.CompareType.LESS_THAN_COLUMN, TestEnum.COLUMN_PERCENT.name(), Percent.create(2.210));
+		matches(false, item, TestEnum.PERCENT, Filter.CompareType.LESS_THAN_COLUMN, TestEnum.COLUMN_PERCENT.name(), Percent.create(2.219));
+		matches(false, item, TestEnum.PERCENT, Filter.CompareType.LESS_THAN_COLUMN, TestEnum.COLUMN_PERCENT.name(), Percent.create(2.21));
 	}
 
 	private void allTest() {

@@ -101,7 +101,7 @@ public class ConverterTestOptionsGetter {
 		private static final PriceData[] PRICE_DATA = {new PriceData()};
 		private static final MarketPriceData[] MARKET_PRICE_DATA = {new MarketPriceData()};
 		private static final Tags[] TAGS = {new Tags()};
-		private static final Percent[] PERCENT = {new Percent(5.1)};
+		private static final Percent[] PERCENT = {Percent.create(5.1)};
 		private static final UserPrice[] USER_ITEM = {new UserPrice(DOUBLE[0], INTEGER[0], STRING[0])};
 		//LocationType
 		private static final RawAsset.LocationType[] RAW_LOCATION_TYPE = RawAsset.LocationType.values();

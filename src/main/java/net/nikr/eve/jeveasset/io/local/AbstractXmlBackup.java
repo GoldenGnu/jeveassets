@@ -76,7 +76,7 @@ public abstract class AbstractXmlBackup {
 		return new File(filename.substring(0, filename.lastIndexOf(".")) + "_" + Program.PROGRAM_VERSION.replace(" ", "_") + "_backup.zip");
 	}
 	
-	protected void backup(final String filename, final Element element) {
+	protected void backup(final String filename) {
 		File backupFile = getProgramBackup(filename);
 		if (!backupFile.exists()) {
 			ZipOutputStream out = null;

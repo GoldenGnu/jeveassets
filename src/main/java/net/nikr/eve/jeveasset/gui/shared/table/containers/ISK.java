@@ -21,9 +21,9 @@
 package net.nikr.eve.jeveasset.gui.shared.table.containers;
 
 
-public class ISK extends NumberValue {
+public class ISK {
 
-	private String price;
+	private final String price;
 
 	public ISK(final String price) {
 		this.price = price;

@@ -124,7 +124,7 @@ public enum StockpileTableFormat implements EnumTableColumn<StockpileItem> {
 		}
 		@Override
 		public Object getColumnValue(final StockpileItem from) {
-			return new Percent(from.getPercentNeeded());
+			return Percent.create(from.getPercentNeeded());
 		}
 	},
 	COUNT_NOW_INVENTORY(Long.class, GlazedLists.comparableComparator()) {

@@ -238,7 +238,7 @@ public final class ApiIdConverter {
 
 	public static MyLocation getLocation(Integer locationID) {
 		if (locationID == null) {
-			return new MyLocation(0);
+			return MyLocation.create(0);
 		} else {
 			return getLocation(Long.valueOf(locationID), null);
 		}
@@ -250,7 +250,7 @@ public final class ApiIdConverter {
 
 	public static MyLocation getLocation(final Long locationID, final MyAsset parentAsset) {
 		if (locationID == null) {
-			return new MyLocation(0);
+			return MyLocation.create(0);
 		}
 		//Offices
 		long fixedLocationID = locationID;
@@ -275,7 +275,7 @@ public final class ApiIdConverter {
 		if (location != null) {
 			return location;
 		}
-		return new MyLocation(locationID);
+		return MyLocation.create(locationID);
 	}
 
 	public static void addLocation(final Citadel citadel, long locationID) {

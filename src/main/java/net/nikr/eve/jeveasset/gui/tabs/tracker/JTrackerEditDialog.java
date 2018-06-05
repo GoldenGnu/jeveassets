@@ -47,8 +47,8 @@ import net.nikr.eve.jeveasset.gui.shared.Colors;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
 import net.nikr.eve.jeveasset.gui.shared.components.JSelectionDialog;
+import net.nikr.eve.jeveasset.gui.tabs.values.AssetValue;
 import net.nikr.eve.jeveasset.gui.tabs.values.Value;
-import net.nikr.eve.jeveasset.gui.tabs.values.Value.AssetValue;
 import net.nikr.eve.jeveasset.i18n.TabsTracker;
 
 
@@ -331,7 +331,7 @@ public class JTrackerEditDialog extends JDialogCentered {
 				}
 			} else {
 				for (FilterUpdate filterUpdate : assetUpdates) {
-					AssetValue assetValue = new AssetValue(filterUpdate.getKey());
+					AssetValue assetValue = AssetValue.create(filterUpdate.getKey());
 					value.removeAssets(assetValue);
 					value.addAssets(assetValue, filterUpdate.getValue());
 				}
@@ -452,9 +452,9 @@ public class JTrackerEditDialog extends JDialogCentered {
 				}
 				AssetValue assetValue;
 				if (returnFlag.equals(TabsTracker.get().other())) {
-					assetValue = new AssetValue(returnLocation);
+					assetValue = AssetValue.create(returnLocation);
 				} else {
-					assetValue = new AssetValue(returnLocation + " > " + returnFlag);
+					assetValue = AssetValue.create(returnLocation + " > " + returnFlag);
 				}
 				Double asset = value.getAssetsFilter().get(assetValue);
 				if (asset != null) { //Item found

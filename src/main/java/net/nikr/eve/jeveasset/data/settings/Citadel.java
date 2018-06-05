@@ -35,6 +35,7 @@ public class Citadel {
 	public String regionName;
 	public final boolean userLocation;
 	public final boolean citadel;
+	public MyLocation myLocation;
 
 	/**
 	 * Used by hammerti.me.uk API
@@ -60,6 +61,24 @@ public class Citadel {
 		this.regionName = regionName;
 		this.userLocation = userLocation;
 		this.citadel = citadel;
+		updateLocation();
+	}
+
+	public void setID(long id) {
+		this.id = id;
+		updateLocation();
+	}
+
+	private void updateLocation() {
+		if (!isEmpty()) { //Location is valid -> return locations
+			if (userLocation) {
+				this.myLocation = new MyLocation(id, systemName + " - " + name, systemId, systemName, regionId, regionName, ApiIdConverter.getLocation(systemId).getSecurity(), citadel, userLocation);
+			} else {
+				this.myLocation = new MyLocation(id, name, systemId, systemName, regionId, regionName, ApiIdConverter.getLocation(systemId).getSecurity(), citadel, userLocation);
+			}
+		} else { //Location not valid -> return fallback location
+			this.myLocation = null;
+		}
 	}
 
 	public String getName() {
@@ -71,15 +90,7 @@ public class Citadel {
 	}
 
 	public MyLocation getLocation() {
-		if (!isEmpty()) { //Location is valid -> return locations
-			if (userLocation) {
-				return new MyLocation(id, systemName + " - " + name, systemId, systemName, regionId, regionName, ApiIdConverter.getLocation(systemId).getSecurity(), citadel, userLocation);
-			} else {
-				return new MyLocation(id, name, systemId, systemName, regionId, regionName, ApiIdConverter.getLocation(systemId).getSecurity(), citadel, userLocation);
-			}
-		} else { //Location not valid -> return fallback location
-			return null;
-		}
+		return myLocation;
 	}
 
 }
