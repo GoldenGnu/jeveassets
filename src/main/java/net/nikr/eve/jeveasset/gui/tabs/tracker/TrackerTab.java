@@ -87,6 +87,7 @@ import net.nikr.eve.jeveasset.gui.shared.components.JMultiSelectionList;
 import net.nikr.eve.jeveasset.gui.shared.components.JSelectionDialog;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo;
 import net.nikr.eve.jeveasset.gui.tabs.values.AssetValue;
+import net.nikr.eve.jeveasset.gui.tabs.values.DataSetCreator;
 import net.nikr.eve.jeveasset.gui.tabs.values.Value;
 import net.nikr.eve.jeveasset.i18n.General;
 import net.nikr.eve.jeveasset.i18n.TabsTracker;
@@ -555,6 +556,7 @@ public class TrackerTab extends JMainTabSecondary {
 					.addComponent(jOwnersScroll, 70, 70, Integer.MAX_VALUE)
 				)
 		);
+		DataSetCreator.purgeInvalidTrackerAssetValues();
 	}
 
 	@Override
