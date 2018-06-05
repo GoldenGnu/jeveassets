@@ -263,7 +263,7 @@ public enum AssetTableFormat implements EnumTableColumn<MyAsset> {
 		}
 		@Override
 		public Object getColumnValue(final MyAsset from) {
-			return new Percent(from.getPriceReprocessedPercent());
+			return Percent.create(from.getPriceReprocessedPercent());
 		}
 	},
 	COUNT(Long.class, GlazedLists.comparableComparator()) {

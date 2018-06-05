@@ -117,11 +117,11 @@ public class Loadout implements Comparable<Loadout>, LocationType, ItemType, Pri
 	private final OwnerType owner;
 	private final Double price;
 	private final Set<Long> owners;
+	private final boolean first;
 	private double value;
 	private long count;
-	private boolean first = false;
 
-	public Loadout(final Item item, final MyLocation location, final OwnerType owner, final String name, final String key, final String flag, final Double price, final double value, final long count) {
+	public Loadout(final Item item, final MyLocation location, final OwnerType owner, final String name, final String key, final String flag, final Double price, final double value, final long count, final boolean first) {
 		this.item = item;
 		this.location = location;
 		this.owner = owner;
@@ -132,6 +132,7 @@ public class Loadout implements Comparable<Loadout>, LocationType, ItemType, Pri
 		this.value = value;
 		this.count = count;
 		this.owners = Collections.singleton(owner.getOwnerID());
+		this.first = first;
 	}
 
 	private FlagType convertFlag(final String s) {
@@ -212,10 +213,6 @@ public class Loadout implements Comparable<Loadout>, LocationType, ItemType, Pri
 
 	public boolean isFirst() {
 		return first;
-	}
-
-	public void first() {
-		first = true;
 	}
 
 	public String getKey() {

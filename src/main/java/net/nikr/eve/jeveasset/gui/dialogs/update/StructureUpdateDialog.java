@@ -46,7 +46,7 @@ import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
 import net.nikr.eve.jeveasset.gui.shared.components.ListComboBoxModel;
-import net.nikr.eve.jeveasset.gui.tabs.values.Value;
+import net.nikr.eve.jeveasset.gui.tabs.values.AssetValue;
 import net.nikr.eve.jeveasset.i18n.DialoguesStructure;
 import net.nikr.eve.jeveasset.i18n.DialoguesUpdate;
 import net.nikr.eve.jeveasset.io.esi.EsiStructuresGetter;
@@ -238,7 +238,7 @@ public class StructureUpdateDialog extends JDialogCentered {
 			@Override
 			public void tasksCompleted(TaskDialog taskDialog) {
 				//Update tracker locations
-				Value.update();
+				AssetValue.updateData();
 				//Update eventlists
 				program.updateEventLists();
 				//Save settings after updating (if we crash later)

@@ -180,6 +180,7 @@ public class RoutingTab extends JMainTabSecondary {
 	private RouteFind routeFind;
 
 	//Data
+	private final Map<Long, SolarSystem> systemCache = new HashMap<Long, SolarSystem>();;
 	private final Set<SolarSystem> available = new HashSet<>();
 	protected Graph filteredGraph;
 	private double lastSecMin = 0.0;
@@ -729,7 +730,6 @@ public class RoutingTab extends JMainTabSecondary {
 			secMax = 1.0f;
 		}
 		int count = 0;
-		Map<Long, SolarSystem> systemCache = new HashMap<Long, SolarSystem>();
 		for (Jump jump : StaticData.get().getJumps()) { // this way we exclude the locations that are unreachable.
 			count++;
 			SplashUpdater.setSubProgress((int) (count * 100.0 / StaticData.get().getJumps().size()));
@@ -737,12 +737,10 @@ public class RoutingTab extends JMainTabSecondary {
 			SolarSystem from = systemCache.get(jump.getFrom().getSystemID());
 			SolarSystem to = systemCache.get(jump.getTo().getSystemID());
 			if (from == null) {
-				from = new SolarSystem(jump.getFrom());
-				systemCache.put(from.getSystemID(), from);
+				from = SolarSystem.create(systemCache, jump.getFrom());
 			}
 			if (to == null) {
-				to = new SolarSystem(jump.getTo());
-				systemCache.put(to.getSystemID(), to);
+				to = SolarSystem.create(systemCache, jump.getTo());
 			}
 			if (all || (jump.getFrom().getSecurityObject().getDouble() >= secMin
 						&& jump.getTo().getSecurityObject().getDouble() >= secMin
@@ -755,7 +753,6 @@ public class RoutingTab extends JMainTabSecondary {
 			}
 		}
 		SplashUpdater.setSubProgress(100);
-		systemCache.clear();
 	}
 
 	protected void processFilteredAssets() {
@@ -791,7 +788,7 @@ public class RoutingTab extends JMainTabSecondary {
 		for (MyAsset ea : assets) {
 			SolarSystem loc = null;
 			if (jSystems.isSelected()) { //System
-				loc = findNodeForLocation(filteredGraph, ea.getLocation().getSystemID());
+				loc = systemCache.get(ea.getLocation().getSystemID());
 			} else if (ea.getLocation().isStation()) { //Station
 				loc = new SolarSystem(ea.getLocation());
 			}
@@ -815,35 +812,6 @@ public class RoutingTab extends JMainTabSecondary {
 			jStations.setText(TabsRouting.get().checked());
 		}
 		updateRemaining();
-	}
-
-	/**
-	 *
-	 * @param g
-	 * @param locationID
-	 * @return null if the system is unreachable (e.g. w-space)
-	 */
-	private SolarSystem findNodeForLocation(final Graph g, final long locationID) {
-		if (locationID < 0) {
-			throw new RuntimeException("Unknown Location:" + locationID);
-		}
-		for (Node n : g.getNodes()) {
-			if (n instanceof SolarSystem) {
-				SolarSystem ss = (SolarSystem) n;
-				if (ss.getSystemID() == locationID) {
-					return ss;
-				}
-			}
-		}
-		MyLocation location = ApiIdConverter.getLocation(locationID);
-		if (!location.isEmpty()) {
-			location = ApiIdConverter.getLocation(location.getSystemID());
-		}
-		if (!location.isEmpty()) {
-			return new SolarSystem(location);
-		} else {
-			return null;
-		}
 	}
 
 	/**
@@ -945,7 +913,7 @@ public class RoutingTab extends JMainTabSecondary {
 					}
 					stations.add(solarSystem);
 				}
-				waypoints.add(findNodeForLocation(filteredGraph, solarSystem.getSystemID()));
+				waypoints.add(systemCache.get(solarSystem.getSystemID()));
 			}
 			List<Node> inputWaypoints = new ArrayList<Node>(waypoints);
 			//Move frist system to the top....
@@ -1282,7 +1250,7 @@ public class RoutingTab extends JMainTabSecondary {
 		if (location == null) {
 			return; //Cancel
 		}
-		SolarSystem system = findNodeForLocation(filteredGraph, location.getSystemID());
+		SolarSystem system = systemCache.get(location.getSystemID());
 		if (system == null) {
 			return; //Ignore system that was not found
 		}

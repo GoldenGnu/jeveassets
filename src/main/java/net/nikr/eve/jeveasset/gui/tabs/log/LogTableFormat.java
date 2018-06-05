@@ -66,7 +66,7 @@ public enum LogTableFormat implements EnumTableColumn<AssetLogSource> {
 		}
 		@Override
 		public Object getColumnValue(final AssetLogSource from) {
-			return new Percent(from.getPercent() / 100.0);
+			return Percent.create(from.getPercent() / 100.0);
 		}
 	},
 	COUNT(Long.class, GlazedLists.comparableComparator()) {

@@ -45,7 +45,7 @@ import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
-import net.nikr.eve.jeveasset.gui.tabs.values.Value;
+import net.nikr.eve.jeveasset.gui.tabs.values.AssetValue;
 import net.nikr.eve.jeveasset.i18n.DialoguesUpdate;
 import net.nikr.eve.jeveasset.i18n.General;
 import net.nikr.eve.jeveasset.io.esi.EsiAccountBalanceGetter;
@@ -616,7 +616,7 @@ public class UpdateDialog extends JDialogCentered {
 						@Override
 						public void tasksCompleted(TaskDialog taskDialog) {
 							//Update tracker locations
-							Value.update();
+							AssetValue.updateData();
 							//Update eventlists
 							program.updateEventLists(start);
 							//Create value tracker point

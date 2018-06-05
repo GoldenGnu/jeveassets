@@ -21,14 +21,28 @@
 
 package net.nikr.eve.jeveasset.gui.shared.table.containers;
 
+import java.util.HashMap;
+import java.util.Map;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 
 
 public class Percent extends NumberValue implements Comparable<Percent> {
+
+	private final static Map<Double, Percent> CACHE = new HashMap<>();
+
 	private final double percent;
 	private final String formatted;
 
-	public Percent(final double percent) {
+	public static Percent create(final double key) {
+		Percent cached = CACHE.get(key);
+		if (cached == null) {
+			cached = new Percent(key);
+			CACHE.put(key, cached);
+		}
+		return cached;
+	}
+
+	private Percent(final double percent) {
 		this.percent = percent;
 		if (Double.isInfinite(percent)) {
 			formatted = Formater.integerFormat(percent);

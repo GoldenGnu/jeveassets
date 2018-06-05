@@ -348,7 +348,7 @@ public class OverviewTab extends JMainTabSecondary {
 			for (Map.Entry<String, OverviewGroup> entry : Settings.get().getOverviewGroups().entrySet()) {
 				OverviewGroup overviewGroup = entry.getValue();
 				if (!locationsMap.containsKey(overviewGroup.getName())) { //Create new overview
-					Overview overview = new Overview(overviewGroup.getName(), new MyLocation(0), 0, 0, 0, 0);
+					Overview overview = new Overview(overviewGroup.getName(), MyLocation.create(0), 0, 0, 0, 0);
 					locationsMap.put(overviewGroup.getName(), overview);
 					locations.add(overview);
 				}

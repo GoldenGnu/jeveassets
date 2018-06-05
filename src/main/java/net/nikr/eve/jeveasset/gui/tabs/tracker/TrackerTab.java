@@ -86,8 +86,8 @@ import net.nikr.eve.jeveasset.gui.shared.components.JMainTabSecondary;
 import net.nikr.eve.jeveasset.gui.shared.components.JMultiSelectionList;
 import net.nikr.eve.jeveasset.gui.shared.components.JSelectionDialog;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo;
+import net.nikr.eve.jeveasset.gui.tabs.values.AssetValue;
 import net.nikr.eve.jeveasset.gui.tabs.values.Value;
-import net.nikr.eve.jeveasset.gui.tabs.values.Value.AssetValue;
 import net.nikr.eve.jeveasset.i18n.General;
 import net.nikr.eve.jeveasset.i18n.TabsTracker;
 import org.jfree.chart.ChartMouseEvent;
@@ -579,19 +579,29 @@ public class TrackerTab extends JMainTabSecondary {
 	}
 
 	private void updateFilterButtons() {
-		Set<String> walletIDs = new TreeSet<String>();
-		Set<AssetValue> assetsIDs = new TreeSet<AssetValue>();
+		if (updateLock) {
+			return;
+		}
 		List<String> owners = jOwners.getSelectedValuesList();
+		boolean balanceFilter = false;
+		boolean assetsFilter = false;
 		for (String owner : owners) {
 			for (Value data : Settings.get().getTrackerData().get(owner)) {
 				//Get all account wallet account keys
-				walletIDs.addAll(data.getBalanceFilter().keySet());
+				if (!data.getBalanceFilter().isEmpty()) {
+					balanceFilter = true;
+				}
 				//Get all asset IDs
-				assetsIDs.addAll(data.getAssetsFilter().keySet());
+				if (!data.getAssetsFilter().isEmpty()) {
+					assetsFilter = true;
+				}
+				if (balanceFilter && assetsFilter) {
+					break;
+				}
 			}
 		}
-		jWalletBalanceFilters.setEnabled(!walletIDs.isEmpty());
-		jAssetsFilters.setEnabled(!assetsIDs.isEmpty());
+		jWalletBalanceFilters.setEnabled(balanceFilter);
+		jAssetsFilters.setEnabled(assetsFilter);
 	}
 
 	private void updateOwners() {
@@ -719,6 +729,8 @@ public class TrackerTab extends JMainTabSecondary {
 		Date from = getFromDate();
 		Date to = getToDate();
 		cache = new TreeMap<SimpleTimePeriod, Value>();
+		Map<String, CheckBoxNode> accountNodesMap = new HashMap<String, CheckBoxNode>(accountNodes);
+		Map<String, CheckBoxNode> assetNodesMap = new HashMap<String, CheckBoxNode>(assetNodes);
 		Map<Date, Boolean> assetColumns = new TreeMap<Date, Boolean>();
 		Map<Date, Boolean> walletColumns = new TreeMap<Date, Boolean>();
 		if (owners != null) { //No data set...
@@ -746,7 +758,7 @@ public class TrackerTab extends JMainTabSecondary {
 						} else {
 							assetColumns.put(data.getDate(), true);
 							for (Map.Entry<AssetValue, Double> entry : data.getAssetsFilter().entrySet()) {
-								if (assetNodes.get(entry.getKey().getID()).isSelected()) {
+								if (assetNodesMap.get(entry.getKey().getID()).isSelected()) {
 									value.addAssets(entry.getKey(), entry.getValue());
 								}
 							}
@@ -762,7 +774,7 @@ public class TrackerTab extends JMainTabSecondary {
 						} else {
 							walletColumns.put(data.getDate(), true);
 							for (Map.Entry<String, Double> entry : data.getBalanceFilter().entrySet()) {
-								if (accountNodes.get(entry.getKey()).isSelected()) {
+								if (accountNodesMap.get(entry.getKey()).isSelected()) {
 									value.addBalance(entry.getKey(), entry.getValue());
 								}
 							}
@@ -1314,7 +1326,6 @@ public class TrackerTab extends JMainTabSecondary {
 				addNote();
 				jNextChart.getXYPlot().setDomainCrosshairVisible(false);
 			} else if (TrackerAction.PROFILE.name().equals(e.getActionCommand())) {
-				updateOwners();
 				updateData();
 			} else if (TrackerAction.FILTER_WALLET_BALANCE.name().equals(e.getActionCommand())) {
 				boolean save = filterDialog.showWallet(accountNodes);
@@ -1406,6 +1417,9 @@ public class TrackerTab extends JMainTabSecondary {
 
 		@Override
 		public void valueChanged(ListSelectionEvent e) {
+			if (e.getValueIsAdjusting()) {
+				return;
+			}
 			updateFilterButtons();
 			createData();
 		}

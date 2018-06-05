@@ -116,12 +116,10 @@ public class ProfileData {
 			SolarSystem from = systemCache.get(jump.getFrom().getSystemID());
 			SolarSystem to = systemCache.get(jump.getTo().getSystemID());
 			if (from == null) {
-				from = new SolarSystem(jump.getFrom());
-				systemCache.put(from.getSystemID(), from);
+				from = SolarSystem.create(systemCache, jump.getFrom());
 			}
 			if (to == null) {
-				to = new SolarSystem(jump.getTo());
-				systemCache.put(to.getSystemID(), to);
+				to = SolarSystem.create(systemCache, jump.getTo());
 			}
 			graph.addEdge(new Edge(from, to));
 		}
