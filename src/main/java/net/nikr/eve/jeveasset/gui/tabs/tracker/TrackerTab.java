@@ -49,6 +49,7 @@ import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -87,6 +88,7 @@ import net.nikr.eve.jeveasset.gui.shared.components.JMultiSelectionList;
 import net.nikr.eve.jeveasset.gui.shared.components.JSelectionDialog;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo;
 import net.nikr.eve.jeveasset.gui.tabs.values.AssetValue;
+import net.nikr.eve.jeveasset.gui.tabs.values.DataSetCreator;
 import net.nikr.eve.jeveasset.gui.tabs.values.Value;
 import net.nikr.eve.jeveasset.i18n.General;
 import net.nikr.eve.jeveasset.i18n.TabsTracker;
@@ -555,10 +557,12 @@ public class TrackerTab extends JMainTabSecondary {
 					.addComponent(jOwnersScroll, 70, 70, Integer.MAX_VALUE)
 				)
 		);
+		DataSetCreator.purgeInvalidTrackerAssetValues();
 	}
 
 	@Override
 	public void updateData() {
+		purgeInvalidTrackerAssetValues();
 		updateNodes(); //Must be first or NPE!
 		updateButtonIcons();
 		updateOwners();
@@ -576,6 +580,32 @@ public class TrackerTab extends JMainTabSecondary {
 		JDateChooser jDate = new JDateChooser(true);
 		jDate.addDateChangeListener(listener);
 		return jDate;
+	}
+
+	private void purgeInvalidTrackerAssetValues() {
+		int count = 0;
+		for (List<Value> values : Settings.get().getTrackerData().values()) {
+			for (Value value : values) {
+				List<AssetValue> assetValues = new ArrayList<>(value.getAssetsFilter().keySet()); //Copy to allow modification of original during the loop
+				for (AssetValue assetValue : assetValues) {
+					Long locationID = assetValue.getLocationID();
+					if (locationID != null &&
+							(
+							Settings.get().getAssetAdded().containsKey(locationID) //Confirmed asset AKA Not a location!
+							|| locationID > 9000000000000000000L //9e18 locations: https://github.com/ccpgames/esi-issues/issues/684
+							|| (locationID > 40000000 && locationID < 50000000) //Deleted PI structures: https://github.com/esi/esi-issues/issues/943
+							)
+							) {
+						value.getAssetsFilter().remove(assetValue);
+						Boolean remove = Settings.get().getTrackerFilters().remove(assetValue.getID());
+						if (remove != null) {
+							count++;
+						}
+					}
+				}
+			}
+		}
+		System.out.println("Removed " + count + " invalid tracker locations");
 	}
 
 	private void updateFilterButtons() {
