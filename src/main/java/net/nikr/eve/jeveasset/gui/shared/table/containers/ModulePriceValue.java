@@ -23,10 +23,10 @@ package net.nikr.eve.jeveasset.gui.shared.table.containers;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 
 
-public class ModulePriceValue extends NumberValue {
-	private Double price;
-	private double value;
-	private long count;
+public class ModulePriceValue {
+	private final Double price;
+	private final double value;
+	private final long count;
 
 	public ModulePriceValue(final Double price, final double value, final long count) {
 		this.price = price;

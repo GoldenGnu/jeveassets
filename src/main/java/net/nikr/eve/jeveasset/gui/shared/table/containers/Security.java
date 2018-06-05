@@ -21,13 +21,27 @@
 
 package net.nikr.eve.jeveasset.gui.shared.table.containers;
 
+import java.util.HashMap;
+import java.util.Map;
+
 
 public class Security extends NumberValue implements Comparable<Security> {
 
-	private String security;
+	private final static Map<String, Security> CACHE = new HashMap<>();
+
+	private final String security;
 	private Double securityValue;
 
-	public Security(String security) {
+	public static Security create(String key) {
+		Security cached = CACHE.get(key);
+		if (cached == null) {
+			cached = new Security(key);
+			CACHE.put(key, cached);
+		}
+		return cached;
+	}
+
+	private Security(String security) {
 		this.security = security;
 		try {
 			securityValue = Double.valueOf(security);

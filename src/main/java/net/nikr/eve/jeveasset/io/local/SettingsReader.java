@@ -91,8 +91,8 @@ import net.nikr.eve.jeveasset.gui.tabs.transaction.TransactionTab;
 import net.nikr.eve.jeveasset.gui.tabs.transaction.TransactionTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.tree.TreeTab;
 import net.nikr.eve.jeveasset.gui.tabs.tree.TreeTableFormat;
+import net.nikr.eve.jeveasset.gui.tabs.values.AssetValue;
 import net.nikr.eve.jeveasset.gui.tabs.values.Value;
-import net.nikr.eve.jeveasset.gui.tabs.values.Value.AssetValue;
 import net.nikr.eve.jeveasset.gui.tabs.values.ValueTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.values.ValueTableTab;
 import net.nikr.eve.jeveasset.i18n.General;
@@ -467,12 +467,12 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 	private AssetValue parseAssetValue(Element node) throws XmlException {
 		if (AttributeGetters.haveAttribute(node, "id")) {
 			String id = AttributeGetters.getString(node, "id");
-			return new AssetValue(id);
+			return AssetValue.create(id);
 		} else {
 			String location = AttributeGetters.getString(node, "location");
 			Long locationID = AttributeGetters.getLongOptional(node, "locationid");
 			String flag = AttributeGetters.getStringOptional(node, "flag");
-			return new AssetValue(location, flag, locationID);
+			return AssetValue.create(location, flag, locationID);
 		}
 	}
 

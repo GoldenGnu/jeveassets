@@ -85,22 +85,19 @@ public abstract class AbstractXmlReader<T> extends AbstractXmlBackup {
 	}
 
 	private Element getDocumentElement(final String filename, final XmlType xmlType) throws XmlException, IOException {
-		DocumentBuilderFactory factory;
-		DocumentBuilder builder;
-		Document doc;
 		FileInputStream is = null;
-		File file = new File(filename);
 		try {
 			if (xmlType == XmlType.DYNAMIC || xmlType == XmlType.DYNAMIC_BACKUP) {
 				lock(filename);
 			}
+			File file = new File(filename);
 			is = new FileInputStream(file);
-			factory = DocumentBuilderFactory.newInstance();
-			builder = factory.newDocumentBuilder();
-			doc = builder.parse(is);
+			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder builder = factory.newDocumentBuilder();
+			Document doc = builder.parse(is);
 			Element element = doc.getDocumentElement();
 			if (xmlType == XmlType.DYNAMIC_BACKUP) {
-				backup(filename, element);
+				backup(filename);
 			}
 			return element;
 		} catch (SAXException ex) {
