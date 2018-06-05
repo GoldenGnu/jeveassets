@@ -252,16 +252,7 @@ public final class ApiIdConverter {
 		if (locationID == null) {
 			return MyLocation.create(0);
 		}
-		//Offices
-		long fixedLocationID = locationID;
-		if (fixedLocationID >= 66000000) {
-			if (fixedLocationID < 66014933) {
-				fixedLocationID = fixedLocationID - 6000001;
-			} else {
-				fixedLocationID = fixedLocationID - 6000000;
-			}
-		}
-		MyLocation location = StaticData.get().getLocations().get(fixedLocationID);
+		MyLocation location = StaticData.get().getLocations().get(locationID);
 		if (location != null) {
 			return location;
 		}
