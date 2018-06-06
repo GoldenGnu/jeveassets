@@ -16,6 +16,26 @@
                   #### #  # #  # #  # #### #### #### #### ####
 
 ________________________________________________________________________________
+_5.6.0__________________________________________________________________________
+
+New Features:
+-Added Fuzzwork Blueprint Calculator to the Lookup menu
+-Added Fuzzwork Market to the Lookup menu
+-Added Eve Info item database to the Lookup menu
+-Delete known invalid tracker asset locations
+-Major Memory Optimizations
+-CPU Optimization of Tracker, Routing, Ship Fittings, Stockpile
+
+Bug Fixes:
+-Industry Jobs Assets was missing ME/TE/RUNS and had wrong BPO/BPC
+-Workaround for deleted PI structures
+
+Changed:
+-Removed Eve-Central from the lookup menu
+-Removed Conquerable Stations
+-Ignore Wormhole and Abyssal locations in the routing tool
+
+________________________________________________________________________________
 _5.5.1__________________________________________________________________________
 
 New Features:
