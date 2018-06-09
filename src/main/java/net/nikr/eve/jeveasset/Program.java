@@ -52,6 +52,7 @@ import net.nikr.eve.jeveasset.data.sde.MyLocation;
 import net.nikr.eve.jeveasset.data.sde.StaticData;
 import net.nikr.eve.jeveasset.data.settings.LogManager;
 import net.nikr.eve.jeveasset.data.settings.Settings;
+import net.nikr.eve.jeveasset.data.settings.TrackerData;
 import net.nikr.eve.jeveasset.data.settings.tag.TagUpdate;
 import net.nikr.eve.jeveasset.gui.dialogs.AboutDialog;
 import net.nikr.eve.jeveasset.gui.dialogs.account.AccountManagerDialog;
@@ -182,6 +183,7 @@ public class Program implements ActionListener {
 		LOG.info("DATA Loading...");
 		StaticData.load();
 		Settings.load();
+		TrackerData.load();
 
 		updater = new Updater();
 		localData = updater.getLocalData();
@@ -636,6 +638,7 @@ public class Program implements ActionListener {
 			LOG.info("Waiting for save queue to finish...");
 			Settings.waitForEmptySaveQueue();
 		}
+		TrackerData.waitForEmptySaveQueue();
 	}
 
 	/**
@@ -772,6 +775,7 @@ public class Program implements ActionListener {
 	}
 	public void createTrackerDataPoint() {
 		DataSetCreator.createTrackerDataPoint(profileData, Settings.getNow());
+		TrackerData.save("Added", true);
 		ensureEDT(new Runnable() {
 			@Override
 			public void run() {

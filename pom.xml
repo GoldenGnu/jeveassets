@@ -120,6 +120,8 @@
 								<copy todir="${project.build.directory}/data">
 									<fileset dir="data" includes="*.xml"/>
 									<fileset dir="data" includes="*.dat"/>
+									<fileset dir="data" includes="*.json"/>
+									<fileset dir="data" includes="*.zip"/>
 								</copy>
 								<copy todir="${project.build.directory}">
 									<fileset dir="" includes="*.txt"/>

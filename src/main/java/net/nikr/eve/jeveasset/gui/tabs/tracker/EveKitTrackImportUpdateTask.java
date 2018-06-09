@@ -29,7 +29,7 @@ import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.api.accounts.EveKitOwner;
 import net.nikr.eve.jeveasset.data.profile.ProfileData;
 import net.nikr.eve.jeveasset.data.profile.ProfileManager;
-import net.nikr.eve.jeveasset.data.settings.Settings;
+import net.nikr.eve.jeveasset.data.settings.TrackerData;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.tabs.values.DataSetCreator;
@@ -371,97 +371,112 @@ public class EveKitTrackImportUpdateTask extends UpdateTask {
 	}
 
 	private boolean haveDateKeep(Date date, EveKitOwner owner) {
-		List<Value> values = Settings.get().getTrackerData().get(owner.getOwnerName());
-		if (values == null) {
-			return false;
-		}
-		Calendar fromCalendar = Calendar.getInstance(); 
-		fromCalendar.setTime(date);
-		fromCalendar.set(Calendar.HOUR_OF_DAY, 0);
-		fromCalendar.set(Calendar.MINUTE, 0);
-		fromCalendar.set(Calendar.SECOND, 1);
-		fromCalendar.set(Calendar.MILLISECOND, 0);
-		Date from = fromCalendar.getTime();
-
-		Calendar toCalendar = Calendar.getInstance(); 
-		toCalendar.setTime(date);
-		toCalendar.set(Calendar.HOUR_OF_DAY, 23);
-		toCalendar.set(Calendar.MINUTE, 59);
-		toCalendar.set(Calendar.SECOND, 59);
-		toCalendar.set(Calendar.MILLISECOND, 0);
-		Date to = toCalendar.getTime();
-		
-		for (Value value : values) {
-			if (from.before(value.getDate()) && to.after(value.getDate())) {
-				return true;
+		try {
+			TrackerData.readLock();
+			List<Value> values = TrackerData.get().get(owner.getOwnerName());
+			if (values == null) {
+				return false;
 			}
+			Calendar fromCalendar = Calendar.getInstance(); 
+			fromCalendar.setTime(date);
+			fromCalendar.set(Calendar.HOUR_OF_DAY, 0);
+			fromCalendar.set(Calendar.MINUTE, 0);
+			fromCalendar.set(Calendar.SECOND, 1);
+			fromCalendar.set(Calendar.MILLISECOND, 0);
+			Date from = fromCalendar.getTime();
+
+			Calendar toCalendar = Calendar.getInstance(); 
+			toCalendar.setTime(date);
+			toCalendar.set(Calendar.HOUR_OF_DAY, 23);
+			toCalendar.set(Calendar.MINUTE, 59);
+			toCalendar.set(Calendar.SECOND, 59);
+			toCalendar.set(Calendar.MILLISECOND, 0);
+			Date to = toCalendar.getTime();
+
+			for (Value value : values) {
+				if (from.before(value.getDate()) && to.after(value.getDate())) {
+					return true;
+				}
+			}
+			return false;
+		} finally {
+			TrackerData.readUnlock();
 		}
-		return false;
 	}
 	private boolean haveDateOverwrite(Date date, EveKitOwner owner) {
-		List<Value> values = Settings.get().getTrackerData().get(owner.getOwnerName());
-		if (values == null) {
-			return false;
-		}
-
-		if (!haveDateEveKit(date, owner)) {
-			return false;
-		}
-
-		Calendar eveKitCalendar = Calendar.getInstance(); 
-		eveKitCalendar.setTime(date);
-		eveKitCalendar.set(Calendar.HOUR_OF_DAY, 12);
-		eveKitCalendar.set(Calendar.MINUTE, 0);
-		eveKitCalendar.set(Calendar.SECOND, 0);
-		eveKitCalendar.set(Calendar.MILLISECOND, 0);
-		Date eveKit = eveKitCalendar.getTime();
-
-		Calendar fromCalendar = Calendar.getInstance(); 
-		fromCalendar.setTime(date);
-		fromCalendar.set(Calendar.HOUR_OF_DAY, 0);
-		fromCalendar.set(Calendar.MINUTE, 0);
-		fromCalendar.set(Calendar.SECOND, 1);
-		fromCalendar.set(Calendar.MILLISECOND, 0);
-		Date from = fromCalendar.getTime();
-
-		Calendar toCalendar = Calendar.getInstance(); 
-		toCalendar.setTime(date);
-		toCalendar.set(Calendar.HOUR_OF_DAY, 23);
-		toCalendar.set(Calendar.MINUTE, 59);
-		toCalendar.set(Calendar.SECOND, 59);
-		toCalendar.set(Calendar.MILLISECOND, 0);
-		Date to = toCalendar.getTime();
-
 		List<Value> removeValues = new ArrayList<Value>();
-		for (Value value : values) {
-			if (from.before(value.getDate()) && to.after(value.getDate()) && !eveKit.equals(value.getDate())) {
-				removeValues.add(value);
+		try {
+			TrackerData.readLock();
+			List<Value> values = TrackerData.get().get(owner.getOwnerName());
+			if (values == null) {
+				return false;
 			}
+
+			if (!haveDateEveKit(date, owner)) {
+				return false;
+			}
+
+			Calendar eveKitCalendar = Calendar.getInstance(); 
+			eveKitCalendar.setTime(date);
+			eveKitCalendar.set(Calendar.HOUR_OF_DAY, 12);
+			eveKitCalendar.set(Calendar.MINUTE, 0);
+			eveKitCalendar.set(Calendar.SECOND, 0);
+			eveKitCalendar.set(Calendar.MILLISECOND, 0);
+			Date eveKit = eveKitCalendar.getTime();
+
+			Calendar fromCalendar = Calendar.getInstance(); 
+			fromCalendar.setTime(date);
+			fromCalendar.set(Calendar.HOUR_OF_DAY, 0);
+			fromCalendar.set(Calendar.MINUTE, 0);
+			fromCalendar.set(Calendar.SECOND, 1);
+			fromCalendar.set(Calendar.MILLISECOND, 0);
+			Date from = fromCalendar.getTime();
+
+			Calendar toCalendar = Calendar.getInstance(); 
+			toCalendar.setTime(date);
+			toCalendar.set(Calendar.HOUR_OF_DAY, 23);
+			toCalendar.set(Calendar.MINUTE, 59);
+			toCalendar.set(Calendar.SECOND, 59);
+			toCalendar.set(Calendar.MILLISECOND, 0);
+			Date to = toCalendar.getTime();
+			for (Value value : values) {
+				if (from.before(value.getDate()) && to.after(value.getDate()) && !eveKit.equals(value.getDate())) {
+					removeValues.add(value);
+				}
+			}
+		} finally {
+			TrackerData.readUnlock();
 		}
-		Settings.get().getTrackerData().get(owner.getOwnerName()).removeAll(removeValues);
+		TrackerData.removeAll(owner.getOwnerName(), removeValues);
 		return true;
+		
 	}
 
 	private boolean haveDateEveKit(Date date, EveKitOwner owner) {
-		List<Value> values = Settings.get().getTrackerData().get(owner.getOwnerName());
-		if (values == null) {
-			return false;
-		}
-
-		Calendar eveKitCalendar = Calendar.getInstance(); 
-		eveKitCalendar.setTime(date);
-		eveKitCalendar.set(Calendar.HOUR_OF_DAY, 12);
-		eveKitCalendar.set(Calendar.MINUTE, 0);
-		eveKitCalendar.set(Calendar.SECOND, 0);
-		eveKitCalendar.set(Calendar.MILLISECOND, 0);
-		Date eveKit = eveKitCalendar.getTime();
-
-		for (Value value : values) {
-			if (eveKit.equals(value.getDate())) {
-				return true;
+		try {
+			TrackerData.readLock();
+			List<Value> values = TrackerData.get().get(owner.getOwnerName());
+			if (values == null) {
+				return false;
 			}
+
+			Calendar eveKitCalendar = Calendar.getInstance(); 
+			eveKitCalendar.setTime(date);
+			eveKitCalendar.set(Calendar.HOUR_OF_DAY, 12);
+			eveKitCalendar.set(Calendar.MINUTE, 0);
+			eveKitCalendar.set(Calendar.SECOND, 0);
+			eveKitCalendar.set(Calendar.MILLISECOND, 0);
+			Date eveKit = eveKitCalendar.getTime();
+
+			for (Value value : values) {
+				if (eveKit.equals(value.getDate())) {
+					return true;
+				}
+			}
+			return false;
+		} finally {
+			TrackerData.readUnlock();
 		}
-		return false;
 	}
 
 	public static enum ReturnValue {
