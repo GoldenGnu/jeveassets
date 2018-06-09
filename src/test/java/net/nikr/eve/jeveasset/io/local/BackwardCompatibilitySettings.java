@@ -31,6 +31,7 @@ import net.nikr.eve.jeveasset.data.settings.ExportSettings;
 import net.nikr.eve.jeveasset.data.settings.PriceDataSettings;
 import net.nikr.eve.jeveasset.data.settings.ProxyData;
 import net.nikr.eve.jeveasset.data.settings.ReprocessSettings;
+import net.nikr.eve.jeveasset.data.settings.TrackerData;
 import net.nikr.eve.jeveasset.data.settings.UserItem;
 import net.nikr.eve.jeveasset.data.settings.tag.Tag;
 import net.nikr.eve.jeveasset.data.settings.tag.TagID;
@@ -99,7 +100,16 @@ public class BackwardCompatibilitySettings extends FakeSettings {
 		} else {
 			tested.add(function);
 		}
-		return ok.get(function);
+		if (function == Function.GET_TRACKER_DATA) {
+			try {
+				TrackerData.readLock();
+				return !TrackerData.get().isEmpty();
+			} finally {
+				TrackerData.readUnlock();
+			}
+		} else {
+			return ok.get(function);
+		}
 	}
 
 	public List<Function> test() {
@@ -234,12 +244,6 @@ public class BackwardCompatibilitySettings extends FakeSettings {
 	public Tags getTags(TagID tagID) {
 		ok.put(Function.GET_TAGS_ID, true);
 		return new Tags();
-	}
-
-	@Override
-	public Map<String, List<Value>> getTrackerData() {
-		ok.put(Function.GET_TRACKER_DATA, true);
-		return trackerData;
 	}
 
 	@Override

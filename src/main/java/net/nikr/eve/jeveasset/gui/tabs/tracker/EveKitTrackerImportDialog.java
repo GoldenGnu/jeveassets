@@ -40,6 +40,8 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.api.accounts.EveKitOwner;
+import net.nikr.eve.jeveasset.data.settings.Settings;
+import net.nikr.eve.jeveasset.data.settings.TrackerData;
 import net.nikr.eve.jeveasset.gui.dialogs.update.TaskDialog;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel.UpdateType;
 import net.nikr.eve.jeveasset.gui.images.Images;
@@ -268,12 +270,13 @@ public class EveKitTrackerImportDialog extends JDialogCentered {
 		TaskDialog taskDialog = new TaskDialog(program, updateTask, true, UpdateType.EVEKIT, new TaskDialog.TasksCompletedAdvanced() {
 			@Override
 			public void tasksCompleted(TaskDialog taskDialog) {
-				program.saveSettings("Import EveKit Tracker Points");
+				TrackerData.save("EveKit Import", true);
+				program.saveSettings("Import EveKit: Asset Added Date"); //Save Asset Added
+				Settings.waitForEmptySaveQueue(); //Wait for save to finish
 				Program.ensureEDT(new Runnable() {
 					@Override
 					public void run() {
 						program.getTrackerTab().updateData();
-						
 					}
 				});
 			}

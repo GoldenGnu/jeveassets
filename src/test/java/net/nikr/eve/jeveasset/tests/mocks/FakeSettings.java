@@ -46,7 +46,6 @@ import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewGroup;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile;
 import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerDate;
 import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerNote;
-import net.nikr.eve.jeveasset.gui.tabs.values.Value;
 
 /**
  *
@@ -303,11 +302,6 @@ public abstract class FakeSettings extends Settings {
 
 	@Override
 	public Map<Long, Date> getAssetAdded() {
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	@Override
-	public Map<String, List<Value>> getTrackerData() {
 		throw new UnsupportedOperationException("not implemented");
 	}
 

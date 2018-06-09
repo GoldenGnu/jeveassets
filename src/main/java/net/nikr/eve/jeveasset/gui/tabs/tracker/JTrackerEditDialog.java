@@ -41,7 +41,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.data.settings.Settings;
+import net.nikr.eve.jeveasset.data.settings.TrackerData;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Colors;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
@@ -306,44 +306,47 @@ public class JTrackerEditDialog extends JDialogCentered {
 			double manufacturing = parse(jManufacturing.getText());
 			double contractCollateral = parse(jContractCollateral.getText());
 			double contractValue = parse(jContractValue.getText());
-			Settings.lock("Tracker Data (Edit)");
-			if (value.getBalanceFilter().isEmpty()) {
-				value.setBalanceTotal(walletBalanc);
-			} else if (value.getBalanceFilter().size() == 1) {
-				for (Map.Entry<String, Double> entry : value.getBalanceFilter().entrySet()) {
-					//Just done once...
-					value.removeBalance(entry.getKey()); //Remove old value
-					value.addBalance(entry.getKey(), walletBalanc); //Add new value
+			try {
+				TrackerData.writeLock();
+				if (value.getBalanceFilter().isEmpty()) {
+					value.setBalanceTotal(walletBalanc);
+				} else if (value.getBalanceFilter().size() == 1) {
+					for (Map.Entry<String, Double> entry : value.getBalanceFilter().entrySet()) {
+						//Just done once...
+						value.removeBalance(entry.getKey()); //Remove old value
+						value.addBalance(entry.getKey(), walletBalanc); //Add new value
+					}
+				} else {
+					for (FilterUpdate filterUpdate : balanceUpdates) {
+						value.removeBalance(filterUpdate.getKey());
+						value.addBalance(filterUpdate.getKey(), filterUpdate.getValue());
+					}
 				}
-			} else {
-				for (FilterUpdate filterUpdate : balanceUpdates) {
-					value.removeBalance(filterUpdate.getKey());
-					value.addBalance(filterUpdate.getKey(), filterUpdate.getValue());
+				if (value.getAssetsFilter().isEmpty()) {
+					value.setAssetsTotal(assets);
+				} else if (value.getAssetsFilter().size() == 1) {
+					for (Map.Entry<AssetValue, Double> entry : value.getAssetsFilter().entrySet()) {
+						//Just done once...
+						value.removeAssets(entry.getKey()); //Remove old value
+						value.addAssets(entry.getKey(), walletBalanc); //Add new value
+					}
+				} else {
+					for (FilterUpdate filterUpdate : assetUpdates) {
+						AssetValue assetValue = AssetValue.create(filterUpdate.getKey());
+						value.removeAssets(assetValue);
+						value.addAssets(assetValue, filterUpdate.getValue());
+					}
 				}
+				value.setSellOrders(sellOrders);
+				value.setEscrows(escrows);
+				value.setEscrowsToCover(escrowsToCover);
+				value.setManufacturing(manufacturing);
+				value.setContractCollateral(contractCollateral);
+				value.setContractValue(contractValue);
+			} finally {
+				TrackerData.writeUnlock();
 			}
-			if (value.getAssetsFilter().isEmpty()) {
-				value.setAssetsTotal(assets);
-			} else if (value.getAssetsFilter().size() == 1) {
-				for (Map.Entry<AssetValue, Double> entry : value.getAssetsFilter().entrySet()) {
-					//Just done once...
-					value.removeAssets(entry.getKey()); //Remove old value
-					value.addAssets(entry.getKey(), walletBalanc); //Add new value
-				}
-			} else {
-				for (FilterUpdate filterUpdate : assetUpdates) {
-					AssetValue assetValue = AssetValue.create(filterUpdate.getKey());
-					value.removeAssets(assetValue);
-					value.addAssets(assetValue, filterUpdate.getValue());
-				}
-			}
-			value.setSellOrders(sellOrders);
-			value.setEscrows(escrows);
-			value.setEscrowsToCover(escrowsToCover);
-			value.setManufacturing(manufacturing);
-			value.setContractCollateral(contractCollateral);
-			value.setContractValue(contractValue);
-			Settings.unlock("Tracker Data (Edit)");
-			program.saveSettings("Tracker Data (Edit)");
+			TrackerData.save("Edited");
 			update = true;
 			setVisible(false);
 		} catch (ParseException ex) {

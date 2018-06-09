@@ -31,7 +31,6 @@ import java.util.zip.ZipOutputStream;
 import net.nikr.eve.jeveasset.Program;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.w3c.dom.Element;
 
 
 public abstract class AbstractXmlBackup {

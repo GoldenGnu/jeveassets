@@ -35,6 +35,7 @@ import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder;
 import net.nikr.eve.jeveasset.data.api.raw.RawContract.ContractStatus;
 import net.nikr.eve.jeveasset.data.profile.ProfileData;
 import net.nikr.eve.jeveasset.data.settings.Settings;
+import net.nikr.eve.jeveasset.data.settings.TrackerData;
 import net.nikr.eve.jeveasset.i18n.TabsValues;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 
@@ -57,23 +58,28 @@ public class DataSetCreator {
 	}
 
 	public static void purgeInvalidTrackerAssetValues() {
-		for (List<Value> values : Settings.get().getTrackerData().values()) {
-			for (Value value : values) {
-				List<AssetValue> assetValues = new ArrayList<>(value.getAssetsFilter().keySet()); //Copy to allow modification of original during the loop
-				for (AssetValue assetValue : assetValues) {
-					Long locationID = assetValue.getLocationID();
-					if (locationID != null &&
-							(
-							Settings.get().getAssetAdded().containsKey(locationID) //Confirmed asset AKA not a location, must be destroyed asset!
-							|| locationID > 9000000000000000000L //9e18 locations: https://github.com/ccpgames/esi-issues/issues/684
-							|| (locationID > 40000000 && locationID < 50000000) //Deleted PI structures: https://github.com/esi/esi-issues/issues/943
-							)
-							) {
-						value.getAssetsFilter().remove(assetValue);
-						Settings.get().getTrackerFilters().remove(assetValue.getID());
+		try {
+			TrackerData.writeLock();
+			for (List<Value> values : TrackerData.get().values()) {
+				for (Value value : values) {
+					List<AssetValue> assetValues = new ArrayList<>(value.getAssetsFilter().keySet()); //Copy to allow modification of original during the loop
+					for (AssetValue assetValue : assetValues) {
+						Long locationID = assetValue.getLocationID();
+						if (locationID != null &&
+								(
+								Settings.get().getAssetAdded().containsKey(locationID) //Confirmed asset AKA not a location, must be destroyed asset!
+								|| locationID > 9000000000000000000L //9e18 locations: https://github.com/ccpgames/esi-issues/issues/684
+								|| (locationID > 40000000 && locationID < 50000000) //Deleted PI structures: https://github.com/esi/esi-issues/issues/943
+								)
+								) {
+							value.getAssetsFilter().remove(assetValue);
+							Settings.get().getTrackerFilters().remove(assetValue.getID());
+						}
 					}
 				}
 			}
+		} finally {
+			TrackerData.writeUnlock();
 		}
 	}
 
@@ -88,24 +94,15 @@ public class DataSetCreator {
 		Map<String, Value> data = createDataSetInner(profileData, date);
 
 		//Add everything
-		Settings.lock("Tracker Data (Create Point)");
 		for (Map.Entry<String, Value> entry : data.entrySet()) {
 			String owner = entry.getKey();
 			Value value = entry.getValue();
 			if (owner.equals(TabsValues.get().grandTotal())) {
 				continue;
 			}
-			//New TrackerOwner
-			List<Value> list = Settings.get().getTrackerData().get(owner);
-			if (list == null) {
-				list = new ArrayList<Value>();
-				Settings.get().getTrackerData().put(owner, list);
-			}
-			list.add(value);
-
+			TrackerData.add(owner, value);
 		}
 		purgeInvalidTrackerAssetValues();
-		Settings.unlock("Tracker Data (Create Point)");
 	}
 
 	private Map<String, Value> createDataSetInner(ProfileData profileData, Date date) {

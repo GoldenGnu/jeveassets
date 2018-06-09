@@ -49,7 +49,6 @@ import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -77,6 +76,7 @@ import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.settings.Settings;
+import net.nikr.eve.jeveasset.data.settings.TrackerData;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
@@ -588,20 +588,25 @@ public class TrackerTab extends JMainTabSecondary {
 		List<String> owners = jOwners.getSelectedValuesList();
 		boolean balanceFilter = false;
 		boolean assetsFilter = false;
-		for (String owner : owners) {
-			for (Value data : Settings.get().getTrackerData().get(owner)) {
-				//Get all account wallet account keys
-				if (!data.getBalanceFilter().isEmpty()) {
-					balanceFilter = true;
-				}
-				//Get all asset IDs
-				if (!data.getAssetsFilter().isEmpty()) {
-					assetsFilter = true;
-				}
-				if (balanceFilter && assetsFilter) {
-					break;
+		try {
+			TrackerData.readLock();
+			for (String owner : owners) {
+				for (Value data : TrackerData.get().get(owner)) {
+					//Get all account wallet account keys
+					if (!data.getBalanceFilter().isEmpty()) {
+						balanceFilter = true;
+					}
+					//Get all asset IDs
+					if (!data.getAssetsFilter().isEmpty()) {
+						assetsFilter = true;
+					}
+					if (balanceFilter && assetsFilter) {
+						break;
+					}
 				}
 			}
+		} finally {
+			TrackerData.readUnlock();
 		}
 		jWalletBalanceFilters.setEnabled(balanceFilter);
 		jAssetsFilters.setEnabled(assetsFilter);
@@ -609,7 +614,13 @@ public class TrackerTab extends JMainTabSecondary {
 
 	private void updateOwners() {
 		updateLock = true;
-		Set<String> owners = new TreeSet<String>(Settings.get().getTrackerData().keySet());
+		Set<String> owners;
+		try {
+			TrackerData.readLock();
+			owners = new TreeSet<String>(TrackerData.get().keySet());
+		} finally {
+			TrackerData.readUnlock();
+		}
 		final List<String> ownersList;
 		if (jAllProfiles.isSelected()) {
 			ownersList = new ArrayList<String>(owners);
@@ -658,13 +669,18 @@ public class TrackerTab extends JMainTabSecondary {
 	//Find all saved Keys/IDs
 		Set<String> walletIDs = new TreeSet<String>();
 		Set<AssetValue> assetsIDs = new TreeSet<AssetValue>();
-		for (List<Value> values : Settings.get().getTrackerData().values()) {
-			for (Value data : values) {
-				//Get all account wallet account keys
-				walletIDs.addAll(data.getBalanceFilter().keySet());
-				//Get all asset IDs
-				assetsIDs.addAll(data.getAssetsFilter().keySet());
+		try {
+			TrackerData.readLock();
+			for (List<Value> values : TrackerData.get().values()) {
+				for (Value data : values) {
+					//Get all account wallet account keys
+					walletIDs.addAll(data.getBalanceFilter().keySet());
+					//Get all asset IDs
+					assetsIDs.addAll(data.getAssetsFilter().keySet());
+				}
 			}
+		} finally {
+			TrackerData.readUnlock();
 		}
 
 		//WALLET - Make nodes for found wallet account keys
@@ -737,53 +753,58 @@ public class TrackerTab extends JMainTabSecondary {
 		Map<Date, Boolean> assetColumns = new TreeMap<Date, Boolean>();
 		Map<Date, Boolean> walletColumns = new TreeMap<Date, Boolean>();
 		if (owners != null) { //No data set...
-			for (String owner : owners) {
-				for (Value data : Settings.get().getTrackerData().get(owner)) {
-					SimpleTimePeriod date = new SimpleTimePeriod(data.getDate(), data.getDate());
-					if ((from == null || data.getDate().after(from)) && (to == null || data.getDate().before(to))) {
-						Value value = cache.get(date);
-						if (value == null) {
-							value = new Value(data.getDate());
-							cache.put(date, value);
-						}
+			try {
+				TrackerData.readLock();
+				for (String owner : owners) {
+					for (Value data : TrackerData.get().get(owner)) {
+						SimpleTimePeriod date = new SimpleTimePeriod(data.getDate(), data.getDate());
+						if ((from == null || data.getDate().after(from)) && (to == null || data.getDate().before(to))) {
+							Value value = cache.get(date);
+							if (value == null) {
+								value = new Value(data.getDate());
+								cache.put(date, value);
+							}
 
-						//Default
-						Boolean assetBoolean = assetColumns.get(data.getDate());
-						if (assetBoolean == null) {
-							assetColumns.put(data.getDate(), false);
-						}
-						Boolean walletBoolean = walletColumns.get(data.getDate());
-						if (walletBoolean == null) {
-							walletColumns.put(data.getDate(), false);
-						}
-						if (data.getAssetsFilter().isEmpty()) {
-							value.addAssets(data.getAssetsTotal());
-						} else {
-							assetColumns.put(data.getDate(), true);
-							for (Map.Entry<AssetValue, Double> entry : data.getAssetsFilter().entrySet()) {
-								if (assetNodesMap.get(entry.getKey().getID()).isSelected()) {
-									value.addAssets(entry.getKey(), entry.getValue());
+							//Default
+							Boolean assetBoolean = assetColumns.get(data.getDate());
+							if (assetBoolean == null) {
+								assetColumns.put(data.getDate(), false);
+							}
+							Boolean walletBoolean = walletColumns.get(data.getDate());
+							if (walletBoolean == null) {
+								walletColumns.put(data.getDate(), false);
+							}
+							if (data.getAssetsFilter().isEmpty()) {
+								value.addAssets(data.getAssetsTotal());
+							} else {
+								assetColumns.put(data.getDate(), true);
+								for (Map.Entry<AssetValue, Double> entry : data.getAssetsFilter().entrySet()) {
+									if (assetNodesMap.get(entry.getKey().getID()).isSelected()) {
+										value.addAssets(entry.getKey(), entry.getValue());
+									}
 								}
 							}
-						}
-						value.addEscrows(data.getEscrows());
-						value.addEscrowsToCover(data.getEscrowsToCover());
-						value.addManufacturing(data.getManufacturing());
-						value.addContractCollateral(data.getContractCollateral());
-						value.addContractValue(data.getContractValue());
-						value.addSellOrders(data.getSellOrders());
-						if (data.getBalanceFilter().isEmpty()) {
-							value.addBalance(data.getBalanceTotal());
-						} else {
-							walletColumns.put(data.getDate(), true);
-							for (Map.Entry<String, Double> entry : data.getBalanceFilter().entrySet()) {
-								if (accountNodesMap.get(entry.getKey()).isSelected()) {
-									value.addBalance(entry.getKey(), entry.getValue());
+							value.addEscrows(data.getEscrows());
+							value.addEscrowsToCover(data.getEscrowsToCover());
+							value.addManufacturing(data.getManufacturing());
+							value.addContractCollateral(data.getContractCollateral());
+							value.addContractValue(data.getContractValue());
+							value.addSellOrders(data.getSellOrders());
+							if (data.getBalanceFilter().isEmpty()) {
+								value.addBalance(data.getBalanceTotal());
+							} else {
+								walletColumns.put(data.getDate(), true);
+								for (Map.Entry<String, Double> entry : data.getBalanceFilter().entrySet()) {
+									if (accountNodesMap.get(entry.getKey()).isSelected()) {
+										value.addBalance(entry.getKey(), entry.getValue());
+									}
 								}
 							}
 						}
 					}
 				}
+			} finally {
+				TrackerData.readUnlock();
 			}
 			for (Map.Entry<SimpleTimePeriod, Value> entry : cache.entrySet()) {
 				walletBalance.add(entry.getKey(), entry.getValue().getBalanceTotal());
@@ -1077,13 +1098,17 @@ public class TrackerTab extends JMainTabSecondary {
 
 	private Value getSelectedValue(String owner) {
 		String date = Formater.simpleDate(new Date((long)jNextChart.getXYPlot().getDomainCrosshairValue()));
-		for (Value value : Settings.get().getTrackerData().get(owner)) {
-			if (date.equals(Formater.simpleDate(value.getDate()))) {
-				return value;
+		try {
+			TrackerData.readLock();
+			for (Value value : TrackerData.get().get(owner)) {
+				if (date.equals(Formater.simpleDate(value.getDate()))) {
+					return value;
+				}
 			}
+		} finally {
+			TrackerData.readUnlock();
 		}
 		return null;
-
 	}
 
 	private void addNote() {
@@ -1306,17 +1331,11 @@ public class TrackerTab extends JMainTabSecondary {
 				
 				int retrunValue = JOptionPane.showConfirmDialog(program.getMainWindow().getFrame(), TabsTracker.get().deleteSelected(), TabsTracker.get().delete(), JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
 				if (retrunValue == JOptionPane.OK_OPTION) {
-					Settings.lock("Tracker Data (Delete)");
 					for (Map.Entry<String, Value> entry : values.entrySet()) {
 						//Remove value
-						Settings.get().getTrackerData().get(entry.getKey()).remove(entry.getValue());
-						//Remove empty owner
-						if (Settings.get().getTrackerData().get(entry.getKey()).isEmpty()) {
-							Settings.get().getTrackerData().remove(entry.getKey());
-						} 
+						TrackerData.remove(entry.getKey(), entry.getValue());
 					}
-					Settings.unlock("Tracker Data (Delete)");
-					program.saveSettings("Tracker Data (Delete)");
+					TrackerData.save("Deleted");
 					updateData();
 				}
 				jNextChart.getXYPlot().setDomainCrosshairVisible(false);

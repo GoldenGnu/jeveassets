@@ -56,7 +56,6 @@ import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewGroup;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile;
 import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerDate;
 import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerNote;
-import net.nikr.eve.jeveasset.gui.tabs.values.Value;
 import net.nikr.eve.jeveasset.io.local.SettingsReader;
 import net.nikr.eve.jeveasset.io.local.SettingsWriter;
 import net.nikr.eve.jeveasset.io.shared.FileUtil;
@@ -67,6 +66,7 @@ public class Settings {
 
 	private static final Logger LOG = LoggerFactory.getLogger(Settings.class);
 
+	private static final String PATH_TRACKER_DATA = "data" + File.separator + "tracker.json";
 	private static final String PATH_SETTINGS = "data" + File.separator + "settings.xml";
 	private static final String PATH_ITEMS = "data" + File.separator + "items.xml";
 	private static final String PATH_JUMPS = "data" + File.separator + "jumps.xml";
@@ -150,7 +150,6 @@ public class Settings {
 	//Lock OK
 	private final ExportSettings exportSettings = new ExportSettings();
 //Tracker						Saved by TaskDialog.update() (on API update)
-	private final Map<String, List<Value>> trackerData = new HashMap<String, List<Value>>(); //ownerID :: long
 	private final Map<TrackerDate, TrackerNote> trackerNotes = new HashMap<TrackerDate, TrackerNote>();
 	private final Map<String, Boolean> trackerFilters = new HashMap<String, Boolean>();
 	private boolean trackerSelectNew = true;
@@ -364,10 +363,6 @@ public class Settings {
 		//Load data and overwite default values
 		settingsLoadError = !SettingsReader.load(this);
 		SplashUpdater.setProgress(35);
-	}
-
-	public Map<String, List<Value>> getTrackerData() {
-		return trackerData;
 	}
 
 	public Map<TrackerDate, TrackerNote> getTrackerNotes() {
@@ -802,6 +797,10 @@ public class Settings {
 
 	public String getPathSettings() {
 		return FileUtil.getLocalFile(Settings.PATH_SETTINGS, !Program.isPortable());
+	}
+
+	public static String getPathTrackerData() {
+		return FileUtil.getLocalFile(Settings.PATH_TRACKER_DATA, !Program.isPortable());
 	}
 
 	public static String getPathConquerableStations() {

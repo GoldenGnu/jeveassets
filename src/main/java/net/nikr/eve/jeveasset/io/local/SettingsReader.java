@@ -48,6 +48,7 @@ import net.nikr.eve.jeveasset.data.settings.ReprocessSettings;
 import net.nikr.eve.jeveasset.data.settings.RouteResult;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.data.settings.Settings.SettingFlag;
+import net.nikr.eve.jeveasset.data.settings.TrackerData;
 import net.nikr.eve.jeveasset.data.settings.UserItem;
 import net.nikr.eve.jeveasset.data.settings.tag.Tag;
 import net.nikr.eve.jeveasset.data.settings.tag.TagColor;
@@ -111,13 +112,20 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 
 	private static final Logger LOG = LoggerFactory.getLogger(SettingsReader.class);
 
+	private enum ReaderType {
+		SETTINGS, STOCKPILE
+	}
+
 	private Settings settings;
 	private List<Stockpile> stockpilesList;
+	private final ReaderType readerType;
 
-	private SettingsReader() { }
+	private SettingsReader(ReaderType readerType) {
+		this.readerType = readerType;
+	}
 
 	public static boolean load(final Settings settings) {
-		SettingsReader reader = new SettingsReader();
+		SettingsReader reader = new SettingsReader(ReaderType.SETTINGS);
 		reader.settings = settings;
 		Update updater = new Update();
 		try {
@@ -129,7 +137,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 	}
 
 	public static List<Stockpile> loadStockpile(final String filename) {
-		SettingsReader reader = new SettingsReader();
+		SettingsReader reader = new SettingsReader(ReaderType.STOCKPILE);
 		if (reader.read(filename, filename, XmlType.IMPORT)) {
 			return reader.stockpilesList;
 		} else {
@@ -139,10 +147,13 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 
 	@Override
 	protected Boolean parse(Element element) throws XmlException {
-		if (settings == null) {
-			stockpilesList = parseStockpile(element);
-		} else {
-			parseSettings(element, settings);
+		switch (readerType) {
+			case SETTINGS:
+				loadSettings(element, settings);
+				break;
+			case STOCKPILE:
+				stockpilesList = loadStockpile(element);
+				break;
 		}
 		return true;
 	}
@@ -157,7 +168,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		return true;
 	}
 
-	private List<Stockpile> parseStockpile(final Element element) throws XmlException {
+	private List<Stockpile> loadStockpile(final Element element) throws XmlException {
 		if (!element.getNodeName().equals("settings")) {
 			throw new XmlException("Wrong root element name.");
 		}
@@ -172,7 +183,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		return stockpiles;
 	}
 
-	private void parseSettings(final Element element, final Settings settings) throws XmlException {
+	private void loadSettings(final Element element, final Settings settings) throws XmlException {
 		if (!element.getNodeName().equals("settings")) {
 			throw new XmlException("Wrong root element name.");
 		}
@@ -209,7 +220,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		NodeList trackerDataNodes = element.getElementsByTagName("trackerdata");
 		if (trackerDataNodes.getLength() == 1) {
 			Element trackerDataElement = (Element) trackerDataNodes.item(0);
-			parseTrackerData(trackerDataElement, settings);
+			parseTrackerData(trackerDataElement);
 		}
 
 		//Tracker Data
@@ -390,7 +401,8 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 			settings.getOwners().put(ownerID, ownerName);
 		}
 	}
-	private void parseTrackerData(final Element element, final Settings settings) throws XmlException {
+
+	private void parseTrackerData(final Element element) throws XmlException {
 		NodeList tableNodeList = element.getElementsByTagName("owner");
 		for (int a = 0; a < tableNodeList.getLength(); a++) {
 			//Read Owner
@@ -400,8 +412,6 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 			if (owner.isEmpty()) {
 				continue;
 			}
-			//Add new Owner
-			settings.getTrackerData().put(owner, new ArrayList<Value>());
 			//Data
 			NodeList dataNodeList = ownerNode.getElementsByTagName("data");
 			for (int b = 0; b < dataNodeList.getLength(); b++) {
@@ -455,11 +465,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 				value.setManufacturing(manufacturing);
 				value.setContractCollateral(contractCollateral);
 				value.setContractValue(contractValue);
-				settings.getTrackerData().get(owner).add(value);
-			}
-			//Remove empty owners
-			if (settings.getTrackerData().get(owner).isEmpty()) {
-				settings.getTrackerData().remove(owner);
+				TrackerData.add(owner, value);
 			}
 		}
 	}
