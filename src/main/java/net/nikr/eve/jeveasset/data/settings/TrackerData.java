@@ -194,10 +194,7 @@ public class TrackerData {
 			TrackerDataWriter.save();
 			TrackerData.readUnlock();
 			saveQueueRemove();
-
-			long after = System.currentTimeMillis();
-
-			LOG.debug("Tracker data saved in: " + (after - before) + "ms");
+			LOG.debug("Tracker data saved in: " + (System.currentTimeMillis() - before) + "ms");
 		}
 	}
 }
