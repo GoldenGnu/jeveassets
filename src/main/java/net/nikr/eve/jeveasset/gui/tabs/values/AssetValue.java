@@ -25,7 +25,7 @@ import java.util.Map;
 import java.util.Objects;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
 import net.nikr.eve.jeveasset.data.sde.StaticData;
-import net.nikr.eve.jeveasset.data.settings.Settings;
+import net.nikr.eve.jeveasset.data.settings.TrackerData;
 import net.nikr.eve.jeveasset.i18n.General;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 
@@ -36,8 +36,8 @@ public class AssetValue implements Comparable<AssetValue> {
 	private static final String CITADEL_MATCH = "\\[Citadel #(\\d+)\\]";
 	private static final String CITADEL_REPLACE = General.get().emptyLocation("$1").replace("[", "\\[").replace("]", "\\]");
 
+	private final String flag;
 	private String location;
-	private String flag;
 	private Long locationID;
 	private String id;
 
@@ -50,11 +50,15 @@ public class AssetValue implements Comparable<AssetValue> {
 	}
 
 	public static void updateData() {
-		Settings.lock("Tracker Data (Updating Locations)");
-		for (AssetValue assetValue : CACHE.values()) {
-			assetValue.update();
+		try {
+			TrackerData.writeLock();
+			for (AssetValue assetValue : CACHE.values()) {
+				assetValue.update();
+			}
+		} finally {
+			TrackerData.writeUnlock();
 		}
-		Settings.unlock("Tracker Data (Updating Locations)");
+		TrackerData.save("Asset values updated", true);
 	}
 
 	private static AssetValue get(final AssetValue add) {
@@ -117,16 +121,16 @@ public class AssetValue implements Comparable<AssetValue> {
 
 	private Long updateLocationID(String name) {
 		//Unknown Locations
-		Long id = resolveUnknownLocationID(name, UNKNOWN_LOCATION);
+		Long locationIDvalue = resolveUnknownLocationID(name, UNKNOWN_LOCATION);
 		//Citadel
-		if (id == null) {
-			id = resolveUnknownLocationID(name.replace(",", ""), CITADEL_MATCH);
+		if (locationIDvalue == null) {
+			locationIDvalue = resolveUnknownLocationID(name.replace(",", ""), CITADEL_MATCH);
 		}
 		//Existing Locations
-		if (id == null) {
-			id = resolveExistingLocationID(name);
+		if (locationIDvalue == null) {
+			locationIDvalue = resolveExistingLocationID(name);
 		}
-		return id;
+		return locationIDvalue;
 	}
 
 	private String updateLocationName(String locationValue, Long locationIDvalue) {

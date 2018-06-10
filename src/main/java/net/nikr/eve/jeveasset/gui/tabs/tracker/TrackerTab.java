@@ -1121,9 +1121,9 @@ public class TrackerTab extends JMainTabSecondary {
 			newNote = (String) JOptionPane.showInputDialog(program.getMainWindow().getFrame(), TabsTracker.get().notesEditMsg(), TabsTracker.get().notesEditTitle(), JOptionPane.PLAIN_MESSAGE, null, null, trackerNote.getNote());
 		}
 		if (newNote != null) {
-			Settings.lock("Tracker Data (Set Note)");
+			Settings.lock("Tracker Notes (Set Note)");
 			Settings.get().getTrackerNotes().put(new TrackerDate(date), new TrackerNote(newNote));
-			Settings.unlock("Tracker Data (Set Note)");
+			Settings.unlock("Tracker Notes (Set Note)");
 			program.saveSettings("Tracker Data (Set Note)");
 		}
 	}
@@ -1133,9 +1133,9 @@ public class TrackerTab extends JMainTabSecondary {
 		TrackerNote trackerNote = Settings.get().getTrackerNotes().get(new TrackerDate(date));
 		int returnValue = JOptionPane.showConfirmDialog(program.getMainWindow().getFrame(), TabsTracker.get().notesDeleteMsg(trackerNote.getNote()), TabsTracker.get().notesDeleteTitle(), JOptionPane.OK_CANCEL_OPTION);
 		if (returnValue == JOptionPane.OK_OPTION) {
-			Settings.lock("Tracker Data (Delete Note)");
+			Settings.lock("Tracker Notes (Delete Note)");
 			Settings.get().getTrackerNotes().remove(new TrackerDate(date));
-			Settings.unlock("Tracker Data (Delete Note)");
+			Settings.unlock("Tracker Notes (Delete Note)");
 			program.saveSettings("Tracker Data (Delete Note)");
 		}
 	}
