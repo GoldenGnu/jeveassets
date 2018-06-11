@@ -184,8 +184,12 @@ public class RawAsset {
 		itemFlag = RawConverter.toFlag(asset.getLocationFlag());
 		locationId = asset.getLocationId();
 		locationType = LocationType.valueOf(asset.getLocationType().name());
-		if (asset.getQuantity() == null) {
-			quantity = 1;
+		if (asset.getQuantity() == 1) {
+			if (asset.getIsBlueprintCopy() != null && asset.getIsBlueprintCopy()) {
+				quantity = -2;
+			} else {
+				quantity = -1;
+			}
 		} else {
 			quantity = asset.getQuantity();
 		}
@@ -207,8 +211,12 @@ public class RawAsset {
 		itemFlag = RawConverter.toFlag(asset.getLocationFlag());
 		locationId = asset.getLocationId();
 		locationType = LocationType.valueOf(asset.getLocationType().name());
-		if (asset.getQuantity() == null) {
-			quantity = 1;
+		if (asset.getQuantity() == 1) {
+			if (asset.getIsBlueprintCopy() != null && asset.getIsBlueprintCopy()) {
+				quantity = -2;
+			} else {
+				quantity = -1;
+			}
 		} else {
 			quantity = asset.getQuantity();
 		}

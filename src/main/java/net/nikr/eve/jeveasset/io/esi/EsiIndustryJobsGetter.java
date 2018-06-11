@@ -52,7 +52,7 @@ public class EsiIndustryJobsGetter extends AbstractEsiGetter {
 					return updatePages(DEFAULT_RETRIES, new EsiPagesHandler<CorporationIndustryJobsResponse>() {
 						@Override
 						public List<CorporationIndustryJobsResponse> get(ApiClient apiClient, Integer page) throws ApiException {
-							return getIndustryApiAuth(apiClient).getCorporationsCorporationIdIndustryJobs((int) owner.getOwnerID(), DATASOURCE, null, k, page, null, USER_AGENT, null);
+							return getIndustryApiAuth(apiClient).getCorporationsCorporationIdIndustryJobs((int) owner.getOwnerID(), DATASOURCE, null, k, page, null);
 						}
 					});
 				}
@@ -66,7 +66,7 @@ public class EsiIndustryJobsGetter extends AbstractEsiGetter {
 			Map<Boolean, List<CharacterIndustryJobsResponse>> updateList = updateList(completed, DEFAULT_RETRIES, new ListHandler<Boolean, List<CharacterIndustryJobsResponse>>() {
 				@Override
 				protected List<CharacterIndustryJobsResponse> get(ApiClient client, Boolean k) throws ApiException {
-					return getIndustryApiAuth(apiClient).getCharactersCharacterIdIndustryJobs((int) owner.getOwnerID(), DATASOURCE, null, k, null, USER_AGENT, null);
+					return getIndustryApiAuth(apiClient).getCharactersCharacterIdIndustryJobs((int) owner.getOwnerID(), DATASOURCE, null, k, null);
 				}
 			});
 			List<CharacterIndustryJobsResponse> industryJobs = new ArrayList<>();
