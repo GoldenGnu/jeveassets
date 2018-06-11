@@ -56,11 +56,6 @@ public abstract class FakeSettings extends Settings {
 	public FakeSettings() { }
 
 	@Override
-	public Date getConquerableStationsNextUpdate() {
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	@Override
 	public Map<SettingFlag, Boolean> getFlags() {
 		throw new UnsupportedOperationException("not implemented");
 	}
@@ -122,11 +117,6 @@ public abstract class FakeSettings extends Settings {
 
 	@Override
 	public boolean isWindowMaximized() {
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	@Override
-	public void setConquerableStationsNextUpdate(final Date conquerableStationNextUpdate) {
 		throw new UnsupportedOperationException("not implemented");
 	}
 
