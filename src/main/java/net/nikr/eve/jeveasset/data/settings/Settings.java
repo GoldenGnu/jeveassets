@@ -120,8 +120,6 @@ public class Settings {
 //API Data
 	//Api id to owner name		Saved by TaskDialog.update() (on API update)
 	private final Map<Long, String> owners = new HashMap<Long, String>();
-	//Stations Next Update		Saved by TaskDialog.update() (on API update)
-	private Date conquerableStationsNextUpdate = Settings.getNow();
 //!! - Values
 	//OK - Custom Price			Saved by JUserListPanel.edit()/delete() + SettingsDialog.save()
 	//Lock OK
@@ -380,14 +378,6 @@ public class Settings {
 
 	public void setTrackerSelectNew(boolean trackerSelectNew) {
 		this.trackerSelectNew = trackerSelectNew;
-	}
-
-	public Date getConquerableStationsNextUpdate() {
-		return conquerableStationsNextUpdate;
-	}
-
-	public void setConquerableStationsNextUpdate(final Date conquerableStationNextUpdate) {
-		this.conquerableStationsNextUpdate = conquerableStationNextUpdate;
 	}
 
 	public PriceDataSettings getPriceDataSettings() {

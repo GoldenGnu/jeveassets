@@ -324,14 +324,6 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		Element flagsElement = (Element) flagNodes.item(0);
 		parseFlags(flagsElement, settings);
 
-		//Updates
-		NodeList updateNodes = element.getElementsByTagName("updates");
-		if (updateNodes.getLength() != 1) {
-			throw new XmlException("Wrong updates element count.");
-		}
-		Element updatesElement = (Element) updateNodes.item(0);
-		parseUpdates(updatesElement, settings);
-
 		//Table Filters (Must be loaded before Asset Filters)
 		NodeList tablefiltersNodes = element.getElementsByTagName("tablefilters");
 		if (tablefiltersNodes.getLength() == 1) {
@@ -962,21 +954,6 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 			}
 		}
 		settings.cacheFlags();
-	}
-
-	private void parseUpdates(final Element element, final Settings settings) throws XmlException {
-		NodeList updateNodes = element.getElementsByTagName("update");
-		for (int i = 0; i < updateNodes.getLength(); i++) {
-			Element currentNode = (Element) updateNodes.item(i);
-			parseUpdate(currentNode, settings);
-		}
-	}
-	private void parseUpdate(final Element element, final Settings settings) throws XmlException {
-		String text = AttributeGetters.getString(element, "name");
-		Date nextUpdate = AttributeGetters.getDate(element, "nextupdate");
-		if (text.equals("conquerable station")) {
-			settings.setConquerableStationsNextUpdate(nextUpdate);
-		}
 	}
 
 	private void parseTableColumns(final Element element, final Settings settings) throws XmlException {

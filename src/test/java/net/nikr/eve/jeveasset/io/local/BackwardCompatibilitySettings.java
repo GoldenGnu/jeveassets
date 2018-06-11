@@ -66,7 +66,6 @@ public class BackwardCompatibilitySettings extends FakeSettings {
 		GET_TRACKER_DATA,
 		GET_USER_ITEM_NAMES,
 		GET_USER_PRICES,
-		SET_CONQUERABLE_STATIONS_NEXT_UPDATE,
 		SET_MAXIMUM_PURCHASE_AGE,
 		SET_PRICE_DATA_SETTINGS,
 		SET_PROXY_DATA,
@@ -256,11 +255,6 @@ public class BackwardCompatibilitySettings extends FakeSettings {
 	public Map<Integer, UserItem<Integer, Double>> getUserPrices() {
 		ok.put(Function.GET_USER_PRICES, true);
 		return new HashMap<Integer, UserItem<Integer, Double>>();
-	}
-
-	@Override
-	public void setConquerableStationsNextUpdate(final Date conquerableStationNextUpdate) {
-		ok.put(Function.SET_CONQUERABLE_STATIONS_NEXT_UPDATE, true);
 	}
 
 	@Override
