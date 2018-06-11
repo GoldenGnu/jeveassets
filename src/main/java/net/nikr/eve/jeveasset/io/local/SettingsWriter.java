@@ -116,7 +116,6 @@ public class SettingsWriter extends AbstractXmlWriter {
 		writeUserPrices(xmldoc, settings.getUserPrices());
 		writeUserItemNames(xmldoc, settings.getUserItemNames());
 		writeEveNames(xmldoc, settings.getEveNames());
-		writeUpdates(xmldoc, settings);
 		writeTableFilters(xmldoc, settings.getTableFilters());
 		writeTableColumns(xmldoc, settings.getTableColumns());
 		writeTableColumnsWidth(xmldoc, settings.getTableColumnsWidth());
@@ -548,18 +547,6 @@ public class SettingsWriter extends AbstractXmlWriter {
 			node.setAttributeNS(null, "enabled", String.valueOf(entry.getValue()));
 			parentNode.appendChild(node);
 		}
-	}
-
-	private void writeUpdates(final Document xmldoc, final Settings settings) {
-		Element parentNode = xmldoc.createElementNS(null, "updates");
-		xmldoc.getDocumentElement().appendChild(parentNode);
-
-		Element node;
-
-		node = xmldoc.createElementNS(null, "update");
-		node.setAttributeNS(null, "name", "conquerable station");
-		node.setAttributeNS(null, "nextupdate", String.valueOf(settings.getConquerableStationsNextUpdate().getTime()));
-		parentNode.appendChild(node);
 	}
 
 	private void writeProxy(final Document xmldoc, final ProxyData proxy) {
