@@ -51,7 +51,7 @@ public class EsiDeprecationOnlineTest extends TestUtil {
 	public void esiAccountBalanceGetterCharacter() {
 		WalletApi api = new WalletApi();
 		try {
-			api.getCharactersCharacterIdWallet(1, DATASOURCE, null, null, null, null);
+			api.getCharactersCharacterIdWallet(1, DATASOURCE, null, null);
 		} catch (ApiException ex) {
 
 		}
@@ -62,7 +62,7 @@ public class EsiDeprecationOnlineTest extends TestUtil {
 	public void esiAccountBalanceGetterCorporation() {
 		WalletApi api = new WalletApi();
 		try {
-			api.getCorporationsCorporationIdWallets(1, DATASOURCE, null, null, null, null);
+			api.getCorporationsCorporationIdWallets(1, DATASOURCE, null, null);
 		} catch (ApiException ex) {
 
 		}
@@ -73,7 +73,7 @@ public class EsiDeprecationOnlineTest extends TestUtil {
 	public void esiAssetsGetterCharacter() {
 		AssetsApi api = new AssetsApi();
 		try {
-			api.getCharactersCharacterIdAssets(1, DATASOURCE, null, null, null, null, null);
+			api.getCharactersCharacterIdAssets(1, DATASOURCE, null, null, null);
 		} catch (ApiException ex) {
 
 		}
@@ -84,7 +84,7 @@ public class EsiDeprecationOnlineTest extends TestUtil {
 	public void esiAssetsGetterCorporation() {
 		AssetsApi api = new AssetsApi();
 		try {
-			api.getCorporationsCorporationIdAssets(1, DATASOURCE, null, null, null, null, null);
+			api.getCorporationsCorporationIdAssets(1, DATASOURCE, null, null, null);
 		} catch (ApiException ex) {
 
 		}
@@ -95,7 +95,7 @@ public class EsiDeprecationOnlineTest extends TestUtil {
 	public void esiBlueprintsGetterCharacter() {
 		CharacterApi api = new CharacterApi();
 		try {
-			api.getCharactersCharacterIdBlueprints(1, DATASOURCE, null, null, null, null, null);
+			api.getCharactersCharacterIdBlueprints(1, DATASOURCE, null, null, null);
 		} catch (ApiException ex) {
 
 		}
@@ -106,7 +106,7 @@ public class EsiDeprecationOnlineTest extends TestUtil {
 	public void esiBlueprintsGetterCorporation() {
 		CorporationApi api = new CorporationApi();
 		try {
-			api.getCorporationsCorporationIdBlueprints(1, DATASOURCE, null, null, null, null, null);
+			api.getCorporationsCorporationIdBlueprints(1, DATASOURCE, null, null, null);
 		} catch (ApiException ex) {
 
 		}
@@ -117,7 +117,7 @@ public class EsiDeprecationOnlineTest extends TestUtil {
 	public void esiConquerableStationsGetter() {
 		SovereigntyApi api = new SovereigntyApi();
 		try {
-			api.getSovereigntyStructures(DATASOURCE, null, null, null);
+			api.getSovereigntyStructures(DATASOURCE, null);
 		} catch (ApiException ex) {
 
 		}
@@ -128,7 +128,7 @@ public class EsiDeprecationOnlineTest extends TestUtil {
 	public void esiContractItemsGetterCharacter() {
 		ContractsApi api = new ContractsApi();
 		try {
-			api.getCharactersCharacterIdContractsContractIdItems(1, 1, DATASOURCE, null, null, null, null);
+			api.getCharactersCharacterIdContractsContractIdItems(1, 1, DATASOURCE, null, null);
 		} catch (ApiException ex) {
 
 		}
@@ -139,7 +139,7 @@ public class EsiDeprecationOnlineTest extends TestUtil {
 	public void esiContractItemsGetterCorporation() {
 		ContractsApi api = new ContractsApi();
 		try {
-			api.getCorporationsCorporationIdContractsContractIdItems(1, 1, DATASOURCE, null, null, null, null);
+			api.getCorporationsCorporationIdContractsContractIdItems(1, 1, DATASOURCE, null, null);
 		} catch (ApiException ex) {
 
 		}
@@ -150,7 +150,7 @@ public class EsiDeprecationOnlineTest extends TestUtil {
 	public void esiContractsGetterCharacter() {
 		ContractsApi api = new ContractsApi();
 		try {
-			api.getCharactersCharacterIdContracts(1, DATASOURCE, null, null, null, null, null);
+			api.getCharactersCharacterIdContracts(1, DATASOURCE, null, null, null);
 		} catch (ApiException ex) {
 
 		}
@@ -161,7 +161,7 @@ public class EsiDeprecationOnlineTest extends TestUtil {
 	public void esiContractsGetterCorporation() {
 		ContractsApi api = new ContractsApi();
 		try {
-			api.getCorporationsCorporationIdContracts(1, DATASOURCE, null, null, null, null, null);
+			api.getCorporationsCorporationIdContracts(1, DATASOURCE, null, null, null);
 		} catch (ApiException ex) {
 
 		}
@@ -172,7 +172,7 @@ public class EsiDeprecationOnlineTest extends TestUtil {
 	public void esiIndustryJobsGetterCharacter() {
 		IndustryApi api = new IndustryApi();
 		try {
-			api.getCharactersCharacterIdIndustryJobs(1, DATASOURCE, null, true, null, null, null);
+			api.getCharactersCharacterIdIndustryJobs(1, DATASOURCE, null, true, null);
 		} catch (ApiException ex) {
 
 		}
@@ -183,7 +183,7 @@ public class EsiDeprecationOnlineTest extends TestUtil {
 	public void esiIndustryJobsGetterCorporation() {
 		IndustryApi api = new IndustryApi();
 		try {
-			api.getCorporationsCorporationIdIndustryJobs(1, DATASOURCE, null, true, null, null, null, null);
+			api.getCorporationsCorporationIdIndustryJobs(1, DATASOURCE, null, true, null, null);
 		} catch (ApiException ex) {
 
 		}
@@ -194,7 +194,7 @@ public class EsiDeprecationOnlineTest extends TestUtil {
 	public void esiJournalGetterCharacter() {
 		WalletApi api = new WalletApi();
 		try {
-			api.getCharactersCharacterIdWalletJournal(1, DATASOURCE, null, null, null, null, null);
+			api.getCharactersCharacterIdWalletJournal(1, DATASOURCE, null, null, null);
 		} catch (ApiException ex) {
 
 		}
@@ -205,7 +205,7 @@ public class EsiDeprecationOnlineTest extends TestUtil {
 	public void esiJournalGetterCorporation() {
 		WalletApi api = new WalletApi();
 		try {
-			api.getCorporationsCorporationIdWalletsDivisionJournal(1, 1, DATASOURCE, null, null, null, null, null);
+			api.getCorporationsCorporationIdWalletsDivisionJournal(1, 1, DATASOURCE, null, null, null);
 		} catch (ApiException ex) {
 
 		}
@@ -216,7 +216,7 @@ public class EsiDeprecationOnlineTest extends TestUtil {
 	public void esiLocationsGetterCharacter() {
 		AssetsApi api = new AssetsApi();
 		try {
-			api.postCharactersCharacterIdAssetsLocations(1, Collections.singletonList(1L), DATASOURCE, null, null, null);
+			api.postCharactersCharacterIdAssetsLocations(1, Collections.singletonList(1L), DATASOURCE, null);
 		} catch (ApiException ex) {
 
 		}
@@ -227,7 +227,7 @@ public class EsiDeprecationOnlineTest extends TestUtil {
 	public void esiLocationsGetterCorporation() {
 		AssetsApi api = new AssetsApi();
 		try {
-			api.postCorporationsCorporationIdAssetsNames(1, Collections.singletonList(1L), DATASOURCE, null, null, null);
+			api.postCorporationsCorporationIdAssetsNames(1, Collections.singletonList(1L), DATASOURCE, null);
 		} catch (ApiException ex) {
 
 		}
@@ -238,7 +238,7 @@ public class EsiDeprecationOnlineTest extends TestUtil {
 	public void esiMarketOrdersGetterCharacter() {
 		MarketApi api = new MarketApi();
 		try {
-			api.getCharactersCharacterIdOrders(1, DATASOURCE, null, null, null, null);
+			api.getCharactersCharacterIdOrders(1, DATASOURCE, null, null);
 		} catch (ApiException ex) {
 
 		}
@@ -249,7 +249,7 @@ public class EsiDeprecationOnlineTest extends TestUtil {
 	public void esiMarketOrdersHistoryGetterCharacter() {
 		MarketApi api = new MarketApi();
 		try {
-			api.getCharactersCharacterIdOrdersHistory(1, DATASOURCE, null, null, null, null, null);
+			api.getCharactersCharacterIdOrdersHistory(1, DATASOURCE, null, null, null);
 		} catch (ApiException ex) {
 
 		}
@@ -260,7 +260,7 @@ public class EsiDeprecationOnlineTest extends TestUtil {
 	public void esiMarketOrdersGetterCorporation() {
 		MarketApi api = new MarketApi();
 		try {
-			api.getCorporationsCorporationIdOrders(1, DATASOURCE, null, 1, null, null, null);
+			api.getCorporationsCorporationIdOrders(1, DATASOURCE, null, null, null);
 		} catch (ApiException ex) {
 
 		}
@@ -271,7 +271,7 @@ public class EsiDeprecationOnlineTest extends TestUtil {
 	public void esiMarketOrdersHistoryGetterCorporation() {
 		MarketApi api = new MarketApi();
 		try {
-			api.getCorporationsCorporationIdOrdersHistory(1, DATASOURCE, null, null, null, null, null);
+			api.getCorporationsCorporationIdOrdersHistory(1, DATASOURCE, null, null, null);
 		} catch (ApiException ex) {
 
 		}
@@ -282,7 +282,7 @@ public class EsiDeprecationOnlineTest extends TestUtil {
 	public void esiNameGetter() {
 		UniverseApi api = new UniverseApi();
 		try {
-			api.postUniverseNames(Collections.singletonList(1), DATASOURCE, null, null);
+			api.postUniverseNames(Collections.singletonList(1), DATASOURCE);
 		} catch (ApiException ex) {
 
 		}
@@ -293,7 +293,7 @@ public class EsiDeprecationOnlineTest extends TestUtil {
 	public void esiOwnerGetterCharacter() {
 		CharacterApi api = new CharacterApi();
 		try {
-			api.getCharactersCharacterId(1, DATASOURCE, null, null, null);
+			api.getCharactersCharacterId(1, DATASOURCE, null);
 		} catch (ApiException ex) {
 
 		}
@@ -303,7 +303,7 @@ public class EsiDeprecationOnlineTest extends TestUtil {
 	public void esiOwnerGetterCorporation() {
 		CorporationApi api = new CorporationApi();
 		try {
-			api.getCorporationsCorporationId(1, DATASOURCE, null, null, null);
+			api.getCorporationsCorporationId(1, DATASOURCE, null);
 		} catch (ApiException ex) {
 
 		}
@@ -314,7 +314,7 @@ public class EsiDeprecationOnlineTest extends TestUtil {
 	public void esiShipLocationGetter() {
 		LocationApi api = new LocationApi();
 		try {
-			api.getCharactersCharacterIdLocation(1, DATASOURCE, null, null, null, null);
+			api.getCharactersCharacterIdLocation(1, DATASOURCE, null, null);
 		} catch (ApiException ex) {
 
 		}
@@ -325,7 +325,7 @@ public class EsiDeprecationOnlineTest extends TestUtil {
 	public void esiShipTypeGetter() {
 		LocationApi api = new LocationApi();
 		try {
-			api.getCharactersCharacterIdShip(1, DATASOURCE, null, null, null, null);
+			api.getCharactersCharacterIdShip(1, DATASOURCE, null, null);
 		} catch (ApiException ex) {
 
 		}
@@ -336,7 +336,7 @@ public class EsiDeprecationOnlineTest extends TestUtil {
 	public void esiStructuresGetter() {
 		UniverseApi api = new UniverseApi();
 		try {
-			api.getUniverseStructuresStructureId(1L, DATASOURCE, null, null, null, null);
+			api.getUniverseStructuresStructureId(1L, DATASOURCE, null, null);
 		} catch (ApiException ex) {
 
 		}
@@ -347,7 +347,7 @@ public class EsiDeprecationOnlineTest extends TestUtil {
 	public void esiContainersLogsGetterCorporation() {
 		CorporationApi api = new CorporationApi();
 		try {
-			api.getCorporationsCorporationIdContainersLogs(1, DATASOURCE, null, null, null, null, null);
+			api.getCorporationsCorporationIdContainersLogs(1, DATASOURCE, null, null, null);
 		} catch (ApiException ex) {
 
 		}
@@ -358,7 +358,7 @@ public class EsiDeprecationOnlineTest extends TestUtil {
 	public void esiTransactionsGetterCharacter() {
 		WalletApi api = new WalletApi();
 		try {
-			api.getCharactersCharacterIdWalletTransactions(1, DATASOURCE, null, null, null, null, null);
+			api.getCharactersCharacterIdWalletTransactions(1, DATASOURCE, null, null, null);
 		} catch (ApiException ex) {
 
 		}
@@ -369,7 +369,7 @@ public class EsiDeprecationOnlineTest extends TestUtil {
 	public void esiTransactionsGetterCorporation() {
 		WalletApi api = new WalletApi();
 		try {
-			api.getCorporationsCorporationIdWalletsDivisionTransactions(1, 1, DATASOURCE, null, null, null, null, null);
+			api.getCorporationsCorporationIdWalletsDivisionTransactions(1, 1, DATASOURCE, null, null, null);
 		} catch (ApiException ex) {
 
 		}
@@ -380,7 +380,7 @@ public class EsiDeprecationOnlineTest extends TestUtil {
 	public void esiUiAutopilot() {
 		UserInterfaceApi api = new UserInterfaceApi();
 		try {
-			api.postUiAutopilotWaypoint(false, false, 1L, DATASOURCE, null, null, null);
+			api.postUiAutopilotWaypoint(false, false, 1L, DATASOURCE, null);
 		} catch (ApiException ex) {
 
 		}
@@ -391,7 +391,7 @@ public class EsiDeprecationOnlineTest extends TestUtil {
 	public void esiUiOpenWindowContract() {
 		UserInterfaceApi api = new UserInterfaceApi();
 		try {
-			api.postUiOpenwindowContract(1, DATASOURCE, null, null, null);
+			api.postUiOpenwindowContract(1, DATASOURCE, null);
 		} catch (ApiException ex) {
 
 		}
@@ -402,7 +402,7 @@ public class EsiDeprecationOnlineTest extends TestUtil {
 	public void esiUiOpenWindowInformation() {
 		UserInterfaceApi api = new UserInterfaceApi();
 		try {
-			api.postUiOpenwindowInformation(1, DATASOURCE, null, null, null);
+			api.postUiOpenwindowInformation(1, DATASOURCE, null);
 		} catch (ApiException ex) {
 
 		}
@@ -413,7 +413,7 @@ public class EsiDeprecationOnlineTest extends TestUtil {
 	public void esiUiOpenWindowMarketDetails() {
 		UserInterfaceApi api = new UserInterfaceApi();
 		try {
-			api.postUiOpenwindowMarketdetails(1, DATASOURCE, null, null, null);
+			api.postUiOpenwindowMarketdetails(1, DATASOURCE, null);
 		} catch (ApiException ex) {
 
 		}

@@ -24,8 +24,6 @@ import java.util.Date;
 import java.util.List;
 import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
-import static net.nikr.eve.jeveasset.io.esi.AbstractEsiGetter.DATASOURCE;
-import static net.nikr.eve.jeveasset.io.esi.AbstractEsiGetter.USER_AGENT;
 import net.troja.eve.esi.ApiClient;
 import net.troja.eve.esi.ApiException;
 import net.troja.eve.esi.model.CorporationContainersLogsResponse;
@@ -45,7 +43,7 @@ public class EsiContainerLogsGetter extends AbstractEsiGetter {
 		List<CorporationContainersLogsResponse> response = updatePages(DEFAULT_RETRIES, new EsiPagesHandler<CorporationContainersLogsResponse>() {
 			@Override
 			public List<CorporationContainersLogsResponse> get(ApiClient apiClient, Integer page) throws ApiException {
-				return getCorporationApiAuth(apiClient).getCorporationsCorporationIdContainersLogs((int)owner.getOwnerID(), DATASOURCE, null, page, null, USER_AGENT, null);
+				return getCorporationApiAuth(apiClient).getCorporationsCorporationIdContainersLogs((int)owner.getOwnerID(), DATASOURCE, null, page, null);
 			}
 		});
 		owner.setContainerLogs(EsiConverter.toContainersLogCorporation(response, owner));

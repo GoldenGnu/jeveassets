@@ -56,7 +56,7 @@ public class EsiNameGetter extends AbstractEsiGetter {
 			@Override
 			public List<UniverseNamesResponse> get(ApiClient apiClient, List<Integer> t) throws ApiException {
 				try {
-					return getUniverseApiOpen(apiClient).postUniverseNames(t, DATASOURCE, USER_AGENT, null);
+					return getUniverseApiOpen(apiClient).postUniverseNames(t, DATASOURCE);
 				} catch (ApiException ex) {
 					if (ex.getCode() == 404 && ex.getResponseBody().toLowerCase().contains("ensure all ids are valid before resolving")) {
 						return null; //Ignore this error we will use another endpoint instead
@@ -81,7 +81,7 @@ public class EsiNameGetter extends AbstractEsiGetter {
 				for (Integer i : k) {
 					list.add(i.longValue());
 				}
-				return getCharacterApiOpen(apiClient).getCharactersNames(list, DATASOURCE, null, USER_AGENT, null);
+				return getCharacterApiOpen(apiClient).getCharactersNames(list, DATASOURCE, null);
 			}
 		});
 		for (Map.Entry<List<Integer>, List<CharacterNamesResponse>> entry : retriesResponses.entrySet()) {
