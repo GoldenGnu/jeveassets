@@ -47,22 +47,22 @@ public class EsiMarketOrdersGetter extends AbstractEsiGetter {
 			List<CorporationOrdersResponse> marketOrders = updatePages(DEFAULT_RETRIES, new EsiPagesHandler<CorporationOrdersResponse>() {
 				@Override
 				public List<CorporationOrdersResponse> get(ApiClient apiClient, Integer page) throws ApiException {
-					return getMarketApiAuth(apiClient).getCorporationsCorporationIdOrders((int) owner.getOwnerID(), DATASOURCE, null, page, null, USER_AGENT, null);
+					return getMarketApiAuth(apiClient).getCorporationsCorporationIdOrders((int) owner.getOwnerID(), DATASOURCE, null, page, null);
 				}
 			});
 			List<CorporationOrdersHistoryResponse> marketOrdersHistory = updatePages(DEFAULT_RETRIES, new EsiPagesHandler<CorporationOrdersHistoryResponse>() {
 				@Override
 				public List<CorporationOrdersHistoryResponse> get(ApiClient apiClient, Integer page) throws ApiException {
-					return getMarketApiAuth(apiClient).getCorporationsCorporationIdOrdersHistory((int) owner.getOwnerID(), DATASOURCE, null, page, null, USER_AGENT, null);
+					return getMarketApiAuth(apiClient).getCorporationsCorporationIdOrdersHistory((int) owner.getOwnerID(), DATASOURCE, null, page, null);
 				}
 			});
 			owner.setMarketOrders(EsiConverter.toMarketOrdersCorporation(marketOrders, marketOrdersHistory, owner, saveHistory));
 		} else {
-			List<CharacterOrdersResponse> marketOrders = getMarketApiAuth(apiClient).getCharactersCharacterIdOrders((int) owner.getOwnerID(), DATASOURCE, null, null, USER_AGENT, null);
+			List<CharacterOrdersResponse> marketOrders = getMarketApiAuth(apiClient).getCharactersCharacterIdOrders((int) owner.getOwnerID(), DATASOURCE, null, null);
 			List<CharacterOrdersHistoryResponse> marketOrdersHistory = updatePages(DEFAULT_RETRIES, new EsiPagesHandler<CharacterOrdersHistoryResponse>() {
 				@Override
 				public List<CharacterOrdersHistoryResponse> get(ApiClient apiClient, Integer page) throws ApiException {
-					return getMarketApiAuth(apiClient).getCharactersCharacterIdOrdersHistory((int) owner.getOwnerID(), DATASOURCE, null, page, null, USER_AGENT, null);
+					return getMarketApiAuth(apiClient).getCharactersCharacterIdOrdersHistory((int) owner.getOwnerID(), DATASOURCE, null, page, null);
 				}
 			});
 			owner.setMarketOrders(EsiConverter.toMarketOrders(marketOrders, marketOrdersHistory, owner, saveHistory));

@@ -28,8 +28,6 @@ import net.troja.eve.esi.ApiClient;
 import net.troja.eve.esi.ApiException;
 import net.troja.eve.esi.model.CharacterWalletJournalResponse;
 import net.troja.eve.esi.model.CorporationWalletJournalResponse;
-import static net.nikr.eve.jeveasset.io.esi.AbstractEsiGetter.DATASOURCE;
-import static net.nikr.eve.jeveasset.io.esi.AbstractEsiGetter.USER_AGENT;
 
 
 public class EsiJournalGetter extends AbstractEsiGetter {
@@ -49,7 +47,7 @@ public class EsiJournalGetter extends AbstractEsiGetter {
 				List<CorporationWalletJournalResponse> journals = updatePages(DEFAULT_RETRIES, new EsiPagesHandler<CorporationWalletJournalResponse>() {
 					@Override
 					public List<CorporationWalletJournalResponse> get(ApiClient apiClient, Integer page) throws ApiException {
-						return getWalletApiAuth(apiClient).getCorporationsCorporationIdWalletsDivisionJournal((int) owner.getOwnerID(), division, DATASOURCE, null, page, null, USER_AGENT, null);
+						return getWalletApiAuth(apiClient).getCorporationsCorporationIdWalletsDivisionJournal((int) owner.getOwnerID(), division, DATASOURCE, null, page, null);
 					}
 				});
 				int fixedDivision = division + 999;
@@ -59,7 +57,7 @@ public class EsiJournalGetter extends AbstractEsiGetter {
 			List<CharacterWalletJournalResponse> journals = updatePages(DEFAULT_RETRIES, new EsiPagesHandler<CharacterWalletJournalResponse>() {
 				@Override
 				public List<CharacterWalletJournalResponse> get(ApiClient apiClient, Integer page) throws ApiException {
-					return getWalletApiAuth(apiClient).getCharactersCharacterIdWalletJournal((int) owner.getOwnerID(), DATASOURCE, null, page, null, USER_AGENT, null);
+					return getWalletApiAuth(apiClient).getCharactersCharacterIdWalletJournal((int) owner.getOwnerID(), DATASOURCE, null, page, null);
 				}
 			});
 			owner.setJournal(EsiConverter.toJournals(journals, owner, 1000, saveHistory));

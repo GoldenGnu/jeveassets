@@ -68,6 +68,9 @@ public class RawUtil {
 			if (value.getName().equals("locationFlag") && (raw.equals(RawAsset.class) || raw.equals(RawBlueprint.class))) {
 				continue;
 			}
+			if (value.getName().equals("isBlueprintCopy") && raw.equals(RawAsset.class)) { //Converted to quantity
+				continue;
+			}
 			if (value.getName().equals("accountKey") && (raw.equals(RawTransaction.class) || raw.equals(RawJournal.class))) {
 				continue;
 			}
@@ -116,6 +119,9 @@ public class RawUtil {
 				continue;
 			}
 			if (value.getName().equals("locationFlag") && (raw.equals(RawAsset.class) || raw.equals(RawBlueprint.class))) {
+				continue;
+			}
+			if (value.getName().equals("isBlueprintCopy") && raw.equals(RawAsset.class)) { //Converted to quantity
 				continue;
 			}
 			if (value.getName().equals("accountKey") && (raw.equals(RawTransaction.class) || raw.equals(RawJournal.class))) {
