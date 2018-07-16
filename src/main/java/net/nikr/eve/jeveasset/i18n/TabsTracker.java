@@ -125,6 +125,7 @@ public abstract class TabsTracker extends Bundle {
 	public abstract String to();
 	public abstract String today();
 	public abstract String total();
+	public abstract String unknownLocations();
 	public abstract String updateTitle();
 	public abstract String walletBalance();
 	public abstract String week1();
