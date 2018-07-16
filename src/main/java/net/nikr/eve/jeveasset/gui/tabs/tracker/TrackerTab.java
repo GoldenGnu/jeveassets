@@ -677,6 +677,7 @@ public class TrackerTab extends JMainTabSecondary {
 
 		//ASSETS - Make nodes for found asset IDs
 		CheckBoxNode assetNode = new CheckBoxNode(null, TabsTracker.get().assets(), TabsTracker.get().assets(), false);
+		CheckBoxNode unknownLocationsNode = new CheckBoxNode(assetNode, TabsTracker.get().unknownLocations(), TabsTracker.get().unknownLocations(), false);
 		
 		Map<String, CheckBoxNode> nodeCache = new HashMap<String, CheckBoxNode>();
 		for (AssetValue assetValue : assetsIDs) {
@@ -685,7 +686,11 @@ public class TrackerTab extends JMainTabSecondary {
 			String id = assetValue.getID();
 			CheckBoxNode locationNode = nodeCache.get(location);
 			if (locationNode == null) {
-				locationNode = new CheckBoxNode(assetNode, location, location, selectNode(location));
+				if (location.startsWith("[Unknown Location #")) {
+					locationNode = new CheckBoxNode(unknownLocationsNode, location, location, selectNode(location));
+				} else {
+					locationNode = new CheckBoxNode(assetNode, location, location, selectNode(location));
+				}
 				nodeCache.put(location, locationNode);
 			}
 
