@@ -607,7 +607,11 @@ public class ConverterTestUtil {
 			throw new RuntimeException("Option is null");
 		}
 		if (optional) {
-			return options.getNull(); //Optional, must handle null
+			if (type.equals(Boolean.class) || type.equals(boolean.class)) {
+				return false; //Optional boolean should default to false
+			} else {
+				return options.getNull(); //Optional, must handle null
+			}
 		} else if (type.equals(Integer.class) || type.equals(int.class)) {
 			return options.getInteger();
 		} else if (type.equals(Float.class) || type.equals(float.class)) {
