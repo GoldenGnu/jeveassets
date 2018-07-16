@@ -63,15 +63,13 @@ public class DataSetCreator {
 			for (List<Value> values : TrackerData.get().values()) {
 				for (Value value : values) {
 					List<AssetValue> assetValues = new ArrayList<>(value.getAssetsFilter().keySet()); //Copy to allow modification of original during the loop
-					for (AssetValue assetValue : assetValues) {
-						Long locationID = assetValue.getLocationID();
-						if (locationID != null &&
-								(
-								Settings.get().getAssetAdded().containsKey(locationID) //Confirmed asset AKA not a location, must be destroyed asset!
-								|| locationID > 9000000000000000000L //9e18 locations: https://github.com/ccpgames/esi-issues/issues/684
-								|| (locationID > 40000000 && locationID < 50000000) //Deleted PI structures: https://github.com/esi/esi-issues/issues/943
-								)
-								) {
+				for (AssetValue assetValue : assetValues) {
+					Long locationID = assetValue.getLocationID();
+					if (locationID != null &&
+							(locationID > 9000000000000000000L //9e18 locations: https://github.com/ccpgames/esi-issues/issues/684
+							|| (locationID > 40000000 && locationID < 50000000) //Deleted PI structures: https://github.com/esi/esi-issues/issues/943
+							)
+							) {
 							value.getAssetsFilter().remove(assetValue);
 							Settings.get().getTrackerFilters().remove(assetValue.getID());
 						}
