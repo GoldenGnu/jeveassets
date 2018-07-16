@@ -63,9 +63,7 @@ public class DataSetCreator {
 				for (AssetValue assetValue : assetValues) {
 					Long locationID = assetValue.getLocationID();
 					if (locationID != null &&
-							(
-							Settings.get().getAssetAdded().containsKey(locationID) //Confirmed asset AKA not a location, must be destroyed asset!
-							|| locationID > 9000000000000000000L //9e18 locations: https://github.com/ccpgames/esi-issues/issues/684
+							(locationID > 9000000000000000000L //9e18 locations: https://github.com/ccpgames/esi-issues/issues/684
 							|| (locationID > 40000000 && locationID < 50000000) //Deleted PI structures: https://github.com/esi/esi-issues/issues/943
 							)
 							) {
