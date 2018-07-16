@@ -55,10 +55,19 @@ public class MyLocation implements Comparable<MyLocation> {
 	}
 
 	private MyLocation(long locationID) {
-		this.location = General.get().emptyLocation(String.valueOf(locationID));
-		this.station = General.get().emptyLocation(String.valueOf(locationID));
-		this.system = General.get().emptyLocation(String.valueOf(locationID));
-		this.region = General.get().emptyLocation(String.valueOf(locationID));
+		if (locationID == 2004) {
+			this.location = General.get().assetSafety();
+			this.station = General.get().assetSafety();
+			this.system = General.get().assetSafety();
+			this.region = General.get().assetSafety();
+			this.empty = false;
+		} else {
+			this.location = General.get().emptyLocation(String.valueOf(locationID));
+			this.station = General.get().emptyLocation(String.valueOf(locationID));
+			this.system = General.get().emptyLocation(String.valueOf(locationID));
+			this.region = General.get().emptyLocation(String.valueOf(locationID));
+			this.empty = true;
+		}
 		this.locationID = locationID;
 		this.stationID = 0;
 		this.systemID = 0;
@@ -66,7 +75,6 @@ public class MyLocation implements Comparable<MyLocation> {
 		this.security = "0.0";
 		this.securityObject = Security.create(security);
 		this.citadel = false;
-		this.empty = true;
 		this.userLocation = false;
 	}
 
