@@ -2516,7 +2516,7 @@
     <row r="Molden Heath" ri="10000028" s="" se="0.5" si="0" sy="Fegomenko" syi="30002408"/>
     <row r="Molden Heath" ri="10000028" s="" se="0.2" si="0" sy="Osvetur" syi="30002409"/>
     <row r="Molden Heath" ri="10000028" s="" se="0.2" si="0" sy="Mimiror" syi="30002410"/>
-    <row r="Molden Heath" ri="10000028" s="" se="0.0" si="0" sy="Skarkon" syi="30002411"/>
+    <row r="Molden Heath" ri="10000028" s="" se="0.1" si="0" sy="Skarkon" syi="30002411"/>
     <row r="Molden Heath" ri="10000028" s="" se="0.1" si="0" sy="Ennur" syi="30002412"/>
     <row r="Molden Heath" ri="10000028" s="" se="0.3" si="0" sy="Unertek" syi="30002413"/>
     <row r="Molden Heath" ri="10000028" s="" se="0.3" si="0" sy="Klingt" syi="30002414"/>
@@ -2525,7 +2525,7 @@
     <row r="Molden Heath" ri="10000028" s="" se="0.4" si="0" sy="Kadlina" syi="30002417"/>
     <row r="Molden Heath" ri="10000028" s="" se="0.3" si="0" sy="Hegfunden" syi="30002418"/>
     <row r="Molden Heath" ri="10000028" s="" se="0.2" si="0" sy="Aeditide" syi="30002419"/>
-    <row r="Molden Heath" ri="10000028" s="" se="0.0" si="0" sy="Egbinger" syi="30002420"/>
+    <row r="Molden Heath" ri="10000028" s="" se="0.1" si="0" sy="Egbinger" syi="30002420"/>
     <row r="Geminate" ri="10000029" s="" se="0.0" si="0" sy="MR4-MY" syi="30002421"/>
     <row r="Geminate" ri="10000029" s="" se="0.0" si="0" sy="SR-KBB" syi="30002422"/>
     <row r="Geminate" ri="10000029" s="" se="0.0" si="0" sy="FDZ4-A" syi="30002423"/>
@@ -3925,9 +3925,9 @@
     <row r="Placid" ri="10000048" s="" se="0.6" si="0" sy="Ommaerrer" syi="30003817"/>
     <row r="Placid" ri="10000048" s="" se="0.1" si="0" sy="Aulbres" syi="30003818"/>
     <row r="Placid" ri="10000048" s="" se="0.1" si="0" sy="Barleguet" syi="30003819"/>
-    <row r="Placid" ri="10000048" s="" se="0.0" si="0" sy="Vestouve" syi="30003820"/>
+    <row r="Placid" ri="10000048" s="" se="0.1" si="0" sy="Vestouve" syi="30003820"/>
     <row r="Placid" ri="10000048" s="" se="0.1" si="0" sy="Ausmaert" syi="30003821"/>
-    <row r="Placid" ri="10000048" s="" se="0.0" si="0" sy="Espigoure" syi="30003822"/>
+    <row r="Placid" ri="10000048" s="" se="0.1" si="0" sy="Espigoure" syi="30003822"/>
     <row r="Placid" ri="10000048" s="" se="0.1" si="0" sy="Kenninck" syi="30003823"/>
     <row r="Placid" ri="10000048" s="" se="0.6" si="0" sy="Archavoinet" syi="30003824"/>
     <row r="Placid" ri="10000048" s="" se="0.4" si="0" sy="Eugales" syi="30003825"/>
@@ -4365,12 +4365,12 @@
     <row r="Aridia" ri="10000054" s="" se="0.1" si="0" sy="Hakatiz" syi="30004257"/>
     <row r="Aridia" ri="10000054" s="" se="0.1" si="0" sy="Khnar" syi="30004258"/>
     <row r="Aridia" ri="10000054" s="" se="0.1" si="0" sy="Ertoo" syi="30004259"/>
-    <row r="Aridia" ri="10000054" s="" se="0.0" si="0" sy="Yiratal" syi="30004260"/>
-    <row r="Aridia" ri="10000054" s="" se="0.0" si="0" sy="Balas" syi="30004261"/>
-    <row r="Aridia" ri="10000054" s="" se="0.0" si="0" sy="Pemsah" syi="30004262"/>
-    <row r="Aridia" ri="10000054" s="" se="0.0" si="0" sy="Feshur" syi="30004263"/>
+    <row r="Aridia" ri="10000054" s="" se="0.1" si="0" sy="Yiratal" syi="30004260"/>
+    <row r="Aridia" ri="10000054" s="" se="0.1" si="0" sy="Balas" syi="30004261"/>
+    <row r="Aridia" ri="10000054" s="" se="0.1" si="0" sy="Pemsah" syi="30004262"/>
+    <row r="Aridia" ri="10000054" s="" se="0.1" si="0" sy="Feshur" syi="30004263"/>
     <row r="Aridia" ri="10000054" s="" se="0.1" si="0" sy="Hoseen" syi="30004264"/>
-    <row r="Aridia" ri="10000054" s="" se="0.0" si="0" sy="Yekh" syi="30004265"/>
+    <row r="Aridia" ri="10000054" s="" se="0.1" si="0" sy="Yekh" syi="30004265"/>
     <row r="Aridia" ri="10000054" s="" se="0.1" si="0" sy="Gesh" syi="30004266"/>
     <row r="Aridia" ri="10000054" s="" se="0.3" si="0" sy="Nema" syi="30004267"/>
     <row r="Aridia" ri="10000054" s="" se="0.5" si="0" sy="Shenda" syi="30004268"/>
@@ -4404,17 +4404,17 @@
     <row r="Aridia" ri="10000054" s="" se="0.3" si="0" sy="Bapraya" syi="30004296"/>
     <row r="Aridia" ri="10000054" s="" se="0.1" si="0" sy="Efu" syi="30004297"/>
     <row r="Aridia" ri="10000054" s="" se="0.1" si="0" sy="Tisot" syi="30004298"/>
-    <row r="Aridia" ri="10000054" s="" se="0.0" si="0" sy="Sakht" syi="30004299"/>
-    <row r="Aridia" ri="10000054" s="" se="0.0" si="0" sy="Naga" syi="30004300"/>
-    <row r="Aridia" ri="10000054" s="" se="0.0" si="0" sy="Anath" syi="30004301"/>
+    <row r="Aridia" ri="10000054" s="" se="0.1" si="0" sy="Sakht" syi="30004299"/>
+    <row r="Aridia" ri="10000054" s="" se="0.1" si="0" sy="Naga" syi="30004300"/>
+    <row r="Aridia" ri="10000054" s="" se="0.1" si="0" sy="Anath" syi="30004301"/>
     <row r="Aridia" ri="10000054" s="" se="0.2" si="0" sy="Omigiav" syi="30004302"/>
     <row r="Aridia" ri="10000054" s="" se="0.2" si="0" sy="Fobiner" syi="30004303"/>
     <row r="Aridia" ri="10000054" s="" se="0.1" si="0" sy="Huna" syi="30004304"/>
     <row r="Aridia" ri="10000054" s="" se="0.1" si="0" sy="Esaeel" syi="30004305"/>
-    <row r="Aridia" ri="10000054" s="" se="0.0" si="0" sy="Karan" syi="30004306"/>
+    <row r="Aridia" ri="10000054" s="" se="0.1" si="0" sy="Karan" syi="30004306"/>
     <row r="Aridia" ri="10000054" s="" se="0.3" si="0" sy="Nouta" syi="30004307"/>
     <row r="Aridia" ri="10000054" s="" se="0.2" si="0" sy="Ned" syi="30004308"/>
-    <row r="Aridia" ri="10000054" s="" se="0.0" si="0" sy="Hophib" syi="30004309"/>
+    <row r="Aridia" ri="10000054" s="" se="0.1" si="0" sy="Hophib" syi="30004309"/>
     <row r="Branch" ri="10000055" s="" se="0.0" si="0" sy="UQ9-3C" syi="30004310"/>
     <row r="Branch" ri="10000055" s="" se="0.0" si="0" sy="DCI7-7" syi="30004311"/>
     <row r="Branch" ri="10000055" s="" se="0.0" si="0" sy="J7YR-1" syi="30004312"/>
@@ -8368,7 +8368,7 @@
     <row r="Molden Heath" ri="10000028" s="Klingt VII - Moon 2 - CBD Corporation Storage" se="0.3" si="60000076" sy="Klingt" syi="30002414"/>
     <row r="Molden Heath" ri="10000028" s="Weld IV - Moon 14 - CBD Corporation Storage" se="0.3" si="60000079" sy="Weld" syi="30002415"/>
     <row r="Molden Heath" ri="10000028" s="Klingt IV - Moon 1 - CBD Corporation Storage" se="0.3" si="60000082" sy="Klingt" syi="30002414"/>
-    <row r="Molden Heath" ri="10000028" s="Egbinger XI - Moon 3 - CBD Corporation Storage" se="0.0" si="60000085" sy="Egbinger" syi="30002420"/>
+    <row r="Molden Heath" ri="10000028" s="Egbinger XI - Moon 3 - CBD Corporation Storage" se="0.1" si="60000085" sy="Egbinger" syi="30002420"/>
     <row r="Molden Heath" ri="10000028" s="Klingt V - CBD Corporation Storage" se="0.3" si="60000088" sy="Klingt" syi="30002414"/>
     <row r="Molden Heath" ri="10000028" s="Klingt IX - Moon 3 - CBD Corporation Storage" se="0.3" si="60000091" sy="Klingt" syi="30002414"/>
     <row r="Metropolis" ri="10000042" s="Geffur VIII - Moon 10 - CBD Corporation Storage" se="0.7" si="60000094" sy="Geffur" syi="30003429"/>
@@ -9860,7 +9860,7 @@
     <row r="Molden Heath" ri="10000028" s="Teonusude VII - Moon 1 - Vherokior Tribe Treasury" se="0.6" si="60004552" sy="Teonusude" syi="30002385"/>
     <row r="Molden Heath" ri="10000028" s="Gelfiven IX - Moon 15 - Vherokior Tribe Bureau" se="0.6" si="60004555" sy="Gelfiven" syi="30002386"/>
     <row r="Molden Heath" ri="10000028" s="Gelfiven IX - Moon 8 - Vherokior Tribe Bureau" se="0.6" si="60004558" sy="Gelfiven" syi="30002386"/>
-    <row r="Molden Heath" ri="10000028" s="Egbinger XII - Moon 2 - Vherokior Tribe Treasury" se="0.0" si="60004561" sy="Egbinger" syi="30002420"/>
+    <row r="Molden Heath" ri="10000028" s="Egbinger XII - Moon 2 - Vherokior Tribe Treasury" se="0.1" si="60004561" sy="Egbinger" syi="30002420"/>
     <row r="Molden Heath" ri="10000028" s="Aeditide IV - Moon 1 - Vherokior Tribe Bureau" se="0.2" si="60004564" sy="Aeditide" syi="30002419"/>
     <row r="Molden Heath" ri="10000028" s="Klingt X - Moon 1 - Vherokior Tribe Bureau" se="0.3" si="60004567" sy="Klingt" syi="30002414"/>
     <row r="Molden Heath" ri="10000028" s="Eldulf VI - Moon 3 - Vherokior Tribe Academy" se="0.6" si="60004570" sy="Eldulf" syi="30002398"/>
@@ -9890,7 +9890,7 @@
     <row r="Metropolis" ri="10000042" s="Agtver VIII - Moon 2 - Republic Parliament Bureau" se="0.9" si="60004642" sy="Agtver" syi="30003404"/>
     <row r="Metropolis" ri="10000042" s="Evettullur VI - Moon 18 - Republic Parliament Bureau" se="0.8" si="60004645" sy="Evettullur" syi="30003408"/>
     <row r="Molden Heath" ri="10000028" s="Unertek IX - Moon 16 - Republic Parliament Bureau" se="0.3" si="60004648" sy="Unertek" syi="30002413"/>
-    <row r="Molden Heath" ri="10000028" s="Skarkon III - Moon 14 - Republic Parliament Bureau" se="0.0" si="60004651" sy="Skarkon" syi="30002411"/>
+    <row r="Molden Heath" ri="10000028" s="Skarkon III - Moon 14 - Republic Parliament Bureau" se="0.1" si="60004651" sy="Skarkon" syi="30002411"/>
     <row r="Molden Heath" ri="10000028" s="Ennur VIII - Moon 7 - Republic Parliament Treasury" se="0.1" si="60004654" sy="Ennur" syi="30002412"/>
     <row r="Molden Heath" ri="10000028" s="Ennur VIII - Moon 6 - Republic Parliament Treasury" se="0.1" si="60004657" sy="Ennur" syi="30002412"/>
     <row r="Metropolis" ri="10000042" s="Nein IV - Republic Parliament Bureau" se="0.5" si="60004660" sy="Nein" syi="30003423"/>
@@ -9963,7 +9963,7 @@
     <row r="Metropolis" ri="10000042" s="Lasleinur V - Moon 11 - Republic Fleet Assembly Plant" se="0.2" si="60004861" sy="Lasleinur" syi="30002065"/>
     <row r="Metropolis" ri="10000042" s="Ofstold V - Moon 13 - Republic Fleet Logistic Support" se="0.3" si="60004864" sy="Ofstold" syi="30002061"/>
     <row r="Metropolis" ri="10000042" s="Lasleinur II - Moon 3 - Republic Fleet Assembly Plant" se="0.2" si="60004867" sy="Lasleinur" syi="30002065"/>
-    <row r="Molden Heath" ri="10000028" s="Egbinger XI - Moon 3 - Republic Fleet Testing Facilities" se="0.0" si="60004870" sy="Egbinger" syi="30002420"/>
+    <row r="Molden Heath" ri="10000028" s="Egbinger XI - Moon 3 - Republic Fleet Testing Facilities" se="0.1" si="60004870" sy="Egbinger" syi="30002420"/>
     <row r="Molden Heath" ri="10000028" s="Hegfunden IV - Moon 1 - Republic Fleet Assembly Plant" se="0.3" si="60004873" sy="Hegfunden" syi="30002418"/>
     <row r="Molden Heath" ri="10000028" s="Weld III - Moon 6 - Republic Fleet Logistic Support" se="0.3" si="60004876" sy="Weld" syi="30002415"/>
     <row r="Molden Heath" ri="10000028" s="Klingt III - Republic Fleet Assembly Plant" se="0.3" si="60004879" sy="Klingt" syi="30002414"/>
@@ -10127,9 +10127,9 @@
     <row r="Molden Heath" ri="10000028" s="Gelfiven X - Moon 4 - Minmatar Mining Corporation Refinery" se="0.6" si="60005353" sy="Gelfiven" syi="30002386"/>
     <row r="Molden Heath" ri="10000028" s="Gulfonodi VIII - Moon 6 - Minmatar Mining Corporation Refinery" se="0.5" si="60005356" sy="Gulfonodi" syi="30002384"/>
     <row r="Molden Heath" ri="10000028" s="Weld VI - Moon 1 - Minmatar Mining Corporation Refinery" se="0.3" si="60005359" sy="Weld" syi="30002415"/>
-    <row r="Molden Heath" ri="10000028" s="Egbinger IX - Moon 8 - Minmatar Mining Corporation Mining Outpost" se="0.0" si="60005362" sy="Egbinger" syi="30002420"/>
+    <row r="Molden Heath" ri="10000028" s="Egbinger IX - Moon 8 - Minmatar Mining Corporation Mining Outpost" se="0.1" si="60005362" sy="Egbinger" syi="30002420"/>
     <row r="Molden Heath" ri="10000028" s="Weld III - Moon 5 - Minmatar Mining Corporation Mineral Reserve" se="0.3" si="60005365" sy="Weld" syi="30002415"/>
-    <row r="Molden Heath" ri="10000028" s="Egbinger III - Moon 1 - Minmatar Mining Corporation Mining Outpost" se="0.0" si="60005368" sy="Egbinger" syi="30002420"/>
+    <row r="Molden Heath" ri="10000028" s="Egbinger III - Moon 1 - Minmatar Mining Corporation Mining Outpost" se="0.1" si="60005368" sy="Egbinger" syi="30002420"/>
     <row r="Molden Heath" ri="10000028" s="Weld IV - Moon 9 - Minmatar Mining Corporation Mining Outpost" se="0.3" si="60005371" sy="Weld" syi="30002415"/>
     <row r="Molden Heath" ri="10000028" s="Weld IV - Moon 10 - Minmatar Mining Corporation Mineral Reserve" se="0.3" si="60005374" sy="Weld" syi="30002415"/>
     <row r="Metropolis" ri="10000042" s="Aldrat IX - Moon 13 - Minmatar Mining Corporation Mineral Reserve" se="0.6" si="60005377" sy="Aldrat" syi="30003416"/>
@@ -10564,7 +10564,7 @@
     <row r="Aridia" ri="10000054" s="Omigiav IV - Moon 12 - Zoar and Sons Warehouse" se="0.2" si="60006664" sy="Omigiav" syi="30004302"/>
     <row r="Aridia" ri="10000054" s="Efu V - Moon 19 - Zoar and Sons Factory" se="0.1" si="60006667" sy="Efu" syi="30004297"/>
     <row r="Aridia" ri="10000054" s="Efu V - Moon 18 - Zoar and Sons Factory" se="0.1" si="60006670" sy="Efu" syi="30004297"/>
-    <row r="Aridia" ri="10000054" s="Sakht VI - Moon 6 - Zoar and Sons Factory" se="0.0" si="60006673" sy="Sakht" syi="30004299"/>
+    <row r="Aridia" ri="10000054" s="Sakht VI - Moon 6 - Zoar and Sons Factory" se="0.1" si="60006673" sy="Sakht" syi="30004299"/>
     <row r="Kor-Azor" ri="10000065" s="Khabara VI - Moon 7 - Zoar and Sons Factory" se="0.3" si="60006676" sy="Khabara" syi="30005032"/>
     <row r="Kor-Azor" ri="10000065" s="Jeni IX - Moon 17 - Zoar and Sons Warehouse" se="0.3" si="60006679" sy="Jeni" syi="30005033"/>
     <row r="Kor-Azor" ri="10000065" s="Fensi VII - Moon 10 - Zoar and Sons Factory" se="0.4" si="60006682" sy="Fensi" syi="30005030"/>
@@ -10672,8 +10672,8 @@
     <row r="Genesis" ri="10000067" s="Angur III - Moon 1 - Inherent Implants Biotech Production" se="0.2" si="60006988" sy="Angur" syi="30005264"/>
     <row r="Domain" ri="10000043" s="Hayumtom XII - Moon 1 - Inherent Implants Biotech Research Center" se="0.5" si="60006991" sy="Hayumtom" syi="30003542"/>
     <row r="Domain" ri="10000043" s="Faswiba IX - Moon 1 - Inherent Implants Biotech Production" se="0.4" si="60006994" sy="Faswiba" syi="30003541"/>
-    <row r="Aridia" ri="10000054" s="Balas I - Moon 2 - Inherent Implants Biotech Production" se="0.0" si="60006997" sy="Balas" syi="30004261"/>
-    <row r="Aridia" ri="10000054" s="Balas I - Moon 11 - Inherent Implants Biotech Production" se="0.0" si="60007000" sy="Balas" syi="30004261"/>
+    <row r="Aridia" ri="10000054" s="Balas I - Moon 2 - Inherent Implants Biotech Production" se="0.1" si="60006997" sy="Balas" syi="30004261"/>
+    <row r="Aridia" ri="10000054" s="Balas I - Moon 11 - Inherent Implants Biotech Production" se="0.1" si="60007000" sy="Balas" syi="30004261"/>
     <row r="Kor-Azor" ri="10000065" s="Leva IX - Moon 5 - Imperial Shipment Storage" se="0.6" si="60007003" sy="Leva" syi="30005039"/>
     <row r="Kor-Azor" ri="10000065" s="Nakregde VII - Moon 1 - Imperial Shipment Storage" se="0.8" si="60007006" sy="Nakregde" syi="30005043"/>
     <row r="Kor-Azor" ri="10000065" s="Nishah VI - Moon 14 - Imperial Shipment Storage" se="0.6" si="60007009" sy="Nishah" syi="30005040"/>
@@ -10909,7 +10909,7 @@
     <row r="Domain" ri="10000043" s="Vashkah IV - Moon 2 - Further Foodstuffs Food Packaging" se="0.7" si="60007699" sy="Vashkah" syi="30002230"/>
     <row r="Tash-Murkon" ri="10000020" s="Emrayur III - Moon 1 - Royal Amarr Institute School" se="1.0" si="60007702" sy="Emrayur" syi="30001672"/>
     <row r="Aridia" ri="10000054" s="Fihrneh VI - Moon 1 - Royal Amarr Institute School" se="0.1" si="60007705" sy="Fihrneh" syi="30004254"/>
-    <row r="Aridia" ri="10000054" s="Karan VIII - Royal Amarr Institute School" se="0.0" si="60007708" sy="Karan" syi="30004306"/>
+    <row r="Aridia" ri="10000054" s="Karan VIII - Royal Amarr Institute School" se="0.1" si="60007708" sy="Karan" syi="30004306"/>
     <row r="The Bleak Lands" ri="10000038" s="Komaa V - Royal Amarr Institute School" se="0.6" si="60007711" sy="Komaa" syi="30003092"/>
     <row r="Genesis" ri="10000067" s="Noranim IV - Moon 16 - Royal Amarr Institute School" se="0.3" si="60007714" sy="Noranim" syi="30005236"/>
     <row r="Aridia" ri="10000054" s="Hier V - Royal Amarr Institute School" se="0.4" si="60007717" sy="Hier" syi="30004240"/>
@@ -10989,10 +10989,10 @@
     <row r="Aridia" ri="10000054" s="Esubara I - Moon 13 - Ministry of War Bureau Offices" se="0.2" si="60007939" sy="Esubara" syi="30004287"/>
     <row r="Aridia" ri="10000054" s="Esubara I - Moon 15 - Ministry of War Bureau Offices" se="0.2" si="60007942" sy="Esubara" syi="30004287"/>
     <row r="Aridia" ri="10000054" s="Nalnifan VI - Moon 3 - Ministry of War Information Center" se="0.3" si="60007945" sy="Nalnifan" syi="30004280"/>
-    <row r="Aridia" ri="10000054" s="Hophib XII - Ministry of War Archives" se="0.0" si="60007948" sy="Hophib" syi="30004309"/>
+    <row r="Aridia" ri="10000054" s="Hophib XII - Ministry of War Archives" se="0.1" si="60007948" sy="Hophib" syi="30004309"/>
     <row r="Aridia" ri="10000054" s="Ned IV - Ministry of War Archives" se="0.2" si="60007951" sy="Ned" syi="30004308"/>
     <row r="Aridia" ri="10000054" s="Huna VI - Moon 17 - Ministry of War Archives" se="0.1" si="60007954" sy="Huna" syi="30004304"/>
-    <row r="Aridia" ri="10000054" s="Hophib VI - Moon 3 - Ministry of War Archives" se="0.0" si="60007957" sy="Hophib" syi="30004309"/>
+    <row r="Aridia" ri="10000054" s="Hophib VI - Moon 3 - Ministry of War Archives" se="0.1" si="60007957" sy="Hophib" syi="30004309"/>
     <row r="Kador" ri="10000052" s="Joramok VI - Moon 14 - Ministry of War Archives" se="0.8" si="60007960" sy="Joramok" syi="30004088"/>
     <row r="Kador" ri="10000052" s="Aband IV - Moon 12 - Ministry of War Archives" se="0.5" si="60007963" sy="Aband" syi="30004090"/>
     <row r="Kador" ri="10000052" s="Ghesis IV - Moon 17 - Ministry of War Information Center" se="0.5" si="60007966" sy="Ghesis" syi="30004084"/>
@@ -11303,9 +11303,9 @@
     <row r="Tash-Murkon" ri="10000020" s="Hibi VI - Moon 5 - Civic Court Tribunal" se="0.5" si="60008881" sy="Hibi" syi="30001662"/>
     <row r="Tash-Murkon" ri="10000020" s="Chamume V - Moon 7 - Civic Court Accounting" se="0.3" si="60008884" sy="Chamume" syi="30001664"/>
     <row r="Tash-Murkon" ri="10000020" s="Yong VII - Moon 6 - Civic Court Accounting" se="0.3" si="60008887" sy="Yong" syi="30001668"/>
-    <row r="Aridia" ri="10000054" s="Hophib III - Civic Court Law School" se="0.0" si="60008890" sy="Hophib" syi="30004309"/>
+    <row r="Aridia" ri="10000054" s="Hophib III - Civic Court Law School" se="0.1" si="60008890" sy="Hophib" syi="30004309"/>
     <row r="Aridia" ri="10000054" s="Huna III - Civic Court Law School" se="0.1" si="60008893" sy="Huna" syi="30004304"/>
-    <row r="Aridia" ri="10000054" s="Hophib VI - Moon 2 - Civic Court Law School" se="0.0" si="60008896" sy="Hophib" syi="30004309"/>
+    <row r="Aridia" ri="10000054" s="Hophib VI - Moon 2 - Civic Court Law School" se="0.1" si="60008896" sy="Hophib" syi="30004309"/>
     <row r="Aridia" ri="10000054" s="Fobiner VII - Moon 13 - Civic Court Tribunal" se="0.2" si="60008899" sy="Fobiner" syi="30004303"/>
     <row r="Devoid" ri="10000036" s="Ibash V - Moon 7 - Civic Court Accounting" se="0.2" si="60008902" sy="Ibash" syi="30002984"/>
     <row r="Devoid" ri="10000036" s="Rahadalon VI - Moon 3 - Civic Court Accounting" se="0.4" si="60008905" sy="Rahadalon" syi="30002982"/>
@@ -11904,7 +11904,7 @@
     <row r="Genesis" ri="10000067" s="Heorah VI - Moon 17 - The Scope Development Studio" se="0.5" si="60010684" sy="Heorah" syi="30005290"/>
     <row r="Genesis" ri="10000067" s="Heorah VI - Moon 14 - The Scope Publisher" se="0.5" si="60010687" sy="Heorah" syi="30005290"/>
     <row r="Aridia" ri="10000054" s="Fihrneh VI - Moon 5 - The Scope Development Studio" se="0.1" si="60010690" sy="Fihrneh" syi="30004254"/>
-    <row r="Aridia" ri="10000054" s="Yiratal VIII - Moon 4 - The Scope Publisher" se="0.0" si="60010693" sy="Yiratal" syi="30004260"/>
+    <row r="Aridia" ri="10000054" s="Yiratal VIII - Moon 4 - The Scope Publisher" se="0.1" si="60010693" sy="Yiratal" syi="30004260"/>
     <row r="Domain" ri="10000043" s="Faswiba VII - Moon 4 - The Scope Development Studio" se="0.4" si="60010696" sy="Faswiba" syi="30003541"/>
     <row r="Domain" ri="10000043" s="Faswiba VIII - Moon 3 - The Scope Publisher" se="0.4" si="60010699" sy="Faswiba" syi="30003541"/>
     <row r="Heimatar" ri="10000030" s="Gerbold III - Moon 2 - The Scope Development Studio" se="0.8" si="60010702" sy="Gerbold" syi="30002533"/>
@@ -12086,9 +12086,9 @@
     <row r="Genesis" ri="10000067" s="Korridi III - Aliastra Retail Center" se="0.3" si="60011230" sy="Korridi" syi="30005258"/>
     <row r="Genesis" ri="10000067" s="Itrin V - Moon 7 - Aliastra Warehouse" se="0.4" si="60011233" sy="Itrin" syi="30005256"/>
     <row r="Genesis" ri="10000067" s="Itrin V - Moon 19 - Aliastra Retail Center" se="0.4" si="60011236" sy="Itrin" syi="30005256"/>
-    <row r="Placid" ri="10000048" s="Espigoure VIII - Moon 5 - Aliastra Warehouse" se="0.0" si="60011239" sy="Espigoure" syi="30003822"/>
+    <row r="Placid" ri="10000048" s="Espigoure VIII - Moon 5 - Aliastra Warehouse" se="0.1" si="60011239" sy="Espigoure" syi="30003822"/>
     <row r="Placid" ri="10000048" s="Aulbres X - Aliastra Warehouse" se="0.1" si="60011242" sy="Aulbres" syi="30003818"/>
-    <row r="Placid" ri="10000048" s="Vestouve IX - Moon 11 - Aliastra Warehouse" se="0.0" si="60011245" sy="Vestouve" syi="30003820"/>
+    <row r="Placid" ri="10000048" s="Vestouve IX - Moon 11 - Aliastra Warehouse" se="0.1" si="60011245" sy="Vestouve" syi="30003820"/>
     <row r="Placid" ri="10000048" s="Ausmaert VIII - Moon 1 - Aliastra Warehouse" se="0.1" si="60011248" sy="Ausmaert" syi="30003821"/>
     <row r="Genesis" ri="10000067" s="Shalne VII - Moon 1 - Aliastra Retail Center" se="0.3" si="60011251" sy="Shalne" syi="30005270"/>
     <row r="Genesis" ri="10000067" s="Olin IV - Moon 3 - Aliastra Warehouse" se="0.3" si="60011254" sy="Olin" syi="30005272"/>
@@ -12264,8 +12264,8 @@
     <row r="Solitude" ri="10000044" s="Sarline VII - Moon 16 - Federation Navy Assembly Plant" se="0.4" si="60011764" sy="Sarline" syi="30003584"/>
     <row r="Solitude" ri="10000044" s="Gererique VI - Moon 3 - Federation Navy Testing Facilities" se="0.7" si="60011767" sy="Gererique" syi="30003586"/>
     <row r="Placid" ri="10000048" s="Aulbres VI - Moon 5 - Federation Navy Logistic Support" se="0.1" si="60011770" sy="Aulbres" syi="30003818"/>
-    <row r="Placid" ri="10000048" s="Vestouve VIII - Moon 13 - Federation Navy Logistic Support" se="0.0" si="60011773" sy="Vestouve" syi="30003820"/>
-    <row r="Placid" ri="10000048" s="Vestouve IX - Moon 14 - Federation Navy Logistic Support" se="0.0" si="60011776" sy="Vestouve" syi="30003820"/>
+    <row r="Placid" ri="10000048" s="Vestouve VIII - Moon 13 - Federation Navy Logistic Support" se="0.1" si="60011773" sy="Vestouve" syi="30003820"/>
+    <row r="Placid" ri="10000048" s="Vestouve IX - Moon 14 - Federation Navy Logistic Support" se="0.1" si="60011776" sy="Vestouve" syi="30003820"/>
     <row r="Placid" ri="10000048" s="Barleguet VII - Moon 9 - Federation Navy Assembly Plant" se="0.1" si="60011779" sy="Barleguet" syi="30003819"/>
     <row r="Placid" ri="10000048" s="Aulbres V - Moon 5 - Federation Navy Assembly Plant" se="0.1" si="60011782" sy="Aulbres" syi="30003818"/>
     <row r="Placid" ri="10000048" s="Barleguet VII - Federation Navy Assembly Plant" se="0.1" si="60011785" sy="Barleguet" syi="30003819"/>
@@ -12481,8 +12481,8 @@
     <row r="Khanid" ri="10000049" s="Ipref II - Moon 1 - CONCORD Assembly Plant" se="0.9" si="60012415" sy="Ipref" syi="30003861"/>
     <row r="Molden Heath" ri="10000028" s="Klingt III - CONCORD Bureau" se="0.3" si="60012418" sy="Klingt" syi="30002414"/>
     <row r="Molden Heath" ri="10000028" s="Aeditide V - CONCORD Bureau" se="0.2" si="60012421" sy="Aeditide" syi="30002419"/>
-    <row r="Molden Heath" ri="10000028" s="Egbinger XII - CONCORD Academy" se="0.0" si="60012424" sy="Egbinger" syi="30002420"/>
-    <row r="Molden Heath" ri="10000028" s="Egbinger V - CONCORD Treasury" se="0.0" si="60012427" sy="Egbinger" syi="30002420"/>
+    <row r="Molden Heath" ri="10000028" s="Egbinger XII - CONCORD Academy" se="0.1" si="60012424" sy="Egbinger" syi="30002420"/>
+    <row r="Molden Heath" ri="10000028" s="Egbinger V - CONCORD Treasury" se="0.1" si="60012427" sy="Egbinger" syi="30002420"/>
     <row r="Molden Heath" ri="10000028" s="Klingt VIII - CONCORD Logistic Support" se="0.3" si="60012430" sy="Klingt" syi="30002414"/>
     <row r="Molden Heath" ri="10000028" s="Klingt IX - CONCORD Assembly Plant" se="0.3" si="60012433" sy="Klingt" syi="30002414"/>
     <row r="Placid" ri="10000048" s="Barleguet IV - Moon 2 - CONCORD Bureau" se="0.1" si="60012436" sy="Barleguet" syi="30003819"/>
@@ -12725,8 +12725,8 @@
     <row r="The Forge" ri="10000002" s="Kiainti VII - Genolution Biotech Production" se="0.5" si="60013147" sy="Kiainti" syi="30000189"/>
     <row r="The Forge" ri="10000002" s="Vasala VI - Moon 10 - Genolution Biotech Production" se="0.5" si="60013150" sy="Vasala" syi="30000190"/>
     <row r="Aridia" ri="10000054" s="Tisot V - Moon 1 - Genolution Biotech Production" se="0.1" si="60013153" sy="Tisot" syi="30004298"/>
-    <row r="Aridia" ri="10000054" s="Naga X - Moon 16 - Genolution Biotech Production" se="0.0" si="60013156" sy="Naga" syi="30004300"/>
-    <row r="Aridia" ri="10000054" s="Sakht VI - Moon 7 - Genolution Biotech Production" se="0.0" si="60013159" sy="Sakht" syi="30004299"/>
+    <row r="Aridia" ri="10000054" s="Naga X - Moon 16 - Genolution Biotech Production" se="0.1" si="60013156" sy="Naga" syi="30004300"/>
+    <row r="Aridia" ri="10000054" s="Sakht VI - Moon 7 - Genolution Biotech Production" se="0.1" si="60013159" sy="Sakht" syi="30004299"/>
     <row r="Aridia" ri="10000054" s="Efu V - Moon 1 - Genolution Biotech Production" se="0.1" si="60013162" sy="Efu" syi="30004297"/>
     <row r="Tash-Murkon" ri="10000020" s="Yasud VI - Moon 18 - Genolution Biotech Production" se="0.6" si="60013165" sy="Yasud" syi="30001713"/>
     <row r="Tash-Murkon" ri="10000020" s="Asezai I - Moon 1 - Genolution Biotech Production" se="0.6" si="60013168" sy="Asezai" syi="30001708"/>
