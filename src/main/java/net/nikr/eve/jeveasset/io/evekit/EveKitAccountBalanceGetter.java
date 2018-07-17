@@ -34,11 +34,11 @@ import net.nikr.eve.jeveasset.io.evekit.AbstractEveKitGetter.EveKitPagesHandler;
 public class EveKitAccountBalanceGetter extends AbstractEveKitGetter implements EveKitPagesHandler<AccountBalance>{
 
 	public EveKitAccountBalanceGetter(UpdateTask updateTask, EveKitOwner owner, boolean first) {
-		super(updateTask, owner, false, owner.getBalanceNextUpdate(), TaskType.ACCOUNT_BALANCE, first, null);
+		super(updateTask, owner, true, owner.getBalanceNextUpdate(), TaskType.ACCOUNT_BALANCE, first, null);
 	}
 
 	public EveKitAccountBalanceGetter(UpdateTask updateTask, EveKitOwner owner, Long at) {
-		super(updateTask, owner, false, owner.getBalanceNextUpdate(), TaskType.ACCOUNT_BALANCE, false, at);
+		super(updateTask, owner, true, owner.getBalanceNextUpdate(), TaskType.ACCOUNT_BALANCE, false, at);
 	}
 
 	public EveKitAccountBalanceGetter(UpdateTask updateTask, EveKitOwner owner) {

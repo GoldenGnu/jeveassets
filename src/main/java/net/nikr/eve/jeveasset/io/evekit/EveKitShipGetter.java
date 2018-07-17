@@ -38,7 +38,7 @@ import net.nikr.eve.jeveasset.io.shared.RawConverter;
 public class EveKitShipGetter extends AbstractEveKitGetter {
 
 	public EveKitShipGetter(UpdateTask updateTask, EveKitOwner owner, Long at) {
-		super(updateTask, owner, false, owner.getAssetNextUpdate(), TaskType.SHIP, false, at);
+		super(updateTask, owner, true, owner.getAssetNextUpdate(), TaskType.SHIP, false, at);
 	}
 
 	public EveKitShipGetter(UpdateTask updateTask, EveKitOwner owner) {
