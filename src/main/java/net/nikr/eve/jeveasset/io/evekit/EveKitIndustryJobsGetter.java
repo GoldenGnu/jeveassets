@@ -46,11 +46,11 @@ public class EveKitIndustryJobsGetter extends AbstractEveKitGetter implements Ev
 	private Runs run;
 
 	public EveKitIndustryJobsGetter(UpdateTask updateTask, EveKitOwner owner, boolean first) {
-		super(updateTask, owner, false, owner.getIndustryJobsNextUpdate(), TaskType.INDUSTRY_JOBS, first, null);
+		super(updateTask, owner, true, owner.getIndustryJobsNextUpdate(), TaskType.INDUSTRY_JOBS, first, null);
 		runs.add(Runs.ALL);
 	}
 	public EveKitIndustryJobsGetter(UpdateTask updateTask, EveKitOwner owner, Long at) {
-		super(updateTask, owner, false, owner.getIndustryJobsNextUpdate(), TaskType.INDUSTRY_JOBS, false, at);
+		super(updateTask, owner, true, owner.getIndustryJobsNextUpdate(), TaskType.INDUSTRY_JOBS, false, at);
 		runs.add(Runs.ALL);
 	}
 	public EveKitIndustryJobsGetter(UpdateTask updateTask, EveKitOwner owner) {

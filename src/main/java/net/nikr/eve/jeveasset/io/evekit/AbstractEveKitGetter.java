@@ -42,7 +42,8 @@ import net.nikr.eve.jeveasset.io.shared.ThreadWoker.TaskCancelledException;
 
 
 public abstract class AbstractEveKitGetter extends AbstractGetter<EveKitOwner, ApiClient, ApiException> {
-	
+
+	protected static final int DEFAULT_RETRIES = 3;
 	private boolean invalid = false;
 	private Date lifeStart = null;
 	private final boolean first;
@@ -109,7 +110,12 @@ public abstract class AbstractEveKitGetter extends AbstractGetter<EveKitOwner, A
 			return r;
 		} catch (ApiException ex) {
 			logError(updater.getStatus(), ex.getMessage(), ex.getMessage());
-			throw ex;
+			if (retries < DEFAULT_RETRIES) {
+				retries++;
+				return updateApi(updater, retries);
+			} else {
+				throw ex;
+			}
 		}
 	}
 

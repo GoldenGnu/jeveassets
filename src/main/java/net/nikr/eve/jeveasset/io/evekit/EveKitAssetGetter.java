@@ -34,11 +34,11 @@ import net.nikr.eve.jeveasset.io.evekit.AbstractEveKitGetter.EveKitPagesHandler;
 public class EveKitAssetGetter extends AbstractEveKitGetter implements EveKitPagesHandler<Asset> {
 
 	public EveKitAssetGetter(UpdateTask updateTask, EveKitOwner owner, boolean first) {
-		super(updateTask, owner, false, owner.getAssetNextUpdate(), TaskType.ASSETS, first, null);
+		super(updateTask, owner, true, owner.getAssetNextUpdate(), TaskType.ASSETS, first, null);
 	}
 
 	public EveKitAssetGetter(UpdateTask updateTask, EveKitOwner owner, Long at) {
-		super(updateTask, owner, false, owner.getAssetNextUpdate(), TaskType.ASSETS, false, at);
+		super(updateTask, owner, true, owner.getAssetNextUpdate(), TaskType.ASSETS, false, at);
 	}
 
 	public EveKitAssetGetter(UpdateTask updateTask, EveKitOwner owner) {
@@ -64,7 +64,7 @@ public class EveKitAssetGetter extends AbstractEveKitGetter implements EveKitPag
 	@Override
 	public List<Asset> get(ApiClient apiClient, String at, Long contid, Integer maxResults) throws ApiException {
 		return getCommonApi(apiClient).getAssets(owner.getAccessKey(), owner.getAccessCred(), at, contid, maxResults, false,
-				null, null, null, null, null, null, null, null);
+				null, null, null, null, null, null, null, null, null);
 	}
 
 	@Override
