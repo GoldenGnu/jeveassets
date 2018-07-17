@@ -47,12 +47,12 @@ public class EveKitContractsGetter extends AbstractEveKitGetter implements EveKi
 	private Runs run;
 
 	public EveKitContractsGetter(UpdateTask updateTask, EveKitOwner owner, boolean first) {
-		super(updateTask, owner, false, owner.getContractsNextUpdate(), TaskType.CONTRACTS, first, null);
+		super(updateTask, owner, true, owner.getContractsNextUpdate(), TaskType.CONTRACTS, first, null);
 		runs.add(Runs.ALL);
 	}
 
 	public EveKitContractsGetter(UpdateTask updateTask, EveKitOwner owner, Long at) {
-		super(updateTask, owner, false, owner.getContractsNextUpdate(), TaskType.CONTRACTS, false, at);
+		super(updateTask, owner, true, owner.getContractsNextUpdate(), TaskType.CONTRACTS, false, at);
 		runs.add(Runs.ALL);
 	}
 

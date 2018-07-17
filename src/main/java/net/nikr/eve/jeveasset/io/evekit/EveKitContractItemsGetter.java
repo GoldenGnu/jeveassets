@@ -44,7 +44,7 @@ public class EveKitContractItemsGetter extends AbstractEveKitGetter implements E
 	private final Map<Integer, MyContract> contracts = new HashMap<Integer, MyContract>();
 
 	public EveKitContractItemsGetter(UpdateTask updateTask, EveKitOwner owner) {
-		super(updateTask, owner, false, Settings.getNow(), TaskType.CONTRACT_ITEMS, false, null);
+		super(updateTask, owner, true, Settings.getNow(), TaskType.CONTRACT_ITEMS, false, null);
 	}
 
 	@Override

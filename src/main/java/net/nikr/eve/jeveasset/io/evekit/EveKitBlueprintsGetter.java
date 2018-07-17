@@ -37,11 +37,11 @@ import net.nikr.eve.jeveasset.io.evekit.AbstractEveKitGetter.EveKitPagesHandler;
 public class EveKitBlueprintsGetter extends AbstractEveKitGetter implements EveKitPagesHandler<Blueprint> {
 
 	public EveKitBlueprintsGetter(UpdateTask updateTask, EveKitOwner owner, boolean first) {
-		super(updateTask, owner, false, owner.getBlueprintsNextUpdate(), TaskType.BLUEPRINTS, first, null);
+		super(updateTask, owner, true, owner.getBlueprintsNextUpdate(), TaskType.BLUEPRINTS, first, null);
 	}
 
 	public EveKitBlueprintsGetter(UpdateTask updateTask, EveKitOwner owner, Long at) {
-		super(updateTask, owner, false, owner.getBlueprintsNextUpdate(), TaskType.BLUEPRINTS, false, at);
+		super(updateTask, owner, true, owner.getBlueprintsNextUpdate(), TaskType.BLUEPRINTS, false, at);
 	}
 
 	public EveKitBlueprintsGetter(UpdateTask updateTask, EveKitOwner owner) {
