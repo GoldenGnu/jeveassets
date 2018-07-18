@@ -485,6 +485,7 @@ public class ProfileData {
 			} else { //Sell
 				order.setLastTransaction(transactionPriceDataBuy.get(order.getTypeID()));
 			}
+			order.setIssuedByName(ApiIdConverter.getOwnerName(order.getIssuedBy()));
 		}
 
 		//Update IndustryJobs dynamic values
