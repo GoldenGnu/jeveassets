@@ -49,6 +49,7 @@ import net.nikr.eve.jeveasset.data.profile.ProfileData;
 import net.nikr.eve.jeveasset.data.profile.ProfileManager;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
 import net.nikr.eve.jeveasset.data.sde.StaticData;
+import net.nikr.eve.jeveasset.data.settings.AssetAddedData;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.data.settings.TrackerData;
 import net.nikr.eve.jeveasset.data.settings.tag.TagUpdate;
@@ -180,6 +181,7 @@ public class Program implements ActionListener {
 		StaticData.load();
 		Settings.load();
 		TrackerData.load();
+		AssetAddedData.load();
 
 		updater = new Updater();
 		localData = updater.getLocalData();
@@ -445,7 +447,7 @@ public class Program implements ActionListener {
 				}
 			});
 		}
-		boolean saveSettings = false;
+		boolean assetAddedDataChanged = false;
 		if (itemIDs != null) {
 			profileData.updateNames(itemIDs);
 		} else if (locationIDs != null) {
@@ -453,7 +455,7 @@ public class Program implements ActionListener {
 		} else if (typeIDs != null) {
 			profileData.updatePrice(typeIDs);
 		} else {
-			saveSettings = profileData.updateEventLists();
+			assetAddedDataChanged = profileData.updateEventLists();
 		}
 		if (locationIDs != null) { //Update locations
 			for (JMainTab jMainTab : mainWindow.getTabs()) {
@@ -522,8 +524,8 @@ public class Program implements ActionListener {
 				updateTableMenu();
 			}
 		});
-		if (saveSettings) {
-			saveSettings("Asset Added Date"); //Save Asset Added Date
+		if (assetAddedDataChanged) {
+			AssetAddedData.save("Added");
 		}
 	}
 
@@ -666,11 +668,6 @@ public class Program implements ActionListener {
 	public TreeTab getTreeTab() {
 		return treeTab;
 	}
-
-	public TrackerTab getTrackerTab() {
-		return trackerTab;
-	}
-
 	public StatusPanel getStatusPanel() {
 		return this.getMainWindow().getStatusPanel();
 	}

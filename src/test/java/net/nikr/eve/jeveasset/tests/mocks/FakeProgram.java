@@ -254,11 +254,6 @@ public abstract class FakeProgram extends Program {
 	}
 
 	@Override
-	public TrackerTab getTrackerTab() {
-		throw new UnsupportedOperationException("Not implemented");
-	}
-
-	@Override
 	public List<MyJournal> getJournalList() {
 		throw new UnsupportedOperationException("Not implemented");
 	}

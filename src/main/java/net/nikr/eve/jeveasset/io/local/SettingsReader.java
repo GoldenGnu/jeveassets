@@ -35,6 +35,7 @@ import java.util.Set;
 import java.util.TreeMap;
 import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
+import net.nikr.eve.jeveasset.data.settings.AssetAddedData;
 import net.nikr.eve.jeveasset.data.settings.ExportSettings.DecimalSeparator;
 import net.nikr.eve.jeveasset.data.settings.ExportSettings.ExportFormat;
 import net.nikr.eve.jeveasset.data.settings.ExportSettings.FieldDelimiter;
@@ -1316,7 +1317,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 			Element currentNode = (Element) assetNodes.item(i);
 			Long itemID = AttributeGetters.getLong(currentNode, "itemid");
 			Date date = AttributeGetters.getDate(currentNode, "date");
-			settings.getAssetAdded().put(itemID, date);
+			AssetAddedData.put(itemID, date);
 		}
 	}
 }

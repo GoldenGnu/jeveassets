@@ -66,6 +66,7 @@ public class Settings {
 
 	private static final Logger LOG = LoggerFactory.getLogger(Settings.class);
 
+	private static final String PATH_ASSET_ADDED = "data" + File.separator + "added.json";
 	private static final String PATH_TRACKER_DATA = "data" + File.separator + "tracker.json";
 	private static final String PATH_SETTINGS = "data" + File.separator + "settings.xml";
 	private static final String PATH_ITEMS = "data" + File.separator + "items.xml";
@@ -129,9 +130,6 @@ public class Settings {
 	//Eve Item Name				Saved by TaskDialog.update() (on API update)
 	//Lock ???
 	private Map<Long, String> eveNames = new HashMap<Long, String>();
-	//!! - Assets				Saved by Program.updateEventLists() if needed
-	//Lock OK
-	private final Map<Long, Date> assetAdded = new HashMap<Long, Date>();
 //!! - Stockpile				Saved by StockpileTab.removeItems() / addStockpile() / removeStockpile()
 	//							Could be more selective...
 	//Lock FAIL!!!
@@ -484,10 +482,6 @@ public class Settings {
 		return tableFilters.get(key);
 	}
 
-	public Map<Long, Date> getAssetAdded() {
-		return assetAdded;
-	}
-
 	public Map<String, List<SimpleColumn>> getTableColumns() {
 		return tableColumns;
 	}
@@ -791,6 +785,10 @@ public class Settings {
 
 	public static String getPathTrackerData() {
 		return FileUtil.getLocalFile(Settings.PATH_TRACKER_DATA, !Program.isPortable());
+	}
+
+	public static String getPathAssetAdded() {
+		return FileUtil.getLocalFile(Settings.PATH_ASSET_ADDED, !Program.isPortable());
 	}
 
 	public static String getPathConquerableStations() {

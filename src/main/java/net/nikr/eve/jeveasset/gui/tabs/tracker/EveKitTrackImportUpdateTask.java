@@ -237,7 +237,7 @@ public class EveKitTrackImportUpdateTask extends UpdateTask {
 				break;
 			}
 			//Update data
-			profile.updateEventLists();
+			profile.updateEventLists(date);
 			//Create Tracker point
 			DataSetCreator.createTrackerDataPoint(profile, date);
 			//Update Progress

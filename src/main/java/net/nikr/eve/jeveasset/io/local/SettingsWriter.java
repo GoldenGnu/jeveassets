@@ -23,10 +23,10 @@ package net.nikr.eve.jeveasset.io.local;
 
 import java.io.File;
 import java.net.Proxy;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import net.nikr.eve.jeveasset.data.settings.AssetAddedData;
 import net.nikr.eve.jeveasset.data.settings.ExportSettings;
 import net.nikr.eve.jeveasset.data.settings.PriceDataSettings;
 import net.nikr.eve.jeveasset.data.settings.ProxyData;
@@ -64,8 +64,11 @@ public class SettingsWriter extends AbstractXmlWriter {
 	private SettingsWriter() { }
 
 	public static boolean save(final Settings settings) {
-		if (!new File(Settings.getPathTrackerData()).exists()) { //Make sure the track data is saved
+		if (!new File(Settings.getPathTrackerData()).exists()) { //Make sure the tracker data is saved
 			TrackerData.save("Saving Settings", true);
+		}
+		if (!new File(Settings.getPathAssetAdded()).exists()) { //Make sure the asset added data is saved
+			AssetAddedData.save("Saving Settings", true);
 		}
 		SettingsWriter writer = new SettingsWriter();
 		return writer.write(settings);
@@ -125,7 +128,6 @@ public class SettingsWriter extends AbstractXmlWriter {
 		writeTablesResize(xmldoc, settings.getTableResize());
 		writeTablesViews(xmldoc, settings.getTableViews());
 		writeExportSettings(xmldoc, settings.getExportSettings());
-		writeAssetAdded(xmldoc, settings.getAssetAdded());
 		writeTrackerNotes(xmldoc, settings.getTrackerNotes());
 		writeTrackerFilters(xmldoc, settings.getTrackerFilters(), settings.isTrackerSelectNew());
 		writeOwners(xmldoc, settings.getOwners());
@@ -562,17 +564,6 @@ public class SettingsWriter extends AbstractXmlWriter {
 				columnNode.setAttributeNS(null, "name", column);
 				nameNode.appendChild(columnNode);
 			}
-		}
-	}
-
-	private void writeAssetAdded(Document xmldoc, Map<Long, Date> assetAdded) {
-		Element assetaddedNode = xmldoc.createElementNS(null, "assetadded");
-		xmldoc.getDocumentElement().appendChild(assetaddedNode);
-		for (Map.Entry<Long, Date> entry : assetAdded.entrySet()) {
-			Element assetNode = xmldoc.createElementNS(null, "asset");
-			assetNode.setAttributeNS(null, "itemid", String.valueOf(entry.getKey()));
-			assetNode.setAttributeNS(null, "date", String.valueOf(entry.getValue().getTime()));
-			assetaddedNode.appendChild(assetNode);
 		}
 	}
 }
