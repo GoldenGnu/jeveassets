@@ -36,7 +36,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
-public class TrackerDataWriter extends AbstractXmlBackup {
+public class TrackerDataWriter extends AbstractBackup {
+
 	private static final Logger LOG = LoggerFactory.getLogger(TrackerDataWriter.class);
 
 	public static void save() {

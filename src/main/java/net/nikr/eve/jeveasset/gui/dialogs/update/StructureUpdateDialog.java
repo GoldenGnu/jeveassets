@@ -238,11 +238,9 @@ public class StructureUpdateDialog extends JDialogCentered {
 			@Override
 			public void tasksCompleted(TaskDialog taskDialog) {
 				//Update tracker locations
-				AssetValue.updateData();
+				AssetValue.updateData(); //Change and save tracker data
 				//Update eventlists
 				program.updateEventLists();
-				//Save settings after updating (if we crash later)
-				program.saveSettingsAndProfile();
 			}
 		});
 	}

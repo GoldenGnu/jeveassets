@@ -33,8 +33,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
-public abstract class AbstractXmlBackup {
-	private static final Logger LOG = LoggerFactory.getLogger(AbstractXmlBackup.class);
+public abstract class AbstractBackup {
+	private static final Logger LOG = LoggerFactory.getLogger(AbstractBackup.class);
 
 	protected boolean exist(final String filename) {
 		return new File(filename).exists() //.xml

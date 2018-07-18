@@ -291,11 +291,6 @@ public abstract class FakeSettings extends Settings {
 	}
 
 	@Override
-	public Map<Long, Date> getAssetAdded() {
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	@Override
 	public Map<Long, String> getOwners() {
 		throw new UnsupportedOperationException("not implemented");
 	}

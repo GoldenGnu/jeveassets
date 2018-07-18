@@ -49,6 +49,7 @@ import net.nikr.eve.jeveasset.data.sde.Jump;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
 import net.nikr.eve.jeveasset.data.sde.ReprocessedMaterial;
 import net.nikr.eve.jeveasset.data.sde.StaticData;
+import net.nikr.eve.jeveasset.data.settings.AssetAddedData;
 import net.nikr.eve.jeveasset.data.settings.MarketPriceData;
 import net.nikr.eve.jeveasset.data.settings.PriceData;
 import net.nikr.eve.jeveasset.data.settings.Settings;
@@ -97,7 +98,7 @@ public class ProfileData {
 	private Map<Integer, MarketPriceData> transactionPriceDataBuy; //TypeID : int
 	private final List<String> ownerNames = new ArrayList<String>();
 	private final Map<Long, OwnerType> owners = new HashMap<Long, OwnerType>();
-	private boolean saveSettings = false;
+	private boolean assetAddedDataChanged = false;
 	private final Graph graph;
 	private final Map<Long, SolarSystem> systemCache;
 	private final Map<Long, Map<Long, Integer>> distance = new HashMap<Long, Map<Long, Integer>>();
@@ -362,7 +363,11 @@ public class ProfileData {
 	}
 
 	public boolean updateEventLists() {
-		saveSettings = false;
+		return updateEventLists(new Date());
+	}
+
+	public boolean updateEventLists(Date assetAddedData) {
+		assetAddedDataChanged = false;
 		uniqueAssetsDuplicates = new HashMap<Integer, List<MyAsset>>();
 		Set<String> uniqueOwnerNames = new HashSet<String>();
 		Map<Long, OwnerType> uniqueOwners = new HashMap<Long, OwnerType>();
@@ -537,17 +542,17 @@ public class ProfileData {
 			@Override
 			public void run() {
 				//Add Market Orders to Assets
-				addAssets(DataConverter.assetMarketOrder(marketOrders, Settings.get().isIncludeSellOrders(), Settings.get().isIncludeBuyOrders()), assets, blueprints);
+				addAssets(DataConverter.assetMarketOrder(marketOrders, Settings.get().isIncludeSellOrders(), Settings.get().isIncludeBuyOrders()), assets, blueprints, assetAddedData);
 
 				//Add Industry Jobs to Assets
-				addAssets(DataConverter.assetIndustryJob(industryJobs, Settings.get().isIncludeManufacturing()), assets, blueprints);
+				addAssets(DataConverter.assetIndustryJob(industryJobs, Settings.get().isIncludeManufacturing()), assets, blueprints, assetAddedData);
 
 				//Add Contract Items to Assets
-				addAssets(DataConverter.assetContracts(contractItems, uniqueOwners, Settings.get().isIncludeSellContracts(), Settings.get().isIncludeBuyContracts()), assets, blueprints);
+				addAssets(DataConverter.assetContracts(contractItems, uniqueOwners, Settings.get().isIncludeSellContracts(), Settings.get().isIncludeBuyContracts()), assets, blueprints, assetAddedData);
 
 				//Add Assets to Assets
 				for (List<MyAsset> list : assetsMap.values()) {
-					addAssets(list, assets, blueprints);
+					addAssets(list, assets, blueprints, assetAddedData);
 				}
 			}
 		});
@@ -691,7 +696,7 @@ public class ProfileData {
 		Collections.sort(ownerNames, new CaseInsensitiveComparator());
 		owners.clear();
 		owners.putAll(uniqueOwners);
-		return saveSettings;
+		return assetAddedDataChanged;
 	}
 
 	public static <T extends MyAsset> void updateNames(EventList<T> eventList, Set<Long> itemIDs) {
@@ -909,7 +914,7 @@ public class ProfileData {
 		data.update(transaction.getPrice(), transaction.getDate());
 	}
 
-	private void addAssets(final List<MyAsset> assets, List<MyAsset> addTo, Map<Long, RawBlueprint> blueprints) {
+	private void addAssets(final List<MyAsset> assets, List<MyAsset> addTo, Map<Long, RawBlueprint> blueprints, Date assetAddedData) {
 		for (MyAsset asset : assets) {
 			//XXX Ignore 9e18 locations: https://github.com/ccpgames/esi-issues/issues/684
 			if (asset.getLocationID() > 9000000000000000000L) {
@@ -926,16 +931,10 @@ public class ProfileData {
 			Tags tags = Settings.get().getTags(asset.getTagID());
 			asset.setTags(tags);
 			//Date added
-			if (Settings.get().getAssetAdded().containsKey(asset.getItemID())) {
-				asset.setAdded(Settings.get().getAssetAdded().get(asset.getItemID()));
-			} else {
-				Date date = new Date();
-				Settings.lock("Asset Added Date"); //Lock for Asset Added
-				Settings.get().getAssetAdded().put(asset.getItemID(), date);
-				Settings.unlock("Asset Added Date"); //Unlock for Asset Added
-				saveSettings = true;
-				asset.setAdded(date);
+			if (!assetAddedDataChanged && !AssetAddedData.containsKey(asset.getItemID())) {
+				assetAddedDataChanged = true;
 			}
+			asset.setAdded(AssetAddedData.getAdd(asset.getItemID(), assetAddedData));
 			//Price
 			updatePrice(asset);
 			//Reprocessed price
@@ -995,7 +994,7 @@ public class ProfileData {
 			//Add asset
 			addTo.add(asset);
 			//Add sub-assets
-			addAssets(asset.getAssets(), addTo, blueprints);
+			addAssets(asset.getAssets(), addTo, blueprints, assetAddedData);
 		}
 	}
 

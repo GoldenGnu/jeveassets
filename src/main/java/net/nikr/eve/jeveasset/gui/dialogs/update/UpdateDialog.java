@@ -621,7 +621,7 @@ public class UpdateDialog extends JDialogCentered {
 							//Create value tracker point
 							program.createTrackerDataPoint();
 							//Save settings after updating (if we crash later)
-							program.saveSettingsAndProfile();
+							program.saveSettingsAndProfile(); //Save updated id<->name data
 							//Resume structure update
 							program.getStatusPanel().setPauseUpdates(false);
 						}

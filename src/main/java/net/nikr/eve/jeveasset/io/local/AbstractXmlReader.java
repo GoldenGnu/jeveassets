@@ -35,7 +35,7 @@ import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
 
 
-public abstract class AbstractXmlReader<T> extends AbstractXmlBackup {
+public abstract class AbstractXmlReader<T> extends AbstractBackup {
 
 	private static final Logger LOG = LoggerFactory.getLogger(AbstractXmlReader.class);
 
