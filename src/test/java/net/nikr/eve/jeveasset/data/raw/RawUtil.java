@@ -89,6 +89,9 @@ public class RawUtil {
 			if (value.getName().equals("walletDivision") && raw.equals(RawMarketOrder.class)) { //accountId in character endpoint / walletDivision in corporation endpoint
 				continue;
 			}
+			if (value.getName().equals("issuedBy") && raw.equals(RawMarketOrder.class)) { //Only in corporation endpoint
+				continue;
+			}
 			if (value.getName().equals("isCorp") && raw.equals(RawMarketOrder.class)) { //Only in character endpoint
 				continue;
 			}
@@ -146,6 +149,9 @@ public class RawUtil {
 				continue;
 			}
 			if (value.getName().equals("isCorporation") && raw.equals(RawMarketOrder.class)) { //Only in character endpoint
+				continue;
+			}
+			if (value.getName().equals("issuedBy") && raw.equals(RawMarketOrder.class)) { //Only in corporation endpoint
 				continue;
 			}
 			if (value.getName().equals("state") && raw.equals(RawMarketOrder.class)) { //Only in history endpoints

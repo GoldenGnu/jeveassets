@@ -113,6 +113,7 @@ public class MyMarketOrder extends RawMarketOrder implements Comparable<MyMarket
 	private double lastTransactionPrice;
 	private double lastTransactionValue;
 	private Percent lastTransactionPercent;
+	private String issuedByName = "";
 
 	public MyMarketOrder(final RawMarketOrder rawMarketOrder, final Item item, final OwnerType owner) {
 		super(rawMarketOrder);
@@ -264,6 +265,14 @@ public class MyMarketOrder extends RawMarketOrder implements Comparable<MyMarket
 
 	public String getRangeFormated() {
 		return rangeFormated;
+	}
+
+	public String getIssuedByName() {
+		return issuedByName;
+	}
+
+	public void setIssuedByName(String issuedByName) {
+		this.issuedByName = issuedByName;
 	}
 
 	public OwnerType getOwner() {
