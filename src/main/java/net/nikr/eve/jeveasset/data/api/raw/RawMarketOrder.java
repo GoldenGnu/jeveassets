@@ -100,6 +100,7 @@ public class RawMarketOrder {
 	private Boolean isBuyOrder = null;
 	private Boolean isCorp = null;
 	private Date issued = null;
+	private Integer issuedBy = null;
 	private Long locationId = null;
 	private Integer minVolume = null;
 	private Long orderId = null;
@@ -133,6 +134,7 @@ public class RawMarketOrder {
 		isBuyOrder = marketOrder.isBuyOrder;
 		isCorp = marketOrder.isCorp;
 		issued = marketOrder.issued;
+		issuedBy = marketOrder.issuedBy;
 		locationId = marketOrder.locationId;
 		minVolume = marketOrder.minVolume;
 		orderId = marketOrder.orderId;
@@ -157,6 +159,7 @@ public class RawMarketOrder {
 		isBuyOrder = RawConverter.toBoolean(marketOrder.getIsBuyOrder());
 		isCorp = marketOrder.getIsCorporation();
 		issued = RawConverter.toDate(marketOrder.getIssued());
+		issuedBy = null;
 		locationId = marketOrder.getLocationId();
 		minVolume = RawConverter.toInteger(marketOrder.getMinVolume(), 0);
 		orderId = marketOrder.getOrderId();
@@ -181,6 +184,7 @@ public class RawMarketOrder {
 		isBuyOrder = RawConverter.toBoolean(marketOrder.getIsBuyOrder());
 		isCorp = marketOrder.getIsCorporation();
 		issued = RawConverter.toDate(marketOrder.getIssued());
+		issuedBy = null;
 		locationId = marketOrder.getLocationId();
 		minVolume = RawConverter.toInteger(marketOrder.getMinVolume(), 0);
 		orderId = marketOrder.getOrderId();
@@ -205,6 +209,7 @@ public class RawMarketOrder {
 		isBuyOrder = RawConverter.toBoolean(marketOrder.getIsBuyOrder());
 		isCorp = true;
 		issued = RawConverter.toDate(marketOrder.getIssued());
+		issuedBy = marketOrder.getIssuedBy();
 		locationId = marketOrder.getLocationId();
 		minVolume = RawConverter.toInteger(marketOrder.getMinVolume(), 0);
 		orderId = marketOrder.getOrderId();
@@ -229,6 +234,7 @@ public class RawMarketOrder {
 		isBuyOrder = RawConverter.toBoolean(marketOrder.getIsBuyOrder());
 		isCorp = true;
 		issued = RawConverter.toDate(marketOrder.getIssued());
+		issuedBy = marketOrder.getIssuedBy();
 		locationId = marketOrder.getLocationId();
 		minVolume = RawConverter.toInteger(marketOrder.getMinVolume(), 0);
 		orderId = marketOrder.getOrderId();
@@ -253,6 +259,11 @@ public class RawMarketOrder {
 		isBuyOrder = marketOrder.getBid();
 		isCorp = marketOrder.getCorp();
 		issued = RawConverter.toDate(marketOrder.getIssuedDate());
+		if (marketOrder.getIssuedBy() > 0) {
+			issuedBy = marketOrder.getIssuedBy();
+		} else {
+			issuedBy = null;
+		}
 		locationId = marketOrder.getLocationID();
 		minVolume = RawConverter.toInteger(marketOrder.getMinVolume(), 0);
 		orderId = marketOrder.getOrderID();
@@ -311,6 +322,14 @@ public class RawMarketOrder {
 
 	public void setIssued(Date issued) {
 		this.issued = issued;
+	}
+
+	public Integer getIssuedBy() {
+		return issuedBy;
+	}
+
+	public void setIssuedBy(Integer issuedBy) {
+		this.issuedBy = issuedBy;
 	}
 
 	public long getLocationID() {

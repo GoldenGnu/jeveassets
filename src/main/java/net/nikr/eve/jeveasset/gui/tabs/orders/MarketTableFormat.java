@@ -145,6 +145,16 @@ public enum MarketTableFormat implements EnumTableColumn<MyMarketOrder> {
 			return from.getOwnerName();
 		}
 	},
+	ISSUED_BY(String.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsOrders.get().columnIssuedBy();
+		}
+		@Override
+		public Object getColumnValue(final MyMarketOrder from) {
+			return from.getIssuedByName();
+		}
+	},
 	LOCATION(String.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {

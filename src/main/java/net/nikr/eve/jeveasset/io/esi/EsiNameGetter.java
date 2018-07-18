@@ -20,7 +20,6 @@
  */
 package net.nikr.eve.jeveasset.io.esi;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -30,13 +29,13 @@ import net.nikr.eve.jeveasset.data.api.accounts.OwnerType;
 import net.nikr.eve.jeveasset.data.api.my.MyContract;
 import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob;
 import net.nikr.eve.jeveasset.data.api.my.MyJournal;
+import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder;
 import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 import net.troja.eve.esi.ApiClient;
 import net.troja.eve.esi.ApiException;
-import net.troja.eve.esi.model.CharacterNamesResponse;
 import net.troja.eve.esi.model.UniverseNamesResponse;
 
 
@@ -74,19 +73,23 @@ public class EsiNameGetter extends AbstractEsiGetter {
 			}
 			retries.removeAll(entry.getKey());
 		}
-		Map<List<Integer>, List<CharacterNamesResponse>> retriesResponses = updateList(splitList(retries, UNIVERSE_BATCH_SIZE), DEFAULT_RETRIES, new ListHandler<List<Integer>, List<CharacterNamesResponse>>() {
+		Map<List<Integer>, List<UniverseNamesResponse>> retryResponses = updateList(splitList(retries, 1), NO_RETRIES, new ListHandler<List<Integer>, List<UniverseNamesResponse>>() {
 			@Override
-			public List<CharacterNamesResponse> get(ApiClient apiClient, List<Integer> k) throws ApiException {
-				List<Long> list = new ArrayList<Long>();
-				for (Integer i : k) {
-					list.add(i.longValue());
+			public List<UniverseNamesResponse> get(ApiClient apiClient, List<Integer> t) throws ApiException {
+				try {
+					return getUniverseApiOpen(apiClient).postUniverseNames(t, DATASOURCE);
+				} catch (ApiException ex) {
+					if (ex.getCode() == 404 && ex.getResponseBody().toLowerCase().contains("ensure all ids are valid before resolving")) {
+						return null; //Ignore this error we will use another endpoint instead
+					} else {
+						throw ex;
+					}
 				}
-				return getCharacterApiOpen(apiClient).getCharactersNames(list, DATASOURCE, null);
 			}
 		});
-		for (Map.Entry<List<Integer>, List<CharacterNamesResponse>> entry : retriesResponses.entrySet()) {
-			for (CharacterNamesResponse lookup : entry.getValue()) {
-				Settings.get().getOwners().put((long)lookup.getCharacterId(), lookup.getCharacterName());
+		for (Map.Entry<List<Integer>, List<UniverseNamesResponse>> entry : retryResponses.entrySet()) {
+			for (UniverseNamesResponse lookup : entry.getValue()) {
+				Settings.get().getOwners().put((long)lookup.getId(), lookup.getName());
 			}
 		}
 	}
@@ -97,6 +100,9 @@ public class EsiNameGetter extends AbstractEsiGetter {
 			addOwnerID(list, ownerType.getOwnerID());
 			for (MyIndustryJob myIndustryJob : ownerType.getIndustryJobs()) {
 				addOwnerID(list, myIndustryJob.getInstallerID());
+			}
+			for (MyMarketOrder marketOrder : ownerType.getMarketOrders()) {
+				addOwnerID(list, marketOrder.getIssuedBy());
 			}
 			for (MyContract contract : ownerType.getContracts().keySet()) {
 				addOwnerID(list, contract.getAcceptorID());

@@ -544,6 +544,7 @@ public class ConverterTestUtil {
 			MyMarketOrder marketOrder = (MyMarketOrder) object;
 			marketOrder.setWalletDivision(options.getInteger());
 			marketOrder.setState(options.getMarketOrderStateRaw());
+			marketOrder.setIssuedBy(options.getInteger());
 		}
 		if (object instanceof MyJournal) {
 			MyJournal journal = (MyJournal) object;
@@ -736,6 +737,8 @@ public class ConverterTestUtil {
 					|| methodId.equals("CorporationOrdersHistoryResponse->getEscrow")
 					|| methodId.equals("CharacterOrdersResponse->getEscrow")
 					|| methodId.equals("CorporationOrdersResponse->getEscrow")
+					// issuedBy workaround for optional in CorporationOrdersHistoryResponse 
+					|| methodId.equals("CorporationOrdersHistoryResponse->getIssuedBy")
 					//isBuyOrder is not optinal in RawMarketOrder
 					|| methodId.equals("CharacterOrdersHistoryResponse->getIsBuyOrder")
 					|| methodId.equals("CorporationOrdersHistoryResponse->getIsBuyOrder")
