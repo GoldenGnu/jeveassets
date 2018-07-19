@@ -36,7 +36,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import net.nikr.eve.jeveasset.data.settings.Settings;
-import net.nikr.eve.jeveasset.data.settings.TrackerData;
 import net.nikr.eve.jeveasset.gui.tabs.values.AssetValue;
 import net.nikr.eve.jeveasset.gui.tabs.values.Value;
 import org.slf4j.Logger;
@@ -47,18 +46,23 @@ public class TrackerDataReader extends AbstractBackup {
 
 	private static final Logger LOG = LoggerFactory.getLogger(TrackerDataReader.class);
 
-	public static void load() {
-		TrackerDataReader reader = new TrackerDataReader();
-		reader.read();
+	public static Map<String, List<Value>> load() {
+		return load(Settings.getPathTrackerData(), true);
 	}
 
-	private void read() {
-		String filename = Settings.getPathTrackerData();
+	public static Map<String, List<Value>> load(String filename, boolean backup) {
+		TrackerDataReader reader = new TrackerDataReader();
+		return reader.read(filename, backup);
+	}
+
+	private Map<String, List<Value>> read(String filename, boolean backup) {
 		File file = new File(filename);
 		if (!file.exists()) {
-			return;
+			return null;
 		}
-		backup(filename);
+		if (backup) {
+			backup(filename);
+		}
 		ObjectMapper mapper = new ObjectMapper();
 		SimpleModule module = new SimpleModule();
 		module.addDeserializer(Value.class, new ValueDeserializer());
@@ -66,15 +70,13 @@ public class TrackerDataReader extends AbstractBackup {
 		try {
 			lock(filename);
 			Map<String, List<Value>> trackerData = mapper.readValue(file, new TypeReference<HashMap<String, ArrayList<Value>>>() {});
-			if (trackerData != null) {
-				TrackerData.set(trackerData);
-				LOG.info("Tracker data loaded");
-			}
+			LOG.info("Tracker data loaded");
+			return trackerData;
 		} catch (IOException ex) {
 			if (restoreNewFile(filename)) { //If possible restore from .new (Should be the newest)
-				read();
+				read(filename, backup);
 			} else if (restoreBackupFile(filename)) { //If possible restore from .bac (Should be the oldest, but, still worth trying)
-				read();
+				read(filename, backup);
 			} else { //Nothing left to try - throw error
 				restoreFailed(filename); //Backup error file
 				LOG.error(ex.getMessage(), ex);
@@ -82,6 +84,7 @@ public class TrackerDataReader extends AbstractBackup {
 		} finally {
 			unlock(filename);
 		}
+		return null;
 	}
 
 	public static class ValueDeserializer extends StdDeserializer<Value> { 

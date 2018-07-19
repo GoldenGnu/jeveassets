@@ -38,6 +38,10 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -54,12 +58,15 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 import javax.swing.AbstractListModel;
 import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
@@ -81,8 +88,10 @@ import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.components.CheckBoxNode;
+import net.nikr.eve.jeveasset.gui.shared.components.JCustomFileChooser;
 import net.nikr.eve.jeveasset.gui.shared.components.JDateChooser;
 import net.nikr.eve.jeveasset.gui.shared.components.JDropDownButton;
+import net.nikr.eve.jeveasset.gui.shared.components.JLockWindow;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTabSecondary;
 import net.nikr.eve.jeveasset.gui.shared.components.JMultiSelectionList;
 import net.nikr.eve.jeveasset.gui.shared.components.JSelectionDialog;
@@ -92,6 +101,9 @@ import net.nikr.eve.jeveasset.gui.tabs.values.DataSetCreator;
 import net.nikr.eve.jeveasset.gui.tabs.values.Value;
 import net.nikr.eve.jeveasset.i18n.General;
 import net.nikr.eve.jeveasset.i18n.TabsTracker;
+import net.nikr.eve.jeveasset.io.local.SettingsReader;
+import net.nikr.eve.jeveasset.io.local.TrackerDataReader;
+import net.nikr.eve.jeveasset.io.shared.FileUtil;
 import org.jfree.chart.ChartMouseEvent;
 import org.jfree.chart.ChartMouseListener;
 import org.jfree.chart.ChartPanel;
@@ -116,6 +128,7 @@ public class TrackerTab extends JMainTabSecondary {
 		QUICK_DATE,
 		UPDATE_DATA,
 		UPDATE_SHOWN,
+		IMPORT_FILE,
 		INCLUDE_ZERO,
 		ALL,
 		EDIT,
@@ -151,6 +164,7 @@ public class TrackerTab extends JMainTabSecondary {
 	private final JCheckBox jContractCollateral;
 	private final JCheckBox jContractValue;
 	private final JCheckBox jAllProfiles;
+	private final JMenuItem jImportFile;
 	private final JCheckBoxMenuItem jIncludeZero;
 	private final JPopupMenu jPopupMenu;
 	private final JMenuItem jNote;
@@ -165,6 +179,8 @@ public class TrackerTab extends JMainTabSecondary {
 	private final Shape FILTER_AND_DEFAULT = new Ellipse2D.Float(-3.0f, -3.0f, 6.0f, 6.0f);
 	private final JMenuItem jAddNote;
 	private final JMenu jEditNote;
+	private final JCustomFileChooser jFileChooser;
+	private final JLockWindow jLockWindow;
 
 	private final JLabel jTotalStatus;
 	private final JLabel jWalletBalanceStatus;
@@ -198,6 +214,16 @@ public class TrackerTab extends JMainTabSecondary {
 		super(program, TabsTracker.get().title(), Images.TOOL_TRACKER.getIcon(), true);
 
 		filterDialog = new TrackerFilterDialog(program);
+		List<String> extensions = new ArrayList<>();
+		extensions.add("xml");
+		extensions.add("zip");
+		extensions.add("json");
+		extensions.add("backup");
+		jFileChooser = JCustomFileChooser.createFileChooser(program.getMainWindow().getFrame(), extensions);
+		jFileChooser.setMultiSelectionEnabled(false);
+		jFileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+
+		jLockWindow = new JLockWindow(program.getMainWindow().getFrame());
 
 		jPopupMenu = new JPopupMenu();
 		jPopupMenu.addPopupMenuListener(listener);
@@ -378,6 +404,14 @@ public class TrackerTab extends JMainTabSecondary {
 		jFilter.setIcon(new ShapeIcon(FILTER_AND_DEFAULT));
 
 		JDropDownButton jSettings = new JDropDownButton(Images.DIALOG_SETTINGS.getIcon());
+
+		jImportFile = new JMenuItem(TabsTracker.get().importFile(), Images.EDIT_IMPORT.getIcon());
+		jImportFile.setSelected(true);
+		jImportFile.setActionCommand(TrackerAction.IMPORT_FILE.name());
+		jImportFile.addActionListener(listener);
+		jSettings.add(jImportFile);
+
+		jSettings.addSeparator();
 
 		jIncludeZero = new JCheckBoxMenuItem(TabsTracker.get().includeZero());
 		jIncludeZero.setSelected(true);
@@ -1368,6 +1402,13 @@ public class TrackerTab extends JMainTabSecondary {
 					createData();
 					updateButtonIcons();
 				}
+			} else if (TrackerAction.IMPORT_FILE.name().equals(e.getActionCommand())) {
+				jFileChooser.setCurrentDirectory(new File(Settings.getPathDataDirectory()));
+				int value = jFileChooser.showOpenDialog(program.getMainWindow().getFrame());
+				if (value != JFileChooser.APPROVE_OPTION) {
+					return; //Cancel
+				}
+				jLockWindow.show(TabsTracker.get().importFileImport(), new ImportFileLockWorker(jFileChooser.getSelectedFile()));
 			}
 		}
 
@@ -1487,4 +1528,105 @@ public class TrackerTab extends JMainTabSecondary {
 			return 16;
 		}
 	}
+
+	private class ImportFileLockWorker implements JLockWindow.LockWorkerAdvanced {
+
+		private File file;
+		private Map<String, List<Value>> trackerData = null;
+
+		public ImportFileLockWorker(File file) {
+			this.file = file;
+		}
+
+		@Override
+		public void task() {
+			File unzippedFile = null;
+			String extension = FileUtil.getExtension(file);
+			if (extension.equals("zip")) { //Unzip file (if needed)
+				ZipInputStream zis = null;
+				try {
+					zis = new ZipInputStream(new FileInputStream(file));
+					ZipEntry zipEntry = zis.getNextEntry();
+					while(zipEntry != null){
+						String filename = zipEntry.getName();
+						if (filename.equals("settings.xml") || filename.equals("tracker.json")) {
+							unzippedFile = new File(Settings.getPathDataDirectory() + File.separator + "temp_" + filename);
+							FileOutputStream fos = new FileOutputStream(unzippedFile);
+							byte[] buffer = new byte[1024];
+							int len;
+							while ((len = zis.read(buffer)) > 0) {
+								fos.write(buffer, 0, len);
+							}
+							fos.close();
+							//Set file and extension to the unzipped file
+							file = unzippedFile;
+							extension = FileUtil.getExtension(file);
+							break;
+						}
+						zipEntry = zis.getNextEntry();
+					}	zis.closeEntry();
+					zis.close();
+				} catch (IOException ex) {
+					//Ignore errors
+				} finally {
+					try {
+						if (zis != null) {
+							zis.close();
+						}
+					} catch (IOException ex) {
+
+					}
+				}
+			}
+			switch (extension) { //Load data (if possible)
+				case "xml":
+				case "backup":
+					trackerData = SettingsReader.loadTracker(file.getAbsolutePath());
+					break;
+				case "json":
+					trackerData = TrackerDataReader.load(file.getAbsolutePath(), false);
+					break;
+				default:
+					trackerData = null;
+					break;
+			}
+			if (unzippedFile != null) { //Clean up temp file
+				unzippedFile.delete();
+			}
+		}
+
+		@Override
+		public void gui() { }
+
+		@Override
+		public void hidden() {
+			if (trackerData == null) { //Invalid file
+				JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), TabsTracker.get().importFileInvalidMsg(), TabsTracker.get().importFileInvalidTitle(), JOptionPane.WARNING_MESSAGE);
+				return;
+			}
+			//Overwrite?
+			int value = JOptionPane.showConfirmDialog(program.getMainWindow().getFrame(), TabsTracker.get().importFileOverwriteMsg(), TabsTracker.get().importFileOverwriteTitle(), JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
+			if (value != JOptionPane.OK_OPTION) {
+				return; //Cancel
+			}
+			SwingUtilities.invokeLater(new Runnable() {
+				@Override
+				public void run() {
+					jLockWindow.show(TabsTracker.get().importFileImport(), new JLockWindow.LockWorker() {
+						@Override
+						public void task() {
+							TrackerData.addAll(trackerData);
+							TrackerData.save("File Import", true);
+						}
+
+						@Override
+						public void gui() {
+							updateData();
+						}
+					});
+				}
+			});
+		}
+	}
+
 }
