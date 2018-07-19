@@ -114,11 +114,12 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 	private static final Logger LOG = LoggerFactory.getLogger(SettingsReader.class);
 
 	private enum ReaderType {
-		SETTINGS, STOCKPILE
+		SETTINGS, STOCKPILE, TRACKER
 	}
 
 	private Settings settings;
 	private List<Stockpile> stockpilesList;
+	private Map<String, List<Value>> trackerDataMap;
 	private final ReaderType readerType;
 
 	private SettingsReader(ReaderType readerType) {
@@ -146,6 +147,15 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		}
 	}
 
+	public static Map<String, List<Value>> loadTracker(final String filename) {
+		SettingsReader reader = new SettingsReader(ReaderType.TRACKER);
+		if (reader.read(filename, filename, XmlType.IMPORT)) {
+			return reader.trackerDataMap;
+		} else {
+			return null;
+		}
+	}
+
 	@Override
 	protected Boolean parse(Element element) throws XmlException {
 		switch (readerType) {
@@ -154,6 +164,9 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 				break;
 			case STOCKPILE:
 				stockpilesList = loadStockpile(element);
+				break;
+			case TRACKER:
+				trackerDataMap = loadTracker(element);
 				break;
 		}
 		return true;
@@ -167,6 +180,19 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 	@Override
 	protected Boolean doNotExistValue() {
 		return true;
+	}
+
+	private Map<String, List<Value>> loadTracker(final Element element) throws XmlException {
+		if (!element.getNodeName().equals("settings")) {
+			throw new XmlException("Wrong root element name.");
+		}
+		//Tracker Data
+		NodeList trackerDataNodes = element.getElementsByTagName("trackerdata");
+		if (trackerDataNodes.getLength() == 1) {
+			Element trackerDataElement = (Element) trackerDataNodes.item(0);
+			return parseTrackerData(trackerDataElement);
+		}
+		return null;
 	}
 
 	private List<Stockpile> loadStockpile(final Element element) throws XmlException {
@@ -221,7 +247,8 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		NodeList trackerDataNodes = element.getElementsByTagName("trackerdata");
 		if (trackerDataNodes.getLength() == 1) {
 			Element trackerDataElement = (Element) trackerDataNodes.item(0);
-			parseTrackerData(trackerDataElement);
+			Map<String, List<Value>> trackerData = parseTrackerData(trackerDataElement);
+			TrackerData.set(trackerData);
 		}
 
 		//Tracker Data
@@ -395,7 +422,8 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		}
 	}
 
-	private void parseTrackerData(final Element element) throws XmlException {
+	private Map<String, List<Value>> parseTrackerData(final Element element) throws XmlException {
+		Map<String, List<Value>> trackerData = new HashMap<String, List<Value>>();
 		NodeList tableNodeList = element.getElementsByTagName("owner");
 		for (int a = 0; a < tableNodeList.getLength(); a++) {
 			//Read Owner
@@ -458,9 +486,15 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 				value.setManufacturing(manufacturing);
 				value.setContractCollateral(contractCollateral);
 				value.setContractValue(contractValue);
-				TrackerData.add(owner, value);
+				List<Value> list = trackerData.get(owner);
+				if (list == null) {
+					list = new ArrayList<>();
+					trackerData.put(owner, list);
+				}
+				list.add(value);
 			}
 		}
+		return trackerData;
 	}
 
 	private AssetValue parseAssetValue(Element node) throws XmlException {

@@ -72,7 +72,8 @@ public class TrackerData {
 	}
 
 	public static void load() {
-		TrackerDataReader.load();
+		Map<String, List<Value>> trackerData = TrackerDataReader.load();
+		TrackerData.set(trackerData);
 	}
 
 	public static void save(String msg) {
@@ -116,7 +117,19 @@ public class TrackerData {
 		}
 	}
 
+	public static void addAll(Map<String, List<Value>> trackerData) {
+		try {
+			LOCK.writeLock().lock();
+			TRACKER_DATA.putAll(trackerData);
+		} finally {
+			LOCK.writeLock().unlock();
+		}
+	}
+
 	public static void set(Map<String, List<Value>> trackerData) {
+		if (trackerData == null) {
+			return;
+		}
 		try {
 			LOCK.writeLock().lock();
 			TRACKER_DATA.clear();

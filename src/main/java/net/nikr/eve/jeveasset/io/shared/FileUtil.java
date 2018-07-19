@@ -88,4 +88,17 @@ public class FileUtil {
 		}
 		return ret.getAbsolutePath();
 	}
+
+	public static String getExtension(final File file) {
+		String extension = null;
+		if (file == null) {
+			return null;
+		}
+		String filename = file.getName();
+		int i = filename.lastIndexOf('.');
+		if (i > 0 &&  i < filename.length() - 1) {
+			extension = filename.substring(i + 1).toLowerCase();
+		}
+		return extension;
+	}
 }

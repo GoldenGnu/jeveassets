@@ -23,27 +23,37 @@ package net.nikr.eve.jeveasset.gui.shared.components;
 
 import java.awt.Window;
 import java.io.File;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 import javax.swing.filechooser.FileFilter;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
+import net.nikr.eve.jeveasset.io.shared.FileUtil;
 
 
-public class JCustomFileChooser extends JFileChooser {
+public final class JCustomFileChooser extends JFileChooser {
 
 	private final Window window;
-	private String extension;
+	private List<String> extensions;
 
 	public static JCustomFileChooser createFileChooser(final Window window, final String extension) {
-		//XXX - Workaround for https://bugs.openjdk.java.net/browse/JDK-8179014
-		UIManager.put("FileChooser.useSystemExtensionHiding", false);
-		return new JCustomFileChooser(window, extension);
+		return createFileChooser(window, Collections.singletonList(extension));
 	}
 
-	private JCustomFileChooser(final Window window, final String extension) {
+	public static JCustomFileChooser createFileChooser(final Window window, final List<String> extensions) {
+		//XXX - Workaround for https://bugs.openjdk.java.net/browse/JDK-8179014
+		UIManager.put("FileChooser.useSystemExtensionHiding", false);
+		return new JCustomFileChooser(window, extensions);
+	}
+
+	private JCustomFileChooser(final Window window, final List<String> extensions) {
 		this.window = window;
-		setExtension(extension);
+		setExtensions(extensions);
 		this.setAcceptAllFileFilterUsed(false);
 	}
 
@@ -55,7 +65,7 @@ public class JCustomFileChooser extends JFileChooser {
 				int end = filename.lastIndexOf(".");
 				filename = filename.substring(0, end);
 			}
-			filename = filename + "." +  getExtension();
+			filename = filename + "." + extensions.get(0);
 			super.setSelectedFile(new File(filename));
 		} else {
 			super.setSelectedFile(file);
@@ -64,9 +74,13 @@ public class JCustomFileChooser extends JFileChooser {
 	}
 
 	public final void setExtension(final String extension) {
-		this.extension = extension.toLowerCase();
+		setExtensions(Collections.singletonList(extension));
+	}
+
+	public final void setExtensions(final List<String> extensions) {
+		this.extensions = extensions;
 		this.resetChoosableFileFilters();
-		this.addChoosableFileFilter(new CustomFileFilter(extension));
+		this.addChoosableFileFilter(new CustomFileFilter(extensions));
 	}
 
 	@Override
@@ -88,16 +102,25 @@ public class JCustomFileChooser extends JFileChooser {
 		super.approveSelection();
 	}
 
-	public String getExtension() {
-		return extension;
-	}
-
 	public static class CustomFileFilter extends FileFilter {
 
-		private final String extension;
+		private final Set<String> extensions = new HashSet<>();
+		private final String description;
 
-		public CustomFileFilter(final String extension) {
-			this.extension = extension;
+		public CustomFileFilter(final List<String> extensions) {
+			StringBuilder builder = new StringBuilder();
+			boolean first = true;
+			for (String extension : extensions) {
+				if (first) {
+					first = false;
+				} else {
+					builder.append("/");
+				}
+				builder.append(extension.toUpperCase());
+				this.extensions.add(extension.toLowerCase());
+				
+			}
+			description = GuiShared.get().files(builder.toString());
 		}
 
 		@Override
@@ -105,56 +128,39 @@ public class JCustomFileChooser extends JFileChooser {
 			if (f.isDirectory()) {
 				return true;
 			}
-			String currentExtension = Utils.getExtension(f);
-			if (currentExtension != null && currentExtension.equals(extension)) {
-				return true;
-			} else {
-				return false;
-			}
+			String currentExtension = FileUtil.getExtension(f);
+			return currentExtension != null && extensions.contains(currentExtension);
 		}
 
 		//The description of this filter
 		@Override
 		public String getDescription() {
-			return GuiShared.get().files(extension.toUpperCase());
+			return description;
 		}
 
 		@Override
 		public int hashCode() {
 			int hash = 7;
-			hash = 23 * hash + (this.extension != null ? this.extension.hashCode() : 0);
+			hash = 53 * hash + Objects.hashCode(this.extensions);
 			return hash;
 		}
 
 		@Override
 		public boolean equals(Object obj) {
+			if (this == obj) {
+				return true;
+			}
 			if (obj == null) {
 				return false;
 			}
 			if (getClass() != obj.getClass()) {
 				return false;
 			}
-			final CustomFileFilter other = (CustomFileFilter) obj;
-			if ((this.extension == null) ? (other.extension != null) : !this.extension.equals(other.extension)) {
+			final JCustomFileChooser other = (JCustomFileChooser) obj;
+			if (!Objects.equals(this.extensions, other.extensions)) {
 				return false;
 			}
 			return true;
-		}
-	}
-
-	private static class Utils {
-		//public final static String XML = "xml";
-		public static String getExtension(final File file) {
-			String extension = null;
-			if (file == null) {
-				return null;
-			}
-			String filename = file.getName();
-			int i = filename.lastIndexOf('.');
-			if (i > 0 &&  i < filename.length() - 1) {
-				extension = filename.substring(i + 1).toLowerCase();
-			}
-			return extension;
 		}
 	}
 }
