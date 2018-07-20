@@ -30,6 +30,7 @@ public class CheckBoxNode implements Comparable<CheckBoxNode>{
 	private CheckBoxNode parent;
 	private final List<CheckBoxNode> children = new ArrayList<CheckBoxNode>();
 	private boolean selected;
+	private boolean shown;
 
 	public CheckBoxNode(CheckBoxNode parent, CheckBoxNode clone) {
 		this(parent, clone.nodeId, clone.nodeName, clone.selected);
@@ -40,10 +41,19 @@ public class CheckBoxNode implements Comparable<CheckBoxNode>{
 		this.nodeName = nodeName;
 		this.selected = selected;
 		this.parent = parent;
+		this.shown = true;
 		if (parent != null) {
 			parent.addChild(this);
 			parent.selectionFromChildren();
 		}
+	}
+
+	public boolean isShown() {
+		return shown;
+	}
+
+	public void setShown(boolean shown) {
+		this.shown = shown;
 	}
 
 	public CheckBoxNode getParent() {
@@ -87,6 +97,9 @@ public class CheckBoxNode implements Comparable<CheckBoxNode>{
 	private boolean selectionToChildren(boolean newValue) {
 		boolean updated = false;
 		for (CheckBoxNode node : children) {
+			if (!node.isShown()) {
+				continue;
+			}
 			if (node.isSelected() != newValue) {
 				node.selected = newValue;
 				node.selectionToChildren(newValue);
@@ -99,6 +112,9 @@ public class CheckBoxNode implements Comparable<CheckBoxNode>{
 	private boolean selectionFromChildren() {
 		boolean isAllSelected = true;
 		for (CheckBoxNode node : children) {
+			if (!node.isShown()) {
+				continue;
+			}
 			if (!node.isSelected()) {
 				isAllSelected = false;
 				break;

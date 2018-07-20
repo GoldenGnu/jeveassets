@@ -174,6 +174,7 @@ public class TrackerTab extends JMainTabSecondary {
 	private final JSelectionDialog<String> jSelectionDialog;
 	private final ChartPanel jChartPanel;
 	private final TrackerFilterDialog filterDialog;
+	private final TrackerAssetFilterDialog assetFilterDialog;
 	private final MyRender render;
 	private final Shape NO_FILTER = new Rectangle(-3, -3, 6, 6);
 	private final Shape FILTER_AND_DEFAULT = new Ellipse2D.Float(-3.0f, -3.0f, 6.0f, 6.0f);
@@ -214,6 +215,8 @@ public class TrackerTab extends JMainTabSecondary {
 		super(program, TabsTracker.get().title(), Images.TOOL_TRACKER.getIcon(), true);
 
 		filterDialog = new TrackerFilterDialog(program);
+		assetFilterDialog = new TrackerAssetFilterDialog(program);
+
 		List<String> extensions = new ArrayList<>();
 		extensions.add("xml");
 		extensions.add("zip");
@@ -728,7 +731,9 @@ public class TrackerTab extends JMainTabSecondary {
 
 		//ASSETS - Make nodes for found asset IDs
 		CheckBoxNode assetNode = new CheckBoxNode(null, TabsTracker.get().assets(), TabsTracker.get().assets(), false);
+		assetNodes.put(TabsTracker.get().assets(), assetNode);
 		CheckBoxNode unknownLocationsNode = new CheckBoxNode(assetNode, TabsTracker.get().unknownLocations(), TabsTracker.get().unknownLocations(), false);
+		assetNodes.put(TabsTracker.get().unknownLocations(), unknownLocationsNode);
 		
 		Map<String, CheckBoxNode> nodeCache = new HashMap<String, CheckBoxNode>();
 		for (AssetValue assetValue : assetsIDs) {
@@ -743,6 +748,7 @@ public class TrackerTab extends JMainTabSecondary {
 					locationNode = new CheckBoxNode(assetNode, location, location, selectNode(location));
 				}
 				nodeCache.put(location, locationNode);
+				assetNodes.put(locationNode.getNodeId(), locationNode);
 			}
 
 			CheckBoxNode flagNode = nodeCache.get(id);
@@ -757,7 +763,7 @@ public class TrackerTab extends JMainTabSecondary {
 			if (locationNode.isParent()) {
 				String id = locationNode.getNodeId() + " > unique ID";
 				CheckBoxNode otherNode = new CheckBoxNode(locationNode, id, TabsTracker.get().other(), selectNode(id));
-				assetNodes.put(locationNode.getNodeId(), otherNode);
+				assetNodes.put(otherNode.getNodeId(), otherNode);
 			}
 		}
 	}
@@ -1106,6 +1112,9 @@ public class TrackerTab extends JMainTabSecondary {
 		Settings.lock("Tracker Filters: Update");
 		Settings.get().getTrackerFilters().clear();
 		for (CheckBoxNode checkBoxNode : assetNodes.values()) {
+			if (checkBoxNode.isParent()) {
+				continue;
+			}
 			Settings.get().getTrackerFilters().put(checkBoxNode.getNodeId(), checkBoxNode.isSelected());
 		}
 		for (CheckBoxNode checkBoxNode : accountNodes.values()) {
@@ -1396,7 +1405,7 @@ public class TrackerTab extends JMainTabSecondary {
 					updateButtonIcons();
 				}
 			} else if (TrackerAction.FILTER_ASSETS.name().equals(e.getActionCommand())) {
-				boolean save = filterDialog.showLocations(assetNodes);
+				boolean save = assetFilterDialog.showLocations(assetNodes);
 				if (save) { //Need refilter
 					updateSettings();
 					createData();

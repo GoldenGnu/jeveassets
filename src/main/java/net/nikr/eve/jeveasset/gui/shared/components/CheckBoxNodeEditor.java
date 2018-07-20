@@ -20,6 +20,7 @@
  */
 package net.nikr.eve.jeveasset.gui.shared.components;
 
+import ca.odell.glazedlists.TreeList;
 import java.awt.Component;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
@@ -45,42 +46,37 @@ public class CheckBoxNodeEditor extends AbstractCellEditor implements TreeCellEd
 	}
 
 	private CheckBoxNode getCheckBoxNode() {
-		TreePath selectionPath = tree.getSelectionPath();
-		Object object = selectionPath.getLastPathComponent();
-		if (object instanceof DefaultMutableTreeNode) {
-			DefaultMutableTreeNode node = (DefaultMutableTreeNode) object;
-			Object userObject = node.getUserObject();
-			if (userObject instanceof CheckBoxNode) {
-				CheckBoxNode checkBoxNode = (CheckBoxNode) userObject;
-				return checkBoxNode;
-			}
+		return getCheckBoxNode(tree.getSelectionPath());
+	}
+
+	private CheckBoxNode getCheckBoxNode(TreePath path) {
+		Object value = path.getLastPathComponent();
+		Object userObject = null;
+		if (value != null && value instanceof DefaultMutableTreeNode) {
+			userObject = ((DefaultMutableTreeNode) value).getUserObject();
+		}
+		if (value != null && value instanceof TreeList.Node) {
+			userObject = ((TreeList.Node) value).getElement();
+		}
+		if (userObject != null && userObject instanceof CheckBoxNode) {
+			return (CheckBoxNode) userObject;
 		}
 		return null;
 	}
 
 	@Override
 	public Object getCellEditorValue() {
-		
 		return getCheckBoxNode();
 	}
 
 	@Override
 	public boolean isCellEditable(EventObject event) {
-		boolean returnValue = false;
 		if (event instanceof MouseEvent) {
 			MouseEvent mouseEvent = (MouseEvent) event;
-			TreePath path = tree.getPathForLocation(mouseEvent.getX(),
-					mouseEvent.getY());
-			if (path != null) {
-				Object node = path.getLastPathComponent();
-				if ((node != null) && (node instanceof DefaultMutableTreeNode)) {
-					DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode) node;
-					Object userObject = treeNode.getUserObject();
-					returnValue = userObject instanceof CheckBoxNode;
-				}
-			}
+			TreePath path = tree.getPathForLocation(mouseEvent.getX(), mouseEvent.getY());
+			return getCheckBoxNode(path) != null;
 		}
-		return returnValue;
+		return false;
 	}
 
 	@Override
