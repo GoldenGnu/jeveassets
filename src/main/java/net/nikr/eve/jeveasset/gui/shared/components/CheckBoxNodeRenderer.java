@@ -20,6 +20,7 @@
  */
 package net.nikr.eve.jeveasset.gui.shared.components;
 
+import ca.odell.glazedlists.TreeList;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
@@ -46,10 +47,8 @@ public class CheckBoxNodeRenderer implements TreeCellRenderer {
 		if (fontValue != null) {
 			leafRenderer.setFont(fontValue);
 		}
-		Boolean booleanValue = (Boolean) UIManager
-				.get("Tree.drawsFocusBorderAroundIcon");
-		leafRenderer.setFocusPainted((booleanValue != null)
-				&& (booleanValue.booleanValue()));
+		Boolean booleanValue = (Boolean) UIManager.get("Tree.drawsFocusBorderAroundIcon");
+		leafRenderer.setFocusPainted(booleanValue != null && booleanValue);
 
 		selectionBorderColor = UIManager.getColor("Tree.selectionBorderColor");
 		selectionForeground = UIManager.getColor("Tree.selectionForeground");
@@ -77,15 +76,17 @@ public class CheckBoxNodeRenderer implements TreeCellRenderer {
 			leafRenderer.setForeground(textForeground);
 			leafRenderer.setBackground(textBackground);
 		}
-
-		if ((value != null) && (value instanceof DefaultMutableTreeNode)) {
-			Object userObject = ((DefaultMutableTreeNode) value)
-					.getUserObject();
-			if (userObject instanceof CheckBoxNode) {
-				final CheckBoxNode node = (CheckBoxNode) userObject;
-				leafRenderer.setText(node.getNodeName());
-				leafRenderer.setSelected(node.isSelected());
-			}
+		Object userObject = null;
+		if (value != null && value instanceof DefaultMutableTreeNode) {
+			userObject = ((DefaultMutableTreeNode) value).getUserObject();
+		}
+		if (value != null && value instanceof TreeList.Node) {
+			userObject = ((TreeList.Node) value).getElement();
+		}
+		if (userObject != null && userObject instanceof CheckBoxNode) {
+			final CheckBoxNode node = (CheckBoxNode) userObject;
+			leafRenderer.setText(node.getNodeName());
+			leafRenderer.setSelected(node.isSelected());
 		}
 		return leafRenderer;
 	}
