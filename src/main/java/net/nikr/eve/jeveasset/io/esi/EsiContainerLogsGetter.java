@@ -46,7 +46,7 @@ public class EsiContainerLogsGetter extends AbstractEsiGetter {
 				return getCorporationApiAuth(apiClient).getCorporationsCorporationIdContainersLogs((int)owner.getOwnerID(), DATASOURCE, null, page, null);
 			}
 		});
-		owner.setContainerLogs(EsiConverter.toContainersLogCorporation(response, owner));
+		owner.setContainerLogs(EsiConverter.toContainersLogCorporation(response));
 	}
 
 	@Override

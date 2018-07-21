@@ -41,6 +41,7 @@ import net.nikr.eve.jeveasset.data.api.accounts.EveKitOwner;
 import net.nikr.eve.jeveasset.data.api.accounts.OwnerType;
 import net.nikr.eve.jeveasset.data.api.my.MyAccountBalance;
 import net.nikr.eve.jeveasset.data.api.my.MyAsset;
+import net.nikr.eve.jeveasset.data.api.my.MyContainerLog;
 import net.nikr.eve.jeveasset.data.api.my.MyContract;
 import net.nikr.eve.jeveasset.data.api.my.MyContractItem;
 import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob;
@@ -173,7 +174,7 @@ public class ConverterTestUtil {
 		owner.setTransactions(Collections.singleton(saveMyTransaction));
 
 		//ConatinerLog
-		RawContainerLog saveRawContainerLog = getRawContainerLog(setNull, options);
+		MyContainerLog saveRawContainerLog = getMyContainerLog(setNull, setValues, options);
 		owner.setContainerLogs(Collections.singletonList(saveRawContainerLog));
 	}
 
@@ -316,6 +317,14 @@ public class ConverterTestUtil {
 	public static RawContainerLog getRawContainerLog(boolean setNull, ConverterTestOptions options) {
 		RawContainerLog containerLog = RawContainerLog.create();
 		setValues(containerLog, options, setNull ? CorporationContainersLogsResponse.class : null);
+		return containerLog;
+	}
+
+	public static MyContainerLog getMyContainerLog(boolean setNull, boolean setValues, ConverterTestOptions options) {
+		MyContainerLog containerLog = new MyContainerLog(getRawContainerLog(setNull, options));
+		if (setValues) {
+			setValues(containerLog, options, null, false);
+		}
 		return containerLog;
 	}
 

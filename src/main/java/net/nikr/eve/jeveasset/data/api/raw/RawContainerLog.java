@@ -21,7 +21,6 @@
 package net.nikr.eve.jeveasset.data.api.raw;
 
 import java.util.Date;
-import net.nikr.eve.jeveasset.data.api.accounts.OwnerType;
 import net.nikr.eve.jeveasset.data.sde.ItemFlag;
 import net.nikr.eve.jeveasset.io.shared.RawConverter;
 import net.troja.eve.esi.model.CorporationContainersLogsResponse;
@@ -103,11 +102,31 @@ public class RawContainerLog {
 	}
 
 	/**
-	 * ESI
-	 * @param response
-	 * @param owner 
+	 * Raw
+	 * 
+	 * @param response 
 	 */
-	public RawContainerLog(CorporationContainersLogsResponse response, OwnerType owner) {
+	public RawContainerLog(RawContainerLog response) {
+		loggedAt = response.loggedAt;
+		containerId = response.containerId;
+		containerTypeId = response.containerTypeId;
+		characterId = response.characterId;
+		locationId = response.locationId;
+		itemFlag = response.itemFlag;
+		action = response.action;
+		passwordType = response.passwordType;
+		typeId = response.typeId;
+		quantity = response.quantity;
+		oldConfigBitmask = response.oldConfigBitmask;
+		newConfigBitmask = response.newConfigBitmask;
+	}
+
+	/**
+	 * ESI
+	 * 
+	 * @param response 
+	 */
+	public RawContainerLog(CorporationContainersLogsResponse response) {
 		loggedAt = RawConverter.toDate(response.getLoggedAt());
 		containerId = response.getContainerId();
 		containerTypeId = response.getContainerTypeId();

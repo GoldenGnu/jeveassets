@@ -28,6 +28,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import net.nikr.eve.jeveasset.data.api.my.MyContainerLog;
 
 
 public class LogSource extends AssetLogData {
@@ -56,6 +57,13 @@ public class LogSource extends AssetLogData {
 		this.sourceAssetLog = assetLog;
 	}
 
+	public LogSource(LogSourceType sourceType, long count, MyContainerLog containerLog) {
+		super(new AssetLogData(containerLog, count), count);
+		this.sourceType = sourceType;
+		this.available = count;
+		this.sourceAssetLog = null;
+	}
+
 	public LogSource(LogSourceType sourceType, long count, int typeID, Date date, Long ownerID, Long locationID, LogType logType, long id) {
 		super(typeID, date, ownerID, locationID, count, logType, id);
 		this.sourceType = sourceType;
@@ -64,7 +72,7 @@ public class LogSource extends AssetLogData {
 	}
 
 	public void addClaim(AssetLog assetLog) {
-		if (!Objects.equal(assetLog.getOwnerID(), getOwnerID())) {
+		if (!Objects.equal(assetLog.getOwnerID(), getOwnerID()) && getLogType() != LogType.ASSET) { //Assets can move from owner to owner
 			return; //Wrong owner
 		}
 		Match match = new Match(match(assetLog));

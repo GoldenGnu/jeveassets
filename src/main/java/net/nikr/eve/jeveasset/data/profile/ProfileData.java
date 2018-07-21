@@ -36,6 +36,7 @@ import net.nikr.eve.jeveasset.SplashUpdater;
 import net.nikr.eve.jeveasset.data.api.accounts.OwnerType;
 import net.nikr.eve.jeveasset.data.api.my.MyAccountBalance;
 import net.nikr.eve.jeveasset.data.api.my.MyAsset;
+import net.nikr.eve.jeveasset.data.api.my.MyContainerLog;
 import net.nikr.eve.jeveasset.data.api.my.MyContract;
 import net.nikr.eve.jeveasset.data.api.my.MyContractItem;
 import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob;
@@ -43,13 +44,13 @@ import net.nikr.eve.jeveasset.data.api.my.MyJournal;
 import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder;
 import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
 import net.nikr.eve.jeveasset.data.api.raw.RawBlueprint;
-import net.nikr.eve.jeveasset.data.api.raw.RawContainerLog;
 import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.data.sde.Jump;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
 import net.nikr.eve.jeveasset.data.sde.ReprocessedMaterial;
 import net.nikr.eve.jeveasset.data.sde.StaticData;
 import net.nikr.eve.jeveasset.data.settings.AssetAddedData;
+import net.nikr.eve.jeveasset.data.settings.LogManager;
 import net.nikr.eve.jeveasset.data.settings.MarketPriceData;
 import net.nikr.eve.jeveasset.data.settings.PriceData;
 import net.nikr.eve.jeveasset.data.settings.Settings;
@@ -92,7 +93,8 @@ public class ProfileData {
 	private final List<MyAsset> assetsList = new ArrayList<MyAsset>();
 	private final List<MyAccountBalance> accountBalanceList = new ArrayList<MyAccountBalance>();
 	private final List<MyContract> contractList = new ArrayList<MyContract>();
-	private final List<RawContainerLog> containerLogsList = new ArrayList<RawContainerLog>();
+	private final List<MyContainerLog> containerLogsList = new ArrayList<MyContainerLog>();
+	private Map<Long, List<MyContainerLog>> containerLogs = null; //ItemID : long
 	private Map<Integer, List<MyAsset>> uniqueAssetsDuplicates = null; //TypeID : int
 	private Map<Integer, MarketPriceData> marketPriceData; //TypeID : int
 	private Map<Integer, MarketPriceData> transactionPriceDataSell; //TypeID : int
@@ -196,7 +198,7 @@ public class ProfileData {
 		return contractList;
 	}
 
-	public List<RawContainerLog> getContainerLogsList() {
+	public List<MyContainerLog> getContainerLogsList() {
 		return containerLogsList;
 	}
 
@@ -370,6 +372,8 @@ public class ProfileData {
 	public boolean updateEventLists(Date assetAddedData) {
 		assetAddedDataChanged = false;
 		uniqueAssetsDuplicates = new HashMap<Integer, List<MyAsset>>();
+		containerLogs = new HashMap<>();
+		containerLogsList.clear();
 		Set<String> uniqueOwnerNames = new HashSet<String>();
 		Map<Long, OwnerType> uniqueOwners = new HashMap<Long, OwnerType>();
 		//Temp
@@ -388,7 +392,6 @@ public class ProfileData {
 		Set<MyIndustryJob> industryJobs = new HashSet<MyIndustryJob>();
 		Set<MyContractItem> contractItems = new HashSet<MyContractItem>();
 		Set<MyContract> contracts = new HashSet<MyContract>();
-		Set<RawContainerLog> containerLogs = new HashSet<RawContainerLog>();
 		Map<Long, Map<Long, RawBlueprint>> blueprintsMap = new HashMap<Long, Map<Long, RawBlueprint>>();
 		Map<Long, RawBlueprint> blueprints = new HashMap<Long, RawBlueprint>();
 
@@ -463,7 +466,10 @@ public class ProfileData {
 				}
 			}
 			//Container Logs
-			containerLogs.addAll(owner.getContainerLogs());
+			containerLogsList.addAll(owner.getContainerLogs());
+			for (MyContainerLog containerLog : owner.getContainerLogs()) {
+				LogManager.put(containerLogs, containerLog.getContainerID(), containerLog);
+			}
 		}
 
 		//Fill accountBalance
@@ -591,8 +597,6 @@ public class ProfileData {
 		contractItemList.addAll(contractItems);
 		contractList.clear();
 		contractList.addAll(contracts);
-		containerLogsList.clear();
-		containerLogsList.addAll(containerLogs);
 		accountBalanceList.clear();
 		accountBalanceList.addAll(accountBalance);
 		Program.ensureEDT(new Runnable() {
@@ -952,6 +956,7 @@ public class ProfileData {
 			updateName(asset);
 			//Contaioner
 			String sContainer = "";
+			List<Long> parentIds = new ArrayList<>();
 			for (MyAsset parentAsset : asset.getParents()) {
 				if (!sContainer.isEmpty()) {
 					sContainer = sContainer + " > ";
@@ -961,9 +966,17 @@ public class ProfileData {
 				} else {
 					sContainer = sContainer + parentAsset.getName();
 				}
+				parentIds.add(parentAsset.getItemID());
 			}
 			if (sContainer.isEmpty()) {
 				sContainer = General.get().none();
+			}
+			List<MyContainerLog> containers = containerLogs.get(asset.getItemID());
+			if (containers != null) {
+				for (MyContainerLog containerLog : containers) {
+					containerLog.setContainer(sContainer);
+					containerLog.setParentIDs(parentIds);
+				}
 			}
 			asset.setContainer(sContainer);
 

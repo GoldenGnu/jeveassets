@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import net.nikr.eve.jeveasset.data.api.my.MyAsset;
+import net.nikr.eve.jeveasset.data.api.my.MyContainerLog;
 import net.nikr.eve.jeveasset.data.api.my.MyContract;
 import net.nikr.eve.jeveasset.data.api.my.MyContractItem;
 import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob;
@@ -136,6 +137,16 @@ public class LogManager {
 		Map<Integer, List<AssetLog>> removedClaims = new HashMap<>();
 
 		//Moved Claims/Soruces
+		for (MyContainerLog containerLog : profileData.getContainerLogsList()) {
+			switch (containerLog.getAction()) {
+				case LOCK:
+					putSet(addedSources, containerLog.getTypeID(), new LogSource(LogSourceType.MOVED_FROM, containerLog.getQuantity(), containerLog));
+					break;
+				case UNLOCK:
+					putSet(removedSources, containerLog.getTypeID(), new LogSource(LogSourceType.MOVED_TO, containerLog.getQuantity(), containerLog));
+					break;
+			}
+		}
 		for (Long itemID : same.keySet()) {
 			AssetLog from = oldAssetsMap.get(itemID);
 			AssetLog to = newAssetsMap.get(itemID);
@@ -149,6 +160,8 @@ public class LogManager {
 			}
 			if (from.getNeed() > to.getNeed()) { //Removed from stack
 				removed.put(from.getItemID(), new AssetLog(from, end, from.getNeed() - to.getNeed()));
+			} else if (from.getNeed() < to.getNeed()) { //Added to stack
+				putSet(removedSources, from.getTypeID(), new LogSource(to, LogSourceType.MOVED_TO));
 			}
 		}
 
@@ -536,7 +549,7 @@ public class LogManager {
 			if (oldMarketOrder.getStatus().equals(newMarketOrder.getStatus())) {
 				continue;
 			}
-			if (newMarketOrder.getStatus() != MyMarketOrder.OrderStatus.UNKNOWN) {
+			if (newMarketOrder.getStatus() != MyMarketOrder.OrderStatus.CANCELLED) {
 				continue;
 			}
 			int typeID = newMarketOrder.getTypeID();

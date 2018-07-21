@@ -26,6 +26,7 @@ import java.util.Map;
 import java.util.Set;
 import net.nikr.eve.jeveasset.data.api.my.MyAccountBalance;
 import net.nikr.eve.jeveasset.data.api.my.MyAsset;
+import net.nikr.eve.jeveasset.data.api.my.MyContainerLog;
 import net.nikr.eve.jeveasset.data.api.my.MyContract;
 import net.nikr.eve.jeveasset.data.api.my.MyContractItem;
 import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob;
@@ -33,7 +34,6 @@ import net.nikr.eve.jeveasset.data.api.my.MyJournal;
 import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder;
 import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
 import net.nikr.eve.jeveasset.data.api.raw.RawBlueprint;
-import net.nikr.eve.jeveasset.data.api.raw.RawContainerLog;
 
 
 public interface OwnerType extends Comparable<OwnerType> {
@@ -63,7 +63,7 @@ public interface OwnerType extends Comparable<OwnerType> {
 	public Map<MyContract, List<MyContractItem>> getContracts();
 	public List<MyAsset> getAssets();
 	public Map<Long, RawBlueprint> getBlueprints();
-	public List<RawContainerLog> getContainerLogs();
+	public List<MyContainerLog> getContainerLogs();
 	public void setBlueprints(final Map<Long, RawBlueprint> blueprints);
 	public void setIndustryJobs(final List<MyIndustryJob> industryJobs);
 	public void setTransactions(final Set<MyTransaction> transactions);
@@ -72,7 +72,7 @@ public interface OwnerType extends Comparable<OwnerType> {
 	public void setContracts(final Map<MyContract, List<MyContractItem>> contracts);
 	public void setAssets(final List<MyAsset> assets);
 	public void setAccountBalances(final List<MyAccountBalance> accountBalances);
-	public void setContainerLogs(final List<RawContainerLog> containersLogs);
+	public void setContainerLogs(final List<MyContainerLog> containersLogs);
 	//Account Mask
 	public boolean isCharacter();
 	public boolean isAssetList();

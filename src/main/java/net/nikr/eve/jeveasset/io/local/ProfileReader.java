@@ -45,9 +45,6 @@ import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
 import net.nikr.eve.jeveasset.data.api.raw.RawAccountBalance;
 import net.nikr.eve.jeveasset.data.api.raw.RawAsset;
 import net.nikr.eve.jeveasset.data.api.raw.RawBlueprint;
-import net.nikr.eve.jeveasset.data.api.raw.RawContainerLog;
-import net.nikr.eve.jeveasset.data.api.raw.RawContainerLog.ContainerAction;
-import net.nikr.eve.jeveasset.data.api.raw.RawContainerLog.ContainerPasswordType;
 import net.nikr.eve.jeveasset.data.api.raw.RawContract;
 import net.nikr.eve.jeveasset.data.api.raw.RawContract.ContractAvailability;
 import net.nikr.eve.jeveasset.data.api.raw.RawContract.ContractStatus;
@@ -301,7 +298,6 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 		parseTransactions(node, owner);
 		parseIndustryJobs(node, owner);
 		parseBlueprints(node, owner);
-		parseContainerLogs(node, owner);
 	}
 
 	private void parseContracts(final Element element, final OwnerType owner) throws XmlException {
@@ -767,52 +763,5 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 		blueprint.setTimeEfficiency(timeEfficiency);
 		blueprint.setTypeID(typeID);
 		return blueprint;
-	}
-
-	private void parseContainerLogs(final Element element, final OwnerType owners) throws XmlException {
-		List<RawContainerLog> containerLogs = new ArrayList<RawContainerLog>();
-		NodeList containerLogsNodes = element.getElementsByTagName("containerlogs");
-		for (int a = 0; a < containerLogsNodes.getLength(); a++) {
-			Element containerLogsNode = (Element) containerLogsNodes.item(a);
-			NodeList containerLogNodes = containerLogsNode.getElementsByTagName("containerlog");
-			for (int b = 0; b < containerLogNodes.getLength(); b++) {
-				Element containerLogNode = (Element) containerLogNodes.item(a);
-				ContainerAction action = ContainerAction.valueOf(AttributeGetters.getString(containerLogNode, "action"));
-				Integer characterID = AttributeGetters.getInt(containerLogNode, "characterid");
-				Long containerID = AttributeGetters.getLong(containerLogNode, "containerid");
-				Integer containerTypeID = AttributeGetters.getInt(containerLogNode, "containertypeid");
-				Integer flagID = AttributeGetters.getInt(containerLogNode, "flagid");
-				Long locationID = AttributeGetters.getLong(containerLogNode, "locationid");
-				Date loggedAt = AttributeGetters.getDateNotNull(containerLogNode, "loggedat");
-				Integer newConfigBitmask = AttributeGetters.getIntOptional(containerLogNode, "newconfigbitmask");
-				Integer oldConfigBitmask = AttributeGetters.getIntOptional(containerLogNode, "oldconfigbitmask");
-				String passwordTypeValue = AttributeGetters.getStringOptional(containerLogNode, "passwordtype");
-				ContainerPasswordType passwordType;
-				if (passwordTypeValue == null) {
-					passwordType = null;
-				} else {
-					passwordType = ContainerPasswordType.valueOf(passwordTypeValue);
-				}
-				Integer quantity = AttributeGetters.getIntOptional(containerLogNode, "quantity");
-				Integer typeID = AttributeGetters.getIntOptional(containerLogNode, "typeid");
-
-				RawContainerLog containerLog = RawContainerLog.create();
-				containerLog.setAction(action);
-				containerLog.setCharacterID(characterID);
-				containerLog.setContainerID(containerID);
-				containerLog.setContainerTypeID(containerTypeID);
-				containerLog.setItemFlag(ApiIdConverter.getFlag(flagID));
-				containerLog.setLocationID(locationID);
-				containerLog.setLoggedAt(loggedAt);
-				containerLog.setNewConfigBitmask(newConfigBitmask);
-				containerLog.setOldConfigBitmask(oldConfigBitmask);
-				containerLog.setPasswordType(passwordType);
-				containerLog.setQuantity(quantity);
-				containerLog.setTypeID(typeID);
-
-				containerLogs.add(containerLog);
-			}
-		}
-		owners.setContainerLogs(containerLogs);
 	}
 }

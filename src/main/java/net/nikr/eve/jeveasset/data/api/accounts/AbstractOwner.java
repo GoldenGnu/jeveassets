@@ -29,6 +29,7 @@ import java.util.Map;
 import java.util.Set;
 import net.nikr.eve.jeveasset.data.api.my.MyAccountBalance;
 import net.nikr.eve.jeveasset.data.api.my.MyAsset;
+import net.nikr.eve.jeveasset.data.api.my.MyContainerLog;
 import net.nikr.eve.jeveasset.data.api.my.MyContract;
 import net.nikr.eve.jeveasset.data.api.my.MyContractItem;
 import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob;
@@ -36,7 +37,6 @@ import net.nikr.eve.jeveasset.data.api.my.MyJournal;
 import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder;
 import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
 import net.nikr.eve.jeveasset.data.api.raw.RawBlueprint;
-import net.nikr.eve.jeveasset.data.api.raw.RawContainerLog;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 
 
@@ -50,7 +50,7 @@ public abstract class AbstractOwner implements OwnerType, Comparable<OwnerType> 
 	private Map<MyContract, List<MyContractItem>> contracts = new HashMap<MyContract, List<MyContractItem>>();
 	private List<MyAsset> assets = new ArrayList<MyAsset>();
 	private Map<Long, RawBlueprint> blueprints = new HashMap<Long, RawBlueprint>();
-	private List<RawContainerLog> containerLogs = new ArrayList<>();
+	private List<MyContainerLog> containerLogs = new ArrayList<>();
 
 	private String ownerName;
 	private long ownerID;
@@ -363,12 +363,12 @@ public abstract class AbstractOwner implements OwnerType, Comparable<OwnerType> 
 	}
 
 	@Override
-	public List<RawContainerLog> getContainerLogs() {
+	public List<MyContainerLog> getContainerLogs() {
 		return containerLogs;
 	}
 
 	@Override
-	public void setContainerLogs(final List<RawContainerLog> containersLogs) {
+	public void setContainerLogs(final List<MyContainerLog> containersLogs) {
 		this.containerLogs = containersLogs;
 	}
 

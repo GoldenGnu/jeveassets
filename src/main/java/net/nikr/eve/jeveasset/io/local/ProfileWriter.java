@@ -38,7 +38,6 @@ import net.nikr.eve.jeveasset.data.api.my.MyJournal;
 import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder;
 import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
 import net.nikr.eve.jeveasset.data.api.raw.RawBlueprint;
-import net.nikr.eve.jeveasset.data.api.raw.RawContainerLog;
 import net.nikr.eve.jeveasset.data.profile.ProfileManager;
 import net.nikr.eve.jeveasset.io.shared.RawConverter;
 import net.troja.eve.esi.model.CharacterRolesResponse.RolesEnum;
@@ -183,7 +182,6 @@ public final class ProfileWriter extends AbstractXmlWriter {
 		writeTransactions(xmldoc, node, owner.getTransactions(), owner.isCorporation());
 		writeIndustryJobs(xmldoc, node, owner.getIndustryJobs(), owner.isCorporation());
 		writeBlueprints(xmldoc, node, owner.getBlueprints(), owner.isCorporation());
-		writeContainerLogs(xmldoc, node, owner.getContainerLogs(), owner.isCorporation());
 	}
 
 	private void writeAssets(final Document xmldoc, final Element parentNode, final List<MyAsset> assets) {
@@ -402,26 +400,5 @@ public final class ProfileWriter extends AbstractXmlWriter {
 			setAttribute(childNode, "runs", blueprint.getRuns());
 			node.appendChild(childNode);
 		}
-	}
-
-	private void writeContainerLogs(final Document xmldoc, final Element parentNode, final List<RawContainerLog> containerLogs, final boolean bCorp) {
-		Element node = xmldoc.createElement("containerlogs");
-		for (RawContainerLog containerLog : containerLogs) {
-			Element childNode = xmldoc.createElement("containerlog");
-			setAttribute(childNode, "action", containerLog.getAction());
-			setAttribute(childNode, "characterid", containerLog.getCharacterID());
-			setAttribute(childNode, "containerid", containerLog.getContainerID());
-			setAttribute(childNode, "containertypeid", containerLog.getContainerTypeID());
-			setAttribute(childNode, "flagid", containerLog.getFlagID());
-			setAttribute(childNode, "locationid", containerLog.getLocationID());
-			setAttribute(childNode, "loggedat", containerLog.getLoggedAt());
-			setAttributeOptional(childNode, "newconfigbitmask", containerLog.getNewConfigBitmask());
-			setAttributeOptional(childNode, "oldconfigbitmask", containerLog.getOldConfigBitmask());
-			setAttributeOptional(childNode, "passwordtype", containerLog.getPasswordType());
-			setAttributeOptional(childNode, "quantity", containerLog.getQuantity());
-			setAttributeOptional(childNode, "typeid", containerLog.getTypeID());
-			node.appendChild(childNode);
-		}
-		parentNode.appendChild(node);
 	}
 }

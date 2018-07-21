@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import net.nikr.eve.jeveasset.data.api.my.MyAsset;
+import net.nikr.eve.jeveasset.data.api.my.MyContainerLog;
 import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 
@@ -87,6 +88,21 @@ public class AssetLogData {
 		this.count = count;
 		this.logType = data.getLogType();
 		this.id = data.getID();
+		this.location = createLocation();
+		this.item = ApiIdConverter.getItem(typeID);
+	}
+
+	public AssetLogData(MyContainerLog data, long count) {
+		this.typeID = data.getTypeID();
+		this.date = data.getLoggedAt();
+		this.ownerID = data.getCharacterID();
+		this.locationID = data.getLocationID();
+		this.flagID = data.getFlagID();
+		this.container = data.getContainer();
+		this.parentIDs = data.getParentIDs();
+		this.count = count;
+		this.logType = LogType.ASSET;
+		this.id = data.getLoggedAt().getTime();
 		this.location = createLocation();
 		this.item = ApiIdConverter.getItem(typeID);
 	}

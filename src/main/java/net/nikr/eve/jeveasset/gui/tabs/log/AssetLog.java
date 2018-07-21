@@ -25,6 +25,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import net.nikr.eve.jeveasset.data.api.my.MyAsset;
+import net.nikr.eve.jeveasset.data.api.my.MyContainerLog;
 
 
 public class AssetLog extends AssetLogData implements Comparable<AssetLog> {
@@ -68,6 +69,18 @@ public class AssetLog extends AssetLogData implements Comparable<AssetLog> {
 		super(asset, date);
 		this.need = asset.getCount();
 		this.itemID = asset.getItemID();
+	}
+
+	/**
+	 * Log
+	 * @param containerLog
+	 * @param count
+	 * @param date 
+	 */
+	public AssetLog(MyContainerLog containerLog, long count, Date date) {
+		super(containerLog, count);
+		this.need = count;
+		this.itemID = containerLog.getLoggedAt().getTime();
 	}
 
 	public List<AssetLogSource> getSources() {

@@ -29,6 +29,7 @@ import net.nikr.eve.jeveasset.TestUtil;
 import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
 import net.nikr.eve.jeveasset.data.api.my.MyAccountBalance;
 import net.nikr.eve.jeveasset.data.api.my.MyAsset;
+import net.nikr.eve.jeveasset.data.api.my.MyContainerLog;
 import net.nikr.eve.jeveasset.data.api.my.MyContract;
 import net.nikr.eve.jeveasset.data.api.my.MyContractItem;
 import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob;
@@ -37,7 +38,6 @@ import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder;
 import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
 import net.nikr.eve.jeveasset.data.api.raw.RawAsset;
 import net.nikr.eve.jeveasset.data.api.raw.RawBlueprint;
-import net.nikr.eve.jeveasset.data.api.raw.RawContainerLog;
 import net.nikr.eve.jeveasset.io.shared.ConverterTestOptions;
 import net.nikr.eve.jeveasset.io.shared.ConverterTestOptionsGetter;
 import net.nikr.eve.jeveasset.io.shared.ConverterTestUtil;
@@ -526,7 +526,7 @@ public class EsiConverterTest extends TestUtil {
 		for (ConverterTestOptions options : ConverterTestOptionsGetter.getConverterOptions()) {
 			CorporationContainersLogsResponse containersLogsResponse = new CorporationContainersLogsResponse();
 			ConverterTestUtil.setValues(containersLogsResponse, options, esi);
-			List<RawContainerLog> containerLogs = EsiConverter.toContainersLogCorporation(Collections.singletonList(containersLogsResponse), ConverterTestUtil.getEsiOwner(options));
+			List<MyContainerLog> containerLogs = EsiConverter.toContainersLogCorporation(Collections.singletonList(containersLogsResponse));
 			ConverterTestUtil.testValues(containerLogs.iterator().next(), options, esi);
 		}
 	}

@@ -30,6 +30,7 @@ import java.util.Set;
 import net.nikr.eve.jeveasset.data.api.accounts.OwnerType;
 import net.nikr.eve.jeveasset.data.api.my.MyAccountBalance;
 import net.nikr.eve.jeveasset.data.api.my.MyAsset;
+import net.nikr.eve.jeveasset.data.api.my.MyContainerLog;
 import net.nikr.eve.jeveasset.data.api.my.MyContract;
 import net.nikr.eve.jeveasset.data.api.my.MyContractItem;
 import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob;
@@ -38,6 +39,7 @@ import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder;
 import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
 import net.nikr.eve.jeveasset.data.api.raw.RawAccountBalance;
 import net.nikr.eve.jeveasset.data.api.raw.RawAsset;
+import net.nikr.eve.jeveasset.data.api.raw.RawContainerLog;
 import net.nikr.eve.jeveasset.data.api.raw.RawContract;
 import net.nikr.eve.jeveasset.data.api.raw.RawContract.ContractStatus;
 import net.nikr.eve.jeveasset.data.api.raw.RawContractItem;
@@ -283,5 +285,17 @@ public abstract class DataConverter {
 	public static MyTransaction toMyTransaction(RawTransaction rawTransaction, OwnerType owner) {
 		Item item = ApiIdConverter.getItem(rawTransaction.getTypeID());
 		return new MyTransaction(rawTransaction, item, owner);
+	}
+
+	public static List<MyContainerLog> convertRawContainersLogs(List<RawContainerLog> rawContainerLogs) {
+		List<MyContainerLog> myContainerLogs = new ArrayList<MyContainerLog>();
+		for (RawContainerLog rawTransaction : rawContainerLogs) {
+			myContainerLogs.add(toMyContainerLog(rawTransaction));
+		}
+		return myContainerLogs;
+	}
+
+	public static MyContainerLog toMyContainerLog(RawContainerLog rawContainerLog) {
+		return new MyContainerLog(rawContainerLog);
 	}
 }

@@ -29,6 +29,7 @@ import java.util.Set;
 import net.nikr.eve.jeveasset.data.api.accounts.OwnerType;
 import net.nikr.eve.jeveasset.data.api.my.MyAccountBalance;
 import net.nikr.eve.jeveasset.data.api.my.MyAsset;
+import net.nikr.eve.jeveasset.data.api.my.MyContainerLog;
 import net.nikr.eve.jeveasset.data.api.my.MyContract;
 import net.nikr.eve.jeveasset.data.api.my.MyContractItem;
 import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob;
@@ -225,11 +226,11 @@ public class EsiConverter extends DataConverter {
 		return convertRawTransactions(rawTransactions, owner, saveHistory);
 	}
 
-	public static List<RawContainerLog> toContainersLogCorporation(List<CorporationContainersLogsResponse> responses, OwnerType owner) {
+	public static List<MyContainerLog> toContainersLogCorporation(List<CorporationContainersLogsResponse> responses) {
 		List<RawContainerLog> rawContainersLogs = new ArrayList<RawContainerLog>();
 		for (CorporationContainersLogsResponse response : responses) {
-			rawContainersLogs.add(new RawContainerLog(response, owner));
+			rawContainersLogs.add(new RawContainerLog(response));
 		}
-		return rawContainersLogs;
+		return convertRawContainersLogs(rawContainersLogs);
 	}
 }
