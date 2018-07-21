@@ -282,17 +282,19 @@ public abstract class AbstractGetter<O extends OwnerType, C, E extends Exception
 		return parts;
 	}
 
-	protected final Set<Long> getIDs(Map<Long, String> itemMap, OwnerType owner) {
+	protected final Map<Long, MyAsset> getIDs(OwnerType owner) {
+		Map<Long, MyAsset> itemMap = new HashMap<Long, MyAsset>();
 		addItemIDs(itemMap, owner.getAssets());
-		return itemMap.keySet();
+		return itemMap;
 	}
 
-	private void addItemIDs(Map<Long, String> itemIDs, List<MyAsset> assets) {
+	private void addItemIDs(Map<Long, MyAsset> itemIDs, List<MyAsset> assets) {
 		for (MyAsset asset : assets) {
 			if ((asset.getItem().getGroup().equals("Audit Log Secure Container")
-					|| asset.getItem().getCategory().equals("Ship"))
+					|| asset.getItem().getCategory().equals("Ship")
+					|| asset.getItem().getCategory().equals("Structure"))
 					&& asset.isSingleton()) {
-				itemIDs.put(asset.getItemID(), asset.getItem().getTypeName());
+				itemIDs.put(asset.getItemID(), asset);
 			}
 			addItemIDs(itemIDs, asset.getAssets());
 		}
