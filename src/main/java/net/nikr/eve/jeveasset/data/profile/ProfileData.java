@@ -66,6 +66,7 @@ import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
 import net.nikr.eve.jeveasset.i18n.General;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 import net.nikr.eve.jeveasset.io.shared.DataConverter;
+import net.nikr.eve.jeveasset.io.shared.RawConverter;
 import uk.me.candle.eve.graph.Edge;
 import uk.me.candle.eve.graph.Graph;
 import uk.me.candle.eve.graph.distances.Jumps;
@@ -913,6 +914,12 @@ public class ProfileData {
 			if (asset.getLocationID() > 40000000 && asset.getLocationID() < 50000000) {
 				continue;
 			}
+			//Handle Asset Structures
+			if (asset.getItem().getCategory().equals("Structure")) {
+				for (MyAsset childAsset:  asset.getAssets()) {
+					updateStructureAssets(childAsset, asset);
+				}
+			}
 			//Blueprint
 			RawBlueprint blueprint = blueprints.get(asset.getItemID());
 			asset.setBlueprint(blueprint);
@@ -981,7 +988,9 @@ public class ProfileData {
 			asset.setVolume(volume);
 
 			//Add asset
-			addTo.add(asset);
+			if (asset.getTypeID() != 27) { //Ignore offices
+				addTo.add(asset);
+			}
 			//Add sub-assets
 			addAssets(asset.getAssets(), addTo, blueprints, assetAddedData);
 		}
@@ -1011,6 +1020,22 @@ public class ProfileData {
 			asset.setName(eveName + " (" + asset.getTypeName() + ")", false, true);
 		} else {
 			asset.setName(asset.getTypeName(), false, false);
+		}
+	}
+
+	private void updateStructureAssets(final MyAsset asset, final MyAsset structure) {
+		final Long locationID;
+		if (asset.isCorporation() && asset.getParents().get(asset.getParents().size() - 1).equals(structure) && asset.getTypeID() != 27) {
+			locationID = structure.getLocationID();
+		} else {
+			asset.getParents().remove(structure);
+			locationID = structure.getItemID();
+		}
+		asset.setLocationID(locationID);
+		asset.setLocation(ApiIdConverter.getLocation(locationID));
+		asset.setLocationType(RawConverter.toAssetLocationType(locationID));
+		for (MyAsset subAsset : asset.getAssets()) { //Update child assets
+			updateStructureAssets(subAsset, structure);
 		}
 	}
 }

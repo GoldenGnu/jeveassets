@@ -64,6 +64,19 @@ public class Citadel {
 		updateLocation();
 	}
 
+	public Citadel(long locationID, String name, long systemID) {
+		this.id = locationID;
+		this.name = name;
+		MyLocation location = ApiIdConverter.getLocation(systemID);
+		this.systemId = location.getSystemID();
+		this.systemName = location.getSystem();
+		this.regionId = location.getRegionID();
+		this.regionName = location.getRegion();
+		this.userLocation = false;
+		this.citadel = true;
+		updateLocation();
+	}
+
 	public void setID(long id) {
 		this.id = id;
 		updateLocation();
