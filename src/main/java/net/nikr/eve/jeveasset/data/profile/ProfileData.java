@@ -1025,7 +1025,7 @@ public class ProfileData {
 
 	private void updateStructureAssets(final MyAsset asset, final MyAsset structure) {
 		final Long locationID;
-		if (asset.isCorporation() && asset.getParents().get(asset.getParents().size() - 1).equals(structure) && asset.getTypeID() != 27) {
+		if (asset.isCorporation() && !asset.getParents().isEmpty() && asset.getParents().get(asset.getParents().size() - 1).equals(structure) && asset.getTypeID() != 27) {
 			locationID = structure.getLocationID();
 		} else {
 			asset.getParents().remove(structure);
