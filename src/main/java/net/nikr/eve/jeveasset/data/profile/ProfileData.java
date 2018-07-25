@@ -978,7 +978,7 @@ public class ProfileData {
 					containerLog.setParentIDs(parentIds);
 				}
 			}
-			asset.setContainer(sContainer);
+			asset.setContainer(sContainer.intern());
 
 			//Price data
 			PriceData priceData = Settings.get().getPriceData().get(asset.getItem().getTypeID());
