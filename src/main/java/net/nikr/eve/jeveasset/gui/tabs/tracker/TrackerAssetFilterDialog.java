@@ -41,8 +41,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.JTree;
 import javax.swing.Timer;
-import javax.swing.event.CaretEvent;
-import javax.swing.event.CaretListener;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 import net.nikr.eve.jeveasset.Program;
@@ -67,7 +67,7 @@ public class TrackerAssetFilterDialog extends JDialogCentered {
 	private final FilterList<CheckBoxNode> filterList;
 
 	private boolean save = false;
-	
+
 	public TrackerAssetFilterDialog(Program program) {
 		super(program, TabsTracker.get().filterTitle(), Images.TOOL_TRACKER.getImage());
 		eventList = new EventListManager<CheckBoxNode>().create();
@@ -84,30 +84,39 @@ public class TrackerAssetFilterDialog extends JDialogCentered {
 		jTree.setCellRenderer(new CheckBoxNodeRenderer());
 		jTree.setCellEditor(new CheckBoxNodeEditor(jTree));
 		jTree.setEditable(true);
+		jTree.setLargeModel(true);
+		jTree.setRowHeight(16);
 
 		timer = new Timer(500, new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				timer.stop();
-				filterList.setMatcher(new CheckBoxNodeMatcher(jFilter.getText()));
-				if (jTree.getRowCount() > 0) {
-					expandAll(jTree.getPathForRow(0), true);
-				}
-				jTree.repaint();
+				filter();
 			}
 		});
 
 		JLabel jSearch = new JLabel(TabsTracker.get().search());
 
 		jFilter = new JTextField();
-		jFilter.addCaretListener(new CaretListener() {
+		jFilter.getDocument().addDocumentListener(new DocumentListener() {
 			@Override
-			public void caretUpdate(CaretEvent e) {
+			public void insertUpdate(DocumentEvent e) {
+				timer.stop();
+				timer.start();
+			}
+
+			@Override
+			public void removeUpdate(DocumentEvent e) {
+				timer.stop();
+				timer.start();
+			}
+
+			@Override
+			public void changedUpdate(DocumentEvent e) {
 				timer.stop();
 				timer.start();
 			}
 		});
-
 		JButton jClear = new JButton(Images.TAB_CLOSE.getIcon());
 		jClear.setContentAreaFilled(false);
 		jClear.setFocusPainted(false);
@@ -117,10 +126,7 @@ public class TrackerAssetFilterDialog extends JDialogCentered {
 			public void actionPerformed(ActionEvent e) {
 				jFilter.setText("");
 				timer.stop();
-				filterList.setMatcher(new CheckBoxNodeMatcher(""));
-				if (jTree.getRowCount() > 0) {
-					expandAll(jTree.getPathForRow(0), true);
-				}
+				filter();
 			}
 		});
 		
@@ -200,11 +206,10 @@ public class TrackerAssetFilterDialog extends JDialogCentered {
 
 	public boolean showLocations(Map<String, CheckBoxNode> nodes) {
 		//Reset
-		jTree.setVisibleRowCount(nodes.size());
 		save = false;
 		jFilter.setText("");
 		timer.stop();
-		filterList.setMatcher(new CheckBoxNodeMatcher(""));
+		filterList.setMatcher(null);
 
 		//Copy list
 		Map<String, CheckBoxNode> cloneList = cloneList(nodes);
@@ -217,9 +222,12 @@ public class TrackerAssetFilterDialog extends JDialogCentered {
 		} finally {
 			eventList.getReadWriteLock().writeLock().unlock();
 		}
-
-		//Expand all
-		expandAll(jTree.getPathForRow(0), true);
+		if (cloneList.size() > 35) {
+			jTree.setVisibleRowCount(35);
+		} else {
+			jTree.setVisibleRowCount(cloneList.size());
+		}
+		expandAll(); //Expand all
 
 		//Show
 		setVisible(true);
@@ -230,6 +238,23 @@ public class TrackerAssetFilterDialog extends JDialogCentered {
 			nodes.putAll(cloneList);
 		}
 		return save && changed;
+	}
+
+	private void filter() {
+		if (jFilter.getText().isEmpty()) {
+			filterList.setMatcher(null);
+			try { 
+				eventList.getReadWriteLock().readLock().lock();
+				for (CheckBoxNode node : eventList) {
+					node.setShown(true);
+				}
+			} finally {
+				eventList.getReadWriteLock().readLock().unlock();
+			}
+		} else {
+			filterList.setMatcher(new CheckBoxNodeMatcher(jFilter.getText()));
+		}
+		expandAll();
 	}
 
 	private Map<String, CheckBoxNode> cloneList(Map<String, CheckBoxNode> nodes) {
@@ -272,18 +297,20 @@ public class TrackerAssetFilterDialog extends JDialogCentered {
 		return false;
 	}
 
-	private void expandAll(final TreePath parent, final boolean expand) {
-		TreeList.Node<?> node = (TreeList.Node<?>) parent.getLastPathComponent();
-		if (!node.getChildren().isEmpty()) {
-			for (TreeList.Node<?> n : node.getChildren()) {
-				TreePath path = parent.pathByAddingChild(n);
-				expandAll(path, expand);
-			}
+	private void expandAll() {
+		if (jTree.getRowCount() > 0) { //Always expand root
+			jTree.expandRow(0);
 		}
-		if (expand) {
-			jTree.expandPath(parent);
-		} else {
-			jTree.collapsePath(parent);
+		for (int i = 0; i < jTree.getRowCount(); i++) { //Expand everything
+			TreePath path = jTree.getPathForRow(i);
+			Object object = path.getLastPathComponent();
+			if (object instanceof TreeList.Node) {
+				TreeList.Node<?> node = (TreeList.Node) object;
+				if (node.getChildren().size() > 5000) { //Ignore nodes with more that 5000 children
+					continue;
+				}
+			}
+			jTree.expandPath(path);
 		}
 	}
 
