@@ -31,7 +31,8 @@ import net.nikr.eve.jeveasset.io.shared.RawConverter;
 
 public class MyJournal extends RawJournal implements Comparable<MyJournal>, OwnersType {
 
-	private final String corp = "(Corporation)";
+	private static final String CORP = "(Corporation)";
+
 	private final OwnerType owner;
 	private String firstPartyName = "";
 	private String secondPartyName = "";
@@ -56,7 +57,7 @@ public class MyJournal extends RawJournal implements Comparable<MyJournal>, Owne
 	public String getRefTypeFormated() {
 		RawJournalRefType refType = getRefType();
 		if (refType != null) {
-			return capitalizeAll(refType.name().replace("_CORP_", corp).replace('_', ' '));
+			return capitalizeAll(refType.name().replace("_CORP_", CORP).replace('_', ' '));
 		} else {
 			return "";
 		}
@@ -82,7 +83,7 @@ public class MyJournal extends RawJournal implements Comparable<MyJournal>, Owne
 		if (s.length() == 0) {
 			return s;
 		}
-		if (s.equals(corp)) {
+		if (s.equals(CORP)) {
 			return s;
 		}
 		return s.substring(0, 1).toUpperCase() + s.substring(1).toLowerCase();
