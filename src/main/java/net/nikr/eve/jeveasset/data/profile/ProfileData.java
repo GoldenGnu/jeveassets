@@ -954,7 +954,7 @@ public class ProfileData {
 			if (sContainer.isEmpty()) {
 				sContainer = General.get().none();
 			}
-			asset.setContainer(sContainer);
+			asset.setContainer(sContainer.intern());
 
 			//Price data
 			PriceData priceData = Settings.get().getPriceData().get(asset.getItem().getTypeID());

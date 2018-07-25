@@ -90,10 +90,10 @@ public class MyLocation implements Comparable<MyLocation> {
 		this.stationID = stationID;
 		this.station = station;
 		this.systemID = systemID;
-		this.system = system;
+		this.system = system.intern();
 		this.regionID = regionID;
-		this.region = region;
-		this.security = security;
+		this.region = region.intern();
+		this.security = security.intern();
 		this.securityObject = Security.create(security);
 		if (isStation()) {
 			empty = false;
@@ -102,11 +102,11 @@ public class MyLocation implements Comparable<MyLocation> {
 		} else if (isSystem()) {
 			empty = false;
 			this.locationID = systemID;
-			this.location = system;
+			this.location = system.intern();
 		} else if (isRegion()) {
 			empty = false;
 			this.locationID = regionID;
-			this.location = region;
+			this.location = region.intern();
 		} else {
 			empty = true;
 			this.locationID = 0;
