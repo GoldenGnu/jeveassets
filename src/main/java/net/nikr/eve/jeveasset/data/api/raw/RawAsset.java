@@ -38,6 +38,14 @@ import net.troja.eve.esi.model.CorporationAssetsResponse;
 
 public class RawAsset {
 
+	private static final ItemFlag MANUFACTURING_FLAG = new ItemFlag(0, IndustryActivity.ACTIVITY_MANUFACTURING.toString(), IndustryActivity.ACTIVITY_MANUFACTURING.toString());
+	private static final ItemFlag REACTIONS_FLAG = new ItemFlag(0, IndustryActivity.ACTIVITY_REACTIONS.toString(), IndustryActivity.ACTIVITY_REACTIONS.toString());
+	private static final ItemFlag INDUSTRY_JOB_FLAG = new ItemFlag(0, General.get().industryJobFlag(), General.get().industryJobFlag());
+	private static final ItemFlag MARKET_ORDER_BUY_FLAG = new ItemFlag(0, General.get().marketOrderBuyFlag(), General.get().marketOrderBuyFlag());
+	private static final ItemFlag MARKET_ORDER_SELL_FLAG = new ItemFlag(0, General.get().marketOrderSellFlag(), General.get().marketOrderSellFlag());
+	private static final ItemFlag CONTRACT_INCLUDED_FLAG = new ItemFlag(0, General.get().contractIncluded(), General.get().contractIncluded());
+	private static final ItemFlag CONTRACT_EXCLUDED_FLAG = new ItemFlag(0, General.get().contractExcluded(), General.get().contractExcluded());
+
 	public enum LocationType {
 		STATION("station"),
 		SOLAR_SYSTEM("solar_system"),
@@ -85,10 +93,10 @@ public class RawAsset {
 			itemId = RawConverter.toLong(industryJob.getJobID()); //This item doesn't exist yet, need a new itemID
 			switch (industryJob.getActivity()) { //Can not be null
 				case ACTIVITY_MANUFACTURING: //Manufacturing
-					itemFlag = new ItemFlag(0, IndustryActivity.ACTIVITY_MANUFACTURING.toString(), IndustryActivity.ACTIVITY_MANUFACTURING.toString());
+					itemFlag = MANUFACTURING_FLAG;
 					break;
 				case ACTIVITY_REACTIONS: //Reactions
-					itemFlag = new ItemFlag(0, IndustryActivity.ACTIVITY_REACTIONS.toString(), IndustryActivity.ACTIVITY_REACTIONS.toString());
+					itemFlag = REACTIONS_FLAG;
 					break;
 				default:
 					itemFlag = ApiIdConverter.getFlag(0); //Should never happen, but, better safe than sorry...
@@ -100,7 +108,7 @@ public class RawAsset {
 		} else {
 			isSingleton = true;
 			itemId = industryJob.getBlueprintID(); //blueprint itemID
-			itemFlag = new ItemFlag(0, General.get().industryJobFlag(), General.get().industryJobFlag());
+			itemFlag = INDUSTRY_JOB_FLAG;
 			locationId = industryJob.getLocationID();
 			locationType = RawConverter.toAssetLocationType(locationId);
 			if (industryJob.isBPO()) {
@@ -121,9 +129,9 @@ public class RawAsset {
 		isSingleton = false;
 		itemId = marketOrder.getOrderID();
 		if (marketOrder.isBuyOrder()) { //Buy
-			itemFlag = new ItemFlag(0, General.get().marketOrderBuyFlag(), General.get().marketOrderBuyFlag());
+			itemFlag = MARKET_ORDER_BUY_FLAG;
 		} else { //Sell
-			itemFlag = new ItemFlag(0, General.get().marketOrderSellFlag(), General.get().marketOrderSellFlag());
+			itemFlag = MARKET_ORDER_SELL_FLAG;
 		}
 		locationId = marketOrder.getLocationID();
 		locationType = RawConverter.toAssetLocationType(locationId);
@@ -140,9 +148,9 @@ public class RawAsset {
 		isSingleton = contractItem.isSingleton();
 		itemId = RawConverter.toLong(contractItem.getRecordID());
 		if (contractItem.isIncluded()) { //Sell
-			itemFlag = new ItemFlag(0, General.get().contractIncluded(), General.get().contractIncluded());
+			itemFlag = CONTRACT_INCLUDED_FLAG;
 		} else { //Buy
-			itemFlag = new ItemFlag(0, General.get().contractExcluded(), General.get().contractExcluded());
+			itemFlag = CONTRACT_EXCLUDED_FLAG;
 		}
 		if (contractItem.getContract().getStartLocationID() != null) {
 			locationId = contractItem.getContract().getStartLocationID();
