@@ -660,12 +660,12 @@ public class RawConverter {
 		RIGSLOT6("RigSlot6", 98),
 		RIGSLOT7("RigSlot7", 99),
 		CORPSAG1("CorpSAG1", 115),
-        CORPSAG2("CorpSAG2", 116),
-        CORPSAG3("CorpSAG3", 117),
-        CORPSAG4("CorpSAG4", 118),
-        CORPSAG5("CorpSAG5", 119),
-        CORPSAG6("CorpSAG6", 120),
-        CORPSAG7("CorpSAG7", 121),
+		CORPSAG2("CorpSAG2", 116),
+		CORPSAG3("CorpSAG3", 117),
+		CORPSAG4("CorpSAG4", 118),
+		CORPSAG5("CorpSAG5", 119),
+		CORPSAG6("CorpSAG6", 120),
+		CORPSAG7("CorpSAG7", 121),
 		SECONDARYSTORAGE("SecondaryStorage", 122),
 		SUBSYSTEMSLOT0("SubSystemSlot0", 125),
 		SUBSYSTEMSLOT1("SubSystemSlot1", 126),
@@ -707,13 +707,13 @@ public class RawConverter {
 		FIGHTERTUBE3("FighterTube3", 162),
 		FIGHTERTUBE4("FighterTube4", 163),
 		SERVICESLOT0("StructureServiceSlot0", 164), //ServiceSlot0
-        SERVICESLOT1("StructureServiceSlot1", 165), //ServiceSlot1
-        SERVICESLOT2("StructureServiceSlot2", 166), //ServiceSlot2
-        SERVICESLOT3("StructureServiceSlot3", 167), //ServiceSlot3
-        SERVICESLOT4("StructureServiceSlot4", 168), //ServiceSlot4
-        SERVICESLOT5("StructureServiceSlot5", 169), //ServiceSlot5
-        SERVICESLOT6("StructureServiceSlot6", 170), //ServiceSlot6
-        SERVICESLOT7("StructureServiceSlot7", 171), //ServiceSlot7
+		SERVICESLOT1("StructureServiceSlot1", 165), //ServiceSlot1
+		SERVICESLOT2("StructureServiceSlot2", 166), //ServiceSlot2
+		SERVICESLOT3("StructureServiceSlot3", 167), //ServiceSlot3
+		SERVICESLOT4("StructureServiceSlot4", 168), //ServiceSlot4
+		SERVICESLOT5("StructureServiceSlot5", 169), //ServiceSlot5
+		SERVICESLOT6("StructureServiceSlot6", 170), //ServiceSlot6
+		SERVICESLOT7("StructureServiceSlot7", 171), //ServiceSlot7
 		STRUCTUREFUEL("StructureFuel", 172),
 		DELIVERIES("Deliveries", 173),
 		CRATELOOT("CrateLoot", 174),

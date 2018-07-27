@@ -47,13 +47,13 @@ public class RawIndustryJob {
 		}
 
 		public static IndustryJobStatus fromValue(String text) {
-            for (IndustryJobStatus b : IndustryJobStatus.values()) {
-                if (String.valueOf(b.value).equals(text)) {
-                    return b;
-                }
-            }
-            return null;
-        }
+			for (IndustryJobStatus b : IndustryJobStatus.values()) {
+				if (String.valueOf(b.value).equals(text)) {
+					return b;
+				}
+			}
+			return null;
+		}
 	}
 
 	private Integer activityId = null;
