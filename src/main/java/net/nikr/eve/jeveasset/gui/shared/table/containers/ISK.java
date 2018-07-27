@@ -20,6 +20,8 @@
  */
 package net.nikr.eve.jeveasset.gui.shared.table.containers;
 
+import java.util.Objects;
+
 
 public class ISK {
 
@@ -33,4 +35,30 @@ public class ISK {
 	public String toString() {
 		return price;
 	}
+
+	@Override
+	public int hashCode() {
+		int hash = 7;
+		hash = 29 * hash + Objects.hashCode(this.price);
+		return hash;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		final ISK other = (ISK) obj;
+		if (!Objects.equals(this.price, other.price)) {
+			return false;
+		}
+		return true;
+	}
+
 }

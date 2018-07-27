@@ -35,9 +35,9 @@ import net.nikr.eve.jeveasset.data.settings.types.ItemType;
 import net.nikr.eve.jeveasset.data.settings.types.LocationType;
 import net.nikr.eve.jeveasset.data.settings.types.LocationsType;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
+import net.nikr.eve.jeveasset.gui.shared.table.containers.HierarchyColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.NumberValue;
 import net.nikr.eve.jeveasset.gui.tabs.tree.TreeAsset;
-import net.nikr.eve.jeveasset.gui.tabs.tree.TreeTableFormat.HierarchyColumn;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

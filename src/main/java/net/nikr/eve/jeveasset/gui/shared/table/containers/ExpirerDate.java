@@ -21,6 +21,7 @@
 package net.nikr.eve.jeveasset.gui.shared.table.containers;
 
 import java.util.Date;
+import java.util.Objects;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 
@@ -47,4 +48,30 @@ public class ExpirerDate implements Comparable<ExpirerDate> {
 	public int compareTo(final ExpirerDate o) {
 		return this.expirer.compareTo(o.expirer);
 	}
+
+	@Override
+	public int hashCode() {
+		int hash = 5;
+		hash = 79 * hash + Objects.hashCode(this.expirer);
+		return hash;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		final ExpirerDate other = (ExpirerDate) obj;
+		if (!Objects.equals(this.expirer, other.expirer)) {
+			return false;
+		}
+		return true;
+	}
+
 }
