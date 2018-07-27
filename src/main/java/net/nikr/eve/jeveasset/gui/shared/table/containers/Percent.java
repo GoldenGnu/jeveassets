@@ -77,4 +77,29 @@ public class Percent extends NumberValue implements Comparable<Percent> {
 	public int compareTo(final Percent o) {
 		return Double.compare(percent, o.percent);
 	}
+
+	@Override
+	public int hashCode() {
+		int hash = 5;
+		hash = 71 * hash + (int) (Double.doubleToLongBits(this.percent) ^ (Double.doubleToLongBits(this.percent) >>> 32));
+		return hash;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		final Percent other = (Percent) obj;
+		if (Double.doubleToLongBits(this.percent) != Double.doubleToLongBits(other.percent)) {
+			return false;
+		}
+		return true;
+	}
 }

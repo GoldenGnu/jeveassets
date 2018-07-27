@@ -30,7 +30,7 @@ import java.util.Date;
 import javax.swing.AbstractAction;
 import javax.swing.AbstractButton;
 import javax.swing.JTable;
-import net.nikr.eve.jeveasset.gui.tabs.tree.TreeTableFormat;
+import net.nikr.eve.jeveasset.gui.shared.table.containers.HierarchyColumn;
 
 
 public class CopyHandler {
@@ -115,8 +115,8 @@ public class CopyHandler {
 						rowText.append(Formater.longFormat(value));
 					} else if (value instanceof Date) {
 						rowText.append(Formater.columnDate(value));
-					} else if (value instanceof TreeTableFormat.HierarchyColumn) {
-						TreeTableFormat.HierarchyColumn hierarchyColumn = (TreeTableFormat.HierarchyColumn) value;
+					} else if (value instanceof HierarchyColumn) {
+						HierarchyColumn hierarchyColumn = (HierarchyColumn) value;
 						rowText.append(hierarchyColumn.getExport());
 					} else {
 						rowText.append(value.toString()); //Default

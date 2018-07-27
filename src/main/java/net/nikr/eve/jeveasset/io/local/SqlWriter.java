@@ -34,7 +34,7 @@ import java.util.Locale;
 import java.util.Map;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
-import net.nikr.eve.jeveasset.gui.tabs.tree.TreeTableFormat.HierarchyColumn;
+import net.nikr.eve.jeveasset.gui.shared.table.containers.HierarchyColumn;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

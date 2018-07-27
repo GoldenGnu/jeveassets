@@ -24,6 +24,7 @@ import ca.odell.glazedlists.GlazedLists;
 import java.awt.Color;
 import java.awt.Font;
 import java.util.Collection;
+import java.util.Objects;
 import java.util.TreeSet;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -183,6 +184,29 @@ public class Tags extends TreeSet<Tag> implements Comparable<Tags>{
 		}
 	}
 
-	
+	@Override
+	public int hashCode() {
+		int hash = 3;
+		hash = 89 * hash + Objects.hashCode(this.tags);
+		return hash;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		final Tags other = (Tags) obj;
+		if (!Objects.equals(this.tags, other.tags)) {
+			return false;
+		}
+		return true;
+	}
 
 }

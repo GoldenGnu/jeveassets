@@ -61,5 +61,30 @@ public class Runs extends NumberValue implements Comparable<Runs> {
 	public String toString() {
 		return runsString;
 	}
-	
+
+	@Override
+	public int hashCode() {
+		int hash = 5;
+		hash = 79 * hash + this.runs;
+		return hash;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		final Runs other = (Runs) obj;
+		if (this.runs != other.runs) {
+			return false;
+		}
+		return true;
+	}
+
 }
