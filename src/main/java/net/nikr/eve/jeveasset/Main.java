@@ -55,6 +55,7 @@ public final class Main {
 		SplashUpdater splashUpdater = new SplashUpdater();
 		splashUpdater.start();
 		//Print program data
+		log.info("jmemory ok");
 		log.info("Starting " + Program.PROGRAM_NAME + " " + Program.PROGRAM_VERSION);
 		log.log(Level.INFO, "OS: {0} {1}", new Object[]{System.getProperty("os.name"), System.getProperty("os.version")});
 		log.log(Level.INFO, "Java: {0} {1}", new Object[]{System.getProperty("java.vendor"), System.getProperty("java.version")});
