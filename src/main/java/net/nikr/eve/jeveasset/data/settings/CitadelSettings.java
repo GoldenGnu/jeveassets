@@ -41,7 +41,7 @@ public class CitadelSettings {
 	}
 
 	public void put(long locationID, Citadel citadel) {
-		cache.put(locationID, citadel);
+		cache.put(locationID, new Citadel(citadel));
 		ApiIdConverter.addLocation(citadel, locationID);
 	}
 

@@ -52,28 +52,33 @@ public class Citadel {
 		this(id, "", 0, "", 0, "", false, true);
 	}
 
+	/**
+	 * Clone
+	 * @param clone
+	 */
+	public Citadel(Citadel clone) {
+		this(clone.id, clone.name, clone.systemId, clone.systemName, clone.regionId, clone.regionName, clone.userLocation, clone.citadel);
+	}
+
+	/**
+	 * Asset Name Structure
+	 * @param locationID
+	 * @param name
+	 * @param location 
+	 */
+	public Citadel(long locationID, String name, MyLocation location) {
+		this(locationID, name, location.getSystemID(), location.getSystem(), location.getRegionID(), location.getRegion(), false, true);
+	}
+
 	public Citadel(long id, String name, long systemId, String systemName, long regionId, String regionName, boolean userLocation, boolean citadel) {
 		this.id = id;
 		this.name = name;
 		this.systemId = systemId;
-		this.systemName = systemName;
+		this.systemName = systemName.intern();
 		this.regionId = regionId;
-		this.regionName = regionName;
+		this.regionName = regionName.intern();
 		this.userLocation = userLocation;
 		this.citadel = citadel;
-		updateLocation();
-	}
-
-	public Citadel(long locationID, String name, long systemID) {
-		this.id = locationID;
-		this.name = name;
-		MyLocation location = ApiIdConverter.getLocation(systemID);
-		this.systemId = location.getSystemID();
-		this.systemName = location.getSystem();
-		this.regionId = location.getRegionID();
-		this.regionName = location.getRegion();
-		this.userLocation = false;
-		this.citadel = true;
 		updateLocation();
 	}
 
