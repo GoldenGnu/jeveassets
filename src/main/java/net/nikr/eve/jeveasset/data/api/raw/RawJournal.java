@@ -51,39 +51,39 @@ public class RawJournal {
 	}
 
 	public enum ContextType {
-        STRUCTURE_ID("structure_id"),
-        STATION_ID("station_id"),
-        MARKET_TRANSACTION_ID("market_transaction_id"),
-        CHARACTER_ID("character_id"),
-        CORPORATION_ID("corporation_id"),
-        ALLIANCE_ID("alliance_id"),
-        EVE_SYSTEM("eve_system"),
-        INDUSTRY_JOB_ID("industry_job_id"),
-        CONTRACT_ID("contract_id"),
-        PLANET_ID("planet_id"),
-        SYSTEM_ID("system_id"),
-        TYPE_ID("type_id");
+		STRUCTURE_ID("structure_id"),
+		STATION_ID("station_id"),
+		MARKET_TRANSACTION_ID("market_transaction_id"),
+		CHARACTER_ID("character_id"),
+		CORPORATION_ID("corporation_id"),
+		ALLIANCE_ID("alliance_id"),
+		EVE_SYSTEM("eve_system"),
+		INDUSTRY_JOB_ID("industry_job_id"),
+		CONTRACT_ID("contract_id"),
+		PLANET_ID("planet_id"),
+		SYSTEM_ID("system_id"),
+		TYPE_ID("type_id");
 
-        private final String value;
+		private final String value;
 
-        ContextType(String value) {
-            this.value = value;
-        }
+		ContextType(String value) {
+			this.value = value;
+		}
 
-        @Override
-        public String toString() {
-            return String.valueOf(value);
-        }
+		@Override
+		public String toString() {
+			return String.valueOf(value);
+		}
 
-        public static ContextType fromValue(String text) {
-            for (ContextType b : ContextType.values()) {
-                if (String.valueOf(b.value).equals(text)) {
-                    return b;
-                }
-            }
-            return null;
-        }
-    }
+		public static ContextType fromValue(String text) {
+			for (ContextType b : ContextType.values()) {
+				if (String.valueOf(b.value).equals(text)) {
+					return b;
+				}
+			}
+			return null;
+		}
+	}
 
 	private Double amount = null;
 	private Double balance = null;
