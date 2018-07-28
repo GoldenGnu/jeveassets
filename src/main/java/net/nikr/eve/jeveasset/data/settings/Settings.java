@@ -276,11 +276,15 @@ public class Settings {
 		if (Program.PROGRAM_DEV_BUILD && !testMode) { //Need import
 			Program.setPortable(false);
 			Path settingsFrom = Paths.get(settings.getPathSettings());
+			Path trackerFrom = Paths.get(Settings.getPathTrackerData());
+			Path assetAddedFrom = Paths.get(Settings.getPathAssetAdded());
 			Path citadelFrom = Paths.get(Settings.getPathCitadel());
 			Path priceFrom = Paths.get(Settings.getPathPriceData());
 			Path profilesFrom = Paths.get(Settings.getPathProfilesDirectory());
 			Program.setPortable(true);
 			Path settingsTo = Paths.get(Settings.get().getPathSettings());
+			Path trackerTo = Paths.get(Settings.getPathTrackerData());
+			Path assetAddedTo = Paths.get(Settings.getPathAssetAdded());
 			Path citadelTo = Paths.get(Settings.getPathCitadel());
 			Path priceTo = Paths.get(Settings.getPathPriceData());
 			Path profilesTo = Paths.get(Settings.getPathProfilesDirectory());
@@ -288,6 +292,24 @@ public class Settings {
 				LOG.info("Importing settings");
 				try {
 					Files.copy(settingsFrom, settingsTo);
+					LOG.info("	OK");
+				} catch (IOException ex) {
+					LOG.info("	FAILED");
+				}
+			}
+			if (Files.exists(trackerFrom) && !Files.exists(trackerTo)) {
+				LOG.info("Importing tracker data");
+				try {
+					Files.copy(trackerFrom, trackerTo);
+					LOG.info("	OK");
+				} catch (IOException ex) {
+					LOG.info("	FAILED");
+				}
+			}
+			if (Files.exists(assetAddedFrom) && !Files.exists(assetAddedTo)) {
+				LOG.info("Importing asset added");
+				try {
+					Files.copy(assetAddedFrom, assetAddedTo);
 					LOG.info("	OK");
 				} catch (IOException ex) {
 					LOG.info("	FAILED");
