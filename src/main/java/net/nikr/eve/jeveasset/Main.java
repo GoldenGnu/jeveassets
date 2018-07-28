@@ -43,6 +43,7 @@ public final class Main {
 	private static boolean forceNoUpdate = false;
 	private static boolean forceUpdate = false;
 	private static boolean lazySave = false;
+	private static boolean jmemory = false;
 
 	private static Logger log;
 
@@ -55,7 +56,9 @@ public final class Main {
 		SplashUpdater splashUpdater = new SplashUpdater();
 		splashUpdater.start();
 		//Print program data
-		log.info("jmemory ok");
+		if (jmemory) {
+			log.info("jmemory ok");
+		}
 		log.info("Starting " + Program.PROGRAM_NAME + " " + Program.PROGRAM_VERSION);
 		log.log(Level.INFO, "OS: {0} {1}", new Object[]{System.getProperty("os.name"), System.getProperty("os.version")});
 		log.log(Level.INFO, "Java: {0} {1}", new Object[]{System.getProperty("java.vendor"), System.getProperty("java.version")});
@@ -72,6 +75,10 @@ public final class Main {
 		}
 		//Lets go!
 		Program program = new Program();
+	}
+
+	public static boolean isJmemory() {
+		return jmemory;
 	}
 
 	/**
@@ -95,6 +102,9 @@ public final class Main {
 			}
 			if (arg.toLowerCase().equals("-lazysave")) {
 				lazySave = true;
+			}
+			if (arg.toLowerCase().equals("-jmemory")) {
+				jmemory = true;
 			}
 		}
 		//Force UTF-8 File system
