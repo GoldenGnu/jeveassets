@@ -990,6 +990,8 @@ public class ProfileData {
 			//Add asset
 			if (asset.getTypeID() != 27) { //Ignore offices
 				addTo.add(asset);
+			} else { //Office
+				asset.setLocation(ApiIdConverter.getLocation(asset.getLocationID()));
 			}
 			//Add sub-assets
 			addAssets(asset.getAssets(), addTo, blueprints, assetAddedData);
