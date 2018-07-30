@@ -16,6 +16,24 @@
                   #### #  # #  # #  # #### #### #### #### ####
 
 ________________________________________________________________________________
+_5.7.0__________________________________________________________________________
+
+New Features:
+-Major optimization of settings IO
+-Allow unchecking all unknown locations in the tracker assets filter
+-Tracker assets filter search
+-Import tracker data from file
+-Added issued by column to market orders
+-Updated jmemory (Warn on 32bit Java and better error messages)
+-Now run with jmemory after update (if jmemory was used to start jEveAssets)
+-More memory optimiaztions
+-Better handling of structure assets
+
+Bug Fixes:
+-Tracker purge removed too much
+-Asset safety is not an unknown location
+
+________________________________________________________________________________
 _5.6.0__________________________________________________________________________
 
 New Features:
