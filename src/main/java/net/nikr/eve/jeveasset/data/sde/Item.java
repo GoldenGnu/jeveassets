@@ -52,12 +52,12 @@ public class Item implements Comparable<Item>, ItemType {
 	public Item(final int typeID, final String name, final String group, final String category, final long price, final float volume, final int meta, final String tech, final boolean marketGroup, final boolean piMaterial, final int portion, final int product, final int productQuantity) {
 		this.typeID = typeID;
 		this.name = name;
-		this.group = group;
-		this.category = category;
+		this.group = group.intern();
+		this.category = category.intern();
 		this.price = price;
 		this.volume = volume;
 		this.meta = meta;
-		this.tech = tech;
+		this.tech = tech.intern();
 		this.marketGroup = marketGroup;
 		this.piMaterial = piMaterial;
 		this.portion = portion;

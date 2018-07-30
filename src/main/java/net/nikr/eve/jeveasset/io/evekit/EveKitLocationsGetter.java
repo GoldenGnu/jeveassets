@@ -24,18 +24,21 @@ import enterprises.orbital.evekit.client.ApiClient;
 import enterprises.orbital.evekit.client.ApiException;
 import enterprises.orbital.evekit.client.model.Location;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import net.nikr.eve.jeveasset.data.api.accounts.EveKitAccessMask;
 import net.nikr.eve.jeveasset.data.api.accounts.EveKitOwner;
+import net.nikr.eve.jeveasset.data.api.my.MyAsset;
+import net.nikr.eve.jeveasset.data.settings.Citadel;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import net.nikr.eve.jeveasset.io.evekit.AbstractEveKitGetter.EveKitPagesHandler;
+import net.nikr.eve.jeveasset.io.online.CitadelGetter;
+import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 
 public class EveKitLocationsGetter extends AbstractEveKitGetter implements EveKitPagesHandler<Location> {
 
-	private final Map<Long, String> itemMap = new HashMap<Long, String>();
+	private Map<Long, MyAsset> iDs;
 
 	public EveKitLocationsGetter(UpdateTask updateTask, EveKitOwner owner) {
 		super(updateTask, owner, false, owner.getLocationsNextUpdate(), TaskType.LOCATIONS, false, null);
@@ -54,6 +57,10 @@ public class EveKitLocationsGetter extends AbstractEveKitGetter implements EveKi
 				String eveName = location.getItemName();
 				if (!eveName.isEmpty()) {
 					Settings.get().getEveNames().put(itemID, eveName);
+					MyAsset asset = iDs.get(itemID);
+					if (asset.getItem().getCategory().equals("Structure")) {
+						CitadelGetter.set(new Citadel(asset.getItemID(), eveName, ApiIdConverter.getLocation(asset.getLocationID())));
+					}
 				} else {
 					Settings.get().getEveNames().remove(itemID);
 				}
@@ -66,8 +73,9 @@ public class EveKitLocationsGetter extends AbstractEveKitGetter implements EveKi
 	@Override
 	public List<Location> get(ApiClient apiClient, String at, Long contid, Integer maxResults) throws ApiException {
 		//Get all items matching itemID
+		iDs = getIDs(owner);
 		return getCommonApi(apiClient).getLocations(owner.getAccessKey(), owner.getAccessCred(), at, contid, maxResults, false,
-				valuesFilter(getIDs(itemMap, owner)), null, null, null, null);
+				valuesFilter(iDs.keySet()), null, null, null, null);
 	}
 
 	@Override

@@ -21,11 +21,12 @@
 
 package net.nikr.eve.jeveasset.io.local;
 
+import java.io.File;
 import java.net.Proxy;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import net.nikr.eve.jeveasset.data.settings.AssetAddedData;
 import net.nikr.eve.jeveasset.data.settings.ExportSettings;
 import net.nikr.eve.jeveasset.data.settings.PriceDataSettings;
 import net.nikr.eve.jeveasset.data.settings.ProxyData;
@@ -34,6 +35,7 @@ import net.nikr.eve.jeveasset.data.settings.RouteResult;
 import net.nikr.eve.jeveasset.data.settings.RoutingSettings;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.data.settings.Settings.SettingFlag;
+import net.nikr.eve.jeveasset.data.settings.TrackerData;
 import net.nikr.eve.jeveasset.data.settings.UserItem;
 import net.nikr.eve.jeveasset.data.settings.tag.Tag;
 import net.nikr.eve.jeveasset.data.settings.tag.TagID;
@@ -49,8 +51,6 @@ import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileFilter;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
 import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerDate;
 import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerNote;
-import net.nikr.eve.jeveasset.gui.tabs.values.AssetValue;
-import net.nikr.eve.jeveasset.gui.tabs.values.Value;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -64,6 +64,12 @@ public class SettingsWriter extends AbstractXmlWriter {
 	private SettingsWriter() { }
 
 	public static boolean save(final Settings settings) {
+		if (!new File(Settings.getPathTrackerData()).exists()) { //Make sure the tracker data is saved
+			TrackerData.save("Saving Settings", true);
+		}
+		if (!new File(Settings.getPathAssetAdded()).exists()) { //Make sure the asset added data is saved
+			AssetAddedData.save("Saving Settings", true);
+		}
 		SettingsWriter writer = new SettingsWriter();
 		return writer.write(settings);
 	}
@@ -122,8 +128,6 @@ public class SettingsWriter extends AbstractXmlWriter {
 		writeTablesResize(xmldoc, settings.getTableResize());
 		writeTablesViews(xmldoc, settings.getTableViews());
 		writeExportSettings(xmldoc, settings.getExportSettings());
-		writeAssetAdded(xmldoc, settings.getAssetAdded());
-		writeTrackerData(xmldoc, settings.getTrackerData());
 		writeTrackerNotes(xmldoc, settings.getTrackerNotes());
 		writeTrackerFilters(xmldoc, settings.getTrackerFilters(), settings.isTrackerSelectNew());
 		writeOwners(xmldoc, settings.getOwners());
@@ -237,47 +241,6 @@ public class SettingsWriter extends AbstractXmlWriter {
 			ownerNode.setAttributeNS(null, "id", entry.getKey());
 			ownerNode.setAttributeNS(null, "selected", String.valueOf(entry.getValue()));
 			trackerDataNode.appendChild(ownerNode);
-		}
-	}
-
-	private void writeTrackerData(final Document xmldoc, final Map<String, List<Value>> trackerData) {
-		Element trackerDataNode = xmldoc.createElementNS(null, "trackerdata");
-		xmldoc.getDocumentElement().appendChild(trackerDataNode);
-		for (Map.Entry<String, List<Value>> entry : trackerData.entrySet()) {
-			Element ownerNode = xmldoc.createElementNS(null, "owner");
-			ownerNode.setAttributeNS(null, "name", entry.getKey());
-			trackerDataNode.appendChild(ownerNode);
-			for (Value value : entry.getValue()) {
-				Element dataNode = xmldoc.createElementNS(null, "data");
-				dataNode.setAttributeNS(null, "date", String.valueOf(value.getDate().getTime()));
-				dataNode.setAttributeNS(null, "assets", String.valueOf(value.getAssetsTotal()));
-				dataNode.setAttributeNS(null, "escrows", String.valueOf(value.getEscrows()));
-				dataNode.setAttributeNS(null, "escrowstocover", String.valueOf(value.getEscrowsToCover()));
-				dataNode.setAttributeNS(null, "sellorders", String.valueOf(value.getSellOrders()));
-				dataNode.setAttributeNS(null, "walletbalance", String.valueOf(value.getBalanceTotal()));
-				dataNode.setAttributeNS(null, "manufacturing", String.valueOf(value.getManufacturing()));
-				dataNode.setAttributeNS(null, "contractcollateral", String.valueOf(value.getContractCollateral()));
-				dataNode.setAttributeNS(null, "contractvalue", String.valueOf(value.getContractValue()));
-				ownerNode.appendChild(dataNode);
-				for (Map.Entry<String, Double> balanceEntry : value.getBalanceFilter().entrySet()) {
-					Element balanceNode = xmldoc.createElementNS(null, "balance");
-					balanceNode.setAttributeNS(null, "id", balanceEntry.getKey());
-					balanceNode.setAttributeNS(null, "value", String.valueOf(balanceEntry.getValue()));
-					dataNode.appendChild(balanceNode);
-				}
-				for (Map.Entry<AssetValue, Double> assetEntry : value.getAssetsFilter().entrySet()) {
-					Element assetNode = xmldoc.createElementNS(null, "asset");
-					assetNode.setAttributeNS(null, "location", assetEntry.getKey().getLocation());
-					if (assetEntry.getKey().getLocationID() != null) {
-						assetNode.setAttributeNS(null, "locationid", String.valueOf(assetEntry.getKey().getLocationID()));
-					}
-					if (assetEntry.getKey().getFlag() != null) {
-						assetNode.setAttributeNS(null, "flag", assetEntry.getKey().getFlag());
-					}
-					assetNode.setAttributeNS(null, "value", String.valueOf(assetEntry.getValue()));
-					dataNode.appendChild(assetNode);
-				}
-			}
 		}
 	}
 
@@ -601,17 +564,6 @@ public class SettingsWriter extends AbstractXmlWriter {
 				columnNode.setAttributeNS(null, "name", column);
 				nameNode.appendChild(columnNode);
 			}
-		}
-	}
-
-	private void writeAssetAdded(Document xmldoc, Map<Long, Date> assetAdded) {
-		Element assetaddedNode = xmldoc.createElementNS(null, "assetadded");
-		xmldoc.getDocumentElement().appendChild(assetaddedNode);
-		for (Map.Entry<Long, Date> entry : assetAdded.entrySet()) {
-			Element assetNode = xmldoc.createElementNS(null, "asset");
-			assetNode.setAttributeNS(null, "itemid", String.valueOf(entry.getKey()));
-			assetNode.setAttributeNS(null, "date", String.valueOf(entry.getValue().getTime()));
-			assetaddedNode.appendChild(assetNode);
 		}
 	}
 }

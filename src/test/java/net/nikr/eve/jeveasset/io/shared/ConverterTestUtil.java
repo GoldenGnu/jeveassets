@@ -23,6 +23,7 @@ package net.nikr.eve.jeveasset.io.shared;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
@@ -579,7 +580,7 @@ public class ConverterTestUtil {
 		if (object.getClass().equals(MyMarketOrder.class) && field.getName().equals("regionId")) {
 			return true;
 		}
-		if (field.getName().equals("serialVersionUID")) {
+		if (Modifier.isStatic(field.getModifiers())) { //Ignore static fields
 			return true;
 		}
 		if (type.equals(List.class)) {

@@ -20,6 +20,7 @@
  */
 package net.nikr.eve.jeveasset.gui.shared.table.containers;
 
+import java.util.Objects;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 
 
@@ -42,4 +43,38 @@ public class ModulePriceValue {
 			return Formater.iskFormat(value);
 		}
 	}
+
+	@Override
+	public int hashCode() {
+		int hash = 7;
+		hash = 79 * hash + Objects.hashCode(this.price);
+		hash = 79 * hash + (int) (Double.doubleToLongBits(this.value) ^ (Double.doubleToLongBits(this.value) >>> 32));
+		hash = 79 * hash + (int) (this.count ^ (this.count >>> 32));
+		return hash;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		final ModulePriceValue other = (ModulePriceValue) obj;
+		if (Double.doubleToLongBits(this.value) != Double.doubleToLongBits(other.value)) {
+			return false;
+		}
+		if (this.count != other.count) {
+			return false;
+		}
+		if (!Objects.equals(this.price, other.price)) {
+			return false;
+		}
+		return true;
+	}
+
 }

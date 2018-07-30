@@ -38,6 +38,7 @@ import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
 import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
 import net.nikr.eve.jeveasset.data.sde.ReprocessedMaterial;
+import net.nikr.eve.jeveasset.data.settings.tag.Tags;
 import net.nikr.eve.jeveasset.gui.dialogs.account.AccountTableFormat;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.tabs.assets.AssetTableFormat;
@@ -199,6 +200,12 @@ public class TableFormatTest extends TestUtil {
 			//Handled by toString()
 		} else {
 			assertTrue(tableFormat.getClass().getSuperclass().getSimpleName() + "->" + tableFormat.name() + " expected: " + expecteds.getSimpleName() + " was: " + actual.getClass().getSimpleName(), expecteds.isAssignableFrom(actual.getClass()));
+			try {
+				assertTrue(actual.getClass() + " does not implement hashCode", actual.getClass().getMethod("hashCode").getDeclaringClass() == actual.getClass());
+				assertTrue(actual.getClass() + " does not implement equals", actual.getClass().getMethod("equals").getDeclaringClass() == actual.getClass());
+			} catch (NoSuchMethodException | SecurityException ex) {
+				//fail(ex.getMessage());
+			}
 		}
 	}
 }

@@ -37,7 +37,7 @@ import net.nikr.eve.jeveasset.data.api.raw.RawContract;
 import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
 import net.nikr.eve.jeveasset.data.settings.Citadel;
-import net.nikr.eve.jeveasset.data.settings.Settings;
+import net.nikr.eve.jeveasset.data.settings.TrackerData;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.tabs.values.AssetValue;
@@ -172,12 +172,17 @@ public class EsiStructuresGetter extends AbstractEsiGetter {
 		Set<Long> itemIDs = new HashSet<Long>();
 		Set<Long> locationIDs = new HashSet<Long>();
 		if (tracker) {
-			for (List<Value> values : Settings.get().getTrackerData().values()) {
-				for (Value value : values) {
-					for (AssetValue assetValue : value.getAssetsFilter().keySet()) {
-						add(locationIDs, assetValue.getLocationID());
+			try {
+				TrackerData.readLock();
+				for (List<Value> values : TrackerData.get().values()) {
+					for (Value value : values) {
+						for (AssetValue assetValue : value.getAssetsFilter().keySet()) {
+							add(locationIDs, assetValue.getLocationID());
+						}
 					}
 				}
+			} finally {
+				TrackerData.readUnlock();
 			}
 		}
 		for (OwnerType ownerType : ownerTypes) {

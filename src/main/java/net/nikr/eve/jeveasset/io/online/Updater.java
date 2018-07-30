@@ -37,6 +37,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
+import net.nikr.eve.jeveasset.Main;
 import net.nikr.eve.jeveasset.data.settings.ProxyData;
 import net.nikr.eve.jeveasset.io.shared.FileUtil;
 
@@ -203,7 +204,11 @@ public class Updater {
 		list.add("-jar");
 		list.add(FileUtil.getPathRunUpdate());
 		list.add(link);
-		list.add(FileUtil.getPathRunJar());
+		if (Main.isJmemory()) {
+			list.add(FileUtil.getPathRunMemory());
+		} else {
+			list.add(FileUtil.getPathRunJar());
+		}
 		return list;
 	}
 

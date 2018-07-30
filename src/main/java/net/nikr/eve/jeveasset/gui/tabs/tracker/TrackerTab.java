@@ -38,6 +38,10 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -54,12 +58,15 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 import javax.swing.AbstractListModel;
 import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
@@ -76,12 +83,15 @@ import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.settings.Settings;
+import net.nikr.eve.jeveasset.data.settings.TrackerData;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.components.CheckBoxNode;
+import net.nikr.eve.jeveasset.gui.shared.components.JCustomFileChooser;
 import net.nikr.eve.jeveasset.gui.shared.components.JDateChooser;
 import net.nikr.eve.jeveasset.gui.shared.components.JDropDownButton;
+import net.nikr.eve.jeveasset.gui.shared.components.JLockWindow;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTabSecondary;
 import net.nikr.eve.jeveasset.gui.shared.components.JMultiSelectionList;
 import net.nikr.eve.jeveasset.gui.shared.components.JSelectionDialog;
@@ -91,6 +101,9 @@ import net.nikr.eve.jeveasset.gui.tabs.values.DataSetCreator;
 import net.nikr.eve.jeveasset.gui.tabs.values.Value;
 import net.nikr.eve.jeveasset.i18n.General;
 import net.nikr.eve.jeveasset.i18n.TabsTracker;
+import net.nikr.eve.jeveasset.io.local.SettingsReader;
+import net.nikr.eve.jeveasset.io.local.TrackerDataReader;
+import net.nikr.eve.jeveasset.io.shared.FileUtil;
 import org.jfree.chart.ChartMouseEvent;
 import org.jfree.chart.ChartMouseListener;
 import org.jfree.chart.ChartPanel;
@@ -115,6 +128,7 @@ public class TrackerTab extends JMainTabSecondary {
 		QUICK_DATE,
 		UPDATE_DATA,
 		UPDATE_SHOWN,
+		IMPORT_FILE,
 		INCLUDE_ZERO,
 		ALL,
 		EDIT,
@@ -150,6 +164,7 @@ public class TrackerTab extends JMainTabSecondary {
 	private final JCheckBox jContractCollateral;
 	private final JCheckBox jContractValue;
 	private final JCheckBox jAllProfiles;
+	private final JMenuItem jImportFile;
 	private final JCheckBoxMenuItem jIncludeZero;
 	private final JPopupMenu jPopupMenu;
 	private final JMenuItem jNote;
@@ -159,11 +174,14 @@ public class TrackerTab extends JMainTabSecondary {
 	private final JSelectionDialog<String> jSelectionDialog;
 	private final ChartPanel jChartPanel;
 	private final TrackerFilterDialog filterDialog;
+	private final TrackerAssetFilterDialog assetFilterDialog;
 	private final MyRender render;
 	private final Shape NO_FILTER = new Rectangle(-3, -3, 6, 6);
 	private final Shape FILTER_AND_DEFAULT = new Ellipse2D.Float(-3.0f, -3.0f, 6.0f, 6.0f);
 	private final JMenuItem jAddNote;
 	private final JMenu jEditNote;
+	private final JCustomFileChooser jFileChooser;
+	private final JLockWindow jLockWindow;
 
 	private final JLabel jTotalStatus;
 	private final JLabel jWalletBalanceStatus;
@@ -197,6 +215,18 @@ public class TrackerTab extends JMainTabSecondary {
 		super(program, TabsTracker.get().title(), Images.TOOL_TRACKER.getIcon(), true);
 
 		filterDialog = new TrackerFilterDialog(program);
+		assetFilterDialog = new TrackerAssetFilterDialog(program);
+
+		List<String> extensions = new ArrayList<>();
+		extensions.add("xml");
+		extensions.add("zip");
+		extensions.add("json");
+		extensions.add("backup");
+		jFileChooser = JCustomFileChooser.createFileChooser(program.getMainWindow().getFrame(), extensions);
+		jFileChooser.setMultiSelectionEnabled(false);
+		jFileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+
+		jLockWindow = new JLockWindow(program.getMainWindow().getFrame());
 
 		jPopupMenu = new JPopupMenu();
 		jPopupMenu.addPopupMenuListener(listener);
@@ -377,6 +407,14 @@ public class TrackerTab extends JMainTabSecondary {
 		jFilter.setIcon(new ShapeIcon(FILTER_AND_DEFAULT));
 
 		JDropDownButton jSettings = new JDropDownButton(Images.DIALOG_SETTINGS.getIcon());
+
+		jImportFile = new JMenuItem(TabsTracker.get().importFile(), Images.EDIT_IMPORT.getIcon());
+		jImportFile.setSelected(true);
+		jImportFile.setActionCommand(TrackerAction.IMPORT_FILE.name());
+		jImportFile.addActionListener(listener);
+		jSettings.add(jImportFile);
+
+		jSettings.addSeparator();
 
 		jIncludeZero = new JCheckBoxMenuItem(TabsTracker.get().includeZero());
 		jIncludeZero.setSelected(true);
@@ -587,20 +625,25 @@ public class TrackerTab extends JMainTabSecondary {
 		List<String> owners = jOwners.getSelectedValuesList();
 		boolean balanceFilter = false;
 		boolean assetsFilter = false;
-		for (String owner : owners) {
-			for (Value data : Settings.get().getTrackerData().get(owner)) {
-				//Get all account wallet account keys
-				if (!data.getBalanceFilter().isEmpty()) {
-					balanceFilter = true;
-				}
-				//Get all asset IDs
-				if (!data.getAssetsFilter().isEmpty()) {
-					assetsFilter = true;
-				}
-				if (balanceFilter && assetsFilter) {
-					break;
+		try {
+			TrackerData.readLock();
+			for (String owner : owners) {
+				for (Value data : TrackerData.get().get(owner)) {
+					//Get all account wallet account keys
+					if (!data.getBalanceFilter().isEmpty()) {
+						balanceFilter = true;
+					}
+					//Get all asset IDs
+					if (!data.getAssetsFilter().isEmpty()) {
+						assetsFilter = true;
+					}
+					if (balanceFilter && assetsFilter) {
+						break;
+					}
 				}
 			}
+		} finally {
+			TrackerData.readUnlock();
 		}
 		jWalletBalanceFilters.setEnabled(balanceFilter);
 		jAssetsFilters.setEnabled(assetsFilter);
@@ -608,7 +651,13 @@ public class TrackerTab extends JMainTabSecondary {
 
 	private void updateOwners() {
 		updateLock = true;
-		Set<String> owners = new TreeSet<String>(Settings.get().getTrackerData().keySet());
+		Set<String> owners;
+		try {
+			TrackerData.readLock();
+			owners = new TreeSet<String>(TrackerData.get().keySet());
+		} finally {
+			TrackerData.readUnlock();
+		}
 		final List<String> ownersList;
 		if (jAllProfiles.isSelected()) {
 			ownersList = new ArrayList<String>(owners);
@@ -657,13 +706,18 @@ public class TrackerTab extends JMainTabSecondary {
 	//Find all saved Keys/IDs
 		Set<String> walletIDs = new TreeSet<String>();
 		Set<AssetValue> assetsIDs = new TreeSet<AssetValue>();
-		for (List<Value> values : Settings.get().getTrackerData().values()) {
-			for (Value data : values) {
-				//Get all account wallet account keys
-				walletIDs.addAll(data.getBalanceFilter().keySet());
-				//Get all asset IDs
-				assetsIDs.addAll(data.getAssetsFilter().keySet());
+		try {
+			TrackerData.readLock();
+			for (List<Value> values : TrackerData.get().values()) {
+				for (Value data : values) {
+					//Get all account wallet account keys
+					walletIDs.addAll(data.getBalanceFilter().keySet());
+					//Get all asset IDs
+					assetsIDs.addAll(data.getAssetsFilter().keySet());
+				}
 			}
+		} finally {
+			TrackerData.readUnlock();
 		}
 
 		//WALLET - Make nodes for found wallet account keys
@@ -677,7 +731,9 @@ public class TrackerTab extends JMainTabSecondary {
 
 		//ASSETS - Make nodes for found asset IDs
 		CheckBoxNode assetNode = new CheckBoxNode(null, TabsTracker.get().assets(), TabsTracker.get().assets(), false);
+		assetNodes.put(TabsTracker.get().assets(), assetNode);
 		CheckBoxNode unknownLocationsNode = new CheckBoxNode(assetNode, TabsTracker.get().unknownLocations(), TabsTracker.get().unknownLocations(), false);
+		assetNodes.put(TabsTracker.get().unknownLocations(), unknownLocationsNode);
 		
 		Map<String, CheckBoxNode> nodeCache = new HashMap<String, CheckBoxNode>();
 		for (AssetValue assetValue : assetsIDs) {
@@ -692,6 +748,7 @@ public class TrackerTab extends JMainTabSecondary {
 					locationNode = new CheckBoxNode(assetNode, location, location, selectNode(location));
 				}
 				nodeCache.put(location, locationNode);
+				assetNodes.put(locationNode.getNodeId(), locationNode);
 			}
 
 			CheckBoxNode flagNode = nodeCache.get(id);
@@ -706,7 +763,7 @@ public class TrackerTab extends JMainTabSecondary {
 			if (locationNode.isParent()) {
 				String id = locationNode.getNodeId() + " > unique ID";
 				CheckBoxNode otherNode = new CheckBoxNode(locationNode, id, TabsTracker.get().other(), selectNode(id));
-				assetNodes.put(locationNode.getNodeId(), otherNode);
+				assetNodes.put(otherNode.getNodeId(), otherNode);
 			}
 		}
 	}
@@ -741,53 +798,58 @@ public class TrackerTab extends JMainTabSecondary {
 		Map<Date, Boolean> assetColumns = new TreeMap<Date, Boolean>();
 		Map<Date, Boolean> walletColumns = new TreeMap<Date, Boolean>();
 		if (owners != null) { //No data set...
-			for (String owner : owners) {
-				for (Value data : Settings.get().getTrackerData().get(owner)) {
-					SimpleTimePeriod date = new SimpleTimePeriod(data.getDate(), data.getDate());
-					if ((from == null || data.getDate().after(from)) && (to == null || data.getDate().before(to))) {
-						Value value = cache.get(date);
-						if (value == null) {
-							value = new Value(data.getDate());
-							cache.put(date, value);
-						}
+			try {
+				TrackerData.readLock();
+				for (String owner : owners) {
+					for (Value data : TrackerData.get().get(owner)) {
+						SimpleTimePeriod date = new SimpleTimePeriod(data.getDate(), data.getDate());
+						if ((from == null || data.getDate().after(from)) && (to == null || data.getDate().before(to))) {
+							Value value = cache.get(date);
+							if (value == null) {
+								value = new Value(data.getDate());
+								cache.put(date, value);
+							}
 
-						//Default
-						Boolean assetBoolean = assetColumns.get(data.getDate());
-						if (assetBoolean == null) {
-							assetColumns.put(data.getDate(), false);
-						}
-						Boolean walletBoolean = walletColumns.get(data.getDate());
-						if (walletBoolean == null) {
-							walletColumns.put(data.getDate(), false);
-						}
-						if (data.getAssetsFilter().isEmpty()) {
-							value.addAssets(data.getAssetsTotal());
-						} else {
-							assetColumns.put(data.getDate(), true);
-							for (Map.Entry<AssetValue, Double> entry : data.getAssetsFilter().entrySet()) {
-								if (assetNodesMap.get(entry.getKey().getID()).isSelected()) {
-									value.addAssets(entry.getKey(), entry.getValue());
+							//Default
+							Boolean assetBoolean = assetColumns.get(data.getDate());
+							if (assetBoolean == null) {
+								assetColumns.put(data.getDate(), false);
+							}
+							Boolean walletBoolean = walletColumns.get(data.getDate());
+							if (walletBoolean == null) {
+								walletColumns.put(data.getDate(), false);
+							}
+							if (data.getAssetsFilter().isEmpty()) {
+								value.addAssets(data.getAssetsTotal());
+							} else {
+								assetColumns.put(data.getDate(), true);
+								for (Map.Entry<AssetValue, Double> entry : data.getAssetsFilter().entrySet()) {
+									if (assetNodesMap.get(entry.getKey().getID()).isSelected()) {
+										value.addAssets(entry.getKey(), entry.getValue());
+									}
 								}
 							}
-						}
-						value.addEscrows(data.getEscrows());
-						value.addEscrowsToCover(data.getEscrowsToCover());
-						value.addManufacturing(data.getManufacturing());
-						value.addContractCollateral(data.getContractCollateral());
-						value.addContractValue(data.getContractValue());
-						value.addSellOrders(data.getSellOrders());
-						if (data.getBalanceFilter().isEmpty()) {
-							value.addBalance(data.getBalanceTotal());
-						} else {
-							walletColumns.put(data.getDate(), true);
-							for (Map.Entry<String, Double> entry : data.getBalanceFilter().entrySet()) {
-								if (accountNodesMap.get(entry.getKey()).isSelected()) {
-									value.addBalance(entry.getKey(), entry.getValue());
+							value.addEscrows(data.getEscrows());
+							value.addEscrowsToCover(data.getEscrowsToCover());
+							value.addManufacturing(data.getManufacturing());
+							value.addContractCollateral(data.getContractCollateral());
+							value.addContractValue(data.getContractValue());
+							value.addSellOrders(data.getSellOrders());
+							if (data.getBalanceFilter().isEmpty()) {
+								value.addBalance(data.getBalanceTotal());
+							} else {
+								walletColumns.put(data.getDate(), true);
+								for (Map.Entry<String, Double> entry : data.getBalanceFilter().entrySet()) {
+									if (accountNodesMap.get(entry.getKey()).isSelected()) {
+										value.addBalance(entry.getKey(), entry.getValue());
+									}
 								}
 							}
 						}
 					}
 				}
+			} finally {
+				TrackerData.readUnlock();
 			}
 			for (Map.Entry<SimpleTimePeriod, Value> entry : cache.entrySet()) {
 				walletBalance.add(entry.getKey(), entry.getValue().getBalanceTotal());
@@ -1050,6 +1112,9 @@ public class TrackerTab extends JMainTabSecondary {
 		Settings.lock("Tracker Filters: Update");
 		Settings.get().getTrackerFilters().clear();
 		for (CheckBoxNode checkBoxNode : assetNodes.values()) {
+			if (checkBoxNode.isParent()) {
+				continue;
+			}
 			Settings.get().getTrackerFilters().put(checkBoxNode.getNodeId(), checkBoxNode.isSelected());
 		}
 		for (CheckBoxNode checkBoxNode : accountNodes.values()) {
@@ -1081,13 +1146,17 @@ public class TrackerTab extends JMainTabSecondary {
 
 	private Value getSelectedValue(String owner) {
 		String date = Formater.simpleDate(new Date((long)jNextChart.getXYPlot().getDomainCrosshairValue()));
-		for (Value value : Settings.get().getTrackerData().get(owner)) {
-			if (date.equals(Formater.simpleDate(value.getDate()))) {
-				return value;
+		try {
+			TrackerData.readLock();
+			for (Value value : TrackerData.get().get(owner)) {
+				if (date.equals(Formater.simpleDate(value.getDate()))) {
+					return value;
+				}
 			}
+		} finally {
+			TrackerData.readUnlock();
 		}
 		return null;
-
 	}
 
 	private void addNote() {
@@ -1100,9 +1169,9 @@ public class TrackerTab extends JMainTabSecondary {
 			newNote = (String) JOptionPane.showInputDialog(program.getMainWindow().getFrame(), TabsTracker.get().notesEditMsg(), TabsTracker.get().notesEditTitle(), JOptionPane.PLAIN_MESSAGE, null, null, trackerNote.getNote());
 		}
 		if (newNote != null) {
-			Settings.lock("Tracker Data (Set Note)");
+			Settings.lock("Tracker Notes (Set Note)");
 			Settings.get().getTrackerNotes().put(new TrackerDate(date), new TrackerNote(newNote));
-			Settings.unlock("Tracker Data (Set Note)");
+			Settings.unlock("Tracker Notes (Set Note)");
 			program.saveSettings("Tracker Data (Set Note)");
 		}
 	}
@@ -1112,9 +1181,9 @@ public class TrackerTab extends JMainTabSecondary {
 		TrackerNote trackerNote = Settings.get().getTrackerNotes().get(new TrackerDate(date));
 		int returnValue = JOptionPane.showConfirmDialog(program.getMainWindow().getFrame(), TabsTracker.get().notesDeleteMsg(trackerNote.getNote()), TabsTracker.get().notesDeleteTitle(), JOptionPane.OK_CANCEL_OPTION);
 		if (returnValue == JOptionPane.OK_OPTION) {
-			Settings.lock("Tracker Data (Delete Note)");
+			Settings.lock("Tracker Notes (Delete Note)");
 			Settings.get().getTrackerNotes().remove(new TrackerDate(date));
-			Settings.unlock("Tracker Data (Delete Note)");
+			Settings.unlock("Tracker Notes (Delete Note)");
 			program.saveSettings("Tracker Data (Delete Note)");
 		}
 	}
@@ -1310,17 +1379,11 @@ public class TrackerTab extends JMainTabSecondary {
 				
 				int retrunValue = JOptionPane.showConfirmDialog(program.getMainWindow().getFrame(), TabsTracker.get().deleteSelected(), TabsTracker.get().delete(), JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
 				if (retrunValue == JOptionPane.OK_OPTION) {
-					Settings.lock("Tracker Data (Delete)");
 					for (Map.Entry<String, Value> entry : values.entrySet()) {
 						//Remove value
-						Settings.get().getTrackerData().get(entry.getKey()).remove(entry.getValue());
-						//Remove empty owner
-						if (Settings.get().getTrackerData().get(entry.getKey()).isEmpty()) {
-							Settings.get().getTrackerData().remove(entry.getKey());
-						} 
+						TrackerData.remove(entry.getKey(), entry.getValue());
 					}
-					Settings.unlock("Tracker Data (Delete)");
-					program.saveSettings("Tracker Data (Delete)");
+					TrackerData.save("Deleted");
 					updateData();
 				}
 				jNextChart.getXYPlot().setDomainCrosshairVisible(false);
@@ -1342,12 +1405,19 @@ public class TrackerTab extends JMainTabSecondary {
 					updateButtonIcons();
 				}
 			} else if (TrackerAction.FILTER_ASSETS.name().equals(e.getActionCommand())) {
-				boolean save = filterDialog.showLocations(assetNodes);
+				boolean save = assetFilterDialog.showLocations(assetNodes);
 				if (save) { //Need refilter
 					updateSettings();
 					createData();
 					updateButtonIcons();
 				}
+			} else if (TrackerAction.IMPORT_FILE.name().equals(e.getActionCommand())) {
+				jFileChooser.setCurrentDirectory(new File(Settings.getPathDataDirectory()));
+				int value = jFileChooser.showOpenDialog(program.getMainWindow().getFrame());
+				if (value != JFileChooser.APPROVE_OPTION) {
+					return; //Cancel
+				}
+				jLockWindow.show(TabsTracker.get().importFileImport(), new ImportFileLockWorker(jFileChooser.getSelectedFile()));
 			}
 		}
 
@@ -1467,4 +1537,105 @@ public class TrackerTab extends JMainTabSecondary {
 			return 16;
 		}
 	}
+
+	private class ImportFileLockWorker implements JLockWindow.LockWorkerAdvanced {
+
+		private File file;
+		private Map<String, List<Value>> trackerData = null;
+
+		public ImportFileLockWorker(File file) {
+			this.file = file;
+		}
+
+		@Override
+		public void task() {
+			File unzippedFile = null;
+			String extension = FileUtil.getExtension(file);
+			if (extension.equals("zip")) { //Unzip file (if needed)
+				ZipInputStream zis = null;
+				try {
+					zis = new ZipInputStream(new FileInputStream(file));
+					ZipEntry zipEntry = zis.getNextEntry();
+					while(zipEntry != null){
+						String filename = zipEntry.getName();
+						if (filename.equals("settings.xml") || filename.equals("tracker.json")) {
+							unzippedFile = new File(Settings.getPathDataDirectory() + File.separator + "temp_" + filename);
+							FileOutputStream fos = new FileOutputStream(unzippedFile);
+							byte[] buffer = new byte[1024];
+							int len;
+							while ((len = zis.read(buffer)) > 0) {
+								fos.write(buffer, 0, len);
+							}
+							fos.close();
+							//Set file and extension to the unzipped file
+							file = unzippedFile;
+							extension = FileUtil.getExtension(file);
+							break;
+						}
+						zipEntry = zis.getNextEntry();
+					}	zis.closeEntry();
+					zis.close();
+				} catch (IOException ex) {
+					//Ignore errors
+				} finally {
+					try {
+						if (zis != null) {
+							zis.close();
+						}
+					} catch (IOException ex) {
+
+					}
+				}
+			}
+			switch (extension) { //Load data (if possible)
+				case "xml":
+				case "backup":
+					trackerData = SettingsReader.loadTracker(file.getAbsolutePath());
+					break;
+				case "json":
+					trackerData = TrackerDataReader.load(file.getAbsolutePath(), false);
+					break;
+				default:
+					trackerData = null;
+					break;
+			}
+			if (unzippedFile != null) { //Clean up temp file
+				unzippedFile.delete();
+			}
+		}
+
+		@Override
+		public void gui() { }
+
+		@Override
+		public void hidden() {
+			if (trackerData == null) { //Invalid file
+				JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), TabsTracker.get().importFileInvalidMsg(), TabsTracker.get().importFileInvalidTitle(), JOptionPane.WARNING_MESSAGE);
+				return;
+			}
+			//Overwrite?
+			int value = JOptionPane.showConfirmDialog(program.getMainWindow().getFrame(), TabsTracker.get().importFileOverwriteMsg(), TabsTracker.get().importFileOverwriteTitle(), JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
+			if (value != JOptionPane.OK_OPTION) {
+				return; //Cancel
+			}
+			SwingUtilities.invokeLater(new Runnable() {
+				@Override
+				public void run() {
+					jLockWindow.show(TabsTracker.get().importFileImport(), new JLockWindow.LockWorker() {
+						@Override
+						public void task() {
+							TrackerData.addAll(trackerData);
+							TrackerData.save("File Import", true);
+						}
+
+						@Override
+						public void gui() {
+							updateData();
+						}
+					});
+				}
+			});
+		}
+	}
+
 }

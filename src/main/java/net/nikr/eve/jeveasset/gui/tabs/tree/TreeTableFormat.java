@@ -26,6 +26,7 @@ import java.util.Comparator;
 import java.util.Date;
 import net.nikr.eve.jeveasset.data.settings.tag.Tags;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
+import net.nikr.eve.jeveasset.gui.shared.table.containers.HierarchyColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.LongInt;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.Percent;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.Runs;
@@ -457,34 +458,4 @@ public enum TreeTableFormat implements EnumTableColumn<TreeAsset> {
 	//XXX - TableFormat.getColumnValue(...) Workaround
 	@Override public abstract Object getColumnValue(final TreeAsset from);
 
-	//FIXME - - > TreeTableFormat: Move inner classes to containers
-	public static class HierarchyColumn implements Comparable<HierarchyColumn>{
-		private final String export;
-		private final String gui;
-		//private final String compare;
-
-		public HierarchyColumn(String text, boolean parent) {
-			this.gui = text.trim();
-			if (parent) {
-				int split = text.indexOf(gui);
-				this.export = text.substring(0, split) + "+" + text.substring(split);
-			} else {
-				this.export = text;
-			}
-		}
-
-		public String getExport() {
-			return export;
-		}
-
-		@Override
-		public int compareTo(HierarchyColumn o) {
-			return this.toString().compareTo(o.toString());
-		}
-
-		@Override
-		public String toString() {
-			return gui;
-		}
-	}
 }

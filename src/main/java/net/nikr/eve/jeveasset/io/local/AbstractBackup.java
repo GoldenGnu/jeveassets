@@ -31,11 +31,10 @@ import java.util.zip.ZipOutputStream;
 import net.nikr.eve.jeveasset.Program;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.w3c.dom.Element;
 
 
-public abstract class AbstractXmlBackup {
-	private static final Logger LOG = LoggerFactory.getLogger(AbstractXmlBackup.class);
+public abstract class AbstractBackup {
+	private static final Logger LOG = LoggerFactory.getLogger(AbstractBackup.class);
 
 	protected boolean exist(final String filename) {
 		return new File(filename).exists() //.xml

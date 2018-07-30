@@ -55,13 +55,13 @@ public class RawMarketOrder {
 		}
 
 		public static MarketOrderRange fromValue(String text) {
-            for (MarketOrderRange b : MarketOrderRange.values()) {
-                if (String.valueOf(b.value).equals(text)) {
-                    return b;
-                }
-            }
-            return null;
-        }
+			for (MarketOrderRange b : MarketOrderRange.values()) {
+				if (String.valueOf(b.value).equals(text)) {
+					return b;
+				}
+			}
+			return null;
+		}
 	}
 
 	public enum MarketOrderState {
@@ -85,13 +85,13 @@ public class RawMarketOrder {
 		}
 
 		public static MarketOrderState fromValue(String text) {
-            for (MarketOrderState b : MarketOrderState.values()) {
-                if (String.valueOf(b.value).equals(text)) {
-                    return b;
-                }
-            }
-            return null;
-        }
+			for (MarketOrderState b : MarketOrderState.values()) {
+				if (String.valueOf(b.value).equals(text)) {
+					return b;
+				}
+			}
+			return null;
+		}
 	}
 
 	private Integer walletDivision = null;

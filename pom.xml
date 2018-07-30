@@ -5,7 +5,7 @@
 	<groupId>net.nikr</groupId>
 	<artifactId>jeveassets</artifactId>
 	<packaging>jar</packaging>
-	<version>5.6.1-SNAPSHOT</version>
+	<version>5.7.0</version>
 	<name>jeveassets</name>
 	<description>jEveAssets is an out-of-game asset manager for Eve-Online, written in Java</description>
 	<url>http://eve.nikr.net/jeveasset</url>
@@ -120,6 +120,8 @@
 								<copy todir="${project.build.directory}/data">
 									<fileset dir="data" includes="*.xml"/>
 									<fileset dir="data" includes="*.dat"/>
+									<fileset dir="data" includes="*.json"/>
+									<fileset dir="data" includes="*.zip"/>
 								</copy>
 								<copy todir="${project.build.directory}">
 									<fileset dir="" includes="*.txt"/>

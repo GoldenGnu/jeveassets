@@ -21,12 +21,15 @@
 package net.nikr.eve.jeveasset.io.esi;
 
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
+import net.nikr.eve.jeveasset.data.api.my.MyAsset;
+import net.nikr.eve.jeveasset.data.settings.Citadel;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
+import net.nikr.eve.jeveasset.io.online.CitadelGetter;
+import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 import net.troja.eve.esi.ApiClient;
 import net.troja.eve.esi.ApiException;
 import net.troja.eve.esi.model.CharacterAssetsNamesResponse;
@@ -35,16 +38,15 @@ import net.troja.eve.esi.model.CorporationAssetsNamesResponse;
 
 public class EsiLocationsGetter extends AbstractEsiGetter {
 
-	private final Map<Long, String> itemMap = new HashMap<Long, String>();
-
 	public EsiLocationsGetter(UpdateTask updateTask, EsiOwner owner) {
 		super(updateTask, owner, false, owner.getLocationsNextUpdate(), TaskType.LOCATIONS, NO_RETRIES);
 	}
 
 	@Override
 	protected void get(ApiClient apiClient) throws ApiException {
+		Map<Long, MyAsset> iDs = getIDs(owner);
 		if (owner.isCorporation()) {
-			Map<List<Long>, List<CorporationAssetsNamesResponse>> responses = updateList(splitList(getIDs(itemMap, owner), LOCATIONS_BATCH_SIZE), DEFAULT_RETRIES, new ListHandler<List<Long>, List<CorporationAssetsNamesResponse>>() {
+			Map<List<Long>, List<CorporationAssetsNamesResponse>> responses = updateList(splitList(iDs.keySet(), LOCATIONS_BATCH_SIZE), DEFAULT_RETRIES, new ListHandler<List<Long>, List<CorporationAssetsNamesResponse>>() {
 				@Override
 				public List<CorporationAssetsNamesResponse> get(ApiClient apiClient, List<Long> t) throws ApiException {
 					return getAssetsApiAuth(apiClient).postCorporationsCorporationIdAssetsNames((int) owner.getOwnerID(), t, DATASOURCE, null);
@@ -59,6 +61,10 @@ public class EsiLocationsGetter extends AbstractEsiGetter {
 						final String eveName = response.getName();
 						if (!eveName.isEmpty()) { //Set name
 							Settings.get().getEveNames().put(itemID, eveName);
+							MyAsset asset = iDs.get(itemID);
+							if (asset.getItem().getCategory().equals("Structure")) {
+								CitadelGetter.set(new Citadel(asset.getItemID(), eveName, ApiIdConverter.getLocation(asset.getLocationID())));
+							}
 						} else { //Remove name (Empty)
 							Settings.get().getEveNames().remove(itemID);
 						}
@@ -67,9 +73,8 @@ public class EsiLocationsGetter extends AbstractEsiGetter {
 			} finally {
 				Settings.unlock("Ship/Container Names");
 			}
-			
 		} else {
-			Map<List<Long>, List<CharacterAssetsNamesResponse>> responses = updateList(splitList(getIDs(itemMap, owner), LOCATIONS_BATCH_SIZE), DEFAULT_RETRIES, new ListHandler<List<Long>, List<CharacterAssetsNamesResponse>>() {
+			Map<List<Long>, List<CharacterAssetsNamesResponse>> responses = updateList(splitList(iDs.keySet(), LOCATIONS_BATCH_SIZE), DEFAULT_RETRIES, new ListHandler<List<Long>, List<CharacterAssetsNamesResponse>>() {
 				@Override
 				public List<CharacterAssetsNamesResponse> get(ApiClient apiClient, List<Long> t) throws ApiException {
 					return getAssetsApiAuth(apiClient).postCharactersCharacterIdAssetsNames((int) owner.getOwnerID(), t, DATASOURCE, null);
@@ -83,6 +88,10 @@ public class EsiLocationsGetter extends AbstractEsiGetter {
 						final String eveName = response.getName();
 						if (!eveName.isEmpty()) { //Set name
 							Settings.get().getEveNames().put(itemID, eveName);
+							MyAsset asset = iDs.get(itemID);
+							if (asset.getItem().getCategory().equals("Structure")) {
+								CitadelGetter.set(new Citadel(asset.getItemID(), eveName, ApiIdConverter.getLocation(asset.getLocationID())));
+							}
 						} else { //Remove name (Empty)
 							Settings.get().getEveNames().remove(itemID);
 						}

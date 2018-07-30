@@ -87,6 +87,12 @@ public abstract class TabsTracker extends Bundle {
 	public abstract String help();
 	public abstract String helpLegacyData();
 	public abstract String helpNewData();
+	public abstract String importFile();
+	public abstract String importFileImport();
+	public abstract String importFileInvalidMsg();
+	public abstract String importFileInvalidTitle();
+	public abstract String importFileOverwriteMsg();
+	public abstract String importFileOverwriteTitle();
 	public abstract String includeZero();
 	public abstract String invalid();
 	public abstract String invalidNumberMsg();
@@ -107,6 +113,7 @@ public abstract class TabsTracker extends Bundle {
 	public abstract String other();
 	public abstract String quickDate();
 	public abstract String reset();
+	public abstract String search();
 	public abstract String selectDivision();
 	public abstract String selectFlag();
 	public abstract String selectLocation();

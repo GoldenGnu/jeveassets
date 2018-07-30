@@ -23,6 +23,7 @@ package net.nikr.eve.jeveasset.gui.shared.table.containers;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 
 public class Security extends NumberValue implements Comparable<Security> {
@@ -72,5 +73,30 @@ public class Security extends NumberValue implements Comparable<Security> {
 	@Override
 	public int compareTo(Security o) {
 		return this.getSecurity().compareTo(o.getSecurity());
+	}
+
+	@Override
+	public int hashCode() {
+		int hash = 7;
+		hash = 37 * hash + Objects.hashCode(this.security);
+		return hash;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		final Security other = (Security) obj;
+		if (!Objects.equals(this.security, other.security)) {
+			return false;
+		}
+		return true;
 	}
 }

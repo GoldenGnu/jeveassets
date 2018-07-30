@@ -56,7 +56,6 @@ import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewGroup;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile;
 import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerDate;
 import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerNote;
-import net.nikr.eve.jeveasset.gui.tabs.values.Value;
 import net.nikr.eve.jeveasset.io.local.SettingsReader;
 import net.nikr.eve.jeveasset.io.local.SettingsWriter;
 import net.nikr.eve.jeveasset.io.shared.FileUtil;
@@ -67,6 +66,8 @@ public class Settings {
 
 	private static final Logger LOG = LoggerFactory.getLogger(Settings.class);
 
+	private static final String PATH_ASSET_ADDED = "data" + File.separator + "added.json";
+	private static final String PATH_TRACKER_DATA = "data" + File.separator + "tracker.json";
 	private static final String PATH_SETTINGS = "data" + File.separator + "settings.xml";
 	private static final String PATH_ITEMS = "data" + File.separator + "items.xml";
 	private static final String PATH_JUMPS = "data" + File.separator + "jumps.xml";
@@ -129,9 +130,6 @@ public class Settings {
 	//Eve Item Name				Saved by TaskDialog.update() (on API update)
 	//Lock ???
 	private Map<Long, String> eveNames = new HashMap<Long, String>();
-	//!! - Assets				Saved by Program.updateEventLists() if needed
-	//Lock OK
-	private final Map<Long, Date> assetAdded = new HashMap<Long, Date>();
 //!! - Stockpile				Saved by StockpileTab.removeItems() / addStockpile() / removeStockpile()
 	//							Could be more selective...
 	//Lock FAIL!!!
@@ -148,7 +146,6 @@ public class Settings {
 	//Lock OK
 	private final ExportSettings exportSettings = new ExportSettings();
 //Tracker						Saved by TaskDialog.update() (on API update)
-	private final Map<String, List<Value>> trackerData = new HashMap<String, List<Value>>(); //ownerID :: long
 	private final Map<TrackerDate, TrackerNote> trackerNotes = new HashMap<TrackerDate, TrackerNote>();
 	private final Map<String, Boolean> trackerFilters = new HashMap<String, Boolean>();
 	private boolean trackerSelectNew = true;
@@ -279,11 +276,15 @@ public class Settings {
 		if (Program.PROGRAM_DEV_BUILD && !testMode) { //Need import
 			Program.setPortable(false);
 			Path settingsFrom = Paths.get(settings.getPathSettings());
+			Path trackerFrom = Paths.get(Settings.getPathTrackerData());
+			Path assetAddedFrom = Paths.get(Settings.getPathAssetAdded());
 			Path citadelFrom = Paths.get(Settings.getPathCitadel());
 			Path priceFrom = Paths.get(Settings.getPathPriceData());
 			Path profilesFrom = Paths.get(Settings.getPathProfilesDirectory());
 			Program.setPortable(true);
 			Path settingsTo = Paths.get(Settings.get().getPathSettings());
+			Path trackerTo = Paths.get(Settings.getPathTrackerData());
+			Path assetAddedTo = Paths.get(Settings.getPathAssetAdded());
 			Path citadelTo = Paths.get(Settings.getPathCitadel());
 			Path priceTo = Paths.get(Settings.getPathPriceData());
 			Path profilesTo = Paths.get(Settings.getPathProfilesDirectory());
@@ -291,6 +292,24 @@ public class Settings {
 				LOG.info("Importing settings");
 				try {
 					Files.copy(settingsFrom, settingsTo);
+					LOG.info("	OK");
+				} catch (IOException ex) {
+					LOG.info("	FAILED");
+				}
+			}
+			if (Files.exists(trackerFrom) && !Files.exists(trackerTo)) {
+				LOG.info("Importing tracker data");
+				try {
+					Files.copy(trackerFrom, trackerTo);
+					LOG.info("	OK");
+				} catch (IOException ex) {
+					LOG.info("	FAILED");
+				}
+			}
+			if (Files.exists(assetAddedFrom) && !Files.exists(assetAddedTo)) {
+				LOG.info("Importing asset added");
+				try {
+					Files.copy(assetAddedFrom, assetAddedTo);
 					LOG.info("	OK");
 				} catch (IOException ex) {
 					LOG.info("	FAILED");
@@ -362,10 +381,6 @@ public class Settings {
 		//Load data and overwite default values
 		settingsLoadError = !SettingsReader.load(this);
 		SplashUpdater.setProgress(35);
-	}
-
-	public Map<String, List<Value>> getTrackerData() {
-		return trackerData;
 	}
 
 	public Map<TrackerDate, TrackerNote> getTrackerNotes() {
@@ -487,10 +502,6 @@ public class Settings {
 			tableFilters.put(key, new HashMap<String, List<Filter>>());
 		}
 		return tableFilters.get(key);
-	}
-
-	public Map<Long, Date> getAssetAdded() {
-		return assetAdded;
 	}
 
 	public Map<String, List<SimpleColumn>> getTableColumns() {
@@ -792,6 +803,14 @@ public class Settings {
 
 	public String getPathSettings() {
 		return FileUtil.getLocalFile(Settings.PATH_SETTINGS, !Program.isPortable());
+	}
+
+	public static String getPathTrackerData() {
+		return FileUtil.getLocalFile(Settings.PATH_TRACKER_DATA, !Program.isPortable());
+	}
+
+	public static String getPathAssetAdded() {
+		return FileUtil.getLocalFile(Settings.PATH_ASSET_ADDED, !Program.isPortable());
 	}
 
 	public static String getPathConquerableStations() {

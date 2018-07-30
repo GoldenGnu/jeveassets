@@ -43,6 +43,8 @@ public final class ApiIdConverter {
 	private ApiIdConverter() { }
 
 	private static final Map<String, Float> PACKAGED_VOLUME = new HashMap<String, Float>();
+	private static final String EMPTY_STRING = "";
+	private static final String UNKNOWN_FLAG = "Unknown";
 
 	private static void buildVolume() {
 		PACKAGED_VOLUME.put("Assault Ship", 2500f);
@@ -101,7 +103,7 @@ public final class ApiIdConverter {
 		if (itemFlag != null) {
 			return itemFlag;
 		} else {
-			return new ItemFlag(flag, "Unknown", "Unknown");
+			return new ItemFlag(flag, UNKNOWN_FLAG, UNKNOWN_FLAG);
 		}
 	}
 
@@ -198,7 +200,7 @@ public final class ApiIdConverter {
 
 	public static String getOwnerName(final Integer ownerID) {
 		if (ownerID == null) {
-			return "";
+			return EMPTY_STRING;
 		} else {
 			return getOwnerName(Long.valueOf(ownerID));
 		}
@@ -206,7 +208,7 @@ public final class ApiIdConverter {
 
 	public static String getOwnerName(final Long ownerID) {
 		if (ownerID == null || ownerID == 0) { //0 (zero) is valid, but, should return empty string
-			return "";
+			return EMPTY_STRING;
 		}
 		String owner = Settings.get().getOwners().get(ownerID);
 		if (owner != null) {

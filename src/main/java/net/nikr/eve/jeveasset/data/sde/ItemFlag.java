@@ -23,9 +23,9 @@ package net.nikr.eve.jeveasset.data.sde;
 
 
 public class ItemFlag implements Comparable<ItemFlag> {
-	private int flagID;
-	private String flagName;
-	private String flagText;
+	private final int flagID;
+	private final String flagName;
+	private final String flagText;
 
 	public ItemFlag(final int flagID, final String flagName, final String flagText) {
 		this.flagID = flagID;

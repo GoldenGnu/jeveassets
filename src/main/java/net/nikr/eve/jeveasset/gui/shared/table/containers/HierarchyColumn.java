@@ -18,46 +18,44 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
  */
-
 package net.nikr.eve.jeveasset.gui.shared.table.containers;
 
 import java.util.Objects;
-import net.nikr.eve.jeveasset.gui.shared.Formater;
 
 
-public class LongInt extends NumberValue implements Comparable<LongInt> {
-	private final Long number;
-	private final String formatted;
+public class HierarchyColumn implements Comparable<HierarchyColumn>{
+	private final String export;
+	private final String gui;
+	//private final String compare;
 
-	public LongInt(final Long number) {
-		this.number = number;
-		this.formatted = Formater.integerFormat(number);
+	public HierarchyColumn(String text, boolean parent) {
+		this.gui = text.trim();
+		if (parent) {
+			int split = text.indexOf(gui);
+			this.export = text.substring(0, split) + "+" + text.substring(split);
+		} else {
+			this.export = text;
+		}
+	}
+
+	public String getExport() {
+		return export;
 	}
 
 	@Override
-	public Number getNumber() {
-		return number;
-	}
-
-	@Override
-	public Long getLong() {
-		return number;
+	public int compareTo(HierarchyColumn o) {
+		return this.toString().compareTo(o.toString());
 	}
 
 	@Override
 	public String toString() {
-		return formatted;
-	}
-
-	@Override
-	public int compareTo(final LongInt o) {
-		return number.compareTo(o.getLong());
+		return gui;
 	}
 
 	@Override
 	public int hashCode() {
-		int hash = 7;
-		hash = 53 * hash + Objects.hashCode(this.number);
+		int hash = 5;
+		hash = 67 * hash + Objects.hashCode(this.gui);
 		return hash;
 	}
 
@@ -72,11 +70,10 @@ public class LongInt extends NumberValue implements Comparable<LongInt> {
 		if (getClass() != obj.getClass()) {
 			return false;
 		}
-		final LongInt other = (LongInt) obj;
-		if (!Objects.equals(this.number, other.number)) {
+		final HierarchyColumn other = (HierarchyColumn) obj;
+		if (!Objects.equals(this.gui, other.gui)) {
 			return false;
 		}
 		return true;
 	}
-
 }

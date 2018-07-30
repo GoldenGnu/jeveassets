@@ -48,6 +48,7 @@ import net.nikr.eve.jeveasset.data.sde.Jump;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
 import net.nikr.eve.jeveasset.data.sde.ReprocessedMaterial;
 import net.nikr.eve.jeveasset.data.sde.StaticData;
+import net.nikr.eve.jeveasset.data.settings.AssetAddedData;
 import net.nikr.eve.jeveasset.data.settings.MarketPriceData;
 import net.nikr.eve.jeveasset.data.settings.PriceData;
 import net.nikr.eve.jeveasset.data.settings.Settings;
@@ -65,6 +66,7 @@ import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
 import net.nikr.eve.jeveasset.i18n.General;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 import net.nikr.eve.jeveasset.io.shared.DataConverter;
+import net.nikr.eve.jeveasset.io.shared.RawConverter;
 import uk.me.candle.eve.graph.Edge;
 import uk.me.candle.eve.graph.Graph;
 import uk.me.candle.eve.graph.distances.Jumps;
@@ -95,7 +97,7 @@ public class ProfileData {
 	private Map<Integer, MarketPriceData> transactionPriceDataBuy; //TypeID : int
 	private final List<String> ownerNames = new ArrayList<String>();
 	private final Map<Long, OwnerType> owners = new HashMap<Long, OwnerType>();
-	private boolean saveSettings = false;
+	private boolean assetAddedDataChanged = false;
 	private final Graph graph;
 	private final Map<Long, SolarSystem> systemCache;
 	private final Map<Long, Map<Long, Integer>> distance = new HashMap<Long, Map<Long, Integer>>();
@@ -356,7 +358,11 @@ public class ProfileData {
 	}
 
 	public boolean updateEventLists() {
-		saveSettings = false;
+		return updateEventLists(new Date());
+	}
+
+	public boolean updateEventLists(Date assetAddedData) {
+		assetAddedDataChanged = false;
 		uniqueAssetsDuplicates = new HashMap<Integer, List<MyAsset>>();
 		Set<String> uniqueOwnerNames = new HashSet<String>();
 		Map<Long, OwnerType> uniqueOwners = new HashMap<Long, OwnerType>();
@@ -528,17 +534,17 @@ public class ProfileData {
 			@Override
 			public void run() {
 				//Add Market Orders to Assets
-				addAssets(DataConverter.assetMarketOrder(marketOrders, Settings.get().isIncludeSellOrders(), Settings.get().isIncludeBuyOrders()), assets, blueprints);
+				addAssets(DataConverter.assetMarketOrder(marketOrders, Settings.get().isIncludeSellOrders(), Settings.get().isIncludeBuyOrders()), assets, blueprints, assetAddedData);
 
 				//Add Industry Jobs to Assets
-				addAssets(DataConverter.assetIndustryJob(industryJobs, Settings.get().isIncludeManufacturing()), assets, blueprints);
+				addAssets(DataConverter.assetIndustryJob(industryJobs, Settings.get().isIncludeManufacturing()), assets, blueprints, assetAddedData);
 
 				//Add Contract Items to Assets
-				addAssets(DataConverter.assetContracts(contractItems, uniqueOwners, Settings.get().isIncludeSellContracts(), Settings.get().isIncludeBuyContracts()), assets, blueprints);
+				addAssets(DataConverter.assetContracts(contractItems, uniqueOwners, Settings.get().isIncludeSellContracts(), Settings.get().isIncludeBuyContracts()), assets, blueprints, assetAddedData);
 
 				//Add Assets to Assets
 				for (List<MyAsset> list : assetsMap.values()) {
-					addAssets(list, assets, blueprints);
+					addAssets(list, assets, blueprints, assetAddedData);
 				}
 			}
 		});
@@ -680,7 +686,7 @@ public class ProfileData {
 		Collections.sort(ownerNames, new CaseInsensitiveComparator());
 		owners.clear();
 		owners.putAll(uniqueOwners);
-		return saveSettings;
+		return assetAddedDataChanged;
 	}
 
 	public static <T extends MyAsset> void updateNames(EventList<T> eventList, Set<Long> itemIDs) {
@@ -898,7 +904,7 @@ public class ProfileData {
 		data.update(transaction.getPrice(), transaction.getDate());
 	}
 
-	private void addAssets(final List<MyAsset> assets, List<MyAsset> addTo, Map<Long, RawBlueprint> blueprints) {
+	private void addAssets(final List<MyAsset> assets, List<MyAsset> addTo, Map<Long, RawBlueprint> blueprints, Date assetAddedData) {
 		for (MyAsset asset : assets) {
 			//XXX Ignore 9e18 locations: https://github.com/ccpgames/esi-issues/issues/684
 			if (asset.getLocationID() > 9000000000000000000L) {
@@ -908,6 +914,12 @@ public class ProfileData {
 			if (asset.getLocationID() > 40000000 && asset.getLocationID() < 50000000) {
 				continue;
 			}
+			//Handle Asset Structures
+			if (asset.getItem().getCategory().equals("Structure")) {
+				for (MyAsset childAsset:  asset.getAssets()) {
+					updateStructureAssets(childAsset, asset);
+				}
+			}
 			//Blueprint
 			RawBlueprint blueprint = blueprints.get(asset.getItemID());
 			asset.setBlueprint(blueprint);
@@ -915,16 +927,10 @@ public class ProfileData {
 			Tags tags = Settings.get().getTags(asset.getTagID());
 			asset.setTags(tags);
 			//Date added
-			if (Settings.get().getAssetAdded().containsKey(asset.getItemID())) {
-				asset.setAdded(Settings.get().getAssetAdded().get(asset.getItemID()));
-			} else {
-				Date date = new Date();
-				Settings.lock("Asset Added Date"); //Lock for Asset Added
-				Settings.get().getAssetAdded().put(asset.getItemID(), date);
-				Settings.unlock("Asset Added Date"); //Unlock for Asset Added
-				saveSettings = true;
-				asset.setAdded(date);
+			if (!assetAddedDataChanged && !AssetAddedData.containsKey(asset.getItemID())) {
+				assetAddedDataChanged = true;
 			}
+			asset.setAdded(AssetAddedData.getAdd(asset.getItemID(), assetAddedData));
 			//Price
 			updatePrice(asset);
 			//Reprocessed price
@@ -948,7 +954,7 @@ public class ProfileData {
 			if (sContainer.isEmpty()) {
 				sContainer = General.get().none();
 			}
-			asset.setContainer(sContainer);
+			asset.setContainer(sContainer.intern());
 
 			//Price data
 			PriceData priceData = Settings.get().getPriceData().get(asset.getItem().getTypeID());
@@ -982,9 +988,11 @@ public class ProfileData {
 			asset.setVolume(volume);
 
 			//Add asset
-			addTo.add(asset);
+			if (asset.getTypeID() != 27) { //Ignore offices
+				addTo.add(asset);
+			}
 			//Add sub-assets
-			addAssets(asset.getAssets(), addTo, blueprints);
+			addAssets(asset.getAssets(), addTo, blueprints, assetAddedData);
 		}
 	}
 
@@ -1012,6 +1020,22 @@ public class ProfileData {
 			asset.setName(eveName + " (" + asset.getTypeName() + ")", false, true);
 		} else {
 			asset.setName(asset.getTypeName(), false, false);
+		}
+	}
+
+	private void updateStructureAssets(final MyAsset asset, final MyAsset structure) {
+		final Long locationID;
+		if (asset.isCorporation() && !asset.getParents().isEmpty() && asset.getParents().get(asset.getParents().size() - 1).equals(structure) && asset.getTypeID() != 27) {
+			locationID = structure.getLocationID();
+		} else {
+			asset.getParents().remove(structure);
+			locationID = structure.getItemID();
+		}
+		asset.setLocationID(locationID);
+		asset.setLocation(ApiIdConverter.getLocation(locationID));
+		asset.setLocationType(RawConverter.toAssetLocationType(locationID));
+		for (MyAsset subAsset : asset.getAssets()) { //Update child assets
+			updateStructureAssets(subAsset, structure);
 		}
 	}
 }

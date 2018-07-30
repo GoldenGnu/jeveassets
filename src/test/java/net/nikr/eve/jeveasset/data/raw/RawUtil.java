@@ -24,6 +24,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.time.OffsetDateTime;
 import java.util.Date;
 import java.util.HashMap;
@@ -57,11 +58,10 @@ public class RawUtil {
 	private static Map<String, String> getTypes(Class<?> raw, Field[] values) {
 		Map<String, String> names = new HashMap<String, String>();
 		for (Field value : values) {
-			Class<?> type = value.getType();
-			
-			if (value.getName().equals("serialVersionUID")) { //serialVersionUID
+			if (Modifier.isStatic(value.getModifiers())) { //Ignore static fields
 				continue;
 			}
+			Class<?> type = value.getType();
 			if (value.getName().equals("itemFlag") && (raw.equals(RawAsset.class) || raw.equals(RawBlueprint.class))) {
 				continue;
 			}
@@ -115,7 +115,7 @@ public class RawUtil {
 	private static Set<String> getNames(Class<?> raw, Field[] values) {
 		Set<String> names = new HashSet<String>();
 		for (Field value : values) {
-			if (value.getName().equals("serialVersionUID")) { //serialVersionUID
+			if (Modifier.isStatic(value.getModifiers())) { //Ignore static fields
 				continue;
 			}
 			if (value.getName().equals("itemFlag") && (raw.equals(RawAsset.class) || raw.equals(RawBlueprint.class))) {
