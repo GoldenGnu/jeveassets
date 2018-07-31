@@ -42,6 +42,9 @@ import net.troja.eve.esi.model.UniverseNamesResponse;
 
 public class EsiNameGetter extends AbstractEsiGetter {
 
+	public static final int FACTION_MIN = 500001;
+	public static final int FACTION_MAX = 500026;
+			
 	private final List<OwnerType> ownerTypes;
 
 	public EsiNameGetter(UpdateTask updateTask, List<OwnerType> ownerTypes) {
@@ -67,7 +70,7 @@ public class EsiNameGetter extends AbstractEsiGetter {
 			}
 		});
 
-		Set<Integer> retries = new HashSet<Integer>(ids);
+		Set<Integer> retries = new HashSet<>(ids);
 		for (Map.Entry<List<Integer>, List<UniverseNamesResponse>> entry : responses.entrySet()) {
 			for (UniverseNamesResponse lookup : entry.getValue()) {
 				Settings.get().getOwners().put((long)lookup.getId(), lookup.getName());
@@ -131,7 +134,7 @@ public class EsiNameGetter extends AbstractEsiGetter {
 			return;
 		}
 		///XXX - Workaround for universe/names not supporting factions
-		if (number.longValue() >= 500001 && number.longValue() <= 500024) {
+		if (number.longValue() >= FACTION_MIN && number.longValue() <= FACTION_MAX) {
 			return;
 		}
 		//Ignore Locations
