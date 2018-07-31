@@ -83,24 +83,24 @@ public class ProfileData {
 	private final EventList<MyAsset> assetsEventList = new EventListManager<MyAsset>().create();
 	private final EventList<MyAccountBalance> accountBalanceEventList = new EventListManager<MyAccountBalance>().create();
 	private final EventList<MyContract> contractEventList = new EventListManager<MyContract>().create();
-	private final List<MyContractItem> contractItemList = new ArrayList<MyContractItem>();
-	private final List<MyIndustryJob> industryJobsList = new ArrayList<MyIndustryJob>();
-	private final List<MyMarketOrder> marketOrdersList = new ArrayList<MyMarketOrder>();
-	private final List<MyJournal> journalList = new ArrayList<MyJournal>();
-	private final List<MyTransaction> transactionsList = new ArrayList<MyTransaction>();
-	private final List<MyAsset> assetsList = new ArrayList<MyAsset>();
-	private final List<MyAccountBalance> accountBalanceList = new ArrayList<MyAccountBalance>();
-	private final List<MyContract> contractList = new ArrayList<MyContract>();
+	private final List<MyContractItem> contractItemList = new ArrayList<>();
+	private final List<MyIndustryJob> industryJobsList = new ArrayList<>();
+	private final List<MyMarketOrder> marketOrdersList = new ArrayList<>();
+	private final List<MyJournal> journalList = new ArrayList<>();
+	private final List<MyTransaction> transactionsList = new ArrayList<>();
+	private final List<MyAsset> assetsList = new ArrayList<>();
+	private final List<MyAccountBalance> accountBalanceList = new ArrayList<>();
+	private final List<MyContract> contractList = new ArrayList<>();
 	private Map<Integer, List<MyAsset>> uniqueAssetsDuplicates = null; //TypeID : int
 	private Map<Integer, MarketPriceData> marketPriceData; //TypeID : int
 	private Map<Integer, MarketPriceData> transactionPriceDataSell; //TypeID : int
 	private Map<Integer, MarketPriceData> transactionPriceDataBuy; //TypeID : int
-	private final List<String> ownerNames = new ArrayList<String>();
-	private final Map<Long, OwnerType> owners = new HashMap<Long, OwnerType>();
+	private final List<String> ownerNames = new ArrayList<>();
+	private final Map<Long, OwnerType> owners = new HashMap<>();
 	private boolean assetAddedDataChanged = false;
 	private final Graph graph;
 	private final Map<Long, SolarSystem> systemCache;
-	private final Map<Long, Map<Long, Integer>> distance = new HashMap<Long, Map<Long, Integer>>();
+	private final Map<Long, Map<Long, Integer>> distance = new HashMap<>();
 
 	public ProfileData(ProfileManager profileManager) {
 		this.profileManager = profileManager;
@@ -108,7 +108,7 @@ public class ProfileData {
 		// filter the solarsystems based on the settings.
 		graph = new Graph(new Jumps());
 		int count = 0;
-		systemCache = new HashMap<Long, SolarSystem>();
+		systemCache = new HashMap<>();
 		for (Jump jump : StaticData.get().getJumps()) { // this way we exclude the locations that are unreachable.
 			count++;
 			SplashUpdater.setSubProgress((int) (count * 100.0 / StaticData.get().getJumps().size()));
@@ -195,7 +195,7 @@ public class ProfileData {
 	}
 
 	public List<String> getOwnerNames(boolean all) {
-		List<String> sortedOwners = new ArrayList<String>(ownerNames);
+		List<String> sortedOwners = new ArrayList<>(ownerNames);
 		if (all) {
 			sortedOwners.add(0, General.get().all());
 		}
@@ -203,7 +203,7 @@ public class ProfileData {
 	}
 
 	public Map<Long, OwnerType> getOwners() {
-		return new HashMap<Long, OwnerType>(owners);
+		return new HashMap<>(owners);
 	}
 
 	public void updateJumps(Collection<JumpType> jumpTypes, Class<?> clazz) {
@@ -218,7 +218,7 @@ public class ProfileData {
 				if (systemID != jumpSystemID) {
 					Map<Long, Integer> distances = distance.get(jumpSystemID);
 					if (distances == null) {
-						distances = new HashMap<Long, Integer>();
+						distances = new HashMap<>();
 						distance.put(jumpSystemID, distances);
 					}
 					Integer jumps = distances.get(systemID);
@@ -241,7 +241,7 @@ public class ProfileData {
 	}
 
 	private Set<Integer> createPriceTypeIDs() {
-		Set<Integer> priceTypeIDs = new HashSet<Integer>();
+		Set<Integer> priceTypeIDs = new HashSet<>();
 		for (OwnerType owner : profileManager.getOwnerTypes()) {
 			//Add Assets to uniqueIds
 			deepAssets(owner.getAssets(), priceTypeIDs);
@@ -363,27 +363,27 @@ public class ProfileData {
 
 	public boolean updateEventLists(Date assetAddedData) {
 		assetAddedDataChanged = false;
-		uniqueAssetsDuplicates = new HashMap<Integer, List<MyAsset>>();
-		Set<String> uniqueOwnerNames = new HashSet<String>();
-		Map<Long, OwnerType> uniqueOwners = new HashMap<Long, OwnerType>();
+		uniqueAssetsDuplicates = new HashMap<>();
+		Set<String> uniqueOwnerNames = new HashSet<>();
+		Map<Long, OwnerType> uniqueOwners = new HashMap<>();
 		//Temp
-		List<MyAsset> assets = new ArrayList<MyAsset>();
-		List<MyAccountBalance> accountBalance = new ArrayList<MyAccountBalance>();
+		List<MyAsset> assets = new ArrayList<>();
+		List<MyAccountBalance> accountBalance = new ArrayList<>();
 		//ownerID > 
 		Date blueprintsNewest = null;
 		Date assetsNewest = null;
 		Date accountBalanceNewest = null;
-		Map<Long, List<MyAsset>> assetsMap = new HashMap<Long, List<MyAsset>>();
-		Map<Long, List<MyAccountBalance>> accountBalanceMap = new HashMap<Long, List<MyAccountBalance>>();
-		Set<MyMarketOrder> marketOrders = new HashSet<MyMarketOrder>();
-		Set<MyMarketOrder> charMarketOrders = new HashSet<MyMarketOrder>();
-		Set<MyJournal> journals = new HashSet<MyJournal>();
-		Set<MyTransaction> transactions = new HashSet<MyTransaction>();
-		Set<MyIndustryJob> industryJobs = new HashSet<MyIndustryJob>();
-		Set<MyContractItem> contractItems = new HashSet<MyContractItem>();
-		Set<MyContract> contracts = new HashSet<MyContract>();
-		Map<Long, Map<Long, RawBlueprint>> blueprintsMap = new HashMap<Long, Map<Long, RawBlueprint>>();
-		Map<Long, RawBlueprint> blueprints = new HashMap<Long, RawBlueprint>();
+		Map<Long, List<MyAsset>> assetsMap = new HashMap<>();
+		Map<Long, List<MyAccountBalance>> accountBalanceMap = new HashMap<>();
+		Set<MyMarketOrder> marketOrders = new HashSet<>();
+		Set<MyMarketOrder> charMarketOrders = new HashSet<>();
+		Set<MyJournal> journals = new HashSet<>();
+		Set<MyTransaction> transactions = new HashSet<>();
+		Set<MyIndustryJob> industryJobs = new HashSet<>();
+		Set<MyContractItem> contractItems = new HashSet<>();
+		Set<MyContract> contracts = new HashSet<>();
+		Map<Long, Map<Long, RawBlueprint>> blueprintsMap = new HashMap<>();
+		Map<Long, RawBlueprint> blueprints = new HashMap<>();
 
 		maximumPurchaseAge();
 		calcTransactionsPriceData();
@@ -550,7 +550,7 @@ public class ProfileData {
 		});
 
 		//Update Locations
-		List<EditableLocationType> editableLocationTypes = new ArrayList<EditableLocationType>();
+		List<EditableLocationType> editableLocationTypes = new ArrayList<>();
 		editableLocationTypes.addAll(assets);
 		editableLocationTypes.addAll(marketOrders);
 		editableLocationTypes.addAll(transactions);
@@ -559,14 +559,14 @@ public class ProfileData {
 			editableLocationType.setLocation(ApiIdConverter.getLocation(editableLocationType.getLocationID()));
 		}
 		//Update Prices
-		List<EditablePriceType> editablePriceTypes = new ArrayList<EditablePriceType>();
+		List<EditablePriceType> editablePriceTypes = new ArrayList<>();
 		editablePriceTypes.addAll(marketOrders);
 		editablePriceTypes.addAll(contractItems);
 		for (EditablePriceType editablePriceType : editablePriceTypes) {
 			editablePriceType.setDynamicPrice(ApiIdConverter.getPrice(editablePriceType.getItem().getTypeID(), editablePriceType.isBPC()));
 		}
 		//Update Jumps (Must be updated after locations!)
-		updateJumps(new ArrayList<JumpType>(assets), MyAsset.class);
+		updateJumps(new ArrayList<>(assets), MyAsset.class);
 
 		assetsList.clear();
 		assetsList.addAll(assets);
@@ -689,18 +689,31 @@ public class ProfileData {
 		return assetAddedDataChanged;
 	}
 
-	public static <T extends MyAsset> void updateNames(EventList<T> eventList, Set<Long> itemIDs) {
+	public static void updateNames(EventList<MyAsset> eventList, Set<Long> itemIDs) {
 		if (itemIDs == null || itemIDs.isEmpty()) {
 			return;
 		}
-		List<T> found = new ArrayList<T>();
+		List<MyAsset> found = new ArrayList<>();
 		try {
 			eventList.getReadWriteLock().readLock().lock();
-			for (T asset : eventList) {
+			for (MyAsset asset : eventList) {
 				if (itemIDs.contains(asset.getItemID())) {
 					found.add(asset); //Save for update
-					updateName(asset); //Update data
+					updateName(asset); //Update Name
+					updateContainerChildren(found, asset.getAssets()); //Update Container
 				}
+				for (MyAsset parent : asset.getParents()) { //Offices
+					if (parent.getTypeID() != 27) {
+						continue;
+					}
+					if (itemIDs.contains(parent.getItemID())) {
+						updateName(parent); //Update Name
+						updateContainerChildren(found, parent.getAssets()); //Update Container
+					}
+				}
+			}
+			if (found.isEmpty()) {
+				
 			}
 		} finally {
 			eventList.getReadWriteLock().readLock().unlock();
@@ -712,7 +725,7 @@ public class ProfileData {
 		if (typeIDs == null || typeIDs.isEmpty()) {
 			return;
 		}
-		List<T> found = new ArrayList<T>();
+		List<T> found = new ArrayList<>();
 		try {
 			eventList.getReadWriteLock().readLock().lock();
 			for (T t : eventList) {
@@ -731,7 +744,7 @@ public class ProfileData {
 		if (typeIDs == null || typeIDs.isEmpty()) {
 			return;
 		}
-		List<MyIndustryJob> found = new ArrayList<MyIndustryJob>();
+		List<MyIndustryJob> found = new ArrayList<>();
 		try {
 			eventList.getReadWriteLock().readLock().lock();
 			for (MyIndustryJob industryJob : eventList) {
@@ -750,7 +763,7 @@ public class ProfileData {
 		if (typeIDs == null || typeIDs.isEmpty()) {
 			return;
 		}
-		List<MyAsset> found = new ArrayList<MyAsset>();
+		List<MyAsset> found = new ArrayList<>();
 		try {
 			eventList.getReadWriteLock().readLock().lock();
 			for (MyAsset asset : eventList) {
@@ -785,7 +798,7 @@ public class ProfileData {
 		if (locationIDs == null || locationIDs.isEmpty()) {
 			return;
 		}
-		List<T> found = new ArrayList<T>();
+		List<T> found = new ArrayList<>();
 		try {
 			eventList.getReadWriteLock().readLock().lock();
 			for (T t : eventList) {
@@ -804,7 +817,7 @@ public class ProfileData {
 		if (locationIDs == null || locationIDs.isEmpty()) {
 			return;
 		}
-		List<T> found = new ArrayList<T>();
+		List<T> found = new ArrayList<>();
 		try {
 			eventList.getReadWriteLock().readLock().lock();
 			for (T t : eventList) {
@@ -831,7 +844,7 @@ public class ProfileData {
 				public void run() {
 					try {
 						eventList.getReadWriteLock().writeLock().lock();
-						List<T> cache = new ArrayList<T>(eventList);
+						List<T> cache = new ArrayList<>(eventList);
 						eventList.clear();
 						eventList.addAll(cache);
 					} finally {
@@ -857,7 +870,7 @@ public class ProfileData {
 
 	private void maximumPurchaseAge() {
 		//Create Market Price Data
-		marketPriceData = new HashMap<Integer, MarketPriceData>();
+		marketPriceData = new HashMap<>();
 		//Date - maximumPurchaseAge in days
 		Date maxAge = new Date(System.currentTimeMillis() - (Settings.get().getMaximumPurchaseAge() * 24 * 60 * 60 * 1000L));
 		for (OwnerType owner : profileManager.getOwnerTypes()) {
@@ -880,8 +893,8 @@ public class ProfileData {
 
 	private void calcTransactionsPriceData() {
 		//Create Transaction Price Data
-		transactionPriceDataSell = new HashMap<Integer, MarketPriceData>();
-		transactionPriceDataBuy = new HashMap<Integer, MarketPriceData>();
+		transactionPriceDataSell = new HashMap<>();
+		transactionPriceDataBuy = new HashMap<>();
 		//Date - maximumPurchaseAge in days
 		for (OwnerType owner : profileManager.getOwnerTypes()) {
 			for (MyTransaction transaction : owner.getTransactions()) {
@@ -940,22 +953,7 @@ public class ProfileData {
 			//User Item Names
 			updateName(asset);
 			//Contaioner
-			String sContainer = "";
-			for (MyAsset parentAsset : asset.getParents()) {
-				if (!sContainer.isEmpty()) {
-					sContainer = sContainer + " > ";
-				}
-				if (!parentAsset.isUserName()) {
-					sContainer = sContainer + parentAsset.getName() + " #" + parentAsset.getItemID();
-				} else {
-					sContainer = sContainer + parentAsset.getName();
-				}
-			}
-			if (sContainer.isEmpty()) {
-				sContainer = General.get().none();
-			}
-			asset.setContainer(sContainer.intern());
-
+			updateContainer(asset);
 			//Price data
 			PriceData priceData = Settings.get().getPriceData().get(asset.getItem().getTypeID());
 			if (asset.getItem().isMarketGroup() && priceData != null && !priceData.isEmpty()) { //Market Price
@@ -972,7 +970,7 @@ public class ProfileData {
 			}
 			List<MyAsset> dup = uniqueAssetsDuplicates.get(typeID);
 			if (dup == null) {
-				dup = new ArrayList<MyAsset>();
+				dup = new ArrayList<>();
 				uniqueAssetsDuplicates.put(typeID, dup);
 			}
 			long newCount = asset.getCount();
@@ -1023,6 +1021,32 @@ public class ProfileData {
 		} else {
 			asset.setName(asset.getTypeName(), false, false);
 		}
+	}
+
+	private static void updateContainerChildren(List<MyAsset> found, List<MyAsset> assets) {
+		for (MyAsset asset : assets) {
+			found.add(asset);
+			updateContainer(asset);
+			updateContainerChildren(found, asset.getAssets());
+		}
+	}
+
+	private static void updateContainer(MyAsset asset) {
+		String sContainer = "";
+		for (MyAsset parentAsset : asset.getParents()) {
+			if (!sContainer.isEmpty()) {
+				sContainer = sContainer + " > ";
+			}
+			if (!parentAsset.isUserName()) {
+				sContainer = sContainer + parentAsset.getName() + " #" + parentAsset.getItemID();
+			} else {
+				sContainer = sContainer + parentAsset.getName();
+			}
+		}
+		if (sContainer.isEmpty()) {
+			sContainer = General.get().none();
+		}
+		asset.setContainer(sContainer.intern());
 	}
 
 	private void updateStructureAssets(final MyAsset asset, final MyAsset structure) {

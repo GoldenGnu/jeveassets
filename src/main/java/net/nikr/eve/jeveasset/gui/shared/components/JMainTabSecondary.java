@@ -24,11 +24,11 @@ import ca.odell.glazedlists.EventList;
 import java.util.Set;
 import javax.swing.Icon;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.data.api.my.MyAsset;
 import net.nikr.eve.jeveasset.data.profile.ProfileData;
 import net.nikr.eve.jeveasset.data.settings.types.EditableLocationType;
 import net.nikr.eve.jeveasset.data.settings.types.EditablePriceType;
 import net.nikr.eve.jeveasset.data.settings.types.ItemType;
+import net.nikr.eve.jeveasset.gui.tabs.tree.TreeTab;
 
 
 public abstract class JMainTabSecondary extends JMainTab {
@@ -43,9 +43,8 @@ public abstract class JMainTabSecondary extends JMainTab {
 
 	@Override
 	public void updateNames(Set<Long> itemIDs) {
-		if (this instanceof NamesUpdater) {
-			NamesUpdater<?> namesUpdater = (NamesUpdater) this;
-			ProfileData.updateNames(namesUpdater.getEventList(), itemIDs);
+		if (this instanceof TreeTab) {
+			updateData();
 		}
 	}
 
@@ -70,10 +69,6 @@ public abstract class JMainTabSecondary extends JMainTab {
 	}
 
 	public interface LocationsUpdater<T extends EditableLocationType> {
-		public EventList<T> getEventList();
-	}
-
-	public interface NamesUpdater<T extends MyAsset> {
 		public EventList<T> getEventList();
 	}
 
