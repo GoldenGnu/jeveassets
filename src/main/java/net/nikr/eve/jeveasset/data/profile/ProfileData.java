@@ -369,12 +369,8 @@ public class ProfileData {
 		//Temp
 		List<MyAsset> assets = new ArrayList<>();
 		List<MyAccountBalance> accountBalance = new ArrayList<>();
-		//ownerID > 
-		Date blueprintsNewest = null;
-		Date assetsNewest = null;
-		Date accountBalanceNewest = null;
-		Map<Long, List<MyAsset>> assetsMap = new HashMap<>();
-		Map<Long, List<MyAccountBalance>> accountBalanceMap = new HashMap<>();
+		Map<Long, OwnerType> assetsMap = new HashMap<>();
+		Map<Long, OwnerType> accountBalanceMap = new HashMap<>();
 		Set<MyMarketOrder> marketOrders = new HashSet<>();
 		Set<MyMarketOrder> charMarketOrders = new HashSet<>();
 		Set<MyJournal> journals = new HashSet<>();
@@ -382,7 +378,7 @@ public class ProfileData {
 		Set<MyIndustryJob> industryJobs = new HashSet<>();
 		Set<MyContractItem> contractItems = new HashSet<>();
 		Set<MyContract> contracts = new HashSet<>();
-		Map<Long, Map<Long, RawBlueprint>> blueprintsMap = new HashMap<>();
+		Map<Long, OwnerType> blueprintsMap = new HashMap<>();
 		Map<Long, RawBlueprint> blueprints = new HashMap<>();
 
 		maximumPurchaseAge();
@@ -433,38 +429,35 @@ public class ProfileData {
 			}
 			//Blueprints (Newest)
 			if (!owner.getBlueprints().isEmpty()) {
-				Map<Long, RawBlueprint> map = blueprintsMap.get(owner.getOwnerID());
-				if (map == null || (owner.getBlueprintsNextUpdate() != null && blueprintsNewest != null && owner.getBlueprintsNextUpdate().after(blueprintsNewest))) {
-					blueprintsMap.put(owner.getOwnerID(), owner.getBlueprints());
-					blueprintsNewest = owner.getBlueprintsNextUpdate();
+				OwnerType ownerType = blueprintsMap.get(owner.getOwnerID());
+				if (ownerType == null || (owner.getBlueprintsNextUpdate() != null && ownerType.getBalanceNextUpdate() != null && owner.getBlueprintsNextUpdate().after(ownerType.getBalanceNextUpdate()))) {
+					blueprintsMap.put(owner.getOwnerID(), owner);
 				}
 			}
 			//Assets (Newest)
 			if (!owner.getAssets().isEmpty()) {
-				List<MyAsset> list = assetsMap.get(owner.getOwnerID());
-				if (list == null || (owner.getAssetNextUpdate() != null && assetsNewest != null && owner.getAssetNextUpdate().after(assetsNewest))) {
-					assetsMap.put(owner.getOwnerID(), owner.getAssets());
-					assetsNewest = owner.getAssetNextUpdate();
+				OwnerType ownerType = assetsMap.get(owner.getOwnerID());
+				if (ownerType == null || (owner.getAssetNextUpdate() != null && ownerType.getAssetNextUpdate() != null && owner.getAssetNextUpdate().after(ownerType.getAssetNextUpdate()))) {
+					assetsMap.put(owner.getOwnerID(), owner);
 				}
 			}
 			//Account Balance (Newest)
 			if (!owner.getAccountBalances().isEmpty()) {
-				List<MyAccountBalance> list = accountBalanceMap.get(owner.getOwnerID());
-				if (list == null || (owner.getBalanceNextUpdate() != null && accountBalanceNewest != null && owner.getBalanceNextUpdate().after(accountBalanceNewest))) {
-					accountBalanceMap.put(owner.getOwnerID(), owner.getAccountBalances());
-					accountBalanceNewest = owner.getBalanceNextUpdate();
+				OwnerType ownerType = accountBalanceMap.get(owner.getOwnerID());
+				if (ownerType == null || (owner.getBalanceNextUpdate() != null && ownerType.getBalanceNextUpdate() != null && owner.getBalanceNextUpdate().after(ownerType.getBalanceNextUpdate()))) {
+					accountBalanceMap.put(owner.getOwnerID(), owner);
 				}
 			}
 		}
 
 		//Fill accountBalance
-		for (List<MyAccountBalance> list : accountBalanceMap.values()) {
-			accountBalance.addAll(list);
+		for (OwnerType owner : accountBalanceMap.values()) {
+			accountBalance.addAll(owner.getAccountBalances());
 		}
 
 		//Fill blueprints
-		for (Map<Long, RawBlueprint> map : blueprintsMap.values()) {
-			blueprints.putAll(map);
+		for (OwnerType owner : blueprintsMap.values()) {
+			blueprints.putAll(owner.getBlueprints());
 		}
 
 		for (MyMarketOrder marketOrder : charMarketOrders) {
@@ -543,8 +536,8 @@ public class ProfileData {
 				addAssets(DataConverter.assetContracts(contractItems, uniqueOwners, Settings.get().isIncludeSellContracts(), Settings.get().isIncludeBuyContracts()), assets, blueprints, assetAddedData);
 
 				//Add Assets to Assets
-				for (List<MyAsset> list : assetsMap.values()) {
-					addAssets(list, assets, blueprints, assetAddedData);
+				for (OwnerType owner : assetsMap.values()) {
+					addAssets(owner.getAssets(), assets, blueprints, assetAddedData);
 				}
 			}
 		});
