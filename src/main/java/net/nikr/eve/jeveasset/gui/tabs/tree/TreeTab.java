@@ -67,13 +67,11 @@ import net.nikr.eve.jeveasset.data.api.my.MyAsset;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.data.settings.tag.TagUpdate;
-import net.nikr.eve.jeveasset.data.settings.types.JumpType;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.components.JFixedToolBar;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTabSecondary;
-import net.nikr.eve.jeveasset.gui.shared.components.JMainTabSecondary.NamesUpdater;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo;
@@ -92,7 +90,7 @@ import net.nikr.eve.jeveasset.i18n.TabsTree;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 
 
-public class TreeTab extends JMainTabSecondary implements TagUpdate, NamesUpdater<TreeAsset> {
+public class TreeTab extends JMainTabSecondary implements TagUpdate {
 
 	private enum TreeAction {
 		UPDATE,
@@ -123,10 +121,10 @@ public class TreeTab extends JMainTabSecondary implements TagUpdate, NamesUpdate
 	private final DefaultEventSelectionModel<TreeAsset> selectionModel;
 	private final AssetTreeExpansionModel expansionModel;
 	private final SortedList<TreeAsset> sortedList;
-	private final Set<TreeAsset> locationsExport = new TreeSet<TreeAsset>(new AssetTreeComparator());
-	private final Set<TreeAsset> locations = new TreeSet<TreeAsset>(new AssetTreeComparator());
-	private final Set<TreeAsset> categoriesExport = new TreeSet<TreeAsset>(new AssetTreeComparator());
-	private final Set<TreeAsset> categories = new TreeSet<TreeAsset>(new AssetTreeComparator());
+	private final Set<TreeAsset> locationsExport = new TreeSet<>(new AssetTreeComparator());
+	private final Set<TreeAsset> locations = new TreeSet<>(new AssetTreeComparator());
+	private final Set<TreeAsset> categoriesExport = new TreeSet<>(new AssetTreeComparator());
+	private final Set<TreeAsset> categories = new TreeSet<>(new AssetTreeComparator());
 
 	public static final String NAME = "treeassets"; //Not to be changed!
 
@@ -168,7 +166,7 @@ public class TreeTab extends JMainTabSecondary implements TagUpdate, NamesUpdate
 
 
 		//Table Format
-		tableFormat = new EnumTableFormatAdaptor<TreeTableFormat, TreeAsset>(TreeTableFormat.class);
+		tableFormat = new EnumTableFormatAdaptor<>(TreeTableFormat.class);
 		//Backend
 		eventList = new EventListManager<TreeAsset>().create();
 		exportEventList = new EventListManager<TreeAsset>().create();
@@ -176,16 +174,16 @@ public class TreeTab extends JMainTabSecondary implements TagUpdate, NamesUpdate
 		
 		EventList<TreeAsset> myEventList = new EventListManager<TreeAsset>().create();
 		myEventList.getReadWriteLock().readLock().lock();
-		sortedList = new SortedList<TreeAsset>(myEventList);
+		sortedList = new SortedList<>(myEventList);
 		myEventList.getReadWriteLock().readLock().unlock();
 		//Filter
 		eventList.getReadWriteLock().readLock().lock();
-		filterList = new FilterList<TreeAsset>(eventList);
+		filterList = new FilterList<>(eventList);
 		eventList.getReadWriteLock().readLock().unlock();
 		filterList.addListEventListener(listener);
 		//Tree
 		expansionModel = new AssetTreeExpansionModel();
-		treeList = new TreeList<TreeAsset>(filterList, new AssetTreeFormat(sortedList), expansionModel);
+		treeList = new TreeList<>(filterList, new AssetTreeFormat(sortedList), expansionModel);
 		//Table Model
 		tableModel = EventModels.createTableModel(treeList, tableFormat);
 		//Table
@@ -275,12 +273,12 @@ public class TreeTab extends JMainTabSecondary implements TagUpdate, NamesUpdate
 		categories.clear();
 		locationsExport.clear();
 		categoriesExport.clear();
-		Map<String, TreeAsset> categoryCache = new HashMap<String, TreeAsset>();
-		Map<String, TreeAsset> locationCache = new HashMap<String, TreeAsset>();
+		Map<String, TreeAsset> categoryCache = new HashMap<>();
+		Map<String, TreeAsset> locationCache = new HashMap<>();
 		MyLocation emptyLocation = new MyLocation(0, "", 0, "", 0, "", "");
 		for (MyAsset asset : program.getAssetList()) {
 		//LOCATION
-			List<TreeAsset> locationTree = new ArrayList<TreeAsset>();
+			List<TreeAsset> locationTree = new ArrayList<>();
 			MyLocation location = asset.getLocation();
 
 			//Region
@@ -341,7 +339,7 @@ public class TreeTab extends JMainTabSecondary implements TagUpdate, NamesUpdate
 			}
 			
 		//CATEGORY
-			List<TreeAsset> categoryTree = new ArrayList<TreeAsset>();
+			List<TreeAsset> categoryTree = new ArrayList<>();
 
 			//Category
 			String categoryKey = asset.getItem().getCategory();
@@ -388,16 +386,15 @@ public class TreeTab extends JMainTabSecondary implements TagUpdate, NamesUpdate
 	}
 
 	public void addColumn(MyLocation location) {
-		tableFormat.addColumn(new JMenuJumps.Column<TreeAsset>(location.getSystem(), location.getSystemID()));
+		tableFormat.addColumn(new JMenuJumps.Column<>(location.getSystem(), location.getSystemID()));
 		filterControl.setColumns(tableFormat.getOrderColumns());
 	}
 
 	public void removeColumn(MyLocation location) {
-		tableFormat.removeColumn(new JMenuJumps.Column<TreeAsset>(location.getSystem(), location.getSystemID()));
+		tableFormat.removeColumn(new JMenuJumps.Column<>(location.getSystem(), location.getSystemID()));
 		filterControl.setColumns(tableFormat.getOrderColumns());
 	}
 
-	@Override
 	public EventList<TreeAsset> getEventList() {
 		return eventList;
 	}
@@ -411,7 +408,7 @@ public class TreeTab extends JMainTabSecondary implements TagUpdate, NamesUpdate
 			treeAssetsExport = categoriesExport;
 		}
 		//Update Jumps
-		program.getProfileData().updateJumps(new ArrayList<JumpType>(treeAssets), TreeAsset.class);
+		program.getProfileData().updateJumps(new ArrayList<>(treeAssets), TreeAsset.class);
 		eventList.getReadWriteLock().writeLock().lock();
 		try {
 			eventList.clear();
@@ -447,7 +444,7 @@ public class TreeTab extends JMainTabSecondary implements TagUpdate, NamesUpdate
 			for (TreeAsset treeAsset : locationsExport) {
 				treeAsset.resetValues();
 			}
-			Set<TreeAsset> parentItems = new TreeSet<TreeAsset>(new AssetTreeComparator());
+			Set<TreeAsset> parentItems = new TreeSet<>(new AssetTreeComparator());
 			try {
 				filterList.getReadWriteLock().readLock().lock();
 				for (TreeAsset treeAsset : filterList) {
@@ -496,7 +493,7 @@ public class TreeTab extends JMainTabSecondary implements TagUpdate, NamesUpdate
 	private class TreeTableMenu implements TableMenu<TreeAsset> {
 		@Override
 		public MenuData<TreeAsset> getMenuData() {
-			return new MenuData<TreeAsset>(selectionModel.getSelected());
+			return new MenuData<>(selectionModel.getSelected());
 		}
 
 		@Override
@@ -578,7 +575,7 @@ public class TreeTab extends JMainTabSecondary implements TagUpdate, NamesUpdate
 				public void run() {
 					//Full list update
 					expansionModel.setState(ExpandeState.LOAD);
-					List<TreeAsset> treeAssets = new ArrayList<TreeAsset>(eventList);
+					List<TreeAsset> treeAssets = new ArrayList<>(eventList);
 					eventList.getReadWriteLock().writeLock().lock();
 					try {
 						eventList.clear();
@@ -720,12 +717,12 @@ public class TreeTab extends JMainTabSecondary implements TagUpdate, NamesUpdate
 
 		@Override
 		protected List<EnumTableColumn<TreeAsset>> getColumns() {
-			return new ArrayList<EnumTableColumn<TreeAsset>>(tableFormat.getOrderColumns());
+			return new ArrayList<>(tableFormat.getOrderColumns());
 		}
 
 		@Override
 		protected List<EnumTableColumn<TreeAsset>> getShownColumns() {
-			return new ArrayList<EnumTableColumn<TreeAsset>>(tableFormat.getShownColumns());
+			return new ArrayList<>(tableFormat.getShownColumns());
 		}
 
 		@Override
