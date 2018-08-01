@@ -70,10 +70,18 @@ public class TrackerAssetFilterDialog extends JDialogCentered {
 
 	public TrackerAssetFilterDialog(Program program) {
 		super(program, TabsTracker.get().filterTitle(), Images.TOOL_TRACKER.getImage());
+		//Backend
 		eventList = new EventListManager<CheckBoxNode>().create();
-		filterList = new FilterList<CheckBoxNode>(eventList);
-		TreeList<CheckBoxNode> treeList = new TreeList<CheckBoxNode>(EventModels.createSwingThreadProxyList(filterList), new CheckBoxNodeFormat(), TreeList.nodesStartExpanded());
-		EventTreeModel<CheckBoxNode> eventTreeModel = new EventTreeModel<CheckBoxNode>(treeList);
+		//Filter
+		eventList.getReadWriteLock().readLock().lock();
+		filterList = new FilterList<>(eventList);
+		eventList.getReadWriteLock().readLock().unlock();
+		//Tree
+		eventList.getReadWriteLock().readLock().lock();
+		TreeList<CheckBoxNode> treeList = new TreeList<>(EventModels.createSwingThreadProxyList(filterList), new CheckBoxNodeFormat(), TreeList.nodesStartExpanded());
+		eventList.getReadWriteLock().readLock().unlock();
+
+		EventTreeModel<CheckBoxNode> eventTreeModel = new EventTreeModel<>(treeList);
 		jTree = new JTree(eventTreeModel);
 		jTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 		jTree.putClientProperty("JTree.lineStyle", "None");
@@ -258,8 +266,8 @@ public class TrackerAssetFilterDialog extends JDialogCentered {
 	}
 
 	private Map<String, CheckBoxNode> cloneList(Map<String, CheckBoxNode> nodes) {
-		Map<String, CheckBoxNode> clonesCache = new HashMap<String, CheckBoxNode>();
-		Map<String, CheckBoxNode> clonedNodes = new TreeMap<String, CheckBoxNode>();
+		Map<String, CheckBoxNode> clonesCache = new HashMap<>();
+		Map<String, CheckBoxNode> clonedNodes = new TreeMap<>();
 		for (Map.Entry<String, CheckBoxNode> entry : nodes.entrySet()) {
 			clonedNodes.put(entry.getKey(), cloneTree(clonesCache, entry.getValue()));
 		}
