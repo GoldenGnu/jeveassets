@@ -125,9 +125,8 @@ public class MicroServe implements AuthCodeListener {
 		@Override
 		public void run() {
 			boolean found = false;
-			BufferedReader in = null;
 			try {
-				in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+				BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
 				OutputStream out = clientSocket.getOutputStream();
 
 				String s;
@@ -158,7 +157,7 @@ public class MicroServe implements AuthCodeListener {
 				} else {
 					location  = "Location: http://eve.nikr.net/jeveasset/auth-cancel\r\n";
 				}
-				
+
 				out.write(location.getBytes("ASCII"));
 
 				// signal end of headers
@@ -168,13 +167,6 @@ public class MicroServe implements AuthCodeListener {
 			} catch (IOException ex) {
 				LOG.error(ex.getMessage(), ex);
 			} finally {
-				if (in != null) {
-					try {
-						in.close(); //Close BufferedReader
-					} catch (IOException ex) {
-						//That is okay
-					}
-				} 
 				if (clientSocket != null) {
 					try {
 						clientSocket.close(); //Close connection
@@ -182,8 +174,10 @@ public class MicroServe implements AuthCodeListener {
 						//That is okay
 					}
 				}
-				synchronized(LOCK) {
-					LOCK.notifyAll();
+				if (found) {
+					synchronized(LOCK) {
+						LOCK.notifyAll();
+					}
 				}
 			}
 		}
