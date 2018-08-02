@@ -383,6 +383,7 @@ public class SettingsWriter extends AbstractXmlWriter {
 				locationNode.setAttributeNS(null, "buyingcontracts", String.valueOf(filter.isBuyingContracts()));
 				locationNode.setAttributeNS(null, "boughtcontracts", String.valueOf(filter.isBoughtContracts()));
 				locationNode.setAttributeNS(null, "exclude", String.valueOf(filter.isExclude()));
+				setAttributeOptional(locationNode, "singleton", filter.isSingleton());
 				locationNode.setAttributeNS(null, "inventory", String.valueOf(filter.isAssets()));
 				locationNode.setAttributeNS(null, "sellorders", String.valueOf(filter.isSellOrders()));
 				locationNode.setAttributeNS(null, "buyorders", String.valueOf(filter.isBuyOrders()));
@@ -395,9 +396,10 @@ public class SettingsWriter extends AbstractXmlWriter {
 					ownerNode.setAttributeNS(null, "ownerid", String.valueOf(ownerID));
 					locationNode.appendChild(ownerNode);
 				}
-				for (String container : filter.getContainers()) {
+				for (StockpileFilter.StockpileContainer container : filter.getContainers()) {
 					Element containerNode = xmldoc.createElementNS(null, "container");
-					containerNode.setAttributeNS(null, "container", container);
+					containerNode.setAttributeNS(null, "container", container.getContainer());
+					containerNode.setAttributeNS(null, "includecontainer", String.valueOf(container.isIncludeContainer()));
 					locationNode.appendChild(containerNode);
 				}
 				for (Integer flagID : filter.getFlagIDs()) {
