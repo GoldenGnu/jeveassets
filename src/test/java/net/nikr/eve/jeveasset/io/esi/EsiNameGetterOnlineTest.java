@@ -61,8 +61,8 @@ public class EsiNameGetterOnlineTest extends TestUtil {
 		esiNameGetter.run();
 
 		for (Long id : ids) {
-			Assert.assertNotNull(Settings.get().getOwners().get(id));
-			Assert.assertFalse(Settings.get().getOwners().get(id).isEmpty());
+			Assert.assertNotNull(id + " not set", Settings.get().getOwners().get(id));
+			Assert.assertFalse(id + " is empty", Settings.get().getOwners().get(id).isEmpty());
 		}
 	}
 
