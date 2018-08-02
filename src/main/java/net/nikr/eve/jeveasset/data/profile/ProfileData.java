@@ -1025,21 +1025,21 @@ public class ProfileData {
 	}
 
 	private static void updateContainer(MyAsset asset) {
-		String sContainer = "";
-		for (MyAsset parentAsset : asset.getParents()) {
-			if (!sContainer.isEmpty()) {
-				sContainer = sContainer + " > ";
-			}
-			if (!parentAsset.isUserName()) {
-				sContainer = sContainer + parentAsset.getName() + " #" + parentAsset.getItemID();
-			} else {
-				sContainer = sContainer + parentAsset.getName();
+		StringBuilder builder = new StringBuilder();
+		if (asset.getParents().isEmpty()) {
+			builder.append(General.get().none());
+		} else {
+			boolean first = true;
+			for (MyAsset parentAsset : asset.getParents()) {
+				if (first) {
+					first = false;
+				} else {
+					builder.append(" > ");
+				}
+				builder.append(containerName(parentAsset));
 			}
 		}
-		if (sContainer.isEmpty()) {
-			sContainer = General.get().none();
-		}
-		asset.setContainer(sContainer.intern());
+		asset.setContainer(builder.toString().intern());
 	}
 
 	private void updateStructureAssets(final MyAsset asset, final MyAsset structure) {
@@ -1055,6 +1055,14 @@ public class ProfileData {
 		asset.setLocationType(RawConverter.toAssetLocationType(locationID));
 		for (MyAsset subAsset : asset.getAssets()) { //Update child assets
 			updateStructureAssets(subAsset, structure);
+		}
+	}
+
+	public static String containerName(MyAsset asset) {
+		if (!asset.isUserName()) {
+			return asset.getName() + " #" + asset.getItemID();
+		} else {
+			return asset.getName();
 		}
 	}
 }

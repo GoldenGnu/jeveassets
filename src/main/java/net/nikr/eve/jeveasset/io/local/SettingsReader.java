@@ -83,6 +83,7 @@ import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewLocation;
 import net.nikr.eve.jeveasset.gui.tabs.routing.SolarSystem;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileFilter;
+import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileFilter.StockpileContainer;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.StockpileExtendedTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.StockpileTab;
@@ -563,11 +564,11 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 				}
 			}
 			//Containers
-			List<String> containers = new ArrayList<String>();
+			List<StockpileContainer> containers = new ArrayList<StockpileContainer>();
 			if (AttributeGetters.haveAttribute(stockpileNode, "container")) {
 				String container = AttributeGetters.getString(stockpileNode, "container");
 				if (!container.equals(General.get().all())) {
-					containers.add(container);
+					containers.add(new StockpileContainer(container, false));
 				}
 			}
 			//Flags
@@ -604,7 +605,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 			}
 			List<StockpileFilter> filters = new ArrayList<StockpileFilter>();
 			if (inventory != null && sellOrders != null && buyOrders != null && jobs != null) {
-				StockpileFilter filter = new StockpileFilter(location, flagIDs, containers, ownerIDs, exclude, inventory, sellOrders, buyOrders, jobs, false, false, false, false, false, false);
+				StockpileFilter filter = new StockpileFilter(location, flagIDs, containers, ownerIDs, exclude, null, inventory, sellOrders, buyOrders, jobs, false, false, false, false, false, false);
 				filters.add(filter);
 			}
 		//NEW
@@ -615,6 +616,11 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 				boolean filterExclude = false;
 				if (AttributeGetters.haveAttribute(filterNode, "exclude")) {
 					filterExclude = AttributeGetters.getBoolean(filterNode, "exclude");
+				}
+				//Singleton
+				Boolean filterSingleton = null;
+				if (AttributeGetters.haveAttribute(filterNode, "singleton")) {
+					filterSingleton = AttributeGetters.getBoolean(filterNode, "singleton");
 				}
 				boolean filterSellingContracts = false;
 				if (AttributeGetters.haveAttribute(filterNode, "sellingcontracts")) {
@@ -656,12 +662,16 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 					filterOwnerIDs.add(filterOwnerID);
 				}
 				//Containers
-				List<String> filterContainers = new ArrayList<String>();
+				List<StockpileContainer> filterContainers = new ArrayList<StockpileContainer>();
 				NodeList containerNodes = filterNode.getElementsByTagName("container");
 				for (int c = 0; c < containerNodes.getLength(); c++) {
 					Element containerNode = (Element) containerNodes.item(c);
 					String filterContainer = AttributeGetters.getString(containerNode, "container");
-					filterContainers.add(filterContainer);
+					boolean filterIncludeContainer = false;
+					if (AttributeGetters.haveAttribute(containerNode, "includecontainer")) {
+						filterIncludeContainer = AttributeGetters.getBoolean(containerNode, "includecontainer");
+					}
+					filterContainers.add(new StockpileContainer(filterContainer, filterIncludeContainer));
 				}
 				//Flags
 				List<Integer> filterFlagIDs = new ArrayList<Integer>();
@@ -671,7 +681,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 					int filterFlagID = AttributeGetters.getInt(flagNode, "flagid");
 					filterFlagIDs.add(filterFlagID);
 				}
-				StockpileFilter stockpileFilter = new StockpileFilter(location, filterFlagIDs, filterContainers, filterOwnerIDs, filterExclude, filterInventory, filterSellOrders, filterBuyOrders, filterJobs, filterBuyTransactions, filterSellTransactions, filterSellingContracts, filterSoldBuy, filterBuyingContracts, filterBoughtContracts);
+				StockpileFilter stockpileFilter = new StockpileFilter(location, filterFlagIDs, filterContainers, filterOwnerIDs, filterExclude, filterSingleton, filterInventory, filterSellOrders, filterBuyOrders, filterJobs, filterBuyTransactions, filterSellTransactions, filterSellingContracts, filterSoldBuy, filterBuyingContracts, filterBoughtContracts);
 				filters.add(stockpileFilter);
 			}
 		//MULTIPLIER

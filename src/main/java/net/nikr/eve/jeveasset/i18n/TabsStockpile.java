@@ -98,6 +98,7 @@ public abstract class TabsStockpile extends Bundle {
 	public abstract String importXmlSkipHelp();
 	public abstract String include();
 	public abstract String includeCount(int i);
+	public abstract String includeContainer();
 	public abstract String includeAssets();
 	public abstract String includeAssetsTip();
 	public abstract String includeBuyOrders();
@@ -146,6 +147,7 @@ public abstract class TabsStockpile extends Bundle {
 	public abstract String shownValueNow();
 	public abstract String shownVolumeNeeded();
 	public abstract String shownVolumeNow();
+	public abstract String singleton();
 	public abstract String station();
 	public abstract String stockpile();
 	public abstract String stockpileLocation();

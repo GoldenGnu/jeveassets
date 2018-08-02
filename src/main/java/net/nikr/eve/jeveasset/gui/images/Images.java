@@ -118,6 +118,7 @@ public enum Images {
 	INCLUDE_CONTRACTS ("include_contracts.png"),
 	INCLUDE_ORDERS_SELECTED ("include_orders_selected.png"),
 	INCLUDE_ORDERS ("include_orders.png"),
+	INCLUDE_PACKAGED ("include_packaged.png"),
 	MISC_EVE ("misc_eve.png"),
 	MISC_EVEKIT ("misc_evekit.png"),
 	MISC_EVEKIT_32 ("misc_evekit_32.png"),
