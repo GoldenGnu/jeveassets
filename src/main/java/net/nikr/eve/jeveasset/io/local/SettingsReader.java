@@ -1087,13 +1087,17 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 				NodeList rowNodes = filterNode.getElementsByTagName("row");
 				for (int c = 0; c < rowNodes.getLength(); c++) {
 					Element rowNode = (Element) rowNodes.item(c);
+					int group = 1;
+					if (AttributeGetters.haveAttribute(rowNode, "group")) {
+						group = AttributeGetters.getInt(rowNode, "group");
+					}
 					String text = AttributeGetters.getString(rowNode, "text");
 					String columnString = AttributeGetters.getString(rowNode, "column");
 					EnumTableColumn<?> column =  getColumn(columnString, tableName);
 					if (column != null) {
 						String compare = AttributeGetters.getString(rowNode, "compare");
 						String logic = AttributeGetters.getString(rowNode, "logic");
-						filter.add(new Filter(logic, column, compare, text));
+						filter.add(new Filter(group, logic, column, compare, text));
 					} else {
 						LOG.warn(columnString + " column removed from filter");
 					}
