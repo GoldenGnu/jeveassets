@@ -57,15 +57,18 @@ public enum Colors {
 	 * 220, 240, 255
 	 */
 	LIGHT_BLUE(220, 240, 255, 180, 220, 255),
+	/**
+	 * 255, 220, 200
+	 */
+	LIGHT_ORANGE(255, 220, 200, 255, 180, 120),
+	/**
+	 * 255, 220, 255
+	 */
+	LIGHT_MAGENTA(255, 220, 255, 255, 180, 255),
 	;
 
 	private final Color color;
 	private final Color colorStrong;
-
-	private Colors(int r, int g, int b) {
-		this(r, g, b, r, g, b);
-	}
-	
 
 	private Colors(int r, int g, int b, int r_strong, int g_strong, int b_strong) {
 		color = new Color(r, g, b);
