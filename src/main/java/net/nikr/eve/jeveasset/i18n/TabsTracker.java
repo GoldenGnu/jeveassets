@@ -40,6 +40,8 @@ public abstract class TabsTracker extends Bundle {
 	public abstract String autoZoom();
 	public abstract String cancel();
 	public abstract String characterWallet();
+	public abstract String checkAllLocationsMsg();
+	public abstract String checkAllLocationsTitle();
 	public abstract String clear();
 	public abstract String contractCollateral();
 	public abstract String contractValue();

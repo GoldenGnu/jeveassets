@@ -876,6 +876,7 @@ public class Program implements ActionListener {
 			mainWindow.addTab(itemsTab);
 		} else if (MainMenuAction.TRACKER.name().equals(e.getActionCommand())) {
 			mainWindow.addTab(trackerTab);
+			trackerTab.checkAll();
 		} else if (MainMenuAction.REPROCESSED.name().equals(e.getActionCommand())) {
 			mainWindow.addTab(reprocessedTab);
 		} else if (MainMenuAction.CONTRACTS.name().equals(e.getActionCommand())) {
