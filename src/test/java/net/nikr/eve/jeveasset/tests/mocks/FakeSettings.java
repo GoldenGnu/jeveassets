@@ -554,4 +554,16 @@ public abstract class FakeSettings extends Settings {
 	public boolean isIncludeManufacturing() {
 		throw new UnsupportedOperationException("not implemented");
 	}
+
+	@Override
+	public void setAskedCheckAllTracker(boolean checkAllTracker) {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public boolean isAskedCheckAllTracker() {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	
 }
