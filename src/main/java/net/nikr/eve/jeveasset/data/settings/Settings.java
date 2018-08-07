@@ -103,7 +103,8 @@ public class Settings {
 		FLAG_TRANSACTION_HISTORY,
 		FLAG_JOURNAL_HISTORY,
 		FLAG_MARKET_ORDER_HISTORY,
-		FLAG_STRONG_COLORS
+		FLAG_STRONG_COLORS,
+		FLAG_ASKED_CHECK_ALL_TRACKER
 	}
 
 	private static final SettingsLock LOCK = new SettingsLock();
@@ -229,6 +230,7 @@ public class Settings {
 		flags.put(SettingFlag.FLAG_JOURNAL_HISTORY, true);
 		flags.put(SettingFlag.FLAG_MARKET_ORDER_HISTORY, true);
 		flags.put(SettingFlag.FLAG_STRONG_COLORS, false);
+		flags.put(SettingFlag.FLAG_ASKED_CHECK_ALL_TRACKER, false);
 		cacheFlags();
 	}
 
@@ -691,6 +693,14 @@ public class Settings {
 
 	public void setStrongColors(final boolean strongColors) {
 		flags.put(SettingFlag.FLAG_STRONG_COLORS, strongColors);
+	}
+
+	public boolean isAskedCheckAllTracker() {
+		return flags.get(SettingFlag.FLAG_ASKED_CHECK_ALL_TRACKER);
+	}
+
+	public void setAskedCheckAllTracker(final boolean checkAllTracker) {
+		flags.put(SettingFlag.FLAG_ASKED_CHECK_ALL_TRACKER, checkAllTracker);
 	}
 
 	public List<Stockpile> getStockpiles() {

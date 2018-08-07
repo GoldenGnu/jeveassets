@@ -612,6 +612,38 @@ public class TrackerTab extends JMainTabSecondary {
 	@Override
 	public void updateCache() { }
 
+	public void checkAll() {
+		if (!Settings.get().isAskedCheckAllTracker()) {
+			Settings.lock("Tracker: Check All");
+			Settings.get().setAskedCheckAllTracker(true);
+			Settings.unlock("Tracker: Check All");
+			Settings.saveSettings();
+			boolean isAll = true;
+			for (CheckBoxNode node : assetNodes.values()) {
+				if (!node.isSelected()) {
+					isAll = false;
+					break;
+				}
+			}
+			if (!isAll && !TrackerData.get().isEmpty()) {
+				int value = JOptionPane.showConfirmDialog(program.getMainWindow().getFrame(), TabsTracker.get().checkAllLocationsMsg(), TabsTracker.get().checkAllLocationsTitle(), JOptionPane.OK_CANCEL_OPTION);
+				if (value == JOptionPane.OK_OPTION) {
+					for (CheckBoxNode node : assetNodes.values()) {
+						if (node.isParent()) {
+							continue;
+						}
+						node.setSelected(true);
+					}
+					updateSettings();
+					createData();
+					updateButtonIcons();
+				} else {
+					showLocationFilter();
+				}
+			}
+		}
+	}
+
 	private JDateChooser createDateChooser() {
 		JDateChooser jDate = new JDateChooser(true);
 		jDate.addDateChangeListener(listener);
@@ -1274,6 +1306,15 @@ public class TrackerTab extends JMainTabSecondary {
 		return LocalDateTime.ofInstant(instant, ZoneId.of("GMT")).toLocalDate();
 	}
 
+	private void showLocationFilter() {
+		boolean save = assetFilterDialog.showLocations(assetNodes);
+		if (save) { //Need refilter
+			updateSettings();
+			createData();
+			updateButtonIcons();
+		}
+	}
+
 	private class ListenerClass extends MouseAdapter implements 
 			ActionListener, PopupMenuListener,
 			ChartMouseListener, ListSelectionListener, DateChangeListener {
@@ -1405,12 +1446,7 @@ public class TrackerTab extends JMainTabSecondary {
 					updateButtonIcons();
 				}
 			} else if (TrackerAction.FILTER_ASSETS.name().equals(e.getActionCommand())) {
-				boolean save = assetFilterDialog.showLocations(assetNodes);
-				if (save) { //Need refilter
-					updateSettings();
-					createData();
-					updateButtonIcons();
-				}
+				showLocationFilter();
 			} else if (TrackerAction.IMPORT_FILE.name().equals(e.getActionCommand())) {
 				jFileChooser.setCurrentDirectory(new File(Settings.getPathDataDirectory()));
 				int value = jFileChooser.showOpenDialog(program.getMainWindow().getFrame());
