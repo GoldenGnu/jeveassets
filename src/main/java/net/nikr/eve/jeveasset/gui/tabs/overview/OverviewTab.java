@@ -395,7 +395,7 @@ public class OverviewTab extends JMainTabSecondary {
 					}
 					if (view.equals(TabsOverview.get().stations())) {
 						locationName = asset.getLocation().getLocation();
-						location = ApiIdConverter.getLocation(asset.getLocation().getStationID());
+						location = ApiIdConverter.getLocation(asset.getLocation().getLocationID());
 					}
 				} else {
 					locationName = location.getLocation();
