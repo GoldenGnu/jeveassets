@@ -186,7 +186,7 @@ class FilterGui<E> {
 	}
 
 	void updateShowing() {
-		jShowing.setText(GuiShared.get().filterShowing(EventListManager.size(filterControl.getFilterList()), EventListManager.size(filterControl.getExportEventList()), getCurrentFilterName()));
+		jShowing.setText(GuiShared.get().filterShowing(EventListManager.size(filterControl.getFilterList()), EventListManager.size(filterControl.getEventList()), getCurrentFilterName()));
 	}
 
 	String getCurrentFilterName() {
