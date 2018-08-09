@@ -625,7 +625,14 @@ public class TrackerTab extends JMainTabSecondary {
 					break;
 				}
 			}
-			if (!isAll && !TrackerData.get().isEmpty()) {
+			boolean empty = false;
+			try {
+				TrackerData.readLock();
+				empty = TrackerData.get().isEmpty();
+			} finally {
+				TrackerData.readUnlock();
+			}
+			if (!isAll && !empty) {
 				int value = JOptionPane.showConfirmDialog(program.getMainWindow().getFrame(), TabsTracker.get().checkAllLocationsMsg(), TabsTracker.get().checkAllLocationsTitle(), JOptionPane.OK_CANCEL_OPTION);
 				if (value == JOptionPane.OK_OPTION) {
 					for (CheckBoxNode node : assetNodes.values()) {
