@@ -287,9 +287,9 @@ public class TreeTab extends JMainTabSecondary implements TagUpdate {
 			if (regionAsset == null) {
 				regionAsset = new TreeAsset(ApiIdConverter.getLocation(location.getRegionID()), location.getRegion(), regionKey, Images.LOC_REGION.getIcon(), locationTree);
 				locationCache.put(regionKey, regionAsset);
+				locationsExport.add(regionAsset);
 			}
 			locationTree.add(regionAsset);
-			locationsExport.add(regionAsset);
 
 			//System
 			String systemKey = location.getRegion() + location.getSystem();
@@ -297,9 +297,9 @@ public class TreeTab extends JMainTabSecondary implements TagUpdate {
 			if (systemAsset == null) {
 				systemAsset = new TreeAsset(ApiIdConverter.getLocation(location.getSystemID()), location.getSystem(), systemKey, Images.LOC_SYSTEM.getIcon(), locationTree);
 				locationCache.put(systemKey, systemAsset);
+				locationsExport.add(systemAsset);
 			}
 			locationTree.add(systemAsset);
-			locationsExport.add(systemAsset);
 
 			String fullLocation = location.getRegion()+location.getSystem();
 			//Station
@@ -309,9 +309,9 @@ public class TreeTab extends JMainTabSecondary implements TagUpdate {
 				if (stationAsset == null) {
 					stationAsset = new TreeAsset(asset.getLocation(), location.getLocation(), stationKey, Images.LOC_STATION.getIcon(), locationTree);
 					locationCache.put(stationKey, stationAsset);
+					locationsExport.add(stationAsset);
 				}
 				locationTree.add(stationAsset);
-				locationsExport.add(stationAsset);
 				fullLocation = location.getRegion()+location.getSystem()+location.getLocation();
 			}
 
@@ -325,10 +325,10 @@ public class TreeTab extends JMainTabSecondary implements TagUpdate {
 						parentTreeAsset = new TreeAsset(parentAsset, TreeType.LOCATION, locationTree, parentKey, !parentAsset.getAssets().isEmpty());
 						locationCache.put(cacheKey, parentTreeAsset);
 						locations.add(parentTreeAsset);
+						locationsExport.add(parentTreeAsset);
 					}
 					parentKey = parentKey + parentAsset.getName() + " #" + parentAsset.getItemID();
 					locationTree.add(parentTreeAsset);
-					locationsExport.add(parentTreeAsset);
 				}
 			}
 			//Add item
