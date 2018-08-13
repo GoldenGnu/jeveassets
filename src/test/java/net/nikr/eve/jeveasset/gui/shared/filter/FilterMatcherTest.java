@@ -115,9 +115,11 @@ public class FilterMatcherTest extends TestUtil {
 	private static final String TEXT_PART = "Tex";
 	private static final String TEXT_NOT = "Not";
 
-	private static final String DATE = "2005-01-01";
-	private static final String DATE_BEFORE = "2010-01-01";
-	private static final String DATE_AFTER = "2000-01-01";
+	private static final String DATE = "2005-01-02 09:00";
+	private static final String DATE_BEFORE = "2005-01-03 09:00"; //DATE before this
+	private static final String DATE_NOT_BEFORE = "2005-01-02 10:00";
+	private static final String DATE_AFTER = "2005-01-01 9:00"; //DATE after this
+	private static final String DATE_NOT_AFTER = "2005-01-02 8:00";
 	private static final String DATE_PART = "2005";
 	private static final String DATE_NOT = "2005-05-05";
 
@@ -184,15 +186,17 @@ public class FilterMatcherTest extends TestUtil {
 		this.dateColumn = dateColumn;
 		this.percentColumn = percentColumn;
 		FilterMatcher<Item> filterMatcher;
-		filterMatcher = new FilterMatcher<Item>(filterControl, Filter.LogicType.AND, enumColumn, compare, text, true);
+		filterMatcher = new FilterMatcher<>(filterControl, Filter.LogicType.AND, enumColumn, compare, text, true);
 		assertEquals(enumColumn.name(), expected, filterMatcher.matches(item));
-		filterMatcher = new FilterMatcher<Item>(filterControl, new Filter(Filter.LogicType.AND, enumColumn, compare, text));
+		filterMatcher = new FilterMatcher<>(filterControl, new Filter(Filter.LogicType.AND, enumColumn, compare, text));
 		assertEquals(enumColumn.name() + " (filter)", expected, filterMatcher.matches(item));
 	}
 
 	private void dateTest() {
 		//Equals
 		matches(true,  item, TestEnum.DATE, Filter.CompareType.EQUALS, DATE);
+		matches(false, item, TestEnum.DATE, Filter.CompareType.EQUALS, DATE_NOT_AFTER);
+		matches(false, item, TestEnum.DATE, Filter.CompareType.EQUALS, DATE_NOT_BEFORE);
 		matches(false, item, TestEnum.DATE, Filter.CompareType.EQUALS, DATE_PART);
 		matches(false, item, TestEnum.DATE, Filter.CompareType.EQUALS, DATE_NOT);
 		//Equals not
@@ -201,6 +205,8 @@ public class FilterMatcherTest extends TestUtil {
 		matches(true,  item, TestEnum.DATE, Filter.CompareType.EQUALS_NOT, DATE_NOT);
 		//Equals date
 		matches(true,  item, TestEnum.DATE, Filter.CompareType.EQUALS_DATE, DATE);
+		matches(true,  item, TestEnum.DATE, Filter.CompareType.EQUALS_DATE, DATE_NOT_AFTER);
+		matches(true,  item, TestEnum.DATE, Filter.CompareType.EQUALS_DATE, DATE_NOT_BEFORE);
 		matches(false, item, TestEnum.DATE, Filter.CompareType.EQUALS_DATE, DATE_PART);
 		matches(false, item, TestEnum.DATE, Filter.CompareType.EQUALS_DATE, DATE_NOT);
 		//Equals not date
@@ -218,10 +224,12 @@ public class FilterMatcherTest extends TestUtil {
 		//Before
 		matches(false, item, TestEnum.DATE, Filter.CompareType.BEFORE, DATE);
 		matches(false, item, TestEnum.DATE, Filter.CompareType.BEFORE, DATE_AFTER);
+		matches(false, item, TestEnum.DATE, Filter.CompareType.BEFORE, DATE_NOT_BEFORE);
 		matches(true,  item, TestEnum.DATE, Filter.CompareType.BEFORE, DATE_BEFORE);
 		//After
 		matches(false, item, TestEnum.DATE, Filter.CompareType.AFTER, DATE);
 		matches(true,  item, TestEnum.DATE, Filter.CompareType.AFTER, DATE_AFTER);
+		matches(false, item, TestEnum.DATE, Filter.CompareType.BEFORE, DATE_NOT_AFTER);
 		matches(false, item, TestEnum.DATE, Filter.CompareType.AFTER, DATE_BEFORE);
 		//Last X Days
 		matches(false, item, TestEnum.DATE_LAST, Filter.CompareType.LAST_DAYS, "1"); //Last 1 days
@@ -232,6 +240,8 @@ public class FilterMatcherTest extends TestUtil {
 
 		//Equals column
 		matches(true,  item, TestEnum.DATE, Filter.CompareType.EQUALS_COLUMN, TestEnum.COLUMN_DATE.name(), Formater.columnStringToDate(DATE));
+		matches(false, item, TestEnum.DATE, Filter.CompareType.EQUALS_COLUMN, TestEnum.COLUMN_DATE.name(), Formater.columnStringToDate(DATE_NOT_AFTER));
+		matches(false, item, TestEnum.DATE, Filter.CompareType.EQUALS_COLUMN, TestEnum.COLUMN_DATE.name(), Formater.columnStringToDate(DATE_NOT_BEFORE));
 		matches(false, item, TestEnum.DATE, Filter.CompareType.EQUALS_COLUMN, TestEnum.COLUMN_DATE.name(), Formater.columnStringToDate(DATE_NOT));
 		//Equals not column
 		matches(false, item, TestEnum.DATE, Filter.CompareType.EQUALS_NOT_COLUMN, TestEnum.COLUMN_DATE.name(), Formater.columnStringToDate(DATE));
@@ -245,10 +255,12 @@ public class FilterMatcherTest extends TestUtil {
 		//Before column
 		matches(false, item, TestEnum.DATE, Filter.CompareType.BEFORE_COLUMN, TestEnum.COLUMN_DATE.name(), Formater.columnStringToDate(DATE));
 		matches(false, item, TestEnum.DATE, Filter.CompareType.BEFORE_COLUMN, TestEnum.COLUMN_DATE.name(), Formater.columnStringToDate(DATE_AFTER));
+		matches(false, item, TestEnum.DATE, Filter.CompareType.BEFORE_COLUMN, TestEnum.COLUMN_DATE.name(), Formater.columnStringToDate(DATE_NOT_BEFORE));
 		matches(true,  item, TestEnum.DATE, Filter.CompareType.BEFORE_COLUMN, TestEnum.COLUMN_DATE.name(), Formater.columnStringToDate(DATE_BEFORE));
 		//After column
 		matches(false, item, TestEnum.DATE, Filter.CompareType.AFTER_COLUMN, TestEnum.COLUMN_DATE.name(), Formater.columnStringToDate(DATE));
 		matches(true,  item, TestEnum.DATE, Filter.CompareType.AFTER_COLUMN, TestEnum.COLUMN_DATE.name(), Formater.columnStringToDate(DATE_AFTER));
+		matches(false, item, TestEnum.DATE, Filter.CompareType.AFTER_COLUMN, TestEnum.COLUMN_DATE.name(), Formater.columnStringToDate(DATE_NOT_AFTER));
 		matches(false, item, TestEnum.DATE, Filter.CompareType.AFTER_COLUMN, TestEnum.COLUMN_DATE.name(), Formater.columnStringToDate(DATE_BEFORE));
 	}
 
@@ -545,14 +557,6 @@ public class FilterMatcherTest extends TestUtil {
 		matches(false, item, AllColumn.ALL, Filter.CompareType.EQUALS_NOT, DATE);
 		matches(true,  item, AllColumn.ALL, Filter.CompareType.EQUALS_NOT, DATE_PART);
 		matches(true,  item, AllColumn.ALL, Filter.CompareType.EQUALS_NOT, DATE_NOT);
-		//Equals date
-		matches(true,  item, AllColumn.ALL, Filter.CompareType.EQUALS_DATE, DATE);
-		matches(false, item, AllColumn.ALL, Filter.CompareType.EQUALS_DATE, DATE_PART);
-		matches(false, item, AllColumn.ALL, Filter.CompareType.EQUALS_DATE, DATE_NOT);
-		//Equals not date
-		matches(false, item, AllColumn.ALL, Filter.CompareType.EQUALS_NOT_DATE, DATE);
-		matches(true,  item, AllColumn.ALL, Filter.CompareType.EQUALS_NOT_DATE, DATE_PART);
-		matches(true,  item, AllColumn.ALL, Filter.CompareType.EQUALS_NOT_DATE, DATE_NOT);
 		//Contains
 		matches(true,  item, AllColumn.ALL, Filter.CompareType.CONTAINS, DATE);
 		matches(true,  item, AllColumn.ALL, Filter.CompareType.CONTAINS, DATE_PART);
@@ -615,7 +619,7 @@ public class FilterMatcherTest extends TestUtil {
 
 		@Override
 		protected List<EnumTableColumn<Item>> getColumns() {
-			return new ArrayList<EnumTableColumn<Item>>(Arrays.asList(TestEnum.values()));
+			return new ArrayList<>(Arrays.asList(TestEnum.values()));
 		}
 
 		@Override
