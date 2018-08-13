@@ -26,9 +26,7 @@ import java.text.NumberFormat;
 import java.text.ParsePosition;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Locale;
-import java.util.Map;
 import java.util.TimeZone;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter.CompareType;
@@ -39,12 +37,10 @@ import net.nikr.eve.jeveasset.gui.shared.table.containers.NumberValue;
 
 public class FilterMatcher<E> implements Matcher<E> {
 
-	//TODO i18n Use localized input
-	//public static final Locale LOCALE = Locale.getDefault();
 	public static final Locale LOCALE = Locale.ENGLISH; //Use english AKA US_EN
 	private static final NumberFormat NUMBER_FORMAT = NumberFormat.getInstance(LOCALE);
 	private static final NumberFormat PERCENT_FORMAT = NumberFormat.getPercentInstance(LOCALE);
-	private static final  Map<String, Map<Object, String>> CACHE = new HashMap<String, Map<Object, String>>();
+	private static final Calendar CALENDAR = Calendar.getInstance(TimeZone.getTimeZone("GMT"));;
 
 	private final FilterControl<E> filterControl;
 	private final int group;
@@ -52,7 +48,7 @@ public class FilterMatcher<E> implements Matcher<E> {
 	private final EnumTableColumn<?> enumColumn;
 	private final CompareType compare;
 	private final String text;
-	private final boolean enabled;
+	private final boolean empty;
 
 	FilterMatcher(final FilterControl<E> filterControl, final Filter filter) {
 		this(filterControl, filter.getGroup(), filter.getLogic(), filter.getColumn(), filter.getCompareType(), filter.getText(), true);
@@ -68,7 +64,7 @@ public class FilterMatcher<E> implements Matcher<E> {
 		} else {
 			this.text = format(text, true).toLowerCase();
 		}
-		this.enabled = enabled;
+		empty = !enabled || text.isEmpty();
 		and = logic == Filter.LogicType.AND;
 	}
 
@@ -81,7 +77,7 @@ public class FilterMatcher<E> implements Matcher<E> {
 	}
 
 	public boolean isEmpty() {
-		return text.isEmpty() || !enabled;
+		return empty;
 	}
 
 	@Override
@@ -103,11 +99,11 @@ public class FilterMatcher<E> implements Matcher<E> {
 			case EQUALS:
 				return equals(column, text);
 			case EQUALS_DATE:
-				return equals(column, text);
+				return equalsDate(column, text);
 			case EQUALS_NOT:
 				return !equals(column, text);
 			case EQUALS_NOT_DATE:
-				return !equals(column, text);
+				return !equalsDate(column, text);
 			case GREATER_THAN:
 				return great(column, text);
 			case LESS_THAN:
@@ -170,11 +166,7 @@ public class FilterMatcher<E> implements Matcher<E> {
 				return !haystack.contains(formatedText);
 			case EQUALS:
 				return haystack.contains("\n" + formatedText + "\r");
-			case EQUALS_DATE:
-				return haystack.contains("\n" + formatedText + "\r");
 			case EQUALS_NOT:
-				return !haystack.contains("\n" + formatedText + "\r");
-			case EQUALS_NOT_DATE:
 				return !haystack.contains("\n" + formatedText + "\r");
 			default:
 				return true;
@@ -245,7 +237,12 @@ public class FilterMatcher<E> implements Matcher<E> {
 		Date date1 = getDate(object1, false);
 		Date date2 = getDate(object2, true);
 		if (date1 != null && date2 != null) {
-			return date1.before(date2);
+			CALENDAR.setTime(date2);
+			CALENDAR.set(Calendar.HOUR_OF_DAY, 0);
+			CALENDAR.set(Calendar.MINUTE, 0);
+			CALENDAR.set(Calendar.SECOND, 0);
+			CALENDAR.set(Calendar.MILLISECOND, 0);
+			return date1.before(CALENDAR.getTime());
 		}
 		return false; //Fallback
 	}
@@ -254,7 +251,33 @@ public class FilterMatcher<E> implements Matcher<E> {
 		Date date1 = getDate(object1, false);
 		Date date2 = getDate(object2, true);
 		if (date1 != null && date2 != null) {
-			return date1.after(date2);
+			CALENDAR.setTime(date2);
+			CALENDAR.set(Calendar.HOUR_OF_DAY, 23);
+			CALENDAR.set(Calendar.MINUTE, 59);
+			CALENDAR.set(Calendar.SECOND, 59);
+			CALENDAR.set(Calendar.MILLISECOND, 999);
+			return date1.after(CALENDAR.getTime());
+		}
+		return false;
+	}
+
+	private boolean equalsDate(final Object object1, final Object object2) {
+		Date date1 = getDate(object1, false);
+		Date date2 = getDate(object2, true);
+		if (date1 != null && date2 != null) {
+			CALENDAR.setTime(date2);
+			CALENDAR.set(Calendar.HOUR_OF_DAY, 12);
+			CALENDAR.set(Calendar.MINUTE, 0);
+			CALENDAR.set(Calendar.SECOND, 0);
+			CALENDAR.set(Calendar.MILLISECOND, 0);
+			date2 = CALENDAR.getTime();
+			CALENDAR.setTime(date1);
+			CALENDAR.set(Calendar.HOUR_OF_DAY, 12);
+			CALENDAR.set(Calendar.MINUTE, 0);
+			CALENDAR.set(Calendar.SECOND, 0);
+			CALENDAR.set(Calendar.MILLISECOND, 0);
+			date1 = CALENDAR.getTime();
+			return date1.equals(date2);
 		}
 		return false;
 	}
@@ -263,13 +286,13 @@ public class FilterMatcher<E> implements Matcher<E> {
 		Date date = getDate(object1, false);
 		Number days = createNumber(object2);
 		if (date != null && days != null) {
-			Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
-			calendar.set(Calendar.HOUR_OF_DAY, 0);
-			calendar.set(Calendar.MINUTE, 0);
-			calendar.set(Calendar.SECOND, 0);
-			calendar.set(Calendar.MILLISECOND, 0);
-			calendar.add(Calendar.DAY_OF_MONTH, -days.intValue());  
-			return date.after(calendar.getTime());
+			CALENDAR.setTime(new Date());
+			CALENDAR.set(Calendar.HOUR_OF_DAY, 0);
+			CALENDAR.set(Calendar.MINUTE, 0);
+			CALENDAR.set(Calendar.SECOND, 0);
+			CALENDAR.set(Calendar.MILLISECOND, 0);
+			CALENDAR.add(Calendar.DAY_OF_MONTH, -days.intValue());  
+			return date.after(CALENDAR.getTime());
 		}
 		return false;
 	}
@@ -278,9 +301,9 @@ public class FilterMatcher<E> implements Matcher<E> {
 		Date date = getDate(object1, false);
 		Number hours = createNumber(object2);
 		if (date != null && hours != null) {
-			Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
-			calendar.add(Calendar.HOUR_OF_DAY, -hours.intValue());  
-			return date.after(calendar.getTime());
+			CALENDAR.setTime(new Date());
+			CALENDAR.add(Calendar.HOUR_OF_DAY, -hours.intValue());  
+			return date.after(CALENDAR.getTime());
 		}
 		return false;
 	}
