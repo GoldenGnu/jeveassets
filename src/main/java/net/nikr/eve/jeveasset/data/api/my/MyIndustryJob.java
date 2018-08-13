@@ -197,7 +197,7 @@ public class MyIndustryJob extends RawIndustryJob implements Comparable<MyIndust
 	private final Item item;
 	private final OwnerType owner;
 	private final String name;
-	private final Set<Long> owners = new HashSet<Long>();
+	private final Set<Long> owners = new HashSet<>();
 	private double price;
 	private double outputValue;
 	private int outputCount;
@@ -380,7 +380,7 @@ public class MyIndustryJob extends RawIndustryJob implements Comparable<MyIndust
 	}
 
 	public void setOutputPrice(double outputPrice) {
-		if (isManufacturing() && !isDelivered()) {
+		if (isManufacturing()) {
 			this.outputValue = outputPrice * getRuns() * getProductQuantity();
 		} else {
 			this.outputValue = 0;
