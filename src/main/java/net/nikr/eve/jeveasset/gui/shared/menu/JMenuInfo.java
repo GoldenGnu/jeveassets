@@ -216,7 +216,9 @@ public class JMenuInfo {
 						success++;
 					}
 				}
-				outputValue += industryJob.getOutputValue();
+				if (!industryJob.isDelivered()) { //Only include active jobs
+					outputValue += industryJob.getOutputValue();
+				}
 			}
 			if (inventionCount <= 0) {
 				createMenuItem(jPopupMenu, Formater.percentFormat(0.0), GuiShared.get().selectionInventionSuccess(), Images.JOBS_INVENTION_SUCCESS.getIcon());
