@@ -206,7 +206,9 @@ public class IndustryJobsTab extends JMainTabPrimary {
 						success++;
 					}
 				}
-				outputValue += industryJob.getOutputValue();
+				if (!industryJob.isDelivered()) { //Only include active jobs
+					outputValue += industryJob.getOutputValue();
+				}
 			}
 			if (inventionCount <= 0) {
 				jInventionSuccess.setText(Formater.percentFormat(0.0));
