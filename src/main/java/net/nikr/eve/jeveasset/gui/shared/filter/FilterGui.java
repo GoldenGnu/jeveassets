@@ -231,11 +231,15 @@ class FilterGui<E> {
 		return matchers;
 	}
 
-	void update() {
+	private void update() {
+		update(true);
+	}
+
+	private void update(boolean sort) {
 		//Save focus owner
 		Component focusOwner = jFrame.getFocusOwner();
 		//Update group
-		updateGroup();
+		updateGroupSize();
 		jPanel.removeAll();
 		GroupLayout.ParallelGroup horizontalGroup = layout.createParallelGroup();
 		GroupLayout.SequentialGroup verticalGroup = layout.createSequentialGroup();
@@ -253,7 +257,9 @@ class FilterGui<E> {
 		);
 		//Filters
 		if (jShowFilters.isSelected()) {
-			Collections.sort(filterPanels);
+			if (sort) {
+				Collections.sort(filterPanels);
+			}
 			for (FilterPanel<E> filterPanel : filterPanels) {
 				verticalGroup.addComponent(filterPanel.getPanel(), GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE);
 				horizontalGroup.addComponent(filterPanel.getPanel());
@@ -267,7 +273,7 @@ class FilterGui<E> {
 		}
 	}
 
-	void updateGroup() {
+	void updateGroupSize() {
 		int size = 0;
 		for (FilterPanel<E> filterPanel : filterPanels) {
 			if (!filterPanel.isAnd()) {
@@ -279,10 +285,20 @@ class FilterGui<E> {
 		}
 	}
 
-	void setGroupsEnabled(boolean b) {
-		for (FilterPanel<E> filterPanel : filterPanels) {
-			filterPanel.setGroupEnabled(b);
-		}
+	int getFromIndex(FilterPanel<E> filterPanel) {
+		return filterPanels.indexOf(filterPanel);
+	}
+
+	int getToIndex(FilterPanel<E> filterPanel) {
+		List<FilterPanel<E>> list = new ArrayList<>(filterPanels);
+		Collections.sort(list);
+		return list.indexOf(filterPanel);
+	}
+
+	void move(FilterPanel<E> filterPanel, int index) {
+		filterPanels.remove(filterPanel);
+		filterPanels.add(index, filterPanel);
+		update(false);
 	}
 
 	boolean fade(FilterPanel<E> filterPanel) {
