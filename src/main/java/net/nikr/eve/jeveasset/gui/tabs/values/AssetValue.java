@@ -151,7 +151,7 @@ public class AssetValue implements Comparable<AssetValue> {
 	}
 
 	private Long resolveExistingLocationID(String locationValue) {
-		for (MyLocation myLocation : StaticData.get().getLocations().values()) {
+		for (MyLocation myLocation : StaticData.get().getLocations()) {
 			if (myLocation.getLocation().equals(locationValue)) {
 				return myLocation.getLocationID();
 			}

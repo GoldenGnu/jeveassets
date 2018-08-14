@@ -402,7 +402,7 @@ public class StockpileDialog extends JDialogCentered {
 		List<MyLocation> stationList = new ArrayList<MyLocation>();
 		List<MyLocation> systemList = new ArrayList<MyLocation>();
 		List<MyLocation> regionList = new ArrayList<MyLocation>();
-		for (MyLocation location : StaticData.get().getLocations().values()) {
+		for (MyLocation location : StaticData.get().getLocations()) {
 			if (location.isStation()) {
 				stationList.add(location);
 			} else if (location.isSystem()) {

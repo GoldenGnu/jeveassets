@@ -57,9 +57,9 @@ public class UserLocationSettingsPanel extends JSettingsPanel {
 	private final JButton jEdit;
 	private final JButton jDelete;
 	private final JSystemDialog jSystemDialog;
-	private final Set<Long> delete = new HashSet<Long>();
-	private final List<Citadel> edit = new ArrayList<Citadel>();
-	private final Map<Long, MyLocation> citadels = new HashMap<Long, MyLocation>();
+	private final Set<Long> delete = new HashSet<>();
+	private final List<Citadel> edit = new ArrayList<>();
+	private final Map<Long, MyLocation> citadels = new HashMap<>();
 
 	public UserLocationSettingsPanel(Program program, SettingsDialog settingsDialog) {
 		super(program, settingsDialog, GuiShared.get().location(), Images.LOC_LOCATIONS.getIcon());
@@ -68,7 +68,7 @@ public class UserLocationSettingsPanel extends JSettingsPanel {
 
 		jSystemDialog = new JSystemDialog(program);
 
-		jItems = new JComboBox<MyLocation>();
+		jItems = new JComboBox<>();
 
 		jEdit = new JButton(DialoguesSettings.get().editItem());
 		jEdit.setActionCommand(UserListAction.EDIT.name());
@@ -119,23 +119,23 @@ public class UserLocationSettingsPanel extends JSettingsPanel {
 		}
 		if (citadels.isEmpty()) {
 			setEnabledAll(false);
-			jItems.setModel(new ListComboBoxModel<MyLocation>());
+			jItems.setModel(new ListComboBoxModel<>());
 			jItems.getModel().setSelectedItem(DialoguesSettings.get().itemEmpty());
 		} else {
 			setEnabledAll(true);
-			jItems.setModel(new ListComboBoxModel<MyLocation>(new ArrayList<MyLocation>(new TreeSet<MyLocation>(citadels.values()))));
+			jItems.setModel(new ListComboBoxModel<>(new ArrayList<>(new TreeSet<>(citadels.values()))));
 		}
 	}
 
 	private void updateGUI() {
 		if (citadels.isEmpty()) {
 			setEnabledAll(false);
-			jItems.setModel(new ListComboBoxModel<MyLocation>());
+			jItems.setModel(new ListComboBoxModel<>());
 			jItems.getModel().setSelectedItem(DialoguesSettings.get().itemEmpty());
 		} else {
 			setEnabledAll(true);
 			Object selectedItem = jItems.getSelectedItem();
-			jItems.setModel(new ListComboBoxModel<MyLocation>(new ArrayList<MyLocation>(new TreeSet<MyLocation>(citadels.values()))));
+			jItems.setModel(new ListComboBoxModel<>(new ArrayList<>(new TreeSet<>(citadels.values()))));
 			jItems.setSelectedItem(selectedItem);
 		}
 	}
@@ -181,8 +181,8 @@ public class UserLocationSettingsPanel extends JSettingsPanel {
 			return null;
 		}
 		//Create data for the system dialog
-		List<MyLocation> locations = new ArrayList<MyLocation>(); 
-		for (MyLocation system : StaticData.get().getLocations().values()) {
+		List<MyLocation> locations = new ArrayList<>(); 
+		for (MyLocation system : StaticData.get().getLocations()) {
 			if (system.isSystem()) {
 				locations.add(system);
 			}

@@ -22,9 +22,7 @@
 package net.nikr.eve.jeveasset.io.local;
 
 import java.util.List;
-import java.util.Map;
 import net.nikr.eve.jeveasset.data.sde.Jump;
-import net.nikr.eve.jeveasset.data.sde.MyLocation;
 import net.nikr.eve.jeveasset.data.sde.StaticData;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import org.w3c.dom.Element;
@@ -43,7 +41,7 @@ public final class JumpsReader extends AbstractXmlReader<Boolean> {
 
 	@Override
 	protected Boolean parse(Element element) throws XmlException {
-		parseJumps(element, StaticData.get().getLocations(), StaticData.get().getJumps());
+		parseJumps(element, StaticData.get().getJumps());
 		return true;
 	}
 
@@ -57,19 +55,19 @@ public final class JumpsReader extends AbstractXmlReader<Boolean> {
 		return false;
 	}
 
-	private void parseJumps(final Element element, final Map<Long, MyLocation> locations, final List<Jump> jumps) throws XmlException {
+	private void parseJumps(final Element element, final List<Jump> jumps) throws XmlException {
 		NodeList nodes = element.getElementsByTagName("row");
 		Jump jump;
 		for (int i = 0; i < nodes.getLength(); i++) {
-			jump = parseEdge(nodes.item(i), locations);
+			jump = parseEdge(nodes.item(i));
 			jumps.add(jump);
 		}
 	}
 
-	private Jump parseEdge(final Node node, final Map<Long, MyLocation> locations) throws XmlException {
+	private Jump parseEdge(final Node node) throws XmlException {
 		long from = AttributeGetters.getLong(node, "from");
 		long to = AttributeGetters.getLong(node, "to");
-		Jump j = new Jump(locations.get(from), locations.get(to));
+		Jump j = new Jump(StaticData.get().getLocation(from), StaticData.get().getLocation(to));
 		return j;
 	}
 }

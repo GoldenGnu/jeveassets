@@ -37,7 +37,7 @@ public class PriceDataSettingsTest extends TestUtil {
 		for (RegionType regionType : RegionType.values()) {
 			List<Long> regions = regionType.getRegions();
 			if (regions.size() == 1) { //Single location
-				MyLocation location = StaticData.get().getLocations().get(regions.get(0));
+				MyLocation location = StaticData.get().getLocation(regions.get(0));
 				String locationName = regionType.toString();
 				if (locationName.contains("(")) {
 					locationName = locationName.substring(0, locationName.indexOf("(")).trim();
@@ -45,7 +45,7 @@ public class PriceDataSettingsTest extends TestUtil {
 				assertEquals(location.getLocation(), locationName);
 			} else { //Multiple locations
 				for (Long regionID : regionType.getRegions()) {
-					MyLocation location = StaticData.get().getLocations().get(regionID);
+					MyLocation location = StaticData.get().getLocation(regionID);
 					assertNotNull(location);
 				}
 			}

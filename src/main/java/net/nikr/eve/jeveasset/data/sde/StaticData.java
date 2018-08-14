@@ -21,9 +21,11 @@
 package net.nikr.eve.jeveasset.data.sde;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 import net.nikr.eve.jeveasset.SplashUpdater;
 import net.nikr.eve.jeveasset.io.local.FlagsReader;
 import net.nikr.eve.jeveasset.io.local.ItemsReader;
@@ -32,11 +34,12 @@ import net.nikr.eve.jeveasset.io.local.LocationsReader;
 
 
 public class StaticData {
+	private static final ReentrantReadWriteLock LOCATIONS_LOCK = new ReentrantReadWriteLock();
 	//Data
-	private final Map<Integer, Item> items = new HashMap<Integer, Item>(); //TypeID : int
-	private final Map<Integer, ItemFlag> itemFlags = new HashMap<Integer, ItemFlag>(); //FlagID : int
-	private final Map<Long, MyLocation> locations = new HashMap<Long, MyLocation>(); //LocationID : long
-	private final List<Jump> jumps = new ArrayList<Jump>(); //LocationID : long
+	private final Map<Integer, Item> items = new HashMap<>(); //TypeID : int
+	private final Map<Integer, ItemFlag> itemFlags = new HashMap<>(); //FlagID : int
+	private final Map<Long, MyLocation> locations = new HashMap<>(); //LocationID : long
+	private final List<Jump> jumps = new ArrayList<>(); //LocationID : long
 
 	private static StaticData staticData = null;
 
@@ -78,7 +81,39 @@ public class StaticData {
 		return jumps;
 	}
 
-	public Map<Long, MyLocation> getLocations() {
-		return locations;
+	public void addLocation(MyLocation location) {
+		try {
+			LOCATIONS_LOCK.writeLock().lock();
+			locations.put(location.getLocationID(), location);
+		} finally {
+			LOCATIONS_LOCK.writeLock().unlock();
+		}
+	}
+
+	public void removeLocation(long locationID) {
+		try {
+			LOCATIONS_LOCK.writeLock().lock();
+			locations.remove(locationID);
+		} finally {
+			LOCATIONS_LOCK.writeLock().unlock();
+		}
+	}
+
+	public MyLocation getLocation(long locationID) {
+		try {
+			LOCATIONS_LOCK.readLock().lock();
+			return locations.get(locationID);
+		} finally {
+			LOCATIONS_LOCK.readLock().unlock();
+		}
+	}
+
+	public Collection<MyLocation> getLocations() {
+		try {
+			LOCATIONS_LOCK.readLock().lock();
+			return new ArrayList<>(locations.values()); //Copy
+		} finally {
+			LOCATIONS_LOCK.readLock().unlock();
+		}
 	}
 }
