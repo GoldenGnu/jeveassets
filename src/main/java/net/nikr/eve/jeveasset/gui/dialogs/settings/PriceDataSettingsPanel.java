@@ -90,7 +90,7 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 		try {
 			systemsEventList.getReadWriteLock().writeLock().lock();
 			stationsEventList.getReadWriteLock().writeLock().lock();
-			for (MyLocation location : StaticData.get().getLocations().values()) {
+			for (MyLocation location : StaticData.get().getLocations()) {
 				if (location.isStation() && !location.isCitadel() && !location.isUserLocation()) { //Ignore citadels and user locations
 					stationsEventList.add(location);
 					if (station == null || station.getLocation().length() < location.getLocation().length()) {
@@ -109,11 +109,11 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 			stationsEventList.getReadWriteLock().writeLock().unlock();
 		}
 		systemsEventList.getReadWriteLock().readLock().lock();
-		SortedList<MyLocation> systemsSortedList = new SortedList<MyLocation>(systemsEventList);
+		SortedList<MyLocation> systemsSortedList = new SortedList<>(systemsEventList);
 		systemsEventList.getReadWriteLock().readLock().unlock();
 
 		stationsEventList.getReadWriteLock().readLock().lock();
-		SortedList<MyLocation> stationsSortedList = new SortedList<MyLocation>(stationsEventList);
+		SortedList<MyLocation> stationsSortedList = new SortedList<>(stationsEventList);
 		stationsEventList.getReadWriteLock().readLock().unlock();
 
 		ButtonGroup group = new ButtonGroup();
@@ -134,13 +134,13 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 		group.add(jRadioStations);
 
 		JLabel jRegionsLabel = new JLabel(DialoguesSettings.get().includeRegions());
-		jRegions = new JComboBox<RegionType>();
+		jRegions = new JComboBox<>();
 		jRegions.getEditor().getEditorComponent().addFocusListener(listener);
 		regionsAutoComplete = AutoCompleteSupport.install(jRegions, EventModels.createSwingThreadProxyList(regions), new RegionTypeFilterator());
 		regionsAutoComplete.setStrict(true);
 
 		JLabel jSystemsLabel = new JLabel(DialoguesSettings.get().includeSystems());
-		jSystems = new JComboBox<MyLocation>();
+		jSystems = new JComboBox<>();
 		jSystems.setPrototypeDisplayValue(system);
 		jSystems.getEditor().getEditorComponent().addFocusListener(listener);
 		systemsAutoComplete = AutoCompleteSupport.install(jSystems, EventModels.createSwingThreadProxyList(systemsSortedList), new LocationsFilterator());
@@ -149,7 +149,7 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 		systemsEventList.getReadWriteLock().readLock().unlock();
 
 		JLabel jStationsLabel = new JLabel(DialoguesSettings.get().includeStations());
-		jStations = new JComboBox<MyLocation>();
+		jStations = new JComboBox<>();
 		jStations.setPrototypeDisplayValue(station);
 		jStations.getEditor().getEditorComponent().addFocusListener(listener);
 		stationsAutoComplete = AutoCompleteSupport.install(jStations, EventModels.createSwingThreadProxyList(stationsSortedList), new LocationsFilterator());
@@ -158,13 +158,13 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 		stationsEventList.getReadWriteLock().readLock().unlock();
 
 		JLabel jPriceTypeLabel = new JLabel(DialoguesSettings.get().price());
-		jPriceType = new JComboBox<PriceMode>(PriceMode.values());
+		jPriceType = new JComboBox<>(PriceMode.values());
 
 		JLabel jPriceReprocessedTypeLabel = new JLabel(DialoguesSettings.get().priceReprocessed());
-		jPriceReprocessedType = new JComboBox<PriceMode>(PriceMode.values());
+		jPriceReprocessedType = new JComboBox<>(PriceMode.values());
 
 		JLabel jSourceLabel = new JLabel(DialoguesSettings.get().source());
-		jSource = new JComboBox<PriceSource>(PriceSource.values());
+		jSource = new JComboBox<>(PriceSource.values());
 		jSource.setActionCommand(PriceDataSettingsAction.SOURCE_SELECTED.name());
 		jSource.addActionListener(listener);
 
@@ -327,7 +327,7 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 		final LocationType locationType = Settings.get().getPriceDataSettings().getLocationType();
 
 		//Price Types
-		jPriceType.setModel(new ListComboBoxModel<PriceMode>(source.getPriceTypes()));
+		jPriceType.setModel(new ListComboBoxModel<>(source.getPriceTypes()));
 		jPriceType.setSelectedItem(Settings.get().getPriceDataSettings().getPriceType());
 		if (source.getPriceTypes().length <= 0) { //Empty
 			jPriceType.getModel().setSelectedItem(DialoguesSettings.get().notConfigurable());
@@ -337,7 +337,7 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 		}
 
 		//Price Reprocessed Types
-		jPriceReprocessedType.setModel(new ListComboBoxModel<PriceMode>(source.getPriceTypes()));
+		jPriceReprocessedType.setModel(new ListComboBoxModel<>(source.getPriceTypes()));
 		jPriceReprocessedType.setSelectedItem(Settings.get().getPriceDataSettings().getPriceReprocessedType());
 		if (source.getPriceTypes().length <= 0) { //Empty
 			jPriceReprocessedType.getModel().setSelectedItem(DialoguesSettings.get().notConfigurable());
@@ -396,7 +396,7 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 		}
 		if (locationType == LocationType.SYSTEM && jRadioSystems.isEnabled()) {
 			if (!locations.isEmpty()) {
-					jSystems.setSelectedItem(StaticData.get().getLocations().get(locations.get(0)));
+					jSystems.setSelectedItem(StaticData.get().getLocation(locations.get(0)));
 				}
 			jRadioSystems.setSelected(true);
 		} else {
@@ -414,7 +414,7 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 		}
 		if (locationType == LocationType.STATION && jRadioStations.isEnabled()) {
 			if (!locations.isEmpty()) {
-					jStations.setSelectedItem(StaticData.get().getLocations().get(locations.get(0)));
+					jStations.setSelectedItem(StaticData.get().getLocation(locations.get(0)));
 				}
 			jRadioStations.setSelected(true);
 		} else {

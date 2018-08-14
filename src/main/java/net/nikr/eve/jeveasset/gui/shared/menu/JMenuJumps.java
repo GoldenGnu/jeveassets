@@ -117,8 +117,8 @@ public class JMenuJumps<T> extends MenuManager.JAutoMenu<T> {
 	}
 
 	private void updateJumpsData() {
-		program.getProfileData().updateJumps(new ArrayList<JumpType>(program.getProfileData().getAssetsEventList()), MyAsset.class);
-		program.getProfileData().updateJumps(new ArrayList<JumpType>(program.getTreeTab().getEventList()), TreeAsset.class);
+		program.getProfileData().updateJumps(new ArrayList<>(program.getProfileData().getAssetsEventList()), MyAsset.class);
+		program.getProfileData().updateJumps(new ArrayList<>(program.getTreeTab().getEventList()), TreeAsset.class);
 	}
 
 	private void updateJumpsGUI() {
@@ -177,7 +177,7 @@ public class JMenuJumps<T> extends MenuManager.JAutoMenu<T> {
 				//Clear tab
 				SolarSystem solarSystem = program.getRoutingTab().getSolarSystem();
 				if (solarSystem != null) {
-					MyLocation location = StaticData.get().getLocations().get(solarSystem.getSystemID());
+					MyLocation location = StaticData.get().getLocation(solarSystem.getSystemID());
 					if (location != null) {
 						//Add to settings
 						Settings.get().addJumpLocation(clazz, location);

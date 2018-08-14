@@ -653,7 +653,7 @@ public class RoutingTab extends JMainTabSecondary {
 		jInfo.setEnabled(false);
 
 		List<MyLocation> stations = new ArrayList<MyLocation>();
-		for (MyLocation location : StaticData.get().getLocations().values()) {
+		for (MyLocation location : StaticData.get().getLocations()) {
 			if (location.isStation()) {
 				stations.add(location);
 			}

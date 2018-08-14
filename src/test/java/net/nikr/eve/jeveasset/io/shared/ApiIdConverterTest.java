@@ -36,7 +36,7 @@ public class ApiIdConverterTest extends TestUtil {
 	 */
 	@Test
 	public void testLocation() {
-		for (MyLocation o1 : StaticData.get().getLocations().values()) {
+		for (MyLocation o1 : StaticData.get().getLocations()) {
 			MyLocation location = ApiIdConverter.getLocation(o1.getLocationID());
 			assertEquals(o1.getLocation(), location.getLocation());
 			assertEquals(o1.getLocationID(), location.getLocationID());

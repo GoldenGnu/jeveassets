@@ -21,7 +21,6 @@
 
 package net.nikr.eve.jeveasset.io.local;
 
-import java.util.Map;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
 import net.nikr.eve.jeveasset.data.sde.StaticData;
 import net.nikr.eve.jeveasset.data.settings.Settings;
@@ -41,7 +40,7 @@ public final class LocationsReader extends AbstractXmlReader<Boolean> {
 
 	@Override
 	protected Boolean parse(Element element) throws XmlException {
-		parseLocations(element, StaticData.get().getLocations());
+		parseLocations(element);
 		return true;
 	}
 
@@ -55,12 +54,12 @@ public final class LocationsReader extends AbstractXmlReader<Boolean> {
 		return false;
 	}
 
-	private void parseLocations(final Element element, final Map<Long, MyLocation> locations) throws XmlException {
+	private void parseLocations(final Element element) throws XmlException {
 		NodeList nodes = element.getElementsByTagName("row");
 		MyLocation location;
 		for (int i = 0; i < nodes.getLength(); i++) {
 			location = parseLocation(nodes.item(i));
-			locations.put(location.getLocationID(), location);
+			StaticData.get().addLocation(location);
 		}
 	}
 
