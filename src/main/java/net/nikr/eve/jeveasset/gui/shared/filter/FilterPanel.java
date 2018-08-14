@@ -34,11 +34,10 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Executor;
@@ -55,7 +54,6 @@ import javax.swing.JSpinner;
 import javax.swing.JTextField;
 import javax.swing.SpinnerListModel;
 import javax.swing.SpinnerNumberModel;
-import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 import javax.swing.UIManager;
 import javax.swing.border.Border;
@@ -81,7 +79,7 @@ import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 class FilterPanel<E> implements Comparable<FilterPanel<E>>{
 
 	private enum FilterPanelAction {
-		FILTER, FILTER_TIMER, REMOVE
+		FILTER, FILTER_TIMER, GROUP_TIMER, REMOVE
 	}
 
 	private final JPanel jPanel;
@@ -100,6 +98,7 @@ class FilterPanel<E> implements Comparable<FilterPanel<E>>{
 	private final JButton jRemove;
 
 	private final Timer timer;
+	private final Timer groupTimer;
 
 	private final FilterGui<E> gui;
 	private final FilterControl<E> filterControl;
@@ -116,6 +115,9 @@ class FilterPanel<E> implements Comparable<FilterPanel<E>>{
 		this.filterControl = filterControl;
 
 		ListenerClass listener = new ListenerClass();
+
+		groupTimer = new Timer(500, listener);
+		groupTimer.setActionCommand(FilterPanelAction.GROUP_TIMER.name());
 
 		groupModel = new SpinnerNumberModel(0, 0, 0, 1);
 		groupModel.addChangeListener(listener);
@@ -154,6 +156,7 @@ class FilterPanel<E> implements Comparable<FilterPanel<E>>{
 				loading = true;
 				Dimension preferredSize = ((JSpinner.DefaultEditor) jGroup.getEditor()).getTextField().getPreferredSize();
 				if (isAnd()) {
+					groupModel.removeChangeListener(listener);
 					groupModel.setMinimum(0);
 					groupModel.setValue(0);
 					jGroup.setEditor(new JSpinner.DefaultEditor(jGroup));
@@ -161,6 +164,7 @@ class FilterPanel<E> implements Comparable<FilterPanel<E>>{
 					jGroup.setEditor(new JSpinner.DefaultEditor(jGroup));
 					jGroup.setEnabled(false);
 				} else {
+					groupModel.addChangeListener(listener);
 					jGroup.setModel(groupModel);
 					jGroup.setEditor(new JSpinner.NumberEditor(jGroup));
 					groupModel.setMinimum(1);
@@ -169,7 +173,6 @@ class FilterPanel<E> implements Comparable<FilterPanel<E>>{
 					}
 					jGroup.setEnabled(true);
 				}
-				//((JSpinner.DefaultEditor) jGroup.getEditor()).getTextField().setBorder(BorderFactory.createEmptyBorder(0, 3, 0, 0));
 				((JSpinner.DefaultEditor) jGroup.getEditor()).getTextField().setHorizontalAlignment(JTextField.CENTER);
 				((JSpinner.DefaultEditor) jGroup.getEditor()).getTextField().setPreferredSize(preferredSize);
 				((JSpinner.DefaultEditor) jGroup.getEditor()).getTextField().setMaximumSize(preferredSize);
@@ -182,7 +185,10 @@ class FilterPanel<E> implements Comparable<FilterPanel<E>>{
 				}
 			}
 		});
+		loading = true;
 		jLogic.setSelectedIndex(0);
+		loading = false;
+		updateGroupColor();
 
 		JComboBox<String> jComboBox = new JComboBox<>();
 		FontMetrics fontMetrics = jComboBox.getFontMetrics(jComboBox.getFont());
@@ -331,14 +337,6 @@ class FilterPanel<E> implements Comparable<FilterPanel<E>>{
 			timer.stop();
 		}
 		loading = oldValue;
-	}
-
-	void setGroupEnabled(boolean b) {
-		if (b) {
-			jGroup.setEnabled(!isAnd());
-		} else {
-			jGroup.setEnabled(b);
-		}
 	}
 
 	@Override
@@ -520,7 +518,7 @@ class FilterPanel<E> implements Comparable<FilterPanel<E>>{
 				fades.execute(new FadeThread());
 			} else {
 				updateGroupColor();
-				gui.updateGroup();
+				gui.updateGroupSize();
 			}
 		}
 	}
@@ -573,6 +571,10 @@ class FilterPanel<E> implements Comparable<FilterPanel<E>>{
 					processFilterAction(e);
 				}
 			}
+			if (FilterPanelAction.GROUP_TIMER.name().equals(e.getActionCommand())) {
+				groupTimer.stop();
+				groupChanged();
+			}
 		}
 
 		@Override
@@ -582,60 +584,64 @@ class FilterPanel<E> implements Comparable<FilterPanel<E>>{
 
 		@Override
 		public void stateChanged(ChangeEvent e) {
-			groupChanged();
+			groupTimer.stop();
+			groupTimer.start();
 		}
 	}
 
-	private class FadeThread implements Runnable {
+	private class FadeThread implements Runnable, ActionListener {
+
+		private final List<FadeComponent> components = new ArrayList<>();
+		private final Timer moveTimer = new Timer(50, this);
+		private int from;
+		private int to;
+		private int index;
+
+		public FadeThread() {
+			components.add(new FadeComponent(jEnabled));
+			components.add(new FadeComponent(jPanel));
+		}
+
 		@Override
 		public void run() {
-			List<FadeComponent> components = new ArrayList<>();
-			components.add(new FadeComponent(jEnabled));
-			//components.add(new FadeComponent(jText));
-			components.add(new FadeComponent(jPanel));
-			try {
-				SwingUtilities.invokeAndWait(new Runnable() {
-					@Override
-					public void run() {
-						gui.setGroupsEnabled(false);
-						//setEnabled(false);
-					}
-				});
-			} catch (InterruptedException ex) {
-				//No worries
-			} catch (InvocationTargetException ex) {
-				//No worries
+			if (!gui.fade(getThis())) {
+				return;
 			}
-			Fade fade = new Fade(components, 300, Color.GRAY);
-			fade.start(true);
-			try {
-				SwingUtilities.invokeAndWait(new Runnable() {
-					@Override
-					public void run() {
-						gui.update();
-						updateGroupColor();
-					}
-				});
-			} catch (InterruptedException ex) {
-				//No worries
-			} catch (InvocationTargetException ex) {
-				//No worries
+			Fade fadeIn = new Fade(components, 100, Color.GRAY);
+			fadeIn.start(true);
+
+			from = gui.getFromIndex(FilterPanel.this);
+			to = gui.getToIndex(FilterPanel.this);
+			index = from;
+			moveTimer.start();
+			synchronized (this) {
+				try {
+					wait();
+				} catch (InterruptedException ex) {
+					//No problem
+				}
 			}
-			try {
-				SwingUtilities.invokeAndWait(new Runnable() {
-					@Override
-					public void run() {
-						//setEnabled(true);
-						gui.setGroupsEnabled(true);
-					}
-				});
-			} catch (InterruptedException ex) {
-				//No worries
-			} catch (InvocationTargetException ex) {
-				//No worries
+			Fade fadeOut = new Fade(components, 750);
+			fadeOut.start(true);
+		}
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			if (from < to) {
+				index++;
+			} else if (from > to) {
+				index--;
+			} else {
+				//Should never happen
 			}
-			fade = new Fade(components, 750);
-			fade.start(true);
+			gui.move(FilterPanel.this, index);
+			if (index == to) {
+				moveTimer.stop();
+				updateGroupColor();
+				synchronized (this) {
+					notifyAll();
+				}
+			}
 		}
 	}
 
@@ -653,30 +659,30 @@ class FilterPanel<E> implements Comparable<FilterPanel<E>>{
 		}
 
 		private Fade(List<FadeComponent> fadeComponents, int duration, Color to) {
-			this.frames = (int)(duration / MS_PER_FRAME);
+			this.frames = (int) (duration / MS_PER_FRAME);
 
 			for (FadeComponent fadeComponent : fadeComponents) {
 				Color from = fadeComponent.getComponent().getBackground();
 				List<Color> colors = new ArrayList<>();
 				Color toColor = to == null ? fadeComponent.getColor() : to;
-				float redDiff = (from.getRed() -  toColor.getRed()) / frames;
+				float redDiff = (from.getRed() - toColor.getRed()) / frames;
 				float blueDiff = (from.getBlue() - toColor.getBlue()) / frames;
 				float greenDiff = (from.getGreen() - toColor.getGreen()) / frames;
 				for (int i = 1; i <= frames; i++) {
-					colors.add(new Color((int) (from.getRed() - (i * redDiff))
-						,(int)(from.getGreen() - (i * greenDiff))
-						,(int)(from.getBlue() - (i * blueDiff))));
+					colors.add(new Color((int) (from.getRed() - (i * redDiff)),
+							 (int) (from.getGreen() - (i * greenDiff)),
+							 (int) (from.getBlue() - (i * blueDiff))));
 				}
 				colors.add(toColor);
 				map.put(fadeComponent.getComponent(), colors);
 			}
-			timer = new Timer((int)MS_PER_FRAME, this);
+			timer = new Timer((int) MS_PER_FRAME, this);
 		}
 
 		public void start(boolean wait) {
 			timer.start();
 			if (wait) {
-				synchronized(this) {
+				synchronized (this) {
 					try {
 						wait();
 					} catch (InterruptedException ex) {
@@ -691,7 +697,7 @@ class FilterPanel<E> implements Comparable<FilterPanel<E>>{
 			for (Map.Entry<Component, List<Color>> entry : map.entrySet()) {
 				entry.getKey().setBackground(entry.getValue().get(entry.getValue().size() - 1));
 			}
-			synchronized(this) {
+			synchronized (this) {
 				notifyAll();
 			}
 		}
@@ -704,7 +710,7 @@ class FilterPanel<E> implements Comparable<FilterPanel<E>>{
 				for (Map.Entry<Component, List<Color>> entry : map.entrySet()) {
 					entry.getKey().setBackground(entry.getValue().get(entry.getValue().size() - 1));
 				}
-				synchronized(this) {
+				synchronized (this) {
 					notifyAll();
 				}
 			} else {
@@ -716,6 +722,7 @@ class FilterPanel<E> implements Comparable<FilterPanel<E>>{
 	}
 
 	private static class FadeComponent {
+
 		private final Component jComponent;
 		private final Color color;
 
