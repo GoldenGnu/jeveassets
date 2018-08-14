@@ -225,10 +225,10 @@ public final class ApiIdConverter {
 	public static List<MyAsset> getParents(final MyAsset parentAsset) {
 		List<MyAsset> parents;
 		if (parentAsset != null) {
-			parents = new ArrayList<MyAsset>(parentAsset.getParents());
+			parents = new ArrayList<>(parentAsset.getParents());
 			parents.add(parentAsset);
 		} else {
-			parents = new ArrayList<MyAsset>();
+			parents = new ArrayList<>();
 		}
 
 		return parents;
@@ -254,7 +254,7 @@ public final class ApiIdConverter {
 		if (locationID == null) {
 			return MyLocation.create(0);
 		}
-		MyLocation location = StaticData.get().getLocations().get(locationID);
+		MyLocation location = StaticData.get().getLocation(locationID);
 		if (location != null) {
 			return location;
 		}
@@ -274,12 +274,12 @@ public final class ApiIdConverter {
 	public static void addLocation(final Citadel citadel, long locationID) {
 		MyLocation location = citadel.getLocation();
 		if (location != null) {
-			StaticData.get().getLocations().put(location.getLocationID(), location);
+			StaticData.get().addLocation(location);
 		}
 	}
 
 	public static void removeLocation(final long locationID) {
-		StaticData.get().getLocations().remove(locationID);
+		StaticData.get().removeLocation(locationID);
 	}
 
 	public static Citadel getCitadel(final SovereigntyStructuresResponse station, String name) {
