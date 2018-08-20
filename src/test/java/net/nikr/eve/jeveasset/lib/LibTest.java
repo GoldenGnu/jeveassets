@@ -21,10 +21,16 @@
 package net.nikr.eve.jeveasset.lib;
 
 import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
-import net.nikr.eve.jeveasset.Main;
+import net.nikr.eve.jeveasset.LibraryManager;
 import net.nikr.eve.jeveasset.TestUtil;
+import net.nikr.eve.jeveasset.io.shared.FileUtil;
+import org.junit.Assert;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
@@ -36,12 +42,12 @@ public class LibTest extends TestUtil {
 		assertTrue(folder.exists());
 		File[] listOfFiles = folder.listFiles();
 
-		Set<String> files = new HashSet<String>();
+		Set<String> files = new HashSet<>();
 		for (File file : listOfFiles) {
 			files.add(file.getName());
 		}
 
-		Set<String> libs = Main.getLibFiles();
+		Set<String> libs = LibraryManager.getLibFiles();
 		for (String file : files) {
 			if (file.endsWith(".md5")) {
 				continue;
@@ -51,5 +57,27 @@ public class LibTest extends TestUtil {
 		for (String lib : libs) {
 			assertTrue("Libs dosn't exist: " + lib, files.contains(lib));
 		}
+	}
+
+	@Test
+	public void testPurge() {
+		List<File> files = new ArrayList<>();
+		for (int i = 0; i < 10; i++) {
+			File file = new File(FileUtil.getPathLib(i + ".jar"));
+			files.add(file);
+			try {
+				assertTrue("Failed to create file: " + file.getName(), file.createNewFile());
+			} catch (IOException ex) {
+				Assert.fail("Failed to create file: " + file.getName() + " (" + ex.getMessage() + ")");
+			}
+		}
+		for (File file : files) {
+			assertTrue("File doesn't exist: " + file.getName(), file.exists());
+		}
+		LibraryManager.checkLibraries();
+		for (File file : files) {
+			assertFalse("File still exist (after purge): " + file.getName(), file.exists());
+		}
+		
 	}
 }

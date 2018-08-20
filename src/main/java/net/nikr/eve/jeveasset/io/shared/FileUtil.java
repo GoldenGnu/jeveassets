@@ -45,6 +45,10 @@ public class FileUtil {
 		return FileUtil.getLocalFile(PATH_MEMORY, false);
 	}
 
+	public static String getPathLib() {
+		return getPathLib("");
+	}
+
 	public static String getPathLib(String filename) {
 		return FileUtil.getLocalFile("lib" + File.separator + filename, false);
 	}
