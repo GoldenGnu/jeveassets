@@ -37,6 +37,11 @@ import org.junit.Test;
 public class LibTest extends TestUtil {
 
 	@Test
+	public void test() {
+		testLibs();
+		testPurge();
+	}
+
 	public void testLibs() {
 		File folder = new File("target" + File.separator + "lib");
 		assertTrue(folder.exists());
@@ -59,7 +64,6 @@ public class LibTest extends TestUtil {
 		}
 	}
 
-	@Test
 	public void testPurge() {
 		List<File> files = new ArrayList<>();
 		for (int i = 0; i < 10; i++) {
