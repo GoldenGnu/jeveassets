@@ -350,7 +350,7 @@ public class JAutoColumnTable extends JTable {
 		if (renderer == null) {
 			renderer = jTable.getTableHeader().getDefaultRenderer();
 		}
-		Component component = renderer.getTableCellRendererComponent(jTable, column.getHeaderValue(), false, false, 0, 0);
+		Component component = renderer.getTableCellRendererComponent(jTable, column.getHeaderValue(), false, false, 0, columnIndex);
 		int maxWidth = component.getPreferredSize().width;
 
 		if (!overwrite) {
@@ -361,15 +361,15 @@ public class JAutoColumnTable extends JTable {
 		}
 		//Rows width
 		final int rowCount = jTable.getRowCount();
-		for (int i = 0; i < rowCount; i++) {
-			final Object rowValue = jTable.getValueAt(i, columnIndex); //Get cell value
-			if (rowValue == null) { //Ignore null
+		for (int rowIndex = 0; rowIndex < rowCount; rowIndex++) {
+			final Object cellValue = jTable.getValueAt(rowIndex, columnIndex); //Get cell value
+			if (cellValue == null) { //Ignore null
 				continue;
 			}
-			boolean useCache = !disableColumnResizeCache.contains(rowValue.getClass());
+			boolean useCache = !disableColumnResizeCache.contains(cellValue.getClass());
 			Integer savedWidth;
 			if (useCache) {
-				savedWidth = rowsWidth.get(rowValue);
+				savedWidth = rowsWidth.get(cellValue);
 			} else {
 				savedWidth = null;
 			}
@@ -377,16 +377,16 @@ public class JAutoColumnTable extends JTable {
 				maxWidth = Math.max(maxWidth, savedWidth);
 			} else { //Calculate the row width
 				if (overwrite) {
-					renderer = jTable.getCellRenderer(i, columnIndex);
+					renderer = jTable.getCellRenderer(rowIndex, columnIndex);
 				}
 				//Ignore SeparatorTableCell
 				if (renderer instanceof SeparatorTableCell) {
 					continue;
 				}
-				component = renderer.getTableCellRendererComponent(jTable, jTable.getValueAt(i, columnIndex), false, false, i, columnIndex);
+				component = renderer.getTableCellRendererComponent(jTable, jTable.getValueAt(rowIndex, columnIndex), false, false, rowIndex, columnIndex);
 				int width = component.getPreferredSize().width;
 				if (useCache) {
-					rowsWidth.put(rowValue, width);
+					rowsWidth.put(cellValue, width);
 				}
 				maxWidth = Math.max(maxWidth, width);
 			}
