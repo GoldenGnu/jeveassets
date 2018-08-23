@@ -29,9 +29,9 @@ public class JSeparatorTable extends JAutoColumnTable {
 	/** working with separator cells. */
 	private TableCellRenderer separatorRenderer;
 	private TableCellEditor separatorEditor;
-	private final Map<Integer, Integer> rowsHeight = new HashMap<Integer, Integer>();
 	private final SeparatorList<?> separatorList;
-	private final Map<Integer, Boolean> expandedSate = new HashMap<Integer, Boolean>();
+	private final Map<Object, Boolean> expandedSate = new HashMap<>();
+	private final List<Integer> selectedRows = new ArrayList<>(); //XXX - Workaround for Autoscroller less then optimal behavior on SeparatorList.Separator
 	private boolean defaultState = true;
 
 	public JSeparatorTable(final Program program, final DefaultEventTableModel<?> tableModel, SeparatorList<?> separatorList) {
@@ -46,6 +46,7 @@ public class JSeparatorTable extends JAutoColumnTable {
 	public void expandSeparators(final boolean expand) {
 		clearExpandedState(); //Reset
 		defaultState = expand;
+		final int newLimit = expand ? Integer.MAX_VALUE : 0;
 		lock();
 		final DefaultEventSelectionModel<?> selectModel = getEventSelectionModel();
 		if (selectModel != null) {
@@ -57,13 +58,15 @@ public class JSeparatorTable extends JAutoColumnTable {
 				Object object = separatorList.get(i);
 				if (object instanceof SeparatorList.Separator) {
 					SeparatorList.Separator<?> separator = (SeparatorList.Separator<?>) object;
-					try {
-						separatorList.getReadWriteLock().readLock().unlock();
-						separatorList.getReadWriteLock().writeLock().lock();
-						separator.setLimit(expand ? Integer.MAX_VALUE : 0);
-					} finally {
-						separatorList.getReadWriteLock().writeLock().unlock();
-						separatorList.getReadWriteLock().readLock().lock();
+					if (separator.getLimit() != newLimit) {
+						try {
+							separatorList.getReadWriteLock().readLock().unlock();
+							separatorList.getReadWriteLock().writeLock().lock();
+							separator.setLimit(newLimit);
+						} finally {
+							separatorList.getReadWriteLock().writeLock().unlock();
+							separatorList.getReadWriteLock().readLock().lock();
+						}
 					}
 				}
 			}
@@ -88,8 +91,19 @@ public class JSeparatorTable extends JAutoColumnTable {
 				Object object = separatorList.get(i);
 				if (object instanceof SeparatorList.Separator) {
 					SeparatorList.Separator<?> separator = (SeparatorList.Separator) object;
-					for (Object item : separator.getGroup()) {
-						expandedSate.put(item.hashCode(), separator.getLimit() != 0);
+					final int limit = separator.getLimit();
+					if (limit == 0) { //Collapsed
+						for (Object item : separator.getGroup()) {
+							expandedSate.put(item, limit != 0);
+						}
+					} else {
+						for (int x = i + 1; x < separatorList.size(); x++) {
+							Object xObject = separatorList.get(x);
+							if (xObject instanceof SeparatorList.Separator) {
+								break;
+							}
+							expandedSate.put(xObject, limit != 0);
+						}
 					}
 				}
 			}
@@ -106,22 +120,43 @@ public class JSeparatorTable extends JAutoColumnTable {
 				if (object instanceof SeparatorList.Separator) {
 					SeparatorList.Separator<?> separator = (SeparatorList.Separator) object;
 					Boolean expanded = null;
-					for (Object item : separator.getGroup()) {
-						expanded = expandedSate.get(item.hashCode());
-						if (expanded != null) {
-							break;
+					final int oldLimit = separator.getLimit();
+					if (separator.getLimit() == 0) { //Collapsed
+						Object first = separator.first(); //Lets try first
+						expanded = expandedSate.get(first);
+						if (expanded == null) { //No luck, now it's going to get expensive
+							for (Object item : separator.getGroup()) {
+								expanded = expandedSate.get(item);
+								if (expanded != null) {
+									break;
+								}
+							}
+						}
+					} else {
+						for (int x = i + 1; x < separatorList.size(); x++) {
+							Object xObject = separatorList.get(x);
+							if (xObject instanceof SeparatorList.Separator) {
+								break;
+							}
+							expanded = expandedSate.get(xObject);
+							if (expanded != null) {
+								break;
+							}
 						}
 					}
 					if (expanded == null) {
 						expanded = defaultState;
 					}
-					try {
-						separatorList.getReadWriteLock().readLock().unlock();
-						separatorList.getReadWriteLock().writeLock().lock();
-						separator.setLimit(expanded ? Integer.MAX_VALUE : 0);
-					} finally {
-						separatorList.getReadWriteLock().writeLock().unlock();
-						separatorList.getReadWriteLock().readLock().lock();
+					final int newLimit = expanded ? Integer.MAX_VALUE : 0;
+					if (oldLimit != newLimit) {
+						try {
+							separatorList.getReadWriteLock().readLock().unlock();
+							separatorList.getReadWriteLock().writeLock().lock();
+							separator.setLimit(newLimit);
+						} finally {
+							separatorList.getReadWriteLock().writeLock().unlock();
+							separatorList.getReadWriteLock().readLock().lock();
+						}
 					}
 				}
 			}
@@ -241,18 +276,19 @@ public class JSeparatorTable extends JAutoColumnTable {
 
 	/**
 	 * Get the renderer for separator rows.
+	 * @return 
 	 */
 	public TableCellRenderer getSeparatorRenderer() { return separatorRenderer; }
 	public void setSeparatorRenderer(final TableCellRenderer separatorRenderer) { this.separatorRenderer = separatorRenderer; }
 
 	/**
 	 * Get the editor for separator rows.
+	 * @return 
 	 */
 	public TableCellEditor getSeparatorEditor() { return separatorEditor; }
 	public void setSeparatorEditor(final TableCellEditor separatorEditor) { this.separatorEditor = separatorEditor; }
 
 	//XXX - Workaround for Autoscroller less then optimal behavior on SeparatorList.Separator
-	private List<Integer> selectedRows = new ArrayList<Integer>();
 	/** {@inheritDoc} */
 	@Override
 	public void valueChanged(final ListSelectionEvent e) {
@@ -292,35 +328,25 @@ public class JSeparatorTable extends JAutoColumnTable {
 			return;
 		}
 		for (int row = 0; row < getEventTableModel().getRowCount(); row++) {
-			autoResizeRow(row);
+			autoResizeRow(row, getRowHeight());
 		}
 	}
 
-	private void autoResizeRow(final int row) {
+	private void autoResizeRow(final int row, int defaultHeight) {
 		if (row < 0 || row > getEventTableModel().getRowCount()) {
 			return;
 		}
 		int height = 0;
 		final Object rowValue = getEventTableModel().getElementAt(row);
-		final int key = rowValue.hashCode();
-		if (rowsHeight.containsKey(key)) { //Load row height
-			height = rowsHeight.get(key);
-		} else if (rowValue instanceof SeparatorList.Separator) {
-				//Calculate the Separator row height
-				//This is done every time, because Separator can never be identified 100%
-				//Because elements is changed by filters and sorting
-				//If saved: the list keep growing with useless hash keys
-				TableCellRenderer renderer = this.getCellRenderer(row, 0);
-				Component component = super.prepareRenderer(renderer, row, 0);
-				height = component.getPreferredSize().height;
-			} else { //Calculate the row height
-				for (int i = 0; i < this.getColumnCount(); i++) {
-					TableCellRenderer renderer = this.getCellRenderer(row, i);
-					Component component = super.prepareRenderer(renderer, row, i);
-					height = Math.max(height, component.getPreferredSize().height);
-				}
-				//Save row height so we don't have to calculate it all the time
-				rowsHeight.put(key, height);
+		if (rowValue instanceof SeparatorList.Separator) {
+			//Calculate the Separator row height
+			//This is done every time, because Separator can never be identified 100%
+			//Because elements is changed by filters and sorting
+			//If saved: the list keep growing with useless hash keys
+			Component component = separatorRenderer.getTableCellRendererComponent(this, getValueAt(row, 0), false, false, row, 0);
+			height = component.getPreferredSize().height;
+		} else { //Calculate the row height
+			height = defaultHeight;
 		}
 
 		//Set row height, if needed (is expensive because repaint is needed)
