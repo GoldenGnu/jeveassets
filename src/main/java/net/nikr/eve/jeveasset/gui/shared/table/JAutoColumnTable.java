@@ -63,11 +63,12 @@ public class JAutoColumnTable extends JTable {
 	private int size = 0;
 	private ResizeMode resizeMode = null;
 	private boolean loadingWidth = false;
-	private final Map<String, Integer> columnsWidth = new HashMap<String, Integer>();
-	private final Map<Object, Integer> rowsWidth = new HashMap<Object, Integer>();
+	private final Map<String, Integer> columnsWidth = new HashMap<>();
+	private final Map<Object, Integer> rowsWidth = new HashMap<>();
 	protected Program program;
 	private boolean autoResizeLock = false;
-	private final Set<Class<?>> disableColumnResizeCache = new HashSet<Class<?>>();
+	private final Set<Class<?>> disableColumnResizeCache = new HashSet<>();
+	private boolean overwrite;
 
 	public JAutoColumnTable(final Program program, final TableModel tableModel) {
 		super(tableModel);
@@ -77,6 +78,14 @@ public class JAutoColumnTable extends JTable {
 		if (tableModel instanceof FixedEventTableModel) {
 			FixedEventTableModel<?> eventTableModel = (FixedEventTableModel) tableModel;
 			eventTableModel.setTable(this);
+		}
+
+		try {
+			overwrite = !getClass().getMethod("getCellRenderer", int.class, int.class).getDeclaringClass().equals(JTable.class);
+		} catch (NoSuchMethodException ex) {
+			overwrite = true; //should never happen, but, will use safe value if it does
+		} catch (SecurityException ex) {
+			overwrite = true; //should never happen, but, will use safe value if it does
 		}
 
 		//Listeners
@@ -344,17 +353,32 @@ public class JAutoColumnTable extends JTable {
 		Component component = renderer.getTableCellRendererComponent(jTable, column.getHeaderValue(), false, false, 0, 0);
 		int maxWidth = component.getPreferredSize().width;
 
+		if (!overwrite) {
+			renderer = column.getCellRenderer();
+			if (renderer == null) {
+				renderer = getDefaultRenderer(getColumnClass(columnIndex));
+			}
+		}
 		//Rows width
-		for (int i = 0; i < jTable.getRowCount(); i++) {
+		final int rowCount = jTable.getRowCount();
+		for (int i = 0; i < rowCount; i++) {
 			final Object rowValue = jTable.getValueAt(i, columnIndex); //Get cell value
 			if (rowValue == null) { //Ignore null
 				continue;
 			}
 			boolean useCache = !disableColumnResizeCache.contains(rowValue.getClass());
-			if (rowsWidth.containsKey(rowValue) && useCache) { //Load row width
-				maxWidth = Math.max(maxWidth, rowsWidth.get(rowValue));
+			Integer savedWidth;
+			if (useCache) {
+				savedWidth = rowsWidth.get(rowValue);
+			} else {
+				savedWidth = null;
+			}
+			if (savedWidth != null) { //Load row width
+				maxWidth = Math.max(maxWidth, savedWidth);
 			} else { //Calculate the row width
-				renderer = jTable.getCellRenderer(i, columnIndex);
+				if (overwrite) {
+					renderer = jTable.getCellRenderer(i, columnIndex);
+				}
 				//Ignore SeparatorTableCell
 				if (renderer instanceof SeparatorTableCell) {
 					continue;
