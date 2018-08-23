@@ -244,44 +244,44 @@ public class MaterialsTab extends JMainTabSecondary {
 			}
 
 			//Locations
-			if (!uniqueMaterials.containsKey(asset.getLocation().getLocation() + asset.getName())) { //New
-				Material material = new Material(MaterialType.LOCATIONS, asset, asset.getLocation().getLocation(), asset.getItem().getGroup(), asset.getName());
+			Material material = uniqueMaterials.get(asset.getLocation().getLocation() + asset.getName());
+			if (material == null) { //New
+				material = new Material(MaterialType.LOCATIONS, asset, asset.getLocation().getLocation(), asset.getItem().getGroup(), asset.getName());
 				uniqueMaterials.put(asset.getLocation().getLocation() + asset.getName(), material);
 				materials.add(material);
 			}
-			Material material = uniqueMaterials.get(asset.getLocation().getLocation() + asset.getName());
 
 			//Locations Total
-			if (!totalMaterials.containsKey(asset.getLocation().getLocation() + asset.getItem().getGroup())) { //New
-				Material totalMaterial = new Material(MaterialType.LOCATIONS_TOTAL, asset, asset.getLocation().getLocation(), TabsMaterials.get().total(), asset.getItem().getGroup());
+			Material totalMaterial =  totalMaterials.get(asset.getLocation().getLocation() + asset.getItem().getGroup());
+			if (totalMaterial == null) { //New
+				totalMaterial = new Material(MaterialType.LOCATIONS_TOTAL, asset, asset.getLocation().getLocation(), TabsMaterials.get().total(), asset.getItem().getGroup());
 				totalMaterials.put(asset.getLocation().getLocation() + asset.getItem().getGroup(), totalMaterial);
 				materials.add(totalMaterial);
 			}
-			Material totalMaterial =  totalMaterials.get(asset.getLocation().getLocation() + asset.getItem().getGroup());
 
 			//Locations Total All
-			if (!totalAllMaterials.containsKey(asset.getLocation().getLocation())) { //New
-				Material totalAllMaterial = new Material(MaterialType.LOCATIONS_ALL, asset, asset.getLocation().getLocation(), TabsMaterials.get().total(), General.get().all());
+			Material totalAllMaterial = totalAllMaterials.get(asset.getLocation().getLocation());
+			if (totalAllMaterial == null) { //New
+				totalAllMaterial = new Material(MaterialType.LOCATIONS_ALL, asset, asset.getLocation().getLocation(), TabsMaterials.get().total(), General.get().all());
 				totalAllMaterials.put(asset.getLocation().getLocation(), totalAllMaterial);
 				materials.add(totalAllMaterial);
 			}
-			Material totalAllMaterial = totalAllMaterials.get(asset.getLocation().getLocation());
 
 			//Summary
-			if (!summary.containsKey(asset.getName())) { //New
-				Material summaryMaterial = new Material(MaterialType.SUMMARY, asset, TabsMaterials.get().summary(), asset.getItem().getGroup(),  asset.getName());
+			Material summaryMaterial = summary.get(asset.getName());
+			if (summaryMaterial == null) { //New
+				summaryMaterial = new Material(MaterialType.SUMMARY, asset, TabsMaterials.get().summary(), asset.getItem().getGroup(),  asset.getName());
 				summary.put(asset.getName(), summaryMaterial);
 				materials.add(summaryMaterial);
 			}
-			Material summaryMaterial = summary.get(asset.getName());
 
 			//Summary Total
-			if (!total.containsKey(asset.getItem().getGroup())) { //New
-				Material summaryTotalMaterial = new Material(MaterialType.SUMMARY_TOTAL, null, TabsMaterials.get().summary(), TabsMaterials.get().grandTotal(), asset.getItem().getGroup());
+			Material summaryTotalMaterial =  total.get(asset.getItem().getGroup());
+			if (summaryTotalMaterial == null) { //New
+				summaryTotalMaterial = new Material(MaterialType.SUMMARY_TOTAL, null, TabsMaterials.get().summary(), TabsMaterials.get().grandTotal(), asset.getItem().getGroup());
 				total.put(asset.getItem().getGroup(), summaryTotalMaterial);
 				materials.add(summaryTotalMaterial);
 			}
-			Material summaryTotalMaterial =  total.get(asset.getItem().getGroup());
 
 			//Update values
 			material.updateValue(asset.getCount(), asset.getDynamicPrice());

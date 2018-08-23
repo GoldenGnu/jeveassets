@@ -137,7 +137,14 @@ public class MaterialsSeparatorTableCell extends SeparatorTableCell<Material> {
 		Material material = (Material) currentSeparator.first();
 		try {
 			separatorList.getReadWriteLock().readLock().lock();
-			for (int i = 0; i < separatorList.size(); i++) {
+			int start;
+			if (material.isFirst()) {
+				start = currentRow;
+			} else {
+				start = 0;
+			}
+			boolean found = false;
+			for (int i = start; i < separatorList.size(); i++) {
 				Object object = separatorList.get(i);
 				if (object instanceof SeparatorList.Separator<?>) {
 					SeparatorList.Separator<?> separator = (SeparatorList.Separator<?>) object;
@@ -146,6 +153,9 @@ public class MaterialsSeparatorTableCell extends SeparatorTableCell<Material> {
 						if (separator.getLimit() != 0) {
 							return false;
 						}
+						found = true;
+					} else if (found) {
+						break; //No longer the same header...
 					}
 				}
 			}
