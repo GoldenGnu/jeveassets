@@ -60,7 +60,6 @@ public class EsiAuth {
 			oAuth = new OAuth(); //We always need a new oAuth to start a new flow
 			this.callbackURL = callbackURL;
 			oAuth.setClientId(callbackURL.getA());
-			oAuth.setClientSecret(callbackURL.getB());
 			String authorizationUri = oAuth.getAuthorizationUri(callbackURL.getUrl(), scopes, "jeveassets");
 			return DesktopUtil.browse(authorizationUri, window);
 		} catch (Exception ex) {

@@ -22,17 +22,15 @@ package net.nikr.eve.jeveasset.io.esi;
 
 
 public enum EsiCallbackURL {
-	LOCALHOST("http://localhost:2221", "", ""),
-	EVE_NIKR_NET("https://eve.nikr.net/jeveasset/auth", "", ""),
+	LOCALHOST("http://localhost:2221", ""),
+	EVE_NIKR_NET("https://eve.nikr.net/jeveasset/auth", ""),
 	;
 	private final String url;
 	private final String a;
-	private final String b;
 
-	private EsiCallbackURL(String url, String a, String b) {
+	private EsiCallbackURL(String url, String a) {
 		this.url = url;
 		this.a = a;
-		this.b = b;
 	}
 
 	public String getUrl() {
@@ -41,9 +39,5 @@ public enum EsiCallbackURL {
 
 	public String getA() {
 		return a;
-	}
-
-	public String getB() {
-		return b;
 	}
 }

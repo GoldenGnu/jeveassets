@@ -373,7 +373,6 @@ public class JMenuUI <T> extends MenuManager.JAutoMenu<T> {
 				OAuth auth = (OAuth) client.getAuthentication("evesso");
 				auth.setRefreshToken(owner.getRefreshToken());
 				auth.setClientId(owner.getCallbackURL().getA());
-				auth.setClientSecret(owner.getCallbackURL().getB());
 			}
 			return new UserInterfaceApi(client);
 		}
