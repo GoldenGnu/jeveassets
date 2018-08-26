@@ -254,12 +254,20 @@ public class TrackerAssetFilterDialog extends JDialogCentered {
 			try { 
 				eventList.getReadWriteLock().readLock().lock();
 				for (CheckBoxNode node : eventList) {
-					node.setShown(true);
+					node.show();
 				}
 			} finally {
 				eventList.getReadWriteLock().readLock().unlock();
 			}
 		} else {
+			try { 
+				eventList.getReadWriteLock().readLock().lock();
+				for (CheckBoxNode node : eventList) {
+					node.hide();
+				}
+			} finally {
+				eventList.getReadWriteLock().readLock().unlock();
+			}
 			filterList.setMatcher(new CheckBoxNodeMatcher(jFilter.getText()));
 		}
 		expandAll();
@@ -362,30 +370,18 @@ public class TrackerAssetFilterDialog extends JDialogCentered {
 
 	private static class CheckBoxNodeMatcher implements Matcher<CheckBoxNode> {
 
-		private final String match;
+		private final String text;
 
-		public CheckBoxNodeMatcher(String match) {
-			this.match = match.toLowerCase();
+		public CheckBoxNodeMatcher(String text) {
+			this.text = text.toLowerCase();
 		}
 
 		@Override
 		public boolean matches(CheckBoxNode item) {
-			boolean shown = matchTree(item);
-			item.setShown(shown);
-			return shown;
-		}
-
-		private boolean matchTree(CheckBoxNode item) {
-			if (item == null) {
-				return false;
-			}
-			if (item.getNodeName().toLowerCase().contains(match)) {
+			if (item.isShown()) { //already evaluated
 				return true;
-			} else {
-				return matchTree(item.getParent());
 			}
+			return item.matches(text);
 		}
-
 	}
-
 }

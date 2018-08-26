@@ -770,9 +770,11 @@ public class TrackerTab extends JMainTabSecondary {
 
 		//ASSETS - Make nodes for found asset IDs
 		CheckBoxNode assetNode = new CheckBoxNode(null, TabsTracker.get().assets(), TabsTracker.get().assets(), false);
-		assetNodes.put(TabsTracker.get().assets(), assetNode);
+		assetNodes.put(assetNode.getNodeId(), assetNode);
+		CheckBoxNode knownLocationsNode = new CheckBoxNode(assetNode, TabsTracker.get().knownLocations(), TabsTracker.get().knownLocations(), false);
+		assetNodes.put(knownLocationsNode.getNodeId(), knownLocationsNode);
 		CheckBoxNode unknownLocationsNode = new CheckBoxNode(assetNode, TabsTracker.get().unknownLocations(), TabsTracker.get().unknownLocations(), false);
-		assetNodes.put(TabsTracker.get().unknownLocations(), unknownLocationsNode);
+		assetNodes.put(unknownLocationsNode.getNodeId(), unknownLocationsNode);
 		
 		Map<String, CheckBoxNode> nodeCache = new HashMap<String, CheckBoxNode>();
 		for (AssetValue assetValue : assetsIDs) {
@@ -784,7 +786,7 @@ public class TrackerTab extends JMainTabSecondary {
 				if (location.startsWith("[Unknown Location #")) {
 					locationNode = new CheckBoxNode(unknownLocationsNode, location, location, selectNode(location));
 				} else {
-					locationNode = new CheckBoxNode(assetNode, location, location, selectNode(location));
+					locationNode = new CheckBoxNode(knownLocationsNode, location, location, selectNode(location));
 				}
 				nodeCache.put(location, locationNode);
 				assetNodes.put(locationNode.getNodeId(), locationNode);
