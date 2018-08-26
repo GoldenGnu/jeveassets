@@ -72,8 +72,18 @@ public abstract class AbstractEsiGetter extends AbstractGetter<EsiOwner, ApiClie
 
 
 	public AbstractEsiGetter(UpdateTask updateTask, EsiOwner owner, boolean forceUpdate, Date nextUpdate, TaskType taskType, int maxRetries) {
-		super(updateTask, owner, forceUpdate, nextUpdate, taskType, "ESI");
+		super(updateTask, owner, forceUpdate(owner, taskType, forceUpdate), nextUpdate, taskType, "ESI");
 		this.maxRetries = maxRetries;
+	}
+
+	private static boolean forceUpdate(EsiOwner owner, TaskType taskType, boolean forceUpdate) {
+		if (forceUpdate) {
+			return true;
+		}
+		if (taskType == TaskType.OWNER && owner != null) {
+			return !"JWT".equals(owner.getTokenType()); //Force update of old tokens
+		}
+		return false;
 	}
 
 	@Override
