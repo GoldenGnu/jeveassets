@@ -104,7 +104,6 @@ public abstract class AbstractEsiGetter extends AbstractGetter<EsiOwner, ApiClie
 			OAuth auth = (OAuth) client.getAuthentication("evesso");
 			auth.setRefreshToken(owner.getRefreshToken());
 			auth.setClientId(owner.getCallbackURL().getA());
-			auth.setClientSecret(owner.getCallbackURL().getB());
 		}
 		checkErrors(); //Update timeframe as needed
 		checkCancelled();
@@ -117,6 +116,8 @@ public abstract class AbstractEsiGetter extends AbstractGetter<EsiOwner, ApiClie
 			logInfo(updater.getStatus(), "Updated");
 			if (owner != null) {
 				owner.setInvalid(false);
+				OAuth auth = (OAuth) client.getAuthentication("evesso");
+				owner.setRefreshToken(auth.getRefreshToken()); //May have changed, so always update
 			}
 			return t;
 		} catch (ApiException ex) {

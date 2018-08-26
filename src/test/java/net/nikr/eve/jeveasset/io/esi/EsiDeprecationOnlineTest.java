@@ -35,10 +35,12 @@ import net.troja.eve.esi.api.CorporationApi;
 import net.troja.eve.esi.api.IndustryApi;
 import net.troja.eve.esi.api.LocationApi;
 import net.troja.eve.esi.api.MarketApi;
+import net.troja.eve.esi.api.MetaApi;
 import net.troja.eve.esi.api.SovereigntyApi;
 import net.troja.eve.esi.api.UniverseApi;
 import net.troja.eve.esi.api.UserInterfaceApi;
 import net.troja.eve.esi.api.WalletApi;
+import static org.hamcrest.CoreMatchers.equalTo;
 import org.junit.Test;
 
 public class EsiDeprecationOnlineTest extends TestUtil {
@@ -418,6 +420,17 @@ public class EsiDeprecationOnlineTest extends TestUtil {
 
 		}
 		validate(api.getApiClient());
+	}
+
+	@Test
+	public void esiHeaders() {
+		MetaApi api = new MetaApi();
+		try {
+			Map<String, String> headers = api.getHeaders();
+			assertThat(headers.get("User-Agent"), equalTo(USER_AGENT));
+		} catch (ApiException ex) {
+			fail();
+		}
 	}
 
 	private void validate(ApiClient client) {
