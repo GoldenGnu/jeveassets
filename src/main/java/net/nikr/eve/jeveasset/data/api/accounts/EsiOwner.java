@@ -36,7 +36,7 @@ public class EsiOwner extends AbstractOwner implements OwnerType {
 
 	private String accountName;
 	private String refreshToken;
-	private Set<String> scopes = new HashSet<String>();
+	private Set<String> scopes = new HashSet<>();
 	private String tokenType;
 	private String CharacterOwnerHash;
 	private String intellectualProperty;
@@ -63,11 +63,11 @@ public class EsiOwner extends AbstractOwner implements OwnerType {
 		this.invalid = esiOwner.invalid;
 	}
 
-	public String getRefreshToken() {
+	public synchronized String getRefreshToken() {
 		return refreshToken;
 	}
 
-	public void setRefreshToken(String refreshToken) {
+	public synchronized void setRefreshToken(String refreshToken) {
 		this.refreshToken = refreshToken;
 	}
 
