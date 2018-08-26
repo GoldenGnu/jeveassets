@@ -99,6 +99,7 @@ public abstract class TabsTracker extends Bundle {
 	public abstract String invalid();
 	public abstract String invalidNumberMsg();
 	public abstract String invalidNumberTitle();
+	public abstract String knownLocations();
 	public abstract String manufacturing();
 	public abstract String month1();
 	public abstract String months3();

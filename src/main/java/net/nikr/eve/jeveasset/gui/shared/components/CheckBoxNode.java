@@ -27,8 +27,11 @@ public class CheckBoxNode implements Comparable<CheckBoxNode>{
 
 	private final String nodeId;
 	private final String nodeName;
+	private final String match;
+	private final List<CheckBoxNode> children = new ArrayList<>();
 	private CheckBoxNode parent;
-	private final List<CheckBoxNode> children = new ArrayList<CheckBoxNode>();
+	private int childrenSelected = 0;
+	private int childrenShown = 0;
 	private boolean selected;
 	private boolean shown;
 
@@ -39,12 +42,12 @@ public class CheckBoxNode implements Comparable<CheckBoxNode>{
 	public CheckBoxNode(CheckBoxNode parent, String nodeId, String nodeName, boolean selected) {
 		this.nodeId = nodeId;
 		this.nodeName = nodeName;
+		this.match = nodeName.toLowerCase();
 		this.selected = selected;
 		this.parent = parent;
 		this.shown = true;
 		if (parent != null) {
 			parent.addChild(this);
-			parent.selectionFromChildren();
 		}
 	}
 
@@ -52,8 +55,33 @@ public class CheckBoxNode implements Comparable<CheckBoxNode>{
 		return shown;
 	}
 
-	public void setShown(boolean shown) {
-		this.shown = shown;
+	public void hide() {
+		setShown(false);
+	}
+
+	public void show() {
+		updateShown(true);
+	}
+
+	public boolean matches(String text) {
+		if (match.contains(text)) { //Matches Self (include everything)
+			shownParents();
+			updateShown(true);
+			shownChildren();
+			return true;
+		}
+		if (matchesParent(text)) { //Matches Parent (include everything)
+			shownParents();
+			updateShown(true);
+			shownChildren();
+			return true;
+		}
+		if (matchesChildren(text)) {  //Matches Child (include self and parent)
+			shownParents();
+			updateShown(true);
+			return true;
+		}
+		return false;
 	}
 
 	public CheckBoxNode getParent() {
@@ -69,12 +97,26 @@ public class CheckBoxNode implements Comparable<CheckBoxNode>{
 	}
 
 	public boolean setSelected(boolean newValue) {
-		selected = newValue;
-		boolean updated = selectionToChildren(newValue);
-		if (parent != null) {
-			updated = parent.selectionFromChildren() || updated;
+		boolean update = selected != newValue;
+		if (!update) { //Nothing changed -> do nothing
+			return false;
 		}
-		return updated;
+		selected = newValue;
+		if (isParent()) {  //If have children -> Update Tree
+			update = selectionToChildren(newValue) || update;
+		}
+		if (selected != newValue) {
+			throw new RuntimeException();
+		}
+		if (parent != null && isShown()) {
+			if (selected) {
+				parent.childSelected();
+			} else {
+				parent.childDeselected();
+			}
+			parent.updateSelection();
+		}
+		return update;
 	}
 
 	public String getNodeId() {
@@ -85,13 +127,113 @@ public class CheckBoxNode implements Comparable<CheckBoxNode>{
 		return nodeName;
 	}
 
-	@Override
-	public String toString() {
-		return nodeName;
-	}
-
 	private void addChild(CheckBoxNode child) {
 		children.add(child);
+		if (child.isSelected()) {
+			childSelected();
+		}
+		if (child.isShown()) {
+			childShown();
+		}
+		updateSelection();
+	}
+
+	private void childShown() {
+		childrenShown++;
+	}
+
+	private void childHidden() {
+		childrenShown--;
+	}
+
+	private void childSelected() {
+		childrenSelected++;
+	}
+
+	private void childDeselected() {
+		childrenSelected--;
+	}
+
+	private boolean setShown(boolean newValue) {
+		boolean updated = this.shown != newValue;
+		this.shown = newValue;
+		if (parent != null && updated) {
+			if (shown) { //If shown: add shown and update
+				parent.childShown();
+				if (selected) { //If selected -> add selection
+					parent.childSelected();
+				}
+			} else { //Remove
+				parent.childHidden();
+				if (selected) { //If selected -> remove selection
+					parent.childDeselected();
+				}
+			}
+		}
+		return updated;
+	}
+
+	private void updateShown(boolean newValue) {
+		if (setShown(newValue) && parent != null) {
+			parent.updateSelection();
+		}
+	}
+
+	private boolean matchesParent(String text) {
+		if (parent != null) {
+			if (parent.match.contains(text)) {
+				return true;
+			}
+			if (parent.matchesParent(text)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private boolean matchesChildren(String text) {
+		for (CheckBoxNode node : children) {
+			if (node.match.contains(text)) {
+				return true;
+			}
+			if (node.matchesChildren(text)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private void shownParents() {
+		if (parent != null) {
+			parent.shownParents();
+			parent.updateShown(true);
+		}
+	}
+
+	private void shownChildren() {
+		for (CheckBoxNode child : children) {
+			child.updateShown(true);
+			child.shownChildren();
+		}
+	}
+
+	private boolean updateSelection() {
+		if (!isParent()) {
+			return false;
+		}
+		boolean oldValue = selected;
+		selected = childrenSelected == childrenShown;
+		selected = childrenSelected == childrenShown;
+		boolean updated = oldValue != selected;
+		if (updated && parent != null) { //Value changed -> Update Tree
+			if (selected) {
+				parent.childSelected();
+			} else {
+				parent.childDeselected();
+			}
+			updated = parent.updateSelection() || updated;
+		}
+		return updated;
 	}
 
 	private boolean selectionToChildren(boolean newValue) {
@@ -102,33 +244,30 @@ public class CheckBoxNode implements Comparable<CheckBoxNode>{
 			}
 			if (node.isSelected() != newValue) {
 				node.selected = newValue;
-				node.selectionToChildren(newValue);
+				if (newValue) {
+					childSelected();
+				} else {
+					childDeselected();
+				}
 				updated = true;
+			}
+			node.selectionToChildren(newValue);
+		}
+		if (newValue) {
+			if (childrenShown != childrenSelected) {
+				throw new RuntimeException();
+			}
+		} else {
+			if (childrenSelected != 0) {
+				throw new RuntimeException();
 			}
 		}
 		return updated;
 	}
 
-	private boolean selectionFromChildren() {
-		boolean isAllSelected = true;
-		for (CheckBoxNode node : children) {
-			if (!node.isShown()) {
-				continue;
-			}
-			if (!node.isSelected()) {
-				isAllSelected = false;
-				break;
-			}
-		}
-		if (isSelected() == isAllSelected) {
-			return false;
-		} else {
-			selected = isAllSelected;
-			if (parent != null) {
-				parent.selectionFromChildren();
-			}
-			return true;
-		}
+	@Override
+	public String toString() {
+		return nodeName;
 	}
 
 	@Override
