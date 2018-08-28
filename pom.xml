@@ -173,7 +173,7 @@
 						<configuration>
 							<target>
 								<ftp action="delete"
-									 server="ftp.nikr.net"
+									 server="linux227.unoeuro.com"
 									 userid="${ftp.user}"
 									 password="${ftp.pass}"
 									 remotedir="eve.nikr.net/jeveassets/update" >
@@ -182,7 +182,7 @@
 									</fileset>
 								</ftp>
 								<ftp action="rmdir"
-									 server="ftp.nikr.net"
+									 server="linux227.unoeuro.com"
 									 userid="${ftp.user}"
 									 password="${ftp.pass}"
 									 remotedir="eve.nikr.net/jeveassets/update" >
@@ -350,7 +350,7 @@
 							<fromDir>${project.build.directory}</fromDir>
 							<includes>*.txt,*.jar,*.md5,lib/*,*.dat,*.php,*.properties</includes>
 							<serverId>eve-nikr-net</serverId>
-							<url>ftp://ftp.nikr.net</url>
+							<url>ftp://linux227.unoeuro.com</url>
 							<toDir>eve.nikr.net/jeveassets/update/program</toDir>
 						</configuration>
 					</execution>
@@ -364,7 +364,7 @@
 							<fromDir>${project.build.directory}</fromDir>
 							<includes>*.zip</includes>
 							<serverId>eve-nikr-net</serverId>
-							<url>ftp://ftp.nikr.net</url>
+							<url>ftp://linux227.unoeuro.com</url>
 							<toDir>eve.nikr.net/jeveassets</toDir>
 						</configuration>
 					</execution>
