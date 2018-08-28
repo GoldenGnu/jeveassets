@@ -103,6 +103,7 @@ import net.nikr.eve.jeveasset.i18n.General;
 import net.nikr.eve.jeveasset.i18n.TabsTracker;
 import net.nikr.eve.jeveasset.io.local.SettingsReader;
 import net.nikr.eve.jeveasset.io.local.TrackerDataReader;
+import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 import net.nikr.eve.jeveasset.io.shared.FileUtil;
 import org.jfree.chart.ChartMouseEvent;
 import org.jfree.chart.ChartMouseListener;
@@ -794,7 +795,7 @@ public class TrackerTab extends JMainTabSecondary {
 
 			CheckBoxNode flagNode = nodeCache.get(id);
 			if (flagNode == null) {
-				flagNode = new CheckBoxNode(locationNode, id, flag, selectNode(id));
+				flagNode = new CheckBoxNode(locationNode, id, ApiIdConverter.getFlagName(flag), selectNode(id));
 				nodeCache.put(id, flagNode);
 			}
 			assetNodes.put(id, flagNode);

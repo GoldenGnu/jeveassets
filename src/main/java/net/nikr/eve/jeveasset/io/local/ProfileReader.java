@@ -296,6 +296,8 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 		parseTransactions(node, owner);
 		parseIndustryJobs(node, owner);
 		parseBlueprints(node, owner);
+		parseAssetDivisions(node, owner);
+		parseWalletDivisions(node, owner);
 	}
 
 	private void parseContracts(final Element element, final OwnerType owner) throws XmlException {
@@ -761,5 +763,37 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 		blueprint.setTimeEfficiency(timeEfficiency);
 		blueprint.setTypeID(typeID);
 		return blueprint;
+	}
+
+	private void parseAssetDivisions(final Element element, final OwnerType owners) throws XmlException {
+		Map<Integer, String> divisions = new HashMap<>();
+		NodeList divisionsNodes = element.getElementsByTagName("assetdivisions");
+		for (int a = 0; a < divisionsNodes.getLength(); a++) {
+			Element currentDivisionsNode = (Element) divisionsNodes.item(a);
+			NodeList divisionNodes = currentDivisionsNode.getElementsByTagName("assetdivision");
+			for (int b = 0; b < divisionNodes.getLength(); b++) {
+				Element currentNode = (Element) divisionNodes.item(b);
+				int id = AttributeGetters.getInt(currentNode, "id");
+				String name = AttributeGetters.getStringOptional(currentNode, "name");
+				divisions.put(id, name);
+			}
+		}
+		owners.setAssetDivisions(divisions);
+	}
+
+	private void parseWalletDivisions(final Element element, final OwnerType owners) throws XmlException {
+		Map<Integer, String> divisions = new HashMap<>();
+		NodeList divisionsNodes = element.getElementsByTagName("walletdivisions");
+		for (int a = 0; a < divisionsNodes.getLength(); a++) {
+			Element currentDivisionsNode = (Element) divisionsNodes.item(a);
+			NodeList divisionNodes = currentDivisionsNode.getElementsByTagName("walletdivision");
+			for (int b = 0; b < divisionNodes.getLength(); b++) {
+				Element currentNode = (Element) divisionNodes.item(b);
+				int id = AttributeGetters.getInt(currentNode, "id");
+				String name = AttributeGetters.getStringOptional(currentNode, "name");
+				divisions.put(id, name);
+			}
+		}
+		owners.setWalletDivisions(divisions);
 	}
 }

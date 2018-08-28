@@ -38,6 +38,7 @@ import net.nikr.eve.jeveasset.data.api.raw.RawContract.ContractStatus;
 import net.nikr.eve.jeveasset.data.api.raw.RawIndustryJob;
 import net.nikr.eve.jeveasset.data.profile.ProfileData;
 import net.nikr.eve.jeveasset.data.sde.Item;
+import net.nikr.eve.jeveasset.data.sde.ItemFlag;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.data.settings.tag.TagID;
@@ -331,11 +332,11 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 		return flagName;
 	}
 
-	public final void setFlagName(final List<String> flagNames) {
+	public final void setFlagName(final Set<ItemFlag> flagNames) {
 		if (flagNames.isEmpty()) {
 			this.flagName = General.get().all();
 		} else if (flagNames.size() == 1) {
-			this.flagName = flagNames.get(0);
+			this.flagName = flagNames.iterator().next().toString();
 		} else {
 			this.flagName = TabsStockpile.get().multiple();
 		}

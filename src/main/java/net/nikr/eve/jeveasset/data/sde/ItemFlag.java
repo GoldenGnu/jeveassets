@@ -21,16 +21,20 @@
 
 package net.nikr.eve.jeveasset.data.sde;
 
+import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
+
 
 public class ItemFlag implements Comparable<ItemFlag> {
 	private final int flagID;
 	private final String flagName;
 	private final String flagText;
+	private final String toString;
 
 	public ItemFlag(final int flagID, final String flagName, final String flagText) {
 		this.flagID = flagID;
 		this.flagName = flagName;
 		this.flagText = flagText;
+		this.toString = ApiIdConverter.getFlagName(this);
 	}
 
 	public int getFlagID() {
@@ -47,7 +51,7 @@ public class ItemFlag implements Comparable<ItemFlag> {
 
 	@Override
 	public String toString() {
-		return getFlagName();
+		return toString;
 	}
 
 	@Override

@@ -53,6 +53,7 @@ import net.nikr.eve.jeveasset.io.esi.EsiAssetsGetter;
 import net.nikr.eve.jeveasset.io.esi.EsiBlueprintsGetter;
 import net.nikr.eve.jeveasset.io.esi.EsiContractItemsGetter;
 import net.nikr.eve.jeveasset.io.esi.EsiContractsGetter;
+import net.nikr.eve.jeveasset.io.esi.EsiDivisionsGetter;
 import net.nikr.eve.jeveasset.io.esi.EsiIndustryJobsGetter;
 import net.nikr.eve.jeveasset.io.esi.EsiJournalGetter;
 import net.nikr.eve.jeveasset.io.esi.EsiLocationsGetter;
@@ -66,6 +67,7 @@ import net.nikr.eve.jeveasset.io.evekit.EveKitAssetGetter;
 import net.nikr.eve.jeveasset.io.evekit.EveKitBlueprintsGetter;
 import net.nikr.eve.jeveasset.io.evekit.EveKitContractItemsGetter;
 import net.nikr.eve.jeveasset.io.evekit.EveKitContractsGetter;
+import net.nikr.eve.jeveasset.io.evekit.EveKitDivisionsGetter;
 import net.nikr.eve.jeveasset.io.evekit.EveKitIndustryJobsGetter;
 import net.nikr.eve.jeveasset.io.evekit.EveKitJournalGetter;
 import net.nikr.eve.jeveasset.io.evekit.EveKitLocationsGetter;
@@ -670,10 +672,16 @@ public class UpdateDialog extends JDialogCentered {
 				//EveKit
 				for (EveKitOwner eveKitOwner : program.getProfileManager().getEveKitOwners()) {
 					updates.add(new EveKitAssetGetter(this, eveKitOwner));
+					if (eveKitOwner.isCorporation()) {
+						updates.add(new EveKitDivisionsGetter(this, eveKitOwner));
+					}
 				}
 				//Esi
 				for (EsiOwner esiOwner : program.getProfileManager().getEsiOwners()) {
 					updates.add(new EsiAssetsGetter(this, esiOwner));
+					if (esiOwner.isCorporation()) {
+						updates.add(new EsiDivisionsGetter(this, esiOwner));
+					}
 				}
 			}
 			if (jIndustryJobs.isSelected()) {

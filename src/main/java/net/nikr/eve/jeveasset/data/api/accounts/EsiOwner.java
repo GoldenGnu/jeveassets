@@ -221,6 +221,15 @@ public class EsiOwner extends AbstractOwner implements OwnerType {
 	}
 
 	@Override
+	public boolean isDivisions() {
+		if (isCorporation()) {
+			return EsiScopes.CORPORATION_DIVISIONS.isInScope(scopes) && roles.contains(RolesEnum.DIRECTOR);
+		} else {
+			return false;
+		}
+	}
+
+	@Override
 	public boolean isIndustryJobs() {
 		if (isCorporation()) {
 			return EsiScopes.CORPORATION_INDUSTRY_JOBS.isInScope(scopes) 

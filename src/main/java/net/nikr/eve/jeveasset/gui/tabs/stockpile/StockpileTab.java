@@ -533,12 +533,12 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 		}
 		stockpile.setOwnerName(new ArrayList<String>(owners));
 		//Update Item flag name
-		Set<String> flags = new HashSet<String>();
+		Set<ItemFlag> flags = new HashSet<>();
 		for (StockpileFilter filter : stockpile.getFilters()) {
 			for (Integer flagID : filter.getFlagIDs()) {
 				ItemFlag flag = StaticData.get().getItemFlags().get(flagID);
 				if (flag != null) {
-					flags.add(flag.getFlagName());
+					flags.add(flag);
 				}
 			}
 		}
@@ -636,7 +636,7 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 			}
 		}
 		
-		stockpile.setFlagName(new ArrayList<String>(flags));
+		stockpile.setFlagName(flags);
 		stockpile.reset();
 		if (!stockpile.isEmpty()) {
 			for (StockpileItem item : stockpile.getItems()) {

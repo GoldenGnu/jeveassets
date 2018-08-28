@@ -181,6 +181,8 @@ public final class ProfileWriter extends AbstractXmlWriter {
 		writeTransactions(xmldoc, node, owner.getTransactions(), owner.isCorporation());
 		writeIndustryJobs(xmldoc, node, owner.getIndustryJobs(), owner.isCorporation());
 		writeBlueprints(xmldoc, node, owner.getBlueprints(), owner.isCorporation());
+		writeAssetDivisions(xmldoc, node, owner.getAssetDivisions());
+		writeWalletDivisions(xmldoc, node, owner.getWalletDivisions());
 	}
 
 	private void writeAssets(final Document xmldoc, final Element parentNode, final List<MyAsset> assets) {
@@ -397,6 +399,31 @@ public final class ProfileWriter extends AbstractXmlWriter {
 			setAttribute(childNode, "timeefficiency", blueprint.getTimeEfficiency());
 			setAttribute(childNode, "materialefficiency", blueprint.getMaterialEfficiency());
 			setAttribute(childNode, "runs", blueprint.getRuns());
+			node.appendChild(childNode);
+		}
+	}
+
+	private void writeAssetDivisions(final Document xmldoc, final Element parentNode, final Map<Integer, String> divisions) {
+		Element node = xmldoc.createElement("assetdivisions");
+		if (!divisions.isEmpty()) {
+			parentNode.appendChild(node);
+		}
+		for (Map.Entry<Integer, String> entry : divisions.entrySet()) {
+			Element childNode = xmldoc.createElement("assetdivision");
+			setAttribute(childNode, "id", entry.getKey());
+			setAttribute(childNode, "name", entry.getValue());
+			node.appendChild(childNode);
+		}
+	}
+	private void writeWalletDivisions(final Document xmldoc, final Element parentNode, final Map<Integer, String> divisions) {
+		Element node = xmldoc.createElement("walletdivisions");
+		if (!divisions.isEmpty()) {
+			parentNode.appendChild(node);
+		}
+		for (Map.Entry<Integer, String> entry : divisions.entrySet()) {
+			Element childNode = xmldoc.createElement("walletdivision");
+			setAttribute(childNode, "id", entry.getKey());
+			setAttributeOptional(childNode, "name", entry.getValue());
 			node.appendChild(childNode);
 		}
 	}

@@ -58,7 +58,7 @@ import net.nikr.eve.jeveasset.io.shared.RawConverter;
 public class MyAsset extends RawAsset implements Comparable<MyAsset>, InfoItem, JumpType, ItemType, BlueprintType, EditablePriceType, TagsType, EditableLocationType, OwnersType {
 
 //Static values (set by constructor)
-	private final List<MyAsset> assets = new ArrayList<MyAsset>();
+	private final List<MyAsset> assets = new ArrayList<>();
 	private final RawAsset rawAsset;
 	private final Item item;
 	private final OwnerType owner;
@@ -84,11 +84,12 @@ public class MyAsset extends RawAsset implements Comparable<MyAsset>, InfoItem, 
 	private Tags tags;
 	private RawBlueprint blueprint;
 	private MyLocation location;
+	private String flagName;
 	//Dynamic values cache
 	private boolean userNameSet = false;
 	private boolean eveNameSet = false;
 	private boolean userPriceSet = false;
-	private final Map<Long, Integer> jumpsList = new HashMap<Long, Integer>();
+	private final Map<Long, Integer> jumpsList = new HashMap<>();
 
 	protected MyAsset(MyAsset asset) {
 		this(asset.rawAsset,
@@ -120,13 +121,14 @@ public class MyAsset extends RawAsset implements Comparable<MyAsset>, InfoItem, 
 		this.owner = null;
 		this.parents = null;
 		this.location = location;
-		this.owners = new HashSet<Long>();
+		this.owners = new HashSet<>();
 		this.generated = true;
 		if (getQuantity() == null || getQuantity() <= 0) {
 			this.count = 1;
 		} else {
 			this.count = getQuantity();
 		}
+		this.flagName = ApiIdConverter.getFlagName(ApiIdConverter.getFlag(0));
 		setItemID(0L);
 		setItemFlag(ApiIdConverter.getFlag(0));
 		setLocationID(location.getLocationID());
@@ -182,6 +184,7 @@ public class MyAsset extends RawAsset implements Comparable<MyAsset>, InfoItem, 
 				this.name = this.typeName;
 			}
 		}
+		this.flagName = ApiIdConverter.getFlagName(rawAsset.getItemFlag(), owner);
 	}
 
 	public MyAsset(MyIndustryJob industryJob, boolean manufacturing) {
@@ -219,6 +222,10 @@ public class MyAsset extends RawAsset implements Comparable<MyAsset>, InfoItem, 
 	@Override
 	public long getCount() {
 		return count;
+	}
+
+	public String getFlagName() {
+		return flagName;
 	}
 
 	public final String getFlag() {

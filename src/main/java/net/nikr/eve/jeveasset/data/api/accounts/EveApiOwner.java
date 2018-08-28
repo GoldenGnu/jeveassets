@@ -132,6 +132,11 @@ public class EveApiOwner extends AbstractOwner implements OwnerType {
 	}
 
 	@Override
+	public boolean isDivisions() {
+		return false; //Not supported by the XML API
+	}
+
+	@Override
 	public Date getExpire() {
 		return getParentAccount().getExpires();
 	}
