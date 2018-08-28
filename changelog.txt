@@ -16,6 +16,32 @@
                   #### #  # #  # #  # #### #### #### #### ####
 
 ________________________________________________________________________________
+_5.7.2__________________________________________________________________________
+
+Bug Fixes:
+-ESI import showed invalid account before authorizing on the EVE SSO web site
+-ESI workaround for universe names not resolving faction ids
+-Overview displayed wrong system/region for systems
+-Wrong count of total rows in some tools
+-Date filter equals/before/after did not match correctly
+-Column name was not always fully visible when sorted
+-Tracker asset filter selecting and filtering was not working correctly
+-Fixed two crash bugs (BugID: 693 and 687)
+
+Changed:
+-Always show output value in table (table menu and statusbar unchanged)
+-Ask to include all tracker asset filter locations (once)
+-Delete unused library files
+
+Optimizations:
+-Column resizing (All tools with tables - also faster filtering)
+-Materials Tool
+-Separator Table (Stockpile/Contracts/Materials/Reprocessing/Loadout)
+
+Code:
+-Updated eve-esi to 2.3.4 (Use PKCE, instead of client secret)
+
+________________________________________________________________________________
 _5.7.1__________________________________________________________________________
 
 Bug Fixes:
