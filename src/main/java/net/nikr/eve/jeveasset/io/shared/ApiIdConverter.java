@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import net.nikr.eve.jeveasset.data.api.accounts.OwnerType;
 import net.nikr.eve.jeveasset.data.api.my.MyAsset;
 import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.data.sde.ItemFlag;
@@ -86,6 +87,7 @@ public final class ApiIdConverter {
 		PACKAGED_VOLUME.put("Transport Ship", 20000f);
 	}
 
+	/*
 	public static String flag(final int flag, final MyAsset parentAsset) {
 		ItemFlag itemFlag = StaticData.get().getItemFlags().get(flag);
 		if (itemFlag != null) {
@@ -97,6 +99,7 @@ public final class ApiIdConverter {
 		}
 		return "!" + flag;
 	}
+	*/
 
 	public static ItemFlag getFlag(final int flag) {
 		ItemFlag itemFlag = StaticData.get().getItemFlags().get(flag);
@@ -105,6 +108,75 @@ public final class ApiIdConverter {
 		} else {
 			return new ItemFlag(flag, UNKNOWN_FLAG, UNKNOWN_FLAG);
 		}
+	}
+
+	public static String getFlagName(String flagName) {
+		switch (flagName) {
+			case "CorpSAG1": return "1st Division";
+			case "CorpSAG2": return "2nd Division";
+			case "CorpSAG3": return "3rd Division";
+			case "CorpSAG4": return "4th Division";
+			case "CorpSAG5": return "5th Division";
+			case "CorpSAG6": return "6th Division";
+			case "CorpSAG7": return "7th Division";
+			default: return flagName;
+		}
+	}
+
+	public static String getFlagName(ItemFlag itemFlag) {
+		return getFlagName(itemFlag, null);
+	}
+
+	public static String getFlagName(ItemFlag itemFlag, OwnerType ownerType) {
+		switch (itemFlag.getFlagID()) {
+			case 62: return "Corporation Deliveries";
+			case 63: return itemFlag.getFlagName();
+			case 64: return itemFlag.getFlagName();
+			
+			case 115: return getDivisionName(ownerType, 1);
+			case 116: return getDivisionName(ownerType, 2);
+			case 117: return getDivisionName(ownerType, 3);
+			case 118: return getDivisionName(ownerType, 4);
+			case 119: return getDivisionName(ownerType, 5);
+			case 120: return getDivisionName(ownerType, 6);
+			case 121: return getDivisionName(ownerType, 7);
+			case 146: return "Junkyard Reprocessed";
+			case 147: return "Junkyard Trashed";
+		}
+		if (itemFlag.getFlagText().toLowerCase().contains("slot")) {
+			return getSlotName(itemFlag);
+		}
+		return itemFlag.getFlagText();
+	}
+
+	private static String getDivisionName(OwnerType ownerType, int i) {
+		final String division;
+		switch (i) {
+			case 1: division = "1st Division"; break;
+			case 2: division = "2nd Division"; break;
+			case 3: division = "3rd Division"; break;
+			case 4: division = "4th Division"; break;
+			case 5: division = "5th Division"; break;
+			case 6: division = "6th Division"; break;
+			case 7: division = "7th Division"; break;
+			default: division = "Division " + 1;  break;
+		}
+		String divisionName = null;
+		if (ownerType != null) {
+			divisionName = ownerType.getAssetDivisions().get(i);
+		}
+		if (divisionName == null || divisionName.isEmpty()) {
+			return division;
+		} else {
+			return divisionName + " (" + division + ")";
+		}
+	}
+
+	private static String getSlotName(ItemFlag itemFlag) {
+		String name = itemFlag.getFlagText();
+		name = name.replace(" power", "");
+		name = name.replace(" s", " S");
+		return name;
 	}
 
 	public static double getPrice(final Integer typeID, final boolean isBlueprintCopy) {

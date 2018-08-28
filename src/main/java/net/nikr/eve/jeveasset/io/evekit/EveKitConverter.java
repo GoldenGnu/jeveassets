@@ -29,6 +29,7 @@ import enterprises.orbital.evekit.client.model.CharacterLocation;
 import enterprises.orbital.evekit.client.model.CharacterShip;
 import enterprises.orbital.evekit.client.model.Contract;
 import enterprises.orbital.evekit.client.model.ContractItem;
+import enterprises.orbital.evekit.client.model.Division;
 import enterprises.orbital.evekit.client.model.IndustryJob;
 import enterprises.orbital.evekit.client.model.MarketOrder;
 import enterprises.orbital.evekit.client.model.WalletJournal;
@@ -65,7 +66,7 @@ public final class EveKitConverter extends DataConverter {
 	}
 
 	public static List<MyAccountBalance> toAccountBalance(List<AccountBalance> responses, OwnerType owner) {
-		List<RawAccountBalance> accountBalances = new ArrayList<RawAccountBalance>();
+		List<RawAccountBalance> accountBalances = new ArrayList<>();
 		for (AccountBalance response : responses) {
 			accountBalances.add(new RawAccountBalance(response));
 		}
@@ -73,7 +74,7 @@ public final class EveKitConverter extends DataConverter {
 	}
 
 	public static List<MyAsset> toAssets(List<Asset> responses, OwnerType owner) {
-		List<RawAsset> rawAssets = new ArrayList<RawAsset>();
+		List<RawAsset> rawAssets = new ArrayList<>();
 		for (Asset response : responses) {
 			rawAssets.add(new RawAsset(response));
 		}
@@ -81,11 +82,11 @@ public final class EveKitConverter extends DataConverter {
 	}
 
 	public static MyAsset toAssetsShip(CharacterShip shipType, CharacterLocation shipLocation, OwnerType owner) {
-		return toMyAsset(new RawAsset(shipType, shipLocation), owner, new ArrayList<MyAsset>());
+		return toMyAsset(new RawAsset(shipType, shipLocation), owner, new ArrayList<>());
 	}
 
 	public static Map<Long, RawBlueprint> toBlueprints(List<Blueprint> responses) {
-		Map<Long, RawBlueprint> blueprints = new HashMap<Long, RawBlueprint>();
+		Map<Long, RawBlueprint> blueprints = new HashMap<>();
 		for (Blueprint blueprint : responses) {
 			blueprints.put(blueprint.getItemID(), new RawBlueprint(blueprint));
 		}
@@ -93,7 +94,7 @@ public final class EveKitConverter extends DataConverter {
 	}
 
 	public static Map<MyContract, List<MyContractItem>> toContracts(List<Contract> responses, OwnerType owner) {
-		List<RawContract> rawContracts = new ArrayList<RawContract>();
+		List<RawContract> rawContracts = new ArrayList<>();
 		for (Contract response : responses) {
 			rawContracts.add(new RawContract(response));
 		}
@@ -101,7 +102,7 @@ public final class EveKitConverter extends DataConverter {
 	}
 
 	public static Map<MyContract, List<MyContractItem>> toContractItems(MyContract contract, List<ContractItem> responses, OwnerType owner) {
-		List<RawContractItem> rawContractItems = new ArrayList<RawContractItem>();
+		List<RawContractItem> rawContractItems = new ArrayList<>();
 		for (ContractItem response : responses) {
 			rawContractItems.add(new RawContractItem(response));
 		}
@@ -109,7 +110,7 @@ public final class EveKitConverter extends DataConverter {
 	}
 
 	public static List<MyIndustryJob> toIndustryJobs(List<IndustryJob> responses, OwnerType owner) {
-		List<RawIndustryJob> rawIndustryJobs = new ArrayList<RawIndustryJob>();
+		List<RawIndustryJob> rawIndustryJobs = new ArrayList<>();
 		for (IndustryJob response : responses) {
 			rawIndustryJobs.add(new RawIndustryJob(response));
 		}
@@ -117,7 +118,7 @@ public final class EveKitConverter extends DataConverter {
 	}
 
 	public static Set<MyJournal> toJournals(List<WalletJournal> responses, OwnerType owner, boolean saveHistory) {
-		List<RawJournal> rawIndustryJobs = new ArrayList<RawJournal>();
+		List<RawJournal> rawIndustryJobs = new ArrayList<>();
 		for (WalletJournal response : responses) {
 			rawIndustryJobs.add(new RawJournal(response));
 		}
@@ -125,7 +126,7 @@ public final class EveKitConverter extends DataConverter {
 	}
 
 	public static Set<MyMarketOrder> toMarketOrders(List<MarketOrder> responses, OwnerType owner, boolean saveHistory) {
-		List<RawMarketOrder> rawMarketOrders = new ArrayList<RawMarketOrder>();
+		List<RawMarketOrder> rawMarketOrders = new ArrayList<>();
 		for (MarketOrder response : responses) {
 			rawMarketOrders.add(new RawMarketOrder(response));
 		}
@@ -133,10 +134,30 @@ public final class EveKitConverter extends DataConverter {
 	}
 
 	public static Set<MyTransaction> toTransactions(List<WalletTransaction> responses, OwnerType owner, boolean saveHistory) {
-		List<RawTransaction> rawTransactions = new ArrayList<RawTransaction>();
+		List<RawTransaction> rawTransactions = new ArrayList<>();
 		for (WalletTransaction response : responses) {
 			rawTransactions.add(new RawTransaction(response));
 		}
 		return convertRawTransactions(rawTransactions, owner, saveHistory);
+	}
+
+	public static Map<Integer, String> toWalletDivisions(List<Division> divisionsWallets) {
+		Map<Integer, String> divisions = new HashMap<>();
+		for (Division response : divisionsWallets) {
+			if (response.getWallet()) {
+				divisions.put(response.getDivision(), response.getName());
+			}
+		}
+		return divisions;
+	}
+
+	public static Map<Integer, String> toAssetDivisions(List<Division> divisionsWallets) {
+		Map<Integer, String> divisions = new HashMap<>();
+		for (Division response : divisionsWallets) {
+			if (!response.getWallet()) {
+				divisions.put(response.getDivision(), response.getName());
+			}
+		}
+		return divisions;
 	}
 }

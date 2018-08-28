@@ -85,6 +85,7 @@ public abstract class DialoguesAccount extends Bundle {
 	public abstract String scopeShipLocation();
 	public abstract String scopeOpenWindows();
 	public abstract String scopeAutopilot();
+	public abstract String scopeDivisions();
 	public abstract String scopeContainerLogs();
 
 	public abstract String dialogueNameAccountManagement();
@@ -149,6 +150,7 @@ public abstract class DialoguesAccount extends Bundle {
 	public abstract String tableFormatLocations();
 	public abstract String tableFormatStructures();
 	public abstract String tableFormatBlueprints();
+	public abstract String tableFormatDivisions();
 	public abstract String tableFormatShip();
 	public abstract String tableFormatOpenWindows();
 	public abstract String tableFormatAutopilot();

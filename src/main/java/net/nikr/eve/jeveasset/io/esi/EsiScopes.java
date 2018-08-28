@@ -44,6 +44,7 @@ public enum EsiScopes {
 	CORPORATION_MARKET_ORDERS(SsoScopes.ESI_MARKETS_READ_CORPORATION_ORDERS_V1, DialoguesAccount.get().scopeMarketOrders(), ScopeType.CORPORATION),
 	CORPORATION_BLUEPRINTS(SsoScopes.ESI_CORPORATIONS_READ_BLUEPRINTS_V1, DialoguesAccount.get().scopeBlueprints(), ScopeType.CORPORATION),
 	CORPORATION_CONTRACTS(SsoScopes.ESI_CONTRACTS_READ_CORPORATION_CONTRACTS_V1, DialoguesAccount.get().scopeContracts(), ScopeType.CORPORATION),
+	CORPORATION_DIVISIONS(SsoScopes.ESI_CORPORATIONS_READ_DIVISIONS_V1, DialoguesAccount.get().scopeDivisions(), ScopeType.CORPORATION),
 	CORPORATION_CONTAINER_LOGS(SsoScopes.ESI_CORPORATIONS_READ_CONTAINER_LOGS_V1, DialoguesAccount.get().scopeContainerLogs(), ScopeType.CORPORATION),
 	NAMES(), //Public
 	CONQUERABLE_STATIONS(), //Public

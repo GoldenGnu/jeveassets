@@ -63,6 +63,8 @@ import net.troja.eve.esi.model.CorporationBlueprintsResponse;
 import net.troja.eve.esi.model.CorporationContainersLogsResponse;
 import net.troja.eve.esi.model.CorporationContractsItemsResponse;
 import net.troja.eve.esi.model.CorporationContractsResponse;
+import net.troja.eve.esi.model.CorporationDivisionsHangar;
+import net.troja.eve.esi.model.CorporationDivisionsWallet;
 import net.troja.eve.esi.model.CorporationIndustryJobsResponse;
 import net.troja.eve.esi.model.CorporationOrdersHistoryResponse;
 import net.troja.eve.esi.model.CorporationOrdersResponse;
@@ -81,7 +83,7 @@ public class EsiConverter extends DataConverter {
 	}
 
 	public static List<MyAccountBalance> toAccountBalanceCorporation(List<CorporationWalletsResponse> responses, OwnerType owner) {
-		List<RawAccountBalance> rawAccountBalances = new ArrayList<RawAccountBalance>();
+		List<RawAccountBalance> rawAccountBalances = new ArrayList<>();
 		for (CorporationWalletsResponse response : responses) {
 			rawAccountBalances.add(new RawAccountBalance(response));
 		}
@@ -89,7 +91,7 @@ public class EsiConverter extends DataConverter {
 	}
 
 	public static List<MyAsset> toAssets(List<CharacterAssetsResponse> responses, OwnerType owner) {
-		List<RawAsset> rawAssets = new ArrayList<RawAsset>();
+		List<RawAsset> rawAssets = new ArrayList<>();
 		for (CharacterAssetsResponse response : responses) {
 			rawAssets.add(new RawAsset(response));
 		}
@@ -97,7 +99,7 @@ public class EsiConverter extends DataConverter {
 	}
 
 	public static List<MyAsset> toAssetsCorporation(List<CorporationAssetsResponse> responses, OwnerType owner) {
-		List<RawAsset> rawAssets = new ArrayList<RawAsset>();
+		List<RawAsset> rawAssets = new ArrayList<>();
 		for (CorporationAssetsResponse response : responses) {
 			rawAssets.add(new RawAsset(response));
 		}
@@ -105,11 +107,11 @@ public class EsiConverter extends DataConverter {
 	}
 
 	public static MyAsset toAssetsShip(CharacterShipResponse shipType, CharacterLocationResponse shipLocation, OwnerType owner) {
-		return toMyAsset(new RawAsset(shipType, shipLocation), owner, new ArrayList<MyAsset>());
+		return toMyAsset(new RawAsset(shipType, shipLocation), owner, new ArrayList<>());
 	}
 
 	public static Map<Long, RawBlueprint> toBlueprints(List<CharacterBlueprintsResponse> responses) {
-		Map<Long, RawBlueprint> rawBlueprints = new HashMap<Long, RawBlueprint>();
+		Map<Long, RawBlueprint> rawBlueprints = new HashMap<>();
 		for (CharacterBlueprintsResponse blueprint : responses) {
 			rawBlueprints.put(blueprint.getItemId(), new RawBlueprint(blueprint));
 		}
@@ -117,7 +119,7 @@ public class EsiConverter extends DataConverter {
 	}
 
 	public static Map<Long, RawBlueprint> toBlueprintsCorporation(List<CorporationBlueprintsResponse> responses) {
-		Map<Long, RawBlueprint> rawBlueprints = new HashMap<Long, RawBlueprint>();
+		Map<Long, RawBlueprint> rawBlueprints = new HashMap<>();
 		for (CorporationBlueprintsResponse blueprint : responses) {
 			rawBlueprints.put(blueprint.getItemId(), new RawBlueprint(blueprint));
 		}
@@ -125,7 +127,7 @@ public class EsiConverter extends DataConverter {
 	}
 
 	public static List<MyIndustryJob> toIndustryJobs(List<CharacterIndustryJobsResponse> responses, OwnerType owner) {
-		List<RawIndustryJob> rawIndustryJobs = new ArrayList<RawIndustryJob>();
+		List<RawIndustryJob> rawIndustryJobs = new ArrayList<>();
 		for (CharacterIndustryJobsResponse response : responses) {
 			rawIndustryJobs.add(new RawIndustryJob(response));
 		}
@@ -133,7 +135,7 @@ public class EsiConverter extends DataConverter {
 	}
 
 	public static List<MyIndustryJob> toIndustryJobsCorporation(List<CorporationIndustryJobsResponse> responses, OwnerType owner) {
-		List<RawIndustryJob> rawIndustryJobs = new ArrayList<RawIndustryJob>();
+		List<RawIndustryJob> rawIndustryJobs = new ArrayList<>();
 		for (CorporationIndustryJobsResponse response : responses) {
 			rawIndustryJobs.add(new RawIndustryJob(response));
 		}
@@ -141,7 +143,7 @@ public class EsiConverter extends DataConverter {
 	}
 
 	public static Set<MyJournal> toJournals(List<CharacterWalletJournalResponse> responses, OwnerType owner, Integer accountKey, boolean saveHistory) {
-		List<RawJournal> rawJournals = new ArrayList<RawJournal>();
+		List<RawJournal> rawJournals = new ArrayList<>();
 		for (CharacterWalletJournalResponse response : responses) {
 			rawJournals.add(new RawJournal(response, accountKey));
 		}
@@ -149,7 +151,7 @@ public class EsiConverter extends DataConverter {
 	}
 
 	public static Set<MyJournal> toJournalsCorporation(List<CorporationWalletJournalResponse> responses, OwnerType owner, Integer accountKey, boolean saveHistory) {
-		List<RawJournal> rawJournals = new ArrayList<RawJournal>();
+		List<RawJournal> rawJournals = new ArrayList<>();
 		for (CorporationWalletJournalResponse response : responses) {
 			rawJournals.add(new RawJournal(response, accountKey));
 		}
@@ -157,7 +159,7 @@ public class EsiConverter extends DataConverter {
 	}
 
 	public static Map<MyContract, List<MyContractItem>> toContracts(List<CharacterContractsResponse> responses, OwnerType owner) {
-		List<RawContract> rawContracts = new ArrayList<RawContract>();
+		List<RawContract> rawContracts = new ArrayList<>();
 		for (CharacterContractsResponse response : responses) {
 			rawContracts.add(new RawContract(response));
 		}
@@ -165,7 +167,7 @@ public class EsiConverter extends DataConverter {
 	}
 
 	public static Map<MyContract, List<MyContractItem>> toContractsCorporation(List<CorporationContractsResponse> responses, OwnerType owner) {
-		List<RawContract> rawContracts = new ArrayList<RawContract>();
+		List<RawContract> rawContracts = new ArrayList<>();
 		for (CorporationContractsResponse response : responses) {
 			rawContracts.add(new RawContract(response));
 		}
@@ -173,7 +175,7 @@ public class EsiConverter extends DataConverter {
 	}
 
 	public static Map<MyContract, List<MyContractItem>> toContractItems(MyContract contract, List<CharacterContractsItemsResponse> responses, OwnerType owner) {
-		List<RawContractItem> rawContractItems = new ArrayList<RawContractItem>();
+		List<RawContractItem> rawContractItems = new ArrayList<>();
 		for (CharacterContractsItemsResponse response : responses) {
 			rawContractItems.add(new RawContractItem(response));
 		}
@@ -181,7 +183,7 @@ public class EsiConverter extends DataConverter {
 	}
 
 	public static Map<MyContract, List<MyContractItem>> toContractItemsCorporation(MyContract contract, List<CorporationContractsItemsResponse> responses, OwnerType owner) {
-		List<RawContractItem> rawContractItems = new ArrayList<RawContractItem>();
+		List<RawContractItem> rawContractItems = new ArrayList<>();
 		for (CorporationContractsItemsResponse response : responses) {
 			rawContractItems.add(new RawContractItem(response));
 		}
@@ -189,7 +191,7 @@ public class EsiConverter extends DataConverter {
 	}
 
 	public static Set<MyMarketOrder> toMarketOrders(List<CharacterOrdersResponse> responses, List<CharacterOrdersHistoryResponse> responsesHistory, OwnerType owner, boolean saveHistory) {
-		List<RawMarketOrder> rawMarketOrders = new ArrayList<RawMarketOrder>();
+		List<RawMarketOrder> rawMarketOrders = new ArrayList<>();
 		for (CharacterOrdersResponse response : responses) {
 			rawMarketOrders.add(new RawMarketOrder(response));
 		}
@@ -200,7 +202,7 @@ public class EsiConverter extends DataConverter {
 	}
 
 	public static Set<MyMarketOrder> toMarketOrdersCorporation(List<CorporationOrdersResponse> responses, List<CorporationOrdersHistoryResponse> responsesHistory, OwnerType owner, boolean saveHistory) {
-		List<RawMarketOrder> rawMarketOrders = new ArrayList<RawMarketOrder>();
+		List<RawMarketOrder> rawMarketOrders = new ArrayList<>();
 		for (CorporationOrdersResponse response : responses) {
 			rawMarketOrders.add(new RawMarketOrder(response));
 		}
@@ -211,7 +213,7 @@ public class EsiConverter extends DataConverter {
 	}
 
 	public static Set<MyTransaction> toTransaction(List<CharacterWalletTransactionsResponse> responses, OwnerType owner, Integer accountKey, boolean saveHistory) {
-		List<RawTransaction> rawTransactions = new ArrayList<RawTransaction>();
+		List<RawTransaction> rawTransactions = new ArrayList<>();
 		for (CharacterWalletTransactionsResponse response : responses) {
 			rawTransactions.add(new RawTransaction(response, accountKey));
 		}
@@ -219,15 +221,31 @@ public class EsiConverter extends DataConverter {
 	}
 
 	public static Set<MyTransaction> toTransactionCorporation(List<CorporationWalletTransactionsResponse> responses, OwnerType owner, Integer accountKey, boolean saveHistory) {
-		List<RawTransaction> rawTransactions = new ArrayList<RawTransaction>();
+		List<RawTransaction> rawTransactions = new ArrayList<>();
 		for (CorporationWalletTransactionsResponse response : responses) {
 			rawTransactions.add(new RawTransaction(response, accountKey));
 		}
 		return convertRawTransactions(rawTransactions, owner, saveHistory);
 	}
 
+	public static Map<Integer, String> toWalletDivisions(List<CorporationDivisionsWallet> divisionsWallets) {
+		Map<Integer, String> divisions = new HashMap<>();
+		for (CorporationDivisionsWallet response : divisionsWallets) {
+			divisions.put(response.getDivision(), response.getName());
+		}
+		return divisions;
+	}
+
+	public static Map<Integer, String> toAssetDivisions(List<CorporationDivisionsHangar> divisionsWallets) {
+		Map<Integer, String> divisions = new HashMap<>();
+		for (CorporationDivisionsHangar response : divisionsWallets) {
+			divisions.put(response.getDivision(), response.getName());
+		}
+		return divisions;
+	}
+
 	public static List<MyContainerLog> toContainersLogCorporation(List<CorporationContainersLogsResponse> responses) {
-		List<RawContainerLog> rawContainersLogs = new ArrayList<RawContainerLog>();
+		List<RawContainerLog> rawContainersLogs = new ArrayList<>();
 		for (CorporationContainersLogsResponse response : responses) {
 			rawContainersLogs.add(new RawContainerLog(response));
 		}
