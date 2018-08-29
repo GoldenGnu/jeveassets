@@ -49,6 +49,7 @@ import net.nikr.eve.jeveasset.data.settings.ReprocessSettings;
 import net.nikr.eve.jeveasset.data.settings.RouteResult;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.data.settings.Settings.SettingFlag;
+import net.nikr.eve.jeveasset.data.settings.Settings.SettingsFactory;
 import net.nikr.eve.jeveasset.data.settings.TrackerData;
 import net.nikr.eve.jeveasset.data.settings.UserItem;
 import net.nikr.eve.jeveasset.data.settings.tag.Tag;
@@ -119,6 +120,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 	}
 
 	private Settings settings;
+	private SettingsFactory settingsFactory;
 	private List<Stockpile> stockpilesList;
 	private Map<String, List<Value>> trackerDataMap;
 	private final ReaderType readerType;
@@ -127,22 +129,46 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		this.readerType = readerType;
 	}
 
-	public static boolean load(final Settings settings) {
+	public static Settings load(final SettingsFactory settingsFactory, final String filename) {
 		SettingsReader reader = new SettingsReader(ReaderType.SETTINGS);
-		reader.settings = settings;
+		reader.setSettingsFactory(settingsFactory);;
 		Update updater = new Update();
 		try {
-			updater.performUpdates(SETTINGS_VERSION, settings.getPathSettings());
+			updater.performUpdates(SETTINGS_VERSION, filename);
 		} catch (XmlException ex) {
-			return false; //Failed update!
+			Settings settings = settingsFactory.create();
+			settings.setSettingsLoadError(true);
+			return settings;
 		}
-		return reader.read("Settings", settings.getPathSettings(), XmlType.DYNAMIC_BACKUP);
+		Boolean ok = reader.read("Settings", filename, XmlType.DYNAMIC_BACKUP);
+		Settings settings = reader.getSettings();
+		if (!ok || settings == null) {
+			settings = settingsFactory.create();
+			settings.setSettingsLoadError(true);
+		}
+		return settings;
+	}
+
+	private void setSettingsFactory(SettingsFactory settingsFactory) {
+		this.settingsFactory = settingsFactory;
+	}
+
+	private Settings getSettings() {
+		return settings;
+	}
+
+	private List<Stockpile> getStockpiles() {
+		return stockpilesList;
+	}
+
+	private Map<String, List<Value>> getTrackerDataMap() {
+		return trackerDataMap;
 	}
 
 	public static List<Stockpile> loadStockpile(final String filename) {
 		SettingsReader reader = new SettingsReader(ReaderType.STOCKPILE);
 		if (reader.read(filename, filename, XmlType.IMPORT)) {
-			return reader.stockpilesList;
+			return reader.getStockpiles();
 		} else {
 			return null;
 		}
@@ -151,7 +177,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 	public static Map<String, List<Value>> loadTracker(final String filename) {
 		SettingsReader reader = new SettingsReader(ReaderType.TRACKER);
 		if (reader.read(filename, filename, XmlType.IMPORT)) {
-			return reader.trackerDataMap;
+			return reader.getTrackerDataMap();
 		} else {
 			return null;
 		}
@@ -161,7 +187,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 	protected Boolean parse(Element element) throws XmlException {
 		switch (readerType) {
 			case SETTINGS:
-				loadSettings(element, settings);
+				settings = loadSettings(element, settingsFactory.create());
 				break;
 			case STOCKPILE:
 				stockpilesList = loadStockpile(element);
@@ -206,12 +232,11 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		if (stockpilesNodes.getLength() == 1) {
 			Element stockpilesElement = (Element) stockpilesNodes.item(0);
 			parseStockpiles(stockpilesElement, stockpiles);
-			Collections.sort(Settings.get().getStockpiles());
 		}
 		return stockpiles;
 	}
 
-	private void loadSettings(final Element element, final Settings settings) throws XmlException {
+	private Settings loadSettings(final Element element, final Settings settings) throws XmlException {
 		if (!element.getNodeName().equals("settings")) {
 			throw new XmlException("Wrong root element name.");
 		}
@@ -278,7 +303,6 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		if (stockpilesNodes.getLength() == 1) {
 			Element stockpilesElement = (Element) stockpilesNodes.item(0);
 			parseStockpiles(stockpilesElement, settings.getStockpiles());
-			Collections.sort(Settings.get().getStockpiles());
 		}
 
 		//Stockpile Groups
@@ -410,6 +434,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		} else if (proxyNodes.getLength() > 1) {
 			throw new XmlException("Wrong proxy element count.");
 		}
+		return settings;
 	}
 
 	private void parseOwners(final Element element, final Settings settings) throws XmlException {
@@ -711,6 +736,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 				}
 			}
 		}
+		Collections.sort(stockpiles);
 	}
 
 	private void parseEveKitSettings(Element eveKitElement, Settings settings) throws XmlException {
@@ -765,7 +791,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 				Long systemID = AttributeGetters.getLong(systemNode, "id");
 				systemIDs.add(systemID);
 			}
-			Settings.get().getRoutingSettings().getPresets().put(name, systemIDs);
+			settings.getRoutingSettings().getPresets().put(name, systemIDs);
 		}
 		NodeList routeNodes = routingElement.getElementsByTagName("route");
 		for (int a = 0; a < routeNodes.getLength(); a++) {

@@ -24,9 +24,10 @@ import java.io.File;
 import java.net.URISyntaxException;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.settings.Settings;
+import net.nikr.eve.jeveasset.data.settings.Settings.SettingsFactory;
 
 
-public class FileLockSettings extends Settings {
+public class FileLockSettings extends Settings implements SettingsFactory {
 
 	private static final String SETTINGS = "settings_test";
 	private static final String PROFILE = "profile_test";
@@ -41,6 +42,10 @@ public class FileLockSettings extends Settings {
 	}
 
 	@Override
+	public Settings create() {
+		return this;
+	}
+
 	public String getPathSettings() {
 		return getPath(SETTINGS+XML); 
 	}
