@@ -63,7 +63,7 @@ public class SettingsWriter extends AbstractXmlWriter {
 
 	private SettingsWriter() { }
 
-	public static boolean save(final Settings settings) {
+	public static boolean save(final Settings settings, final String filename) {
 		if (!new File(Settings.getPathTrackerData()).exists()) { //Make sure the tracker data is saved
 			TrackerData.save("Saving Settings", true);
 		}
@@ -71,7 +71,7 @@ public class SettingsWriter extends AbstractXmlWriter {
 			AssetAddedData.save("Saving Settings", true);
 		}
 		SettingsWriter writer = new SettingsWriter();
-		return writer.write(settings);
+		return writer.write(settings, filename);
 	}
 
 	public static boolean saveStockpiles(final List<Stockpile> stockpiles, final String filename) {
@@ -99,7 +99,7 @@ public class SettingsWriter extends AbstractXmlWriter {
 		return true;
 	}
 
-	private boolean write(final Settings settings) {
+	private boolean write(final Settings settings, final String filename) {
 		Document xmldoc;
 		try {
 			xmldoc = getXmlDocument("settings");
@@ -135,7 +135,7 @@ public class SettingsWriter extends AbstractXmlWriter {
 		writeRoutingSettings(xmldoc, settings.getRoutingSettings());
 		writeEveKitSettings(xmldoc, settings);
 		try {
-			writeXmlFile(xmldoc, settings.getPathSettings(), true);
+			writeXmlFile(xmldoc, filename, true);
 		} catch (XmlException ex) {
 			LOG.error("Settings not saved " + ex.getMessage(), ex);
 			return false;

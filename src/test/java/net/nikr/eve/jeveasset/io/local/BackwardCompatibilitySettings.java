@@ -32,6 +32,8 @@ import net.nikr.eve.jeveasset.data.settings.ExportSettings;
 import net.nikr.eve.jeveasset.data.settings.PriceDataSettings;
 import net.nikr.eve.jeveasset.data.settings.ProxyData;
 import net.nikr.eve.jeveasset.data.settings.ReprocessSettings;
+import net.nikr.eve.jeveasset.data.settings.Settings;
+import net.nikr.eve.jeveasset.data.settings.Settings.SettingsFactory;
 import net.nikr.eve.jeveasset.data.settings.TrackerData;
 import net.nikr.eve.jeveasset.data.settings.UserItem;
 import net.nikr.eve.jeveasset.data.settings.tag.Tag;
@@ -42,11 +44,10 @@ import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.View;
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewGroup;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile;
-import net.nikr.eve.jeveasset.gui.tabs.values.Value;
 import net.nikr.eve.jeveasset.tests.mocks.FakeSettings;
 
 
-public class BackwardCompatibilitySettings extends FakeSettings {
+public class BackwardCompatibilitySettings extends FakeSettings implements SettingsFactory {
 
 	public enum Function {
 		GET_ASSET_ADDED,
@@ -78,12 +79,19 @@ public class BackwardCompatibilitySettings extends FakeSettings {
 		SET_WINDOW_SIZE,
 	}
 
-	private final Map<String, List<Value>> trackerData = new HashMap<String, List<Value>>();
-
 	private final String settingsPath;
 	private final String name;
 	private final Map<Function, Boolean> ok = new EnumMap<Function, Boolean>(Function.class);
 	private final List<Function> tested = new ArrayList<Function>();
+	private boolean settingsLoadError;
+
+	public BackwardCompatibilitySettings() {
+		for (Function function : Function.values()) {
+			ok.put(function, false);
+		}
+		this.settingsPath = null;
+		this.name = null;
+	}
 
 	public BackwardCompatibilitySettings(final String name) throws URISyntaxException {
 		this.name = name;
@@ -92,6 +100,21 @@ public class BackwardCompatibilitySettings extends FakeSettings {
 		}
 		URL resource = BackwardCompatibilitySettings.class.getResource("/" + name + "/settings.xml");
 		settingsPath = new File(resource.toURI()).getAbsolutePath();
+	}
+
+	@Override
+	public Settings create() {
+		return this;
+	}
+
+	@Override
+	public boolean isSettingsLoadError() {
+		return settingsLoadError;
+	}
+
+	@Override
+	public void setSettingsLoadError(boolean settingsLoadError) {
+		this.settingsLoadError = settingsLoadError;
 	}
 
 	public boolean test(Function function) {
@@ -189,7 +212,6 @@ public class BackwardCompatibilitySettings extends FakeSettings {
 		return new PriceDataSettings();
 	}
 
-	@Override
 	public String getPathSettings() {
 		return settingsPath;
 	}

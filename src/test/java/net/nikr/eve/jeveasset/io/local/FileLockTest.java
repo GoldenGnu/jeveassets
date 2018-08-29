@@ -70,36 +70,35 @@ public class FileLockTest extends TestUtil {
 
 	private static class LoadSettings extends Thread implements TestThread {
 
-		private final Settings settings;
-		private Boolean ok = null;
+		private final FileLockSettings settings;
 
-		public LoadSettings(Settings settings) {
+		public LoadSettings(FileLockSettings settings) {
 			this.settings = settings;
 		}
-		
+
 		@Override
 		public void run() {
-			ok = SettingsReader.load(settings);
+			SettingsReader.load(settings, settings.getPathSettings());
 		}
 
 		@Override
 		public Boolean isOk() {
-			return ok;
+			return !settings.isSettingsLoadError();
 		}
 	}
 
 	private static class SaveSettings extends Thread implements TestThread {
 
-		private final Settings settings;
+		private final FileLockSettings settings;
 		private Boolean ok = null;
 
-		public SaveSettings(Settings settings) {
+		public SaveSettings(FileLockSettings settings) {
 			this.settings = settings;
 		}
-		
+
 		@Override
 		public void run() {
-			ok = SettingsWriter.save(settings);
+			ok = SettingsWriter.save(settings, settings.getPathSettings());
 		}
 
 		@Override
@@ -135,20 +134,20 @@ public class FileLockTest extends TestUtil {
 
 	@Test
 	public void restoreBackupSettingsTest() throws IOException {
-		Settings settings = new FileLockSettings();
+		FileLockSettings settings = new FileLockSettings();
 		File file = new File (settings.getPathSettings());
 		boolean saved;
-		saved = SettingsWriter.save(settings);
+		saved = SettingsWriter.save(settings, settings.getPathSettings());
 		assertTrue("LockTest: Backup - Save settings failed (1 of 2)", saved);
-		saved = SettingsWriter.save(settings);
+		saved = SettingsWriter.save(settings, settings.getPathSettings());
 		assertTrue("LockTest: Backup - Save settings failed (2 of 2)", saved);
 		boolean deleted = file.delete();
 		assertTrue("LockTest: Backup - Delete settings failed", deleted);
 		boolean created = file.createNewFile();
 		assertTrue("LockTest: Backup - Create settings failed", created);
 		System.out.println("\"Premature end of file\": Is an expected error:");
-		boolean loaded = SettingsReader.load(settings);
-		assertTrue("LockTest: Backup - Load settings failed", loaded);
+		SettingsReader.load(settings, settings.getPathSettings());
+		assertTrue("LockTest: Backup - Load settings failed", !settings.isSettingsLoadError());
 	}
 
 	@Test
@@ -200,8 +199,8 @@ public class FileLockTest extends TestUtil {
 	@Test
 	public void settingsLockTest() throws InterruptedException {
 		//Setup
-		Settings settings = new FileLockSettings();
-		boolean ok = SettingsWriter.save(settings);
+		FileLockSettings settings = new FileLockSettings();
+		boolean ok = SettingsWriter.save(settings, settings.getPathSettings());
 		assertTrue("LockTest: Setup failed", ok);
 		//Load
 		TestThread load1 = new LoadSettings(settings);
