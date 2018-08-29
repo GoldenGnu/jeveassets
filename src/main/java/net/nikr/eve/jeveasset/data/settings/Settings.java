@@ -209,8 +209,6 @@ public class Settings {
 	private final Map<Class<?>, List<MyLocation>> jumpLocations = new HashMap<Class<?>, List<MyLocation>>();
 
 	protected Settings() {
-		SplashUpdater.setProgress(30);
-
 		//Settings
 		flags.put(SettingFlag.FLAG_FILTER_ON_ENTER, false); //Cached
 		flags.put(SettingFlag.FLAG_HIGHLIGHT_SELECTED_ROWS, true); //Cached
@@ -268,23 +266,24 @@ public class Settings {
 
 	public synchronized static void load() {
 		if (settings == null) {
-			settings = new Settings();
+			SplashUpdater.setProgress(30);
 			autoImportSettings();
-			settings.loadSettings();
+			settings = SettingsReader.load(new EmptySettingsFactory(), Settings.getPathSettings());
+			SplashUpdater.setProgress(35);
 		}
 	}
 
 	private static void autoImportSettings() {
 		if (Program.PROGRAM_DEV_BUILD && !testMode) { //Need import
 			Program.setPortable(false);
-			Path settingsFrom = Paths.get(settings.getPathSettings());
+			Path settingsFrom = Paths.get(Settings.getPathSettings());
 			Path trackerFrom = Paths.get(Settings.getPathTrackerData());
 			Path assetAddedFrom = Paths.get(Settings.getPathAssetAdded());
 			Path citadelFrom = Paths.get(Settings.getPathCitadel());
 			Path priceFrom = Paths.get(Settings.getPathPriceData());
 			Path profilesFrom = Paths.get(Settings.getPathProfilesDirectory());
 			Program.setPortable(true);
-			Path settingsTo = Paths.get(Settings.get().getPathSettings());
+			Path settingsTo = Paths.get(Settings.getPathSettings());
 			Path trackerTo = Paths.get(Settings.getPathTrackerData());
 			Path assetAddedTo = Paths.get(Settings.getPathAssetAdded());
 			Path citadelTo = Paths.get(Settings.getPathCitadel());
@@ -373,16 +372,10 @@ public class Settings {
 	public static void saveSettings() {
 		LOCK.lock("Save Settings");
 		try {
-			SettingsWriter.save(settings);
+			SettingsWriter.save(settings, Settings.getPathSettings());
 		} finally {
 			LOCK.unlock("Save Settings");
 		}
-	}
-
-	private void loadSettings() {
-		//Load data and overwite default values
-		settingsLoadError = !SettingsReader.load(this);
-		SplashUpdater.setProgress(35);
 	}
 
 	public Map<TrackerDate, TrackerNote> getTrackerNotes() {
@@ -767,6 +760,10 @@ public class Settings {
 		return settingsLoadError;
 	}
 
+	public void setSettingsLoadError(boolean settingsLoadError) {
+		this.settingsLoadError = settingsLoadError;
+	}
+
 	public Map<String, OverviewGroup> getOverviewGroups() {
 		return overviewGroups;
 	}
@@ -811,7 +808,7 @@ public class Settings {
 		this.eveKitContractsHistory = eveKitContractsHistory;
 	}
 
-	public String getPathSettings() {
+	private static String getPathSettings() {
 		return FileUtil.getLocalFile(Settings.PATH_SETTINGS, !Program.isPortable());
 	}
 
@@ -971,5 +968,16 @@ public class Settings {
 				}
 			}
 		}
+	}
+
+	private static class EmptySettingsFactory implements SettingsFactory {
+		@Override
+		public Settings create() {
+			return new Settings();
+		}
+	}
+
+	public static interface SettingsFactory {
+		public Settings create();
 	}
 }

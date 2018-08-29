@@ -106,6 +106,11 @@ public abstract class FakeSettings extends Settings {
 	}
 
 	@Override
+	public void setSettingsLoadError(boolean settingsLoadError) {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
 	public boolean isUpdatable(final Date date) {
 		throw new UnsupportedOperationException("not implemented");
 	}
@@ -247,11 +252,6 @@ public abstract class FakeSettings extends Settings {
 
 	@Override
 	public void setWindowAlwaysOnTop(final boolean windowAlwaysOnTop) {
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	@Override
-	public String getPathSettings() {
 		throw new UnsupportedOperationException("not implemented");
 	}
 
