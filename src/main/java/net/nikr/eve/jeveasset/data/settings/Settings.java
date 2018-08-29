@@ -970,6 +970,7 @@ public class Settings {
 					wait();
 				} catch (InterruptedException ex) {
 
+				}
 			}
 		}
 	}
@@ -984,5 +985,4 @@ public class Settings {
 	public static interface SettingsFactory {
 		public Settings create();
 	}
-}
 }
