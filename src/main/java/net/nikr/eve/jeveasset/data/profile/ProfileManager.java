@@ -20,13 +20,16 @@
  */
 package net.nikr.eve.jeveasset.data.profile;
 
+import java.awt.Component;
 import net.nikr.eve.jeveasset.data.api.accounts.EveApiAccount;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.JOptionPane;
 import net.nikr.eve.jeveasset.SplashUpdater;
 import net.nikr.eve.jeveasset.data.api.accounts.EveKitOwner;
 import net.nikr.eve.jeveasset.data.api.accounts.OwnerType;
 import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
+import net.nikr.eve.jeveasset.i18n.GuiShared;
 import net.nikr.eve.jeveasset.io.local.ProfileReader;
 import net.nikr.eve.jeveasset.io.local.ProfileWriter;
 import net.nikr.eve.jeveasset.io.local.ProfileFinder;
@@ -41,6 +44,7 @@ public class ProfileManager {
 	private final List<EveApiAccount> accounts = new ArrayList<EveApiAccount>();
 	private final List<EveKitOwner> eveKitOwners = new ArrayList<EveKitOwner>();
 	private final List<EsiOwner> esiOwners = new ArrayList<EsiOwner>();
+	private boolean profileLoadError = false;
 	private Profile activeProfile;
 	private List<Profile> profiles = new ArrayList<Profile>();
 
@@ -102,12 +106,22 @@ public class ProfileManager {
 	public void loadActiveProfile() {
 	//Load Profile
 		LOG.info("Loading profile: {}", activeProfile.getName());
-		accounts.clear();
-		eveKitOwners.clear();
-		esiOwners.clear();
-		ProfileReader.load(this, activeProfile.getFilename()); //Assets (Must be loaded before the price data)
+		clear();
+		profileLoadError = !ProfileReader.load(this, activeProfile.getFilename()); //Assets (Must be loaded before the price data)
 		SplashUpdater.setProgress(40);
 	//Price data (update as needed)
 		SplashUpdater.setProgress(45);
+	}
+
+	public void showProfileLoadErrorWarning(Component parentComponent) {
+		if (profileLoadError) {
+			JOptionPane.showMessageDialog(parentComponent, GuiShared.get().errorLoadingProfileMsg(), GuiShared.get().errorLoadingProfileTitle(), JOptionPane.ERROR_MESSAGE);
+		}
+	}
+
+	public void clear() {
+		accounts.clear();
+		eveKitOwners.clear();
+		esiOwners.clear();
 	}
 }

@@ -180,6 +180,8 @@ public class ProfileDialog extends JDialogCentered {
 		jProfiles.updateUI();
 		//Update window title
 		program.getMainWindow().updateTitle();
+		//Warn on profile load error
+		program.getProfileManager().showProfileLoadErrorWarning(this.getDialog());
 		//Ask to clear filters - if needed
 		if (!program.getAssetsTab().isFiltersEmpty()) {
 			int value = JOptionPane.showConfirmDialog(this.getDialog(),

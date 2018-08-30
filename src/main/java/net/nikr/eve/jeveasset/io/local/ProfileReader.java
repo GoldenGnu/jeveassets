@@ -70,16 +70,24 @@ import org.w3c.dom.NodeList;
 
 public final class ProfileReader extends AbstractXmlReader<Boolean> {
 
-	private ProfileManager profileManager;
+	private final ProfileManager profileManager;
 
 	public static boolean load(ProfileManager profileManager, final String filename) {
-		ProfileReader reader = new ProfileReader();
-		reader.profileManager = profileManager;
-		return reader.read(filename, filename, XmlType.DYNAMIC_BACKUP);
+		ProfileReader reader = new ProfileReader(profileManager);
+		Boolean ok = reader.read(filename, filename, XmlType.DYNAMIC_BACKUP);
+		if (!ok) {
+			profileManager.clear();
+		}
+		return ok;
+	}
+
+	public ProfileReader(final ProfileManager profileManager) {
+		this.profileManager = profileManager;
 	}
 
 	@Override
 	protected Boolean parse(Element element) throws XmlException {
+		profileManager.clear(); //Clear before load (may happen more than once)
 		parseSettings(element, profileManager);
 		return true;
 	}
