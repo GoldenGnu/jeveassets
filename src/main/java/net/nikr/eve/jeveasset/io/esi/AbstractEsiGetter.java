@@ -102,6 +102,8 @@ public abstract class AbstractEsiGetter extends AbstractGetter<EsiOwner, ApiClie
 			addError(null, ex.getCode(), "Error Code: " + ex.getCode(), ex);
 		} catch (TaskCancelledException ex) {
 			logInfo(null, "Cancelled");
+		} catch (InvalidAuthException ex) {
+			addError(null, "REFRESH TOKEN INVALID", "Auth invalid\r\n(Fix: Options > Accounts... > Edit)");
 		} catch (Throwable ex) {
 			addError(null, ex.getMessage(), "Unknown Error: " + ex.getMessage(), ex);
 		}
@@ -132,13 +134,11 @@ public abstract class AbstractEsiGetter extends AbstractGetter<EsiOwner, ApiClie
 			return t;
 		} catch (ApiException ex) {
 			logError(updater.getStatus(), ex.getMessage(), ex.getMessage());
-			if (ex.getCode() == 400 && ex.getMessage().toLowerCase().contains("invalid_token")
-					&& (ex.getMessage().toLowerCase().contains("the refresh token is expired")
-					|| ex.getMessage().toLowerCase().contains("token is no longer valid"))) {
+			if (ex.getCode() == 401 && ex.getMessage().toLowerCase().contains("error") && ex.getMessage().toLowerCase().contains("authorization not provided")) {
 				if (owner != null) {
 					owner.setInvalid(true);
 				}
-				throw ex;
+				throw new InvalidAuthException();
 			} else if (ex.getCode() >= 500 && ex.getCode() < 600 //CCP error, Lets try again in a sec
 					&& ex.getCode() != 503 //Don't retry when it may be downtime
 					&& (ex.getCode() != 502 || ex.getMessage().toLowerCase().contains("no reply within 10 seconds")) //Don't retry when it may be downtime, unless it's "no reply within 10 seconds"
@@ -404,5 +404,9 @@ public abstract class AbstractEsiGetter extends AbstractGetter<EsiOwner, ApiClie
 		public int getMaxRetries() {
 			return maxRetries;
 		}
+	}
+
+	private static class InvalidAuthException extends RuntimeException {
+		
 	}
 }
