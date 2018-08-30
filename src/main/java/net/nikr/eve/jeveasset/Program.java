@@ -170,6 +170,7 @@ public class Program implements ActionListener {
 	private static int height = 0;
 
 	public Program() {
+
 		height = calcButtonsHeight();
 		if (debug) {
 			LOG.debug("Force Update: {} Force No Update: {}", forceUpdate, forceNoUpdate);
