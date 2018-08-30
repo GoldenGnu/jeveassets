@@ -152,7 +152,7 @@ public class Settings {
 	private final Map<String, Boolean> trackerFilters = new HashMap<String, Boolean>();
 	private boolean trackerSelectNew = true;
 //Runtime flags					Is not saved to file
-	private boolean settingsLoadError;
+	private boolean settingsLoadError = false;
 //Settings Dialog:				Saved by SettingsDialog.save()
 	//Lock OK
 	//Mixed boolean flags
