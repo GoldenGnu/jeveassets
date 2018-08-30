@@ -130,7 +130,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 
 	public static Settings load(final SettingsFactory settingsFactory, final String filename) {
 		SettingsReader reader = new SettingsReader(ReaderType.SETTINGS);
-		reader.setSettingsFactory(settingsFactory);;
+		reader.setSettingsFactory(settingsFactory);
 		Update updater = new Update();
 		try {
 			updater.performUpdates(SETTINGS_VERSION, filename);
@@ -143,6 +143,8 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		Settings settings = reader.getSettings();
 		if (!ok || settings == null) {
 			settings = settingsFactory.create();
+		}
+		if (!ok) {
 			settings.setSettingsLoadError(true);
 		}
 		return settings;
