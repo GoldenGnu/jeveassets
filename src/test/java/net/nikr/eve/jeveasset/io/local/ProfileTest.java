@@ -32,6 +32,7 @@ import net.nikr.eve.jeveasset.TestUtil;
 import net.nikr.eve.jeveasset.data.api.accounts.EveApiAccount;
 import net.nikr.eve.jeveasset.data.api.accounts.EveApiOwner;
 import net.nikr.eve.jeveasset.data.profile.ProfileManager;
+import static org.hamcrest.CoreMatchers.is;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -147,5 +148,16 @@ public class ProfileTest extends TestUtil {
 		test("data-2-5-0", true);
 		test("data-2-6-0", true, true);
 		test("data-2-7-0", true, true, true);
+	}
+
+	@Test
+	public void failTest() throws URISyntaxException {
+		ProfileManager profileManager = new ProfileManager();
+		String filename = getFilename("data-fail");
+		boolean load = ProfileReader.load(profileManager, filename);
+		assertThat(load, is(false));
+		assertThat(profileManager.getEsiOwners().isEmpty(), is(true));
+		assertThat(profileManager.getEveKitOwners().isEmpty(), is(true));
+		assertThat(profileManager.getAccounts().isEmpty(), is(true));
 	}
 }

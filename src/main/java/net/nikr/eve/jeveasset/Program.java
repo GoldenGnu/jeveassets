@@ -314,6 +314,7 @@ public class Program implements ActionListener {
 		if (Settings.get().isSettingsLoadError()) {
 			JOptionPane.showMessageDialog(mainWindow.getFrame(), GuiShared.get().errorLoadingSettingsMsg(), GuiShared.get().errorLoadingSettingsTitle(), JOptionPane.ERROR_MESSAGE);
 		}
+		profileManager.showProfileLoadErrorWarning(mainWindow.getFrame());
 		if (profileManager.getOwnerTypes().isEmpty()) {
 			LOG.info("Show Account Manager");
 			accountManagerDialog.setVisible(true);
