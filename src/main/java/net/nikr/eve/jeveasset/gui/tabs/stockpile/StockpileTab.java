@@ -695,6 +695,7 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 			}
 		}
 		stockpile.updateTotal();
+		stockpile.updateTags();
 	}
 
 	private void importText(StockpileImport stockpileImport) {
