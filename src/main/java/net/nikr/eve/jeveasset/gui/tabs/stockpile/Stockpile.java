@@ -112,10 +112,9 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 		createContainerName();
 		createLocationName();
 		createInclude();
-		updateTags();
 	}
 
-	private void updateTags() {
+	void updateTags() {
 		locationName = General.get().all();
 		for (StockpileItem item : items) {
 			item.updateTags();
@@ -485,7 +484,6 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 			this.typeID = typeID;
 			this.countMinimum = countMinimum;
 			this.id = id;
-			updateTags();
 		}
 
 		void update(StockpileItem stockpileItem) {
