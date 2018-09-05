@@ -138,7 +138,12 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 			String intellectualProperty = AttributeGetters.getString(currentNode, "intellectualproperty");
 			Date structuresNextUpdate = AttributeGetters.getDate(currentNode, "structuresnextupdate");
 			Date accountNextUpdate = AttributeGetters.getDate(currentNode, "accountnextupdate");
-			EsiCallbackURL callbackURL = EsiCallbackURL.valueOf(AttributeGetters.getString(currentNode, "callbackurl"));
+			EsiCallbackURL callbackURL;
+			try {
+				callbackURL = EsiCallbackURL.valueOf(AttributeGetters.getString(currentNode, "callbackurl"));
+			} catch (IllegalArgumentException ex) {
+				throw new XmlException(ex);
+			}
 			Set<RolesEnum> roles = EnumSet.noneOf(RolesEnum.class);
 			if (AttributeGetters.haveAttribute(currentNode, "characterroles")) {
 				for (String role : AttributeGetters.getString(currentNode, "characterroles").split(",")) {
