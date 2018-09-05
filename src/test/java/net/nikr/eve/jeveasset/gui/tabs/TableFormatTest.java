@@ -92,6 +92,7 @@ public class TableFormatTest extends TestUtil {
 		boolean setNull = false;
 		for (ConverterTestOptions options : ConverterTestOptionsGetter.getConverterOptions()) {
 			//Shared
+			Tags tags = new Tags();
 			EsiOwner owner = ConverterTestUtil.getEsiOwner(options);
 			Item item = new Item(INTEGER_VALUE, STRING_VALUE, STRING_VALUE, STRING_VALUE, LONG_VALUE, FLOAT_VALUE, INTEGER_VALUE, STRING_VALUE, BOOLEAN_VALUE, BOOLEAN_VALUE, INTEGER_VALUE, INTEGER_VALUE, INTEGER_VALUE);
 			MyLocation location = new MyLocation(LONG_VALUE, STRING_VALUE, LONG_VALUE, STRING_VALUE, LONG_VALUE, STRING_VALUE, STRING_VALUE);
@@ -167,6 +168,7 @@ public class TableFormatTest extends TestUtil {
 			stockpile.setOwnerName(Collections.singletonList(owner.getOwnerName()));
 			stockpile.setFlagName(Collections.singletonList(asset.getFlag()));
 			StockpileItem stockpileItem = new StockpileItem(stockpile, item, INTEGER_VALUE, DOUBLE_VALUE);
+			stockpileItem.setTags(tags);
 			for (StockpileTableFormat tableFormat : StockpileTableFormat.values()) {
 				test(tableFormat, tableFormat.getType(), tableFormat.getColumnValue(stockpileItem));
 			}
