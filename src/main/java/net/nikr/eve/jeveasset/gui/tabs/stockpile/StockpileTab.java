@@ -645,7 +645,7 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 				}
 				final int TYPE_ID = item.getItemTypeID();
 				double price = ApiIdConverter.getPrice(TYPE_ID, item.isBPC());
-				float volume = ApiIdConverter.getVolume(TYPE_ID, true);
+				float volume = ApiIdConverter.getVolume(item.getItem(), true);
 				item.updateValues(price, volume);
 				//ContractItems
 				if (stockpile.isContracts()) {

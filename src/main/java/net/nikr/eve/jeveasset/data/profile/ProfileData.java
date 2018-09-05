@@ -974,10 +974,6 @@ public class ProfileData {
 			for (MyAsset assetLoop : dup) {
 				assetLoop.setTypeCount(newCount);
 			}
-			//Packaged Volume
-			float volume = ApiIdConverter.getVolume(asset.getItem().getTypeID(), !asset.isSingleton());
-			asset.setVolume(volume);
-
 			//Add asset
 			if (asset.getTypeID() != 27) { //Ignore offices
 				addTo.add(asset);

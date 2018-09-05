@@ -66,6 +66,7 @@ public class MyAsset extends RawAsset implements Comparable<MyAsset>, InfoItem, 
 	private final Set<Long> owners;
 	private final boolean generated;
 	private final long count;
+	private final float volume;
 //Static values cache (set by constructor)
 	private String typeName;
 	private boolean bpo;
@@ -75,7 +76,6 @@ public class MyAsset extends RawAsset implements Comparable<MyAsset>, InfoItem, 
 	private String container = "";
 	private PriceData priceData;
 	private UserItem<Integer, Double> userPrice;
-	private float volume;
 	private long typeCount = 0;
 	private double priceReprocessed;
 	private MarketPriceData marketPriceData;
@@ -100,7 +100,6 @@ public class MyAsset extends RawAsset implements Comparable<MyAsset>, InfoItem, 
 		this.container = asset.container;
 		this.priceData = asset.priceData;
 		this.userPrice = asset.userPrice;
-		this.volume = asset.volume;
 		this.typeCount = asset.typeCount;
 		this.priceReprocessed = asset.priceReprocessed;
 		this.marketPriceData = asset.marketPriceData;
@@ -128,6 +127,7 @@ public class MyAsset extends RawAsset implements Comparable<MyAsset>, InfoItem, 
 		} else {
 			this.count = getQuantity();
 		}
+		this.volume = 0;
 		this.flagName = ApiIdConverter.getFlagName(ApiIdConverter.getFlag(0));
 		setItemID(0L);
 		setItemFlag(ApiIdConverter.getFlag(0));
@@ -141,7 +141,7 @@ public class MyAsset extends RawAsset implements Comparable<MyAsset>, InfoItem, 
 		this.item = item;
 		this.owner = owner;
 		this.parents = parents;
-		this.volume = item.getVolume();
+		this.volume = ApiIdConverter.getVolume(item, !rawAsset.isSingleton());
 		this.typeName = item.getTypeName();
 		this.name = item.getTypeName();
 		this.owners = Collections.singleton(owner.getOwnerID());
@@ -511,10 +511,6 @@ public class MyAsset extends RawAsset implements Comparable<MyAsset>, InfoItem, 
 	public void setUserPrice(final UserItem<Integer, Double> userPrice) {
 		this.userPrice = userPrice;
 		userPriceSet = (this.getUserPrice() != null);
-	}
-
-	public void setVolume(final float volume) {
-		this.volume = volume;
 	}
 
 	@Override
