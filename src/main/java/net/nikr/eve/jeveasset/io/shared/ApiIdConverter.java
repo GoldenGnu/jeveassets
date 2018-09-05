@@ -21,9 +21,7 @@
 package net.nikr.eve.jeveasset.io.shared;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import net.nikr.eve.jeveasset.data.api.accounts.OwnerType;
 import net.nikr.eve.jeveasset.data.api.my.MyAsset;
 import net.nikr.eve.jeveasset.data.sde.Item;
@@ -43,49 +41,8 @@ public final class ApiIdConverter {
 
 	private ApiIdConverter() { }
 
-	private static final Map<String, Float> PACKAGED_VOLUME = new HashMap<String, Float>();
 	private static final String EMPTY_STRING = "";
 	private static final String UNKNOWN_FLAG = "Unknown";
-
-	private static void buildVolume() {
-		PACKAGED_VOLUME.put("Assault Ship", 2500f);
-		PACKAGED_VOLUME.put("Battlecruiser", 15000f);
-		PACKAGED_VOLUME.put("Battleship", 50000f);
-		PACKAGED_VOLUME.put("Black Ops", 50000f);
-		PACKAGED_VOLUME.put("Capital Industrial Ship", 1000000f);
-		PACKAGED_VOLUME.put("Capsule", 500f);
-		PACKAGED_VOLUME.put("Carrier", 1000000f);
-		PACKAGED_VOLUME.put("Combat Recon Ship", 10000f);
-		PACKAGED_VOLUME.put("Command Ship", 15000f);
-		PACKAGED_VOLUME.put("Covert Ops", 2500f);
-		PACKAGED_VOLUME.put("Cruiser", 10000f);
-		PACKAGED_VOLUME.put("Destroyer", 5000f);
-		PACKAGED_VOLUME.put("Dreadnought", 1000000f);
-		PACKAGED_VOLUME.put("Electronic Attack Ship", 2500f);
-		PACKAGED_VOLUME.put("Elite Battleship", 50000f);
-		PACKAGED_VOLUME.put("Exhumer", 3750f);
-		PACKAGED_VOLUME.put("Force Recon Ship", 10000f);
-		PACKAGED_VOLUME.put("Freighter", 1000000f);
-		PACKAGED_VOLUME.put("Frigate", 2500f);
-		PACKAGED_VOLUME.put("Heavy Assault Ship", 10000f);
-		PACKAGED_VOLUME.put("Heavy Interdictor", 10000f);
-		PACKAGED_VOLUME.put("Industrial", 20000f);
-		PACKAGED_VOLUME.put("Industrial Command Ship", 500000f);
-		PACKAGED_VOLUME.put("Interceptor", 2500f);
-		PACKAGED_VOLUME.put("Interdictor", 5000f);
-		PACKAGED_VOLUME.put("Jump Freighter", 1000000f);
-		PACKAGED_VOLUME.put("Logistics", 10000f);
-		PACKAGED_VOLUME.put("Marauder", 50000f);
-		PACKAGED_VOLUME.put("Mining Barge", 3750f);
-		PACKAGED_VOLUME.put("Prototype Exploration Ship", 500f);
-		PACKAGED_VOLUME.put("Rookie ship", 2500f);
-		PACKAGED_VOLUME.put("Shuttle", 500f);
-		PACKAGED_VOLUME.put("Stealth Bomber", 2500f);
-		PACKAGED_VOLUME.put("Strategic Cruiser", 5000f);
-		PACKAGED_VOLUME.put("Supercarrier", 1000000f);
-		PACKAGED_VOLUME.put("Titan", 10000000f);
-		PACKAGED_VOLUME.put("Transport Ship", 20000f);
-	}
 
 	/*
 	public static String flag(final int flag, final MyAsset parentAsset) {
@@ -246,14 +203,10 @@ public final class ApiIdConverter {
 		return priceReprocessed;
 	}
 
-	public static float getVolume(final int typeID, final boolean packaged) {
-		Item item = StaticData.get().getItems().get(typeID);
+	public static float getVolume(final Item item, final boolean packaged) {
 		if (item != null) {
-			if (PACKAGED_VOLUME.isEmpty()) {
-				buildVolume();
-			}
-			if (packaged && PACKAGED_VOLUME.containsKey(item.getGroup())) {
-				return PACKAGED_VOLUME.get(item.getGroup());
+			if (packaged) {
+				return item.getPackagedVolume();
 			} else {
 				return item.getVolume();
 			}
