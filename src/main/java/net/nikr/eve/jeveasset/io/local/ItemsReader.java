@@ -74,6 +74,10 @@ public final class ItemsReader extends AbstractXmlReader<Boolean> {
 		String category = AttributeGetters.getString(node, "category");
 		long price = AttributeGetters.getLong(node, "price");
 		float volume = AttributeGetters.getFloat(node, "volume");
+		Float packagedVolume = AttributeGetters.getFloatOptional(node, "packagedvolume");
+		if (packagedVolume == null) {
+			packagedVolume = volume;
+		}
 		int meta = AttributeGetters.getInt(node, "meta");
 		String tech = AttributeGetters.getString(node, "tech");
 		boolean marketGroup = AttributeGetters.getBoolean(node, "marketgroup");
@@ -89,7 +93,7 @@ public final class ItemsReader extends AbstractXmlReader<Boolean> {
 		if (AttributeGetters.haveAttribute(node, "productquantity")) {
 			productQuantity = AttributeGetters.getInt(node, "productquantity");
 		}
-		return new Item(id, name, group, category, price, volume, meta, tech, marketGroup, piMaterial, portion, product, productQuantity);
+		return new Item(id, name, group, category, price, volume, packagedVolume, meta, tech, marketGroup, piMaterial, portion, product, productQuantity);
 	}
 
 	private void parseMaterials(final Element element, final Item item) throws XmlException {
