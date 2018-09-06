@@ -16,6 +16,18 @@
                   #### #  # #  # #  # #### #### #### #### ####
 
 ________________________________________________________________________________
+_5.7.3__________________________________________________________________________
+
+Bug Fixes:
+-All packed assets now have the correct volume (require latest data update)
+-Better handling of corrupted settings and profile files
+-Better handling of invalid ESI accounts (auth failures)
+-Settings not saved when adding items to the stockpiles
+
+Code:
+-Updated eve-esi to 2.3.5 (URL encoding fixed)
+
+________________________________________________________________________________
 _5.7.2__________________________________________________________________________
 
 Bug Fixes:
