@@ -617,7 +617,7 @@ public class TrackerTab extends JMainTabSecondary {
 			Settings.lock("Tracker: Check All");
 			Settings.get().setAskedCheckAllTracker(true);
 			Settings.unlock("Tracker: Check All");
-			Settings.saveSettings();
+			program.saveSettings("Tracker: Check All");
 			boolean isAll = true;
 			for (CheckBoxNode node : assetNodes.values()) {
 				if (!node.isSelected()) {
@@ -1163,7 +1163,7 @@ public class TrackerTab extends JMainTabSecondary {
 		}
 		Settings.get().setTrackerSelectNew(filterDialog.isSelectNew());
 		Settings.unlock("Tracker Filters: Update");
-		Settings.saveSettings();
+		program.saveSettings("Tracker Filters: Update");
 	}
 
 	private String getSelectedOwner(boolean all) {
