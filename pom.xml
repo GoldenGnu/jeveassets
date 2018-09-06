@@ -176,6 +176,7 @@
 									 server="linux227.unoeuro.com"
 									 userid="${ftp.user}"
 									 password="${ftp.pass}"
+									 passive="true"
 									 remotedir="eve.nikr.net/jeveassets/update" >
 									<fileset>
 										<include name="program/**"/>
@@ -185,6 +186,7 @@
 									 server="linux227.unoeuro.com"
 									 userid="${ftp.user}"
 									 password="${ftp.pass}"
+									 passive="true"
 									 remotedir="eve.nikr.net/jeveassets/update" >
 									<fileset>
 										<include name="program/**"/>
