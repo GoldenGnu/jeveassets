@@ -98,6 +98,7 @@ public enum Images {
 	LINK_LOOKUP ("link_lookup.png"),
 	LINK_CHRUKER ("link_chruker.png"),
 	LINK_FUZZWORK ("link_fuzzwork.png"),
+	LINK_ZKILLBOARD ("link_zkillboard.png"),
 
 	LOC_GROUPS ("loc_groups.png"),
 	LOC_STATION ("loc_station.png"),
