@@ -341,7 +341,15 @@ class FilterPanel<E> implements Comparable<FilterPanel<E>>{
 
 	@Override
 	public int compareTo(FilterPanel<E> o) {
-		return this.getGroup().compareTo(o.getGroup());
+		if (this.isAnd() && o.isAnd()) {
+			return 0;
+		} else if (this.isAnd()) {
+			return 1;
+		} else if (o.isAnd()) {
+			return -1;
+		} else {
+			return this.getGroup().compareTo(o.getGroup());
+		}
 	}
 
 	private void setDateString(Date date) {
