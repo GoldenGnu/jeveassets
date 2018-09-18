@@ -308,7 +308,7 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 			} else if (MenuLookupAction.EVE_REF.name().equals(e.getActionCommand())) {
 				Set<String> urls = new HashSet<String>();
 				for (int typeID : menuData.getTypeIDs()) {
-					urls.add("https://everef.net/type/" + typeID);
+					urls.add("https://everef.net/type/" + typeID+ "?utm_source=jeveassets");
 				}
 				DesktopUtil.browse(urls, program);
 			} else if (MenuLookupAction.FUZZWORK_BLUEPRINTS.name().equals(e.getActionCommand())) {
