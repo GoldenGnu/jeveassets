@@ -47,6 +47,7 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 		GAMES_CHRUKER,
 		FUZZWORK_ITEMS,
 		ZKILLBOARD,
+		EVE_REF,
 		FUZZWORK_BLUEPRINTS,
 		FUZZWORK_MARKET,
 		EVEMAPS_DOTLAN_STATION,
@@ -70,6 +71,7 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 	private final JMenuItem jFuzzworkItems;
 	private final JMenuItem jChruker;
 	private final JMenuItem jzKillboard;
+	private final JMenuItem jEveRef;
 	private final JMenuItem jEveInfo;
 	private final JMenu jIndustry;
 	private final JMenuItem jFuzzworkBlueprints;
@@ -171,6 +173,12 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 		jzKillboard.setActionCommand(MenuLookupAction.ZKILLBOARD.name());
 		jzKillboard.addActionListener(listener);
 		jItemDatabase.add(jzKillboard);
+
+		jEveRef = new JMenuItem(GuiShared.get().eveRef());
+		//jEveRef.setIcon(Images.LINK_EVE_REF.getIcon());
+		jEveRef.setActionCommand(MenuLookupAction.EVE_REF.name());
+		jEveRef.addActionListener(listener);
+		jItemDatabase.add(jEveRef);
 
 		jIndustry = new JMenu(GuiShared.get().industry());
 		jIndustry.setIcon(Images.TOOL_INDUSTRY_JOBS.getIcon());
@@ -295,6 +303,12 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 				Set<String> urls = new HashSet<String>();
 				for (int typeID : menuData.getTypeIDs()) {
 					urls.add("https://zkillboard.com/item/" + typeID + "/");
+				}
+				DesktopUtil.browse(urls, program);
+			} else if (MenuLookupAction.EVE_REF.name().equals(e.getActionCommand())) {
+				Set<String> urls = new HashSet<String>();
+				for (int typeID : menuData.getTypeIDs()) {
+					urls.add("https://everef.net/type/" + typeID);
 				}
 				DesktopUtil.browse(urls, program);
 			} else if (MenuLookupAction.FUZZWORK_BLUEPRINTS.name().equals(e.getActionCommand())) {

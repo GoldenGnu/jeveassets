@@ -62,6 +62,7 @@ public abstract class GuiShared extends Bundle {
 	public abstract String eveMarketer();
 	public abstract String eveMarkets();
 	public abstract String eveOnline();
+	public abstract String eveRef();
 	public abstract String foreground();
 	public abstract String fuzzworkBlueprints();
 	public abstract String fuzzworkItems();
