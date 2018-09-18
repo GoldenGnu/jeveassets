@@ -102,6 +102,7 @@ public abstract class AbstractEveKitGetter extends AbstractGetter<EveKitOwner, A
 		try {
 			checkCancelled();
 			final ApiClient client = new ApiClient();
+			client.setUserAgent(System.getProperty("http.agent"));
 			R r = updater.update(client);
 			logInfo(updater.getStatus(), "Updated");
 			String expiresHeader = getHeader(client.getResponseHeaders(), "Expires");
@@ -231,7 +232,7 @@ public abstract class AbstractEveKitGetter extends AbstractGetter<EveKitOwner, A
 
 	protected <K> List<K> updatePages(EveKitPagesHandler<K> handler) throws ApiException {
 		if (first) {
-			EveKitPageUpdater<K> updater = new EveKitPageUpdater<K>(handler, "", atAny(), null, 1);
+			EveKitPageUpdater<K> updater = new EveKitPageUpdater<K>(handler, "first", atAny(), null, 1);
 			List<K> results = updateApi(updater, 0);
 			if (results != null && !results.isEmpty()) {
 				Long l = handler.getLifeStart(results.get(0));
@@ -247,7 +248,7 @@ public abstract class AbstractEveKitGetter extends AbstractGetter<EveKitOwner, A
 			List<K> results = new ArrayList<K>();
 			List<K> batch = null;
 			int count = 0;
-			while (batch == null || !batch.isEmpty()) {
+			while (batch == null || batch.size() == 1000) {
 				count++;
 				EveKitPageUpdater<K> updater = new EveKitPageUpdater<K>(handler, count + " of ?", atFilter(at), getCid(handler, batch), Integer.MAX_VALUE);
 				batch = updateApi(updater, 0);
