@@ -23,6 +23,7 @@ package net.nikr.eve.jeveasset.io.evekit;
 import enterprises.orbital.evekit.client.ApiClient;
 import enterprises.orbital.evekit.client.ApiException;
 import enterprises.orbital.evekit.client.model.Location;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -74,6 +75,9 @@ public class EveKitLocationsGetter extends AbstractEveKitGetter implements EveKi
 	public List<Location> get(ApiClient apiClient, String at, Long contid, Integer maxResults) throws ApiException {
 		//Get all items matching itemID
 		iDs = getIDs(owner);
+		if (iDs.isEmpty()) {
+			return new ArrayList<>();
+		}
 		return getCommonApi(apiClient).getLocations(owner.getAccessKey(), owner.getAccessCred(), at, contid, maxResults, false,
 				valuesFilter(iDs.keySet()), null, null, null, null);
 	}
