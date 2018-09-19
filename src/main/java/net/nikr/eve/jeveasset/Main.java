@@ -187,10 +187,10 @@ public final class Main {
 		//lookAndFeel = "com.sun.java.swing.plaf.windows.WindowsLookAndFeel";
 		lookAndFeel = UIManager.getSystemLookAndFeelClassName(); //System
 		//lookAndFeel = UIManager.getCrossPlatformLookAndFeelClassName(); //Java
-		//lookAndFeel = "com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel"; //Nimbus
-		//lookAndFeel = "javax.swing.plaf.metal.MetalLookAndFeel";
-		//lookAndFeel = "com.sun.java.swing.plaf.gtk.GTKLookAndFeel"; //GTK
-		//lookAndFeel = "com.sun.java.swing.plaf.motif.MotifLookAndFeel";
+		//lookAndFeel = "javax.swing.plaf.nimbus.NimbusLookAndFeel"; //Nimbus
+		//lookAndFeel = "javax.swing.plaf.metal.MetalLookAndFeel"; //Metal
+		//lookAndFeel = "com.sun.java.swing.plaf.gtk.GTKLookAndFeel"; //GTK+
+		//lookAndFeel = "com.sun.java.swing.plaf.motif.MotifLookAndFeel"; //CDE/Motif
 		try {
 			UIManager.setLookAndFeel(lookAndFeel);
 		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ex) {
