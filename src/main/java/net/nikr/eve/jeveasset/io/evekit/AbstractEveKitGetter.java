@@ -165,7 +165,7 @@ public abstract class AbstractEveKitGetter extends AbstractGetter<EveKitOwner, A
 	}
 
 	protected final String industryJobsFilter() {
-		return encode("{ values: [\"1\", \"2\", \"3\"] }");
+		return encode("{ values: [1, 2, 3] }");
 	}
 
 	protected final String contractsFilter() {
@@ -173,12 +173,9 @@ public abstract class AbstractEveKitGetter extends AbstractGetter<EveKitOwner, A
 	}
 	
 
-	protected final <E> String valuesFilter(Set<E> ids) {
+	protected final <E extends Number> String valuesFilter(Set<E> ids) {
 		StringBuilder builder = new StringBuilder();
 		builder.append("{ values: [");
-		if (ids.isEmpty()) {
-			builder.append("\"\"");
-		}
 		boolean firstRun = true;
 		for (E id : ids) {
 			if (firstRun) {
@@ -186,9 +183,7 @@ public abstract class AbstractEveKitGetter extends AbstractGetter<EveKitOwner, A
 			} else {
 				builder.append(", ");
 			}
-			builder.append("\"");
 			builder.append(id);
-			builder.append("\"");
 		}
 		builder.append("] }");
 		return encode(builder.toString());
@@ -200,7 +195,7 @@ public abstract class AbstractEveKitGetter extends AbstractGetter<EveKitOwner, A
 		} else {
 			Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
 			calendar.add(Calendar.DAY_OF_MONTH, (-months * 30));
-			return encode("{ start: \"" + String.valueOf(calendar.getTime().getTime()) + "\", end: \"" + String.valueOf(Long.MAX_VALUE) + "\" }");
+			return encode("{ start: " + String.valueOf(calendar.getTime().getTime()) + ", end: " + String.valueOf(Long.MAX_VALUE) + " }");
 		}
 	}
 
@@ -209,9 +204,9 @@ public abstract class AbstractEveKitGetter extends AbstractGetter<EveKitOwner, A
 			return null;
 		}
 		StringBuilder builder = new StringBuilder();
-		builder.append("{ values: [\"");
+		builder.append("{ values: [");
 		builder.append(at);
-		builder.append("\"] }");
+		builder.append("] }");
 		return encode(builder.toString());
 	}
 
