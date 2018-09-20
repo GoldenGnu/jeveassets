@@ -76,7 +76,7 @@ import net.nikr.eve.jeveasset.gui.shared.filter.Filter.LogicType;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 
 
-class FilterPanel<E> implements Comparable<FilterPanel<E>>{
+class FilterPanel<E> implements Comparable<FilterPanel<E>> {
 
 	private enum FilterPanelAction {
 		FILTER, FILTER_TIMER, GROUP_TIMER, REMOVE
@@ -109,6 +109,7 @@ class FilterPanel<E> implements Comparable<FilterPanel<E>>{
 
 	private final Executor fades = Executors.newSingleThreadExecutor();
 	private boolean loading = false;
+	private boolean moving = false;
 
 	FilterPanel(final FilterGui<E> gui, final FilterControl<E> filterControl) {
 		this.gui = gui;
@@ -241,6 +242,7 @@ class FilterPanel<E> implements Comparable<FilterPanel<E>>{
 		layout.setHorizontalGroup(
 			layout.createSequentialGroup()
 				.addComponent(jEnabled, 30, 30, 30)
+				.addGap(0)
 				.addComponent(jLogic, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
 				.addComponent(jGroup, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
 				.addComponent(jColumn, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
@@ -275,7 +277,11 @@ class FilterPanel<E> implements Comparable<FilterPanel<E>>{
 		return this;
 	}
 
-	private Integer getGroup() {
+	boolean isMoving() {
+		return moving;
+	}
+
+	Integer getGroup() {
 		return groupModel.getNumber().intValue();
 	}
 
@@ -527,6 +533,7 @@ class FilterPanel<E> implements Comparable<FilterPanel<E>>{
 			} else {
 				updateGroupColor();
 				gui.updateGroupSize();
+				gui.update();
 			}
 		}
 	}
@@ -615,6 +622,7 @@ class FilterPanel<E> implements Comparable<FilterPanel<E>>{
 			if (!gui.fade(getThis())) {
 				return;
 			}
+			moving = true;
 			Fade fadeIn = new Fade(components, 100, Color.GRAY);
 			fadeIn.start(true);
 
@@ -646,6 +654,8 @@ class FilterPanel<E> implements Comparable<FilterPanel<E>>{
 			if (index == to) {
 				moveTimer.stop();
 				updateGroupColor();
+				moving = false;
+				gui.update();
 				synchronized (this) {
 					notifyAll();
 				}

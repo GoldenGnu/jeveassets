@@ -26,8 +26,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -231,7 +233,7 @@ class FilterGui<E> {
 		return matchers;
 	}
 
-	private void update() {
+	void update() {
 		update(true);
 	}
 
@@ -250,19 +252,28 @@ class FilterGui<E> {
 				.addGap(0)
 				.addComponent(jToolBarRight, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
 		);
-		verticalGroup
-				.addGroup(layout.createParallelGroup()
-					.addComponent(jToolBarLeft, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
-					.addComponent(jToolBarRight, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+		verticalGroup.addGroup(
+			layout.createParallelGroup()
+				.addComponent(jToolBarLeft, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+				.addComponent(jToolBarRight, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
 		);
 		//Filters
 		if (jShowFilters.isSelected()) {
 			if (sort) {
 				Collections.sort(filterPanels);
 			}
+			int group = -1;
 			for (FilterPanel<E> filterPanel : filterPanels) {
-				verticalGroup.addComponent(filterPanel.getPanel(), GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE);
+				if (!filterPanel.isMoving()) {
+					if (group > -1 && group != filterPanel.getGroup()) {
+						FilterPanelSeparator separator = new FilterPanelSeparator(group);
+						horizontalGroup.addComponent(separator.getPanel());
+						verticalGroup.addGap(0).addComponent(separator.getPanel(), GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE).addGap(0);
+					}
+					group = filterPanel.getGroup();
+				}
 				horizontalGroup.addComponent(filterPanel.getPanel());
+				verticalGroup.addComponent(filterPanel.getPanel(), GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE);
 			}
 		}
 		layout.setHorizontalGroup(horizontalGroup);
@@ -274,14 +285,15 @@ class FilterGui<E> {
 	}
 
 	void updateGroupSize() {
-		int size = 0;
+		Set<Integer> groups = new HashSet<>();
 		for (FilterPanel<E> filterPanel : filterPanels) {
 			if (!filterPanel.isAnd()) {
-				size++;
+				groups.add(filterPanel.getGroup());
 			}
 		}
+		int groupSize = groups.size() + 1;
 		for (FilterPanel<E> filterPanel : filterPanels) {
-			filterPanel.updateGroupSize(size);
+			filterPanel.updateGroupSize(groupSize);
 		}
 	}
 
