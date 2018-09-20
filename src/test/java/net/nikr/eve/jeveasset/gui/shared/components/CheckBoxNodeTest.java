@@ -41,7 +41,7 @@ public class CheckBoxNodeTest {
 	private CheckBoxNode c1;
 	private CheckBoxNode c2;
 	private CheckBoxNode c3;
-	private List<CheckBoxNode> all = new ArrayList<>();
+	private final List<CheckBoxNode> all = new ArrayList<>();
 	
 
 	@Test
@@ -278,6 +278,7 @@ public class CheckBoxNodeTest {
 		c1 = new CheckBoxNode(c, "c1", "c1", selected);
 		c2 = new CheckBoxNode(c, "c2", "c2", selected);
 		c3 = new CheckBoxNode(c, "c3", "c3", selected);
+		all.clear();
 		all.add(root);
 		all.add(a);
 		all.add(a1);
@@ -319,26 +320,5 @@ public class CheckBoxNodeTest {
 		assertThat(c2.isShown(), equalTo(true));
 		assertThat(c3.isSelected(), equalTo(selected));
 		assertThat(c3.isShown(), equalTo(true));
-	}
-
-	private void printTree() {
-		System.out.println(nodeToString(root));
-		System.out.println("  "+ nodeToString(a));
-		System.out.println("    "+ nodeToString(a1));
-		System.out.println("    "+ nodeToString(a2));
-		System.out.println("    "+ nodeToString(a3));
-		System.out.println("  "+ nodeToString(b));
-		System.out.println("    "+ nodeToString(b1));
-		System.out.println("    "+ nodeToString(b2));
-		System.out.println("    "+ nodeToString(b3));
-		System.out.println("  "+ nodeToString(c));
-		System.out.println("    "+ nodeToString(c1));
-		System.out.println("    "+ nodeToString(c2));
-		System.out.println("    "+ nodeToString(c3));
-	}
-
-	
-	private String nodeToString(CheckBoxNode root) {
-		return root.getNodeName() + " - show: " + root.isShown() + " selected:" + root.isSelected();
 	}
 }

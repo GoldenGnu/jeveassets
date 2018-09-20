@@ -159,29 +159,6 @@ public class BackwardCompatibilitySettings extends FakeSettings implements Setti
 		return name.replace("data-", "").replace("-", ".");
 	}
 
-	public void print() {
-		System.out.println("---");
-		System.out.println("Tested: " + getName());
-		int count = 0;
-		String s = "";
-		for (Function key : Function.values()) {
-			if (ok.get(key)) {
-				count++;
-			} else {
-				if (s.isEmpty()) {
-					s = "Use Default Settings: "+key.name();
-				} else {
-					s = s + ", " + key.name();
-				}
-			}
-		}
-		if (ok.get(Function.GET_TABLE_FILTERS)) { //GET_TABLE_FILTERS_KEY is optinal
-			count++;
-		}
-		System.out.println(s);
-		System.out.println(count + "/" + Function.values().length);
-	}
-
 	@Override
 	public ExportSettings getExportSettings() {
 		ok.put(Function.GET_EXPORT_SETTINGS, true);

@@ -410,7 +410,6 @@ public class AccountImportDialog extends JDialogCentered {
 			esiOwner = new EsiOwner();
 			try {
 				String code = new String(Base64.getUrlDecoder().decode(jImport.getText().trim()), "UTF-8");
-				System.out.println("code: " + code);
 				String[] codes = code.split(" ");
 				esiOwner.setCallbackURL(EsiCallbackURL.valueOf(codes[0]));
 				esiOwner.setRefreshToken(codes[1]);
