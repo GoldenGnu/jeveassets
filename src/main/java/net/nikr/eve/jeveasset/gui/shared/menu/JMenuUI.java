@@ -277,9 +277,12 @@ public class JMenuUI <T> extends MenuManager.JAutoMenu<T> {
 					return;
 				}
 				List<Owner> owners = new ArrayList<Owner>();
-				for (long ownerID : menuData.getOwnerIDs()) {
-					if (ownerID > 0) {
+				for (Long ownerID : menuData.getOwnerIDs()) {
+					if (ownerID != null && ownerID > 0) {
 						String name = Settings.get().getOwners().get(ownerID);
+						if (name == null) {
+							name = GuiShared.get().unknownOwner();
+						}
 						owners.add(new Owner(ownerID, name));
 					}
 				}
@@ -295,8 +298,10 @@ public class JMenuUI <T> extends MenuManager.JAutoMenu<T> {
 					} else {
 						return;
 					}
-				} else {
+				} else if (!owners.isEmpty()) {
 					owner = owners.get(0);
+				} else {
+					return;
 				}
 				getLockWindow().show(GuiShared.get().updating(), new EsiUpdate() {
 					@Override
