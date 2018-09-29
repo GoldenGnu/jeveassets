@@ -448,7 +448,6 @@ public class Program implements ActionListener {
 				}
 			});
 		}
-		boolean assetAddedDataChanged = false;
 		if (itemIDs != null) {
 			profileData.updateNames(itemIDs);
 		} else if (locationIDs != null) {
@@ -456,7 +455,7 @@ public class Program implements ActionListener {
 		} else if (typeIDs != null) {
 			profileData.updatePrice(typeIDs);
 		} else {
-			assetAddedDataChanged = profileData.updateEventLists();
+			profileData.updateEventLists();
 		}
 		if (locationIDs != null) { //Update locations
 			for (JMainTab jMainTab : mainWindow.getTabs()) {
@@ -525,9 +524,6 @@ public class Program implements ActionListener {
 				updateTableMenu();
 			}
 		});
-		if (assetAddedDataChanged) {
-			AssetAddedData.save("Added");
-		}
 	}
 
 	public static void ensureEDT(Runnable runnable) {

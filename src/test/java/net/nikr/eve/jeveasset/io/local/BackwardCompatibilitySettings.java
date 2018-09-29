@@ -132,12 +132,7 @@ public class BackwardCompatibilitySettings extends FakeSettings implements Setti
 					TrackerData.readUnlock();
 				}
 			case GET_ASSET_ADDED:
-				try {
-					AssetAddedData.readLock();
-					return !AssetAddedData.get().isEmpty();
-				} finally {
-					AssetAddedData.readUnlock();
-				}
+				return !AssetAddedData.isEmpty();
 			default:
 				return ok.get(function);
 		}

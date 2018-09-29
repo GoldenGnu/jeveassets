@@ -26,7 +26,6 @@ import java.net.Proxy;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import net.nikr.eve.jeveasset.data.settings.AssetAddedData;
 import net.nikr.eve.jeveasset.data.settings.ExportSettings;
 import net.nikr.eve.jeveasset.data.settings.PriceDataSettings;
 import net.nikr.eve.jeveasset.data.settings.ProxyData;
@@ -66,9 +65,6 @@ public class SettingsWriter extends AbstractXmlWriter {
 	public static boolean save(final Settings settings, final String filename) {
 		if (!new File(Settings.getPathTrackerData()).exists()) { //Make sure the tracker data is saved
 			TrackerData.save("Saving Settings", true);
-		}
-		if (!new File(Settings.getPathAssetAdded()).exists()) { //Make sure the asset added data is saved
-			AssetAddedData.save("Saving Settings", true);
 		}
 		SettingsWriter writer = new SettingsWriter();
 		return writer.write(settings, filename);

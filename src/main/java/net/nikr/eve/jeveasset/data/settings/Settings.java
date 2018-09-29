@@ -67,6 +67,7 @@ public class Settings {
 	private static final Logger LOG = LoggerFactory.getLogger(Settings.class);
 
 	private static final String PATH_ASSET_ADDED = "data" + File.separator + "added.json";
+	private static final String PATH_ASSET_ADDED_DATABASE = "data" + File.separator + "addedsql.db";
 	private static final String PATH_TRACKER_DATA = "data" + File.separator + "tracker.json";
 	private static final String PATH_SETTINGS = "data" + File.separator + "settings.xml";
 	private static final String PATH_ITEMS = "data" + File.separator + "items.xml";
@@ -279,6 +280,7 @@ public class Settings {
 			Path settingsFrom = Paths.get(Settings.getPathSettings());
 			Path trackerFrom = Paths.get(Settings.getPathTrackerData());
 			Path assetAddedFrom = Paths.get(Settings.getPathAssetAdded());
+			Path assetAddedDatabaseFrom = Paths.get(Settings.getPathAssetAddedDatabase());
 			Path citadelFrom = Paths.get(Settings.getPathCitadel());
 			Path priceFrom = Paths.get(Settings.getPathPriceData());
 			Path profilesFrom = Paths.get(Settings.getPathProfilesDirectory());
@@ -286,6 +288,7 @@ public class Settings {
 			Path settingsTo = Paths.get(Settings.getPathSettings());
 			Path trackerTo = Paths.get(Settings.getPathTrackerData());
 			Path assetAddedTo = Paths.get(Settings.getPathAssetAdded());
+			Path assetAddedDatabaseTo = Paths.get(Settings.getPathAssetAddedDatabase());
 			Path citadelTo = Paths.get(Settings.getPathCitadel());
 			Path priceTo = Paths.get(Settings.getPathPriceData());
 			Path profilesTo = Paths.get(Settings.getPathProfilesDirectory());
@@ -311,6 +314,15 @@ public class Settings {
 				LOG.info("Importing asset added");
 				try {
 					Files.copy(assetAddedFrom, assetAddedTo);
+					LOG.info("	OK");
+				} catch (IOException ex) {
+					LOG.info("	FAILED");
+				}
+			}
+			if (Files.exists(assetAddedDatabaseFrom) && !Files.exists(assetAddedDatabaseTo)) {
+				LOG.info("Importing asset added");
+				try {
+					Files.copy(assetAddedDatabaseFrom, assetAddedDatabaseTo);
 					LOG.info("	OK");
 				} catch (IOException ex) {
 					LOG.info("	FAILED");
@@ -818,6 +830,10 @@ public class Settings {
 
 	public static String getPathAssetAdded() {
 		return FileUtil.getLocalFile(Settings.PATH_ASSET_ADDED, !Program.isPortable());
+	}
+
+	public static String getPathAssetAddedDatabase() {
+		return FileUtil.getLocalFile(Settings.PATH_ASSET_ADDED_DATABASE, !Program.isPortable());
 	}
 
 	public static String getPathConquerableStations() {

@@ -425,7 +425,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		NodeList assetaddedNodes = element.getElementsByTagName("assetadded");
 		if (assetaddedNodes.getLength() == 1) {
 			Element assetaddedElement = (Element) assetaddedNodes.item(0);
-			parseAssetAdded(assetaddedElement, settings);
+			parseAssetAdded(assetaddedElement);
 		}
 
 		// Proxy can have 0 or 1 proxy elements; at 0, the proxy stays as null.
@@ -1387,13 +1387,15 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		}
 	}
 
-	private void parseAssetAdded(final Element element, final Settings settings) throws XmlException {
+	private void parseAssetAdded(final Element element) throws XmlException {
 		NodeList assetNodes = element.getElementsByTagName("asset");
+		Map<Long, Date> assetAdded = new HashMap<>();
 		for (int i = 0; i < assetNodes.getLength(); i++) {
 			Element currentNode = (Element) assetNodes.item(i);
 			Long itemID = AttributeGetters.getLong(currentNode, "itemid");
 			Date date = AttributeGetters.getDate(currentNode, "date");
-			AssetAddedData.put(itemID, date);
+			assetAdded.put(itemID, date);
 		}
+		AssetAddedData.set(assetAdded); //Import from settings.xml
 	}
 }

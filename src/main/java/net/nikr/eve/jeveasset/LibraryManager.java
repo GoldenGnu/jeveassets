@@ -141,6 +141,7 @@ public class LibraryManager {
 			files.add("hamcrest-core-1.3.jar");
 			files.add("oauth2-client-2.25.1.jar");
 			files.add("jaxb-api-2.3.0.jar");
+			files.add("sqlite-jdbc-3.23.1.jar");
 		}
 		return files;
 	}
