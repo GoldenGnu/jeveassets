@@ -20,37 +20,33 @@
  */
 package net.nikr.eve.jeveasset.io.local;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.File;
-import java.io.IOException;
+import java.net.URISyntaxException;
+import java.net.URL;
+import net.nikr.eve.jeveasset.TestUtil;
 import net.nikr.eve.jeveasset.data.settings.AssetAddedData;
-import net.nikr.eve.jeveasset.data.settings.Settings;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.junit.Assert;
+import org.junit.Test;
 
 
-public class AssetAddedWriter extends AbstractBackup {
+public class AssetAddedReaderTest extends TestUtil {
 
-	private static final Logger LOG = LoggerFactory.getLogger(AssetAddedWriter.class);
-
-	public static void save() {
-		AssetAddedWriter writer = new AssetAddedWriter();
-		writer.parse();
+	@Test
+	public void testAddedJson() {
+		TestAssetAddedReader.load();
+		Assert.assertTrue(!AssetAddedData.isEmpty());
 	}
 
-	private void parse() {
-		String filename = Settings.getPathAssetAdded();
-		File file = getNewFile(filename); //Save to .new file
-		ObjectMapper mapper = new ObjectMapper();
-		try {
-			lock(filename);
-			mapper.writeValue(file, AssetAddedData.get());
-			LOG.info("Asset added data saved");
-		} catch (IOException ex) {
-			LOG.error(ex.getMessage(), ex);
-		} finally {
-			backupFile(filename); //Rename .xml => .bac (.new is safe) and .new => .xml (.bac is safe). That way we always have at least one safe file
-			unlock(filename);
+	private static class TestAssetAddedReader extends AssetAddedReader {
+		public static void load() {
+			try {
+				TestAssetAddedReader assetAddedReader = new TestAssetAddedReader();
+				URL resource = BackwardCompatibilitySettings.class.getResource("/added.json");
+				String filename = new File(resource.toURI()).getAbsolutePath();
+				assetAddedReader.read(filename);
+			} catch (URISyntaxException ex) {
+				Assert.fail(ex.getMessage());
+			}
 		}
 	}
 }

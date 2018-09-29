@@ -39,11 +39,10 @@ public class AssetAddedReader extends AbstractBackup {
 
 	public static void load() {
 		AssetAddedReader reader = new AssetAddedReader();
-		reader.read();
+		reader.read(Settings.getPathAssetAdded());
 	}
 
-	private void read() {
-		String filename = Settings.getPathAssetAdded();
+	protected void read(String filename) {
 		File file = new File(filename);
 		if (!file.exists()) {
 			return;
@@ -54,14 +53,14 @@ public class AssetAddedReader extends AbstractBackup {
 			lock(filename);
 			Map<Long, Date> assetAddedData = mapper.readValue(file, new TypeReference<HashMap<Long, Date>>() {});
 			if (assetAddedData != null) {
-				AssetAddedData.set(assetAddedData);
+				AssetAddedData.set(assetAddedData); //Import from added.json
 				LOG.info("Asset added data loaded");
 			}
 		} catch (IOException ex) {
 			if (restoreNewFile(filename)) { //If possible restore from .new (Should be the newest)
-				read();
+				read(filename);
 			} else if (restoreBackupFile(filename)) { //If possible restore from .bac (Should be the oldest, but, still worth trying)
-				read();
+				read(filename);
 			} else { //Nothing left to try - throw error
 				restoreFailed(filename); //Backup error file
 				LOG.error(ex.getMessage(), ex);

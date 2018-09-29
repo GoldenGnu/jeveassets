@@ -463,7 +463,6 @@ public class Program implements ActionListener {
 				}
 			});
 		}
-		boolean assetAddedDataChanged = false;
 		if (itemIDs != null) {
 			profileData.updateNames(itemIDs);
 		} else if (locationIDs != null) {
@@ -475,7 +474,7 @@ public class Program implements ActionListener {
 			List<MyIndustryJob> oldIndustryJobs = new ArrayList<MyIndustryJob>(getIndustryJobsList()); //Copy
 			List<MyMarketOrder> oldMarketOrders = new ArrayList<MyMarketOrder>(getMarketOrdersList()); //Copy
 			List<MyAsset> oldAsset = new ArrayList<MyAsset>(getAssetList()); //Copy
-			assetAddedDataChanged = profileData.updateEventLists();
+			profileData.updateEventLists();
 			if (start != null) {
 				LogManager.createLog(oldContracts, oldIndustryJobs, oldMarketOrders, oldAsset, start, profileData);
 			}
@@ -547,9 +546,6 @@ public class Program implements ActionListener {
 				updateTableMenu();
 			}
 		});
-		if (assetAddedDataChanged) {
-			AssetAddedData.save("Added");
-		}
 	}
 
 	public static void ensureEDT(Runnable runnable) {
