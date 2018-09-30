@@ -16,6 +16,22 @@
                   #### #  # #  # #  # #### #### #### #### ####
 
 ________________________________________________________________________________
+_5.8.0__________________________________________________________________________
+
+New Features:
+-Improved Stockpile filters
+-Advanced Filters (OR groups)
+-Added zKillboard item database to the lookup menu
+-Added EVE Ref item database to the lookup menu
+
+Bug Fixes:
+-Crash: NPE in JMenuUI (BugID: 708)
+-Corporation market orders on characters in the isk/values/tracker tools
+
+Code:
+-Moved asset added data to SQLite
+
+________________________________________________________________________________
 _5.7.4__________________________________________________________________________
 
 Bug Fixes:
