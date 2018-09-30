@@ -39,7 +39,9 @@ public interface OwnerType extends Comparable<OwnerType> {
 
 	//Info
 	public String getOwnerName();
+	public String getCorporationName();
 	public void setOwnerName(String ownerName);
+	public void setCorporationName(String corporationName);
 	public long getOwnerID();
 	public void setOwnerID(long ownerID);
 	public boolean isCorporation();
