@@ -158,6 +158,7 @@ public final class ProfileWriter extends AbstractXmlWriter {
 	private void writeTypeOwner(final Document xmldoc, final Element node, final OwnerType owner) {
 		setAttribute(node, "id", owner.getOwnerID());
 		setAttribute(node, "name", owner.getOwnerName());
+		setAttributeOptional(node, "corp", owner.getCorporationName());
 		setAttribute(node, "show", owner.isShowOwner());
 		setAttributeOptional(node, "assetslastupdate", owner.getAssetLastUpdate());
 		setAttribute(node, "assetsnextupdate", owner.getAssetNextUpdate());

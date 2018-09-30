@@ -145,7 +145,12 @@ public class DataSetCreator {
 			profileData.getMarketOrdersEventList().getReadWriteLock().readLock().lock();
 			for (MyMarketOrder marketOrder : profileData.getMarketOrdersEventList()) {
 				if (marketOrder.isActive()) {
-					Value value = getValueInner(values, marketOrder.getOwnerName(), date);
+					Value value;
+					if (marketOrder.isCorp() && !marketOrder.isCorporation() && marketOrder.getOwner().getCorporationName() != null) {
+						value = getValueInner(values, marketOrder.getOwner().getCorporationName(), date);
+					} else {
+						value = getValueInner(values, marketOrder.getOwnerName(), date);
+					}
 					if (!marketOrder.isBuyOrder()) { //Sell Orders
 						value.addSellOrders(marketOrder.getPrice() * marketOrder.getVolumeRemain());
 						total.addSellOrders(marketOrder.getPrice() * marketOrder.getVolumeRemain());

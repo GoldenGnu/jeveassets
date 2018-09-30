@@ -43,6 +43,7 @@ import net.nikr.eve.jeveasset.io.evekit.EveKitContractItemsGetter;
 import net.nikr.eve.jeveasset.io.evekit.EveKitContractsGetter;
 import net.nikr.eve.jeveasset.io.evekit.EveKitIndustryJobsGetter;
 import net.nikr.eve.jeveasset.io.evekit.EveKitMarketOrdersGetter;
+import net.nikr.eve.jeveasset.io.evekit.EveKitOwnerGetter;
 import net.nikr.eve.jeveasset.io.evekit.EveKitShipGetter;
 import net.nikr.eve.jeveasset.io.online.CitadelGetter;
 import net.nikr.eve.jeveasset.io.shared.ThreadWoker;
@@ -122,6 +123,7 @@ public class EveKitTrackImportUpdateTask extends UpdateTask {
 				if (!haveData(date, owner)) {
 					EveKitOwner eveKitOwner = new EveKitOwner(owner.getAccessKey(), owner.getAccessCred(), owner.getExpire(), owner.getAccessMask(), owner.isCorporation(), owner.getLimit(), owner.getAccountName());
 					eveKitOwner.setOwnerName(owner.getOwnerName());
+					eveKitOwner.setCorporationName(owner.getCorporationName());
 					eveKitOwner.setOwnerID(owner.getOwnerID());
 					eveKitOwner.setShowOwner(true);
 					clones.add(eveKitOwner);
@@ -269,9 +271,21 @@ public class EveKitTrackImportUpdateTask extends UpdateTask {
 	private Date getLifeStart() {
 		setProgress(0);
 		List<EveKitOwner> clones = new ArrayList<EveKitOwner>();
+		List<EveKitOwnerGetter> ownerUpdates = new ArrayList<EveKitOwnerGetter>();
+		for (EveKitOwner owner : owners) { //Update owner data (like corporation name)
+			ownerUpdates.add(new EveKitOwnerGetter(this, owner));
+		}
+
+		ThreadWoker.start(this, ownerUpdates);
+
+		if (isCancelled()) { //No data return by the API OR Task is cancelled
+			return null;
+		}
+
 		for (EveKitOwner owner : owners) { //Find owners without data
 			EveKitOwner eveKitOwner = new EveKitOwner(owner.getAccessKey(), owner.getAccessCred(), owner.getExpire(), owner.getAccessMask(), owner.isCorporation(), owner.getLimit(), owner.getAccountName());
 			eveKitOwner.setOwnerName(owner.getOwnerName());
+			eveKitOwner.setCorporationName(owner.getCorporationName());
 			eveKitOwner.setOwnerID(owner.getOwnerID());
 			eveKitOwner.setShowOwner(true);
 			clones.add(eveKitOwner);

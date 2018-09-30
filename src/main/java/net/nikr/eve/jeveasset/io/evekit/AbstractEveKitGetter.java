@@ -169,9 +169,12 @@ public abstract class AbstractEveKitGetter extends AbstractGetter<EveKitOwner, A
 	}
 
 	protected final String contractsFilter() {
-		return encode("{ values: [\"InProgress\"] }");
+		return encode("{ values: [\"in_progress\", \"outstanding\"] }");
 	}
-	
+
+	protected final String marketOrdersFilter() {
+		return encode("{ values: [\"open\"] }");
+	}
 
 	protected final <E extends Number> String valuesFilter(Set<E> ids) {
 		StringBuilder builder = new StringBuilder();
@@ -214,9 +217,9 @@ public abstract class AbstractEveKitGetter extends AbstractGetter<EveKitOwner, A
 		return encode("{ any: true }");
 	}
 
-	protected String encode(String plane) {
+	protected String encode(String plain) {
 		try {
-			return URLEncoder.encode(plane, "UTF-8").replace("+", "%20");
+			return URLEncoder.encode(plain, "UTF-8").replace("+", "%20");
 		} catch (UnsupportedEncodingException ex) {
 			return null;
 		}

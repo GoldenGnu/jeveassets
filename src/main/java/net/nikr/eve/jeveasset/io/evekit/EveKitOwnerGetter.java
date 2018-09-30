@@ -41,7 +41,7 @@ public class EveKitOwnerGetter extends AbstractEveKitGetter implements AccountAd
 	}
 
 	public EveKitOwnerGetter(UpdateTask updateTask, EveKitOwner owner) {
-		super(updateTask, owner, false, owner.getAccountNextUpdate(), TaskType.OWNER, false, null);
+		super(updateTask, owner, owner.getCorporationName() == null, owner.getAccountNextUpdate(), TaskType.OWNER, false, null);
 	}
 
 	@Override
@@ -57,6 +57,7 @@ public class EveKitOwnerGetter extends AbstractEveKitGetter implements AccountAd
 		}
 		owner.setOwnerID(keyInfo.getEntityID());
 		owner.setOwnerName(keyInfo.getEntityName());
+		owner.setCorporationName(keyInfo.getCorpName());
 		owner.setCorporation(keyInfo.getKeyType().equals("corporation"));
 		owner.setAccessMask(keyInfo.getMask());
 		Long expiry = keyInfo.getExpiry();
