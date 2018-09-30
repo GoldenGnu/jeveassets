@@ -21,12 +21,15 @@
 
 package net.nikr.eve.jeveasset.gui.shared.filter;
 
+import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -70,11 +73,12 @@ class FilterGui<E> {
 
 	private final FilterControl<E> filterControl;
 
-	private final List<FilterPanel<E>> filterPanels = new ArrayList<FilterPanel<E>>();
+	private final List<FilterPanel<E>> filterPanels = new ArrayList<>();
 	private final FilterSave filterSave;
 	private final FilterManager<E> filterManager;
 
 	private final ExportDialog<E> exportDialog;
+	private boolean multiUpdate = false;
 
 	ListenerClass listener = new ListenerClass();
 
@@ -82,7 +86,7 @@ class FilterGui<E> {
 		this.jFrame = jFrame;
 		this.filterControl = filterControl;
 
-		exportDialog = new ExportDialog<E>(jFrame, filterControl.getName(), filterControl, filterControl, Collections.singletonList(filterControl.getExportEventList()), filterControl.getColumns());
+		exportDialog = new ExportDialog<>(jFrame, filterControl.getName(), filterControl, filterControl, Collections.singletonList(filterControl.getExportEventList()), filterControl.getColumns());
 
 		jPanel = new JPanel();
 
@@ -166,7 +170,7 @@ class FilterGui<E> {
 		add();
 
 		filterSave = new FilterSave(jFrame);
-		filterManager = new FilterManager<E>(jFrame, filterControl.getName(), this, filterControl.getFilters(), filterControl.getDefaultFilters());
+		filterManager = new FilterManager<>(jFrame, filterControl.getName(), this, filterControl.getFilters(), filterControl.getDefaultFilters());
 	}
 
 	JPanel getPanel() {
@@ -208,7 +212,7 @@ class FilterGui<E> {
 	}
 
 	List<Filter> getFilters(boolean includeDisabled) {
-		List<Filter> filters = new ArrayList<Filter>();
+		List<Filter> filters = new ArrayList<>();
 		for (FilterPanel<E> filterPanel : filterPanels) {
 			Filter filter = filterPanel.getFilter();
 			if (!filter.isEmpty() && (filter.isEnabled() || includeDisabled)) {
@@ -219,7 +223,7 @@ class FilterGui<E> {
 	}
 
 	private List<FilterMatcher<E>> getMatchers() {
-		List<FilterMatcher<E>> matchers = new ArrayList<FilterMatcher<E>>();
+		List<FilterMatcher<E>> matchers = new ArrayList<>();
 		for (FilterPanel<E> filterPanel : filterPanels) {
 			FilterMatcher<E> matcher = filterPanel.getMatcher();
 			if (!matcher.isEmpty()) {
@@ -229,7 +233,15 @@ class FilterGui<E> {
 		return matchers;
 	}
 
-	private void update() {
+	void update() {
+		update(true);
+	}
+
+	private void update(boolean sort) {
+		//Save focus owner
+		Component focusOwner = jFrame.getFocusOwner();
+		//Update group
+		updateGroupSize();
 		jPanel.removeAll();
 		GroupLayout.ParallelGroup horizontalGroup = layout.createParallelGroup();
 		GroupLayout.SequentialGroup verticalGroup = layout.createSequentialGroup();
@@ -240,34 +252,90 @@ class FilterGui<E> {
 				.addGap(0)
 				.addComponent(jToolBarRight, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
 		);
-		verticalGroup
-				.addGroup(layout.createParallelGroup()
-					.addComponent(jToolBarLeft, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
-					.addComponent(jToolBarRight, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+		verticalGroup.addGroup(
+			layout.createParallelGroup()
+				.addComponent(jToolBarLeft, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+				.addComponent(jToolBarRight, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
 		);
 		//Filters
 		if (jShowFilters.isSelected()) {
+			if (sort) {
+				Collections.sort(filterPanels);
+			}
+			int group = -1;
 			for (FilterPanel<E> filterPanel : filterPanels) {
-				verticalGroup.addComponent(filterPanel.getPanel());
+				if (!filterPanel.isMoving()) {
+					if (group > -1 && group != filterPanel.getGroup()) {
+						FilterPanelSeparator separator = new FilterPanelSeparator(group);
+						horizontalGroup.addComponent(separator.getPanel());
+						verticalGroup.addGap(0).addComponent(separator.getPanel(), GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE).addGap(0);
+					}
+					group = filterPanel.getGroup();
+				}
 				horizontalGroup.addComponent(filterPanel.getPanel());
+				verticalGroup.addComponent(filterPanel.getPanel(), GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE);
 			}
 		}
 		layout.setHorizontalGroup(horizontalGroup);
 		layout.setVerticalGroup(verticalGroup);
+		//Load focus owner
+		if (focusOwner != null) {
+			focusOwner.requestFocusInWindow();
+		}
+	}
+
+	void updateGroupSize() {
+		Set<Integer> groups = new HashSet<>();
+		for (FilterPanel<E> filterPanel : filterPanels) {
+			if (!filterPanel.isAnd()) {
+				groups.add(filterPanel.getGroup());
+			}
+		}
+		int groupSize = groups.size() + 1;
+		for (FilterPanel<E> filterPanel : filterPanels) {
+			filterPanel.updateGroupSize(groupSize);
+		}
+	}
+
+	int getFromIndex(FilterPanel<E> filterPanel) {
+		return filterPanels.indexOf(filterPanel);
+	}
+
+	int getToIndex(FilterPanel<E> filterPanel) {
+		List<FilterPanel<E>> list = new ArrayList<>(filterPanels);
+		Collections.sort(list);
+		return list.indexOf(filterPanel);
+	}
+
+	void move(FilterPanel<E> filterPanel, int index) {
+		filterPanels.remove(filterPanel);
+		filterPanels.add(index, filterPanel);
+		update(false);
+	}
+
+	boolean fade(FilterPanel<E> filterPanel) {
+		int index = filterPanels.indexOf(filterPanel);
+		List<FilterPanel<E>> list = new ArrayList<>(filterPanels);
+		Collections.sort(list);
+		return index != list.indexOf(filterPanel);
 	}
 
 	void remove(final FilterPanel<E> filterPanel) {
 		filterPanels.remove(filterPanel);
-		update();
+		if (!multiUpdate) {
+			update();
+		}
 	}
 
 	private void add() {
-		add(new FilterPanel<E>(this, filterControl));
+		add(new FilterPanel<>(this, filterControl));
 	}
 
 	private void add(final FilterPanel<E> filterPanel) {
 		filterPanels.add(filterPanel);
-		update();
+		if (!multiUpdate) {
+			update();
+		}
 	}
 
 	void addEmpty() {
@@ -283,10 +351,13 @@ class FilterGui<E> {
 	}
 
 	void clear() {
+		multiUpdate = true;
 		while (filterPanels.size() > 0) {
 			remove(filterPanels.get(0));
 		}
 		addEmpty();
+		multiUpdate = false;
+		update();
 		refilter();
 	}
 
@@ -305,9 +376,11 @@ class FilterGui<E> {
 	}
 
 	void setFilters(final List<Filter> filters) {
+		multiUpdate = true;
 		while (filterPanels.size() > 0) {
 			remove(filterPanels.get(0));
 		}
+		multiUpdate = false;
 		addFilters(filters);
 	}
 
@@ -316,13 +389,16 @@ class FilterGui<E> {
 	}
 
 	void addFilters(final List<Filter> filters) {
+		multiUpdate = true;
 		clearEmpty(); //Remove single empty filter...
 		for (Filter filter : filters) {
-			FilterPanel<E> filterPanel = new FilterPanel<E>(this, filterControl);
+			FilterPanel<E> filterPanel = new FilterPanel<>(this, filterControl);
 			filterPanel.setFilter(filter);
 			add(filterPanel);
 		}
 		addEmpty(); //Add single filter (if empty)
+		multiUpdate = false;
+		update();
 		refilter();
 	}
 
@@ -336,10 +412,10 @@ class FilterGui<E> {
 		jMenuItem.setRolloverEnabled(true);
 		jLoadFilter.add(jMenuItem);
 
-		List<String> filters = new ArrayList<String>(filterControl.getFilters().keySet());
+		List<String> filters = new ArrayList<>(filterControl.getFilters().keySet());
 		Collections.sort(filters, new CaseInsensitiveComparator());
 
-		List<String> defaultFilters = new ArrayList<String>(filterControl.getDefaultFilters().keySet());
+		List<String> defaultFilters = new ArrayList<>(filterControl.getDefaultFilters().keySet());
 		Collections.sort(defaultFilters, new CaseInsensitiveComparator());
 
 		if (!filters.isEmpty() || !defaultFilters.isEmpty()) {
@@ -382,7 +458,7 @@ class FilterGui<E> {
 		if (empty) {
 			filterControl.getFilterList().setMatcher(null);
 		} else {
-			filterControl.getFilterList().setMatcher(new FilterLogicalMatcher<E>(matchers));
+			filterControl.getFilterList().setMatcher(new FilterLogicalMatcher<>(matchers));
 		}
 
 		filterControl.afterFilter();
@@ -390,7 +466,7 @@ class FilterGui<E> {
 	}
 
 	String getFilterName() {
-		return filterSave.show(new ArrayList<String>(filterControl.getFilters().keySet()), new ArrayList<String>(filterControl.getDefaultFilters().keySet()));
+		return filterSave.show(new ArrayList<>(filterControl.getFilters().keySet()), new ArrayList<>(filterControl.getDefaultFilters().keySet()));
 	}
 
 	private class ListenerClass implements ActionListener {
@@ -418,7 +494,7 @@ class FilterGui<E> {
 				if (filters.isEmpty()) {
 					JOptionPane.showMessageDialog(jFrame, GuiShared.get().nothingToSave(), GuiShared.get().saveFilter(), JOptionPane.PLAIN_MESSAGE);
 				} else {
-					String name = filterSave.show(new ArrayList<String>(filterControl.getFilters().keySet()), new ArrayList<String>(filterControl.getDefaultFilters().keySet()));
+					String name = filterSave.show(new ArrayList<>(filterControl.getFilters().keySet()), new ArrayList<>(filterControl.getDefaultFilters().keySet()));
 					if (name != null && !name.isEmpty()) {
 						Settings.lock("Filter (New)"); //Lock for Filter (New)
 						filterControl.getFilters().put(name, filters);

@@ -224,6 +224,11 @@ public class EveKitOwner extends AbstractOwner implements OwnerType {
 	}
 
 	@Override
+	public boolean isDivisions() {
+		return (getAccessMask() & EveKitAccessMask.DIVISIONS.getAccessMask()) == EveKitAccessMask.DIVISIONS.getAccessMask();
+	}
+
+	@Override
 	public String getComparator() {
 		return "evekit" + getAccountName() + getAccessKey();
 	}

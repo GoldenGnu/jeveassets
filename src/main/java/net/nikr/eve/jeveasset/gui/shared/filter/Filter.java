@@ -289,26 +289,43 @@ public class Filter {
 		}
 	}
 
+	private final int group;
 	private final LogicType logic;
 	private final EnumTableColumn<?> column;
 	private final CompareType compare;
 	private final String text;
 	private final boolean enabled;
 
-	public Filter(final String logic, final EnumTableColumn<?> column, final String compare, final String text) {
-		this(LogicType.valueOf(logic), column, CompareType.valueOf(compare), text, true);
-	}
-
+	/**
+	 * Legacy support
+	 * @param logic
+	 * @param column
+	 * @param compare
+	 * @param text 
+	 */
 	public Filter(final LogicType logic, final EnumTableColumn<?> column, final CompareType compare, final String text) {
-		this(logic, column, compare, text, true);
+		this(1, logic, column, compare, text, true);
 	}
 
-	public Filter(final LogicType logic, final EnumTableColumn<?> column, final CompareType compare, final String text, final boolean enabled) {
+	public Filter(int group, final String logic, final EnumTableColumn<?> column, final String compare, final String text) {
+		this(group, LogicType.valueOf(logic), column, CompareType.valueOf(compare), text, true);
+	}
+
+	public Filter(int group, final LogicType logic, final EnumTableColumn<?> column, final CompareType compare, final String text, final boolean enabled) {
+		if (logic == LogicType.AND) {
+			this.group = 0;
+		} else {
+			this.group = group;
+		}
 		this.logic = logic;
 		this.column = column;
 		this.compare = compare;
 		this.text = text;
 		this.enabled = enabled;
+	}
+
+	public int getGroup() {
+		return group;
 	}
 
 	public EnumTableColumn<?> getColumn() {

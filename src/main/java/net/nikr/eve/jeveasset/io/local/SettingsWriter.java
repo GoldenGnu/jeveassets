@@ -26,7 +26,6 @@ import java.net.Proxy;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import net.nikr.eve.jeveasset.data.settings.AssetAddedData;
 import net.nikr.eve.jeveasset.data.settings.ExportSettings;
 import net.nikr.eve.jeveasset.data.settings.PriceDataSettings;
 import net.nikr.eve.jeveasset.data.settings.ProxyData;
@@ -66,9 +65,6 @@ public class SettingsWriter extends AbstractXmlWriter {
 	public static boolean save(final Settings settings, final String filename) {
 		if (!new File(Settings.getPathTrackerData()).exists()) { //Make sure the tracker data is saved
 			TrackerData.save("Saving Settings", true);
-		}
-		if (!new File(Settings.getPathAssetAdded()).exists()) { //Make sure the asset added data is saved
-			AssetAddedData.save("Saving Settings", true);
 		}
 		SettingsWriter writer = new SettingsWriter();
 		return writer.write(settings, filename);
@@ -268,6 +264,7 @@ public class SettingsWriter extends AbstractXmlWriter {
 				nameNode.appendChild(filterNode);
 				for (Filter filter :  filters.getValue()) {
 					Element childNode = xmldoc.createElementNS(null, "row");
+					childNode.setAttributeNS(null, "group", String.valueOf(filter.getGroup()));
 					childNode.setAttributeNS(null, "text", filter.getText());
 					childNode.setAttributeNS(null, "column",  filter.getColumn().name());
 					childNode.setAttributeNS(null, "compare", filter.getCompareType().name());
@@ -383,6 +380,7 @@ public class SettingsWriter extends AbstractXmlWriter {
 				locationNode.setAttributeNS(null, "buyingcontracts", String.valueOf(filter.isBuyingContracts()));
 				locationNode.setAttributeNS(null, "boughtcontracts", String.valueOf(filter.isBoughtContracts()));
 				locationNode.setAttributeNS(null, "exclude", String.valueOf(filter.isExclude()));
+				setAttributeOptional(locationNode, "singleton", filter.isSingleton());
 				locationNode.setAttributeNS(null, "inventory", String.valueOf(filter.isAssets()));
 				locationNode.setAttributeNS(null, "sellorders", String.valueOf(filter.isSellOrders()));
 				locationNode.setAttributeNS(null, "buyorders", String.valueOf(filter.isBuyOrders()));
@@ -395,9 +393,10 @@ public class SettingsWriter extends AbstractXmlWriter {
 					ownerNode.setAttributeNS(null, "ownerid", String.valueOf(ownerID));
 					locationNode.appendChild(ownerNode);
 				}
-				for (String container : filter.getContainers()) {
+				for (StockpileFilter.StockpileContainer container : filter.getContainers()) {
 					Element containerNode = xmldoc.createElementNS(null, "container");
-					containerNode.setAttributeNS(null, "container", container);
+					containerNode.setAttributeNS(null, "container", container.getContainer());
+					containerNode.setAttributeNS(null, "includecontainer", String.valueOf(container.isIncludeContainer()));
 					locationNode.appendChild(containerNode);
 				}
 				for (Integer flagID : filter.getFlagIDs()) {

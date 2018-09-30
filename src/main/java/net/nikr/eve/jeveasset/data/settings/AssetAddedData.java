@@ -20,165 +20,185 @@
  */
 package net.nikr.eve.jeveasset.data.settings;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
-import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.io.local.AssetAddedReader;
-import net.nikr.eve.jeveasset.io.local.AssetAddedWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
 public class AssetAddedData {
+
 	private static final Logger LOG = LoggerFactory.getLogger(AssetAddedData.class);
-	private static final Map<Long, Date> ASSET_ADDED = new HashMap<Long, Date>();
-	private static final ReentrantReadWriteLock LOCK = new ReentrantReadWriteLock();
-	private static final Object SAVE_QUEUE_SYNC = new Object();
-	private static Integer SAVE_QUEUE = 0;
-	
 
-	public static void readLock() {
-		LOCK.readLock().lock();
-	}
-
-	public static void readUnlock() {
-		LOCK.readLock().unlock();
-	}
-
-	public static void writeLock() {
-		LOCK.writeLock().lock();
-	}
-
-	public static void writeUnlock() {
-		LOCK.writeLock().unlock();
-	}
-
-	public static void waitForEmptySaveQueue() {
-		while (!saveQueueEmpty()) {
-			synchronized(SAVE_QUEUE_SYNC) {
-				try {
-					SAVE_QUEUE_SYNC.wait();
-				} catch (InterruptedException ex) {
-					//No problem
-				}
-			}
-		}
-	}
+	private static final String CONNECTION_URL = "jdbc:sqlite:" + Settings.getPathAssetAddedDatabase();
+	private static Map<Long, Date> insert = null;
+	private static Map<Long, Date> update = null;
 
 	public static void load() {
-		AssetAddedReader.load();
-	}
-
-	public static void save(String msg) {
-		save(msg, false);
-	}
-
-	public static void save(String msg, boolean wait) {
-		if (saveQueueIgnore()) {
-			return;
+		if (!tableExist()) { //New database: Import from added.json
+			AssetAddedReader.load();
 		}
-		saveQueueAdd();
-		Save save = new Save(msg);
-		save.start();
-		if (wait) {
-			try {
-				save.join();
-			} catch (InterruptedException ex) {
-				//No problem
+		if (!tableExist()) { //New database: Empty
+			createTable();
+		}
+	}
+
+	public static Date getAdd(Map<Long, Date> assetAdded, Long itemID, Date added) {
+		Date date = assetAdded.get(itemID);
+		if (date == null) { //Insert
+			date = added;
+			insertQueue(itemID, date);
+		}
+		if (date.after(added)) { //Update
+			date = added;
+			updateQueue(itemID, date);
+		}
+		return date;
+	}
+
+	private static void insertQueue(Long itemID, Date date) {
+		if (insert == null) {
+			insert = new HashMap<>();
+		}
+		insert.put(itemID, date);
+	}
+
+	private static void updateQueue(Long itemID, Date date) {
+		if (update == null) {
+			update = new HashMap<>();
+		}
+		update.put(itemID, date);
+	}
+
+	public static void commitQueue() {
+		insert(insert);
+		update(update);
+		update = null;
+		insert = null;
+	}
+
+	public static boolean isEmpty() {
+		String sql = "SELECT * FROM assetadded";
+		try (Connection connection = DriverManager.getConnection(CONNECTION_URL);
+				PreparedStatement statement = connection.prepareStatement(sql);
+				ResultSet rs = statement.executeQuery()) {
+			while (rs.next()) {
+				return false;
 			}
+		} catch (SQLException ex) {
+			LOG.error(ex.getMessage(), ex);
 		}
-	}
-
-	public static Map<Long, Date> get() {
-		if (Program.isDebug() && LOCK.getReadHoldCount() == 0 && LOCK.getWriteHoldCount() == 0) {
-			throw new RuntimeException("Asset Added not read locked");
-		}
-		return ASSET_ADDED;
-	}
-
-	public static Date getAdd(Long itemID, Date added) {
-		try {
-			LOCK.readLock().lock();
-			Date date = ASSET_ADDED.get(itemID);
-			if (date == null || date.after(added)) { //Add or Update
-				date = added;
-				ASSET_ADDED.put(itemID, date);
-			}
-			return date;
-		} finally {
-			LOCK.readLock().unlock();
-		}
-	}
-
-	public static boolean containsKey(Long itemID) {
-		try {
-			LOCK.readLock().lock();
-			return ASSET_ADDED.containsKey(itemID);
-		} finally {
-			LOCK.readLock().unlock();
-		}
-	}
-
-	public static void put(Long itemID, Date date) {
-		try {
-			LOCK.writeLock().lock();
-			ASSET_ADDED.put(itemID, date);
-		} finally {
-			LOCK.writeLock().unlock();
-		}
+		return true;
 	}
 
 	public static void set(Map<Long, Date> assetAdded) {
-		try {
-			LOCK.writeLock().lock();
-			ASSET_ADDED.clear();
-			ASSET_ADDED.putAll(assetAdded);
-		} finally {
-			LOCK.writeLock().unlock();
+		if (assetAdded == null || assetAdded.isEmpty() || tableExist()) {
+			return;
+		}
+		createTable();
+		insert(assetAdded);
+	}
+
+	private static void insert(Map<Long, Date> assetAdded) {
+		if (assetAdded == null || assetAdded.isEmpty()) {
+			return;
+		}
+		String sql = "INSERT INTO assetadded(itemid,date) VALUES(?,?)";
+		try (Connection connection = DriverManager.getConnection(CONNECTION_URL);
+				PreparedStatement statement = connection.prepareStatement(sql)) {
+			int i = 0;
+			connection.setAutoCommit(false);
+			for (Map.Entry<Long, Date> entry : assetAdded.entrySet()) {
+				statement.setLong(1, entry.getKey());
+				statement.setLong(2, entry.getValue().getTime());
+
+				statement.addBatch();
+				i++;
+				if (i % 1000 == 0 || i == assetAdded.size()) {
+					statement.executeBatch(); // Execute every 1000 items.
+				}
+			}
+			connection.commit();
+			connection.setAutoCommit(true);
+		} catch (SQLException ex) {
+			LOG.error(ex.getMessage(), ex);
 		}
 	}
 
-	private synchronized static boolean saveQueueIgnore() {
-		return SAVE_QUEUE > 1;
-	}
+	public static void update(Map<Long, Date> assetAdded) {
+		if (assetAdded == null || assetAdded.isEmpty()) {
+			return;
+		}
+		String sql = "UPDATE assetadded SET date = ? WHERE itemid = ?";
+		try (Connection connection = DriverManager.getConnection(CONNECTION_URL);
+				PreparedStatement statement = connection.prepareStatement(sql)) {
+			int i = 0;
+			connection.setAutoCommit(false);
+			for (Map.Entry<Long, Date> entry : assetAdded.entrySet()) {
+				statement.setLong(1, entry.getValue().getTime());
+				statement.setLong(2, entry.getKey());
 
-	private synchronized static void saveQueueAdd() {
-		SAVE_QUEUE++;
-		synchronized(SAVE_QUEUE_SYNC) {
-			SAVE_QUEUE_SYNC.notifyAll();
+				statement.addBatch();
+				i++;
+				if (i % 1000 == 0 || i == assetAdded.size()) {
+					statement.executeBatch(); // Execute every 1000 items.
+				}
+			}
+			connection.commit();
+			connection.setAutoCommit(true);
+		} catch (SQLException ex) {
+			LOG.error(ex.getMessage(), ex);
 		}
 	}
 
-	private synchronized static void saveQueueRemove() {
-		SAVE_QUEUE--;
-		synchronized(SAVE_QUEUE_SYNC) {
-			SAVE_QUEUE_SYNC.notifyAll();
+	public static Map<Long, Date> getAll() {
+		Map<Long, Date> map = new HashMap<>();
+		String sql = "SELECT * FROM assetadded";
+		try (Connection connection = DriverManager.getConnection(CONNECTION_URL);
+				PreparedStatement statement = connection.prepareStatement(sql);
+				ResultSet rs = statement.executeQuery();) {
+			while (rs.next()) {
+				map.put(rs.getLong("itemid"), new Date(rs.getLong("date")));
+			}
+			return map;
+		} catch (SQLException ex) {
+			LOG.error(ex.getMessage(), ex);
+		}
+		return null;
+	}
+
+	private static void createTable() {
+		String sql = "CREATE TABLE IF NOT EXISTS assetadded (\n"
+				+ "	itemid integer PRIMARY KEY,\n"
+				+ "	date integer NOT NULL\n"
+				+ ");";
+		try (Connection connection = DriverManager.getConnection(CONNECTION_URL);
+				Statement statement = connection.createStatement()) {
+			statement.execute(sql);
+		} catch (SQLException ex) {
+			LOG.error(ex.getMessage(), ex);
 		}
 	}
 
-	private synchronized static boolean saveQueueEmpty() {
-		return SAVE_QUEUE == 0;
-	}
-
-	private static class Save extends Thread {
-		private final String msg;
-
-		public Save(String msg) {
-			this.msg = msg;
+	private static boolean tableExist() {
+		String sql = "SELECT name FROM sqlite_master WHERE type='table' AND name='assetadded'";
+		try (Connection connection = DriverManager.getConnection(CONNECTION_URL);
+				Statement statement = connection.createStatement();
+				ResultSet rs = statement.executeQuery(sql)) {
+			while (rs.next()) {
+				return true;
+			}
+		} catch (SQLException ex) {
+			LOG.error(ex.getMessage(), ex);
 		}
-
-		@Override
-		public void run() {
-			long before = System.currentTimeMillis();
-
-			LOG.info("Saving asset added data: " + msg);
-			AssetAddedData.readLock();
-			AssetAddedWriter.save();
-			AssetAddedData.readUnlock();
-			saveQueueRemove();
-			LOG.debug("Asset added data saved in: " + (System.currentTimeMillis() - before) + "ms");
-		}
+		return false;
 	}
 }

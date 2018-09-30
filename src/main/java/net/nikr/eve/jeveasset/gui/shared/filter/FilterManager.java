@@ -85,7 +85,7 @@ public class FilterManager<E> extends JManageDialog {
 	protected void merge(final String name, final List<String> list) {
 		//Get filters to merge
 		Settings.lock("Filter (Merge)"); //Lock for Filter (Merge)
-		List<Filter> filter = new ArrayList<Filter>();
+		List<Filter> filter = new ArrayList<>();
 		for (String mergeName : list) {
 			for (Filter currentFilter : filters.get(mergeName)) {
 				if (!filter.contains(currentFilter)) {
@@ -112,6 +112,8 @@ public class FilterManager<E> extends JManageDialog {
 			//Each filter
 			for (Filter filter : filters.get(filterName)) {
 				builder.append("[");
+				builder.append(filter.getGroup());
+				builder.append("] [");
 				builder.append(filter.getLogic().name());
 				builder.append("] [");
 				builder.append(filter.getColumn().name());
@@ -133,20 +135,20 @@ public class FilterManager<E> extends JManageDialog {
 
 	private void importData(String oldText) {
 		String filterName = null;
-		List<Filter> filterList = new ArrayList<Filter>();
+		List<Filter> filterList = new ArrayList<>();
 		boolean headerLoaded = false;
 		boolean filtersSaved = false;
 		String importText = jTextDialog.importText(oldText);
 		if (importText == null) {
 			return;
 		}
-		List<String> groups = new ArrayList<String>();
+		List<String> groups = new ArrayList<>();
 		for (String line : importText.split("[\r\n]+")) {
 			groups.clear(); //Clear old data
 			
 			//For each [*]
-			Pattern group = Pattern.compile("\\[([^\\]]|\\]\\])*\\]"); //	\[([^\]]|\]\])*\]	A([^B]|BB)*B
-			Matcher m = group.matcher(line);
+			Pattern pattern = Pattern.compile("\\[([^\\]]|\\]\\])*\\]"); //	\[([^\]]|\]\])*\]	A([^B]|BB)*B
+			Matcher m = pattern.matcher(line);
 			while (m.find()) {
 				groups.add(m.group());
 			}
@@ -155,12 +157,12 @@ public class FilterManager<E> extends JManageDialog {
 				if (headerLoaded) { //Save previous filter
 					filtersSaved = saveFilter(filterName, filterList) || filtersSaved;
 				}
-				filterList = new ArrayList<Filter>(); //New list (as the list is passed to "filters")
+				filterList = new ArrayList<>(); //New list (as the list is passed to "filters")
 				filterName = unwrap(groups.get(1));
 				headerLoaded = true;
 			}
 			//Filter
-			if (groups.size() == 4 && headerLoaded) {
+			if (groups.size() == 4 && headerLoaded) { //backward compatibility (5.7.X and bellow)
 				//Logic
 				Filter.LogicType logic = null;
 				try {
@@ -190,6 +192,46 @@ public class FilterManager<E> extends JManageDialog {
 				}
 				if (logic != null && column != null && compare != null && (text != null || compareColumn != null)) {
 					Filter filter = new Filter(logic, column, compare, text);
+					filterList.add(filter);
+				}
+			}
+			if (groups.size() == 5 && headerLoaded) {
+				//Group
+				Integer group = null;
+				try {
+					group = Integer.valueOf(unwrap(groups.get(0)));
+				} catch (IllegalArgumentException ex) {
+					//Already null;
+				}
+				//Logic
+				Filter.LogicType logic = null;
+				try {
+					logic = Filter.LogicType.valueOf(unwrap(groups.get(1)));
+				} catch (IllegalArgumentException ex) {
+					//Already null;
+				}
+				//Column
+				EnumTableColumn<?> column = SettingsReader.getColumn(unwrap(groups.get(2)), toolName);
+
+				//Compare
+				Filter.CompareType compare = null;
+				try {
+					compare = Filter.CompareType.valueOf(unwrap(groups.get(3)));
+				} catch (IllegalArgumentException ex) {
+					//Already null;
+				}
+				String text = null;
+				EnumTableColumn<?> compareColumn = null;
+				if (Filter.CompareType.isColumnCompare(compare)) {
+					compareColumn = SettingsReader.getColumn(unwrap(groups.get(4)), toolName);
+					if (compareColumn != null) { //Valid
+						text = unwrap(groups.get(3));
+					}
+				} else {
+					text = unwrap(groups.get(3));
+				}
+				if (group != null && logic != null && column != null && compare != null && (text != null || compareColumn != null)) {
+					Filter filter = new Filter(group, logic, column, compare, text, true);
 					filterList.add(filter);
 				}
 			}
@@ -265,7 +307,7 @@ public class FilterManager<E> extends JManageDialog {
 
 
 	public final void updateFilters() {
-		update(new ArrayList<String>(filters.keySet()));
+		update(new ArrayList<>(filters.keySet()));
 		gui.updateFilters();
 	}
 

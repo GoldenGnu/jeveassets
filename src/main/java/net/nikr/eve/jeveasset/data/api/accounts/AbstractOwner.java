@@ -41,14 +41,16 @@ import net.nikr.eve.jeveasset.data.settings.Settings;
 
 public abstract class AbstractOwner implements OwnerType, Comparable<OwnerType> {
 
-	private List<MyAccountBalance> accountBalances = new ArrayList<MyAccountBalance>();
-	private Set<MyMarketOrder> marketOrders = new HashSet<MyMarketOrder>();
-	private Set<MyTransaction> transactions = new HashSet<MyTransaction>();
-	private Set<MyJournal> journal = new HashSet<MyJournal>();
-	private List<MyIndustryJob> industryJobs = new ArrayList<MyIndustryJob>();
-	private Map<MyContract, List<MyContractItem>> contracts = new HashMap<MyContract, List<MyContractItem>>();
-	private List<MyAsset> assets = new ArrayList<MyAsset>();
-	private Map<Long, RawBlueprint> blueprints = new HashMap<Long, RawBlueprint>();
+	private List<MyAccountBalance> accountBalances = new ArrayList<>();
+	private Set<MyMarketOrder> marketOrders = new HashSet<>();
+	private Set<MyTransaction> transactions = new HashSet<>();
+	private Set<MyJournal> journal = new HashSet<>();
+	private List<MyIndustryJob> industryJobs = new ArrayList<>();
+	private Map<MyContract, List<MyContractItem>> contracts = new HashMap<>();
+	private List<MyAsset> assets = new ArrayList<>();
+	private Map<Long, RawBlueprint> blueprints = new HashMap<>();
+	private Map<Integer, String> walletDivisions = new HashMap<>();
+	private Map<Integer, String> assetDivisions = new HashMap<>();
 
 	private String ownerName;
 	private String corporationName = null;
@@ -356,6 +358,26 @@ public abstract class AbstractOwner implements OwnerType, Comparable<OwnerType> 
 	@Override
 	public final void setAccountBalances(List<MyAccountBalance> accountBalances) {
 		this.accountBalances = accountBalances;
+	}
+
+	@Override
+	public Map<Integer, String> getWalletDivisions() {
+		return walletDivisions;
+	}
+
+	@Override
+	public void setWalletDivisions(Map<Integer, String> walletDivisions) {
+		this.walletDivisions = walletDivisions;
+	}
+
+	@Override
+	public Map<Integer, String> getAssetDivisions() {
+		return assetDivisions;
+	}
+
+	@Override
+	public void setAssetDivisions(Map<Integer, String> assetDivisions) {
+		this.assetDivisions = assetDivisions;
 	}
 
 	@Override

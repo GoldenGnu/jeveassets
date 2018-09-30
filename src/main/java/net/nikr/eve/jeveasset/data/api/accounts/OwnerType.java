@@ -64,6 +64,8 @@ public interface OwnerType extends Comparable<OwnerType> {
 	public Map<MyContract, List<MyContractItem>> getContracts();
 	public List<MyAsset> getAssets();
 	public Map<Long, RawBlueprint> getBlueprints();
+	public Map<Integer, String> getWalletDivisions();
+	public Map<Integer, String> getAssetDivisions();
 	public void setBlueprints(Map<Long, RawBlueprint> blueprints);
 	public void setIndustryJobs(final List<MyIndustryJob> industryJobs);
 	public void setTransactions(final Set<MyTransaction> transactions);
@@ -72,6 +74,8 @@ public interface OwnerType extends Comparable<OwnerType> {
 	public void setContracts(final Map<MyContract, List<MyContractItem>> contracts);
 	public void setAssets(final List<MyAsset> assets);
 	public void setAccountBalances(List<MyAccountBalance> accountBalances);
+	public void setWalletDivisions(Map<Integer, String> walletDivisions);
+	public void setAssetDivisions(Map<Integer, String> assetDivisions);
 	//Account Mask
 	public boolean isCharacter();
 	public boolean isAssetList();
@@ -87,6 +91,7 @@ public interface OwnerType extends Comparable<OwnerType> {
 	public boolean isShip();
 	public boolean isOpenWindows();
 	public boolean isAutopilot();
+	public boolean isDivisions();
 	//Last Update
 	public Date getAssetLastUpdate();
 	public Date getBalanceLastUpdate();

@@ -107,7 +107,7 @@ public class Program implements ActionListener {
 		TIMER
 	}
 	//Major.Minor.Bugfix [Release Candidate n] [BETA n] [DEV BUILD #n];
-	public static final String PROGRAM_VERSION = "5.7.5 DEV BUILD 1";
+	public static final String PROGRAM_VERSION = "5.8.0";
 	public static final String PROGRAM_NAME = "jEveAssets";
 	public static final String PROGRAM_HOMEPAGE = "https://eve.nikr.net/jeveasset";
 	public static final boolean PROGRAM_DEV_BUILD = false;
@@ -448,7 +448,6 @@ public class Program implements ActionListener {
 				}
 			});
 		}
-		boolean assetAddedDataChanged = false;
 		if (itemIDs != null) {
 			profileData.updateNames(itemIDs);
 		} else if (locationIDs != null) {
@@ -456,7 +455,7 @@ public class Program implements ActionListener {
 		} else if (typeIDs != null) {
 			profileData.updatePrice(typeIDs);
 		} else {
-			assetAddedDataChanged = profileData.updateEventLists();
+			profileData.updateEventLists();
 		}
 		if (locationIDs != null) { //Update locations
 			for (JMainTab jMainTab : mainWindow.getTabs()) {
@@ -525,9 +524,6 @@ public class Program implements ActionListener {
 				updateTableMenu();
 			}
 		});
-		if (assetAddedDataChanged) {
-			AssetAddedData.save("Added");
-		}
 	}
 
 	public static void ensureEDT(Runnable runnable) {

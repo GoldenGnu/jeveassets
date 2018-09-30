@@ -164,9 +164,9 @@ public class TableFormatTest extends TestUtil {
 				test(tableFormat, tableFormat.getType(), tableFormat.getColumnValue(reprocessedItem));
 			}
 			//StockpileItem
-			Stockpile stockpile = new Stockpile(STRING_VALUE, new ArrayList<Stockpile.StockpileFilter>(), DOUBLE_VALUE);
+			Stockpile stockpile = new Stockpile(STRING_VALUE, new ArrayList<>(), DOUBLE_VALUE);
 			stockpile.setOwnerName(Collections.singletonList(owner.getOwnerName()));
-			stockpile.setFlagName(Collections.singletonList(asset.getFlag()));
+			stockpile.setFlagName(Collections.singleton(asset.getItemFlag()));
 			StockpileItem stockpileItem = new StockpileItem(stockpile, item, INTEGER_VALUE, DOUBLE_VALUE);
 			stockpileItem.setTags(tags);
 			for (StockpileTableFormat tableFormat : StockpileTableFormat.values()) {
@@ -187,7 +187,7 @@ public class TableFormatTest extends TestUtil {
 			for (ValueTableFormat tableFormat : ValueTableFormat.values()) {
 				test(tableFormat, tableFormat.getType(), tableFormat.getColumnValue(value));
 			}
-			TreeAsset treeAsset = new TreeAsset(asset, TreeAsset.TreeType.CATEGORY, new ArrayList<TreeAsset>(), STRING_VALUE, BOOLEAN_VALUE);
+			TreeAsset treeAsset = new TreeAsset(asset, TreeAsset.TreeType.CATEGORY, new ArrayList<>(), STRING_VALUE, BOOLEAN_VALUE);
 			for (TreeTableFormat tableFormat : TreeTableFormat.values()) {
 				test(tableFormat, tableFormat.getType(), tableFormat.getColumnValue(treeAsset));
 			}

@@ -564,6 +564,4 @@ public abstract class FakeSettings extends Settings {
 	public boolean isAskedCheckAllTracker() {
 		throw new UnsupportedOperationException("not implemented");
 	}
-
-	
 }

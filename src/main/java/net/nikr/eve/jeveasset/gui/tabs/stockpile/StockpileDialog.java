@@ -25,6 +25,7 @@ import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.FilterList;
 import ca.odell.glazedlists.TextFilterator;
 import ca.odell.glazedlists.matchers.Matcher;
+import ca.odell.glazedlists.matchers.TextMatcherEditor;
 import ca.odell.glazedlists.swing.AutoCompleteSupport;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
@@ -51,6 +52,7 @@ import javax.swing.GroupLayout.ParallelGroup;
 import javax.swing.GroupLayout.SequentialGroup;
 import javax.swing.Icon;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
@@ -64,6 +66,9 @@ import javax.swing.SwingConstants;
 import javax.swing.ToolTipManager;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.text.JTextComponent;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.api.accounts.EveApiOwner;
 import net.nikr.eve.jeveasset.data.api.accounts.OwnerType;
@@ -79,6 +84,7 @@ import net.nikr.eve.jeveasset.gui.shared.CaseInsensitiveComparator;
 import net.nikr.eve.jeveasset.gui.shared.Colors;
 import net.nikr.eve.jeveasset.gui.shared.DocumentFactory;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
+import net.nikr.eve.jeveasset.gui.shared.components.JCopyPopup;
 import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
 import net.nikr.eve.jeveasset.gui.shared.components.JDoubleField;
 import net.nikr.eve.jeveasset.gui.shared.components.JDropDownButton;
@@ -87,6 +93,8 @@ import net.nikr.eve.jeveasset.gui.shared.components.ListComboBoxModel;
 import net.nikr.eve.jeveasset.gui.shared.table.EventListManager;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileFilter;
+import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileFilter.StockpileContainer;
+import net.nikr.eve.jeveasset.i18n.DataModelAsset;
 import net.nikr.eve.jeveasset.i18n.TabsStockpile;
 
 
@@ -104,6 +112,7 @@ public class StockpileDialog extends JDialogCentered {
 		ADD_OWNER,
 		ADD_FLAG,
 		ADD_CONTAINER,
+		ADD_SINGLETON,
 		REMOVE,
 		CLONE,
 		CHANGE_LOCATION_TYPE
@@ -114,7 +123,7 @@ public class StockpileDialog extends JDialogCentered {
 	private final JTextField jName;
 	private final JDoubleField jMultiplier;
 	private final JButton jOK;
-	private final List<LocationPanel> locationPanels = new ArrayList<LocationPanel>();
+	private final List<LocationPanel> locationPanels = new ArrayList<>();
 	private final JPanel jFiltersPanel;
 	private final JLabel jWarning;
 
@@ -135,18 +144,18 @@ public class StockpileDialog extends JDialogCentered {
 		super(program, TabsStockpile.get().addStockpileTitle(), Images.TOOL_STOCKPILE.getImage());
 	//Data
 		//Flags - static
-		itemFlags = new ArrayList<ItemFlag>(StaticData.get().getItemFlags().values());
+		itemFlags = new ArrayList<>(StaticData.get().getItemFlags().values());
 		Collections.sort(itemFlags);
 		//Locations - not static
 		stations = new EventListManager<MyLocation>().create();
 		systems = new EventListManager<MyLocation>().create();
 		regions = new EventListManager<MyLocation>().create();
 		//Owners - not static
-		owners = new ArrayList<OwnerType>();
+		owners = new ArrayList<>();
 		//myLocations - not static
-		myLocations = new HashSet<String>();
+		myLocations = new HashSet<>();
 		//Containers - not static
-		containers = new ArrayList<String>();
+		containers = new ArrayList<>();
 
 		ListenerClass listener = new ListenerClass();
 	//Name
@@ -247,7 +256,7 @@ public class StockpileDialog extends JDialogCentered {
 		//Name
 		String name = jName.getText();
 		//Filters
-		List<StockpileFilter> stockpileFilters = new ArrayList<StockpileFilter>();
+		List<StockpileFilter> stockpileFilters = new ArrayList<>();
 		for (LocationPanel locationPanel : locationPanels) {
 			stockpileFilters.add(locationPanel.getFilter());
 		}
@@ -317,7 +326,7 @@ public class StockpileDialog extends JDialogCentered {
 
 	Stockpile showRename(final Stockpile stockpile) {
 		clear();
-		cloneStockpile = stockpile.clone();
+		cloneStockpile = stockpile.deepClone();
 		//Title
 		this.getDialog().setTitle(TabsStockpile.get().renameStockpileTitle());
 		//Load
@@ -333,7 +342,7 @@ public class StockpileDialog extends JDialogCentered {
 
 	Stockpile showClone(final Stockpile stockpile) {
 		clear();
-		cloneStockpile = stockpile.clone();
+		cloneStockpile = stockpile.deepClone();
 		//Title
 		this.getDialog().setTitle(TabsStockpile.get().cloneStockpileTitle());
 		//Load
@@ -399,9 +408,9 @@ public class StockpileDialog extends JDialogCentered {
 
 	void updateData() {
 		//Locations
-		List<MyLocation> stationList = new ArrayList<MyLocation>();
-		List<MyLocation> systemList = new ArrayList<MyLocation>();
-		List<MyLocation> regionList = new ArrayList<MyLocation>();
+		List<MyLocation> stationList = new ArrayList<>();
+		List<MyLocation> systemList = new ArrayList<>();
+		List<MyLocation> regionList = new ArrayList<>();
 		for (MyLocation location : StaticData.get().getLocations()) {
 			if (location.isStation()) {
 				stationList.add(location);
@@ -440,7 +449,7 @@ public class StockpileDialog extends JDialogCentered {
 		jName.setText("");
 
 		//Owners
-		Map<Long, OwnerType> ownersById = new HashMap<Long, OwnerType>();
+		Map<Long, OwnerType> ownersById = new HashMap<>();
 		for (OwnerType owner : program.getOwnerTypes()) {
 			ownersById.put(owner.getOwnerID(), owner);
 		}
@@ -449,7 +458,7 @@ public class StockpileDialog extends JDialogCentered {
 		Collections.sort(owners);
 
 		//Containers & MyLocations Loop
-		Set<String> containerSet = new HashSet<String>();
+		Set<String> containerSet = new HashSet<>();
 		myLocations.clear();
 		for (MyAsset asset : program.getAssetList()) {
 			if (!asset.getContainer().isEmpty()) {
@@ -595,7 +604,8 @@ public class StockpileDialog extends JDialogCentered {
 	private enum FilterType {
 		OWNER,
 		FLAG,
-		CONTAINER
+		CONTAINER,
+		SINGLETON,
 	}
 
 	private enum LocationType {
@@ -618,16 +628,20 @@ public class StockpileDialog extends JDialogCentered {
 		private JComboBox<ItemFlag> jFlag;
 		//Container
 		private JComboBox<String> jContainer;
+		private JCheckBox jIncludeContainer;
+		//Singleton
+		private JComboBox<String> jSingleton;
 
 		private final ListenerClass listener = new ListenerClass();
 
 		private final LocationPanel locationPanel;
 		private final FilterType filterType;
 
-		public FilterPanel(final LocationPanel locationPanel, final String container) {
+		public FilterPanel(final LocationPanel locationPanel, final StockpileContainer container) {
 			this(locationPanel, FilterType.CONTAINER);
 
-			jContainer.setSelectedItem(container);
+			jContainer.setSelectedItem(container.getContainer());
+			jIncludeContainer.setSelected(container.isIncludeContainer());
 		}
 
 		public FilterPanel(final LocationPanel locationPanel, final ItemFlag itemFlag) {
@@ -640,6 +654,12 @@ public class StockpileDialog extends JDialogCentered {
 			this(locationPanel, FilterType.OWNER);
 
 			jOwner.setSelectedItem(owner);
+		}
+
+		public FilterPanel(final LocationPanel locationPanel, final boolean singleton) {
+			this(locationPanel, FilterType.SINGLETON);
+
+			jSingleton.setSelectedItem(singleton ? DataModelAsset.get().unpackaged() : DataModelAsset.get().packaged());
 		}
 
 		public FilterPanel(final LocationPanel locationPanel, final FilterType filterType) {
@@ -662,9 +682,19 @@ public class StockpileDialog extends JDialogCentered {
 			if (filterType == FilterType.CONTAINER) {
 				jType.setIcon(Images.LOC_CONTAINER_WHITE.getIcon());
 				jType.setToolTipText(TabsStockpile.get().container());
-
-				jContainer = new JComboBox<String>(new ListComboBoxModel<String>(containers));
-				jContainer.setEnabled(!containers.isEmpty());
+				EventList<String> containerEventList = new EventListManager<String>().create();
+				try {
+					containerEventList.getReadWriteLock().writeLock().lock();
+					containerEventList.addAll(containers);
+				} finally {
+					containerEventList.getReadWriteLock().writeLock().unlock();
+				}
+				jContainer = new JComboBox<>();
+				jIncludeContainer = new JCheckBox(TabsStockpile.get().includeContainer());
+				JCopyPopup.install((JTextComponent) jContainer.getEditor().getEditorComponent());
+				AutoCompleteSupport<String> install = AutoCompleteSupport.install(jContainer, EventModels.createSwingThreadProxyList(containerEventList), new Filterator());
+				install.setFilterMode(TextMatcherEditor.CONTAINS);
+				((JTextComponent) jContainer.getEditor().getEditorComponent()).getDocument().addDocumentListener(listener);
 				jContainer.setActionCommand(StockpileDialogAction.VALIDATE.name());
 				jContainer.addActionListener(listener);
 
@@ -673,6 +703,7 @@ public class StockpileDialog extends JDialogCentered {
 						.addComponent(jType)
 						.addComponent(jWarning)
 						.addComponent(jContainer, 0, 0, FIELD_WIDTH)
+						.addComponent(jIncludeContainer)
 						.addComponent(jRemove, 30, 30, 30)
 				);
 				groupLayout.setVerticalGroup(
@@ -680,13 +711,35 @@ public class StockpileDialog extends JDialogCentered {
 						.addComponent(jType, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 						.addComponent(jWarning, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 						.addComponent(jContainer, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+						.addComponent(jIncludeContainer, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+						.addComponent(jRemove, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+				);
+			} else if (filterType == FilterType.SINGLETON) {
+				jType.setIcon(Images.INCLUDE_PACKAGED.getIcon());
+				jType.setToolTipText(TabsStockpile.get().container());
+
+				String[] singleton = {DataModelAsset.get().unpackaged(), DataModelAsset.get().packaged()};
+				jSingleton = new JComboBox<>(new ListComboBoxModel<>(singleton));
+
+				groupLayout.setHorizontalGroup(
+					groupLayout.createSequentialGroup()
+						.addComponent(jType)
+						.addComponent(jWarning)
+						.addComponent(jSingleton, 0, 0, FIELD_WIDTH)
+						.addComponent(jRemove, 30, 30, 30)
+				);
+				groupLayout.setVerticalGroup(
+					groupLayout.createParallelGroup(GroupLayout.Alignment.TRAILING)
+						.addComponent(jType, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+						.addComponent(jWarning, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+						.addComponent(jSingleton, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 						.addComponent(jRemove, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 				);
 			} else if (filterType == FilterType.FLAG) {
 				jType.setIcon(Images.LOC_FLAG.getIcon());
 				jType.setToolTipText(TabsStockpile.get().flag());
 
-				jFlag = new JComboBox<ItemFlag>(new ListComboBoxModel<ItemFlag>(itemFlags));
+				jFlag = new JComboBox<>(new ListComboBoxModel<>(itemFlags));
 				jFlag.setActionCommand(StockpileDialogAction.VALIDATE.name());
 				jFlag.addActionListener(listener);
 
@@ -708,7 +761,7 @@ public class StockpileDialog extends JDialogCentered {
 				jType.setIcon(Images.LOC_OWNER.getIcon());
 				jType.setToolTipText(TabsStockpile.get().owner());
 
-				jOwner = new JComboBox<OwnerType>(new ListComboBoxModel<OwnerType>(owners));
+				jOwner = new JComboBox<>(new ListComboBoxModel<>(owners));
 				jOwner.setActionCommand(StockpileDialogAction.VALIDATE.name());
 				jOwner.addActionListener(listener);
 				jOwner.setEnabled(!owners.isEmpty());
@@ -731,7 +784,9 @@ public class StockpileDialog extends JDialogCentered {
 		}
 
 		private void remove() {
-			if (filterType == FilterType.CONTAINER) {
+			if (filterType == FilterType.SINGLETON) {
+				locationPanel.removeSingleton();
+			} else if (filterType == FilterType.CONTAINER) {
 				locationPanel.removeContainer(this);
 			} else if (filterType == FilterType.FLAG) {
 				locationPanel.removeFlag(this);
@@ -741,8 +796,13 @@ public class StockpileDialog extends JDialogCentered {
 			updatePanels();
 		}
 
-		public String getContainer() {
-			return getValue(jContainer, String.class);
+		public StockpileContainer getContainer() {
+			return new StockpileContainer(((JTextComponent) jContainer.getEditor().getEditorComponent()).getText(), jIncludeContainer.isSelected());
+			//return new StockpileContainer(getValue(jContainer, String.class), jIncludeContainer.isSelected());
+		}
+
+		public boolean getSingleton() {
+			return getValue(jSingleton, String.class).equals(DataModelAsset.get().unpackaged());
 		}
 
 		public Integer getFlag() {
@@ -771,7 +831,7 @@ public class StockpileDialog extends JDialogCentered {
 			jWarning.setVisible(b);
 		}
 
-		private class ListenerClass implements ActionListener {
+		private class ListenerClass implements ActionListener, DocumentListener {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
 				if (StockpileDialogAction.REMOVE.name().equals(e.getActionCommand())) {
@@ -780,17 +840,35 @@ public class StockpileDialog extends JDialogCentered {
 					autoValidate();
 				}
 			}
+
+			@Override
+			public void insertUpdate(DocumentEvent e) {
+				autoValidate();
+			}
+
+			@Override
+			public void removeUpdate(DocumentEvent e) {
+				autoValidate();
+			}
+
+			@Override
+			public void changedUpdate(DocumentEvent e) {
+				autoValidate();
+			}
 		}
 	}
 
 	private class LocationPanel {
-		private final List<FilterPanel> ownerPanels = new ArrayList<FilterPanel>();
-		private final List<FilterPanel> flagPanels = new ArrayList<FilterPanel>();
-		private final List<FilterPanel> containerPanels = new ArrayList<FilterPanel>();
-
+		private final List<FilterPanel> ownerPanels = new ArrayList<>();
+		private final List<FilterPanel> flagPanels = new ArrayList<>();
+		private final List<FilterPanel> containerPanels = new ArrayList<>();
+		private FilterPanel singletonPanel = null;
+		
 		private final JPanel jPanel;
 		private final JPanel jFilters;
 		private final ListenerClass listener = new ListenerClass();
+		//Singleton
+		private final JButton jSingleton;
 		//Location
 		private final JLabel jLocationType;
 		private final JComboBox<MyLocation> jLocation;
@@ -845,11 +923,11 @@ public class StockpileDialog extends JDialogCentered {
 				jLocation.setSelectedItem(location);
 			}
 			//Container
-			for (String container : stockpileFilter.getContainers()) {
+			for (StockpileContainer container : stockpileFilter.getContainers()) {
 				containerPanels.add(new FilterPanel(this, container));
 			}
 			//Owner
-			Set<OwnerType> ownersFound = new HashSet<OwnerType>();
+			Set<OwnerType> ownersFound = new HashSet<>();
 			for (long ownerID : stockpileFilter.getOwnerIDs()) {
 				for (OwnerType owner : owners) {
 					if (owner.getOwnerID() == ownerID) {
@@ -867,6 +945,13 @@ public class StockpileDialog extends JDialogCentered {
 				if (itemFlag != null) {
 					flagPanels.add(new FilterPanel(this, itemFlag));
 				}
+			}
+			Boolean singleton = stockpileFilter.isSingleton();
+			if (singleton != null) {
+				singletonPanel = new FilterPanel(this, singleton);
+				jSingleton.setEnabled(false);
+			} else {
+				jSingleton.setEnabled(true);
 			}
 			//Exclude
 			jMatchExclude.setSelected(stockpileFilter.isExclude());
@@ -937,8 +1022,12 @@ public class StockpileDialog extends JDialogCentered {
 			JButton jContainer = new JButton(TabsStockpile.get().container(), Images.LOC_CONTAINER_WHITE.getIcon());
 			jContainer.setActionCommand(StockpileDialogAction.ADD_CONTAINER.name());
 			jContainer.addActionListener(listener);
-			jContainer.setEnabled(!containers.isEmpty());
 			jToolBar.addButton(jContainer);
+
+			jSingleton = new JButton(TabsStockpile.get().singleton(), Images.INCLUDE_PACKAGED.getIcon());
+			jSingleton.setActionCommand(StockpileDialogAction.ADD_SINGLETON.name());
+			jSingleton.addActionListener(listener);
+			jToolBar.addButton(jSingleton);
 		//INCLUDE
 			jInclude = new JDropDownButton(TabsStockpile.get().include(), Images.LOC_INCLUDE.getIcon());
 			jInclude.setToolTipText(TabsStockpile.get().include());
@@ -1089,7 +1178,7 @@ public class StockpileDialog extends JDialogCentered {
 
 			jLocationType = new JLabel();
 
-			jLocation = new JComboBox<MyLocation>();
+			jLocation = new JComboBox<>();
 
 			groupLayout.setHorizontalGroup(
 				groupLayout.createParallelGroup()
@@ -1151,6 +1240,10 @@ public class StockpileDialog extends JDialogCentered {
 				horizontalGroup.addComponent(containerPanel.getPanel());
 				verticalGroup.addComponent(containerPanel.getPanel());
 			}
+			if (singletonPanel != null) {
+				horizontalGroup.addComponent(singletonPanel.getPanel());
+				verticalGroup.addComponent(singletonPanel.getPanel());
+			}
 
 			layout.setVerticalGroup(verticalGroup);
 			layout.setHorizontalGroup(horizontalGroup);
@@ -1165,7 +1258,7 @@ public class StockpileDialog extends JDialogCentered {
 				jPanel.setBorder(BorderFactory.createTitledBorder(TabsStockpile.get().station()));
 				try {
 					stations.getReadWriteLock().readLock().lock();
-					filterList = new FilterList<MyLocation>(stations);
+					filterList = new FilterList<>(stations);
 				} finally {
 					stations.getReadWriteLock().readLock().unlock();
 				}
@@ -1176,7 +1269,7 @@ public class StockpileDialog extends JDialogCentered {
 				jPanel.setBorder(BorderFactory.createTitledBorder(TabsStockpile.get().system()));
 				try {
 					systems.getReadWriteLock().readLock().lock();
-					filterList = new FilterList<MyLocation>(systems);
+					filterList = new FilterList<>(systems);
 				} finally {
 					systems.getReadWriteLock().readLock().unlock();
 				}
@@ -1187,7 +1280,7 @@ public class StockpileDialog extends JDialogCentered {
 				jPanel.setBorder(BorderFactory.createTitledBorder(TabsStockpile.get().region()));
 				try {
 					regions.getReadWriteLock().readLock().lock();
-					filterList = new FilterList<MyLocation>(regions);
+					filterList = new FilterList<>(regions);
 				} finally {
 					regions.getReadWriteLock().readLock().unlock();
 				}
@@ -1199,7 +1292,7 @@ public class StockpileDialog extends JDialogCentered {
 				EventList<MyLocation> eventList = new EventListManager<MyLocation>().create();
 				try {
 					eventList.getReadWriteLock().readLock().lock();
-					filterList = new FilterList<MyLocation>(eventList);
+					filterList = new FilterList<>(eventList);
 				} finally {
 					eventList.getReadWriteLock().readLock().unlock();
 				}
@@ -1227,15 +1320,15 @@ public class StockpileDialog extends JDialogCentered {
 		}
 
 		public StockpileFilter getFilter () {
-			List<Long> ownerIDs = new ArrayList<Long>();
+			List<Long> ownerIDs = new ArrayList<>();
 			for (FilterPanel ownerPanel : ownerPanels) {
 				ownerIDs.add(ownerPanel.getOwner());
 			}
-			List<Integer> flagIDs = new ArrayList<Integer>();
+			List<Integer> flagIDs = new ArrayList<>();
 			for (FilterPanel flagPanel : flagPanels) {
 				flagIDs.add(flagPanel.getFlag());
 			}
-			List<String> containers = new ArrayList<String>();
+			List<StockpileContainer> containers = new ArrayList<>();
 			for (FilterPanel containerPanel : containerPanels) {
 				containers.add(containerPanel.getContainer());
 			}
@@ -1246,8 +1339,15 @@ public class StockpileDialog extends JDialogCentered {
 			} else {
 				location = MyLocation.create(0);
 			}
+			Boolean singleton;
+			if (singletonPanel != null) {
+				singleton = singletonPanel.getSingleton();
+			} else {
+				singleton = null;
+			}
 			return new StockpileFilter(location, flagIDs, containers, ownerIDs
 					,jMatchExclude.isSelected()
+					,singleton
 					,jAssets.isSelected()
 					,jSellingOrders.isSelected()
 					,jBuyingOrders.isSelected()
@@ -1263,7 +1363,7 @@ public class StockpileDialog extends JDialogCentered {
 
 		public boolean isValid() {
 			boolean ok = true;
-			Set<Long> owners = new HashSet<Long>();
+			Set<Long> owners = new HashSet<>();
 			for (FilterPanel ownerPanel : ownerPanels) {
 				long owner = ownerPanel.getOwner();
 				boolean add = owners.add(owner);
@@ -1272,7 +1372,7 @@ public class StockpileDialog extends JDialogCentered {
 					ok = false;
 				}
 			}
-			Set<Integer> flags = new HashSet<Integer>();
+			Set<Integer> flags = new HashSet<>();
 			for (FilterPanel flagPanel : flagPanels) {
 				int flag = flagPanel.getFlag();
 				boolean add = flags.add(flag);
@@ -1281,14 +1381,17 @@ public class StockpileDialog extends JDialogCentered {
 					ok = false;
 				}
 			}
-			Set<String> containers = new HashSet<String>();
+			Set<StockpileContainer> containers = new HashSet<>();
 			for (FilterPanel containerPanel : containerPanels) {
-				String container = containerPanel.getContainer();
+				StockpileContainer container = containerPanel.getContainer();
 				boolean add = containers.add(container);
 				containerPanel.warning(!add);
 				if (!add) {
 					ok = false;
 				}
+			}
+			if (singletonPanel != null) {
+				singletonPanel.warning(false);
 			}
 			if (!jAssets.isSelected() 
 					&& !jJobs.isSelected()
@@ -1390,6 +1493,11 @@ public class StockpileDialog extends JDialogCentered {
 			containerPanels.remove(containerPanel);
 			doLayout();
 		}
+		public void removeSingleton() {
+			singletonPanel = null;
+			jSingleton.setEnabled(true);
+			doLayout();
+		}
 
 		private void remove() {
 			locationPanels.remove(this);
@@ -1417,6 +1525,13 @@ public class StockpileDialog extends JDialogCentered {
 			doLayout();
 		}
 
+		private void addSingleton() {
+			singletonPanel = new FilterPanel(this, FilterType.SINGLETON);
+			doLayout();
+			jSingleton.setEnabled(false);
+			singletonPanel.jSingleton.requestFocusInWindow();
+		}
+
 		private void changeLocationType() {
 			if (jStation.isSelected()) {
 				setLocationType(LocationType.STATION);
@@ -1439,6 +1554,8 @@ public class StockpileDialog extends JDialogCentered {
 					addFlag();
 				} else if (StockpileDialogAction.ADD_CONTAINER.name().equals(e.getActionCommand())) {
 					addContainer();
+				} else if (StockpileDialogAction.ADD_SINGLETON.name().equals(e.getActionCommand())) {
+					addSingleton();
 				} else if (StockpileDialogAction.FILTER_LOCATIONS.name().equals(e.getActionCommand())) {
 					refilter();
 				} else if (StockpileDialogAction.VALIDATE.name().equals(e.getActionCommand())) {
@@ -1467,7 +1584,7 @@ public class StockpileDialog extends JDialogCentered {
 
 		private final GroupLayout layout;
 		private final JPanel jPanel;
-		private final List<JComponent> components = new ArrayList<JComponent>();
+		private final List<JComponent> components = new ArrayList<>();
 		private final Alignment alignment;
 
 		public BorderPanel(String title) {
@@ -1514,6 +1631,15 @@ public class StockpileDialog extends JDialogCentered {
 
 		public JPanel getPanel() {
 			return jPanel;
+		}
+	}
+
+	private static class Filterator implements TextFilterator<String> {
+		@Override
+		public void getFilterStrings(final List<String> baseList, final String element) {
+			if (element.length() > 0) {
+				baseList.add(element);
+			}
 		}
 	}
 }

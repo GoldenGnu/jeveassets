@@ -23,58 +23,64 @@ package net.nikr.eve.jeveasset.gui.shared.filter;
 
 import ca.odell.glazedlists.matchers.Matcher;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 public class FilterLogicalMatcher<E> implements Matcher<E> {
 
-	private final List<FilterMatcher<E>> and = new ArrayList<FilterMatcher<E>>();
-	private final List<FilterMatcher<E>> or = new ArrayList<FilterMatcher<E>>();
-	private final boolean orEmpty;
+	private final List<FilterMatcher<E>> and = new ArrayList<>();
+	private final Map<Integer, List<FilterMatcher<E>>> or = new HashMap<>();
 
 	public FilterLogicalMatcher(final List<FilterMatcher<E>> matchers) {
 		for (FilterMatcher<E> matcher : matchers) {
-			if (!matcher.isEmpty()) {
-				if (matcher.isAnd()) { //And
-					and.add(matcher);
-				} else {
-					or.add(matcher);
-				}
-			}
+			addMatcher(matcher);
 		}
-		orEmpty = or.isEmpty();
 	}
 
 	public FilterLogicalMatcher(final FilterControl<E> filterControl, final List<Filter> filters) {
 		for (Filter filter : filters) {
-			FilterMatcher<E> matcher = new FilterMatcher<E>(filterControl, filter);
-			if (!matcher.isEmpty()) {
-				if (matcher.isAnd()) { //And
-					and.add(matcher);
-				} else {
-					or.add(matcher);
+			FilterMatcher<E> matcher = new FilterMatcher<>(filterControl, filter);
+			addMatcher(matcher);
+		}
+	}
+
+	private void addMatcher(FilterMatcher<E> matcher) {
+		if (!matcher.isEmpty()) {
+			if (matcher.isAnd()) { //And
+				and.add(matcher);
+			} else {
+				List<FilterMatcher<E>> list = or.get(matcher.getGroup());
+				if (list == null) {
+					list = new ArrayList<>();
+					or.put(matcher.getGroup(), list);
 				}
+				list.add(matcher);
 			}
 		}
-		orEmpty = or.isEmpty();
 	}
 
 	@Override
 	public boolean matches(final E item) {
 		for (FilterMatcher<E> matcher : and) {
-			boolean matches = matcher.matches(item);
-			if (!matches) { //if just one don't match, none match
+			if (!matcher.matches(item)) { //if just one don't match, none match
 				return false;
 			}
 		}
 		//All ANDs matches
-		for (FilterMatcher<E> matcher : or) {
-			boolean matches = matcher.matches(item);
-			if (matches) { //if just one is true all is true
-				return true;
+		for (List<FilterMatcher<E>> list : or.values()) {
+			boolean found = false;
+			for (FilterMatcher<E> matcher : list) {
+				if (matcher.matches(item)) { //if just one is true all is true
+					found = true;
+					break;
+				}
+			}
+			if (!found) { //if none in group match (just need to match one)
+				return false;
 			}
 		}
-		//NO ORs mached
-		return orEmpty; //no ORs return true, otherwise return false
+		return true; //Matched
 	}
 }

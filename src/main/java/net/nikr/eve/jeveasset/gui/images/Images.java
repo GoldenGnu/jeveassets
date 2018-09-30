@@ -98,6 +98,7 @@ public enum Images {
 	LINK_LOOKUP ("link_lookup.png"),
 	LINK_CHRUKER ("link_chruker.png"),
 	LINK_FUZZWORK ("link_fuzzwork.png"),
+	LINK_ZKILLBOARD ("link_zkillboard.png"),
 
 	LOC_GROUPS ("loc_groups.png"),
 	LOC_STATION ("loc_station.png"),
@@ -118,6 +119,7 @@ public enum Images {
 	INCLUDE_CONTRACTS ("include_contracts.png"),
 	INCLUDE_ORDERS_SELECTED ("include_orders_selected.png"),
 	INCLUDE_ORDERS ("include_orders.png"),
+	INCLUDE_PACKAGED ("include_packaged.png"),
 	MISC_EVE ("misc_eve.png"),
 	MISC_EVEKIT ("misc_evekit.png"),
 	MISC_EVEKIT_32 ("misc_evekit_32.png"),
@@ -130,6 +132,7 @@ public enum Images {
 	MISC_COLLAPSED ("misc_collapsed.png"),
 	MISC_EXPANDED_WHITE ("misc_expanded_white.png"),
 	MISC_COLLAPSED_WHITE ("misc_collapsed_white.png"),
+	MISC_AND ("misc_and.png"),
 	MISC_ASSETS_32 ("misc_assets_32.png"),
 	MISC_ASSETS_64 ("misc_assets_64.png"),
 	MISC_DEBUG ("misc_debug.png"),

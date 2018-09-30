@@ -43,6 +43,7 @@ public class FilterMatcher<E> implements Matcher<E> {
 	private static final Calendar CALENDAR = Calendar.getInstance(TimeZone.getTimeZone("GMT"));;
 
 	private final FilterControl<E> filterControl;
+	private final int group;
 	private final boolean and;
 	private final EnumTableColumn<?> enumColumn;
 	private final CompareType compare;
@@ -50,11 +51,12 @@ public class FilterMatcher<E> implements Matcher<E> {
 	private final boolean empty;
 
 	FilterMatcher(final FilterControl<E> filterControl, final Filter filter) {
-		this(filterControl, filter.getLogic(), filter.getColumn(), filter.getCompareType(), filter.getText(), true);
+		this(filterControl, filter.getGroup(), filter.getLogic(), filter.getColumn(), filter.getCompareType(), filter.getText(), true);
 	}
 
-	FilterMatcher(final FilterControl<E> filterControl, final LogicType logic, final EnumTableColumn<?> enumColumn, final CompareType compare, final String text, final boolean enabled) {
+	FilterMatcher(final FilterControl<E> filterControl, int group, final LogicType logic, final EnumTableColumn<?> enumColumn, final CompareType compare, final String text, final boolean enabled) {
 		this.filterControl = filterControl;
+		this.group = group;
 		this.enumColumn = enumColumn;
 		this.compare = compare;
 		if (CompareType.isColumnCompare(compare)) {
@@ -64,6 +66,10 @@ public class FilterMatcher<E> implements Matcher<E> {
 		}
 		empty = !enabled || text.isEmpty();
 		and = logic == Filter.LogicType.AND;
+	}
+
+	public int getGroup() {
+		return group;
 	}
 
 	boolean isAnd() {

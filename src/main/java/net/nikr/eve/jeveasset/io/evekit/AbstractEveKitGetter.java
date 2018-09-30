@@ -25,6 +25,7 @@ import enterprises.orbital.evekit.client.ApiException;
 import enterprises.orbital.evekit.client.api.AccessKeyApi;
 import enterprises.orbital.evekit.client.api.CharacterApi;
 import enterprises.orbital.evekit.client.api.CommonApi;
+import enterprises.orbital.evekit.client.api.CorporationApi;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -149,6 +150,10 @@ public abstract class AbstractEveKitGetter extends AbstractGetter<EveKitOwner, A
 
 	protected final CharacterApi getCharacterApi(ApiClient apiClient) {
 		return new CharacterApi(apiClient);
+	}
+
+	protected final CorporationApi getCorporationApi(ApiClient apiClient) {
+		return new CorporationApi(apiClient);
 	}
 
 	protected final AccessKeyApi getAccessKeyApi(ApiClient apiClient) {

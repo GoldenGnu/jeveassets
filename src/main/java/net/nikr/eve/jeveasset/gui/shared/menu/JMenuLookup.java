@@ -46,6 +46,8 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 		EVEMARKETER,
 		GAMES_CHRUKER,
 		FUZZWORK_ITEMS,
+		ZKILLBOARD,
+		EVE_REF,
 		FUZZWORK_BLUEPRINTS,
 		FUZZWORK_MARKET,
 		EVEMAPS_DOTLAN_STATION,
@@ -68,6 +70,8 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 	private final JMenu jItemDatabase;
 	private final JMenuItem jFuzzworkItems;
 	private final JMenuItem jChruker;
+	private final JMenuItem jzKillboard;
+	private final JMenuItem jEveRef;
 	private final JMenuItem jEveInfo;
 	private final JMenu jIndustry;
 	private final JMenuItem jFuzzworkBlueprints;
@@ -164,6 +168,18 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 		jFuzzworkItems.addActionListener(listener);
 		jItemDatabase.add(jFuzzworkItems);
 
+		jzKillboard = new JMenuItem(GuiShared.get().zKillboard());
+		jzKillboard.setIcon(Images.LINK_ZKILLBOARD.getIcon());
+		jzKillboard.setActionCommand(MenuLookupAction.ZKILLBOARD.name());
+		jzKillboard.addActionListener(listener);
+		jItemDatabase.add(jzKillboard);
+
+		jEveRef = new JMenuItem(GuiShared.get().eveRef());
+		//jEveRef.setIcon(Images.LINK_EVE_REF.getIcon());
+		jEveRef.setActionCommand(MenuLookupAction.EVE_REF.name());
+		jEveRef.addActionListener(listener);
+		jItemDatabase.add(jEveRef);
+
 		jIndustry = new JMenu(GuiShared.get().industry());
 		jIndustry.setIcon(Images.TOOL_INDUSTRY_JOBS.getIcon());
 		add(jIndustry);
@@ -191,6 +207,7 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 		jFuzzworkMarket.setEnabled(!menuData.getMarketTypeIDs().isEmpty());
 		jItemDatabase.setEnabled(!menuData.getTypeIDs().isEmpty());
 		jFuzzworkItems.setEnabled(!menuData.getTypeIDs().isEmpty());
+		jzKillboard.setEnabled(!menuData.getTypeIDs().isEmpty());
 		jChruker.setEnabled(!menuData.getTypeIDs().isEmpty());
 		jIndustry.setEnabled(!menuData.getTypeIDs().isEmpty());
 		jFuzzworkBlueprints.setEnabled(!menuData.getTypeIDs().isEmpty());
@@ -280,6 +297,18 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 				Set<String> urls = new HashSet<String>();
 				for (int typeID : menuData.getTypeIDs()) {
 					urls.add("https://www.fuzzwork.co.uk/info/?typeid=" + typeID);
+				}
+				DesktopUtil.browse(urls, program);
+			} else if (MenuLookupAction.ZKILLBOARD.name().equals(e.getActionCommand())) {
+				Set<String> urls = new HashSet<String>();
+				for (int typeID : menuData.getTypeIDs()) {
+					urls.add("https://zkillboard.com/item/" + typeID + "/");
+				}
+				DesktopUtil.browse(urls, program);
+			} else if (MenuLookupAction.EVE_REF.name().equals(e.getActionCommand())) {
+				Set<String> urls = new HashSet<String>();
+				for (int typeID : menuData.getTypeIDs()) {
+					urls.add("https://everef.net/type/" + typeID+ "?utm_source=jeveassets");
 				}
 				DesktopUtil.browse(urls, program);
 			} else if (MenuLookupAction.FUZZWORK_BLUEPRINTS.name().equals(e.getActionCommand())) {

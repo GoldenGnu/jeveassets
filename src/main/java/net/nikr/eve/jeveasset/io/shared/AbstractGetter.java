@@ -55,6 +55,7 @@ public abstract class AbstractGetter<O extends OwnerType, C, E extends Exception
 		CONQUERABLE_STATIONS,
 		CONTRACT_ITEMS,
 		CONTRACTS,
+		DIVISIONS,
 		INDUSTRY_JOBS,
 		JOURNAL,
 		LOCATIONS,
@@ -88,6 +89,7 @@ public abstract class AbstractGetter<O extends OwnerType, C, E extends Exception
 			case CONQUERABLE_STATIONS: taskName = "Conquerable Stations"; break;
 			case CONTRACT_ITEMS: taskName = "Contract Items"; break;
 			case CONTRACTS: taskName = "Contracts"; break;
+			case DIVISIONS: taskName = "Division Names"; break;
 			case INDUSTRY_JOBS: taskName = "Industry Jobs"; break;
 			case JOURNAL: taskName = "Journal"; break;
 			case LOCATIONS: taskName = "Locations"; break;
