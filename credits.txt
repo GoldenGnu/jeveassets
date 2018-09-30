@@ -66,12 +66,12 @@ Toolkit License:
   ©CCP hf. All rights reserved. Used with permission.
 
 ________________________________________________________________________________
-_EVE-CENTRAL____________________________________________________________________
+_EVEKIT_________________________________________________________________________
 
-jEveAssets use Eve-Central.com API to get price data
+jEveAssets use EveKit account API
 
 Link:
-  http://eve-central.com/
+  https://evekit.orbital.enterprises
 
 ________________________________________________________________________________
 _EVE-MARKETDATA_________________________________________________________________
@@ -134,17 +134,6 @@ Link:
 
 License:
   Apache License (http://www.apache.org/licenses/LICENSE-2.0)
-
-________________________________________________________________________________
-_EVEAPI_________________________________________________________________________
-
-jEveAssets use eveapi to get data from the EVE-Online API
-
-Link:
-  https://github.com/ZyorTaelon/eveapi
-
-License:
-  GNU Lesser General Public License (http://www.gnu.org/copyleft/lesser.html)
 
 ________________________________________________________________________________
 _EVE-ESI________________________________________________________________________
@@ -235,6 +224,17 @@ License:
   LGPL 2.1 (https://www.gnu.org/licenses/old-licenses/lgpl-2.1.html)
 
 ________________________________________________________________________________
+_SQLITE_________________________________________________________________________
+
+jEveAssets use SQLite for database storage
+
+Link:
+  https://github.com/xerial/sqlite-jdbc
+
+License:
+  Apache License 2.0 (http://www.apache.org/licenses/LICENSE-2.0)
+
+________________________________________________________________________________
 _JUNIT__________________________________________________________________________
 
 jEveAssets use JUnit for unit testing
@@ -254,8 +254,7 @@ Link:
   https://github.com/LGoodDatePicker/LGoodDatePicker
 
 License:
-  The MIT License (MIT)
-  https://opensource.org/licenses/MIT
+  The MIT License (https://opensource.org/licenses/MIT)
 
 ________________________________________________________________________________
 _JFREECHART_____________________________________________________________________
@@ -266,8 +265,7 @@ Link:
   http://www.jfree.org/jfreechart/
 
 License:
-  GNU Lesser General Public Licence 
-  http://www.gnu.org/licenses/lgpl.html
+  GNU Lesser General Public Licence (http://www.gnu.org/licenses/lgpl.html)
 
 ________________________________________________________________________________
 _JACKSON________________________________________________________________________
@@ -278,8 +276,7 @@ Link:
   https://github.com/FasterXML/jackson-databind/
 
 License:
-  Apache License 2.0
-  http://www.apache.org/licenses/LICENSE-2.0
+  Apache License 2.0 (http://www.apache.org/licenses/LICENSE-2.0)
 
 ________________________________________________________________________________
 _COPYRIGHT______________________________________________________________________
