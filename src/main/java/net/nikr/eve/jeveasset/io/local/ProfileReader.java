@@ -267,6 +267,7 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 
 	private void parseOwnerType(final Element node, OwnerType owner) throws XmlException {
 		String ownerName = AttributeGetters.getString(node, "name");
+		String corporationName = AttributeGetters.getStringOptional(node, "corp");
 		long ownerID = AttributeGetters.getLong(node, "id");
 		Date assetsNextUpdate = AttributeGetters.getDateNotNull(node, "assetsnextupdate");
 		Date assetsLastUpdate = AttributeGetters.getDateOptional(node, "assetslastupdate");
@@ -285,6 +286,7 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 		Date blueprintsNextUpdate = AttributeGetters.getDateNotNull(node, "blueprintsnextupdate");
 		Date containerLogsNextUpdate = AttributeGetters.getDateNotNull(node, "containerlogsnextupdate");
 		owner.setOwnerName(ownerName);
+		owner.setCorporationName(corporationName);
 		owner.setOwnerID(ownerID);
 		owner.setAssetNextUpdate(assetsNextUpdate);
 		owner.setAssetLastUpdate(assetsLastUpdate);

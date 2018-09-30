@@ -53,6 +53,7 @@ import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -82,6 +83,7 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 import net.nikr.eve.jeveasset.Program;
+import net.nikr.eve.jeveasset.data.api.accounts.OwnerType;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.data.settings.TrackerData;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
@@ -691,25 +693,29 @@ public class TrackerTab extends JMainTabSecondary {
 
 	private void updateOwners() {
 		updateLock = true;
-		Set<String> owners;
+		Set<String> trackerOwners;
 		try {
 			TrackerData.readLock();
-			owners = new TreeSet<String>(TrackerData.get().keySet());
+			trackerOwners = new TreeSet<String>(TrackerData.get().keySet());
 		} finally {
 			TrackerData.readUnlock();
 		}
-		final List<String> ownersList;
+		Set<String> uniqueOwners;
 		if (jAllProfiles.isSelected()) {
-			ownersList = new ArrayList<String>(owners);
-		} else {
-			ownersList = new ArrayList<String>();
-			for (String s : owners) {
-				if (program.getOwnerNames(false).contains(s)) {
-					ownersList.add(s);
+			uniqueOwners = new HashSet<String>(trackerOwners);
+		} else { //Profile owners
+			uniqueOwners = new HashSet<String>();
+			for (OwnerType owner : program.getOwnerTypes()) {
+				if (trackerOwners.contains(owner.getOwnerName())) {
+					uniqueOwners.add(owner.getOwnerName());
+				}
+				if (owner.getCorporationName() != null && trackerOwners.contains(owner.getCorporationName())) {
+					uniqueOwners.add(owner.getCorporationName());
 				}
 			}
 		}
-		if (owners.isEmpty()) {
+		final List<String> ownersList = new ArrayList<>(uniqueOwners);
+		if (ownersList.isEmpty()) {
 			jOwners.setEnabled(false);
 			jOwners.setModel(new AbstractListModel<String>() {
 				@Override

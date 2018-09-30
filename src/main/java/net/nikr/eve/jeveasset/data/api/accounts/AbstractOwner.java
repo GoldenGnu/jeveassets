@@ -55,6 +55,7 @@ public abstract class AbstractOwner implements OwnerType, Comparable<OwnerType> 
 	private List<MyContainerLog> containerLogs = new ArrayList<>();
 
 	private String ownerName;
+	private String corporationName = null;
 	private long ownerID;
 	private boolean showOwner = true;
 
@@ -277,6 +278,16 @@ public abstract class AbstractOwner implements OwnerType, Comparable<OwnerType> 
 	@Override
 	public final long getOwnerID() {
 		return ownerID;
+	}
+
+	@Override
+	public String getCorporationName() {
+		return corporationName;
+	}
+
+	@Override
+	public void setCorporationName(String corporationName) {
+		this.corporationName = corporationName;
 	}
 
 	@Override

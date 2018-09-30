@@ -46,7 +46,7 @@ public class EsiOwnerGetter extends AbstractEsiGetter implements AccountAdder{
 	}
 
 	public EsiOwnerGetter(UpdateTask updateTask, EsiOwner owner) {
-		super(updateTask, owner, false, owner.getAccountNextUpdate(), TaskType.OWNER, NO_RETRIES);
+		super(updateTask, owner, owner.getCorporationName() == null, owner.getAccountNextUpdate(), TaskType.OWNER, NO_RETRIES);
 	}
 
 	@Override
@@ -54,16 +54,14 @@ public class EsiOwnerGetter extends AbstractEsiGetter implements AccountAdder{
 		CharacterInfo characterInfo = getSsoApiAuth(apiClient).getCharacterInfo();
 		Set<RolesEnum> roles = EnumSet.noneOf(RolesEnum.class);
 		Integer characterID = characterInfo.getCharacterId();
-		Integer corporationID = 0;
-		String corporationName = "";
+		//CharacterID to CorporationID
+		CharacterResponse character = getCharacterApiOpen(apiClient).getCharactersCharacterId(characterID, DATASOURCE, null);
+		Integer corporationID = character.getCorporationId();
+		//CorporationID to CorporationName
+		CorporationResponse corporation = getCorporationApiOpen(apiClient).getCorporationsCorporationId(corporationID, DATASOURCE, null);
+		String corporationName = corporation.getName();
 		boolean isCorporation = EsiScopes.CORPORATION_ROLES.isInScope(characterInfo.getScopes());
 		if (isCorporation) { //Corporation
-			//CharacterID to CorporationID
-			CharacterResponse character = getCharacterApiOpen(apiClient).getCharactersCharacterId(characterID, DATASOURCE, null);
-			corporationID = character.getCorporationId();
-			//CorporationID to CorporationName
-			CorporationResponse corporation = getCorporationApiOpen(apiClient).getCorporationsCorporationId(corporationID, DATASOURCE, null);
-			corporationName = corporation.getName();
 			//Updated Character Roles
 			CharacterRolesResponse characterRolesResponse = getCharacterApiAuth(apiClient).getCharactersCharacterIdRoles(characterID, DATASOURCE, null, null);
 			roles.addAll(characterRolesResponse.getRoles());
@@ -80,6 +78,7 @@ public class EsiOwnerGetter extends AbstractEsiGetter implements AccountAdder{
 		owner.setIntellectualProperty(characterInfo.getIntellectualProperty());
 		owner.setTokenType(characterInfo.getTokenType());
 		owner.setRoles(roles);
+		owner.setCorporationName(corporationName);
 		if (owner.isCorporation()) {
 			owner.setOwnerID(corporationID);
 			owner.setOwnerName(corporationName);

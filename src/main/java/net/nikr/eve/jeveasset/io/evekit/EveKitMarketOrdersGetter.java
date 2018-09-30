@@ -35,7 +35,7 @@ import net.nikr.eve.jeveasset.io.evekit.AbstractEveKitGetter.EveKitPagesHandler;
 public class EveKitMarketOrdersGetter extends AbstractEveKitGetter implements EveKitPagesHandler<MarketOrder> {
 
 	private enum Runs {
-		MONTHS, ALL
+		MONTHS, ALL, AT
 	}
 
 	private final Runs run;
@@ -46,7 +46,7 @@ public class EveKitMarketOrdersGetter extends AbstractEveKitGetter implements Ev
 	}
 	public EveKitMarketOrdersGetter(UpdateTask updateTask, EveKitOwner owner, Long at) {
 		super(updateTask, owner, true, owner.getMarketOrdersNextUpdate(), TaskType.MARKET_ORDERS, false, at);
-		run = Runs.ALL;
+		run = Runs.AT;
 	}
 	public EveKitMarketOrdersGetter(UpdateTask updateTask, EveKitOwner owner) {
 		super(updateTask, owner, false, owner.getMarketOrdersNextUpdate(), TaskType.MARKET_ORDERS, false, null);
@@ -70,6 +70,9 @@ public class EveKitMarketOrdersGetter extends AbstractEveKitGetter implements Ev
 			case MONTHS:
 				return getCommonApi(apiClient).getMarketOrders(owner.getAccessKey(), owner.getAccessCred(), at, contid, maxResults, false,
 						null, null, null, null, null, null, dateFilter(Settings.get().getEveKitMarketOrdersHistory()), null, null, null, null, null, null, null, null, null, null, null);
+			case AT:
+				return getCommonApi(apiClient).getMarketOrders(owner.getAccessKey(), owner.getAccessCred(), at, contid, maxResults, false,
+						null, null, null, null, null, null, null, null, null, marketOrdersFilter(), null, null, null, null, null, null, null, null);
 			default: //ALL
 				return getCommonApi(apiClient).getMarketOrders(owner.getAccessKey(), owner.getAccessCred(), at, contid, maxResults, false,
 						null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);

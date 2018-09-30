@@ -209,12 +209,17 @@ public class ValueRetroTab extends JMainTabSecondary {
 		total = values.get(TabsValues.get().grandTotal());
 		for (OwnerType owner : program.getOwnerTypes()) {
 			Value value = DataSetCreator.getValue(values, owner.getOwnerName(), date);
-			if (owner.isCharacter()) {
-				characters.put(value.getName(), value);
-			} else if (owner.isCorporation()) {
+			if (owner.isCorporation()) {
 				corporations.put(value.getName(), value);
+			} else {
+				characters.put(value.getName(), value);
+				if (owner.getCorporationName() != null) {
+					Value corpValue = values.get(owner.getCorporationName());
+					if (corpValue != null) {
+						corporations.put(corpValue.getName(), corpValue);
+					}
+				}
 			}
-
 		}
 		return !EventListManager.isEmpty(program.getProfileData().getAssetsEventList());
 	}
