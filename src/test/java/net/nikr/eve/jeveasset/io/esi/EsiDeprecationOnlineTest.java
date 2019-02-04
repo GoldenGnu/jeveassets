@@ -41,6 +41,7 @@ import net.troja.eve.esi.api.UniverseApi;
 import net.troja.eve.esi.api.UserInterfaceApi;
 import net.troja.eve.esi.api.WalletApi;
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.junit.Assume.assumeTrue;
 import org.junit.Test;
 
 public class EsiDeprecationOnlineTest extends TestUtil {
@@ -427,7 +428,11 @@ public class EsiDeprecationOnlineTest extends TestUtil {
 		if (responseHeaders != null) {
 			for (Map.Entry<String, List<String>> entry : responseHeaders.entrySet()) {
 				if (entry.getKey().toLowerCase().equals("warning")) {
-					fail(entry.getValue().get(0));
+					if (entry.getValue().get(0).startsWith("199")) {
+						assumeTrue(entry.getValue().get(0), false);
+					} else {
+						fail(entry.getValue().get(0));
+					}
 				}
 			}
 		} else {
