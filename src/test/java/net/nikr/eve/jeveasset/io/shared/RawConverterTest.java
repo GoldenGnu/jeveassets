@@ -324,7 +324,7 @@ public class RawConverterTest extends TestUtil {
 
 	@Test
 	public void testToJournalRefType_CharacterWalletJournalResponseRefTypeEnum() {
-		assertEquals(117, CharacterWalletJournalResponse.RefTypeEnum.values().length);
+		assertEquals(118, CharacterWalletJournalResponse.RefTypeEnum.values().length);
 		int undefined = 0;
 		for (CharacterWalletJournalResponse.RefTypeEnum refType : CharacterWalletJournalResponse.RefTypeEnum.values()) {
 			RawJournalRefType rawJournalRefType = RawConverter.toJournalRefType(refType);
@@ -338,7 +338,7 @@ public class RawConverterTest extends TestUtil {
 
 	@Test
 	public void testToJournalRefType_CorporationWalletJournalResponseRefTypeEnum() {
-		assertEquals(117, CorporationWalletJournalResponse.RefTypeEnum.values().length);
+		assertEquals(118, CorporationWalletJournalResponse.RefTypeEnum.values().length);
 		int undefined = 0;
 		for (CorporationWalletJournalResponse.RefTypeEnum refType : CorporationWalletJournalResponse.RefTypeEnum.values()) {
 			RawJournalRefType rawJournalRefType = RawConverter.toJournalRefType(refType);

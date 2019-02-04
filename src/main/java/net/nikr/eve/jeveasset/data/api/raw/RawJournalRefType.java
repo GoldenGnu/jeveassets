@@ -155,6 +155,7 @@ public enum RawJournalRefType {
 	EXTERNAL_TRADE_FREEZE(136, "External Trade Freeze"),
 	EXTERNAL_TRADE_THAW(137, "External Trade Thaw"),
 	EXTERNAL_TRADE_DELIVERY(138, "External Trade Delivery"),
+	STRUCTURE_GATE_JUMP(140, "Structure GateJump"),
 	MODIFY_ISK(10001, "Modify ISK"),
 	PRIMARY_MARKETPLACE_PURCHASE(10002, "Primary Marketplace Purchase"),
 	BATTLE_REWARD(10003, "Battle Reward"),
