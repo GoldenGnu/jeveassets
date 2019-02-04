@@ -109,9 +109,9 @@ public class LibraryManager {
 			files.add("logback-classic-1.2.3.jar");
 			files.add("super-csv-2.4.0.jar");
 			files.add("translations-2.2.0.jar");
-			files.add("jackson-core-2.8.6.jar");
+			files.add("jackson-core-2.9.8.jar");
 			files.add("jackson-databind-2.8.8.1.jar");
-			files.add("jackson-annotations-2.8.6.jar");
+			files.add("jackson-annotations-2.9.8.jar");
 			files.add("aopalliance-repackaged-2.5.0-b32.jar");
 			files.add("jersey-guava-2.25.1.jar");
 			files.add("javax.inject-2.5.0-b32.jar");
@@ -133,11 +133,11 @@ public class LibraryManager {
 			files.add("jackson-module-jaxb-annotations-2.8.4.jar");
 			files.add("jersey-client-2.25.1.jar");
 			files.add("migbase64-2.2.jar");
-			files.add("swagger-annotations-1.5.12.jar");
-			files.add("jackson-datatype-jsr310-2.8.6.jar");
+			files.add("swagger-annotations-1.5.21.jar");
+			files.add("jackson-datatype-jsr310-2.9.8.jar");
 			files.add("commons-lang3-3.5.jar");
 			files.add("hamcrest-core-1.3.jar");
-			files.add("eve-esi-2.3.8.jar");
+			files.add("eve-esi-2.4.0.jar");
 			files.add("hamcrest-core-1.3.jar");
 			files.add("oauth2-client-2.25.1.jar");
 			files.add("jaxb-api-2.3.0.jar");
