@@ -89,7 +89,7 @@ public class LibraryManager {
 		if (files == null) { //Lazy init
 			files = new HashSet<>();
 			files.add("asm-5.0.4.jar");
-			files.add("dom4j-2.1.0.jar");
+			files.add("dom4j-2.1.1.jar");
 			files.add("glazedlists-1.11.0.jar");
 			files.add("graph-1.5.0.jar");
 			files.add("guava-r09.jar");
