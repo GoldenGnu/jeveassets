@@ -45,6 +45,7 @@ public class PriceDataSettings {
 			}
 		},
 		*/
+		/*
 		EVE_MARKETDATA(PricingFetch.EVE_MARKETDATA, false, true, true, true, LocationType.REGION, Collections.singletonList(10000002L), Images.LINK_EVE_MARKETDATA.getIcon()) {
 			@Override public PriceMode[] getPriceTypes() {
 				return new PriceMode[]{PriceMode.PRICE_SELL_PERCENTILE, PriceMode.PRICE_MIDPOINT, PriceMode.PRICE_BUY_PERCENTILE};
@@ -53,6 +54,7 @@ public class PriceDataSettings {
 				return DataModelPriceDataSettings.get().sourceEveMarketdata();
 			}
 		},
+		*/
 		EVEMARKETER(PricingFetch.EVEMARKETER, false, true, true, false, LocationType.REGION, Collections.singletonList(10000002L), Images.LINK_EVEMARKETER.getIcon()) {
 			@Override public PriceMode[] getPriceTypes() {
 				return PriceMode.values();
