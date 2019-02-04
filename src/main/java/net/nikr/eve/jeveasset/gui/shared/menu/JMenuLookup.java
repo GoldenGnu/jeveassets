@@ -41,7 +41,7 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 
 	private enum MenuLookupAction {
 		//EVE_CENTRAL,
-		EVE_MARKETDATA,
+		//EVE_MARKETDATA,
 		EVE_MARKETS,
 		EVEMARKETER,
 		GAMES_CHRUKER,
@@ -63,7 +63,7 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 	private final JMenuItem jDotlanLocations;
 	//private final JMenuItem jEveCentral;
 	private final JMenu jMarket;
-	private final JMenuItem jEveMarketdata;
+	//private final JMenuItem jEveMarketdata;
 	private final JMenuItem jEveMarketer;
 	private final JMenuItem jEveMarkets;
 	private final JMenuItem jFuzzworkMarket;
@@ -122,11 +122,13 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 		add(jEveCentral);
 		*/
 
+		/*
 		jEveMarketdata = new JMenuItem(GuiShared.get().eveMarketdata());
 		jEveMarketdata.setIcon(Images.LINK_EVE_MARKETDATA.getIcon());
 		jEveMarketdata.setActionCommand(MenuLookupAction.EVE_MARKETDATA.name());
 		jEveMarketdata.addActionListener(listener);
 		jMarket.add(jEveMarketdata);
+		*/
 
 		jEveMarkets = new JMenuItem(GuiShared.get().eveMarkets());
 		jEveMarkets.setIcon(Images.LINK_EVE_MARKETS.getIcon());
@@ -201,7 +203,7 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 		jDotlanRegion.setEnabled(!menuData.getRegionNames().isEmpty());
 		jMarket.setEnabled(!menuData.getMarketTypeIDs().isEmpty());
 		//jEveCentral.setEnabled(!menuData.getMarketTypeIDs().isEmpty());
-		jEveMarketdata.setEnabled(!menuData.getMarketTypeIDs().isEmpty());
+		//jEveMarketdata.setEnabled(!menuData.getMarketTypeIDs().isEmpty());
 		jEveMarketer.setEnabled(!menuData.getMarketTypeIDs().isEmpty());
 		jEveMarkets.setEnabled(!menuData.getMarketTypeIDs().isEmpty());
 		jFuzzworkMarket.setEnabled(!menuData.getMarketTypeIDs().isEmpty());
@@ -269,12 +271,14 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 				}
 				DesktopUtil.browse(urls, program);
 			*/
+			/*
 			} else if (MenuLookupAction.EVE_MARKETDATA.name().equals(e.getActionCommand())) {
 				Set<String> urls = new HashSet<String>();
 				for (int marketTypeID : menuData.getMarketTypeIDs()) {
 					urls.add("http://eve-marketdata.com/price_check.php?type_id=" + marketTypeID);
 				}
 				DesktopUtil.browse(urls, program);
+			*/
 			} else if (MenuLookupAction.EVEMARKETER.name().equals(e.getActionCommand())) {
 				Set<String> urls = new HashSet<String>();
 				for (int marketTypeID : menuData.getMarketTypeIDs()) {
