@@ -36,10 +36,14 @@ import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 import net.troja.eve.esi.ApiClient;
 import net.troja.eve.esi.ApiException;
+import net.troja.eve.esi.model.FactionsResponse;
 import net.troja.eve.esi.model.UniverseNamesResponse;
 
 
 public class EsiNameGetter extends AbstractEsiGetter {
+
+	public static final int FACTION_MIN = 500001;
+	public static final int FACTION_MAX = 500026;
 			
 	private final List<OwnerType> ownerTypes;
 
@@ -92,6 +96,11 @@ public class EsiNameGetter extends AbstractEsiGetter {
 				Settings.get().getOwners().put((long)lookup.getId(), lookup.getName());
 			}
 		}
+		///XXX - Workaround for universe/names not supporting factions: https://github.com/esi/esi-issues/issues/879
+		List<FactionsResponse> universeFactions = getUniverseApiOpen(apiClient).getUniverseFactions(null, AbstractEsiGetter.DATASOURCE, null, null);
+		for (FactionsResponse lookup : universeFactions) {
+			Settings.get().getOwners().put((long)lookup.getFactionId(), lookup.getName());
+		}
 	}
 
 	private Set<Integer> getOwnerIDs(List<OwnerType> ownerTypes) {
@@ -124,6 +133,10 @@ public class EsiNameGetter extends AbstractEsiGetter {
 	private void addOwnerID(Set<Integer> list, Number number) {
 		//Ignore null
 		if (number == null) {
+			return;
+		}
+		///XXX - Workaround for universe/names not supporting factions: https://github.com/esi/esi-issues/issues/879
+		if (number.longValue() >= FACTION_MIN && number.longValue() <= FACTION_MAX) {
 			return;
 		}
 		//Ignore Locations
