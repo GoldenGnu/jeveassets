@@ -29,6 +29,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import javax.swing.ButtonGroup;
@@ -51,6 +52,7 @@ import net.nikr.eve.jeveasset.gui.shared.components.ListComboBoxModel;
 import net.nikr.eve.jeveasset.gui.shared.table.EventListManager;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
 import net.nikr.eve.jeveasset.i18n.DialoguesSettings;
+import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 import uk.me.candle.eve.pricing.options.LocationType;
 
 
@@ -73,6 +75,8 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 	private final JComboBox<PriceSource> jSource;
 
 	private final EventList<RegionType> regions = new EventListManager<RegionType>().create();
+	private final EventList<MyLocation> stationsEventList = new EventListManager<MyLocation>().create();
+	private final List<MyLocation> stations = new ArrayList<MyLocation>();
 	
 	private final AutoCompleteSupport<RegionType> regionsAutoComplete;
 	private final AutoCompleteSupport<MyLocation> systemsAutoComplete;
@@ -86,13 +90,11 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 		MyLocation system = null;
 		MyLocation station = null;
 		EventList<MyLocation> systemsEventList = new EventListManager<MyLocation>().create();
-		EventList<MyLocation> stationsEventList = new EventListManager<MyLocation>().create();
 		try {
 			systemsEventList.getReadWriteLock().writeLock().lock();
-			stationsEventList.getReadWriteLock().writeLock().lock();
 			for (MyLocation location : StaticData.get().getLocations()) {
 				if (location.isStation() && !location.isCitadel() && !location.isUserLocation()) { //Ignore citadels and user locations
-					stationsEventList.add(location);
+					stations.add(location);
 					if (station == null || station.getLocation().length() < location.getLocation().length()) {
 						station = location;
 					}
@@ -106,7 +108,6 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 			}
 		} finally {
 			systemsEventList.getReadWriteLock().writeLock().unlock();
-			stationsEventList.getReadWriteLock().writeLock().unlock();
 		}
 		systemsEventList.getReadWriteLock().readLock().lock();
 		SortedList<MyLocation> systemsSortedList = new SortedList<>(systemsEventList);
@@ -372,12 +373,12 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 			jRadioRegions.setEnabled(false);
 			regionsAutoComplete.setFirstItem(RegionType.NOT_CONFIGURABLE);
 		}
-			jRegions.setSelectedIndex(0);
+		jRegions.setSelectedIndex(0);
 		if (locationType == LocationType.REGION && jRadioRegions.isEnabled()) {
 			if (!locations.isEmpty()) {
 				for (RegionType regionType : regionTypes) {
 					if (regionType.getRegions().equals(locations)) {
-							jRegions.setSelectedItem(regionType);
+						jRegions.setSelectedItem(regionType);
 						break;
 					}
 				}
@@ -396,14 +397,32 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 		}
 		if (locationType == LocationType.SYSTEM && jRadioSystems.isEnabled()) {
 			if (!locations.isEmpty()) {
-					jSystems.setSelectedItem(StaticData.get().getLocation(locations.get(0)));
-				}
+				jSystems.setSelectedItem(StaticData.get().getLocation(locations.get(0)));
+			}
 			jRadioSystems.setSelected(true);
 		} else {
-				jSystems.setSelectedIndex(0);
-			}
+			jSystems.setSelectedIndex(0);
+		}
 	//STATION
 		if (source.supportsStation()) {
+			List<MyLocation> list;
+			if (source == PriceSource.FUZZWORK) {
+				list = new ArrayList<>();
+				list.add(ApiIdConverter.getLocation(60003760));
+				list.add(ApiIdConverter.getLocation(60008494));
+				list.add(ApiIdConverter.getLocation(60011866));
+				list.add(ApiIdConverter.getLocation(60004588));
+				list.add(ApiIdConverter.getLocation(60005686));
+			} else {
+				list = stations;
+			}
+			try {
+				stationsEventList.getReadWriteLock().writeLock().lock();
+				stationsEventList.clear();
+				stationsEventList.addAll(list);
+			} finally {
+				stationsEventList.getReadWriteLock().writeLock().unlock();
+			}
 			stationsAutoComplete.removeFirstItem();
 			jRadioStations.setEnabled(true);
 			jStations.setEnabled(true);
@@ -414,13 +433,13 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 		}
 		if (locationType == LocationType.STATION && jRadioStations.isEnabled()) {
 			if (!locations.isEmpty()) {
-					jStations.setSelectedItem(StaticData.get().getLocation(locations.get(0)));
-				}
+				jStations.setSelectedItem(StaticData.get().getLocation(locations.get(0)));
+			}
 			jRadioStations.setSelected(true);
 		} else {
-				jStations.setSelectedIndex(0);
-			}
+			jStations.setSelectedIndex(0);
 		}
+	}
 
 	private class ListenerClass implements ActionListener, FocusListener {
 
