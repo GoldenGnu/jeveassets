@@ -99,7 +99,7 @@ public class LibraryManager {
 			files.add("LGoodDatePicker-10.2.3.jar");
 			files.add("jfreechart-1.5.0.jar");
 			files.add("osxadapter-1.1.0.jar");
-			files.add("pricing-1.8.0.jar");
+			files.add("pricing-1.9.1.jar");
 			files.add("routing-1.5.0.jar");
 			files.add("slf4j-api-1.7.25.jar");
 			files.add("log4j-over-slf4j-1.7.25.jar");

@@ -63,6 +63,14 @@ public class PriceDataSettings {
 				return DataModelPriceDataSettings.get().sourceEvemarketer();
 			}
 		},
+		FUZZWORK(PricingFetch.FUZZWORK, false, true, false, true, LocationType.REGION, Collections.singletonList(10000002L), Images.LINK_FUZZWORK.getIcon()) {
+			@Override public PriceMode[] getPriceTypes() {
+				return PriceMode.values();
+			}
+			@Override String getI18N() {
+				return DataModelPriceDataSettings.get().sourceFuzzwork();
+			}
+		},
 		/*
 		EVEMARKETEER(PricingFetch.EVEMARKETEER, false, true, true, true) {
 			@Override public PriceMode[] getPriceTypes() {
