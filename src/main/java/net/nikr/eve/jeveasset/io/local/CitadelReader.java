@@ -81,7 +81,11 @@ public final class CitadelReader extends AbstractXmlReader<CitadelSettings> {
 			if (AttributeGetters.haveAttribute(currentNode, "citadel")) {
 				citadel = AttributeGetters.getBoolean(currentNode, "citadel");
 			}
-			settings.put(id, new Citadel(id, name, systemId, systemName, regionId, regionName, userLocation, citadel));
+			boolean hammertime = true; //Old data is "unknown" -> default to overwriting it
+			if (AttributeGetters.haveAttribute(currentNode, "hammertime")) {
+				hammertime = AttributeGetters.getBoolean(currentNode, "hammertime");
+			}
+			settings.put(id, new Citadel(id, name, systemId, systemName, regionId, regionName, userLocation, citadel, hammertime));
 		}
 	}
 

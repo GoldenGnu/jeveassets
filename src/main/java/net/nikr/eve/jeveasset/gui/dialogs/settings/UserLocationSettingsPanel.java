@@ -198,7 +198,7 @@ public class UserLocationSettingsPanel extends JSettingsPanel {
 		if (system == null) { //Cancel
 			return null;
 		}
-		return new Citadel(renameLocation.getLocationID(), locationName, system.getSystemID(), system.getSystem(), system.getRegionID(), system.getRegion(), true, true);
+		return new Citadel(renameLocation.getLocationID(), locationName, system.getSystemID(), system.getSystem(), system.getRegionID(), system.getRegion(), true, true, false);
 	}
 
 	private String getLocationName(String text) {
