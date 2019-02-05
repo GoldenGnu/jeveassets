@@ -41,6 +41,10 @@ public class CitadelSettings {
 	}
 
 	public void put(long locationID, Citadel citadel) {
+		Citadel old = cache.get(locationID);
+		if (old != null && !old.hammertime && citadel.hammertime) {
+			return; //hammertime should not overwrite ESI data!
+		}
 		cache.put(locationID, new Citadel(citadel));
 		ApiIdConverter.addLocation(citadel, locationID);
 	}

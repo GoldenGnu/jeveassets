@@ -35,13 +35,14 @@ public class Citadel {
 	public String regionName;
 	public final boolean userLocation;
 	public final boolean citadel;
+	public final boolean hammertime;
 	public MyLocation myLocation;
 
 	/**
 	 * Used by hammerti.me.uk API
 	 */
 	public Citadel() {
-		this(0, "", 0, "", 0, "", false, true);
+		this(0, "", 0, "", 0, "", false, true, true);
 	}
 
 	/**
@@ -49,7 +50,7 @@ public class Citadel {
 	 * @param id locationID
 	 */
 	public Citadel(long id) {
-		this(id, "", 0, "", 0, "", false, true);
+		this(id, "", 0, "", 0, "", false, true, false);
 	}
 
 	/**
@@ -57,7 +58,7 @@ public class Citadel {
 	 * @param clone
 	 */
 	public Citadel(Citadel clone) {
-		this(clone.id, clone.name, clone.systemId, clone.systemName, clone.regionId, clone.regionName, clone.userLocation, clone.citadel);
+		this(clone.id, clone.name, clone.systemId, clone.systemName, clone.regionId, clone.regionName, clone.userLocation, clone.citadel, clone.hammertime);
 	}
 
 	/**
@@ -67,10 +68,10 @@ public class Citadel {
 	 * @param location 
 	 */
 	public Citadel(long locationID, String name, MyLocation location) {
-		this(locationID, name, location.getSystemID(), location.getSystem(), location.getRegionID(), location.getRegion(), false, true);
+		this(locationID, name, location.getSystemID(), location.getSystem(), location.getRegionID(), location.getRegion(), false, true, false);
 	}
 
-	public Citadel(long id, String name, long systemId, String systemName, long regionId, String regionName, boolean userLocation, boolean citadel) {
+	public Citadel(long id, String name, long systemId, String systemName, long regionId, String regionName, boolean userLocation, boolean citadel, boolean hammertime) {
 		this.id = id;
 		this.name = name;
 		this.systemId = systemId;
@@ -79,6 +80,7 @@ public class Citadel {
 		this.regionName = regionName.intern();
 		this.userLocation = userLocation;
 		this.citadel = citadel;
+		this.hammertime = hammertime;
 		updateLocation();
 	}
 
