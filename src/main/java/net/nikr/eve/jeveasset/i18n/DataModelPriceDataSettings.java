@@ -43,6 +43,7 @@ public abstract class DataModelPriceDataSettings extends Bundle {
 	public abstract String sourceEveMarketdata();
 	public abstract String sourceEveMarketeer();
 	public abstract String sourceEvemarketer();
+	public abstract String sourceFuzzwork();
 	public abstract String regionEmpire();
 	public abstract String regionMarketHubs();
 	public abstract String regionAllAmarr();
