@@ -55,12 +55,12 @@ License:
 ________________________________________________________________________________
 _EVE-ONLINE_____________________________________________________________________
 
-jEveAssets use EVE-Online API and toolkit
+jEveAssets use EVE-Online API and SDE
 
 Link:
   Main site: http://www.eveonline.com/
-  Toolkit: http://community.eveonline.com/community/fansites/toolkit/
-  API: http://api.eve-online.com/
+  Toolkit: https://developers.eveonline.com/resource/resources
+  API: https://esi.evetech.net/ui
 
 Toolkit License:
   ©CCP hf. All rights reserved. Used with permission.
@@ -74,12 +74,12 @@ Link:
   https://evekit.orbital.enterprises
 
 ________________________________________________________________________________
-_EVE-MARKETDATA_________________________________________________________________
+_FUZZWORK_______________________________________________________________________
 
-jEveAssets use Eve-MarketData.com API to get price data
+jEveAssets use fuzzwork API to get price data
 
 Link:
-  http://eve-marketdata.com/
+  https://market.fuzzwork.co.uk/api/
 
 ________________________________________________________________________________
 _EVEMARKETER____________________________________________________________________
