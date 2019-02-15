@@ -110,7 +110,7 @@ public class LibraryManager {
 			files.add("super-csv-2.4.0.jar");
 			files.add("translations-2.2.0.jar");
 			files.add("jackson-core-2.9.8.jar");
-			files.add("jackson-databind-2.8.8.1.jar");
+			files.add("jackson-databind-2.9.8.jar");
 			files.add("jackson-annotations-2.9.8.jar");
 			files.add("aopalliance-repackaged-2.5.0-b32.jar");
 			files.add("jersey-guava-2.25.1.jar");
