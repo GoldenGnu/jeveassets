@@ -40,7 +40,7 @@ public class FilterMatcher<E> implements Matcher<E> {
 	public static final Locale LOCALE = Locale.ENGLISH; //Use english AKA US_EN
 	private static final NumberFormat NUMBER_FORMAT = NumberFormat.getInstance(LOCALE);
 	private static final NumberFormat PERCENT_FORMAT = NumberFormat.getPercentInstance(LOCALE);
-	private static final Calendar CALENDAR = Calendar.getInstance(TimeZone.getTimeZone("GMT"));;
+	private static final Calendar CALENDAR = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
 
 	private final FilterControl<E> filterControl;
 	private final int group;
