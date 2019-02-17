@@ -620,6 +620,13 @@
 				<arg2>-noupdate</arg2>
 			</properties>
 		</profile>
+		<profile>
+			<id>backgroundupdate</id>
+			<properties>
+				<arg1>-backgroundupdate</arg1>
+				<arg2>-portable</arg2>
+			</properties>
+		</profile>
 	</profiles>
 
 	<repositories>
