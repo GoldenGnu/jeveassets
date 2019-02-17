@@ -20,6 +20,7 @@
  */
 package net.nikr.eve.jeveasset;
 
+import java.awt.GraphicsEnvironment;
 import java.io.File;
 import java.net.URISyntaxException;
 import java.util.logging.Level;
@@ -43,13 +44,21 @@ public final class Main {
 	private static Logger log;
 
 	private Main() {
+		init();
+		//Lets go!
+		Program program = new Program();
+	}
+
+	private static void init() {
 		//Validate directory
 		LibraryManager.checkLibraries();
 		//install the uncaught exception handlers
 		NikrUncaughtExceptionHandler.install();
 		//Splash screen
-		SplashUpdater splashUpdater = new SplashUpdater();
-		splashUpdater.start();
+		if (!GraphicsEnvironment.isHeadless()) {
+			SplashUpdater splashUpdater = new SplashUpdater();
+			splashUpdater.start();
+		}
 		//Print program data
 		if (jmemory) {
 			log.info("jmemory ok");
@@ -68,8 +77,6 @@ public final class Main {
 		if (instance.isSingleInstance()) {
 			FileLock.unlockAll();
 		}
-		//Lets go!
-		Program program = new Program();
 	}
 
 	public static boolean isJmemory() {
@@ -82,6 +89,7 @@ public final class Main {
 	 * @param args the command line arguments
 	 */
 	public static void main(final String[] args) {
+		boolean backgroundUpdate = false;
 		for (String arg : args) {
 			if (arg.toLowerCase().equals("-debug")) {
 				debug = true;
@@ -100,6 +108,9 @@ public final class Main {
 			}
 			if (arg.toLowerCase().equals("-jmemory")) {
 				jmemory = true;
+			}
+			if (arg.toLowerCase().equals("-backgroundupdate")) {
+				backgroundUpdate =  true;
 			}
 		}
 		//Force UTF-8 File system
@@ -159,13 +170,19 @@ public final class Main {
 		System.setProperty("jdk.http.auth.tunneling.disabledSchemes", "");
 		System.setProperty("jdk.http.auth.proxying.disabledSchemes", "");
 
-		javax.swing.SwingUtilities.invokeLater(
-			new Runnable() {
-				@Override
-			public void run() {
-				createAndShowGUI();
-			}
-		});
+		if (backgroundUpdate) {
+			init();
+			BackgroundUpdate update = new BackgroundUpdate();
+			update.update();
+		} else {
+			javax.swing.SwingUtilities.invokeLater(
+				new Runnable() {
+					@Override
+				public void run() {
+					createAndShowGUI();
+				}
+			});
+		}
 	}
 
 	private static void createAndShowGUI() {
