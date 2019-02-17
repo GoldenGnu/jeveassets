@@ -608,6 +608,7 @@ public class UpdateDialog extends JDialogCentered {
 							jAssets.isSelected(),
 							jAccountBalance.isSelected(),
 							jBlueprints.isSelected(),
+							jContainerLogs.isSelected(),
 							jContracts.isSelected(),
 							jIndustryJobs.isSelected(),
 							jJournal.isSelected(),
@@ -709,7 +710,7 @@ public class UpdateDialog extends JDialogCentered {
 
 		private final List<Runnable> updates = new ArrayList<Runnable>();
 
-		public Step2Task(final ProfileManager profileManager, final boolean assets, final boolean balance, final boolean blueprints, final boolean contracts, final boolean industry, final boolean journal, final boolean orders, final boolean transactions) {
+		public Step2Task(final ProfileManager profileManager, final boolean assets, final boolean balance, final boolean blueprints, final boolean container, final boolean contracts, final boolean industry, final boolean journal, final boolean orders, final boolean transactions) {
 			super(DialoguesUpdate.get().step2());
 			if (balance) {
 				//EveKit
@@ -797,9 +798,9 @@ public class UpdateDialog extends JDialogCentered {
 					updates.add(new EsiBlueprintsGetter(this, esiOwner));
 				}
 			}
-			if (jContainerLogs.isSelected()) {
+			if (container) {
 				//Esi
-				for (EsiOwner esiOwner : program.getProfileManager().getEsiOwners()) {
+				for (EsiOwner esiOwner : profileManager.getEsiOwners()) {
 					updates.add(new EsiContainerLogsGetter(this, esiOwner));
 				}
 			}
