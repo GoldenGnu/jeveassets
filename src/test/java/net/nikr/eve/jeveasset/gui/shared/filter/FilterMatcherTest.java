@@ -621,6 +621,9 @@ public class FilterMatcherTest extends TestUtil {
 					case DATE_LAST:
 						Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
 						//minus 47 hours
+						calendar.set(Calendar.MINUTE, 0);
+						calendar.set(Calendar.SECOND, 0);
+						calendar.set(Calendar.MILLISECOND, 0);
 						calendar.add(Calendar.HOUR_OF_DAY, +1);
 						calendar.add(Calendar.DAY_OF_MONTH, -2);
 						return calendar.getTime();
