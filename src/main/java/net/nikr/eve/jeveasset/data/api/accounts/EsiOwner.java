@@ -107,11 +107,11 @@ public class EsiOwner extends AbstractOwner implements OwnerType {
 		this.intellectualProperty = intellectualProperty;
 	}
 
-	public Date getStructuresNextUpdate() {
+	public synchronized Date getStructuresNextUpdate() {
 		return structuresNextUpdate;
 	}
 
-	public void setStructuresNextUpdate(Date structuresNextUpdate) {
+	public synchronized void setStructuresNextUpdate(Date structuresNextUpdate) {
 		this.structuresNextUpdate = structuresNextUpdate;
 	}
 

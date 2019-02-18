@@ -160,10 +160,6 @@ public abstract class AbstractGetter<O extends OwnerType, C, E extends Exception
 		return forceUpdate;
 	}
 
-	protected final synchronized void setNextUpdateSafe(Date date) {
-		setNextUpdate(date);
-	}
-
 	protected interface Updater<R, C, E extends Throwable> {
 		public R update(final C client) throws E;
 		public String getStatus();
