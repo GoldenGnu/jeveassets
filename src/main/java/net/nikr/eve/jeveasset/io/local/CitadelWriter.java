@@ -74,7 +74,7 @@ public final class CitadelWriter extends AbstractXmlWriter {
 			node.setAttributeNS(null, "regionname", citadel.regionName);
 			node.setAttributeNS(null, "userlocation", String.valueOf(citadel.userLocation));
 			node.setAttributeNS(null, "citadel", String.valueOf(citadel.citadel));
-			node.setAttributeNS(null, "hammertime", String.valueOf(citadel.hammertime));
+			node.setAttributeNS(null, "source", citadel.source.name());
 			parentNode.appendChild(node);
 		}
 	}

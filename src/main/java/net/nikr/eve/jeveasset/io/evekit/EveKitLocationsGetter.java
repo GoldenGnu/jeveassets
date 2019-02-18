@@ -31,6 +31,7 @@ import net.nikr.eve.jeveasset.data.api.accounts.EveKitAccessMask;
 import net.nikr.eve.jeveasset.data.api.accounts.EveKitOwner;
 import net.nikr.eve.jeveasset.data.api.my.MyAsset;
 import net.nikr.eve.jeveasset.data.settings.Citadel;
+import net.nikr.eve.jeveasset.data.settings.Citadel.CitadelSource;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import net.nikr.eve.jeveasset.io.evekit.AbstractEveKitGetter.EveKitPagesHandler;
@@ -60,7 +61,7 @@ public class EveKitLocationsGetter extends AbstractEveKitGetter implements EveKi
 					Settings.get().getEveNames().put(itemID, eveName);
 					MyAsset asset = iDs.get(itemID);
 					if (asset.getItem().getCategory().equals("Structure")) {
-						CitadelGetter.set(new Citadel(asset.getItemID(), eveName, ApiIdConverter.getLocation(asset.getLocationID())));
+						CitadelGetter.set(new Citadel(asset.getItemID(), eveName, ApiIdConverter.getLocation(asset.getLocationID()), CitadelSource.EVEKIT_LOCATIONS));
 					}
 				} else {
 					Settings.get().getEveNames().remove(itemID);

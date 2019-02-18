@@ -52,6 +52,7 @@ public abstract class AbstractGetter<O extends OwnerType, C, E extends Exception
 		ASSETS,
 		ACCOUNT_BALANCE,
 		BLUEPRINTS,
+		BOOKMARKS,
 		CONQUERABLE_STATIONS,
 		CONTRACT_ITEMS,
 		CONTRACTS,
@@ -86,6 +87,7 @@ public abstract class AbstractGetter<O extends OwnerType, C, E extends Exception
 			case ACCOUNT_BALANCE: taskName = "Account Balance"; break;
 			case ASSETS: taskName = "Assets"; break;
 			case BLUEPRINTS: taskName = "Blueprints"; break;
+			case BOOKMARKS: taskName = "Bookmarks"; break;
 			case CONQUERABLE_STATIONS: taskName = "Conquerable Stations"; break;
 			case CONTRACT_ITEMS: taskName = "Contract Items"; break;
 			case CONTRACTS: taskName = "Contracts"; break;

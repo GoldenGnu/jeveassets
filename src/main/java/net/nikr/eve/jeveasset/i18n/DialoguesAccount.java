@@ -75,6 +75,7 @@ public abstract class DialoguesAccount extends Bundle {
 	public abstract String scopeAssets();
 	public abstract String scopeWallet();
 	public abstract String scopeBlueprints();
+	public abstract String scopeBookmarks();
 	public abstract String scopeIndustryJobs();
 	public abstract String scopeMarketOrders();
 	public abstract String scopeContracts();

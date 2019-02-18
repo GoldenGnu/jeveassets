@@ -27,6 +27,30 @@ import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Citadel {
 
+	public static enum CitadelSource {
+		ESI_STRUCTURES(3), //Certified fresh
+		ESI_LOCATIONS(3), //Good source
+		EVEKIT_LOCATIONS(3), //Good source
+		USER(2), //User set this data (unless we have top-notch info, don't overwrite)
+		HAMMERTIME(1), //Better than nothing source
+		OLD(1), //Unknown source - keep if?
+		ESI_BOOKMARKS(0), //Unknown location name, but, known system and region
+		EVEKIT_BOOKMARKS(0), //Unknown location name, but, known system and region
+		EMPTY(-1) //100% Unknown location
+		;
+
+		private final int priority;
+
+		private CitadelSource(int priority) {
+			this.priority = priority;
+		}
+
+		public int getPriority() {
+			return priority;
+		}
+
+	}
+
 	public long id;
 	public String name;
 	public long systemId;
@@ -35,22 +59,22 @@ public class Citadel {
 	public String regionName;
 	public final boolean userLocation;
 	public final boolean citadel;
-	public final boolean hammertime;
+	public final CitadelSource source;
 	public MyLocation myLocation;
 
 	/**
 	 * Used by hammerti.me.uk API
 	 */
 	public Citadel() {
-		this(0, "", 0, "", 0, "", false, true, true);
+		this(0, "", 0, "", 0, "", false, true, CitadelSource.HAMMERTIME);
 	}
 
 	/**
-	 * Blank location
+	 * Empty location
 	 * @param id locationID
 	 */
 	public Citadel(long id) {
-		this(id, "", 0, "", 0, "", false, true, false);
+		this(id, "", 0, "", 0, "", false, true, CitadelSource.EMPTY);
 	}
 
 	/**
@@ -58,20 +82,21 @@ public class Citadel {
 	 * @param clone
 	 */
 	public Citadel(Citadel clone) {
-		this(clone.id, clone.name, clone.systemId, clone.systemName, clone.regionId, clone.regionName, clone.userLocation, clone.citadel, clone.hammertime);
+		this(clone.id, clone.name, clone.systemId, clone.systemName, clone.regionId, clone.regionName, clone.userLocation, clone.citadel, clone.source);
 	}
 
 	/**
-	 * Asset Name Structure
+	 * Asset Locations
 	 * @param locationID
 	 * @param name
 	 * @param location 
+	 * @param source 
 	 */
-	public Citadel(long locationID, String name, MyLocation location) {
-		this(locationID, name, location.getSystemID(), location.getSystem(), location.getRegionID(), location.getRegion(), false, true, false);
+	public Citadel(long locationID, String name, MyLocation location, CitadelSource source) {
+		this(locationID, name, location.getSystemID(), location.getSystem(), location.getRegionID(), location.getRegion(), false, true, source);
 	}
 
-	public Citadel(long id, String name, long systemId, String systemName, long regionId, String regionName, boolean userLocation, boolean citadel, boolean hammertime) {
+	public Citadel(long id, String name, long systemId, String systemName, long regionId, String regionName, boolean userLocation, boolean citadel, CitadelSource source) {
 		this.id = id;
 		this.name = name;
 		this.systemId = systemId;
@@ -80,7 +105,7 @@ public class Citadel {
 		this.regionName = regionName.intern();
 		this.userLocation = userLocation;
 		this.citadel = citadel;
-		this.hammertime = hammertime;
+		this.source = source;
 		updateLocation();
 	}
 
@@ -105,12 +130,17 @@ public class Citadel {
 		return name;
 	}
 
-	private boolean isEmpty() {
+	public boolean isEmpty() {
 		return systemId == 0 || regionId == 0;
 	}
 
 	public MyLocation getLocation() {
 		return myLocation;
+	}
+
+	@Override
+	public String toString() {
+		return myLocation.toString();
 	}
 
 }

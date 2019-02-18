@@ -37,6 +37,7 @@ import net.nikr.eve.jeveasset.io.shared.ThreadWoker.TaskCancelledException;
 import net.troja.eve.esi.ApiClient;
 import net.troja.eve.esi.ApiException;
 import net.troja.eve.esi.api.AssetsApi;
+import net.troja.eve.esi.api.BookmarksApi;
 import net.troja.eve.esi.api.CharacterApi;
 import net.troja.eve.esi.api.ContractsApi;
 import net.troja.eve.esi.api.CorporationApi;
@@ -240,6 +241,10 @@ public abstract class AbstractEsiGetter extends AbstractGetter<EsiOwner, ApiClie
 
 	protected AssetsApi getAssetsApiAuth(ApiClient apiClient) {
 		return new AssetsApi(apiClient);
+	}
+
+	protected BookmarksApi getBookmarksApiAuth(ApiClient apiClient) {
+		return new BookmarksApi(apiClient);
 	}
 
 	protected WalletApi getWalletApiAuth(ApiClient apiClient) {

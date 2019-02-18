@@ -20,6 +20,7 @@
  */
 package net.nikr.eve.jeveasset.io.shared;
 
+import enterprises.orbital.evekit.client.model.Bookmark;
 import java.util.ArrayList;
 import java.util.List;
 import net.nikr.eve.jeveasset.data.api.accounts.OwnerType;
@@ -30,10 +31,16 @@ import net.nikr.eve.jeveasset.data.sde.MyLocation;
 import net.nikr.eve.jeveasset.data.sde.ReprocessedMaterial;
 import net.nikr.eve.jeveasset.data.sde.StaticData;
 import net.nikr.eve.jeveasset.data.settings.Citadel;
+import net.nikr.eve.jeveasset.data.settings.Citadel.CitadelSource;
 import net.nikr.eve.jeveasset.data.settings.PriceData;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.data.settings.UserItem;
+import net.nikr.eve.jeveasset.i18n.General;
 import net.nikr.eve.jeveasset.io.online.CitadelGetter;
+import net.troja.eve.esi.model.CharacterBookmarkItem;
+import net.troja.eve.esi.model.CharacterBookmarksResponse;
+import net.troja.eve.esi.model.CorporationBookmarkItem;
+import net.troja.eve.esi.model.CorporationBookmarksResponse;
 import net.troja.eve.esi.model.StructureResponse;
 
 public final class ApiIdConverter {
@@ -308,6 +315,40 @@ public final class ApiIdConverter {
 
 	public static Citadel getCitadel(final StructureResponse response, final long locationID) {
 		MyLocation system = getLocation(response.getSolarSystemId());
-		return new Citadel(locationID, response.getName(), response.getSolarSystemId(), system.getSystem(), system.getRegionID(), system.getRegion(), false, true, false);
+		return new Citadel(locationID, response.getName(), response.getSolarSystemId(), system.getSystem(), system.getRegionID(), system.getRegion(), false, true, CitadelSource.ESI_STRUCTURES);
 	}
+
+	public static Citadel getCitadel(final Bookmark response) {
+		Integer locationID = response.getLocationID();
+		Long itemID = response.getItemID();
+		if (locationID != null && locationID > 0 && itemID != null && itemID > 1000000000000L) {
+			return getCitadel(locationID, itemID, response.getMemo(), CitadelSource.EVEKIT_BOOKMARKS);
+		} else {
+			return null;
+		}
+	}
+
+	public static Citadel getCitadel(final CorporationBookmarksResponse response) {
+		CorporationBookmarkItem item = response.getItem(); //Can be null
+		if (item != null && item.getItemId() > 1000000000000L) {
+			return getCitadel(response.getLocationId(), item.getItemId(), response.getLabel(), CitadelSource.ESI_BOOKMARKS);
+		} else {
+			return null;
+		}
+	}
+
+	public static Citadel getCitadel(final CharacterBookmarksResponse response) {
+		CharacterBookmarkItem item = response.getItem(); //Can be null
+		if (item != null && item.getItemId() > 1000000000000L) {
+			return getCitadel(response.getLocationId(), item.getItemId(), response.getLabel(), CitadelSource.ESI_BOOKMARKS);
+		} else {
+			return null;
+		}
+	}
+
+	private static Citadel getCitadel(Integer systemID, Long locationID, String label, CitadelSource source) {
+		MyLocation system = getLocation(systemID);
+		return new Citadel(locationID, General.get().bookmarkLocation(system.getSystem(), label.trim(), String.valueOf(locationID)), systemID, system.getSystem(), system.getRegionID(), system.getRegion(), false, true, source);
+	}
+
 }

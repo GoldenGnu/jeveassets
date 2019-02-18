@@ -177,6 +177,11 @@ public class EveKitOwner extends AbstractOwner implements OwnerType {
 	}
 
 	@Override
+	public boolean isBookmarks() {
+		return (getAccessMask() & EveKitAccessMask.BOOKMARKS.getAccessMask()) == EveKitAccessMask.BOOKMARKS.getAccessMask();
+	}
+
+	@Override
 	public boolean isMarketOrders() {
 		return (getAccessMask() & EveKitAccessMask.MARKET_ORDERS.getAccessMask()) == EveKitAccessMask.MARKET_ORDERS.getAccessMask();
 	}
