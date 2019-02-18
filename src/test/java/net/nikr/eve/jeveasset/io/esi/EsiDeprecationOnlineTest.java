@@ -29,6 +29,7 @@ import net.nikr.eve.jeveasset.TestUtil;
 import net.troja.eve.esi.ApiClient;
 import net.troja.eve.esi.ApiException;
 import net.troja.eve.esi.api.AssetsApi;
+import net.troja.eve.esi.api.BookmarksApi;
 import net.troja.eve.esi.api.CharacterApi;
 import net.troja.eve.esi.api.ContractsApi;
 import net.troja.eve.esi.api.CorporationApi;
@@ -110,6 +111,28 @@ public class EsiDeprecationOnlineTest extends TestUtil {
 		CorporationApi api = new CorporationApi();
 		try {
 			api.getCorporationsCorporationIdBlueprints(1, DATASOURCE, null, null, null);
+		} catch (ApiException ex) {
+
+		}
+		validate(api.getApiClient());
+	}
+
+	@Test
+	public void esiBookmarksGetterCharacters() {
+		BookmarksApi api = new BookmarksApi();
+		try {
+			api.getCharactersCharacterIdBookmarks(1, DATASOURCE, null, null, null);
+		} catch (ApiException ex) {
+
+		}
+		validate(api.getApiClient());
+	}
+
+	@Test
+	public void esiBookmarksGetterCorporation() {
+		BookmarksApi api = new BookmarksApi();
+		try {
+			api.getCorporationsCorporationIdBookmarks(1, DATASOURCE, null, null, null);
 		} catch (ApiException ex) {
 
 		}

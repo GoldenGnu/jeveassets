@@ -23,6 +23,7 @@ package net.nikr.eve.jeveasset.io.local;
 
 import java.util.Date;
 import net.nikr.eve.jeveasset.data.settings.Citadel;
+import net.nikr.eve.jeveasset.data.settings.Citadel.CitadelSource;
 import net.nikr.eve.jeveasset.data.settings.CitadelSettings;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import org.w3c.dom.Element;
@@ -81,11 +82,15 @@ public final class CitadelReader extends AbstractXmlReader<CitadelSettings> {
 			if (AttributeGetters.haveAttribute(currentNode, "citadel")) {
 				citadel = AttributeGetters.getBoolean(currentNode, "citadel");
 			}
-			boolean hammertime = true; //Old data is "unknown" -> default to overwriting it
-			if (AttributeGetters.haveAttribute(currentNode, "hammertime")) {
-				hammertime = AttributeGetters.getBoolean(currentNode, "hammertime");
+			CitadelSource source = CitadelSource.OLD;
+			if (AttributeGetters.haveAttribute(currentNode, "source")) {
+				try {
+					source = CitadelSource.valueOf(AttributeGetters.getString(currentNode, "source"));
+				} catch (IllegalArgumentException ex) {
+					source = CitadelSource.OLD;
+				}
 			}
-			settings.put(id, new Citadel(id, name, systemId, systemName, regionId, regionName, userLocation, citadel, hammertime));
+			settings.put(id, new Citadel(id, name, systemId, systemName, regionId, regionName, userLocation, citadel, source));
 		}
 	}
 

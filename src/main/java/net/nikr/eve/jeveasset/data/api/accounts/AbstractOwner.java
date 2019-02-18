@@ -70,6 +70,7 @@ public abstract class AbstractOwner implements OwnerType, Comparable<OwnerType> 
 	private Date contractsNextUpdate = Settings.getNow();
 	private Date locationsNextUpdate = Settings.getNow();
 	private Date blueprintsNextUpdate = Settings.getNow();
+	private Date bookmarksNextUpdate = Settings.getNow();
 	private Date containerLogsNextUpdate = Settings.getNow();
 
 	public AbstractOwner() { }
@@ -103,6 +104,7 @@ public abstract class AbstractOwner implements OwnerType, Comparable<OwnerType> 
 		this.contractsNextUpdate = abstractOwner.contractsNextUpdate;
 		this.locationsNextUpdate = abstractOwner.locationsNextUpdate;
 		this.blueprintsNextUpdate = abstractOwner.blueprintsNextUpdate;
+		this.bookmarksNextUpdate = abstractOwner.bookmarksNextUpdate;
 		this.containerLogsNextUpdate = abstractOwner.containerLogsNextUpdate;
 	}
 
@@ -119,6 +121,11 @@ public abstract class AbstractOwner implements OwnerType, Comparable<OwnerType> 
 	@Override
 	public synchronized void setBlueprintsNextUpdate(final Date blueprintsNextUpdate) {
 		this.blueprintsNextUpdate = blueprintsNextUpdate;
+	}
+
+	@Override
+	public synchronized void setBookmarksNextUpdate(Date bookmarksNextUpdate) {
+		this.bookmarksNextUpdate = bookmarksNextUpdate;
 	}
 
 	@Override
@@ -169,6 +176,11 @@ public abstract class AbstractOwner implements OwnerType, Comparable<OwnerType> 
 	@Override
 	public synchronized Date getBlueprintsNextUpdate() {
 		return blueprintsNextUpdate;
+	}
+
+	@Override
+	public synchronized Date getBookmarksNextUpdate() {
+		return bookmarksNextUpdate;
 	}
 
 	@Override

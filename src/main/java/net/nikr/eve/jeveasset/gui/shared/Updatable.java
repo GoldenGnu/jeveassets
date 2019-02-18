@@ -54,6 +54,9 @@ public class Updatable {
 				if (isUpdatable(owner.getBlueprintsNextUpdate())){
 					return true;
 				}
+				if (isUpdatable(owner.getBookmarksNextUpdate())){
+					return true;
+				}
 				if (isUpdatable(owner.getContractsNextUpdate())){
 					return true;
 				}
