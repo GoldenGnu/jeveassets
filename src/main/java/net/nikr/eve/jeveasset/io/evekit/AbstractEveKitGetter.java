@@ -107,7 +107,7 @@ public abstract class AbstractEveKitGetter extends AbstractGetter<EveKitOwner, A
 			logInfo(updater.getStatus(), "Updated");
 			String expiresHeader = getHeader(client.getResponseHeaders(), "Expires");
 			if (expiresHeader != null) {
-				setNextUpdateSafe(Formater.parseExpireDate(expiresHeader));
+				setNextUpdate(Formater.parseExpireDate(expiresHeader));
 			}
 			return r;
 		} catch (ApiException ex) {

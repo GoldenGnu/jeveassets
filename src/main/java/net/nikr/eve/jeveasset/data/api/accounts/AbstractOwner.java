@@ -102,92 +102,92 @@ public abstract class AbstractOwner implements OwnerType, Comparable<OwnerType> 
 	}
 
 	@Override
-	public void setAssetNextUpdate(final Date nextUpdate) {
+	public synchronized void setAssetNextUpdate(final Date nextUpdate) {
 		this.assetNextUpdate = nextUpdate;
 	}
 
 	@Override
-	public void setBalanceNextUpdate(final Date balanceNextUpdate) {
+	public synchronized void setBalanceNextUpdate(final Date balanceNextUpdate) {
 		this.balanceNextUpdate = balanceNextUpdate;
 	}
 
 	@Override
-	public void setBlueprintsNextUpdate(Date blueprintsNextUpdate) {
+	public synchronized void setBlueprintsNextUpdate(Date blueprintsNextUpdate) {
 		this.blueprintsNextUpdate = blueprintsNextUpdate;
 	}
 
 	@Override
-	public void setContractsNextUpdate(final Date contractsNextUpdate) {
+	public synchronized void setContractsNextUpdate(final Date contractsNextUpdate) {
 		this.contractsNextUpdate = contractsNextUpdate;
 	}
 
 	@Override
-	public void setIndustryJobsNextUpdate(final Date industryJobsNextUpdate) {
+	public synchronized void setIndustryJobsNextUpdate(final Date industryJobsNextUpdate) {
 		this.industryJobsNextUpdate = industryJobsNextUpdate;
 	}
 
 	@Override
-	public void setLocationsNextUpdate(Date locationsNextUpdate) {
+	public synchronized void setLocationsNextUpdate(Date locationsNextUpdate) {
 		this.locationsNextUpdate = locationsNextUpdate;
 	}
 
 	@Override
-	public void setMarketOrdersNextUpdate(final Date marketOrdersNextUpdate) {
+	public synchronized void setMarketOrdersNextUpdate(final Date marketOrdersNextUpdate) {
 		this.marketOrdersNextUpdate = marketOrdersNextUpdate;
 	}
 
 	@Override
-	public void setJournalNextUpdate(Date journalNextUpdate) {
+	public synchronized void setJournalNextUpdate(Date journalNextUpdate) {
 		this.journalNextUpdate = journalNextUpdate;
 	}
 
 	@Override
-	public void setTransactionsNextUpdate(final Date transactionsNextUpdate) {
+	public synchronized void setTransactionsNextUpdate(final Date transactionsNextUpdate) {
 		this.transactionsNextUpdate = transactionsNextUpdate;
 	}
 
 	@Override
-	public Date getTransactionsNextUpdate() {
+	public synchronized Date getTransactionsNextUpdate() {
 		return transactionsNextUpdate;
 	}
 
 	@Override
-	public Date getAssetNextUpdate() {
+	public synchronized  Date getAssetNextUpdate() {
 		return assetNextUpdate;
 	}
 
 	@Override
-	public Date getBalanceNextUpdate() {
+	public synchronized  Date getBalanceNextUpdate() {
 		return balanceNextUpdate;
 	}
 
 	@Override
-	public Date getBlueprintsNextUpdate() {
+	public synchronized Date getBlueprintsNextUpdate() {
 		return blueprintsNextUpdate;
 	}
 
 	@Override
-	public Date getContractsNextUpdate() {
+	public synchronized Date getContractsNextUpdate() {
 		return contractsNextUpdate;
 	}
 
 	@Override
-	public Date getIndustryJobsNextUpdate() {
+	public synchronized Date getIndustryJobsNextUpdate() {
 		return industryJobsNextUpdate;
 	}
 
 	@Override
-	public Date getLocationsNextUpdate() {
+	public synchronized Date getLocationsNextUpdate() {
 		return locationsNextUpdate;
 	}
 
 	@Override
-	public Date getMarketOrdersNextUpdate() {
+	public synchronized Date getMarketOrdersNextUpdate() {
 		return marketOrdersNextUpdate;
 	}
 
 	@Override
-	public Date getJournalNextUpdate() {
+	public synchronized Date getJournalNextUpdate() {
 		return journalNextUpdate;
 	}
 

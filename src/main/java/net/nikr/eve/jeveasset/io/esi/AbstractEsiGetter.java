@@ -123,7 +123,7 @@ public abstract class AbstractEsiGetter extends AbstractGetter<EsiOwner, ApiClie
 			R t = updater.update(client);
 			String expiresHeader = getHeader(client.getResponseHeaders(), "expires");
 			if (expiresHeader != null) {
-				setNextUpdateSafe(Formater.parseExpireDate(expiresHeader));
+				setNextUpdate(Formater.parseExpireDate(expiresHeader));
 			}
 			logInfo(updater.getStatus(), "Updated");
 			if (owner != null) {
