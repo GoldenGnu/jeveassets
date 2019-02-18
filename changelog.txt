@@ -16,6 +16,26 @@
                   #### #  # #  # #  # #### #### #### #### ####
 
 ________________________________________________________________________________
+_5.8.1__________________________________________________________________________
+
+New Feature:
+-Added fuzzwork as a price data source
+
+Bug Fixes:
+-Fixed price updates continuing download after canceled
+
+Changed:
+-Removed eve-marketdata as a price source and from the lookup menu
+-Prioritize user and esi citadel data over hammerti.me
+
+Code:
+-Updated eve-esi to 2.4.0
+-Updated pricing library to 2.0.0
+
+Notes:
+-Give the fuzzwork price source a try. It's lightning fast.
+
+________________________________________________________________________________
 _5.8.0__________________________________________________________________________
 
 New Features:
