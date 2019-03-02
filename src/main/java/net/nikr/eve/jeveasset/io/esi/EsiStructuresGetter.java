@@ -115,7 +115,7 @@ public class EsiStructuresGetter extends AbstractEsiGetter {
 			@Override
 			protected void handle(ApiException ex, Long k) throws ApiException {
 				if ((ex.getCode() == 403 && ex.getMessage().toLowerCase().contains("forbidden"))
-						|| (ex.getCode() == 404 && ex.getMessage().toLowerCase().contains("structure not found"))
+						|| (ex.getCode() == 404 && ex.getMessage().toLowerCase().contains("structure"))
 						|| (ex.getCode() == 502 && ex.getMessage().toLowerCase().contains("could not determine docking access"))) {
 					LOG.warn("Failed to find locationID: " + k);
 				} else {
@@ -125,7 +125,7 @@ public class EsiStructuresGetter extends AbstractEsiGetter {
 			}
 		});
 
-		List<Citadel> citadels = new ArrayList<Citadel>();
+		List<Citadel> citadels = new ArrayList<>();
 		for (Map.Entry<Long, StructureResponse> entry : responses.entrySet()) {
 			citadels.add(ApiIdConverter.getCitadel(entry.getValue(), entry.getKey()));
 		}
@@ -159,7 +159,7 @@ public class EsiStructuresGetter extends AbstractEsiGetter {
 	}
 
 	private static Set<Long> buildIDs(Set<MyLocation> locations) {
-		Set<Long> locationIDs = new HashSet<Long>();
+		Set<Long> locationIDs = new HashSet<>();
 		for (MyLocation locationEnd : locations) {
 			if (locationEnd.isEmpty() || locationEnd.isUserLocation() || locationEnd.isCitadel()) {
 				locationIDs.add(locationEnd.getLocationID());
@@ -169,8 +169,8 @@ public class EsiStructuresGetter extends AbstractEsiGetter {
 	}
 
 	private static Set<Long> buildIDs(List<OwnerType> ownerTypes, boolean tracker) {
-		Set<Long> itemIDs = new HashSet<Long>();
-		Set<Long> locationIDs = new HashSet<Long>();
+		Set<Long> itemIDs = new HashSet<>();
+		Set<Long> locationIDs = new HashSet<>();
 		if (tracker) {
 			try {
 				TrackerData.readLock();
