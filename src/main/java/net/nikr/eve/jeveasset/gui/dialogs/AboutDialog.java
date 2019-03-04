@@ -54,7 +54,7 @@ public class AboutDialog extends JDialogCentered {
 
 		JEditorPane jProgram = createEditorPane(false,
 				"<div style=\"font-size: 30pt;\"><b>" + Program.PROGRAM_NAME + "</b></div>"
-				+ "Copyright &copy; 2009-2018 Contributors<br>"
+				+ "Copyright &copy; 2009-2019 Contributors<br>"
 				);
 
 		JEditorPane jInfo = createEditorPane(
