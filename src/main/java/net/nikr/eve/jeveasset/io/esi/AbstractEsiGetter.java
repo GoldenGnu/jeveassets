@@ -141,7 +141,7 @@ public abstract class AbstractEsiGetter extends AbstractGetter<EsiOwner, ApiClie
 				throw new InvalidAuthException();
 			} else if (ex.getCode() >= 500 && ex.getCode() < 600 //CCP error, Lets try again in a sec
 					&& ex.getCode() != 503 //Don't retry when it may be downtime
-					&& (ex.getCode() != 502 || ex.getMessage().toLowerCase().contains("no reply within 10 seconds")) //Don't retry when it may be downtime, unless it's "no reply within 10 seconds"
+					&& (ex.getCode() != 502 || (ex.getMessage().toLowerCase().contains("no reply within 10 seconds") || ex.getMessage().toLowerCase().startsWith("<html>"))) //Don't retry when it may be downtime, unless it's "no reply within 10 seconds" or html body
 					&& retries < updater.getMaxRetries()) { //Retries
 				retries++;
 				try {
