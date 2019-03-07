@@ -84,6 +84,11 @@ public class ReprocessedTotal implements ReprocessedInterface {
 	}
 
 	@Override
+	public long getItemCount() {
+		return getQuantitySkill();
+	}
+
+	@Override
 	public String getName() {
 		return TabsReprocessed.get().total();
 	}

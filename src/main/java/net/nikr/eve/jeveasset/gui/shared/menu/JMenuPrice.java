@@ -46,8 +46,6 @@ public class JMenuPrice<T> extends JAutoMenu<T> {
 	private final JMenuItem jEdit;
 	private final JMenuItem jReset;
 
-	private MenuData<T> menuData;
-
 	public JMenuPrice(final Program program) {
 		super(GuiShared.get().itemPriceTitle(), program); //
 		this.setIcon(Images.SETTINGS_USER_PRICE.getIcon());
@@ -69,8 +67,7 @@ public class JMenuPrice<T> extends JAutoMenu<T> {
 
 	
 	@Override
-	public void setMenuData(MenuData<T> menuData) {
-		this.menuData = menuData;
+	public void updateMenuData() {
 		jEdit.setEnabled(!menuData.getPrices().isEmpty());
 		jReset.setEnabled(!menuData.getPrices().isEmpty() && program.getUserPriceSettingsPanel().containsKey(menuData.getPrices().keySet()));
 	}

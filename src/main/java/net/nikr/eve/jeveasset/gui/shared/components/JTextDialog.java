@@ -68,7 +68,7 @@ public class JTextDialog extends JDialogCentered {
 	private final JButton jCancel;
 	private final Color exportColor;
 	private final Color importColor;
-	private JCustomFileChooser jFileChooser;
+	private final JCustomFileChooser jFileChooser;
 
 	private String returnValue = null;
 

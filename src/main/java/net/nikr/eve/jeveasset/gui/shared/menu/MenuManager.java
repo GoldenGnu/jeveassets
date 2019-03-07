@@ -62,7 +62,8 @@ public class MenuManager<Q> {
 		NAME,
 		REPROCESSED,
 		JUMPS,
-		ROUTING
+		ROUTING,
+		COPY_PLUS,
 	}
 
 	private boolean priceSupported = false;
@@ -122,6 +123,10 @@ public class MenuManager<Q> {
 	}
 
 	public final void createCashe(final Program program, final Map<MenuEnum, JAutoMenu<Q>> menus, final Class<Q> clazz) {
+	//COPY SIMPLE
+		if (itemSupported) {
+			menus.put(MenuEnum.COPY_PLUS, new JMenuCopyPlus<Q>(program));
+		}
 	//ASSET FILTER
 		if (!assets && (itemSupported || locationSupported)) {
 			menus.put(MenuEnum.ASSET_FILTER, new JMenuAssetFilter<Q>(program));
@@ -184,6 +189,12 @@ public class MenuManager<Q> {
 		if (jComponent instanceof JPopupMenu) {
 			jComponent.add(new JMenuCopy(jTable));
 			addSeparator(jComponent);
+			notEmpty = true;
+		}
+	//COPY+
+		JAutoMenu<Q> jcopyPlus = menus.get(MenuEnum.COPY_PLUS);
+		if (jcopyPlus != null) {
+			jComponent.add(jcopyPlus);
 			notEmpty = true;
 		}
 	//TOOL MENU
@@ -427,11 +438,20 @@ public class MenuManager<Q> {
 	protected abstract static class JAutoMenu<T> extends JMenu implements AutoMenu<T> {
 
 		protected Program program;
+		protected MenuData<T> menuData;
 		
 		public JAutoMenu(final String s, final Program program) {
 			super(s);
 			this.program = program;
 		}
+
+		@Override
+		public final void setMenuData(MenuData<T> menuData) {
+			this.menuData = menuData;
+			updateMenuData();
+		}
+
+		protected abstract void updateMenuData();
 	}
 
 	public static interface TableMenu<T> {

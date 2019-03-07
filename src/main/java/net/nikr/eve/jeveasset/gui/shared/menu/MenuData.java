@@ -63,6 +63,7 @@ public class MenuData<T> {
 	private final List<TagsType> tags = new ArrayList<TagsType>();
 	private final List<MyAsset> assets = new ArrayList<MyAsset>();
 	private final Set<MyContract> contracts = new HashSet<MyContract>();
+	private final Map<Item, Long> itemCounts = new HashMap<>();
 
 	public MenuData() { }
 
@@ -97,6 +98,11 @@ public class MenuData<T> {
 			if (t instanceof ItemType) {
 				ItemType type = (ItemType) t;
 				itemType = type.getItem();
+				Long count = itemCounts.get(itemType);
+				if (count == null) {
+					count = 0L;
+				}
+				itemCounts.put(itemType, (count + type.getItemCount()));
 			}
 
 			BlueprintType blueprint = null;
@@ -300,5 +306,9 @@ public class MenuData<T> {
 	public void setContracts(Set<MyContract> contracts) {
 		this.contracts.clear();
 		this.contracts.addAll(contracts);
+	}
+
+	public Map<Item, Long> getItemCounts() {
+		return itemCounts;
 	}
 }

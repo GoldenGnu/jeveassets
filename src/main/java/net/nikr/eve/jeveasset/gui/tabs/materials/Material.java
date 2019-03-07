@@ -124,6 +124,11 @@ public class Material implements Comparable<Material>, LocationType, ItemType, P
 	}
 
 	@Override
+	public long getItemCount() {
+		return getCount();
+	}
+
+	@Override
 	public MyLocation getLocation() {
 		return location;
 	}

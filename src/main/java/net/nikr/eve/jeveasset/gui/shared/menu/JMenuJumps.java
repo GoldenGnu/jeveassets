@@ -52,8 +52,6 @@ public class JMenuJumps<T> extends MenuManager.JAutoMenu<T> {
 	private final JMenuItem jClear;
 	private final Class<T> clazz;
 
-	private MenuData<T> menuData;
-
 	public JMenuJumps(Program program, Class<T> clazz) {
 		super(GuiShared.get().jumps(), program);
 		this.clazz = clazz;
@@ -78,9 +76,7 @@ public class JMenuJumps<T> extends MenuManager.JAutoMenu<T> {
 	}
 
 	@Override
-	public void setMenuData(MenuData<T> menuData) {
-		this.menuData = menuData;
-
+	public void updateMenuData() {
 		removeAll();
 
 		add(jAddSelected);

@@ -44,6 +44,8 @@ public abstract class GuiShared extends Bundle {
 	public abstract String containerEdit();
 	public abstract String containerText();
 	public abstract String copy();
+	public abstract String copyEveMultiBuy();
+	public abstract String copyPlus();
 	public abstract String custom();
 	public abstract String cut();
 	public abstract String delete();
@@ -63,6 +65,7 @@ public abstract class GuiShared extends Bundle {
 	public abstract String eveMarkets();
 	public abstract String eveOnline();
 	public abstract String eveRef();
+	public abstract String evepraisal();
 	public abstract String foreground();
 	public abstract String fuzzworkBlueprints();
 	public abstract String fuzzworkItems();

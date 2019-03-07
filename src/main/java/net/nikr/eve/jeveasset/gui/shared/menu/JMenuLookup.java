@@ -34,6 +34,7 @@ import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewTab;
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewTab.OverviewAction;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 import net.nikr.eve.jeveasset.i18n.TabsOverview;
+import net.nikr.eve.jeveasset.io.online.EvepraisalGetter;
 import net.nikr.eve.jeveasset.io.shared.DesktopUtil;
 
 
@@ -54,6 +55,7 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 		EVEMAPS_DOTLAN_SYSTEM,
 		EVEMAPS_DOTLAN_REGION,
 		EVE_INFO,
+		EVEPRAISAL,
 	}
 
 	private final JMenu jDotlan;
@@ -73,10 +75,9 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 	private final JMenuItem jzKillboard;
 	private final JMenuItem jEveRef;
 	private final JMenuItem jEveInfo;
+	private final JMenuItem jEvepraisal;
 	private final JMenu jIndustry;
 	private final JMenuItem jFuzzworkBlueprints;
-
-	private MenuData<T> menuData;
 
 	public JMenuLookup(final Program program) {
 		super(GuiShared.get().lookup(), program);
@@ -148,6 +149,12 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 		jFuzzworkMarket.addActionListener(listener);
 		jMarket.add(jFuzzworkMarket);
 
+		jEvepraisal = new JMenuItem(GuiShared.get().evepraisal());
+		jEvepraisal.setIcon(Images.LINK_EVEPRAISAL.getIcon());
+		jEvepraisal.setActionCommand(MenuLookupAction.EVEPRAISAL.name());
+		jEvepraisal.addActionListener(listener);
+		jMarket.add(jEvepraisal);
+
 		jItemDatabase = new JMenu(GuiShared.get().itemDatabase());
 		jItemDatabase.setIcon(Images.TOOL_ASSETS.getIcon());
 		add(jItemDatabase);
@@ -195,8 +202,7 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 	}
 
 	@Override
-	public void setMenuData(MenuData<T> menuData) {
-		this.menuData = menuData;
+	public void updateMenuData() {
 		jDotlan.setEnabled(!menuData.getStationNames().isEmpty() || !menuData.getSystemNames().isEmpty() || !menuData.getRegionNames().isEmpty());
 		jDotlanStation.setEnabled(!menuData.getStationNames().isEmpty());
 		jDotlanSystem.setEnabled(!menuData.getSystemNames().isEmpty());
@@ -315,6 +321,11 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 					urls.add("https://everef.net/type/" + typeID+ "?utm_source=jeveassets");
 				}
 				DesktopUtil.browse(urls, program);
+			} else if (MenuLookupAction.EVEPRAISAL.name().equals(e.getActionCommand())) {
+				String evepraisal = EvepraisalGetter.post(menuData.getItemCounts());
+				if (evepraisal != null) {
+					DesktopUtil.browse("https://evepraisal.com/a/" + evepraisal, program);
+				}
 			} else if (MenuLookupAction.FUZZWORK_BLUEPRINTS.name().equals(e.getActionCommand())) {
 				Set<String> urls = new HashSet<String>();
 				for (int typeID : menuData.getTypeIDs()) {

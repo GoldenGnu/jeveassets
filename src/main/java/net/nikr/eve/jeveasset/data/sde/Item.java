@@ -157,6 +157,11 @@ public class Item implements Comparable<Item>, ItemType {
 		return this;
 	}
 
+	@Override
+	public long getItemCount() {
+		return 1; //Just this one item?
+	}
+
 	public void setPriceReprocessed(double priceReprocessed) {
 		this.priceReprocessed = priceReprocessed;
 	}

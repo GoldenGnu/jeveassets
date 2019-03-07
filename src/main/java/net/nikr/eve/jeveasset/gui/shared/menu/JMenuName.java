@@ -91,7 +91,7 @@ public class JMenuName<T> extends JAutoMenu<T> {
 	}
 
 	@Override
-	public void setMenuData(MenuData<T> menuData) {
+	public void updateMenuData() {
 		itemNames = new ArrayList<UserItem<Long, String>>();
 		containerNames = new ArrayList<UserItem<Long, String>>();
 		for (MyAsset asset : menuData.getAssets()) {

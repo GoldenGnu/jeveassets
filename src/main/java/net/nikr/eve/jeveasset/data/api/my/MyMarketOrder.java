@@ -249,6 +249,11 @@ public class MyMarketOrder extends RawMarketOrder implements Comparable<MyMarket
 	}
 
 	@Override
+	public long getItemCount() {
+		return getVolumeRemain();
+	}
+
+	@Override
 	public MyLocation getLocation() {
 		return location;
 	}
