@@ -21,25 +21,30 @@
 
 package net.nikr.eve.jeveasset.gui.tabs.stockpile;
 
+import java.awt.Component;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javax.swing.DefaultListCellRenderer;
 import javax.swing.GroupLayout;
+import javax.swing.Icon;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JScrollPane;
-import javax.swing.JSeparator;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
-import javax.swing.SwingConstants;
+import javax.swing.ListCellRenderer;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
 import net.nikr.eve.jeveasset.Program;
@@ -63,14 +68,20 @@ class StockpileShoppingListDialog extends JDialogCentered {
 
 	private enum StockpileShoppingListAction {
 		CLIPBOARD_STOCKPILE,
-		CLOSE
+		CLOSE,
+		FORMAT_CHANGED
 	}
+
+	private final DecimalFormat number  = new DecimalFormat("0");
 
 	private final JTextArea jText;
 	private final JButton jClose;
 	private final JTextField jPercentFull;
 	private final JTextField jPercentIgnore;
+	private final JComboBox<String> jEveMultiBuy;
 
+	private String shoppingList = "";
+	private String eveMultibuy = "";
 	private List<Stockpile> stockpiles;
 	private boolean updating = false;
 
@@ -85,15 +96,20 @@ class StockpileShoppingListDialog extends JDialogCentered {
 		jCopyToClipboard.setActionCommand(StockpileShoppingListAction.CLIPBOARD_STOCKPILE.name());
 		jCopyToClipboard.addActionListener(listener);
 
-		JSeparator jSeparator1 = new JSeparator(SwingConstants.VERTICAL);
+		String[] formats = {TabsStockpile.get().shoppingList(), TabsStockpile.get().eveMultibuy()};
+		jEveMultiBuy = new JComboBox<String>(formats);
+		IconListCellRendererRenderer renderer = new IconListCellRendererRenderer();
+		renderer.add(TabsStockpile.get().shoppingList(), Images.STOCKPILE_SHOPPING_LIST.getIcon());
+		renderer.add(TabsStockpile.get().eveMultibuy(), Images.MISC_EVE.getIcon());
+		jEveMultiBuy.setRenderer(renderer);
+		jEveMultiBuy.setActionCommand(StockpileShoppingListAction.FORMAT_CHANGED.name());
+		jEveMultiBuy.addActionListener(listener);
 
 		JLabel jFullLabel = new JLabel(TabsStockpile.get().percentFull());
 		JLabel jFullPercentLabel = new JLabel(TabsStockpile.get().percent());
 
 		jPercentFull = new JIntegerField("");
 		jPercentFull.addCaretListener(listener);
-
-		JSeparator jSeparator2 = new JSeparator(SwingConstants.VERTICAL);
 
 		JLabel jIgnoreLabel = new JLabel(TabsStockpile.get().percentIgnore());
 		JLabel jIgnorePercentLabel = new JLabel(TabsStockpile.get().percent());
@@ -116,19 +132,23 @@ class StockpileShoppingListDialog extends JDialogCentered {
 		layout.setHorizontalGroup(
 			layout.createParallelGroup(GroupLayout.Alignment.LEADING)
 				.addGroup(layout.createSequentialGroup()
-					.addComponent(jCopyToClipboard)
-					.addGap(10)
-					.addComponent(jSeparator1, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
-					.addGap(10)
-					.addComponent(jFullLabel)
-					.addComponent(jPercentFull, 100, 100, 100)
-					.addComponent(jFullPercentLabel)
-					.addGap(10)
-					.addComponent(jSeparator2, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
-					.addGap(10)
-					.addComponent(jIgnoreLabel)
-					.addComponent(jPercentIgnore, 100, 100, 100)
-					.addComponent(jIgnorePercentLabel)
+					.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING, false)
+						.addComponent(jCopyToClipboard)
+						.addComponent(jEveMultiBuy)
+					)
+					.addGap(0, 0, Integer.MAX_VALUE)
+					.addGroup(layout.createParallelGroup()
+						.addComponent(jFullLabel)
+						.addComponent(jIgnoreLabel)
+					)
+					.addGroup(layout.createParallelGroup()
+						.addComponent(jPercentFull, 100, 100, 100)
+						.addComponent(jPercentIgnore, 100, 100, 100)
+					)
+					.addGroup(layout.createParallelGroup()
+						.addComponent(jFullPercentLabel)
+						.addComponent(jIgnorePercentLabel)
+					)
 				)
 				.addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
 					.addComponent(jTextScroll, 500, 500, Integer.MAX_VALUE)
@@ -139,11 +159,12 @@ class StockpileShoppingListDialog extends JDialogCentered {
 			layout.createSequentialGroup()
 				.addGroup(layout.createParallelGroup()
 					.addComponent(jCopyToClipboard, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-					.addComponent(jSeparator1, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 					.addComponent(jFullLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 					.addComponent(jPercentFull, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 					.addComponent(jFullPercentLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-					.addComponent(jSeparator2, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+				)
+				.addGroup(layout.createParallelGroup()
+					.addComponent(jEveMultiBuy, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 					.addComponent(jIgnoreLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 					.addComponent(jPercentIgnore, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 					.addComponent(jIgnorePercentLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
@@ -162,6 +183,7 @@ class StockpileShoppingListDialog extends JDialogCentered {
 		this.stockpiles = addStockpiles;
 		jPercentFull.setText("100");
 		jPercentIgnore.setText("100");
+		jEveMultiBuy.setSelectedIndex(0);
 		updateList();
 		updating = false;
 		super.setVisible(true);
@@ -249,7 +271,8 @@ class StockpileShoppingListDialog extends JDialogCentered {
 		}
 
 	//Show missing
-		StringBuilder builder = new StringBuilder();
+		StringBuilder shoppingListBuilder = new StringBuilder();
+		StringBuilder eveMultibuyBuilder = new StringBuilder();
 		double volume = 0;
 		double value = 0;
 		for (Map.Entry<Integer, List<StockClaim>> entry : claims.entrySet()) {
@@ -276,18 +299,24 @@ class StockpileShoppingListDialog extends JDialogCentered {
 				value = value + (stockClaim.getCountMinimum() * stockClaim.getDynamicPrice());
 			}
 			if (countMinimum > 0) { //Add type string (if anything is needed)
-				builder.append(Formater.longFormat(countMinimum));
-				builder.append("x ");
-				builder.append(item.getTypeName());
+				//Multibuy
+				eveMultibuyBuilder.append(item.getTypeName());
+				eveMultibuyBuilder.append(" ");
+				eveMultibuyBuilder.append(number.format(countMinimum));
+				eveMultibuyBuilder.append("\r\n");
+				//Shopping List
+				shoppingListBuilder.append(Formater.longFormat(countMinimum));
+				shoppingListBuilder.append("x ");
+				shoppingListBuilder.append(item.getTypeName());
 				if (bpc) {
-					builder.append(" (BPC)");
+					shoppingListBuilder.append(" (BPC)");
 				} else if (bpo) {
-					builder.append(" (BPO)");
+					shoppingListBuilder.append(" (BPO)");
 				}
-				builder.append("\r\n");
+				shoppingListBuilder.append("\r\n");
 			}
 		}
-		String s = builder.toString();
+		String s = shoppingListBuilder.toString();
 		if (s.isEmpty()) { //if string is empty, nothing is needed
 			s = TabsStockpile.get().nothingNeeded();
 		} else { //Add total volume and value
@@ -300,7 +329,9 @@ class StockpileShoppingListDialog extends JDialogCentered {
 		} else { //(without percent)
 			s = stockpileNames + "\r\n\r\n" + s;
 		}
-		jText.setText(s);
+		shoppingList = s;
+		eveMultibuy = eveMultibuyBuilder.toString();
+		setText();
 	}
 
 	//Add claims to item
@@ -338,6 +369,15 @@ class StockpileShoppingListDialog extends JDialogCentered {
 		cp.setContents(data, null);
 	}
 
+	private void setText() {
+		Object selectedItem = jEveMultiBuy.getSelectedItem();
+		if (TabsStockpile.get().eveMultibuy().equals(selectedItem)) {
+			jText.setText(eveMultibuy);
+		} else { //Default
+			jText.setText(shoppingList);
+		}
+	}
+
 	@Override
 	protected JComponent getDefaultFocus() {
 		return jClose;
@@ -362,6 +402,9 @@ class StockpileShoppingListDialog extends JDialogCentered {
 			}
 			if (StockpileShoppingListAction.CLOSE.name().equals(e.getActionCommand())) {
 				setVisible(false);
+			}
+			if (StockpileShoppingListAction.FORMAT_CHANGED.name().equals(e.getActionCommand())) {
+				setText();
 			}
 		}
 
@@ -509,6 +552,33 @@ class StockpileShoppingListDialog extends JDialogCentered {
 				return false;
 			}
 			return true;
+		}
+	}
+
+	private static class IconListCellRendererRenderer implements ListCellRenderer<String> {
+		DefaultListCellRenderer renderer = new DefaultListCellRenderer();
+		Map<String, Icon> icons = new HashMap<>();
+
+		@Override
+		public Component getListCellRendererComponent(JList<? extends String> list, String value, int index, boolean isSelected, boolean cellHasFocus) {
+			Component component = renderer.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+			if (component instanceof JLabel) {
+				JLabel jLabel = (JLabel) component;
+				jLabel.setIcon(icons.get(value));
+			}
+			return component;
+		}
+
+		public void add(String text, Icon icon) {
+			icons.put(text, icon);
+		}
+
+		public void remove(String text) {
+			icons.remove(text);
+		}
+
+		public void clear() {
+			icons.clear();
 		}
 	}
 }
