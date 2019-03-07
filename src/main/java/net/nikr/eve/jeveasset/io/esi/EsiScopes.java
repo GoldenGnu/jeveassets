@@ -37,6 +37,7 @@ public enum EsiScopes {
 	CHARACTER_SHIP_TYPE(SsoScopes.ESI_LOCATION_READ_SHIP_TYPE_V1, DialoguesAccount.get().scopeShipType(), ScopeType.CHARACTER),
 	CHARACTER_SHIP_LOCATION(SsoScopes.ESI_LOCATION_READ_LOCATION_V1, DialoguesAccount.get().scopeShipLocation(), ScopeType.CHARACTER),
 	CHARACTER_OPEN_WINDOWS(SsoScopes.ESI_UI_OPEN_WINDOW_V1, DialoguesAccount.get().scopeOpenWindows(), ScopeType.CHARACTER),
+	CHARACTER_PLANETARY_INTERACTION(SsoScopes.ESI_PLANETS_MANAGE_PLANETS_V1, DialoguesAccount.get().scopePlanetaryInteraction(), ScopeType.CHARACTER),
 	CHARACTER_AUTOPILOT(SsoScopes.ESI_UI_WRITE_WAYPOINT_V1, DialoguesAccount.get().scopeAutopilot(), ScopeType.CHARACTER),
 	CORPORATION_ROLES(SsoScopes.ESI_CHARACTERS_READ_CORPORATION_ROLES_V1, DialoguesAccount.get().scopeRoles(), ScopeType.CORPORATION, true),
 	CORPORATION_ASSETS(SsoScopes.ESI_ASSETS_READ_CORPORATION_ASSETS_V1, DialoguesAccount.get().scopeAssets(), ScopeType.CORPORATION),

@@ -44,6 +44,7 @@ import net.troja.eve.esi.api.CorporationApi;
 import net.troja.eve.esi.api.IndustryApi;
 import net.troja.eve.esi.api.LocationApi;
 import net.troja.eve.esi.api.MarketApi;
+import net.troja.eve.esi.api.PlanetaryInteractionApi;
 import net.troja.eve.esi.api.SovereigntyApi;
 import net.troja.eve.esi.api.SsoApi;
 import net.troja.eve.esi.api.UniverseApi;
@@ -265,6 +266,10 @@ public abstract class AbstractEsiGetter extends AbstractGetter<EsiOwner, ApiClie
 
 	public LocationApi getLocationApiAuth(ApiClient apiClient) {
 		return new LocationApi(apiClient);
+	}
+
+	public PlanetaryInteractionApi getPlanetaryInteractionApiAuth(ApiClient apiClient) {
+		return new PlanetaryInteractionApi(apiClient);
 	}
 
 	public UniverseApi getUniverseApiOpen(ApiClient apiClient) {

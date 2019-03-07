@@ -48,6 +48,7 @@ public class EveKitLocationsGetter extends AbstractEveKitGetter implements EveKi
 
 	@Override
 	protected void get(ApiClient apiClient, Long at, boolean first) throws ApiException {
+		iDs = getIDs(owner);
 		List<Location> data = updatePages(this);
 		if (data == null) {
 			return;
@@ -75,7 +76,6 @@ public class EveKitLocationsGetter extends AbstractEveKitGetter implements EveKi
 	@Override
 	public List<Location> get(ApiClient apiClient, String at, Long contid, Integer maxResults) throws ApiException {
 		//Get all items matching itemID
-		iDs = getIDs(owner);
 		if (iDs.isEmpty()) {
 			return new ArrayList<>();
 		}
