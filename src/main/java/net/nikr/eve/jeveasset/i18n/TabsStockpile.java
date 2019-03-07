@@ -64,6 +64,7 @@ public abstract class TabsStockpile extends Bundle {
 	public abstract String editStockpileItem();
 	public abstract String editStockpileTitle();
 	public abstract String estimatedMarketValue();
+	public abstract String eveMultibuy();
 	public abstract String expand();
 	public abstract String exportStockpiles();
 	public abstract String flag();
