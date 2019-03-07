@@ -333,8 +333,16 @@ public abstract class AbstractOwner implements OwnerType, Comparable<OwnerType> 
 	}
 
 	@Override
-	public final List<MyAsset> getAssets() {
+	public final synchronized List<MyAsset> getAssets() {
 		return assets;
+	}
+
+	public final synchronized void addAsset(MyAsset asset) {
+		assets.add(asset);
+	}
+
+	public final synchronized void removeAssets(List<MyAsset> remove) {
+		assets.removeAll(remove);
 	}
 
 	@Override
@@ -378,7 +386,7 @@ public abstract class AbstractOwner implements OwnerType, Comparable<OwnerType> 
 	}
 
 	@Override
-	public final void setAssets(final List<MyAsset> assets) {
+	public final synchronized void setAssets(final List<MyAsset> assets) {
 		this.assets = assets;
 	}
 

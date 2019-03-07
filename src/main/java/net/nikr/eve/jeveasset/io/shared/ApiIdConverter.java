@@ -37,10 +37,12 @@ import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.data.settings.UserItem;
 import net.nikr.eve.jeveasset.i18n.General;
 import net.nikr.eve.jeveasset.io.online.CitadelGetter;
+import net.nikr.eve.jeveasset.io.online.FuzzworkMapGetter.Planet;
 import net.troja.eve.esi.model.CharacterBookmarkItem;
 import net.troja.eve.esi.model.CharacterBookmarksResponse;
 import net.troja.eve.esi.model.CorporationBookmarkItem;
 import net.troja.eve.esi.model.CorporationBookmarksResponse;
+import net.troja.eve.esi.model.PlanetResponse;
 import net.troja.eve.esi.model.StructureResponse;
 
 public final class ApiIdConverter {
@@ -349,6 +351,19 @@ public final class ApiIdConverter {
 	private static Citadel getCitadel(Integer systemID, Long locationID, String label, CitadelSource source) {
 		MyLocation system = getLocation(systemID);
 		return new Citadel(locationID, General.get().bookmarkLocation(system.getSystem(), label.trim(), String.valueOf(locationID)), systemID, system.getSystem(), system.getRegionID(), system.getRegion(), false, true, source);
+	}
+
+	public static Citadel getCitadel(PlanetResponse planet) {
+		MyLocation system = getLocation(planet.getSystemId());
+		return new Citadel(planet.getPlanetId(), planet.getName(), planet.getSystemId(), system.getSystem(), system.getRegionID(), system.getRegion(), false, false, CitadelSource.ESI_PLANET);
+	}
+
+	public static Citadel getCitadel(Planet planet) {
+		if (planet == null) {
+			return null;
+		}
+		MyLocation system = getLocation(planet.getSystemId());
+		return new Citadel(planet.getPlanetId(), planet.getName(), planet.getSystemId(), system.getSystem(), system.getRegionID(), system.getRegion(), false, false, CitadelSource.FUZZWORK_PLANET);
 	}
 
 }

@@ -22,6 +22,8 @@ package net.nikr.eve.jeveasset.data.api.raw;
 
 import enterprises.orbital.evekit.client.model.CharacterLocation;
 import enterprises.orbital.evekit.client.model.CharacterShip;
+import enterprises.orbital.evekit.client.model.PlanetaryPin;
+import enterprises.orbital.evekit.client.model.PlanetaryPinContent;
 import java.util.Objects;
 import net.nikr.eve.jeveasset.data.api.my.MyContractItem;
 import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob;
@@ -33,8 +35,11 @@ import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 import net.nikr.eve.jeveasset.io.shared.RawConverter;
 import net.troja.eve.esi.model.CharacterAssetsResponse;
 import net.troja.eve.esi.model.CharacterLocationResponse;
+import net.troja.eve.esi.model.CharacterPlanetsResponse;
 import net.troja.eve.esi.model.CharacterShipResponse;
 import net.troja.eve.esi.model.CorporationAssetsResponse;
+import net.troja.eve.esi.model.PlanetContent;
+import net.troja.eve.esi.model.PlanetPin;
 
 public class RawAsset {
 
@@ -254,6 +259,23 @@ public class RawAsset {
 	}
 
 	/**
+	 * ESI Planetary Interaction
+	 *
+	 * @param planet
+	 * @param pin
+	 * @param content
+	 */
+	public RawAsset(CharacterPlanetsResponse planet, PlanetPin pin, PlanetContent content) {
+		isSingleton = false; //Packed
+		itemId = Long.valueOf(pin.getPinId() + "" + content.getTypeId()); //Semi unique
+		itemFlag = ApiIdConverter.getFlag(0); //None
+		locationId = (long) planet.getPlanetId(); //Planet
+		locationType = RawConverter.toAssetLocationType(locationId);
+		quantity = content.getAmount().intValue(); //Not perfect, but, will have to do
+		typeId = content.getTypeId();
+	}
+
+	/**
 	 * EveKit
 	 *
 	 * @param asset
@@ -292,6 +314,22 @@ public class RawAsset {
 		locationType = RawConverter.toAssetLocationType(locationId);
 		quantity = 1; //Unpacked AKA always 1
 		typeId = shipType.getShipTypeID();
+	}
+
+	/**
+	 * EveKit Planetary Interaction
+	 *
+	 * @param content
+	 * @param pin
+	 */
+	public RawAsset(PlanetaryPinContent content, PlanetaryPin pin) {
+		isSingleton = false; //Packed
+		itemId = Long.valueOf(pin.getPinID() + "" + content.getTypeID());
+		itemFlag = ApiIdConverter.getFlag(0); //None
+		locationId = RawConverter.toLong(pin.getPlanetID());
+		locationType = RawConverter.toAssetLocationType(locationId);
+		quantity = content.getAmount().intValue(); //Not perfect, but, will have to do
+		typeId = content.getTypeID();
 	}
 
 	/**

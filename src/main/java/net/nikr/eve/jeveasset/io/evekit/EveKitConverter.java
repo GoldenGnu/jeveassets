@@ -32,6 +32,8 @@ import enterprises.orbital.evekit.client.model.ContractItem;
 import enterprises.orbital.evekit.client.model.Division;
 import enterprises.orbital.evekit.client.model.IndustryJob;
 import enterprises.orbital.evekit.client.model.MarketOrder;
+import enterprises.orbital.evekit.client.model.PlanetaryPin;
+import enterprises.orbital.evekit.client.model.PlanetaryPinContent;
 import enterprises.orbital.evekit.client.model.WalletJournal;
 import enterprises.orbital.evekit.client.model.WalletTransaction;
 import java.util.ArrayList;
@@ -83,6 +85,10 @@ public final class EveKitConverter extends DataConverter {
 
 	public static MyAsset toAssetsShip(CharacterShip shipType, CharacterLocation shipLocation, OwnerType owner) {
 		return toMyAsset(new RawAsset(shipType, shipLocation), owner, new ArrayList<>());
+	}
+
+	public static MyAsset toAssetsPlanetaryInteraction(PlanetaryPinContent content, PlanetaryPin pin, OwnerType owner) {
+		return toMyAsset(new RawAsset(content, pin), owner, new ArrayList<>());
 	}
 
 	public static Map<Long, RawBlueprint> toBlueprints(List<Blueprint> responses) {

@@ -63,6 +63,7 @@ public abstract class AbstractGetter<O extends OwnerType, C, E extends Exception
 		MARKET_ORDERS,
 		OWNER_ID_TO_NAME,
 		OWNER,
+		PLANETARY_INTERACTION,
 		STRUCTURES,
 		TRANSACTIONS,
 		SHIP,
@@ -102,6 +103,7 @@ public abstract class AbstractGetter<O extends OwnerType, C, E extends Exception
 			case TRANSACTIONS: taskName = "Transactions"; break;
 			case STRUCTURES: taskName = "Structures"; break;
 			case SHIP: taskName = "Active Ship"; break;
+			case PLANETARY_INTERACTION: taskName = "Planetary Assets"; break;
 			case CONTAINER_LOGS: taskName = "Container Logs"; break;
 			default: taskName = "Unknown"; break;
 		}
@@ -284,7 +286,11 @@ public abstract class AbstractGetter<O extends OwnerType, C, E extends Exception
 
 	protected final Map<Long, MyAsset> getIDs(OwnerType owner) {
 		Map<Long, MyAsset> itemMap = new HashMap<Long, MyAsset>();
-		addItemIDs(itemMap, owner.getAssets());
+		ArrayList<MyAsset> assets;
+		synchronized(owner) {
+			assets = new ArrayList<>(owner.getAssets());
+		}
+		addItemIDs(itemMap,  assets);
 		return itemMap;
 	}
 

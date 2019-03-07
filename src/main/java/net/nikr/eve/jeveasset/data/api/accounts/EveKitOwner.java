@@ -215,12 +215,17 @@ public class EveKitOwner extends AbstractOwner implements OwnerType {
 
 	@Override
 	public boolean isShip() {
-		return isAssetList() && isCharacter();
+		return isLocations() && isCharacter();
 	}
 
 	@Override
 	public boolean isOpenWindows() {
 		return false; //Not supported by the EveKit, Yet?
+	}
+
+	@Override
+	public boolean isPlanetaryInteraction() {
+		return isAssetList() && isCharacter();
 	}
 
 	@Override

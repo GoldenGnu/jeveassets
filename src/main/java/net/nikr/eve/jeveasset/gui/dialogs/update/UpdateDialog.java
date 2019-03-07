@@ -64,6 +64,7 @@ import net.nikr.eve.jeveasset.io.esi.EsiLocationsGetter;
 import net.nikr.eve.jeveasset.io.esi.EsiMarketOrdersGetter;
 import net.nikr.eve.jeveasset.io.esi.EsiNameGetter;
 import net.nikr.eve.jeveasset.io.esi.EsiOwnerGetter;
+import net.nikr.eve.jeveasset.io.esi.EsiPlanetaryInteractionGetter;
 import net.nikr.eve.jeveasset.io.esi.EsiShipGetter;
 import net.nikr.eve.jeveasset.io.esi.EsiTransactionsGetter;
 import net.nikr.eve.jeveasset.io.evekit.EveKitAccountBalanceGetter;
@@ -78,6 +79,7 @@ import net.nikr.eve.jeveasset.io.evekit.EveKitJournalGetter;
 import net.nikr.eve.jeveasset.io.evekit.EveKitLocationsGetter;
 import net.nikr.eve.jeveasset.io.evekit.EveKitMarketOrdersGetter;
 import net.nikr.eve.jeveasset.io.evekit.EveKitOwnerGetter;
+import net.nikr.eve.jeveasset.io.evekit.EveKitPlanetaryInteractionGetter;
 import net.nikr.eve.jeveasset.io.evekit.EveKitShipGetter;
 import net.nikr.eve.jeveasset.io.evekit.EveKitTransactionsGetter;
 import net.nikr.eve.jeveasset.io.online.CitadelGetter;
@@ -869,11 +871,13 @@ public class UpdateDialog extends JDialogCentered {
 				for (EveKitOwner eveKitOwner : profileManager.getEveKitOwners()) {
 					updates.add(new EveKitLocationsGetter(this, eveKitOwner));
 					updates.add(new EveKitShipGetter(this, eveKitOwner));
+					updates.add(new EveKitPlanetaryInteractionGetter(this, eveKitOwner));
 				}
 				//Esi
 				for (EsiOwner esiOwner : profileManager.getEsiOwners()) {
 					updates.add(new EsiLocationsGetter(this, esiOwner));
 					updates.add(new EsiShipGetter(this, esiOwner));
+					updates.add(new EsiPlanetaryInteractionGetter(this, esiOwner));
 				}
 			}
 			//char/corp/alliance IDs to names (ESI)

@@ -94,6 +94,7 @@ public interface OwnerType extends Comparable<OwnerType> {
 	public boolean isBookmarks();
 	public boolean isShip();
 	public boolean isOpenWindows();
+	public boolean isPlanetaryInteraction();
 	public boolean isAutopilot();
 	public boolean isDivisions();
 	public boolean isContainerLogs();

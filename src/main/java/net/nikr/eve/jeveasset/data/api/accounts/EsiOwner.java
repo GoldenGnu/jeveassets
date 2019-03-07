@@ -262,6 +262,15 @@ public class EsiOwner extends AbstractOwner implements OwnerType {
 	}
 
 	@Override
+	public boolean isPlanetaryInteraction() {
+		if (isCorporation()) {
+			return false; //Character Endpoint
+		} else {
+			return EsiScopes.CHARACTER_PLANETARY_INTERACTION.isInScope(scopes);
+		}
+	}
+
+	@Override
 	public boolean isTransactions() {
 		return isWallet();
 	}

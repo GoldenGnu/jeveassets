@@ -31,6 +31,8 @@ public class Citadel {
 		ESI_STRUCTURES(3), //Certified fresh
 		ESI_LOCATIONS(3), //Good source
 		EVEKIT_LOCATIONS(3), //Good source
+		ESI_PLANET(3), //Planet source
+		FUZZWORK_PLANET(3), //Planet source
 		USER(2), //User set this data (unless we have top-notch info, don't overwrite)
 		HAMMERTIME(1), //Better than nothing source
 		OLD(1), //Unknown source - keep if?

@@ -170,6 +170,16 @@ public enum AccountTableFormat implements EnumTableColumn<OwnerType> {
 			return new YesNo(from.isStructures());
 		}
 	},
+	BOOKMARKS(YesNo.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return DialoguesAccount.get().tableFormatBookmarks();
+		}
+		@Override
+		public Object getColumnValue(final OwnerType from) {
+			return new YesNo(from.isBookmarks());
+		}
+	},
 	BLUEPRINTS(YesNo.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
@@ -198,6 +208,16 @@ public enum AccountTableFormat implements EnumTableColumn<OwnerType> {
 		@Override
 		public Object getColumnValue(final OwnerType from) {
 			return new YesNo(from.isShip());
+		}
+	},
+	PLANETARY_INTERACTION(YesNo.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return DialoguesAccount.get().tableFormatPlanetaryInteraction();
+		}
+		@Override
+		public Object getColumnValue(final OwnerType from) {
+			return new YesNo(from.isPlanetaryInteraction());
 		}
 	},
 	OPEN_WINDOWS(YesNo.class, GlazedLists.comparableComparator()) {

@@ -66,7 +66,11 @@ public class EveKitShipGetter extends AbstractEveKitGetter {
 		MyAsset activeShip = EveKitConverter.toAssetsShip(ship, location, owner);
 		//Search for active ship
 		boolean activeShipInAssets = false;
-		for (MyAsset asset : owner.getAssets()) {
+		List<MyAsset> assets;
+		synchronized (owner) {
+			assets = new ArrayList<>(owner.getAssets());
+		}
+		for (MyAsset asset : assets) {
 			if (asset.getItemID().equals(activeShip.getItemID())) {
 				activeShipInAssets = true;
 				break;
@@ -74,8 +78,8 @@ public class EveKitShipGetter extends AbstractEveKitGetter {
 		}
 		//Update Assets (if active ship is not found)
 		if (!activeShipInAssets) {
-			List<MyAsset> activeShipChildren = new ArrayList<MyAsset>();
-			for (MyAsset asset : owner.getAssets()) { //Root assets only
+			List<MyAsset> activeShipChildren = new ArrayList<>();
+			for (MyAsset asset : assets) { //Root assets only
 				if (asset.getParents().isEmpty() && activeShip.getItemID().equals(asset.getLocationID())) { //Found Child
 					//Add asset to active ship
 					activeShip.addAsset(asset);
@@ -90,9 +94,9 @@ public class EveKitShipGetter extends AbstractEveKitGetter {
 
 			}
 			//Add active ship to root
-			owner.getAssets().add(activeShip);
+			owner.addAsset(activeShip);
 			//Remove active ship children from root
-			owner.getAssets().removeAll(activeShipChildren);
+			owner.removeAssets(activeShipChildren);
 			//Save ship name
 			try {
 				Settings.lock("Active Ship Name");
