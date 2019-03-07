@@ -450,6 +450,11 @@ public class MyIndustryJob extends RawIndustryJob implements Comparable<MyIndust
 	}
 
 	@Override
+	public long getItemCount() {
+		return 1; //Just one blueprint here
+	}
+
+	@Override
 	public int hashCode() {
 		int hash = 5;
 		hash = 37 * hash + Objects.hashCode(this.getJobID());

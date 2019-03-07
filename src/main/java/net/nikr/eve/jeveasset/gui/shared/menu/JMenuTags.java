@@ -63,7 +63,7 @@ public class JMenuTags<T> extends JAutoMenu<T> {
 	}
 
 	@Override
-	public void setMenuData(MenuData<T> menuData) {
+	public void updateMenuData() {
 		tagsTypes = menuData.getTags();
 
 		boolean valid = !tagsTypes.isEmpty();

@@ -1072,6 +1072,11 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 		}
 
 		@Override
+		public long getItemCount() {
+			return getCountNeeded();
+		}
+
+		@Override
 		public Set<MyLocation> getLocations() {
 			return stockpile.getLocations();
 		}

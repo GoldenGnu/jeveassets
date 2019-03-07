@@ -49,8 +49,6 @@ public class JMenuStockpile<T> extends JAutoMenu<T> {
 	private final List<JMenuItem> jMenuItems = new ArrayList<JMenuItem>();
 	private final JMenuItem jAddToNew;
 
-	private MenuData<T> menuData;
-
 	ListenerClass listener = new ListenerClass();
 
 	public JMenuStockpile(final Program program) {
@@ -64,8 +62,7 @@ public class JMenuStockpile<T> extends JAutoMenu<T> {
 	}
 
 	@Override
-	public void setMenuData(MenuData<T> menuData) {
-		this.menuData = menuData;
+	public void updateMenuData() {
 		if (stockpilesCashe == null || !stockpilesCashe.equals(Settings.get().getStockpiles())) {
 			updateMenu(); //Stockpiles changed...
 		}

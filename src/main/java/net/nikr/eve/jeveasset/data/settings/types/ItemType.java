@@ -25,4 +25,5 @@ import net.nikr.eve.jeveasset.data.sde.Item;
 
 public interface ItemType {
 	public Item getItem();
+	public long getItemCount();
 }

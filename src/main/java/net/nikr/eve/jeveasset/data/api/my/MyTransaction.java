@@ -89,6 +89,11 @@ public class MyTransaction extends RawTransaction implements EditableLocationTyp
 		return item;
 	}
 
+	@Override
+	public long getItemCount() {
+		return getQuantity();
+	}
+
 	public String getOwnerName() {
 		return owner.getOwnerName();
 	}
