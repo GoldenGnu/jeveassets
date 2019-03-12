@@ -137,7 +137,7 @@ public class LibraryManager {
 			files.add("jackson-datatype-jsr310-2.9.8.jar");
 			files.add("commons-lang3-3.5.jar");
 			files.add("hamcrest-core-1.3.jar");
-			files.add("eve-esi-2.4.0.jar");
+			files.add("eve-esi-2.4.1.jar");
 			files.add("hamcrest-core-1.3.jar");
 			files.add("oauth2-client-2.25.1.jar");
 			files.add("jaxb-api-2.3.0.jar");
