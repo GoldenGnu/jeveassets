@@ -28,12 +28,7 @@ import net.nikr.eve.jeveasset.TestUtil;
 import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
 import net.nikr.eve.jeveasset.data.api.accounts.OwnerType;
 import net.nikr.eve.jeveasset.data.settings.Settings;
-import net.troja.eve.esi.ApiException;
-import net.troja.eve.esi.api.UniverseApi;
-import net.troja.eve.esi.model.FactionsResponse;
-import org.hamcrest.Matchers;
 import org.junit.Assert;
-import static org.junit.Assert.assertThat;
 import org.junit.Test;
 
 
@@ -44,7 +39,7 @@ public class EsiNameGetterOnlineTest extends TestUtil {
 		Set<Long> ids = new HashSet<>();
 		ids.add(1232111352L);
 		ids.add(2112730710L);
-		//ids.add(500016L);
+		ids.add(500016L);
 		ids.add(93678202L);
 		ids.add(96503035L);
 
@@ -65,16 +60,4 @@ public class EsiNameGetterOnlineTest extends TestUtil {
 			Assert.assertFalse(id + " is empty", Settings.get().getOwners().get(id).isEmpty());
 		}
 	}
-
-	@Test
-	public void testFactionExclude() throws ApiException {
-		UniverseApi api = new UniverseApi();
-		List<FactionsResponse> universeFactions = api.getUniverseFactions(null, AbstractEsiGetter.DATASOURCE, null, null);
-		for (FactionsResponse faction : universeFactions) {
-			assertThat(faction.getFactionId(), Matchers.greaterThanOrEqualTo(EsiNameGetter.FACTION_MIN));
-			assertThat(faction.getFactionId(), Matchers.lessThanOrEqualTo(EsiNameGetter.FACTION_MAX));
-			
-		}
-	}
-
 }
