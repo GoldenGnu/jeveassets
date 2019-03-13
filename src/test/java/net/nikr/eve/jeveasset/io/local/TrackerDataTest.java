@@ -31,7 +31,6 @@ import net.nikr.eve.jeveasset.TestUtil;
 import net.nikr.eve.jeveasset.gui.tabs.values.AssetValue;
 import net.nikr.eve.jeveasset.gui.tabs.values.Value;
 import static org.hamcrest.CoreMatchers.equalTo;
-import org.junit.AfterClass;
 import static org.junit.Assert.assertThat;
 import org.junit.Test;
 
@@ -39,10 +38,13 @@ import org.junit.Test;
 public class TrackerDataTest extends TestUtil {
 
 	private final String filename = "tracker.json";
+	private final Date date = new Date(1552492124589L);
 
 	@Test
 	public void testEmpty() throws URISyntaxException {
-		test(new TreeMap<>());
+		Map<String, List<Value>> out = new TreeMap<>();
+		testWriteRead(out);
+		testRead(out, "tracker_empty.json");
 	}
 
 	@Test
@@ -50,7 +52,7 @@ public class TrackerDataTest extends TestUtil {
 		Map<String, List<Value>> out = new TreeMap<>();
 		List<Value> values = new ArrayList<>();
 		out.put("TEST-NAME", values);
-		Value value = new Value(new Date());
+		Value value = new Value(date);
 		value.setContractCollateral(3);
 		value.setContractValue(4);
 		value.setEscrows(5);
@@ -60,7 +62,8 @@ public class TrackerDataTest extends TestUtil {
 		value.addAssets(AssetValue.create("location", "flag", 1000L), 9.0);
 		value.addBalance("balence-id", 10);
 		values.add(value);
-		test(out);
+		testWriteRead(out);
+		testRead(out, "tracker_filters.json");
 	}
 
 	@Test
@@ -68,7 +71,7 @@ public class TrackerDataTest extends TestUtil {
 		Map<String, List<Value>> out = new TreeMap<>();
 		List<Value> values = new ArrayList<>();
 		out.put("TEST-NAME", values);
-		Value value = new Value(new Date());
+		Value value = new Value(date);
 		value.setAssetsTotal(1);
 		value.setBalanceTotal(2);
 		value.setContractCollateral(3);
@@ -78,11 +81,26 @@ public class TrackerDataTest extends TestUtil {
 		value.setManufacturing(7);
 		value.setSellOrders(8);
 		values.add(value);
-		test(out);
+		testWriteRead(out);
+		testRead(out, "tracker_total.json");
 	}
 
-	private void test(final Map<String, List<Value>> out) {
+	private void testRead(final Map<String, List<Value>> out, String filename) {
+		try {
+			read(out, new File(TrackerDataTest.class.getResource("/" + filename).toURI()).getAbsolutePath());
+		} catch (URISyntaxException ex) {
+			throw new RuntimeException(ex);
+		}
+	}
+
+	private void testWriteRead(final Map<String, List<Value>> out) {
 		TestTrackerDataWriter.save(filename, out);
+		read(out, filename);
+		File file = new File(filename);
+		file.delete();
+	}
+
+	private void read(final Map<String, List<Value>> out, String filename) {
 		final Map<String, List<Value>> in = TrackerDataReader.load(filename, false);
 		assertThat(in.keySet(), equalTo(out.keySet()));
 		for (String key : in.keySet()) {
@@ -90,13 +108,10 @@ public class TrackerDataTest extends TestUtil {
 			List<Value> inValues = in.get(key);
 			assertThat(inValues.getClass(), equalTo(outValues.getClass()));
 			assertThat(inValues.size(), equalTo(outValues.size()));
-			System.out.println(inValues.size());
-			System.out.println(outValues.size());
 			for (int i = 0; i < inValues.size(); i++) {
 				Value outValue = outValues.get(i);
 				Value inValue = inValues.get(i);
-				assertThat(inValue, equalTo(outValue));
-				assertThat(inValue.hashCode(), equalTo(outValue.hashCode()));
+				//assertThat(inValue.hashCode(), equalTo(outValue.hashCode()));
 				assertThat(inValue.getAssetsFilter(), equalTo(outValue.getAssetsFilter()));
 				assertThat(inValue.getAssetsTotal(), equalTo(outValue.getAssetsTotal()));
 				assertThat(inValue.getBalanceFilter(), equalTo(outValue.getBalanceFilter()));
@@ -113,11 +128,10 @@ public class TrackerDataTest extends TestUtil {
 				assertThat(inValue.getBestShipFittedName(), equalTo(outValue.getBestShipFittedName()));
 				assertThat(inValue.getBestShipName(), equalTo(outValue.getBestShipName()));
 				assertThat(inValue.getName(), equalTo(outValue.getName()));
+				assertThat(inValue, equalTo(outValue));
 			}
 		}
 		assertThat(in, equalTo(out));
-		File file = new File(filename);
-		file.delete();
 	}
 
 	private static class TestTrackerDataWriter extends TrackerDataWriter  {
@@ -131,5 +145,5 @@ public class TrackerDataTest extends TestUtil {
 			return super.getNewFile(filename); //To change body of generated methods, choose Tools | Templates.
 		}
 	}
-	
+
 }
