@@ -27,6 +27,7 @@ import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.data.settings.TrackerData;
@@ -42,11 +43,10 @@ public class TrackerDataWriter extends AbstractBackup {
 
 	public static void save() {
 		TrackerDataWriter writer = new TrackerDataWriter();
-		writer.parse();
+		writer.write(Settings.getPathTrackerData(), TrackerData.get());
 	}
 
-	private void parse() {
-		String filename = Settings.getPathTrackerData();
+	protected void write(String filename, Map<String, List<Value>> trackerData) {
 		File file = getNewFile(filename); //Save to .new file
 		ObjectMapper mapper = new ObjectMapper();
 		SimpleModule module = new SimpleModule();
@@ -54,7 +54,7 @@ public class TrackerDataWriter extends AbstractBackup {
 		mapper.registerModule(module);
 		try {
 			lock(filename);
-			mapper.writeValue(file, TrackerData.get());
+			mapper.writeValue(file, trackerData);
 			LOG.info("Tracker data saved");
 		} catch (IOException ex) {
 			LOG.error(ex.getMessage(), ex);
