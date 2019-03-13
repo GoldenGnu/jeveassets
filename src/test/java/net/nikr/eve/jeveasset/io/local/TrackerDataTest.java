@@ -1,0 +1,135 @@
+/*
+ * Copyright 2009-2018 Contributors (see credits.txt)
+ *
+ * This file is part of jEveAssets.
+ *
+ * jEveAssets is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * jEveAssets is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with jEveAssets; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ *
+ */
+package net.nikr.eve.jeveasset.io.local;
+
+import java.io.File;
+import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+import net.nikr.eve.jeveasset.TestUtil;
+import net.nikr.eve.jeveasset.gui.tabs.values.AssetValue;
+import net.nikr.eve.jeveasset.gui.tabs.values.Value;
+import static org.hamcrest.CoreMatchers.equalTo;
+import org.junit.AfterClass;
+import static org.junit.Assert.assertThat;
+import org.junit.Test;
+
+
+public class TrackerDataTest extends TestUtil {
+
+	private final String filename = "tracker.json";
+
+	@Test
+	public void testEmpty() throws URISyntaxException {
+		test(new TreeMap<>());
+	}
+
+	@Test
+	public void testFilters() throws URISyntaxException {
+		Map<String, List<Value>> out = new TreeMap<>();
+		List<Value> values = new ArrayList<>();
+		out.put("TEST-NAME", values);
+		Value value = new Value(new Date());
+		value.setContractCollateral(3);
+		value.setContractValue(4);
+		value.setEscrows(5);
+		value.setEscrowsToCover(6);
+		value.setManufacturing(7);
+		value.setSellOrders(8);
+		value.addAssets(AssetValue.create("location", "flag", 1000L), 9.0);
+		value.addBalance("balence-id", 10);
+		values.add(value);
+		test(out);
+	}
+
+	@Test
+	public void testTotal() throws URISyntaxException {
+		Map<String, List<Value>> out = new TreeMap<>();
+		List<Value> values = new ArrayList<>();
+		out.put("TEST-NAME", values);
+		Value value = new Value(new Date());
+		value.setAssetsTotal(1);
+		value.setBalanceTotal(2);
+		value.setContractCollateral(3);
+		value.setContractValue(4);
+		value.setEscrows(5);
+		value.setEscrowsToCover(6);
+		value.setManufacturing(7);
+		value.setSellOrders(8);
+		values.add(value);
+		test(out);
+	}
+
+	private void test(final Map<String, List<Value>> out) {
+		TestTrackerDataWriter.save(filename, out);
+		final Map<String, List<Value>> in = TrackerDataReader.load(filename, false);
+		assertThat(in.keySet(), equalTo(out.keySet()));
+		for (String key : in.keySet()) {
+			List<Value> outValues = out.get(key);
+			List<Value> inValues = in.get(key);
+			assertThat(inValues.getClass(), equalTo(outValues.getClass()));
+			assertThat(inValues.size(), equalTo(outValues.size()));
+			System.out.println(inValues.size());
+			System.out.println(outValues.size());
+			for (int i = 0; i < inValues.size(); i++) {
+				Value outValue = outValues.get(i);
+				Value inValue = inValues.get(i);
+				assertThat(inValue, equalTo(outValue));
+				assertThat(inValue.hashCode(), equalTo(outValue.hashCode()));
+				assertThat(inValue.getAssetsFilter(), equalTo(outValue.getAssetsFilter()));
+				assertThat(inValue.getAssetsTotal(), equalTo(outValue.getAssetsTotal()));
+				assertThat(inValue.getBalanceFilter(), equalTo(outValue.getBalanceFilter()));
+				assertThat(inValue.getBalanceTotal(), equalTo(outValue.getBalanceTotal()));
+				assertThat(inValue.getBestAssetValue(), equalTo(outValue.getBestAssetValue()));
+				assertThat(inValue.getBestModuleValue(), equalTo(outValue.getBestModuleValue()));
+				assertThat(inValue.getBestShipFittedValue(), equalTo(outValue.getBestShipFittedValue()));
+				assertThat(inValue.getBestShipValue(), equalTo(outValue.getBestShipValue()));
+				assertThat(inValue.getContractCollateral(), equalTo(outValue.getContractCollateral()));
+				assertThat(inValue.getContractValue(), equalTo(outValue.getContractValue()));
+				assertThat(inValue.getDate(), equalTo(outValue.getDate()));
+				assertThat(inValue.getBestAssetName(), equalTo(outValue.getBestAssetName()));
+				assertThat(inValue.getBestModuleName(), equalTo(outValue.getBestModuleName()));
+				assertThat(inValue.getBestShipFittedName(), equalTo(outValue.getBestShipFittedName()));
+				assertThat(inValue.getBestShipName(), equalTo(outValue.getBestShipName()));
+				assertThat(inValue.getName(), equalTo(outValue.getName()));
+			}
+		}
+		assertThat(in, equalTo(out));
+		File file = new File(filename);
+		file.delete();
+	}
+
+	private static class TestTrackerDataWriter extends TrackerDataWriter  {
+		public static void save(String filename, Map<String, List<Value>> trackerData) {
+			TrackerDataWriter trackerDataReader = new TrackerDataWriter();
+			trackerDataReader.write(filename, trackerData);
+		}
+
+		@Override
+		protected File getNewFile(String filename) {
+			return super.getNewFile(filename); //To change body of generated methods, choose Tools | Templates.
+		}
+	}
+	
+}
