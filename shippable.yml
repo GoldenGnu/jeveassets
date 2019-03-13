@@ -5,4 +5,4 @@ jdk:
 
 build:
   ci:
-   - shippable_retry mvn install -P skip-online-tests
+   - shippable_retry mvn install
