@@ -20,12 +20,14 @@
  */
 package net.nikr.eve.jeveasset.io.esi;
 
+import com.squareup.okhttp.OkHttpClient;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -35,7 +37,9 @@ import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.io.shared.AbstractGetter;
 import net.nikr.eve.jeveasset.io.shared.ThreadWoker.TaskCancelledException;
 import net.troja.eve.esi.ApiClient;
+import net.troja.eve.esi.ApiClientBuilder;
 import net.troja.eve.esi.ApiException;
+import net.troja.eve.esi.ApiResponse;
 import net.troja.eve.esi.api.AssetsApi;
 import net.troja.eve.esi.api.CharacterApi;
 import net.troja.eve.esi.api.ContractsApi;
@@ -43,24 +47,31 @@ import net.troja.eve.esi.api.CorporationApi;
 import net.troja.eve.esi.api.IndustryApi;
 import net.troja.eve.esi.api.LocationApi;
 import net.troja.eve.esi.api.MarketApi;
+import net.troja.eve.esi.api.MetaApi;
 import net.troja.eve.esi.api.SovereigntyApi;
-import net.troja.eve.esi.api.SsoApi;
 import net.troja.eve.esi.api.UniverseApi;
+import net.troja.eve.esi.api.UserInterfaceApi;
 import net.troja.eve.esi.api.WalletApi;
 import net.troja.eve.esi.auth.OAuth;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
-public abstract class AbstractEsiGetter extends AbstractGetter<EsiOwner, ApiClient, ApiException> {
+public abstract class AbstractEsiGetter extends AbstractGetter<EsiOwner> {
 
 	private static final Logger LOG = LoggerFactory.getLogger(AbstractEsiGetter.class);
 
+	private static OkHttpClient OkHttpClient;
+	private static final ApiClient PUBLIC_CLIENT = new ApiClientBuilder().okHttpClient(getHttpClient()).build();
+	private static final UniverseApi UNIVERSE_API = new UniverseApi(PUBLIC_CLIENT);
+	private static final CharacterApi CHARACTER_API = new CharacterApi(PUBLIC_CLIENT);
+	private static final CorporationApi CORPORATION_API = new CorporationApi(PUBLIC_CLIENT);
+	private static final SovereigntyApi SOVEREIGNTY_API = new SovereigntyApi(PUBLIC_CLIENT);
+	public static final UserInterfaceApi USER_INTERFACE_API = new UserInterfaceApi(PUBLIC_CLIENT);
 	public static final String DATASOURCE = "tranquility";
 	protected static final int UNIVERSE_BATCH_SIZE = 100;
 	protected static final int LOCATIONS_BATCH_SIZE = 100;
 	protected static final int DEFAULT_RETRIES = 3;
-	private final int maxRetries;
 	/**
 	 * Errors left in in this error limit time frame (can be null)
 	 */
@@ -71,9 +82,15 @@ public abstract class AbstractEsiGetter extends AbstractGetter<EsiOwner, ApiClie
 	private static Date errorReset = new Date();
 
 
-	public AbstractEsiGetter(UpdateTask updateTask, EsiOwner owner, boolean forceUpdate, Date nextUpdate, TaskType taskType, int maxRetries) {
+	public AbstractEsiGetter(UpdateTask updateTask, EsiOwner owner, boolean forceUpdate, Date nextUpdate, TaskType taskType) {
 		super(updateTask, owner, forceUpdate(owner, taskType, forceUpdate), nextUpdate, taskType, "ESI");
-		this.maxRetries = maxRetries;
+	}
+
+	public static OkHttpClient getHttpClient() {
+		if (OkHttpClient == null || OkHttpClient.interceptors().size() > 100 || OkHttpClient.networkInterceptors().size() > 100) {
+			OkHttpClient = new OkHttpClient();
+		}
+		return OkHttpClient;
 	}
 
 	private static boolean forceUpdate(EsiOwner owner, TaskType taskType, boolean forceUpdate) {
@@ -97,7 +114,7 @@ public abstract class AbstractEsiGetter extends AbstractGetter<EsiOwner, ApiClie
 			return;
 		}
 		try {
-			updateApi(new EsiUpdater(maxRetries), 0);
+			update();
 		} catch (ApiException ex) {
 			addError(null, ex.getCode(), "Error Code: " + ex.getCode(), ex);
 		} catch (TaskCancelledException ex) {
@@ -109,31 +126,32 @@ public abstract class AbstractEsiGetter extends AbstractGetter<EsiOwner, ApiClie
 		}
 	}
 
-	@Override
-	public <R> R updateApi(Updater<R, ApiClient, ApiException> updater, int retries) throws ApiException {
-		final ApiClient client = new ApiClient(); //Public
+	private <R> R updateApi(Updater<ApiResponse<R>, ApiException> updater) throws ApiException {
+		return updateApi(updater, 0);
+	}
+
+	private <R> R updateApi(Updater<ApiResponse<R>, ApiException> updater, int retries) throws ApiException {
+		final ApiClient client;
 		if (owner != null) { //Auth
-			OAuth auth = (OAuth) client.getAuthentication("evesso");
-			auth.setRefreshToken(owner.getRefreshToken());
-			auth.setClientId(owner.getCallbackURL().getA());
+			client = owner.getApiClient();
+		} else {
+			client = PUBLIC_CLIENT;
 		}
 		checkErrors(); //Update timeframe as needed
 		checkCancelled();
 		try {
-			R t = updater.update(client);
-			String expiresHeader = getHeader(client.getResponseHeaders(), "expires");
-			if (expiresHeader != null) {
-				setNextUpdate(Formater.parseExpireDate(expiresHeader));
-			}
+			ApiResponse<R> apiResponse = updater.update();
+			handleHeaders(apiResponse);
 			logInfo(updater.getStatus(), "Updated");
 			if (owner != null) {
 				owner.setInvalid(false);
 				OAuth auth = (OAuth) client.getAuthentication("evesso");
 				owner.setRefreshToken(auth.getRefreshToken()); //May have changed, so always update
 			}
-			return t;
+			return apiResponse.getData();
 		} catch (ApiException ex) {
-			logError(updater.getStatus(), ex.getMessage(), ex.getMessage());
+			handleHeaders(ex);
+			logError(updater.getStatus(), ex.getResponseBody(), ex.getMessage());
 			if (ex.getCode() == 401 && ex.getMessage().toLowerCase().contains("error") && ex.getMessage().toLowerCase().contains("authorization not provided")) {
 				if (owner != null) {
 					owner.setInvalid(true);
@@ -141,7 +159,7 @@ public abstract class AbstractEsiGetter extends AbstractGetter<EsiOwner, ApiClie
 				throw new InvalidAuthException();
 			} else if (ex.getCode() >= 500 && ex.getCode() < 600 //CCP error, Lets try again in a sec
 					&& ex.getCode() != 503 //Don't retry when it may be downtime
-					&& (ex.getCode() != 502 || (ex.getMessage().toLowerCase().contains("no reply within 10 seconds") || ex.getMessage().toLowerCase().startsWith("<html>"))) //Don't retry when it may be downtime, unless it's "no reply within 10 seconds" or html body
+					&& (ex.getCode() != 502 || (ex.getResponseBody().toLowerCase().contains("no reply within 10 seconds") || ex.getResponseBody().toLowerCase().startsWith("<html>"))) //Don't retry when it may be downtime, unless it's "no reply within 10 seconds" or html body
 					&& retries < updater.getMaxRetries()) { //Retries
 				retries++;
 				try {
@@ -155,12 +173,21 @@ public abstract class AbstractEsiGetter extends AbstractGetter<EsiOwner, ApiClie
 				throw ex;
 			}
 		} finally {
-			setErrorLimit(client.getResponseHeaders()); //Always save error limit header
+			
 		}
 	}
 
-	@Override
-	protected void throwApiException(Exception ex) throws ApiException {
+	private void handleHeaders(ApiException apiException) throws ApiException {
+		setExpires(apiException.getResponseHeaders());
+		setErrorLimit(apiException.getResponseHeaders()); //Always save error limit header
+	}
+
+	private void handleHeaders(ApiResponse<?> apiResponse) throws ApiException {
+		setExpires(apiResponse.getHeaders());
+		setErrorLimit(apiResponse.getHeaders()); //Always save error limit header
+	}
+
+	private void throwApiException(Exception ex) throws ApiException {
 		Throwable cause = ex.getCause();
 		if (cause instanceof ApiException) {
 			ApiException apiException = (ApiException) cause;
@@ -178,7 +205,7 @@ public abstract class AbstractEsiGetter extends AbstractGetter<EsiOwner, ApiClie
 		return owner != null && !inScope();
 	}
 
-	protected abstract void get(ApiClient apiClient) throws ApiException;
+	protected abstract void update() throws ApiException;
 
 	protected abstract boolean inScope();
 
@@ -222,60 +249,60 @@ public abstract class AbstractEsiGetter extends AbstractGetter<EsiOwner, ApiClie
 		}
 	}
 
-	protected SsoApi getSsoApiAuth(ApiClient apiClient) {
-		return new SsoApi(apiClient);
+	protected MetaApi getMetaApiAuth() {
+		return owner.getMetaApiAuth();
 	}
 
-	public MarketApi getMarketApiAuth(ApiClient apiClient) {
-		return new MarketApi(apiClient);
+	public MarketApi getMarketApiAuth() {
+		return owner.getMarketApiAuth();
 	}
 
-	public IndustryApi getIndustryApiAuth(ApiClient apiClient) {
-		return new IndustryApi(apiClient);
+	public IndustryApi getIndustryApiAuth() {
+		return owner.getIndustryApiAuth();
 	}
 
-	protected CharacterApi getCharacterApiAuth(ApiClient apiClient) {
-		return new CharacterApi(apiClient);
+	protected CharacterApi getCharacterApiAuth() {
+		return owner.getCharacterApiAuth();
 	}
 
-	protected AssetsApi getAssetsApiAuth(ApiClient apiClient) {
-		return new AssetsApi(apiClient);
+	protected AssetsApi getAssetsApiAuth() {
+		return owner.getAssetsApiAuth();
 	}
 
-	protected WalletApi getWalletApiAuth(ApiClient apiClient) {
-		return new WalletApi(apiClient);
+	protected WalletApi getWalletApiAuth() {
+		return owner.getWalletApiAuth();
 	}
 
-	protected UniverseApi getUniverseApiAuth(ApiClient apiClient) {
-		return new UniverseApi(apiClient);
+	protected UniverseApi getUniverseApiAuth() {
+		return owner.getUniverseApiAuth();
 	}
 
-	public ContractsApi getContractsApiAuth(ApiClient apiClient) {
-		return new ContractsApi(apiClient);
+	public ContractsApi getContractsApiAuth() {
+		return owner.getContractsApiAuth();
 	}
 
-	public CorporationApi getCorporationApiAuth(ApiClient apiClient) {
-		return new CorporationApi(apiClient);
+	public CorporationApi getCorporationApiAuth() {
+		return owner.getCorporationApiAuth();
 	}
 
-	public LocationApi getLocationApiAuth(ApiClient apiClient) {
-		return new LocationApi(apiClient);
+	public LocationApi getLocationApiAuth() {
+		return owner.getLocationApiAuth();
 	}
 
-	public UniverseApi getUniverseApiOpen(ApiClient apiClient) {
-		return new UniverseApi();
+	public UniverseApi getUniverseApiOpen() {
+		return UNIVERSE_API;
 	}
 
-	public CharacterApi getCharacterApiOpen(ApiClient apiClient) {
-		return new CharacterApi();
+	public CharacterApi getCharacterApiOpen() {
+		return CHARACTER_API;
 	}
 
-	public CorporationApi getCorporationApiOpen(ApiClient apiClient) {
-		return new CorporationApi();
+	public CorporationApi getCorporationApiOpen() {
+		return CORPORATION_API;
 	}
 
-	public SovereigntyApi getSovereigntyApiOpen(ApiClient apiClient) {
-		return new SovereigntyApi();
+	public SovereigntyApi getSovereigntyApiOpen() {
+		return SOVEREIGNTY_API;
 	}
 
 	protected final <K, V> Map<K, V> updateListSlow(Collection<K> list, boolean trackProgress, int maxRetries, ListHandlerSlow<K, V> handler) throws ApiException {
@@ -303,14 +330,154 @@ public abstract class AbstractEsiGetter extends AbstractGetter<EsiOwner, ApiClie
 		protected abstract void handle(ApiException ex, K k) throws ApiException;
 	}
 
+	protected final <K, V> Map<K, V> updateList(Collection<K> list, int maxRetries, ListHandler<K, V> handler) throws ApiException {
+		Map<K, V> values = new HashMap<K, V>();
+		List<ListUpdater<K, V>> updaters = new ArrayList<ListUpdater<K, V>>();
+		int count = 1;
+		for (K k : list) {
+			updaters.add(new ListUpdater<K, V>(handler, k, count + " of " + list.size(), maxRetries));
+			count++;
+		}
+		LOG.info("Starting " + updaters.size() + " list threads");
+		try {
+			List<Future<Map<K, V>>> futures = startSubThreads(updaters);
+			for (Future<Map<K, V>> future : futures) {
+				Map<K, V> returnValue = future.get();
+				if (returnValue != null) {
+					values.putAll(returnValue);
+				}
+			}
+		} catch (InterruptedException | ExecutionException ex) {
+			throwApiException(ex);
+		}
+		return values;
+	}
+
+	protected abstract class ListHandler<K, V> {
+		protected abstract ApiResponse<V> get(K k) throws ApiException;
+	}
+
+	protected class ListUpdater<K, V> implements Updater<ApiResponse<V>, ApiException>, Callable<Map<K, V>> {
+
+		private final ListHandler<K, V> handler;
+		private final K k;
+		private final String status;
+		private final int maxRetries;
+
+		public ListUpdater(ListHandler<K, V> handler, K k, String status, int maxRetries) {
+			this.handler = handler;
+			this.k = k;
+			this.status = status;
+			this.maxRetries = maxRetries;
+		}
+
+		@Override
+		public ApiResponse<V> update() throws ApiException {
+			return handler.get(k);
+			
+		}
+
+		public Map<K, V> go() throws ApiException {
+			V v = updateApi(this);
+			if (v != null) {
+				Map<K, V> map = new HashMap<K, V>();
+				map.put(k, v);
+				return map;
+			} else {
+				return null;
+			}
+		}
+
+		@Override
+		public Map<K, V> call() throws Exception {
+			return go();
+		}
+
+		@Override
+		public String getStatus() {
+			return status;
+		}
+
+		@Override
+		public int getMaxRetries() {
+			return maxRetries;
+		}
+	}
+
+	protected final <K> List<K> updateIDs(Set<Long> existing, int maxRetries, IDsHandler<K> handler) throws ApiException {
+		List<K> list = new ArrayList<K>();
+		Long fromID = null;
+		boolean run = true;
+		int count = 0;
+		while (run) {
+			count++;
+			List<K> result;
+			result = updateApi(new IdUpdater<K>(handler, fromID, count + " of ?", maxRetries));
+			if (result == null || result.isEmpty()) { //Nothing returned: we're done
+				break; //Stop updating
+			}
+
+			list.addAll(result); //Add new
+
+			Long lastID = handler.getID(result.get(result.size() - 1)); //Get the last ID
+			if (lastID.equals(fromID)) { //ID is the same as on last update: we're done
+				break; //Stop updating
+			}
+			fromID = lastID; //Set ID for next update
+
+			for (K t : result) { //Search for existing data
+				if (existing.contains(handler.getID(t))) { //Found existing data
+					run = false; //Stop updating
+					break; //no need to continue
+				}
+			}
+		}
+		return list;
+	}
+
+	public abstract class IDsHandler<K> {
+		protected abstract ApiResponse<List<K>> get(Long fromID) throws ApiException;
+		protected abstract Long getID(K response);
+	}
+
+	public class IdUpdater<K> implements Updater<ApiResponse<List<K>>, ApiException> {
+
+		private final IDsHandler<K> handler;
+		private final Long fromID;
+		private final String status;
+		private final int maxRetries;
+
+		public IdUpdater(IDsHandler<K> handler, Long fromID, String status, int maxRetries) {
+			this.handler = handler;
+			this.fromID = fromID;
+			this.status = status;
+			this.maxRetries = maxRetries;
+		}
+
+		@Override
+		public ApiResponse<List<K>> update() throws ApiException {
+			return handler.get(fromID);
+		}
+
+		@Override
+		public String getStatus() {
+			return status;
+		}
+
+		@Override
+		public int getMaxRetries() {
+			return maxRetries;
+		}
+	}
+
 	protected <K> List<K> updatePages(int maxRetries, EsiPagesHandler<K> handler) throws ApiException {
 		List<K> values = new ArrayList<K>();
 		EsiPageUpdater<K> pageUpdater = new EsiPageUpdater<K>(handler, 1, "1 of ?", maxRetries);
-		List<K> returnValue = updateApi(pageUpdater, 0);
+		List<K> returnValue = updateApi(pageUpdater);
 		if (returnValue != null) {
 			values.addAll(returnValue);
 		}
-		Integer pages = getHeaderInteger(pageUpdater.getClient().getResponseHeaders(), "x-pages"); //Get pages header
+		Integer pages = getHeaderInteger(pageUpdater.getResponse().getHeaders(), "x-pages"); //Get pages header
 		int count = 2;
 		if (pages != null && pages > 1) { //More than one page
 			List<EsiPageUpdater<K>> updaters = new ArrayList<EsiPageUpdater<K>>();
@@ -337,16 +504,16 @@ public abstract class AbstractEsiGetter extends AbstractGetter<EsiOwner, ApiClie
 	}
 
 	public interface EsiPagesHandler<K> {
-		public List<K> get(ApiClient apiClient, Integer page) throws ApiException;
+		public ApiResponse<List<K>> get(Integer page) throws ApiException;
 	}
 
-	public class EsiPageUpdater<T> implements Callable<List<T>>, Updater<List<T>, ApiClient, ApiException> {
+	public class EsiPageUpdater<T> implements Callable<List<T>>, Updater<ApiResponse<List<T>>, ApiException> {
 
 		private final EsiPagesHandler<T> handler;
 		private final int page;
 		private final String status;
-		private ApiClient client;
 		private final int maxRetries;
+		private ApiResponse<List<T>> response;
 
 		public EsiPageUpdater(EsiPagesHandler<T> handler, int page, String status, int maxRetries) {
 			this.handler = handler;
@@ -356,18 +523,18 @@ public abstract class AbstractEsiGetter extends AbstractGetter<EsiOwner, ApiClie
 		}
 
 		@Override
-		public List<T> update(ApiClient client) throws ApiException {
-			this.client = client;
-			return handler.get(client, page);
+		public ApiResponse<List<T>> update() throws ApiException {
+			response = handler.get(page);
+			return response;
 		}
 
 		@Override
 		public List<T> call() throws Exception {
-			return updateApi(this, 0);
+			return updateApi(this);
 		}
 
-		public ApiClient getClient() {
-			return client;
+		public ApiResponse<List<T>> getResponse() {
+			return response;
 		}
 
 		@Override
@@ -381,18 +548,32 @@ public abstract class AbstractEsiGetter extends AbstractGetter<EsiOwner, ApiClie
 		}
 	}
 
-	public class EsiUpdater implements Updater<Void, ApiClient, ApiException> {
+	protected <K> K update(int maxRetries, EsiHandler<K> handler) throws ApiException {
+		EsiUpdater<K> esiUpdater = new EsiUpdater<K>(maxRetries, handler);
+		return esiUpdater.go();
+	}
+
+	public interface EsiHandler<K> {
+		public ApiResponse<K> get() throws ApiException;
+	}
+
+	public class EsiUpdater<T> implements Updater<ApiResponse<T>, ApiException> {
 
 		private final int maxRetries;
+		private final EsiHandler<T> handler;
 
-		public EsiUpdater(int maxRetries) {
+		public EsiUpdater(int maxRetries, EsiHandler<T> handler) {
 			this.maxRetries = maxRetries;
+			this.handler = handler;
 		}
-		
+
+		public T go() throws ApiException {
+			return updateApi(this);
+		}
+
 		@Override
-		public Void update(ApiClient client) throws ApiException {
-			get(client);
-			return null;
+		public ApiResponse<T> update() throws ApiException {
+			return handler.get();
 		}
 
 		@Override

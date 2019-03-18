@@ -30,8 +30,8 @@ import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import net.nikr.eve.jeveasset.io.online.CitadelGetter;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
-import net.troja.eve.esi.ApiClient;
 import net.troja.eve.esi.ApiException;
+import net.troja.eve.esi.ApiResponse;
 import net.troja.eve.esi.model.CharacterAssetsNamesResponse;
 import net.troja.eve.esi.model.CorporationAssetsNamesResponse;
 
@@ -39,17 +39,17 @@ import net.troja.eve.esi.model.CorporationAssetsNamesResponse;
 public class EsiLocationsGetter extends AbstractEsiGetter {
 
 	public EsiLocationsGetter(UpdateTask updateTask, EsiOwner owner) {
-		super(updateTask, owner, false, owner.getLocationsNextUpdate(), TaskType.LOCATIONS, NO_RETRIES);
+		super(updateTask, owner, false, owner.getLocationsNextUpdate(), TaskType.LOCATIONS);
 	}
 
 	@Override
-	protected void get(ApiClient apiClient) throws ApiException {
+	protected void update() throws ApiException {
 		Map<Long, MyAsset> iDs = getIDs(owner);
 		if (owner.isCorporation()) {
 			Map<List<Long>, List<CorporationAssetsNamesResponse>> responses = updateList(splitList(iDs.keySet(), LOCATIONS_BATCH_SIZE), DEFAULT_RETRIES, new ListHandler<List<Long>, List<CorporationAssetsNamesResponse>>() {
 				@Override
-				public List<CorporationAssetsNamesResponse> get(ApiClient apiClient, List<Long> t) throws ApiException {
-					return getAssetsApiAuth(apiClient).postCorporationsCorporationIdAssetsNames((int) owner.getOwnerID(), t, DATASOURCE, null);
+				public ApiResponse<List<CorporationAssetsNamesResponse>> get(List<Long> t) throws ApiException {
+					return getAssetsApiAuth().postCorporationsCorporationIdAssetsNamesWithHttpInfo((int) owner.getOwnerID(), t, DATASOURCE, null);
 				}
 			});
 
@@ -76,8 +76,8 @@ public class EsiLocationsGetter extends AbstractEsiGetter {
 		} else {
 			Map<List<Long>, List<CharacterAssetsNamesResponse>> responses = updateList(splitList(iDs.keySet(), LOCATIONS_BATCH_SIZE), DEFAULT_RETRIES, new ListHandler<List<Long>, List<CharacterAssetsNamesResponse>>() {
 				@Override
-				public List<CharacterAssetsNamesResponse> get(ApiClient apiClient, List<Long> t) throws ApiException {
-					return getAssetsApiAuth(apiClient).postCharactersCharacterIdAssetsNames((int) owner.getOwnerID(), t, DATASOURCE, null);
+				public ApiResponse<List<CharacterAssetsNamesResponse>> get(List<Long> t) throws ApiException {
+					return getAssetsApiAuth().postCharactersCharacterIdAssetsNamesWithHttpInfo((int) owner.getOwnerID(), t, DATASOURCE, null);
 				}
 			});
 			try {

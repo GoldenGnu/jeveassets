@@ -23,23 +23,29 @@ package net.nikr.eve.jeveasset.io.esi;
 import java.util.Date;
 import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
-import net.troja.eve.esi.ApiClient;
+import static net.nikr.eve.jeveasset.io.esi.AbstractEsiGetter.DATASOURCE;
 import net.troja.eve.esi.ApiException;
+import net.troja.eve.esi.ApiResponse;
 import net.troja.eve.esi.model.CorporationDivisionsResponse;
 
 
 public class EsiDivisionsGetter extends AbstractEsiGetter {
 
 	public EsiDivisionsGetter(UpdateTask updateTask, EsiOwner owner) {
-		super(updateTask, owner, false, owner.getAssetNextUpdate(), TaskType.DIVISIONS, DEFAULT_RETRIES);
+		super(updateTask, owner, false, owner.getAssetNextUpdate(), TaskType.DIVISIONS);
 	}
 	
 	@Override
-	protected void get(ApiClient apiClient) throws ApiException {
+	protected void update() throws ApiException {
 		if (!owner.isCorporation()) {
 			return; //Character accounts can not get divisions
 		}
-		CorporationDivisionsResponse response = getCorporationApiAuth(apiClient).getCorporationsCorporationIdDivisions((int) owner.getOwnerID(), DATASOURCE, null, null);
+		CorporationDivisionsResponse response = update(DEFAULT_RETRIES, new EsiHandler<CorporationDivisionsResponse>() {
+			@Override
+			public ApiResponse<CorporationDivisionsResponse> get() throws ApiException {
+				return getCorporationApiAuth().getCorporationsCorporationIdDivisionsWithHttpInfo((int) owner.getOwnerID(), DATASOURCE, null, null);
+			}
+		});
 		owner.setAssetDivisions(EsiConverter.toAssetDivisions(response.getHangar()));
 		owner.setWalletDivisions(EsiConverter.toWalletDivisions(response.getWallet()));
 	}

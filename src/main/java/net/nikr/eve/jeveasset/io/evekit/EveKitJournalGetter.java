@@ -20,8 +20,8 @@
  */
 package net.nikr.eve.jeveasset.io.evekit;
 
-import enterprises.orbital.evekit.client.ApiClient;
 import enterprises.orbital.evekit.client.ApiException;
+import enterprises.orbital.evekit.client.ApiResponse;
 import enterprises.orbital.evekit.client.model.WalletJournal;
 import java.util.Date;
 import java.util.List;
@@ -39,7 +39,7 @@ public class EveKitJournalGetter extends AbstractEveKitGetter implements EveKitP
 	}
 
 	@Override
-	protected void get(ApiClient apiClient, Long at, boolean first) throws ApiException {
+	protected void update(Long at, boolean first) throws ApiException {
 		List<WalletJournal> data = updatePages(this);
 		if (data == null) {
 			return;
@@ -48,9 +48,9 @@ public class EveKitJournalGetter extends AbstractEveKitGetter implements EveKitP
 	}
 
 	@Override
-	public List<WalletJournal> get(ApiClient apiClient, String at, Long contid, Integer maxResults) throws ApiException {
+	public ApiResponse<List<WalletJournal>> get(String at, Long contid, Integer maxResults) throws ApiException {
 		//months
-		return getCommonApi(apiClient).getJournalEntries(owner.getAccessKey(), owner.getAccessCred(), at, contid, maxResults, false,
+		return getCommonApi().getJournalEntriesWithHttpInfo(owner.getAccessKey(), owner.getAccessCred(), at, contid, maxResults, false,
 				null, null, dateFilter(Settings.get().getEveKitJournalHistory()), null, null, null, null, null, null, null, null, null, null, null, null, null);
 	}
 

@@ -20,8 +20,8 @@
  */
 package net.nikr.eve.jeveasset.io.evekit;
 
-import enterprises.orbital.evekit.client.ApiClient;
 import enterprises.orbital.evekit.client.ApiException;
+import enterprises.orbital.evekit.client.ApiResponse;
 import enterprises.orbital.evekit.client.model.AccountBalance;
 import java.util.Date;
 import java.util.List;
@@ -46,7 +46,7 @@ public class EveKitAccountBalanceGetter extends AbstractEveKitGetter implements 
 	}
 
 	@Override
-	protected void get(ApiClient apiClient, Long at, boolean first) throws ApiException {
+	protected void update(Long at, boolean first) throws ApiException {
 		List<AccountBalance> data = updatePages(this);
 		if (data == null) {
 			return;
@@ -62,8 +62,8 @@ public class EveKitAccountBalanceGetter extends AbstractEveKitGetter implements 
 	}
 
 	@Override
-	public List<AccountBalance> get(ApiClient apiClient, String at, Long contid, Integer maxResults) throws ApiException {
-		return getCommonApi(apiClient).getAccountBalance(owner.getAccessKey(), owner.getAccessCred(), at, contid, maxResults, false,
+	public ApiResponse<List<AccountBalance>> get(String at, Long contid, Integer maxResults) throws ApiException {
+		return getCommonApi().getAccountBalanceWithHttpInfo(owner.getAccessKey(), owner.getAccessCred(), at, contid, maxResults, false,
 				null, null);
 	}
 

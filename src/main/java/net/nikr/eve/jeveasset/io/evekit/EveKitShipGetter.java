@@ -20,7 +20,6 @@
  */
 package net.nikr.eve.jeveasset.io.evekit;
 
-import enterprises.orbital.evekit.client.ApiClient;
 import enterprises.orbital.evekit.client.ApiException;
 import enterprises.orbital.evekit.client.model.CharacterLocation;
 import enterprises.orbital.evekit.client.model.CharacterShip;
@@ -46,14 +45,14 @@ public class EveKitShipGetter extends AbstractEveKitGetter {
 	}
 
 	@Override
-	protected void get(ApiClient apiClient, Long at, boolean first) throws ApiException {
+	protected void update(Long at, boolean first) throws ApiException {
 		if (owner.isCorporation()) { //Corporation can't have an active ship
 			return;
 		}
 		//Get Ship
-		List<CharacterShip> characterShips = getCharacterApi(apiClient).getShipType(owner.getAccessKey(), owner.getAccessCred(), atFilter(at), null, null, false, null, null, null);
+		List<CharacterShip> characterShips = getCharacterApi().getShipType(owner.getAccessKey(), owner.getAccessCred(), atFilter(at), null, null, false, null, null, null);
 		//Get Location
-		List<CharacterLocation> characterLocations = getCharacterApi(apiClient).getLocation(owner.getAccessKey(), owner.getAccessCred(), atFilter(at), null, null, false, null, null, null);
+		List<CharacterLocation> characterLocations = getCharacterApi().getLocation(owner.getAccessKey(), owner.getAccessCred(), atFilter(at), null, null, false, null, null, null);
 		//Create assets
 		if (characterShips == null || characterShips.isEmpty()) {
 			return;

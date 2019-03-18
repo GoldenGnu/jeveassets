@@ -25,32 +25,32 @@ import java.util.List;
 import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
-import net.troja.eve.esi.ApiClient;
 import net.troja.eve.esi.ApiException;
+import net.troja.eve.esi.ApiResponse;
 import net.troja.eve.esi.model.CharacterAssetsResponse;
 import net.troja.eve.esi.model.CorporationAssetsResponse;
 
 public class EsiAssetsGetter extends AbstractEsiGetter {
 
 	public EsiAssetsGetter(UpdateTask updateTask, EsiOwner owner) {
-		super(updateTask, owner, false, owner.getAssetNextUpdate(), TaskType.ASSETS, NO_RETRIES);
+		super(updateTask, owner, false, owner.getAssetNextUpdate(), TaskType.ASSETS);
 	}
 
 	@Override
-	protected void get(ApiClient apiClient) throws ApiException {
+	protected void update() throws ApiException {
 		if (owner.isCorporation()) {
 			List<CorporationAssetsResponse> responses = updatePages(DEFAULT_RETRIES, new EsiPagesHandler<CorporationAssetsResponse>() {
 				@Override
-				public List<CorporationAssetsResponse> get(ApiClient apiClient, Integer page) throws ApiException {
-					return getAssetsApiAuth(apiClient).getCorporationsCorporationIdAssets((int) owner.getOwnerID(), DATASOURCE, null, page, null);
+				public ApiResponse<List<CorporationAssetsResponse>> get(Integer page) throws ApiException {
+					return getAssetsApiAuth().getCorporationsCorporationIdAssetsWithHttpInfo((int) owner.getOwnerID(), DATASOURCE, null, page, null);
 				}
 			});
 			owner.setAssets(EsiConverter.toAssetsCorporation(responses, owner));
 		} else {
 			List<CharacterAssetsResponse> responses = updatePages(DEFAULT_RETRIES, new EsiPagesHandler<CharacterAssetsResponse>() {
 				@Override
-				public List<CharacterAssetsResponse> get(ApiClient apiClient, Integer page) throws ApiException {
-					return getAssetsApiAuth(apiClient).getCharactersCharacterIdAssets((int) owner.getOwnerID(), DATASOURCE, null, page, null);
+				public ApiResponse<List<CharacterAssetsResponse>> get(Integer page) throws ApiException {
+					return getAssetsApiAuth().getCharactersCharacterIdAssetsWithHttpInfo((int) owner.getOwnerID(), DATASOURCE, null, page, null);
 				}
 			});
 			owner.setAssets(EsiConverter.toAssets(responses, owner));

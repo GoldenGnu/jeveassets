@@ -27,13 +27,40 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 import net.nikr.eve.jeveasset.data.settings.Settings;
+import net.nikr.eve.jeveasset.io.esi.AbstractEsiGetter;
 import net.nikr.eve.jeveasset.io.esi.EsiCallbackURL;
 import net.nikr.eve.jeveasset.io.esi.EsiScopes;
+import net.troja.eve.esi.ApiClient;
+import net.troja.eve.esi.ApiClientBuilder;
+import net.troja.eve.esi.api.AssetsApi;
+import net.troja.eve.esi.api.CharacterApi;
+import net.troja.eve.esi.api.ContractsApi;
+import net.troja.eve.esi.api.CorporationApi;
+import net.troja.eve.esi.api.IndustryApi;
+import net.troja.eve.esi.api.LocationApi;
+import net.troja.eve.esi.api.MarketApi;
+import net.troja.eve.esi.api.MetaApi;
+import net.troja.eve.esi.api.UniverseApi;
+import net.troja.eve.esi.api.UserInterfaceApi;
+import net.troja.eve.esi.api.WalletApi;
+import net.troja.eve.esi.auth.OAuth;
 import net.troja.eve.esi.model.CharacterRolesResponse.RolesEnum;
 
 
 public class EsiOwner extends AbstractOwner implements OwnerType {
 
+	private final ApiClient apiClient = new ApiClientBuilder().okHttpClient(AbstractEsiGetter.getHttpClient()).build();
+	private final MetaApi metaApi = new MetaApi(apiClient);
+	private final MarketApi marketApi = new MarketApi(apiClient);
+	private final IndustryApi industryApi = new IndustryApi(apiClient);
+	private final CharacterApi characterApi = new CharacterApi(apiClient);
+	private final AssetsApi assetsApi = new AssetsApi(apiClient);
+	private final WalletApi walletApi = new WalletApi(apiClient);
+	private final UniverseApi universeApi = new UniverseApi(apiClient);
+	private final ContractsApi contractsApi = new ContractsApi(apiClient);
+	private final CorporationApi corporationApi = new CorporationApi(apiClient);
+	private final LocationApi locationApi = new LocationApi(apiClient);
+	private final UserInterfaceApi userInterfaceApi = new UserInterfaceApi(apiClient);
 	private String accountName;
 	private String refreshToken;
 	private Set<String> scopes = new HashSet<>();
@@ -61,6 +88,7 @@ public class EsiOwner extends AbstractOwner implements OwnerType {
 		this.callbackURL = esiOwner.callbackURL;
 		this.roles = esiOwner.roles;
 		this.invalid = esiOwner.invalid;
+		updateAuth();
 	}
 
 	public synchronized String getRefreshToken() {
@@ -69,6 +97,7 @@ public class EsiOwner extends AbstractOwner implements OwnerType {
 
 	public synchronized void setRefreshToken(String refreshToken) {
 		this.refreshToken = refreshToken;
+		updateAuth();
 	}
 
 	public Set<String> getScopes() {
@@ -129,6 +158,7 @@ public class EsiOwner extends AbstractOwner implements OwnerType {
 
 	public void setCallbackURL(EsiCallbackURL callbackURL) {
 		this.callbackURL = callbackURL;
+		updateAuth();
 	}
 
 	public Set<RolesEnum> getRoles() {
@@ -314,6 +344,61 @@ public class EsiOwner extends AbstractOwner implements OwnerType {
 
 	public boolean isRoles() {
 		return EsiScopes.CORPORATION_ROLES.isInScope(scopes);
+	}
+
+	private void updateAuth() {
+		if (getCallbackURL() != null && getRefreshToken() != null) {
+			OAuth auth = (OAuth) apiClient.getAuthentication("evesso");
+			auth.setAuth(getCallbackURL().getA(), getRefreshToken());
+		}
+	}
+
+	public synchronized ApiClient getApiClient() {
+		return apiClient;
+	}
+
+	public MetaApi getMetaApiAuth() {
+		return metaApi;
+	}
+
+	public MarketApi getMarketApiAuth() {
+		return marketApi;
+	}
+
+	public IndustryApi getIndustryApiAuth() {
+		return industryApi;
+	}
+
+	public CharacterApi getCharacterApiAuth() {
+		return characterApi;
+	}
+
+	public AssetsApi getAssetsApiAuth() {
+		return assetsApi;
+	}
+
+	public WalletApi getWalletApiAuth() {
+		return walletApi;
+	}
+
+	public UniverseApi getUniverseApiAuth() {
+		return universeApi;
+	}
+
+	public ContractsApi getContractsApiAuth() {
+		return contractsApi;
+	}
+
+	public CorporationApi getCorporationApiAuth() {
+		return corporationApi;
+	}
+
+	public LocationApi getLocationApiAuth() {
+		return locationApi;
+	}
+
+	public UserInterfaceApi getUserInterfaceApiAuth() {
+		return userInterfaceApi;
 	}
 
 	@Override

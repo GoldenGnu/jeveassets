@@ -25,14 +25,16 @@ import java.util.EnumSet;
 import java.util.Set;
 import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
+import static net.nikr.eve.jeveasset.io.esi.AbstractEsiGetter.DATASOURCE;
 import net.nikr.eve.jeveasset.io.shared.AccountAdder;
-import net.troja.eve.esi.ApiClient;
 import net.troja.eve.esi.ApiException;
-import net.troja.eve.esi.auth.CharacterInfo;
+import net.troja.eve.esi.ApiResponse;
+import net.troja.eve.esi.model.CharacterInfo;
 import net.troja.eve.esi.model.CharacterResponse;
 import net.troja.eve.esi.model.CharacterRolesResponse;
 import net.troja.eve.esi.model.CharacterRolesResponse.RolesEnum;
 import net.troja.eve.esi.model.CorporationResponse;
+import net.troja.eve.esi.model.EsiVerifyResponse;
 
 
 public class EsiOwnerGetter extends AbstractEsiGetter implements AccountAdder{
@@ -42,28 +44,34 @@ public class EsiOwnerGetter extends AbstractEsiGetter implements AccountAdder{
 	private boolean wrongEntry = false;
 
 	public EsiOwnerGetter(EsiOwner owner, boolean forceUpdate) {
-		super(null, owner, forceUpdate, owner.getAccountNextUpdate(), TaskType.OWNER, NO_RETRIES);
+		super(null, owner, forceUpdate, owner.getAccountNextUpdate(), TaskType.OWNER);
 	}
 
 	public EsiOwnerGetter(UpdateTask updateTask, EsiOwner owner) {
-		super(updateTask, owner, owner.getCorporationName() == null, owner.getAccountNextUpdate(), TaskType.OWNER, NO_RETRIES);
+		super(updateTask, owner, owner.getCorporationName() == null, owner.getAccountNextUpdate(), TaskType.OWNER);
 	}
 
 	@Override
-	protected void get(ApiClient apiClient) throws ApiException {
-		CharacterInfo characterInfo = getSsoApiAuth(apiClient).getCharacterInfo();
+	protected void update() throws ApiException {
+		EsiVerifyResponse esiVerifyResponse = update(DEFAULT_RETRIES, new EsiHandler<EsiVerifyResponse>() {
+			@Override
+			public ApiResponse<EsiVerifyResponse> get() throws ApiException {
+				return getMetaApiAuth().getVerifyWithHttpInfo(null, null, DATASOURCE, null, null);
+			}
+		});
+		CharacterInfo characterInfo = new CharacterInfo(esiVerifyResponse);
 		Set<RolesEnum> roles = EnumSet.noneOf(RolesEnum.class);
-		Integer characterID = characterInfo.getCharacterId();
+		Integer characterID = characterInfo.getCharacterID();
 		//CharacterID to CorporationID
-		CharacterResponse character = getCharacterApiOpen(apiClient).getCharactersCharacterId(characterID, DATASOURCE, null);
+		CharacterResponse character = getCharacterApiOpen().getCharactersCharacterId(characterID, DATASOURCE, null);
 		Integer corporationID = character.getCorporationId();
 		//CorporationID to CorporationName
-		CorporationResponse corporation = getCorporationApiOpen(apiClient).getCorporationsCorporationId(corporationID, DATASOURCE, null);
+		CorporationResponse corporation = getCorporationApiOpen().getCorporationsCorporationId(corporationID, DATASOURCE, null);
 		String corporationName = corporation.getName();
 		boolean isCorporation = EsiScopes.CORPORATION_ROLES.isInScope(characterInfo.getScopes());
 		if (isCorporation) { //Corporation
 			//Updated Character Roles
-			CharacterRolesResponse characterRolesResponse = getCharacterApiAuth(apiClient).getCharactersCharacterIdRoles(characterID, DATASOURCE, null, null);
+			CharacterRolesResponse characterRolesResponse = getCharacterApiAuth().getCharactersCharacterIdRoles(characterID, DATASOURCE, null, null);
 			roles.addAll(characterRolesResponse.getRoles());
 		}
 		if (((!isCorporation && characterID != owner.getOwnerID())
@@ -83,7 +91,7 @@ public class EsiOwnerGetter extends AbstractEsiGetter implements AccountAdder{
 			owner.setOwnerID(corporationID);
 			owner.setOwnerName(corporationName);
 		} else {
-			owner.setOwnerID(characterInfo.getCharacterId());
+			owner.setOwnerID(characterInfo.getCharacterID());
 			owner.setOwnerName(characterInfo.getCharacterName());
 		}
 

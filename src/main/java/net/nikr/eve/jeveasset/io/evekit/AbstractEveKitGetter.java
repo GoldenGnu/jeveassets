@@ -22,12 +22,11 @@ package net.nikr.eve.jeveasset.io.evekit;
 
 import enterprises.orbital.evekit.client.ApiClient;
 import enterprises.orbital.evekit.client.ApiException;
+import enterprises.orbital.evekit.client.ApiResponse;
 import enterprises.orbital.evekit.client.api.AccessKeyApi;
 import enterprises.orbital.evekit.client.api.CharacterApi;
 import enterprises.orbital.evekit.client.api.CommonApi;
 import enterprises.orbital.evekit.client.api.CorporationApi;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -37,13 +36,24 @@ import java.util.TimeZone;
 import java.util.concurrent.Callable;
 import net.nikr.eve.jeveasset.data.api.accounts.EveKitOwner;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
-import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.io.shared.AbstractGetter;
 import net.nikr.eve.jeveasset.io.shared.ThreadWoker.TaskCancelledException;
 
 
-public abstract class AbstractEveKitGetter extends AbstractGetter<EveKitOwner, ApiClient, ApiException> {
+public abstract class AbstractEveKitGetter extends AbstractGetter<EveKitOwner> {
 
+	
+	private static final ApiClient API_CLIENT = new ApiClient();
+	static {
+		API_CLIENT.setUserAgent(System.getProperty("http.agent"));
+		API_CLIENT.setConnectTimeout(180000);
+		API_CLIENT.setWriteTimeout(180000);
+		API_CLIENT.setReadTimeout(180000);
+	}
+	private static final CommonApi COMMON_API = new CommonApi(API_CLIENT);
+	private static final CharacterApi CHARACTER_API = new CharacterApi(API_CLIENT);
+	private static final CorporationApi CORPORATION_API = new CorporationApi(API_CLIENT);
+	private static final AccessKeyApi ACCESS_KEY_API = new AccessKeyApi(API_CLIENT);
 	protected static final int DEFAULT_RETRIES = 3;
 	private boolean invalid = false;
 	private Date lifeStart = null;
@@ -68,22 +78,22 @@ public abstract class AbstractEveKitGetter extends AbstractGetter<EveKitOwner, A
 			return;
 		}
 		try {
-			updateApi(new EveKitUpdater(), 0);
+			update(at, first);
 		} catch (ApiException ex) {
 			switch (ex.getCode()) {
 				case 400:
-					addError(null, "INVALID ATTRIBUTE SELECTOR", "Invalid attribute selector");
+					addError(null, "INVALID ATTRIBUTE SELECTOR", "Invalid attribute selector", ex);
 					break;
 				case 401:
-					addError(null, "INVALID CREDENTIAL", "Access credential invalid");
+					addError(null, "INVALID CREDENTIAL", "Access credential invalid", ex);
 					invalid = true;
 					break;
 				case 403:
-					addError(null, "INVALID ACCESS MASK", "Not enough access privileges.\r\n(Fix: Add " + getTaskName() + " to the API Key)");
+					addError(null, "INVALID ACCESS MASK", "Not enough access privileges.\r\n(Fix: Add " + getTaskName() + " to the API Key)", ex);
 					invalid = true;
 					break;
 				case 404:
-					addError(null, "INVALID ACCESS KEY ID", "Access key with the given ID not found");
+					addError(null, "INVALID ACCESS KEY ID", "Access key with the given ID not found", ex);
 					invalid = true;
 					break;
 				default:
@@ -97,41 +107,26 @@ public abstract class AbstractEveKitGetter extends AbstractGetter<EveKitOwner, A
 		}
 	}
 
-	@Override
-	public <R> R updateApi(Updater<R, ApiClient, ApiException> updater, int retries) throws ApiException {
+	private <R> R updateApi(Updater<ApiResponse<R>, ApiException> updater) throws ApiException {
+		return updateApi(updater, 0);
+	}
+
+	private <R> R updateApi(Updater<ApiResponse<R>, ApiException> updater, int retries) throws ApiException {
 		try {
 			checkCancelled();
-			final ApiClient client = new ApiClient();
-			client.setUserAgent(System.getProperty("http.agent"));
-			R r = updater.update(client);
+			ApiResponse<R> apiResponse = updater.update();
+			setExpires(apiResponse.getHeaders());
 			logInfo(updater.getStatus(), "Updated");
-			String expiresHeader = getHeader(client.getResponseHeaders(), "Expires");
-			if (expiresHeader != null) {
-				setNextUpdate(Formater.parseExpireDate(expiresHeader));
-			}
-			return r;
+			return apiResponse.getData();
 		} catch (ApiException ex) {
-			logError(updater.getStatus(), ex.getMessage(), ex.getMessage());
+			setExpires(ex.getResponseHeaders());
+			logError(updater.getStatus(), ex.getResponseBody(), ex.getMessage(), ex);
 			if (retries < DEFAULT_RETRIES) {
 				retries++;
 				return updateApi(updater, retries);
 			} else {
 				throw ex;
 			}
-		}
-	}
-
-	@Override
-	protected void throwApiException(Exception ex) throws ApiException {
-		Throwable cause = ex.getCause();
-		if (cause instanceof ApiException) {
-			ApiException apiException = (ApiException) cause;
-			throw apiException;
-		} else if (cause instanceof RuntimeException) {
-			RuntimeException runtimeException = (RuntimeException) cause;
-			throw runtimeException;
-		} else {
-			throw new RuntimeException(cause);
 		}
 	}
 
@@ -144,20 +139,20 @@ public abstract class AbstractEveKitGetter extends AbstractGetter<EveKitOwner, A
 		return invalid;
 	}
 
-	protected final CommonApi getCommonApi(ApiClient apiClient) {
-		return new CommonApi(apiClient);
+	protected final CommonApi getCommonApi() {
+		return COMMON_API;
 	}
 
-	protected final CharacterApi getCharacterApi(ApiClient apiClient) {
-		return new CharacterApi(apiClient);
+	protected final CharacterApi getCharacterApi() {
+		return CHARACTER_API;
 	}
 
-	protected final CorporationApi getCorporationApi(ApiClient apiClient) {
-		return new CorporationApi(apiClient);
+	protected final CorporationApi getCorporationApi() {
+		return CORPORATION_API;
 	}
 
-	protected final AccessKeyApi getAccessKeyApi(ApiClient apiClient) {
-		return new AccessKeyApi(apiClient);
+	protected final AccessKeyApi getAccessKeyApi() {
+		return ACCESS_KEY_API;
 	}
 
 	public Date getLifeStart() {
@@ -165,15 +160,15 @@ public abstract class AbstractEveKitGetter extends AbstractGetter<EveKitOwner, A
 	}
 
 	protected final String industryJobsFilter() {
-		return encode("{ values: [1, 2, 3] }");
+		return "{ values: [1, 2, 3] }";
 	}
 
 	protected final String contractsFilter() {
-		return encode("{ values: [\"in_progress\", \"outstanding\"] }");
+		return "{ values: [\"in_progress\", \"outstanding\"] }";
 	}
 
 	protected final String marketOrdersFilter() {
-		return encode("{ values: [\"open\"] }");
+		return "{ values: [\"open\"] }";
 	}
 
 	protected final <E extends Number> String valuesFilter(Set<E> ids) {
@@ -189,16 +184,16 @@ public abstract class AbstractEveKitGetter extends AbstractGetter<EveKitOwner, A
 			builder.append(id);
 		}
 		builder.append("] }");
-		return encode(builder.toString());
+		return builder.toString();
 	}
 
 	protected final String dateFilter(int months) {
 		if (months == 0) {
-			return encode("{ any: true }");
+			return "{ any: true }";
 		} else {
 			Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
 			calendar.add(Calendar.DAY_OF_MONTH, (-months * 30));
-			return encode("{ start: " + String.valueOf(calendar.getTime().getTime()) + ", end: " + String.valueOf(Long.MAX_VALUE) + " }");
+			return "{ start: " + String.valueOf(calendar.getTime().getTime()) + ", end: " + String.valueOf(Long.MAX_VALUE) + " }";
 		}
 	}
 
@@ -210,28 +205,20 @@ public abstract class AbstractEveKitGetter extends AbstractGetter<EveKitOwner, A
 		builder.append("{ values: [");
 		builder.append(at);
 		builder.append("] }");
-		return encode(builder.toString());
+		return builder.toString();
 	}
 
 	protected final String atAny() {
-		return encode("{ any: true }");
+		return "{ any: true }";
 	}
 
-	protected String encode(String plain) {
-		try {
-			return URLEncoder.encode(plain, "UTF-8").replace("+", "%20");
-		} catch (UnsupportedEncodingException ex) {
-			return null;
-		}
-	}
-
-	protected abstract void get(ApiClient apiClient, Long at, boolean first) throws ApiException;
+	protected abstract void update(Long at, boolean first) throws ApiException;
 	protected abstract long getAccessMask();
 
 	protected <K> List<K> updatePages(EveKitPagesHandler<K> handler) throws ApiException {
 		if (first) {
 			EveKitPageUpdater<K> updater = new EveKitPageUpdater<K>(handler, "first", atAny(), null, 1);
-			List<K> results = updateApi(updater, 0);
+			List<K> results = updateApi(updater);
 			if (results != null && !results.isEmpty()) {
 				Long l = handler.getLifeStart(results.get(0));
 				if (l != null) {
@@ -248,8 +235,8 @@ public abstract class AbstractEveKitGetter extends AbstractGetter<EveKitOwner, A
 			int count = 0;
 			while (batch == null || batch.size() == 1000) {
 				count++;
-				EveKitPageUpdater<K> updater = new EveKitPageUpdater<K>(handler, count + " of ?", atFilter(at), getCid(handler, batch), Integer.MAX_VALUE);
-				batch = updateApi(updater, 0);
+				EveKitPageUpdater<K> updater = new EveKitPageUpdater<K>(handler, count + " of ?", atFilter(at), getCid(handler, batch), 1000);
+				batch = updateApi(updater);
 				if (batch == null) {
 					break;
 				}
@@ -269,7 +256,7 @@ public abstract class AbstractEveKitGetter extends AbstractGetter<EveKitOwner, A
 	}
 
 	public interface EveKitPagesHandler<K> {
-		public List<K> get(ApiClient apiClient, String at, Long cid, Integer maxResults) throws ApiException;
+		public ApiResponse<List<K>> get(String at, Long cid, Integer maxResults) throws ApiException;
 		public long getCID(K k);
 		public Long getLifeStart(K obj);
 		/**
@@ -286,7 +273,7 @@ public abstract class AbstractEveKitGetter extends AbstractGetter<EveKitOwner, A
 		public Long loadCID(); 
 	}
 
-	public class EveKitPageUpdater<K> implements Callable<List<K>>, Updater<List<K>, ApiClient, ApiException> {
+	public class EveKitPageUpdater<K> implements Callable<List<K>>, Updater<ApiResponse<List<K>>, ApiException> {
 
 		private final EveKitPagesHandler<K> handler;
 		private final String status;
@@ -303,13 +290,13 @@ public abstract class AbstractEveKitGetter extends AbstractGetter<EveKitOwner, A
 		}
 
 		@Override
-		public List<K> update(ApiClient client) throws ApiException {
-			return handler.get(client, at, cid, maxResults);
+		public ApiResponse<List<K>> update() throws ApiException {
+			return handler.get(at, cid, maxResults);
 		}
 
 		@Override
 		public List<K> call() throws Exception {
-			return updateApi(this, 0);
+			return updateApi(this);
 		}
 
 		@Override
@@ -319,27 +306,7 @@ public abstract class AbstractEveKitGetter extends AbstractGetter<EveKitOwner, A
 
 		@Override
 		public int getMaxRetries() {
-			return NO_RETRIES;
+			return DEFAULT_RETRIES;
 		}
 	}
-
-	public class EveKitUpdater implements Updater<Void, ApiClient, ApiException> {
-
-		@Override
-		public Void update(ApiClient client) throws ApiException {
-			get(client, at, first);
-			return null;
-		}
-
-		@Override
-		public String getStatus() {
-			return "Completed";
-		}
-
-		@Override
-		public int getMaxRetries() {
-			return NO_RETRIES;
-		}
-	}
-
 }

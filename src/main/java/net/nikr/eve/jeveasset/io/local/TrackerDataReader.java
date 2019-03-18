@@ -20,21 +20,24 @@
  */
 package net.nikr.eve.jeveasset.io.local;
 
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
-import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
+import com.google.gson.reflect.TypeToken;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.tabs.values.AssetValue;
 import net.nikr.eve.jeveasset.gui.tabs.values.Value;
@@ -63,16 +66,16 @@ public class TrackerDataReader extends AbstractBackup {
 		if (backup) {
 			backup(filename);
 		}
-		ObjectMapper mapper = new ObjectMapper();
-		SimpleModule module = new SimpleModule();
-		module.addDeserializer(Value.class, new ValueDeserializer());
-		mapper.registerModule(module);
+		Gson gson = new GsonBuilder().registerTypeAdapter(Value.class, new ValueDeserializerJSon()).create();
+		FileReader fileReader = null;
 		try {
 			lock(filename);
-			Map<String, List<Value>> trackerData = mapper.readValue(file, new TypeReference<HashMap<String, ArrayList<Value>>>() {});
+			fileReader = new FileReader(file);
+			Map<String, List<Value>> trackerData =  gson.fromJson(fileReader, new TypeToken<HashMap<String, ArrayList<Value>>>() {}.getType());
 			LOG.info("Tracker data loaded");
 			return trackerData;
 		} catch (IOException ex) {
+			LOG.warn(ex.getMessage(), ex);
 			if (restoreNewFile(filename)) { //If possible restore from .new (Should be the newest)
 				read(filename, backup);
 			} else if (restoreBackupFile(filename)) { //If possible restore from .bac (Should be the oldest, but, still worth trying)
@@ -82,64 +85,69 @@ public class TrackerDataReader extends AbstractBackup {
 				LOG.error(ex.getMessage(), ex);
 			}
 		} finally {
+			if (fileReader != null) {
+				try {
+					fileReader.close();
+				} catch (IOException ex) {
+					//No problem
+				}
+			}
 			unlock(filename);
 		}
 		return null;
 	}
 
-	public static class ValueDeserializer extends StdDeserializer<Value> { 
+	    public static class ValueDeserializerJSon implements JsonDeserializer<Value> {
 
-		public ValueDeserializer() { 
-			this(null); 
-		} 
-
-		public ValueDeserializer(Class<Value> vc) { 
-			super(vc); 
-		}
-
-		@Override
-		public Value deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException, JsonProcessingException {
-			JsonNode node = jp.getCodec().readTree(jp);
-			Date date = new Date(node.get("date").asLong());
-			double assetsTotal = node.get("assets").asDouble();
-			double escrows = node.get("escrows").asDouble();
-			double escrowstocover = node.get("escrowstocover").asDouble();
-			double sellorders = node.get("sellorders").asDouble();
-			double balanceTotal = node.get("walletbalance").asDouble();
-			double manufacturing = node.get("manufacturing").asDouble();
-			double contractCollateral = node.get("contractcollateral").asDouble();
-			double contractValue = node.get("contractvalue").asDouble();
+        @Override
+        public Value deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
+                throws JsonParseException {
+			JsonObject node = json.getAsJsonObject();
+			Date date = new Date(node.get("date").getAsLong());
+			double assetsTotal = node.get("assets").getAsDouble();
+			double escrows = node.get("escrows").getAsDouble();
+			double escrowstocover = node.get("escrowstocover").getAsDouble();
+			double sellorders = node.get("sellorders").getAsDouble();
+			double balanceTotal = node.get("walletbalance").getAsDouble();
+			double manufacturing = node.get("manufacturing").getAsDouble();
+			double contractCollateral = node.get("contractcollateral").getAsDouble();
+			double contractValue = node.get("contractvalue").getAsDouble();
 			//Add data
 			Value value = new Value(date);
 			//Balance
-			if (node.get("balance") != null) {
-				for (JsonNode balanceNode : node.get("balance")) {
-					String id = balanceNode.get("id").asText();
-					double balance = balanceNode.get("value").asDouble();
+
+			JsonElement balanceElement = node.get("balance");
+            if (balanceElement != null && balanceElement.isJsonArray()) {
+                for (JsonElement itemElement : balanceElement.getAsJsonArray()) {
+					JsonObject itemObject = itemElement.getAsJsonObject();
+                    String id = itemObject.get("id").getAsString();
+					double balance = itemObject.get("value").getAsDouble();
 					value.addBalance(id, balance);
-				}
-			} else {
-				value.setBalanceTotal(balanceTotal);
-			}
-			//Assets
-			if (node.get("asset") != null) {
-				for (JsonNode assetNode : node.get("asset")) {
-					String location = assetNode.get("location").asText();
+                }
+            } else {
+                value.setBalanceTotal(balanceTotal);
+            }
+
+			JsonElement assetElement = node.get("asset");
+            if (assetElement != null && assetElement.isJsonArray()) {
+                for (JsonElement itemElement : assetElement.getAsJsonArray()) {
+					JsonObject itemObject = itemElement.getAsJsonObject();
+                    String location = itemObject.get("location").getAsString();
 					Long locationID = null;
-					if (assetNode.get("locationid") != null) {
-						locationID = assetNode.get("locationid").asLong();
+					if (itemObject.get("locationid") != null) {
+						locationID = itemObject.get("locationid").getAsLong();
 					}
 					String flag = null;
-					if (assetNode.get("flag") != null) {
-						flag = assetNode.get("flag").asText();
+					if (itemObject.get("flag") != null) {
+						flag = itemObject.get("flag").getAsString();
 					}
-					Double assets = assetNode.get("value").asDouble();
+					Double assets = itemObject.get("value").getAsDouble();
 					AssetValue assetValue = AssetValue.create(location, flag, locationID);
 					value.addAssets(assetValue, assets);
-				}
-			} else {
-				value.setAssetsTotal(assetsTotal);
-			}
+                }
+            } else {
+                value.setAssetsTotal(assetsTotal);
+            }
 			value.setEscrows(escrows);
 			value.setEscrowsToCover(escrowstocover);
 			value.setSellOrders(sellorders);
@@ -148,5 +156,5 @@ public class TrackerDataReader extends AbstractBackup {
 			value.setContractValue(contractValue);
 			return value;
 		}
-	}
+    }
 }

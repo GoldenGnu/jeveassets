@@ -20,26 +20,26 @@
  */
 package net.nikr.eve.jeveasset.io.evekit;
 
-import enterprises.orbital.evekit.client.ApiClient;
 import enterprises.orbital.evekit.client.ApiException;
+import enterprises.orbital.evekit.client.ApiResponse;
 import enterprises.orbital.evekit.client.model.Division;
 import java.util.Date;
 import java.util.List;
 import net.nikr.eve.jeveasset.data.api.accounts.EveKitAccessMask;
 import net.nikr.eve.jeveasset.data.api.accounts.EveKitOwner;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
+import net.nikr.eve.jeveasset.io.evekit.AbstractEveKitGetter.EveKitPagesHandler;
 
 
-public class EveKitDivisionsGetter extends AbstractEveKitGetter {
+public class EveKitDivisionsGetter extends AbstractEveKitGetter implements EveKitPagesHandler<Division>{
 
 	public EveKitDivisionsGetter(UpdateTask updateTask, EveKitOwner owner) {
 		super(updateTask, owner, false, owner.getAssetNextUpdate(), TaskType.DIVISIONS, false, null);
 	}
 
 	@Override
-	protected void get(ApiClient apiClient, Long at, boolean first) throws ApiException {
-		List<Division> response = getCorporationApi(apiClient).getDivisions(owner.getAccessKey(), owner.getAccessCred(), atFilter(at), null, null, false,
-				null, null, null);
+	protected void update(Long at, boolean first) throws ApiException {
+		List<Division> response = updatePages(this);
 		owner.setAssetDivisions(EveKitConverter.toAssetDivisions(response));
 		owner.setWalletDivisions(EveKitConverter.toWalletDivisions(response));
 	}
@@ -53,5 +53,31 @@ public class EveKitDivisionsGetter extends AbstractEveKitGetter {
 	protected void setNextUpdate(Date date) {
 		//Nope
 	}
-	
+
+	@Override
+	public ApiResponse<List<Division>> get(String at, Long cid, Integer maxResults) throws ApiException {
+		return getCorporationApi().getDivisionsWithHttpInfo(owner.getAccessKey(), owner.getAccessCred(), at, null, null, false,
+				null, null, null);
+	}
+
+	@Override
+	public long getCID(Division k) {
+		return k.getCid();
+	}
+
+	@Override
+	public Long getLifeStart(Division k) {
+		return k.getLifeStart();
+	}
+
+	@Override
+	public void saveCID(Long cid) {
+		//Nope
+	}
+
+	@Override
+	public Long loadCID() {
+		return null;
+	}
+
 }

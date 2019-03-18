@@ -20,8 +20,8 @@
  */
 package net.nikr.eve.jeveasset.io.evekit;
 
-import enterprises.orbital.evekit.client.ApiClient;
 import enterprises.orbital.evekit.client.ApiException;
+import enterprises.orbital.evekit.client.ApiResponse;
 import enterprises.orbital.evekit.client.model.ContractItem;
 import java.util.ArrayList;
 import java.util.Date;
@@ -42,13 +42,19 @@ import net.nikr.eve.jeveasset.io.evekit.AbstractEveKitGetter.EveKitPagesHandler;
 public class EveKitContractItemsGetter extends AbstractEveKitGetter implements EveKitPagesHandler<ContractItem> {
 
 	private final Map<Integer, MyContract> contracts = new HashMap<Integer, MyContract>();
+	private Set<Integer> ids;
 
 	public EveKitContractItemsGetter(UpdateTask updateTask, EveKitOwner owner) {
 		super(updateTask, owner, true, Settings.getNow(), TaskType.CONTRACT_ITEMS, false, null);
 	}
 
 	@Override
-	protected void get(ApiClient apiClient, Long at, boolean first) throws ApiException {
+	protected void update(Long at, boolean first) throws ApiException {
+		//Get all items matching contractIDs
+		ids = getIDs(owner);
+		if (ids.isEmpty()) { //return  - nothing to update
+			return;
+		}
 		List<ContractItem> data = updatePages(this);
 		if (data == null) {
 			return;
@@ -68,26 +74,21 @@ public class EveKitContractItemsGetter extends AbstractEveKitGetter implements E
 	}
 
 	@Override
-	public List<ContractItem> get(ApiClient apiClient, String at, Long contid, Integer maxResults) throws ApiException {
-		Set<Integer> ids = getIDs(owner);
-		if (ids.isEmpty()) { //No items to get, return empty list
-			return new ArrayList<>();
-		}
-		//Get all items matching contractIDs
-		return getCommonApi(apiClient).getContractItems(owner.getAccessKey(), owner.getAccessCred(), null, contid, maxResults, false,
+	public ApiResponse<List<ContractItem>> get(String at, Long contid, Integer maxResults) throws ApiException {
+		return getCommonApi().getContractItemsWithHttpInfo(owner.getAccessKey(), owner.getAccessCred(), null, contid, maxResults, false,
 				valuesFilter(ids), null, null, null, null, null, null);
 	}
 
 	protected Set<Integer> getIDs(EveKitOwner owner) throws ApiException {
-		Set<Integer> ids = new HashSet<Integer>();
+		Set<Integer> set = new HashSet<Integer>();
 		for (Map.Entry<MyContract, List<MyContractItem>> entry : owner.getContracts().entrySet()) {
 			if (entry.getKey().isItemContract() //Do not get courier contracts
 					&& entry.getValue().isEmpty()) { //Only get items once (Contract items can not be changed)
-				ids.add(entry.getKey().getContractID());
+				set.add(entry.getKey().getContractID());
 				contracts.put(entry.getKey().getContractID(), entry.getKey());
 			}
 		}
-		return ids;
+		return set;
 	}
 
 	@Override
