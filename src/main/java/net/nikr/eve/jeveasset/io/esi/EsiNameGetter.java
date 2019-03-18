@@ -34,8 +34,8 @@ import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
-import net.troja.eve.esi.ApiClient;
 import net.troja.eve.esi.ApiException;
+import net.troja.eve.esi.ApiResponse;
 import net.troja.eve.esi.model.UniverseNamesResponse;
 
 
@@ -44,18 +44,18 @@ public class EsiNameGetter extends AbstractEsiGetter {
 	private final List<OwnerType> ownerTypes;
 
 	public EsiNameGetter(UpdateTask updateTask, List<OwnerType> ownerTypes) {
-		super(updateTask, null, false, Settings.getNow(), TaskType.OWNER_ID_TO_NAME, NO_RETRIES);
+		super(updateTask, null, false, Settings.getNow(), TaskType.OWNER_ID_TO_NAME);
 		this.ownerTypes = ownerTypes;
 	}
 
 	@Override
-	protected void get(ApiClient apiClient) throws ApiException {
+	protected void update() throws ApiException {
 		Set<Integer> ids = getOwnerIDs(ownerTypes);
 		Map<List<Integer>, List<UniverseNamesResponse>> responses = updateList(splitList(ids, UNIVERSE_BATCH_SIZE), NO_RETRIES, new ListHandler<List<Integer>, List<UniverseNamesResponse>>() {
 			@Override
-			public List<UniverseNamesResponse> get(ApiClient apiClient, List<Integer> t) throws ApiException {
+			public ApiResponse<List<UniverseNamesResponse>> get(List<Integer> t) throws ApiException {
 				try {
-					return getUniverseApiOpen(apiClient).postUniverseNames(t, DATASOURCE);
+					return getUniverseApiOpen().postUniverseNamesWithHttpInfo(t, DATASOURCE);
 				} catch (ApiException ex) {
 					if (ex.getCode() == 404 && ex.getResponseBody().toLowerCase().contains("ensure all ids are valid before resolving")) {
 						return null; //Ignore this error we will use another endpoint instead
@@ -75,9 +75,9 @@ public class EsiNameGetter extends AbstractEsiGetter {
 		}
 		Map<List<Integer>, List<UniverseNamesResponse>> retryResponses = updateList(splitList(retries, 1), NO_RETRIES, new ListHandler<List<Integer>, List<UniverseNamesResponse>>() {
 			@Override
-			public List<UniverseNamesResponse> get(ApiClient apiClient, List<Integer> t) throws ApiException {
+			public ApiResponse<List<UniverseNamesResponse>> get(List<Integer> t) throws ApiException {
 				try {
-					return getUniverseApiOpen(apiClient).postUniverseNames(t, DATASOURCE);
+					return getUniverseApiOpen().postUniverseNamesWithHttpInfo(t, DATASOURCE);
 				} catch (ApiException ex) {
 					if (ex.getCode() == 404 && ex.getResponseBody().toLowerCase().contains("ensure all ids are valid before resolving")) {
 						return null; //Ignore this error we will use another endpoint instead

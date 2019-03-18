@@ -20,8 +20,8 @@
  */
 package net.nikr.eve.jeveasset.io.evekit;
 
-import enterprises.orbital.evekit.client.ApiClient;
 import enterprises.orbital.evekit.client.ApiException;
+import enterprises.orbital.evekit.client.ApiResponse;
 import enterprises.orbital.evekit.client.model.WalletTransaction;
 import java.util.Date;
 import java.util.List;
@@ -39,7 +39,7 @@ public class EveKitTransactionsGetter extends AbstractEveKitGetter implements Ev
 	}
 
 	@Override
-	protected void get(ApiClient apiClient, Long at, boolean first) throws ApiException {
+	protected void update(Long at, boolean first) throws ApiException {
 		List<WalletTransaction> data = updatePages(this);
 		if (data == null) {
 			return;
@@ -50,8 +50,8 @@ public class EveKitTransactionsGetter extends AbstractEveKitGetter implements Ev
 	
 
 	@Override
-	public List<WalletTransaction> get(ApiClient apiClient, String at, Long contid, Integer maxResults) throws ApiException {
-		return getCommonApi(apiClient).getWalletTransactions(owner.getAccessKey(), owner.getAccessCred(), at, contid, maxResults, false,
+	public ApiResponse<List<WalletTransaction>> get(String at, Long contid, Integer maxResults) throws ApiException {
+		return getCommonApi().getWalletTransactionsWithHttpInfo(owner.getAccessKey(), owner.getAccessCred(), at, contid, maxResults, false,
 				null, null , dateFilter(Settings.get().getEveKitTransactionsHistory()), null, null, null, null, null, null, null, null);
 	}
 

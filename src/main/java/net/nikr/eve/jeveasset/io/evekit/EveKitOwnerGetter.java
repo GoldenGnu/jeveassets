@@ -21,7 +21,6 @@
 package net.nikr.eve.jeveasset.io.evekit;
 
 
-import enterprises.orbital.evekit.client.ApiClient;
 import enterprises.orbital.evekit.client.ApiException;
 import enterprises.orbital.evekit.client.model.KeyInfo;
 import java.util.Date;
@@ -45,8 +44,8 @@ public class EveKitOwnerGetter extends AbstractEveKitGetter implements AccountAd
 	}
 
 	@Override
-	protected void get(ApiClient apiClient, Long at, boolean first) throws ApiException {
-		KeyInfo keyInfo = getAccessKeyApi(apiClient).getKeyInfo(owner.getAccessKey(), owner.getAccessCred());
+	protected void update(Long at, boolean first) throws ApiException {
+		KeyInfo keyInfo = getAccessKeyApi().getKeyInfo(owner.getAccessKey(), owner.getAccessCred());
 		if (owner.getOwnerID() != keyInfo.getEntityID() && owner.getOwnerID() != 0) {
 			addError(null, "Wrong Entry", null);
 			wrongEntry = true;

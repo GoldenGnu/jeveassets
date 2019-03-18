@@ -30,8 +30,8 @@ import static net.nikr.eve.jeveasset.io.esi.AbstractEsiGetter.DATASOURCE;
 import static net.nikr.eve.jeveasset.io.esi.AbstractEsiGetter.DEFAULT_RETRIES;
 import net.nikr.eve.jeveasset.io.online.CitadelGetter;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
-import net.troja.eve.esi.ApiClient;
 import net.troja.eve.esi.ApiException;
+import net.troja.eve.esi.ApiResponse;
 import net.troja.eve.esi.model.CharacterBookmarksResponse;
 import net.troja.eve.esi.model.CorporationBookmarksResponse;
 
@@ -39,18 +39,18 @@ import net.troja.eve.esi.model.CorporationBookmarksResponse;
 public class EsiBookmarksGetter extends AbstractEsiGetter {
 
 	public EsiBookmarksGetter(UpdateTask updateTask, EsiOwner esiOwner) {
-		super(updateTask, esiOwner, false, esiOwner.getBookmarksNextUpdate(), TaskType.BOOKMARKS, NO_RETRIES);
+		super(updateTask, esiOwner, false, esiOwner.getBookmarksNextUpdate(), TaskType.BOOKMARKS);
 	}
 
 	
 
 	@Override
-	protected void get(ApiClient apiClient) throws ApiException {
+	protected void update() throws ApiException {
 		if (owner.isCorporation()) {
 			List<CorporationBookmarksResponse> bookmarks = updatePages(DEFAULT_RETRIES, new EsiPagesHandler<CorporationBookmarksResponse>() {
 				@Override
-				public List<CorporationBookmarksResponse> get(ApiClient apiClient, Integer page) throws ApiException {
-					return getBookmarksApiAuth(apiClient).getCorporationsCorporationIdBookmarks((int) owner.getOwnerID(), DATASOURCE, null, page, null);
+				public ApiResponse<List<CorporationBookmarksResponse>> get(Integer page) throws ApiException {
+					return getBookmarksApiAuth().getCorporationsCorporationIdBookmarksWithHttpInfo((int) owner.getOwnerID(), DATASOURCE, null, page, null);
 				}
 				
 			});
@@ -65,8 +65,8 @@ public class EsiBookmarksGetter extends AbstractEsiGetter {
 		} else {
 			List<CharacterBookmarksResponse> bookmarks = updatePages(DEFAULT_RETRIES, new EsiPagesHandler<CharacterBookmarksResponse>() {
 				@Override
-				public List<CharacterBookmarksResponse> get(ApiClient apiClient, Integer page) throws ApiException {
-					return getBookmarksApiAuth(apiClient).getCharactersCharacterIdBookmarks((int) owner.getOwnerID(), DATASOURCE, null, page, null);
+				public ApiResponse<List<CharacterBookmarksResponse>> get(Integer page) throws ApiException {
+					return getBookmarksApiAuth().getCharactersCharacterIdBookmarksWithHttpInfo((int) owner.getOwnerID(), DATASOURCE, null, page, null);
 				}
 			});
 			List<Citadel> citadels = new ArrayList<Citadel>();

@@ -34,8 +34,8 @@ import net.nikr.eve.jeveasset.data.api.my.MyContractItem;
 import net.nikr.eve.jeveasset.data.api.raw.RawContract.ContractStatus;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
-import net.troja.eve.esi.ApiClient;
 import net.troja.eve.esi.ApiException;
+import net.troja.eve.esi.ApiResponse;
 import net.troja.eve.esi.model.CharacterContractsItemsResponse;
 import net.troja.eve.esi.model.CorporationContractsItemsResponse;
 
@@ -48,7 +48,7 @@ public class EsiContractItemsGetter extends AbstractEsiGetter {
 	private final static int BATCH_SIZE = 20;
 
 	public EsiContractItemsGetter(UpdateTask updateTask, EsiOwner owner, List<EsiOwner> owners) {
-		super(updateTask, owner, false, Settings.getNow(), TaskType.CONTRACT_ITEMS, NO_RETRIES);
+		super(updateTask, owner, false, Settings.getNow(), TaskType.CONTRACT_ITEMS);
 		this.owners = owners;
 	}
 
@@ -59,7 +59,7 @@ public class EsiContractItemsGetter extends AbstractEsiGetter {
 	}
 
 	@Override
-	protected void get(ApiClient apiClient) throws ApiException {
+	protected void update() throws ApiException {
 		createContracts(owners);
 		if (owner.isCorporation()) {
 			List<List<MyContract>> updates = splitList(contracts.get(owner.getOwnerID()), BATCH_SIZE);
@@ -77,8 +77,8 @@ public class EsiContractItemsGetter extends AbstractEsiGetter {
 				}
 				Map<MyContract, List<CorporationContractsItemsResponse>> responses = updateList(list, DEFAULT_RETRIES, new ListHandler<MyContract, List<CorporationContractsItemsResponse>>() {
 					@Override
-					public List<CorporationContractsItemsResponse> get(ApiClient apiClient, MyContract t) throws ApiException {
-						return getContractsApiAuth(apiClient).getCorporationsCorporationIdContractsContractIdItems(t.getContractID(), (int) owner.getOwnerID(), DATASOURCE, null, null);
+					public ApiResponse<List<CorporationContractsItemsResponse>> get(MyContract t) throws ApiException {
+						return getContractsApiAuth().getCorporationsCorporationIdContractsContractIdItemsWithHttpInfo(t.getContractID(), (int) owner.getOwnerID(), DATASOURCE, null, null);
 					}
 				});
 				responseList.putAll(responses);
@@ -91,8 +91,8 @@ public class EsiContractItemsGetter extends AbstractEsiGetter {
 		} else {
 			Map<MyContract, List<CharacterContractsItemsResponse>> responses = updateList(contracts.get(owner.getOwnerID()), DEFAULT_RETRIES, new ListHandler<MyContract, List<CharacterContractsItemsResponse>>() {
 				@Override
-				public List<CharacterContractsItemsResponse> get(ApiClient apiClient, MyContract t) throws ApiException {
-					List<CharacterContractsItemsResponse> response = getContractsApiAuth(apiClient).getCharactersCharacterIdContractsContractIdItems((int) owner.getOwnerID(), t.getContractID(), DATASOURCE, null, null);
+				public ApiResponse<List<CharacterContractsItemsResponse>> get(MyContract t) throws ApiException {
+					ApiResponse<List<CharacterContractsItemsResponse>> response = getContractsApiAuth().getCharactersCharacterIdContractsContractIdItemsWithHttpInfo((int) owner.getOwnerID(), t.getContractID(), DATASOURCE, null, null);
 					PROGRESS.getAndAdd(1);
 					setProgress(SIZE.get(), PROGRESS.get(), 0, 100);
 					return response;

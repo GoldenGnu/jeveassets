@@ -24,8 +24,8 @@ import java.util.Date;
 import java.util.List;
 import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
-import net.troja.eve.esi.ApiClient;
 import net.troja.eve.esi.ApiException;
+import net.troja.eve.esi.ApiResponse;
 import net.troja.eve.esi.model.CharacterWalletJournalResponse;
 import net.troja.eve.esi.model.CorporationWalletJournalResponse;
 
@@ -35,19 +35,19 @@ public class EsiJournalGetter extends AbstractEsiGetter {
 	private final boolean saveHistory;
 
 	public EsiJournalGetter(UpdateTask updateTask, EsiOwner owner, boolean saveHistory) {
-		super(updateTask, owner, false, owner.getJournalNextUpdate(), TaskType.JOURNAL, NO_RETRIES);
+		super(updateTask, owner, false, owner.getJournalNextUpdate(), TaskType.JOURNAL);
 		this.saveHistory = saveHistory;
 	}
 
 	@Override
-	protected void get(ApiClient apiClient) throws ApiException {
+	protected void update() throws ApiException {
 		if (owner.isCorporation()) {
 			for (int i = 1; i < 8; i++) { //Division 1-7
 				final int division = i;
 				List<CorporationWalletJournalResponse> journals = updatePages(DEFAULT_RETRIES, new EsiPagesHandler<CorporationWalletJournalResponse>() {
 					@Override
-					public List<CorporationWalletJournalResponse> get(ApiClient apiClient, Integer page) throws ApiException {
-						return getWalletApiAuth(apiClient).getCorporationsCorporationIdWalletsDivisionJournal((int) owner.getOwnerID(), division, DATASOURCE, null, page, null);
+					public ApiResponse<List<CorporationWalletJournalResponse>> get(Integer page) throws ApiException {
+						return getWalletApiAuth().getCorporationsCorporationIdWalletsDivisionJournalWithHttpInfo((int) owner.getOwnerID(), division, DATASOURCE, null, page, null);
 					}
 				});
 				int fixedDivision = division + 999;
@@ -56,8 +56,8 @@ public class EsiJournalGetter extends AbstractEsiGetter {
 		} else {
 			List<CharacterWalletJournalResponse> journals = updatePages(DEFAULT_RETRIES, new EsiPagesHandler<CharacterWalletJournalResponse>() {
 				@Override
-				public List<CharacterWalletJournalResponse> get(ApiClient apiClient, Integer page) throws ApiException {
-					return getWalletApiAuth(apiClient).getCharactersCharacterIdWalletJournal((int) owner.getOwnerID(), DATASOURCE, null, page, null);
+				public ApiResponse<List<CharacterWalletJournalResponse>> get(Integer page) throws ApiException {
+					return getWalletApiAuth().getCharactersCharacterIdWalletJournalWithHttpInfo((int) owner.getOwnerID(), DATASOURCE, null, page, null);
 				}
 			});
 			owner.setJournal(EsiConverter.toJournals(journals, owner, 1000, saveHistory));

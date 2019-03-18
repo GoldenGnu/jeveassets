@@ -27,10 +27,10 @@ import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
 import net.nikr.eve.jeveasset.data.api.my.MyAsset;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
+import static net.nikr.eve.jeveasset.io.esi.AbstractEsiGetter.DATASOURCE;
 import net.nikr.eve.jeveasset.io.shared.RawConverter;
-import net.troja.eve.esi.ApiClient;
 import net.troja.eve.esi.ApiException;
-import net.troja.eve.esi.api.LocationApi;
+import net.troja.eve.esi.ApiResponse;
 import net.troja.eve.esi.model.CharacterLocationResponse;
 import net.troja.eve.esi.model.CharacterShipResponse;
 
@@ -38,19 +38,28 @@ import net.troja.eve.esi.model.CharacterShipResponse;
 public class EsiShipGetter extends AbstractEsiGetter {
 
 	public EsiShipGetter(UpdateTask updateTask, EsiOwner owner) {
-		super(updateTask, owner, false, owner.getAssetNextUpdate(), TaskType.SHIP, DEFAULT_RETRIES);
+		super(updateTask, owner, false, owner.getAssetNextUpdate(), TaskType.SHIP);
 	}
 
 	@Override
-	protected void get(ApiClient apiClient) throws ApiException {
+	protected void update() throws ApiException {
 		if (owner.isCorporation()) {
 			return; //Character Endpoint
 		}
-		LocationApi locationApi = getLocationApiAuth(apiClient);
 		//Get Ship
-		CharacterShipResponse shipType = locationApi.getCharactersCharacterIdShip((int)owner.getOwnerID(), DATASOURCE, null, null);
+		CharacterShipResponse shipType = update(DEFAULT_RETRIES, new EsiHandler<CharacterShipResponse>() {
+			@Override
+			public ApiResponse<CharacterShipResponse> get() throws ApiException {
+				return getLocationApiAuth().getCharactersCharacterIdShipWithHttpInfo((int)owner.getOwnerID(), DATASOURCE, null, null);
+			}
+		});
 		//Get Location
-		CharacterLocationResponse shipLocation = locationApi.getCharactersCharacterIdLocation((int)owner.getOwnerID(), DATASOURCE, null, null);
+		CharacterLocationResponse shipLocation = update(DEFAULT_RETRIES, new EsiHandler<CharacterLocationResponse>() {
+			@Override
+			public ApiResponse<CharacterLocationResponse> get() throws ApiException {
+				return getLocationApiAuth().getCharactersCharacterIdLocationWithHttpInfo((int)owner.getOwnerID(), DATASOURCE, null, null);
+			}
+		});
 		//Create assets
 		MyAsset activeShip = EsiConverter.toAssetsShip(shipType, shipLocation, owner);
 		//Search for active ship

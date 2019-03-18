@@ -69,6 +69,17 @@ import net.nikr.eve.jeveasset.data.settings.tag.Tags;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.Percent;
 import net.nikr.eve.jeveasset.io.esi.EsiCallbackURL;
 import net.troja.eve.esi.ApiClient;
+import net.troja.eve.esi.api.AssetsApi;
+import net.troja.eve.esi.api.CharacterApi;
+import net.troja.eve.esi.api.ContractsApi;
+import net.troja.eve.esi.api.CorporationApi;
+import net.troja.eve.esi.api.IndustryApi;
+import net.troja.eve.esi.api.LocationApi;
+import net.troja.eve.esi.api.MarketApi;
+import net.troja.eve.esi.api.MetaApi;
+import net.troja.eve.esi.api.UniverseApi;
+import net.troja.eve.esi.api.UserInterfaceApi;
+import net.troja.eve.esi.api.WalletApi;
 import net.troja.eve.esi.auth.SsoScopes;
 import net.troja.eve.esi.model.CharacterAssetsResponse;
 import net.troja.eve.esi.model.CharacterBlueprintsResponse;
@@ -589,7 +600,46 @@ public class ConverterTestUtil {
 		if (type.equals(Set.class)) {
 			return true;
 		}
-		return type.equals(Map.class);
+		if (type.equals(Map.class)) {
+			return true;
+		}
+		if (type.equals(ApiClient.class)) {
+			return true;
+		}
+		if (type.equals(MetaApi.class)) {
+			return true;
+		}
+		if (type.equals(MarketApi.class)) {
+			return true;
+		}
+		if (type.equals(IndustryApi.class)) {
+			return true;
+		}
+		if (type.equals(CharacterApi.class)) {
+			return true;
+		}
+		if (type.equals(AssetsApi.class)) {
+			return true;
+		}
+		if (type.equals(WalletApi.class)) {
+			return true;
+		}
+		if (type.equals(UniverseApi.class)) {
+			return true;
+		}
+		if (type.equals(ContractsApi.class)) {
+			return true;
+		}
+		if (type.equals(CorporationApi.class)) {
+			return true;
+		}
+		if (type.equals(LocationApi.class)) {
+			return true;
+		}
+		if (type.equals(UserInterfaceApi.class)) {
+			return true;
+		}
+		return false;
 	}
 
 	private static Object getValue(Class<?> type, boolean optional, ConverterTestOptions options) {

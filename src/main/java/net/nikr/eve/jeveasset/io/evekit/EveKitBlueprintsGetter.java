@@ -20,8 +20,8 @@
  */
 package net.nikr.eve.jeveasset.io.evekit;
 
-import enterprises.orbital.evekit.client.ApiClient;
 import enterprises.orbital.evekit.client.ApiException;
+import enterprises.orbital.evekit.client.ApiResponse;
 import enterprises.orbital.evekit.client.model.Blueprint;
 import java.util.Date;
 import java.util.HashMap;
@@ -49,7 +49,7 @@ public class EveKitBlueprintsGetter extends AbstractEveKitGetter implements EveK
 	}
 
 	@Override
-	protected void get(ApiClient apiClient, Long at, boolean first) throws ApiException {
+	protected void update(Long at, boolean first) throws ApiException {
 		List<Blueprint> data = updatePages(this);
 		if (data == null) {
 			return;
@@ -64,8 +64,8 @@ public class EveKitBlueprintsGetter extends AbstractEveKitGetter implements EveK
 	
 
 	@Override
-	public List<Blueprint> get(ApiClient apiClient, String at, Long contid, Integer maxResults) throws ApiException {
-		return getCommonApi(apiClient).getBlueprints(owner.getAccessKey(), owner.getAccessCred(), at, contid, maxResults, false,
+	public ApiResponse<List<Blueprint>> get(String at, Long contid, Integer maxResults) throws ApiException {
+		return getCommonApi().getBlueprintsWithHttpInfo(owner.getAccessKey(), owner.getAccessCred(), at, contid, maxResults, false,
 				null, null, null, null, null, null, null, null);
 	}
 

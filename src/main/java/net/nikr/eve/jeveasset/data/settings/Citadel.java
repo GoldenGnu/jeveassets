@@ -20,11 +20,9 @@
  */
 package net.nikr.eve.jeveasset.data.settings;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 
-@JsonIgnoreProperties(ignoreUnknown = true)
 public class Citadel {
 
 	public static enum CitadelSource {

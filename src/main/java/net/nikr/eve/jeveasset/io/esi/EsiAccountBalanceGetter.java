@@ -25,24 +25,35 @@ import java.util.List;
 import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
-import net.troja.eve.esi.ApiClient;
+import static net.nikr.eve.jeveasset.io.esi.AbstractEsiGetter.DATASOURCE;
 import net.troja.eve.esi.ApiException;
+import net.troja.eve.esi.ApiResponse;
 import net.troja.eve.esi.model.CorporationWalletsResponse;
 
 
 public class EsiAccountBalanceGetter extends AbstractEsiGetter {
 
 	public EsiAccountBalanceGetter(UpdateTask updateTask, EsiOwner owner) {
-		super(updateTask, owner, false, owner.getBalanceNextUpdate(), TaskType.ACCOUNT_BALANCE, DEFAULT_RETRIES);
+		super(updateTask, owner, false, owner.getBalanceNextUpdate(), TaskType.ACCOUNT_BALANCE);
 	}
 	
 	@Override
-	protected void get(ApiClient apiClient) throws ApiException {
+	protected void update() throws ApiException {
 		if (owner.isCorporation()) {
-			List<CorporationWalletsResponse> responses = getWalletApiAuth(apiClient).getCorporationsCorporationIdWallets((int)owner.getOwnerID(), DATASOURCE, null, null);
-			owner.setAccountBalances(EsiConverter.toAccountBalanceCorporation(responses, owner));
+			List<CorporationWalletsResponse> response = update(DEFAULT_RETRIES, new EsiHandler<List<CorporationWalletsResponse>>() {
+				@Override
+				public ApiResponse<List<CorporationWalletsResponse>> get() throws ApiException {
+					return getWalletApiAuth().getCorporationsCorporationIdWalletsWithHttpInfo((int)owner.getOwnerID(), DATASOURCE, null, null);
+				}
+			});
+			owner.setAccountBalances(EsiConverter.toAccountBalanceCorporation(response, owner));
 		} else {
-			Double response = getWalletApiAuth(apiClient).getCharactersCharacterIdWallet((int) owner.getOwnerID(), DATASOURCE, null, null);
+			Double response = update(DEFAULT_RETRIES, new EsiHandler<Double>() {
+				@Override
+				public ApiResponse<Double> get() throws ApiException {
+					return getWalletApiAuth().getCharactersCharacterIdWalletWithHttpInfo((int) owner.getOwnerID(), DATASOURCE, null, null);
+				}
+			});
 			owner.setAccountBalances(EsiConverter.toAccountBalance(response, owner, 1000));
 		}
 	}

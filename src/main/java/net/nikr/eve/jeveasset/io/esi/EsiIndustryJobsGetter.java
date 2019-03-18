@@ -28,8 +28,8 @@ import java.util.Map;
 import java.util.Set;
 import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
-import net.troja.eve.esi.ApiClient;
 import net.troja.eve.esi.ApiException;
+import net.troja.eve.esi.ApiResponse;
 import net.troja.eve.esi.model.CharacterIndustryJobsResponse;
 import net.troja.eve.esi.model.CorporationIndustryJobsResponse;
 
@@ -37,36 +37,38 @@ import net.troja.eve.esi.model.CorporationIndustryJobsResponse;
 public class EsiIndustryJobsGetter extends AbstractEsiGetter {
 
 	public EsiIndustryJobsGetter(UpdateTask updateTask, EsiOwner owner) {
-		super(updateTask, owner, false, owner.getIndustryJobsNextUpdate(), TaskType.INDUSTRY_JOBS, NO_RETRIES);
+		super(updateTask, owner, false, owner.getIndustryJobsNextUpdate(), TaskType.INDUSTRY_JOBS);
 	}
 
 	@Override
-	protected void get(ApiClient apiClient) throws ApiException {
-		Set<Boolean> completed = new HashSet<Boolean>();
-		completed.add(true);
-		completed.add(false);
+	protected void update() throws ApiException {
 		if (owner.isCorporation()) {
-			Map<Boolean, List<CorporationIndustryJobsResponse>> updateList = updateList(completed, NO_RETRIES, new ListHandler<Boolean, List<CorporationIndustryJobsResponse>>() {
+			List<CorporationIndustryJobsResponse> industryJobs = new ArrayList<>();
+			//Completed
+			List<CorporationIndustryJobsResponse> completed = updatePages(DEFAULT_RETRIES, new EsiPagesHandler<CorporationIndustryJobsResponse>() {
 				@Override
-				protected List<CorporationIndustryJobsResponse> get(ApiClient client, Boolean k) throws ApiException {
-					return updatePages(DEFAULT_RETRIES, new EsiPagesHandler<CorporationIndustryJobsResponse>() {
-						@Override
-						public List<CorporationIndustryJobsResponse> get(ApiClient apiClient, Integer page) throws ApiException {
-							return getIndustryApiAuth(apiClient).getCorporationsCorporationIdIndustryJobs((int) owner.getOwnerID(), DATASOURCE, null, k, page, null);
-						}
-					});
+				public ApiResponse<List<CorporationIndustryJobsResponse>> get(Integer page) throws ApiException {
+					return getIndustryApiAuth().getCorporationsCorporationIdIndustryJobsWithHttpInfo((int) owner.getOwnerID(), DATASOURCE, null, true, page, null);
 				}
 			});
-			List<CorporationIndustryJobsResponse> industryJobs = new ArrayList<>();
-			for (List<CorporationIndustryJobsResponse> list : updateList.values()) {
-				industryJobs.addAll(list);
-			}
+			industryJobs.addAll(completed);
+			//Not Completed
+			List<CorporationIndustryJobsResponse> incomplated = updatePages(DEFAULT_RETRIES, new EsiPagesHandler<CorporationIndustryJobsResponse>() {
+				@Override
+				public ApiResponse<List<CorporationIndustryJobsResponse>> get(Integer page) throws ApiException {
+					return getIndustryApiAuth().getCorporationsCorporationIdIndustryJobsWithHttpInfo((int) owner.getOwnerID(), DATASOURCE, null, false, page, null);
+				}
+			});
+			industryJobs.addAll(incomplated);
 			owner.setIndustryJobs(EsiConverter.toIndustryJobsCorporation(industryJobs, owner));
 		} else {
+			Set<Boolean> completed = new HashSet<Boolean>();
+			completed.add(true);
+			completed.add(false);
 			Map<Boolean, List<CharacterIndustryJobsResponse>> updateList = updateList(completed, DEFAULT_RETRIES, new ListHandler<Boolean, List<CharacterIndustryJobsResponse>>() {
 				@Override
-				protected List<CharacterIndustryJobsResponse> get(ApiClient client, Boolean k) throws ApiException {
-					return getIndustryApiAuth(apiClient).getCharactersCharacterIdIndustryJobs((int) owner.getOwnerID(), DATASOURCE, null, k, null);
+				protected ApiResponse<List<CharacterIndustryJobsResponse>> get(Boolean k) throws ApiException {
+					return getIndustryApiAuth().getCharactersCharacterIdIndustryJobsWithHttpInfo((int) owner.getOwnerID(), DATASOURCE, null, k, null);
 				}
 			});
 			List<CharacterIndustryJobsResponse> industryJobs = new ArrayList<>();

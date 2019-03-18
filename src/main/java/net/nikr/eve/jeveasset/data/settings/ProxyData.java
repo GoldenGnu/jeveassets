@@ -65,7 +65,7 @@ public class ProxyData {
 	private void updateProxy() {
 		//Reset everything
 		Authenticator.setDefault(null); //Auth
-		ProxySelector.setDefault(null); //Proxy
+		ProxySelector.setDefault(new ProxyHost(Proxy.NO_PROXY)); //Proxy
 		//Host
 		System.clearProperty("http.proxyHost"); //http
 		System.clearProperty("https.proxyHost");//https
@@ -101,8 +101,7 @@ public class ProxyData {
 				//Auth
 				Authenticator.setDefault(new ProxyAuth(getUsername(), getPassword()));
 			}
-		}
-		if (type == Proxy.Type.SOCKS) { //SOCKS Proxy
+		} else if (type == Proxy.Type.SOCKS) { //SOCKS Proxy
 			//Proxy
 			ProxySelector.setDefault(new ProxyHost(getProxy()));
 			//Address

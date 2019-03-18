@@ -20,10 +20,12 @@
  */
 package net.nikr.eve.jeveasset.io.online;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
@@ -53,8 +55,18 @@ public class FuzzworkMapGetter {
 			query.append(z);
 			URL url = new URL("https://www.fuzzwork.co.uk/api/nearestCelestial.php?" + query.toString());
 			HttpURLConnection con = (HttpURLConnection) url.openConnection();
-            ObjectMapper mapper = new ObjectMapper(); //create once, reuse
-            Celestial result = mapper.readValue(con.getInputStream(), Celestial.class);
+			
+			StringBuilder response;
+            try (BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()))) {
+                String inputLine;
+                response = new StringBuilder();
+                while ((inputLine = in.readLine()) != null) {
+                    response.append(inputLine);
+                }
+            }
+
+            Gson gson = new GsonBuilder().create();
+            Celestial result = gson.fromJson(response.toString(), Celestial.class);
             if (result == null) {
                 return null;
             }
@@ -79,8 +91,18 @@ public class FuzzworkMapGetter {
 				query.append("&format=json");
 				URL url = new URL("https://www.fuzzwork.co.uk/api/mapdata.php?" + query.toString());
 				HttpURLConnection con = (HttpURLConnection) url.openConnection();
-				ObjectMapper mapper = new ObjectMapper(); //create once, reuse
-				List<Planet> results = mapper.readValue(con.getInputStream(), new TypeReference<List<Planet>>() {});
+
+				StringBuilder response;
+				try (BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()))) {
+					String inputLine;
+					response = new StringBuilder();
+					while ((inputLine = in.readLine()) != null) {
+						response.append(inputLine);
+					}
+				}
+
+				Gson gson = new GsonBuilder().create();
+				List<Planet> results = gson.fromJson(response.toString(), new TypeToken<List<Planet>>() {}.getType());
 				if (results != null) {
 					planets.addAll(results);
 				}
@@ -99,7 +121,6 @@ public class FuzzworkMapGetter {
 		public double distance;
 	}
 
-	@JsonIgnoreProperties(ignoreUnknown = true)
 	public static class Planet { 
 		public Integer itemid;
 		public String itemname;

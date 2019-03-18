@@ -41,9 +41,7 @@ import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.JLockWindow;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 import net.nikr.eve.jeveasset.io.esi.AbstractEsiGetter;
-import net.troja.eve.esi.ApiClient;
 import net.troja.eve.esi.api.UserInterfaceApi;
-import net.troja.eve.esi.auth.OAuth;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -371,13 +369,11 @@ public class JMenuUI <T> extends MenuManager.JAutoMenu<T> {
 		protected abstract void ok();
 		protected abstract void fail();
 		protected UserInterfaceApi getApi(EsiOwner owner) {
-			final ApiClient client = new ApiClient(); //Public
 			if (owner != null) { //Auth
-				OAuth auth = (OAuth) client.getAuthentication("evesso");
-				auth.setRefreshToken(owner.getRefreshToken());
-				auth.setClientId(owner.getCallbackURL().getA());
+				return owner.getUserInterfaceApiAuth();
+			} else {
+				return AbstractEsiGetter.USER_INTERFACE_API;
 			}
-			return new UserInterfaceApi(client);
 		}
 
 		@Override

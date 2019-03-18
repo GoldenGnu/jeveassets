@@ -20,8 +20,8 @@
  */
 package net.nikr.eve.jeveasset.io.evekit;
 
-import enterprises.orbital.evekit.client.ApiClient;
 import enterprises.orbital.evekit.client.ApiException;
+import enterprises.orbital.evekit.client.ApiResponse;
 import enterprises.orbital.evekit.client.model.Asset;
 import java.util.Date;
 import java.util.List;
@@ -46,7 +46,7 @@ public class EveKitAssetGetter extends AbstractEveKitGetter implements EveKitPag
 	}
 
 	@Override
-	protected void get(ApiClient apiClient, Long at, boolean first) throws ApiException {
+	protected void update(Long at, boolean first) throws ApiException {
 		List<Asset> data = updatePages(this);
 		if (data == null) {
 			return;
@@ -62,8 +62,8 @@ public class EveKitAssetGetter extends AbstractEveKitGetter implements EveKitPag
 	}
 
 	@Override
-	public List<Asset> get(ApiClient apiClient, String at, Long contid, Integer maxResults) throws ApiException {
-		return getCommonApi(apiClient).getAssets(owner.getAccessKey(), owner.getAccessCred(), at, contid, maxResults, false,
+	public ApiResponse<List<Asset>> get(String at, Long contid, Integer maxResults) throws ApiException {
+		return getCommonApi().getAssetsWithHttpInfo(owner.getAccessKey(), owner.getAccessCred(), at, contid, maxResults, false,
 				null, null, null, null, null, null, null, null, null);
 	}
 

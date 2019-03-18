@@ -27,8 +27,8 @@ import java.util.Set;
 import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
 import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
-import net.troja.eve.esi.ApiClient;
 import net.troja.eve.esi.ApiException;
+import net.troja.eve.esi.ApiResponse;
 import net.troja.eve.esi.model.CharacterWalletTransactionsResponse;
 import net.troja.eve.esi.model.CorporationWalletTransactionsResponse;
 
@@ -38,12 +38,12 @@ public class EsiTransactionsGetter extends AbstractEsiGetter {
 	private final boolean saveHistory;
 
 	public EsiTransactionsGetter(UpdateTask updateTask, EsiOwner owner, boolean saveHistory) {
-		super(updateTask, owner, false, owner.getTransactionsNextUpdate(), TaskType.TRANSACTIONS, NO_RETRIES);
+		super(updateTask, owner, false, owner.getTransactionsNextUpdate(), TaskType.TRANSACTIONS);
 		this.saveHistory = saveHistory;
 	}
 
 	@Override
-	protected void get(ApiClient apiClient) throws ApiException {
+	protected void update() throws ApiException {
 		Set<Long> existing = new HashSet<Long>();
 		if (saveHistory) {
 			for (MyTransaction transaction : owner.getTransactions()) {
@@ -55,8 +55,8 @@ public class EsiTransactionsGetter extends AbstractEsiGetter {
 				final int division = i;
 				List<CorporationWalletTransactionsResponse> responses = updateIDs(existing, DEFAULT_RETRIES, new IDsHandler<CorporationWalletTransactionsResponse>() {
 					@Override
-					public List<CorporationWalletTransactionsResponse> get(ApiClient apiClient, Long fromID) throws ApiException {
-						return getWalletApiAuth(apiClient).getCorporationsCorporationIdWalletsDivisionTransactions((int) owner.getOwnerID(), division, DATASOURCE, fromID, null, null);
+					public ApiResponse<List<CorporationWalletTransactionsResponse>> get(Long fromID) throws ApiException {
+						return getWalletApiAuth().getCorporationsCorporationIdWalletsDivisionTransactionsWithHttpInfo((int) owner.getOwnerID(), division, DATASOURCE, fromID, null, null);
 					}
 
 					@Override
@@ -70,8 +70,8 @@ public class EsiTransactionsGetter extends AbstractEsiGetter {
 		} else {
 			List<CharacterWalletTransactionsResponse> responses = updateIDs(existing, DEFAULT_RETRIES, new IDsHandler<CharacterWalletTransactionsResponse>() {
 				@Override
-				public List<CharacterWalletTransactionsResponse> get(ApiClient apiClient, Long fromID) throws ApiException {
-					return getWalletApiAuth(apiClient).getCharactersCharacterIdWalletTransactions((int) owner.getOwnerID(), DATASOURCE, fromID, null, null);
+				public ApiResponse<List<CharacterWalletTransactionsResponse>> get(Long fromID) throws ApiException {
+					return getWalletApiAuth().getCharactersCharacterIdWalletTransactionsWithHttpInfo((int) owner.getOwnerID(), DATASOURCE, fromID, null, null);
 				}
 
 				@Override

@@ -27,22 +27,21 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.TreeMap;
 import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.api.accounts.OwnerType;
 import net.nikr.eve.jeveasset.data.api.my.MyAsset;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
+import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.io.shared.ThreadWoker.TaskCancelledException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
-public abstract class AbstractGetter<O extends OwnerType, C, E extends Exception> implements Runnable {
+public abstract class AbstractGetter<O extends OwnerType> implements Runnable {
 
 	private static final Logger LOG = LoggerFactory.getLogger(AbstractGetter.class);
 
@@ -132,11 +131,16 @@ public abstract class AbstractGetter<O extends OwnerType, C, E extends Exception
 	 */
 	protected abstract void setNextUpdate(Date date);
 	protected abstract boolean invalidAccessPrivileges();
-	protected abstract <R> R updateApi(Updater<R, C, E> updater, int retries) throws E;
-	protected abstract void throwApiException(Exception ex) throws E;
 
 	protected final String getTaskName() {
 		return taskName;
+	}
+
+	protected synchronized void setExpires(Map<String, List<String>> headers) {
+		String expiresHeader = getHeader(headers, "expires");
+		if (expiresHeader != null) {
+			setNextUpdate(Formater.parseExpireDate(expiresHeader));
+		}
 	}
 
 	protected final boolean canUpdate() {
@@ -162,8 +166,8 @@ public abstract class AbstractGetter<O extends OwnerType, C, E extends Exception
 		return forceUpdate;
 	}
 
-	protected interface Updater<R, C, E extends Throwable> {
-		public R update(final C client) throws E;
+	protected interface Updater<R, E extends Throwable> {
+		public R update() throws E;
 		public String getStatus();
 		public int getMaxRetries();
 	}
@@ -329,144 +333,5 @@ public abstract class AbstractGetter<O extends OwnerType, C, E extends Exception
 			}
 		}
 		return null;
-	}
-
-	protected final <K, V> Map<K, V> updateList(Collection<K> list, int maxRetries, ListHandler<K, V> handler) throws E {
-		Map<K, V> values = new HashMap<K, V>();
-		List<ListUpdater<K, V>> updaters = new ArrayList<ListUpdater<K, V>>();
-		int count = 1;
-		for (K k : list) {
-			updaters.add(new ListUpdater<K, V>(handler, k, count + " of " + list.size(), maxRetries));
-			count++;
-		}
-		LOG.info("Starting " + updaters.size() + " list threads");
-		try {
-			List<Future<Map<K, V>>> futures = startSubThreads(updaters);
-			for (Future<Map<K, V>> future : futures) {
-				Map<K, V> returnValue = future.get();
-				if (returnValue != null) {
-					values.putAll(returnValue);
-				}
-			}
-		} catch (InterruptedException | ExecutionException ex) {
-			throwApiException(ex);
-		}
-		return values;
-	}
-
-	protected abstract class ListHandler<K, V> {
-		protected abstract V get(C client, K k) throws E;
-	}
-
-	protected class ListUpdater<K, V> implements Updater<Map<K, V>, C, E>, Callable<Map<K, V>> {
-
-		private final ListHandler<K, V> handler;
-		private final K k;
-		private final String status;
-		private final int maxRetries;
-
-		public ListUpdater(ListHandler<K, V> handler, K k, String status, int maxRetries) {
-			this.handler = handler;
-			this.k = k;
-			this.status = status;
-			this.maxRetries = maxRetries;
-		}
-
-		@Override
-		public Map<K, V> update(C client) throws E {
-			V v = handler.get(client, k);
-			if (v != null) {
-				Map<K, V> map = new HashMap<K, V>();
-				map.put(k, v);
-				return map;
-			} else {
-				return null;
-			}
-		}
-
-		public Map<K, V> go() throws E {
-			return updateApi(this, 0);
-		}
-
-		@Override
-		public Map<K, V> call() throws Exception {
-			return updateApi(this, 0);
-		}
-
-		@Override
-		public String getStatus() {
-			return status;
-		}
-
-		@Override
-		public int getMaxRetries() {
-			return maxRetries;
-		}
-	}
-
-	protected final <K> List<K> updateIDs(Set<Long> existing, int maxRetries, IDsHandler<K> handler) throws E {
-		List<K> list = new ArrayList<K>();
-		Long fromID = null;
-		boolean run = true;
-		int count = 0;
-		while (run) {
-			count++;
-			List<K> result;
-			result = updateApi(new IdUpdater<K>(handler, fromID, count + " of ?", maxRetries), 0);
-			if (result == null || result.isEmpty()) { //Nothing returned: we're done
-				break; //Stop updating
-			}
-
-			list.addAll(result); //Add new
-
-			Long lastID = handler.getID(result.get(result.size() - 1)); //Get the last ID
-			if (lastID.equals(fromID)) { //ID is the same as on last update: we're done
-				break; //Stop updating
-			}
-			fromID = lastID; //Set ID for next update
-
-			for (K t : result) { //Search for existing data
-				if (existing.contains(handler.getID(t))) { //Found existing data
-					run = false; //Stop updating
-					break; //no need to continue
-				}
-			}
-		}
-		return list;
-	}
-
-	public abstract class IDsHandler<K> {
-		protected abstract List<K> get(C client, Long fromID) throws E;
-		protected abstract Long getID(K response);
-	}
-
-	public class IdUpdater<K> implements Updater<List<K>, C, E> {
-
-		private final IDsHandler<K> handler;
-		private final Long fromID;
-		private final String status;
-		private final int maxRetries;
-
-		public IdUpdater(IDsHandler<K> handler, Long fromID, String status, int maxRetries) {
-			this.handler = handler;
-			this.fromID = fromID;
-			this.status = status;
-			this.maxRetries = maxRetries;
-		}
-
-		@Override
-		public List<K> update(C client) throws E {
-			return handler.get(client, fromID);
-		}
-
-		@Override
-		public String getStatus() {
-			return status;
-		}
-
-		@Override
-		public int getMaxRetries() {
-			return maxRetries;
-		}
 	}
 }
