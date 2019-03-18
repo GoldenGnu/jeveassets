@@ -72,6 +72,7 @@ import net.nikr.eve.jeveasset.gui.shared.table.containers.Percent;
 import net.nikr.eve.jeveasset.io.esi.EsiCallbackURL;
 import net.troja.eve.esi.ApiClient;
 import net.troja.eve.esi.api.AssetsApi;
+import net.troja.eve.esi.api.BookmarksApi;
 import net.troja.eve.esi.api.CharacterApi;
 import net.troja.eve.esi.api.ContractsApi;
 import net.troja.eve.esi.api.CorporationApi;
@@ -79,6 +80,7 @@ import net.troja.eve.esi.api.IndustryApi;
 import net.troja.eve.esi.api.LocationApi;
 import net.troja.eve.esi.api.MarketApi;
 import net.troja.eve.esi.api.MetaApi;
+import net.troja.eve.esi.api.PlanetaryInteractionApi;
 import net.troja.eve.esi.api.UniverseApi;
 import net.troja.eve.esi.api.UserInterfaceApi;
 import net.troja.eve.esi.api.WalletApi;
@@ -658,6 +660,12 @@ public class ConverterTestUtil {
 			return true;
 		}
 		if (type.equals(UserInterfaceApi.class)) {
+			return true;
+		}
+		if (type.equals(BookmarksApi.class)) {
+			return true;
+		}
+		if (type.equals(PlanetaryInteractionApi.class)) {
 			return true;
 		}
 		return false;
