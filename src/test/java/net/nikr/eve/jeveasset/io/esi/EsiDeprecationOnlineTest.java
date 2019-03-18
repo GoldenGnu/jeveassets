@@ -37,6 +37,7 @@ import net.troja.eve.esi.api.IndustryApi;
 import net.troja.eve.esi.api.LocationApi;
 import net.troja.eve.esi.api.MarketApi;
 import net.troja.eve.esi.api.MetaApi;
+import net.troja.eve.esi.api.PlanetaryInteractionApi;
 import net.troja.eve.esi.api.SovereigntyApi;
 import net.troja.eve.esi.api.UniverseApi;
 import net.troja.eve.esi.api.UserInterfaceApi;
@@ -330,6 +331,28 @@ public class EsiDeprecationOnlineTest extends TestUtil {
 		CorporationApi api = new CorporationApi();
 		try {
 			api.getCorporationsCorporationId(1, DATASOURCE, null);
+		} catch (ApiException ex) {
+
+		}
+		validate(api.getApiClient());
+	}
+
+	@Test
+	public void esiPlanetaryInteractionGetterPlanet() {
+		PlanetaryInteractionApi api = new PlanetaryInteractionApi();
+		try {
+			api.getCharactersCharacterIdPlanetsPlanetId(1, 1, DATASOURCE, null, null);
+		} catch (ApiException ex) {
+
+		}
+		validate(api.getApiClient());
+	}
+
+	@Test
+	public void esiPlanetaryInteractionGetterPlanets() {
+		PlanetaryInteractionApi api = new PlanetaryInteractionApi();
+		try {
+			api.getCharactersCharacterIdPlanets(1, DATASOURCE, null, null);
 		} catch (ApiException ex) {
 
 		}
