@@ -24,32 +24,32 @@ import java.util.Date;
 import java.util.List;
 import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
-import net.troja.eve.esi.ApiClient;
 import net.troja.eve.esi.ApiException;
+import net.troja.eve.esi.ApiResponse;
 import net.troja.eve.esi.model.CharacterContractsResponse;
 import net.troja.eve.esi.model.CorporationContractsResponse;
 
 public class EsiContractsGetter extends AbstractEsiGetter {
 
 	public EsiContractsGetter(UpdateTask updateTask, EsiOwner owner) {
-		super(updateTask, owner, false,  owner.getContractsNextUpdate(), TaskType.CONTRACTS, DEFAULT_RETRIES);
+		super(updateTask, owner, false,  owner.getContractsNextUpdate(), TaskType.CONTRACTS);
 	}
 
 	@Override
-	protected void get(ApiClient apiClient) throws ApiException {
+	protected void update() throws ApiException {
 		if (owner.isCorporation()) {
 			List<CorporationContractsResponse> contracts = updatePages(DEFAULT_RETRIES, new EsiPagesHandler<CorporationContractsResponse>() {
 				@Override
-				public List<CorporationContractsResponse> get(ApiClient apiClient, Integer page) throws ApiException {
-					return getContractsApiAuth(apiClient).getCorporationsCorporationIdContracts((int) owner.getOwnerID(), DATASOURCE, null, page, null);
+				public ApiResponse<List<CorporationContractsResponse>> get(Integer page) throws ApiException {
+					return getContractsApiAuth().getCorporationsCorporationIdContractsWithHttpInfo((int) owner.getOwnerID(), DATASOURCE, null, page, null);
 				}
 			});
 			owner.setContracts(EsiConverter.toContractsCorporation(contracts, owner));
 		} else {
 			List<CharacterContractsResponse> contracts = updatePages(DEFAULT_RETRIES, new EsiPagesHandler<CharacterContractsResponse>() {
 				@Override
-				public List<CharacterContractsResponse> get(ApiClient apiClient, Integer page) throws ApiException {
-					return getContractsApiAuth(apiClient).getCharactersCharacterIdContracts((int) owner.getOwnerID(), DATASOURCE, null, page, null);
+				public ApiResponse<List<CharacterContractsResponse>> get(Integer page) throws ApiException {
+					return getContractsApiAuth().getCharactersCharacterIdContractsWithHttpInfo((int) owner.getOwnerID(), DATASOURCE, null, page, null);
 				}
 			});
 			owner.setContracts(EsiConverter.toContracts(contracts, owner));

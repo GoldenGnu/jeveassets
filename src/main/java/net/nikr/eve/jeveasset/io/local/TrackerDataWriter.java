@@ -20,13 +20,17 @@
  */
 package net.nikr.eve.jeveasset.io.local;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializerProvider;
-import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.fasterxml.jackson.databind.ser.std.StdSerializer;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Map;
 import net.nikr.eve.jeveasset.data.settings.Settings;
@@ -48,73 +52,71 @@ public class TrackerDataWriter extends AbstractBackup {
 
 	protected void write(String filename, Map<String, List<Value>> trackerData) {
 		File file = getNewFile(filename); //Save to .new file
-		ObjectMapper mapper = new ObjectMapper();
-		SimpleModule module = new SimpleModule();
-		module.addSerializer(Value.class, new ValueSerializer());
-		mapper.registerModule(module);
+		Gson gson = new GsonBuilder().registerTypeAdapter(Value.class, new ValueSerializerGJson()).create();
+		FileWriter fileWriter = null;
 		try {
 			lock(filename);
-			mapper.writeValue(file, trackerData);
+			fileWriter = new FileWriter(file);
+			gson.toJson(trackerData, fileWriter);
 			LOG.info("Tracker data saved");
 		} catch (IOException ex) {
 			LOG.error(ex.getMessage(), ex);
 		} finally {
+			if (fileWriter != null) {
+				try {
+					fileWriter.close();
+				} catch (IOException ex) {
+					//No problem
+				}
+			}
 			backupFile(filename); //Rename .xml => .bac (.new is safe) and .new => .xml (.bac is safe). That way we always have at least one safe file
 			unlock(filename);
 		}
 	}
 
-	public static class ValueSerializer extends StdSerializer<Value> {
-
-		public ValueSerializer() {
-			this(null);
-		}
-
-		public ValueSerializer(Class<Value> t) {
-			super(t);
-		}
+	public static class ValueSerializerGJson implements JsonSerializer<Value> {
 
 		@Override
-		public void serialize(Value value, JsonGenerator jsonGenerator, SerializerProvider serializer) throws IOException {
-			jsonGenerator.writeStartObject();
-			jsonGenerator.writeNumberField("date", value.getDate().getTime());
-			jsonGenerator.writeNumberField("assets", value.getAssetsTotal());
-			jsonGenerator.writeNumberField("escrows", value.getEscrows());
-			jsonGenerator.writeNumberField("escrowstocover", value.getEscrowsToCover());
-			jsonGenerator.writeNumberField("sellorders", value.getSellOrders());
-			jsonGenerator.writeNumberField("walletbalance", value.getBalanceTotal());
-			jsonGenerator.writeNumberField("manufacturing", value.getManufacturing());
-			jsonGenerator.writeNumberField("contractcollateral", value.getContractCollateral());
-			jsonGenerator.writeNumberField("contractvalue", value.getContractValue());
+		public JsonElement serialize(Value value, Type typeOfSrc, JsonSerializationContext context) {
+			JsonObject valueObject = new JsonObject();
+			valueObject.addProperty("date", value.getDate().getTime());
+			valueObject.addProperty("assets", value.getAssetsTotal());
+			valueObject.addProperty("escrows", value.getEscrows());
+			valueObject.addProperty("escrowstocover", value.getEscrowsToCover());
+			valueObject.addProperty("sellorders", value.getSellOrders());
+			valueObject.addProperty("walletbalance", value.getBalanceTotal());
+			valueObject.addProperty("manufacturing", value.getManufacturing());
+			valueObject.addProperty("contractcollateral", value.getContractCollateral());
+			valueObject.addProperty("contractvalue", value.getContractValue());
 			if (!value.getBalanceFilter().isEmpty()) {
-				jsonGenerator.writeFieldName("balance");
-				jsonGenerator.writeStartArray();
+				JsonArray  balanceObject = new JsonArray();
+				valueObject.add("balance", balanceObject);
 				for (Map.Entry<String, Double> entry : value.getBalanceFilter().entrySet()) {
-					jsonGenerator.writeStartObject();
-					jsonGenerator.writeStringField("id", entry.getKey());
-					jsonGenerator.writeNumberField("value", entry.getValue());
-					jsonGenerator.writeEndObject();
+					JsonObject itemObject = new JsonObject();
+					itemObject.addProperty("id", entry.getKey());
+					itemObject.addProperty("value", entry.getValue());
+					balanceObject.add(itemObject);
 				}
-				jsonGenerator.writeEndArray();
 			}
 			if (!value.getAssetsFilter().isEmpty()) {
-				jsonGenerator.writeFieldName("asset");
-				jsonGenerator.writeStartArray();
+				JsonArray  assetObject = new JsonArray();
+				valueObject.add("asset", assetObject);
 				for (Map.Entry<AssetValue, Double> entry : value.getAssetsFilter().entrySet()) {
-					jsonGenerator.writeStartObject();
-					jsonGenerator.writeStringField("location", entry.getKey().getLocation());
+					JsonObject itemObject = new JsonObject();
+					itemObject.addProperty("location", entry.getKey().getLocation());
 					if (entry.getKey().getLocationID() != null) {
-						jsonGenerator.writeNumberField("locationid", entry.getKey().getLocationID());
+						itemObject.addProperty("locationid", entry.getKey().getLocationID());
 					}
 					if (entry.getKey().getFlag() != null) {
-						jsonGenerator.writeStringField("flag", entry.getKey().getFlag());
+						itemObject.addProperty("flag", entry.getKey().getFlag());
 					}
-					jsonGenerator.writeNumberField("value", entry.getValue());
-					jsonGenerator.writeEndObject();
+					itemObject.addProperty("value", entry.getValue());
+					assetObject.add(itemObject);
 				}
-				jsonGenerator.writeEndArray();
 			}
-			jsonGenerator.writeEndObject();
+			return valueObject;
 		}
+		
+		
 	}
 }

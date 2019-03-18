@@ -20,8 +20,8 @@
  */
 package net.nikr.eve.jeveasset.io.evekit;
 
-import enterprises.orbital.evekit.client.ApiClient;
 import enterprises.orbital.evekit.client.ApiException;
+import enterprises.orbital.evekit.client.ApiResponse;
 import enterprises.orbital.evekit.client.model.IndustryJob;
 import java.util.ArrayList;
 import java.util.Date;
@@ -64,7 +64,7 @@ public class EveKitIndustryJobsGetter extends AbstractEveKitGetter implements Ev
 	}
 
 	@Override
-	protected void get(ApiClient apiClient, Long at, boolean first) throws ApiException {
+	protected void update(Long at, boolean first) throws ApiException {
 		ArrayList<IndustryJob> data = new ArrayList<IndustryJob>();
 		for (Runs r : runs) {
 			run = r;
@@ -83,16 +83,16 @@ public class EveKitIndustryJobsGetter extends AbstractEveKitGetter implements Ev
 	}
 
 	@Override
-	public List<IndustryJob> get(ApiClient apiClient, String at, Long contid, Integer maxResults) throws ApiException {
+	public ApiResponse<List<IndustryJob>> get(String at, Long contid, Integer maxResults) throws ApiException {
 		switch (run) {
 			case ACTIVE_PAUSED_READY:
-				return getCommonApi(apiClient).getIndustryJobs(owner.getAccessKey(), owner.getAccessCred(), at, contid, maxResults, false,
+				return getCommonApi().getIndustryJobsWithHttpInfo(owner.getAccessKey(), owner.getAccessCred(), at, contid, maxResults, false,
 						null, null, null, null, null, null, null, null, null, null, null, null, null, null, industryJobsFilter(), null, null, null, null, null, null, null);
 			case MONTHS:
-				return getCommonApi(apiClient).getIndustryJobs(owner.getAccessKey(), owner.getAccessCred(), at, contid, maxResults, false,
+				return getCommonApi().getIndustryJobsWithHttpInfo(owner.getAccessKey(), owner.getAccessCred(), at, contid, maxResults, false,
 						null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, dateFilter(Settings.get().getEveKitIndustryJobsHistory()), null, null);
 			default: //ALL
-				return getCommonApi(apiClient).getIndustryJobs(owner.getAccessKey(), owner.getAccessCred(), at, contid, maxResults, false,
+				return getCommonApi().getIndustryJobsWithHttpInfo(owner.getAccessKey(), owner.getAccessCred(), at, contid, maxResults, false,
 						null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
 		}
 	}

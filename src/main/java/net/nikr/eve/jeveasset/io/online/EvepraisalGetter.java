@@ -20,9 +20,8 @@
  */
 package net.nikr.eve.jeveasset.io.online;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -83,11 +82,8 @@ public class EvepraisalGetter {
                 }
             }
 			// read json
-			String s = response.toString();
-			System.out.println(s);
-            ObjectMapper objectMapper = new ObjectMapper();
-            Result result = objectMapper.readValue(s, Result.class);
-			System.out.println(result.getID());
+            Gson gson = new GsonBuilder().create();
+            Result result = gson.fromJson(response.toString(), Result.class);
 			return result.getID();
             // set data
         } catch (MalformedURLException ex) {
@@ -106,36 +102,20 @@ public class EvepraisalGetter {
         }
     }
 
-	@JsonIgnoreProperties(ignoreUnknown = true)
 	public static class Appraisal {
-		@JsonProperty("id")
 		private String id;
 
-		@JsonProperty("id")
 		public String getID() {
 			return id;
 		}
-
-		@JsonProperty("id")
-		public void setID(String id) {
-			this.id = id;
-		}
 	}
 
-	@JsonIgnoreProperties(ignoreUnknown = true)
 	public static class Result {
 
-		@JsonProperty("appraisal")
 		private Appraisal appraisal;
 
-		@JsonProperty("appraisal")
 		public Appraisal getAppraisal() {
 			return appraisal;
-		}
-
-		@JsonProperty("appraisal")
-		public void setAppraisal(Appraisal appraisal) {
-			this.appraisal = appraisal;
 		}
 
 		public String getID() {

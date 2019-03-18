@@ -20,10 +20,9 @@
  */
 package net.nikr.eve.jeveasset.io.evekit;
 
-import enterprises.orbital.evekit.client.ApiClient;
 import enterprises.orbital.evekit.client.ApiException;
+import enterprises.orbital.evekit.client.ApiResponse;
 import enterprises.orbital.evekit.client.model.Location;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -40,18 +39,22 @@ import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 
 public class EveKitLocationsGetter extends AbstractEveKitGetter implements EveKitPagesHandler<Location> {
 
-	private Map<Long, MyAsset> iDs;
+	private Map<Long, MyAsset> ids;
 
 	public EveKitLocationsGetter(UpdateTask updateTask, EveKitOwner owner) {
 		super(updateTask, owner, false, owner.getLocationsNextUpdate(), TaskType.LOCATIONS, false, null);
 	}
 
 	@Override
-	protected void get(ApiClient apiClient, Long at, boolean first) throws ApiException {
-		iDs = getIDs(owner);
-		List<Location> data = updatePages(this);
-		if (data == null) {
+	protected void update(Long at, boolean first) throws ApiException {
+		//Get all items matching itemID
+		ids = getIDs(owner);
+		if (ids.isEmpty()) { //return  - nothing to update
 			return;
+		}
+		List<Location> data = updatePages(this);
+ 		if (data == null) {
+ 			return;
 		}
 		try {
 			Settings.lock("Ship/Container Names");
@@ -60,7 +63,7 @@ public class EveKitLocationsGetter extends AbstractEveKitGetter implements EveKi
 				String eveName = location.getItemName();
 				if (!eveName.isEmpty()) {
 					Settings.get().getEveNames().put(itemID, eveName);
-					MyAsset asset = iDs.get(itemID);
+					MyAsset asset = ids.get(itemID);
 					if (asset.getItem().getCategory().equals("Structure")) {
 						CitadelGetter.set(new Citadel(asset.getItemID(), eveName, ApiIdConverter.getLocation(asset.getLocationID()), CitadelSource.EVEKIT_LOCATIONS));
 					}
@@ -74,14 +77,10 @@ public class EveKitLocationsGetter extends AbstractEveKitGetter implements EveKi
 	}
 
 	@Override
-	public List<Location> get(ApiClient apiClient, String at, Long contid, Integer maxResults) throws ApiException {
-		//Get all items matching itemID
-		if (iDs.isEmpty()) {
-			return new ArrayList<>();
-		}
-		return getCommonApi(apiClient).getLocations(owner.getAccessKey(), owner.getAccessCred(), at, contid, maxResults, false,
-				valuesFilter(iDs.keySet()), null, null, null, null);
-	}
+	public ApiResponse<List<Location>> get(String at, Long contid, Integer maxResults) throws ApiException {
+		return getCommonApi().getLocationsWithHttpInfo(owner.getAccessKey(), owner.getAccessCred(), at, contid, maxResults, false,
+				valuesFilter(ids.keySet()), null, null, null, null);
+ 	}
 
 	@Override
 	public Long getLifeStart(Location obj) {

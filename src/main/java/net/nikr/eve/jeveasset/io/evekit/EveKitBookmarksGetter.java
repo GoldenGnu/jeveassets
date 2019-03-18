@@ -22,6 +22,7 @@ package net.nikr.eve.jeveasset.io.evekit;
 
 import enterprises.orbital.evekit.client.ApiClient;
 import enterprises.orbital.evekit.client.ApiException;
+import enterprises.orbital.evekit.client.ApiResponse;
 import enterprises.orbital.evekit.client.model.Bookmark;
 import java.util.ArrayList;
 import java.util.Date;
@@ -42,7 +43,7 @@ public class EveKitBookmarksGetter extends AbstractEveKitGetter implements EveKi
 	}
 
 	@Override
-	protected void get(ApiClient apiClient, Long at, boolean first) throws ApiException {
+	protected void update(Long at, boolean first) throws ApiException {
 		List<Bookmark> data = updatePages(this);
 		if (data == null) {
 			return;
@@ -68,8 +69,8 @@ public class EveKitBookmarksGetter extends AbstractEveKitGetter implements EveKi
 	}
 
 	@Override
-	public List<Bookmark> get(ApiClient apiClient, String at, Long cid, Integer maxResults) throws ApiException {
-		return getCommonApi(apiClient).getBookmarks(owner.getAccessKey(), owner.getAccessCred(), at, cid, maxResults, false,
+	public ApiResponse<List<Bookmark>> get(String at, Long cid, Integer maxResults) throws ApiException {
+		return getCommonApi().getBookmarksWithHttpInfo(owner.getAccessKey(), owner.getAccessCred(), at, cid, maxResults, false,
 				null, null, null, null, null, null, null, null, null, null, null, null, null, null);
 	}
 

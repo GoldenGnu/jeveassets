@@ -20,8 +20,8 @@
  */
 package net.nikr.eve.jeveasset.io.evekit;
 
-import enterprises.orbital.evekit.client.ApiClient;
 import enterprises.orbital.evekit.client.ApiException;
+import enterprises.orbital.evekit.client.ApiResponse;
 import enterprises.orbital.evekit.client.model.PlanetaryPin;
 import enterprises.orbital.evekit.client.model.PlanetaryPinContent;
 import java.util.ArrayList;
@@ -33,25 +33,25 @@ import net.nikr.eve.jeveasset.data.api.accounts.EveKitAccessMask;
 import net.nikr.eve.jeveasset.data.api.accounts.EveKitOwner;
 import net.nikr.eve.jeveasset.data.settings.Citadel;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
+import net.nikr.eve.jeveasset.io.evekit.AbstractEveKitGetter.EveKitPagesHandler;
 import net.nikr.eve.jeveasset.io.online.CitadelGetter;
 import net.nikr.eve.jeveasset.io.online.FuzzworkMapGetter;
 import net.nikr.eve.jeveasset.io.online.FuzzworkMapGetter.Planet;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 
 
-public class EveKitPlanetaryInteractionGetter extends AbstractEveKitGetter {
+public class EveKitPlanetaryInteractionGetter extends AbstractEveKitGetter implements EveKitPagesHandler<PlanetaryPin> {
 
 	public EveKitPlanetaryInteractionGetter(UpdateTask updateTask, EveKitOwner eveKitOwner) {
 		super(updateTask, eveKitOwner, false, eveKitOwner.getAssetNextUpdate(), TaskType.PLANETARY_INTERACTION, false, null);
 	}
 
 	@Override
-	protected void get(ApiClient apiClient, Long at, boolean first) throws ApiException {
+	protected void update(Long at, boolean first) throws ApiException {
 		if (owner.isCorporation()) {
 			return; //Character Endpoint
 		}
-		List<PlanetaryPin> pins = getCharacterApi(apiClient).getPlanetaryPins(owner.getAccessKey(), owner.getAccessCred(), atFilter(at), null, null, false,
-				null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+		List<PlanetaryPin> pins = updatePages(this);
 		//Convert planet locations to citadels
 		Set<Integer> planetIDs = new HashSet<>();
 		for (PlanetaryPin pin : pins) {
@@ -72,6 +72,32 @@ public class EveKitPlanetaryInteractionGetter extends AbstractEveKitGetter {
 				owner.addAsset(EveKitConverter.toAssetsPlanetaryInteraction(content, pin, owner));
 			}
 		}
+	}
+
+	@Override
+	public ApiResponse<List<PlanetaryPin>> get(String at, Long cid, Integer maxResults) throws ApiException {
+		return getCharacterApi().getPlanetaryPinsWithHttpInfo(owner.getAccessKey(), owner.getAccessCred(), at, null, null, false,
+				null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+	}
+
+	@Override
+	public long getCID(PlanetaryPin k) {
+		return k.getCid();
+	}
+
+	@Override
+	public Long getLifeStart(PlanetaryPin obj) {
+		return obj.getLifeStart();
+	}
+
+	@Override
+	public void saveCID(Long cid) {
+		//Do nothing
+	}
+
+	@Override
+	public Long loadCID() {
+		return null;
 	}
 
 	@Override

@@ -44,8 +44,8 @@ import net.nikr.eve.jeveasset.gui.tabs.values.AssetValue;
 import net.nikr.eve.jeveasset.gui.tabs.values.Value;
 import net.nikr.eve.jeveasset.io.online.CitadelGetter;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
-import net.troja.eve.esi.ApiClient;
 import net.troja.eve.esi.ApiException;
+import net.troja.eve.esi.ApiResponse;
 import net.troja.eve.esi.model.StructureResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,7 +58,7 @@ public class EsiStructuresGetter extends AbstractEsiGetter {
 	private final boolean tracker;
 
 	public EsiStructuresGetter(UpdateTask updateTask, EsiOwner owner, boolean tracker) {
-		super(updateTask, owner, false, owner.getStructuresNextUpdate(), TaskType.STRUCTURES, NO_RETRIES);
+		super(updateTask, owner, false, owner.getStructuresNextUpdate(), TaskType.STRUCTURES);
 		this.tracker = tracker;
 	}
 
@@ -98,7 +98,7 @@ public class EsiStructuresGetter extends AbstractEsiGetter {
 	}
 
 	@Override
-	protected void get(ApiClient apiClient) throws ApiException {
+	protected void update() throws ApiException {
 		if (owner.isCorporation()) {
 			return; //Corporation accounts don't get structures
 		}
@@ -108,9 +108,9 @@ public class EsiStructuresGetter extends AbstractEsiGetter {
 		}
 		Map<Long, StructureResponse> responses = updateListSlow(IDS, true, DEFAULT_RETRIES, new ListHandlerSlow<Long, StructureResponse>() {
 			@Override
-			public StructureResponse get(ApiClient apiClient, Long k) throws ApiException {
+			public ApiResponse<StructureResponse> get(Long k) throws ApiException {
 				pause();
-				return getUniverseApiAuth(apiClient).getUniverseStructuresStructureId(k, DATASOURCE, null, null);
+				return getUniverseApiAuth().getUniverseStructuresStructureIdWithHttpInfo(k, DATASOURCE, null, null);
 			}
 			@Override
 			protected void handle(ApiException ex, Long k) throws ApiException {

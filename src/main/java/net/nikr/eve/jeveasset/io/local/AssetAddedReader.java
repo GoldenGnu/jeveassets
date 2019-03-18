@@ -20,10 +20,16 @@
  */
 package net.nikr.eve.jeveasset.io.local;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonElement;
+import com.google.gson.reflect.TypeToken;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -48,10 +54,10 @@ public class AssetAddedReader extends AbstractBackup {
 			return;
 		}
 		backup(filename);
-		ObjectMapper mapper = new ObjectMapper();
 		try {
 			lock(filename);
-			Map<Long, Date> assetAddedData = mapper.readValue(file, new TypeReference<HashMap<Long, Date>>() {});
+			Gson gson = new GsonBuilder().registerTypeAdapter(Date.class, new DateDeserializer()).create();
+			Map<Long, Date> assetAddedData = gson.fromJson(new FileReader(file), new TypeToken<HashMap<Long, Date>>() {}.getType());
 			if (assetAddedData != null) {
 				AssetAddedData.set(assetAddedData); //Import from added.json
 				LOG.info("Asset added data loaded");
@@ -67,6 +73,14 @@ public class AssetAddedReader extends AbstractBackup {
 			}
 		} finally {
 			unlock(filename);
+		}
+	}
+
+	public static class DateDeserializer implements JsonDeserializer<Date> {
+
+        @Override
+        public Date deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
+			return new Date(json.getAsLong());
 		}
 	}
 }

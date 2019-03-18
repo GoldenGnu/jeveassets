@@ -20,10 +20,12 @@
  */
 package net.nikr.eve.jeveasset.io.online;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Date;
@@ -113,7 +115,6 @@ public class CitadelGetter extends AbstractXmlWriter {
 		//Update citadel
 		InputStream in = null;
 		try { //Update from API
-			ObjectMapper mapper = new ObjectMapper(); //create once, reuse
 			URL url = new URL(hostUrl);
 			HttpURLConnection con = (HttpURLConnection) url.openConnection();
 			con.setRequestProperty("Accept-Encoding", "gzip");
@@ -126,8 +127,8 @@ public class CitadelGetter extends AbstractXmlWriter {
 			} else {
 				in = inputStream;
 			}
-			Map<Long, Citadel> results = mapper.readValue(in, new TypeReference<Map<Long, Citadel>>() {
-			});
+			Gson gson = new GsonBuilder().create();
+			Map<Long, Citadel> results = gson.fromJson(new InputStreamReader(in), new TypeToken<Map<Long, Citadel>>() {}.getType());
 			if (results == null) { 
 				return false;
 			}

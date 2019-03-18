@@ -20,8 +20,8 @@
  */
 package net.nikr.eve.jeveasset.io.evekit;
 
-import enterprises.orbital.evekit.client.ApiClient;
 import enterprises.orbital.evekit.client.ApiException;
+import enterprises.orbital.evekit.client.ApiResponse;
 import enterprises.orbital.evekit.client.model.MarketOrder;
 import java.util.Date;
 import java.util.List;
@@ -54,7 +54,7 @@ public class EveKitMarketOrdersGetter extends AbstractEveKitGetter implements Ev
 	}
 
 	@Override
-	protected void get(ApiClient apiClient, Long at, boolean first) throws ApiException {
+	protected void update(Long at, boolean first) throws ApiException {
 		List<MarketOrder> data = updatePages(this);
 		if (data == null) {
 			return;
@@ -65,16 +65,16 @@ public class EveKitMarketOrdersGetter extends AbstractEveKitGetter implements Ev
 	
 
 	@Override
-	public List<MarketOrder> get(ApiClient apiClient, String at, Long contid, Integer maxResults) throws ApiException {
+	public ApiResponse<List<MarketOrder>> get(String at, Long contid, Integer maxResults) throws ApiException {
 		switch (run) {
 			case MONTHS:
-				return getCommonApi(apiClient).getMarketOrders(owner.getAccessKey(), owner.getAccessCred(), at, contid, maxResults, false,
+				return getCommonApi().getMarketOrdersWithHttpInfo(owner.getAccessKey(), owner.getAccessCred(), at, contid, maxResults, false,
 						null, null, null, null, null, null, dateFilter(Settings.get().getEveKitMarketOrdersHistory()), null, null, null, null, null, null, null, null, null, null, null);
 			case AT:
-				return getCommonApi(apiClient).getMarketOrders(owner.getAccessKey(), owner.getAccessCred(), at, contid, maxResults, false,
+				return getCommonApi().getMarketOrdersWithHttpInfo(owner.getAccessKey(), owner.getAccessCred(), at, contid, maxResults, false,
 						null, null, null, null, null, null, null, null, null, marketOrdersFilter(), null, null, null, null, null, null, null, null);
 			default: //ALL
-				return getCommonApi(apiClient).getMarketOrders(owner.getAccessKey(), owner.getAccessCred(), at, contid, maxResults, false,
+				return getCommonApi().getMarketOrdersWithHttpInfo(owner.getAccessKey(), owner.getAccessCred(), at, contid, maxResults, false,
 						null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
 		}
 	}
