@@ -191,14 +191,14 @@ public class MenuManager<Q> {
 			addSeparator(jComponent);
 			notEmpty = true;
 		}
+	//TOOL MENU
+		tableMenu.addToolMenu(jComponent);
 	//COPY+
 		JAutoMenu<Q> jcopyPlus = menus.get(MenuEnum.COPY_PLUS);
 		if (jcopyPlus != null) {
 			jComponent.add(jcopyPlus);
 			notEmpty = true;
 		}
-	//TOOL MENU
-		tableMenu.addToolMenu(jComponent);
 	//FILTER
 		JMenu filterMenu = tableMenu.getFilterMenu();
 		if (filterMenu != null) {
