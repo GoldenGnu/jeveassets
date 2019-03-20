@@ -108,8 +108,8 @@ public class EveKitIndustryJobsGetter extends AbstractEveKitGetter implements Ev
 	}
 
 	@Override
-	protected long getAccessMask() {
-		return EveKitAccessMask.INDUSTRY_JOBS.getAccessMask();
+	protected boolean haveAccess() {
+		return EveKitAccessMask.INDUSTRY_JOBS.isInMask(owner.getAccessMask());
 	}
 
 	@Override

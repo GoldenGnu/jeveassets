@@ -78,8 +78,8 @@ public class EveKitAssetGetter extends AbstractEveKitGetter implements EveKitPag
 	}
 
 	@Override
-	protected long getAccessMask() {
-		return EveKitAccessMask.ASSET_LIST.getAccessMask();
+	protected boolean haveAccess() {
+		return EveKitAccessMask.ASSET_LIST.isInMask(owner.getAccessMask());
 	}
 
 	@Override

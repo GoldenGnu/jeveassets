@@ -364,6 +364,16 @@ public class EsiOwner extends AbstractOwner implements OwnerType {
 		}
 	}
 
+	@Override
+	public boolean isPrivilegesLimited() {
+		return EsiScopes.isPrivilegesLimited(isCorporation(), scopes);
+	}
+
+	@Override
+	public boolean isPrivilegesInvalid() {
+		return EsiScopes.isPrivilegesInvalid(isCorporation(), scopes);
+	}
+
 	public boolean isRoles() {
 		return EsiScopes.CORPORATION_ROLES.isInScope(scopes);
 	}

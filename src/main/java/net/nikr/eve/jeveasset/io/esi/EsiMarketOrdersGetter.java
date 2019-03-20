@@ -81,7 +81,7 @@ public class EsiMarketOrdersGetter extends AbstractEsiGetter {
 	}
 
 	@Override
-	protected boolean inScope() {
+	protected boolean haveAccess() {
 		return owner.isMarketOrders();
 	}
 

@@ -70,7 +70,7 @@ public class EsiJournalGetter extends AbstractEsiGetter {
 	}
 
 	@Override
-	protected boolean inScope() {
+	protected boolean haveAccess() {
 		return owner.isJournal();
 	}
 

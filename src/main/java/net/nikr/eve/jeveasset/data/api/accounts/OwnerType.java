@@ -94,6 +94,8 @@ public interface OwnerType extends Comparable<OwnerType> {
 	public boolean isPlanetaryInteraction();
 	public boolean isAutopilot();
 	public boolean isDivisions();
+	public boolean isPrivilegesLimited();
+	public boolean isPrivilegesInvalid();
 	//Last Update
 	public Date getAssetLastUpdate();
 	public Date getBalanceLastUpdate();

@@ -78,8 +78,8 @@ public class EveKitAccountBalanceGetter extends AbstractEveKitGetter implements 
 	}
 
 	@Override
-	public long getAccessMask() {
-		return EveKitAccessMask.ACCOUNT_BALANCE.getAccessMask();
+	protected boolean haveAccess() {
+		return EveKitAccessMask.ACCOUNT_BALANCE.isInMask(owner.getAccessMask());
 	}
 
 	@Override

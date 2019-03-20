@@ -107,8 +107,8 @@ public class EveKitShipGetter extends AbstractEveKitGetter {
 	}
 
 	@Override
-	protected long getAccessMask() {
-		return EveKitAccessMask.LOCATIONS.getAccessMask();
+	protected boolean haveAccess() {
+		return EveKitAccessMask.LOCATIONS.isInMask(owner.getAccessMask());
 	}
 
 	@Override

@@ -36,13 +36,39 @@ public enum EveKitAccessMask {
 	BOOKMARKS(549755813888L),
 	;
 
-	long accessMask;
+	private final long eveKitAccessMask;
 
 	private EveKitAccessMask(long accessMask) {
-		this.accessMask = accessMask;
+		this.eveKitAccessMask = accessMask;
 	}
 
 	public Long getAccessMask() {
-		return accessMask;
+		return eveKitAccessMask;
+	}
+
+	public boolean isInMask(long accessMask) {
+		return (accessMask & eveKitAccessMask) == eveKitAccessMask;
+	}
+
+	public static boolean isPrivilegesLimited(long accessMask) {
+		boolean found = false;
+		boolean missing = false;
+		for (EveKitAccessMask mask : EveKitAccessMask.values()) {
+			if (mask.isInMask(accessMask)) {
+				found = true;
+			} else {
+				missing = true;
+			}
+		}
+		return missing && found;
+	}
+
+	public static boolean isPrivilegesInvalid(long accessMask) {
+		for (EveKitAccessMask mask : EveKitAccessMask.values()) {
+			if (mask.isInMask(accessMask)) {
+				return false;
+			}
+		}
+		return true;
 	}
 }

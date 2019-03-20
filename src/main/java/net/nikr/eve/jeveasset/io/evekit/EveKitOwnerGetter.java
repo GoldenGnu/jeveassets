@@ -31,8 +31,6 @@ import net.nikr.eve.jeveasset.io.shared.AccountAdder;
 
 public class EveKitOwnerGetter extends AbstractEveKitGetter implements AccountAdder {
 
-	private boolean limited = false;
-	private boolean invalidPrivileges = false;
 	private boolean wrongEntry = false;
 
 	public EveKitOwnerGetter(EveKitOwner owner, boolean forceUpdate) {
@@ -71,58 +69,25 @@ public class EveKitOwnerGetter extends AbstractEveKitGetter implements AccountAd
 		} else {
 			owner.setLimit(null);
 		}
-		int fails = 0;
-		int max = 0;
-		max++;
-		if (!owner.isAccountBalance()) {
-			fails++;
+		if (isPrivilegesLimited()) {
+			addError(null, "LIMITED ACCOUNT", "Limited account data access\r\n(Fix: Update the access key permissions in EveKit)");
+			setError(null);
 		}
-		max++;
-		if (!owner.isIndustryJobs()) {
-			fails++;
-		}
-		max++;
-		if (!owner.isMarketOrders()) {
-			fails++;
-		}
-		max++;
-		if (!owner.isJournal()) {
-			fails++;
-		}
-		max++;
-		if (!owner.isTransactions()) {
-			fails++;
-		}
-		max++;
-		if (!owner.isContracts()) {
-			fails++;
-		}
-		max++;
-		if (!owner.isLocations()) {
-			fails++;
-		}
-		max++;
-		if (!owner.isAssetList()) {
-			fails++;
-		}
-
-		limited = (fails > 0 && fails < max);
-		invalidPrivileges = (fails >= max);
 	}
 
 	@Override
-	protected long getAccessMask() {
-		return 0;
+	protected boolean haveAccess() {
+		return true;
 	}
 
 	@Override
-	public boolean isLimited() {
-		return  limited;
+	public boolean isPrivilegesLimited() {
+		return owner.isPrivilegesLimited();
 	}
 
 	@Override
-	public boolean isInvalidPrivileges() {
-		return invalidPrivileges;
+	public boolean isPrivilegesInvalid() {
+		return owner.isPrivilegesInvalid();
 	}
 
 	@Override

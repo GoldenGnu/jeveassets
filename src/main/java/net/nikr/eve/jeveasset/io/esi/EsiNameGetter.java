@@ -140,7 +140,7 @@ public class EsiNameGetter extends AbstractEsiGetter {
 	protected void setNextUpdate(Date date) { }
 
 	@Override
-	protected boolean inScope() {
+	protected boolean haveAccess() {
 		return true;
 	}
 

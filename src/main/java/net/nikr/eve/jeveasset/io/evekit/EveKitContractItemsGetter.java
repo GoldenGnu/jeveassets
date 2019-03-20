@@ -97,8 +97,8 @@ public class EveKitContractItemsGetter extends AbstractEveKitGetter implements E
 	}
 
 	@Override
-	protected long getAccessMask() {
-		return EveKitAccessMask.CONTRACTS.getAccessMask();
+	protected boolean haveAccess() {
+		return EveKitAccessMask.CONTRACTS.isInMask(owner.getAccessMask());
 	}
 
 	@Override

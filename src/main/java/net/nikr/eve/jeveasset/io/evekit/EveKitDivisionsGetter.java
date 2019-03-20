@@ -45,8 +45,8 @@ public class EveKitDivisionsGetter extends AbstractEveKitGetter implements EveKi
 	}
 
 	@Override
-	protected long getAccessMask() {
-		return EveKitAccessMask.DIVISIONS.getAccessMask();
+	protected boolean haveAccess() {
+		return EveKitAccessMask.DIVISIONS.isInMask(owner.getAccessMask());
 	}
 
 	@Override

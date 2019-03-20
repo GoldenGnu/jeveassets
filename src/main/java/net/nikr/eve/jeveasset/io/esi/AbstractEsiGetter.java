@@ -202,14 +202,7 @@ public abstract class AbstractEsiGetter extends AbstractGetter<EsiOwner> {
 		}
 	}
 
-	@Override
-	protected boolean invalidAccessPrivileges() {
-		return owner != null && !inScope();
-	}
-
 	protected abstract void update() throws ApiException;
-
-	protected abstract boolean inScope();
 
 	private void setErrorLimit(Map<String, List<String>> responseHeaders) {
 		if (responseHeaders != null) {
