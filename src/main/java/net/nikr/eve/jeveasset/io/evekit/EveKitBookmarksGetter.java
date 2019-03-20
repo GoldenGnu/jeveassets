@@ -20,7 +20,6 @@
  */
 package net.nikr.eve.jeveasset.io.evekit;
 
-import enterprises.orbital.evekit.client.ApiClient;
 import enterprises.orbital.evekit.client.ApiException;
 import enterprises.orbital.evekit.client.ApiResponse;
 import enterprises.orbital.evekit.client.model.Bookmark;
@@ -59,8 +58,8 @@ public class EveKitBookmarksGetter extends AbstractEveKitGetter implements EveKi
 	}
 
 	@Override
-	protected long getAccessMask() {
-		return EveKitAccessMask.BOOKMARKS.getAccessMask();
+	protected boolean haveAccess() {
+		return EveKitAccessMask.BOOKMARKS.isInMask(owner.getAccessMask());
 	}
 
 	@Override

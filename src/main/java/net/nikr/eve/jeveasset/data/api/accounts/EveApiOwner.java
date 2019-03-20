@@ -152,6 +152,16 @@ public class EveApiOwner extends AbstractOwner implements OwnerType {
 	}
 
 	@Override
+	public boolean isPrivilegesLimited() {
+		return false;
+	}
+
+	@Override
+	public boolean isPrivilegesInvalid() {
+		return false;
+	}
+
+	@Override
 	public Date getExpire() {
 		return getParentAccount().getExpires();
 	}

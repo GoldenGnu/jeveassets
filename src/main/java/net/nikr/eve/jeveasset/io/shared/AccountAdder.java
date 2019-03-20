@@ -25,9 +25,9 @@ public interface AccountAdder {
 
 	public boolean hasError();
 
-	public boolean isLimited();
+	public boolean isPrivilegesLimited();
 
-	public boolean isInvalidPrivileges();
+	public boolean isPrivilegesInvalid();
 
 	public boolean isWrongEntry();
 

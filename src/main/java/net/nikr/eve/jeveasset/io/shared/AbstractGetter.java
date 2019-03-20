@@ -132,7 +132,7 @@ public abstract class AbstractGetter<O extends OwnerType> implements Runnable {
 	 * @param date 
 	 */
 	protected abstract void setNextUpdate(Date date);
-	protected abstract boolean invalidAccessPrivileges();
+	protected abstract boolean haveAccess();
 
 	protected final String getTaskName() {
 		return taskName;
@@ -157,8 +157,8 @@ public abstract class AbstractGetter<O extends OwnerType> implements Runnable {
 			return false;
 		}
 		//Check if the owner have accesss to the endpoint 
-		if (invalidAccessPrivileges()) {
-			addError(null, "NOT ENOUGH ACCESS PRIVILEGES", "Not enough access privileges.\r\n(Fix: Add " + getTaskName() + " to the API Key)");
+		if (owner != null && !haveAccess()) {
+			//Silent
 			return false;
 		}
 		return true;

@@ -112,8 +112,8 @@ public class EveKitContractsGetter extends AbstractEveKitGetter implements EveKi
 	}
 
 	@Override
-	protected long getAccessMask() {
-		return EveKitAccessMask.CONTRACTS.getAccessMask();
+	protected boolean haveAccess() {
+		return EveKitAccessMask.CONTRACTS.isInMask(owner.getAccessMask());
 	}
 
 	@Override

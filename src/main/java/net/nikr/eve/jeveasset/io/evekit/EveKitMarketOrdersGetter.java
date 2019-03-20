@@ -90,8 +90,8 @@ public class EveKitMarketOrdersGetter extends AbstractEveKitGetter implements Ev
 	}
 
 	@Override
-	protected long getAccessMask() {
-		return EveKitAccessMask.MARKET_ORDERS.getAccessMask();
+	protected boolean haveAccess() {
+		return EveKitAccessMask.MARKET_ORDERS.isInMask(owner.getAccessMask());
 	}
 
 	@Override

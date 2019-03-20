@@ -89,7 +89,7 @@ public class EsiPlanetaryInteractionGetter extends AbstractEsiGetter {
 	}
 
 	@Override
-	protected boolean inScope() {
+	protected boolean haveAccess() {
 		if (owner.isCorporation()) {
 			return true; //Overwrite the default, so, we don't get errors
 		} else {

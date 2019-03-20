@@ -110,7 +110,7 @@ public class EsiLocationsGetter extends AbstractEsiGetter {
 	}
 
 	@Override
-	protected boolean inScope() {
+	protected boolean haveAccess() {
 		return owner.isLocations();
 	}
 

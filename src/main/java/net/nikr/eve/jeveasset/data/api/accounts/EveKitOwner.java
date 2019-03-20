@@ -158,17 +158,17 @@ public class EveKitOwner extends AbstractOwner implements OwnerType {
 
 	@Override
 	public boolean isAssetList() {
-		return (getAccessMask() & EveKitAccessMask.ASSET_LIST.getAccessMask()) == EveKitAccessMask.ASSET_LIST.getAccessMask();
+		return EveKitAccessMask.ASSET_LIST.isInMask(getAccessMask());
 	}
 
 	@Override
 	public boolean isAccountBalance() {
-		return (getAccessMask() & EveKitAccessMask.ACCOUNT_BALANCE.getAccessMask()) == EveKitAccessMask.ACCOUNT_BALANCE.getAccessMask();
+		return EveKitAccessMask.ACCOUNT_BALANCE.isInMask(getAccessMask());
 	}
 
 	@Override
 	public boolean isIndustryJobs() {
-		return (getAccessMask() & EveKitAccessMask.INDUSTRY_JOBS.getAccessMask()) == EveKitAccessMask.INDUSTRY_JOBS.getAccessMask();
+		return EveKitAccessMask.INDUSTRY_JOBS.isInMask(getAccessMask());
 	}
 
 	@Override
@@ -178,34 +178,33 @@ public class EveKitOwner extends AbstractOwner implements OwnerType {
 
 	@Override
 	public boolean isBookmarks() {
-		return (getAccessMask() & EveKitAccessMask.BOOKMARKS.getAccessMask()) == EveKitAccessMask.BOOKMARKS.getAccessMask();
+		return EveKitAccessMask.BOOKMARKS.isInMask(getAccessMask());
 	}
 
 	@Override
 	public boolean isMarketOrders() {
-		return (getAccessMask() & EveKitAccessMask.MARKET_ORDERS.getAccessMask()) == EveKitAccessMask.MARKET_ORDERS.getAccessMask();
+		return EveKitAccessMask.MARKET_ORDERS.isInMask(getAccessMask());
 	}
 
 	@Override
 	public boolean isTransactions() {
-		return (getAccessMask() & EveKitAccessMask.TRANSACTIONS.getAccessMask()) == EveKitAccessMask.TRANSACTIONS.getAccessMask();
-		
+		return EveKitAccessMask.TRANSACTIONS.isInMask(getAccessMask());
 	}
 
 	@Override
 	public boolean isJournal() {
-		return (getAccessMask() & EveKitAccessMask.JOURNAL.getAccessMask()) == EveKitAccessMask.JOURNAL.getAccessMask();
+		return EveKitAccessMask.JOURNAL.isInMask(getAccessMask());
 	}
 
 	@Override
 	public boolean isContracts() {
-		return (getAccessMask() & EveKitAccessMask.CONTRACTS.getAccessMask()) == EveKitAccessMask.CONTRACTS.getAccessMask();
+		return EveKitAccessMask.CONTRACTS.isInMask(getAccessMask());
 		
 	}
 
 	@Override
 	public boolean isLocations() {
-		return (getAccessMask() & EveKitAccessMask.LOCATIONS.getAccessMask()) == EveKitAccessMask.LOCATIONS.getAccessMask();
+		return EveKitAccessMask.LOCATIONS.isInMask(getAccessMask());
 	}
 
 	@Override
@@ -240,7 +239,17 @@ public class EveKitOwner extends AbstractOwner implements OwnerType {
 
 	@Override
 	public boolean isDivisions() {
-		return (getAccessMask() & EveKitAccessMask.DIVISIONS.getAccessMask()) == EveKitAccessMask.DIVISIONS.getAccessMask();
+		return EveKitAccessMask.DIVISIONS.isInMask(getAccessMask());
+	}
+
+	@Override
+	public boolean isPrivilegesLimited() {
+		return EveKitAccessMask.isPrivilegesLimited(getAccessMask());
+	}
+
+	@Override
+	public boolean isPrivilegesInvalid() {
+		return EveKitAccessMask.isPrivilegesInvalid(getAccessMask());
 	}
 
 	@Override

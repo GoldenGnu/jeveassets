@@ -50,7 +50,7 @@ public class EsiContainerLogsGetter extends AbstractEsiGetter {
 	}
 
 	@Override
-	protected boolean inScope() {
+	protected boolean haveAccess() {
 		if (owner.isCorporation()) {
 			return owner.isContainerLogs();
 		} else {

@@ -112,6 +112,40 @@ public enum EsiScopes {
 		return forced;
 	}
 
+	public static boolean isPrivilegesLimited(boolean corp, Set<String> scopes) {
+		boolean found = false;
+		boolean missing = false;
+		for (EsiScopes scope : EsiScopes.values()) {
+			if (!corp && !scope.isCharacterScope()) {
+				continue;
+			}
+			if (corp && !scope.isCorporationScope()) {
+				continue;
+			}
+			if (scope.isInScope(scopes)) {
+				found = true;
+			} else {
+				missing = true;
+			}
+		}
+		return missing && found;
+	}
+
+	public static boolean isPrivilegesInvalid(boolean corp, Set<String> scopes) {
+		for (EsiScopes scope : EsiScopes.values()) {
+			if (!corp && !scope.isCharacterScope()) {
+				continue;
+			}
+			if (corp && !scope.isCorporationScope()) {
+				continue;
+			}
+			if (scope.isInScope(scopes)) {
+				return false;
+			}
+		}
+		return true;
+	}
+
 	@Override
 	public String toString() {
 		return text;
