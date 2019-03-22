@@ -889,6 +889,7 @@ public class StockpileDialog extends JDialogCentered {
 		private final JCheckBoxMenuItem jSellingContracts;
 		private final JCheckBoxMenuItem jBoughtContracts;
 		private final JCheckBoxMenuItem jSoldContracts;
+		private final JLabel jErrorLabel;
 		private final JLabel jAssetsLabel;
 		private final JLabel jJobsLabel;
 		private final JLabel jOrdersLabel;
@@ -1105,6 +1106,9 @@ public class StockpileDialog extends JDialogCentered {
 			jInclude.add(jSoldContracts, true);
 
 		//INCLIDE LABELS
+			jErrorLabel = new JLabel();
+			jErrorLabel.setDisabledIcon(Images.UPDATE_DONE_ERROR.getIcon());
+			jErrorLabel.setEnabled(false);
 			jAssetsLabel = new JLabel();
 			jAssetsLabel.setDisabledIcon(Images.INCLUDE_ASSETS.getIcon());
 			jAssetsLabel.setEnabled(false);
@@ -1190,6 +1194,7 @@ public class StockpileDialog extends JDialogCentered {
 					)
 					.addComponent(jFilters)
 					.addGroup(groupLayout.createSequentialGroup()
+						.addComponent(jErrorLabel)
 						.addComponent(jAssetsLabel)
 						.addComponent(jJobsLabel)
 						.addComponent(jOrdersLabel)
@@ -1207,6 +1212,7 @@ public class StockpileDialog extends JDialogCentered {
 					)
 					.addComponent(jFilters)
 					.addGroup(groupLayout.createParallelGroup()
+						.addComponent(jErrorLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 						.addComponent(jAssetsLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 						.addComponent(jJobsLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 						.addComponent(jOrdersLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
@@ -1445,6 +1451,11 @@ public class StockpileDialog extends JDialogCentered {
 			}
 			jContractsLabel.setText(TabsStockpile.get().includeCount(contracts));
 			jContractsLabel.setVisible(contracts > 0);
+
+			jErrorLabel.setVisible(!jAssets.isSelected()
+					&& !jJobs.isSelected()
+					&& orders == 0
+					&& contracts == 0);
 
 			jMatch.setIcon(jMatchExclude.isSelected() ? Images.EDIT_DELETE_WHITE.getIcon() : Images.EDIT_ADD_WHITE.getIcon());
 			jAssets.setIcon(jAssets.isSelected() ? Images.INCLUDE_ASSETS_SELECTED.getIcon() : Images.INCLUDE_ASSETS.getIcon());

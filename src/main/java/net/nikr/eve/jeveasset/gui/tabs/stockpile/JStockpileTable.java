@@ -88,31 +88,31 @@ public class JStockpileTable extends JSeparatorTable {
 			if (columnName.equals(StockpileTableFormat.COUNT_NOW_INVENTORY.getColumnName()) && !stockpileItem.getStockpile().isAssets()) {
 				component.setForeground(component.getBackground());
 			}
-			if (columnName.equals(StockpileTableFormat.COUNT_NOW_BUY_ORDERS.getColumnName()) && !stockpileItem.getStockpile().isBuyOrders()) {
+			if (columnName.equals(StockpileTableFormat.COUNT_NOW_BUY_ORDERS.getColumnName()) && (!stockpileItem.getStockpile().isBuyOrders() || stockpileItem.isRuns())) {
 				component.setForeground(component.getBackground());
 			}
-			if (columnName.equals(StockpileTableFormat.COUNT_NOW_SELL_ORDERS.getColumnName()) && !stockpileItem.getStockpile().isSellOrders()) {
+			if (columnName.equals(StockpileTableFormat.COUNT_NOW_SELL_ORDERS.getColumnName()) && (!stockpileItem.getStockpile().isSellOrders() || stockpileItem.isRuns())) {
 				component.setForeground(component.getBackground());
 			}
-			if (columnName.equals(StockpileTableFormat.COUNT_NOW_BUY_TRANSACTIONS.getColumnName()) && !stockpileItem.getStockpile().isBuyTransactions()) {
+			if (columnName.equals(StockpileTableFormat.COUNT_NOW_BUY_TRANSACTIONS.getColumnName()) && (!stockpileItem.getStockpile().isBuyTransactions() || stockpileItem.isRuns())) {
 				component.setForeground(component.getBackground());
 			}
-			if (columnName.equals(StockpileTableFormat.COUNT_NOW_SELL_TRANSACTIONS.getColumnName()) && !stockpileItem.getStockpile().isSellTransactions()) {
+			if (columnName.equals(StockpileTableFormat.COUNT_NOW_SELL_TRANSACTIONS.getColumnName()) && (!stockpileItem.getStockpile().isSellTransactions() || stockpileItem.isRuns())) {
 				component.setForeground(component.getBackground());
 			}
 			if (columnName.equals(StockpileTableFormat.COUNT_NOW_JOBS.getColumnName()) && !stockpileItem.getStockpile().isJobs()) {
 				component.setForeground(component.getBackground());
 			}
-			if (columnName.equals(StockpileTableFormat.COUNT_NOW_SELLING_CONTRACTS.getColumnName()) && !stockpileItem.getStockpile().isSellingContracts()) {
+			if (columnName.equals(StockpileTableFormat.COUNT_NOW_SELLING_CONTRACTS.getColumnName()) && (!stockpileItem.getStockpile().isSellingContracts() || stockpileItem.isRuns())) {
 				component.setForeground(component.getBackground());
 			}
-			if (columnName.equals(StockpileTableFormat.COUNT_NOW_SOLD_CONTRACTS.getColumnName()) && !stockpileItem.getStockpile().isSoldContracts()) {
+			if (columnName.equals(StockpileTableFormat.COUNT_NOW_SOLD_CONTRACTS.getColumnName()) && (!stockpileItem.getStockpile().isSoldContracts() || stockpileItem.isRuns())) {
 				component.setForeground(component.getBackground());
 			}
-			if (columnName.equals(StockpileTableFormat.COUNT_NOW_BUYING_CONTRACTS.getColumnName()) && !stockpileItem.getStockpile().isBuyingContracts()) {
+			if (columnName.equals(StockpileTableFormat.COUNT_NOW_BUYING_CONTRACTS.getColumnName()) && (!stockpileItem.getStockpile().isBuyingContracts() || stockpileItem.isRuns())) {
 				component.setForeground(component.getBackground());
 			}
-			if (columnName.equals(StockpileTableFormat.COUNT_NOW_BOUGHT_CONTRACTS.getColumnName()) && !stockpileItem.getStockpile().isBoughtContracts()) {
+			if (columnName.equals(StockpileTableFormat.COUNT_NOW_BOUGHT_CONTRACTS.getColumnName()) && (!stockpileItem.getStockpile().isBoughtContracts() || stockpileItem.isRuns())) {
 				component.setForeground(component.getBackground());
 			}
 			if (columnName.equals(StockpileTableFormat.COUNT_NEEDED.getColumnName()) && stockpileItem.getCountNeeded() < 0) {

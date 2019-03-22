@@ -730,10 +730,14 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 					id = StockpileItem.getNewID();
 				}
 				int typeID = AttributeGetters.getInt(itemNode, "typeid");
+				boolean runs = false;
+				if (AttributeGetters.haveAttribute(itemNode, "runs")) {
+					runs = AttributeGetters.getBoolean(itemNode, "runs");
+				}
 				double countMinimum = AttributeGetters.getDouble(itemNode, "minimum");
 				if (typeID != 0) { //Ignore Total
 					Item item = ApiIdConverter.getItem(Math.abs(typeID));
-					StockpileItem stockpileItem = new StockpileItem(stockpile, item, typeID, countMinimum, id);
+					StockpileItem stockpileItem = new StockpileItem(stockpile, item, typeID, countMinimum, runs, id);
 					stockpile.add(stockpileItem);
 				}
 			}

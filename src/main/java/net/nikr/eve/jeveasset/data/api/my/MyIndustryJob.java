@@ -345,6 +345,10 @@ public class MyIndustryJob extends RawIndustryJob implements Comparable<MyIndust
 		return getActivity() == IndustryActivity.ACTIVITY_MANUFACTURING || getActivity() == IndustryActivity.ACTIVITY_REACTIONS;
 	}
 
+	public final boolean isCopying() {
+		return getActivity() == IndustryActivity.ACTIVITY_COPYING;
+	}
+
 	public final boolean isInvention() {
 		return getActivity() == IndustryActivity.ACTIVITY_REVERSE_INVENTION;
 	}
