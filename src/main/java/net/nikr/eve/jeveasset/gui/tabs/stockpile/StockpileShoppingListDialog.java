@@ -213,7 +213,7 @@ class StockpileShoppingListDialog extends JDialogCentered {
 		}
 
 	//All claims
-		Map<Integer, List<StockClaim>> claims = new HashMap<Integer, List<StockClaim>>();
+		Map<TypeIdentifier, List<StockClaim>> claims = new HashMap<TypeIdentifier, List<StockClaim>>();
 		String stockpileNames = "";
 		for (Stockpile stockpile : stockpiles) {
 			//Stockpile names
@@ -222,12 +222,12 @@ class StockpileShoppingListDialog extends JDialogCentered {
 			}
 			stockpileNames = stockpileNames + stockpile.getName();
 			for (StockpileItem stockpileItem : stockpile.getItems()) {
-				final int TYPEID = stockpileItem.getItemTypeID();
-				if (TYPEID != 0) { //Ignore Total
-					List<StockClaim> claimList  = claims.get(TYPEID);
+				TypeIdentifier typeID = new TypeIdentifier(stockpileItem);
+				if (!typeID.isEmpty()) { //Ignore Total
+					List<StockClaim> claimList  = claims.get(typeID);
 					if (claimList == null) {
 						claimList = new ArrayList<StockClaim>();
-						claims.put(TYPEID, claimList);
+						claims.put(typeID, claimList);
 					}
 					claimList.add(new StockClaim(stockpileItem, percent));
 				}
@@ -235,36 +235,40 @@ class StockpileShoppingListDialog extends JDialogCentered {
 		}
 
 	//All items
-		Map<Integer, List<StockItem>> items = new HashMap<Integer, List<StockItem>>();
+		Map<TypeIdentifier, List<StockItem>> items = new HashMap<TypeIdentifier, List<StockItem>>();
 		//Assets
 		for (MyAsset asset : program.getAssetList()) {
 			if (asset.isGenerated()) { //Skip generated assets
 				continue;
 			}
-			add(asset.isBPC() ? -asset.getTypeID() : asset.getTypeID(), asset, claims, items);
+			int typeID = asset.isBPC() ? -asset.getTypeID() : asset.getTypeID();
+			add(new TypeIdentifier(typeID, false), asset, claims, items);
+			add(new TypeIdentifier(typeID, true), asset, claims, items);
 		}
 		//Market Orders
 		for (MyMarketOrder marketOrder : program.getMarketOrdersList()) {
-			add(marketOrder.getTypeID(), marketOrder, claims, items);
+			add(new TypeIdentifier(marketOrder.getTypeID(), false), marketOrder, claims, items);
 		}
 		//Industry Jobs
 		for (MyIndustryJob industryJob : program.getIndustryJobsList()) {
-			add(industryJob.getProductTypeID(), industryJob, claims, items);
+			add(new TypeIdentifier(industryJob.getProductTypeID(), false), industryJob, claims, items);
+			add(new TypeIdentifier(-industryJob.getBlueprintTypeID(), true), industryJob, claims, items);
 		}
 		//Transactions
 		for (MyTransaction transaction : program.getTransactionsList()) {
-			add(transaction.getTypeID(), transaction, claims, items);
+			add(new TypeIdentifier(transaction.getTypeID(), false), transaction, claims, items);
 		}
 		//ContractItems
 		for (MyContractItem contractItem : program.getContractItemList()) {
 			if (contractItem.getContract().isIgnoreContract()) {
 				continue;
 			}
-			add(contractItem.isBPC() ? -contractItem.getTypeID() : contractItem.getTypeID(), contractItem, claims, items);
+			int typeID = contractItem.isBPC() ? -contractItem.getTypeID() : contractItem.getTypeID();
+			add(new TypeIdentifier(typeID, false), contractItem, claims, items);
 		}
 
 	//Claim items
-		for (Map.Entry<Integer, List<StockItem>> entry : items.entrySet()) {
+		for (Map.Entry<TypeIdentifier, List<StockItem>> entry : items.entrySet()) {
 			for (StockItem stockItem : entry.getValue()) {
 				stockItem.claim();
 			}
@@ -275,15 +279,17 @@ class StockpileShoppingListDialog extends JDialogCentered {
 		StringBuilder eveMultibuyBuilder = new StringBuilder();
 		double volume = 0;
 		double value = 0;
-		for (Map.Entry<Integer, List<StockClaim>> entry : claims.entrySet()) {
+		for (Map.Entry<TypeIdentifier, List<StockClaim>> entry : claims.entrySet()) {
 			boolean bpc = false;
 			boolean bpo = false;
+			boolean runs = false;
 			Item item;
-			if (entry.getKey() < 0) {
-				item = ApiIdConverter.getItem(Math.abs(entry.getKey()));
+			if (entry.getKey().isBPC()) {
+				item = ApiIdConverter.getItem(Math.abs(entry.getKey().getTypeID()));
 				bpc = true;
+				runs = entry.getKey().isRuns();
 			} else {
-				item = ApiIdConverter.getItem(entry.getKey());
+				item = ApiIdConverter.getItem(entry.getKey().getTypeID());
 				bpo = item.isBlueprint();
 			}
 			long countMinimum = 0;
@@ -309,7 +315,11 @@ class StockpileShoppingListDialog extends JDialogCentered {
 				shoppingListBuilder.append("x ");
 				shoppingListBuilder.append(item.getTypeName());
 				if (bpc) {
-					shoppingListBuilder.append(" (BPC)");
+					if (runs) {
+						shoppingListBuilder.append(" (Runs)");
+					} else {
+						shoppingListBuilder.append(" (BPC)");
+					}
 				} else if (bpo) {
 					shoppingListBuilder.append(" (BPO)");
 				}
@@ -335,7 +345,7 @@ class StockpileShoppingListDialog extends JDialogCentered {
 	}
 
 	//Add claims to item
-	private void add(final int typeID, final Object object, final Map<Integer, List<StockClaim>> claims, final Map<Integer, List<StockItem>> items) {
+	private void add(final TypeIdentifier typeID, final Object object, final Map<TypeIdentifier, List<StockClaim>> claims, final Map<TypeIdentifier, List<StockItem>> items) {
 		//Get claims by typeID
 		List<StockClaim> minimumList = claims.get(typeID);
 		if (minimumList == null) { //if no claims for typeID: return
@@ -549,6 +559,66 @@ class StockpileShoppingListDialog extends JDialogCentered {
 			}
 			final Count other = (Count) obj;
 			if (this.id != other.id) {
+				return false;
+			}
+			return true;
+		}
+	}
+
+	private static class TypeIdentifier  {
+		private final int typeID;
+		private final boolean runs;
+
+		public TypeIdentifier(StockpileItem stockpileItem) {
+			this.typeID = stockpileItem.getItemTypeID();
+			this.runs = stockpileItem.isRuns();
+		}
+
+		public TypeIdentifier(int typeID, boolean runs) {
+			this.typeID = typeID;
+			this.runs = runs;
+		}
+
+		public boolean isEmpty() {
+			return typeID == 0;
+		}
+
+		public boolean isBPC() {
+			return typeID < 0;
+		}
+
+		public boolean isRuns() {
+			return runs;
+		}
+
+		public int getTypeID() {
+			return typeID;
+		}
+
+		@Override
+		public int hashCode() {
+			int hash = 7;
+			hash = 59 * hash + this.typeID;
+			hash = 59 * hash + (this.runs ? 1 : 0);
+			return hash;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj) {
+				return true;
+			}
+			if (obj == null) {
+				return false;
+			}
+			if (getClass() != obj.getClass()) {
+				return false;
+			}
+			final TypeIdentifier other = (TypeIdentifier) obj;
+			if (this.typeID != other.typeID) {
+				return false;
+			}
+			if (this.runs != other.runs) {
 				return false;
 			}
 			return true;

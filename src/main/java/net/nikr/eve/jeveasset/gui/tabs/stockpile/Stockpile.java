@@ -79,7 +79,6 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 	private boolean sellingContracts = false;
 	private boolean soldContracts = false;
 	private boolean boughtContracts = false;
-	
 
 	private Stockpile(final Stockpile stockpile) {
 		update(stockpile);
@@ -445,6 +444,7 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 		private Item item;
 		private int typeID;
 		private double countMinimum;
+		private boolean runs;
 
 		//Updated values
 		private boolean marketGroup;
@@ -470,19 +470,21 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 			this(stockpile,
 					stockpileItem.item,
 					stockpileItem.typeID,
-					stockpileItem.countMinimum
+					stockpileItem.countMinimum,
+					stockpileItem.runs
 					);
 		}
 
-		public StockpileItem(final Stockpile stockpile, final Item item, final int typeID, final double countMinimum) {
-			this(stockpile, item, typeID, countMinimum, getNewID());
+		public StockpileItem(final Stockpile stockpile, final Item item, final int typeID, final double countMinimum, final boolean runs) {
+			this(stockpile, item, typeID, countMinimum, runs, getNewID());
 		}
 
-		public StockpileItem(final Stockpile stockpile, final Item item, final int typeID, final double countMinimum, final long id) {
+		public StockpileItem(final Stockpile stockpile, final Item item, final int typeID, final double countMinimum, final boolean runs, final long id) {
 			this.stockpile = stockpile;
 			this.item = item;
 			this.typeID = typeID;
 			this.countMinimum = countMinimum;
+			this.runs = runs;
 			this.id = id;
 		}
 
@@ -491,6 +493,7 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 			this.item = stockpileItem.item;
 			this.typeID = stockpileItem.typeID;
 			this.countMinimum = stockpileItem.countMinimum;
+			this.runs = stockpileItem.runs;
 		}
 
 		private void updateTags() {
@@ -562,8 +565,16 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 		}
 
 		private Long matchesIndustryJob(final MyIndustryJob industryJob, boolean add) {
-			if (industryJob != null) { //better safe then sorry 
-				return matches(add, industryJob.getProductTypeID(), industryJob.getOwnerID(), null, industryJob.getLocation(), null, null, industryJob, null, null);
+			if (industryJob != null) { //better safe then sorry
+				Long productCount = matches(add, industryJob.getProductTypeID(), industryJob.getOwnerID(), null, industryJob.getLocation(), null, null, industryJob, null, null);
+				Long runsCount = matches(add, -industryJob.getBlueprintTypeID(), industryJob.getOwnerID(), null, industryJob.getLocation(), null, null, industryJob, null, null);
+				if (productCount != null && runsCount != null) {
+					return productCount + runsCount;
+				} else if (productCount != null) {
+					return productCount;
+				} else {
+					return runsCount; //May be null - that is okay
+				}
 			} else {
 				return null;
 			}
@@ -664,7 +675,15 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 				long count = 0;
 				//Assets
 				if (asset != null) {
-					if (filter.isAssets()) {
+					if (runs && typeID < 0) {
+						if (filter.isAssets() && asset.isBPC()) {
+							if (add) { //Match
+								inventoryCountNow = inventoryCountNow + asset.getRuns();
+							} else {
+								count = count + asset.getRuns();
+							}
+						}
+					} else if (filter.isAssets()) {
 						if (add) { //Match
 							inventoryCountNow = inventoryCountNow + asset.getCount();
 						} else {
@@ -675,7 +694,15 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 					}
 				 //Jobs
 				} else if (industryJob != null) {
-					if (industryJob.isManufacturing()  //Manufacturing
+					if (runs && typeID < 0) {
+						if (filter.isJobs() && industryJob.isCopying() && !industryJob.isDelivered()) {
+							if (add) { //Match
+								jobsCountNow = jobsCountNow + (industryJob.getRuns() * industryJob.getLicensedRuns());
+							} else {
+								count = count + (industryJob.getRuns() * industryJob.getLicensedRuns());
+							}
+						}
+					} else if (industryJob.isManufacturing()  //Manufacturing
 							&& (industryJob.getStatus() == RawIndustryJob.IndustryJobStatus.ACTIVE //Inprogress AKA not delivered (1 = Active, 2 = Paused (Facility Offline), 3 = Ready)
 								|| industryJob.getStatus() == RawIndustryJob.IndustryJobStatus.PAUSED
 								|| industryJob.getStatus() == RawIndustryJob.IndustryJobStatus.READY
@@ -691,6 +718,9 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 					}
 				//Orders
 				} else if (marketOrder != null) {
+					if (runs && typeID < 0) {
+						continue; //Ignore BPC runs (Can't sell BPC)
+					}
 					if (!marketOrder.isBuyOrder() && marketOrder.isActive() && filter.isSellOrders()) {
 						if (add) { //Open/Active sell order - match
 							sellOrdersCountNow = sellOrdersCountNow + marketOrder.getVolumeRemain();
@@ -708,6 +738,9 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 					}
 				//Transactions
 				} else if (transaction != null) {
+					if (runs && typeID < 0) {
+						continue; //Ignore BPC runs (Can't sell BPC)
+					}
 					if (transaction.isAfterAssets() && transaction.isBuy() && filter.isBuyTransactions()) {
 						if (add) { //Buy - match
 							buyTransactionsCountNow = buyTransactionsCountNow + transaction.getQuantity();
@@ -725,6 +758,9 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 					}
 				//Contracts
 				} else if (contractItem != null) {
+					if (runs && typeID < 0) {
+						continue; //Ignore BPC runs (We don't have blueprint info for contracts - yet)
+					}
 					boolean found = false;
 					//Get issuer
 					long issuer = contractItem.getContract().isForCorp() ? contractItem.getContract().getIssuerCorpID() : contractItem.getContract().getIssuerID();
@@ -899,6 +935,14 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 			return stockpile;
 		}
 
+		public void setRuns(boolean runs) {
+			this.runs = runs;
+		}
+
+		public boolean isRuns() {
+			return runs;
+		}
+
 		@Override
 		public boolean isBPC() {
 			return (typeID < 0);
@@ -909,13 +953,17 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 			return isBlueprint() && !isBPC();
 		}
 
-		private boolean isBlueprint() {
+		public boolean isBlueprint() {
 			return item.isBlueprint();
 		}
 
 		public String getName() {
 			if (isBPC()) { //Blueprint copy
-				return item.getTypeName() + " (BPC)";
+				if (runs) {
+					return item.getTypeName() + " (Runs)";
+				} else {
+					return item.getTypeName() + " (BPC)";
+				}
 			} else if (isBPO()) { //Blueprint original
 				return item.getTypeName() + " (BPO)";
 			} else { //Everything else
@@ -1013,7 +1061,11 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 		}
 
 		public double getVolume() {
-			return volume;
+			if (runs) {
+				return 0.0;
+			} else {
+				return volume;
+			}
 		}
 
 		public double getValueNow() {
@@ -1025,11 +1077,11 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 		}
 
 		public double getVolumeNow() {
-			return getCountNow() * volume;
+			return getCountNow() * getVolume();
 		}
 
 		public double getVolumeNeeded() {
-			return getCountNeeded() * volume;
+			return getCountNeeded() * getVolume();
 		}
 
 		public boolean isMarketGroup() {
@@ -1103,7 +1155,19 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 		}
 
 		@Override
-		public boolean equals(final Object obj) {
+		public int hashCode() {
+			int hash = 5;
+			hash = 97 * hash + Objects.hashCode(this.stockpile);
+			hash = 97 * hash + this.typeID;
+			hash = 97 * hash + (this.runs ? 1 : 0);
+			return hash;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj) {
+				return true;
+			}
 			if (obj == null) {
 				return false;
 			}
@@ -1114,18 +1178,13 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 			if (this.typeID != other.typeID) {
 				return false;
 			}
-			if (this.stockpile != other.stockpile && (this.stockpile == null || !this.stockpile.equals(other.stockpile))) {
+			if (this.runs != other.runs) {
+				return false;
+			}
+			if (!Objects.equals(this.stockpile, other.stockpile)) {
 				return false;
 			}
 			return true;
-		}
-
-		@Override
-		public int hashCode() {
-			int hash = 7;
-			hash = 29 * hash + this.typeID;
-			hash = 29 * hash + (this.stockpile != null ? this.stockpile.hashCode() : 0);
-			return hash;
 		}
 
 		@Override
@@ -1146,8 +1205,8 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 		private long sellOrdersCountNow = 0;
 		private long buyOrdersCountNow = 0;
 		private long jobsCountNow = 0;
-		private long buyTransactionsNow = 0;
-		private long sellTransactionsNow = 0;
+		private long buyTransactionsCountNow = 0;
+		private long sellTransactionsCountNow = 0;
 		private long buyingContractsCountNow = 0;
 		private long boughtContractsCountNow = 0;
 		private long sellingContractsCountNow = 0;
@@ -1163,7 +1222,7 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 		private double volumeNeeded = 0;
 
 		public StockpileTotal(final Stockpile stockpile) {
-			super(stockpile, new Item(0), 0, 0, 0);
+			super(stockpile, new Item(0), 0, 0, false, 0);
 		}
 
 		private void reset() {
@@ -1180,8 +1239,8 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 			volumeNow = 0;
 			volumeNeeded = 0;
 			countMinimumMultiplied = 0;
-			buyTransactionsNow = 0;
-			sellTransactionsNow = 0;
+			buyTransactionsCountNow = 0;
+			sellTransactionsCountNow = 0;
 			buyingContractsCountNow = 0;
 			boughtContractsCountNow = 0;
 			sellingContractsCountNow = 0;
@@ -1198,8 +1257,8 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 			//Jobs
 			jobsCountNow = jobsCountNow + item.getJobsCountNow();
 			//Transactions
-			buyTransactionsNow = item.getBuyTransactionsCountNow();
-			sellTransactionsNow = item.getSellTransactionsCountNow();
+			buyTransactionsCountNow = item.getBuyTransactionsCountNow();
+			sellTransactionsCountNow = item.getSellTransactionsCountNow();
 			//Contracts
 			buyingContractsCountNow = item.getBuyingContractsCountNow();
 			boughtContractsCountNow = item.getBoughtContractsCountNow();
@@ -1255,7 +1314,18 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 
 		@Override
 		public long getCountNow() {
-			return inventoryCountNow + buyOrdersCountNow + jobsCountNow + sellOrdersCountNow;
+			//return inventoryCountNow + buyOrdersCountNow + jobsCountNow + sellOrdersCountNow;
+			return inventoryCountNow
+					+ buyOrdersCountNow
+					+ sellOrdersCountNow
+					+ jobsCountNow
+					+ buyTransactionsCountNow
+					+ sellTransactionsCountNow
+					+ buyingContractsCountNow 
+					+ boughtContractsCountNow
+					+ sellingContractsCountNow
+					+ soldContractsCountNow
+					;
 		}
 
 		@Override
@@ -1300,12 +1370,12 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 
 		@Override
 		public long getSellTransactionsCountNow() {
-			return sellTransactionsNow;
+			return sellTransactionsCountNow;
 		}
 
 		@Override
 		public long getBuyTransactionsCountNow() {
-			return buyTransactionsNow;
+			return buyTransactionsCountNow;
 		}
 
 		@Override

@@ -121,6 +121,7 @@ public enum Images {
 	INCLUDE_ORDERS_SELECTED ("include_orders_selected.png"),
 	INCLUDE_ORDERS ("include_orders.png"),
 	INCLUDE_PACKAGED ("include_packaged.png"),
+
 	MISC_EVE ("misc_eve.png"),
 	MISC_EVEKIT ("misc_evekit.png"),
 	MISC_EVEKIT_32 ("misc_evekit_32.png"),
@@ -138,6 +139,10 @@ public enum Images {
 	MISC_ASSETS_64 ("misc_assets_64.png"),
 	MISC_DEBUG ("misc_debug.png"),
 	MISC_UPDATE ("misc_update.png"),
+	MISC_RUNS ("misc_runs.png"),
+	MISC_BLUEPRINT ("misc_blueprint.png"),
+	MISC_BPC ("misc_bpc.png"),
+	MISC_BPO ("misc_bpo.png"),
 
 	SETTINGS_TOOLS ("settings_tools.png"),
 	SETTINGS_PRICE_DATA ("settings_price_data.png"),

@@ -38,25 +38,25 @@ import net.nikr.eve.jeveasset.gui.shared.components.JMultiSelectionList;
 import net.nikr.eve.jeveasset.i18n.TabsStockpile;
 
 
-public class StockpileSelectionDialog extends JDialogCentered {
+public class StockpileSelectionDialog<T> extends JDialogCentered {
 
 	private enum StockpileSelection {
 		OK, CANCEL
 	}
 
 	//GUI
-	private final JMultiSelectionList<Stockpile> jList;
+	private final JMultiSelectionList<T> jList;
 	private final JButton jOK;
 
 	//Data
-	private List<Stockpile> stockpiles;
+	private List<T> data;
 
-	public StockpileSelectionDialog(final Program program) {
-		super(program, TabsStockpile.get().selectStockpiles());
+	public StockpileSelectionDialog(final Program program, String title) {
+		super(program, title);
 
 		ListenerClass listener = new ListenerClass();
 
-		jList = new JMultiSelectionList<Stockpile>();
+		jList = new JMultiSelectionList<T>();
 		jList.addListSelectionListener(listener);
 		JScrollPane jListScroll = new JScrollPane(jList);
 
@@ -97,11 +97,11 @@ public class StockpileSelectionDialog extends JDialogCentered {
 		return jOK;
 	}
 
-	public List<Stockpile> show(List<Stockpile> stockpiles) {
-		jList.setModel(new DataListModel<Stockpile>(stockpiles));
-		this.stockpiles = null;
+	public List<T> show(List<T> stockpiles) {
+		jList.setModel(new DataListModel<>(stockpiles));
+		this.data = null;
 		this.setVisible(true);
-		return this.stockpiles;
+		return this.data;
 	}
 
 	@Override
@@ -109,7 +109,7 @@ public class StockpileSelectionDialog extends JDialogCentered {
 
 	@Override
 	protected void save() {
-		stockpiles = new ArrayList<Stockpile>(jList.getSelectedValuesList());
+		data = new ArrayList<>(jList.getSelectedValuesList());
 		this.setVisible(false);
 	}
 

@@ -26,6 +26,7 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.data.settings.Settings;
@@ -34,6 +35,7 @@ import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.JAutoMenu;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
+import net.nikr.eve.jeveasset.i18n.TabsStockpile;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 
 
@@ -104,11 +106,59 @@ public class JMenuStockpile<T> extends JAutoMenu<T> {
 				if (source instanceof JStockpileMenu) {
 					JStockpileMenu jStockpileMenu = (JStockpileMenu) source;
 					Stockpile stockpile = jStockpileMenu.getStockpile();
-					List<StockpileItem> items = new ArrayList<StockpileItem>();
+					boolean blueprint = false;
 					for (int typeID : menuData.getBlueprintTypeIDs()) {
 						Item item = ApiIdConverter.getItem(Math.abs(typeID));
-						StockpileItem stockpileItem = new StockpileItem(stockpile, item, typeID, DEFAULT_ADD_COUNT);
-						items.add(stockpileItem);
+						if (item.isBlueprint()) {
+							blueprint = true;
+							break;
+						}
+					}
+					List<StockpileItem> items = new ArrayList<>();
+					if (blueprint) {
+						String[] options = {TabsStockpile.get().source(), TabsStockpile.get().original(), TabsStockpile.get().copy(), TabsStockpile.get().runs()};
+						Object object = JOptionPane.showInputDialog(program.getMainWindow().getFrame(), TabsStockpile.get().addBlueprintMsg(), TabsStockpile.get().addBlueprintTitle(), JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+						if (object == null) {
+							return;
+						}
+						if (object.equals(TabsStockpile.get().original())) {
+							for (int typeID : menuData.getBlueprintTypeIDs()) {
+								Item item = ApiIdConverter.getItem(Math.abs(typeID));
+								if (item.isBlueprint()) {
+									items.add(new StockpileItem(stockpile, item, Math.abs(item.getTypeID()), DEFAULT_ADD_COUNT, false));
+								} else {
+									items.add(new StockpileItem(stockpile, item, typeID, DEFAULT_ADD_COUNT, false));
+								}
+							}
+						} else if (object.equals(TabsStockpile.get().copy())) {
+							for (int typeID : menuData.getBlueprintTypeIDs()) {
+								Item item = ApiIdConverter.getItem(Math.abs(typeID));
+								if (item.isBlueprint()) {
+									items.add(new StockpileItem(stockpile, item, -Math.abs(item.getTypeID()), DEFAULT_ADD_COUNT, false));
+								} else {
+									items.add(new StockpileItem(stockpile, item, typeID, DEFAULT_ADD_COUNT, false));
+								}
+							}
+						} else if (object.equals(TabsStockpile.get().runs())) {
+							for (int typeID : menuData.getBlueprintTypeIDs()) {
+								Item item = ApiIdConverter.getItem(Math.abs(typeID));
+								if (item.isBlueprint()) {
+									items.add(new StockpileItem(stockpile, item, -Math.abs(item.getTypeID()), DEFAULT_ADD_COUNT, true));
+								} else {
+									items.add(new StockpileItem(stockpile, item, typeID, DEFAULT_ADD_COUNT, false));
+								}
+							}
+						} else { //source
+							for (int typeID : menuData.getBlueprintTypeIDs()) {
+								Item item = ApiIdConverter.getItem(Math.abs(typeID));
+								items.add(new StockpileItem(stockpile, item, typeID, DEFAULT_ADD_COUNT, false));
+							}
+						}
+					} else { //No bluepints
+						for (int typeID : menuData.getBlueprintTypeIDs()) {
+							Item item = ApiIdConverter.getItem(Math.abs(typeID));
+							items.add(new StockpileItem(stockpile, item, typeID, DEFAULT_ADD_COUNT, false));
+						}
 					}
 					stockpile = program.getStockpileTool().addToStockpile(stockpile, items);
 					if (stockpile != null) {
@@ -126,7 +176,7 @@ public class JMenuStockpile<T> extends JAutoMenu<T> {
 
 	public static class JStockpileMenu extends JMenuItem {
 
-		private Stockpile stockpile;
+		private final Stockpile stockpile;
 
 		public JStockpileMenu(final String text) {
 			super(text);
