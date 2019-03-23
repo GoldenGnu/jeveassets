@@ -107,7 +107,7 @@ public class JMenuStockpile<T> extends JAutoMenu<T> {
 					JStockpileMenu jStockpileMenu = (JStockpileMenu) source;
 					Stockpile stockpile = jStockpileMenu.getStockpile();
 					boolean blueprint = false;
-					for (int typeID : menuData.getBlueprintTypeIDs()) {
+					for (int typeID : menuData.getBpcTypeIDs()) {
 						Item item = ApiIdConverter.getItem(Math.abs(typeID));
 						if (item.isBlueprint()) {
 							blueprint = true;
@@ -122,7 +122,7 @@ public class JMenuStockpile<T> extends JAutoMenu<T> {
 							return;
 						}
 						if (object.equals(TabsStockpile.get().original())) {
-							for (int typeID : menuData.getBlueprintTypeIDs()) {
+							for (int typeID : menuData.getBpcTypeIDs()) {
 								Item item = ApiIdConverter.getItem(Math.abs(typeID));
 								if (item.isBlueprint()) {
 									items.add(new StockpileItem(stockpile, item, Math.abs(item.getTypeID()), DEFAULT_ADD_COUNT, false));
@@ -131,7 +131,7 @@ public class JMenuStockpile<T> extends JAutoMenu<T> {
 								}
 							}
 						} else if (object.equals(TabsStockpile.get().copy())) {
-							for (int typeID : menuData.getBlueprintTypeIDs()) {
+							for (int typeID : menuData.getBpcTypeIDs()) {
 								Item item = ApiIdConverter.getItem(Math.abs(typeID));
 								if (item.isBlueprint()) {
 									items.add(new StockpileItem(stockpile, item, -Math.abs(item.getTypeID()), DEFAULT_ADD_COUNT, false));
@@ -140,7 +140,7 @@ public class JMenuStockpile<T> extends JAutoMenu<T> {
 								}
 							}
 						} else if (object.equals(TabsStockpile.get().runs())) {
-							for (int typeID : menuData.getBlueprintTypeIDs()) {
+							for (int typeID : menuData.getBpcTypeIDs()) {
 								Item item = ApiIdConverter.getItem(Math.abs(typeID));
 								if (item.isBlueprint()) {
 									items.add(new StockpileItem(stockpile, item, -Math.abs(item.getTypeID()), DEFAULT_ADD_COUNT, true));
@@ -149,13 +149,13 @@ public class JMenuStockpile<T> extends JAutoMenu<T> {
 								}
 							}
 						} else { //source
-							for (int typeID : menuData.getBlueprintTypeIDs()) {
+							for (int typeID : menuData.getBpcTypeIDs()) {
 								Item item = ApiIdConverter.getItem(Math.abs(typeID));
 								items.add(new StockpileItem(stockpile, item, typeID, DEFAULT_ADD_COUNT, false));
 							}
 						}
 					} else { //No bluepints
-						for (int typeID : menuData.getBlueprintTypeIDs()) {
+						for (int typeID : menuData.getBpcTypeIDs()) {
 							Item item = ApiIdConverter.getItem(Math.abs(typeID));
 							items.add(new StockpileItem(stockpile, item, typeID, DEFAULT_ADD_COUNT, false));
 						}

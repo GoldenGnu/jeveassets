@@ -40,7 +40,8 @@ public class Item implements Comparable<Item>, ItemType {
 	private final boolean marketGroup;
 	private final boolean piMaterial;
 	private final int portion;
-	private final int product;
+	private final int productTypeID;
+	private int blueprintTypeID = 0;
 	private final int productQuantity;
 	private final boolean blueprint;
 	private final List<ReprocessedMaterial> reprocessedMaterials = new ArrayList<ReprocessedMaterial>();
@@ -50,7 +51,7 @@ public class Item implements Comparable<Item>, ItemType {
 		this(typeID, emptyType(typeID), "", "", -1, -1, -1, -1, "", false, false, 0, 0, 1);
 	}
 
-	public Item(final int typeID, final String name, final String group, final String category, final long price, final float volume, final float packagedVolume, final int meta, final String tech, final boolean marketGroup, final boolean piMaterial, final int portion, final int product, final int productQuantity) {
+	public Item(final int typeID, final String name, final String group, final String category, final long price, final float volume, final float packagedVolume, final int meta, final String tech, final boolean marketGroup, final boolean piMaterial, final int portion, final int productTypeID, final int productQuantity) {
 		this.typeID = typeID;
 		this.name = name;
 		this.group = group.intern();
@@ -63,7 +64,7 @@ public class Item implements Comparable<Item>, ItemType {
 		this.marketGroup = marketGroup;
 		this.piMaterial = piMaterial;
 		this.portion = portion;
-		this.product = product;
+		this.productTypeID = productTypeID;
 		this.productQuantity = productQuantity;
 		this.blueprint = (name.toLowerCase().contains("blueprint"));
 	}
@@ -136,8 +137,8 @@ public class Item implements Comparable<Item>, ItemType {
 		return portion;
 	}
 
-	public int getProduct() {
-		return product;
+	public int getProductTypeID() {
+		return productTypeID;
 	}
 
 	public int getProductQuantity() {
@@ -160,6 +161,18 @@ public class Item implements Comparable<Item>, ItemType {
 	@Override
 	public long getItemCount() {
 		return 1; //Just this one item?
+	}
+
+	public boolean isProduct() {
+		return blueprintTypeID > 0;
+	}
+
+	public int getBlueprintTypeID() {
+		return blueprintTypeID;
+	}
+
+	public void setBlueprintID(int blueprintID) {
+		this.blueprintTypeID = blueprintID;
 	}
 
 	public void setPriceReprocessed(double priceReprocessed) {
