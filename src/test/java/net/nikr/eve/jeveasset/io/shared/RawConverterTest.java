@@ -296,7 +296,7 @@ public class RawConverterTest extends TestUtil {
 
 	@Test
 	public void testToJournalRefType_CharacterWalletJournalResponseRefTypeEnum() {
-		assertEquals(118, CharacterWalletJournalResponse.RefTypeEnum.values().length);
+		assertEquals(120, CharacterWalletJournalResponse.RefTypeEnum.values().length);
 		int undefined = 0;
 		for (CharacterWalletJournalResponse.RefTypeEnum refType : CharacterWalletJournalResponse.RefTypeEnum.values()) {
 			RawJournalRefType rawJournalRefType = RawConverter.toJournalRefType(refType);
