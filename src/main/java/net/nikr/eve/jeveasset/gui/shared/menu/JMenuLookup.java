@@ -76,7 +76,7 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 	private final JMenuItem jzKillboardSystem;
 	private final JMenuItem jzKillboardRegion;
 	private final JMenu jMarket;
-	private final JMenuItem jEveMarketdata;
+	//private final JMenuItem jEveMarketdata;
 	private final JMenuItem jEveMarketer;
 	private final JMenuItem jFuzzworkMarket;
 	private final JMenuItem jEvepraisal;
