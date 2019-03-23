@@ -344,7 +344,7 @@ public class StructureUpdateDialog extends JDialogCentered {
 
 		public StructureUpdateTask(List<EsiOwner> owners, List<OwnerType> ownerTypes, Set<MyLocation> locations, boolean tracker) {
 			super(DialoguesUpdate.get().structures());
-			this.owners = owners;
+			this.owners = new ArrayList<>(owners); //Copy, since we do this in the background it may be changed
 			this.ownerTypes = ownerTypes;
 			this.locations = locations;
 			this.tracker = tracker;
