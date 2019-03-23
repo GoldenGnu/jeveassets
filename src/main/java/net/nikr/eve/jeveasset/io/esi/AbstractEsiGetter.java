@@ -226,7 +226,7 @@ public abstract class AbstractEsiGetter extends AbstractGetter<EsiOwner> {
 
 	private synchronized static void setErrorReset(Integer errorReset) {
 		if (errorReset != null) {
-			AbstractEsiGetter.errorReset = new Date(System.currentTimeMillis() + (errorReset * 1000));
+			AbstractEsiGetter.errorReset = new Date(System.currentTimeMillis() + (errorReset * 1000L));
 		}
 	}
 
