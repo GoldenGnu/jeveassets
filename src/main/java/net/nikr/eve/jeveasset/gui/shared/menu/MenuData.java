@@ -48,6 +48,7 @@ public class MenuData<T> {
 	private final Set<Integer> typeIDs = new HashSet<Integer>();
 	private final Set<MyLocation> autopilotStationLocations = new HashSet<MyLocation>();
 	private final Set<MyLocation> systemLocations = new HashSet<MyLocation>();
+	private final Set<MyLocation> regionLocations = new HashSet<MyLocation>();
 	private final Set<MyLocation> editableCitadelLocations = new HashSet<MyLocation>();
 	private final Set<MyLocation> userLocations = new HashSet<MyLocation>();
 	private final Map<Integer, Double> prices = new HashMap<Integer, Double>();
@@ -58,6 +59,8 @@ public class MenuData<T> {
 	private final Set<String> regionNames = new HashSet<String>();
 	private final Set<Integer> marketTypeIDs = new HashSet<Integer>();
 	private final Set<Integer> blueprintTypeIDs = new HashSet<Integer>();
+	private final Set<Integer> inventionTypeIDs = new HashSet<Integer>();
+	private final Set<Integer> bpcTypeIDs = new HashSet<Integer>();
 	private final Set<Long> ownerIDs = new HashSet<Long>();
 	private final Map<Tag, Integer> tagCount = new HashMap<Tag, Integer>();
 	private final List<TagsType> tags = new ArrayList<TagsType>();
@@ -142,7 +145,18 @@ public class MenuData<T> {
 			//TypeID
 			int typeID = item.getTypeID();
 			typeIDs.add(typeID);
-			
+
+			if (item.isBlueprint()) {
+				blueprintTypeIDs.add(item.getTypeID());
+				if (item.getMeta() == 0 && item.getTypeName().endsWith(" I")) {
+					inventionTypeIDs.add(item.getTypeID());
+				}
+			} else if (item.isProduct()) {
+				blueprintTypeIDs.add(item.getBlueprintTypeID());
+				if (item.getMeta() == 0 && item.getTypeName().endsWith(" I")) {
+					inventionTypeIDs.add(item.getBlueprintTypeID());
+				}
+			}
 			//Market TypeID
 			if (item.isMarketGroup()) {
 				marketTypeIDs.add(typeID);
@@ -154,7 +168,7 @@ public class MenuData<T> {
 			} else {
 				blueprintTypeID = typeID;
 			}
-			blueprintTypeIDs.add(blueprintTypeID);
+			bpcTypeIDs.add(blueprintTypeID);
 			//Price TypeID
 			if (price != null) { //Not unique
 				prices.put(blueprintTypeID, price);
@@ -190,17 +204,21 @@ public class MenuData<T> {
 				//Jumps
 				MyLocation system = ApiIdConverter.getLocation(location.getSystemID());
 				if (!system.isEmpty()) {
-					systemLocations.add(system); //Jumps and Autopilot System 
+					systemLocations.add(system); //Jumps + Autopilot + zKillboard System 
 				}
 			}
 			//System
 			if (location.isSystem()) {
 				systemNames.add(location.getSystem()); //Dotlan System
-				systemLocations.add(location); //Jumps and Autopilot System 
+				systemLocations.add(location); //Jumps + Autopilot + zKillboard System 
 			}
 			//Staion, System, or Region
 			if (location.isStation() || location.isSystem() || location.isRegion()) {
 				regionNames.add(location.getRegion()); //Dotlan Region
+				MyLocation region = ApiIdConverter.getLocation(location.getRegionID());
+				if (!region.isEmpty()) {
+					regionLocations.add(region); //zKillboard Region
+				}
 			}
 		}
 		//Tags
@@ -258,6 +276,10 @@ public class MenuData<T> {
 		return regionNames;
 	}
 
+	public Set<MyLocation> getRegionLocations() {
+		return regionLocations;
+	}
+
 	//JMenuJumps and JMenuUI
 	public Set<MyLocation> getSystemLocations() {
 		return systemLocations;
@@ -282,8 +304,16 @@ public class MenuData<T> {
 		return marketTypeIDs;
 	}
 
+	public Set<Integer> getBpcTypeIDs() {
+		return bpcTypeIDs;
+	}
+
 	public Set<Integer> getBlueprintTypeIDs() {
 		return blueprintTypeIDs;
+	}
+
+	public Set<Integer> getInventionTypeIDs() {
+		return inventionTypeIDs;
 	}
 
 	public Set<Long> getOwnerIDs() {

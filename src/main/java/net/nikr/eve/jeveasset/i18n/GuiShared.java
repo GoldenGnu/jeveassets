@@ -34,6 +34,7 @@ public abstract class GuiShared extends Bundle {
 		super(locale);
 	}
 
+	public abstract String adam4eve();
 	public abstract String add();
 	public abstract String addFilter();
 	public abstract String addStockpileItem();
@@ -57,12 +58,11 @@ public abstract class GuiShared extends Bundle {
 	public abstract String errorLoadingProfileMsg();
 	public abstract String errorLoadingProfileTitle();
 	public abstract String eveAddicts();
-	public abstract String eveCentral();
+	public abstract String eveHub();
 	public abstract String eveInfo();
-	public abstract String eveMarketdata();
-	public abstract String eveMarketeer();
+	public abstract String eveMarketData();
+	public abstract String eveMarketHelper();
 	public abstract String eveMarketer();
-	public abstract String eveMarkets();
 	public abstract String eveOnline();
 	public abstract String eveRef();
 	public abstract String evepraisal();
@@ -77,11 +77,14 @@ public abstract class GuiShared extends Bundle {
 	public abstract String itemEdit();
 	public abstract String itemNameTitle();
 	public abstract String itemPriceTitle();
-	public abstract String updateStructures();
 	public abstract String jumps();
 	public abstract String jumpsAddCustom();
 	public abstract String jumpsAddSelected();
 	public abstract String jumpsClear();
+	public abstract String khonSpace();
+	public abstract String khonSpaceInvention();
+	public abstract String khonSpaceManufacturing();
+	public abstract String khonSpaceResearch();
 	public abstract String location();
 	public abstract String locationClear();
 	public abstract String locationClearConfirm(String location);
@@ -174,6 +177,7 @@ public abstract class GuiShared extends Bundle {
 	public abstract String uiStation();
 	public abstract String uiSystem();
 	public abstract String unknownOwner();
+	public abstract String updateStructures();
 	public abstract String updating();
 	public abstract String zKillboard();
 

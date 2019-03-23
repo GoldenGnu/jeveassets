@@ -101,12 +101,12 @@ public class JMenuPrice<T> extends JAutoMenu<T> {
 		@Override
 		public void actionPerformed(final ActionEvent e) {
 			if (MenuPriceAction.EDIT.name().equals(e.getActionCommand())) {
-				if (!menuData.getBlueprintTypeIDs().isEmpty() && !menuData.getPrices().isEmpty() && !menuData.getTypeNames().isEmpty()) {
+				if (!menuData.getBpcTypeIDs().isEmpty() && !menuData.getPrices().isEmpty() && !menuData.getTypeNames().isEmpty()) {
 					program.getUserPriceSettingsPanel().edit(createList());
 				}
 			}
 			if (MenuPriceAction.DELETE.name().equals(e.getActionCommand())) {
-				if (!menuData.getBlueprintTypeIDs().isEmpty() && !menuData.getPrices().isEmpty() && !menuData.getTypeNames().isEmpty()) {
+				if (!menuData.getBpcTypeIDs().isEmpty() && !menuData.getPrices().isEmpty() && !menuData.getTypeNames().isEmpty()) {
 					program.getUserPriceSettingsPanel().delete(createList());
 				}
 			}
