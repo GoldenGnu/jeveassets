@@ -670,7 +670,7 @@
 		<dependency>
 			<groupId>net.troja.eve</groupId>
 			<artifactId>eve-esi</artifactId>
-			<version>3.0.0</version>
+			<version>3.2.0</version>
 		</dependency>
 		<dependency>
 			<groupId>enterprises.orbital.evekit</groupId>
