@@ -118,17 +118,17 @@ public class CitadelGetter extends AbstractXmlWriter {
 			URL url = new URL(hostUrl);
 			HttpURLConnection con = (HttpURLConnection) url.openConnection();
 			con.setRequestProperty("Accept-Encoding", "gzip");
-
 			long contentLength = con.getContentLengthLong();
 			String contentEncoding = con.getContentEncoding();
-			InputStream inputStream = new UpdateTaskInputStream(con.getInputStream(), contentLength, updateTask);
+			in = con.getInputStream();
+			InputStreamReader reader;
 			if ("gzip".equals(contentEncoding)) {
-				in = new GZIPInputStream(inputStream);
+				reader = new InputStreamReader(new UpdateTaskInputStream(new GZIPInputStream(in), contentLength, updateTask));
 			} else {
-				in = inputStream;
+				reader = new InputStreamReader(new UpdateTaskInputStream(in, contentLength, updateTask));
 			}
 			Gson gson = new GsonBuilder().create();
-			Map<Long, Citadel> results = gson.fromJson(new InputStreamReader(in), new TypeToken<Map<Long, Citadel>>() {}.getType());
+			Map<Long, Citadel> results = gson.fromJson(reader, new TypeToken<Map<Long, Citadel>>() {}.getType());
 			if (results == null) { 
 				return false;
 			}
