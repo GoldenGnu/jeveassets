@@ -33,7 +33,6 @@ import java.lang.reflect.Type;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Level;
 import net.nikr.eve.jeveasset.data.settings.AssetAddedData;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import org.slf4j.Logger;

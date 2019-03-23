@@ -37,7 +37,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.tabs.values.AssetValue;
 import net.nikr.eve.jeveasset.gui.tabs.values.Value;

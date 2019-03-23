@@ -23,7 +23,6 @@ package net.nikr.eve.jeveasset.io.evekit;
 import enterprises.orbital.evekit.client.ApiException;
 import enterprises.orbital.evekit.client.ApiResponse;
 import enterprises.orbital.evekit.client.model.Location;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
