@@ -31,6 +31,7 @@ import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
@@ -89,6 +90,9 @@ public abstract class AbstractEsiGetter extends AbstractGetter<EsiOwner> {
 	public static OkHttpClient getHttpClient() {
 		if (OkHttpClient == null || OkHttpClient.interceptors().size() > 100 || OkHttpClient.networkInterceptors().size() > 100) {
 			OkHttpClient = new OkHttpClient();
+			OkHttpClient.setReadTimeout(20, TimeUnit.SECONDS);
+			OkHttpClient.setWriteTimeout(20, TimeUnit.SECONDS);
+			OkHttpClient.setConnectTimeout(20, TimeUnit.SECONDS);
 		}
 		return OkHttpClient;
 	}
@@ -151,13 +155,14 @@ public abstract class AbstractEsiGetter extends AbstractGetter<EsiOwner> {
 			return apiResponse.getData();
 		} catch (ApiException ex) {
 			handleHeaders(ex);
-			logError(updater.getStatus(), ex.getResponseBody(), ex.getMessage());
+			logWarn(ex.getResponseBody(), ex.getMessage());
 			if (ex.getCode() == 401 && ex.getMessage().toLowerCase().contains("error") && ex.getMessage().toLowerCase().contains("authorization not provided")) {
 				if (owner != null) {
 					owner.setInvalid(true);
 				}
 				throw new InvalidAuthException();
-			} else if (ex.getCode() >= 500 && ex.getCode() < 600 //CCP error, Lets try again in a sec
+			} else if ((ex.getCode() >= 500 && ex.getCode() < 600 //CCP error, Lets try again in a sec
+					|| ex.getCode() == 0) //Other error, Lets try again in a sec
 					&& ex.getCode() != 503 //Don't retry when it may be downtime
 					&& (ex.getCode() != 502 || (ex.getResponseBody().toLowerCase().contains("no reply within 10 seconds") || ex.getResponseBody().toLowerCase().startsWith("<html>"))) //Don't retry when it may be downtime, unless it's "no reply within 10 seconds" or html body
 					&& retries < updater.getMaxRetries()) { //Retries

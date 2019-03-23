@@ -217,6 +217,21 @@ public abstract class AbstractGetter<O extends OwnerType> implements Runnable {
 		logError(update, logMsg, taskMsg, null);
 	}
 	protected final void logError(String update, Object logMsg, Object taskMsg, Throwable ex) {
+		String e = getLog(update, logMsg, taskMsg, ex);
+		setError(e);
+		if (ex != null) {
+			LOG.error(e, ex);
+		} else {
+			LOG.error(e);
+		}
+	}
+
+	protected final void logWarn(Object logMsg, Object taskMsg) {
+		String e = getLog(null, logMsg, taskMsg, null);
+		LOG.warn(e);
+	}
+
+	protected final String getLog(String update, Object logMsg, Object taskMsg, Throwable ex) {
 		StringBuilder builder = new StringBuilder();
 		builder.append(apiName);
 		builder.append(" ");
@@ -232,13 +247,7 @@ public abstract class AbstractGetter<O extends OwnerType> implements Runnable {
 			builder.append(" ERROR: ");
 			builder.append(logMsg);
 		}
-		String e = builder.toString();
-		setError(e);
-		if (ex != null) {
-			LOG.error(e, ex);
-		} else {
-			LOG.error(e);
-		}
+		return builder.toString();
 	}
 
 	protected final void logInfo(String update, String msg) {

@@ -120,7 +120,7 @@ public abstract class AbstractEveKitGetter extends AbstractGetter<EveKitOwner> {
 			return apiResponse.getData();
 		} catch (ApiException ex) {
 			setExpires(ex.getResponseHeaders());
-			logError(updater.getStatus(), ex.getResponseBody(), ex.getMessage(), ex);
+			logWarn(ex.getResponseBody(), ex.getMessage());
 			if (retries < DEFAULT_RETRIES) {
 				retries++;
 				return updateApi(updater, retries);
