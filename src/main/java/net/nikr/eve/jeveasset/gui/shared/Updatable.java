@@ -41,37 +41,35 @@ public class Updatable {
 			return true;
 		}
 		for (OwnerType owner : program.getOwnerTypes()) {
-			if (owner.getAccountAPI() == ApiType.EVE_ONLINE) {
+			if (!owner.isShowOwner() || owner.isInvalid() || owner.isExpired() || owner.getAccountAPI() == ApiType.EVE_ONLINE) {
 				continue;
 			}
-			if (owner.isShowOwner()) {
-				if (isUpdatable(owner.getAssetNextUpdate())){
-					return true;
-				}
-				if (isUpdatable(owner.getBalanceNextUpdate())){
-					return true;
-				}
-				if (isUpdatable(owner.getBlueprintsNextUpdate())){
-					return true;
-				}
-				if (isUpdatable(owner.getBookmarksNextUpdate())){
-					return true;
-				}
-				if (isUpdatable(owner.getContractsNextUpdate())){
-					return true;
-				}
-				if (isUpdatable(owner.getIndustryJobsNextUpdate())){
-					return true;
-				}
-				if (isUpdatable(owner.getJournalNextUpdate())){
-					return true;
-				}
-				if (isUpdatable(owner.getMarketOrdersNextUpdate())){
-					return true;
-				}
-				if (isUpdatable(owner.getTransactionsNextUpdate())){
-					return true;
-				}
+			if (owner.isAssetList() && isUpdatable(owner.getAssetNextUpdate())){
+				return true;
+			}
+			if (owner.isAccountBalance() && isUpdatable(owner.getBalanceNextUpdate())){
+				return true;
+			}
+			if (owner.isIndustryJobs() && isUpdatable(owner.getIndustryJobsNextUpdate())){
+				return true;
+			}
+			if (owner.isMarketOrders() && isUpdatable(owner.getMarketOrdersNextUpdate())){
+				return true;
+			}
+			if (owner.isJournal() && isUpdatable(owner.getJournalNextUpdate())){
+				return true;
+			}
+			if (owner.isTransactions() && isUpdatable(owner.getTransactionsNextUpdate())){
+				return true;
+			}
+			if (owner.isContracts() && isUpdatable(owner.getContractsNextUpdate())){
+				return true;
+			}
+			if (owner.isBlueprints() && isUpdatable(owner.getBlueprintsNextUpdate())){
+				return true;
+			}
+			if (owner.isBookmarks() && isUpdatable(owner.getBookmarksNextUpdate())){
+				return true;
 			}
 		}
 		return false;

@@ -392,46 +392,44 @@ public class UpdateDialog extends JDialogCentered {
 
 		Date priceData = program.getPriceDataGetter().getNextUpdate();
 		for (OwnerType owner : program.getOwnerTypes()) {
-			if (owner.isShowOwner() && !owner.isInvalid() && !owner.isExpired()) {
-				if (owner.getAccountAPI() == ApiType.EVE_ONLINE) {
-					continue;
-				}
-				if (owner.isIndustryJobs()) {
-					industryJobsFirst = updateFirst(industryJobsFirst, owner.getIndustryJobsNextUpdate());
-					industryJobsLast = updateLast(industryJobsLast, owner.getIndustryJobsNextUpdate());
-				}
-				if (owner.isMarketOrders()) {
-					marketOrdersFirst = updateFirst(marketOrdersFirst, owner.getMarketOrdersNextUpdate());
-					marketOrdersLast = updateLast(marketOrdersLast, owner.getMarketOrdersNextUpdate());
-				}
-				if (owner.isJournal()) {
-					journalFirst = updateFirst(journalFirst, owner.getJournalNextUpdate());
-					journalLast = updateLast(journalLast, owner.getJournalNextUpdate());
-				}
-				if (owner.isTransactions()) {
-					transactionsFirst = updateFirst(transactionsFirst, owner.getTransactionsNextUpdate());
-					transactionsLast = updateLast(transactionsLast, owner.getTransactionsNextUpdate());
-				}
-				if (owner.isContracts()) {
-					contractsFirst = updateFirst(contractsFirst, owner.getContractsNextUpdate());
-					contractsLast = updateLast(contractsLast, owner.getContractsNextUpdate());
-				}
-				if (owner.isAssetList()) {
-					assetsFirst = updateFirst(assetsFirst, owner.getAssetNextUpdate());
-					assetsLast = updateLast(assetsLast, owner.getAssetNextUpdate());
-				}
-				if (owner.isBlueprints()) {
-					blueprintsFirst = updateFirst(blueprintsFirst, owner.getBlueprintsNextUpdate());
-					blueprintsLast = updateLast(blueprintsLast, owner.getBlueprintsNextUpdate());
-				}
-				if (owner.isBookmarks()) {
-					bookmarksFirst = updateFirst(bookmarksFirst, owner.getBookmarksNextUpdate());
-					bookmarksLast = updateLast(bookmarksLast, owner.getBookmarksNextUpdate());
-				}
-				if (owner.isAccountBalance()) {
-					accountBalanceFirst = updateFirst(accountBalanceFirst, owner.getBalanceNextUpdate());
-					accountBalanceLast = updateLast(accountBalanceLast, owner.getBalanceNextUpdate());
-				}
+			if (!owner.isShowOwner() || owner.isInvalid() || owner.isExpired() || owner.getAccountAPI() == ApiType.EVE_ONLINE) {
+				continue;
+			}
+			if (owner.isIndustryJobs()) {
+				industryJobsFirst = updateFirst(industryJobsFirst, owner.getIndustryJobsNextUpdate());
+				industryJobsLast = updateLast(industryJobsLast, owner.getIndustryJobsNextUpdate());
+			}
+			if (owner.isMarketOrders()) {
+				marketOrdersFirst = updateFirst(marketOrdersFirst, owner.getMarketOrdersNextUpdate());
+				marketOrdersLast = updateLast(marketOrdersLast, owner.getMarketOrdersNextUpdate());
+			}
+			if (owner.isJournal()) {
+				journalFirst = updateFirst(journalFirst, owner.getJournalNextUpdate());
+				journalLast = updateLast(journalLast, owner.getJournalNextUpdate());
+			}
+			if (owner.isTransactions()) {
+				transactionsFirst = updateFirst(transactionsFirst, owner.getTransactionsNextUpdate());
+				transactionsLast = updateLast(transactionsLast, owner.getTransactionsNextUpdate());
+			}
+			if (owner.isContracts()) {
+				contractsFirst = updateFirst(contractsFirst, owner.getContractsNextUpdate());
+				contractsLast = updateLast(contractsLast, owner.getContractsNextUpdate());
+			}
+			if (owner.isAssetList()) {
+				assetsFirst = updateFirst(assetsFirst, owner.getAssetNextUpdate());
+				assetsLast = updateLast(assetsLast, owner.getAssetNextUpdate());
+			}
+			if (owner.isBlueprints()) {
+				blueprintsFirst = updateFirst(blueprintsFirst, owner.getBlueprintsNextUpdate());
+				blueprintsLast = updateLast(blueprintsLast, owner.getBlueprintsNextUpdate());
+			}
+			if (owner.isAccountBalance()) {
+				accountBalanceFirst = updateFirst(accountBalanceFirst, owner.getBalanceNextUpdate());
+				accountBalanceLast = updateLast(accountBalanceLast, owner.getBalanceNextUpdate());
+			}
+			if (owner.isBookmarks()) {
+				bookmarksFirst = updateFirst(bookmarksFirst, owner.getBookmarksNextUpdate());
+				bookmarksLast = updateLast(bookmarksLast, owner.getBookmarksNextUpdate());
 			}
 		}
 		if (program.getOwnerTypes().isEmpty()) {
