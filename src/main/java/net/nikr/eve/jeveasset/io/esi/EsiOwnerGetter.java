@@ -27,6 +27,7 @@ import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import static net.nikr.eve.jeveasset.io.esi.AbstractEsiGetter.DATASOURCE;
 import net.nikr.eve.jeveasset.io.shared.AccountAdder;
+import net.nikr.eve.jeveasset.io.shared.RawConverter;
 import net.troja.eve.esi.ApiException;
 import net.troja.eve.esi.ApiResponse;
 import net.troja.eve.esi.model.CharacterInfo;
@@ -61,10 +62,20 @@ public class EsiOwnerGetter extends AbstractEsiGetter implements AccountAdder{
 		Set<RolesEnum> roles = EnumSet.noneOf(RolesEnum.class);
 		Integer characterID = characterInfo.getCharacterID();
 		//CharacterID to CorporationID
-		CharacterResponse character = getCharacterApiOpen().getCharactersCharacterId(characterID, DATASOURCE, null);
+		CharacterResponse character = update(DEFAULT_RETRIES, new EsiHandler<CharacterResponse>() {
+			@Override
+			public ApiResponse<CharacterResponse> get() throws ApiException {
+				return getCharacterApiOpen().getCharactersCharacterIdWithHttpInfo(characterID, DATASOURCE, null);
+			}
+		});
 		Integer corporationID = character.getCorporationId();
 		//CorporationID to CorporationName
-		CorporationResponse corporation = getCorporationApiOpen().getCorporationsCorporationId(corporationID, DATASOURCE, null);
+		CorporationResponse corporation = update(DEFAULT_RETRIES, new EsiHandler<CorporationResponse>() {
+			@Override
+			public ApiResponse<CorporationResponse> get() throws ApiException {
+				return getCorporationApiOpen().getCorporationsCorporationIdWithHttpInfo(corporationID, DATASOURCE, null);
+			}
+		});
 		String corporationName = corporation.getName();
 		boolean isCorporation = EsiScopes.CORPORATION_ROLES.isInScope(characterInfo.getScopes());
 		if (isCorporation) { //Corporation
@@ -92,6 +103,7 @@ public class EsiOwnerGetter extends AbstractEsiGetter implements AccountAdder{
 			owner.setOwnerID(characterInfo.getCharacterID());
 			owner.setOwnerName(characterInfo.getCharacterName());
 		}
+		owner.setAccountNextUpdate(RawConverter.toDate(characterInfo.getExpiresOn()));
 		if (isPrivilegesLimited()) {
 			addError(null, "LIMITED ACCOUNT", "Limited account data access\r\n(Fix: Options > Accounts... > Edit)");
 			setError(null);
@@ -100,7 +112,7 @@ public class EsiOwnerGetter extends AbstractEsiGetter implements AccountAdder{
 
 	@Override
 	protected void setNextUpdate(Date date) {
-		owner.setAccountNextUpdate(date);
+		//Do nothing
 	}
 
 	@Override
