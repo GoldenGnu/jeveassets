@@ -31,6 +31,7 @@ Retired Developers:
   Jan
   Ima Sohmbadi*
   Saulvin
+  AnrDaemon
 
 Retired Testers:
   Varo Jan*
@@ -266,17 +267,6 @@ Link:
 
 License:
   GNU Lesser General Public Licence (http://www.gnu.org/licenses/lgpl.html)
-
-________________________________________________________________________________
-_JACKSON________________________________________________________________________
-
-jEveAssets use Jackson to parse json into java objects
-
-Link:
-  https://github.com/FasterXML/jackson-databind/
-
-License:
-  Apache License 2.0 (http://www.apache.org/licenses/LICENSE-2.0)
 
 ________________________________________________________________________________
 _COPYRIGHT______________________________________________________________________
