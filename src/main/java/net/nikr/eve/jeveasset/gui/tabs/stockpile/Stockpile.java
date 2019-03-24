@@ -447,7 +447,6 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 		private boolean runs;
 
 		//Updated values
-		private boolean marketGroup;
 		private double price = 0.0;
 		private double volume = 0.0f;
 
@@ -513,7 +512,6 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 			soldContractsCountNow = 0;
 			price = 0.0;
 			volume = 0.0f;
-			marketGroup = false;
 		}
 
 		public void updateValues(final double updatePrice, final float updateVolume) {
@@ -1084,12 +1082,12 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 			return getCountNeeded() * getVolume();
 		}
 
-		public boolean isMarketGroup() {
-			return marketGroup;
-		}
-
 		public long getID() {
 			return id;
+		}
+
+		public Integer getMeta() {
+			return item.getMeta();
 		}
 
 		public static long getNewID() {
@@ -1408,13 +1406,13 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 		}
 
 		@Override
-		public boolean isMarketGroup() {
-			return false;
+		public double getPercentNeeded() {
+			return getStockpile().getPercentFull();
 		}
 
 		@Override
-		public double getPercentNeeded() {
-			return getStockpile().getPercentFull();
+		public Integer getMeta() {
+			return null;
 		}
 	}
 
