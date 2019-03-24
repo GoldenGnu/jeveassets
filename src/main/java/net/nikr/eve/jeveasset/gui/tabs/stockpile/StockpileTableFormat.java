@@ -61,6 +61,16 @@ public enum StockpileTableFormat implements EnumTableColumn<StockpileItem> {
 			return from.getItem().getGroup();
 		}
 	},
+	META(Integer.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsStockpile.get().columnMeta();
+		}
+		@Override
+		public Object getColumnValue(final StockpileItem from) {
+			return from.getMeta();
+		}
+	},
 	COUNT_MINIMUM(Double.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
