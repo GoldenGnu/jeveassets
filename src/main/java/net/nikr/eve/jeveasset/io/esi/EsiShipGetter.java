@@ -44,7 +44,7 @@ public class EsiShipGetter extends AbstractEsiGetter {
 	@Override
 	protected void update() throws ApiException {
 		if (owner.isCorporation()) {
-			return; //Character Ednpoint
+			return; //Character Endpoint
 		}
 		//Get Ship
 		CharacterShipResponse shipType = update(DEFAULT_RETRIES, new EsiHandler<CharacterShipResponse>() {
@@ -63,8 +63,12 @@ public class EsiShipGetter extends AbstractEsiGetter {
 		//Create assets
 		MyAsset activeShip = EsiConverter.toAssetsShip(shipType, shipLocation, owner);
 		//Search for active ship
+		List<MyAsset> assets;
+		synchronized (owner) {
+			assets = new ArrayList<>(owner.getAssets());
+		}
 		boolean activeShipInAssets = false;
-		for (MyAsset asset : owner.getAssets()) {
+		for (MyAsset asset : assets) {
 			if (asset.getItemID().equals(activeShip.getItemID())) {
 				activeShipInAssets = true;
 				break;
@@ -72,8 +76,8 @@ public class EsiShipGetter extends AbstractEsiGetter {
 		}
 		//Update Assets (if active ship is not found)
 		if (!activeShipInAssets) {
-			List<MyAsset> activeShipChildren = new ArrayList<MyAsset>();
-			for (MyAsset asset : owner.getAssets()) { //Root assets only
+			List<MyAsset> activeShipChildren = new ArrayList<>();
+			for (MyAsset asset : assets) { //Root assets only
 				if (asset.getParents().isEmpty() && activeShip.getItemID().equals(asset.getLocationID())) { //Found Child
 					//Add asset to active ship
 					activeShip.addAsset(asset);
@@ -88,9 +92,9 @@ public class EsiShipGetter extends AbstractEsiGetter {
 
 			}
 			//Add active ship to root
-			owner.getAssets().add(activeShip);
+			owner.addAsset(activeShip);
 			//Remove active ship children from root
-			owner.getAssets().removeAll(activeShipChildren);
+			owner.removeAssets(activeShipChildren);
 			//Save ship name
 			try {
 				Settings.lock("Active Ship Name");
@@ -102,7 +106,7 @@ public class EsiShipGetter extends AbstractEsiGetter {
 	}
 
 	@Override
-	protected boolean inScope() {
+	protected boolean haveAccess() {
 		if (owner.isCorporation()) {
 			return true; //Overwrite the default, so, we don't get errors
 		} else {

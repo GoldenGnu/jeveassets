@@ -30,6 +30,7 @@ import net.nikr.eve.jeveasset.data.api.accounts.EveKitAccessMask;
 import net.nikr.eve.jeveasset.data.api.accounts.EveKitOwner;
 import net.nikr.eve.jeveasset.data.api.my.MyAsset;
 import net.nikr.eve.jeveasset.data.settings.Citadel;
+import net.nikr.eve.jeveasset.data.settings.Citadel.CitadelSource;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import net.nikr.eve.jeveasset.io.evekit.AbstractEveKitGetter.EveKitPagesHandler;
@@ -52,8 +53,8 @@ public class EveKitLocationsGetter extends AbstractEveKitGetter implements EveKi
 			return;
 		}
 		List<Location> data = updatePages(this);
-		if (data == null) {
-			return;
+ 		if (data == null) {
+ 			return;
 		}
 		try {
 			Settings.lock("Ship/Container Names");
@@ -64,7 +65,7 @@ public class EveKitLocationsGetter extends AbstractEveKitGetter implements EveKi
 					Settings.get().getEveNames().put(itemID, eveName);
 					MyAsset asset = ids.get(itemID);
 					if (asset.getItem().getCategory().equals("Structure")) {
-						CitadelGetter.set(new Citadel(asset.getItemID(), eveName, ApiIdConverter.getLocation(asset.getLocationID())));
+						CitadelGetter.set(new Citadel(asset.getItemID(), eveName, ApiIdConverter.getLocation(asset.getLocationID()), CitadelSource.EVEKIT_LOCATIONS));
 					}
 				} else {
 					Settings.get().getEveNames().remove(itemID);
@@ -79,7 +80,7 @@ public class EveKitLocationsGetter extends AbstractEveKitGetter implements EveKi
 	public ApiResponse<List<Location>> get(String at, Long contid, Integer maxResults) throws ApiException {
 		return getCommonApi().getLocationsWithHttpInfo(owner.getAccessKey(), owner.getAccessCred(), at, contid, maxResults, false,
 				valuesFilter(ids.keySet()), null, null, null, null);
-	}
+ 	}
 
 	@Override
 	public Long getLifeStart(Location obj) {
@@ -87,8 +88,8 @@ public class EveKitLocationsGetter extends AbstractEveKitGetter implements EveKi
 	}
 
 	@Override
-	protected long getAccessMask() {
-		return EveKitAccessMask.LOCATIONS.getAccessMask();
+	protected boolean haveAccess() {
+		return EveKitAccessMask.LOCATIONS.isInMask(owner.getAccessMask());
 	}
 
 	@Override

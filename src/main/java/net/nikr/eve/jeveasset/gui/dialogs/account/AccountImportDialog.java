@@ -1306,11 +1306,11 @@ public class AccountImportDialog extends JDialogCentered {
 				return null;
 			}
 			load();
-			if (getAccountAdder().hasError() || getAccountAdder().isInvalidPrivileges()) { //Failed to add new account
+			if (getAccountAdder().hasError() || getAccountAdder().isPrivilegesInvalid()) { //Failed to add new account
 				String s = getAccountAdder().getError();
 				if (getAccountAdder().isInvalid()) { //invalid account
 					result = Result.FAIL_INVALID;
-				} else if (getAccountAdder().isInvalidPrivileges()) { // Not enough privileges
+				} else if (getAccountAdder().isPrivilegesInvalid()) { // Not enough privileges
 					result = Result.FAIL_NOT_ENOUGH_PRIVILEGES;
 				} else if (getAccountAdder().isWrongEntry()) { // Editing account to a different character/corporation 
 					result = Result.FAIL_WRONG_ENTRY;
@@ -1319,7 +1319,7 @@ public class AccountImportDialog extends JDialogCentered {
 					result = Result.FAIL_API_FAIL;
 				}
 			} else { //Successfully added new account
-				if (getAccountAdder().isLimited()) {
+				if (getAccountAdder().isPrivilegesLimited()) {
 					result = Result.OK_LIMITED_ACCESS;
 				} else {
 					result = Result.OK_ACCOUNT_VALID;

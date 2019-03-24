@@ -37,8 +37,7 @@ public class JMenuRouting<T> extends MenuManager.JAutoMenu<T> {
 		SYSTEM,
 		STATION
 	}
-	
-	private MenuData<T> menuData;
+
 	private final JMenuItem jSystem;
 	private final JMenuItem jStation;
 
@@ -62,8 +61,7 @@ public class JMenuRouting<T> extends MenuManager.JAutoMenu<T> {
 	}
 
 	@Override
-	public void setMenuData(MenuData<T> menuData) {
-		this.menuData = menuData;
+	public void updateMenuData() {
 		jStation.setEnabled(!menuData.getAutopilotStationLocations().isEmpty() && menuData.getContracts().size() <= 1);
 		jSystem.setEnabled(!menuData.getSystemLocations().isEmpty() && menuData.getContracts().size() <= 1);
 	}

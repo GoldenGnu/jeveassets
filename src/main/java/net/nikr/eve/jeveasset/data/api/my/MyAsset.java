@@ -250,6 +250,11 @@ public class MyAsset extends RawAsset implements Comparable<MyAsset>, InfoItem, 
 	}
 
 	@Override
+	public long getItemCount() {
+		return getCount();
+	}
+
+	@Override
 	public MyLocation getLocation() {
 		return location;
 	}

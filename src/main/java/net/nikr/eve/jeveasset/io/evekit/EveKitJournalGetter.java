@@ -65,8 +65,8 @@ public class EveKitJournalGetter extends AbstractEveKitGetter implements EveKitP
 	}
 
 	@Override
-	protected long getAccessMask() {
-		return EveKitAccessMask.JOURNAL.getAccessMask();
+	protected boolean haveAccess() {
+		return EveKitAccessMask.JOURNAL.isInMask(owner.getAccessMask());
 	}
 
 	@Override

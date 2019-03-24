@@ -31,11 +31,13 @@ public enum EsiScopes {
 	CHARACTER_INDUSTRY_JOBS(SsoScopes.ESI_INDUSTRY_READ_CHARACTER_JOBS_V1, DialoguesAccount.get().scopeIndustryJobs(), ScopeType.CHARACTER),
 	CHARACTER_MARKET_ORDERS(SsoScopes.ESI_MARKETS_READ_CHARACTER_ORDERS_V1, DialoguesAccount.get().scopeMarketOrders(), ScopeType.CHARACTER),
 	CHARACTER_BLUEPRINTS(SsoScopes.ESI_CHARACTERS_READ_BLUEPRINTS_V1, DialoguesAccount.get().scopeBlueprints(), ScopeType.CHARACTER),
+	CHARACTER_BOOKMARKS(SsoScopes.ESI_BOOKMARKS_READ_CHARACTER_BOOKMARKS_V1, DialoguesAccount.get().scopeBookmarks(), ScopeType.CHARACTER),
 	CHARACTER_CONTRACTS(SsoScopes.ESI_CONTRACTS_READ_CHARACTER_CONTRACTS_V1, DialoguesAccount.get().scopeContracts(), ScopeType.CHARACTER),
 	CHARACTER_STRUCTURES(SsoScopes.ESI_UNIVERSE_READ_STRUCTURES_V1, DialoguesAccount.get().scopeStructures(), ScopeType.CHARACTER),
 	CHARACTER_SHIP_TYPE(SsoScopes.ESI_LOCATION_READ_SHIP_TYPE_V1, DialoguesAccount.get().scopeShipType(), ScopeType.CHARACTER),
 	CHARACTER_SHIP_LOCATION(SsoScopes.ESI_LOCATION_READ_LOCATION_V1, DialoguesAccount.get().scopeShipLocation(), ScopeType.CHARACTER),
 	CHARACTER_OPEN_WINDOWS(SsoScopes.ESI_UI_OPEN_WINDOW_V1, DialoguesAccount.get().scopeOpenWindows(), ScopeType.CHARACTER),
+	CHARACTER_PLANETARY_INTERACTION(SsoScopes.ESI_PLANETS_MANAGE_PLANETS_V1, DialoguesAccount.get().scopePlanetaryInteraction(), ScopeType.CHARACTER),
 	CHARACTER_AUTOPILOT(SsoScopes.ESI_UI_WRITE_WAYPOINT_V1, DialoguesAccount.get().scopeAutopilot(), ScopeType.CHARACTER),
 	CORPORATION_ROLES(SsoScopes.ESI_CHARACTERS_READ_CORPORATION_ROLES_V1, DialoguesAccount.get().scopeRoles(), ScopeType.CORPORATION, true),
 	CORPORATION_ASSETS(SsoScopes.ESI_ASSETS_READ_CORPORATION_ASSETS_V1, DialoguesAccount.get().scopeAssets(), ScopeType.CORPORATION),
@@ -43,6 +45,7 @@ public enum EsiScopes {
 	CORPORATION_INDUSTRY_JOBS(SsoScopes.ESI_INDUSTRY_READ_CORPORATION_JOBS_V1, DialoguesAccount.get().scopeIndustryJobs(), ScopeType.CORPORATION),
 	CORPORATION_MARKET_ORDERS(SsoScopes.ESI_MARKETS_READ_CORPORATION_ORDERS_V1, DialoguesAccount.get().scopeMarketOrders(), ScopeType.CORPORATION),
 	CORPORATION_BLUEPRINTS(SsoScopes.ESI_CORPORATIONS_READ_BLUEPRINTS_V1, DialoguesAccount.get().scopeBlueprints(), ScopeType.CORPORATION),
+	CORPORATION_BOOKMARKS(SsoScopes.ESI_BOOKMARKS_READ_CORPORATION_BOOKMARKS_V1, DialoguesAccount.get().scopeBookmarks(), ScopeType.CORPORATION),
 	CORPORATION_CONTRACTS(SsoScopes.ESI_CONTRACTS_READ_CORPORATION_CONTRACTS_V1, DialoguesAccount.get().scopeContracts(), ScopeType.CORPORATION),
 	CORPORATION_DIVISIONS(SsoScopes.ESI_CORPORATIONS_READ_DIVISIONS_V1, DialoguesAccount.get().scopeDivisions(), ScopeType.CORPORATION),
 	NAMES(), //Public
@@ -106,6 +109,40 @@ public enum EsiScopes {
 
 	public boolean isForced() {
 		return forced;
+	}
+
+	public static boolean isPrivilegesLimited(boolean corp, Set<String> scopes) {
+		boolean found = false;
+		boolean missing = false;
+		for (EsiScopes scope : EsiScopes.values()) {
+			if (!corp && !scope.isCharacterScope()) {
+				continue;
+			}
+			if (corp && !scope.isCorporationScope()) {
+				continue;
+			}
+			if (scope.isInScope(scopes)) {
+				found = true;
+			} else {
+				missing = true;
+			}
+		}
+		return missing && found;
+	}
+
+	public static boolean isPrivilegesInvalid(boolean corp, Set<String> scopes) {
+		for (EsiScopes scope : EsiScopes.values()) {
+			if (!corp && !scope.isCharacterScope()) {
+				continue;
+			}
+			if (corp && !scope.isCorporationScope()) {
+				continue;
+			}
+			if (scope.isInScope(scopes)) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	@Override

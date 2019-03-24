@@ -368,6 +368,7 @@ public class SettingsWriter extends AbstractXmlWriter {
 					}
 					itemNode.setAttributeNS(null, "typeid", String.valueOf(item.getItemTypeID()));
 					itemNode.setAttributeNS(null, "minimum", String.valueOf(item.getCountMinimum()));
+					itemNode.setAttributeNS(null, "runs", String.valueOf(item.isRuns()));
 					strockpileNode.appendChild(itemNode);
 				}
 			}

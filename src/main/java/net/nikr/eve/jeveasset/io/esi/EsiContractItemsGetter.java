@@ -153,7 +153,7 @@ public class EsiContractItemsGetter extends AbstractEsiGetter {
 	}
 
 	@Override
-	protected boolean inScope() {
+	protected boolean haveAccess() {
 		return owner.isContracts();
 	}
 

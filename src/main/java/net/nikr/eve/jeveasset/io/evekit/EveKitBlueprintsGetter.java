@@ -80,8 +80,8 @@ public class EveKitBlueprintsGetter extends AbstractEveKitGetter implements EveK
 	}
 
 	@Override
-	protected long getAccessMask() {
-		return EveKitAccessMask.BLUEPRINTS.getAccessMask();
+	protected boolean haveAccess() {
+		return EveKitAccessMask.BLUEPRINTS.isInMask(owner.getAccessMask());
 	}
 
 	@Override

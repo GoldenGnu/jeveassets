@@ -130,11 +130,6 @@ public abstract class AbstractEveKitGetter extends AbstractGetter<EveKitOwner> {
 		}
 	}
 
-	@Override
-	protected boolean invalidAccessPrivileges() {
-		return (owner.getAccessMask() & getAccessMask()) != getAccessMask();
-	}
-
 	public final boolean isInvalid() {
 		return invalid;
 	}
@@ -213,7 +208,6 @@ public abstract class AbstractEveKitGetter extends AbstractGetter<EveKitOwner> {
 	}
 
 	protected abstract void update(Long at, boolean first) throws ApiException;
-	protected abstract long getAccessMask();
 
 	protected <K> List<K> updatePages(EveKitPagesHandler<K> handler) throws ApiException {
 		if (first) {

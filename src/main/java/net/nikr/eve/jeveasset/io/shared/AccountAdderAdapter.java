@@ -29,12 +29,12 @@ public class AccountAdderAdapter implements AccountAdder {
 	}
 
 	@Override
-	public boolean isLimited() {
+	public boolean isPrivilegesLimited() {
 		return false;
 	}
 
 	@Override
-	public boolean isInvalidPrivileges() {
+	public boolean isPrivilegesInvalid() {
 		return false;
 	}
 

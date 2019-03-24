@@ -51,7 +51,7 @@ public class EsiDivisionsGetter extends AbstractEsiGetter {
 	}
 
 	@Override
-	protected boolean inScope() {
+	protected boolean haveAccess() {
 		if (owner.isCorporation()) {
 			return owner.isDivisions();
 		} else {

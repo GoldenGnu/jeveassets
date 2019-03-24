@@ -37,6 +37,7 @@ import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
 import net.nikr.eve.jeveasset.data.sde.StaticData;
 import net.nikr.eve.jeveasset.data.settings.Citadel;
+import net.nikr.eve.jeveasset.data.settings.Citadel.CitadelSource;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.JLabelMultiline;
 import net.nikr.eve.jeveasset.gui.shared.components.ListComboBoxModel;
@@ -198,7 +199,7 @@ public class UserLocationSettingsPanel extends JSettingsPanel {
 		if (system == null) { //Cancel
 			return null;
 		}
-		return new Citadel(renameLocation.getLocationID(), locationName, system.getSystemID(), system.getSystem(), system.getRegionID(), system.getRegion(), true, true, false);
+		return new Citadel(renameLocation.getLocationID(), locationName, system.getSystemID(), system.getSystem(), system.getRegionID(), system.getRegion(), true, true, CitadelSource.USER);
 	}
 
 	private String getLocationName(String text) {

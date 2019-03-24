@@ -284,6 +284,7 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 		Date contractsNextUpdate = AttributeGetters.getDateNotNull(node, "contractsnextupdate");
 		Date locationsNextUpdate = AttributeGetters.getDateNotNull(node, "locationsnextupdate");
 		Date blueprintsNextUpdate = AttributeGetters.getDateNotNull(node, "blueprintsnextupdate");
+		Date bookmarksNextUpdate = AttributeGetters.getDateNotNull(node, "bookmarksnextupdate");
 		owner.setOwnerName(ownerName);
 		owner.setCorporationName(corporationName);
 		owner.setOwnerID(ownerID);
@@ -299,6 +300,7 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 		owner.setContractsNextUpdate(contractsNextUpdate);
 		owner.setLocationsNextUpdate(locationsNextUpdate);
 		owner.setBlueprintsNextUpdate(blueprintsNextUpdate);
+		owner.setBookmarksNextUpdate(bookmarksNextUpdate);
 
 		NodeList assetNodes = node.getElementsByTagName("assets");
 		if (assetNodes.getLength() == 1) {

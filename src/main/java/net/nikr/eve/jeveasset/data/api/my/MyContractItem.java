@@ -130,6 +130,11 @@ public class MyContractItem extends RawContractItem implements Comparable<MyCont
 	}
 
 	@Override
+	public long getItemCount() {
+		return getQuantity();
+	}
+
+	@Override
 	public String getCopyString() {
 		StringBuilder builder = new StringBuilder();
 		builder.append(getContract().getTitle());

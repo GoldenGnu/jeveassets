@@ -66,8 +66,8 @@ public class EveKitTransactionsGetter extends AbstractEveKitGetter implements Ev
 	}
 
 	@Override
-	protected long getAccessMask() {
-		return EveKitAccessMask.TRANSACTIONS.getAccessMask();
+	protected boolean haveAccess() {
+		return EveKitAccessMask.TRANSACTIONS.isInMask(owner.getAccessMask());
 	}
 
 	@Override

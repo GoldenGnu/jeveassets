@@ -194,6 +194,11 @@ public class Loadout implements Comparable<Loadout>, LocationType, ItemType, Pri
 	}
 
 	@Override
+	public long getItemCount() {
+		return getCount();
+	}
+
+	@Override
 	public MyLocation getLocation() {
 		return location;
 	}

@@ -46,8 +46,6 @@ public class JMenuAssetFilter<T> extends JAutoMenu<T> {
 		ITEM_TYPE_FILTER
 	}
 
-	private MenuData<T> menuData;
-
 	private final JMenuItem jTypeID;
 	private final JMenuItem jStation;
 	private final JMenuItem jSystem;
@@ -92,8 +90,7 @@ public class JMenuAssetFilter<T> extends JAutoMenu<T> {
 	}
 
 	@Override
-	public void setMenuData(MenuData<T> menuData) {
-		this.menuData = menuData;
+	public void updateMenuData() {
 		jTypeID.setEnabled(!menuData.getTypeIDs().isEmpty());
 		jStation.setEnabled(!menuData.getStationAndCitadelNames().isEmpty());
 		jSystem.setEnabled(!menuData.getSystemNames().isEmpty());

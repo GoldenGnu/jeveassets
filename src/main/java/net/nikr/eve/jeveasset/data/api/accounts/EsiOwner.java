@@ -33,6 +33,7 @@ import net.nikr.eve.jeveasset.io.esi.EsiScopes;
 import net.troja.eve.esi.ApiClient;
 import net.troja.eve.esi.ApiClientBuilder;
 import net.troja.eve.esi.api.AssetsApi;
+import net.troja.eve.esi.api.BookmarksApi;
 import net.troja.eve.esi.api.CharacterApi;
 import net.troja.eve.esi.api.ContractsApi;
 import net.troja.eve.esi.api.CorporationApi;
@@ -40,6 +41,7 @@ import net.troja.eve.esi.api.IndustryApi;
 import net.troja.eve.esi.api.LocationApi;
 import net.troja.eve.esi.api.MarketApi;
 import net.troja.eve.esi.api.MetaApi;
+import net.troja.eve.esi.api.PlanetaryInteractionApi;
 import net.troja.eve.esi.api.UniverseApi;
 import net.troja.eve.esi.api.UserInterfaceApi;
 import net.troja.eve.esi.api.WalletApi;
@@ -60,6 +62,8 @@ public class EsiOwner extends AbstractOwner implements OwnerType {
 	private final ContractsApi contractsApi = new ContractsApi(apiClient);
 	private final CorporationApi corporationApi = new CorporationApi(apiClient);
 	private final LocationApi locationApi = new LocationApi(apiClient);
+	private final BookmarksApi bookmarksApi = new BookmarksApi(apiClient);
+	private final PlanetaryInteractionApi planetaryInteractionApi = new PlanetaryInteractionApi(apiClient);
 	private final UserInterfaceApi userInterfaceApi = new UserInterfaceApi(apiClient);
 	private String accountName;
 	private String refreshToken;
@@ -251,6 +255,15 @@ public class EsiOwner extends AbstractOwner implements OwnerType {
 	}
 
 	@Override
+	public boolean isBookmarks() {
+		if (isCorporation()) {
+			return EsiScopes.CORPORATION_BOOKMARKS.isInScope(scopes);
+		} else {
+			return EsiScopes.CHARACTER_BOOKMARKS.isInScope(scopes);
+		}
+	}
+
+	@Override
 	public boolean isDivisions() {
 		if (isCorporation()) {
 			return EsiScopes.CORPORATION_DIVISIONS.isInScope(scopes) && roles.contains(RolesEnum.DIRECTOR);
@@ -279,6 +292,15 @@ public class EsiOwner extends AbstractOwner implements OwnerType {
 					|| roles.contains(RolesEnum.DIRECTOR));
 		} else {
 			return EsiScopes.CHARACTER_MARKET_ORDERS.isInScope(scopes);
+		}
+	}
+
+	@Override
+	public boolean isPlanetaryInteraction() {
+		if (isCorporation()) {
+			return false; //Character Endpoint
+		} else {
+			return EsiScopes.CHARACTER_PLANETARY_INTERACTION.isInScope(scopes);
 		}
 	}
 
@@ -342,6 +364,16 @@ public class EsiOwner extends AbstractOwner implements OwnerType {
 		}
 	}
 
+	@Override
+	public boolean isPrivilegesLimited() {
+		return EsiScopes.isPrivilegesLimited(isCorporation(), scopes);
+	}
+
+	@Override
+	public boolean isPrivilegesInvalid() {
+		return EsiScopes.isPrivilegesInvalid(isCorporation(), scopes);
+	}
+
 	public boolean isRoles() {
 		return EsiScopes.CORPORATION_ROLES.isInScope(scopes);
 	}
@@ -399,6 +431,14 @@ public class EsiOwner extends AbstractOwner implements OwnerType {
 
 	public UserInterfaceApi getUserInterfaceApiAuth() {
 		return userInterfaceApi;
+	}
+
+	public BookmarksApi getBookmarksApiAuth() {
+		return bookmarksApi;
+	}
+
+	public PlanetaryInteractionApi getPlanetaryInteractionApiAuth() {
+		return planetaryInteractionApi;
 	}
 
 	@Override

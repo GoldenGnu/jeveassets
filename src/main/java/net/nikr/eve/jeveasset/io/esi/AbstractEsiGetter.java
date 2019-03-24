@@ -42,14 +42,16 @@ import net.troja.eve.esi.ApiClientBuilder;
 import net.troja.eve.esi.ApiException;
 import net.troja.eve.esi.ApiResponse;
 import net.troja.eve.esi.api.AssetsApi;
+import net.troja.eve.esi.api.BookmarksApi;
 import net.troja.eve.esi.api.CharacterApi;
 import net.troja.eve.esi.api.ContractsApi;
 import net.troja.eve.esi.api.CorporationApi;
 import net.troja.eve.esi.api.IndustryApi;
 import net.troja.eve.esi.api.LocationApi;
 import net.troja.eve.esi.api.MarketApi;
-import net.troja.eve.esi.api.MetaApi;
+import net.troja.eve.esi.api.PlanetaryInteractionApi;
 import net.troja.eve.esi.api.SovereigntyApi;
+import net.troja.eve.esi.api.MetaApi;
 import net.troja.eve.esi.api.UniverseApi;
 import net.troja.eve.esi.api.UserInterfaceApi;
 import net.troja.eve.esi.api.WalletApi;
@@ -205,14 +207,7 @@ public abstract class AbstractEsiGetter extends AbstractGetter<EsiOwner> {
 		}
 	}
 
-	@Override
-	protected boolean invalidAccessPrivileges() {
-		return owner != null && !inScope();
-	}
-
 	protected abstract void update() throws ApiException;
-
-	protected abstract boolean inScope();
 
 	private void setErrorLimit(Map<String, List<String>> responseHeaders) {
 		if (responseHeaders != null) {
@@ -256,59 +251,67 @@ public abstract class AbstractEsiGetter extends AbstractGetter<EsiOwner> {
 
 	protected MetaApi getMetaApiAuth() {
 		return owner.getMetaApiAuth();
-	}
-
+ 	}
+ 
 	public MarketApi getMarketApiAuth() {
 		return owner.getMarketApiAuth();
-	}
-
+ 	}
+ 
 	public IndustryApi getIndustryApiAuth() {
 		return owner.getIndustryApiAuth();
-	}
-
+ 	}
+ 
 	protected CharacterApi getCharacterApiAuth() {
 		return owner.getCharacterApiAuth();
-	}
-
+ 	}
+ 
 	protected AssetsApi getAssetsApiAuth() {
 		return owner.getAssetsApiAuth();
-	}
-
+ 	}
+ 
 	protected WalletApi getWalletApiAuth() {
 		return owner.getWalletApiAuth();
-	}
-
+ 	}
+ 
 	protected UniverseApi getUniverseApiAuth() {
 		return owner.getUniverseApiAuth();
-	}
-
+ 	}
+ 
 	public ContractsApi getContractsApiAuth() {
 		return owner.getContractsApiAuth();
-	}
-
+ 	}
+ 
 	public CorporationApi getCorporationApiAuth() {
 		return owner.getCorporationApiAuth();
-	}
-
+ 	}
+ 
 	public LocationApi getLocationApiAuth() {
 		return owner.getLocationApiAuth();
-	}
+ 	}
 
+	public BookmarksApi getBookmarksApiAuth() {
+		return owner.getBookmarksApiAuth();
+ 	}
+
+	public PlanetaryInteractionApi getPlanetaryInteractionApiAuth() {
+		return owner.getPlanetaryInteractionApiAuth();
+ 	}
+ 
 	public UniverseApi getUniverseApiOpen() {
 		return UNIVERSE_API;
-	}
-
+ 	}
+ 
 	public CharacterApi getCharacterApiOpen() {
 		return CHARACTER_API;
-	}
-
+ 	}
+ 
 	public CorporationApi getCorporationApiOpen() {
 		return CORPORATION_API;
-	}
-
+ 	}
+ 
 	public SovereigntyApi getSovereigntyApiOpen() {
 		return SOVEREIGNTY_API;
-	}
+ 	}
 
 	protected final <K, V> Map<K, V> updateListSlow(Collection<K> list, boolean trackProgress, int maxRetries, ListHandlerSlow<K, V> handler) throws ApiException {
 		Map<K, V> values = new HashMap<K, V>();

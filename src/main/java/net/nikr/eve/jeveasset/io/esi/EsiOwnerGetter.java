@@ -40,8 +40,6 @@ import net.troja.eve.esi.model.EsiVerifyResponse;
 
 public class EsiOwnerGetter extends AbstractEsiGetter implements AccountAdder{
 
-	private boolean limited = false;
-	private boolean invalidPrivileges = false;
 	private boolean wrongEntry = false;
 
 	public EsiOwnerGetter(EsiOwner owner, boolean forceUpdate) {
@@ -106,22 +104,10 @@ public class EsiOwnerGetter extends AbstractEsiGetter implements AccountAdder{
 			owner.setOwnerName(characterInfo.getCharacterName());
 		}
 		owner.setAccountNextUpdate(RawConverter.toDate(characterInfo.getExpiresOn()));
-		int fails = 0;
-		int max = 0;
-		for (EsiScopes scope : EsiScopes.values()) {
-			if (!owner.isCorporation() && !scope.isCharacterScope()) {
-				continue;
-			}
-			if (owner.isCorporation() && !scope.isCorporationScope()) {
-				continue;
-			}
-			max++;
-			if (!scope.isInScope(owner.getScopes())) {
-				fails++;
-			}
+		if (isPrivilegesLimited()) {
+			addError(null, "LIMITED ACCOUNT", "Limited account data access\r\n(Fix: Options > Accounts... > Edit)");
+			setError(null);
 		}
-		limited = (fails > 0 && fails < max);
-		invalidPrivileges = (fails >= max);
 	}
 
 	@Override
@@ -130,18 +116,18 @@ public class EsiOwnerGetter extends AbstractEsiGetter implements AccountAdder{
 	}
 
 	@Override
-	protected boolean inScope() {
+	protected boolean haveAccess() {
 		return true; //Always update accounts
 	}
 
 	@Override
-	public boolean isLimited() {
-		return limited;
+	public boolean isPrivilegesLimited() {
+		return owner.isPrivilegesLimited();
 	}
 
 	@Override
-	public boolean isInvalidPrivileges() {
-		return invalidPrivileges;
+	public boolean isPrivilegesInvalid() {
+		return owner.isPrivilegesInvalid();
 	}
 
 	@Override

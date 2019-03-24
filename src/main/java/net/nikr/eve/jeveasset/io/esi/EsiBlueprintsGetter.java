@@ -64,7 +64,7 @@ public class EsiBlueprintsGetter extends AbstractEsiGetter {
 	}
 
 	@Override
-	protected boolean inScope() {
+	protected boolean haveAccess() {
 		return owner.isBlueprints();
 	}
 

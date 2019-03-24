@@ -29,6 +29,7 @@ import net.nikr.eve.jeveasset.TestUtil;
 import net.troja.eve.esi.ApiException;
 import net.troja.eve.esi.ApiResponse;
 import net.troja.eve.esi.api.AssetsApi;
+import net.troja.eve.esi.api.BookmarksApi;
 import net.troja.eve.esi.api.CharacterApi;
 import net.troja.eve.esi.api.ContractsApi;
 import net.troja.eve.esi.api.CorporationApi;
@@ -36,6 +37,7 @@ import net.troja.eve.esi.api.IndustryApi;
 import net.troja.eve.esi.api.LocationApi;
 import net.troja.eve.esi.api.MarketApi;
 import net.troja.eve.esi.api.MetaApi;
+import net.troja.eve.esi.api.PlanetaryInteractionApi;
 import net.troja.eve.esi.api.SovereigntyApi;
 import net.troja.eve.esi.api.UniverseApi;
 import net.troja.eve.esi.api.UserInterfaceApi;
@@ -43,12 +45,15 @@ import net.troja.eve.esi.api.WalletApi;
 import net.troja.eve.esi.model.CharacterAssetsLocationsResponse;
 import net.troja.eve.esi.model.CharacterAssetsResponse;
 import net.troja.eve.esi.model.CharacterBlueprintsResponse;
+import net.troja.eve.esi.model.CharacterBookmarksResponse;
 import net.troja.eve.esi.model.CharacterContractsItemsResponse;
 import net.troja.eve.esi.model.CharacterContractsResponse;
 import net.troja.eve.esi.model.CharacterIndustryJobsResponse;
 import net.troja.eve.esi.model.CharacterLocationResponse;
 import net.troja.eve.esi.model.CharacterOrdersHistoryResponse;
 import net.troja.eve.esi.model.CharacterOrdersResponse;
+import net.troja.eve.esi.model.CharacterPlanetResponse;
+import net.troja.eve.esi.model.CharacterPlanetsResponse;
 import net.troja.eve.esi.model.CharacterResponse;
 import net.troja.eve.esi.model.CharacterShipResponse;
 import net.troja.eve.esi.model.CharacterWalletJournalResponse;
@@ -56,6 +61,7 @@ import net.troja.eve.esi.model.CharacterWalletTransactionsResponse;
 import net.troja.eve.esi.model.CorporationAssetsNamesResponse;
 import net.troja.eve.esi.model.CorporationAssetsResponse;
 import net.troja.eve.esi.model.CorporationBlueprintsResponse;
+import net.troja.eve.esi.model.CorporationBookmarksResponse;
 import net.troja.eve.esi.model.CorporationContractsItemsResponse;
 import net.troja.eve.esi.model.CorporationContractsResponse;
 import net.troja.eve.esi.model.CorporationIndustryJobsResponse;
@@ -138,6 +144,28 @@ public class EsiDeprecationOnlineTest extends TestUtil {
 		CorporationApi api = new CorporationApi();
 		try {
 			ApiResponse<List<CorporationBlueprintsResponse>> apiResponse = api.getCorporationsCorporationIdBlueprintsWithHttpInfo(1, DATASOURCE, null, null, null);
+			validate(apiResponse.getHeaders());
+		} catch (ApiException ex) {
+			validate(ex.getResponseHeaders());
+		}
+	}
+
+	@Test
+	public void esiBookmarksGetterCharacters() {
+		BookmarksApi api = new BookmarksApi();
+		try {
+			ApiResponse<List<CharacterBookmarksResponse>> apiResponse = api.getCharactersCharacterIdBookmarksWithHttpInfo(1, DATASOURCE, null, null, null);
+			validate(apiResponse.getHeaders());
+		} catch (ApiException ex) {
+			validate(ex.getResponseHeaders());
+		}
+	}
+
+	@Test
+	public void esiBookmarksGetterCorporation() {
+		BookmarksApi api = new BookmarksApi();
+		try {
+			ApiResponse<List<CorporationBookmarksResponse>> apiResponse = api.getCorporationsCorporationIdBookmarksWithHttpInfo(1, DATASOURCE, null, null, null);
 			validate(apiResponse.getHeaders());
 		} catch (ApiException ex) {
 			validate(ex.getResponseHeaders());
@@ -335,6 +363,28 @@ public class EsiDeprecationOnlineTest extends TestUtil {
 		CorporationApi api = new CorporationApi();
 		try {
 			ApiResponse<CorporationResponse> apiResponse = api.getCorporationsCorporationIdWithHttpInfo(1, DATASOURCE, null);
+			validate(apiResponse.getHeaders());
+		} catch (ApiException ex) {
+			validate(ex.getResponseHeaders());
+		}
+	}
+
+	@Test
+	public void esiPlanetaryInteractionGetterPlanet() {
+		PlanetaryInteractionApi api = new PlanetaryInteractionApi();
+		try {
+			ApiResponse<CharacterPlanetResponse> apiResponse = api.getCharactersCharacterIdPlanetsPlanetIdWithHttpInfo(1, 1, DATASOURCE, null, null);
+			validate(apiResponse.getHeaders());
+		} catch (ApiException ex) {
+			validate(ex.getResponseHeaders());
+		}
+	}
+
+	@Test
+	public void esiPlanetaryInteractionGetterPlanets() {
+		PlanetaryInteractionApi api = new PlanetaryInteractionApi();
+		try {
+			ApiResponse<List<CharacterPlanetsResponse>> apiResponse = api.getCharactersCharacterIdPlanetsWithHttpInfo(1, DATASOURCE, null, null);
 			validate(apiResponse.getHeaders());
 		} catch (ApiException ex) {
 			validate(ex.getResponseHeaders());

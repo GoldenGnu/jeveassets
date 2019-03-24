@@ -51,6 +51,7 @@ public abstract class AbstractGetter<O extends OwnerType> implements Runnable {
 		ASSETS,
 		ACCOUNT_BALANCE,
 		BLUEPRINTS,
+		BOOKMARKS,
 		CONQUERABLE_STATIONS,
 		CONTRACT_ITEMS,
 		CONTRACTS,
@@ -61,6 +62,7 @@ public abstract class AbstractGetter<O extends OwnerType> implements Runnable {
 		MARKET_ORDERS,
 		OWNER_ID_TO_NAME,
 		OWNER,
+		PLANETARY_INTERACTION,
 		STRUCTURES,
 		TRANSACTIONS,
 		SHIP
@@ -85,6 +87,7 @@ public abstract class AbstractGetter<O extends OwnerType> implements Runnable {
 			case ACCOUNT_BALANCE: taskName = "Account Balance"; break;
 			case ASSETS: taskName = "Assets"; break;
 			case BLUEPRINTS: taskName = "Blueprints"; break;
+			case BOOKMARKS: taskName = "Bookmarks"; break;
 			case CONQUERABLE_STATIONS: taskName = "Conquerable Stations"; break;
 			case CONTRACT_ITEMS: taskName = "Contract Items"; break;
 			case CONTRACTS: taskName = "Contracts"; break;
@@ -98,6 +101,7 @@ public abstract class AbstractGetter<O extends OwnerType> implements Runnable {
 			case TRANSACTIONS: taskName = "Transactions"; break;
 			case STRUCTURES: taskName = "Structures"; break;
 			case SHIP: taskName = "Active Ship"; break;
+			case PLANETARY_INTERACTION: taskName = "Planetary Assets"; break;
 			default: taskName = "Unknown"; break;
 		}
 		//this.taskName = taskType;
@@ -126,7 +130,7 @@ public abstract class AbstractGetter<O extends OwnerType> implements Runnable {
 	 * @param date 
 	 */
 	protected abstract void setNextUpdate(Date date);
-	protected abstract boolean invalidAccessPrivileges();
+	protected abstract boolean haveAccess();
 
 	protected final String getTaskName() {
 		return taskName;
@@ -151,8 +155,8 @@ public abstract class AbstractGetter<O extends OwnerType> implements Runnable {
 			return false;
 		}
 		//Check if the owner have accesss to the endpoint 
-		if (invalidAccessPrivileges()) {
-			addError(null, "NOT ENOUGH ACCESS PRIVILEGES", "Not enough access privileges.\r\n(Fix: Add " + getTaskName() + " to the API Key)");
+		if (owner != null && !haveAccess()) {
+			//Silent
 			return false;
 		}
 		return true;
@@ -293,7 +297,11 @@ public abstract class AbstractGetter<O extends OwnerType> implements Runnable {
 
 	protected final Map<Long, MyAsset> getIDs(OwnerType owner) {
 		Map<Long, MyAsset> itemMap = new HashMap<Long, MyAsset>();
-		addItemIDs(itemMap, owner.getAssets());
+		ArrayList<MyAsset> assets;
+		synchronized(owner) {
+			assets = new ArrayList<>(owner.getAssets());
+		}
+		addItemIDs(itemMap,  assets);
 		return itemMap;
 	}
 

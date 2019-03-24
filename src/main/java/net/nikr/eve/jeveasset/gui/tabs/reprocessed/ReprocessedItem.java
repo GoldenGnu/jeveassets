@@ -116,6 +116,11 @@ public class ReprocessedItem implements ReprocessedInterface {
 	}
 
 	@Override
+	public long getItemCount() {
+		return getQuantitySkill();
+	}
+
+	@Override
 	public int hashCode() {
 		int hash = 5;
 		hash = 29 * hash + (this.total != null ? this.total.hashCode() : 0);

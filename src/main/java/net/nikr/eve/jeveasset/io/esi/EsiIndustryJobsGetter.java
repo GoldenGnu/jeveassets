@@ -85,7 +85,7 @@ public class EsiIndustryJobsGetter extends AbstractEsiGetter {
 	}
 
 	@Override
-	protected boolean inScope() {
+	protected boolean haveAccess() {
 		return owner.isIndustryJobs();
 	}
 

@@ -21,6 +21,7 @@
 
 package net.nikr.eve.jeveasset.io.local;
 
+import java.util.HashMap;
 import java.util.Map;
 import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.data.sde.ReprocessedMaterial;
@@ -58,12 +59,21 @@ public final class ItemsReader extends AbstractXmlReader<Boolean> {
 
 	private void parseItems(final Element element, final Map<Integer, Item> items) throws XmlException {
 		NodeList nodes = element.getElementsByTagName("row");
-		Item item;
+		Map<Integer, Integer> blueprints = new HashMap<>();
 		for (int i = 0; i < nodes.getLength(); i++) {
 			Element itemElement = (Element) nodes.item(i);
-			item = parseItem(itemElement);
+			Item item = parseItem(itemElement);
 			parseMaterials(itemElement, item);
 			items.put(item.getTypeID(), item);
+			if (item.isBlueprint()) {
+				blueprints.put(item.getTypeID(), item.getProductTypeID());
+			}
+		}
+		for (Map.Entry<Integer, Integer> entry : blueprints.entrySet()) {
+			Item item = items.get(entry.getValue());
+			if (item != null) {
+				item.setBlueprintID(entry.getKey());
+			}
 		}
 	}
 

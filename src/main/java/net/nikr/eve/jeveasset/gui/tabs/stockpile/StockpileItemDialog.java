@@ -50,7 +50,7 @@ public class StockpileItemDialog extends JDialogCentered {
 	private enum StockpileItemAction {
 		CANCEL,
 		OK,
-		COPY
+		TYPE_CHANGE
 	}
 
 	private final JButton jOK;
@@ -58,6 +58,7 @@ public class StockpileItemDialog extends JDialogCentered {
 	private final JComboBox<Item> jItems;
 	private JTextField jCountMinimum;
 	private final JCheckBox jCopy;
+	private final JCheckBox jRuns;
 
 	private final EventList<Item> items = new EventListManager<Item>().create();
 	private Stockpile stockpile;
@@ -86,8 +87,12 @@ public class StockpileItemDialog extends JDialogCentered {
 		jCountMinimum.addCaretListener(listener);
 
 		jCopy = new JCheckBox(TabsStockpile.get().copy());
-		jCopy.setActionCommand(StockpileItemAction.COPY.name());
+		jCopy.setActionCommand(StockpileItemAction.TYPE_CHANGE.name());
 		jCopy.addActionListener(listener);
+
+		jRuns = new JCheckBox(TabsStockpile.get().runs());
+		jRuns.setActionCommand(StockpileItemAction.TYPE_CHANGE.name());
+		jRuns.addActionListener(listener);
 
 		jOK = new JButton(TabsStockpile.get().ok());
 		jOK.setActionCommand(StockpileItemAction.OK.name());
@@ -98,7 +103,6 @@ public class StockpileItemDialog extends JDialogCentered {
 		jCancel.setActionCommand(StockpileItemAction.CANCEL.name());
 		jCancel.addActionListener(listener);
 
-
 		layout.setHorizontalGroup(
 			layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
 				.addGroup(layout.createSequentialGroup()
@@ -108,10 +112,11 @@ public class StockpileItemDialog extends JDialogCentered {
 					)
 					.addGroup(layout.createParallelGroup()
 						.addComponent(jItems, 300, 300, 300)
-						.addGroup(layout.createSequentialGroup()
-							.addComponent(jCountMinimum, 100, 100, Short.MAX_VALUE)
-							.addComponent(jCopy)
-						)
+						.addComponent(jCountMinimum, 300, 300, 300)
+					)
+					.addGroup(layout.createParallelGroup()
+						.addComponent(jCopy)
+						.addComponent(jRuns)
 					)
 				)
 				.addGroup(layout.createSequentialGroup()
@@ -124,11 +129,13 @@ public class StockpileItemDialog extends JDialogCentered {
 				.addGroup(layout.createParallelGroup()
 					.addComponent(jItemsLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 					.addComponent(jItems, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jCopy, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 				)
 				.addGroup(layout.createParallelGroup()
 					.addComponent(jCountMinimumLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 					.addComponent(jCountMinimum, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-					.addComponent(jCopy, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jRuns, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					
 				)
 				.addGroup(layout.createParallelGroup()
 					.addComponent(jOK, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
@@ -137,14 +144,15 @@ public class StockpileItemDialog extends JDialogCentered {
 		);
 	}
 
-	StockpileItem showEdit(final StockpileItem addStockpileItem) {
+	StockpileItem showEdit(final StockpileItem editStockpileItem) {
 		updateData();
-		this.stockpileItem = addStockpileItem;
+		this.stockpileItem = editStockpileItem;
 		this.getDialog().setTitle(TabsStockpile.get().editStockpileItem());
-		Item item = StaticData.get().getItems().get(addStockpileItem.getTypeID());
+		Item item = StaticData.get().getItems().get(editStockpileItem.getTypeID());
 		jItems.setSelectedItem(item);
-		jCopy.setSelected(addStockpileItem.isBPC());
-		jCountMinimum.setText(String.valueOf(addStockpileItem.getCountMinimum()));
+		jCopy.setSelected(editStockpileItem.isBPC());
+		jRuns.setSelected(editStockpileItem.isRuns());
+		jCountMinimum.setText(String.valueOf(editStockpileItem.getCountMinimum()));
 		show();
 		return stockpileItem;
 	}
@@ -200,13 +208,14 @@ public class StockpileItemDialog extends JDialogCentered {
 			countMinimum = 0;
 		}
 		boolean copy = jCopy.isSelected() && jCopy.isEnabled();
+		boolean runs = jRuns.isSelected() && jRuns.isEnabled();
 		int typeID;
 		if (copy) {
 			typeID = -item.getTypeID();
 		} else {
 			typeID = item.getTypeID();
 		}
-		return new StockpileItem(getStockpile(), item, typeID, countMinimum);
+		return new StockpileItem(getStockpile(), item, typeID, countMinimum, runs);
 	}
 
 	private boolean itemExist() {
@@ -226,9 +235,10 @@ public class StockpileItemDialog extends JDialogCentered {
 		if (existing == null) {
 			return null;
 		}
-		boolean copy = jCopy.isSelected();
+		boolean copy = jCopy.isSelected() && jCopy.isEnabled();
+		boolean runs = jRuns.isSelected() && jRuns.isEnabled();
 		for (StockpileItem item : existing.getItems()) {
-			if (item.getTypeID() == typeItem.getTypeID() && (copy == item.isBPC())) {
+			if (item.getTypeID() == typeItem.getTypeID() && copy == item.isBPC() && runs == item.isRuns()) {
 				return item;
 			}
 		}
@@ -249,6 +259,11 @@ public class StockpileItemDialog extends JDialogCentered {
 			if (!blueprint) {
 				jCopy.setSelected(blueprint);
 			}
+		}
+		if (jCopy.isSelected()) {
+			jRuns.setEnabled(true);
+		} else {
+			jRuns.setEnabled(false);
 		}
 		if (itemExist()) { //Editing existing item
 			colorIsSet = true;
@@ -334,7 +349,7 @@ public class StockpileItemDialog extends JDialogCentered {
 			if (StockpileItemAction.CANCEL.name().equals(e.getActionCommand())) {
 				setVisible(false);
 			}
-			if (StockpileItemAction.COPY.name().equals(e.getActionCommand())) {
+			if (StockpileItemAction.TYPE_CHANGE.name().equals(e.getActionCommand())) {
 				autoSet();
 				autoValidate();
 			}

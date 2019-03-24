@@ -18,14 +18,15 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
  */
-
 package net.nikr.eve.jeveasset.gui.tabs.stockpile;
 
 import ca.odell.glazedlists.SeparatorList;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.swing.Icon;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
@@ -42,11 +43,13 @@ public class JStockpileItemMenu extends JMenu {
 
 	private enum StockpileItemMenuAction {
 		EDIT_ITEM,
-		ADD_TO, 
-		DELETE_ITEM
+		ADD_TO,
+		DELETE_ITEM,
+		ORIGINAL,
+		COPY,
+		RUNS
 	}
 
-	//private StockpileTab stockpileTab;
 	private Program program;
 
 	public JStockpileItemMenu(final Program program, final List<StockpileItem> items) {
@@ -55,8 +58,9 @@ public class JStockpileItemMenu extends JMenu {
 		this.setIcon(Images.TOOL_STOCKPILE.getIcon());
 
 		ListenerClass listener = new ListenerClass();
-		
+
 		JMenuItem jMenuItem;
+		JMenu jMenu;
 
 		JMenu jSubMenu = new JMenu(TabsStockpile.get().addToStockpile());
 		jSubMenu.setEnabled(!items.isEmpty());
@@ -88,21 +92,208 @@ public class JStockpileItemMenu extends JMenu {
 		jMenuItem.addActionListener(listener);
 		jMenuItem.setEnabled(!items.isEmpty());
 		this.add(jMenuItem);
+
+		boolean blueprint = false;
+		for (Object object : items) {
+			if (object instanceof SeparatorList.Separator || object instanceof StockpileTotal || (!(object instanceof StockpileItem))) {
+				continue;
+			}
+			StockpileItem item = (StockpileItem) object;
+			if (item.isBlueprint()) {
+				blueprint = true;
+				break;
+			}
+		}
+
+		this.addSeparator();
+
+		jMenu = new JMenu(TabsStockpile.get().blueprints());
+		jMenu.setIcon(Images.MISC_BLUEPRINT.getIcon());
+		this.add(jMenu);
+		
+		jMenuItem = new JStockpileMenuItem(TabsStockpile.get().original(), Images.MISC_BPO.getIcon(), items);
+		jMenuItem.setActionCommand(StockpileItemMenuAction.ORIGINAL.name());
+		jMenuItem.addActionListener(listener);
+		jMenuItem.setEnabled(blueprint);
+		jMenu.add(jMenuItem);
+		
+		jMenuItem = new JStockpileMenuItem(TabsStockpile.get().copy(), Images.MISC_BPC.getIcon(), items);
+		jMenuItem.setActionCommand(StockpileItemMenuAction.COPY.name());
+		jMenuItem.addActionListener(listener);
+		jMenuItem.setEnabled(blueprint);
+		jMenu.add(jMenuItem);
+
+		jMenuItem = new JStockpileMenuItem(TabsStockpile.get().runs(), Images.MISC_RUNS.getIcon(), items);
+		jMenuItem.setActionCommand(StockpileItemMenuAction.RUNS.name());
+		jMenuItem.addActionListener(listener);
+		jMenuItem.setEnabled(blueprint);
+		jMenu.add(jMenuItem);
 	}
 
 	private class ListenerClass implements ActionListener {
+
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			//Add item to
-			if (StockpileItemMenuAction.ADD_TO.name().equals(e.getActionCommand())) {
+			if (StockpileItemMenuAction.ADD_TO.name().equals(e.getActionCommand())) { //Add item to
 				Object source = e.getSource();
 				if (source instanceof JStockpileMenuItem) {
 					JStockpileMenuItem jMenuItem = (JStockpileMenuItem) source;
-					program.getStockpileTool().addToStockpile(jMenuItem.getStockpile(), jMenuItem.getItems(), true);
+					boolean blueprint = false;
+					for (StockpileItem item : jMenuItem.getItems()) {
+						if (item.isBlueprint()) {
+							blueprint = true;
+							break;
+						}
+					}
+					List<StockpileItem> items = new ArrayList<>();
+					if (blueprint) {
+						String[] options = {TabsStockpile.get().source(), TabsStockpile.get().original(), TabsStockpile.get().copy(), TabsStockpile.get().runs()};
+						Object object = JOptionPane.showInputDialog(program.getMainWindow().getFrame(), TabsStockpile.get().addBlueprintMsg(), TabsStockpile.get().addBlueprintTitle(), JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+						if (object == null) {
+							return;
+						}
+						if (object.equals(TabsStockpile.get().original())) {
+							for (StockpileItem item : jMenuItem.getItems()) {
+								if (item.isBlueprint()) {
+									items.add(new StockpileItem(item.getStockpile(), item.getItem(), Math.abs(item.getTypeID()), item.getCountMinimum(), false));
+								} else {
+									items.add(item);
+								}
+							}
+							
+						} else if (object.equals(TabsStockpile.get().copy())) {
+							for (StockpileItem item : jMenuItem.getItems()) {
+								if (item.isBlueprint()) {
+									items.add(new StockpileItem(item.getStockpile(), item.getItem(), -Math.abs(item.getTypeID()), item.getCountMinimum(), false));
+								} else {
+									items.add(item);
+								}
+							}
+						} else if (object.equals(TabsStockpile.get().runs())) {
+							for (StockpileItem item : jMenuItem.getItems()) {
+								if (item.isBlueprint()) {
+									items.add(new StockpileItem(item.getStockpile(), item.getItem(), -Math.abs(item.getTypeID()), item.getCountMinimum(), true));
+								} else {
+									items.add(item);
+								}
+							}
+						} else { //source
+							items.addAll(jMenuItem.getItems());
+						}
+						program.getStockpileTool().addToStockpile(jMenuItem.getStockpile(), items, true);
+					} else { //No bluepints
+						program.getStockpileTool().addToStockpile(jMenuItem.getStockpile(), jMenuItem.getItems(), true);
+					}
 				}
-			}
-			//Edit item
-			if (StockpileItemMenuAction.EDIT_ITEM.name().equals(e.getActionCommand())) {
+			} else if (StockpileItemMenuAction.RUNS.name().equals(e.getActionCommand())) { //Runs
+				Object source = e.getSource();
+				if (source instanceof JStockpileMenuItem) {
+					JStockpileMenuItem jMenuItem = (JStockpileMenuItem) source;
+					//Find items that will be changed
+					Map<Stockpile, List<StockpileItem>> update = new HashMap<>();
+					for (StockpileItem stockpileItem : jMenuItem.getItems()) {
+						if (stockpileItem.isBlueprint() && !stockpileItem.isRuns()) {
+							List<StockpileItem> list = update.get(stockpileItem.getStockpile());
+							if (list == null) {
+								list = new ArrayList<>();
+								update.put(stockpileItem.getStockpile(), list);
+							}
+							list.add(stockpileItem);
+						}
+					}
+					Settings.lock("Stokcpile (Stockpile Menu)"); //Lock for Stokcpile (Stockpile Menu)
+					//Remove items that will be changed
+					for (Map.Entry<Stockpile, List<StockpileItem>> entry : update.entrySet()) {
+						for (StockpileItem item : entry.getValue()) {
+							entry.getKey().remove(item);
+						}
+						program.getStockpileTool().removeItems(entry.getValue());
+					}
+					//Change items
+					for (Map.Entry<Stockpile, List<StockpileItem>> entry : update.entrySet()) {
+						for (StockpileItem item : entry.getValue()) {
+							item.update(new StockpileItem(item.getStockpile(), item.getItem(), -Math.abs(item.getTypeID()), item.getCountMinimum(), true));
+						}
+					}
+					Settings.unlock("Stokcpile (Stockpile Menu)"); //Lock for Stokcpile (Stockpile Menu)
+					//Add changed items
+					for (Map.Entry<Stockpile, List<StockpileItem>> entry : update.entrySet()) {
+						program.getStockpileTool().addToStockpile(entry.getKey(), entry.getValue(), true);
+					}
+				}
+			} else if (StockpileItemMenuAction.ORIGINAL.name().equals(e.getActionCommand())) { //Original
+				Object source = e.getSource();
+				if (source instanceof JStockpileMenuItem) {
+					JStockpileMenuItem jMenuItem = (JStockpileMenuItem) source;
+					//Find items that will be changed
+					Map<Stockpile, List<StockpileItem>> update = new HashMap<>();
+					for (StockpileItem stockpileItem : jMenuItem.getItems()) {
+						if (stockpileItem.isBlueprint() && !stockpileItem.isBPO()) {
+							List<StockpileItem> list = update.get(stockpileItem.getStockpile());
+							if (list == null) {
+								list = new ArrayList<>();
+								update.put(stockpileItem.getStockpile(), list);
+							}
+							list.add(stockpileItem);
+						}
+					}
+					Settings.lock("Stokcpile (Stockpile Menu)"); //Lock for Stokcpile (Stockpile Menu)
+					//Remove items that will be changed
+					for (Map.Entry<Stockpile, List<StockpileItem>> entry : update.entrySet()) {
+						for (StockpileItem item : entry.getValue()) {
+							entry.getKey().remove(item);
+						}
+						program.getStockpileTool().removeItems(entry.getValue());
+					}
+					//Change items
+					for (Map.Entry<Stockpile, List<StockpileItem>> entry : update.entrySet()) {
+						for (StockpileItem item : entry.getValue()) {
+							item.update(new StockpileItem(item.getStockpile(), item.getItem(), Math.abs(item.getTypeID()), item.getCountMinimum(), false));
+						}
+					}
+					Settings.unlock("Stokcpile (Stockpile Menu)"); //Lock for Stokcpile (Stockpile Menu)
+					//Add changed items
+					for (Map.Entry<Stockpile, List<StockpileItem>> entry : update.entrySet()) {
+						program.getStockpileTool().addToStockpile(entry.getKey(), entry.getValue(), true);
+					}
+				}
+			} else if (StockpileItemMenuAction.COPY.name().equals(e.getActionCommand())) { //Copy
+				Object source = e.getSource();
+				if (source instanceof JStockpileMenuItem) {
+					JStockpileMenuItem jMenuItem = (JStockpileMenuItem) source;
+					//Find items that will be changed
+					Map<Stockpile, List<StockpileItem>> update = new HashMap<>();
+					for (StockpileItem stockpileItem : jMenuItem.getItems()) {
+						if (stockpileItem.isBlueprint() && (stockpileItem.isBPO() || stockpileItem.isRuns())) {
+							List<StockpileItem> list = update.get(stockpileItem.getStockpile());
+							if (list == null) {
+								list = new ArrayList<>();
+								update.put(stockpileItem.getStockpile(), list);
+							}
+							list.add(stockpileItem);
+						}
+					}
+					Settings.lock("Stokcpile (Stockpile Menu)"); //Lock for Stokcpile (Stockpile Menu)
+					//Remove items that will be changed
+					for (Map.Entry<Stockpile, List<StockpileItem>> entry : update.entrySet()) {
+						for (StockpileItem item : entry.getValue()) {
+							entry.getKey().remove(item);
+						}
+						program.getStockpileTool().removeItems(entry.getValue());
+					}
+					//Change items
+					for (Map.Entry<Stockpile, List<StockpileItem>> entry : update.entrySet()) {
+						for (StockpileItem item : entry.getValue()) {
+							item.update(new StockpileItem(item.getStockpile(), item.getItem(), -Math.abs(item.getTypeID()), item.getCountMinimum(), false));
+						}
+					}
+					Settings.unlock("Stokcpile (Stockpile Menu)"); //Lock for Stokcpile (Stockpile Menu)
+					//Add changed items
+					for (Map.Entry<Stockpile, List<StockpileItem>> entry : update.entrySet()) {
+						program.getStockpileTool().addToStockpile(entry.getKey(), entry.getValue(), true);
+					}
+				}
+			} else if (StockpileItemMenuAction.EDIT_ITEM.name().equals(e.getActionCommand())) { //Edit item
 				Object source = e.getSource();
 				if (source instanceof JStockpileMenuItem) {
 					JStockpileMenuItem jMenuItem = (JStockpileMenuItem) source;
@@ -111,9 +302,7 @@ public class JStockpileItemMenu extends JMenu {
 						program.getStockpileTool().editItem(items.get(0));
 					}
 				}
-			}
-			//Delete item
-			if (StockpileItemMenuAction.DELETE_ITEM.name().equals(e.getActionCommand())) {
+			} else if (StockpileItemMenuAction.DELETE_ITEM.name().equals(e.getActionCommand())) { //Delete item
 				Object source = e.getSource();
 				if (source instanceof JStockpileMenuItem) {
 					JStockpileMenuItem jMenuItem = (JStockpileMenuItem) source;
@@ -159,7 +348,7 @@ public class JStockpileItemMenu extends JMenu {
 			for (int i = 0; i < items.size(); i++) { //Remove StockpileTotal and SeparatorList.Separator
 				Object item = items.get(i);
 				if (!(item instanceof SeparatorList.Separator) && !(item instanceof StockpileTotal)) {
-					this.items.add((StockpileItem)item);
+					this.items.add((StockpileItem) item);
 				}
 			}
 		}
@@ -172,5 +361,5 @@ public class JStockpileItemMenu extends JMenu {
 			return stockpile;
 		}
 	}
-	
+
 }

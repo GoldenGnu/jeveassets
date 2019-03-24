@@ -64,7 +64,7 @@ public class JMenuReprocessed<T> extends JAutoMenu<T> {
 	}
 
 	@Override
-	public void setMenuData(MenuData<T> menuData) {
+	public void updateMenuData() {
 		items.clear();
 		for (int typeID : menuData.getTypeIDs()) {
 			Item item = StaticData.get().getItems().get(typeID);

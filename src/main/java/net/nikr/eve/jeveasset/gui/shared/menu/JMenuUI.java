@@ -70,7 +70,6 @@ public class JMenuUI <T> extends MenuManager.JAutoMenu<T> {
 	private final JMenuItem jOwner;
 	private final JMenuItem jContracts;
 
-	private MenuData<T> menuData;
 	private static JLockWindow jLockWindow = null;
 
 	public JMenuUI(Program program) {
@@ -115,8 +114,7 @@ public class JMenuUI <T> extends MenuManager.JAutoMenu<T> {
 	}
 	
 	@Override
-	public void setMenuData(MenuData<T> menuData) {
-		this.menuData = menuData;
+	public void updateMenuData() {
 		jWaypoints.setEnabled(menuData.getSystemLocations().size() == 1 || menuData.getAutopilotStationLocations().size() == 1 || menuData.getContracts().size() == 1);
 		jStation.setEnabled(menuData.getAutopilotStationLocations().size() == 1 || menuData.getContracts().size() == 1);
 		jSystem.setEnabled(menuData.getSystemLocations().size() == 1 || menuData.getContracts().size() == 1);

@@ -53,6 +53,7 @@ import net.troja.eve.esi.model.CharacterIndustryJobsResponse;
 import net.troja.eve.esi.model.CharacterLocationResponse;
 import net.troja.eve.esi.model.CharacterOrdersHistoryResponse;
 import net.troja.eve.esi.model.CharacterOrdersResponse;
+import net.troja.eve.esi.model.CharacterPlanetsResponse;
 import net.troja.eve.esi.model.CharacterShipResponse;
 import net.troja.eve.esi.model.CharacterWalletJournalResponse;
 import net.troja.eve.esi.model.CharacterWalletTransactionsResponse;
@@ -68,6 +69,8 @@ import net.troja.eve.esi.model.CorporationOrdersResponse;
 import net.troja.eve.esi.model.CorporationWalletJournalResponse;
 import net.troja.eve.esi.model.CorporationWalletTransactionsResponse;
 import net.troja.eve.esi.model.CorporationWalletsResponse;
+import net.troja.eve.esi.model.PlanetContent;
+import net.troja.eve.esi.model.PlanetPin;
 
 
 public class EsiConverter extends DataConverter {
@@ -105,6 +108,10 @@ public class EsiConverter extends DataConverter {
 
 	public static MyAsset toAssetsShip(CharacterShipResponse shipType, CharacterLocationResponse shipLocation, OwnerType owner) {
 		return toMyAsset(new RawAsset(shipType, shipLocation), owner, new ArrayList<>());
+	}
+
+	public static MyAsset toAssetsPlanetaryInteraction(CharacterPlanetsResponse planet, PlanetPin pin, PlanetContent content, OwnerType owner) {
+		return toMyAsset(new RawAsset(planet, pin, content), owner, new ArrayList<>());
 	}
 
 	public static Map<Long, RawBlueprint> toBlueprints(List<CharacterBlueprintsResponse> responses) {

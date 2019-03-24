@@ -126,7 +126,7 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 	private final StockpileDialog stockpileDialog;
 	private final StockpileItemDialog stockpileItemDialog;
 	private final StockpileShoppingListDialog stockpileShoppingListDialog;
-	private final StockpileSelectionDialog stockpileSelectionDialog;
+	private final StockpileSelectionDialog<Stockpile> stockpileSelectionDialog;
 	private final StockpileImportDialog stockpileImportDialog;
 	private final JTextDialog jTextDialog;
 
@@ -156,7 +156,7 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 		stockpileDialog = new StockpileDialog(program);
 		stockpileItemDialog = new StockpileItemDialog(program);
 		stockpileShoppingListDialog = new StockpileShoppingListDialog(program);
-		stockpileSelectionDialog = new StockpileSelectionDialog(program);
+		stockpileSelectionDialog = new StockpileSelectionDialog<>(program, TabsStockpile.get().selectStockpiles());
 		stockpileImportDialog = new StockpileImportDialog(program);
 		jTextDialog = new JTextDialog(program.getMainWindow().getFrame());
 
@@ -376,7 +376,7 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 				StockpileItem toItem = null;
 				//Search for existing
 				for (StockpileItem item : stockpile.getItems()) {
-					if (item.getItemTypeID() == fromItem.getItemTypeID()) {
+					if (item.getItemTypeID() == fromItem.getItemTypeID() && item.isRuns() == fromItem.isRuns()) {
 						toItem = item;
 						break;
 					}
@@ -607,16 +607,24 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 		Map<Integer, List<MyIndustryJob>> industryJobs = new HashMap<Integer, List<MyIndustryJob>>();
 		if (stockpile.isJobs()) {
 			for (MyIndustryJob industryJob : program.getIndustryJobsList()) {
-				int typeID = industryJob.getProductTypeID();
-				if (!typeIDs.contains(typeID)) {
-					continue; //Ignore wrong typeID
+				int productTypeID = industryJob.getProductTypeID();
+				if (typeIDs.contains(productTypeID)) {
+					List<MyIndustryJob> items = industryJobs.get(productTypeID);
+					if (items == null) {
+						items = new ArrayList<MyIndustryJob>();
+						industryJobs.put(productTypeID, items);
+					}
+					items.add(industryJob);
 				}
-				List<MyIndustryJob> items = industryJobs.get(typeID);
-				if (items == null) {
-					items = new ArrayList<MyIndustryJob>();
-					industryJobs.put(typeID, items);
+				int blueprintTypeID = -industryJob.getBlueprintTypeID(); //Negative - match blueprints copies
+				if (typeIDs.contains(blueprintTypeID)) {
+					List<MyIndustryJob> items = industryJobs.get(blueprintTypeID);
+					if (items == null) {
+						items = new ArrayList<MyIndustryJob>();
+						industryJobs.put(blueprintTypeID, items);
+					}
+					items.add(industryJob);
 				}
-				items.add(industryJob);
 			}
 		}
 		//Transactions
@@ -635,7 +643,7 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 				items.add(transaction);
 			}
 		}
-		
+
 		stockpile.setFlagName(flags);
 		stockpile.reset();
 		if (!stockpile.isEmpty()) {
@@ -726,7 +734,7 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 		Settings.lock("Stockpile (Import)"); //Lock for Stockpile (Import)
 		for (Map.Entry<Integer, Double> entry : data.entrySet()) {
 			Item item = ApiIdConverter.getItem(entry.getKey());
-			StockpileItem stockpileItem = new StockpileItem(stockpile, item, entry.getKey(), entry.getValue());
+			StockpileItem stockpileItem = new StockpileItem(stockpile, item, entry.getKey(), entry.getValue(), false);
 			stockpile.add(stockpileItem);
 		}
 		Settings.unlock("Stockpile (Import)"); //Unlock for Stockpile (Import)

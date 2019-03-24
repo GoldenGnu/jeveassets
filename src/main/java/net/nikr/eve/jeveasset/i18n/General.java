@@ -51,7 +51,8 @@ public abstract class General extends Bundle {
 	public abstract String fileLockMsg(String s);
 	public abstract String singleInstanceTitle();
 	public abstract String singleInstanceMsg();
-	public abstract String emptyLocation(String location);
+	public abstract String emptyLocation(String locationID);
+	public abstract String bookmarkLocation(String system, String label, String locationID);
 	public abstract String assetSafety();
 	
 }

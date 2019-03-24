@@ -51,8 +51,6 @@ public class JMenuLocation<T> extends MenuManager.JAutoMenu<T> {
 	private final JMenuItem jReset;
 	private final JSelectionDialog<MyLocation> jLocationDialog;
 
-	private MenuData<T> menuData;
-
 	public JMenuLocation(final Program program) {
 		super((GuiShared.get().location()), program);
 		setIcon(Images.LOC_LOCATIONS.getIcon());
@@ -85,8 +83,7 @@ public class JMenuLocation<T> extends MenuManager.JAutoMenu<T> {
 	}
 
 	@Override
-	public void setMenuData(MenuData<T> menuData) {
-		this.menuData = menuData;
+	public void updateMenuData() {
 		jEdit.setEnabled(!menuData.getEditableCitadelLocations().isEmpty());
 		jUpdate.setEnabled(!menuData.getEditableCitadelLocations().isEmpty());
 		if (StructureUpdateDialog.structuresUpdatable(program)) {

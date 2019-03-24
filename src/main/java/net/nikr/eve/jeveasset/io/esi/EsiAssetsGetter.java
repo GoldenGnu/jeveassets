@@ -64,7 +64,7 @@ public class EsiAssetsGetter extends AbstractEsiGetter {
 	}
 
 	@Override
-	protected boolean inScope() {
+	protected boolean haveAccess() {
 		return owner.isAssetList();
 	}
 
