@@ -16,6 +16,37 @@
                   #### #  # #  # #  # #### #### #### #### ####
 
 ________________________________________________________________________________
+_5.9.0__________________________________________________________________________
+
+New Features:
+-Added meta column to the stockpile
+-Update from the command line (with -backgroundupdate)
+-Use Bookmark endpoints to resolve structures (require new scope)
+-Planetary Assets (require new scope)
+-Multibuy export in the stockpiles shopping list
+-Eve multibuy export in the Copy+ menu
+-Blueprint Runs in the Stockpile tool
+-Evepraisal in the loopup menu
+-Adam4EVE in the lookup menu
+-Eve-MarketData in the lookup menu
+-eve-hub in the lookup menu
+-evemarkethelper in the lookup menu
+-khon.space in the lookup menu
+
+Bug Fixes:
+-Fixed system names in pricing regions selector. (Contributed by AnrDaemon) o7
+-Fix for Bug ID: 739 (thread safety)
+
+Changed:
+-Removed eve-markets from the lookup menu (dead)
+
+Code:
+-Better retry logic for ESI requests
+-Updated EveKit library to 5.0.1
+-Updated eve-esi to 3.2.0 (major improvements)
+-Updated pricing to 2.1.1
+
+________________________________________________________________________________
 _5.8.2__________________________________________________________________________
 
 Bug Fixes:
@@ -198,7 +229,7 @@ Bug Fixes:
 ________________________________________________________________________________
 _5.4.1__________________________________________________________________________
 
-New Feature:
+New Features:
 -Get closed Market Orders from ESI (new endpoints)
 
 Bug Fixes:
