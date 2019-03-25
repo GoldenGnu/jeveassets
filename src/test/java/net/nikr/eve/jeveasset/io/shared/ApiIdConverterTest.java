@@ -66,7 +66,20 @@ public class ApiIdConverterTest extends TestUtil {
 				assertEquals(o1.getRegionID(), location.getRegionID());
 				assertFalse(o1.getRegion().equals(""));
 				assertFalse(o1.getRegionID() == 0);
-			} else if (o1.isStation()) {
+			} else if (o1.isStation()) { //Not planet
+				assertEquals(o1.getStation(), location.getStation());
+				assertEquals(o1.getStationID(), location.getStationID());
+				assertFalse(o1.getStation().equals(""));
+				assertFalse(o1.getStationID() == 0);
+				assertEquals(o1.getSystem(), location.getSystem());
+				assertEquals(o1.getSystemID(), location.getSystemID());
+				assertFalse(o1.getSystem().equals(""));
+				assertFalse(o1.getSystemID() == 0);
+				assertEquals(o1.getRegion(), location.getRegion());
+				assertEquals(o1.getRegionID(), location.getRegionID());
+				assertFalse(o1.getRegion().equals(""));
+				assertFalse(o1.getRegionID() == 0);
+			} else if (o1.isPlanet()) {
 				assertEquals(o1.getStation(), location.getStation());
 				assertEquals(o1.getStationID(), location.getStationID());
 				assertFalse(o1.getStation().equals(""));

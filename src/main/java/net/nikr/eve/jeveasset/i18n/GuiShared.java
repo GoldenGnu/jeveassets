@@ -103,6 +103,7 @@ public abstract class GuiShared extends Bundle {
 	public abstract String overwrite();
 	public abstract String overwriteFile();
 	public abstract String paste();
+	public abstract String planet();
 	public abstract String region();
 	public abstract String selectionAverage();
 	public abstract String selectionCount();

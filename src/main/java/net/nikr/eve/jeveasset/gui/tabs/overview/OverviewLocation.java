@@ -26,7 +26,7 @@ import net.nikr.eve.jeveasset.data.api.my.MyAsset;
 
 public class OverviewLocation {
 	public enum LocationType {
-		TYPE_STATION, TYPE_SYSTEM, TYPE_REGION;
+		TYPE_PLANET, TYPE_STATION, TYPE_SYSTEM, TYPE_REGION;
 	}
 
 	private String name;
@@ -47,6 +47,10 @@ public class OverviewLocation {
 
 	public LocationType getType() {
 		return type;
+	}
+
+	public boolean isPlanet() {
+		return type.equals(LocationType.TYPE_PLANET);
 	}
 
 	public boolean isStation() {

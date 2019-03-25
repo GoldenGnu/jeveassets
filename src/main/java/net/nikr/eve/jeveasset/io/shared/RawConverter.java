@@ -166,7 +166,7 @@ public class RawConverter {
 
 	public static RawAsset.LocationType toAssetLocationType(Long locationID) {
 		MyLocation location = ApiIdConverter.getLocation(locationID);
-		if (location.isStation()) {
+		if (location.isStation()) { //Not planet
 			return RawAsset.LocationType.STATION;
 		} else if (location.isSystem()) {
 			return RawAsset.LocationType.SOLAR_SYSTEM;
