@@ -156,16 +156,20 @@ public class MyLocation implements Comparable<MyLocation> {
 		return securityObject;
 	}
 
+	public final boolean isPlanet() {
+		return getStationID() != 0 && getSystemID() != 0 && getRegionID() != 0 && locationID > 40000000 && locationID < 50000000;
+	}
+
 	public final boolean isStation() {
-		return (getStationID() != 0 && getSystemID() != 0 && getRegionID() != 0);
+		return getStationID() != 0 && getSystemID() != 0 && getRegionID() != 0;
 	}
 
 	public final boolean isSystem() {
-		return (getStationID() == 0 && getSystemID() != 0 && getRegionID() != 0);
+		return getStationID() == 0 && getSystemID() != 0 && getRegionID() != 0;
 	}
 
 	public final boolean isRegion() {
-		return (getStationID() == 0 && getSystemID() == 0 && getRegionID() != 0);
+		return getStationID() == 0 && getSystemID() == 0 && getRegionID() != 0;
 	}
 
 	public boolean isEmpty() {

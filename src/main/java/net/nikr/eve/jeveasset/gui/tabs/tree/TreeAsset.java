@@ -73,6 +73,27 @@ public class TreeAsset extends MyAsset {
 				this.icon = Images.LOC_CONTAINER.getIcon();
 			} else if (asset.getItem().getCategory().equals("Ship")) {
 				this.icon = Images.TOOL_SHIP_LOADOUTS.getIcon();
+			} else if (asset.getItem().getCategory().equals("Planetary Interaction")) {
+				switch (asset.getItem().getGroup()) {
+					case "Command Centers":
+						this.icon = Images.LOC_PIN_COMMAND.getIcon();
+						break;
+					case "Extractors":
+						this.icon = Images.LOC_PIN_EXTRACTOR.getIcon();
+						break;
+					case "Processors":
+						this.icon = Images.LOC_PIN_PROCESSOR.getIcon();
+						break;
+					case "Spaceports":
+						this.icon = Images.LOC_PIN_SPACEPORT.getIcon();
+						break;
+					case "Storage Facilities":
+						this.icon = Images.LOC_PIN_STORAGE.getIcon();
+						break;
+					default:
+						this.icon = null;
+						break;
+				}
 			} else {
 				this.icon = null;
 			}
