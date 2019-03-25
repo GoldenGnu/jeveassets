@@ -42,6 +42,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 import javax.swing.BorderFactory;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
@@ -376,6 +378,24 @@ class FilterPanel<E> implements Comparable<FilterPanel<E>> {
 		}
 	}
 
+	private boolean isInvalidRegex() {
+		if (!isRegexCompare()) {
+			return true;
+		}
+		String text = jText.getText();
+		try {
+			Pattern.compile(text, Pattern.CASE_INSENSITIVE);
+			return false;
+		} catch (PatternSyntaxException ex) {
+			return true;
+		}
+	}
+
+	private boolean isRegexCompare() {
+		CompareType compareType = (CompareType) jCompare.getSelectedItem();
+		return CompareType.isRegexCompare(compareType);
+	}
+
 	private boolean isColumnCompare() {
 		CompareType compareType = (CompareType) jCompare.getSelectedItem();
 		return CompareType.isColumnCompare(compareType);
@@ -454,7 +474,11 @@ class FilterPanel<E> implements Comparable<FilterPanel<E>> {
 			updateCompare(true);
 		}
 		if (jEnabled.isSelected()) {
-			jText.setBackground(Color.WHITE);
+			if (isInvalidRegex()) {
+				jText.setBackground(Colors.LIGHT_YELLOW.getColor());
+			} else {
+				jText.setBackground(Color.WHITE);
+			}
 		} else {
 			jText.setBackground(Colors.LIGHT_RED.getColor());
 		}
