@@ -113,8 +113,13 @@ public class EsiConverter extends DataConverter {
 		return toMyAsset(new RawAsset(shipType, shipLocation), owner, new ArrayList<>());
 	}
 
-	public static MyAsset toAssetsPlanetaryInteraction(CharacterPlanetsResponse planet, PlanetPin pin, PlanetContent content, OwnerType owner) {
-		return toMyAsset(new RawAsset(planet, pin, content), owner, new ArrayList<>());
+	public static MyAsset toAssetsPlanetaryInteraction(CharacterPlanetsResponse planet, PlanetPin pin, OwnerType owner) {
+		MyAsset parent = toMyAsset(new RawAsset(planet, pin), owner, new ArrayList<>());
+		List<MyAsset> parents = Collections.singletonList(parent);
+		for (PlanetContent content : pin.getContents()) {
+			parent.addAsset(toMyAsset(new RawAsset(planet, pin, content), owner, parents));
+		}
+		return parent;
 	}
 
 	public static Map<Long, RawBlueprint> toBlueprints(List<CharacterBlueprintsResponse> responses) {

@@ -33,7 +33,6 @@ import net.troja.eve.esi.ApiException;
 import net.troja.eve.esi.ApiResponse;
 import net.troja.eve.esi.model.CharacterPlanetResponse;
 import net.troja.eve.esi.model.CharacterPlanetsResponse;
-import net.troja.eve.esi.model.PlanetContent;
 import net.troja.eve.esi.model.PlanetPin;
 import net.troja.eve.esi.model.PlanetResponse;
 
@@ -80,9 +79,7 @@ public class EsiPlanetaryInteractionGetter extends AbstractEsiGetter {
 				if (pin.getContents() == null) {
 					continue;
 				}
-				for (PlanetContent content : pin.getContents()) { //For each type in pin
-					owner.addAsset(EsiConverter.toAssetsPlanetaryInteraction(response, pin, content, owner));
-				}
+				owner.addAsset(EsiConverter.toAssetsPlanetaryInteraction(response, pin, owner));
 			}
 		}
 		CitadelGetter.set(citadels);
