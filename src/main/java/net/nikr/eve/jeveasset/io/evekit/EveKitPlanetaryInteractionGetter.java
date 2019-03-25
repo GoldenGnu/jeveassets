@@ -23,7 +23,6 @@ package net.nikr.eve.jeveasset.io.evekit;
 import enterprises.orbital.evekit.client.ApiException;
 import enterprises.orbital.evekit.client.ApiResponse;
 import enterprises.orbital.evekit.client.model.PlanetaryPin;
-import enterprises.orbital.evekit.client.model.PlanetaryPinContent;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
@@ -68,9 +67,10 @@ public class EveKitPlanetaryInteractionGetter extends AbstractEveKitGetter imple
 		CitadelGetter.set(citadels);
 		//Get planetary assets
 		for (PlanetaryPin pin : pins) {
-			for (PlanetaryPinContent content : pin.getContents()) {
-				owner.addAsset(EveKitConverter.toAssetsPlanetaryInteraction(content, pin, owner));
+			if (pin.getContents() == null) {
+				continue;
 			}
+			owner.addAsset(EveKitConverter.toAssetsPlanetaryInteraction(pin, owner));
 		}
 	}
 

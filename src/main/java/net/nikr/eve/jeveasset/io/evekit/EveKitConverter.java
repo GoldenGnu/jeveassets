@@ -37,6 +37,7 @@ import enterprises.orbital.evekit.client.model.PlanetaryPinContent;
 import enterprises.orbital.evekit.client.model.WalletJournal;
 import enterprises.orbital.evekit.client.model.WalletTransaction;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -87,8 +88,13 @@ public final class EveKitConverter extends DataConverter {
 		return toMyAsset(new RawAsset(shipType, shipLocation), owner, new ArrayList<>());
 	}
 
-	public static MyAsset toAssetsPlanetaryInteraction(PlanetaryPinContent content, PlanetaryPin pin, OwnerType owner) {
-		return toMyAsset(new RawAsset(content, pin), owner, new ArrayList<>());
+	public static MyAsset toAssetsPlanetaryInteraction(PlanetaryPin pin, OwnerType owner) {
+		MyAsset parent = toMyAsset(new RawAsset(pin), owner, new ArrayList<>());
+		List<MyAsset> parents = Collections.singletonList(parent);
+		for (PlanetaryPinContent content : pin.getContents()) {
+			parent.addAsset(toMyAsset(new RawAsset(pin, content), owner, parents));
+		}
+		return parent;
 	}
 
 	public static Map<Long, RawBlueprint> toBlueprints(List<Blueprint> responses) {
