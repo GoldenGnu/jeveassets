@@ -135,6 +135,7 @@ public abstract class TabsStockpile extends Bundle {
 	public abstract String name();
 	public abstract String needed();
 	public abstract String newStockpile();
+	public abstract String noLocationsFound();
 	public abstract String nothingNeeded();
 	public abstract String now();
 	public abstract String ok();
@@ -143,6 +144,7 @@ public abstract class TabsStockpile extends Bundle {
 	public abstract String percent();
 	public abstract String percentFull();
 	public abstract String percentIgnore();
+	public abstract String planet();
 	public abstract String region();
 	public abstract String remove();
 	public abstract String renameStockpileTitle();
