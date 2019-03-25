@@ -190,7 +190,9 @@ public class MenuData<T> {
 			}
 			if (location.getLocationID() != 0 && (location.isStation() || location.isEmpty())) { //Any station with a locationID
 				stationsAndCitadelsNames.add(location.getStation()); //Assets Station
-				autopilotStationLocations.add(location); //Autopilot Station
+				if (!location.isPlanet()) {
+					autopilotStationLocations.add(location); //Autopilot Station
+				}
 			}
 			if (location.isEmpty()) {
 				continue; //Ignore empty locations for the rest of the loop
