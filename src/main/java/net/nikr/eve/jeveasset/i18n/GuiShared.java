@@ -245,6 +245,7 @@ public abstract class GuiShared extends Bundle {
 	public abstract String filterContainsNot();
 	public abstract String filterEquals();
 	public abstract String filterEqualsNot();
+	public abstract String filterRegex();
 	public abstract String filterGreaterThan();
 	public abstract String filterLastDays();
 	public abstract String filterLastHours();

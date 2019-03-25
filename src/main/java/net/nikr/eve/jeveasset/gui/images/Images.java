@@ -71,6 +71,7 @@ public enum Images {
 	FILTER_NOT_CONTAIN ("filter_not_contain.png"),
 	FILTER_CONTAIN ("filter_contain.png"),
 	FILTER_NOT_EQUAL ("filter_not_equal.png"),
+	FILTER_REGEX ("filter_regex.png"),
 	FILTER_EQUAL ("filter_equal.png"),
 	FILTER_EQUAL_DATE ("filter_equal_date.png"),
 	FILTER_NOT_EQUAL_DATE ("filter_not_equal_date.png"),
