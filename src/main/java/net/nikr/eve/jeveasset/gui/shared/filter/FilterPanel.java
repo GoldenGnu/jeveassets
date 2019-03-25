@@ -380,7 +380,7 @@ class FilterPanel<E> implements Comparable<FilterPanel<E>> {
 
 	private boolean isInvalidRegex() {
 		if (!isRegexCompare()) {
-			return true;
+			return false;
 		}
 		String text = jText.getText();
 		try {
