@@ -790,7 +790,9 @@ public class RoutingTab extends JMainTabSecondary {
 			if (jSystems.isSelected()) { //System
 				loc = systemCache.get(ea.getLocation().getSystemID());
 			} else if (ea.getLocation().isStation()) { //Station
-				loc = new SolarSystem(ea.getLocation());
+				if (!ea.getLocation().isPlanet()) {
+					loc = new SolarSystem(ea.getLocation());
+				}
 			}
 			if (loc != null &&
 					(loc.getRegionID() < 11000000 || loc.getRegionID() > 13000000) //Ignore Wormhole and Abyssal Regions
