@@ -105,6 +105,12 @@ public enum Images {
 	LINK_EVEMARKETHELPER ("link_evemarkethelper.png"),
 
 	LOC_GROUPS ("loc_groups.png"),
+	LOC_PIN_COMMAND ("loc_pin_command.png"),
+	LOC_PIN_EXTRACTOR ("loc_pin_extractor.png"),
+	LOC_PIN_PROCESSOR ("loc_pin_processor.png"),
+	LOC_PIN_SPACEPORT ("loc_pin_spaceport.png"),
+	LOC_PIN_STORAGE ("loc_pin_storage.png"),
+	LOC_PLANET ("loc_planet.png"),
 	LOC_STATION ("loc_station.png"),
 	LOC_SYSTEM ("loc_system.png"),
 	LOC_REGION ("loc_region.png"),

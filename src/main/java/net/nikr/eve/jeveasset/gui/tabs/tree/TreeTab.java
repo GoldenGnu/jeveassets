@@ -307,7 +307,11 @@ public class TreeTab extends JMainTabSecondary implements TagUpdate {
 				String stationKey = location.getRegion() + location.getSystem() + location.getLocation();
 				TreeAsset stationAsset = locationCache.get(stationKey);
 				if (stationAsset == null) {
-					stationAsset = new TreeAsset(asset.getLocation(), location.getLocation(), stationKey, Images.LOC_STATION.getIcon(), locationTree);
+					if (asset.getLocation().isPlanet()) {
+						stationAsset = new TreeAsset(asset.getLocation(), location.getLocation(), stationKey, Images.LOC_PLANET.getIcon(), locationTree);
+					} else {
+						stationAsset = new TreeAsset(asset.getLocation(), location.getLocation(), stationKey, Images.LOC_STATION.getIcon(), locationTree);
+					}
 					locationCache.put(stationKey, stationAsset);
 					locationsExport.add(stationAsset);
 				}
