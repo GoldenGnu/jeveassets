@@ -114,7 +114,6 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 	}
 
 	void updateTags() {
-		locationName = General.get().all();
 		for (StockpileItem item : items) {
 			item.updateTags();
 		}
