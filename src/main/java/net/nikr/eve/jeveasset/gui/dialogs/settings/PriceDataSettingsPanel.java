@@ -93,7 +93,7 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 		try {
 			systemsEventList.getReadWriteLock().writeLock().lock();
 			for (MyLocation location : StaticData.get().getLocations()) {
-				if (location.isStation() && !location.isCitadel() && !location.isUserLocation()) { //Ignore citadels and user locations
+				if (location.isStation() && !location.isCitadel() && !location.isUserLocation()) { //Ignore citadels and user locations and planets
 					stations.add(location);
 					if (station == null || station.getLocation().length() < location.getLocation().length()) {
 						station = location;

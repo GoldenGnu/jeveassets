@@ -55,6 +55,7 @@ public class MenuData<T> {
 	private final Set<String> typeNames = new HashSet<String>();
 	private final Set<String> stationsAndCitadelsNames = new HashSet<String>();
 	private final Set<String> stationNames = new HashSet<String>();
+	private final Set<String> planetNames = new HashSet<String>();
 	private final Set<String> systemNames = new HashSet<String>();
 	private final Set<String> regionNames = new HashSet<String>();
 	private final Set<Integer> marketTypeIDs = new HashSet<Integer>();
@@ -188,35 +189,33 @@ public class MenuData<T> {
 			if (location.isUserLocation()) { //User
 				userLocations.add(location);
 			}
-			if (location.getLocationID() != 0 && (location.isStation() || location.isEmpty())) { //Any station with a locationID
-				stationsAndCitadelsNames.add(location.getStation()); //Assets Station
-				if (!location.isPlanet()) {
-					autopilotStationLocations.add(location); //Autopilot Station
-				}
+			if (location.getLocationID() != 0 && (location.isStation() || location.isEmpty())) { //Any station with a locationID (not planets)
+				stationsAndCitadelsNames.add(location.getStation()); //Assets Station (support citadels)
+				autopilotStationLocations.add(location); //Autopilot Station (support citadels)
 			}
 			if (location.isEmpty()) {
 				continue; //Ignore empty locations for the rest of the loop
 			}
 			//Staion
-			if (location.isStation()) {
-				if (!location.isCitadel()) {
-					stationNames.add(location.getStation()); //Dotlan Station (does not support citadels)
-				}
-				systemNames.add(location.getSystem()); //Dotlan System
+			if (location.isStation() && !location.isCitadel()) { //Not planet
+				stationNames.add(location.getStation()); //Dotlan Station (does not support citadels)
+			}
+			//Planet
+			if (location.isPlanet()) {
+				planetNames.add(location.getLocation()); //Dotlan + Assets Planet
+			}
+			//System
+			if (location.isStation()  || location.isPlanet() || location.isSystem()) { //Station or Planet or System
+				systemNames.add(location.getSystem()); //Dotlan + Assets System
 				//Jumps
 				MyLocation system = ApiIdConverter.getLocation(location.getSystemID());
 				if (!system.isEmpty()) {
 					systemLocations.add(system); //Jumps + Autopilot + zKillboard System 
 				}
 			}
-			//System
-			if (location.isSystem()) {
-				systemNames.add(location.getSystem()); //Dotlan System
-				systemLocations.add(location); //Jumps + Autopilot + zKillboard System 
-			}
 			//Staion, System, or Region
-			if (location.isStation() || location.isSystem() || location.isRegion()) {
-				regionNames.add(location.getRegion()); //Dotlan Region
+			if (location.isStation()  || location.isPlanet() || location.isSystem() || location.isRegion()) {  //Station or Planet or System or Region
+				regionNames.add(location.getRegion()); //Dotlan + Assets Region
 				MyLocation region = ApiIdConverter.getLocation(location.getRegionID());
 				if (!region.isEmpty()) {
 					regionLocations.add(region); //zKillboard Region
@@ -268,12 +267,17 @@ public class MenuData<T> {
 		return stationNames;
 	}
 
-	//JMenuLookup
+	//JMenuLookup + JMenuAssetFilter
+	public Set<String> getPlanetNames() {
+		return planetNames;
+	}
+
+	//JMenuLookup + JMenuAssetFilter
 	public Set<String> getSystemNames() {
 		return systemNames;
 	}
 
-	//JMenuLookup
+	//JMenuLookup + JMenuAssetFilter
 	public Set<String> getRegionNames() {
 		return regionNames;
 	}

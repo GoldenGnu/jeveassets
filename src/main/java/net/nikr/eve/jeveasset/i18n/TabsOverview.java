@@ -47,6 +47,7 @@ public abstract class TabsOverview extends Bundle {
 	public abstract String locations();
 	public abstract String overview();
 	public abstract String owner();
+	public abstract String planets();
 	public abstract String regions();
 	public abstract String renameGroup();
 	public abstract String stations();

@@ -424,7 +424,7 @@ public class StockpileDialog extends JDialogCentered {
 		for (MyLocation location : StaticData.get().getLocations()) {
 			if (location.isPlanet()) {
 				planetList.add(location);
-			} else if (location.isStation()) {
+			} else if (location.isStation()) { //Not planet
 				stationList.add(location);
 			} else if (location.isSystem()) {
 				systemList.add(location);
@@ -935,7 +935,7 @@ public class StockpileDialog extends JDialogCentered {
 				setLocationType(LocationType.UNIVERSE);
 			} else if (stockpileFilter.getLocation().isPlanet()) {
 				setLocationType(LocationType.PLANET);
-			} else if (stockpileFilter.getLocation().isStation()) {
+			} else if (stockpileFilter.getLocation().isStation()) { //Not planet
 				setLocationType(LocationType.STATION);
 			} else if (stockpileFilter.getLocation().isSystem()) {
 				setLocationType(LocationType.SYSTEM);

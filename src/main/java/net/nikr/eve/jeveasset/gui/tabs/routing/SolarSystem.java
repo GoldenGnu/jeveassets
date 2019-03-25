@@ -48,7 +48,7 @@ public class SolarSystem extends Node {
 	}
 
 	public final boolean isStation() {
-		return location.isStation();
+		return location.isStation(); //Not Planet
 	}
 
 	public String getSecurity() {

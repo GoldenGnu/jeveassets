@@ -58,6 +58,7 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 		KHON_SPACE_MANUFACTURING,
 		FUZZWORK_MARKET,
 		EVEMAPS_DOTLAN_STATION,
+		EVEMAPS_DOTLAN_PLANET,
 		EVEMAPS_DOTLAN_SYSTEM,
 		EVEMAPS_DOTLAN_REGION,
 		EVE_INFO,
@@ -70,6 +71,7 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 	private final JMenu jLocations;
 	private final JMenu jDotlan;
 	private final JMenuItem jDotlanStation;
+	private final JMenuItem jDotlanPlanet;
 	private final JMenuItem jDotlanSystem;
 	private final JMenuItem jDotlanRegion;
 	private final JMenuItem jDotlanLocations;
@@ -131,6 +133,12 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 		jDotlanStation.setActionCommand(MenuLookupAction.EVEMAPS_DOTLAN_STATION.name());
 		jDotlanStation.addActionListener(listener);
 		jDotlan.add(jDotlanStation);
+
+		jDotlanPlanet = new JMenuItem(GuiShared.get().planet());
+		jDotlanPlanet.setIcon(Images.LOC_PLANET.getIcon());
+		jDotlanPlanet.setActionCommand(MenuLookupAction.EVEMAPS_DOTLAN_PLANET.name());
+		jDotlanPlanet.addActionListener(listener);
+		jDotlan.add(jDotlanPlanet);
 
 		jDotlanSystem = new JMenuItem(GuiShared.get().system());
 		jDotlanSystem.setIcon(Images.LOC_SYSTEM.getIcon());
@@ -265,6 +273,7 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 	//Location
 		jLocations.setEnabled(!menuData.getStationNames().isEmpty() || !menuData.getSystemNames().isEmpty() || !menuData.getRegionNames().isEmpty());
 		jDotlanStation.setEnabled(!menuData.getStationNames().isEmpty());
+		jDotlanPlanet.setEnabled(!menuData.getPlanetNames().isEmpty());
 		jDotlanSystem.setEnabled(!menuData.getSystemNames().isEmpty());
 		jDotlanRegion.setEnabled(!menuData.getRegionNames().isEmpty());
 		jzKillboardSystem.setEnabled(!menuData.getSystemLocations().isEmpty());
@@ -309,8 +318,13 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 		}
 	}
 
-	public static void browseDotlan(final Program program, Set<String> stations, Set<String> systems, Set<String> regions) {
+	public static void browseDotlan(final Program program, Set<String> stations, Set<String> planets, Set<String> systems, Set<String> regions) {
 		Set<String> urls = new HashSet<String>();
+		if (planets != null) {
+			for (String planet : planets) {
+				urls.add("http://evemaps.dotlan.net/system/" + replaceLast(planet, " ", "/").replace(" ", "_"));
+			}
+		}
 		if (stations != null) {
 			for (String station : stations) {
 				urls.add("http://evemaps.dotlan.net/outpost/" + station.replace(" ", "_"));
@@ -334,11 +348,13 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 		public void actionPerformed(final ActionEvent e) {
 		//Locations
 			if (MenuLookupAction.EVEMAPS_DOTLAN_STATION.name().equals(e.getActionCommand())) {
-				browseDotlan(program, menuData.getStationNames(), null, null);
+				browseDotlan(program, menuData.getStationNames(), null, null, null);
+			} else if (MenuLookupAction.EVEMAPS_DOTLAN_PLANET.name().equals(e.getActionCommand())) {
+				browseDotlan(program, null, menuData.getPlanetNames(), null, null);
 			} else if (MenuLookupAction.EVEMAPS_DOTLAN_SYSTEM.name().equals(e.getActionCommand())) {
-				browseDotlan(program, null, menuData.getSystemNames(), null);
+				browseDotlan(program, null, null, menuData.getSystemNames(), null);
 			} else if (MenuLookupAction.EVEMAPS_DOTLAN_REGION.name().equals(e.getActionCommand())) {
-				browseDotlan(program, null, null, menuData.getRegionNames());
+				browseDotlan(program, null, null, null, menuData.getRegionNames());
 			} else if (MenuLookupAction.ZKILLBOARD_SYSTEM.name().equals(e.getActionCommand())) {
 				Set<String> urls = new HashSet<String>();
 				for (MyLocation location : menuData.getSystemLocations()) {
@@ -451,6 +467,17 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 				}
 				DesktopUtil.browse(urls, program);
 			}
+		}
+	}
+
+	public static String replaceLast(String string, String toReplace, String replacement) {
+		int pos = string.lastIndexOf(toReplace);
+		if (pos > -1) {
+			return string.substring(0, pos)
+				 + replacement
+				 + string.substring(pos + toReplace.length(), string.length());
+		} else {
+			return string;
 		}
 	}
 }

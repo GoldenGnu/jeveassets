@@ -74,6 +74,9 @@ public class JOverviewMenu extends JMenu {
 				OverviewGroup overviewGroup = entry.getValue();
 				boolean found = overviewGroup.getLocations().containsAll(overviewTab.getSelectedLocations());
 				jCheckBoxMenuItem = new JCheckBoxMenuItem(overviewGroup.getName());
+				if (overviewTab.getSelectedView().equals(TabsOverview.get().planets())) {
+					jCheckBoxMenuItem.setIcon(Images.LOC_PLANET.getIcon());
+				}
 				if (overviewTab.getSelectedView().equals(TabsOverview.get().stations())) {
 					jCheckBoxMenuItem.setIcon(Images.LOC_STATION.getIcon());
 				}
@@ -115,6 +118,9 @@ public class JOverviewMenu extends JMenu {
 					}
 					for (OverviewLocation location : overviewGroup.getLocations()) {
 						jCheckBoxMenuItem = new JCheckBoxMenuItem(location.getName());
+						if (location.isPlanet()) {
+							jCheckBoxMenuItem.setIcon(Images.LOC_PLANET.getIcon());
+						}
 						if (location.isStation()) {
 							jCheckBoxMenuItem.setIcon(Images.LOC_STATION.getIcon());
 						}
