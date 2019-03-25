@@ -182,17 +182,17 @@ public class StockpileDialog extends JDialogCentered {
 		JFixedToolBar jToolBar = new JFixedToolBar();
 		jToolBar.setBorder(BorderFactory.createTitledBorder(TabsStockpile.get().addFilter()));
 
-		JButton jPlanet = new JButton(TabsStockpile.get().planet(), Images.LOC_PLANET.getIcon());
-		jPlanet.setHorizontalAlignment(JButton.LEFT);
-		jPlanet.setActionCommand(StockpileDialogAction.ADD_PLANET.name());
-		jPlanet.addActionListener(listener);
-		jToolBar.addButton(jPlanet);
-
 		JButton jStation = new JButton(TabsStockpile.get().station(), Images.LOC_STATION.getIcon());
 		jStation.setHorizontalAlignment(JButton.LEFT);
 		jStation.setActionCommand(StockpileDialogAction.ADD_STATION.name());
 		jStation.addActionListener(listener);
 		jToolBar.addButton(jStation);
+
+		JButton jPlanet = new JButton(TabsStockpile.get().planet(), Images.LOC_PLANET.getIcon());
+		jPlanet.setHorizontalAlignment(JButton.LEFT);
+		jPlanet.setActionCommand(StockpileDialogAction.ADD_PLANET.name());
+		jPlanet.addActionListener(listener);
+		jToolBar.addButton(jPlanet);
 
 		JButton jSystem = new JButton(TabsStockpile.get().system(), Images.LOC_SYSTEM.getIcon());
 		jSystem.setHorizontalAlignment(JButton.LEFT);
@@ -1178,17 +1178,17 @@ public class StockpileDialog extends JDialogCentered {
 
 			jOptions.addSeparator();
 
-			jPlanet = new JRadioButtonMenuItem(TabsStockpile.get().planet(), Images.LOC_PLANET.getIcon());
-			jPlanet.setHorizontalAlignment(JButton.LEFT);
-			jPlanet.setActionCommand(StockpileDialogAction.CHANGE_LOCATION_TYPE.name());
-			jPlanet.addActionListener(listener);
-			jOptions.add(jPlanet);
-
 			jStation = new JRadioButtonMenuItem(TabsStockpile.get().station(), Images.LOC_STATION.getIcon());
 			jStation.setHorizontalAlignment(JButton.LEFT);
 			jStation.setActionCommand(StockpileDialogAction.CHANGE_LOCATION_TYPE.name());
 			jStation.addActionListener(listener);
 			jOptions.add(jStation);
+
+			jPlanet = new JRadioButtonMenuItem(TabsStockpile.get().planet(), Images.LOC_PLANET.getIcon());
+			jPlanet.setHorizontalAlignment(JButton.LEFT);
+			jPlanet.setActionCommand(StockpileDialogAction.CHANGE_LOCATION_TYPE.name());
+			jPlanet.addActionListener(listener);
+			jOptions.add(jPlanet);
 
 			jSystem = new JRadioButtonMenuItem(TabsStockpile.get().system(), Images.LOC_SYSTEM.getIcon());
 			jSystem.setHorizontalAlignment(JButton.LEFT);
