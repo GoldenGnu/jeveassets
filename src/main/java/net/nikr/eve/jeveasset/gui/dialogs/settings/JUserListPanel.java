@@ -29,6 +29,7 @@ import javax.swing.*;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.data.settings.UserItem;
+import net.nikr.eve.jeveasset.gui.shared.JOptionInput;
 import net.nikr.eve.jeveasset.gui.shared.components.JLabelMultiline;
 import net.nikr.eve.jeveasset.gui.shared.components.ListComboBoxModel;
 import net.nikr.eve.jeveasset.i18n.DialoguesSettings;
@@ -147,13 +148,13 @@ public abstract class JUserListPanel<K, V extends Comparable<V>> extends JSettin
 		if (formatedValue == null) {
 			formatedValue = "0";
 		}
-		String value = (String) JOptionPane.showInputDialog(program.getMainWindow().getFrame(), name, DialoguesSettings.get().editTypeTitle(type), JOptionPane.PLAIN_MESSAGE, null, null, formatedValue);
+		String value = (String) JOptionInput.showInputDialog(program.getMainWindow().getFrame(), name, DialoguesSettings.get().editTypeTitle(type), JOptionPane.PLAIN_MESSAGE, null, null, formatedValue);
 		if (value != null) {
 			V v = valueOf(value);
 			if (v != null) { //Update value
 				List<K> containedKeys = new ArrayList<K>();
 				for (UserItem<K, V> userItem : userItems) {
-					UserItem<K, V> userItemExisting = items.get(userItem.getKey());;
+					UserItem<K, V> userItemExisting = items.get(userItem.getKey());
 					if (userItemExisting == null) { //Add new
 						userItemExisting = userItem;
 						items.put(userItem.getKey(), userItem);

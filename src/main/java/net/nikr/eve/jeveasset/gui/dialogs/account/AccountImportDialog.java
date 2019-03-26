@@ -75,7 +75,6 @@ import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
 import net.nikr.eve.jeveasset.data.api.accounts.EveKitOwner;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.DocumentFactory;
-import net.nikr.eve.jeveasset.gui.shared.components.JCopyPopup;
 import net.nikr.eve.jeveasset.gui.shared.components.JCustomFileChooser;
 import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
 import net.nikr.eve.jeveasset.gui.shared.components.JDropDownButton;
@@ -840,12 +839,10 @@ public class AccountImportDialog extends JDialogCentered {
 			jUserIdLabel.setHorizontalAlignment(JLabel.RIGHT);
 
 			jAccessKey = new JIntegerField("", DocumentFactory.ValueFlag.POSITIVE_AND_ZERO);
-			JCopyPopup.install(jAccessKey);
 
 			JLabel jApiKeyLabel = new JLabel(DialoguesAccount.get().credential());
 
 			jAccessCred = new JTextField();
-			JCopyPopup.install(jAccessCred);
 			JEditorPane jHelp = new JEditorPane(
 					"text/html", "<html><body style=\"font-family: " + jUserIdLabel.getFont().getName() + "; font-size: " + jUserIdLabel.getFont().getSize() + "pt\">"
 				+ DialoguesAccount.get().eveKitHelpText() + "</body></html>");
@@ -948,7 +945,6 @@ public class AccountImportDialog extends JDialogCentered {
 
 			JLabel jAuthCodeLabel = new JLabel(DialoguesAccount.get().authCode());
 			jAuthCode = new JTextField();
-			JCopyPopup.install(jAuthCode);
 
 			JEditorPane jHelp = new JEditorPane(
 					"text/html", "<html><body style=\"font-family: " + jAuthLabel.getFont().getName() + "; font-size: " + jAuthLabel.getFont().getSize() + "pt\">"

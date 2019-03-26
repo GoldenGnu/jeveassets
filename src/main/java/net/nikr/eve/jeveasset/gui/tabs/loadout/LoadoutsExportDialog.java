@@ -27,7 +27,6 @@ import javax.swing.*;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.DocumentFactory;
-import net.nikr.eve.jeveasset.gui.shared.components.JCopyPopup;
 import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
 import net.nikr.eve.jeveasset.i18n.TabsLoadout;
 
@@ -38,11 +37,11 @@ public class LoadoutsExportDialog extends JDialogCentered {
 		OK, CANCEL
 	}
 
-	private JTextField jName;
-	private JTextPane jDescription;
-	private JButton jOK;
+	private final JTextField jName;
+	private final JTextPane jDescription;
+	private final JButton jOK;
 
-	private LoadoutsTab loadoutsDialog;
+	private final LoadoutsTab loadoutsDialog;
 
 	public LoadoutsExportDialog(final Program program, final LoadoutsTab loadoutsDialog) {
 		super(program, TabsLoadout.get().export(), Images.TOOL_SHIP_LOADOUTS.getImage());
@@ -54,7 +53,6 @@ public class LoadoutsExportDialog extends JDialogCentered {
 		jPanel.add(jNameLabel);
 
 		jName = new JTextField();
-		JCopyPopup.install(jName);
 		jName.setDocument(DocumentFactory.getMaxLengthPlainDocument(40)); //max length: 40
 		jPanel.add(jName);
 
@@ -62,7 +60,6 @@ public class LoadoutsExportDialog extends JDialogCentered {
 		jPanel.add(jDescriptionLabel);
 
 		jDescription = new JTextPane();
-		JCopyPopup.install(jDescription);
 		jDescription.setDocument(DocumentFactory.getMaxLengthStyledDocument(400)); //max length: 400
 		JScrollPane jDescriptionScrollPane = new JScrollPane(jDescription);
 		jPanel.add(jDescriptionScrollPane);

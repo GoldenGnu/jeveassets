@@ -42,7 +42,6 @@ import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.CaseInsensitiveComparator;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
-import net.nikr.eve.jeveasset.gui.shared.components.JCopyPopup;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTabSecondary;
 import net.nikr.eve.jeveasset.gui.shared.table.EventListManager;
 import net.nikr.eve.jeveasset.i18n.TabsValues;
@@ -85,7 +84,6 @@ public class ValueRetroTab extends JMainTabSecondary {
 		jCharacters.addActionListener(listener);
 
 		jCharacter = new JEditorPane("text/html", "<html>");
-		JCopyPopup.install(jCharacter);
 		jCharacter.setEditable(false);
 		jCharacter.setOpaque(false);
 		jCharacter.setBorder(null);
@@ -97,7 +95,6 @@ public class ValueRetroTab extends JMainTabSecondary {
 		jCorporations.addActionListener(listener);
 
 		jCorporation = new JEditorPane("text/html", "<html>");
-		JCopyPopup.install(jCorporation);
 		jCorporation.setEditable(false);
 		jCorporation.setOpaque(false);
 		jCorporation.setBorder(null);
@@ -112,7 +109,6 @@ public class ValueRetroTab extends JMainTabSecondary {
 		jTotalLabel.setOpaque(true);
 
 		jTotal = new JEditorPane("text/html", "<html>");
-		JCopyPopup.install(jTotal);
 		jTotal.setEditable(false);
 		jTotal.setOpaque(false);
 		jTotal.setBorder(null);

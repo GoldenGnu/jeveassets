@@ -32,6 +32,7 @@ import javax.swing.JOptionPane;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
+import net.nikr.eve.jeveasset.gui.shared.JOptionInput;
 import net.nikr.eve.jeveasset.i18n.TabsOverview;
 
 
@@ -145,7 +146,7 @@ public class JOverviewMenu extends JMenu {
 		public void actionPerformed(ActionEvent e) {
 			//Group
 			if (OverviewMenu.NEW.name().equals(e.getActionCommand())) {
-				String value = JOptionPane.showInputDialog(program.getMainWindow().getFrame(), TabsOverview.get().groupName(), TabsOverview.get().addGroup(), JOptionPane.PLAIN_MESSAGE);
+				String value = JOptionInput.showInputDialog(program.getMainWindow().getFrame(), TabsOverview.get().groupName(), TabsOverview.get().addGroup(), JOptionPane.PLAIN_MESSAGE);
 				if (value != null) {
 					Settings.lock("Overview Groups (New)"); //Lock for Overview Groups (New)
 					OverviewGroup overviewGroup = new OverviewGroup(value);
@@ -169,7 +170,7 @@ public class JOverviewMenu extends JMenu {
 			}
 			if (OverviewMenu.RENAME.name().equals(e.getActionCommand())) {
 				OverviewGroup overviewGroup = program.getOverviewTab().getSelectGroup();
-				String value = (String) JOptionPane.showInputDialog(program.getMainWindow().getFrame(), TabsOverview.get().groupName(), TabsOverview.get().renameGroup(), JOptionPane.PLAIN_MESSAGE, null, null, overviewGroup.getName());
+				String value = (String) JOptionInput.showInputDialog(program.getMainWindow().getFrame(), TabsOverview.get().groupName(), TabsOverview.get().renameGroup(), JOptionPane.PLAIN_MESSAGE, null, null, overviewGroup.getName());
 				if (value != null) {
 					Settings.lock("Overview Groups (Rename)"); //Lock for Overview Groups (Rename)
 					Settings.get().getOverviewGroups().remove(overviewGroup.getName());

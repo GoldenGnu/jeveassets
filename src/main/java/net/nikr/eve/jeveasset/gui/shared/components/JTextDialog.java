@@ -108,7 +108,6 @@ public class JTextDialog extends JDialogCentered {
 		jText = new JTextArea();
 		jText.setEditable(false);
 		jText.setFont(jPanel.getFont());
-		JCopyPopup.install(jText);
 
 		exportColor = jPanel.getBackground();
 		importColor = new Color(jText.getBackground().getRGB());

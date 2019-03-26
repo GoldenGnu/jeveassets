@@ -39,6 +39,7 @@ import net.nikr.eve.jeveasset.data.sde.StaticData;
 import net.nikr.eve.jeveasset.data.settings.Citadel;
 import net.nikr.eve.jeveasset.data.settings.Citadel.CitadelSource;
 import net.nikr.eve.jeveasset.gui.images.Images;
+import net.nikr.eve.jeveasset.gui.shared.JOptionInput;
 import net.nikr.eve.jeveasset.gui.shared.components.JLabelMultiline;
 import net.nikr.eve.jeveasset.gui.shared.components.ListComboBoxModel;
 import net.nikr.eve.jeveasset.gui.shared.menu.JSystemDialog;
@@ -203,7 +204,7 @@ public class UserLocationSettingsPanel extends JSettingsPanel {
 	}
 
 	private String getLocationName(String text) {
-		text = (String) JOptionPane.showInputDialog(program.getMainWindow().getFrame(), GuiShared.get().locationName(), GuiShared.get().locationRename(), JOptionPane.PLAIN_MESSAGE, null, null, text);
+		text = (String) JOptionInput.showInputDialog(program.getMainWindow().getFrame(), GuiShared.get().locationName(), GuiShared.get().locationRename(), JOptionPane.PLAIN_MESSAGE, null, null, text);
 		if (text == null) {
 			return null;
 		}

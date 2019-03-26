@@ -45,6 +45,7 @@ import net.nikr.eve.jeveasset.data.settings.TrackerData;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Colors;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
+import net.nikr.eve.jeveasset.gui.shared.JOptionInput;
 import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
 import net.nikr.eve.jeveasset.gui.shared.components.JSelectionDialog;
 import net.nikr.eve.jeveasset.gui.tabs.values.AssetValue;
@@ -355,7 +356,7 @@ public class JTrackerEditDialog extends JDialogCentered {
 	}
 
 	private Double getValue(Double balance)  {
-		String balanceReturn = JOptionPane.showInputDialog(getDialog(), TabsTracker.get().enterNewValue(), format(balance));
+		String balanceReturn = JOptionInput.showInputDialog(getDialog(), TabsTracker.get().enterNewValue(), format(balance));
 		if (balanceReturn == null) {
 			return null; //Cancel
 		}
