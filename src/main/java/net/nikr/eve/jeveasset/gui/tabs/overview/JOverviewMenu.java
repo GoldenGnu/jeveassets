@@ -59,7 +59,7 @@ public class JOverviewMenu extends JMenu {
 		JCheckBoxMenuItem jCheckBoxMenuItem;
 
 		//Station, System, Region views
-		if (!overviewTab.getSelectedView().equals(TabsOverview.get().groups())) {
+		if (overviewTab.getSelectedView() != OverviewTab.View.GROUPS) {
 			jMenuItem = new JMenuItem(TabsOverview.get().add());
 			jMenuItem.setIcon(Images.EDIT_ADD.getIcon());
 			jMenuItem.setEnabled(!selected.isEmpty());
@@ -75,16 +75,13 @@ public class JOverviewMenu extends JMenu {
 				OverviewGroup overviewGroup = entry.getValue();
 				boolean found = overviewGroup.getLocations().containsAll(overviewTab.getSelectedLocations());
 				jCheckBoxMenuItem = new JCheckBoxMenuItem(overviewGroup.getName());
-				if (overviewTab.getSelectedView().equals(TabsOverview.get().planets())) {
+				if (overviewTab.getSelectedView() == OverviewTab.View.PLANETS) {
 					jCheckBoxMenuItem.setIcon(Images.LOC_PLANET.getIcon());
-				}
-				if (overviewTab.getSelectedView().equals(TabsOverview.get().stations())) {
+				} else if (overviewTab.getSelectedView() == OverviewTab.View.STATIONS) {
 					jCheckBoxMenuItem.setIcon(Images.LOC_STATION.getIcon());
-				}
-				if (overviewTab.getSelectedView().equals(TabsOverview.get().systems())) {
+				} else if (overviewTab.getSelectedView() == OverviewTab.View.SYSTEMS) {
 					jCheckBoxMenuItem.setIcon(Images.LOC_SYSTEM.getIcon());
-				}
-				if (overviewTab.getSelectedView().equals(TabsOverview.get().regions())) {
+				} else if (overviewTab.getSelectedView() == OverviewTab.View.REGIONS) {
 					jCheckBoxMenuItem.setIcon(Images.LOC_REGION.getIcon());
 				}
 				jCheckBoxMenuItem.setEnabled(!selected.isEmpty());
@@ -95,7 +92,7 @@ public class JOverviewMenu extends JMenu {
 			}
 		}
 		//Groups view
-		if (overviewTab.getSelectedView().equals(TabsOverview.get().groups())) {
+		if (overviewTab.getSelectedView() == OverviewTab.View.GROUPS) {
 			jMenuItem = new JMenuItem(TabsOverview.get().renameGroup());
 			jMenuItem.setIcon(Images.EDIT_RENAME.getIcon());
 			jMenuItem.setEnabled(selected.size() == 1);

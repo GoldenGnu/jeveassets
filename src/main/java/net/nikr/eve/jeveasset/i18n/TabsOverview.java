@@ -57,7 +57,6 @@ public abstract class TabsOverview extends Bundle {
 	public abstract String totalValue();
 	public abstract String totalVolume();
 	public abstract String view();
-	public abstract String whitespace();
 	public abstract String columnName();
 	public abstract String columnSystem();
 	public abstract String columnRegion();
