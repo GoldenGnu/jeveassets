@@ -633,14 +633,7 @@ public class RoutingTab extends JMainTabSecondary {
 		//Do everything the constructor does...
 		jAvailable.getEditableModel().clear();
 		jWaypoints.getEditableModel().clear();
-		List<SourceItem> sources = new ArrayList<SourceItem>();
-		for (Entry<String, OverviewGroup> entry : Settings.get().getOverviewGroups().entrySet()) {
-			sources.add(new SourceItem(entry.getKey(), true));
-		}
-		Collections.sort(sources);
-		sources.add(0, new SourceItem(TabsRouting.get().filteredAssets()));
-		sources.add(0, new SourceItem(General.get().all()));
-		jSource.setModel(new ListComboBoxModel<SourceItem>(sources));
+		overviewGroupsChanged();
 		jAlgorithm.setSelectedIndex(0);
 		jResult.setText(TabsRouting.get().emptyResult());
 		jResult.setCaretPosition(0);
@@ -663,6 +656,17 @@ public class RoutingTab extends JMainTabSecondary {
 		updateRemaining();
 		processFilteredAssets();
 		updateRoutes();
+	}
+
+	public void overviewGroupsChanged() {
+		List<SourceItem> sources = new ArrayList<SourceItem>();
+		for (Entry<String, OverviewGroup> entry : Settings.get().getOverviewGroups().entrySet()) {
+			sources.add(new SourceItem(entry.getKey(), true));
+		}
+		Collections.sort(sources);
+		sources.add(0, new SourceItem(TabsRouting.get().filteredAssets()));
+		sources.add(0, new SourceItem(General.get().all()));
+		jSource.setModel(new ListComboBoxModel<SourceItem>(sources));
 	}
 
 	@Override

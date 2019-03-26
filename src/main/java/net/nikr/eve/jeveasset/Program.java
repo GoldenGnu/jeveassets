@@ -825,7 +825,7 @@ public class Program implements ActionListener {
 	 * Called when Overview Groups are changed.
 	 */
 	public void overviewGroupsChanged() {
-		routingTab.updateData();
+		routingTab.overviewGroupsChanged();
 	}
 
 	/**
