@@ -76,6 +76,7 @@ public abstract class JAutoCompleteDialog<T> extends JDialogCentered {
 		eventList.getReadWriteLock().readLock().unlock();
 		
 		autoComplete = AutoCompleteSupport.install(jItems, EventModels.createSwingThreadProxyList(sortedList), getFilterator());
+		autoComplete.setStrict(strict);
 
 		jOK = new JButton(GuiShared.get().ok());
 		jOK.setActionCommand(AutoCompleteAction.OK.name());
@@ -112,21 +113,21 @@ public abstract class JAutoCompleteDialog<T> extends JDialogCentered {
 	protected abstract T getValue(Object object);
 
 	public final void updateData(Collection<T> list) {
-		try {
-			eventList.getReadWriteLock().writeLock().lock();
-			eventList.clear();
-			eventList.addAll(list);
-		} finally {
-			eventList.getReadWriteLock().writeLock().unlock();
-		}
-		//Can not set strict on empty EventList - so we do it now (if possible)
+        boolean same = false;
 		try {
 			eventList.getReadWriteLock().readLock().lock();
-			if (!eventList.isEmpty()) {
-				autoComplete.setStrict(strict);
-			}
+			same = eventList.equals(list);
 		} finally {
 			eventList.getReadWriteLock().readLock().unlock();
+		}
+		if (!same) {
+			try {
+				eventList.getReadWriteLock().writeLock().lock();
+				eventList.clear();
+				eventList.addAll(list);
+			} finally {
+				eventList.getReadWriteLock().writeLock().unlock();
+			}
 		}
 	}
 
