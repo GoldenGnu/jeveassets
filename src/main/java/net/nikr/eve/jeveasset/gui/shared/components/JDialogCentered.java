@@ -33,6 +33,7 @@ import javax.swing.*;
 import javax.swing.text.DefaultEditorKit;
 import javax.swing.text.JTextComponent;
 import net.nikr.eve.jeveasset.Program;
+import net.nikr.eve.jeveasset.gui.shared.TextManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -132,6 +133,7 @@ public abstract class JDialogCentered {
 
 			firstActivating = true;
 			firstFocus = true;
+			TextManager.installAll(dialog);
 		} else {
 			LOG.info("Hiding: {} Dialog", dialog.getTitle());
 		}

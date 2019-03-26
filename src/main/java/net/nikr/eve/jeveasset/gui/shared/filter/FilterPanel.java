@@ -70,6 +70,7 @@ import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Colors;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
+import net.nikr.eve.jeveasset.gui.shared.TextManager;
 import net.nikr.eve.jeveasset.gui.shared.components.JDateChooser;
 import net.nikr.eve.jeveasset.gui.shared.components.ListComboBoxModel;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter.AllColumn;
@@ -215,6 +216,7 @@ class FilterPanel<E> implements Comparable<FilterPanel<E>> {
 		jText = new JTextField();
 		jText.getDocument().addDocumentListener(listener);
 		jText.addKeyListener(listener);
+		TextManager.installTextComponent(jText);
 
 		jCompareColumn = new JComboBox<>();
 		jCompareColumn.setPrototypeDisplayValue(longestColumn);

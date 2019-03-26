@@ -84,7 +84,7 @@ import net.nikr.eve.jeveasset.gui.shared.CaseInsensitiveComparator;
 import net.nikr.eve.jeveasset.gui.shared.Colors;
 import net.nikr.eve.jeveasset.gui.shared.DocumentFactory;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
-import net.nikr.eve.jeveasset.gui.shared.components.JCopyPopup;
+import net.nikr.eve.jeveasset.gui.shared.TextManager;
 import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
 import net.nikr.eve.jeveasset.gui.shared.components.JDoubleField;
 import net.nikr.eve.jeveasset.gui.shared.components.JDropDownButton;
@@ -715,7 +715,7 @@ public class StockpileDialog extends JDialogCentered {
 				}
 				jContainer = new JComboBox<>();
 				jIncludeContainer = new JCheckBox(TabsStockpile.get().includeContainer());
-				JCopyPopup.install((JTextComponent) jContainer.getEditor().getEditorComponent());
+				TextManager.installTextComponent((JTextComponent) jContainer.getEditor().getEditorComponent());
 				AutoCompleteSupport<String> install = AutoCompleteSupport.install(jContainer, EventModels.createSwingThreadProxyList(containerEventList), new Filterator());
 				install.setFilterMode(TextMatcherEditor.CONTAINS);
 				((JTextComponent) jContainer.getEditor().getEditorComponent()).getDocument().addDocumentListener(listener);

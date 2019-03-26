@@ -39,10 +39,8 @@ import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.text.JTextComponent;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.gui.shared.CaseInsensitiveComparator;
-import net.nikr.eve.jeveasset.gui.shared.components.JCopyPopup;
 import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
 import net.nikr.eve.jeveasset.gui.shared.table.EventListManager;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
@@ -70,7 +68,6 @@ public class FilterSave extends JDialogCentered {
 		JLabel jText = new JLabel(GuiShared.get().enterFilterName());
 
 		jName = new JComboBox<String>();
-		JCopyPopup.install((JTextComponent) jName.getEditor().getEditorComponent());
 		filters = new EventListManager<String>().create();
 		AutoCompleteSupport.install(jName, EventModels.createSwingThreadProxyList(filters), new Filterator());
 		jSave = new JButton(GuiShared.get().save());

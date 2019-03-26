@@ -38,6 +38,7 @@ import net.nikr.eve.jeveasset.data.api.my.MyContractItem;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
+import net.nikr.eve.jeveasset.gui.shared.JOptionInput;
 import net.nikr.eve.jeveasset.gui.shared.components.JLockWindow;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 import net.nikr.eve.jeveasset.io.esi.AbstractEsiGetter;
@@ -152,7 +153,7 @@ public class JMenuUI <T> extends MenuManager.JAutoMenu<T> {
 			JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), GuiShared.get().uiCharacterInvalidMsg(), GuiShared.get().uiCharacterTitle(), JOptionPane.PLAIN_MESSAGE);
 			return null;
 		}
-		Object object = JOptionPane.showInputDialog(program.getMainWindow().getFrame(), GuiShared.get().uiCharacterMsg(), GuiShared.get().uiCharacterTitle(), JOptionPane.PLAIN_MESSAGE, null, owners.toArray(new EsiOwner[owners.size()]), owners.get(0));
+		Object object = JOptionInput.showInputDialog(program.getMainWindow().getFrame(), GuiShared.get().uiCharacterMsg(), GuiShared.get().uiCharacterTitle(), JOptionPane.PLAIN_MESSAGE, null, owners.toArray(new EsiOwner[owners.size()]), owners.get(0));
 		if (object == null) {
 			return null; //Cancel
 		} else if (object instanceof EsiOwner) {
@@ -172,7 +173,7 @@ public class JMenuUI <T> extends MenuManager.JAutoMenu<T> {
 		} else if (locations.size() == 1) {
 			return locations.iterator().next();
 		} else {
-			Object object = JOptionPane.showInputDialog(program.getMainWindow().getFrame(), null, GuiShared.get().uiLocationTitle(), JOptionPane.PLAIN_MESSAGE, null, locations.toArray(new MyLocation[locations.size()]), locations.iterator().next());
+			Object object = JOptionInput.showInputDialog(program.getMainWindow().getFrame(), null, GuiShared.get().uiLocationTitle(), JOptionPane.PLAIN_MESSAGE, null, locations.toArray(new MyLocation[locations.size()]), locations.iterator().next());
 			if (object == null) {
 				return null; //Cancel
 			} else if (object instanceof MyLocation) {
@@ -285,7 +286,7 @@ public class JMenuUI <T> extends MenuManager.JAutoMenu<T> {
 				Owner owner;
 				if (owners.size() > 1) {
 					Collections.sort(owners);
-					Object object = JOptionPane.showInputDialog(program.getMainWindow().getFrame(), GuiShared.get().uiOwnerMsg(), GuiShared.get().uiOwnerTitle(), JOptionPane.PLAIN_MESSAGE, null, owners.toArray(new Owner[owners.size()]), owners.get(0));
+					Object object = JOptionInput.showInputDialog(program.getMainWindow().getFrame(), GuiShared.get().uiOwnerMsg(), GuiShared.get().uiOwnerTitle(), JOptionPane.PLAIN_MESSAGE, null, owners.toArray(new Owner[owners.size()]), owners.get(0));
 					if (object == null) {
 						return; //Cancel
 					}

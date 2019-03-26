@@ -89,6 +89,7 @@ import net.nikr.eve.jeveasset.data.settings.TrackerData;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
+import net.nikr.eve.jeveasset.gui.shared.JOptionInput;
 import net.nikr.eve.jeveasset.gui.shared.components.CheckBoxNode;
 import net.nikr.eve.jeveasset.gui.shared.components.JCustomFileChooser;
 import net.nikr.eve.jeveasset.gui.shared.components.JDateChooser;
@@ -1212,9 +1213,9 @@ public class TrackerTab extends JMainTabSecondary {
 		TrackerNote trackerNote = Settings.get().getTrackerNotes().get(new TrackerDate(date));
 		String newNote;
 		if (trackerNote == null) {
-			newNote = JOptionPane.showInputDialog(program.getMainWindow().getFrame(), TabsTracker.get().notesEditMsg(), TabsTracker.get().notesEditTitle(), JOptionPane.PLAIN_MESSAGE);
+			newNote = JOptionInput.showInputDialog(program.getMainWindow().getFrame(), TabsTracker.get().notesEditMsg(), TabsTracker.get().notesEditTitle(), JOptionPane.PLAIN_MESSAGE);
 		} else {
-			newNote = (String) JOptionPane.showInputDialog(program.getMainWindow().getFrame(), TabsTracker.get().notesEditMsg(), TabsTracker.get().notesEditTitle(), JOptionPane.PLAIN_MESSAGE, null, null, trackerNote.getNote());
+			newNote = (String) JOptionInput.showInputDialog(program.getMainWindow().getFrame(), TabsTracker.get().notesEditMsg(), TabsTracker.get().notesEditTitle(), JOptionPane.PLAIN_MESSAGE, null, null, trackerNote.getNote());
 		}
 		if (newNote != null) {
 			Settings.lock("Tracker Notes (Set Note)");
