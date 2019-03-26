@@ -85,12 +85,20 @@ import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 
 public class OverviewTab extends JMainTabSecondary {
 
-	public enum OverviewAction {
+	public static enum OverviewAction {
 		UPDATE_LIST,
 		LOAD_FILTER,
 		GROUP_ASSET_FILTER,
 		GROUP_LOOKUP,
 		EXPORT
+	}
+
+	public static enum View {
+		STATIONS,
+		PLANETS,
+		SYSTEMS,
+		REGIONS,
+		GROUPS,
 	}
 
 	private final JOverviewTable jTable;
@@ -291,7 +299,7 @@ public class OverviewTab extends JMainTabSecondary {
 	}
 
 	public boolean isGroup() {
-		return getSelectedView().equals(TabsOverview.get().groups());
+		return getSelectedView() == View.GROUPS;
 	}
 
 	public boolean isGroupAndNotEmpty() {
@@ -331,31 +339,31 @@ public class OverviewTab extends JMainTabSecondary {
 		jValue.setText(Formater.iskFormat(totalValue));
 	}
 
-	protected String getSelectedView() {
+	protected View getSelectedView() {
 		if (jStations.isSelected()) {
-			return TabsOverview.get().stations();
+			return View.STATIONS;
 		}
 		if (jPlanets.isSelected()) {
-			return TabsOverview.get().planets();
+			return View.PLANETS;
 		}
 		if (jSystems.isSelected()) {
-			return TabsOverview.get().systems();
+			return View.SYSTEMS;
 		}
 		if (jRegions.isSelected()) {
-			return TabsOverview.get().regions();
+			return View.REGIONS;
 		}
 		if (jGroups.isSelected()) {
-			return TabsOverview.get().groups();
+			return View.GROUPS;
 		}
-		return "";
+		return View.STATIONS;
 	}
 
-	private List<Overview> getList(final List<MyAsset> input, final String owner, final String view) {
+	private List<Overview> getList(final List<MyAsset> input, final String owner, final View view) {
 		List<Overview> locations = new ArrayList<Overview>();
 		Map<String, Overview> locationsMap = new HashMap<String, Overview>();
 		List<String> groupedLocations = new ArrayList<String>();
 		rowCount = 0;
-		if (view.equals(TabsOverview.get().groups())) { //Add all groups
+		if (view == View.GROUPS) { //Add all groups
 			for (Map.Entry<String, OverviewGroup> entry : Settings.get().getOverviewGroups().entrySet()) {
 				OverviewGroup overviewGroup = entry.getValue();
 				if (!locationsMap.containsKey(overviewGroup.getName())) { //Create new overview
@@ -374,6 +382,7 @@ public class OverviewTab extends JMainTabSecondary {
 				}
 			}
 		}
+		final boolean all = owner.equals(General.get().all());
 		for (MyAsset asset : input) {
 			if (asset.getItem().getGroup().equals("Audit Log Secure Container") && Settings.get().isIgnoreSecureContainers()) {
 				continue;
@@ -382,7 +391,7 @@ public class OverviewTab extends JMainTabSecondary {
 				continue;
 			}
 			//Filters
-			if (!owner.equals(asset.getOwnerName()) && !owner.equals(General.get().all())) {
+			if (!owner.equals(asset.getOwnerName()) && !all) {
 				continue;
 			}
 
@@ -392,29 +401,26 @@ public class OverviewTab extends JMainTabSecondary {
 			double value = asset.getValue();
 			long count = asset.getCount();
 			double volume = asset.getVolumeTotal();
-			if (!view.equals(TabsOverview.get().groups())) { //Locations
-				String locationName = TabsOverview.get().whitespace();
+			if (view != View.GROUPS) { //Locations
+				String locationName = "";
 				MyLocation location = asset.getLocation();
-				if (view.equals(TabsOverview.get().stations()) && location.isPlanet()) {
+				if (view == View.STATIONS && location.isPlanet()) {
 					continue;
 				}
-				if (view.equals(TabsOverview.get().planets()) && !location.isPlanet()) {
+				if (view == View.PLANETS && !location.isPlanet()) {
 					continue;
 				}
 				if (!location.isEmpty()) { //Always use the default location for empty locations
-					if (view.equals(TabsOverview.get().regions())) {
+					if (view == View.REGIONS) {
 						locationName = asset.getLocation().getRegion();
 						location = ApiIdConverter.getLocation(asset.getLocation().getRegionID());
-					}
-					if (view.equals(TabsOverview.get().systems())) {
+					} else if (view == View.SYSTEMS) {
 						locationName = asset.getLocation().getSystem();
 						location = ApiIdConverter.getLocation(asset.getLocation().getSystemID());
-					}
-					if (view.equals(TabsOverview.get().planets())) {
+					} else if (view == View.PLANETS) {
 						locationName = asset.getLocation().getLocation();
 						location = ApiIdConverter.getLocation(asset.getLocation().getLocationID());
-					}
-					if (view.equals(TabsOverview.get().stations())) {
+					} else if (view == View.STATIONS) {
 						locationName = asset.getLocation().getLocation();
 						location = ApiIdConverter.getLocation(asset.getLocation().getLocationID());
 					}
@@ -486,32 +492,28 @@ public class OverviewTab extends JMainTabSecondary {
 			return;
 		}
 		String owner = (String) jOwner.getSelectedItem();
-		String view = getSelectedView();
-		if (view.equals(TabsOverview.get().regions())) {
+		View view = getSelectedView();
+		if (view == View.REGIONS) {
 			tableFormat.hideColumn(OverviewTableFormat.SYSTEM);
 			tableFormat.hideColumn(OverviewTableFormat.REGION);
 			tableFormat.hideColumn(OverviewTableFormat.SECURITY);
 			tableModel.fireTableStructureChanged();
-		}
-		if (view.equals(TabsOverview.get().systems())) {
+		} else if (view == View.SYSTEMS) {
 			tableFormat.hideColumn(OverviewTableFormat.SYSTEM);
 			tableFormat.showColumn(OverviewTableFormat.REGION);
 			tableFormat.showColumn(OverviewTableFormat.SECURITY);
 			tableModel.fireTableStructureChanged();
-		}
-		if (view.equals(TabsOverview.get().planets())) {
+		} else if (view == View.PLANETS) {
 			tableFormat.showColumn(OverviewTableFormat.SYSTEM);
 			tableFormat.showColumn(OverviewTableFormat.REGION);
 			tableFormat.showColumn(OverviewTableFormat.SECURITY);
 			tableModel.fireTableStructureChanged();
-		}
-		if (view.equals(TabsOverview.get().stations())) {
+		} else if (view == View.STATIONS) {
 			tableFormat.showColumn(OverviewTableFormat.SYSTEM);
 			tableFormat.showColumn(OverviewTableFormat.REGION);
 			tableFormat.showColumn(OverviewTableFormat.SECURITY);
 			tableModel.fireTableStructureChanged();
-		}
-		if (view.equals(TabsOverview.get().groups())) {
+		} else if (view == View.GROUPS) {
 			tableFormat.hideColumn(OverviewTableFormat.SYSTEM);
 			tableFormat.hideColumn(OverviewTableFormat.REGION);
 			tableFormat.hideColumn(OverviewTableFormat.SECURITY);
@@ -545,16 +547,13 @@ public class OverviewTab extends JMainTabSecondary {
 		for (int row : jTable.getSelectedRows()) {
 			Overview overview = tableModel.getElementAt(row);
 			OverviewLocation overviewLocation = null;
-			if (getSelectedView().equals(TabsOverview.get().stations())) {
+			if (getSelectedView() == View.STATIONS) {
 				overviewLocation = new OverviewLocation(overview.getName(), OverviewLocation.LocationType.TYPE_STATION);
-			}
-			if (getSelectedView().equals(TabsOverview.get().planets())) {
+			} else if (getSelectedView() == View.PLANETS) {
 				overviewLocation = new OverviewLocation(overview.getName(), OverviewLocation.LocationType.TYPE_PLANET);
-			}
-			if (getSelectedView().equals(TabsOverview.get().systems())) {
+			} else if (getSelectedView() == View.SYSTEMS) {
 				overviewLocation = new OverviewLocation(overview.getName(), OverviewLocation.LocationType.TYPE_SYSTEM);
-			}
-			if (getSelectedView().equals(TabsOverview.get().regions())) {
+			} else if (getSelectedView() == View.REGIONS) {
 				overviewLocation = new OverviewLocation(overview.getName(), OverviewLocation.LocationType.TYPE_REGION);
 			}
 			if (overviewLocation != null) {

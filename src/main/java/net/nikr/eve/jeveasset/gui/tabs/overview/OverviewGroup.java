@@ -26,12 +26,11 @@ import java.util.List;
 
 
 public class OverviewGroup {
-	private List<OverviewLocation> locations;
+	private final List<OverviewLocation> locations = new ArrayList<OverviewLocation>();
 	private String name;
 
 	public OverviewGroup(final String name) {
 		this.name = name;
-		locations = new ArrayList<OverviewLocation>();
 	}
 
 	public void add(final OverviewLocation location) {
