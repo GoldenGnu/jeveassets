@@ -694,7 +694,7 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 					if (runs && typeID < 0) {
 						if (filter.isJobs() && industryJob.isCopying() && !industryJob.isDelivered()) {
 							if (add) { //Match
-								jobsCountNow = jobsCountNow + (industryJob.getRuns() * industryJob.getLicensedRuns());
+								jobsCountNow = jobsCountNow + ((long)industryJob.getRuns() * (long)industryJob.getLicensedRuns());
 							} else {
 								count = count + (industryJob.getRuns() * industryJob.getLicensedRuns());
 							}
@@ -706,7 +706,7 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 							)
 							&& filter.isJobs()) {
 						if (add) { //Match
-							jobsCountNow = jobsCountNow + (industryJob.getRuns() * industryJob.getProductQuantity());
+							jobsCountNow = jobsCountNow + (long)(industryJob.getRuns() * industryJob.getProductQuantity());
 						} else {
 							count = count + (industryJob.getRuns() * industryJob.getProductQuantity());
 						}
