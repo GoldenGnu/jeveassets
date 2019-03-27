@@ -444,18 +444,11 @@ public class TreeTab extends JMainTabSecondary implements TagUpdate {
 			for (TreeAsset treeAsset : locationsExport) {
 				treeAsset.resetValues();
 			}
-			Set<TreeAsset> parentItems = new TreeSet<>(new AssetTreeComparator());
 			try {
 				filterList.getReadWriteLock().readLock().lock();
 				for (TreeAsset treeAsset : filterList) {
 					if (treeAsset.isItem()) {
 						treeAsset.updateParents();
-					}
-					//Add containers
-					for (TreeAsset treeParent : treeAsset.getTree()) {
-						if (treeParent.isItem()) {
-							parentItems.add(treeParent);
-						}
 					}
 				}
 			} finally {

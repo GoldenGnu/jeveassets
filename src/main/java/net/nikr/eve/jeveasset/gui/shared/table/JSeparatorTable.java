@@ -94,7 +94,7 @@ public class JSeparatorTable extends JAutoColumnTable {
 					final int limit = separator.getLimit();
 					if (limit == 0) { //Collapsed
 						for (Object item : separator.getGroup()) {
-							expandedSate.put(item, limit != 0);
+							expandedSate.put(item, false);
 						}
 					} else {
 						for (int x = i + 1; x < separatorList.size(); x++) {
@@ -102,7 +102,7 @@ public class JSeparatorTable extends JAutoColumnTable {
 							if (xObject instanceof SeparatorList.Separator) {
 								break;
 							}
-							expandedSate.put(xObject, limit != 0);
+							expandedSate.put(xObject, true);
 						}
 					}
 				}

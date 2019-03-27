@@ -146,7 +146,7 @@ public abstract class JMainTab {
 			eventSelectionModel.setValueIsAdjusting(false);
 			selected = null;
 		}
-		if (selectedColumns != null) {
+		if (selectedColumns != null && jTable != null) {
 			for (int index : selectedColumns) {
 				jTable.getColumnModel().getSelectionModel().addSelectionInterval(index, index);
 			}

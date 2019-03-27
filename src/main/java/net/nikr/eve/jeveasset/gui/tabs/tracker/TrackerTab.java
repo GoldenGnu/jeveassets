@@ -1612,17 +1612,19 @@ public class TrackerTab extends JMainTabSecondary {
 						String filename = zipEntry.getName();
 						if (filename.equals("settings.xml") || filename.equals("tracker.json")) {
 							unzippedFile = new File(Settings.getPathDataDirectory() + File.separator + "temp_" + filename);
-							FileOutputStream fos = new FileOutputStream(unzippedFile);
-							byte[] buffer = new byte[1024];
-							int len;
-							while ((len = zis.read(buffer)) > 0) {
-								fos.write(buffer, 0, len);
+							if (unzippedFile.toPath().normalize().startsWith(Settings.getPathDataDirectory() + File.separator)) {  //Make sure path is correct
+								FileOutputStream fos = new FileOutputStream(unzippedFile);
+								byte[] buffer = new byte[1024];
+								int len;
+								while ((len = zis.read(buffer)) > 0) {
+									fos.write(buffer, 0, len);
+								}
+								fos.close();
+								//Set file and extension to the unzipped file
+								file = unzippedFile;
+								extension = FileUtil.getExtension(file);
+								break;
 							}
-							fos.close();
-							//Set file and extension to the unzipped file
-							file = unzippedFile;
-							extension = FileUtil.getExtension(file);
-							break;
 						}
 						zipEntry = zis.getNextEntry();
 					}	zis.closeEntry();

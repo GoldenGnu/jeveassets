@@ -854,7 +854,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 			for (int b = 0; b < idNodes.getLength(); b++) {
 				Element idNode = (Element) idNodes.item(b);
 				String tool = AttributeGetters.getString(idNode, "tool");
-				Long id = AttributeGetters.getLong(idNode, "id");
+				long id = AttributeGetters.getLong(idNode, "id");
 
 				TagID tagID = new TagID(tool, id);
 				tag.getIDs().add(tagID);

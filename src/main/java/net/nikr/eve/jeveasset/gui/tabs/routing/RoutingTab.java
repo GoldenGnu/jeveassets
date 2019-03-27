@@ -823,7 +823,6 @@ public class RoutingTab extends JMainTabSecondary {
 	 *
 	 * @param from
 	 * @param to
-	 * @param limit
 	 * @return true if all the items were moved.
 	 */
 	private void move(final MoveJList<SolarSystem> from, final MoveJList<SolarSystem> to) {
