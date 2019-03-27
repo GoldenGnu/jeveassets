@@ -108,7 +108,6 @@ public class TreeTab extends JMainTabSecondary implements TagUpdate {
 	private final JLabel jAverage;
 	private final JLabel jVolume;
 	private final JToggleButton jCategories;
-	private final JToggleButton jLocation;
 
 	//Table
 	private final DefaultEventTableModel<TreeAsset> tableModel;
@@ -120,7 +119,6 @@ public class TreeTab extends JMainTabSecondary implements TagUpdate {
 	private final EnumTableFormatAdaptor<TreeTableFormat, TreeAsset> tableFormat;
 	private final DefaultEventSelectionModel<TreeAsset> selectionModel;
 	private final AssetTreeExpansionModel expansionModel;
-	private final SortedList<TreeAsset> sortedList;
 	private final Set<TreeAsset> locationsExport = new TreeSet<>(new AssetTreeComparator());
 	private final Set<TreeAsset> locations = new TreeSet<>(new AssetTreeComparator());
 	private final Set<TreeAsset> categoriesExport = new TreeSet<>(new AssetTreeComparator());
@@ -145,7 +143,7 @@ public class TreeTab extends JMainTabSecondary implements TagUpdate {
 		buttonGroup.add(jCategories);
 		jToolBarLeft.addButton(jCategories);
 
-		jLocation = new JToggleButton(TabsTree.get().locations(), Images.LOC_LOCATIONS.getIcon());
+		JToggleButton jLocation = new JToggleButton(TabsTree.get().locations(), Images.LOC_LOCATIONS.getIcon());
 		jLocation.setActionCommand(TreeAction.UPDATE.name());
 		jLocation.addActionListener(listener);
 		jLocation.setSelected(true);
@@ -174,7 +172,7 @@ public class TreeTab extends JMainTabSecondary implements TagUpdate {
 		
 		EventList<TreeAsset> myEventList = new EventListManager<TreeAsset>().create();
 		myEventList.getReadWriteLock().readLock().lock();
-		sortedList = new SortedList<>(myEventList);
+		SortedList<TreeAsset> sortedList = new SortedList<>(myEventList);
 		myEventList.getReadWriteLock().readLock().unlock();
 		//Filter
 		eventList.getReadWriteLock().readLock().lock();
