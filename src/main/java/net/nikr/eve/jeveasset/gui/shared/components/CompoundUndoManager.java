@@ -158,11 +158,9 @@ public class CompoundUndoManager extends UndoManager
 		AbstractDocument.DefaultDocumentEvent event
 				= (AbstractDocument.DefaultDocumentEvent) e.getEdit();
 
-		if (event.getType().equals(DocumentEvent.EventType.CHANGE)) {
-			if (offsetChange == 0) {
-				compoundEdit.addEdit(e.getEdit());
-				return;
-			}
+		if (event.getType().equals(DocumentEvent.EventType.CHANGE) && offsetChange == 0) {
+			compoundEdit.addEdit(e.getEdit());
+			return;
 		}
 
 		//  Check for an incremental edit or backspace.
