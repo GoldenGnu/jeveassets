@@ -114,6 +114,9 @@ public class CitadelGetter extends AbstractXmlWriter {
 		}
 		//Update citadel
 		InputStream in = null;
+		GZIPInputStream gZipIn = null;
+		UpdateTaskInputStream updateTaskIn = null;
+		InputStreamReader reader = null;
 		try { //Update from API
 			URL url = new URL(hostUrl);
 			HttpURLConnection con = (HttpURLConnection) url.openConnection();
@@ -121,12 +124,15 @@ public class CitadelGetter extends AbstractXmlWriter {
 			long contentLength = con.getContentLengthLong();
 			String contentEncoding = con.getContentEncoding();
 			in = con.getInputStream();
-			InputStreamReader reader;
+			InputStream temp;
 			if ("gzip".equals(contentEncoding)) {
-				reader = new InputStreamReader(new UpdateTaskInputStream(new GZIPInputStream(in), contentLength, updateTask));
+				gZipIn = new GZIPInputStream(in);
+				temp = gZipIn;
 			} else {
-				reader = new InputStreamReader(new UpdateTaskInputStream(in, contentLength, updateTask));
+				temp = in;
 			}
+			updateTaskIn = new UpdateTaskInputStream(temp, contentLength, updateTask);
+			reader = new InputStreamReader(updateTaskIn);
 			Gson gson = new GsonBuilder().create();
 			Map<Long, Citadel> results = gson.fromJson(reader, new TypeToken<Map<Long, Citadel>>() {}.getType());
 			if (results == null) { 
@@ -151,6 +157,27 @@ public class CitadelGetter extends AbstractXmlWriter {
 			if (in != null) {
 				try {
 					in.close();
+				} catch (IOException ex) {
+					//No problem...
+				}
+			}
+			if (gZipIn != null) {
+				try {
+					gZipIn.close();
+				} catch (IOException ex) {
+					//No problem...
+				}
+			}
+			if (updateTaskIn != null) {
+				try {
+					updateTaskIn.close();
+				} catch (IOException ex) {
+					//No problem...
+				}
+			}
+			if (reader != null) {
+				try {
+					reader.close();
 				} catch (IOException ex) {
 					//No problem...
 				}

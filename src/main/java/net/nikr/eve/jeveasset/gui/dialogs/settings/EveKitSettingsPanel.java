@@ -368,7 +368,7 @@ public class EveKitSettingsPanel extends JSettingsPanel {
 
 	@Override
 	public void load() {
-		Integer eveKitTransactionsHistory = Settings.get().getEveKitTransactionsHistory();
+		int eveKitTransactionsHistory = Settings.get().getEveKitTransactionsHistory();
 		if (eveKitTransactionsHistory == 0) {
 			jTransactionsAll.setSelected(true);
 			jTransactions.setEnabled(false);
@@ -378,7 +378,7 @@ public class EveKitSettingsPanel extends JSettingsPanel {
 			jTransactions.setEnabled(true);
 			jTransactions.setText("" + eveKitTransactionsHistory);
 		}
-		Integer eveKitJournalHistory = Settings.get().getEveKitJournalHistory();
+		int eveKitJournalHistory = Settings.get().getEveKitJournalHistory();
 		if (eveKitJournalHistory == 0) {
 			jJournalAll.setSelected(true);
 			jJournal.setEnabled(false);
@@ -388,7 +388,7 @@ public class EveKitSettingsPanel extends JSettingsPanel {
 			jJournal.setEnabled(true);
 			jJournal.setText("" + eveKitJournalHistory);
 		}
-		Integer eveKitMarketOrdersHistory = Settings.get().getEveKitMarketOrdersHistory();
+		int eveKitMarketOrdersHistory = Settings.get().getEveKitMarketOrdersHistory();
 		if (eveKitMarketOrdersHistory == 0) {
 			jMarketOrdersAll.setSelected(true);
 			jMarketOrders.setEnabled(false);

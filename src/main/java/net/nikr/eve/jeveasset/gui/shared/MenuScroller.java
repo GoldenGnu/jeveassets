@@ -91,8 +91,6 @@ public class MenuScroller {
 	 * and bottom of the popup menu.
 	 *
 	 * @param menu the popup menu
-	 * @param scrollCount the number of items to display in the scrolling
-	 * portion
 	 * @param interval the scroll interval, in milliseconds
 	 * @param topFixedCount the number of items to fix at the top. May be 0
 	 * @param bottomFixedCount the number of items to fix at the bottom. May be
@@ -289,11 +287,11 @@ public class MenuScroller {
 			for (Component item : menuItems) {
 				maxHeight = Math.max(maxHeight, item.getPreferredSize().height);
 			}
+			Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+			int height = screenSize.height;
+			int maxScroll = (height / maxHeight) - (topFixedCount + bottomFixedCount + 1);  // 2 just takes the menu up a bit from the bottom which looks nicer
+			scrollCount = Math.min(maxScroll, menuItems.length - (topFixedCount + bottomFixedCount + 2));
 		}
-		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-		int height = screenSize.height;
-		int maxScroll = (height / maxHeight) - (topFixedCount + bottomFixedCount + 1);  // 2 just takes the menu up a bit from the bottom which looks nicer
-		scrollCount = Math.min(maxScroll, menuItems.length - (topFixedCount + bottomFixedCount + 2));
 	}
 
 	private class MenuScrollListener implements PopupMenuListener {

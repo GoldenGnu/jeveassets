@@ -54,6 +54,7 @@ public class Update1To2 implements LocalUpdate {
 		LOG.info("Performing update from v1 to v2");
 		LOG.info(" - modifies files:");
 		LOG.info("  - settings.xml");
+		FileOutputStream fos = null;
 		try {
 			// We need to update the settings
 			// current changes are:
@@ -68,7 +69,7 @@ public class Update1To2 implements LocalUpdate {
 			convertModes(doc);
 			convertTableSettings(doc);
 
-			FileOutputStream fos = new FileOutputStream(path);
+			fos = new FileOutputStream(path);
 			OutputFormat outformat = OutputFormat.createPrettyPrint();
 			outformat.setEncoding("UTF-16");
 			XMLWriter writer = new XMLWriter(fos, outformat);
@@ -80,6 +81,14 @@ public class Update1To2 implements LocalUpdate {
 		} catch (DocumentException ex) {
 			LOG.error("", ex);
 			throw new XmlException(ex);
+		} finally {
+			if (fos != null) {
+				try {
+					fos.close();
+				} catch (IOException ex) {
+					//No problem
+				}
+			}
 		}
 	}
 

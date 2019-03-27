@@ -116,7 +116,10 @@ public class Profile implements Comparable<Profile> {
 	}
 
 	@Override
-	public boolean equals(final Object obj) {
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
 		if (obj == null) {
 			return false;
 		}
@@ -124,10 +127,13 @@ public class Profile implements Comparable<Profile> {
 			return false;
 		}
 		final Profile other = (Profile) obj;
-		if ((this.name == null) ? (other.name != null) : !this.name.toLowerCase().equals(other.name.toLowerCase())) {
-			return false;
+		if (this.name == null && other.name == null) {
+			return true; //Both null
+		} else if (this.name == null || other.name == null) {
+			return false; //One null
+		} else {
+			return this.name.equalsIgnoreCase(other.name);
 		}
-		return true;
 	}
 
 	@Override
