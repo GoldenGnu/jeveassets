@@ -445,7 +445,6 @@ public class JTrackerEditDialog extends JDialogCentered {
 				}
 
 				//Select Flag
-				String id;
 				Set<String> flags = values.get(returnLocation);
 				String returnFlag = TabsTracker.get().other(); //Used if size is 1
 				if (flags.size() > 1) { //Always contain "Other" flag
