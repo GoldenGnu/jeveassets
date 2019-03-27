@@ -543,12 +543,10 @@ public class Program implements ActionListener {
 	 * @param msg Who is saving what?
 	 */
 	public void saveSettings(final String msg) {
-		if (!lazySave) {
-			if (!Settings.ignoreSave()) {
-				Settings.saveStart();
-				Thread thread = new SaveSettings(msg, this);
-				thread.start();
-			}
+		if (!lazySave && !Settings.ignoreSave()) {
+			Settings.saveStart();
+			Thread thread = new SaveSettings(msg, this);
+			thread.start();
 		}
 	}
 
