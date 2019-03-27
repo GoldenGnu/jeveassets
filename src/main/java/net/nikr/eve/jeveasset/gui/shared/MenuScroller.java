@@ -287,11 +287,11 @@ public class MenuScroller {
 			for (Component item : menuItems) {
 				maxHeight = Math.max(maxHeight, item.getPreferredSize().height);
 			}
+			Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+			int height = screenSize.height;
+			int maxScroll = (height / maxHeight) - (topFixedCount + bottomFixedCount + 1);  // 2 just takes the menu up a bit from the bottom which looks nicer
+			scrollCount = Math.min(maxScroll, menuItems.length - (topFixedCount + bottomFixedCount + 2));
 		}
-		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-		int height = screenSize.height;
-		int maxScroll = (height / maxHeight) - (topFixedCount + bottomFixedCount + 1);  // 2 just takes the menu up a bit from the bottom which looks nicer
-		scrollCount = Math.min(maxScroll, menuItems.length - (topFixedCount + bottomFixedCount + 2));
 	}
 
 	private class MenuScrollListener implements PopupMenuListener {
