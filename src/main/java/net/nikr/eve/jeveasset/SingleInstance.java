@@ -65,7 +65,7 @@ public class SingleInstance {
 	private boolean findExisting() {
 		LOG.info("Check for existing instances");
 		try {
-			Socket client = new Socket(HOST, PORT);
+			new Socket(HOST, PORT);
 			return true;
 		} catch (Exception e) {
 			return false;
