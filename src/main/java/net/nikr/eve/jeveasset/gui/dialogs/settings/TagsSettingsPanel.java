@@ -57,7 +57,6 @@ public class TagsSettingsPanel extends JSettingsPanel {
 
 	//GUI
 	private final JList<Tag> jTags;
-	private final JButton jAdd;
 	private final JButton jEdit;
 	private final JButton jDelete;
 	private final DefaultListModel<Tag> listModel;
@@ -81,7 +80,7 @@ public class TagsSettingsPanel extends JSettingsPanel {
 		jTags.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		jTags.addListSelectionListener(listener);
 
-		jAdd = new JButton(GuiShared.get().add());
+		JButton jAdd = new JButton(GuiShared.get().add());
 		jAdd.setActionCommand(TagsSettingsAction.ADD.name());
 		jAdd.addActionListener(listener);
 
