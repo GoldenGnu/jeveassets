@@ -708,7 +708,7 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 
 	private RawAsset parseAsset(final Node node, final MyAsset parentAsset) throws XmlException {
 		RawAsset rawAsset = RawAsset.create();
-		Integer count = AttributeGetters.getInt(node, "count");
+		int count = AttributeGetters.getInt(node, "count");
 
 		long itemId = AttributeGetters.getLong(node, "id");
 		int typeID = AttributeGetters.getInt(node, "typeid");

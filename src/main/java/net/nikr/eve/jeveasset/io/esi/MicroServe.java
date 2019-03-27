@@ -125,9 +125,13 @@ public class MicroServe implements AuthCodeListener {
 		@Override
 		public void run() {
 			boolean found = false;
+			InputStreamReader inputStreamReader = null;
+			BufferedReader in = null;
+			OutputStream out = null;
 			try {
-				BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-				OutputStream out = clientSocket.getOutputStream();
+				inputStreamReader = new InputStreamReader(clientSocket.getInputStream());
+				in = new BufferedReader(inputStreamReader);
+				out = clientSocket.getOutputStream();
 
 				String s;
 				while ((s = in.readLine()) != null) {
@@ -170,6 +174,27 @@ public class MicroServe implements AuthCodeListener {
 				if (clientSocket != null) {
 					try {
 						clientSocket.close(); //Close connection
+					} catch (IOException ex) {
+						//That is okay
+					}
+				}
+				if (inputStreamReader != null) {
+					try {
+						inputStreamReader.close(); //Close connection
+					} catch (IOException ex) {
+						//That is okay
+					}
+				}
+				if (in != null) {
+					try {
+						in.close(); //Close connection
+					} catch (IOException ex) {
+						//That is okay
+					}
+				}
+				if (out != null) {
+					try {
+						out.close(); //Close connection
 					} catch (IOException ex) {
 						//That is okay
 					}

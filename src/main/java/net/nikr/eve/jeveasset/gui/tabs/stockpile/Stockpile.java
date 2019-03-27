@@ -694,9 +694,9 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 					if (runs && typeID < 0) {
 						if (filter.isJobs() && industryJob.isCopying() && !industryJob.isDelivered()) {
 							if (add) { //Match
-								jobsCountNow = jobsCountNow + (industryJob.getRuns() * industryJob.getLicensedRuns());
+								jobsCountNow = jobsCountNow + ((long)industryJob.getRuns() * (long)industryJob.getLicensedRuns());
 							} else {
-								count = count + (industryJob.getRuns() * industryJob.getLicensedRuns());
+								count = count + ((long)industryJob.getRuns() * (long)industryJob.getLicensedRuns());
 							}
 						}
 					} else if (industryJob.isManufacturing()  //Manufacturing
@@ -706,9 +706,9 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 							)
 							&& filter.isJobs()) {
 						if (add) { //Match
-							jobsCountNow = jobsCountNow + (industryJob.getRuns() * industryJob.getProductQuantity());
+							jobsCountNow = jobsCountNow + ((long)industryJob.getRuns() * (long)industryJob.getProductQuantity());
 						} else {
-							count = count + (industryJob.getRuns() * industryJob.getProductQuantity());
+							count = count + ((long)industryJob.getRuns() * (long)industryJob.getProductQuantity());
 						}
 					} else {
 						continue; //Do not match - try next filter

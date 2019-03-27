@@ -89,8 +89,9 @@ public class Update extends AbstractXmlReader<Integer> {
 			}
 		}
 
+		FileOutputStream fos = null;
 		try {
-			FileOutputStream fos = new FileOutputStream(xml);
+			fos = new FileOutputStream(xml);
 			OutputFormat outformat = OutputFormat.createPrettyPrint();
 			outformat.setEncoding("UTF-16");
 			XMLWriter writer = new XMLWriter(fos, outformat);
@@ -99,6 +100,14 @@ public class Update extends AbstractXmlReader<Integer> {
 		} catch (IOException ioe) {
 			LOG.error("Failed to update the serttings.xml version number", ioe);
 			throw new RuntimeException(ioe);
+		} finally {
+			if (fos != null) {
+				try {
+					fos.close();
+				} catch (IOException ex) {
+					//No problem
+				}
+			}
 		}
 	}
 

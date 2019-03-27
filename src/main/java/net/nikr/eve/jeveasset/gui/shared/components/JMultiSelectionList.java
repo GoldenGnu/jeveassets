@@ -246,7 +246,7 @@ public class JMultiSelectionList<T> extends JList<T> {
 		setValueIsAdjusting(true);
 		ListModel<T> lm = this.getModel();
 		selectedList.clear();
-		for (Integer i = 0; i < lm.getSize(); i++) {
+		for (int i = 0; i < lm.getSize(); i++) {
 			selectedList.add(i);
 		}
 		setSelectionInterval(0, lm.getSize() - 1);
