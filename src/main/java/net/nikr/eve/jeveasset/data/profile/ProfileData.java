@@ -864,7 +864,7 @@ public class ProfileData {
 		//Create Market Price Data
 		marketPriceData = new HashMap<>();
 		//Date - maximumPurchaseAge in days
-		Date maxAge = new Date(System.currentTimeMillis() - (long)(Settings.get().getMaximumPurchaseAge() * 24 * 60 * 60 * 1000L));
+		Date maxAge = new Date(System.currentTimeMillis() - ((long)Settings.get().getMaximumPurchaseAge() * 24L * 60L * 60L * 1000L));
 		for (OwnerType owner : profileManager.getOwnerTypes()) {
 			for (MyMarketOrder marketOrder : owner.getMarketOrders()) {
 				if (marketOrder.isBuyOrder() //Buy orders only
