@@ -91,8 +91,6 @@ public class MenuScroller {
 	 * and bottom of the popup menu.
 	 *
 	 * @param menu the popup menu
-	 * @param scrollCount the number of items to display in the scrolling
-	 * portion
 	 * @param interval the scroll interval, in milliseconds
 	 * @param topFixedCount the number of items to fix at the top. May be 0
 	 * @param bottomFixedCount the number of items to fix at the bottom. May be
