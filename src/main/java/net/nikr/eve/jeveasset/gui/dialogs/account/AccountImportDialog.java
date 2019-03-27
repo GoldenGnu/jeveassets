@@ -575,7 +575,9 @@ public class AccountImportDialog extends JDialogCentered {
 						} else if (apiType == ApiType.ESI) {
 							currentCard = AccountImportCard.ADD_ESI;
 						}
-						addTask.cancel(true);
+						if (addTask != null) {
+							addTask.cancel(true);
+						}
 						break;
 					case DONE: //Previous: Add
 						if (share == Share.IMPORT) {
