@@ -148,9 +148,10 @@ public class TagsSettingsPanel extends JSettingsPanel {
 		jDelete.setEnabled(false);
 	}
 
-	private int addToList(Tag tag, int index) {
+	private int addToList(Tag tag) {
 		boolean ok = false;
-		for (int i = 0; i < listModel.size(); i++) {
+		int index = 0;
+		for (int i = index; i < listModel.size(); i++) {
 			Tag listTag = listModel.get(i);
 			int compareTo = listTag.compareTo(tag);
 			if (compareTo >= 0) {
@@ -185,7 +186,7 @@ public class TagsSettingsPanel extends JSettingsPanel {
 					//Save for update (only executed if saved AKA ignored on cancel)
 					tasks.add(new AddTask(tag));
 					//Update List
-					addToList(tag, -1);
+					addToList(tag);
 					//Update current tags
 					currentTags.add(tag.getName());
 				}
@@ -207,10 +208,8 @@ public class TagsSettingsPanel extends JSettingsPanel {
 					}
 					//Save for update (only executed if saved AKA ignored on cancel)
 					tasks.add(new EditTask(tag, editedTag));
-					//Save selected index
-					int index = jTags.getSelectedIndex();
 					//Add to list
-					index = addToList(new EditTag(tag, editedTag), index);
+					int index = addToList(new EditTag(tag, editedTag));
 					//Load selected index
 					jTags.setSelectedIndex(index);
 				}
