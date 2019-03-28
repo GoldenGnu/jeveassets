@@ -221,7 +221,7 @@ public class DataSetCreator {
 					//If assets is updated, so are all the values
 					if (assetsUpdated(contract.getDateIssued(), issuer) && (contract.getStatus() == ContractStatus.IN_PROGRESS || contract.getStatus() == ContractStatus.OUTSTANDING)) {
 						addContractCollateral(contract, values, total, date, issuer.getOwnerName()); //OK
-					} else if (AssetsNotUpdated(contract.getDateCompleted(), issuer)) {
+					} else if (assetsNotUpdated(contract.getDateCompleted(), issuer)) {
 						addContractCollateral(contract, values, total, date, issuer.getOwnerName()); //NOT TESTED
 					}
 				}
@@ -298,7 +298,7 @@ public class DataSetCreator {
 				} else if (contract.getDateCompleted() != null) { //Completed
 					//Done & Assets not updated yet = Add Bought Item & Remove Sold Item (Contract completed, update with the current values)
 					//If Assets is updated, so are all the values
-					if (AssetsNotUpdated(contract.getDateCompleted(), issuer)) {
+					if (assetsNotUpdated(contract.getDateCompleted(), issuer)) {
 						if (contractItem.isIncluded()) { //Item is being sold: remove item value
 							//Sold: -Item
 							addContractValue(values, total, date, issuer.getOwnerName(), (-contractItem.getDynamicPrice() * contractItem.getQuantity()));
@@ -312,7 +312,7 @@ public class DataSetCreator {
 			if (acceptor != null && contract.getDateCompleted() != null) { //Completed
 				//Done & Assets not updated yet = Add Bought Item & Remove Sold Item (Contract completed, update with the current values)
 				//If Assets is updated, so are all the values
-				if (AssetsNotUpdated(contract.getDateCompleted(), acceptor)) {
+				if (assetsNotUpdated(contract.getDateCompleted(), acceptor)) {
 					if (contractItem.isIncluded()) { //Items are being bought: Add items value
 						//Bought: +Item
 						addContractValue(values, total, date, acceptor.getOwnerName(), contractItem.getDynamicPrice() * contractItem.getQuantity());
@@ -335,7 +335,7 @@ public class DataSetCreator {
 		return owner.getAssetLastUpdate().after(date);
 	}
 
-	private boolean AssetsNotUpdated(Date date, OwnerType owner) {
+	private boolean assetsNotUpdated(Date date, OwnerType owner) {
 		if (date == null) {
 			return false;
 		}
