@@ -73,7 +73,6 @@ public class MarketOrdersTab extends JMainTabPrimary {
 	private final EnumTableFormatAdaptor<MarketTableFormat, MyMarketOrder> tableFormat;
 	private final DefaultEventTableModel<MyMarketOrder> tableModel;
 	private final FilterList<MyMarketOrder> filterList;
-	private final EventList<MyMarketOrder> eventList;
 	private final DefaultEventSelectionModel<MyMarketOrder> selectionModel;
 
 	public static final String NAME = "marketorders"; //Not to be changed!
@@ -85,7 +84,7 @@ public class MarketOrdersTab extends JMainTabPrimary {
 		//Table Format
 		tableFormat = new EnumTableFormatAdaptor<MarketTableFormat, MyMarketOrder>(MarketTableFormat.class);
 		//Backend
-		eventList = program.getProfileData().getMarketOrdersEventList();
+		EventList<MyMarketOrder> eventList = program.getProfileData().getMarketOrdersEventList();
 		//Sorting (per column)
 		eventList.getReadWriteLock().readLock().lock();
 		SortedList<MyMarketOrder> sortedList = new SortedList<MyMarketOrder>(eventList);
