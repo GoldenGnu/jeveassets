@@ -101,7 +101,7 @@ public class NikrUncaughtExceptionHandler implements Thread.UncaughtExceptionHan
 						+ "\r\n"
 						+ "\r\n",
 						"Critical Error", JOptionPane.ERROR_MESSAGE);
-			} else if (cause instanceof NoClassDefFoundError) { //Corrupted class files
+			} else if (cause instanceof NoClassDefFoundError || cause instanceof ClassNotFoundException) { //Corrupted class files 
 				try {
 					Updater updater = new Updater();
 					updater.fixMissingClasses();
