@@ -155,13 +155,14 @@ public class CompoundUndoManager extends UndoManager
 		int lengthChange = textComponent.getDocument().getLength() - lastLength;
 
 		//  Check for an attribute change
-		AbstractDocument.DefaultDocumentEvent event
-				= (AbstractDocument.DefaultDocumentEvent) e.getEdit();
-
-		if (event.getType().equals(DocumentEvent.EventType.CHANGE)) {
-			if (offsetChange == 0) {
-				compoundEdit.addEdit(e.getEdit());
-				return;
+		UndoableEdit edit = e.getEdit();
+		if (edit instanceof AbstractDocument.DefaultDocumentEvent) {
+			AbstractDocument.DefaultDocumentEvent event = (AbstractDocument.DefaultDocumentEvent) e.getEdit();
+			if (event.getType().equals(DocumentEvent.EventType.CHANGE)) {
+				if (offsetChange == 0) {
+					compoundEdit.addEdit(e.getEdit());
+					return;
+				}
 			}
 		}
 
