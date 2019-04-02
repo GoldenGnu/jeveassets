@@ -22,6 +22,7 @@ package net.nikr.eve.jeveasset.io.online;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonParseException;
 import com.google.gson.reflect.TypeToken;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -72,7 +73,7 @@ public class FuzzworkMapGetter {
             }
             //Updated OK
 			return result;
-        } catch (IOException ex) {
+        } catch (IOException | JsonParseException ex) {
             LOG.error(ex.getMessage(), ex);
         }
         return null;
@@ -108,7 +109,7 @@ public class FuzzworkMapGetter {
 				}
 			}
 			return planets;
-        } catch (IOException ex) {
+        } catch (IOException | JsonParseException ex) {
             LOG.error(ex.getMessage(), ex);
         }
         return null;
