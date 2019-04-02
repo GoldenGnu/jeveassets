@@ -25,6 +25,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 import java.io.File;
@@ -59,7 +60,7 @@ public class TrackerDataWriter extends AbstractBackup {
 			fileWriter = new FileWriter(file);
 			gson.toJson(trackerData, fileWriter);
 			LOG.info("Tracker data saved");
-		} catch (IOException ex) {
+		} catch (IOException | JsonParseException ex) {
 			LOG.error(ex.getMessage(), ex);
 		} finally {
 			if (fileWriter != null) {
