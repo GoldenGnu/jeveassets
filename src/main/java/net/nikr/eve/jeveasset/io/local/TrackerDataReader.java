@@ -73,7 +73,7 @@ public class TrackerDataReader extends AbstractBackup {
 			Map<String, List<Value>> trackerData =  gson.fromJson(fileReader, new TypeToken<HashMap<String, ArrayList<Value>>>() {}.getType());
 			LOG.info("Tracker data loaded");
 			return trackerData;
-		} catch (IOException ex) {
+		} catch (IOException | JsonParseException ex) {
 			LOG.warn(ex.getMessage(), ex);
 			if (restoreNewFile(filename)) { //If possible restore from .new (Should be the newest)
 				read(filename, backup);
