@@ -22,6 +22,7 @@ package net.nikr.eve.jeveasset.io.online;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonParseException;
 import com.google.gson.reflect.TypeToken;
 import java.io.IOException;
 import java.io.InputStream;
@@ -147,7 +148,7 @@ public class CitadelGetter extends AbstractXmlWriter {
 			saveXml();
 			LOG.info("	Updated citadels for jEveAssets");
 			return true;
-		} catch (IOException ex) {
+		} catch (IOException | JsonParseException ex) {
 			if (updateTask != null) {
 				updateTask.addError(DialoguesUpdate.get().citadel(), ex.getMessage());
 			}

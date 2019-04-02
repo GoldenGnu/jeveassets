@@ -25,6 +25,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonParseException;
 import com.google.gson.reflect.TypeToken;
 import java.io.File;
 import java.io.FileReader;
@@ -64,7 +65,7 @@ public class AssetAddedReader extends AbstractBackup {
 				AssetAddedData.set(assetAddedData); //Import from added.json
 				LOG.info("Asset added data loaded");
 			}
-		} catch (IOException ex) {
+		} catch (IOException | JsonParseException ex) {
 			if (restoreNewFile(filename)) { //If possible restore from .new (Should be the newest)
 				read(filename);
 			} else if (restoreBackupFile(filename)) { //If possible restore from .bac (Should be the oldest, but, still worth trying)
