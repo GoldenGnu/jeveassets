@@ -32,6 +32,8 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.util.HashSet;
+import java.util.Set;
 import javax.swing.JOptionPane;
 import net.nikr.eve.jeveasset.io.online.Updater;
 import org.slf4j.Logger;
@@ -50,8 +52,7 @@ public class NikrUncaughtExceptionHandler implements Thread.UncaughtExceptionHan
 		Thread.setDefaultUncaughtExceptionHandler(new NikrUncaughtExceptionHandler());
 	}
 
-	private NikrUncaughtExceptionHandler() {
-	}
+	private NikrUncaughtExceptionHandler() { }
 
 	@Override
 	public void uncaughtException(final Thread t, final Throwable e) {
@@ -67,26 +68,28 @@ public class NikrUncaughtExceptionHandler implements Thread.UncaughtExceptionHan
 			error = true;
 			LOG.error("Uncaught Exception (" + s + "): " + t.getMessage(), t);
 			//Get root cause
+			Set<Class<?>> causes = new HashSet<>();
 			Throwable cause = t;
-			while (cause.getCause() != null) {
-				cause = cause.getCause();
+			while (cause != null) {
+				causes.add(cause.getClass());
+				cause = cause.getCause(); //Next or null
 			}
-			if (cause instanceof IllegalComponentStateException
+			if (causes.contains(IllegalComponentStateException.class)
 					&& t.getMessage().toLowerCase().contains("component must be showing on the screen to determine its location")
 					) { //XXX - Workaround for Java bug: https://bugs.openjdk.java.net/browse/JDK-8179665 (Ignore error)
 				LOG.warn("Ignoring: component must be showing on the screen to determine its location");
 				error = false;
 				return;
-			} else if (cause instanceof UnsupportedClassVersionError) { //Old Java
+			} else if (causes.contains(UnsupportedClassVersionError.class)) { //Old Java
 				JOptionPane.showMessageDialog(null,
 						"Please update Java to the latest version.\r\n"
 						+ "The minimum supported version is " + JAVA + "\r\n"
 						+ "\r\n"
 						+ "Press OK to close jEveAssets"
 						+ "\r\n"
-						+ "\r\n",
-						"Critical Error", JOptionPane.ERROR_MESSAGE);
-			} else if (cause instanceof OutOfMemoryError) { //Out of memory
+						+ "\r\n"
+						, "Critical Error", JOptionPane.ERROR_MESSAGE);
+			} else if (causes.contains(OutOfMemoryError.class)) { //Out of memory
 				JOptionPane.showMessageDialog(null,
 						"Java has run out of memory\r\n"
 						+ "\r\n"
@@ -99,16 +102,19 @@ public class NikrUncaughtExceptionHandler implements Thread.UncaughtExceptionHan
 						+ "\r\n"
 						+ "Press OK to close jEveAssets"
 						+ "\r\n"
-						+ "\r\n",
-						"Critical Error", JOptionPane.ERROR_MESSAGE);
-			} else if (cause instanceof NoClassDefFoundError || cause instanceof ClassNotFoundException) { //Corrupted class files 
+						+ "\r\n"
+						, "Critical Error", JOptionPane.ERROR_MESSAGE);
+			} else if (causes.contains(NoClassDefFoundError.class) || causes.contains(ClassNotFoundException.class)) { //Corrupted class files 
 				try {
 					Updater updater = new Updater();
 					updater.fixMissingClasses();
 				} catch (Throwable ex) { //Better safe than sorry...
-					JOptionPane.showMessageDialog(null, "Please, re-download jEveAssets and leave the unzipped directory intact\r\nPress OK to close jEveAssets", "Critical Error", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(null,
+							"Please, re-download jEveAssets and leave the unzipped directory intact\r\n"
+							+ "Press OK to close jEveAssets"
+							, "Critical Error", JOptionPane.ERROR_MESSAGE);
 				}
-			} else if (cause instanceof UnsatisfiedLinkError && t.getMessage().contains("splashscreen")) { //Headless Java
+			} else if (causes.contains(UnsatisfiedLinkError.class) && t.getMessage().contains("splashscreen")) { //Headless Java
 				System.err.println("ERROR: Your version of java does not support a GUI");
 				System.err.println("       Please, install in non-headless version of " + JAVA + " (or later) to run jEveAssets");
 				System.out.println("ERROR: Your version of java does not support a GUI");
@@ -127,8 +133,8 @@ public class NikrUncaughtExceptionHandler implements Thread.UncaughtExceptionHan
 						+ "\r\n"
 						+ "Press OK to continue\r\n"
 						+ "\r\n"
-						+ "\r\n",
-						"Critical Error", JOptionPane.ERROR_MESSAGE);
+						+ "\r\n"
+						, "Critical Error", JOptionPane.ERROR_MESSAGE);
 				}
 				int value = JOptionPane.showConfirmDialog(null,
 						"Send bug report?\r\n"
@@ -140,8 +146,8 @@ public class NikrUncaughtExceptionHandler implements Thread.UncaughtExceptionHan
 						+ "-Date (current)\r\n"
 						+ "-Java stack trace (bug)\r\n"
 						+ "\r\n"
-						+ "\r\n",
-						"Critical Error", JOptionPane.OK_CANCEL_OPTION, JOptionPane.ERROR_MESSAGE);
+						+ "\r\n"
+						, "Critical Error", JOptionPane.OK_CANCEL_OPTION, JOptionPane.ERROR_MESSAGE);
 				if (value == JOptionPane.OK_OPTION) {
 					String result = send(t);
 					JOptionPane.showMessageDialog(null, result, "Bug Report", JOptionPane.PLAIN_MESSAGE);
