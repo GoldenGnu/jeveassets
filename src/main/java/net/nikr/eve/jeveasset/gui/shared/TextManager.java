@@ -102,19 +102,19 @@ public final class TextManager {
 
 		jCut = new JMenuItem(GuiShared.get().cut());
 		jCut.setIcon(Images.EDIT_CUT.getIcon());
-		jCut.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, InputEvent.CTRL_MASK));
+		jCut.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, InputEvent.CTRL_DOWN_MASK));
 		jCut.setActionCommand(CopyPopupAction.CUT.name());
 		jCut.addActionListener(listener);
 
 		jCopy = new JMenuItem(GuiShared.get().copy());
-		jCopy.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, InputEvent.CTRL_MASK));
+		jCopy.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, InputEvent.CTRL_DOWN_MASK));
 		jCopy.setIcon(Images.EDIT_COPY.getIcon());
 		jCopy.setActionCommand(CopyPopupAction.COPY.name());
 		jCopy.addActionListener(listener);
 
 		jPaste = new JMenuItem(GuiShared.get().paste());
 		jPaste.setIcon(Images.EDIT_PASTE.getIcon());
-		jPaste.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V, InputEvent.CTRL_MASK));
+		jPaste.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V, InputEvent.CTRL_DOWN_MASK));
 		jPaste.setActionCommand(CopyPopupAction.PASTE.name());
 		jPaste.addActionListener(listener);
 

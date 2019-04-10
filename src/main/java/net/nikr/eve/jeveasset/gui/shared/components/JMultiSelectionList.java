@@ -165,7 +165,7 @@ public class JMultiSelectionList<T> extends JList<T> {
 
 		@Override
 		public void keyPressed(final KeyEvent e) {
-			if (e.getKeyCode() == KeyEvent.VK_A && e.getModifiers() == KeyEvent.CTRL_MASK) {
+			if (e.getKeyCode() == KeyEvent.VK_A && e.isControlDown()) {
 				toggleSelectAll();
 			}
 			if (e.getKeyCode() == KeyEvent.VK_UP) {
