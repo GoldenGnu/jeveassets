@@ -80,6 +80,7 @@
 						<Xmaxwarns>1000</Xmaxwarns>
 						<Xlint:all/>
 						<Xlint:-serial/>
+						<Werror />
 					</compilerArguments>
 					<showWarnings>true</showWarnings>
 					<showDeprecation>true</showDeprecation>
