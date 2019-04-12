@@ -108,7 +108,7 @@ public class LibraryManager {
 			files.add("logback-core-1.2.3.jar");
 			files.add("logback-classic-1.2.3.jar");
 			files.add("super-csv-2.4.0.jar");
-			files.add("translations-2.2.0.jar");
+			files.add("translations-3.0.0.jar");
 			files.add("evekit-5.0.1.jar");
 			files.add("swagger-annotations-1.5.22.jar");
 			files.add("hamcrest-core-1.3.jar");
