@@ -661,6 +661,16 @@
 				<project.build.sourceVersion>11</project.build.sourceVersion>
 			</properties>
 		</profile>
+		<profile>
+			<id>jdk12</id>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+				<jdk>12</jdk>
+			</activation>
+			<properties>
+				<project.build.sourceVersion>12</project.build.sourceVersion>
+			</properties>
+		</profile>
 	</profiles>
 
 	<repositories>
