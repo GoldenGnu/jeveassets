@@ -6,7 +6,7 @@ matrix:
     - os: linux
       jdk: oraclejdk11
     - os: linux
-      jdk: oraclejdk12
+      jdk: openjdk12
     - os: osx
       #oraclejdk8
       osx_image: xcode9.3 
