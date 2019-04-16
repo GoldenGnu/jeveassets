@@ -94,7 +94,7 @@ public class TrackerDataTest extends TestUtil {
 	}
 
 	private void testWriteRead(final Map<String, List<Value>> out) {
-		TestTrackerDataWriter.save(filename, out);
+		TrackerDataWriter.save(filename, out, false);
 		read(out, filename);
 		File file = new File(filename);
 		file.delete();
@@ -133,17 +133,4 @@ public class TrackerDataTest extends TestUtil {
 		}
 		assertThat(in, equalTo(out));
 	}
-
-	private static class TestTrackerDataWriter extends TrackerDataWriter  {
-		public static void save(String filename, Map<String, List<Value>> trackerData) {
-			TrackerDataWriter trackerDataReader = new TrackerDataWriter();
-			trackerDataReader.write(filename, trackerData);
-		}
-
-		@Override
-		protected File getNewFile(String filename) {
-			return super.getNewFile(filename); //To change body of generated methods, choose Tools | Templates.
-		}
-	}
-
 }
