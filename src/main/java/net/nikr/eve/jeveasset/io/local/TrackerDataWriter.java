@@ -47,12 +47,21 @@ public class TrackerDataWriter extends AbstractBackup {
 	private static final Logger LOG = LoggerFactory.getLogger(TrackerDataWriter.class);
 
 	public static void save() {
-		TrackerDataWriter writer = new TrackerDataWriter();
-		writer.write(Settings.getPathTrackerData(), TrackerData.get());
+		save(Settings.getPathTrackerData(), TrackerData.get(), true);
 	}
 
-	protected void write(String filename, Map<String, List<Value>> trackerData) {
-		File file = getNewFile(filename); //Save to .new file
+	protected static void save(String filename, Map<String, List<Value>> trackerData, boolean createBackup) {
+		TrackerDataWriter writer = new TrackerDataWriter();
+		writer.write(filename, trackerData, createBackup);
+	}
+
+	private void write(String filename, Map<String, List<Value>> trackerData, boolean createBackup) {
+		File file;
+		if (createBackup) {
+			file = getNewFile(filename); //Save to .new file
+		} else {
+			file = new File(filename);
+		}
 		Gson gson = new GsonBuilder().registerTypeAdapter(Value.class, new ValueSerializerGJson()).create();
 		FileWriter fileWriter = null;
 		try {
@@ -70,8 +79,11 @@ public class TrackerDataWriter extends AbstractBackup {
 					//No problem
 				}
 			}
-			backupFile(filename); //Rename .xml => .bac (.new is safe) and .new => .xml (.bac is safe). That way we always have at least one safe file
-			unlock(filename);
+			//Saving done - create backup and rename new file to target
+			if (createBackup) {
+				backupFile(filename); //Rename .xml => .bac (.new is safe) and .new => .xml (.bac is safe). That way we always have at least one safe file
+			}
+			unlock(filename); //Last thing to do
 		}
 	}
 
