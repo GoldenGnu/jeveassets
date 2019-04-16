@@ -49,10 +49,13 @@ import net.nikr.eve.jeveasset.data.sde.MyLocation;
 import net.nikr.eve.jeveasset.data.sde.ReprocessedMaterial;
 import net.nikr.eve.jeveasset.data.sde.StaticData;
 import net.nikr.eve.jeveasset.data.settings.AssetAddedData;
+import net.nikr.eve.jeveasset.data.settings.ContractPriceManager;
+import net.nikr.eve.jeveasset.data.settings.ContractPriceManager.ContractPriceItem;
 import net.nikr.eve.jeveasset.data.settings.MarketPriceData;
 import net.nikr.eve.jeveasset.data.settings.PriceData;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.data.settings.tag.Tags;
+import net.nikr.eve.jeveasset.data.settings.types.EditableContractPriceType;
 import net.nikr.eve.jeveasset.data.settings.types.EditableLocationType;
 import net.nikr.eve.jeveasset.data.settings.types.EditablePriceType;
 import net.nikr.eve.jeveasset.data.settings.types.ItemType;
@@ -127,6 +130,10 @@ public class ProfileData {
 
 	public Set<Integer> getPriceTypeIDs() {
 		return createPriceTypeIDs(); //always needs to be fresh :)
+	}
+
+	public Set<ContractPriceItem> getContractPricesTypes() {
+		return createContractPriceTypes(); //always needs to be fresh :)
 	}
 
 	public EventList<MyAccountBalance> getAccountBalanceEventList() {
@@ -287,9 +294,8 @@ public class ProfileData {
 		//Add StockpileItems to uniqueIds
 		for (Stockpile stockpile : Settings.get().getStockpiles()) {
 			for (StockpileItem stockpileItem : stockpile.getItems()) {
-				Item item = stockpileItem.getItem();
-				if (item.isMarketGroup()) {
-					priceTypeIDs.add(item.getTypeID());
+				if (stockpileItem.getItem().isMarketGroup()) {
+					priceTypeIDs.add(stockpileItem.getTypeID());
 				}
 			}
 		}
@@ -313,6 +319,64 @@ public class ProfileData {
 				priceTypeIDs.add(asset.getItem().getTypeID());
 			}
 			deepAssets(asset.getAssets(), priceTypeIDs);
+		}
+	}
+
+	private Set<ContractPriceItem> createContractPriceTypes() {
+		Set<ContractPriceItem> contractPriceTypes = new HashSet<>();
+		for (OwnerType owner : profileManager.getOwnerTypes()) {
+			//Assets
+			deepAssetsType(owner.getAssets(), contractPriceTypes);
+			//Blueprints
+			for (RawBlueprint blueprint : owner.getBlueprints().values()) {
+				addContractPrice(contractPriceTypes, ContractPriceItem.create(blueprint));
+			}
+			//Market Orders
+			for (MyMarketOrder marketOrder : owner.getMarketOrders()) {
+				addContractPrice(contractPriceTypes, ContractPriceItem.create(marketOrder));
+			}
+			//Transactions
+			for (MyTransaction transaction : owner.getTransactions()) {
+				addContractPrice(contractPriceTypes, ContractPriceItem.create(transaction));
+			}
+			//Industry Jobs
+			for (MyIndustryJob industryJob : owner.getIndustryJobs()) {
+				addContractPrice(contractPriceTypes, ContractPriceItem.create(industryJob, true));
+				addContractPrice(contractPriceTypes, ContractPriceItem.create(industryJob, false));
+			}
+			//Contract Items
+			for (Map.Entry<MyContract, List<MyContractItem>> entry : owner.getContracts().entrySet()) {
+				for (MyContractItem contractItem : entry.getValue()) {
+					addContractPrice(contractPriceTypes, ContractPriceItem.create(contractItem));
+				}
+			}
+		}
+		//Stockpile Items
+		for (Stockpile stockpile : Settings.get().getStockpiles()) {
+			for (StockpileItem stockpileItem : stockpile.getItems()) {
+				addContractPrice(contractPriceTypes, ContractPriceItem.create(stockpileItem));
+			}
+		}
+		//Reprocessed Materials
+		for (Item item : StaticData.get().getItems().values()) {
+			for (ReprocessedMaterial reprocessedMaterial : item.getReprocessedMaterial()) {
+				addContractPrice(contractPriceTypes, ContractPriceItem.create(reprocessedMaterial));
+			}
+		}
+		return contractPriceTypes;
+	}
+
+	private void deepAssetsType(List<MyAsset> assets, Set<ContractPriceItem> contractPriceTypes) {
+		for (MyAsset asset : assets) {
+			//Unique Ids
+			addContractPrice(contractPriceTypes, ContractPriceItem.create(asset));
+			deepAssetsType(asset.getAssets(), contractPriceTypes);
+		}
+	}
+
+	private void addContractPrice(Set<ContractPriceItem> contractPriceTypes, ContractPriceItem contractPriceType) {
+		if (contractPriceType != null && contractPriceType.isContractPrice()) {
+			contractPriceTypes.add(contractPriceType);
 		}
 	}
 
@@ -361,6 +425,7 @@ public class ProfileData {
 	}
 
 	public void updateEventLists(Date assetAddedData) {
+		final boolean defaultBPC = Settings.get().getContractPriceSettings().isDefaultBPC();
 		uniqueAssetsDuplicates = new HashMap<>();
 		Set<String> uniqueOwnerNames = new HashSet<>();
 		Map<Long, OwnerType> uniqueOwners = new HashMap<>();
@@ -475,7 +540,6 @@ public class ProfileData {
 			}
 			order.setIssuedByName(ApiIdConverter.getOwnerName(order.getIssuedBy()));
 		}
-
 		//Update IndustryJobs dynamic values
 		for (MyIndustryJob industryJob : industryJobs) {
 			//Update Owners
@@ -484,7 +548,7 @@ public class ProfileData {
 			RawBlueprint blueprint = blueprints.get(industryJob.getBlueprintID());
 			industryJob.setBlueprint(blueprint);
 			//Price
-			updatePrice(industryJob);
+			updatePrice(industryJob, defaultBPC);
 		}
 		//Update Contracts dynamic values
 		for (MyContract contract : contracts) {
@@ -526,17 +590,17 @@ public class ProfileData {
 			@Override
 			public void run() {
 				//Add Market Orders to Assets
-				addAssets(DataConverter.assetMarketOrder(marketOrders, Settings.get().isIncludeSellOrders(), Settings.get().isIncludeBuyOrders()), assets, blueprints, assetAdded, assetAddedData);
+				addAssets(DataConverter.assetMarketOrder(marketOrders, Settings.get().isIncludeSellOrders(), Settings.get().isIncludeBuyOrders()), assets, blueprints, assetAdded, assetAddedData, defaultBPC);
 
 				//Add Industry Jobs to Assets
-				addAssets(DataConverter.assetIndustryJob(industryJobs, Settings.get().isIncludeManufacturing()), assets, blueprints, assetAdded, assetAddedData);
+				addAssets(DataConverter.assetIndustryJob(industryJobs, Settings.get().isIncludeManufacturing()), assets, blueprints, assetAdded, assetAddedData, defaultBPC);
 
 				//Add Contract Items to Assets
-				addAssets(DataConverter.assetContracts(contractItems, uniqueOwners, Settings.get().isIncludeSellContracts(), Settings.get().isIncludeBuyContracts()), assets, blueprints, assetAdded, assetAddedData);
+				addAssets(DataConverter.assetContracts(contractItems, uniqueOwners, Settings.get().isIncludeSellContracts(), Settings.get().isIncludeBuyContracts()), assets, blueprints, assetAdded, assetAddedData, defaultBPC);
 
 				//Add Assets to Assets
 				for (OwnerType owner : assetsMap.values()) {
-					addAssets(owner.getAssets(), assets, blueprints, assetAdded, assetAddedData);
+					addAssets(owner.getAssets(), assets, blueprints, assetAdded, assetAddedData, defaultBPC);
 				}
 			}
 		});
@@ -556,7 +620,7 @@ public class ProfileData {
 		editablePriceTypes.addAll(marketOrders);
 		editablePriceTypes.addAll(contractItems);
 		for (EditablePriceType editablePriceType : editablePriceTypes) {
-			editablePriceType.setDynamicPrice(ApiIdConverter.getPrice(editablePriceType.getItem().getTypeID(), editablePriceType.isBPC()));
+			updatePrice(editablePriceType, defaultBPC);
 		}
 		//Update Jumps (Must be updated after locations!)
 		updateJumps(new ArrayList<>(assets), MyAsset.class);
@@ -720,10 +784,11 @@ public class ProfileData {
 		List<T> found = new ArrayList<>();
 		try {
 			eventList.getReadWriteLock().readLock().lock();
+			final boolean defaultBPC = Settings.get().getContractPriceSettings().isDefaultBPC();
 			for (T t : eventList) {
 				if (typeIDs.contains(t.getItem().getTypeID())) {
 					found.add(t); //Save for update
-					t.setDynamicPrice(ApiIdConverter.getPrice(t.getItem().getTypeID(), t.isBPC())); //Update data
+					updatePrice(t, defaultBPC);
 				}
 			}
 		} finally {
@@ -738,11 +803,12 @@ public class ProfileData {
 		}
 		List<MyIndustryJob> found = new ArrayList<>();
 		try {
+			final boolean defaultBPC = Settings.get().getContractPriceSettings().isDefaultBPC();
 			eventList.getReadWriteLock().readLock().lock();
 			for (MyIndustryJob industryJob : eventList) {
 				if (typeIDs.contains(industryJob.getItem().getTypeID()) || typeIDs.contains(industryJob.getProductTypeID())) {
 					found.add(industryJob); //Save for update
-					updatePrice(industryJob); //Update data
+					updatePrice(industryJob, defaultBPC); //Update data
 				}
 			}
 		} finally {
@@ -757,6 +823,7 @@ public class ProfileData {
 		}
 		List<MyAsset> found = new ArrayList<>();
 		try {
+			final boolean defaultBPC = Settings.get().getContractPriceSettings().isDefaultBPC();
 			eventList.getReadWriteLock().readLock().lock();
 			for (MyAsset asset : eventList) {
 				//Reprocessed price
@@ -773,7 +840,7 @@ public class ProfileData {
 				//Dynamic Price
 				boolean dynamic = typeIDs.contains(asset.getItem().getTypeID());
 				if (dynamic) {
-					updatePrice(asset); //Update data
+					updatePrice(asset, defaultBPC); //Update data
 				}
 				//Update
 				if (reprocessed || dynamic) { //If changed
@@ -909,7 +976,7 @@ public class ProfileData {
 		data.update(transaction.getPrice(), transaction.getDate());
 	}
 
-	private void addAssets(final List<MyAsset> assets, List<MyAsset> addTo, Map<Long, RawBlueprint> blueprints, Map<Long, Date> assetAdded, Date assetAddedDate) {
+	private void addAssets(final List<MyAsset> assets, List<MyAsset> addTo, Map<Long, RawBlueprint> blueprints, Map<Long, Date> assetAdded, Date assetAddedDate, boolean defaultBPC) {
 		for (MyAsset asset : assets) {
 			//XXX Ignore 9e18 locations: https://github.com/ccpgames/esi-issues/issues/684
 			if (asset.getLocationID() > 9000000000000000000L) {
@@ -930,7 +997,7 @@ public class ProfileData {
 			//Date added
 			asset.setAdded(AssetAddedData.getAdd(assetAdded, asset.getItemID(), assetAddedDate));
 			//Price
-			updatePrice(asset);
+			updatePrice(asset, defaultBPC);
 			//Reprocessed price
 			asset.setPriceReprocessed(ApiIdConverter.getPriceReprocessed(asset.getItem()));
 			//Market price
@@ -973,16 +1040,41 @@ public class ProfileData {
 				asset.setLocation(ApiIdConverter.getLocation(asset.getLocationID()));
 			}
 			//Add sub-assets
-			addAssets(asset.getAssets(), addTo, blueprints, assetAdded, assetAddedDate);
+			addAssets(asset.getAssets(), addTo, blueprints, assetAdded, assetAddedDate, defaultBPC);
 		}
 	}
 
-	private static void updatePrice(MyIndustryJob industryJob) {
-		industryJob.setOutputPrice(ApiIdConverter.getPrice(industryJob.getProductTypeID(), false));
-		industryJob.setDynamicPrice(ApiIdConverter.getPrice(industryJob.getItem().getTypeID(), industryJob.isBPC()));
+	private static void updatePrice(EditablePriceType editablePriceType, boolean defaultBPC) {
+		if (editablePriceType instanceof EditableContractPriceType) {
+			EditableContractPriceType contractPriceType = (EditableContractPriceType) editablePriceType;
+			double contractPrice = ContractPriceManager.get().getContractPrice(contractPriceType);
+			if (defaultBPC && editablePriceType.isBPC()) {
+				editablePriceType.setDynamicPrice(contractPrice);
+			} else {
+				editablePriceType.setDynamicPrice(ApiIdConverter.getPrice(editablePriceType.getItem().getTypeID(), editablePriceType.isBPC()));
+			}
+			contractPriceType.setContractPrice(contractPrice);
+		} else if (editablePriceType != null){
+			editablePriceType.setDynamicPrice(ApiIdConverter.getPrice(editablePriceType.getItem().getTypeID(), editablePriceType.isBPC()));
+		}
 	}
 
-	private static void updatePrice(MyAsset asset) {
+	private static void updatePrice(MyIndustryJob industryJob, boolean defaultBPC) {
+		double contractPrice = ContractPriceManager.get().getContractPrice(industryJob, false);
+		if (defaultBPC && industryJob.isBPC()) {
+			industryJob.setDynamicPrice(contractPrice);
+		} else {
+			industryJob.setDynamicPrice(ApiIdConverter.getPrice(industryJob.getItem().getTypeID(), industryJob.isBPC()));
+		}
+		industryJob.setContractPrice(contractPrice);
+		if (defaultBPC && industryJob.isCopying()) {
+			industryJob.setOutputPrice(ContractPriceManager.get().getContractPrice(industryJob, true));
+		} else {
+			industryJob.setOutputPrice(ApiIdConverter.getPrice(industryJob.getProductTypeID(), industryJob.isCopying()));
+		}
+	}
+
+	private static void updatePrice(MyAsset asset, boolean defaultBPC) {
 		//User price
 		if (asset.getItem().isBlueprint() && !asset.isBPO()) { //Blueprint Copy
 			asset.setUserPrice(Settings.get().getUserPrices().get(-asset.getItem().getTypeID()));
@@ -990,7 +1082,13 @@ public class ProfileData {
 			asset.setUserPrice(Settings.get().getUserPrices().get(asset.getItem().getTypeID()));
 		}
 		//Dynamic Price
-		asset.setDynamicPrice(ApiIdConverter.getPrice(asset.getItem().getTypeID(), asset.isBPC())); //Update data
+		double contractPrice = ContractPriceManager.get().getContractPrice(asset);
+		if (defaultBPC && asset.isBPC()) {
+			asset.setDynamicPrice(contractPrice);
+		} else {
+			asset.setDynamicPrice(ApiIdConverter.getPrice(asset.getItem().getTypeID(), asset.isBPC()));
+		}
+		asset.setContractPrice(contractPrice);
 	}
 
 	private static void updateName(MyAsset asset) {
