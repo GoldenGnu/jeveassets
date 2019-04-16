@@ -174,4 +174,12 @@ public abstract class DialoguesSettings extends Bundle {
 	public abstract String contractsHistory();
 	public abstract String allHistory();
 	public abstract String monthsHistory();
+
+	// used in ContractPriceSettingsPanel
+	public abstract String contractPrices();
+	public abstract String includePrivate();
+	public abstract String defaultBPC();
+	public abstract String priceMode();
+	public abstract String updateRequired();
+	public abstract String security();
 }

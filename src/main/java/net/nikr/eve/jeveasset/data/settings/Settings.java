@@ -44,6 +44,7 @@ import java.util.Map;
 import java.util.TreeMap;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.SplashUpdater;
+import net.nikr.eve.jeveasset.data.settings.ContractPriceManager.ContractPriceSettings;
 import net.nikr.eve.jeveasset.data.settings.tag.Tag;
 import net.nikr.eve.jeveasset.data.settings.tag.TagID;
 import net.nikr.eve.jeveasset.data.settings.tag.Tags;
@@ -69,6 +70,7 @@ public class Settings {
 	private static final String PATH_ASSET_ADDED = "data" + File.separator + "added.json";
 	private static final String PATH_ASSET_ADDED_DATABASE = "data" + File.separator + "addedsql.db";
 	private static final String PATH_TRACKER_DATA = "data" + File.separator + "tracker.json";
+	private static final String PATH_CONTRACT_PRICES = "data" + File.separator + "contract_prices.json";
 	private static final String PATH_SETTINGS = "data" + File.separator + "settings.xml";
 	private static final String PATH_ITEMS = "data" + File.separator + "items.xml";
 	private static final String PATH_JUMPS = "data" + File.separator + "jumps.xml";
@@ -160,6 +162,8 @@ public class Settings {
 	private final Map<SettingFlag, Boolean> flags = new EnumMap<SettingFlag, Boolean>(SettingFlag.class);
 	//Price
 	private PriceDataSettings priceDataSettings = new PriceDataSettings();
+	//Contract price
+	private final ContractPriceSettings contractPriceSettings = new ContractPriceSettings();
 	//Proxy (API)
 	private ProxyData proxyData = new ProxyData();
 	//FIXME - - > Settings: Create windows settings
@@ -413,6 +417,10 @@ public class Settings {
 
 	public void setPriceDataSettings(final PriceDataSettings priceDataSettings) {
 		this.priceDataSettings = priceDataSettings;
+	}
+
+	public ContractPriceSettings getContractPriceSettings() {
+		return contractPriceSettings;
 	}
 
 	public Map<Integer, UserItem<Integer, Double>> getUserPrices() {
@@ -829,6 +837,10 @@ public class Settings {
 		return FileUtil.getLocalFile(Settings.PATH_TRACKER_DATA, !Program.isPortable());
 	}
 
+	public static String getPathContractPrices() {
+		return FileUtil.getLocalFile(Settings.PATH_CONTRACT_PRICES, !Program.isPortable());
+	}
+
 	public static String getPathAssetAdded() {
 		return FileUtil.getLocalFile(Settings.PATH_ASSET_ADDED, !Program.isPortable());
 	}
@@ -915,7 +927,8 @@ public class Settings {
 	}
 
 	public boolean isUpdatable(final Date date) {
-		return ((Settings.getNow().after(date)
+		return date != null &&
+				((Settings.getNow().after(date)
 				|| Settings.getNow().equals(date)
 				|| Program.isForceUpdate())
 				&& !Program.isForceNoUpdate());
