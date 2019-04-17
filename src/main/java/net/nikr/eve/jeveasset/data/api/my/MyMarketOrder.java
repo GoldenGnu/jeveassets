@@ -260,6 +260,14 @@ public class MyMarketOrder extends RawMarketOrder implements Comparable<MyMarket
 		}
 	}
 
+	public Date getCreatedOrIssued() {
+		if (getCreated() != null) {
+			return getCreated();
+		} else {
+			return getIssued();
+		}
+	}
+
 	@Override
 	public Item getItem() {
 		return item;

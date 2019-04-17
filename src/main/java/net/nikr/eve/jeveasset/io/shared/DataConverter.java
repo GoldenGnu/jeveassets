@@ -255,8 +255,17 @@ public abstract class DataConverter {
 
 	public static Set<MyMarketOrder> convertRawMarketOrders(List<RawMarketOrder> rawMarketOrders, OwnerType owner, boolean saveHistory) {
 		Set<MyMarketOrder> marketOrders = new HashSet<MyMarketOrder>();
+		Map<Long, MyMarketOrder> orders = new HashMap<>();
 		for (RawMarketOrder rawMarketOrder : rawMarketOrders) {
-			marketOrders.add(toMyMarketOrder(rawMarketOrder, owner));
+			MyMarketOrder marketOrder = toMyMarketOrder(rawMarketOrder, owner);
+			marketOrders.add(marketOrder);
+			orders.put(marketOrder.getOrderID(), marketOrder);
+		}
+		for (MyMarketOrder old : owner.getMarketOrders()) {
+			MyMarketOrder marketOrder = orders.get(old.getOrderID());
+			if (marketOrder != null && marketOrder.getCreated() == null) {
+				marketOrder.setCreated(old.getIssued());
+			}
 		}
 		if (saveHistory) {
 			marketOrders.addAll(owner.getMarketOrders());
