@@ -77,7 +77,7 @@ public class AboutDialog extends JDialogCentered {
 				+ "<b>www</b><br>"
 				+ "&nbsp;<a href=\"" + Program.PROGRAM_HOMEPAGE + "\">Homepage</a> (download and source)<br>"
 				+ "&nbsp;<a href=\"https://github.com/GoldenGnu/jeveassets\">GitHub Project</a> (developers)<br>"
-				+ "&nbsp;<a href=\"https://forums.eveonline.com/t/jeveassets-4-1-2-2017-06-07/13255\">Forum Thread</a> (feedback)<br>"
+				+ "&nbsp;<a href=\"https://forums.eveonline.com/t/13255\">Forum Thread</a> (feedback)<br>"
 				+ "<br>"
 				+ "<br>"
 				);
@@ -89,6 +89,7 @@ public class AboutDialog extends JDialogCentered {
 				//+ "&nbsp;<a href=\"http://eve-marketdata.com/\">EVE-Marketdata.com</a> (price data api)<br>"
 				+ "&nbsp;<a href=\"https://market.fuzzwork.co.uk/api/\">fuzzwork.co.uk</a> (price data api)<br>"
 				+ "&nbsp;<a href=\"https://evemarketer.com/\">EveMarketer.com</a> (price data api)<br>"
+				+ "&nbsp;<a href=\"https://app.swaggerhub.com/apis-docs/rihanshazih/contracts-appraisal/\">Contracts Appraisal</a> (contract price api)<br>"
 				+ "&nbsp;<a href=\"https://stop.hammerti.me.uk/api/\">stop.hammerti.me.uk</a> (citadel api)<br>"
 				+ "&nbsp;<a href=\"http://www.famfamfam.com/lab/icons/silk/\">Silk icons</a> (icons)<br>"
 				+ "<br>"
