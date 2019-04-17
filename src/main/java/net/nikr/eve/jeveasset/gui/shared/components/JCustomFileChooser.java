@@ -48,13 +48,14 @@ public final class JCustomFileChooser extends JFileChooser {
 	public static JCustomFileChooser createFileChooser(final Window window, final List<String> extensions) {
 		//XXX - Workaround for https://bugs.openjdk.java.net/browse/JDK-8179014
 		UIManager.put("FileChooser.useSystemExtensionHiding", false);
-		return new JCustomFileChooser(window, extensions);
+		JCustomFileChooser jCustomFileChooser = new JCustomFileChooser(window, extensions);
+		jCustomFileChooser.setExtensions(extensions);
+		jCustomFileChooser.setAcceptAllFileFilterUsed(false);
+		return jCustomFileChooser;
 	}
 
 	private JCustomFileChooser(final Window window, final List<String> extensions) {
 		this.window = window;
-		setExtensions(extensions);
-		this.setAcceptAllFileFilterUsed(false);
 	}
 
 	@Override
