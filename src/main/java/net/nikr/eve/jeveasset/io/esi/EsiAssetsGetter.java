@@ -41,7 +41,12 @@ public class EsiAssetsGetter extends AbstractEsiGetter {
 			List<CorporationAssetsResponse> responses = updatePages(DEFAULT_RETRIES, new EsiPagesHandler<CorporationAssetsResponse>() {
 				@Override
 				public ApiResponse<List<CorporationAssetsResponse>> get(Integer page) throws ApiException {
-					return getAssetsApiAuth().getCorporationsCorporationIdAssetsWithHttpInfo((int) owner.getOwnerID(), DATASOURCE, null, page, null);
+					ApiResponse<List<CorporationAssetsResponse>> apiResponse = getAssetsApiAuth().getCorporationsCorporationIdAssetsWithHttpInfo((int) owner.getOwnerID(), DATASOURCE, null, page, null);
+					Date modified = getHeaderDate(apiResponse.getHeaders(), "last-modified");
+					if (modified != null && (owner.getAssetLastUpdate() == null || modified.after(owner.getAssetLastUpdate()))) {
+						owner.setAssetLastUpdate(modified);
+					}
+					return apiResponse;
 				}
 			});
 			owner.setAssets(EsiConverter.toAssetsCorporation(responses, owner));
