@@ -23,7 +23,6 @@ package net.nikr.eve.jeveasset.io.esi;
 import java.util.Date;
 import java.util.List;
 import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
-import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import static net.nikr.eve.jeveasset.io.esi.AbstractEsiGetter.DATASOURCE;
 import net.troja.eve.esi.ApiException;
@@ -43,7 +42,12 @@ public class EsiAccountBalanceGetter extends AbstractEsiGetter {
 			List<CorporationWalletsResponse> response = update(DEFAULT_RETRIES, new EsiHandler<List<CorporationWalletsResponse>>() {
 				@Override
 				public ApiResponse<List<CorporationWalletsResponse>> get() throws ApiException {
-					return getWalletApiAuth().getCorporationsCorporationIdWalletsWithHttpInfo((int)owner.getOwnerID(), DATASOURCE, null, null);
+					ApiResponse<List<CorporationWalletsResponse>> apiResponse = getWalletApiAuth().getCorporationsCorporationIdWalletsWithHttpInfo((int)owner.getOwnerID(), DATASOURCE, null, null);
+					Date modified = getHeaderDate(apiResponse.getHeaders(), "last-modified");
+					if (modified != null && (owner.getBalanceLastUpdate() == null || modified.after(owner.getBalanceLastUpdate()))) {
+						owner.setBalanceLastUpdate(modified);
+					}
+					return apiResponse;
 				}
 			});
 			owner.setAccountBalances(EsiConverter.toAccountBalanceCorporation(response, owner));
@@ -51,7 +55,12 @@ public class EsiAccountBalanceGetter extends AbstractEsiGetter {
 			Double response = update(DEFAULT_RETRIES, new EsiHandler<Double>() {
 				@Override
 				public ApiResponse<Double> get() throws ApiException {
-					return getWalletApiAuth().getCharactersCharacterIdWalletWithHttpInfo((int) owner.getOwnerID(), DATASOURCE, null, null);
+					ApiResponse<Double> apiResponse = getWalletApiAuth().getCharactersCharacterIdWalletWithHttpInfo((int) owner.getOwnerID(), DATASOURCE, null, null);
+					Date modified = getHeaderDate(apiResponse.getHeaders(), "last-modified");
+					if (modified != null && (owner.getBalanceLastUpdate() == null || modified.after(owner.getBalanceLastUpdate()))) {
+						owner.setBalanceLastUpdate(modified);
+					}
+					return apiResponse;
 				}
 			});
 			owner.setAccountBalances(EsiConverter.toAccountBalance(response, owner, 1000));
@@ -61,7 +70,6 @@ public class EsiAccountBalanceGetter extends AbstractEsiGetter {
 	@Override
 	protected void setNextUpdate(Date date) {
 		owner.setBalanceNextUpdate(date);
-		owner.setBalanceLastUpdate(Settings.getNow());
 	}
 
 	@Override
