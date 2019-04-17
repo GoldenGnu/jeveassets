@@ -470,6 +470,7 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 		Double price = AttributeGetters.getDouble(element, "price");
 		int bid = AttributeGetters.getInt(element, "bid");
 		Date issued = AttributeGetters.getDate(element, "issued");
+		Date created = AttributeGetters.getDateOptional(element, "created");
 		Integer issuedBy = AttributeGetters.getIntOptional(element, "issuedby");
 		boolean corp = owner.isCorporation();
 		if (AttributeGetters.haveAttribute(element, "corp")) {
@@ -481,6 +482,7 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 		apiMarketOrder.setBuyOrder(bid > 0);
 		apiMarketOrder.setCorp(corp);
 		apiMarketOrder.setIssued(issued);
+		apiMarketOrder.setCreated(created);
 		apiMarketOrder.setIssuedBy(issuedBy);
 		apiMarketOrder.setLocationID(locationID);
 		apiMarketOrder.setMinVolume(minVolume);

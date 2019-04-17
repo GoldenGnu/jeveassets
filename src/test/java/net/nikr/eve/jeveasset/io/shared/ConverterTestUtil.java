@@ -580,6 +580,7 @@ public class ConverterTestUtil {
 			marketOrder.setWalletDivision(options.getInteger());
 			marketOrder.setState(options.getMarketOrderStateRaw());
 			marketOrder.setIssuedBy(options.getInteger());
+			marketOrder.setCreated(options.getDate());
 		}
 		if (object instanceof MyJournal) {
 			MyJournal journal = (MyJournal) object;
