@@ -345,7 +345,7 @@ public class RawIndustryJob {
 		this.productTypeId = productTypeId;
 	}
 
-	public final Integer getRuns() {
+	public final int getRuns() {
 		return runs;
 	}
 

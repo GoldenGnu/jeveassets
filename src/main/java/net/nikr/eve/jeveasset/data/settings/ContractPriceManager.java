@@ -30,10 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import net.nikr.eve.jeveasset.data.api.my.MyAsset;
-import net.nikr.eve.jeveasset.data.api.my.MyContractItem;
 import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob;
-import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder;
 import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
 import net.nikr.eve.jeveasset.data.api.raw.RawBlueprint;
 import net.nikr.eve.jeveasset.data.sde.Item;
@@ -81,19 +78,7 @@ public class ContractPriceManager {
 		contractPriceData.add(returnData);
 	}
 
-	public double getContractPrice(MyAsset asset) {
-		return getContractPrice(ContractPriceItem.create(asset), asset.getRuns());
-	}
-
-	public double getContractPrice(EditableContractPriceType editablePriceType) {
-		return getContractPrice(ContractPriceItem.create(editablePriceType), 0);
-	}
-
-	public double getContractPrice(MyIndustryJob industryJob, boolean product) {
-		return getContractPrice(ContractPriceItem.create(industryJob, product), industryJob.getRuns());
-	}
-
-	public double getContractPrice(ContractPriceItem contractPriceType, int runs) {
+	public double getContractPrice(ContractPriceItem contractPriceType) {
 		if (contractPriceType == null) {
 			return 0;
 		}
@@ -104,8 +89,8 @@ public class ContractPriceManager {
 		Double price = Settings.get().getContractPriceSettings().getContractPriceMode().getPrice(prices);
 		if (price == null) {
 			return 0;
-		} else if (runs > 0){
-			return price * runs;
+		} else if (contractPriceType.getRuns() > 0){
+			return price * contractPriceType.getRuns();
 		} else {
 			return price;
 		}
@@ -312,23 +297,15 @@ public class ContractPriceManager {
 	public static class ContractPriceItem {
 
 		public static ContractPriceItem create(EditableContractPriceType editablePriceType) {
-			return new ContractPriceItem(editablePriceType.getItem().getTypeID(), editablePriceType.isBPC(), editablePriceType.isBPO(), 0, 0);
-		}
-
-		public static ContractPriceItem create(MyAsset asset) {
-			return new ContractPriceItem(asset.getTypeID(), asset.isBPC(), asset.isBPO(), asset.getMaterialEfficiency(), asset.getTimeEfficiency());
+			return new ContractPriceItem(editablePriceType.getItem().getTypeID(), editablePriceType.isBPC(), editablePriceType.isBPO(), editablePriceType.getMaterialEfficiency(), editablePriceType.getTimeEfficiency(), editablePriceType.getRuns());
 		}
 
 		public static ContractPriceItem create(RawBlueprint blueprint) {
-			return new ContractPriceItem(blueprint.getTypeID(), blueprint.getRuns() > 0, blueprint.getRuns() < 1, blueprint.getMaterialEfficiency(), blueprint.getTimeEfficiency());
-		}
-
-		public static ContractPriceItem create(MyMarketOrder marketOrder) {
-			return new ContractPriceItem(marketOrder.getTypeID(), marketOrder.isBPC(), marketOrder.isBPO(), 0, 0);
+			return new ContractPriceItem(blueprint.getTypeID(), blueprint.getRuns() > 0, blueprint.getRuns() < 1, blueprint.getMaterialEfficiency(), blueprint.getTimeEfficiency(), blueprint.getRuns());
 		}
 
 		public static ContractPriceItem create(MyTransaction transaction) {
-			return new ContractPriceItem(transaction.getTypeID(), false, transaction.getItem().isBlueprint(), 0, 0);
+			return new ContractPriceItem(transaction.getTypeID(), false, transaction.getItem().isBlueprint(), 0, 0, -1);
 		}
 
 		public static ContractPriceItem create(MyIndustryJob industryJob, boolean product) {
@@ -336,23 +313,19 @@ public class ContractPriceManager {
 				if (industryJob.getProductTypeID() == null) {
 					return null;
 				}
-				return new ContractPriceItem(industryJob.getProductTypeID(), industryJob.isCopying(), false, industryJob.getMaterialEfficiency(), industryJob.getTimeEfficiency());
+				return new ContractPriceItem(industryJob.getProductTypeID(), industryJob.isCopying(), false, industryJob.getMaterialEfficiency(), industryJob.getTimeEfficiency(), industryJob.getRuns() * industryJob.getLicensedRuns());
 			} else {
-				return new ContractPriceItem(industryJob.getBlueprintTypeID(), industryJob.isBPC(), industryJob.isBPO(), industryJob.getMaterialEfficiency(), industryJob.getTimeEfficiency());
+				return new ContractPriceItem(industryJob.getBlueprintTypeID(), industryJob.isBPC(), industryJob.isBPO(), industryJob.getMaterialEfficiency(), industryJob.getTimeEfficiency(), industryJob.getRuns());
 			}
 		}
 
-		public static ContractPriceItem create(MyContractItem contractItem) {
-			return new ContractPriceItem(contractItem.getTypeID(), contractItem.isBPC(), contractItem.isBPO(), 0, 0);
-		}
-
 		public static ContractPriceItem create(StockpileItem stockpileItem) {
-			return new ContractPriceItem(stockpileItem.getTypeID(), stockpileItem.isBPC(), stockpileItem.isBPO(), 0, 0);
+			return new ContractPriceItem(stockpileItem.getTypeID(), stockpileItem.isBPC(), stockpileItem.isBPO(), 0, 0, -1);
 		}
 
 		public static ContractPriceItem create(ReprocessedMaterial reprocessedMaterial) {
 			Item item = ApiIdConverter.getItem(reprocessedMaterial.getTypeID());
-			return new ContractPriceItem(reprocessedMaterial.getTypeID(), false, item.isBlueprint(), 0, 0);
+			return new ContractPriceItem(reprocessedMaterial.getTypeID(), false, item.isBlueprint(), 0, 0, -1);
 		}
 
 		private final int typeID;
@@ -360,13 +333,15 @@ public class ContractPriceManager {
 		private final boolean bpo;
 		private final int me;
 		private final int te;
+		private final int runs;
 
-		public ContractPriceItem(int typeID, boolean bpc, boolean bpo, int me, int te) {
+		public ContractPriceItem(int typeID, boolean bpc, boolean bpo, int me, int te, int runs) {
 			this.typeID = typeID;
 			this.bpc = bpc;
 			this.bpo = bpo;
 			this.me = me;
 			this.te = te;
+			this.runs = runs;
 		}
 
 		public boolean isContractPrice() {
@@ -395,6 +370,10 @@ public class ContractPriceManager {
 			} else {
 				return null;
 			}
+		}
+
+		public int getRuns() {
+			return runs;
 		}
 
 		@Override
