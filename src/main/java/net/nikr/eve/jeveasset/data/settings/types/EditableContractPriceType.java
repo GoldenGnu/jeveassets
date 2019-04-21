@@ -27,5 +27,8 @@ public interface EditableContractPriceType extends ContractPriceType {
 	public void setContractPrice(double price);
 	public boolean isBPC();
 	public boolean isBPO();
+	public int getRuns();
+	public int getMaterialEfficiency();
+	public int getTimeEfficiency();
 	public Item getItem();
 }

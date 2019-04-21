@@ -801,7 +801,7 @@ public class ProfileData {
 			eventList.getReadWriteLock().readLock().lock();
 			final boolean defaultBPC = Settings.get().getContractPriceSettings().isDefaultBPC();
 			for (T t : eventList) {
-				if (typeIDs.contains(t.getItem().getTypeID())) {
+				if (typeIDs.contains(getTypeID(t.isBPC(), t.getItem().getTypeID()))) {
 					found.add(t); //Save for update
 					updatePrice(t, defaultBPC);
 				}
@@ -821,7 +821,7 @@ public class ProfileData {
 			final boolean defaultBPC = Settings.get().getContractPriceSettings().isDefaultBPC();
 			eventList.getReadWriteLock().readLock().lock();
 			for (MyIndustryJob industryJob : eventList) {
-				if (typeIDs.contains(industryJob.getItem().getTypeID()) || typeIDs.contains(industryJob.getProductTypeID())) {
+				if (typeIDs.contains(getTypeID(industryJob.isBPC(), industryJob.getItem().getTypeID())) || typeIDs.contains(getTypeID(industryJob.isCopying(), industryJob.getProductTypeID()))) {
 					found.add(industryJob); //Save for update
 					updatePrice(industryJob, defaultBPC); //Update data
 				}
@@ -853,7 +853,7 @@ public class ProfileData {
 					asset.setPriceReprocessed(ApiIdConverter.getPriceReprocessed(asset.getItem())); //Update data
 				}
 				//Dynamic Price
-				boolean dynamic = typeIDs.contains(asset.getItem().getTypeID());
+				boolean dynamic = typeIDs.contains(getTypeID(asset.isBPC(), asset.getItem().getTypeID()));
 				if (dynamic) {
 					updatePrice(asset, defaultBPC); //Update data
 				}
@@ -866,6 +866,14 @@ public class ProfileData {
 			eventList.getReadWriteLock().readLock().unlock();
 		}
 		updateList(eventList, found);
+	}
+
+	private static int getTypeID(boolean bpc, int typeID) {
+		if (bpc) {
+			return -typeID;
+		} else {
+			return typeID;
+		}
 	}
 
 	public static <T extends EditableLocationType> void updateLocation(EventList<T> eventList, Set<Long> locationIDs) {
@@ -1062,28 +1070,26 @@ public class ProfileData {
 	private static void updatePrice(EditablePriceType editablePriceType, boolean defaultBPC) {
 		if (editablePriceType instanceof EditableContractPriceType) {
 			EditableContractPriceType contractPriceType = (EditableContractPriceType) editablePriceType;
-			double contractPrice = ContractPriceManager.get().getContractPrice(contractPriceType);
+			contractPriceType.setContractPrice(ContractPriceManager.get().getContractPrice(ContractPriceItem.create(contractPriceType)));
 			if (defaultBPC && editablePriceType.isBPC()) {
-				editablePriceType.setDynamicPrice(contractPrice);
+				editablePriceType.setDynamicPrice(ApiIdConverter.getPrice(editablePriceType.getItem().getTypeID(), editablePriceType.isBPC(), ContractPriceItem.create(contractPriceType)));
 			} else {
 				editablePriceType.setDynamicPrice(ApiIdConverter.getPrice(editablePriceType.getItem().getTypeID(), editablePriceType.isBPC()));
 			}
-			contractPriceType.setContractPrice(contractPrice);
 		} else if (editablePriceType != null){
 			editablePriceType.setDynamicPrice(ApiIdConverter.getPrice(editablePriceType.getItem().getTypeID(), editablePriceType.isBPC()));
 		}
 	}
 
 	private static void updatePrice(MyIndustryJob industryJob, boolean defaultBPC) {
-		double contractPrice = ContractPriceManager.get().getContractPrice(industryJob, false);
 		if (defaultBPC && industryJob.isBPC()) {
-			industryJob.setDynamicPrice(contractPrice);
+			industryJob.setDynamicPrice(ApiIdConverter.getPrice(industryJob.getItem().getTypeID(), industryJob.isBPC(), ContractPriceItem.create(industryJob, false)));
 		} else {
 			industryJob.setDynamicPrice(ApiIdConverter.getPrice(industryJob.getItem().getTypeID(), industryJob.isBPC()));
 		}
-		industryJob.setContractPrice(contractPrice);
+		industryJob.setContractPrice(ContractPriceManager.get().getContractPrice(ContractPriceItem.create(industryJob, false)));
 		if (defaultBPC && industryJob.isCopying()) {
-			industryJob.setOutputPrice(ContractPriceManager.get().getContractPrice(industryJob, true));
+			industryJob.setOutputPrice(ApiIdConverter.getPrice(industryJob.getProductTypeID(), industryJob.isCopying(), ContractPriceItem.create(industryJob, true)));
 		} else {
 			industryJob.setOutputPrice(ApiIdConverter.getPrice(industryJob.getProductTypeID(), industryJob.isCopying()));
 		}
@@ -1097,13 +1103,12 @@ public class ProfileData {
 			asset.setUserPrice(Settings.get().getUserPrices().get(asset.getItem().getTypeID()));
 		}
 		//Dynamic Price
-		double contractPrice = ContractPriceManager.get().getContractPrice(asset);
 		if (defaultBPC && asset.isBPC()) {
-			asset.setDynamicPrice(contractPrice);
+			asset.setDynamicPrice(ApiIdConverter.getPrice(asset.getItem().getTypeID(), asset.isBPC(), ContractPriceItem.create(asset)));
 		} else {
 			asset.setDynamicPrice(ApiIdConverter.getPrice(asset.getItem().getTypeID(), asset.isBPC()));
 		}
-		asset.setContractPrice(contractPrice);
+		asset.setContractPrice(ContractPriceManager.get().getContractPrice(ContractPriceItem.create(asset)));
 	}
 
 	private void updateName(MyAsset asset) {

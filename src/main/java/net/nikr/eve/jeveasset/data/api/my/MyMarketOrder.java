@@ -212,6 +212,21 @@ public class MyMarketOrder extends RawMarketOrder implements Comparable<MyMarket
 	}
 
 	@Override
+	public int getRuns() {
+		return -1; //BPO - Can not sell BPC
+	}
+
+	@Override
+	public int getMaterialEfficiency() {
+		return 0; //Zero - Can not sell researched blueprints 
+	}
+
+	@Override
+	public int getTimeEfficiency() {
+		return 0; //Zero - Can not sell researched blueprints
+	}
+
+	@Override
 	public void setDynamicPrice(double price) {
 		this.price = price;
 	}

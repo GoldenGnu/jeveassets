@@ -32,6 +32,8 @@ import net.nikr.eve.jeveasset.data.sde.ReprocessedMaterial;
 import net.nikr.eve.jeveasset.data.sde.StaticData;
 import net.nikr.eve.jeveasset.data.settings.Citadel;
 import net.nikr.eve.jeveasset.data.settings.Citadel.CitadelSource;
+import net.nikr.eve.jeveasset.data.settings.ContractPriceManager;
+import net.nikr.eve.jeveasset.data.settings.ContractPriceManager.ContractPriceItem;
 import net.nikr.eve.jeveasset.data.settings.PriceData;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.data.settings.UserItem;
@@ -145,14 +147,18 @@ public final class ApiIdConverter {
 	}
 
 	public static double getPrice(final Integer typeID, final boolean isBlueprintCopy) {
-		return getPriceType(typeID, isBlueprintCopy, false);
+		return getPriceType(typeID, isBlueprintCopy, null, false);
+	}
+
+	public static double getPrice(final Integer typeID, final boolean isBlueprintCopy, ContractPriceItem contractPriceItem) {
+		return getPriceType(typeID, isBlueprintCopy, contractPriceItem, false);
 	}
 
 	private static double getPriceReprocessed(final Integer typeID, final boolean isBlueprintCopy) {
-		return getPriceType(typeID, isBlueprintCopy, true);
+		return getPriceType(typeID, isBlueprintCopy, null, true);
 	}
 
-	private static double getPriceType(final Integer typeID, final boolean isBlueprintCopy, boolean reprocessed) {
+	private static double getPriceType(final Integer typeID, final boolean isBlueprintCopy, ContractPriceItem contractPriceItem, boolean reprocessed) {
 		if (typeID == null) {
 			return 0;
 		}
@@ -168,7 +174,11 @@ public final class ApiIdConverter {
 
 		//Blueprint Copy (Default Zero)
 		if (isBlueprintCopy) {
-			return 0;
+			if (contractPriceItem != null) {
+				return ContractPriceManager.get().getContractPrice(contractPriceItem);
+			} else {
+				return 0;
+			}
 		}
 
 		//Blueprints Base Price

@@ -52,7 +52,7 @@ public class ContractPriceTest extends TestUtil{
 			
 	@Test
 	public void testReadWrite() {
-		ContractPriceItem contractPriceType = new ContractPriceItem(TYPE_ID, BPC, BPO, ME, TE);
+		ContractPriceItem contractPriceType = new ContractPriceItem(TYPE_ID, BPC, BPO, ME, TE, 100);
 		Prices prices = new Prices();
 		prices.setTypeId(TYPE_ID);
 		prices.setTypeName(TYPE_NAME);

@@ -437,6 +437,7 @@ public class MyAsset extends RawAsset implements Comparable<MyAsset>, InfoItem, 
 		return bpc;
 	}
 
+	@Override
 	public int getMaterialEfficiency() {
 		if (blueprint != null) {
 			return blueprint.getMaterialEfficiency();
@@ -445,6 +446,7 @@ public class MyAsset extends RawAsset implements Comparable<MyAsset>, InfoItem, 
 		}
 	}
 
+	@Override
 	public int getTimeEfficiency() {
 		if (blueprint != null) {
 			return blueprint.getTimeEfficiency();
@@ -453,6 +455,7 @@ public class MyAsset extends RawAsset implements Comparable<MyAsset>, InfoItem, 
 		}
 	}
 
+	@Override
 	public int getRuns() {
 		if (blueprint != null) {
 			return blueprint.getRuns();
