@@ -37,7 +37,7 @@ public abstract class JSettingsPanel {
 	protected GroupLayout layout;
 	protected Window parent;
 	protected DefaultMutableTreeNode treeNode;
-	private Icon icon;
+	private final Icon icon;
 
 	public JSettingsPanel(final Program program, final SettingsDialog optionsDialog, final String title, final Icon icon) {
 		this.program = program;

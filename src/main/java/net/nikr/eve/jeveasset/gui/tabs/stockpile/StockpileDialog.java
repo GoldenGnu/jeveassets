@@ -84,7 +84,7 @@ import net.nikr.eve.jeveasset.gui.shared.CaseInsensitiveComparator;
 import net.nikr.eve.jeveasset.gui.shared.Colors;
 import net.nikr.eve.jeveasset.gui.shared.DocumentFactory;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
-import net.nikr.eve.jeveasset.gui.shared.components.JCopyPopup;
+import net.nikr.eve.jeveasset.gui.shared.TextManager;
 import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
 import net.nikr.eve.jeveasset.gui.shared.components.JDoubleField;
 import net.nikr.eve.jeveasset.gui.shared.components.JDropDownButton;
@@ -105,6 +105,7 @@ public class StockpileDialog extends JDialogCentered {
 		VALIDATE,
 		CANCEL,
 		OK,
+		ADD_PLANET,
 		ADD_STATION,
 		ADD_SYSTEM,
 		ADD_REGION,
@@ -132,6 +133,7 @@ public class StockpileDialog extends JDialogCentered {
 	private boolean updated = false;
 
 	//Data
+	private final EventList<MyLocation> planets;
 	private final EventList<MyLocation> stations;
 	private final EventList<MyLocation> systems;
 	private final EventList<MyLocation> regions;
@@ -147,6 +149,7 @@ public class StockpileDialog extends JDialogCentered {
 		itemFlags = new ArrayList<>(StaticData.get().getItemFlags().values());
 		Collections.sort(itemFlags);
 		//Locations - not static
+		planets = new EventListManager<MyLocation>().create();
 		stations = new EventListManager<MyLocation>().create();
 		systems = new EventListManager<MyLocation>().create();
 		regions = new EventListManager<MyLocation>().create();
@@ -184,6 +187,12 @@ public class StockpileDialog extends JDialogCentered {
 		jStation.setActionCommand(StockpileDialogAction.ADD_STATION.name());
 		jStation.addActionListener(listener);
 		jToolBar.addButton(jStation);
+
+		JButton jPlanet = new JButton(TabsStockpile.get().planet(), Images.LOC_PLANET.getIcon());
+		jPlanet.setHorizontalAlignment(JButton.LEFT);
+		jPlanet.setActionCommand(StockpileDialogAction.ADD_PLANET.name());
+		jPlanet.addActionListener(listener);
+		jToolBar.addButton(jPlanet);
 
 		JButton jSystem = new JButton(TabsStockpile.get().system(), Images.LOC_SYSTEM.getIcon());
 		jSystem.setHorizontalAlignment(JButton.LEFT);
@@ -408,11 +417,14 @@ public class StockpileDialog extends JDialogCentered {
 
 	void updateData() {
 		//Locations
+		List<MyLocation> planetList = new ArrayList<>();
 		List<MyLocation> stationList = new ArrayList<>();
 		List<MyLocation> systemList = new ArrayList<>();
 		List<MyLocation> regionList = new ArrayList<>();
 		for (MyLocation location : StaticData.get().getLocations()) {
-			if (location.isStation()) {
+			if (location.isPlanet()) {
+				planetList.add(location);
+			} else if (location.isStation()) { //Not planet
 				stationList.add(location);
 			} else if (location.isSystem()) {
 				systemList.add(location);
@@ -420,9 +432,17 @@ public class StockpileDialog extends JDialogCentered {
 				regionList.add(location);
 			}
 		}
+		Collections.sort(planetList);
 		Collections.sort(stationList);
 		Collections.sort(systemList);
 		Collections.sort(regionList);
+		try {
+			planets.getReadWriteLock().writeLock().lock();
+			planets.clear();
+			planets.addAll(planetList);
+		} finally {
+			planets.getReadWriteLock().writeLock().unlock();
+		}
 		try {
 			stations.getReadWriteLock().writeLock().lock();
 			stations.clear();
@@ -547,6 +567,9 @@ public class StockpileDialog extends JDialogCentered {
 				save();
 			} else if (StockpileDialogAction.CANCEL.name().equals(e.getActionCommand())) {
 				setVisible(false);
+			} else if (StockpileDialogAction.ADD_PLANET.name().equals(e.getActionCommand())) {
+				locationPanels.add(new LocationPanel(LocationType.PLANET));
+				updatePanels();
 			} else if (StockpileDialogAction.ADD_STATION.name().equals(e.getActionCommand())) {
 				locationPanels.add(new LocationPanel(LocationType.STATION));
 				updatePanels();
@@ -609,6 +632,7 @@ public class StockpileDialog extends JDialogCentered {
 	}
 
 	private enum LocationType {
+		PLANET,
 		STATION,
 		SYSTEM,
 		REGION,
@@ -691,7 +715,7 @@ public class StockpileDialog extends JDialogCentered {
 				}
 				jContainer = new JComboBox<>();
 				jIncludeContainer = new JCheckBox(TabsStockpile.get().includeContainer());
-				JCopyPopup.install((JTextComponent) jContainer.getEditor().getEditorComponent());
+				TextManager.installTextComponent((JTextComponent) jContainer.getEditor().getEditorComponent());
 				AutoCompleteSupport<String> install = AutoCompleteSupport.install(jContainer, EventModels.createSwingThreadProxyList(containerEventList), new Filterator());
 				install.setFilterMode(TextMatcherEditor.CONTAINS);
 				((JTextComponent) jContainer.getEditor().getEditorComponent()).getDocument().addDocumentListener(listener);
@@ -894,8 +918,10 @@ public class StockpileDialog extends JDialogCentered {
 		private final JLabel jJobsLabel;
 		private final JLabel jOrdersLabel;
 		private final JLabel jContractsLabel;
+		private final JLabel jLocationWarning;
 
 		//Edit
+		private final JRadioButtonMenuItem jPlanet;
 		private final JRadioButtonMenuItem jStation;
 		private final JRadioButtonMenuItem jSystem;
 		private final JRadioButtonMenuItem jRegion;
@@ -907,12 +933,14 @@ public class StockpileDialog extends JDialogCentered {
 			this();
 			if (stockpileFilter.getLocation() == null || stockpileFilter.getLocation().isEmpty()) {
 				setLocationType(LocationType.UNIVERSE);
-			} else if (stockpileFilter.getLocation().isRegion()) {
-				setLocationType(LocationType.REGION);
+			} else if (stockpileFilter.getLocation().isPlanet()) {
+				setLocationType(LocationType.PLANET);
+			} else if (stockpileFilter.getLocation().isStation()) { //Not planet
+				setLocationType(LocationType.STATION);
 			} else if (stockpileFilter.getLocation().isSystem()) {
 				setLocationType(LocationType.SYSTEM);
-			} else if (stockpileFilter.getLocation().isStation()) {
-				setLocationType(LocationType.STATION);
+			} else if (stockpileFilter.getLocation().isRegion()) {
+				setLocationType(LocationType.REGION);
 			} else {
 				setLocationType(LocationType.UNIVERSE);
 			}
@@ -1156,6 +1184,12 @@ public class StockpileDialog extends JDialogCentered {
 			jStation.addActionListener(listener);
 			jOptions.add(jStation);
 
+			jPlanet = new JRadioButtonMenuItem(TabsStockpile.get().planet(), Images.LOC_PLANET.getIcon());
+			jPlanet.setHorizontalAlignment(JButton.LEFT);
+			jPlanet.setActionCommand(StockpileDialogAction.CHANGE_LOCATION_TYPE.name());
+			jPlanet.addActionListener(listener);
+			jOptions.add(jPlanet);
+
 			jSystem = new JRadioButtonMenuItem(TabsStockpile.get().system(), Images.LOC_SYSTEM.getIcon());
 			jSystem.setHorizontalAlignment(JButton.LEFT);
 			jSystem.setActionCommand(StockpileDialogAction.CHANGE_LOCATION_TYPE.name());
@@ -1175,12 +1209,16 @@ public class StockpileDialog extends JDialogCentered {
 			jOptions.add(jUniverse);
 
 			ButtonGroup buttonGroup = new ButtonGroup();
+			buttonGroup.add(jPlanet);
 			buttonGroup.add(jStation);
 			buttonGroup.add(jSystem);
 			buttonGroup.add(jRegion);
 			buttonGroup.add(jUniverse);
 
 			jLocationType = new JLabel();
+
+			jLocationWarning = createToolTipLabel(Images.UPDATE_DONE_ERROR.getIcon(), TabsStockpile.get().noLocationsFound());
+			jLocationWarning.setVisible(false);
 
 			jLocation = new JComboBox<>();
 
@@ -1189,6 +1227,7 @@ public class StockpileDialog extends JDialogCentered {
 					.addComponent(jToolBar, 0, 0, FIELD_WIDTH)
 					.addGroup(groupLayout.createSequentialGroup()
 						.addComponent(jLocationType)
+						.addComponent(jLocationWarning)
 						.addComponent(jLocation, 0, 0, FIELD_WIDTH)
 						.addComponent(jOptions, 30, 30, 30)
 					)
@@ -1207,6 +1246,7 @@ public class StockpileDialog extends JDialogCentered {
 					.addComponent(jToolBar, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
 					.addGroup(groupLayout.createParallelGroup()
 						.addComponent(jLocationType, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+						.addComponent(jLocationWarning, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 						.addComponent(jLocation, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 						.addComponent(jOptions, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 					)
@@ -1258,12 +1298,26 @@ public class StockpileDialog extends JDialogCentered {
 
 		private void setLocationType(LocationType locationType) {
 			this.locationType = locationType;
-			if (locationType == LocationType.STATION) {
+			boolean empty = false;
+			if (locationType == LocationType.PLANET) {
+				jLocationType.setIcon(Images.LOC_PLANET.getIcon());
+				jLocationType.setToolTipText(TabsStockpile.get().planet());
+				jPanel.setBorder(BorderFactory.createTitledBorder(TabsStockpile.get().planet()));
+				try {
+					planets.getReadWriteLock().readLock().lock();
+					empty = planets.isEmpty();
+					filterList = new FilterList<>(planets);
+				} finally {
+					planets.getReadWriteLock().readLock().unlock();
+				}
+				jPlanet.setSelected(true);
+			} else if (locationType == LocationType.STATION) {
 				jLocationType.setIcon(Images.LOC_STATION.getIcon());
 				jLocationType.setToolTipText(TabsStockpile.get().station());
 				jPanel.setBorder(BorderFactory.createTitledBorder(TabsStockpile.get().station()));
 				try {
 					stations.getReadWriteLock().readLock().lock();
+					empty = stations.isEmpty();
 					filterList = new FilterList<>(stations);
 				} finally {
 					stations.getReadWriteLock().readLock().unlock();
@@ -1275,6 +1329,7 @@ public class StockpileDialog extends JDialogCentered {
 				jPanel.setBorder(BorderFactory.createTitledBorder(TabsStockpile.get().system()));
 				try {
 					systems.getReadWriteLock().readLock().lock();
+					empty = systems.isEmpty();
 					filterList = new FilterList<>(systems);
 				} finally {
 					systems.getReadWriteLock().readLock().unlock();
@@ -1286,6 +1341,7 @@ public class StockpileDialog extends JDialogCentered {
 				jPanel.setBorder(BorderFactory.createTitledBorder(TabsStockpile.get().region()));
 				try {
 					regions.getReadWriteLock().readLock().lock();
+					empty = regions.isEmpty();
 					filterList = new FilterList<>(regions);
 				} finally {
 					regions.getReadWriteLock().readLock().unlock();
@@ -1310,11 +1366,16 @@ public class StockpileDialog extends JDialogCentered {
 				autoComplete = null;
 			}
 			if (locationType != LocationType.UNIVERSE) {
-				jLocation.setEnabled(true);
-				autoComplete = AutoCompleteSupport.install(jLocation, EventModels.createSwingThreadProxyList(filterList), new LocationsFilterator());
-				autoComplete.setStrict(true);
-				autoComplete.setCorrectsCase(true);
-				jLocation.addItemListener(listener); //Must be added after AutoCompleteSupport
+				if (empty) {
+					jLocation.setEnabled(false);
+					jLocation.getModel().setSelectedItem(TabsStockpile.get().noLocationsFound());
+				} else {
+					jLocation.setEnabled(true);
+					autoComplete = AutoCompleteSupport.install(jLocation, EventModels.createSwingThreadProxyList(filterList), new LocationsFilterator());
+					autoComplete.setStrict(true);
+					autoComplete.setCorrectsCase(true);
+					jLocation.addItemListener(listener); //Must be added after AutoCompleteSupport
+				}
 			} else {
 				jLocation.setEnabled(false);
 				jLocation.getModel().setSelectedItem(TabsStockpile.get().universe());
@@ -1395,6 +1456,13 @@ public class StockpileDialog extends JDialogCentered {
 				if (!add) {
 					ok = false;
 				}
+			}
+			Object object = jLocation.getSelectedItem();
+			if (TabsStockpile.get().noLocationsFound().equals(object)) {
+				ok = false;
+				jLocationWarning.setVisible(true);
+			} else {
+				jLocationWarning.setVisible(false);
 			}
 			if (singletonPanel != null) {
 				singletonPanel.warning(false);
@@ -1544,7 +1612,9 @@ public class StockpileDialog extends JDialogCentered {
 		}
 
 		private void changeLocationType() {
-			if (jStation.isSelected()) {
+			if (jPlanet.isSelected()) {
+				setLocationType(LocationType.PLANET);
+			} else if (jStation.isSelected()) {
 				setLocationType(LocationType.STATION);
 			} else if (jSystem.isSelected()) {
 				setLocationType(LocationType.SYSTEM);
@@ -1554,6 +1624,7 @@ public class StockpileDialog extends JDialogCentered {
 				setLocationType(LocationType.UNIVERSE);
 			}
 			refilter();
+			autoValidate();
 		}
 
 		private class ListenerClass implements ActionListener, ItemListener {

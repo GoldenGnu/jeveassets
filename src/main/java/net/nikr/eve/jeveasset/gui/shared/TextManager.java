@@ -18,25 +18,33 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
  */
+package net.nikr.eve.jeveasset.gui.shared;
 
-package net.nikr.eve.jeveasset.gui.shared.components;
-
+import java.awt.Component;
+import java.awt.Container;
 import java.awt.datatransfer.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.IOException;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
+import javax.swing.KeyStroke;
+import javax.swing.event.UndoableEditListener;
+import javax.swing.text.AbstractDocument;
+import javax.swing.text.Document;
 import javax.swing.text.JTextComponent;
+import javax.swing.undo.CompoundEdit;
 import net.nikr.eve.jeveasset.gui.images.Images;
+import net.nikr.eve.jeveasset.gui.shared.components.CompoundUndoManager;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 
 
-public final class JCopyPopup {
+public final class TextManager {
 
-	//FIXME - - - > JTextComponent: need to use JCopyPopup
 	private enum CopyPopupAction {
 		CUT, COPY, PASTE
 	}
@@ -46,14 +54,44 @@ public final class JCopyPopup {
 	private final JMenuItem jCut;
 	private final JMenuItem jCopy;
 	private final JMenuItem jPaste;
+	private final JMenuItem jUndo;
+	private final JMenuItem jRedo;
+	private final CompoundUndoManager undoManager;
 
 	private final Clipboard clipboard;
 
-	public static void install(final JTextComponent component) {
-		JCopyPopup jCopyPopup = new JCopyPopup(component);
+	
+	public static void installAll(final Container container) {
+		for (Component component : container.getComponents()) {
+			if (component instanceof Container) {
+				installAll((Container) component);
+			}
+			if (component instanceof JTextComponent) {
+				installTextComponent((JTextComponent) component);
+			}
+		}
 	}
 
-	private JCopyPopup(final JTextComponent component) {
+	public static void installTextComponent(final JTextComponent component) {
+		//Make sure this component does not already have a UndoManager
+		Document document = component.getDocument();
+		boolean found = false;
+		if (document instanceof AbstractDocument) {
+			AbstractDocument abstractDocument = (AbstractDocument) document;
+			for (UndoableEditListener editListener : abstractDocument.getUndoableEditListeners()) {
+				if (editListener.getClass().equals(CompoundUndoManager.class)) {
+					CompoundUndoManager undoManager = (CompoundUndoManager) editListener;
+					undoManager.reset();
+					return;
+				}
+			}
+		}
+		if (!found) {
+			TextManager jCopyPopup = new TextManager(component);
+		}
+	}
+
+	private TextManager(final JTextComponent component) {
 		this.component = component;
 
 		ListenerClass listener = new ListenerClass();
@@ -64,23 +102,38 @@ public final class JCopyPopup {
 
 		jCut = new JMenuItem(GuiShared.get().cut());
 		jCut.setIcon(Images.EDIT_CUT.getIcon());
+		jCut.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, InputEvent.CTRL_DOWN_MASK));
 		jCut.setActionCommand(CopyPopupAction.CUT.name());
 		jCut.addActionListener(listener);
 
 		jCopy = new JMenuItem(GuiShared.get().copy());
+		jCopy.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, InputEvent.CTRL_DOWN_MASK));
 		jCopy.setIcon(Images.EDIT_COPY.getIcon());
 		jCopy.setActionCommand(CopyPopupAction.COPY.name());
 		jCopy.addActionListener(listener);
 
 		jPaste = new JMenuItem(GuiShared.get().paste());
 		jPaste.setIcon(Images.EDIT_PASTE.getIcon());
+		jPaste.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V, InputEvent.CTRL_DOWN_MASK));
 		jPaste.setActionCommand(CopyPopupAction.PASTE.name());
 		jPaste.addActionListener(listener);
 
 		clipboard = component.getToolkit().getSystemClipboard();
+
+		undoManager = new CompoundUndoManager(component);
+
+		jUndo = new JMenuItem(undoManager.getUndoAction());
+		jUndo.setIcon(Images.EDIT_UNDO.getIcon());
+
+		jRedo = new JMenuItem(undoManager.getRedoAction()); 
+		jRedo.setIcon(Images.EDIT_REDO.getIcon());
 	}
 
 	private void showPopupMenu(final MouseEvent e) {
+		if (!component.isFocusable()) { //Don't show anything for unfocusable components
+			return;
+		}
+
 		if (!component.hasFocus()) {
 			component.requestFocus();
 		}
@@ -105,12 +158,18 @@ public final class JCopyPopup {
 
 		if (component.isEditable()) {
 			jPopupMenu.add(jPaste);
+			jPopupMenu.addSeparator();
+			jPopupMenu.add(jUndo);
+			jPopupMenu.add(jRedo);
 		}
 
 		jPopupMenu.show(e.getComponent(), e.getX(), e.getY());
 	}
 
 	private class ListenerClass implements MouseListener, ActionListener {
+
+		CompoundEdit compoundEdit;
+
 		@Override
 		public void mouseClicked(final MouseEvent e) {
 			if (e.isPopupTrigger()) {
@@ -185,5 +244,6 @@ public final class JCopyPopup {
 				}
 			}
 		}
+
 	}
 }

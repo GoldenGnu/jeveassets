@@ -41,6 +41,7 @@ import javax.swing.event.ListSelectionListener;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.CaseInsensitiveComparator;
+import net.nikr.eve.jeveasset.gui.shared.JOptionInput;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 
 
@@ -259,7 +260,7 @@ public abstract class JManageDialog extends JDialogCentered {
 
 	private String showNameDialog(final String oldValue, final String oldName, final String title) {
 		//Show dialog
-		String name = (String) JOptionPane.showInputDialog(this.getDialog(), textEnterName(), title, JOptionPane.PLAIN_MESSAGE, null, null, oldValue);
+		String name = (String) JOptionInput.showInputDialog(this.getDialog(), textEnterName(), title, JOptionPane.PLAIN_MESSAGE, null, null, oldValue);
 		if (name == null) { //Cancel (do nothing)
 			return null;
 		}

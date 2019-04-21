@@ -95,7 +95,7 @@ public class MyLocation implements Comparable<MyLocation> {
 		this.region = region.intern();
 		this.security = security.intern();
 		this.securityObject = Security.create(security);
-		if (isStation()) {
+		if (isStation() || isPlanet()) { //Station or Planet
 			empty = false;
 			this.locationID = stationID;
 			this.location = station;
@@ -156,18 +156,37 @@ public class MyLocation implements Comparable<MyLocation> {
 		return securityObject;
 	}
 
-	public final boolean isPlanet() {
-		return getStationID() != 0 && getSystemID() != 0 && getRegionID() != 0 && locationID > 40000000 && locationID < 50000000;
-	}
-
+	/**
+	 * Return true if this location is a Station
+	 * Will return false if this location is a Planet, System, Region or Unknown/Empty locations
+	 * @return 
+	 */
 	public final boolean isStation() {
-		return getStationID() != 0 && getSystemID() != 0 && getRegionID() != 0;
+		return getStationID() != 0 && getSystemID() != 0 && getRegionID() != 0 && (locationID < 40000000 || locationID > 50000000);
 	}
 
+	/**
+	 * Return true if this location is a Planet
+	 * Will return false if this location is a Station, System, Region or Unknown/Empty locations
+	 * @return 
+	 */
+	public final boolean isPlanet() {
+		return getStationID() != 0 && getSystemID() != 0 && getRegionID() != 0 && locationID >= 40000000 && locationID <= 50000000;
+	}
+
+	/**
+	 * Return true if this location is a System
+	 * Will return false if this location is a Station, Planet, Region or Unknown/Empty locations
+	 * @return 
+	 */
 	public final boolean isSystem() {
 		return getStationID() == 0 && getSystemID() != 0 && getRegionID() != 0;
 	}
-
+	/**
+	 * Return true if this location is a Region
+	 * Will return false if this location is a Station, Planet, System or Unknown/Empty locations
+	 * @return 
+	 */
 	public final boolean isRegion() {
 		return getStationID() == 0 && getSystemID() == 0 && getRegionID() != 0;
 	}

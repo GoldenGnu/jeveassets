@@ -134,6 +134,9 @@ public class SettingsDialog extends JDialogCentered {
 		PriceDataSettingsPanel priceDataSettingsPanel = new PriceDataSettingsPanel(program, this);
 		add(priceDataSettingsPanel);
 
+		ContractPriceSettingsPanel contractPriceSettingsPanel = new ContractPriceSettingsPanel(program, this);
+		add(contractPriceSettingsPanel);
+
 		ReprocessingSettingsPanel reprocessingSettingsPanel = new ReprocessingSettingsPanel(program, this);
 		add(reprocessingSettingsPanel);
 

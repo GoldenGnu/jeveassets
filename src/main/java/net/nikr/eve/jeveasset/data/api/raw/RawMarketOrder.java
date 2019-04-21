@@ -100,6 +100,7 @@ public class RawMarketOrder {
 	private Boolean isBuyOrder = null;
 	private Boolean isCorp = null;
 	private Date issued = null;
+	private Date created = null;
 	private Integer issuedBy = null;
 	private Long locationId = null;
 	private Integer minVolume = null;
@@ -134,6 +135,7 @@ public class RawMarketOrder {
 		isBuyOrder = marketOrder.isBuyOrder;
 		isCorp = marketOrder.isCorp;
 		issued = marketOrder.issued;
+		created = marketOrder.created;
 		issuedBy = marketOrder.issuedBy;
 		locationId = marketOrder.locationId;
 		minVolume = marketOrder.minVolume;
@@ -322,6 +324,18 @@ public class RawMarketOrder {
 
 	public void setIssued(Date issued) {
 		this.issued = issued;
+	}
+
+	/**
+	 * 
+	 * @return Date created or null
+	 */
+	public Date getCreated() {
+		return created;
+	}
+
+	public void setCreated(Date created) {
+		this.created = created;
 	}
 
 	public Integer getIssuedBy() {

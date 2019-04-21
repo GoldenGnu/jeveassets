@@ -29,6 +29,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
 import net.nikr.eve.jeveasset.TestUtil;
+import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter.AllColumn;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter.CompareType;
@@ -141,6 +142,71 @@ public class FilterMatcherTest extends TestUtil {
 		long endTime = System.currentTimeMillis();
 		System.out.println("Filter time:" + (endTime - startTime) + "ms");
 	}
+
+	/**
+	 * Speed test
+	 * @param args 
+	 */
+	public static void main(final String[] args) {
+		Images.preload();
+		FilterMatcherTest filterMatcherTest = new FilterMatcherTest();
+		filterMatcherTest.testEqualsSingle();
+		filterMatcherTest.testRexexSingle();
+		filterMatcherTest.testEqualsAll();
+		filterMatcherTest.testRexexAll();
+		filterMatcherTest.testRexexAll();
+		filterMatcherTest.testEqualsAll();
+		filterMatcherTest.testRexexSingle();
+		filterMatcherTest.testEqualsSingle();
+	}
+
+	private void testEqualsSingle() {
+		long startTime = System.currentTimeMillis();
+		for (int i = 0; i < 1000; i++) {
+			//Equals
+			matches(true,  TestEnum.TEXT, Filter.CompareType.EQUALS, TEXT);
+			matches(false, TestEnum.TEXT, Filter.CompareType.EQUALS, TEXT_PART);
+			matches(false, TestEnum.TEXT, Filter.CompareType.EQUALS, TEXT_NOT);
+		}
+		long endTime = System.currentTimeMillis();
+		System.out.println("Equals Single time:" + (endTime - startTime) + "ms");
+	}
+
+	private void testRexexSingle() {
+		long startTime = System.currentTimeMillis();
+		for (int i = 0; i < 1000; i++) {
+			//Regex
+			matches(true,  TestEnum.TEXT, Filter.CompareType.REGEX, TEXT);
+			matches(false, TestEnum.TEXT, Filter.CompareType.REGEX, TEXT_PART);
+			matches(false, TestEnum.TEXT, Filter.CompareType.REGEX, TEXT_NOT);
+		}
+		long endTime = System.currentTimeMillis();
+		System.out.println("Rexex Single time:" + (endTime - startTime) + "ms");
+	}
+
+	private void testEqualsAll() {
+		long startTime = System.currentTimeMillis();
+		for (int i = 0; i < 1000; i++) {
+			//Equals
+			matches(true,  AllColumn.ALL, Filter.CompareType.EQUALS, TEXT);
+			matches(false, AllColumn.ALL, Filter.CompareType.EQUALS, TEXT_PART);
+			matches(false, AllColumn.ALL, Filter.CompareType.EQUALS, TEXT_NOT);
+		}
+		long endTime = System.currentTimeMillis();
+		System.out.println("Equals All time:" + (endTime - startTime) + "ms");
+	}
+
+	private void testRexexAll() {
+		long startTime = System.currentTimeMillis();
+		for (int i = 0; i < 1000; i++) {
+			//Regex
+			matches(true,  TestEnum.TEXT, Filter.CompareType.REGEX, TEXT);
+			matches(false, TestEnum.TEXT, Filter.CompareType.REGEX, TEXT_PART);
+			matches(false, TestEnum.TEXT, Filter.CompareType.REGEX, TEXT_NOT);
+		}
+		long endTime = System.currentTimeMillis();
+		System.out.println("Rexex All time:" + (endTime - startTime) + "ms");
+	}
 	/**
 	 * Test of matches method, of class FilterControl.
 	 */
@@ -243,6 +309,10 @@ public class FilterMatcherTest extends TestUtil {
 		matches(false, TestEnum.DATE, Filter.CompareType.CONTAINS_NOT, DATE);
 		matches(false, TestEnum.DATE, Filter.CompareType.CONTAINS_NOT, DATE_PART);
 		matches(true,  TestEnum.DATE, Filter.CompareType.CONTAINS_NOT, DATE_NOT);
+		//Regex
+		matches(true,  TestEnum.DATE, Filter.CompareType.REGEX, DATE);
+		matches(true,  TestEnum.DATE, Filter.CompareType.REGEX, DATE_PART);
+		matches(false, TestEnum.DATE, Filter.CompareType.REGEX, DATE_NOT);
 		//Before
 		matches(false, TestEnum.DATE, Filter.CompareType.BEFORE, DATE);
 		matches(false, TestEnum.DATE, Filter.CompareType.BEFORE, DATE_AFTER);
@@ -303,6 +373,10 @@ public class FilterMatcherTest extends TestUtil {
 		matches(false, TestEnum.TEXT, Filter.CompareType.CONTAINS_NOT, TEXT);
 		matches(false, TestEnum.TEXT, Filter.CompareType.CONTAINS_NOT, TEXT_PART);
 		matches(true,  TestEnum.TEXT, Filter.CompareType.CONTAINS_NOT, TEXT_NOT);
+		//Regex
+		matches(true,  TestEnum.TEXT, Filter.CompareType.REGEX, TEXT);
+		matches(true,  TestEnum.TEXT, Filter.CompareType.REGEX, TEXT_PART);
+		matches(false, TestEnum.TEXT, Filter.CompareType.REGEX, TEXT_NOT);
 		//Equals column
 		matches(true,  TestEnum.TEXT, Filter.CompareType.EQUALS_COLUMN, TestEnum.COLUMN_TEXT.name(), TEXT);
 		matches(false, TestEnum.TEXT, Filter.CompareType.EQUALS_COLUMN, TestEnum.COLUMN_TEXT.name(), TEXT_PART);
@@ -346,6 +420,12 @@ public class FilterMatcherTest extends TestUtil {
 		matches(true,  testEnum, Filter.CompareType.CONTAINS_NOT, "222.1");
 		matches(false, testEnum, Filter.CompareType.CONTAINS_NOT, "222");
 		matches(false, testEnum, Filter.CompareType.CONTAINS_NOT, "222.0");
+		//Regex
+		matches(true,  testEnum, Filter.CompareType.REGEX, "222");
+		matches(false, testEnum, Filter.CompareType.REGEX, "222.0");
+		matches(false, testEnum, Filter.CompareType.REGEX, "223");
+		matches(false, testEnum, Filter.CompareType.REGEX, "223.1");
+		matches(false, testEnum, Filter.CompareType.REGEX, "222.1");
 		//Great than
 		matches(false, testEnum, Filter.CompareType.GREATER_THAN, "222.0");
 		matches(false, testEnum, Filter.CompareType.GREATER_THAN, "222");
@@ -429,6 +509,12 @@ public class FilterMatcherTest extends TestUtil {
 		matches(true,  TestEnum.PERCENT, Filter.CompareType.CONTAINS_NOT, "222.1%");
 		matches(false, TestEnum.PERCENT, Filter.CompareType.CONTAINS_NOT, "222%");
 		matches(false, TestEnum.PERCENT, Filter.CompareType.CONTAINS_NOT, "222.0%");
+		//Regex
+		matches(true,  TestEnum.PERCENT, Filter.CompareType.REGEX, "222");
+		matches(false, TestEnum.PERCENT, Filter.CompareType.REGEX, "222.0%");
+		matches(false, TestEnum.PERCENT, Filter.CompareType.REGEX, "223%");
+		matches(false, TestEnum.PERCENT, Filter.CompareType.REGEX, "223.1%");
+		matches(false, TestEnum.PERCENT, Filter.CompareType.REGEX, "222.1%");
 		//Great than
 		matches(false, TestEnum.PERCENT, Filter.CompareType.GREATER_THAN, "222.0%");
 		matches(false, TestEnum.PERCENT, Filter.CompareType.GREATER_THAN, "222%");
@@ -545,6 +631,10 @@ public class FilterMatcherTest extends TestUtil {
 		matches(false, AllColumn.ALL, Filter.CompareType.CONTAINS_NOT, TEXT);
 		matches(false, AllColumn.ALL, Filter.CompareType.CONTAINS_NOT, TEXT_PART);
 		matches(true,  AllColumn.ALL, Filter.CompareType.CONTAINS_NOT, TEXT_NOT);
+		//Regex
+		matches(true,  AllColumn.ALL, Filter.CompareType.REGEX, TEXT);
+		matches(true,  AllColumn.ALL, Filter.CompareType.REGEX, TEXT_PART);
+		matches(false, AllColumn.ALL, Filter.CompareType.REGEX, TEXT_NOT);
 	//Number
 		//Equals
 		matches(true,  AllColumn.ALL, Filter.CompareType.EQUALS, "222");
@@ -570,6 +660,12 @@ public class FilterMatcherTest extends TestUtil {
 		matches(true,  AllColumn.ALL, Filter.CompareType.CONTAINS_NOT, "222.1");
 		matches(false, AllColumn.ALL, Filter.CompareType.CONTAINS_NOT, "222");
 		matches(false, AllColumn.ALL, Filter.CompareType.CONTAINS_NOT, "222.0");
+		//Contains
+		matches(true,  AllColumn.ALL, Filter.CompareType.REGEX, "222");
+		matches(false, AllColumn.ALL, Filter.CompareType.REGEX, "222\\.0");
+		matches(false, AllColumn.ALL, Filter.CompareType.REGEX, "223");
+		matches(false, AllColumn.ALL, Filter.CompareType.REGEX, "223\\.1");
+		matches(false, AllColumn.ALL, Filter.CompareType.REGEX, "222\\.1");
 	//Date
 		//Equals
 		matches(true,  AllColumn.ALL, Filter.CompareType.EQUALS, DATE);
@@ -587,6 +683,10 @@ public class FilterMatcherTest extends TestUtil {
 		matches(false, AllColumn.ALL, Filter.CompareType.CONTAINS_NOT, DATE);
 		matches(false, AllColumn.ALL, Filter.CompareType.CONTAINS_NOT, DATE_PART);
 		matches(true,  AllColumn.ALL, Filter.CompareType.CONTAINS_NOT, DATE_NOT);
+		//Contains
+		matches(true,  AllColumn.ALL, Filter.CompareType.REGEX, DATE);
+		matches(true,  AllColumn.ALL, Filter.CompareType.REGEX, DATE_PART);
+		matches(false, AllColumn.ALL, Filter.CompareType.REGEX, DATE_NOT);
 	}
 
 	public static class Item { }

@@ -30,6 +30,7 @@ import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder;
 import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
 import net.nikr.eve.jeveasset.data.settings.MarketPriceData;
+import net.nikr.eve.jeveasset.data.settings.types.EditableContractPriceType;
 import net.nikr.eve.jeveasset.data.settings.types.EditableLocationType;
 import net.nikr.eve.jeveasset.data.settings.types.EditablePriceType;
 import net.nikr.eve.jeveasset.data.settings.types.ItemType;
@@ -37,7 +38,7 @@ import net.nikr.eve.jeveasset.data.settings.types.OwnersType;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.Percent;
 import net.nikr.eve.jeveasset.i18n.TabsOrders;
 
-public class MyMarketOrder extends RawMarketOrder implements Comparable<MyMarketOrder>, EditableLocationType, ItemType, EditablePriceType, OwnersType {
+public class MyMarketOrder extends RawMarketOrder implements Comparable<MyMarketOrder>, EditableLocationType, ItemType, EditablePriceType, EditableContractPriceType, OwnersType {
 
 	public enum OrderStatus {
 		ACTIVE() {
@@ -110,6 +111,7 @@ public class MyMarketOrder extends RawMarketOrder implements Comparable<MyMarket
 	private OrderStatus status;
 	private OwnerType owner;
 	private double price;
+	private double contractPrice;
 	private double lastTransactionPrice;
 	private double lastTransactionValue;
 	private Percent lastTransactionPercent;
@@ -205,6 +207,11 @@ public class MyMarketOrder extends RawMarketOrder implements Comparable<MyMarket
 	}
 
 	@Override
+	public boolean isBPO() {
+		return item.isBlueprint();
+	}
+
+	@Override
 	public void setDynamicPrice(double price) {
 		this.price = price;
 	}
@@ -212,6 +219,16 @@ public class MyMarketOrder extends RawMarketOrder implements Comparable<MyMarket
 	@Override
 	public Double getDynamicPrice() {
 		return price;
+	}
+
+	@Override
+	public double getContractPrice() {
+		return contractPrice;
+	}
+
+	@Override
+	public void setContractPrice(double contractPrice) {
+		this.contractPrice = contractPrice;
 	}
 
 	public double getLastTransactionPrice() {
@@ -240,6 +257,14 @@ public class MyMarketOrder extends RawMarketOrder implements Comparable<MyMarket
 			this.lastTransactionPrice = 0;
 			this.lastTransactionValue = 0;
 			this.lastTransactionPercent = Percent.create(0);
+		}
+	}
+
+	public Date getCreatedOrIssued() {
+		if (getCreated() != null) {
+			return getCreated();
+		} else {
+			return getIssued();
 		}
 	}
 

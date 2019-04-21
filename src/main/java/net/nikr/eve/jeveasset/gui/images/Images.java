@@ -63,6 +63,8 @@ public enum Images {
 	EDIT_SET ("edit_set.png"),
 	EDIT_IMPORT ("edit_import.png"),
 	EDIT_EDIT_WHITE ("edit_edit_white.png"),
+	EDIT_REDO ("edit_redo.png"),
+	EDIT_UNDO ("edit_undo.png"),
 
 	FILTER_CLEAR ("filter_clear.png"),
 	FILTER_SAVE ("filter_save.png"),
@@ -71,6 +73,7 @@ public enum Images {
 	FILTER_NOT_CONTAIN ("filter_not_contain.png"),
 	FILTER_CONTAIN ("filter_contain.png"),
 	FILTER_NOT_EQUAL ("filter_not_equal.png"),
+	FILTER_REGEX ("filter_regex.png"),
 	FILTER_EQUAL ("filter_equal.png"),
 	FILTER_EQUAL_DATE ("filter_equal_date.png"),
 	FILTER_NOT_EQUAL_DATE ("filter_not_equal_date.png"),
@@ -104,6 +107,12 @@ public enum Images {
 	LINK_EVEMARKETHELPER ("link_evemarkethelper.png"),
 
 	LOC_GROUPS ("loc_groups.png"),
+	LOC_PIN_COMMAND ("loc_pin_command.png"),
+	LOC_PIN_EXTRACTOR ("loc_pin_extractor.png"),
+	LOC_PIN_PROCESSOR ("loc_pin_processor.png"),
+	LOC_PIN_SPACEPORT ("loc_pin_spaceport.png"),
+	LOC_PIN_STORAGE ("loc_pin_storage.png"),
+	LOC_PLANET ("loc_planet.png"),
 	LOC_STATION ("loc_station.png"),
 	LOC_SYSTEM ("loc_system.png"),
 	LOC_REGION ("loc_region.png"),
@@ -148,6 +157,7 @@ public enum Images {
 	MISC_COPYING ("misc_copying.png"),
 	MISC_INVENTION ("misc_invention.png"),
 	MISC_MANUFACTURING ("misc_manufacturing.png"),
+	MISC_CONTRACTS_APPRAISAL ("misc_contracts_appraisal.png"),
 
 	SETTINGS_TOOLS ("settings_tools.png"),
 	SETTINGS_PRICE_DATA ("settings_price_data.png"),

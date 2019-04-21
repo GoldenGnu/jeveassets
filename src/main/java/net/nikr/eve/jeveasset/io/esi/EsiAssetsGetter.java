@@ -23,7 +23,6 @@ package net.nikr.eve.jeveasset.io.esi;
 import java.util.Date;
 import java.util.List;
 import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
-import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import net.troja.eve.esi.ApiException;
 import net.troja.eve.esi.ApiResponse;
@@ -42,7 +41,12 @@ public class EsiAssetsGetter extends AbstractEsiGetter {
 			List<CorporationAssetsResponse> responses = updatePages(DEFAULT_RETRIES, new EsiPagesHandler<CorporationAssetsResponse>() {
 				@Override
 				public ApiResponse<List<CorporationAssetsResponse>> get(Integer page) throws ApiException {
-					return getAssetsApiAuth().getCorporationsCorporationIdAssetsWithHttpInfo((int) owner.getOwnerID(), DATASOURCE, null, page, null);
+					ApiResponse<List<CorporationAssetsResponse>> apiResponse = getAssetsApiAuth().getCorporationsCorporationIdAssetsWithHttpInfo((int) owner.getOwnerID(), DATASOURCE, null, page, null);
+					Date modified = getHeaderDate(apiResponse.getHeaders(), "last-modified");
+					if (modified != null && (owner.getAssetLastUpdate() == null || modified.after(owner.getAssetLastUpdate()))) {
+						owner.setAssetLastUpdate(modified);
+					}
+					return apiResponse;
 				}
 			});
 			owner.setAssets(EsiConverter.toAssetsCorporation(responses, owner));
@@ -50,7 +54,12 @@ public class EsiAssetsGetter extends AbstractEsiGetter {
 			List<CharacterAssetsResponse> responses = updatePages(DEFAULT_RETRIES, new EsiPagesHandler<CharacterAssetsResponse>() {
 				@Override
 				public ApiResponse<List<CharacterAssetsResponse>> get(Integer page) throws ApiException {
-					return getAssetsApiAuth().getCharactersCharacterIdAssetsWithHttpInfo((int) owner.getOwnerID(), DATASOURCE, null, page, null);
+					ApiResponse<List<CharacterAssetsResponse>> apiResponse = getAssetsApiAuth().getCharactersCharacterIdAssetsWithHttpInfo((int) owner.getOwnerID(), DATASOURCE, null, page, null);
+					Date modified = getHeaderDate(apiResponse.getHeaders(), "last-modified");
+					if (modified != null && (owner.getAssetLastUpdate() == null || modified.after(owner.getAssetLastUpdate()))) {
+						owner.setAssetLastUpdate(modified);
+					}
+					return apiResponse;
 				}
 			});
 			owner.setAssets(EsiConverter.toAssets(responses, owner));
@@ -60,7 +69,6 @@ public class EsiAssetsGetter extends AbstractEsiGetter {
 	@Override
 	protected void setNextUpdate(Date date) {
 		owner.setAssetNextUpdate(date);
-		owner.setAssetLastUpdate(Settings.getNow());
 	}
 
 	@Override

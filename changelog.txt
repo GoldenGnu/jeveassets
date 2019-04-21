@@ -16,6 +16,31 @@
                   #### #  # #  # #  # #### #### #### #### ####
 
 ________________________________________________________________________________
+_6.0.0__________________________________________________________________________
+
+New Features:
+-Added Contracts Appraisal API
+-Regular Expression Filter
+-Added Planetary Facilities
+-Added undo/redo to all text components
+-Better planetary assets integration throughout the program
+
+Bug Fixes:
+-Stockpile always showed location all
+-Excluded planets from the routing tool and UI menu (not valid destinations)
+-Possible fix for BugId: 750
+
+Changed:
+-Tracker now ignore sell orders that is still in assets (to avoid duplicates)
+
+Code:
+-Optimization of the Routing and Overview tools
+-Fixed issues found by LGTM.com
+-Better Uncaught Exception Handling
+-Better error handling for JSon reading and writing (BugId: 744)
+-Fixed problem with Java 11 and Java 12 (still primarily developed on Java 8)
+
+________________________________________________________________________________
 _5.9.0__________________________________________________________________________
 
 New Features:

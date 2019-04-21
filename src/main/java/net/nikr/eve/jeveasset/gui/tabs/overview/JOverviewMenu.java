@@ -32,6 +32,7 @@ import javax.swing.JOptionPane;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
+import net.nikr.eve.jeveasset.gui.shared.JOptionInput;
 import net.nikr.eve.jeveasset.i18n.TabsOverview;
 
 
@@ -58,7 +59,7 @@ public class JOverviewMenu extends JMenu {
 		JCheckBoxMenuItem jCheckBoxMenuItem;
 
 		//Station, System, Region views
-		if (!overviewTab.getSelectedView().equals(TabsOverview.get().groups())) {
+		if (overviewTab.getSelectedView() != OverviewTab.View.GROUPS) {
 			jMenuItem = new JMenuItem(TabsOverview.get().add());
 			jMenuItem.setIcon(Images.EDIT_ADD.getIcon());
 			jMenuItem.setEnabled(!selected.isEmpty());
@@ -74,13 +75,13 @@ public class JOverviewMenu extends JMenu {
 				OverviewGroup overviewGroup = entry.getValue();
 				boolean found = overviewGroup.getLocations().containsAll(overviewTab.getSelectedLocations());
 				jCheckBoxMenuItem = new JCheckBoxMenuItem(overviewGroup.getName());
-				if (overviewTab.getSelectedView().equals(TabsOverview.get().stations())) {
+				if (overviewTab.getSelectedView() == OverviewTab.View.PLANETS) {
+					jCheckBoxMenuItem.setIcon(Images.LOC_PLANET.getIcon());
+				} else if (overviewTab.getSelectedView() == OverviewTab.View.STATIONS) {
 					jCheckBoxMenuItem.setIcon(Images.LOC_STATION.getIcon());
-				}
-				if (overviewTab.getSelectedView().equals(TabsOverview.get().systems())) {
+				} else if (overviewTab.getSelectedView() == OverviewTab.View.SYSTEMS) {
 					jCheckBoxMenuItem.setIcon(Images.LOC_SYSTEM.getIcon());
-				}
-				if (overviewTab.getSelectedView().equals(TabsOverview.get().regions())) {
+				} else if (overviewTab.getSelectedView() == OverviewTab.View.REGIONS) {
 					jCheckBoxMenuItem.setIcon(Images.LOC_REGION.getIcon());
 				}
 				jCheckBoxMenuItem.setEnabled(!selected.isEmpty());
@@ -91,7 +92,7 @@ public class JOverviewMenu extends JMenu {
 			}
 		}
 		//Groups view
-		if (overviewTab.getSelectedView().equals(TabsOverview.get().groups())) {
+		if (overviewTab.getSelectedView() == OverviewTab.View.GROUPS) {
 			jMenuItem = new JMenuItem(TabsOverview.get().renameGroup());
 			jMenuItem.setIcon(Images.EDIT_RENAME.getIcon());
 			jMenuItem.setEnabled(selected.size() == 1);
@@ -115,6 +116,9 @@ public class JOverviewMenu extends JMenu {
 					}
 					for (OverviewLocation location : overviewGroup.getLocations()) {
 						jCheckBoxMenuItem = new JCheckBoxMenuItem(location.getName());
+						if (location.isPlanet()) {
+							jCheckBoxMenuItem.setIcon(Images.LOC_PLANET.getIcon());
+						}
 						if (location.isStation()) {
 							jCheckBoxMenuItem.setIcon(Images.LOC_STATION.getIcon());
 						}
@@ -139,7 +143,7 @@ public class JOverviewMenu extends JMenu {
 		public void actionPerformed(ActionEvent e) {
 			//Group
 			if (OverviewMenu.NEW.name().equals(e.getActionCommand())) {
-				String value = JOptionPane.showInputDialog(program.getMainWindow().getFrame(), TabsOverview.get().groupName(), TabsOverview.get().addGroup(), JOptionPane.PLAIN_MESSAGE);
+				String value = JOptionInput.showInputDialog(program.getMainWindow().getFrame(), TabsOverview.get().groupName(), TabsOverview.get().addGroup(), JOptionPane.PLAIN_MESSAGE);
 				if (value != null) {
 					Settings.lock("Overview Groups (New)"); //Lock for Overview Groups (New)
 					OverviewGroup overviewGroup = new OverviewGroup(value);
@@ -163,7 +167,7 @@ public class JOverviewMenu extends JMenu {
 			}
 			if (OverviewMenu.RENAME.name().equals(e.getActionCommand())) {
 				OverviewGroup overviewGroup = program.getOverviewTab().getSelectGroup();
-				String value = (String) JOptionPane.showInputDialog(program.getMainWindow().getFrame(), TabsOverview.get().groupName(), TabsOverview.get().renameGroup(), JOptionPane.PLAIN_MESSAGE, null, null, overviewGroup.getName());
+				String value = (String) JOptionInput.showInputDialog(program.getMainWindow().getFrame(), TabsOverview.get().groupName(), TabsOverview.get().renameGroup(), JOptionPane.PLAIN_MESSAGE, null, null, overviewGroup.getName());
 				if (value != null) {
 					Settings.lock("Overview Groups (Rename)"); //Lock for Overview Groups (Rename)
 					Settings.get().getOverviewGroups().remove(overviewGroup.getName());

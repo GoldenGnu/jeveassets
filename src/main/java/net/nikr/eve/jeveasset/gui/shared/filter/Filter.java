@@ -111,6 +111,9 @@ public class Filter {
 		EQUALS_NOT(Images.FILTER_NOT_EQUAL.getIcon()) {
 			@Override String getI18N() { return GuiShared.get().filterEqualsNot(); }
 		},
+		REGEX(Images.FILTER_REGEX.getIcon()) {
+			@Override String getI18N() { return GuiShared.get().filterRegex(); }
+		},
 		GREATER_THAN(Images.FILTER_GREATER_THAN.getIcon()) {
 			@Override String getI18N() { return GuiShared.get().filterGreaterThan(); }
 		},
@@ -165,12 +168,14 @@ public class Filter {
 			CONTAINS_NOT,
 			EQUALS,
 			EQUALS_NOT,
+			REGEX,
 		};
 		private static final CompareType[] VALUES_STRING = new CompareType[]
 			{CONTAINS,
 			CONTAINS_NOT,
 			EQUALS,
 			EQUALS_NOT,
+			REGEX,
 			CONTAINS_COLUMN,
 			CONTAINS_NOT_COLUMN,
 			EQUALS_COLUMN,
@@ -181,6 +186,7 @@ public class Filter {
 			CONTAINS_NOT,
 			EQUALS,
 			EQUALS_NOT,
+			REGEX,
 			GREATER_THAN,
 			LESS_THAN,
 			CONTAINS_COLUMN,
@@ -195,6 +201,7 @@ public class Filter {
 			CONTAINS_NOT,
 			EQUALS,
 			EQUALS_NOT,
+			REGEX,
 			EQUALS_DATE,
 			EQUALS_NOT_DATE,
 			BEFORE,
@@ -236,12 +243,8 @@ public class Filter {
 			return VALUES_DATE;
 		}
 
-		public static boolean isNot(final CompareType compareType) {
-			return compareType == CompareType.CONTAINS_NOT
-				|| compareType == CompareType.CONTAINS_NOT_COLUMN
-				|| compareType == CompareType.EQUALS_NOT
-				|| compareType == CompareType.EQUALS_NOT_COLUMN
-				|| compareType == CompareType.EQUALS_NOT_DATE;
+		public static boolean isRegexCompare(final CompareType compareType) {
+			return compareType == CompareType.REGEX;
 		}
 		public static boolean isColumnCompare(final CompareType compareType) {
 			return compareType == CompareType.GREATER_THAN_COLUMN

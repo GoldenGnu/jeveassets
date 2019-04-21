@@ -85,7 +85,7 @@ import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 
 public class OverviewTab extends JMainTabSecondary {
 
-	public enum OverviewAction {
+	public static enum OverviewAction {
 		UPDATE_LIST,
 		LOAD_FILTER,
 		GROUP_ASSET_FILTER,
@@ -93,8 +93,17 @@ public class OverviewTab extends JMainTabSecondary {
 		EXPORT
 	}
 
+	public static enum View {
+		STATIONS,
+		PLANETS,
+		SYSTEMS,
+		REGIONS,
+		GROUPS,
+	}
+
 	private final JOverviewTable jTable;
 	private final JToggleButton jStations;
+	private final JToggleButton jPlanets;
 	private final JToggleButton jSystems;
 	private final JToggleButton jRegions;
 	private final JToggleButton jGroups;
@@ -140,6 +149,12 @@ public class OverviewTab extends JMainTabSecondary {
 		jStations.setSelected(true);
 		jToolBarLeft.addButton(jStations, 1, SwingConstants.CENTER);
 
+		jPlanets = new JToggleButton(Images.LOC_PLANET.getIcon());
+		jPlanets.setToolTipText(TabsOverview.get().planets());
+		jPlanets.setActionCommand(OverviewAction.UPDATE_LIST.name());
+		jPlanets.addActionListener(listener);
+		jToolBarLeft.addButton(jPlanets, 1, SwingConstants.CENTER);
+
 		jSystems = new JToggleButton(Images.LOC_SYSTEM.getIcon());
 		jSystems.setToolTipText(TabsOverview.get().systems());
 		jSystems.setActionCommand(OverviewAction.UPDATE_LIST.name());
@@ -160,6 +175,7 @@ public class OverviewTab extends JMainTabSecondary {
 
 		ButtonGroup group = new ButtonGroup();
 		group.add(jStations);
+		group.add(jPlanets);
 		group.add(jSystems);
 		group.add(jRegions);
 		group.add(jGroups);
@@ -283,7 +299,7 @@ public class OverviewTab extends JMainTabSecondary {
 	}
 
 	public boolean isGroup() {
-		return getSelectedView().equals(TabsOverview.get().groups());
+		return getSelectedView() == View.GROUPS;
 	}
 
 	public boolean isGroupAndNotEmpty() {
@@ -323,28 +339,31 @@ public class OverviewTab extends JMainTabSecondary {
 		jValue.setText(Formater.iskFormat(totalValue));
 	}
 
-	protected String getSelectedView() {
+	protected View getSelectedView() {
 		if (jStations.isSelected()) {
-			return TabsOverview.get().stations();
+			return View.STATIONS;
+		}
+		if (jPlanets.isSelected()) {
+			return View.PLANETS;
 		}
 		if (jSystems.isSelected()) {
-			return TabsOverview.get().systems();
+			return View.SYSTEMS;
 		}
 		if (jRegions.isSelected()) {
-			return TabsOverview.get().regions();
+			return View.REGIONS;
 		}
 		if (jGroups.isSelected()) {
-			return TabsOverview.get().groups();
+			return View.GROUPS;
 		}
-		return "";
+		return View.STATIONS;
 	}
 
-	private List<Overview> getList(final List<MyAsset> input, final String owner, final String view) {
+	private List<Overview> getList(final List<MyAsset> input, final String owner, final View view) {
 		List<Overview> locations = new ArrayList<Overview>();
 		Map<String, Overview> locationsMap = new HashMap<String, Overview>();
 		List<String> groupedLocations = new ArrayList<String>();
 		rowCount = 0;
-		if (view.equals(TabsOverview.get().groups())) { //Add all groups
+		if (view == View.GROUPS) { //Add all groups
 			for (Map.Entry<String, OverviewGroup> entry : Settings.get().getOverviewGroups().entrySet()) {
 				OverviewGroup overviewGroup = entry.getValue();
 				if (!locationsMap.containsKey(overviewGroup.getName())) { //Create new overview
@@ -363,6 +382,7 @@ public class OverviewTab extends JMainTabSecondary {
 				}
 			}
 		}
+		final boolean all = owner.equals(General.get().all());
 		for (MyAsset asset : input) {
 			if (asset.getItem().getGroup().equals("Audit Log Secure Container") && Settings.get().isIgnoreSecureContainers()) {
 				continue;
@@ -371,7 +391,7 @@ public class OverviewTab extends JMainTabSecondary {
 				continue;
 			}
 			//Filters
-			if (!owner.equals(asset.getOwnerName()) && !owner.equals(General.get().all())) {
+			if (!owner.equals(asset.getOwnerName()) && !all) {
 				continue;
 			}
 
@@ -381,19 +401,26 @@ public class OverviewTab extends JMainTabSecondary {
 			double value = asset.getValue();
 			long count = asset.getCount();
 			double volume = asset.getVolumeTotal();
-			if (!view.equals(TabsOverview.get().groups())) { //Locations
-				String locationName = TabsOverview.get().whitespace();
+			if (view != View.GROUPS) { //Locations
+				String locationName = "";
 				MyLocation location = asset.getLocation();
+				if (view == View.STATIONS && location.isPlanet()) {
+					continue;
+				}
+				if (view == View.PLANETS && !location.isPlanet()) {
+					continue;
+				}
 				if (!location.isEmpty()) { //Always use the default location for empty locations
-					if (view.equals(TabsOverview.get().regions())) {
+					if (view == View.REGIONS) {
 						locationName = asset.getLocation().getRegion();
 						location = ApiIdConverter.getLocation(asset.getLocation().getRegionID());
-					}
-					if (view.equals(TabsOverview.get().systems())) {
+					} else if (view == View.SYSTEMS) {
 						locationName = asset.getLocation().getSystem();
 						location = ApiIdConverter.getLocation(asset.getLocation().getSystemID());
-					}
-					if (view.equals(TabsOverview.get().stations())) {
+					} else if (view == View.PLANETS) {
+						locationName = asset.getLocation().getLocation();
+						location = ApiIdConverter.getLocation(asset.getLocation().getLocationID());
+					} else if (view == View.STATIONS) {
 						locationName = asset.getLocation().getLocation();
 						location = ApiIdConverter.getLocation(asset.getLocation().getLocationID());
 					}
@@ -442,9 +469,13 @@ public class OverviewTab extends JMainTabSecondary {
 		jMenuItem.addActionListener(listener);
 		jLoadFilter.add(jMenuItem);
 
-		jLoadFilter.addSeparator();
 		List<String> filters = new ArrayList<String>(Settings.get().getTableFilters(AssetsTab.NAME).keySet());
 		Collections.sort(filters, new CaseInsensitiveComparator());
+
+		if (!filters.isEmpty()) {
+			jLoadFilter.addSeparator();
+		}
+
 		for (String filter : filters) {
 			List<Filter> filterList = Settings.get().getTableFilters(AssetsTab.NAME).get(filter);
 			jMenuItem = new FilterMenuItem(filter, filterList);
@@ -461,26 +492,28 @@ public class OverviewTab extends JMainTabSecondary {
 			return;
 		}
 		String owner = (String) jOwner.getSelectedItem();
-		String view = getSelectedView();
-		if (view.equals(TabsOverview.get().regions())) {
+		View view = getSelectedView();
+		if (view == View.REGIONS) {
 			tableFormat.hideColumn(OverviewTableFormat.SYSTEM);
 			tableFormat.hideColumn(OverviewTableFormat.REGION);
 			tableFormat.hideColumn(OverviewTableFormat.SECURITY);
 			tableModel.fireTableStructureChanged();
-		}
-		if (view.equals(TabsOverview.get().systems())) {
+		} else if (view == View.SYSTEMS) {
 			tableFormat.hideColumn(OverviewTableFormat.SYSTEM);
 			tableFormat.showColumn(OverviewTableFormat.REGION);
 			tableFormat.showColumn(OverviewTableFormat.SECURITY);
 			tableModel.fireTableStructureChanged();
-		}
-		if (view.equals(TabsOverview.get().stations())) {
+		} else if (view == View.PLANETS) {
 			tableFormat.showColumn(OverviewTableFormat.SYSTEM);
 			tableFormat.showColumn(OverviewTableFormat.REGION);
 			tableFormat.showColumn(OverviewTableFormat.SECURITY);
 			tableModel.fireTableStructureChanged();
-		}
-		if (view.equals(TabsOverview.get().groups())) {
+		} else if (view == View.STATIONS) {
+			tableFormat.showColumn(OverviewTableFormat.SYSTEM);
+			tableFormat.showColumn(OverviewTableFormat.REGION);
+			tableFormat.showColumn(OverviewTableFormat.SECURITY);
+			tableModel.fireTableStructureChanged();
+		} else if (view == View.GROUPS) {
 			tableFormat.hideColumn(OverviewTableFormat.SYSTEM);
 			tableFormat.hideColumn(OverviewTableFormat.REGION);
 			tableFormat.hideColumn(OverviewTableFormat.SECURITY);
@@ -514,13 +547,13 @@ public class OverviewTab extends JMainTabSecondary {
 		for (int row : jTable.getSelectedRows()) {
 			Overview overview = tableModel.getElementAt(row);
 			OverviewLocation overviewLocation = null;
-			if (getSelectedView().equals(TabsOverview.get().stations())) {
+			if (getSelectedView() == View.STATIONS) {
 				overviewLocation = new OverviewLocation(overview.getName(), OverviewLocation.LocationType.TYPE_STATION);
-			}
-			if (getSelectedView().equals(TabsOverview.get().systems())) {
+			} else if (getSelectedView() == View.PLANETS) {
+				overviewLocation = new OverviewLocation(overview.getName(), OverviewLocation.LocationType.TYPE_PLANET);
+			} else if (getSelectedView() == View.SYSTEMS) {
 				overviewLocation = new OverviewLocation(overview.getName(), OverviewLocation.LocationType.TYPE_SYSTEM);
-			}
-			if (getSelectedView().equals(TabsOverview.get().regions())) {
+			} else if (getSelectedView() == View.REGIONS) {
 				overviewLocation = new OverviewLocation(overview.getName(), OverviewLocation.LocationType.TYPE_REGION);
 			}
 			if (overviewLocation != null) {
@@ -598,6 +631,10 @@ public class OverviewTab extends JMainTabSecondary {
 						Filter filter = new Filter(LogicType.OR, AssetTableFormat.LOCATION, CompareType.EQUALS, location.getName());
 						filters.add(filter);
 					}
+					if (location.isPlanet()) {
+						Filter filter = new Filter(LogicType.OR, AssetTableFormat.LOCATION, CompareType.EQUALS, location.getName());
+						filters.add(filter);
+					}
 					if (location.isSystem()) {
 						Filter filter = new Filter(LogicType.OR, AssetTableFormat.LOCATION, CompareType.CONTAINS, location.getName());
 						filters.add(filter);
@@ -614,12 +651,16 @@ public class OverviewTab extends JMainTabSecondary {
 				int index = jTable.getSelectedRow();
 				Overview overview = tableModel.getElementAt(index);
 				OverviewGroup overviewGroup = Settings.get().getOverviewGroups().get(overview.getName());
+				Set<String> planets = new HashSet<String>();
 				Set<String> stations = new HashSet<String>();
 				Set<String> systems = new HashSet<String>();
 				Set<String> regions = new HashSet<String>();
 				for (OverviewLocation location : overviewGroup.getLocations()) {
 					if (location.isStation()) {
 						stations.add(location.getName());
+					}
+					if (location.isPlanet()) {
+						planets.add(location.getName());
 					}
 					if (location.isSystem()) {
 						systems.add(location.getName());
@@ -628,7 +669,7 @@ public class OverviewTab extends JMainTabSecondary {
 						regions.add(location.getName());
 					}
 				}
-				JMenuLookup.browseDotlan(program, stations, systems, regions);
+				JMenuLookup.browseDotlan(program, stations, planets, systems, regions);
 			}
 			if (OverviewAction.LOAD_FILTER.name().equals(e.getActionCommand())) {
 				Object source = e.getSource();

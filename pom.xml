@@ -5,7 +5,7 @@
 	<groupId>net.nikr</groupId>
 	<artifactId>jeveassets</artifactId>
 	<packaging>jar</packaging>
-	<version>5.9.1-SNAPSHOT</version>
+	<version>6.0.0</version>
 	<name>jeveassets</name>
 	<description>jEveAssets is an out-of-game asset manager for Eve-Online, written in Java</description>
 	<url>http://eve.nikr.net/jeveasset</url>
@@ -697,6 +697,11 @@
 			<groupId>enterprises.orbital.evekit</groupId>
 			<artifactId>evekit</artifactId>
 			<version>5.0.1</version>
+		</dependency>
+		<dependency>
+			<groupId>eve.nikr.net</groupId>
+			<artifactId>contracts-pricing</artifactId>
+			<version>1.1.0</version>
 		</dependency>
 		<dependency>
 			<groupId>uk.me.candle</groupId>

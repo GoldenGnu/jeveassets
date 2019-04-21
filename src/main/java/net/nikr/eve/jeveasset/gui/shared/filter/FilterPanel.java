@@ -42,6 +42,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 import javax.swing.BorderFactory;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
@@ -68,6 +70,7 @@ import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Colors;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
+import net.nikr.eve.jeveasset.gui.shared.TextManager;
 import net.nikr.eve.jeveasset.gui.shared.components.JDateChooser;
 import net.nikr.eve.jeveasset.gui.shared.components.ListComboBoxModel;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter.AllColumn;
@@ -213,6 +216,7 @@ class FilterPanel<E> implements Comparable<FilterPanel<E>> {
 		jText = new JTextField();
 		jText.getDocument().addDocumentListener(listener);
 		jText.addKeyListener(listener);
+		TextManager.installTextComponent(jText);
 
 		jCompareColumn = new JComboBox<>();
 		jCompareColumn.setPrototypeDisplayValue(longestColumn);
@@ -376,6 +380,24 @@ class FilterPanel<E> implements Comparable<FilterPanel<E>> {
 		}
 	}
 
+	private boolean isInvalidRegex() {
+		if (!isRegexCompare()) {
+			return false;
+		}
+		String text = jText.getText();
+		try {
+			Pattern.compile(text, Pattern.CASE_INSENSITIVE);
+			return false;
+		} catch (PatternSyntaxException ex) {
+			return true;
+		}
+	}
+
+	private boolean isRegexCompare() {
+		CompareType compareType = (CompareType) jCompare.getSelectedItem();
+		return CompareType.isRegexCompare(compareType);
+	}
+
 	private boolean isColumnCompare() {
 		CompareType compareType = (CompareType) jCompare.getSelectedItem();
 		return CompareType.isColumnCompare(compareType);
@@ -454,7 +476,11 @@ class FilterPanel<E> implements Comparable<FilterPanel<E>> {
 			updateCompare(true);
 		}
 		if (jEnabled.isSelected()) {
-			jText.setBackground(Color.WHITE);
+			if (isInvalidRegex()) {
+				jText.setBackground(Colors.LIGHT_YELLOW.getColor());
+			} else {
+				jText.setBackground(Color.WHITE);
+			}
 		} else {
 			jText.setBackground(Colors.LIGHT_RED.getColor());
 		}

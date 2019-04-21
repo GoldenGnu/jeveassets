@@ -42,6 +42,7 @@ import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.data.settings.tag.Tags;
 import net.nikr.eve.jeveasset.gui.shared.Colors;
 import net.nikr.eve.jeveasset.gui.shared.CopyHandler;
+import net.nikr.eve.jeveasset.gui.shared.TextManager;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.ResizeMode;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.SimpleColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels.FixedEventTableModel;
@@ -147,7 +148,10 @@ public class JAutoColumnTable extends JTable {
 		Component component = super.prepareEditor(editor, row, column);
 		if (component instanceof JTextComponent) {
 			JTextComponent jTextComponent = (JTextComponent) component;
+			TextManager.installTextComponent(jTextComponent);
 			jTextComponent.selectAll();
+		} else if (component instanceof Container) {
+			TextManager.installAll((Container) component);
 		}
 		return component;
 	}

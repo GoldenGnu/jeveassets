@@ -259,7 +259,7 @@ public class RawAsset {
 	}
 
 	/**
-	 * ESI Planetary Interaction
+	 * ESI Planetary Interaction Asset
 	 *
 	 * @param planet
 	 * @param pin
@@ -273,6 +273,22 @@ public class RawAsset {
 		locationType = RawConverter.toAssetLocationType(locationId);
 		quantity = content.getAmount().intValue(); //Not perfect, but, will have to do
 		typeId = content.getTypeId();
+	}
+
+	/**
+	 * ESI Planetary Interaction Facility 
+	 *
+	 * @param planet
+	 * @param pin
+	 */
+	public RawAsset(CharacterPlanetsResponse planet, PlanetPin pin) {
+		isSingleton = false; //Packed
+		itemId = pin.getPinId(); //Semi unique
+		itemFlag = ApiIdConverter.getFlag(0); //None
+		locationId = (long) planet.getPlanetId(); //Planet
+		locationType = RawConverter.toAssetLocationType(locationId);
+		quantity = 1;
+		typeId = pin.getTypeId();
 	}
 
 	/**
@@ -317,12 +333,12 @@ public class RawAsset {
 	}
 
 	/**
-	 * EveKit Planetary Interaction
+	 * EveKit Planetary Interaction Asset
 	 *
-	 * @param content
 	 * @param pin
+	 * @param content
 	 */
-	public RawAsset(PlanetaryPinContent content, PlanetaryPin pin) {
+	public RawAsset(PlanetaryPin pin, PlanetaryPinContent content) {
 		isSingleton = false; //Packed
 		itemId = Long.valueOf(pin.getPinID() + "" + content.getTypeID());
 		itemFlag = ApiIdConverter.getFlag(0); //None
@@ -330,6 +346,21 @@ public class RawAsset {
 		locationType = RawConverter.toAssetLocationType(locationId);
 		quantity = content.getAmount().intValue(); //Not perfect, but, will have to do
 		typeId = content.getTypeID();
+	}
+
+	/**
+	 * EveKit Planetary Interaction Facility
+	 *
+	 * @param pin
+	 */
+	public RawAsset(PlanetaryPin pin) {
+		isSingleton = false; //Packed
+		itemId = pin.getPinID();
+		itemFlag = ApiIdConverter.getFlag(0); //None
+		locationId = RawConverter.toLong(pin.getPlanetID());
+		locationType = RawConverter.toAssetLocationType(locationId);
+		quantity = 1;
+		typeId = pin.getTypeID();
 	}
 
 	/**

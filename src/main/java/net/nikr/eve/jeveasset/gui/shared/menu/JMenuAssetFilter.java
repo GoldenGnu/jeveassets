@@ -41,12 +41,14 @@ public class JMenuAssetFilter<T> extends JAutoMenu<T> {
 
 	private enum MenuAssetFilterAction {
 		STATION_FILTER,
+		PLANET_FILTER,
 		SYSTEM_FILTER,
 		REGION_FILTER,
 		ITEM_TYPE_FILTER
 	}
 
 	private final JMenuItem jTypeID;
+	private final JMenuItem jPlanet;
 	private final JMenuItem jStation;
 	private final JMenuItem jSystem;
 	private final JMenuItem jRegion;
@@ -73,6 +75,12 @@ public class JMenuAssetFilter<T> extends JAutoMenu<T> {
 		jStation.addActionListener(listener);
 		add(jStation);
 
+		jPlanet = new JMenuItem(GuiShared.get().planet());
+		jPlanet.setIcon(Images.LOC_PLANET.getIcon());
+		jPlanet.setActionCommand(MenuAssetFilterAction.PLANET_FILTER.name());
+		jPlanet.addActionListener(listener);
+		add(jPlanet);
+
 		jSystem = new JMenuItem(GuiShared.get().system());
 		jSystem.setIcon(Images.LOC_SYSTEM.getIcon());
 		jSystem.setActionCommand(MenuAssetFilterAction.SYSTEM_FILTER.name());
@@ -93,6 +101,7 @@ public class JMenuAssetFilter<T> extends JAutoMenu<T> {
 	public void updateMenuData() {
 		jTypeID.setEnabled(!menuData.getTypeIDs().isEmpty());
 		jStation.setEnabled(!menuData.getStationAndCitadelNames().isEmpty());
+		jPlanet.setEnabled(!menuData.getPlanetNames().isEmpty());
 		jSystem.setEnabled(!menuData.getSystemNames().isEmpty());
 		jRegion.setEnabled(!menuData.getRegionNames().isEmpty());
 	}
@@ -122,22 +131,25 @@ public class JMenuAssetFilter<T> extends JAutoMenu<T> {
 					program.getAssetsTab().addFilter(filter);
 				}
 				program.getMainWindow().addTab(program.getAssetsTab());
-			}
-			if (MenuAssetFilterAction.SYSTEM_FILTER.name().equals(e.getActionCommand())) {
+			} else if (MenuAssetFilterAction.PLANET_FILTER.name().equals(e.getActionCommand())) {
+				for (String planet : menuData.getPlanetNames()) {
+					Filter filter = new Filter(LogicType.AND, AssetTableFormat.LOCATION, CompareType.EQUALS, planet);
+					program.getAssetsTab().addFilter(filter);
+				}
+				program.getMainWindow().addTab(program.getAssetsTab());
+			} else if (MenuAssetFilterAction.SYSTEM_FILTER.name().equals(e.getActionCommand())) {
 				for (String system : menuData.getSystemNames()) {
 					Filter filter = new Filter(LogicType.AND, AssetTableFormat.LOCATION, CompareType.CONTAINS, system);
 					program.getAssetsTab().addFilter(filter);
 				}
 				program.getMainWindow().addTab(program.getAssetsTab());
-			}
-			if (MenuAssetFilterAction.REGION_FILTER.name().equals(e.getActionCommand())) {
+			} else if (MenuAssetFilterAction.REGION_FILTER.name().equals(e.getActionCommand())) {
 				for (String region : menuData.getRegionNames()) {
 					Filter filter = new Filter(LogicType.AND, AssetTableFormat.REGION, CompareType.EQUALS, region);
 					program.getAssetsTab().addFilter(filter);
 				}
 				program.getMainWindow().addTab(program.getAssetsTab());
-			}
-			if (MenuAssetFilterAction.ITEM_TYPE_FILTER.name().equals(e.getActionCommand())) {
+			} else if (MenuAssetFilterAction.ITEM_TYPE_FILTER.name().equals(e.getActionCommand())) {
 				for (String typeName : menuData.getTypeNames()) {
 					Filter filter = new Filter(LogicType.AND, AssetTableFormat.NAME, CompareType.CONTAINS, typeName);
 					program.getAssetsTab().addFilter(filter);

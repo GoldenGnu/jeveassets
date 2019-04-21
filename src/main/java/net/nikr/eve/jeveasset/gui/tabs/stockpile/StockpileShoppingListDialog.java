@@ -56,7 +56,6 @@ import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
 import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
-import net.nikr.eve.jeveasset.gui.shared.components.JCopyPopup;
 import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
 import net.nikr.eve.jeveasset.gui.shared.components.JIntegerField;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
@@ -125,7 +124,6 @@ class StockpileShoppingListDialog extends JDialogCentered {
 		jText.setEditable(false);
 		jText.setFont(jPanel.getFont());
 		jText.setBackground(jPanel.getBackground());
-		JCopyPopup.install(jText);
 
 		JScrollPane jTextScroll = new JScrollPane(jText);
 

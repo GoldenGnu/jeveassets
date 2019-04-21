@@ -41,6 +41,7 @@ import net.nikr.eve.jeveasset.data.settings.UserItem;
 import net.nikr.eve.jeveasset.data.settings.tag.TagID;
 import net.nikr.eve.jeveasset.data.settings.tag.Tags;
 import net.nikr.eve.jeveasset.data.settings.types.BlueprintType;
+import net.nikr.eve.jeveasset.data.settings.types.EditableContractPriceType;
 import net.nikr.eve.jeveasset.data.settings.types.EditableLocationType;
 import net.nikr.eve.jeveasset.data.settings.types.EditablePriceType;
 import net.nikr.eve.jeveasset.data.settings.types.ItemType;
@@ -55,7 +56,7 @@ import net.nikr.eve.jeveasset.i18n.General;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 import net.nikr.eve.jeveasset.io.shared.RawConverter;
 
-public class MyAsset extends RawAsset implements Comparable<MyAsset>, InfoItem, JumpType, ItemType, BlueprintType, EditablePriceType, TagsType, EditableLocationType, OwnersType {
+public class MyAsset extends RawAsset implements Comparable<MyAsset>, InfoItem, JumpType, ItemType, BlueprintType, EditablePriceType, EditableContractPriceType, TagsType, EditableLocationType, OwnersType {
 
 //Static values (set by constructor)
 	private final List<MyAsset> assets = new ArrayList<>();
@@ -81,6 +82,7 @@ public class MyAsset extends RawAsset implements Comparable<MyAsset>, InfoItem, 
 	private MarketPriceData marketPriceData;
 	private Date added;
 	private double price;
+	private double contractPrice;
 	private Tags tags;
 	private RawBlueprint blueprint;
 	private MyLocation location;
@@ -320,6 +322,16 @@ public class MyAsset extends RawAsset implements Comparable<MyAsset>, InfoItem, 
 	@Override
 	public void setDynamicPrice(double price) {
 		this.price = price;
+	}
+
+	@Override
+	public double getContractPrice() {
+		return contractPrice;
+	}
+
+	@Override
+	public void setContractPrice(double contractPrice) {
+		this.contractPrice = contractPrice;
 	}
 
 	public double getPriceBuyMax() {

@@ -633,14 +633,7 @@ public class RoutingTab extends JMainTabSecondary {
 		//Do everything the constructor does...
 		jAvailable.getEditableModel().clear();
 		jWaypoints.getEditableModel().clear();
-		List<SourceItem> sources = new ArrayList<SourceItem>();
-		for (Entry<String, OverviewGroup> entry : Settings.get().getOverviewGroups().entrySet()) {
-			sources.add(new SourceItem(entry.getKey(), true));
-		}
-		Collections.sort(sources);
-		sources.add(0, new SourceItem(TabsRouting.get().filteredAssets()));
-		sources.add(0, new SourceItem(General.get().all()));
-		jSource.setModel(new ListComboBoxModel<SourceItem>(sources));
+		overviewGroupsChanged();
 		jAlgorithm.setSelectedIndex(0);
 		jResult.setText(TabsRouting.get().emptyResult());
 		jResult.setCaretPosition(0);
@@ -654,7 +647,7 @@ public class RoutingTab extends JMainTabSecondary {
 
 		List<MyLocation> stations = new ArrayList<MyLocation>();
 		for (MyLocation location : StaticData.get().getLocations()) {
-			if (location.isStation()) {
+			if (location.isStation()) { //Not Planet
 				stations.add(location);
 			}
 		}
@@ -663,6 +656,17 @@ public class RoutingTab extends JMainTabSecondary {
 		updateRemaining();
 		processFilteredAssets();
 		updateRoutes();
+	}
+
+	public void overviewGroupsChanged() {
+		List<SourceItem> sources = new ArrayList<SourceItem>();
+		for (Entry<String, OverviewGroup> entry : Settings.get().getOverviewGroups().entrySet()) {
+			sources.add(new SourceItem(entry.getKey(), true));
+		}
+		Collections.sort(sources);
+		sources.add(0, new SourceItem(TabsRouting.get().filteredAssets()));
+		sources.add(0, new SourceItem(General.get().all()));
+		jSource.setModel(new ListComboBoxModel<SourceItem>(sources));
 	}
 
 	@Override
@@ -789,14 +793,10 @@ public class RoutingTab extends JMainTabSecondary {
 			SolarSystem loc = null;
 			if (jSystems.isSelected()) { //System
 				loc = systemCache.get(ea.getLocation().getSystemID());
-			} else if (ea.getLocation().isStation()) { //Station
-				if (!ea.getLocation().isPlanet()) {
-					loc = new SolarSystem(ea.getLocation());
-				}
+			} else if (ea.getLocation().isStation()) { //Not planet
+				loc = new SolarSystem(ea.getLocation());
 			}
-			if (loc != null &&
-					(loc.getRegionID() < 11000000 || loc.getRegionID() > 13000000) //Ignore Wormhole and Abyssal Regions
-					) {
+			if (loc != null && (loc.getRegionID() < 11000000 || loc.getRegionID() > 13000000)) { //Ignore Wormhole and Abyssal Regions
 				allLocs.add(loc);
 			} else {
 				LOG.debug("ignoring {}", ea.getLocation().getLocation());
@@ -908,7 +908,7 @@ public class RoutingTab extends JMainTabSecondary {
 			Map<Long, List<SolarSystem>> stationsMap = new HashMap<Long, List<SolarSystem>>();
 			Set<Node> waypoints = new HashSet<Node>();
 			for (SolarSystem solarSystem : jWaypoints.getEditableModel().getAll()) {
-				if (solarSystem.isStation()) {
+				if (solarSystem.isStation()) { //Not Planet
 					List<SolarSystem> stations = stationsMap.get(solarSystem.getSystemID());
 					if (stations == null) {
 						stations = new ArrayList<SolarSystem>();

@@ -28,6 +28,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter.CompareType;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter.LogicType;
@@ -48,6 +50,7 @@ public class FilterMatcher<E> implements Matcher<E> {
 	private final EnumTableColumn<?> enumColumn;
 	private final CompareType compare;
 	private final String text;
+	private final Pattern pattern;
 	private final boolean empty;
 
 	FilterMatcher(final FilterControl<E> filterControl, final Filter filter) {
@@ -59,6 +62,13 @@ public class FilterMatcher<E> implements Matcher<E> {
 		this.group = group;
 		this.enumColumn = enumColumn;
 		this.compare = compare;
+		Pattern compiled;
+		try {
+			compiled = Pattern.compile(text, Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
+		} catch (PatternSyntaxException ex){
+			compiled = Pattern.compile("", Pattern.CASE_INSENSITIVE);
+		}
+		this.pattern = compiled;
 		if (CompareType.isColumnCompare(compare)) {
 			this.text = text;
 		} else {
@@ -83,7 +93,7 @@ public class FilterMatcher<E> implements Matcher<E> {
 	@Override
 	public boolean matches(final E item) {
 		if (enumColumn instanceof Filter.AllColumn) {
-			return matchesAll(item, compare, text);
+			return matchesAll(item);
 		}
 		Object column = filterControl.getColumnValue(item, enumColumn.name());
 		if (column == null) {
@@ -102,6 +112,8 @@ public class FilterMatcher<E> implements Matcher<E> {
 				return equalsDate(column, text);
 			case EQUALS_NOT:
 				return !equals(column, text);
+			case REGEX:
+				return regex(column, pattern);
 			case EQUALS_NOT_DATE:
 				return !equalsDate(column, text);
 			case GREATER_THAN:
@@ -151,23 +163,25 @@ public class FilterMatcher<E> implements Matcher<E> {
 		return builder.toString().toLowerCase();
 	}
 
-	private boolean matchesAll(final E item, final Filter.CompareType compareType, final String formatedText) {
+	private boolean matchesAll(final E item) {
 		String haystack = filterControl.getCache().get(item);
 		if (haystack == null) { //Will be build on update if any filter is set
 			haystack = buildItemCache(filterControl, item);
 			filterControl.addCache(item, haystack);
 		}
-		if (null == compareType) {
+		if (null == compare) {
 			return true;
-		} else switch (compareType) {
+		} else switch (compare) {
 			case CONTAINS:
-				return haystack.contains(formatedText);
+				return haystack.contains(text);
 			case CONTAINS_NOT:
-				return !haystack.contains(formatedText);
+				return !haystack.contains(text);
 			case EQUALS:
-				return haystack.contains("\n" + formatedText + "\r");
+				return haystack.contains("\n" + text + "\r");
 			case EQUALS_NOT:
-				return !haystack.contains("\n" + formatedText + "\r");
+				return !haystack.contains("\n" + text + "\r");
+			case REGEX:
+				return pattern.matcher(haystack).find();
 			default:
 				return true;
 		}
@@ -181,6 +195,16 @@ public class FilterMatcher<E> implements Matcher<E> {
 
 		//Equals (case insentive)
 		return format(object1, false).toLowerCase().equals(formatedText);
+	}
+
+	private boolean regex(final Object object1, final Pattern pattern) {
+		//Null
+		if (object1 == null || pattern == null) {
+			return false;
+		}
+
+		//Rexex
+		return pattern.matcher(format(object1, false)).find();
 	}
 
 	private boolean contains(final Object object1, final String formatedText) {

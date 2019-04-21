@@ -53,6 +53,7 @@ public class TreeAsset extends MyAsset {
 	private double value = 0;
 	private double valueBase = 0;
 	private double valueBuyMax = 0;
+	private double valueContract = 0;
 	private double valueReprocessed = 0;
 	private double valueSellMin = 0;
 	private double volumnTotal = 0;
@@ -73,6 +74,27 @@ public class TreeAsset extends MyAsset {
 				this.icon = Images.LOC_CONTAINER.getIcon();
 			} else if (asset.getItem().getCategory().equals("Ship")) {
 				this.icon = Images.TOOL_SHIP_LOADOUTS.getIcon();
+			} else if (asset.getItem().getCategory().equals("Planetary Interaction")) {
+				switch (asset.getItem().getGroup()) {
+					case "Command Centers":
+						this.icon = Images.LOC_PIN_COMMAND.getIcon();
+						break;
+					case "Extractors":
+						this.icon = Images.LOC_PIN_EXTRACTOR.getIcon();
+						break;
+					case "Processors":
+						this.icon = Images.LOC_PIN_PROCESSOR.getIcon();
+						break;
+					case "Spaceports":
+						this.icon = Images.LOC_PIN_SPACEPORT.getIcon();
+						break;
+					case "Storage Facilities":
+						this.icon = Images.LOC_PIN_STORAGE.getIcon();
+						break;
+					default:
+						this.icon = null;
+						break;
+				}
 			} else {
 				this.icon = null;
 			}
@@ -169,6 +191,15 @@ public class TreeAsset extends MyAsset {
 			return super.getDynamicPrice();
 		} else {
 			return value / count;
+		}
+	}
+
+	@Override
+	public double getContractPrice() {
+		if (isItem()) {
+			return super.getContractPrice();
+		} else {
+			return valueContract / count;
 		}
 	}
 
@@ -310,6 +341,7 @@ public class TreeAsset extends MyAsset {
 		this.value = this.value + asset.getValue();
 		this.valueBase = this.valueBase + (asset.getItem().getPriceBase() * asset.getCount());
 		this.valueBuyMax = this.valueBuyMax + (asset.getPriceBuyMax() * asset.getCount());
+		this.valueContract = this.valueContract + (asset.getContractPrice() * asset.getCount());
 		this.valueReprocessed = this.valueReprocessed + asset.getValueReprocessed();
 		this.valueSellMin = this.valueSellMin + (asset.getPriceSellMin() * asset.getCount());
 		this.volumnTotal = this.volumnTotal + asset.getVolumeTotal();
@@ -320,6 +352,7 @@ public class TreeAsset extends MyAsset {
 		this.value = 0;
 		this.valueBase = 0;
 		this.valueBuyMax = 0;
+		this.valueContract = 0;
 		this.valueReprocessed = 0;
 		this.valueSellMin = 0;
 		this.volumnTotal = 0;

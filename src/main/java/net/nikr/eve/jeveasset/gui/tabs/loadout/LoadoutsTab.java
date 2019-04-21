@@ -52,6 +52,7 @@ import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.CaseInsensitiveComparator;
+import net.nikr.eve.jeveasset.gui.shared.JOptionInput;
 import net.nikr.eve.jeveasset.gui.shared.components.JCustomFileChooser;
 import net.nikr.eve.jeveasset.gui.shared.components.JDropDownButton;
 import net.nikr.eve.jeveasset.gui.shared.components.JFixedToolBar;
@@ -440,7 +441,7 @@ public class LoadoutsTab extends JMainTabSecondary {
 	}
 
 	private String getBuildName() {
-		String buildName = JOptionPane.showInputDialog(program.getMainWindow().getFrame(), "Enter Build Name", "Export EFT", JOptionPane.PLAIN_MESSAGE);
+		String buildName = JOptionInput.showInputDialog(program.getMainWindow().getFrame(), "Enter Build Name", "Export EFT", JOptionPane.PLAIN_MESSAGE);
 		if (buildName == null) {
 			return null; //Cancel
 		} else if (buildName.isEmpty()) {
