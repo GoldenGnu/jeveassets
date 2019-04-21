@@ -316,6 +316,7 @@ public class MyIndustryJob extends RawIndustryJob implements Comparable<MyIndust
 		return !isBPO();
 	}
 
+	@Override
 	public int getMaterialEfficiency() {
 		if (blueprint != null) {
 			return blueprint.getMaterialEfficiency();
@@ -324,6 +325,7 @@ public class MyIndustryJob extends RawIndustryJob implements Comparable<MyIndust
 		}
 	}
 
+	@Override
 	public int getTimeEfficiency() {
 		if (blueprint != null) {
 			return blueprint.getTimeEfficiency();
@@ -398,6 +400,8 @@ public class MyIndustryJob extends RawIndustryJob implements Comparable<MyIndust
 	public void setOutputPrice(double outputPrice) {
 		if (isManufacturing()) {
 			this.outputValue = outputPrice * getRuns() * getProductQuantity();
+		} else if (isCopying() && getLicensedRuns() != null) {
+			this.outputValue = outputPrice * getRuns() * getLicensedRuns();
 		} else {
 			this.outputValue = 0;
 		}

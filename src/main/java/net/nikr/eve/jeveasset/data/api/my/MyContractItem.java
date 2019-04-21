@@ -127,6 +127,27 @@ public class MyContractItem extends RawContractItem implements Comparable<MyCont
 	}
 
 	@Override
+	public int getRuns() {
+		if (isBPC()) {
+			return 1; //BPC
+		} else if (isBPO()) {
+			return -1; //BPO
+		} else {
+			return 0; //Default unknown
+		}
+	}
+
+	@Override
+	public int getMaterialEfficiency() {
+		return 0;
+	}
+
+	@Override
+	public int getTimeEfficiency() {
+		return 0;
+	}
+
+	@Override
 	public Set<MyLocation> getLocations() {
 		return getContract().getLocations();
 	}
