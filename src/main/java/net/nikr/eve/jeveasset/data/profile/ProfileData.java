@@ -55,7 +55,7 @@ import net.nikr.eve.jeveasset.data.settings.MarketPriceData;
 import net.nikr.eve.jeveasset.data.settings.PriceData;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.data.settings.tag.Tags;
-import net.nikr.eve.jeveasset.data.settings.types.EditableContractPriceType;
+import net.nikr.eve.jeveasset.data.settings.types.ContractPriceType;
 import net.nikr.eve.jeveasset.data.settings.types.EditableLocationType;
 import net.nikr.eve.jeveasset.data.settings.types.EditablePriceType;
 import net.nikr.eve.jeveasset.data.settings.types.ItemType;
@@ -327,17 +327,9 @@ public class ProfileData {
 		for (OwnerType owner : profileManager.getOwnerTypes()) {
 			//Assets
 			deepAssetsType(owner.getAssets(), contractPriceTypes);
-			//Blueprints
-			for (RawBlueprint blueprint : owner.getBlueprints().values()) {
-				addContractPrice(contractPriceTypes, ContractPriceItem.create(blueprint));
-			}
 			//Market Orders
 			for (MyMarketOrder marketOrder : owner.getMarketOrders()) {
 				addContractPrice(contractPriceTypes, ContractPriceItem.create(marketOrder));
-			}
-			//Transactions
-			for (MyTransaction transaction : owner.getTransactions()) {
-				addContractPrice(contractPriceTypes, ContractPriceItem.create(transaction));
 			}
 			//Industry Jobs
 			for (MyIndustryJob industryJob : owner.getIndustryJobs()) {
@@ -357,12 +349,6 @@ public class ProfileData {
 				addContractPrice(contractPriceTypes, ContractPriceItem.create(stockpileItem));
 			}
 		}
-		//Reprocessed Materials
-		for (Item item : StaticData.get().getItems().values()) {
-			for (ReprocessedMaterial reprocessedMaterial : item.getReprocessedMaterial()) {
-				addContractPrice(contractPriceTypes, ContractPriceItem.create(reprocessedMaterial));
-			}
-		}
 		return contractPriceTypes;
 	}
 
@@ -375,7 +361,7 @@ public class ProfileData {
 	}
 
 	private void addContractPrice(Set<ContractPriceItem> contractPriceTypes, ContractPriceItem contractPriceType) {
-		if (contractPriceType != null && contractPriceType.isContractPrice()) {
+		if (contractPriceType != null) {
 			contractPriceTypes.add(contractPriceType);
 		}
 	}
@@ -1053,16 +1039,14 @@ public class ProfileData {
 	}
 
 	private static void updatePrice(EditablePriceType editablePriceType, boolean defaultBPC) {
-		if (editablePriceType instanceof EditableContractPriceType) {
-			EditableContractPriceType contractPriceType = (EditableContractPriceType) editablePriceType;
+		if (defaultBPC && editablePriceType.isBPC()) {
+			editablePriceType.setDynamicPrice(ApiIdConverter.getPrice(editablePriceType.getItem().getTypeID(), editablePriceType.isBPC(), editablePriceType));
+		} else {
+			editablePriceType.setDynamicPrice(ApiIdConverter.getPriceSimple(editablePriceType.getItem().getTypeID(), editablePriceType.isBPC()));
+		}
+		if (editablePriceType instanceof ContractPriceType) {
+			ContractPriceType contractPriceType = (ContractPriceType) editablePriceType;
 			contractPriceType.setContractPrice(ContractPriceManager.get().getContractPrice(ContractPriceItem.create(contractPriceType)));
-			if (defaultBPC && editablePriceType.isBPC()) {
-				editablePriceType.setDynamicPrice(ApiIdConverter.getPrice(editablePriceType.getItem().getTypeID(), editablePriceType.isBPC(), ContractPriceItem.create(contractPriceType)));
-			} else {
-				editablePriceType.setDynamicPrice(ApiIdConverter.getPrice(editablePriceType.getItem().getTypeID(), editablePriceType.isBPC()));
-			}
-		} else if (editablePriceType != null){
-			editablePriceType.setDynamicPrice(ApiIdConverter.getPrice(editablePriceType.getItem().getTypeID(), editablePriceType.isBPC()));
 		}
 	}
 
@@ -1070,13 +1054,13 @@ public class ProfileData {
 		if (defaultBPC && industryJob.isBPC()) {
 			industryJob.setDynamicPrice(ApiIdConverter.getPrice(industryJob.getItem().getTypeID(), industryJob.isBPC(), ContractPriceItem.create(industryJob, false)));
 		} else {
-			industryJob.setDynamicPrice(ApiIdConverter.getPrice(industryJob.getItem().getTypeID(), industryJob.isBPC()));
+			industryJob.setDynamicPrice(ApiIdConverter.getPriceSimple(industryJob.getItem().getTypeID(), industryJob.isBPC()));
 		}
 		industryJob.setContractPrice(ContractPriceManager.get().getContractPrice(ContractPriceItem.create(industryJob, false)));
 		if (defaultBPC && industryJob.isCopying()) {
 			industryJob.setOutputPrice(ApiIdConverter.getPrice(industryJob.getProductTypeID(), industryJob.isCopying(), ContractPriceItem.create(industryJob, true)));
 		} else {
-			industryJob.setOutputPrice(ApiIdConverter.getPrice(industryJob.getProductTypeID(), industryJob.isCopying()));
+			industryJob.setOutputPrice(ApiIdConverter.getPriceSimple(industryJob.getProductTypeID(), industryJob.isCopying()));
 		}
 	}
 
@@ -1089,9 +1073,9 @@ public class ProfileData {
 		}
 		//Dynamic Price
 		if (defaultBPC && asset.isBPC()) {
-			asset.setDynamicPrice(ApiIdConverter.getPrice(asset.getItem().getTypeID(), asset.isBPC(), ContractPriceItem.create(asset)));
+			asset.setDynamicPrice(ApiIdConverter.getPrice(asset.getItem().getTypeID(), asset.isBPC(), asset));
 		} else {
-			asset.setDynamicPrice(ApiIdConverter.getPrice(asset.getItem().getTypeID(), asset.isBPC()));
+			asset.setDynamicPrice(ApiIdConverter.getPriceSimple(asset.getItem().getTypeID(), asset.isBPC()));
 		}
 		asset.setContractPrice(ContractPriceManager.get().getContractPrice(ContractPriceItem.create(asset)));
 	}

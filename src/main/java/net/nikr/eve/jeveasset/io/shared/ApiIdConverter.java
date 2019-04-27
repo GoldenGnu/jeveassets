@@ -37,6 +37,7 @@ import net.nikr.eve.jeveasset.data.settings.ContractPriceManager.ContractPriceIt
 import net.nikr.eve.jeveasset.data.settings.PriceData;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.data.settings.UserItem;
+import net.nikr.eve.jeveasset.data.settings.types.BlueprintType;
 import net.nikr.eve.jeveasset.i18n.General;
 import net.nikr.eve.jeveasset.io.online.CitadelGetter;
 import net.nikr.eve.jeveasset.io.online.FuzzworkMapGetter.Planet;
@@ -146,12 +147,18 @@ public final class ApiIdConverter {
 		return name;
 	}
 
-	public static double getPrice(final Integer typeID, final boolean isBlueprintCopy) {
+	public static double getPriceSimple(final Integer typeID, final boolean isBlueprintCopy) {
 		return getPriceType(typeID, isBlueprintCopy, null, false);
 	}
 
-	public static double getPrice(final Integer typeID, final boolean isBlueprintCopy, ContractPriceItem contractPriceItem) {
-		return getPriceType(typeID, isBlueprintCopy, contractPriceItem, false);
+	public static double getPrice(final Integer typeID, final boolean isBlueprintCopy, Object object) {
+		if (object instanceof BlueprintType) {
+			return getPriceType(typeID, isBlueprintCopy, ContractPriceItem.create((BlueprintType) object), false);
+		} else if (object instanceof ContractPriceItem) {
+			return getPriceType(typeID, isBlueprintCopy, (ContractPriceItem) object, false);
+		} else {
+			return getPriceType(typeID, isBlueprintCopy, null, false);
+		}
 	}
 
 	private static double getPriceReprocessed(final Integer typeID, final boolean isBlueprintCopy) {

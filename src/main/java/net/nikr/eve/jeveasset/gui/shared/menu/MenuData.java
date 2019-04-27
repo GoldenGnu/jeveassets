@@ -36,7 +36,7 @@ import net.nikr.eve.jeveasset.data.settings.ContractPriceManager;
 import net.nikr.eve.jeveasset.data.settings.ContractPriceManager.ContractPriceItem;
 import net.nikr.eve.jeveasset.data.settings.tag.Tag;
 import net.nikr.eve.jeveasset.data.settings.types.BlueprintType;
-import net.nikr.eve.jeveasset.data.settings.types.EditableContractPriceType;
+import net.nikr.eve.jeveasset.data.settings.types.ContractPriceType;
 import net.nikr.eve.jeveasset.data.settings.types.ItemType;
 import net.nikr.eve.jeveasset.data.settings.types.LocationType;
 import net.nikr.eve.jeveasset.data.settings.types.LocationsType;
@@ -132,7 +132,7 @@ public class MenuData<T> {
 			if (t instanceof Item) {
 				Item item = (Item) t;
 				if (items.size() == 1) { //Always zero for multiple items
-					price = ApiIdConverter.getPrice(item.getTypeID(), false);
+					price = ApiIdConverter.getPriceSimple(item.getTypeID(), false);
 				}
 				if (price == null || price == 0) {
 					price = (double) item.getPriceBase();
@@ -140,8 +140,8 @@ public class MenuData<T> {
 			}
 
 			ContractPriceItem contractPriceItem = null;
-			if (t instanceof EditableContractPriceType) {
-				contractPriceItem = ContractPriceItem.create((EditableContractPriceType) t);
+			if (t instanceof ContractPriceType) {
+				contractPriceItem = ContractPriceItem.create((ContractPriceType) t);
 			}
 
 			add(itemType, locations, price, blueprint, tagsType, owners, contractPriceItem);

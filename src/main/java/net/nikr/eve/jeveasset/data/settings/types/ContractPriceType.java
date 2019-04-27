@@ -21,6 +21,7 @@
 package net.nikr.eve.jeveasset.data.settings.types;
 
 
-public interface ContractPriceType {
+public interface ContractPriceType extends BlueprintType {
+	public void setContractPrice(double price);
 	public double getContractPrice();
 }
