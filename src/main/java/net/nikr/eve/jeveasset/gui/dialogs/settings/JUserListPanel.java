@@ -123,15 +123,15 @@ public abstract class JUserListPanel<K, V extends Comparable<V>> extends JSettin
 		edit(Collections.singletonList(userItem), true, null);
 	}
 
-	public void edit(final List<UserItem<K, V>> userItems) {
-		edit(userItems, true, null);
+	public boolean edit(final List<UserItem<K, V>> userItems) {
+		return edit(userItems, true, null);
 	}
 
-	private void edit(final UserItem<K, V> userItem, final boolean save) {
-		edit(Collections.singletonList(userItem), save, null);
+	private boolean edit(final UserItem<K, V> userItem, final boolean save) {
+		return edit(Collections.singletonList(userItem), save, null);
 	}
 
-	private void edit(final List<UserItem<K, V>> userItems, final boolean save, final String oldValue) {
+	private boolean edit(final List<UserItem<K, V>> userItems, final boolean save, final String oldValue) {
 		if (save) {
 			load();
 		}
@@ -149,36 +149,38 @@ public abstract class JUserListPanel<K, V extends Comparable<V>> extends JSettin
 			formatedValue = "0";
 		}
 		String value = (String) JOptionInput.showInputDialog(program.getMainWindow().getFrame(), name, DialoguesSettings.get().editTypeTitle(type), JOptionPane.PLAIN_MESSAGE, null, null, formatedValue);
-		if (value != null) {
-			V v = valueOf(value);
-			if (v != null) { //Update value
-				List<K> containedKeys = new ArrayList<K>();
-				for (UserItem<K, V> userItem : userItems) {
-					UserItem<K, V> userItemExisting = items.get(userItem.getKey());
-					if (userItemExisting == null) { //Add new
-						userItemExisting = userItem;
-						items.put(userItem.getKey(), userItem);
-					}
-					containedKeys.add(userItem.getKey());
-					//Update Value
-					userItemExisting.setValue(v);
+		if (value == null) {
+			return false; //Cancel
+		}
+		V v = valueOf(value);
+		if (v != null) { //Update value
+			List<K> containedKeys = new ArrayList<K>();
+			for (UserItem<K, V> userItem : userItems) {
+				UserItem<K, V> userItemExisting = items.get(userItem.getKey());
+				if (userItemExisting == null) { //Add new
+					userItemExisting = userItem;
+					items.put(userItem.getKey(), userItem);
 				}
-				//Update GUI
-				updateGUI();
-				if (save) { //Save (if not in setttings dialog)
-					Settings.lock("Custom Price/Name (Edit)"); //Lock for Custom Price/Name (Edit)
-					boolean update = save();
-					Settings.unlock("Custom Price/Name (Edit)"); //Unlock for Custom Price/Name (Edit)
-					if (update) {
-						//FIXME - - - > Price/Name: Update Price/Name (no need to update all date - just need to update the data in tags column)
-						updateEventList(containedKeys);
-					}
-					program.saveSettings("Custom Price/Name (Edit)"); //Save Custom Price/Name (Edit)
-				}
-			} else {
-				JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), DialoguesSettings.get().inputNotValid(), DialoguesSettings.get().badInput(), JOptionPane.PLAIN_MESSAGE);
-				edit(userItems, save, value);
+				containedKeys.add(userItem.getKey());
+				//Update Value
+				userItemExisting.setValue(v);
 			}
+			//Update GUI
+			updateGUI();
+			if (save) { //Save (if not in setttings dialog)
+				Settings.lock("Custom Price/Name (Edit)"); //Lock for Custom Price/Name (Edit)
+				boolean update = save();
+				Settings.unlock("Custom Price/Name (Edit)"); //Unlock for Custom Price/Name (Edit)
+				if (update) {
+					//FIXME - - - > Price/Name: Update Price/Name (no need to update all date - just need to update the data in tags column)
+					updateEventList(containedKeys);
+				}
+				program.saveSettings("Custom Price/Name (Edit)"); //Save Custom Price/Name (Edit)
+			}
+			return true;
+		} else {
+			JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), DialoguesSettings.get().inputNotValid(), DialoguesSettings.get().badInput(), JOptionPane.PLAIN_MESSAGE);
+			return edit(userItems, save, value);
 		}
 	}
 

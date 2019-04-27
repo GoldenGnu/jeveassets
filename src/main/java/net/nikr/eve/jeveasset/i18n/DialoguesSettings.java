@@ -182,4 +182,5 @@ public abstract class DialoguesSettings extends Bundle {
 	public abstract String priceMode();
 	public abstract String updateRequired();
 	public abstract String security();
+	public abstract String feedback();
 }
