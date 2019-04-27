@@ -20,6 +20,7 @@
  */
 package net.nikr.eve.jeveasset.data.settings;
 
+import eve.nikr.net.client.model.Feedback.SecurityEnum;
 import eve.nikr.net.client.model.Prices;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -44,7 +45,7 @@ import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 
 public class ContractPriceManager {
 
-	//https://app.swaggerhub.com/apis-docs/rihanshazih/contracts-appraisal/1.1.0
+	//https://app.swaggerhub.com/apis-docs/rihanshazih/contracts-appraisal/
 	private static volatile ContractPriceManager PRICE_GETTER = null;
 
 	private final ContractPriceData contractPriceData;
@@ -78,7 +79,26 @@ public class ContractPriceManager {
 		contractPriceData.add(returnData);
 	}
 
+	public boolean haveContractPrice(ContractPriceItem contractPriceType) {
+		if (contractPriceType == null) {
+			return false;
+		}
+		Prices prices = contractPriceData.getPrices(contractPriceType);
+		if (prices == null) {
+			return false;
+		}
+		Double price = Settings.get().getContractPriceSettings().getContractPriceMode().getPrice(prices);
+		if (price == null) {
+			return false;
+		}
+		return true;
+	}
+
 	public double getContractPrice(ContractPriceItem contractPriceType) {
+		return getContractPrice(contractPriceType, false);
+	}
+
+	public double getContractPrice(ContractPriceItem contractPriceType, boolean perUnit) {
 		if (contractPriceType == null) {
 			return 0;
 		}
@@ -89,6 +109,8 @@ public class ContractPriceManager {
 		Double price = Settings.get().getContractPriceSettings().getContractPriceMode().getPrice(prices);
 		if (price == null) {
 			return 0;
+		} else if (perUnit){
+			return price;
 		} else if (contractPriceType.getRuns() > 0){
 			return price * contractPriceType.getRuns();
 		} else {
@@ -186,25 +208,25 @@ public class ContractPriceManager {
 
 		}
 		public static enum ContractPriceSecurity {
-			HIGH_SEC("highsec") {
+			HIGH_SEC("highsec", SecurityEnum.HIGHSEC) {
 				@Override
 				public String getText() {
 					return DataContractPrices.get().highSec();
 				}
 			},
-			LOW_SEC("lowsec") {
+			LOW_SEC("lowsec", SecurityEnum.LOWSEC) {
 				@Override
 				public String getText() {
 					return DataContractPrices.get().lowSec();
 				}
 			},
-			NULL_SEC("nullsec") {
+			NULL_SEC("nullsec", SecurityEnum.NULLSEC) {
 				@Override
 				public String getText() {
 					return DataContractPrices.get().nullSec();
 				}
 			},
-			WORMHOLE("wormhole") {
+			WORMHOLE("wormhole", SecurityEnum.WORMHOLE) {
 				@Override
 				public String getText() {
 					return DataContractPrices.get().wormhole();
@@ -213,13 +235,19 @@ public class ContractPriceManager {
 			;
 
 			private final String value;
+			private final SecurityEnum securityEnum;
 
-			private ContractPriceSecurity(String value) {
+			private ContractPriceSecurity(String value, SecurityEnum securityEnum) {
 				this.value = value;
+				this.securityEnum = securityEnum;
 			}
 
 			public String getValue() {
 				return value;
+			}
+
+			public SecurityEnum getSecurityEnum() {
+				return securityEnum;
 			}
 
 			public abstract String getText();
@@ -231,6 +259,8 @@ public class ContractPriceManager {
 
 		}
 
+		private boolean feedback = false;
+		private boolean feedbackAsked = false;
 		private boolean includePrivate = false;
 		private boolean defaultBPC = true;
 		private ContractPriceMode contractPriceMode = ContractPriceMode.FIVE_PERCENT;
@@ -238,6 +268,22 @@ public class ContractPriceManager {
 
 		public ContractPriceMode getContractPriceMode() {
 			return contractPriceMode;
+		}
+
+		public boolean isFeedback() {
+			return feedback;
+		}
+
+		public void setFeedback(boolean feedback) {
+			this.feedback = feedback;
+		}
+
+		public boolean isFeedbackAsked() {
+			return feedbackAsked;
+		}
+
+		public void setFeedbackAsked(boolean feedbackAsked) {
+			this.feedbackAsked = feedbackAsked;
 		}
 
 		public void setContractPriceMode(ContractPriceMode contractPriceMode) {
@@ -275,6 +321,14 @@ public class ContractPriceManager {
 			List<String> values = new ArrayList<>();
 			for (ContractPriceSecurity security : contractPriceSecurity) {
 				values.add(security.getValue());
+			}
+			return values;
+		}
+
+		public List<SecurityEnum> getSecurityEnums() {
+			List<SecurityEnum> values = new ArrayList<>();
+			for (ContractPriceSecurity security : contractPriceSecurity) {
+				values.add(security.getSecurityEnum());
 			}
 			return values;
 		}
@@ -354,6 +408,10 @@ public class ContractPriceManager {
 
 		public boolean isBpc() {
 			return bpc;
+		}
+
+		public boolean isBpo() {
+			return bpo;
 		}
 
 		public Integer getMe() {

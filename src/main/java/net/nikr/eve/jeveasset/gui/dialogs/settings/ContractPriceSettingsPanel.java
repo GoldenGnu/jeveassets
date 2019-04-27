@@ -23,6 +23,7 @@ package net.nikr.eve.jeveasset.gui.dialogs.settings;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import javax.swing.GroupLayout;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -44,6 +45,7 @@ public class ContractPriceSettingsPanel extends JSettingsPanel {
 
 	private final JCheckBox jIncludePrivate;
 	private final JCheckBox jDefaultBPC;
+	private final JCheckBox jFeedback;
 	private final JComboBox<ContractPriceMode> jMode;
 	private final JMultiSelectionList<ContractPriceSecurity> jSecurity;
 	
@@ -53,6 +55,7 @@ public class ContractPriceSettingsPanel extends JSettingsPanel {
 
 		jIncludePrivate = new JCheckBox(DialoguesSettings.get().includePrivate());
 		jDefaultBPC = new JCheckBox(DialoguesSettings.get().defaultBPC());
+		jFeedback = new JCheckBox(DialoguesSettings.get().feedback());
 		JLabel jPriceModeLabel = new JLabel(DialoguesSettings.get().priceMode());
 		jMode = new JComboBox<>(ContractPriceMode.values());
 		JLabel jSecurityLabel = new JLabel(DialoguesSettings.get().security());
@@ -68,7 +71,7 @@ public class ContractPriceSettingsPanel extends JSettingsPanel {
 				}
 			}
 		});
-		JScrollPane jSecurityScroll = new JScrollPane(jSecurity);
+		jSecurity.setBorder(new JScrollPane(jSecurity).getBorder());
 		JLabelMultiline jWarning = new JLabelMultiline(DialoguesSettings.get().updateRequired(), 2);
 
 		layout.setHorizontalGroup(
@@ -78,9 +81,10 @@ public class ContractPriceSettingsPanel extends JSettingsPanel {
 					.addComponent(jMode)
 				)
 				.addComponent(jSecurityLabel)
-				.addComponent(jSecurityScroll)
+				.addComponent(jSecurity, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Integer.MAX_VALUE)
 				.addComponent(jIncludePrivate)
 				.addComponent(jDefaultBPC)
+				.addComponent(jFeedback)
 				.addComponent(jWarning)
 		);
 		layout.setVerticalGroup(
@@ -90,9 +94,10 @@ public class ContractPriceSettingsPanel extends JSettingsPanel {
 					.addComponent(jMode, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 				)
 				.addComponent(jSecurityLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-				.addComponent(jSecurityScroll)
+				.addComponent(jSecurity)
 				.addComponent(jIncludePrivate, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 				.addComponent(jDefaultBPC, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+				.addComponent(jFeedback, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 				.addComponent(jWarning)
 		);
 		
@@ -104,6 +109,7 @@ public class ContractPriceSettingsPanel extends JSettingsPanel {
 		Object object = jMode.getSelectedItem();
 		boolean includePrivate = jIncludePrivate.isSelected();
 		boolean defaultBPC = jDefaultBPC.isSelected();
+		boolean feedback = jFeedback.isSelected();
 		boolean updated = false;
 		if (old.getContractPriceMode() != object) {
 			updated = true;
@@ -118,6 +124,7 @@ public class ContractPriceSettingsPanel extends JSettingsPanel {
 		old.setContractPriceSecurity(new HashSet<>(contractPriceSecurity));
 		old.setIncludePrivate(includePrivate);
 		old.setDefaultBPC(defaultBPC);
+		old.setFeedback(feedback);
 		if (contractPriceSecurity.isEmpty()) {
 			jSecurity.setSelectedIndex(ContractPriceSecurity.HIGH_SEC.ordinal());
 		}
@@ -130,6 +137,7 @@ public class ContractPriceSettingsPanel extends JSettingsPanel {
 		jMode.setSelectedItem(contractPriceSettings.getContractPriceMode());
 		jIncludePrivate.setSelected(contractPriceSettings.isIncludePrivate());
 		jDefaultBPC.setSelected(contractPriceSettings.isDefaultBPC());
+		jFeedback.setSelected(contractPriceSettings.isFeedback());
 		jSecurity.clearSelection();
 		for (ContractPriceSecurity contractPriceSecurity : contractPriceSettings.getContractPriceSecurity()) {
 			jSecurity.addSelection(contractPriceSecurity.ordinal(), true);
