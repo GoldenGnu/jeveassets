@@ -157,7 +157,7 @@ public class DataSetCreator {
 				//Manufacturing and not completed
 				if (industryJob.isManufacturing() && !industryJob.isDelivered()) {
 					Value value = getValueInner(values, industryJob.getOwnerName(), date);
-					double manufacturingTotal = industryJob.getProductQuantity() * industryJob.getRuns() * ApiIdConverter.getPrice(industryJob.getProductTypeID(), false);
+					double manufacturingTotal = industryJob.getProductQuantity() * industryJob.getRuns() * ApiIdConverter.getPriceSimple(industryJob.getProductTypeID(), false);
 					value.addManufacturing(manufacturingTotal);
 					total.addManufacturing(manufacturingTotal);
 				}

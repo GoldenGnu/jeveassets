@@ -32,16 +32,10 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob;
-import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
-import net.nikr.eve.jeveasset.data.api.raw.RawBlueprint;
-import net.nikr.eve.jeveasset.data.sde.Item;
-import net.nikr.eve.jeveasset.data.sde.ReprocessedMaterial;
-import net.nikr.eve.jeveasset.data.settings.types.EditableContractPriceType;
-import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
+import net.nikr.eve.jeveasset.data.settings.types.BlueprintType;
 import net.nikr.eve.jeveasset.i18n.DataContractPrices;
 import net.nikr.eve.jeveasset.io.local.ContractPriceReader;
 import net.nikr.eve.jeveasset.io.local.ContractPriceWriter;
-import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 
 public class ContractPriceManager {
 
@@ -350,16 +344,8 @@ public class ContractPriceManager {
 
 	public static class ContractPriceItem {
 
-		public static ContractPriceItem create(EditableContractPriceType editablePriceType) {
-			return new ContractPriceItem(editablePriceType.getItem().getTypeID(), editablePriceType.isBPC(), editablePriceType.isBPO(), editablePriceType.getMaterialEfficiency(), editablePriceType.getTimeEfficiency(), editablePriceType.getRuns());
-		}
-
-		public static ContractPriceItem create(RawBlueprint blueprint) {
-			return new ContractPriceItem(blueprint.getTypeID(), blueprint.getRuns() > 0, blueprint.getRuns() < 1, blueprint.getMaterialEfficiency(), blueprint.getTimeEfficiency(), blueprint.getRuns());
-		}
-
-		public static ContractPriceItem create(MyTransaction transaction) {
-			return new ContractPriceItem(transaction.getTypeID(), false, transaction.getItem().isBlueprint(), 0, 0, -1);
+		public static ContractPriceItem create(BlueprintType blueprintType) {
+			return new ContractPriceItem(blueprintType.getTypeID(), blueprintType.isBPC(), blueprintType.isBPO(), blueprintType.getMaterialEfficiency(), blueprintType.getTimeEfficiency(), blueprintType.getRuns());
 		}
 
 		public static ContractPriceItem create(MyIndustryJob industryJob, boolean product) {
@@ -371,15 +357,6 @@ public class ContractPriceManager {
 			} else {
 				return new ContractPriceItem(industryJob.getBlueprintTypeID(), industryJob.isBPC(), industryJob.isBPO(), industryJob.getMaterialEfficiency(), industryJob.getTimeEfficiency(), industryJob.getRuns());
 			}
-		}
-
-		public static ContractPriceItem create(StockpileItem stockpileItem) {
-			return new ContractPriceItem(stockpileItem.getTypeID(), stockpileItem.isBPC(), stockpileItem.isBPO(), 0, 0, -1);
-		}
-
-		public static ContractPriceItem create(ReprocessedMaterial reprocessedMaterial) {
-			Item item = ApiIdConverter.getItem(reprocessedMaterial.getTypeID());
-			return new ContractPriceItem(reprocessedMaterial.getTypeID(), false, item.isBlueprint(), 0, 0, -1);
 		}
 
 		private final int typeID;
@@ -396,10 +373,6 @@ public class ContractPriceManager {
 			this.me = me;
 			this.te = te;
 			this.runs = runs;
-		}
-
-		public boolean isContractPrice() {
-			return true;
 		}
 
 		public int getTypeID() {

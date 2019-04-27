@@ -30,7 +30,7 @@ import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.data.settings.types.BlueprintType;
-import net.nikr.eve.jeveasset.data.settings.types.EditableContractPriceType;
+import net.nikr.eve.jeveasset.data.settings.types.ContractPriceType;
 import net.nikr.eve.jeveasset.data.settings.types.EditableLocationType;
 import net.nikr.eve.jeveasset.data.settings.types.EditablePriceType;
 import net.nikr.eve.jeveasset.data.settings.types.ItemType;
@@ -38,7 +38,7 @@ import net.nikr.eve.jeveasset.data.settings.types.OwnersType;
 import net.nikr.eve.jeveasset.i18n.DataModelIndustryJob;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 
-public class MyIndustryJob extends RawIndustryJob implements Comparable<MyIndustryJob>, EditableLocationType, EditableContractPriceType, ItemType, EditablePriceType, BlueprintType, OwnersType {
+public class MyIndustryJob extends RawIndustryJob implements Comparable<MyIndustryJob>, EditableLocationType, ContractPriceType, ItemType, EditablePriceType, BlueprintType, OwnersType {
 
 	public enum IndustryJobState {
 		STATE_ALL() {
@@ -332,6 +332,11 @@ public class MyIndustryJob extends RawIndustryJob implements Comparable<MyIndust
 		} else {
 			return 0;
 		}
+	}
+
+	@Override
+	public Integer getTypeID() {
+		return getBlueprintTypeID();
 	}
 
 	public final boolean isCompleted() {
