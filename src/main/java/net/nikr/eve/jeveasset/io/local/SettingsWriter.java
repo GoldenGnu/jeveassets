@@ -509,6 +509,8 @@ public class SettingsWriter extends AbstractXmlWriter {
 		parentNode.setAttributeNS(null, "defaultbpc", String.valueOf(contractPriceSettings.isDefaultBPC()));
 		parentNode.setAttributeNS(null, "mode", contractPriceSettings.getContractPriceMode().name());
 		parentNode.setAttributeNS(null, "sec", contractPriceSettings.getSecurityString());
+		parentNode.setAttributeNS(null, "feedback", String.valueOf(contractPriceSettings.isFeedback()));
+		parentNode.setAttributeNS(null, "feedbackasked", String.valueOf(contractPriceSettings.isFeedbackAsked()));
 		xmldoc.getDocumentElement().appendChild(parentNode);
 	}
 

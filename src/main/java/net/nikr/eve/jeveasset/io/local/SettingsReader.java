@@ -1026,6 +1026,14 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 	private void parseContractPriceSettings(final Element element, final Settings settings) throws XmlException {
 		boolean defaultBPC = AttributeGetters.getBoolean(element, "defaultbpc");
 		boolean includePrivate = AttributeGetters.getBoolean(element, "includeprivate");
+		boolean feedback = false;
+		if (AttributeGetters.haveAttribute(element, "feedback")) {
+			feedback = AttributeGetters.getBoolean(element, "feedback");
+		}
+		boolean feedbackAsked = false;
+		if (AttributeGetters.haveAttribute(element, "feedbackasked")) {
+			feedbackAsked = AttributeGetters.getBoolean(element, "feedbackasked");
+		}
 		ContractPriceMode mode = ContractPriceMode.valueOf(AttributeGetters.getString(element, "mode"));
 		String sec = AttributeGetters.getStringOptional(element, "sec");
 		Set<ContractPriceSecurity> security = new HashSet<>();
@@ -1037,6 +1045,8 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		contractPriceSettings.setIncludePrivate(includePrivate);
 		contractPriceSettings.setContractPriceMode(mode);
 		contractPriceSettings.setContractPriceSecurity(security);
+		contractPriceSettings.setFeedback(feedback);
+		contractPriceSettings.setFeedbackAsked(feedbackAsked);
 	}
 
 	private void parseFlags(final Element element, final Settings settings) throws XmlException {
