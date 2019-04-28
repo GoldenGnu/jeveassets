@@ -25,6 +25,7 @@ import java.util.Date;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.api.accounts.ApiType;
 import net.nikr.eve.jeveasset.data.api.accounts.OwnerType;
+import net.nikr.eve.jeveasset.data.settings.ContractPriceManager;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 
 
@@ -38,6 +39,9 @@ public class Updatable {
 
 	public boolean isUpdatable() {
 		if (isUpdatable(program.getPriceDataGetter().getNextUpdate())) {
+			return true;
+		}
+		if (isUpdatable(ContractPriceManager.get().getNextUpdate())) {
 			return true;
 		}
 		for (OwnerType owner : program.getOwnerTypes()) {
