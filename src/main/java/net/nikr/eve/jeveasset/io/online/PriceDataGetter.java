@@ -134,8 +134,8 @@ public class PriceDataGetter implements PricingListener {
 				priceDataList.remove(typeID); //Remove failed typeID
 			}
 			long nextUpdateTemp = pricing.getNextUpdateTime(typeID);
-			if (nextUpdateTemp >= 0 && nextUpdateTemp > nextUpdate) {
-				nextUpdate = nextUpdateTemp;
+			if (nextUpdateTemp >= 0 && nextUpdateTemp > getNextUpdateTime()) {
+				setUpdateNext(nextUpdateTemp);
 			}
 		}
 		if (!priceDataList.isEmpty()) {
@@ -267,8 +267,16 @@ public class PriceDataGetter implements PricingListener {
 		}
 	}
 
-	public Date getNextUpdate() {
+	public synchronized Date getNextUpdate() {
 		return new Date(nextUpdate + priceCacheTimer);
+	}
+
+	private synchronized long getNextUpdateTime() {
+		return nextUpdate;
+	}
+
+	private synchronized void setUpdateNext(long nextUpdate) {
+		this.nextUpdate = nextUpdate;
 	}
 
 	private void clear(Pricing pricing) {
@@ -325,8 +333,9 @@ public class PriceDataGetter implements PricingListener {
 			failed.add(typeID);
 		}
 		long nextUpdateTemp = pricing.getNextUpdateTime(typeID);
-		if (nextUpdateTemp >= 0 && nextUpdateTemp > nextUpdate) {
-			nextUpdate = nextUpdateTemp;
+		
+		if (nextUpdateTemp >= 0 && nextUpdateTemp > getNextUpdateTime()) {
+			setUpdateNext(nextUpdateTemp);;
 		}
 		if (updateTask != null) {
 			updateTask.setTaskProgress(typeIDs.size(), okay.size(), 0, 100);
