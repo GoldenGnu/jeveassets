@@ -54,7 +54,6 @@ public class StockpileItemDialog extends JDialogCentered {
 	}
 
 	private final JButton jOK;
-	private final JButton jCancel;
 	private final JComboBox<Item> jItems;
 	private JTextField jCountMinimum;
 	private final JCheckBox jCopy;
@@ -99,7 +98,7 @@ public class StockpileItemDialog extends JDialogCentered {
 		jOK.addActionListener(listener);
 		jOK.setEnabled(false);
 
-		jCancel = new JButton(TabsStockpile.get().cancel());
+		JButton jCancel = new JButton(TabsStockpile.get().cancel());
 		jCancel.setActionCommand(StockpileItemAction.CANCEL.name());
 		jCancel.addActionListener(listener);
 
@@ -144,7 +143,7 @@ public class StockpileItemDialog extends JDialogCentered {
 		);
 	}
 
-	StockpileItem showEdit(final StockpileItem editStockpileItem) {
+	protected  StockpileItem showEdit(final StockpileItem editStockpileItem) {
 		updateData();
 		this.stockpileItem = editStockpileItem;
 		this.getDialog().setTitle(TabsStockpile.get().editStockpileItem());
@@ -157,7 +156,7 @@ public class StockpileItemDialog extends JDialogCentered {
 		return stockpileItem;
 	}
 
-	StockpileItem showAdd(final Stockpile addStockpile) {
+	protected StockpileItem showAdd(final Stockpile addStockpile) {
 		updateData();
 		this.stockpile = addStockpile;
 		this.getDialog().setTitle(TabsStockpile.get().addStockpileItem());

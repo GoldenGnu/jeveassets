@@ -57,7 +57,6 @@ public class TagsSettingsPanel extends JSettingsPanel {
 
 	//GUI
 	private final JList<Tag> jTags;
-	private final JButton jAdd;
 	private final JButton jEdit;
 	private final JButton jDelete;
 	private final DefaultListModel<Tag> listModel;
@@ -81,7 +80,7 @@ public class TagsSettingsPanel extends JSettingsPanel {
 		jTags.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		jTags.addListSelectionListener(listener);
 
-		jAdd = new JButton(GuiShared.get().add());
+		JButton jAdd = new JButton(GuiShared.get().add());
 		jAdd.setActionCommand(TagsSettingsAction.ADD.name());
 		jAdd.addActionListener(listener);
 
@@ -148,9 +147,10 @@ public class TagsSettingsPanel extends JSettingsPanel {
 		jDelete.setEnabled(false);
 	}
 
-	private int addToList(Tag tag, int index) {
+	private int addToList(Tag tag) {
 		boolean ok = false;
-		for (int i = 0; i < listModel.size(); i++) {
+		int index = 0;
+		for (int i = index; i < listModel.size(); i++) {
 			Tag listTag = listModel.get(i);
 			int compareTo = listTag.compareTo(tag);
 			if (compareTo >= 0) {
@@ -185,7 +185,7 @@ public class TagsSettingsPanel extends JSettingsPanel {
 					//Save for update (only executed if saved AKA ignored on cancel)
 					tasks.add(new AddTask(tag));
 					//Update List
-					addToList(tag, -1);
+					addToList(tag);
 					//Update current tags
 					currentTags.add(tag.getName());
 				}
@@ -207,10 +207,8 @@ public class TagsSettingsPanel extends JSettingsPanel {
 					}
 					//Save for update (only executed if saved AKA ignored on cancel)
 					tasks.add(new EditTask(tag, editedTag));
-					//Save selected index
-					int index = jTags.getSelectedIndex();
 					//Add to list
-					index = addToList(new EditTag(tag, editedTag), index);
+					int index = addToList(new EditTag(tag, editedTag));
 					//Load selected index
 					jTags.setSelectedIndex(index);
 				}
