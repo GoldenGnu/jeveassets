@@ -29,7 +29,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob;
 import net.nikr.eve.jeveasset.data.settings.types.BlueprintType;
@@ -39,7 +38,7 @@ import net.nikr.eve.jeveasset.io.local.ContractPriceWriter;
 
 public class ContractPriceManager {
 
-	//https://app.swaggerhub.com/apis-docs/rihanshazih/contracts-appraisal/
+	// https://app.swaggerhub.com/apis/rihanshazih/contracts-appraisal/
 	private static volatile ContractPriceManager PRICE_GETTER = null;
 
 	private final ContractPriceData contractPriceData;
@@ -71,6 +70,13 @@ public class ContractPriceManager {
 
 	public void addPrices(ReturnData returnData) {
 		contractPriceData.add(returnData);
+	}
+
+	public boolean isFailed(ContractPriceItem contractPriceType) {
+		if (contractPriceType == null) {
+			return false;
+		}
+		return contractPriceData.isFailed(contractPriceType);
 	}
 
 	public boolean haveContractPrice(ContractPriceItem contractPriceType) {
@@ -119,21 +125,35 @@ public class ContractPriceManager {
 	public static class ContractPriceData {
 		private Date date = Settings.getNow();
 		private final Map<ContractPriceItem, Prices> prices = new HashMap<>();
+		private final Map<ContractPriceItem, Date> failed = new HashMap<>();
 
-		public Date getDate() {
+		public synchronized Date getDate() {
 			return date;
 		}
 
-		public void add(ReturnData returnData) {
-			prices.put(returnData.getContractPriceType(), returnData.getPrices());
-			Date expire = returnData.getExpire();
-			if (expire.after(date)) {
-				date = expire;
+		public synchronized void add(ReturnData returnData) {
+			if (returnData.isEmpty()) {
+				failed.put(returnData.getContractPriceType(), returnData.getExpire());
+			} else {
+				prices.put(returnData.getContractPriceType(), returnData.getPrices());
+				failed.remove(returnData.getContractPriceType());
+				Date expire = returnData.getExpire();
+				if (returnData.isAll() && expire.after(date)) {
+					date = expire;
+				}
 			}
 		}
 
 		public Prices getPrices(ContractPriceItem contractPriceType) {
 			return prices.get(contractPriceType);
+		}
+
+		public boolean isFailed(ContractPriceItem contractPriceType) {
+			Date expire = failed.get(contractPriceType);
+			if (expire == null) {
+				return false;
+			}
+			return expire.before(Settings.getNow());
 		}
 	}
 
@@ -409,11 +429,12 @@ public class ContractPriceManager {
 
 		@Override
 		public int hashCode() {
-			int hash = 5;
-			hash = 41 * hash + this.typeID;
-			hash = 41 * hash + (this.bpc ? 1 : 0);
-			hash = 41 * hash + this.me;
-			hash = 41 * hash + this.te;
+			int hash = 3;
+			hash = 89 * hash + this.typeID;
+			hash = 89 * hash + (this.bpc ? 1 : 0);
+			hash = 89 * hash + (this.bpo ? 1 : 0);
+			hash = 89 * hash + this.me;
+			hash = 89 * hash + this.te;
 			return hash;
 		}
 
@@ -435,37 +456,58 @@ public class ContractPriceManager {
 			if (this.bpc != other.bpc) {
 				return false;
 			}
-			if (!Objects.equals(this.me, other.me)) {
+			if (this.bpo != other.bpo) {
 				return false;
 			}
-			if (!Objects.equals(this.te, other.te)) {
+			if (this.me != other.me) {
+				return false;
+			}
+			if (this.te != other.te) {
 				return false;
 			}
 			return true;
 		}
+
 	}
 
 	public static class ReturnData {
 		private final ContractPriceItem contractPriceType;
 		private final Prices prices;
 		private final Date expire;
+		private final boolean all;
 
-		public ReturnData(ContractPriceItem contractPriceType, Prices prices, Date expire) {
+		public ReturnData(ContractPriceItem contractPriceType, Date expire) {
 			this.contractPriceType = contractPriceType;
-			this.prices = prices;
 			this.expire = expire;
+			this.prices = null;
+			this.all = false;
+		}
+
+		public ReturnData(ContractPriceItem contractPriceType, Date expire, Prices prices, boolean all) {
+			this.contractPriceType = contractPriceType;
+			this.expire = expire;
+			this.prices = prices;
+			this.all = all;
 		}
 
 		public ContractPriceItem getContractPriceType() {
 			return contractPriceType;
 		}
 
+		public Date getExpire() {
+			return expire;
+		}
+
 		public Prices getPrices() {
 			return prices;
 		}
 
-		public Date getExpire() {
-			return expire;
+		public boolean isAll() {
+			return all;
+		}
+
+		public boolean isEmpty() {
+			return prices == null;
 		}
 	}
 

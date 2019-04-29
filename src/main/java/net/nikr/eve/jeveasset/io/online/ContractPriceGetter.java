@@ -56,10 +56,12 @@ public class ContractPriceGetter extends AbstractGetter<EsiOwner> {
 	}
 
 	private final ProfileData profileData;
+	private final boolean all;
 	
-	public ContractPriceGetter(final UpdateTask updateTask, final ProfileData profileData) {
+	public ContractPriceGetter(final UpdateTask updateTask, final ProfileData profileData, boolean all) {
 		super(updateTask, null, false, ContractPriceManager.get().getNextUpdate(), TaskType.CONTRACT_PRICES, "Contracts Appraisal");
 		this.profileData = profileData;
+		this.all = all;
 	}
 
 	@Override
@@ -78,22 +80,31 @@ public class ContractPriceGetter extends AbstractGetter<EsiOwner> {
 	public void update(Set<Integer> exclude) {
 		List<Update> updates = new ArrayList<>();
 		final ContractPriceSettings contractPriceSettings = Settings.get().getContractPriceSettings();
+		final ContractPriceManager priceManager = ContractPriceManager.get();
 		for (ContractPriceItem contractPriceType : profileData.getContractPricesTypes()) {
-			updates.add(new Update(contractPriceSettings, contractPriceType));
+			if (!priceManager.isFailed(contractPriceType) && (all || !priceManager.haveContractPrice(contractPriceType))) {
+				updates.add(new Update(contractPriceSettings, contractPriceType, all));
+			}
 		}
-		ContractPriceManager priceManager = ContractPriceManager.get();
 		try {
 			List<Future<ReturnData>> futures = startSubThreads(updates, true);
+			int done = 0;
+			int failed = 0;
 			for (Future<ReturnData> future : futures) {
 				if (future.isDone()) {
 					ReturnData returnValue = future.get(); //Get data from ESI
 					if (returnValue != null) {
 						priceManager.addPrices(returnValue);
+						if (returnValue.isEmpty()) {
+							done++;
+						} else {
+							failed++;
+						}
 					}
 				}
 			}
 			priceManager.save();
-			LOG.info("Contract prices updated");
+			LOG.info(done + " contract prices updated (" + failed + " empty/failed)");
 		} catch (ExecutionException ex) {
 			addError(null, ex.getMessage(), ex.getMessage(), ex);
 		} catch (InterruptedException ex) {
@@ -109,11 +120,13 @@ public class ContractPriceGetter extends AbstractGetter<EsiOwner> {
 
 		private final ContractPriceSettings contractPriceSettings;
 		private final ContractPriceItem contractPriceType;
+		private final boolean all;
 		private int retry = 0;
 
-		public Update(ContractPriceSettings contractPriceSettings, ContractPriceItem contractPriceType) {
+		public Update(ContractPriceSettings contractPriceSettings, ContractPriceItem contractPriceType, boolean all) {
 			this.contractPriceSettings = contractPriceSettings;
 			this.contractPriceType = contractPriceType;
+			this.all = all;
 		}
 
 		@Override
@@ -125,14 +138,14 @@ public class ContractPriceGetter extends AbstractGetter<EsiOwner> {
 			try {
 				ApiResponse<Prices> apiResponse = API.getPricesWithHttpInfo(contractPriceType.getTypeID(), contractPriceSettings.isIncludePrivate(), contractPriceType.isBpc(), contractPriceSettings.getSecurityValues(), contractPriceType.getMe(), contractPriceType.getTe());
 				if (apiResponse.getStatusCode() == 204) {
-					return null;
+					return new ReturnData(contractPriceType, getHeaderExpires(apiResponse.getHeaders()));
 				} else {
-					return new ReturnData(contractPriceType, apiResponse.getData(), getHeaderExpires(apiResponse.getHeaders()));
+					return new ReturnData(contractPriceType, getHeaderExpires(apiResponse.getHeaders()), apiResponse.getData(), all);
 				}
 			} catch (ApiException ex) {
 				if (ex.getCode() == 404) {
 					LOG.info(contractPriceType.getTypeID() + " not found", ex);
-					return null;
+					return new ReturnData(contractPriceType, getHeaderExpires(ex.getResponseHeaders()));
 				} else {
 					retry++;
 					if (retry < RETRIES) {
