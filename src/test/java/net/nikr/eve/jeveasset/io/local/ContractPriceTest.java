@@ -62,7 +62,7 @@ public class ContractPriceTest extends TestUtil{
 		prices.setMaximum(MAXIMUM);
 		prices.setFivePercent(FIVE_PERCENT);
 		prices.setContracts(CONTRACTS);
-		ReturnData returnData = new ReturnData(contractPriceType, prices, DATE);
+		ReturnData returnData = new ReturnData(contractPriceType, DATE, prices, true);
 		ContractPriceData out = new ContractPriceData();
 		out.add(returnData);
 		//Save
