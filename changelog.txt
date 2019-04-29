@@ -16,6 +16,18 @@
                   #### #  # #  # #  # #### #### #### #### ####
 
 ________________________________________________________________________________
+_6.0.1__________________________________________________________________________
+
+New Features:
+-Send feedback to the Contract Appraisal API
+-Prices for BPCs and BP runs in the stockpile
+-Added "New" update option for Contract Appraisal
+
+Bug Fixes:
+-Can not set BPC price
+-Incorrect update time for Contract Appraisal (sometimes missing a day)
+
+________________________________________________________________________________
 _6.0.0__________________________________________________________________________
 
 New Features:
