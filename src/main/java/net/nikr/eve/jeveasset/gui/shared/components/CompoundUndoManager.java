@@ -120,7 +120,7 @@ public class CompoundUndoManager extends UndoManager
 	**  the Caret correctly as each edit is undone.
 	 */
 	@Override
-	public void undo() {
+	public synchronized void undo() {
 		textComponent.getDocument().addDocumentListener(this);
 		super.undo();
 		textComponent.getDocument().removeDocumentListener(this);
@@ -131,7 +131,7 @@ public class CompoundUndoManager extends UndoManager
 	**  the Caret correctly as each edit is redone.
 	 */
 	@Override
-	public void redo() {
+	public synchronized void redo() {
 		textComponent.getDocument().addDocumentListener(this);
 		super.redo();
 		textComponent.getDocument().removeDocumentListener(this);
