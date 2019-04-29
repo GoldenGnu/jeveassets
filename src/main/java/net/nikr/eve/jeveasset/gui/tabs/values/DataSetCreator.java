@@ -146,25 +146,7 @@ public class DataSetCreator {
 		//Market Orders
 		try {
 			profileData.getMarketOrdersEventList().getReadWriteLock().readLock().lock();
-			for (MyMarketOrder marketOrder : profileData.getMarketOrdersEventList()) {
-				if (marketOrder.isActive()) {
-					Value value;
-					if (marketOrder.isCorp() && !marketOrder.isCorporation() && marketOrder.getOwner().getCorporationName() != null) {
-						value = getValueInner(values, marketOrder.getOwner().getCorporationName(), date);
-					} else {
-						value = getValueInner(values, marketOrder.getOwnerName(), date);
-					}
-					if (!marketOrder.isBuyOrder()) { //Sell Orders
-						value.addSellOrders(marketOrder.getPrice() * marketOrder.getVolumeRemain());
-						total.addSellOrders(marketOrder.getPrice() * marketOrder.getVolumeRemain());
-					} else { //Buy Orders
-						value.addEscrows(marketOrder.getEscrow());
-						value.addEscrowsToCover((marketOrder.getPrice() * marketOrder.getVolumeRemain()) - marketOrder.getEscrow());
-						total.addEscrows(marketOrder.getEscrow());
-						total.addEscrowsToCover((marketOrder.getPrice() * marketOrder.getVolumeRemain()) - marketOrder.getEscrow());
-					}
-				}
-			}
+			addMarketOrders(profileData.getMarketOrdersEventList(), values, total, date);
 		} finally {
 			profileData.getMarketOrdersEventList().getReadWriteLock().readLock().unlock();
 		}
@@ -175,7 +157,7 @@ public class DataSetCreator {
 				//Manufacturing and not completed
 				if (industryJob.isManufacturing() && !industryJob.isDelivered()) {
 					Value value = getValueInner(values, industryJob.getOwnerName(), date);
-					double manufacturingTotal = industryJob.getProductQuantity() * industryJob.getRuns() * ApiIdConverter.getPrice(industryJob.getProductTypeID(), false);
+					double manufacturingTotal = industryJob.getProductQuantity() * industryJob.getRuns() * ApiIdConverter.getPriceSimple(industryJob.getProductTypeID(), false);
 					value.addManufacturing(manufacturingTotal);
 					total.addManufacturing(manufacturingTotal);
 				}
@@ -198,6 +180,32 @@ public class DataSetCreator {
 			profileData.getContractItemEventList().getReadWriteLock().readLock().unlock();
 		}
 		return values;
+	}
+
+	protected void addMarketOrders(List<MyMarketOrder> marketOrders, Map<String, Value> values, Value total, Date date) {
+		for (MyMarketOrder marketOrder : marketOrders) {
+			if (marketOrder.isActive()) {
+				Value value;
+				if (marketOrder.isCorp() && !marketOrder.isCorporation() && marketOrder.getOwner().getCorporationName() != null) {
+					value = getValueInner(values, marketOrder.getOwner().getCorporationName(), date);
+				} else {
+					value = getValueInner(values, marketOrder.getOwnerName(), date);
+				}
+				if (marketOrder.isBuyOrder()) { //Buy Orders
+					value.addEscrows(marketOrder.getEscrow());
+					value.addEscrowsToCover((marketOrder.getPrice() * marketOrder.getVolumeRemain()) - marketOrder.getEscrow());
+					total.addEscrows(marketOrder.getEscrow());
+					total.addEscrowsToCover((marketOrder.getPrice() * marketOrder.getVolumeRemain()) - marketOrder.getEscrow());
+				} else { //Sell Orders
+					if (assetsUpdated(marketOrder.getCreatedOrIssued(), marketOrder.getOwner())) {
+						//To avoid duplicating the value:
+						//Only add sell orders value that was created before the last asset update
+						value.addSellOrders(marketOrder.getPrice() * marketOrder.getVolumeRemain());
+						total.addSellOrders(marketOrder.getPrice() * marketOrder.getVolumeRemain());
+					}
+				}
+			}
+		}
 	}
 
 	protected void addContracts(List<MyContract> contractItems, Map<String, Value> values, Map<Long, OwnerType> owners, Value total, Date date) {

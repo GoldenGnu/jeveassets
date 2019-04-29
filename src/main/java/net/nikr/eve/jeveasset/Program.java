@@ -92,6 +92,7 @@ import net.nikr.eve.jeveasset.gui.tabs.values.ValueTableTab;
 import net.nikr.eve.jeveasset.i18n.GuiFrame;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 import net.nikr.eve.jeveasset.i18n.TabsTracker;
+import net.nikr.eve.jeveasset.data.settings.ContractPriceManager;
 import net.nikr.eve.jeveasset.io.online.PriceDataGetter;
 import net.nikr.eve.jeveasset.io.online.Updater;
 import net.nikr.eve.jeveasset.io.shared.DesktopUtil;
@@ -107,7 +108,7 @@ public class Program implements ActionListener {
 		TIMER
 	}
 	//Major.Minor.Bugfix [Release Candidate n] [BETA n] [DEV BUILD #n];
-	public static final String PROGRAM_VERSION = "6.0.0 DEV BUILD 1";
+	public static final String PROGRAM_VERSION = "6.1.0 DEV BUILD 4";
 	public static final String PROGRAM_NAME = "jEveAssets";
 	public static final String PROGRAM_HOMEPAGE = "https://eve.nikr.net/jeveasset";
 	public static final boolean PROGRAM_DEV_BUILD = false;
@@ -182,6 +183,7 @@ public class Program implements ActionListener {
 		Settings.load();
 		TrackerData.load();
 		AssetAddedData.load();
+		ContractPriceManager.load();
 
 		updater = new Updater();
 		localData = updater.getLocalData();

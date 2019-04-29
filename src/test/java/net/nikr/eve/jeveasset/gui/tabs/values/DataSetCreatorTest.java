@@ -45,7 +45,7 @@ import org.junit.Test;
 
 public class DataSetCreatorTest extends TestUtil {
 
-	private static enum AsssetDate {
+	private static enum AssetDate {
 		UPDATED, NOT_UPDATED
 	}
 
@@ -81,8 +81,8 @@ public class DataSetCreatorTest extends TestUtil {
 		List<TestMatch> matchs = new ArrayList<>();
 	//Contract Collateral (Courier)
 		//issuer
-		matchs.add(new TestMatch(1, issuer(AsssetDate.UPDATED, null), acceptor(null, null), Included.BOTH, Completed.BOTH, COLLATERAL, NONE, contractType(ContractType.COURIER), contractStatus(ContractStatus.IN_PROGRESS, ContractStatus.OUTSTANDING), contractStatus()));
-		matchs.add(new TestMatch(1, issuer(AsssetDate.NOT_UPDATED, null), acceptor(null, null), Included.BOTH, Completed.TRUE, COLLATERAL, NONE, contractType(ContractType.COURIER), contractStatus(), contractStatus()));
+		matchs.add(new TestMatch(1, issuer(AssetDate.UPDATED, null), acceptor(null, null), Included.BOTH, Completed.BOTH, COLLATERAL, NONE, contractType(ContractType.COURIER), contractStatus(ContractStatus.IN_PROGRESS, ContractStatus.OUTSTANDING), contractStatus()));
+		matchs.add(new TestMatch(1, issuer(AssetDate.NOT_UPDATED, null), acceptor(null, null), Included.BOTH, Completed.TRUE, COLLATERAL, NONE, contractType(ContractType.COURIER), contractStatus(), contractStatus()));
 		//acceptor
 		matchs.add(new TestMatch(2, issuer(null, null), acceptor(null, BalanceDate.UPDATED), Included.BOTH, Completed.BOTH, COLLATERAL, NONE, contractType(ContractType.COURIER), contractStatus(ContractStatus.IN_PROGRESS), contractStatus()));
 	//Contract ISK
@@ -93,25 +93,25 @@ public class DataSetCreatorTest extends TestUtil {
 		matchs.add(new TestMatch(4, issuer(null, null), acceptor(null, BalanceDate.NOT_UPDATED), Included.BOTH, Completed.TRUE, NONE, (REWARD + -PRICE), contractType(), contractStatus(), contractStatus()));
 	//Contract Items
 		//issuer
-		matchs.add(new TestMatch(5, issuer(AsssetDate.UPDATED, null), acceptor(null, null), Included.TRUE, Completed.BOTH, NONE, ITEM, contractType(ContractType.AUCTION, ContractType.ITEM_EXCHANGE), contractStatus(ContractStatus.OUTSTANDING), contractStatus()));
-		matchs.add(new TestMatch(5, issuer(AsssetDate.NOT_UPDATED, null), acceptor(null, null), Included.TRUE, Completed.TRUE, NONE, -ITEM, contractType(ContractType.AUCTION, ContractType.ITEM_EXCHANGE), contractStatus(), contractStatus(ContractStatus.OUTSTANDING)));
-		matchs.add(new TestMatch(5, issuer(AsssetDate.NOT_UPDATED, null), acceptor(null, null), Included.FALSE, Completed.TRUE, NONE, ITEM, contractType(ContractType.AUCTION, ContractType.ITEM_EXCHANGE), contractStatus(), contractStatus(ContractStatus.OUTSTANDING)));
+		matchs.add(new TestMatch(5, issuer(AssetDate.UPDATED, null), acceptor(null, null), Included.TRUE, Completed.BOTH, NONE, ITEM, contractType(ContractType.AUCTION, ContractType.ITEM_EXCHANGE), contractStatus(ContractStatus.OUTSTANDING), contractStatus()));
+		matchs.add(new TestMatch(5, issuer(AssetDate.NOT_UPDATED, null), acceptor(null, null), Included.TRUE, Completed.TRUE, NONE, -ITEM, contractType(ContractType.AUCTION, ContractType.ITEM_EXCHANGE), contractStatus(), contractStatus(ContractStatus.OUTSTANDING)));
+		matchs.add(new TestMatch(5, issuer(AssetDate.NOT_UPDATED, null), acceptor(null, null), Included.FALSE, Completed.TRUE, NONE, ITEM, contractType(ContractType.AUCTION, ContractType.ITEM_EXCHANGE), contractStatus(), contractStatus(ContractStatus.OUTSTANDING)));
 		//acceptor
-		matchs.add(new TestMatch(6, issuer(null, null), acceptor(AsssetDate.NOT_UPDATED, null), Included.TRUE, Completed.TRUE, NONE, ITEM, contractType(ContractType.AUCTION, ContractType.ITEM_EXCHANGE), contractStatus(), contractStatus()));
-		matchs.add(new TestMatch(6, issuer(null, null), acceptor(AsssetDate.NOT_UPDATED, null), Included.FALSE, Completed.TRUE, NONE, -ITEM, contractType(ContractType.AUCTION, ContractType.ITEM_EXCHANGE), contractStatus(), contractStatus()));
+		matchs.add(new TestMatch(6, issuer(null, null), acceptor(AssetDate.NOT_UPDATED, null), Included.TRUE, Completed.TRUE, NONE, ITEM, contractType(ContractType.AUCTION, ContractType.ITEM_EXCHANGE), contractStatus(), contractStatus()));
+		matchs.add(new TestMatch(6, issuer(null, null), acceptor(AssetDate.NOT_UPDATED, null), Included.FALSE, Completed.TRUE, NONE, -ITEM, contractType(ContractType.AUCTION, ContractType.ITEM_EXCHANGE), contractStatus(), contractStatus()));
 		boolean[] includedValues = {true, false};
 		boolean[] completedValues = {true, false};
 		int iteration = 0;
 		for (ContractStatus status : ContractStatus.values()) {
 			for (ContractType type : ContractType.values()) {
-				for (AsssetDate issuerAsssetDate : AsssetDate.values()) {
-					for (AsssetDate acceptorAsssetDate : AsssetDate.values()) {
+				for (AssetDate issuerAssetDate : AssetDate.values()) {
+					for (AssetDate acceptorAssetDate : AssetDate.values()) {
 						for (BalanceDate issuerBalanceDate : BalanceDate.values()) {
 							for (BalanceDate acceptorBalanceDate : BalanceDate.values()) {
 								for (boolean included : includedValues) {
 									for (boolean completed : completedValues) {
 										iteration++;
-										test(iteration, matchs, new TestData(issuer(issuerAsssetDate, issuerBalanceDate), acceptor(acceptorAsssetDate, acceptorBalanceDate), included, completed, type, status));
+										test(iteration, matchs, new TestData(issuer(issuerAssetDate, issuerBalanceDate), acceptor(acceptorAssetDate, acceptorBalanceDate), included, completed, type, status));
 									}
 								}
 							}
@@ -172,12 +172,12 @@ public class DataSetCreatorTest extends TestUtil {
 		builder.append(test.isComplated());
 		builder.append("\r\n	Included: ");
 		builder.append(test.isIncluded());
-		builder.append("\r\n	Issue:\r\n		AsssetDate.");
-		builder.append(test.getIssuer().getAsssetDate());
+		builder.append("\r\n	Issue:\r\n		AssetDate.");
+		builder.append(test.getIssuer().getAssetDate());
 		builder.append("\r\n		BalanceDate.");
 		builder.append(test.getIssuer().getBalanceDate());
-		builder.append("\r\n	Acceptor:\r\n		AsssetDate.");
-		builder.append(test.getAcceptor().getAsssetDate());
+		builder.append("\r\n	Acceptor:\r\n		AssetDate.");
+		builder.append(test.getAcceptor().getAssetDate());
 		builder.append("\r\n		BalanceDate.");
 		builder.append(test.getAcceptor().getBalanceDate());
 		builder.append("\r\nTotal\r\n	Collateral: ");
@@ -188,12 +188,12 @@ public class DataSetCreatorTest extends TestUtil {
 		return builder.toString();
 	}
 
-	private Issuer issuer(AsssetDate asssetDate, BalanceDate balanceDate) {
-		return new Issuer(asssetDate, balanceDate);
+	private Issuer issuer(AssetDate assetDate, BalanceDate balanceDate) {
+		return new Issuer(assetDate, balanceDate);
 	}
 
-	private Acceptor acceptor(AsssetDate asssetDate, BalanceDate balanceDate) {
-		return new Acceptor(asssetDate, balanceDate);
+	private Acceptor acceptor(AssetDate assetDate, BalanceDate balanceDate) {
+		return new Acceptor(assetDate, balanceDate);
 	}
 
 	public Set<ContractStatus> contractStatus(ContractStatus ... data) {
@@ -205,9 +205,9 @@ public class DataSetCreatorTest extends TestUtil {
 	}
 
 	private void setOwnerData(OwnerType ownerType, OwnerData<?> ownerData) {
-		if (ownerData.getAsssetDate() == null) {
+		if (ownerData.getAssetDate() == null) {
 			ownerType.setAssetLastUpdate(now);
-		} else switch (ownerData.getAsssetDate()) {
+		} else switch (ownerData.getAssetDate()) {
 			case UPDATED:
 				ownerType.setAssetLastUpdate(after);
 				break;
@@ -459,17 +459,17 @@ public class DataSetCreatorTest extends TestUtil {
 	}
 
 	private static class Acceptor implements OwnerData<Acceptor> {
-		protected final AsssetDate asssetDate;
+		protected final AssetDate assetDate;
 		protected final BalanceDate balanceDate;
 
-		public Acceptor(AsssetDate asssetDate, BalanceDate balanceDate) {
-			this.asssetDate = asssetDate;
+		public Acceptor(AssetDate assetDate, BalanceDate balanceDate) {
+			this.assetDate = assetDate;
 			this.balanceDate = balanceDate;
 		}
 
 		@Override
-		public AsssetDate getAsssetDate() {
-			return asssetDate;
+		public AssetDate getAssetDate() {
+			return assetDate;
 		}
 
 		@Override
@@ -485,17 +485,17 @@ public class DataSetCreatorTest extends TestUtil {
 
 	private static class Issuer implements OwnerData<Issuer> {
 
-		protected final AsssetDate asssetDate;
+		protected final AssetDate assetDate;
 		protected final BalanceDate balanceDate;
 
-		public Issuer(AsssetDate asssetDate, BalanceDate balanceDate) {
-			this.asssetDate = asssetDate;
+		public Issuer(AssetDate assetDate, BalanceDate balanceDate) {
+			this.assetDate = assetDate;
 			this.balanceDate = balanceDate;
 		}
 
 		@Override
-		public AsssetDate getAsssetDate() {
-			return asssetDate;
+		public AssetDate getAssetDate() {
+			return assetDate;
 		}
 
 		@Override
@@ -510,13 +510,13 @@ public class DataSetCreatorTest extends TestUtil {
 	}
 
 	private static interface OwnerData<T extends OwnerData<?>> {
-		public AsssetDate getAsssetDate();
+		public AssetDate getAssetDate();
 		public BalanceDate getBalanceDate();
 		public boolean match(T ownerData);
 		default boolean match(T o1, T o2) {
-			return match(o1.getAsssetDate(), o2.getAsssetDate()) && match(o1.getBalanceDate(), o2.getBalanceDate());
+			return match(o1.getAssetDate(), o2.getAssetDate()) && match(o1.getBalanceDate(), o2.getBalanceDate());
 		}
-		default boolean match(AsssetDate o1, AsssetDate o2) {
+		default boolean match(AssetDate o1, AssetDate o2) {
 			if (o1 == null || o2 == null) {
 				return true;
 			} else {

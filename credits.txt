@@ -85,10 +85,18 @@ Link:
 ________________________________________________________________________________
 _EVEMARKETER____________________________________________________________________
 
-jEveAssets evemarketer.com API to get price data
+jEveAssets use evemarketer.com API to get price data
 
 Link:
   https://evemarketer.com/
+
+________________________________________________________________________________
+_CONTRACTS_APPRAISAL____________________________________________________________
+
+jEveAssets use Contracts Appraisal API to get contract price data
+
+Link:
+  https://app.swaggerhub.com/apis-docs/rihanshazih/contracts-appraisal/
 
 ________________________________________________________________________________
 _STOP.HAMMERTI.ME.UK____________________________________________________________

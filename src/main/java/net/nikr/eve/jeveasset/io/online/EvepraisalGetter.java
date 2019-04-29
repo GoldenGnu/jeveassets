@@ -22,12 +22,12 @@ package net.nikr.eve.jeveasset.io.online;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonParseException;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.text.DecimalFormat;
@@ -86,9 +86,7 @@ public class EvepraisalGetter {
             Result result = gson.fromJson(response.toString(), Result.class);
 			return result.getID();
             // set data
-        } catch (MalformedURLException ex) {
-            LOG.error(ex.getMessage(), ex);
-        } catch (IOException ex) {
+        } catch (IOException | JsonParseException ex) {
             LOG.error(ex.getMessage(), ex);
         }
 		return null;

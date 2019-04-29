@@ -26,6 +26,7 @@ import net.nikr.eve.jeveasset.data.api.raw.RawContractItem;
 import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
 import net.nikr.eve.jeveasset.data.settings.types.BlueprintType;
+import net.nikr.eve.jeveasset.data.settings.types.ContractPriceType;
 import net.nikr.eve.jeveasset.data.settings.types.EditablePriceType;
 import net.nikr.eve.jeveasset.data.settings.types.ItemType;
 import net.nikr.eve.jeveasset.data.settings.types.LocationsType;
@@ -34,11 +35,12 @@ import net.nikr.eve.jeveasset.gui.shared.CopyHandler.CopySeparator;
 import net.nikr.eve.jeveasset.i18n.TabsContracts;
 import net.nikr.eve.jeveasset.io.shared.RawConverter;
 
-public class MyContractItem extends RawContractItem implements Comparable<MyContractItem>, LocationsType, ItemType, BlueprintType, EditablePriceType, CopySeparator, OwnersType {
+public class MyContractItem extends RawContractItem implements Comparable<MyContractItem>, LocationsType, ItemType, BlueprintType, EditablePriceType, ContractPriceType, CopySeparator, OwnersType {
 
 	private MyContract contract;
 	private final Item item;
 	private double price;
+	private double contractPrice;
 
 	public MyContractItem(MyContract contract) {
 		super(RawContractItem.create());
@@ -105,6 +107,16 @@ public class MyContractItem extends RawContractItem implements Comparable<MyCont
 	}
 
 	@Override
+	public double getContractPrice() {
+		return contractPrice;
+	}
+
+	@Override
+	public void setContractPrice(double contractPrice) {
+		this.contractPrice = contractPrice;
+	}
+
+	@Override
 	public boolean isBPO() {
 		return (item.isBlueprint() && this.getRawQuantity() != null && this.getRawQuantity() == -1);
 	}
@@ -112,6 +124,27 @@ public class MyContractItem extends RawContractItem implements Comparable<MyCont
 	@Override
 	public boolean isBPC() {
 		return (item.isBlueprint() && this.getRawQuantity() != null && this.getRawQuantity() == -2);
+	}
+
+	@Override
+	public int getRuns() {
+		if (isBPC()) {
+			return 1; //BPC
+		} else if (isBPO()) {
+			return -1; //BPO
+		} else {
+			return 0; //Default unknown
+		}
+	}
+
+	@Override
+	public int getMaterialEfficiency() {
+		return 0;
+	}
+
+	@Override
+	public int getTimeEfficiency() {
+		return 0;
 	}
 
 	@Override

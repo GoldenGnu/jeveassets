@@ -42,18 +42,18 @@ public class ThreadWoker {
 	private static final Logger LOG = LoggerFactory.getLogger(ThreadWoker.class);
 
 	public static void start(UpdateTask updateTask, Collection<? extends Runnable> updaters) {
-		start(updateTask, true, updaters);
+		start(updateTask, updaters, true);
 	}
 
 	public static void start(UpdateTask updateTask, Collection<? extends Runnable> updaters, int start, int end) {
-		start(updateTask, true, updaters, start, end);
+		start(updateTask, updaters, true, start, end);
 	}
 
-	public static void start(UpdateTask updateTask, boolean updateProgress, Collection<? extends Runnable> updaters) {
-		start(updateTask, updateProgress, updaters, 0, 100);
+	public static void start(UpdateTask updateTask, Collection<? extends Runnable> updaters, boolean updateProgress) {
+		start(updateTask, updaters, updateProgress, 0, 100);
 	}
 
-	public static void start(UpdateTask updateTask, boolean updateProgress, Collection<? extends Runnable> updaters, int start, int end) {
+	public static void start(UpdateTask updateTask, Collection<? extends Runnable> updaters, boolean updateProgress, int start, int end) {
 		ExecutorService threadPool = Executors.newFixedThreadPool(MAIN_THREADS);
 		try {
 			LOG.info("Starting " + updaters.size() + " main threads");
@@ -83,10 +83,18 @@ public class ThreadWoker {
 	}
 
 	public static <K> List<Future<K>> startReturn(UpdateTask updateTask, Collection<? extends Callable<K>> updaters) throws InterruptedException {
+		return startReturn(updateTask, updaters, false);
+	}
+	
+	public static <K> List<Future<K>> startReturn(UpdateTask updateTask, Collection<? extends Callable<K>> updaters, boolean updateProgress) throws InterruptedException {
+		return startReturn(updateTask, updaters, updateProgress, 0, 100);
+	}
+
+	public static <K> List<Future<K>> startReturn(UpdateTask updateTask, Collection<? extends Callable<K>> updaters, boolean updateProgress, int start, int end) throws InterruptedException {
 		if (updateTask != null && updateTask.isCancelled()) {
 			throw new TaskCancelledException();
 		}
-		LOG.info("Starting " + updaters.size() + " main threads");
+		LOG.info("Starting " + updaters.size() + " sub threads");
 		List<Future<K>> futures = new ArrayList<Future<K>>();
 		for (Callable<K> callable : updaters) {
 			futures.add(RETURN_THREAD_POOL.submit(callable));
@@ -105,6 +113,8 @@ public class ThreadWoker {
 						future.cancel(true);
 					}
 					throw new TaskCancelledException(); //Stop parent Task
+				} else if (updateProgress) {
+					updateTask.setTaskProgress(updaters.size(), done, start, end);
 				}
 			}
 			Thread.sleep(500);

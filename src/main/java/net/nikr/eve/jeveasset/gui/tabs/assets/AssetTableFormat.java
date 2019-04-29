@@ -166,6 +166,16 @@ public enum AssetTableFormat implements EnumTableColumn<MyAsset> {
 			return from.getPriceBuyMax();
 		}
 	},
+	PRICE_CONTRACT(Double.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsAssets.get().columnPriceContract();
+		}
+		@Override
+		public Object getColumnValue(final MyAsset from) {
+			return from.getContractPrice();
+		}
+	},
 	PRICE_REPROCESSED(Double.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {

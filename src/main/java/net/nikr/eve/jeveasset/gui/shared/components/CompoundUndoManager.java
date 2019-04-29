@@ -22,7 +22,6 @@
  */
 package net.nikr.eve.jeveasset.gui.shared.components;
 
-import java.awt.Event;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
@@ -72,14 +71,14 @@ public class CompoundUndoManager extends UndoManager
 		undoAction = new UndoAction();
 		redoAction = new RedoAction();
 
-		KeyStroke undoKeystrokeOther = KeyStroke.getKeyStroke(KeyEvent.VK_Z, Event.CTRL_MASK);
-		KeyStroke undoKeystrokeMac = KeyStroke.getKeyStroke(KeyEvent.VK_Z, Event.META_MASK);
+		KeyStroke undoKeystrokeOther = KeyStroke.getKeyStroke(KeyEvent.VK_Z, InputEvent.CTRL_DOWN_MASK);
+		KeyStroke undoKeystrokeMac = KeyStroke.getKeyStroke(KeyEvent.VK_Z, InputEvent.META_DOWN_MASK);
 		component.getInputMap().put(undoKeystrokeOther, "undoKeystroke");
 		component.getInputMap().put(undoKeystrokeMac, "undoKeystroke");
 		component.getActionMap().put("undoKeystroke", undoAction);
 
-		KeyStroke redoKeystrokeOther = KeyStroke.getKeyStroke(KeyEvent.VK_Y, Event.CTRL_MASK);
-		KeyStroke redoKeystrokeMac = KeyStroke.getKeyStroke(KeyEvent.VK_Y, Event.META_MASK);
+		KeyStroke redoKeystrokeOther = KeyStroke.getKeyStroke(KeyEvent.VK_Y, InputEvent.CTRL_DOWN_MASK);
+		KeyStroke redoKeystrokeMac = KeyStroke.getKeyStroke(KeyEvent.VK_Y, InputEvent.META_DOWN_MASK);
 		component.getInputMap().put(redoKeystrokeOther, "redoKeystroke");
 		component.getInputMap().put(redoKeystrokeMac, "redoKeystroke");
 		component.getActionMap().put("redoKeystroke", redoAction);
@@ -121,7 +120,7 @@ public class CompoundUndoManager extends UndoManager
 	**  the Caret correctly as each edit is undone.
 	 */
 	@Override
-	public void undo() {
+	public synchronized void undo() {
 		textComponent.getDocument().addDocumentListener(this);
 		super.undo();
 		textComponent.getDocument().removeDocumentListener(this);
@@ -132,7 +131,7 @@ public class CompoundUndoManager extends UndoManager
 	**  the Caret correctly as each edit is redone.
 	 */
 	@Override
-	public void redo() {
+	public synchronized void redo() {
 		textComponent.getDocument().addDocumentListener(this);
 		super.redo();
 		textComponent.getDocument().removeDocumentListener(this);
@@ -155,12 +154,15 @@ public class CompoundUndoManager extends UndoManager
 		int lengthChange = textComponent.getDocument().getLength() - lastLength;
 
 		//  Check for an attribute change
-		AbstractDocument.DefaultDocumentEvent event
-				= (AbstractDocument.DefaultDocumentEvent) e.getEdit();
-
-		if (event.getType().equals(DocumentEvent.EventType.CHANGE) && offsetChange == 0) {
-			compoundEdit.addEdit(e.getEdit());
-			return;
+		UndoableEdit edit = e.getEdit();
+		if (edit instanceof AbstractDocument.DefaultDocumentEvent) {
+			AbstractDocument.DefaultDocumentEvent event = (AbstractDocument.DefaultDocumentEvent) e.getEdit();
+			if (event.getType().equals(DocumentEvent.EventType.CHANGE)) {
+				if (offsetChange == 0) {
+					compoundEdit.addEdit(e.getEdit());
+					return;
+				}
+			}
 		}
 
 		//  Check for an incremental edit or backspace.
@@ -279,7 +281,7 @@ public class CompoundUndoManager extends UndoManager
 			putValue(Action.NAME, "Undo");
 			putValue(Action.SHORT_DESCRIPTION, getValue(Action.NAME));
 			putValue(Action.MNEMONIC_KEY, KeyEvent.VK_U);
-			putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_Z, InputEvent.CTRL_MASK));
+			putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_Z, InputEvent.CTRL_DOWN_MASK));
 			setEnabled(false);
 		}
 
@@ -309,7 +311,7 @@ public class CompoundUndoManager extends UndoManager
 			putValue(Action.NAME, "Redo");
 			putValue(Action.SHORT_DESCRIPTION, getValue(Action.NAME));
 			putValue(Action.MNEMONIC_KEY, KeyEvent.VK_R);
-			putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_Y, InputEvent.CTRL_MASK));
+			putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_Y, InputEvent.CTRL_DOWN_MASK));
 			setEnabled(false);
 		}
 

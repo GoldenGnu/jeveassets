@@ -216,6 +216,9 @@ public final class Formater {
 			space = true;
 		}
 		long hours = time / (60 * 60 * 1000) % 24;
+		if (!showDays) {
+			hours = hours + (days * 24);
+		}
 		if (hours > 0 && showHours) {
 			if (space) {
 				timeString.append(" ");
@@ -236,6 +239,9 @@ public final class Formater {
 			space = true;
 		}
 		long minutes = time / (60 * 1000) % 60;
+		if (!showHours) {
+			minutes = minutes + (hours * 60);
+		}
 		if (minutes > 0 && showMinutes) {
 			if (space) {
 				timeString.append(" ");
@@ -256,6 +262,9 @@ public final class Formater {
 			space = true;
 		}
 		long seconds = time / (1000) % 60;
+		if (!showMinutes) {
+			seconds = seconds + (minutes * 60);
+		}
 		if (seconds > 0 && showSecounds) {
 			if (space) {
 				timeString.append(" ");

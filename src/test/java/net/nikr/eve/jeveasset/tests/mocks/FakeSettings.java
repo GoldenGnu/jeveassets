@@ -27,6 +27,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
+import net.nikr.eve.jeveasset.data.settings.ContractPriceManager;
 import net.nikr.eve.jeveasset.data.settings.ExportSettings;
 import net.nikr.eve.jeveasset.data.settings.PriceData;
 import net.nikr.eve.jeveasset.data.settings.PriceDataSettings;
@@ -560,6 +561,11 @@ public abstract class FakeSettings extends Settings {
 
 	@Override
 	public boolean isAskedCheckAllTracker() {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public ContractPriceManager.ContractPriceSettings getContractPriceSettings() {
 		throw new UnsupportedOperationException("not implemented");
 	}
 }

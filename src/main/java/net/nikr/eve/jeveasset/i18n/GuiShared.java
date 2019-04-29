@@ -44,6 +44,8 @@ public abstract class GuiShared extends Bundle {
 	public abstract String containerDelete();
 	public abstract String containerEdit();
 	public abstract String containerText();
+	public abstract String contractPriceReportMsg();
+	public abstract String contractPriceReportTitle();
 	public abstract String copy();
 	public abstract String copyEveMultiBuy();
 	public abstract String copyPlus();

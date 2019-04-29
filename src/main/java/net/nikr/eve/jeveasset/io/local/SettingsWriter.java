@@ -26,6 +26,7 @@ import java.net.Proxy;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import net.nikr.eve.jeveasset.data.settings.ContractPriceManager.ContractPriceSettings;
 import net.nikr.eve.jeveasset.data.settings.ExportSettings;
 import net.nikr.eve.jeveasset.data.settings.PriceDataSettings;
 import net.nikr.eve.jeveasset.data.settings.ProxyData;
@@ -114,6 +115,7 @@ public class SettingsWriter extends AbstractXmlWriter {
 		writeWindow(xmldoc, settings);
 		writeProxy(xmldoc, settings.getProxyData());
 		writePriceDataSettings(xmldoc, settings.getPriceDataSettings());
+		writeContractPriceSettings(xmldoc, settings.getContractPriceSettings());
 		writeFlags(xmldoc, settings.getFlags());
 		writeUserPrices(xmldoc, settings.getUserPrices());
 		writeUserItemNames(xmldoc, settings.getUserItemNames());
@@ -498,6 +500,17 @@ public class SettingsWriter extends AbstractXmlWriter {
 		}
 		parentNode.setAttributeNS(null, "locations", builder.toString());
 		parentNode.setAttributeNS(null, "type", priceDataSettings.getLocationType().name());
+		xmldoc.getDocumentElement().appendChild(parentNode);
+	}
+
+	private void writeContractPriceSettings(final Document xmldoc, final ContractPriceSettings contractPriceSettings) {
+		Element parentNode = xmldoc.createElementNS(null, "contractpricesettings");
+		parentNode.setAttributeNS(null, "includeprivate", String.valueOf(contractPriceSettings.isIncludePrivate()));
+		parentNode.setAttributeNS(null, "defaultbpc", String.valueOf(contractPriceSettings.isDefaultBPC()));
+		parentNode.setAttributeNS(null, "mode", contractPriceSettings.getContractPriceMode().name());
+		parentNode.setAttributeNS(null, "sec", contractPriceSettings.getSecurityString());
+		parentNode.setAttributeNS(null, "feedback", String.valueOf(contractPriceSettings.isFeedback()));
+		parentNode.setAttributeNS(null, "feedbackasked", String.valueOf(contractPriceSettings.isFeedbackAsked()));
 		xmldoc.getDocumentElement().appendChild(parentNode);
 	}
 

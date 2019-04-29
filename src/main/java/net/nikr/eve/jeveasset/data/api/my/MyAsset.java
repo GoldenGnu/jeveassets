@@ -41,6 +41,7 @@ import net.nikr.eve.jeveasset.data.settings.UserItem;
 import net.nikr.eve.jeveasset.data.settings.tag.TagID;
 import net.nikr.eve.jeveasset.data.settings.tag.Tags;
 import net.nikr.eve.jeveasset.data.settings.types.BlueprintType;
+import net.nikr.eve.jeveasset.data.settings.types.ContractPriceType;
 import net.nikr.eve.jeveasset.data.settings.types.EditableLocationType;
 import net.nikr.eve.jeveasset.data.settings.types.EditablePriceType;
 import net.nikr.eve.jeveasset.data.settings.types.ItemType;
@@ -55,7 +56,7 @@ import net.nikr.eve.jeveasset.i18n.General;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 import net.nikr.eve.jeveasset.io.shared.RawConverter;
 
-public class MyAsset extends RawAsset implements Comparable<MyAsset>, InfoItem, JumpType, ItemType, BlueprintType, EditablePriceType, TagsType, EditableLocationType, OwnersType {
+public class MyAsset extends RawAsset implements Comparable<MyAsset>, InfoItem, JumpType, ItemType, BlueprintType, EditablePriceType, ContractPriceType, TagsType, EditableLocationType, OwnersType {
 
 //Static values (set by constructor)
 	private final List<MyAsset> assets = new ArrayList<>();
@@ -81,6 +82,7 @@ public class MyAsset extends RawAsset implements Comparable<MyAsset>, InfoItem, 
 	private MarketPriceData marketPriceData;
 	private Date added;
 	private double price;
+	private double contractPrice;
 	private Tags tags;
 	private RawBlueprint blueprint;
 	private MyLocation location;
@@ -322,6 +324,16 @@ public class MyAsset extends RawAsset implements Comparable<MyAsset>, InfoItem, 
 		this.price = price;
 	}
 
+	@Override
+	public double getContractPrice() {
+		return contractPrice;
+	}
+
+	@Override
+	public void setContractPrice(double contractPrice) {
+		this.contractPrice = contractPrice;
+	}
+
 	public double getPriceBuyMax() {
 		if (item.isBlueprint() && !isBPO()) {
 			return 0;
@@ -425,6 +437,7 @@ public class MyAsset extends RawAsset implements Comparable<MyAsset>, InfoItem, 
 		return bpc;
 	}
 
+	@Override
 	public int getMaterialEfficiency() {
 		if (blueprint != null) {
 			return blueprint.getMaterialEfficiency();
@@ -433,6 +446,7 @@ public class MyAsset extends RawAsset implements Comparable<MyAsset>, InfoItem, 
 		}
 	}
 
+	@Override
 	public int getTimeEfficiency() {
 		if (blueprint != null) {
 			return blueprint.getTimeEfficiency();
@@ -441,6 +455,7 @@ public class MyAsset extends RawAsset implements Comparable<MyAsset>, InfoItem, 
 		}
 	}
 
+	@Override
 	public int getRuns() {
 		if (blueprint != null) {
 			return blueprint.getRuns();

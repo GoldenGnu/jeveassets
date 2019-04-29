@@ -21,11 +21,7 @@
 package net.nikr.eve.jeveasset.data.settings.types;
 
 
-public interface BlueprintType {
-	public boolean isBPO();
-	public boolean isBPC();
-	public int getRuns();
-	public int getMaterialEfficiency();
-	public int getTimeEfficiency();
-	public Integer getTypeID();
+public interface ContractPriceType extends BlueprintType {
+	public void setContractPrice(double price);
+	public double getContractPrice();
 }

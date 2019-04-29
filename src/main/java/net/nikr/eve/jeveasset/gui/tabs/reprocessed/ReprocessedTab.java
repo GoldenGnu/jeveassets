@@ -211,13 +211,13 @@ public class ReprocessedTab extends JMainTabSecondary {
 				if (item.getReprocessedMaterial().isEmpty()) {
 					continue; //Ignore types without materials
 				}
-				double sellPrice = ApiIdConverter.getPrice(i, false);
+				double sellPrice = ApiIdConverter.getPriceSimple(i, false);
 				ReprocessedTotal total = new ReprocessedTotal(item, sellPrice);
 				list.add(total);
 				for (ReprocessedMaterial material : item.getReprocessedMaterial()) {
 					Item materialItem = StaticData.get().getItems().get(material.getTypeID());
 					if (materialItem != null) {
-						double price = ApiIdConverter.getPrice(materialItem.getTypeID(), false);
+						double price = ApiIdConverter.getPriceSimple(materialItem.getTypeID(), false);
 						int quantitySkill = Settings.get().getReprocessSettings().getLeft(material.getQuantity(), item.isOre());
 						ReprocessedItem reprocessedItem = new ReprocessedItem(total, materialItem, material, quantitySkill, price);
 						list.add(reprocessedItem);

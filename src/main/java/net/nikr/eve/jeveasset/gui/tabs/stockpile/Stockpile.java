@@ -950,6 +950,21 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 			return isBlueprint() && !isBPC();
 		}
 
+		@Override
+		public int getRuns() {
+			return -1;
+		}
+
+		@Override
+		public int getMaterialEfficiency() {
+			return 0;
+		}
+
+		@Override
+		public int getTimeEfficiency() {
+			return 0;
+		}
+
 		public boolean isBlueprint() {
 			return item.isBlueprint();
 		}
@@ -1053,7 +1068,8 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 			return typeID;
 		}
 
-		public int getTypeID() {
+		@Override
+		public Integer getTypeID() {
 			return Math.abs(typeID);
 		}
 

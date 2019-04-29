@@ -22,60 +22,57 @@ package net.nikr.eve.jeveasset.io.local;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonDeserializer;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
-import com.google.gson.reflect.TypeToken;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.lang.reflect.Type;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import net.nikr.eve.jeveasset.data.settings.AssetAddedData;
 import net.nikr.eve.jeveasset.data.settings.Settings;
+import net.nikr.eve.jeveasset.data.settings.ContractPriceManager.ContractPriceData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
-public class AssetAddedReader extends AbstractBackup {
+public class ContractPriceReader extends AbstractBackup {
 
-	private static final Logger LOG = LoggerFactory.getLogger(TrackerDataReader.class);
+	private static final Logger LOG = LoggerFactory.getLogger(ContractPriceReader.class);
 
-	public static void load() {
-		AssetAddedReader reader = new AssetAddedReader();
-		reader.read(Settings.getPathAssetAdded());
+	public static ContractPriceData load() {
+		return load(Settings.getPathContractPrices(), true);
 	}
 
-	protected void read(String filename) {
+	protected static ContractPriceData load(String filename, boolean backup) {
+		ContractPriceReader reader = new ContractPriceReader();
+		return reader.read(filename, backup);
+	}
+
+	private ContractPriceData read(String filename, boolean backup) {
 		File file = new File(filename);
 		if (!file.exists()) {
-			return;
+			return new ContractPriceData();
 		}
-		backup(filename);
+		if (backup) {
+			backup(filename);
+		}
+		Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm:ss.SSS").create();
 		FileReader fileReader = null;
 		try {
 			lock(filename);
 			fileReader = new FileReader(file);
-			Gson gson = new GsonBuilder().registerTypeAdapter(Date.class, new DateDeserializer()).create();
-			Map<Long, Date> assetAddedData = gson.fromJson(fileReader, new TypeToken<HashMap<Long, Date>>() {}.getType());
-			if (assetAddedData != null) {
-				AssetAddedData.set(assetAddedData); //Import from added.json
-				LOG.info("Asset added data loaded");
-			}
+			ContractPriceData contractPriceData =  gson.fromJson(fileReader, ContractPriceData.class);
+			LOG.info("Contract prices loaded");
+			return contractPriceData;
 		} catch (IOException | JsonParseException ex) {
+			LOG.warn(ex.getMessage(), ex);
 			if (restoreNewFile(filename)) { //If possible restore from .new (Should be the newest)
-				read(filename);
+				read(filename, backup);
 			} else if (restoreBackupFile(filename)) { //If possible restore from .bac (Should be the oldest, but, still worth trying)
-				read(filename);
+				read(filename, backup);
 			} else { //Nothing left to try - throw error
 				restoreFailed(filename); //Backup error file
 				LOG.error(ex.getMessage(), ex);
 			}
 		} finally {
-			if (fileReader != null)  {
+			if (fileReader != null) {
 				try {
 					fileReader.close();
 				} catch (IOException ex) {
@@ -84,13 +81,6 @@ public class AssetAddedReader extends AbstractBackup {
 			}
 			unlock(filename);
 		}
-	}
-
-	public static class DateDeserializer implements JsonDeserializer<Date> {
-
-        @Override
-        public Date deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
-			return new Date(json.getAsLong());
-		}
+		return new ContractPriceData();
 	}
 }

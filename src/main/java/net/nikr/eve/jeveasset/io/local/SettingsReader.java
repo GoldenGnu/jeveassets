@@ -36,6 +36,9 @@ import java.util.TreeMap;
 import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
 import net.nikr.eve.jeveasset.data.settings.AssetAddedData;
+import net.nikr.eve.jeveasset.data.settings.ContractPriceManager.ContractPriceSettings;
+import net.nikr.eve.jeveasset.data.settings.ContractPriceManager.ContractPriceSettings.ContractPriceMode;
+import net.nikr.eve.jeveasset.data.settings.ContractPriceManager.ContractPriceSettings.ContractPriceSecurity;
 import net.nikr.eve.jeveasset.data.settings.ExportSettings.DecimalSeparator;
 import net.nikr.eve.jeveasset.data.settings.ExportSettings.ExportFormat;
 import net.nikr.eve.jeveasset.data.settings.ExportSettings.FieldDelimiter;
@@ -369,6 +372,13 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		if (priceDataSettingsNodes.getLength() == 1) {
 			Element priceDataSettingsElement = (Element) priceDataSettingsNodes.item(0);
 			parsePriceDataSettings(priceDataSettingsElement, settings);
+		}
+
+		//ContractPriceSettings
+		NodeList contractPriceSettingsNodes = element.getElementsByTagName("contractpricesettings");
+		if (contractPriceSettingsNodes.getLength() == 1) {
+			Element contractPriceSettingsElement = (Element) contractPriceSettingsNodes.item(0);
+			parseContractPriceSettings(contractPriceSettingsElement, settings);
 		}
 
 		//Flags
@@ -1011,6 +1021,32 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 			locations = priceSource.getDefaultLocations();
 		}	
 		settings.setPriceDataSettings(new PriceDataSettings(locationType, locations, priceSource, priceType, priceReprocessedType));
+	}
+
+	private void parseContractPriceSettings(final Element element, final Settings settings) throws XmlException {
+		boolean defaultBPC = AttributeGetters.getBoolean(element, "defaultbpc");
+		boolean includePrivate = AttributeGetters.getBoolean(element, "includeprivate");
+		boolean feedback = false;
+		if (AttributeGetters.haveAttribute(element, "feedback")) {
+			feedback = AttributeGetters.getBoolean(element, "feedback");
+		}
+		boolean feedbackAsked = false;
+		if (AttributeGetters.haveAttribute(element, "feedbackasked")) {
+			feedbackAsked = AttributeGetters.getBoolean(element, "feedbackasked");
+		}
+		ContractPriceMode mode = ContractPriceMode.valueOf(AttributeGetters.getString(element, "mode"));
+		String sec = AttributeGetters.getStringOptional(element, "sec");
+		Set<ContractPriceSecurity> security = new HashSet<>();
+		for (String s : sec.split(",")) {
+			security.add(ContractPriceSecurity.valueOf(s));
+		}
+		ContractPriceSettings contractPriceSettings = settings.getContractPriceSettings();
+		contractPriceSettings.setDefaultBPC(defaultBPC);
+		contractPriceSettings.setIncludePrivate(includePrivate);
+		contractPriceSettings.setContractPriceMode(mode);
+		contractPriceSettings.setContractPriceSecurity(security);
+		contractPriceSettings.setFeedback(feedback);
+		contractPriceSettings.setFeedbackAsked(feedbackAsked);
 	}
 
 	private void parseFlags(final Element element, final Settings settings) throws XmlException {

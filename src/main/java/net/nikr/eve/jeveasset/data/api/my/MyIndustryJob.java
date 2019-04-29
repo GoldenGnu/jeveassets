@@ -30,6 +30,7 @@ import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.data.settings.types.BlueprintType;
+import net.nikr.eve.jeveasset.data.settings.types.ContractPriceType;
 import net.nikr.eve.jeveasset.data.settings.types.EditableLocationType;
 import net.nikr.eve.jeveasset.data.settings.types.EditablePriceType;
 import net.nikr.eve.jeveasset.data.settings.types.ItemType;
@@ -37,7 +38,7 @@ import net.nikr.eve.jeveasset.data.settings.types.OwnersType;
 import net.nikr.eve.jeveasset.i18n.DataModelIndustryJob;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 
-public class MyIndustryJob extends RawIndustryJob implements Comparable<MyIndustryJob>, EditableLocationType, ItemType, EditablePriceType, BlueprintType, OwnersType {
+public class MyIndustryJob extends RawIndustryJob implements Comparable<MyIndustryJob>, EditableLocationType, ContractPriceType, ItemType, EditablePriceType, BlueprintType, OwnersType {
 
 	public enum IndustryJobState {
 		STATE_ALL() {
@@ -199,6 +200,7 @@ public class MyIndustryJob extends RawIndustryJob implements Comparable<MyIndust
 	private final String name;
 	private final Set<Long> owners = new HashSet<>();
 	private double price;
+	private double contractPrice;
 	private double outputValue;
 	private int outputCount;
 	private String installer = "";
@@ -314,6 +316,7 @@ public class MyIndustryJob extends RawIndustryJob implements Comparable<MyIndust
 		return !isBPO();
 	}
 
+	@Override
 	public int getMaterialEfficiency() {
 		if (blueprint != null) {
 			return blueprint.getMaterialEfficiency();
@@ -322,12 +325,18 @@ public class MyIndustryJob extends RawIndustryJob implements Comparable<MyIndust
 		}
 	}
 
+	@Override
 	public int getTimeEfficiency() {
 		if (blueprint != null) {
 			return blueprint.getTimeEfficiency();
 		} else {
 			return 0;
 		}
+	}
+
+	@Override
+	public Integer getTypeID() {
+		return getBlueprintTypeID();
 	}
 
 	public final boolean isCompleted() {
@@ -375,6 +384,16 @@ public class MyIndustryJob extends RawIndustryJob implements Comparable<MyIndust
 		return price;
 	}
 
+	@Override
+	public double getContractPrice() {
+		return contractPrice;
+	}
+
+	@Override
+	public void setContractPrice(double contractPrice) {
+		this.contractPrice = contractPrice;
+	}
+
 	public double getOutputValue() {
 		return outputValue;
 	}
@@ -386,6 +405,8 @@ public class MyIndustryJob extends RawIndustryJob implements Comparable<MyIndust
 	public void setOutputPrice(double outputPrice) {
 		if (isManufacturing()) {
 			this.outputValue = outputPrice * getRuns() * getProductQuantity();
+		} else if (isCopying() && getLicensedRuns() != null) {
+			this.outputValue = outputPrice * getRuns() * getLicensedRuns();
 		} else {
 			this.outputValue = 0;
 		}

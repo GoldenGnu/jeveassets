@@ -65,7 +65,8 @@ public abstract class AbstractGetter<O extends OwnerType> implements Runnable {
 		PLANETARY_INTERACTION,
 		STRUCTURES,
 		TRANSACTIONS,
-		SHIP
+		SHIP,
+		CONTRACT_PRICES
 	}
 
 	private final UpdateTask updateTask;
@@ -102,6 +103,7 @@ public abstract class AbstractGetter<O extends OwnerType> implements Runnable {
 			case STRUCTURES: taskName = "Structures"; break;
 			case SHIP: taskName = "Active Ship"; break;
 			case PLANETARY_INTERACTION: taskName = "Planetary Assets"; break;
+			case CONTRACT_PRICES: taskName = "Contract Prices"; break;
 			default: taskName = "Unknown"; break;
 		}
 		//this.taskName = taskType;
@@ -137,9 +139,9 @@ public abstract class AbstractGetter<O extends OwnerType> implements Runnable {
 	}
 
 	protected synchronized void setExpires(Map<String, List<String>> headers) {
-		String expiresHeader = getHeader(headers, "expires");
-		if (expiresHeader != null) {
-			setNextUpdate(Formater.parseExpireDate(expiresHeader));
+		Date expires = getHeaderDate(headers, "expires");
+		if (expires != null) {
+			setNextUpdate(expires);
 		}
 	}
 
@@ -186,6 +188,10 @@ public abstract class AbstractGetter<O extends OwnerType> implements Runnable {
 
 	protected final <K> List<Future<K>> startSubThreads(Collection<? extends Callable<K>> updaters) throws InterruptedException {
 		return ThreadWoker.startReturn(updateTask, updaters);
+	}
+
+	protected final <K> List<Future<K>> startSubThreads(Collection<? extends Callable<K>> updaters, boolean updateProgress) throws InterruptedException {
+		return ThreadWoker.startReturn(updateTask, updaters, updateProgress);
 	}
 
 	protected final void checkCancelled() {
@@ -317,7 +323,7 @@ public abstract class AbstractGetter<O extends OwnerType> implements Runnable {
 		}
 	}
 
-	protected final  synchronized Integer getHeaderInteger(Map<String, List<String>> responseHeaders, String headerName) {
+	protected static final Integer getHeaderInteger(Map<String, List<String>> responseHeaders, String headerName) {
 		String errorResetHeader = getHeader(responseHeaders, headerName);
 		if (errorResetHeader != null) {
 			try {
@@ -329,7 +335,23 @@ public abstract class AbstractGetter<O extends OwnerType> implements Runnable {
 		return null;
 	}
 
-	protected final synchronized String getHeader(Map<String, List<String>> responseHeaders, String headerName) {
+	protected static final Date getHeaderDate(Map<String, List<String>> responseHeaders, String headerName) {
+		String header = getHeader(responseHeaders, headerName);
+		if (header != null) {
+			return Formater.parseExpireDate(header);
+		}
+		return null;
+	}
+
+	protected static final Date getHeaderExpires(Map<String, List<String>> responseHeaders) {
+		String header = getHeader(responseHeaders, "expires");
+		if (header != null) {
+			return Formater.parseExpireDate(header);
+		}
+		return null;
+	}
+
+	protected static final String getHeader(Map<String, List<String>> responseHeaders, String headerName) {
 		if (responseHeaders != null) {
 			Map<String, List<String>> caseInsensitiveHeaders = new TreeMap<String, List<String>>(String.CASE_INSENSITIVE_ORDER);
 			caseInsensitiveHeaders.putAll(responseHeaders);

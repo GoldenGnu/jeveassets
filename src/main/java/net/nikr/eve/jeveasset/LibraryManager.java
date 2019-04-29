@@ -88,7 +88,7 @@ public class LibraryManager {
 	public static synchronized Set<String> getLibFiles() {
 		if (files == null) { //Lazy init
 			files = new HashSet<>();
-			files.add("asm-5.0.4.jar");
+			files.add("asm-7.1.jar");
 			files.add("dom4j-2.1.1.jar");
 			files.add("glazedlists-1.11.0.jar");
 			files.add("graph-1.5.0.jar");
@@ -108,7 +108,7 @@ public class LibraryManager {
 			files.add("logback-core-1.2.3.jar");
 			files.add("logback-classic-1.2.3.jar");
 			files.add("super-csv-2.4.0.jar");
-			files.add("translations-2.2.0.jar");
+			files.add("translations-3.0.0.jar");
 			files.add("evekit-5.0.1.jar");
 			files.add("swagger-annotations-1.5.22.jar");
 			files.add("hamcrest-core-1.3.jar");
@@ -125,6 +125,7 @@ public class LibraryManager {
 			files.add("org.apache.oltu.oauth2.client-1.0.1.jar");
 			files.add("json-20140107.jar");
 			files.add("commons-codec-1.9.jar");
+			files.add("contracts-pricing-1.2.0.jar");
 		}
 		return files;
 	}
