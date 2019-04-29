@@ -74,7 +74,6 @@ public class AssetsTab extends JMainTabPrimary implements TagUpdate {
 
 	//Table
 	private final DefaultEventTableModel<MyAsset> tableModel;
-	private final EventList<MyAsset> eventList;
 	private final FilterList<MyAsset> filterList;
 	private final AssetFilterControl filterControl;
 	private final EnumTableFormatAdaptor<AssetTableFormat, MyAsset> tableFormat;
@@ -91,7 +90,7 @@ public class AssetsTab extends JMainTabPrimary implements TagUpdate {
 		//Table Format
 		tableFormat = new EnumTableFormatAdaptor<AssetTableFormat, MyAsset>(AssetTableFormat.class);
 		//Backend
-		eventList = program.getProfileData().getAssetsEventList();
+		EventList<MyAsset> eventList = program.getProfileData().getAssetsEventList();
 		//Sorting (per column)
 		eventList.getReadWriteLock().readLock().lock();
 		SortedList<MyAsset> sortedList = new SortedList<MyAsset>(eventList);

@@ -57,8 +57,6 @@ public class JournalTab extends JMainTabPrimary {
 	private final JournalFilterControl filterControl;
 	private final EnumTableFormatAdaptor<JournalTableFormat, MyJournal> tableFormat;
 	private final DefaultEventTableModel<MyJournal> tableModel;
-	private final FilterList<MyJournal> filterList;
-	private final EventList<MyJournal> eventList;
 	private final DefaultEventSelectionModel<MyJournal> selectionModel;
 
 	public static final String NAME = "journal"; //Not to be changed!
@@ -69,7 +67,7 @@ public class JournalTab extends JMainTabPrimary {
 		//Table Format
 		tableFormat = new EnumTableFormatAdaptor<JournalTableFormat, MyJournal>(JournalTableFormat.class);
 		//Backend
-		eventList = program.getProfileData().getJournalEventList();
+		EventList<MyJournal> eventList = program.getProfileData().getJournalEventList();
 		//Sorting (per column)
 		eventList.getReadWriteLock().readLock().lock();
 		SortedList<MyJournal> sortedList = new SortedList<MyJournal>(eventList);
@@ -77,7 +75,7 @@ public class JournalTab extends JMainTabPrimary {
 
 		//Filter
 		eventList.getReadWriteLock().readLock().lock();
-		filterList = new FilterList<MyJournal>(sortedList);
+		FilterList<MyJournal> filterList = new FilterList<MyJournal>(sortedList);
 		eventList.getReadWriteLock().readLock().unlock();
 		//Table Model
 		tableModel = EventModels.createTableModel(filterList, tableFormat);

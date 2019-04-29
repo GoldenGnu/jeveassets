@@ -1,5 +1,5 @@
 <?php
-include 'conn.php';
+require 'conn.php';
 
 //Get versions
 $dbh = con();
@@ -236,7 +236,7 @@ $statement = $dbh->prepare($sql);
 $statement->execute();
 $rows = $statement->fetchAll(PDO::FETCH_ASSOC);
 foreach ($rows as &$row) {
-	echo '<div style="width: 400px; float: left;">'.PHP_EOL;;
+	echo '<div style="width: 400px; float: left;">'.PHP_EOL;
 	switch ($row['status']) {
 		case -2:
 			echo '<span class="status" style="background: Gainsboro;">&nbsp;Won\'t Fix&nbsp;</span>';
