@@ -79,11 +79,11 @@ public class ContractPriceManager {
 		return contractPriceData.isFailed(contractPriceType);
 	}
 
-	public boolean haveContractPrice(ContractPriceItem contractPriceType) {
-		if (contractPriceType == null) {
+	public boolean haveContractPrice(ContractPriceItem contractPriceItem) {
+		if (contractPriceItem == null) {
 			return false;
 		}
-		Prices prices = contractPriceData.getPrices(contractPriceType);
+		Prices prices = contractPriceData.getPrices(contractPriceItem);
 		if (prices == null) {
 			return false;
 		}
