@@ -305,7 +305,7 @@ public class RawIndustryJob {
 		this.jobId = jobId;
 	}
 
-	public Integer getLicensedRuns() {
+	public final Integer getLicensedRuns() {
 		return licensedRuns;
 	}
 
