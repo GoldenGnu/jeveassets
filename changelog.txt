@@ -16,6 +16,18 @@
                   #### #  # #  # #  # #### #### #### #### ####
 
 ________________________________________________________________________________
+_6.0.2__________________________________________________________________________
+
+
+Bug Fixes:
+-Fixed CtD (NPE) in Tree and Stockpile Tools (BugID: 755, 756, 757, 758, 759)
+-Fixed missing contract prices in the Tree tool
+-Stockpile did not respect BPC contract price settings
+
+Changed:
+-Industry Jobs output column now show total runs when copying
+
+________________________________________________________________________________
 _6.0.1__________________________________________________________________________
 
 New Features:
