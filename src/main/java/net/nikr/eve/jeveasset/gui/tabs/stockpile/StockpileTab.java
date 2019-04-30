@@ -643,7 +643,6 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 				items.add(transaction);
 			}
 		}
-
 		stockpile.setFlagName(flags);
 		stockpile.reset();
 		if (!stockpile.isEmpty()) {

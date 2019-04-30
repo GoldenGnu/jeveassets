@@ -181,7 +181,7 @@ public final class ApiIdConverter {
 
 		//Blueprint Copy (Default Zero)
 		if (isBlueprintCopy) {
-			if (contractPriceItem != null) {
+			if (contractPriceItem != null && Settings.get().getContractPriceSettings().isDefaultBPC()) {
 				return ContractPriceManager.get().getContractPrice(contractPriceItem);
 			} else {
 				return 0;
