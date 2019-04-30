@@ -70,6 +70,7 @@ public class MyAsset extends RawAsset implements Comparable<MyAsset>, InfoItem, 
 	private final float volume;
 //Static values cache (set by constructor)
 	private String typeName;
+	private String flagName;
 	private boolean bpo;
 	private boolean bpc;
 //Dynamic values
@@ -86,7 +87,6 @@ public class MyAsset extends RawAsset implements Comparable<MyAsset>, InfoItem, 
 	private Tags tags;
 	private RawBlueprint blueprint;
 	private MyLocation location;
-	private String flagName;
 	//Dynamic values cache
 	private boolean userNameSet = false;
 	private boolean eveNameSet = false;
@@ -107,6 +107,7 @@ public class MyAsset extends RawAsset implements Comparable<MyAsset>, InfoItem, 
 		this.marketPriceData = asset.marketPriceData;
 		this.added = asset.added;
 		this.price = asset.price;
+		this.contractPrice = asset.contractPrice;
 		this.tags = asset.tags;
 		this.blueprint = asset.blueprint;
 		this.location = asset.location;
