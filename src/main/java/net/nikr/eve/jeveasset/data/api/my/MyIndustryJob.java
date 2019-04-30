@@ -199,10 +199,10 @@ public class MyIndustryJob extends RawIndustryJob implements Comparable<MyIndust
 	private final OwnerType owner;
 	private final String name;
 	private final Set<Long> owners = new HashSet<>();
+	private final int outputCount;
 	private double price;
 	private double contractPrice;
 	private double outputValue;
-	private int outputCount;
 	private String installer = "";
 	private RawBlueprint blueprint;
 	private MyLocation location;
@@ -284,7 +284,11 @@ public class MyIndustryJob extends RawIndustryJob implements Comparable<MyIndust
 				outputCount = getRuns() * item.getProductQuantity();
 				break;
 			case ACTIVITY_COPYING:
-				outputCount = getRuns();
+				if (getLicensedRuns() != null) {
+					outputCount = getRuns() * getLicensedRuns();
+				} else { //Should never happen, but, better safe than sorry
+					outputCount = getRuns();
+				}
 				break;
 			default:
 				outputCount = 1;
