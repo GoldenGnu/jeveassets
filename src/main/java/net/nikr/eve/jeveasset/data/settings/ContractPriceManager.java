@@ -94,15 +94,15 @@ public class ContractPriceManager {
 		return true;
 	}
 
-	public double getContractPrice(ContractPriceItem contractPriceType) {
-		return getContractPrice(contractPriceType, false);
+	public double getContractPrice(ContractPriceItem contractPriceItem) {
+		return getContractPrice(contractPriceItem, false);
 	}
 
-	public double getContractPrice(ContractPriceItem contractPriceType, boolean perUnit) {
-		if (contractPriceType == null) {
+	public double getContractPrice(ContractPriceItem contractPriceItem, boolean perUnit) {
+		if (contractPriceItem == null) {
 			return 0;
 		}
-		Prices prices = contractPriceData.getPrices(contractPriceType);
+		Prices prices = contractPriceData.getPrices(contractPriceItem);
 		if (prices == null) {
 			return 0;
 		}
@@ -111,8 +111,8 @@ public class ContractPriceManager {
 			return 0;
 		} else if (perUnit){
 			return price;
-		} else if (contractPriceType.getRuns() > 0){
-			return price * contractPriceType.getRuns();
+		} else if (contractPriceItem.getRuns() > 0){
+			return price * contractPriceItem.getRuns();
 		} else {
 			return price;
 		}
@@ -365,6 +365,12 @@ public class ContractPriceManager {
 	public static class ContractPriceItem {
 
 		public static ContractPriceItem create(BlueprintType blueprintType) {
+			if (blueprintType == null) {
+				return null;
+			}
+			if (blueprintType.getTypeID() == null) {
+				return null;
+			}
 			return new ContractPriceItem(blueprintType.getTypeID(), blueprintType.isBPC(), blueprintType.isBPO(), blueprintType.getMaterialEfficiency(), blueprintType.getTimeEfficiency(), blueprintType.getRuns());
 		}
 
