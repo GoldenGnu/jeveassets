@@ -143,7 +143,7 @@ public class StockpileItemDialog extends JDialogCentered {
 		);
 	}
 
-	protected  StockpileItem showEdit(final StockpileItem editStockpileItem) {
+	protected StockpileItem showEdit(final StockpileItem editStockpileItem) {
 		updateData();
 		this.stockpileItem = editStockpileItem;
 		this.getDialog().setTitle(TabsStockpile.get().editStockpileItem());
