@@ -153,7 +153,7 @@ public class ContractPriceManager {
 			if (expire == null) {
 				return false;
 			}
-			return expire.before(Settings.getNow());
+			return expire.after(Settings.getNow());
 		}
 	}
 
