@@ -48,25 +48,36 @@ public abstract class AbstractGetter<O extends OwnerType> implements Runnable {
 	protected static final int NO_RETRIES = 0;
 
 	protected enum TaskType {
-		ASSETS,
-		ACCOUNT_BALANCE,
-		BLUEPRINTS,
-		BOOKMARKS,
-		CONQUERABLE_STATIONS,
-		CONTRACT_ITEMS,
-		CONTRACTS,
-		DIVISIONS,
-		INDUSTRY_JOBS,
-		JOURNAL,
-		LOCATIONS,
-		MARKET_ORDERS,
-		OWNER_ID_TO_NAME,
-		OWNER,
-		PLANETARY_INTERACTION,
-		STRUCTURES,
-		TRANSACTIONS,
-		SHIP,
-		CONTRACT_PRICES
+		ACCOUNT_BALANCE("Account Balance"),
+		ASSETS("Assets"),
+		BLUEPRINTS("Blueprints"),
+		BOOKMARKS("Bookmarks"),
+		CONTRACTS("Contracts"),
+		CONTRACT_ITEMS("Contract Items"),
+		CONTRACT_PRICES("Contract Prices"),
+		DIVISIONS("Division Names"),
+		INDUSTRY_JOBS("Industry Jobs"),
+		ITEM_TYPES("Item Types"),
+		JOURNAL("Journal"),
+		LOCATIONS("Locations"),
+		MARKET_ORDERS("Market Orders"),
+		OWNER("Account"),
+		OWNER_ID_TO_NAME("IDs to Names"),
+		PLANETARY_INTERACTION("Planetary Assets"),
+		SHIP("Active Ship"),
+		STRUCTURES("Structures"),
+		TRANSACTIONS("Transactions"),
+		;
+
+		private final String taskName;
+
+		private TaskType(String taskName) {
+			this.taskName = taskName;
+		}
+
+		public String getTaskName() {
+			return taskName;
+		}
 	}
 
 	private final UpdateTask updateTask;
@@ -84,27 +95,10 @@ public abstract class AbstractGetter<O extends OwnerType> implements Runnable {
 		this.forceUpdate = forceUpdate;
 		this.disabled = !forceUpdate && owner != null && !owner.isShowOwner();
 		this.wait = !forceUpdate && !Settings.get().isUpdatable(nextUpdate);
-		switch (taskType) {
-			case ACCOUNT_BALANCE: taskName = "Account Balance"; break;
-			case ASSETS: taskName = "Assets"; break;
-			case BLUEPRINTS: taskName = "Blueprints"; break;
-			case BOOKMARKS: taskName = "Bookmarks"; break;
-			case CONQUERABLE_STATIONS: taskName = "Conquerable Stations"; break;
-			case CONTRACT_ITEMS: taskName = "Contract Items"; break;
-			case CONTRACTS: taskName = "Contracts"; break;
-			case DIVISIONS: taskName = "Division Names"; break;
-			case INDUSTRY_JOBS: taskName = "Industry Jobs"; break;
-			case JOURNAL: taskName = "Journal"; break;
-			case LOCATIONS: taskName = "Locations"; break;
-			case MARKET_ORDERS: taskName = "Market Orders"; break;
-			case OWNER: taskName = "Account"; break;
-			case OWNER_ID_TO_NAME:  taskName = "IDs to Names"; break;
-			case TRANSACTIONS: taskName = "Transactions"; break;
-			case STRUCTURES: taskName = "Structures"; break;
-			case SHIP: taskName = "Active Ship"; break;
-			case PLANETARY_INTERACTION: taskName = "Planetary Assets"; break;
-			case CONTRACT_PRICES: taskName = "Contract Prices"; break;
-			default: taskName = "Unknown"; break;
+		if (taskType == null) {
+			taskName = "Unknown";
+		} else {
+			taskName = taskType.getTaskName();
 		}
 		//this.taskName = taskType;
 		this.apiName = ApiName;
