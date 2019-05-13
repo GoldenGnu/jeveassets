@@ -33,7 +33,6 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.sde.Item;
-import net.nikr.eve.jeveasset.data.sde.StaticData;
 import net.nikr.eve.jeveasset.data.settings.ContractPriceManager;
 import net.nikr.eve.jeveasset.data.settings.ContractPriceManager.ContractPriceItem;
 import net.nikr.eve.jeveasset.data.settings.Settings;
@@ -42,6 +41,7 @@ import net.nikr.eve.jeveasset.gui.dialogs.settings.UserPriceSettingsPanel.UserPr
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.JAutoMenu;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
+import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -86,10 +86,10 @@ public class JMenuPrice<T> extends JAutoMenu<T> {
 	private List<UserItem<Integer, Double>> createList() {
 		List<UserItem<Integer, Double>> itemPrices = new ArrayList<UserItem<Integer, Double>>();
 		for (Map.Entry<Integer, Double> entry : menuData.getPrices().entrySet()) {
-			Item item = StaticData.get().getItems().get(Math.abs(entry.getKey()));
+			Item item = ApiIdConverter.getItem(Math.abs(entry.getKey()));
 			String name = "";
-			if (item != null) {
-				if (item.getTypeName().toLowerCase().contains("blueprint")) {
+			if (!item.isEmpty()) {
+				if (item.isBlueprint()) {
 					//Blueprint
 					if (entry.getKey() < 0) {
 						//Copy

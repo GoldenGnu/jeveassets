@@ -168,7 +168,7 @@ public abstract class DataConverter {
 	}
 
 	public static MyAsset toMyAsset(RawAsset rawAsset, OwnerType owner, List<MyAsset> parents) {
-		Item item = ApiIdConverter.getItem(rawAsset.getTypeID());
+		Item item = ApiIdConverter.getItemUpdate(rawAsset.getTypeID());
 		if (!parents.isEmpty()) { //Update locationID from ItemID to locationID
 			MyAsset rootAsset = parents.get(0);
 			rawAsset.setLocationID(rootAsset.getLocationID());
@@ -223,7 +223,7 @@ public abstract class DataConverter {
 	}
 
 	public static MyContractItem toMyContractItem(RawContractItem rawContractItem, MyContract contract) {
-		Item item = ApiIdConverter.getItem(rawContractItem.getTypeID());
+		Item item = ApiIdConverter.getItemUpdate(rawContractItem.getTypeID());
 		return new MyContractItem(rawContractItem, contract, item);
 	}
 
@@ -236,7 +236,7 @@ public abstract class DataConverter {
 	}
 
 	public static MyIndustryJob toMyIndustryJob(RawIndustryJob rawIndustryJob, OwnerType owner) {
-		Item item = ApiIdConverter.getItem(rawIndustryJob.getBlueprintTypeID());
+		Item item = ApiIdConverter.getItemUpdate(rawIndustryJob.getBlueprintTypeID());
 		return new MyIndustryJob(rawIndustryJob, item, owner);
 	}
 
@@ -276,7 +276,7 @@ public abstract class DataConverter {
 	}
 
 	public static MyMarketOrder toMyMarketOrder(RawMarketOrder rawMarketOrder, OwnerType owner) {
-		Item item = ApiIdConverter.getItem(rawMarketOrder.getTypeID());
+		Item item = ApiIdConverter.getItemUpdate(rawMarketOrder.getTypeID());
 		return new MyMarketOrder(rawMarketOrder, item, owner);
 	}
 
@@ -292,7 +292,7 @@ public abstract class DataConverter {
 	}
 
 	public static MyTransaction toMyTransaction(RawTransaction rawTransaction, OwnerType owner) {
-		Item item = ApiIdConverter.getItem(rawTransaction.getTypeID());
+		Item item = ApiIdConverter.getItemUpdate(rawTransaction.getTypeID());
 		return new MyTransaction(rawTransaction, item, owner);
 	}
 

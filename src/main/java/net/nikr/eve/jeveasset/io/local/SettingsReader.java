@@ -746,7 +746,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 				}
 				double countMinimum = AttributeGetters.getDouble(itemNode, "minimum");
 				if (typeID != 0) { //Ignore Total
-					Item item = ApiIdConverter.getItem(Math.abs(typeID));
+					Item item = ApiIdConverter.getItemUpdate(Math.abs(typeID));
 					StockpileItem stockpileItem = new StockpileItem(stockpile, item, typeID, countMinimum, runs, id);
 					stockpile.add(stockpileItem);
 				}

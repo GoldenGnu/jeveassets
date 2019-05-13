@@ -51,7 +51,6 @@ import javax.swing.SwingConstants;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.data.sde.ReprocessedMaterial;
-import net.nikr.eve.jeveasset.data.sde.StaticData;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.JFixedToolBar;
@@ -205,18 +204,18 @@ public class ReprocessedTab extends JMainTabSecondary {
 		List<ReprocessedInterface> list = new ArrayList<ReprocessedInterface>();
 		List<ReprocessedGrandItem> uniqueList = new ArrayList<ReprocessedGrandItem>();
 		ReprocessedGrandTotal grandTotal = new ReprocessedGrandTotal();
-		for (Integer i : typeIDs) {
-			Item item = StaticData.get().getItems().get(i);
-			if (item != null) {
+		for (Integer typeID : typeIDs) {
+			Item item = ApiIdConverter.getItem(typeID);
+			if (!item.isEmpty()) {
 				if (item.getReprocessedMaterial().isEmpty()) {
 					continue; //Ignore types without materials
 				}
-				double sellPrice = ApiIdConverter.getPriceSimple(i, false);
+				double sellPrice = ApiIdConverter.getPriceSimple(typeID, false);
 				ReprocessedTotal total = new ReprocessedTotal(item, sellPrice);
 				list.add(total);
 				for (ReprocessedMaterial material : item.getReprocessedMaterial()) {
-					Item materialItem = StaticData.get().getItems().get(material.getTypeID());
-					if (materialItem != null) {
+					Item materialItem = ApiIdConverter.getItem(material.getTypeID());
+					if (!materialItem.isEmpty()) {
 						double price = ApiIdConverter.getPriceSimple(materialItem.getTypeID(), false);
 						int quantitySkill = Settings.get().getReprocessSettings().getLeft(material.getQuantity(), item.isOre());
 						ReprocessedItem reprocessedItem = new ReprocessedItem(total, materialItem, material, quantitySkill, price);

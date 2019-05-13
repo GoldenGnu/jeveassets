@@ -43,6 +43,7 @@ import net.nikr.eve.jeveasset.gui.shared.table.EventListManager;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
 import net.nikr.eve.jeveasset.i18n.TabsStockpile;
+import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 
 
 public class StockpileItemDialog extends JDialogCentered {
@@ -148,7 +149,7 @@ public class StockpileItemDialog extends JDialogCentered {
 		updateData();
 		this.stockpileItem = editStockpileItem;
 		this.getDialog().setTitle(TabsStockpile.get().editStockpileItem());
-		Item item = StaticData.get().getItems().get(editStockpileItem.getTypeID());
+		Item item = ApiIdConverter.getItem(editStockpileItem.getTypeID());
 		jItems.setSelectedItem(item);
 		jCopy.setSelected(editStockpileItem.isBPC());
 		jRuns.setSelected(editStockpileItem.isRuns());

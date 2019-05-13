@@ -44,14 +44,19 @@ public class Item implements Comparable<Item>, ItemType {
 	private int blueprintTypeID = 0;
 	private final int productQuantity;
 	private final boolean blueprint;
+	private final String version;
 	private final List<ReprocessedMaterial> reprocessedMaterials = new ArrayList<ReprocessedMaterial>();
 	private double priceReprocessed;
 
 	public Item(int typeID) {
-		this(typeID, emptyType(typeID), "", "", -1, -1, -1, -1, "", false, false, 0, 0, 1);
+		this(typeID, emptyType(typeID), "", "", -1, -1, -1, -1, "", false, 0, 0, 1, null);
 	}
 
-	public Item(final int typeID, final String name, final String group, final String category, final long price, final float volume, final float packagedVolume, final int meta, final String tech, final boolean marketGroup, final boolean piMaterial, final int portion, final int productTypeID, final int productQuantity) {
+	public Item(int typeID, String version) {
+		this(typeID, emptyType(typeID), "", "", -1, -1, -1, -1, "", false, 0, 0, 1, version);
+	}
+
+	public Item(final int typeID, final String name, final String group, final String category, final long price, final float volume, final float packagedVolume, final int meta, final String tech, final boolean marketGroup, final int portion, final int productTypeID, final int productQuantity, String version) {
 		this.typeID = typeID;
 		this.name = name;
 		this.group = group.intern();
@@ -62,11 +67,16 @@ public class Item implements Comparable<Item>, ItemType {
 		this.meta = meta;
 		this.tech = tech.intern();
 		this.marketGroup = marketGroup;
-		this.piMaterial = piMaterial;
+		this.piMaterial = category.equals("Planetary Commodities") || category.equals("Planetary Resources");
 		this.portion = portion;
 		this.productTypeID = productTypeID;
 		this.productQuantity = productQuantity;
 		this.blueprint = (name.toLowerCase().contains("blueprint"));
+		this.version = version;
+	}
+
+	public String getVersion() {
+		return version;
 	}
 
 	public boolean isOre() {
