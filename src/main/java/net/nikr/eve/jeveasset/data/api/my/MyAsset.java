@@ -191,7 +191,7 @@ public class MyAsset extends RawAsset implements Comparable<MyAsset>, InfoItem, 
 	}
 
 	public MyAsset(MyIndustryJob industryJob, boolean manufacturing) {
-		this(new RawAsset(industryJob, manufacturing), manufacturing ? ApiIdConverter.getItem(industryJob.getProductTypeID()) : industryJob.getItem(), industryJob.getOwner(), new ArrayList<MyAsset>());
+		this(new RawAsset(industryJob, manufacturing), manufacturing ? ApiIdConverter.getItemUpdate(industryJob.getProductTypeID()) : industryJob.getItem(), industryJob.getOwner(), new ArrayList<MyAsset>());
 	}
 
 	public MyAsset(MyMarketOrder marketOrder) {

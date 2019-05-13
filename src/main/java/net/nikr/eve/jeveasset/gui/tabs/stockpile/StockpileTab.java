@@ -732,7 +732,7 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 		}
 		Settings.lock("Stockpile (Import)"); //Lock for Stockpile (Import)
 		for (Map.Entry<Integer, Double> entry : data.entrySet()) {
-			Item item = ApiIdConverter.getItem(entry.getKey());
+			Item item = ApiIdConverter.getItemUpdate(entry.getKey());
 			StockpileItem stockpileItem = new StockpileItem(stockpile, item, entry.getKey(), entry.getValue(), false);
 			stockpile.add(stockpileItem);
 		}

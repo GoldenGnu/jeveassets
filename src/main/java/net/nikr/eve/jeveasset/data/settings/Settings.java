@@ -73,6 +73,7 @@ public class Settings {
 	private static final String PATH_CONTRACT_PRICES = "data" + File.separator + "contract_prices.json";
 	private static final String PATH_SETTINGS = "data" + File.separator + "settings.xml";
 	private static final String PATH_ITEMS = "data" + File.separator + "items.xml";
+	private static final String PATH_ITEMS_UPDATES = "data" + File.separator + "items_updates.xml";
 	private static final String PATH_JUMPS = "data" + File.separator + "jumps.xml";
 	private static final String PATH_LOCATIONS = "data" + File.separator + "locations.xml";
 	private static final String PATH_FLAGS = "data" + File.separator + "flags.xml";
@@ -887,6 +888,10 @@ public class Settings {
 	public static String getPathItems() {
 		return FileUtil.getLocalFile(Settings.PATH_ITEMS, false);
 	}
+	
+	public static String getPathItemsUpdates() {
+		return FileUtil.getLocalFile(Settings.PATH_ITEMS_UPDATES, !Program.isPortable());
+	}
 
 	public static String getPathLocations() {
 		return FileUtil.getLocalFile(Settings.PATH_LOCATIONS, false);
@@ -922,9 +927,10 @@ public class Settings {
 	}
 
 	public boolean isUpdatable(final Date date) {
+		Date now = Settings.getNow();
 		return date != null &&
-				((Settings.getNow().after(date)
-				|| Settings.getNow().equals(date)
+				((now.after(date)
+				|| now.equals(date)
 				|| Program.isForceUpdate())
 				&& !Program.isForceNoUpdate());
 	}

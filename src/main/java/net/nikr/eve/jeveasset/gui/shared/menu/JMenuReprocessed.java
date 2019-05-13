@@ -28,10 +28,10 @@ import java.util.Set;
 import javax.swing.JMenuItem;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.sde.Item;
-import net.nikr.eve.jeveasset.data.sde.StaticData;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.JAutoMenu;
 import net.nikr.eve.jeveasset.i18n.TabsReprocessed;
+import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 
 
 public class JMenuReprocessed<T> extends JAutoMenu<T> {
@@ -67,8 +67,8 @@ public class JMenuReprocessed<T> extends JAutoMenu<T> {
 	public void updateMenuData() {
 		items.clear();
 		for (int typeID : menuData.getTypeIDs()) {
-			Item item = StaticData.get().getItems().get(typeID);
-			if (item != null && !item.getReprocessedMaterial().isEmpty()) {
+			Item item = ApiIdConverter.getItem(typeID);
+			if (!item.getReprocessedMaterial().isEmpty()) {
 				items.add(typeID);
 			}
 		}
