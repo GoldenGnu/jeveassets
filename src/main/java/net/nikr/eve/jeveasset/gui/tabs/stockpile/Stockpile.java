@@ -57,6 +57,8 @@ import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 
 
 public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersType {
+	private static final AtomicLong TS = new AtomicLong();
+	private final long id;
 	private String name;
 	private String ownerName;
 	private String flagName;
@@ -88,12 +90,18 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 			}
 		}
 		items.add(totalItem);
+		this.id = getNewID(); //New stockpile = new id
 	}
 
-	public Stockpile(final String name, final List<StockpileFilter> filters, double multiplier) {
+	public Stockpile(final String name, final Long id, final List<StockpileFilter> filters, double multiplier) {
 		this.name = name;
 		this.filters = filters;
 		this.multiplier = multiplier;
+		if (id == null) {
+			this.id = getNewID();
+		} else {
+			this.id = id;
+		}
 		items.add(totalItem);
 		updateDynamicValues();
 	}
@@ -116,6 +124,21 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 	void updateTags() {
 		for (StockpileItem item : items) {
 			item.updateTags();
+		}
+	}
+
+	public long getId() {
+		return id;
+	}
+
+	private static long getNewID() {
+		long micros = System.currentTimeMillis() * 1000;
+		for ( ; ; ) {
+			long value = TS.get();
+			if (micros <= value)
+				micros = value + 1;
+			if (TS.compareAndSet(value, micros))
+				return micros;
 		}
 	}
 

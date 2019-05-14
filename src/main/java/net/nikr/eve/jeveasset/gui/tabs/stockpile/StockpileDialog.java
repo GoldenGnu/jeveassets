@@ -277,7 +277,7 @@ public class StockpileDialog extends JDialogCentered {
 			multiplier = 1;
 		}
 		//Add
-		return new Stockpile(name, stockpileFilters, multiplier);
+		return new Stockpile(name, null, stockpileFilters, multiplier); //New id
 	}
 
 	private void autoValidate() {
@@ -524,10 +524,10 @@ public class StockpileDialog extends JDialogCentered {
 			stockpile.update(getStockpile());
 		} else if (cloneStockpile != null) { //Clone
 			cloneStockpile.update(getStockpile());
-			Settings.get().getStockpiles().add(cloneStockpile);
+			StockpileTab.addStockpile(program, cloneStockpile); //Add Clone
 		} else { //Add
 			stockpile = getStockpile();
-			Settings.get().getStockpiles().add(stockpile);
+			StockpileTab.addStockpile(program, stockpile); //Add
 		}
 		Collections.sort(Settings.get().getStockpiles());
 		updated = true;

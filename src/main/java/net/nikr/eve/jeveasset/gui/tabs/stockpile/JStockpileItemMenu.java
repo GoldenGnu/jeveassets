@@ -64,6 +64,7 @@ public class JStockpileItemMenu extends JMenu {
 		JMenu jMenu;
 
 		JMenu jSubMenu = new JMenu(TabsStockpile.get().addToStockpile());
+		jSubMenu.setIcon(Images.EDIT_ADD.getIcon());
 		jSubMenu.setEnabled(!items.isEmpty());
 		this.add(jSubMenu);
 		if (!items.isEmpty()) {
@@ -74,7 +75,7 @@ public class JStockpileItemMenu extends JMenu {
 
 			jSubMenu.addSeparator();
 
-			for (Stockpile stockpile : Settings.get().getStockpiles()) {
+			for (Stockpile stockpile : StockpileTab.getShownStockpiles(program)) {
 				jMenuItem = new JStockpileMenuItem(stockpile, Images.TOOL_STOCKPILE.getIcon(), items);
 				jMenuItem.setActionCommand(StockpileItemMenuAction.ADD_TO.name());
 				jMenuItem.addActionListener(listener);

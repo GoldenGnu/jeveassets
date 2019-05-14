@@ -38,6 +38,7 @@ import net.nikr.eve.jeveasset.data.api.my.MyJournal;
 import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder;
 import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
 import net.nikr.eve.jeveasset.data.api.raw.RawBlueprint;
+import net.nikr.eve.jeveasset.data.profile.Profile;
 import net.nikr.eve.jeveasset.data.profile.ProfileManager;
 import net.nikr.eve.jeveasset.io.shared.RawConverter;
 import net.troja.eve.esi.model.CharacterRolesResponse.RolesEnum;
@@ -66,6 +67,7 @@ public final class ProfileWriter extends AbstractXmlWriter {
 			LOG.error("Profile not saved " + ex.getMessage(), ex);
 			return false;
 		}
+		writeStockpiles(xmldoc, profileManager.getActiveProfile());
 		writeAccounts(xmldoc, profileManager.getAccounts());
 		writeEveKitOwners(xmldoc, profileManager.getEveKitOwners());
 		writeEsiOwners(xmldoc, profileManager.getEsiOwners());
@@ -77,6 +79,16 @@ public final class ProfileWriter extends AbstractXmlWriter {
 		}
 		LOG.info("Profile saved");
 		return true;
+	}
+
+	private void writeStockpiles(final Document xmldoc, final Profile profile) {
+		Element parentNode = xmldoc.createElement("stockpiles");
+		xmldoc.getDocumentElement().appendChild(parentNode);
+		for (Long id : profile.getStockpileIDs()) {
+			Element node = xmldoc.createElement("stockpile");
+			setAttribute(node, "id", id);
+			parentNode.appendChild(node);
+		}
 	}
 
 	private void writeEsiOwners(final Document xmldoc, final List<EsiOwner> esiOwners) {

@@ -24,6 +24,7 @@ package net.nikr.eve.jeveasset.gui.tabs.stockpile;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import javax.swing.AbstractListModel;
 import javax.swing.GroupLayout;
@@ -50,6 +51,7 @@ public class StockpileSelectionDialog<T> extends JDialogCentered {
 
 	//Data
 	private List<T> data;
+	private boolean emptyAllowed;
 
 	public StockpileSelectionDialog(final Program program, String title) {
 		super(program, title);
@@ -98,7 +100,20 @@ public class StockpileSelectionDialog<T> extends JDialogCentered {
 	}
 
 	public List<T> show(List<T> stockpiles) {
+		emptyAllowed = false;
+		return show(stockpiles, new ArrayList<Integer>());
+	}
+
+	public List<T> show(List<T> stockpiles, Collection<Integer> selected) {
+		emptyAllowed = true;
 		jList.setModel(new DataListModel<>(stockpiles));
+		int[] indices = new int[selected.size()];
+		int i = 0;
+		for (int index : selected) {
+			indices[i] = index;
+			i++;
+		}
+		jList.setSelectedIndices(indices);
 		this.data = null;
 		this.setVisible(true);
 		return this.data;
@@ -116,7 +131,7 @@ public class StockpileSelectionDialog<T> extends JDialogCentered {
 	private class ListenerClass implements ListSelectionListener, ActionListener {
 		@Override
 		public void valueChanged(final ListSelectionEvent e) {
-			jOK.setEnabled(jList.getSelectedIndices().length > 0);
+			jOK.setEnabled(emptyAllowed || jList.getSelectedIndices().length > 0);
 		}
 
 		@Override
