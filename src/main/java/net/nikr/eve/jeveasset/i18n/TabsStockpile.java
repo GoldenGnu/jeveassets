@@ -151,6 +151,7 @@ public abstract class TabsStockpile extends Bundle {
 	public abstract String runs();
 	public abstract String selectStockpiles();
 	public abstract String shoppingList();
+	public abstract String showHide();
 	public abstract String shownValueNeeded();
 	public abstract String shownValueNow();
 	public abstract String shownVolumeNeeded();

@@ -44,7 +44,7 @@ public class StockpileTest extends TestUtil {
 				Collections.singletonList(0L),
 				false, //Exclude
 				true, true, true, true, true, true, true, true, true, true, true);
-		Stockpile stockpile = new Stockpile("Name", Collections.singletonList(filter), 1);
+		Stockpile stockpile = new Stockpile("Name", null, Collections.singletonList(filter), 1);
 		StockpileItem item1 = new Stockpile.StockpileItem(stockpile, new Item(0), 0, 0, false);
 		StockpileItem item2 = new Stockpile.StockpileItem(stockpile, new Item(0), 0, 0, false);
 		StockpileTotal total1 = new StockpileTotal(stockpile);
