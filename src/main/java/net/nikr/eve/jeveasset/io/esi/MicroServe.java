@@ -24,6 +24,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.net.Inet4Address;
 import java.net.ServerSocket;
 import java.net.Socket;
 import org.slf4j.Logger;
@@ -43,7 +44,7 @@ public class MicroServe implements AuthCodeListener {
 
 	public void startServer() {
 		try {
-			ServerSocket serverSocket = new ServerSocket(2221);
+			ServerSocket serverSocket = new ServerSocket(2221, 50, Inet4Address.getLoopbackAddress());
 			ConnectionListener connectionListener = new ConnectionListener(serverSocket, this);
 			connectionListener.start();
 			serverStarted = true;
