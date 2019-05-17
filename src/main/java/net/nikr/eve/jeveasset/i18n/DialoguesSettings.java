@@ -81,6 +81,10 @@ public abstract class DialoguesSettings extends Bundle {
 	public abstract String journal();
 	public abstract String journalSaveHistory();
 
+	// used in TrackerToolSettingsPanel
+	public abstract String tracker();
+	public abstract String useAssetPriceForSellOrders();
+
 	// used in PriceDataSettingsPanel
 	public abstract String changeSourceWarning();
 	public abstract String includeRegions();

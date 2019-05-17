@@ -108,7 +108,8 @@ public class Settings {
 		FLAG_JOURNAL_HISTORY,
 		FLAG_MARKET_ORDER_HISTORY,
 		FLAG_STRONG_COLORS,
-		FLAG_ASKED_CHECK_ALL_TRACKER
+		FLAG_ASKED_CHECK_ALL_TRACKER,
+		FLAG_TRACKER_USE_ASSET_PRICE_FOR_SELL_ORDERS,
 	}
 
 	private static final SettingsLock LOCK = new SettingsLock();
@@ -235,6 +236,7 @@ public class Settings {
 		flags.put(SettingFlag.FLAG_MARKET_ORDER_HISTORY, true);
 		flags.put(SettingFlag.FLAG_STRONG_COLORS, false);
 		flags.put(SettingFlag.FLAG_ASKED_CHECK_ALL_TRACKER, false);
+		flags.put(SettingFlag.FLAG_TRACKER_USE_ASSET_PRICE_FOR_SELL_ORDERS, false);
 		cacheFlags();
 	}
 
@@ -715,6 +717,14 @@ public class Settings {
 
 	public void setAskedCheckAllTracker(final boolean checkAllTracker) {
 		flags.put(SettingFlag.FLAG_ASKED_CHECK_ALL_TRACKER, checkAllTracker);
+	}
+
+	public boolean isTrackerUseAssetPriceForSellOrders() {
+		return flags.get(SettingFlag.FLAG_TRACKER_USE_ASSET_PRICE_FOR_SELL_ORDERS);
+	}
+
+	public void setTrackerUseAssetPriceForSellOrders(final boolean checkAllTracker) {
+		flags.put(SettingFlag.FLAG_TRACKER_USE_ASSET_PRICE_FOR_SELL_ORDERS, checkAllTracker);
 	}
 
 	public List<Stockpile> getStockpiles() {

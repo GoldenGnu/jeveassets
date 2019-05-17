@@ -183,6 +183,7 @@ public class DataSetCreator {
 	}
 
 	protected void addMarketOrders(List<MyMarketOrder> marketOrders, Map<String, Value> values, Value total, Date date) {
+		final boolean useAssetPriceForSellOrders = Settings.get().isTrackerUseAssetPriceForSellOrders();
 		for (MyMarketOrder marketOrder : marketOrders) {
 			if (marketOrder.isActive()) {
 				Value value;
@@ -200,8 +201,14 @@ public class DataSetCreator {
 					if (assetsUpdated(marketOrder.getCreatedOrIssued(), marketOrder.getOwner())) {
 						//To avoid duplicating the value:
 						//Only add sell orders value that was created before the last asset update
-						value.addSellOrders(marketOrder.getPrice() * marketOrder.getVolumeRemain());
-						total.addSellOrders(marketOrder.getPrice() * marketOrder.getVolumeRemain());
+						final double price; 
+						if (useAssetPriceForSellOrders) {
+							price = marketOrder.getDynamicPrice();
+						} else {
+							price = marketOrder.getPrice();
+						}
+						value.addSellOrders(price * marketOrder.getVolumeRemain());
+						total.addSellOrders(price * marketOrder.getVolumeRemain());
 					}
 				}
 			}
