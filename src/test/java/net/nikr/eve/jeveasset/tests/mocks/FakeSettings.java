@@ -570,4 +570,14 @@ public abstract class FakeSettings extends Settings {
 	public ContractPriceManager.ContractPriceSettings getContractPriceSettings() {
 		throw new UnsupportedOperationException("not implemented");
 	}
+
+	@Override
+	public void setTrackerUseAssetPriceForSellOrders(boolean checkAllTracker) {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public boolean isTrackerUseAssetPriceForSellOrders() {
+		throw new UnsupportedOperationException("not implemented");
+	}
 }
