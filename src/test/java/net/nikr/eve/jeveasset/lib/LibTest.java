@@ -53,15 +53,29 @@ public class LibTest extends TestUtil {
 		}
 
 		Set<String> libs = LibraryManager.getLibFiles();
+		StringBuilder missingLibraries = new StringBuilder();
+		missingLibraries.append("---Libs missing---\r\n");
+		StringBuilder removedLibraries = new StringBuilder();
+		removedLibraries.append("---Libs removed---\r\n");
+		boolean missing = false;
+		boolean removed = false;
 		for (String file : files) {
 			if (file.endsWith(".md5")) {
 				continue;
 			}
-			assertTrue("Libs missing: " + file, libs.contains(file));
+			if (!libs.contains(file)) {
+				missing = true;
+				missingLibraries.append(file);
+				missingLibraries.append("\r\n");
+			}
 		}
 		for (String lib : libs) {
-			assertTrue("Libs dosn't exist: " + lib, files.contains(lib));
+			if (!files.contains(lib)) {
+				removedLibraries.append(lib);
+				removedLibraries.append("\r\n");
+			}
 		}
+		assertFalse(missingLibraries.toString() + removedLibraries.toString(), missing || removed);
 	}
 
 	public void testPurge() {
