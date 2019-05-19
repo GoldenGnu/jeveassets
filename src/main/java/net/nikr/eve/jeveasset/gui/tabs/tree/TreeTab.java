@@ -113,6 +113,8 @@ public class TreeTab extends JMainTabSecondary implements TagUpdate {
 	private final DefaultEventTableModel<TreeAsset> tableModel;
 	private final EventList<TreeAsset> eventList;
 	private final EventList<TreeAsset> exportEventList;
+	private final SortedList<TreeAsset> sortedList;
+	private final SortedList<TreeAsset> sortedListEmpty;
 	private final FilterList<TreeAsset> filterList;
 	private final TreeList<TreeAsset> treeList;
 	private final AssetFilterControl filterControl;
@@ -169,14 +171,16 @@ public class TreeTab extends JMainTabSecondary implements TagUpdate {
 		eventList = new EventListManager<TreeAsset>().create();
 		exportEventList = new EventListManager<TreeAsset>().create();
 		//Sorting (per column)
-		
 		EventList<TreeAsset> myEventList = new EventListManager<TreeAsset>().create();
 		myEventList.getReadWriteLock().readLock().lock();
-		SortedList<TreeAsset> sortedList = new SortedList<>(myEventList);
+		sortedListEmpty = new SortedList<>(myEventList);
 		myEventList.getReadWriteLock().readLock().unlock();
+		eventList.getReadWriteLock().readLock().lock();
+		sortedList = new SortedList<>(eventList);
+		eventList.getReadWriteLock().readLock().unlock();
 		//Filter
 		eventList.getReadWriteLock().readLock().lock();
-		filterList = new FilterList<>(eventList);
+		filterList = new FilterList<>(sortedList);
 		eventList.getReadWriteLock().readLock().unlock();
 		filterList.addListEventListener(listener);
 		//Tree
@@ -191,7 +195,7 @@ public class TreeTab extends JMainTabSecondary implements TagUpdate {
 		jTable.setRowHeight(22);
 		jTable.addMouseListener(listener);
 		//Sorting
-		TableComparatorChooser<TreeAsset> tableComparatorChooser = TableComparatorChooser.install(jTable, sortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, tableFormat);
+		TableComparatorChooser<TreeAsset> tableComparatorChooser = TableComparatorChooser.install(jTable, sortedListEmpty, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, tableFormat);
 		tableComparatorChooser.addSortActionListener(new ListenerSorter());
 		//Tree
 		TreeTableSupport install = TreeTableSupport.install(jTable, treeList, 0);
@@ -426,10 +430,10 @@ public class TreeTab extends JMainTabSecondary implements TagUpdate {
 			exportEventList.getReadWriteLock().writeLock().unlock();
 		}
 		updateTotals();
+		jTable.unlock();
 	}
 
 	private void updateTotals() {
-		jTable.lock();
 		if (jCategories.isSelected()) {
 			for (TreeAsset treeAsset : categoriesExport) {
 				treeAsset.resetValues();
@@ -457,7 +461,10 @@ public class TreeTab extends JMainTabSecondary implements TagUpdate {
 				filterList.getReadWriteLock().readLock().unlock();
 			}
 		}
-		jTable.unlock();
+	}
+
+	private void updateSort() {
+		sortedList.setComparator(sortedListEmpty.getComparator());
 	}
 
 	private void updateStatusbar() {
@@ -568,16 +575,8 @@ public class TreeTab extends JMainTabSecondary implements TagUpdate {
 			SwingUtilities.invokeLater(new Runnable() {
 				@Override
 				public void run() {
-					//Full list update
 					expansionModel.setState(ExpandeState.LOAD);
-					List<TreeAsset> treeAssets = new ArrayList<>(eventList);
-					eventList.getReadWriteLock().writeLock().lock();
-					try {
-						eventList.clear();
-						eventList.addAll(treeAssets);
-					} finally {
-						eventList.getReadWriteLock().writeLock().unlock();
-					}
+					updateSort();
 				}
 			});
 		}
@@ -735,6 +734,8 @@ public class TreeTab extends JMainTabSecondary implements TagUpdate {
 		@Override
 		protected void afterFilter() {
 			updateTotals();
+			updateSort();
+			jTable.unlock();
 		}
 
 		@Override
