@@ -41,14 +41,18 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
 import javax.swing.ButtonGroup;
 import javax.swing.GroupLayout;
+import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
@@ -64,6 +68,7 @@ import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.api.my.MyAsset;
+import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob.IndustryActivity;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.data.settings.tag.TagUpdate;
@@ -85,6 +90,7 @@ import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.HierarchyColumn;
 import net.nikr.eve.jeveasset.gui.tabs.tree.TreeAsset.TreeType;
 import net.nikr.eve.jeveasset.gui.tabs.tree.TreeTab.AssetTreeExpansionModel.ExpandeState;
+import net.nikr.eve.jeveasset.i18n.General;
 import net.nikr.eve.jeveasset.i18n.TabsAssets;
 import net.nikr.eve.jeveasset.i18n.TabsTree;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
@@ -275,6 +281,27 @@ public class TreeTab extends JMainTabSecondary implements TagUpdate {
 		categories.clear();
 		locationsExport.clear();
 		categoriesExport.clear();
+		Map<Flag, Set<String>> flags = new HashMap<>();
+		Flag shipHangar = new Flag("Ship Hangar", Images.LOC_HANGAR_SHIPS.getIcon());
+		flags.put(new Flag("Asset Safety", Images.LOC_SAFTY.getIcon()), Collections.singleton("AssetSafety")); //FlagID 36 (Asset Safety)
+		flags.put(new Flag("Item Hangar", Images.LOC_HANGAR_ITEMS.getIcon()), Collections.singleton("Hangar")); //FlagID 4
+		Set<String> deliveries = new HashSet<>();
+		deliveries.add("Deliveries"); //FlagID 173
+		deliveries.add("CorpMarket"); //FlagID 62 (Corporation Deliveries)
+		flags.put(new Flag("Deliveries", Images.LOC_DELIVERIES.getIcon()), deliveries);
+		Set<String> industryJobs = new HashSet<>();
+		industryJobs.add(General.get().industryJobFlag());
+		industryJobs.add(IndustryActivity.ACTIVITY_MANUFACTURING.toString()); //industry job manufacturing
+		industryJobs.add(IndustryActivity.ACTIVITY_REACTIONS.toString()); //industry job reactions
+		flags.put(new Flag(General.get().industryJobFlag(), Images.LOC_INDUSTRY.getIcon()), industryJobs);
+		Set<String> contracts = new HashSet<>();
+		contracts.add(General.get().contractExcluded());
+		contracts.add(General.get().contractIncluded());
+		flags.put(new Flag("Contracts", Images.LOC_CONTRACTS.getIcon()), contracts);
+		Set<String> marketOrders = new HashSet<>();
+		marketOrders.add(General.get().marketOrderBuyFlag());
+		marketOrders.add(General.get().marketOrderSellFlag());
+		flags.put(new Flag("Market Orders", Images.LOC_MARKET.getIcon()), marketOrders);
 		Map<String, TreeAsset> categoryCache = new HashMap<>();
 		Map<String, TreeAsset> locationCache = new HashMap<>();
 		MyLocation emptyLocation = new MyLocation(0, "", 0, "", 0, "", "");
@@ -323,11 +350,52 @@ public class TreeTab extends JMainTabSecondary implements TagUpdate {
 
 			//Add parent item(s)
 			String parentKey = fullLocation;
-			if (!asset.getParents().isEmpty()) {
-				for (MyAsset parentAsset : asset.getParents()) {
+			List<MyAsset> list = new ArrayList<>(asset.getParents()); //Copy
+			if (asset.getAssets().isEmpty()) {
+				list.add(asset);
+			}
+			if (!list.isEmpty()) {
+				for (MyAsset parentAsset : list) {
+					//Office
+					MyAsset parent = parentAsset.getParent();
+					if (parent != null && parent.getTypeID() == 27) { //Office divisions
+						String cacheKey = parentAsset.getFlagName() + " #" + parent.getItemID();
+						TreeAsset divisionAsset = locationCache.get(cacheKey);
+						if (divisionAsset == null) {						
+							divisionAsset = new TreeAsset(location, parentAsset.getFlagName(), parentKey + cacheKey, Images.LOC_DIVISION.getIcon(), locationTree);
+							locationCache.put(cacheKey, divisionAsset);
+							locations.add(divisionAsset);
+							locationsExport.add(divisionAsset);
+						}
+						parentKey = parentKey + cacheKey;
+						locationTree.add(divisionAsset);
+					}
+					if (parent == null) {
+						for (Map.Entry<Flag, Set<String>> entry: flags.entrySet()) {
+							if (entry.getValue().contains(parentAsset.getFlag())) {
+								final Flag flag;
+								if (entry.getKey().getName().equals("Item Hangar") && parentAsset.getItem().getCategory().equals("Ship")) {
+									flag = shipHangar;
+								} else {
+									flag = entry.getKey();
+								}
+								String cacheKey = flag.getName() + "#" + parentAsset.getLocationID();
+								TreeAsset hangarAsset = locationCache.get(cacheKey);
+								if (hangarAsset == null) {						
+									hangarAsset = new TreeAsset(location, flag.getName(), parentKey + cacheKey, flag.getIcon(), locationTree);
+									locationCache.put(cacheKey, hangarAsset);
+									locations.add(hangarAsset);
+									locationsExport.add(hangarAsset);
+								}
+								parentKey = parentKey + cacheKey;
+								locationTree.add(hangarAsset);
+							}
+						}
+					}
+					//Item
 					String cacheKey = parentAsset.getName() + " #" + parentAsset.getItemID();
 					TreeAsset parentTreeAsset = locationCache.get(cacheKey);
-					if (parentTreeAsset == null) {
+					if (parentTreeAsset == null) {						
 						parentTreeAsset = new TreeAsset(parentAsset, TreeType.LOCATION, locationTree, parentKey, !parentAsset.getAssets().isEmpty());
 						locationCache.put(cacheKey, parentTreeAsset);
 						locations.add(parentTreeAsset);
@@ -336,12 +404,6 @@ public class TreeTab extends JMainTabSecondary implements TagUpdate {
 					parentKey = parentKey + parentAsset.getName() + " #" + parentAsset.getItemID();
 					locationTree.add(parentTreeAsset);
 				}
-			}
-			//Add item
-			if (asset.getAssets().isEmpty()) {
-				TreeAsset locationAsset = new TreeAsset(asset, TreeType.LOCATION, locationTree, parentKey, !asset.getAssets().isEmpty());
-				locations.add(locationAsset);
-				locationsExport.add(locationAsset);
 			}
 			
 		//CATEGORY
@@ -579,6 +641,54 @@ public class TreeTab extends JMainTabSecondary implements TagUpdate {
 					updateSort();
 				}
 			});
+		}
+	}
+
+	private static class Flag implements Comparable<Flag> {
+		private final String name;
+		private final Icon icon;
+
+		public Flag(String name, Icon icon) {
+			this.name = name;
+			this.icon = icon;
+		}
+
+		public String getName() {
+			return name;
+		}
+
+		public Icon getIcon() {
+			return icon;
+		}
+
+		@Override
+		public int hashCode() {
+			int hash = 3;
+			hash = 61 * hash + Objects.hashCode(this.name);
+			return hash;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj) {
+				return true;
+			}
+			if (obj == null) {
+				return false;
+			}
+			if (getClass() != obj.getClass()) {
+				return false;
+			}
+			final Flag other = (Flag) obj;
+			if (!Objects.equals(this.name, other.name)) {
+				return false;
+			}
+			return true;
+		}
+
+		@Override
+		public int compareTo(Flag o) {
+			return this.name.compareTo(o.name);
 		}
 	}
 

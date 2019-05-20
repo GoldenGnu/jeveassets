@@ -315,6 +315,13 @@ public class MyAsset extends RawAsset implements Comparable<MyAsset>, InfoItem, 
 		return parents;
 	}
 
+	public MyAsset getParent() {
+		if (parents.isEmpty()) {
+			return null;
+		}
+		return parents.get(parents.size() - 1);
+	}
+
 	@Override
 	public Double getDynamicPrice() {
 		return price;
