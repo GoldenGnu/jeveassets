@@ -168,6 +168,7 @@ public class TrackerTab extends JMainTabSecondary {
 	private final JCheckBox jContractCollateral;
 	private final JCheckBox jContractValue;
 	private final JCheckBox jAllProfiles;
+	private final JCheckBox jCharacterCorporations;
 	private final JMenuItem jImportFile;
 	private final JCheckBoxMenuItem jIncludeZero;
 	private final JPopupMenu jPopupMenu;
@@ -370,6 +371,10 @@ public class TrackerTab extends JMainTabSecondary {
 		jAllProfiles.setActionCommand(TrackerAction.PROFILE.name());
 		jAllProfiles.addActionListener(listener);
 
+		jCharacterCorporations = new JCheckBox(TabsTracker.get().characterCorporations());
+		jCharacterCorporations.setActionCommand(TrackerAction.PROFILE.name());
+		jCharacterCorporations.addActionListener(listener);
+
 		jOwners = new JMultiSelectionList<String>();
 		jOwners.getSelectionModel().addListSelectionListener(listener);
 		JScrollPane jOwnersScroll = new JScrollPane(jOwners);
@@ -552,6 +557,7 @@ public class TrackerTab extends JMainTabSecondary {
 					.addComponent(jContractValue, PANEL_WIDTH, PANEL_WIDTH, PANEL_WIDTH)
 					.addComponent(jOwnersSeparator, PANEL_WIDTH, PANEL_WIDTH, PANEL_WIDTH)
 					.addComponent(jAllProfiles, PANEL_WIDTH, PANEL_WIDTH, PANEL_WIDTH)
+					.addComponent(jCharacterCorporations, PANEL_WIDTH, PANEL_WIDTH, PANEL_WIDTH)
 					.addComponent(jOwnersScroll, PANEL_WIDTH, PANEL_WIDTH, PANEL_WIDTH)
 				)
 		);
@@ -595,6 +601,7 @@ public class TrackerTab extends JMainTabSecondary {
 					.addComponent(jContractValue, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 					.addComponent(jOwnersSeparator, 3, 3, 3)
 					.addComponent(jAllProfiles, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jCharacterCorporations, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 					.addComponent(jOwnersScroll, 70, 70, Integer.MAX_VALUE)
 				)
 		);
@@ -706,11 +713,12 @@ public class TrackerTab extends JMainTabSecondary {
 			uniqueOwners = new HashSet<String>(trackerOwners);
 		} else { //Profile owners
 			uniqueOwners = new HashSet<String>();
+			boolean characterCorporations = jCharacterCorporations.isSelected();
 			for (OwnerType owner : program.getOwnerTypes()) {
 				if (trackerOwners.contains(owner.getOwnerName())) {
 					uniqueOwners.add(owner.getOwnerName());
 				}
-				if (owner.getCorporationName() != null && trackerOwners.contains(owner.getCorporationName())) {
+				if (characterCorporations && owner.getCorporationName() != null && trackerOwners.contains(owner.getCorporationName())) {
 					uniqueOwners.add(owner.getCorporationName());
 				}
 			}
@@ -849,49 +857,63 @@ public class TrackerTab extends JMainTabSecondary {
 		if (owners != null) { //No data set...
 			try {
 				TrackerData.readLock();
-				for (String owner : owners) {
-					for (Value data : TrackerData.get().get(owner)) {
-						SimpleTimePeriod date = new SimpleTimePeriod(data.getDate(), data.getDate());
-						if ((from == null || data.getDate().after(from)) && (to == null || data.getDate().before(to))) {
-							Value value = cache.get(date);
-							if (value == null) {
-								value = new Value(data.getDate());
-								cache.put(date, value);
+				Map<Date, Map<String, Value>> trackerDataByDate = getTrackerDataByDate(owners);
+				Map<String, Value> lastMap = new HashMap<>();
+				for (Map.Entry<Date, Map<String, Value>> dateEntry : trackerDataByDate.entrySet()) {
+					final Date date = dateEntry.getKey();
+					final Value value;
+					if ((from == null || date.after(from)) && (to == null || date.before(to))) {
+						value = new Value(date);
+						cache.put(new SimpleTimePeriod(date, date), value);
+					} else {
+						continue;
+					}
+					for (Map.Entry<String, Value> ownerEntry : dateEntry.getValue().entrySet()) {
+						Value data = ownerEntry.getValue();
+						if (data == null) {
+							Value last = lastMap.get(ownerEntry.getKey());
+							if (last != null) {
+								data = last;
 							}
-
+						}
+						if (data == null) {
+							continue;
+						} else {
+							lastMap.put(ownerEntry.getKey(), data);
+						}
+						if (data.getAssetsFilter().isEmpty()) {
+							value.addAssets(data.getAssetsTotal());
 							//Default
-							Boolean assetBoolean = assetColumns.get(data.getDate());
+							Boolean assetBoolean = assetColumns.get(date);
 							if (assetBoolean == null) {
-								assetColumns.put(data.getDate(), false);
+								assetColumns.put(date, false);
 							}
-							Boolean walletBoolean = walletColumns.get(data.getDate());
-							if (walletBoolean == null) {
-								walletColumns.put(data.getDate(), false);
-							}
-							if (data.getAssetsFilter().isEmpty()) {
-								value.addAssets(data.getAssetsTotal());
-							} else {
-								assetColumns.put(data.getDate(), true);
-								for (Map.Entry<AssetValue, Double> entry : data.getAssetsFilter().entrySet()) {
-									if (assetNodesMap.get(entry.getKey().getID()).isSelected()) {
-										value.addAssets(entry.getKey(), entry.getValue());
-									}
+						} else {
+							assetColumns.put(date, true);
+							for (Map.Entry<AssetValue, Double> entry : data.getAssetsFilter().entrySet()) {
+								if (assetNodesMap.get(entry.getKey().getID()).isSelected()) {
+									value.addAssets(entry.getValue());
 								}
 							}
-							value.addEscrows(data.getEscrows());
-							value.addEscrowsToCover(data.getEscrowsToCover());
-							value.addManufacturing(data.getManufacturing());
-							value.addContractCollateral(data.getContractCollateral());
-							value.addContractValue(data.getContractValue());
-							value.addSellOrders(data.getSellOrders());
-							if (data.getBalanceFilter().isEmpty()) {
-								value.addBalance(data.getBalanceTotal());
-							} else {
-								walletColumns.put(data.getDate(), true);
-								for (Map.Entry<String, Double> entry : data.getBalanceFilter().entrySet()) {
-									if (accountNodesMap.get(entry.getKey()).isSelected()) {
-										value.addBalance(entry.getKey(), entry.getValue());
-									}
+						}
+						value.addEscrows(data.getEscrows());
+						value.addEscrowsToCover(data.getEscrowsToCover());
+						value.addManufacturing(data.getManufacturing());
+						value.addContractCollateral(data.getContractCollateral());
+						value.addContractValue(data.getContractValue());
+						value.addSellOrders(data.getSellOrders());
+						if (data.getBalanceFilter().isEmpty()) {
+							value.addBalance(data.getBalanceTotal());
+							//Default
+							Boolean walletBoolean = walletColumns.get(date);
+							if (walletBoolean == null) {
+								walletColumns.put(date, false);
+							}
+						} else {
+							walletColumns.put(date, true);
+							for (Map.Entry<String, Double> entry : data.getBalanceFilter().entrySet()) {
+								if (accountNodesMap.get(entry.getKey()).isSelected()) {
+									value.addBalance(entry.getValue());
 								}
 							}
 						}
@@ -931,6 +953,26 @@ public class TrackerTab extends JMainTabSecondary {
 			count++;
 		}
 		updateShown();
+	}
+
+	private Map<Date, Map<String, Value>> getTrackerDataByDate(final List<String> owners) {
+		Map<Date, Map<String, Value>> trackerDataByDate = new TreeMap<>();
+		Map<String, Value> empty = new HashMap<>();
+		for (String owner : owners) {
+			empty.put(owner, null);
+		}
+		for (String owner : owners) {
+			for (Value data : TrackerData.get().get(owner)) {
+				Date key = data.getDate();
+				Map<String, Value> map = trackerDataByDate.get(key);
+				if (map == null) {
+					map = new HashMap<>(empty);
+					trackerDataByDate.put(key, map);
+				}
+				map.put(owner, data);
+			}
+		}
+		return trackerDataByDate;
 	}
 
 	private void updateButtonIcons() {
