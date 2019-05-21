@@ -27,6 +27,7 @@ import java.net.URL;
 public class FileUtil {
 	private static final String PATH_DATA_VERSION = "data" + File.separator + "data.dat";
 	private static final String PATH_JAR = "jeveassets.jar";
+	private static final String PATH_PACKAGE_MANAGER = "packagemanager.properties";
 	private static final String PATH_MEMORY = "jmemory.jar";
 
 	public static boolean onMac() {
@@ -43,6 +44,10 @@ public class FileUtil {
 
 	public static String getPathRunMemory() {
 		return FileUtil.getLocalFile(PATH_MEMORY, false);
+	}
+
+	public static String getPathPackageManager() {
+		return FileUtil.getLocalFile(PATH_PACKAGE_MANAGER, false);
 	}
 
 	public static String getPathLib() {

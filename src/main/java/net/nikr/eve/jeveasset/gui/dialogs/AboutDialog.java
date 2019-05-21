@@ -33,6 +33,7 @@ import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
 import net.nikr.eve.jeveasset.i18n.DialoguesAbout;
+import net.nikr.eve.jeveasset.io.online.Updater;
 import net.nikr.eve.jeveasset.io.shared.DesktopUtil;
 
 
@@ -57,6 +58,18 @@ public class AboutDialog extends JDialogCentered {
 				+ "Copyright &copy; 2009-2019 Contributors<br>"
 				);
 
+		String s = Updater.getPackageMaintainers();
+		StringBuilder packageManager = new StringBuilder();
+		if (s != null) {
+			String[] names = s.split(",");
+			packageManager.append("<b>Package Maintainers</b><br>");
+			for (String name : names) {
+				packageManager.append("&nbsp;");
+				packageManager.append(name.trim());
+				packageManager.append("<br>");
+			}
+			packageManager.append("<br>");
+		}
 		JEditorPane jInfo = createEditorPane(
 				  "<b>Version</b><br>"
 				+ "&nbsp;" + Program.PROGRAM_VERSION + " (" + program.getProgramDataVersion() + ")<br>"
@@ -71,6 +84,7 @@ public class AboutDialog extends JDialogCentered {
 				+ "&nbsp;Saulvin<br>"
 				+ "&nbsp;AnrDaemon<br>"
 				+ "<br>"
+				+ packageManager.toString()
 				+ "<b>License</b><br>"
 				+ "&nbsp;<a href=\"http://www.gnu.org/licenses/old-licenses/gpl-2.0.html\">GNU General Public License 2.0</a><br>"
 				+ "<br>"
