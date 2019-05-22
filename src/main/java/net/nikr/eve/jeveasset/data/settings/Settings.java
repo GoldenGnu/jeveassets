@@ -292,6 +292,7 @@ public class Settings {
 			Path citadelFrom = Paths.get(Settings.getPathCitadel());
 			Path priceFrom = Paths.get(Settings.getPathPriceData());
 			Path profilesFrom = Paths.get(Settings.getPathProfilesDirectory());
+			Path contractPricesFrom = Paths.get(Settings.getPathContractPrices());
 			Program.setPortable(true);
 			Path settingsTo = Paths.get(Settings.getPathSettings());
 			Path trackerTo = Paths.get(Settings.getPathTrackerData());
@@ -300,6 +301,7 @@ public class Settings {
 			Path citadelTo = Paths.get(Settings.getPathCitadel());
 			Path priceTo = Paths.get(Settings.getPathPriceData());
 			Path profilesTo = Paths.get(Settings.getPathProfilesDirectory());
+			Path contractPricesTo = Paths.get(Settings.getPathContractPrices());
 			if (Files.exists(settingsFrom) && !Files.exists(settingsTo)) {
 				LOG.info("Importing settings");
 				try {
@@ -349,6 +351,15 @@ public class Settings {
 				LOG.info("Importing prices");
 				try {
 					Files.copy(priceFrom, priceTo);
+					LOG.info("	OK");
+				} catch (IOException ex) {
+					LOG.info("	FAILED");
+				}
+			}
+			if (Files.exists(contractPricesFrom) && !Files.exists(contractPricesTo)) {
+				LOG.info("Importing contract prices");
+				try {
+					Files.copy(contractPricesFrom, contractPricesTo);
 					LOG.info("	OK");
 				} catch (IOException ex) {
 					LOG.info("	FAILED");
