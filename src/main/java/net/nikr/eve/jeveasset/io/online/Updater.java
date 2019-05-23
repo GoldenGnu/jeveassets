@@ -53,7 +53,7 @@ public class Updater {
 	private static final String UPDATE =	 UPDATE_URL + "jupdate.jar";
 
 	public void update(final String localProgram, String localData, ProxyData proxyData) {
-		if (isPackageManager()) {
+		if (isPackageManager() && !getPackageNotifyUpdates()) {
 			LOG.info("Not checking for updates (package manager enabled)");
 			return;
 		}
@@ -197,6 +197,20 @@ public class Updater {
 	private void update(String title, String online, String local, String link, ProxyData proxyData) {
 		LOG.log(Level.INFO, "{0} Online: {1} Local: {2}", new Object[]{title.toUpperCase(), online, local});
 		if (online != null && !online.equals(local)) {
+			if (isPackageManager()) {
+				JOptionPane.showMessageDialog(null, 
+					title + " update available\r\n"
+					+ "\r\n"
+					+ "Your version: " + local + "\r\n"
+					+ "Latest version: " + online + "\r\n"
+					+ "\r\n"
+					+ "Please use your package manager to update\r\n"
+					+ "\r\n"
+					,
+					"Auto Update",
+					JOptionPane.PLAIN_MESSAGE);
+				return;
+			}
 			int value = JOptionPane.showConfirmDialog(null, 
 					title + " update available\r\n"
 					+ "\r\n"
@@ -267,6 +281,16 @@ public class Updater {
 			//No problem
 		}
 		return prop.getProperty("maintainers", null);
+	}
+
+	public static boolean getPackageNotifyUpdates() {
+		Properties prop = new Properties();
+		try {
+			prop.load(new FileInputStream(new File(FileUtil.getPathPackageManager())));
+		} catch (IOException ex) {
+			//No problem
+		}
+		return "true".equals(prop.getProperty("notifyUpdates", "").toLowerCase());
 	}
 
 	private boolean downloadUpdater() {
