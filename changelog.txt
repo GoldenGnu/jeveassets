@@ -16,6 +16,28 @@
                   #### #  # #  # #  # #### #### #### #### ####
 
 ________________________________________________________________________________
+_6.1.0__________________________________________________________________________
+
+New Features:
+-Update missing item data from ESI (not all item data is available via ESI, yet)
+-Tracker: Use asset prices for sell orders (Optional, off by default)
+-Tree tool: Added more groups
+-Tree tool: Container types show totals of sup items
+-Stockpiles: Show/Hide Stockpiles per Profile
+-Keep the splash screen open after dismissing an update dialog
+-Better error message for OutOfMemoryErrors
+
+Bug Fixes:
+-Fixed duplicates in the Tree Tool
+-Better handling of multiple profiles in the tracker
+
+Code:
+-Better support for package managers
+-Updated evekit library to 6.0.0
+-Updated eve-esi library to 3.3.0
+-Updated contracts-pricing library to 2.0.0
+
+________________________________________________________________________________
 _6.0.4__________________________________________________________________________
 
 Bug Fixes:
