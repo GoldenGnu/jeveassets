@@ -20,7 +20,6 @@
  */
 package net.nikr.eve.jeveasset.io.esi;
 
-import com.squareup.okhttp.OkHttpClient;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -56,6 +55,7 @@ import net.troja.eve.esi.api.UniverseApi;
 import net.troja.eve.esi.api.UserInterfaceApi;
 import net.troja.eve.esi.api.WalletApi;
 import net.troja.eve.esi.auth.OAuth;
+import okhttp3.OkHttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -92,10 +92,10 @@ public abstract class AbstractEsiGetter extends AbstractGetter<EsiOwner> {
 
 	public static OkHttpClient getHttpClient() {
 		if (OkHttpClient == null || OkHttpClient.interceptors().size() > 100 || OkHttpClient.networkInterceptors().size() > 100) {
-			OkHttpClient = new OkHttpClient();
-			OkHttpClient.setReadTimeout(20, TimeUnit.SECONDS);
-			OkHttpClient.setWriteTimeout(20, TimeUnit.SECONDS);
-			OkHttpClient.setConnectTimeout(20, TimeUnit.SECONDS);
+			OkHttpClient = new OkHttpClient.Builder()
+					.readTimeout(20, TimeUnit.SECONDS)
+					.writeTimeout(20, TimeUnit.SECONDS)
+					.connectTimeout(20, TimeUnit.SECONDS).build();
 		}
 		return OkHttpClient;
 	}
