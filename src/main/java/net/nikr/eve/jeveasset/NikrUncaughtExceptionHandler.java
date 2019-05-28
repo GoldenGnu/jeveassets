@@ -20,6 +20,7 @@
  */
 package net.nikr.eve.jeveasset;
 
+import java.awt.Desktop;
 import java.awt.IllegalComponentStateException;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
@@ -30,6 +31,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.HashSet;
@@ -90,20 +92,18 @@ public class NikrUncaughtExceptionHandler implements Thread.UncaughtExceptionHan
 						+ "\r\n"
 						, "Critical Error", JOptionPane.ERROR_MESSAGE);
 			} else if (causes.contains(OutOfMemoryError.class)) { //Out of memory
-				JOptionPane.showMessageDialog(null,
-						"Java has run out of memory\r\n"
+				int value = JOptionPane.showConfirmDialog(null,
+						"Java has run out of memory. jEveAssets will now close\r\n"
+						+ "Do you want to browse to the wiki article explaining how to fix this?\r\n"
 						+ "\r\n"
-						+ "To avoid this error you can use jmemory.jar\r\n"
-						+ "(instead of jeveassets.jar)\r\n"
-						+ "\r\n"
-						+ "Feel free to ask for help in the forum thread\r\n"
-						+ "if you encounter any problems with jmemory.jar\r\n"
-						+ "I will do my best to resolve any issues.\r\n"
-						+ "\r\n"
-						+ "Press OK to close jEveAssets"
-						+ "\r\n"
-						+ "\r\n"
-						, "Critical Error", JOptionPane.ERROR_MESSAGE);
+						, "Critical Error", JOptionPane.OK_CANCEL_OPTION, JOptionPane.ERROR_MESSAGE);
+				if (value == JOptionPane.OK_OPTION) {
+					try {
+						Desktop.getDesktop().browse(new URI("https://jeveassets.nikr.net/jmemory"));
+					} catch (Throwable ex) {
+						//We tried our best, nothing more to do now...
+					}
+				}
 			} else if (causes.contains(NoClassDefFoundError.class) || causes.contains(ClassNotFoundException.class)) { //Corrupted class files 
 				try {
 					Updater updater = new Updater();
