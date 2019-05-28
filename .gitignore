@@ -1,3 +1,6 @@
 target
 nbactions.xml
 jeveassets.log
+nbproject
+nb-configuration.xml
+nbactions*.xml

@@ -55,6 +55,7 @@ import net.nikr.eve.jeveasset.data.api.raw.RawJournal;
 import net.nikr.eve.jeveasset.data.api.raw.RawJournalRefType;
 import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder;
 import net.nikr.eve.jeveasset.data.api.raw.RawTransaction;
+import net.nikr.eve.jeveasset.data.profile.Profile;
 import net.nikr.eve.jeveasset.data.profile.ProfileManager;
 import net.nikr.eve.jeveasset.data.sde.ItemFlag;
 import net.nikr.eve.jeveasset.data.sde.StaticData;
@@ -88,7 +89,7 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 	@Override
 	protected Boolean parse(Element element) throws XmlException {
 		profileManager.clear(); //Clear before load (may happen more than once)
-		parseSettings(element, profileManager);
+		parseProfile(element, profileManager);
 		return true;
 	}
 
@@ -102,9 +103,15 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 		return true;
 	}
 
-	private void parseSettings(final Element element, ProfileManager profileManager) throws XmlException {
+	private void parseProfile(final Element element, ProfileManager profileManager) throws XmlException {
 		if (!element.getNodeName().equals("assets")) {
 			throw new XmlException("Wrong root element name.");
+		}
+		//Stockpiles
+		NodeList stockpilesNodes = element.getElementsByTagName("stockpiles");
+		if (stockpilesNodes.getLength() == 1) {
+			Element stockpilesElement = (Element) stockpilesNodes.item(0);
+			parseStockpiles(stockpilesElement, profileManager.getActiveProfile());
 		}
 		//Eve XML Api
 		NodeList accountNodes = element.getElementsByTagName("accounts");
@@ -124,6 +131,17 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 			Element esiElement = (Element) esiOwnersNodes.item(0);
 			parseEsiOwners(esiElement, profileManager.getEsiOwners());
 		}
+	}
+
+	private void parseStockpiles(final Element element, final Profile profile) throws XmlException {
+		NodeList stockpilesNodes = element.getElementsByTagName("stockpile");
+		Set<Long> stockpileIDs = new HashSet<>();
+		for (int i = 0; i < stockpilesNodes.getLength(); i++) {
+			Element currentNode = (Element) stockpilesNodes.item(i);
+			Long id = AttributeGetters.getLong(currentNode, "id");
+			stockpileIDs.add(id);
+		}
+		profile.setStockpileIDs(stockpileIDs);
 	}
 
 	private void parseEsiOwners(final Element element, final List<EsiOwner> esiOwners) throws XmlException {

@@ -38,6 +38,7 @@ public final class ItemsReader extends AbstractXmlReader<Boolean> {
 
 	public static void load() {
 		ItemsReader reader = new ItemsReader();
+		reader.read("Items Updates", Settings.getPathItemsUpdates(), AbstractXmlReader.XmlType.DYNAMIC_BACKUP);
 		reader.read("Items", Settings.getPathItems(), AbstractXmlReader.XmlType.STATIC);
 	}
 
@@ -79,6 +80,10 @@ public final class ItemsReader extends AbstractXmlReader<Boolean> {
 
 	private Item parseItem(final Node node) throws XmlException {
 		int id = AttributeGetters.getInt(node, "id");
+		String version = AttributeGetters.getStringOptional(node, "version");
+		if (AttributeGetters.haveAttribute(node, "empty")) {
+			return new Item(id, version);
+		}
 		String name = AttributeGetters.getString(node, "name");
 		String group = AttributeGetters.getString(node, "group");
 		String category = AttributeGetters.getString(node, "category");
@@ -91,7 +96,6 @@ public final class ItemsReader extends AbstractXmlReader<Boolean> {
 		int meta = AttributeGetters.getInt(node, "meta");
 		String tech = AttributeGetters.getString(node, "tech");
 		boolean marketGroup = AttributeGetters.getBoolean(node, "marketgroup");
-		boolean piMaterial = AttributeGetters.getBoolean(node, "pi");
 		int portion = AttributeGetters.getInt(node, "portion");
 		int product;
 		if (AttributeGetters.haveAttribute(node, "product")) {
@@ -103,7 +107,7 @@ public final class ItemsReader extends AbstractXmlReader<Boolean> {
 		if (AttributeGetters.haveAttribute(node, "productquantity")) {
 			productQuantity = AttributeGetters.getInt(node, "productquantity");
 		}
-		return new Item(id, name, group, category, price, volume, packagedVolume, meta, tech, marketGroup, piMaterial, portion, product, productQuantity);
+		return new Item(id, name, group, category, price, volume, packagedVolume, meta, tech, marketGroup, portion, product, productQuantity, version);
 	}
 
 	private void parseMaterials(final Element element, final Item item) throws XmlException {

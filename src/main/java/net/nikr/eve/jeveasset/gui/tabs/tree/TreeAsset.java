@@ -70,10 +70,15 @@ public class TreeAsset extends MyAsset {
 		this.item = true;
 		this.depthOffset = 0;
 		if (treeType == TreeType.LOCATION && parent) {
-			if (asset.getItem().getGroup().equals("Audit Log Secure Container")) {
+			if (asset.getItem().getGroup().equals("Audit Log Secure Container") 
+					|| asset.getItem().getGroup().equals("Freight Container")
+					|| asset.getItem().getGroup().equals("Cargo Container")
+					|| asset.getItem().getGroup().equals("Secure Cargo Container")) {
 				this.icon = Images.LOC_CONTAINER.getIcon();
 			} else if (asset.getItem().getCategory().equals("Ship")) {
-				this.icon = Images.TOOL_SHIP_LOADOUTS.getIcon();
+				this.icon = Images.LOC_SHIP.getIcon();
+			} else if (asset.getItem().getTypeID() == 27) { //Office
+				this.icon = Images.LOC_OFFICE.getIcon();
 			} else if (asset.getItem().getCategory().equals("Planetary Interaction")) {
 				switch (asset.getItem().getGroup()) {
 					case "Command Centers":
@@ -178,7 +183,7 @@ public class TreeAsset extends MyAsset {
 
 	@Override
 	public long getCount() {
-		if (isItem()) {
+		if (!isParent()) {
 			return super.getCount();
 		} else {
 			return count;
@@ -190,7 +195,11 @@ public class TreeAsset extends MyAsset {
 		if (isItem()) {
 			return super.getDynamicPrice();
 		} else {
-			return value / count;
+			if (value > 0 && count > 0) {
+				return value / count;
+			} else {
+				return 0.0;
+			}
 		}
 	}
 
@@ -199,7 +208,11 @@ public class TreeAsset extends MyAsset {
 		if (isItem()) {
 			return super.getContractPrice();
 		} else {
-			return valueContract / count;
+			if (valueContract > 0 && count > 0) {
+				return valueContract / count;
+			} else {
+				return 0.0;
+			}
 		}
 	}
 
@@ -220,7 +233,11 @@ public class TreeAsset extends MyAsset {
 		if (isItem()) {
 			return super.getItem().getPriceBase();
 		} else {
-			return valueBase / count;
+			if (valueBase > 0 && count > 0) {
+				return valueBase / count;
+			} else {
+				return 0.0;
+			}
 		}
 	}
 
@@ -229,7 +246,11 @@ public class TreeAsset extends MyAsset {
 		if (isItem()) {
 			return super.getPriceBuyMax();
 		} else {
-			return valueBuyMax / count;
+			if (valueBuyMax > 0 && count > 0) {
+				return valueBuyMax / count;
+			} else {
+				return 0.0;
+			}
 		}
 	}
 
@@ -270,7 +291,11 @@ public class TreeAsset extends MyAsset {
 		if (isItem()) {
 			return super.getPriceReprocessed();
 		} else {
-			return valueReprocessed / count;
+			if (valueReprocessed > 0 && count > 0) {
+				return valueReprocessed / count;
+			} else {
+				return 0.0;
+			}
 		}
 	}
 
@@ -279,13 +304,17 @@ public class TreeAsset extends MyAsset {
 		if (isItem()) {
 			return super.getPriceSellMin();
 		} else {
-			return valueSellMin / count;
+			if (valueSellMin > 0 && count > 0) {
+				return valueSellMin / count;
+			} else {
+				return 0.0;
+			}
 		}
 	}
 
 	@Override
 	public double getValue() {
-		if (isItem()) {
+		if (!isParent()) {
 			return super.getValue();
 		} else {
 			return value;
@@ -311,7 +340,7 @@ public class TreeAsset extends MyAsset {
 
 	@Override
 	public double getValueReprocessed() {
-		if (isItem()) {
+		if (!isParent()) {
 			return super.getValueReprocessed();
 		} else {
 			return valueReprocessed;
@@ -323,13 +352,17 @@ public class TreeAsset extends MyAsset {
 		if (isItem()) {
 			return super.getVolume();
 		} else {
-			return (float) (volumnTotal / count);
+			if (volumnTotal > 0 && count > 0) {
+				return (float) volumnTotal / count;
+			} else {
+				return 0.0f;
+			}
 		}
 	}
 
 	@Override
 	public double getVolumeTotal() {
-		if (isItem()) {
+		if (!isParent()) {
 			return super.getVolumeTotal();
 		} else {
 			return volumnTotal;

@@ -303,8 +303,8 @@ public class ProfileData {
 		for (Item item : StaticData.get().getItems().values()) {
 			for (ReprocessedMaterial reprocessedMaterial : item.getReprocessedMaterial()) {
 				int typeID = reprocessedMaterial.getTypeID();
-				Item reprocessedItem = StaticData.get().getItems().get(typeID);
-				if (reprocessedItem != null && reprocessedItem.isMarketGroup()) {
+				Item reprocessedItem = ApiIdConverter.getItem(typeID);
+				if (reprocessedItem.isMarketGroup()) {
 					priceTypeIDs.add(typeID);
 				}
 			}

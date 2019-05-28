@@ -22,13 +22,19 @@
 package net.nikr.eve.jeveasset;
 
 import java.awt.AlphaComposite;
+import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.SplashScreen;
+import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import javax.imageio.ImageIO;
+import javax.swing.JWindow;
+import javax.swing.SwingUtilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,13 +47,19 @@ public class SplashUpdater {
 	private static String text = "";
 	private static int currentLoadingImage = 0;
 	private static BufferedImage[] loadingImages;
-	private static SplashScreen splash;
+	private static SplashScreen splashScreen;
+	private static JWindow splashWindow;
+	private static Canvas splashWindowCanvas;
 	private static final int UPDATE_DELAY = 200;
 	private static final Object PAINT_LOCK = new Object();
+	private static BufferedImage splashImage;
+	private static boolean showSplashWindow = true;
+	private static long delta = 0;
+	private static Long lastPaint = null;
 
 	/** Creates a new instance of SplashUpdater. */
 	public SplashUpdater() {
-		splash = SplashScreen.getSplashScreen();
+		splashScreen = SplashScreen.getSplashScreen();
 		loadingImages = new BufferedImage[8];
 		for (int i = 0; i < 8; i++) {
 			try {
@@ -56,6 +68,28 @@ public class SplashUpdater {
 				LOG.warn("SplashScreen: loading0{}.png (NOT FOUND)", (i + 1));
 			}
 		}
+		try {
+			splashImage = ImageIO.read(getClass().getResource("/splash.jpg"));
+		} catch (IOException | IllegalArgumentException ex) {
+			splashImage = null;
+		}
+		splashWindow = new JWindow();
+		splashWindowCanvas = new Canvas();
+		splashWindowCanvas.setIgnoreRepaint(true);
+		splashWindowCanvas.setFocusable(false);
+		splashWindowCanvas.setFont(new Font("Dialog.plain", 0, 12));
+		splashWindow.add(splashWindowCanvas);
+		if (splashScreen != null) {
+			splashWindow.setBounds(splashScreen.getBounds());
+		} else if (splashImage != null) {
+			splashWindow.setSize(splashImage.getWidth(), splashImage.getHeight());
+		}
+		splashWindow.setLocationRelativeTo(null);
+	}
+
+	public static void hide() {
+		showSplashWindow = false;
+		splashWindow.setVisible(false);
 	}
 
 	public void start() {
@@ -93,9 +127,9 @@ public class SplashUpdater {
 			number = 0;
 		}
 		if (subProgress != number) {
-			if (isVisible() && (number > subProgress || number == 0)) {
+			if ((number > subProgress || number == 0)) {
 				subProgress = number;
-				update();
+				update(true);
 			}
 		}
 	}
@@ -113,58 +147,113 @@ public class SplashUpdater {
 			number = 0;
 		}
 		if (progress != number) {
-			if (isVisible() && number > progress) {
+			if (number > progress) {
 				progress = number;
-				update();
+				update(false);
+			}	
+		}
+	}
+
+	private static void update(boolean sub) {
+		if (isVisible()) {
+			synchronized (PAINT_LOCK) {
+				PAINT_LOCK.notify();
+			}
+		} else if (SwingUtilities.isEventDispatchThread()) {
+			showSplashWindow();
+			paintSplashWindow(sub);
+		}
+	}
+
+	private static void showSplashWindow() {
+		if (showSplashWindow && !splashWindow.isVisible()) {
+			splashWindow.setVisible(true);
+			splashWindow.toFront();
+		}
+	}
+
+	private static void paintSplashWindow(boolean sub) {
+		synchronized (PAINT_LOCK) {
+			if (splashWindow.isVisible()) {
+				if (lastPaint != null) {
+					delta = delta + (System.currentTimeMillis() - lastPaint);
+				}
+				boolean paint = sub || (lastPaint == null || (System.currentTimeMillis() - lastPaint) > 16);
+				if (delta > UPDATE_DELAY) {
+					nextLoadingImage();
+					delta = 0;
+					paint = true;
+				}
+				if (paint) {
+					lastPaint = System.currentTimeMillis();
+					nextLoadingImage();
+					BufferStrategy bufferStrategy = splashWindowCanvas.getBufferStrategy();
+					if (bufferStrategy == null) {
+						splashWindowCanvas.createBufferStrategy(2);
+						bufferStrategy = splashWindowCanvas.getBufferStrategy();
+					}
+					Graphics g = bufferStrategy.getDrawGraphics();
+					g.drawImage(splashImage, 0, 0, null);
+					paint((Graphics2D) g);
+					g.dispose();
+					splashWindowCanvas.getBufferStrategy().show();
+				}
 			}
 		}
 	}
 
-	private static void update() {
-		synchronized (PAINT_LOCK) {
-			PAINT_LOCK.notify();
-		}
-	}
-
-	private static void repaint() {
+	private static void paintSplashScreen() {
 		if (isVisible()) {
 			try {
-				Graphics2D g = splash.createGraphics();
-				//Clear Screen
-				g.setComposite(AlphaComposite.Clear);
-				Dimension size = splash.getSize();
-				g.fillRect(0, 0, size.width, size.height);
-				g.setPaintMode();
-				if (Program.isDebug()) {
-					g.setColor(Color.DARK_GRAY);
-					g.drawString("DEBUG", 344, 232);
-					g.setColor(Color.WHITE);
-					g.drawString("DEBUG", 343, 231);
+				if (splashScreen != null) {
+					Graphics2D g = splashScreen.createGraphics();
+					if (g != null) {
+						g.setComposite(AlphaComposite.Clear);
+						Dimension size = splashScreen.getSize();
+						g.fillRect(0, 0, size.width, size.height);
+						g.setPaintMode();
+						LOG.info("Family: " + g.getFont().getFamily()
+								+ " Name: " + g.getFont().getFontName()
+								+ " Size: " + g.getFont().getSize()
+								+ " Style: " + g.getFont().getStyle()
+						);
+						paint(g);
+						splashScreen.update();
+					}
 				}
-				if (!text.isEmpty()) {
-					g.setColor(Color.BLACK);
-					g.fillRect(0, 235, 90, 24);
-					g.setColor(Color.WHITE);
-					g.drawString(text, 5, 252);
-				}
-				g.setColor(Color.WHITE);
-				g.fillRect(106, 242, (int) (progress * 2.6), 12);
-				if (subProgress > 0) {
-					g.setColor(Color.LIGHT_GRAY);
-					g.fillRect(106, 248, (int) (subProgress * 2.6), 6);
-				}
-				if (loadingImages[currentLoadingImage] != null) {
-					g.drawImage(loadingImages[currentLoadingImage], 368, 238, null);
-				}
-				splash.update();
 			} catch (IllegalStateException ex) {
 				LOG.info("SplashScreen: Closed before painting ended (NO PROBLEM)");
 			}
 		}
 	}
 
+	private static void paint(final Graphics2D g) throws IllegalStateException {
+		//Clear Screen
+		if (Program.isDebug()) {
+			g.setColor(Color.DARK_GRAY);
+			g.drawString("DEBUG", 344, 232);
+			g.setColor(Color.WHITE);
+			g.drawString("DEBUG", 343, 231);
+		}
+		if (!text.isEmpty()) {
+			g.setColor(Color.BLACK);
+			g.fillRect(0, 235, 90, 24);
+			g.setColor(Color.WHITE);
+			g.drawString(text, 5, 252);
+		}
+		g.setColor(Color.WHITE);
+		g.fillRect(106, 242, (int) (progress * 2.6), 12);
+		if (subProgress > 0) {
+			g.setColor(Color.LIGHT_GRAY);
+			g.fillRect(106, 248, (int) (subProgress * 2.6), 6);
+		}
+		if (loadingImages[currentLoadingImage] != null) {
+			g.drawImage(loadingImages[currentLoadingImage], 368, 238, null);
+		}
+	}
+
 	private static boolean isVisible() {
-		return (splash != null && splash.isVisible());
+		return (splashScreen != null && splashScreen.isVisible());
 	}
 
 	private class Paineter extends Thread {
@@ -176,9 +265,9 @@ public class SplashUpdater {
 					try {
 						PAINT_LOCK.wait();
 					} catch (InterruptedException ex) {
-						
+
 					}
-					repaint();
+					paintSplashScreen();
 				}
 			}
 		}
@@ -190,11 +279,13 @@ public class SplashUpdater {
 		public void run() {
 			while (isVisible()) {
 				nextLoadingImage();
-				update();
-				try {
-					Thread.sleep(UPDATE_DELAY);
-				} catch (InterruptedException e) {
-					break;
+				update(false);
+				synchronized (this) {
+					try {
+						wait(UPDATE_DELAY);
+					} catch (InterruptedException ex) {
+						break;
+					}
 				}
 			}
 		}

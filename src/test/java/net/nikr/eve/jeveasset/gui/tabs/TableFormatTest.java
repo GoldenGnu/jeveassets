@@ -94,7 +94,7 @@ public class TableFormatTest extends TestUtil {
 			//Shared
 			Tags tags = new Tags();
 			EsiOwner owner = ConverterTestUtil.getEsiOwner(options);
-			Item item = new Item(INTEGER_VALUE, STRING_VALUE, STRING_VALUE, STRING_VALUE, LONG_VALUE, FLOAT_VALUE, FLOAT_VALUE, INTEGER_VALUE, STRING_VALUE, BOOLEAN_VALUE, BOOLEAN_VALUE, INTEGER_VALUE, INTEGER_VALUE, INTEGER_VALUE);
+			Item item = new Item(INTEGER_VALUE, STRING_VALUE, STRING_VALUE, STRING_VALUE, LONG_VALUE, FLOAT_VALUE, FLOAT_VALUE, INTEGER_VALUE, STRING_VALUE, BOOLEAN_VALUE, INTEGER_VALUE, INTEGER_VALUE, INTEGER_VALUE, STRING_VALUE);
 			MyLocation location = new MyLocation(LONG_VALUE, STRING_VALUE, LONG_VALUE, STRING_VALUE, LONG_VALUE, STRING_VALUE, STRING_VALUE);
 		//Primary Tools
 			//Asset
@@ -164,7 +164,7 @@ public class TableFormatTest extends TestUtil {
 				test(tableFormat, tableFormat.getType(), tableFormat.getColumnValue(reprocessedItem));
 			}
 			//StockpileItem
-			Stockpile stockpile = new Stockpile(STRING_VALUE, new ArrayList<>(), DOUBLE_VALUE);
+			Stockpile stockpile = new Stockpile(STRING_VALUE, null, new ArrayList<>(), DOUBLE_VALUE);
 			stockpile.setOwnerName(Collections.singletonList(owner.getOwnerName()));
 			stockpile.setFlagName(Collections.singleton(asset.getItemFlag()));
 			StockpileItem stockpileItem = new StockpileItem(stockpile, item, INTEGER_VALUE, DOUBLE_VALUE, BOOLEAN_VALUE);

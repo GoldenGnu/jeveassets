@@ -30,6 +30,7 @@ import javax.swing.JFrame;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import net.nikr.eve.jeveasset.io.local.FileLock;
+import net.nikr.eve.jeveasset.io.online.Updater;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 
 public final class Main {
@@ -66,6 +67,10 @@ public final class Main {
 		log.info("Starting " + Program.PROGRAM_NAME + " " + Program.PROGRAM_VERSION);
 		log.log(Level.INFO, "OS: {0} {1}", new Object[]{System.getProperty("os.name"), System.getProperty("os.version")});
 		log.log(Level.INFO, "Java: {0} {1}", new Object[]{System.getProperty("java.vendor"), System.getProperty("java.version")});
+		if (Updater.isPackageManager()) {
+			log.log(Level.INFO, "Package Manager Mode: Enabled");
+			log.log(Level.INFO, "Package Maintainers: {0}", Updater.getPackageMaintainers());
+		}
 		// variables to the main program and settings.
 		Program.setDebug(debug);
 		Program.setPortable(portable);

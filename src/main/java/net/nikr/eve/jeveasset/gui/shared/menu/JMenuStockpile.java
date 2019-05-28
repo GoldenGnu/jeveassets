@@ -35,6 +35,7 @@ import net.nikr.eve.jeveasset.gui.shared.JOptionInput;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.JAutoMenu;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
+import net.nikr.eve.jeveasset.gui.tabs.stockpile.StockpileTab;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 import net.nikr.eve.jeveasset.i18n.TabsStockpile;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
@@ -66,7 +67,9 @@ public class JMenuStockpile<T> extends JAutoMenu<T> {
 
 	@Override
 	public void updateMenuData() {
-		if (stockpilesCashe == null || !stockpilesCashe.equals(Settings.get().getStockpiles())) {
+		List<Stockpile> newValue = StockpileTab.getShownStockpiles(program);
+		if (stockpilesCashe == null || !stockpilesCashe.equals(newValue)) {
+			stockpilesCashe = new ArrayList<Stockpile>(newValue); //Update Cache
 			updateMenu(); //Stockpiles changed...
 		}
 		boolean enabled = !menuData.getTypeIDs().isEmpty();
@@ -83,13 +86,12 @@ public class JMenuStockpile<T> extends JAutoMenu<T> {
 
 		add(jAddToNew); //Add "To new Stockpile"
 
-		if (!Settings.get().getStockpiles().isEmpty()) { //Add Separator (if we have stockpiles)
+		if (!stockpilesCashe.isEmpty()) { //Add Separator (if we have stockpiles)
 			addSeparator();
 		}
 
-		stockpilesCashe = new ArrayList<Stockpile>(Settings.get().getStockpiles()); //Update Cache
 		jMenuItems.clear(); //Clear update list
-		for (Stockpile stockpile : Settings.get().getStockpiles()) { //Create menu items
+		for (Stockpile stockpile : stockpilesCashe) { //Create menu items
 			JMenuItem jMenuItem = new JStockpileMenu(stockpile);
 			jMenuItem.setIcon(Images.TOOL_STOCKPILE.getIcon());
 			jMenuItem.setActionCommand(MenuStockpileAction.ADD_TO.name());

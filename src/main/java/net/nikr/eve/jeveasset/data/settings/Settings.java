@@ -73,6 +73,7 @@ public class Settings {
 	private static final String PATH_CONTRACT_PRICES = "data" + File.separator + "contract_prices.json";
 	private static final String PATH_SETTINGS = "data" + File.separator + "settings.xml";
 	private static final String PATH_ITEMS = "data" + File.separator + "items.xml";
+	private static final String PATH_ITEMS_UPDATES = "data" + File.separator + "items_updates.xml";
 	private static final String PATH_JUMPS = "data" + File.separator + "jumps.xml";
 	private static final String PATH_LOCATIONS = "data" + File.separator + "locations.xml";
 	private static final String PATH_FLAGS = "data" + File.separator + "flags.xml";
@@ -106,7 +107,8 @@ public class Settings {
 		FLAG_JOURNAL_HISTORY,
 		FLAG_MARKET_ORDER_HISTORY,
 		FLAG_STRONG_COLORS,
-		FLAG_ASKED_CHECK_ALL_TRACKER
+		FLAG_ASKED_CHECK_ALL_TRACKER,
+		FLAG_TRACKER_USE_ASSET_PRICE_FOR_SELL_ORDERS,
 	}
 
 	private static final SettingsLock LOCK = new SettingsLock();
@@ -233,6 +235,7 @@ public class Settings {
 		flags.put(SettingFlag.FLAG_MARKET_ORDER_HISTORY, true);
 		flags.put(SettingFlag.FLAG_STRONG_COLORS, false);
 		flags.put(SettingFlag.FLAG_ASKED_CHECK_ALL_TRACKER, false);
+		flags.put(SettingFlag.FLAG_TRACKER_USE_ASSET_PRICE_FOR_SELL_ORDERS, false);
 		cacheFlags();
 	}
 
@@ -288,6 +291,7 @@ public class Settings {
 			Path citadelFrom = Paths.get(Settings.getPathCitadel());
 			Path priceFrom = Paths.get(Settings.getPathPriceData());
 			Path profilesFrom = Paths.get(Settings.getPathProfilesDirectory());
+			Path contractPricesFrom = Paths.get(Settings.getPathContractPrices());
 			Program.setPortable(true);
 			Path settingsTo = Paths.get(Settings.getPathSettings());
 			Path trackerTo = Paths.get(Settings.getPathTrackerData());
@@ -296,6 +300,7 @@ public class Settings {
 			Path citadelTo = Paths.get(Settings.getPathCitadel());
 			Path priceTo = Paths.get(Settings.getPathPriceData());
 			Path profilesTo = Paths.get(Settings.getPathProfilesDirectory());
+			Path contractPricesTo = Paths.get(Settings.getPathContractPrices());
 			if (Files.exists(settingsFrom) && !Files.exists(settingsTo)) {
 				LOG.info("Importing settings");
 				try {
@@ -345,6 +350,15 @@ public class Settings {
 				LOG.info("Importing prices");
 				try {
 					Files.copy(priceFrom, priceTo);
+					LOG.info("	OK");
+				} catch (IOException ex) {
+					LOG.info("	FAILED");
+				}
+			}
+			if (Files.exists(contractPricesFrom) && !Files.exists(contractPricesTo)) {
+				LOG.info("Importing contract prices");
+				try {
+					Files.copy(contractPricesFrom, contractPricesTo);
 					LOG.info("	OK");
 				} catch (IOException ex) {
 					LOG.info("	FAILED");
@@ -715,6 +729,14 @@ public class Settings {
 		flags.put(SettingFlag.FLAG_ASKED_CHECK_ALL_TRACKER, checkAllTracker);
 	}
 
+	public boolean isTrackerUseAssetPriceForSellOrders() {
+		return flags.get(SettingFlag.FLAG_TRACKER_USE_ASSET_PRICE_FOR_SELL_ORDERS);
+	}
+
+	public void setTrackerUseAssetPriceForSellOrders(final boolean checkAllTracker) {
+		flags.put(SettingFlag.FLAG_TRACKER_USE_ASSET_PRICE_FOR_SELL_ORDERS, checkAllTracker);
+	}
+
 	public List<Stockpile> getStockpiles() {
 		return stockpiles;
 	}
@@ -887,6 +909,10 @@ public class Settings {
 	public static String getPathItems() {
 		return FileUtil.getLocalFile(Settings.PATH_ITEMS, false);
 	}
+	
+	public static String getPathItemsUpdates() {
+		return FileUtil.getLocalFile(Settings.PATH_ITEMS_UPDATES, !Program.isPortable());
+	}
 
 	public static String getPathLocations() {
 		return FileUtil.getLocalFile(Settings.PATH_LOCATIONS, false);
@@ -922,9 +948,10 @@ public class Settings {
 	}
 
 	public boolean isUpdatable(final Date date) {
+		Date now = Settings.getNow();
 		return date != null &&
-				((Settings.getNow().after(date)
-				|| Settings.getNow().equals(date)
+				((now.after(date)
+				|| now.equals(date)
 				|| Program.isForceUpdate())
 				&& !Program.isForceNoUpdate());
 	}

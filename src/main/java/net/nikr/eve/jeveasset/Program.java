@@ -108,7 +108,7 @@ public class Program implements ActionListener {
 		TIMER
 	}
 	//Major.Minor.Bugfix [Release Candidate n] [BETA n] [DEV BUILD #n];
-	public static final String PROGRAM_VERSION = "6.0.5 DEV BUILD 1";
+	public static final String PROGRAM_VERSION = "6.1.0";
 	public static final String PROGRAM_NAME = "jEveAssets";
 	public static final String PROGRAM_HOMEPAGE = "https://eve.nikr.net/jeveasset";
 	public static final boolean PROGRAM_DEV_BUILD = false;
@@ -296,6 +296,7 @@ public class Program implements ActionListener {
 		SplashUpdater.setProgress(100);
 		LOG.info("Showing GUI");
 		mainWindow.show();
+		SplashUpdater.hide();
 		//Start timer
 		timerTicked();
 		LOG.info("Startup Done");

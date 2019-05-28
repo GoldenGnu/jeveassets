@@ -25,6 +25,7 @@ package net.nikr.eve.jeveasset.io.online;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
@@ -34,6 +35,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
@@ -51,6 +53,10 @@ public class Updater {
 	private static final String UPDATE =	 UPDATE_URL + "jupdate.jar";
 
 	public void update(final String localProgram, String localData, ProxyData proxyData) {
+		if (isPackageManager() && !getPackageNotifyUpdates()) {
+			LOG.info("Not checking for updates (package manager enabled)");
+			return;
+		}
 		LOG.info("Checking online version");
 		Getter getter = new Getter();
 		final String onlineProgram = getter.get(PROGRAM+"update_version.dat");
@@ -64,6 +70,10 @@ public class Updater {
 	}
 
 	public boolean checkProgramUpdate(final String localProgram) {
+		if (isPackageManager()) {
+			LOG.info("Not checking for updates (package manager enabled)");
+			return false;
+		}
 		LOG.info("Checking online version");
 		Getter getter = new Getter();
 		final String onlineProgram = getter.get(PROGRAM+"update_version.dat");
@@ -71,6 +81,10 @@ public class Updater {
 	}
 
 	public boolean checkDataUpdate(String localData) {
+		if (isPackageManager()) {
+			LOG.info("Not checking for updates (package manager enabled)");
+			return false;
+		}
 		LOG.info("Checking online version");
 		Getter getter = new Getter();
 		final String onlineData = getter.get(DATA+"update_version.dat");
@@ -78,6 +92,14 @@ public class Updater {
 	}
 
 	public void fixData() {
+		if (isPackageManager()) {
+			JOptionPane.showMessageDialog(null, 
+				"One of the data files in the data folder is corrupted or missing\r\n"
+				+ "jEveAssets will not work without it\r\n"
+				+ "Please use your package manager to correct the problem\r\n"
+				, "Critical Error", JOptionPane.ERROR_MESSAGE);
+			System.exit(-1);
+		}
 		int value = JOptionPane.showConfirmDialog(null, 
 				"One of the data files in the data folder is corrupted or missing\r\n"
 				+ "jEveAssets will not work without it\r\n"
@@ -101,6 +123,14 @@ public class Updater {
 	}
 
 	public void fixLibs() {
+		if (isPackageManager()) {
+			JOptionPane.showMessageDialog(null, 
+				"One of the libraies in the lib folder is corrupted or missing\r\n"
+				+ "jEveAssets will not work without it\r\n"
+				+ "Please use your package manager to correct the problem\r\n"
+				, "Critical Error", JOptionPane.ERROR_MESSAGE);
+			System.exit(-1);
+		}
 		int value = JOptionPane.showConfirmDialog(null, 
 				"One of the libraies in the lib folder is corrupted or missing\r\n"
 				+ "jEveAssets will not work without it\r\n"
@@ -124,6 +154,13 @@ public class Updater {
 	}
 
 	public void fixMissingClasses() {
+		if (isPackageManager()) {
+			JOptionPane.showMessageDialog(null, 
+				"jEveAssets have been corrupted\r\n"
+				+ "Please use your package manager to correct the problem\r\n"
+				, "Critical Error", JOptionPane.ERROR_MESSAGE);
+			System.exit(-1);
+		}
 		int value = JOptionPane.showConfirmDialog(null, 
 				"jEveAssets have been corrupted\r\n"
 				+ "You may be able to use auto update to fix the problem\r\n"
@@ -160,6 +197,20 @@ public class Updater {
 	private void update(String title, String online, String local, String link, ProxyData proxyData) {
 		LOG.log(Level.INFO, "{0} Online: {1} Local: {2}", new Object[]{title.toUpperCase(), online, local});
 		if (online != null && !online.equals(local)) {
+			if (isPackageManager()) {
+				JOptionPane.showMessageDialog(null, 
+					title + " update available\r\n"
+					+ "\r\n"
+					+ "Your version: " + local + "\r\n"
+					+ "Latest version: " + online + "\r\n"
+					+ "\r\n"
+					+ "Please use your package manager to update\r\n"
+					+ "\r\n"
+					,
+					"Auto Update",
+					JOptionPane.PLAIN_MESSAGE);
+				return;
+			}
 			int value = JOptionPane.showConfirmDialog(null, 
 					title + " update available\r\n"
 					+ "\r\n"
@@ -218,7 +269,31 @@ public class Updater {
 		return list;
 	}
 
-	private static boolean downloadUpdater() {
+	public static boolean isPackageManager() {
+		return new File(FileUtil.getPathPackageManager()).exists();
+	}
+
+	public static String getPackageMaintainers() {
+		Properties prop = new Properties();
+		try {
+			prop.load(new FileInputStream(new File(FileUtil.getPathPackageManager())));
+		} catch (IOException ex) {
+			//No problem
+		}
+		return prop.getProperty("maintainers", null);
+	}
+
+	public static boolean getPackageNotifyUpdates() {
+		Properties prop = new Properties();
+		try {
+			prop.load(new FileInputStream(new File(FileUtil.getPathPackageManager())));
+		} catch (IOException ex) {
+			//No problem
+		}
+		return "true".equals(prop.getProperty("notifyUpdates", "").toLowerCase());
+	}
+
+	private boolean downloadUpdater() {
 		DataGetter dataGetter = new DataGetter();
 		Getter getter = new Getter();
 		String checksum = getter.get(UPDATE+".md5");

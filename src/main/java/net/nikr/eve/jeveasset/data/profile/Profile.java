@@ -23,6 +23,9 @@ package net.nikr.eve.jeveasset.data.profile;
 
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import java.io.File;
+import java.util.HashSet;
+import java.util.Set;
+import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,6 +37,7 @@ public class Profile implements Comparable<Profile> {
 	private String name;
 	private boolean defaultProfile;
 	private boolean activeProfile;
+	private Set<Long> stockpileIDs = null;
 
 	public Profile(final String name, final boolean defaultProfile, final boolean activeProfile) {
 		this.name = name;
@@ -51,6 +55,24 @@ public class Profile implements Comparable<Profile> {
 
 	public void setActiveProfile(final boolean activeProfile) {
 		this.activeProfile = activeProfile;
+	}
+
+	public Set<Long> getStockpileIDs() {
+		createList();
+		return stockpileIDs;
+	}
+
+	public void setStockpileIDs(Set<Long> stockpileIDs) {
+		this.stockpileIDs = stockpileIDs;
+	}
+
+	private void createList() {
+		if (stockpileIDs == null) {
+			stockpileIDs = new HashSet<>();
+			for (Stockpile stockpile : Settings.get().getStockpiles()) {
+				stockpileIDs.add(stockpile.getId());
+			}
+		}
 	}
 
 	public String getBackupFilename() {

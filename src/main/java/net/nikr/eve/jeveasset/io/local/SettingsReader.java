@@ -590,7 +590,10 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		for (int a = 0; a < stockpileNodes.getLength(); a++) {
 			Element stockpileNode = (Element) stockpileNodes.item(a);
 			String name = AttributeGetters.getString(stockpileNode, "name");
-
+			Long stockpileID = null; //If null > get new id
+			if (AttributeGetters.haveAttribute(stockpileNode, "id")) {
+				stockpileID = AttributeGetters.getLong(stockpileNode, "id");
+			}
 		//LEGACY
 			//Owners
 			List<Long> ownerIDs = new ArrayList<Long>();
@@ -727,7 +730,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 				multiplier = AttributeGetters.getDouble(stockpileNode, "multiplier");
 			}
 		
-			Stockpile stockpile = new Stockpile(name, filters, multiplier);
+			Stockpile stockpile = new Stockpile(name, stockpileID, filters, multiplier);
 			stockpiles.add(stockpile);
 		//ITEMS
 			NodeList itemNodes = stockpileNode.getElementsByTagName("item");
@@ -746,7 +749,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 				}
 				double countMinimum = AttributeGetters.getDouble(itemNode, "minimum");
 				if (typeID != 0) { //Ignore Total
-					Item item = ApiIdConverter.getItem(Math.abs(typeID));
+					Item item = ApiIdConverter.getItemUpdate(Math.abs(typeID));
 					StockpileItem stockpileItem = new StockpileItem(stockpile, item, typeID, countMinimum, runs, id);
 					stockpile.add(stockpileItem);
 				}

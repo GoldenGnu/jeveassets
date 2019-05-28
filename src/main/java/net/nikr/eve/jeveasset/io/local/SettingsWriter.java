@@ -361,6 +361,9 @@ public class SettingsWriter extends AbstractXmlWriter {
 		for (Stockpile strockpile : stockpiles) {
 			Element strockpileNode = xmldoc.createElementNS(null, "stockpile");
 			strockpileNode.setAttributeNS(null, "name", strockpile.getName());
+			if (!export) { //Risk of collision, better to generate a new one on import
+				strockpileNode.setAttributeNS(null, "id", String.valueOf(strockpile.getId()));
+			}
 			strockpileNode.setAttributeNS(null, "multiplier", String.valueOf(strockpile.getMultiplier()));
 			for (StockpileItem item : strockpile.getItems()) {
 				if (item.getItemTypeID() != 0) { //Ignore Total

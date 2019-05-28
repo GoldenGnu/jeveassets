@@ -109,23 +109,24 @@ public class LibraryManager {
 			files.add("logback-classic-1.2.3.jar");
 			files.add("super-csv-2.4.0.jar");
 			files.add("translations-3.0.0.jar");
-			files.add("evekit-5.0.1.jar");
+			files.add("evekit-6.0.0.jar");
 			files.add("swagger-annotations-1.5.22.jar");
 			files.add("hamcrest-core-1.3.jar");
-			files.add("eve-esi-3.2.0.jar");
+			files.add("eve-esi-3.3.0.jar");
 			files.add("hamcrest-core-1.3.jar");
 			files.add("jaxb-api-2.3.0.jar");
 			files.add("sqlite-jdbc-3.23.1.jar");
-			files.add("okhttp-2.7.5.jar");
+			files.add("okhttp-3.14.0.jar");
 			files.add("gson-fire-1.8.3.jar");
 			files.add("gson-2.8.5.jar");
-			files.add("okio-1.6.0.jar");
-			files.add("logging-interceptor-2.7.5.jar");
+			files.add("okio-1.17.2.jar");
+			files.add("logging-interceptor-3.14.0.jar");
 			files.add("org.apache.oltu.oauth2.common-1.0.1.jar");
 			files.add("org.apache.oltu.oauth2.client-1.0.1.jar");
 			files.add("json-20140107.jar");
 			files.add("commons-codec-1.9.jar");
-			files.add("contracts-pricing-1.2.0.jar");
+			files.add("contracts-pricing-2.0.0.jar");
+			files.add("commons-lang3-3.8.1.jar");
 		}
 		return files;
 	}
