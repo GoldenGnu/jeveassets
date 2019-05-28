@@ -296,6 +296,7 @@ public class Program implements ActionListener {
 		SplashUpdater.setProgress(100);
 		LOG.info("Showing GUI");
 		mainWindow.show();
+		SplashUpdater.hide();
 		//Start timer
 		timerTicked();
 		LOG.info("Startup Done");
