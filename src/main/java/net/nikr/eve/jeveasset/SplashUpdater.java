@@ -212,11 +212,6 @@ public class SplashUpdater {
 						Dimension size = splashScreen.getSize();
 						g.fillRect(0, 0, size.width, size.height);
 						g.setPaintMode();
-						LOG.info("Family: " + g.getFont().getFamily()
-								+ " Name: " + g.getFont().getFontName()
-								+ " Size: " + g.getFont().getSize()
-								+ " Style: " + g.getFont().getStyle()
-						);
 						paint(g);
 						splashScreen.update();
 					}
