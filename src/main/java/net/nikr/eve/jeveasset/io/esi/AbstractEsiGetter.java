@@ -35,6 +35,7 @@ import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.io.shared.AbstractGetter;
+import net.nikr.eve.jeveasset.io.shared.ThreadWoker;
 import net.nikr.eve.jeveasset.io.shared.ThreadWoker.TaskCancelledException;
 import net.troja.eve.esi.ApiClient;
 import net.troja.eve.esi.ApiClientBuilder;
@@ -128,7 +129,9 @@ public abstract class AbstractEsiGetter extends AbstractGetter<EsiOwner> {
 			logInfo(null, "Cancelled");
 		} catch (InvalidAuthException ex) {
 			addError(null, "REFRESH TOKEN INVALID", "Auth invalid\r\n(Fix: Options > Accounts... > Edit)");
-		} catch (Throwable ex) {
+		} catch (Error ex) {
+			throw ex;
+		} catch (Exception ex) {
 			addError(null, ex.getMessage(), "Unknown Error: " + ex.getMessage(), ex);
 		}
 	}
@@ -159,7 +162,7 @@ public abstract class AbstractEsiGetter extends AbstractGetter<EsiOwner> {
 		} catch (ApiException ex) {
 			handleHeaders(ex);
 			logWarn(ex.getResponseBody(), ex.getMessage());
-			if (ex.getCode() == 401 && ex.getMessage().toLowerCase().contains("error") && ex.getMessage().toLowerCase().contains("authorization not provided")) {
+			if (ex.getCode() == 401 && ex.getResponseBody().toLowerCase().contains("error") && ex.getResponseBody().toLowerCase().contains("authorization not provided")) {
 				if (owner != null) {
 					owner.setInvalid(true);
 				}
@@ -193,19 +196,6 @@ public abstract class AbstractEsiGetter extends AbstractGetter<EsiOwner> {
 	private void handleHeaders(ApiResponse<?> apiResponse) throws ApiException {
 		setExpires(apiResponse.getHeaders());
 		setErrorLimit(apiResponse.getHeaders()); //Always save error limit header
-	}
-
-	private void throwApiException(Exception ex) throws ApiException {
-		Throwable cause = ex.getCause();
-		if (cause instanceof ApiException) {
-			ApiException apiException = (ApiException) cause;
-			throw apiException;
-		} else if (cause instanceof RuntimeException) {
-			RuntimeException runtimeException = (RuntimeException) cause;
-			throw runtimeException;
-		} else {
-			throw new RuntimeException(cause);
-		}
 	}
 
 	protected abstract void update() throws ApiException;
@@ -360,8 +350,10 @@ public abstract class AbstractEsiGetter extends AbstractGetter<EsiOwner> {
 					values.putAll(returnValue);
 				}
 			}
-		} catch (InterruptedException | ExecutionException ex) {
-			throwApiException(ex);
+		} catch (InterruptedException ex) {
+			throw new RuntimeException(ex);
+		} catch (ExecutionException ex) {
+			ThreadWoker.throwExecutionException(ApiException.class, ex);
 		}
 		return values;
 	}
@@ -509,8 +501,10 @@ public abstract class AbstractEsiGetter extends AbstractGetter<EsiOwner> {
 						}
 					}
 				}
-			} catch (InterruptedException | ExecutionException ex) {
-				throwApiException(ex);
+			} catch (InterruptedException ex) {
+				throw new RuntimeException(ex);
+			} catch (ExecutionException ex) {
+				ThreadWoker.throwExecutionException(ApiException.class, ex);
 			}
 		}
 		return values;

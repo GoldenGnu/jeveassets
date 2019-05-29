@@ -80,6 +80,7 @@ public abstract class AbstractEveKitGetter extends AbstractGetter<EveKitOwner> {
 		try {
 			update(at, first);
 		} catch (ApiException ex) {
+			logWarn(ex.getResponseBody(), ex.getMessage());
 			switch (ex.getCode()) {
 				case 400:
 					addError(null, "INVALID ATTRIBUTE SELECTOR", "Invalid attribute selector", ex);
@@ -102,7 +103,9 @@ public abstract class AbstractEveKitGetter extends AbstractGetter<EveKitOwner> {
 			}
 		} catch (TaskCancelledException ex) {
 			logInfo(null, "Cancelled");
-		} catch (Throwable ex) {
+		} catch (Error ex) {
+			throw ex;
+		} catch (Exception ex) {
 			addError(null, ex.getMessage(), "Unknown Error: " + ex.getMessage(), ex);
 		}
 	}
