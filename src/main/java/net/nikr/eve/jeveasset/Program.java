@@ -946,7 +946,7 @@ public class Program implements ActionListener {
 		} else if (MainMenuAction.LINK_GITHUB.name().equals(e.getActionCommand())) { //Links
 			DesktopUtil.browse("https://github.com/GoldenGnu/jeveassets/issues/new", this);
 		} else if (MainMenuAction.LINK_FAQ.name().equals(e.getActionCommand())) {
-			DesktopUtil.browse("https://github.com/GoldenGnu/jeveassets/wiki/ReadMe", this);
+			DesktopUtil.browse("https://jeveassets.nikr.net/faq", this);
 		} else if (MainMenuAction.LINK_FORUM.name().equals(e.getActionCommand())) {
 			DesktopUtil.browse("https://forums.eveonline.com/t/13255/", this);
 		} else if (MainMenuAction.EXIT_PROGRAM.name().equals(e.getActionCommand())) { //Exit
