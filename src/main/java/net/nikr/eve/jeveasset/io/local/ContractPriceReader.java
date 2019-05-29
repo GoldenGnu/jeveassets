@@ -60,7 +60,11 @@ public class ContractPriceReader extends AbstractBackup {
 			fileReader = new FileReader(file);
 			ContractPriceData contractPriceData =  gson.fromJson(fileReader, ContractPriceData.class);
 			LOG.info("Contract prices loaded");
-			return contractPriceData;
+			if (contractPriceData != null) {
+				return contractPriceData;
+			} else {
+				return new ContractPriceData();
+			}
 		} catch (IOException | JsonParseException ex) {
 			LOG.warn(ex.getMessage(), ex);
 			if (restoreNewFile(filename)) { //If possible restore from .new (Should be the newest)
