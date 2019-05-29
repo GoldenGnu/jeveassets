@@ -114,9 +114,9 @@ public class EsiStructuresGetter extends AbstractEsiGetter {
 			}
 			@Override
 			protected void handle(ApiException ex, Long k) throws ApiException {
-				if ((ex.getCode() == 403 && ex.getMessage().toLowerCase().contains("forbidden"))
-						|| (ex.getCode() == 404 && ex.getMessage().toLowerCase().contains("structure"))
-						|| (ex.getCode() == 502 && ex.getMessage().toLowerCase().contains("could not determine docking access"))) {
+				if ((ex.getCode() == 403 && ex.getResponseBody().toLowerCase().contains("forbidden"))
+						|| (ex.getCode() == 404 && ex.getResponseBody().toLowerCase().contains("structure"))
+						|| (ex.getCode() == 502 && ex.getResponseBody().toLowerCase().contains("could not determine docking access"))) {
 					LOG.warn("Failed to find locationID: " + k);
 				} else {
 					LOG.error("Failed to find locationID: " + k, ex);
