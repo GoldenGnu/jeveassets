@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -77,8 +78,14 @@ public class ThreadWoker {
 					}
 				}
 			}
+			//Get errors (if any)
+			for (Future<?> future : futures) {
+				future.get();
+			}
 		} catch (InterruptedException ex) {
-			
+			//No problem
+		} catch (ExecutionException ex) {
+			throwExecutionException(ex);
 		}
 	}
 
@@ -124,5 +131,22 @@ public class ThreadWoker {
 
 	public static class TaskCancelledException extends RuntimeException {
 		
+	}
+
+	private static <E extends Exception> void throwExecutionException(ExecutionException ex) throws E {
+		throwExecutionException(null, ex);
+	}
+
+	public static <E extends Exception> void throwExecutionException(Class<E> clazz, ExecutionException ex) throws E {
+		Throwable cause = ex.getCause();
+		if (clazz != null && cause.getClass().equals(clazz) ) {
+			throw clazz.cast(cause);
+		} else if (cause instanceof Error) {
+			throw (Error) cause;
+		} else if (cause instanceof RuntimeException) {
+			throw (RuntimeException) cause;
+		} else {
+			throw new RuntimeException(cause);
+		}
 	}
 }

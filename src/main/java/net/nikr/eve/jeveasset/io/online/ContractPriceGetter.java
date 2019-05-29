@@ -41,6 +41,7 @@ import net.nikr.eve.jeveasset.data.settings.ContractPriceManager.ReturnData;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import net.nikr.eve.jeveasset.io.shared.AbstractGetter;
+import net.nikr.eve.jeveasset.io.shared.ThreadWoker;
 import net.nikr.eve.jeveasset.io.shared.ThreadWoker.TaskCancelledException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,15 +50,16 @@ public class ContractPriceGetter extends AbstractGetter<EsiOwner> {
 
 	private static final Logger LOG = LoggerFactory.getLogger(ContractPriceGetter.class);
 	private static final int RETRIES = 3;
-	
+
 	private static final PricesApi API = new PricesApi();
+
 	static {
 		API.getApiClient().setUserAgent(System.getProperty("http.agent"));
 	}
 
 	private final ProfileData profileData;
 	private final boolean all;
-	
+
 	public ContractPriceGetter(final UpdateTask updateTask, final ProfileData profileData, boolean all) {
 		super(updateTask, null, false, ContractPriceManager.get().getNextUpdate(), TaskType.CONTRACT_PRICES, "Contracts Appraisal");
 		this.profileData = profileData;
@@ -76,7 +78,7 @@ public class ContractPriceGetter extends AbstractGetter<EsiOwner> {
 	public void run() {
 		update(new HashSet<>());
 	}
-	
+
 	public void update(Set<Integer> exclude) {
 		List<Update> updates = new ArrayList<>();
 		final ContractPriceSettings contractPriceSettings = Settings.get().getContractPriceSettings();
@@ -92,26 +94,33 @@ public class ContractPriceGetter extends AbstractGetter<EsiOwner> {
 			int failed = 0;
 			for (Future<ReturnData> future : futures) {
 				if (future.isDone()) {
-					ReturnData returnValue = future.get(); //Get data from ESI
-					if (returnValue != null) {
-						priceManager.addPrices(returnValue);
-						if (returnValue.isEmpty()) {
-							done++;
-						} else {
-							failed++;
+					try {
+						ReturnData returnValue = future.get(); //Get data
+						if (returnValue != null) {
+							priceManager.addPrices(returnValue);
+							if (returnValue.isEmpty()) {
+								done++;
+							} else {
+								failed++;
+							}
 						}
+					} catch (ExecutionException ex) {
+						ThreadWoker.throwExecutionException(ApiException.class, ex);
 					}
 				}
 			}
 			priceManager.save();
 			LOG.info(done + " contract prices updated (" + failed + " empty/failed)");
-		} catch (ExecutionException ex) {
-			addError(null, ex.getMessage(), ex.getMessage(), ex);
-		} catch (InterruptedException ex) {
-			addError(null, ex.getMessage(), ex.getMessage(), ex);
+		} catch (ApiException ex) {
+			logWarn(ex.getResponseBody(), ex.getMessage());
+			addError(null, ex.getCode(), "Error Code: " + ex.getCode(), ex);
 		} catch (TaskCancelledException ex) {
 			logInfo(null, "Cancelled");
-		} catch (Throwable ex) {
+		} catch (InterruptedException ex) {
+			addError(null, ex.getMessage(), ex.getMessage(), ex);
+		} catch (Error ex) {
+			throw ex;
+		} catch (Exception ex) {
 			addError(null, ex.getMessage(), "Unknown Error: " + ex.getMessage(), ex);
 		}
 	}
