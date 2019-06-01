@@ -270,7 +270,10 @@ public abstract class DataConverter {
 			}
 		}
 		if (saveHistory) {
-			marketOrders.addAll(owner.getMarketOrders());
+			for (MyMarketOrder marketOrder : owner.getMarketOrders()) {
+				marketOrder.close();
+				marketOrders.add(marketOrder);
+			}
 		}
 		return marketOrders;
 	}

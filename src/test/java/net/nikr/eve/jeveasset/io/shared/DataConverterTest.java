@@ -37,11 +37,13 @@ import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob;
 import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob.IndustryJobState;
 import net.nikr.eve.jeveasset.data.api.my.MyJournal;
 import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder;
+import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder.OrderStatus;
 import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
 import net.nikr.eve.jeveasset.data.api.raw.RawAsset;
 import net.nikr.eve.jeveasset.data.api.raw.RawContract;
 import net.nikr.eve.jeveasset.data.api.raw.RawJournal;
 import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder;
+import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder.MarketOrderState;
 import net.nikr.eve.jeveasset.data.api.raw.RawTransaction;
 import net.nikr.eve.jeveasset.i18n.General;
 import static org.hamcrest.CoreMatchers.is;
@@ -321,6 +323,17 @@ public class DataConverterTest extends TestUtil {
 			esiOwner.setMarketOrders(DataConverter.convertRawMarketOrders(rawMarketOrders, esiOwner, saveHistory));
 			if (saveHistory) {
 				assertThat(esiOwner.getMarketOrders().size(), is(20));
+				if (options.getMarketOrderStateRaw() == RawMarketOrder.MarketOrderState.OPEN) {
+					for (MyMarketOrder marketOrder : esiOwner.getMarketOrders()) {
+						if (marketOrder.getOrderID() <= 10) {
+							assertThat(marketOrder.getState(), is(MarketOrderState.UNKNOWN));
+							assertThat(marketOrder.getStatus(), is(OrderStatus.UNKNOWN));
+						} else {
+							assertThat(marketOrder.getState(), is(MarketOrderState.OPEN));
+							assertThat(marketOrder.getStatus(), is(OrderStatus.ACTIVE));
+						}
+					}
+				}
 			} else {
 				assertThat(esiOwner.getMarketOrders().size(), is(10));
 				assertTrue(esiOwner.getMarketOrders().iterator().next().getOrderID() > 10L);

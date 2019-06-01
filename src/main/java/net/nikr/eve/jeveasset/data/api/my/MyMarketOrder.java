@@ -182,6 +182,13 @@ public class MyMarketOrder extends RawMarketOrder implements Comparable<MyMarket
 		}
 	}
 
+	public void close() {
+		if (status == OrderStatus.ACTIVE) {
+			setState(MarketOrderState.UNKNOWN);
+			status = OrderStatus.UNKNOWN;
+		}
+	}
+
 	@Override
 	public int compareTo(final MyMarketOrder o) {
 		Long thisID = this.getOrderID();
