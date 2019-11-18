@@ -6,6 +6,10 @@ matrix:
       before_script:
         - wget https://github.com/sormuras/bach/raw/master/install-jdk.sh
         - source ./install-jdk.sh --url 'https://api.adoptopenjdk.net/v2/binary/releases/openjdk8?openjdk_impl=hotspot&os=linux&arch=x64&release=latest&type=jdk'
+        - echo JAVA_HOME = ${JAVA_HOME}
+        - echo PATH = ${PATH}
+        - ls ${JAVA_HOME}
+        - java -version
     - os: linux
       jdk: oraclejdk11
     - os: linux
