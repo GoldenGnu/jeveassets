@@ -1,11 +1,11 @@
 language: java
-before_script:
-- wget https://github.com/sormuras/bach/raw/master/install-jdk.sh
 matrix:
   include:
     - os: linux
       env: JDK=adoptopenjdk8 + HotSpot
-      script: source ./install-jdk.sh --url 'https://api.adoptopenjdk.net/v2/binary/releases/openjdk8?openjdk_impl=hotspot&os=linux&arch=x64&release=latest&type=jdk'
+      before_script:
+        - wget https://github.com/sormuras/bach/raw/master/install-jdk.sh
+        - source ./install-jdk.sh --url 'https://api.adoptopenjdk.net/v2/binary/releases/openjdk8?openjdk_impl=hotspot&os=linux&arch=x64&release=latest&type=jdk'
     - os: linux
       jdk: oraclejdk11
     - os: linux
