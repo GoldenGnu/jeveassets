@@ -42,6 +42,7 @@ import net.troja.eve.esi.api.SovereigntyApi;
 import net.troja.eve.esi.api.UniverseApi;
 import net.troja.eve.esi.api.UserInterfaceApi;
 import net.troja.eve.esi.api.WalletApi;
+import net.troja.eve.esi.model.CharacterAffiliationResponse;
 import net.troja.eve.esi.model.CharacterAssetsLocationsResponse;
 import net.troja.eve.esi.model.CharacterAssetsResponse;
 import net.troja.eve.esi.model.CharacterBlueprintsResponse;
@@ -54,7 +55,6 @@ import net.troja.eve.esi.model.CharacterOrdersHistoryResponse;
 import net.troja.eve.esi.model.CharacterOrdersResponse;
 import net.troja.eve.esi.model.CharacterPlanetResponse;
 import net.troja.eve.esi.model.CharacterPlanetsResponse;
-import net.troja.eve.esi.model.CharacterResponse;
 import net.troja.eve.esi.model.CharacterShipResponse;
 import net.troja.eve.esi.model.CharacterWalletJournalResponse;
 import net.troja.eve.esi.model.CharacterWalletTransactionsResponse;
@@ -67,7 +67,6 @@ import net.troja.eve.esi.model.CorporationContractsResponse;
 import net.troja.eve.esi.model.CorporationIndustryJobsResponse;
 import net.troja.eve.esi.model.CorporationOrdersHistoryResponse;
 import net.troja.eve.esi.model.CorporationOrdersResponse;
-import net.troja.eve.esi.model.CorporationResponse;
 import net.troja.eve.esi.model.CorporationWalletJournalResponse;
 import net.troja.eve.esi.model.CorporationWalletTransactionsResponse;
 import net.troja.eve.esi.model.CorporationWalletsResponse;
@@ -349,20 +348,10 @@ public class EsiDeprecationOnlineTest extends TestUtil {
 	}
 
 	@Test
-	public void esiOwnerGetterCharacter() {
+	public void esiOwnerGetterAffiliation() {
 		CharacterApi api = new CharacterApi();
 		try {
-			ApiResponse<CharacterResponse> apiResponse = api.getCharactersCharacterIdWithHttpInfo(1, DATASOURCE, null);
-			validate(apiResponse.getHeaders());
-		} catch (ApiException ex) {
-			validate(ex.getResponseHeaders());
-		}
-	}
-	@Test
-	public void esiOwnerGetterCorporation() {
-		CorporationApi api = new CorporationApi();
-		try {
-			ApiResponse<CorporationResponse> apiResponse = api.getCorporationsCorporationIdWithHttpInfo(1, DATASOURCE, null);
+			ApiResponse<List<CharacterAffiliationResponse>> apiResponse = api.postCharactersAffiliationWithHttpInfo(Collections.singletonList(1), DATASOURCE);
 			validate(apiResponse.getHeaders());
 		} catch (ApiException ex) {
 			validate(ex.getResponseHeaders());

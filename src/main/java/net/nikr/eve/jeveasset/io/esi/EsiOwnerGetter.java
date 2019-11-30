@@ -20,8 +20,10 @@
  */
 package net.nikr.eve.jeveasset.io.esi;
 
+import java.util.Collections;
 import java.util.Date;
 import java.util.EnumSet;
+import java.util.List;
 import java.util.Set;
 import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
@@ -30,12 +32,12 @@ import net.nikr.eve.jeveasset.io.shared.AccountAdder;
 import net.nikr.eve.jeveasset.io.shared.RawConverter;
 import net.troja.eve.esi.ApiException;
 import net.troja.eve.esi.ApiResponse;
+import net.troja.eve.esi.model.CharacterAffiliationResponse;
 import net.troja.eve.esi.model.CharacterInfo;
-import net.troja.eve.esi.model.CharacterResponse;
 import net.troja.eve.esi.model.CharacterRolesResponse;
 import net.troja.eve.esi.model.CharacterRolesResponse.RolesEnum;
-import net.troja.eve.esi.model.CorporationResponse;
 import net.troja.eve.esi.model.EsiVerifyResponse;
+import net.troja.eve.esi.model.UniverseNamesResponse;
 
 
 public class EsiOwnerGetter extends AbstractEsiGetter implements AccountAdder{
@@ -62,20 +64,28 @@ public class EsiOwnerGetter extends AbstractEsiGetter implements AccountAdder{
 		Set<RolesEnum> roles = EnumSet.noneOf(RolesEnum.class);
 		Integer characterID = characterInfo.getCharacterID();
 		//CharacterID to CorporationID
-		CharacterResponse character = update(DEFAULT_RETRIES, new EsiHandler<CharacterResponse>() {
+		List<CharacterAffiliationResponse> characters = update(DEFAULT_RETRIES, new EsiHandler<List<CharacterAffiliationResponse>>() {
 			@Override
-			public ApiResponse<CharacterResponse> get() throws ApiException {
-				return getCharacterApiOpen().getCharactersCharacterIdWithHttpInfo(characterID, DATASOURCE, null);
+			public ApiResponse<List<CharacterAffiliationResponse>> get() throws ApiException {
+				return getCharacterApiOpen().postCharactersAffiliationWithHttpInfo(Collections.singletonList(characterID), DATASOURCE);
 			}
 		});
+		if (characters.isEmpty()) {
+			return;
+		}
+		CharacterAffiliationResponse character = characters.get(0);
 		Integer corporationID = character.getCorporationId();
 		//CorporationID to CorporationName
-		CorporationResponse corporation = update(DEFAULT_RETRIES, new EsiHandler<CorporationResponse>() {
+		List<UniverseNamesResponse> corporations = update(DEFAULT_RETRIES, new EsiHandler<List<UniverseNamesResponse>>() {
 			@Override
-			public ApiResponse<CorporationResponse> get() throws ApiException {
-				return getCorporationApiOpen().getCorporationsCorporationIdWithHttpInfo(corporationID, DATASOURCE, null);
+			public ApiResponse<List<UniverseNamesResponse>> get() throws ApiException {
+				return getUniverseApiOpen().postUniverseNamesWithHttpInfo(Collections.singletonList(corporationID), DATASOURCE);
 			}
 		});
+		if (corporations.isEmpty()) {
+			return;
+		}
+		UniverseNamesResponse corporation = corporations.get(0);
 		String corporationName = corporation.getName();
 		boolean isCorporation = EsiScopes.CORPORATION_ROLES.isInScope(characterInfo.getScopes());
 		if (isCorporation) { //Corporation
