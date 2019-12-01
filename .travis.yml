@@ -10,7 +10,7 @@ matrix:
         - echo PATH = ${PATH}
         - ls ${JAVA_HOME}
         - java -version
-      # script: mvn install -DskipTests -P jpackager-deploy
+      script: mvn install -DskipTests -P jpackager-deploy
 install: true
 script: mvn install -P skip-online-tests
 cache:
