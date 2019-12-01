@@ -49,5 +49,5 @@ deploy:
   prerelease: true
   skip_cleanup: true
   on:
-    condition: JDK = jpackage
+    condition: JDK=jpackage
     branch: native
