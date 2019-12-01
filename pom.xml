@@ -820,7 +820,10 @@
 										<argument>--name</argument>
 										<argument>jEveAssets</argument>
 										<argument>--app-version</argument>
+										<argument>6.1.2</argument>
+										<!--
 										<argument>${project.version}</argument>
+										-->
 										<argument>--copyright</argument>  
 										<argument>Copyright 2009-2019 Contributors (see credits.txt)</argument>
 										<argument>--description</argument>  
