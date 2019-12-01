@@ -713,7 +713,7 @@
 				</os>
 			</activation>
 			<properties>
-				<project.build.jpackage>???</project.build.jpackage>
+				
 			</properties>
 		</profile>
 		<profile>
