@@ -700,7 +700,7 @@
 			</activation>
 			<properties>
 				<!-- use ${java.home} -->
-				<project.build.jpackage>C:\Program Files\Java\jdk-14-jpackage\bin\jpackage.exe</project.build.jpackage>
+				<project.build.jpackage>jpackage</project.build.jpackage>
 				<project.build.jpackage.installer.type>msi</project.build.jpackage.installer.type>
 				<project.build.jpackage.installer.icon>install-resources/jEveAssets.ico</project.build.jpackage.installer.icon>
 				<project.build.jpackage.installer.options-1>--win-dir-chooser</project.build.jpackage.installer.options-1>
