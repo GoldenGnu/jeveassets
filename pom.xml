@@ -701,6 +701,7 @@
 			<properties>
 				<project.build.jpackage.installer.type>msi</project.build.jpackage.installer.type>
 				<project.build.jpackage.installer.icon>install-resources/jEveAssets.ico</project.build.jpackage.installer.icon>
+				<project.build.jpackage.installer.image>${project.build.directory}/appimage/jEveAssets</project.build.jpackage.installer.image>
 				<project.build.jpackage.installer.options-1>--win-dir-chooser</project.build.jpackage.installer.options-1>
 				<project.build.jpackage.installer.options-2>--win-menu</project.build.jpackage.installer.options-2>
 			</properties>
@@ -715,33 +716,8 @@
 			<properties>
 				<project.build.jpackage.installer.type>deb</project.build.jpackage.installer.type>
 				<project.build.jpackage.installer.icon>install-resources/jEveAssets.png</project.build.jpackage.installer.icon>
+				<project.build.jpackage.installer.image>${project.build.directory}/appimage/jEveAssets.app</project.build.jpackage.installer.image>
 			</properties>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.codehaus.mojo</groupId>
-						<artifactId>exec-maven-plugin</artifactId>
-						<version>1.4.0</version>
-						<executions>
-									<!-- jPackager: Help -->
-							<execution>
-								<id>package-help</id>
-								<phase>verify</phase>
-								<goals>
-									<goal>exec</goal>
-								</goals>
-								<configuration>
-									<executable>jpackage</executable>
-									<arguments>
-										<argument>--help</argument>
-									</arguments>
-									<workingDirectory>${project.basedir}</workingDirectory>
-								</configuration>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
 		</profile>
 		<profile>
 			<id>jpackager-unix</id>
@@ -753,6 +729,7 @@
 			<properties>
 				<project.build.jpackage.installer.type>deb</project.build.jpackage.installer.type>
 				<project.build.jpackage.installer.icon>install-resources/jEveAssets.png</project.build.jpackage.installer.icon>
+				<project.build.jpackage.installer.image>${project.build.directory}/appimage/jEveAssets</project.build.jpackage.installer.image>
 				<project.build.jpackage.installer.options-1>--linux-package-name</project.build.jpackage.installer.options-1>
 				<project.build.jpackage.installer.options-2>jeveassets</project.build.jpackage.installer.options-2>
 				<project.build.jpackage.installer.options-3>--linux-shortcut</project.build.jpackage.installer.options-3>
@@ -849,7 +826,7 @@
 										<argument>--license-file</argument>
 										<argument>license.txt</argument>
 										<argument>--app-image</argument>
-										<argument>${project.build.directory}/appimage</argument>
+										<argument>${project.build.jpackage.installer.image}</argument>
 										<argument>--dest</argument>
 										<argument>${project.build.directory}/installer</argument>
 										<argument>--temp</argument>  
