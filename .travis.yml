@@ -14,9 +14,19 @@ matrix:
       jdk: oraclejdk11
     - os: linux
       jdk: openjdk12
+    - os: linux
+      env: JDK=jpackage
+      before_script:
+        - wget https://github.com/sormuras/bach/raw/master/install-jdk.sh
+        - source ./install-jdk.sh --url 'https://download.java.net/java/early_access/jpackage/1/openjdk-14-jpackage+1-70_linux-x64_bin.tar.gz'
+        - echo JAVA_HOME = ${JAVA_HOME}
+        - echo PATH = ${PATH}
+        - ls ${JAVA_HOME}
+        - java -version
+      script: mvn install -P skip-online-tests
     - os: osx
       #oraclejdk8
-      osx_image: xcode9.3 
+      osx_image: xcode9.3
 install: true
 script: mvn install -P skip-online-tests
 cache:
@@ -25,6 +35,6 @@ cache:
 notifications:
   email:
     recipients:
-      - nkr@niklaskr.dk
+    - nkr@niklaskr.dk
     on_success: never
     on_failure: always
