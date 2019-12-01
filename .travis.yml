@@ -5,8 +5,10 @@ matrix:
     - os: linux
       env: JDK=jpackage
       before_script:
+        #JPackage JDK
         - wget https://github.com/sormuras/bach/raw/master/install-jdk.sh
         - source ./install-jdk.sh --url 'https://download.java.net/java/early_access/jpackage/1/openjdk-14-jpackage+1-70_linux-x64_bin.tar.gz'
+        #Debug
         - echo JAVA_HOME = ${JAVA_HOME}
         - echo PATH = ${PATH}
         - ls ${JAVA_HOME}
@@ -41,9 +43,12 @@ matrix:
     #JPACKAGE: Mac
     - os: osx
       osx_image: xcode11.2
+      env: JDK=jpackage
       before_script:
+        #JPackage JDK
         - wget https://github.com/sormuras/bach/raw/master/install-jdk.sh
         - source ./install-jdk.sh --url 'https://download.java.net/java/early_access/jpackage/1/openjdk-14-jpackage+1-70_osx-x64_bin.tar.gz'
+        #Debug
         - echo JAVA_HOME = ${JAVA_HOME}
         - echo PATH = ${PATH}
         - ls ${JAVA_HOME}
