@@ -220,6 +220,46 @@
 							<goal>run</goal>
 						</goals>
 					</execution>
+					<execution>
+						<phase>process-resources</phase>
+						<goals>
+							<goal>run</goal>
+						</goals>
+						<configuration>
+							<tasks>
+								<delete dir="${project.build.directory}/jre" failonerror="false" includeemptydirs="true" />
+								<delete dir="${project.build.directory}/installer" failonerror="false" includeemptydirs="true" />
+								<delete dir="${project.build.directory}/appimage" failonerror="false" includeemptydirs="true" />
+								<delete dir="${project.build.directory}/app" failonerror="false" includeemptydirs="true" />
+								<delete dir="${project.build.directory}/temp-image" failonerror="false" includeemptydirs="true" />
+								<delete dir="${project.build.directory}/temp-install" failonerror="false" includeemptydirs="true" />
+							</tasks>
+						</configuration>
+					</execution>
+					<!--  -->
+					<execution>
+						<id>copy-to-jpackager</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>run</goal>
+						</goals>
+						<configuration>
+							<target>
+								<copy todir="${project.build.directory}/app">
+									<fileset dir="${project.build.directory}" includes="*.jar"/>
+									<fileset dir="${project.build.directory}" includes="*.txt"/>
+									<fileset dir="${project.build.directory}" includes="*jmemory.properties"/>
+								</copy>
+								<copy todir="${project.build.directory}/app/data">
+									<fileset dir="data" includes="*.xml"/>
+									<fileset dir="data" includes="*.dat"/>
+								</copy>
+								<copy todir="${project.build.directory}/app/lib">
+									<fileset dir="${project.build.directory}/lib" includes="*.jar"/>
+								</copy>
+							</target>
+						</configuration>
+					</execution>
 				</executions>
 				<dependencies>
 					<dependency>
@@ -652,6 +692,171 @@
 			</properties>
 		</profile>
 		<profile>
+			<id>jpackager-windows</id>
+			<activation>
+				<os>
+					<family>windows</family>
+				</os>
+			</activation>
+			<properties>
+				<!-- use ${java.home} -->
+				<project.build.jpackage>C:\Program Files\Java\jdk-14-jpackage\bin\jpackage.exe</project.build.jpackage>
+				<project.build.jpackage.installer.type>msi</project.build.jpackage.installer.type>
+				<project.build.jpackage.installer.icon>install-resources/jEveAssets.ico</project.build.jpackage.installer.icon>
+				<project.build.jpackage.installer.options-1>--win-dir-chooser</project.build.jpackage.installer.options-1>
+				<project.build.jpackage.installer.options-2>--win-menu</project.build.jpackage.installer.options-2>
+			</properties>
+		</profile>
+		<profile>
+			<id>jpackager-mac</id>
+			<activation>
+				<os>
+					<family>mac</family>
+				</os>
+			</activation>
+			<properties>
+				<project.build.jpackage>???</project.build.jpackage>
+			</properties>
+		</profile>
+		<profile>
+			<id>jpackager-unix</id>
+			<activation>
+				<os>
+					<family>unix</family>
+				</os>
+			</activation>
+			<properties>
+				<!--
+				<project.build.jpackage>/usr/lib/jvm/jdk-14/bin/jpackage</project.build.jpackage>
+				-->
+				<project.build.jpackage>jpackage</project.build.jpackage>
+				<project.build.jpackage.installer.type>deb</project.build.jpackage.installer.type>
+				<project.build.jpackage.installer.icon>install-resources/jEveAssets.png</project.build.jpackage.installer.icon>
+				<project.build.jpackage.installer.options-1>--linux-package-name</project.build.jpackage.installer.options-1>
+				<project.build.jpackage.installer.options-2>jeveassets</project.build.jpackage.installer.options-2>
+				<project.build.jpackage.installer.options-3>--linux-shortcut</project.build.jpackage.installer.options-3>
+			</properties>
+		</profile>
+		<profile>
+			<id>jpackager-deploy</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>exec-maven-plugin</artifactId>
+						<version>1.4.0</version>
+						<executions>
+							<!-- jlink: JRE -->
+							<execution>
+								<id>package-1-jlink</id>
+								<phase>verify</phase>
+								<goals>
+									<goal>exec</goal>
+								</goals>
+								<configuration>
+									<!--<longModulepath>false</longModulepath>-->
+									<executable>jlink</executable> <!-- use the jlink on the current JDK -->
+									<arguments>
+										<argument>--output</argument>
+										<argument>${project.build.directory}/jre</argument>
+										<argument>--module-path</argument>
+										<argument>${java.home}/jmods</argument>
+										<argument>--add-modules</argument>
+										<argument>java.base,java.desktop,java.logging,java.management,java.sql,java.naming</argument>
+									</arguments>
+								</configuration>
+							</execution>
+							<!-- jPackager: AppImage -->
+							<execution>
+								<id>package-2-image</id>
+								<phase>verify</phase>
+								<goals>
+									<goal>exec</goal>
+								</goals>
+								<configuration>
+									<executable>${project.build.jpackage}</executable>
+									<arguments>
+										<!--Type -->
+										<argument>--type</argument>
+										<argument>app-image</argument>
+										<!-- Image Options -->
+										<argument>--runtime-image</argument>
+										<argument>${project.build.directory}/jre</argument>
+										<argument>--input</argument>
+										<argument>${project.build.directory}/app</argument>
+										<argument>--dest</argument>
+										<argument>${project.build.directory}/appimage</argument>
+										<argument>--main-jar</argument>
+										<argument>jeveassets.jar</argument>
+										<argument>--main-class</argument>
+										<argument>net.nikr.eve.jeveasset.Main</argument>
+										<argument>--icon</argument>
+										<argument>${project.build.jpackage.installer.icon}</argument>
+										<argument>--temp</argument>  
+										<argument>${project.build.directory}/temp-image</argument>
+										<!-- Generic Options -->
+										<argument>--verbose</argument>
+										<argument>--name</argument>
+										<argument>jEveAssets</argument>
+										<argument>--app-version</argument>
+										<argument>${project.version}</argument>
+										<argument>--copyright</argument>  
+										<argument>Copyright 2009-2019 Contributors (see credits.txt)</argument>
+										<argument>--description</argument>  
+										<argument>jEveAssets is an out-of-game asset manager for Eve-Online</argument>
+									</arguments>
+								</configuration>
+							</execution>
+							<!-- jPackager: Installer -->
+							<execution>
+								<id>package-3-installer</id>
+								<phase>verify</phase>
+								<goals>
+									<goal>exec</goal>
+								</goals>
+								<configuration>
+									<executable>${project.build.jpackage}</executable>
+									<arguments>
+										<!--Type: Use default -->
+										<!-- Installer Options -->
+										<argument>${project.build.jpackage.installer.options-1}</argument>
+										<argument>${project.build.jpackage.installer.options-2}</argument>
+										<argument>${project.build.jpackage.installer.options-3}</argument>
+										<argument>${project.build.jpackage.installer.options-4}</argument>
+										<argument>--license-file</argument>
+										<argument>license.txt</argument>
+										<argument>--app-image</argument>
+										<argument>${project.build.directory}/appimage/jEveAssets</argument>
+										<argument>--dest</argument>
+										<argument>${project.build.directory}/installer</argument>
+										<argument>--temp</argument>  
+										<argument>${project.build.directory}/temp-install</argument>
+										<argument>--resource-dir</argument>
+										<argument>install-resources</argument>
+										<!-- Generic Options -->
+										<argument>--verbose</argument>
+										<argument>--name</argument>
+										<argument>jEveAssets</argument>
+										<argument>--app-version</argument>
+										<argument>6.1.2</argument>
+										<!--
+										Ignore app-version: see https://bugs.openjdk.java.net/browse/JDK-8220806
+										<argument>${project.version}</argument>
+										-->
+										<argument>--copyright</argument>  
+										<argument>Copyright 2009-2019 Contributors (see credits.txt)</argument>
+										<argument>--description</argument>  
+										<argument>jEveAssets is an out-of-game asset manager for Eve-Online</argument>
+									</arguments>
+									<workingDirectory>${project.basedir}</workingDirectory>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
 			<id>jdk11</id>
 			<activation>
 				<activeByDefault>false</activeByDefault>
@@ -669,6 +874,26 @@
 			</activation>
 			<properties>
 				<project.build.sourceVersion>12</project.build.sourceVersion>
+			</properties>
+		</profile>
+		<profile>
+			<id>jdk13</id>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+				<jdk>13</jdk>
+			</activation>
+			<properties>
+				<project.build.sourceVersion>13</project.build.sourceVersion>
+			</properties>
+		</profile>
+		<profile>
+			<id>jdk14</id>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+				<jdk>14</jdk>
+			</activation>
+			<properties>
+				<project.build.sourceVersion>14</project.build.sourceVersion>
 			</properties>
 		</profile>
 	</profiles>
