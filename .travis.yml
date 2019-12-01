@@ -97,6 +97,7 @@ deploy:
   draft: true
   prerelease: true
   skip_cleanup: true
+  tag_name: $TRAVIS_TAG
   on:
     condition: $JDK = jpackage
     tags: true
