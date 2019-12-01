@@ -13,6 +13,10 @@ matrix:
         - wget -nv -nc -O maven.zip http://mirrors.dotsrc.org/apache/maven/maven-3/3.6.3/binaries/apache-maven-3.6.3-bin.zip  || true
         - 7z x maven.zip
         - export PATH=$TRAVIS_BUILD_DIR/apache-maven-3.6.3/bin:$PATH
+        # WiX Toolset
+        - wget -nv -nc -O wix311.zip https://github.com/wixtoolset/wix3/releases/download/wix3112rtm/wix311-binaries.zip  || true
+        - 7z x wix311.zip -owix311
+        - export PATH=$TRAVIS_BUILD_DIR/wix311:$PATH
         #Debug
         - echo JAVA_HOME = ${JAVA_HOME}
         - echo PATH = ${PATH}

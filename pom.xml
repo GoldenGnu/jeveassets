@@ -699,8 +699,6 @@
 				</os>
 			</activation>
 			<properties>
-				<!-- use ${java.home} -->
-				<project.build.jpackage>jpackage</project.build.jpackage>
 				<project.build.jpackage.installer.type>msi</project.build.jpackage.installer.type>
 				<project.build.jpackage.installer.icon>install-resources/jEveAssets.ico</project.build.jpackage.installer.icon>
 				<project.build.jpackage.installer.options-1>--win-dir-chooser</project.build.jpackage.installer.options-1>
@@ -726,10 +724,6 @@
 				</os>
 			</activation>
 			<properties>
-				<!--
-				<project.build.jpackage>/usr/lib/jvm/jdk-14/bin/jpackage</project.build.jpackage>
-				-->
-				<project.build.jpackage>jpackage</project.build.jpackage>
 				<project.build.jpackage.installer.type>deb</project.build.jpackage.installer.type>
 				<project.build.jpackage.installer.icon>install-resources/jEveAssets.png</project.build.jpackage.installer.icon>
 				<project.build.jpackage.installer.options-1>--linux-package-name</project.build.jpackage.installer.options-1>
@@ -774,7 +768,7 @@
 									<goal>exec</goal>
 								</goals>
 								<configuration>
-									<executable>${project.build.jpackage}</executable>
+									<executable>jpackage</executable>
 									<arguments>
 										<!--Type -->
 										<argument>--type</argument>
@@ -815,7 +809,7 @@
 									<goal>exec</goal>
 								</goals>
 								<configuration>
-									<executable>${project.build.jpackage}</executable>
+									<executable>jpackage</executable>
 									<arguments>
 										<!--Type: Use default -->
 										<!-- Installer Options -->
