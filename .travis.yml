@@ -39,3 +39,15 @@ notifications:
     - nkr@niklaskr.dk
     on_success: never
     on_failure: always
+deploy:
+  provider: releases
+  api_key:
+    secure: hRQqU+s7sHoDkNnN90FkHSYky91o89rdxCpvxyI71cGLDjbo4j0Kicdq1rDsHltECk4bsnNHmv2w4Onc7k6T1s2pqVFNgZ89QOri4umtK1INqQSGu/qsnovdziWOd5CNUO0g987sxjkxuxSHUpY8KfEHh+MvdhVEWkrEU5kYMlCOMbdNqNHznZYWZlWIV6WKS5W6Aeyt+iiHskcIq5LxGjRR16XinP4xb4vlq2Vht4JgTPkqXbvPlAvBXjlovrMFoxImKHb1sAau1UnjMXhwHsJJQ7NbUFe4UXhDNe+MreEf6rjbI62aVsMnAsvgeNWYnO/L2fDMDjrYXZzr/NMWYSNu/RMYc2ndwaPMF6ZwN7ClBa+zlo8CN4DaGnfYuFvAPXFeieAVbmtlbfIW/PDKSndowIMk0hCVOlqlhSFCJZr8M9cMtp4VtMokRUV8hxgQlbEaP49MatqAsg1opI9X41wXqtw822e7ij2Qm2++JF+8d3McWhYXu2BG5miEarHD7x5d1P7ZTpZ0BK2/fMMcfZJdMrh6y9I4VKvawfQO1ylXjQwG/WpH/G+NdyazQB/+kMShX3n/l4xdZJUD+f3aBb1HGsOyCiPUBmH/JpEJA5+xmCiTQZ2c/Orumts81LI7vz80QIrqC/GWIj5tAQnXHXjlrEOO94mh7A8FYU0XeOQ=
+  file_glob: true
+  file: target/installer/*
+  draft: true
+  prerelease: true
+  skip_cleanup: true
+  on:
+    condition: JDK = jpackage
+    branch: native
