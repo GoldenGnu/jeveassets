@@ -709,15 +709,12 @@
 			<id>jpackager-mac</id>
 			<activation>
 				<os>
-					<family>mac</family>
+					<name>Mac OS X</name>
 				</os>
 			</activation>
 			<properties>
 				<project.build.jpackage.installer.type>deb</project.build.jpackage.installer.type>
 				<project.build.jpackage.installer.icon>install-resources/jEveAssets.png</project.build.jpackage.installer.icon>
-				<project.build.jpackage.installer.options-1></project.build.jpackage.installer.options-1>
-				<project.build.jpackage.installer.options-2></project.build.jpackage.installer.options-2>
-				<project.build.jpackage.installer.options-3></project.build.jpackage.installer.options-3>
 			</properties>
 			<build>
 				<plugins>
@@ -750,7 +747,7 @@
 			<id>jpackager-unix</id>
 			<activation>
 				<os>
-					<family>unix</family>
+					<name>Linux</name>
 				</os>
 			</activation>
 			<properties>
