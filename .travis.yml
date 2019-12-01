@@ -11,6 +11,57 @@ matrix:
         - ls ${JAVA_HOME}
         - java -version
       script: mvn install -DskipTests -P jpackager-deploy
+    - os: linux
+      env: JDK=adoptopenjdk8 + HotSpot
+      before_script:
+        - wget https://github.com/sormuras/bach/raw/master/install-jdk.sh
+        - source ./install-jdk.sh --url 'https://api.adoptopenjdk.net/v2/binary/releases/openjdk8?openjdk_impl=hotspot&os=linux&arch=x64&release=latest&type=jdk'
+        - echo JAVA_HOME = ${JAVA_HOME}
+        - echo PATH = ${PATH}
+        - ls ${JAVA_HOME}
+        - java -version
+    - os: linux
+      jdk: oraclejdk11
+    - os: linux
+      jdk: openjdk12
+    - os: osx
+      #oraclejdk8
+      osx_image: xcode9.3
+    - os: linux
+      env: JDK=jpackage
+      before_script:
+        - wget https://github.com/sormuras/bach/raw/master/install-jdk.sh
+        - source ./install-jdk.sh --url 'https://download.java.net/java/early_access/jpackage/1/openjdk-14-jpackage+1-70_linux-x64_bin.tar.gz'
+        - echo JAVA_HOME = ${JAVA_HOME}
+        - echo PATH = ${PATH}
+        - ls ${JAVA_HOME}
+        - java -version
+        - sudo apt-get -y install fakeroot
+      script: mvn install -DskipTests -P jpackager-deploy
+    - os: windows
+      language: shell
+      env: JDK=jpackage
+      before_script:
+        #JPackage JDK
+        - wget -nv -nc -O openjdk-jpackage.zip https://download.java.net/java/early_access/jpackage/1/openjdk-14-jpackage+1-70_windows-x64_bin.zip  || true
+        - 7z x openjdk-jpackage.zip
+        - export JAVA_HOME=$TRAVIS_BUILD_DIR/jdk-14
+        - export PATH=$JAVA_HOME/bin:$PATH
+        # Maven
+        - wget -nv -nc -O maven.zip http://mirrors.dotsrc.org/apache/maven/maven-3/3.6.3/binaries/apache-maven-3.6.3-bin.zip  || true
+        - 7z x maven.zip
+        - export PATH=$TRAVIS_BUILD_DIR/apache-maven-3.6.3/bin:$PATH
+        # WiX Toolset
+        - wget -nv -nc -O wix311.zip https://github.com/wixtoolset/wix3/releases/download/wix3112rtm/wix311-binaries.zip  || true
+        - 7z x wix311.zip -owix311
+        - export PATH=$TRAVIS_BUILD_DIR/wix311:$PATH
+        #Debug
+        - echo JAVA_HOME = ${JAVA_HOME}
+        - echo PATH = ${PATH}
+        - dir ${JAVA_HOME}
+        - java -version
+        - mvn --version
+      script: mvn install -DskipTests -P jpackager-deploy
 install: true
 script: mvn install -P skip-online-tests
 cache:

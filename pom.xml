@@ -849,7 +849,7 @@
 										<argument>--license-file</argument>
 										<argument>license.txt</argument>
 										<argument>--app-image</argument>
-										<argument>${project.build.directory}/appimage/jEveAssets</argument>
+										<argument>${project.build.directory}/appimage</argument>
 										<argument>--dest</argument>
 										<argument>${project.build.directory}/installer</argument>
 										<argument>--temp</argument>  
