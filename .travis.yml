@@ -10,7 +10,7 @@ matrix:
         - export PATH=$JAVA_HOME/bin:$PATH
         - echo JAVA_HOME = ${JAVA_HOME}
         - echo PATH = ${PATH}
-        - dir ${JAVA_HOME}
+        #- dir ${JAVA_HOME}
         - java -version
         - choco install maven
       script:
