@@ -705,6 +705,47 @@
 				<project.build.jpackage.installer.options-1>--win-dir-chooser</project.build.jpackage.installer.options-1>
 				<project.build.jpackage.installer.options-2>--win-menu</project.build.jpackage.installer.options-2>
 			</properties>
+			<build>
+				<plugins>
+					<plugin>
+						<artifactId>maven-antrun-plugin</artifactId>
+						<version>1.7</version>
+						<executions>
+							<execution>
+								<id>package-4-java</id>
+								<phase>verify</phase>
+								<goals>
+									<goal>run</goal>
+								</goals>
+								<configuration>
+									<target>
+										<copy todir="${project.build.directory}/installer">
+											<fileset dir="${project.build.directory}" includes="jeveassets-*.zip"/>
+										</copy>
+									</target>
+								</configuration>
+							</execution>
+						</executions>
+						<dependencies>
+							<dependency>
+								<groupId>ant-contrib</groupId>
+								<artifactId>ant-contrib</artifactId>
+								<version>20020829</version>
+							</dependency>
+							<dependency>
+								<groupId>commons-net</groupId>
+								<artifactId>commons-net</artifactId>
+								<version>1.4.1</version>
+							</dependency>
+							<dependency>
+								<groupId>ant</groupId>
+								<artifactId>ant-commons-net</artifactId>
+								<version>1.6.5</version>
+							</dependency>
+						</dependencies>
+					</plugin>
+				</plugins>
+			</build>
 		</profile>
 		<profile>
 			<id>jpackager-mac</id>
@@ -753,7 +794,7 @@
 								</goals>
 								<configuration>
 									<!--<longModulepath>false</longModulepath>-->
-									<executable>jlink</executable>
+									<executable>${java.home}/bin/jlink</executable>
 									<arguments>
 										<argument>--output</argument>
 										<argument>${project.build.directory}/jre</argument>
@@ -772,7 +813,7 @@
 									<goal>exec</goal>
 								</goals>
 								<configuration>
-									<executable>jpackage</executable>
+									<executable>${java.home}/bin/jpackage</executable>
 									<arguments>
 										<!--Type -->
 										<argument>--type</argument>
@@ -816,7 +857,7 @@
 									<goal>exec</goal>
 								</goals>
 								<configuration>
-									<executable>jpackage</executable>
+									<executable>${java.home}/bin/jpackage</executable>
 									<arguments>
 										<!-- Installer Options -->
 										<argument>${project.build.jpackage.installer.options-1}</argument>
