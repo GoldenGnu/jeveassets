@@ -24,6 +24,7 @@ matrix:
     #JPACKAGE: Linux
     - if: tag IS present
       os: linux
+      dist: bionic
       env: JDK=jpackage
       before_script:
         #JPackage JDK
