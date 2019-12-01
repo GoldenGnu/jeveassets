@@ -19,7 +19,6 @@ script: mvn install -P skip-online-tests
 cache:
   directories:
   - $HOME/.m2
-  - $TRAVIS_BUILD_DIR/openjdk-jpackage.zip
 notifications:
   email:
     recipients:
