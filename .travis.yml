@@ -1,7 +1,7 @@
 language: java
 matrix:
   include:
-    #TESTS: Linux - OpenJDK 8
+    #TEST: Linux - OpenJDK 8
     - os: linux
       env: JDK=adoptopenjdk8 + HotSpot
       before_script:
@@ -11,13 +11,13 @@ matrix:
         - echo PATH = ${PATH}
         - ls ${JAVA_HOME}
         - java -version
-    #TESTS: Linux - OracleJDK 11 
+    #TEST: Linux - OracleJDK 11 
     - os: linux
       jdk: oraclejdk11
-    #TESTS: Linux - OpenJDK 12
+    #TEST: Linux - OpenJDK 12
     - os: linux
       jdk: openjdk12
-    #TESTS: Max OS X - OpenJDK 8
+    #TEST: Max OS X - OpenJDK 8
     - os: osx
       #oraclejdk8
       osx_image: xcode9.3
@@ -36,7 +36,7 @@ matrix:
         - java -version
         - sudo apt-get -y install fakeroot
       script: mvn install -DskipTests -P jpackager-deploy
-      #JPACKAGE: Windows
+    #JPACKAGE: Windows
     - if: tag IS present
       os: windows
       language: shell
