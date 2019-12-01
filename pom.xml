@@ -713,8 +713,38 @@
 				</os>
 			</activation>
 			<properties>
-				
+				<project.build.jpackage.installer.type>deb</project.build.jpackage.installer.type>
+				<project.build.jpackage.installer.icon>install-resources/jEveAssets.png</project.build.jpackage.installer.icon>
+				<project.build.jpackage.installer.options-1></project.build.jpackage.installer.options-1>
+				<project.build.jpackage.installer.options-2></project.build.jpackage.installer.options-2>
+				<project.build.jpackage.installer.options-3></project.build.jpackage.installer.options-3>
 			</properties>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>exec-maven-plugin</artifactId>
+						<version>1.4.0</version>
+						<executions>
+									<!-- jPackager: Help -->
+							<execution>
+								<id>package-help</id>
+								<phase>verify</phase>
+								<goals>
+									<goal>exec</goal>
+								</goals>
+								<configuration>
+									<executable>jpackage</executable>
+									<arguments>
+										<argument>--help</argument>
+									</arguments>
+									<workingDirectory>${project.basedir}</workingDirectory>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
 		</profile>
 		<profile>
 			<id>jpackager-unix</id>
@@ -749,7 +779,7 @@
 								</goals>
 								<configuration>
 									<!--<longModulepath>false</longModulepath>-->
-									<executable>jlink</executable> <!-- use the jlink on the current JDK -->
+									<executable>jlink</executable>
 									<arguments>
 										<argument>--output</argument>
 										<argument>${project.build.directory}/jre</argument>
@@ -811,7 +841,6 @@
 								<configuration>
 									<executable>jpackage</executable>
 									<arguments>
-										<!--Type: Use default -->
 										<!-- Installer Options -->
 										<argument>${project.build.jpackage.installer.options-1}</argument>
 										<argument>${project.build.jpackage.installer.options-2}</argument>
