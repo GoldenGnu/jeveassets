@@ -700,6 +700,7 @@
 				</os>
 			</activation>
 			<properties>
+				<project.build.jpackage.appimage.name>windows</project.build.jpackage.appimage.name>
 				<project.build.jpackage.installer.type>msi</project.build.jpackage.installer.type>
 				<project.build.jpackage.installer.icon>install-resources/jEveAssets.ico</project.build.jpackage.installer.icon>
 				<project.build.jpackage.installer.image>${project.build.directory}/appimage/jEveAssets</project.build.jpackage.installer.image>
@@ -713,7 +714,7 @@
 						<version>1.7</version>
 						<executions>
 							<execution>
-								<id>package-4-java</id>
+								<id>package-6-move-java</id>
 								<phase>verify</phase>
 								<goals>
 									<goal>run</goal>
@@ -756,6 +757,7 @@
 				</os>
 			</activation>
 			<properties>
+				<project.build.jpackage.appimage.name>mac-osx</project.build.jpackage.appimage.name>
 				<project.build.jpackage.installer.type>dmg</project.build.jpackage.installer.type>
 				<project.build.jpackage.installer.icon>install-resources/jEveAssets.png</project.build.jpackage.installer.icon>
 				<project.build.jpackage.installer.image>${project.build.directory}/appimage/jEveAssets.app</project.build.jpackage.installer.image>
@@ -769,6 +771,7 @@
 				</os>
 			</activation>
 			<properties>
+				<project.build.jpackage.appimage.name>linux</project.build.jpackage.appimage.name>
 				<project.build.jpackage.installer.type>deb</project.build.jpackage.installer.type>
 				<project.build.jpackage.installer.icon>install-resources/jEveAssets.png</project.build.jpackage.installer.icon>
 				<project.build.jpackage.installer.image>${project.build.directory}/appimage/jEveAssets</project.build.jpackage.installer.image>
@@ -897,6 +900,63 @@
 								</configuration>
 							</execution>
 						</executions>
+					</plugin>
+					<plugin>
+						<artifactId>maven-assembly-plugin</artifactId>
+						<version>2.4</version>
+						<executions>
+							<execution>
+								<id>package-4-zip-appimage</id>
+								<phase>verify</phase>
+								<goals>
+									<goal>single</goal>
+								</goals>
+								<configuration>
+									<finalName>${project.name}-${project.build.jpackage.appimage.name}-${project.version}</finalName>
+									<appendAssemblyId>false</appendAssemblyId>
+									<descriptors>
+										<descriptor>src/main/assembly/appimage.xml</descriptor>
+									</descriptors>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<artifactId>maven-antrun-plugin</artifactId>
+						<version>1.7</version>
+						<executions>
+							<execution>
+								<id>package-5-move-appimage</id>
+								<phase>install</phase>
+								<goals>
+									<goal>run</goal>
+								</goals>
+								<configuration>
+									<target>
+										<copy todir="${project.build.directory}/installer">
+											<fileset dir="${project.build.directory}" includes="${project.name}-${project.build.jpackage.appimage.name}-${project.version}.zip"/>
+										</copy>
+									</target>
+								</configuration>
+							</execution>
+						</executions>
+						<dependencies>
+							<dependency>
+								<groupId>ant-contrib</groupId>
+								<artifactId>ant-contrib</artifactId>
+								<version>20020829</version>
+							</dependency>
+							<dependency>
+								<groupId>commons-net</groupId>
+								<artifactId>commons-net</artifactId>
+								<version>1.4.1</version>
+							</dependency>
+							<dependency>
+								<groupId>ant</groupId>
+								<artifactId>ant-commons-net</artifactId>
+								<version>1.6.5</version>
+							</dependency>
+						</dependencies>
 					</plugin>
 				</plugins>
 			</build>
