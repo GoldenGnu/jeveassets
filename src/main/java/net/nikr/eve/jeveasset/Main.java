@@ -174,6 +174,8 @@ public final class Main {
 		//XXX - Workaround: Allow basic proxy authorization
 		System.setProperty("jdk.http.auth.tunneling.disabledSchemes", "");
 		System.setProperty("jdk.http.auth.proxying.disabledSchemes", "");
+		//XXX - Workaround: javax.net.ssl.SSLHandshakeException: Received fatal alert: handshake_failure
+		System.setProperty("https.protocols", "SSLv3,TLSv1,TLSv1.1,TLSv1.2");
 
 		if (backgroundUpdate) {
 			init();
