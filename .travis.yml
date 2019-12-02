@@ -22,8 +22,8 @@ matrix:
       #oraclejdk8
       osx_image: xcode9.3
     #JPACKAGE: Linux
-    - if: tag IS present
-      os: linux
+    #- if: tag IS present
+    - os: linux
       dist: bionic
       env: JDK=jpackage
       before_script:
@@ -38,8 +38,8 @@ matrix:
         - sudo apt-get -y install fakeroot
       script: mvn install -DskipTests -P jpackager-deploy
     #JPACKAGE: Windows
-    - if: tag IS present
-      os: windows
+    #- if: tag IS present
+    - os: windows
       language: shell
       env: JDK=jpackage
       before_script:
@@ -64,8 +64,8 @@ matrix:
         - mvn --version
       script: mvn install -DskipTests -P jpackager-deploy
     #JPACKAGE: Mac
-    - if: tag IS present
-      os: osx
+    #- if: tag IS present
+    - os: osx
       osx_image: xcode11.2
       env: JDK=jpackage
       before_script:
@@ -102,4 +102,4 @@ deploy:
   name: $TRAVIS_TAG
   on:
     condition: $JDK = jpackage
-    tags: true
+    #tags: true

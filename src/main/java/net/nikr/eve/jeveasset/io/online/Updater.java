@@ -26,12 +26,10 @@ package net.nikr.eve.jeveasset.io.online;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -252,7 +250,7 @@ public class Updater {
 
 	private List<String> getArgsString(String link, ProxyData proxyData) {
 		List<String> list = new ArrayList<String>();
-		list.add("java");
+		list.add(System.getProperty("java.home") + File.separator + "bin" + File.separator + "java");
 		if (proxyData != null) {
 			list.addAll(proxyData.getArgs());
 		} else {
@@ -305,7 +303,8 @@ public class Updater {
 		protected String get(File file) {
 			try {
 				return get(new FileReader(file));
-			} catch (FileNotFoundException ex) {
+			} catch (IOException ex) {
+				LOG.log(Level.SEVERE, "Failed to read " + file, ex);
 				return null;
 			}
 		}
@@ -314,14 +313,13 @@ public class Updater {
 			try {
 				URL url = new URL(link);
 				return get(new InputStreamReader(url.openStream()));
-			} catch (MalformedURLException e) {
-				return null;
 			} catch (IOException ex) {
+				LOG.log(Level.SEVERE, "Failed to download " + link, ex);
 				return null;
 			}
 		}
 		
-		protected String get(Reader reader) {
+		protected String get(Reader reader) throws IOException {
 			StringBuilder builder = new StringBuilder();
 			try {
 				BufferedReader in = new BufferedReader(reader);
@@ -331,10 +329,6 @@ public class Updater {
 					builder.append(str);
 				}
 				return builder.toString();
-			} catch (MalformedURLException e) {
-				return null;
-			} catch (IOException e) {
-				return null;
 			} finally {
 				if (reader != null) {
 					try {

@@ -150,7 +150,7 @@
 								<copy todir="${project.build.directory}/install">
 									<fileset dir="${project.build.directory}" includes="*.jar"/>
 									<fileset dir="${project.build.directory}" includes="*.txt"/>
-									<fileset dir="${project.build.directory}" includes="*jmemory.properties"/>
+									<fileset dir="${project.build.directory}" includes="*.properties"/>
 								</copy>
 								<copy todir="${project.build.directory}/install/izpack">
 									<fileset dir="tools" includes="izpack-util.jar"/>
@@ -246,9 +246,10 @@
 						<configuration>
 							<target>
 								<copy todir="${project.build.directory}/app">
-									<fileset dir="${project.build.directory}" includes="*.jar"/>
+									<fileset dir="${project.build.directory}" includes="jeveassets.jar"/>
+									<fileset dir="${project.build.directory}" includes="jmemory.jar"/>
 									<fileset dir="${project.build.directory}" includes="*.txt"/>
-									<fileset dir="${project.build.directory}" includes="*jmemory.properties"/>
+									<fileset dir="${project.build.directory}" includes="*.properties"/>
 								</copy>
 								<copy todir="${project.build.directory}/app/data">
 									<fileset dir="data" includes="*.xml"/>
