@@ -68,16 +68,6 @@ public class RawAccountBalance {
 		this.accountKey = response.getDivision() + 999;
 	}
 
-	/**
-	 * EveKit
-	 *
-	 * @param balance
-	 */
-	public RawAccountBalance(enterprises.orbital.evekit.client.model.AccountBalance balance) {
-		this.balance = balance.getBalance();
-		this.accountKey = balance.getDivision() + 999;
-	}
-
 	public Double getBalance() {
 		return balance;
 	}

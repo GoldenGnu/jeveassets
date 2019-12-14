@@ -20,7 +20,6 @@
  */
 package net.nikr.eve.jeveasset.data.api.raw;
 
-import net.nikr.eve.jeveasset.io.shared.RawConverter;
 import net.troja.eve.esi.model.CharacterContractsItemsResponse;
 import net.troja.eve.esi.model.CorporationContractsItemsResponse;
 
@@ -83,20 +82,6 @@ public class RawContractItem {
 		rawQuantity = contractItem.getRawQuantity();
 		recordId = contractItem.getRecordId();
 		typeId = contractItem.getTypeId();
-	}
-
-	/**
-	 * EveKit
-	 *
-	 * @param contractItem
-	 */
-	public RawContractItem(enterprises.orbital.evekit.client.model.ContractItem contractItem) {
-		isIncluded = contractItem.getIncluded();
-		isSingleton = contractItem.getSingleton();
-		quantity = RawConverter.toInteger(contractItem.getQuantity());
-		rawQuantity = RawConverter.toInteger(contractItem.getRawQuantity());
-		recordId = contractItem.getRecordID();
-		typeId = contractItem.getTypeID();
 	}
 
 	public Boolean isIncluded() {

@@ -146,10 +146,7 @@ public enum Images {
 
 	MISC_EVE ("misc_eve.png"),
 	MISC_EVEKIT ("misc_evekit.png"),
-	MISC_EVEKIT_32 ("misc_evekit_32.png"),
-	MISC_EVEKIT_DISABLED ("misc_evekit_disabled.png"),
 	MISC_ESI ("misc_esi.png"),
-	MISC_ESI_32 ("misc_esi_32.png"),
 	MISC_EXIT ("misc_exit.png"),
 	MISC_HELP ("misc_help.png"),
 	MISC_EXPANDED ("misc_expanded.png"),

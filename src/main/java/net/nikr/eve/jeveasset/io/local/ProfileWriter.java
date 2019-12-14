@@ -127,6 +127,7 @@ public final class ProfileWriter extends AbstractXmlWriter {
 			setAttribute(node, "corporation", owner.isCorporation());
 			setAttributeOptional(node, "limit", owner.getLimit());
 			setAttribute(node, "accountname", owner.getAccountName());
+			setAttribute(node, "migrated", owner.isMigrated());
 			//ContID
 			setAttributeOptional(node, "journalcid", owner.getJournalCID());
 			setAttributeOptional(node, "transactionscid", owner.getTransactionsCID());

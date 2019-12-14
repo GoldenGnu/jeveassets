@@ -40,6 +40,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import net.nikr.eve.jeveasset.Program;
+import net.nikr.eve.jeveasset.data.api.accounts.DeprecatedOwner;
 import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
 import net.nikr.eve.jeveasset.data.api.accounts.EveApiAccount;
 import net.nikr.eve.jeveasset.data.api.accounts.EveApiOwner;
@@ -347,10 +348,6 @@ public class AccountManagerDialog extends JDialogCentered {
 				if (o instanceof SeparatorList.Separator<?>) {
 					SeparatorList.Separator<?> separator = (SeparatorList.Separator<?>) o;
 					Object object = separator.first();
-					if (object instanceof EveKitOwner) {
-						EveKitOwner eveKitOwner = (EveKitOwner) object;
-						accountImportDialog.editEveKit(eveKitOwner);
-					}		
 					if (object instanceof EsiOwner) {
 						EsiOwner esiOwner = (EsiOwner) object;
 						accountImportDialog.editEsi(esiOwner);
@@ -394,12 +391,12 @@ public class AccountManagerDialog extends JDialogCentered {
 				Object o = tableModel.getElementAt(index);
 				if (o instanceof SeparatorList.Separator<?>) {
 					SeparatorList.Separator<?> separator = (SeparatorList.Separator<?>) o;
-					List<EveApiOwner> owners = new ArrayList<EveApiOwner>();
+					List<DeprecatedOwner> owners = new ArrayList<DeprecatedOwner>();
 					try {
 						separatorList.getReadWriteLock().readLock().lock();
 						for (Object object : separator.getGroup()) {
-							if (object instanceof EveApiOwner) { //Eve Api
-								owners.add((EveApiOwner) object);
+							if (object instanceof DeprecatedOwner) { //Eve Api
+								owners.add((DeprecatedOwner) object);
 							}
 						}
 					} finally {
@@ -408,7 +405,7 @@ public class AccountManagerDialog extends JDialogCentered {
 					boolean updated = jMigrateDialog.show(owners);
 					if (updated) {
 						boolean allMigrated = true;
-						for (EveApiOwner owner : owners) {
+						for (DeprecatedOwner owner : owners) {
 							if (!owner.isMigrated()) {
 								allMigrated = false;
 								break;

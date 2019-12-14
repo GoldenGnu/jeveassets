@@ -20,7 +20,6 @@
  */
 package net.nikr.eve.jeveasset.io.shared;
 
-import enterprises.orbital.evekit.client.model.Bookmark;
 import java.util.ArrayList;
 import java.util.List;
 import net.nikr.eve.jeveasset.data.api.accounts.OwnerType;
@@ -360,16 +359,6 @@ public final class ApiIdConverter {
 	public static Citadel getCitadel(final StructureResponse response, final long locationID) {
 		MyLocation system = getLocation(response.getSolarSystemId());
 		return new Citadel(locationID, response.getName(), response.getSolarSystemId(), system.getSystem(), system.getRegionID(), system.getRegion(), false, true, CitadelSource.ESI_STRUCTURES);
-	}
-
-	public static Citadel getCitadel(final Bookmark response) {
-		Integer locationID = response.getLocationID();
-		Long itemID = response.getItemID();
-		if (locationID != null && locationID > 0 && itemID != null && itemID > 1000000000000L) {
-			return getCitadel(locationID, itemID, response.getMemo(), CitadelSource.EVEKIT_BOOKMARKS);
-		} else {
-			return null;
-		}
 	}
 
 	public static Citadel getCitadel(final CorporationBookmarksResponse response) {
