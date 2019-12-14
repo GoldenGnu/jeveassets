@@ -39,7 +39,7 @@ import javax.swing.JPanel;
 import javax.swing.ListCellRenderer;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
-import net.nikr.eve.jeveasset.data.api.accounts.EveApiOwner;
+import net.nikr.eve.jeveasset.data.api.accounts.DeprecatedOwner;
 import net.nikr.eve.jeveasset.data.api.my.MyAccountBalance;
 import net.nikr.eve.jeveasset.data.api.my.MyAsset;
 import net.nikr.eve.jeveasset.data.api.my.MyContract;
@@ -134,11 +134,11 @@ public class JMigrateDialog extends JDialogCentered {
 		setVisible(false);
 	}
 
-	public boolean show(List<EveApiOwner> owners) {
+	public boolean show(List<DeprecatedOwner> owners) {
 		returnValue = false;
 		jPanel.removeAll();
 		containers.clear();
-		for (EveApiOwner owner : owners) {
+		for (DeprecatedOwner owner : owners) {
 			List<EsiOwner> esiOwners = new ArrayList<EsiOwner>();
 			for (EsiOwner esiOwner : program.getProfileManager().getEsiOwners()) {
 				if (esiOwner.getOwnerID() == owner.getOwnerID()) {
@@ -199,13 +199,13 @@ public class JMigrateDialog extends JDialogCentered {
 
 	private class OwnerContainer {
 
-		private final EveApiOwner owner;
+		private final DeprecatedOwner owner;
 		private final JCheckBox jOwner;
 		private final JLabel jInfo;
 		private final JComboBox<EsiOwner> jEsiOwners;
 		private final JButton jEsiInfo;
 
-		public OwnerContainer(EveApiOwner owner, List<EsiOwner> esiOwners) {
+		public OwnerContainer(DeprecatedOwner owner, List<EsiOwner> esiOwners) {
 			this.owner = owner;
 			jOwner = new JCheckBox(owner.getOwnerName());
 			jOwner.addActionListener(new ActionListener() {

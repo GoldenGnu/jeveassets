@@ -173,8 +173,6 @@ public class ProfileDialog extends JDialogCentered {
 	}
 
 	private void loadProfileGui() {
-		//Update EveKit Import
-		program.profilesChanged();
 		//Update GUI (this dialog)
 		updateProfiles();
 		jProfiles.updateUI();

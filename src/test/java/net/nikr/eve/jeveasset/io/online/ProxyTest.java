@@ -30,14 +30,12 @@ import java.util.List;
 import java.util.Set;
 import net.nikr.eve.jeveasset.TestUtil;
 import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
-import net.nikr.eve.jeveasset.data.api.accounts.EveKitOwner;
 import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.data.sde.StaticData;
 import net.nikr.eve.jeveasset.data.settings.PriceDataSettings.PriceSource;
 import net.nikr.eve.jeveasset.data.settings.ProxyData;
 import net.nikr.eve.jeveasset.io.esi.EsiCallbackURL;
 import net.nikr.eve.jeveasset.io.esi.EsiOwnerGetter;
-import net.nikr.eve.jeveasset.io.evekit.EveKitOwnerGetter;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -99,9 +97,6 @@ public class ProxyTest extends TestUtil {
 		esiOwner.setCallbackURL(EsiCallbackURL.LOCALHOST);
 		EsiOwnerGetter esi = new EsiOwnerGetter(esiOwner, false);
 		esi.start();
-		//EveKit
-		EveKitOwnerGetter eveKit = new EveKitOwnerGetter(new EveKitOwner(0, ""), false);
-		eveKit.start();
 		//Citadels
 		CitadelGetterMock citadel = new CitadelGetterMock();
 		citadel.update();

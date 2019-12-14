@@ -207,7 +207,11 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 			Long industryJobsCID = AttributeGetters.getLongOptional(currentNode, "industryjobscid");
 			Long marketOrdersCID = AttributeGetters.getLongOptional(currentNode, "marketorderscid");
 			Date accountNextUpdate = AttributeGetters.getDateOptional(currentNode, "accountnextupdate");
-			EveKitOwner owner = new EveKitOwner(accessKey, accessCred, expire, accessmask, corporation, limit, accountName);
+			boolean migrated = false;
+			if (AttributeGetters.haveAttribute(currentNode, "migrated")) {
+				migrated = AttributeGetters.getBoolean(currentNode, "migrated");
+			}
+			EveKitOwner owner = new EveKitOwner(accessKey, accessCred, expire, accessmask, corporation, limit, accountName, migrated);
 			owner.setJournalCID(journalCID);
 			owner.setTransactionsCID(transactionsCID);
 			owner.setContractsCID(contractsCID);

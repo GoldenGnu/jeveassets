@@ -42,7 +42,6 @@ import net.nikr.eve.jeveasset.gui.shared.components.JFixedToolBar;
 import net.nikr.eve.jeveasset.gui.shared.components.JGroupLayoutPanel;
 import net.nikr.eve.jeveasset.i18n.DialoguesStructure;
 import net.nikr.eve.jeveasset.i18n.GuiFrame;
-import net.nikr.eve.jeveasset.i18n.TabsTracker;
 
 
 public class StatusPanel extends JGroupLayoutPanel {
@@ -238,9 +237,6 @@ public class StatusPanel extends JGroupLayoutPanel {
 			this.updateType = updateType;
 			this.progressControl = progressShow;
 			switch (updateType) {
-				case EVEKIT:
-					text = TabsTracker.get().updateTitle();
-					break;
 				case STRUCTURE:
 					text = DialoguesStructure.get().updateTitle();
 					break;
@@ -341,6 +337,6 @@ public class StatusPanel extends JGroupLayoutPanel {
 	}
 
 	public static enum UpdateType {
-		STRUCTURE, EVEKIT
+		STRUCTURE
 	}
 }

@@ -249,35 +249,6 @@ public class RawMarketOrder {
 		volumeTotal = marketOrder.getVolumeTotal();
 	}
 
-	/**
-	 * EveKit
-	 *
-	 * @param marketOrder
-	 */
-	public RawMarketOrder(enterprises.orbital.evekit.client.model.MarketOrder marketOrder) {
-		walletDivision = marketOrder.getWalletDivision() + 999;
-		duration = marketOrder.getDuration();
-		escrow = RawConverter.toDouble(marketOrder.getEscrow(), 0);
-		isBuyOrder = marketOrder.getBid();
-		isCorp = marketOrder.getCorp();
-		issued = RawConverter.toDate(marketOrder.getIssuedDate());
-		if (marketOrder.getIssuedBy() > 0) {
-			issuedBy = marketOrder.getIssuedBy();
-		} else {
-			issuedBy = null;
-		}
-		locationId = marketOrder.getLocationID();
-		minVolume = RawConverter.toInteger(marketOrder.getMinVolume(), 0);
-		orderId = marketOrder.getOrderID();
-		price = marketOrder.getPrice();
-		range = RawConverter.toMarketOrderRange(marketOrder.getOrderRange());
-		regionId = marketOrder.getRegionID();
-		state = RawConverter.toMarketOrderState(marketOrder.getOrderState());
-		typeId = marketOrder.getTypeID();
-		volumeRemain = marketOrder.getVolRemaining();
-		volumeTotal = marketOrder.getVolEntered();
-	}
-
 	public Integer getWalletDivision() {
 		return walletDivision;
 	}

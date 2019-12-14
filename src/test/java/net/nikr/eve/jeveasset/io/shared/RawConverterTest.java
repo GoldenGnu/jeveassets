@@ -20,7 +20,7 @@
  */
 package net.nikr.eve.jeveasset.io.shared;
 
-import enterprises.orbital.evekit.client.model.WalletJournal;
+
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.Date;
@@ -403,52 +403,6 @@ public class RawConverterTest extends TestUtil {
 		assertEquals(map.size(), ContextType.values().length - 2);
 		for (Map.Entry<RawJournalRefType, ContextType> entry : map.entrySet()) {
 			assertEquals(entry.getValue(), RawConverter.toJournalContextType(entry.getKey()));
-		}
-	}
-
-	@Test
-	public void testToJournalContextType_WalletJournal_RawJournalRefType() {
-		Map<RawJournalRefType, ContextType> map = new EnumMap<>(RawJournalRefType.class);
-		map.put(RawJournalRefType.ALLIANCE_MAINTAINANCE_FEE, ContextType.ALLIANCE_ID);
-		map.put(RawJournalRefType.MISSION_REWARD, ContextType.CHARACTER_ID);
-		map.put(RawJournalRefType.CONTRACT_AUCTION_BID, ContextType.CONTRACT_ID);
-		map.put(RawJournalRefType.CORPORATION_LOGO_CHANGE_COST, ContextType.CORPORATION_ID);
-		//map.put(RawJournalRefType., ContextType.EVE_SYSTEM);
-		map.put(RawJournalRefType.MANUFACTURING, ContextType.INDUSTRY_JOB_ID);
-		map.put(RawJournalRefType.MARKET_TRANSACTION, ContextType.MARKET_TRANSACTION_ID);
-		map.put(RawJournalRefType.PLANETARY_IMPORT_TAX, ContextType.PLANET_ID);
-		map.put(RawJournalRefType.INDUSTRY_JOB_TAX, ContextType.STATION_ID);
-		//map.put(RawJournalRefType., ContextType.STRUCTURE_ID);
-		map.put(RawJournalRefType.BOUNTY_PRIZES, ContextType.SYSTEM_ID);
-		map.put(RawJournalRefType.BOUNTY_PRIZE, ContextType.TYPE_ID);
-		assertEquals(map.size(), ContextType.values().length - 2);
-		WalletJournal journal = new WalletJournal();
-		for (Map.Entry<RawJournalRefType, ContextType> entry : map.entrySet()) {
-			assertEquals(entry.getValue(), RawConverter.toJournalContextType(journal, entry.getKey()));
-		}
-	}
-
-	@Test
-	public void testToJournalContextID_WalletJournal_RawJournalRefType() {
-		Map<RawJournalRefType, Long> map = new EnumMap<>(RawJournalRefType.class);
-		map.put(RawJournalRefType.ALLIANCE_MAINTAINANCE_FEE, 1L);
-		map.put(RawJournalRefType.MISSION_REWARD, 1L);
-		map.put(RawJournalRefType.CONTRACT_AUCTION_BID, 1L);
-		map.put(RawJournalRefType.CORPORATION_LOGO_CHANGE_COST, 1L);
-		//map.put(RawJournalRefType., ContextType.EVE_SYSTEM);
-		map.put(RawJournalRefType.MANUFACTURING, 1L);
-		map.put(RawJournalRefType.MARKET_TRANSACTION, 1L);
-		map.put(RawJournalRefType.PLANETARY_IMPORT_TAX, 1L);
-		map.put(RawJournalRefType.INDUSTRY_JOB_TAX, 1L);
-		//map.put(RawJournalRefType., ContextType.STRUCTURE_ID);
-		map.put(RawJournalRefType.BOUNTY_PRIZES, 1L);
-		map.put(RawJournalRefType.BOUNTY_PRIZE, 1L);
-		assertEquals(map.size(), ContextType.values().length - 2);
-		WalletJournal journal = new WalletJournal();
-		journal.setArgName1("1");
-		journal.setArgID1(1L);
-		for (Map.Entry<RawJournalRefType, Long> entry : map.entrySet()) {
-			assertEquals(entry.getValue(), RawConverter.toJournalContextID(journal, entry.getKey()));
 		}
 	}
 
