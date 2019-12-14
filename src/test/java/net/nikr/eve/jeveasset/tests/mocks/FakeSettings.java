@@ -472,56 +472,6 @@ public abstract class FakeSettings extends Settings {
 	}
 
 	@Override
-	public void setEveKitContractsHistory(int eveKitContractsHistory) {
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	@Override
-	public int getEveKitContractsHistory() {
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	@Override
-	public void setEveKitIndustryJobsHistory(int eveKitIndustryJobsHistory) {
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	@Override
-	public int getEveKitIndustryJobsHistory() {
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	@Override
-	public void setEveKitMarketOrdersHistory(int eveKitMarketOrdersHistory) {
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	@Override
-	public int getEveKitMarketOrdersHistory() {
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	@Override
-	public void setEveKitJournalHistory(int eveKitJournalHistory) {
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	@Override
-	public int getEveKitJournalHistory() {
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	@Override
-	public void setEveKitTransactionsHistory(int eveKitTransactionsHistory) {
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	@Override
-	public int getEveKitTransactionsHistory() {
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	@Override
 	public void setStrongColors(boolean strongColors) {
 		throw new UnsupportedOperationException("not implemented");
 	}

@@ -66,14 +66,6 @@ Toolkit License:
   ©CCP hf. All rights reserved. Used with permission.
 
 ________________________________________________________________________________
-_EVEKIT_________________________________________________________________________
-
-jEveAssets use EveKit account API
-
-Link:
-  https://evekit.orbital.enterprises
-
-________________________________________________________________________________
 _FUZZWORK_______________________________________________________________________
 
 jEveAssets use fuzzwork API to get price data

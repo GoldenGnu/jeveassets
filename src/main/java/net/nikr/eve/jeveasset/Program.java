@@ -593,7 +593,6 @@ public class Program implements ActionListener {
 
 	public void saveProfile() {
 		LOG.info("Saving Profile");
-		//Update EveKit Import
 		profileManager.saveProfile();
 	}
 
