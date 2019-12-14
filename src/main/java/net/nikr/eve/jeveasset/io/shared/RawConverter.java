@@ -20,7 +20,6 @@
  */
 package net.nikr.eve.jeveasset.io.shared;
 
-import enterprises.orbital.evekit.client.model.WalletJournal;
 import java.time.OffsetDateTime;
 import java.util.Date;
 import java.util.HashMap;
@@ -383,14 +382,6 @@ public class RawConverter {
 		}
 	}
 
-	public static ContextType toJournalContextType(WalletJournal journal, RawJournalRefType refType) {
-		ContextType contextType = toJournalContextType(journal.getContextType());
-		if (contextType != null) {
-			return contextType;
-		}
-		return toJournalContextType(refType);
-	}
-
 	public static ContextType toJournalContextType(RawJournalRefType refType) {
 		if (refType.getArgName() != null) {
 			switch (refType.getArgName()) {
@@ -421,19 +412,6 @@ public class RawConverter {
 				case PLANET_ID:
 					return ContextType.PLANET_ID;
 			}
-		}
-		return null;
-	}
-
-	public static Long toJournalContextID(WalletJournal journal, RawJournalRefType refType) {
-		Long contextID;
-		contextID = journal.getContextID();
-		if (contextID != null && contextID != 0) {
-			return contextID;
-		}
-		contextID = toJournalContextID(journal.getArgID1(), journal.getArgName1(), refType);
-		if (contextID != null && contextID != 0) {
-			return contextID;
 		}
 		return null;
 	}

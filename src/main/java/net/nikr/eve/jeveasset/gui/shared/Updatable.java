@@ -45,7 +45,7 @@ public class Updatable {
 			return true;
 		}
 		for (OwnerType owner : program.getOwnerTypes()) {
-			if (!owner.isShowOwner() || owner.isInvalid() || owner.isExpired() || owner.getAccountAPI() == ApiType.EVE_ONLINE) {
+			if (!owner.isShowOwner() || owner.isInvalid() || owner.isExpired() || owner.getAccountAPI() == ApiType.EVE_ONLINE || owner.getAccountAPI() == ApiType.EVEKIT) {
 				continue;
 			}
 			if (owner.isAssetList() && isUpdatable(owner.getAssetNextUpdate())){

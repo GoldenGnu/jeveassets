@@ -18,7 +18,7 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.api.accounts.ApiType;
-import net.nikr.eve.jeveasset.data.api.accounts.EveApiOwner;
+import net.nikr.eve.jeveasset.data.api.accounts.DeprecatedOwner;
 import net.nikr.eve.jeveasset.data.api.accounts.OwnerType;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Colors;
@@ -150,13 +150,13 @@ public class AccountSeparatorTableCell extends SeparatorTableCell<OwnerType> {
 		jSeparatorLabel.setVisible(currentRow != 0);
 		boolean allMigrated = false;
 		boolean canMigrate = false;
-		if (owner.getAccountAPI() == ApiType.EVE_ONLINE) {
+		if (owner.getAccountAPI() == ApiType.EVE_ONLINE || owner.getAccountAPI() == ApiType.EVEKIT) {
 			try {
 				separatorList.getReadWriteLock().readLock().lock();
 				for (Object object : separator.getGroup()) {
-					if (object instanceof EveApiOwner) {
-						EveApiOwner eveApiOwner = (EveApiOwner) object;
-						if (eveApiOwner.canMigrate()) {
+					if (object instanceof DeprecatedOwner) {
+						DeprecatedOwner deprecatedOwner = (DeprecatedOwner) object;
+						if (deprecatedOwner.canMigrate()) {
 							canMigrate = true;
 							break;
 						}

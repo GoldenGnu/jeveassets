@@ -94,22 +94,6 @@ public class RawBlueprint {
 		typeId = blueprint.getTypeId();
 	}
 
-	/**
-	 * EveKit
-	 *
-	 * @param blueprint
-	 */
-	public RawBlueprint(enterprises.orbital.evekit.client.model.Blueprint blueprint) {
-		itemId = blueprint.getItemID();
-		itemFlag = RawConverter.toFlag(blueprint.getLocationFlag());
-		locationId = blueprint.getLocationID();
-		materialEfficiency = blueprint.getMaterialEfficiency();
-		quantity = blueprint.getQuantity();
-		runs = blueprint.getRuns();
-		timeEfficiency = blueprint.getTimeEfficiency();
-		typeId = blueprint.getTypeID();
-	}
-
 	public Long getItemID() {
 		return itemId;
 	}

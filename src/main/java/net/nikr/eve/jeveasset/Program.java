@@ -85,7 +85,6 @@ import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewTab;
 import net.nikr.eve.jeveasset.gui.tabs.reprocessed.ReprocessedTab;
 import net.nikr.eve.jeveasset.gui.tabs.routing.RoutingTab;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.StockpileTab;
-import net.nikr.eve.jeveasset.gui.tabs.tracker.EveKitTrackerImportDialog;
 import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerTab;
 import net.nikr.eve.jeveasset.gui.tabs.transaction.TransactionTab;
 import net.nikr.eve.jeveasset.gui.tabs.tree.TreeTab;
@@ -94,7 +93,6 @@ import net.nikr.eve.jeveasset.gui.tabs.values.ValueRetroTab;
 import net.nikr.eve.jeveasset.gui.tabs.values.ValueTableTab;
 import net.nikr.eve.jeveasset.i18n.GuiFrame;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
-import net.nikr.eve.jeveasset.i18n.TabsTracker;
 import net.nikr.eve.jeveasset.data.settings.ContractPriceManager;
 import net.nikr.eve.jeveasset.io.online.PriceDataGetter;
 import net.nikr.eve.jeveasset.io.online.Updater;
@@ -152,7 +150,6 @@ public class Program implements ActionListener {
 	private TreeTab treeTab;
 	private LogTab logTab;
 	private StructureUpdateDialog structureUpdateDialog;
-	private EveKitTrackerImportDialog eveKitTrackerImportDialog;
 
 	//Misc
 	private Updater updater;
@@ -290,15 +287,11 @@ public class Program implements ActionListener {
 		SplashUpdater.setProgress(96);
 		LOG.info("Loading: Structure UpdateDialog");
 		structureUpdateDialog = new StructureUpdateDialog(this);
-		LOG.info("Loading: EveKit Tracker Import Dialog");
-		eveKitTrackerImportDialog = new EveKitTrackerImportDialog(this);
 	//GUI Done
 		LOG.info("GUI loaded");
 	//Updating data...
 		LOG.info("Updating data...");
 		updateEventLists(); //Update price
-		//Update EveKit Import
-		profilesChanged();
 		macOsxCode();
 		SplashUpdater.setProgress(100);
 		LOG.info("Showing GUI");
@@ -601,17 +594,7 @@ public class Program implements ActionListener {
 	public void saveProfile() {
 		LOG.info("Saving Profile");
 		//Update EveKit Import
-		profilesChanged();
 		profileManager.saveProfile();
-	}
-
-	public final void profilesChanged() {
-		ensureEDT(new Runnable() {
-			@Override
-			public void run() {
-				getMainWindow().getMenu().eveKitImport(!getProfileManager().getEveKitOwners().isEmpty());
-			}
-		});
 	}
 
 	/**
@@ -920,16 +903,6 @@ public class Program implements ActionListener {
 				JOptionPane.showMessageDialog(getMainWindow().getFrame(), GuiFrame.get().updatingInProgressMsg(), GuiFrame.get().updatingInProgressTitle(), JOptionPane.PLAIN_MESSAGE);
 			} else {
 				updateStructures(null);
-			}
-		} else if (MainMenuAction.UPDATE_EVEKIT.name().equals(e.getActionCommand())) {
-			if (getProfileManager().getEveKitOwners().isEmpty()) {
-				JOptionPane.showMessageDialog(getMainWindow().getFrame(), TabsTracker.get().eveKitImportNoOwners(), TabsTracker.get().eveKitImportTitle(), JOptionPane.PLAIN_MESSAGE);
-			} else {
-				if (getStatusPanel().updateing(UpdateType.EVEKIT)) {
-					JOptionPane.showMessageDialog(getMainWindow().getFrame(), GuiFrame.get().updatingInProgressMsg(), GuiFrame.get().updatingInProgressTitle(), JOptionPane.PLAIN_MESSAGE);
-				} else {
-					eveKitTrackerImportDialog.setVisible(true);
-				}
 			}
 		} else if (MainMenuAction.ABOUT.name().equals(e.getActionCommand())) { //Others
 			showAbout();

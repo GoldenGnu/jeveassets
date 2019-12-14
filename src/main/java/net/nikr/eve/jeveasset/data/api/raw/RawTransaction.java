@@ -108,25 +108,6 @@ public class RawTransaction {
 		this.accountKey = accountKey;
 	}
 
-	/**
-	 * EveKit
-	 *
-	 * @param transaction
-	 */
-	public RawTransaction(enterprises.orbital.evekit.client.model.WalletTransaction transaction) {
-		clientId = transaction.getClientID();
-		date = RawConverter.toDate(transaction.getDateDate());
-		isBuy = transaction.getBuy();
-		isPersonal = transaction.getPersonal();
-		journalRefId = transaction.getJournalTransactionID();
-		locationId = transaction.getLocationID();
-		quantity = transaction.getQuantity();
-		transactionId = transaction.getTransactionID();
-		typeId = transaction.getTypeID();
-		unitPrice = transaction.getPrice();
-		accountKey = transaction.getDivision() + 999;
-	}
-
 	public final long getClientID() {
 		return clientId;
 	}

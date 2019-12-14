@@ -131,7 +131,7 @@ public class ConverterTestUtil {
 	}
 
 	public static EveKitOwner getEveKitOwner(boolean data, boolean setNull, boolean setValues, ConverterTestOptions options) {
-		EveKitOwner owner = new EveKitOwner(null, null);
+		EveKitOwner owner = new EveKitOwner(false);
 		setValues(owner, options);
 		if (data) {
 			setData(owner, setNull, setValues, options);
@@ -435,42 +435,7 @@ public class ConverterTestUtil {
 			CorporationWalletsResponse response = (CorporationWalletsResponse) object;
 			response.setDivision(response.getDivision() - 999);
 		}
-		//EveKit
-		if (object instanceof enterprises.orbital.evekit.client.model.AccountBalance) {
-			enterprises.orbital.evekit.client.model.AccountBalance response = (enterprises.orbital.evekit.client.model.AccountBalance) object;
-			response.setDivision(response.getDivision() - 999);
-		}
 	//Assets
-		//EveKit Asset
-		if (object instanceof enterprises.orbital.evekit.client.model.Asset) {
-			enterprises.orbital.evekit.client.model.Asset asset = (enterprises.orbital.evekit.client.model.Asset) object;
-			asset.setItemID(asset.getItemID() + 1); //Workaround for itemID == locationID
-			asset.setLocationID(options.getLocationTypeEveApi());
-			asset.setLocationFlag(options.getLocationFlagEveKit());
-		}
-		//EveKit Ship
-		if (object instanceof  enterprises.orbital.evekit.client.model.CharacterShip) {
-			enterprises.orbital.evekit.client.model.CharacterShip asset = (enterprises.orbital.evekit.client.model.CharacterShip) object;
-			asset.setShipItemID(asset.getShipItemID()+ 1); //Workaround for itemID == locationID
-		}
-		//EveKit Location
-		if (object instanceof enterprises.orbital.evekit.client.model.CharacterLocation) {
-			enterprises.orbital.evekit.client.model.CharacterLocation asset = (enterprises.orbital.evekit.client.model.CharacterLocation) object;
-			long locationID = options.getLocationTypeEveApi();
-			if (locationID >= 30000000 && locationID <= 32000000) { //System
-				asset.setSolarSystemID((int)locationID);
-				asset.setStationID(null);
-				asset.setStructureID(null);
-			} else if (locationID >= 60000000 && locationID <= 64000000) { //Station
-				asset.setSolarSystemID(null);
-				asset.setStationID((int)locationID);
-				asset.setStructureID(null);
-			} else { //Other
-				asset.setSolarSystemID(null);
-				asset.setStationID(null);
-				asset.setStructureID(locationID);
-			}
-		}
 		//ESI Character
 		if (object instanceof CharacterAssetsResponse) {
 			CharacterAssetsResponse asset = (CharacterAssetsResponse) object;
@@ -511,45 +476,6 @@ public class ConverterTestUtil {
 			RawAsset asset = (RawAsset) object;
 			asset.setItemID(asset.getItemID() + 1); //Workaround for itemID == locationID
 			asset.setLocationID(options.getLocationTypeEveApi());
-		}
-	//Blueprints
-		if (object instanceof enterprises.orbital.evekit.client.model.Blueprint) {
-			enterprises.orbital.evekit.client.model.Blueprint blueprint = (enterprises.orbital.evekit.client.model.Blueprint) object;
-			blueprint.setLocationFlag(options.getLocationFlagEveKit());
-		}
-	//Contracts
-		//EveKit
-		if (object instanceof enterprises.orbital.evekit.client.model.Contract) {
-			enterprises.orbital.evekit.client.model.Contract contract = (enterprises.orbital.evekit.client.model.Contract) object;
-			contract.setAvailability(options.getContractAvailabilityEveKit());
-			contract.setStatus(options.getContractStatusEveKit());
-			contract.setType(options.getContractTypeEveKit());
-		}
-	//IndustryJobs
-		//EveKit
-		if (object instanceof enterprises.orbital.evekit.client.model.IndustryJob) {
-			enterprises.orbital.evekit.client.model.IndustryJob industryJob = (enterprises.orbital.evekit.client.model.IndustryJob) object;
-			industryJob.setStatus(options.getIndustryJobStatusEveKit()); //Workaround: Set valid value for status (PENDING)
-		}
-	//Journal
-		//EveKit
-		if (object instanceof enterprises.orbital.evekit.client.model.WalletJournal) {
-			enterprises.orbital.evekit.client.model.WalletJournal journalEntry = (enterprises.orbital.evekit.client.model.WalletJournal) object;
-			journalEntry.setRefType(options.getJournalRefTypeEsiCharacter().toString());
-			journalEntry.setDivision(journalEntry.getDivision() - 999);
-		}
-	//Market Orders
-		//EveKit
-		if (object instanceof enterprises.orbital.evekit.client.model.MarketOrder) {
-			enterprises.orbital.evekit.client.model.MarketOrder marketOrder = (enterprises.orbital.evekit.client.model.MarketOrder) object;
-			marketOrder.setOrderRange(options.getMarketOrderRangeEsiCharacter().toString());
-			marketOrder.setOrderState(options.getMarketOrderStateEsiCharacterHistory().toString());
-		}
-	//Transactions
-		//EveKit
-		if (object instanceof enterprises.orbital.evekit.client.model.WalletTransaction) {
-			enterprises.orbital.evekit.client.model.WalletTransaction transaction = (enterprises.orbital.evekit.client.model.WalletTransaction) object;
-			transaction.setDivision(transaction.getDivision() - 999);
 		}
 	}
 

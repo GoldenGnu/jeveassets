@@ -162,36 +162,6 @@ public class RawContract {
 		volume = contract.getVolume();
 	}
 
-	/**
-	 * EveKit
-	 *
-	 * @param contract
-	 */
-	public RawContract(enterprises.orbital.evekit.client.model.Contract contract) {
-		acceptorId = contract.getAcceptorID();
-		assigneeId = contract.getAssigneeID();
-		availability = RawConverter.toContractAvailability(contract.getAvailability());
-		buyout = contract.getBuyout();
-		collateral = contract.getCollateral();
-		contractId = contract.getContractID();
-		dateAccepted = RawConverter.toDate(contract.getDateAcceptedDate());
-		dateCompleted = RawConverter.toDate(contract.getDateCompletedDate());
-		dateExpired = RawConverter.toDate(contract.getDateExpiredDate());
-		dateIssued = RawConverter.toDate(contract.getDateIssuedDate());
-		daysToComplete = contract.getNumDays();
-		endLocationId = contract.getEndStationID();
-		forCorporation = contract.getForCorp();
-		issuerCorporationId = contract.getIssuerCorpID();
-		issuerId = contract.getIssuerID();
-		price = contract.getPrice();
-		reward = contract.getReward();
-		startLocationId = contract.getStartStationID();
-		status = RawConverter.toContractStatus(contract.getStatus());
-		title = contract.getTitle();
-		type = RawConverter.toContractType(contract.getType());
-		volume = contract.getVolume();
-	}
-
 	public final long getAcceptorID() {
 		return acceptorId;
 	}

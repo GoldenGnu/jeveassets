@@ -25,7 +25,7 @@ import java.util.Objects;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 
 
-public class EveKitOwner extends AbstractOwner implements OwnerType {
+public class EveKitOwner extends DeprecatedOwner implements OwnerType {
 	private final Integer accessKey;
 	private final String accessCred;
 
@@ -41,14 +41,9 @@ public class EveKitOwner extends AbstractOwner implements OwnerType {
 	private Long marketOrdersCID = null;
 	private Date accountNextUpdate = Settings.getNow();
 
-	//New owner
-	public EveKitOwner(Integer accessKey, String accessCred) {
-		this.accessKey = accessKey;
-		this.accessCred = accessCred;
-	}
-
 	//Load owner
-	public EveKitOwner(Integer accessKey, String accessCred, Date expire, long accessMask, boolean corporation, Date limit, String accountName) {
+	public EveKitOwner(Integer accessKey, String accessCred, Date expire, long accessMask, boolean corporation, Date limit, String accountName, boolean migrated) {
+		super(migrated);
 		this.accessKey = accessKey;
 		this.accessCred = accessCred;
 		this.expire = expire;
@@ -58,22 +53,10 @@ public class EveKitOwner extends AbstractOwner implements OwnerType {
 		this.accountName = accountName;
 	}
 
-	//Copy owner
-	public EveKitOwner(Integer accessKey, String accessCred, EveKitOwner editEveKitOwner) {
-		super(editEveKitOwner);
-		this.accessKey = accessKey;
-		this.accessCred = accessCred;
-		this.expire = editEveKitOwner.expire;
-		this.accessMask = editEveKitOwner.accessMask;
-		this.corporation = editEveKitOwner.corporation;
-		this.limit = editEveKitOwner.limit;
-		this.accountName = editEveKitOwner.accountName;
-		this.journalCID = editEveKitOwner.journalCID;
-		this.transactionsCID = editEveKitOwner.transactionsCID;
-		this.contractsCID = editEveKitOwner.contractsCID;
-		this.industryJobsCID = editEveKitOwner.industryJobsCID;
-		this.marketOrdersCID = editEveKitOwner.marketOrdersCID;
-		this.accountNextUpdate = editEveKitOwner.accountNextUpdate;
+	public EveKitOwner(boolean migrated) {
+		super(migrated);
+		this.accessKey = null;
+		this.accessCred = null;
 	}
 
 	public Long getJournalCID() {

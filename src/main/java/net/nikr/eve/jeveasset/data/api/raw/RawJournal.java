@@ -179,29 +179,6 @@ public class RawJournal {
 		
 	}
 
-	/**
-	 * EveKit
-	 *
-	 * @param journal
-	 */
-	public RawJournal(enterprises.orbital.evekit.client.model.WalletJournal journal) {
-		amount = journal.getAmount();
-		balance = journal.getBalance();
-		date = RawConverter.toDate(journal.getDateDate());
-		description = journal.getArgName1();
-		firstPartyId = journal.getFirstPartyID();
-		reason = journal.getReason();
-		id = journal.getRefID();
-		refType = RawConverter.toJournalRefType(journal.getRefType());
-		secondPartyId = journal.getSecondPartyID();
-		tax = journal.getTaxAmount();
-		taxReceiverId = journal.getTaxReceiverID();
-		this.accountKey = journal.getDivision() + 999;
-		//Must be set after refType
-		contextId = RawConverter.toJournalContextID(journal, refType);
-		contextIdType = RawConverter.toJournalContextType(journal, refType);
-	}
-
 	public Double getAmount() {
 		return amount;
 	}
