@@ -72,7 +72,6 @@ import javax.swing.text.html.HTMLDocument;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.api.accounts.ApiType;
 import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
-import net.nikr.eve.jeveasset.data.api.accounts.EveKitOwner;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.JCustomFileChooser;
 import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
@@ -153,8 +152,6 @@ public class AccountImportDialog extends JDialogCentered {
 
 	private final DonePanel donePanel;
 
-	private EveKitOwner eveKitOwner;
-	private EveKitOwner editEveKitOwner;
 	private EsiOwner esiOwner;
 	private EsiOwner editEsiOwner;
 	private AccountImportCard currentCard;
@@ -243,25 +240,24 @@ public class AccountImportDialog extends JDialogCentered {
 	protected void save() { }
 
 	public void add() {
-		show(null, AccountImportCard.ADD_ESI, null, null);
+		show(null, AccountImportCard.ADD_ESI, null);
 	}
 
 	public void shareExport() {
-		show(Share.EXPORT, AccountImportCard.ADD_ESI, null, null);
+		show(Share.EXPORT, AccountImportCard.ADD_ESI, null);
 	}
 
 	public void shareImport() {
-		show(Share.IMPORT, AccountImportCard.SHARE_IMPORT, null, null);
+		show(Share.IMPORT, AccountImportCard.SHARE_IMPORT, null);
 	}
 
 	public void editEsi(final EsiOwner editEsiOwner) {
-		show(null, AccountImportCard.ADD_ESI, null, editEsiOwner);
+		show(null, AccountImportCard.ADD_ESI, editEsiOwner);
 	}
 
-	private void show(Share share, AccountImportCard accountImportCard, final EveKitOwner editEveKitOwner, final EsiOwner editEsiOwner) {
+	private void show(Share share, AccountImportCard accountImportCard, final EsiOwner editEsiOwner) {
 		currentCard = accountImportCard;
 		this.share = share;
-		this.editEveKitOwner = editEveKitOwner;
 		this.editEsiOwner = editEsiOwner;
 		if (editEsiOwner != null) { //Edit ESI
 			jType.setVisible(false);
@@ -379,14 +375,6 @@ public class AccountImportDialog extends JDialogCentered {
 	}
 
 	private void done() {
-		if (apiType == ApiType.EVEKIT) {
-			if (editEveKitOwner != null) { //Edit
-				program.getProfileManager().getEveKitOwners().remove(editEveKitOwner);
-			}
-			apiManager.forceUpdate();
-			program.getProfileManager().getEveKitOwners().add(eveKitOwner);
-			apiManager.updateTable();
-		}
 		if (apiType == ApiType.ESI && share != Share.EXPORT) {
 			if (editEsiOwner != null) { //Edit
 				program.getProfileManager().getEsiOwners().remove(editEsiOwner);
