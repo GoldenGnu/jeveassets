@@ -44,20 +44,6 @@ public class EveApiAccount {
 
 	private List<EveApiOwner> owners = new ArrayList<EveApiOwner>();
 
-	public EveApiAccount(final EveApiAccount account) {
-		this(account.getKeyID(),
-				account.getVCode(),
-				account.getName(),
-				account.getAccountNextUpdate(),
-				account.getAccessMask(),
-				account.getType(),
-				account.getExpires(),
-				account.isInvalid());
-		for (EveApiOwner owner : account.getOwners()) {
-			owners.add(new EveApiOwner(this, owner));
-		}
-	}
-
 	public EveApiAccount(final int keyID, final String vCode) {
 		this(keyID, vCode, Integer.toString(keyID), Settings.getNow(), 0, null, null, false);
 	}

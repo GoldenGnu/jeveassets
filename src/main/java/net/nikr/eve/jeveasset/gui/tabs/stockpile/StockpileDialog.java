@@ -70,7 +70,6 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.JTextComponent;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.data.api.accounts.EveApiOwner;
 import net.nikr.eve.jeveasset.data.api.accounts.OwnerType;
 import net.nikr.eve.jeveasset.data.api.my.MyAsset;
 import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob;
@@ -591,18 +590,6 @@ public class StockpileDialog extends JDialogCentered {
 		}
 	}
 
-	static class OwnerFilterator implements TextFilterator<EveApiOwner> {
-		@Override
-		public void getFilterStrings(final List<String> baseList, final EveApiOwner element) {
-			baseList.add(element.getOwnerName());
-		}
-	}
-	static class ItemFlagFilterator implements TextFilterator<ItemFlag> {
-		@Override
-		public void getFilterStrings(final List<String> baseList, final ItemFlag element) {
-			baseList.add(element.getFlagName());
-		}
-	}
 	static class LocationsFilterator implements TextFilterator<MyLocation> {
 		@Override
 		public void getFilterStrings(final List<String> baseList, final MyLocation element) {

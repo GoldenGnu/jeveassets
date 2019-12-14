@@ -179,36 +179,6 @@ public class RawIndustryJob {
 		successfulRuns = industryJob.getSuccessfulRuns();
 	}
 
-	/**
-	 * EveKit
-	 *
-	 * @param industryJob
-	 */
-	public RawIndustryJob(enterprises.orbital.evekit.client.model.IndustryJob industryJob) {
-		activityId = industryJob.getActivityID();
-		blueprintId = industryJob.getBlueprintID();
-		blueprintLocationId = industryJob.getBlueprintLocationID();
-		blueprintTypeId = industryJob.getBlueprintTypeID();
-		completedCharacterId = industryJob.getCompletedCharacterID();
-		completedDate = RawConverter.toDate(industryJob.getCompletedDateDate());
-		cost = industryJob.getCost();
-		duration = industryJob.getTimeInSeconds();
-		endDate = RawConverter.toDate(industryJob.getEndDateDate());
-		facilityId = industryJob.getFacilityID();
-		installerId = industryJob.getInstallerID();
-		jobId = industryJob.getJobID();
-		licensedRuns = industryJob.getLicensedRuns();
-		outputLocationId = industryJob.getOutputLocationID();
-		pauseDate = RawConverter.toDate(industryJob.getPauseDateDate());
-		probability = RawConverter.toFloat(industryJob.getProbability());
-		productTypeId = industryJob.getProductTypeID();
-		runs = industryJob.getRuns();
-		startDate = RawConverter.toDate(industryJob.getStartDateDate());
-		stationId = industryJob.getStationID();
-		status = RawConverter.toIndustryJobStatus(industryJob.getStatus());
-		successfulRuns = industryJob.getSuccessfulRuns();
-	}
-
 	public final Integer getActivityID() {
 		return activityId;
 	}

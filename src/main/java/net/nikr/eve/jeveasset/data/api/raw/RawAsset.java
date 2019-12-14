@@ -20,10 +20,6 @@
  */
 package net.nikr.eve.jeveasset.data.api.raw;
 
-import enterprises.orbital.evekit.client.model.CharacterLocation;
-import enterprises.orbital.evekit.client.model.CharacterShip;
-import enterprises.orbital.evekit.client.model.PlanetaryPin;
-import enterprises.orbital.evekit.client.model.PlanetaryPinContent;
 import java.util.Objects;
 import net.nikr.eve.jeveasset.data.api.my.MyContractItem;
 import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob;
@@ -289,78 +285,6 @@ public class RawAsset {
 		locationType = RawConverter.toAssetLocationType(locationId);
 		quantity = 1;
 		typeId = pin.getTypeId();
-	}
-
-	/**
-	 * EveKit
-	 *
-	 * @param asset
-	 */
-	public RawAsset(enterprises.orbital.evekit.client.model.Asset asset) {
-		isSingleton = asset.getSingleton();
-		itemId = asset.getItemID();
-		itemFlag = RawConverter.toFlag(asset.getLocationFlag());
-		locationId = asset.getLocationID();
-		locationType = RawConverter.toAssetLocationType(asset.getLocationID());
-		if (asset.getQuantity() == null) {
-			quantity = 1;
-		} else {
-			quantity = asset.getQuantity();
-		}
-		typeId = asset.getTypeID();
-	}
-
-	/**
-	 * EveKit Ship
-	 *
-	 * @param shipType
-	 * @param shipLocation
-	 */
-	public RawAsset(CharacterShip shipType, CharacterLocation shipLocation) {
-		isSingleton = true; //Unpacked
-		itemId = shipType.getShipItemID();
-		itemFlag = ApiIdConverter.getFlag(0); //None
-		if (shipLocation.getStationID() != null) {
-			locationId = RawConverter.toLong(shipLocation.getStationID());
-		} else if (shipLocation.getStructureID() != null) {
-			locationId = shipLocation.getStructureID();
-		} else {
-			locationId = RawConverter.toLong(shipLocation.getSolarSystemID());
-		}
-		locationType = RawConverter.toAssetLocationType(locationId);
-		quantity = 1; //Unpacked AKA always 1
-		typeId = shipType.getShipTypeID();
-	}
-
-	/**
-	 * EveKit Planetary Interaction Asset
-	 *
-	 * @param pin
-	 * @param content
-	 */
-	public RawAsset(PlanetaryPin pin, PlanetaryPinContent content) {
-		isSingleton = false; //Packed
-		itemId = Long.valueOf(pin.getPinID() + "" + content.getTypeID());
-		itemFlag = ApiIdConverter.getFlag(0); //None
-		locationId = RawConverter.toLong(pin.getPlanetID());
-		locationType = RawConverter.toAssetLocationType(locationId);
-		quantity = content.getAmount().intValue(); //Not perfect, but, will have to do
-		typeId = content.getTypeID();
-	}
-
-	/**
-	 * EveKit Planetary Interaction Facility
-	 *
-	 * @param pin
-	 */
-	public RawAsset(PlanetaryPin pin) {
-		isSingleton = false; //Packed
-		itemId = pin.getPinID();
-		itemFlag = ApiIdConverter.getFlag(0); //None
-		locationId = RawConverter.toLong(pin.getPlanetID());
-		locationType = RawConverter.toAssetLocationType(locationId);
-		quantity = 1;
-		typeId = pin.getTypeID();
 	}
 
 	/**
