@@ -131,7 +131,6 @@ public class SettingsWriter extends AbstractXmlWriter {
 		writeOwners(xmldoc, settings.getOwners());
 		writeTags(xmldoc, settings.getTags());
 		writeRoutingSettings(xmldoc, settings.getRoutingSettings());
-		writeEveKitSettings(xmldoc, settings);
 		try {
 			writeXmlFile(xmldoc, filename, true);
 		} catch (XmlException ex) {
@@ -140,16 +139,6 @@ public class SettingsWriter extends AbstractXmlWriter {
 		}
 		LOG.info("Settings saved");
 		return true;
-	}
-
-	private void writeEveKitSettings(Document xmldoc, Settings settings) {
-		Element routingNode = xmldoc.createElementNS(null, "evekit");
-		xmldoc.getDocumentElement().appendChild(routingNode);
-		routingNode.setAttribute("transactionshistory", String.valueOf(settings.getEveKitTransactionsHistory()));
-		routingNode.setAttribute("journalhistory", String.valueOf(settings.getEveKitJournalHistory()));
-		routingNode.setAttribute("marketordershistory", String.valueOf(settings.getEveKitMarketOrdersHistory()));
-		routingNode.setAttribute("industryjobshistory", String.valueOf(settings.getEveKitIndustryJobsHistory()));
-		routingNode.setAttribute("contractshistory", String.valueOf(settings.getEveKitContractsHistory()));
 	}
 
 	private void writeRoutingSettings(Document xmldoc, RoutingSettings routingSettings) {

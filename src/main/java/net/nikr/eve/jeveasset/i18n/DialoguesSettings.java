@@ -169,16 +169,6 @@ public abstract class DialoguesSettings extends Bundle {
 	public abstract String windowMaximised();
 	public abstract String windowDefault();
 
-	// used in EveKitSettingsPanel
-	public abstract String eveKit();
-	public abstract String transactionsHistory();
-	public abstract String journalHistory();
-	public abstract String marketOrdersHistory();
-	public abstract String industryJobsHistory();
-	public abstract String contractsHistory();
-	public abstract String allHistory();
-	public abstract String monthsHistory();
-
 	// used in ContractPriceSettingsPanel
 	public abstract String contractPrices();
 	public abstract String includePrivate();
