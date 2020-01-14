@@ -706,17 +706,7 @@
 		<dependency>
 			<groupId>uk.me.candle</groupId>
 			<artifactId>routing</artifactId>
-			<version>1.5.0</version>
-			<exclusions>
-				<exclusion>
-					<groupId>org.slf4j</groupId>
-					<artifactId>slf4j-log4j12</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>log4j</groupId>
-					<artifactId>log4j</artifactId>
-				</exclusion>
-			</exclusions>
+			<version>1.6.0</version>
 		</dependency>
 		<dependency>
 			<groupId>uk.me.candle</groupId>
