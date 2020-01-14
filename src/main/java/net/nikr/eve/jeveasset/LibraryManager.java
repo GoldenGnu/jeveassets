@@ -100,7 +100,7 @@ public class LibraryManager {
 			files.add("jfreechart-1.5.0.jar");
 			files.add("osxadapter-1.1.0.jar");
 			files.add("pricing-2.1.1.jar");
-			files.add("routing-1.5.0.jar");
+			files.add("routing-1.6.0.jar");
 			files.add("slf4j-api-1.7.25.jar");
 			files.add("log4j-over-slf4j-1.7.25.jar");
 			files.add("jcl-over-slf4j-1.7.25.jar");
