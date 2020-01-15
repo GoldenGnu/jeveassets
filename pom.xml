@@ -668,7 +668,7 @@
 				<jdk>13</jdk>
 			</activation>
 			<properties>
-				<project.build.sourceVersion>12</project.build.sourceVersion>
+				<project.build.sourceVersion>13</project.build.sourceVersion>
 			</properties>
 		</profile>
 	</profiles>
