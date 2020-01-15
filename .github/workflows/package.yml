@@ -13,7 +13,6 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v1
     - name: Create Release
-      if: strategy.job-index == 0
       id: create_release
       uses: actions/create-release@v1
       env:
