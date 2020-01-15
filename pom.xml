@@ -1015,6 +1015,14 @@
 			<url>http://repo.maven.apache.org/maven2/</url>
 		</repository>
 		<repository>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+			<id>central</id>
+			<name>Maven Central</name>
+			<url>http://repo.maven.apache.org/maven2/</url>
+		</repository>
+		<repository>
 			<id>maven.nikr.net</id>
 			<name>maven.nikr.net</name>
 			<releases>

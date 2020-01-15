@@ -14,9 +14,9 @@ matrix:
     #TEST: Linux - OracleJDK 11 
     - os: linux
       jdk: oraclejdk11
-    #TEST: Linux - OpenJDK 12
+    #TEST: Linux - OpenJDK 13
     - os: linux
-      jdk: openjdk12
+      jdk: openjdk13
     #TEST: Max OS X - OpenJDK 8
     - os: osx
       #oraclejdk8
