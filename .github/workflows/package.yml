@@ -1,6 +1,9 @@
 name: Package Mk2
 
-on: [push]
+on:
+  push:
+    tags:
+      - '*'
 
 jobs:
   build:
