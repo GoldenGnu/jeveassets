@@ -1,4 +1,4 @@
-name: Ubuntu
+name: Package Ubuntu
 
 on: [push]
 
