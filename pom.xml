@@ -429,6 +429,7 @@
 				<version>5.0.3</version>
 				<executions>
 					<execution>
+						<id>izpack</id>
 						<phase>package</phase>
 						<goals>
 							<goal>izpack</goal>
@@ -790,7 +791,7 @@
 						<version>5.0.3</version>
 						<executions>
 							<execution>
-								<id>izpack-skip</id>
+								<id>izpack</id>
 								<phase>none</phase>
 							</execution>
 						</executions>
