@@ -11,6 +11,8 @@ jobs:
         java: [ 8, 11, 13 ]
     name: ${{ matrix.os }} (Java ${{ matrix.java }})
     steps:
+    - name: Checkout
+      uses: actions/checkout@v1
     - name: Cache
       uses: actions/cache@v1
       with:
@@ -18,8 +20,6 @@ jobs:
         key: ${{ matrix.os }}-maven-${{ hashFiles('**/pom.xml') }}
         restore-keys: |
           ${{ matrix.os }}-maven-
-    - name: Checkout
-      uses: actions/checkout@v1
     - name: JDK
       uses: actions/setup-java@v1
       with:
