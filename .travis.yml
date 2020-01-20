@@ -30,7 +30,7 @@ matrix:
         #JPackage JDK
         - wget https://github.com/sormuras/bach/raw/master/install-jdk.sh
         #Download latest JDK 14 EA build - should be changed to JDK 14 stable when it is released
-        - source ./install-jdk.sh --os linux-x64
+        - source ./install-jdk.sh --feature 14 --os linux-x64
         #Debug
         - echo JAVA_HOME = ${JAVA_HOME}
         - echo PATH = ${PATH}
@@ -74,7 +74,7 @@ matrix:
         #JPackage JDK
         - wget https://github.com/sormuras/bach/raw/master/install-jdk.sh
         #Download latest JDK 14 EA build - should be changed to JDK 14 stable when it is released
-        - source ./install-jdk.sh --os osx-x64
+        - source ./install-jdk.sh --feature 14 --os osx-x64
         #Debug
         - echo JAVA_HOME = ${JAVA_HOME}
         - echo PATH = ${PATH}
