@@ -1012,7 +1012,7 @@
 			</snapshots>
 			<id>central</id>
 			<name>Maven Central</name>
-			<url>http://repo.maven.apache.org/maven2/</url>
+			<url>https://repo.maven.apache.org/maven2/</url>
 		</repository>
 		<repository>
 			<id>maven.nikr.net</id>
@@ -1023,7 +1023,7 @@
 			<snapshots>
 				<enabled>true</enabled>
 			</snapshots>
-			<url>http://maven.nikr.net/</url>
+			<url>https://maven.nikr.net/</url>
 		</repository>
 	</repositories>
 
