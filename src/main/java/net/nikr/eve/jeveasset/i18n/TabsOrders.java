@@ -43,6 +43,7 @@ public abstract class TabsOrders extends Bundle {
 	public abstract String columnVolumeTotal();
 	public abstract String columnPrice();
 	public abstract String columnIssued();
+	public abstract String columnIssuedFirst();
 	public abstract String columnExpires();
 	public abstract String columnRange();
 	public abstract String columnRemainingValue();
@@ -55,6 +56,7 @@ public abstract class TabsOrders extends Bundle {
 	public abstract String columnLastTransactionPrice();
 	public abstract String columnLastTransactionValue();
 	public abstract String columnLastTransactionPercent();
+	public abstract String columnTypeID();
 	public abstract String market();
 	public abstract String rangeStation();
 	public abstract String rangeSolarSystem();

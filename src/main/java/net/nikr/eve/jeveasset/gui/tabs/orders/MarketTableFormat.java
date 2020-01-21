@@ -95,6 +95,16 @@ public enum MarketTableFormat implements EnumTableColumn<MyMarketOrder> {
 			return from.getIssued();
 		}
 	},
+	ISSUED_FIRST(Date.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsOrders.get().columnIssuedFirst();
+		}
+		@Override
+		public Object getColumnValue(final MyMarketOrder from) {
+			return from.getCreatedOrIssued();
+		}
+	},
 	EXPIRES(Date.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
@@ -213,6 +223,16 @@ public enum MarketTableFormat implements EnumTableColumn<MyMarketOrder> {
 		@Override
 		public Object getColumnValue(final MyMarketOrder from) {
 			return from.getLastTransactionPercent();
+		}
+	},
+	TYPE_ID(Integer.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsOrders.get().columnTypeID();
+		}
+		@Override
+		public Object getColumnValue(final MyMarketOrder from) {
+			return from.getTypeID();
 		}
 	};
 
