@@ -132,4 +132,5 @@
     <row flagid="174" flagname="CrateLoot" flagtext="Crate Loot"/>
     <row flagid="176" flagname="BoosterBay" flagtext="Booster Hold"/>
     <row flagid="177" flagname="SubsystemBay" flagtext="Subsystem Hold"/>
+    <row flagid="178" flagname="Raffles" flagtext="Raffles Hangar"/>
 </rows>
