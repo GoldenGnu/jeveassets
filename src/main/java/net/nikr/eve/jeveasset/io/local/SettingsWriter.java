@@ -344,6 +344,10 @@ public class SettingsWriter extends AbstractXmlWriter {
 		parentNode.setAttributeNS(null, "stockpilegroup3", String.valueOf(settings.getStockpileColorGroup3()));
 	}
 
+	/**
+	 * -!- `!´ IMPORTANT `!´ -!-
+	 * StockpileDataWriter and StockpileDataReader needs to be updated too - on any changes!!!
+	 */
 	private void writeStockpiles(final Document xmldoc, final List<Stockpile> stockpiles, boolean export) {
 		Element parentNode = xmldoc.createElementNS(null, "stockpiles");
 		xmldoc.getDocumentElement().appendChild(parentNode);

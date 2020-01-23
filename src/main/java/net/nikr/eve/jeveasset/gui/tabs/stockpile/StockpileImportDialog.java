@@ -71,20 +71,20 @@ public class StockpileImportDialog extends JDialogCentered {
 	private ImportReturn importReturn;
 	
 	public StockpileImportDialog(Program program) {
-		super(program, "Import XML");
-		
+		super(program, TabsStockpile.get().importOptions());
+
 		listenerClass = new ListenerClass();
 
 		jName = new JLabel();
 		jName.setFont(new Font(jName.getFont().getName(), Font.BOLD, jName.getFont().getSize() + 1));
-		jRenameLabel = new JLabel(TabsStockpile.get().importXmlRenameHelp());
-		jRename = new JRadioButton(TabsStockpile.get().importXmlRename());
-		jMergeLabel = new JLabel(TabsStockpile.get().importXmlMergeHelp());
-		jMerge = new JRadioButton(TabsStockpile.get().importXmlMerge());
-		jOverwriteLabel = new JLabel(TabsStockpile.get().importXmlOverwriteHelp());
-		jOverwrite = new JRadioButton(TabsStockpile.get().importXmlOverwrite());
-		jSkipLabel = new JLabel(TabsStockpile.get().importXmlSkipHelp());
-		jSkip = new JRadioButton(TabsStockpile.get().importXmlSkip());
+		jRenameLabel = new JLabel(TabsStockpile.get().importOptionsRenameHelp());
+		jRename = new JRadioButton(TabsStockpile.get().importOptionsRename());
+		jMergeLabel = new JLabel(TabsStockpile.get().importOptionsMergeHelp());
+		jMerge = new JRadioButton(TabsStockpile.get().importOptionsMerge());
+		jOverwriteLabel = new JLabel(TabsStockpile.get().importOptionsOverwriteHelp());
+		jOverwrite = new JRadioButton(TabsStockpile.get().importOptionsOverwrite());
+		jSkipLabel = new JLabel(TabsStockpile.get().importOptionsSkipHelp());
+		jSkip = new JRadioButton(TabsStockpile.get().importOptionsSkip());
 
 		ButtonGroup buttonGroup = new ButtonGroup();
 		buttonGroup.add(jRename);
@@ -165,7 +165,7 @@ public class StockpileImportDialog extends JDialogCentered {
 
 	public ImportReturn show(String name, int count) {
 		jName.setText(name);
-		jAll.setText(TabsStockpile.get().importXmlAll(count));
+		jAll.setText(TabsStockpile.get().importOptionsAll(count));
 		jAll.setEnabled(count > 1);
 		setVisible(true);
 		return importReturn;
