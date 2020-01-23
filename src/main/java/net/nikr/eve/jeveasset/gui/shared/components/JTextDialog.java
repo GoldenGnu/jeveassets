@@ -170,6 +170,10 @@ public class JTextDialog extends JDialogCentered {
 		return importText("");
 	}
 
+	public void setLineWrap(boolean wrap) {
+		jText.setLineWrap(wrap);
+	}
+
 	public String importText(String text) {
 		getDialog().setTitle(GuiShared.get().textImport());
 		jText.setEditable(true);
