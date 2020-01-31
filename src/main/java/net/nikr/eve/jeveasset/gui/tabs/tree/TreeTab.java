@@ -89,7 +89,7 @@ import net.nikr.eve.jeveasset.gui.shared.table.EventListManager;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.HierarchyColumn;
 import net.nikr.eve.jeveasset.gui.tabs.tree.TreeAsset.TreeType;
-import net.nikr.eve.jeveasset.gui.tabs.tree.TreeTab.AssetTreeExpansionModel.ExpandeState;
+import net.nikr.eve.jeveasset.gui.tabs.tree.TreeTab.AssetTreeExpansionModel.ExpandedState;
 import net.nikr.eve.jeveasset.i18n.General;
 import net.nikr.eve.jeveasset.i18n.TabsAssets;
 import net.nikr.eve.jeveasset.i18n.TabsTree;
@@ -446,6 +446,7 @@ public class TreeTab extends JMainTabSecondary implements TagUpdate {
 			eventList.getReadWriteLock().writeLock().unlock();
 		}
 		filterControl.clearCache();
+		expansionModel.clearCache();
 	}
 
 	@Override
@@ -526,7 +527,12 @@ public class TreeTab extends JMainTabSecondary implements TagUpdate {
 	}
 
 	private void updateSort() {
-		sortedList.setComparator(sortedListEmpty.getComparator());
+		try {
+			sortedList.getReadWriteLock().writeLock().lock();
+			sortedList.setComparator(sortedListEmpty.getComparator());
+		} finally {
+			sortedList.getReadWriteLock().writeLock().unlock();
+		}
 	}
 
 	private void updateStatusbar() {
@@ -585,16 +591,16 @@ public class TreeTab extends JMainTabSecondary implements TagUpdate {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			if (TreeAction.UPDATE.name().equals(e.getActionCommand())) {
-				expansionModel.setState(ExpandeState.LOAD);
+				expansionModel.setState(ExpandedState.LOAD);
 				updateTable();
 			} else if (TreeAction.COLLAPSE.name().equals(e.getActionCommand())) {
-				expansionModel.setState(ExpandeState.COLLAPSE);
+				expansionModel.setState(ExpandedState.COLLAPSE);
 				updateTable();
-				expansionModel.setState(ExpandeState.LOAD);
+				expansionModel.setState(ExpandedState.LOAD);
 			} else if (TreeAction.EXPAND.name().equals(e.getActionCommand())) {
-				expansionModel.setState(ExpandeState.EXPANDE);
+				expansionModel.setState(ExpandedState.EXPAND);
 				updateTable();
-				expansionModel.setState(ExpandeState.LOAD);
+				expansionModel.setState(ExpandedState.LOAD);
 			}
 		}
 
@@ -637,7 +643,7 @@ public class TreeTab extends JMainTabSecondary implements TagUpdate {
 			SwingUtilities.invokeLater(new Runnable() {
 				@Override
 				public void run() {
-					expansionModel.setState(ExpandeState.LOAD);
+					expansionModel.setState(ExpandedState.LOAD);
 					updateSort();
 				}
 			});
@@ -694,38 +700,55 @@ public class TreeTab extends JMainTabSecondary implements TagUpdate {
 
 	public static class AssetTreeExpansionModel implements TreeList.ExpansionModel<TreeAsset> {
 
-		public enum ExpandeState {
-			EXPANDE,
+		public enum ExpandedState {
+			EXPAND,
 			COLLAPSE,
 			LOAD
 		}
 
-		private ExpandeState expandeState = ExpandeState.COLLAPSE;
+		private final Map<String, Boolean> cache = new HashMap<>();
+		private ExpandedState state = ExpandedState.LOAD;
 
 		@Override
 		public boolean isExpanded(TreeAsset element, List<TreeAsset> path) {
-			if (expandeState == ExpandeState.EXPANDE) {
-				element.setExpanded(true);  //Save changes made by ExpandeState
-				return true;
-			} else if (expandeState == ExpandeState.COLLAPSE) {
-				element.setExpanded(false);  //Save changes made by ExpandeState
-				return false;
+			if (state == ExpandedState.EXPAND) {
+				return saveExpanded(element, true);
+			} else if (state == ExpandedState.COLLAPSE) {
+				return saveExpanded(element, false);
 			} else {
-				return element.isExpanded();
+				return loadExpanded(element);
 			}
 		}
 
 		@Override
 		public void setExpanded(TreeAsset element, List<TreeAsset> path, boolean expanded) {
-			element.setExpanded(expanded); //Save GUI changes
+			saveExpanded(element, expanded);
 		}
 
-		public ExpandeState getState() {
-			return expandeState;
+		private boolean loadExpanded(final TreeAsset element) {
+			Boolean expanded = cache.get(getElementKey(element));
+			if (expanded != null) {
+				return expanded;
+			} else {
+				return false; // default to collapsed
+			}
 		}
 
-		public void setState(ExpandeState expandeState) {
-			this.expandeState = expandeState;
+		private boolean saveExpanded(final TreeAsset element, final boolean expanded) {
+			cache.put(getElementKey(element), expanded);
+			return expanded;
+		}
+
+		private String getElementKey(TreeAsset element) {
+			return element.getCompare();
+		}
+
+		public void clearCache() {
+			cache.clear();
+		}
+
+		public void setState(ExpandedState expandeState) {
+			this.state = expandeState;
 		}
 	}
 
