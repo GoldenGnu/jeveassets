@@ -47,8 +47,6 @@ public class TreeAsset extends MyAsset {
 	private final int depthOffset;
 	private final Icon icon;
 
-	private boolean expanded;
-
 	private long count = 0;
 	private double value = 0;
 	private double valueBase = 0;
@@ -158,10 +156,6 @@ public class TreeAsset extends MyAsset {
 		return treeName;
 	}
 
-	public boolean isExpanded() {
-		return expanded;
-	}
-
 	public boolean isItem() {
 		return item;
 	}
@@ -175,10 +169,6 @@ public class TreeAsset extends MyAsset {
 		super.setName(name, userNameSet, eveNameSet);
 		this.treeName = createSpace(tree.size()) + name;
 		this.hierarchyColumn = new HierarchyColumn(this.treeName, this.parent);
-	}
-
-	public void setExpanded(boolean expanded) {
-		this.expanded = expanded;
 	}
 
 	@Override
