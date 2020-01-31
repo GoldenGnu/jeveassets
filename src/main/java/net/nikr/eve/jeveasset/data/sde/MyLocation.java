@@ -32,24 +32,44 @@ public class MyLocation implements Comparable<MyLocation> {
 	private final static Map<Long, MyLocation> CACHE = new HashMap<>();
 
 	private final long locationID; //LocationID : long
-	private final String location;
-	private final long stationID; //LocationID : long
-	private final String station;
-	private final long systemID; //LocationID : long
-	private final String system;
-	private final long regionID; //LocationID : long
-	private final String region;
-	private final String security;
-	private final Security securityObject;
-	private final boolean citadel;
-	private final boolean empty;
-	private final boolean userLocation;
+	private String location;
+	private long stationID; //LocationID : long
+	private String station;
+	private long systemID; //LocationID : long
+	private String system;
+	private long regionID; //LocationID : long
+	private String region;
+	private String security;
+	private Security securityObject;
+	private boolean citadel;
+	private boolean empty;
+	private boolean userLocation;
+
+	
+	public static void reset(long locationID) {
+		MyLocation cached = CACHE.get(locationID);
+		if (cached != null) {
+			cached.updateLocation(new MyLocation(locationID));
+		}
+	}
 
 	public static MyLocation create(long locationID) {
 		MyLocation cached = CACHE.get(locationID);
 		if (cached == null) {
 			cached = new MyLocation(locationID);
 			CACHE.put(locationID, cached);
+		}
+		return cached;
+	}
+
+	public static MyLocation create(long stationID, String station, long systemID, String system, long regionID, String region, String security, boolean citadel, boolean userLocation) {
+		final MyLocation newLocation = new MyLocation(stationID, station, systemID, system, regionID, region, security, citadel, userLocation);
+		MyLocation cached = CACHE.get(newLocation.getLocationID());
+		if (cached == null) { //New
+			cached = newLocation;
+			CACHE.put(newLocation.getLocationID(), newLocation);
+		} else { //Update
+			cached.updateLocation(newLocation);
 		}
 		return cached;
 	}
@@ -82,11 +102,7 @@ public class MyLocation implements Comparable<MyLocation> {
 		this(stationID, station, systemID, system, regionID, region, security, false, false);
 	}
 
-	public MyLocation(long stationID, String station, long systemID, String system, long regionID, String region, String security, boolean citadel) {
-		this(stationID, station, systemID, system, regionID, region, security, citadel, false);
-	}
-
-	public MyLocation(long stationID, String station, long systemID, String system, long regionID, String region, String security, boolean citadel, boolean userLocation) {
+	private MyLocation(long stationID, String station, long systemID, String system, long regionID, String region, String security, boolean citadel, boolean userLocation) {
 		this.stationID = stationID;
 		this.station = station;
 		this.systemID = systemID;
@@ -114,6 +130,21 @@ public class MyLocation implements Comparable<MyLocation> {
 		}
 		this.citadel = citadel;
 		this.userLocation = userLocation;
+	}
+
+	private void updateLocation(final MyLocation newLocation) {
+		this.stationID = newLocation.stationID;
+		this.station = newLocation.station;
+		this.systemID = newLocation.systemID;
+		this.system = newLocation.system.intern();
+		this.regionID = newLocation.regionID;
+		this.region = newLocation.region.intern();
+		this.security = newLocation.security.intern();
+		this.securityObject = Security.create(newLocation.security);
+		this.location = newLocation.location.intern();
+		this.empty = newLocation.empty;
+		this.citadel = newLocation.citadel;
+		this.userLocation = newLocation.userLocation;
 	}
 
 	public String getLocation() {
