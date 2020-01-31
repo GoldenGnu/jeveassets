@@ -71,6 +71,6 @@ public final class LocationsReader extends AbstractXmlReader<Boolean> {
 		long regionID = AttributeGetters.getLong(node, "ri");
 		String region = AttributeGetters.getString(node, "r");
 		String security = AttributeGetters.getString(node, "se");
-		return new MyLocation(stationID, station, systemID, system, regionID, region, security);
+		return MyLocation.create(stationID, station, systemID, system, regionID, region, security, false, false);
 	}
 }

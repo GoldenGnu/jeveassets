@@ -57,9 +57,9 @@ public class Citadel {
 	public String systemName;
 	public long regionId;
 	public String regionName;
-	public final boolean userLocation;
-	public final boolean citadel;
-	public final CitadelSource source;
+	public boolean userLocation;
+	public boolean citadel;
+	public CitadelSource source;
 	public MyLocation myLocation;
 
 	/**
@@ -75,14 +75,6 @@ public class Citadel {
 	 */
 	public Citadel(long id) {
 		this(id, "", 0, "", 0, "", false, true, CitadelSource.EMPTY);
-	}
-
-	/**
-	 * Clone
-	 * @param clone
-	 */
-	public Citadel(Citadel clone) {
-		this(clone.id, clone.name, clone.systemId, clone.systemName, clone.regionId, clone.regionName, clone.userLocation, clone.citadel, clone.source);
 	}
 
 	/**
@@ -114,12 +106,25 @@ public class Citadel {
 		updateLocation();
 	}
 
+	public void update(Citadel citadel) {
+		this.id = citadel.id;
+		this.name = citadel.name;
+		this.systemId = citadel.systemId;
+		this.systemName = citadel.systemName.intern();
+		this.regionId = citadel.regionId;
+		this.regionName = citadel.regionName.intern();
+		this.userLocation = citadel.userLocation;
+		this.citadel = citadel.citadel;
+		this.source = citadel.source;
+		updateLocation();
+	}
+
 	private void updateLocation() {
 		if (!isEmpty()) { //Location is valid -> return locations
 			if (userLocation) {
-				this.myLocation = new MyLocation(id, systemName + " - " + name, systemId, systemName, regionId, regionName, ApiIdConverter.getLocation(systemId).getSecurity(), citadel, userLocation);
+				this.myLocation =  MyLocation.create(id, systemName + " - " + name, systemId, systemName, regionId, regionName, ApiIdConverter.getLocation(systemId).getSecurity(), citadel, userLocation);
 			} else {
-				this.myLocation = new MyLocation(id, name, systemId, systemName, regionId, regionName, ApiIdConverter.getLocation(systemId).getSecurity(), citadel, userLocation);
+				this.myLocation = MyLocation.create(id, name, systemId, systemName, regionId, regionName, ApiIdConverter.getLocation(systemId).getSecurity(), citadel, userLocation);
 			}
 		} else { //Location not valid -> return fallback location
 			this.myLocation = null;
