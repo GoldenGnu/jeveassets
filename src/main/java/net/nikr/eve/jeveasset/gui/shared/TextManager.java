@@ -22,14 +22,12 @@ package net.nikr.eve.jeveasset.gui.shared;
 
 import java.awt.Component;
 import java.awt.Container;
-import java.awt.datatransfer.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.io.IOException;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.KeyStroke;
@@ -55,9 +53,6 @@ public final class TextManager {
 	private final JMenuItem jPaste;
 	private final JMenuItem jUndo;
 	private final JMenuItem jRedo;
-
-	private final Clipboard clipboard;
-
 	
 	public static void installAll(final Container container) {
 		for (Component component : container.getComponents()) {
@@ -115,8 +110,6 @@ public final class TextManager {
 		jPaste.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V, InputEvent.CTRL_DOWN_MASK));
 		jPaste.setActionCommand(CopyPopupAction.PASTE.name());
 		jPaste.addActionListener(listener);
-
-		clipboard = component.getToolkit().getSystemClipboard();
 
 		CompoundUndoManager undoManager = new CompoundUndoManager(component);
 
@@ -196,48 +189,13 @@ public final class TextManager {
 		@Override
 		public void actionPerformed(final ActionEvent e) {
 			if (CopyPopupAction.CUT.name().equals(e.getActionCommand())) {
-				String s = component.getSelectedText();
-				if (s == null) {
-					return;
-				}
-				if (s.length() == 0) {
-					return;
-				}
-				String text = component.getText();
-				String before = text.substring(0, component.getSelectionStart());
-				String after = text.substring(component.getSelectionEnd(), text.length());
-				component.setText(before + after);
-				StringSelection st = new StringSelection(s);
-				clipboard.setContents(st, null);
+				CopyHandler.cut(component);
 			}
 			if (CopyPopupAction.COPY.name().equals(e.getActionCommand())) {
-				String s = component.getSelectedText();
-				if (s == null) {
-					return;
-				}
-				if (s.length() == 0) {
-					return;
-				}
-				StringSelection st = new StringSelection(s);
-				clipboard.setContents(st, null);
+				CopyHandler.toClipboard(component.getSelectedText());
 			}
 			if (CopyPopupAction.PASTE.name().equals(e.getActionCommand())) {
-				Transferable transferable = clipboard.getContents(this);
-				try {
-					String s = (String) transferable.getTransferData(DataFlavor.stringFlavor);
-					String text = component.getText();
-					String before = text.substring(0, component.getSelectionStart());
-					String after = text.substring(component.getSelectionEnd(), text.length());
-					component.setText(before + s + after);
-					int caretPosition = before.length() + s.length();
-					if (caretPosition <= component.getText().length()) {
-						component.setCaretPosition(before.length() + s.length());
-					}
-				} catch (UnsupportedFlavorException ex) {
-
-				} catch (IOException ex) {
-
-				}
+				CopyHandler.paste(component);
 			}
 		}
 
