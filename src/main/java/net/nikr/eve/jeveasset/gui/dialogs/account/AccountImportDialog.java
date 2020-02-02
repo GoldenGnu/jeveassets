@@ -25,12 +25,6 @@ import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.LayoutManager;
-import java.awt.Toolkit;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.StringSelection;
-import java.awt.datatransfer.Transferable;
-import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
@@ -73,6 +67,7 @@ import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.api.accounts.ApiType;
 import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
 import net.nikr.eve.jeveasset.gui.images.Images;
+import net.nikr.eve.jeveasset.gui.shared.CopyHandler;
 import net.nikr.eve.jeveasset.gui.shared.components.JCustomFileChooser;
 import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
 import net.nikr.eve.jeveasset.gui.shared.components.JDropDownButton;
@@ -524,10 +519,7 @@ public class AccountImportDialog extends JDialogCentered {
 				}
 				updateTab();
 			} else if (AccountImportAction.SHARE_TO_CLIPBOARD.name().equals(e.getActionCommand())) {
-				Toolkit tk = Toolkit.getDefaultToolkit();
-				StringSelection data = new StringSelection(jExport.getText());
-				Clipboard cp = tk.getSystemClipboard();
-				cp.setContents(data, null);
+				CopyHandler.toClipboard(jExport.getText());
 			} else if (AccountImportAction.SHARE_TO_FILE.name().equals(e.getActionCommand())) {
 				File file = jFileChooser.getSelectedFile();
 				if (file != null)  {
@@ -554,14 +546,9 @@ public class AccountImportDialog extends JDialogCentered {
 					}
 				}
 			} else if (AccountImportAction.SHARE_FROM_CLIPBOARD.name().equals(e.getActionCommand())) {
-				Toolkit tk = Toolkit.getDefaultToolkit();
-				Clipboard clipboard = tk.getSystemClipboard();
-				Transferable transferable = clipboard.getContents(this);
-				try {
-					String s = (String) transferable.getTransferData(DataFlavor.stringFlavor);
+				String s = CopyHandler.fromClipboard();
+				if (s != null) {
 					jImport.setText(s);
-				} catch (UnsupportedFlavorException | IOException ex) {
-
 				}
 			} else if (AccountImportAction.SHARE_FROM_FILE.name().equals(e.getActionCommand())) {
 				File file = jFileChooser.getSelectedFile();

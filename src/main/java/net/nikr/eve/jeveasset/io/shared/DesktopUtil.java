@@ -22,10 +22,7 @@
 package net.nikr.eve.jeveasset.io.shared;
 
 import java.awt.Desktop;
-import java.awt.Toolkit;
 import java.awt.Window;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.StringSelection;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
@@ -36,6 +33,7 @@ import javax.swing.JOptionPane;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 import net.nikr.eve.jeveasset.Program;
+import net.nikr.eve.jeveasset.gui.shared.CopyHandler;
 import net.nikr.eve.jeveasset.gui.shared.components.JTextDialog;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 import org.slf4j.Logger;
@@ -111,9 +109,7 @@ public final class DesktopUtil {
 					+ "1) Press OK to copy the URL into your clipboard.\r\n"
 					+ "2) Open your browser and paste the url into the address line.", "Browse", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
 			if (value == JOptionPane.OK_OPTION) {
-				StringSelection selection = new StringSelection(url);
-				Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-				clipboard.setContents(selection, selection);
+				CopyHandler.toClipboard(url);
 				return true;
 			} else {
 				return false;
