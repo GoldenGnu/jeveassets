@@ -364,7 +364,6 @@ public class TreeTab extends JMainTabSecondary implements TagUpdate {
 						if (divisionAsset == null) {						
 							divisionAsset = new TreeAsset(location, parentAsset.getFlagName(), parentKey + cacheKey, Images.LOC_DIVISION.getIcon(), locationTree);
 							locationCache.put(cacheKey, divisionAsset);
-							locations.add(divisionAsset);
 							locationsExport.add(divisionAsset);
 						}
 						parentKey = parentKey + cacheKey;
@@ -384,7 +383,6 @@ public class TreeTab extends JMainTabSecondary implements TagUpdate {
 								if (hangarAsset == null) {						
 									hangarAsset = new TreeAsset(location, flag.getName(), parentKey + cacheKey, flag.getIcon(), locationTree);
 									locationCache.put(cacheKey, hangarAsset);
-									locations.add(hangarAsset);
 									locationsExport.add(hangarAsset);
 								}
 								parentKey = parentKey + cacheKey;
