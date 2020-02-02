@@ -311,7 +311,12 @@ public class MyIndustryJob extends RawIndustryJob implements Comparable<MyIndust
 		if (blueprint != null) {
 			return blueprint.getRuns() <= 0;
 		} else {
-			return getLicensedRuns() == null || getLicensedRuns() <= 0;
+			return (getLicensedRuns() == null || getLicensedRuns() <= 0 //BPO should have value -1
+					|| activity == IndustryActivity.ACTIVITY_COPYING //BPO only
+					|| activity == IndustryActivity.ACTIVITY_RESEARCHING_METERIAL_PRODUCTIVITY //BPO only
+					|| activity == IndustryActivity.ACTIVITY_RESEARCHING_TIME_PRODUCTIVITY) //BPO only
+					&& activity != IndustryActivity.ACTIVITY_REVERSE_INVENTION //BPC only
+					;
 		}
 	}
 
