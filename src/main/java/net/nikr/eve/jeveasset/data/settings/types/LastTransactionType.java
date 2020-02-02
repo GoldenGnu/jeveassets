@@ -20,7 +20,6 @@
  */
 package net.nikr.eve.jeveasset.data.settings.types;
 
-import net.nikr.eve.jeveasset.data.settings.MarketPriceData;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.Percent;
 
 
@@ -33,20 +32,4 @@ public interface LastTransactionType {
 	public void setLastTransactionValue(double lastTransactionValue);
 	public void setLastTransactionPercent(Percent lastTransactionPercent);
 
-	public default void setLastTransaction(MarketPriceData lastTransaction, boolean buy, double price) {
-		if (lastTransaction != null) {
-			setLastTransactionPrice(lastTransaction.getLatest());
-			if (buy) { //Buy
-				setLastTransactionValue(lastTransaction.getLatest() - price);
-				setLastTransactionPercent(Percent.create(lastTransaction.getLatest() / price));
-			} else { //Sell
-				setLastTransactionValue(price - lastTransaction.getLatest());
-				setLastTransactionPercent(Percent.create(price / lastTransaction.getLatest()));
-			}
-		} else {
-			setLastTransactionPrice(0);
-			setLastTransactionValue(0);
-			setLastTransactionPercent(Percent.create(0));
-		}
-	}
 }

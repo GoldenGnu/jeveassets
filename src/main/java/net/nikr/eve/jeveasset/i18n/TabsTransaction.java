@@ -55,6 +55,7 @@ public abstract class TabsTransaction extends Bundle {
 	public abstract String columnName();
 	public abstract String columnQuantity();
 	public abstract String columnPrice();
+	public abstract String columnTax();
 	public abstract String columnClientName();
 	public abstract String columnStationName();
 	public abstract String columnRegion();

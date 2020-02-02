@@ -44,6 +44,7 @@ import net.nikr.eve.jeveasset.data.api.my.MyJournal;
 import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder;
 import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
 import net.nikr.eve.jeveasset.data.api.raw.RawBlueprint;
+import net.nikr.eve.jeveasset.data.api.raw.RawJournalRefType;
 import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.data.sde.Jump;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
@@ -62,9 +63,11 @@ import net.nikr.eve.jeveasset.data.settings.types.EditableLocationType;
 import net.nikr.eve.jeveasset.data.settings.types.EditablePriceType;
 import net.nikr.eve.jeveasset.data.settings.types.ItemType;
 import net.nikr.eve.jeveasset.data.settings.types.JumpType;
+import net.nikr.eve.jeveasset.data.settings.types.LastTransactionType;
 import net.nikr.eve.jeveasset.data.settings.types.LocationsType;
 import net.nikr.eve.jeveasset.gui.shared.CaseInsensitiveComparator;
 import net.nikr.eve.jeveasset.gui.shared.table.EventListManager;
+import net.nikr.eve.jeveasset.gui.shared.table.containers.Percent;
 import net.nikr.eve.jeveasset.gui.tabs.routing.SolarSystem;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
@@ -100,8 +103,10 @@ public class ProfileData {
 	private Map<Long, List<MyContainerLog>> containerLogs = null; //ItemID : long
 	private Map<Integer, List<MyAsset>> uniqueAssetsDuplicates = null; //TypeID : int
 	private Map<Integer, MarketPriceData> marketPriceData; //TypeID : int
-	private Map<Integer, MarketPriceData> transactionPriceDataSell; //TypeID : int
-	private Map<Integer, MarketPriceData> transactionPriceDataBuy; //TypeID : int
+	private Map<Integer, MarketPriceData> transactionSellPriceData; //TypeID : int
+	private Map<Integer, MarketPriceData> transactionBuyPriceData; //TypeID : int
+	private Map<Integer, Double> transactionBuyTax; //TypeID : int
+	private Map<Long, Double> transactionSellTax; //TransactionID : long
 	private final List<String> ownerNames = new ArrayList<>();
 	private final Map<Long, OwnerType> owners = new HashMap<>();
 	private final Graph graph;
@@ -534,9 +539,9 @@ public class ProfileData {
 		for (MyMarketOrder order : marketOrders) {
 			//Last Transaction
 			if (order.isBuyOrder()) { //Buy
-				order.setLastTransaction(transactionPriceDataSell.get(order.getTypeID()), order.isBuyOrder(), order.getPrice());
+				setLastTransaction(order, order.getTypeID(), order.isBuyOrder(), order.getPrice(), null);
 			} else { //Sell
-				order.setLastTransaction(transactionPriceDataBuy.get(order.getTypeID()), order.isBuyOrder(), order.getPrice());
+				setLastTransaction(order, order.getTypeID() , order.isBuyOrder(), order.getPrice(), null);
 			}
 			order.setIssuedByName(ApiIdConverter.getOwnerName(order.getIssuedBy()));
 		}
@@ -572,11 +577,19 @@ public class ProfileData {
 
 		//Update Transaction dynamic values
 		for (MyTransaction transaction : transactions) {
+			//Client Name
 			transaction.setClientName(ApiIdConverter.getOwnerName(transaction.getClientID()));
+			//Tax
 			if (transaction.isBuy()) { //Buy
-				transaction.setLastTransaction(transactionPriceDataSell.get(transaction.getTypeID()), transaction.isBuy(), transaction.getPrice());
+				transaction.setTax(null); //Seller pays the tax
 			} else { //Sell
-				transaction.setLastTransaction(transactionPriceDataBuy.get(transaction.getTypeID()), transaction.isBuy(), transaction.getPrice());
+				transaction.setTax(transactionSellTax.get(transaction.getTransactionID()));
+			}
+			//Transaction Profit
+			if (transaction.isBuy()) { //Buy
+				setLastTransaction(transaction, transaction.getTypeID(), transaction.isBuy(), transaction.getPrice(), transactionBuyTax.get(transaction.getTypeID()));
+			} else { //Sell
+				setLastTransaction(transaction, transaction.getTypeID(), transaction.isBuy(), transaction.getPrice(), transaction.getTax());
 			}
 		}
 		//Update Journal dynamic values
@@ -962,17 +975,32 @@ public class ProfileData {
 
 	private void calcTransactionsPriceData() {
 		//Create Transaction Price Data
-		transactionPriceDataSell = new HashMap<>();
-		transactionPriceDataBuy = new HashMap<>();
-		//Date - maximumPurchaseAge in days
+		transactionBuyTax = new HashMap<>();
+		transactionSellPriceData = new HashMap<>();
+		transactionBuyPriceData = new HashMap<>();
+		transactionSellTax = new HashMap<>();
+		Date lastTaxDate = null;
 		for (OwnerType owner : profileManager.getOwnerTypes()) {
+			Map<Date, Double> taxes = new HashMap<>();
+			for (MyJournal journal : owner.getJournal()) {
+				if (journal.getRefType() == RawJournalRefType.TRANSACTION_TAX) {
+					taxes.put(journal.getDate(), journal.getAmount());
+				}
+			}
 			for (MyTransaction transaction : owner.getTransactions()) {
 				if (transaction.isSell()) { //Sell
-					createTransactionsPriceData(transactionPriceDataSell, transaction);
+					createTransactionsPriceData(transactionSellPriceData, transaction);
 				} else { //Buy
-					createTransactionsPriceData(transactionPriceDataBuy, transaction);
+					createTransactionsPriceData(transactionBuyPriceData, transaction);
 				}
-
+				Double tax = taxes.get(transaction.getDate());
+				if (tax != null) {
+					transactionSellTax.put(transaction.getTransactionID(), tax);
+					if ((lastTaxDate == null || lastTaxDate.before(transaction.getDate()))) {
+						transactionBuyTax.put(transaction.getTypeID(), tax);
+						lastTaxDate = transaction.getDate();
+					}
+				}
 			}
 		}
 	}
@@ -984,6 +1012,33 @@ public class ProfileData {
 		}
 		MarketPriceData data = transactionPriceData.get(typeID);
 		data.update(transaction.getPrice(), transaction.getDate());
+	}
+
+	private void setLastTransaction(LastTransactionType item, int typeID, boolean buy, double price, Double tax) {
+		if (tax == null) {
+			tax = 0.0;
+		}
+		MarketPriceData lastTransaction;
+		if (buy) { //Buy
+			lastTransaction = transactionSellPriceData.get(typeID);
+		} else { //Sell
+			lastTransaction = transactionBuyPriceData.get(typeID); 
+		}
+		if (lastTransaction != null) {
+			Double lastTransactionPrice = lastTransaction.getLatest();
+			item.setLastTransactionPrice(lastTransactionPrice);
+			if (buy) { //Buy
+				item.setLastTransactionValue(lastTransactionPrice - (price + tax));
+				item.setLastTransactionPercent(Percent.create(lastTransactionPrice / (price + tax)));
+			} else { //Sell
+				item.setLastTransactionValue((price - tax) - (lastTransactionPrice));
+				item.setLastTransactionPercent(Percent.create((price - tax) / (lastTransactionPrice)));
+			}
+		} else {
+			item.setLastTransactionPrice(0);
+			item.setLastTransactionValue(0);
+			item.setLastTransactionPercent(Percent.create(0));
+		}
 	}
 
 	private void addAssets(final List<MyAsset> assets, List<MyAsset> addTo, Map<Long, RawBlueprint> blueprints, Map<Long, Date> assetAdded, Date assetAddedDate) {
