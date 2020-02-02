@@ -118,7 +118,7 @@ public class MyTransaction extends RawTransaction implements EditableLocationTyp
 
 	public double getValue() {
 		if (isSell()) {
-			return getQuantity() * getPrice();
+			return (getQuantity() * getPrice()) + getTaxNotNull(); //Adding tax, tax is a negative number
 		} else {
 			return getQuantity() * -getPrice();
 		}
@@ -143,6 +143,14 @@ public class MyTransaction extends RawTransaction implements EditableLocationTyp
 
 	public Double getTax() {
 		return tax;
+	}
+
+	public double getTaxNotNull() {
+		if (tax != null) {
+			return tax;
+		} else {
+			return 0.0;
+		}
 	}
 
 	public void setTax(Double tax) {
