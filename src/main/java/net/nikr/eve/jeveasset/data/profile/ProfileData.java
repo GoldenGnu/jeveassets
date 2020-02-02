@@ -103,6 +103,7 @@ public class ProfileData {
 	private Map<Integer, MarketPriceData> transactionBuyPriceData; //TypeID : int
 	private Map<Integer, Double> transactionBuyTax; //TypeID : int
 	private Map<Long, Double> transactionSellTax; //TransactionID : long
+	private Map<Long, Double> marketOrdersBrokersFee; //OrderID : long
 	private final List<String> ownerNames = new ArrayList<>();
 	private final Map<Long, OwnerType> owners = new HashMap<>();
 	private final Graph graph;
@@ -529,6 +530,7 @@ public class ProfileData {
 				setLastTransaction(order, order.getTypeID() , order.isBuyOrder(), order.getPrice(), null);
 			}
 			order.setIssuedByName(ApiIdConverter.getOwnerName(order.getIssuedBy()));
+			order.setBrokersFee(marketOrdersBrokersFee.get(order.getOrderID()));
 		}
 		//Update IndustryJobs dynamic values
 		for (MyIndustryJob industryJob : industryJobs) {
@@ -964,12 +966,17 @@ public class ProfileData {
 		transactionSellPriceData = new HashMap<>();
 		transactionBuyPriceData = new HashMap<>();
 		transactionSellTax = new HashMap<>();
+		marketOrdersBrokersFee = new HashMap<>();
 		Date lastTaxDate = null;
 		for (OwnerType owner : profileManager.getOwnerTypes()) {
 			Map<Date, Double> taxes = new HashMap<>();
+			Map<Date, Double> fees = new HashMap<>();
 			for (MyJournal journal : owner.getJournal()) {
 				if (journal.getRefType() == RawJournalRefType.TRANSACTION_TAX) {
 					taxes.put(journal.getDate(), journal.getAmount());
+				}
+				if (journal.getRefType() == RawJournalRefType.BROKERS_FEE) {
+					fees.put(journal.getDate(), journal.getAmount());
 				}
 			}
 			for (MyTransaction transaction : owner.getTransactions()) {
@@ -985,6 +992,12 @@ public class ProfileData {
 						transactionBuyTax.put(transaction.getTypeID(), tax);
 						lastTaxDate = transaction.getDate();
 					}
+				}
+			}
+			for (MyMarketOrder marketOrder : owner.getMarketOrders()) {
+				Double fee = fees.get(marketOrder.getCreatedOrIssued());
+				if (fee != null) {
+					marketOrdersBrokersFee.put(marketOrder.getOrderID(), fee);
 				}
 			}
 		}
@@ -1011,11 +1024,12 @@ public class ProfileData {
 		}
 		if (lastTransaction != null) {
 			Double lastTransactionPrice = lastTransaction.getLatest();
-			item.setLastTransactionPrice(lastTransactionPrice);
 			if (buy) { //Buy
+				item.setLastTransactionPrice(lastTransactionPrice - tax);
 				item.setLastTransactionValue(lastTransactionPrice - (price + tax));
 				item.setLastTransactionPercent(Percent.create(lastTransactionPrice / (price + tax)));
 			} else { //Sell
+				item.setLastTransactionPrice(lastTransactionPrice);
 				item.setLastTransactionValue((price - tax) - (lastTransactionPrice));
 				item.setLastTransactionPercent(Percent.create((price - tax) / (lastTransactionPrice)));
 			}
