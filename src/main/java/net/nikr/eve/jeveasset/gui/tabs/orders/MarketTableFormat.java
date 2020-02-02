@@ -85,6 +85,16 @@ public enum MarketTableFormat implements EnumTableColumn<MyMarketOrder> {
 			return from.getPrice();
 		}
 	},
+	BROKERS_FEE(Double.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsOrders.get().columnBrokersFee();
+		}
+		@Override
+		public Object getColumnValue(final MyMarketOrder from) {
+			return from.getBrokersFee();
+		}
+	},
 	ISSUED(Date.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {

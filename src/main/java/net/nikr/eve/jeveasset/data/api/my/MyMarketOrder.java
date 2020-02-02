@@ -117,6 +117,7 @@ public class MyMarketOrder extends RawMarketOrder implements Comparable<MyMarket
 	private double lastTransactionValue;
 	private Percent lastTransactionPercent;
 	private String issuedByName = "";
+	private Double brokersFee;
 
 	public MyMarketOrder(final RawMarketOrder rawMarketOrder, final Item item, final OwnerType owner) {
 		super(rawMarketOrder);
@@ -347,6 +348,22 @@ public class MyMarketOrder extends RawMarketOrder implements Comparable<MyMarket
 
 	public boolean isCorporation() {
 		return owner.isCorporation();
+	}
+
+	public Double getBrokersFee() {
+		return brokersFee;
+	}
+
+	public Double getBrokersFeeNotNull() {
+		if (brokersFee != null) {
+			return brokersFee;
+		} else {
+			return 0.0;
+		}
+	}
+
+	public void setBrokersFee(Double brokerFee) {
+		this.brokersFee = brokerFee;
 	}
 
 	@Override
