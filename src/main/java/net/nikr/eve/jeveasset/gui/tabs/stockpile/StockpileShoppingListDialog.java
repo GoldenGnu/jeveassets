@@ -22,9 +22,6 @@
 package net.nikr.eve.jeveasset.gui.tabs.stockpile;
 
 import java.awt.Component;
-import java.awt.Toolkit;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.DecimalFormat;
@@ -55,6 +52,7 @@ import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder;
 import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
 import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.gui.images.Images;
+import net.nikr.eve.jeveasset.gui.shared.CopyHandler;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
 import net.nikr.eve.jeveasset.gui.shared.components.JIntegerField;
@@ -370,13 +368,6 @@ class StockpileShoppingListDialog extends JDialogCentered {
 		}
 	}
 
-	private void copyToClipboard() {
-		Toolkit tk = Toolkit.getDefaultToolkit();
-		StringSelection data = new StringSelection(jText.getText());
-		Clipboard cp = tk.getSystemClipboard();
-		cp.setContents(data, null);
-	}
-
 	private void setText() {
 		Object selectedItem = jEveMultiBuy.getSelectedItem();
 		if (TabsStockpile.get().eveMultibuy().equals(selectedItem)) {
@@ -406,7 +397,7 @@ class StockpileShoppingListDialog extends JDialogCentered {
 		@Override
 		public void actionPerformed(final ActionEvent e) {
 			if (StockpileShoppingListAction.CLIPBOARD_STOCKPILE.name().equals(e.getActionCommand())) {
-				copyToClipboard();
+				CopyHandler.toClipboard(jText.getText());
 			}
 			if (StockpileShoppingListAction.CLOSE.name().equals(e.getActionCommand())) {
 				setVisible(false);

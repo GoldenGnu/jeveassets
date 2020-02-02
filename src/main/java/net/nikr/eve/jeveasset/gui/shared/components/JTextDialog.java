@@ -22,13 +22,7 @@
 package net.nikr.eve.jeveasset.gui.shared.components;
 
 import java.awt.Color;
-import java.awt.Toolkit;
 import java.awt.Window;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.StringSelection;
-import java.awt.datatransfer.Transferable;
-import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
@@ -45,6 +39,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.gui.images.Images;
+import net.nikr.eve.jeveasset.gui.shared.CopyHandler;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 
 
@@ -204,13 +199,6 @@ public class JTextDialog extends JDialogCentered {
 		setVisible(true);
 	}
 
-	private void toClipboard() {
-		Toolkit tk = Toolkit.getDefaultToolkit();
-		StringSelection data = new StringSelection(jText.getText());
-		Clipboard cp = tk.getSystemClipboard();
-		cp.setContents(data, null);
-	}
-
 	private void toFile() {
 		int showSaveDialog = jFileChooser.showSaveDialog(getDialog());
 		if (showSaveDialog == JCustomFileChooser.APPROVE_OPTION) {
@@ -232,27 +220,6 @@ public class JTextDialog extends JDialogCentered {
 			}
 		}
 		
-	}
-
-	private void fromClipboard() {
-		Toolkit tk = Toolkit.getDefaultToolkit();
-		Clipboard clipboard = tk.getSystemClipboard();
-		Transferable transferable = clipboard.getContents(this);
-		try {
-			String s = (String) transferable.getTransferData(DataFlavor.stringFlavor);
-			String text = jText.getText();
-			String before = text.substring(0, jText.getSelectionStart());
-			String after = text.substring(jText.getSelectionEnd(), text.length());
-			jText.setText(before + s + after);
-			int caretPosition = before.length() + s.length();
-			if (caretPosition <= jText.getText().length()) {
-				jText.setCaretPosition(before.length() + s.length());
-			}
-		} catch (UnsupportedFlavorException ex) {
-
-		} catch (IOException ex) {
-
-		}
 	}
 
 	private void fromFile() {
@@ -286,13 +253,13 @@ public class JTextDialog extends JDialogCentered {
 		@Override
 		public void actionPerformed(final ActionEvent e) {
 			if (TextDialogAction.TO_CLIPBOARD.name().equals(e.getActionCommand())) {
-				toClipboard();
+				CopyHandler.toClipboard(jText.getText());
 			}
 			if (TextDialogAction.TO_FILE.name().equals(e.getActionCommand())) {
 				toFile();
 			}
 			if (TextDialogAction.FROM_CLIPBOARD.name().equals(e.getActionCommand())) {
-				fromClipboard();
+				CopyHandler.paste(jText);
 			}
 			if (TextDialogAction.FROM_FILE.name().equals(e.getActionCommand())) {
 				fromFile();
