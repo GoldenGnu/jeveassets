@@ -71,6 +71,16 @@ public enum TransactionTableFormat implements EnumTableColumn<MyTransaction> {
 			return from.getPrice();
 		}
 	},
+	TAX(Double.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsTransaction.get().columnTax();
+		}
+		@Override
+		public Object getColumnValue(final MyTransaction from) {
+			return from.getTax();
+		}
+	},
 	VALUE(Double.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
