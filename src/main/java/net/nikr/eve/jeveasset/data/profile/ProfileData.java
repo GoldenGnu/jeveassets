@@ -534,9 +534,9 @@ public class ProfileData {
 		for (MyMarketOrder order : marketOrders) {
 			//Last Transaction
 			if (order.isBuyOrder()) { //Buy
-				order.setLastTransaction(transactionPriceDataSell.get(order.getTypeID()));
+				order.setLastTransaction(transactionPriceDataSell.get(order.getTypeID()), order.isBuyOrder(), order.getPrice());
 			} else { //Sell
-				order.setLastTransaction(transactionPriceDataBuy.get(order.getTypeID()));
+				order.setLastTransaction(transactionPriceDataBuy.get(order.getTypeID()), order.isBuyOrder(), order.getPrice());
 			}
 			order.setIssuedByName(ApiIdConverter.getOwnerName(order.getIssuedBy()));
 		}
@@ -573,6 +573,11 @@ public class ProfileData {
 		//Update Transaction dynamic values
 		for (MyTransaction transaction : transactions) {
 			transaction.setClientName(ApiIdConverter.getOwnerName(transaction.getClientID()));
+			if (transaction.isBuy()) { //Buy
+				transaction.setLastTransaction(transactionPriceDataSell.get(transaction.getTypeID()), transaction.isBuy(), transaction.getPrice());
+			} else { //Sell
+				transaction.setLastTransaction(transactionPriceDataBuy.get(transaction.getTypeID()), transaction.isBuy(), transaction.getPrice());
+			}
 		}
 		//Update Journal dynamic values
 		for (MyJournal journal : journals) {
