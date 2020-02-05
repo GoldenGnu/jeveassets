@@ -995,8 +995,14 @@ public class ProfileData {
 				}
 			}
 			for (MyMarketOrder marketOrder : owner.getMarketOrders()) {
-				Double fee = fees.get(marketOrder.getCreatedOrIssued());
-				if (fee != null) {
+				double fee = 0;
+				for (Date date : marketOrder.getChanged()) {
+					Double f = fees.get(date);
+					if (f != null) {
+						fee += f;
+					}
+				}
+				if (fee != 0) {
 					marketOrdersBrokersFee.put(marketOrder.getOrderID(), fee);
 				}
 			}

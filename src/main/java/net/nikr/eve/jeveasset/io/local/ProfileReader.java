@@ -21,6 +21,7 @@
 package net.nikr.eve.jeveasset.io.local;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.EnumSet;
 import java.util.HashMap;
@@ -64,12 +65,16 @@ import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 import net.nikr.eve.jeveasset.io.shared.DataConverter;
 import net.nikr.eve.jeveasset.io.shared.RawConverter;
 import net.troja.eve.esi.model.CharacterRolesResponse.RolesEnum;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 
 public final class ProfileReader extends AbstractXmlReader<Boolean> {
+
+	private static final Logger LOG = LoggerFactory.getLogger(ProfileReader.class);
 
 	private final ProfileManager profileManager;
 
@@ -491,6 +496,7 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 		int bid = AttributeGetters.getInt(element, "bid");
 		Date issued = AttributeGetters.getDate(element, "issued");
 		Date created = AttributeGetters.getDateOptional(element, "created");
+		String changed = AttributeGetters.getStringOptional(element, "changed");
 		Integer issuedBy = AttributeGetters.getIntOptional(element, "issuedby");
 		boolean corp = owner.isCorporation();
 		if (AttributeGetters.haveAttribute(element, "corp")) {
@@ -502,7 +508,18 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 		apiMarketOrder.setBuyOrder(bid > 0);
 		apiMarketOrder.setCorp(corp);
 		apiMarketOrder.setIssued(issued);
-		apiMarketOrder.setCreated(created);
+		apiMarketOrder.addChanged(created);
+		if (changed != null) {
+			String[] array = changed.split(",");
+			for (String s : array) {
+				try {
+					Date date = new Date(Long.valueOf(s));
+					apiMarketOrder.addChanged(date);
+				} catch (NumberFormatException ex) {
+					LOG.error(ex.getMessage(), ex);
+				}
+			}
+		}
 		apiMarketOrder.setIssuedBy(issuedBy);
 		apiMarketOrder.setLocationID(locationID);
 		apiMarketOrder.setMinVolume(minVolume);
