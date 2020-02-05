@@ -303,7 +303,7 @@ public final class ProfileWriter extends AbstractXmlWriter {
 			setAttribute(childNode, "price", marketOrder.getPrice());
 			setAttribute(childNode, "bid", RawConverter.fromMarketOrderIsBuyOrder(marketOrder.isBuyOrder()));
 			setAttribute(childNode, "issued", marketOrder.getIssued());
-			setAttributeOptional(childNode, "created", marketOrder.getCreated());
+			setAttributeOptional(childNode, "changed", marketOrder.getChanged());
 			setAttributeOptional(childNode, "issuedby", marketOrder.getIssuedBy());
 			setAttribute(childNode, "corp", marketOrder.isCorp());
 			node.appendChild(childNode);
