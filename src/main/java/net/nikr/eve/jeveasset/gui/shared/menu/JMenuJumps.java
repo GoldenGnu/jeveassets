@@ -216,6 +216,11 @@ public class JMenuJumps<T> extends MenuManager.JAutoMenu<T> {
 		}
 
 		@Override
+		public String getColumnToolTip() {
+			return GuiShared.get().jumpsColumnToolTip(systemName);
+		}
+
+		@Override
 		public Object getColumnValue(Q from) {
 			return from.getJumps(systemID);
 		}

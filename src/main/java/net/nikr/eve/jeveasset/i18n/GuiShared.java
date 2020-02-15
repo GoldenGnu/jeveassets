@@ -83,6 +83,7 @@ public abstract class GuiShared extends Bundle {
 	public abstract String jumpsAddCustom();
 	public abstract String jumpsAddSelected();
 	public abstract String jumpsClear();
+	public abstract String jumpsColumnToolTip(String systemName);
 	public abstract String khonSpace();
 	public abstract String khonSpaceInvention();
 	public abstract String khonSpaceManufacturing();
