@@ -75,7 +75,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
-import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.ToolTipManager;
 import javax.swing.event.ListSelectionEvent;
@@ -172,9 +171,6 @@ public class TrackerTab extends JMainTabSecondary {
 	private final JMenuItem jImportFile;
 	private final JCheckBoxMenuItem jIncludeZero;
 	private final JPopupMenu jPopupMenu;
-	private final JMenuItem jNote;
-	private final JMenuItem jIskValue;
-	private final JMenuItem jDateValue;
 	private final JTrackerEditDialog jEditDialog;
 	private final JSelectionDialog<String> jSelectionDialog;
 	private final ChartPanel jChartPanel;
@@ -267,28 +263,6 @@ public class TrackerTab extends JMainTabSecondary {
 		jMenuItem.setActionCommand(TrackerAction.NOTE_DELETE.name());
 		jMenuItem.addActionListener(listener);
 		jEditNote.add(jMenuItem);
-
-		JMenuInfo.createDefault(jPopupMenu);
-
-		jIskValue = new JMenuItem();
-		jIskValue.setEnabled(false);
-		jIskValue.setForeground(Color.BLACK);
-		jIskValue.setHorizontalAlignment(SwingConstants.RIGHT);
-		jIskValue.setDisabledIcon(Images.TOOL_VALUES.getIcon());
-		jPopupMenu.add(jIskValue);
-
-		jDateValue = new JMenuItem();
-		jDateValue.setEnabled(false);
-		jDateValue.setForeground(Color.BLACK);
-		jDateValue.setHorizontalAlignment(SwingConstants.RIGHT);
-		jDateValue.setDisabledIcon(Images.EDIT_DATE.getIcon());
-		jPopupMenu.add(jDateValue);
-
-		jNote = new JMenuItem();
-		jNote.setEnabled(false);
-		jNote.setForeground(Color.BLACK);
-		jNote.setDisabledIcon(Images.SETTINGS_USER_NAME.getIcon());
-		jPopupMenu.add(jNote);
 
 		jEditDialog = new JTrackerEditDialog(program);
 
@@ -1552,20 +1526,39 @@ public class TrackerTab extends JMainTabSecondary {
 						int x = (int) jNextChart.getXYPlot().getDomainAxis().valueToJava2D(xValue, dataArea, xEdge);
 						int y = (int) jNextChart.getXYPlot().getRangeAxis().valueToJava2D(yValue, dataArea, yEdge);
 						Date date = new Date((long)xValue);
-						jIskValue.setText(iskFormat.format(yValue));
-						jDateValue.setText(dateFormat.format(date));
+						JMenuItem jSelectionInformation = new JMenuItem();
+						List<JMenuInfo.MenuItemValue> values = JMenuInfo.createDefault(jPopupMenu, jSelectionInformation);
+						JMenuItem jIskValue = JMenuInfo.createMenuItem(values, jPopupMenu, yValue, JMenuInfo.NumberFormat.ISK, TabsTracker.get().selectionIsk(), TabsTracker.get().selectionShortIsk(), Images.TOOL_VALUES.getIcon());
+						JMenuItem jDateValue = JMenuInfo.createMenuItem(values, jPopupMenu, dateFormat.format(date), TabsTracker.get().selectionDate(), TabsTracker.get().selectionShortDate(), Images.EDIT_DATE.getIcon());
 						TrackerNote trackerNote = Settings.get().getTrackerNotes().get(new TrackerDate(date));
+						JMenuItem jNote;
 						if (trackerNote != null) {
 							jAddNote.setVisible(false);
 							jEditNote.setVisible(true);
-							jNote.setVisible(true);
-							jNote.setText(trackerNote.getNote());
+							jNote = JMenuInfo.createMenuItem(values, jPopupMenu, trackerNote.getNote(), TabsTracker.get().selectionNote(), TabsTracker.get().selectionShortNote(), Images.SETTINGS_USER_NAME.getIcon());
 						} else {
 							jAddNote.setVisible(true);
 							jEditNote.setVisible(false);
-							jNote.setVisible(false);
+							jNote = null;
 						}
-						jPopupMenu.show((Component)cme.getTrigger().getSource(), x, y);
+						jPopupMenu.addPopupMenuListener(new PopupMenuListener() {
+							@Override
+							public void popupMenuWillBecomeVisible(PopupMenuEvent e) { }
+
+							@Override
+							public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
+								jPopupMenu.remove(jSelectionInformation);
+								jPopupMenu.remove(jIskValue);
+								jPopupMenu.remove(jDateValue);
+								if (jNote != null) {
+									jPopupMenu.remove(jNote);
+								}
+							}
+
+							@Override
+							public void popupMenuCanceled(PopupMenuEvent e) { }
+						});
+						jPopupMenu.show((Component)cme.getTrigger().getSource(), x, y);					
 					}
 				});
 			}
