@@ -431,6 +431,14 @@ public class EnumTableFormatAdaptor<T extends Enum<T> & EnumTableColumn<Q>, Q> i
 		}
 	}
 
+	public String getColumnToolTip(final int i) {
+		try {
+			return getColumn(i).getColumnToolTip();
+		} catch (IndexOutOfBoundsException ex) {
+			return null;
+		}
+	}
+
 	@Override public Object getColumnValue(final Q e, final int i) {
 		try {
 			return getColumn(i).getColumnValue(e);
