@@ -20,18 +20,24 @@
  */
 package net.nikr.eve.jeveasset.gui.shared.table.containers;
 
+import java.util.Objects;
+
 
 public class Runs extends NumberValue implements Comparable<Runs> {
 
 	private final String runsString;
-	private final int runs;
+	private final Long runs;
 
 	public Runs(int runs) {
-		this.runs = runs;
-		if (runs >= 0) {
+		if (runs > 0) {
+			this.runs = (long) runs;
 			this.runsString = String.valueOf(runs);
+		} else if (runs == 0) { // Not Blueprint
+			this.runsString = null;
+			this.runs = 0L;
 		} else {
 			this.runsString = "BPO";
+			this.runs = null;
 		}
 	}
 
@@ -42,19 +48,19 @@ public class Runs extends NumberValue implements Comparable<Runs> {
 
 	@Override
 	public Long getLong() {
-		return (long) runs;
+		return runs;
 	}
 
 	@Override
 	public int compareTo(Runs o) {
-		if (this.runs < 0 && o.runs < 0) {
+		if (this.runs == null && o.runs == null) {
 			return 0; //Both BPO: Equals
-		} else if (this.runs < 0) {
+		} else if (this.runs == null) {
 			return 1; // This is BPO: This is Greater
-		} else if (o.runs < 0) {
+		} else if (o.runs == null) {
 			return -1; // Other is BPO: This is Less
 		}
-		return Integer.compare(this.runs, o.runs);
+		return Long.compare(this.runs, o.runs); //Both BPC: Compare runs
 	}
 
 	@Override
@@ -65,7 +71,7 @@ public class Runs extends NumberValue implements Comparable<Runs> {
 	@Override
 	public int hashCode() {
 		int hash = 5;
-		hash = 79 * hash + this.runs;
+		hash = 67 * hash + Objects.hashCode(this.runs);
 		return hash;
 	}
 
@@ -81,7 +87,7 @@ public class Runs extends NumberValue implements Comparable<Runs> {
 			return false;
 		}
 		final Runs other = (Runs) obj;
-		if (this.runs != other.runs) {
+		if (!Objects.equals(this.runs, other.runs)) {
 			return false;
 		}
 		return true;
