@@ -619,6 +619,18 @@
 			</properties>
 		</profile>
 		<profile>
+			<id>skip-online-price-tests</id>
+			<activation>
+				<property>
+					<name>skip-online-price-tests</name>
+					<value>true</value>
+				</property>
+			</activation>
+			<properties>
+				<tests.to.skip>**/*PriceDataGetterOnlineTest.java</tests.to.skip>
+			</properties>
+		</profile>
+		<profile>
 			<id>portable</id>
 			<properties>
 				<arg1>-portable</arg1>
