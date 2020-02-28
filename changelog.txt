@@ -16,6 +16,35 @@
                   #### #  # #  # #  # #### #### #### #### ####
 
 ________________________________________________________________________________
+_6.2.0__________________________________________________________________________
+
+New Features:
+-Tree now preserve expanded state on update
+-Added Market Orders column: Issued (first known issued date)
+-Added Market Orders column: TypeID
+-Added Market Orders column: Broker's Fee
+-Added Transaction column: Profit/percent/price
+-Added Transaction column: Tax
+-Added Export/Import Stockpiles as Text
+-Added broker's fee and tax to the table menu selection info
+-You can now copy selection info from the table menu by clicking the menu item
+-Added support for column header tooltips 
+-Added tooltip to jumps column headers
+
+Changed:
+-Transactions Value column now include tax
+-Copyright updated to 2020
+-Market Orders column: Issued renamed Updated (last known issued date)
+
+Code:
+-Fixed memory leak in MyLocation/Citadel
+
+Bug Fixes:
+-Possible fix for duplicated value in the tree tool
+-Better BPO detection for Industry Jobs
+-Runs column does not match with the value "BPO". Only match "-1"
+
+________________________________________________________________________________
 _6.1.3__________________________________________________________________________
 
 Changed:
