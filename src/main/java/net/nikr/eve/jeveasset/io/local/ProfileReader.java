@@ -518,7 +518,7 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 					Date date = new Date(Long.valueOf(s));
 					apiMarketOrder.addChanged(date);
 				} catch (NumberFormatException ex) {
-					LOG.error(ex.getMessage(), ex);
+					//No problem....
 				}
 			}
 		}
