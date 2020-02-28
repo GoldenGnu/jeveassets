@@ -21,7 +21,6 @@
 package net.nikr.eve.jeveasset.io.local;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.EnumSet;
 import java.util.HashMap;
