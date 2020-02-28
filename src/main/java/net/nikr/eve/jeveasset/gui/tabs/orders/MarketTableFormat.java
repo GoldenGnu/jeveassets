@@ -91,6 +91,10 @@ public enum MarketTableFormat implements EnumTableColumn<MyMarketOrder> {
 			return TabsOrders.get().columnBrokersFee();
 		}
 		@Override
+		public String getColumnToolTip() {
+			return TabsOrders.get().columnBrokersFeeToolTip();
+		}
+		@Override
 		public Object getColumnValue(final MyMarketOrder from) {
 			return from.getBrokersFee();
 		}
@@ -101,6 +105,10 @@ public enum MarketTableFormat implements EnumTableColumn<MyMarketOrder> {
 			return TabsOrders.get().columnIssued();
 		}
 		@Override
+		public String getColumnToolTip() {
+			return TabsOrders.get().columnIssuedToolTip();
+		}
+		@Override
 		public Object getColumnValue(final MyMarketOrder from) {
 			return from.getIssued();
 		}
@@ -109,6 +117,10 @@ public enum MarketTableFormat implements EnumTableColumn<MyMarketOrder> {
 		@Override
 		public String getColumnName() {
 			return TabsOrders.get().columnIssuedFirst();
+		}
+		@Override
+		public String getColumnToolTip() {
+			return TabsOrders.get().columnIssuedFirstToolTip();
 		}
 		@Override
 		public Object getColumnValue(final MyMarketOrder from) {
