@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2019 Contributors (see credits.txt)
+ * Copyright 2009-2020 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -21,6 +21,8 @@
 package net.nikr.eve.jeveasset.data.api.raw;
 
 import java.util.Date;
+import java.util.Set;
+import java.util.TreeSet;
 import net.nikr.eve.jeveasset.io.shared.RawConverter;
 import net.troja.eve.esi.model.CharacterOrdersHistoryResponse;
 import net.troja.eve.esi.model.CharacterOrdersResponse;
@@ -100,7 +102,7 @@ public class RawMarketOrder {
 	private Boolean isBuyOrder = null;
 	private Boolean isCorp = null;
 	private Date issued = null;
-	private Date created = null;
+	private Set<Date> changed = new TreeSet<>();
 	private Integer issuedBy = null;
 	private Long locationId = null;
 	private Integer minVolume = null;
@@ -135,7 +137,7 @@ public class RawMarketOrder {
 		isBuyOrder = marketOrder.isBuyOrder;
 		isCorp = marketOrder.isCorp;
 		issued = marketOrder.issued;
-		created = marketOrder.created;
+		changed = marketOrder.changed;
 		issuedBy = marketOrder.issuedBy;
 		locationId = marketOrder.locationId;
 		minVolume = marketOrder.minVolume;
@@ -161,6 +163,7 @@ public class RawMarketOrder {
 		isBuyOrder = RawConverter.toBoolean(marketOrder.getIsBuyOrder());
 		isCorp = marketOrder.getIsCorporation();
 		issued = RawConverter.toDate(marketOrder.getIssued());
+		changed.add(issued);
 		issuedBy = null;
 		locationId = marketOrder.getLocationId();
 		minVolume = RawConverter.toInteger(marketOrder.getMinVolume(), 0);
@@ -186,6 +189,7 @@ public class RawMarketOrder {
 		isBuyOrder = RawConverter.toBoolean(marketOrder.getIsBuyOrder());
 		isCorp = marketOrder.getIsCorporation();
 		issued = RawConverter.toDate(marketOrder.getIssued());
+		changed.add(issued);
 		issuedBy = null;
 		locationId = marketOrder.getLocationId();
 		minVolume = RawConverter.toInteger(marketOrder.getMinVolume(), 0);
@@ -211,6 +215,7 @@ public class RawMarketOrder {
 		isBuyOrder = RawConverter.toBoolean(marketOrder.getIsBuyOrder());
 		isCorp = true;
 		issued = RawConverter.toDate(marketOrder.getIssued());
+		changed.add(issued);
 		issuedBy = marketOrder.getIssuedBy();
 		locationId = marketOrder.getLocationId();
 		minVolume = RawConverter.toInteger(marketOrder.getMinVolume(), 0);
@@ -236,6 +241,7 @@ public class RawMarketOrder {
 		isBuyOrder = RawConverter.toBoolean(marketOrder.getIsBuyOrder());
 		isCorp = true;
 		issued = RawConverter.toDate(marketOrder.getIssued());
+		changed.add(issued);
 		issuedBy = marketOrder.getIssuedBy();
 		locationId = marketOrder.getLocationId();
 		minVolume = RawConverter.toInteger(marketOrder.getMinVolume(), 0);
@@ -295,18 +301,23 @@ public class RawMarketOrder {
 
 	public void setIssued(Date issued) {
 		this.issued = issued;
+		this.changed.add(issued);
 	}
 
-	/**
-	 * 
-	 * @return Date created or null
-	 */
-	public Date getCreated() {
-		return created;
+	public Set<Date> getChanged() {
+		return changed;
 	}
 
-	public void setCreated(Date created) {
-		this.created = created;
+	public void addChanged(Set<Date> changed) {
+		if (changed != null) {
+			this.changed.addAll(changed);
+		}
+	}
+
+	public void addChanged(Date changed) {
+		if (changed != null) {
+			this.changed.add(changed);
+		}
 	}
 
 	public Integer getIssuedBy() {

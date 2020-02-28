@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2019 Contributors (see credits.txt)
+ * Copyright 2009-2020 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -22,6 +22,7 @@ package net.nikr.eve.jeveasset.io.shared;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -255,17 +256,14 @@ public abstract class DataConverter {
 
 	public static Set<MyMarketOrder> convertRawMarketOrders(List<RawMarketOrder> rawMarketOrders, OwnerType owner, boolean saveHistory) {
 		Set<MyMarketOrder> marketOrders = new HashSet<MyMarketOrder>();
-		Map<Long, MyMarketOrder> orders = new HashMap<>();
+		Map<Long, Set<Date>> changed = new HashMap<>();
+		for (MyMarketOrder marketOrder : owner.getMarketOrders()) {
+			changed.put(marketOrder.getOrderID(), marketOrder.getChanged());
+		}
 		for (RawMarketOrder rawMarketOrder : rawMarketOrders) {
 			MyMarketOrder marketOrder = toMyMarketOrder(rawMarketOrder, owner);
 			marketOrders.add(marketOrder);
-			orders.put(marketOrder.getOrderID(), marketOrder);
-		}
-		for (MyMarketOrder old : owner.getMarketOrders()) {
-			MyMarketOrder marketOrder = orders.get(old.getOrderID());
-			if (marketOrder != null && marketOrder.getCreated() == null) {
-				marketOrder.setCreated(old.getIssued());
-			}
+			marketOrder.addChanged(changed.get(marketOrder.getOrderID()));
 		}
 		if (saveHistory) {
 			for (MyMarketOrder marketOrder : owner.getMarketOrders()) {

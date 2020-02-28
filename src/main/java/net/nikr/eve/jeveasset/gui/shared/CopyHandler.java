@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2019 Contributors (see credits.txt)
+ * Copyright 2009-2020 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -24,12 +24,17 @@ package net.nikr.eve.jeveasset.gui.shared;
 import ca.odell.glazedlists.SeparatorList;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.StringSelection;
+import java.awt.datatransfer.Transferable;
+import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.event.ActionEvent;
+import java.io.IOException;
 import java.util.Date;
 import javax.swing.AbstractAction;
 import javax.swing.AbstractButton;
 import javax.swing.JTable;
+import javax.swing.text.JTextComponent;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.HierarchyColumn;
 
 
@@ -48,6 +53,62 @@ public class CopyHandler {
 		//jTable.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("ctrl C"), "copy");
 		jTable.getActionMap().put("copy", listenerClass);
 		jTable.getActionMap().put("cut", listenerClass);	
+	}
+
+	public static void toClipboard(final String text) {
+		if (text == null) {
+			return;
+		}
+		if (text.length() == 0) {
+			return;
+		}
+		Toolkit toolkit = Toolkit.getDefaultToolkit();
+		StringSelection selection = new StringSelection(text);
+		Clipboard clipboard = toolkit.getSystemClipboard();
+		clipboard.setContents(selection, null);
+	}
+
+	public static String fromClipboard() {
+		Toolkit toolkit = Toolkit.getDefaultToolkit();
+		Clipboard clipboard = toolkit.getSystemClipboard();
+		Transferable transferable = clipboard.getContents(null);
+		try {
+			return (String) transferable.getTransferData(DataFlavor.stringFlavor);
+		} catch (UnsupportedFlavorException ex) {
+			return null;
+		} catch (IOException ex) {
+			return null;
+		}
+	}
+
+	public static void paste(JTextComponent jText) {
+		String s = CopyHandler.fromClipboard();
+		if (s == null) {
+			return;
+		}
+		String text = jText.getText();
+		String before = text.substring(0, jText.getSelectionStart());
+		String after = text.substring(jText.getSelectionEnd(), text.length());
+		jText.setText(before + s + after);
+		int caretPosition = before.length() + s.length();
+		if (caretPosition <= jText.getText().length()) {
+			jText.setCaretPosition(before.length() + s.length());
+		}
+	}
+
+	public static void cut(JTextComponent jText) {
+		String s = jText.getSelectedText();
+		if (s == null) {
+			return;
+		}
+		if (s.length() == 0) {
+			return;
+		}
+		String text = jText.getText();
+		String before = text.substring(0, jText.getSelectionStart());
+		String after = text.substring(jText.getSelectionEnd(), text.length());
+		jText.setText(before + after);
+		CopyHandler.toClipboard(s);
 	}
 
 	private static void copy(JTable jTable) {
@@ -136,14 +197,7 @@ public class CopyHandler {
 				} //Add end line
 			}
 		}
-		copyToClipboard(tableText.toString()); //Send it all to the clipboard
-	}
-
-	private static void copyToClipboard(final String text) {
-		Toolkit toolkit = Toolkit.getDefaultToolkit();
-		StringSelection selection = new StringSelection(text);
-		Clipboard clipboard = toolkit.getSystemClipboard();
-		clipboard.setContents(selection, null);
+		toClipboard(tableText.toString()); //Send it all to the clipboard
 	}
 
 	/**

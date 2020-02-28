@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2019 Contributors (see credits.txt)
+ * Copyright 2009-2020 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -34,8 +34,21 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JViewport;
 import javax.swing.SwingConstants;
-import javax.swing.event.*;
-import javax.swing.table.*;
+import javax.swing.ToolTipManager;
+import javax.swing.event.AncestorEvent;
+import javax.swing.event.AncestorListener;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.TableColumnModelEvent;
+import javax.swing.event.TableColumnModelListener;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
+import javax.swing.table.JTableHeader;
+import javax.swing.table.TableCellEditor;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumn;
+import javax.swing.table.TableColumnModel;
+import javax.swing.table.TableModel;
 import javax.swing.text.JTextComponent;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.settings.Settings;
@@ -116,6 +129,38 @@ public class JAutoColumnTable extends JTable {
 		autoResizeColumns();
 
 		fixScrollPaneRedraw();
+	}
+
+	@Override
+	protected JTableHeader createDefaultTableHeader() {
+		JTableHeader jTableHeader = new JTableHeader(columnModel) {
+			@Override
+			public String getToolTipText(MouseEvent e) {
+				java.awt.Point p = e.getPoint();
+				int index = columnModel.getColumnIndexAtX(p.x);
+				int realIndex = columnModel.getColumn(index).getModelIndex();
+				return getEnumTableFormatAdaptor().getColumnToolTip(realIndex);
+			}
+		};
+		jTableHeader.addMouseListener(new MouseAdapter() { //Instant ToolTips
+			private int defaultDismissTimeout;
+			private int defaultInitialDelay;
+
+			@Override
+			public void mouseEntered(MouseEvent me) {
+				defaultDismissTimeout = ToolTipManager.sharedInstance().getDismissDelay();
+				defaultInitialDelay = ToolTipManager.sharedInstance().getInitialDelay();
+				ToolTipManager.sharedInstance().setDismissDelay(60000);
+				ToolTipManager.sharedInstance().setInitialDelay(0);
+			}
+
+			@Override
+			public void mouseExited(MouseEvent me) {
+				ToolTipManager.sharedInstance().setDismissDelay(defaultDismissTimeout);
+				ToolTipManager.sharedInstance().setInitialDelay(defaultInitialDelay);
+			}
+		});
+		return jTableHeader;
 	}
 
 	@Override

@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2019 Contributors (see credits.txt)
+ * Copyright 2009-2020 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -30,16 +30,22 @@ import net.nikr.eve.jeveasset.data.api.accounts.OwnerType;
 import net.nikr.eve.jeveasset.data.api.raw.RawTransaction;
 import net.nikr.eve.jeveasset.data.settings.types.EditableLocationType;
 import net.nikr.eve.jeveasset.data.settings.types.ItemType;
+import net.nikr.eve.jeveasset.data.settings.types.LastTransactionType;
 import net.nikr.eve.jeveasset.data.settings.types.OwnersType;
+import net.nikr.eve.jeveasset.gui.shared.table.containers.Percent;
 import net.nikr.eve.jeveasset.i18n.TabsTransaction;
 
-public class MyTransaction extends RawTransaction implements EditableLocationType, ItemType, Comparable<MyTransaction>, OwnersType {
+public class MyTransaction extends RawTransaction implements EditableLocationType, ItemType, Comparable<MyTransaction>, OwnersType, LastTransactionType {
 
 	private final Item item;
 	private final OwnerType owner;
 	private final Set<Long> owners = new HashSet<Long>();
 	private MyLocation location;
 	private String clientName;
+	private double lastTransactionPrice;
+	private double lastTransactionValue;
+	private Percent lastTransactionPercent;
+	private Double tax;
 
 	public MyTransaction(final RawTransaction rawTransaction, final Item item, final OwnerType owner) {
 		super(rawTransaction);
@@ -112,7 +118,7 @@ public class MyTransaction extends RawTransaction implements EditableLocationTyp
 
 	public double getValue() {
 		if (isSell()) {
-			return getQuantity() * getPrice();
+			return (getQuantity() * getPrice()) + getTaxNotNull(); //Adding tax, tax is a negative number
 		} else {
 			return getQuantity() * -getPrice();
 		}
@@ -133,6 +139,52 @@ public class MyTransaction extends RawTransaction implements EditableLocationTyp
 
 	public boolean isCorporation() {
 		return !isPersonal();
+	}
+
+	public Double getTax() {
+		return tax;
+	}
+
+	public double getTaxNotNull() {
+		if (tax != null) {
+			return tax;
+		} else {
+			return 0.0;
+		}
+	}
+
+	public void setTax(Double tax) {
+		this.tax = tax;
+	}
+
+	@Override
+	public double getLastTransactionPrice() {
+		return lastTransactionPrice;
+	}
+
+	@Override
+	public double getLastTransactionValue() {
+		return lastTransactionValue;
+	}
+
+	@Override
+	public Percent getLastTransactionPercent() {
+		return lastTransactionPercent;
+	}
+
+	@Override
+	public void setLastTransactionPrice(double lastTransactionPrice) {
+		this.lastTransactionPrice = lastTransactionPrice;
+	}
+
+	@Override
+	public void setLastTransactionValue(double lastTransactionValue) {
+		this.lastTransactionValue = lastTransactionValue;
+	}
+
+	@Override
+	public void setLastTransactionPercent(Percent lastTransactionPercent) {
+		this.lastTransactionPercent = lastTransactionPercent;
 	}
 
 	@Override

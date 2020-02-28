@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2019 Contributors (see credits.txt)
+ * Copyright 2009-2020 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -485,7 +485,6 @@ public class ConverterTestUtil {
 			marketOrder.setWalletDivision(options.getInteger());
 			marketOrder.setState(options.getMarketOrderStateRaw());
 			marketOrder.setIssuedBy(options.getInteger());
-			marketOrder.setCreated(options.getDate());
 		}
 		if (object instanceof MyJournal) {
 			MyJournal journal = (MyJournal) object;

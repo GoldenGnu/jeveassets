@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2019 Contributors (see credits.txt)
+ * Copyright 2009-2020 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -54,6 +54,7 @@ public final class Formater {
 	private static final DecimalFormat FLOAT_FORMAT  = new DecimalFormat("#,##0.####");
 	private static final DecimalFormat COMPARE_FORMAT  = new DecimalFormat("0.####", new DecimalFormatSymbols(FilterMatcher.LOCALE));
 	private static final DecimalFormat SECURITY_FORMAT  = new DecimalFormat("0.0", new DecimalFormatSymbols(Locale.ENGLISH));
+	private static final DecimalFormat COPY_FORMAT  = new DecimalFormat("0.##");
 	public static final NumberFormat MILLIONS_FORMAT  = new FixedFormat(1000000.0, "M");
 	public static final NumberFormat BILLIONS_FORMAT  = new FixedFormat(1000000000.0, "B");
 	public static final NumberFormat TRILLIONS_FORMAT  = new FixedFormat(1000000000000.0, "T");
@@ -83,17 +84,20 @@ public final class Formater {
 		}
 	}
 
-	public static String iskFormat(final Double number) {
+	public static String copyFormat(final Number number) {
+		return COPY_FORMAT.format(number);
+	}
+	public static String iskFormat(final Number number) {
 		return ISK_FORMAT.format(number);
 	}
-	public static String percentFormat(final Double number) {
+	public static String percentFormat(final Number number) {
 		return PERCENT_FORMAT.format(number);
 	}
 	public static String timesFormat(final Double number) {
 		return TIMES_FORMAT.format(number);
 	}
-	public static String itemsFormat(final Long number) {
-		if (number == 1) {
+	public static String itemsFormat(final Number number) {
+		if (number.longValue() == 1) {
 			return ITEM_FORMAT.format(number);
 		} else {
 			return ITEMS_FORMAT.format(number);

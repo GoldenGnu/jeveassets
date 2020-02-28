@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2019 Contributors (see credits.txt)
+ * Copyright 2009-2020 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -29,17 +29,17 @@ import net.nikr.eve.jeveasset.data.api.accounts.OwnerType;
 import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder;
 import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
-import net.nikr.eve.jeveasset.data.settings.MarketPriceData;
 import net.nikr.eve.jeveasset.data.settings.types.BlueprintType;
 import net.nikr.eve.jeveasset.data.settings.types.ContractPriceType;
 import net.nikr.eve.jeveasset.data.settings.types.EditableLocationType;
 import net.nikr.eve.jeveasset.data.settings.types.EditablePriceType;
 import net.nikr.eve.jeveasset.data.settings.types.ItemType;
+import net.nikr.eve.jeveasset.data.settings.types.LastTransactionType;
 import net.nikr.eve.jeveasset.data.settings.types.OwnersType;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.Percent;
 import net.nikr.eve.jeveasset.i18n.TabsOrders;
 
-public class MyMarketOrder extends RawMarketOrder implements Comparable<MyMarketOrder>, EditableLocationType, ItemType, BlueprintType, EditablePriceType, ContractPriceType, OwnersType {
+public class MyMarketOrder extends RawMarketOrder implements Comparable<MyMarketOrder>, EditableLocationType, ItemType, BlueprintType, EditablePriceType, ContractPriceType, OwnersType, LastTransactionType {
 
 	public enum OrderStatus {
 		ACTIVE() {
@@ -117,6 +117,7 @@ public class MyMarketOrder extends RawMarketOrder implements Comparable<MyMarket
 	private double lastTransactionValue;
 	private Percent lastTransactionPercent;
 	private String issuedByName = "";
+	private Double brokersFee;
 
 	public MyMarketOrder(final RawMarketOrder rawMarketOrder, final Item item, final OwnerType owner) {
 		super(rawMarketOrder);
@@ -254,38 +255,39 @@ public class MyMarketOrder extends RawMarketOrder implements Comparable<MyMarket
 		this.contractPrice = contractPrice;
 	}
 
+	@Override
 	public double getLastTransactionPrice() {
 		return lastTransactionPrice;
 	}
 
+	@Override
 	public double getLastTransactionValue() {
 		return lastTransactionValue;
 	}
 
+	@Override
 	public Percent getLastTransactionPercent() {
 		return lastTransactionPercent;
 	}
 
-	public void setLastTransaction(MarketPriceData lastTransaction) {
-		if (lastTransaction != null) {
-			this.lastTransactionPrice = lastTransaction.getLatest();
-			if (isBuyOrder()) { //Buy
-				this.lastTransactionValue = this.lastTransactionPrice - getPrice();
-				this.lastTransactionPercent = Percent.create(this.lastTransactionPrice / getPrice());
-			} else { //Sell
-				this.lastTransactionValue = getPrice() - this.lastTransactionPrice;
-				this.lastTransactionPercent = Percent.create(getPrice() / this.lastTransactionPrice);
-			}
-		} else {
-			this.lastTransactionPrice = 0;
-			this.lastTransactionValue = 0;
-			this.lastTransactionPercent = Percent.create(0);
-		}
+	@Override
+	public void setLastTransactionPrice(double lastTransactionPrice) {
+		this.lastTransactionPrice = lastTransactionPrice;
+	}
+
+	@Override
+	public void setLastTransactionValue(double lastTransactionValue) {
+		this.lastTransactionValue = lastTransactionValue;
+	}
+
+	@Override
+	public void setLastTransactionPercent(Percent lastTransactionPercent) {
+		this.lastTransactionPercent = lastTransactionPercent;
 	}
 
 	public Date getCreatedOrIssued() {
-		if (getCreated() != null) {
-			return getCreated();
+		if (!getChanged().isEmpty()) {
+			return getChanged().iterator().next();
 		} else {
 			return getIssued();
 		}
@@ -346,6 +348,22 @@ public class MyMarketOrder extends RawMarketOrder implements Comparable<MyMarket
 
 	public boolean isCorporation() {
 		return owner.isCorporation();
+	}
+
+	public Double getBrokersFee() {
+		return brokersFee;
+	}
+
+	public Double getBrokersFeeNotNull() {
+		if (brokersFee != null) {
+			return brokersFee;
+		} else {
+			return 0.0;
+		}
+	}
+
+	public void setBrokersFee(Double brokerFee) {
+		this.brokersFee = brokerFee;
 	}
 
 	@Override

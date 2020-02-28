@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2019 Contributors (see credits.txt)
+ * Copyright 2009-2020 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -83,6 +83,7 @@ public abstract class GuiShared extends Bundle {
 	public abstract String jumpsAddCustom();
 	public abstract String jumpsAddSelected();
 	public abstract String jumpsClear();
+	public abstract String jumpsColumnToolTip(String systemName);
 	public abstract String khonSpace();
 	public abstract String khonSpaceInvention();
 	public abstract String khonSpaceManufacturing();
@@ -111,17 +112,24 @@ public abstract class GuiShared extends Bundle {
 	public abstract String selectionCount();
 	public abstract String selectionInventionSuccess();
 	public abstract String selectionManufactureJobsValue();
-	public abstract String selectionOrdersBoth();
-	public abstract String selectionOrdersBothAvg();
-	public abstract String selectionOrdersBothCount();
-	public abstract String selectionOrdersBuy();
-	public abstract String selectionOrdersBuyAvg();
-	public abstract String selectionOrdersBuyCount();
-	public abstract String selectionOrdersEscrow();
-	public abstract String selectionOrdersSell();
-	public abstract String selectionOrdersSellAvg();
-	public abstract String selectionOrdersSellCount();
-	public abstract String selectionOrdersToCover();
+	public abstract String selectionOrdersCount();
+	public abstract String selectionOrdersCountValue(String volumeRemain, String volumeTotal);
+	public abstract String selectionOrdersSellTotal();
+	public abstract String selectionOrdersBuyTotal();
+	public abstract String selectionOrdersBuyEscrow();
+	public abstract String selectionOrdersBuyToCover();
+	public abstract String selectionOrdersBrokersFee();
+	public abstract String selectionTransactionsSellCount();
+	public abstract String selectionTransactionsSellTotal();
+	public abstract String selectionTransactionsSellAvg();
+	public abstract String selectionTransactionsSellTax();
+	public abstract String selectionTransactionsBothCount();
+	public abstract String selectionTransactionsBothTotal();
+	public abstract String selectionTransactionsBothAvg();
+	public abstract String selectionTransactionsBuyCount();
+	public abstract String selectionTransactionsBuyAvg();
+	public abstract String selectionTransactionsBuyTotal();
+	public abstract String selectionCopiedToClipboard();
 	public abstract String selectionTitle();
 	public abstract String selectionTitleBoth();
 	public abstract String selectionTitleBuy();
@@ -135,6 +143,20 @@ public abstract class GuiShared extends Bundle {
 	public abstract String selectionVolume();
 	public abstract String selectionVolumeNeeded();
 	public abstract String selectionVolumeNow();
+	public abstract String selectionShortAverage();
+	public abstract String selectionShortBrokerFees();
+	public abstract String selectionShortBuy();
+	public abstract String selectionShortCount();
+	public abstract String selectionShortEscrow();
+	public abstract String selectionShortGroup(String text);
+	public abstract String selectionShortInventionSuccess();
+	public abstract String selectionShortIskToCover();
+	public abstract String selectionShortOutputValue();
+	public abstract String selectionShortReprocessedValue();
+	public abstract String selectionShortSell();
+	public abstract String selectionShortTax();
+	public abstract String selectionShortValue();
+	public abstract String selectionShortVolume();
 	public abstract String station();
 	public abstract String stockpile();
 	public abstract String system();

@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2019 Contributors (see credits.txt)
+ * Copyright 2009-2020 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -23,6 +23,10 @@ package net.nikr.eve.jeveasset.gui.shared.menu;
 import ca.odell.glazedlists.SeparatorList;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.BorderFactory;
@@ -32,12 +36,14 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.SwingConstants;
+import javax.swing.Timer;
 import javax.swing.border.Border;
 import net.nikr.eve.jeveasset.data.api.my.MyAsset;
 import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob;
 import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder;
 import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
 import net.nikr.eve.jeveasset.gui.images.Images;
+import net.nikr.eve.jeveasset.gui.shared.CopyHandler;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo.InfoItem;
 import net.nikr.eve.jeveasset.gui.tabs.loadout.Loadout;
@@ -54,6 +60,7 @@ import net.nikr.eve.jeveasset.i18n.TabsLoadout;
 public class JMenuInfo {
 
 	private static Border border = null;
+	private static final int COPY_DELAY = 500;
 
 	private JMenuInfo() {
 	}
@@ -90,7 +97,7 @@ public class JMenuInfo {
 		if (jComponent instanceof JPopupMenu) {
 			JPopupMenu jPopupMenu = (JPopupMenu) jComponent;
 
-			createDefault(jPopupMenu);
+			List<MenuItemValue> values = createDefault(jPopupMenu);
 
 			double averageValue = 0;
 			double totalValue = 0;
@@ -106,15 +113,11 @@ public class JMenuInfo {
 			if (totalCount > 0 && totalValue > 0) {
 				averageValue = totalValue / totalCount;
 			}
-			createMenuItem(jPopupMenu, Formater.iskFormat(totalValue), GuiShared.get().selectionValue(), Images.TOOL_VALUES.getIcon());
-
-			createMenuItem(jPopupMenu, Formater.iskFormat(totalReprocessed), GuiShared.get().selectionValueReprocessed(), Images.SETTINGS_REPROCESSING.getIcon());
-
-			createMenuItem(jPopupMenu, Formater.iskFormat(averageValue), GuiShared.get().selectionAverage(), Images.ASSETS_AVERAGE.getIcon());
-
-			createMenuItem(jPopupMenu, Formater.doubleFormat(totalVolume), GuiShared.get().selectionVolume(), Images.ASSETS_VOLUME.getIcon());
-
-			createMenuItem(jPopupMenu, Formater.itemsFormat(totalCount), GuiShared.get().selectionCount(), Images.EDIT_ADD.getIcon());
+			createMenuItem(values, jPopupMenu, totalValue, NumberFormat.ISK, GuiShared.get().selectionValue(), GuiShared.get().selectionShortValue(), Images.TOOL_VALUES.getIcon());
+			createMenuItem(values, jPopupMenu, totalReprocessed, NumberFormat.ISK, GuiShared.get().selectionValueReprocessed(), GuiShared.get().selectionShortReprocessedValue(), Images.SETTINGS_REPROCESSING.getIcon());
+			createMenuItem(values, jPopupMenu, averageValue, NumberFormat.ISK, GuiShared.get().selectionAverage(), GuiShared.get().selectionShortAverage(), Images.ASSETS_AVERAGE.getIcon());
+			createMenuItem(values, jPopupMenu, totalVolume, NumberFormat.DOUBLE, GuiShared.get().selectionVolume(), GuiShared.get().selectionShortVolume(), Images.ASSETS_VOLUME.getIcon());
+			createMenuItem(values, jPopupMenu, totalCount, NumberFormat.ITEMS, GuiShared.get().selectionCount(), GuiShared.get().selectionShortCount(), Images.EDIT_ADD.getIcon());
 		}
 	}
 
@@ -122,28 +125,35 @@ public class JMenuInfo {
 		if (jComponent instanceof JPopupMenu) {
 			JPopupMenu jPopupMenu = (JPopupMenu) jComponent;
 
-			createDefault(jPopupMenu);
+			List<MenuItemValue> values = createDefault(jPopupMenu);
 
 			double sellOrdersTotal = 0;
+			double sellBrokersFeeTotal = 0;
 			double buyOrdersTotal = 0;
+			double buyBrokersFeeTotal = 0;
 			double toCoverTotal = 0;
 			double escrowTotal = 0;
+			long volumeRemain = 0;
+			long volumeTotal = 0;
 			for (MyMarketOrder marketOrder : list) {
-				if (!marketOrder.isBuyOrder()) { //Sell
-					sellOrdersTotal += marketOrder.getPrice() * marketOrder.getVolumeRemain();
-				} else { //Buy
-					buyOrdersTotal += marketOrder.getPrice() * marketOrder.getVolumeRemain();
+				if (marketOrder.isBuyOrder()) { //Buy
+					buyOrdersTotal += marketOrder.getPrice() * marketOrder.getVolumeTotal();
 					escrowTotal += marketOrder.getEscrow();
-					toCoverTotal += (marketOrder.getPrice() * marketOrder.getVolumeRemain()) - marketOrder.getEscrow();
+					toCoverTotal += (marketOrder.getPrice() * marketOrder.getVolumeTotal()) - marketOrder.getEscrow();
+					buyBrokersFeeTotal += marketOrder.getBrokersFeeNotNull();
+				} else { //Sell
+					sellOrdersTotal += marketOrder.getPrice() * marketOrder.getVolumeTotal();
+					sellBrokersFeeTotal += marketOrder.getBrokersFeeNotNull();
 				}
+				volumeRemain += marketOrder.getVolumeRemain();
+				volumeTotal += marketOrder.getVolumeTotal();
 			}
-			createMenuItem(jPopupMenu, Formater.iskFormat(sellOrdersTotal), GuiShared.get().selectionOrdersSell(), Images.ORDERS_SELL.getIcon());
-
-			createMenuItem(jPopupMenu, Formater.iskFormat(buyOrdersTotal), GuiShared.get().selectionOrdersBuy(), Images.ORDERS_BUY.getIcon());
-
-			createMenuItem(jPopupMenu, Formater.iskFormat(escrowTotal), GuiShared.get().selectionOrdersEscrow(), Images.ORDERS_ESCROW.getIcon());
-
-			createMenuItem(jPopupMenu, Formater.iskFormat(toCoverTotal), GuiShared.get().selectionOrdersToCover(), Images.ORDERS_TO_COVER.getIcon());
+			createMenuItem(values, jPopupMenu, GuiShared.get().selectionOrdersCountValue(Formater.longFormat(volumeRemain), Formater.itemsFormat(volumeTotal)), GuiShared.get().selectionOrdersCount(), GuiShared.get().selectionShortCount(), Images.EDIT_ADD.getIcon());
+			createMenuItem(values, jPopupMenu, sellOrdersTotal + sellBrokersFeeTotal, NumberFormat.ISK, GuiShared.get().selectionOrdersSellTotal(), GuiShared.get().selectionShortSell(), Images.ORDERS_SELL.getIcon());
+			createMenuItem(values, jPopupMenu, buyOrdersTotal + buyBrokersFeeTotal, NumberFormat.ISK, GuiShared.get().selectionOrdersBuyTotal(), GuiShared.get().selectionShortBuy(), Images.ORDERS_BUY.getIcon());
+			createMenuItem(values, jPopupMenu, escrowTotal, NumberFormat.ISK, GuiShared.get().selectionOrdersBuyEscrow(), GuiShared.get().selectionShortEscrow(), Images.ORDERS_ESCROW.getIcon());
+			createMenuItem(values, jPopupMenu, toCoverTotal, NumberFormat.ISK, GuiShared.get().selectionOrdersBuyToCover(), GuiShared.get().selectionShortIskToCover(), Images.ORDERS_TO_COVER.getIcon());
+			createMenuItem(values, jPopupMenu, sellBrokersFeeTotal + buyBrokersFeeTotal, NumberFormat.ISK, GuiShared.get().selectionOrdersBrokersFee(), GuiShared.get().selectionShortBrokerFees(), Images.MISC_COLLAPSED.getIcon());
 		}
 	}
 
@@ -151,9 +161,10 @@ public class JMenuInfo {
 		if (jComponent instanceof JPopupMenu) {
 			JPopupMenu jPopupMenu = (JPopupMenu) jComponent;
 
-			createDefault(jPopupMenu);
+			List<MenuItemValue> values = createDefault(jPopupMenu);
 
 			double sellTotal = 0;
+			double sellTaxTotal = 0;
 			double buyTotal = 0;
 			long sellCount = 0;
 			long buyCount = 0;
@@ -161,6 +172,7 @@ public class JMenuInfo {
 				if (transaction.isSell()) { //Sell
 					sellTotal += transaction.getPrice() * transaction.getQuantity();
 					sellCount += transaction.getQuantity();
+					sellTaxTotal += transaction.getTaxNotNull();
 				} else { //Buy
 					buyTotal += transaction.getPrice() * transaction.getQuantity();
 					buyCount += transaction.getQuantity();
@@ -168,7 +180,7 @@ public class JMenuInfo {
 			}
 			double sellAvg = 0;
 			if (sellTotal > 0 && sellCount > 0) {
-				sellAvg = sellTotal / sellCount;
+				sellAvg = (sellTotal + sellTaxTotal) / sellCount;
 			}
 			double buyAvg = 0;
 			if (buyTotal > 0 && buyCount > 0) {
@@ -178,23 +190,27 @@ public class JMenuInfo {
 			double bothCount = sellCount + buyCount;
 			double bothAvg = 0;
 			if (bothTotal > 0 && bothCount > 0) {
-				bothAvg = bothTotal / bothCount;
+				bothAvg = (bothTotal + sellTaxTotal) / bothCount;
 			}
 			//Sell
-			createMenuItemGroup(jPopupMenu, GuiShared.get().selectionTitleSell(), Images.ORDERS_SELL.getIcon());
-			createMenuItem(jPopupMenu, Formater.itemsFormat(sellCount), GuiShared.get().selectionOrdersSellCount(), Images.EDIT_ADD.getIcon());
-			createMenuItem(jPopupMenu, Formater.iskFormat(sellTotal), GuiShared.get().selectionOrdersSell(), Images.TOOL_VALUES.getIcon());
-			createMenuItem(jPopupMenu, Formater.iskFormat(sellAvg), GuiShared.get().selectionOrdersSellAvg(), Images.ASSETS_AVERAGE.getIcon());
+			List<MenuItemValue> sell = createMenuItemGroup(jPopupMenu, GuiShared.get().selectionTitleSell(), Images.ORDERS_SELL.getIcon());
+			createMenuItem(sell, jPopupMenu, sellCount, NumberFormat.ITEMS, GuiShared.get().selectionTransactionsSellCount(), GuiShared.get().selectionShortCount(), Images.EDIT_ADD.getIcon());
+			createMenuItem(sell, jPopupMenu, sellTotal + sellTaxTotal, NumberFormat.ISK, GuiShared.get().selectionTransactionsSellTotal(), GuiShared.get().selectionShortValue(), Images.TOOL_VALUES.getIcon());
+			createMenuItem(sell, jPopupMenu, sellAvg, NumberFormat.ISK, GuiShared.get().selectionTransactionsSellAvg(), GuiShared.get().selectionShortAverage(), Images.ASSETS_AVERAGE.getIcon());
+			createMenuItem(sell, jPopupMenu, sellTaxTotal, NumberFormat.ISK, GuiShared.get().selectionTransactionsSellTax(), GuiShared.get().selectionShortTax(), Images.MISC_COLLAPSED.getIcon());
+			values.addAll(sell);
 			//Both
-			createMenuItemGroup(jPopupMenu, GuiShared.get().selectionTitleBoth(), Images.TOOL_TRANSACTION.getIcon());
-			createMenuItem(jPopupMenu, Formater.itemsFormat(sellCount + buyCount), GuiShared.get().selectionOrdersBothCount(), Images.EDIT_ADD.getIcon());
-			createMenuItem(jPopupMenu, Formater.iskFormat(bothTotal), GuiShared.get().selectionOrdersBoth(), Images.TOOL_VALUES.getIcon());
-			createMenuItem(jPopupMenu, Formater.iskFormat(bothAvg), GuiShared.get().selectionOrdersBothAvg(), Images.ASSETS_AVERAGE.getIcon());
+			List<MenuItemValue> both = createMenuItemGroup(jPopupMenu, GuiShared.get().selectionTitleBoth(), Images.TOOL_TRANSACTION.getIcon());
+			createMenuItem(both, jPopupMenu, sellCount + buyCount, NumberFormat.ITEMS, GuiShared.get().selectionTransactionsBothCount(), GuiShared.get().selectionShortCount(), Images.EDIT_ADD.getIcon());
+			createMenuItem(both, jPopupMenu, bothTotal + sellTaxTotal, NumberFormat.ISK, GuiShared.get().selectionTransactionsBothTotal(), GuiShared.get().selectionShortValue(), Images.TOOL_VALUES.getIcon());
+			createMenuItem(both, jPopupMenu, bothAvg, NumberFormat.ISK, GuiShared.get().selectionTransactionsBothAvg(), GuiShared.get().selectionShortAverage(), Images.ASSETS_AVERAGE.getIcon());
+			values.addAll(both);
 			//Buy
-			createMenuItemGroup(jPopupMenu, GuiShared.get().selectionTitleBuy(), Images.ORDERS_BUY.getIcon());
-			createMenuItem(jPopupMenu, Formater.itemsFormat(buyCount), GuiShared.get().selectionOrdersBuyCount(), Images.EDIT_ADD.getIcon());
-			createMenuItem(jPopupMenu, Formater.iskFormat(buyTotal), GuiShared.get().selectionOrdersBuy(), Images.TOOL_VALUES.getIcon());
-			createMenuItem(jPopupMenu, Formater.iskFormat(buyAvg), GuiShared.get().selectionOrdersBuyAvg(), Images.ASSETS_AVERAGE.getIcon());
+			List<MenuItemValue> buy = createMenuItemGroup(jPopupMenu, GuiShared.get().selectionTitleBuy(), Images.ORDERS_BUY.getIcon());
+			createMenuItem(buy, jPopupMenu, buyCount, NumberFormat.ITEMS, GuiShared.get().selectionTransactionsBuyCount(), GuiShared.get().selectionShortCount(), Images.EDIT_ADD.getIcon());
+			createMenuItem(buy, jPopupMenu, buyTotal, NumberFormat.ISK, GuiShared.get().selectionTransactionsBuyTotal(), GuiShared.get().selectionShortValue(), Images.TOOL_VALUES.getIcon());
+			createMenuItem(buy, jPopupMenu, buyAvg, NumberFormat.ISK, GuiShared.get().selectionTransactionsBuyAvg(), GuiShared.get().selectionShortAverage(), Images.ASSETS_AVERAGE.getIcon());
+			values.addAll(buy);
 		}
 	}
 
@@ -202,7 +218,7 @@ public class JMenuInfo {
 		if (jComponent instanceof JPopupMenu) {
 			JPopupMenu jPopupMenu = (JPopupMenu) jComponent;
 
-			createDefault(jPopupMenu);
+			List<MenuItemValue> values = createDefault(jPopupMenu);
 
 			int inventionCount = 0;
 			long count = 0;
@@ -221,12 +237,12 @@ public class JMenuInfo {
 				}
 			}
 			if (inventionCount <= 0) {
-				createMenuItem(jPopupMenu, Formater.percentFormat(0.0), GuiShared.get().selectionInventionSuccess(), Images.JOBS_INVENTION_SUCCESS.getIcon());
+				createMenuItem(values, jPopupMenu, 0.0, NumberFormat.PERCENT, GuiShared.get().selectionInventionSuccess(), GuiShared.get().selectionShortInventionSuccess(), Images.JOBS_INVENTION_SUCCESS.getIcon());
 			} else {
-				createMenuItem(jPopupMenu, Formater.percentFormat(success / count), GuiShared.get().selectionInventionSuccess(), Images.JOBS_INVENTION_SUCCESS.getIcon());
+				createMenuItem(values, jPopupMenu, success / count, NumberFormat.PERCENT, GuiShared.get().selectionInventionSuccess(), GuiShared.get().selectionShortInventionSuccess(), Images.JOBS_INVENTION_SUCCESS.getIcon());
 			}
-			createMenuItem(jPopupMenu, Formater.iskFormat(outputValue), GuiShared.get().selectionManufactureJobsValue(), Images.TOOL_VALUES.getIcon());
-			createMenuItem(jPopupMenu, Formater.itemsFormat(count), GuiShared.get().selectionCount(), Images.EDIT_ADD.getIcon());
+			createMenuItem(values, jPopupMenu, outputValue, NumberFormat.ISK, GuiShared.get().selectionManufactureJobsValue(), GuiShared.get().selectionShortOutputValue(), Images.TOOL_VALUES.getIcon());
+			createMenuItem(values, jPopupMenu, count, NumberFormat.ITEMS, GuiShared.get().selectionCount(), GuiShared.get().selectionShortCount(), Images.EDIT_ADD.getIcon());
 		}
 	}
 
@@ -234,7 +250,7 @@ public class JMenuInfo {
 		if (jComponent instanceof JPopupMenu) {
 			JPopupMenu jPopupMenu = (JPopupMenu) jComponent;
 
-			createDefault(jPopupMenu);
+			List<MenuItemValue> values = createDefault(jPopupMenu);
 
 			double volumnNow = 0;
 			double volumnNeeded = 0;
@@ -259,17 +275,14 @@ public class JMenuInfo {
 					valueNeeded = valueNeeded + item.getValueNeeded();
 				}
 			}
-			createMenuItemGroup(jPopupMenu, GuiShared.get().selectionTitleNow());
-
-			createMenuItem(jPopupMenu, Formater.iskFormat(valueNow), GuiShared.get().selectionValueNow(), Images.TOOL_VALUES.getIcon());
-
-			createMenuItem(jPopupMenu, Formater.doubleFormat(volumnNow), GuiShared.get().selectionVolumeNow(), Images.ASSETS_VOLUME.getIcon());
-
-			createMenuItemGroup(jPopupMenu, GuiShared.get().selectionTitleNeeded());
-
-			createMenuItem(jPopupMenu, Formater.iskFormat(valueNeeded), GuiShared.get().selectionValueNeeded(), Images.TOOL_VALUES.getIcon());
-
-			createMenuItem(jPopupMenu, Formater.doubleFormat(volumnNeeded), GuiShared.get().selectionVolumeNeeded(), Images.ASSETS_VOLUME.getIcon());
+			List<MenuItemValue> now = createMenuItemGroup(jPopupMenu, GuiShared.get().selectionTitleNow());
+			createMenuItem(now, jPopupMenu, valueNow, NumberFormat.ISK, GuiShared.get().selectionValueNow(), GuiShared.get().selectionShortValue(), Images.TOOL_VALUES.getIcon());
+			createMenuItem(now, jPopupMenu, volumnNow, NumberFormat.DOUBLE, GuiShared.get().selectionVolumeNow(), GuiShared.get().selectionShortVolume(), Images.ASSETS_VOLUME.getIcon());
+			values.addAll(now);
+			List<MenuItemValue> needed = createMenuItemGroup(jPopupMenu, GuiShared.get().selectionTitleNeeded());
+			createMenuItem(needed, jPopupMenu, valueNeeded, NumberFormat.ISK, GuiShared.get().selectionValueNeeded(), GuiShared.get().selectionShortValue(), Images.TOOL_VALUES.getIcon());
+			createMenuItem(needed, jPopupMenu, volumnNeeded, NumberFormat.DOUBLE, GuiShared.get().selectionVolumeNeeded(), GuiShared.get().selectionShortVolume(), Images.ASSETS_VOLUME.getIcon());
+			values.addAll(needed);
 		}
 	}
 
@@ -277,15 +290,13 @@ public class JMenuInfo {
 		if (jComponent instanceof JPopupMenu) {
 			JPopupMenu jPopupMenu = (JPopupMenu) jComponent;
 
-			createDefault(jPopupMenu);
+			List<MenuItemValue> values = createDefault(jPopupMenu);
 
 			MaterialTotal materialTotal = calcMaterialTotal(new ArrayList<Material>(selected), all);
 
-			createMenuItem(jPopupMenu, Formater.iskFormat(materialTotal.getTotalValue()), GuiShared.get().selectionValue(), Images.TOOL_VALUES.getIcon());
-
-			createMenuItem(jPopupMenu, Formater.iskFormat(materialTotal.getAverageValue()), GuiShared.get().selectionAverage(), Images.ASSETS_AVERAGE.getIcon());
-
-			createMenuItem(jPopupMenu, Formater.itemsFormat(materialTotal.getTotalCount()), GuiShared.get().selectionCount(), Images.EDIT_ADD.getIcon());
+			createMenuItem(values, jPopupMenu, materialTotal.getTotalValue(), NumberFormat.ISK, GuiShared.get().selectionValue(), GuiShared.get().selectionShortValue(), Images.TOOL_VALUES.getIcon());
+			createMenuItem(values, jPopupMenu, materialTotal.getAverageValue(), NumberFormat.ISK, GuiShared.get().selectionAverage(), GuiShared.get().selectionShortAverage(), Images.ASSETS_AVERAGE.getIcon());
+			createMenuItem(values, jPopupMenu, materialTotal.getTotalCount(), NumberFormat.ITEMS, GuiShared.get().selectionCount(), GuiShared.get().selectionShortCount(), Images.EDIT_ADD.getIcon());
 		}
 	}
 
@@ -361,7 +372,7 @@ public class JMenuInfo {
 		if (jComponent instanceof JPopupMenu) {
 			JPopupMenu jPopupMenu = (JPopupMenu) jComponent;
 
-			createDefault(jPopupMenu);
+			List<MenuItemValue> values = createDefault(jPopupMenu);
 
 			long totalCount = 0;
 			double totalValue = 0;
@@ -402,33 +413,76 @@ public class JMenuInfo {
 			if (totalCount > 0 && totalValue > 0) {
 				averageValue = totalValue / totalCount;
 			}
-			createMenuItem(jPopupMenu, Formater.iskFormat(totalValue), GuiShared.get().selectionValue(), Images.TOOL_VALUES.getIcon());
-
-			createMenuItem(jPopupMenu, Formater.iskFormat(averageValue), GuiShared.get().selectionAverage(), Images.ASSETS_AVERAGE.getIcon());
-
-			createMenuItem(jPopupMenu, Formater.itemsFormat(totalCount), GuiShared.get().selectionCount(), Images.EDIT_ADD.getIcon());
+			createMenuItem(values, jPopupMenu, totalValue, NumberFormat.ISK, GuiShared.get().selectionValue(), GuiShared.get().selectionShortValue(), Images.TOOL_VALUES.getIcon());
+			createMenuItem(values, jPopupMenu, averageValue, NumberFormat.ISK, GuiShared.get().selectionAverage(), GuiShared.get().selectionShortAverage(), Images.ASSETS_AVERAGE.getIcon());
+			createMenuItem(values, jPopupMenu, totalCount, NumberFormat.ISK, GuiShared.get().selectionCount(),  GuiShared.get().selectionShortCount(), Images.EDIT_ADD.getIcon());
 		}
 	}
 
-	private static void createMenuItem(final JPopupMenu jPopupMenu, final String text, final String toolTipText, final Icon icon) {
-		JMenuItem jMenuItem = new JMenuItem(text);
+	public static JMenuItem createMenuItem(List<MenuItemValue> values, final JPopupMenu jPopupMenu, final Number number, NumberFormat numberFormat, final String toolTipText, String shortText, final Icon icon) {
+		return createMenuItem(values, jPopupMenu, null, number, numberFormat, toolTipText, shortText, icon);
+	}
+
+	public static JMenuItem createMenuItem(List<MenuItemValue> values, final JPopupMenu jPopupMenu, final String text, final String toolTipText, String shortText, final Icon icon) {
+		return createMenuItem(values, jPopupMenu, text, null, null, toolTipText, shortText, icon);
+	}
+
+	private static JMenuItem createMenuItem(List<MenuItemValue> values, final JPopupMenu jPopupMenu, final String text, final Number number, NumberFormat numberFormat, final String toolTipText, String shortText, final Icon icon) {
+		values.add(new MenuItemValue(shortText, text, number));
+		JMenuItem jMenuItem;
+		if (text == null) { //Numeric Value
+			jMenuItem = new JMenuItem(format(number, numberFormat));
+		} else { //Text value
+			jMenuItem = new JMenuItem(text);
+		}
 		jMenuItem.setToolTipText(toolTipText);
 		jMenuItem.setEnabled(false);
 		jMenuItem.setDisabledIcon(icon);
 		jMenuItem.setForeground(Color.BLACK);
 		jMenuItem.setHorizontalAlignment(SwingConstants.RIGHT);
 		jPopupMenu.add(jMenuItem);
+		jMenuItem.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mousePressed(MouseEvent e) {
+				if (e.getButton() == MouseEvent.BUTTON1) {
+					if (number != null) {
+						CopyHandler.toClipboard(Formater.copyFormat(number));
+					} else {
+						CopyHandler.toClipboard(text);
+					}
+					jMenuItem.setText(GuiShared.get().selectionCopiedToClipboard());
+					jMenuItem.setDisabledIcon(Images.EDIT_COPY.getIcon());
+					final Timer timer = new Timer(COPY_DELAY, null);
+					timer.addActionListener(new ActionListener() {
+						@Override
+						public void actionPerformed(ActionEvent e) {
+							if (text == null) {
+								jMenuItem.setText(format(number, numberFormat));
+							} else {
+								jMenuItem.setText(text);
+							}
+							jMenuItem.setDisabledIcon(icon);
+							timer.stop();
+						}
+					});
+					timer.start();
+				}
+			}
+		});
+		return jMenuItem;
 	}
 
-	private static void createMenuItemGroup(final JPopupMenu jPopupMenu, final String text) {
-		createMenuItemGroup(jPopupMenu, text, null);
+	private static List<MenuItemValue> createMenuItemGroup(final JPopupMenu jPopupMenu, final String text) {
+		return createMenuItemGroup(jPopupMenu, text, null);
 	}
 
-	private static void createMenuItemGroup(final JPopupMenu jPopupMenu, final String text, final Icon icon) {
+	private static List<MenuItemValue> createMenuItemGroup(final JPopupMenu jPopupMenu, final String text, final Icon icon) {
+		List<MenuItemValue> values = new ArrayList<>();
 		JMenuItem jMenuItem = new JMenuItem(text);
 		if (icon != null) {
 			jMenuItem.setDisabledIcon(icon);
 		}
+		values.add(new MenuItemValue(null, GuiShared.get().selectionShortGroup(text), null));
 		jMenuItem.setEnabled(false);
 		if (border == null) {
 			border = BorderFactory.createCompoundBorder(
@@ -442,18 +496,64 @@ public class JMenuInfo {
 		jMenuItem.setForeground(Color.BLACK);
 		jMenuItem.setBorder(border);
 		jMenuItem.setBorderPainted(true);
+		jMenuItem.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mousePressed(MouseEvent e) {
+				if (e.getButton() == MouseEvent.BUTTON1) {
+					CopyHandler.toClipboard(format(values));
+					jMenuItem.setText(GuiShared.get().selectionCopiedToClipboard());
+					jMenuItem.setDisabledIcon(Images.EDIT_COPY.getIcon());
+					final Timer timer = new Timer(COPY_DELAY, null);
+					timer.addActionListener(new ActionListener() {
+						@Override
+						public void actionPerformed(ActionEvent e) {
+							jMenuItem.setText(text);
+							jMenuItem.setDisabledIcon(icon);
+							timer.stop();
+						}
+					});
+					timer.start();
+				}
+			}
+		});
 		jPopupMenu.add(jMenuItem);
+		return values;
 	}
 
-	public static void createDefault(final JPopupMenu jPopupMenu) {
-		JMenuItem jMenuItem;
+	public static List<MenuItemValue> createDefault(final JPopupMenu jPopupMenu) {
+		return createDefault(jPopupMenu, new JMenuItem());
+	}
+
+	public static List<MenuItemValue> createDefault(final JPopupMenu jPopupMenu, final JMenuItem jMenuItem) {
+		final List<MenuItemValue> values = new ArrayList<>();
+		values.add(new MenuItemValue(null, GuiShared.get().selectionTitle(), null));
 
 		jPopupMenu.addSeparator();
 
-		jMenuItem = new JMenuItem(GuiShared.get().selectionTitle());
+		jMenuItem.setText(GuiShared.get().selectionTitle());
 		jMenuItem.setDisabledIcon(Images.DIALOG_ABOUT.getIcon());
 		jMenuItem.setEnabled(false);
 		jMenuItem.setForeground(Color.BLACK);
+		jMenuItem.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mousePressed(MouseEvent e) {
+				if (e.getButton() == MouseEvent.BUTTON1) {
+					CopyHandler.toClipboard(format(values));
+					jMenuItem.setText(GuiShared.get().selectionCopiedToClipboard());
+					jMenuItem.setDisabledIcon(Images.EDIT_COPY.getIcon());
+					final Timer timer = new Timer(COPY_DELAY, null);
+					timer.addActionListener(new ActionListener() {
+						@Override
+						public void actionPerformed(ActionEvent e) {
+							jMenuItem.setText(GuiShared.get().selectionTitle());
+							jMenuItem.setDisabledIcon(Images.DIALOG_ABOUT.getIcon());
+							timer.stop();
+						}
+					});
+					timer.start();
+				}
+			}
+		});
 		jPopupMenu.add(jMenuItem);
 
 		JPanel jSpacePanel = new JPanel();
@@ -462,6 +562,38 @@ public class JMenuInfo {
 		jSpacePanel.setPreferredSize(new Dimension(50, 5));
 		jSpacePanel.setMaximumSize(new Dimension(50, 5));
 		jPopupMenu.add(jSpacePanel);
+
+		return values;
+	}
+
+	private static String format(final Number number, NumberFormat numberFormat) {
+		switch(numberFormat) {
+			case ISK: return Formater.iskFormat(number);
+			case DOUBLE: return Formater.doubleFormat(number);
+			case ITEMS: return Formater.itemsFormat(number);
+			case PERCENT: return Formater.percentFormat(number);
+			default: return String.valueOf(number);
+		}
+	}
+
+	private static String format(final List<MenuItemValue> values) {
+		StringBuilder builder = new StringBuilder();
+		for (MenuItemValue item : values) {
+			if (item.type != null) {
+				builder.append(item.type);
+				builder.append(": ");
+			}
+			if (item.number != null) {
+				builder.append(Formater.copyFormat(item.number));
+				builder.append("\r\n");
+			} else if (item.text != null) {
+				builder.append(item.text);
+				builder.append("\r\n");
+			} else {
+				builder.append("\r\n");
+			}
+		}
+		return builder.toString();
 	}
 
 	public static class MaterialTotal {
@@ -487,6 +619,23 @@ public class JMenuInfo {
 		public double getTotalValue() {
 			return totalValue;
 		}
+	}
+
+	public static class MenuItemValue {
+		private final String type;
+		private final String text;
+		private final Number number;
+
+		public MenuItemValue(String type, String text, Number number) {
+			this.type = type;
+			this.text = text;
+			this.number = number;
+		}
+
+	}
+
+	public enum NumberFormat {
+		ISK, DOUBLE, ITEMS, PERCENT
 	}
 
 	public interface InfoItem {

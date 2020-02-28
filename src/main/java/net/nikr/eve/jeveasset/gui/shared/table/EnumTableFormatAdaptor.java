@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2019 Contributors (see credits.txt)
+ * Copyright 2009-2020 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -426,6 +426,14 @@ public class EnumTableFormatAdaptor<T extends Enum<T> & EnumTableColumn<Q>, Q> i
 	@Override public String getColumnName(final int i) {
 		try {
 			return getColumn(i).getColumnName();
+		} catch (IndexOutOfBoundsException ex) {
+			return null;
+		}
+	}
+
+	public String getColumnToolTip(final int i) {
+		try {
+			return getColumn(i).getColumnToolTip();
 		} catch (IndexOutOfBoundsException ex) {
 			return null;
 		}

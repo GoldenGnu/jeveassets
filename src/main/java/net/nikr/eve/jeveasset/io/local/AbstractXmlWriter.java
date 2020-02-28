@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2019 Contributors (see credits.txt)
+ * Copyright 2009-2020 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -27,7 +27,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -148,6 +151,13 @@ public abstract class AbstractXmlWriter extends AbstractBackup {
 	private String valueOf(final Object object) {
 		if (object == null) {
 			throw new RuntimeException("Can't save null");
+		} else if (object instanceof Collection) {
+			Collection<?> collection = (Collection) object;
+			List<String> list = new ArrayList<>();
+			for (Object t : collection) {
+				list.add(valueOf(t));
+			}
+			return String.join(",", list);
 		} else if (object instanceof Date) {
 			Date date = (Date) object;
 			return String.valueOf(date.getTime());

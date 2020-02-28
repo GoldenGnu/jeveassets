@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2019 Contributors (see credits.txt)
+ * Copyright 2009-2020 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -213,6 +213,11 @@ public class JMenuJumps<T> extends MenuManager.JAutoMenu<T> {
 		@Override
 		public String getColumnName() {
 			return systemName;
+		}
+
+		@Override
+		public String getColumnToolTip() {
+			return GuiShared.get().jumpsColumnToolTip(systemName);
 		}
 
 		@Override

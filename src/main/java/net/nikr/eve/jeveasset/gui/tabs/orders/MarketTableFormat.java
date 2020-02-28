@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2019 Contributors (see credits.txt)
+ * Copyright 2009-2020 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -85,14 +85,46 @@ public enum MarketTableFormat implements EnumTableColumn<MyMarketOrder> {
 			return from.getPrice();
 		}
 	},
+	BROKERS_FEE(Double.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsOrders.get().columnBrokersFee();
+		}
+		@Override
+		public String getColumnToolTip() {
+			return TabsOrders.get().columnBrokersFeeToolTip();
+		}
+		@Override
+		public Object getColumnValue(final MyMarketOrder from) {
+			return from.getBrokersFee();
+		}
+	},
 	ISSUED(Date.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
 			return TabsOrders.get().columnIssued();
 		}
 		@Override
+		public String getColumnToolTip() {
+			return TabsOrders.get().columnIssuedToolTip();
+		}
+		@Override
 		public Object getColumnValue(final MyMarketOrder from) {
 			return from.getIssued();
+		}
+	},
+	ISSUED_FIRST(Date.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsOrders.get().columnIssuedFirst();
+		}
+		@Override
+		public String getColumnToolTip() {
+			return TabsOrders.get().columnIssuedFirstToolTip();
+		}
+		@Override
+		public Object getColumnValue(final MyMarketOrder from) {
+			return from.getCreatedOrIssued();
 		}
 	},
 	EXPIRES(Date.class, GlazedLists.comparableComparator()) {
@@ -213,6 +245,16 @@ public enum MarketTableFormat implements EnumTableColumn<MyMarketOrder> {
 		@Override
 		public Object getColumnValue(final MyMarketOrder from) {
 			return from.getLastTransactionPercent();
+		}
+	},
+	TYPE_ID(Integer.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsOrders.get().columnTypeID();
+		}
+		@Override
+		public Object getColumnValue(final MyMarketOrder from) {
+			return from.getTypeID();
 		}
 	};
 

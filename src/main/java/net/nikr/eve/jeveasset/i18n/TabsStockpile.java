@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2019 Contributors (see credits.txt)
+ * Copyright 2009-2020 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -69,7 +69,8 @@ public abstract class TabsStockpile extends Bundle {
 	public abstract String estimatedMarketValue();
 	public abstract String eveMultibuy();
 	public abstract String expand();
-	public abstract String exportStockpiles();
+	public abstract String exportStockpilesXml();
+	public abstract String exportStockpilesText();
 	public abstract String flag();
 	public abstract String getShoppingList();
 	public abstract String importButton();
@@ -86,20 +87,23 @@ public abstract class TabsStockpile extends Bundle {
 	public abstract String importShoppingList();
 	public abstract String importShoppingListHelp();
 	public abstract String importShoppingListTitle();
-	public abstract String importStockpiles();
-	public abstract String importXmlAll(int count);
-	public abstract String importXmlCancelledMsg();
-	public abstract String importXmlCancelledTitle();
+	public abstract String importStockpilesText();
+	public abstract String importTextFailedMsg();
+	public abstract String importStockpilesXml();
+	public abstract String importOptionsAll(int count);
+	public abstract String importOptionsCancelledMsg();
+	public abstract String importOptionsCancelledTitle();
 	public abstract String importXmlFailedMsg();
-	public abstract String importXmlFailedTitle();
-	public abstract String importXmlMerge();
-	public abstract String importXmlMergeHelp();
-	public abstract String importXmlOverwrite();
-	public abstract String importXmlOverwriteHelp();
-	public abstract String importXmlRename();
-	public abstract String importXmlRenameHelp();
-	public abstract String importXmlSkip();
-	public abstract String importXmlSkipHelp();
+	public abstract String importFailedTitle();
+	public abstract String importOptions();
+	public abstract String importOptionsMerge();
+	public abstract String importOptionsMergeHelp();
+	public abstract String importOptionsOverwrite();
+	public abstract String importOptionsOverwriteHelp();
+	public abstract String importOptionsRename();
+	public abstract String importOptionsRenameHelp();
+	public abstract String importOptionsSkip();
+	public abstract String importOptionsSkipHelp();
 	public abstract String include();
 	public abstract String includeContainer();
 	public abstract String includeCount(int i);

@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2019 Contributors (see credits.txt)
+ * Copyright 2009-2020 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -98,6 +98,8 @@ import net.nikr.eve.jeveasset.gui.tabs.stockpile.StockpileSeparatorTableCell.Sto
 import net.nikr.eve.jeveasset.i18n.TabsStockpile;
 import net.nikr.eve.jeveasset.io.local.SettingsReader;
 import net.nikr.eve.jeveasset.io.local.SettingsWriter;
+import net.nikr.eve.jeveasset.io.local.StockpileDataReader;
+import net.nikr.eve.jeveasset.io.local.StockpileDataWriter;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 
 
@@ -111,7 +113,9 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 		IMPORT_ISK_PER_HOUR,
 		IMPORT_MULTIBUY,
 		IMPORT_SHOPPING_LIST,
+		IMPORT_TEXT,
 		IMPORT_XML,
+		EXPORT_TEXT,
 		EXPORT_XML,
 		COLLAPSE,
 		EXPAND
@@ -207,14 +211,23 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 		jImportShoppingList.addActionListener(listener);
 		jImport.add(jImportShoppingList);
 
-		JMenuItem jImportXml = new JMenuItem(TabsStockpile.get().importStockpiles(), Images.TOOL_STOCKPILE.getIcon());
+		JMenuItem jImportXml = new JMenuItem(TabsStockpile.get().importStockpilesXml(), Images.TOOL_STOCKPILE.getIcon());
 		jImportXml.setActionCommand(StockpileAction.IMPORT_XML.name());
 		jImportXml.addActionListener(listener);
 		jImport.add(jImportXml);
 
-		JMenuItem jExportXml = new JMenuItem(TabsStockpile.get().exportStockpiles(), Images.TOOL_STOCKPILE.getIcon());
+		JMenuItem jImportText = new JMenuItem(TabsStockpile.get().importStockpilesText(), Images.EDIT_COPY.getIcon());
+		jImportText.setActionCommand(StockpileAction.IMPORT_TEXT.name());
+		jImportText.addActionListener(listener);
+		jImport.add(jImportText);
+
+		JMenuItem jExportXml = new JMenuItem(TabsStockpile.get().exportStockpilesXml(), Images.TOOL_STOCKPILE.getIcon());
 		jExportXml.setActionCommand(StockpileAction.EXPORT_XML.name());
 		jExportXml.addActionListener(listener);
+
+		JMenuItem jExportText = new JMenuItem(TabsStockpile.get().exportStockpilesText(), Images.EDIT_COPY.getIcon());
+		jExportText.setActionCommand(StockpileAction.EXPORT_TEXT.name());
+		jExportText.addActionListener(listener);
 
 		JFixedToolBar jToolBarRight = new JFixedToolBar();
 
@@ -277,6 +290,7 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 				);
 
 		filterControl.addExportOption(jExportXml);
+		filterControl.addExportOption(jExportText);
 		//Menu
 		installMenu(program, new StockpileTableMenu(), jTable, StockpileItem.class);
 
@@ -757,42 +771,65 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 		if (value == JFileChooser.APPROVE_OPTION) {
 			List<Stockpile> stockpiles = SettingsReader.loadStockpile(jFileChooser.getSelectedFile().getAbsolutePath());
 			if (stockpiles != null) {
-				stockpiles = stockpileSelectionDialog.show(stockpiles);
-				if (stockpiles != null) {
-					List<Stockpile> existing = new ArrayList<Stockpile>();
-					boolean save = false;
-					for (Stockpile stockpile : stockpiles) {
-						if (Settings.get().getStockpiles().contains(stockpile)) { //Exist
-							existing.add(stockpile);
-						} else { //New
-							//Save Result
-							save = true;
-							Settings.lock("Stockpile (Import XML new)");
-							addStockpile(program, stockpile); //Add 
-							Settings.unlock("Stockpile (Import XML new)");
-							//Update UI
-							addStockpile(stockpile);
-						}
-					}
-					stockpileImportDialog.resetToDefault();
-					int count = existing.size();
-					ImportReturn importReturn = ImportReturn.SKIP;
-					for (Stockpile stockpile : existing) {
-						importReturn = importOptions(stockpile, importReturn, count);
-						if (importReturn == ImportReturn.OVERWRITE || importReturn == ImportReturn.OVERWRITE_ALL) {
-							save = true;
-						}
-						count--;
-					}
-					Collections.sort(Settings.get().getStockpiles());
-					if (save) {
-						program.saveSettings("Stockpile (Import XML)");
-					}
-					
-				}
+				importStockpiles(stockpiles);
 			} else {
-				JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), TabsStockpile.get().importXmlFailedMsg(), TabsStockpile.get().importXmlFailedTitle(), JOptionPane.WARNING_MESSAGE);
+				JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), TabsStockpile.get().importXmlFailedMsg(), TabsStockpile.get().importFailedTitle(), JOptionPane.WARNING_MESSAGE);
 			}
+		}
+	}
+
+	private void importText() {
+		jTextDialog.setLineWrap(true);
+		String importText = jTextDialog.importText();
+		jTextDialog.setLineWrap(false);
+		if (importText == null) {
+			return; //Cancel
+		}
+		List<Stockpile> stockpiles  = StockpileDataReader.load(importText);
+		if (stockpiles != null) {
+			importStockpiles(stockpiles);
+		} else {
+			JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), TabsStockpile.get().importTextFailedMsg(), TabsStockpile.get().importFailedTitle(), JOptionPane.WARNING_MESSAGE);
+		}
+	}
+
+	private void importStockpiles(List<Stockpile> stockpiles) {
+		if (stockpiles == null) {
+			return;
+		}
+		stockpiles = stockpileSelectionDialog.show(stockpiles);
+		importStockpiles(stockpiles);
+		if (stockpiles == null) {
+			return;
+		}
+		List<Stockpile> existing = new ArrayList<Stockpile>();
+		boolean save = false;
+		for (Stockpile stockpile : stockpiles) {
+			if (Settings.get().getStockpiles().contains(stockpile)) { //Exist
+				existing.add(stockpile);
+			} else { //New
+				//Save Result
+				save = true;
+				Settings.lock("Stockpile (Import new)");
+				addStockpile(program, stockpile); //Add 
+				Settings.unlock("Stockpile (Import new)");
+				//Update UI
+				addStockpile(stockpile);
+			}
+		}
+		stockpileImportDialog.resetToDefault();
+		int count = existing.size();
+		ImportReturn importReturn = ImportReturn.SKIP;
+		for (Stockpile stockpile : existing) {
+			importReturn = importOptions(stockpile, importReturn, count);
+			if (importReturn == ImportReturn.OVERWRITE || importReturn == ImportReturn.OVERWRITE_ALL) {
+				save = true;
+			}
+			count--;
+		}
+		Collections.sort(Settings.get().getStockpiles());
+		if (save) {
+			program.saveSettings("Stockpile (Import)");
 		}
 	}
 
@@ -809,7 +846,7 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 			if (returnRename != null) { //OK
 				addStockpile(returnRename); //Update UI
 			} else { //Cancel
-				JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), TabsStockpile.get().importXmlCancelledMsg(), TabsStockpile.get().importXmlCancelledTitle(), JOptionPane.PLAIN_MESSAGE);
+				JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), TabsStockpile.get().importOptionsCancelledMsg(), TabsStockpile.get().importOptionsCancelledTitle(), JOptionPane.PLAIN_MESSAGE);
 				return importOptions(stockpile, ImportReturn.RENAME, count); //Retry - if RENAME_ALL, ask again
 			}
 		}
@@ -821,7 +858,7 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 		}
 		//Overwrite
 		if (importReturn == ImportReturn.OVERWRITE || importReturn == ImportReturn.OVERWRITE_ALL) {
-			Settings.lock("Stockpile (Import XML overwrite)"); //Lock settings
+			Settings.lock("Stockpile (Import Options overwrite)"); //Lock settings
 			//Remove
 			int index = Settings.get().getStockpiles().indexOf(stockpile); //Get index of old Stockpile
 			Stockpile removeStockpile = Settings.get().getStockpiles().get(index); //Get old stockpile
@@ -829,7 +866,7 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 			Settings.get().getStockpiles().remove(removeStockpile); //Remove old stockpile from the Settings
 			//Add
 			addStockpile(program, stockpile); //Add imported stockpile to Settings
-			Settings.unlock("Stockpile (Import XML overwrite)"); //Unlock settings
+			Settings.unlock("Stockpile (Import Options overwrite)"); //Unlock settings
 			//Update UI
 			addStockpile(stockpile); //Add imported stockpile to Settings
 		}
@@ -864,6 +901,18 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 			int value = jFileChooser.showSaveDialog(program.getMainWindow().getFrame());
 			if (value == JFileChooser.APPROVE_OPTION) {
 				SettingsWriter.saveStockpiles(stockpiles, jFileChooser.getSelectedFile().getAbsolutePath());
+			}
+		}
+	}
+
+	private void exportText() {
+		List<Stockpile> stockpiles = stockpileSelectionDialog.show(getShownStockpiles());
+		if (stockpiles != null) {
+			String json = StockpileDataWriter.save(stockpiles);
+			if (json != null) {
+				jTextDialog.setLineWrap(true);
+				jTextDialog.exportText(json);
+				jTextDialog.setLineWrap(false);
 			}
 		}
 	}
@@ -1023,8 +1072,12 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 				importText(new ImportShoppingList());
 			} else if (StockpileAction.IMPORT_XML.name().equals(e.getActionCommand())) { //Add stockpile (Xml)
 				importXml();
+			} else if (StockpileAction.IMPORT_TEXT.name().equals(e.getActionCommand())) { //Add stockpile (Xml)
+				importText();
 			} else if (StockpileAction.EXPORT_XML.name().equals(e.getActionCommand())) { //Export XML
 				exportXml();
+			} else if (StockpileAction.EXPORT_TEXT.name().equals(e.getActionCommand())) { //Export XML
+				exportText();
 			} else if (StockpileAction.ADD_STOCKPILE.name().equals(e.getActionCommand())) { //Add stockpile
 				Stockpile stockpile = stockpileDialog.showAdd();
 				if (stockpile != null) {

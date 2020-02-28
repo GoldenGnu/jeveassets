@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2019 Contributors (see credits.txt)
+ * Copyright 2009-2020 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -42,7 +42,12 @@ public abstract class TabsOrders extends Bundle {
 	public abstract String columnVolumeRemain();
 	public abstract String columnVolumeTotal();
 	public abstract String columnPrice();
+	public abstract String columnBrokersFee();
+	public abstract String columnBrokersFeeToolTip();
 	public abstract String columnIssued();
+	public abstract String columnIssuedToolTip();
+	public abstract String columnIssuedFirst();
+	public abstract String columnIssuedFirstToolTip();
 	public abstract String columnExpires();
 	public abstract String columnRange();
 	public abstract String columnRemainingValue();
@@ -55,6 +60,7 @@ public abstract class TabsOrders extends Bundle {
 	public abstract String columnLastTransactionPrice();
 	public abstract String columnLastTransactionValue();
 	public abstract String columnLastTransactionPercent();
+	public abstract String columnTypeID();
 	public abstract String market();
 	public abstract String rangeStation();
 	public abstract String rangeSolarSystem();

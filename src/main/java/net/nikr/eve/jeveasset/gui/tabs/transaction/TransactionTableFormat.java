@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2019 Contributors (see credits.txt)
+ * Copyright 2009-2020 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -26,6 +26,7 @@ import java.util.Comparator;
 import java.util.Date;
 import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
+import net.nikr.eve.jeveasset.gui.shared.table.containers.Percent;
 import net.nikr.eve.jeveasset.i18n.TabsTransaction;
 
 
@@ -70,6 +71,16 @@ public enum TransactionTableFormat implements EnumTableColumn<MyTransaction> {
 			return from.getPrice();
 		}
 	},
+	TAX(Double.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsTransaction.get().columnTax();
+		}
+		@Override
+		public Object getColumnValue(final MyTransaction from) {
+			return from.getTax();
+		}
+	},
 	VALUE(Double.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
@@ -108,6 +119,36 @@ public enum TransactionTableFormat implements EnumTableColumn<MyTransaction> {
 		@Override
 		public Object getColumnValue(final MyTransaction from) {
 			return from.getLocation().getRegion();
+		}
+	},
+	LAST_TRANSACTION_PRICE(Double.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsTransaction.get().columnLastTransactionPrice();
+		}
+		@Override
+		public Object getColumnValue(final MyTransaction from) {
+			return from.getLastTransactionPrice();
+		}
+	},
+	LAST_TRANSACTION_VALUE(Double.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsTransaction.get().columnLastTransactionValue();
+		}
+		@Override
+		public Object getColumnValue(final MyTransaction from) {
+			return from.getLastTransactionValue();
+		}
+	},
+	LAST_TRANSACTION_PERCENT(Percent.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsTransaction.get().columnLastTransactionPercent();
+		}
+		@Override
+		public Object getColumnValue(final MyTransaction from) {
+			return from.getLastTransactionPercent();
 		}
 	},
 	CLIENT(String.class, GlazedLists.comparableComparator()) {

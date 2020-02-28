@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2019 Contributors (see credits.txt)
+ * Copyright 2009-2020 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -578,6 +578,10 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		settings.setStockpileColorGroup3(group3);
 	}
 
+	/**
+	 * -!- `!´ IMPORTANT `!´ -!-
+	 * StockpileDataWriter and StockpileDataReader needs to be updated too - on any changes!!!
+	 */
 	private void parseStockpiles(final Element stockpilesElement, final List<Stockpile> stockpiles) throws XmlException {
 		NodeList stockpileNodes = stockpilesElement.getElementsByTagName("stockpile");
 		for (int a = 0; a < stockpileNodes.getLength(); a++) {

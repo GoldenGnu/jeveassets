@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2019 Contributors (see credits.txt)
+ * Copyright 2009-2020 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -36,4 +36,7 @@ public interface EnumTableColumn<Q> {
 	public boolean isColumnEditable(Object baseObject);
 	public boolean isShowDefault();
 	public boolean setColumnValue(Object baseObject, Object editedValue);
+	default public String getColumnToolTip() {
+		return null;
+	}
 }

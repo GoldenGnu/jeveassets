@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2019 Contributors (see credits.txt)
+ * Copyright 2009-2020 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -96,6 +96,12 @@ public abstract class TabsTracker extends Bundle {
 	public abstract String selectFlag();
 	public abstract String selectLocation();
 	public abstract String selectOwner();
+	public abstract String selectionDate();
+	public abstract String selectionIsk();
+	public abstract String selectionNote();
+	public abstract String selectionShortDate();
+	public abstract String selectionShortIsk();
+	public abstract String selectionShortNote();
 	public abstract String sellOrders();
 	public abstract String statusAssets();
 	public abstract String statusBalance();

@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2019 Contributors (see credits.txt)
+ * Copyright 2009-2020 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -55,9 +55,13 @@ public abstract class TabsTransaction extends Bundle {
 	public abstract String columnName();
 	public abstract String columnQuantity();
 	public abstract String columnPrice();
+	public abstract String columnTax();
 	public abstract String columnClientName();
 	public abstract String columnStationName();
 	public abstract String columnRegion();
+	public abstract String columnLastTransactionPrice();
+	public abstract String columnLastTransactionValue();
+	public abstract String columnLastTransactionPercent();
 	public abstract String columnTransactionFor();
 	public abstract String columnValue();
 	public abstract String columnTransactionDate();
