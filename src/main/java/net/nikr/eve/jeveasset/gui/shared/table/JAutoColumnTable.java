@@ -138,6 +138,9 @@ public class JAutoColumnTable extends JTable {
 			public String getToolTipText(MouseEvent e) {
 				java.awt.Point p = e.getPoint();
 				int index = columnModel.getColumnIndexAtX(p.x);
+				if (index < 0 || index > columnModel.getColumnCount()) {
+					return null;
+				}
 				int realIndex = columnModel.getColumn(index).getModelIndex();
 				return getEnumTableFormatAdaptor().getColumnToolTip(realIndex);
 			}
