@@ -373,13 +373,14 @@ function getArray($dbh, $column) {
 	$statement = $dbh->prepare("SELECT $column FROM ".table());
 	$statement->execute();
 	$rows = $statement->fetchAll(PDO::FETCH_ASSOC);
-	$array = array('All');
+	$array = array();
 	foreach ($rows as &$row) {
 		$temp = explode(';', $row[$column]);
 		$temp = array_merge($temp, $array);
 		$array = array_unique($temp);
 	}
 	sort($array);
+	array_unshift($array, "All");
 	return $array;
 }
 function update($dbh, $id, $status) {
