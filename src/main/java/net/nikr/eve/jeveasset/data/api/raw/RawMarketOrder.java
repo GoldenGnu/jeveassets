@@ -102,7 +102,7 @@ public class RawMarketOrder {
 	private Boolean isBuyOrder = null;
 	private Boolean isCorp = null;
 	private Date issued = null;
-	private Set<Date> changed = new TreeSet<>();
+	private final Set<Date> changed = new TreeSet<>();
 	private Integer issuedBy = null;
 	private Long locationId = null;
 	private Integer minVolume = null;
@@ -137,7 +137,7 @@ public class RawMarketOrder {
 		isBuyOrder = marketOrder.isBuyOrder;
 		isCorp = marketOrder.isCorp;
 		issued = marketOrder.issued;
-		changed = marketOrder.changed;
+		changed.addAll(marketOrder.changed);
 		issuedBy = marketOrder.issuedBy;
 		locationId = marketOrder.locationId;
 		minVolume = marketOrder.minVolume;
