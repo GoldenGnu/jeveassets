@@ -99,6 +99,20 @@ public enum MarketTableFormat implements EnumTableColumn<MyMarketOrder> {
 			return from.getBrokersFee();
 		}
 	},
+	EDITS(Integer.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsOrders.get().columnEdits();
+		}
+		@Override
+		public String getColumnToolTip() {
+			return TabsOrders.get().columnEditsToolTip();
+		}
+		@Override
+		public Object getColumnValue(final MyMarketOrder from) {
+			return from.getChanged().size();
+		}
+	},
 	ISSUED(Date.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
