@@ -42,6 +42,7 @@ import net.nikr.eve.jeveasset.gui.shared.components.JFixedToolBar;
 import net.nikr.eve.jeveasset.gui.shared.components.JGroupLayoutPanel;
 import net.nikr.eve.jeveasset.i18n.DialoguesStructure;
 import net.nikr.eve.jeveasset.i18n.GuiFrame;
+import net.nikr.eve.jeveasset.i18n.TabsOrders;
 
 
 public class StatusPanel extends JGroupLayoutPanel {
@@ -240,6 +241,9 @@ public class StatusPanel extends JGroupLayoutPanel {
 				case STRUCTURE:
 					text = DialoguesStructure.get().updateTitle();
 					break;
+				case PUBLIC_MARKET_ORDERS:
+					text = TabsOrders.get().updateTitle();
+					break;
 				default:
 					text = "";
 			}
@@ -249,14 +253,19 @@ public class StatusPanel extends JGroupLayoutPanel {
 			jProgress.setPreferredSize(size);
 			jProgress.setMaximumSize(size);
 			jProgress.setVisible(false);
+			
 			jProgress.setStringPainted(true);
-			jProgress.setString(GuiFrame.get().clickToShow(text));
-			jProgress.addMouseListener(new MouseAdapter() {
-				@Override
-				public void mouseClicked(MouseEvent e) {
-					progressShow.show();
-				}
-			});
+			if (updateType == UpdateType.STRUCTURE) {
+				jProgress.setString(GuiFrame.get().clickToShow(text));
+				jProgress.addMouseListener(new MouseAdapter() {
+					@Override
+					public void mouseClicked(MouseEvent e) {
+						progressShow.show();
+					}
+				});
+			} else {
+				jProgress.setString(text);
+			}
 		}
 
 		public void setDone(boolean done) {
@@ -337,6 +346,6 @@ public class StatusPanel extends JGroupLayoutPanel {
 	}
 
 	public static enum UpdateType {
-		STRUCTURE
+		STRUCTURE, PUBLIC_MARKET_ORDERS
 	}
 }

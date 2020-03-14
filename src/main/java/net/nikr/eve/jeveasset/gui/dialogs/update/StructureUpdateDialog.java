@@ -234,7 +234,7 @@ public class StructureUpdateDialog extends JDialogCentered {
 			ownerTypes = null;
 		}
 		setVisible(false);
-		TaskDialog taskDialog = new TaskDialog(program, new StructureUpdateTask(esiOwners, ownerTypes, locations, jTrackerLocations.isSelected()), esiOwners.size() > 1, UpdateType.STRUCTURE, new TaskDialog.TasksCompleted() {
+		TaskDialog taskDialog = new TaskDialog(program, new StructureUpdateTask(esiOwners, ownerTypes, locations, jTrackerLocations.isSelected()), esiOwners.size() > 1, false, false, UpdateType.STRUCTURE, new TaskDialog.TasksCompleted() {
 			@Override
 			public void tasksCompleted(TaskDialog taskDialog) {
 				//Update tracker locations

@@ -73,6 +73,8 @@ import net.nikr.eve.jeveasset.i18n.General;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 import net.nikr.eve.jeveasset.io.shared.DataConverter;
 import net.nikr.eve.jeveasset.io.shared.RawConverter;
+import net.troja.eve.esi.model.MarketOrdersResponse;
+import uk.me.candle.eve.graph.DisconnectedGraphException;
 import uk.me.candle.eve.graph.Edge;
 import uk.me.candle.eve.graph.Graph;
 import uk.me.candle.eve.graph.distances.Jumps;
@@ -109,6 +111,7 @@ public class ProfileData {
 	private final Graph graph;
 	private final Map<Long, SolarSystem> systemCache;
 	private final Map<Long, Map<Long, Integer>> distance = new HashMap<>();
+	private final Map<Long, MarketOrdersResponse> marketOrdersUpdates = new HashMap<>();
 
 	public ProfileData(ProfileManager profileManager) {
 		this.profileManager = profileManager;
@@ -252,6 +255,24 @@ public class ProfileData {
 		}
 	}
 
+	public Integer distanceBetween(Long fromSystemID, Long toSystemID) {
+		SolarSystem from = systemCache.get(fromSystemID);
+		SolarSystem to = systemCache.get(toSystemID);
+		if (from == null || to == null) {
+			return null;
+		}
+		try {
+			return graph.distanceBetween(from, to);
+		} catch (DisconnectedGraphException ex) {
+			return Integer.MAX_VALUE;
+		}
+	}
+
+	public void setMarketOrdersUpdates(Map<Long, MarketOrdersResponse> updates) {
+		marketOrdersUpdates.clear();
+		marketOrdersUpdates.putAll(updates);
+	}
+	
 	private Set<Integer> createPriceTypeIDs() {
 		Set<Integer> priceTypeIDs = new HashSet<>();
 		for (OwnerType owner : profileManager.getOwnerTypes()) {
@@ -531,6 +552,13 @@ public class ProfileData {
 			}
 			order.setIssuedByName(ApiIdConverter.getOwnerName(order.getIssuedBy()));
 			order.setBrokersFee(marketOrdersBrokersFee.get(order.getOrderID()));
+			order.setUnderbid(Settings.get().getMarketOrdersUnderbid().get(order.getOrderID()));
+			MarketOrdersResponse response = marketOrdersUpdates.get(order.getOrderID());
+			if (response != null) {
+				order.setPrice(response.getPrice());
+				order.setVolumeRemain(response.getVolumeRemain());
+				order.addChanged(RawConverter.toDate(response.getIssued()));
+			}
 		}
 		//Update IndustryJobs dynamic values
 		for (MyIndustryJob industryJob : industryJobs) {

@@ -528,4 +528,14 @@ public abstract class FakeSettings extends Settings {
 	public boolean isTrackerUseAssetPriceForSellOrders() {
 		throw new UnsupportedOperationException("not implemented");
 	}
+
+	@Override
+	public void setPublicMarketOrdersNextUpdate(Date publicMarketOrdersNextUpdate) {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public Date getPublicMarketOrdersNextUpdate() {
+		throw new UnsupportedOperationException("not implemented");
+	}
 }

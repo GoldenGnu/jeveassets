@@ -29,21 +29,33 @@ import ca.odell.glazedlists.event.ListEventListener;
 import ca.odell.glazedlists.swing.DefaultEventSelectionModel;
 import ca.odell.glazedlists.swing.DefaultEventTableModel;
 import ca.odell.glazedlists.swing.TableComparatorChooser;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javax.swing.GroupLayout;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
+import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
+import javax.swing.Timer;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder;
+import net.nikr.eve.jeveasset.data.profile.ProfileData;
 import net.nikr.eve.jeveasset.data.settings.Settings;
+import net.nikr.eve.jeveasset.gui.dialogs.update.TaskDialog;
+import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
+import net.nikr.eve.jeveasset.gui.shared.components.JFixedToolBar;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTabPrimary;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter.CompareType;
@@ -57,16 +69,29 @@ import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
 import net.nikr.eve.jeveasset.gui.shared.table.JAutoColumnTable;
 import net.nikr.eve.jeveasset.gui.shared.table.PaddingTableCellRenderer;
+import net.nikr.eve.jeveasset.i18n.DialoguesUpdate;
 import net.nikr.eve.jeveasset.i18n.TabsOrders;
+import net.nikr.eve.jeveasset.io.esi.EsiPublicMarketOrdersGetter;
+import net.nikr.eve.jeveasset.io.esi.EsiPublicMarketOrdersGetter.SellOrderRange;
 
 
 public class MarketOrdersTab extends JMainTabPrimary {
+
+	private enum MarketOrdersAction {
+		UPDATE,
+		AUTO_UPDATE
+	}
 
 	private final JAutoColumnTable jTable;
 	private final JLabel jSellOrdersTotal;
 	private final JLabel jBuyOrdersTotal;
 	private final JLabel jEscrowTotal;
 	private final JLabel jToCoverTotal;
+	private final JButton jUpdate;
+	private final JCheckBox jAutoUpdate;
+	private final JLabel jSellOrderRange;
+	private final Timer timer;
+	private java.util.Timer utilTimer;
 
 	//Table
 	private final MarketOrdersFilterControl filterControl;
@@ -81,6 +106,39 @@ public class MarketOrdersTab extends JMainTabPrimary {
 		super(program, TabsOrders.get().market(), Images.TOOL_MARKET_ORDERS.getIcon(), true);
 
 		ListenerClass listener = new ListenerClass();
+
+		JFixedToolBar jToolBar = new JFixedToolBar();
+
+		jUpdate = new JButton(TabsOrders.get().updateUnderbid(), Images.DIALOG_UPDATE.getIcon());
+		jUpdate.setActionCommand(MarketOrdersAction.UPDATE.name());
+		jUpdate.addActionListener(listener);
+		jToolBar.addButton(jUpdate);
+
+		jAutoUpdate = new JCheckBox("Auto Update");
+		jAutoUpdate.setActionCommand(MarketOrdersAction.AUTO_UPDATE.name());
+		jAutoUpdate.addActionListener(listener);
+		jToolBar.addButton(jAutoUpdate);
+
+		timer = new Timer(1000, new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				Date nextUpdate = Settings.get().getPublicMarketOrdersNextUpdate();
+				if (Settings.get().isUpdatable(nextUpdate)) {
+					jUpdate.setText(TabsOrders.get().updateUnderbid());
+					jUpdate.setEnabled(!jAutoUpdate.isSelected());
+				} else {
+					long ms = nextUpdate.getTime()-System.currentTimeMillis();
+					if (ms < 1000) {
+						jUpdate.setText(TabsOrders.get().updateUnderbidWhen("..."));
+					} else {
+						jUpdate.setText(TabsOrders.get().updateUnderbidWhen(Formater.milliseconds(ms, true, false)));
+					}
+					jUpdate.setEnabled(false);
+				}
+			}
+		});
+		timer.start();
+
 		//Table Format
 		tableFormat = new EnumTableFormatAdaptor<MarketTableFormat, MyMarketOrder>(MarketTableFormat.class);
 		//Backend
@@ -146,14 +204,20 @@ public class MarketOrdersTab extends JMainTabPrimary {
 		jToCoverTotal = StatusPanel.createLabel(TabsOrders.get().totalToCover(), Images.ORDERS_TO_COVER.getIcon());
 		this.addStatusbarLabel(jToCoverTotal);
 
+		jSellOrderRange = StatusPanel.createLabel(TabsOrders.get().sellOrderRangeToolTip(), Images.ORDERS_SELL.getIcon());
+		this.addStatusbarLabel(jSellOrderRange);
+		jSellOrderRange.setText(TabsOrders.get().sellOrderRangeSelcted(Settings.get().getSellOrderUnderbidRange().toString()));
+
 		layout.setHorizontalGroup(
 				layout.createParallelGroup()
 						.addComponent(filterControl.getPanel())
+						.addComponent(jToolBar, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Integer.MAX_VALUE)
 						.addComponent(jTableScroll, 0, 0, Short.MAX_VALUE)
 		);
 		layout.setVerticalGroup(
 				layout.createSequentialGroup()
 						.addComponent(filterControl.getPanel())
+						.addComponent(jToolBar, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
 						.addComponent(jTableScroll, 0, 0, Short.MAX_VALUE)
 		);
 	}
@@ -166,6 +230,57 @@ public class MarketOrdersTab extends JMainTabPrimary {
 	@Override
 	public void updateCache() {
 		filterControl.createCache();
+	}
+
+	private void schedule() {
+		if (jAutoUpdate.isSelected()) {
+			long delay = Math.max(0, Settings.get().getPublicMarketOrdersNextUpdate().getTime() - System.currentTimeMillis());
+			if (utilTimer != null) { //Cancel old tasks
+				utilTimer.cancel();
+			}
+			utilTimer = new java.util.Timer();
+			utilTimer.schedule(new java.util.TimerTask() {
+				@Override
+				public void run() {
+					update();
+					utilTimer = null;
+				}
+			}, delay);
+		} else {
+			if (utilTimer != null) {
+				utilTimer.cancel();
+			}
+		}
+	}
+
+	private void update() {
+		SellOrderRange sellOrderRange;
+		if (jUpdate.isEnabled()) {
+			sellOrderRange = (SellOrderRange) JOptionPane.showInputDialog(program.getMainWindow().getFrame(), null, TabsOrders.get().sellOrderRange(), JOptionPane.PLAIN_MESSAGE, null, SellOrderRange.values(), Settings.get().getSellOrderUnderbidRange());
+			if (sellOrderRange == null) {
+				return;
+			}
+			Settings.get().setSellOrderUnderbidRange(sellOrderRange);
+		} else {
+			sellOrderRange = Settings.get().getSellOrderUnderbidRange();
+		}
+		jSellOrderRange.setText(TabsOrders.get().sellOrderRangeSelcted(Settings.get().getSellOrderUnderbidRange().toString()));
+		timer.stop();
+		jUpdate.setText(TabsOrders.get().updateUnderbidUpdating());
+		jUpdate.setEnabled(false);
+		TaskDialog taskDialog = new TaskDialog(program, new PublicMarkerOrdersUpdateTask(program.getProfileData(), sellOrderRange), false, true, true, StatusPanel.UpdateType.PUBLIC_MARKET_ORDERS, new TaskDialog.TasksCompleted() {
+			@Override
+			public void tasksCompleted(TaskDialog taskDialog) {
+				//Update eventlists
+				program.updateEventLists();
+				//Save Settings
+				program.saveSettingsAndProfile();
+				//Update time again
+				timer.start();
+				//Schedule next update
+				schedule();
+			}
+		});
 	}
 
 	private class OrdersTableMenu implements TableMenu<MyMarketOrder> {
@@ -195,7 +310,7 @@ public class MarketOrdersTab extends JMainTabPrimary {
 		}
 	}
 
-	private class ListenerClass implements ListEventListener<MyMarketOrder> {
+	private class ListenerClass implements ListEventListener<MyMarketOrder>, ActionListener {
 
 		@Override
 		public void listChanged(ListEvent<MyMarketOrder> listChanges) {
@@ -216,6 +331,15 @@ public class MarketOrdersTab extends JMainTabPrimary {
 			jBuyOrdersTotal.setText(Formater.iskFormat(buyOrdersTotal));
 			jToCoverTotal.setText(Formater.iskFormat(toCoverTotal));
 			jEscrowTotal.setText(Formater.iskFormat(escrowTotal));
+		}
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			if (MarketOrdersAction.UPDATE.name().equals(e.getActionCommand())) {
+				update();
+			} else if (MarketOrdersAction.AUTO_UPDATE.name().equals(e.getActionCommand())) {
+				schedule();
+			}
 		}
 	}
 
@@ -252,6 +376,24 @@ public class MarketOrdersTab extends JMainTabPrimary {
 		@Override
 		protected void saveSettings(final String msg) {
 			program.saveSettings("Market Orders Table: " + msg); //Save Market Order Filters and Export Setttings
+		}
+	}
+
+	private static class PublicMarkerOrdersUpdateTask extends UpdateTask {
+
+		private final ProfileData profileData;
+		private final SellOrderRange sellOrderRange;
+
+		public PublicMarkerOrdersUpdateTask(ProfileData profileData, SellOrderRange sellOrderRange) {
+			super(DialoguesUpdate.get().publicMarkerOrders());
+			this.profileData = profileData;
+			this.sellOrderRange = sellOrderRange;
+		}
+
+		@Override
+		public void update() {
+			EsiPublicMarketOrdersGetter publicMarketOrdersGetter = new EsiPublicMarketOrdersGetter(this, profileData, sellOrderRange);
+			publicMarketOrdersGetter.run();
 		}
 	}
 }

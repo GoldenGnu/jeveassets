@@ -66,9 +66,9 @@ public final class FlagsReader extends AbstractXmlReader<Boolean> {
 	}
 
 	private ItemFlag parseFlag(final Node node) throws XmlException {
-		int flagID = AttributeGetters.getInt(node, "flagid");
-		String flagName = AttributeGetters.getString(node, "flagname");
-		String flagText = AttributeGetters.getString(node, "flagtext");
+		int flagID = getInt(node, "flagid");
+		String flagName = getString(node, "flagname");
+		String flagText = getString(node, "flagtext");
 		return new ItemFlag(flagID, flagName, flagText);
 	}
 }
