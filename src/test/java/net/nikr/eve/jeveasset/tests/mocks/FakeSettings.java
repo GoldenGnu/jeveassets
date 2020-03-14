@@ -47,6 +47,7 @@ import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewGroup;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile;
 import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerDate;
 import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerNote;
+import net.nikr.eve.jeveasset.io.esi.EsiPublicMarketOrdersGetter;
 
 /**
  *
@@ -536,6 +537,26 @@ public abstract class FakeSettings extends Settings {
 
 	@Override
 	public Date getPublicMarketOrdersNextUpdate() {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public void setMarketOrdersUnderbid(Map<Long, EsiPublicMarketOrdersGetter.Underbid> underbids) {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public Map<Long, EsiPublicMarketOrdersGetter.Underbid> getMarketOrdersUnderbid() {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public void setSellOrderUnderbidRange(EsiPublicMarketOrdersGetter.SellOrderRange sellOrderUnderbidRange) {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public EsiPublicMarketOrdersGetter.SellOrderRange getSellOrderUnderbidRange() {
 		throw new UnsupportedOperationException("not implemented");
 	}
 }
