@@ -42,6 +42,8 @@ public abstract class TabsOrders extends Bundle {
 	public abstract String columnVolumeRemain();
 	public abstract String columnVolumeTotal();
 	public abstract String columnPrice();
+	public abstract String columnUnderbidPrice();
+	public abstract String columnUnderbidCount();
 	public abstract String columnBrokersFee();
 	public abstract String columnBrokersFeeToolTip();
 	public abstract String columnEdits();
@@ -83,5 +85,12 @@ public abstract class TabsOrders extends Bundle {
 	public abstract String totalBuyOrders();
 	public abstract String totalEscrow();
 	public abstract String totalToCover();
+	public abstract String updateUnderbid();
+	public abstract String updateUnderbidWhen(String time);
+	public abstract String updateUnderbidUpdating();
+	public abstract String sellOrderRange();
+	public abstract String sellOrderRangeToolTip();
+	public abstract String sellOrderRangeSelcted(String selected);
+	public abstract String updateTitle();
 	public abstract String whitespace(Object arg0);
 }

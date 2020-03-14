@@ -55,6 +55,29 @@ public class JMarketOrdersTable extends JAutoColumnTable {
 				}
 			}
 		}
+		if (columnName.equals(MarketTableFormat.UNDERBID_PRICE.getColumnName())) {
+			if (marketOrder.haveUnderbid()) {
+				if (marketOrder.isUndercut()) {
+					if (isSelected) {
+						component.setBackground(this.getSelectionBackground().darker());
+					} else {
+						component.setBackground(Colors.LIGHT_RED.getColor());
+					}
+				} else {
+					if (isSelected) {
+						component.setBackground(this.getSelectionBackground().darker());
+					} else {
+						component.setBackground(Colors.LIGHT_GREEN.getColor());
+					}
+				}
+			} else if (marketOrder.isActive()) {
+				if (isSelected) {
+					component.setBackground(this.getSelectionBackground().darker());
+				} else {
+					component.setBackground(Colors.LIGHT_GRAY.getColor());
+				}
+			}
+		}
 		//User set location
 		if (marketOrder.getLocation().isUserLocation() && columnName.equals(MarketTableFormat.LOCATION.getColumnName())) {
 			if (!isSelected) {

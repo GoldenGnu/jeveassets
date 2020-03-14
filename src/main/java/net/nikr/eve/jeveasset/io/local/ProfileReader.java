@@ -142,7 +142,7 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 		Set<Long> stockpileIDs = new HashSet<>();
 		for (int i = 0; i < stockpilesNodes.getLength(); i++) {
 			Element currentNode = (Element) stockpilesNodes.item(i);
-			Long id = AttributeGetters.getLong(currentNode, "id");
+			Long id = getLong(currentNode, "id");
 			stockpileIDs.add(id);
 		}
 		profile.setStockpileIDs(stockpileIDs);
@@ -152,23 +152,23 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 		NodeList ownerNodes = element.getElementsByTagName("esiowner");
 		for (int i = 0; i < ownerNodes.getLength(); i++) {
 			Element currentNode = (Element) ownerNodes.item(i);
-			String accountName = AttributeGetters.getString(currentNode, "accountname");
-			String refreshToken = AttributeGetters.getString(currentNode, "refreshtoken");
-			String scopes = AttributeGetters.getString(currentNode, "scopes");
-			String tokenType = AttributeGetters.getString(currentNode, "tokentype");
-			String characterOwnerHash = AttributeGetters.getString(currentNode, "characterownerhash");
-			String intellectualProperty = AttributeGetters.getString(currentNode, "intellectualproperty");
-			Date structuresNextUpdate = AttributeGetters.getDate(currentNode, "structuresnextupdate");
-			Date accountNextUpdate = AttributeGetters.getDate(currentNode, "accountnextupdate");
+			String accountName = getString(currentNode, "accountname");
+			String refreshToken = getString(currentNode, "refreshtoken");
+			String scopes = getString(currentNode, "scopes");
+			String tokenType = getString(currentNode, "tokentype");
+			String characterOwnerHash = getString(currentNode, "characterownerhash");
+			String intellectualProperty = getString(currentNode, "intellectualproperty");
+			Date structuresNextUpdate = getDate(currentNode, "structuresnextupdate");
+			Date accountNextUpdate = getDate(currentNode, "accountnextupdate");
 			EsiCallbackURL callbackURL;
 			try {
-				callbackURL = EsiCallbackURL.valueOf(AttributeGetters.getString(currentNode, "callbackurl"));
+				callbackURL = EsiCallbackURL.valueOf(getString(currentNode, "callbackurl"));
 			} catch (IllegalArgumentException ex) {
 				throw new XmlException(ex);
 			}
 			Set<RolesEnum> roles = EnumSet.noneOf(RolesEnum.class);
-			if (AttributeGetters.haveAttribute(currentNode, "characterroles")) {
-				for (String role : AttributeGetters.getString(currentNode, "characterroles").split(",")) {
+			if (haveAttribute(currentNode, "characterroles")) {
+				for (String role : getString(currentNode, "characterroles").split(",")) {
 					try {
 						roles.add(RolesEnum.valueOf(role));
 					} catch (IllegalArgumentException ex) {
@@ -197,23 +197,23 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 		NodeList ownerNodes = element.getElementsByTagName("evekitowner");
 		for (int i = 0; i < ownerNodes.getLength(); i++) {
 			Element currentNode = (Element) ownerNodes.item(i);
-			int accessKey = AttributeGetters.getInt(currentNode, "accesskey");
-			String accessCred = AttributeGetters.getString(currentNode, "accesscred");
-			Date expire = AttributeGetters.getDateOptional(currentNode, "expire");
-			long accessmask = AttributeGetters.getLong(currentNode, "accessmask");
-			boolean corporation = AttributeGetters.getBoolean(currentNode, "corporation");
-			Date limit = AttributeGetters.getDateOptional(currentNode, "limit");
-			String accountName = AttributeGetters.getString(currentNode, "accountname");
+			int accessKey = getInt(currentNode, "accesskey");
+			String accessCred = getString(currentNode, "accesscred");
+			Date expire = getDateOptional(currentNode, "expire");
+			long accessmask = getLong(currentNode, "accessmask");
+			boolean corporation = getBoolean(currentNode, "corporation");
+			Date limit = getDateOptional(currentNode, "limit");
+			String accountName = getString(currentNode, "accountname");
 			//ContID
-			Long journalCID = AttributeGetters.getLongOptional(currentNode, "journalcid");
-			Long transactionsCID = AttributeGetters.getLongOptional(currentNode, "transactionscid");
-			Long contractsCID = AttributeGetters.getLongOptional(currentNode, "contractscid");
-			Long industryJobsCID = AttributeGetters.getLongOptional(currentNode, "industryjobscid");
-			Long marketOrdersCID = AttributeGetters.getLongOptional(currentNode, "marketorderscid");
-			Date accountNextUpdate = AttributeGetters.getDateOptional(currentNode, "accountnextupdate");
+			Long journalCID = getLongOptional(currentNode, "journalcid");
+			Long transactionsCID = getLongOptional(currentNode, "transactionscid");
+			Long contractsCID = getLongOptional(currentNode, "contractscid");
+			Long industryJobsCID = getLongOptional(currentNode, "industryjobscid");
+			Long marketOrdersCID = getLongOptional(currentNode, "marketorderscid");
+			Date accountNextUpdate = getDateOptional(currentNode, "accountnextupdate");
 			boolean migrated = false;
-			if (AttributeGetters.haveAttribute(currentNode, "migrated")) {
-				migrated = AttributeGetters.getBoolean(currentNode, "migrated");
+			if (haveAttribute(currentNode, "migrated")) {
+				migrated = getBoolean(currentNode, "migrated");
 			}
 			EveKitOwner owner = new EveKitOwner(accessKey, accessCred, expire, accessmask, corporation, limit, accountName, migrated);
 			owner.setJournalCID(journalCID);
@@ -239,40 +239,40 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 
 	private EveApiAccount parseAccount(final Node node) throws XmlException {
 		int keyID;
-		if (AttributeGetters.haveAttribute(node, "keyid")) {
-			keyID = AttributeGetters.getInt(node, "keyid");
+		if (haveAttribute(node, "keyid")) {
+			keyID = getInt(node, "keyid");
 		} else {
-			keyID = AttributeGetters.getInt(node, "userid");
+			keyID = getInt(node, "userid");
 		}
 		String vCode;
-		if (AttributeGetters.haveAttribute(node, "vcode")) {
-			vCode = AttributeGetters.getString(node, "vcode");
+		if (haveAttribute(node, "vcode")) {
+			vCode = getString(node, "vcode");
 		} else {
-			vCode = AttributeGetters.getString(node, "apikey");
+			vCode = getString(node, "apikey");
 		}
-		Date nextUpdate = AttributeGetters.getDate(node, "charactersnextupdate");
+		Date nextUpdate = getDate(node, "charactersnextupdate");
 		String name = Integer.toString(keyID);
-		if (AttributeGetters.haveAttribute(node, "name")) {
-			name = AttributeGetters.getString(node, "name");
+		if (haveAttribute(node, "name")) {
+			name = getString(node, "name");
 		}
 		long accessMask = 0;
-		if (AttributeGetters.haveAttribute(node, "accessmask")) {
-			accessMask = AttributeGetters.getLong(node, "accessmask");
+		if (haveAttribute(node, "accessmask")) {
+			accessMask = getLong(node, "accessmask");
 		}
 		KeyType type = null;
-		if (AttributeGetters.haveAttribute(node, "type")) {
-			type = KeyType.valueOf(AttributeGetters.getString(node, "type").toUpperCase());
+		if (haveAttribute(node, "type")) {
+			type = KeyType.valueOf(getString(node, "type").toUpperCase());
 		}
 		Date expires = null;
-		if (AttributeGetters.haveAttribute(node, "expires")) {
-			long i = AttributeGetters.getLong(node, "expires");
+		if (haveAttribute(node, "expires")) {
+			long i = getLong(node, "expires");
 			if (i != 0) {
 				expires = new Date(i);
 			}
 		}
 		boolean invalid = false;
-		if (AttributeGetters.haveAttribute(node, "invalid")) {
-			invalid = AttributeGetters.getBoolean(node, "invalid");
+		if (haveAttribute(node, "invalid")) {
+			invalid = getBoolean(node, "invalid");
 		}
 		return new EveApiAccount(keyID, vCode, name, nextUpdate, accessMask, type, expires, invalid);
 	}
@@ -282,8 +282,8 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 		for (int i = 0; i < ownerNodes.getLength(); i++) {
 			Element currentNode = (Element) ownerNodes.item(i);
 			boolean migrated = false;
-			if (AttributeGetters.haveAttribute(currentNode, "migrated")) {
-				migrated = AttributeGetters.getBoolean(currentNode, "migrated");
+			if (haveAttribute(currentNode, "migrated")) {
+				migrated = getBoolean(currentNode, "migrated");
 			}
 			EveApiOwner owner = new EveApiOwner(account, migrated);
 			parseOwnerType(currentNode, owner);
@@ -292,26 +292,26 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 	}
 
 	private void parseOwnerType(final Element node, OwnerType owner) throws XmlException {
-		String ownerName = AttributeGetters.getString(node, "name");
-		String corporationName = AttributeGetters.getStringOptional(node, "corp");
-		long ownerID = AttributeGetters.getLong(node, "id");
-		Date assetsNextUpdate = AttributeGetters.getDateNotNull(node, "assetsnextupdate");
-		Date assetsLastUpdate = AttributeGetters.getDateOptional(node, "assetslastupdate");
-		Date balanceNextUpdate = AttributeGetters.getDateNotNull(node, "balancenextupdate");
-		Date balanceLastUpdate = AttributeGetters.getDateOptional(node, "balancelastupdate");
+		String ownerName = getString(node, "name");
+		String corporationName = getStringOptional(node, "corp");
+		long ownerID = getLong(node, "id");
+		Date assetsNextUpdate = getDateNotNull(node, "assetsnextupdate");
+		Date assetsLastUpdate = getDateOptional(node, "assetslastupdate");
+		Date balanceNextUpdate = getDateNotNull(node, "balancenextupdate");
+		Date balanceLastUpdate = getDateOptional(node, "balancelastupdate");
 		boolean showOwner = true;
-		if (AttributeGetters.haveAttribute(node, "show")) {
-			showOwner = AttributeGetters.getBoolean(node, "show");
+		if (haveAttribute(node, "show")) {
+			showOwner = getBoolean(node, "show");
 		}
-		Date marketOrdersNextUpdate = AttributeGetters.getDateNotNull(node, "marketordersnextupdate");
-		Date journalNextUpdate = AttributeGetters.getDateNotNull(node, "journalnextupdate");
-		Date transactionsNextUpdate = AttributeGetters.getDateNotNull(node, "wallettransactionsnextupdate");
-		Date industryJobsNextUpdate = AttributeGetters.getDateNotNull(node, "industryjobsnextupdate");
-		Date contractsNextUpdate = AttributeGetters.getDateNotNull(node, "contractsnextupdate");
-		Date locationsNextUpdate = AttributeGetters.getDateNotNull(node, "locationsnextupdate");
-		Date blueprintsNextUpdate = AttributeGetters.getDateNotNull(node, "blueprintsnextupdate");
-		Date bookmarksNextUpdate = AttributeGetters.getDateNotNull(node, "bookmarksnextupdate");
-		Date containerLogsNextUpdate = AttributeGetters.getDateNotNull(node, "containerlogsnextupdate");
+		Date marketOrdersNextUpdate = getDateNotNull(node, "marketordersnextupdate");
+		Date journalNextUpdate = getDateNotNull(node, "journalnextupdate");
+		Date transactionsNextUpdate = getDateNotNull(node, "wallettransactionsnextupdate");
+		Date industryJobsNextUpdate = getDateNotNull(node, "industryjobsnextupdate");
+		Date contractsNextUpdate = getDateNotNull(node, "contractsnextupdate");
+		Date locationsNextUpdate = getDateNotNull(node, "locationsnextupdate");
+		Date blueprintsNextUpdate = getDateNotNull(node, "blueprintsnextupdate");
+		Date bookmarksNextUpdate = getDateNotNull(node, "bookmarksnextupdate");
+		Date containerLogsNextUpdate = getDateNotNull(node, "containerlogsnextupdate");
 		owner.setOwnerName(ownerName);
 		owner.setCorporationName(corporationName);
 		owner.setOwnerID(ownerID);
@@ -372,28 +372,28 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 
 	private RawContract parseContract(final Element element) throws XmlException {
 		RawContract contract = RawContract.create();
-		Integer acceptorID = AttributeGetters.getInt(element, "acceptorid");
-		Integer assigneeID = AttributeGetters.getInt(element, "assigneeid");
-		ContractAvailability availability = RawConverter.toContractAvailability(AttributeGetters.getString(element, "availability"));
-		Double buyout = AttributeGetters.getDoubleOptional(element, "buyout");
-		Double collateral = AttributeGetters.getDoubleOptional(element, "collateral");
-		Integer contractID = AttributeGetters.getInt(element, "contractid");
-		Date dateAccepted = AttributeGetters.getDateOptional(element, "dateaccepted");
-		Date dateCompleted = AttributeGetters.getDateOptional(element, "datecompleted");
-		Date dateExpired = AttributeGetters.getDate(element, "dateexpired");
-		Date dateIssued = AttributeGetters.getDate(element, "dateissued");
-		Long endLocationID = AttributeGetters.getLongOptional(element, "endstationid");
-		Integer issuerCorporationID = AttributeGetters.getInt(element, "issuercorpid");
-		Integer issuerID = AttributeGetters.getInt(element, "issuerid");
-		Integer daysToComplete = AttributeGetters.getIntOptional(element, "numdays");
-		Double price = AttributeGetters.getDoubleOptional(element, "price");
-		Double reward = AttributeGetters.getDoubleOptional(element, "reward");
-		Long startLocationID = AttributeGetters.getLongOptional(element, "startstationid");
-		ContractStatus status = RawConverter.toContractStatus(AttributeGetters.getString(element, "status"));
-		String title = AttributeGetters.getStringOptional(element, "title");
-		ContractType type = RawConverter.toContractType(AttributeGetters.getString(element, "type"));
-		Double volume = AttributeGetters.getDoubleOptional(element, "volume");
-		boolean forCorporation = AttributeGetters.getBoolean(element, "forcorp");
+		Integer acceptorID = getInt(element, "acceptorid");
+		Integer assigneeID = getInt(element, "assigneeid");
+		ContractAvailability availability = RawConverter.toContractAvailability(getString(element, "availability"));
+		Double buyout = getDoubleOptional(element, "buyout");
+		Double collateral = getDoubleOptional(element, "collateral");
+		Integer contractID = getInt(element, "contractid");
+		Date dateAccepted = getDateOptional(element, "dateaccepted");
+		Date dateCompleted = getDateOptional(element, "datecompleted");
+		Date dateExpired = getDate(element, "dateexpired");
+		Date dateIssued = getDate(element, "dateissued");
+		Long endLocationID = getLongOptional(element, "endstationid");
+		Integer issuerCorporationID = getInt(element, "issuercorpid");
+		Integer issuerID = getInt(element, "issuerid");
+		Integer daysToComplete = getIntOptional(element, "numdays");
+		Double price = getDoubleOptional(element, "price");
+		Double reward = getDoubleOptional(element, "reward");
+		Long startLocationID = getLongOptional(element, "startstationid");
+		ContractStatus status = RawConverter.toContractStatus(getString(element, "status"));
+		String title = getStringOptional(element, "title");
+		ContractType type = RawConverter.toContractType(getString(element, "type"));
+		Double volume = getDoubleOptional(element, "volume");
+		boolean forCorporation = getBoolean(element, "forcorp");
 
 		contract.setAcceptorID(acceptorID);
 		contract.setAssigneeID(assigneeID);
@@ -423,12 +423,12 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 
 	private RawContractItem parseContractItem(final Element element) throws XmlException {
 		RawContractItem contractItem = RawContractItem.create();
-		boolean included = AttributeGetters.getBoolean(element, "included");
-		Integer quantity = AttributeGetters.getInt(element, "quantity");
-		long recordID = AttributeGetters.getLong(element, "recordid");
-		boolean singleton = AttributeGetters.getBoolean(element, "singleton");
-		int typeID = AttributeGetters.getInt(element, "typeid");
-		Integer rawQuantity = AttributeGetters.getIntOptional(element, "rawquantity");
+		boolean included = getBoolean(element, "included");
+		Integer quantity = getInt(element, "quantity");
+		long recordID = getLong(element, "recordid");
+		boolean singleton = getBoolean(element, "singleton");
+		int typeID = getInt(element, "typeid");
+		Integer rawQuantity = getIntOptional(element, "rawquantity");
 		contractItem.setIncluded(included);
 		contractItem.setQuantity(quantity);
 		contractItem.setRecordID(recordID);
@@ -457,8 +457,8 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 
 	private RawAccountBalance parseBalance(final Element element) throws XmlException {
 		RawAccountBalance accountBalance = RawAccountBalance.create();
-		int accountKey = AttributeGetters.getInt(element, "accountkey");
-		Double balance = AttributeGetters.getDouble(element, "balance");
+		int accountKey = getInt(element, "accountkey");
+		Double balance = getDouble(element, "balance");
 		accountBalance.setAccountKey(accountKey);
 		accountBalance.setBalance(balance);
 		return accountBalance;
@@ -482,26 +482,26 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 
 	private RawMarketOrder parseMarketOrder(final Element element, final OwnerType owner) throws XmlException {
 		RawMarketOrder apiMarketOrder = RawMarketOrder.create();
-		long orderID = AttributeGetters.getLong(element, "orderid");
-		long locationID = AttributeGetters.getLong(element, "stationid");
-		int volEntered = AttributeGetters.getInt(element, "volentered");
-		int volRemaining = AttributeGetters.getInt(element, "volremaining");
-		int minVolume = AttributeGetters.getInt(element, "minvolume");
-		int state = AttributeGetters.getInt(element, "orderstate");
-		int typeID = AttributeGetters.getInt(element, "typeid");
-		int range = AttributeGetters.getInt(element, "range");
-		int accountID = AttributeGetters.getInt(element, "accountkey");
-		int duration = AttributeGetters.getInt(element, "duration");
-		Double escrow = AttributeGetters.getDouble(element, "escrow");
-		Double price = AttributeGetters.getDouble(element, "price");
-		int bid = AttributeGetters.getInt(element, "bid");
-		Date issued = AttributeGetters.getDate(element, "issued");
-		Date created = AttributeGetters.getDateOptional(element, "created");
-		String changed = AttributeGetters.getStringOptional(element, "changed");
-		Integer issuedBy = AttributeGetters.getIntOptional(element, "issuedby");
+		long orderID = getLong(element, "orderid");
+		long locationID = getLong(element, "stationid");
+		int volEntered = getInt(element, "volentered");
+		int volRemaining = getInt(element, "volremaining");
+		int minVolume = getInt(element, "minvolume");
+		int state = getInt(element, "orderstate");
+		int typeID = getInt(element, "typeid");
+		int range = getInt(element, "range");
+		int accountID = getInt(element, "accountkey");
+		int duration = getInt(element, "duration");
+		Double escrow = getDouble(element, "escrow");
+		Double price = getDouble(element, "price");
+		int bid = getInt(element, "bid");
+		Date issued = getDate(element, "issued");
+		Date created = getDateOptional(element, "created");
+		String changed = getStringOptional(element, "changed");
+		Integer issuedBy = getIntOptional(element, "issuedby");
 		boolean corp = owner.isCorporation();
-		if (AttributeGetters.haveAttribute(element, "corp")) {
-			corp = AttributeGetters.getBoolean(element, "corp");
+		if (haveAttribute(element, "corp")) {
+			corp = getBoolean(element, "corp");
 		}
 		apiMarketOrder.setWalletDivision(accountID);
 		apiMarketOrder.setDuration(duration);
@@ -554,28 +554,28 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 	private RawJournal parseJournal(final Element element) throws XmlException {
 		//Base
 		RawJournal rawJournal = RawJournal.create();
-		Double amount = AttributeGetters.getDoubleOptional(element, "amount");
-		Long argID = AttributeGetters.getLongOptional(element, "argid1");
-		String argName = AttributeGetters.getStringOptional(element, "argname1");
-		Double balance = AttributeGetters.getDoubleOptional(element, "balance");
-		Long contextID = AttributeGetters.getLongOptional(element, "contextid");
-		String contextType = AttributeGetters.getStringOptional(element, "contexttype");
-		Date date = AttributeGetters.getDate(element, "date");
+		Double amount = getDoubleOptional(element, "amount");
+		Long argID = getLongOptional(element, "argid1");
+		String argName = getStringOptional(element, "argname1");
+		Double balance = getDoubleOptional(element, "balance");
+		Long contextID = getLongOptional(element, "contextid");
+		String contextType = getStringOptional(element, "contexttype");
+		Date date = getDate(element, "date");
 		String description;
-		if (AttributeGetters.haveAttribute(element, "description")) {
-			description = AttributeGetters.getString(element, "description");
+		if (haveAttribute(element, "description")) {
+			description = getString(element, "description");
 		} else {
 			description = argName;
 		}
-		Integer firstPartyID = AttributeGetters.getIntOptional(element, "ownerid1");
-		Integer secondPartyID = AttributeGetters.getIntOptional(element, "ownerid2");
-		String reason = AttributeGetters.getStringOptional(element, "reason");
-		long refID = AttributeGetters.getLong(element, "refid");
-		int refTypeID = AttributeGetters.getInt(element, "reftypeid");
-		Double taxAmount = AttributeGetters.getDoubleOptional(element, "taxamount");
-		Integer taxReceiverID = AttributeGetters.getIntOptional(element, "taxreceiverid");
+		Integer firstPartyID = getIntOptional(element, "ownerid1");
+		Integer secondPartyID = getIntOptional(element, "ownerid2");
+		String reason = getStringOptional(element, "reason");
+		long refID = getLong(element, "refid");
+		int refTypeID = getInt(element, "reftypeid");
+		Double taxAmount = getDoubleOptional(element, "taxamount");
+		Integer taxReceiverID = getIntOptional(element, "taxreceiverid");
 		//Extra
-		int accountKey = AttributeGetters.getInt(element, "accountkey");
+		int accountKey = getInt(element, "accountkey");
 
 		rawJournal.setAmount(amount);
 		rawJournal.setBalance(balance);
@@ -618,28 +618,28 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 
 	private RawTransaction parseTransaction(final Element element) throws XmlException {
 		RawTransaction rawTransaction = RawTransaction.create();
-		Date date = AttributeGetters.getDate(element, "transactiondatetime");
-		Long transactionID = AttributeGetters.getLong(element, "transactionid");
-		int quantity = AttributeGetters.getInt(element, "quantity");
-		int typeID = AttributeGetters.getInt(element, "typeid");
-		Double price = AttributeGetters.getDouble(element, "price");
-		Integer clientID = AttributeGetters.getInt(element, "clientid");
-		long locationID = AttributeGetters.getLong(element, "stationid");
-		String transactionType = AttributeGetters.getString(element, "transactiontype");
-		String transactionFor = AttributeGetters.getString(element, "transactionfor");
+		Date date = getDate(element, "transactiondatetime");
+		Long transactionID = getLong(element, "transactionid");
+		int quantity = getInt(element, "quantity");
+		int typeID = getInt(element, "typeid");
+		Double price = getDouble(element, "price");
+		Integer clientID = getInt(element, "clientid");
+		long locationID = getLong(element, "stationid");
+		String transactionType = getString(element, "transactiontype");
+		String transactionFor = getString(element, "transactionfor");
 
 		//New
 		Long journalRefID;
-		if (AttributeGetters.haveAttribute(element, "journaltransactionid")) {
-			journalRefID = AttributeGetters.getLong(element, "journaltransactionid");
+		if (haveAttribute(element, "journaltransactionid")) {
+			journalRefID = getLong(element, "journaltransactionid");
 		} else {
 			journalRefID = 0L; //Legacy support
 		}
 
 		//Extra
 		int accountKey = 1000;
-		if (AttributeGetters.haveAttribute(element, "accountkey")) {
-			accountKey = AttributeGetters.getInt(element, "accountkey");
+		if (haveAttribute(element, "accountkey")) {
+			accountKey = getInt(element, "accountkey");
 		}
 		rawTransaction.setClientID(clientID);
 		rawTransaction.setDate(date);
@@ -663,7 +663,7 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 			NodeList industryJobNodes = currentIndustryJobsNode.getElementsByTagName("industryjob");
 			for (int b = 0; b < industryJobNodes.getLength(); b++) {
 				Element currentNode = (Element) industryJobNodes.item(b);
-				if (AttributeGetters.haveAttribute(currentNode, "blueprintid")) {
+				if (haveAttribute(currentNode, "blueprintid")) {
 					RawIndustryJob rawIndustryJob = parseIndustryJob(currentNode);
 					MyIndustryJob industryJob = DataConverter.toMyIndustryJob(rawIndustryJob, owner);
 					industryJobs.add(industryJob);
@@ -675,28 +675,28 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 
 	private RawIndustryJob parseIndustryJob(final Element element) throws XmlException {
 		RawIndustryJob rawIndustryJob = RawIndustryJob.create();
-		Integer jobID = AttributeGetters.getInt(element, "jobid");
-		Integer installerID = AttributeGetters.getInt(element, "installerid");
-		long facilityID = AttributeGetters.getLong(element, "facilityid");
-		long stationID = AttributeGetters.getLong(element, "stationid");
-		int activityID = AttributeGetters.getInt(element, "activityid");
-		long blueprintID = AttributeGetters.getLong(element, "blueprintid");
-		int blueprintTypeID = AttributeGetters.getInt(element, "blueprinttypeid");
-		long blueprintLocationID = AttributeGetters.getLong(element, "blueprintlocationid");
-		long outputLocationID = AttributeGetters.getLong(element, "outputlocationid");
-		int runs = AttributeGetters.getInt(element, "runs");
-		Double cost = AttributeGetters.getDoubleOptional(element, "cost");
-		Integer licensedRuns = AttributeGetters.getIntOptional(element, "licensedruns");
-		Float probability = AttributeGetters.getFloatOptional(element, "probability");
-		Integer productTypeID = AttributeGetters.getIntOptional(element, "producttypeid");
-		int status = AttributeGetters.getInt(element, "status");
-		int duration = AttributeGetters.getInt(element, "timeinseconds");
-		Date startDate = AttributeGetters.getDate(element, "startdate");
-		Date endDate = AttributeGetters.getDate(element, "enddate");
-		Date pauseDate = AttributeGetters.getDateOptional(element, "pausedate");
-		Date completedDate = AttributeGetters.getDateOptional(element, "completeddate");
-		Integer completedCharacterID = AttributeGetters.getIntOptional(element, "completedcharacterid");
-		Integer successfulRuns = AttributeGetters.getIntOptional(element, "successfulruns");
+		Integer jobID = getInt(element, "jobid");
+		Integer installerID = getInt(element, "installerid");
+		long facilityID = getLong(element, "facilityid");
+		long stationID = getLong(element, "stationid");
+		int activityID = getInt(element, "activityid");
+		long blueprintID = getLong(element, "blueprintid");
+		int blueprintTypeID = getInt(element, "blueprinttypeid");
+		long blueprintLocationID = getLong(element, "blueprintlocationid");
+		long outputLocationID = getLong(element, "outputlocationid");
+		int runs = getInt(element, "runs");
+		Double cost = getDoubleOptional(element, "cost");
+		Integer licensedRuns = getIntOptional(element, "licensedruns");
+		Float probability = getFloatOptional(element, "probability");
+		Integer productTypeID = getIntOptional(element, "producttypeid");
+		int status = getInt(element, "status");
+		int duration = getInt(element, "timeinseconds");
+		Date startDate = getDate(element, "startdate");
+		Date endDate = getDate(element, "enddate");
+		Date pauseDate = getDateOptional(element, "pausedate");
+		Date completedDate = getDateOptional(element, "completeddate");
+		Integer completedCharacterID = getIntOptional(element, "completedcharacterid");
+		Integer successfulRuns = getIntOptional(element, "successfulruns");
 
 		rawIndustryJob.setActivityID(activityID);
 		rawIndustryJob.setBlueprintID(blueprintID);
@@ -750,26 +750,26 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 
 	private RawAsset parseAsset(final Node node, final MyAsset parentAsset) throws XmlException {
 		RawAsset rawAsset = RawAsset.create();
-		int count = AttributeGetters.getInt(node, "count");
+		int count = getInt(node, "count");
 
-		long itemId = AttributeGetters.getLong(node, "id");
-		int typeID = AttributeGetters.getInt(node, "typeid");
-		long locationID = AttributeGetters.getLong(node, "locationid");
+		long itemId = getLong(node, "id");
+		int typeID = getInt(node, "typeid");
+		long locationID = getLong(node, "locationid");
 		if (locationID == 0 && parentAsset != null) {
 			locationID = parentAsset.getLocationID();
 		}
-		boolean singleton = AttributeGetters.getBoolean(node, "singleton");
+		boolean singleton = getBoolean(node, "singleton");
 		Integer rawQuantity;
-		if (AttributeGetters.haveAttribute(node, "rawquantity")) {
-			rawQuantity = AttributeGetters.getInt(node, "rawquantity");
+		if (haveAttribute(node, "rawquantity")) {
+			rawQuantity = getInt(node, "rawquantity");
 		} else {
 			rawQuantity = null; //Legacy support
 		}
 		int flagID = 0;
-		if (AttributeGetters.haveAttribute(node, "flagid")) {
-			flagID = AttributeGetters.getInt(node, "flagid");
+		if (haveAttribute(node, "flagid")) {
+			flagID = getInt(node, "flagid");
 		} else { //Workaround for the old system
-			String flag = AttributeGetters.getString(node, "flag");
+			String flag = getString(node, "flag");
 			for (ItemFlag itemFlag : StaticData.get().getItemFlags().values()) {
 				if (flag.equals(itemFlag.getFlagName())) {
 					flagID = itemFlag.getFlagID();
@@ -804,14 +804,14 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 
 	private RawBlueprint parseBlueprint(final Node node) throws XmlException {
 		RawBlueprint blueprint = RawBlueprint.create();
-		long itemID = AttributeGetters.getLong(node, "itemid");
-		long locationID = AttributeGetters.getLong(node, "locationid");
-		int typeID = AttributeGetters.getInt(node, "typeid");
-		int flagID = AttributeGetters.getInt(node, "flagid");
-		int quantity = AttributeGetters.getInt(node, "quantity");
-		int timeEfficiency = AttributeGetters.getInt(node, "timeefficiency");
-		int materialEfficiency = AttributeGetters.getInt(node, "materialefficiency");
-		int runs = AttributeGetters.getInt(node, "runs");
+		long itemID = getLong(node, "itemid");
+		long locationID = getLong(node, "locationid");
+		int typeID = getInt(node, "typeid");
+		int flagID = getInt(node, "flagid");
+		int quantity = getInt(node, "quantity");
+		int timeEfficiency = getInt(node, "timeefficiency");
+		int materialEfficiency = getInt(node, "materialefficiency");
+		int runs = getInt(node, "runs");
 
 		blueprint.setItemID(itemID);
 		blueprint.setItemFlag(ApiIdConverter.getFlag(flagID));
@@ -832,8 +832,8 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 			NodeList divisionNodes = currentDivisionsNode.getElementsByTagName("assetdivision");
 			for (int b = 0; b < divisionNodes.getLength(); b++) {
 				Element currentNode = (Element) divisionNodes.item(b);
-				int id = AttributeGetters.getInt(currentNode, "id");
-				String name = AttributeGetters.getStringOptional(currentNode, "name");
+				int id = getInt(currentNode, "id");
+				String name = getStringOptional(currentNode, "name");
 				divisions.put(id, name);
 			}
 		}
@@ -848,8 +848,8 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 			NodeList divisionNodes = currentDivisionsNode.getElementsByTagName("walletdivision");
 			for (int b = 0; b < divisionNodes.getLength(); b++) {
 				Element currentNode = (Element) divisionNodes.item(b);
-				int id = AttributeGetters.getInt(currentNode, "id");
-				String name = AttributeGetters.getStringOptional(currentNode, "name");
+				int id = getInt(currentNode, "id");
+				String name = getStringOptional(currentNode, "name");
 				divisions.put(id, name);
 			}
 		}

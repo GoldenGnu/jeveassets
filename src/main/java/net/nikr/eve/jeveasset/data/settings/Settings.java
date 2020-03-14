@@ -57,6 +57,8 @@ import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewGroup;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile;
 import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerDate;
 import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerNote;
+import net.nikr.eve.jeveasset.io.esi.EsiPublicMarketOrdersGetter.SellOrderRange;
+import net.nikr.eve.jeveasset.io.esi.EsiPublicMarketOrdersGetter.Underbid;
 import net.nikr.eve.jeveasset.io.local.SettingsReader;
 import net.nikr.eve.jeveasset.io.local.SettingsWriter;
 import net.nikr.eve.jeveasset.io.shared.FileUtil;
@@ -178,6 +180,12 @@ public class Settings {
 	private int maximumPurchaseAge = 0;
 	//Reprocess price
 	private ReprocessSettings reprocessSettings = new ReprocessSettings();
+	//Public Market Orders Next Update
+	private Date publicMarketOrdersNextUpdate = getNow();
+	//Market Orders Underbid
+	private final Map<Long, Underbid> marketOrdersUnderbid = new HashMap<>();
+	//SellOrderRange
+	private SellOrderRange sellOrderUnderbidRange = SellOrderRange.REGION;
 	//Cache
 	private Boolean filterOnEnter = null; //Filter tools
 	private Boolean highlightSelectedRows = null;  //Assets
@@ -565,6 +573,31 @@ public class Settings {
 			tagIds.put(tagID, set);
 		}
 		return set;
+	}
+
+	public Date getPublicMarketOrdersNextUpdate() {
+		return publicMarketOrdersNextUpdate;
+	}
+
+	public void setPublicMarketOrdersNextUpdate(Date publicMarketOrdersNextUpdate) {
+		this.publicMarketOrdersNextUpdate = publicMarketOrdersNextUpdate;
+	}
+
+	public SellOrderRange getSellOrderUnderbidRange() {
+		return sellOrderUnderbidRange;
+	}
+
+	public void setSellOrderUnderbidRange(SellOrderRange sellOrderUnderbidRange) {
+		this.sellOrderUnderbidRange = sellOrderUnderbidRange;
+	}
+
+	public Map<Long, Underbid> getMarketOrdersUnderbid() {
+		return marketOrdersUnderbid;
+	}
+
+	public void setMarketOrdersUnderbid(Map<Long, Underbid> underbids) {
+		marketOrdersUnderbid.clear();
+		marketOrdersUnderbid.putAll(underbids);
 	}
 
 	public int getMaximumPurchaseAge() {

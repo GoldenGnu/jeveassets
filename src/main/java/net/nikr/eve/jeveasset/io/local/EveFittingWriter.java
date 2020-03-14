@@ -79,17 +79,17 @@ public final class EveFittingWriter extends AbstractXmlWriter {
 		Element fittingsNode = xmldoc.getDocumentElement();
 		Element fittingNode = xmldoc.createElementNS(null, "fitting");
 		//Fit Name
-		fittingNode.setAttributeNS(null, "name", setupName);
+		setAttribute(fittingNode, "name", setupName);
 		fittingsNode.appendChild(fittingNode);
 
 		//Description
 		Element descriptionNode = xmldoc.createElementNS(null, "description");
-		descriptionNode.setAttributeNS(null, "value", description);
+		setAttribute(descriptionNode, "value", description);
 		fittingNode.appendChild(descriptionNode);
 
 		//Ship Type
 		Element shipTypeNode = xmldoc.createElementNS(null, "shipType");
-		shipTypeNode.setAttributeNS(null, "value", asset.getTypeName());
+		setAttribute(shipTypeNode, "value", asset.getTypeName());
 		fittingNode.appendChild(shipTypeNode);
 
 		//Sort assets by (last) flag
@@ -113,8 +113,8 @@ public final class EveFittingWriter extends AbstractXmlWriter {
 		for (int i = 0; i < 8; i++) {
 			if (modules.containsKey("LoSlot" + i)) {
 				hardwareNode = xmldoc.createElementNS(null, "hardware");
-				hardwareNode.setAttributeNS(null, "slot", "low slot " + i);
-				hardwareNode.setAttributeNS(null, "type", modules.get("LoSlot" + i).get(0).getName());
+				setAttribute(hardwareNode, "slot", "low slot " + i);
+				setAttribute(hardwareNode, "type", modules.get("LoSlot" + i).get(0).getName());
 				fittingNode.appendChild(hardwareNode);
 			}
 		}
@@ -122,8 +122,8 @@ public final class EveFittingWriter extends AbstractXmlWriter {
 		for (int i = 0; i < 8; i++) {
 			if (modules.containsKey("MedSlot" + i)) {
 				hardwareNode = xmldoc.createElementNS(null, "hardware");
-				hardwareNode.setAttributeNS(null, "slot", "med slot " + i);
-				hardwareNode.setAttributeNS(null, "type", modules.get("MedSlot" + i).get(0).getName());
+				setAttribute(hardwareNode, "slot", "med slot " + i);
+				setAttribute(hardwareNode, "type", modules.get("MedSlot" + i).get(0).getName());
 				fittingNode.appendChild(hardwareNode);
 			}
 		}
@@ -131,8 +131,8 @@ public final class EveFittingWriter extends AbstractXmlWriter {
 		for (int i = 0; i < 8; i++) {
 			if (modules.containsKey("HiSlot" + i)) {
 				hardwareNode = xmldoc.createElementNS(null, "hardware");
-				hardwareNode.setAttributeNS(null, "slot", "hi slot " + i);
-				hardwareNode.setAttributeNS(null, "type", modules.get("HiSlot" + i).get(0).getName());
+				setAttribute(hardwareNode, "slot", "hi slot " + i);
+				setAttribute(hardwareNode, "type", modules.get("HiSlot" + i).get(0).getName());
 				fittingNode.appendChild(hardwareNode);
 			}
 		}
@@ -140,8 +140,8 @@ public final class EveFittingWriter extends AbstractXmlWriter {
 		for (int i = 0; i < 8; i++) {
 			if (modules.containsKey("RigSlot" + i)) {
 				hardwareNode = xmldoc.createElementNS(null, "hardware");
-				hardwareNode.setAttributeNS(null, "slot", "rig slot " + i);
-				hardwareNode.setAttributeNS(null, "type", modules.get("RigSlot" + i).get(0).getName());
+				setAttribute(hardwareNode, "slot", "rig slot " + i);
+				setAttribute(hardwareNode, "type", modules.get("RigSlot" + i).get(0).getName());
 				fittingNode.appendChild(hardwareNode);
 			}
 		}
@@ -149,8 +149,8 @@ public final class EveFittingWriter extends AbstractXmlWriter {
 		for (int i = 0; i < 5; i++) {
 			if (modules.containsKey("SubSystem" + i)) {
 				hardwareNode = xmldoc.createElementNS(null, "hardware");
-				hardwareNode.setAttributeNS(null, "slot", "subsystem slot" + i);
-				hardwareNode.setAttributeNS(null, "type", modules.get("SubSystem" + i).get(0).getName());
+				setAttribute(hardwareNode, "slot", "subsystem slot" + i);
+				setAttribute(hardwareNode, "type", modules.get("SubSystem" + i).get(0).getName());
 				fittingNode.appendChild(hardwareNode);
 			}
 		}
@@ -170,9 +170,9 @@ public final class EveFittingWriter extends AbstractXmlWriter {
 			}
 			for (Map.Entry<String, Long> entry : moduleCount.entrySet()) {
 				hardwareNode = xmldoc.createElementNS(null, "hardware");
-				hardwareNode.setAttributeNS(null, "qty", String.valueOf(entry.getValue()));
-				hardwareNode.setAttributeNS(null, "slot", "drone bay");
-				hardwareNode.setAttributeNS(null, "type", entry.getKey());
+				setAttribute(hardwareNode, "qty", String.valueOf(entry.getValue()));
+				setAttribute(hardwareNode, "slot", "drone bay");
+				setAttribute(hardwareNode, "type", entry.getKey());
 				fittingNode.appendChild(hardwareNode);
 			}
 		}
@@ -192,9 +192,9 @@ public final class EveFittingWriter extends AbstractXmlWriter {
 			}
 			for (Map.Entry<String, Long> entry : moduleCount.entrySet()) {
 				hardwareNode = xmldoc.createElementNS(null, "hardware");
-				hardwareNode.setAttributeNS(null, "qty", String.valueOf(entry.getValue()));
-				hardwareNode.setAttributeNS(null, "slot", "cargo");
-				hardwareNode.setAttributeNS(null, "type", entry.getKey());
+				setAttribute(hardwareNode, "qty", String.valueOf(entry.getValue()));
+				setAttribute(hardwareNode, "slot", "cargo");
+				setAttribute(hardwareNode, "type", entry.getKey());
 				fittingNode.appendChild(hardwareNode);
 			}
 		}

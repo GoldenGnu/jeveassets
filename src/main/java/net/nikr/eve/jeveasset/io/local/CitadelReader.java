@@ -68,24 +68,24 @@ public final class CitadelReader extends AbstractXmlReader<CitadelSettings> {
 		NodeList filterNodes = element.getElementsByTagName("citadel");
 		for (int i = 0; i < filterNodes.getLength(); i++) {
 			Element currentNode = (Element) filterNodes.item(i);
-			long id = AttributeGetters.getLong(currentNode, "stationid");
-			String name = AttributeGetters.getString(currentNode, "name");
-			long systemId = AttributeGetters.getLong(currentNode, "systemid");
-			String systemName = AttributeGetters.getString(currentNode, "systemname");
-			long regionId = AttributeGetters.getLong(currentNode, "regionid");
-			String regionName = AttributeGetters.getString(currentNode, "regionname");
+			long id = getLong(currentNode, "stationid");
+			String name = getString(currentNode, "name");
+			long systemId = getLong(currentNode, "systemid");
+			String systemName = getString(currentNode, "systemname");
+			long regionId = getLong(currentNode, "regionid");
+			String regionName = getString(currentNode, "regionname");
 			boolean userLocation = false;
-			if (AttributeGetters.haveAttribute(currentNode, "userlocation")) {
-				userLocation = AttributeGetters.getBoolean(currentNode, "userlocation");
+			if (haveAttribute(currentNode, "userlocation")) {
+				userLocation = getBoolean(currentNode, "userlocation");
 			}
 			boolean citadel = true;
-			if (AttributeGetters.haveAttribute(currentNode, "citadel")) {
-				citadel = AttributeGetters.getBoolean(currentNode, "citadel");
+			if (haveAttribute(currentNode, "citadel")) {
+				citadel = getBoolean(currentNode, "citadel");
 			}
 			CitadelSource source = CitadelSource.OLD;
-			if (AttributeGetters.haveAttribute(currentNode, "source")) {
+			if (haveAttribute(currentNode, "source")) {
 				try {
-					source = CitadelSource.valueOf(AttributeGetters.getString(currentNode, "source"));
+					source = CitadelSource.valueOf(getString(currentNode, "source"));
 				} catch (IllegalArgumentException ex) {
 					source = CitadelSource.OLD;
 				}
@@ -98,7 +98,7 @@ public final class CitadelReader extends AbstractXmlReader<CitadelSettings> {
 		NodeList filterNodes = element.getElementsByTagName("settings");
 		for (int i = 0; i < filterNodes.getLength(); i++) {
 			Element currentNode = (Element) filterNodes.item(i);
-			Date nextUpdate = AttributeGetters.getDate(currentNode, "nextupdate");
+			Date nextUpdate = getDate(currentNode, "nextupdate");
 			settings.setNextUpdate(nextUpdate);
 		}
 	}

@@ -80,7 +80,7 @@ public class LogsReader extends AbstractXmlReader<Boolean> {
 		NodeList claimSetNodes = element.getElementsByTagName("claimset");
 		for (int a = 0; a < claimSetNodes.getLength(); a++) {
 			Element claimSetNode = (Element) claimSetNodes.item(a);
-			Date date = AttributeGetters.getDate(claimSetNode, "date");
+			Date date = getDate(claimSetNode, "date");
 			NodeList addedNodes = claimSetNode.getElementsByTagName("added");
 			if (addedNodes.getLength() == 1) {
 				Element addedElement = (Element) addedNodes.item(0);
@@ -102,7 +102,7 @@ public class LogsReader extends AbstractXmlReader<Boolean> {
 		for (int a = 0; a < claimNodes.getLength(); a++) {
 			Element claimNode = (Element) claimNodes.item(a);
 			AssetLogData data = parseData(claimNode);
-			long itemID = AttributeGetters.getLong(claimNode, "itemid");
+			long itemID = getLong(claimNode, "itemid");
 			AssetLog assetLog = new AssetLog(data, itemID);
 			LogManager.put(map, assetLog.getTypeID(), assetLog);
 		}
@@ -132,7 +132,7 @@ public class LogsReader extends AbstractXmlReader<Boolean> {
 		for (int a = 0; a < sourceNodes.getLength(); a++) {
 			Element sourceNode = (Element) sourceNodes.item(a);
 			AssetLogData data = parseData(sourceNode);
-			LogSourceType sourceType = LogSourceType.valueOf(AttributeGetters.getString(sourceNode, "sourcetype"));
+			LogSourceType sourceType = LogSourceType.valueOf(getString(sourceNode, "sourcetype"));
 			LogSource source = new LogSource(data, sourceType);
 			LogManager.putSet(map, source.getTypeID(), source);
 		}
@@ -140,16 +140,16 @@ public class LogsReader extends AbstractXmlReader<Boolean> {
 	}
 
 	private AssetLogData parseData(Element node) throws XmlException {
-		int typeID = AttributeGetters.getInt(node, "typeid");
-		Date date = AttributeGetters.getDate(node, "date");
-		long ownerID = AttributeGetters.getLong(node, "ownerid");
-		long locationID = AttributeGetters.getLong(node, "locationid");
-		Integer flagID = AttributeGetters.getIntOptional(node, "flagid");
-		String container = AttributeGetters.getStringOptional(node, "container");
-		String parents = AttributeGetters.getString(node, "parentids");
-		long count = AttributeGetters.getLong(node, "count");
-		long id = AttributeGetters.getLong(node, "id");
-		LogType logType = LogType.valueOf(AttributeGetters.getString(node, "type"));
+		int typeID = getInt(node, "typeid");
+		Date date = getDate(node, "date");
+		long ownerID = getLong(node, "ownerid");
+		long locationID = getLong(node, "locationid");
+		Integer flagID = getIntOptional(node, "flagid");
+		String container = getStringOptional(node, "container");
+		String parents = getString(node, "parentids");
+		long count = getLong(node, "count");
+		long id = getLong(node, "id");
+		LogType logType = LogType.valueOf(getString(node, "type"));
 		List<Long> parentIDs = new ArrayList<>();
 		for (String s : parents.split(",")) {
 			try {

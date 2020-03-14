@@ -33,7 +33,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
-public abstract class AbstractBackup {
+public abstract class AbstractBackup extends AttributeGetters {
 	private static final Logger LOG = LoggerFactory.getLogger(AbstractBackup.class);
 
 	protected boolean exist(final String filename) {

@@ -27,31 +27,31 @@ import net.nikr.eve.jeveasset.data.settings.Settings;
 import org.w3c.dom.Node;
 
 
-public final class AttributeGetters {
+public class AttributeGetters {
 
 	private static final SimpleDateFormat FORMAT = new SimpleDateFormat("yyy-MM-dd HH:mm:ss");
 
-	private AttributeGetters() { }
+	protected AttributeGetters() { }
 
-	public static boolean haveAttribute(final Node node, final String attributeName) {
+	protected static boolean haveAttribute(final Node node, final String attributeName) {
 		Node attributeNode = node.getAttributes().getNamedItem(attributeName);
 		return attributeNode != null;
 	}
 
-	public static String getString(final Node node, final String attributeName) throws XmlException {
+	protected String getString(final Node node, final String attributeName) throws XmlException {
 		return getNodeValue(node, attributeName);
 	}
 
-	public static String getStringOptional(final Node node, final String attributeName) throws XmlException {
+	protected String getStringOptional(final Node node, final String attributeName) throws XmlException {
 		return getNodeValueOptional(node, attributeName);
 	}
 
-	public static Date getDate(final Node node, final String attributeName) throws XmlException {
+	protected Date getDate(final Node node, final String attributeName) throws XmlException {
 		String value = getNodeValue(node, attributeName);
 		return toDate(value, node, attributeName);
 	}
 
-	public static Date getDateNotNull(final Node node, final String attributeName) {
+	protected Date getDateNotNull(final Node node, final String attributeName) {
 		String value = getNodeValueOptional(node, attributeName);
 		if (value == null) {
 			return Settings.getNow();
@@ -63,7 +63,7 @@ public final class AttributeGetters {
 		}
 	}
 
-	public static Date getDateOptional(final Node node, final String attributeName) throws XmlException {
+	protected Date getDateOptional(final Node node, final String attributeName) throws XmlException {
 		String value = getNodeValueOptional(node, attributeName);
 		if (value == null) {
 			return null;
@@ -71,7 +71,7 @@ public final class AttributeGetters {
 		return toDate(value, node, attributeName);
 	}
 
-	private static Date toDate(final String value, final Node node, final String attributeName) throws XmlException {
+	private Date toDate(final String value, final Node node, final String attributeName) throws XmlException {
 		try {
 			return FORMAT.parse(value);
 		} catch (ParseException ex) {
@@ -84,12 +84,12 @@ public final class AttributeGetters {
 		}
 	}
 
-	public static int getInt(final Node node, final String attributeName) throws XmlException {
+	protected int getInt(final Node node, final String attributeName) throws XmlException {
 		String value = getNodeValue(node, attributeName);
 		return toInt(value, node, attributeName);
 	}
 
-	public static Integer getIntOptional(final Node node, final String attributeName) throws XmlException {
+	protected Integer getIntOptional(final Node node, final String attributeName) throws XmlException {
 		String value = getNodeValueOptional(node, attributeName);
 		if (value == null) {
 			return null;
@@ -97,7 +97,7 @@ public final class AttributeGetters {
 		return toInt(value, node, attributeName);
 	}
 
-	private static Integer toInt(String value, final Node node, final String attributeName) throws XmlException {
+	protected Integer toInt(String value, final Node node, final String attributeName) throws XmlException {
 		try {
 			return Integer.parseInt(value);
 		} catch (NumberFormatException ex) {
@@ -105,12 +105,12 @@ public final class AttributeGetters {
 		}
 	}
 
-	public static long getLong(final Node node, final String attributeName) throws XmlException {
+	protected long getLong(final Node node, final String attributeName) throws XmlException {
 		String value = getNodeValue(node, attributeName);
 		return toLong(value, node, attributeName);
 	}
 
-	public static Long getLongOptional(final Node node, final String attributeName) throws XmlException {
+	protected Long getLongOptional(final Node node, final String attributeName) throws XmlException {
 		String value = getNodeValueOptional(node, attributeName);
 		if (value == null) {
 			return null;
@@ -118,7 +118,7 @@ public final class AttributeGetters {
 		return toLong(value, node, attributeName);
 	}
 
-	private static Long toLong(final String value, final Node node, final String attributeName) throws XmlException {
+	private Long toLong(final String value, final Node node, final String attributeName) throws XmlException {
 		try {
 			return safeStringToLong(value);
 		} catch (NumberFormatException ex) {
@@ -126,12 +126,12 @@ public final class AttributeGetters {
 		}
 	}
 
-	public static double getDouble(final Node node, final String attributeName) throws XmlException {
+	protected double getDouble(final Node node, final String attributeName) throws XmlException {
 		String value = getNodeValue(node, attributeName);
 		return toDouble(value, node, attributeName);
 	}
 
-	public static Double getDoubleOptional(final Node node, final String attributeName) throws XmlException {
+	protected Double getDoubleOptional(final Node node, final String attributeName) throws XmlException {
 		String value = getNodeValueOptional(node, attributeName);
 		if (value == null) {
 			return null;
@@ -139,7 +139,7 @@ public final class AttributeGetters {
 		return toDouble(value, node, attributeName);
 	}
 
-	private static Double toDouble(final String value, final Node node, final String attributeName) throws XmlException {
+	private Double toDouble(final String value, final Node node, final String attributeName) throws XmlException {
 		try {
 			return Double.valueOf(value);
 		} catch (NumberFormatException ex) {
@@ -147,12 +147,12 @@ public final class AttributeGetters {
 		}
 	}
 
-	public static float getFloat(final Node node, final String attributeName) throws XmlException {
+	protected float getFloat(final Node node, final String attributeName) throws XmlException {
 		String value = getNodeValue(node, attributeName);
 		return toFloat(value, node, attributeName);
 	}
 
-	public static Float getFloatOptional(final Node node, final String attributeName) throws XmlException {
+	protected Float getFloatOptional(final Node node, final String attributeName) throws XmlException {
 		String value = getNodeValueOptional(node, attributeName);
 		if (value == null) {
 			return null;
@@ -160,7 +160,7 @@ public final class AttributeGetters {
 		return toFloat(value, node, attributeName);
 	}
 
-	private static Float toFloat(String value, final Node node, final String attributeName) throws XmlException {
+	private Float toFloat(String value, final Node node, final String attributeName) throws XmlException {
 		try {
 			return Float.valueOf(value);
 		} catch (NumberFormatException ex) {
@@ -168,12 +168,12 @@ public final class AttributeGetters {
 		}
 	}
 
-	public static boolean getBoolean(final Node node, final String attributeName) throws XmlException {
+	protected boolean getBoolean(final Node node, final String attributeName) throws XmlException {
 		String value = getNodeValue(node, attributeName);
 		return (value.equals("true") || value.equals("1"));
 	}
 
-	private static Long safeStringToLong(final String s) {
+	private Long safeStringToLong(final String s) {
 		int nE = s.indexOf("E");
 		if (nE == -1) {
 			nE = s.indexOf("e");
@@ -194,7 +194,7 @@ public final class AttributeGetters {
 		return nOutput;
 	}
 
-	private static String getNodeValue(final Node node, final String attributeName) throws XmlException {
+	private String getNodeValue(final Node node, final String attributeName) throws XmlException {
 		Node attributeNode = node.getAttributes().getNamedItem(attributeName);
 		if (attributeNode == null) {
 			throw new XmlException("Failed to parse attribute from node: " + node.getNodeName() + " > " + attributeName);
@@ -202,7 +202,7 @@ public final class AttributeGetters {
 		return attributeNode.getNodeValue();
 	}
 
-	private static String getNodeValueOptional(final Node node, final String attributeName) {
+	private String getNodeValueOptional(final Node node, final String attributeName) {
 		Node attributeNode = node.getAttributes().getNamedItem(attributeName);
 		if (attributeNode == null) {
 			return null;
