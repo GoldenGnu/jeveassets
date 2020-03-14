@@ -26,7 +26,6 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
 import net.nikr.eve.jeveasset.io.local.AbstractXmlReader;
-import net.nikr.eve.jeveasset.io.local.AttributeGetters;
 import net.nikr.eve.jeveasset.io.local.SettingsReader;
 import net.nikr.eve.jeveasset.io.local.XmlException;
 import net.nikr.eve.jeveasset.io.local.update.updates.Update1To2;
@@ -54,8 +53,8 @@ public class Update extends AbstractXmlReader<Integer> {
 	@Override
 	protected Integer parse(org.w3c.dom.Element element) throws XmlException {
 		if (element.getNodeName().equals("settings")) {
-			if (AttributeGetters.haveAttribute((Node) element, "version")) {
-				return AttributeGetters.getInt((Node) element, "version");
+			if (haveAttribute((Node) element, "version")) {
+				return getInt((Node) element, "version");
 			}
 		} else {
 			throw new XmlException("Wrong root element name.");

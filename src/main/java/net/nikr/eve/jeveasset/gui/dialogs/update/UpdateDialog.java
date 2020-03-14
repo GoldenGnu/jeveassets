@@ -658,7 +658,7 @@ public class UpdateDialog extends JDialogCentered {
 				if (!updateTasks.isEmpty()) {
 					//Pause structure update
 					program.getStatusPanel().setPauseUpdates(true);
-					TaskDialog taskDialog = new TaskDialog(program, updateTasks, false, null, new TaskDialog.TasksCompleted() {
+					TaskDialog taskDialog = new TaskDialog(program, updateTasks, false, false, false, null, new TaskDialog.TasksCompleted() {
 						@Override
 						public void tasksCompleted(TaskDialog taskDialog) {
 							//Update tracker locations

@@ -38,6 +38,7 @@ import net.nikr.eve.jeveasset.data.settings.types.LastTransactionType;
 import net.nikr.eve.jeveasset.data.settings.types.OwnersType;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.Percent;
 import net.nikr.eve.jeveasset.i18n.TabsOrders;
+import net.nikr.eve.jeveasset.io.esi.EsiPublicMarketOrdersGetter.Underbid;
 
 public class MyMarketOrder extends RawMarketOrder implements Comparable<MyMarketOrder>, EditableLocationType, ItemType, BlueprintType, EditablePriceType, ContractPriceType, OwnersType, LastTransactionType {
 
@@ -118,6 +119,7 @@ public class MyMarketOrder extends RawMarketOrder implements Comparable<MyMarket
 	private Percent lastTransactionPercent;
 	private String issuedByName = "";
 	private Double brokersFee;
+	private Underbid underbid;
 
 	public MyMarketOrder(final RawMarketOrder rawMarketOrder, final Item item, final OwnerType owner) {
 		super(rawMarketOrder);
@@ -364,6 +366,39 @@ public class MyMarketOrder extends RawMarketOrder implements Comparable<MyMarket
 
 	public void setBrokersFee(Double brokerFee) {
 		this.brokersFee = brokerFee;
+	}
+
+	public boolean isUndercut() {
+		if (underbid == null) {
+			return false;
+		}
+		if (isBuyOrder()) {
+			return underbid.getPrice() > getPrice();
+		} else {
+			return underbid.getPrice() < getPrice();
+		}
+	}
+
+	public boolean haveUnderbid() {
+		return underbid != null;
+	}
+
+	public Double getUnderbidPrice() {
+		if (underbid == null) {
+			return null;
+		}
+		return underbid.getPrice();
+	}
+
+	public Long getUnderbidCount() {
+		if (underbid == null) {
+			return null;
+		}
+		return underbid.getCount();
+	}
+
+	public void setUnderbid(Underbid underbid) {
+		this.underbid = underbid;
 	}
 
 	@Override

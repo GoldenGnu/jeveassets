@@ -65,8 +65,8 @@ public final class JumpsReader extends AbstractXmlReader<Boolean> {
 	}
 
 	private Jump parseEdge(final Node node) throws XmlException {
-		long from = AttributeGetters.getLong(node, "from");
-		long to = AttributeGetters.getLong(node, "to");
+		long from = getLong(node, "from");
+		long to = getLong(node, "to");
 		Jump j = new Jump(StaticData.get().getLocation(from), StaticData.get().getLocation(to));
 		return j;
 	}

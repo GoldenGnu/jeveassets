@@ -22,6 +22,7 @@
 package net.nikr.eve.jeveasset.gui.dialogs.update;
 
 import java.awt.Font;
+import java.awt.Window;
 import java.awt.event.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -69,15 +70,17 @@ public class TaskDialog {
 	private UpdateTask updateTask;
 	private Progress progress;
 	private final TasksCompleted completed;
+	private final boolean auto;
 
-	public TaskDialog(final Program program, final UpdateTask updateTask, boolean totalProgress, UpdateType updateType, TasksCompleted completed) {
-		this(program, Collections.singletonList(updateTask), totalProgress, updateType, completed);
+	public TaskDialog(final Program program, final UpdateTask updateTask, boolean totalProgress, boolean minimized, boolean auto, UpdateType updateType, TasksCompleted completed) {
+		this(program, Collections.singletonList(updateTask), totalProgress, minimized, auto, updateType, completed);
 	}
 
-	public TaskDialog(final Program program, final List<UpdateTask> updateTasks, boolean totalProgress, UpdateType updateType, TasksCompleted completed) {
+	public TaskDialog(final Program program, final List<UpdateTask> updateTasks, boolean totalProgress, boolean minimized, boolean auto, UpdateType updateType, TasksCompleted completed) {
 		this.program = program;
 		this.updateTasks = updateTasks;
 		this.completed = completed;
+		this.auto = auto;
 
 		listener = new ListenerClass();
 
@@ -224,7 +227,7 @@ public class TaskDialog {
 		if (!updateTasks.isEmpty()) {
 			index = 0;
 			update();
-			setVisible(true);
+			setVisible(true, minimized);
 		}
 	}
 
@@ -241,7 +244,7 @@ public class TaskDialog {
 		} else { //Done
 			jIcon.setIcon(new UpdateTask.EmptyIcon());
 			jCancel.setEnabled(false);
-			if (progress != null && progress.isVisible()) {
+			if (!auto && progress != null && progress.isVisible()) {
 				progress.setDone(true);
 			} else {
 				done();
@@ -250,23 +253,52 @@ public class TaskDialog {
 	}
 
 	private void done() {
-		jLockWindow.show(GuiShared.get().updating(), new JLockWindow.LockWorkerAdvanced() {
-			@Override
-			public void task() {
-				completed.tasksCompleted(TaskDialog.this);
-			}
-			@Override
-			public void gui() {
-				jOK.setEnabled(true);
-				jMinimize.setEnabled(false); //Should not minimize after completed
-			}
-			@Override
-			public void hidden() {
-				if (completed instanceof TasksCompletedAdvanced) {
-					((TasksCompletedAdvanced) completed).tasksHidden(TaskDialog.this);
+		if (!auto || jWindow.isVisible()) {
+			jLockWindow.show(GuiShared.get().updating(), new JLockWindow.LockWorkerAdvanced() {
+				@Override
+				public void task() {
+					completed.tasksCompleted(TaskDialog.this);
 				}
+				@Override
+				public void gui() {
+					jOK.setEnabled(true);
+					jMinimize.setEnabled(false); //Should not minimize after completed
+				}
+				@Override
+				public void hidden() {
+					if (completed instanceof TasksCompletedAdvanced) {
+						((TasksCompletedAdvanced) completed).tasksHidden(TaskDialog.this);
+					}
+				}
+			});
+		} else {
+			JLockWindow jLockMainFrame = new JLockWindow(getTopWindow(program.getMainWindow().getFrame()));
+			jLockMainFrame.show(GuiShared.get().updating(), new JLockWindow.LockWorkerAdvanced() {
+				@Override
+				public void task() {
+					completed.tasksCompleted(TaskDialog.this);
+				}
+				@Override
+				public void gui() {
+					setVisible(false);
+				}
+				@Override
+				public void hidden() {
+					if (completed instanceof TasksCompletedAdvanced) {
+						((TasksCompletedAdvanced) completed).tasksHidden(TaskDialog.this);
+					}
+				}
+			});
+		}
+	}
+
+	private Window getTopWindow(Window in) {
+		for (Window window : in.getOwnedWindows()) {
+			if (window.isVisible()) {
+				return getTopWindow(window);
 			}
-		});
+		}
+		return in;
 	}
 
 	private void centerWindow() {
@@ -275,8 +307,23 @@ public class TaskDialog {
 	}
 
 	private void setVisible(final boolean b) {
+		setVisible(b, false);
+	}
+
+	private void setVisible(final boolean b, boolean minimized) {
 		if (b) {
 			centerWindow();
+			if (minimized) {
+				if (progress != null) {
+					progress.setVisible(true);
+				}
+				jWindow.setVisible(false);
+			} else {
+				if (progress != null) {
+					progress.setVisible(false);
+				}
+				jWindow.setVisible(true);
+			}
 		} else { //Memory
 			for (UpdateTask task : updateTasks) {
 				for (MouseListener mouseListener : task.getTextLabel().getMouseListeners()) {
@@ -290,8 +337,8 @@ public class TaskDialog {
 			if (progress != null) {
 				program.getStatusPanel().removeProgress(progress);
 			}
+			jWindow.setVisible(false);
 		}
-		jWindow.setVisible(b);
 	}
 
 	private void cancelUpdate() {
