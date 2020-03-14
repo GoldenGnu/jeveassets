@@ -41,6 +41,7 @@ import net.nikr.eve.jeveasset.data.settings.UserItem;
 import net.nikr.eve.jeveasset.data.settings.tag.Tags;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.Percent;
 import net.nikr.eve.jeveasset.io.esi.EsiCallbackURL;
+import net.nikr.eve.jeveasset.io.esi.EsiPublicMarketOrdersGetter.Underbid;
 import net.troja.eve.esi.model.CharacterAssetsResponse;
 import net.troja.eve.esi.model.CharacterBlueprintsResponse;
 import net.troja.eve.esi.model.CharacterContractsResponse;
@@ -179,6 +180,8 @@ public interface ConverterTestOptions {
 	public RawMarketOrder.MarketOrderState getMarketOrderStateRaw();
 
 	public CharacterOrdersHistoryResponse.StateEnum getMarketOrderStateEsiCharacterHistory();
+
+	public Underbid getMarketOrdersUnderbid();
 
 	public CorporationOrdersHistoryResponse.StateEnum getMarketOrderStateEsiCorporationHistory();
 
