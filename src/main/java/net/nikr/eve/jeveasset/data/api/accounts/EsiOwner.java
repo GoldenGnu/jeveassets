@@ -338,6 +338,15 @@ public class EsiOwner extends AbstractOwner implements OwnerType {
 	}
 
 	@Override
+	public boolean isMarketStructures() {
+		if (isCorporation()) {
+			return false; //Character Endpoint
+		} else {
+			return EsiScopes.CHARACTER_MARKET_STRUCTURES.isInScope(scopes);
+		}
+	}
+
+	@Override
 	public boolean isShip() {
 		if (isCorporation()) {
 			return false; //Character Endpoint

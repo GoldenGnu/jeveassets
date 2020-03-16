@@ -29,8 +29,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Collection;
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.zip.GZIPInputStream;
@@ -84,7 +84,7 @@ public class CitadelGetter extends AbstractXmlWriter {
 		getCitadelGetter().setCitadel(citadel);
 	}
 
-	public synchronized static void set(List<Citadel> citadels) {
+	public synchronized static void set(Collection<Citadel> citadels) {
 		getCitadelGetter().setCitadels(citadels);
 	}
 
@@ -205,7 +205,7 @@ public class CitadelGetter extends AbstractXmlWriter {
 		saveXml();
 	}
 
-	private void setCitadels(List<Citadel> citadels) {
+	private void setCitadels(Collection<Citadel> citadels) {
 		for (Citadel citadel : citadels) {
 			citadelSettings.put(citadel.id, citadel);
 		}

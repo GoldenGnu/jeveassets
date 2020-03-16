@@ -97,6 +97,11 @@ public class EveApiOwner extends DeprecatedOwner implements OwnerType {
 	}
 
 	@Override
+	public boolean isMarketStructures() {
+		return false; //Not supported by the XML API
+	}
+
+	@Override
 	public boolean isShip() {
 		return false; //Not supported by the XML API
 	}

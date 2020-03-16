@@ -23,22 +23,33 @@ package net.nikr.eve.jeveasset.io.esi;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
+import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
 import net.nikr.eve.jeveasset.data.api.accounts.OwnerType;
 import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder;
-import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder;
+import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder.MarketOrderRange;
+import net.nikr.eve.jeveasset.data.api.raw.RawPublicMarketOrder;
 import net.nikr.eve.jeveasset.data.profile.ProfileData;
+import net.nikr.eve.jeveasset.data.sde.MyLocation;
+import net.nikr.eve.jeveasset.data.settings.Citadel;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import static net.nikr.eve.jeveasset.io.esi.AbstractEsiGetter.DATASOURCE;
 import static net.nikr.eve.jeveasset.io.esi.AbstractEsiGetter.DEFAULT_RETRIES;
 import static net.nikr.eve.jeveasset.io.esi.AbstractEsiGetter.getMarketApiOpen;
+import net.nikr.eve.jeveasset.io.online.CitadelGetter;
+import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 import net.nikr.eve.jeveasset.io.shared.RawConverter;
 import net.troja.eve.esi.ApiException;
 import net.troja.eve.esi.ApiResponse;
 import net.troja.eve.esi.model.MarketOrdersResponse;
+import net.troja.eve.esi.model.MarketStructuresResponse;
+import net.troja.eve.esi.model.StructureResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,79 +60,137 @@ public class EsiPublicMarketOrdersGetter extends AbstractEsiGetter {
 
 	private final ProfileData profileData;
 	private final SellOrderRange sellOrderRange;
+	private final UpdateTask updateTask;
+	private boolean first = true;
 	
 	public EsiPublicMarketOrdersGetter(UpdateTask updateTask, ProfileData profileData, SellOrderRange sellOrderRange) {
 		super(updateTask, null, false, Settings.get().getPublicMarketOrdersNextUpdate(), TaskType.PUBLIC_MARKET_ORDERS);
+		this.updateTask = updateTask;
 		this.profileData = profileData;
 		this.sellOrderRange = sellOrderRange;
 	}
 
 	@Override
 	protected void update() throws ApiException {
-		List<MyMarketOrder> marketOrders = getMarketOrders();
-
-		Map<Long, Underbid> underbids = new HashMap<>();
-		Map<Long, MarketOrdersResponse> updates = new HashMap<>();
-
-		Map<Integer, Map<Integer, List<MyMarketOrder>>> regionIDs = getRegionIDs(marketOrders);
-		int count = 0;
-		for (Map.Entry<Integer, Map<Integer, List<MyMarketOrder>>> entry : regionIDs.entrySet()) {
-			count++;
-			List<MarketOrdersResponse> updatePages = updatePages(DEFAULT_RETRIES, new EsiPagesHandler<MarketOrdersResponse>() {
-				@Override
-				public ApiResponse<List<MarketOrdersResponse>> get(Integer page) throws ApiException {
-					return getMarketApiOpen().getMarketsRegionIdOrdersWithHttpInfo("all", entry.getKey(), DATASOURCE, null, page, null);
-				}
-			});
-			for (MarketOrdersResponse ordersResponse : updatePages) {
-				List<MyMarketOrder> orders = entry.getValue().get(ordersResponse.getTypeId());
-				if (orders != null) {
-					//Orders to be updated
-					for (MyMarketOrder marketOrder : orders) {
-						if (isSameOrder(marketOrder, ordersResponse)) {
-							updates.put(ordersResponse.getOrderId(), ordersResponse);
-						}
+		Set<Long> structureIDs = new HashSet<>();
+		Set<Integer> regionIDs = new HashSet<>();
+		Map<Integer, List<MyMarketOrder>> typeIDs = new HashMap<>();
+		for (OwnerType ownerType : profileData.getOwners().values()) {
+			for (MyMarketOrder marketOrder : ownerType.getMarketOrders()) {
+				if (marketOrder.isActive()) {
+					//StructuresIDs
+					if (marketOrder.getLocationID() > 100000000) {
+						structureIDs.add(marketOrder.getLocationID());
 					}
-					//Orders to match
-					for (MyMarketOrder marketOrder : orders) {
-						if (isSameOrder(marketOrder, ordersResponse)) {
-							continue;
-						}
-						if (!isSameType(marketOrder, ordersResponse)) { //Both buy or both sell
-							continue;
-						}
-						if (!isInRange(marketOrder, updates.get(marketOrder.getOrderID()), ordersResponse)) { //Order range overlap
-							continue;
-						}
-						Underbid underbid = underbids.get(marketOrder.getOrderID());
-						if (underbid == null) {
-							underbid = new Underbid(ordersResponse);
-							underbids.put(marketOrder.getOrderID(), underbid);
-						}
-						if (marketOrder.isBuyOrder()) { //Buy (underbid is higher)
-							underbid.setPrice(Math.max(underbid.getPrice(), ordersResponse.getPrice()));
-							if (ordersResponse.getPrice() > marketOrder.getPrice()) {
-								underbid.addCount(ordersResponse.getVolumeRemain());
-							}
-						} else { //Sell  (underbid is lower)
-							underbid.setPrice(Math.min(underbid.getPrice(), ordersResponse.getPrice()));
-							if (marketOrder.getPrice() > ordersResponse.getPrice()) {
-								underbid.addCount(ordersResponse.getVolumeRemain());
-							}
-						}
-
+					//TypeIDs
+					List<MyMarketOrder> list = typeIDs.get(marketOrder.getTypeID());
+					if (list == null) {
+						list = new ArrayList<>();
+						typeIDs.put(marketOrder.getTypeID(), list);
+					}
+					list.add(marketOrder);
+					//RegionIDs
+					Integer regionID = RawConverter.toInteger(marketOrder.getLocation().getRegionID());
+					if (regionID >= 10000000 && regionID <= 13000000) {
+						regionIDs.add(regionID);
 					}
 				}
 			}
-			setProgress(regionIDs.size(), count, 0, 100);
 		}
-		profileData.setMarketOrdersUpdates(updates);
-		Settings.get().setMarketOrdersUnderbid(underbids);
+		Data data = new Data(typeIDs);
+		AtomicInteger count = new AtomicInteger(0);
+		List<RawPublicMarketOrder> orders = new ArrayList<>();
+		//Update public market orders
+		List<MarketOrdersResponse> responses = updatePagedList(regionIDs, new PagedListHandler<Integer, MarketOrdersResponse>() {
+			@Override
+			protected List<MarketOrdersResponse> get(Integer k) throws ApiException {
+				try {
+					return updatePages(DEFAULT_RETRIES, new EsiPagesHandler<MarketOrdersResponse>() {
+						@Override
+						public ApiResponse<List<MarketOrdersResponse>> get(Integer page) throws ApiException {
+							return getMarketApiOpen().getMarketsRegionIdOrdersWithHttpInfo("all", k, DATASOURCE, null, page, null);
+						}
+					});
+				} finally {
+					setProgressAll(regionIDs.size(), count.incrementAndGet(), 0, 40);
+				}
+			}
+		});
+		orders.addAll(EsiConverter.toPublicMarketOrders(responses));
+		for (MarketOrdersResponse ordersResponse : responses) {
+			//Find leaking market structures
+			if (ordersResponse.getLocationId() > 100000000) {
+				structureIDs.add(ordersResponse.getLocationId());
+			}
+			//Map known locationID <=> systemID
+			data.getLocationToSystem().put(ordersResponse.getLocationId(), RawConverter.toLong(ordersResponse.getSystemId()));
+		}
+		//Get public structures
+		structureIDs.addAll(update(DEFAULT_RETRIES, new EsiHandler<List<Long>>() {
+			@Override
+			public ApiResponse<List<Long>> get() throws ApiException {
+				return getUniverseApiOpen().getUniverseStructuresWithHttpInfo(DATASOURCE, "market", null);
+			}
+		}));
+		//Update orders in structures
+		count.set(0);
+		boolean updated = false;
+		for (EsiOwner esiOwner : profileData.getProfileManager().getEsiOwners()) {
+			if (esiOwner.isMarketStructures()) {
+				List<MarketStructuresResponse> structuresResponses = updatePagedList(structureIDs, new PagedListHandler<Long, MarketStructuresResponse>() {
+					@Override
+					protected List<MarketStructuresResponse> get(Long k) throws ApiException {
+						try {
+							return updatePages(DEFAULT_RETRIES, new EsiPagesHandler<MarketStructuresResponse>() {
+								@Override
+								public ApiResponse<List<MarketStructuresResponse>> get(Integer page) throws ApiException {
+									return esiOwner.getMarketApiAuth().getMarketsStructuresStructureIdWithHttpInfo(k, DATASOURCE, null, page, null);
+								}
+							});
+						} catch (ApiException ex) {
+							if (ex.getCode() == 403 && ex.getResponseBody().toLowerCase().contains("market access denied")) {
+								System.out.println(ex.getResponseBody() + "|" + ex.getMessage());
+								return null;
+							} else {
+								throw ex;
+							}
+						} finally {
+							setProgressAll(structureIDs.size(), count.incrementAndGet(), 40, 80);
+						}
+					}
+				});
+				orders.addAll(EsiConverter.toPublicMarketOrdersStructures(structuresResponses));
+				updated = true;
+				break;
+			}
+		}
+		if (!updated) {
+			addError(null, "NO ENOUGH ACCESS PRIVILEGES", "No character with market orders structure scope found\r\n(Add scope: [Options] > [Acounts...] > [Edit])");
+		}
+		//Process data
+		process(data, orders);
+		setProgressAll(100, 90, 0, 100);
+		CitadelGetter.set(data.getCitadels().values());
+		setProgressAll(100, 93, 0, 100);
+		profileData.setMarketOrdersUpdates(data.getUpdates());
+		setProgressAll(100, 96, 0, 100);
+		Settings.get().setMarketOrdersUnderbid(data.getUnderbids());
+		setProgressAll(100, 100, 0, 100);
+	}
+
+	private void setProgressAll(final float progressEnd, final float progressNow, final int minimum, final int maximum) {
+		if (updateTask != null) {
+			updateTask.setTaskProgress(progressEnd, progressNow, minimum, maximum);
+			updateTask.setTotalProgress(progressEnd, progressNow, minimum, maximum);
+		}
 	}
 
 	@Override
 	protected void setNextUpdate(Date date) {
-		Settings.get().setPublicMarketOrdersNextUpdate(date);
+		if (first) {
+			first = false;
+			Settings.get().setPublicMarketOrdersNextUpdate(date);
+		}
 	}
 
 	@Override
@@ -129,63 +198,71 @@ public class EsiPublicMarketOrdersGetter extends AbstractEsiGetter {
 		return true; //Public
 	}
 
-	private List<MyMarketOrder> getMarketOrders() {
-		List<MyMarketOrder> marketOrders = new ArrayList<>();
-		for (OwnerType ownerType : profileData.getOwners().values()) {
-			for (MyMarketOrder marketOrder : ownerType.getMarketOrders()) {
-				if (marketOrder.isActive()) {
-					marketOrders.add(marketOrder);
+	private void process(Data data, List<RawPublicMarketOrder> publicMarketOrders) {
+		//Process the orders
+		for (RawPublicMarketOrder ordersResponse : publicMarketOrders) {
+			List<MyMarketOrder> orders = data.getTypeIDs().get(ordersResponse.getTypeId());
+			if (orders != null) {
+				//Orders to match
+				for (MyMarketOrder marketOrder : orders) {
+					if (isSameOrder(marketOrder, ordersResponse)) { //Orders to be updated
+						data.getUpdates().put(ordersResponse.getOrderId(), ordersResponse);
+						continue;
+					}
+					if (!isSameType(marketOrder, ordersResponse)) { //Both buy or both sell
+						continue;
+					}
+					if (!isInRange(data, marketOrder, ordersResponse)) { //Order range overlap
+						continue;
+					}
+					Underbid underbid = data.getUnderbids().get(marketOrder.getOrderID());
+					if (underbid == null) {
+						underbid = new Underbid(ordersResponse);
+						data.getUnderbids().put(marketOrder.getOrderID(), underbid);
+					}
+					if (marketOrder.isBuyOrder()) { //Buy (underbid is higher)
+						underbid.setPrice(Math.max(underbid.getPrice(), ordersResponse.getPrice()));
+						if (ordersResponse.getPrice() > marketOrder.getPrice()) {
+							underbid.addCount(ordersResponse.getVolumeRemain());
+						}
+					} else { //Sell  (underbid is lower)
+						underbid.setPrice(Math.min(underbid.getPrice(), ordersResponse.getPrice()));
+						if (marketOrder.getPrice() > ordersResponse.getPrice()) {
+							underbid.addCount(ordersResponse.getVolumeRemain());
+						}
+					}
+
 				}
 			}
 		}
-		return marketOrders;
 	}
 
-	private Map<Integer, Map<Integer, List<MyMarketOrder>>> getRegionIDs(List<MyMarketOrder> marketOrders) {
-		Map<Integer, Map<Integer, List<MyMarketOrder>>> regionIDs = new HashMap<>();
-		for (MyMarketOrder marketOrder : marketOrders) {
-			Integer regionID = RawConverter.toInteger(marketOrder.getLocation().getRegionID());
-			if (regionID < 10000000 || regionID > 13000000) {
-				continue;
-			}
-			Map<Integer, List<MyMarketOrder>> ordersMap = regionIDs.get(regionID);
-			if (ordersMap == null) {
-				ordersMap = new HashMap<>();
-				regionIDs.put(regionID, ordersMap);
-			}
-			List<MyMarketOrder> orders = ordersMap.get(marketOrder.getTypeID());
-			if (orders == null) {
-				orders = new ArrayList<>();
-				ordersMap.put(marketOrder.getTypeID(), orders);
-			}
-			orders.add(marketOrder);
+	private boolean isInRange(Data data, MyMarketOrder marketOrder, RawPublicMarketOrder other) {
+		Long fromSystemID = getSystemID(data, marketOrder.getLocationID());
+		Long toSystemID = getSystemID(data, other.getLocationId());
+		MyLocation fromSystemLocation = ApiIdConverter.getLocation(fromSystemID);
+		MyLocation toSystemLocation = ApiIdConverter.getLocation(toSystemID);
+		if (fromSystemLocation.isEmpty() || toSystemLocation.isEmpty()) {
+			LOG.warn("Unknown market location ignored");
+			return false; //We can't work with unknown locations
 		}
-		return regionIDs;
-	}
-
-	private boolean isInRange(MyMarketOrder marketOrder, MarketOrdersResponse same, MarketOrdersResponse other) {
+		if (!Objects.equals(fromSystemLocation.getRegionID(), toSystemLocation.getRegionID())) {
+			return false; //Must be in same region
+		}
 		if (marketOrder.isBuyOrder()) {
-			if (marketOrder.getRange() == RawMarketOrder.MarketOrderRange.REGION
-					|| other.getRange() == MarketOrdersResponse.RangeEnum.REGION) {
+			if (marketOrder.getRange() == MarketOrderRange.REGION
+					|| other.getRange() == MarketOrderRange.REGION) {
 				return true; //Match everything
-			} else if (marketOrder.getRange() == RawMarketOrder.MarketOrderRange.STATION
-					&& other.getRange() == MarketOrdersResponse.RangeEnum.STATION) {
+			} else if (marketOrder.getRange() == MarketOrderRange.STATION
+					&& other.getRange() == MarketOrderRange.STATION) {
 				return Objects.equals(marketOrder.getLocationID(), other.getLocationId()); //Only match if in the same station
 			} else {
-				int range = getRange(other) + getRange(marketOrder); //Find overlapping area
-				long from;
-				if (!marketOrder.getLocation().isEmpty()) {
-					from = marketOrder.getLocation().getSystemID();
-				} else if (same != null) {
-					from = same.getSystemId();
-				} else {
-					LOG.warn("Null location! my: " + marketOrder.getLocation().getSystemID() + " response: " + other.getSystemId() + " same: " + (same != null ? same.getSystemId() : "null"));
+				int range = getRange(other.getRange()) + getRange(marketOrder.getRange()); //Find overlapping area
+				//int range = Math.max(getRange(response), getRange(marketOrder)); //Use the order with the max range
+				Integer distance = profileData.distanceBetween(fromSystemID, toSystemID);
+				if (distance == null) {
 					return false;
 				}
-				Integer distance = profileData.distanceBetween(from, RawConverter.toLong(other.getSystemId()));
-				if (distance == null) {
-									}
-				//int range = Math.max(getRange(response), getRange(marketOrder)); //Use the order with the max range
 				return distance <= range;
 			}
 		} else {//Sell order
@@ -193,7 +270,7 @@ public class EsiPublicMarketOrdersGetter extends AbstractEsiGetter {
 				case REGION:
 					return true; //Match everything
 				case SYSTEM:
-					return Objects.equals(marketOrder.getLocation().getSystemID(), other.getSystemId()); //Only match if in the same system
+					return Objects.equals(fromSystemID, toSystemID); //Only match if in the same system
 				case STATION:
 					return Objects.equals(marketOrder.getLocation().getStationID(), other.getLocationId()); //Only match if in the same station
 				default:
@@ -202,8 +279,43 @@ public class EsiPublicMarketOrdersGetter extends AbstractEsiGetter {
 		}
 	}
 
-	private int getRange(MarketOrdersResponse response) {
-		switch (response.getRange()) {
+	private Long getSystemID(Data data, long locationID) {
+		Long systemID = data.getLocationToSystem().get(locationID);
+		if (systemID != null) {
+			return systemID;
+		}
+		MyLocation location = ApiIdConverter.getLocation(locationID);
+		if (!location.isEmpty()) {
+			return location.getSystemID();
+		}
+		Citadel citadel = data.getCitadels().get(locationID);
+		if (citadel != null) {
+			return citadel.systemId;
+		}
+		for (EsiOwner esiOwner : profileData.getProfileManager().getEsiOwners()) {
+			if (esiOwner.isStructures()) {
+				try {
+					StructureResponse response = update(DEFAULT_RETRIES, new EsiHandler<StructureResponse>() {
+						@Override
+						public ApiResponse<StructureResponse> get() throws ApiException {
+							return esiOwner.getUniverseApiAuth().getUniverseStructuresStructureIdWithHttpInfo(locationID, DATASOURCE, null, null);
+						}
+					});
+					data.getCitadels().put(locationID, ApiIdConverter.getCitadel(response, locationID));
+					return RawConverter.toLong(response.getSolarSystemId());
+				} catch (ApiException ex) {
+					handleHeaders(ex);
+					LOG.error(ex.getMessage(), ex);
+					break; //Only try one time
+				}
+			}
+		}
+		LOG.warn("Unknown market location");
+		return null;
+	}
+
+	private int getRange(MarketOrderRange range) {
+		switch (range) {
 			case REGION: return Integer.MAX_VALUE;
 			case SOLARSYSTEM: return 0;
 			case STATION: return 0;
@@ -220,29 +332,11 @@ public class EsiPublicMarketOrdersGetter extends AbstractEsiGetter {
 		return Integer.MAX_VALUE;
 	}
 
-	private int getRange(MyMarketOrder marketOrder) {
-		switch (marketOrder.getRange()) {
-			case REGION: return Integer.MAX_VALUE;
-			case SOLARSYSTEM: return 0;
-			case STATION: return 0;
-			case _1: return 1;
-			case _2: return 2;
-			case _3: return 3;
-			case _4: return 4;
-			case _5: return 5;
-			case _10: return 10;
-			case _20: return 20;
-			case _30: return 30;
-			case _40: return 40;
-		}
-		return Integer.MAX_VALUE;
-	}
-
-	private boolean isSameType(MyMarketOrder marketOrder, MarketOrdersResponse response) {
+	private boolean isSameType(MyMarketOrder marketOrder, RawPublicMarketOrder response) {
 		return Objects.equals(marketOrder.isBuyOrder(), response.getIsBuyOrder());
 	}
 
-	private boolean isSameOrder(MyMarketOrder marketOrder, MarketOrdersResponse response) {
+	private boolean isSameOrder(MyMarketOrder marketOrder, RawPublicMarketOrder response) {
 		return Objects.equals(marketOrder.getOrderID(), response.getOrderId());
 	}
 
@@ -255,7 +349,7 @@ public class EsiPublicMarketOrdersGetter extends AbstractEsiGetter {
 			this.count = count;
 		}
 
-		public Underbid(MarketOrdersResponse ordersResponse) {
+		public Underbid(RawPublicMarketOrder ordersResponse) {
 			this.price = ordersResponse.getPrice();
 			this.count = 0;
 		}
@@ -291,6 +385,38 @@ public class EsiPublicMarketOrdersGetter extends AbstractEsiGetter {
 		@Override
 		public String toString() {
 			return text;
+		}
+	}
+
+	private static class Data {
+		private final Map<Long, Underbid> underbids = new HashMap<>();
+		private final Map<Long, RawPublicMarketOrder> updates = new HashMap<>();
+		private final Map<Long, Long> locationToSystem = new HashMap<>();
+		private final Map<Long, Citadel> citadels = new HashMap<>();
+		private final Map<Integer, List<MyMarketOrder>> typeIDs;
+
+		public Data(Map<Integer, List<MyMarketOrder>> typeIDs) {
+			this.typeIDs = typeIDs;
+		}
+
+		public Map<Long, Underbid> getUnderbids() {
+			return underbids;
+		}
+
+		public Map<Long, RawPublicMarketOrder> getUpdates() {
+			return updates;
+		}
+
+		public Map<Long, Long> getLocationToSystem() {
+			return locationToSystem;
+		}
+
+		public Map<Long, Citadel> getCitadels() {
+			return citadels;
+		}
+
+		public Map<Integer, List<MyMarketOrder>> getTypeIDs() {
+			return typeIDs;
 		}
 	}
 

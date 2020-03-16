@@ -68,7 +68,7 @@ public abstract class UpdateTask extends SwingWorker<Void, Void> {
 		jText = new JLabel(name);
 		jText.setIcon(Images.UPDATE_NOT_STARTED.getIcon());
 
-		errors = Collections.synchronizedList(new ArrayList<ErrorClass>());
+		errors = Collections.synchronizedList(new ArrayList<>());
 	}
 
 	public void setTotalProgress(final float end, final float done, final int start, final int max) {
@@ -175,6 +175,13 @@ public abstract class UpdateTask extends SwingWorker<Void, Void> {
 	public void setError(final JTextPane jError) {
 		if (!errors.isEmpty()) {
 			StyledDocument doc = new DefaultStyledDocument();
+			addError(doc);
+			jError.setDocument(doc);
+		}
+	}
+
+	public void addError(final StyledDocument doc) {
+		if (!errors.isEmpty()) {
 			SimpleAttributeSet errorAttributeSet = new SimpleAttributeSet();
 			errorAttributeSet.addAttribute(StyleConstants.CharacterConstants.Foreground, jText.getBackground().darker().darker());
 
@@ -194,7 +201,6 @@ public abstract class UpdateTask extends SwingWorker<Void, Void> {
 			} catch (BadLocationException ex) {
 				LOG.warn("Ignoring exception: " + ex.getMessage(), ex);
 			}
-			jError.setDocument(doc);
 		}
 	}
 
