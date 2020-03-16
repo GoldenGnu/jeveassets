@@ -65,6 +65,11 @@ public abstract class TabsOrders extends Bundle {
 	public abstract String columnLastTransactionValue();
 	public abstract String columnLastTransactionPercent();
 	public abstract String columnTypeID();
+	public abstract String logClear();
+	public abstract String logClose();
+	public abstract String logError();
+	public abstract String logOK();
+	public abstract String logTitle();
 	public abstract String market();
 	public abstract String rangeStation();
 	public abstract String rangeSolarSystem();
@@ -86,10 +91,14 @@ public abstract class TabsOrders extends Bundle {
 	public abstract String totalEscrow();
 	public abstract String totalToCover();
 	public abstract String updateUnderbid();
+	public abstract String updateUnderbidAuto();
+	public abstract String updateUnderbidToolTip();
 	public abstract String updateUnderbidWhen(String time);
 	public abstract String updateUnderbidUpdating();
 	public abstract String sellOrderRange();
-	public abstract String sellOrderRangeToolTip();
+	public abstract String sellOrderRangeLastToolTip();
+	public abstract String sellOrderRangeNextToolTip();
+	public abstract String sellOrderRangeNone();
 	public abstract String sellOrderRangeSelcted(String selected);
 	public abstract String updateTitle();
 	public abstract String whitespace(Object arg0);

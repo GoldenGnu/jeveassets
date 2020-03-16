@@ -45,6 +45,7 @@ import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder;
 import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
 import net.nikr.eve.jeveasset.data.api.raw.RawBlueprint;
 import net.nikr.eve.jeveasset.data.api.raw.RawJournalRefType;
+import net.nikr.eve.jeveasset.data.api.raw.RawPublicMarketOrder;
 import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.data.sde.Jump;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
@@ -75,7 +76,6 @@ import net.nikr.eve.jeveasset.i18n.General;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 import net.nikr.eve.jeveasset.io.shared.DataConverter;
 import net.nikr.eve.jeveasset.io.shared.RawConverter;
-import net.troja.eve.esi.model.MarketOrdersResponse;
 import uk.me.candle.eve.graph.DisconnectedGraphException;
 import uk.me.candle.eve.graph.Edge;
 import uk.me.candle.eve.graph.Graph;
@@ -115,7 +115,7 @@ public class ProfileData {
 	private final Graph graph;
 	private final Map<Long, SolarSystem> systemCache;
 	private final Map<Long, Map<Long, Integer>> distance = new HashMap<>();
-	private final Map<Long, MarketOrdersResponse> marketOrdersUpdates = new HashMap<>();
+	private final Map<Long, RawPublicMarketOrder> marketOrdersUpdates = new HashMap<>();
 
 	public ProfileData(ProfileManager profileManager) {
 		this.profileManager = profileManager;
@@ -139,6 +139,10 @@ public class ProfileData {
 			graph.addEdge(new Edge(from, to));
 		}
 		SplashUpdater.setSubProgress(100);
+	}
+
+	public ProfileManager getProfileManager() {
+		return profileManager;
 	}
 
 	public Set<Integer> getPriceTypeIDs() {
@@ -276,7 +280,7 @@ public class ProfileData {
 		}
 	}
 
-	public void setMarketOrdersUpdates(Map<Long, MarketOrdersResponse> updates) {
+	public void setMarketOrdersUpdates(Map<Long, RawPublicMarketOrder> updates) {
 		marketOrdersUpdates.clear();
 		marketOrdersUpdates.putAll(updates);
 	}
@@ -568,11 +572,11 @@ public class ProfileData {
 			order.setIssuedByName(ApiIdConverter.getOwnerName(order.getIssuedBy()));
 			order.setBrokersFee(marketOrdersBrokersFee.get(order.getOrderID()));
 			order.setUnderbid(Settings.get().getMarketOrdersUnderbid().get(order.getOrderID()));
-			MarketOrdersResponse response = marketOrdersUpdates.get(order.getOrderID());
+			RawPublicMarketOrder response = marketOrdersUpdates.get(order.getOrderID());
 			if (response != null) {
 				order.setPrice(response.getPrice());
 				order.setVolumeRemain(response.getVolumeRemain());
-				order.addChanged(RawConverter.toDate(response.getIssued()));
+				order.addChanged(response.getIssued());
 			}
 		}
 		//Update IndustryJobs dynamic values

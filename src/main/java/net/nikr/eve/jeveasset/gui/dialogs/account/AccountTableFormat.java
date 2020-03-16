@@ -170,6 +170,16 @@ public enum AccountTableFormat implements EnumTableColumn<OwnerType> {
 			return new YesNo(from.isStructures());
 		}
 	},
+	MARKET_STRUCTURES(YesNo.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return DialoguesAccount.get().tableFormatMarketStructures();
+		}
+		@Override
+		public Object getColumnValue(final OwnerType from) {
+			return new YesNo(from.isMarketStructures());
+		}
+	},
 	BOOKMARKS(YesNo.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {

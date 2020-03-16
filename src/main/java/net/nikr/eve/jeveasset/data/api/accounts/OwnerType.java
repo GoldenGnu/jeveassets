@@ -90,6 +90,7 @@ public interface OwnerType extends Comparable<OwnerType> {
 	public boolean isContracts();
 	public boolean isLocations();
 	public boolean isStructures();
+	public boolean isMarketStructures();
 	public boolean isBlueprints();
 	public boolean isBookmarks();
 	public boolean isShip();

@@ -38,6 +38,7 @@ import net.nikr.eve.jeveasset.data.api.raw.RawIndustryJob;
 import net.nikr.eve.jeveasset.data.api.raw.RawJournal;
 import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder;
 import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder.MarketOrderState;
+import net.nikr.eve.jeveasset.data.api.raw.RawPublicMarketOrder;
 import net.nikr.eve.jeveasset.data.api.raw.RawTransaction;
 
 
@@ -57,7 +58,7 @@ public class RawUtil {
 	}
 
 	private static Map<String, String> getTypes(Class<?> raw, Field[] values) {
-		Map<String, String> names = new HashMap<String, String>();
+		Map<String, String> names = new HashMap<>();
 		for (Field value : values) {
 			if (Modifier.isStatic(value.getModifiers())) { //Ignore static fields
 				continue;
@@ -102,6 +103,9 @@ public class RawUtil {
 			if (value.getName().equals("changed") && raw.equals(RawMarketOrder.class)) { //jEveAssets value
 				continue;
 			}
+			if (value.getName().equals("systemId") && raw.equals(RawPublicMarketOrder.class)) { //Only in RawPublicMarketOrder
+				continue;
+			}
 			if (type.isEnum()) { //Ignore enums
 				continue;
 			}
@@ -117,7 +121,7 @@ public class RawUtil {
 	}
 
 	private static Set<String> getNames(Class<?> raw, Field[] values) {
-		Set<String> names = new HashSet<String>();
+		Set<String> names = new HashSet<>();
 		for (Field value : values) {
 			if (Modifier.isStatic(value.getModifiers())) { //Ignore static fields
 				continue;
@@ -164,13 +168,16 @@ public class RawUtil {
 			if (value.getName().equals("changed") && raw.equals(RawMarketOrder.class)) { //jEveAssets value
 				continue;
 			}
+			if (value.getName().equals("systemId") && raw.equals(RawPublicMarketOrder.class)) { //Only in RawPublicMarketOrder
+				continue;
+			}
 			names.add(value.getName());
 		}
 		return names;
 	}
 
 	private static Set<String> getNames(Enum<?>[] ... values) {
-		Set<String> names = new HashSet<String>();
+		Set<String> names = new HashSet<>();
 		for (Enum<?>[] value : values) {
 			for (Enum<?> e : value) {
 				if (e.equals(MarketOrderState.UNKNOWN)) { //jEveAssets value

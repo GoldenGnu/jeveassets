@@ -45,6 +45,7 @@ import net.nikr.eve.jeveasset.data.api.raw.RawContractItem;
 import net.nikr.eve.jeveasset.data.api.raw.RawIndustryJob;
 import net.nikr.eve.jeveasset.data.api.raw.RawJournal;
 import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder;
+import net.nikr.eve.jeveasset.data.api.raw.RawPublicMarketOrder;
 import net.nikr.eve.jeveasset.data.api.raw.RawTransaction;
 import net.nikr.eve.jeveasset.io.shared.DataConverter;
 import net.troja.eve.esi.model.CharacterAssetsResponse;
@@ -72,6 +73,8 @@ import net.troja.eve.esi.model.CorporationOrdersResponse;
 import net.troja.eve.esi.model.CorporationWalletJournalResponse;
 import net.troja.eve.esi.model.CorporationWalletTransactionsResponse;
 import net.troja.eve.esi.model.CorporationWalletsResponse;
+import net.troja.eve.esi.model.MarketOrdersResponse;
+import net.troja.eve.esi.model.MarketStructuresResponse;
 import net.troja.eve.esi.model.PlanetContent;
 import net.troja.eve.esi.model.PlanetPin;
 
@@ -262,5 +265,21 @@ public class EsiConverter extends DataConverter {
 			rawContainersLogs.add(new RawContainerLog(response));
 		}
 		return convertRawContainersLogs(rawContainersLogs);
+	}
+
+	public static List<RawPublicMarketOrder> toPublicMarketOrders(List<MarketOrdersResponse> responses) {
+		List<RawPublicMarketOrder> marketOrders = new ArrayList<>();
+		for (MarketOrdersResponse response : responses) {
+			marketOrders.add(new RawPublicMarketOrder(response));
+		}
+		return marketOrders;
+	}
+
+	public static List<RawPublicMarketOrder> toPublicMarketOrdersStructures(List<MarketStructuresResponse> responses) {
+		List<RawPublicMarketOrder> marketOrders = new ArrayList<>();
+		for (MarketStructuresResponse response : responses) {
+			marketOrders.add(new RawPublicMarketOrder(response));
+		}
+		return marketOrders;
 	}
 }

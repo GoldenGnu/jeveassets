@@ -27,14 +27,18 @@ import java.awt.event.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import javax.swing.*;
 import javax.swing.GroupLayout.ParallelGroup;
 import javax.swing.GroupLayout.SequentialGroup;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.StyledDocument;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel.Progress;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel.UpdateType;
+import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.components.JLockWindow;
 import net.nikr.eve.jeveasset.i18n.DialoguesUpdate;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
@@ -134,6 +138,10 @@ public class TaskDialog {
 				@Override
 				public void setPause(boolean pause) {
 					updateTask.setPause(pause);
+				}
+				@Override
+				public boolean isAuto() {
+					return auto;
 				}
 			});
 		}
@@ -263,6 +271,10 @@ public class TaskDialog {
 				public void gui() {
 					jOK.setEnabled(true);
 					jMinimize.setEnabled(false); //Should not minimize after completed
+					if (completed instanceof TasksCompletedAdvanced) {
+						StyledDocument doc = ((TasksCompletedAdvanced) completed).getStyledDocument();
+						updateErrorDocument(doc);
+					}
 				}
 				@Override
 				public void hidden() {
@@ -281,6 +293,10 @@ public class TaskDialog {
 				@Override
 				public void gui() {
 					setVisible(false);
+					if (completed instanceof TasksCompletedAdvanced) {
+						StyledDocument doc = ((TasksCompletedAdvanced) completed).getStyledDocument();
+						updateErrorDocument(doc);
+					}
 				}
 				@Override
 				public void hidden() {
@@ -289,6 +305,26 @@ public class TaskDialog {
 					}
 				}
 			});
+		}
+	}
+
+	private void updateErrorDocument(StyledDocument doc) {
+		if (doc == null) {
+			return;
+		}
+		int length = doc.getLength();
+		for (UpdateTask task : updateTasks) {
+			task.addError(doc);
+		}
+		if (doc.getLength() > length) { //If changed
+			try {
+				doc.insertString(length, Formater.columnDate(new Date()) + "\n\r", null);
+				if (length > 0) {
+					doc.insertString(length, "\n\r", null);
+				}
+			} catch (BadLocationException ex) {
+				//Shouldn't be possible....
+			}
 		}
 	}
 
@@ -487,5 +523,6 @@ public class TaskDialog {
 
 	public static interface TasksCompletedAdvanced extends TasksCompleted {
 		public void tasksHidden(TaskDialog taskDialog);
+		public StyledDocument getStyledDocument();
 	}
 }
