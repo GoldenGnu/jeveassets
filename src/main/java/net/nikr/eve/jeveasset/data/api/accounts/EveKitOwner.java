@@ -196,6 +196,11 @@ public class EveKitOwner extends DeprecatedOwner implements OwnerType {
 	}
 
 	@Override
+	public boolean isMarketStructures() {
+		return false; //Not supported by the EveKit, Yet
+	}
+
+	@Override
 	public boolean isShip() {
 		return isLocations() && isCharacter();
 	}

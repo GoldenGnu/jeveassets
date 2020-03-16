@@ -34,6 +34,7 @@ public enum EsiScopes {
 	CHARACTER_BOOKMARKS(SsoScopes.ESI_BOOKMARKS_READ_CHARACTER_BOOKMARKS_V1, DialoguesAccount.get().scopeBookmarks(), ScopeType.CHARACTER),
 	CHARACTER_CONTRACTS(SsoScopes.ESI_CONTRACTS_READ_CHARACTER_CONTRACTS_V1, DialoguesAccount.get().scopeContracts(), ScopeType.CHARACTER),
 	CHARACTER_STRUCTURES(SsoScopes.ESI_UNIVERSE_READ_STRUCTURES_V1, DialoguesAccount.get().scopeStructures(), ScopeType.CHARACTER),
+	CHARACTER_MARKET_STRUCTURES(SsoScopes.ESI_MARKETS_STRUCTURE_MARKETS_V1, DialoguesAccount.get().scopeMarketStructures(), ScopeType.CHARACTER),
 	CHARACTER_SHIP_TYPE(SsoScopes.ESI_LOCATION_READ_SHIP_TYPE_V1, DialoguesAccount.get().scopeShipType(), ScopeType.CHARACTER),
 	CHARACTER_SHIP_LOCATION(SsoScopes.ESI_LOCATION_READ_LOCATION_V1, DialoguesAccount.get().scopeShipLocation(), ScopeType.CHARACTER),
 	CHARACTER_OPEN_WINDOWS(SsoScopes.ESI_UI_OPEN_WINDOW_V1, DialoguesAccount.get().scopeOpenWindows(), ScopeType.CHARACTER),

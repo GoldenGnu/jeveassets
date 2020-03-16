@@ -255,7 +255,9 @@ public class StatusPanel extends JGroupLayoutPanel {
 			jProgress.setVisible(false);
 			
 			jProgress.setStringPainted(true);
-			if (updateType == UpdateType.STRUCTURE) {
+			if (progressShow.isAuto()) {
+				jProgress.setString(text);
+			} else {
 				jProgress.setString(GuiFrame.get().clickToShow(text));
 				jProgress.addMouseListener(new MouseAdapter() {
 					@Override
@@ -263,8 +265,6 @@ public class StatusPanel extends JGroupLayoutPanel {
 						progressShow.show();
 					}
 				});
-			} else {
-				jProgress.setString(text);
 			}
 		}
 
@@ -340,6 +340,7 @@ public class StatusPanel extends JGroupLayoutPanel {
 	}
 
 	public static interface ProgressControl {
+		public boolean isAuto();
 		public void show();
 		public void cancel();
 		public void setPause(boolean pause);
