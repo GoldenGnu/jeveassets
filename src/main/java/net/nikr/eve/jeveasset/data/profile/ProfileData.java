@@ -571,7 +571,7 @@ public class ProfileData {
 			}
 			order.setIssuedByName(ApiIdConverter.getOwnerName(order.getIssuedBy()));
 			order.setBrokersFee(marketOrdersBrokersFee.get(order.getOrderID()));
-			order.setUnderbid(Settings.get().getMarketOrdersUnderbid().get(order.getOrderID()));
+			order.setOutbid(Settings.get().getMarketOrdersOutbid().get(order.getOrderID()));
 			RawPublicMarketOrder response = marketOrdersUpdates.get(order.getOrderID());
 			if (response != null) {
 				order.setPrice(response.getPrice());
@@ -579,6 +579,7 @@ public class ProfileData {
 				order.addChanged(response.getIssued());
 			}
 		}
+		marketOrdersUpdates.clear(); //update complete - we only want to do this once
 		//Update IndustryJobs dynamic values
 		for (MyIndustryJob industryJob : industryJobs) {
 			//Update Owners

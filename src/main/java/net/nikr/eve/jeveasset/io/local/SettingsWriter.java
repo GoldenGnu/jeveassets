@@ -53,7 +53,7 @@ import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
 import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerDate;
 import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerNote;
 import net.nikr.eve.jeveasset.io.esi.EsiPublicMarketOrdersGetter.SellOrderRange;
-import net.nikr.eve.jeveasset.io.esi.EsiPublicMarketOrdersGetter.Underbid;
+import net.nikr.eve.jeveasset.io.esi.EsiPublicMarketOrdersGetter.Outbid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -134,7 +134,7 @@ public class SettingsWriter extends AbstractXmlWriter {
 		writeOwners(xmldoc, settings.getOwners());
 		writeTags(xmldoc, settings.getTags());
 		writeRoutingSettings(xmldoc, settings.getRoutingSettings());
-		writeMarketOrderUnderbid(xmldoc, settings.getPublicMarketOrdersNextUpdate(), settings.getSellOrderUnderbidRange(), settings.getMarketOrdersUnderbid());
+		writeMarketOrderOutbid(xmldoc, settings.getPublicMarketOrdersNextUpdate(), settings.getSellOrderOutbidRange(), settings.getMarketOrdersOutbid());
 		try {
 			writeXmlFile(xmldoc, filename, true);
 		} catch (XmlException ex) {
@@ -145,17 +145,17 @@ public class SettingsWriter extends AbstractXmlWriter {
 		return true;
 	}
 
-	private void writeMarketOrderUnderbid(Document xmldoc, Date publicMarketOrdersNextUpdate, SellOrderRange sellOrderRange, Map<Long, Underbid> marketOrdersUnderbid) {
-		Element marketOrderUnderbidNode = xmldoc.createElementNS(null, "marketorderunderbid");
-		xmldoc.getDocumentElement().appendChild(marketOrderUnderbidNode);
-		setAttribute(marketOrderUnderbidNode, "nextupdate", publicMarketOrdersNextUpdate);
-		setAttribute(marketOrderUnderbidNode, "sellorderrange", sellOrderRange);
-		for (Map.Entry<Long, Underbid> entry : marketOrdersUnderbid.entrySet()) {
-			Element underbidNode = xmldoc.createElementNS(null, "underbid");
-			setAttribute(underbidNode, "id", entry.getKey());
-			setAttribute(underbidNode, "price", entry.getValue().getPrice());
-			setAttribute(underbidNode, "count", entry.getValue().getCount());
-			marketOrderUnderbidNode.appendChild(underbidNode);
+	private void writeMarketOrderOutbid(Document xmldoc, Date publicMarketOrdersNextUpdate, SellOrderRange sellOrderRange, Map<Long, Outbid> marketOrdersOutbid) {
+		Element marketOrderOutbidNode = xmldoc.createElementNS(null, "marketorderoutbid");
+		xmldoc.getDocumentElement().appendChild(marketOrderOutbidNode);
+		setAttribute(marketOrderOutbidNode, "nextupdate", publicMarketOrdersNextUpdate);
+		setAttribute(marketOrderOutbidNode, "sellorderrange", sellOrderRange);
+		for (Map.Entry<Long, Outbid> entry : marketOrdersOutbid.entrySet()) {
+			Element outbidNode = xmldoc.createElementNS(null, "outbid");
+			setAttribute(outbidNode, "id", entry.getKey());
+			setAttribute(outbidNode, "price", entry.getValue().getPrice());
+			setAttribute(outbidNode, "count", entry.getValue().getCount());
+			marketOrderOutbidNode.appendChild(outbidNode);
 		}
 	}
 

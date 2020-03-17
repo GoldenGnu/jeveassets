@@ -205,6 +205,7 @@ public class TableFormatTest extends TestUtil {
 			try {
 				assertTrue(actual.getClass() + " does not implement hashCode", actual.getClass().getMethod("hashCode").getDeclaringClass() == actual.getClass());
 				assertTrue(actual.getClass() + " does not implement equals", actual.getClass().getMethod("equals").getDeclaringClass() == actual.getClass());
+				assertTrue(actual.getClass() + " does not implement compareTo", actual.getClass().getMethod("compareTo").getDeclaringClass() == actual.getClass());
 			} catch (NoSuchMethodException | SecurityException ex) {
 				//fail(ex.getMessage());
 			}

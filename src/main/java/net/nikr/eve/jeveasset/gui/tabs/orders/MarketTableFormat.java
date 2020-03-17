@@ -22,6 +22,7 @@
 package net.nikr.eve.jeveasset.gui.tabs.orders;
 
 import ca.odell.glazedlists.GlazedLists;
+import java.awt.Component;
 import java.util.Comparator;
 import java.util.Date;
 import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder;
@@ -85,24 +86,40 @@ public enum MarketTableFormat implements EnumTableColumn<MyMarketOrder> {
 			return from.getPrice();
 		}
 	},
-	UNDERBID_PRICE(Double.class, GlazedLists.comparableComparator()) {
+	OUTBID_PRICE(Double.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
-			return TabsOrders.get().columnUnderbidPrice();
+			return TabsOrders.get().columnOutbidPrice();
 		}
 		@Override
 		public Object getColumnValue(final MyMarketOrder from) {
-			return from.getUnderbidPrice();
+			return from.getOutbidPrice();
 		}
 	},
-	UNDERBID_COUNT(Long.class, GlazedLists.comparableComparator()) {
+	OUTBID_COUNT(Long.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
-			return TabsOrders.get().columnUnderbidCount();
+			return TabsOrders.get().columnOutbidCount();
 		}
 		@Override
 		public Object getColumnValue(final MyMarketOrder from) {
-			return from.getUnderbidCount();
+			return from.getOutbidCount();
+		}
+	},
+	EVE_UI(Component.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsOrders.get().columnEveUi();
+		}
+
+		@Override
+		public boolean isColumnEditable(Object baseObject) {
+			return true;
+		}
+
+		@Override
+		public Object getColumnValue(final MyMarketOrder from) {
+			return from.getButton();
 		}
 	},
 	BROKERS_FEE(Double.class, GlazedLists.comparableComparator()) {

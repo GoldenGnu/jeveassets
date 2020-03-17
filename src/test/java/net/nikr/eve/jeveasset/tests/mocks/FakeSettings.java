@@ -543,22 +543,32 @@ public abstract class FakeSettings extends Settings {
 	}
 
 	@Override
-	public void setMarketOrdersUnderbid(Map<Long, EsiPublicMarketOrdersGetter.Underbid> underbids) {
+	public void setMarketOrdersOutbid(Map<Long, EsiPublicMarketOrdersGetter.Outbid> outbids) {
 		throw new UnsupportedOperationException("not implemented");
 	}
 
 	@Override
-	public Map<Long, EsiPublicMarketOrdersGetter.Underbid> getMarketOrdersUnderbid() {
+	public Map<Long, EsiPublicMarketOrdersGetter.Outbid> getMarketOrdersOutbid() {
 		throw new UnsupportedOperationException("not implemented");
 	}
 
 	@Override
-	public void setSellOrderUnderbidRange(EsiPublicMarketOrdersGetter.SellOrderRange sellOrderUnderbidRange) {
+	public void setSellOrderOutbidRange(EsiPublicMarketOrdersGetter.SellOrderRange sellOrderOutbidRange) {
 		throw new UnsupportedOperationException("not implemented");
 	}
 
 	@Override
-	public EsiPublicMarketOrdersGetter.SellOrderRange getSellOrderUnderbidRange() {
+	public EsiPublicMarketOrdersGetter.SellOrderRange getSellOrderOutbidRange() {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public void setFocusEveOnlineOnEsiUiCalls(boolean focusEveOnlineOnEsiUiCalls) {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public boolean isFocusEveOnlineOnEsiUiCalls() {
 		throw new UnsupportedOperationException("not implemented");
 	}
 }

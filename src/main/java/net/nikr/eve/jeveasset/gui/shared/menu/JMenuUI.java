@@ -39,6 +39,7 @@ import net.nikr.eve.jeveasset.data.sde.MyLocation;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.JOptionInput;
+import net.nikr.eve.jeveasset.gui.shared.NativeUtil;
 import net.nikr.eve.jeveasset.gui.shared.components.JLockWindow;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 import net.nikr.eve.jeveasset.io.esi.AbstractEsiGetter;
@@ -140,7 +141,7 @@ public class JMenuUI <T> extends MenuManager.JAutoMenu<T> {
 	}
 
 	public static EsiOwner selectOwner(Program program, EsiOwnerRequirement requirement) {
-		List<EsiOwner> owners = new ArrayList<EsiOwner>();
+		List<EsiOwner> owners = new ArrayList<>();
 		for (EsiOwner owner : program.getProfileManager().getEsiOwners()) {
 			if (requirement == EsiOwnerRequirement.OPEN_WINDOW && owner.isOpenWindows()) {
 				owners.add(owner);
@@ -195,10 +196,10 @@ public class JMenuUI <T> extends MenuManager.JAutoMenu<T> {
 			int beginningValue = JOptionPane.showConfirmDialog(program.getMainWindow().getFrame(), GuiShared.get().uiWaypointBeginning(), GuiShared.get().uiWaypointTitle(), JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE);
 			addToBeginning = beginningValue == JOptionPane.YES_OPTION;
 		}
-		getLockWindow().show(GuiShared.get().updating(), new EsiUpdate() {
+		getLockWindow().show(GuiShared.get().updating(), new EsiUpdate(owner) {
 			@Override
 			protected void updateESI() throws Throwable {
-				getApi(owner).postUiAutopilotWaypoint(addToBeginning, clearOtherWaypoints, locationID, AbstractEsiGetter.DATASOURCE, null);
+				getApi().postUiAutopilotWaypoint(addToBeginning, clearOtherWaypoints, locationID, AbstractEsiGetter.DATASOURCE, null);
 			}
 			@Override
 			protected void ok() {
@@ -215,7 +216,7 @@ public class JMenuUI <T> extends MenuManager.JAutoMenu<T> {
 
 		public ContractMenuData(List<MyContractItem> items) {
 			super(items);
-			Set<MyContract> contracts = new HashSet<MyContract>();
+			Set<MyContract> contracts = new HashSet<>();
 			for (Object item : items) {
 				if (item instanceof MyContractItem) {
 					contracts.add(((MyContractItem)item).getContract());
@@ -250,30 +251,14 @@ public class JMenuUI <T> extends MenuManager.JAutoMenu<T> {
 				setAutopilot(system.getSystemID(), owner);
 			} else if (MenuUIAction.MARKET.name().equals(e.getActionCommand())) {
 				EsiOwner owner = selectOwner(EsiOwnerRequirement.OPEN_WINDOW);
-				if (owner == null) {
-					return;
-				}
 				Integer typeID = menuData.getMarketTypeIDs().iterator().next();
-				getLockWindow().show(GuiShared.get().updating(), new EsiUpdate() {
-					@Override
-					protected void updateESI() throws Throwable {
-						getApi(owner).postUiOpenwindowMarketdetails(typeID, AbstractEsiGetter.DATASOURCE, null);
-					}
-					@Override
-					protected void ok() {
-						JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), GuiShared.get().uiMarketOk(), GuiShared.get().uiMarketTitle(), JOptionPane.PLAIN_MESSAGE);
-					}
-					@Override
-					protected void fail() {
-						JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), GuiShared.get().uiMarketFail(), GuiShared.get().uiMarketTitle(), JOptionPane.PLAIN_MESSAGE);
-					}
-				});
+				openMarketDetails(program, owner, typeID, true);
 			} else if (MenuUIAction.OWNER.name().equals(e.getActionCommand())) {
 				EsiOwner esiOwner = selectOwner(EsiOwnerRequirement.OPEN_WINDOW);
 				if (esiOwner == null) {
 					return;
 				}
-				List<Owner> owners = new ArrayList<Owner>();
+				List<Owner> owners = new ArrayList<>();
 				for (Long ownerID : menuData.getOwnerIDs()) {
 					if (ownerID != null && ownerID > 0) {
 						String name = Settings.get().getOwners().get(ownerID);
@@ -300,10 +285,10 @@ public class JMenuUI <T> extends MenuManager.JAutoMenu<T> {
 				} else {
 					return;
 				}
-				getLockWindow().show(GuiShared.get().updating(), new EsiUpdate() {
+				getLockWindow().show(GuiShared.get().updating(), new EsiUpdate(esiOwner) {
 					@Override
 					protected void updateESI() throws Throwable {
-						getApi(esiOwner).postUiOpenwindowInformation((int)owner.getId(), AbstractEsiGetter.DATASOURCE, null);
+						getApi().postUiOpenwindowInformation((int)owner.getId(), AbstractEsiGetter.DATASOURCE, null);
 					}
 					@Override
 					protected void ok() {
@@ -320,10 +305,10 @@ public class JMenuUI <T> extends MenuManager.JAutoMenu<T> {
 					return;
 				}
 				MyContract contract = menuData.getContracts().iterator().next();
-				getLockWindow().show(GuiShared.get().updating(), new EsiUpdate() {
+				getLockWindow().show(GuiShared.get().updating(), new EsiUpdate(owner) {
 					@Override
 					protected void updateESI() throws Throwable {
-						getApi(owner).postUiOpenwindowContract(contract.getContractID(), AbstractEsiGetter.DATASOURCE, null);
+						getApi().postUiOpenwindowContract(contract.getContractID(), AbstractEsiGetter.DATASOURCE, null);
 					}
 					@Override
 					protected void ok() {
@@ -336,6 +321,28 @@ public class JMenuUI <T> extends MenuManager.JAutoMenu<T> {
 				});
 			}
 		}
+	}
+
+	public static void openMarketDetails(Program program, EsiOwner owner, Integer typeID, boolean showOkMsg) {
+		if (owner == null) {
+			return;
+		}
+		getLockWindow(program).show(GuiShared.get().updating(), new EsiUpdate(owner) {
+			@Override
+			protected void updateESI() throws Throwable {
+				getApi().postUiOpenwindowMarketdetails(typeID, AbstractEsiGetter.DATASOURCE, null);
+			}
+			@Override
+			protected void ok() {
+				if (showOkMsg) {
+					JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), GuiShared.get().uiMarketOk(), GuiShared.get().uiMarketTitle(), JOptionPane.PLAIN_MESSAGE);
+				}
+			}
+			@Override
+			protected void fail() {
+				JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), GuiShared.get().uiMarketFail(), GuiShared.get().uiMarketTitle(), JOptionPane.PLAIN_MESSAGE);
+			}
+		});
 	}
 
 	private static class Owner implements Comparable<Owner> {
@@ -369,7 +376,14 @@ public class JMenuUI <T> extends MenuManager.JAutoMenu<T> {
 		protected abstract void updateESI() throws Throwable;
 		protected abstract void ok();
 		protected abstract void fail();
-		protected UserInterfaceApi getApi(EsiOwner owner) {
+
+		private final EsiOwner owner;
+
+		public EsiUpdate(EsiOwner owner) {
+			this.owner = owner;
+		}
+
+		protected UserInterfaceApi getApi() {
 			if (owner != null) { //Auth
 				return owner.getUserInterfaceApiAuth();
 			} else {
@@ -395,6 +409,9 @@ public class JMenuUI <T> extends MenuManager.JAutoMenu<T> {
 				public void run() {
 					if (ok) {
 						ok();
+						if (Settings.get().isFocusEveOnlineOnEsiUiCalls()) {
+							NativeUtil.focusEveOnline(owner.getOwnerName());
+						}
 					} else {
 						fail();
 					}

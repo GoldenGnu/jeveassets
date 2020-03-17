@@ -31,6 +31,10 @@ import ca.odell.glazedlists.swing.DefaultEventTableModel;
 import ca.odell.glazedlists.swing.TableComparatorChooser;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -46,8 +50,13 @@ import javax.swing.JMenu;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.Timer;
+import javax.swing.event.CellEditorListener;
+import javax.swing.event.ChangeEvent;
+import javax.swing.table.TableCellEditor;
 import javax.swing.text.StyledDocument;
 import net.nikr.eve.jeveasset.Program;
+import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
+import net.nikr.eve.jeveasset.data.api.accounts.OwnerType;
 import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder;
 import net.nikr.eve.jeveasset.data.profile.ProfileData;
 import net.nikr.eve.jeveasset.data.settings.Settings;
@@ -55,6 +64,7 @@ import net.nikr.eve.jeveasset.gui.dialogs.update.TaskDialog;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
 import net.nikr.eve.jeveasset.gui.images.Images;
+import net.nikr.eve.jeveasset.gui.shared.CopyHandler;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.components.JFixedToolBar;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTabPrimary;
@@ -63,6 +73,7 @@ import net.nikr.eve.jeveasset.gui.shared.filter.Filter.CompareType;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter.LogicType;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo;
+import net.nikr.eve.jeveasset.gui.shared.menu.JMenuUI;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuData;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.TableMenu;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
@@ -83,6 +94,8 @@ public class MarketOrdersTab extends JMainTabPrimary {
 		AUTO_UPDATE,
 		ERROR_LOG
 	}
+
+	private static final int SIGNIFICANT_FIGURES = 4;
 
 	private final JAutoColumnTable jTable;
 	private final JLabel jSellOrdersTotal;
@@ -124,12 +137,12 @@ public class MarketOrdersTab extends JMainTabPrimary {
 		jErrors.setEnabled(false);
 		jToolBar.addButton(jErrors);
 
-		jUpdate = new JButton(TabsOrders.get().updateUnderbid(), Images.DIALOG_UPDATE.getIcon());
+		jUpdate = new JButton(TabsOrders.get().updateOutbid(), Images.DIALOG_UPDATE.getIcon());
 		jUpdate.setActionCommand(MarketOrdersAction.UPDATE.name());
 		jUpdate.addActionListener(listener);
 		jToolBar.addButton(jUpdate);
 
-		jAutoUpdate = new JCheckBox(TabsOrders.get().updateUnderbidAuto());
+		jAutoUpdate = new JCheckBox(TabsOrders.get().updateOutbidAuto());
 		jAutoUpdate.setActionCommand(MarketOrdersAction.AUTO_UPDATE.name());
 		jAutoUpdate.addActionListener(listener);
 		jToolBar.addButton(jAutoUpdate);
@@ -167,6 +180,54 @@ public class MarketOrdersTab extends JMainTabPrimary {
 		selectionModel = EventModels.createSelectionModel(filterList);
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
 		jTable.setSelectionModel(selectionModel);
+		jTable.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mousePressed(MouseEvent e) {
+				int row = jTable.rowAtPoint(e.getPoint());
+				int column = jTable.columnAtPoint(e.getPoint());
+
+				if (row < 0 || row > jTable.getRowCount() || column < 0 || column > jTable.getColumnCount()) {
+					return;
+				}
+				Object value = jTable.getValueAt(row, column);
+				String columnName = (String) jTable.getTableHeader().getColumnModel().getColumn(column).getHeaderValue();
+				if (!columnName.equals(MarketTableFormat.EVE_UI.getColumnName())) {
+					return;
+				}
+				TableCellEditor cellEditor = jTable.getCellEditor();
+				if ((value instanceof JButton) && cellEditor != null) {
+					JButton jButton = (JButton) value;
+					MyMarketOrder marketOrder = tableModel.getElementAt(row);
+
+					ActionListener actionListener = new ActionListener() {
+						@Override
+						public void actionPerformed(ActionEvent e) {
+							openEve(marketOrder);
+						}
+					};
+
+					jButton.addActionListener(actionListener);
+
+					cellEditor.addCellEditorListener(new CellEditorListener() {
+						@Override
+						public void editingStopped(ChangeEvent e) {
+							cellEditor.removeCellEditorListener(this);
+							jButton.removeActionListener(actionListener);
+							jTable.requestFocusInWindow();
+						}
+
+						@Override
+						public void editingCanceled(ChangeEvent e) {
+							cellEditor.removeCellEditorListener(this);
+							jButton.removeActionListener(actionListener);
+							jTable.requestFocusInWindow();
+						}
+					});
+					jButton.doClick();
+				}
+			}
+		});
+
 		//Listeners
 		installTable(jTable, NAME);
 		//Scroll Panels
@@ -209,7 +270,7 @@ public class MarketOrdersTab extends JMainTabPrimary {
 
 		jSellOrderRangeLast = StatusPanel.createLabel(TabsOrders.get().sellOrderRangeLastToolTip(), Images.ORDERS_SELL.getIcon());
 		this.addStatusbarLabel(jSellOrderRangeLast);
-		jSellOrderRangeLast.setText(TabsOrders.get().sellOrderRangeSelcted(Settings.get().getSellOrderUnderbidRange().toString()));
+		jSellOrderRangeLast.setText(TabsOrders.get().sellOrderRangeSelcted(Settings.get().getSellOrderOutbidRange().toString()));
 
 		jSellOrderRangeNext = StatusPanel.createLabel(TabsOrders.get().sellOrderRangeNextToolTip(), Images.DIALOG_UPDATE.getIcon());
 		this.addStatusbarLabel(jSellOrderRangeNext);
@@ -261,6 +322,31 @@ public class MarketOrdersTab extends JMainTabPrimary {
 		}
 	}
 
+	private void openEve(MyMarketOrder marketOrder) {
+		OwnerType owner = marketOrder.getOwner();
+		if (!owner.isOpenWindows()) {
+			JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), "The owner of this order does not have the required ui scope", "Failed to open orders", JOptionPane.PLAIN_MESSAGE);
+			return;
+		}
+		if (!(owner instanceof EsiOwner)) {
+			return;
+		}
+		EsiOwner esiOwner = (EsiOwner) owner;
+
+		Double price = marketOrder.getOutbidPrice();
+		if (marketOrder.isOutbid() && price != null) {
+			if (marketOrder.isBuyOrder()) {
+				price = significantIncrement(price);
+			} else { //Sell
+				price = significantDecrement(price);
+			}
+			CopyHandler.toClipboard(Formater.copyFormat(price));
+		} else {
+			CopyHandler.toClipboard(Formater.copyFormat(marketOrder.getPrice()));
+		}
+		JMenuUI.openMarketDetails(program, esiOwner, marketOrder.getTypeID(), false);
+	}
+
 	private void updateErrorLogButton() {
 		jErrors.setEnabled(jMarketOrdersErrorDialog.getDocument().getLength() > 0);
 		jErrors.setText(jMarketOrdersErrorDialog.getDocument().getLength() > 0 ? TabsOrders.get().logError() : TabsOrders.get().logOK());
@@ -269,14 +355,14 @@ public class MarketOrdersTab extends JMainTabPrimary {
 	private void updateUpdateButton() {
 		Date nextUpdate = Settings.get().getPublicMarketOrdersNextUpdate();
 		if (Settings.get().isUpdatable(nextUpdate)) {
-			jUpdate.setText(TabsOrders.get().updateUnderbid());
+			jUpdate.setText(TabsOrders.get().updateOutbid());
 			jUpdate.setEnabled(!jAutoUpdate.isSelected());
 		} else {
 			long ms = nextUpdate.getTime()-System.currentTimeMillis();
 			if (ms < 1000) {
-				jUpdate.setText(TabsOrders.get().updateUnderbidWhen("..."));
+				jUpdate.setText(TabsOrders.get().updateOutbidWhen("..."));
 			} else {
-				jUpdate.setText(TabsOrders.get().updateUnderbidWhen(Formater.milliseconds(ms, true, false)));
+				jUpdate.setText(TabsOrders.get().updateOutbidWhen(Formater.milliseconds(ms, true, false)));
 			}
 			jUpdate.setEnabled(false);
 		}
@@ -284,7 +370,7 @@ public class MarketOrdersTab extends JMainTabPrimary {
 
 	private boolean updateSellOrderRange() {
 		updateUpdateButton();
-		SellOrderRange sellOrderRange = (SellOrderRange) JOptionPane.showInputDialog(program.getMainWindow().getFrame(), null, TabsOrders.get().sellOrderRange(), JOptionPane.PLAIN_MESSAGE, null, SellOrderRange.values(), Settings.get().getSellOrderUnderbidRange());
+		SellOrderRange sellOrderRange = (SellOrderRange) JOptionPane.showInputDialog(program.getMainWindow().getFrame(), null, TabsOrders.get().sellOrderRange(), JOptionPane.PLAIN_MESSAGE, null, SellOrderRange.values(), Settings.get().getSellOrderOutbidRange());
 		if (sellOrderRange == null) {
 			jAutoUpdate.setSelected(false);
 			updateUpdateButton();
@@ -292,14 +378,14 @@ public class MarketOrdersTab extends JMainTabPrimary {
 			return false;
 		}
 		jSellOrderRangeNext.setText(sellOrderRange.toString());
-		Settings.get().setSellOrderUnderbidRange(sellOrderRange);
+		Settings.get().setSellOrderOutbidRange(sellOrderRange);
 		return true;
 	}
 
 	private void update() {
-		SellOrderRange sellOrderRange = Settings.get().getSellOrderUnderbidRange();
+		SellOrderRange sellOrderRange = Settings.get().getSellOrderOutbidRange();
 		timer.stop();
-		jUpdate.setText(TabsOrders.get().updateUnderbidUpdating());
+		jUpdate.setText(TabsOrders.get().updateOutbidUpdating());
 		jUpdate.setEnabled(false);
 		TaskDialog taskDialog = new TaskDialog(program, new PublicMarkerOrdersUpdateTask(program.getProfileData(), sellOrderRange), false, jAutoUpdate.isSelected(), jAutoUpdate.isSelected(), StatusPanel.UpdateType.PUBLIC_MARKET_ORDERS, new TaskDialog.TasksCompletedAdvanced() {
 			@Override
@@ -313,7 +399,7 @@ public class MarketOrdersTab extends JMainTabPrimary {
 				//Schedule next update
 				schedule();
 				//Sell Order Range
-				jSellOrderRangeLast.setText(TabsOrders.get().sellOrderRangeSelcted(Settings.get().getSellOrderUnderbidRange().toString()));
+				jSellOrderRangeLast.setText(TabsOrders.get().sellOrderRangeSelcted(Settings.get().getSellOrderOutbidRange().toString()));
 			}
 
 			@Override
@@ -326,6 +412,22 @@ public class MarketOrdersTab extends JMainTabPrimary {
 				return jMarketOrdersErrorDialog.getDocument();
 			}
 		});
+	}
+
+	public static double significantIncrement(double value) {
+		return significantChange(value, +1);
+	}
+
+	public static double significantDecrement(double value) {
+		return significantChange(value, -1);
+	}
+
+	private static double significantChange(double value, double change) {
+		double power = Math.pow(10, Math.floor(Math.log10(value)) - SIGNIFICANT_FIGURES + 1);
+		value = value / power;
+		value = value + change;
+		value = value * power;
+		return new BigDecimal(value).setScale(2, RoundingMode.HALF_UP).doubleValue();
 	}
 
 	private class OrdersTableMenu implements TableMenu<MyMarketOrder> {

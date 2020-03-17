@@ -58,7 +58,7 @@ import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile;
 import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerDate;
 import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerNote;
 import net.nikr.eve.jeveasset.io.esi.EsiPublicMarketOrdersGetter.SellOrderRange;
-import net.nikr.eve.jeveasset.io.esi.EsiPublicMarketOrdersGetter.Underbid;
+import net.nikr.eve.jeveasset.io.esi.EsiPublicMarketOrdersGetter.Outbid;
 import net.nikr.eve.jeveasset.io.local.SettingsReader;
 import net.nikr.eve.jeveasset.io.local.SettingsWriter;
 import net.nikr.eve.jeveasset.io.shared.FileUtil;
@@ -112,6 +112,7 @@ public class Settings {
 		FLAG_STRONG_COLORS,
 		FLAG_ASKED_CHECK_ALL_TRACKER,
 		FLAG_TRACKER_USE_ASSET_PRICE_FOR_SELL_ORDERS,
+		FLAG_FOCUS_EVE_ONLINE_ON_ESI_UI_CALLS,
 	}
 
 	private static final SettingsLock LOCK = new SettingsLock();
@@ -182,10 +183,10 @@ public class Settings {
 	private ReprocessSettings reprocessSettings = new ReprocessSettings();
 	//Public Market Orders Next Update
 	private Date publicMarketOrdersNextUpdate = getNow();
-	//Market Orders Underbid
-	private final Map<Long, Underbid> marketOrdersUnderbid = new HashMap<>();
+	//Market Orders Outbid
+	private final Map<Long, Outbid> marketOrdersOutbid = new HashMap<>();
 	//SellOrderRange
-	private SellOrderRange sellOrderUnderbidRange = SellOrderRange.REGION;
+	private SellOrderRange sellOrderOutbidRange = SellOrderRange.REGION;
 	//Cache
 	private Boolean filterOnEnter = null; //Filter tools
 	private Boolean highlightSelectedRows = null;  //Assets
@@ -240,6 +241,7 @@ public class Settings {
 		flags.put(SettingFlag.FLAG_STRONG_COLORS, false);
 		flags.put(SettingFlag.FLAG_ASKED_CHECK_ALL_TRACKER, false);
 		flags.put(SettingFlag.FLAG_TRACKER_USE_ASSET_PRICE_FOR_SELL_ORDERS, false);
+		flags.put(SettingFlag.FLAG_FOCUS_EVE_ONLINE_ON_ESI_UI_CALLS, true);
 		cacheFlags();
 	}
 
@@ -583,21 +585,21 @@ public class Settings {
 		this.publicMarketOrdersNextUpdate = publicMarketOrdersNextUpdate;
 	}
 
-	public SellOrderRange getSellOrderUnderbidRange() {
-		return sellOrderUnderbidRange;
+	public SellOrderRange getSellOrderOutbidRange() {
+		return sellOrderOutbidRange;
 	}
 
-	public void setSellOrderUnderbidRange(SellOrderRange sellOrderUnderbidRange) {
-		this.sellOrderUnderbidRange = sellOrderUnderbidRange;
+	public void setSellOrderOutbidRange(SellOrderRange sellOrderOutbidRange) {
+		this.sellOrderOutbidRange = sellOrderOutbidRange;
 	}
 
-	public Map<Long, Underbid> getMarketOrdersUnderbid() {
-		return marketOrdersUnderbid;
+	public Map<Long, Outbid> getMarketOrdersOutbid() {
+		return marketOrdersOutbid;
 	}
 
-	public void setMarketOrdersUnderbid(Map<Long, Underbid> underbids) {
-		marketOrdersUnderbid.clear();
-		marketOrdersUnderbid.putAll(underbids);
+	public void setMarketOrdersOutbid(Map<Long, Outbid> outbids) {
+		marketOrdersOutbid.clear();
+		marketOrdersOutbid.putAll(outbids);
 	}
 
 	public int getMaximumPurchaseAge() {
@@ -764,6 +766,14 @@ public class Settings {
 
 	public void setTrackerUseAssetPriceForSellOrders(final boolean checkAllTracker) {
 		flags.put(SettingFlag.FLAG_TRACKER_USE_ASSET_PRICE_FOR_SELL_ORDERS, checkAllTracker);
+	}
+
+	public boolean isFocusEveOnlineOnEsiUiCalls() {
+		return flags.get(SettingFlag.FLAG_FOCUS_EVE_ONLINE_ON_ESI_UI_CALLS);
+	}
+
+	public void setFocusEveOnlineOnEsiUiCalls(final boolean focusEveOnlineOnEsiUiCalls) {
+		flags.put(SettingFlag.FLAG_FOCUS_EVE_ONLINE_ON_ESI_UI_CALLS, focusEveOnlineOnEsiUiCalls);
 	}
 
 	public List<Stockpile> getStockpiles() {

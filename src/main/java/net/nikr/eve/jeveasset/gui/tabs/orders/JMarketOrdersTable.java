@@ -55,9 +55,9 @@ public class JMarketOrdersTable extends JAutoColumnTable {
 				}
 			}
 		}
-		if (columnName.equals(MarketTableFormat.UNDERBID_PRICE.getColumnName())) {
-			if (marketOrder.haveUnderbid()) {
-				if (marketOrder.isUndercut()) {
+		if (columnName.equals(MarketTableFormat.OUTBID_PRICE.getColumnName())) {
+			if (marketOrder.haveOutbid()) {
+				if (marketOrder.isOutbid()) {
 					if (isSelected) {
 						component.setBackground(this.getSelectionBackground().darker());
 					} else {
