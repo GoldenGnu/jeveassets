@@ -23,11 +23,13 @@ package net.nikr.eve.jeveasset.gui.shared.table;
 
 import java.awt.Component;
 import java.util.Date;
+import javax.swing.AbstractCellEditor;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.TableCellEditor;
 import net.nikr.eve.jeveasset.data.settings.tag.Tags;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 
@@ -156,6 +158,41 @@ public class TableCellRenderers {
 				return jPanel;
 			}
 			return jLabel;
+		}
+	}
+
+	public static class ComponentRenderer extends DefaultTableCellRenderer {
+
+		@Override
+		public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+			if (value instanceof Component) {
+				return (Component) value;
+			} else {
+				return super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+			}
+		}
+	}
+
+	public static class ComponentEditor extends AbstractCellEditor implements TableCellEditor {
+
+		private final TableCellEditor defaultTableCellEditor;
+
+		public ComponentEditor(TableCellEditor defaultTableCellEditor) {
+			this.defaultTableCellEditor = defaultTableCellEditor;
+		}
+
+		@Override
+		public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
+			if (value instanceof Component) {
+				return (Component) value;
+			} else {
+				return defaultTableCellEditor.getTableCellEditorComponent(table, value, isSelected, row, column);
+			}
+		}
+
+		@Override
+		public Object getCellEditorValue() {
+			return null;
 		}
 	}
 }

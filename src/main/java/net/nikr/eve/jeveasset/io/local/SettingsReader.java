@@ -104,7 +104,7 @@ import net.nikr.eve.jeveasset.gui.tabs.values.ValueTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.values.ValueTableTab;
 import net.nikr.eve.jeveasset.i18n.General;
 import net.nikr.eve.jeveasset.io.esi.EsiPublicMarketOrdersGetter.SellOrderRange;
-import net.nikr.eve.jeveasset.io.esi.EsiPublicMarketOrdersGetter.Underbid;
+import net.nikr.eve.jeveasset.io.esi.EsiPublicMarketOrdersGetter.Outbid;
 import net.nikr.eve.jeveasset.io.local.update.Update;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 import org.slf4j.Logger;
@@ -249,10 +249,10 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		}
 
 		//writePublicMarketOrdersNextUpdate
-		NodeList marketOrderUnderbidNodes = element.getElementsByTagName("marketorderunderbid");
-		if (marketOrderUnderbidNodes.getLength() == 1) {
-			Element marketOrderUnderbidElement =  (Element) marketOrderUnderbidNodes.item(0);
-			parseMarketOrderUnderbidNodes(marketOrderUnderbidElement, settings);
+		NodeList marketOrderOutbidNodes = element.getElementsByTagName("marketorderoutbid");
+		if (marketOrderOutbidNodes.getLength() == 1) {
+			Element marketOrderOutbidElement =  (Element) marketOrderOutbidNodes.item(0);
+			parseMarketOrderOutbidNodes(marketOrderOutbidElement, settings);
 		}
 
 		//Routing
@@ -764,23 +764,23 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		Collections.sort(stockpiles);
 	}
 
-	private void parseMarketOrderUnderbidNodes(Element marketOrderUnderbidElement, Settings settings) throws XmlException {
-		Date nextUpdate = getDate(marketOrderUnderbidElement, "nextupdate");
+	private void parseMarketOrderOutbidNodes(Element marketOrderOutbidElement, Settings settings) throws XmlException {
+		Date nextUpdate = getDate(marketOrderOutbidElement, "nextupdate");
 		settings.setPublicMarketOrdersNextUpdate(nextUpdate);
 		SellOrderRange sellOrderRange;
 		try {
-			sellOrderRange = SellOrderRange.valueOf(getString(marketOrderUnderbidElement, "sellorderrange"));
+			sellOrderRange = SellOrderRange.valueOf(getString(marketOrderOutbidElement, "sellorderrange"));
 		} catch (IllegalArgumentException ex) {
 			sellOrderRange = SellOrderRange.REGION;
 		}
-		settings.setSellOrderUnderbidRange(sellOrderRange);
-		NodeList underbidNodes = marketOrderUnderbidElement.getElementsByTagName("underbid");
-		for (int a = 0; a < underbidNodes.getLength(); a++) {
-			Element underbidNode = (Element) underbidNodes.item(a);
-			Long orderID = getLong(underbidNode, "id");
-			double price = getDouble(underbidNode, "price");
-			long count = getLong(underbidNode, "count");
-			settings.getMarketOrdersUnderbid().put(orderID, new Underbid(price, count));
+		settings.setSellOrderOutbidRange(sellOrderRange);
+		NodeList outbidNodes = marketOrderOutbidElement.getElementsByTagName("outbid");
+		for (int a = 0; a < outbidNodes.getLength(); a++) {
+			Element outbidNode = (Element) outbidNodes.item(a);
+			Long orderID = getLong(outbidNode, "id");
+			double price = getDouble(outbidNode, "price");
+			long count = getLong(outbidNode, "count");
+			settings.getMarketOrdersOutbid().put(orderID, new Outbid(price, count));
 		}
 	}
 

@@ -174,7 +174,7 @@ public class EsiPublicMarketOrdersGetter extends AbstractEsiGetter {
 		setProgressAll(100, 93, 0, 100);
 		profileData.setMarketOrdersUpdates(data.getUpdates());
 		setProgressAll(100, 96, 0, 100);
-		Settings.get().setMarketOrdersUnderbid(data.getUnderbids());
+		Settings.get().setMarketOrdersOutbid(data.getOutbids());
 		setProgressAll(100, 100, 0, 100);
 	}
 
@@ -215,20 +215,20 @@ public class EsiPublicMarketOrdersGetter extends AbstractEsiGetter {
 					if (!isInRange(data, marketOrder, ordersResponse)) { //Order range overlap
 						continue;
 					}
-					Underbid underbid = data.getUnderbids().get(marketOrder.getOrderID());
-					if (underbid == null) {
-						underbid = new Underbid(ordersResponse);
-						data.getUnderbids().put(marketOrder.getOrderID(), underbid);
+					Outbid outbid = data.getOutbids().get(marketOrder.getOrderID());
+					if (outbid == null) {
+						outbid = new Outbid(ordersResponse);
+						data.getOutbids().put(marketOrder.getOrderID(), outbid);
 					}
-					if (marketOrder.isBuyOrder()) { //Buy (underbid is higher)
-						underbid.setPrice(Math.max(underbid.getPrice(), ordersResponse.getPrice()));
+					if (marketOrder.isBuyOrder()) { //Buy (outbid is higher)
+						outbid.setPrice(Math.max(outbid.getPrice(), ordersResponse.getPrice()));
 						if (ordersResponse.getPrice() > marketOrder.getPrice()) {
-							underbid.addCount(ordersResponse.getVolumeRemain());
+							outbid.addCount(ordersResponse.getVolumeRemain());
 						}
-					} else { //Sell  (underbid is lower)
-						underbid.setPrice(Math.min(underbid.getPrice(), ordersResponse.getPrice()));
+					} else { //Sell  (outbid is lower)
+						outbid.setPrice(Math.min(outbid.getPrice(), ordersResponse.getPrice()));
 						if (marketOrder.getPrice() > ordersResponse.getPrice()) {
-							underbid.addCount(ordersResponse.getVolumeRemain());
+							outbid.addCount(ordersResponse.getVolumeRemain());
 						}
 					}
 
@@ -340,16 +340,16 @@ public class EsiPublicMarketOrdersGetter extends AbstractEsiGetter {
 		return Objects.equals(marketOrder.getOrderID(), response.getOrderId());
 	}
 
-	public static class Underbid {
+	public static class Outbid {
 		private Double price;
 		private long count;
 
-		public Underbid(Double price, long count) {
+		public Outbid(Double price, long count) {
 			this.price = price;
 			this.count = count;
 		}
 
-		public Underbid(RawPublicMarketOrder ordersResponse) {
+		public Outbid(RawPublicMarketOrder ordersResponse) {
 			this.price = ordersResponse.getPrice();
 			this.count = 0;
 		}
@@ -389,7 +389,7 @@ public class EsiPublicMarketOrdersGetter extends AbstractEsiGetter {
 	}
 
 	private static class Data {
-		private final Map<Long, Underbid> underbids = new HashMap<>();
+		private final Map<Long, Outbid> outbids = new HashMap<>();
 		private final Map<Long, RawPublicMarketOrder> updates = new HashMap<>();
 		private final Map<Long, Long> locationToSystem = new HashMap<>();
 		private final Map<Long, Citadel> citadels = new HashMap<>();
@@ -399,8 +399,8 @@ public class EsiPublicMarketOrdersGetter extends AbstractEsiGetter {
 			this.typeIDs = typeIDs;
 		}
 
-		public Map<Long, Underbid> getUnderbids() {
-			return underbids;
+		public Map<Long, Outbid> getOutbids() {
+			return outbids;
 		}
 
 		public Map<Long, RawPublicMarketOrder> getUpdates() {
