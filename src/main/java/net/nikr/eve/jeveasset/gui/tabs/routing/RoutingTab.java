@@ -1389,7 +1389,7 @@ public class RoutingTab extends JMainTabSecondary {
 				if (owner == null) {
 					return;
 				}
-				JMenuUI.getLockWindow(program).show(GuiShared.get().updating(), new JMenuUI.EsiUpdate() {
+				JMenuUI.getLockWindow(program).show(GuiShared.get().updating(), new JMenuUI.EsiUpdate(owner) {
 					@Override
 					protected void updateESI() throws Throwable {
 						boolean clear = true;
@@ -1398,10 +1398,10 @@ public class RoutingTab extends JMainTabSecondary {
 							List<SolarSystem> stations = routeResult.getStations().get(system.getSystemID());
 							if (stations != null && !stations.isEmpty()) { //Station(s)
 								for (SolarSystem station : stations) {
-									getApi(owner).postUiAutopilotWaypoint(false, clear, station.getLocationID(), AbstractEsiGetter.DATASOURCE, null);
+									getApi().postUiAutopilotWaypoint(false, clear, station.getLocationID(), AbstractEsiGetter.DATASOURCE, null);
 								}
 							} else { //System
-								getApi(owner).postUiAutopilotWaypoint(false, clear, system.getSystemID(), AbstractEsiGetter.DATASOURCE, null);
+								getApi().postUiAutopilotWaypoint(false, clear, system.getSystemID(), AbstractEsiGetter.DATASOURCE, null);
 							}
 							if (clear) {
 								clear = false;

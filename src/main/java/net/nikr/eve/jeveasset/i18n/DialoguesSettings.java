@@ -43,6 +43,9 @@ public abstract class DialoguesSettings extends Bundle {
 	public abstract String enterFilter();
 	public abstract String highlightSelectedRow();
 	public abstract String strongColors();
+	public abstract String focusEveOnline();
+	public abstract String focusEveOnlineLinuxCmd();
+	public abstract String focusEveOnlineLinuxHelp();
 
 	// used in AssetsToolSettingsPanel
 	public abstract String assets();

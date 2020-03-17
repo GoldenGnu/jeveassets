@@ -126,6 +126,8 @@ public class LibraryManager {
 			files.add("commons-codec-1.9.jar");
 			files.add("contracts-pricing-2.0.0.jar");
 			files.add("commons-lang3-3.8.1.jar");
+			files.add("jna-platform-4.5.2.jar");
+			files.add("jna-4.5.2.jar");
 		}
 		return files;
 	}

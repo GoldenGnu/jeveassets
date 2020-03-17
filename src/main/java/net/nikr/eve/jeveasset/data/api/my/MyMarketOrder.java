@@ -36,9 +36,10 @@ import net.nikr.eve.jeveasset.data.settings.types.EditablePriceType;
 import net.nikr.eve.jeveasset.data.settings.types.ItemType;
 import net.nikr.eve.jeveasset.data.settings.types.LastTransactionType;
 import net.nikr.eve.jeveasset.data.settings.types.OwnersType;
+import net.nikr.eve.jeveasset.gui.shared.components.JButtonComparable;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.Percent;
 import net.nikr.eve.jeveasset.i18n.TabsOrders;
-import net.nikr.eve.jeveasset.io.esi.EsiPublicMarketOrdersGetter.Underbid;
+import net.nikr.eve.jeveasset.io.esi.EsiPublicMarketOrdersGetter.Outbid;
 
 public class MyMarketOrder extends RawMarketOrder implements Comparable<MyMarketOrder>, EditableLocationType, ItemType, BlueprintType, EditablePriceType, ContractPriceType, OwnersType, LastTransactionType {
 
@@ -119,7 +120,8 @@ public class MyMarketOrder extends RawMarketOrder implements Comparable<MyMarket
 	private Percent lastTransactionPercent;
 	private String issuedByName = "";
 	private Double brokersFee;
-	private Underbid underbid;
+	private Outbid outbid;
+	private JButtonComparable jButton = new JButtonComparable(TabsOrders.get().eveUiOpen());
 
 	public MyMarketOrder(final RawMarketOrder rawMarketOrder, final Item item, final OwnerType owner) {
 		super(rawMarketOrder);
@@ -368,37 +370,41 @@ public class MyMarketOrder extends RawMarketOrder implements Comparable<MyMarket
 		this.brokersFee = brokerFee;
 	}
 
-	public boolean isUndercut() {
-		if (underbid == null) {
+	public boolean isOutbid() {
+		if (outbid == null) {
 			return false;
 		}
 		if (isBuyOrder()) {
-			return underbid.getPrice() > getPrice();
+			return outbid.getPrice() > getPrice();
 		} else {
-			return underbid.getPrice() < getPrice();
+			return outbid.getPrice() < getPrice();
 		}
 	}
 
-	public boolean haveUnderbid() {
-		return underbid != null;
+	public boolean haveOutbid() {
+		return outbid != null;
 	}
 
-	public Double getUnderbidPrice() {
-		if (underbid == null) {
+	public Double getOutbidPrice() {
+		if (outbid == null) {
 			return null;
 		}
-		return underbid.getPrice();
+		return outbid.getPrice();
 	}
 
-	public Long getUnderbidCount() {
-		if (underbid == null) {
+	public Long getOutbidCount() {
+		if (outbid == null) {
 			return null;
 		}
-		return underbid.getCount();
+		return outbid.getCount();
 	}
 
-	public void setUnderbid(Underbid underbid) {
-		this.underbid = underbid;
+	public void setOutbid(Outbid outbid) {
+		this.outbid = outbid;
+	}
+
+	public JButtonComparable getButton() {
+		return jButton;
 	}
 
 	@Override

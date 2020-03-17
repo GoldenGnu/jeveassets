@@ -21,8 +21,13 @@
 
 package net.nikr.eve.jeveasset.gui.dialogs.settings;
 
+import com.sun.jna.Platform;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
 import javax.swing.GroupLayout;
 import javax.swing.JCheckBox;
+import javax.swing.JLabel;
+import javax.swing.JTextField;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
@@ -34,6 +39,7 @@ public class GeneralSettingsPanel extends JSettingsPanel {
 	private final JCheckBox jEnterFilters;
 	private final JCheckBox jHighlightSelectedRow;
 	private final JCheckBox jStrongColors;
+	private final JCheckBox jFocusEveOnline;
 
 
 	public GeneralSettingsPanel(final Program program, final SettingsDialog optionsDialog) {
@@ -45,17 +51,42 @@ public class GeneralSettingsPanel extends JSettingsPanel {
 
 		jStrongColors = new JCheckBox(DialoguesSettings.get().strongColors());
 
+		jFocusEveOnline = new JCheckBox(DialoguesSettings.get().focusEveOnline());
+
+		JLabel jFocusEveOnlineLinuxHelp = new JLabel(DialoguesSettings.get().focusEveOnlineLinuxHelp());
+		jFocusEveOnlineLinuxHelp.setVisible(Platform.isLinux());
+		JTextField jFocusEveOnlineLinuxCmd = new JTextField(DialoguesSettings.get().focusEveOnlineLinuxCmd());
+		jFocusEveOnlineLinuxCmd.addFocusListener(new FocusAdapter() {
+			@Override
+			public void focusGained(FocusEvent e) {
+				jFocusEveOnlineLinuxCmd.selectAll();
+			}
+		});
+		jFocusEveOnlineLinuxCmd.setEditable(false);
+		jFocusEveOnlineLinuxCmd.setVisible(Platform.isLinux());
+
 		layout.setHorizontalGroup(
 			layout.createParallelGroup(GroupLayout.Alignment.LEADING)
 				.addComponent(jEnterFilters)
 				.addComponent(jHighlightSelectedRow)
 				.addComponent(jStrongColors)
+				.addComponent(jFocusEveOnline)
+				.addGroup(layout.createSequentialGroup()
+					.addGap(30)
+					.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+						.addComponent(jFocusEveOnlineLinuxHelp)
+						.addComponent(jFocusEveOnlineLinuxCmd)
+					)
+				)
 		);
 		layout.setVerticalGroup(
 			layout.createSequentialGroup()
 				.addComponent(jEnterFilters, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 				.addComponent(jHighlightSelectedRow, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 				.addComponent(jStrongColors, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+				.addComponent(jFocusEveOnline, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+				.addComponent(jFocusEveOnlineLinuxHelp, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+				.addComponent(jFocusEveOnlineLinuxCmd, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 		);
 	}
 
@@ -65,6 +96,7 @@ public class GeneralSettingsPanel extends JSettingsPanel {
 		Settings.get().setFilterOnEnter(jEnterFilters.isSelected());
 		Settings.get().setHighlightSelectedRows(jHighlightSelectedRow.isSelected());
 		Settings.get().setStrongColors(jStrongColors.isSelected());
+		Settings.get().setFocusEveOnlineOnEsiUiCalls(jFocusEveOnline.isSelected());
 		return update;
 	}
 
@@ -73,5 +105,6 @@ public class GeneralSettingsPanel extends JSettingsPanel {
 		jEnterFilters.setSelected(Settings.get().isFilterOnEnter());
 		jHighlightSelectedRow.setSelected(Settings.get().isHighlightSelectedRows());
 		jStrongColors.setSelected(Settings.get().isStrongColors());
+		jFocusEveOnline.setSelected(Settings.get().isFocusEveOnlineOnEsiUiCalls());
 	}
 }

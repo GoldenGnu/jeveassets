@@ -42,8 +42,8 @@ public abstract class TabsOrders extends Bundle {
 	public abstract String columnVolumeRemain();
 	public abstract String columnVolumeTotal();
 	public abstract String columnPrice();
-	public abstract String columnUnderbidPrice();
-	public abstract String columnUnderbidCount();
+	public abstract String columnOutbidPrice();
+	public abstract String columnOutbidCount();
 	public abstract String columnBrokersFee();
 	public abstract String columnBrokersFeeToolTip();
 	public abstract String columnEdits();
@@ -65,6 +65,8 @@ public abstract class TabsOrders extends Bundle {
 	public abstract String columnLastTransactionValue();
 	public abstract String columnLastTransactionPercent();
 	public abstract String columnTypeID();
+	public abstract String columnEveUi();
+	public abstract String eveUiOpen();
 	public abstract String logClear();
 	public abstract String logClose();
 	public abstract String logError();
@@ -90,11 +92,11 @@ public abstract class TabsOrders extends Bundle {
 	public abstract String totalBuyOrders();
 	public abstract String totalEscrow();
 	public abstract String totalToCover();
-	public abstract String updateUnderbid();
-	public abstract String updateUnderbidAuto();
-	public abstract String updateUnderbidToolTip();
-	public abstract String updateUnderbidWhen(String time);
-	public abstract String updateUnderbidUpdating();
+	public abstract String updateOutbid();
+	public abstract String updateOutbidAuto();
+	public abstract String updateOutbidToolTip();
+	public abstract String updateOutbidWhen(String time);
+	public abstract String updateOutbidUpdating();
 	public abstract String sellOrderRange();
 	public abstract String sellOrderRangeLastToolTip();
 	public abstract String sellOrderRangeNextToolTip();
