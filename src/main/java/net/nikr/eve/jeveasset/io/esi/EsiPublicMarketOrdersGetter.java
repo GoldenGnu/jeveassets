@@ -59,11 +59,11 @@ public class EsiPublicMarketOrdersGetter extends AbstractEsiGetter {
 	private static final Logger LOG = LoggerFactory.getLogger(EsiPublicMarketOrdersGetter.class);
 
 	private final ProfileData profileData;
-	private final SellOrderRange sellOrderRange;
+	private final MarketOrderRange sellOrderRange;
 	private final UpdateTask updateTask;
 	private boolean first = true;
 	
-	public EsiPublicMarketOrdersGetter(UpdateTask updateTask, ProfileData profileData, SellOrderRange sellOrderRange) {
+	public EsiPublicMarketOrdersGetter(UpdateTask updateTask, ProfileData profileData, MarketOrderRange sellOrderRange) {
 		super(updateTask, null, false, Settings.get().getPublicMarketOrdersNextUpdate(), TaskType.PUBLIC_MARKET_ORDERS);
 		this.updateTask = updateTask;
 		this.profileData = profileData;
@@ -249,33 +249,26 @@ public class EsiPublicMarketOrdersGetter extends AbstractEsiGetter {
 		if (!Objects.equals(fromSystemLocation.getRegionID(), toSystemLocation.getRegionID())) {
 			return false; //Must be in same region
 		}
+		MarketOrderRange marketOrderRange;
 		if (marketOrder.isBuyOrder()) {
-			if (marketOrder.getRange() == MarketOrderRange.REGION
-					|| other.getRange() == MarketOrderRange.REGION) {
-				return true; //Match everything
-			} else if (marketOrder.getRange() == MarketOrderRange.STATION
-					&& other.getRange() == MarketOrderRange.STATION) {
-				return Objects.equals(marketOrder.getLocationID(), other.getLocationId()); //Only match if in the same station
-			} else {
-				int range = getRange(other.getRange()) + getRange(marketOrder.getRange()); //Find overlapping area
-				//int range = Math.max(getRange(response), getRange(marketOrder)); //Use the order with the max range
-				Integer distance = profileData.distanceBetween(fromSystemID, toSystemID);
-				if (distance == null) {
-					return false;
-				}
-				return distance <= range;
+			marketOrderRange = marketOrder.getRange();
+		} else {
+			marketOrderRange = sellOrderRange;
+		}
+		if (marketOrderRange == MarketOrderRange.REGION
+				|| other.getRange() == MarketOrderRange.REGION) {
+			return true; //Match everything
+		} else if (marketOrderRange == MarketOrderRange.STATION
+				&& other.getRange() == MarketOrderRange.STATION) {
+			return Objects.equals(marketOrder.getLocationID(), other.getLocationId()); //Only match if in the same station
+		} else {
+			int range = getRange(other.getRange()) + getRange(marketOrderRange); //Find overlapping area
+			//int range = Math.max(getRange(response), getRange(marketOrder)); //Use the order with the max range
+			Integer distance = profileData.distanceBetween(fromSystemID, toSystemID);
+			if (distance == null) {
+				return false;
 			}
-		} else {//Sell order
-			switch (sellOrderRange) {
-				case REGION:
-					return true; //Match everything
-				case SYSTEM:
-					return Objects.equals(fromSystemID, toSystemID); //Only match if in the same system
-				case STATION:
-					return Objects.equals(marketOrder.getLocation().getStationID(), other.getLocationId()); //Only match if in the same station
-				default:
-					return false;
-			}
+			return distance <= range;
 		}
 	}
 
@@ -368,23 +361,6 @@ public class EsiPublicMarketOrdersGetter extends AbstractEsiGetter {
 
 		public void addCount(long count) {
 			this.count = this.count + count;
-		}
-	}
-
-	public static enum SellOrderRange {
-		REGION("Region"),
-		SYSTEM("System"),
-		STATION("Station");
-
-		private final String text;
-		
-		private SellOrderRange(String text) {		
-			this.text = text;
-		}
-
-		@Override
-		public String toString() {
-			return text;
 		}
 	}
 

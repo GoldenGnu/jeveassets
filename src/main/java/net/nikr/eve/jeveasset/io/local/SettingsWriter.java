@@ -27,6 +27,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder.MarketOrderRange;
 import net.nikr.eve.jeveasset.data.settings.ContractPriceManager.ContractPriceSettings;
 import net.nikr.eve.jeveasset.data.settings.ExportSettings;
 import net.nikr.eve.jeveasset.data.settings.PriceDataSettings;
@@ -52,7 +53,6 @@ import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileFilter;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
 import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerDate;
 import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerNote;
-import net.nikr.eve.jeveasset.io.esi.EsiPublicMarketOrdersGetter.SellOrderRange;
 import net.nikr.eve.jeveasset.io.esi.EsiPublicMarketOrdersGetter.Outbid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -145,7 +145,7 @@ public class SettingsWriter extends AbstractXmlWriter {
 		return true;
 	}
 
-	private void writeMarketOrderOutbid(Document xmldoc, Date publicMarketOrdersNextUpdate, SellOrderRange sellOrderRange, Map<Long, Outbid> marketOrdersOutbid) {
+	private void writeMarketOrderOutbid(Document xmldoc, Date publicMarketOrdersNextUpdate, MarketOrderRange sellOrderRange, Map<Long, Outbid> marketOrdersOutbid) {
 		Element marketOrderOutbidNode = xmldoc.createElementNS(null, "marketorderoutbid");
 		xmldoc.getDocumentElement().appendChild(marketOrderOutbidNode);
 		setAttribute(marketOrderOutbidNode, "nextupdate", publicMarketOrdersNextUpdate);
