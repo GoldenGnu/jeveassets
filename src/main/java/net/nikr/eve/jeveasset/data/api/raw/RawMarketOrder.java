@@ -33,19 +33,24 @@ import net.troja.eve.esi.model.CorporationOrdersResponse;
 public class RawMarketOrder {
 
 	public enum MarketOrderRange {
+		_1("1", TabsOrders.get().rangeJump()),
+		_10("10"),
+		_2("2"),
+		_20("20"),
+		_3("3"),
+		_30("30"),
+		_4("4"),
+		_40("40"),
+		_5("5"),
 		REGION("region", TabsOrders.get().rangeRegion()),
 		SOLARSYSTEM("solarsystem", TabsOrders.get().rangeSolarSystem()),
-		STATION("station", TabsOrders.get().rangeStation()),
-		_1("1", TabsOrders.get().rangeJump()),
-		_2("2"),
-		_3("3"),
-		_4("4"),
-		_5("5"),
-		_10("10"),
-		_20("20"),
-		_30("30"),
-		_40("40");
+		STATION("station", TabsOrders.get().rangeStation());
+		
 
+		private static final MarketOrderRange[] SORTED = {
+			REGION, SOLARSYSTEM, STATION, _1, _2, _3, _4, _5, _10, _20, _30, _40
+		};
+		
 		private final String value;
 		private final String text;
 
@@ -56,6 +61,10 @@ public class RawMarketOrder {
 		MarketOrderRange(String value, String text) {
 			this.value = value;
 			this.text = text;
+		}
+
+		public static MarketOrderRange[] valuesSorted() {
+			return SORTED;
 		}
 
 		@Override
