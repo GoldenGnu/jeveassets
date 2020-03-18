@@ -23,6 +23,7 @@ package net.nikr.eve.jeveasset.data.api.raw;
 import java.util.Date;
 import java.util.Set;
 import java.util.TreeSet;
+import net.nikr.eve.jeveasset.i18n.TabsOrders;
 import net.nikr.eve.jeveasset.io.shared.RawConverter;
 import net.troja.eve.esi.model.CharacterOrdersHistoryResponse;
 import net.troja.eve.esi.model.CharacterOrdersResponse;
@@ -32,28 +33,34 @@ import net.troja.eve.esi.model.CorporationOrdersResponse;
 public class RawMarketOrder {
 
 	public enum MarketOrderRange {
-		_1("1"),
-		_10("10"),
+		REGION("region", TabsOrders.get().rangeRegion()),
+		SOLARSYSTEM("solarsystem", TabsOrders.get().rangeSolarSystem()),
+		STATION("station", TabsOrders.get().rangeStation()),
+		_1("1", TabsOrders.get().rangeJump()),
 		_2("2"),
-		_20("20"),
 		_3("3"),
-		_30("30"),
 		_4("4"),
-		_40("40"),
 		_5("5"),
-		REGION("region"),
-		SOLARSYSTEM("solarsystem"),
-		STATION("station");
+		_10("10"),
+		_20("20"),
+		_30("30"),
+		_40("40");
 
 		private final String value;
+		private final String text;
 
 		MarketOrderRange(String value) {
+			this(value, TabsOrders.get().rangeJumps(value));
+		}
+
+		MarketOrderRange(String value, String text) {
 			this.value = value;
+			this.text = text;
 		}
 
 		@Override
 		public String toString() {
-			return String.valueOf(value);
+			return text;
 		}
 
 		public static MarketOrderRange fromValue(String text) {

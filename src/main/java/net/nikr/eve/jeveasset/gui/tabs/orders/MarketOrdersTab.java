@@ -58,6 +58,7 @@ import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
 import net.nikr.eve.jeveasset.data.api.accounts.OwnerType;
 import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder;
+import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder.MarketOrderRange;
 import net.nikr.eve.jeveasset.data.profile.ProfileData;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.dialogs.update.TaskDialog;
@@ -84,7 +85,6 @@ import net.nikr.eve.jeveasset.gui.shared.table.PaddingTableCellRenderer;
 import net.nikr.eve.jeveasset.i18n.DialoguesUpdate;
 import net.nikr.eve.jeveasset.i18n.TabsOrders;
 import net.nikr.eve.jeveasset.io.esi.EsiPublicMarketOrdersGetter;
-import net.nikr.eve.jeveasset.io.esi.EsiPublicMarketOrdersGetter.SellOrderRange;
 
 
 public class MarketOrdersTab extends JMainTabPrimary {
@@ -370,7 +370,7 @@ public class MarketOrdersTab extends JMainTabPrimary {
 
 	private boolean updateSellOrderRange() {
 		updateUpdateButton();
-		SellOrderRange sellOrderRange = (SellOrderRange) JOptionPane.showInputDialog(program.getMainWindow().getFrame(), null, TabsOrders.get().sellOrderRange(), JOptionPane.PLAIN_MESSAGE, null, SellOrderRange.values(), Settings.get().getSellOrderOutbidRange());
+		MarketOrderRange sellOrderRange = (MarketOrderRange) JOptionPane.showInputDialog(program.getMainWindow().getFrame(), null, TabsOrders.get().sellOrderRange(), JOptionPane.PLAIN_MESSAGE, null, MarketOrderRange.values(), Settings.get().getSellOrderOutbidRange());
 		if (sellOrderRange == null) {
 			jAutoUpdate.setSelected(false);
 			updateUpdateButton();
@@ -383,7 +383,7 @@ public class MarketOrdersTab extends JMainTabPrimary {
 	}
 
 	private void update() {
-		SellOrderRange sellOrderRange = Settings.get().getSellOrderOutbidRange();
+		MarketOrderRange sellOrderRange = Settings.get().getSellOrderOutbidRange();
 		timer.stop();
 		jUpdate.setText(TabsOrders.get().updateOutbidUpdating());
 		jUpdate.setEnabled(false);
@@ -537,9 +537,9 @@ public class MarketOrdersTab extends JMainTabPrimary {
 	private static class PublicMarkerOrdersUpdateTask extends UpdateTask {
 
 		private final ProfileData profileData;
-		private final SellOrderRange sellOrderRange;
+		private final MarketOrderRange sellOrderRange;
 
-		public PublicMarkerOrdersUpdateTask(ProfileData profileData, SellOrderRange sellOrderRange) {
+		public PublicMarkerOrdersUpdateTask(ProfileData profileData, MarketOrderRange sellOrderRange) {
 			super(DialoguesUpdate.get().publicMarkerOrders());
 			this.profileData = profileData;
 			this.sellOrderRange = sellOrderRange;

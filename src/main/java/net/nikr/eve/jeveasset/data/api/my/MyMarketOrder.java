@@ -110,7 +110,6 @@ public class MyMarketOrder extends RawMarketOrder implements Comparable<MyMarket
 	private final Set<Long> owners;
 	private Item item;
 	private MyLocation location;
-	private String rangeFormated;
 	private OrderStatus status;
 	private OwnerType owner;
 	private double price;
@@ -128,24 +127,6 @@ public class MyMarketOrder extends RawMarketOrder implements Comparable<MyMarket
 		this.item = item;
 		this.owner = owner;
 		this.owners = Collections.singleton(owner.getOwnerID());
-		rangeFormated = "";
-		switch (this.getRange()) {
-			case STATION:
-				rangeFormated = TabsOrders.get().rangeStation();
-				break;
-			case SOLARSYSTEM:
-				rangeFormated = TabsOrders.get().rangeSolarSystem();
-				break;
-			case REGION:
-				rangeFormated = TabsOrders.get().rangeRegion();
-				break;
-			case _1:
-				rangeFormated = TabsOrders.get().rangeJump();
-				break;
-			default:
-				rangeFormated = TabsOrders.get().rangeJumps(this.getRange().toString());
-				break;
-		}
 		if (isExpired()) { //expired (status may be out-of-date)
 			if (this.getVolumeRemain() == 0) {
 				status = OrderStatus.FULFILLED;
@@ -320,10 +301,6 @@ public class MyMarketOrder extends RawMarketOrder implements Comparable<MyMarket
 	@Override
 	public void setLocation(MyLocation location) {
 		this.location = location;
-	}
-
-	public String getRangeFormated() {
-		return rangeFormated;
 	}
 
 	public String getIssuedByName() {

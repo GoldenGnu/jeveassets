@@ -26,6 +26,7 @@ import java.awt.Point;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder.MarketOrderRange;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
 import net.nikr.eve.jeveasset.data.settings.ContractPriceManager;
 import net.nikr.eve.jeveasset.data.settings.ExportSettings;
@@ -553,12 +554,12 @@ public abstract class FakeSettings extends Settings {
 	}
 
 	@Override
-	public void setSellOrderOutbidRange(EsiPublicMarketOrdersGetter.SellOrderRange sellOrderOutbidRange) {
+	public void setSellOrderOutbidRange(MarketOrderRange sellOrderOutbidRange) {
 		throw new UnsupportedOperationException("not implemented");
 	}
 
 	@Override
-	public EsiPublicMarketOrdersGetter.SellOrderRange getSellOrderOutbidRange() {
+	public MarketOrderRange getSellOrderOutbidRange() {
 		throw new UnsupportedOperationException("not implemented");
 	}
 
