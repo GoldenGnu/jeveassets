@@ -44,6 +44,7 @@ import java.util.Map;
 import java.util.TreeMap;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.SplashUpdater;
+import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder.MarketOrderRange;
 import net.nikr.eve.jeveasset.data.settings.ContractPriceManager.ContractPriceSettings;
 import net.nikr.eve.jeveasset.data.settings.tag.Tag;
 import net.nikr.eve.jeveasset.data.settings.tag.TagID;
@@ -57,7 +58,6 @@ import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewGroup;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile;
 import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerDate;
 import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerNote;
-import net.nikr.eve.jeveasset.io.esi.EsiPublicMarketOrdersGetter.SellOrderRange;
 import net.nikr.eve.jeveasset.io.esi.EsiPublicMarketOrdersGetter.Outbid;
 import net.nikr.eve.jeveasset.io.local.SettingsReader;
 import net.nikr.eve.jeveasset.io.local.SettingsWriter;
@@ -185,7 +185,7 @@ public class Settings {
 	//Market Orders Outbid
 	private final Map<Long, Outbid> marketOrdersOutbid = new HashMap<>();
 	//SellOrderRange
-	private SellOrderRange sellOrderOutbidRange = SellOrderRange.REGION;
+	private MarketOrderRange sellOrderOutbidRange = MarketOrderRange.REGION;
 	//Cache
 	private Boolean filterOnEnter = null; //Filter tools
 	private Boolean highlightSelectedRows = null;  //Assets
@@ -584,11 +584,11 @@ public class Settings {
 		this.publicMarketOrdersNextUpdate = publicMarketOrdersNextUpdate;
 	}
 
-	public SellOrderRange getSellOrderOutbidRange() {
+	public MarketOrderRange getSellOrderOutbidRange() {
 		return sellOrderOutbidRange;
 	}
 
-	public void setSellOrderOutbidRange(SellOrderRange sellOrderOutbidRange) {
+	public void setSellOrderOutbidRange(MarketOrderRange sellOrderOutbidRange) {
 		this.sellOrderOutbidRange = sellOrderOutbidRange;
 	}
 

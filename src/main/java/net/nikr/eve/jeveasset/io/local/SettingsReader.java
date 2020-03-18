@@ -33,6 +33,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder.MarketOrderRange;
 import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
 import net.nikr.eve.jeveasset.data.settings.AssetAddedData;
@@ -103,7 +104,6 @@ import net.nikr.eve.jeveasset.gui.tabs.values.Value;
 import net.nikr.eve.jeveasset.gui.tabs.values.ValueTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.values.ValueTableTab;
 import net.nikr.eve.jeveasset.i18n.General;
-import net.nikr.eve.jeveasset.io.esi.EsiPublicMarketOrdersGetter.SellOrderRange;
 import net.nikr.eve.jeveasset.io.esi.EsiPublicMarketOrdersGetter.Outbid;
 import net.nikr.eve.jeveasset.io.local.update.Update;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
@@ -767,11 +767,11 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 	private void parseMarketOrderOutbidNodes(Element marketOrderOutbidElement, Settings settings) throws XmlException {
 		Date nextUpdate = getDate(marketOrderOutbidElement, "nextupdate");
 		settings.setPublicMarketOrdersNextUpdate(nextUpdate);
-		SellOrderRange sellOrderRange;
+		MarketOrderRange sellOrderRange;
 		try {
-			sellOrderRange = SellOrderRange.valueOf(getString(marketOrderOutbidElement, "sellorderrange"));
+			sellOrderRange = MarketOrderRange.valueOf(getString(marketOrderOutbidElement, "sellorderrange"));
 		} catch (IllegalArgumentException ex) {
-			sellOrderRange = SellOrderRange.REGION;
+			sellOrderRange = MarketOrderRange.REGION;
 		}
 		settings.setSellOrderOutbidRange(sellOrderRange);
 		NodeList outbidNodes = marketOrderOutbidElement.getElementsByTagName("outbid");
