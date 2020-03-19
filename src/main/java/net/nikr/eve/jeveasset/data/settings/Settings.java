@@ -121,24 +121,24 @@ public class Settings {
 
 //External
 	//Price						Saved by PriceDataGetter.process() in pricedata.dat (on api update)
-	private Map<Integer, PriceData> priceDatas = new HashMap<Integer, PriceData>(); //TypeID : int
+	private Map<Integer, PriceData> priceDatas = new HashMap<>(); //TypeID : int
 //API Data
 	//Api id to owner name		Saved by TaskDialog.update() (on API update)
-	private final Map<Long, String> owners = new HashMap<Long, String>();
+	private final Map<Long, String> owners = new HashMap<>();
 //!! - Values
 	//OK - Custom Price			Saved by JUserListPanel.edit()/delete() + SettingsDialog.save()
 	//Lock OK
-	private Map<Integer, UserItem<Integer, Double>> userPrices = new HashMap<Integer, UserItem<Integer, Double>>(); //TypeID : int
+	private Map<Integer, UserItem<Integer, Double>> userPrices = new HashMap<>(); //TypeID : int
 	//OK - Custom Item Name		Saved by JUserListPanel.edit()/delete() + SettingsDialog.save()
 	//Lock OK
-	private Map<Long, UserItem<Long, String>> userNames = new HashMap<Long, UserItem<Long, String>>(); //ItemID : long
+	private Map<Long, UserItem<Long, String>> userNames = new HashMap<>(); //ItemID : long
 	//Eve Item Name				Saved by TaskDialog.update() (on API update)
 	//Lock ???
-	private Map<Long, String> eveNames = new HashMap<Long, String>();
+	private Map<Long, String> eveNames = new HashMap<>();
 //!! - Stockpile				Saved by StockpileTab.removeItems() / addStockpile() / removeStockpile()
 	//							Could be more selective...
 	//Lock FAIL!!!
-	private final List<Stockpile> stockpiles = new ArrayList<Stockpile>();
+	private final List<Stockpile> stockpiles = new ArrayList<>();
 	private int stockpileColorGroup2 = 100;
 	private int stockpileColorGroup3 = 0;
 //Routing						Saved by ???
@@ -146,20 +146,20 @@ public class Settings {
 	private final RoutingSettings routingSettings = new RoutingSettings();
 //Overview						Saved by JOverviewMenu.ListenerClass.NEW/DELETE/RENAME
 	//Lock OK
-	private final Map<String, OverviewGroup> overviewGroups = new HashMap<String, OverviewGroup>();
+	private final Map<String, OverviewGroup> overviewGroups = new HashMap<>();
 //Export						Saved in ExportDialog.saveSettings()
 	//Lock OK
 	private final ExportSettings exportSettings = new ExportSettings();
 //Tracker						Saved by TaskDialog.update() (on API update)
-	private final Map<TrackerDate, TrackerNote> trackerNotes = new HashMap<TrackerDate, TrackerNote>();
-	private final Map<String, Boolean> trackerFilters = new HashMap<String, Boolean>();
+	private final Map<TrackerDate, TrackerNote> trackerNotes = new HashMap<>();
+	private final Map<String, Boolean> trackerFilters = new HashMap<>();
 	private boolean trackerSelectNew = true;
 //Runtime flags					Is not saved to file
 	private boolean settingsLoadError = false;
 //Settings Dialog:				Saved by SettingsDialog.save()
 	//Lock OK
 	//Mixed boolean flags
-	private final Map<SettingFlag, Boolean> flags = new EnumMap<SettingFlag, Boolean>(SettingFlag.class);
+	private final Map<SettingFlag, Boolean> flags = new EnumMap<>(SettingFlag.class);
 	//Price
 	private PriceDataSettings priceDataSettings = new PriceDataSettings();
 	//Contract price
@@ -181,6 +181,8 @@ public class Settings {
 	private int maximumPurchaseAge = 0;
 	//Reprocess price
 	private ReprocessSettings reprocessSettings = new ReprocessSettings();
+	//Public Market Orders Last Update
+	private Date publicMarketOrdersLastUpdate = null;
 	//Public Market Orders Next Update
 	private Date publicMarketOrdersNextUpdate = getNow();
 	//Market Orders Outbid
@@ -195,30 +197,30 @@ public class Settings {
 //Table settings
 	//Filters					Saved by ExportFilterControl.saveSettings()
 	//Lock OK
-	private final Map<String, Map<String, List<Filter>>> tableFilters = new HashMap<String, Map<String, List<Filter>>>();
+	private final Map<String, Map<String, List<Filter>>> tableFilters = new HashMap<>();
 	//Columns					Saved by EnumTableFormatAdaptor.getMenu() - Reset
 	//									 EditColumnsDialog.save() - Edit Columns
 	//									 JAutoColumnTable.ListenerClass.mouseReleased() - Moved
 	//									 ViewManager.loadView() - Load View
 	//Lock OK
-	private final Map<String, List<SimpleColumn>> tableColumns = new HashMap<String, List<SimpleColumn>>();
+	private final Map<String, List<SimpleColumn>> tableColumns = new HashMap<>();
 	//Column Width				Saved by JAutoColumnTable.saveColumnsWidth()
 	//Lock OK
-	private final Map<String, Map<String, Integer>> tableColumnsWidth = new HashMap<String, Map<String, Integer>>();
+	private final Map<String, Map<String, Integer>> tableColumnsWidth = new HashMap<>();
 	//Resize Mode				Saved by EnumTableFormatAdaptor.getMenu()
 	//Lock OK
-	private final Map<String, ResizeMode> tableResize = new HashMap<String, ResizeMode>();
+	private final Map<String, ResizeMode> tableResize = new HashMap<>();
 	//Views						Saved by EnumTableFormatAdaptor.getMenu() - New
 	//									 ViewManager.rename() - Rename
 	//									 ViewManager.delete() - Delete
 	//Lock OK
-	private final Map<String, Map<String, View>> tableViews = new HashMap<String, Map<String, View>>();
+	private final Map<String, Map<String, View>> tableViews = new HashMap<>();
 //Tags						Saved by JMenuTags.addTag()/removeTag() + SettingsDialog.save()
 	//Lock OK
-	private final Map<String, Tag> tags = new HashMap<String, Tag>();
-	private final Map<TagID, Tags> tagIds = new HashMap<TagID, Tags>();
+	private final Map<String, Tag> tags = new HashMap<>();
+	private final Map<TagID, Tags> tagIds = new HashMap<>();
 //Jumps
-	private final Map<Class<?>, List<MyLocation>> jumpLocations = new HashMap<Class<?>, List<MyLocation>>();
+	private final Map<Class<?>, List<MyLocation>> jumpLocations = new HashMap<>();
 
 	protected Settings() {
 		//Settings
@@ -500,7 +502,7 @@ public class Settings {
 	public List<MyLocation> getJumpLocations(Class<?> clazz) {
 		List<MyLocation> locations = jumpLocations.get(clazz);
 		if (locations == null) {
-			locations = new ArrayList<MyLocation>();
+			locations = new ArrayList<>();
 			jumpLocations.put(clazz, locations);
 		}
 		return locations;
@@ -534,7 +536,7 @@ public class Settings {
 
 	public Map<String, List<Filter>> getTableFilters(final String key) {
 		if (!tableFilters.containsKey(key)) {
-			tableFilters.put(key, new HashMap<String, List<Filter>>());
+			tableFilters.put(key, new HashMap<>());
 		}
 		return tableFilters.get(key);
 	}
@@ -558,7 +560,7 @@ public class Settings {
 	public Map<String, View> getTableViews(String name) {
 		Map<String, View> views = tableViews.get(name);
 		if (views == null) {
-			views = new TreeMap<String, View>(new CaseInsensitiveComparator());
+			views = new TreeMap<>(new CaseInsensitiveComparator());
 			tableViews.put(name, views);
 		}
 		return views;
@@ -583,6 +585,14 @@ public class Settings {
 
 	public void setPublicMarketOrdersNextUpdate(Date publicMarketOrdersNextUpdate) {
 		this.publicMarketOrdersNextUpdate = publicMarketOrdersNextUpdate;
+	}
+
+	public Date getPublicMarketOrdersLastUpdate() {
+		return publicMarketOrdersLastUpdate;
+	}
+
+	public void setPublicMarketOrdersLastUpdate(Date publicMarketOrdersLastUpdate) {
+		this.publicMarketOrdersLastUpdate = publicMarketOrdersLastUpdate;
 	}
 
 	public MarketOrderRange getSellOrderOutbidRange() {

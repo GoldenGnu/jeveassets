@@ -767,6 +767,8 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 	private void parseMarketOrderOutbidNodes(Element marketOrderOutbidElement, Settings settings) throws XmlException {
 		Date nextUpdate = getDate(marketOrderOutbidElement, "nextupdate");
 		settings.setPublicMarketOrdersNextUpdate(nextUpdate);
+		Date lastUpdate = getDateOptional(marketOrderOutbidElement, "lastupdate");
+		settings.setPublicMarketOrdersLastUpdate(lastUpdate);
 		MarketOrderRange sellOrderRange;
 		try {
 			sellOrderRange = MarketOrderRange.valueOf(getString(marketOrderOutbidElement, "sellorderrange"));
