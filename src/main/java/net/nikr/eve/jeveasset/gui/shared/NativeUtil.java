@@ -22,44 +22,50 @@ package net.nikr.eve.jeveasset.gui.shared;
 
 import com.sun.jna.Native;
 import com.sun.jna.Platform;
-import com.sun.jna.platform.win32.WinDef;
-import com.sun.jna.platform.win32.WinUser;
+import com.sun.jna.platform.win32.WinDef.HWND;
 import static com.sun.jna.platform.win32.WinUser.SW_RESTORE;
+import static com.sun.jna.platform.win32.WinUser.SW_SHOWMINIMIZED;
+import com.sun.jna.platform.win32.WinUser.WINDOWPLACEMENT;
 import com.sun.jna.win32.StdCallLibrary;
 import java.io.IOException;
-import org.jfree.chart.plot.dial.DialPointer.Pointer;
 
 
 public class NativeUtil {
 
 	interface User32 extends StdCallLibrary {
-		// https://msdn.microsoft.com/en-us/library/windows/desktop/ms633499(v=vs.85).aspx
 
-		WinDef.HWND FindWindowA(String className, String windowName);
-		// https://msdn.microsoft.com/en-us/library/windows/desktop/ms633548(v=vs.85).aspx
+		//FindWindowA:         https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-findwindowa
+		HWND FindWindowA(String className, String windowName);
 
-		boolean ShowWindow(WinDef.HWND hWnd, int command);
+		//ShowWindow:          https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-showwindow
+		boolean ShowWindow(HWND hWnd, int command);
 
-		boolean EnumWindows(WinUser.WNDENUMPROC lpEnumFunc, Pointer arg);
+		//SetForegroundWindow: https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-setforegroundwindow
+		boolean SetForegroundWindow(HWND hWnd);
 
-		WinDef.HWND SetFocus(WinDef.HWND hWnd);
+		//GetWindowPlacement:  https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-getwindowplacement
+		//WINDOWPLACEMENT:     https://docs.microsoft.com/en-us/windows/win32/api/winuser/ns-winuser-windowplacement
+		boolean GetWindowPlacement(HWND hWnd, WINDOWPLACEMENT lpwndpl);
 
-		int GetWindowTextA(WinDef.HWND hWnd, byte[] lpString, int nMaxCount);
-
-		boolean SetForegroundWindow(WinDef.HWND hWnd);
 	}
 
 	public static boolean focusEveOnline(String characterName) {
-		String windowName = "EVE - " + characterName;
+		final String windowName = "EVE - " + characterName;
 		if (Platform.isWindows()) {
 			final User32 user32 = Native.loadLibrary("User32.dll", User32.class);
-			WinDef.HWND window = user32.FindWindowA(null, windowName);
-			return user32.ShowWindow(window, SW_RESTORE);
+			HWND window = user32.FindWindowA(null, windowName);
+			WINDOWPLACEMENT windowPlacement = new WINDOWPLACEMENT();
+			user32.GetWindowPlacement(window, windowPlacement);
+			if (windowPlacement.showCmd == SW_SHOWMINIMIZED) {
+				user32.ShowWindow(window, SW_RESTORE);
+			} else {
+				user32.SetForegroundWindow(window);
+			}
 		} else if (Platform.isLinux()) {
 			try {
 				Runtime runtime = Runtime.getRuntime();
 				String[] args = { "wmctrl", "-a", windowName};
-				Process process = runtime.exec(args);
+				runtime.exec(args);
 				return true;
 			} catch (IOException ex) {
 				return false;
@@ -68,7 +74,7 @@ public class NativeUtil {
 			try {
 				Runtime runtime = Runtime.getRuntime();
 				String[] args = { "osascript", "-e", "tell app \"" + windowName + "\" to activate" };
-				Process process = runtime.exec(args);
+				runtime.exec(args);
 				return true;
 			} catch (IOException ex) {
 				return false;

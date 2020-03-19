@@ -39,6 +39,7 @@ import net.nikr.eve.jeveasset.data.sde.MyLocation;
 import net.nikr.eve.jeveasset.data.settings.Citadel;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
+import net.nikr.eve.jeveasset.gui.shared.Formater;
 import static net.nikr.eve.jeveasset.io.esi.AbstractEsiGetter.DATASOURCE;
 import static net.nikr.eve.jeveasset.io.esi.AbstractEsiGetter.DEFAULT_RETRIES;
 import static net.nikr.eve.jeveasset.io.esi.AbstractEsiGetter.getMarketApiOpen;
@@ -61,7 +62,8 @@ public class EsiPublicMarketOrdersGetter extends AbstractEsiGetter {
 	private final ProfileData profileData;
 	private final MarketOrderRange sellOrderRange;
 	private final UpdateTask updateTask;
-	private boolean first = true;
+	private boolean firstNextUpdate = true;
+	private Date lastUpdate;
 	
 	public EsiPublicMarketOrdersGetter(UpdateTask updateTask, ProfileData profileData, MarketOrderRange sellOrderRange) {
 		super(updateTask, null, false, Settings.get().getPublicMarketOrdersNextUpdate(), TaskType.PUBLIC_MARKET_ORDERS);
@@ -108,7 +110,14 @@ public class EsiPublicMarketOrdersGetter extends AbstractEsiGetter {
 					return updatePages(DEFAULT_RETRIES, new EsiPagesHandler<MarketOrdersResponse>() {
 						@Override
 						public ApiResponse<List<MarketOrdersResponse>> get(Integer page) throws ApiException {
-							return getMarketApiOpen().getMarketsRegionIdOrdersWithHttpInfo("all", k, DATASOURCE, null, page, null);
+							ApiResponse<List<MarketOrdersResponse>> response = getMarketApiOpen().getMarketsRegionIdOrdersWithHttpInfo("all", k, DATASOURCE, null, page, null);
+							if (lastUpdate == null) {
+								String header = getHeader(response.getHeaders(), "last-modified");
+								if (header != null) {
+									lastUpdate = Formater.parseExpireDate(header);
+								}
+							}
+							return response;
 						}
 					});
 				} finally {
@@ -169,6 +178,9 @@ public class EsiPublicMarketOrdersGetter extends AbstractEsiGetter {
 		}
 		//Process data
 		process(data, orders);
+		if (lastUpdate != null) {
+			Settings.get().setPublicMarketOrdersLastUpdate(lastUpdate);
+		}
 		setProgressAll(100, 90, 0, 100);
 		CitadelGetter.set(data.getCitadels().values());
 		setProgressAll(100, 93, 0, 100);
@@ -187,8 +199,8 @@ public class EsiPublicMarketOrdersGetter extends AbstractEsiGetter {
 
 	@Override
 	protected void setNextUpdate(Date date) {
-		if (first) {
-			first = false;
+		if (firstNextUpdate) {
+			firstNextUpdate = false;
 			Settings.get().setPublicMarketOrdersNextUpdate(date);
 		}
 	}

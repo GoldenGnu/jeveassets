@@ -100,6 +100,7 @@ public abstract class TabsOrders extends Bundle {
 	public abstract String sellOrderRange();
 	public abstract String sellOrderRangeLastToolTip();
 	public abstract String sellOrderRangeNextToolTip();
+	public abstract String lastUpdateToolTip();
 	public abstract String sellOrderRangeNone();
 	public abstract String sellOrderRangeSelcted(String selected);
 	public abstract String updateTitle();

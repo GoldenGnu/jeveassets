@@ -570,4 +570,14 @@ public abstract class FakeSettings extends Settings {
 	public boolean isFocusEveOnlineOnEsiUiCalls() {
 		throw new UnsupportedOperationException("not implemented");
 	}
+
+	@Override
+	public void setPublicMarketOrdersLastUpdate(Date date) {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public Date getPublicMarketOrdersLastUpdate() {
+		throw new UnsupportedOperationException("not implemented");
+	}
 }
