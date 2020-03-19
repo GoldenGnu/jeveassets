@@ -134,7 +134,7 @@ public class SettingsWriter extends AbstractXmlWriter {
 		writeOwners(xmldoc, settings.getOwners());
 		writeTags(xmldoc, settings.getTags());
 		writeRoutingSettings(xmldoc, settings.getRoutingSettings());
-		writeMarketOrderOutbid(xmldoc, settings.getPublicMarketOrdersNextUpdate(), settings.getSellOrderOutbidRange(), settings.getMarketOrdersOutbid());
+		writeMarketOrderOutbid(xmldoc, settings.getPublicMarketOrdersNextUpdate(), settings.getPublicMarketOrdersLastUpdate(), settings.getSellOrderOutbidRange(), settings.getMarketOrdersOutbid());
 		try {
 			writeXmlFile(xmldoc, filename, true);
 		} catch (XmlException ex) {
@@ -145,10 +145,11 @@ public class SettingsWriter extends AbstractXmlWriter {
 		return true;
 	}
 
-	private void writeMarketOrderOutbid(Document xmldoc, Date publicMarketOrdersNextUpdate, MarketOrderRange sellOrderRange, Map<Long, Outbid> marketOrdersOutbid) {
+	private void writeMarketOrderOutbid(Document xmldoc, Date publicMarketOrdersNextUpdate, Date publicMarketOrdersLastUpdate, MarketOrderRange sellOrderRange, Map<Long, Outbid> marketOrdersOutbid) {
 		Element marketOrderOutbidNode = xmldoc.createElementNS(null, "marketorderoutbid");
 		xmldoc.getDocumentElement().appendChild(marketOrderOutbidNode);
 		setAttribute(marketOrderOutbidNode, "nextupdate", publicMarketOrdersNextUpdate);
+		setAttributeOptional(marketOrderOutbidNode, "lastupdate", publicMarketOrdersLastUpdate);
 		setAttribute(marketOrderOutbidNode, "sellorderrange", sellOrderRange);
 		for (Map.Entry<Long, Outbid> entry : marketOrdersOutbid.entrySet()) {
 			Element outbidNode = xmldoc.createElementNS(null, "outbid");

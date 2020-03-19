@@ -29,6 +29,10 @@ import ca.odell.glazedlists.event.ListEventListener;
 import ca.odell.glazedlists.swing.DefaultEventSelectionModel;
 import ca.odell.glazedlists.swing.DefaultEventTableModel;
 import ca.odell.glazedlists.swing.TableComparatorChooser;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -41,6 +45,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.swing.GroupLayout;
+import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
@@ -65,6 +70,7 @@ import net.nikr.eve.jeveasset.gui.dialogs.update.TaskDialog;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
 import net.nikr.eve.jeveasset.gui.images.Images;
+import net.nikr.eve.jeveasset.gui.shared.Colors;
 import net.nikr.eve.jeveasset.gui.shared.CopyHandler;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.components.JFixedToolBar;
@@ -106,6 +112,7 @@ public class MarketOrdersTab extends JMainTabPrimary {
 	private final JButton jErrors;
 	private final JCheckBox jAutoUpdate;
 	private final JLabel jSellOrderRangeLast;
+	private final JLabel jLastUpdate;
 	private final JLabel jSellOrderRangeNext;
 	private final MarketOrdersErrorDialog jMarketOrdersErrorDialog;
 	private final Timer timer;
@@ -145,14 +152,6 @@ public class MarketOrdersTab extends JMainTabPrimary {
 		jAutoUpdate.setActionCommand(MarketOrdersAction.AUTO_UPDATE.name());
 		jAutoUpdate.addActionListener(listener);
 		jToolBar.addButton(jAutoUpdate);
-
-		timer = new Timer(1000, new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				updateUpdateButton();
-			}
-		});
-		timer.start();
 
 		//Table Format
 		tableFormat = new EnumTableFormatAdaptor<>(MarketTableFormat.class);
@@ -275,6 +274,20 @@ public class MarketOrdersTab extends JMainTabPrimary {
 		this.addStatusbarLabel(jSellOrderRangeNext);
 		jSellOrderRangeNext.setText(TabsOrders.get().sellOrderRangeNone());
 
+		jLastUpdate = StatusPanel.createLabel(TabsOrders.get().lastUpdateToolTip(), null);
+		this.addStatusbarLabel(jLastUpdate);
+
+		updateDates();
+
+
+		timer = new Timer(1000, new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				updateDates();
+			}
+		});
+		timer.start();
+
 		layout.setHorizontalGroup(
 				layout.createParallelGroup()
 						.addComponent(filterControl.getPanel())
@@ -351,7 +364,7 @@ public class MarketOrdersTab extends JMainTabPrimary {
 		jErrors.setText(jMarketOrdersErrorDialog.getDocument().getLength() > 0 ? TabsOrders.get().logError() : TabsOrders.get().logOK());
 	}
 
-	private void updateUpdateButton() {
+	private void updateDates() {
 		Date nextUpdate = Settings.get().getPublicMarketOrdersNextUpdate();
 		if (Settings.get().isUpdatable(nextUpdate)) {
 			jUpdate.setText(TabsOrders.get().updateOutbid());
@@ -365,14 +378,30 @@ public class MarketOrdersTab extends JMainTabPrimary {
 			}
 			jUpdate.setEnabled(false);
 		}
+		Date lastUpdate = Settings.get().getPublicMarketOrdersLastUpdate();
+		if (lastUpdate != null) {
+			long diff = Math.abs(System.currentTimeMillis() - lastUpdate.getTime());
+			long diffMinutes = diff / (60 * 1000) % 60;
+			if (diffMinutes < 2) {
+				jLastUpdate.setIcon(new RectColorIcon(Colors.GREEN.getColor()));
+			} else if (diffMinutes < 5) {
+				jLastUpdate.setIcon(new RectColorIcon(Colors.YELLOW.getColor()));
+			} else {
+				jLastUpdate.setIcon(new RectColorIcon(Colors.RED.getColor()));
+			}
+			jLastUpdate.setText(Formater.milliseconds(diff, false, false, true, true, true, true));
+		} else {
+			jLastUpdate.setIcon(new RectColorIcon(Colors.LIGHT_GRAY.getColor()));
+			jLastUpdate.setText(TabsOrders.get().sellOrderRangeNone());
+		}
 	}
 
 	private boolean updateSellOrderRange() {
-		updateUpdateButton();
-		MarketOrderRange sellOrderRange = (MarketOrderRange) JOptionPane.showInputDialog(program.getMainWindow().getFrame(), null, TabsOrders.get().sellOrderRange(), JOptionPane.PLAIN_MESSAGE, null, MarketOrderRange.values(), Settings.get().getSellOrderOutbidRange());
+		updateDates();
+		MarketOrderRange sellOrderRange = (MarketOrderRange) JOptionPane.showInputDialog(program.getMainWindow().getFrame(), null, TabsOrders.get().sellOrderRange(), JOptionPane.PLAIN_MESSAGE, null, MarketOrderRange.valuesSorted(), Settings.get().getSellOrderOutbidRange());
 		if (sellOrderRange == null) {
 			jAutoUpdate.setSelected(false);
-			updateUpdateButton();
+			updateDates();
 			jSellOrderRangeNext.setText(TabsOrders.get().sellOrderRangeNone());
 			return false;
 		}
@@ -399,6 +428,8 @@ public class MarketOrdersTab extends JMainTabPrimary {
 				schedule();
 				//Sell Order Range
 				jSellOrderRangeLast.setText(TabsOrders.get().sellOrderRangeSelcted(Settings.get().getSellOrderOutbidRange().toString()));
+				//Last Update
+				updateDates();
 			}
 
 			@Override
@@ -548,6 +579,42 @@ public class MarketOrdersTab extends JMainTabPrimary {
 		public void update() {
 			EsiPublicMarketOrdersGetter publicMarketOrdersGetter = new EsiPublicMarketOrdersGetter(this, profileData, sellOrderRange);
 			publicMarketOrdersGetter.run();
+		}
+	}
+
+	public static class RectColorIcon implements Icon {
+
+		private final Color color;
+		private final Color border;
+
+		public RectColorIcon(Color color) {
+			this.color = color;
+			this.border = new JLabel().getBackground().darker();
+		}
+
+		@Override
+		public void paintIcon(Component c, Graphics g, int x, int y) {
+			Graphics2D g2d = (Graphics2D) g;
+		
+			//Border
+			g2d.setColor(border);
+			g2d.fillRect(x, y, getIconWidth(), getIconHeight());
+
+			//Background
+			g2d.setColor(color);
+			g2d.fillRect(x + 1, y + 1, getIconWidth() - 2, getIconHeight() - 2);
+			
+			
+		}
+
+		@Override
+		public int getIconWidth() {
+			return 16;
+		}
+
+		@Override
+		public int getIconHeight() {
+			return 16;
 		}
 	}
 }
