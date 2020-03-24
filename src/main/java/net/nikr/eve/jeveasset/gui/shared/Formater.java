@@ -372,17 +372,25 @@ public final class Formater {
 		private static final TimeZone TIME_ZONE = TimeZone.getTimeZone("GMT");
 
 		private final String format;
+		private final boolean lenient;
+
 		private final ThreadLocal<DateFormat> df = new ThreadLocal<DateFormat>() {
 			@Override
 			protected DateFormat initialValue() {
 				SimpleDateFormat value = new SimpleDateFormat(format, new Locale("en"));
 				value.setTimeZone(TIME_ZONE);
+				value.setLenient(lenient);
 				return value;
 			}
 		};
 
 		public DateFormatThreadSafe(String format) {
+			this(format, false);
+		}
+
+		public DateFormatThreadSafe(String format, boolean lenient) {
 			this.format = format;
+			this.lenient = lenient;
 		}
 
 		public Date parse(String dateString) throws ParseException {

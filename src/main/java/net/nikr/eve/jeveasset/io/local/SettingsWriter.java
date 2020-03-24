@@ -45,6 +45,7 @@ import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.ResizeMode;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.SimpleColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.View;
+import net.nikr.eve.jeveasset.gui.tabs.orders.Outbid;
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewGroup;
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewLocation;
 import net.nikr.eve.jeveasset.gui.tabs.routing.SolarSystem;
@@ -53,7 +54,6 @@ import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileFilter;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
 import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerDate;
 import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerNote;
-import net.nikr.eve.jeveasset.io.esi.EsiPublicMarketOrdersGetter.Outbid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -134,7 +134,7 @@ public class SettingsWriter extends AbstractXmlWriter {
 		writeOwners(xmldoc, settings.getOwners());
 		writeTags(xmldoc, settings.getTags());
 		writeRoutingSettings(xmldoc, settings.getRoutingSettings());
-		writeMarketOrderOutbid(xmldoc, settings.getPublicMarketOrdersNextUpdate(), settings.getPublicMarketOrdersLastUpdate(), settings.getSellOrderOutbidRange(), settings.getMarketOrdersOutbid());
+		writeMarketOrderOutbid(xmldoc, settings.getPublicMarketOrdersNextUpdate(), settings.getPublicMarketOrdersLastUpdate(), settings.getOutbidOrderRange(), settings.getMarketOrdersOutbid());
 		try {
 			writeXmlFile(xmldoc, filename, true);
 		} catch (XmlException ex) {
@@ -145,12 +145,12 @@ public class SettingsWriter extends AbstractXmlWriter {
 		return true;
 	}
 
-	private void writeMarketOrderOutbid(Document xmldoc, Date publicMarketOrdersNextUpdate, Date publicMarketOrdersLastUpdate, MarketOrderRange sellOrderRange, Map<Long, Outbid> marketOrdersOutbid) {
+	private void writeMarketOrderOutbid(Document xmldoc, Date publicMarketOrdersNextUpdate, Date publicMarketOrdersLastUpdate, MarketOrderRange outbidOrderRange, Map<Long, Outbid> marketOrdersOutbid) {
 		Element marketOrderOutbidNode = xmldoc.createElementNS(null, "marketorderoutbid");
 		xmldoc.getDocumentElement().appendChild(marketOrderOutbidNode);
 		setAttribute(marketOrderOutbidNode, "nextupdate", publicMarketOrdersNextUpdate);
 		setAttributeOptional(marketOrderOutbidNode, "lastupdate", publicMarketOrdersLastUpdate);
-		setAttribute(marketOrderOutbidNode, "sellorderrange", sellOrderRange);
+		setAttribute(marketOrderOutbidNode, "outbidorderrange", outbidOrderRange);
 		for (Map.Entry<Long, Outbid> entry : marketOrdersOutbid.entrySet()) {
 			Element outbidNode = xmldoc.createElementNS(null, "outbid");
 			setAttribute(outbidNode, "id", entry.getKey());
