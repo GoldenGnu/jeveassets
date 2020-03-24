@@ -65,7 +65,11 @@ public class JFixedToolBar extends JToolBar {
 	}
 
 	public void addButton(final AbstractButton jButton) {
-		addButton(jButton, 100, SwingConstants.LEFT);
+		addButton(jButton, 100);
+	}
+
+	public void addButton(final AbstractButton jButton, final int width) {
+		addButton(jButton, width, SwingConstants.LEFT);
 	}
 
 	public void addButton(final AbstractButton jButton, final int width, final int alignment) {

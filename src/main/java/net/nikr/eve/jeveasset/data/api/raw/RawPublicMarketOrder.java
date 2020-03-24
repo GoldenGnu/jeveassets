@@ -22,6 +22,7 @@ package net.nikr.eve.jeveasset.data.api.raw;
 
 import java.util.Date;
 import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder.MarketOrderRange;
+import net.nikr.eve.jeveasset.gui.tabs.orders.MarketLog;
 import net.nikr.eve.jeveasset.io.shared.RawConverter;
 import net.troja.eve.esi.model.MarketOrdersResponse;
 import net.troja.eve.esi.model.MarketStructuresResponse;
@@ -33,6 +34,7 @@ public class RawPublicMarketOrder {
     private final Integer minVolume;
     private final Boolean isBuyOrder;
     private final Double price;
+	private final Integer systemId;
     private final Integer typeId;
     private final MarketOrderRange range;
     private final Integer volumeTotal;
@@ -46,6 +48,7 @@ public class RawPublicMarketOrder {
 		this.minVolume = marketOrder.getMinVolume();
 		this.isBuyOrder = marketOrder.getIsBuyOrder();
 		this.price = marketOrder.getPrice();
+		this.systemId = marketOrder.getSystemId();
 		this.typeId = marketOrder.getTypeId();
 		this.range = MarketOrderRange.valueOf(marketOrder.getRange().name());
 		this.volumeTotal = marketOrder.getVolumeTotal();
@@ -55,11 +58,12 @@ public class RawPublicMarketOrder {
 		this.locationId = marketOrder.getLocationId();
 	}
 
-	public RawPublicMarketOrder(MarketStructuresResponse marketOrder) {
+	public RawPublicMarketOrder(MarketStructuresResponse marketOrder, final Long systemId) {
 		this.duration = marketOrder.getDuration();
 		this.minVolume = marketOrder.getMinVolume();
 		this.isBuyOrder = marketOrder.getIsBuyOrder();
 		this.price = marketOrder.getPrice();
+		this.systemId = RawConverter.toInteger(systemId);
 		this.typeId = marketOrder.getTypeId();
 		this.range = MarketOrderRange.valueOf(marketOrder.getRange().name());
 		this.volumeTotal = marketOrder.getVolumeTotal();
@@ -67,6 +71,21 @@ public class RawPublicMarketOrder {
 		this.orderId = marketOrder.getOrderId();
 		this.volumeRemain = marketOrder.getVolumeRemain();
 		this.locationId = marketOrder.getLocationId();
+	}
+
+	public RawPublicMarketOrder(MarketLog marketLog) {
+		this.duration = marketLog.getDuration();
+		this.minVolume = marketLog.getMinVolume();
+		this.isBuyOrder = marketLog.getBid();
+		this.price = marketLog.getPrice();
+		this.systemId = RawConverter.toInteger(marketLog.getSolarSystemID());
+		this.typeId = marketLog.getTypeID();
+		this.range = RawConverter.toMarketOrderRange(marketLog.getRange());
+		this.volumeTotal = marketLog.getVolEntered();
+		this.issued = marketLog.getIssueDate();
+		this.orderId = marketLog.getOrderID();
+		this.volumeRemain = RawConverter.toInteger(marketLog.getVolRemaining());
+		this.locationId = marketLog.getStationID();
 	}
 
 	public Integer getDuration() {
@@ -77,12 +96,16 @@ public class RawPublicMarketOrder {
 		return minVolume;
 	}
 
-	public Boolean getIsBuyOrder() {
+	public Boolean isBuyOrder() {
 		return isBuyOrder;
 	}
 
 	public Double getPrice() {
 		return price;
+	}
+
+	public Integer getSystemId() {
+		return systemId;
 	}
 
 	public Integer getTypeId() {

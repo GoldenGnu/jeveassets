@@ -44,11 +44,11 @@ import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.ResizeMode;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.SimpleColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.View;
+import net.nikr.eve.jeveasset.gui.tabs.orders.Outbid;
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewGroup;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile;
 import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerDate;
 import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerNote;
-import net.nikr.eve.jeveasset.io.esi.EsiPublicMarketOrdersGetter;
 
 /**
  *
@@ -542,22 +542,22 @@ public abstract class FakeSettings extends Settings {
 	}
 
 	@Override
-	public void setMarketOrdersOutbid(Map<Long, EsiPublicMarketOrdersGetter.Outbid> outbids) {
+	public void setMarketOrdersOutbid(Map<Long, Outbid> outbids) {
 		throw new UnsupportedOperationException("not implemented");
 	}
 
 	@Override
-	public Map<Long, EsiPublicMarketOrdersGetter.Outbid> getMarketOrdersOutbid() {
+	public Map<Long, Outbid> getMarketOrdersOutbid() {
 		throw new UnsupportedOperationException("not implemented");
 	}
 
 	@Override
-	public void setSellOrderOutbidRange(MarketOrderRange sellOrderOutbidRange) {
+	public void seOutbidOrderRange(MarketOrderRange sellOrderOutbidRange) {
 		throw new UnsupportedOperationException("not implemented");
 	}
 
 	@Override
-	public MarketOrderRange getSellOrderOutbidRange() {
+	public MarketOrderRange getOutbidOrderRange() {
 		throw new UnsupportedOperationException("not implemented");
 	}
 
