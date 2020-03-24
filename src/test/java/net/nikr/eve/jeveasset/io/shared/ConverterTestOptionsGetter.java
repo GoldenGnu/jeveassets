@@ -45,8 +45,8 @@ import net.nikr.eve.jeveasset.data.settings.UserItem;
 import net.nikr.eve.jeveasset.data.settings.tag.Tags;
 import net.nikr.eve.jeveasset.gui.dialogs.settings.UserPriceSettingsPanel.UserPrice;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.Percent;
+import net.nikr.eve.jeveasset.gui.tabs.orders.Outbid;
 import net.nikr.eve.jeveasset.io.esi.EsiCallbackURL;
-import net.nikr.eve.jeveasset.io.esi.EsiPublicMarketOrdersGetter;
 import net.troja.eve.esi.model.CharacterAssetsResponse;
 import net.troja.eve.esi.model.CharacterBlueprintsResponse;
 import net.troja.eve.esi.model.CharacterContractsResponse;
@@ -175,7 +175,7 @@ public class ConverterTestOptionsGetter {
 			//UNKNOWN("Unknown");  //Ignored: jEveAssets value
 		};
 		//MarketOrder Outbid
-		private static final EsiPublicMarketOrdersGetter.Outbid ESI_MARKET_ORDER_OUTBID = new EsiPublicMarketOrdersGetter.Outbid(0.0, 0);
+		private static final Outbid ESI_MARKET_ORDER_OUTBID = new Outbid(0.0, 0);
 		private static final CharacterOrdersHistoryResponse.StateEnum[] ESI_MARKET_ORDER_STATE_CHARACTER_HISTORY = CharacterOrdersHistoryResponse.StateEnum.values();
 		private static final CorporationOrdersHistoryResponse.StateEnum[] ESI_MARKET_ORDER_STATE_CORPORATION_HISTORY = CorporationOrdersHistoryResponse.StateEnum.values();
 		private static final Integer[] EVE_API_MARKET_ORDER_STATE = {3, 5, 1, 2, 0, 4};
@@ -697,7 +697,7 @@ public class ConverterTestOptionsGetter {
 
 //MarketOrder Outbid
 		@Override
-		public EsiPublicMarketOrdersGetter.Outbid getMarketOrdersOutbid() {
+		public Outbid getMarketOrdersOutbid() {
 			return ESI_MARKET_ORDER_OUTBID;
 		}
 

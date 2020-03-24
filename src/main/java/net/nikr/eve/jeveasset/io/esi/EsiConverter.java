@@ -267,18 +267,16 @@ public class EsiConverter extends DataConverter {
 		return convertRawContainersLogs(rawContainersLogs);
 	}
 
-	public static List<RawPublicMarketOrder> toPublicMarketOrders(List<MarketOrdersResponse> responses) {
-		List<RawPublicMarketOrder> marketOrders = new ArrayList<>();
+	public static Map<Integer, List<RawPublicMarketOrder>> toPublicMarketOrders(List<MarketOrdersResponse> responses) {
+		Map<Integer, List<RawPublicMarketOrder>> marketOrders = new HashMap<>();
 		for (MarketOrdersResponse response : responses) {
-			marketOrders.add(new RawPublicMarketOrder(response));
-		}
-		return marketOrders;
-	}
-
-	public static List<RawPublicMarketOrder> toPublicMarketOrdersStructures(List<MarketStructuresResponse> responses) {
-		List<RawPublicMarketOrder> marketOrders = new ArrayList<>();
-		for (MarketStructuresResponse response : responses) {
-			marketOrders.add(new RawPublicMarketOrder(response));
+			RawPublicMarketOrder marketOrder = new RawPublicMarketOrder(response);
+			List<RawPublicMarketOrder> list = marketOrders.get(marketOrder.getTypeId());
+			if (list == null) {
+				list = new ArrayList<>();
+				marketOrders.put(marketOrder.getTypeId(), list);
+			}
+			list.add(marketOrder);
 		}
 		return marketOrders;
 	}

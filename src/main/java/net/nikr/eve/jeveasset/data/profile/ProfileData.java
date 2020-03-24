@@ -46,8 +46,8 @@ import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
 import net.nikr.eve.jeveasset.data.api.raw.RawBlueprint;
 import net.nikr.eve.jeveasset.data.api.raw.RawJournalRefType;
 import net.nikr.eve.jeveasset.data.api.raw.RawPublicMarketOrder;
+import net.nikr.eve.jeveasset.data.sde.RouteFinder;
 import net.nikr.eve.jeveasset.data.sde.Item;
-import net.nikr.eve.jeveasset.data.sde.Jump;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
 import net.nikr.eve.jeveasset.data.sde.ReprocessedMaterial;
 import net.nikr.eve.jeveasset.data.sde.StaticData;
@@ -69,17 +69,12 @@ import net.nikr.eve.jeveasset.data.settings.types.LocationsType;
 import net.nikr.eve.jeveasset.gui.shared.CaseInsensitiveComparator;
 import net.nikr.eve.jeveasset.gui.shared.table.EventListManager;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.Percent;
-import net.nikr.eve.jeveasset.gui.tabs.routing.SolarSystem;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
 import net.nikr.eve.jeveasset.i18n.General;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 import net.nikr.eve.jeveasset.io.shared.DataConverter;
 import net.nikr.eve.jeveasset.io.shared.RawConverter;
-import uk.me.candle.eve.graph.DisconnectedGraphException;
-import uk.me.candle.eve.graph.Edge;
-import uk.me.candle.eve.graph.Graph;
-import uk.me.candle.eve.graph.distances.Jumps;
 
 public class ProfileData {
 
@@ -112,32 +107,11 @@ public class ProfileData {
 	private Map<Long, Double> marketOrdersBrokersFee; //OrderID : long
 	private final List<String> ownerNames = new ArrayList<>();
 	private final Map<Long, OwnerType> owners = new HashMap<>();
-	private final Graph graph;
-	private final Map<Long, SolarSystem> systemCache;
-	private final Map<Long, Map<Long, Integer>> distance = new HashMap<>();
 	private final Map<Long, RawPublicMarketOrder> marketOrdersUpdates = new HashMap<>();
 
 	public ProfileData(ProfileManager profileManager) {
 		this.profileManager = profileManager;
-		// build the graph.
-		// filter the solarsystems based on the settings.
-		graph = new Graph(new Jumps());
-		int count = 0;
-		systemCache = new HashMap<>();
-		for (Jump jump : StaticData.get().getJumps()) { // this way we exclude the locations that are unreachable.
-			count++;
-			SplashUpdater.setSubProgress((int) (count * 100.0 / StaticData.get().getJumps().size()));
-
-			SolarSystem from = systemCache.get(jump.getFrom().getSystemID());
-			SolarSystem to = systemCache.get(jump.getTo().getSystemID());
-			if (from == null) {
-				from = SolarSystem.create(systemCache, jump.getFrom());
-			}
-			if (to == null) {
-				to = SolarSystem.create(systemCache, jump.getTo());
-			}
-			graph.addEdge(new Edge(from, to));
-		}
+		RouteFinder.load();
 		SplashUpdater.setSubProgress(100);
 	}
 
@@ -242,41 +216,12 @@ public class ProfileData {
 			}
 			for (MyLocation jumpLocation : Settings.get().getJumpLocations(clazz)) {
 				long jumpSystemID = jumpLocation.getSystemID();
-				if (systemID != jumpSystemID) {
-					Map<Long, Integer> distances = distance.get(jumpSystemID);
-					if (distances == null) {
-						distances = new HashMap<>();
-						distance.put(jumpSystemID, distances);
-					}
-					Integer jumps = distances.get(systemID);
-					if (jumps == null) {
-						SolarSystem from = systemCache.get(systemID);
-						SolarSystem to = systemCache.get(jumpSystemID);
-						if (from != null && to != null) {
-							jumps = graph.distanceBetween(from, to);
-						} else {
-							jumps = -1;
-						}
-						distances.put(systemID, jumps);
-					}
-					jumpType.addJump(jumpSystemID, jumps);
-				} else {
-					jumpType.addJump(jumpSystemID, 0);
+				Integer jumps = RouteFinder.get().distanceBetween(jumpSystemID, systemID);
+				if (jumps == null) {
+					jumps = -1;
 				}
+				jumpType.addJump(jumpSystemID, jumps);
 			}
-		}
-	}
-
-	public Integer distanceBetween(Long fromSystemID, Long toSystemID) {
-		SolarSystem from = systemCache.get(fromSystemID);
-		SolarSystem to = systemCache.get(toSystemID);
-		if (from == null || to == null) {
-			return null;
-		}
-		try {
-			return graph.distanceBetween(from, to);
-		} catch (DisconnectedGraphException ex) {
-			return Integer.MAX_VALUE;
 		}
 	}
 

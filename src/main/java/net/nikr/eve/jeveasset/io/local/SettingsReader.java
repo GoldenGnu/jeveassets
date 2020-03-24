@@ -83,6 +83,7 @@ import net.nikr.eve.jeveasset.gui.tabs.journal.JournalTab;
 import net.nikr.eve.jeveasset.gui.tabs.journal.JournalTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.orders.MarketOrdersTab;
 import net.nikr.eve.jeveasset.gui.tabs.orders.MarketTableFormat;
+import net.nikr.eve.jeveasset.gui.tabs.orders.Outbid;
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewGroup;
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewLocation;
 import net.nikr.eve.jeveasset.gui.tabs.routing.SolarSystem;
@@ -104,7 +105,6 @@ import net.nikr.eve.jeveasset.gui.tabs.values.Value;
 import net.nikr.eve.jeveasset.gui.tabs.values.ValueTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.values.ValueTableTab;
 import net.nikr.eve.jeveasset.i18n.General;
-import net.nikr.eve.jeveasset.io.esi.EsiPublicMarketOrdersGetter.Outbid;
 import net.nikr.eve.jeveasset.io.local.update.Update;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 import org.slf4j.Logger;
@@ -769,13 +769,13 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		settings.setPublicMarketOrdersNextUpdate(nextUpdate);
 		Date lastUpdate = getDateOptional(marketOrderOutbidElement, "lastupdate");
 		settings.setPublicMarketOrdersLastUpdate(lastUpdate);
-		MarketOrderRange sellOrderRange;
+		MarketOrderRange outbidOrderRange;
 		try {
-			sellOrderRange = MarketOrderRange.valueOf(getString(marketOrderOutbidElement, "sellorderrange"));
+			outbidOrderRange = MarketOrderRange.valueOf(getString(marketOrderOutbidElement, "outbidorderrange"));
 		} catch (IllegalArgumentException ex) {
-			sellOrderRange = MarketOrderRange.REGION;
+			outbidOrderRange = MarketOrderRange.REGION;
 		}
-		settings.setSellOrderOutbidRange(sellOrderRange);
+		settings.seOutbidOrderRange(outbidOrderRange);
 		NodeList outbidNodes = marketOrderOutbidElement.getElementsByTagName("outbid");
 		for (int a = 0; a < outbidNodes.getLength(); a++) {
 			Element outbidNode = (Element) outbidNodes.item(a);

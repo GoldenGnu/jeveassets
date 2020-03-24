@@ -33,27 +33,42 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.File;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.nio.file.FileSystems;
+import java.nio.file.Path;
+import static java.nio.file.StandardWatchEventKinds.ENTRY_CREATE;
+import static java.nio.file.StandardWatchEventKinds.OVERFLOW;
+import java.nio.file.WatchEvent;
+import java.nio.file.WatchKey;
+import java.nio.file.WatchService;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import javax.swing.ButtonGroup;
 import javax.swing.GroupLayout;
 import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JOptionPane;
+import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
+import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 import javax.swing.event.CellEditorListener;
 import javax.swing.event.ChangeEvent;
@@ -64,7 +79,6 @@ import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
 import net.nikr.eve.jeveasset.data.api.accounts.OwnerType;
 import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder;
 import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder.MarketOrderRange;
-import net.nikr.eve.jeveasset.data.profile.ProfileData;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.dialogs.update.TaskDialog;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
@@ -88,17 +102,26 @@ import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
 import net.nikr.eve.jeveasset.gui.shared.table.JAutoColumnTable;
 import net.nikr.eve.jeveasset.gui.shared.table.PaddingTableCellRenderer;
+import net.nikr.eve.jeveasset.gui.tabs.orders.OutbidProcesser.OutbidProcesserInput;
+import net.nikr.eve.jeveasset.gui.tabs.orders.OutbidProcesser.OutbidProcesserOutput;
 import net.nikr.eve.jeveasset.i18n.DialoguesUpdate;
 import net.nikr.eve.jeveasset.i18n.TabsOrders;
 import net.nikr.eve.jeveasset.io.esi.EsiPublicMarketOrdersGetter;
+import net.nikr.eve.jeveasset.io.local.MarketLogReader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 public class MarketOrdersTab extends JMainTabPrimary {
 
+	private static final Logger LOG = LoggerFactory.getLogger(MarketOrdersTab.class);
+
 	private enum MarketOrdersAction {
 		UPDATE,
 		AUTO_UPDATE,
-		ERROR_LOG
+		AUTO_READ,
+		ERROR_LOG,
+		ORDER_RANGE
 	}
 
 	private static final int SIGNIFICANT_FIGURES = 4;
@@ -112,11 +135,18 @@ public class MarketOrdersTab extends JMainTabPrimary {
 	private final JButton jErrors;
 	private final JCheckBox jAutoUpdate;
 	private final JLabel jSellOrderRangeLast;
-	private final JLabel jLastUpdate;
-	private final JLabel jSellOrderRangeNext;
+	private final JLabel jLastEsiUpdate;
+	private final JLabel jLastLogUpdate;
+	private final JLabel jClipboard;
+	private final JComboBox<MarketOrderRange> jOrderRangeNext;
 	private final MarketOrdersErrorDialog jMarketOrdersErrorDialog;
+	private final JRadioButton jImportNone;
+	private final JRadioButton jImportBuyOrders;
+	private final JRadioButton jImportSellOrders;
 	private final Timer timer;
-	private java.util.Timer utilTimer;
+	private java.util.Timer updateTimer;
+	private FileListener fileListener;
+	private static Date lastLogUpdate = null;
 
 	//Table
 	private final MarketOrdersFilterControl filterControl;
@@ -144,15 +174,41 @@ public class MarketOrdersTab extends JMainTabPrimary {
 		jErrors.setEnabled(false);
 		jToolBar.addButton(jErrors);
 
-		jUpdate = new JButton(TabsOrders.get().updateOutbid(), Images.DIALOG_UPDATE.getIcon());
+		jUpdate = new JButton(TabsOrders.get().updateOutbidEsi(), Images.DIALOG_UPDATE.getIcon());
 		jUpdate.setActionCommand(MarketOrdersAction.UPDATE.name());
 		jUpdate.addActionListener(listener);
 		jToolBar.addButton(jUpdate);
 
-		jAutoUpdate = new JCheckBox(TabsOrders.get().updateOutbidAuto());
+		jAutoUpdate = new JCheckBox(TabsOrders.get().updateOutbidEsiAuto());
 		jAutoUpdate.setActionCommand(MarketOrdersAction.AUTO_UPDATE.name());
 		jAutoUpdate.addActionListener(listener);
 		jToolBar.addButton(jAutoUpdate);
+
+		jOrderRangeNext = new JComboBox<>(MarketOrderRange.valuesSorted());
+		jOrderRangeNext.setSelectedItem(Settings.get().getOutbidOrderRange());
+		jOrderRangeNext.setActionCommand(MarketOrdersAction.ORDER_RANGE.name());
+		jToolBar.addComboBox(jOrderRangeNext, 100);
+
+		jImportNone = new JRadioButton(TabsOrders.get().updateOutbidFileNone());
+		jImportNone.setSelected(true);
+		jImportNone.setActionCommand(MarketOrdersAction.AUTO_READ.name());
+		jImportNone.addActionListener(listener);
+		jToolBar.addButton(jImportNone, 50);
+
+		jImportBuyOrders = new JRadioButton(TabsOrders.get().updateOutbidFileBuy());
+		jImportBuyOrders.setActionCommand(MarketOrdersAction.AUTO_READ.name());
+		jImportBuyOrders.addActionListener(listener);
+		jToolBar.addButton(jImportBuyOrders, 50);
+
+		jImportSellOrders = new JRadioButton(TabsOrders.get().updateOutbidFileSell());
+		jImportSellOrders.setActionCommand(MarketOrdersAction.AUTO_READ.name());
+		jImportSellOrders.addActionListener(listener);
+		jToolBar.addButton(jImportSellOrders, 50);
+
+		ButtonGroup buttonGroup = new ButtonGroup();
+		buttonGroup.add(jImportNone);
+		buttonGroup.add(jImportBuyOrders);
+		buttonGroup.add(jImportSellOrders);
 
 		//Table Format
 		tableFormat = new EnumTableFormatAdaptor<>(MarketTableFormat.class);
@@ -269,17 +325,18 @@ public class MarketOrdersTab extends JMainTabPrimary {
 
 		jSellOrderRangeLast = StatusPanel.createLabel(TabsOrders.get().sellOrderRangeLastToolTip(), Images.ORDERS_SELL.getIcon());
 		this.addStatusbarLabel(jSellOrderRangeLast);
-		jSellOrderRangeLast.setText(TabsOrders.get().sellOrderRangeSelcted(Settings.get().getSellOrderOutbidRange().toString()));
+		jSellOrderRangeLast.setText(TabsOrders.get().sellOrderRangeSelcted(Settings.get().getOutbidOrderRange().toString()));
 
-		jSellOrderRangeNext = StatusPanel.createLabel(TabsOrders.get().sellOrderRangeNextToolTip(), Images.DIALOG_UPDATE.getIcon());
-		this.addStatusbarLabel(jSellOrderRangeNext);
-		jSellOrderRangeNext.setText(TabsOrders.get().sellOrderRangeNone());
+		jLastEsiUpdate = StatusPanel.createLabel(TabsOrders.get().lastEsiUpdateToolTip(), null);
+		this.addStatusbarLabel(jLastEsiUpdate);
 
-		jLastUpdate = StatusPanel.createLabel(TabsOrders.get().lastUpdateToolTip(), null);
-		this.addStatusbarLabel(jLastUpdate);
+		jLastLogUpdate = StatusPanel.createLabel(TabsOrders.get().lastLogUpdateToolTip(), null);
+		this.addStatusbarLabel(jLastLogUpdate);
+
+		jClipboard = StatusPanel.createLabel("Clipboard", Images.EDIT_COPY.getIcon());
+		this.addStatusbarLabel(jClipboard);
 
 		updateDates();
-
 
 		timer = new Timer(1000, new ActionListener() {
 			@Override
@@ -316,23 +373,30 @@ public class MarketOrdersTab extends JMainTabPrimary {
 	private void schedule() {
 		if (jAutoUpdate.isSelected()) {
 			long delay = Math.max(0, Settings.get().getPublicMarketOrdersNextUpdate().getTime() - System.currentTimeMillis());
-			if (utilTimer != null) { //Cancel old tasks
-				utilTimer.cancel();
+			if (updateTimer != null) { //Cancel old tasks
+				updateTimer.cancel();
 			}
-			utilTimer = new java.util.Timer();
-			utilTimer.schedule(new java.util.TimerTask() {
+			updateTimer = new java.util.Timer();
+			updateTimer.schedule(new java.util.TimerTask() {
 				@Override
 				public void run() {
-					update();
-					utilTimer = null;
+					updateESI();
+					updateTimer = null;
 				}
 			}, delay);
 		} else {
-			jSellOrderRangeNext.setText(TabsOrders.get().sellOrderRangeNone());
-			if (utilTimer != null) {
-				utilTimer.cancel();
+			if (updateTimer != null) {
+				updateTimer.cancel();
 			}
 		}
+	}
+
+	public synchronized static Date getLastLogUpdate() {
+		return lastLogUpdate;
+	}
+
+	public synchronized static void setLastLogUpdate() {
+		MarketOrdersTab.lastLogUpdate = new Date();
 	}
 
 	private void openEve(MyMarketOrder marketOrder) {
@@ -345,19 +409,27 @@ public class MarketOrdersTab extends JMainTabPrimary {
 			return;
 		}
 		EsiOwner esiOwner = (EsiOwner) owner;
+		copy(marketOrder);
+		JMenuUI.openMarketDetails(program, esiOwner, marketOrder.getTypeID(), false);
+	}
 
+	private void copy(MyMarketOrder marketOrder) {
 		Double price = marketOrder.getOutbidPrice();
+		LOG.info("Copy: " + marketOrder.isOutbid()+ " price: " + (price != null));
 		if (marketOrder.isOutbid() && price != null) {
 			if (marketOrder.isBuyOrder()) {
+				LOG.info("adding 1");
 				price = significantIncrement(price);
 			} else { //Sell
+				LOG.info("removing 1");
 				price = significantDecrement(price);
 			}
-			CopyHandler.toClipboard(Formater.copyFormat(price));
+			String copy = Formater.copyFormat(price);
+			CopyHandler.toClipboard(copy);
+			jClipboard.setText(copy);
 		} else {
-			CopyHandler.toClipboard(Formater.copyFormat(marketOrder.getPrice()));
+			jClipboard.setText(TabsOrders.get().rangeNone());
 		}
-		JMenuUI.openMarketDetails(program, esiOwner, marketOrder.getTypeID(), false);
 	}
 
 	private void updateErrorLogButton() {
@@ -368,7 +440,7 @@ public class MarketOrdersTab extends JMainTabPrimary {
 	private void updateDates() {
 		Date nextUpdate = Settings.get().getPublicMarketOrdersNextUpdate();
 		if (Settings.get().isUpdatable(nextUpdate)) {
-			jUpdate.setText(TabsOrders.get().updateOutbid());
+			jUpdate.setText(TabsOrders.get().updateOutbidEsi());
 			jUpdate.setEnabled(!jAutoUpdate.isSelected());
 		} else {
 			long ms = nextUpdate.getTime()-System.currentTimeMillis();
@@ -379,46 +451,51 @@ public class MarketOrdersTab extends JMainTabPrimary {
 			}
 			jUpdate.setEnabled(false);
 		}
-		Date lastUpdate = Settings.get().getPublicMarketOrdersLastUpdate();
-		if (lastUpdate != null) {
-			long diff = Math.abs(System.currentTimeMillis() - lastUpdate.getTime());
+		Date lastEsiUpdate = Settings.get().getPublicMarketOrdersLastUpdate();
+		if (lastEsiUpdate != null) {
+			long diff = Math.abs(System.currentTimeMillis() - lastEsiUpdate.getTime());
 			long diffMinutes = diff / (60 * 1000) % 60;
 			if (diffMinutes < 2) {
-				jLastUpdate.setIcon(new RectColorIcon(Colors.GREEN.getColor()));
+				jLastEsiUpdate.setIcon(new RectColorIcon(Colors.GREEN.getColor(), Images.MISC_ESI.getImage()));
 			} else if (diffMinutes < 5) {
-				jLastUpdate.setIcon(new RectColorIcon(Colors.YELLOW.getColor()));
+				jLastEsiUpdate.setIcon(new RectColorIcon(Colors.YELLOW.getColor(), Images.MISC_ESI.getImage()));
 			} else {
-				jLastUpdate.setIcon(new RectColorIcon(Colors.RED.getColor()));
+				jLastEsiUpdate.setIcon(new RectColorIcon(Colors.RED.getColor(), Images.MISC_ESI.getImage()));
 			}
-			jLastUpdate.setText(Formater.milliseconds(diff, false, false, true, true, true, true));
+			jLastEsiUpdate.setText(Formater.milliseconds(diff, false, false, true, true, true, true));
 		} else {
-			jLastUpdate.setIcon(new RectColorIcon(Colors.LIGHT_GRAY.getColor()));
-			jLastUpdate.setText(TabsOrders.get().sellOrderRangeNone());
+			jLastEsiUpdate.setIcon(new RectColorIcon(Colors.LIGHT_GRAY.getColor(), Images.MISC_ESI.getImage()));
+			jLastEsiUpdate.setText(TabsOrders.get().rangeNone());
+		}
+		Date logUpdate = getLastLogUpdate();
+		if (logUpdate != null) {
+			long diff = Math.abs(System.currentTimeMillis() - logUpdate.getTime());
+			long diffMinutes = diff / (60 * 1000) % 60;
+			if (diffMinutes < 2) {
+				jLastLogUpdate.setIcon(new RectColorIcon(Colors.GREEN.getColor(), Images.FILTER_LOAD.getImage()));
+			} else if (diffMinutes < 5) {
+				jLastLogUpdate.setIcon(new RectColorIcon(Colors.YELLOW.getColor(), Images.FILTER_LOAD.getImage()));
+			} else {
+				jLastLogUpdate.setIcon(new RectColorIcon(Colors.RED.getColor(), Images.FILTER_LOAD.getImage()));
+			}
+			jLastLogUpdate.setText(Formater.milliseconds(diff, false, false, true, true, true, true));
+		} else {
+			jLastLogUpdate.setIcon(new RectColorIcon(Colors.LIGHT_GRAY.getColor(), Images.FILTER_LOAD.getImage()));
+			jLastLogUpdate.setText(TabsOrders.get().rangeNone());
 		}
 	}
 
-	private boolean updateSellOrderRange() {
-		updateDates();
-		MarketOrderRange sellOrderRange = (MarketOrderRange) JOptionPane.showInputDialog(program.getMainWindow().getFrame(), null, TabsOrders.get().sellOrderRange(), JOptionPane.PLAIN_MESSAGE, null, MarketOrderRange.valuesSorted(), Settings.get().getSellOrderOutbidRange());
-		if (sellOrderRange == null) {
-			jAutoUpdate.setSelected(false);
-			updateDates();
-			jSellOrderRangeNext.setText(TabsOrders.get().sellOrderRangeNone());
-			return false;
-		}
-		jSellOrderRangeNext.setText(sellOrderRange.toString());
-		Settings.get().setSellOrderOutbidRange(sellOrderRange);
-		return true;
-	}
-
-	private void update() {
-		MarketOrderRange sellOrderRange = Settings.get().getSellOrderOutbidRange();
+	private void updateESI() {
 		timer.stop();
 		jUpdate.setText(TabsOrders.get().updateOutbidUpdating());
 		jUpdate.setEnabled(false);
-		TaskDialog taskDialog = new TaskDialog(program, new PublicMarkerOrdersUpdateTask(program.getProfileData(), sellOrderRange), false, jAutoUpdate.isSelected(), jAutoUpdate.isSelected(), StatusPanel.UpdateType.PUBLIC_MARKET_ORDERS, new TaskDialog.TasksCompletedAdvanced() {
+		OutbidProcesserInput input = new OutbidProcesserInput(program.getProfileData(), Settings.get().getOutbidOrderRange());
+		OutbidProcesserOutput output = new OutbidProcesserOutput();
+		TaskDialog taskDialog = new TaskDialog(program, new PublicMarkerOrdersUpdateTask(input, output), false, jAutoUpdate.isSelected(), jAutoUpdate.isSelected(), StatusPanel.UpdateType.PUBLIC_MARKET_ORDERS, new TaskDialog.TasksCompletedAdvanced() {
 			@Override
 			public void tasksCompleted(TaskDialog taskDialog) {
+				program.getProfileData().setMarketOrdersUpdates(output.getUpdates());
+				Settings.get().setMarketOrdersOutbid(output.getOutbids());
 				//Update eventlists
 				program.updateEventLists();
 				//Save Settings
@@ -428,7 +505,7 @@ public class MarketOrdersTab extends JMainTabPrimary {
 				//Schedule next update
 				schedule();
 				//Sell Order Range
-				jSellOrderRangeLast.setText(TabsOrders.get().sellOrderRangeSelcted(Settings.get().getSellOrderOutbidRange().toString()));
+				jSellOrderRangeLast.setText(TabsOrders.get().sellOrderRangeSelcted(Settings.get().getOutbidOrderRange().toString()));
 				//Last Update
 				updateDates();
 			}
@@ -454,7 +531,30 @@ public class MarketOrdersTab extends JMainTabPrimary {
 	}
 
 	private static double significantChange(double value, double change) {
-		double power = Math.pow(10, Math.floor(Math.log10(value)) - SIGNIFICANT_FIGURES + 1);
+		int significantFigures;
+		if (value <= 0.0) {
+			return 0.0;
+		} else if (value == 0.01) {
+			if (change > 0) {
+				return 0.02;
+			} else {
+				return 0.01;
+			}
+		} else if (value < 0.1) {
+			significantFigures = SIGNIFICANT_FIGURES - 3;
+		} else if (value < 1.0) {
+			significantFigures = SIGNIFICANT_FIGURES - 2;
+		} else if (value < 10.0) {
+			significantFigures = SIGNIFICANT_FIGURES - 1;
+		} else {
+			significantFigures = SIGNIFICANT_FIGURES;
+		}
+		double log10 = Math.log10(value);
+		if (Math.round(log10) == log10 && value > 10 && change < 0) { //Power of 10
+			significantFigures++;
+		}
+		double power = Math.pow(10, Math.floor(Math.log10(value)) - significantFigures + 1);
+		//double power = Math.pow(10, Math.floor(Math.log10(value)) - significantFigures);
 		value = value / power;
 		value = value + change;
 		value = value * power;
@@ -514,17 +614,35 @@ public class MarketOrdersTab extends JMainTabPrimary {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			if (MarketOrdersAction.UPDATE.name().equals(e.getActionCommand())) {
-				if (updateSellOrderRange()) {
-					update();
-				}
+				updateDates();
+				updateESI();
 			} else if (MarketOrdersAction.AUTO_UPDATE.name().equals(e.getActionCommand())) {
 				if (jAutoUpdate.isSelected()) {
-					updateSellOrderRange();
+					updateDates();
 				}
 				schedule();
+			} else if (MarketOrdersAction.AUTO_READ.name().equals(e.getActionCommand())) {
+				if (jImportNone.isSelected()) { //Stop
+					if (fileListener != null) {
+						fileListener.interrupt();
+					}
+				} else {
+					if (fileListener == null) {
+						fileListener = new FileListener(MarketOrdersTab.this, program, MarketLogReader.getMarketlogsDirectory().toPath(), jImportBuyOrders.isSelected(), Settings.get().getOutbidOrderRange());
+						fileListener.start();
+					} else {
+						fileListener.setBuy(jImportBuyOrders.isSelected());
+					}
+				}
 			} else if (MarketOrdersAction.ERROR_LOG.name().equals(e.getActionCommand())) {
 				jMarketOrdersErrorDialog.setVisible(true);
 				updateErrorLogButton();
+			} else if (MarketOrdersAction.ORDER_RANGE.name().equals(e.getActionCommand())) {
+				MarketOrderRange range = jOrderRangeNext.getItemAt(jOrderRangeNext.getSelectedIndex());
+				Settings.get().seOutbidOrderRange(range);
+				if (fileListener != null) {
+					fileListener.setRange(range);
+				}
 			}
 		}
 	}
@@ -567,18 +685,18 @@ public class MarketOrdersTab extends JMainTabPrimary {
 
 	private static class PublicMarkerOrdersUpdateTask extends UpdateTask {
 
-		private final ProfileData profileData;
-		private final MarketOrderRange sellOrderRange;
+		private final OutbidProcesserInput input;
+		private final OutbidProcesserOutput output;
 
-		public PublicMarkerOrdersUpdateTask(ProfileData profileData, MarketOrderRange sellOrderRange) {
+		public PublicMarkerOrdersUpdateTask(OutbidProcesserInput input, OutbidProcesserOutput output) {
 			super(DialoguesUpdate.get().publicMarkerOrders());
-			this.profileData = profileData;
-			this.sellOrderRange = sellOrderRange;
+			this.input = input;
+			this.output = output;
 		}
 
 		@Override
 		public void update() {
-			EsiPublicMarketOrdersGetter publicMarketOrdersGetter = new EsiPublicMarketOrdersGetter(this, profileData, sellOrderRange);
+			EsiPublicMarketOrdersGetter publicMarketOrdersGetter = new EsiPublicMarketOrdersGetter(this, input, output);
 			publicMarketOrdersGetter.run();
 		}
 	}
@@ -586,10 +704,12 @@ public class MarketOrdersTab extends JMainTabPrimary {
 	public static class RectColorIcon implements Icon {
 
 		private final Color color;
+		private final Image image;
 		private final Color border;
 
-		public RectColorIcon(Color color) {
+		public RectColorIcon(Color color, Image image) {
 			this.color = color;
+			this.image = image;
 			this.border = new JLabel().getBackground().darker();
 		}
 
@@ -604,18 +724,186 @@ public class MarketOrdersTab extends JMainTabPrimary {
 			//Background
 			g2d.setColor(color);
 			g2d.fillRect(x + 1, y + 1, getIconWidth() - 2, getIconHeight() - 2);
-			
-			
+
+			//Icon
+			g2d.drawImage(image, x+1, y, null);
 		}
 
 		@Override
 		public int getIconWidth() {
-			return 16;
+			return 18;
 		}
 
 		@Override
 		public int getIconHeight() {
 			return 16;
+		}
+	}
+
+	private static class FileListener extends Thread {
+		
+		private final MarketOrdersTab marketOrdersTab;
+		private final Program program;
+		private final Path dir;
+		private boolean buy;
+		private MarketOrderRange range;
+
+		public FileListener(MarketOrdersTab marketOrdersTab, Program program, Path dir, boolean buy, MarketOrderRange range) {
+			this.marketOrdersTab = marketOrdersTab;
+			this.program = program;
+			this.dir = dir;
+			this.buy = buy;
+			this.range = range;
+		}
+
+		public synchronized boolean isBuy() {
+			return buy;
+		}
+
+		public synchronized void setBuy(boolean buy) {
+			this.buy = buy;
+		}
+
+		public synchronized MarketOrderRange getRange() {
+			return range;
+		}
+
+		public synchronized void setRange(MarketOrderRange range) {
+			this.range = range;
+		}
+
+		@Override
+		public void run() {
+			try {
+				WatchService watcher = FileSystems.getDefault().newWatchService();
+				dir.register(watcher, ENTRY_CREATE);
+				MarketLogReader.markOld();
+				while (true) {
+					WatchKey key;
+					List<File> files = new ArrayList<>();
+					try {
+						key = watcher.take();
+						for (WatchEvent<?> event : key.pollEvents()) {
+							// This key is registered only
+							// for ENTRY_CREATE events,
+							// but an OVERFLOW event can
+							// occur regardless if events
+							// are lost or discarded.
+							WatchEvent.Kind<?> kind = event.kind();
+							if (kind == OVERFLOW) {
+								continue;
+							}
+							// The filename is the
+							// context of the event.
+							Object context = event.context();
+							if (context instanceof Path) {
+								Path path = (Path)context;
+								files.add(dir.resolve(path).toFile());
+							}
+						}
+					} catch (InterruptedException ex) {
+						LOG.info("stopping file listener");
+						break;
+					}
+					for (File file : files) {
+						update(file);
+					}
+					boolean valid = key.reset();
+					if (!valid) {
+						break;
+					}
+				}
+			} catch (IOException ex) {
+				LOG.error(ex.getMessage(), ex);
+			}
+			LOG.info("file listener stopped");
+			
+		}
+
+		private void update(File file) {
+			OutbidProcesserInput input = new OutbidProcesserInput(program.getProfileData(), Settings.get().getOutbidOrderRange());
+			OutbidProcesserOutput output = new OutbidProcesserOutput();
+			List<MarketLog> marketLogs = MarketLogReader.read(file, input, output);
+			if (marketLogs == null || marketLogs.isEmpty()) {
+				LOG.info("Orders empty");
+				return;
+			}
+			program.getProfileData().setMarketOrdersUpdates(output.getUpdates());
+			Settings.lock("Outbids (files)");
+			Settings.get().setMarketOrdersOutbid(output.getOutbids());
+			Settings.unlock("Outbids (files)");
+			//Update eventlists
+			program.updateEventLists();
+			//Save Settings
+			program.saveSettingsAndProfile();
+			//Copy to clipart
+			for (OwnerType ownerType : program.getProfileData().getOwners().values()) {
+				for (MyMarketOrder marketOrder : ownerType.getMarketOrders()) {
+					if (!Objects.equals(isBuy(), marketOrder.isBuyOrder())) {
+						continue;
+					}
+					if (!marketOrder.isOutbid()) {
+						continue;	
+					}
+					for (MarketLog raw : marketLogs) {
+						
+						if (Objects.equals(raw.getOrderID(), marketOrder.getOrderID())) {
+							LOG.info("marketOrder.isBuyOrder(): " + marketOrder.isBuyOrder() + " buyOrder: " + isBuy() + " equals: " + Objects.equals(isBuy(), marketOrder.isBuyOrder()));
+							LOG.info("raw.getOrderId() " + raw.getOrderID() + " marketOrder.getOrderID(): " + marketOrder.getOrderID() + " equals: " + Objects.equals(raw.getOrderID(), marketOrder.getOrderID()));
+							setLastLogUpdate();
+							LOG.info("Found matching order");
+							marketOrdersTab.copy(marketOrder);
+							return;
+						}
+					}
+				}
+			}
+			//Nothing found - going region wide
+			Double price = null;
+			for (MarketLog marketLog : marketLogs) {
+				if (!Objects.equals(isBuy(), marketLog.getBid())) {
+					continue;
+				}
+				if (marketLog.getJumps() > OutbidProcesser.getRange(getRange())) {
+					continue;
+				}
+				if (price == null) {
+					price = marketLog.getPrice();
+				} else {
+					if (marketLog.getBid()) {
+						price = Math.max(price, marketLog.getPrice());
+					} else { //Sell
+						price = Math.min(price, marketLog.getPrice());
+					}
+				}
+			}
+			if (price != null) {
+				LOG.info("Region price");
+				if (isBuy()) {
+					LOG.info("adding 1");
+					price = significantIncrement(price);
+				} else { //Sell
+					LOG.info("removing 1");
+					price = significantDecrement(price);
+				}
+				String copy = Formater.copyFormat(price);
+				CopyHandler.toClipboard(copy);
+				SwingUtilities.invokeLater(new Runnable() {
+					@Override
+					public void run() {
+						marketOrdersTab.jClipboard.setText(copy);
+					}
+				});
+				setLastLogUpdate();
+				return;
+			}
+			LOG.info("Nothing found....");
+			SwingUtilities.invokeLater(new Runnable() {
+				@Override
+				public void run() {
+					marketOrdersTab.jClipboard.setText(TabsOrders.get().rangeNone());
+				}
+			});
 		}
 	}
 }
