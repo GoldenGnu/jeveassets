@@ -195,7 +195,12 @@ public final class SqlWriter {
 			//Date
 			return "'" + SQL_DATE_FORMATTER.format(object) + "'";
 		} else { //String etc.
-			return "'" + String.valueOf(object).replace("'", "\\'") + "'";
+			String string = String.valueOf(object);
+			if (string == null) {
+				return "''";
+			} else {
+				return "'" + String.valueOf(object).replace("'", "\\'") + "'";
+			}
 		}
 	}
 }
