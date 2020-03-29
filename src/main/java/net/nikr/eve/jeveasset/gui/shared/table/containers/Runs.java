@@ -33,7 +33,7 @@ public class Runs extends NumberValue implements Comparable<Runs> {
 			this.runs = (long) runs;
 			this.runsString = String.valueOf(runs);
 		} else if (runs == 0) { // Not Blueprint
-			this.runsString = null;
+			this.runsString = "";
 			this.runs = 0L;
 		} else {
 			this.runsString = "BPO";
