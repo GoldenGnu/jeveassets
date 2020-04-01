@@ -7,7 +7,6 @@ jobs:
     #- if: tag IS present
     - os: linux
       dist: bionic
-      env: JDK=jpackage
       before_script:
         #JPackage JDK
         - wget https://github.com/sormuras/bach/raw/master/install-jdk.sh
@@ -24,7 +23,6 @@ jobs:
     #- if: tag IS present
     - os: windows
       language: shell
-      env: JDK=jpackage
       before_script:
         #JPackage JDK
         # Download JDK 14.0 General Availability
@@ -51,7 +49,6 @@ jobs:
     #- if: tag IS present
     - os: osx
       osx_image: xcode11.3
-      env: JDK=jpackage
       before_script:
         #JPackage JDK
         - wget https://github.com/sormuras/bach/raw/master/install-jdk.sh
@@ -81,12 +78,10 @@ deploy:
   file_glob: true
   file: target/installer/*
   draft: true
-  prerelease: true
   cleanup: false
   # tag_name: $TRAVIS_TAG
   # name: $TRAVIS_TAG
   name: test-build
   on:
-    condition: $JDK = jpackage
     branch: native
     #tags: true
