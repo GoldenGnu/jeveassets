@@ -3,6 +3,7 @@ jobs:
   include:
     #TEST: Linux - OpenJDK 8
     - os: linux
+      dist: bionic
       env: JDK=adoptopenjdk8 + HotSpot
       before_script:
         - wget https://github.com/sormuras/bach/raw/master/install-jdk.sh
@@ -13,9 +14,11 @@ jobs:
         - java -version
     #TEST: Linux - OracleJDK 11 
     - os: linux
+      dist: bionic
       jdk: oraclejdk11
     #TEST: Linux - OpenJDK 13
     - os: linux
+      dist: bionic
       jdk: openjdk13
     #TEST: Max OS X - OpenJDK 8
     - os: osx
@@ -68,7 +71,7 @@ jobs:
     #JPACKAGE: Mac
     #- if: tag IS present
     - os: osx
-      osx_image: xcode11.2
+      osx_image: xcode11.3
       env: JDK=jpackage
       before_script:
         #JPackage JDK
