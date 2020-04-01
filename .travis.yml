@@ -78,10 +78,9 @@ deploy:
   file_glob: true
   file: target/installer/*
   draft: true
-  cleanup: false
+  skip_cleanup: true
   tag_name: $TRAVIS_TAG
   name: $TRAVIS_TAG
-  name: test-build
   on:
     branch: native
     tags: true
