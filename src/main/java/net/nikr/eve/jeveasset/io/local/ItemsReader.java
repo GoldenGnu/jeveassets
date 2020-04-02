@@ -25,7 +25,6 @@ import java.util.HashMap;
 import java.util.Map;
 import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.data.sde.ReprocessedMaterial;
-import net.nikr.eve.jeveasset.data.sde.StaticData;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -34,17 +33,21 @@ import org.w3c.dom.NodeList;
 
 public final class ItemsReader extends AbstractXmlReader<Boolean> {
 
-	private ItemsReader() { }
+	private final Map<Integer, Item> items;
 
-	public static void load() {
-		ItemsReader reader = new ItemsReader();
+	public ItemsReader(Map<Integer, Item> items) {
+		this.items = items;
+	}
+
+	public static void load(Map<Integer, Item> items) {
+		ItemsReader reader = new ItemsReader(items);
 		reader.read("Items Updates", Settings.getPathItemsUpdates(), AbstractXmlReader.XmlType.DYNAMIC_BACKUP);
 		reader.read("Items", Settings.getPathItems(), AbstractXmlReader.XmlType.STATIC);
 	}
 
 	@Override
 	protected Boolean parse(Element element) throws XmlException {
-		parseItems(element, StaticData.get().getItems());
+		parseItems(element);
 		return true;
 	}
 
@@ -58,7 +61,7 @@ public final class ItemsReader extends AbstractXmlReader<Boolean> {
 		return false;
 	}
 
-	private void parseItems(final Element element, final Map<Integer, Item> items) throws XmlException {
+	private void parseItems(final Element element) throws XmlException {
 		NodeList nodes = element.getElementsByTagName("row");
 		Map<Integer, Integer> blueprints = new HashMap<>();
 		for (int i = 0; i < nodes.getLength(); i++) {
