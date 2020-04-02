@@ -711,7 +711,7 @@
 		<dependency>
 			<groupId>net.troja.eve</groupId>
 			<artifactId>eve-esi</artifactId>
-			<version>3.3.0</version>
+			<version>3.6.0</version>
 		</dependency>
 		<dependency>
 			<groupId>net.nikr.eve</groupId>

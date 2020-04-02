@@ -37,7 +37,7 @@ public class StaticData {
 	private static final ReentrantReadWriteLock LOCATIONS_LOCK = new ReentrantReadWriteLock();
 	//Data
 	private final Map<Integer, Item> items = new HashMap<>(); //TypeID : int
-	private final Map<Integer, ItemFlag> itemFlags = new HashMap<>(); //FlagID : int
+	private final Map<Integer, ItemFlag> flags = new HashMap<>(); //FlagID : int
 	private final Map<Long, MyLocation> locations = new HashMap<>(); //LocationID : long
 	private final List<Jump> jumps = new ArrayList<>(); //LocationID : long
 
@@ -59,18 +59,27 @@ public class StaticData {
 
 	private void loadData() {
 		SplashUpdater.setProgress(5);
-		ItemsReader.load(); //Items
+		ItemsReader.load(items); //Items
 		SplashUpdater.setProgress(10);
-		LocationsReader.load(); //Locations
+		try {
+			LOCATIONS_LOCK.writeLock().lock();
+			LocationsReader.load(locations); //Locations
+		} finally {
+			LOCATIONS_LOCK.writeLock().unlock();
+		}
 		SplashUpdater.setProgress(15);
-		JumpsReader.load(); //Jumps
+		JumpsReader.load(jumps); //Jumps
 		SplashUpdater.setProgress(20);
-		FlagsReader.load(); //Item Flags
+		FlagsReader.load(flags); //Item Flags
+		ItemFlag frigateEscapeBay = flags.get(179);
+		if (frigateEscapeBay == null) {
+			flags.put(179, new ItemFlag(179, "FrigateEscapeBay", "Frigate Escape Bay"));
+		}
 		SplashUpdater.setProgress(25);
 	}
 
 	public Map<Integer, ItemFlag> getItemFlags() {
-		return itemFlags;
+		return flags;
 	}
 
 	public Map<Integer, Item> getItems() {

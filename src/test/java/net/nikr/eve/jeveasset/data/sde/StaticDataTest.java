@@ -21,16 +21,27 @@
 package net.nikr.eve.jeveasset.data.sde;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import javax.swing.SwingWorker;
 import net.nikr.eve.jeveasset.TestUtil;
+import net.nikr.eve.jeveasset.io.local.FlagsReader;
+import static org.junit.Assert.assertFalse;
 import org.junit.Test;
 
 
 public class StaticDataTest extends TestUtil {
 
 	private static final int RUNS = 1000;
+
+	@Test
+	public void testFlagsWorkaround() throws InterruptedException, ExecutionException {
+		Map<Integer, ItemFlag> flags = new HashMap<>();
+		FlagsReader.load(flags);
+		assertFalse(flags.containsKey(179));
+	}
 
 	@Test
 	public void testLocationsThreadSafty() throws InterruptedException, ExecutionException {
