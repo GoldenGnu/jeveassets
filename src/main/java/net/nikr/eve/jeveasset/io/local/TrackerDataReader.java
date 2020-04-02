@@ -96,11 +96,11 @@ public class TrackerDataReader extends AbstractBackup {
 		return null;
 	}
 
-	    public static class ValueDeserializerJSon implements JsonDeserializer<Value> {
+		public static class ValueDeserializerJSon implements JsonDeserializer<Value> {
 
-        @Override
-        public Value deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
-                throws JsonParseException {
+		@Override
+		public Value deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
+				throws JsonParseException {
 			JsonObject node = json.getAsJsonObject();
 			Date date = new Date(node.get("date").getAsLong());
 			double assetsTotal = node.get("assets").getAsDouble();
@@ -116,22 +116,22 @@ public class TrackerDataReader extends AbstractBackup {
 			//Balance
 
 			JsonElement balanceElement = node.get("balance");
-            if (balanceElement != null && balanceElement.isJsonArray()) {
-                for (JsonElement itemElement : balanceElement.getAsJsonArray()) {
+			if (balanceElement != null && balanceElement.isJsonArray()) {
+				for (JsonElement itemElement : balanceElement.getAsJsonArray()) {
 					JsonObject itemObject = itemElement.getAsJsonObject();
-                    String id = itemObject.get("id").getAsString();
+					String id = itemObject.get("id").getAsString();
 					double balance = itemObject.get("value").getAsDouble();
 					value.addBalance(id, balance);
-                }
-            } else {
-                value.setBalanceTotal(balanceTotal);
-            }
+				}
+			} else {
+				value.setBalanceTotal(balanceTotal);
+			}
 
 			JsonElement assetElement = node.get("asset");
-            if (assetElement != null && assetElement.isJsonArray()) {
-                for (JsonElement itemElement : assetElement.getAsJsonArray()) {
+			if (assetElement != null && assetElement.isJsonArray()) {
+				for (JsonElement itemElement : assetElement.getAsJsonArray()) {
 					JsonObject itemObject = itemElement.getAsJsonObject();
-                    String location = itemObject.get("location").getAsString();
+					String location = itemObject.get("location").getAsString();
 					Long locationID = null;
 					if (itemObject.get("locationid") != null) {
 						locationID = itemObject.get("locationid").getAsLong();
@@ -143,10 +143,10 @@ public class TrackerDataReader extends AbstractBackup {
 					Double assets = itemObject.get("value").getAsDouble();
 					AssetValue assetValue = AssetValue.create(location, flag, locationID);
 					value.addAssets(assetValue, assets);
-                }
-            } else {
-                value.setAssetsTotal(assetsTotal);
-            }
+				}
+			} else {
+				value.setAssetsTotal(assetsTotal);
+			}
 			value.setEscrows(escrows);
 			value.setEscrowsToCover(escrowstocover);
 			value.setSellOrders(sellorders);
@@ -155,5 +155,5 @@ public class TrackerDataReader extends AbstractBackup {
 			value.setContractValue(contractValue);
 			return value;
 		}
-    }
+	}
 }

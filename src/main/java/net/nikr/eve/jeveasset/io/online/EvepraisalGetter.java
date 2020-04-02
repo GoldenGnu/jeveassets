@@ -54,51 +54,51 @@ public class EvepraisalGetter {
 		StringBuilder urlParameters = new StringBuilder();
 		//market=jita&raw_textarea=avatar&persist=no
 		urlParameters.append("market=");
-        urlParameters.append(encode("jita"));
-        urlParameters.append("&raw_textarea=");
+		urlParameters.append(encode("jita"));
+		urlParameters.append("&raw_textarea=");
 		urlParameters.append(encode(builder.toString()));
 		try {
-            URL obj = new URL("https://evepraisal.com/appraisal.json");
-            HttpsURLConnection con = (HttpsURLConnection) obj.openConnection();
+			URL obj = new URL("https://evepraisal.com/appraisal.json");
+			HttpsURLConnection con = (HttpsURLConnection) obj.openConnection();
 
-            // add request header
-            con.setRequestMethod("POST");
-            con.setConnectTimeout(10000);
-            con.setReadTimeout(10000);
+			// add request header
+			con.setRequestMethod("POST");
+			con.setConnectTimeout(10000);
+			con.setReadTimeout(10000);
 
-            // Send post request
-            con.setDoOutput(true);
-            try (DataOutputStream wr = new DataOutputStream(con.getOutputStream())) {
-                wr.writeBytes(urlParameters.toString());
-                wr.flush();
-            }
+			// Send post request
+			con.setDoOutput(true);
+			try (DataOutputStream wr = new DataOutputStream(con.getOutputStream())) {
+				wr.writeBytes(urlParameters.toString());
+				wr.flush();
+			}
 
-            StringBuilder response;
-            try (BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()))) {
-                String inputLine;
-                response = new StringBuilder();
-                while ((inputLine = in.readLine()) != null) {
-                    response.append(inputLine);
-                }
-            }
+			StringBuilder response;
+			try (BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()))) {
+				String inputLine;
+				response = new StringBuilder();
+				while ((inputLine = in.readLine()) != null) {
+					response.append(inputLine);
+				}
+			}
 			// read json
-            Gson gson = new GsonBuilder().create();
-            Result result = gson.fromJson(response.toString(), Result.class);
+			Gson gson = new GsonBuilder().create();
+			Result result = gson.fromJson(response.toString(), Result.class);
 			return result.getID();
-            // set data
-        } catch (IOException | JsonParseException ex) {
-            LOG.error(ex.getMessage(), ex);
-        }
+			// set data
+		} catch (IOException | JsonParseException ex) {
+			LOG.error(ex.getMessage(), ex);
+		}
 		return null;
 	}
 
 	private static String encode(String parameter) {
-        try {
-            return URLEncoder.encode(parameter, "UTF-8");
-        } catch (UnsupportedEncodingException ex) {
-            return null;
-        }
-    }
+		try {
+			return URLEncoder.encode(parameter, "UTF-8");
+		} catch (UnsupportedEncodingException ex) {
+			return null;
+		}
+	}
 
 	public static class Appraisal {
 		private String id;
