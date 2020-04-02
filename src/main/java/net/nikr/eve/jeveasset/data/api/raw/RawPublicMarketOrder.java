@@ -30,18 +30,18 @@ import net.troja.eve.esi.model.MarketStructuresResponse;
 
 public class RawPublicMarketOrder {
 
-    private final Integer duration;
-    private final Integer minVolume;
-    private final Boolean isBuyOrder;
-    private final Double price;
+	private final Integer duration;
+	private final Integer minVolume;
+	private final Boolean isBuyOrder;
+	private final Double price;
 	private final Integer systemId;
-    private final Integer typeId;
-    private final MarketOrderRange range;
-    private final Integer volumeTotal;
-    private final Date issued;
-    private final Long orderId;
-    private final Integer volumeRemain;
-    private final Long locationId;
+	private final Integer typeId;
+	private final MarketOrderRange range;
+	private final Integer volumeTotal;
+	private final Date issued;
+	private final Long orderId;
+	private final Integer volumeRemain;
+	private final Long locationId;
 
 	public RawPublicMarketOrder(MarketOrdersResponse marketOrder) {
 		this.duration = marketOrder.getDuration();

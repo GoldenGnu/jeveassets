@@ -88,8 +88,8 @@ public class AssetAddedReader extends AbstractBackup {
 
 	public static class DateDeserializer implements JsonDeserializer<Date> {
 
-        @Override
-        public Date deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
+		@Override
+		public Date deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
 			return new Date(json.getAsLong());
 		}
 	}

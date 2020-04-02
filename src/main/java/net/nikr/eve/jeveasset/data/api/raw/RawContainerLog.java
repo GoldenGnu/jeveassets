@@ -29,67 +29,67 @@ import net.troja.eve.esi.model.CorporationContainersLogsResponse;
 public class RawContainerLog {
 
 	public enum ContainerAction {
-        ADD("add"),
+		ADD("add"),
 
-        ASSEMBLE("assemble"),
+		ASSEMBLE("assemble"),
 
-        CONFIGURE("configure"),
+		CONFIGURE("configure"),
 
-        ENTER_PASSWORD("enter_password"),
+		ENTER_PASSWORD("enter_password"),
 
-        LOCK("lock"),
+		LOCK("lock"),
 
-        MOVE("move"),
+		MOVE("move"),
 
-        REPACKAGE("repackage"),
+		REPACKAGE("repackage"),
 
-        SET_NAME("set_name"),
+		SET_NAME("set_name"),
 
-        SET_PASSWORD("set_password"),
+		SET_PASSWORD("set_password"),
 
-        UNLOCK("unlock");
+		UNLOCK("unlock");
 
-        private final String value;
+		private final String value;
 
-        ContainerAction(String value) {
-            this.value = value;
-        }
+		ContainerAction(String value) {
+			this.value = value;
+		}
 
-        @Override
-        public String toString() {
-            return String.valueOf(value);
-        }
-    }
+		@Override
+		public String toString() {
+			return String.valueOf(value);
+		}
+	}
 
 	public enum ContainerPasswordType {
-        CONFIG("config"),
+		CONFIG("config"),
 
-        GENERAL("general");
+		GENERAL("general");
 
-        private final String value;
+		private final String value;
 
-        ContainerPasswordType(String value) {
-            this.value = value;
-        }
+		ContainerPasswordType(String value) {
+			this.value = value;
+		}
 
-        @Override
-        public String toString() {
-            return String.valueOf(value);
-        }
-    }
+		@Override
+		public String toString() {
+			return String.valueOf(value);
+		}
+	}
 
-    private Date loggedAt = null;
-    private Long containerId = null;
-    private Integer containerTypeId = null;
-    private Integer characterId = null;
-    private Long locationId = null;
-    private ItemFlag itemFlag;
-    private ContainerAction action = null;
-    private ContainerPasswordType passwordType = null;
-    private Integer typeId = null;
-    private Integer quantity = null;
-    private Integer oldConfigBitmask = null;
-    private Integer newConfigBitmask = null;
+	private Date loggedAt = null;
+	private Long containerId = null;
+	private Integer containerTypeId = null;
+	private Integer characterId = null;
+	private Long locationId = null;
+	private ItemFlag itemFlag;
+	private ContainerAction action = null;
+	private ContainerPasswordType passwordType = null;
+	private Integer typeId = null;
+	private Integer quantity = null;
+	private Integer oldConfigBitmask = null;
+	private Integer newConfigBitmask = null;
 
 	/**
 	 * New

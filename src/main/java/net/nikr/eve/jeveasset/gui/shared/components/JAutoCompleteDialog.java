@@ -113,7 +113,7 @@ public abstract class JAutoCompleteDialog<T> extends JDialogCentered {
 	protected abstract T getValue(Object object);
 
 	public final void updateData(Collection<T> list) {
-        boolean same = false;
+		boolean same = false;
 		try {
 			eventList.getReadWriteLock().readLock().lock();
 			same = eventList.equals(list);
