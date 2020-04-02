@@ -5,7 +5,8 @@ jobs:
   include:
     #JPACKAGE: Linux
     #- if: tag IS present
-    - os: linux
+    - if: tag IS present
+      os: linux
       dist: bionic
       before_script:
         #JPackage JDK
@@ -21,7 +22,8 @@ jobs:
       script: mvn install -DskipTests -P jpackager-deploy
     #JPACKAGE: Windows
     #- if: tag IS present
-    - os: windows
+    - if: tag IS present
+      os: windows
       language: shell
       before_script:
         #JPackage JDK
@@ -47,7 +49,8 @@ jobs:
       script: mvn install -DskipTests -P jpackager-deploy
     #JPACKAGE: Mac
     #- if: tag IS present
-    - os: osx
+    - if: tag IS present
+      os: osx
       osx_image: xcode11.3
       before_script:
         #JPackage JDK
