@@ -82,10 +82,10 @@ public class StockpileDataReader extends AbstractBackup {
 		}
 	}
 
-	    public static class StockpileDeserializerGson implements JsonDeserializer<Stockpile> {
+		public static class StockpileDeserializerGson implements JsonDeserializer<Stockpile> {
 
-        @Override
-        public Stockpile deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+		@Override
+		public Stockpile deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
 			//Stockpile
 			JsonObject stockpileObject = json.getAsJsonObject();
 			String name = stockpileObject.get("n").getAsString();
@@ -153,5 +153,5 @@ public class StockpileDataReader extends AbstractBackup {
 			}
 			return stockpile;
 		}
-    }
+	}
 }
