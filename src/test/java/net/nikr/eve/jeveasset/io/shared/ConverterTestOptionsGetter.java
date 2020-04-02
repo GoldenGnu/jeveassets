@@ -110,7 +110,7 @@ public class ConverterTestOptionsGetter {
 		private static final RawAsset.LocationType[] RAW_LOCATION_TYPE = RawAsset.LocationType.values();
 		private static final CharacterAssetsResponse.LocationTypeEnum[] ESI_LOCATION_TYPE_CHARACTER = CharacterAssetsResponse.LocationTypeEnum.values();
 		private static final CorporationAssetsResponse.LocationTypeEnum[] ESI_LOCATION_TYPE_CORPORATION = CorporationAssetsResponse.LocationTypeEnum.values();
-		private static final Long[] EVE_API_LOCATION_TYPE = {60003466L, 30000142L, 10000002L};
+		private static final Long[] EVE_API_LOCATION_TYPE = {60003466L, 30000142L, 100000000L, 10000002L};
 		//LocationFlag
 		private static final List<LocationFlag> LOCATION_TYPE = createLocationTypes();
 		//ContractAvailability

@@ -164,11 +164,12 @@ public class RawConverter {
 	}
 
 	public static RawAsset.LocationType toAssetLocationType(Long locationID) {
-		MyLocation location = ApiIdConverter.getLocation(locationID);
-		if (location.isStation()) { //Not planet
-			return RawAsset.LocationType.STATION;
-		} else if (location.isSystem()) {
+		if (locationID >= 30000000 &&  locationID <= 39999999) { //Not planet
 			return RawAsset.LocationType.SOLAR_SYSTEM;
+		} else if (locationID >= 60000000 &&  locationID <= 64000000) { //Not planet
+			return RawAsset.LocationType.STATION;
+		} else if (locationID >= 100000000) { //Not planet
+			return RawAsset.LocationType.ITEM;
 		} else {
 			return RawAsset.LocationType.OTHER;
 		}
@@ -698,6 +699,7 @@ public class RawConverter {
 		CORPSEBAY("CrateLoot", 174), //CorpseBay
 		BOOSTERBAY("BoosterBay", 176),
 		SUBSYSTEMBAY("SubSystemBay", 177),
+		FRIGATEESCAPEBAY("FrigateEscapeBay", 179),
 		;
 
 		private final String value;

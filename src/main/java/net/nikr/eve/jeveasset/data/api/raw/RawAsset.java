@@ -49,8 +49,9 @@ public class RawAsset {
 
 	public enum LocationType {
 		STATION("station"),
-		SOLAR_SYSTEM("solar_system"),
-		OTHER("other");
+        SOLAR_SYSTEM("solar_system"),
+        ITEM("item"),
+        OTHER("other");
 
 		private final String value;
 

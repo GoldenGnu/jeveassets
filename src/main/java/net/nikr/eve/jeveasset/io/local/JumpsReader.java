@@ -32,16 +32,20 @@ import org.w3c.dom.NodeList;
 
 public final class JumpsReader extends AbstractXmlReader<Boolean> {
 
-	private JumpsReader() { }
+	private final List<Jump> jumps;
 
-	public static void load() {
-		JumpsReader reader = new JumpsReader();
+	public JumpsReader(List<Jump> jumps) {
+		this.jumps = jumps;
+	}
+
+	public static void load(List<Jump> jumps) {
+		JumpsReader reader = new JumpsReader(jumps);
 		reader.read("Jumps", Settings.getPathJumps(), AbstractXmlReader.XmlType.STATIC);
 	}
 
 	@Override
 	protected Boolean parse(Element element) throws XmlException {
-		parseJumps(element, StaticData.get().getJumps());
+		parseJumps(element);
 		return true;
 	}
 
@@ -55,7 +59,7 @@ public final class JumpsReader extends AbstractXmlReader<Boolean> {
 		return false;
 	}
 
-	private void parseJumps(final Element element, final List<Jump> jumps) throws XmlException {
+	private void parseJumps(final Element element) throws XmlException {
 		NodeList nodes = element.getElementsByTagName("row");
 		Jump jump;
 		for (int i = 0; i < nodes.getLength(); i++) {

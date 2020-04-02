@@ -773,8 +773,15 @@ public class ConverterTestUtil {
 			}
 			if (methodName.startsWith("get")) {
 				Annotation[] annotations = method.getAnnotations();
-				assertEquals(1, annotations.length);
-				optional.put(methodName.toLowerCase().replaceFirst("get", ""), annotations[0].toString().contains("required=false"));
+				boolean found = false;
+				for (Annotation annotation : annotations) {
+					if (io.swagger.annotations.ApiModelProperty.class.equals(annotation.annotationType())) {
+						optional.put(methodName.toLowerCase().replaceFirst("get", ""), annotations[0].toString().contains("required=false"));
+						found = true;
+						break;
+					}
+				}
+				assertTrue(method + " " + Arrays.toString(annotations), found);
 			}
 		}
 		Boolean isOptional = optional.get(field.getName().toLowerCase());

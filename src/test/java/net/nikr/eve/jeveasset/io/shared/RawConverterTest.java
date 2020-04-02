@@ -173,6 +173,7 @@ public class RawConverterTest extends TestUtil {
 	@Test
 	public void testToAssetLocationType() {
 		Map<Long, RawAsset.LocationType> map = new HashMap<Long, RawAsset.LocationType>();
+		map.put(100000000L, RawAsset.LocationType.ITEM);
 		map.put(10000002L, RawAsset.LocationType.OTHER);
 		map.put(30000142L, RawAsset.LocationType.SOLAR_SYSTEM);
 		map.put(60003466L, RawAsset.LocationType.STATION);

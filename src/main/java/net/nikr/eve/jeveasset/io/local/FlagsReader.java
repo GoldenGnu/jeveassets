@@ -23,7 +23,6 @@ package net.nikr.eve.jeveasset.io.local;
 
 import java.util.Map;
 import net.nikr.eve.jeveasset.data.sde.ItemFlag;
-import net.nikr.eve.jeveasset.data.sde.StaticData;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -32,16 +31,20 @@ import org.w3c.dom.NodeList;
 
 public final class FlagsReader extends AbstractXmlReader<Boolean> {
 
-	private FlagsReader() { }
+	private final Map<Integer, ItemFlag> flags;
 
-	public static boolean load() {
-		FlagsReader reader = new FlagsReader();
+	public FlagsReader(Map<Integer, ItemFlag> flags) {
+		this.flags = flags;
+	}
+
+	public static boolean load(Map<Integer, ItemFlag> flags) {
+		FlagsReader reader = new FlagsReader(flags);
 		return reader.read("Flags", Settings.getPathFlags(), AbstractXmlReader.XmlType.STATIC);
 	}
 
 	@Override
 	protected Boolean parse(Element element) throws XmlException {
-		parseFlags(element, StaticData.get().getItemFlags());
+		parseFlags(element);
 		return true;
 	}
 
@@ -55,7 +58,7 @@ public final class FlagsReader extends AbstractXmlReader<Boolean> {
 		return false;
 	}
 
-	private void parseFlags(final Element element, final Map<Integer, ItemFlag> flags) throws XmlException {
+	private void parseFlags(final Element element) throws XmlException {
 		NodeList nodes = element.getElementsByTagName("row");
 		ItemFlag itemFlag;
 		for (int i = 0; i < nodes.getLength(); i++) {
