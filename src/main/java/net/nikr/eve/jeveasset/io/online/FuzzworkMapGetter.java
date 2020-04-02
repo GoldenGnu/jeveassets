@@ -41,10 +41,10 @@ public class FuzzworkMapGetter {
 	private static final Logger LOG = LoggerFactory.getLogger(FuzzworkMapGetter.class);
 
 	public static Celestial nearestCelestialName(Integer systemID, Double x, Double y, Double z) {
-        if (systemID == null || x == null || y == null || z == null) {
-            return null;
-        }
-        try {
+		if (systemID == null || x == null || y == null || z == null) {
+			return null;
+		}
+		try {
 			StringBuilder query = new StringBuilder();
 			query.append("solarsystemid=");
 			query.append(systemID);
@@ -56,34 +56,34 @@ public class FuzzworkMapGetter {
 			query.append(z);
 			URL url = new URL("https://www.fuzzwork.co.uk/api/nearestCelestial.php?" + query.toString());
 			HttpURLConnection con = (HttpURLConnection) url.openConnection();
-			
-			StringBuilder response;
-            try (BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()))) {
-                String inputLine;
-                response = new StringBuilder();
-                while ((inputLine = in.readLine()) != null) {
-                    response.append(inputLine);
-                }
-            }
 
-            Gson gson = new GsonBuilder().create();
-            Celestial result = gson.fromJson(response.toString(), Celestial.class);
-            if (result == null) {
-                return null;
-            }
-            //Updated OK
+			StringBuilder response;
+			try (BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()))) {
+				String inputLine;
+				response = new StringBuilder();
+				while ((inputLine = in.readLine()) != null) {
+					response.append(inputLine);
+				}
+			}
+
+			Gson gson = new GsonBuilder().create();
+			Celestial result = gson.fromJson(response.toString(), Celestial.class);
+			if (result == null) {
+				return null;
+			}
+			//Updated OK
 			return result;
-        } catch (IOException | JsonParseException ex) {
-            LOG.error(ex.getMessage(), ex);
-        }
-        return null;
+		} catch (IOException | JsonParseException ex) {
+			LOG.error(ex.getMessage(), ex);
+		}
+		return null;
 	}
 
 	public static List<Planet> getPlanets(Set<Integer> planetIDs) {
-        if (planetIDs == null) {
-            return new ArrayList<>();
-        }
-        try {
+		if (planetIDs == null) {
+			return new ArrayList<>();
+		}
+		try {
 			List<Planet> planets = new ArrayList<>();
 			for (Integer planetID : planetIDs) {
 				StringBuilder query = new StringBuilder();
@@ -109,10 +109,10 @@ public class FuzzworkMapGetter {
 				}
 			}
 			return planets;
-        } catch (IOException | JsonParseException ex) {
-            LOG.error(ex.getMessage(), ex);
-        }
-        return null;
+		} catch (IOException | JsonParseException ex) {
+			LOG.error(ex.getMessage(), ex);
+		}
+		return null;
 	}
 
 	public static class Celestial {
