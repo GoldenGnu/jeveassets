@@ -82,5 +82,4 @@ deploy:
   tag_name: $TRAVIS_TAG
   name: $TRAVIS_TAG
   on:
-    branch: native
     tags: true
