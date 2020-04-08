@@ -599,7 +599,7 @@ public class Settings {
 		return outbidOrderRange;
 	}
 
-	public void seOutbidOrderRange(MarketOrderRange sellOrderOutbidRange) {
+	public void setOutbidOrderRange(MarketOrderRange sellOrderOutbidRange) {
 		this.outbidOrderRange = sellOrderOutbidRange;
 	}
 
