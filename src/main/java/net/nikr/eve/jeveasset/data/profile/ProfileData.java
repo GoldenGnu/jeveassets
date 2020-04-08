@@ -217,8 +217,7 @@ public class ProfileData {
 		}
 	}
 
-	public void setMarketOrdersUpdates(Map<Long, RawPublicMarketOrder> updates) {
-		marketOrdersUpdates.clear();
+	public synchronized void setMarketOrdersUpdates(Map<Long, RawPublicMarketOrder> updates) {
 		marketOrdersUpdates.putAll(updates);
 	}
 	
@@ -386,7 +385,7 @@ public class ProfileData {
 		updateEventLists(new Date());
 	}
 
-	public void updateEventLists(Date assetAddedData) {
+	public synchronized void updateEventLists(Date assetAddedData) {
 		uniqueAssetsDuplicates = new HashMap<>();
 		Set<String> uniqueOwnerNames = new HashSet<>();
 		Map<Long, OwnerType> uniqueOwners = new HashMap<>();

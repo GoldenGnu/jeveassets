@@ -21,10 +21,9 @@
 package net.nikr.eve.jeveasset.io.local;
 
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
-import java.io.RandomAccessFile;
-import java.nio.channels.Channels;
-import java.nio.channels.FileChannel;
+import java.io.Reader;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -32,8 +31,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import javax.swing.filechooser.FileSystemView;
 import net.nikr.eve.jeveasset.data.api.raw.RawPublicMarketOrder;
 import net.nikr.eve.jeveasset.gui.shared.Formater.DateFormatThreadSafe;
@@ -61,15 +62,14 @@ public class MarketLogReader {
 
 	private static final Logger LOG = LoggerFactory.getLogger(OutbidProcesser.class);
 
-	private static final List<String> PARSED_FILES = Collections.synchronizedList(new ArrayList<>());
+	private static final int RETRIES = 3;
+	private static final Set<String> PARSED_FILES = Collections.synchronizedSet(new HashSet<>());
 
 	DateFormat dateFormat = new SimpleDateFormat("yyyy.MM.dd hhmmss");
 	private final OutbidProcesserInput input;
-	private final OutbidProcesserOutput output;
 
-	public MarketLogReader(OutbidProcesserInput input, OutbidProcesserOutput output) {
+	public MarketLogReader(OutbidProcesserInput input) {
 		this.input = input;
-		this.output = output;
 	}
 
 	public static void markOld() {
@@ -83,7 +83,7 @@ public class MarketLogReader {
 	}
 
 	public static List<MarketLog> read(File file, OutbidProcesserInput input, OutbidProcesserOutput output) {
-		MarketLogReader reader = new MarketLogReader(input, output);
+		MarketLogReader reader = new MarketLogReader(input);
 		List<MarketLog> orders = reader.read(file);
 		OutbidProcesser.process(input, output);
 		return orders;
@@ -92,6 +92,7 @@ public class MarketLogReader {
 	private List<MarketLog> read(final File logFile) {
 		final String filename = logFile.getName();
 		if (PARSED_FILES.contains(filename)) {
+			LOG.info("Old file ignored: " + filename);
 			return null;
 		} else {
 			PARSED_FILES.add(filename);
@@ -111,11 +112,12 @@ public class MarketLogReader {
 		
 		List<MarketLog> marketLogs = parse(logFile);
 		if (marketLogs == null || marketLogs.isEmpty()) {
+			LOG.warn("No orders found in: " + filename);
 			return null;
 		}
 		Integer typeID = marketLogs.get(0).getTypeID();
 		if (typeID == null) {
-			LOG.warn("No orders found in: " + filename);
+			LOG.warn("typeID is null: " + filename);
 			return null; 
 		}
 		List<RawPublicMarketOrder> marketOrders = new ArrayList<>();
@@ -130,16 +132,14 @@ public class MarketLogReader {
 	}
 
 	private List<MarketLog> parse(File file) {
-		ICsvBeanReader beanReader = null;
-		FileChannel channel = null;
-		java.nio.channels.FileLock lock = null;
-		try {
-			RandomAccessFile randomAccessFile = new RandomAccessFile(file, "rw");
-			channel = randomAccessFile.getChannel();
-			lock = channel.lock();
-			beanReader = new CsvBeanReader(Channels.newReader(channel, "UTF-8"), CsvPreference.STANDARD_PREFERENCE);
-			
+		return parse(file, 0);
+	}
 
+	private List<MarketLog> parse(File file, int retries) {
+		Reader reader = null;
+		ICsvBeanReader beanReader = null;
+		try {
+			beanReader = new CsvBeanReader(new FileReader(file), CsvPreference.STANDARD_PREFERENCE);
 			beanReader.getHeader(true);
 			// the header elements are used to map the values to the bean (names must match)
 			final String[] header = {"price","volRemaining","typeID","range","orderID","volEntered","minVolume","bid","issueDate","duration","stationID","regionID","solarSystemID","jumps", "empty"};
@@ -151,8 +151,10 @@ public class MarketLogReader {
 			}
 			return marketLogs;
 		} catch (IllegalArgumentException ex) {
-			LOG.warn(ex.getMessage(), ex);
-			return null;
+			if (retries > 3) {
+				LOG.error(ex.getMessage(), ex);
+				return null;
+			}
 		} catch (IOException ex) {
 			LOG.error(ex.getMessage(), ex);
 			return null;
@@ -164,23 +166,22 @@ public class MarketLogReader {
 					//No problem
 				}
 			}
-			// release the lock
-			if (lock != null) {
+			if (reader != null) {
 				try {
-					lock.release();
-				} catch (IOException ex) {
-					//No problem
-				}
-			}
-			// close the channel
-			if (channel != null) {
-				try {
-					channel.close();
+					reader.close();
 				} catch (IOException ex) {
 					//No problem
 				}
 			}
 		}
+		retries++;
+		LOG.info("Retrying in " + 500 * retries +  "ms (" + retries + " of " + RETRIES + ")");
+		try {
+			Thread.sleep(500 * retries);
+		} catch (InterruptedException ex1) {
+			//No problem, just continue
+		}
+		return parse(file, retries);
 	}
 
 	private static CellProcessor[] getProcessors() {
@@ -246,7 +247,11 @@ public class MarketLogReader {
 
 		@Override
 		public Object execute(Object value, CsvContext context) {
-			validateInputNotNull(value, context);  // throws an Exception if the input is null
+			if (value == null) {
+				throw new SuperCsvCellProcessorException(
+						"this processor does not accept null input - if the column is optional then chain an Optional() processor before this one",
+						context, this);
+			}
 
 			Date result;
 			if (value instanceof Date) {

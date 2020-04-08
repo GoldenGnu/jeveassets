@@ -95,7 +95,6 @@ public abstract class TabsOrders extends Bundle {
 	public abstract String updateOutbidEsi();
 	public abstract String updateOutbidEsiAuto();
 	public abstract String updateOutbidFileBuy();
-	public abstract String updateOutbidFileNone();
 	public abstract String updateOutbidFileSell();
 	public abstract String updateOutbidToolTip();
 	public abstract String updateOutbidWhen(String time);
@@ -104,7 +103,8 @@ public abstract class TabsOrders extends Bundle {
 	public abstract String sellOrderRangeLastToolTip();
 	public abstract String lastEsiUpdateToolTip();
 	public abstract String lastLogUpdateToolTip();
-	public abstract String rangeNone();
+	public abstract String lastClipboardToolTip();
+	public abstract String none();
 	public abstract String sellOrderRangeSelcted(String selected);
 	public abstract String updateTitle();
 	public abstract String whitespace(Object arg0);

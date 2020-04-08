@@ -552,7 +552,7 @@ public abstract class FakeSettings extends Settings {
 	}
 
 	@Override
-	public void seOutbidOrderRange(MarketOrderRange sellOrderOutbidRange) {
+	public void setOutbidOrderRange(MarketOrderRange sellOrderOutbidRange) {
 		throw new UnsupportedOperationException("not implemented");
 	}
 
