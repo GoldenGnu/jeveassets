@@ -195,6 +195,7 @@ public class TrackerTab extends JMainTabSecondary {
 	private final JLabel jContractValueStatus;
 
 	private final ListenerClass listener = new ListenerClass();
+	private final List<JMenuInfo.MenuItemValue> values;
 
 	private final TimePeriodValuesCollection dataset = new TimePeriodValuesCollection();
 	private TimePeriodValues walletBalance;
@@ -253,6 +254,8 @@ public class TrackerTab extends JMainTabSecondary {
 		jEditNote = new JMenu(TabsTracker.get().note());
 		jEditNote.setIcon(Images.SETTINGS_USER_NAME.getIcon());
 		jPopupMenu.add(jEditNote);
+
+		values = JMenuInfo.createDefault(jPopupMenu);
 
 		jMenuItem = new JMenuItem(TabsTracker.get().edit(), Images.EDIT_EDIT.getIcon());
 		jMenuItem.setActionCommand(TrackerAction.NOTE_ADD.name());
@@ -1526,8 +1529,7 @@ public class TrackerTab extends JMainTabSecondary {
 						int x = (int) jNextChart.getXYPlot().getDomainAxis().valueToJava2D(xValue, dataArea, xEdge);
 						int y = (int) jNextChart.getXYPlot().getRangeAxis().valueToJava2D(yValue, dataArea, yEdge);
 						Date date = new Date((long)xValue);
-						JMenuItem jSelectionInformation = new JMenuItem();
-						List<JMenuInfo.MenuItemValue> values = JMenuInfo.createDefault(jPopupMenu, jSelectionInformation);
+						values.clear();
 						JMenuItem jIskValue = JMenuInfo.createMenuItem(values, jPopupMenu, yValue, JMenuInfo.NumberFormat.ISK, TabsTracker.get().selectionIsk(), TabsTracker.get().selectionShortIsk(), Images.TOOL_VALUES.getIcon());
 						JMenuItem jDateValue = JMenuInfo.createMenuItem(values, jPopupMenu, dateFormat.format(date), TabsTracker.get().selectionDate(), TabsTracker.get().selectionShortDate(), Images.EDIT_DATE.getIcon());
 						TrackerNote trackerNote = Settings.get().getTrackerNotes().get(new TrackerDate(date));
@@ -1547,7 +1549,6 @@ public class TrackerTab extends JMainTabSecondary {
 
 							@Override
 							public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
-								jPopupMenu.remove(jSelectionInformation);
 								jPopupMenu.remove(jIskValue);
 								jPopupMenu.remove(jDateValue);
 								if (jNote != null) {
