@@ -775,7 +775,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		} catch (IllegalArgumentException ex) {
 			outbidOrderRange = MarketOrderRange.REGION;
 		}
-		settings.seOutbidOrderRange(outbidOrderRange);
+		settings.setOutbidOrderRange(outbidOrderRange);
 		NodeList outbidNodes = marketOrderOutbidElement.getElementsByTagName("outbid");
 		for (int a = 0; a < outbidNodes.getLength(); a++) {
 			Element outbidNode = (Element) outbidNodes.item(a);

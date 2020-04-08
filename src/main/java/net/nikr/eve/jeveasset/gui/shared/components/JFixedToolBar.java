@@ -55,6 +55,13 @@ public class JFixedToolBar extends JToolBar {
 		getSize();
 	}
 
+	public void add(final JComponent jComponent, int width) {
+		if (width > 0) {
+			setSize(jComponent, width);
+		}
+		super.add(jComponent);
+	}
+
 	public void addComboBox(final JComboBox<?> jComboBox, int width) {
 		if (width > 0) {
 			setSize(jComboBox, width);
