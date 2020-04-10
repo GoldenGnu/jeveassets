@@ -183,6 +183,16 @@
 										<include name="*.${project.build.jpackage.installer.type}"/>
 									</fileset>
 								</ftp>
+								<ftp action="send"
+									 server="linux227.unoeuro.com"
+									 userid="${ftp.user}"
+									 password="${ftp.pass}"
+									 passive="true"
+									 remotedir="${upload.program.file}" >
+									<fileset>
+										<include name="*.${project.build.jpackage.installer.type}"/>
+									</fileset>
+								</ftp>
 							</target>
 						</configuration>
 						<goals>
@@ -369,6 +379,7 @@
 					<individualFiles>true</individualFiles>
 				</configuration>
 			</plugin>
+			<!--
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>wagon-maven-plugin</artifactId>
@@ -404,6 +415,7 @@
 					</execution>
 				</executions>
 			</plugin>
+			-->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-deploy-plugin</artifactId>
