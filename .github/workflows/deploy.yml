@@ -2,7 +2,20 @@ name: Deploy
 
 on: [push]
 
+
 jobs:
+  release:
+    steps:
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ github.ref }}
+        release_name: Release ${{ github.ref }}
+        draft: true
+        prerelease: false
   build:
     runs-on: ${{ matrix.os }}
     strategy:
@@ -34,16 +47,6 @@ jobs:
         java-version: 14
     - name: Build with Maven
       run: mvn -s settings.xml clean deploy -DskipTests -P jpackager-deploy "-Dftp.user=${{secrets.ftpuser}}" "-Dftp.pass=${{secrets.ftppass}}"
-    - name: Create Release
-      id: create_release
-      uses: actions/create-release@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        tag_name: ${{ github.ref }}
-        release_name: Release ${{ github.ref }}
-        draft: true
-        prerelease: false
     - name: Upload Release Asset
       id: upload-release-asset 
       uses: actions/upload-release-asset@v1

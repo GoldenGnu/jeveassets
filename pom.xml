@@ -198,6 +198,9 @@
 								<copy file="${project.build.directory}/installer/jEveAssets-${project.version}.dmg" tofile="${project.build.directory}/upload/jeveassets.dmg" failonerror="false" />
 								<copy file="${project.build.directory}/installer/jEveAssets-${project.version}.exe" tofile="${project.build.directory}/upload/jeveassets.exe" failonerror="false" />
 								<copy file="${project.build.directory}/installer/jeveassets_${project.version}-1_amd64.deb" tofile="${project.build.directory}/upload/jeveassets.deb" failonerror="false" />
+								<move file="${project.build.directory}/installer/jEveAssets-${project.version}.dmg" tofile="${project.build.directory}/installer/jEveAssets-${project.version}-MacOS.dmg" failonerror="false" />
+								<move file="${project.build.directory}/installer/jEveAssets-${project.version}.exe" tofile="${project.build.directory}/installer/jEveAssets-${project.version}-Windows.exe" failonerror="false" />
+								<move file="${project.build.directory}/installer/jeveassets_${project.version}-1_amd64.deb" tofile="${project.build.directory}/installer/jeveassets_${project.version}-Linux.deb" failonerror="false" />
 							</target>
 						</configuration>
 						<goals>
