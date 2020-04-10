@@ -190,6 +190,21 @@
 						</goals>
 					</execution>
 					<execution>
+						<id>move-and-rename</id>
+						<phase>deploy</phase>
+						<configuration>
+							<target>
+								<mkdir dir="${project.build.directory}/upload"/>
+								<copy file="${project.build.directory}/installer/jEveAssets-${project.version}.dmg" tofile="${project.build.directory}/upload/jeveassets.dmg" failonerror="false" />
+								<copy file="${project.build.directory}/installer/jEveAssets-${project.version}.exe" tofile="${project.build.directory}/upload/jeveassets.exe" failonerror="false" />
+								<copy file="${project.build.directory}/installer/jeveassets_${project.version}-1_amd64.deb" tofile="${project.build.directory}/upload/jeveassets.deb" failonerror="false" />
+							</target>
+						</configuration>
+						<goals>
+							<goal>run</goal>
+						</goals>
+					</execution>
+					<execution>
 						<id>copy-profiles</id>
 						<phase>process-resources</phase>
 						<configuration>
@@ -381,7 +396,7 @@
 							<goal>upload</goal>
 						</goals>
 						<configuration>
-							<fromDir>${project.build.directory}/installer</fromDir>
+							<fromDir>${project.build.directory}/upload</fromDir>
 							<includes>*.${project.build.jpackage.installer.type}</includes>
 							<serverId>eve-nikr-net</serverId>
 							<url>ftp://linux227.unoeuro.com</url>

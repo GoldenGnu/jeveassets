@@ -7,8 +7,17 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [macOS-latest, ubuntu-latest, windows-latest]
-    name: ${{ matrix.os }} (Java ${{ matrix.java }})
+        include:
+          - os: ubuntu-latest
+            asset_path: jeveassets.deb
+            asset_name: jEveAssets-Linux.deb
+          - os: windows-latest
+            asset_path: jeveassets.exe
+            asset_name: jEveAssets-Windows.exe
+          - os: macos-latest
+            asset_path: jeveassets.dmg
+            asset_name: jEveAssets-MacOS.dmg
+    name: ${{ matrix.os }} Deploy
     steps:
     - name: Checkout
       uses: actions/checkout@v1
@@ -25,3 +34,23 @@ jobs:
         java-version: 14
     - name: Build with Maven
       run: mvn -s settings.xml clean deploy -DskipTests -P jpackager-deploy "-Dftp.user=${{secrets.ftpuser}}" "-Dftp.pass=${{secrets.ftppass}}"
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ github.ref }}
+        release_name: Release ${{ github.ref }}
+        draft: true
+        prerelease: false
+    - name: Upload Release Asset
+      id: upload-release-asset 
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+        asset_path: target/upload/${{ asset_path }}
+        asset_name: ${{ artifact_name }}
+        asset_content_type: application/zip
