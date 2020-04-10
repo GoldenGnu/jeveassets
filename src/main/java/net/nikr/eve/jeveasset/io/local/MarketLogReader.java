@@ -24,9 +24,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
-import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -64,8 +62,9 @@ public class MarketLogReader {
 
 	private static final int RETRIES = 3;
 	private static final Set<String> PARSED_FILES = Collections.synchronizedSet(new HashSet<>());
+	private static final DateFormatThreadSafe FILE_DATE_FORMAT = new DateFormatThreadSafe("yyyy.MM.dd hhmmss", true);
+	private static final DateFormatThreadSafe DATE_FORMAT = new DateFormatThreadSafe("yyyy-MM-dd HH:mm:ss,SSS");
 
-	DateFormat dateFormat = new SimpleDateFormat("yyyy.MM.dd hhmmss");
 	private final OutbidProcesserInput input;
 
 	public MarketLogReader(OutbidProcesserInput input) {
@@ -104,7 +103,8 @@ public class MarketLogReader {
 		}
 		Date date;
 		try {
-			date = dateFormat.parse(values[values.length-1]);
+			date = FILE_DATE_FORMAT.parse(values[values.length-1]);
+			LOG.info("File created @ " +  DATE_FORMAT.format(date));
 		} catch (ParseException ex) {
 			LOG.error(ex.getMessage(), ex);
 			return null;
@@ -149,15 +149,24 @@ public class MarketLogReader {
 			while ((marketLog = beanReader.read(MarketLog.class, header, getProcessors())) != null) {
 				marketLogs.add(marketLog);
 			}
+			if (marketLogs.isEmpty()) {
+				throw new IllegalArgumentException("Empty file");
+			}
 			return marketLogs;
-		} catch (IllegalArgumentException ex) {
-			if (retries > 3) {
+		} catch (IOException | IllegalArgumentException ex) {
+			retries++;
+			if (retries < RETRIES) {
+				try {
+					Thread.sleep(retries * 500);
+				} catch (InterruptedException ex1) {
+					//Keep calm and carry on
+				}
+				LOG.info("Retrying: " + retries + " of " + RETRIES + " (" + retries * 500 + ")");
+				parse(file, retries);
+			} else {
 				LOG.error(ex.getMessage(), ex);
 				return null;
 			}
-		} catch (IOException ex) {
-			LOG.error(ex.getMessage(), ex);
-			return null;
 		} finally {
 			if (beanReader != null) {
 				try {
@@ -210,10 +219,8 @@ public class MarketLogReader {
 		String home = System.getProperty("user.home"); // can be null
 		StringBuilder builder = new StringBuilder();
 		if (documents.exists()) {
-			System.out.println("documents: " + documents.getAbsolutePath());
 			builder.append(documents.getPath());
 		} else {
-			System.out.println("home: " + home);
 			builder.append(home);
 		}
 		if (!new File(documents.getAbsolutePath() + File.separator + "EVE").exists()

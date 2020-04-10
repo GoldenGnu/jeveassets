@@ -151,7 +151,9 @@ public class EsiPublicMarketOrdersGetter extends AbstractEsiGetter {
 		//Process data
 		OutbidProcesser.process(input, output);
 		if (lastUpdate != null) {
+			Settings.lock("Public Orders (last update)");
 			Settings.get().setPublicMarketOrdersLastUpdate(lastUpdate);
+			Settings.unlock("Public Orders (last update)");
 		}
 	}
 
@@ -166,7 +168,9 @@ public class EsiPublicMarketOrdersGetter extends AbstractEsiGetter {
 	protected void setNextUpdate(Date date) {
 		if (firstNextUpdate) {
 			firstNextUpdate = false;
+			Settings.lock("Public Orders (next update)");
 			Settings.get().setPublicMarketOrdersNextUpdate(date);
+			Settings.unlock("Public Orders (next update)");
 		}
 	}
 

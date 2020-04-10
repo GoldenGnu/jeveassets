@@ -91,6 +91,7 @@ import net.nikr.eve.jeveasset.gui.tabs.values.ValueTableTab;
 import net.nikr.eve.jeveasset.i18n.GuiFrame;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 import net.nikr.eve.jeveasset.data.settings.ContractPriceManager;
+import net.nikr.eve.jeveasset.gui.tabs.orders.OutbidProcesser.OutbidProcesserOutput;
 import net.nikr.eve.jeveasset.io.online.PriceDataGetter;
 import net.nikr.eve.jeveasset.io.online.Updater;
 import net.nikr.eve.jeveasset.io.shared.DesktopUtil;
@@ -374,12 +375,29 @@ public class Program implements ActionListener {
 		return updater.checkDataUpdate(localData);
 	}
 
+	public final void updateMarketOrdersWithProgress(OutbidProcesserOutput output) {
+		JLockWindow jLockWindow = new JLockWindow(getMainWindow().getFrame());
+		jLockWindow.show(GuiShared.get().updating(), new JLockWindow.LockWorker() {
+			@Override
+			public void task() {
+				updateEventLists(null, null, null, output);
+			}
+
+			@Override
+			public void gui() { }
+		});
+	}
+
+	public final void updateMarketOrders(OutbidProcesserOutput output) {
+		updateEventLists(null, null, null, output);
+	}
+
 	public final void updateLocations(Set<Long> locationIDs) {
 		JLockWindow jLockWindow = new JLockWindow(getMainWindow().getFrame());
 		jLockWindow.show(GuiShared.get().updating(), new JLockWindow.LockWorker() {
 			@Override
 			public void task() {
-				updateEventLists(null, locationIDs, null);
+				updateEventLists(null, locationIDs, null, null);
 			}
 
 			@Override
@@ -392,7 +410,7 @@ public class Program implements ActionListener {
 		jLockWindow.show(GuiShared.get().updating(), new JLockWindow.LockWorker() {
 			@Override
 			public void task() {
-				updateEventLists(null, null, typeIDs);
+				updateEventLists(null, null, typeIDs, null);
 			}
 
 			@Override
@@ -405,7 +423,7 @@ public class Program implements ActionListener {
 		jLockWindow.show(GuiShared.get().updating(), new JLockWindow.LockWorker() {
 			@Override
 			public void task() {
-				updateEventLists(itemIDs, null, null);
+				updateEventLists(itemIDs, null, null, null);
 			}
 
 			@Override
@@ -431,10 +449,10 @@ public class Program implements ActionListener {
 	}
 
 	public final void updateEventLists() {
-		updateEventLists(null, null, null);
+		updateEventLists(null, null, null, null);
 	}
 
-	public final synchronized void updateEventLists(Set<Long> itemIDs, Set<Long> locationIDs, Set<Integer> typeIDs) {
+	private synchronized void updateEventLists(Set<Long> itemIDs, Set<Long> locationIDs, Set<Integer> typeIDs, OutbidProcesserOutput output) {
 		LOG.info("Updating EventList");
 		for (JMainTab jMainTab : mainWindow.getTabs()) {
 			ensureEDT(new Runnable() {
@@ -444,7 +462,9 @@ public class Program implements ActionListener {
 				}
 			});
 		}
-		if (itemIDs != null) {
+		if (output != null) {
+			profileData.updateMarketOrders(output);
+		} else if (itemIDs != null) {
 			profileData.updateNames(itemIDs);
 		} else if (locationIDs != null) {
 			profileData.updateLocations(locationIDs);
@@ -567,7 +587,7 @@ public class Program implements ActionListener {
 		saveProfile();
 	}
 
-	public void saveProfile() {
+	public synchronized void saveProfile() {
 		LOG.info("Saving Profile");
 		profileManager.saveProfile();
 	}
