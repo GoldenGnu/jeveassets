@@ -294,6 +294,15 @@ public class Program implements ActionListener {
 		LOG.info("Updating data...");
 		updateEventLists(); //Update price
 		macOsxCode();
+	//Open Tools
+		for (String title : Settings.get().getShowTools()) {
+			for (JMainTab jMainTab : jMainTabs) {
+				if (title.equals(jMainTab.getTitle())) {
+					mainWindow.addTab(jMainTab);
+				}
+			}
+		}
+		mainWindow.addTab(assetsTab, true);
 		SplashUpdater.setProgress(100);
 		LOG.info("Showing GUI");
 		mainWindow.show();
@@ -359,6 +368,10 @@ public class Program implements ActionListener {
 
 	public void addMainTab(final JMainTab jMainTab) {
 		jMainTabs.add(jMainTab);
+	}
+
+	public List<JMainTab> getMainTabs() {
+		return jMainTabs;
 	}
 
 	private void timerTicked() {

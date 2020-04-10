@@ -25,6 +25,7 @@ import java.awt.Dimension;
 import java.awt.Point;
 import java.net.Proxy;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -246,6 +247,13 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 	private Settings loadSettings(final Element element, final Settings settings) throws XmlException {
 		if (!element.getNodeName().equals("settings")) {
 			throw new XmlException("Wrong root element name.");
+		}
+
+		//writePublicMarketOrdersNextUpdate
+		NodeList showToolsNodes = element.getElementsByTagName("showtools");
+		if (showToolsNodes.getLength() == 1) {
+			Element showToolsElement =  (Element) showToolsNodes.item(0);
+			parseShowToolsNodes(showToolsElement, settings);
 		}
 
 		//writePublicMarketOrdersNextUpdate
@@ -762,6 +770,15 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 			}
 		}
 		Collections.sort(stockpiles);
+	}
+
+	private void parseShowToolsNodes(Element showToolsElement, Settings settings) throws XmlException {
+		boolean saveOnExit = getBoolean(showToolsElement, "saveonexit");
+		String str = getString(showToolsElement, "show");
+		String[] arr = str.split(",");
+		List<String> showTools = new ArrayList<>(Arrays.asList(arr));
+		settings.setSaveToolsOnExit(saveOnExit);
+		settings.getShowTools().addAll(showTools);
 	}
 
 	private void parseMarketOrderOutbidNodes(Element marketOrderOutbidElement, Settings settings) throws XmlException {
