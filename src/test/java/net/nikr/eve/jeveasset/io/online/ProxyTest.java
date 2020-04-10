@@ -20,6 +20,7 @@
  */
 package net.nikr.eve.jeveasset.io.online;
 
+import com.google.gson.JsonParseException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -114,7 +115,11 @@ public class ProxyTest extends TestUtil {
 	private static class CitadelGetterMock extends CitadelGetter {
 
 		public boolean update() {
-			return super.updateCache(null, "https://niklaskr.dk/jeveassets/citadel/");
+			try {
+				return super.updateCache(null, "https://niklaskr.dk/jeveassets/citadel/");
+			} catch (IOException | JsonParseException ex) {
+				throw new RuntimeException(ex);
+			}
 		}
 	}
 
