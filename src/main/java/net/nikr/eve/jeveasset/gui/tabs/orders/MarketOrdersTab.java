@@ -45,7 +45,6 @@ import java.math.RoundingMode;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.nio.file.StandardWatchEventKinds;
-import static java.nio.file.StandardWatchEventKinds.ENTRY_CREATE;
 import static java.nio.file.StandardWatchEventKinds.OVERFLOW;
 import java.nio.file.WatchEvent;
 import java.nio.file.WatchKey;
@@ -785,7 +784,6 @@ public class MarketOrdersTab extends JMainTabPrimary {
 				LOG.error(ex.getMessage(), ex);
 				return;
 			}
-			MarketLogReader.markOld();
 			while (true) {
 				WatchKey key;
 				try {
