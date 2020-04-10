@@ -1,73 +1,73 @@
 language: java
 os: linux
 dist: bionic
+env:
+  global:
+    - secure: r0g9+grbOatW37bEXcKLS0V8aDWNuLZwvhxPDtQjDezm4X8sP+BU3xlekt9xYD7mQGjQuvowGuIU/lwDnuOTMLKXug0OBXWBgCzdsEiC/BBokmwRuZelst/fAQ3rll2qMBYSMwojkWuy8l3A/zfu7r35Xn116XLz5C79elaZVd0aFqT7sp6XE/BW74sB47+VYtCmDdwNe9belWlGFd6LGVwYYeCwy9aKgIliip4JyydbsVWzv+7r+1cL6wLCxPv6AwLCvs2jIckzwCGIy6/+jZqHnJuLb2eC7+nnlXPEF/AoBg2KKlBY+pDzmH68WPz2VGy97ihLfwfN1M2UYVfyKqypQqtEBMyXzsw5Ds1dOQmy1eIHjbYUlMq0e/P+tW7QY8K3glKfICjqgOHTD3id5mNLdeFz7hUbyJxo4mqqT3H5Nsb1LaFV8adoUeQ0N+pt6Df4RPW7SNzQSbt8skx1B0AVH0fZeaLxvLO9qS9IjGt7BWd6YPvvd07+pvXxzUgbooHdD8yRriMoflZ5l5x+VVjQEsJy+ptrRJIpFJYk0YvG1m0WYThZdkStuwWUkix51dHPxR6/51sG292Q1xbJyninVdbCk/P7ACCu1oWTbQ5xP3kOjK27IkdK42UkGPugmDBtzok6k6RKlxSb77IjgY+SzU5ZnZybXCZToUceZCE=
 jobs:
   include:
-    #JPACKAGE: Linux
-    #- if: tag IS present
-    - if: tag IS present
-      os: linux
-      dist: bionic
-      before_script:
-        #JPackage JDK
-        - wget https://github.com/sormuras/bach/raw/master/install-jdk.sh
-        #Download latest JDK 14 EA build - should be changed to JDK 14 stable when it is released
-        - source ./install-jdk.sh --feature 14 --os linux-x64
-        #Debug
-        - echo JAVA_HOME = ${JAVA_HOME}
-        - echo PATH = ${PATH}
-        - ls ${JAVA_HOME}
-        - java -version
-        - sudo apt-get -y install fakeroot
-      script: mvn install -DskipTests -P jpackager-deploy
-    #JPACKAGE: Windows
-    #- if: tag IS present
-    - if: tag IS present
-      os: windows
-      language: shell
-      before_script:
-        #JPackage JDK
-        # Download JDK 14.0 General Availability
-        - wget -nv -nc -O openjdk-14.zip https://download.java.net/java/GA/jdk14/076bab302c7b4508975440c56f6cc26a/36/GPL/openjdk-14_windows-x64_bin.zip  || true
-        - 7z x openjdk-14.zip
-        - export JAVA_HOME=$TRAVIS_BUILD_DIR/jdk-14
-        - export PATH=$JAVA_HOME/bin:$PATH
-        # Maven
-        - wget -nv -nc -O maven.zip http://mirrors.dotsrc.org/apache/maven/maven-3/3.6.3/binaries/apache-maven-3.6.3-bin.zip  || true
-        - 7z x maven.zip
-        - export PATH=$TRAVIS_BUILD_DIR/apache-maven-3.6.3/bin:$PATH
-        # WiX Toolset
-        - wget -nv -nc -O wix311.zip https://github.com/wixtoolset/wix3/releases/download/wix3112rtm/wix311-binaries.zip  || true
-        - 7z x wix311.zip -owix311
-        - export PATH=$TRAVIS_BUILD_DIR/wix311:$PATH
-        #Debug
-        - echo JAVA_HOME = ${JAVA_HOME}
-        - echo PATH = ${PATH}
-        - dir ${JAVA_HOME}
-        - java -version
-        - mvn --version
-      script: mvn install -DskipTests -P jpackager-deploy
+  #JPACKAGE: Linux
+  - if: tag IS present
+    os: linux
+    dist: bionic
+    before_script:
+    #JPackage JDK
+    - wget https://github.com/sormuras/bach/raw/master/install-jdk.sh
+    #Download latest JDK 14 EA build - should be changed to JDK 14 stable when it is released
+    - source ./install-jdk.sh --feature 14 --os linux-x64
+    #Debug
+    - echo JAVA_HOME = ${JAVA_HOME}
+    - echo PATH = ${PATH}
+    - ls ${JAVA_HOME}
+    - java -version
+    - sudo apt-get -y install fakeroot
+    script: mvn deploy -DskipTests -P jpackager-deploy
+  #JPACKAGE: Windows
+  - if: tag IS present
+    os: windows
+    language: shell
+    before_script:
+    #JPackage JDK
+    # Download JDK 14.0 General Availability
+    - wget -nv -nc -O openjdk-14.zip https://download.java.net/java/GA/jdk14/076bab302c7b4508975440c56f6cc26a/36/GPL/openjdk-14_windows-x64_bin.zip  || true
+    - 7z x openjdk-14.zip
+    - export JAVA_HOME=$TRAVIS_BUILD_DIR/jdk-14
+    - export PATH=$JAVA_HOME/bin:$PATH
+    # Maven
+    - wget -nv -nc -O maven.zip http://mirrors.dotsrc.org/apache/maven/maven-3/3.6.3/binaries/apache-maven-3.6.3-bin.zip  || true
+    - 7z x maven.zip
+    - export PATH=$TRAVIS_BUILD_DIR/apache-maven-3.6.3/bin:$PATH
+    # WiX Toolset
+    - wget -nv -nc -O wix311.zip https://github.com/wixtoolset/wix3/releases/download/wix3112rtm/wix311-binaries.zip  || true
+    - 7z x wix311.zip -owix311
+    - export PATH=$TRAVIS_BUILD_DIR/wix311:$PATH
+    #Debug
+    - echo JAVA_HOME = ${JAVA_HOME}
+    - echo PATH = ${PATH}
+    - dir ${JAVA_HOME}
+    - java -version
+    - mvn --version
+    script: mvn install -DskipTests -P jpackager-deploy
     #JPACKAGE: Mac
-    #- if: tag IS present
-    - if: tag IS present
-      os: osx
-      osx_image: xcode11.3
-      before_script:
-        #JPackage JDK
-        - wget https://github.com/sormuras/bach/raw/master/install-jdk.sh
-        #Download latest JDK 14 EA build - should be changed to JDK 14 stable when it is released
-        - source ./install-jdk.sh --feature 14 --os osx-x64
-        #Debug
-        - echo JAVA_HOME = ${JAVA_HOME}
-        - echo PATH = ${PATH}
-        - ls ${JAVA_HOME}
-        - java -version
-      script: mvn install -DskipTests -P jpackager-deploy
+  - if: tag IS present
+    os: osx
+    osx_image: xcode11.3
+    before_script:
+    #JPackage JDK
+    - wget https://github.com/sormuras/bach/raw/master/install-jdk.sh
+    #Download latest JDK 14 EA build - should be changed to JDK 14 stable when it is released
+    - source ./install-jdk.sh --feature 14 --os osx-x64
+    #Debug
+    - echo JAVA_HOME = ${JAVA_HOME}
+    - echo PATH = ${PATH}
+    - ls ${JAVA_HOME}
+    - java -version
+    script: mvn install -DskipTests -P jpackager-deploy
 install: true
 script: mvn install -P skip-online-tests
 cache:
   directories:
-  - $HOME/.m2
+  - "$HOME/.m2"
 notifications:
   email:
     recipients:
@@ -82,7 +82,7 @@ deploy:
   file: target/installer/*
   draft: true
   skip_cleanup: true
-  tag_name: $TRAVIS_TAG
-  name: $TRAVIS_TAG
+  tag_name: "$TRAVIS_TAG"
+  name: "$TRAVIS_TAG"
   on:
     tags: true
