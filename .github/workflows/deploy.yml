@@ -25,4 +25,4 @@ jobs:
       with:
         java-version: ${{ matrix.java }}
     - name: Build with Maven
-      run: mvn -s settings.xml clean deploy -DskipTests -P jpackager-deploy "-Dftp.user=${{ftpuser}}" "-Dftp.pass=${{ftppass}}"
+      run: mvn -s settings.xml clean deploy -DskipTests -P jpackager-deploy "-Dftp.user=${{secrets.ftpuser}}" "-Dftp.pass=${{secrets.ftppass}}"
