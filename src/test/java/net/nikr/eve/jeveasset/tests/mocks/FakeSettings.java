@@ -582,4 +582,19 @@ public abstract class FakeSettings extends Settings {
 	public Date getPublicMarketOrdersLastUpdate() {
 		throw new UnsupportedOperationException("not implemented");
 	}
+
+	@Override
+	public List<String> getShowTools() {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public void setSaveToolsOnExit(boolean saveToolsOnExit) {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public boolean isSaveToolsOnExit() {
+		throw new UnsupportedOperationException("not implemented");
+	}
 }
