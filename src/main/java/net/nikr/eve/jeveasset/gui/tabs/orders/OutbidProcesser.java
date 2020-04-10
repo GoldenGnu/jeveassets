@@ -200,34 +200,43 @@ public class OutbidProcesser {
 
 		public OutbidProcesserInput(ProfileData profileData, MarketOrderRange sellOrderRange) {	
 			this.sellOrderRange = sellOrderRange;
-			for (OwnerType ownerType : profileData.getOwners().values()) {
-				for (MyMarketOrder marketOrder : ownerType.getMarketOrders()) {
-					if (marketOrder.isActive()) {
-						//StructuresIDs
-						if (marketOrder.getLocationID() > 100000000) {
-							structureIDs.add(marketOrder.getLocationID());
-						}
-						//TypeIDs
-						List<MyMarketOrder> list = typeIDs.get(marketOrder.getTypeID());
-						if (list == null) {
-							list = new ArrayList<>();
-							typeIDs.put(marketOrder.getTypeID(), list);
-						}
-						list.add(marketOrder);
-						//RegionIDs
-						Integer regionID = RawConverter.toInteger(marketOrder.getLocation().getRegionID());
-						if (regionID >= 10000000 && regionID <= 13000000) {
-							regionIDs.add(regionID);
+			for (OwnerType ownerType : profileData.getOwners().values()) { //Copy = thread safe
+				synchronized (ownerType) {
+					for (MyMarketOrder marketOrder : ownerType.getMarketOrders()) { //Synchronized on owner = thread safe
+						if (marketOrder.isActive()) {
+							//StructuresIDs
+							if (marketOrder.getLocationID() > 100000000) {
+								structureIDs.add(marketOrder.getLocationID());
+							}
+							//TypeIDs
+							List<MyMarketOrder> list = typeIDs.get(marketOrder.getTypeID());
+							if (list == null) {
+								list = new ArrayList<>();
+								typeIDs.put(marketOrder.getTypeID(), list);
+							}
+							list.add(marketOrder);
+							//RegionIDs
+							MyLocation location = marketOrder.getLocation();
+							if (location == null) {
+								continue;
+							}
+							Integer regionID = RawConverter.toInteger(location.getRegionID());
+							if (regionID >= 10000000 && regionID <= 13000000) {
+								regionIDs.add(regionID);
+							}
 						}
 					}
 				}
 			}
-			for (EsiOwner esiOwner : profileData.getProfileManager().getEsiOwners()) {
-				if (esiOwner.isStructures()) {
-					structuresApi = esiOwner.getUniverseApiAuth();
-				}
-				if (esiOwner.isMarketStructures()) {
-					marketApi = esiOwner.getMarketApiAuth();
+			for (OwnerType ownerType : profileData.getOwners().values()) { //Copy = thread safe
+				if (ownerType instanceof EsiOwner) {
+					EsiOwner esiOwner = (EsiOwner) ownerType;
+					if (esiOwner.isStructures()) {
+						structuresApi = esiOwner.getUniverseApiAuth();
+					}
+					if (esiOwner.isMarketStructures()) {
+						marketApi = esiOwner.getMarketApiAuth();
+					}
 				}
 			}
 		}

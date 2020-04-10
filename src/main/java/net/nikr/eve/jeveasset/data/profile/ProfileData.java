@@ -69,6 +69,8 @@ import net.nikr.eve.jeveasset.data.settings.types.LocationsType;
 import net.nikr.eve.jeveasset.gui.shared.CaseInsensitiveComparator;
 import net.nikr.eve.jeveasset.gui.shared.table.EventListManager;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.Percent;
+import net.nikr.eve.jeveasset.gui.tabs.orders.Outbid;
+import net.nikr.eve.jeveasset.gui.tabs.orders.OutbidProcesser.OutbidProcesserOutput;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
 import net.nikr.eve.jeveasset.i18n.General;
@@ -113,10 +115,6 @@ public class ProfileData {
 		this.profileManager = profileManager;
 		RouteFinder.load();
 		SplashUpdater.setSubProgress(100);
-	}
-
-	public ProfileManager getProfileManager() {
-		return profileManager;
 	}
 
 	public Set<Integer> getPriceTypeIDs() {
@@ -203,7 +201,7 @@ public class ProfileData {
 		return sortedOwners;
 	}
 
-	public Map<Long, OwnerType> getOwners() {
+	public synchronized Map<Long, OwnerType> getOwners() { //synchronized as owners are modified by updateEventLists
 		return new HashMap<>(owners);
 	}
 
@@ -347,6 +345,48 @@ public class ProfileData {
 		if (contractPriceType != null) {
 			contractPriceTypes.add(contractPriceType);
 		}
+	}
+
+	public synchronized void updateMarketOrders(OutbidProcesserOutput output) {
+		List<MyMarketOrder> found = new ArrayList<>();
+		try {
+			marketOrdersEventList.getReadWriteLock().readLock().lock();
+			boolean added = false;
+			for (MyMarketOrder order : marketOrdersEventList) {
+				added = false;
+				Outbid outbid = output.getOutbids().get(order.getOrderID());
+				if (outbid != null) {
+					order.setOutbid(outbid);
+					added = true;
+				}
+				RawPublicMarketOrder response = marketOrdersUpdates.get(order.getOrderID());
+				if (response != null) {
+					order.setPrice(response.getPrice());
+					order.setVolumeRemain(response.getVolumeRemain());
+					order.addChanged(response.getIssued());
+					added = true;
+				}
+				if (added) {
+					found.add(order);
+				}
+			}
+		} finally {
+			marketOrdersEventList.getReadWriteLock().readLock().unlock();
+		}
+		updateList(marketOrdersEventList, found);
+		Program.ensureEDT(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					marketOrdersEventList.getReadWriteLock().writeLock().lock();
+					List<MyMarketOrder> cache = new ArrayList<>(marketOrdersEventList);
+					marketOrdersEventList.clear();
+					marketOrdersEventList.addAll(cache);
+				} finally {
+					marketOrdersEventList.getReadWriteLock().writeLock().unlock();
+				}
+			}
+		});
 	}
 
 	public void updateLocations(Set<Long> locationIDs) {
