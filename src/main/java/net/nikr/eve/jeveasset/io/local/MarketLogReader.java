@@ -61,7 +61,6 @@ public class MarketLogReader {
 	private static final Logger LOG = LoggerFactory.getLogger(OutbidProcesser.class);
 
 	private static final int RETRIES = 3;
-	private static final Set<String> PARSED_FILES = Collections.synchronizedSet(new HashSet<>());
 	private static final DateFormatThreadSafe FILE_DATE_FORMAT = new DateFormatThreadSafe("yyyy.MM.dd hhmmss", true);
 	private static final DateFormatThreadSafe DATE_FORMAT = new DateFormatThreadSafe("yyyy-MM-dd HH:mm:ss,SSS");
 
@@ -69,16 +68,6 @@ public class MarketLogReader {
 
 	public MarketLogReader(OutbidProcesserInput input) {
 		this.input = input;
-	}
-
-	public static void markOld() {
-		File marketlogsDirectory = getMarketlogsDirectory();
-		if (!marketlogsDirectory.exists()) {
-			return;
-		}
-		for (File file : marketlogsDirectory.listFiles()) {
-			PARSED_FILES.add(file.getName());
-		}
 	}
 
 	public static List<MarketLog> read(File file, OutbidProcesserInput input, OutbidProcesserOutput output) {
@@ -90,12 +79,6 @@ public class MarketLogReader {
 
 	private List<MarketLog> read(final File logFile) {
 		final String filename = logFile.getName();
-		if (PARSED_FILES.contains(filename)) {
-			LOG.info("Old file ignored: " + filename);
-			return null;
-		} else {
-			PARSED_FILES.add(filename);
-		}
 		LOG.info("Reading: " + filename);
 		String[] values = filename.split("-");
 		if (values.length < 3) {
