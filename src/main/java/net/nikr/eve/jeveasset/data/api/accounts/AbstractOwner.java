@@ -293,7 +293,7 @@ public abstract class AbstractOwner implements OwnerType, Comparable<OwnerType> 
 	}
 
 	@Override
-	public final Set<MyMarketOrder> getMarketOrders() {
+	public synchronized final Set<MyMarketOrder> getMarketOrders() {
 		return marketOrders;
 	}
 
@@ -361,7 +361,7 @@ public abstract class AbstractOwner implements OwnerType, Comparable<OwnerType> 
 	}
 
 	@Override
-	public final void setMarketOrders(Set<MyMarketOrder> marketOrders) {
+	public synchronized final void setMarketOrders(Set<MyMarketOrder> marketOrders) {
 		this.marketOrders = marketOrders;
 	}
 

@@ -2,7 +2,7 @@
 
 <configuration>
 
-	<property name="PATTERN" value="%level: [%thread] %logger - %msg%n" />
+	<property name="PATTERN" value="%level: %d [%thread] %logger - %msg%n" />
 
 	<contextListener class="ch.qos.logback.classic.jul.LevelChangePropagator"/>
 
