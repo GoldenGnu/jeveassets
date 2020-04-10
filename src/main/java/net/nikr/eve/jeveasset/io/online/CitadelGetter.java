@@ -29,6 +29,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -67,8 +68,33 @@ public class CitadelGetter extends AbstractXmlWriter {
 	}
 
 	public synchronized static void update(UpdateTask updateTask) {
-		if (!getCitadelGetter().updateCache(updateTask, NIKR_URL)) { //Get the cached version
-			getCitadelGetter().updateCache(updateTask, HAMMERTI_URL); //Get it from the source
+		if (!getCitadelGetter().canUpdate(updateTask)) {
+			return;
+		}
+		List<Exception> exceptions = new ArrayList<>();
+		try {
+			boolean updated = getCitadelGetter().updateCache(updateTask, NIKR_URL); //Get the cached version
+			if (updated) {
+				return;
+			}
+		} catch (IOException | JsonParseException ex) {
+			LOG.error("	Citadels failed to update", ex);
+			exceptions.add(ex);
+		}
+		try {
+			boolean updated = getCitadelGetter().updateCache(updateTask, HAMMERTI_URL); //Get it from the source
+			if (updated) {
+				return;
+			}
+		} catch (IOException | JsonParseException ex) {
+			LOG.error("	Citadels failed to update", ex);
+			exceptions.add(ex);
+			
+		}
+		for (Exception ex : exceptions) {
+			if (updateTask != null) {
+				updateTask.addError(DialoguesUpdate.get().citadel(), ex.getMessage());
+			}
 		}
 	}
 
@@ -104,8 +130,7 @@ public class CitadelGetter extends AbstractXmlWriter {
 		citadelSettings = CitadelReader.load();
 	}
 
-	protected boolean updateCache(UpdateTask updateTask, String hostUrl) {
-		LOG.info("Citadels updating from: " + hostUrl);
+	protected boolean canUpdate(UpdateTask updateTask) {
 		if (citadelSettings.getNextUpdate().after(new Date()) && !Program.isForceUpdate()) { //Check if we can update now
 			if (updateTask != null) {
 				updateTask.addError(DialoguesUpdate.get().citadel(), "Waiting for cache to expire.\r\n(Fix: Just wait a bit)");
@@ -113,6 +138,11 @@ public class CitadelGetter extends AbstractXmlWriter {
 			LOG.info("	Citadels failed to update (NOT ALLOWED YET)");
 			return false;
 		}
+		return true;
+	}
+
+	protected boolean updateCache(UpdateTask updateTask, String hostUrl) throws IOException, JsonParseException {
+		LOG.info("Citadels updating from: " + hostUrl);
 		//Update citadel
 		InputStream in = null;
 		GZIPInputStream gZipIn = null;
@@ -148,12 +178,6 @@ public class CitadelGetter extends AbstractXmlWriter {
 			saveXml();
 			LOG.info("	Updated citadels for jEveAssets");
 			return true;
-		} catch (IOException | JsonParseException ex) {
-			if (updateTask != null) {
-				updateTask.addError(DialoguesUpdate.get().citadel(), ex.getMessage());
-			}
-			LOG.error("	Citadels failed to update", ex);
-			return false;
 		} finally {
 			if (in != null) {
 				try {
