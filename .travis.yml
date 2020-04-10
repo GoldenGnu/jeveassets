@@ -18,7 +18,7 @@ jobs:
     - ls ${JAVA_HOME}
     - java -version
     - sudo apt-get -y install fakeroot
-    script: mvn -s settings.xml clean deploy -DskipTests -P jpackager-deploy "-Dftp.user=${ftpuser}" "-Dftp.pass=${ftppass}"
+    script: mvn deploy -DskipTests -P jpackager-deploy
   #JPACKAGE: Windows
   - if: tag IS present
     os: windows
@@ -44,7 +44,7 @@ jobs:
     - dir ${JAVA_HOME}
     - java -version
     - mvn --version
-    script: mvn -s settings.xml clean deploy -DskipTests -P jpackager-deploy "-Dftp.user=${ftpuser}" "-Dftp.pass=${ftppass}"
+    script: mvn install -DskipTests -P jpackager-deploy
     #JPACKAGE: Mac
   - if: tag IS present
     os: osx
@@ -59,7 +59,7 @@ jobs:
     - echo PATH = ${PATH}
     - ls ${JAVA_HOME}
     - java -version
-    script: mvn -s settings.xml clean deploy -DskipTests -P jpackager-deploy "-Dftp.user=${ftpuser}" "-Dftp.pass=${ftppass}"
+    script: mvn install -DskipTests -P jpackager-deploy
 install: true
 script: mvn install -P skip-online-tests
 cache:

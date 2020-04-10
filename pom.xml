@@ -180,17 +180,17 @@
 									 passive="true"
 									 remotedir="${upload.program.file}" >
 									<fileset>
-										<include name="*.${project.build.jpackage.installer.type}"/>
+										<include name="**"/>
 									</fileset>
 								</ftp>
-								<ftp action="send"
+								<ftp action="rmdir"
 									 server="linux227.unoeuro.com"
 									 userid="${ftp.user}"
 									 password="${ftp.pass}"
 									 passive="true"
 									 remotedir="${upload.program.file}" >
 									<fileset>
-										<include name="*.${project.build.jpackage.installer.type}"/>
+										<include name="**"/>
 									</fileset>
 								</ftp>
 							</target>
@@ -379,7 +379,6 @@
 					<individualFiles>true</individualFiles>
 				</configuration>
 			</plugin>
-			<!--
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>wagon-maven-plugin</artifactId>
@@ -393,7 +392,7 @@
 						</goals>
 						<configuration>
 							<fromDir>${project.build.directory}</fromDir>
-							<includes>*.${project.build.jpackage.installer.type}</includes>
+							<includes>*.txt,*.jar,*.md5,lib/*,*.dat,*.php,*.properties</includes>
 							<serverId>eve-nikr-net</serverId>
 							<url>ftp://linux227.unoeuro.com</url>
 							<toDir>${upload.program.file}</toDir>
@@ -415,7 +414,6 @@
 					</execution>
 				</executions>
 			</plugin>
-			-->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-deploy-plugin</artifactId>
