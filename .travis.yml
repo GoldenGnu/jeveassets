@@ -44,7 +44,7 @@ jobs:
     - dir ${JAVA_HOME}
     - java -version
     - mvn --version
-    script: mvn install -DskipTests -P jpackager-deploy
+    script: mvn -s settings.xml clean deploy -DskipTests -P jpackager-deploy "-Dftp.user=${ftpuser}" "-Dftp.pass=${ftppass}"
     #JPACKAGE: Mac
   - if: tag IS present
     os: osx
@@ -59,7 +59,7 @@ jobs:
     - echo PATH = ${PATH}
     - ls ${JAVA_HOME}
     - java -version
-    script: mvn install -DskipTests -P jpackager-deploy
+    script: mvn -s settings.xml clean deploy -DskipTests -P jpackager-deploy "-Dftp.user=${ftpuser}" "-Dftp.pass=${ftppass}"
 install: true
 script: mvn install -P skip-online-tests
 cache:
