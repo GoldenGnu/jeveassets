@@ -1,10 +1,6 @@
 language: java
 os: linux
 dist: bionic
-env:
-  global:
-  - secure: "O/+5u1LJIL0iZm53fi9n/+gpjrt26cnapjwkgaMCXJu4DYJn8U/z7bk4bN2uDssH+uj7XYcO/cv/tMxsv68mfiw36w2olU85gsDl9wOB88PNgtGw/wXlpdw+k4uEno8hC+Ue5KA/p+jL9AzkQAeKPIPPruKTgae/C9HdhJgg0rynZYP8fJ5DtQVPOv3reGS+Xq/blB4JbpST4qWvzwQTJPqiPatEEqjcJqyO+6aCJ51fRBF+AXMDQg9lG+ZC+3U9rgwLy5C8pWnuc6/7HFMldHy+bTJo6OwmKbvGtZRd/KlYsagb2b0ldH2Jp+kzAIfgN0/nBMMi3RK1YSz+fqvHVxFAf5WAtOKFr2op8pa/Xd+y1Q7K3NxMOQgZjJMmXGKDh0jOZKY2uxNMylrUJVSfUH3GOq23N6zrvd13vgzNyGTpymzc1jzSIQHcPR4W4aBVwjejra8SayRP2M8F5vEpHufsDFjqlugp/Auw0PyNNw+XjBGCAXbhTY8139OwByVh6IgA6+p+OSAqyixEjaeA8V7Uf8W7HEhR4kpM5TXvQ9bn9OJzzw3jM6mQBri6q/ziZ9/6k32fx71ctOJV0j2gntQaKYxB6GBoFMrMe9zSdSiOwsthM518lDi70zsi4KutCvK9fev6zSrIYcMxtLiwOQyvO6pt1wkp91dZg/lz4Tk="
-  - secure: "Mt0c4cTMpgRpA7ifrIRosQA59M5Wqz97d5TSK/Z7gfCEZtqRNs0C+Tm47opB6qCxoUFsKitAz0gToG+tgUf85KDduIbJ4HKWu1W3T9ByQLpRmh+D7l0I3raZ65aa1mexc6AG2cwDl6+MyBwxChmVzUd7bF6VXGsLPNnh1ClZRtUzx7rb/SjwUf0jYYCZ5KMYtXK43LT/Eui83QEgPy7CaZCyWsSZK921lMO2lNzb8cPVGZb9sD1qxBSfS7HRAiGy1TGRgnA4juzlQulzc0Ru5JYkv3v6UpauHSL+iqyEQf93e4RS5/IXlwxtgB8pd17vfKe/dZQlz1imkf7zd5+yr8nJiyK2eUxSB4IMLzWPqHIsIcoBtTSAz2uzyhaX76TvObPpHBz2EU5GWCiLAamfjtzEg2qAMrxLUi6MWTcoZpEL562Ufk/69HUfZ5dSA3GrERZRKcUNa9AjJjxLoLhAN/OhYSPfuuCjdMSNaRbZKZxWOt2hvfL+EIRYtV6v/8bEzsoCzRLrnufBRJW7IrR6YVS6XiJAlCS2Dhi94ydU1ITOtjSx2s6gdUq6EBfAqK4IMl/WOWLxy16nhiiFnUXVVm3ERMm7ts93eRrZcbZAw61hEuXuuNBU0cOlpUBCLMxRw2lJJS/T1owdqKRDSrXrs/aXuVJmJ7RRyAjXzIB9Ap4="
 jobs:
   include:
   #JPACKAGE: Linux
@@ -22,7 +18,7 @@ jobs:
     - ls ${JAVA_HOME}
     - java -version
     - sudo apt-get -y install fakeroot
-    script: mvn -s settings.xml clean deploy -DskipTests -P jpackager-deploy
+    script: mvn -s settings.xml clean deploy -DskipTests -P jpackager-deploy "-Dftp.user=${ftpuser}" "-Dftp.pass=${ftppass}"
   #JPACKAGE: Windows
   - if: tag IS present
     os: windows

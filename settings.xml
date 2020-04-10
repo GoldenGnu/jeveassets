@@ -6,8 +6,8 @@
 	<servers>
 		<server>
 			<id>eve-nikr-net</id>
-			<username>${env.ftpuser}</username>
-			<password>${env.ftppass}</password>
+			<username>${ftp.user}</username>
+			<password>${ftp.pass}</password>
 		</server>
 	</servers>
 </settings>
