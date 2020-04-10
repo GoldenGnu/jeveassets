@@ -714,7 +714,7 @@
 			</activation>
 			<properties>
 				<project.build.jpackage.appimage.name>windows</project.build.jpackage.appimage.name>
-				<project.build.jpackage.installer.type>msi</project.build.jpackage.installer.type>
+				<project.build.jpackage.installer.type>exe</project.build.jpackage.installer.type>
 				<project.build.jpackage.installer.icon>install-resources/jEveAssets.ico</project.build.jpackage.installer.icon>
 				<project.build.jpackage.installer.image>${project.build.directory}/appimage/jEveAssets</project.build.jpackage.installer.image>
 				<project.build.jpackage.installer.options-1>--win-dir-chooser</project.build.jpackage.installer.options-1>
