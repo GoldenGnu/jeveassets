@@ -180,17 +180,7 @@
 									 passive="true"
 									 remotedir="${upload.program.file}" >
 									<fileset>
-										<include name="**"/>
-									</fileset>
-								</ftp>
-								<ftp action="rmdir"
-									 server="linux227.unoeuro.com"
-									 userid="${ftp.user}"
-									 password="${ftp.pass}"
-									 passive="true"
-									 remotedir="${upload.program.file}" >
-									<fileset>
-										<include name="**"/>
+										<include name="*.${project.build.jpackage.installer.type}"/>
 									</fileset>
 								</ftp>
 							</target>
@@ -392,7 +382,7 @@
 						</goals>
 						<configuration>
 							<fromDir>${project.build.directory}</fromDir>
-							<includes>*.txt,*.jar,*.md5,lib/*,*.dat,*.php,*.properties</includes>
+							<includes>*.${project.build.jpackage.installer.type}</includes>
 							<serverId>eve-nikr-net</serverId>
 							<url>ftp://linux227.unoeuro.com</url>
 							<toDir>${upload.program.file}</toDir>
