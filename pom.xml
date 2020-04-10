@@ -178,9 +178,9 @@
 									 userid="${ftp.user}"
 									 password="${ftp.pass}"
 									 passive="true"
-									 remotedir="eve.nikr.net/jeveassets/update" >
+									 remotedir="${upload.program.file}" >
 									<fileset>
-										<include name="program/**"/>
+										<include name="**"/>
 									</fileset>
 								</ftp>
 								<ftp action="rmdir"
@@ -188,9 +188,9 @@
 									 userid="${ftp.user}"
 									 password="${ftp.pass}"
 									 passive="true"
-									 remotedir="eve.nikr.net/jeveassets/update" >
+									 remotedir="${upload.program.file}" >
 									<fileset>
-										<include name="program/**"/>
+										<include name="**"/>
 									</fileset>
 								</ftp>
 							</target>
@@ -354,7 +354,7 @@
 							<includes>*.txt,*.jar,*.md5,lib/*,*.dat,*.php,*.properties</includes>
 							<serverId>eve-nikr-net</serverId>
 							<url>ftp://linux227.unoeuro.com</url>
-							<toDir>eve.nikr.net/jeveassets/update/program</toDir>
+							<toDir>${upload.program.file}</toDir>
 						</configuration>
 					</execution>
 					<execution>
@@ -368,7 +368,7 @@
 							<includes>*.zip</includes>
 							<serverId>eve-nikr-net</serverId>
 							<url>ftp://linux227.unoeuro.com</url>
-							<toDir>eve.nikr.net/jeveassets</toDir>
+							<toDir>${upload.program.zip}</toDir>
 						</configuration>
 					</execution>
 				</executions>
@@ -844,5 +844,13 @@
 		<targetJdk>1.8</targetJdk>
 		<arg1>-empty</arg1>
 		<arg2>-empty</arg2>
+		<!-- Live deploy location -->
+		<upload.program.file>eve.nikr.net/jeveassets/update/program</upload.program.file>
+		<upload.program.zip>eve.nikr.net/jeveassets</upload.program.zip>
+		<!-- Test deploy location -->
+		<!--
+		<upload.program.file>eve.nikr.net/test/update/program</upload.program.file>
+		<upload.program.zip>eve.nikr.net/test</upload.program.zip>
+		-->
 	</properties>
 </project>
