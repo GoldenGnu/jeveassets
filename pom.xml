@@ -381,7 +381,7 @@
 							<goal>upload</goal>
 						</goals>
 						<configuration>
-							<fromDir>${project.build.directory}</fromDir>
+							<fromDir>${project.build.directory}/installer</fromDir>
 							<includes>*.${project.build.jpackage.installer.type}</includes>
 							<serverId>eve-nikr-net</serverId>
 							<url>ftp://linux227.unoeuro.com</url>
@@ -395,8 +395,8 @@
 							<goal>upload</goal>
 						</goals>
 						<configuration>
-							<fromDir>${project.build.directory}</fromDir>
-							<includes>*.zip</includes>
+							<fromDir>${project.build.directory}/installer</fromDir>
+							<includes>*.*</includes>
 							<serverId>eve-nikr-net</serverId>
 							<url>ftp://linux227.unoeuro.com</url>
 							<toDir>${upload.program.zip}</toDir>
