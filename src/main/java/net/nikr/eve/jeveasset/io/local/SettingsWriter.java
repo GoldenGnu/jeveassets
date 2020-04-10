@@ -135,6 +135,7 @@ public class SettingsWriter extends AbstractXmlWriter {
 		writeTags(xmldoc, settings.getTags());
 		writeRoutingSettings(xmldoc, settings.getRoutingSettings());
 		writeMarketOrderOutbid(xmldoc, settings.getPublicMarketOrdersNextUpdate(), settings.getPublicMarketOrdersLastUpdate(), settings.getOutbidOrderRange(), settings.getMarketOrdersOutbid());
+		writeShowTool(xmldoc, settings.getShowTools(), settings.isSaveToolsOnExit());
 		try {
 			writeXmlFile(xmldoc, filename, true);
 		} catch (XmlException ex) {
@@ -143,6 +144,13 @@ public class SettingsWriter extends AbstractXmlWriter {
 		}
 		LOG.info("Settings saved");
 		return true;
+	}
+
+	private void writeShowTool(Document xmldoc, List<String> showTools, boolean saveToolsOnExit) {
+		Element showToolsNode = xmldoc.createElementNS(null, "showtools");
+		xmldoc.getDocumentElement().appendChild(showToolsNode);
+		setAttribute(showToolsNode, "saveonexit", saveToolsOnExit);
+		setAttribute(showToolsNode, "show", showTools);
 	}
 
 	private void writeMarketOrderOutbid(Document xmldoc, Date publicMarketOrdersNextUpdate, Date publicMarketOrdersLastUpdate, MarketOrderRange outbidOrderRange, Map<Long, Outbid> marketOrdersOutbid) {

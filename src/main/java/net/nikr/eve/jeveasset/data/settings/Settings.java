@@ -112,6 +112,7 @@ public class Settings {
 		FLAG_ASKED_CHECK_ALL_TRACKER,
 		FLAG_TRACKER_USE_ASSET_PRICE_FOR_SELL_ORDERS,
 		FLAG_FOCUS_EVE_ONLINE_ON_ESI_UI_CALLS,
+		FLAG_SAVE_TOOLS_ON_EXIT
 	}
 
 	private static final SettingsLock LOCK = new SettingsLock();
@@ -220,6 +221,8 @@ public class Settings {
 	private final Map<TagID, Tags> tagIds = new HashMap<>();
 //Jumps
 	private final Map<Class<?>, List<MyLocation>> jumpLocations = new HashMap<>();
+//Tools
+	private final List<String> showTools = new ArrayList<>();
 
 	protected Settings() {
 		//Settings
@@ -243,6 +246,7 @@ public class Settings {
 		flags.put(SettingFlag.FLAG_ASKED_CHECK_ALL_TRACKER, false);
 		flags.put(SettingFlag.FLAG_TRACKER_USE_ASSET_PRICE_FOR_SELL_ORDERS, false);
 		flags.put(SettingFlag.FLAG_FOCUS_EVE_ONLINE_ON_ESI_UI_CALLS, true);
+		flags.put(SettingFlag.FLAG_SAVE_TOOLS_ON_EXIT, false);
 		cacheFlags();
 	}
 
@@ -783,6 +787,18 @@ public class Settings {
 
 	public void setFocusEveOnlineOnEsiUiCalls(final boolean focusEveOnlineOnEsiUiCalls) {
 		flags.put(SettingFlag.FLAG_FOCUS_EVE_ONLINE_ON_ESI_UI_CALLS, focusEveOnlineOnEsiUiCalls);
+	}
+
+	public boolean isSaveToolsOnExit() {
+		return flags.get(SettingFlag.FLAG_SAVE_TOOLS_ON_EXIT);
+	}
+
+	public void setSaveToolsOnExit(final boolean saveToolsOnExit) {
+		flags.put(SettingFlag.FLAG_SAVE_TOOLS_ON_EXIT, saveToolsOnExit);
+	}
+
+	public List<String> getShowTools() {
+		return showTools;
 	}
 
 	public List<Stockpile> getStockpiles() {

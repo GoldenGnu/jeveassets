@@ -143,6 +143,10 @@ public class MainWindow {
 			tabs.add(jMainTab);
 			jTabbedPane.addTab(jMainTab.getTitle(), jMainTab.getIcon(), jMainTab.getPanel());
 			jTabbedPane.setTabComponentAt(jTabbedPane.getTabCount() - 1, new TabCloseButton(jMainTab));
+			if (Settings.get().isSaveToolsOnExit() && !Settings.get().getShowTools().contains(jMainTab.getTitle())) {
+				Settings.get().getShowTools().add(jMainTab.getTitle());
+				program.saveSettings("Showing Tool");
+			}
 		}
 		if (focus) {
 			LOG.info("Focusing tab: " + jMainTab.getTitle());
@@ -158,12 +162,18 @@ public class MainWindow {
 		return tabs.get(jTabbedPane.getSelectedIndex());
 	}
 
-	public void removeTab(final JMainTab jMainTab) {
+	private void removeTab(final JMainTab jMainTab) {
 		LOG.info("Closing tab: " + jMainTab.getTitle());
 		int index = tabs.indexOf(jMainTab);
 		jTabbedPane.removeTabAt(index);
 		tabs.remove(index);
 		jMainTab.clearData();
+		if (Settings.get().isSaveToolsOnExit()) {
+			boolean removed = Settings.get().getShowTools().remove(jMainTab.getTitle());
+			if (removed) {
+				program.saveSettings("Hidding Tool");
+			}
+		}
 	}
 
 	public List<JMainTab> getTabs() {
