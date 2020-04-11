@@ -337,6 +337,10 @@
 				</configuration>
 			</plugin>
 			<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<version>2.4</version>
+			</plugin>
+			<plugin>
 				<groupId>net.ju-n.maven.plugins</groupId>
 				<artifactId>checksum-maven-plugin</artifactId>
 				<version>1.4</version>

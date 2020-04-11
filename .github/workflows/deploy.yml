@@ -28,7 +28,7 @@ jobs:
           - os: ubuntu-latest
             java: 8
             profile: jpackager-java8
-    name: ${{ matrix.os }} Deploy
+    name: ${{ matrix.os }}-java-${{ matrix.java }}
     steps:
     - name: Checkout
       uses: actions/checkout@v1
