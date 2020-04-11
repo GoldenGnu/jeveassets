@@ -349,18 +349,15 @@
 						<goals>
 							<goal>files</goal>
 						</goals>
-						<phase>verify</phase>
+						<phase>install</phase>
 					</execution>
 				</executions>
 				<configuration>
 					<fileSets>
 						<fileSet>
-							<directory>${project.build.directory}</directory>
+							<directory>${project.build.directory}/upload</directory>
 							<includes>
-								<include>*.txt</include>
-								<include>*.jar</include>
-								<include>*.properties</include>
-								<include>lib/*.jar</include>
+								<include>*.*</include>
 							</includes>
 						</fileSet>
 					</fileSets>
