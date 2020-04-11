@@ -751,7 +751,10 @@
 									<target>
 										<copy todir="${project.build.directory}/installer">
 											<fileset dir="${project.build.directory}" includes="jeveassets-*.zip"/>
+										</copy>
+										<copy todir="${project.build.directory}/upload">
 											<fileset dir="${project.build.directory}" includes="*.dat"/>
+											<fileset dir="${project.build.directory}" includes="list.php"/>
 										</copy>
 									</target>
 								</configuration>
