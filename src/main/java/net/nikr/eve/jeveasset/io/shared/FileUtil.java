@@ -58,6 +58,16 @@ public class FileUtil {
 		return FileUtil.getLocalFile("lib" + File.separator + filename, false);
 	}
 
+	public static String getPathInstaller(String filename) {
+		File userDir = new File(System.getProperty("user.home", "."));
+		File file = new File(userDir.getAbsolutePath() + File.separator + ".jupdate" + File.separator + filename);
+		File parentDir = file.getParentFile();
+		if (!parentDir.exists() && !parentDir.mkdirs()) {
+			throw new RuntimeException("Failed to create .jUpdate directory");
+		}
+		return file.getAbsolutePath();
+	}
+
 	public static String getPathRunUpdate() {
 		File userDir = new File(System.getProperty("user.home", "."));
 		File file = new File(userDir.getAbsolutePath() + File.separator + ".jupdate" + File.separator + "jupdate.jar");
