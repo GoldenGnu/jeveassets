@@ -1,0 +1,37 @@
+name: Esi Deprecation Test
+
+on:
+  push:
+  schedule:
+    # Daily @ 8:44
+    - cron:  '44 8 * * *'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v1
+    - name: Cache
+      uses: actions/cache@v1
+      with:
+        path: ~/.m2/repository
+        key: build-${{ hashFiles('**/pom.xml') }}
+        restore-keys: |
+          build-
+    - name: JDK
+      uses: actions/setup-java@v1
+      with:
+        java-version: 8
+    - name: Build with Maven
+      env:
+        SSO_CLIENT_ID: ${{ secrets.SSO_CLIENT_ID }}
+        SSO_REFRESH_TOKEN: ${{ secrets.SSO_REFRESH_TOKEN }}
+      run: mvn -Dtest=EsiDeprecationOnlineTest test
+    - name: Send discord notification for new release
+      if: failure()
+      env:
+        DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+      uses: Ilshidur/action-discord@05a28ef
+      with:
+        args: '<@GoldenGnu> ESI deprecation test failed!'
