@@ -26,6 +26,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import net.nikr.eve.jeveasset.TestUtil;
+import net.troja.eve.esi.ApiClient;
+import net.troja.eve.esi.ApiClientBuilder;
 import net.troja.eve.esi.ApiException;
 import net.troja.eve.esi.ApiResponse;
 import net.troja.eve.esi.api.AssetsApi;
@@ -80,15 +82,38 @@ import org.junit.Test;
 
 public class EsiDeprecationOnlineTest extends TestUtil {
 
-	private final String DATASOURCE = "tranquility";
+	private final static String DATASOURCE = "tranquility";
+	private final static ApiClient API_CLIENT = setupAuth();
+	private final static WalletApi WALLET_API = new WalletApi(API_CLIENT);
+	private final static AssetsApi ASSETS_API = new AssetsApi(API_CLIENT);
+	private final static CharacterApi CHARACTER_API = new CharacterApi(API_CLIENT);
+	private final static CorporationApi CORPORATION_API = new CorporationApi(API_CLIENT);
+	private final static BookmarksApi BOOKMARKS_API = new BookmarksApi(API_CLIENT);
+	private final static SovereigntyApi SOVEREIGNTY_API = new SovereigntyApi();
+	private final static ContractsApi CONTRACTS_API = new ContractsApi(API_CLIENT);
+	private final static IndustryApi INDUSTRY_API = new IndustryApi(API_CLIENT);
+	private final static MarketApi MARKET_API = new MarketApi(API_CLIENT);
+	private final static UniverseApi UNIVERSE_API = new UniverseApi(API_CLIENT);
+	private final static PlanetaryInteractionApi PLANETARY_INTERACTION_API = new PlanetaryInteractionApi(API_CLIENT);
+	private final static LocationApi LOCATION_API = new LocationApi(API_CLIENT);
+	private final static UserInterfaceApi USER_INTERFACE_API = new UserInterfaceApi(API_CLIENT);
 
 	public EsiDeprecationOnlineTest() { }
 
+	public static ApiClient setupAuth() {
+        String clientId = System.getenv().get("SSO_CLIENT_ID");
+        String refreshToken = System.getenv().get("SSO_REFRESH_TOKEN");
+		if (clientId != null && refreshToken != null) {
+			return new ApiClientBuilder().clientID(clientId).refreshToken(refreshToken).build();
+		} else {
+			return new ApiClient();
+		}
+	}
+
 	@Test
 	public void esiAccountBalanceGetterCharacter() {
-		WalletApi api = new WalletApi();
 		try {
-			ApiResponse<Double> apiResponse = api.getCharactersCharacterIdWalletWithHttpInfo(1, DATASOURCE, null, null);
+			ApiResponse<Double> apiResponse = WALLET_API.getCharactersCharacterIdWalletWithHttpInfo(1, DATASOURCE, null, null);
 			validate(apiResponse.getHeaders());
 		} catch (ApiException ex) {
 			validate(ex.getResponseHeaders());
@@ -97,9 +122,8 @@ public class EsiDeprecationOnlineTest extends TestUtil {
 
 	@Test
 	public void esiAccountBalanceGetterCorporation() {
-		WalletApi api = new WalletApi();
 		try {
-			ApiResponse<List<CorporationWalletsResponse>> apiResponse = api.getCorporationsCorporationIdWalletsWithHttpInfo(1, DATASOURCE, null, null);
+			ApiResponse<List<CorporationWalletsResponse>> apiResponse = WALLET_API.getCorporationsCorporationIdWalletsWithHttpInfo(1, DATASOURCE, null, null);
 			validate(apiResponse.getHeaders());
 		} catch (ApiException ex) {
 			validate(ex.getResponseHeaders());
@@ -108,9 +132,8 @@ public class EsiDeprecationOnlineTest extends TestUtil {
 
 	@Test
 	public void esiAssetsGetterCharacter() {
-		AssetsApi api = new AssetsApi();
 		try {
-			ApiResponse<List<CharacterAssetsResponse>> apiResponse = api.getCharactersCharacterIdAssetsWithHttpInfo(1, DATASOURCE, null, null, null);
+			ApiResponse<List<CharacterAssetsResponse>> apiResponse = ASSETS_API.getCharactersCharacterIdAssetsWithHttpInfo(1, DATASOURCE, null, null, null);
 			validate(apiResponse.getHeaders());
 		} catch (ApiException ex) {
 			validate(ex.getResponseHeaders());
@@ -119,9 +142,8 @@ public class EsiDeprecationOnlineTest extends TestUtil {
 
 	@Test
 	public void esiAssetsGetterCorporation() {
-		AssetsApi api = new AssetsApi();
 		try {
-			ApiResponse<List<CorporationAssetsResponse>> apiResponse = api.getCorporationsCorporationIdAssetsWithHttpInfo(1, DATASOURCE, null, null, null);
+			ApiResponse<List<CorporationAssetsResponse>> apiResponse = ASSETS_API.getCorporationsCorporationIdAssetsWithHttpInfo(1, DATASOURCE, null, null, null);
 			validate(apiResponse.getHeaders());
 		} catch (ApiException ex) {
 			validate(ex.getResponseHeaders());
@@ -130,9 +152,8 @@ public class EsiDeprecationOnlineTest extends TestUtil {
 
 	@Test
 	public void esiBlueprintsGetterCharacter() {
-		CharacterApi api = new CharacterApi();
 		try {
-			ApiResponse<List<CharacterBlueprintsResponse>> apiResponse = api.getCharactersCharacterIdBlueprintsWithHttpInfo(1, DATASOURCE, null, null, null);
+			ApiResponse<List<CharacterBlueprintsResponse>> apiResponse = CHARACTER_API.getCharactersCharacterIdBlueprintsWithHttpInfo(1, DATASOURCE, null, null, null);
 			validate(apiResponse.getHeaders());
 		} catch (ApiException ex) {
 			validate(ex.getResponseHeaders());
@@ -141,9 +162,8 @@ public class EsiDeprecationOnlineTest extends TestUtil {
 
 	@Test
 	public void esiBlueprintsGetterCorporation() {
-		CorporationApi api = new CorporationApi();
 		try {
-			ApiResponse<List<CorporationBlueprintsResponse>> apiResponse = api.getCorporationsCorporationIdBlueprintsWithHttpInfo(1, DATASOURCE, null, null, null);
+			ApiResponse<List<CorporationBlueprintsResponse>> apiResponse = CORPORATION_API.getCorporationsCorporationIdBlueprintsWithHttpInfo(1, DATASOURCE, null, null, null);
 			validate(apiResponse.getHeaders());
 		} catch (ApiException ex) {
 			validate(ex.getResponseHeaders());
@@ -152,9 +172,8 @@ public class EsiDeprecationOnlineTest extends TestUtil {
 
 	@Test
 	public void esiBookmarksGetterCharacters() {
-		BookmarksApi api = new BookmarksApi();
 		try {
-			ApiResponse<List<CharacterBookmarksResponse>> apiResponse = api.getCharactersCharacterIdBookmarksWithHttpInfo(1, DATASOURCE, null, null, null);
+			ApiResponse<List<CharacterBookmarksResponse>> apiResponse = BOOKMARKS_API.getCharactersCharacterIdBookmarksWithHttpInfo(1, DATASOURCE, null, null, null);
 			validate(apiResponse.getHeaders());
 		} catch (ApiException ex) {
 			validate(ex.getResponseHeaders());
@@ -163,9 +182,8 @@ public class EsiDeprecationOnlineTest extends TestUtil {
 
 	@Test
 	public void esiBookmarksGetterCorporation() {
-		BookmarksApi api = new BookmarksApi();
 		try {
-			ApiResponse<List<CorporationBookmarksResponse>> apiResponse = api.getCorporationsCorporationIdBookmarksWithHttpInfo(1, DATASOURCE, null, null, null);
+			ApiResponse<List<CorporationBookmarksResponse>> apiResponse = BOOKMARKS_API.getCorporationsCorporationIdBookmarksWithHttpInfo(1, DATASOURCE, null, null, null);
 			validate(apiResponse.getHeaders());
 		} catch (ApiException ex) {
 			validate(ex.getResponseHeaders());
@@ -174,9 +192,8 @@ public class EsiDeprecationOnlineTest extends TestUtil {
 
 	@Test
 	public void esiConquerableStationsGetter() {
-		SovereigntyApi api = new SovereigntyApi();
 		try {
-			ApiResponse<List<SovereigntyStructuresResponse>> apiResponse = api.getSovereigntyStructuresWithHttpInfo(DATASOURCE, null);
+			ApiResponse<List<SovereigntyStructuresResponse>> apiResponse = SOVEREIGNTY_API.getSovereigntyStructuresWithHttpInfo(DATASOURCE, null);
 			validate(apiResponse.getHeaders());
 		} catch (ApiException ex) {
 			validate(ex.getResponseHeaders());
@@ -185,9 +202,8 @@ public class EsiDeprecationOnlineTest extends TestUtil {
 
 	@Test
 	public void esiContractItemsGetterCharacter() {
-		ContractsApi api = new ContractsApi();
 		try {
-			ApiResponse<List<CharacterContractsItemsResponse>> apiResponse = api.getCharactersCharacterIdContractsContractIdItemsWithHttpInfo(1, 1, DATASOURCE, null, null);
+			ApiResponse<List<CharacterContractsItemsResponse>> apiResponse = CONTRACTS_API.getCharactersCharacterIdContractsContractIdItemsWithHttpInfo(1, 1, DATASOURCE, null, null);
 			validate(apiResponse.getHeaders());
 		} catch (ApiException ex) {
 			validate(ex.getResponseHeaders());
@@ -196,9 +212,8 @@ public class EsiDeprecationOnlineTest extends TestUtil {
 
 	@Test
 	public void esiContractItemsGetterCorporation() {
-		ContractsApi api = new ContractsApi();
 		try {
-			ApiResponse<List<CorporationContractsItemsResponse>> apiResponse = api.getCorporationsCorporationIdContractsContractIdItemsWithHttpInfo(1, 1, DATASOURCE, null, null);
+			ApiResponse<List<CorporationContractsItemsResponse>> apiResponse = CONTRACTS_API.getCorporationsCorporationIdContractsContractIdItemsWithHttpInfo(1, 1, DATASOURCE, null, null);
 			validate(apiResponse.getHeaders());
 		} catch (ApiException ex) {
 			validate(ex.getResponseHeaders());
@@ -207,9 +222,8 @@ public class EsiDeprecationOnlineTest extends TestUtil {
 
 	@Test
 	public void esiContractsGetterCharacter() {
-		ContractsApi api = new ContractsApi();
 		try {
-			ApiResponse<List<CharacterContractsResponse>> apiResponse = api.getCharactersCharacterIdContractsWithHttpInfo(1, DATASOURCE, null, null, null);
+			ApiResponse<List<CharacterContractsResponse>> apiResponse = CONTRACTS_API.getCharactersCharacterIdContractsWithHttpInfo(1, DATASOURCE, null, null, null);
 			validate(apiResponse.getHeaders());
 		} catch (ApiException ex) {
 			validate(ex.getResponseHeaders());
@@ -218,9 +232,8 @@ public class EsiDeprecationOnlineTest extends TestUtil {
 
 	@Test
 	public void esiContractsGetterCorporation() {
-		ContractsApi api = new ContractsApi();
 		try {
-			ApiResponse<List<CorporationContractsResponse>> apiResponse = api.getCorporationsCorporationIdContractsWithHttpInfo(1, DATASOURCE, null, null, null);
+			ApiResponse<List<CorporationContractsResponse>> apiResponse = CONTRACTS_API.getCorporationsCorporationIdContractsWithHttpInfo(1, DATASOURCE, null, null, null);
 			validate(apiResponse.getHeaders());
 		} catch (ApiException ex) {
 			validate(ex.getResponseHeaders());
@@ -229,9 +242,8 @@ public class EsiDeprecationOnlineTest extends TestUtil {
 
 	@Test
 	public void esiIndustryJobsGetterCharacter() {
-		IndustryApi api = new IndustryApi();
 		try {
-			ApiResponse<List<CharacterIndustryJobsResponse>> apiResponse = api.getCharactersCharacterIdIndustryJobsWithHttpInfo(1, DATASOURCE, null, true, null);
+			ApiResponse<List<CharacterIndustryJobsResponse>> apiResponse = INDUSTRY_API.getCharactersCharacterIdIndustryJobsWithHttpInfo(1, DATASOURCE, null, true, null);
 			validate(apiResponse.getHeaders());
 		} catch (ApiException ex) {
 			validate(ex.getResponseHeaders());
@@ -240,9 +252,8 @@ public class EsiDeprecationOnlineTest extends TestUtil {
 
 	@Test
 	public void esiIndustryJobsGetterCorporation() {
-		IndustryApi api = new IndustryApi();
 		try {
-			ApiResponse<List<CorporationIndustryJobsResponse>> apiResponse = api.getCorporationsCorporationIdIndustryJobsWithHttpInfo(1, DATASOURCE, null, true, null, null);
+			ApiResponse<List<CorporationIndustryJobsResponse>> apiResponse = INDUSTRY_API.getCorporationsCorporationIdIndustryJobsWithHttpInfo(1, DATASOURCE, null, true, null, null);
 			validate(apiResponse.getHeaders());
 		} catch (ApiException ex) {
 			validate(ex.getResponseHeaders());
@@ -251,9 +262,8 @@ public class EsiDeprecationOnlineTest extends TestUtil {
 
 	@Test
 	public void esiJournalGetterCharacter() {
-		WalletApi api = new WalletApi();
 		try {
-			ApiResponse<List<CharacterWalletJournalResponse>> apiResponse = api.getCharactersCharacterIdWalletJournalWithHttpInfo(1, DATASOURCE, null, null, null);
+			ApiResponse<List<CharacterWalletJournalResponse>> apiResponse = WALLET_API.getCharactersCharacterIdWalletJournalWithHttpInfo(1, DATASOURCE, null, null, null);
 			validate(apiResponse.getHeaders());
 		} catch (ApiException ex) {
 			validate(ex.getResponseHeaders());
@@ -262,9 +272,8 @@ public class EsiDeprecationOnlineTest extends TestUtil {
 
 	@Test
 	public void esiJournalGetterCorporation() {
-		WalletApi api = new WalletApi();
 		try {
-			ApiResponse<List<CorporationWalletJournalResponse>> apiResponse = api.getCorporationsCorporationIdWalletsDivisionJournalWithHttpInfo(1, 1, DATASOURCE, null, null, null);
+			ApiResponse<List<CorporationWalletJournalResponse>> apiResponse = WALLET_API.getCorporationsCorporationIdWalletsDivisionJournalWithHttpInfo(1, 1, DATASOURCE, null, null, null);
 			validate(apiResponse.getHeaders());
 		} catch (ApiException ex) {
 			validate(ex.getResponseHeaders());
@@ -273,9 +282,8 @@ public class EsiDeprecationOnlineTest extends TestUtil {
 
 	@Test
 	public void esiLocationsGetterCharacter() {
-		AssetsApi api = new AssetsApi();
 		try {
-			ApiResponse<List<CharacterAssetsLocationsResponse>> apiResponse = api.postCharactersCharacterIdAssetsLocationsWithHttpInfo(1, Collections.singletonList(1L), DATASOURCE, null);
+			ApiResponse<List<CharacterAssetsLocationsResponse>> apiResponse = ASSETS_API.postCharactersCharacterIdAssetsLocationsWithHttpInfo(1, Collections.singletonList(1L), DATASOURCE, null);
 			validate(apiResponse.getHeaders());
 		} catch (ApiException ex) {
 			validate(ex.getResponseHeaders());
@@ -284,9 +292,8 @@ public class EsiDeprecationOnlineTest extends TestUtil {
 
 	@Test
 	public void esiLocationsGetterCorporation() {
-		AssetsApi api = new AssetsApi();
 		try {
-			ApiResponse<List<CorporationAssetsNamesResponse>> apiResponse = api.postCorporationsCorporationIdAssetsNamesWithHttpInfo(1, Collections.singletonList(1L), DATASOURCE, null);
+			ApiResponse<List<CorporationAssetsNamesResponse>> apiResponse = ASSETS_API.postCorporationsCorporationIdAssetsNamesWithHttpInfo(1, Collections.singletonList(1L), DATASOURCE, null);
 			validate(apiResponse.getHeaders());
 		} catch (ApiException ex) {
 			validate(ex.getResponseHeaders());
@@ -295,9 +302,8 @@ public class EsiDeprecationOnlineTest extends TestUtil {
 
 	@Test
 	public void esiMarketOrdersGetterCharacter() {
-		MarketApi api = new MarketApi();
 		try {
-			ApiResponse<List<CharacterOrdersResponse>> apiResponse = api.getCharactersCharacterIdOrdersWithHttpInfo(1, DATASOURCE, null, null);
+			ApiResponse<List<CharacterOrdersResponse>> apiResponse = MARKET_API.getCharactersCharacterIdOrdersWithHttpInfo(1, DATASOURCE, null, null);
 			validate(apiResponse.getHeaders());
 		} catch (ApiException ex) {
 			validate(ex.getResponseHeaders());
@@ -306,9 +312,8 @@ public class EsiDeprecationOnlineTest extends TestUtil {
 
 	@Test
 	public void esiMarketOrdersHistoryGetterCharacter() {
-		MarketApi api = new MarketApi();
 		try {
-			ApiResponse<List<CharacterOrdersHistoryResponse>> apiResponse = api.getCharactersCharacterIdOrdersHistoryWithHttpInfo(1, DATASOURCE, null, null, null);
+			ApiResponse<List<CharacterOrdersHistoryResponse>> apiResponse = MARKET_API.getCharactersCharacterIdOrdersHistoryWithHttpInfo(1, DATASOURCE, null, null, null);
 			validate(apiResponse.getHeaders());
 		} catch (ApiException ex) {
 			validate(ex.getResponseHeaders());
@@ -317,9 +322,8 @@ public class EsiDeprecationOnlineTest extends TestUtil {
 
 	@Test
 	public void esiMarketOrdersGetterCorporation() {
-		MarketApi api = new MarketApi();
 		try {
-			ApiResponse<List<CorporationOrdersResponse>> apiResponse = api.getCorporationsCorporationIdOrdersWithHttpInfo(1, DATASOURCE, null, null, null);
+			ApiResponse<List<CorporationOrdersResponse>> apiResponse = MARKET_API.getCorporationsCorporationIdOrdersWithHttpInfo(1, DATASOURCE, null, null, null);
 			validate(apiResponse.getHeaders());
 		} catch (ApiException ex) {
 			validate(ex.getResponseHeaders());
@@ -328,9 +332,8 @@ public class EsiDeprecationOnlineTest extends TestUtil {
 
 	@Test
 	public void esiMarketOrdersHistoryGetterCorporation() {
-		MarketApi api = new MarketApi();
 		try {
-			ApiResponse<List<CorporationOrdersHistoryResponse>> apiResponse = api.getCorporationsCorporationIdOrdersHistoryWithHttpInfo(1, DATASOURCE, null, null, null);
+			ApiResponse<List<CorporationOrdersHistoryResponse>> apiResponse = MARKET_API.getCorporationsCorporationIdOrdersHistoryWithHttpInfo(1, DATASOURCE, null, null, null);
 			validate(apiResponse.getHeaders());
 		} catch (ApiException ex) {
 			validate(ex.getResponseHeaders());
@@ -339,9 +342,8 @@ public class EsiDeprecationOnlineTest extends TestUtil {
 
 	@Test
 	public void esiNameGetter() {
-		UniverseApi api = new UniverseApi();
 		try {
-			ApiResponse<List<UniverseNamesResponse>> apiResponse = api.postUniverseNamesWithHttpInfo(Collections.singletonList(1), DATASOURCE);
+			ApiResponse<List<UniverseNamesResponse>> apiResponse = UNIVERSE_API.postUniverseNamesWithHttpInfo(Collections.singletonList(1), DATASOURCE);
 			validate(apiResponse.getHeaders());
 		} catch (ApiException ex) {
 			validate(ex.getResponseHeaders());
@@ -350,9 +352,8 @@ public class EsiDeprecationOnlineTest extends TestUtil {
 
 	@Test
 	public void esiOwnerGetterAffiliation() {
-		CharacterApi api = new CharacterApi();
 		try {
-			ApiResponse<List<CharacterAffiliationResponse>> apiResponse = api.postCharactersAffiliationWithHttpInfo(Collections.singletonList(1), DATASOURCE);
+			ApiResponse<List<CharacterAffiliationResponse>> apiResponse = CHARACTER_API.postCharactersAffiliationWithHttpInfo(Collections.singletonList(1), DATASOURCE);
 			validate(apiResponse.getHeaders());
 		} catch (ApiException ex) {
 			validate(ex.getResponseHeaders());
@@ -361,9 +362,8 @@ public class EsiDeprecationOnlineTest extends TestUtil {
 
 	@Test
 	public void esiPlanetaryInteractionGetterPlanet() {
-		PlanetaryInteractionApi api = new PlanetaryInteractionApi();
 		try {
-			ApiResponse<CharacterPlanetResponse> apiResponse = api.getCharactersCharacterIdPlanetsPlanetIdWithHttpInfo(1, 1, DATASOURCE, null, null);
+			ApiResponse<CharacterPlanetResponse> apiResponse = PLANETARY_INTERACTION_API.getCharactersCharacterIdPlanetsPlanetIdWithHttpInfo(1, 1, DATASOURCE, null, null);
 			validate(apiResponse.getHeaders());
 		} catch (ApiException ex) {
 			validate(ex.getResponseHeaders());
@@ -372,9 +372,8 @@ public class EsiDeprecationOnlineTest extends TestUtil {
 
 	@Test
 	public void esiPlanetaryInteractionGetterPlanets() {
-		PlanetaryInteractionApi api = new PlanetaryInteractionApi();
 		try {
-			ApiResponse<List<CharacterPlanetsResponse>> apiResponse = api.getCharactersCharacterIdPlanetsWithHttpInfo(1, DATASOURCE, null, null);
+			ApiResponse<List<CharacterPlanetsResponse>> apiResponse = PLANETARY_INTERACTION_API.getCharactersCharacterIdPlanetsWithHttpInfo(1, DATASOURCE, null, null);
 			validate(apiResponse.getHeaders());
 		} catch (ApiException ex) {
 			validate(ex.getResponseHeaders());
@@ -383,9 +382,8 @@ public class EsiDeprecationOnlineTest extends TestUtil {
 
 	@Test
 	public void esiShipLocationGetter() {
-		LocationApi api = new LocationApi();
 		try {
-			ApiResponse<CharacterLocationResponse> apiResponse = api.getCharactersCharacterIdLocationWithHttpInfo(1, DATASOURCE, null, null);
+			ApiResponse<CharacterLocationResponse> apiResponse = LOCATION_API.getCharactersCharacterIdLocationWithHttpInfo(1, DATASOURCE, null, null);
 			validate(apiResponse.getHeaders());
 		} catch (ApiException ex) {
 			validate(ex.getResponseHeaders());
@@ -394,9 +392,8 @@ public class EsiDeprecationOnlineTest extends TestUtil {
 
 	@Test
 	public void esiShipTypeGetter() {
-		LocationApi api = new LocationApi();
 		try {
-			ApiResponse<CharacterShipResponse> apiResponse = api.getCharactersCharacterIdShipWithHttpInfo(1, DATASOURCE, null, null);
+			ApiResponse<CharacterShipResponse> apiResponse = LOCATION_API.getCharactersCharacterIdShipWithHttpInfo(1, DATASOURCE, null, null);
 			validate(apiResponse.getHeaders());
 		} catch (ApiException ex) {
 			validate(ex.getResponseHeaders());
@@ -405,9 +402,8 @@ public class EsiDeprecationOnlineTest extends TestUtil {
 
 	@Test
 	public void esiStructuresGetter() {
-		UniverseApi api = new UniverseApi();
 		try {
-			ApiResponse<StructureResponse> apiResponse = api.getUniverseStructuresStructureIdWithHttpInfo(1L, DATASOURCE, null, null);
+			ApiResponse<StructureResponse> apiResponse = UNIVERSE_API.getUniverseStructuresStructureIdWithHttpInfo(1L, DATASOURCE, null, null);
 			validate(apiResponse.getHeaders());
 		} catch (ApiException ex) {
 			validate(ex.getResponseHeaders());
@@ -427,9 +423,8 @@ public class EsiDeprecationOnlineTest extends TestUtil {
 
 	@Test
 	public void esiTransactionsGetterCharacter() {
-		WalletApi api = new WalletApi();
 		try {
-			ApiResponse<List<CharacterWalletTransactionsResponse>> apiResponse = api.getCharactersCharacterIdWalletTransactionsWithHttpInfo(1, DATASOURCE, null, null, null);
+			ApiResponse<List<CharacterWalletTransactionsResponse>> apiResponse = WALLET_API.getCharactersCharacterIdWalletTransactionsWithHttpInfo(1, DATASOURCE, null, null, null);
 			validate(apiResponse.getHeaders());
 		} catch (ApiException ex) {
 			validate(ex.getResponseHeaders());
@@ -438,9 +433,8 @@ public class EsiDeprecationOnlineTest extends TestUtil {
 
 	@Test
 	public void esiTransactionsGetterCorporation() {
-		WalletApi api = new WalletApi();
 		try {
-			ApiResponse<List<CorporationWalletTransactionsResponse>> apiResponse = api.getCorporationsCorporationIdWalletsDivisionTransactionsWithHttpInfo(1, 1, DATASOURCE, null, null, null);
+			ApiResponse<List<CorporationWalletTransactionsResponse>> apiResponse = WALLET_API.getCorporationsCorporationIdWalletsDivisionTransactionsWithHttpInfo(1, 1, DATASOURCE, null, null, null);
 			validate(apiResponse.getHeaders());
 		} catch (ApiException ex) {
 			validate(ex.getResponseHeaders());
@@ -449,9 +443,8 @@ public class EsiDeprecationOnlineTest extends TestUtil {
 
 	@Test
 	public void esiUiAutopilot() {
-		UserInterfaceApi api = new UserInterfaceApi();
 		try {
-			ApiResponse<Void> apiResponse = api.postUiAutopilotWaypointWithHttpInfo(false, false, 1L, DATASOURCE, null);
+			ApiResponse<Void> apiResponse = USER_INTERFACE_API.postUiAutopilotWaypointWithHttpInfo(false, false, 1L, DATASOURCE, null);
 			validate(apiResponse.getHeaders());
 		} catch (ApiException ex) {
 			validate(ex.getResponseHeaders());
@@ -460,9 +453,8 @@ public class EsiDeprecationOnlineTest extends TestUtil {
 
 	@Test
 	public void esiUiOpenWindowContract() {
-		UserInterfaceApi api = new UserInterfaceApi();
 		try {
-			ApiResponse<Void> apiResponse = api.postUiOpenwindowContractWithHttpInfo(1, DATASOURCE, null);
+			ApiResponse<Void> apiResponse = USER_INTERFACE_API.postUiOpenwindowContractWithHttpInfo(1, DATASOURCE, null);
 			validate(apiResponse.getHeaders());
 		} catch (ApiException ex) {
 			validate(ex.getResponseHeaders());
@@ -471,9 +463,8 @@ public class EsiDeprecationOnlineTest extends TestUtil {
 
 	@Test
 	public void esiUiOpenWindowInformation() {
-		UserInterfaceApi api = new UserInterfaceApi();
 		try {
-			ApiResponse<Void> apiResponse = api.postUiOpenwindowInformationWithHttpInfo(1, DATASOURCE, null);
+			ApiResponse<Void> apiResponse = USER_INTERFACE_API.postUiOpenwindowInformationWithHttpInfo(1, DATASOURCE, null);
 			validate(apiResponse.getHeaders());
 		} catch (ApiException ex) {
 			validate(ex.getResponseHeaders());
@@ -482,9 +473,8 @@ public class EsiDeprecationOnlineTest extends TestUtil {
 
 	@Test
 	public void esiUiOpenWindowMarketDetails() {
-		UserInterfaceApi api = new UserInterfaceApi();
 		try {
-			ApiResponse<Void> apiResponse = api.postUiOpenwindowMarketdetailsWithHttpInfo(1, DATASOURCE, null);
+			ApiResponse<Void> apiResponse = USER_INTERFACE_API.postUiOpenwindowMarketdetailsWithHttpInfo(1, DATASOURCE, null);
 			validate(apiResponse.getHeaders());
 		} catch (ApiException ex) {
 			validate(ex.getResponseHeaders());
