@@ -5,20 +5,6 @@ on: [push]
 
 jobs:
 
-  release:
-    runs-on: ubuntu-latest
-    steps:
-    - name: Create Release
-      id: create_release
-      uses: actions/create-release@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        tag_name: ${{ github.ref }}
-        release_name: Release ${{ github.ref }}
-        draft: true
-        prerelease: false
-
   build:
     runs-on: ${{ matrix.os }}
     strategy:
@@ -50,13 +36,11 @@ jobs:
         java-version: 14
     - name: Build with Maven
       run: mvn -s settings.xml clean deploy -DskipTests -P jpackager-deploy "-Dftp.user=${{secrets.ftpuser}}" "-Dftp.pass=${{secrets.ftppass}}"
-    - name: Upload Release Asset
-      id: upload-release-asset 
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: Release
+      uses: ncipollo/release-action@v1
       with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
-        asset_path: target/upload/${{ matrix.asset_path }}
-        asset_name: ${{ matrix.asset_name }}
-        asset_content_type: application/zip
+        draft: true
+        allowUpdates: true
+        replacesArtifacts: true
+        artifacts: "target/installer/*.*"
+        token: ${{ secrets.GITHUB_TOKEN }}
