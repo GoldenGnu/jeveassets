@@ -54,7 +54,7 @@ public class LibTest extends TestUtil {
 
 		Set<String> libs = LibraryManager.getLibFiles();
 		StringBuilder missingLibraries = new StringBuilder();
-		missingLibraries.append("---Libs missing---\r\n");
+		missingLibraries.append("\r\n---Libs added---\r\n");
 		StringBuilder removedLibraries = new StringBuilder();
 		removedLibraries.append("---Libs removed---\r\n");
 		boolean missing = false;
