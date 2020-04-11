@@ -25,4 +25,7 @@ jobs:
       with:
         java-version: ${{ matrix.java }}
     - name: Build with Maven
+      env:
+        SSO_CLIENT_ID: ${{ secrets.SSO_CLIENT_ID }}
+        SSO_REFRESH_TOKEN: ${{ secrets.SSO_REFRESH_TOKEN }}
       run: mvn -B package --file pom.xml -P skip-online-price-tests
