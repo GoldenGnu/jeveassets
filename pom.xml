@@ -196,10 +196,10 @@
 							<target>
 								<mkdir dir="${project.build.directory}/upload"/>
 								<copy file="${project.build.directory}/installer/jEveAssets-${project.version}.dmg" tofile="${project.build.directory}/upload/jeveassets.dmg" failonerror="false" />
-								<copy file="${project.build.directory}/installer/jEveAssets-${project.version}.exe" tofile="${project.build.directory}/upload/jeveassets.exe" failonerror="false" />
+								<copy file="${project.build.directory}/installer/jEveAssets-${project.version}.msi" tofile="${project.build.directory}/upload/jeveassets.msi" failonerror="false" />
 								<copy file="${project.build.directory}/installer/jeveassets_${project.version}-1_amd64.deb" tofile="${project.build.directory}/upload/jeveassets.deb" failonerror="false" />
 								<move file="${project.build.directory}/installer/jEveAssets-${project.version}.dmg" tofile="${project.build.directory}/installer/jeveassets-macos-${project.version}.dmg" failonerror="false" />
-								<move file="${project.build.directory}/installer/jEveAssets-${project.version}.exe" tofile="${project.build.directory}/installer/jeveassets-windows-${project.version}.exe" failonerror="false" />
+								<move file="${project.build.directory}/installer/jEveAssets-${project.version}.msi" tofile="${project.build.directory}/installer/jeveassets-windows-${project.version}.msi" failonerror="false" />
 								<move file="${project.build.directory}/installer/jeveassets_${project.version}-1_amd64.deb" tofile="${project.build.directory}/installer/jeveassets-linux-${project.version}.deb" failonerror="false" />
 							</target>
 						</configuration>
