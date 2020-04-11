@@ -191,16 +191,16 @@
 					</execution>
 					<execution>
 						<id>move-and-rename</id>
-						<phase>deploy</phase>
+						<phase>install</phase>
 						<configuration>
 							<target>
 								<mkdir dir="${project.build.directory}/upload"/>
 								<copy file="${project.build.directory}/installer/jEveAssets-${project.version}.dmg" tofile="${project.build.directory}/upload/jeveassets.dmg" failonerror="false" />
 								<copy file="${project.build.directory}/installer/jEveAssets-${project.version}.exe" tofile="${project.build.directory}/upload/jeveassets.exe" failonerror="false" />
 								<copy file="${project.build.directory}/installer/jeveassets_${project.version}-1_amd64.deb" tofile="${project.build.directory}/upload/jeveassets.deb" failonerror="false" />
-								<move file="${project.build.directory}/installer/jEveAssets-${project.version}.dmg" tofile="${project.build.directory}/installer/jEveAssets-${project.version}-MacOS.dmg" failonerror="false" />
-								<move file="${project.build.directory}/installer/jEveAssets-${project.version}.exe" tofile="${project.build.directory}/installer/jEveAssets-${project.version}-Windows.exe" failonerror="false" />
-								<move file="${project.build.directory}/installer/jeveassets_${project.version}-1_amd64.deb" tofile="${project.build.directory}/installer/jeveassets_${project.version}-Linux.deb" failonerror="false" />
+								<move file="${project.build.directory}/installer/jEveAssets-${project.version}.dmg" tofile="${project.build.directory}/installer/jeveassets-macos-${project.version}.dmg" failonerror="false" />
+								<move file="${project.build.directory}/installer/jEveAssets-${project.version}.exe" tofile="${project.build.directory}/installer/jeveassets-windows-${project.version}.exe" failonerror="false" />
+								<move file="${project.build.directory}/installer/jeveassets_${project.version}-1_amd64.deb" tofile="${project.build.directory}/installer/jeveassets-linux-${project.version}.deb" failonerror="false" />
 							</target>
 						</configuration>
 						<goals>
@@ -335,26 +335,6 @@
 						<argument>${arg2}</argument>
 					</arguments>
 				</configuration>
-			</plugin>
-			<plugin>
-				<artifactId>maven-assembly-plugin</artifactId>
-				<version>2.4</version>
-				<configuration>
-					<finalName>${project.name}-java-${project.version}</finalName>
-					<appendAssemblyId>false</appendAssemblyId>
-					<descriptors>
-						<descriptor>src/main/assembly/assembly.xml</descriptor>
-					</descriptors>
-				</configuration>
-				<executions>
-					<execution>
-						<id>make-assembly</id> <!-- this is used for inheritance merges -->
-						<phase>package</phase> <!-- append to the packaging phase. -->
-						<goals>
-							<goal>single</goal> <!-- goals == mojos -->
-						</goals>
-					</execution>
-				</executions>
 			</plugin>
 			<plugin>
 				<groupId>net.ju-n.maven.plugins</groupId>
@@ -778,7 +758,7 @@
 				</os>
 			</activation>
 			<properties>
-				<project.build.jpackage.appimage.name>mac-osx</project.build.jpackage.appimage.name>
+				<project.build.jpackage.appimage.name>macos</project.build.jpackage.appimage.name>
 				<project.build.jpackage.installer.type>dmg</project.build.jpackage.installer.type>
 				<project.build.jpackage.installer.icon>install-resources/jEveAssets.png</project.build.jpackage.installer.icon>
 				<project.build.jpackage.installer.image>${project.build.directory}/appimage/jEveAssets.app</project.build.jpackage.installer.image>
@@ -800,6 +780,33 @@
 				<project.build.jpackage.installer.options-2>jeveassets</project.build.jpackage.installer.options-2>
 				<project.build.jpackage.installer.options-3>--linux-shortcut</project.build.jpackage.installer.options-3>
 			</properties>
+		</profile>
+		<profile>
+			<id>jpackager-java8</id>
+			<build>
+				<plugins>
+					<plugin>
+						<artifactId>maven-assembly-plugin</artifactId>
+						<version>2.4</version>
+						<configuration>
+							<finalName>${project.name}-java8-${project.version}</finalName>
+							<appendAssemblyId>false</appendAssemblyId>
+							<descriptors>
+								<descriptor>src/main/assembly/assembly.xml</descriptor>
+							</descriptors>
+						</configuration>
+						<executions>
+							<execution>
+								<id>make-assembly</id> <!-- this is used for inheritance merges -->
+								<phase>package</phase> <!-- append to the packaging phase. -->
+								<goals>
+									<goal>single</goal> <!-- goals == mojos -->
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
 		</profile>
 		<profile>
 			<id>jpackager-deploy</id>
@@ -990,23 +997,13 @@
 			</build>
 		</profile>
 		<profile>
-			<id>jdk11</id>
+			<id>jdk8</id>
 			<activation>
 				<activeByDefault>false</activeByDefault>
-				<jdk>11</jdk>
+				<jdk>8</jdk>
 			</activation>
 			<properties>
-				<project.build.sourceVersion>11</project.build.sourceVersion>
-			</properties>
-		</profile>
-		<profile>
-			<id>jdk13</id>
-			<activation>
-				<activeByDefault>false</activeByDefault>
-				<jdk>13</jdk>
-			</activation>
-			<properties>
-				<project.build.sourceVersion>13</project.build.sourceVersion>
+				<project.build.sourceVersion>8</project.build.sourceVersion>
 			</properties>
 		</profile>
 		<profile>

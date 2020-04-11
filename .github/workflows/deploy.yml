@@ -12,15 +12,22 @@ jobs:
     strategy:
       matrix:
         include:
+          #Linux
           - os: ubuntu-latest
-            asset_path: jeveassets.deb
-            asset_name: jEveAssets-Linux.deb
+            java: 14
+            profile: jpackager-deploy
+          #Windows
           - os: windows-latest
-            asset_path: jeveassets.exe
-            asset_name: jEveAssets-Windows.exe
+            java: 14
+            profile: jpackager-deploy
+          #MacOS
           - os: macos-latest
-            asset_path: jeveassets.dmg
-            asset_name: jEveAssets-MacOS.dmg
+            java: 14
+            profile: jpackager-deploy
+          #Java 8
+          - os: ubuntu-latest
+            java: 8
+            profile: jpackager-java8
     name: ${{ matrix.os }} Deploy
     steps:
     - name: Checkout
@@ -35,9 +42,9 @@ jobs:
     - name: JDK
       uses: actions/setup-java@v1
       with:
-        java-version: 14
+        java-version: ${{ matrix.java }}
     - name: Build with Maven
-      run: mvn -s settings.xml clean deploy -DskipTests -P jpackager-deploy "-Dftp.user=${{secrets.ftpuser}}" "-Dftp.pass=${{secrets.ftppass}}"
+      run: mvn -s settings.xml clean deploy -DskipTests -P ${{ matrix.profile }} "-Dftp.user=${{secrets.ftpuser}}" "-Dftp.pass=${{secrets.ftppass}}"
     - name: Release
       uses: ncipollo/release-action@v1
       with:
