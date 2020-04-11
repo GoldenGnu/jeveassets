@@ -1204,6 +1204,6 @@
 		-->
 		<!-- Test deploy location -->
 		<upload.program.file>eve.nikr.net/test/update/program</upload.program.file>
-		<upload.program.zip>eve.nikr.net/test</upload.program.zip>
+		<upload.program.zip>eve.nikr.net/test/download</upload.program.zip>
 	</properties>
 </project>
