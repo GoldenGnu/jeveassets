@@ -34,4 +34,4 @@ jobs:
         DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
       uses: Ilshidur/action-discord@05a28ef
       with:
-        args: ':exclamation: ESI deprecation test failed!'
+        args: ':exclamation: eve-esi library needs to be updated'
