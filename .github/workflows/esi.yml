@@ -34,4 +34,4 @@ jobs:
         DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
       uses: Ilshidur/action-discord@05a28ef
       with:
-        args: '<@GoldenGnu> ESI deprecation test failed!'
+        args: '<@GoldenGnu#8245> ESI deprecation test failed!'
