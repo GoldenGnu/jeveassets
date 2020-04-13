@@ -47,7 +47,7 @@ public class TestI18N extends TestUtil {
 	@Test
 	public void testDataModelPriceDataSettings_en() throws Exception {
 		DataModelPriceDataSettings g = BundleServiceFactory.getBundleService().get(DataModelPriceDataSettings.class);
-		assertNotNull(g.regionDerelik());
+		assertNotNull(g.priceBuyAvg());
 	}
 
 	@Test

@@ -364,7 +364,7 @@ public class PriceDataGetter implements PricingListener {
 
 		@Override
 		public List<Long> getLocations() {
-			return Settings.get().getPriceDataSettings().getLocations();
+			return Collections.singletonList(Settings.get().getPriceDataSettings().getLocationID());
 		}
 
 		@Override
