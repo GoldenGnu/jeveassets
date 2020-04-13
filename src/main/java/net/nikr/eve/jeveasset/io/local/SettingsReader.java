@@ -48,7 +48,6 @@ import net.nikr.eve.jeveasset.data.settings.ExportSettings.LineDelimiter;
 import net.nikr.eve.jeveasset.data.settings.PriceDataSettings;
 import net.nikr.eve.jeveasset.data.settings.PriceDataSettings.PriceMode;
 import net.nikr.eve.jeveasset.data.settings.PriceDataSettings.PriceSource;
-import net.nikr.eve.jeveasset.data.settings.PriceDataSettings.RegionType;
 import net.nikr.eve.jeveasset.data.settings.ProxyData;
 import net.nikr.eve.jeveasset.data.settings.ReprocessSettings;
 import net.nikr.eve.jeveasset.data.settings.RouteResult;
@@ -1003,25 +1002,28 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		}
 
 		//null = default
-		List<Long> locations = null;
+		Long locationID = null;
 		LocationType locationType = null;
 		//Backward compatibility
 		if (haveAttribute(element, "regiontype")) {
-			RegionType regionType = RegionType.valueOf(getString(element, "regiontype"));
-			locations = regionType.getRegions();
+			RegionTypeBackwardCompatibility regionType = RegionTypeBackwardCompatibility.valueOf(getString(element, "regiontype"));
+			locationID = regionType.getRegion();
 			locationType = LocationType.REGION;
 		}
+		//Backward compatibility
 		if (haveAttribute(element, "locations")) {
 			String string = getString(element, "locations");
 			String[] split = string.split(",");
-			locations = new ArrayList<Long>();
-			for (String s : split) {
+			if (split.length == 1) {
 				try {
-					locations.add(Long.valueOf(s));
+					locationID = Long.valueOf(split[0]);
 				} catch (NumberFormatException ex) {
-					LOG.warn("Could not parse locations long: " + s);
+					LOG.warn("Could not parse locations long: " + split[0]);
 				}
 			}
+		}
+		if (haveAttribute(element, "locationid")) {
+			locationID = getLong(element, "locationid");
 		}
 		if (haveAttribute(element, "type")) {
 			locationType = LocationType.valueOf(getString(element, "type"));
@@ -1035,11 +1037,11 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 			}
 		}
 		//Validate
-		if (!priceSource.isValid(locationType, locations)) {
+		if (!priceSource.isValid(locationType, locationID)) {
 			locationType = priceSource.getDefaultLocationType();
-			locations = priceSource.getDefaultLocations();
+			locationID = priceSource.getDefaultLocationID();
 		}	
-		settings.setPriceDataSettings(new PriceDataSettings(locationType, locations, priceSource, priceType, priceReprocessedType));
+		settings.setPriceDataSettings(new PriceDataSettings(locationType, locationID, priceSource, priceType, priceReprocessedType));
 	}
 
 	private void parseContractPriceSettings(final Element element, final Settings settings) throws XmlException {
@@ -1456,5 +1458,50 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 			assetAdded.put(itemID, date);
 		}
 		AssetAddedData.set(assetAdded); //Import from settings.xml
+	}
+
+	public enum RegionTypeBackwardCompatibility {
+		NOT_CONFIGURABLE(null),
+		EMPIRE(null),
+		MARKET_HUBS(null),
+		ALL_AMARR(null),
+		ALL_GALLENTE(null),
+		ALL_MINMATAR(null),
+		ALL_CALDARI(null),
+		ARIDIA(10000054L),
+		DEVOID(10000036L),
+		DOMAIN(10000043L),
+		GENESIS(10000067L),
+		KADOR(10000052L),
+		KOR_AZOR(10000065L),
+		TASH_MURKON(10000020L),
+		THE_BLEAK_LANDS(10000038L),
+		BLACK_RISE(10000069L),
+		LONETREK(10000016L),
+		THE_CITADEL(10000033L),
+		THE_FORGE(10000002L),
+		ESSENCE(10000064L),
+		EVERYSHORE(10000037L),
+		PLACID(10000048L),
+		SINQ_LAISON(10000032L),
+		SOLITUDE(10000044L),
+		VERGE_VENDOR(10000068L),
+		METROPOLIS(10000042L),
+		HEIMATAR(10000030L),
+		MOLDEN_HEATH(10000028L),
+		DERELIK(10000001L),
+		KHANID(10000049L)
+		;
+
+		private final Long region;
+
+		private RegionTypeBackwardCompatibility(Long region) {
+			this.region = region;
+		}
+
+		public Long getRegion() {
+			return region;
+		}
+
 	}
 }
