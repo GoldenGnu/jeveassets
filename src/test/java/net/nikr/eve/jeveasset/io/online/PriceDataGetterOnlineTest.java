@@ -41,7 +41,6 @@ import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.data.sde.StaticData;
 import net.nikr.eve.jeveasset.data.settings.PriceData;
 import net.nikr.eve.jeveasset.data.settings.PriceDataSettings.PriceSource;
-import net.nikr.eve.jeveasset.data.settings.PriceDataSettings.RegionType;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -65,7 +64,7 @@ public class PriceDataGetterOnlineTest extends TestUtil {
 	private static final long MAX_RUNS = 5000;
 
 	private final PriceGetter getter = new PriceGetter();
-	private final Set<Integer> typeIDs = new HashSet<Integer>();
+	private final Set<Integer> typeIDs = new HashSet<>();
 
 	public PriceDataGetterOnlineTest() { }
 
@@ -81,14 +80,14 @@ public class PriceDataGetterOnlineTest extends TestUtil {
 	
 	@Before
 	public void setUp() {
-		Set<Integer> ids = new HashSet<Integer>();
+		Set<Integer> ids = new HashSet<>();
 		for (Item item : StaticData.get().getItems().values()) {
 			if (item.isMarketGroup()) {
 				ids.add(item.getTypeID());
 			}
 		}
 		if (MAX_RUNS > 0) {
-			List<Integer> list = new ArrayList<Integer>(ids);
+			List<Integer> list = new ArrayList<>(ids);
 			Collections.shuffle(list); //Randomize
 			typeIDs.addAll(list.subList(0, (int)Math.min(MAX_RUNS, list.size())));
 		} else {
@@ -111,10 +110,7 @@ public class PriceDataGetterOnlineTest extends TestUtil {
 	}
 
 	private void test(PriceSource source) {
-		if (source.supportsMultipleRegions()) {
-			test(source, LocationType.REGION, RegionType.EMPIRE.getRegions());
-		}
-		if (source.supportsMultipleRegions() || source.supportsSingleRegion()) {
+		if (source.supportsRegion()) {
 			test(source, LocationType.REGION, Collections.singletonList(REGION));
 		}
 		if (source.supportsSystem()) {
@@ -138,10 +134,10 @@ public class PriceDataGetterOnlineTest extends TestUtil {
 		Map<Integer, PriceData> process = getter.process(options, typeIDs, source);
 		long end = System.currentTimeMillis();
 		assertNotNull(process);
-		Set<Integer> failed = new TreeSet<Integer>(typeIDs);
+		Set<Integer> failed = new TreeSet<>(typeIDs);
 		failed.removeAll(process.keySet());
 
-		Set<Integer> empty = new TreeSet<Integer>();
+		Set<Integer> empty = new TreeSet<>();
 		for (Map.Entry<Integer, PriceData> entry : process.entrySet()) {
 			assertNotNull(entry.getValue());
 			if (entry.getValue().isEmpty()) {

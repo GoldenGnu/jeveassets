@@ -30,7 +30,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import javax.swing.ButtonGroup;
 import javax.swing.GroupLayout;
@@ -44,7 +43,6 @@ import net.nikr.eve.jeveasset.data.sde.StaticData;
 import net.nikr.eve.jeveasset.data.settings.PriceDataSettings;
 import net.nikr.eve.jeveasset.data.settings.PriceDataSettings.PriceMode;
 import net.nikr.eve.jeveasset.data.settings.PriceDataSettings.PriceSource;
-import net.nikr.eve.jeveasset.data.settings.PriceDataSettings.RegionType;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.JLabelMultiline;
@@ -67,18 +65,17 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 	private final JRadioButton jRadioStations;
 	private final JCheckBox jBlueprintsTech1;
 	private final JCheckBox jBlueprintsTech2;
-	private final JComboBox<RegionType> jRegions;
+	private final JComboBox<MyLocation> jRegions;
 	private final JComboBox<MyLocation> jSystems;
 	private final JComboBox<MyLocation> jStations;
 	private final JComboBox<PriceMode> jPriceType;
 	private final JComboBox<PriceMode> jPriceReprocessedType;
 	private final JComboBox<PriceSource> jSource;
 
-	private final EventList<RegionType> regions = new EventListManager<RegionType>().create();
 	private final EventList<MyLocation> stationsEventList = new EventListManager<MyLocation>().create();
 	private final List<MyLocation> stations = new ArrayList<MyLocation>();
 	
-	private final AutoCompleteSupport<RegionType> regionsAutoComplete;
+	private final AutoCompleteSupport<MyLocation> regionsAutoComplete;
 	private final AutoCompleteSupport<MyLocation> systemsAutoComplete;
 	private final AutoCompleteSupport<MyLocation> stationsAutoComplete;
 
@@ -89,9 +86,12 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 
 		MyLocation system = null;
 		MyLocation station = null;
+		MyLocation region = null;
 		EventList<MyLocation> systemsEventList = new EventListManager<MyLocation>().create();
+		EventList<MyLocation> regionsEventList = new EventListManager<MyLocation>().create();
 		try {
 			systemsEventList.getReadWriteLock().writeLock().lock();
+			regionsEventList.getReadWriteLock().writeLock().lock();
 			for (MyLocation location : StaticData.get().getLocations()) {
 				if (location.isStation() && !location.isCitadel() && !location.isUserLocation()) { //Ignore citadels and user locations and planets
 					stations.add(location);
@@ -105,9 +105,17 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 						system = location;
 					}
 				}
+				//New-eden Regions - Ignore Wormhole and Abyssal
+				if (location.isRegion() && location.getRegionID() >= 10000000 && location.getRegionID() <= 11000000) {
+					regionsEventList.add(location);
+					if (region == null || region.getLocation().length() < location.getLocation().length()) {
+						region = location;
+					}
+				}
 			}
 		} finally {
 			systemsEventList.getReadWriteLock().writeLock().unlock();
+			regionsEventList.getReadWriteLock().writeLock().unlock();
 		}
 		systemsEventList.getReadWriteLock().readLock().lock();
 		SortedList<MyLocation> systemsSortedList = new SortedList<>(systemsEventList);
@@ -136,9 +144,12 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 
 		JLabel jRegionsLabel = new JLabel(DialoguesSettings.get().includeRegions());
 		jRegions = new JComboBox<>();
+		jRegions.setPrototypeDisplayValue(region);
 		jRegions.getEditor().getEditorComponent().addFocusListener(listener);
-		regionsAutoComplete = AutoCompleteSupport.install(jRegions, EventModels.createSwingThreadProxyList(regions), new RegionTypeFilterator());
+		regionsAutoComplete = AutoCompleteSupport.install(jRegions, EventModels.createSwingThreadProxyList(regionsEventList), new LocationsFilterator());
+		systemsEventList.getReadWriteLock().readLock().lock();
 		regionsAutoComplete.setStrict(true);
+		systemsEventList.getReadWriteLock().readLock().unlock();
 
 		JLabel jSystemsLabel = new JLabel(DialoguesSettings.get().includeSystems());
 		jSystems = new JComboBox<>();
@@ -253,7 +264,7 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 	@Override
 	public boolean save() {
 		Object object;
-		List<Long> locations;
+		Long locationID;
 		LocationType locationType = null;
 		Object location = null;
 		if (jRadioRegions.isSelected()) {
@@ -266,14 +277,11 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 			locationType = LocationType.STATION;
 			location = jStations.getSelectedItem();
 		}
-		if (location instanceof RegionType) {
-			RegionType regionType = (RegionType) location;
-			locations = regionType.getRegions();
-		} else if (location instanceof MyLocation) {
+		if (location instanceof MyLocation) {
 			MyLocation myLocation = (MyLocation) location;
-			locations = Collections.singletonList(myLocation.getLocationID());
+			locationID = myLocation.getLocationID();
 		} else { //XXX - Workaround for invalid locations: https://eve.nikr.net/jeveassets/bugs/#bugid631
-			locations = Settings.get().getPriceDataSettings().getLocations();
+			locationID = Settings.get().getPriceDataSettings().getLocationID();
 			locationType = Settings.get().getPriceDataSettings().getLocationType();
 		}
 
@@ -308,7 +316,7 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 								|| blueprintsTech2 != Settings.get().isBlueprintBasePriceTech2();
 
 		//Update settings
-		Settings.get().setPriceDataSettings(new PriceDataSettings(locationType, locations, source, priceType, priceReprocessedType));
+		Settings.get().setPriceDataSettings(new PriceDataSettings(locationType, locationID, source, priceType, priceReprocessedType));
 		Settings.get().setBlueprintBasePriceTech1(blueprintsTech1);
 		Settings.get().setBlueprintBasePriceTech2(blueprintsTech2);
 
@@ -324,7 +332,7 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 	}
 
 	private void updateSource(final PriceSource source) {
-		final List<Long> locations = Settings.get().getPriceDataSettings().getLocations();
+		Long locationID = Settings.get().getPriceDataSettings().getLocationID();
 		final LocationType locationType = Settings.get().getPriceDataSettings().getLocationType();
 
 		//Price Types
@@ -351,39 +359,22 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 		jRadioRegions.setSelected(true);
 
 	//REGIONS
-		final List<RegionType> regionTypes;
-		if (source.supportsMultipleRegions()) {
-			regionTypes = RegionType.getMultipleLocations();
-		} else { //Single Region
-			regionTypes = RegionType.getSingleLocations();
-		}
-		if (source.supportsMultipleRegions() || source.supportsSingleRegion()) {
-			try {
-				regions.getReadWriteLock().writeLock().lock();
-				regions.clear();
-				regions.addAll(regionTypes);
-			} finally {
-				regions.getReadWriteLock().writeLock().unlock();
-			}
+		if (source.supportsRegion()) {
 			regionsAutoComplete.removeFirstItem();
 			jRegions.setEnabled(true);
 			jRadioRegions.setEnabled(true);
 		} else {
 			jRegions.setEnabled(false);
 			jRadioRegions.setEnabled(false);
-			regionsAutoComplete.setFirstItem(RegionType.NOT_CONFIGURABLE);
+			regionsAutoComplete.setFirstItem(new MyLocation(-1, DialoguesSettings.get().notConfigurable(), -1, "", -1, "", ""));
 		}
-		jRegions.setSelectedIndex(0);
 		if (locationType == LocationType.REGION && jRadioRegions.isEnabled()) {
-			if (!locations.isEmpty()) {
-				for (RegionType regionType : regionTypes) {
-					if (regionType.getRegions().equals(locations)) {
-						jRegions.setSelectedItem(regionType);
-						break;
-					}
-				}
+			if (locationID != null) {
+				jRegions.setSelectedItem(StaticData.get().getLocation(locationID));
 			}
 			jRadioRegions.setSelected(true);
+		} else {
+			jRegions.setSelectedIndex(0);
 		}
 	//SYSTEM
 		if (source.supportsSystem()) {
@@ -396,8 +387,8 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 			systemsAutoComplete.setFirstItem(new MyLocation(-1, DialoguesSettings.get().notConfigurable(), -1, "", -1, "", ""));
 		}
 		if (locationType == LocationType.SYSTEM && jRadioSystems.isEnabled()) {
-			if (!locations.isEmpty()) {
-				jSystems.setSelectedItem(StaticData.get().getLocation(locations.get(0)));
+			if (locationID != null) {
+				jSystems.setSelectedItem(StaticData.get().getLocation(locationID));
 			}
 			jRadioSystems.setSelected(true);
 		} else {
@@ -432,8 +423,8 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 			stationsAutoComplete.setFirstItem(new MyLocation(-1, DialoguesSettings.get().notConfigurable(), -1, "", -1, "", ""));
 		}
 		if (locationType == LocationType.STATION && jRadioStations.isEnabled()) {
-			if (!locations.isEmpty()) {
-				jStations.setSelectedItem(StaticData.get().getLocation(locations.get(0)));
+			if (locationID != null) {
+				jStations.setSelectedItem(StaticData.get().getLocation(locationID));
 			}
 			jRadioStations.setSelected(true);
 		} else {
@@ -481,12 +472,6 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 		@Override
 		public void getFilterStrings(final List<String> baseList, final MyLocation element) {
 			baseList.add(element.getLocation());
-		}
-	}
-	static class RegionTypeFilterator implements TextFilterator<RegionType> {
-		@Override
-		public void getFilterStrings(final List<String> baseList, final RegionType element) {
-			baseList.add(element.toString());
 		}
 	}
 }

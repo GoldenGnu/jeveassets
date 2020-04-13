@@ -514,14 +514,7 @@ public class SettingsWriter extends AbstractXmlWriter {
 		setAttribute(parentNode, "defaultprice", priceDataSettings.getPriceType());
 		setAttribute(parentNode, "defaultreprocessedprice", priceDataSettings.getPriceReprocessedType());
 		setAttribute(parentNode, "pricesource", priceDataSettings.getSource());
-		StringBuilder builder = new StringBuilder();
-		for (long location : priceDataSettings.getLocations()) {
-			if (builder.length() > 0) {
-				builder.append(",");
-			}
-			builder.append(location);
-		}
-		setAttribute(parentNode, "locations", builder.toString());
+		setAttribute(parentNode, "locationid", priceDataSettings.getLocationID());
 		setAttribute(parentNode, "type", priceDataSettings.getLocationType());
 		xmldoc.getDocumentElement().appendChild(parentNode);
 	}
