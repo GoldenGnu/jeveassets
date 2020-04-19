@@ -101,8 +101,8 @@ public class EsiDeprecationOnlineTest extends TestUtil {
 	public EsiDeprecationOnlineTest() { }
 
 	public static ApiClient setupAuth() {
-        String clientId = System.getenv().get("SSO_CLIENT_ID");
-        String refreshToken = System.getenv().get("SSO_REFRESH_TOKEN");
+		String clientId = System.getenv().get("SSO_CLIENT_ID");
+		String refreshToken = System.getenv().get("SSO_REFRESH_TOKEN");
 		if (clientId != null && refreshToken != null) {
 			return new ApiClientBuilder().clientID(clientId).refreshToken(refreshToken).build();
 		} else {
