@@ -19,24 +19,24 @@ ________________________________________________________________________________
 _CONTRIBUTORS___________________________________________________________________
 
 Developers:
-  Niklas Kyster Rasmussen (Golden Gnu*)
+  Niklas Kyster Rasmussen (Golden Gnu)
 
 Testers:
-  Johann Hemphill
+  Tomasz (kitsibas) Wiktorski
 
 Retired Developers:
-  Flaming Candle*
+  Flaming Candle
   Jochen Bedersdorfer
-  TryfanMan*
+  TryfanMan
   Jan
-  Ima Sohmbadi*
+  Ima Sohmbadi
   Saulvin
+  AnrDaemon
 
 Retired Testers:
-  Varo Jan*
-  Scrapyard Bob*
-
-* Eve Online in-game name
+  Varo Jan
+  Scrapyard Bob
+  Johann Hemphill
 
 ________________________________________________________________________________
 _SPECIAL_THANKS_________________________________________________________________
@@ -76,10 +76,18 @@ Link:
 ________________________________________________________________________________
 _EVEMARKETER____________________________________________________________________
 
-jEveAssets evemarketer.com API to get price data
+jEveAssets use evemarketer.com API to get price data
 
 Link:
   https://evemarketer.com/
+
+________________________________________________________________________________
+_CONTRACTS_APPRAISAL____________________________________________________________
+
+jEveAssets use Contracts Appraisal API to get contract price data
+
+Link:
+  https://app.swaggerhub.com/apis-docs/rihanshazih/contracts-appraisal/
 
 ________________________________________________________________________________
 _STOP.HAMMERTI.ME.UK____________________________________________________________
@@ -258,17 +266,6 @@ Link:
 
 License:
   GNU Lesser General Public Licence (http://www.gnu.org/licenses/lgpl.html)
-
-________________________________________________________________________________
-_JACKSON________________________________________________________________________
-
-jEveAssets use Jackson to parse json into java objects
-
-Link:
-  https://github.com/FasterXML/jackson-databind/
-
-License:
-  Apache License 2.0 (http://www.apache.org/licenses/LICENSE-2.0)
 
 ________________________________________________________________________________
 _COPYRIGHT______________________________________________________________________

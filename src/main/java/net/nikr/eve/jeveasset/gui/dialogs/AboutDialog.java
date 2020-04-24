@@ -29,6 +29,7 @@ import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JEditorPane;
 import javax.swing.JLabel;
+import javax.swing.JScrollPane;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
@@ -70,21 +71,11 @@ public class AboutDialog extends JDialogCentered {
 			}
 			packageManager.append("<br>");
 		}
+
 		JEditorPane jInfo = createEditorPane(
 				  "<b>Version</b><br>"
 				+ "&nbsp;" + Program.PROGRAM_VERSION + " (" + program.getProgramDataVersion() + ")<br>"
 				+ "<br>"
-				+ "<b>Contributors</b><br>"
-				+ "&nbsp;Niklas Kyster Rasmussen<br>"
-				+ "&nbsp;Flaming Candle<br>"
-				+ "&nbsp;Jochen Bedersdorfer<br>"
-				+ "&nbsp;TryfanMan<br>"
-				+ "&nbsp;Jan<br>"
-				+ "&nbsp;Ima Sohmbadi<br>"
-				+ "&nbsp;Saulvin<br>"
-				+ "&nbsp;AnrDaemon<br>"
-				+ "<br>"
-				+ packageManager.toString()
 				+ "<b>License</b><br>"
 				+ "&nbsp;<a href=\"http://www.gnu.org/licenses/old-licenses/gpl-2.0.html\">GNU General Public License 2.0</a><br>"
 				+ "<br>"
@@ -94,11 +85,31 @@ public class AboutDialog extends JDialogCentered {
 				+ "&nbsp;<a href=\"https://forums.eveonline.com/t/13255\">Forum Thread</a> (feedback)<br>"
 				+ "&nbsp;<a href=\"https://jeveassets.nikr.net\">Wiki</a> (user documentation)<br>"
 				+ "<br>"
+				+ "<b>Developers</b><br>"
+				+ "&nbsp;Niklas Kyster Rasmussen (Golden Gnu)<br>"
 				+ "<br>"
-				);
-
-		JEditorPane jExternal = createEditorPane(
-				  "<b>Content</b><br>"
+				+ "<b>Retired Developers</b><br>"
+				+ "&nbsp;Flaming Candle<br>"
+				+ "&nbsp;Jochen Bedersdorfer<br>"
+				+ "&nbsp;TryfanMan<br>"
+				+ "&nbsp;Jan<br>"
+				+ "&nbsp;Ima Sohmbadi<br>"
+				+ "&nbsp;Saulvin<br>"
+				+ "&nbsp;AnrDaemon<br>"
+				+ "<br>"
+				+ "<b>Testers</b><br>"
+				+ "&nbsp;Tomasz (kitsibas) Wiktorski<br>"
+				+ "<br>"
+				+ "<b>Retired Testers</b><br>"
+				+ "&nbsp;Varo Jan<br>"
+				+ "&nbsp;Scrapyard Bob<br>"
+				+ "&nbsp;Johann Hemphill<br>"
+				+ "<br>"
+				+ packageManager.toString()
+				+ "<b>Special Thanks</b><br>"
+				+ "&nbsp;jEveAssets is heavily based on the user interface in EVE Asset Manager by William J. Rogers<br>"
+				+ "<br>"
+				+ "<b>Content</b><br>"
 				+ "&nbsp;<a href=\"http://www.eveonline.com/\">EVE-Online</a> (api and toolkit)<br> "
 				//+ "&nbsp;<a href=\"http://eve-marketdata.com/\">EVE-Marketdata.com</a> (price data api)<br>"
 				+ "&nbsp;<a href=\"https://market.fuzzwork.co.uk/api/\">fuzzwork.co.uk</a> (price data api)<br>"
@@ -122,12 +133,9 @@ public class AboutDialog extends JDialogCentered {
 				+ "&nbsp;<a href=\"https://github.com/GoldenGnu/routing\">Routing</a> (routing tool)<br>"
 				+ "&nbsp;<a href=\"https://github.com/GoldenGnu/graph\">Graph</a> (routing tool)<br>"
 				+ "&nbsp;<a href=\"https://github.com/GoldenGnu/translations\">Translations</a> (i18n)<br>"
-				//+ "<br>"
 				);
-
-		JEditorPane jThanks =  createEditorPane(
-				"<b>Special Thanks</b><br>"
-				+ "&nbsp;jEveAssets is heavily based on the user interface in <a href=\"http://wiki.heavyduck.com/EveAssetManager\">EVE Asset Manager</a>");
+		
+		JScrollPane jInfoScroll = new JScrollPane(jInfo, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 
 		jClose = new JButton(DialoguesAbout.get().close());
 		jClose.setActionCommand(AboutAction.CLOSE.name());
@@ -142,12 +150,7 @@ public class AboutDialog extends JDialogCentered {
 						.addComponent(jClose, Program.getButtonsWidth(), Program.getButtonsWidth(), Program.getButtonsWidth())
 					)
 				)
-				.addGroup(layout.createSequentialGroup()
-					.addComponent(jInfo)
-					.addGap(10)
-					.addComponent(jExternal)
-				)
-				.addComponent(jThanks)
+				.addComponent(jInfoScroll)
 		);
 		layout.setVerticalGroup(
 			layout.createSequentialGroup()
@@ -155,11 +158,7 @@ public class AboutDialog extends JDialogCentered {
 					.addComponent(jIcon)
 					.addComponent(jProgram)
 				)
-				.addGroup(layout.createParallelGroup()
-					.addComponent(jInfo)
-					.addComponent(jExternal)
-				)
-				.addComponent(jThanks)
+				.addComponent(jInfoScroll, 300, 300, 300)
 				.addComponent(jClose, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 		);
 	}
@@ -170,17 +169,17 @@ public class AboutDialog extends JDialogCentered {
 
 	private JEditorPane createEditorPane(final boolean addBorder, final String text) {
 		JEditorPane jEditorPane = new JEditorPane("text/html",
-				"<html><div style=\"font-family: Arial, Helvetica, sans-serif; font-size: 11pt;\">"
+				"<html><div style=\"font-family: Arial, Helvetica, sans-serif; font-size: 11pt; white-space: nowrap;\">"
 				+ text
 				+ "</div>"
 				);
 		jEditorPane.setEditable(false);
+		jEditorPane.setFocusable(false);
 		jEditorPane.setOpaque(false);
+		jEditorPane.setFont(jPanel.getFont());
 		jEditorPane.addHyperlinkListener(DesktopUtil.getHyperlinkListener(getDialog()));
 		if (addBorder) {
-			jEditorPane.setBorder(BorderFactory.createCompoundBorder(
-					BorderFactory.createLineBorder(jPanel.getBackground().darker(), 1),
-					BorderFactory.createEmptyBorder(10, 10, 10, 10)));
+			jEditorPane.setBorder(BorderFactory.createEmptyBorder(11, 11, 11, 11));
 		}
 		return jEditorPane;
 	}
