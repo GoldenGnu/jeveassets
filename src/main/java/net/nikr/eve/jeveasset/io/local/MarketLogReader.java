@@ -26,13 +26,10 @@ import java.io.IOException;
 import java.io.Reader;
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import javax.swing.filechooser.FileSystemView;
 import net.nikr.eve.jeveasset.data.api.raw.RawPublicMarketOrder;
 import net.nikr.eve.jeveasset.gui.shared.Formater.DateFormatThreadSafe;
@@ -82,25 +79,25 @@ public class MarketLogReader {
 		LOG.info("Reading: " + filename);
 		String[] values = filename.split("-");
 		if (values.length < 3) {
+			LOG.warn("Failed to read: " + filename);
 			return null;
 		}
 		Date date;
 		try {
 			date = FILE_DATE_FORMAT.parse(values[values.length-1]);
-			LOG.info("File created @ " +  DATE_FORMAT.format(date));
 		} catch (ParseException ex) {
-			LOG.error(ex.getMessage(), ex);
+			LOG.error("Failed to read: " + filename, ex);
 			return null;
 		}
 		
 		List<MarketLog> marketLogs = parse(logFile);
 		if (marketLogs == null || marketLogs.isEmpty()) {
-			LOG.warn("No orders found in: " + filename);
+			LOG.warn("Failed to read: " + filename);
 			return null;
 		}
 		Integer typeID = marketLogs.get(0).getTypeID();
 		if (typeID == null) {
-			LOG.warn("typeID is null: " + filename);
+			LOG.warn("Failed to read: " + filename);
 			return null; 
 		}
 		List<RawPublicMarketOrder> marketOrders = new ArrayList<>();
@@ -110,7 +107,7 @@ public class MarketLogReader {
 		Map<Integer, List<RawPublicMarketOrder>> orders = new HashMap<>();
 		orders.put(typeID, marketOrders);
 		input.addOrders(orders, date);
-		LOG.info("File data added: " + filename);
+		LOG.info("Read: " + filename);
 		return marketLogs;
 	}
 
@@ -137,15 +134,15 @@ public class MarketLogReader {
 			}
 			return marketLogs;
 		} catch (IOException | IllegalArgumentException ex) {
-			retries++;
 			if (retries < RETRIES) {
+				retries++;
 				try {
 					Thread.sleep(retries * 500);
 				} catch (InterruptedException ex1) {
 					//Keep calm and carry on
 				}
 				LOG.info("Retrying: " + retries + " of " + RETRIES + " (" + retries * 500 + ")");
-				parse(file, retries);
+				return parse(file, retries);
 			} else {
 				LOG.error(ex.getMessage(), ex);
 				return null;
@@ -166,14 +163,6 @@ public class MarketLogReader {
 				}
 			}
 		}
-		retries++;
-		LOG.info("Retrying in " + 500 * retries +  "ms (" + retries + " of " + RETRIES + ")");
-		try {
-			Thread.sleep(500 * retries);
-		} catch (InterruptedException ex1) {
-			//No problem, just continue
-		}
-		return parse(file, retries);
 	}
 
 	private static CellProcessor[] getProcessors() {
