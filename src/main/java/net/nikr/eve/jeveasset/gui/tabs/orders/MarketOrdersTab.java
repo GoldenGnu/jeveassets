@@ -752,6 +752,7 @@ public class MarketOrdersTab extends JMainTabPrimary {
 		private MarketOrderRange range;
 
 		public FileListener(Program program, MarketOrderRange range) {
+			super("FileListener");
 			this.program = program;
 			this.buy = true;
 			this.range = range;
@@ -806,18 +807,21 @@ public class MarketOrdersTab extends JMainTabPrimary {
 						Object context = event.context();
 						if (context instanceof Path) {
 							Path path = (Path) context;
-							LOG.info("update");
-							update(dir.resolve(path).toFile());
+							File file = dir.resolve(path).toFile();
+							LOG.info("Starting marketlog file processing for " + file.getName());
+							long start = System.currentTimeMillis();
+							update(file);
+							LOG.info("Marketlog file processing done in " + Formater.milliseconds(System.currentTimeMillis() - start) + " for " + file.getName());
 						}
 					}
 					key.reset();
 				} catch (InterruptedException ex) {
-					LOG.info("Interrupted");
+					LOG.info("FileListener Interrupted");
 				}
 			}
 		}
 
-		private void update(File file) {
+		private void update(final File file) {
 			OutbidProcesserOutput output = new OutbidProcesserOutput();
 			boolean updated = update(file, output);
 			if (!updated) {
@@ -827,6 +831,8 @@ public class MarketOrdersTab extends JMainTabPrimary {
 			Thread thread = new Thread(new Runnable() {
 				@Override
 				public void run() {
+					LOG.info("Starting marketlog update thread for " + file.getName());
+					long start = System.currentTimeMillis();
 					LOG.info("Setting profile data");
 					program.getProfileData().setMarketOrdersUpdates(output.getUpdates());
 					LOG.info("Setting setting");
@@ -848,18 +854,17 @@ public class MarketOrdersTab extends JMainTabPrimary {
 						LOG.info("Saving Profile");
 						program.saveProfile();
 					}
-					LOG.info("Thread done");
+					LOG.info("Marketlog update thread done in "  + Formater.milliseconds(System.currentTimeMillis() - start) + " for " + file.getName());
 				}
-			});
+			}, file.getName());
 			thread.start();
-			LOG.info("Done");
 		}
 
-		private boolean update(File file, OutbidProcesserOutput output) {
+		private boolean update(final File file, final OutbidProcesserOutput output) {
 			OutbidProcesserInput input = new OutbidProcesserInput(program.getProfileData(), Settings.get().getOutbidOrderRange());
 			List<MarketLog> marketLogs = MarketLogReader.read(file, input, output);
 			if (marketLogs == null || marketLogs.isEmpty()) {
-				LOG.info("Orders empty");
+				LOG.info("No marketslogs found");
 				return false;
 			}
 			//Copy to clipart
@@ -905,10 +910,8 @@ public class MarketOrdersTab extends JMainTabPrimary {
 			if (price != null) {
 				LOG.info("Found region price");
 				if (isBuy()) {
-					LOG.info("adding 1");
 					price = significantIncrement(price);
 				} else { //Sell
-					LOG.info("removing 1");
 					price = significantDecrement(price);
 				}
 				String copy = Formater.copyFormat(price);
@@ -917,7 +920,7 @@ public class MarketOrdersTab extends JMainTabPrimary {
 				setClipboardData(copy);
 				return true;
 			}
-			LOG.info("Nothing found....");
+			LOG.info("No price found....");
 			setClipboardData(TabsOrders.get().none());
 			return false;
 		}
