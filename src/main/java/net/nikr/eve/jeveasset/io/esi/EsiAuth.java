@@ -24,6 +24,7 @@ import java.awt.Window;
 import java.io.UnsupportedEncodingException;
 import java.util.Base64;
 import java.util.Set;
+import java.util.UUID;
 import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
 import net.nikr.eve.jeveasset.io.shared.DesktopUtil;
 import net.troja.eve.esi.auth.OAuth;
@@ -60,7 +61,8 @@ public class EsiAuth {
 			oAuth = new OAuth(); //We always need a new oAuth to start a new flow
 			this.callbackURL = callbackURL;
 			oAuth.setClientId(callbackURL.getA());
-			String authorizationUri = oAuth.getAuthorizationUri(callbackURL.getUrl(), scopes, "jeveassets");
+			String state = UUID.randomUUID().toString();
+			String authorizationUri = oAuth.getAuthorizationUri(callbackURL.getUrl(), scopes, state);
 			return DesktopUtil.browse(authorizationUri, window);
 		} catch (Exception ex) {
 			LOG.error(ex.getMessage(), ex);
