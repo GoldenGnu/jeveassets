@@ -19,25 +19,24 @@ ________________________________________________________________________________
 _CONTRIBUTORS___________________________________________________________________
 
 Developers:
-  Niklas Kyster Rasmussen (Golden Gnu*)
+  Niklas Kyster Rasmussen (Golden Gnu)
 
 Testers:
-  Johann Hemphill
+  Tomasz (kitsibas) Wiktorski
 
 Retired Developers:
-  Flaming Candle*
+  Flaming Candle
   Jochen Bedersdorfer
-  TryfanMan*
+  TryfanMan
   Jan
-  Ima Sohmbadi*
+  Ima Sohmbadi
   Saulvin
   AnrDaemon
 
 Retired Testers:
-  Varo Jan*
-  Scrapyard Bob*
-
-* Eve Online in-game name
+  Varo Jan
+  Scrapyard Bob
+  Johann Hemphill
 
 ________________________________________________________________________________
 _SPECIAL_THANKS_________________________________________________________________
