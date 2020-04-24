@@ -157,7 +157,7 @@ public class Program implements ActionListener {
 	private Timer timer;
 	private Updatable updatable;
 
-	private final List<JMainTab> jMainTabs = new ArrayList<JMainTab>();
+	private final List<JMainTab> jMainTabs = new ArrayList<>();
 
 	//Data
 	private final ProfileData profileData;
@@ -343,7 +343,7 @@ public class Program implements ActionListener {
 	}
 
 	private int calcButtonsHeight() {
-		int comboBox = new JComboBox<Object>().getPreferredSize().height;
+		int comboBox = new JComboBox<>().getPreferredSize().height;
 		int textField = new JTextField().getPreferredSize().height;
 		int button = new JButton().getPreferredSize().height;
 		int buttonsHeight = 0;

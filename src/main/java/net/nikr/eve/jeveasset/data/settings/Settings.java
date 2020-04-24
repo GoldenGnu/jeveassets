@@ -612,7 +612,6 @@ public class Settings {
 	}
 
 	public void setMarketOrdersOutbid(Map<Long, Outbid> outbids) {
-		marketOrdersOutbid.clear();
 		marketOrdersOutbid.putAll(outbids);
 	}
 
