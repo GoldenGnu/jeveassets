@@ -150,6 +150,9 @@ public abstract class AbstractEsiGetter extends AbstractGetter<EsiOwner> {
 		checkCancelled();
 		try {
 			ApiResponse<R> apiResponse = updater.update();
+			if (apiResponse == null) {
+				return null;
+			}
 			handleHeaders(apiResponse);
 			logInfo(updater.getStatus(), "Updated");
 			if (owner != null) {
@@ -187,12 +190,12 @@ public abstract class AbstractEsiGetter extends AbstractGetter<EsiOwner> {
 		}
 	}
 
-	private void handleHeaders(ApiException apiException) throws ApiException {
+	protected void handleHeaders(ApiException apiException) {
 		setExpires(apiException.getResponseHeaders());
 		setErrorLimit(apiException.getResponseHeaders()); //Always save error limit header
 	}
 
-	private void handleHeaders(ApiResponse<?> apiResponse) throws ApiException {
+	private void handleHeaders(ApiResponse<?> apiResponse) {
 		setExpires(apiResponse.getHeaders());
 		setErrorLimit(apiResponse.getHeaders()); //Always save error limit header
 	}
@@ -304,10 +307,10 @@ public abstract class AbstractEsiGetter extends AbstractGetter<EsiOwner> {
 	}
 
 	protected final <K, V> Map<K, V> updateListSlow(Collection<K> list, boolean trackProgress, int maxRetries, ListHandlerSlow<K, V> handler) throws ApiException {
-		Map<K, V> values = new HashMap<K, V>();
+		Map<K, V> values = new HashMap<>();
 		int count = 1;
 		for (K k : list) {
-			ListUpdater<K, V> listUpdater = new ListUpdater<K, V>(handler, k, count + " of " + list.size(), maxRetries);
+			ListUpdater<K, V> listUpdater = new ListUpdater<>(handler, k, count + " of " + list.size(), maxRetries);
 			try {
 				if (trackProgress) {
 					setProgress(list.size(), count, 0, 100);
@@ -329,11 +332,11 @@ public abstract class AbstractEsiGetter extends AbstractGetter<EsiOwner> {
 	}
 
 	protected final <K, V> Map<K, V> updateList(Collection<K> list, int maxRetries, ListHandler<K, V> handler) throws ApiException {
-		Map<K, V> values = new HashMap<K, V>();
-		List<ListUpdater<K, V>> updaters = new ArrayList<ListUpdater<K, V>>();
+		Map<K, V> values = new HashMap<>();
+		List<ListUpdater<K, V>> updaters = new ArrayList<>();
 		int count = 1;
 		for (K k : list) {
-			updaters.add(new ListUpdater<K, V>(handler, k, count + " of " + list.size(), maxRetries));
+			updaters.add(new ListUpdater<>(handler, k, count + " of " + list.size(), maxRetries));
 			count++;
 		}
 		LOG.info("Starting " + updaters.size() + " list threads");
@@ -380,7 +383,7 @@ public abstract class AbstractEsiGetter extends AbstractGetter<EsiOwner> {
 		public Map<K, V> go() throws ApiException {
 			V v = updateApi(this);
 			if (v != null) {
-				Map<K, V> map = new HashMap<K, V>();
+				Map<K, V> map = new HashMap<>();
 				map.put(k, v);
 				return map;
 			} else {
@@ -404,15 +407,48 @@ public abstract class AbstractEsiGetter extends AbstractGetter<EsiOwner> {
 		}
 	}
 
+	protected final <K, V> List<V> updatePagedList(Collection<K> list, PagedListHandler<K, V> handler) throws ApiException {
+		List<Callable<List<V>>> updaters = new ArrayList<>();
+		for (K k : list) {
+			updaters.add(new Callable<List<V>>() {
+				@Override
+				public List<V> call() throws Exception {
+					return handler.get(k);
+				}
+			}
+			);
+		}
+		LOG.info("Starting " + updaters.size() + " list threads");
+		List<V> values = new ArrayList<>();
+		try {
+			List<Future<List<V>>> futures = startSubThreads(updaters);
+			for (Future<List<V>> future : futures) {
+				List<V> returnValue = future.get();
+				if (returnValue != null) {
+					values.addAll(returnValue);
+				}
+			}
+		} catch (InterruptedException ex) {
+			throw new RuntimeException(ex);
+		} catch (ExecutionException ex) {
+			ThreadWoker.throwExecutionException(ApiException.class, ex);
+		}
+		return values;
+	}
+
+	protected abstract class PagedListHandler<K, V> {
+		protected abstract List<V> get(K k) throws ApiException;
+	}
+
 	protected final <K> List<K> updateIDs(Set<Long> existing, int maxRetries, IDsHandler<K> handler) throws ApiException {
-		List<K> list = new ArrayList<K>();
+		List<K> list = new ArrayList<>();
 		Long fromID = null;
 		boolean run = true;
 		int count = 0;
 		while (run) {
 			count++;
 			List<K> result;
-			result = updateApi(new IdUpdater<K>(handler, fromID, count + " of ?", maxRetries));
+			result = updateApi(new IdUpdater<>(handler, fromID, count + " of ?", maxRetries));
 			if (result == null || result.isEmpty()) { //Nothing returned: we're done
 				break; //Stop updating
 			}
@@ -471,8 +507,8 @@ public abstract class AbstractEsiGetter extends AbstractGetter<EsiOwner> {
 	}
 
 	protected <K> List<K> updatePages(int maxRetries, EsiPagesHandler<K> handler) throws ApiException {
-		List<K> values = new ArrayList<K>();
-		EsiPageUpdater<K> pageUpdater = new EsiPageUpdater<K>(handler, 1, "1 of ?", maxRetries);
+		List<K> values = new ArrayList<>();
+		EsiPageUpdater<K> pageUpdater = new EsiPageUpdater<>(handler, 1, "1 of ?", maxRetries);
 		List<K> returnValue = updateApi(pageUpdater);
 		if (returnValue != null) {
 			values.addAll(returnValue);
@@ -480,9 +516,9 @@ public abstract class AbstractEsiGetter extends AbstractGetter<EsiOwner> {
 		Integer pages = getHeaderInteger(pageUpdater.getResponse().getHeaders(), "x-pages"); //Get pages header
 		int count = 2;
 		if (pages != null && pages > 1) { //More than one page
-			List<EsiPageUpdater<K>> updaters = new ArrayList<EsiPageUpdater<K>>();
+			List<EsiPageUpdater<K>> updaters = new ArrayList<>();
 			for (int i = 2; i <= pages; i++) { //Get the remaining pages (we already got page 1 so we start at page 2
-				updaters.add(new EsiPageUpdater<K>(handler, i, count + " of " + pages, maxRetries));
+				updaters.add(new EsiPageUpdater<>(handler, i, count + " of " + pages, maxRetries));
 				count++;
 			}
 			LOG.info("Starting " + updaters.size() + " pages threads");

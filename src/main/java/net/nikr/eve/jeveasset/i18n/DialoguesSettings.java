@@ -43,7 +43,16 @@ public abstract class DialoguesSettings extends Bundle {
 	public abstract String enterFilter();
 	public abstract String highlightSelectedRow();
 	public abstract String strongColors();
+	public abstract String focusEveOnline();
+	public abstract String focusEveOnlineLinuxCmd();
+	public abstract String focusEveOnlineLinuxHelp();
 
+	// used in ShowToolSettingsPanel
+	public abstract String show();
+	public abstract String saveTools();
+	public abstract String selectTools();
+	public abstract String toolsOrderHelp();
+	
 	// used in AssetsToolSettingsPanel
 	public abstract String assets();
 	public abstract String showSellOrReprocessColours();

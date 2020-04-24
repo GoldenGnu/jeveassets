@@ -68,13 +68,13 @@ public final class LocationsReader extends AbstractXmlReader<Boolean> {
 	}
 
 	private MyLocation parseLocation(final Node node) throws XmlException {
-		long stationID = AttributeGetters.getLong(node, "si");
-		String station = AttributeGetters.getString(node, "s");
-		long systemID = AttributeGetters.getLong(node, "syi");
-		String system = AttributeGetters.getString(node, "sy");
-		long regionID = AttributeGetters.getLong(node, "ri");
-		String region = AttributeGetters.getString(node, "r");
-		String security = AttributeGetters.getString(node, "se");
+		long stationID = getLong(node, "si");
+		String station = getString(node, "s");
+		long systemID = getLong(node, "syi");
+		String system = getString(node, "sy");
+		long regionID = getLong(node, "ri");
+		String region = getString(node, "r");
+		String security = getString(node, "se");
 		return MyLocation.create(stationID, station, systemID, system, regionID, region, security, false, false);
 	}
 }

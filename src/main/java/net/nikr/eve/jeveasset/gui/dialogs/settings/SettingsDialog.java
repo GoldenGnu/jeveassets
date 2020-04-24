@@ -100,6 +100,9 @@ public class SettingsDialog extends JDialogCentered {
 
 		DefaultMutableTreeNode toolNode = addGroup(DialoguesSettings.get().tools(), Images.SETTINGS_TOOLS.getIcon());
 
+		ShowToolSettingsPanel showToolSettingsPanel = new ShowToolSettingsPanel(program, this);
+		add(showToolSettingsPanel, toolNode);
+
 		AssetsToolSettingsPanel assetsToolSettingsPanel = new AssetsToolSettingsPanel(program, this);
 		add(assetsToolSettingsPanel, toolNode);
 

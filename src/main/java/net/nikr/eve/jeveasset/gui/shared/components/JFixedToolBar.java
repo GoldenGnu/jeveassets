@@ -55,6 +55,13 @@ public class JFixedToolBar extends JToolBar {
 		getSize();
 	}
 
+	public void add(final JComponent jComponent, int width) {
+		if (width > 0) {
+			setSize(jComponent, width);
+		}
+		super.add(jComponent);
+	}
+
 	public void addComboBox(final JComboBox<?> jComboBox, int width) {
 		if (width > 0) {
 			setSize(jComboBox, width);
@@ -65,7 +72,11 @@ public class JFixedToolBar extends JToolBar {
 	}
 
 	public void addButton(final AbstractButton jButton) {
-		addButton(jButton, 100, SwingConstants.LEFT);
+		addButton(jButton, 100);
+	}
+
+	public void addButton(final AbstractButton jButton, final int width) {
+		addButton(jButton, width, SwingConstants.LEFT);
 	}
 
 	public void addButton(final AbstractButton jButton, final int width, final int alignment) {

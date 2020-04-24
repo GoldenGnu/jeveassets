@@ -28,7 +28,12 @@ import java.awt.Container;
 import java.awt.event.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.*;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import javax.swing.JComponent;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -60,6 +65,8 @@ import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.ResizeMode
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.SimpleColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels.FixedEventTableModel;
 import net.nikr.eve.jeveasset.gui.shared.table.SeparatorTableCell.JSeparatorPanel;
+import net.nikr.eve.jeveasset.gui.shared.table.TableCellRenderers.ComponentEditor;
+import net.nikr.eve.jeveasset.gui.shared.table.TableCellRenderers.ComponentRenderer;
 import net.nikr.eve.jeveasset.gui.shared.table.TableCellRenderers.DateCellRenderer;
 import net.nikr.eve.jeveasset.gui.shared.table.TableCellRenderers.DoubleCellRenderer;
 import net.nikr.eve.jeveasset.gui.shared.table.TableCellRenderers.FloatCellRenderer;
@@ -125,6 +132,8 @@ public class JAutoColumnTable extends JTable {
 		this.setDefaultRenderer(Tags.class, new TagsCellRenderer());
 		this.setDefaultRenderer(YesNo.class, new ToStringCellRenderer(SwingConstants.CENTER));
 		this.setDefaultRenderer(ExpirerDate.class, new ToStringCellRenderer(SwingConstants.CENTER));
+		this.setDefaultRenderer(Component.class, new ComponentRenderer());
+		this.setDefaultEditor(Component.class, new ComponentEditor(this.getDefaultEditor(Component.class)));
 
 		autoResizeColumns();
 

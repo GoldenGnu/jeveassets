@@ -43,6 +43,7 @@ import net.nikr.eve.jeveasset.data.api.raw.RawContractItem;
 import net.nikr.eve.jeveasset.data.api.raw.RawIndustryJob;
 import net.nikr.eve.jeveasset.data.api.raw.RawJournal;
 import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder;
+import net.nikr.eve.jeveasset.data.api.raw.RawPublicMarketOrder;
 import net.nikr.eve.jeveasset.data.api.raw.RawTransaction;
 import net.nikr.eve.jeveasset.io.shared.DataConverter;
 import net.troja.eve.esi.model.CharacterAssetsResponse;
@@ -69,6 +70,8 @@ import net.troja.eve.esi.model.CorporationOrdersResponse;
 import net.troja.eve.esi.model.CorporationWalletJournalResponse;
 import net.troja.eve.esi.model.CorporationWalletTransactionsResponse;
 import net.troja.eve.esi.model.CorporationWalletsResponse;
+import net.troja.eve.esi.model.MarketOrdersResponse;
+import net.troja.eve.esi.model.MarketStructuresResponse;
 import net.troja.eve.esi.model.PlanetContent;
 import net.troja.eve.esi.model.PlanetPin;
 
@@ -251,5 +254,19 @@ public class EsiConverter extends DataConverter {
 			divisions.put(response.getDivision(), response.getName());
 		}
 		return divisions;
+	}
+
+	public static Map<Integer, List<RawPublicMarketOrder>> toPublicMarketOrders(List<MarketOrdersResponse> responses) {
+		Map<Integer, List<RawPublicMarketOrder>> marketOrders = new HashMap<>();
+		for (MarketOrdersResponse response : responses) {
+			RawPublicMarketOrder marketOrder = new RawPublicMarketOrder(response);
+			List<RawPublicMarketOrder> list = marketOrders.get(marketOrder.getTypeId());
+			if (list == null) {
+				list = new ArrayList<>();
+				marketOrders.put(marketOrder.getTypeId(), list);
+			}
+			list.add(marketOrder);
+		}
+		return marketOrders;
 	}
 }

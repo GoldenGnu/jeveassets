@@ -26,6 +26,7 @@ import java.awt.Point;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder.MarketOrderRange;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
 import net.nikr.eve.jeveasset.data.settings.ContractPriceManager;
 import net.nikr.eve.jeveasset.data.settings.ExportSettings;
@@ -43,6 +44,7 @@ import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.ResizeMode;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.SimpleColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.View;
+import net.nikr.eve.jeveasset.gui.tabs.orders.Outbid;
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewGroup;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile;
 import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerDate;
@@ -526,6 +528,71 @@ public abstract class FakeSettings extends Settings {
 
 	@Override
 	public boolean isTrackerUseAssetPriceForSellOrders() {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public void setPublicMarketOrdersNextUpdate(Date publicMarketOrdersNextUpdate) {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public Date getPublicMarketOrdersNextUpdate() {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public void setMarketOrdersOutbid(Map<Long, Outbid> outbids) {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public Map<Long, Outbid> getMarketOrdersOutbid() {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public void setOutbidOrderRange(MarketOrderRange sellOrderOutbidRange) {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public MarketOrderRange getOutbidOrderRange() {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public void setFocusEveOnlineOnEsiUiCalls(boolean focusEveOnlineOnEsiUiCalls) {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public boolean isFocusEveOnlineOnEsiUiCalls() {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public void setPublicMarketOrdersLastUpdate(Date date) {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public Date getPublicMarketOrdersLastUpdate() {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public List<String> getShowTools() {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public void setSaveToolsOnExit(boolean saveToolsOnExit) {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public boolean isSaveToolsOnExit() {
 		throw new UnsupportedOperationException("not implemented");
 	}
 }

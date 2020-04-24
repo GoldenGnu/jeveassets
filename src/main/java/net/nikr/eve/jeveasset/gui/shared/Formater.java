@@ -54,7 +54,7 @@ public final class Formater {
 	private static final DecimalFormat FLOAT_FORMAT  = new DecimalFormat("#,##0.####");
 	private static final DecimalFormat COMPARE_FORMAT  = new DecimalFormat("0.####", new DecimalFormatSymbols(FilterMatcher.LOCALE));
 	private static final DecimalFormat SECURITY_FORMAT  = new DecimalFormat("0.0", new DecimalFormatSymbols(Locale.ENGLISH));
-	private static final DecimalFormat COPY_FORMAT  = new DecimalFormat("0.##");
+	private static final DecimalFormat COPY_FORMAT  = new DecimalFormat("0.##", new DecimalFormatSymbols(Locale.ENGLISH));
 	public static final NumberFormat MILLIONS_FORMAT  = new FixedFormat(1000000.0, "M");
 	public static final NumberFormat BILLIONS_FORMAT  = new FixedFormat(1000000000.0, "B");
 	public static final NumberFormat TRILLIONS_FORMAT  = new FixedFormat(1000000000000.0, "T");
@@ -372,17 +372,25 @@ public final class Formater {
 		private static final TimeZone TIME_ZONE = TimeZone.getTimeZone("GMT");
 
 		private final String format;
+		private final boolean lenient;
+
 		private final ThreadLocal<DateFormat> df = new ThreadLocal<DateFormat>() {
 			@Override
 			protected DateFormat initialValue() {
 				SimpleDateFormat value = new SimpleDateFormat(format, new Locale("en"));
 				value.setTimeZone(TIME_ZONE);
+				value.setLenient(lenient);
 				return value;
 			}
 		};
 
 		public DateFormatThreadSafe(String format) {
+			this(format, false);
+		}
+
+		public DateFormatThreadSafe(String format, boolean lenient) {
 			this.format = format;
+			this.lenient = lenient;
 		}
 
 		public Date parse(String dateString) throws ParseException {

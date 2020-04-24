@@ -23,6 +23,7 @@ package net.nikr.eve.jeveasset.data.api.raw;
 import java.util.Date;
 import java.util.Set;
 import java.util.TreeSet;
+import net.nikr.eve.jeveasset.i18n.TabsOrders;
 import net.nikr.eve.jeveasset.io.shared.RawConverter;
 import net.troja.eve.esi.model.CharacterOrdersHistoryResponse;
 import net.troja.eve.esi.model.CharacterOrdersResponse;
@@ -32,7 +33,7 @@ import net.troja.eve.esi.model.CorporationOrdersResponse;
 public class RawMarketOrder {
 
 	public enum MarketOrderRange {
-		_1("1"),
+		_1("1", TabsOrders.get().rangeJump()),
 		_10("10"),
 		_2("2"),
 		_20("20"),
@@ -41,19 +42,34 @@ public class RawMarketOrder {
 		_4("4"),
 		_40("40"),
 		_5("5"),
-		REGION("region"),
-		SOLARSYSTEM("solarsystem"),
-		STATION("station");
+		REGION("region", TabsOrders.get().rangeRegion()),
+		SOLARSYSTEM("solarsystem", TabsOrders.get().rangeSolarSystem()),
+		STATION("station", TabsOrders.get().rangeStation());
+		
 
+		private static final MarketOrderRange[] SORTED = {
+			REGION, SOLARSYSTEM, STATION, _1, _2, _3, _4, _5, _10, _20, _30, _40
+		};
+		
 		private final String value;
+		private final String text;
 
 		MarketOrderRange(String value) {
+			this(value, TabsOrders.get().rangeJumps(value));
+		}
+
+		MarketOrderRange(String value, String text) {
 			this.value = value;
+			this.text = text;
+		}
+
+		public static MarketOrderRange[] valuesSorted() {
+			return SORTED;
 		}
 
 		@Override
 		public String toString() {
-			return String.valueOf(value);
+			return text;
 		}
 
 		public static MarketOrderRange fromValue(String text) {
@@ -102,7 +118,7 @@ public class RawMarketOrder {
 	private Boolean isBuyOrder = null;
 	private Boolean isCorp = null;
 	private Date issued = null;
-	private Set<Date> changed = new TreeSet<>();
+	private final Set<Date> changed = new TreeSet<>();
 	private Integer issuedBy = null;
 	private Long locationId = null;
 	private Integer minVolume = null;
@@ -137,7 +153,7 @@ public class RawMarketOrder {
 		isBuyOrder = marketOrder.isBuyOrder;
 		isCorp = marketOrder.isCorp;
 		issued = marketOrder.issued;
-		changed = marketOrder.changed;
+		changed.addAll(marketOrder.changed);
 		issuedBy = marketOrder.issuedBy;
 		locationId = marketOrder.locationId;
 		minVolume = marketOrder.minVolume;

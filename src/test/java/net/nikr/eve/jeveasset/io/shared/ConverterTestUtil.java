@@ -67,6 +67,7 @@ import net.nikr.eve.jeveasset.data.settings.PriceData;
 import net.nikr.eve.jeveasset.data.settings.UserItem;
 import net.nikr.eve.jeveasset.data.settings.tag.Tags;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.Percent;
+import net.nikr.eve.jeveasset.gui.tabs.orders.Outbid;
 import net.nikr.eve.jeveasset.io.esi.EsiCallbackURL;
 import net.troja.eve.esi.ApiClient;
 import net.troja.eve.esi.api.AssetsApi;
@@ -694,6 +695,8 @@ public class ConverterTestUtil {
 			return options.getMarketOrderRangeEsiCharacterHistory();
 		} else if (type.equals(CharacterOrdersHistoryResponse.StateEnum.class)) {
 			return options.getMarketOrderStateEsiCharacterHistory();
+		} else if (type.equals(Outbid.class)) {
+			return options.getMarketOrdersOutbid();
 		} else {
 			fail("No test value for: " + type.getSimpleName());
 			return null;

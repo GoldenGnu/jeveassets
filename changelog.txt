@@ -16,6 +16,26 @@
                   #### #  # #  # #  # #### #### #### #### ####
 
 ________________________________________________________________________________
+_6.3.0__________________________________________________________________________
+
+New Features:
+-Market Orders: Use Public Market Orders to find outbid orders
+-Market Orders: Added Market Details column
+(Button opens market details in-game and copy fixed price to clipboard)
+-Market Orders: Automatically read Marketlogs exports
+(Find outbid orders and copy fixed price to clipboard)
+-Market Orders: Added Edits column
+-Select tool to show at startup or restore tools from last session
+-Support LowSec and NullSec regions as price sources locations
+
+Code:
+-Updated to eve-esi-3.7.0
+
+Bug Fixes:
+-Fixed tracker popup menu getting more and more useless separators
+-Better error messages for citadel updates
+
+________________________________________________________________________________
 _6.2.4__________________________________________________________________________
 
 Bug Fixes:

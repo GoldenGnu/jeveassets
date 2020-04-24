@@ -22,6 +22,7 @@
 package net.nikr.eve.jeveasset.gui.tabs.orders;
 
 import ca.odell.glazedlists.GlazedLists;
+import java.awt.Component;
 import java.util.Comparator;
 import java.util.Date;
 import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder;
@@ -85,6 +86,42 @@ public enum MarketTableFormat implements EnumTableColumn<MyMarketOrder> {
 			return from.getPrice();
 		}
 	},
+	OUTBID_PRICE(Double.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsOrders.get().columnOutbidPrice();
+		}
+		@Override
+		public Object getColumnValue(final MyMarketOrder from) {
+			return from.getOutbidPrice();
+		}
+	},
+	OUTBID_COUNT(Long.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsOrders.get().columnOutbidCount();
+		}
+		@Override
+		public Object getColumnValue(final MyMarketOrder from) {
+			return from.getOutbidCount();
+		}
+	},
+	EVE_UI(Component.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsOrders.get().columnEveUi();
+		}
+
+		@Override
+		public boolean isColumnEditable(Object baseObject) {
+			return true;
+		}
+
+		@Override
+		public Object getColumnValue(final MyMarketOrder from) {
+			return from.getButton();
+		}
+	},
 	BROKERS_FEE(Double.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
@@ -97,6 +134,20 @@ public enum MarketTableFormat implements EnumTableColumn<MyMarketOrder> {
 		@Override
 		public Object getColumnValue(final MyMarketOrder from) {
 			return from.getBrokersFee();
+		}
+	},
+	EDITS(Integer.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsOrders.get().columnEdits();
+		}
+		@Override
+		public String getColumnToolTip() {
+			return TabsOrders.get().columnEditsToolTip();
+		}
+		@Override
+		public Object getColumnValue(final MyMarketOrder from) {
+			return from.getChanged().size();
 		}
 	},
 	ISSUED(Date.class, GlazedLists.comparableComparator()) {
@@ -144,7 +195,7 @@ public enum MarketTableFormat implements EnumTableColumn<MyMarketOrder> {
 		}
 		@Override
 		public Object getColumnValue(final MyMarketOrder from) {
-			return from.getRangeFormated();
+			return from.getRange().toString();
 		}
 	},
 	STATUS(String.class, GlazedLists.comparableComparator()) {

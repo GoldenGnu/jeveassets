@@ -66,15 +66,15 @@ public final class CitadelWriter extends AbstractXmlWriter {
 		for (Map.Entry<Long, Citadel> entry : settings.getCache()) {
 			Element node = xmldoc.createElementNS(null, "citadel");
 			Citadel citadel = entry.getValue();
-			node.setAttributeNS(null, "stationid", String.valueOf(entry.getKey()));
-			node.setAttributeNS(null, "systemid", String.valueOf(citadel.systemId));
-			node.setAttributeNS(null, "name", citadel.name);
-			node.setAttributeNS(null, "systemname", citadel.systemName);
-			node.setAttributeNS(null, "regionid", String.valueOf(citadel.regionId));
-			node.setAttributeNS(null, "regionname", citadel.regionName);
-			node.setAttributeNS(null, "userlocation", String.valueOf(citadel.userLocation));
-			node.setAttributeNS(null, "citadel", String.valueOf(citadel.citadel));
-			node.setAttributeNS(null, "source", citadel.source.name());
+			setAttribute(node, "stationid", String.valueOf(entry.getKey()));
+			setAttribute(node, "systemid", String.valueOf(citadel.systemId));
+			setAttribute(node, "name", citadel.name);
+			setAttribute(node, "systemname", citadel.systemName);
+			setAttribute(node, "regionid", String.valueOf(citadel.regionId));
+			setAttribute(node, "regionname", citadel.regionName);
+			setAttribute(node, "userlocation", String.valueOf(citadel.userLocation));
+			setAttribute(node, "citadel", String.valueOf(citadel.citadel));
+			setAttribute(node, "source", citadel.source.name());
 			parentNode.appendChild(node);
 		}
 	}
@@ -82,7 +82,7 @@ public final class CitadelWriter extends AbstractXmlWriter {
 	private void writeSettings(final Document xmldoc, final CitadelSettings settings) {
 		Element parentNode = xmldoc.getDocumentElement();
 		Element node = xmldoc.createElementNS(null, "settings");
-		node.setAttributeNS(null, "nextupdate", String.valueOf(settings.getNextUpdate().getTime()));
+		setAttribute(node, "nextupdate", String.valueOf(settings.getNextUpdate().getTime()));
 		parentNode.appendChild(node);
 	}
 

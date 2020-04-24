@@ -82,33 +82,33 @@ public final class ItemsReader extends AbstractXmlReader<Boolean> {
 	}
 
 	private Item parseItem(final Node node) throws XmlException {
-		int id = AttributeGetters.getInt(node, "id");
-		String version = AttributeGetters.getStringOptional(node, "version");
-		if (AttributeGetters.haveAttribute(node, "empty")) {
+		int id = getInt(node, "id");
+		String version = getStringOptional(node, "version");
+		if (haveAttribute(node, "empty")) {
 			return new Item(id, version);
 		}
-		String name = AttributeGetters.getString(node, "name");
-		String group = AttributeGetters.getString(node, "group");
-		String category = AttributeGetters.getString(node, "category");
-		long price = AttributeGetters.getLong(node, "price");
-		float volume = AttributeGetters.getFloat(node, "volume");
-		Float packagedVolume = AttributeGetters.getFloatOptional(node, "packagedvolume");
+		String name = getString(node, "name");
+		String group = getString(node, "group");
+		String category = getString(node, "category");
+		long price = getLong(node, "price");
+		float volume = getFloat(node, "volume");
+		Float packagedVolume = getFloatOptional(node, "packagedvolume");
 		if (packagedVolume == null) {
 			packagedVolume = volume;
 		}
-		int meta = AttributeGetters.getInt(node, "meta");
-		String tech = AttributeGetters.getString(node, "tech");
-		boolean marketGroup = AttributeGetters.getBoolean(node, "marketgroup");
-		int portion = AttributeGetters.getInt(node, "portion");
+		int meta = getInt(node, "meta");
+		String tech = getString(node, "tech");
+		boolean marketGroup = getBoolean(node, "marketgroup");
+		int portion = getInt(node, "portion");
 		int product;
-		if (AttributeGetters.haveAttribute(node, "product")) {
-			product = AttributeGetters.getInt(node, "product");
+		if (haveAttribute(node, "product")) {
+			product = getInt(node, "product");
 		} else {
 			product = 0;
 		}
 		int productQuantity = 1;
-		if (AttributeGetters.haveAttribute(node, "productquantity")) {
-			productQuantity = AttributeGetters.getInt(node, "productquantity");
+		if (haveAttribute(node, "productquantity")) {
+			productQuantity = getInt(node, "productquantity");
 		}
 		return new Item(id, name, group, category, price, volume, packagedVolume, meta, tech, marketGroup, portion, product, productQuantity, version);
 	}
@@ -121,9 +121,9 @@ public final class ItemsReader extends AbstractXmlReader<Boolean> {
 	}
 
 	private void parseMaterial(final Node node, final Item item) throws XmlException {
-		int id = AttributeGetters.getInt(node, "id");
-		int quantity = AttributeGetters.getInt(node, "quantity");
-		int portionSize = AttributeGetters.getInt(node, "portionsize");
+		int id = getInt(node, "id");
+		int quantity = getInt(node, "quantity");
+		int portionSize = getInt(node, "portionsize");
 		item.addReprocessedMaterial(new ReprocessedMaterial(id, quantity, portionSize));
 	}
 }

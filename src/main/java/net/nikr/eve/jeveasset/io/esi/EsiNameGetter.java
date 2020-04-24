@@ -58,6 +58,7 @@ public class EsiNameGetter extends AbstractEsiGetter {
 					return getUniverseApiOpen().postUniverseNamesWithHttpInfo(t, DATASOURCE);
 				} catch (ApiException ex) {
 					if (ex.getCode() == 404 && ex.getResponseBody().toLowerCase().contains("ensure all ids are valid before resolving")) {
+						handleHeaders(ex);
 						return null; //Ignore this error we will use another endpoint instead
 					} else {
 						throw ex;
@@ -80,6 +81,7 @@ public class EsiNameGetter extends AbstractEsiGetter {
 					return getUniverseApiOpen().postUniverseNamesWithHttpInfo(t, DATASOURCE);
 				} catch (ApiException ex) {
 					if (ex.getCode() == 404 && ex.getResponseBody().toLowerCase().contains("ensure all ids are valid before resolving")) {
+						handleHeaders(ex);
 						return null; //Ignore this error we will use another endpoint instead
 					} else {
 						throw ex;

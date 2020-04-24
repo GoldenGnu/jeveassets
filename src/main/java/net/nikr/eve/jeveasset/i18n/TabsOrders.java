@@ -42,8 +42,12 @@ public abstract class TabsOrders extends Bundle {
 	public abstract String columnVolumeRemain();
 	public abstract String columnVolumeTotal();
 	public abstract String columnPrice();
+	public abstract String columnOutbidPrice();
+	public abstract String columnOutbidCount();
 	public abstract String columnBrokersFee();
 	public abstract String columnBrokersFeeToolTip();
+	public abstract String columnEdits();
+	public abstract String columnEditsToolTip();
 	public abstract String columnIssued();
 	public abstract String columnIssuedToolTip();
 	public abstract String columnIssuedFirst();
@@ -61,6 +65,13 @@ public abstract class TabsOrders extends Bundle {
 	public abstract String columnLastTransactionValue();
 	public abstract String columnLastTransactionPercent();
 	public abstract String columnTypeID();
+	public abstract String columnEveUi();
+	public abstract String eveUiOpen();
+	public abstract String logClear();
+	public abstract String logClose();
+	public abstract String logError();
+	public abstract String logOK();
+	public abstract String logTitle();
 	public abstract String market();
 	public abstract String rangeStation();
 	public abstract String rangeSolarSystem();
@@ -81,5 +92,20 @@ public abstract class TabsOrders extends Bundle {
 	public abstract String totalBuyOrders();
 	public abstract String totalEscrow();
 	public abstract String totalToCover();
+	public abstract String updateOutbidEsi();
+	public abstract String updateOutbidEsiAuto();
+	public abstract String updateOutbidFileBuy();
+	public abstract String updateOutbidFileSell();
+	public abstract String updateOutbidToolTip();
+	public abstract String updateOutbidWhen(String time);
+	public abstract String updateOutbidUpdating();
+	public abstract String sellOrderRange();
+	public abstract String sellOrderRangeLastToolTip();
+	public abstract String lastEsiUpdateToolTip();
+	public abstract String lastLogUpdateToolTip();
+	public abstract String lastClipboardToolTip();
+	public abstract String none();
+	public abstract String sellOrderRangeSelcted(String selected);
+	public abstract String updateTitle();
 	public abstract String whitespace(Object arg0);
 }

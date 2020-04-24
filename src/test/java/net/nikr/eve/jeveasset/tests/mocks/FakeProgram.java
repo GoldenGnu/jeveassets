@@ -276,4 +276,9 @@ public abstract class FakeProgram extends Program {
 	public boolean checkProgramUpdate() {
 		throw new UnsupportedOperationException("Not implemented");
 	}
+
+	@Override
+	public List<JMainTab> getMainTabs() {
+		throw new UnsupportedOperationException("Not implemented");
+	}
 }

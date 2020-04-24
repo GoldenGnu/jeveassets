@@ -25,6 +25,7 @@ import java.awt.Dimension;
 import java.awt.Point;
 import java.net.Proxy;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -33,6 +34,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder.MarketOrderRange;
 import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
 import net.nikr.eve.jeveasset.data.settings.AssetAddedData;
@@ -46,7 +48,6 @@ import net.nikr.eve.jeveasset.data.settings.ExportSettings.LineDelimiter;
 import net.nikr.eve.jeveasset.data.settings.PriceDataSettings;
 import net.nikr.eve.jeveasset.data.settings.PriceDataSettings.PriceMode;
 import net.nikr.eve.jeveasset.data.settings.PriceDataSettings.PriceSource;
-import net.nikr.eve.jeveasset.data.settings.PriceDataSettings.RegionType;
 import net.nikr.eve.jeveasset.data.settings.ProxyData;
 import net.nikr.eve.jeveasset.data.settings.ReprocessSettings;
 import net.nikr.eve.jeveasset.data.settings.RouteResult;
@@ -82,6 +83,7 @@ import net.nikr.eve.jeveasset.gui.tabs.journal.JournalTab;
 import net.nikr.eve.jeveasset.gui.tabs.journal.JournalTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.orders.MarketOrdersTab;
 import net.nikr.eve.jeveasset.gui.tabs.orders.MarketTableFormat;
+import net.nikr.eve.jeveasset.gui.tabs.orders.Outbid;
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewGroup;
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewLocation;
 import net.nikr.eve.jeveasset.gui.tabs.routing.SolarSystem;
@@ -244,6 +246,20 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 	private Settings loadSettings(final Element element, final Settings settings) throws XmlException {
 		if (!element.getNodeName().equals("settings")) {
 			throw new XmlException("Wrong root element name.");
+		}
+
+		//writePublicMarketOrdersNextUpdate
+		NodeList showToolsNodes = element.getElementsByTagName("showtools");
+		if (showToolsNodes.getLength() == 1) {
+			Element showToolsElement =  (Element) showToolsNodes.item(0);
+			parseShowToolsNodes(showToolsElement, settings);
+		}
+
+		//writePublicMarketOrdersNextUpdate
+		NodeList marketOrderOutbidNodes = element.getElementsByTagName("marketorderoutbid");
+		if (marketOrderOutbidNodes.getLength() == 1) {
+			Element marketOrderOutbidElement =  (Element) marketOrderOutbidNodes.item(0);
+			parseMarketOrderOutbidNodes(marketOrderOutbidElement, settings);
 		}
 
 		//Routing
@@ -447,8 +463,8 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		for (int i = 0; i < ownerNodeList.getLength(); i++) {
 			//Read Owner
 			Element ownerNode = (Element) ownerNodeList.item(i);
-			String ownerName = AttributeGetters.getString(ownerNode, "name");
-			long ownerID = AttributeGetters.getLong(ownerNode, "id");
+			String ownerName = getString(ownerNode, "name");
+			long ownerID = getLong(ownerNode, "id");
 			settings.getOwners().put(ownerID, ownerName);
 		}
 	}
@@ -459,7 +475,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		for (int a = 0; a < tableNodeList.getLength(); a++) {
 			//Read Owner
 			Element ownerNode = (Element) tableNodeList.item(a);
-			String owner = AttributeGetters.getString(ownerNode, "name");
+			String owner = getString(ownerNode, "name");
 			//Ignore grand total, not used anymore
 			if (owner.isEmpty()) {
 				continue;
@@ -469,23 +485,23 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 			for (int b = 0; b < dataNodeList.getLength(); b++) {
 				//Read data
 				Element dataNode = (Element) dataNodeList.item(b);
-				Date date = AttributeGetters.getDate(dataNode, "date");
-				double assetsTotal = AttributeGetters.getDouble(dataNode, "assets");
-				double escrows = AttributeGetters.getDouble(dataNode, "escrows");
-				double escrowstocover = AttributeGetters.getDouble(dataNode, "escrowstocover");
-				double sellorders = AttributeGetters.getDouble(dataNode, "sellorders");
-				double balanceTotal = AttributeGetters.getDouble(dataNode, "walletbalance");
+				Date date = getDate(dataNode, "date");
+				double assetsTotal = getDouble(dataNode, "assets");
+				double escrows = getDouble(dataNode, "escrows");
+				double escrowstocover = getDouble(dataNode, "escrowstocover");
+				double sellorders = getDouble(dataNode, "sellorders");
+				double balanceTotal = getDouble(dataNode, "walletbalance");
 				double manufacturing = 0.0;
-				if (AttributeGetters.haveAttribute(dataNode, "manufacturing")){
-					manufacturing = AttributeGetters.getDouble(dataNode, "manufacturing");
+				if (haveAttribute(dataNode, "manufacturing")){
+					manufacturing = getDouble(dataNode, "manufacturing");
 				}
 				double contractCollateral = 0.0;
-				if (AttributeGetters.haveAttribute(dataNode, "contractcollateral")){
-					contractCollateral = AttributeGetters.getDouble(dataNode, "contractcollateral");
+				if (haveAttribute(dataNode, "contractcollateral")){
+					contractCollateral = getDouble(dataNode, "contractcollateral");
 				}
 				double contractValue = 0.0;
-				if (AttributeGetters.haveAttribute(dataNode, "contractvalue")){
-					contractValue = AttributeGetters.getDouble(dataNode, "contractvalue");
+				if (haveAttribute(dataNode, "contractvalue")){
+					contractValue = getDouble(dataNode, "contractvalue");
 				}
 				//Add data
 				Value value = new Value(date);
@@ -493,8 +509,8 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 				NodeList balanceNodeList = dataNode.getElementsByTagName("balance");
 				for (int c = 0; c < balanceNodeList.getLength(); c++) { //New data
 					Element balanceNode = (Element) balanceNodeList.item(c);
-					String id = AttributeGetters.getString(balanceNode, "id");
-					double balance = AttributeGetters.getDouble(balanceNode, "value");
+					String id = getString(balanceNode, "id");
+					double balance = getDouble(balanceNode, "value");
 					value.addBalance(id, balance);
 				}
 				if (balanceNodeList.getLength() == 0) { //Old data
@@ -505,7 +521,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 				for (int c = 0; c < assetNodeList.getLength(); c++) { //New data
 					Element assetNode = (Element) assetNodeList.item(c);
 					AssetValue assetValue = parseAssetValue(assetNode);
-					double assets = AttributeGetters.getDouble(assetNode, "value");
+					double assets = getDouble(assetNode, "value");
 					value.addAssets(assetValue, assets);
 				}
 				if (assetNodeList.getLength() == 0) { //Old data
@@ -529,13 +545,13 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 	}
 
 	private AssetValue parseAssetValue(Element node) throws XmlException {
-		if (AttributeGetters.haveAttribute(node, "id")) {
-			String id = AttributeGetters.getString(node, "id");
+		if (haveAttribute(node, "id")) {
+			String id = getString(node, "id");
 			return AssetValue.create(id);
 		} else {
-			String location = AttributeGetters.getString(node, "location");
-			Long locationID = AttributeGetters.getLongOptional(node, "locationid");
-			String flag = AttributeGetters.getStringOptional(node, "flag");
+			String location = getString(node, "location");
+			Long locationID = getLongOptional(node, "locationid");
+			String flag = getStringOptional(node, "flag");
 			return AssetValue.create(location, flag, locationID);
 		}
 	}
@@ -545,32 +561,32 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		for (int a = 0; a < noteNodeList.getLength(); a++) {
 			//Read Owner
 			Element noteNode = (Element) noteNodeList.item(a);
-			String note = AttributeGetters.getString(noteNode, "note");
-			Date date = AttributeGetters.getDate(noteNode, "date");
+			String note = getString(noteNode, "note");
+			Date date = getDate(noteNode, "date");
 			settings.getTrackerNotes().put(new TrackerDate(date), new TrackerNote(note));
 		}
 	}
 
 	private void parseTrackerFilters(final Element element, final Settings settings) throws XmlException {
 		NodeList tableNodeList = element.getElementsByTagName("trackerfilter");
-		boolean selectNew = AttributeGetters.getBoolean(element, "selectnew");
+		boolean selectNew = getBoolean(element, "selectnew");
 		settings.setTrackerSelectNew(selectNew);
 		for (int a = 0; a < tableNodeList.getLength(); a++) {
 			Element trackerFilterNode = (Element) tableNodeList.item(a);
-			String id = AttributeGetters.getString(trackerFilterNode, "id");
-			boolean selected = AttributeGetters.getBoolean(trackerFilterNode, "selected");
+			String id = getString(trackerFilterNode, "id");
+			boolean selected = getBoolean(trackerFilterNode, "selected");
 			settings.getTrackerFilters().put(id, selected);
 		}
 	}
 
 	private void parseAssetSettings(final Element assetSettingsElement, final Settings settings) throws XmlException {
-		int maximumPurchaseAge = AttributeGetters.getInt(assetSettingsElement, "maximumpurchaseage");
+		int maximumPurchaseAge = getInt(assetSettingsElement, "maximumpurchaseage");
 		settings.setMaximumPurchaseAge(maximumPurchaseAge);
 	}
 
 	private void parseStockpileGroups(final Element stockpilesElement, final Settings settings) throws XmlException {
-		int group2 = AttributeGetters.getInt(stockpilesElement, "stockpilegroup2");
-		int group3 = AttributeGetters.getInt(stockpilesElement, "stockpilegroup3");
+		int group2 = getInt(stockpilesElement, "stockpilegroup2");
+		int group3 = getInt(stockpilesElement, "stockpilegroup3");
 		if (group2 <= 0) {
 			group2 = 100;
 		}
@@ -586,59 +602,59 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		NodeList stockpileNodes = stockpilesElement.getElementsByTagName("stockpile");
 		for (int a = 0; a < stockpileNodes.getLength(); a++) {
 			Element stockpileNode = (Element) stockpileNodes.item(a);
-			String name = AttributeGetters.getString(stockpileNode, "name");
+			String name = getString(stockpileNode, "name");
 			Long stockpileID = null; //If null > get new id
-			if (AttributeGetters.haveAttribute(stockpileNode, "id")) {
-				stockpileID = AttributeGetters.getLong(stockpileNode, "id");
+			if (haveAttribute(stockpileNode, "id")) {
+				stockpileID = getLong(stockpileNode, "id");
 			}
 		//LEGACY
 			//Owners
 			List<Long> ownerIDs = new ArrayList<Long>();
-			if (AttributeGetters.haveAttribute(stockpileNode, "characterid")) {
-				long ownerID = AttributeGetters.getLong(stockpileNode, "characterid");
+			if (haveAttribute(stockpileNode, "characterid")) {
+				long ownerID = getLong(stockpileNode, "characterid");
 				if (ownerID > 0) {
 					ownerIDs.add(ownerID);
 				}
 			}
 			//Containers
 			List<StockpileContainer> containers = new ArrayList<StockpileContainer>();
-			if (AttributeGetters.haveAttribute(stockpileNode, "container")) {
-				String container = AttributeGetters.getString(stockpileNode, "container");
+			if (haveAttribute(stockpileNode, "container")) {
+				String container = getString(stockpileNode, "container");
 				if (!container.equals(General.get().all())) {
 					containers.add(new StockpileContainer(container, false));
 				}
 			}
 			//Flags
 			List<Integer> flagIDs = new ArrayList<Integer>();
-			if (AttributeGetters.haveAttribute(stockpileNode, "flagid")) {
-				int flagID = AttributeGetters.getInt(stockpileNode, "flagid");
+			if (haveAttribute(stockpileNode, "flagid")) {
+				int flagID = getInt(stockpileNode, "flagid");
 				if (flagID > 0) {
 					flagIDs.add(flagID);
 				}
 			}
 			//Locations
 			MyLocation location = null;
-			if (AttributeGetters.haveAttribute(stockpileNode, "locationid")) {
-				long locationID = AttributeGetters.getLong(stockpileNode, "locationid");
+			if (haveAttribute(stockpileNode, "locationid")) {
+				long locationID = getLong(stockpileNode, "locationid");
 				location = ApiIdConverter.getLocation(locationID);
 			}
 			boolean exclude = false;
 			//Include
 			Boolean inventory = null;
-			if (AttributeGetters.haveAttribute(stockpileNode, "inventory")) {
-				inventory = AttributeGetters.getBoolean(stockpileNode, "inventory");
+			if (haveAttribute(stockpileNode, "inventory")) {
+				inventory = getBoolean(stockpileNode, "inventory");
 			}
 			Boolean sellOrders = null;
-			if (AttributeGetters.haveAttribute(stockpileNode, "sellorders")) {
-				sellOrders = AttributeGetters.getBoolean(stockpileNode, "sellorders");
+			if (haveAttribute(stockpileNode, "sellorders")) {
+				sellOrders = getBoolean(stockpileNode, "sellorders");
 			}
 			Boolean buyOrders = null;
-			if (AttributeGetters.haveAttribute(stockpileNode, "buyorders")) {
-				buyOrders = AttributeGetters.getBoolean(stockpileNode, "buyorders");
+			if (haveAttribute(stockpileNode, "buyorders")) {
+				buyOrders = getBoolean(stockpileNode, "buyorders");
 			}
 			Boolean jobs = null;
-			if (AttributeGetters.haveAttribute(stockpileNode, "jobs")) {
-				jobs = AttributeGetters.getBoolean(stockpileNode, "jobs");
+			if (haveAttribute(stockpileNode, "jobs")) {
+				jobs = getBoolean(stockpileNode, "jobs");
 			}
 			List<StockpileFilter> filters = new ArrayList<StockpileFilter>();
 			if (inventory != null && sellOrders != null && buyOrders != null && jobs != null) {
@@ -651,51 +667,51 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 				Element filterNode = (Element) filterNodes.item(b);
 				//Include
 				boolean filterExclude = false;
-				if (AttributeGetters.haveAttribute(filterNode, "exclude")) {
-					filterExclude = AttributeGetters.getBoolean(filterNode, "exclude");
+				if (haveAttribute(filterNode, "exclude")) {
+					filterExclude = getBoolean(filterNode, "exclude");
 				}
 				//Singleton
 				Boolean filterSingleton = null;
-				if (AttributeGetters.haveAttribute(filterNode, "singleton")) {
-					filterSingleton = AttributeGetters.getBoolean(filterNode, "singleton");
+				if (haveAttribute(filterNode, "singleton")) {
+					filterSingleton = getBoolean(filterNode, "singleton");
 				}
 				boolean filterSellingContracts = false;
-				if (AttributeGetters.haveAttribute(filterNode, "sellingcontracts")) {
-					filterSellingContracts = AttributeGetters.getBoolean(filterNode, "sellingcontracts");
+				if (haveAttribute(filterNode, "sellingcontracts")) {
+					filterSellingContracts = getBoolean(filterNode, "sellingcontracts");
 				}
 				boolean filterSoldBuy = false;
-				if (AttributeGetters.haveAttribute(filterNode, "soldcontracts")) {
-					filterSoldBuy = AttributeGetters.getBoolean(filterNode, "soldcontracts");
+				if (haveAttribute(filterNode, "soldcontracts")) {
+					filterSoldBuy = getBoolean(filterNode, "soldcontracts");
 				}
 				boolean filterBuyingContracts = false;
-				if (AttributeGetters.haveAttribute(filterNode, "buyingcontracts")) {
-					filterBuyingContracts = AttributeGetters.getBoolean(filterNode, "buyingcontracts");
+				if (haveAttribute(filterNode, "buyingcontracts")) {
+					filterBuyingContracts = getBoolean(filterNode, "buyingcontracts");
 				}
 				boolean filterBoughtContracts = false;
-				if (AttributeGetters.haveAttribute(filterNode, "boughtcontracts")) {
-					filterBoughtContracts = AttributeGetters.getBoolean(filterNode, "boughtcontracts");
+				if (haveAttribute(filterNode, "boughtcontracts")) {
+					filterBoughtContracts = getBoolean(filterNode, "boughtcontracts");
 				}
-				boolean filterInventory = AttributeGetters.getBoolean(filterNode, "inventory");
-				boolean filterSellOrders = AttributeGetters.getBoolean(filterNode, "sellorders");
-				boolean filterBuyOrders = AttributeGetters.getBoolean(filterNode, "buyorders");
+				boolean filterInventory = getBoolean(filterNode, "inventory");
+				boolean filterSellOrders = getBoolean(filterNode, "sellorders");
+				boolean filterBuyOrders = getBoolean(filterNode, "buyorders");
 				boolean filterBuyTransactions = false;
-				if (AttributeGetters.haveAttribute(filterNode, "buytransactions")) {
-					filterBuyTransactions = AttributeGetters.getBoolean(filterNode, "buytransactions");
+				if (haveAttribute(filterNode, "buytransactions")) {
+					filterBuyTransactions = getBoolean(filterNode, "buytransactions");
 				}
 				boolean filterSellTransactions = false;
-				if (AttributeGetters.haveAttribute(filterNode, "selltransactions")) {
-					filterSellTransactions = AttributeGetters.getBoolean(filterNode, "selltransactions");
+				if (haveAttribute(filterNode, "selltransactions")) {
+					filterSellTransactions = getBoolean(filterNode, "selltransactions");
 				}
-				boolean filterJobs = AttributeGetters.getBoolean(filterNode, "jobs");
+				boolean filterJobs = getBoolean(filterNode, "jobs");
 				//Location
-				long locationID = AttributeGetters.getLong(filterNode, "locationid");
+				long locationID = getLong(filterNode, "locationid");
 				location = ApiIdConverter.getLocation(locationID);
 				//Owners
 				List<Long> filterOwnerIDs = new ArrayList<Long>();
 				NodeList ownerNodes = filterNode.getElementsByTagName("owner");
 				for (int c = 0; c < ownerNodes.getLength(); c++) {
 					Element ownerNode = (Element) ownerNodes.item(c);
-					long filterOwnerID = AttributeGetters.getLong(ownerNode, "ownerid");
+					long filterOwnerID = getLong(ownerNode, "ownerid");
 					filterOwnerIDs.add(filterOwnerID);
 				}
 				//Containers
@@ -703,10 +719,10 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 				NodeList containerNodes = filterNode.getElementsByTagName("container");
 				for (int c = 0; c < containerNodes.getLength(); c++) {
 					Element containerNode = (Element) containerNodes.item(c);
-					String filterContainer = AttributeGetters.getString(containerNode, "container");
+					String filterContainer = getString(containerNode, "container");
 					boolean filterIncludeContainer = false;
-					if (AttributeGetters.haveAttribute(containerNode, "includecontainer")) {
-						filterIncludeContainer = AttributeGetters.getBoolean(containerNode, "includecontainer");
+					if (haveAttribute(containerNode, "includecontainer")) {
+						filterIncludeContainer = getBoolean(containerNode, "includecontainer");
 					}
 					filterContainers.add(new StockpileContainer(filterContainer, filterIncludeContainer));
 				}
@@ -715,7 +731,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 				NodeList flagNodes = filterNode.getElementsByTagName("flag");
 				for (int c = 0; c < flagNodes.getLength(); c++) {
 					Element flagNode = (Element) flagNodes.item(c);
-					int filterFlagID = AttributeGetters.getInt(flagNode, "flagid");
+					int filterFlagID = getInt(flagNode, "flagid");
 					filterFlagIDs.add(filterFlagID);
 				}
 				StockpileFilter stockpileFilter = new StockpileFilter(location, filterFlagIDs, filterContainers, filterOwnerIDs, filterExclude, filterSingleton, filterInventory, filterSellOrders, filterBuyOrders, filterJobs, filterBuyTransactions, filterSellTransactions, filterSellingContracts, filterSoldBuy, filterBuyingContracts, filterBoughtContracts);
@@ -723,8 +739,8 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 			}
 		//MULTIPLIER
 			double multiplier = 1;
-			if (AttributeGetters.haveAttribute(stockpileNode, "multiplier")){
-				multiplier = AttributeGetters.getDouble(stockpileNode, "multiplier");
+			if (haveAttribute(stockpileNode, "multiplier")){
+				multiplier = getDouble(stockpileNode, "multiplier");
 			}
 		
 			Stockpile stockpile = new Stockpile(name, stockpileID, filters, multiplier);
@@ -734,17 +750,17 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 			for (int b = 0; b < itemNodes.getLength(); b++) {
 				Element itemNode = (Element) itemNodes.item(b);
 				long id;
-				if (AttributeGetters.haveAttribute(itemNode, "id")) {
-					id = AttributeGetters.getLong(itemNode, "id");
+				if (haveAttribute(itemNode, "id")) {
+					id = getLong(itemNode, "id");
 				} else {
 					id = StockpileItem.getNewID();
 				}
-				int typeID = AttributeGetters.getInt(itemNode, "typeid");
+				int typeID = getInt(itemNode, "typeid");
 				boolean runs = false;
-				if (AttributeGetters.haveAttribute(itemNode, "runs")) {
-					runs = AttributeGetters.getBoolean(itemNode, "runs");
+				if (haveAttribute(itemNode, "runs")) {
+					runs = getBoolean(itemNode, "runs");
 				}
-				double countMinimum = AttributeGetters.getDouble(itemNode, "minimum");
+				double countMinimum = getDouble(itemNode, "minimum");
 				if (typeID != 0) { //Ignore Total
 					Item item = ApiIdConverter.getItemUpdate(Math.abs(typeID));
 					StockpileItem stockpileItem = new StockpileItem(stockpile, item, typeID, countMinimum, runs, id);
@@ -755,27 +771,58 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		Collections.sort(stockpiles);
 	}
 
+	private void parseShowToolsNodes(Element showToolsElement, Settings settings) throws XmlException {
+		boolean saveOnExit = getBoolean(showToolsElement, "saveonexit");
+		String str = getString(showToolsElement, "show");
+		String[] arr = str.split(",");
+		List<String> showTools = new ArrayList<>(Arrays.asList(arr));
+		settings.setSaveToolsOnExit(saveOnExit);
+		settings.getShowTools().addAll(showTools);
+	}
+
+	private void parseMarketOrderOutbidNodes(Element marketOrderOutbidElement, Settings settings) throws XmlException {
+		Date nextUpdate = getDate(marketOrderOutbidElement, "nextupdate");
+		settings.setPublicMarketOrdersNextUpdate(nextUpdate);
+		Date lastUpdate = getDateOptional(marketOrderOutbidElement, "lastupdate");
+		settings.setPublicMarketOrdersLastUpdate(lastUpdate);
+		MarketOrderRange outbidOrderRange;
+		try {
+			outbidOrderRange = MarketOrderRange.valueOf(getString(marketOrderOutbidElement, "outbidorderrange"));
+		} catch (IllegalArgumentException ex) {
+			outbidOrderRange = MarketOrderRange.REGION;
+		}
+		settings.setOutbidOrderRange(outbidOrderRange);
+		NodeList outbidNodes = marketOrderOutbidElement.getElementsByTagName("outbid");
+		for (int a = 0; a < outbidNodes.getLength(); a++) {
+			Element outbidNode = (Element) outbidNodes.item(a);
+			Long orderID = getLong(outbidNode, "id");
+			double price = getDouble(outbidNode, "price");
+			long count = getLong(outbidNode, "count");
+			settings.getMarketOrdersOutbid().put(orderID, new Outbid(price, count));
+		}
+	}
+
 	private void parseRoutingSettings(Element routingElement, Settings settings) throws XmlException {
-		double secMax = AttributeGetters.getDouble(routingElement, "securitymaximum");
-		double secMin = AttributeGetters.getDouble(routingElement, "securityminimum");
+		double secMax = getDouble(routingElement, "securitymaximum");
+		double secMin = getDouble(routingElement, "securityminimum");
 		settings.getRoutingSettings().setSecMax(secMax);
 		settings.getRoutingSettings().setSecMin(secMin);
 		NodeList systemNodes = routingElement.getElementsByTagName("routingsystem");
 		for (int a = 0; a < systemNodes.getLength(); a++) {
 			Element systemNode = (Element) systemNodes.item(a);
-			Long systemID = AttributeGetters.getLong(systemNode, "id");
+			Long systemID = getLong(systemNode, "id");
 			MyLocation location = ApiIdConverter.getLocation(systemID);
 			settings.getRoutingSettings().getAvoid().put(systemID, new SolarSystem(location));
 		}
 		NodeList presetNodes = routingElement.getElementsByTagName("routingpreset");
 		for (int a = 0; a < presetNodes.getLength(); a++) {
 			Element presetNode = (Element) presetNodes.item(a);
-			String name = AttributeGetters.getString(presetNode, "name");
+			String name = getString(presetNode, "name");
 			Set<Long> systemIDs = new HashSet<Long>();
 			NodeList presetSystemNodes = presetNode.getElementsByTagName("presetsystem");
 			for (int b = 0; b < presetSystemNodes.getLength(); b++) {
 				Element systemNode = (Element) presetSystemNodes.item(b);
-				Long systemID = AttributeGetters.getLong(systemNode, "id");
+				Long systemID = getLong(systemNode, "id");
 				systemIDs.add(systemID);
 			}
 			settings.getRoutingSettings().getPresets().put(name, systemIDs);
@@ -783,11 +830,11 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		NodeList routeNodes = routingElement.getElementsByTagName("route");
 		for (int a = 0; a < routeNodes.getLength(); a++) {
 			Element routeNode = (Element) routeNodes.item(a);
-			String name = AttributeGetters.getString(routeNode, "name");
-			String algorithmName = AttributeGetters.getString(routeNode, "algorithmname");
-			long algorithmTime = AttributeGetters.getLong(routeNode, "algorithmtime");
-			int jumps = AttributeGetters.getInt(routeNode, "jumps");
-			int waypoints = AttributeGetters.getInt(routeNode, "waypoints");
+			String name = getString(routeNode, "name");
+			String algorithmName = getString(routeNode, "algorithmname");
+			long algorithmTime = getLong(routeNode, "algorithmtime");
+			int jumps = getInt(routeNode, "jumps");
+			int waypoints = getInt(routeNode, "waypoints");
 			NodeList routeSystemsNodes = routeNode.getElementsByTagName("routesystems");
 			List<List<SolarSystem>> route = new ArrayList<List<SolarSystem>>();
 			Map<Long, List<SolarSystem>> stationsMap = new HashMap<Long, List<SolarSystem>>();
@@ -797,7 +844,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 				List<SolarSystem> systems = new ArrayList<SolarSystem>();
 				for (int c = 0; c < routeSystemNodes.getLength(); c++) {
 					Element routeSystemNode = (Element) routeSystemNodes.item(c);
-					long systemID = AttributeGetters.getLong(routeSystemNode, "systemid");
+					long systemID = getLong(routeSystemNode, "systemid");
 					SolarSystem system = new SolarSystem(ApiIdConverter.getLocation(systemID));
 					systems.add(system);
 				}
@@ -805,7 +852,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 				NodeList routeStationNodes = routeStartSystemNode.getElementsByTagName("routestation");
 				for (int c = 0; c < routeStationNodes.getLength(); c++) {
 					Element routeStationNode = (Element) routeStationNodes.item(c);
-					long stationID = AttributeGetters.getLong(routeStationNode, "stationid");
+					long stationID = getLong(routeStationNode, "stationid");
 					SolarSystem station = new SolarSystem(ApiIdConverter.getLocation(stationID));
 					List<SolarSystem> stationsList = stationsMap.get(systems.get(0).getSystemID());
 					if (stationsList == null) {
@@ -823,9 +870,9 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		NodeList tagNodes = tagsElement.getElementsByTagName("tag");
 		for (int a = 0; a < tagNodes.getLength(); a++) {
 			Element tagNode = (Element) tagNodes.item(a);
-			String name = AttributeGetters.getString(tagNode, "name");
-			String background = AttributeGetters.getString(tagNode, "background");
-			String foreground = AttributeGetters.getString(tagNode, "foreground");
+			String name = getString(tagNode, "name");
+			String background = getString(tagNode, "background");
+			String foreground = getString(tagNode, "foreground");
 
 			TagColor color = new TagColor(background, foreground);
 			Tag tag = new Tag(name, color);
@@ -834,8 +881,8 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 			NodeList idNodes = tagNode.getElementsByTagName("tagid");
 			for (int b = 0; b < idNodes.getLength(); b++) {
 				Element idNode = (Element) idNodes.item(b);
-				String tool = AttributeGetters.getString(idNode, "tool");
-				long id = AttributeGetters.getLong(idNode, "id");
+				String tool = getString(idNode, "tool");
+				long id = getLong(idNode, "id");
 
 				TagID tagID = new TagID(tool, id);
 				tag.getIDs().add(tagID);
@@ -848,37 +895,37 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		NodeList groupNodes = overviewElement.getElementsByTagName("group");
 		for (int a = 0; a < groupNodes.getLength(); a++) {
 			Element groupNode = (Element) groupNodes.item(a);
-			String name = AttributeGetters.getString(groupNode, "name");
+			String name = getString(groupNode, "name");
 			OverviewGroup overviewGroup = new OverviewGroup(name);
 			settings.getOverviewGroups().put(overviewGroup.getName(), overviewGroup);
 			NodeList locationNodes = groupNode.getElementsByTagName("location");
 			for (int b = 0; b < locationNodes.getLength(); b++) {
 				Element locationNode = (Element) locationNodes.item(b);
-				String location = AttributeGetters.getString(locationNode, "name");
-				String type = AttributeGetters.getString(locationNode, "type");
+				String location = getString(locationNode, "name");
+				String type = getString(locationNode, "type");
 				overviewGroup.add(new OverviewLocation(location, OverviewLocation.LocationType.valueOf(type)));
 			}
 		}
 	}
 
 	private void parseReprocessing(final Element windowElement, final Settings settings) throws XmlException {
-		int reprocessing = AttributeGetters.getInt(windowElement, "refining");
-		int reprocessingEfficiency = AttributeGetters.getInt(windowElement, "efficiency");
-		int scrapmetalProcessing = AttributeGetters.getInt(windowElement, "processing");
-		int station = AttributeGetters.getInt(windowElement, "station");
+		int reprocessing = getInt(windowElement, "refining");
+		int reprocessingEfficiency = getInt(windowElement, "efficiency");
+		int scrapmetalProcessing = getInt(windowElement, "processing");
+		int station = getInt(windowElement, "station");
 		settings.setReprocessSettings(new ReprocessSettings(station, reprocessing, reprocessingEfficiency, scrapmetalProcessing));
 	}
 
 	private void parseWindow(final Element windowElement, final Settings settings) throws XmlException {
-		int x = AttributeGetters.getInt(windowElement, "x");
-		int y = AttributeGetters.getInt(windowElement, "y");
-		int height = AttributeGetters.getInt(windowElement, "height");
-		int width = AttributeGetters.getInt(windowElement, "width");
-		boolean maximized = AttributeGetters.getBoolean(windowElement, "maximized");
-		boolean autosave = AttributeGetters.getBoolean(windowElement, "autosave");
+		int x = getInt(windowElement, "x");
+		int y = getInt(windowElement, "y");
+		int height = getInt(windowElement, "height");
+		int width = getInt(windowElement, "width");
+		boolean maximized = getBoolean(windowElement, "maximized");
+		boolean autosave = getBoolean(windowElement, "autosave");
 		boolean alwaysOnTop = false;
-		if (AttributeGetters.haveAttribute(windowElement, "alwaysontop")) {
-			alwaysOnTop = AttributeGetters.getBoolean(windowElement, "alwaysontop");
+		if (haveAttribute(windowElement, "alwaysontop")) {
+			alwaysOnTop = getBoolean(windowElement, "alwaysontop");
 		}
 		settings.setWindowLocation(new Point(x, y));
 		settings.setWindowSize(new Dimension(width, height));
@@ -890,19 +937,19 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 	private void parseProxy(final Element proxyElement, final Settings settings) throws XmlException {
 		Proxy.Type type;
 		try {
-			type = Proxy.Type.valueOf(AttributeGetters.getString(proxyElement, "type"));
+			type = Proxy.Type.valueOf(getString(proxyElement, "type"));
 		} catch (IllegalArgumentException  ex) {
 			type = null;
 		}
-		String address = AttributeGetters.getString(proxyElement, "address");
-		int port = AttributeGetters.getInt(proxyElement, "port");
+		String address = getString(proxyElement, "address");
+		int port = getInt(proxyElement, "port");
 		String username = null;
-		if (AttributeGetters.haveAttribute(proxyElement, "username")) {
-			username = AttributeGetters.getString(proxyElement, "username");
+		if (haveAttribute(proxyElement, "username")) {
+			username = getString(proxyElement, "username");
 		}
 		String password = null;
-		if (AttributeGetters.haveAttribute(proxyElement, "password")) {
-			password = AttributeGetters.getString(proxyElement, "password");
+		if (haveAttribute(proxyElement, "password")) {
+			password = getString(proxyElement, "password");
 		}
 		if (type != null && type != Proxy.Type.DIRECT && !address.isEmpty() && port != 0) { // check the proxy attributes are all there.
 			settings.setProxyData(new ProxyData(address, type, port, username, password));
@@ -913,9 +960,9 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		NodeList userPriceNodes = element.getElementsByTagName("userprice");
 		for (int i = 0; i < userPriceNodes.getLength(); i++) {
 			Element currentNode = (Element) userPriceNodes.item(i);
-			String name = AttributeGetters.getString(currentNode, "name");
-			double price = AttributeGetters.getDouble(currentNode, "price");
-			int typeID = AttributeGetters.getInt(currentNode, "typeid");
+			String name = getString(currentNode, "name");
+			double price = getDouble(currentNode, "price");
+			int typeID = getInt(currentNode, "typeid");
 			UserItem<Integer, Double> userPrice = new UserPrice(price, typeID, name);
 			settings.getUserPrices().put(typeID, userPrice);
 		}
@@ -925,9 +972,9 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		NodeList userPriceNodes = element.getElementsByTagName("itemname");
 		for (int i = 0; i < userPriceNodes.getLength(); i++) {
 			Element currentNode = (Element) userPriceNodes.item(i);
-			String name = AttributeGetters.getString(currentNode, "name");
-			String typeName = AttributeGetters.getString(currentNode, "typename");
-			long itemId = AttributeGetters.getLong(currentNode, "itemid");
+			String name = getString(currentNode, "name");
+			String typeName = getString(currentNode, "typename");
+			long itemId = getLong(currentNode, "itemid");
 			UserItem<Long, String> userItemName = new UserName(name, itemId, typeName);
 			settings.getUserItemNames().put(itemId, userItemName);
 		}
@@ -937,76 +984,79 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		NodeList eveNameNodes = element.getElementsByTagName("evename");
 		for (int i = 0; i < eveNameNodes.getLength(); i++) {
 			Element currentNode = (Element) eveNameNodes.item(i);
-			String name = AttributeGetters.getString(currentNode, "name");
-			long itemId = AttributeGetters.getLong(currentNode, "itemid");
+			String name = getString(currentNode, "name");
+			long itemId = getLong(currentNode, "itemid");
 			settings.getEveNames().put(itemId, name);
 		}
 	}
 
 	private void parsePriceDataSettings(final Element element, final Settings settings) throws XmlException {
 		PriceMode priceType = settings.getPriceDataSettings().getPriceType(); //Default
-		if (AttributeGetters.haveAttribute(element, "defaultprice")) {
-			priceType = PriceMode.valueOf(AttributeGetters.getString(element, "defaultprice"));
+		if (haveAttribute(element, "defaultprice")) {
+			priceType = PriceMode.valueOf(getString(element, "defaultprice"));
 		}
 
 		PriceMode priceReprocessedType = settings.getPriceDataSettings().getPriceReprocessedType(); //Default
-		if (AttributeGetters.haveAttribute(element, "defaultreprocessedprice")) {
-			priceReprocessedType = PriceMode.valueOf(AttributeGetters.getString(element, "defaultreprocessedprice"));
+		if (haveAttribute(element, "defaultreprocessedprice")) {
+			priceReprocessedType = PriceMode.valueOf(getString(element, "defaultreprocessedprice"));
 		}
 
 		//null = default
-		List<Long> locations = null;
+		Long locationID = null;
 		LocationType locationType = null;
 		//Backward compatibility
-		if (AttributeGetters.haveAttribute(element, "regiontype")) {
-			RegionType regionType = RegionType.valueOf(AttributeGetters.getString(element, "regiontype"));
-			locations = regionType.getRegions();
+		if (haveAttribute(element, "regiontype")) {
+			RegionTypeBackwardCompatibility regionType = RegionTypeBackwardCompatibility.valueOf(getString(element, "regiontype"));
+			locationID = regionType.getRegion();
 			locationType = LocationType.REGION;
 		}
-		if (AttributeGetters.haveAttribute(element, "locations")) {
-			String string = AttributeGetters.getString(element, "locations");
+		//Backward compatibility
+		if (haveAttribute(element, "locations")) {
+			String string = getString(element, "locations");
 			String[] split = string.split(",");
-			locations = new ArrayList<Long>();
-			for (String s : split) {
+			if (split.length == 1) {
 				try {
-					locations.add(Long.valueOf(s));
+					locationID = Long.valueOf(split[0]);
 				} catch (NumberFormatException ex) {
-					LOG.warn("Could not parse locations long: " + s);
+					LOG.warn("Could not parse locations long: " + split[0]);
 				}
 			}
 		}
-		if (AttributeGetters.haveAttribute(element, "type")) {
-			locationType = LocationType.valueOf(AttributeGetters.getString(element, "type"));
+		if (haveAttribute(element, "locationid")) {
+			locationID = getLong(element, "locationid");
+		}
+		if (haveAttribute(element, "type")) {
+			locationType = LocationType.valueOf(getString(element, "type"));
 		}
 		PriceSource priceSource = PriceDataSettings.getDefaultPriceSource();
-		if (AttributeGetters.haveAttribute(element, "pricesource")) {
+		if (haveAttribute(element, "pricesource")) {
 			try {
-				priceSource = PriceSource.valueOf(AttributeGetters.getString(element, "pricesource"));
+				priceSource = PriceSource.valueOf(getString(element, "pricesource"));
 			} catch (IllegalArgumentException ex) {
 				//In case a price source is removed: Use the default
 			}
 		}
 		//Validate
-		if (!priceSource.isValid(locationType, locations)) {
+		if (!priceSource.isValid(locationType, locationID)) {
 			locationType = priceSource.getDefaultLocationType();
-			locations = priceSource.getDefaultLocations();
+			locationID = priceSource.getDefaultLocationID();
 		}	
-		settings.setPriceDataSettings(new PriceDataSettings(locationType, locations, priceSource, priceType, priceReprocessedType));
+		settings.setPriceDataSettings(new PriceDataSettings(locationType, locationID, priceSource, priceType, priceReprocessedType));
 	}
 
 	private void parseContractPriceSettings(final Element element, final Settings settings) throws XmlException {
-		boolean defaultBPC = AttributeGetters.getBoolean(element, "defaultbpc");
-		boolean includePrivate = AttributeGetters.getBoolean(element, "includeprivate");
+		boolean defaultBPC = getBoolean(element, "defaultbpc");
+		boolean includePrivate = getBoolean(element, "includeprivate");
 		boolean feedback = false;
-		if (AttributeGetters.haveAttribute(element, "feedback")) {
-			feedback = AttributeGetters.getBoolean(element, "feedback");
+		if (haveAttribute(element, "feedback")) {
+			feedback = getBoolean(element, "feedback");
 		}
 		boolean feedbackAsked = false;
-		if (AttributeGetters.haveAttribute(element, "feedbackasked")) {
-			feedbackAsked = AttributeGetters.getBoolean(element, "feedbackasked");
+		if (haveAttribute(element, "feedbackasked")) {
+			feedbackAsked = getBoolean(element, "feedbackasked");
 		}
-		ContractPriceMode mode = ContractPriceMode.valueOf(AttributeGetters.getString(element, "mode"));
-		String sec = AttributeGetters.getStringOptional(element, "sec");
+		ContractPriceMode mode = ContractPriceMode.valueOf(getString(element, "mode"));
+		String sec = getStringOptional(element, "sec");
 		Set<ContractPriceSecurity> security = new HashSet<>();
 		for (String s : sec.split(",")) {
 			security.add(ContractPriceSecurity.valueOf(s));
@@ -1024,8 +1074,8 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		NodeList flagNodes = element.getElementsByTagName("flag");
 		for (int i = 0; i < flagNodes.getLength(); i++) {
 			Element currentNode = (Element) flagNodes.item(i);
-			String key = AttributeGetters.getString(currentNode, "key");
-			boolean enabled = AttributeGetters.getBoolean(currentNode, "enabled");
+			String key = getString(currentNode, "key");
+			boolean enabled = getBoolean(currentNode, "enabled");
 			try {
 				if (key.equals("FLAG_INCLUDE_CONTRACTS")) {
 					settings.getFlags().put(SettingFlag.FLAG_INCLUDE_SELL_CONTRACTS, enabled);
@@ -1045,7 +1095,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		for (int a = 0; a < tableNodeList.getLength(); a++) {
 			List<SimpleColumn> columns = new ArrayList<SimpleColumn>();
 			Element tableNode = (Element) tableNodeList.item(a);
-			String tableName = AttributeGetters.getString(tableNode, "name");
+			String tableName = getString(tableNode, "name");
 			//Ignore old tables
 			if (tableName.equals("marketorderssell") || tableName.equals("marketordersbuy")) {
 				continue;
@@ -1053,8 +1103,8 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 			NodeList columnNodeList = tableNode.getElementsByTagName("column");
 			for (int b = 0; b < columnNodeList.getLength(); b++) {
 				Element columnNode = (Element) columnNodeList.item(b);
-				String name = AttributeGetters.getString(columnNode, "name");
-				boolean shown = AttributeGetters.getBoolean(columnNode, "shown");
+				String name = getString(columnNode, "name");
+				boolean shown = getBoolean(columnNode, "shown");
 				columns.add(new SimpleColumn(name, shown));
 			}
 			settings.getTableColumns().put(tableName, columns);
@@ -1066,12 +1116,12 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		for (int a = 0; a < tableNodeList.getLength(); a++) {
 			Map<String, Integer> columns = new HashMap<String, Integer>();
 			Element tableNode = (Element) tableNodeList.item(a);
-			String tableName = AttributeGetters.getString(tableNode, "name");
+			String tableName = getString(tableNode, "name");
 			NodeList columnNodeList = tableNode.getElementsByTagName("column");
 			for (int b = 0; b < columnNodeList.getLength(); b++) {
 				Element columnNode = (Element) columnNodeList.item(b);
-				int width = AttributeGetters.getInt(columnNode, "width");
-				String column = AttributeGetters.getString(columnNode, "column");
+				int width = getInt(columnNode, "width");
+				String column = getString(columnNode, "column");
 				columns.put(column, width);
 			}
 			settings.getTableColumnsWidth().put(tableName, columns);
@@ -1082,8 +1132,8 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		NodeList tableNodeList = element.getElementsByTagName("table");
 		for (int i = 0; i < tableNodeList.getLength(); i++) {
 			Element tableNode = (Element) tableNodeList.item(i);
-			String tableName = AttributeGetters.getString(tableNode, "name");
-			ResizeMode resizeMode = ResizeMode.valueOf(AttributeGetters.getString(tableNode, "resize"));
+			String tableName = getString(tableNode, "name");
+			ResizeMode resizeMode = ResizeMode.valueOf(getString(tableNode, "resize"));
 			settings.getTableResize().put(tableName, resizeMode);
 		}
 	}
@@ -1092,20 +1142,20 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		NodeList viewToolNodeList = element.getElementsByTagName("viewtool");
 		for (int a = 0; a < viewToolNodeList.getLength(); a++) {
 			Element viewToolNode = (Element) viewToolNodeList.item(a);
-			String toolName = AttributeGetters.getString(viewToolNode, "tool");
+			String toolName = getString(viewToolNode, "tool");
 			Map<String, View> views = new TreeMap<String, View>(new CaseInsensitiveComparator());
 			settings.getTableViews().put(toolName, views);
 			NodeList viewNodeList = viewToolNode.getElementsByTagName("view");
 			for (int b = 0; b < viewNodeList.getLength(); b++) {
 				Element viewNode = (Element) viewNodeList.item(b);
-				String viewName = AttributeGetters.getString(viewNode, "name");
+				String viewName = getString(viewNode, "name");
 				View view = new View(viewName);
 				views.put(view.getName(), view);
 				NodeList viewColumnList = viewNode.getElementsByTagName("viewcolumn");
 				for (int c = 0; c < viewColumnList.getLength(); c++) {
 					Element viewColumnNode = (Element) viewColumnList.item(c);
-					String name = AttributeGetters.getString(viewColumnNode, "name");
-					boolean shown = AttributeGetters.getBoolean(viewColumnNode, "shown");
+					String name = getString(viewColumnNode, "name");
+					boolean shown = getBoolean(viewColumnNode, "shown");
 					view.getColumns().add(new SimpleColumn(name, shown));
 				}
 			}
@@ -1116,26 +1166,26 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		NodeList tableNodeList = element.getElementsByTagName("table");
 		for (int a = 0; a < tableNodeList.getLength(); a++) {
 			Element tableNode = (Element) tableNodeList.item(a);
-			String tableName = AttributeGetters.getString(tableNode, "name");
+			String tableName = getString(tableNode, "name");
 			NodeList filterNodeList = tableNode.getElementsByTagName("filter");
 			Map<String, List<Filter>> filters = new HashMap<String, List<Filter>>();
 			for (int b = 0; b < filterNodeList.getLength(); b++) {
 				Element filterNode = (Element) filterNodeList.item(b);
-				String filterName = AttributeGetters.getString(filterNode, "name");
+				String filterName = getString(filterNode, "name");
 				List<Filter> filter = new ArrayList<Filter>();
 				NodeList rowNodes = filterNode.getElementsByTagName("row");
 				for (int c = 0; c < rowNodes.getLength(); c++) {
 					Element rowNode = (Element) rowNodes.item(c);
 					int group = 1;
-					if (AttributeGetters.haveAttribute(rowNode, "group")) {
-						group = AttributeGetters.getInt(rowNode, "group");
+					if (haveAttribute(rowNode, "group")) {
+						group = getInt(rowNode, "group");
 					}
-					String text = AttributeGetters.getString(rowNode, "text");
-					String columnString = AttributeGetters.getString(rowNode, "column");
+					String text = getString(rowNode, "text");
+					String columnString = getString(rowNode, "column");
 					EnumTableColumn<?> column =  getColumn(columnString, tableName);
 					if (column != null) {
-						String compare = AttributeGetters.getString(rowNode, "compare");
-						String logic = AttributeGetters.getString(rowNode, "logic");
+						String compare = getString(rowNode, "compare");
+						String logic = getString(rowNode, "logic");
 						filter.add(new Filter(group, logic, column, compare, text));
 					} else {
 						LOG.warn(columnString + " column removed from filter");
@@ -1259,21 +1309,21 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		NodeList filterNodeList = filtersElement.getElementsByTagName("filter");
 		for (int a = 0; a < filterNodeList.getLength(); a++) {
 			Element filterNode = (Element) filterNodeList.item(a);
-			String filterName = AttributeGetters.getString(filterNode, "name");
+			String filterName = getString(filterNode, "name");
 
 			List<Filter> filters = new ArrayList<Filter>();
 
 			NodeList rowNodeList = filterNode.getElementsByTagName("row");
 			for (int b = 0; b < rowNodeList.getLength(); b++) {
 				Element rowNode = (Element) rowNodeList.item(b);
-				LogicType logic = convertLogic(AttributeGetters.getBoolean(rowNode, "and"));
-				EnumTableColumn<?> column = convertColumn(AttributeGetters.getString(rowNode, "column"));
-				CompareType compare = convertMode(AttributeGetters.getString(rowNode, "mode"));
+				LogicType logic = convertLogic(getBoolean(rowNode, "and"));
+				EnumTableColumn<?> column = convertColumn(getString(rowNode, "column"));
+				CompareType compare = convertMode(getString(rowNode, "mode"));
 				String text;
-				if (AttributeGetters.haveAttribute(rowNode, "columnmatch")) {
-					text =  convertColumn(AttributeGetters.getString(rowNode, "columnmatch")).name();
+				if (haveAttribute(rowNode, "columnmatch")) {
+					text =  convertColumn(getString(rowNode, "columnmatch")).name();
 				} else {
-					text = AttributeGetters.getString(rowNode, "text");
+					text = getString(rowNode, "text");
 				}
 				Filter filter = new Filter(logic, column, compare, text);
 				filters.add(filter);
@@ -1333,65 +1383,65 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 
 	private void parseExportSettings(final Element element, final Settings settings) throws XmlException {
 		//CSV
-		DecimalSeparator decimal = DecimalSeparator.valueOf(AttributeGetters.getString(element, "decimal"));
-		FieldDelimiter field = FieldDelimiter.valueOf(AttributeGetters.getString(element, "field"));
-		LineDelimiter line = LineDelimiter.valueOf(AttributeGetters.getString(element, "line"));
+		DecimalSeparator decimal = DecimalSeparator.valueOf(getString(element, "decimal"));
+		FieldDelimiter field = FieldDelimiter.valueOf(getString(element, "field"));
+		LineDelimiter line = LineDelimiter.valueOf(getString(element, "line"));
 		settings.getExportSettings().setDecimalSeparator(decimal);
 		settings.getExportSettings().setFieldDelimiter(field);
 		settings.getExportSettings().setLineDelimiter(line);
 		//SQL
-		if (AttributeGetters.haveAttribute(element, "sqlcreatetable")) {
-			boolean createTable = AttributeGetters.getBoolean(element, "sqlcreatetable");
+		if (haveAttribute(element, "sqlcreatetable")) {
+			boolean createTable = getBoolean(element, "sqlcreatetable");
 			settings.getExportSettings().setCreateTable(createTable);
 		}
-		if (AttributeGetters.haveAttribute(element, "sqldroptable")) {
-			boolean dropTable = AttributeGetters.getBoolean(element, "sqldroptable");
+		if (haveAttribute(element, "sqldroptable")) {
+			boolean dropTable = getBoolean(element, "sqldroptable");
 			settings.getExportSettings().setDropTable(dropTable);
 		}
-		if (AttributeGetters.haveAttribute(element, "sqlextendedinserts")) {
-			boolean extendedInserts = AttributeGetters.getBoolean(element, "sqlextendedinserts");
+		if (haveAttribute(element, "sqlextendedinserts")) {
+			boolean extendedInserts = getBoolean(element, "sqlextendedinserts");
 			settings.getExportSettings().setExtendedInserts(extendedInserts);
 		}
-		if (AttributeGetters.haveAttribute(element, "htmlstyled")) {
-			boolean htmlStyled = AttributeGetters.getBoolean(element, "htmlstyled");
+		if (haveAttribute(element, "htmlstyled")) {
+			boolean htmlStyled = getBoolean(element, "htmlstyled");
 			settings.getExportSettings().setHtmlStyled(htmlStyled);
 		}
-		if (AttributeGetters.haveAttribute(element, "htmligb")) {
-			boolean htmlIGB = AttributeGetters.getBoolean(element, "htmligb");
+		if (haveAttribute(element, "htmligb")) {
+			boolean htmlIGB = getBoolean(element, "htmligb");
 			settings.getExportSettings().setHtmlIGB(htmlIGB);
 		}
-		if (AttributeGetters.haveAttribute(element, "htmlrepeatheader")) {
-			int htmlRepeatHeader = AttributeGetters.getInt(element, "htmlrepeatheader");
+		if (haveAttribute(element, "htmlrepeatheader")) {
+			int htmlRepeatHeader = getInt(element, "htmlrepeatheader");
 			settings.getExportSettings().setHtmlRepeatHeader(htmlRepeatHeader);
 		}
-		if (AttributeGetters.haveAttribute(element, "exportformat")) {
-			ExportFormat exportFormat = ExportFormat.valueOf(AttributeGetters.getString(element, "exportformat"));
+		if (haveAttribute(element, "exportformat")) {
+			ExportFormat exportFormat = ExportFormat.valueOf(getString(element, "exportformat"));
 			settings.getExportSettings().setExportFormat(exportFormat);
 		}
 		NodeList tableNamesNodeList = element.getElementsByTagName("sqltablenames");
 		for (int a = 0; a < tableNamesNodeList.getLength(); a++) {
 			Element tableNameNode = (Element) tableNamesNodeList.item(a);
-			String tool = AttributeGetters.getString(tableNameNode, "tool");
-			String tableName = AttributeGetters.getString(tableNameNode, "tablename");
+			String tool = getString(tableNameNode, "tool");
+			String tableName = getString(tableNameNode, "tablename");
 			settings.getExportSettings().putTableName(tool, tableName);
 		}
 		//Shared
 		NodeList fileNamesNodeList = element.getElementsByTagName("filenames");
 		for (int a = 0; a < fileNamesNodeList.getLength(); a++) {
 			Element tableNameNode = (Element) fileNamesNodeList.item(a);
-			String tool = AttributeGetters.getString(tableNameNode, "tool");
-			String fileName = AttributeGetters.getString(tableNameNode, "filename");
+			String tool = getString(tableNameNode, "tool");
+			String fileName = getString(tableNameNode, "filename");
 			settings.getExportSettings().putFilename(tool, fileName);
 		}
 		NodeList tableNodeList = element.getElementsByTagName("table");
 		for (int a = 0; a < tableNodeList.getLength(); a++) {
 			List<String> columns = new ArrayList<String>();
 			Element tableNode = (Element) tableNodeList.item(a);
-			String tableName = AttributeGetters.getString(tableNode, "name");
+			String tableName = getString(tableNode, "name");
 			NodeList columnNodeList = tableNode.getElementsByTagName("column");
 			for (int b = 0; b < columnNodeList.getLength(); b++) {
 				Element columnNode = (Element) columnNodeList.item(b);
-				String name = AttributeGetters.getString(columnNode, "name");
+				String name = getString(columnNode, "name");
 				columns.add(name);
 			}
 			settings.getExportSettings().putTableExportColumns(tableName, columns);
@@ -1403,10 +1453,55 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		Map<Long, Date> assetAdded = new HashMap<>();
 		for (int i = 0; i < assetNodes.getLength(); i++) {
 			Element currentNode = (Element) assetNodes.item(i);
-			Long itemID = AttributeGetters.getLong(currentNode, "itemid");
-			Date date = AttributeGetters.getDate(currentNode, "date");
+			Long itemID = getLong(currentNode, "itemid");
+			Date date = getDate(currentNode, "date");
 			assetAdded.put(itemID, date);
 		}
 		AssetAddedData.set(assetAdded); //Import from settings.xml
+	}
+
+	public enum RegionTypeBackwardCompatibility {
+		NOT_CONFIGURABLE(null),
+		EMPIRE(null),
+		MARKET_HUBS(null),
+		ALL_AMARR(null),
+		ALL_GALLENTE(null),
+		ALL_MINMATAR(null),
+		ALL_CALDARI(null),
+		ARIDIA(10000054L),
+		DEVOID(10000036L),
+		DOMAIN(10000043L),
+		GENESIS(10000067L),
+		KADOR(10000052L),
+		KOR_AZOR(10000065L),
+		TASH_MURKON(10000020L),
+		THE_BLEAK_LANDS(10000038L),
+		BLACK_RISE(10000069L),
+		LONETREK(10000016L),
+		THE_CITADEL(10000033L),
+		THE_FORGE(10000002L),
+		ESSENCE(10000064L),
+		EVERYSHORE(10000037L),
+		PLACID(10000048L),
+		SINQ_LAISON(10000032L),
+		SOLITUDE(10000044L),
+		VERGE_VENDOR(10000068L),
+		METROPOLIS(10000042L),
+		HEIMATAR(10000030L),
+		MOLDEN_HEATH(10000028L),
+		DERELIK(10000001L),
+		KHANID(10000049L)
+		;
+
+		private final Long region;
+
+		private RegionTypeBackwardCompatibility(Long region) {
+			this.region = region;
+		}
+
+		public Long getRegion() {
+			return region;
+		}
+
 	}
 }

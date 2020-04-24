@@ -36,7 +36,9 @@ import net.nikr.eve.jeveasset.data.settings.types.EditablePriceType;
 import net.nikr.eve.jeveasset.data.settings.types.ItemType;
 import net.nikr.eve.jeveasset.data.settings.types.LastTransactionType;
 import net.nikr.eve.jeveasset.data.settings.types.OwnersType;
+import net.nikr.eve.jeveasset.gui.shared.components.JButtonComparable;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.Percent;
+import net.nikr.eve.jeveasset.gui.tabs.orders.Outbid;
 import net.nikr.eve.jeveasset.i18n.TabsOrders;
 
 public class MyMarketOrder extends RawMarketOrder implements Comparable<MyMarketOrder>, EditableLocationType, ItemType, BlueprintType, EditablePriceType, ContractPriceType, OwnersType, LastTransactionType {
@@ -108,7 +110,6 @@ public class MyMarketOrder extends RawMarketOrder implements Comparable<MyMarket
 	private final Set<Long> owners;
 	private Item item;
 	private MyLocation location;
-	private String rangeFormated;
 	private OrderStatus status;
 	private OwnerType owner;
 	private double price;
@@ -118,30 +119,14 @@ public class MyMarketOrder extends RawMarketOrder implements Comparable<MyMarket
 	private Percent lastTransactionPercent;
 	private String issuedByName = "";
 	private Double brokersFee;
+	private Outbid outbid;
+	private JButtonComparable jButton = new JButtonComparable(TabsOrders.get().eveUiOpen());
 
 	public MyMarketOrder(final RawMarketOrder rawMarketOrder, final Item item, final OwnerType owner) {
 		super(rawMarketOrder);
 		this.item = item;
 		this.owner = owner;
 		this.owners = Collections.singleton(owner.getOwnerID());
-		rangeFormated = "";
-		switch (this.getRange()) {
-			case STATION:
-				rangeFormated = TabsOrders.get().rangeStation();
-				break;
-			case SOLARSYSTEM:
-				rangeFormated = TabsOrders.get().rangeSolarSystem();
-				break;
-			case REGION:
-				rangeFormated = TabsOrders.get().rangeRegion();
-				break;
-			case _1:
-				rangeFormated = TabsOrders.get().rangeJump();
-				break;
-			default:
-				rangeFormated = TabsOrders.get().rangeJumps(this.getRange().toString());
-				break;
-		}
 		if (isExpired()) { //expired (status may be out-of-date)
 			if (this.getVolumeRemain() == 0) {
 				status = OrderStatus.FULFILLED;
@@ -318,10 +303,6 @@ public class MyMarketOrder extends RawMarketOrder implements Comparable<MyMarket
 		this.location = location;
 	}
 
-	public String getRangeFormated() {
-		return rangeFormated;
-	}
-
 	public String getIssuedByName() {
 		return issuedByName;
 	}
@@ -364,6 +345,43 @@ public class MyMarketOrder extends RawMarketOrder implements Comparable<MyMarket
 
 	public void setBrokersFee(Double brokerFee) {
 		this.brokersFee = brokerFee;
+	}
+
+	public boolean isOutbid() {
+		if (outbid == null) {
+			return false;
+		}
+		if (isBuyOrder()) {
+			return outbid.getPrice() > getPrice();
+		} else {
+			return outbid.getPrice() < getPrice();
+		}
+	}
+
+	public boolean haveOutbid() {
+		return outbid != null;
+	}
+
+	public Double getOutbidPrice() {
+		if (outbid == null) {
+			return null;
+		}
+		return outbid.getPrice();
+	}
+
+	public Long getOutbidCount() {
+		if (outbid == null) {
+			return null;
+		}
+		return outbid.getCount();
+	}
+
+	public void setOutbid(Outbid outbid) {
+		this.outbid = outbid;
+	}
+
+	public JButtonComparable getButton() {
+		return jButton;
 	}
 
 	@Override
