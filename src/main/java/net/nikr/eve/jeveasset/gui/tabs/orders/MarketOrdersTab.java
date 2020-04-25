@@ -400,10 +400,43 @@ public class MarketOrdersTab extends JMainTabPrimary {
 	}
 
 	private void openEve(MyMarketOrder marketOrder) {
-		OwnerType owner = marketOrder.getOwner();
+		OwnerType owner = null;
+		if (marketOrder.isCorporation()) {
+			//Look for issuing owner
+			if (marketOrder.getIssuedBy() != null) {
+				for (OwnerType ownerType : program.getProfileData().getOwners().values()) { //Copy = thread safe
+					if (marketOrder.getIssuedBy() == ownerType.getOwnerID()) {
+						owner = ownerType;
+						if (owner.isOpenWindows()) {
+							break; //Found valid owner - otherwise keep looking
+						}
+					}
+				}
+			}
+		} else {
+			owner = marketOrder.getOwner();
+		}
+		//Issuer not found
+		if (owner == null) {
+			int value = JOptionPane.showConfirmDialog(program.getMainWindow().getFrame(), TabsOrders.get().ownerNotFoundMsg(), TabsOrders.get().ownerNotFoundTitle(), JOptionPane.OK_CANCEL_OPTION);
+			if (value != JOptionPane.OK_OPTION) {
+				return;
+			}
+			owner = JMenuUI.selectOwner(program, JMenuUI.EsiOwnerRequirement.OPEN_WINDOW);
+			if (owner == null) {
+				return;
+			}
+		}
+		//Issuer missing scope
 		if (!owner.isOpenWindows()) {
-			JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), "The owner of this order does not have the required ui scope", "Failed to open orders", JOptionPane.PLAIN_MESSAGE);
-			return;
+			int value = JOptionPane.showConfirmDialog(program.getMainWindow().getFrame(), TabsOrders.get().ownerInvalidScopeMsg(), TabsOrders.get().ownerInvalidScopeTital(), JOptionPane.OK_CANCEL_OPTION);
+			if (value != JOptionPane.OK_OPTION) {
+				return;
+			}
+			owner = JMenuUI.selectOwner(program, JMenuUI.EsiOwnerRequirement.OPEN_WINDOW);
+			if (owner == null) {
+				return;
+			}
 		}
 		if (!(owner instanceof EsiOwner)) {
 			return;
