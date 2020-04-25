@@ -71,6 +71,7 @@ public class EsiOwnerGetter extends AbstractEsiGetter implements AccountAdder{
 			}
 		});
 		if (characters.isEmpty()) {
+			addError(null, "Characters is empty", null);
 			return;
 		}
 		CharacterAffiliationResponse character = characters.get(0);
@@ -83,6 +84,7 @@ public class EsiOwnerGetter extends AbstractEsiGetter implements AccountAdder{
 			}
 		});
 		if (corporations.isEmpty()) {
+			addError(null, "Corporations is empty", null);
 			return;
 		}
 		UniverseNamesResponse corporation = corporations.get(0);
