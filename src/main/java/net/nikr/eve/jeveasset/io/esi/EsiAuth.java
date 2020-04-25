@@ -91,6 +91,9 @@ public class EsiAuth {
 			oAuth.finishFlow(code, "jeveassets");
 			esiOwner.setRefreshToken(oAuth.getRefreshToken());
 			esiOwner.setCallbackURL(callbackURL);
+			//Clear the existing access token (if any) as it will be using the old scopes
+			OAuth auth = (OAuth) esiOwner.getApiClient().getAuthentication("evesso");
+			auth.setAccessToken(null);
 			return true;
 		} catch (Exception ex) {
 			LOG.error(ex.getMessage(), ex);
