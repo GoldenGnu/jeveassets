@@ -105,6 +105,10 @@ public abstract class TabsOrders extends Bundle {
 	public abstract String lastLogUpdateToolTip();
 	public abstract String lastClipboardToolTip();
 	public abstract String none();
+	public abstract String ownerInvalidScopeMsg();
+	public abstract String ownerInvalidScopeTital();
+	public abstract String ownerNotFoundMsg();
+	public abstract String ownerNotFoundTitle();
 	public abstract String sellOrderRangeSelcted(String selected);
 	public abstract String updateTitle();
 	public abstract String whitespace(Object arg0);
