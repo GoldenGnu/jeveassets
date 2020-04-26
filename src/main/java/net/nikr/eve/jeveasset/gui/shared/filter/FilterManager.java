@@ -225,10 +225,10 @@ public class FilterManager<E> extends JManageDialog {
 				if (Filter.CompareType.isColumnCompare(compare)) {
 					compareColumn = SettingsReader.getColumn(unwrap(groups.get(4)), toolName);
 					if (compareColumn != null) { //Valid
-						text = unwrap(groups.get(3));
+						text = unwrap(groups.get(4));
 					}
 				} else {
-					text = unwrap(groups.get(3));
+					text = unwrap(groups.get(4));
 				}
 				if (group != null && logic != null && column != null && compare != null && (text != null || compareColumn != null)) {
 					Filter filter = new Filter(group, logic, column, compare, text, true);
