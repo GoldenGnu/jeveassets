@@ -36,9 +36,13 @@ import javax.swing.AbstractButton;
 import javax.swing.JTable;
 import javax.swing.text.JTextComponent;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.HierarchyColumn;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 public class CopyHandler {
+
+	private static final Logger LOG = LoggerFactory.getLogger(CopyHandler.class);
 
 	public static void installCopyAction(AbstractButton abstractButton, JTable jTable) {
 		abstractButton.addActionListener(new ListenerClass(jTable));
@@ -56,6 +60,10 @@ public class CopyHandler {
 	}
 
 	public static void toClipboard(final String text) {
+		toClipboard(text, 0);
+	}
+
+	private static void toClipboard(final String text, int retries) {
 		if (text == null) {
 			return;
 		}
@@ -65,7 +73,22 @@ public class CopyHandler {
 		Toolkit toolkit = Toolkit.getDefaultToolkit();
 		StringSelection selection = new StringSelection(text);
 		Clipboard clipboard = toolkit.getSystemClipboard();
-		clipboard.setContents(selection, null);
+		try {
+			clipboard.setContents(selection, null);
+		} catch (IllegalStateException ex) {
+			if (retries < 3) { //Retry 3 times
+				retries++;
+				LOG.info("Retrying copy to clipboard (" + retries + " of 3)" );
+				try {
+					Thread.sleep(100);
+				} catch (InterruptedException ex1) {
+					//No problem
+				}
+				toClipboard(text, retries);
+			} else {
+				LOG.error(ex.getMessage(), ex);
+			}
+		}
 	}
 
 	public static String fromClipboard() {
