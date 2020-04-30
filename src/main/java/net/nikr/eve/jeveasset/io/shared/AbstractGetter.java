@@ -285,20 +285,20 @@ public abstract class AbstractGetter<O extends OwnerType> implements Runnable {
 	}
 
 	protected final <T> List<List<T>> splitList(Collection<T> list, final int L) {
-		return splitList(new ArrayList<T>(list), L);
+		return splitList(new ArrayList<>(list), L);
 	}
 
 	private <T> List<List<T>> splitList(List<T> list, final int L) {
-		List<List<T>> parts = new ArrayList<List<T>>();
+		List<List<T>> parts = new ArrayList<>();
 		final int N = list.size();
 		for (int i = 0; i < N; i += L) {
-			parts.add(new ArrayList<T>(list.subList(i, Math.min(N, i + L))));
+			parts.add(new ArrayList<>(list.subList(i, Math.min(N, i + L))));
 		}
 		return parts;
 	}
 
 	protected final Map<Long, MyAsset> getIDs(OwnerType owner) {
-		Map<Long, MyAsset> itemMap = new HashMap<Long, MyAsset>();
+		Map<Long, MyAsset> itemMap = new HashMap<>();
 		ArrayList<MyAsset> assets;
 		synchronized(owner) {
 			assets = new ArrayList<>(owner.getAssets());
@@ -310,6 +310,11 @@ public abstract class AbstractGetter<O extends OwnerType> implements Runnable {
 	private void addItemIDs(Map<Long, MyAsset> itemIDs, List<MyAsset> assets) {
 		for (MyAsset asset : assets) {
 			if ((asset.getItem().getGroup().equals("Audit Log Secure Container")
+					|| asset.getItem().getGroup().equals("Cargo Container")
+					|| asset.getItem().getGroup().equals("Freight Container")
+					|| asset.getItem().getGroup().equals("Secure Cargo Container")
+					|| asset.getItem().getGroup().equals("Biomass")
+					|| asset.getItem().getCategory().equals("Deployable")
 					|| asset.getItem().getCategory().equals("Ship")
 					|| asset.getItem().getCategory().equals("Structure"))
 					&& asset.isSingleton()) {
@@ -349,7 +354,7 @@ public abstract class AbstractGetter<O extends OwnerType> implements Runnable {
 
 	protected static final String getHeader(Map<String, List<String>> responseHeaders, String headerName) {
 		if (responseHeaders != null) {
-			Map<String, List<String>> caseInsensitiveHeaders = new TreeMap<String, List<String>>(String.CASE_INSENSITIVE_ORDER);
+			Map<String, List<String>> caseInsensitiveHeaders = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
 			caseInsensitiveHeaders.putAll(responseHeaders);
 			List<String> headers = caseInsensitiveHeaders.get(headerName.toLowerCase());
 			if (headers != null && !headers.isEmpty()) {
