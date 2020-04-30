@@ -191,7 +191,7 @@ public class OverviewTab extends JMainTabSecondary {
 		JLabel jOwnerLabel = new JLabel(TabsOverview.get().owner());
 		jToolBarLeft.add(jOwnerLabel);
 
-		jOwner = new JComboBox<String>();
+		jOwner = new JComboBox<>();
 		jOwner.setActionCommand(OverviewAction.UPDATE_LIST.name());
 		jOwner.addActionListener(listener);
 		jToolBarLeft.addComboBox(jOwner, 150);
@@ -211,12 +211,12 @@ public class OverviewTab extends JMainTabSecondary {
 		updateFilters();
 
 		//Table Format
-		tableFormat = new EnumTableFormatAdaptor<OverviewTableFormat, Overview>(OverviewTableFormat.class);
+		tableFormat = new EnumTableFormatAdaptor<>(OverviewTableFormat.class);
 		//Backend
 		eventList = new EventListManager<Overview>().create();
 		//Sorting (per column)
 		eventList.getReadWriteLock().readLock().lock();
-		sortedList = new SortedList<Overview>(eventList);
+		sortedList = new SortedList<>(eventList);
 		eventList.getReadWriteLock().readLock().unlock();
 		//Table Model
 		tableModel = EventModels.createTableModel(sortedList, tableFormat);
@@ -235,11 +235,11 @@ public class OverviewTab extends JMainTabSecondary {
 		//Menu
 		installMenu(program, new OverviewTableMenu(), jTable, Overview.class);
 
-		List<EnumTableColumn<Overview>> enumColumns = new ArrayList<EnumTableColumn<Overview>>();
+		List<EnumTableColumn<Overview>> enumColumns = new ArrayList<>();
 		enumColumns.addAll(Arrays.asList(OverviewTableFormat.values()));
-		List<EventList<Overview>> eventLists = new ArrayList<EventList<Overview>>();
+		List<EventList<Overview>> eventLists = new ArrayList<>();
 		eventLists.add(sortedList);
-		exportDialog = new ExportDialog<Overview>(program.getMainWindow().getFrame(), NAME, null, new OverviewFilterControl(), eventLists, enumColumns);
+		exportDialog = new ExportDialog<>(program.getMainWindow().getFrame(), NAME, null, new OverviewFilterControl(), eventLists, enumColumns);
 
 		jVolume = StatusPanel.createLabel(TabsOverview.get().totalVolume(), Images.ASSETS_VOLUME.getIcon());
 		this.addStatusbarLabel(jVolume);
@@ -277,7 +277,7 @@ public class OverviewTab extends JMainTabSecondary {
 
 	@Override
 	public void updateData() {
-		jOwner.setModel(new ListComboBoxModel<String>(program.getOwnerNames(true)));
+		jOwner.setModel(new ListComboBoxModel<>(program.getOwnerNames(true)));
 		updateTable();
 	}
 
@@ -359,9 +359,9 @@ public class OverviewTab extends JMainTabSecondary {
 	}
 
 	private List<Overview> getList(final List<MyAsset> input, final String owner, final View view) {
-		List<Overview> locations = new ArrayList<Overview>();
-		Map<String, Overview> locationsMap = new HashMap<String, Overview>();
-		List<String> groupedLocations = new ArrayList<String>();
+		List<Overview> locations = new ArrayList<>();
+		Map<String, Overview> locationsMap = new HashMap<>();
+		List<String> groupedLocations = new ArrayList<>();
 		rowCount = 0;
 		if (view == View.GROUPS) { //Add all groups
 			for (Map.Entry<String, OverviewGroup> entry : Settings.get().getOverviewGroups().entrySet()) {
@@ -384,7 +384,11 @@ public class OverviewTab extends JMainTabSecondary {
 		}
 		final boolean all = owner.equals(General.get().all());
 		for (MyAsset asset : input) {
-			if (asset.getItem().getGroup().equals("Audit Log Secure Container") && Settings.get().isIgnoreSecureContainers()) {
+			if ((asset.getItem().getGroup().equals("Audit Log Secure Container")
+					|| asset.getItem().getGroup().equals("Cargo Container")
+					|| asset.getItem().getGroup().equals("Freight Container")
+					|| asset.getItem().getGroup().equals("Secure Cargo Container"))
+					&& Settings.get().isIgnoreSecureContainers()) {
 				continue;
 			}
 			if (asset.getItem().getGroup().equals("Station Services")) {
@@ -463,13 +467,13 @@ public class OverviewTab extends JMainTabSecondary {
 
 		jLoadFilter.removeAll();
 
-		jMenuItem = new FilterMenuItem(TabsOverview.get().clear(), new ArrayList<Filter>());
+		jMenuItem = new FilterMenuItem(TabsOverview.get().clear(), new ArrayList<>());
 		jMenuItem.setIcon(Images.FILTER_CLEAR.getIcon());
 		jMenuItem.setActionCommand(OverviewAction.LOAD_FILTER.name());
 		jMenuItem.addActionListener(listener);
 		jLoadFilter.add(jMenuItem);
 
-		List<String> filters = new ArrayList<String>(Settings.get().getTableFilters(AssetsTab.NAME).keySet());
+		List<String> filters = new ArrayList<>(Settings.get().getTableFilters(AssetsTab.NAME).keySet());
 		Collections.sort(filters, new CaseInsensitiveComparator());
 
 		if (!filters.isEmpty()) {
@@ -520,7 +524,7 @@ public class OverviewTab extends JMainTabSecondary {
 			tableModel.fireTableStructureChanged();
 		}
 		//Update Export Columns
-		List<EnumTableColumn<Overview>> enumColumns = new ArrayList<EnumTableColumn<Overview>>();
+		List<EnumTableColumn<Overview>> enumColumns = new ArrayList<>();
 		enumColumns.addAll(tableFormat.getShownColumns());
 		exportDialog.setColumns(enumColumns);
 		try {
@@ -543,7 +547,7 @@ public class OverviewTab extends JMainTabSecondary {
 	}
 
 	protected List<OverviewLocation> getSelectedLocations() {
-		List<OverviewLocation> locations = new ArrayList<OverviewLocation>();
+		List<OverviewLocation> locations = new ArrayList<>();
 		for (int row : jTable.getSelectedRows()) {
 			Overview overview = tableModel.getElementAt(row);
 			OverviewLocation overviewLocation = null;
@@ -578,7 +582,7 @@ public class OverviewTab extends JMainTabSecondary {
 	private class OverviewTableMenu implements TableMenu<Overview> {
 		@Override
 		public MenuData<Overview> getMenuData() {
-			return new MenuData<Overview>(selectionModel.getSelected());
+			return new MenuData<>(selectionModel.getSelected());
 		}
 
 		@Override
@@ -625,7 +629,7 @@ public class OverviewTab extends JMainTabSecondary {
 				int index = jTable.getSelectedRow();
 				Overview overview = tableModel.getElementAt(index);
 				OverviewGroup overviewGroup = Settings.get().getOverviewGroups().get(overview.getName());
-				List<Filter> filters = new ArrayList<Filter>();
+				List<Filter> filters = new ArrayList<>();
 				for (OverviewLocation location : overviewGroup.getLocations()) {
 					if (location.isStation()) {
 						Filter filter = new Filter(LogicType.OR, AssetTableFormat.LOCATION, CompareType.EQUALS, location.getName());
@@ -651,10 +655,10 @@ public class OverviewTab extends JMainTabSecondary {
 				int index = jTable.getSelectedRow();
 				Overview overview = tableModel.getElementAt(index);
 				OverviewGroup overviewGroup = Settings.get().getOverviewGroups().get(overview.getName());
-				Set<String> planets = new HashSet<String>();
-				Set<String> stations = new HashSet<String>();
-				Set<String> systems = new HashSet<String>();
-				Set<String> regions = new HashSet<String>();
+				Set<String> planets = new HashSet<>();
+				Set<String> stations = new HashSet<>();
+				Set<String> systems = new HashSet<>();
+				Set<String> regions = new HashSet<>();
 				for (OverviewLocation location : overviewGroup.getLocations()) {
 					if (location.isStation()) {
 						stations.add(location.getName());
@@ -715,7 +719,7 @@ public class OverviewTab extends JMainTabSecondary {
 
 		@Override
 		protected List<EnumTableColumn<Overview>> getShownColumns() {
-			return new ArrayList<EnumTableColumn<Overview>>(tableFormat.getShownColumns());
+			return new ArrayList<>(tableFormat.getShownColumns());
 		}
 
 		@Override

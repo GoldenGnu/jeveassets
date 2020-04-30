@@ -31,32 +31,32 @@ import net.nikr.eve.jeveasset.i18n.DialoguesSettings;
 
 public class OverviewToolSettingsPanel extends JSettingsPanel {
 
-	private final JCheckBox jIgnoreSecureContainers;
+	private final JCheckBox jIgnoreContainers;
 
 	public OverviewToolSettingsPanel(final Program program, final SettingsDialog settingsDialog) {
 		super(program, settingsDialog, DialoguesSettings.get().overview(), Images.TOOL_OVERVIEW.getIcon());
-		jIgnoreSecureContainers = new JCheckBox(DialoguesSettings.get().ignoreAuditLogContainers());
+		jIgnoreContainers = new JCheckBox(DialoguesSettings.get().ignoreContainers());
 
 		layout.setHorizontalGroup(
 			layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-				.addComponent(jIgnoreSecureContainers)
+				.addComponent(jIgnoreContainers)
 		);
 		layout.setVerticalGroup(
 			layout.createSequentialGroup()
-				.addComponent(jIgnoreSecureContainers, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+				.addComponent(jIgnoreContainers, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 		);
 	}
 
 	@Override
 	public boolean save() {
-		boolean update = jIgnoreSecureContainers.isSelected() != Settings.get().isIgnoreSecureContainers();
-		Settings.get().setIgnoreSecureContainers(jIgnoreSecureContainers.isSelected());
+		boolean update = jIgnoreContainers.isSelected() != Settings.get().isIgnoreSecureContainers();
+		Settings.get().setIgnoreSecureContainers(jIgnoreContainers.isSelected());
 		return update;
 	}
 
 	@Override
 	public void load() {
-		jIgnoreSecureContainers.setSelected(Settings.get().isIgnoreSecureContainers());
+		jIgnoreContainers.setSelected(Settings.get().isIgnoreSecureContainers());
 	}
 
 }
