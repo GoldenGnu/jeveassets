@@ -43,6 +43,7 @@ public class FilterMatcherTest extends TestUtil {
 
 	public enum TestEnum implements EnumTableColumn<Item> {
 		TEXT(false, false),
+		TEXT_FORMAT(false, false),
 		LONG(true, false),
 		INTEGER(true, false),
 		DOUBLE(true, false),
@@ -113,6 +114,7 @@ public class FilterMatcherTest extends TestUtil {
 	private Date dateColumn = null;
 	private Percent percentColumn = null;
 	private static final String TEXT = "Text";
+	private static final String TEXT_FORMAT = "Text\"'-";
 	private static final String TEXT_PART = "Tex";
 	private static final String TEXT_NOT = "Not";
 
@@ -214,6 +216,7 @@ public class FilterMatcherTest extends TestUtil {
 	public void testMatches() {
 	//String
 		stringTest();
+		stringFormatTest();
 	//Numbers
 		numberTest(TestEnum.DOUBLE);
 		numberTest(TestEnum.FLOAT);
@@ -393,6 +396,87 @@ public class FilterMatcherTest extends TestUtil {
 		matches(false, TestEnum.TEXT, Filter.CompareType.CONTAINS_NOT_COLUMN, TestEnum.COLUMN_TEXT.name(), TEXT);
 		matches(false, TestEnum.TEXT, Filter.CompareType.CONTAINS_NOT_COLUMN, TestEnum.COLUMN_TEXT.name(), TEXT_PART);
 		matches(true,  TestEnum.TEXT, Filter.CompareType.CONTAINS_NOT_COLUMN, TestEnum.COLUMN_TEXT.name(), TEXT_NOT);
+	}
+
+	private void stringFormatTest() {
+		//Equals
+		matches(true,  TestEnum.TEXT_FORMAT, Filter.CompareType.EQUALS, TEXT + "\"'-");
+		matches(true,  TestEnum.TEXT_FORMAT, Filter.CompareType.EQUALS, TEXT + "„‘–");
+		matches(true,  TestEnum.TEXT_FORMAT, Filter.CompareType.EQUALS, TEXT + "“’‐");
+		matches(true,  TestEnum.TEXT_FORMAT, Filter.CompareType.EQUALS, TEXT + "”`‑");
+		matches(true,  TestEnum.TEXT_FORMAT, Filter.CompareType.EQUALS, TEXT + "\"´‒");
+		matches(true,  TestEnum.TEXT_FORMAT, Filter.CompareType.EQUALS, TEXT + "\"'—");
+		//Contains
+		matches(true,  TestEnum.TEXT_FORMAT, Filter.CompareType.CONTAINS, "\"");
+		matches(true,  TestEnum.TEXT_FORMAT, Filter.CompareType.CONTAINS, "'");
+		matches(true,  TestEnum.TEXT_FORMAT, Filter.CompareType.CONTAINS, "-");
+		matches(true,  TestEnum.TEXT_FORMAT, Filter.CompareType.CONTAINS, "„"); //Index
+		matches(true,  TestEnum.TEXT_FORMAT, Filter.CompareType.CONTAINS, "“"); //Set transmit state
+		matches(true,  TestEnum.TEXT_FORMAT, Filter.CompareType.CONTAINS, "”"); //Cancel character
+		matches(true,  TestEnum.TEXT_FORMAT, Filter.CompareType.CONTAINS, "‘"); //Private use one
+		matches(true,  TestEnum.TEXT_FORMAT, Filter.CompareType.CONTAINS, "’"); //Private use two
+		matches(true,  TestEnum.TEXT_FORMAT, Filter.CompareType.CONTAINS, "`"); //Grave accent
+		matches(true,  TestEnum.TEXT_FORMAT, Filter.CompareType.CONTAINS, "´"); //Acute accent
+		matches(true,  TestEnum.TEXT_FORMAT, Filter.CompareType.CONTAINS, "–"); //En dash
+		matches(true,  TestEnum.TEXT_FORMAT, Filter.CompareType.CONTAINS, "‐"); //Hyphen
+		matches(true,  TestEnum.TEXT_FORMAT, Filter.CompareType.CONTAINS, "‑"); //Non-breaking hyphen
+		matches(true,  TestEnum.TEXT_FORMAT, Filter.CompareType.CONTAINS, "‒"); //Figure dEash
+		matches(true,  TestEnum.TEXT_FORMAT, Filter.CompareType.CONTAINS, "—"); //Em dash
+		//Regex
+		matches(true,  TestEnum.TEXT_FORMAT, Filter.CompareType.REGEX, "\"");
+		matches(true,  TestEnum.TEXT_FORMAT, Filter.CompareType.REGEX, "'");
+		matches(true,  TestEnum.TEXT_FORMAT, Filter.CompareType.REGEX, "-");
+		matches(true,  TestEnum.TEXT_FORMAT, Filter.CompareType.REGEX, "„"); //Index
+		matches(true,  TestEnum.TEXT_FORMAT, Filter.CompareType.REGEX, "“"); //Set transmit state
+		matches(true,  TestEnum.TEXT_FORMAT, Filter.CompareType.REGEX, "”"); //Cancel character
+		matches(true,  TestEnum.TEXT_FORMAT, Filter.CompareType.REGEX, "‘"); //Private use one
+		matches(true,  TestEnum.TEXT_FORMAT, Filter.CompareType.REGEX, "’"); //Private use two
+		matches(true,  TestEnum.TEXT_FORMAT, Filter.CompareType.REGEX, "`"); //Grave accent
+		matches(true,  TestEnum.TEXT_FORMAT, Filter.CompareType.REGEX, "´"); //Acute accent
+		matches(true,  TestEnum.TEXT_FORMAT, Filter.CompareType.REGEX, "–"); //En dash
+		matches(true,  TestEnum.TEXT_FORMAT, Filter.CompareType.REGEX, "‐"); //Hyphen
+		matches(true,  TestEnum.TEXT_FORMAT, Filter.CompareType.REGEX, "‑"); //Non-breaking hyphen
+		matches(true,  TestEnum.TEXT_FORMAT, Filter.CompareType.REGEX, "‒"); //Figure dash
+		matches(true,  TestEnum.TEXT_FORMAT, Filter.CompareType.REGEX, "—"); //Em dash
+		//All - Regex
+		matches(true,  AllColumn.ALL, Filter.CompareType.REGEX, "\"");
+		matches(true,  AllColumn.ALL, Filter.CompareType.REGEX, "'");
+		matches(true,  AllColumn.ALL, Filter.CompareType.REGEX, "-");
+		matches(true,  AllColumn.ALL, Filter.CompareType.REGEX, "„"); //Index
+		matches(true,  AllColumn.ALL, Filter.CompareType.REGEX, "“"); //Set transmit state
+		matches(true,  AllColumn.ALL, Filter.CompareType.REGEX, "”"); //Cancel character
+		matches(true,  AllColumn.ALL, Filter.CompareType.REGEX, "‘"); //Private use one
+		matches(true,  AllColumn.ALL, Filter.CompareType.REGEX, "’"); //Private use two
+		matches(true,  AllColumn.ALL, Filter.CompareType.REGEX, "`"); //Grave accent
+		matches(true,  AllColumn.ALL, Filter.CompareType.REGEX, "´"); //Acute accent
+		matches(true,  AllColumn.ALL, Filter.CompareType.REGEX, "–"); //En dash
+		matches(true,  AllColumn.ALL, Filter.CompareType.REGEX, "‐"); //Hyphen
+		matches(true,  AllColumn.ALL, Filter.CompareType.REGEX, "‑"); //Non-breaking hyphen
+		matches(true,  AllColumn.ALL, Filter.CompareType.REGEX, "‒"); //Figure dash
+		matches(true,  AllColumn.ALL, Filter.CompareType.REGEX, "—"); //Em dash
+		//All - Contains
+		matches(true,  AllColumn.ALL, Filter.CompareType.CONTAINS, "\"");
+		matches(true,  AllColumn.ALL, Filter.CompareType.CONTAINS, "'");
+		matches(true,  AllColumn.ALL, Filter.CompareType.CONTAINS, "-");
+		matches(true,  AllColumn.ALL, Filter.CompareType.CONTAINS, "„"); //Index
+		matches(true,  AllColumn.ALL, Filter.CompareType.CONTAINS, "“"); //Set transmit state
+		matches(true,  AllColumn.ALL, Filter.CompareType.CONTAINS, "”"); //Cancel character
+		matches(true,  AllColumn.ALL, Filter.CompareType.CONTAINS, "‘"); //Private use one
+		matches(true,  AllColumn.ALL, Filter.CompareType.CONTAINS, "’"); //Private use two
+		matches(true,  AllColumn.ALL, Filter.CompareType.CONTAINS, "`"); //Grave accent
+		matches(true,  AllColumn.ALL, Filter.CompareType.CONTAINS, "´"); //Acute accent
+		matches(true,  AllColumn.ALL, Filter.CompareType.CONTAINS, "–"); //En dash
+		matches(true,  AllColumn.ALL, Filter.CompareType.CONTAINS, "‐"); //Hyphen
+		matches(true,  AllColumn.ALL, Filter.CompareType.CONTAINS, "‑"); //Non-breaking hyphen
+		matches(true,  AllColumn.ALL, Filter.CompareType.CONTAINS, "‒"); //Figure dash
+		matches(true,  AllColumn.ALL, Filter.CompareType.CONTAINS, "—"); //Em dash
+		//All - Equals
+		matches(true,  AllColumn.ALL, Filter.CompareType.EQUALS, TEXT + "\"'-");
+		matches(true,  AllColumn.ALL, Filter.CompareType.EQUALS, TEXT + "„‘–");
+		matches(true,  AllColumn.ALL, Filter.CompareType.EQUALS, TEXT + "“’‐");
+		matches(true,  AllColumn.ALL, Filter.CompareType.EQUALS, TEXT + "”`‑");
+		matches(true,  AllColumn.ALL, Filter.CompareType.EQUALS, TEXT + "\"´‒");
+		matches(true,  AllColumn.ALL, Filter.CompareType.EQUALS, TEXT + "\"'—");
 	}
 
 	private void numberTest(final TestEnum testEnum) {
@@ -706,6 +790,8 @@ public class FilterMatcherTest extends TestUtil {
 				switch (format) {
 					case TEXT:
 						return TEXT;
+					case TEXT_FORMAT:
+						return TEXT_FORMAT;
 					case DOUBLE:
 						return NUMBER_DOUBLE;
 					case FLOAT:
