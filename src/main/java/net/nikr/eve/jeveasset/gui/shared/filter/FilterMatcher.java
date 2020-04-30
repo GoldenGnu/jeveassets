@@ -64,7 +64,7 @@ public class FilterMatcher<E> implements Matcher<E> {
 		this.compare = compare;
 		Pattern compiled;
 		try {
-			compiled = Pattern.compile(text, Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
+			compiled = Pattern.compile(format(text), Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
 		} catch (PatternSyntaxException ex){
 			compiled = Pattern.compile("", Pattern.CASE_INSENSITIVE);
 		}
@@ -435,6 +435,23 @@ public class FilterMatcher<E> implements Matcher<E> {
 		}
 
 		//String
-		return object.toString();
+		return format(object.toString());
+	}
+
+	private static String format(String string) {
+		return string
+				.replace("„", "\"") //Index
+				.replace("“", "\"") //Set transmit state
+				.replace("”", "\"") //Cancel character
+				.replace("‘", "'") //Private use one
+				.replace("’", "'") //Private use two
+				.replace("`", "'") //Grave accent
+				.replace("´", "'") //Acute accent
+				.replace("–", "-") //En dash
+				.replace("‐", "-") //Hyphen
+				.replace("‑", "-") //Non-breaking hyphen
+				.replace("‒", "-") //Figure dash
+				.replace("—", "-") //Em dash
+				;
 	}
 }
