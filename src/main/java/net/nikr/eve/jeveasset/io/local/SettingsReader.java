@@ -234,7 +234,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 			throw new XmlException("Wrong root element name.");
 		}
 		//Stockpiles
-		List<Stockpile> stockpiles = new ArrayList<Stockpile>();
+		List<Stockpile> stockpiles = new ArrayList<>();
 		NodeList stockpilesNodes = element.getElementsByTagName("stockpiles");
 		if (stockpilesNodes.getLength() == 1) {
 			Element stockpilesElement = (Element) stockpilesNodes.item(0);
@@ -470,7 +470,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 	}
 
 	private Map<String, List<Value>> parseTrackerData(final Element element) throws XmlException {
-		Map<String, List<Value>> trackerData = new HashMap<String, List<Value>>();
+		Map<String, List<Value>> trackerData = new HashMap<>();
 		NodeList tableNodeList = element.getElementsByTagName("owner");
 		for (int a = 0; a < tableNodeList.getLength(); a++) {
 			//Read Owner
@@ -609,7 +609,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 			}
 		//LEGACY
 			//Owners
-			List<Long> ownerIDs = new ArrayList<Long>();
+			List<Long> ownerIDs = new ArrayList<>();
 			if (haveAttribute(stockpileNode, "characterid")) {
 				long ownerID = getLong(stockpileNode, "characterid");
 				if (ownerID > 0) {
@@ -617,7 +617,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 				}
 			}
 			//Containers
-			List<StockpileContainer> containers = new ArrayList<StockpileContainer>();
+			List<StockpileContainer> containers = new ArrayList<>();
 			if (haveAttribute(stockpileNode, "container")) {
 				String container = getString(stockpileNode, "container");
 				if (!container.equals(General.get().all())) {
@@ -625,7 +625,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 				}
 			}
 			//Flags
-			List<Integer> flagIDs = new ArrayList<Integer>();
+			List<Integer> flagIDs = new ArrayList<>();
 			if (haveAttribute(stockpileNode, "flagid")) {
 				int flagID = getInt(stockpileNode, "flagid");
 				if (flagID > 0) {
@@ -656,7 +656,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 			if (haveAttribute(stockpileNode, "jobs")) {
 				jobs = getBoolean(stockpileNode, "jobs");
 			}
-			List<StockpileFilter> filters = new ArrayList<StockpileFilter>();
+			List<StockpileFilter> filters = new ArrayList<>();
 			if (inventory != null && sellOrders != null && buyOrders != null && jobs != null) {
 				StockpileFilter filter = new StockpileFilter(location, flagIDs, containers, ownerIDs, exclude, null, inventory, sellOrders, buyOrders, jobs, false, false, false, false, false, false);
 				filters.add(filter);
@@ -707,7 +707,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 				long locationID = getLong(filterNode, "locationid");
 				location = ApiIdConverter.getLocation(locationID);
 				//Owners
-				List<Long> filterOwnerIDs = new ArrayList<Long>();
+				List<Long> filterOwnerIDs = new ArrayList<>();
 				NodeList ownerNodes = filterNode.getElementsByTagName("owner");
 				for (int c = 0; c < ownerNodes.getLength(); c++) {
 					Element ownerNode = (Element) ownerNodes.item(c);
@@ -715,7 +715,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 					filterOwnerIDs.add(filterOwnerID);
 				}
 				//Containers
-				List<StockpileContainer> filterContainers = new ArrayList<StockpileContainer>();
+				List<StockpileContainer> filterContainers = new ArrayList<>();
 				NodeList containerNodes = filterNode.getElementsByTagName("container");
 				for (int c = 0; c < containerNodes.getLength(); c++) {
 					Element containerNode = (Element) containerNodes.item(c);
@@ -727,7 +727,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 					filterContainers.add(new StockpileContainer(filterContainer, filterIncludeContainer));
 				}
 				//Flags
-				List<Integer> filterFlagIDs = new ArrayList<Integer>();
+				List<Integer> filterFlagIDs = new ArrayList<>();
 				NodeList flagNodes = filterNode.getElementsByTagName("flag");
 				for (int c = 0; c < flagNodes.getLength(); c++) {
 					Element flagNode = (Element) flagNodes.item(c);
@@ -818,7 +818,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		for (int a = 0; a < presetNodes.getLength(); a++) {
 			Element presetNode = (Element) presetNodes.item(a);
 			String name = getString(presetNode, "name");
-			Set<Long> systemIDs = new HashSet<Long>();
+			Set<Long> systemIDs = new HashSet<>();
 			NodeList presetSystemNodes = presetNode.getElementsByTagName("presetsystem");
 			for (int b = 0; b < presetSystemNodes.getLength(); b++) {
 				Element systemNode = (Element) presetSystemNodes.item(b);
@@ -831,17 +831,19 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		for (int a = 0; a < routeNodes.getLength(); a++) {
 			Element routeNode = (Element) routeNodes.item(a);
 			String name = getString(routeNode, "name");
+			int waypoints = getInt(routeNode, "waypoints");
 			String algorithmName = getString(routeNode, "algorithmname");
 			long algorithmTime = getLong(routeNode, "algorithmtime");
 			int jumps = getInt(routeNode, "jumps");
-			int waypoints = getInt(routeNode, "waypoints");
+			String avoid = getStringOptional(routeNode, "avoid");
+			String security = getStringOptional(routeNode, "security");
 			NodeList routeSystemsNodes = routeNode.getElementsByTagName("routesystems");
-			List<List<SolarSystem>> route = new ArrayList<List<SolarSystem>>();
-			Map<Long, List<SolarSystem>> stationsMap = new HashMap<Long, List<SolarSystem>>();
+			List<List<SolarSystem>> route = new ArrayList<>();
+			Map<Long, List<SolarSystem>> stationsMap = new HashMap<>();
 			for (int b = 0; b < routeSystemsNodes.getLength(); b++) {
 				Element routeStartSystemNode = (Element) routeSystemsNodes.item(b);
 				NodeList routeSystemNodes = routeStartSystemNode.getElementsByTagName("routesystem");
-				List<SolarSystem> systems = new ArrayList<SolarSystem>();
+				List<SolarSystem> systems = new ArrayList<>();
 				for (int c = 0; c < routeSystemNodes.getLength(); c++) {
 					Element routeSystemNode = (Element) routeSystemNodes.item(c);
 					long systemID = getLong(routeSystemNode, "systemid");
@@ -862,7 +864,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 					stationsList.add(station);
 				}
 			}
-			settings.getRoutingSettings().getRoutes().put(name, new RouteResult(route, stationsMap, waypoints, algorithmName, algorithmTime, jumps));
+			settings.getRoutingSettings().getRoutes().put(name, new RouteResult(route, stationsMap, waypoints, algorithmName, algorithmTime, jumps, avoid, security));
 		}
 	}
 
@@ -1093,7 +1095,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 	private void parseTableColumns(final Element element, final Settings settings) throws XmlException {
 		NodeList tableNodeList = element.getElementsByTagName("table");
 		for (int a = 0; a < tableNodeList.getLength(); a++) {
-			List<SimpleColumn> columns = new ArrayList<SimpleColumn>();
+			List<SimpleColumn> columns = new ArrayList<>();
 			Element tableNode = (Element) tableNodeList.item(a);
 			String tableName = getString(tableNode, "name");
 			//Ignore old tables
@@ -1114,7 +1116,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 	private void parseTableColumnsWidth(final Element element, final Settings settings) throws XmlException {
 		NodeList tableNodeList = element.getElementsByTagName("table");
 		for (int a = 0; a < tableNodeList.getLength(); a++) {
-			Map<String, Integer> columns = new HashMap<String, Integer>();
+			Map<String, Integer> columns = new HashMap<>();
 			Element tableNode = (Element) tableNodeList.item(a);
 			String tableName = getString(tableNode, "name");
 			NodeList columnNodeList = tableNode.getElementsByTagName("column");
@@ -1143,7 +1145,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		for (int a = 0; a < viewToolNodeList.getLength(); a++) {
 			Element viewToolNode = (Element) viewToolNodeList.item(a);
 			String toolName = getString(viewToolNode, "tool");
-			Map<String, View> views = new TreeMap<String, View>(new CaseInsensitiveComparator());
+			Map<String, View> views = new TreeMap<>(new CaseInsensitiveComparator());
 			settings.getTableViews().put(toolName, views);
 			NodeList viewNodeList = viewToolNode.getElementsByTagName("view");
 			for (int b = 0; b < viewNodeList.getLength(); b++) {
@@ -1168,11 +1170,11 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 			Element tableNode = (Element) tableNodeList.item(a);
 			String tableName = getString(tableNode, "name");
 			NodeList filterNodeList = tableNode.getElementsByTagName("filter");
-			Map<String, List<Filter>> filters = new HashMap<String, List<Filter>>();
+			Map<String, List<Filter>> filters = new HashMap<>();
 			for (int b = 0; b < filterNodeList.getLength(); b++) {
 				Element filterNode = (Element) filterNodeList.item(b);
 				String filterName = getString(filterNode, "name");
-				List<Filter> filter = new ArrayList<Filter>();
+				List<Filter> filter = new ArrayList<>();
 				NodeList rowNodes = filterNode.getElementsByTagName("row");
 				for (int c = 0; c < rowNodes.getLength(); c++) {
 					Element rowNode = (Element) rowNodes.item(c);
@@ -1311,7 +1313,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 			Element filterNode = (Element) filterNodeList.item(a);
 			String filterName = getString(filterNode, "name");
 
-			List<Filter> filters = new ArrayList<Filter>();
+			List<Filter> filters = new ArrayList<>();
 
 			NodeList rowNodeList = filterNode.getElementsByTagName("row");
 			for (int b = 0; b < rowNodeList.getLength(); b++) {
@@ -1435,7 +1437,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		}
 		NodeList tableNodeList = element.getElementsByTagName("table");
 		for (int a = 0; a < tableNodeList.getLength(); a++) {
-			List<String> columns = new ArrayList<String>();
+			List<String> columns = new ArrayList<>();
 			Element tableNode = (Element) tableNodeList.item(a);
 			String tableName = getString(tableNode, "name");
 			NodeList columnNodeList = tableNode.getElementsByTagName("column");

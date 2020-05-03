@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import net.nikr.eve.jeveasset.gui.tabs.routing.SolarSystem;
+import net.nikr.eve.jeveasset.i18n.TabsRouting;
 
 
 public class RouteResult {
@@ -33,14 +34,26 @@ public class RouteResult {
 	private final String algorithmName;
 	private final long algorithmTime;
 	private final int jumps;
+	private final String avoid;
+	private final String security;
 
-	public RouteResult(List<List<SolarSystem>> route, Map<Long, List<SolarSystem>> stations, int waypoints, String algorithmName, long algorithmTime, int jumps) {
+	public RouteResult(List<List<SolarSystem>> route, Map<Long, List<SolarSystem>> stations, int waypoints, String algorithmName, long algorithmTime, int jumps, String avoid, String security) {
 		this.route = route;
 		this.stations = stations;
 		this.waypoints = waypoints;
 		this.algorithmName = algorithmName;
 		this.algorithmTime = algorithmTime;
 		this.jumps = jumps;
+		if (avoid != null) {
+			this.avoid = avoid;
+		} else {
+			this.avoid = TabsRouting.get().resultUnknownValue();
+		}
+		if (security != null) {
+			this.security = security;
+		} else {
+			this.security = TabsRouting.get().resultUnknownValue();
+		}
 	}
 
 	public List<List<SolarSystem>> getRoute() {
@@ -67,15 +80,25 @@ public class RouteResult {
 		return jumps;
 	}
 
+	public String getAvoid() {
+		return avoid;
+	}
+
+	public String getSecurity() {
+		return security;
+	}
+
 	@Override
 	public int hashCode() {
 		int hash = 5;
-		hash = 19 * hash + Objects.hashCode(this.route);
-		hash = 19 * hash + Objects.hashCode(this.stations);
-		hash = 19 * hash + this.waypoints;
-		hash = 19 * hash + Objects.hashCode(this.algorithmName);
-		hash = 19 * hash + (int) (this.algorithmTime ^ (this.algorithmTime >>> 32));
-		hash = 19 * hash + this.jumps;
+		hash = 97 * hash + Objects.hashCode(this.route);
+		hash = 97 * hash + Objects.hashCode(this.stations);
+		hash = 97 * hash + this.waypoints;
+		hash = 97 * hash + Objects.hashCode(this.algorithmName);
+		hash = 97 * hash + (int) (this.algorithmTime ^ (this.algorithmTime >>> 32));
+		hash = 97 * hash + this.jumps;
+		hash = 97 * hash + Objects.hashCode(this.avoid);
+		hash = 97 * hash + Objects.hashCode(this.security);
 		return hash;
 	}
 
@@ -103,6 +126,12 @@ public class RouteResult {
 		if (!Objects.equals(this.algorithmName, other.algorithmName)) {
 			return false;
 		}
+		if (!Objects.equals(this.avoid, other.avoid)) {
+			return false;
+		}
+		if (!Objects.equals(this.security, other.security)) {
+			return false;
+		}
 		if (!Objects.equals(this.route, other.route)) {
 			return false;
 		}
@@ -111,4 +140,5 @@ public class RouteResult {
 		}
 		return true;
 	}
+
 }
