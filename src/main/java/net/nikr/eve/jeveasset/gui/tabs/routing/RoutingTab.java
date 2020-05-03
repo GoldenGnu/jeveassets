@@ -91,10 +91,13 @@ import org.slf4j.LoggerFactory;
 import uk.me.candle.eve.graph.DisconnectedGraphException;
 import uk.me.candle.eve.graph.Edge;
 import uk.me.candle.eve.graph.Graph;
-import uk.me.candle.eve.graph.Node;
 import uk.me.candle.eve.graph.distances.Jumps;
+import uk.me.candle.eve.routing.BruteForce;
+import uk.me.candle.eve.routing.Crossover;
+import uk.me.candle.eve.routing.NearestNeighbour;
 import uk.me.candle.eve.routing.Progress;
 import uk.me.candle.eve.routing.RoutingAlgorithm;
+import uk.me.candle.eve.routing.SimpleUnisexMutatorHibrid2Opt;
 import uk.me.candle.eve.routing.cancel.CancelService;
 
 /**
@@ -184,7 +187,7 @@ public class RoutingTab extends JMainTabSecondary {
 	//Data
 	private final Map<Long, SolarSystem> systemCache = new HashMap<>();
 	private final Set<SolarSystem> available = new HashSet<>();
-	protected Graph filteredGraph;
+	protected Graph<SolarSystem> filteredGraph;
 	private double lastSecMin = 0.0;
 	private double lastSecMax = 1.0;
 	private List<Long> lastAvoid = new ArrayList<>();
@@ -723,7 +726,7 @@ public class RoutingTab extends JMainTabSecondary {
 		if (filteredGraph != null) {
 			filteredGraph.clear();
 		}
-		filteredGraph = new Graph(new Jumps());
+		filteredGraph = new Graph<>(new Jumps<>());
 		double secMin;
 		double secMax;
 		if (jSecurityMinimum != null) {
@@ -756,7 +759,7 @@ public class RoutingTab extends JMainTabSecondary {
 						&& !Settings.get().getRoutingSettings().getAvoid().keySet().contains(jump.getFrom().getSystemID())
 						&& !Settings.get().getRoutingSettings().getAvoid().keySet().contains(jump.getTo().getSystemID())
 					)) {
-				filteredGraph.addEdge(new Edge(from, to));
+				filteredGraph.addEdge(new Edge<>(from, to));
 			}
 		}
 		SplashUpdater.setSubProgress(100);
@@ -909,7 +912,7 @@ public class RoutingTab extends JMainTabSecondary {
 			//Update all SolarSystem with the latest from the new Graph
 			//This is needed to get the proper Edge(s) parsed to the routing Algorithm
 			Map<Long, List<SolarSystem>> stationsMap = new HashMap<>();
-			Set<Node> waypoints = new HashSet<>();
+			Set<SolarSystem> waypoints = new HashSet<>();
 			for (SolarSystem solarSystem : jWaypoints.getEditableModel().getAll()) {
 				if (solarSystem.isStation()) { //Not Planet
 					List<SolarSystem> stations = stationsMap.get(solarSystem.getSystemID());
@@ -921,13 +924,13 @@ public class RoutingTab extends JMainTabSecondary {
 				}
 				waypoints.add(systemCache.get(solarSystem.getSystemID()));
 			}
-			List<Node> inputWaypoints = new ArrayList<>(waypoints);
+			List<SolarSystem> inputWaypoints = new ArrayList<>(waypoints);
 			//Move frist system to the top....
 			final String text = jStart.getText();
 			if (!text.contains(TabsRouting.get().startEmpty())) {
-				Collections.sort(inputWaypoints, new Comparator<Node>() {
+				Collections.sort(inputWaypoints, new Comparator<SolarSystem>() {
 					@Override
-					public int compare(Node o1, Node o2) {
+					public int compare(SolarSystem o1, SolarSystem o2) {
 						if (o1.getName().equals(text) && o2.getName().equals(text)) {
 							return 0; //Equal
 						} else if (o1.getName().equals(text)) {
@@ -942,20 +945,24 @@ public class RoutingTab extends JMainTabSecondary {
 			}
 			//Start route finding:
 			RoutingAlgorithmContainer algorithm = (RoutingAlgorithmContainer) jAlgorithm.getSelectedItem();
-			List<Node> nodeRoute = executeRouteFinding(inputWaypoints, algorithm);
+			List<SolarSystem> nodeRoute = executeRouteFinding(inputWaypoints, algorithm);
 			if (nodeRoute.isEmpty()) { //Cancelled
 				algorithm.resetCancelService();
 				return;
 			} else { //Completed!
 				jProgress.setValue(jProgress.getMaximum());
 			}
-			Node last = null;
+			SolarSystem last = null;
 			List<List<SolarSystem>> route = new ArrayList<>();
-			for (Node current : nodeRoute) {
-				add(route, last, current);
+			for (SolarSystem current : nodeRoute) {
+				if (last != null) {
+					route.add(new ArrayList<>(filteredGraph.routeBetween(last, current)));
+				}
 				last = current;
 			}
-			add(route, last, nodeRoute.get(0));
+			if (last != null) {
+				route.add(new ArrayList<>(filteredGraph.routeBetween(last, nodeRoute.get(0))));
+			}
 			setRouteResult(new RouteResult(route, stationsMap, inputWaypoints.size(), algorithm.getName(), algorithm.getLastTimeTaken(), algorithm.getLastDistance(), getAvoidString(), getSecurityString()));
 		} catch (DisconnectedGraphException dce) {
 			JOptionPane.showMessageDialog(program.getMainWindow().getFrame()
@@ -985,21 +992,6 @@ public class RoutingTab extends JMainTabSecondary {
 			builder.append(TabsRouting.get().avoidNone());
 		}
 		return builder.toString();
-	}
-
-	private void add(List<List<SolarSystem>> route, Node last, Node current) {
-		if (last != null) {
-			List<SolarSystem> fullRoute = new ArrayList<>();
-			for (Node node : filteredGraph.routeBetween(last, current)) {
-				if (node instanceof SolarSystem) {
-					SolarSystem routeSystem = (SolarSystem) node;
-					fullRoute.add(routeSystem);
-				}
-			}
-			if (last instanceof SolarSystem) {
-				route.add(fullRoute);
-			}
-		}
 	}
 
 	public void setRouteResult(RouteResult routeResult) {
@@ -1062,11 +1054,11 @@ public class RoutingTab extends JMainTabSecondary {
 		});
 	}
 
-	protected Graph getGraph() {
+	protected Graph<SolarSystem> getGraph() {
 		return filteredGraph;
 	}
 
-	private List<Node> executeRouteFinding(final List<Node> inputWaypoints, final RoutingAlgorithmContainer algorithm) {
+	private List<SolarSystem> executeRouteFinding(final List<SolarSystem> inputWaypoints, final RoutingAlgorithmContainer algorithm) {
 		return algorithm.execute(routeFind, filteredGraph, inputWaypoints);
 	}
 
@@ -1607,9 +1599,9 @@ public class RoutingTab extends JMainTabSecondary {
 	 */
 	private static class RoutingAlgorithmContainer {
 
-		private RoutingAlgorithm contained;
+		private RoutingAlgorithm<SolarSystem> contained;
 
-		public RoutingAlgorithmContainer(final RoutingAlgorithm contained) {
+		public RoutingAlgorithmContainer(final RoutingAlgorithm<SolarSystem> contained) {
 			this.contained = contained;
 		}
 
@@ -1629,7 +1621,7 @@ public class RoutingTab extends JMainTabSecondary {
 			return contained.getBasicDescription();
 		}
 
-		public List<Node> execute(final Progress progress, final Graph g, final List<? extends Node> assetLocations) {
+		public List<SolarSystem> execute(final Progress progress, final Graph<SolarSystem> g, final List<SolarSystem> assetLocations) {
 			return contained.execute(progress, g, assetLocations);
 		}
 
@@ -1653,12 +1645,13 @@ public class RoutingTab extends JMainTabSecondary {
 		public String toString() {
 			return getName();
 		}
-
+		
 		public static List<RoutingAlgorithmContainer> getRegisteredList() {
 			List<RoutingAlgorithmContainer> list = new ArrayList<>();
-			for (RoutingAlgorithm ra : RoutingAlgorithm.getRegisteredList()) {
-				list.add(new RoutingAlgorithmContainer(ra));
-			}
+			list.add(new RoutingAlgorithmContainer(new BruteForce<>()));
+			list.add(new RoutingAlgorithmContainer(new SimpleUnisexMutatorHibrid2Opt<>()));
+			list.add(new RoutingAlgorithmContainer(new Crossover<>()));
+			list.add(new RoutingAlgorithmContainer(new NearestNeighbour<>()));
 			return list;
 		}
 	}

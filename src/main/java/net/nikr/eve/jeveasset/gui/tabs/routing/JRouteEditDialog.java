@@ -46,7 +46,6 @@ import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
 import net.nikr.eve.jeveasset.i18n.TabsRouting;
 import uk.me.candle.eve.graph.DisconnectedGraphException;
 import uk.me.candle.eve.graph.Graph;
-import uk.me.candle.eve.graph.Node;
 
 
 public class JRouteEditDialog extends JDialogCentered {
@@ -59,7 +58,7 @@ public class JRouteEditDialog extends JDialogCentered {
 	private final JLabel jAvoid;
 	private final JLabel jSecurity;
 	private Map<Long, SolarSystem> systemCache;
-	private Graph filteredGraph;
+	private Graph<SolarSystem> filteredGraph;
 	private RouteResult routeResult;
 	private RouteResult returnResult;
 	private boolean updating = false;
@@ -189,14 +188,7 @@ public class JRouteEditDialog extends JDialogCentered {
 	}
 
 	private List<SolarSystem> routeBetween(Route from, Route to) {
-		List<Node> nodeRoute = filteredGraph.routeBetween(systemCache.get(from.getSystemID()), systemCache.get(to.getSystemID()));
-		List<SolarSystem> route = new ArrayList<>();
-		for (Node node : nodeRoute) {
-			if (node instanceof SolarSystem) {
-				route.add((SolarSystem) node);
-			}
-		}
-		return route;
+		return filteredGraph.routeBetween(systemCache.get(from.getSystemID()), systemCache.get(to.getSystemID()));
 	}
 
 	private int distanceBetween(Route from, Route to) {
@@ -213,7 +205,7 @@ public class JRouteEditDialog extends JDialogCentered {
 		return jOK;
 	}
 
-	public RouteResult show(Map<Long, SolarSystem> systemCache, Graph filteredGraph, RouteResult routeResult) {
+	public RouteResult show(Map<Long, SolarSystem> systemCache, Graph<SolarSystem> filteredGraph, RouteResult routeResult) {
 		updating = true;
 		this.filteredGraph = filteredGraph;
 		this.systemCache = systemCache;

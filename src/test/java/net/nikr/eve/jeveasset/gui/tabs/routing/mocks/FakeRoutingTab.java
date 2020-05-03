@@ -21,14 +21,12 @@
 
 package net.nikr.eve.jeveasset.gui.tabs.routing.mocks;
 
-import java.awt.Image;
 import java.util.ArrayList;
 import java.util.List;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.gui.tabs.routing.RoutingTab;
+import net.nikr.eve.jeveasset.gui.tabs.routing.SolarSystem;
 import uk.me.candle.eve.graph.Graph;
-import uk.me.candle.eve.graph.Node;
-import uk.me.candle.eve.routing.RoutingAlgorithm;
 
 /**
  *
@@ -36,23 +34,21 @@ import uk.me.candle.eve.routing.RoutingAlgorithm;
  */
 public class FakeRoutingTab extends RoutingTab {
 
-	private RoutingAlgorithm ra;
 
-	public FakeRoutingTab(final Program program, final Image image, final RoutingAlgorithm ra) {
+	public FakeRoutingTab(final Program program) {
 		super(false);
 		this.program = program;
-		this.ra = ra;
 	}
 
 	public void buildTestGraph() {
 		super.buildGraph(true);
 	}
 
-	public List<Node> getNodesFromNames(final List<String> names) {
-		List<Node> nodes = new ArrayList<Node>();
+	public List<SolarSystem> getNodesFromNames(final List<String> names) {
+		List<SolarSystem> nodes = new ArrayList<>();
 		for (String name : names) {
-			Node nn = null;
-			for (Node n : filteredGraph.getNodes()) {
+			SolarSystem nn = null;
+			for (SolarSystem n : filteredGraph.getNodes()) {
 				if (n.getName().equals(name)) {
 					nn = n;
 					break;
@@ -66,7 +62,8 @@ public class FakeRoutingTab extends RoutingTab {
 		return nodes;
 	}
 
-	public Graph getGraph() {
+	@Override
+	public Graph<SolarSystem> getGraph() {
 		return filteredGraph;
 	}
 }

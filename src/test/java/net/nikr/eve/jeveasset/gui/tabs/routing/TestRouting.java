@@ -32,10 +32,14 @@ import org.junit.AfterClass;
 import static org.junit.Assert.assertEquals;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import uk.me.candle.eve.graph.Node;
 import uk.me.candle.eve.routing.BruteForce;
+import uk.me.candle.eve.routing.Crossover;
+import uk.me.candle.eve.routing.CrossoverHibrid2opt;
 import uk.me.candle.eve.routing.NearestNeighbour;
+import uk.me.candle.eve.routing.NearestNeighbourIteration;
 import uk.me.candle.eve.routing.RoutingAlgorithm;
+import uk.me.candle.eve.routing.SimpleUnisexMutator;
+import uk.me.candle.eve.routing.SimpleUnisexMutatorHibrid2Opt;
 
 /**
  *
@@ -53,9 +57,6 @@ public class TestRouting extends TestUtil {
 		setLoggingLevel(Level.INFO);
 	}
 
-	@Test
-	public void empty() { }
-
 	private List<String> getErentaList() {
 		/*
 		 * Erenta
@@ -66,7 +67,7 @@ public class TestRouting extends TestUtil {
 		 * Torrinos
 		 * Umokka
 		 */
-		List<String> waypointNames = new ArrayList<String>();
+		List<String> waypointNames = new ArrayList<>();
 		waypointNames.add("Erenta");
 		waypointNames.add("Haajinen");
 		waypointNames.add("Kakakela");
@@ -78,62 +79,132 @@ public class TestRouting extends TestUtil {
 	}
 
 	@Test
-	public void testErentaBF() {
-		testRoute(getErentaList(), new BruteForce(), 40);
+	public void testErentaBruteForce() {
+		testRoute(getErentaList(), new BruteForce<>(), 40);
 	}
 
 	@Test
-	public void testErentaNN() {
-		testRoute(getErentaList(), new NearestNeighbour(), 42);
+	public void testErentaCrossover() {
+		testRoute(getErentaList(), new Crossover<>(), 40);
 	}
 
-	private void testRoute(final List<String> waypointNames, final RoutingAlgorithm ra, final int exptectedDistance) {
-		FakeRoutingTab frd = new FakeRoutingTab(new RoutingMockProgram(), null, ra);
-		frd.buildTestGraph();
-		List<Node> initial = frd.getNodesFromNames(waypointNames);
-		List<Node> routeBF = ra.execute(new FakeProgress(), frd.getGraph(), new ArrayList<Node>(initial));
+	@Test
+	public void testErentaCrossoverHibrid2opt() {
+		testRoute(getErentaList(), new CrossoverHibrid2opt<>(), 40);
+	}
 
+	@Test
+	public void testErentaNearestNeighbour() {
+		testRoute(getErentaList(), new NearestNeighbour<>(), 42);
+	}
+
+	@Test
+	public void testErentaNearestNeighbourIteration() {
+		testRoute(getErentaList(), new NearestNeighbourIteration<>(), 40);
+	}
+
+
+	@Test
+	public void testErentaSimpleUnisexMutator() {
+		testRoute(getErentaList(), new SimpleUnisexMutator<>(), 40);
+	}
+
+	@Test
+	public void testErentaSimpleUnisexMutatorHibrid2Opt() {
+		testRoute(getErentaList(), new SimpleUnisexMutatorHibrid2Opt<>(), 40);
+	}
+
+	private void testRoute(final List<String> waypointNames, final RoutingAlgorithm<SolarSystem> ra, final int exptectedDistance) {
+		FakeRoutingTab frd = new FakeRoutingTab(new RoutingMockProgram());
+		frd.buildTestGraph();
+		List<SolarSystem> initial = frd.getNodesFromNames(waypointNames);
+		List<SolarSystem> route = ra.execute(new FakeProgress(), frd.getGraph(), new ArrayList<>(initial));
+
+		System.out.println("--- " + ra.getName() + " ---");
 		for (int i = 0; i < initial.size(); ++i) {
 			System.out.println(i + " " + initial.get(i));
 		}
 
+		SolarSystem last = null;
+		int totalDistance = 0;
+		for (SolarSystem current : route) {
+			if (last != null) {
+				totalDistance = totalDistance + frd.getGraph().distanceBetween(last, current);
+			}
+			last = current;
+		}
+		if (last != null) {
+			totalDistance = totalDistance + frd.getGraph().distanceBetween(last, route.get(0));
+		}
+
 		short[][] distances = ra.getLastDistanceMatrix();
 		for (int i = 0; i < distances.length; ++i) {
-		  System.out.print("" + i + ":");
+			System.out.print("" + i + ":");
 			for (int j = 0; j < distances[i].length && j <= i; ++j) {
 				String id = "" + distances[i][j];
 				switch (id.length()) { // HAAAAAX.
 					case 1:
-						id = "  " + id; break;
+						id = "  " + id;
+						break;
 					case 2:
-						id = " " + id; break;
+						id = " " + id;
+						break;
 					case 3:
-						id = "" + id; break;
+						id = "" + id;
+						break;
 				}
 				System.out.print(" " + id);
 			}
 			System.out.println();
 		}
 
-		for (Node n : routeBF) {
+		for (SolarSystem n : route) {
 			System.out.println(n + "(" + initial.indexOf(n) + ")");
 		}
 
-		System.out.println("Length: " + ra.getLastDistance());
-		assertEquals(exptectedDistance, ra.getLastDistance());
-	}
-
-//	@Test   - skipped 'cause it takes too long.
-	public void testArtisineBF() {
-		testRoute(getArtisineList(), new BruteForce(), 61);
+		System.out.println("Length: " + totalDistance + " or " + ra.getLastDistance());
+		assertEquals("Not the same stating system", route.get(0), initial.get(0));
+		assertEquals("totalDistance != exptectedDistance", exptectedDistance, totalDistance);
+		assertEquals("totalDistance != LastDistance", totalDistance, ra.getLastDistance());
 	}
 
 	@Test
-	public void testArtisineNN() {
-		testRoute(getArtisineList(), new NearestNeighbour(), 63);
+	public void testArtisineBruteForce() {
+		testRoute(getArtisineList(), new BruteForce<>(), 61);
 	}
+
+	@Test
+	public void testArtisineCrossover() {
+		testRoute(getArtisineList(), new Crossover<>(), 61);
+	}
+
+	@Test
+	public void testArtisineCrossoverHibrid2opt() {
+		testRoute(getArtisineList(), new CrossoverHibrid2opt<>(), 61);
+	}
+
+	@Test
+	public void testArtisineNearestNeighbour() {
+		testRoute(getArtisineList(), new NearestNeighbour<>(), 63);
+	}
+
+	@Test
+	public void testArtisineNearestNeighbourIteration() {
+		testRoute(getArtisineList(), new NearestNeighbourIteration<>(), 61);
+	}
+
+	@Test
+	public void testArtisineSimpleUnisexMutator() {
+		testRoute(getArtisineList(), new SimpleUnisexMutator<>(), 61);
+	}
+
+	@Test
+	public void testArtisineSimpleUnisexMutatorHibrid2Opt() {
+		testRoute(getArtisineList(), new SimpleUnisexMutatorHibrid2Opt<>(), 61);
+	}
+
 	private List<String> getArtisineList() {
-	/*
+		/*
 	 * Artisine
 	 * Deltole
 	 * Jolia
@@ -145,8 +216,8 @@ public class TestRouting extends TestUtil {
 	 * Odette
 	 * Inghenges
 	 * Sileperer
-	 */
-		List<String> waypointNames = new ArrayList<String>();
+		 */
+		List<String> waypointNames = new ArrayList<>();
 		waypointNames.add("Artisine");
 		waypointNames.add("Deltole");
 		waypointNames.add("Jolia");
