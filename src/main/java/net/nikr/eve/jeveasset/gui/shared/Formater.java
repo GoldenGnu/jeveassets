@@ -48,16 +48,17 @@ public final class Formater {
 	private static final DecimalFormat ITEMS_FORMAT  = new DecimalFormat("#,##0 items");
 	private static final DecimalFormat PERCENT_FORMAT  = new DecimalFormat("##0%");
 	private static final DecimalFormat TIMES_FORMAT  = new DecimalFormat("##0x");
-	public static final DecimalFormat LONG_FORMAT  = new DecimalFormat("#,##0");
 	private static final DecimalFormat INTEGER_FORMAT  = new DecimalFormat("0");
 	private static final DecimalFormat DECIMAL_FORMAT  = new DecimalFormat("#,##0.00");
 	private static final DecimalFormat FLOAT_FORMAT  = new DecimalFormat("#,##0.####");
 	private static final DecimalFormat COMPARE_FORMAT  = new DecimalFormat("0.####", new DecimalFormatSymbols(FilterMatcher.LOCALE));
 	private static final DecimalFormat SECURITY_FORMAT  = new DecimalFormat("0.0", new DecimalFormatSymbols(Locale.ENGLISH));
 	private static final DecimalFormat COPY_FORMAT  = new DecimalFormat("0.##", new DecimalFormatSymbols(Locale.ENGLISH));
+	public static final DecimalFormat LONG_FORMAT  = new DecimalFormat("#,##0");
 	public static final NumberFormat MILLIONS_FORMAT  = new FixedFormat(1000000.0, "M");
 	public static final NumberFormat BILLIONS_FORMAT  = new FixedFormat(1000000000.0, "B");
 	public static final NumberFormat TRILLIONS_FORMAT  = new FixedFormat(1000000000000.0, "T");
+	public static final NumberFormat AUTO_FORMAT  = new AutoFormat();
 
 	private static final DateFormatThreadSafe EXPIRE_DATE1 = new DateFormatThreadSafe("EEE, dd MMM yyyy kk:mm:ss zzz"); //Tue, 04 Oct 2016 18:21:28 GMT
 	private static final DateFormatThreadSafe EXPIRE_DATE2 = new DateFormatThreadSafe("dd MMM yyyy kk:mm:ss zzz");
@@ -296,40 +297,33 @@ public final class Formater {
 
 	public static class AutoFormat extends NumberFormat {
 
+		private static final String[] UNITS = new String[] { "", "K", "M", "B", "T", "P", "E" };
 		private final NumberFormat format;
 
 		public AutoFormat() {
 			format = new DecimalFormat("#,##0.#");
 		}
 
-		@Override
-		public StringBuffer format(double number, StringBuffer toAppendTo, FieldPosition pos) {
-			if(number <= 0) {
-				toAppendTo.append("0");
-				return toAppendTo;
+		private String formatNumber(Number number) {
+			long value = number.longValue();
+			if(value <= 0) {
+				return "0";
 			} else {
-				final String[] units = new String[] { "", "K", "M", "B", "T" };
-				int digitGroups = (int) (Math.log10(number)/Math.log10(1000));
-				toAppendTo.append(format.format(number/Math.pow(1000, digitGroups)));
-				toAppendTo.append(" ");
-				toAppendTo.append(units[digitGroups]);
-				return toAppendTo;
+				int digitGroups = (int) (Math.log10(value)/Math.log10(1000));
+				return format.format(value/Math.pow(1000, digitGroups)) + UNITS[digitGroups];
 			}
 		}
 
 		@Override
+		public StringBuffer format(double number, StringBuffer toAppendTo, FieldPosition pos) {
+			toAppendTo.append(formatNumber(number));
+			return toAppendTo;
+		}
+
+		@Override
 		public StringBuffer format(long number, StringBuffer toAppendTo, FieldPosition pos) {
-			if(number <= 0) {
-				toAppendTo.append("0");
-				return toAppendTo;
-			} else {
-				final String[] units = new String[] { "", "K", "M", "B", "T" };
-				int digitGroups = (int) (Math.log10(number)/Math.log10(1000));
-				toAppendTo.append(format.format(number/Math.pow(1000, digitGroups)));
-				toAppendTo.append(" ");
-				toAppendTo.append(units[digitGroups]);
-				return toAppendTo;
-			}
+			toAppendTo.append(formatNumber(number));
+			return toAppendTo;
 		}
 
 		@Override
@@ -345,7 +339,7 @@ public final class Formater {
 
 		public FixedFormat(final double fix, final String name) {
 			this.fix = fix;
-			format = new DecimalFormat("#,##0.0 "+name);
+			format = new DecimalFormat("#,##0.0"+name);
 		}
 
 		@Override
