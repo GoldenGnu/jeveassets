@@ -192,10 +192,12 @@ public class SettingsWriter extends AbstractXmlWriter {
 			Element routeNode = xmldoc.createElementNS(null, "route");
 			RouteResult routeResult = entry.getValue();
 			setAttribute(routeNode, "name", entry.getKey());
+			setAttribute(routeNode, "waypoints", routeResult.getWaypoints());
 			setAttribute(routeNode, "algorithmname", routeResult.getAlgorithmName());
 			setAttribute(routeNode, "algorithmtime",routeResult.getAlgorithmTime());
 			setAttribute(routeNode, "jumps", routeResult.getJumps());
-			setAttribute(routeNode, "waypoints", routeResult.getWaypoints());
+			setAttribute(routeNode, "avoid", routeResult.getAvoid());
+			setAttribute(routeNode, "security", routeResult.getSecurity());
 			routingNode.appendChild(routeNode);
 			for (List<SolarSystem> systems : routeResult.getRoute()) {
 				Element systemsNode = xmldoc.createElementNS(null, "routesystems");

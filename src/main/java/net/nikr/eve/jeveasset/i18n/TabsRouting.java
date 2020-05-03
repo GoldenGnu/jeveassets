@@ -68,6 +68,13 @@ public abstract class TabsRouting extends Bundle {
 	public abstract String overviewGroup(Object arg0);
 	public abstract String remove();
 	public abstract String resultArrow();
+	public abstract String resultEdit();
+	public abstract String resultEditAvoid(String avoid);
+	public abstract String resultEditHelp();
+	public abstract String resultEditJumps(int jumps);
+	public abstract String resultEditSecurity(String security);
+	public abstract String resultEditTitle();
+	public abstract String resultEdited();
 	public abstract String resultEmpty();
 	public abstract String resultLoad();
 	public abstract String resultManage();
@@ -81,6 +88,7 @@ public abstract class TabsRouting extends Bundle {
 	public abstract String resultUiFail();
 	public abstract String resultUiOk();
 	public abstract String resultUiWaypoints();
+	public abstract String resultUnknownValue();
 	public abstract String resultUntitled();
 	public abstract String routeDeleteMsg(int size);
 	public abstract String routeDeleteTitle();

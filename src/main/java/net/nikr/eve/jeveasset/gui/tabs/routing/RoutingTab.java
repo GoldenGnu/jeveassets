@@ -116,6 +116,7 @@ public class RoutingTab extends JMainTabSecondary {
 		CALCULATE,
 		EVE_UI,
 		ROUTE_SAVE,
+		ROUTE_EDIT,
 		ROUTE_MANAGE,
 		AVOID_ADD,
 		AVOID_REMOVE,
@@ -150,7 +151,7 @@ public class RoutingTab extends JMainTabSecondary {
 	private JLabel jWaypointsRemaining;
 	//Filter
 	private JList<SolarSystem> jAvoid;
-	private EditableListModel<SolarSystem> avoidModel = new EditableListModel<SolarSystem>();
+	private EditableListModel<SolarSystem> avoidModel = new EditableListModel<>();
 	private JButton jAvoidAdd;
 	private JButton jAvoidRemove;
 	private JButton jAvoidClear;
@@ -167,7 +168,7 @@ public class RoutingTab extends JMainTabSecondary {
 	private JTextArea jResult;
 	private JTextArea jFullResult;
 	private JTextArea jInfo;
-	private List<ResultToolbar> resultToolbars = new ArrayList<ResultToolbar>();
+	private List<ResultToolbar> resultToolbars = new ArrayList<>();
 	//Dialogs
 	private JStationDialog jStationDialog ;
 	private JSystemDialog jSystemDialog;
@@ -175,17 +176,18 @@ public class RoutingTab extends JMainTabSecondary {
 	private JManageAvoidDialog jManageAvoidDialog;
 	private JRouteSaveDialog jSaveRouteDialog;
 	private JRouteManageDialog jManageRoutesDialog;
+	private JRouteEditDialog jRouteEditDialog;
 
 	private ListenerClass listener;
 	private RouteFind routeFind;
 
 	//Data
-	private final Map<Long, SolarSystem> systemCache = new HashMap<Long, SolarSystem>();;
+	private final Map<Long, SolarSystem> systemCache = new HashMap<>();
 	private final Set<SolarSystem> available = new HashSet<>();
 	protected Graph filteredGraph;
 	private double lastSecMin = 0.0;
 	private double lastSecMax = 1.0;
-	private List<Long> lastAvoid = new ArrayList<Long>();
+	private List<Long> lastAvoid = new ArrayList<>();
 	private boolean uiEnabled = true;
 	private RouteResult routeResult = null;
 	/**
@@ -207,6 +209,7 @@ public class RoutingTab extends JMainTabSecondary {
 		jManageAvoidDialog = new JManageAvoidDialog(this, program);
 		jSaveRouteDialog = new JRouteSaveDialog(program);
 		jManageRoutesDialog = new JRouteManageDialog(this, program);
+		jRouteEditDialog = new JRouteEditDialog(program);
 
 	//Routing
 		JPanel jRoutingPanel = new JPanel();
@@ -217,7 +220,7 @@ public class RoutingTab extends JMainTabSecondary {
 
 		jAlgorithmLabel = new JLabel(TabsRouting.get().algorithm());
 
-		jAlgorithm = new JComboBox<RoutingAlgorithmContainer>(new ListComboBoxModel<RoutingAlgorithmContainer>(RoutingAlgorithmContainer.getRegisteredList()));
+		jAlgorithm = new JComboBox<>(new ListComboBoxModel<>(RoutingAlgorithmContainer.getRegisteredList()));
 		jAlgorithm.setSelectedIndex(0);
 		jAlgorithm.setActionCommand(RoutingAction.ALGORITHM.name());
 		jAlgorithm.addActionListener(listener);
@@ -235,7 +238,7 @@ public class RoutingTab extends JMainTabSecondary {
 
 		jSourceLabel = new JLabel(TabsRouting.get().source());
 
-		jSource = new JComboBox<SourceItem>();
+		jSource = new JComboBox<>();
 		jSource.setActionCommand(RoutingAction.SOURCE.name());
 		jSource.addActionListener(listener);
 
@@ -266,7 +269,7 @@ public class RoutingTab extends JMainTabSecondary {
 			}
 		};
 
-		jAvailable = new MoveJList<SolarSystem>(new EditableListModel<SolarSystem>());
+		jAvailable = new MoveJList<SolarSystem>(new EditableListModel<>());
 		jAvailable.getEditableModel().setSortComparator(comp);
 		jAvailable.addMouseListener(listener);
 		jAvailable.addListSelectionListener(listener);
@@ -291,7 +294,7 @@ public class RoutingTab extends JMainTabSecondary {
 		jAddStation.setActionCommand(RoutingAction.ADD_STATION.name());
 		jAddStation.addActionListener(listener);
 
-		jWaypoints = new MoveJList<SolarSystem>(new EditableListModel<SolarSystem>());
+		jWaypoints = new MoveJList<SolarSystem>(new EditableListModel<>());
 		jWaypoints.getEditableModel().setSortComparator(comp);
 		jWaypoints.addMouseListener(listener);
 		jWaypoints.addListSelectionListener(listener);
@@ -415,7 +418,7 @@ public class RoutingTab extends JMainTabSecondary {
 		avoidModel.setSortComparator(comp);
 		avoidModel.addAll(Settings.get().getRoutingSettings().getAvoid().values());
 
-		jAvoid = new JList<SolarSystem>(avoidModel);
+		jAvoid = new JList<>(avoidModel);
 		jAvoid.addMouseListener(listener);
 		jAvoid.addListSelectionListener(listener);
 
@@ -451,14 +454,14 @@ public class RoutingTab extends JMainTabSecondary {
 
 		jSecurityIcon = new JLabel();
 
-		jSecurityMinimum = new JComboBox<Double>(security);
+		jSecurityMinimum = new JComboBox<>(security);
 		jSecurityMinimum.setSelectedItem(Settings.get().getRoutingSettings().getSecMin());
 		jSecurityMinimum.setActionCommand(RoutingAction.SAVE.name());
 		jSecurityMinimum.addActionListener(listener);
 
 		jSecuritySeparatorLabel = new JLabel(" - ");
 
-		jSecurityMaximum = new JComboBox<Double>(security);
+		jSecurityMaximum = new JComboBox<>(security);
 		jSecurityMaximum.setSelectedItem(Settings.get().getRoutingSettings().getSecMax());
 		jSecurityMaximum.setActionCommand(RoutingAction.SAVE.name());
 		jSecurityMaximum.addActionListener(listener);
@@ -645,7 +648,7 @@ public class RoutingTab extends JMainTabSecondary {
 		jInfo.setCaretPosition(0);
 		jInfo.setEnabled(false);
 
-		List<MyLocation> stations = new ArrayList<MyLocation>();
+		List<MyLocation> stations = new ArrayList<>();
 		for (MyLocation location : StaticData.get().getLocations()) {
 			if (location.isStation()) { //Not Planet
 				stations.add(location);
@@ -659,14 +662,14 @@ public class RoutingTab extends JMainTabSecondary {
 	}
 
 	public void overviewGroupsChanged() {
-		List<SourceItem> sources = new ArrayList<SourceItem>();
+		List<SourceItem> sources = new ArrayList<>();
 		for (Entry<String, OverviewGroup> entry : Settings.get().getOverviewGroups().entrySet()) {
 			sources.add(new SourceItem(entry.getKey(), true));
 		}
 		Collections.sort(sources);
 		sources.add(0, new SourceItem(TabsRouting.get().filteredAssets()));
 		sources.add(0, new SourceItem(General.get().all()));
-		jSource.setModel(new ListComboBoxModel<SourceItem>(sources));
+		jSource.setModel(new ListComboBoxModel<>(sources));
 	}
 
 	@Override
@@ -764,11 +767,11 @@ public class RoutingTab extends JMainTabSecondary {
 		List<MyAsset> assets;
 		SourceItem source = (SourceItem) jSource.getSelectedItem();
 		if (source.getName().equals(General.get().all())) { //ALL
-			assets = new ArrayList<MyAsset>(program.getAssetList());
+			assets = new ArrayList<>(program.getAssetList());
 		} else if (source.getName().equals(TabsRouting.get().filteredAssets())) { //FILTERS
 			assets = program.getAssetsTab().getFilteredAssets();
 		} else { //OVERVIEW GROUP
-			assets = new ArrayList<MyAsset>();
+			assets = new ArrayList<>();
 			OverviewGroup group = Settings.get().getOverviewGroups().get(source.getName());
 			for (OverviewLocation location : group.getLocations()) {
 				for (MyAsset asset : program.getAssetList()) {
@@ -836,7 +839,7 @@ public class RoutingTab extends JMainTabSecondary {
 		}
 		from.setSelectedIndices(new int[]{});
 		to.setSelectedIndices(new int[]{});
-		List<SolarSystem> systems = new ArrayList<SolarSystem>(jAvailable.getEditableModel().getAll());
+		List<SolarSystem> systems = new ArrayList<>(jAvailable.getEditableModel().getAll());
 		for (SolarSystem system : systems) {
 			if (!available.contains(system)) {
 				jAvailable.getEditableModel().remove(system);
@@ -876,11 +879,11 @@ public class RoutingTab extends JMainTabSecondary {
 			//Update Graph if needed (AKA filter has changed)
 			if (lastSecMin != (Double) jSecurityMinimum.getSelectedItem()
 					|| lastSecMax != (Double) jSecurityMaximum.getSelectedItem()
-					|| !lastAvoid.equals(new ArrayList<Long>(Settings.get().getRoutingSettings().getAvoid().keySet()))) {
+					|| !lastAvoid.equals(new ArrayList<>(Settings.get().getRoutingSettings().getAvoid().keySet()))) {
 				buildGraph(false);
 				lastSecMin = (Double) jSecurityMinimum.getSelectedItem();
 				lastSecMax = (Double) jSecurityMaximum.getSelectedItem();
-				lastAvoid = new ArrayList<Long>(Settings.get().getRoutingSettings().getAvoid().keySet());
+				lastAvoid = new ArrayList<>(Settings.get().getRoutingSettings().getAvoid().keySet());
 			}
 			//Warning for 2 or less systems
 			if (getWaypointsSize() <= 2) {
@@ -905,20 +908,20 @@ public class RoutingTab extends JMainTabSecondary {
 			}
 			//Update all SolarSystem with the latest from the new Graph
 			//This is needed to get the proper Edge(s) parsed to the routing Algorithm
-			Map<Long, List<SolarSystem>> stationsMap = new HashMap<Long, List<SolarSystem>>();
-			Set<Node> waypoints = new HashSet<Node>();
+			Map<Long, List<SolarSystem>> stationsMap = new HashMap<>();
+			Set<Node> waypoints = new HashSet<>();
 			for (SolarSystem solarSystem : jWaypoints.getEditableModel().getAll()) {
 				if (solarSystem.isStation()) { //Not Planet
 					List<SolarSystem> stations = stationsMap.get(solarSystem.getSystemID());
 					if (stations == null) {
-						stations = new ArrayList<SolarSystem>();
+						stations = new ArrayList<>();
 						stationsMap.put(solarSystem.getSystemID(), stations);
 					}
 					stations.add(solarSystem);
 				}
 				waypoints.add(systemCache.get(solarSystem.getSystemID()));
 			}
-			List<Node> inputWaypoints = new ArrayList<Node>(waypoints);
+			List<Node> inputWaypoints = new ArrayList<>(waypoints);
 			//Move frist system to the top....
 			final String text = jStart.getText();
 			if (!text.contains(TabsRouting.get().startEmpty())) {
@@ -947,13 +950,13 @@ public class RoutingTab extends JMainTabSecondary {
 				jProgress.setValue(jProgress.getMaximum());
 			}
 			Node last = null;
-			List<List<SolarSystem>> route = new ArrayList<List<SolarSystem>>();
+			List<List<SolarSystem>> route = new ArrayList<>();
 			for (Node current : nodeRoute) {
 				add(route, last, current);
 				last = current;
 			}
 			add(route, last, nodeRoute.get(0));
-			setRouteResult(new RouteResult(route, stationsMap, inputWaypoints.size(), algorithm.getName(), algorithm.getLastTimeTaken(), algorithm.getLastDistance()));
+			setRouteResult(new RouteResult(route, stationsMap, inputWaypoints.size(), algorithm.getName(), algorithm.getLastTimeTaken(), algorithm.getLastDistance(), getAvoidString(), getSecurityString()));
 		} catch (DisconnectedGraphException dce) {
 			JOptionPane.showMessageDialog(program.getMainWindow().getFrame()
 							, dce.getMessage()
@@ -962,9 +965,31 @@ public class RoutingTab extends JMainTabSecondary {
 		}
 	}
 
+	public String getSecurityString() {
+		final StringBuilder builder = new StringBuilder();
+		builder.append(Formater.securityFormat(jSecurityMinimum.getSelectedItem()));
+		builder.append(" - ");
+		builder.append(Formater.securityFormat(jSecurityMaximum.getSelectedItem()));
+		return builder.toString();
+	}
+
+	public String getAvoidString() {
+		final StringBuilder builder = new StringBuilder();
+		for (SolarSystem avoidSystem : Settings.get().getRoutingSettings().getAvoid().values()) {
+			if (!builder.toString().isEmpty()) {
+				builder.append(", ");
+			}
+			builder.append(avoidSystem.getName());
+		}
+		if (builder.toString().isEmpty()) {
+			builder.append(TabsRouting.get().avoidNone());
+		}
+		return builder.toString();
+	}
+
 	private void add(List<List<SolarSystem>> route, Node last, Node current) {
 		if (last != null) {
-			List<SolarSystem> fullRoute = new ArrayList<SolarSystem>();
+			List<SolarSystem> fullRoute = new ArrayList<>();
 			for (Node node : filteredGraph.routeBetween(last, current)) {
 				if (node instanceof SolarSystem) {
 					SolarSystem routeSystem = (SolarSystem) node;
@@ -979,37 +1004,6 @@ public class RoutingTab extends JMainTabSecondary {
 
 	public void setRouteResult(RouteResult routeResult) {
 		this.routeResult = routeResult;
-		//Info Result
-		final StringBuilder infoString = new StringBuilder();
-		//algorithm name
-		String name = routeResult.getAlgorithmName();
-		//generation time
-		String time = Formater.milliseconds(routeResult.getAlgorithmTime());
-		//jumps
-		int jumps = routeResult.getJumps();
-		//avoding systems
-		final StringBuilder avoidingString = new StringBuilder();
-		for (SolarSystem avoidSystem : Settings.get().getRoutingSettings().getAvoid().values()) {
-			if (!avoidingString.toString().isEmpty()) {
-				avoidingString.append(", ");
-			}
-			avoidingString.append(avoidSystem.getName());
-		}
-		if (avoidingString.toString().isEmpty()) {
-			avoidingString.append(TabsRouting.get().avoidNone());
-		}
-		//security
-		final StringBuilder securityString = new StringBuilder();
-		securityString.append(Formater.securityFormat(jSecurityMinimum.getSelectedItem()));
-		securityString.append(" - ");
-		securityString.append(Formater.securityFormat(jSecurityMaximum.getSelectedItem()));
-		//Done
-		infoString.append(TabsRouting.get().resultText(name,
-				jumps,
-				routeResult.getWaypoints(),
-				securityString.toString(),
-				avoidingString.toString(),
-				time));
 	//Route Result
 		final StringBuilder fullRouteString = new StringBuilder();
 		final StringBuilder routeString = new StringBuilder();
@@ -1052,7 +1046,12 @@ public class RoutingTab extends JMainTabSecondary {
 				jFullResult.setText(fullRouteString.toString());
 				jFullResult.setEnabled(true);
 				jFullResult.setCaretPosition(0);
-				jInfo.setText(infoString.toString());
+				jInfo.setText(TabsRouting.get().resultText(routeResult.getAlgorithmName(),
+					routeResult.getJumps(),
+					routeResult.getWaypoints(),
+					routeResult.getSecurity(),
+					routeResult.getAvoid(),
+					Formater.milliseconds(routeResult.getAlgorithmTime())));
 				jInfo.setEnabled(true);
 				jInfo.setCaretPosition(0);
 				for (ResultToolbar resultToolbar : resultToolbars) {
@@ -1131,7 +1130,7 @@ public class RoutingTab extends JMainTabSecondary {
 	}
 
 	private int getWaypointsSize() {
-		Set<Long> waypoints = new HashSet<Long>();
+		Set<Long> waypoints = new HashSet<>();
 		for (SolarSystem solarSystem : jWaypoints.getEditableModel().getAll()) {
 			waypoints.add(solarSystem.getSystemID());
 		}
@@ -1192,7 +1191,7 @@ public class RoutingTab extends JMainTabSecondary {
 			jAvoidLoad.addSeparator();
 		}
 
-		ArrayList<String> presets = new ArrayList<String>(Settings.get().getRoutingSettings().getPresets().keySet());
+		ArrayList<String> presets = new ArrayList<>(Settings.get().getRoutingSettings().getPresets().keySet());
 		Collections.sort(presets);
 		for (String name : presets) {
 			JMenuItem jMenuItem = new JLoadMenuItem(name, Settings.get().getRoutingSettings().getPresets().get(name));
@@ -1238,7 +1237,7 @@ public class RoutingTab extends JMainTabSecondary {
 	}
 
 	public void mergeFilters(String name, List<String> list) {
-		Set<Long> systemIDs = new HashSet<Long>();
+		Set<Long> systemIDs = new HashSet<>();
 		Settings.lock("Routing (Merge Filters)");
 		for (String mergeName : list) {
 			systemIDs.addAll(Settings.get().getRoutingSettings().getPresets().get(mergeName));
@@ -1331,11 +1330,11 @@ public class RoutingTab extends JMainTabSecondary {
 					updateFilterLabels();
 				}
 			} else if (RoutingAction.AVOID_SAVE.name().equals(e.getActionCommand())) {
-				jSaveSystemDialog.updateData(new ArrayList<String>(Settings.get().getRoutingSettings().getPresets().keySet()));
+				jSaveSystemDialog.updateData(new ArrayList<>(Settings.get().getRoutingSettings().getPresets().keySet()));
 				String name = jSaveSystemDialog.show();
 				if (name != null) {
 					Settings.lock("Routing (Save Filter)");
-					Set<Long> systemIDs = new HashSet<Long>();
+					Set<Long> systemIDs = new HashSet<>();
 					for (SolarSystem system : avoidModel.getAll()) {
 						systemIDs.add(system.getSystemID());
 					}
@@ -1427,6 +1426,13 @@ public class RoutingTab extends JMainTabSecondary {
 				Settings.unlock("Routing (Save Route)");
 				program.saveSettings("Routing (Save Route)");
 				updateRoutes();
+			} else if (RoutingAction.ROUTE_EDIT.name().equals(e.getActionCommand())) {
+				buildGraph(false);
+				RouteResult result = jRouteEditDialog.show(systemCache, filteredGraph, routeResult);
+				if (result == null) {
+					return;
+				}
+				setRouteResult(result);
 			} else if (RoutingAction.ROUTE_MANAGE.name().equals(e.getActionCommand())) {
 				jManageRoutesDialog.updateData();
 				jManageRoutesDialog.setVisible(true);
@@ -1466,6 +1472,7 @@ public class RoutingTab extends JMainTabSecondary {
 		private final JLabel jName;
 		private final JButton jEveUiSetRoute;
 		private final JButton jSaveRoute;
+		private final JButton jEditRoute;
 		private final JDropDownButton jLoadRoute;
 		private final JMenuItem jManageRoutes;
 		private final Font plain;
@@ -1490,12 +1497,20 @@ public class RoutingTab extends JMainTabSecondary {
 			jEveUiSetRoute.addActionListener(listener);
 			jEveUiSetRoute.setEnabled(false);
 
+			jEditRoute = new JButton(TabsRouting.get().resultEdit(), Images.EDIT_EDIT.getIcon());
+			jEditRoute.setHorizontalAlignment(JButton.LEFT);
+			jEditRoute.setActionCommand(RoutingAction.ROUTE_EDIT.name());
+			jEditRoute.addActionListener(listener);
+			jEditRoute.setEnabled(false);
+
 			jSaveRoute = new JButton(TabsRouting.get().resultSave(), Images.FILTER_SAVE.getIcon());
+			jSaveRoute.setHorizontalAlignment(JButton.LEFT);
 			jSaveRoute.setActionCommand(RoutingAction.ROUTE_SAVE.name());
 			jSaveRoute.addActionListener(listener);
 			jSaveRoute.setEnabled(false);
 
 			jLoadRoute = new JDropDownButton(TabsRouting.get().resultLoad(), Images.FILTER_LOAD.getIcon());
+			jLoadRoute.setHorizontalAlignment(JButton.LEFT);
 
 			layout.setHorizontalGroup(
 				layout.createSequentialGroup()
@@ -1503,6 +1518,7 @@ public class RoutingTab extends JMainTabSecondary {
 					.addComponent(jName, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Integer.MAX_VALUE)
 					.addGap(0, 0, Integer.MAX_VALUE)
 					.addComponent(jEveUiSetRoute)
+					.addComponent(jEditRoute, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, 100)
 					.addComponent(jSaveRoute, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, 100)
 					.addComponent(jLoadRoute, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, 100)
 					.addContainerGap()
@@ -1511,6 +1527,7 @@ public class RoutingTab extends JMainTabSecondary {
 				layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
 					.addComponent(jName)
 					.addComponent(jEveUiSetRoute)
+					.addComponent(jEditRoute)
 					.addComponent(jSaveRoute)
 					.addComponent(jLoadRoute)
 			);
@@ -1572,6 +1589,7 @@ public class RoutingTab extends JMainTabSecondary {
 
 		public void setEnabledResult(boolean b) {
 			jEveUiSetRoute.setEnabled(b);
+			jEditRoute.setEnabled(b);
 			jSaveRoute.setEnabled(b);
 		}
 
@@ -1637,7 +1655,7 @@ public class RoutingTab extends JMainTabSecondary {
 		}
 
 		public static List<RoutingAlgorithmContainer> getRegisteredList() {
-			List<RoutingAlgorithmContainer> list = new ArrayList<RoutingAlgorithmContainer>();
+			List<RoutingAlgorithmContainer> list = new ArrayList<>();
 			for (RoutingAlgorithm ra : RoutingAlgorithm.getRegisteredList()) {
 				list.add(new RoutingAlgorithmContainer(ra));
 			}
