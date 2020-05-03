@@ -91,7 +91,7 @@ public class LibraryManager {
 			files.add("asm-7.2.jar");
 			files.add("dom4j-2.1.1.jar");
 			files.add("glazedlists-1.11.0.jar");
-			files.add("graph-1.5.0.jar");
+			files.add("graph-2.0.0.jar");
 			files.add("guava-r09.jar");
 			files.add("jaxen-1.1.6.jar");
 			files.add("javax.activation-1.2.0.jar");
@@ -100,7 +100,7 @@ public class LibraryManager {
 			files.add("jfreechart-1.5.0.jar");
 			files.add("osxadapter-1.1.0.jar");
 			files.add("pricing-2.1.1.jar");
-			files.add("routing-1.6.0.jar");
+			files.add("routing-2.0.0.jar");
 			files.add("slf4j-api-1.7.25.jar");
 			files.add("log4j-over-slf4j-1.7.25.jar");
 			files.add("jcl-over-slf4j-1.7.25.jar");
