@@ -35,14 +35,14 @@ public class RouteFinder {
 
 	private static RouteFinder DISTANCE;
 
-	private final Graph graph;
+	private final Graph<SolarSystem> graph;
 	private final Map<Long, SolarSystem> systemCache;
 	private final Map<Route, Integer> distance = new HashMap<>();
 
 	private RouteFinder() {
 		// build the graph.
 		// filter the solarsystems based on the settings.
-		graph = new Graph(new Jumps());
+		graph = new Graph<>(new Jumps<>());
 		int count = 0;
 		systemCache = new HashMap<>();
 		for (Jump jump : StaticData.get().getJumps()) { // this way we exclude the locations that are unreachable.
@@ -57,7 +57,7 @@ public class RouteFinder {
 			if (to == null) {
 				to = SolarSystem.create(systemCache, jump.getTo());
 			}
-			graph.addEdge(new Edge(from, to));
+			graph.addEdge(new Edge<>(from, to));
 		}
 	}
 

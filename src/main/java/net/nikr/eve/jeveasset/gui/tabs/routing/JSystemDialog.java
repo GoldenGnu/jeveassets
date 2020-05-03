@@ -22,31 +22,18 @@
 package net.nikr.eve.jeveasset.gui.tabs.routing;
 
 import ca.odell.glazedlists.TextFilterator;
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Set;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.JAutoCompleteDialog;
 import net.nikr.eve.jeveasset.i18n.TabsRouting;
-import uk.me.candle.eve.graph.Node;
 
 
 public class JSystemDialog extends JAutoCompleteDialog<SolarSystem> {
 
 	public JSystemDialog(Program program) {
 		super(program, TabsRouting.get().addSystemTitle(), Images.TOOL_ROUTING.getImage(), TabsRouting.get().addSystemSelect(), true, true);
-	}
-
-	public void updateData(Set<Node> nodes) {
-		List<SolarSystem> systems = new ArrayList<SolarSystem>();
-		for (Node node : nodes) {
-			if (node instanceof SolarSystem) {
-				systems.add((SolarSystem) node);
-			}
-		}
-		super.updateData(systems);
 	}
 
 	@Override
