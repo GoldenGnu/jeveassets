@@ -595,4 +595,34 @@ public abstract class FakeSettings extends Settings {
 	public boolean isSaveToolsOnExit() {
 		throw new UnsupportedOperationException("not implemented");
 	}
+
+	@Override
+	public void setTrackerSelectedOwners(List<String> trackerOwners) {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public List<String> getTrackerSelectedOwners() {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public void setTrackerCharacterCorporations(boolean trackerCharacterCorporations) {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public boolean isTrackerCharacterCorporations() {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public void setTrackerAllProfiles(boolean trackerAllProfiles) {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public boolean isTrackerAllProfiles() {
+		throw new UnsupportedOperationException("not implemented");
+	}
 }
