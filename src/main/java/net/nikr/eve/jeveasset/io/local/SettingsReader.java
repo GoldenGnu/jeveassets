@@ -248,14 +248,21 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 			throw new XmlException("Wrong root element name.");
 		}
 
-		//writePublicMarketOrdersNextUpdate
+		//Tracker Settings
+		NodeList trackerSettingsNodes = element.getElementsByTagName("trackersettings");
+		if (trackerSettingsNodes.getLength() == 1) {
+			Element trackerSettingsElement =  (Element) trackerSettingsNodes.item(0);
+			parseTrackerSettings(trackerSettingsElement, settings);
+		}
+
+		//Show Tools
 		NodeList showToolsNodes = element.getElementsByTagName("showtools");
 		if (showToolsNodes.getLength() == 1) {
 			Element showToolsElement =  (Element) showToolsNodes.item(0);
 			parseShowToolsNodes(showToolsElement, settings);
 		}
 
-		//writePublicMarketOrdersNextUpdate
+		//Outbid
 		NodeList marketOrderOutbidNodes = element.getElementsByTagName("marketorderoutbid");
 		if (marketOrderOutbidNodes.getLength() == 1) {
 			Element marketOrderOutbidElement =  (Element) marketOrderOutbidNodes.item(0);
@@ -771,11 +778,18 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		Collections.sort(stockpiles);
 	}
 
+	private void parseTrackerSettings(Element trackerSettingsElement, Settings settings) throws XmlException {
+		boolean allProfiles = getBoolean(trackerSettingsElement, "allprofiles");
+		boolean characterCorporations = getBoolean(trackerSettingsElement, "charactercorporations");
+		List<String> selectedOwners = getStringListOptional(trackerSettingsElement, "selectedowners");
+		settings.setTrackerAllProfiles(allProfiles);
+		settings.setTrackerCharacterCorporations(characterCorporations);
+		settings.setTrackerSelectedOwners(selectedOwners);
+	}
+
 	private void parseShowToolsNodes(Element showToolsElement, Settings settings) throws XmlException {
 		boolean saveOnExit = getBoolean(showToolsElement, "saveonexit");
-		String str = getString(showToolsElement, "show");
-		String[] arr = str.split(",");
-		List<String> showTools = new ArrayList<>(Arrays.asList(arr));
+		List<String> showTools = getStringList(showToolsElement, "show");
 		settings.setSaveToolsOnExit(saveOnExit);
 		settings.getShowTools().addAll(showTools);
 	}
