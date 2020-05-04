@@ -154,6 +154,9 @@ public class Settings {
 	private final Map<TrackerDate, TrackerNote> trackerNotes = new HashMap<>();
 	private final Map<String, Boolean> trackerFilters = new HashMap<>();
 	private boolean trackerSelectNew = true;
+	private boolean trackerCharacterCorporations = false;
+	private boolean trackerAllProfiles = false;
+	private List<String> trackerSelectedOwners = null;
 //Runtime flags					Is not saved to file
 	private boolean settingsLoadError = false;
 //Settings Dialog:				Saved by SettingsDialog.save()
@@ -433,6 +436,30 @@ public class Settings {
 
 	public void setTrackerSelectNew(boolean trackerSelectNew) {
 		this.trackerSelectNew = trackerSelectNew;
+	}
+
+	public boolean isTrackerAllProfiles() {
+		return trackerAllProfiles;
+	}
+
+	public void setTrackerAllProfiles(boolean trackerAllProfiles) {
+		this.trackerAllProfiles = trackerAllProfiles;
+	}
+
+	public boolean isTrackerCharacterCorporations() {
+		return trackerCharacterCorporations;
+	}
+
+	public void setTrackerCharacterCorporations(boolean trackerCharacterCorporations) {
+		this.trackerCharacterCorporations = trackerCharacterCorporations;
+	}
+
+	public List<String> getTrackerSelectedOwners() {
+		return trackerSelectedOwners;
+	}
+
+	public void setTrackerSelectedOwners(List<String> trackerOwners) {
+		this.trackerSelectedOwners = trackerOwners;
 	}
 
 	public PriceDataSettings getPriceDataSettings() {
