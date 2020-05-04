@@ -22,7 +22,10 @@ package net.nikr.eve.jeveasset.io.local;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import org.w3c.dom.Node;
 
@@ -36,6 +39,25 @@ public class AttributeGetters {
 	protected static boolean haveAttribute(final Node node, final String attributeName) {
 		Node attributeNode = node.getAttributes().getNamedItem(attributeName);
 		return attributeNode != null;
+	}
+
+	protected List<String> getStringListOptional(final Node node, final String attributeName) throws XmlException {
+		String nodeValue = getNodeValueOptional(node, attributeName);
+		if (nodeValue == null) {
+			return null;
+		} else {
+			return stringToList(nodeValue);
+		}
+	}
+
+	protected List<String> getStringList(final Node node, final String attributeName) throws XmlException {
+		String nodeValue = getNodeValue(node, attributeName);
+		return stringToList(nodeValue);
+	}
+
+	private List<String> stringToList(String nodeValue) {
+		String[] arr = nodeValue.split(",");
+		return new ArrayList<>(Arrays.asList(arr));
 	}
 
 	protected String getString(final Node node, final String attributeName) throws XmlException {

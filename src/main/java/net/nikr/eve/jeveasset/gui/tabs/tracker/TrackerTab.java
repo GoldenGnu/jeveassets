@@ -77,6 +77,7 @@ import javax.swing.JPopupMenu;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
+import javax.swing.ListModel;
 import javax.swing.SwingUtilities;
 import javax.swing.ToolTipManager;
 import javax.swing.event.ListSelectionEvent;
@@ -353,10 +354,12 @@ public class TrackerTab extends JMainTabSecondary {
 		JSeparator jOwnersSeparator = new JSeparator();
 
 		jAllProfiles = new JCheckBox(TabsTracker.get().allProfiles());
+		jAllProfiles.setSelected(Settings.get().isTrackerAllProfiles());
 		jAllProfiles.setActionCommand(TrackerAction.PROFILE.name());
 		jAllProfiles.addActionListener(listener);
 
 		jCharacterCorporations = new JCheckBox(TabsTracker.get().characterCorporations());
+		jCharacterCorporations.setSelected(Settings.get().isTrackerCharacterCorporations());
 		jCharacterCorporations.setActionCommand(TrackerAction.PROFILE.name());
 		jCharacterCorporations.addActionListener(listener);
 
@@ -758,7 +761,18 @@ public class TrackerTab extends JMainTabSecondary {
 					return ownersList.get(index);
 				}
 			});
-			jOwners.selectAll();
+			List<String> owners = Settings.get().getTrackerSelectedOwners();
+			if (owners == null) {
+				jOwners.selectAll();
+			} else {
+				ListModel<String> model = jOwners.getModel();
+				for (int i = 0; i < model.getSize(); i++) {
+					String ownerName = model.getElementAt(i);
+					if (owners.contains(ownerName)) {
+						jOwners.addSelectionInterval(i, i);
+					}
+				}
+			}
 		}
 		updateLock = false;
 	}
@@ -1523,6 +1537,13 @@ public class TrackerTab extends JMainTabSecondary {
 				addNote();
 				jNextChart.getXYPlot().setDomainCrosshairVisible(false);
 			} else if (TrackerAction.PROFILE.name().equals(e.getActionCommand())) {
+				if (!updateLock) {
+					boolean allProfiles = jAllProfiles.isSelected();
+					boolean characterCorporations = jCharacterCorporations.isSelected();
+					Settings.get().setTrackerAllProfiles(allProfiles);
+					Settings.get().setTrackerCharacterCorporations(characterCorporations);
+					program.saveSettings("Tracker (Owner Settings)");
+				}
 				updateData();
 			} else if (TrackerAction.FILTER_WALLET_BALANCE.name().equals(e.getActionCommand())) {
 				boolean save = filterDialog.showWallet(accountNodes);
@@ -1635,6 +1656,11 @@ public class TrackerTab extends JMainTabSecondary {
 		public void valueChanged(ListSelectionEvent e) {
 			if (e.getValueIsAdjusting()) {
 				return;
+			}
+			if (!updateLock) {
+				List<String> selectedOwners = jOwners.getSelectedValuesList();
+				Settings.get().setTrackerSelectedOwners(selectedOwners);
+				program.saveSettings("Tracker (Owners Selection)");
 			}
 			updateFilterButtons();
 			createData();

@@ -131,6 +131,7 @@ public class SettingsWriter extends AbstractXmlWriter {
 		writeExportSettings(xmldoc, settings.getExportSettings());
 		writeTrackerNotes(xmldoc, settings.getTrackerNotes());
 		writeTrackerFilters(xmldoc, settings.getTrackerFilters(), settings.isTrackerSelectNew());
+		writeTrackerSettings(xmldoc, settings);
 		writeOwners(xmldoc, settings.getOwners());
 		writeTags(xmldoc, settings.getTags());
 		writeRoutingSettings(xmldoc, settings.getRoutingSettings());
@@ -258,6 +259,14 @@ public class SettingsWriter extends AbstractXmlWriter {
 			setAttribute(ownerNode, "selected", entry.getValue());
 			trackerDataNode.appendChild(ownerNode);
 		}
+	}
+
+	private void writeTrackerSettings(final Document xmldoc,  Settings settings) {
+		Element trackerSettingsNode = xmldoc.createElementNS(null, "trackersettings");
+		xmldoc.getDocumentElement().appendChild(trackerSettingsNode);
+		setAttribute(trackerSettingsNode, "allprofiles", settings.isTrackerAllProfiles());
+		setAttribute(trackerSettingsNode, "charactercorporations", settings.isTrackerCharacterCorporations());
+		setAttributeOptional(trackerSettingsNode, "selectedowners", settings.getTrackerSelectedOwners());
 	}
 
 	private void writeTrackerNotes(final Document xmldoc, final Map<TrackerDate, TrackerNote> trackerNotes) {
