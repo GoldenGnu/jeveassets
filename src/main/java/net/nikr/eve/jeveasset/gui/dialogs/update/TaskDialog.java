@@ -198,6 +198,7 @@ public class TaskDialog {
 		layout.setHorizontalGroup(
 			layout.createSequentialGroup()
 				.addGroup(horizontalGroup)
+				.addGap(5)
 				.addGroup(layout.createParallelGroup()
 					.addComponent(jErrorName)
 					.addComponent(jErrorScroll, WIDTH, WIDTH, WIDTH)
