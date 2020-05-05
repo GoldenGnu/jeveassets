@@ -69,7 +69,7 @@ public class PriceDataGetter implements PricingListener {
 	private Set<Integer> failed;
 	private Set<Integer> okay;
 	private Set<Integer> queue;
-	private final Map<Integer, PriceData> priceDataList = Collections.synchronizedMap(new HashMap<Integer, PriceData>());;
+	private final Map<Integer, PriceData> priceDataList = Collections.synchronizedMap(new HashMap<>());
 	
 	private long nextUpdate = 0;
 
@@ -140,7 +140,7 @@ public class PriceDataGetter implements PricingListener {
 		}
 		if (!priceDataList.isEmpty()) {
 			LOG.info("	Price data loaded");
-			Map<Integer, PriceData> hashMap = new HashMap<Integer, PriceData>();
+			Map<Integer, PriceData> hashMap = new HashMap<>();
 			hashMap.putAll(priceDataList);
 			return hashMap; //Return copy of Map
 		} else {
@@ -177,10 +177,10 @@ public class PriceDataGetter implements PricingListener {
 	protected Map<Integer, PriceData> processUpdate(final UpdateTask task, final boolean updateAll, final PricingOptions pricingOptions, final Set<Integer> typeIDs, final PriceSource priceSource) {
 		this.updateTask = task;
 		this.update = updateAll;
-		this.typeIDs =  Collections.synchronizedSet(new HashSet<Integer>(typeIDs));
-		this.failed = Collections.synchronizedSet(new HashSet<Integer>());
-		this.okay = Collections.synchronizedSet(new HashSet<Integer>());
-		this.queue = Collections.synchronizedSet(new HashSet<Integer>(typeIDs));
+		this.typeIDs =  Collections.synchronizedSet(new HashSet<>(typeIDs));
+		this.failed = Collections.synchronizedSet(new HashSet<>());
+		this.okay = Collections.synchronizedSet(new HashSet<>());
+		this.queue = Collections.synchronizedSet(new HashSet<>(typeIDs));
 
 		if (updateAll) {
 			LOG.info("Price data update all (" + priceSource + "):");
@@ -209,7 +209,7 @@ public class PriceDataGetter implements PricingListener {
 				LOG.info("Failed to update price");
 				pricing.cancelAll();
 				if (updateTask != null) {
-					updateTask.addError("Price data", "Cancelled");
+					updateTask.addWarning("Price data", "Cancelled");
 					updateTask.setTaskProgress(100, 100, 0, 100);
 					updateTask = null;
 				}
@@ -249,7 +249,7 @@ public class PriceDataGetter implements PricingListener {
 			try {
 				//return new HashMap<Integer, PriceData>(priceDataList);
 				// XXX - Workaround for ConcurrentModificationException in HashMap constructor
-				Map<Integer, PriceData> hashMap = new HashMap<Integer, PriceData>();
+				Map<Integer, PriceData> hashMap = new HashMap<>();
 				priceDataList.keySet().removeAll(failed);
 				hashMap.putAll(priceDataList);
 				return hashMap;
@@ -335,7 +335,7 @@ public class PriceDataGetter implements PricingListener {
 		long nextUpdateTemp = pricing.getNextUpdateTime(typeID);
 		
 		if (nextUpdateTemp >= 0 && nextUpdateTemp > getNextUpdateTime()) {
-			setUpdateNext(nextUpdateTemp);;
+			setUpdateNext(nextUpdateTemp);
 		}
 		if (updateTask != null) {
 			updateTask.setTaskProgress(typeIDs.size(), okay.size(), 0, 100);
