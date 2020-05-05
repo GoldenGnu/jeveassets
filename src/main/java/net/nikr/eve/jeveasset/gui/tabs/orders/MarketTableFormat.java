@@ -92,6 +92,10 @@ public enum MarketTableFormat implements EnumTableColumn<MyMarketOrder> {
 			return TabsOrders.get().columnOutbidPrice();
 		}
 		@Override
+		public String getColumnToolTip() {
+			return TabsOrders.get().columnOutbidPriceToolTip();
+		}
+		@Override
 		public Object getColumnValue(final MyMarketOrder from) {
 			return from.getOutbidPrice();
 		}
@@ -100,6 +104,10 @@ public enum MarketTableFormat implements EnumTableColumn<MyMarketOrder> {
 		@Override
 		public String getColumnName() {
 			return TabsOrders.get().columnOutbidCount();
+		}
+		@Override
+		public String getColumnToolTip() {
+			return  TabsOrders.get().columnOutbidCountToolTip();
 		}
 		@Override
 		public Object getColumnValue(final MyMarketOrder from) {
@@ -111,7 +119,10 @@ public enum MarketTableFormat implements EnumTableColumn<MyMarketOrder> {
 		public String getColumnName() {
 			return TabsOrders.get().columnEveUi();
 		}
-
+		@Override
+		public String getColumnToolTip() {
+			return TabsOrders.get().columnEveUiToolTip();
+		}
 		@Override
 		public boolean isColumnEditable(Object baseObject) {
 			return true;
