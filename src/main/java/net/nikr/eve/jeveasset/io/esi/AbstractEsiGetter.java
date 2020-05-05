@@ -117,21 +117,21 @@ public abstract class AbstractEsiGetter extends AbstractGetter<EsiOwner> {
 		}
 		//Check if API key is invalid (still update when editing account AKA forceUpdate)
 		if (!isForceUpdate() && owner != null && owner.isInvalid()) {
-			addError(null, "REFRESH TOKEN INVALID", "Auth invalid\r\n(Fix: Options > Accounts... > Edit)");
+			addError("REFRESH TOKEN INVALID", "Auth invalid\r\n(Fix: Options > Accounts... > Edit)");
 			return;
 		}
 		try {
 			update();
 		} catch (ApiException ex) {
-			addError(null, ex.getCode(), "Error Code: " + ex.getCode(), ex);
+			addError(ex.getCode(), "Error Code: " + ex.getCode() + "\r\n" + ex.getResponseBody(), ex);
 		} catch (TaskCancelledException ex) {
 			logInfo(null, "Cancelled");
 		} catch (InvalidAuthException ex) {
-			addError(null, "REFRESH TOKEN INVALID", "Auth invalid\r\n(Fix: Options > Accounts... > Edit)");
+			addError("REFRESH TOKEN INVALID", "Auth invalid\r\n(Fix: Options > Accounts... > Edit)");
 		} catch (Error ex) {
 			throw ex;
 		} catch (Exception ex) {
-			addError(null, ex.getMessage(), "Unknown Error: " + ex.getMessage(), ex);
+			addError(ex.getMessage(), "Unknown Error: " + ex.getMessage(), ex);
 		}
 	}
 

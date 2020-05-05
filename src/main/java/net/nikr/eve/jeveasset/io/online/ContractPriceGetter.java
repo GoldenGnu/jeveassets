@@ -113,15 +113,15 @@ public class ContractPriceGetter extends AbstractGetter<EsiOwner> {
 			LOG.info(done + " contract prices updated (" + failed + " empty/failed)");
 		} catch (ApiException ex) {
 			logWarn(ex.getResponseBody(), ex.getMessage());
-			addError(null, ex.getCode(), "Error Code: " + ex.getCode(), ex);
+			addError(ex.getCode(), "Error Code: " + ex.getCode() + "\r\n" + ex.getResponseBody(), ex);
 		} catch (TaskCancelledException ex) {
 			logInfo(null, "Cancelled");
 		} catch (InterruptedException ex) {
-			addError(null, ex.getMessage(), ex.getMessage(), ex);
+			addError(ex.getMessage(), ex.getMessage(), ex);
 		} catch (Error ex) {
 			throw ex;
 		} catch (Exception ex) {
-			addError(null, ex.getMessage(), "Unknown Error: " + ex.getMessage(), ex);
+			addError(ex.getMessage(), "Unknown Error: " + ex.getMessage(), ex);
 		}
 	}
 

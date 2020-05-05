@@ -148,7 +148,7 @@ public abstract class AbstractGetter<O extends OwnerType> implements Runnable {
 		}
 		//Check API cache time
 		if (wait) {
-			addError(null, "NOT ALLOWED YET", "Waiting for cache to expire.\r\n(Fix: Just wait a bit)");
+			addWarning("NOT ALLOWED YET", "Waiting for cache to expire.\r\n(Fix: Just wait a bit)");
 			return false;
 		}
 		//Check if the owner have accesss to the endpoint 
@@ -195,21 +195,36 @@ public abstract class AbstractGetter<O extends OwnerType> implements Runnable {
 		}
 	}
 
-	protected final void addError(String update, String logMsg, String taskMsg) {
-		addError(update, logMsg, taskMsg, null);
+	protected final void addError(String logMsg, String taskMsg) {
+		addError(logMsg, taskMsg, null);
 	}
 
-	protected final void addError(String update, Object logMsg, Object taskMsg, Throwable ex) {
-		logError(update, logMsg, taskMsg, ex);
+	protected final void addError(Object logMsg, Object taskMsg, Throwable ex) {
+		logError(logMsg, taskMsg, ex);
 		if (updateTask != null && taskMsg != null) {
-			StringBuilder ownerBuilder = new StringBuilder();
-			ownerBuilder.append(apiName);
-			ownerBuilder.append(" > ");
-			ownerBuilder.append(taskName);
-			ownerBuilder.append(" > ");
-			ownerBuilder.append(getOwnerName(owner));
-			updateTask.addError(ownerBuilder.toString(), taskMsg.toString());
+			updateTask.addError(buildLogID(), taskMsg.toString());
 		}
+	}
+
+	protected final void addWarning(String logMsg, String taskMsg) {
+		addWarning(logMsg, taskMsg, null);
+	}
+
+	protected final void addWarning(Object logMsg, Object taskMsg, Throwable ex) {
+		logError(logMsg, taskMsg, ex);
+		if (updateTask != null && taskMsg != null) {
+			updateTask.addWarning(buildLogID(), taskMsg.toString());
+		}
+	}
+
+	private String buildLogID() {
+		StringBuilder ownerBuilder = new StringBuilder();
+		ownerBuilder.append(apiName);
+		ownerBuilder.append(" > ");
+		ownerBuilder.append(taskName);
+		ownerBuilder.append(" > ");
+		ownerBuilder.append(getOwnerName(owner));
+		return ownerBuilder.toString();
 	}
 
 	protected final void addMigrationWarning() {
@@ -218,11 +233,11 @@ public abstract class AbstractGetter<O extends OwnerType> implements Runnable {
 		}
 	}
 
-	protected final void logError(String update, Object logMsg, Object taskMsg) {
-		logError(update, logMsg, taskMsg, null);
+	protected final void logError(Object logMsg, Object taskMsg) {
+		logError(logMsg, taskMsg, null);
 	}
-	protected final void logError(String update, Object logMsg, Object taskMsg, Throwable ex) {
-		String e = getLog(update, logMsg, taskMsg, ex);
+	protected final void logError(Object logMsg, Object taskMsg, Throwable ex) {
+		String e = getLog(logMsg, taskMsg, ex);
 		setError(e);
 		if (ex != null) {
 			LOG.error(e, ex);
@@ -232,22 +247,17 @@ public abstract class AbstractGetter<O extends OwnerType> implements Runnable {
 	}
 
 	protected final void logWarn(Object logMsg, Object taskMsg) {
-		String e = getLog(null, logMsg, taskMsg, null);
+		String e = getLog(logMsg, taskMsg, null);
 		LOG.warn(e);
 	}
 
-	protected final String getLog(String update, Object logMsg, Object taskMsg, Throwable ex) {
+	protected final String getLog(Object logMsg, Object taskMsg, Throwable ex) {
 		StringBuilder builder = new StringBuilder();
 		builder.append(apiName);
 		builder.append(" ");
 		builder.append(taskName);
 		builder.append(" failed to update for: ");
 		builder.append(getOwnerName(owner));
-		if (update != null) {
-			builder.append(" (");
-			builder.append(update);
-			builder.append(")");
-		}
 		if (logMsg != null) {
 			builder.append(" ERROR: ");
 			builder.append(logMsg);

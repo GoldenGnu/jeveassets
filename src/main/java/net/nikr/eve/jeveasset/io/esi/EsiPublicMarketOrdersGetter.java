@@ -145,7 +145,7 @@ public class EsiPublicMarketOrdersGetter extends AbstractEsiGetter {
 				list.add(marketOrder);
 			}
 		} else {
-			addError(null, "NO ENOUGH ACCESS PRIVILEGES", "No character with market orders structure scope found\r\n(Add scope: [Options] > [Acounts...] > [Edit])");
+			addError("NO ENOUGH ACCESS PRIVILEGES", "No character with market orders structure scope found\r\n(Add scope: [Options] > [Acounts...] > [Edit])");
 		}
 		input.addOrders(orders, lastUpdate);
 		//Process data
