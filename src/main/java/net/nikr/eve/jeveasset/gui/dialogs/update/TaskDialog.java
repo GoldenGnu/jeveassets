@@ -315,7 +315,7 @@ public class TaskDialog {
 		}
 		int length = doc.getLength();
 		for (UpdateTask task : updateTasks) {
-			task.addError(doc);
+			task.insertLog(doc);
 		}
 		if (doc.getLength() > length) { //If changed
 			try {
@@ -381,7 +381,7 @@ public class TaskDialog {
 	private void cancelUpdate() {
 		int cancelledIndex = index;
 		index = updateTasks.size();
-		updateTask.addError("Update", "Cancelled");
+		updateTask.addWarning("Update", "Cancelled");
 		updateTask.cancel(true);
 		for (int i = cancelledIndex; i < updateTasks.size(); i++) {
 			updateTasks.get(i).cancelled();
@@ -482,15 +482,15 @@ public class TaskDialog {
 
 		@Override
 		public void mouseClicked(final MouseEvent e) {
-			if (e.getButton() == MouseEvent.BUTTON1 && mouseTask.hasError()) {
+			if (e.getButton() == MouseEvent.BUTTON1 && mouseTask.hasLog()) {
 				jErrorMessage.setText("");
 				jErrorName.setText("");
 				boolean shown = mouseTask.isErrorShown();
 				for (UpdateTask task : updateTasks) {
-					task.showError(false);
+					task.showLog(false);
 				}
 				if (shown) {
-					mouseTask.showError(false);
+					mouseTask.showLog(false);
 					jErrorScroll.setVisible(false);
 					jErrorName.setVisible(false);
 					jWindow.pack();
@@ -498,8 +498,8 @@ public class TaskDialog {
 					jErrorScroll.setVisible(true);
 					jErrorName.setVisible(true);
 					jWindow.pack();
-					mouseTask.showError(true);
-					mouseTask.setError(jErrorMessage);
+					mouseTask.showLog(true);
+					mouseTask.insertLog(jErrorMessage);
 					jErrorName.setText(DialoguesUpdate.get().errors(mouseTask.getName()));
 				}
 			}

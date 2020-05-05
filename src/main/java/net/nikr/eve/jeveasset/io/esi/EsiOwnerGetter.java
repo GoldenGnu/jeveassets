@@ -117,7 +117,7 @@ public class EsiOwnerGetter extends AbstractEsiGetter implements AccountAdder{
 		}
 		owner.setAccountNextUpdate(RawConverter.toDate(characterInfo.getExpiresOn()));
 		if (isPrivilegesLimited()) {
-			addError(null, "LIMITED ACCOUNT", "Limited account data access\r\n(Fix: Options > Accounts... > Edit)");
+			addWarning("LIMITED ACCOUNT", "Limited account data access\r\n(Fix: Options > Accounts... > Edit)");
 			setError(null);
 		}
 	}
