@@ -161,7 +161,7 @@ public class ShowToolSettingsPanel extends JSettingsPanel {
 				.addGroup(vertical)
 				.addComponent(jToolsLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 				.addGap(0)
-				.addComponent(jToolsOrderScroll)
+				.addComponent(jToolsOrderScroll, 140, 140, Integer.MAX_VALUE)
 		);
 	}
 
