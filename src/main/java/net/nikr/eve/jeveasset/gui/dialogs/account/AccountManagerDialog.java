@@ -88,7 +88,7 @@ public class AccountManagerDialog extends JDialogCentered {
 	private final DefaultEventSelectionModel<OwnerType> selectionModel;
 	private final JMigrateDialog jMigrateDialog;
 	private final JLockWindow jLockWindow;
-	private final Map<OwnerType, Boolean> ownersShownCache = new HashMap<OwnerType, Boolean>();
+	private final Map<OwnerType, Boolean> ownersShownCache = new HashMap<>();
 
 	private boolean updated = false;
 
@@ -103,13 +103,13 @@ public class AccountManagerDialog extends JDialogCentered {
 
 		ListenerClass listener = new ListenerClass();
 
-		eventList = new EventListManager<OwnerType>().create();
+		eventList = EventListManager.create();
 
 		eventList.getReadWriteLock().readLock().lock();
-		separatorList = new SeparatorList<OwnerType>(eventList, new SeparatorListComparator(), 1, 3);
+		separatorList = new SeparatorList<>(eventList, new SeparatorListComparator(), 1, 3);
 		eventList.getReadWriteLock().readLock().unlock();
 
-		EnumTableFormatAdaptor<AccountTableFormat, OwnerType> tableFormat = new EnumTableFormatAdaptor<AccountTableFormat, OwnerType>(AccountTableFormat.class);
+		EnumTableFormatAdaptor<AccountTableFormat, OwnerType> tableFormat = new EnumTableFormatAdaptor<>(AccountTableFormat.class);
 		tableModel = EventModels.createTableModel(separatorList, tableFormat);
 		jTable = new JAccountTable(program, tableModel, separatorList);
 		jTable.getTableHeader().setReorderingAllowed(false);
@@ -293,7 +293,7 @@ public class AccountManagerDialog extends JDialogCentered {
 	protected void save() {
 		super.setVisible(false);
 		if (!updated) {
-			Map<OwnerType, Boolean> ownersShownNow = new HashMap<OwnerType, Boolean>();
+			Map<OwnerType, Boolean> ownersShownNow = new HashMap<>();
 			for (OwnerType ownerType : program.getProfileManager().getOwnerTypes()) {
 				ownersShownNow.put(ownerType, ownerType.isShowOwner());
 			}
@@ -391,7 +391,7 @@ public class AccountManagerDialog extends JDialogCentered {
 				Object o = tableModel.getElementAt(index);
 				if (o instanceof SeparatorList.Separator<?>) {
 					SeparatorList.Separator<?> separator = (SeparatorList.Separator<?>) o;
-					List<DeprecatedOwner> owners = new ArrayList<DeprecatedOwner>();
+					List<DeprecatedOwner> owners = new ArrayList<>();
 					try {
 						separatorList.getReadWriteLock().readLock().lock();
 						for (Object object : separator.getGroup()) {

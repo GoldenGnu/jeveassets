@@ -66,7 +66,7 @@ public class ColorSettingsPanel extends JSettingsPanel {
 		//Table Format
 		tableFormat = new EnumTableFormatAdaptor<>(ColorsTableFormat.class);
 		//Backend
-		eventList = new EventListManager<ColorRow>().create();
+		eventList = EventListManager.create();
 
 		//Separator
 		SeparatorList<ColorRow> separatorList = new SeparatorList<>(eventList, new ColorRowSeparatorComparator(), 1, Integer.MAX_VALUE);

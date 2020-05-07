@@ -94,7 +94,7 @@ public class ReprocessedTab extends JMainTabSecondary {
 	private final ListenerClass listener = new ListenerClass();
 
 	//Data
-	private final Set<Integer> typeIDs = new HashSet<Integer>();
+	private final Set<Integer> typeIDs = new HashSet<>();
 
 	public static final String NAME = "reprocessed"; //Not to be changed!
 
@@ -129,24 +129,24 @@ public class ReprocessedTab extends JMainTabSecondary {
 		jToolBarRight.addButton(jExpand);
 
 		//Table Format
-		tableFormat = new EnumTableFormatAdaptor<ReprocessedTableFormat, ReprocessedInterface>(ReprocessedTableFormat.class);
+		tableFormat = new EnumTableFormatAdaptor<>(ReprocessedTableFormat.class);
 		//Backend
-		eventList = new EventListManager<ReprocessedInterface>().create();
+		eventList = EventListManager.create();
 		//Sorting (per column)
 		eventList.getReadWriteLock().readLock().lock();
-		SortedList<ReprocessedInterface> sortedListColumn = new SortedList<ReprocessedInterface>(eventList);
+		SortedList<ReprocessedInterface> sortedListColumn = new SortedList<>(eventList);
 		eventList.getReadWriteLock().readLock().unlock();
 
 		//Sorting Total (Ensure that total is always last)
 		eventList.getReadWriteLock().readLock().lock();
-		SortedList<ReprocessedInterface> sortedListTotal = new SortedList<ReprocessedInterface>(sortedListColumn, new TotalComparator());
+		SortedList<ReprocessedInterface> sortedListTotal = new SortedList<>(sortedListColumn, new TotalComparator());
 		eventList.getReadWriteLock().readLock().unlock();
 		//Filter
 		eventList.getReadWriteLock().readLock().lock();
-		filterList = new FilterList<ReprocessedInterface>(sortedListTotal);
+		filterList = new FilterList<>(sortedListTotal);
 		eventList.getReadWriteLock().readLock().unlock();
 		//Separator
-		separatorList = new SeparatorList<ReprocessedInterface>(filterList, new ReprocessedSeparatorComparator(), 1, Integer.MAX_VALUE);
+		separatorList = new SeparatorList<>(filterList, new ReprocessedSeparatorComparator(), 1, Integer.MAX_VALUE);
 		//Table Model
 		tableModel = EventModels.createTableModel(separatorList, tableFormat);
 		//Table
@@ -201,8 +201,8 @@ public class ReprocessedTab extends JMainTabSecondary {
 
 	@Override
 	public void updateData() {
-		List<ReprocessedInterface> list = new ArrayList<ReprocessedInterface>();
-		List<ReprocessedGrandItem> uniqueList = new ArrayList<ReprocessedGrandItem>();
+		List<ReprocessedInterface> list = new ArrayList<>();
+		List<ReprocessedGrandItem> uniqueList = new ArrayList<>();
 		ReprocessedGrandTotal grandTotal = new ReprocessedGrandTotal();
 		for (Integer typeID : typeIDs) {
 			Item item = ApiIdConverter.getItem(typeID);
@@ -286,7 +286,7 @@ public class ReprocessedTab extends JMainTabSecondary {
 	private class ReprocessedTableMenu implements TableMenu<ReprocessedInterface> {
 		@Override
 		public MenuData<ReprocessedInterface> getMenuData() {
-			return new MenuData<ReprocessedInterface>(selectionModel.getSelected());
+			return new MenuData<>(selectionModel.getSelected());
 		}
 
 		@Override
@@ -338,7 +338,7 @@ public class ReprocessedTab extends JMainTabSecondary {
 		private final Comparator<ReprocessedInterface> comparator;
 
 		public TotalComparator() {
-			List<Comparator<ReprocessedInterface>> comparators = new ArrayList<Comparator<ReprocessedInterface>>();
+			List<Comparator<ReprocessedInterface>> comparators = new ArrayList<>();
 			comparators.add(new ReprocessedSeparatorComparator());
 			comparators.add(new InnerTotalComparator());
 			comparator = GlazedLists.chainComparators(comparators);
@@ -408,7 +408,7 @@ public class ReprocessedTab extends JMainTabSecondary {
 		@Override
 		protected List<EnumTableColumn<ReprocessedInterface>> getColumns() {
 			if (columns == null) {
-				columns = new ArrayList<EnumTableColumn<ReprocessedInterface>>();
+				columns = new ArrayList<>();
 				columns.addAll(Arrays.asList(ReprocessedExtendedTableFormat.values()));
 				columns.addAll(Arrays.asList(ReprocessedTableFormat.values()));
 			}
@@ -417,7 +417,7 @@ public class ReprocessedTab extends JMainTabSecondary {
 
 		@Override
 		protected List<EnumTableColumn<ReprocessedInterface>> getShownColumns() {
-			return new ArrayList<EnumTableColumn<ReprocessedInterface>>(tableFormat.getShownColumns());
+			return new ArrayList<>(tableFormat.getShownColumns());
 		}
 
 		@Override

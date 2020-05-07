@@ -68,11 +68,11 @@ public abstract class JAutoCompleteDialog<T> extends JDialogCentered {
 
 		JLabel jText = new JLabel(msg);
 
-		jItems = new JComboBox<T>();
-		eventList = new EventListManager<T>().create();
+		jItems = new JComboBox<>();
+		eventList = EventListManager.create();
 
 		eventList.getReadWriteLock().readLock().lock();
-		SortedList<T> sortedList = new SortedList<T>(eventList, getComparator());
+		SortedList<T> sortedList = new SortedList<>(eventList, getComparator());
 		eventList.getReadWriteLock().readLock().unlock();
 		
 		autoComplete = AutoCompleteSupport.install(jItems, EventModels.createSwingThreadProxyList(sortedList), getFilterator());
