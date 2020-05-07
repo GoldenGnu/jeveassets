@@ -85,21 +85,21 @@ public class LogTab extends JMainTabSecondary {
 		ListenerClass listener = new ListenerClass();
 
 		//Table Format
-		tableFormat = new EnumTableFormatAdaptor<LogTableFormat, AssetLogSource>(LogTableFormat.class);
+		tableFormat = new EnumTableFormatAdaptor<>(LogTableFormat.class);
 		//Backend
-		eventList = new EventListManager<AssetLogSource>().create();
+		eventList = EventListManager.create();
 		//Sorting (per column)
 		eventList.getReadWriteLock().readLock().lock();
-		SortedList<AssetLogSource> sortedList = new SortedList<AssetLogSource>(eventList);
+		SortedList<AssetLogSource> sortedList = new SortedList<>(eventList);
 		eventList.getReadWriteLock().readLock().unlock();
 
 		//Filter
 		eventList.getReadWriteLock().readLock().lock();
-		filterList = new FilterList<AssetLogSource>(sortedList);
+		filterList = new FilterList<>(sortedList);
 		eventList.getReadWriteLock().readLock().unlock();
 		//Separator
 		eventList.getReadWriteLock().readLock().lock();
-		separatorList = new SeparatorList<AssetLogSource>(filterList, new LogSeparatorComparator(), 1, Integer.MAX_VALUE);
+		separatorList = new SeparatorList<>(filterList, new LogSeparatorComparator(), 1, Integer.MAX_VALUE);
 		eventList.getReadWriteLock().readLock().unlock();
 		//Table Model
 		tableModel = EventModels.createTableModel(separatorList, tableFormat);
@@ -201,7 +201,7 @@ public class LogTab extends JMainTabSecondary {
 	private class LogTableMenu implements MenuManager.TableMenu<AssetLogSource> {
 		@Override
 		public MenuData<AssetLogSource> getMenuData() {
-			return new MenuData<AssetLogSource>(selectionModel.getSelected());
+			return new MenuData<>(selectionModel.getSelected());
 		}
 
 		@Override
@@ -239,12 +239,12 @@ public class LogTab extends JMainTabSecondary {
 
 		@Override
 		protected List<EnumTableColumn<AssetLogSource>> getColumns() {
-			return new ArrayList<EnumTableColumn<AssetLogSource>>(tableFormat.getOrderColumns());
+			return new ArrayList<>(tableFormat.getOrderColumns());
 		}
 
 		@Override
 		protected List<EnumTableColumn<AssetLogSource>> getShownColumns() {
-			return new ArrayList<EnumTableColumn<AssetLogSource>>(tableFormat.getShownColumns());
+			return new ArrayList<>(tableFormat.getShownColumns());
 		}
 
 		@Override

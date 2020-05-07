@@ -71,20 +71,20 @@ public class ValueTableTab extends JMainTabSecondary {
 	public ValueTableTab(final Program program) {
 		super(program, TabsValues.get().title(), Images.TOOL_VALUE_TABLE.getIcon(), true);
 		//Table Format
-		tableFormat = new EnumTableFormatAdaptor<ValueTableFormat, Value>(ValueTableFormat.class);
+		tableFormat = new EnumTableFormatAdaptor<>(ValueTableFormat.class);
 		//Backend
-		eventList = new EventListManager<Value>().create();
+		eventList = EventListManager.create();
 		//Sorting (per column)
 		eventList.getReadWriteLock().readLock().lock();
-		SortedList<Value> columnSortedList = new SortedList<Value>(eventList);
+		SortedList<Value> columnSortedList = new SortedList<>(eventList);
 		eventList.getReadWriteLock().readLock().unlock();
 		//Sorting Total
 		eventList.getReadWriteLock().readLock().lock();
-		SortedList<Value> totalSortedList = new SortedList<Value>(columnSortedList, new TotalComparator());
+		SortedList<Value> totalSortedList = new SortedList<>(columnSortedList, new TotalComparator());
 		eventList.getReadWriteLock().readLock().unlock();
 		//Filter
 		eventList.getReadWriteLock().readLock().lock();
-		filterList = new FilterList<Value>(totalSortedList);
+		filterList = new FilterList<>(totalSortedList);
 		eventList.getReadWriteLock().readLock().unlock();
 		//Table Model
 		tableModel = EventModels.createTableModel(filterList, tableFormat);
@@ -159,7 +159,7 @@ public class ValueTableTab extends JMainTabSecondary {
 	private class ValueTableMenu implements TableMenu<Value> {
 		@Override
 		public MenuData<Value> getMenuData() {
-			return new MenuData<Value>();
+			return new MenuData<>();
 		}
 
 		@Override
@@ -206,7 +206,7 @@ public class ValueTableTab extends JMainTabSecondary {
 
 		@Override
 		protected List<EnumTableColumn<Value>> getShownColumns() {
-			return new ArrayList<EnumTableColumn<Value>>(tableFormat.getShownColumns());
+			return new ArrayList<>(tableFormat.getShownColumns());
 		}
 
 		@Override

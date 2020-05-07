@@ -72,8 +72,8 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 	private final JComboBox<PriceMode> jPriceReprocessedType;
 	private final JComboBox<PriceSource> jSource;
 
-	private final EventList<MyLocation> stationsEventList = new EventListManager<MyLocation>().create();
-	private final List<MyLocation> stations = new ArrayList<MyLocation>();
+	private final EventList<MyLocation> stationsEventList = EventListManager.create();
+	private final List<MyLocation> stations = new ArrayList<>();
 	
 	private final AutoCompleteSupport<MyLocation> regionsAutoComplete;
 	private final AutoCompleteSupport<MyLocation> systemsAutoComplete;
@@ -87,8 +87,8 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 		MyLocation system = null;
 		MyLocation station = null;
 		MyLocation region = null;
-		EventList<MyLocation> systemsEventList = new EventListManager<MyLocation>().create();
-		EventList<MyLocation> regionsEventList = new EventListManager<MyLocation>().create();
+		EventList<MyLocation> systemsEventList = EventListManager.create();
+		EventList<MyLocation> regionsEventList = EventListManager.create();
 		try {
 			systemsEventList.getReadWriteLock().writeLock().lock();
 			regionsEventList.getReadWriteLock().writeLock().lock();

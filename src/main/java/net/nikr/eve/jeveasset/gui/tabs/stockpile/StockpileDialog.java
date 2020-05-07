@@ -149,10 +149,10 @@ public class StockpileDialog extends JDialogCentered {
 		itemFlags = new ArrayList<>(StaticData.get().getItemFlags().values());
 		Collections.sort(itemFlags);
 		//Locations - not static
-		planets = new EventListManager<MyLocation>().create();
-		stations = new EventListManager<MyLocation>().create();
-		systems = new EventListManager<MyLocation>().create();
-		regions = new EventListManager<MyLocation>().create();
+		planets = EventListManager.create();
+		stations = EventListManager.create();
+		systems = EventListManager.create();
+		regions = EventListManager.create();
 		//Owners - not static
 		owners = new ArrayList<>();
 		//myLocations - not static
@@ -694,7 +694,7 @@ public class StockpileDialog extends JDialogCentered {
 			if (filterType == FilterType.CONTAINER) {
 				jType.setIcon(Images.LOC_CONTAINER_WHITE.getIcon());
 				jType.setToolTipText(TabsStockpile.get().container());
-				EventList<String> containerEventList = new EventListManager<String>().create();
+				EventList<String> containerEventList = EventListManager.create();
 				try {
 					containerEventList.getReadWriteLock().writeLock().lock();
 					containerEventList.addAll(containers);
@@ -1339,7 +1339,7 @@ public class StockpileDialog extends JDialogCentered {
 				jLocationType.setIcon(Images.LOC_LOCATIONS.getIcon());
 				jLocationType.setToolTipText(TabsStockpile.get().universe());
 				jPanel.setBorder(BorderFactory.createTitledBorder(TabsStockpile.get().universe()));
-				EventList<MyLocation> eventList = new EventListManager<MyLocation>().create();
+				EventList<MyLocation> eventList = EventListManager.create();
 				try {
 					eventList.getReadWriteLock().readLock().lock();
 					filterList = new FilterList<>(eventList);

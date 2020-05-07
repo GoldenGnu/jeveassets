@@ -82,14 +82,14 @@ public class ProfileData {
 
 	private final ProfileManager profileManager;
 
-	private final EventList<MyContractItem> contractItemEventList = new EventListManager<MyContractItem>().create();
-	private final EventList<MyIndustryJob> industryJobsEventList = new EventListManager<MyIndustryJob>().create();
-	private final EventList<MyMarketOrder> marketOrdersEventList = new EventListManager<MyMarketOrder>().create();
-	private final EventList<MyJournal> journalEventList = new EventListManager<MyJournal>().create();
-	private final EventList<MyTransaction> transactionsEventList = new EventListManager<MyTransaction>().create();
-	private final EventList<MyAsset> assetsEventList = new EventListManager<MyAsset>().create();
-	private final EventList<MyAccountBalance> accountBalanceEventList = new EventListManager<MyAccountBalance>().create();
-	private final EventList<MyContract> contractEventList = new EventListManager<MyContract>().create();
+	private final EventList<MyContractItem> contractItemEventList = EventListManager.create();
+	private final EventList<MyIndustryJob> industryJobsEventList = EventListManager.create();
+	private final EventList<MyMarketOrder> marketOrdersEventList = EventListManager.create();
+	private final EventList<MyJournal> journalEventList = EventListManager.create();
+	private final EventList<MyTransaction> transactionsEventList = EventListManager.create();
+	private final EventList<MyAsset> assetsEventList = EventListManager.create();
+	private final EventList<MyAccountBalance> accountBalanceEventList = EventListManager.create();
+	private final EventList<MyContract> contractEventList = EventListManager.create();
 	private final List<MyContractItem> contractItemList = new ArrayList<>();
 	private final List<MyIndustryJob> industryJobsList = new ArrayList<>();
 	private final List<MyMarketOrder> marketOrdersList = new ArrayList<>();
@@ -351,7 +351,7 @@ public class ProfileData {
 		List<MyMarketOrder> found = new ArrayList<>();
 		try {
 			marketOrdersEventList.getReadWriteLock().readLock().lock();
-			boolean added = false;
+			boolean added;
 			for (MyMarketOrder order : marketOrdersEventList) {
 				added = false;
 				Outbid outbid = output.getOutbids().get(order.getOrderID());
