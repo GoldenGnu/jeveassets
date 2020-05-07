@@ -71,7 +71,7 @@ public class TrackerAssetFilterDialog extends JDialogCentered {
 	public TrackerAssetFilterDialog(Program program) {
 		super(program, TabsTracker.get().filterTitle(), Images.TOOL_TRACKER.getImage());
 		//Backend
-		eventList = new EventListManager<CheckBoxNode>().create();
+		eventList = EventListManager.create();
 		//Filter
 		eventList.getReadWriteLock().readLock().lock();
 		filterList = new FilterList<>(eventList);

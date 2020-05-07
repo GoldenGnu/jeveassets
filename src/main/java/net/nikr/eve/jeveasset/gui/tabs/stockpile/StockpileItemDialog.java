@@ -61,7 +61,7 @@ public class StockpileItemDialog extends JDialogCentered {
 	private final JCheckBox jCopy;
 	private final JCheckBox jRuns;
 
-	private final EventList<Item> items = new EventListManager<Item>().create();
+	private final EventList<Item> items = EventListManager.create();
 	private Stockpile stockpile;
 	private StockpileItem stockpileItem;
 

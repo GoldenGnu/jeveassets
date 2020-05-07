@@ -28,20 +28,23 @@ import java.util.List;
 import net.nikr.eve.jeveasset.Program;
 
 
-public class EventListManager<E> {
-	public EventList<E> create() {
+public class EventListManager {
+
+	private EventListManager() { }
+
+	public static <E> EventList<E> create() {
 		if (Program.isDebug()) {
-			DebugList<E> debugList = new DebugList<E>();
+			DebugList<E> debugList = new DebugList<>();
 			debugList.setLockCheckingEnabled(true);
 			return debugList;
 		} else {
-			return new BasicEventList<E>();
+			return new BasicEventList<>();
 		}
 	}
 	public static <E> List<E> safeList(EventList<E> eventList) {
 		try {
 			eventList.getReadWriteLock().readLock().lock();
-			return new ArrayList<E>(eventList);
+			return new ArrayList<>(eventList);
 		} finally {
 			eventList.getReadWriteLock().readLock().unlock();
 		}

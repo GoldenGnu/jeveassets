@@ -135,7 +135,7 @@ public class LoadoutsTab extends JMainTabSecondary {
 		JLabel jOwnersLabel = new JLabel(TabsLoadout.get().owner());
 		jToolBarTop.add(jOwnersLabel);
 
-		jOwners = new JComboBox<String>();
+		jOwners = new JComboBox<>();
 		jOwners.setActionCommand(LoadoutsAction.OWNERS.name());
 		jOwners.addActionListener(listener);
 		jToolBarTop.addComboBox(jOwners, 200);
@@ -143,7 +143,7 @@ public class LoadoutsTab extends JMainTabSecondary {
 		JLabel jShipsLabel = new JLabel(TabsLoadout.get().ship1());
 		jToolBarTop.add(jShipsLabel);
 
-		jShips = new JComboBox<String>();
+		jShips = new JComboBox<>();
 		jShips.setActionCommand(LoadoutsAction.FILTER.name());
 		jShips.addActionListener(listener);
 		jToolBarTop.addComboBox(jShips, 0);
@@ -191,15 +191,15 @@ public class LoadoutsTab extends JMainTabSecondary {
 		jToolBarRight.addButton(jExpand);
 
 		//Table Format
-		tableFormat = new EnumTableFormatAdaptor<LoadoutTableFormat, Loadout>(LoadoutTableFormat.class);
+		tableFormat = new EnumTableFormatAdaptor<>(LoadoutTableFormat.class);
 		//Backend
-		eventList = new EventListManager<Loadout>().create();
+		eventList = EventListManager.create();
 		//Filter
 		eventList.getReadWriteLock().readLock().lock();
-		filterList = new FilterList<Loadout>(eventList);
+		filterList = new FilterList<>(eventList);
 		eventList.getReadWriteLock().readLock().unlock();
 		//Separator
-		separatorList = new SeparatorList<Loadout>(filterList, new LoadoutSeparatorComparator(), 1, Integer.MAX_VALUE);
+		separatorList = new SeparatorList<>(filterList, new LoadoutSeparatorComparator(), 1, Integer.MAX_VALUE);
 		//Table Model
 		tableModel = EventModels.createTableModel(separatorList, tableFormat);
 		//Table
@@ -218,12 +218,12 @@ public class LoadoutsTab extends JMainTabSecondary {
 		//Menu
 		installMenu(program, new LoadoutTableMenu(), jTable, Loadout.class);
 
-		List<EnumTableColumn<Loadout>> enumColumns = new ArrayList<EnumTableColumn<Loadout>>();
+		List<EnumTableColumn<Loadout>> enumColumns = new ArrayList<>();
 		enumColumns.addAll(Arrays.asList(LoadoutExtendedTableFormat.values()));
 		enumColumns.addAll(Arrays.asList(LoadoutTableFormat.values()));
-		List<EventList<Loadout>> eventLists = new ArrayList<EventList<Loadout>>();
+		List<EventList<Loadout>> eventLists = new ArrayList<>();
 		eventLists.add(filterList);
-		exportDialog = new ExportDialog<Loadout>(program.getMainWindow().getFrame(), NAME, null, new LoadoutsFilterControl(), eventLists, enumColumns);
+		exportDialog = new ExportDialog<>(program.getMainWindow().getFrame(), NAME, null, new LoadoutsFilterControl(), eventLists, enumColumns);
 
 		layout.setHorizontalGroup(
 			layout.createParallelGroup(GroupLayout.Alignment.LEADING)
@@ -251,7 +251,7 @@ public class LoadoutsTab extends JMainTabSecondary {
 		if (!program.getOwnerNames(false).isEmpty()) {
 			jOwners.setEnabled(true);
 			String selectedItem = (String) jOwners.getSelectedItem();
-			jOwners.setModel(new ListComboBoxModel<String>(program.getOwnerNames(true)));
+			jOwners.setModel(new ListComboBoxModel<>(program.getOwnerNames(true)));
 			if (selectedItem != null && program.getOwnerNames(true).contains(selectedItem)) {
 				jOwners.setSelectedItem(selectedItem);
 			} else {
@@ -259,9 +259,9 @@ public class LoadoutsTab extends JMainTabSecondary {
 			}
 		} else {
 			jOwners.setEnabled(false);
-			jOwners.setModel(new ListComboBoxModel<String>());
+			jOwners.setModel(new ListComboBoxModel<>());
 			jOwners.getModel().setSelectedItem(TabsLoadout.get().no());
-			jShips.setModel(new ListComboBoxModel<String>());
+			jShips.setModel(new ListComboBoxModel<>());
 			jShips.getModel().setSelectedItem(TabsLoadout.get().no());
 		}
 		updateTable();
@@ -359,9 +359,9 @@ public class LoadoutsTab extends JMainTabSecondary {
 		if (buildName == null) {
 			return; //Cancel
 		}
-		Map<String, Long> droneBay = new HashMap<String, Long>();
-		Map<String, Long> cargo = new HashMap<String, Long>();
-		Map<String, Map<Integer, String>> modulesByFlag = new HashMap<String, Map<Integer, String>>();
+		Map<String, Long> droneBay = new HashMap<>();
+		Map<String, Long> cargo = new HashMap<>();
+		Map<String, Map<Integer, String>> modulesByFlag = new HashMap<>();
 		for (MyAsset asset : exportAsset.getAssets()) {
 			if (asset.getFlag().equals("DroneBay")) {
 				Long count = droneBay.get(asset.getTypeName());
@@ -385,7 +385,7 @@ public class LoadoutsTab extends JMainTabSecondary {
 				}
 				Map<Integer, String> modules = modulesByFlag.get(flag);
 				if (modules == null) {
-					modules = new HashMap<Integer, String>();
+					modules = new HashMap<>();
 					modulesByFlag.put(flag, modules);
 				}
 				if (asset.getCount() > 1) {
@@ -456,7 +456,7 @@ public class LoadoutsTab extends JMainTabSecondary {
 	}
 
 	private void updateTable() {
-		List<Loadout> ship = new ArrayList<Loadout>();
+		List<Loadout> ship = new ArrayList<>();
 		for (MyAsset asset : program.getAssetList()) {
 			String key = asset.getName() + " #" + asset.getItemID();
 			if (!asset.getItem().getCategory().equals(SHIP_CATEGORY) || !asset.isSingleton()) {
@@ -508,7 +508,7 @@ public class LoadoutsTab extends JMainTabSecondary {
 	private class LoadoutTableMenu implements TableMenu<Loadout> {
 		@Override
 		public MenuData<Loadout> getMenuData() {
-			return new MenuData<Loadout>(selectionModel.getSelected());
+			return new MenuData<>(selectionModel.getSelected());
 		}
 
 		@Override
@@ -535,7 +535,7 @@ public class LoadoutsTab extends JMainTabSecondary {
 		public void actionPerformed(final ActionEvent e) {
 			if (LoadoutsAction.OWNERS.name().equals(e.getActionCommand())) {
 				String owner = (String) jOwners.getSelectedItem();
-				List<String> charShips = new ArrayList<String>();
+				List<String> charShips = new ArrayList<>();
 				for (MyAsset asset : program.getAssetList()) {
 					String key = asset.getName() + " #" + asset.getItemID();
 					if (!asset.getItem().getCategory().equals(SHIP_CATEGORY) || !asset.isSingleton()) {
@@ -554,7 +554,7 @@ public class LoadoutsTab extends JMainTabSecondary {
 					jOwners.setEnabled(true);
 					jShips.setEnabled(true);
 					String selectedItem = (String) jShips.getSelectedItem();
-					jShips.setModel(new ListComboBoxModel<String>(charShips));
+					jShips.setModel(new ListComboBoxModel<>(charShips));
 					if (selectedItem != null && charShips.contains(selectedItem)) {
 						jShips.setSelectedItem(selectedItem);
 					} else {
@@ -565,7 +565,7 @@ public class LoadoutsTab extends JMainTabSecondary {
 					jCollapse.setEnabled(false);
 					jExport.setEnabled(false);
 					jShips.setEnabled(false);
-					jShips.setModel(new ListComboBoxModel<String>());
+					jShips.setModel(new ListComboBoxModel<>());
 					jShips.getModel().setSelectedItem(TabsLoadout.get().no1());
 				}
 			} else if (LoadoutsAction.FILTER.name().equals(e.getActionCommand())) {
@@ -579,7 +579,7 @@ public class LoadoutsTab extends JMainTabSecondary {
 				loadoutsExportDialog.setVisible(true);
 			} else if (LoadoutsAction.EXPORT_EVE_ALL.name().equals(e.getActionCommand())) {
 				String filename = browse();
-				List<MyAsset> ships = new ArrayList<MyAsset>();
+				List<MyAsset> ships = new ArrayList<>();
 				for (MyAsset asset : program.getAssetList()) {
 					if (!asset.getItem().getCategory().equals(SHIP_CATEGORY) || !asset.isSingleton() || asset.getAssets().isEmpty()) {
 						continue;
@@ -587,7 +587,7 @@ public class LoadoutsTab extends JMainTabSecondary {
 					ships.add(asset);
 				}
 				if (filename != null) {
-					EveFittingWriter.save(new ArrayList<MyAsset>(ships), filename);
+					EveFittingWriter.save(new ArrayList<>(ships), filename);
 				}
 			} else if (LoadoutsAction.EXPORT_EFT.name().equals(e.getActionCommand())) {
 				exportEFT();
@@ -615,7 +615,7 @@ public class LoadoutsTab extends JMainTabSecondary {
 
 		@Override
 		protected List<EnumTableColumn<Loadout>> getShownColumns() {
-			return new ArrayList<EnumTableColumn<Loadout>>(tableFormat.getShownColumns());
+			return new ArrayList<>(tableFormat.getShownColumns());
 		}
 
 		@Override

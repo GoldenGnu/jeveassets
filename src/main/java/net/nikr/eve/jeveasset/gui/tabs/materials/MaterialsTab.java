@@ -104,7 +104,7 @@ public class MaterialsTab extends JMainTabSecondary {
 		
 		JFixedToolBar jToolBarLeft = new JFixedToolBar();
 
-		jOwners = new JComboBox<String>();
+		jOwners = new JComboBox<>();
 		jOwners.setActionCommand(MaterialsAction.SELECTED.name());
 		jOwners.addActionListener(listener);
 		jToolBarLeft.addComboBox(jOwners, 200);
@@ -136,12 +136,12 @@ public class MaterialsTab extends JMainTabSecondary {
 		jToolBarRight.addButton(jExpand);
 
 		//Table Format
-		tableFormat = new EnumTableFormatAdaptor<MaterialTableFormat, Material>(MaterialTableFormat.class);
+		tableFormat = new EnumTableFormatAdaptor<>(MaterialTableFormat.class);
 		//Backend
-		eventList = new EventListManager<Material>().create();
+		eventList = EventListManager.create();
 		//Separator
 		eventList.getReadWriteLock().readLock().lock();
-		separatorList = new SeparatorList<Material>(eventList, new MaterialSeparatorComparator(), 1, Integer.MAX_VALUE);
+		separatorList = new SeparatorList<>(eventList, new MaterialSeparatorComparator(), 1, Integer.MAX_VALUE);
 		eventList.getReadWriteLock().readLock().unlock();
 		//Table Model
 		tableModel = EventModels.createTableModel(separatorList, tableFormat);
@@ -161,10 +161,10 @@ public class MaterialsTab extends JMainTabSecondary {
 		//Menu
 		installMenu(program, new MaterialTableMenu(), jTable, Material.class);
 
-		List<EnumTableColumn<Material>> enumColumns = new ArrayList<EnumTableColumn<Material>>();
+		List<EnumTableColumn<Material>> enumColumns = new ArrayList<>();
 		enumColumns.addAll(Arrays.asList(MaterialExtenedTableFormat.values()));
 		enumColumns.addAll(Arrays.asList(MaterialTableFormat.values()));
-		exportDialog = new ExportDialog<Material>(program.getMainWindow().getFrame(), NAME, null, new MaterialsFilterControl(), Collections.singletonList(eventList), enumColumns);
+		exportDialog = new ExportDialog<>(program.getMainWindow().getFrame(), NAME, null, new MaterialsFilterControl(), Collections.singletonList(eventList), enumColumns);
 
 		layout.setHorizontalGroup(
 			layout.createParallelGroup()
@@ -193,7 +193,7 @@ public class MaterialsTab extends JMainTabSecondary {
 			jCollapse.setEnabled(true);
 			jOwners.setEnabled(true);
 			String selectedItem = (String) jOwners.getSelectedItem();
-			jOwners.setModel(new ListComboBoxModel<String>(program.getOwnerNames(true)));
+			jOwners.setModel(new ListComboBoxModel<>(program.getOwnerNames(true)));
 			if (selectedItem != null && program.getOwnerNames(true).contains(selectedItem)) {
 				jOwners.setSelectedItem(selectedItem);
 			} else {
@@ -204,7 +204,7 @@ public class MaterialsTab extends JMainTabSecondary {
 			jExpand.setEnabled(false);
 			jCollapse.setEnabled(false);
 			jOwners.setEnabled(false);
-			jOwners.setModel(new ListComboBoxModel<String>());
+			jOwners.setModel(new ListComboBoxModel<>());
 			jOwners.getModel().setSelectedItem(TabsMaterials.get().no());
 		}
 	}
@@ -225,12 +225,12 @@ public class MaterialsTab extends JMainTabSecondary {
 	private void updateTable() {
 		beforeUpdateData();
 		String owner = (String) jOwners.getSelectedItem();
-		List<Material> materials = new ArrayList<Material>();
-		Map<String, Material> uniqueMaterials = new HashMap<String, Material>();
-		Map<String, Material> totalMaterials = new HashMap<String, Material>();
-		Map<String, Material> totalAllMaterials = new HashMap<String, Material>();
-		Map<String, Material> summary = new HashMap<String, Material>();
-		Map<String, Material> total = new HashMap<String, Material>();
+		List<Material> materials = new ArrayList<>();
+		Map<String, Material> uniqueMaterials = new HashMap<>();
+		Map<String, Material> totalMaterials = new HashMap<>();
+		Map<String, Material> totalAllMaterials = new HashMap<>();
+		Map<String, Material> summary = new HashMap<>();
+		Map<String, Material> total = new HashMap<>();
 		//Summary Total All
 		Material summaryTotalAllMaterial = new Material(MaterialType.SUMMARY_ALL, null, TabsMaterials.get().summary(), TabsMaterials.get().grandTotal(), General.get().all());
 		for (MyAsset asset : program.getAssetList()) {
@@ -331,7 +331,7 @@ public class MaterialsTab extends JMainTabSecondary {
 	private class MaterialTableMenu implements TableMenu<Material> {
 		@Override
 		public MenuData<Material> getMenuData() {
-			return new MenuData<Material>(selectionModel.getSelected());
+			return new MenuData<>(selectionModel.getSelected());
 		}
 
 		@Override
@@ -390,7 +390,7 @@ public class MaterialsTab extends JMainTabSecondary {
 
 		@Override
 		protected List<EnumTableColumn<Material>> getShownColumns() {
-			return new ArrayList<EnumTableColumn<Material>>(tableFormat.getShownColumns());
+			return new ArrayList<>(tableFormat.getShownColumns());
 		}
 
 		@Override
