@@ -94,6 +94,18 @@ public abstract class DialoguesSettings extends Bundle {
 	public abstract String tracker();
 	public abstract String useAssetPriceForSellOrders();
 
+	// used in ColorSettingsPanel
+	public abstract String colors();
+	public abstract String collapse();
+	public abstract String expand();
+	public abstract String columnName();
+	public abstract String columnBackground();
+	public abstract String columnForeground();
+	public abstract String columnPreview();
+	public abstract String columnSelected();
+	public abstract String testText();
+	public abstract String testSelectedText();
+
 	// used in PriceDataSettingsPanel
 	public abstract String changeSourceWarning();
 	public abstract String includeRegions();

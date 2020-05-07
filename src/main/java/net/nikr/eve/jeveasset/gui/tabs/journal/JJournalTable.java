@@ -22,12 +22,12 @@
 package net.nikr.eve.jeveasset.gui.tabs.journal;
 
 import ca.odell.glazedlists.swing.DefaultEventTableModel;
-import java.awt.Color;
 import java.awt.Component;
 import javax.swing.table.TableCellRenderer;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.api.my.MyJournal;
-import net.nikr.eve.jeveasset.gui.shared.Colors;
+import net.nikr.eve.jeveasset.data.settings.ColorEntry;
+import net.nikr.eve.jeveasset.data.settings.ColorSettings;
 import net.nikr.eve.jeveasset.gui.shared.table.JAutoColumnTable;
 
 
@@ -48,18 +48,10 @@ public class JJournalTable extends JAutoColumnTable {
 		String columnName = (String) this.getTableHeader().getColumnModel().getColumn(column).getHeaderValue();
 
 		if (columnName.equals(JournalTableFormat.AMOUNT.getColumnName()) && journal.getAmount() < 0) {
-			if (!isSelected) {
-				component.setForeground(Color.RED.darker());
-			} else {
-				component.setForeground(Colors.LIGHT_RED.getColor());
-			}
+			ColorSettings.configCell(component, ColorEntry.GLOBAL_VALUE_NEGATIVE, isSelected);
 		}
 		if (columnName.equals(JournalTableFormat.BALANCE.getColumnName()) && journal.getBalance() < 0) {
-			if (!isSelected) {
-				component.setForeground(Color.RED.darker());
-			} else {
-				component.setForeground(Colors.LIGHT_RED.getColor());
-			}
+			ColorSettings.configCell(component, ColorEntry.GLOBAL_VALUE_NEGATIVE, isSelected);
 		}
 		return component;
 	}

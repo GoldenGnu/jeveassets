@@ -22,12 +22,12 @@
 package net.nikr.eve.jeveasset.gui.tabs.transaction;
 
 import ca.odell.glazedlists.swing.DefaultEventTableModel;
-import java.awt.Color;
 import java.awt.Component;
 import javax.swing.table.TableCellRenderer;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
-import net.nikr.eve.jeveasset.gui.shared.Colors;
+import net.nikr.eve.jeveasset.data.settings.ColorEntry;
+import net.nikr.eve.jeveasset.data.settings.ColorSettings;
 import net.nikr.eve.jeveasset.gui.shared.table.JAutoColumnTable;
 
 
@@ -47,36 +47,19 @@ public class JTransactionTable extends JAutoColumnTable {
 		MyTransaction transaction = tableModel.getElementAt(row);
 		String columnName = (String) this.getTableHeader().getColumnModel().getColumn(column).getHeaderValue();
 
-		//User set price
 		if (columnName.equals(TransactionTableFormat.NAME.getColumnName())) {
 			if (transaction.isSell()) {
-				if (!isSelected) {
-					component.setBackground(Colors.LIGHT_GREEN.getColor());
-				} else {
-					component.setBackground(this.getSelectionBackground().darker());
-				}
+				ColorSettings.configCell(component, ColorEntry.TRANSACTIONS_SOLD, isSelected);
 			} else {
-				if (!isSelected) {
-					component.setBackground(Colors.LIGHT_RED.getColor());
-				} else {
-					component.setBackground(this.getSelectionBackground().darker());
-				}
+				ColorSettings.configCell(component, ColorEntry.TRANSACTIONS_BOUGHT, isSelected);
 			}
 		}
 		if (columnName.equals(TransactionTableFormat.VALUE.getColumnName()) && transaction.isBuy()) {
-			if (!isSelected) {
-				component.setForeground(Color.RED.darker());
-			} else {
-				component.setForeground(Colors.LIGHT_RED.getColor());
-			}
+			ColorSettings.configCell(component, ColorEntry.GLOBAL_VALUE_NEGATIVE, isSelected);
 		}
 		//User set location
 		if (transaction.getLocation().isUserLocation() && columnName.equals(TransactionTableFormat.LOCATION.getColumnName())) {
-			if (!isSelected) {
-				component.setBackground(Colors.LIGHT_GRAY.getColor());
-			} else {
-				component.setBackground(this.getSelectionBackground().darker());
-			}
+			ColorSettings.configCell(component, ColorEntry.CUSTOM_USER_LOCATION, isSelected);
 			return component;
 		}
 		return component;

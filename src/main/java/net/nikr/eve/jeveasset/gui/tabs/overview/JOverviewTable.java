@@ -27,13 +27,14 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.swing.table.TableCellRenderer;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.gui.shared.Colors;
+import net.nikr.eve.jeveasset.data.settings.ColorEntry;
+import net.nikr.eve.jeveasset.data.settings.ColorSettings;
 import net.nikr.eve.jeveasset.gui.shared.table.JAutoColumnTable;
 
 
 class JOverviewTable extends JAutoColumnTable {
 
-	private List<String> groupedLocations = new ArrayList<String>();
+	private List<String> groupedLocations = new ArrayList<>();
 	private final DefaultEventTableModel<Overview> tableModel;
 
 	public JOverviewTable(final Program program, final DefaultEventTableModel<Overview> tableModel) {
@@ -55,36 +56,19 @@ class JOverviewTable extends JAutoColumnTable {
 		//User set location
 		if (columnName.equals(OverviewTableFormat.NAME.getColumnName())) {
 			if (groupedLocations.contains(overview.getName())) { //In group
-				if (!isSelected) {
-					component.setBackground(Colors.LIGHT_GREEN.getColor());
-				} else {
-					component.setBackground(this.getSelectionBackground().darker());
-				}
+				ColorSettings.configCell(component, ColorEntry.OVERVIEW_GROUPED_LOCATIONS, isSelected);
 				return component;
 			} else if (overview.getLocation().isUserLocation()) {
-				if (!isSelected) {
-					component.setBackground(Colors.LIGHT_GRAY.getColor());
-				} else {
-					component.setBackground(this.getSelectionBackground().darker());
-				}
+				ColorSettings.configCell(component, ColorEntry.CUSTOM_USER_LOCATION, isSelected);
 				return component;
 			}
 		}
-
 		if (groupedLocations.contains(overview.getLocation().getSystem()) && columnName.equals(OverviewTableFormat.SYSTEM.getColumnName())) { //In group
-			if (!isSelected) {
-				component.setBackground(Colors.LIGHT_GREEN.getColor());
-			} else {
-				component.setBackground(this.getSelectionBackground().darker());
-			}
+			ColorSettings.configCell(component, ColorEntry.OVERVIEW_GROUPED_LOCATIONS, isSelected);
 			return component;
 		}
 		if (groupedLocations.contains(overview.getLocation().getRegion()) && columnName.equals(OverviewTableFormat.REGION.getColumnName())) { //In group
-			if (!isSelected) {
-				component.setBackground(Colors.LIGHT_GREEN.getColor());
-			} else {
-				component.setBackground(this.getSelectionBackground().darker());
-			}
+			ColorSettings.configCell(component, ColorEntry.OVERVIEW_GROUPED_LOCATIONS, isSelected);
 			return component;
 		}
 		return component;

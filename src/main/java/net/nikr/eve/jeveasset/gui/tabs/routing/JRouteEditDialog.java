@@ -39,9 +39,10 @@ import javax.swing.ListSelectionModel;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 import net.nikr.eve.jeveasset.Program;
+import net.nikr.eve.jeveasset.data.settings.ColorEntry;
+import net.nikr.eve.jeveasset.data.settings.ColorSettings;
 import net.nikr.eve.jeveasset.data.settings.RouteResult;
 import net.nikr.eve.jeveasset.gui.dialogs.settings.ShowToolSettingsPanel.ListItemTransferHandler;
-import net.nikr.eve.jeveasset.gui.shared.Colors;
 import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
 import net.nikr.eve.jeveasset.i18n.TabsRouting;
 import uk.me.candle.eve.graph.DisconnectedGraphException;
@@ -177,10 +178,10 @@ public class JRouteEditDialog extends JDialogCentered {
 	private void calculateInfo(int jumps) {
 		if (jumps > routeResult.getJumps()) {
 			jDelta.setText("+" + (jumps - routeResult.getJumps()));
-			jDelta.setForeground(Colors.RED.getColor());
+			ColorSettings.config(jDelta, ColorEntry.GLOBAL_VALUE_NEGATIVE);
 		} else if (jumps < routeResult.getJumps()) {
 			jDelta.setText("-" + (routeResult.getJumps() - jumps));
-			jDelta.setForeground(Colors.GREEN.getColor().darker());
+			ColorSettings.config(jDelta, ColorEntry.GLOBAL_VALUE_POSITIVE);
 		} else {
 			jDelta.setText("");
 		}

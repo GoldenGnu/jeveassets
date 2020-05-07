@@ -21,6 +21,7 @@
 
 package net.nikr.eve.jeveasset.io.local;
 
+import java.awt.Color;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -158,6 +159,9 @@ public abstract class AbstractXmlWriter extends AbstractBackup {
 				list.add(valueOf(t));
 			}
 			return String.join(",", list);
+		} else if (object instanceof Color) {
+			Color color = (Color) object;
+			return String.valueOf(color.getRGB());
 		} else if (object instanceof Date) {
 			Date date = (Date) object;
 			return String.valueOf(date.getTime());

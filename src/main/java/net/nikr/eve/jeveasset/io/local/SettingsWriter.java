@@ -21,6 +21,7 @@
 
 package net.nikr.eve.jeveasset.io.local;
 
+import java.awt.Color;
 import java.io.File;
 import java.net.Proxy;
 import java.util.Date;
@@ -28,6 +29,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder.MarketOrderRange;
+import net.nikr.eve.jeveasset.data.settings.ColorEntry;
+import net.nikr.eve.jeveasset.data.settings.ColorSettings;
 import net.nikr.eve.jeveasset.data.settings.ContractPriceManager.ContractPriceSettings;
 import net.nikr.eve.jeveasset.data.settings.ExportSettings;
 import net.nikr.eve.jeveasset.data.settings.PriceDataSettings;
@@ -137,6 +140,7 @@ public class SettingsWriter extends AbstractXmlWriter {
 		writeRoutingSettings(xmldoc, settings.getRoutingSettings());
 		writeMarketOrderOutbid(xmldoc, settings.getPublicMarketOrdersNextUpdate(), settings.getPublicMarketOrdersLastUpdate(), settings.getOutbidOrderRange(), settings.getMarketOrdersOutbid());
 		writeShowTool(xmldoc, settings.getShowTools(), settings.isSaveToolsOnExit());
+		writeColorSettings(xmldoc, settings.getColorSettings());
 		try {
 			writeXmlFile(xmldoc, filename, true);
 		} catch (XmlException ex) {
@@ -145,6 +149,18 @@ public class SettingsWriter extends AbstractXmlWriter {
 		}
 		LOG.info("Settings saved");
 		return true;
+	}
+
+	private void writeColorSettings(Document xmldoc, ColorSettings colorSettings) {
+		Element colorSettingsNode = xmldoc.createElementNS(null, "colorsettings");
+		xmldoc.getDocumentElement().appendChild(colorSettingsNode);
+		for (ColorEntry colorEntry : ColorEntry.values()) {
+			Element colorNode = xmldoc.createElementNS(null, "color");
+			setAttribute(colorNode, "name", colorEntry);
+			setAttributeOptional(colorNode, "background", colorSettings.getBackground(colorEntry));
+			setAttributeOptional(colorNode, "foreground", colorSettings.getForeground(colorEntry));
+			colorSettingsNode.appendChild(colorNode);
+		}
 	}
 
 	private void writeShowTool(Document xmldoc, List<String> showTools, boolean saveToolsOnExit) {

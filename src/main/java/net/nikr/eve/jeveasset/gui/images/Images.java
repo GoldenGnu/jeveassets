@@ -174,6 +174,14 @@ public enum Images {
 	SETTINGS_REPROCESSING ("settings_reprocessing.png"),
 	SETTINGS_PROXY ("settings_proxy.png"),
 	SETTINGS_WINDOW ("settings_window.png"),
+	SETTINGS_COLORS ("settings_colors.png"),
+	SETTINGS_COLOR_PICKER ("settings_color_picker.png"),
+	SETTINGS_COLOR_CHECK_BLACK ("settings_color_check_black.png"),
+	SETTINGS_COLOR_CHECK_BLACK_ALPHA ("settings_color_check_black_alpha.png"),
+	SETTINGS_COLOR_CHECK_WHITE ("settings_color_check_white.png"),
+	SETTINGS_COLOR_CHECK_WHITE_ALPHA ("settings_color_check_white_alpha.png"),
+	SETTINGS_COLOR_FOREGROUND ("settings_color_foreground.png"),
+	SETTINGS_COLOR_BACKGROUND ("settings_color_background.png"),
 
 	STOCKPILE_SHOPPING_LIST ("stockpile_shopping_list.png"),
 

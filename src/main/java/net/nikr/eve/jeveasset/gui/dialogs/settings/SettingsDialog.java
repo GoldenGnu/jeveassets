@@ -77,8 +77,8 @@ public class SettingsDialog extends JDialogCentered {
 
 		ListenerClass listener = new ListenerClass();
 
-		settingsPanels = new HashMap<String, JSettingsPanel>();
-		icons = new HashMap<Object, Icon>();
+		settingsPanels = new HashMap<>();
+		icons = new HashMap<>();
 
 		rootNode = new DefaultMutableTreeNode(DialoguesSettings.get().root());
 		treeModel = new DefaultTreeModel(rootNode);
@@ -133,6 +133,9 @@ public class SettingsDialog extends JDialogCentered {
 		add(locationSettingsPanel, valuesNode);
 		TagsSettingsPanel tagsSettingsPanel = new TagsSettingsPanel(program, this);
 		add(tagsSettingsPanel, valuesNode);
+
+		ColorSettingsPanel colorSettingsPanel = new ColorSettingsPanel(program, this);
+		add(colorSettingsPanel);
 
 		PriceDataSettingsPanel priceDataSettingsPanel = new PriceDataSettingsPanel(program, this);
 		add(priceDataSettingsPanel);

@@ -26,7 +26,8 @@ import java.awt.Component;
 import java.awt.Font;
 import javax.swing.table.TableCellRenderer;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.gui.shared.Colors;
+import net.nikr.eve.jeveasset.data.settings.ColorEntry;
+import net.nikr.eve.jeveasset.data.settings.ColorSettings;
 import net.nikr.eve.jeveasset.gui.shared.table.JAutoColumnTable;
 import net.nikr.eve.jeveasset.i18n.TabsValues;
 
@@ -54,13 +55,9 @@ public class JValueTable  extends JAutoColumnTable {
 			string = false;
 		}
 
-		//UGrand Total
+		//Grand Total
 		if (value.isGrandTotal()) {
-			if (!isSelected) {
-				component.setBackground(Colors.LIGHT_GRAY.getColor());
-			} else {
-				component.setBackground(this.getSelectionBackground().darker());
-			}
+			ColorSettings.configCell(component, ColorEntry.GLOBAL_GRAND_TOTAL, isSelected);
 			return component;
 		}
 		//Best Asset: none

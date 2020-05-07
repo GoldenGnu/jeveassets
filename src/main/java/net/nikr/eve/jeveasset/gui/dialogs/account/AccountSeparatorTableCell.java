@@ -20,8 +20,9 @@ import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.api.accounts.ApiType;
 import net.nikr.eve.jeveasset.data.api.accounts.DeprecatedOwner;
 import net.nikr.eve.jeveasset.data.api.accounts.OwnerType;
+import net.nikr.eve.jeveasset.data.settings.ColorEntry;
+import net.nikr.eve.jeveasset.data.settings.ColorSettings;
 import net.nikr.eve.jeveasset.gui.images.Images;
-import net.nikr.eve.jeveasset.gui.shared.Colors;
 import net.nikr.eve.jeveasset.gui.shared.table.SeparatorTableCell;
 import net.nikr.eve.jeveasset.i18n.DialoguesAccount;
 
@@ -199,7 +200,15 @@ public class AccountSeparatorTableCell extends SeparatorTableCell<OwnerType> {
 
 		//Invalid / Expired
 		jSpaceLabel.setVisible(owner.isInvalid() || owner.isExpired() || allMigrated || canMigrate);
-		jPanel.setBackground(owner.isInvalid() || owner.isExpired() ? Colors.LIGHT_RED.getColor() : allMigrated ? Colors.LIGHT_GREEN.getColor() : canMigrate ? Colors.LIGHT_YELLOW.getColor() : defaultColor);
+		if (owner.isInvalid() || owner.isExpired()) {
+			ColorSettings.config(jPanel, ColorEntry.GLOBAL_ENTRY_INVALID);
+		} else if (allMigrated) {
+			ColorSettings.config(jPanel, ColorEntry.GLOBAL_ENTRY_VALID);
+		} else if (canMigrate) {
+			ColorSettings.config(jPanel, ColorEntry.GLOBAL_ENTRY_WARNING);
+		} else {
+			jPanel.setBackground(defaultColor);
+		}
 	}
 
 	private class ListenerClass implements FocusListener, ActionListener {
