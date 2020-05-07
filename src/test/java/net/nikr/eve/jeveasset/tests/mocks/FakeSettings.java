@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder.MarketOrderRange;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
+import net.nikr.eve.jeveasset.data.settings.ColorSettings;
 import net.nikr.eve.jeveasset.data.settings.ContractPriceManager;
 import net.nikr.eve.jeveasset.data.settings.ExportSettings;
 import net.nikr.eve.jeveasset.data.settings.PriceData;
@@ -625,6 +626,11 @@ public abstract class FakeSettings extends Settings {
 
 	@Override
 	public boolean isTrackerAllProfiles() {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public ColorSettings getColorSettings() {
 		throw new UnsupportedOperationException("not implemented");
 	}
 }
