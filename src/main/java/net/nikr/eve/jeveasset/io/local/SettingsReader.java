@@ -21,6 +21,7 @@
 
 package net.nikr.eve.jeveasset.io.local;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.net.Proxy;
@@ -38,6 +39,7 @@ import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder.MarketOrderRange;
 import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
 import net.nikr.eve.jeveasset.data.settings.AssetAddedData;
+import net.nikr.eve.jeveasset.data.settings.ColorEntry;
 import net.nikr.eve.jeveasset.data.settings.ContractPriceManager.ContractPriceSettings;
 import net.nikr.eve.jeveasset.data.settings.ContractPriceManager.ContractPriceSettings.ContractPriceMode;
 import net.nikr.eve.jeveasset.data.settings.ContractPriceManager.ContractPriceSettings.ContractPriceSecurity;
@@ -246,6 +248,13 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 	private Settings loadSettings(final Element element, final Settings settings) throws XmlException {
 		if (!element.getNodeName().equals("settings")) {
 			throw new XmlException("Wrong root element name.");
+		}
+
+		//Color Settings
+		NodeList colorSettingsNodes=  element.getElementsByTagName("colorsettings");
+		if (colorSettingsNodes.getLength() == 1) {
+			Element colorSettingsElement=   (Element) colorSettingsNodes.item(0);
+			parseColorSettings(colorSettingsElement, settings);
 		}
 
 		//Tracker Settings
@@ -776,6 +785,22 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 			}
 		}
 		Collections.sort(stockpiles);
+	}
+
+	private void parseColorSettings(Element colorSettingsElement, Settings settings) throws XmlException {
+		NodeList colorNodes = colorSettingsElement.getElementsByTagName("color");
+		for (int a = 0; a < colorNodes.getLength(); a++) {
+			Element colorNode = (Element) colorNodes.item(a);
+			try {
+				ColorEntry entry = ColorEntry.valueOf(getString(colorNode, "name"));
+				Color background = getColorOptional(colorNode, "background");
+				Color foreground = getColorOptional(colorNode, "foreground");
+				settings.getColorSettings().setBackground(entry, background);
+				settings.getColorSettings().setForeground(entry, foreground);
+			} catch (IllegalArgumentException ex ) {
+				LOG.error(ex.getMessage(), ex);
+			}
+		}
 	}
 
 	private void parseTrackerSettings(Element trackerSettingsElement, Settings settings) throws XmlException {

@@ -26,7 +26,8 @@ import java.awt.Component;
 import javax.swing.table.TableCellRenderer;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder;
-import net.nikr.eve.jeveasset.gui.shared.Colors;
+import net.nikr.eve.jeveasset.data.settings.ColorEntry;
+import net.nikr.eve.jeveasset.data.settings.ColorSettings;
 import net.nikr.eve.jeveasset.gui.shared.table.JAutoColumnTable;
 
 
@@ -48,43 +49,23 @@ public class JMarketOrdersTable extends JAutoColumnTable {
 
 		if (columnName.equals(MarketTableFormat.EXPIRES.getColumnName())) {
 			if (marketOrder.isExpired()) {
-				if (isSelected) {
-					component.setBackground(this.getSelectionBackground().darker());
-				} else {
-					component.setBackground(Colors.LIGHT_RED.getColor());
-				}
+				ColorSettings.configCell(component, ColorEntry.MARKET_ORDERS_EXPIRED, isSelected);
 			}
 		}
 		if (columnName.equals(MarketTableFormat.OUTBID_PRICE.getColumnName())) {
 			if (marketOrder.haveOutbid()) {
 				if (marketOrder.isOutbid()) {
-					if (isSelected) {
-						component.setBackground(this.getSelectionBackground().darker());
-					} else {
-						component.setBackground(Colors.LIGHT_RED.getColor());
-					}
+					ColorSettings.configCell(component, ColorEntry.MARKET_ORDERS_OUTBID_NOT_BEST, isSelected);
 				} else {
-					if (isSelected) {
-						component.setBackground(this.getSelectionBackground().darker());
-					} else {
-						component.setBackground(Colors.LIGHT_GREEN.getColor());
-					}
+					ColorSettings.configCell(component, ColorEntry.MARKET_ORDERS_OUTBID_BEST, isSelected);
 				}
 			} else if (marketOrder.isActive()) {
-				if (isSelected) {
-					component.setBackground(this.getSelectionBackground().darker());
-				} else {
-					component.setBackground(Colors.LIGHT_GRAY.getColor());
-				}
+				ColorSettings.configCell(component, ColorEntry.MARKET_ORDERS_OUTBID_UNKNOWN, isSelected);
 			}
 		}
 		//User set location
 		if (marketOrder.getLocation().isUserLocation() && columnName.equals(MarketTableFormat.LOCATION.getColumnName())) {
-			if (!isSelected) {
-				component.setBackground(Colors.LIGHT_GRAY.getColor());
-			} else {
-				component.setBackground(this.getSelectionBackground().darker());
-			}
+			ColorSettings.configCell(component, ColorEntry.CUSTOM_USER_LOCATION, isSelected);
 			return component;
 		}
 		return component;

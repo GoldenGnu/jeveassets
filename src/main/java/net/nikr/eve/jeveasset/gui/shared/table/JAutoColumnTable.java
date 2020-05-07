@@ -56,9 +56,10 @@ import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableModel;
 import javax.swing.text.JTextComponent;
 import net.nikr.eve.jeveasset.Program;
+import net.nikr.eve.jeveasset.data.settings.ColorEntry;
+import net.nikr.eve.jeveasset.data.settings.ColorSettings;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.data.settings.tag.Tags;
-import net.nikr.eve.jeveasset.gui.shared.Colors;
 import net.nikr.eve.jeveasset.gui.shared.CopyHandler;
 import net.nikr.eve.jeveasset.gui.shared.TextManager;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.ResizeMode;
@@ -191,7 +192,7 @@ public class JAutoColumnTable extends JTable {
 			component.setForeground(this.getForeground());
 			//Highlight selected row
 			if (Settings.get().isHighlightSelectedRows() && this.isRowSelected(row)) {
-				component.setBackground(Colors.LIGHT_BLUE.getColor());
+				ColorSettings.config(component, ColorEntry.GLOBAL_SELECTED_ROW_HIGHLIGHTING);
 				return component;
 			} else {
 				component.setBackground(this.getBackground());
@@ -628,7 +629,7 @@ public class JAutoColumnTable extends JTable {
 		/**
 		 * Holds the JScrollPane we want to force repainting its content.
 		 */
-		private JScrollPane jScrollPane;
+		private final JScrollPane jScrollPane;
 
 		/**
 		 * Holds the last scrollbar position for direction tracking.

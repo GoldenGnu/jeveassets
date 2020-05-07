@@ -26,7 +26,8 @@ import java.awt.Component;
 import javax.swing.table.TableCellRenderer;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob;
-import net.nikr.eve.jeveasset.gui.shared.Colors;
+import net.nikr.eve.jeveasset.data.settings.ColorEntry;
+import net.nikr.eve.jeveasset.data.settings.ColorSettings;
 import net.nikr.eve.jeveasset.gui.shared.table.JAutoColumnTable;
 
 
@@ -46,13 +47,14 @@ public class JIndustryJobsTable extends JAutoColumnTable {
 		MyIndustryJob industryJob = tableModel.getElementAt(row);
 		String columnName = (String) this.getTableHeader().getColumnModel().getColumn(column).getHeaderValue();
 
+		//BPO
+		if (industryJob.isBPO() && columnName.equals(IndustryJobTableFormat.NAME.getColumnName())) {
+			ColorSettings.configCell(component, ColorEntry.GLOBAL_BPO, isSelected);
+			return component;
+		}
 		//User set location
 		if (industryJob.getLocation().isUserLocation() && columnName.equals(IndustryJobTableFormat.LOCATION.getColumnName())) {
-			if (!isSelected) {
-				component.setBackground(Colors.LIGHT_GRAY.getColor());
-			} else {
-				component.setBackground(this.getSelectionBackground().darker());
-			}
+			ColorSettings.configCell(component, ColorEntry.CUSTOM_USER_LOCATION, isSelected);
 			return component;
 		}
 		return component;

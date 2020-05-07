@@ -226,6 +226,8 @@ public class Settings {
 	private final Map<Class<?>, List<MyLocation>> jumpLocations = new HashMap<>();
 //Tools
 	private final List<String> showTools = new ArrayList<>();
+//Colors
+	private final ColorSettings colorSettings = new ColorSettings();
 
 	protected Settings() {
 		//Settings
@@ -825,6 +827,10 @@ public class Settings {
 
 	public List<String> getShowTools() {
 		return showTools;
+	}
+
+	public ColorSettings getColorSettings() {
+		return colorSettings;
 	}
 
 	public List<Stockpile> getStockpiles() {

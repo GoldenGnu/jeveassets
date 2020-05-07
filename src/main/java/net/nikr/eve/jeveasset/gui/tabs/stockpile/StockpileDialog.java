@@ -77,10 +77,11 @@ import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder;
 import net.nikr.eve.jeveasset.data.sde.ItemFlag;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
 import net.nikr.eve.jeveasset.data.sde.StaticData;
+import net.nikr.eve.jeveasset.data.settings.ColorEntry;
+import net.nikr.eve.jeveasset.data.settings.ColorSettings;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.CaseInsensitiveComparator;
-import net.nikr.eve.jeveasset.gui.shared.Colors;
 import net.nikr.eve.jeveasset.gui.shared.DocumentFactory;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.TextManager;
@@ -295,10 +296,10 @@ public class StockpileDialog extends JDialogCentered {
 				jName.setBackground(Color.WHITE);
 			} else {
 				b = false;
-				jName.setBackground(Colors.LIGHT_RED.getColor());
+				ColorSettings.config(jName, ColorEntry.GLOBAL_ENTRY_INVALID);
 			}
 		} else if (jName.getText().isEmpty()) {
-			jName.setBackground(Colors.LIGHT_RED.getColor());
+			ColorSettings.config(jName, ColorEntry.GLOBAL_ENTRY_INVALID);
 			b = false;
 		} else {
 			jName.setBackground(Color.WHITE);
