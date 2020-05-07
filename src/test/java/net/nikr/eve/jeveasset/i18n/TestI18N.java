@@ -33,6 +33,12 @@ import org.junit.Test;
 public class TestI18N extends TestUtil {
 
 	@Test
+	public void testDataColorsBundle_en() throws Exception {
+		DataColors g = BundleServiceFactory.getBundleService().get(DataColors.class);
+		assertNotNull(g.assetsReprocessingEqual());
+	}
+
+	@Test
 	public void testDataModelAssetBundle_en() throws Exception {
 		DataModelAsset g = BundleServiceFactory.getBundleService().get(DataModelAsset.class);
 		assertNotNull(g.packaged());

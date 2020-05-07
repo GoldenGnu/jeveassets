@@ -26,8 +26,9 @@ import java.awt.Component;
 import javax.swing.table.TableCellRenderer;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.api.my.MyAsset;
+import net.nikr.eve.jeveasset.data.settings.ColorEntry;
+import net.nikr.eve.jeveasset.data.settings.ColorSettings;
 import net.nikr.eve.jeveasset.data.settings.Settings;
-import net.nikr.eve.jeveasset.gui.shared.Colors;
 import net.nikr.eve.jeveasset.gui.shared.table.JAutoColumnTable;
 
 
@@ -49,29 +50,17 @@ public class JAssetTable extends JAutoColumnTable {
 
 		//User set price
 		if (asset.isUserPrice() && columnName.equals(AssetTableFormat.PRICE.getColumnName())) {
-			if (!isSelected) {
-				component.setBackground(Colors.LIGHT_GRAY.getColor());
-			} else {
-				component.setBackground(this.getSelectionBackground().darker());
-			}
+			ColorSettings.configCell(component, ColorEntry.CUSTOM_PRICE, isSelected);
 			return component;
 		}
 		//User set name
 		if (asset.isUserName() && columnName.equals(AssetTableFormat.NAME.getColumnName())) {
-			if (!isSelected) {
-				component.setBackground(Colors.LIGHT_GRAY.getColor());
-			} else {
-				component.setBackground(this.getSelectionBackground().darker());
-			}
+			ColorSettings.configCell(component, ColorEntry.CUSTOM_ASSET_NAME, isSelected);
 			return component;
 		}
 		//User set location
 		if (asset.getLocation().isUserLocation() && columnName.equals(AssetTableFormat.LOCATION.getColumnName())) {
-			if (!isSelected) {
-				component.setBackground(Colors.LIGHT_GRAY.getColor());
-			} else {
-				component.setBackground(this.getSelectionBackground().darker());
-			}
+			ColorSettings.configCell(component, ColorEntry.CUSTOM_USER_LOCATION, isSelected);
 			return component;
 		}
 		//Blueprint Original
@@ -81,56 +70,36 @@ public class JAssetTable extends JAutoColumnTable {
 				|| columnName.equals(AssetTableFormat.PRICE_SELL_MIN.getColumnName())
 				|| columnName.equals(AssetTableFormat.PRICE_BUY_MAX.getColumnName())
 				|| columnName.equals(AssetTableFormat.NAME.getColumnName()))) {
-			if (!isSelected) {
-				component.setBackground(Colors.LIGHT_YELLOW.getColor());
-			} else {
-				component.setBackground(this.getSelectionBackground().darker());
-			}
+			ColorSettings.configCell(component, ColorEntry.GLOBAL_BPO, isSelected);
 			return component;
 		}
 
-		//Reproccessing Colors
+		//Reprocessing Colors
 		if (Settings.get().isReprocessColors() && !isSelected) {
 			//Zero price (White)
 			if (asset.getPriceReprocessed() == 0 || asset.getDynamicPrice() == 0) {
 				return component;
 			}
 			//Equal price (Yellow)
+			boolean rowSelection = (this.isRowSelected(row) && Settings.get().isHighlightSelectedRows());
 			if (asset.getPriceReprocessed() == asset.getDynamicPrice()) {
-				if (this.isRowSelected(row) && Settings.get().isHighlightSelectedRows()) {
-					component.setBackground(Colors.YELLOW.getColor());
-				} else {
-					component.setBackground(Colors.LIGHT_YELLOW.getColor());
-				}
+				ColorSettings.configCell(component, ColorEntry.ASSETS_REPROCESSING_EQUAL, rowSelection, true);
 				return component;
 			}
 			//Reprocessed highest (Red)
 			if (asset.getPriceReprocessed() > asset.getDynamicPrice()) {
-				if (this.isRowSelected(row) && Settings.get().isHighlightSelectedRows()) {
-					component.setBackground(Colors.RED.getColor());
-				} else {
-					component.setBackground(Colors.LIGHT_RED.getColor());
-				}
+				ColorSettings.configCell(component, ColorEntry.ASSETS_REPROCESSING_REPROCES, rowSelection, true);
 				return component;
 			}
 			//Price highest (Green)
 			if (asset.getPriceReprocessed() < asset.getDynamicPrice()) {
-				if (this.isRowSelected(row) && Settings.get().isHighlightSelectedRows()) {
-					component.setBackground(Colors.GREEN.getColor());
-				} else {
-					component.setBackground(Colors.LIGHT_GREEN.getColor());
-				}
+				ColorSettings.configCell(component, ColorEntry.ASSETS_REPROCESSING_SELL, rowSelection, true);
 				return component;
 			}
 		}
-
 		//Reproccessed is greater then price
 		if (asset.getPriceReprocessed() > asset.getDynamicPrice() && columnName.equals(AssetTableFormat.PRICE_REPROCESSED.getColumnName())) {
-			if (!isSelected) {
-				component.setBackground(Colors.LIGHT_YELLOW.getColor());
-			} else {
-				component.setBackground(this.getSelectionBackground().darker());
-			}
+			ColorSettings.configCell(component, ColorEntry.ASSETS_REPROCESS, isSelected);
 			return component;
 		}
 		return component;

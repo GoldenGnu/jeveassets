@@ -23,12 +23,12 @@ package net.nikr.eve.jeveasset.gui.tabs.stockpile;
 
 import ca.odell.glazedlists.SeparatorList;
 import ca.odell.glazedlists.swing.DefaultEventTableModel;
-import java.awt.Color;
 import java.awt.Component;
 import javax.swing.table.TableCellRenderer;
 import net.nikr.eve.jeveasset.Program;
+import net.nikr.eve.jeveasset.data.settings.ColorEntry;
+import net.nikr.eve.jeveasset.data.settings.ColorSettings;
 import net.nikr.eve.jeveasset.data.settings.Settings;
-import net.nikr.eve.jeveasset.gui.shared.Colors;
 import net.nikr.eve.jeveasset.gui.shared.table.JSeparatorTable;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileTotal;
@@ -53,35 +53,29 @@ public class JStockpileTable extends JSeparatorTable {
 		if (object instanceof StockpileItem) {
 			StockpileItem stockpileItem = (StockpileItem) object;
 			//Background
+			if (object instanceof StockpileTotal) { //Total
+				ColorSettings.configCell(component, ColorEntry.GLOBAL_GRAND_TOTAL, isSelected);
+			}
 			if (columnName.equals(StockpileTableFormat.NAME.getColumnName())) {
-				component.setForeground(Color.BLACK);
-				if (isSelected) {
-					component.setBackground(this.getSelectionBackground().darker());
-				} else if (Settings.get().isStockpileHalfColors()) {
+				if (Settings.get().isStockpileHalfColors()) {
 					if (stockpileItem.getPercentNeeded() >= (Settings.get().getStockpileColorGroup3() / 100.0) ) {
 						//Group 3
-						component.setBackground(Colors.LIGHT_GREEN.getColor());
+						ColorSettings.configCell(component, ColorEntry.STOCKPILE_TABLE_OVER_THRESHOLD, isSelected);
 					} else if (stockpileItem.getPercentNeeded() >= (Settings.get().getStockpileColorGroup2() / 100.0) ) {
 						//Group 2
-						component.setBackground(Colors.LIGHT_YELLOW.getColor());
+						ColorSettings.configCell(component, ColorEntry.STOCKPILE_TABLE_BELOW_THRESHOLD_2ND, isSelected);
 					} else {
 						//Group 1
-						component.setBackground(Colors.LIGHT_RED.getColor());
+						ColorSettings.configCell(component, ColorEntry.STOCKPILE_TABLE_BELOW_THRESHOLD, isSelected);
 					}
 				} else {
 					if (stockpileItem.getPercentNeeded() >= (Settings.get().getStockpileColorGroup2() / 100.0) ) {
 						//Group 2
-						component.setBackground(Colors.LIGHT_GREEN.getColor());
+						ColorSettings.configCell(component, ColorEntry.STOCKPILE_TABLE_OVER_THRESHOLD, isSelected);
 					} else {
 						//Group 1
-						component.setBackground(Colors.LIGHT_RED.getColor());
+						ColorSettings.configCell(component, ColorEntry.STOCKPILE_TABLE_BELOW_THRESHOLD, isSelected);
 					}
-				}
-			} else if (object instanceof StockpileTotal) { //Total
-				if (!isSelected) {
-					component.setBackground(Colors.LIGHT_GRAY.getColor());
-				} else {
-					component.setBackground(this.getSelectionBackground().darker());
 				}
 			}
 			//Foreground
@@ -116,25 +110,13 @@ public class JStockpileTable extends JSeparatorTable {
 				component.setForeground(component.getBackground());
 			}
 			if (columnName.equals(StockpileTableFormat.COUNT_NEEDED.getColumnName()) && stockpileItem.getCountNeeded() < 0) {
-				if (!isSelected) {
-					component.setForeground(Color.RED.darker());
-				} else {
-					component.setForeground(Colors.LIGHT_RED.getColor());
-				}
+				ColorSettings.configCell(component, ColorEntry.GLOBAL_VALUE_NEGATIVE, isSelected);
 			}
 			if (columnName.equals(StockpileTableFormat.VALUE_NEEDED.getColumnName()) && stockpileItem.getValueNeeded() < 0) {
-				if (!isSelected) {
-					component.setForeground(Color.RED.darker());
-				} else {
-					component.setForeground(Colors.LIGHT_RED.getColor());
-				}
+				ColorSettings.configCell(component, ColorEntry.GLOBAL_VALUE_NEGATIVE, isSelected);
 			}
 			if (columnName.equals(StockpileTableFormat.VOLUME_NEEDED.getColumnName()) && stockpileItem.getVolumeNeeded() < 0) {
-				if (!isSelected) {
-					component.setForeground(Color.RED.darker());
-				} else {
-					component.setForeground(Colors.LIGHT_RED.getColor());
-				}
+				ColorSettings.configCell(component, ColorEntry.GLOBAL_VALUE_NEGATIVE, isSelected);
 			}
 		}
 		return component;

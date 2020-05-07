@@ -35,9 +35,10 @@ import javax.swing.event.CaretListener;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.data.sde.StaticData;
+import net.nikr.eve.jeveasset.data.settings.ColorEntry;
+import net.nikr.eve.jeveasset.data.settings.ColorSettings;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
-import net.nikr.eve.jeveasset.gui.shared.Colors;
 import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
 import net.nikr.eve.jeveasset.gui.shared.table.EventListManager;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
@@ -71,7 +72,7 @@ public class StockpileItemDialog extends JDialogCentered {
 		ListenerClass listener = new ListenerClass();
 
 		JLabel jItemsLabel = new JLabel(TabsStockpile.get().item());
-		jItems = new JComboBox<Item>();
+		jItems = new JComboBox<>();
 		AutoCompleteSupport<Item> itemAutoComplete = AutoCompleteSupport.install(jItems, EventModels.createSwingThreadProxyList(items), new ItemFilterator());
 		itemAutoComplete.setStrict(true);
 		itemAutoComplete.setCorrectsCase(true);
@@ -170,7 +171,7 @@ public class StockpileItemDialog extends JDialogCentered {
 	private void updateData() {
 		stockpile = null;
 		stockpileItem = null;
-		List<Item> itemsList = new ArrayList<Item>(StaticData.get().getItems().values());
+		List<Item> itemsList = new ArrayList<>(StaticData.get().getItems().values());
 		Collections.sort(itemsList);
 		try {
 			items.getReadWriteLock().writeLock().lock();
@@ -268,20 +269,20 @@ public class StockpileItemDialog extends JDialogCentered {
 		}
 		if (itemExist()) { //Editing existing item
 			colorIsSet = true;
-			jCountMinimum.setBackground(Colors.LIGHT_YELLOW.getColor());
+			ColorSettings.config(jCountMinimum, ColorEntry.GLOBAL_ENTRY_WARNING);
 		}
 		try {
 			double d = Double.valueOf(jCountMinimum.getText());
 			if (d <= 0) {
 				valid = false; //Negative and zero is not valid
 				colorIsSet = true;
-				jCountMinimum.setBackground(Colors.LIGHT_RED.getColor());
+				ColorSettings.config(jCountMinimum, ColorEntry.GLOBAL_ENTRY_INVALID);
 			}
 		} catch (NumberFormatException ex) {
 			valid = false; //Empty and NaN is not valid
 			if (!jCountMinimum.getText().isEmpty()) {
 				colorIsSet = true;
-				jCountMinimum.setBackground(Colors.LIGHT_RED.getColor());
+				ColorSettings.config(jCountMinimum, ColorEntry.GLOBAL_ENTRY_INVALID);
 			}
 		}
 		if (!colorIsSet) {

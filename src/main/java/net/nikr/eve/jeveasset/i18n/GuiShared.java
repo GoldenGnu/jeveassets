@@ -306,4 +306,9 @@ public abstract class GuiShared extends Bundle {
 	public abstract String textClose();
 	public abstract String textImport();
 	public abstract String textExport();
+
+	//JSimpleColorPicker
+	public abstract String colorDefault();
+	public abstract String colorNone();
+	public abstract String colorCustom();
 }

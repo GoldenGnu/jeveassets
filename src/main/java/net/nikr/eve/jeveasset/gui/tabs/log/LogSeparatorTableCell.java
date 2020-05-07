@@ -10,7 +10,8 @@ import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JTable;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.gui.shared.Colors;
+import net.nikr.eve.jeveasset.data.settings.ColorEntry;
+import net.nikr.eve.jeveasset.data.settings.ColorSettings;
 import net.nikr.eve.jeveasset.gui.shared.table.SeparatorTableCell;
 
 /**
@@ -67,15 +68,15 @@ public class LogSeparatorTableCell extends SeparatorTableCell<AssetLogSource> {
 		}
 		AssetLog log = source.getParent();
 		if (log.isAdded() && !log.isMoved() && !log.isRemoved()) { //Added
-			jColor.setBackground(Colors.LIGHT_GREEN.getColor());
+			ColorSettings.config(jColor, ColorEntry.CONTAINER_LOG_ADDED);
 		} else if (!log.isAdded() && !log.isMoved() && log.isRemoved()) { //Removed
-			jColor.setBackground(Colors.LIGHT_RED.getColor());
+			ColorSettings.config(jColor, ColorEntry.CONTAINER_LOG_REMOVED);
 		} else if (!log.isAdded() && log.isMoved() && !log.isRemoved()) { //Moved
-			jColor.setBackground(Colors.LIGHT_BLUE.getColor());
+			ColorSettings.config(jColor, ColorEntry.CONTAINER_LOG_MOVED);
 		} else if (!log.isAdded() && !log.isMoved() && !log.isRemoved()) { //None
 			jColor.setBackground(defaultColor);
 		} else { //Multiple changes
-			jColor.setBackground(Colors.LIGHT_YELLOW.getColor());
+			ColorSettings.config(jColor, ColorEntry.CONTAINER_LOG_MULTIPLE_CHANGES);
 		}
 		jType.setText(log.getItem().getTypeName());
 		jLocation.setText(log.getLocation());

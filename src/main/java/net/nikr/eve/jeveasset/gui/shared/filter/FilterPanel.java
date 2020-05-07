@@ -66,9 +66,10 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.plaf.synth.SynthFormattedTextFieldUI;
 import net.nikr.eve.jeveasset.Program;
+import net.nikr.eve.jeveasset.data.settings.ColorEntry;
+import net.nikr.eve.jeveasset.data.settings.ColorSettings;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
-import net.nikr.eve.jeveasset.gui.shared.Colors;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.TextManager;
 import net.nikr.eve.jeveasset.gui.shared.components.JDateChooser;
@@ -477,12 +478,12 @@ class FilterPanel<E> implements Comparable<FilterPanel<E>> {
 		}
 		if (jEnabled.isSelected()) {
 			if (isInvalidRegex()) {
-				jText.setBackground(Colors.LIGHT_YELLOW.getColor());
+				ColorSettings.config(jText, ColorEntry.GLOBAL_ENTRY_WARNING);
 			} else {
 				jText.setBackground(Color.WHITE);
 			}
 		} else {
-			jText.setBackground(Colors.LIGHT_RED.getColor());
+			ColorSettings.config(jText, ColorEntry.GLOBAL_ENTRY_INVALID);
 		}
 		timer.stop();
 		refilter();
@@ -540,13 +541,13 @@ class FilterPanel<E> implements Comparable<FilterPanel<E>> {
 	private Color getGroupColor() {
 		switch (getGroup()) {
 			case 0: return Color.GRAY;
-			case 1: return Color.GRAY;
-			case 2: return Colors.LIGHT_GREEN.getColor();
-			case 3: return Colors.LIGHT_YELLOW.getColor();
-			case 4: return Colors.LIGHT_ORANGE.getColor();
-			case 5: return Colors.LIGHT_RED.getColor();
-			case 6: return Colors.LIGHT_MAGENTA.getColor();
-			case 7: return Colors.LIGHT_BLUE.getColor();
+			case 1: return ColorSettings.background(ColorEntry.FILTER_OR_GROUP_1);
+			case 2: return ColorSettings.background(ColorEntry.FILTER_OR_GROUP_2);
+			case 3: return ColorSettings.background(ColorEntry.FILTER_OR_GROUP_3);
+			case 4: return ColorSettings.background(ColorEntry.FILTER_OR_GROUP_4);
+			case 5: return ColorSettings.background(ColorEntry.FILTER_OR_GROUP_5);
+			case 6: return ColorSettings.background(ColorEntry.FILTER_OR_GROUP_6);
+			case 7: return ColorSettings.background(ColorEntry.FILTER_OR_GROUP_7);
 			default: return Color.GRAY;
 		}
 	}

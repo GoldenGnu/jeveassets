@@ -13,9 +13,10 @@ import java.awt.Font;
 import java.awt.event.*;
 import javax.swing.*;
 import net.nikr.eve.jeveasset.Program;
+import net.nikr.eve.jeveasset.data.settings.ColorEntry;
+import net.nikr.eve.jeveasset.data.settings.ColorSettings;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
-import net.nikr.eve.jeveasset.gui.shared.Colors;
 import net.nikr.eve.jeveasset.gui.shared.DocumentFactory;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.components.JDoubleField;
@@ -227,17 +228,17 @@ public class StockpileSeparatorTableCell extends SeparatorTableCell<StockpileIte
 		jGroup.setText(stockpileItem.getStockpile().getName());
 		if (Settings.get().isStockpileHalfColors()) {
 			if (stockpileItem.getStockpile().getPercentFull() >= (Settings.get().getStockpileColorGroup3() / 100.0) ) {
-				jColor.setBackground(Colors.LIGHT_GREEN.getColor());
+				ColorSettings.config(jColor, ColorEntry.STOCKPILE_ICON_OVER_THRESHOLD);
 			} else if (stockpileItem.getStockpile().getPercentFull() >= (Settings.get().getStockpileColorGroup2() / 100.0)) {
-				jColor.setBackground(Colors.LIGHT_YELLOW.getColor());
+				ColorSettings.config(jColor, ColorEntry.STOCKPILE_ICON_BELOW_THRESHOLD_2ND);
 			} else {
-				jColor.setBackground(Colors.LIGHT_RED.getColor());
+				ColorSettings.config(jColor, ColorEntry.STOCKPILE_ICON_BELOW_THRESHOLD);
 			}
 		} else {
 			if (stockpileItem.getStockpile().getPercentFull() >= (Settings.get().getStockpileColorGroup2() / 100.0)) {
-				jColor.setBackground(Colors.LIGHT_GREEN.getColor());
+				ColorSettings.config(jColor, ColorEntry.STOCKPILE_ICON_OVER_THRESHOLD);
 			} else {
-				jColor.setBackground(Colors.LIGHT_RED.getColor());
+				ColorSettings.config(jColor, ColorEntry.STOCKPILE_ICON_BELOW_THRESHOLD);
 			}
 		}
 		String location = stockpileItem.getStockpile().getLocationName();

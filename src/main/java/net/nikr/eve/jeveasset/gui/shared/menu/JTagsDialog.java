@@ -52,11 +52,12 @@ import javax.swing.JWindow;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
 import net.nikr.eve.jeveasset.Program;
+import net.nikr.eve.jeveasset.data.settings.ColorEntry;
+import net.nikr.eve.jeveasset.data.settings.ColorSettings;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.data.settings.tag.Tag;
 import net.nikr.eve.jeveasset.data.settings.tag.TagColor;
 import net.nikr.eve.jeveasset.gui.images.Images;
-import net.nikr.eve.jeveasset.gui.shared.Colors;
 import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 
@@ -133,7 +134,7 @@ public class JTagsDialog extends JDialogCentered {
 	}
 
 	public Tag show(Tag editTag){
-		return show(editTag, new HashSet<String>(Settings.get().getTags().keySet()));
+		return show(editTag, new HashSet<>(Settings.get().getTags().keySet()));
 	}
 
 	public Tag show(Tag editTag, Set<String> unique){
@@ -148,7 +149,7 @@ public class JTagsDialog extends JDialogCentered {
 	}
 
 	public Tag show() {
-		return show(new HashSet<String>(Settings.get().getTags().keySet()));
+		return show(new HashSet<>(Settings.get().getTags().keySet()));
 	}
 
 	public Tag show(Set<String> unique) {
@@ -212,7 +213,7 @@ public class JTagsDialog extends JDialogCentered {
 		public void caretUpdate(CaretEvent e) {
 			String name = jTextField.getText();
 			if (unique.contains(name) && (editTag == null || !editTag.getName().equals(name))) {
-				jTextField.setBackground(Colors.LIGHT_RED.getColor());
+				ColorSettings.config(jTextField, ColorEntry.GLOBAL_ENTRY_INVALID);
 				jOK.setEnabled(false);
 			} else {
 				jOK.setEnabled(true);

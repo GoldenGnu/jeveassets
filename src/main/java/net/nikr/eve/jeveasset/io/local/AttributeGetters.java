@@ -20,6 +20,7 @@
  */
 package net.nikr.eve.jeveasset.io.local;
 
+import java.awt.Color;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -39,6 +40,20 @@ public class AttributeGetters {
 	protected static boolean haveAttribute(final Node node, final String attributeName) {
 		Node attributeNode = node.getAttributes().getNamedItem(attributeName);
 		return attributeNode != null;
+	}
+
+	protected Color getColorOptional(final Node node, final String attributeName) throws XmlException {
+		Integer i = getIntOptional(node, attributeName);
+		if (i == null) {
+			return null;
+		} else {
+			return new Color(i);
+		}
+	}
+
+	protected Color getColor(final Node node, final String attributeName) throws XmlException {
+		int i = getInt(node, attributeName);
+		return new Color(i);
 	}
 
 	protected List<String> getStringListOptional(final Node node, final String attributeName) throws XmlException {
