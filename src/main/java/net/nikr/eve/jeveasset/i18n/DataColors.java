@@ -86,5 +86,8 @@ public abstract class DataColors extends Bundle {
 	public abstract String groupFilters();
 	public abstract String groupReprocessed();
 	public abstract String groupStockpile();
+	public abstract String colorThemeDefault();
+	public abstract String colorThemeStrong();
+	public abstract String colorThemeColorblind();
 
 }

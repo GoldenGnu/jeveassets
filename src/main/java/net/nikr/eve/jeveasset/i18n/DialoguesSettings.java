@@ -42,7 +42,6 @@ public abstract class DialoguesSettings extends Bundle {
 	public abstract String general();
 	public abstract String enterFilter();
 	public abstract String highlightSelectedRow();
-	public abstract String strongColors();
 	public abstract String focusEveOnline();
 	public abstract String focusEveOnlineLinuxCmd();
 	public abstract String focusEveOnlineLinuxHelp();
@@ -105,6 +104,8 @@ public abstract class DialoguesSettings extends Bundle {
 	public abstract String columnSelected();
 	public abstract String testText();
 	public abstract String testSelectedText();
+	public abstract String overwriteMsg();
+	public abstract String overwriteTitle();
 
 	// used in PriceDataSettingsPanel
 	public abstract String changeSourceWarning();

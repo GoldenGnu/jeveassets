@@ -34,11 +34,16 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Comparator;
+import java.util.List;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 import net.nikr.eve.jeveasset.Program;
+import net.nikr.eve.jeveasset.data.settings.ColorTheme;
+import net.nikr.eve.jeveasset.data.settings.ColorTheme.ColorThemeTypes;
 import net.nikr.eve.jeveasset.data.settings.ColorSettings.ColorRow;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
@@ -51,12 +56,15 @@ import net.nikr.eve.jeveasset.i18n.DialoguesSettings;
 
 public class ColorSettingsPanel extends JSettingsPanel {
 
-	private final JColorTable jTable;
+	private final JComboBox<ColorThemeTypes> jColorThemes;
 	//Table
+	private final JColorTable jTable;
 	private final DefaultEventTableModel<ColorRow> tableModel;
 	private final EnumTableFormatAdaptor<ColorsTableFormat, ColorRow> tableFormat;
 	private final EventList<ColorRow> eventList;
 	private final DefaultEventSelectionModel<ColorRow> selectionModel;
+	private ColorThemeTypes colorThemeTypes;
+	private boolean updateLock = false;
 
 	public ColorSettingsPanel(final Program program, final SettingsDialog settingsDialog) {
 		super(program, settingsDialog, DialoguesSettings.get().colors(), Images.SETTINGS_COLORS.getIcon());
@@ -121,7 +129,7 @@ public class ColorSettingsPanel extends JSettingsPanel {
 						return;
 					}
 					jTable.startEditCell(row, column);
-					jSimpleColorPicker.show(colorRow.getBackground(), colorRow.getColorEntry().getBackground(), colorRow.getColorEntry().isBackgroundNullable(), point, new JSimpleColorPicker.ColorListenere() {
+					jSimpleColorPicker.show(colorRow.getBackground(), colorRow.getDefaultBackground(), colorRow.getColorEntry().isBackgroundNullable(), point, new JSimpleColorPicker.ColorListenere() {
 						@Override
 						public void colorChanged(Color color) {
 							colorRow.setBackground(color);
@@ -140,7 +148,7 @@ public class ColorSettingsPanel extends JSettingsPanel {
 						return;
 					}
 					jTable.startEditCell(row, column);
-					jSimpleColorPicker.show(colorRow.getForeground(), colorRow.getColorEntry().getForeground(), colorRow.getColorEntry().isForegroundNullable(), point, new JSimpleColorPicker.ColorListenere() {
+					jSimpleColorPicker.show(colorRow.getForeground(), colorRow.getDefaultForeground(), colorRow.getColorEntry().isForegroundNullable(), point, new JSimpleColorPicker.ColorListenere() {
 						@Override
 						public void colorChanged(Color color) {
 							colorRow.setForeground(color);
@@ -177,6 +185,22 @@ public class ColorSettingsPanel extends JSettingsPanel {
 
 		JScrollPane jTableScroll = new JScrollPane(jTable);
 
+		jColorThemes = new JComboBox<>(ColorThemeTypes.values());
+		jColorThemes.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (updateLock) {
+					return;
+				}
+				SwingUtilities.invokeLater(new Runnable() {
+					@Override
+					public void run() {
+						updateTheme();
+					}
+				});
+			}
+		});
+
 		JButton jCollapse = new JButton(DialoguesSettings.get().collapse(), Images.MISC_COLLAPSED.getIcon());
 		jCollapse.addActionListener(new ActionListener() {
 			@Override
@@ -196,6 +220,8 @@ public class ColorSettingsPanel extends JSettingsPanel {
 		layout.setHorizontalGroup(
 			layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
 				.addGroup(layout.createSequentialGroup()
+					.addComponent(jColorThemes)
+					.addGap(0, 0, Integer.MAX_VALUE)
 					.addComponent(jCollapse, 100, 100, 100)
 					.addComponent(jExpand, 100, 100, 100)
 				)
@@ -204,6 +230,7 @@ public class ColorSettingsPanel extends JSettingsPanel {
 		layout.setVerticalGroup(
 			layout.createSequentialGroup()
 				.addGroup(layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
+					.addComponent(jColorThemes, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 					.addComponent(jCollapse, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 					.addComponent(jExpand, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 				)
@@ -213,7 +240,9 @@ public class ColorSettingsPanel extends JSettingsPanel {
 
 	@Override
 	public boolean save() {
-		boolean update = false;
+		ColorTheme colorTheme = colorThemeTypes.getInstance();
+		boolean update = !colorTheme.equals(Settings.get().getColorSettings().getColorTheme());
+		Settings.get().getColorSettings().setColorTheme(colorTheme, true); //Later overwritten by table values, but, set uneditable values
 		try {
 			eventList.getReadWriteLock().readLock().lock();
 			for (ColorRow row : eventList) {
@@ -227,10 +256,31 @@ public class ColorSettingsPanel extends JSettingsPanel {
 
 	@Override
 	public void load() {
+		updateLock = true;
+		updateTable(Settings.get().getColorSettings().get());
+		colorThemeTypes = Settings.get().getColorSettings().getColorTheme().getType();
+		jColorThemes.setSelectedItem(colorThemeTypes);
+		updateLock = false;
+	}
+
+	private void updateTheme() {
+		int value = JOptionPane.showConfirmDialog(parent, DialoguesSettings.get().overwriteMsg(), DialoguesSettings.get().overwriteTitle(), JOptionPane.YES_NO_CANCEL_OPTION);
+		if (value == JOptionPane.CANCEL_OPTION) {
+			updateLock = true;
+			jColorThemes.setSelectedItem(colorThemeTypes);
+			updateLock = false;
+			return;
+		}
+		boolean overwrite = value == JOptionPane.YES_OPTION;
+		colorThemeTypes = jColorThemes.getItemAt(jColorThemes.getSelectedIndex());
+		updateTable(colorThemeTypes.getInstance().get(overwrite, EventListManager.safeList(eventList)));
+	}
+
+	private void updateTable(List<ColorRow> rows) {
 		try {
 			eventList.getReadWriteLock().writeLock().lock();
 			eventList.clear();
-			eventList.addAll(Settings.get().getColorSettings().get());
+			eventList.addAll(rows);
 		} finally {
 			eventList.getReadWriteLock().writeLock().unlock();
 		}
