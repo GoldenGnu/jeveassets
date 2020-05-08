@@ -76,7 +76,6 @@ public class Settings {
 		FLAG_TRANSACTION_HISTORY,
 		FLAG_JOURNAL_HISTORY,
 		FLAG_MARKET_ORDER_HISTORY,
-		FLAG_STRONG_COLORS,
 		FLAG_ASKED_CHECK_ALL_TRACKER,
 		FLAG_TRACKER_USE_ASSET_PRICE_FOR_SELL_ORDERS,
 		FLAG_FOCUS_EVE_ONLINE_ON_ESI_UI_CALLS,
@@ -215,7 +214,6 @@ public class Settings {
 		flags.put(SettingFlag.FLAG_TRANSACTION_HISTORY, true);
 		flags.put(SettingFlag.FLAG_JOURNAL_HISTORY, true);
 		flags.put(SettingFlag.FLAG_MARKET_ORDER_HISTORY, true);
-		flags.put(SettingFlag.FLAG_STRONG_COLORS, false);
 		flags.put(SettingFlag.FLAG_ASKED_CHECK_ALL_TRACKER, false);
 		flags.put(SettingFlag.FLAG_TRACKER_USE_ASSET_PRICE_FOR_SELL_ORDERS, false);
 		flags.put(SettingFlag.FLAG_FOCUS_EVE_ONLINE_ON_ESI_UI_CALLS, true);
@@ -640,14 +638,6 @@ public class Settings {
 
 	public void setMarketOrderHistory(final boolean marketOrderHistory) {
 		flags.put(SettingFlag.FLAG_MARKET_ORDER_HISTORY, marketOrderHistory);
-	}
-
-	public boolean isStrongColors() {
-		return flags.get(SettingFlag.FLAG_STRONG_COLORS);
-	}
-
-	public void setStrongColors(final boolean strongColors) {
-		flags.put(SettingFlag.FLAG_STRONG_COLORS, strongColors);
 	}
 
 	public boolean isAskedCheckAllTracker() {
