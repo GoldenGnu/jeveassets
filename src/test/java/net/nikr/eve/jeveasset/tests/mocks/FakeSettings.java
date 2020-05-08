@@ -475,16 +475,6 @@ public abstract class FakeSettings extends Settings {
 	}
 
 	@Override
-	public void setStrongColors(boolean strongColors) {
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	@Override
-	public boolean isStrongColors() {
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	@Override
 	public Map<TrackerDate, TrackerNote> getTrackerNotes() {
 		throw new UnsupportedOperationException("not implemented");
 	}

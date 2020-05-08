@@ -28,7 +28,9 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import net.nikr.eve.jeveasset.data.settings.Settings;
+import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 
 public class AttributeGetters {
@@ -37,7 +39,23 @@ public class AttributeGetters {
 
 	protected AttributeGetters() { }
 
-	protected static boolean haveAttribute(final Node node, final String attributeName) {
+	protected Element getNodeOptional(final Element parent, final String nodeName) throws XmlException {
+		NodeList nodes = parent.getElementsByTagName(nodeName);
+		if (nodes.getLength() != 1) {
+			return null;
+		}
+		return (Element) nodes.item(0);
+	}
+
+	protected Element getNode(final Element parent, final String nodeName) throws XmlException {
+		NodeList nodes = parent.getElementsByTagName(nodeName);
+		if (nodes.getLength() != 1) {
+			throw new XmlException(nodeName + " is " + nodes.getLength()+ " (should be 1)");
+		}
+		return (Element) nodes.item(0);
+	}
+
+	protected boolean haveAttribute(final Node node, final String attributeName) {
 		Node attributeNode = node.getAttributes().getNamedItem(attributeName);
 		return attributeNode != null;
 	}

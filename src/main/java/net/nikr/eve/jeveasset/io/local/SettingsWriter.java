@@ -154,6 +154,7 @@ public class SettingsWriter extends AbstractXmlWriter {
 	private void writeColorSettings(Document xmldoc, ColorSettings colorSettings) {
 		Element colorSettingsNode = xmldoc.createElementNS(null, "colorsettings");
 		xmldoc.getDocumentElement().appendChild(colorSettingsNode);
+		setAttributeOptional(colorSettingsNode, "theme", colorSettings.getColorTheme().getType());
 		for (ColorEntry colorEntry : ColorEntry.values()) {
 			Element colorNode = xmldoc.createElementNS(null, "color");
 			setAttribute(colorNode, "name", colorEntry);

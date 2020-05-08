@@ -38,7 +38,6 @@ public class GeneralSettingsPanel extends JSettingsPanel {
 
 	private final JCheckBox jEnterFilters;
 	private final JCheckBox jHighlightSelectedRow;
-	private final JCheckBox jStrongColors;
 	private final JCheckBox jFocusEveOnline;
 
 
@@ -48,8 +47,6 @@ public class GeneralSettingsPanel extends JSettingsPanel {
 		jEnterFilters = new JCheckBox(DialoguesSettings.get().enterFilter());
 
 		jHighlightSelectedRow = new JCheckBox(DialoguesSettings.get().highlightSelectedRow());
-
-		jStrongColors = new JCheckBox(DialoguesSettings.get().strongColors());
 
 		jFocusEveOnline = new JCheckBox(DialoguesSettings.get().focusEveOnline());
 
@@ -69,7 +66,6 @@ public class GeneralSettingsPanel extends JSettingsPanel {
 			layout.createParallelGroup(GroupLayout.Alignment.LEADING)
 				.addComponent(jEnterFilters)
 				.addComponent(jHighlightSelectedRow)
-				.addComponent(jStrongColors)
 				.addComponent(jFocusEveOnline)
 				.addGroup(layout.createSequentialGroup()
 					.addGap(30)
@@ -83,7 +79,6 @@ public class GeneralSettingsPanel extends JSettingsPanel {
 			layout.createSequentialGroup()
 				.addComponent(jEnterFilters, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 				.addComponent(jHighlightSelectedRow, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-				.addComponent(jStrongColors, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 				.addComponent(jFocusEveOnline, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 				.addComponent(jFocusEveOnlineLinuxHelp, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 				.addComponent(jFocusEveOnlineLinuxCmd, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
@@ -92,10 +87,9 @@ public class GeneralSettingsPanel extends JSettingsPanel {
 
 	@Override
 	public boolean save() {
-		boolean update = jHighlightSelectedRow.isSelected() != Settings.get().isHighlightSelectedRows() || Settings.get().isStrongColors() != jStrongColors.isSelected();
+		boolean update = jHighlightSelectedRow.isSelected() != Settings.get().isHighlightSelectedRows();
 		Settings.get().setFilterOnEnter(jEnterFilters.isSelected());
 		Settings.get().setHighlightSelectedRows(jHighlightSelectedRow.isSelected());
-		Settings.get().setStrongColors(jStrongColors.isSelected());
 		Settings.get().setFocusEveOnlineOnEsiUiCalls(jFocusEveOnline.isSelected());
 		return update;
 	}
@@ -104,7 +98,6 @@ public class GeneralSettingsPanel extends JSettingsPanel {
 	public void load() {
 		jEnterFilters.setSelected(Settings.get().isFilterOnEnter());
 		jHighlightSelectedRow.setSelected(Settings.get().isHighlightSelectedRows());
-		jStrongColors.setSelected(Settings.get().isStrongColors());
 		jFocusEveOnline.setSelected(Settings.get().isFocusEveOnlineOnEsiUiCalls());
 	}
 }

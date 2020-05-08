@@ -28,18 +28,40 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 import javax.swing.JComponent;
+import net.nikr.eve.jeveasset.data.settings.ColorTheme.ColorThemeTypes;
 import net.nikr.eve.jeveasset.gui.shared.ColorTools;
 
 public class ColorSettings {
 
+	private ColorTheme colorTheme = ColorThemeTypes.DEFAULT.getInstance();
 	private final Map<ColorEntry, Color> backgrounds = new EnumMap<>(ColorEntry.class);
 	private final Map<ColorEntry, Color> foregrounds = new EnumMap<>(ColorEntry.class);
 
 	public ColorSettings() {
 		for (ColorEntry colorEntry : ColorEntry.values()) {
-			backgrounds.put(colorEntry, colorEntry.getBackground());
-			foregrounds.put(colorEntry, colorEntry.getForeground());
+			backgrounds.put(colorEntry, colorTheme.getDefaultBackground(colorEntry));
+			foregrounds.put(colorEntry, colorTheme.getDefaultForeground(colorEntry));
 		}
+	}
+
+	public ColorTheme getColorTheme() {
+		return colorTheme;
+	}
+
+	public void setColorTheme(ColorTheme colorTheme, boolean overwrite) {
+		//Setting new colors
+		for (ColorEntry colorEntry : ColorEntry.values()) {
+			boolean defaultBackground = Objects.equals(getBackgrounds().get(colorEntry), getColorTheme().getDefaultBackground(colorEntry));
+			if (defaultBackground || overwrite) {
+				getBackgrounds().put(colorEntry, colorTheme.getDefaultBackground(colorEntry));
+			}
+			boolean defaultForeground = Objects.equals(getForegrounds().get(colorEntry), getColorTheme().getDefaultForeground(colorEntry));
+			if (defaultForeground || overwrite) {
+				getForegrounds().put(colorEntry, colorTheme.getDefaultForeground(colorEntry));
+			}
+		}
+		//Setting ColorTheme (must be done last)
+		this.colorTheme = colorTheme;
 	}
 
 	private Map<ColorEntry, Color> getBackgrounds() {
@@ -86,7 +108,7 @@ public class ColorSettings {
 			if (!colorEntry.isBackgroundEditable() && !colorEntry.isForegroundEditable()) {
 				continue;
 			}
-			rows.add(new ColorRow(colorEntry, getBackground(colorEntry), getForeground(colorEntry)));
+			rows.add(new ColorRow(colorEntry, colorTheme.getDefaultBackground(colorEntry), colorTheme.getDefaultForeground(colorEntry), getBackground(colorEntry), getForeground(colorEntry)));
 		}
 		return rows;
 	}
@@ -183,15 +205,19 @@ public class ColorSettings {
 	public static class ColorRow {
 
 		private final ColorEntry colorEntry;
+		private final Color defaultBackground;
+		private final Color defaultForeground;
 		private Color background;
 		private Color foreground;
+		
 
-		public ColorRow(ColorEntry colorEntry, Color background, Color foreground) {
+		public ColorRow(ColorEntry colorEntry, Color defaultBackground, Color defaultForeground, Color background, Color foreground) {
 			this.colorEntry = colorEntry;
 			this.background = background;
 			this.foreground = foreground;
+			this.defaultBackground = defaultBackground;
+			this.defaultForeground = defaultForeground;
 		}
-
 
 		public ColorEntry getColorEntry() {
 			return colorEntry;
@@ -201,8 +227,16 @@ public class ColorSettings {
 			return background;
 		}
 
+		public Color getDefaultBackground() {
+			return defaultBackground;
+		}
+
 		public void setBackground(Color background) {
 			this.background = background;
+		}
+
+		public Color getDefaultForeground() {
+			return defaultForeground;
 		}
 
 		public Color getForeground() {
@@ -214,15 +248,11 @@ public class ColorSettings {
 		}
 
 		public boolean isForegroundDefault() {
-			return Objects.equals(foreground, colorEntry.getForeground());
+			return Objects.equals(foreground, defaultForeground);
 		}
 
 		public boolean isBackgroundDefault() {
-			return Objects.equals(background, colorEntry.getBackground());
-		}
-
-		public static boolean equals(Object o1, Object o2) {
-			return o1 == o2 || o1 != null && o1.equals(o2) || o2 != null && o2.equals(o1) || o1 == null && o2 == null;
+			return Objects.equals(background, defaultBackground);
 		}
 
 	}
