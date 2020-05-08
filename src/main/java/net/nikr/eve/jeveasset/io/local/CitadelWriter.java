@@ -24,7 +24,7 @@ package net.nikr.eve.jeveasset.io.local;
 import java.util.Map;
 import net.nikr.eve.jeveasset.data.settings.Citadel;
 import net.nikr.eve.jeveasset.data.settings.CitadelSettings;
-import net.nikr.eve.jeveasset.data.settings.Settings;
+import net.nikr.eve.jeveasset.io.shared.FileUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -54,7 +54,7 @@ public final class CitadelWriter extends AbstractXmlWriter {
 
 		//xmldoc.normalizeDocument();
 		try {
-			writeXmlFile(xmldoc, Settings.getPathCitadel(), true);
+			writeXmlFile(xmldoc, FileUtil.getPathCitadel(), true);
 		} catch (XmlException ex) {
 			LOG.error("Citadel not saved " + ex.getMessage(), ex);
 		}

@@ -23,16 +23,6 @@ package net.nikr.eve.jeveasset.data.settings;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
 import java.awt.Dimension;
 import java.awt.Point;
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.FileSystems;
-import java.nio.file.FileVisitResult;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.PathMatcher;
-import java.nio.file.Paths;
-import java.nio.file.SimpleFileVisitor;
-import java.nio.file.attribute.BasicFileAttributes;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -264,6 +254,10 @@ public class Settings {
 		Settings.testMode = testMode;
 	}
 
+	public static boolean isTestMode() {
+		return testMode;
+	}
+
 	public static void lock(String msg) {
 		LOCK.lock(msg);
 	}
@@ -294,120 +288,6 @@ public class Settings {
 			autoImportSettings();
 			settings = SettingsReader.load(new EmptySettingsFactory(), Settings.getPathSettings());
 			SplashUpdater.setProgress(35);
-		}
-	}
-
-	private static void autoImportSettings() {
-		if (Program.PROGRAM_DEV_BUILD && !testMode) { //Need import
-			Program.setPortable(false);
-			Path settingsFrom = Paths.get(Settings.getPathSettings());
-			Path trackerFrom = Paths.get(Settings.getPathTrackerData());
-			Path assetAddedFrom = Paths.get(Settings.getPathAssetAdded());
-			Path assetAddedDatabaseFrom = Paths.get(Settings.getPathAssetAddedDatabase());
-			Path citadelFrom = Paths.get(Settings.getPathCitadel());
-			Path priceFrom = Paths.get(Settings.getPathPriceData());
-			Path profilesFrom = Paths.get(Settings.getPathProfilesDirectory());
-			Path contractPricesFrom = Paths.get(Settings.getPathContractPrices());
-			Program.setPortable(true);
-			Path settingsTo = Paths.get(Settings.getPathSettings());
-			Path trackerTo = Paths.get(Settings.getPathTrackerData());
-			Path assetAddedTo = Paths.get(Settings.getPathAssetAdded());
-			Path assetAddedDatabaseTo = Paths.get(Settings.getPathAssetAddedDatabase());
-			Path citadelTo = Paths.get(Settings.getPathCitadel());
-			Path priceTo = Paths.get(Settings.getPathPriceData());
-			Path profilesTo = Paths.get(Settings.getPathProfilesDirectory());
-			Path contractPricesTo = Paths.get(Settings.getPathContractPrices());
-			if (Files.exists(settingsFrom) && !Files.exists(settingsTo)) {
-				LOG.info("Importing settings");
-				try {
-					Files.copy(settingsFrom, settingsTo);
-					LOG.info("	OK");
-				} catch (IOException ex) {
-					LOG.info("	FAILED");
-				}
-			}
-			if (Files.exists(trackerFrom) && !Files.exists(trackerTo)) {
-				LOG.info("Importing tracker data");
-				try {
-					Files.copy(trackerFrom, trackerTo);
-					LOG.info("	OK");
-				} catch (IOException ex) {
-					LOG.info("	FAILED");
-				}
-			}
-			if (Files.exists(assetAddedFrom) && !Files.exists(assetAddedTo)) {
-				LOG.info("Importing asset added");
-				try {
-					Files.copy(assetAddedFrom, assetAddedTo);
-					LOG.info("	OK");
-				} catch (IOException ex) {
-					LOG.info("	FAILED");
-				}
-			}
-			if (Files.exists(assetAddedDatabaseFrom) && !Files.exists(assetAddedDatabaseTo)) {
-				LOG.info("Importing asset added");
-				try {
-					Files.copy(assetAddedDatabaseFrom, assetAddedDatabaseTo);
-					LOG.info("	OK");
-				} catch (IOException ex) {
-					LOG.info("	FAILED");
-				}
-			}
-			if (Files.exists(citadelFrom) && !Files.exists(citadelTo)) {
-				LOG.info("Importing citadels");
-				try {
-					Files.copy(citadelFrom, citadelTo);
-					LOG.info("	OK");
-				} catch (IOException ex) {
-					LOG.info("	FAILED");
-				}
-			}
-			if (Files.exists(priceFrom) && !Files.exists(priceTo)) {
-				LOG.info("Importing prices");
-				try {
-					Files.copy(priceFrom, priceTo);
-					LOG.info("	OK");
-				} catch (IOException ex) {
-					LOG.info("	FAILED");
-				}
-			}
-			if (Files.exists(contractPricesFrom) && !Files.exists(contractPricesTo)) {
-				LOG.info("Importing contract prices");
-				try {
-					Files.copy(contractPricesFrom, contractPricesTo);
-					LOG.info("	OK");
-				} catch (IOException ex) {
-					LOG.info("	FAILED");
-				}
-			}
-			if (Files.exists(profilesFrom) && !Files.exists(profilesTo)) {
-				PathMatcher matcher = FileSystems.getDefault().getPathMatcher("glob:*.xml");
-				try {
-					LOG.info("Importing profiles");
-					Files.walkFileTree(profilesFrom, new SimpleFileVisitor<Path>() {
-						@Override
-						public FileVisitResult preVisitDirectory(final Path dir, final BasicFileAttributes attrs) throws IOException {
-							if (dir.equals(profilesFrom)) {
-								Files.createDirectories(profilesTo.resolve(profilesFrom.relativize(dir)));
-								return FileVisitResult.CONTINUE;
-							} else {
-								return FileVisitResult.SKIP_SUBTREE;
-							}
-						}
-
-						@Override
-						public FileVisitResult visitFile(final Path file, final BasicFileAttributes attrs) throws IOException {
-							if (matcher.matches(file.getFileName())) {
-								Files.copy(file, profilesTo.resolve(profilesFrom.relativize(file)));
-							}
-							return FileVisitResult.CONTINUE;
-						}
-					});
-					LOG.info("	OK");
-				} catch (IOException ex) {
-					LOG.info("	FAILED");
-				}
-			}
 		}
 	}
 
