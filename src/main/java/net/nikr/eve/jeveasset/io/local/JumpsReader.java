@@ -24,7 +24,7 @@ package net.nikr.eve.jeveasset.io.local;
 import java.util.List;
 import net.nikr.eve.jeveasset.data.sde.Jump;
 import net.nikr.eve.jeveasset.data.sde.StaticData;
-import net.nikr.eve.jeveasset.data.settings.Settings;
+import net.nikr.eve.jeveasset.io.shared.FileUtil;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -40,7 +40,7 @@ public final class JumpsReader extends AbstractXmlReader<Boolean> {
 
 	public static void load(List<Jump> jumps) {
 		JumpsReader reader = new JumpsReader(jumps);
-		reader.read("Jumps", Settings.getPathJumps(), AbstractXmlReader.XmlType.STATIC);
+		reader.read("Jumps", FileUtil.getPathJumps(), AbstractXmlReader.XmlType.STATIC);
 	}
 
 	@Override

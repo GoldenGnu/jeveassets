@@ -27,9 +27,9 @@ import java.util.List;
 import javax.swing.JEditorPane;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.i18n.General;
 import net.nikr.eve.jeveasset.io.shared.DesktopUtil;
+import net.nikr.eve.jeveasset.io.shared.FileUtil;
 import org.slf4j.LoggerFactory;
 
 public class FileLock {
@@ -73,11 +73,11 @@ public class FileLock {
 	public static void unlockAll() {
 		LOG.info("Unlocking all files");
 		File folder;
-		folder = new File(Settings.getPathProfilesDirectory());
+		folder = new File(FileUtil.getPathProfilesDirectory());
 		unlockFiles(folder.listFiles());
-		folder = new File(Settings.getPathStaticDataDirectory());
+		folder = new File(FileUtil.getPathStaticDataDirectory());
 		unlockFiles(folder.listFiles());
-		folder = new File(Settings.getPathDataDirectory());
+		folder = new File(FileUtil.getPathDataDirectory());
 		unlockFiles(folder.listFiles());
 	}
 

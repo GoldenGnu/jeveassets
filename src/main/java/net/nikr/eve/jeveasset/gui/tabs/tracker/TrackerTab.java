@@ -1555,7 +1555,7 @@ public class TrackerTab extends JMainTabSecondary {
 			} else if (TrackerAction.FILTER_ASSETS.name().equals(e.getActionCommand())) {
 				showLocationFilter();
 			} else if (TrackerAction.IMPORT_FILE.name().equals(e.getActionCommand())) {
-				jFileChooser.setCurrentDirectory(new File(Settings.getPathDataDirectory()));
+				jFileChooser.setCurrentDirectory(new File(FileUtil.getPathDataDirectory()));
 				int value = jFileChooser.showOpenDialog(program.getMainWindow().getFrame());
 				if (value != JFileChooser.APPROVE_OPTION) {
 					return; //Cancel
@@ -1724,8 +1724,8 @@ public class TrackerTab extends JMainTabSecondary {
 					while(zipEntry != null){
 						String filename = zipEntry.getName();
 						if (filename.equals("settings.xml") || filename.equals("tracker.json")) {
-							unzippedFile = new File(Settings.getPathDataDirectory() + File.separator + "temp_" + filename);
-							if (unzippedFile.toPath().normalize().startsWith(Settings.getPathDataDirectory() + File.separator)) {  //Make sure path is correct
+							unzippedFile = new File(FileUtil.getPathDataDirectory() + File.separator + "temp_" + filename);
+							if (unzippedFile.toPath().normalize().startsWith(FileUtil.getPathDataDirectory() + File.separator)) {  //Make sure path is correct
 								FileOutputStream fos = new FileOutputStream(unzippedFile);
 								byte[] buffer = new byte[1024];
 								int len;

@@ -49,7 +49,6 @@ import javax.swing.JScrollPane;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.api.my.MyAsset;
 import net.nikr.eve.jeveasset.data.sde.Item;
-import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.CaseInsensitiveComparator;
 import net.nikr.eve.jeveasset.gui.shared.JOptionInput;
@@ -74,6 +73,7 @@ import net.nikr.eve.jeveasset.i18n.General;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 import net.nikr.eve.jeveasset.i18n.TabsLoadout;
 import net.nikr.eve.jeveasset.io.local.EveFittingWriter;
+import net.nikr.eve.jeveasset.io.shared.FileUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -302,7 +302,7 @@ public class LoadoutsTab extends JMainTabSecondary {
 			//			should open: ~library/preferences/eve online preferences/p_drive/my documents/eve/overview
 			jXmlFileChooser.setCurrentDirectory(mac);
 		} else { //Others: use program directory is there is only Win & Mac clients
-			jXmlFileChooser.setCurrentDirectory(new File(Settings.getUserDirectory()));
+			jXmlFileChooser.setCurrentDirectory(new File(FileUtil.getUserDirectory()));
 		}
 		int bFound = jXmlFileChooser.showSaveDialog(program.getMainWindow().getFrame());
 		if (bFound  == JFileChooser.APPROVE_OPTION) {

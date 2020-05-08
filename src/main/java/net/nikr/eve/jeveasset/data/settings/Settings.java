@@ -23,16 +23,6 @@ package net.nikr.eve.jeveasset.data.settings;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
 import java.awt.Dimension;
 import java.awt.Point;
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.FileSystems;
-import java.nio.file.FileVisitResult;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.PathMatcher;
-import java.nio.file.Paths;
-import java.nio.file.SimpleFileVisitor;
-import java.nio.file.attribute.BasicFileAttributes;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -68,28 +58,6 @@ import org.slf4j.LoggerFactory;
 public class Settings {
 
 	private static final Logger LOG = LoggerFactory.getLogger(Settings.class);
-
-	private static final String PATH_ASSET_ADDED = "data" + File.separator + "added.json";
-	private static final String PATH_ASSET_ADDED_DATABASE = "data" + File.separator + "addedsql.db";
-	private static final String PATH_TRACKER_DATA = "data" + File.separator + "tracker.json";
-	private static final String PATH_CONTRACT_PRICES = "data" + File.separator + "contract_prices.json";
-	private static final String PATH_SETTINGS = "data" + File.separator + "settings.xml";
-	private static final String PATH_ITEMS = "data" + File.separator + "items.xml";
-	private static final String PATH_ITEMS_UPDATES = "data" + File.separator + "items_updates.xml";
-	private static final String PATH_JUMPS = "data" + File.separator + "jumps.xml";
-	private static final String PATH_LOCATIONS = "data" + File.separator + "locations.xml";
-	private static final String PATH_FLAGS = "data" + File.separator + "flags.xml";
-	private static final String PATH_PRICE_DATA = "data" + File.separator + "pricedata.dat";
-	private static final String PATH_ASSETS = "data" + File.separator + "assets.xml";
-	private static final String PATH_CONQUERABLE_STATIONS = "data" + File.separator + "conquerable_stations.xml";
-	private static final String PATH_CITADEL = "data" + File.separator + "citadel.xml";
-	private static final String PATH_README = "readme.txt";
-	private static final String PATH_LICENSE = "license.txt";
-	private static final String PATH_CREDITS = "credits.txt";
-	private static final String PATH_CHANGELOG = "changelog.txt";
-	
-	private static final String PATH_PROFILES = "profiles";
-	private static final String PATH_DATA = "data";
 
 	public static enum SettingFlag {
 		FLAG_IGNORE_SECURE_CONTAINERS,
@@ -264,6 +232,10 @@ public class Settings {
 		Settings.testMode = testMode;
 	}
 
+	public static boolean isTestMode() {
+		return testMode;
+	}
+
 	public static void lock(String msg) {
 		LOCK.lock(msg);
 	}
@@ -291,123 +263,8 @@ public class Settings {
 	public synchronized static void load() {
 		if (settings == null) {
 			SplashUpdater.setProgress(30);
-			autoImportSettings();
-			settings = SettingsReader.load(new EmptySettingsFactory(), Settings.getPathSettings());
+			settings = SettingsReader.load(new EmptySettingsFactory(), FileUtil.getPathSettings());
 			SplashUpdater.setProgress(35);
-		}
-	}
-
-	private static void autoImportSettings() {
-		if (Program.PROGRAM_DEV_BUILD && !testMode) { //Need import
-			Program.setPortable(false);
-			Path settingsFrom = Paths.get(Settings.getPathSettings());
-			Path trackerFrom = Paths.get(Settings.getPathTrackerData());
-			Path assetAddedFrom = Paths.get(Settings.getPathAssetAdded());
-			Path assetAddedDatabaseFrom = Paths.get(Settings.getPathAssetAddedDatabase());
-			Path citadelFrom = Paths.get(Settings.getPathCitadel());
-			Path priceFrom = Paths.get(Settings.getPathPriceData());
-			Path profilesFrom = Paths.get(Settings.getPathProfilesDirectory());
-			Path contractPricesFrom = Paths.get(Settings.getPathContractPrices());
-			Program.setPortable(true);
-			Path settingsTo = Paths.get(Settings.getPathSettings());
-			Path trackerTo = Paths.get(Settings.getPathTrackerData());
-			Path assetAddedTo = Paths.get(Settings.getPathAssetAdded());
-			Path assetAddedDatabaseTo = Paths.get(Settings.getPathAssetAddedDatabase());
-			Path citadelTo = Paths.get(Settings.getPathCitadel());
-			Path priceTo = Paths.get(Settings.getPathPriceData());
-			Path profilesTo = Paths.get(Settings.getPathProfilesDirectory());
-			Path contractPricesTo = Paths.get(Settings.getPathContractPrices());
-			if (Files.exists(settingsFrom) && !Files.exists(settingsTo)) {
-				LOG.info("Importing settings");
-				try {
-					Files.copy(settingsFrom, settingsTo);
-					LOG.info("	OK");
-				} catch (IOException ex) {
-					LOG.info("	FAILED");
-				}
-			}
-			if (Files.exists(trackerFrom) && !Files.exists(trackerTo)) {
-				LOG.info("Importing tracker data");
-				try {
-					Files.copy(trackerFrom, trackerTo);
-					LOG.info("	OK");
-				} catch (IOException ex) {
-					LOG.info("	FAILED");
-				}
-			}
-			if (Files.exists(assetAddedFrom) && !Files.exists(assetAddedTo)) {
-				LOG.info("Importing asset added");
-				try {
-					Files.copy(assetAddedFrom, assetAddedTo);
-					LOG.info("	OK");
-				} catch (IOException ex) {
-					LOG.info("	FAILED");
-				}
-			}
-			if (Files.exists(assetAddedDatabaseFrom) && !Files.exists(assetAddedDatabaseTo)) {
-				LOG.info("Importing asset added");
-				try {
-					Files.copy(assetAddedDatabaseFrom, assetAddedDatabaseTo);
-					LOG.info("	OK");
-				} catch (IOException ex) {
-					LOG.info("	FAILED");
-				}
-			}
-			if (Files.exists(citadelFrom) && !Files.exists(citadelTo)) {
-				LOG.info("Importing citadels");
-				try {
-					Files.copy(citadelFrom, citadelTo);
-					LOG.info("	OK");
-				} catch (IOException ex) {
-					LOG.info("	FAILED");
-				}
-			}
-			if (Files.exists(priceFrom) && !Files.exists(priceTo)) {
-				LOG.info("Importing prices");
-				try {
-					Files.copy(priceFrom, priceTo);
-					LOG.info("	OK");
-				} catch (IOException ex) {
-					LOG.info("	FAILED");
-				}
-			}
-			if (Files.exists(contractPricesFrom) && !Files.exists(contractPricesTo)) {
-				LOG.info("Importing contract prices");
-				try {
-					Files.copy(contractPricesFrom, contractPricesTo);
-					LOG.info("	OK");
-				} catch (IOException ex) {
-					LOG.info("	FAILED");
-				}
-			}
-			if (Files.exists(profilesFrom) && !Files.exists(profilesTo)) {
-				PathMatcher matcher = FileSystems.getDefault().getPathMatcher("glob:*.xml");
-				try {
-					LOG.info("Importing profiles");
-					Files.walkFileTree(profilesFrom, new SimpleFileVisitor<Path>() {
-						@Override
-						public FileVisitResult preVisitDirectory(final Path dir, final BasicFileAttributes attrs) throws IOException {
-							if (dir.equals(profilesFrom)) {
-								Files.createDirectories(profilesTo.resolve(profilesFrom.relativize(dir)));
-								return FileVisitResult.CONTINUE;
-							} else {
-								return FileVisitResult.SKIP_SUBTREE;
-							}
-						}
-
-						@Override
-						public FileVisitResult visitFile(final Path file, final BasicFileAttributes attrs) throws IOException {
-							if (matcher.matches(file.getFileName())) {
-								Files.copy(file, profilesTo.resolve(profilesFrom.relativize(file)));
-							}
-							return FileVisitResult.CONTINUE;
-						}
-					});
-					LOG.info("	OK");
-				} catch (IOException ex) {
-					LOG.info("	FAILED");
-				}
-			}
 		}
 	}
 
@@ -418,7 +275,7 @@ public class Settings {
 	public static void saveSettings() {
 		LOCK.lock("Save Settings");
 		try {
-			SettingsWriter.save(settings, Settings.getPathSettings());
+			SettingsWriter.save(settings, FileUtil.getPathSettings());
 		} finally {
 			LOCK.unlock("Save Settings");
 		}
@@ -904,95 +761,6 @@ public class Settings {
 
 	public Map<String, OverviewGroup> getOverviewGroups() {
 		return overviewGroups;
-	}
-
-	private static String getPathSettings() {
-		return FileUtil.getLocalFile(Settings.PATH_SETTINGS, !Program.isPortable());
-	}
-
-	public static String getPathTrackerData() {
-		return FileUtil.getLocalFile(Settings.PATH_TRACKER_DATA, !Program.isPortable());
-	}
-
-	public static String getPathContractPrices() {
-		return FileUtil.getLocalFile(Settings.PATH_CONTRACT_PRICES, !Program.isPortable());
-	}
-
-	public static String getPathAssetAdded() {
-		return FileUtil.getLocalFile(Settings.PATH_ASSET_ADDED, !Program.isPortable());
-	}
-
-	public static String getPathAssetAddedDatabase() {
-		return FileUtil.getLocalFile(Settings.PATH_ASSET_ADDED_DATABASE, !Program.isPortable());
-	}
-
-	public static String getPathConquerableStations() {
-		return FileUtil.getLocalFile(Settings.PATH_CONQUERABLE_STATIONS, !Program.isPortable());
-	}
-
-	public static String getPathCitadel() {
-		return FileUtil.getLocalFile(Settings.PATH_CITADEL, !Program.isPortable());
-	}
-
-	public static String getPathJumps() {
-		return FileUtil.getLocalFile(Settings.PATH_JUMPS, false);
-	}
-
-	public static String getPathFlags() {
-		return FileUtil.getLocalFile(Settings.PATH_FLAGS, false);
-	}
-
-	public static String getPathPriceData() {
-		return FileUtil.getLocalFile(Settings.PATH_PRICE_DATA, !Program.isPortable());
-	}
-
-	public static String getPathAssetsOld() {
-		return FileUtil.getLocalFile(Settings.PATH_ASSETS, !Program.isPortable());
-	}
-
-	public static String getPathProfilesDirectory() {
-		return FileUtil.getLocalFile(Settings.PATH_PROFILES, !Program.isPortable());
-	}
-
-	public static String getPathStaticDataDirectory() {
-		return FileUtil.getLocalFile(Settings.PATH_DATA, false);
-	}
-
-	public static String getPathDataDirectory() {
-		return FileUtil.getLocalFile(Settings.PATH_DATA, !Program.isPortable());
-	}
-
-	public static String getPathItems() {
-		return FileUtil.getLocalFile(Settings.PATH_ITEMS, false);
-	}
-	
-	public static String getPathItemsUpdates() {
-		return FileUtil.getLocalFile(Settings.PATH_ITEMS_UPDATES, !Program.isPortable());
-	}
-
-	public static String getPathLocations() {
-		return FileUtil.getLocalFile(Settings.PATH_LOCATIONS, false);
-	}
-
-	public static String getPathReadme() {
-		return FileUtil.getLocalFile(Settings.PATH_README, false);
-	}
-
-	public static String getPathLicense() {
-		return FileUtil.getLocalFile(Settings.PATH_LICENSE, false);
-	}
-
-	public static String getPathCredits() {
-		return FileUtil.getLocalFile(Settings.PATH_CREDITS, false);
-	}
-
-	public static String getPathChangeLog() {
-		return FileUtil.getLocalFile(Settings.PATH_CHANGELOG, false);
-	}
-
-	public static String getUserDirectory() {
-		File userDir = new File(System.getProperty("user.home", "."));
-		return userDir.getAbsolutePath() + File.separator;
 	}
 
 	public static Date getNow() {

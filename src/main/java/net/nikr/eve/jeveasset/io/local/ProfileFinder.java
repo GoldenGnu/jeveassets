@@ -27,7 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 import net.nikr.eve.jeveasset.data.profile.Profile;
 import net.nikr.eve.jeveasset.data.profile.ProfileManager;
-import net.nikr.eve.jeveasset.data.settings.Settings;
+import net.nikr.eve.jeveasset.io.shared.FileUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,8 +45,8 @@ public final class ProfileFinder {
 
 	private boolean read(final ProfileManager profileManager) {
 		backwardCompatibility();
-		List<Profile> profiles = new ArrayList<Profile>();
-		File profilesDirectory = new File(Settings.getPathProfilesDirectory());
+		List<Profile> profiles = new ArrayList<>();
+		File profilesDirectory = new File(FileUtil.getPathProfilesDirectory());
 		FileFilter fileFilter = new XmlFileFilter();
 
 		File[] files = profilesDirectory.listFiles(fileFilter);
@@ -88,7 +88,7 @@ public final class ProfileFinder {
 
 	private void backwardCompatibility() {
 		//Create profiles directory
-		File dir = new File(Settings.getPathProfilesDirectory());
+		File dir = new File(FileUtil.getPathProfilesDirectory());
 		if (!dir.exists()) {
 			if (dir.mkdirs()) {
 				LOG.info("Created profiles directory");
@@ -97,21 +97,21 @@ public final class ProfileFinder {
 			}
 		}
 		//Move assets.xml to new location
-		File assets = new File(Settings.getPathAssetsOld());
+		File assets = new File(FileUtil.getPathAssetsOld());
 		if (assets.exists()) {
-			if (assets.renameTo(new File(Settings.getPathProfilesDirectory(), "#Default.xml"))) {
+			if (assets.renameTo(new File(FileUtil.getPathProfilesDirectory(), "#Default.xml"))) {
 				LOG.info("Moved assets.xml to new location");
 			} else {
 				LOG.error("Failed to move assets.xml to new location");
 			}
 		}
 		//Move assets.bac to new location
-		String filename = Settings.getPathAssetsOld();
+		String filename = FileUtil.getPathAssetsOld();
 		int end = filename.lastIndexOf(".");
 		filename = filename.substring(0, end) + ".bac";
 		File backup = new File(filename);
 		if (backup.exists()) {
-			if (backup.renameTo(new File(Settings.getPathProfilesDirectory(), "#Default.bac"))) {
+			if (backup.renameTo(new File(FileUtil.getPathProfilesDirectory(), "#Default.bac"))) {
 				LOG.info("Moved assets.xml to new location");
 			} else {
 				LOG.error("Failed to move assets.xml to new location");

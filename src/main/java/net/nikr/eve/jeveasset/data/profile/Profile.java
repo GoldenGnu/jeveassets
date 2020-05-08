@@ -26,6 +26,7 @@ import java.io.File;
 import java.util.HashSet;
 import java.util.Set;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile;
+import net.nikr.eve.jeveasset.io.shared.FileUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -97,7 +98,7 @@ public class Profile implements Comparable<Profile> {
 		if (defaultProfile) {
 			filename = "#" + filename;
 		}
-		filename = Settings.getPathProfilesDirectory() + File.separator + filename;
+		filename = FileUtil.getPathProfilesDirectory() + File.separator + filename;
 		return filename;
 	}
 

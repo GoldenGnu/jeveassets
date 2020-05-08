@@ -44,6 +44,7 @@ import net.nikr.eve.jeveasset.data.settings.PriceDataSettings.PriceMode;
 import net.nikr.eve.jeveasset.data.settings.PriceDataSettings.PriceSource;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
+import net.nikr.eve.jeveasset.io.shared.FileUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.me.candle.eve.pricing.Pricing;
@@ -379,7 +380,7 @@ public class PriceDataGetter implements PricingListener {
 
 		@Override
 		public InputStream getCacheInputStream() throws IOException {
-			File file = new File(Settings.getPathPriceData());
+			File file = new File(FileUtil.getPathPriceData());
 			if (file.exists()) {
 				return new FileInputStream(file);
 			}
@@ -388,7 +389,7 @@ public class PriceDataGetter implements PricingListener {
 
 		@Override
 		public OutputStream getCacheOutputStream() throws IOException {
-			return new FileOutputStream(Settings.getPathPriceData());
+			return new FileOutputStream(FileUtil.getPathPriceData());
 		}
 
 		@Override
