@@ -37,9 +37,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.tabs.values.AssetValue;
 import net.nikr.eve.jeveasset.gui.tabs.values.Value;
+import net.nikr.eve.jeveasset.io.shared.FileUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,7 +49,7 @@ public class TrackerDataReader extends AbstractBackup {
 	private static final Logger LOG = LoggerFactory.getLogger(TrackerDataReader.class);
 
 	public static Map<String, List<Value>> load() {
-		return load(Settings.getPathTrackerData(), true);
+		return load(FileUtil.getPathTrackerData(), true);
 	}
 
 	public static Map<String, List<Value>> load(String filename, boolean backup) {

@@ -29,6 +29,7 @@ import net.nikr.eve.jeveasset.gui.tabs.log.AssetLog;
 import net.nikr.eve.jeveasset.gui.tabs.log.AssetLogData;
 import net.nikr.eve.jeveasset.gui.tabs.log.LogData;
 import net.nikr.eve.jeveasset.gui.tabs.log.LogSource;
+import net.nikr.eve.jeveasset.io.shared.FileUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -54,7 +55,7 @@ public class LogsWriter extends AbstractXmlWriter {
 		}
 		writeLogData(xmldoc, logData);
 		try {
-			writeXmlFile(xmldoc, Settings.getPathLogs(), true);
+			writeXmlFile(xmldoc, FileUtil.getPathLogs(), true);
 		} catch (XmlException ex) {
 			LOG.error("Logs not saved " + ex.getMessage(), ex);
 			return false;

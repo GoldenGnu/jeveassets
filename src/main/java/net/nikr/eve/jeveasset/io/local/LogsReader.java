@@ -27,13 +27,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import net.nikr.eve.jeveasset.data.settings.LogManager;
-import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.tabs.log.AssetLog;
 import net.nikr.eve.jeveasset.gui.tabs.log.AssetLogData;
 import net.nikr.eve.jeveasset.gui.tabs.log.AssetLogData.LogType;
 import net.nikr.eve.jeveasset.gui.tabs.log.LogSourceType;
 import net.nikr.eve.jeveasset.gui.tabs.log.LogData;
 import net.nikr.eve.jeveasset.gui.tabs.log.LogSource;
+import net.nikr.eve.jeveasset.io.shared.FileUtil;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
@@ -48,7 +48,7 @@ public class LogsReader extends AbstractXmlReader<Boolean> {
 
 	public static boolean load(LogData logData) {
 		LogsReader reader = new LogsReader(logData);
-		return reader.read("Logs", Settings.getPathLogs(), XmlType.DYNAMIC_BACKUP);
+		return reader.read("Logs", FileUtil.getPathLogs(), XmlType.DYNAMIC_BACKUP);
 	}
 	
 	@Override

@@ -34,10 +34,10 @@ import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Map;
-import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.data.settings.TrackerData;
 import net.nikr.eve.jeveasset.gui.tabs.values.AssetValue;
 import net.nikr.eve.jeveasset.gui.tabs.values.Value;
+import net.nikr.eve.jeveasset.io.shared.FileUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,7 +47,7 @@ public class TrackerDataWriter extends AbstractBackup {
 	private static final Logger LOG = LoggerFactory.getLogger(TrackerDataWriter.class);
 
 	public static void save() {
-		save(Settings.getPathTrackerData(), TrackerData.get(), true);
+		save(FileUtil.getPathTrackerData(), TrackerData.get(), true);
 	}
 
 	protected static void save(String filename, Map<String, List<Value>> trackerData, boolean createBackup) {

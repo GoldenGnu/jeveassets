@@ -25,7 +25,7 @@ import java.util.Date;
 import net.nikr.eve.jeveasset.data.settings.Citadel;
 import net.nikr.eve.jeveasset.data.settings.Citadel.CitadelSource;
 import net.nikr.eve.jeveasset.data.settings.CitadelSettings;
-import net.nikr.eve.jeveasset.data.settings.Settings;
+import net.nikr.eve.jeveasset.io.shared.FileUtil;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
@@ -36,7 +36,7 @@ public final class CitadelReader extends AbstractXmlReader<CitadelSettings> {
 
 	public static CitadelSettings load() {
 		CitadelReader reader = new CitadelReader();
-		return reader.read("Citadels", Settings.getPathCitadel(), AbstractXmlReader.XmlType.DYNAMIC);
+		return reader.read("Citadels", FileUtil.getPathCitadel(), AbstractXmlReader.XmlType.DYNAMIC);
 	}
 
 	@Override

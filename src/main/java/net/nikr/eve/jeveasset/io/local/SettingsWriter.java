@@ -21,7 +21,6 @@
 
 package net.nikr.eve.jeveasset.io.local;
 
-import java.awt.Color;
 import java.io.File;
 import java.net.Proxy;
 import java.util.Date;
@@ -57,6 +56,7 @@ import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileFilter;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
 import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerDate;
 import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerNote;
+import net.nikr.eve.jeveasset.io.shared.FileUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -70,7 +70,7 @@ public class SettingsWriter extends AbstractXmlWriter {
 	private SettingsWriter() { }
 
 	public static boolean save(final Settings settings, final String filename) {
-		if (!new File(Settings.getPathTrackerData()).exists()) { //Make sure the tracker data is saved
+		if (!new File(FileUtil.getPathTrackerData()).exists()) { //Make sure the tracker data is saved
 			TrackerData.save("Saving Settings", true);
 		}
 		SettingsWriter writer = new SettingsWriter();

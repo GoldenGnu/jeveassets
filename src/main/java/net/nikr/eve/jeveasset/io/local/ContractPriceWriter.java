@@ -26,8 +26,8 @@ import com.google.gson.JsonParseException;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.data.settings.ContractPriceManager.ContractPriceData;
+import net.nikr.eve.jeveasset.io.shared.FileUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,7 +37,7 @@ public class ContractPriceWriter extends AbstractBackup {
 	private static final Logger LOG = LoggerFactory.getLogger(ContractPriceWriter.class);
 
 	public static void save(ContractPriceData contractPriceData) {
-		save(Settings.getPathContractPrices(), contractPriceData, true);
+		save(FileUtil.getPathContractPrices(), contractPriceData, true);
 	}
 
 	protected static void save(String filename, ContractPriceData contractPriceData, boolean createBackup) {

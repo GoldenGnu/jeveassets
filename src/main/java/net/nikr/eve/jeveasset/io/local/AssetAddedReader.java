@@ -35,7 +35,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import net.nikr.eve.jeveasset.data.settings.AssetAddedData;
-import net.nikr.eve.jeveasset.data.settings.Settings;
+import net.nikr.eve.jeveasset.io.shared.FileUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,7 +46,7 @@ public class AssetAddedReader extends AbstractBackup {
 
 	public static void load() {
 		AssetAddedReader reader = new AssetAddedReader();
-		reader.read(Settings.getPathAssetAdded());
+		reader.read(FileUtil.getPathAssetAdded());
 	}
 
 	protected void read(String filename) {

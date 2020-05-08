@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import net.nikr.eve.jeveasset.i18n.DialoguesExport;
+import net.nikr.eve.jeveasset.io.shared.FileUtil;
 
 
 public class ExportSettings {
@@ -43,7 +44,7 @@ public class ExportSettings {
 				return DialoguesExport.get().semicolon();
 			}
 		};
-		private char character;
+		private final char character;
 		private FieldDelimiter(final char character) {
 			this.character = character;
 		}
@@ -76,7 +77,7 @@ public class ExportSettings {
 				return DialoguesExport.get().lineEndingsUnix();
 			}
 		};
-		private String string;
+		private final String string;
 		private LineDelimiter(final String string) {
 			this.string = string;
 		}
@@ -115,7 +116,7 @@ public class ExportSettings {
 		SQL("sql"),
 		HTML("html");
 		
-		private String extension;
+		private final String extension;
 
 		private ExportFormat(String extension) {
 			this.extension = extension;
@@ -126,7 +127,7 @@ public class ExportSettings {
 		}
 	}
 
-	private static final String PATH = Settings.getUserDirectory();
+	private static final String PATH = FileUtil.getUserDirectory();
 //CSV - shared by all tools
 	private FieldDelimiter fieldDelimiter;
 	private LineDelimiter lineDelimiter;
@@ -137,7 +138,7 @@ public class ExportSettings {
 	private boolean dropTable;
 	private boolean extendedInserts;
 	//Per tool option
-	private final Map<String, String> tableNames = new HashMap<String, String>();
+	private final Map<String, String> tableNames = new HashMap<>();
 //HTML  - shared
 	private boolean htmlStyled;
 	private int htmlRepeatHeader;
@@ -146,8 +147,8 @@ public class ExportSettings {
 	//Shared
 	private ExportFormat exportFormat; 
 	//Per tool options
-	private final Map<String, List<String>> tableExportColumns = new HashMap<String, List<String>>();
-	private final Map<String, String> filenames = new HashMap<String, String>();
+	private final Map<String, List<String>> tableExportColumns = new HashMap<>();
+	private final Map<String, String> filenames = new HashMap<>();
 
 	public ExportSettings() {
 		fieldDelimiter = FieldDelimiter.COMMA;

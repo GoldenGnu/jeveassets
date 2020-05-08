@@ -31,7 +31,7 @@ import java.util.ArrayList;
 import java.util.List;
 import net.nikr.eve.jeveasset.TestUtil;
 import net.nikr.eve.jeveasset.data.profile.ProfileManager;
-import net.nikr.eve.jeveasset.data.settings.Settings;
+import net.nikr.eve.jeveasset.io.shared.FileUtil;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -152,22 +152,22 @@ public class FileLockTest extends TestUtil {
 
 	@Test
 	public void unlockAllTest() throws IOException {
-		File profile = new File(Settings.getPathProfilesDirectory() + File.separator + "some_test_profile.xml");
-		File conquerableStations = new File(Settings.getPathConquerableStations());
+		File profile = new File(FileUtil.getPathProfilesDirectory() + File.separator + "some_test_profile.xml");
+		File conquerableStations = new File(FileUtil.getPathConquerableStations());
 		boolean emptyConquerableStations = false;
 		try {
-			List<File> files = new ArrayList<File>();
+			List<File> files = new ArrayList<>();
 			//Static data directory
-			File items = new File(Settings.getPathItems());
+			File items = new File(FileUtil.getPathItems());
 			files.add(items);
 			FileLock.lock(items);
-			File flags = new File(Settings.getPathFlags());
+			File flags = new File(FileUtil.getPathFlags());
 			files.add(flags);
 			FileLock.lock(flags);
-			File jumps = new File(Settings.getPathJumps());
+			File jumps = new File(FileUtil.getPathJumps());
 			files.add(jumps);
 			FileLock.lock(jumps);
-			File locations = new File(Settings.getPathLocations());
+			File locations = new File(FileUtil.getPathLocations());
 			files.add(locations);
 			FileLock.lock(locations);
 			//Profile directory
@@ -243,7 +243,7 @@ public class FileLockTest extends TestUtil {
 		assertTrue(load.isOk());
 		assertTrue(save.isOk());
 		//Chaos! :D
-		List<TestThread> threads = new ArrayList<TestThread>();
+		List<TestThread> threads = new ArrayList<>();
 		for (int i = 0; i < 8; i++) {
 			threads.add(new SaveSettings(settings));
 		}
@@ -295,7 +295,7 @@ public class FileLockTest extends TestUtil {
 		boolean ok = ProfileWriter.save(new ProfileManager(), FileLockSettings.getPathProfile());
 		assertTrue("LockTest: Setup failed", ok);
 		//Chaos! :D
-		List<TestThread> threads = new ArrayList<TestThread>();
+		List<TestThread> threads = new ArrayList<>();
 		for (int i = 0; i < 8; i++) {
 			threads.add(new LoadProfile());
 		}

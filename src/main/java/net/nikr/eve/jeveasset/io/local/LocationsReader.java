@@ -23,7 +23,7 @@ package net.nikr.eve.jeveasset.io.local;
 
 import java.util.Map;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
-import net.nikr.eve.jeveasset.data.settings.Settings;
+import net.nikr.eve.jeveasset.io.shared.FileUtil;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -39,7 +39,7 @@ public final class LocationsReader extends AbstractXmlReader<Boolean> {
 
 	public static void load(Map<Long, MyLocation> locations) {
 		LocationsReader reader = new LocationsReader(locations);
-		reader.read("Locations loaded", Settings.getPathLocations(), AbstractXmlReader.XmlType.STATIC);
+		reader.read("Locations loaded", FileUtil.getPathLocations(), AbstractXmlReader.XmlType.STATIC);
 	}
 
 	@Override

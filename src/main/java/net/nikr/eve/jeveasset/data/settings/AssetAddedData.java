@@ -30,6 +30,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import net.nikr.eve.jeveasset.io.local.AssetAddedReader;
+import net.nikr.eve.jeveasset.io.shared.FileUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,7 +39,7 @@ public class AssetAddedData {
 
 	private static final Logger LOG = LoggerFactory.getLogger(AssetAddedData.class);
 
-	private static final String CONNECTION_URL = "jdbc:sqlite:" + Settings.getPathAssetAddedDatabase();
+	private static final String CONNECTION_URL = "jdbc:sqlite:" + FileUtil.getPathAssetAddedDatabase();
 	private static Map<Long, Date> insert = null;
 	private static Map<Long, Date> update = null;
 

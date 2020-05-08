@@ -26,8 +26,8 @@ import com.google.gson.JsonParseException;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.data.settings.ContractPriceManager.ContractPriceData;
+import net.nikr.eve.jeveasset.io.shared.FileUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,7 +37,7 @@ public class ContractPriceReader extends AbstractBackup {
 	private static final Logger LOG = LoggerFactory.getLogger(ContractPriceReader.class);
 
 	public static ContractPriceData load() {
-		return load(Settings.getPathContractPrices(), true);
+		return load(FileUtil.getPathContractPrices(), true);
 	}
 
 	protected static ContractPriceData load(String filename, boolean backup) {
