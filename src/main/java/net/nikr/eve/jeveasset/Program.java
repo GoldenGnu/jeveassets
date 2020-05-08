@@ -177,6 +177,7 @@ public class Program implements ActionListener {
 	//Data
 		SplashUpdater.setText("Loading DATA");
 		LOG.info("DATA Loading...");
+		FileUtil.autoImportFileUtil();
 		StaticData.load();
 		Settings.load();
 		TrackerData.load();
