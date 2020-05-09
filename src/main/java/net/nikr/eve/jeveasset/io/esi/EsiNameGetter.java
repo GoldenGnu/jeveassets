@@ -37,6 +37,7 @@ import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 import net.troja.eve.esi.ApiException;
 import net.troja.eve.esi.ApiResponse;
+import net.troja.eve.esi.model.CharacterRolesResponse.RolesEnum;
 import net.troja.eve.esi.model.UniverseNamesResponse;
 
 
@@ -148,6 +149,11 @@ public class EsiNameGetter extends AbstractEsiGetter {
 	@Override
 	protected boolean haveAccess() {
 		return true;
+	}
+
+	@Override
+	protected RolesEnum[] getRequiredRoles() {
+		return null;
 	}
 
 }

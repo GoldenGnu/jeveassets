@@ -56,6 +56,7 @@ import net.troja.eve.esi.api.UniverseApi;
 import net.troja.eve.esi.api.UserInterfaceApi;
 import net.troja.eve.esi.api.WalletApi;
 import net.troja.eve.esi.auth.OAuth;
+import net.troja.eve.esi.model.CharacterRolesResponse.RolesEnum;
 import okhttp3.OkHttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -110,9 +111,29 @@ public abstract class AbstractEsiGetter extends AbstractGetter<EsiOwner> {
 		return false;
 	}
 
+	protected abstract RolesEnum[] getRequiredRoles();
+
 	@Override
 	public void run() {
 		if (!canUpdate()) {
+			//Add warning for missing corporation roles
+			if (owner != null && !haveAccess()) {
+				RolesEnum[] requiredRoles = getRequiredRoles();
+				if (owner.isCorporation() && requiredRoles != null && requiredRoles.length > 0) {
+					StringBuilder builder = new StringBuilder();
+					builder.append("Require corporation role:\r\n");
+					boolean first = true;
+					for (RolesEnum role : requiredRoles) {
+						if (first) {
+							first = false;
+						} else {
+							builder.append(", ");
+						}
+						builder.append(role.getValue().replace("_", " "));
+					}
+					addWarning("MISSING CORPORATION ROLE", builder.toString());
+				}
+			}
 			return;
 		}
 		//Check if API key is invalid (still update when editing account AKA forceUpdate)

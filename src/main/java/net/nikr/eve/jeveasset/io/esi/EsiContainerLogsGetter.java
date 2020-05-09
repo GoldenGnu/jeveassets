@@ -26,6 +26,7 @@ import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import net.troja.eve.esi.ApiException;
 import net.troja.eve.esi.ApiResponse;
+import net.troja.eve.esi.model.CharacterRolesResponse.RolesEnum;
 import net.troja.eve.esi.model.CorporationContainersLogsResponse;
 
 
@@ -50,6 +51,11 @@ public class EsiContainerLogsGetter extends AbstractEsiGetter {
 	}
 
 	@Override
+	protected void setNextUpdate(Date date) {
+		owner.setContainerLogsNextUpdate(date);
+	}
+
+	@Override
 	protected boolean haveAccess() {
 		if (owner.isCorporation()) {
 			return owner.isContainerLogs();
@@ -59,8 +65,9 @@ public class EsiContainerLogsGetter extends AbstractEsiGetter {
 	}
 
 	@Override
-	protected void setNextUpdate(Date date) {
-		owner.setContainerLogsNextUpdate(date);
+	protected RolesEnum[] getRequiredRoles() {
+		RolesEnum[] roles = {RolesEnum.DIRECTOR};
+		return roles;
 	}
 
 }
