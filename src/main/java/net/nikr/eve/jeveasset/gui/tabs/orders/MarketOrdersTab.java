@@ -496,13 +496,13 @@ public class MarketOrdersTab extends JMainTabPrimary {
 			long diffMinutes = diff / (60 * 1000) % 60;
 			jLastUpdate.setOpaque(true);
 			if (diffMinutes < 2) {
-				jLastUpdate.setIcon(new IconColorIcon(Colors.LIGHT_GREEN_STRONG.getColor(), images.getImage()));
+				jLastUpdate.setIcon(new IconColorIcon(Colors.STRONG_GREEN.getColor(), images.getImage()));
 				ColorSettings.config(jLastUpdate, ColorEntry.GLOBAL_ENTRY_VALID);
 			} else if (diffMinutes < 5) {
-				jLastUpdate.setIcon(new IconColorIcon(Colors.LIGHT_YELLOW_STRONG.getColor(), images.getImage()));
+				jLastUpdate.setIcon(new IconColorIcon(Colors.STRONG_YELLOW.getColor(), images.getImage()));
 				ColorSettings.config(jLastUpdate, ColorEntry.GLOBAL_ENTRY_WARNING);
 			} else {
-				jLastUpdate.setIcon(new IconColorIcon(Colors.LIGHT_RED_STRONG.getColor(), images.getImage()));
+				jLastUpdate.setIcon(new IconColorIcon(Colors.STRONG_RED.getColor(), images.getImage()));
 				ColorSettings.config(jLastUpdate, ColorEntry.GLOBAL_ENTRY_INVALID);
 			}
 			jLastUpdate.setText(Formater.milliseconds(diff, false, false, true, true, true, true));

@@ -29,7 +29,7 @@ import java.util.List;
 import java.util.Map;
 import javax.swing.JComponent;
 import net.nikr.eve.jeveasset.data.settings.ColorTheme.ColorThemeTypes;
-import net.nikr.eve.jeveasset.gui.shared.ColorTools;
+import net.nikr.eve.jeveasset.gui.shared.ColorUtil;
 
 public class ColorSettings {
 
@@ -174,8 +174,8 @@ public class ColorSettings {
 					component.setBackground(background.darker());
 				}
 				if (foreground != null) {
-					double luminance = ColorTools.luminance(foreground) - 0.2;
-					component.setForeground(ColorTools.brighter(foreground, luminance));
+					double luminance = ColorUtil.luminance(foreground) - 0.2;
+					component.setForeground(ColorUtil.brighter(foreground, luminance));
 				} else {
 					component.setForeground(Color.BLACK);
 				}
@@ -186,8 +186,8 @@ public class ColorSettings {
 					component.setBackground(Colors.TABLE_SELECTION_BACKGROUND.getColor());
 				}
 				if (foreground != null) {
-					double luminance = ColorTools.luminance(foreground) - 0.2;
-					component.setForeground(ColorTools.brighter(foreground, luminance));
+					double luminance = ColorUtil.luminance(foreground) - 0.2;
+					component.setForeground(ColorUtil.brighter(foreground, luminance));
 				} else {
 					component.setForeground(Colors.TABLE_SELECTION_FOREGROUND.getColor());
 				}

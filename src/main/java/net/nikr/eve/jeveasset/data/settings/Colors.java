@@ -32,7 +32,11 @@ public enum Colors {
 	/**
 	 * 190, 190, 190
 	 */
-	LIGHT_GRAY_STRONG(190, 190, 190),
+	STRONG_GRAY(190, 190, 190),
+	/**
+	 * 190, 190, 190
+	 */
+	COLORBLIND_GRAY(190, 190, 190),
 	/**
 	 * 255, 200, 200
 	 */
@@ -40,11 +44,15 @@ public enum Colors {
 	/**
 	 * 255, 160, 160
 	 */
-	LIGHT_RED_STRONG(255, 160, 160),
+	STRONG_RED(255, 160, 160),
 	/**
 	 * Dark Red
 	 */
 	DARK_RED(Color.RED.darker()),
+	/**
+	 * 213, 94, 0
+	 */
+	COLORBLIND_DARK_RED(213, 94, 0),
 	/**
 	 * 200, 255, 200
 	 */
@@ -52,15 +60,19 @@ public enum Colors {
 	/**
 	 * 160, 255, 160
 	 */
-	LIGHT_GREEN_STRONG(160, 255, 160),
+	STRONG_GREEN(160, 255, 160),
 	/**
-	 * 120, 255, 120
+	 * 0, 158, 115
 	 */
-	GREEN_STRONG(120, 255, 120),
+	COLORBLIND_GREEN(0, 158, 115),
 	/**
 	 * Dark Green
 	 */
 	DARK_GREEN(Color.GREEN.darker()),
+	/**
+	 * 0, 114, 178 (not really green, it's blue)
+	 */
+	COLORBLIND_DARK_GREEN(0, 114, 178),
 	/**
 	 * 255, 255, 200
 	 */
@@ -68,11 +80,11 @@ public enum Colors {
 	/**
 	 * 255, 255, 160
 	 */
-	LIGHT_YELLOW_STRONG(255, 255, 160),
+	STRONG_YELLOW(255, 255, 160),
 	/**
-	 * 255, 255, 120
+	 * 255, 176, 0
 	 */
-	YELLOW_STRONG(255, 255, 120),
+	COLORBLIND_YELLOW(240, 228, 66),
 	/**
 	 * 220, 240, 255
 	 */
@@ -80,7 +92,11 @@ public enum Colors {
 	/**
 	 * 180, 220, 255
 	 */
-	LIGHT_BLUE_STRONG(180, 220, 255),
+	STRONG_BLUE(180, 220, 255),
+	/**
+	 * 100, 143, 255
+	 */
+	COLORBLIND_BLUE(86, 180, 233),
 	/**
 	 * 255, 220, 200
 	 */
@@ -88,7 +104,11 @@ public enum Colors {
 	/**
 	 * 255, 180, 120
 	 */
-	LIGHT_ORANGE_STRONG(255, 180, 120),
+	STRONG_ORANGE(255, 180, 120),
+	/**
+	 * 254, 97, 0
+	 */
+	COLORBLIND_ORANGE(230, 159, 0),
 	/**
 	 * 255, 220, 255
 	 */
@@ -96,7 +116,11 @@ public enum Colors {
 	/**
 	 * 255, 180, 255
 	 */
-	LIGHT_MAGENTA_STRONG(255, 180, 255),
+	STRONG_MAGENTA(255, 180, 255),
+	/**
+	 * 220, 38, 127
+	 */
+	COLORBLIND_MAGENTA(204, 121, 167),
 	/**
 	 * Table selection background
 	 */

@@ -23,9 +23,9 @@ package net.nikr.eve.jeveasset.gui.shared;
 import java.awt.Color;
 
 
-public class ColorTools {
+public class ColorUtil {
 
-	private ColorTools() { }
+	private ColorUtil() { }
 	
 	public static double luminance(Color color) {
 		return (0.299 * color.getRed() + 0.587 * color.getGreen() + 0.114 * color.getBlue()) / 255;
