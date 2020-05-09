@@ -21,14 +21,13 @@
 package net.nikr.eve.jeveasset.gui.shared.table.containers;
 
 
-public abstract class NumberValue {
-	public Double getDouble() {
+public interface NumberValue {
+	public default Double getDouble() {
 		return null;
 	}
-	public Long getLong() {
+	public default Long getLong() {
 		return null;
 	}
-	public Number getNumber() {
-		return null;
-	}
+
+	public Number getNumber();
 }

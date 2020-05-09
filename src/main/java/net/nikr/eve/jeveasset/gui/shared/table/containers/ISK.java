@@ -23,17 +23,29 @@ package net.nikr.eve.jeveasset.gui.shared.table.containers;
 import java.util.Objects;
 
 
-public class ISK {
+public class ISK implements NumberValue {
 
 	private final String price;
+	private final double value;
 
-	public ISK(final String price) {
+	public ISK(final String price, double value) {
 		this.price = price;
+		this.value = value;
 	}
 
 	@Override
 	public String toString() {
 		return price;
+	}
+
+	@Override
+	public Double getDouble() {
+		return value;
+	}
+
+	@Override
+	public Number getNumber() {
+		return value;
 	}
 
 	@Override

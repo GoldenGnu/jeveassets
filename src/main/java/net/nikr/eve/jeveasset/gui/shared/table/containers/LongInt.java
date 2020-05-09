@@ -25,7 +25,7 @@ import java.util.Objects;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 
 
-public class LongInt extends NumberValue implements Comparable<LongInt> {
+public class LongInt implements NumberValue, Comparable<LongInt> {
 	private final Long number;
 	private final String formatted;
 

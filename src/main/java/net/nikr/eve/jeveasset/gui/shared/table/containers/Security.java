@@ -26,12 +26,12 @@ import java.util.Map;
 import java.util.Objects;
 
 
-public class Security extends NumberValue implements Comparable<Security> {
+public class Security implements NumberValue, Comparable<Security> {
 
 	private final static Map<String, Security> CACHE = new HashMap<>();
 
 	private final String security;
-	private Double securityValue;
+	private final Double securityValue;
 
 	public static Security create(String key) {
 		Security cached = CACHE.get(key);
@@ -44,11 +44,13 @@ public class Security extends NumberValue implements Comparable<Security> {
 
 	private Security(String security) {
 		this.security = security;
+		Double d;
 		try {
-			securityValue = Double.valueOf(security);
+			 d = Double.valueOf(security);
 		} catch (NumberFormatException e) {
-			securityValue = null;
+			 d = null;
 		}
+		securityValue = d;
 	}
 
 	public String getSecurity() {
