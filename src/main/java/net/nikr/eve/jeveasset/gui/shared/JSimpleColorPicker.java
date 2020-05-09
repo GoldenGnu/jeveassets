@@ -25,6 +25,7 @@ import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Composite;
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GridLayout;
@@ -45,6 +46,7 @@ import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JColorChooser;
 import javax.swing.JDialog;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.border.Border;
@@ -109,21 +111,21 @@ public class JSimpleColorPicker {
 
 		List<Colors> colors = new ArrayList<>();
 		colors.add(Colors.LIGHT_GRAY);
-		colors.add(Colors.LIGHT_GRAY_STRONG);
+		colors.add(Colors.STRONG_GRAY);
 		colors.add(Colors.DARK_RED);
 		colors.add(Colors.DARK_GREEN);
 		colors.add(Colors.LIGHT_RED);
-		colors.add(Colors.LIGHT_RED_STRONG);
+		colors.add(Colors.STRONG_RED);
 		colors.add(Colors.LIGHT_ORANGE);
-		colors.add(Colors.LIGHT_ORANGE_STRONG);
+		colors.add(Colors.STRONG_ORANGE);
 		colors.add(Colors.LIGHT_YELLOW);
-		colors.add(Colors.LIGHT_YELLOW_STRONG);
+		colors.add(Colors.STRONG_YELLOW);
 		colors.add(Colors.LIGHT_GREEN);
-		colors.add(Colors.LIGHT_GREEN_STRONG);
+		colors.add(Colors.STRONG_GREEN);
 		colors.add(Colors.LIGHT_BLUE);
-		colors.add(Colors.LIGHT_BLUE_STRONG);
+		colors.add(Colors.STRONG_BLUE);
 		colors.add(Colors.LIGHT_MAGENTA);
-		colors.add(Colors.LIGHT_MAGENTA_STRONG);
+		colors.add(Colors.STRONG_MAGENTA);
 
 		JPanel jClassicPanel = new JPanel();
 		jClassicPanel.setOpaque(false);
@@ -131,6 +133,24 @@ public class JSimpleColorPicker {
 
 		for (Colors defaultColors : colors) {
 			add(jClassicPanel, defaultColors.getColor());
+		}
+
+		List<Colors> blindColors = new ArrayList<>();
+		blindColors.add(Colors.COLORBLIND_DARK_GREEN);
+		blindColors.add(Colors.COLORBLIND_DARK_RED);
+		blindColors.add(Colors.COLORBLIND_ORANGE);	
+		blindColors.add(Colors.COLORBLIND_YELLOW)		;
+		blindColors.add(Colors.COLORBLIND_GREEN);
+		blindColors.add(Colors.COLORBLIND_BLUE);
+		blindColors.add(Colors.COLORBLIND_MAGENTA);
+
+		JPanel jBlindPanel = new JPanel();
+		jBlindPanel.setOpaque(false);
+		jBlindPanel.setLayout(new GridLayout(0, 1, 0, 1));
+
+		add(jBlindPanel, null);
+		for (Colors defaultColors : blindColors) {
+			add(jBlindPanel, defaultColors.getColor());
 		}
 
 		JButton jCustom = createButton(GuiShared.get().colorCustom());
@@ -157,6 +177,8 @@ public class JSimpleColorPicker {
 							.addComponent(jColorPanel)
 							.addGap(15)
 							.addComponent(jClassicPanel)
+							.addGap(0)
+							.addComponent(jBlindPanel)
 						)
 						.addComponent(jCustom, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Integer.MAX_VALUE)
 		);
@@ -166,9 +188,10 @@ public class JSimpleColorPicker {
 							.addComponent(jDefault)
 							.addComponent(jNone)
 						)
-						.addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
+						.addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
 							.addComponent(jColorPanel)
 							.addComponent(jClassicPanel)
+							.addComponent(jBlindPanel)
 						)
 						.addComponent(jCustom)
 		);
@@ -176,6 +199,12 @@ public class JSimpleColorPicker {
 
 	private void add(JPanel jPanel, Color color) {
 		if (color == null) {
+			JLabel jLabel = new JLabel();
+			Dimension dimension = new Dimension(ColorIcon.SIZE, ColorIcon.SIZE);
+			jLabel.setMinimumSize(dimension);
+			jLabel.setPreferredSize(dimension);
+			jLabel.setMaximumSize(dimension);
+			jPanel.add(jLabel);
 			return;
 		}
 		ColorIcon icon = new ColorIcon(color);
@@ -307,15 +336,16 @@ public class JSimpleColorPicker {
 
 	public static class ColorIcon implements Icon {
 
+		private static final int SIZE = 22;
+
 		private final Color color;
 		private final boolean backgroundIsBright;
-		private final int size = 22;
 		private boolean selected = false;
 		private boolean hover = false;
 
 		public ColorIcon(Color color) {
 			this.color = color;
-			backgroundIsBright = ColorTools.isBrightColor(color);
+			backgroundIsBright = ColorUtil.isBrightColor(color);
 		}
 
 		public void setSelect(Color match) {
@@ -368,12 +398,12 @@ public class JSimpleColorPicker {
 
 		@Override
 		public int getIconWidth() {
-			return size;
+			return SIZE;
 		}
 
 		@Override
 		public int getIconHeight() {
-			return size;
+			return SIZE;
 		}
 	}
 

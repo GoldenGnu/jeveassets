@@ -35,10 +35,11 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Comparator;
 import java.util.List;
+import javax.swing.ButtonGroup;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
-import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
+import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 import net.nikr.eve.jeveasset.Program;
@@ -48,15 +49,19 @@ import net.nikr.eve.jeveasset.data.settings.ColorSettings.ColorRow;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.JSimpleColorPicker;
+import net.nikr.eve.jeveasset.gui.shared.components.JDropDownButton;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.EventListManager;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
+import net.nikr.eve.jeveasset.i18n.DataColors;
 import net.nikr.eve.jeveasset.i18n.DialoguesSettings;
 
 
 public class ColorSettingsPanel extends JSettingsPanel {
 
-	private final JComboBox<ColorThemeTypes> jColorThemes;
+	JRadioButtonMenuItem jDefault;
+	JRadioButtonMenuItem jStrong;
+	JRadioButtonMenuItem jColorblind;
 	//Table
 	private final JColorTable jTable;
 	private final DefaultEventTableModel<ColorRow> tableModel;
@@ -185,21 +190,47 @@ public class ColorSettingsPanel extends JSettingsPanel {
 
 		JScrollPane jTableScroll = new JScrollPane(jTable);
 
-		jColorThemes = new JComboBox<>(ColorThemeTypes.values());
-		jColorThemes.addActionListener(new ActionListener() {
+		JDropDownButton jTheme = new JDropDownButton("Theme", Images.FILTER_LOAD.getIcon());
+
+		ButtonGroup buttonGroup = new ButtonGroup();
+		jDefault = new JRadioButtonMenuItem(DataColors.get().colorThemeDefault());
+		jDefault.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				if (updateLock) {
 					return;
 				}
-				SwingUtilities.invokeLater(new Runnable() {
-					@Override
-					public void run() {
-						updateTheme();
-					}
-				});
+				updateTheme(ColorThemeTypes.DEFAULT);
 			}
 		});
+		jTheme.add(jDefault);
+		buttonGroup.add(jDefault);
+
+		jStrong = new JRadioButtonMenuItem(DataColors.get().colorThemeStrong());
+		jStrong.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (updateLock) {
+					return;
+				}
+				updateTheme(ColorThemeTypes.STRONG);
+			}
+		});
+		jTheme.add(jStrong);
+		buttonGroup.add(jStrong);
+
+		jColorblind = new JRadioButtonMenuItem(DataColors.get().colorThemeColorblind());
+		jColorblind.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (updateLock) {
+					return;
+				}
+				updateTheme(ColorThemeTypes.COLORBLIND);
+			}
+		});
+		jTheme.add(jColorblind);
+		buttonGroup.add(jColorblind);
 
 		JButton jCollapse = new JButton(DialoguesSettings.get().collapse(), Images.MISC_COLLAPSED.getIcon());
 		jCollapse.addActionListener(new ActionListener() {
@@ -220,7 +251,7 @@ public class ColorSettingsPanel extends JSettingsPanel {
 		layout.setHorizontalGroup(
 			layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
 				.addGroup(layout.createSequentialGroup()
-					.addComponent(jColorThemes)
+					.addComponent(jTheme, 100, 100, 100)
 					.addGap(0, 0, Integer.MAX_VALUE)
 					.addComponent(jCollapse, 100, 100, 100)
 					.addComponent(jExpand, 100, 100, 100)
@@ -230,7 +261,7 @@ public class ColorSettingsPanel extends JSettingsPanel {
 		layout.setVerticalGroup(
 			layout.createSequentialGroup()
 				.addGroup(layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
-					.addComponent(jColorThemes, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jTheme, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 					.addComponent(jCollapse, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 					.addComponent(jExpand, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 				)
@@ -259,21 +290,35 @@ public class ColorSettingsPanel extends JSettingsPanel {
 		updateLock = true;
 		updateTable(Settings.get().getColorSettings().get());
 		colorThemeTypes = Settings.get().getColorSettings().getColorTheme().getType();
-		jColorThemes.setSelectedItem(colorThemeTypes);
+		select(colorThemeTypes);
 		updateLock = false;
 	}
 
-	private void updateTheme() {
+	private void updateTheme(ColorThemeTypes colorTheme) {
 		int value = JOptionPane.showConfirmDialog(parent, DialoguesSettings.get().overwriteMsg(), DialoguesSettings.get().overwriteTitle(), JOptionPane.YES_NO_CANCEL_OPTION);
 		if (value == JOptionPane.CANCEL_OPTION) {
 			updateLock = true;
-			jColorThemes.setSelectedItem(colorThemeTypes);
+			select(colorThemeTypes);
 			updateLock = false;
 			return;
 		}
 		boolean overwrite = value == JOptionPane.YES_OPTION;
-		colorThemeTypes = jColorThemes.getItemAt(jColorThemes.getSelectedIndex());
+		colorThemeTypes = colorTheme;
 		updateTable(colorThemeTypes.getInstance().get(overwrite, EventListManager.safeList(eventList)));
+	}
+
+	private void select(ColorThemeTypes colorTheme) {
+		switch(colorTheme) {
+			case DEFAULT:
+				jDefault.setSelected(true);
+				break;
+			case STRONG:
+				jStrong.setSelected(true);
+				break;
+			case COLORBLIND:
+				jColorblind.setSelected(true);
+				break;
+		}
 	}
 
 	private void updateTable(List<ColorRow> rows) {
