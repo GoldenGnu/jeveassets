@@ -22,10 +22,14 @@
 package net.nikr.eve.jeveasset.gui.dialogs.settings;
 
 import ca.odell.glazedlists.EventList;
+import ca.odell.glazedlists.FilterList;
 import ca.odell.glazedlists.ListSelection;
 import ca.odell.glazedlists.SeparatorList;
+import ca.odell.glazedlists.TextFilterator;
+import ca.odell.glazedlists.matchers.MatcherEditor;
 import ca.odell.glazedlists.swing.DefaultEventSelectionModel;
 import ca.odell.glazedlists.swing.DefaultEventTableModel;
+import ca.odell.glazedlists.swing.TextComponentMatcherEditor;
 import java.awt.Color;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -41,6 +45,7 @@ import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JScrollPane;
+import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.settings.ColorTheme;
@@ -50,6 +55,7 @@ import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.JSimpleColorPicker;
 import net.nikr.eve.jeveasset.gui.shared.components.JDropDownButton;
+import net.nikr.eve.jeveasset.gui.shared.components.JFixedToolBar;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.EventListManager;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
@@ -59,9 +65,10 @@ import net.nikr.eve.jeveasset.i18n.DialoguesSettings;
 
 public class ColorSettingsPanel extends JSettingsPanel {
 
-	JRadioButtonMenuItem jDefault;
-	JRadioButtonMenuItem jStrong;
-	JRadioButtonMenuItem jColorblind;
+	private final JRadioButtonMenuItem jDefault;
+	private final JRadioButtonMenuItem jStrong;
+	private final JRadioButtonMenuItem jColorblind;
+	private final JTextField jFilter;
 	//Table
 	private final JColorTable jTable;
 	private final DefaultEventTableModel<ColorRow> tableModel;
@@ -81,8 +88,15 @@ public class ColorSettingsPanel extends JSettingsPanel {
 		//Backend
 		eventList = EventListManager.create();
 
+		//Filter
+		jFilter = new JTextField();
+		MatcherEditor<ColorRow> matcherEditor = new TextComponentMatcherEditor<>(jFilter, new ColorRowTextFilterator());
+		eventList.getReadWriteLock().readLock().lock();
+		FilterList<ColorRow> filterList = new FilterList<>(eventList, matcherEditor);
+		eventList.getReadWriteLock().readLock().unlock();
+
 		//Separator
-		SeparatorList<ColorRow> separatorList = new SeparatorList<>(eventList, new ColorRowSeparatorComparator(), 1, Integer.MAX_VALUE);
+		SeparatorList<ColorRow> separatorList = new SeparatorList<>(filterList, new ColorRowSeparatorComparator(), 1, Integer.MAX_VALUE);
 		
 		//Table Model
 		tableModel = EventModels.createTableModel(separatorList, tableFormat);
@@ -190,7 +204,23 @@ public class ColorSettingsPanel extends JSettingsPanel {
 
 		JScrollPane jTableScroll = new JScrollPane(jTable);
 
+		JFixedToolBar jToolBarLeft = new JFixedToolBar();
+		jToolBarLeft.add(jFilter);
+
+		JButton jClear = new JButton(Images.TAB_CLOSE.getIcon());
+		jClear.setContentAreaFilled(false);
+		jClear.setFocusPainted(false);
+		jClear.setPressedIcon(Images.TAB_CLOSE_ACTIVE.getIcon());
+		jClear.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				jFilter.setText("");
+			}
+		});
+		jToolBarLeft.addButton(jClear, 0);
+
 		JDropDownButton jTheme = new JDropDownButton("Theme", Images.FILTER_LOAD.getIcon());
+		jToolBarLeft.addButton(jTheme);
 
 		ButtonGroup buttonGroup = new ButtonGroup();
 		jDefault = new JRadioButtonMenuItem(DataColors.get().colorThemeDefault());
@@ -239,6 +269,7 @@ public class ColorSettingsPanel extends JSettingsPanel {
 				jTable.expandSeparators(false);
 			}
 		});
+		jToolBarLeft.addButton(jCollapse);
 
 		JButton jExpand = new JButton(DialoguesSettings.get().expand(), Images.MISC_EXPANDED.getIcon());
 		jExpand.addActionListener(new ActionListener() {
@@ -247,23 +278,19 @@ public class ColorSettingsPanel extends JSettingsPanel {
 				jTable.expandSeparators(true);
 			}
 		});
+		jToolBarLeft.addButton(jExpand);
 
 		layout.setHorizontalGroup(
 			layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
 				.addGroup(layout.createSequentialGroup()
-					.addComponent(jTheme, 100, 100, 100)
-					.addGap(0, 0, Integer.MAX_VALUE)
-					.addComponent(jCollapse, 100, 100, 100)
-					.addComponent(jExpand, 100, 100, 100)
+					.addComponent(jToolBarLeft, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Integer.MAX_VALUE)
 				)
 				.addComponent(jTableScroll)
 		);
 		layout.setVerticalGroup(
 			layout.createSequentialGroup()
 				.addGroup(layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
-					.addComponent(jTheme, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-					.addComponent(jCollapse, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-					.addComponent(jExpand, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jToolBarLeft, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
 				)
 				.addComponent(jTableScroll, 290, 290, 290)
 		);
@@ -322,6 +349,8 @@ public class ColorSettingsPanel extends JSettingsPanel {
 	}
 
 	private void updateTable(List<ColorRow> rows) {
+		jTable.lock();
+		jTable.saveExpandedState();
 		try {
 			eventList.getReadWriteLock().writeLock().lock();
 			eventList.clear();
@@ -329,12 +358,23 @@ public class ColorSettingsPanel extends JSettingsPanel {
 		} finally {
 			eventList.getReadWriteLock().writeLock().unlock();
 		}
+		jTable.loadExpandedState();
+		jTable.unlock();
 	}
 
 	public static class ColorRowSeparatorComparator implements Comparator<ColorRow> {
 		@Override
 		public int compare(final ColorRow o1, final ColorRow o2) {
 			return o1.getColorEntry().getGroup().compareTo(o2.getColorEntry().getGroup());
+		}
+	}
+
+	class ColorRowTextFilterator implements TextFilterator<ColorRow> {
+
+		@Override
+		public void getFilterStrings(List<String> baseList, ColorRow element) {
+			baseList.add(element.getColorEntry().getDescription());
+			baseList.add(element.getColorEntry().getGroup().getName());
 		}
 	}
 }
