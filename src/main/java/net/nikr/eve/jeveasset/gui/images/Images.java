@@ -166,6 +166,7 @@ public enum Images {
 	MISC_INVENTION ("misc_invention.png"),
 	MISC_MANUFACTURING ("misc_manufacturing.png"),
 	MISC_CONTRACTS_APPRAISAL ("misc_contracts_appraisal.png"),
+	MISC_SUM ("misc_sum.png"),
 
 	SETTINGS_TOOLS ("settings_tools.png"),
 	SETTINGS_PRICE_DATA ("settings_price_data.png"),
