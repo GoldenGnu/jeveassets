@@ -29,6 +29,7 @@ import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import net.troja.eve.esi.ApiException;
 import net.troja.eve.esi.ApiResponse;
+import net.troja.eve.esi.model.CharacterRolesResponse.RolesEnum;
 import net.troja.eve.esi.model.CharacterWalletTransactionsResponse;
 import net.troja.eve.esi.model.CorporationWalletTransactionsResponse;
 
@@ -44,7 +45,7 @@ public class EsiTransactionsGetter extends AbstractEsiGetter {
 
 	@Override
 	protected void update() throws ApiException {
-		Set<Long> existing = new HashSet<Long>();
+		Set<Long> existing = new HashSet<>();
 		if (saveHistory) {
 			for (MyTransaction transaction : owner.getTransactions()) {
 				existing.add(transaction.getTransactionID());
@@ -91,6 +92,12 @@ public class EsiTransactionsGetter extends AbstractEsiGetter {
 	@Override
 	protected boolean haveAccess() {
 		return owner.isTransactions();
+	}
+
+	@Override
+	protected RolesEnum[] getRequiredRoles() {
+		RolesEnum[] roles = {RolesEnum.DIRECTOR, RolesEnum.ACCOUNTANT, RolesEnum.JUNIOR_ACCOUNTANT};
+		return roles;
 	}
 
 }

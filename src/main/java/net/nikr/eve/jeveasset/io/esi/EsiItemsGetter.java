@@ -28,6 +28,7 @@ import static net.nikr.eve.jeveasset.io.esi.AbstractEsiGetter.getMarketApiOpen;
 import net.troja.eve.esi.ApiException;
 import net.troja.eve.esi.ApiResponse;
 import net.troja.eve.esi.model.CategoryResponse;
+import net.troja.eve.esi.model.CharacterRolesResponse.RolesEnum;
 import net.troja.eve.esi.model.GroupResponse;
 import net.troja.eve.esi.model.MarketGroupResponse;
 import net.troja.eve.esi.model.TypeDogmaAttribute;
@@ -169,6 +170,11 @@ public class EsiItemsGetter extends AbstractEsiGetter {
 	@Override
 	protected boolean haveAccess() {
 		return true; //Only use public endpoints
+	}
+
+	@Override
+	protected RolesEnum[] getRequiredRoles() {
+		return null;
 	}
 	
 }

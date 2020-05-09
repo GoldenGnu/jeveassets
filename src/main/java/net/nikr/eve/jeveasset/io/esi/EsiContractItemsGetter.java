@@ -37,6 +37,7 @@ import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import net.troja.eve.esi.ApiException;
 import net.troja.eve.esi.ApiResponse;
 import net.troja.eve.esi.model.CharacterContractsItemsResponse;
+import net.troja.eve.esi.model.CharacterRolesResponse.RolesEnum;
 import net.troja.eve.esi.model.CorporationContractsItemsResponse;
 
 public class EsiContractItemsGetter extends AbstractEsiGetter {
@@ -63,7 +64,7 @@ public class EsiContractItemsGetter extends AbstractEsiGetter {
 		createContracts(owners);
 		if (owner.isCorporation()) {
 			List<List<MyContract>> updates = splitList(contracts.get(owner.getOwnerID()), BATCH_SIZE);
-			Map<MyContract, List<CorporationContractsItemsResponse>> responseList = new HashMap<MyContract, List<CorporationContractsItemsResponse>>();
+			Map<MyContract, List<CorporationContractsItemsResponse>> responseList = new HashMap<>();
 			boolean first = true;
 			for (List<MyContract> list : updates) {
 				if (first) {
@@ -106,15 +107,15 @@ public class EsiContractItemsGetter extends AbstractEsiGetter {
 
 	private static synchronized void createContracts(List<EsiOwner> owners) {
 		if (contracts == null) {
-			contracts = new HashMap<Long, List<MyContract>>();
-			Set<MyContract> uniqueContacts = new HashSet<MyContract>();
-			Map<Long, EsiOwner> uniqueOwners = new HashMap<Long, EsiOwner>();
+			contracts = new HashMap<>();
+			Set<MyContract> uniqueContacts = new HashSet<>();
+			Map<Long, EsiOwner> uniqueOwners = new HashMap<>();
 			for (EsiOwner esiOwner : owners) {
 				if (!esiOwner.isShowOwner()) {
 					continue;
 				}
 				uniqueOwners.put(esiOwner.getOwnerID(), esiOwner);
-				contracts.put(esiOwner.getOwnerID(), new ArrayList<MyContract>());
+				contracts.put(esiOwner.getOwnerID(), new ArrayList<>());
 				for (Map.Entry<MyContract, List<MyContractItem>> entry : esiOwner.getContracts().entrySet()) {
 					MyContract contract = entry.getKey();
 					if (contract.isIgnoreContract()) {
@@ -155,6 +156,11 @@ public class EsiContractItemsGetter extends AbstractEsiGetter {
 	@Override
 	protected boolean haveAccess() {
 		return owner.isContracts();
+	}
+
+	@Override
+	protected RolesEnum[] getRequiredRoles() {
+		return null;
 	}
 
 }

@@ -31,6 +31,7 @@ import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import net.troja.eve.esi.ApiException;
 import net.troja.eve.esi.ApiResponse;
 import net.troja.eve.esi.model.CharacterIndustryJobsResponse;
+import net.troja.eve.esi.model.CharacterRolesResponse.RolesEnum;
 import net.troja.eve.esi.model.CorporationIndustryJobsResponse;
 
 
@@ -62,7 +63,7 @@ public class EsiIndustryJobsGetter extends AbstractEsiGetter {
 			industryJobs.addAll(incomplated);
 			owner.setIndustryJobs(EsiConverter.toIndustryJobsCorporation(industryJobs, owner));
 		} else {
-			Set<Boolean> completed = new HashSet<Boolean>();
+			Set<Boolean> completed = new HashSet<>();
 			completed.add(true);
 			completed.add(false);
 			Map<Boolean, List<CharacterIndustryJobsResponse>> updateList = updateList(completed, DEFAULT_RETRIES, new ListHandler<Boolean, List<CharacterIndustryJobsResponse>>() {
@@ -87,6 +88,12 @@ public class EsiIndustryJobsGetter extends AbstractEsiGetter {
 	@Override
 	protected boolean haveAccess() {
 		return owner.isIndustryJobs();
+	}
+
+	@Override
+	protected RolesEnum[] getRequiredRoles() {
+		RolesEnum[] roles = {RolesEnum.DIRECTOR, RolesEnum.FACTORY_MANAGER};
+		return roles;
 	}
 
 }
