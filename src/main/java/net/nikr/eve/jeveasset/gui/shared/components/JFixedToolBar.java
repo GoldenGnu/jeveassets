@@ -103,6 +103,7 @@ public class JFixedToolBar extends JToolBar {
 		} else {
 			dimension = new Dimension(width, height);
 		}
+		jComponent.setPreferredSize(dimension);
 		jComponent.setMaximumSize(dimension);
 	}
 
