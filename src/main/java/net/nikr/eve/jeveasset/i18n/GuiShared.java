@@ -100,6 +100,7 @@ public abstract class GuiShared extends Bundle {
 	public abstract String lookup();
 	public abstract String market();
 	public abstract String newStockpile();
+	public abstract String none();
 	public abstract String ok();
 	public abstract String openLinks(int size);
 	public abstract String openLinksTitle();
