@@ -81,5 +81,9 @@ public class ColorThemeStrong extends ColorTheme {
 		colors.put(ColorEntry.REPROCESSED_SELL, new ColorThemeEntry(Colors.STRONG_GREEN));
 		colors.put(ColorEntry.REPROCESSED_REPROCESS, new ColorThemeEntry(Colors.STRONG_RED));
 		colors.put(ColorEntry.REPROCESSED_EQUAL, new ColorThemeEntry(Colors.STRONG_GRAY));
+		colors.put(ColorEntry.CONTAINER_LOG_ADDED, new ColorThemeEntry(Colors.STRONG_GREEN));
+		colors.put(ColorEntry.CONTAINER_LOG_REMOVED, new ColorThemeEntry(Colors.STRONG_RED));
+		colors.put(ColorEntry.CONTAINER_LOG_MOVED, new ColorThemeEntry(Colors.STRONG_BLUE));
+		colors.put(ColorEntry.CONTAINER_LOG_MULTIPLE_CHANGES, new ColorThemeEntry(Colors.STRONG_YELLOW));
 	}
 }

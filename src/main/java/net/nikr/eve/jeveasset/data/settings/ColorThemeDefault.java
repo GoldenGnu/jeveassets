@@ -81,5 +81,9 @@ public class ColorThemeDefault extends ColorTheme {
 		colors.put(ColorEntry.REPROCESSED_SELL, new ColorThemeEntry(Colors.LIGHT_GREEN));
 		colors.put(ColorEntry.REPROCESSED_REPROCESS, new ColorThemeEntry(Colors.LIGHT_RED));
 		colors.put(ColorEntry.REPROCESSED_EQUAL, new ColorThemeEntry(Colors.LIGHT_GRAY));
+		colors.put(ColorEntry.CONTAINER_LOG_ADDED, new ColorThemeEntry(Colors.LIGHT_GREEN));
+		colors.put(ColorEntry.CONTAINER_LOG_REMOVED, new ColorThemeEntry(Colors.LIGHT_RED));
+		colors.put(ColorEntry.CONTAINER_LOG_MOVED, new ColorThemeEntry(Colors.LIGHT_BLUE));
+		colors.put(ColorEntry.CONTAINER_LOG_MULTIPLE_CHANGES, new ColorThemeEntry(Colors.LIGHT_YELLOW));
 	}
 }

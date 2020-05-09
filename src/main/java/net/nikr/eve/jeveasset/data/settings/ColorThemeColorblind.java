@@ -81,5 +81,9 @@ public class ColorThemeColorblind extends ColorTheme {
 		colors.put(ColorEntry.REPROCESSED_SELL, new ColorTheme.ColorThemeEntry(Colors.COLORBLIND_YELLOW));
 		colors.put(ColorEntry.REPROCESSED_REPROCESS, new ColorTheme.ColorThemeEntry(Colors.COLORBLIND_MAGENTA));
 		colors.put(ColorEntry.REPROCESSED_EQUAL, new ColorTheme.ColorThemeEntry(Colors.COLORBLIND_GRAY));
+		colors.put(ColorEntry.CONTAINER_LOG_ADDED, new ColorThemeEntry(Colors.COLORBLIND_YELLOW));
+		colors.put(ColorEntry.CONTAINER_LOG_REMOVED, new ColorThemeEntry(Colors.COLORBLIND_MAGENTA));
+		colors.put(ColorEntry.CONTAINER_LOG_MOVED, new ColorThemeEntry(Colors.COLORBLIND_BLUE));
+		colors.put(ColorEntry.CONTAINER_LOG_MULTIPLE_CHANGES, new ColorThemeEntry(Colors.COLORBLIND_ORANGE));
 	}
 }

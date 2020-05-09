@@ -34,7 +34,7 @@ public enum Colors {
 	 */
 	STRONG_GRAY(190, 190, 190),
 	/**
-	 * 190, 190, 190
+	 * 190, 190, 190 Replace GRAY
 	 */
 	COLORBLIND_GRAY(190, 190, 190),
 	/**
@@ -50,7 +50,7 @@ public enum Colors {
 	 */
 	DARK_RED(Color.RED.darker()),
 	/**
-	 * 213, 94, 0
+	 * 213, 94, 0 Replace DARK_RED
 	 */
 	COLORBLIND_DARK_RED(213, 94, 0),
 	/**
@@ -62,7 +62,7 @@ public enum Colors {
 	 */
 	STRONG_GREEN(160, 255, 160),
 	/**
-	 * 0, 158, 115
+	 * 0, 158, 115 Used by FILTER_OR_GROUP_3
 	 */
 	COLORBLIND_GREEN(0, 158, 115),
 	/**
@@ -70,7 +70,7 @@ public enum Colors {
 	 */
 	DARK_GREEN(Color.GREEN.darker()),
 	/**
-	 * 0, 114, 178 (not really green, it's blue)
+	 * 0, 114, 178 Pleace DARK_GREEN (not really green, it's blue)
 	 */
 	COLORBLIND_DARK_GREEN(0, 114, 178),
 	/**
@@ -82,7 +82,7 @@ public enum Colors {
 	 */
 	STRONG_YELLOW(255, 255, 160),
 	/**
-	 * 255, 176, 0
+	 * 255, 176, 0 Replace GREEN
 	 */
 	COLORBLIND_YELLOW(240, 228, 66),
 	/**
@@ -94,7 +94,7 @@ public enum Colors {
 	 */
 	STRONG_BLUE(180, 220, 255),
 	/**
-	 * 100, 143, 255
+	 * 100, 143, 255 Replace BLUE
 	 */
 	COLORBLIND_BLUE(86, 180, 233),
 	/**
@@ -106,7 +106,7 @@ public enum Colors {
 	 */
 	STRONG_ORANGE(255, 180, 120),
 	/**
-	 * 254, 97, 0
+	 * 254, 97, 0 Replace YELLOW
 	 */
 	COLORBLIND_ORANGE(230, 159, 0),
 	/**
@@ -118,7 +118,7 @@ public enum Colors {
 	 */
 	STRONG_MAGENTA(255, 180, 255),
 	/**
-	 * 220, 38, 127
+	 * 220, 38, 127 Replace RED
 	 */
 	COLORBLIND_MAGENTA(204, 121, 167),
 	/**
