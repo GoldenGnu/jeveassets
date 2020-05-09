@@ -320,6 +320,16 @@ class FilterGui<E> {
 		return index != list.indexOf(filterPanel);
 	}
 
+	protected void clone(final FilterPanel<E> filterPanel) {
+		int index = filterPanels.indexOf(filterPanel);
+		FilterPanel<E> clone = new FilterPanel<>(this, filterControl);
+		clone.setFilter(filterPanel.getFilter());
+		filterPanels.add(index, clone);
+		if (!multiUpdate) {
+			update();
+		}
+	}
+
 	protected void remove(final FilterPanel<E> filterPanel) {
 		filterPanels.remove(filterPanel);
 		if (!multiUpdate) {

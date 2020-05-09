@@ -83,7 +83,7 @@ import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 class FilterPanel<E> implements Comparable<FilterPanel<E>> {
 
 	private enum FilterPanelAction {
-		FILTER, FILTER_TIMER, GROUP_TIMER, REMOVE
+		FILTER, FILTER_TIMER, GROUP_TIMER, REMOVE, CLONE
 	}
 
 	private final JPanel jPanel;
@@ -100,6 +100,7 @@ class FilterPanel<E> implements Comparable<FilterPanel<E>> {
 
 	private final JLabel jSpacing;
 	private final JButton jRemove;
+	private final JButton jClone;
 
 	private final Timer timer;
 	private final Timer groupTimer;
@@ -229,6 +230,11 @@ class FilterPanel<E> implements Comparable<FilterPanel<E>> {
 
 		jSpacing = new JLabel();
 
+		jClone = new JButton();
+		jClone.setIcon(Images.EDIT_COPY.getIcon());
+		jClone.addActionListener(listener);
+		jClone.setActionCommand(FilterPanelAction.CLONE.name());
+
 		jRemove = new JButton();
 		jRemove.setIcon(Images.EDIT_DELETE.getIcon());
 		jRemove.addActionListener(listener);
@@ -256,6 +262,7 @@ class FilterPanel<E> implements Comparable<FilterPanel<E>> {
 				.addComponent(jCompareColumn, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
 				.addComponent(jDate, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
 				.addComponent(jSpacing, 0, 0, Integer.MAX_VALUE)
+				.addComponent(jClone, 30, 30, 30)
 				.addComponent(jRemove, 30, 30, 30)
 		);
 		layout.setVerticalGroup(
@@ -269,6 +276,7 @@ class FilterPanel<E> implements Comparable<FilterPanel<E>> {
 				.addComponent(jCompareColumn, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 				.addComponent(jDate, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 				.addComponent(jSpacing, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+				.addComponent(jClone, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 				.addComponent(jRemove, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 		);
 		updateNumeric(false);
@@ -276,10 +284,6 @@ class FilterPanel<E> implements Comparable<FilterPanel<E>> {
 
 	boolean isAnd() {
 		return ((LogicType) jLogic.getSelectedItem()) == LogicType.AND;
-	}
-
-	private FilterPanel<E> getThis() {
-		return this;
 	}
 
 	boolean isMoving() {
@@ -555,7 +559,7 @@ class FilterPanel<E> implements Comparable<FilterPanel<E>> {
 	private void groupChanged() {
 		refilter();
 		if (!loading) {
-			if (gui.fade(getThis())) {
+			if (gui.fade(FilterPanel.this)) {
 				fades.execute(new FadeThread());
 			} else {
 				updateGroupColor();
@@ -601,19 +605,22 @@ class FilterPanel<E> implements Comparable<FilterPanel<E>> {
 		@Override
 		public void actionPerformed(final ActionEvent e) {
 			if (FilterPanelAction.REMOVE.name().equals(e.getActionCommand())) {
-				gui.remove(getThis());
+				gui.remove(FilterPanel.this);
 				gui.addEmpty();
 				refilter();
-			}
-			if (FilterPanelAction.FILTER.name().equals(e.getActionCommand())) {
+			} else if (FilterPanelAction.CLONE.name().equals(e.getActionCommand())) {
+				gui.clone(FilterPanel.this);
+				refilter();
+				jText.requestFocusInWindow();
+				jCompareColumn.requestFocusInWindow();
+				jDate.getComponentToggleCalendarButton().requestFocusInWindow();
+			} else if (FilterPanelAction.FILTER.name().equals(e.getActionCommand())) {
 				processFilterAction(e);
-			}
-			if (FilterPanelAction.FILTER_TIMER.name().equals(e.getActionCommand())) {
+			} else if (FilterPanelAction.FILTER_TIMER.name().equals(e.getActionCommand())) {
 				if (!Settings.get().isFilterOnEnter()) {
 					processFilterAction(e);
 				}
-			}
-			if (FilterPanelAction.GROUP_TIMER.name().equals(e.getActionCommand())) {
+			} else if (FilterPanelAction.GROUP_TIMER.name().equals(e.getActionCommand())) {
 				groupTimer.stop();
 				groupChanged();
 			}
@@ -648,7 +655,7 @@ class FilterPanel<E> implements Comparable<FilterPanel<E>> {
 
 		@Override
 		public void run() {
-			if (!gui.fade(getThis())) {
+			if (!gui.fade(FilterPanel.this)) {
 				return;
 			}
 			moving = true;
