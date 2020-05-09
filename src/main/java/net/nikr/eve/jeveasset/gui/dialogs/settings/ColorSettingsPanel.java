@@ -322,16 +322,31 @@ public class ColorSettingsPanel extends JSettingsPanel {
 	}
 
 	private void updateTheme(ColorThemeTypes colorTheme) {
-		int value = JOptionPane.showConfirmDialog(parent, DialoguesSettings.get().overwriteMsg(), DialoguesSettings.get().overwriteTitle(), JOptionPane.YES_NO_CANCEL_OPTION);
-		if (value == JOptionPane.CANCEL_OPTION) {
-			updateLock = true;
-			select(colorThemeTypes);
-			updateLock = false;
-			return;
+		List<ColorRow> rows = EventListManager.safeList(eventList);
+		boolean overwrite;
+		if (changed(rows)) {
+			int value = JOptionPane.showConfirmDialog(parent, DialoguesSettings.get().overwriteMsg(), DialoguesSettings.get().overwriteTitle(), JOptionPane.YES_NO_CANCEL_OPTION);
+			if (value == JOptionPane.CANCEL_OPTION) {
+				updateLock = true;
+				select(colorThemeTypes);
+				updateLock = false;
+				return;
+			}
+			overwrite = value == JOptionPane.YES_OPTION;
+		} else {
+			overwrite = true;
 		}
-		boolean overwrite = value == JOptionPane.YES_OPTION;
 		colorThemeTypes = colorTheme;
-		updateTable(colorThemeTypes.getInstance().get(overwrite, EventListManager.safeList(eventList)));
+		updateTable(colorThemeTypes.getInstance().get(overwrite, rows));
+	}
+
+	public boolean changed(List<ColorRow> old) {
+		for (ColorRow colorRow : old) {
+			if (!colorRow.isBackgroundDefault() || !colorRow.isForegroundDefault()) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	private void select(ColorThemeTypes colorTheme) {
