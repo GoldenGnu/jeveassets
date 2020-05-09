@@ -66,7 +66,7 @@ public class JMenuInfo {
 	}
 
 	public static void treeAsset(final JComponent jComponent, final List<TreeAsset> list) {
-		List<InfoItem> items = new ArrayList<InfoItem>();
+		List<InfoItem> items = new ArrayList<>();
 		for (TreeAsset asset : list) {
 			boolean add = true;
 			for (TreeAsset tree : asset.getTree()) {
@@ -86,11 +86,11 @@ public class JMenuInfo {
 	}
 
 	public static void asset(final JComponent jComponent, final List<MyAsset> list) {
-		infoItem(jComponent, new ArrayList<InfoItem>(list));
+		infoItem(jComponent, new ArrayList<>(list));
 	}
 
 	public static void overview(final JComponent jComponent, final List<Overview> list) {
-		infoItem(jComponent, new ArrayList<InfoItem>(list));
+		infoItem(jComponent, new ArrayList<>(list));
 	}
 
 	private static void infoItem(final JComponent jComponent, final List<InfoItem> list) {
@@ -292,7 +292,7 @@ public class JMenuInfo {
 
 			List<MenuItemValue> values = createDefault(jPopupMenu);
 
-			MaterialTotal materialTotal = calcMaterialTotal(new ArrayList<Material>(selected), all);
+			MaterialTotal materialTotal = calcMaterialTotal(new ArrayList<>(selected), all);
 
 			createMenuItem(values, jPopupMenu, materialTotal.getTotalValue(), NumberFormat.ISK, GuiShared.get().selectionValue(), GuiShared.get().selectionShortValue(), Images.TOOL_VALUES.getIcon());
 			createMenuItem(values, jPopupMenu, materialTotal.getAverageValue(), NumberFormat.ISK, GuiShared.get().selectionAverage(), GuiShared.get().selectionShortAverage(), Images.ASSETS_AVERAGE.getIcon());
@@ -302,7 +302,7 @@ public class JMenuInfo {
 
 	static MaterialTotal calcMaterialTotal(final List<Material> selectedList, final List<Material> all) {
 		//Remove none-Material classes
-		List<Material> selected = new ArrayList<Material>(selectedList);
+		List<Material> selected = new ArrayList<>(selectedList);
 		for (int i = 0; i < selected.size(); i++) {
 			Object object = selected.get(i);
 			if (!(object instanceof Material)) {
@@ -428,7 +428,9 @@ public class JMenuInfo {
 	}
 
 	private static JMenuItem createMenuItem(List<MenuItemValue> values, final JPopupMenu jPopupMenu, final String text, final Number number, NumberFormat numberFormat, final String toolTipText, String shortText, final Icon icon) {
-		values.add(new MenuItemValue(shortText, text, number));
+		if (values != null) {
+			values.add(new MenuItemValue(shortText, text, number));
+		}
 		JMenuItem jMenuItem;
 		if (text == null) { //Numeric Value
 			jMenuItem = new JMenuItem(format(number, numberFormat));
@@ -440,7 +442,9 @@ public class JMenuInfo {
 		jMenuItem.setDisabledIcon(icon);
 		jMenuItem.setForeground(Color.BLACK);
 		jMenuItem.setHorizontalAlignment(SwingConstants.RIGHT);
-		jPopupMenu.add(jMenuItem);
+		if (jPopupMenu != null) {
+			jPopupMenu.add(jMenuItem);
+		}
 		jMenuItem.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent e) {
@@ -572,6 +576,7 @@ public class JMenuInfo {
 			case DOUBLE: return Formater.doubleFormat(number);
 			case ITEMS: return Formater.itemsFormat(number);
 			case PERCENT: return Formater.percentFormat(number);
+			case LONG: return Formater.longFormat(number);
 			default: return String.valueOf(number);
 		}
 	}
@@ -635,7 +640,7 @@ public class JMenuInfo {
 	}
 
 	public enum NumberFormat {
-		ISK, DOUBLE, ITEMS, PERCENT
+		ISK, DOUBLE, ITEMS, PERCENT, LONG
 	}
 
 	public interface InfoItem {
