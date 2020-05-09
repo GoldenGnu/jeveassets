@@ -43,7 +43,7 @@ import net.nikr.eve.jeveasset.data.settings.ColorSettings;
 import net.nikr.eve.jeveasset.data.settings.ColorSettings.ColorRow;
 import net.nikr.eve.jeveasset.data.settings.Colors;
 import net.nikr.eve.jeveasset.gui.images.Images;
-import net.nikr.eve.jeveasset.gui.shared.ColorTools;
+import net.nikr.eve.jeveasset.gui.shared.ColorUtil;
 import net.nikr.eve.jeveasset.gui.shared.table.JSeparatorTable;
 import net.nikr.eve.jeveasset.i18n.DialoguesSettings;
 
@@ -285,19 +285,19 @@ public class JColorTable extends JSeparatorTable {
 			if (color == null) {
 				color = Colors.TABLE_SELECTION_FOREGROUND.getColor();
 			}
-			boolean isBrightColor = ColorTools.isBrightColor(color);
+			boolean isBrightColor = ColorUtil.isBrightColor(color);
 			if (editCell) {
 				jPanel.setBorder(BorderFactory.createLineBorder(getSelectionBackground().darker(), 1));
-				jDefault.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, ColorTools.brighter(getSelectionBackground().darker(), FACTOR)));
+				jDefault.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, ColorUtil.brighter(getSelectionBackground().darker(), FACTOR)));
 			} else if (mouseCell) {
 				jPanel.setBorder(BorderFactory.createLineBorder(getSelectionBackground(), 1));
-				jDefault.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, ColorTools.brighter(getSelectionBackground(), FACTOR)));
+				jDefault.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, ColorUtil.brighter(getSelectionBackground(), FACTOR)));
 			} else {
 				jPanel.setBorder(BorderFactory.createLineBorder(jPickerIcon.getBackground(), 1));
 				if (isBrightColor) {
 					jDefault.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, color.darker()));
 				} else {
-					jDefault.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, ColorTools.brighter(color, FACTOR)));
+					jDefault.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, ColorUtil.brighter(color, FACTOR)));
 				}
 			}
 			if (isDefault) {
