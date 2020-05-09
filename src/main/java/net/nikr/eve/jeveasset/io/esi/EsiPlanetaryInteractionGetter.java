@@ -33,6 +33,7 @@ import net.troja.eve.esi.ApiException;
 import net.troja.eve.esi.ApiResponse;
 import net.troja.eve.esi.model.CharacterPlanetResponse;
 import net.troja.eve.esi.model.CharacterPlanetsResponse;
+import net.troja.eve.esi.model.CharacterRolesResponse.RolesEnum;
 import net.troja.eve.esi.model.PlanetPin;
 import net.troja.eve.esi.model.PlanetResponse;
 
@@ -99,5 +100,9 @@ public class EsiPlanetaryInteractionGetter extends AbstractEsiGetter {
 		//Use the assets update times
 	}
 
+	@Override
+	protected RolesEnum[] getRequiredRoles() {
+		return null;
+	}
 	
 }

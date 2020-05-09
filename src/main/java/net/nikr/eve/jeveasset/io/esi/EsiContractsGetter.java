@@ -27,6 +27,7 @@ import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import net.troja.eve.esi.ApiException;
 import net.troja.eve.esi.ApiResponse;
 import net.troja.eve.esi.model.CharacterContractsResponse;
+import net.troja.eve.esi.model.CharacterRolesResponse;
 import net.troja.eve.esi.model.CorporationContractsResponse;
 
 public class EsiContractsGetter extends AbstractEsiGetter {
@@ -64,6 +65,11 @@ public class EsiContractsGetter extends AbstractEsiGetter {
 	@Override
 	protected boolean haveAccess() {
 		return owner.isContracts();
+	}
+
+	@Override
+	protected CharacterRolesResponse.RolesEnum[] getRequiredRoles() {
+		return null;
 	}
 
 }

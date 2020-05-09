@@ -43,6 +43,7 @@ import net.troja.eve.esi.ApiException;
 import net.troja.eve.esi.ApiResponse;
 import net.troja.eve.esi.api.MarketApi;
 import net.troja.eve.esi.api.UniverseApi;
+import net.troja.eve.esi.model.CharacterRolesResponse.RolesEnum;
 import net.troja.eve.esi.model.MarketOrdersResponse;
 import net.troja.eve.esi.model.MarketStructuresResponse;
 import net.troja.eve.esi.model.StructureResponse;
@@ -177,6 +178,11 @@ public class EsiPublicMarketOrdersGetter extends AbstractEsiGetter {
 	@Override
 	protected boolean haveAccess() {
 		return true; //Public
+	}
+
+	@Override
+	protected RolesEnum[] getRequiredRoles() {
+		return null;
 	}
 
 	private Long getSystemID(OutbidProcesser.OutbidProcesserInput data, long locationID) {

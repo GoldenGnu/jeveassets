@@ -34,6 +34,7 @@ import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 import net.troja.eve.esi.ApiException;
 import net.troja.eve.esi.ApiResponse;
 import net.troja.eve.esi.model.CharacterAssetsNamesResponse;
+import net.troja.eve.esi.model.CharacterRolesResponse.RolesEnum;
 import net.troja.eve.esi.model.CorporationAssetsNamesResponse;
 
 
@@ -112,6 +113,12 @@ public class EsiLocationsGetter extends AbstractEsiGetter {
 	@Override
 	protected boolean haveAccess() {
 		return owner.isLocations();
+	}
+
+	@Override
+	protected RolesEnum[] getRequiredRoles() {
+		RolesEnum[] roles = {RolesEnum.DIRECTOR};
+		return roles;
 	}
 
 }

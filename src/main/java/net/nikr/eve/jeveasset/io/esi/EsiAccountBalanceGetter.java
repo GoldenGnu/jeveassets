@@ -27,6 +27,7 @@ import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import static net.nikr.eve.jeveasset.io.esi.AbstractEsiGetter.DATASOURCE;
 import net.troja.eve.esi.ApiException;
 import net.troja.eve.esi.ApiResponse;
+import net.troja.eve.esi.model.CharacterRolesResponse.RolesEnum;
 import net.troja.eve.esi.model.CorporationWalletsResponse;
 
 
@@ -75,6 +76,12 @@ public class EsiAccountBalanceGetter extends AbstractEsiGetter {
 	@Override
 	protected boolean haveAccess() {
 		return owner.isAccountBalance();
+	}
+
+	@Override
+	protected RolesEnum[] getRequiredRoles() {
+		RolesEnum[] roles = {RolesEnum.DIRECTOR, RolesEnum.ACCOUNTANT, RolesEnum.JUNIOR_ACCOUNTANT};
+		return roles;
 	}
 
 }
