@@ -23,7 +23,7 @@ package net.nikr.eve.jeveasset.gui.shared.table.containers;
 import java.util.Objects;
 
 
-public class Runs extends NumberValue implements Comparable<Runs> {
+public class Runs implements NumberValue, Comparable<Runs> {
 
 	private final String runsString;
 	private final Long runs;

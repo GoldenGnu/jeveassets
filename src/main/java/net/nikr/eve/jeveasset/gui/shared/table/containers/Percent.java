@@ -26,7 +26,7 @@ import java.util.Map;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 
 
-public class Percent extends NumberValue implements Comparable<Percent> {
+public class Percent implements NumberValue, Comparable<Percent> {
 
 	private final static Map<Double, Percent> CACHE = new HashMap<>();
 

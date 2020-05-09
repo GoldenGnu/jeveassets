@@ -58,9 +58,9 @@ public enum MaterialTableFormat implements EnumTableColumn<Material> {
 		@Override
 		public Object getColumnValue(final Material from) {
 			if (from.getDynamicPrice() != null) {
-				return new ISK(Formater.iskFormat(from.getDynamicPrice()));
+				return new ISK(Formater.iskFormat(from.getDynamicPrice()), from.getDynamicPrice());
 			} else {
-				return new ISK("(" + Formater.iskFormat(from.getValue() / from.getCount()) + ")");
+				return new ISK("(" + Formater.iskFormat(from.getValue() / from.getCount()) + ")", from.getValue() / from.getCount());
 			}
 		}
 	},
@@ -71,7 +71,7 @@ public enum MaterialTableFormat implements EnumTableColumn<Material> {
 		}
 		@Override
 		public Object getColumnValue(final Material from) {
-			return new ISK(Formater.iskFormat(from.getValue()));
+			return new ISK(Formater.iskFormat(from.getValue()), from.getValue());
 		}
 	};
 
