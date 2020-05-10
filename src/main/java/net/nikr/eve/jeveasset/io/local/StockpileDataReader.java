@@ -68,7 +68,7 @@ public class StockpileDataReader extends AbstractBackup {
 			}
 			Gson gson = new GsonBuilder().registerTypeAdapter(Stockpile.class, new StockpileDeserializerGson()).create();
 			return gson.fromJson(sb.toString(), new TypeToken<List<Stockpile>>() {}.getType());
-		} catch (JsonSyntaxException | IOException ex) {
+		} catch (IllegalArgumentException | JsonSyntaxException | IOException ex) {
 			LOG.error(ex.getMessage(), ex);
 			return null;
 		} finally {
