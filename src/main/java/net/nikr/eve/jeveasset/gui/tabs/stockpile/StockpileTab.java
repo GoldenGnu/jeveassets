@@ -798,7 +798,6 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 			return;
 		}
 		stockpiles = stockpileSelectionDialog.show(stockpiles);
-		importStockpiles(stockpiles);
 		if (stockpiles == null) {
 			return;
 		}
