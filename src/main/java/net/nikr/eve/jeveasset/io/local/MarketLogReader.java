@@ -133,7 +133,7 @@ public class MarketLogReader {
 				throw new IllegalArgumentException("Empty file");
 			}
 			return marketLogs;
-		} catch (IOException | IllegalArgumentException ex) {
+		} catch (SuperCsvCellProcessorException | IOException | IllegalArgumentException ex) {
 			if (retries < RETRIES) {
 				retries++;
 				try {
