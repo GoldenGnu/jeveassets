@@ -58,7 +58,7 @@ public abstract class AbstractXmlReader<T> extends AbstractBackup {
 			}
 			LOG.info(name+ " not loaded");
 			return failValue();
-		} catch (XmlException ex) {
+		} catch (IllegalArgumentException | ArrayIndexOutOfBoundsException | XmlException ex) {
 			if (xmlType == XmlType.STATIC) { //Static data
 				staticDataFix();
 			} else if (xmlType == XmlType.DYNAMIC || xmlType == XmlType.DYNAMIC_BACKUP) { //Dynamic data
