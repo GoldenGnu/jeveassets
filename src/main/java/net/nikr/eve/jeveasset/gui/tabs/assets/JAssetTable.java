@@ -73,6 +73,16 @@ public class JAssetTable extends JAutoColumnTable {
 			ColorSettings.configCell(component, ColorEntry.GLOBAL_BPO, isSelected);
 			return component;
 		}
+		//Blueprint Copy
+		if (asset.isBPC()
+				&& asset.getItem().isBlueprint()
+				&& (columnName.equals(AssetTableFormat.PRICE.getColumnName())
+				|| columnName.equals(AssetTableFormat.PRICE_SELL_MIN.getColumnName())
+				|| columnName.equals(AssetTableFormat.PRICE_BUY_MAX.getColumnName())
+				|| columnName.equals(AssetTableFormat.NAME.getColumnName()))) {
+			ColorSettings.configCell(component, ColorEntry.GLOBAL_BPC, isSelected);
+			return component;
+		}
 
 		//Reprocessing Colors
 		if (Settings.get().isReprocessColors() && !isSelected) {

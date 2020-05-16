@@ -63,6 +63,7 @@ public class ColorThemeDefault extends ColorTheme {
 		colors.put(ColorEntry.MARKET_ORDERS_EXPIRED, new ColorThemeEntry(Colors.LIGHT_RED));
 		colors.put(ColorEntry.TRANSACTIONS_BOUGHT, new ColorThemeEntry(Colors.LIGHT_RED));
 		colors.put(ColorEntry.TRANSACTIONS_SOLD, new ColorThemeEntry(Colors.LIGHT_GREEN));
+		colors.put(ColorEntry.GLOBAL_BPC, new ColorThemeEntry(Colors.LIGHT_MAGENTA));
 		colors.put(ColorEntry.GLOBAL_BPO, new ColorThemeEntry(Colors.LIGHT_YELLOW));
 		colors.put(ColorEntry.GLOBAL_VALUE_NEGATIVE, new ColorThemeEntry(null, Colors.DARK_RED));
 		colors.put(ColorEntry.GLOBAL_VALUE_POSITIVE, new ColorThemeEntry(null, Colors.DARK_GREEN));
