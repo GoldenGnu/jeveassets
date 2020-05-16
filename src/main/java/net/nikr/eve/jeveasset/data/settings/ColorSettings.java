@@ -131,7 +131,6 @@ public class ColorSettings {
 		Color background = background(colorEntry);
 		if (background != null) {
 			component.setBackground(background);
-		} else {
 		}
 		if (foreground != null) {
 			component.setForeground(foreground);

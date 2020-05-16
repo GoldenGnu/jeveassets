@@ -52,6 +52,11 @@ public class JIndustryJobsTable extends JAutoColumnTable {
 			ColorSettings.configCell(component, ColorEntry.GLOBAL_BPO, isSelected);
 			return component;
 		}
+		//BPC
+		if (industryJob.isBPC() && columnName.equals(IndustryJobTableFormat.NAME.getColumnName())) {
+			ColorSettings.configCell(component, ColorEntry.GLOBAL_BPC, isSelected);
+			return component;
+		}
 		//User set location
 		if (industryJob.getLocation().isUserLocation() && columnName.equals(IndustryJobTableFormat.LOCATION.getColumnName())) {
 			ColorSettings.configCell(component, ColorEntry.CUSTOM_USER_LOCATION, isSelected);

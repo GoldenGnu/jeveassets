@@ -48,6 +48,7 @@ public enum ColorEntry {
 	MARKET_ORDERS_EXPIRED(ColorEntryGroup.MARKET_ORDERS, DataColors.get().marketOrdersExpired()),
 	TRANSACTIONS_BOUGHT(ColorEntryGroup.TRANSACTIONS, DataColors.get().transactionsBought()),
 	TRANSACTIONS_SOLD(ColorEntryGroup.TRANSACTIONS, DataColors.get().transactionsSold()),
+	GLOBAL_BPC(ColorEntryGroup.GLOBAL, DataColors.get().globalBPC()),
 	GLOBAL_BPO(ColorEntryGroup.GLOBAL, DataColors.get().globalBPO()),
 	GLOBAL_VALUE_NEGATIVE(ColorEntryGroup.GLOBAL, DataColors.get().globalValueNegative()),
 	GLOBAL_VALUE_POSITIVE(ColorEntryGroup.GLOBAL, DataColors.get().globalValuePositive(), Background.NOT_EDITABLE, Foreground.NOT_EDITABLE),
