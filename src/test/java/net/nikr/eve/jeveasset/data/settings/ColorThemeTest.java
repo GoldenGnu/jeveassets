@@ -29,9 +29,17 @@ import static org.junit.Assert.*;
 public class ColorThemeTest extends TestUtil {
 
 	@Test
-	public void testSomeMethod() {
+	public void testDefaultTheme() {
 		test(ColorThemeTypes.DEFAULT.getInstance());
+	}
+
+	@Test
+	public void testStrongTheme() {
 		test(ColorThemeTypes.STRONG.getInstance());
+	}
+
+	@Test
+	public void testColorblindTheme() {
 		test(ColorThemeTypes.COLORBLIND.getInstance());
 	}
 
