@@ -107,7 +107,7 @@ public class Program implements ActionListener {
 		TIMER
 	}
 	//Major.Minor.Bugfix [Release Candidate n] [BETA n] [DEV BUILD #n];
-	public static final String PROGRAM_VERSION = "6.3.3 DEV BUILD 1";
+	public static final String PROGRAM_VERSION = "6.4.0";
 	public static final String PROGRAM_NAME = "jEveAssets";
 	public static final String PROGRAM_HOMEPAGE = "https://eve.nikr.net/jeveasset";
 	public static final boolean PROGRAM_DEV_BUILD = false;
@@ -177,6 +177,7 @@ public class Program implements ActionListener {
 	//Data
 		SplashUpdater.setText("Loading DATA");
 		LOG.info("DATA Loading...");
+		FileUtil.autoImportFileUtil();
 		StaticData.load();
 		Settings.load();
 		TrackerData.load();
@@ -915,13 +916,13 @@ public class Program implements ActionListener {
 		} else if (MainMenuAction.SEND_BUG_REPORT.name().equals(e.getActionCommand())) {
 			DesktopUtil.browse("https://github.com/GoldenGnu/jeveassets/issues/new", this);
 		} else if (MainMenuAction.README.name().equals(e.getActionCommand())) { //External Files
-			DesktopUtil.open(Settings.getPathReadme(), this);
+			DesktopUtil.open(FileUtil.getPathReadme(), this);
 		} else if (MainMenuAction.LICENSE.name().equals(e.getActionCommand())) {
-			DesktopUtil.open(Settings.getPathLicense(), this);
+			DesktopUtil.open(FileUtil.getPathLicense(), this);
 		} else if (MainMenuAction.CREDITS.name().equals(e.getActionCommand())) {
-			DesktopUtil.open(Settings.getPathCredits(), this);
+			DesktopUtil.open(FileUtil.getPathCredits(), this);
 		} else if (MainMenuAction.CHANGELOG.name().equals(e.getActionCommand())) {
-			DesktopUtil.open(Settings.getPathChangeLog(), this);
+			DesktopUtil.open(FileUtil.getPathChangeLog(), this);
 		} else if (MainMenuAction.LINK_GITHUB.name().equals(e.getActionCommand())) { //Links
 			DesktopUtil.browse("https://github.com/GoldenGnu/jeveassets/issues/new", this);
 		} else if (MainMenuAction.LINK_FAQ.name().equals(e.getActionCommand())) {

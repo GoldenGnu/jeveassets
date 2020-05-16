@@ -41,9 +41,10 @@ import javax.swing.JRadioButton;
 import javax.swing.SwingUtilities;
 import javax.swing.text.JTextComponent;
 import net.nikr.eve.jeveasset.Program;
+import net.nikr.eve.jeveasset.data.settings.ColorEntry;
+import net.nikr.eve.jeveasset.data.settings.ColorSettings;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
-import net.nikr.eve.jeveasset.gui.shared.Colors;
 import net.nikr.eve.jeveasset.i18n.DialoguesSettings;
 
 
@@ -88,7 +89,7 @@ public class StockpileToolSettingsPanel extends JSettingsPanel {
 		jGroup1Label = new JLabel();
 		jGroup1Label.setOpaque(true);
 		jGroup1Label.setHorizontalAlignment(JLabel.CENTER);
-		jGroup1Label.setBackground(Colors.LIGHT_RED.getColor());
+		ColorSettings.config(jGroup1Label, ColorEntry.STOCKPILE_TABLE_BELOW_THRESHOLD);
 		jGroup1Label.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
 
 		jGroup2 = new JFormattedTextField(new DecimalFormat("##0", new DecimalFormatSymbols(Locale.ENGLISH)) );
@@ -114,7 +115,6 @@ public class StockpileToolSettingsPanel extends JSettingsPanel {
 		jGroup2Label = new JLabel();
 		jGroup2Label.setOpaque(true);
 		jGroup2Label.setHorizontalAlignment(JLabel.LEADING);
-		jGroup2Label.setBackground(Colors.LIGHT_RED.getColor());
 		jGroup2Label.setBorder(BorderFactory.createMatteBorder(1, 0, 1, 1, Color.BLACK));
 		jGroup2Label.addMouseListener(new MouseAdapter() {
 			@Override
@@ -146,7 +146,6 @@ public class StockpileToolSettingsPanel extends JSettingsPanel {
 		jGroup3Label = new JLabel();
 		jGroup3Label.setOpaque(true);
 		jGroup3Label.setHorizontalAlignment(JLabel.LEADING);
-		jGroup3Label.setBackground(Colors.LIGHT_RED.getColor());
 		jGroup3Label.setBorder(BorderFactory.createMatteBorder(1, 0, 1, 1, Color.BLACK));
 		jGroup3Label.addMouseListener(new MouseAdapter() {
 			@Override
@@ -270,15 +269,15 @@ public class StockpileToolSettingsPanel extends JSettingsPanel {
 	}
 
 	private void useTwoGroups() {
-		jGroup2Label.setBackground(Colors.LIGHT_GREEN.getColor());
+		ColorSettings.config(jGroup2Label, ColorEntry.STOCKPILE_ICON_OVER_THRESHOLD);
 		jGroup3Label.setBackground(Color.LIGHT_GRAY);
 		jGroup3.setText("");
 		jGroup3.setEnabled(false);
 		jGroup2.requestFocusInWindow();
 	}
 	private void useThreeGroups() {
-		jGroup2Label.setBackground(Colors.LIGHT_YELLOW.getColor());
-		jGroup3Label.setBackground(Colors.LIGHT_GREEN.getColor());
+		ColorSettings.config(jGroup2Label, ColorEntry.STOCKPILE_TABLE_BELOW_THRESHOLD_2ND);
+		ColorSettings.config(jGroup3Label, ColorEntry.STOCKPILE_ICON_OVER_THRESHOLD);
 		jGroup3.setEnabled(true);
 		jGroup2.requestFocusInWindow();
 	}

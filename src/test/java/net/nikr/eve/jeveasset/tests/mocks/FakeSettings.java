@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder.MarketOrderRange;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
+import net.nikr.eve.jeveasset.data.settings.ColorSettings;
 import net.nikr.eve.jeveasset.data.settings.ContractPriceManager;
 import net.nikr.eve.jeveasset.data.settings.ExportSettings;
 import net.nikr.eve.jeveasset.data.settings.PriceData;
@@ -472,16 +473,6 @@ public abstract class FakeSettings extends Settings {
 	}
 
 	@Override
-	public void setStrongColors(boolean strongColors) {
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	@Override
-	public boolean isStrongColors() {
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	@Override
 	public Map<TrackerDate, TrackerNote> getTrackerNotes() {
 		throw new UnsupportedOperationException("not implemented");
 	}
@@ -593,6 +584,41 @@ public abstract class FakeSettings extends Settings {
 
 	@Override
 	public boolean isSaveToolsOnExit() {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public void setTrackerSelectedOwners(List<String> trackerOwners) {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public List<String> getTrackerSelectedOwners() {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public void setTrackerCharacterCorporations(boolean trackerCharacterCorporations) {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public boolean isTrackerCharacterCorporations() {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public void setTrackerAllProfiles(boolean trackerAllProfiles) {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public boolean isTrackerAllProfiles() {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public ColorSettings getColorSettings() {
 		throw new UnsupportedOperationException("not implemented");
 	}
 }

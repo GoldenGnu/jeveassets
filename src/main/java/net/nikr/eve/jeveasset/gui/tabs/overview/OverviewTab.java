@@ -213,7 +213,7 @@ public class OverviewTab extends JMainTabSecondary {
 		//Table Format
 		tableFormat = new EnumTableFormatAdaptor<>(OverviewTableFormat.class);
 		//Backend
-		eventList = new EventListManager<Overview>().create();
+		eventList = EventListManager.create();
 		//Sorting (per column)
 		eventList.getReadWriteLock().readLock().lock();
 		sortedList = new SortedList<>(eventList);

@@ -21,11 +21,11 @@
 
 package net.nikr.eve.jeveasset.io.local;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.net.Proxy;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -38,6 +38,8 @@ import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder.MarketOrderRange;
 import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
 import net.nikr.eve.jeveasset.data.settings.AssetAddedData;
+import net.nikr.eve.jeveasset.data.settings.ColorEntry;
+import net.nikr.eve.jeveasset.data.settings.ColorTheme.ColorThemeTypes;
 import net.nikr.eve.jeveasset.data.settings.ContractPriceManager.ContractPriceSettings;
 import net.nikr.eve.jeveasset.data.settings.ContractPriceManager.ContractPriceSettings.ContractPriceMode;
 import net.nikr.eve.jeveasset.data.settings.ContractPriceManager.ContractPriceSettings.ContractPriceSecurity;
@@ -141,6 +143,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		try {
 			updater.performUpdates(SETTINGS_VERSION, filename);
 		} catch (XmlException ex) {
+			LOG.error(ex.getMessage(), ex);
 			Settings settings = settingsFactory.create();
 			settings.setSettingsLoadError(true);
 			return settings;
@@ -234,7 +237,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 			throw new XmlException("Wrong root element name.");
 		}
 		//Stockpiles
-		List<Stockpile> stockpiles = new ArrayList<Stockpile>();
+		List<Stockpile> stockpiles = new ArrayList<>();
 		NodeList stockpilesNodes = element.getElementsByTagName("stockpiles");
 		if (stockpilesNodes.getLength() == 1) {
 			Element stockpilesElement = (Element) stockpilesNodes.item(0);
@@ -248,212 +251,185 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 			throw new XmlException("Wrong root element name.");
 		}
 
-		//writePublicMarketOrdersNextUpdate
-		NodeList showToolsNodes = element.getElementsByTagName("showtools");
-		if (showToolsNodes.getLength() == 1) {
-			Element showToolsElement =  (Element) showToolsNodes.item(0);
+		//Color Settings
+		Element colorSettingsElement = getNodeOptional(element, "colorsettings");
+		if (colorSettingsElement != null) {
+			parseColorSettings(colorSettingsElement, settings);
+		}
+
+		//Tracker Settings
+		Element trackerSettingsElement = getNodeOptional(element, "trackersettings");
+		if (trackerSettingsElement != null) {
+			parseTrackerSettings(trackerSettingsElement, settings);
+		}
+
+		//Show Tools
+		Element showToolsElement =  getNodeOptional(element, "showtools");
+		if (showToolsElement != null) {
 			parseShowToolsNodes(showToolsElement, settings);
 		}
 
-		//writePublicMarketOrdersNextUpdate
-		NodeList marketOrderOutbidNodes = element.getElementsByTagName("marketorderoutbid");
-		if (marketOrderOutbidNodes.getLength() == 1) {
-			Element marketOrderOutbidElement =  (Element) marketOrderOutbidNodes.item(0);
+		//Outbid
+		Element marketOrderOutbidElement =  getNodeOptional(element, "marketorderoutbid");
+		if (marketOrderOutbidElement != null) {
 			parseMarketOrderOutbidNodes(marketOrderOutbidElement, settings);
 		}
 
 		//Routing
-		NodeList routingNodes = element.getElementsByTagName("routingsettings");
-		if (routingNodes.getLength() == 1) {
-			Element routingElement = (Element) routingNodes.item(0);
+		Element routingElement = getNodeOptional(element, "routingsettings");
+		if (routingElement != null) {
 			parseRoutingSettings(routingElement, settings);
 		}
 
 		//Tags - Must be loaded before stockpiles (and everything else that uses tags)
-		NodeList tagsNodes = element.getElementsByTagName("tags");
-		if (tagsNodes.getLength() == 1) {
-			Element tagsElement = (Element) tagsNodes.item(0);
+		Element tagsElement = getNodeOptional(element, "tags");
+		if (tagsElement != null) {
 			parseTags(tagsElement, settings);
 		}
 
 		//Owners
-		NodeList ownersNodes = element.getElementsByTagName("owners");
-		if (ownersNodes.getLength() == 1) {
-			Element ownersElement = (Element) ownersNodes.item(0);
+		Element ownersElement = getNodeOptional(element, "owners");
+		if (ownersElement != null) {
 			parseOwners(ownersElement, settings);
 		}
 
 		//Tracker Data
-		NodeList trackerDataNodes = element.getElementsByTagName("trackerdata");
-		if (trackerDataNodes.getLength() == 1) {
-			Element trackerDataElement = (Element) trackerDataNodes.item(0);
+		Element trackerDataElement = getNodeOptional(element, "trackerdata");
+		if (trackerDataElement != null) {
 			Map<String, List<Value>> trackerData = parseTrackerData(trackerDataElement);
 			TrackerData.set(trackerData);
 		}
 
 		//Tracker Data
-		NodeList trackerNotesNodes = element.getElementsByTagName("trackernotes");
-		if (trackerNotesNodes.getLength() == 1) {
-			Element trackerNoteElement = (Element) trackerNotesNodes.item(0);
+		Element trackerNoteElement = getNodeOptional(element, "trackernotes");
+		if (trackerNoteElement != null) {
 			parseTrackerNotes(trackerNoteElement, settings);
 		}
 
 		//Tracker Filters
-		NodeList trackerFiltersNodes = element.getElementsByTagName("trackerfilters");
-		if (trackerFiltersNodes.getLength() == 1) {
-			Element trackerFilterElement = (Element) trackerFiltersNodes.item(0);
+		Element trackerFilterElement = getNodeOptional(element, "trackerfilters");
+		if (trackerFilterElement != null) {
 			parseTrackerFilters(trackerFilterElement, settings);
 		}
 
 		//Asset Settings
-		NodeList assetSettingsNodes = element.getElementsByTagName("assetsettings");
-		if (assetSettingsNodes.getLength() == 1) {
-			Element assetSettingsElement = (Element) assetSettingsNodes.item(0);
+		Element assetSettingsElement = getNodeOptional(element, "assetsettings");
+		if (assetSettingsElement != null) {
 			parseAssetSettings(assetSettingsElement, settings);
 		}
 
 		//Stockpiles
-		NodeList stockpilesNodes = element.getElementsByTagName("stockpiles");
-		if (stockpilesNodes.getLength() == 1) {
-			Element stockpilesElement = (Element) stockpilesNodes.item(0);
+		Element stockpilesElement = getNodeOptional(element, "stockpiles");
+		if (stockpilesElement != null) {
 			parseStockpiles(stockpilesElement, settings.getStockpiles());
 		}
 
 		//Stockpile Groups
-		NodeList stockpileGroupsNodes = element.getElementsByTagName("stockpilegroups");
-		if (stockpileGroupsNodes.getLength() == 1) {
-			Element stockpileGroupsElement = (Element) stockpileGroupsNodes.item(0);
+		Element stockpileGroupsElement = getNodeOptional(element, "stockpilegroups");
+		if (stockpileGroupsElement != null) {
 			parseStockpileGroups(stockpileGroupsElement, settings);
 		}
 
 		//Export Settings
-		NodeList exportNodes = element.getElementsByTagName("csvexport");
-		if (exportNodes.getLength() == 1) {
-			Element exportElement = (Element) exportNodes.item(0);
+		Element exportElement = getNodeOptional(element, "csvexport");
+		if (exportElement != null) {
 			parseExportSettings(exportElement, settings);
 		}
 
 		//Overview
-		NodeList overviewNodes = element.getElementsByTagName("overview");
-		if (overviewNodes.getLength() == 1) {
-			Element overviewElement = (Element) overviewNodes.item(0);
+		Element overviewElement = getNodeOptional(element, "overview");
+		if (overviewElement != null) {
 			parseOverview(overviewElement, settings);
 		}
 
 		//Window
-		NodeList windowNodes = element.getElementsByTagName("window");
-		if (windowNodes.getLength() == 1) {
-			Element windowElement = (Element) windowNodes.item(0);
+		Element windowElement = getNodeOptional(element, "window");
+		if (windowElement != null) {
 			parseWindow(windowElement, settings);
 		}
 
 		//Reprocessing
-		NodeList reprocessingNodes = element.getElementsByTagName("reprocessing");
-		if (reprocessingNodes.getLength() == 1) {
-			Element reprocessingElement = (Element) reprocessingNodes.item(0);
+		Element reprocessingElement = getNodeOptional(element, "reprocessing");
+		if (reprocessingElement != null) {
 			parseReprocessing(reprocessingElement, settings);
 		}
 
 		//UserPrices
-		NodeList userPriceNodes = element.getElementsByTagName("userprices");
-		if (userPriceNodes.getLength() == 1) {
-			Element userPriceElement = (Element) userPriceNodes.item(0);
-			parseUserPrices(userPriceElement, settings);
-		}
-
+		Element userPriceElement = getNode(element, "userprices");
+		parseUserPrices(userPriceElement, settings);
 
 		//User Item Names
-		NodeList userItemNameNodes = element.getElementsByTagName("itemmames");
-		if (userItemNameNodes.getLength() == 1) {
-			Element userItemNameElement = (Element) userItemNameNodes.item(0);
+		Element userItemNameElement = getNodeOptional(element, "itemmames");
+		if (userItemNameElement != null) {
 			parseUserItemNames(userItemNameElement, settings);
 		}
 
 		//Eve Item Names
-		NodeList eveNameNodes = element.getElementsByTagName("evenames");
-		if (eveNameNodes.getLength() == 1) {
-			Element eveNameElement = (Element) eveNameNodes.item(0);
+		Element eveNameElement = getNodeOptional(element, "evenames");
+		if (eveNameElement != null) {
 			parseEveNames(eveNameElement, settings);
 		}
 
 		//PriceDataSettings
-		NodeList priceDataSettingsNodes = element.getElementsByTagName("marketstat");
-		if (priceDataSettingsNodes.getLength() == 1) {
-			Element priceDataSettingsElement = (Element) priceDataSettingsNodes.item(0);
-			parsePriceDataSettings(priceDataSettingsElement, settings);
-		}
+		Element priceDataSettingsElement = getNode(element, "marketstat");
+		parsePriceDataSettings(priceDataSettingsElement, settings);
 
 		//ContractPriceSettings
-		NodeList contractPriceSettingsNodes = element.getElementsByTagName("contractpricesettings");
-		if (contractPriceSettingsNodes.getLength() == 1) {
-			Element contractPriceSettingsElement = (Element) contractPriceSettingsNodes.item(0);
+		Element contractPriceSettingsElement = getNodeOptional(element, "contractpricesettings");
+		if (contractPriceSettingsElement != null) {
 			parseContractPriceSettings(contractPriceSettingsElement, settings);
 		}
 
 		//Flags
-		NodeList flagNodes = element.getElementsByTagName("flags");
-		if (flagNodes.getLength() != 1) {
-			throw new XmlException("Wrong flag element count.");
-		}
-		Element flagsElement = (Element) flagNodes.item(0);
+		Element flagsElement = getNode(element, "flags");
 		parseFlags(flagsElement, settings);
 
 		//Table Filters (Must be loaded before Asset Filters)
-		NodeList tablefiltersNodes = element.getElementsByTagName("tablefilters");
-		if (tablefiltersNodes.getLength() == 1) {
-			Element tablefiltersElement = (Element) tablefiltersNodes.item(0);
+		Element tablefiltersElement = getNodeOptional(element, "tablefilters");
+		if (tablefiltersElement != null) {
 			parseTableFilters(tablefiltersElement, settings);
 		}
 
 		//Asset Filters
-		NodeList filterNodes = element.getElementsByTagName("filters");
-		if (filterNodes.getLength() == 1) {
-			Element filtersElement = (Element) filterNodes.item(0);
+		Element filtersElement = getNodeOptional(element, "filters");
+		if (filtersElement != null) {
 			parseAssetFilters(filtersElement, settings);
 		}
 
 		//Table Columns
-		NodeList tablecolumnsNodes = element.getElementsByTagName("tablecolumns");
-		if (tablecolumnsNodes.getLength() == 1) {
-			Element tablecolumnsElement = (Element) tablecolumnsNodes.item(0);
+		Element tablecolumnsElement = getNodeOptional(element, "tablecolumns");
+		if (tablecolumnsElement != null) {
 			parseTableColumns(tablecolumnsElement, settings);
 		}
 
 		//Table Columns Width
-		NodeList tableColumnsWidthNodes = element.getElementsByTagName("tablecolumnswidth");
-		if (tableColumnsWidthNodes.getLength() == 1) {
-			Element tableColumnsWidthElement = (Element) tableColumnsWidthNodes.item(0);
+		Element tableColumnsWidthElement = getNodeOptional(element, "tablecolumnswidth");
+		if (tableColumnsWidthElement != null) {
 			parseTableColumnsWidth(tableColumnsWidthElement, settings);
 		}
 
 		//Table Resize
-		NodeList tableResizeNodes = element.getElementsByTagName("tableresize");
-		if (tableResizeNodes.getLength() == 1) {
-			Element tableResizeElement = (Element) tableResizeNodes.item(0);
+		Element tableResizeElement = getNodeOptional(element, "tableresize");
+		if (tableResizeElement != null) {
 			parseTableResize(tableResizeElement, settings);
 		}
 
 		//Table Views
-		NodeList tableViewsNodes = element.getElementsByTagName("tableviews");
-		if (tableViewsNodes.getLength() == 1) {
-			Element tableViewsElement = (Element) tableViewsNodes.item(0);
+		Element tableViewsElement = getNodeOptional(element, "tableviews");
+		if (tableViewsElement != null) {
 			parseTableViews(tableViewsElement, settings);
 		}
 
 		//Asset added
-		NodeList assetaddedNodes = element.getElementsByTagName("assetadded");
-		if (assetaddedNodes.getLength() == 1) {
-			Element assetaddedElement = (Element) assetaddedNodes.item(0);
+		Element assetaddedElement = getNodeOptional(element, "assetadded");
+		if (assetaddedElement != null) {
 			parseAssetAdded(assetaddedElement);
 		}
 
 		// Proxy can have 0 or 1 proxy elements; at 0, the proxy stays as null.
-		NodeList proxyNodes = element.getElementsByTagName("proxy");
-		if (proxyNodes.getLength() == 1) {
-			Element proxyElement = (Element) proxyNodes.item(0);
+		Element proxyElement = getNodeOptional(element, "proxy");
+		if (proxyElement != null) {
 			parseProxy(proxyElement, settings);
-		} else if (proxyNodes.getLength() > 1) {
-			throw new XmlException("Wrong proxy element count.");
 		}
 		return settings;
 	}
@@ -470,7 +446,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 	}
 
 	private Map<String, List<Value>> parseTrackerData(final Element element) throws XmlException {
-		Map<String, List<Value>> trackerData = new HashMap<String, List<Value>>();
+		Map<String, List<Value>> trackerData = new HashMap<>();
 		NodeList tableNodeList = element.getElementsByTagName("owner");
 		for (int a = 0; a < tableNodeList.getLength(); a++) {
 			//Read Owner
@@ -609,7 +585,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 			}
 		//LEGACY
 			//Owners
-			List<Long> ownerIDs = new ArrayList<Long>();
+			List<Long> ownerIDs = new ArrayList<>();
 			if (haveAttribute(stockpileNode, "characterid")) {
 				long ownerID = getLong(stockpileNode, "characterid");
 				if (ownerID > 0) {
@@ -617,7 +593,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 				}
 			}
 			//Containers
-			List<StockpileContainer> containers = new ArrayList<StockpileContainer>();
+			List<StockpileContainer> containers = new ArrayList<>();
 			if (haveAttribute(stockpileNode, "container")) {
 				String container = getString(stockpileNode, "container");
 				if (!container.equals(General.get().all())) {
@@ -625,7 +601,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 				}
 			}
 			//Flags
-			List<Integer> flagIDs = new ArrayList<Integer>();
+			List<Integer> flagIDs = new ArrayList<>();
 			if (haveAttribute(stockpileNode, "flagid")) {
 				int flagID = getInt(stockpileNode, "flagid");
 				if (flagID > 0) {
@@ -656,7 +632,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 			if (haveAttribute(stockpileNode, "jobs")) {
 				jobs = getBoolean(stockpileNode, "jobs");
 			}
-			List<StockpileFilter> filters = new ArrayList<StockpileFilter>();
+			List<StockpileFilter> filters = new ArrayList<>();
 			if (inventory != null && sellOrders != null && buyOrders != null && jobs != null) {
 				StockpileFilter filter = new StockpileFilter(location, flagIDs, containers, ownerIDs, exclude, null, inventory, sellOrders, buyOrders, jobs, false, false, false, false, false, false);
 				filters.add(filter);
@@ -707,7 +683,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 				long locationID = getLong(filterNode, "locationid");
 				location = ApiIdConverter.getLocation(locationID);
 				//Owners
-				List<Long> filterOwnerIDs = new ArrayList<Long>();
+				List<Long> filterOwnerIDs = new ArrayList<>();
 				NodeList ownerNodes = filterNode.getElementsByTagName("owner");
 				for (int c = 0; c < ownerNodes.getLength(); c++) {
 					Element ownerNode = (Element) ownerNodes.item(c);
@@ -715,7 +691,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 					filterOwnerIDs.add(filterOwnerID);
 				}
 				//Containers
-				List<StockpileContainer> filterContainers = new ArrayList<StockpileContainer>();
+				List<StockpileContainer> filterContainers = new ArrayList<>();
 				NodeList containerNodes = filterNode.getElementsByTagName("container");
 				for (int c = 0; c < containerNodes.getLength(); c++) {
 					Element containerNode = (Element) containerNodes.item(c);
@@ -727,7 +703,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 					filterContainers.add(new StockpileContainer(filterContainer, filterIncludeContainer));
 				}
 				//Flags
-				List<Integer> filterFlagIDs = new ArrayList<Integer>();
+				List<Integer> filterFlagIDs = new ArrayList<>();
 				NodeList flagNodes = filterNode.getElementsByTagName("flag");
 				for (int c = 0; c < flagNodes.getLength(); c++) {
 					Element flagNode = (Element) flagNodes.item(c);
@@ -771,11 +747,43 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		Collections.sort(stockpiles);
 	}
 
+	private void parseColorSettings(Element colorSettingsElement, Settings settings) throws XmlException {
+		NodeList colorNodes = colorSettingsElement.getElementsByTagName("color");
+		for (int a = 0; a < colorNodes.getLength(); a++) {
+			Element colorNode = (Element) colorNodes.item(a);
+			try {
+				ColorEntry entry = ColorEntry.valueOf(getString(colorNode, "name"));
+				Color background = getColorOptional(colorNode, "background");
+				Color foreground = getColorOptional(colorNode, "foreground");
+				settings.getColorSettings().setBackground(entry, background);
+				settings.getColorSettings().setForeground(entry, foreground);
+			} catch (IllegalArgumentException ex ) {
+				LOG.error(ex.getMessage(), ex);
+			}
+		}
+		String theme = getStringOptional(colorSettingsElement, "theme");
+		ColorThemeTypes colorThemeTypes;
+		try {
+			colorThemeTypes = ColorThemeTypes.valueOf(theme);
+		} catch (IllegalArgumentException ex) {
+			LOG.error(ex.getMessage(), ex);
+			colorThemeTypes = ColorThemeTypes.DEFAULT;
+		}
+		settings.getColorSettings().setColorTheme(colorThemeTypes.getInstance(), false);
+	}
+
+	private void parseTrackerSettings(Element trackerSettingsElement, Settings settings) throws XmlException {
+		boolean allProfiles = getBoolean(trackerSettingsElement, "allprofiles");
+		boolean characterCorporations = getBoolean(trackerSettingsElement, "charactercorporations");
+		List<String> selectedOwners = getStringListOptional(trackerSettingsElement, "selectedowners");
+		settings.setTrackerAllProfiles(allProfiles);
+		settings.setTrackerCharacterCorporations(characterCorporations);
+		settings.setTrackerSelectedOwners(selectedOwners);
+	}
+
 	private void parseShowToolsNodes(Element showToolsElement, Settings settings) throws XmlException {
 		boolean saveOnExit = getBoolean(showToolsElement, "saveonexit");
-		String str = getString(showToolsElement, "show");
-		String[] arr = str.split(",");
-		List<String> showTools = new ArrayList<>(Arrays.asList(arr));
+		List<String> showTools = getStringList(showToolsElement, "show");
 		settings.setSaveToolsOnExit(saveOnExit);
 		settings.getShowTools().addAll(showTools);
 	}
@@ -818,7 +826,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		for (int a = 0; a < presetNodes.getLength(); a++) {
 			Element presetNode = (Element) presetNodes.item(a);
 			String name = getString(presetNode, "name");
-			Set<Long> systemIDs = new HashSet<Long>();
+			Set<Long> systemIDs = new HashSet<>();
 			NodeList presetSystemNodes = presetNode.getElementsByTagName("presetsystem");
 			for (int b = 0; b < presetSystemNodes.getLength(); b++) {
 				Element systemNode = (Element) presetSystemNodes.item(b);
@@ -831,17 +839,19 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		for (int a = 0; a < routeNodes.getLength(); a++) {
 			Element routeNode = (Element) routeNodes.item(a);
 			String name = getString(routeNode, "name");
+			int waypoints = getInt(routeNode, "waypoints");
 			String algorithmName = getString(routeNode, "algorithmname");
 			long algorithmTime = getLong(routeNode, "algorithmtime");
 			int jumps = getInt(routeNode, "jumps");
-			int waypoints = getInt(routeNode, "waypoints");
+			String avoid = getStringOptional(routeNode, "avoid");
+			String security = getStringOptional(routeNode, "security");
 			NodeList routeSystemsNodes = routeNode.getElementsByTagName("routesystems");
-			List<List<SolarSystem>> route = new ArrayList<List<SolarSystem>>();
-			Map<Long, List<SolarSystem>> stationsMap = new HashMap<Long, List<SolarSystem>>();
+			List<List<SolarSystem>> route = new ArrayList<>();
+			Map<Long, List<SolarSystem>> stationsMap = new HashMap<>();
 			for (int b = 0; b < routeSystemsNodes.getLength(); b++) {
 				Element routeStartSystemNode = (Element) routeSystemsNodes.item(b);
 				NodeList routeSystemNodes = routeStartSystemNode.getElementsByTagName("routesystem");
-				List<SolarSystem> systems = new ArrayList<SolarSystem>();
+				List<SolarSystem> systems = new ArrayList<>();
 				for (int c = 0; c < routeSystemNodes.getLength(); c++) {
 					Element routeSystemNode = (Element) routeSystemNodes.item(c);
 					long systemID = getLong(routeSystemNode, "systemid");
@@ -862,7 +872,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 					stationsList.add(station);
 				}
 			}
-			settings.getRoutingSettings().getRoutes().put(name, new RouteResult(route, stationsMap, waypoints, algorithmName, algorithmTime, jumps));
+			settings.getRoutingSettings().getRoutes().put(name, new RouteResult(route, stationsMap, waypoints, algorithmName, algorithmTime, jumps, avoid, security));
 		}
 	}
 
@@ -1081,6 +1091,13 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 					settings.getFlags().put(SettingFlag.FLAG_INCLUDE_SELL_CONTRACTS, enabled);
 					settings.getFlags().put(SettingFlag.FLAG_INCLUDE_BUY_CONTRACTS, enabled);
 				}
+				if (key.equals("FLAG_STRONG_COLORS")) {
+					if (enabled) {
+						settings.getColorSettings().setColorTheme(ColorThemeTypes.STRONG.getInstance(), true);
+					} else {
+						settings.getColorSettings().setColorTheme(ColorThemeTypes.DEFAULT.getInstance(), true);
+					}
+				}
 				SettingFlag settingFlag = SettingFlag.valueOf(key);
 				settings.getFlags().put(settingFlag, enabled);
 			} catch (IllegalArgumentException ex) {
@@ -1093,7 +1110,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 	private void parseTableColumns(final Element element, final Settings settings) throws XmlException {
 		NodeList tableNodeList = element.getElementsByTagName("table");
 		for (int a = 0; a < tableNodeList.getLength(); a++) {
-			List<SimpleColumn> columns = new ArrayList<SimpleColumn>();
+			List<SimpleColumn> columns = new ArrayList<>();
 			Element tableNode = (Element) tableNodeList.item(a);
 			String tableName = getString(tableNode, "name");
 			//Ignore old tables
@@ -1114,7 +1131,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 	private void parseTableColumnsWidth(final Element element, final Settings settings) throws XmlException {
 		NodeList tableNodeList = element.getElementsByTagName("table");
 		for (int a = 0; a < tableNodeList.getLength(); a++) {
-			Map<String, Integer> columns = new HashMap<String, Integer>();
+			Map<String, Integer> columns = new HashMap<>();
 			Element tableNode = (Element) tableNodeList.item(a);
 			String tableName = getString(tableNode, "name");
 			NodeList columnNodeList = tableNode.getElementsByTagName("column");
@@ -1143,7 +1160,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		for (int a = 0; a < viewToolNodeList.getLength(); a++) {
 			Element viewToolNode = (Element) viewToolNodeList.item(a);
 			String toolName = getString(viewToolNode, "tool");
-			Map<String, View> views = new TreeMap<String, View>(new CaseInsensitiveComparator());
+			Map<String, View> views = new TreeMap<>(new CaseInsensitiveComparator());
 			settings.getTableViews().put(toolName, views);
 			NodeList viewNodeList = viewToolNode.getElementsByTagName("view");
 			for (int b = 0; b < viewNodeList.getLength(); b++) {
@@ -1168,11 +1185,11 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 			Element tableNode = (Element) tableNodeList.item(a);
 			String tableName = getString(tableNode, "name");
 			NodeList filterNodeList = tableNode.getElementsByTagName("filter");
-			Map<String, List<Filter>> filters = new HashMap<String, List<Filter>>();
+			Map<String, List<Filter>> filters = new HashMap<>();
 			for (int b = 0; b < filterNodeList.getLength(); b++) {
 				Element filterNode = (Element) filterNodeList.item(b);
 				String filterName = getString(filterNode, "name");
-				List<Filter> filter = new ArrayList<Filter>();
+				List<Filter> filter = new ArrayList<>();
 				NodeList rowNodes = filterNode.getElementsByTagName("row");
 				for (int c = 0; c < rowNodes.getLength(); c++) {
 					Element rowNode = (Element) rowNodes.item(c);
@@ -1311,7 +1328,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 			Element filterNode = (Element) filterNodeList.item(a);
 			String filterName = getString(filterNode, "name");
 
-			List<Filter> filters = new ArrayList<Filter>();
+			List<Filter> filters = new ArrayList<>();
 
 			NodeList rowNodeList = filterNode.getElementsByTagName("row");
 			for (int b = 0; b < rowNodeList.getLength(); b++) {
@@ -1435,7 +1452,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		}
 		NodeList tableNodeList = element.getElementsByTagName("table");
 		for (int a = 0; a < tableNodeList.getLength(); a++) {
-			List<String> columns = new ArrayList<String>();
+			List<String> columns = new ArrayList<>();
 			Element tableNode = (Element) tableNodeList.item(a);
 			String tableName = getString(tableNode, "name");
 			NodeList columnNodeList = tableNode.getElementsByTagName("column");

@@ -27,6 +27,7 @@ import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import net.troja.eve.esi.ApiException;
 import net.troja.eve.esi.ApiResponse;
 import net.troja.eve.esi.model.CharacterBlueprintsResponse;
+import net.troja.eve.esi.model.CharacterRolesResponse;
 import net.troja.eve.esi.model.CorporationBlueprintsResponse;
 
 
@@ -66,6 +67,12 @@ public class EsiBlueprintsGetter extends AbstractEsiGetter {
 	@Override
 	protected boolean haveAccess() {
 		return owner.isBlueprints();
+	}
+
+	@Override
+	protected CharacterRolesResponse.RolesEnum[] getRequiredRoles() {
+		CharacterRolesResponse.RolesEnum[] roles = {CharacterRolesResponse.RolesEnum.DIRECTOR};
+		return roles;
 	}
 
 }

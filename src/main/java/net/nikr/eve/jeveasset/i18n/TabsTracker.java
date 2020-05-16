@@ -92,6 +92,8 @@ public abstract class TabsTracker extends Bundle {
 	public abstract String quickDate();
 	public abstract String reset();
 	public abstract String search();
+	public abstract String scaleLinear();
+	public abstract String scaleLogarithmic();
 	public abstract String selectDivision();
 	public abstract String selectFlag();
 	public abstract String selectLocation();

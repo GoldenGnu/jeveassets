@@ -28,6 +28,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder.MarketOrderRange;
+import net.nikr.eve.jeveasset.data.settings.ColorEntry;
+import net.nikr.eve.jeveasset.data.settings.ColorSettings;
 import net.nikr.eve.jeveasset.data.settings.ContractPriceManager.ContractPriceSettings;
 import net.nikr.eve.jeveasset.data.settings.ExportSettings;
 import net.nikr.eve.jeveasset.data.settings.PriceDataSettings;
@@ -54,6 +56,7 @@ import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileFilter;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
 import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerDate;
 import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerNote;
+import net.nikr.eve.jeveasset.io.shared.FileUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -67,7 +70,7 @@ public class SettingsWriter extends AbstractXmlWriter {
 	private SettingsWriter() { }
 
 	public static boolean save(final Settings settings, final String filename) {
-		if (!new File(Settings.getPathTrackerData()).exists()) { //Make sure the tracker data is saved
+		if (!new File(FileUtil.getPathTrackerData()).exists()) { //Make sure the tracker data is saved
 			TrackerData.save("Saving Settings", true);
 		}
 		SettingsWriter writer = new SettingsWriter();
@@ -131,11 +134,13 @@ public class SettingsWriter extends AbstractXmlWriter {
 		writeExportSettings(xmldoc, settings.getExportSettings());
 		writeTrackerNotes(xmldoc, settings.getTrackerNotes());
 		writeTrackerFilters(xmldoc, settings.getTrackerFilters(), settings.isTrackerSelectNew());
+		writeTrackerSettings(xmldoc, settings);
 		writeOwners(xmldoc, settings.getOwners());
 		writeTags(xmldoc, settings.getTags());
 		writeRoutingSettings(xmldoc, settings.getRoutingSettings());
 		writeMarketOrderOutbid(xmldoc, settings.getPublicMarketOrdersNextUpdate(), settings.getPublicMarketOrdersLastUpdate(), settings.getOutbidOrderRange(), settings.getMarketOrdersOutbid());
 		writeShowTool(xmldoc, settings.getShowTools(), settings.isSaveToolsOnExit());
+		writeColorSettings(xmldoc, settings.getColorSettings());
 		try {
 			writeXmlFile(xmldoc, filename, true);
 		} catch (XmlException ex) {
@@ -144,6 +149,19 @@ public class SettingsWriter extends AbstractXmlWriter {
 		}
 		LOG.info("Settings saved");
 		return true;
+	}
+
+	private void writeColorSettings(Document xmldoc, ColorSettings colorSettings) {
+		Element colorSettingsNode = xmldoc.createElementNS(null, "colorsettings");
+		xmldoc.getDocumentElement().appendChild(colorSettingsNode);
+		setAttributeOptional(colorSettingsNode, "theme", colorSettings.getColorTheme().getType());
+		for (ColorEntry colorEntry : ColorEntry.values()) {
+			Element colorNode = xmldoc.createElementNS(null, "color");
+			setAttribute(colorNode, "name", colorEntry);
+			setAttributeOptional(colorNode, "background", colorSettings.getBackground(colorEntry));
+			setAttributeOptional(colorNode, "foreground", colorSettings.getForeground(colorEntry));
+			colorSettingsNode.appendChild(colorNode);
+		}
 	}
 
 	private void writeShowTool(Document xmldoc, List<String> showTools, boolean saveToolsOnExit) {
@@ -192,10 +210,12 @@ public class SettingsWriter extends AbstractXmlWriter {
 			Element routeNode = xmldoc.createElementNS(null, "route");
 			RouteResult routeResult = entry.getValue();
 			setAttribute(routeNode, "name", entry.getKey());
+			setAttribute(routeNode, "waypoints", routeResult.getWaypoints());
 			setAttribute(routeNode, "algorithmname", routeResult.getAlgorithmName());
 			setAttribute(routeNode, "algorithmtime",routeResult.getAlgorithmTime());
 			setAttribute(routeNode, "jumps", routeResult.getJumps());
-			setAttribute(routeNode, "waypoints", routeResult.getWaypoints());
+			setAttribute(routeNode, "avoid", routeResult.getAvoid());
+			setAttribute(routeNode, "security", routeResult.getSecurity());
 			routingNode.appendChild(routeNode);
 			for (List<SolarSystem> systems : routeResult.getRoute()) {
 				Element systemsNode = xmldoc.createElementNS(null, "routesystems");
@@ -256,6 +276,14 @@ public class SettingsWriter extends AbstractXmlWriter {
 			setAttribute(ownerNode, "selected", entry.getValue());
 			trackerDataNode.appendChild(ownerNode);
 		}
+	}
+
+	private void writeTrackerSettings(final Document xmldoc,  Settings settings) {
+		Element trackerSettingsNode = xmldoc.createElementNS(null, "trackersettings");
+		xmldoc.getDocumentElement().appendChild(trackerSettingsNode);
+		setAttribute(trackerSettingsNode, "allprofiles", settings.isTrackerAllProfiles());
+		setAttribute(trackerSettingsNode, "charactercorporations", settings.isTrackerCharacterCorporations());
+		setAttributeOptional(trackerSettingsNode, "selectedowners", settings.getTrackerSelectedOwners());
 	}
 
 	private void writeTrackerNotes(final Document xmldoc, final Map<TrackerDate, TrackerNote> trackerNotes) {

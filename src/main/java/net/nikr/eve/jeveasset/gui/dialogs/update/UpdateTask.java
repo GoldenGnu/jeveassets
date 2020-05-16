@@ -54,10 +54,12 @@ public abstract class UpdateTask extends SwingWorker<Void, Void> {
 
 	private Icon icon;
 	private final JLabel jText;
-	private final List<ErrorClass> errors;
+	private final List<LogClass> log;
 	private final String name;
 	private Integer totalProgress = null;
 
+	private boolean warning = false;
+	private boolean error = false;
 	private boolean errorShown = false;
 	private boolean taskDone = false;
 	private boolean pause = false;
@@ -68,7 +70,7 @@ public abstract class UpdateTask extends SwingWorker<Void, Void> {
 		jText = new JLabel(name);
 		jText.setIcon(Images.UPDATE_NOT_STARTED.getIcon());
 
-		errors = Collections.synchronizedList(new ArrayList<>());
+		log = Collections.synchronizedList(new ArrayList<>());
 	}
 
 	public void setTotalProgress(final float end, final float done, final int start, final int max) {
@@ -118,12 +120,18 @@ public abstract class UpdateTask extends SwingWorker<Void, Void> {
 		return jText;
 	}
 
-	public void addError(final String owner, final String error) {
-		errors.add(new ErrorClass(owner, error));
+	public void addError(final String owner, final String msg) {
+		log.add(new LogClass(owner, msg));
+		error = true;
 	}
 
-	public boolean hasError() {
-		return !errors.isEmpty();
+	public void addWarning(final String owner, final String msg) {
+		log.add(new LogClass(owner, msg));
+		warning = true;
+	}
+
+	public boolean hasLog() {
+		return !log.isEmpty();
 	}
 
 	public Icon getIcon() {
@@ -172,23 +180,23 @@ public abstract class UpdateTask extends SwingWorker<Void, Void> {
 		this.setProgress(progress);
 	}
 
-	public void setError(final JTextPane jError) {
-		if (!errors.isEmpty()) {
+	public void insertLog(final JTextPane jError) {
+		if (!log.isEmpty()) {
 			StyledDocument doc = new DefaultStyledDocument();
-			addError(doc);
+			UpdateTask.this.insertLog(doc);
 			jError.setDocument(doc);
 		}
 	}
 
-	public void addError(final StyledDocument doc) {
-		if (!errors.isEmpty()) {
+	public void insertLog(final StyledDocument doc) {
+		if (!log.isEmpty()) {
 			SimpleAttributeSet errorAttributeSet = new SimpleAttributeSet();
 			errorAttributeSet.addAttribute(StyleConstants.CharacterConstants.Foreground, jText.getBackground().darker().darker());
 
 			try {
 				boolean first = true;
-				synchronized (errors) {
-					for (ErrorClass errorClass : errors) {
+				synchronized (log) {
+					for (LogClass errorClass : log) {
 						if (first) {
 							first = false;
 						} else {
@@ -224,17 +232,25 @@ public abstract class UpdateTask extends SwingWorker<Void, Void> {
 		jText.setIcon(Images.UPDATE_CANCELLED.getIcon());
 	}
 
-	public void showError(final boolean b) {
-		if (!errors.isEmpty()) {
+	public void showLog(final boolean b) {
+		if (!log.isEmpty()) {
 			Font font = jText.getFont();
 			if (b) {
 				errorShown = true;
 				jText.setFont(new Font(font.getName(), Font.BOLD, font.getSize()));
-				jText.setText(DialoguesUpdate.get().clickToHide(name));
+				if (error) {
+					jText.setText(DialoguesUpdate.get().clickToHideErrors(name));
+				} else {
+					jText.setText(DialoguesUpdate.get().clickToHideWarnings(name));
+				}
 			} else {
 				errorShown = false;
 				jText.setFont(new Font(font.getName(), Font.PLAIN, font.getSize()));
-				jText.setText(DialoguesUpdate.get().clickToShow(name));
+				if (error) {
+					jText.setText(DialoguesUpdate.get().clickToShowErrors(name));
+				} else {
+					jText.setText(DialoguesUpdate.get().clickToShowWarnings(name));
+				}
 			}
 		}
 	}
@@ -272,16 +288,17 @@ public abstract class UpdateTask extends SwingWorker<Void, Void> {
 		public void propertyChange(final PropertyChangeEvent evt) {
 			int value = getProgress();
 			if (value == 100) {
-				if (errors.isEmpty()) {
-					jText.setIcon(Images.UPDATE_DONE_OK.getIcon());
-				} else if (isCancelled()) {
-					jText.setIcon(Images.UPDATE_DONE_SOME.getIcon());
-				} else {
+				if (error) {
 					jText.setIcon(Images.UPDATE_DONE_ERROR.getIcon());
+					jText.setText(DialoguesUpdate.get().clickToShowErrors(name));
+				} else if (isCancelled() || warning) {
+					jText.setIcon(Images.UPDATE_DONE_SOME.getIcon());
+					jText.setText(DialoguesUpdate.get().clickToShowWarnings(name));
+				} else {
+					jText.setIcon(Images.UPDATE_DONE_OK.getIcon());
 				}
-				if (!errors.isEmpty()) {
+				if (!log.isEmpty()) {
 					jText.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-					jText.setText(DialoguesUpdate.get().clickToShow(name));
 				}
 			} else {
 				jText.setIcon(Images.UPDATE_WORKING.getIcon());
@@ -289,11 +306,11 @@ public abstract class UpdateTask extends SwingWorker<Void, Void> {
 		}
 	}
 
-	private static class ErrorClass {
+	private static class LogClass {
 		private final String owner;
 		private final String error;
 
-		public ErrorClass(String owner, String error) {
+		public LogClass(String owner, String error) {
 			this.owner = owner;
 			this.error = error;
 		}

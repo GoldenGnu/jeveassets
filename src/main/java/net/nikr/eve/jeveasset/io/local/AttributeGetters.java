@@ -20,11 +20,17 @@
  */
 package net.nikr.eve.jeveasset.io.local;
 
+import java.awt.Color;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 import net.nikr.eve.jeveasset.data.settings.Settings;
+import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 
 public class AttributeGetters {
@@ -33,9 +39,58 @@ public class AttributeGetters {
 
 	protected AttributeGetters() { }
 
+	protected Element getNodeOptional(final Element parent, final String nodeName) throws XmlException {
+		NodeList nodes = parent.getElementsByTagName(nodeName);
+		if (nodes.getLength() != 1) {
+			return null;
+		}
+		return (Element) nodes.item(0);
+	}
+
+	protected Element getNode(final Element parent, final String nodeName) throws XmlException {
+		NodeList nodes = parent.getElementsByTagName(nodeName);
+		if (nodes.getLength() != 1) {
+			throw new XmlException(nodeName + " is " + nodes.getLength()+ " (should be 1)");
+		}
+		return (Element) nodes.item(0);
+	}
+
 	protected boolean haveAttribute(final Node node, final String attributeName) {
 		Node attributeNode = node.getAttributes().getNamedItem(attributeName);
 		return attributeNode != null;
+	}
+
+	protected Color getColorOptional(final Node node, final String attributeName) throws XmlException {
+		Integer i = getIntOptional(node, attributeName);
+		if (i == null) {
+			return null;
+		} else {
+			return new Color(i);
+		}
+	}
+
+	protected Color getColor(final Node node, final String attributeName) throws XmlException {
+		int i = getInt(node, attributeName);
+		return new Color(i);
+	}
+
+	protected List<String> getStringListOptional(final Node node, final String attributeName) throws XmlException {
+		String nodeValue = getNodeValueOptional(node, attributeName);
+		if (nodeValue == null) {
+			return null;
+		} else {
+			return stringToList(nodeValue);
+		}
+	}
+
+	protected List<String> getStringList(final Node node, final String attributeName) throws XmlException {
+		String nodeValue = getNodeValue(node, attributeName);
+		return stringToList(nodeValue);
+	}
+
+	private List<String> stringToList(String nodeValue) {
+		String[] arr = nodeValue.split(",");
+		return new ArrayList<>(Arrays.asList(arr));
 	}
 
 	protected String getString(final Node node, final String attributeName) throws XmlException {
@@ -52,7 +107,7 @@ public class AttributeGetters {
 	}
 
 	protected Date getDateNotNull(final Node node, final String attributeName) {
-		String value = getNodeValueNotNull(node, attributeName);
+		String value = getNodeValueOptional(node, attributeName);
 		if (value == null) {
 			return Settings.getNow();
 		}
@@ -203,15 +258,6 @@ public class AttributeGetters {
 	}
 
 	private String getNodeValueOptional(final Node node, final String attributeName) {
-		Node attributeNode = node.getAttributes().getNamedItem(attributeName);
-		if (attributeNode == null) {
-			return null;
-		} else {
-			return attributeNode.getNodeValue();
-		}
-	}
-
-	private String getNodeValueNotNull(final Node node, final String attributeName) {
 		Node attributeNode = node.getAttributes().getNamedItem(attributeName);
 		if (attributeNode == null) {
 			return null;

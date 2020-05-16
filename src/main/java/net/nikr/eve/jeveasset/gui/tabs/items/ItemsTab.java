@@ -71,16 +71,16 @@ public class ItemsTab extends JMainTabPrimary {
 		super(program, TabsItems.get().items(), Images.TOOL_ITEMS.getIcon(), true);
 
 		//Table Format
-		tableFormat = new EnumTableFormatAdaptor<ItemTableFormat, Item>(ItemTableFormat.class);
+		tableFormat = new EnumTableFormatAdaptor<>(ItemTableFormat.class);
 		//Backend
-		eventList = new EventListManager<Item>().create();
+		eventList = EventListManager.create();
 		//Sorting (per column)
 		eventList.getReadWriteLock().readLock().lock();
-		SortedList<Item> sortedList = new SortedList<Item>(eventList);
+		SortedList<Item> sortedList = new SortedList<>(eventList);
 		eventList.getReadWriteLock().readLock().unlock();
 		//Filter
 		eventList.getReadWriteLock().readLock().lock();
-		filterList = new FilterList<Item>(sortedList);
+		filterList = new FilterList<>(sortedList);
 		eventList.getReadWriteLock().readLock().unlock();
 		
 		//Table Model
@@ -144,7 +144,7 @@ public class ItemsTab extends JMainTabPrimary {
 	private class ItemTableMenu implements TableMenu<Item> {
 		@Override
 		public MenuData<Item> getMenuData() {
-			return new MenuData<Item>(selectionModel.getSelected());
+			return new MenuData<>(selectionModel.getSelected());
 		}
 
 		@Override
@@ -191,7 +191,7 @@ public class ItemsTab extends JMainTabPrimary {
 
 		@Override
 		protected List<EnumTableColumn<Item>> getShownColumns() {
-			return new ArrayList<EnumTableColumn<Item>>(tableFormat.getShownColumns());
+			return new ArrayList<>(tableFormat.getShownColumns());
 		}
 
 		@Override

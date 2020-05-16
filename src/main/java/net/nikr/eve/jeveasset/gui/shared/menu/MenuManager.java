@@ -64,6 +64,7 @@ public class MenuManager<Q> {
 		JUMPS,
 		ROUTING,
 		COPY_PLUS,
+		SUM,
 	}
 
 	private boolean priceSupported = false;
@@ -74,8 +75,8 @@ public class MenuManager<Q> {
 	private boolean stockpile = false;
 	private boolean tagsSupported = false;
 
-	private final Map<MenuEnum, JAutoMenu<Q>> mainMenu =  new EnumMap<MenuEnum, JAutoMenu<Q>>(MenuEnum.class);
-	private final Map<MenuEnum, JAutoMenu<Q>> tablePopupMenu =  new EnumMap<MenuEnum, JAutoMenu<Q>>(MenuEnum.class);
+	private final Map<MenuEnum, AutoMenu<Q>> mainMenu =  new EnumMap<>(MenuEnum.class);
+	private final Map<MenuEnum, AutoMenu<Q>> tablePopupMenu =  new EnumMap<>(MenuEnum.class);
 	
 	private final TableMenu<Q> tableMenu;
 	private final JTable jTable;
@@ -83,7 +84,7 @@ public class MenuManager<Q> {
 	private static final Map<Class<?>, MenuManager<?>> MANAGERS = new HashMap<Class<?>, MenuManager<?>>();
 
 	public static <Q> void install(final Program program, final TableMenu<Q> tableMenu, final JTable jTable, final Class<Q> clazz) {
-		MenuManager<Q> menuManager = new MenuManager<Q>(program, tableMenu, jTable, clazz);
+		MenuManager<Q> menuManager = new MenuManager<>(program, tableMenu, jTable, clazz);
 		MenuManager<?> put = MANAGERS.put(clazz, menuManager);
 		if (put != null)  {
 			throw new RuntimeException("Duplicated MenuManager Class");
@@ -122,51 +123,54 @@ public class MenuManager<Q> {
 		updateMainTableMenu();
 	}
 
-	public final void createCashe(final Program program, final Map<MenuEnum, JAutoMenu<Q>> menus, final Class<Q> clazz) {
+	public final void createCashe(final Program program, final Map<MenuEnum, AutoMenu<Q>> menus, final Class<Q> clazz) {
 	//COPY SIMPLE
 		if (itemSupported) {
-			menus.put(MenuEnum.COPY_PLUS, new JMenuCopyPlus<Q>(program));
+			menus.put(MenuEnum.COPY_PLUS, new JMenuCopyPlus<>(program));
 		}
 	//ASSET FILTER
 		if (!assets && (itemSupported || locationSupported)) {
-			menus.put(MenuEnum.ASSET_FILTER, new JMenuAssetFilter<Q>(program));
+			menus.put(MenuEnum.ASSET_FILTER, new JMenuAssetFilter<>(program));
 		}
 	//STOCKPILE (Add To)
 		if (!stockpile && itemSupported) {
-			menus.put(MenuEnum.STOCKPILE, new JMenuStockpile<Q>(program));
+			menus.put(MenuEnum.STOCKPILE, new JMenuStockpile<>(program));
 		}
 	//LOOKUP
 		if (itemSupported || locationSupported) {
-			menus.put(MenuEnum.LOOKUP, new JMenuLookup<Q>(program));
+			menus.put(MenuEnum.LOOKUP, new JMenuLookup<>(program));
 		}
 	//EDIT
 		if (priceSupported) {
-			menus.put(MenuEnum.PRICE, new JMenuPrice<Q>(program));
+			menus.put(MenuEnum.PRICE, new JMenuPrice<>(program));
 		}
 		if (assets) {
-			menus.put(MenuEnum.NAME, new JMenuName<Q>(program));
+			menus.put(MenuEnum.NAME, new JMenuName<>(program));
 		}
 		if (tagsSupported) {
-			menus.put(MenuEnum.TAGS, new JMenuTags<Q>(program));
+			menus.put(MenuEnum.TAGS, new JMenuTags<>(program));
 		}
 	//REPROCESSED
 		if (itemSupported) {
-			menus.put(MenuEnum.REPROCESSED, new JMenuReprocessed<Q>(program));
+			menus.put(MenuEnum.REPROCESSED, new JMenuReprocessed<>(program));
 		}
 	//JUMPS
 		if (jumpsSupported) {
-			menus.put(MenuEnum.JUMPS, new JMenuJumps<Q>(program, clazz));
+			menus.put(MenuEnum.JUMPS, new JMenuJumps<>(program, clazz));
 		}
 		if (locationSupported) {
-			menus.put(MenuEnum.ROUTING, new JMenuRouting<Q>(program));
+			menus.put(MenuEnum.ROUTING, new JMenuRouting<>(program));
 		}
 	//LOCATION
 		if (locationSupported) {
-			menus.put(MenuEnum.LOCATION, new JMenuLocation<Q>(program));
+			menus.put(MenuEnum.LOCATION, new JMenuLocation<>(program));
 		}
 		if (locationSupported || priceSupported || itemSupported) {
-			menus.put(MenuEnum.UI, new JMenuUI<Q>(program));
+			menus.put(MenuEnum.UI, new JMenuUI<>(program));
 		}
+	//SUM
+		menus.put(MenuEnum.SUM, new JMenuSum<>(program, jTable));
+	
 	}
 
 	private void createMenu(JPopupMenu jPopupMenu) {
@@ -177,12 +181,12 @@ public class MenuManager<Q> {
 		createMenu(jMenu, mainMenu);
 	}
 
-	private void createMenu(JComponent jComponent, Map<MenuEnum, JAutoMenu<Q>> menus) {
+	private void createMenu(JComponent jComponent, Map<MenuEnum, AutoMenu<Q>> menus) {
 		jComponent.removeAll();
 		boolean notEmpty = false;
 	//UPDATE
 		MenuData<Q> menuData = tableMenu.getMenuData();
-		for (JAutoMenu<Q> jAutoMenu : menus.values()) {
+		for (AutoMenu<Q> jAutoMenu : menus.values()) {
 			jAutoMenu.setMenuData(menuData);
 		}
 	//COPY
@@ -194,9 +198,9 @@ public class MenuManager<Q> {
 	//TOOL MENU
 		tableMenu.addToolMenu(jComponent);
 	//COPY+
-		JAutoMenu<Q> jcopyPlus = menus.get(MenuEnum.COPY_PLUS);
+		AutoMenu<Q> jcopyPlus = menus.get(MenuEnum.COPY_PLUS);
 		if (jcopyPlus != null) {
-			jComponent.add(jcopyPlus);
+			jComponent.add(jcopyPlus.getComponent());
 			notEmpty = true;
 		}
 	//FILTER
@@ -206,9 +210,9 @@ public class MenuManager<Q> {
 			notEmpty = true;
 		}
 	//ASSET FILTER
-		JAutoMenu<Q> jAssetFilter = menus.get(MenuEnum.ASSET_FILTER);
+		AutoMenu<Q> jAssetFilter = menus.get(MenuEnum.ASSET_FILTER);
 		if (jAssetFilter != null) {
-			jComponent.add(jAssetFilter);
+			jComponent.add(jAssetFilter.getComponent());
 			notEmpty = true;
 			if (jAssetFilter instanceof JMenuAssetFilter) {
 				JMenuAssetFilter<?> jMenuAssetFilter = (JMenuAssetFilter) jAssetFilter;
@@ -216,15 +220,15 @@ public class MenuManager<Q> {
 			}
 		}
 	//STOCKPILE (Add To)
-		JAutoMenu<Q> jStockpile = menus.get(MenuEnum.STOCKPILE);
+		AutoMenu<Q> jStockpile = menus.get(MenuEnum.STOCKPILE);
 		if (jStockpile != null) {
-			jComponent.add(jStockpile);
+			jComponent.add(jStockpile.getComponent());
 			notEmpty = true;
 		}
 	//LOOKUP
-		JAutoMenu<Q> jLookup = menus.get(MenuEnum.LOOKUP);
+		AutoMenu<Q> jLookup = menus.get(MenuEnum.LOOKUP);
 		if (jLookup != null) {
-			jComponent.add(jLookup);
+			jComponent.add(jLookup.getComponent());
 			notEmpty = true;
 			if (jLookup instanceof JMenuLookup) {
 				JMenuLookup<?> jMenuLookup = (JMenuLookup) jLookup;
@@ -232,47 +236,47 @@ public class MenuManager<Q> {
 			}
 		}
 	//EDIT
-		JAutoMenu<Q> jPrice = menus.get(MenuEnum.PRICE);
+		AutoMenu<Q> jPrice = menus.get(MenuEnum.PRICE);
 		if (jPrice != null) {
-			jComponent.add(jPrice);
+			jComponent.add(jPrice.getComponent());
 			notEmpty = true;
 		}
-		JAutoMenu<Q> jName = menus.get(MenuEnum.NAME);
+		AutoMenu<Q> jName = menus.get(MenuEnum.NAME);
 		if (jName != null) {
-			jComponent.add(jName);
+			jComponent.add(jName.getComponent());
 			notEmpty = true;
 		}
-		JAutoMenu<Q> jTags = menus.get(MenuEnum.TAGS);
+		AutoMenu<Q> jTags = menus.get(MenuEnum.TAGS);
 		if (jTags != null) {
-			jComponent.add(jTags);
+			jComponent.add(jTags.getComponent());
 			notEmpty = true;
 		}
 	//REPROCESSED
-		JAutoMenu<Q> jReprocessed = menus.get(MenuEnum.REPROCESSED);
+		AutoMenu<Q> jReprocessed = menus.get(MenuEnum.REPROCESSED);
 		if (jReprocessed != null) {
-			jComponent.add(jReprocessed);
+			jComponent.add(jReprocessed.getComponent());
 			notEmpty = true;
 		}
 	//JUMPS
-		JAutoMenu<Q> jJumps = menus.get(MenuEnum.JUMPS);
+		AutoMenu<Q> jJumps = menus.get(MenuEnum.JUMPS);
 		if (jJumps != null) {
-			jComponent.add(jJumps);
+			jComponent.add(jJumps.getComponent());
 			notEmpty = true;
 		}
-		JAutoMenu<Q> jRouting = menus.get(MenuEnum.ROUTING);
+		AutoMenu<Q> jRouting = menus.get(MenuEnum.ROUTING);
 		if (jRouting != null) {
-			jComponent.add(jRouting);
+			jComponent.add(jRouting.getComponent());
 			notEmpty = true;
 		}
 	//LOCATION
-		JAutoMenu<Q> jLocation = menus.get(MenuEnum.LOCATION);
+		AutoMenu<Q> jLocation = menus.get(MenuEnum.LOCATION);
 		if (jLocation != null) {
-			jComponent.add(jLocation);
+			jComponent.add(jLocation.getComponent());
 			notEmpty = true;
 		}
-		JAutoMenu<Q> jUi = menus.get(MenuEnum.UI);
+		AutoMenu<Q> jUi = menus.get(MenuEnum.UI);
 		if (jUi != null) {
-			jComponent.add(jUi);
+			jComponent.add(jUi.getComponent());
 			notEmpty = true;
 		}
 	//COLUMNS
@@ -286,6 +290,12 @@ public class MenuManager<Q> {
 			JMenuInfo.asset(jTable, menuData.getAssets());
 		}
 		tableMenu.addInfoMenu(jComponent);
+	//SUM
+		AutoMenu<Q> jSum = menus.get(MenuEnum.SUM);
+		if (jSum != null) {
+			jComponent.add(jSum.getComponent());
+			notEmpty = true;
+		}
 		jComponent.setEnabled(notEmpty);
 	}
 
@@ -300,6 +310,13 @@ public class MenuManager<Q> {
 			for (Component component : columnMenu.getMenuComponents()) { //Clone!
 				jTableHeaderPopupMenu.add(component);
 			}
+		}
+		//SUM
+		jTableHeaderPopupMenu.addSeparator();
+		AutoMenu<Q> jSum = tablePopupMenu.get(MenuEnum.SUM);
+		if (jSum instanceof JMenuSum) {
+			((JMenuSum)jSum).updateMenuDataColumn(jTable.columnAtPoint(e.getPoint()));
+			jTableHeaderPopupMenu.add(jSum.getComponent());
 		}
 		jTableHeaderPopupMenu.show(e.getComponent(), e.getX(), e.getY());
 	}
@@ -433,13 +450,14 @@ public class MenuManager<Q> {
 
 	protected static interface AutoMenu<T> {
 		public void setMenuData(MenuData<T> menuData);
+		public JComponent getComponent();
 	}
 
 	protected abstract static class JAutoMenu<T> extends JMenu implements AutoMenu<T> {
 
 		protected Program program;
 		protected MenuData<T> menuData;
-		
+
 		public JAutoMenu(final String s, final Program program) {
 			super(s);
 			this.program = program;
@@ -450,6 +468,32 @@ public class MenuManager<Q> {
 			this.menuData = menuData;
 			updateMenuData();
 		}
+
+		@Override
+		public JComponent getComponent() {
+			return this;
+		}
+
+		protected abstract void updateMenuData();
+	}
+
+	protected abstract static class JAutoMenuComponent<T> implements AutoMenu<T> {
+
+		protected Program program;
+		protected MenuData<T> menuData;
+
+		public JAutoMenuComponent(final Program program) {
+			this.program = program;
+		}
+
+		@Override
+		public final void setMenuData(MenuData<T> menuData) {
+			this.menuData = menuData;
+			updateMenuData();
+		}
+	
+		@Override
+		public abstract JComponent getComponent();
 
 		protected abstract void updateMenuData();
 	}

@@ -25,7 +25,7 @@ import java.util.HashMap;
 import java.util.Map;
 import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.data.sde.ReprocessedMaterial;
-import net.nikr.eve.jeveasset.data.settings.Settings;
+import net.nikr.eve.jeveasset.io.shared.FileUtil;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -41,8 +41,8 @@ public final class ItemsReader extends AbstractXmlReader<Boolean> {
 
 	public static void load(Map<Integer, Item> items) {
 		ItemsReader reader = new ItemsReader(items);
-		reader.read("Items Updates", Settings.getPathItemsUpdates(), AbstractXmlReader.XmlType.DYNAMIC_BACKUP);
-		reader.read("Items", Settings.getPathItems(), AbstractXmlReader.XmlType.STATIC);
+		reader.read("Items Updates", FileUtil.getPathItemsUpdates(), AbstractXmlReader.XmlType.DYNAMIC_BACKUP);
+		reader.read("Items", FileUtil.getPathItems(), AbstractXmlReader.XmlType.STATIC);
 	}
 
 	@Override

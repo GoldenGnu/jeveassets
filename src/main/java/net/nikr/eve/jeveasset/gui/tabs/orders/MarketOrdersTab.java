@@ -76,12 +76,14 @@ import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
 import net.nikr.eve.jeveasset.data.api.accounts.OwnerType;
 import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder;
 import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder.MarketOrderRange;
+import net.nikr.eve.jeveasset.data.settings.ColorEntry;
+import net.nikr.eve.jeveasset.data.settings.ColorSettings;
+import net.nikr.eve.jeveasset.data.settings.Colors;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.dialogs.update.TaskDialog;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
 import net.nikr.eve.jeveasset.gui.images.Images;
-import net.nikr.eve.jeveasset.gui.shared.Colors;
 import net.nikr.eve.jeveasset.gui.shared.CopyHandler;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.components.JFixedToolBar;
@@ -482,48 +484,33 @@ public class MarketOrdersTab extends JMainTabPrimary {
 			jUpdate.setEnabled(false);
 		}
 		Date lastEsiUpdate = Settings.get().getPublicMarketOrdersLastUpdate();
-		if (lastEsiUpdate != null) {
-			long diff = Math.abs(System.currentTimeMillis() - lastEsiUpdate.getTime());
-			long diffMinutes = diff / (60 * 1000) % 60;
-			if (diffMinutes < 2) {
-				jLastEsiUpdate.setIcon(new RectColorIcon(Colors.GREEN.getColor(), Images.MISC_ESI.getImage()));
-				jLastEsiUpdate.setBackground(Colors.LIGHT_GREEN.getColor());
-			} else if (diffMinutes < 5) {
-				jLastEsiUpdate.setIcon(new RectColorIcon(Colors.YELLOW.getColor(), Images.MISC_ESI.getImage()));
-				jLastEsiUpdate.setBackground(Colors.LIGHT_YELLOW.getColor());
-			} else {
-				jLastEsiUpdate.setIcon(new RectColorIcon(Colors.RED.getColor(), Images.MISC_ESI.getImage()));
-				jLastEsiUpdate.setBackground(Colors.LIGHT_RED.getColor());
-			}
-			jLastEsiUpdate.setOpaque(true);
-			jLastEsiUpdate.setText(Formater.milliseconds(diff, false, false, true, true, true, true));
-		} else {
-			jLastEsiUpdate.setOpaque(false);
-			jLastEsiUpdate.setIcon(Images.MISC_ESI.getIcon());
-			jLastEsiUpdate.setText(TabsOrders.get().none());
-		}
+		update(jLastEsiUpdate, lastEsiUpdate, Images.MISC_ESI);
 		Date logUpdate = getLastLogUpdate();
-		if (logUpdate != null) {
-			long diff = Math.abs(System.currentTimeMillis() - logUpdate.getTime());
-			long diffMinutes = diff / (60 * 1000) % 60;
-			if (diffMinutes < 2) {
-				jLastLogUpdate.setIcon(new RectColorIcon(Colors.GREEN.getColor(), Images.FILTER_LOAD.getImage()));
-				jLastLogUpdate.setBackground(Colors.LIGHT_GREEN.getColor());
-			} else if (diffMinutes < 5) {
-				jLastLogUpdate.setIcon(new RectColorIcon(Colors.YELLOW.getColor(), Images.FILTER_LOAD.getImage()));
-				jLastLogUpdate.setBackground(Colors.LIGHT_YELLOW.getColor());
-			} else {
-				jLastLogUpdate.setIcon(new RectColorIcon(Colors.RED.getColor(), Images.FILTER_LOAD.getImage()));
-				jLastLogUpdate.setBackground(Colors.LIGHT_RED.getColor());
-			}
-			jLastLogUpdate.setOpaque(true);
-			jLastLogUpdate.setText(Formater.milliseconds(diff, false, false, true, true, true, true));
-		} else {
-			jLastLogUpdate.setOpaque(false);
-			jLastLogUpdate.setIcon(Images.FILTER_LOAD.getIcon());
-			jLastLogUpdate.setText(TabsOrders.get().none());
-		}
+		update(jLastLogUpdate, logUpdate, Images.FILTER_LOAD);
 		jClipboard.setText(getClipboardData());
+	}
+
+	private void update(JLabel jLastUpdate, Date lastUpdate, Images images) {
+		if (lastUpdate != null) {
+			long diff = Math.abs(System.currentTimeMillis() - lastUpdate.getTime());
+			long diffMinutes = diff / (60 * 1000) % 60;
+			jLastUpdate.setOpaque(true);
+			if (diffMinutes < 2) {
+				jLastUpdate.setIcon(new IconColorIcon(Colors.STRONG_GREEN.getColor(), images.getImage()));
+				ColorSettings.config(jLastUpdate, ColorEntry.GLOBAL_ENTRY_VALID);
+			} else if (diffMinutes < 5) {
+				jLastUpdate.setIcon(new IconColorIcon(Colors.STRONG_YELLOW.getColor(), images.getImage()));
+				ColorSettings.config(jLastUpdate, ColorEntry.GLOBAL_ENTRY_WARNING);
+			} else {
+				jLastUpdate.setIcon(new IconColorIcon(Colors.STRONG_RED.getColor(), images.getImage()));
+				ColorSettings.config(jLastUpdate, ColorEntry.GLOBAL_ENTRY_INVALID);
+			}
+			jLastUpdate.setText(Formater.milliseconds(diff, false, false, true, true, true, true));
+		} else {
+			jLastUpdate.setOpaque(false);
+			jLastUpdate.setIcon(images.getIcon());
+			jLastUpdate.setText(TabsOrders.get().none());
+		}
 	}
 
 	private void updateESI() {
@@ -745,12 +732,12 @@ public class MarketOrdersTab extends JMainTabPrimary {
 		}
 	}
 
-	public static class RectColorIcon implements Icon {
+	public static class IconColorIcon implements Icon {
 
 		private final Color color;
 		private final Image image;
 
-		public RectColorIcon(Color color, Image image) {
+		public IconColorIcon(Color color, Image image) {
 			this.color = color;
 			this.image = image;
 		}

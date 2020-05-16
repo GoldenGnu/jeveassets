@@ -15,7 +15,8 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JTable;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.gui.shared.Colors;
+import net.nikr.eve.jeveasset.data.settings.ColorEntry;
+import net.nikr.eve.jeveasset.data.settings.ColorSettings;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.table.SeparatorTableCell;
 import net.nikr.eve.jeveasset.i18n.TabsReprocessed;
@@ -144,11 +145,11 @@ public class ReprocessedSeparatorTableCell extends SeparatorTableCell<Reprocesse
 		}
 		//Color
 		if (material.getTotal().isSell()) {
-			jColor.setBackground(Colors.LIGHT_GREEN.getColor());
+			ColorSettings.config(jColor, ColorEntry.REPROCESSED_SELL);
 		} else if (material.getTotal().isReprocess()){
-			jColor.setBackground(Colors.LIGHT_RED.getColor());
+			ColorSettings.config(jColor, ColorEntry.REPROCESSED_REPROCESS);
 		} else {
-			jColor.setBackground(Color.LIGHT_GRAY);
+			ColorSettings.config(jColor, ColorEntry.REPROCESSED_EQUAL);
 		}
 	}
 }

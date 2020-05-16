@@ -41,9 +41,10 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import net.nikr.eve.jeveasset.Program;
+import net.nikr.eve.jeveasset.data.settings.ColorEntry;
+import net.nikr.eve.jeveasset.data.settings.ColorSettings;
 import net.nikr.eve.jeveasset.data.settings.TrackerData;
 import net.nikr.eve.jeveasset.gui.images.Images;
-import net.nikr.eve.jeveasset.gui.shared.Colors;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.JOptionInput;
 import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
@@ -77,8 +78,8 @@ public class JTrackerEditDialog extends JDialogCentered {
 	private final JButton jOK;
 	private final JSelectionDialog<String> jSelectionDialog;
 
-	private final List<FilterUpdate> balanceUpdates = new ArrayList<FilterUpdate>();
-	private final List<FilterUpdate> assetUpdates = new ArrayList<FilterUpdate>();
+	private final List<FilterUpdate> balanceUpdates = new ArrayList<>();
+	private final List<FilterUpdate> assetUpdates = new ArrayList<>();
 
 	//Data
 	private Value value;
@@ -89,7 +90,7 @@ public class JTrackerEditDialog extends JDialogCentered {
 
 		ListenerClass listener = new ListenerClass();
 
-		jSelectionDialog = new  JSelectionDialog<String>(program);
+		jSelectionDialog = new  JSelectionDialog<>(program);
 
 		JLabel jDateLabel = new JLabel(TabsTracker.get().date());
 		jDate = new JTextField();
@@ -378,7 +379,7 @@ public class JTrackerEditDialog extends JDialogCentered {
 				setVisible(false);
 			} else if (TrackerEditAction.EDIT_WALLET.name().equals(e.getActionCommand())) {
 				//Create values for selection dialog
-				Set<String> ids = new TreeSet<String>();
+				Set<String> ids = new TreeSet<>();
 				for (String id : value.getBalanceFilter().keySet()) {
 					ids.add(TabsTracker.get().division(id));
 				}
@@ -403,7 +404,7 @@ public class JTrackerEditDialog extends JDialogCentered {
 						balanceUpdates.add(new FilterUpdate(key, balance)); //Add update to queue (will only be executed if this dialog closed by pressing OK)
 
 						//Update displayed total - only a GUI thing, the textfield is never used when getBalanceFilter is not empty
-						Map<String, Double> map = new HashMap<String, Double>(value.getBalanceFilter());
+						Map<String, Double> map = new HashMap<>(value.getBalanceFilter());
 						for (FilterUpdate filterUpdate : balanceUpdates) {
 							map.put(filterUpdate.getKey(), filterUpdate.getValue());
 						}
@@ -417,12 +418,12 @@ public class JTrackerEditDialog extends JDialogCentered {
 				}
 			} else if (TrackerEditAction.EDIT_ASSETS.name().equals(e.getActionCommand())) {
 				//Create values for selection dialog
-				Map<String, Set<String>> values = new TreeMap<String, Set<String>>();
+				Map<String, Set<String>> values = new TreeMap<>();
 				for (AssetValue assetValue : value.getAssetsFilter().keySet()) {
 					String location = assetValue.getLocation();
 					Set<String> flags = values.get(location);
 					if (flags == null) {
-						flags = new TreeSet<String>();
+						flags = new TreeSet<>();
 						values.put(location, flags);
 					}
 					String flag = assetValue.getFlag();
@@ -466,7 +467,7 @@ public class JTrackerEditDialog extends JDialogCentered {
 						assetUpdates.add(new FilterUpdate(assetValue.getID(), asset)); //Add update to queue (will only be executed if this dialog closed by pressing OK)
 						
 						//Update displayed total - only a GUI thing, the textfield is never used when getAssetsFilter is not empty
-						Map<String, Double> map = new HashMap<String, Double>();
+						Map<String, Double> map = new HashMap<>();
 						for (Map.Entry<AssetValue, Double> entry : value.getAssetsFilter().entrySet()) {
 							map.put(entry.getKey().getID(), entry.getValue());
 						}
@@ -497,7 +498,7 @@ public class JTrackerEditDialog extends JDialogCentered {
 				parse(jTextField.getText());
 				jTextField.setBackground(Color.WHITE);
 			} catch (ParseException ex) {
-				jTextField.setBackground(Colors.LIGHT_RED.getColor());
+				ColorSettings.config(jTextField, ColorEntry.GLOBAL_ENTRY_INVALID);
 			}
 			jTextField.setCaretPosition(jTextField.getText().length());
 		}

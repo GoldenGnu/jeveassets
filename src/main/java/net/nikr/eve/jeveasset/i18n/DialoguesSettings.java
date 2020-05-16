@@ -42,7 +42,6 @@ public abstract class DialoguesSettings extends Bundle {
 	public abstract String general();
 	public abstract String enterFilter();
 	public abstract String highlightSelectedRow();
-	public abstract String strongColors();
 	public abstract String focusEveOnline();
 	public abstract String focusEveOnlineLinuxCmd();
 	public abstract String focusEveOnlineLinuxHelp();
@@ -93,6 +92,20 @@ public abstract class DialoguesSettings extends Bundle {
 	// used in TrackerToolSettingsPanel
 	public abstract String tracker();
 	public abstract String useAssetPriceForSellOrders();
+
+	// used in ColorSettingsPanel
+	public abstract String colors();
+	public abstract String collapse();
+	public abstract String expand();
+	public abstract String columnName();
+	public abstract String columnBackground();
+	public abstract String columnForeground();
+	public abstract String columnPreview();
+	public abstract String columnSelected();
+	public abstract String testText();
+	public abstract String testSelectedText();
+	public abstract String overwriteMsg();
+	public abstract String overwriteTitle();
 
 	// used in PriceDataSettingsPanel
 	public abstract String changeSourceWarning();

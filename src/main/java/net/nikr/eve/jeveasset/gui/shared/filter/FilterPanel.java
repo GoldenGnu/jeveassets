@@ -66,9 +66,10 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.plaf.synth.SynthFormattedTextFieldUI;
 import net.nikr.eve.jeveasset.Program;
+import net.nikr.eve.jeveasset.data.settings.ColorEntry;
+import net.nikr.eve.jeveasset.data.settings.ColorSettings;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
-import net.nikr.eve.jeveasset.gui.shared.Colors;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.TextManager;
 import net.nikr.eve.jeveasset.gui.shared.components.JDateChooser;
@@ -82,7 +83,7 @@ import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 class FilterPanel<E> implements Comparable<FilterPanel<E>> {
 
 	private enum FilterPanelAction {
-		FILTER, FILTER_TIMER, GROUP_TIMER, REMOVE
+		FILTER, FILTER_TIMER, GROUP_TIMER, REMOVE, CLONE
 	}
 
 	private final JPanel jPanel;
@@ -99,6 +100,7 @@ class FilterPanel<E> implements Comparable<FilterPanel<E>> {
 
 	private final JLabel jSpacing;
 	private final JButton jRemove;
+	private final JButton jClone;
 
 	private final Timer timer;
 	private final Timer groupTimer;
@@ -228,6 +230,11 @@ class FilterPanel<E> implements Comparable<FilterPanel<E>> {
 
 		jSpacing = new JLabel();
 
+		jClone = new JButton();
+		jClone.setIcon(Images.EDIT_COPY.getIcon());
+		jClone.addActionListener(listener);
+		jClone.setActionCommand(FilterPanelAction.CLONE.name());
+
 		jRemove = new JButton();
 		jRemove.setIcon(Images.EDIT_DELETE.getIcon());
 		jRemove.addActionListener(listener);
@@ -255,6 +262,7 @@ class FilterPanel<E> implements Comparable<FilterPanel<E>> {
 				.addComponent(jCompareColumn, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
 				.addComponent(jDate, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
 				.addComponent(jSpacing, 0, 0, Integer.MAX_VALUE)
+				.addComponent(jClone, 30, 30, 30)
 				.addComponent(jRemove, 30, 30, 30)
 		);
 		layout.setVerticalGroup(
@@ -268,6 +276,7 @@ class FilterPanel<E> implements Comparable<FilterPanel<E>> {
 				.addComponent(jCompareColumn, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 				.addComponent(jDate, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 				.addComponent(jSpacing, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+				.addComponent(jClone, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 				.addComponent(jRemove, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 		);
 		updateNumeric(false);
@@ -275,10 +284,6 @@ class FilterPanel<E> implements Comparable<FilterPanel<E>> {
 
 	boolean isAnd() {
 		return ((LogicType) jLogic.getSelectedItem()) == LogicType.AND;
-	}
-
-	private FilterPanel<E> getThis() {
-		return this;
 	}
 
 	boolean isMoving() {
@@ -477,12 +482,12 @@ class FilterPanel<E> implements Comparable<FilterPanel<E>> {
 		}
 		if (jEnabled.isSelected()) {
 			if (isInvalidRegex()) {
-				jText.setBackground(Colors.LIGHT_YELLOW.getColor());
+				ColorSettings.config(jText, ColorEntry.GLOBAL_ENTRY_WARNING);
 			} else {
 				jText.setBackground(Color.WHITE);
 			}
 		} else {
-			jText.setBackground(Colors.LIGHT_RED.getColor());
+			ColorSettings.config(jText, ColorEntry.GLOBAL_ENTRY_INVALID);
 		}
 		timer.stop();
 		refilter();
@@ -540,13 +545,13 @@ class FilterPanel<E> implements Comparable<FilterPanel<E>> {
 	private Color getGroupColor() {
 		switch (getGroup()) {
 			case 0: return Color.GRAY;
-			case 1: return Color.GRAY;
-			case 2: return Colors.LIGHT_GREEN.getColor();
-			case 3: return Colors.LIGHT_YELLOW.getColor();
-			case 4: return Colors.LIGHT_ORANGE.getColor();
-			case 5: return Colors.LIGHT_RED.getColor();
-			case 6: return Colors.LIGHT_MAGENTA.getColor();
-			case 7: return Colors.LIGHT_BLUE.getColor();
+			case 1: return ColorSettings.background(ColorEntry.FILTER_OR_GROUP_1);
+			case 2: return ColorSettings.background(ColorEntry.FILTER_OR_GROUP_2);
+			case 3: return ColorSettings.background(ColorEntry.FILTER_OR_GROUP_3);
+			case 4: return ColorSettings.background(ColorEntry.FILTER_OR_GROUP_4);
+			case 5: return ColorSettings.background(ColorEntry.FILTER_OR_GROUP_5);
+			case 6: return ColorSettings.background(ColorEntry.FILTER_OR_GROUP_6);
+			case 7: return ColorSettings.background(ColorEntry.FILTER_OR_GROUP_7);
 			default: return Color.GRAY;
 		}
 	}
@@ -554,7 +559,7 @@ class FilterPanel<E> implements Comparable<FilterPanel<E>> {
 	private void groupChanged() {
 		refilter();
 		if (!loading) {
-			if (gui.fade(getThis())) {
+			if (gui.fade(FilterPanel.this)) {
 				fades.execute(new FadeThread());
 			} else {
 				updateGroupColor();
@@ -600,19 +605,22 @@ class FilterPanel<E> implements Comparable<FilterPanel<E>> {
 		@Override
 		public void actionPerformed(final ActionEvent e) {
 			if (FilterPanelAction.REMOVE.name().equals(e.getActionCommand())) {
-				gui.remove(getThis());
+				gui.remove(FilterPanel.this);
 				gui.addEmpty();
 				refilter();
-			}
-			if (FilterPanelAction.FILTER.name().equals(e.getActionCommand())) {
+			} else if (FilterPanelAction.CLONE.name().equals(e.getActionCommand())) {
+				gui.clone(FilterPanel.this);
+				refilter();
+				jText.requestFocusInWindow();
+				jCompareColumn.requestFocusInWindow();
+				jDate.getComponentToggleCalendarButton().requestFocusInWindow();
+			} else if (FilterPanelAction.FILTER.name().equals(e.getActionCommand())) {
 				processFilterAction(e);
-			}
-			if (FilterPanelAction.FILTER_TIMER.name().equals(e.getActionCommand())) {
+			} else if (FilterPanelAction.FILTER_TIMER.name().equals(e.getActionCommand())) {
 				if (!Settings.get().isFilterOnEnter()) {
 					processFilterAction(e);
 				}
-			}
-			if (FilterPanelAction.GROUP_TIMER.name().equals(e.getActionCommand())) {
+			} else if (FilterPanelAction.GROUP_TIMER.name().equals(e.getActionCommand())) {
 				groupTimer.stop();
 				groupChanged();
 			}
@@ -647,7 +655,7 @@ class FilterPanel<E> implements Comparable<FilterPanel<E>> {
 
 		@Override
 		public void run() {
-			if (!gui.fade(getThis())) {
+			if (!gui.fade(FilterPanel.this)) {
 				return;
 			}
 			moving = true;

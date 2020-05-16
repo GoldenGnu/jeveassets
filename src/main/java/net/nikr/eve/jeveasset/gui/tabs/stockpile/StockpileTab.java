@@ -242,25 +242,25 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 		jToolBarRight.addButton(jExpand);
 
 		//Table Format
-		tableFormat = new EnumTableFormatAdaptor<StockpileTableFormat, StockpileItem>(StockpileTableFormat.class);
+		tableFormat = new EnumTableFormatAdaptor<>(StockpileTableFormat.class);
 		tableFormat.addListener(listener);
 		//Backend
-		eventList = new EventListManager<StockpileItem>().create();
+		eventList = EventListManager.create();
 		//Sorting (per column)
 		eventList.getReadWriteLock().readLock().lock();
-		SortedList<StockpileItem> sortedListColumn = new SortedList<StockpileItem>(eventList);
+		SortedList<StockpileItem> sortedListColumn = new SortedList<>(eventList);
 		eventList.getReadWriteLock().readLock().unlock();
 		//Sorting Total (Ensure that total is always last)
 		eventList.getReadWriteLock().readLock().lock();
-		SortedList<StockpileItem> sortedListTotal = new SortedList<StockpileItem>(sortedListColumn, new TotalComparator());
+		SortedList<StockpileItem> sortedListTotal = new SortedList<>(sortedListColumn, new TotalComparator());
 		eventList.getReadWriteLock().readLock().unlock();
 		//Filter
 		eventList.getReadWriteLock().readLock().lock();
-		filterList = new FilterList<StockpileItem>(sortedListTotal);
+		filterList = new FilterList<>(sortedListTotal);
 		eventList.getReadWriteLock().readLock().unlock();
 		filterList.addListEventListener(listener);
 		//Separator
-		separatorList = new SeparatorList<StockpileItem>(filterList, new StockpileSeparatorComparator(), 1, Integer.MAX_VALUE);
+		separatorList = new SeparatorList<>(filterList, new StockpileSeparatorComparator(), 1, Integer.MAX_VALUE);
 		//Table Model
 		tableModel = EventModels.createTableModel(separatorList, tableFormat);
 		//Table
@@ -330,7 +330,7 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 	@Override
 	public void updateData() {
 		//Items
-		List<StockpileItem> stockpileItems = new ArrayList<StockpileItem>();
+		List<StockpileItem> stockpileItems = new ArrayList<>();
 
 		updateOwners();
 
@@ -544,7 +544,7 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 
 	private void updateStockpile(Stockpile stockpile) {
 		//Update owner name
-		Set<String> owners = new HashSet<String>();
+		Set<String> owners = new HashSet<>();
 		for (StockpileFilter filter : stockpile.getFilters()) {
 			for (Long ownerID : filter.getOwnerIDs()) {
 				String owner = ownersName.get(ownerID);
@@ -553,7 +553,7 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 				}
 			}
 		}
-		stockpile.setOwnerName(new ArrayList<String>(owners));
+		stockpile.setOwnerName(new ArrayList<>(owners));
 		//Update Item flag name
 		Set<ItemFlag> flags = new HashSet<>();
 		for (StockpileFilter filter : stockpile.getFilters()) {
@@ -565,13 +565,13 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 			}
 		}
 	//Create lookup set of TypeIDs
-		Set<Integer> typeIDs = new HashSet<Integer>();
+		Set<Integer> typeIDs = new HashSet<>();
 		for (StockpileItem item : stockpile.getItems()) {
 			typeIDs.add(item.getItemTypeID());
 		}
 	//Create lookup maps of Items
 		//ContractItems
-		Map<Integer, List<MyContractItem>> contractItems = new HashMap<Integer, List<MyContractItem>>();
+		Map<Integer, List<MyContractItem>> contractItems = new HashMap<>();
 		if (stockpile.isContracts()) {
 			for (MyContractItem contractItem : program.getContractItemList()) {
 				if (contractItem.getContract().isIgnoreContract()) {
@@ -583,7 +583,7 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 				}
 				List<MyContractItem> items = contractItems.get(typeID);
 				if (items == null) {
-					items = new ArrayList<MyContractItem>();
+					items = new ArrayList<>();
 					contractItems.put(typeID, items);
 				}
 				items.add(contractItem);
@@ -591,7 +591,7 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 		}
 
 		//Inventory AKA Assets
-		Map<Integer, List<MyAsset>> assets = new HashMap<Integer, List<MyAsset>>();
+		Map<Integer, List<MyAsset>> assets = new HashMap<>();
 		if (stockpile.isAssets()) {
 			for (MyAsset asset : program.getAssetList()) {
 				if (asset.isGenerated()) { //Skip generated assets
@@ -603,14 +603,14 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 				}
 				List<MyAsset> items = assets.get(typeID);
 				if (items == null) {
-					items = new ArrayList<MyAsset>();
+					items = new ArrayList<>();
 					assets.put(typeID, items);
 				}
 				items.add(asset);
 			}
 		}
 		//Market Orders
-		Map<Integer, List<MyMarketOrder>> marketOrders = new HashMap<Integer, List<MyMarketOrder>>();
+		Map<Integer, List<MyMarketOrder>> marketOrders = new HashMap<>();
 		if (stockpile.isBuyOrders() || stockpile.isSellOrders()) {
 			for (MyMarketOrder marketOrder : program.getMarketOrdersList()) {
 				int typeID = marketOrder.getItem().getTypeID();
@@ -619,21 +619,21 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 				}
 				List<MyMarketOrder> items = marketOrders.get(typeID);
 				if (items == null) {
-					items = new ArrayList<MyMarketOrder>();
+					items = new ArrayList<>();
 					marketOrders.put(typeID, items);
 				}
 				items.add(marketOrder);
 			}
 		}
 		//Industry Job
-		Map<Integer, List<MyIndustryJob>> industryJobs = new HashMap<Integer, List<MyIndustryJob>>();
+		Map<Integer, List<MyIndustryJob>> industryJobs = new HashMap<>();
 		if (stockpile.isJobs()) {
 			for (MyIndustryJob industryJob : program.getIndustryJobsList()) {
 				int productTypeID = industryJob.getProductTypeID();
 				if (typeIDs.contains(productTypeID)) {
 					List<MyIndustryJob> items = industryJobs.get(productTypeID);
 					if (items == null) {
-						items = new ArrayList<MyIndustryJob>();
+						items = new ArrayList<>();
 						industryJobs.put(productTypeID, items);
 					}
 					items.add(industryJob);
@@ -642,7 +642,7 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 				if (typeIDs.contains(blueprintTypeID)) {
 					List<MyIndustryJob> items = industryJobs.get(blueprintTypeID);
 					if (items == null) {
-						items = new ArrayList<MyIndustryJob>();
+						items = new ArrayList<>();
 						industryJobs.put(blueprintTypeID, items);
 					}
 					items.add(industryJob);
@@ -650,7 +650,7 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 			}
 		}
 		//Transactions
-		Map<Integer, List<MyTransaction>> transactions = new HashMap<Integer, List<MyTransaction>>();
+		Map<Integer, List<MyTransaction>> transactions = new HashMap<>();
 		if (stockpile.isTransactions()) {
 			for (MyTransaction transaction : program.getTransactionsList()) {
 				int typeID = transaction.getItem().getTypeID();
@@ -659,7 +659,7 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 				}
 				List<MyTransaction> items = transactions.get(typeID);
 				if (items == null) {
-					items = new ArrayList<MyTransaction>();
+					items = new ArrayList<>();
 					transactions.put(typeID, items);
 				}
 				items.add(transaction);
@@ -801,7 +801,7 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 		if (stockpiles == null) {
 			return;
 		}
-		List<Stockpile> existing = new ArrayList<Stockpile>();
+		List<Stockpile> existing = new ArrayList<>();
 		boolean save = false;
 		for (Stockpile stockpile : stockpiles) {
 			if (Settings.get().getStockpiles().contains(stockpile)) { //Exist
@@ -918,7 +918,7 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 
 	private void updateOwners() {
 		//Owners Look-Up
-		ownersName = new HashMap<Long, String>();
+		ownersName = new HashMap<>();
 		for (OwnerType owner : program.getOwnerTypes()) {
 			ownersName.put(owner.getOwnerID(), owner.getOwnerName());
 		}
@@ -927,7 +927,7 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 	private class StockpileTableMenu implements TableMenu<StockpileItem> {
 		@Override
 		public MenuData<StockpileItem> getMenuData() {
-			return new MenuData<StockpileItem>(selectionModel.getSelected());
+			return new MenuData<>(selectionModel.getSelected());
 		}
 
 		@Override
@@ -955,7 +955,7 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 	private class ListenerClass implements ActionListener, ListEventListener<StockpileItem>, ColumnValueChangeListener {
 		@Override
 		public void listChanged(final ListEvent<StockpileItem> listChanges) {
-			List<StockpileItem> items = new ArrayList<StockpileItem>(filterList);
+			List<StockpileItem> items = new ArrayList<>(filterList);
 			//Remove StockpileTotal and SeparatorList.Separator
 			for (int i = 0; i < items.size(); i++) {
 				Object object = items.get(i);
@@ -1206,7 +1206,7 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 		@Override
 		protected List<EnumTableColumn<StockpileItem>> getColumns() {
 			if (columns == null) {
-				columns = new ArrayList<EnumTableColumn<StockpileItem>>();
+				columns = new ArrayList<>();
 				columns.addAll(Arrays.asList(StockpileExtendedTableFormat.values()));
 				columns.addAll(Arrays.asList(StockpileTableFormat.values()));
 			}
@@ -1215,7 +1215,7 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 
 		@Override
 		protected List<EnumTableColumn<StockpileItem>> getShownColumns() {
-			return new ArrayList<EnumTableColumn<StockpileItem>>(tableFormat.getShownColumns());
+			return new ArrayList<>(tableFormat.getShownColumns());
 		}
 
 		@Override
@@ -1229,7 +1229,7 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 		private final Comparator<StockpileItem> comparator;
 
 		public TotalComparator() {
-			List<Comparator<StockpileItem>> comparators = new ArrayList<Comparator<StockpileItem>>();
+			List<Comparator<StockpileItem>> comparators = new ArrayList<>();
 			comparators.add(new StockpileSeparatorComparator());
 			comparators.add(new InnerTotalComparator());
 			comparator = GlazedLists.chainComparators(comparators);

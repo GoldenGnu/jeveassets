@@ -62,6 +62,7 @@ import java.util.TreeSet;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import javax.swing.AbstractListModel;
+import javax.swing.ButtonGroup;
 import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -73,8 +74,10 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
+import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
+import javax.swing.ListModel;
 import javax.swing.SwingUtilities;
 import javax.swing.ToolTipManager;
 import javax.swing.event.ListSelectionEvent;
@@ -112,8 +115,10 @@ import org.jfree.chart.ChartMouseListener;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.DateAxis;
+import org.jfree.chart.axis.LogarithmicAxis;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.labels.XYToolTipGenerator;
+import org.jfree.chart.plot.DefaultDrawingSupplier;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
@@ -133,6 +138,7 @@ public class TrackerTab extends JMainTabSecondary {
 		UPDATE_SHOWN,
 		IMPORT_FILE,
 		INCLUDE_ZERO,
+		LOGARITHMIC,
 		ALL,
 		EDIT,
 		DELETE,
@@ -170,6 +176,7 @@ public class TrackerTab extends JMainTabSecondary {
 	private final JCheckBox jCharacterCorporations;
 	private final JMenuItem jImportFile;
 	private final JCheckBoxMenuItem jIncludeZero;
+	private final JRadioButtonMenuItem jLogarithmic;
 	private final JPopupMenu jPopupMenu;
 	private final JTrackerEditDialog jEditDialog;
 	private final JSelectionDialog<String> jSelectionDialog;
@@ -198,6 +205,8 @@ public class TrackerTab extends JMainTabSecondary {
 	private final List<JMenuInfo.MenuItemValue> values;
 
 	private final TimePeriodValuesCollection dataset = new TimePeriodValuesCollection();
+	private final LogarithmicAxis rangeLogarithmicAxis;
+	private final NumberAxis rangeLinearAxis;
 	private TimePeriodValues walletBalance;
 	private TimePeriodValues assets;
 	private TimePeriodValues sellOrders;
@@ -207,8 +216,8 @@ public class TrackerTab extends JMainTabSecondary {
 	private TimePeriodValues contractCollateral;
 	private TimePeriodValues contractValue;
 	private Map<SimpleTimePeriod, Value> cache;
-	private final Map<String, CheckBoxNode> accountNodes = new TreeMap<String, CheckBoxNode>();
-	private final Map<String, CheckBoxNode> assetNodes = new TreeMap<String, CheckBoxNode>();
+	private final Map<String, CheckBoxNode> accountNodes = new TreeMap<>();
+	private final Map<String, CheckBoxNode> assetNodes = new TreeMap<>();
 	private Integer assetColumn = null;
 	private Integer walletColumn = null;
 	private boolean updateLock = false;
@@ -269,11 +278,11 @@ public class TrackerTab extends JMainTabSecondary {
 
 		jEditDialog = new JTrackerEditDialog(program);
 
-		jSelectionDialog = new JSelectionDialog<String>(program);
+		jSelectionDialog = new JSelectionDialog<>(program);
 
 		JSeparator jDateSeparator = new JSeparator();
 
-		jQuickDate = new JComboBox<QuickDate>(QuickDate.values());
+		jQuickDate = new JComboBox<>(QuickDate.values());
 		jQuickDate.setActionCommand(TrackerAction.QUICK_DATE.name());
 		jQuickDate.addActionListener(listener);
 
@@ -345,14 +354,16 @@ public class TrackerTab extends JMainTabSecondary {
 		JSeparator jOwnersSeparator = new JSeparator();
 
 		jAllProfiles = new JCheckBox(TabsTracker.get().allProfiles());
+		jAllProfiles.setSelected(Settings.get().isTrackerAllProfiles());
 		jAllProfiles.setActionCommand(TrackerAction.PROFILE.name());
 		jAllProfiles.addActionListener(listener);
 
 		jCharacterCorporations = new JCheckBox(TabsTracker.get().characterCorporations());
+		jCharacterCorporations.setSelected(Settings.get().isTrackerCharacterCorporations());
 		jCharacterCorporations.setActionCommand(TrackerAction.PROFILE.name());
 		jCharacterCorporations.addActionListener(listener);
 
-		jOwners = new JMultiSelectionList<String>();
+		jOwners = new JMultiSelectionList<>();
 		jOwners.getSelectionModel().addListSelectionListener(listener);
 		JScrollPane jOwnersScroll = new JScrollPane(jOwners);
 
@@ -408,6 +419,23 @@ public class TrackerTab extends JMainTabSecondary {
 		jIncludeZero.addActionListener(listener);
 		jSettings.add(jIncludeZero);
 
+		jSettings.addSeparator();
+
+		ButtonGroup buttonGroup = new ButtonGroup();
+
+		JRadioButtonMenuItem jLinear = new JRadioButtonMenuItem(TabsTracker.get().scaleLinear());
+		jLinear.setSelected(true);
+		jLinear.setActionCommand(TrackerAction.LOGARITHMIC.name());
+		jLinear.addActionListener(listener);
+		jSettings.add(jLinear);
+		buttonGroup.add(jLinear);
+
+		jLogarithmic = new JRadioButtonMenuItem(TabsTracker.get().scaleLogarithmic());
+		jLogarithmic.setActionCommand(TrackerAction.LOGARITHMIC.name());
+		jLogarithmic.addActionListener(listener);
+		jSettings.add(jLogarithmic);
+		buttonGroup.add(jLogarithmic);
+
 		DateAxis domainAxis = new DateAxis();
 		domainAxis.setDateFormatOverride(dateFormat);
 		domainAxis.setVerticalTickLabels(true);
@@ -415,17 +443,23 @@ public class TrackerTab extends JMainTabSecondary {
 		domainAxis.setAutoRange(true);
 		domainAxis.setTickLabelFont(jFromLabel.getFont());
 
-		NumberAxis rangeAxis = new NumberAxis();
-		rangeAxis.setAutoRange(true);
-		rangeAxis.setStandardTickUnits(NumberAxis.createStandardTickUnits());
-		rangeAxis.setTickLabelFont(jFromLabel.getFont());
+		rangeLogarithmicAxis = new LogarithmicAxis("");
+		rangeLogarithmicAxis.setTickLabelFont(jFromLabel.getFont());
+		rangeLogarithmicAxis.setStrictValuesFlag(false);
+		rangeLogarithmicAxis.setNumberFormatOverride(Formater.AUTO_FORMAT);
+
+		rangeLinearAxis = new NumberAxis();
+		rangeLinearAxis.setAutoRange(true);
+		rangeLinearAxis.setStandardTickUnits(NumberAxis.createStandardTickUnits());
+		rangeLinearAxis.setTickLabelFont(jFromLabel.getFont());
 
 		//XYPlot plot = new XYPlot(dataset, domainAxis, rangeAxis, new XYLineAndShapeRenderer(true, true));
 		render = new MyRender();
-		XYPlot plot = new XYPlot(dataset, domainAxis, rangeAxis, render);
+		XYPlot plot = new XYPlot(dataset, domainAxis, rangeLinearAxis, render);
 		plot.setBackgroundPaint(Color.WHITE);
 		plot.setRangeGridlinePaint(Color.LIGHT_GRAY);
 		plot.setDomainGridlinePaint(Color.LIGHT_GRAY);
+		plot.setDrawingSupplier(new MyDrawingSupplier());
 		plot.getRenderer().setDefaultToolTipGenerator(new XYToolTipGenerator() {
 			@Override
 			public String generateToolTip(XYDataset dataset, int series, int item)	{
@@ -681,15 +715,15 @@ public class TrackerTab extends JMainTabSecondary {
 		Set<String> trackerOwners;
 		try {
 			TrackerData.readLock();
-			trackerOwners = new TreeSet<String>(TrackerData.get().keySet());
+			trackerOwners = new TreeSet<>(TrackerData.get().keySet());
 		} finally {
 			TrackerData.readUnlock();
 		}
 		Set<String> uniqueOwners;
 		if (jAllProfiles.isSelected()) {
-			uniqueOwners = new HashSet<String>(trackerOwners);
+			uniqueOwners = new HashSet<>(trackerOwners);
 		} else { //Profile owners
-			uniqueOwners = new HashSet<String>();
+			uniqueOwners = new HashSet<>();
 			boolean characterCorporations = jCharacterCorporations.isSelected();
 			for (OwnerType owner : program.getOwnerTypes()) {
 				if (trackerOwners.contains(owner.getOwnerName())) {
@@ -727,7 +761,18 @@ public class TrackerTab extends JMainTabSecondary {
 					return ownersList.get(index);
 				}
 			});
-			jOwners.selectAll();
+			List<String> owners = Settings.get().getTrackerSelectedOwners();
+			if (owners == null) {
+				jOwners.selectAll();
+			} else {
+				ListModel<String> model = jOwners.getModel();
+				for (int i = 0; i < model.getSize(); i++) {
+					String ownerName = model.getElementAt(i);
+					if (owners.contains(ownerName)) {
+						jOwners.addSelectionInterval(i, i);
+					}
+				}
+			}
 		}
 		updateLock = false;
 	}
@@ -736,12 +781,12 @@ public class TrackerTab extends JMainTabSecondary {
 		accountNodes.clear();
 		assetNodes.clear();
 	//Find all saved Keys/IDs
-		Set<String> walletIDs = new TreeSet<String>();
-		Set<AssetValue> assetsIDs = new TreeSet<AssetValue>();
+		Set<String> walletIDs = new TreeSet<>();
+		Set<AssetValue> assetsIDs = new TreeSet<>();
 		try {
 			TrackerData.readLock();
-			for (List<Value> values : TrackerData.get().values()) {
-				for (Value data : values) {
+			for (List<Value> list : TrackerData.get().values()) {
+				for (Value data : list) {
 					//Get all account wallet account keys
 					walletIDs.addAll(data.getBalanceFilter().keySet());
 					//Get all asset IDs
@@ -769,7 +814,7 @@ public class TrackerTab extends JMainTabSecondary {
 		CheckBoxNode unknownLocationsNode = new CheckBoxNode(assetNode, TabsTracker.get().unknownLocations(), TabsTracker.get().unknownLocations(), false);
 		assetNodes.put(unknownLocationsNode.getNodeId(), unknownLocationsNode);
 		
-		Map<String, CheckBoxNode> nodeCache = new HashMap<String, CheckBoxNode>();
+		Map<String, CheckBoxNode> nodeCache = new HashMap<>();
 		for (AssetValue assetValue : assetsIDs) {
 			String location = assetValue.getLocation();
 			String flag = assetValue.getFlag();
@@ -826,11 +871,11 @@ public class TrackerTab extends JMainTabSecondary {
 		contractValue = new TimePeriodValues(TabsTracker.get().contractValue());
 		Date from = getFromDate();
 		Date to = getToDate();
-		cache = new TreeMap<SimpleTimePeriod, Value>();
-		Map<String, CheckBoxNode> accountNodesMap = new HashMap<String, CheckBoxNode>(accountNodes);
-		Map<String, CheckBoxNode> assetNodesMap = new HashMap<String, CheckBoxNode>(assetNodes);
-		Map<Date, Boolean> assetColumns = new TreeMap<Date, Boolean>();
-		Map<Date, Boolean> walletColumns = new TreeMap<Date, Boolean>();
+		cache = new TreeMap<>();
+		Map<String, CheckBoxNode> accountNodesMap = new HashMap<>(accountNodes);
+		Map<String, CheckBoxNode> assetNodesMap = new HashMap<>(assetNodes);
+		Map<Date, Boolean> assetColumns = new TreeMap<>();
+		Map<Date, Boolean> walletColumns = new TreeMap<>();
 		if (owners != null) { //No data set...
 			try {
 				TrackerData.readLock();
@@ -1153,19 +1198,20 @@ public class TrackerTab extends JMainTabSecondary {
 			dataset.addSeries(timePeriodValues);
 			updateRender(dataset.getSeriesCount() - 1, Color.BLACK);
 		}
-		jNextChart.getXYPlot().getRangeAxis().setAutoRange(true);
+		rangeLogarithmicAxis.setAutoRange(true);
+		rangeLinearAxis.setAutoRange(true);
 		jNextChart.getXYPlot().getDomainAxis().setAutoRange(true);
 		Number maxNumber = DatasetUtils.findMaximumRangeValue(dataset);
-		NumberAxis rangeAxis = (NumberAxis) jNextChart.getXYPlot().getRangeAxis();
-		rangeAxis.setNumberFormatOverride(Formater.LONG_FORMAT); //Default
-		if (maxNumber != null && (maxNumber instanceof Double)) {
+		if (maxNumber != null && maxNumber instanceof Double) {
 			double max = (Double) maxNumber;
-			if (max > 1000000000000.0) {	 //Higher than 1 Trillion
-				rangeAxis.setNumberFormatOverride(Formater.TRILLIONS_FORMAT);
-			} else if (max > 1000000000.0) { //Higher than 1 Billion
-				rangeAxis.setNumberFormatOverride(Formater.BILLIONS_FORMAT);
-			} else if (max > 1000000.0) {	 //Higher than 1 Million
-				rangeAxis.setNumberFormatOverride(Formater.MILLIONS_FORMAT);
+			if (max >     1_000_000_000_000.0) {	 //Higher than 1 Trillion
+				rangeLinearAxis.setNumberFormatOverride(Formater.TRILLIONS_FORMAT);
+			} else if (max > 1_000_000_000.0) { //Higher than 1 Billion
+				rangeLinearAxis.setNumberFormatOverride(Formater.BILLIONS_FORMAT);
+			} else if (max >     1_000_000.0) {	 //Higher than 1 Million
+				rangeLinearAxis.setNumberFormatOverride(Formater.MILLIONS_FORMAT);
+			} else {
+				rangeLinearAxis.setNumberFormatOverride(Formater.LONG_FORMAT); //Default
 			}
 		}
 	}
@@ -1198,7 +1244,7 @@ public class TrackerTab extends JMainTabSecondary {
 		if (owners.size() == 1) {
 			return jOwners.getSelectedValue();
 		} else {
-			List<String> list = new ArrayList<String>();
+			List<String> list = new ArrayList<>();
 			if (all) {
 				list.add(General.get().all());
 			}
@@ -1256,9 +1302,15 @@ public class TrackerTab extends JMainTabSecondary {
 		}
 	}
 
+	private class MyDrawingSupplier extends DefaultDrawingSupplier {
+		@Override
+		public Shape getNextShape() {
+			return FILTER_AND_DEFAULT;
+		}
+	}
 	private class MyRender extends XYLineAndShapeRenderer {
 
-		Map<Integer, Integer> renders = new HashMap<Integer, Integer>();
+		private final Map<Integer, Integer> renders = new HashMap<>();
 		
 		public MyRender() {
 			super(true, true);
@@ -1288,9 +1340,15 @@ public class TrackerTab extends JMainTabSecondary {
 	private static class ShapeIcon implements Icon {
 
 		private final Shape shape;
+		private final Color color;
+
+		public ShapeIcon(Shape shape, Color color) {
+			this.shape = shape;
+			this.color = color;
+		}
 
 		public ShapeIcon(Shape shape) {
-			this.shape = shape;
+			this(shape, Color.BLACK);
 		}
 
 		@Override
@@ -1302,7 +1360,7 @@ public class TrackerTab extends JMainTabSecondary {
 
 			g2d.setRenderingHints(rh);
 
-			g2d.setColor(Color.BLACK);
+			g2d.setColor(color);
 			g2d.translate(x - shape.getBounds().x, y - shape.getBounds().y);
 			g2d.fill(shape);
 			g2d.dispose();
@@ -1390,8 +1448,14 @@ public class TrackerTab extends JMainTabSecondary {
 					}
 				}
 			} else if (TrackerAction.INCLUDE_ZERO.name().equals(e.getActionCommand())) {
-				NumberAxis domainAxis = (NumberAxis)jNextChart.getXYPlot().getRangeAxis();
-				domainAxis.setAutoRangeIncludesZero(jIncludeZero.isSelected());
+				rangeLogarithmicAxis.setAutoRangeIncludesZero(jIncludeZero.isSelected());
+				rangeLinearAxis.setAutoRangeIncludesZero(jIncludeZero.isSelected());
+			} else if (TrackerAction.LOGARITHMIC.name().equals(e.getActionCommand())) {
+				if (jLogarithmic.isSelected()) {
+					jNextChart.getXYPlot().setRangeAxis(rangeLogarithmicAxis);
+				} else {
+					jNextChart.getXYPlot().setRangeAxis(rangeLinearAxis);
+				}
 			} else if (TrackerAction.UPDATE_DATA.name().equals(e.getActionCommand())) {
 				createData();
 			} else if (TrackerAction.UPDATE_SHOWN.name().equals(e.getActionCommand())) {
@@ -1437,13 +1501,13 @@ public class TrackerTab extends JMainTabSecondary {
 				if (owner == null) {
 					return;
 				}
-				List<String> owners = new ArrayList<String>();
+				List<String> owners = new ArrayList<>();
 				if (owner.equals(General.get().all())) {
 					owners.addAll(jOwners.getSelectedValuesList());
 				} else {
 					owners.add(owner);
 				}
-				Map<String, Value> values = new HashMap<String, Value>();
+				Map<String, Value> values = new HashMap<>();
 				for (String s : owners) {
 					Value value = getSelectedValue(s);
 					if (value != null) {
@@ -1473,6 +1537,13 @@ public class TrackerTab extends JMainTabSecondary {
 				addNote();
 				jNextChart.getXYPlot().setDomainCrosshairVisible(false);
 			} else if (TrackerAction.PROFILE.name().equals(e.getActionCommand())) {
+				if (!updateLock) {
+					boolean allProfiles = jAllProfiles.isSelected();
+					boolean characterCorporations = jCharacterCorporations.isSelected();
+					Settings.get().setTrackerAllProfiles(allProfiles);
+					Settings.get().setTrackerCharacterCorporations(characterCorporations);
+					program.saveSettings("Tracker (Owner Settings)");
+				}
 				updateData();
 			} else if (TrackerAction.FILTER_WALLET_BALANCE.name().equals(e.getActionCommand())) {
 				boolean save = filterDialog.showWallet(accountNodes);
@@ -1484,7 +1555,7 @@ public class TrackerTab extends JMainTabSecondary {
 			} else if (TrackerAction.FILTER_ASSETS.name().equals(e.getActionCommand())) {
 				showLocationFilter();
 			} else if (TrackerAction.IMPORT_FILE.name().equals(e.getActionCommand())) {
-				jFileChooser.setCurrentDirectory(new File(Settings.getPathDataDirectory()));
+				jFileChooser.setCurrentDirectory(new File(FileUtil.getPathDataDirectory()));
 				int value = jFileChooser.showOpenDialog(program.getMainWindow().getFrame());
 				if (value != JFileChooser.APPROVE_OPTION) {
 					return; //Cancel
@@ -1586,6 +1657,11 @@ public class TrackerTab extends JMainTabSecondary {
 			if (e.getValueIsAdjusting()) {
 				return;
 			}
+			if (!updateLock) {
+				List<String> selectedOwners = jOwners.getSelectedValuesList();
+				Settings.get().setTrackerSelectedOwners(selectedOwners);
+				program.saveSettings("Tracker (Owners Selection)");
+			}
 			updateFilterButtons();
 			createData();
 		}
@@ -1648,8 +1724,8 @@ public class TrackerTab extends JMainTabSecondary {
 					while(zipEntry != null){
 						String filename = zipEntry.getName();
 						if (filename.equals("settings.xml") || filename.equals("tracker.json")) {
-							unzippedFile = new File(Settings.getPathDataDirectory() + File.separator + "temp_" + filename);
-							if (unzippedFile.toPath().normalize().startsWith(Settings.getPathDataDirectory() + File.separator)) {  //Make sure path is correct
+							unzippedFile = new File(FileUtil.getPathDataDirectory() + File.separator + "temp_" + filename);
+							if (unzippedFile.toPath().normalize().startsWith(FileUtil.getPathDataDirectory() + File.separator)) {  //Make sure path is correct
 								FileOutputStream fos = new FileOutputStream(unzippedFile);
 								byte[] buffer = new byte[1024];
 								int len;

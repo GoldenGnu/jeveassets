@@ -174,10 +174,10 @@ public class TreeTab extends JMainTabSecondary implements TagUpdate {
 		//Table Format
 		tableFormat = new EnumTableFormatAdaptor<>(TreeTableFormat.class);
 		//Backend
-		eventList = new EventListManager<TreeAsset>().create();
-		exportEventList = new EventListManager<TreeAsset>().create();
+		eventList = EventListManager.create();
+		exportEventList = EventListManager.create();
 		//Sorting (per column)
-		EventList<TreeAsset> myEventList = new EventListManager<TreeAsset>().create();
+		EventList<TreeAsset> myEventList = EventListManager.create();
 		myEventList.getReadWriteLock().readLock().lock();
 		sortedListEmpty = new SortedList<>(myEventList);
 		myEventList.getReadWriteLock().readLock().unlock();

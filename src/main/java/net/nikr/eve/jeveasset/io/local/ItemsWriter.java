@@ -23,7 +23,7 @@ package net.nikr.eve.jeveasset.io.local;
 import java.util.Collection;
 import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.data.sde.StaticData;
-import net.nikr.eve.jeveasset.data.settings.Settings;
+import net.nikr.eve.jeveasset.io.shared.FileUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -36,7 +36,7 @@ public class ItemsWriter extends AbstractXmlWriter {
 
 	public static boolean save() {
 		ItemsWriter writer = new ItemsWriter();
-		return writer.write(StaticData.get().getItems().values(), Settings.getPathItemsUpdates());
+		return writer.write(StaticData.get().getItems().values(), FileUtil.getPathItemsUpdates());
 	}
 
 	private boolean write(final Collection<Item> items, final String filename) {

@@ -53,9 +53,13 @@ import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
 import net.nikr.eve.jeveasset.i18n.DialoguesSettings;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 public class ShowToolSettingsPanel extends JSettingsPanel {
+
+	private static final Logger LOG = LoggerFactory.getLogger(ShowToolSettingsPanel.class);
 
 	private final static double COLUMN_COUNT = 4.0;
 
@@ -64,7 +68,7 @@ public class ShowToolSettingsPanel extends JSettingsPanel {
 	private final JLabel jToolsLabel;
 	private final DefaultListModel<Tool> model = new DefaultListModel<>();
 	private final JList<Tool> jTools;
-	TreeSet<Tool> tools = new TreeSet<Tool>();
+	TreeSet<Tool> tools = new TreeSet<>();
 
 	public ShowToolSettingsPanel(final Program program, final SettingsDialog settingsDialog) {
 		super(program, settingsDialog, DialoguesSettings.get().show(), Images.EDIT_SHOW.getIcon());
@@ -286,7 +290,7 @@ public class ShowToolSettingsPanel extends JSettingsPanel {
 	// @camickr already suggested above.
 	// https://docs.oracle.com/javase/tutorial/uiswing/dnd/dropmodedemo.html
 	@SuppressWarnings("serial")
-	class ListItemTransferHandler extends TransferHandler {
+	public static class ListItemTransferHandler extends TransferHandler {
 
 		protected final DataFlavor localObjectFlavor;
 		protected int[] indices;
@@ -371,10 +375,9 @@ public class ShowToolSettingsPanel extends JSettingsPanel {
 				addCount = values.length;
 				return true;
 			} catch (UnsupportedFlavorException | IOException ex) {
-				ex.printStackTrace();
+				LOG.error(ex.getMessage(), ex);
+				return false;
 			}
-
-			return false;
 		}
 
 		@Override

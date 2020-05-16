@@ -32,6 +32,7 @@ import net.nikr.eve.jeveasset.io.shared.RawConverter;
 import net.troja.eve.esi.ApiException;
 import net.troja.eve.esi.ApiResponse;
 import net.troja.eve.esi.model.CharacterLocationResponse;
+import net.troja.eve.esi.model.CharacterRolesResponse.RolesEnum;
 import net.troja.eve.esi.model.CharacterShipResponse;
 
 
@@ -106,6 +107,11 @@ public class EsiShipGetter extends AbstractEsiGetter {
 	}
 
 	@Override
+	protected void setNextUpdate(Date date) {
+		//Use the assets update times
+	}
+
+	@Override
 	protected boolean haveAccess() {
 		if (owner.isCorporation()) {
 			return true; //Overwrite the default, so, we don't get errors
@@ -115,8 +121,8 @@ public class EsiShipGetter extends AbstractEsiGetter {
 	}
 
 	@Override
-	protected void setNextUpdate(Date date) {
-		//Use the assets update times
+	protected RolesEnum[] getRequiredRoles() {
+		return null;
 	}
 	
 }

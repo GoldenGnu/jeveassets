@@ -38,7 +38,7 @@ public class FormaterTest {
 
 	@Test
 	public void testThreadSafe() throws InterruptedException, ExecutionException {
-		List<Callable<Void>> threads = new ArrayList<Callable<Void>>();
+		List<Callable<Void>> threads = new ArrayList<>();
 		for (int i = 0; i < THREADS; i++) {
 			threads.add(new ParseDate());
 			threads.add(new FormatDate());
@@ -49,6 +49,14 @@ public class FormaterTest {
 		for (Future<Void> future : futures) {
 			future.get();
 		}
+	}
+
+	@Test
+	public void testAutoFormat() throws InterruptedException, ExecutionException {
+		Formater.AUTO_FORMAT.format(Long.MAX_VALUE);
+		Formater.AUTO_FORMAT.format(Long.MIN_VALUE);
+		Formater.AUTO_FORMAT.format(Double.MIN_VALUE);
+		Formater.AUTO_FORMAT.format(Double.MAX_VALUE);
 	}
 
 	private class ParseDate implements Callable<Void> {
