@@ -86,6 +86,7 @@ import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.CopyHandler;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
+import net.nikr.eve.jeveasset.gui.shared.Updatable;
 import net.nikr.eve.jeveasset.gui.shared.components.JFixedToolBar;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTabPrimary;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
@@ -472,7 +473,7 @@ public class MarketOrdersTab extends JMainTabPrimary {
 
 	private void updateDates() {
 		Date nextUpdate = Settings.get().getPublicMarketOrdersNextUpdate();
-		if (Settings.get().isUpdatable(nextUpdate)) {
+		if (Updatable.isUpdatable(nextUpdate)) {
 			jUpdate.setText(TabsOrders.get().updateOutbidEsi());
 			jUpdate.setEnabled(!jAutoUpdate.isSelected());
 		} else {

@@ -82,10 +82,12 @@ public class Updatable {
 		return false;
 	}
 
-	private boolean isUpdatable(Date nextUpdate) {
-		if (nextUpdate == null) {
-			return false;
-		}
-		return Settings.get().isUpdatable(nextUpdate);
+	public static boolean isUpdatable(Date nextUpdate) {
+		Date now = Settings.getNow();
+		return nextUpdate != null &&
+				((now.after(nextUpdate)
+				|| now.equals(nextUpdate)
+				|| Program.isForceUpdate())
+				&& !Program.isForceNoUpdate());
 	}
 }

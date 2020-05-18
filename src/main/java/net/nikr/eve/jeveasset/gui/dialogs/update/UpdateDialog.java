@@ -71,6 +71,7 @@ import net.nikr.eve.jeveasset.io.esi.EsiTransactionsGetter;
 import net.nikr.eve.jeveasset.io.online.CitadelGetter;
 import net.nikr.eve.jeveasset.io.online.ContractPriceGetter;
 import net.nikr.eve.jeveasset.data.settings.ContractPriceManager;
+import net.nikr.eve.jeveasset.gui.shared.Updatable;
 import net.nikr.eve.jeveasset.io.online.PriceDataGetter;
 import net.nikr.eve.jeveasset.io.shared.ThreadWoker;
 
@@ -122,7 +123,7 @@ public class UpdateDialog extends JDialogCentered {
 	private final JLabel jPriceDataLeft;
 	private final JButton jUpdate;
 	private final JButton jCancel;
-	private final List<JCheckBox> jCheckBoxes = new ArrayList<JCheckBox>();
+	private final List<JCheckBox> jCheckBoxes = new ArrayList<>();
 	private final Timer timer;
 
 	public UpdateDialog(final Program program) {
@@ -534,7 +535,7 @@ public class UpdateDialog extends JDialogCentered {
 
 	private void setUpdateLabel(final JLabel jFirst, final JLabel jAll, final JToggleButton jCheckBox, final Date first, final Date last, boolean check) {
 		if (jFirst != null) {
-			if (Settings.get().isUpdatable(last)) {
+			if (Updatable.isUpdatable(last)) {
 				jFirst.setText("");
 			} else {
 				jFirst.setText(getFormatedDuration(first));
@@ -547,7 +548,7 @@ public class UpdateDialog extends JDialogCentered {
 			jAll.setEnabled(last != null);
 		}
 		if (jCheckBox != null) {
-			if ((Settings.get().isUpdatable(first) || Settings.get().isUpdatable(last))) {
+			if ((Updatable.isUpdatable(first) || Updatable.isUpdatable(last))) {
 				if (!jCheckBox.isEnabled()) {
 					if (check) {
 						jCheckBox.setSelected(true);
@@ -564,7 +565,7 @@ public class UpdateDialog extends JDialogCentered {
 	private String getFormatedDuration(Date date) {
 		if (date == null) { //less than 1 second
 			return DialoguesUpdate.get().noAccounts();
-		} else if (Settings.get().isUpdatable(date)){
+		} else if (Updatable.isUpdatable(date)){
 			return DialoguesUpdate.get().now();
 		} else {
 			long time = date.getTime() - Settings.getNow().getTime();
@@ -656,7 +657,7 @@ public class UpdateDialog extends JDialogCentered {
 					}
 				}
 				final Date start = lastUpdate;
-				List<UpdateTask> updateTasks = new ArrayList<UpdateTask>();
+				List<UpdateTask> updateTasks = new ArrayList<>();
 				if (jMarketOrders.isSelected()
 						|| jJournal.isSelected()
 						|| jTransactions.isSelected()
@@ -752,7 +753,7 @@ public class UpdateDialog extends JDialogCentered {
 
 	public static class Step1Task extends UpdateTask {
 
-		private final List<Runnable> updates = new ArrayList<Runnable>();
+		private final List<Runnable> updates = new ArrayList<>();
 		private final ProfileManager profileManager;
 
 		public Step1Task(final ProfileManager profileManager) {
@@ -791,7 +792,7 @@ public class UpdateDialog extends JDialogCentered {
 
 	public static class Step2Task extends UpdateTask {
 
-		private final List<Runnable> updates = new ArrayList<Runnable>();
+		private final List<Runnable> updates = new ArrayList<>();
 
 		public Step2Task(final ProfileManager profileManager, final boolean assets, final boolean balance, final boolean blueprints, final boolean bookmarks, final boolean container, final boolean contracts, final boolean industry, final boolean journal, final boolean orders, final boolean transactions) {
 			super(DialoguesUpdate.get().step2());
@@ -869,7 +870,7 @@ public class UpdateDialog extends JDialogCentered {
 
 	public static class Step3Task extends UpdateTask {
 
-		private final List<Runnable> updates = new ArrayList<Runnable>();
+		private final List<Runnable> updates = new ArrayList<>();
 
 		public Step3Task(final ProfileManager profileManager, final boolean assets, final boolean contracts) {
 			super(DialoguesUpdate.get().step3());
@@ -895,7 +896,7 @@ public class UpdateDialog extends JDialogCentered {
 	
 	public static class Step4Task extends UpdateTask {
 
-		private final List<Runnable> updates = new ArrayList<Runnable>();
+		private final List<Runnable> updates = new ArrayList<>();
 
 		public Step4Task(final ProfileManager profileManager, final boolean contracts) {
 			super(DialoguesUpdate.get().step4());

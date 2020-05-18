@@ -761,15 +761,6 @@ public class Settings {
 		return new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
 	}
 
-	public boolean isUpdatable(final Date date) {
-		Date now = Settings.getNow();
-		return date != null &&
-				((now.after(date)
-				|| now.equals(date)
-				|| Program.isForceUpdate())
-				&& !Program.isForceNoUpdate());
-	}
-
 	private static class SettingsLock {
 
 		private boolean locked = false;
