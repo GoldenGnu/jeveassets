@@ -33,9 +33,9 @@ import java.util.concurrent.Future;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.api.accounts.OwnerType;
 import net.nikr.eve.jeveasset.data.api.my.MyAsset;
-import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
+import net.nikr.eve.jeveasset.gui.shared.Updatable;
 import net.nikr.eve.jeveasset.io.shared.ThreadWoker.TaskCancelledException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -95,7 +95,7 @@ public abstract class AbstractGetter<O extends OwnerType> implements Runnable {
 		this.owner = owner;
 		this.forceUpdate = forceUpdate;
 		this.disabled = !forceUpdate && owner != null && !owner.isShowOwner();
-		this.wait = !forceUpdate && !Settings.get().isUpdatable(nextUpdate);
+		this.wait = !forceUpdate && !Updatable.isUpdatable(nextUpdate);
 		if (taskType == null) {
 			taskName = "Unknown";
 		} else {
