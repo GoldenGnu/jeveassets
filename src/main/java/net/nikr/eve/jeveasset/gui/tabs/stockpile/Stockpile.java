@@ -948,7 +948,7 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 		}
 
 		public String getSeparator() {
-			return stockpile.getName();
+			return stockpile.getName().toLowerCase() + "\r\n" + stockpile.getName(); //Sort lower case, but unique by case
 		}
 
 		public Stockpile getStockpile() {
