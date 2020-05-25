@@ -279,34 +279,46 @@ public enum MarketTableFormat implements EnumTableColumn<MyMarketOrder> {
 			return from.getVolumeRemain() * from.getPrice();
 		}
 	},
-	LAST_TRANSACTION_PRICE(Double.class, GlazedLists.comparableComparator()) {
+	TRANSACTION_PRICE(Double.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
-			return TabsOrders.get().columnLastTransactionPrice();
+			return TabsOrders.get().columnTransactionPrice();
+		}
+		@Override
+		public String getColumnToolTip() {
+			return TabsOrders.get().columnTransactionPriceToolTip();
 		}
 		@Override
 		public Object getColumnValue(final MyMarketOrder from) {
-			return from.getLastTransactionPrice();
+			return from.getTransactionPrice();
 		}
 	},
-	LAST_TRANSACTION_VALUE(Double.class, GlazedLists.comparableComparator()) {
+	TRANSACTION_PROFIT(Double.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
-			return TabsOrders.get().columnLastTransactionValue();
+			return TabsOrders.get().columnTransactionProfitDifference();
+		}
+		@Override
+		public String getColumnToolTip() {
+			return TabsOrders.get().columnTransactionProfitDifferenceToolTip();
 		}
 		@Override
 		public Object getColumnValue(final MyMarketOrder from) {
-			return from.getLastTransactionValue();
+			return from.getTransactionProfitDifference();
 		}
 	},
-	LAST_TRANSACTION_PERCENT(Percent.class, GlazedLists.comparableComparator()) {
+	TRANSACTION_PROFIT_PERCENT(Percent.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
-			return TabsOrders.get().columnLastTransactionPercent();
+			return TabsOrders.get().columnTransactionProfitPercent();
+		}
+		@Override
+		public String getColumnToolTip() {
+			return TabsOrders.get().columnTransactionProfitPercentToolTip();
 		}
 		@Override
 		public Object getColumnValue(final MyMarketOrder from) {
-			return from.getLastTransactionPercent();
+			return from.getTransactionProfitPercent();
 		}
 	},
 	TYPE_ID(Integer.class, GlazedLists.comparableComparator()) {

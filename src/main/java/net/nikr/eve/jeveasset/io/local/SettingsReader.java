@@ -56,6 +56,7 @@ import net.nikr.eve.jeveasset.data.settings.RouteResult;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.data.settings.Settings.SettingFlag;
 import net.nikr.eve.jeveasset.data.settings.Settings.SettingsFactory;
+import net.nikr.eve.jeveasset.data.settings.Settings.TransactionProfitPrice;
 import net.nikr.eve.jeveasset.data.settings.TrackerData;
 import net.nikr.eve.jeveasset.data.settings.UserItem;
 import net.nikr.eve.jeveasset.data.settings.tag.Tag;
@@ -557,6 +558,15 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 
 	private void parseAssetSettings(final Element assetSettingsElement, final Settings settings) throws XmlException {
 		int maximumPurchaseAge = getInt(assetSettingsElement, "maximumpurchaseage");
+		TransactionProfitPrice transactionProfitPrice = TransactionProfitPrice.LASTEST;
+		if (haveAttribute(assetSettingsElement, "transactionprofitprice")) {
+			try {
+				transactionProfitPrice = TransactionProfitPrice.valueOf(getString(assetSettingsElement, "transactionprofitprice"));
+			} catch (IllegalArgumentException ex) {
+				//No problem already set
+			}
+		}
+		settings.setTransactionProfitPrice(transactionProfitPrice);
 		settings.setMaximumPurchaseAge(maximumPurchaseAge);
 	}
 

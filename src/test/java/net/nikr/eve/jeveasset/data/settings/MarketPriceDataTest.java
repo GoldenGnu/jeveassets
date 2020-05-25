@@ -21,7 +21,6 @@
 
 package net.nikr.eve.jeveasset.data.settings;
 
-import net.nikr.eve.jeveasset.data.settings.MarketPriceData;
 import java.util.Date;
 import net.nikr.eve.jeveasset.TestUtil;
 
@@ -36,9 +35,9 @@ public class MarketPriceDataTest extends TestUtil {
 	public void testUpdate() {
 		//Set
 		MarketPriceData data = new MarketPriceData();
-		data.update(75, new Date(1));
-		data.update(25, new Date(2));
-		data.update(50, new Date(3));
+		data.update(75, 1, new Date(1));
+		data.update(25, 1, new Date(2));
+		data.update(50, 1, new Date(3));
 		assertEquals(50, data.getAverage(), 0);
 		assertEquals(75, data.getMaximum(), 0);
 		assertEquals(25, data.getMinimum(), 0);
@@ -50,5 +49,14 @@ public class MarketPriceDataTest extends TestUtil {
 		assertEquals(0, data.getMaximum(), 0);
 		assertEquals(0, data.getMinimum(), 0);
 		assertEquals(0, data.getLatest(), 0);
+
+		//Set
+		data = new MarketPriceData();
+		data.update(10, 300 , new Date(1));
+		data.update(20, 100, new Date(2));
+		assertEquals(12.5, data.getAverage(), 0);
+		assertEquals(20, data.getMaximum(), 0);
+		assertEquals(10, data.getMinimum(), 0);
+		assertEquals(20, data.getLatest(), 0);
 	}
 }

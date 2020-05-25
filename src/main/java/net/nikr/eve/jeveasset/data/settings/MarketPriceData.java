@@ -35,7 +35,7 @@ public class MarketPriceData {
 
 	public MarketPriceData() { }
 
-	public void update(final double price, final Date date) {
+	public void update(final double price, final double count, final Date date) {
 		//Max
 		if (price > maximum) {
 			this.maximum = price;
@@ -45,8 +45,8 @@ public class MarketPriceData {
 			this.minimum = price;
 		}
 		//Average
-		total = total + price;
-		count++;
+		this.total = total + (price * count);
+		this.count = this.count + count;
 		//Latest
 		if (latestDate == null || latestDate.before(date)) {
 			latest = price;

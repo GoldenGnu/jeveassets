@@ -29,7 +29,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.SplashUpdater;
@@ -97,7 +96,6 @@ public class ProfileData {
 	private final List<MyAccountBalance> accountBalanceList = new ArrayList<>();
 	private final List<MyContract> contractList = new ArrayList<>();
 	private Map<Integer, List<MyAsset>> uniqueAssetsDuplicates = null; //TypeID : int
-	private Map<Integer, MarketPriceData> marketPriceData; //TypeID : int
 	private Map<Integer, MarketPriceData> transactionSellPriceData; //TypeID : int
 	private Map<Integer, MarketPriceData> transactionBuyPriceData; //TypeID : int
 	private Map<Integer, Double> transactionBuyTax; //TypeID : int
@@ -444,7 +442,6 @@ public class ProfileData {
 		Map<Long, OwnerType> blueprintsMap = new HashMap<>();
 		Map<Long, RawBlueprint> blueprints = new HashMap<>();
 
-		maximumPurchaseAge();
 		calcTransactionsPriceData();
 		for (OwnerType owner : profileManager.getOwnerTypes()) {
 			if (!owner.isShowOwner()) {
@@ -954,29 +951,6 @@ public class ProfileData {
 		}
 	}
 
-	private void maximumPurchaseAge() {
-		//Create Market Price Data
-		marketPriceData = new HashMap<>();
-		//Date - maximumPurchaseAge in days
-		Date maxAge = new Date(System.currentTimeMillis() - ((long)Settings.get().getMaximumPurchaseAge() * 24L * 60L * 60L * 1000L));
-		for (OwnerType owner : profileManager.getOwnerTypes()) {
-			for (MyMarketOrder marketOrder : owner.getMarketOrders()) {
-				if (marketOrder.isBuyOrder() //Buy orders only
-						//at least one bought
-						&& !Objects.equals(marketOrder.getVolumeRemain(), marketOrder.getVolumeTotal())
-						//Date in range or unlimited
-						&& (marketOrder.getIssued().after(maxAge) || Settings.get().getMaximumPurchaseAge() == 0)) {
-					int typeID = marketOrder.getTypeID();
-					if (!marketPriceData.containsKey(typeID)) {
-						marketPriceData.put(typeID, new MarketPriceData());
-					}
-					MarketPriceData data = marketPriceData.get(typeID);
-					data.update(marketOrder.getPrice(), marketOrder.getIssued());
-				}
-			}
-		}
-	}
-
 	private void calcTransactionsPriceData() {
 		//Create Transaction Price Data
 		transactionBuyTax = new HashMap<>();
@@ -985,6 +959,7 @@ public class ProfileData {
 		transactionSellTax = new HashMap<>();
 		marketOrdersBrokersFee = new HashMap<>();
 		Date lastTaxDate = null;
+		Date maxAge = new Date(System.currentTimeMillis() - ((long)Settings.get().getMaximumPurchaseAge() * 24L * 60L * 60L * 1000L));
 		for (OwnerType owner : profileManager.getOwnerTypes()) {
 			Map<Date, Double> taxes = new HashMap<>();
 			Map<Date, Double> fees = new HashMap<>();
@@ -997,11 +972,6 @@ public class ProfileData {
 				}
 			}
 			for (MyTransaction transaction : owner.getTransactions()) {
-				if (transaction.isSell()) { //Sell
-					createTransactionsPriceData(transactionSellPriceData, transaction);
-				} else { //Buy
-					createTransactionsPriceData(transactionBuyPriceData, transaction);
-				}
 				Double tax = taxes.get(transaction.getDate());
 				if (tax != null) {
 					transactionSellTax.put(transaction.getTransactionID(), tax);
@@ -1009,6 +979,14 @@ public class ProfileData {
 						transactionBuyTax.put(transaction.getTypeID(), tax);
 						lastTaxDate = transaction.getDate();
 					}
+				}
+				if (transaction.getDate().before(maxAge) && Settings.get().getMaximumPurchaseAge() != 0){
+					continue; //Date out of range and not unlimited
+				}
+				if (transaction.isSell()) { //Sell
+					createTransactionsPriceData(transactionSellPriceData, transaction);
+				} else { //Buy
+					createTransactionsPriceData(transactionBuyPriceData, transaction);
 				}
 			}
 			for (MyMarketOrder marketOrder : owner.getMarketOrders()) {
@@ -1028,38 +1006,55 @@ public class ProfileData {
 
 	private void createTransactionsPriceData(Map<Integer, MarketPriceData> transactionPriceData, MyTransaction transaction) {
 		int typeID = transaction.getTypeID();
-		if (!transactionPriceData.containsKey(typeID)) {
-			transactionPriceData.put(typeID, new MarketPriceData());
-		}
 		MarketPriceData data = transactionPriceData.get(typeID);
-		data.update(transaction.getPrice(), transaction.getDate());
+		if (data == null) {
+			data = new MarketPriceData();
+			transactionPriceData.put(typeID, data);
+		}
+		data.update(transaction.getPrice(), transaction.getItemCount(), transaction.getDate());
 	}
 
 	private void setLastTransaction(LastTransactionType item, int typeID, boolean buy, double price, Double tax) {
 		if (tax == null) {
 			tax = 0.0;
 		}
-		MarketPriceData lastTransaction;
+		MarketPriceData marketPriceData;
 		if (buy) { //Buy
-			lastTransaction = transactionSellPriceData.get(typeID);
+			marketPriceData = transactionSellPriceData.get(typeID);
 		} else { //Sell
-			lastTransaction = transactionBuyPriceData.get(typeID); 
+			marketPriceData = transactionBuyPriceData.get(typeID); 
 		}
-		if (lastTransaction != null) {
-			Double lastTransactionPrice = lastTransaction.getLatest();
+		if (marketPriceData != null) {
+			Double transactionPrice;
+			switch (Settings.get().getTransactionProfitPrice()) {
+				case AVERAGE: 
+					transactionPrice = marketPriceData.getAverage();
+					break;
+				case LASTEST:
+					transactionPrice = marketPriceData.getLatest();
+					break;
+				case MAXIMUM:
+					transactionPrice = marketPriceData.getMaximum();
+					break;
+				case MINIMUM:
+					transactionPrice = marketPriceData.getMinimum();
+					break;
+				default:
+					transactionPrice = marketPriceData.getLatest();
+			}
 			if (buy) { //Buy
-				item.setLastTransactionPrice(lastTransactionPrice - tax);
-				item.setLastTransactionValue(lastTransactionPrice - (price + tax));
-				item.setLastTransactionPercent(Percent.create(lastTransactionPrice / (price + tax)));
+				item.setTransactionPrice(transactionPrice - tax);
+				item.setTransactionProfit(transactionPrice - (price + tax));
+				item.setTransactionProfitPercent(Percent.create(transactionPrice / (price + tax)));
 			} else { //Sell
-				item.setLastTransactionPrice(lastTransactionPrice);
-				item.setLastTransactionValue((price - tax) - (lastTransactionPrice));
-				item.setLastTransactionPercent(Percent.create((price - tax) / (lastTransactionPrice)));
+				item.setTransactionPrice(transactionPrice);
+				item.setTransactionProfit((price - tax) - (transactionPrice));
+				item.setTransactionProfitPercent(Percent.create((price - tax) / (transactionPrice)));
 			}
 		} else {
-			item.setLastTransactionPrice(0);
-			item.setLastTransactionValue(0);
-			item.setLastTransactionPercent(Percent.create(0));
+			item.setTransactionPrice(0);
+			item.setTransactionProfit(0);
+			item.setTransactionProfitPercent(Percent.create(0));
 		}
 	}
 
@@ -1088,7 +1083,7 @@ public class ProfileData {
 			//Reprocessed price
 			asset.setPriceReprocessed(ApiIdConverter.getPriceReprocessed(asset.getItem()));
 			//Market price
-			asset.setMarketPriceData(marketPriceData.get(asset.getItem().getTypeID()));
+			asset.setMarketPriceData(transactionBuyPriceData.get(asset.getItem().getTypeID()));
 			//User Item Names
 			updateName(asset);
 			//Contaioner
