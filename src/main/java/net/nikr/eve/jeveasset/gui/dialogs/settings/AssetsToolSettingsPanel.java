@@ -23,13 +23,9 @@ package net.nikr.eve.jeveasset.gui.dialogs.settings;
 
 import javax.swing.GroupLayout;
 import javax.swing.JCheckBox;
-import javax.swing.JLabel;
-import javax.swing.JTextField;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
-import net.nikr.eve.jeveasset.gui.shared.DocumentFactory;
-import net.nikr.eve.jeveasset.gui.shared.components.JIntegerField;
 import net.nikr.eve.jeveasset.i18n.DialoguesSettings;
 
 
@@ -41,7 +37,6 @@ public class AssetsToolSettingsPanel extends JSettingsPanel {
 	private final JCheckBox jSellContracts;
 	private final JCheckBox jBuyContracts;
 	private final JCheckBox jManufacturing;
-	private final JTextField jMaxOrderAge;
 
 	public AssetsToolSettingsPanel(final Program program, final SettingsDialog settingsDialog) {
 		super(program, settingsDialog, DialoguesSettings.get().assets(), Images.TOOL_ASSETS.getIcon());
@@ -52,9 +47,6 @@ public class AssetsToolSettingsPanel extends JSettingsPanel {
 		jSellContracts = new JCheckBox(DialoguesSettings.get().includeSellContracts());
 		jBuyContracts = new JCheckBox(DialoguesSettings.get().includeBuyContracts());
 		jManufacturing = new JCheckBox(DialoguesSettings.get().includeManufacturing());
-		jMaxOrderAge = new JIntegerField("0", DocumentFactory.ValueFlag.POSITIVE_AND_ZERO);
-		JLabel jMaxOrderAgeLabel = new JLabel(DialoguesSettings.get().maximumPurchaseAge());
-		JLabel jDaysLabel = new JLabel(DialoguesSettings.get().days());
 
 		layout.setHorizontalGroup(
 			layout.createParallelGroup(GroupLayout.Alignment.LEADING)
@@ -64,11 +56,6 @@ public class AssetsToolSettingsPanel extends JSettingsPanel {
 				.addComponent(jSellContracts)
 				.addComponent(jBuyContracts)
 				.addComponent(jManufacturing)
-				.addGroup(layout.createSequentialGroup()
-					.addComponent(jMaxOrderAgeLabel)
-					.addComponent(jMaxOrderAge, 75, 75, 75)
-					.addComponent(jDaysLabel)
-				)
 		);
 		layout.setVerticalGroup(
 			layout.createSequentialGroup()
@@ -78,30 +65,17 @@ public class AssetsToolSettingsPanel extends JSettingsPanel {
 				.addComponent(jSellContracts, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 				.addComponent(jBuyContracts, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 				.addComponent(jManufacturing, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-				.addGap(20)
-				.addGroup(layout.createParallelGroup()
-					.addComponent(jMaxOrderAgeLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-					.addComponent(jMaxOrderAge, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-					.addComponent(jDaysLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-				)
 		);
 	}
 
 	@Override
 	public boolean save() {
-		int maximumPurchaseAge;
-		try {
-			maximumPurchaseAge = Integer.valueOf(jMaxOrderAge.getText());
-		} catch (NumberFormatException ex) {
-			maximumPurchaseAge = 0;
-		}
 		boolean update = jReprocessColors.isSelected() != Settings.get().isReprocessColors()
 						|| jSellOrders.isSelected() != Settings.get().isIncludeSellOrders()
 						|| jBuyOrders.isSelected() != Settings.get().isIncludeBuyOrders()
 						|| jSellContracts.isSelected() != Settings.get().isIncludeSellContracts()
 						|| jBuyContracts.isSelected() != Settings.get().isIncludeBuyContracts()
 						|| jManufacturing.isSelected() != Settings.get().isIncludeManufacturing()
-						|| maximumPurchaseAge != Settings.get().getMaximumPurchaseAge()
 						;
 		Settings.get().setReprocessColors(jReprocessColors.isSelected());
 		Settings.get().setIncludeSellOrders(jSellOrders.isSelected());
@@ -109,7 +83,6 @@ public class AssetsToolSettingsPanel extends JSettingsPanel {
 		Settings.get().setIncludeSellContracts(jSellContracts.isSelected());
 		Settings.get().setIncludeBuyContracts(jBuyContracts.isSelected());
 		Settings.get().setIncludeManufacturing(jManufacturing.isSelected());
-		Settings.get().setMaximumPurchaseAge(maximumPurchaseAge);
 		return update;
 	}
 
@@ -121,7 +94,6 @@ public class AssetsToolSettingsPanel extends JSettingsPanel {
 		jSellContracts.setSelected(Settings.get().isIncludeSellContracts());
 		jBuyContracts.setSelected(Settings.get().isIncludeBuyContracts());
 		jManufacturing.setSelected(Settings.get().isIncludeManufacturing());
-		jMaxOrderAge.setText(String.valueOf(Settings.get().getMaximumPurchaseAge()));
 	}
 }
 

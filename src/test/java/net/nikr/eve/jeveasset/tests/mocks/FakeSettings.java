@@ -618,4 +618,14 @@ public abstract class FakeSettings extends Settings {
 	public ColorSettings getColorSettings() {
 		throw new UnsupportedOperationException("not implemented");
 	}
+
+	@Override
+	public void setTransactionProfitPrice(TransactionProfitPrice transactionProfitPrice) {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public TransactionProfitPrice getTransactionProfitPrice() {
+		throw new UnsupportedOperationException("not implemented");
+	}
 }

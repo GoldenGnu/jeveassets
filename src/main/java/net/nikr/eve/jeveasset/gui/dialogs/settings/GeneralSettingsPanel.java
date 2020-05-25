@@ -26,11 +26,15 @@ import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import javax.swing.GroupLayout;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.settings.Settings;
+import net.nikr.eve.jeveasset.data.settings.Settings.TransactionProfitPrice;
 import net.nikr.eve.jeveasset.gui.images.Images;
+import net.nikr.eve.jeveasset.gui.shared.DocumentFactory;
+import net.nikr.eve.jeveasset.gui.shared.components.JIntegerField;
 import net.nikr.eve.jeveasset.i18n.DialoguesSettings;
 
 
@@ -39,6 +43,8 @@ public class GeneralSettingsPanel extends JSettingsPanel {
 	private final JCheckBox jEnterFilters;
 	private final JCheckBox jHighlightSelectedRow;
 	private final JCheckBox jFocusEveOnline;
+	private final JTextField jMaxOrderAge;
+	private final JComboBox<TransactionProfitPrice> jTransactionProfitPrice;
 
 
 	public GeneralSettingsPanel(final Program program, final SettingsDialog optionsDialog) {
@@ -52,6 +58,8 @@ public class GeneralSettingsPanel extends JSettingsPanel {
 
 		JLabel jFocusEveOnlineLinuxHelp = new JLabel(DialoguesSettings.get().focusEveOnlineLinuxHelp());
 		jFocusEveOnlineLinuxHelp.setVisible(Platform.isLinux());
+		JLabel jFocusEveOnlineLinuxHelp2 = new JLabel(DialoguesSettings.get().focusEveOnlineLinuxHelp2());
+		jFocusEveOnlineLinuxHelp2.setVisible(Platform.isLinux());
 		JTextField jFocusEveOnlineLinuxCmd = new JTextField(DialoguesSettings.get().focusEveOnlineLinuxCmd());
 		jFocusEveOnlineLinuxCmd.addFocusListener(new FocusAdapter() {
 			@Override
@@ -62,17 +70,40 @@ public class GeneralSettingsPanel extends JSettingsPanel {
 		jFocusEveOnlineLinuxCmd.setEditable(false);
 		jFocusEveOnlineLinuxCmd.setVisible(Platform.isLinux());
 
+		jMaxOrderAge = new JIntegerField("0", DocumentFactory.ValueFlag.POSITIVE_AND_ZERO);
+		JLabel jMaxOrderAgeLabel = new JLabel(DialoguesSettings.get().includeDays());
+		JLabel jDaysLabel = new JLabel(DialoguesSettings.get().days());
+
+		JLabel jTransactionProfitLabel = new JLabel(DialoguesSettings.get().transactionsProfit());
+		JLabel jTransactionProfitPriceLabel = new JLabel(DialoguesSettings.get().transactionsPrice());
+		jTransactionProfitPrice = new JComboBox<>(TransactionProfitPrice.values());
+		jTransactionProfitPrice.setPrototypeDisplayValue(TransactionProfitPrice.LASTEST);
+
 		layout.setHorizontalGroup(
 			layout.createParallelGroup(GroupLayout.Alignment.LEADING)
 				.addComponent(jEnterFilters)
 				.addComponent(jHighlightSelectedRow)
 				.addComponent(jFocusEveOnline)
+				.addComponent(jTransactionProfitLabel)
 				.addGroup(layout.createSequentialGroup()
-					.addGap(30)
+					.addGap(25)
 					.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
 						.addComponent(jFocusEveOnlineLinuxHelp)
+						.addComponent(jFocusEveOnlineLinuxHelp2)
 						.addComponent(jFocusEveOnlineLinuxCmd)
 					)
+				)
+				.addGroup(layout.createSequentialGroup()
+					.addGap(25)
+					.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+						.addComponent(jTransactionProfitPriceLabel)
+						.addComponent(jMaxOrderAgeLabel)
+					)
+					.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+						.addComponent(jMaxOrderAge)
+						.addComponent(jTransactionProfitPrice)
+					)
+					.addComponent(jDaysLabel)
 				)
 		);
 		layout.setVerticalGroup(
@@ -81,16 +112,40 @@ public class GeneralSettingsPanel extends JSettingsPanel {
 				.addComponent(jHighlightSelectedRow, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 				.addComponent(jFocusEveOnline, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 				.addComponent(jFocusEveOnlineLinuxHelp, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+				.addComponent(jFocusEveOnlineLinuxHelp2, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 				.addComponent(jFocusEveOnlineLinuxCmd, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+				.addGap(10)
+				.addComponent(jTransactionProfitLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+				.addGroup(layout.createParallelGroup()
+					.addComponent(jMaxOrderAgeLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jMaxOrderAge, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jDaysLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+				)
+				.addGroup(layout.createParallelGroup()
+					.addComponent(jTransactionProfitPriceLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jTransactionProfitPrice, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+				)
 		);
 	}
 
 	@Override
 	public boolean save() {
-		boolean update = jHighlightSelectedRow.isSelected() != Settings.get().isHighlightSelectedRows();
+		int maximumPurchaseAge;
+		try {
+			maximumPurchaseAge = Integer.valueOf(jMaxOrderAge.getText());
+		} catch (NumberFormatException ex) {
+			maximumPurchaseAge = 0;
+		}
+		TransactionProfitPrice transactionProfitPrice = jTransactionProfitPrice.getItemAt(jTransactionProfitPrice.getSelectedIndex());
+		boolean update = jHighlightSelectedRow.isSelected() != Settings.get().isHighlightSelectedRows()
+						|| maximumPurchaseAge != Settings.get().getMaximumPurchaseAge()
+						|| transactionProfitPrice != Settings.get().getTransactionProfitPrice()
+						;
 		Settings.get().setFilterOnEnter(jEnterFilters.isSelected());
 		Settings.get().setHighlightSelectedRows(jHighlightSelectedRow.isSelected());
 		Settings.get().setFocusEveOnlineOnEsiUiCalls(jFocusEveOnline.isSelected());
+		Settings.get().setMaximumPurchaseAge(maximumPurchaseAge);
+		Settings.get().setTransactionProfitPrice(transactionProfitPrice);
 		return update;
 	}
 
@@ -99,5 +154,7 @@ public class GeneralSettingsPanel extends JSettingsPanel {
 		jEnterFilters.setSelected(Settings.get().isFilterOnEnter());
 		jHighlightSelectedRow.setSelected(Settings.get().isHighlightSelectedRows());
 		jFocusEveOnline.setSelected(Settings.get().isFocusEveOnlineOnEsiUiCalls());
+		jMaxOrderAge.setText(String.valueOf(Settings.get().getMaximumPurchaseAge()));
+		jTransactionProfitPrice.setSelectedItem(Settings.get().getTransactionProfitPrice());
 	}
 }

@@ -59,9 +59,12 @@ public abstract class TabsTransaction extends Bundle {
 	public abstract String columnClientName();
 	public abstract String columnStationName();
 	public abstract String columnRegion();
-	public abstract String columnLastTransactionPrice();
-	public abstract String columnLastTransactionValue();
-	public abstract String columnLastTransactionPercent();
+	public abstract String columnTransactionPrice();
+	public abstract String columnTransactionPriceToolTip();
+	public abstract String columnTransactionProfitDifference();
+	public abstract String columnTransactionProfitDifferenceToolTip();
+	public abstract String columnTransactionProfitPercent();
+	public abstract String columnTransactionProfitPercentToolTip();
 	public abstract String columnTransactionFor();
 	public abstract String columnValue();
 	public abstract String columnTransactionDate();

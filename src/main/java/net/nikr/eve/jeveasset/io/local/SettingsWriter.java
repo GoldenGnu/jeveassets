@@ -390,6 +390,7 @@ public class SettingsWriter extends AbstractXmlWriter {
 		Element parentNode = xmldoc.createElementNS(null, "assetsettings");
 		xmldoc.getDocumentElement().appendChild(parentNode);
 		setAttribute(parentNode, "maximumpurchaseage", settings.getMaximumPurchaseAge());
+		setAttribute(parentNode, "transactionprofitprice", settings.getTransactionProfitPrice());
 	}
 
 	private void writeStockpileGroups(final Document xmldoc, final Settings settings) {

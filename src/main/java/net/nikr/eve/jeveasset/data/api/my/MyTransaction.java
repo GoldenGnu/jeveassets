@@ -39,12 +39,12 @@ public class MyTransaction extends RawTransaction implements EditableLocationTyp
 
 	private final Item item;
 	private final OwnerType owner;
-	private final Set<Long> owners = new HashSet<Long>();
+	private final Set<Long> owners = new HashSet<>();
 	private MyLocation location;
 	private String clientName;
-	private double lastTransactionPrice;
-	private double lastTransactionValue;
-	private Percent lastTransactionPercent;
+	private double transactionPrice;
+	private double transactionProfit;
+	private Percent transactionProfitPercent;
 	private Double tax;
 
 	public MyTransaction(final RawTransaction rawTransaction, final Item item, final OwnerType owner) {
@@ -158,33 +158,33 @@ public class MyTransaction extends RawTransaction implements EditableLocationTyp
 	}
 
 	@Override
-	public double getLastTransactionPrice() {
-		return lastTransactionPrice;
+	public double getTransactionPrice() {
+		return transactionPrice;
 	}
 
 	@Override
-	public double getLastTransactionValue() {
-		return lastTransactionValue;
+	public double getTransactionProfitDifference() {
+		return transactionProfit;
 	}
 
 	@Override
-	public Percent getLastTransactionPercent() {
-		return lastTransactionPercent;
+	public Percent getTransactionProfitPercent() {
+		return transactionProfitPercent;
 	}
 
 	@Override
-	public void setLastTransactionPrice(double lastTransactionPrice) {
-		this.lastTransactionPrice = lastTransactionPrice;
+	public void setTransactionPrice(double transactionPrice) {
+		this.transactionPrice = transactionPrice;
 	}
 
 	@Override
-	public void setLastTransactionValue(double lastTransactionValue) {
-		this.lastTransactionValue = lastTransactionValue;
+	public void setTransactionProfit(double transactionProfit) {
+		this.transactionProfit = transactionProfit;
 	}
 
 	@Override
-	public void setLastTransactionPercent(Percent lastTransactionPercent) {
-		this.lastTransactionPercent = lastTransactionPercent;
+	public void setTransactionProfitPercent(Percent transactionProfitPercent) {
+		this.transactionProfitPercent = transactionProfitPercent;
 	}
 
 	@Override

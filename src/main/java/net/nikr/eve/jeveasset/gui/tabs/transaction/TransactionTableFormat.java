@@ -121,34 +121,46 @@ public enum TransactionTableFormat implements EnumTableColumn<MyTransaction> {
 			return from.getLocation().getRegion();
 		}
 	},
-	LAST_TRANSACTION_PRICE(Double.class, GlazedLists.comparableComparator()) {
+	TRANSACTION_PRICE(Double.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
-			return TabsTransaction.get().columnLastTransactionPrice();
+			return TabsTransaction.get().columnTransactionPrice();
+		}
+		@Override
+		public String getColumnToolTip() {
+			return TabsTransaction.get().columnTransactionPriceToolTip();
 		}
 		@Override
 		public Object getColumnValue(final MyTransaction from) {
-			return from.getLastTransactionPrice();
+			return from.getTransactionPrice();
 		}
 	},
-	LAST_TRANSACTION_VALUE(Double.class, GlazedLists.comparableComparator()) {
+	TRANSACTION_PROFIT(Double.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
-			return TabsTransaction.get().columnLastTransactionValue();
+			return TabsTransaction.get().columnTransactionProfitDifference();
+		}
+		@Override
+		public String getColumnToolTip() {
+			return TabsTransaction.get().columnTransactionProfitDifferenceToolTip();
 		}
 		@Override
 		public Object getColumnValue(final MyTransaction from) {
-			return from.getLastTransactionValue();
+			return from.getTransactionProfitDifference();
 		}
 	},
-	LAST_TRANSACTION_PERCENT(Percent.class, GlazedLists.comparableComparator()) {
+	TRANSACTION_PROFIT_PERCENT(Percent.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
-			return TabsTransaction.get().columnLastTransactionPercent();
+			return TabsTransaction.get().columnTransactionProfitPercent();
+		}
+		@Override
+		public String getColumnToolTip() {
+			return TabsTransaction.get().columnTransactionProfitPercentToolTip();
 		}
 		@Override
 		public Object getColumnValue(final MyTransaction from) {
-			return from.getLastTransactionPercent();
+			return from.getTransactionProfitPercent();
 		}
 	},
 	CLIENT(String.class, GlazedLists.comparableComparator()) {

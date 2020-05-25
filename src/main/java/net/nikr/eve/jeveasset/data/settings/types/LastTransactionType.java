@@ -25,11 +25,11 @@ import net.nikr.eve.jeveasset.gui.shared.table.containers.Percent;
 
 public interface LastTransactionType {
 
-	public double getLastTransactionPrice();
-	public double getLastTransactionValue();
-	public Percent getLastTransactionPercent();
-	public void setLastTransactionPrice(double lastTransactionPrice);
-	public void setLastTransactionValue(double lastTransactionValue);
-	public void setLastTransactionPercent(Percent lastTransactionPercent);
+	public double getTransactionPrice();
+	public double getTransactionProfitDifference();
+	public Percent getTransactionProfitPercent();
+	public void setTransactionPrice(double transactionPrice);
+	public void setTransactionProfit(double transactionProfit);
+	public void setTransactionProfitPercent(Percent transactionProfitPercent);
 
 }
