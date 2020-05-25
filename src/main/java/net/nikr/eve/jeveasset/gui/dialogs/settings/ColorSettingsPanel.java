@@ -204,23 +204,10 @@ public class ColorSettingsPanel extends JSettingsPanel {
 
 		JScrollPane jTableScroll = new JScrollPane(jTable);
 
-		JFixedToolBar jToolBarLeft = new JFixedToolBar();
-		jToolBarLeft.add(jFilter);
-
-		JButton jClear = new JButton(Images.TAB_CLOSE.getIcon());
-		jClear.setContentAreaFilled(false);
-		jClear.setFocusPainted(false);
-		jClear.setPressedIcon(Images.TAB_CLOSE_ACTIVE.getIcon());
-		jClear.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				jFilter.setText("");
-			}
-		});
-		jToolBarLeft.addButton(jClear, 0);
+		JFixedToolBar jToolBarTop = new JFixedToolBar();
 
 		JDropDownButton jTheme = new JDropDownButton("Theme", Images.FILTER_LOAD.getIcon());
-		jToolBarLeft.addButton(jTheme);
+		jToolBarTop.addButton(jTheme);
 
 		ButtonGroup buttonGroup = new ButtonGroup();
 		jDefault = new JRadioButtonMenuItem(DataColors.get().colorThemeDefault());
@@ -269,7 +256,7 @@ public class ColorSettingsPanel extends JSettingsPanel {
 				jTable.expandSeparators(false);
 			}
 		});
-		jToolBarLeft.addButton(jCollapse);
+		jToolBarTop.addButton(jCollapse);
 
 		JButton jExpand = new JButton(DialoguesSettings.get().expand(), Images.MISC_EXPANDED.getIcon());
 		jExpand.addActionListener(new ActionListener() {
@@ -278,21 +265,35 @@ public class ColorSettingsPanel extends JSettingsPanel {
 				jTable.expandSeparators(true);
 			}
 		});
-		jToolBarLeft.addButton(jExpand);
+		jToolBarTop.addButton(jExpand);
+
+		JFixedToolBar jToolBarBottom = new JFixedToolBar();
+
+		jToolBarBottom.add(jFilter);
+
+		JButton jClear = new JButton(Images.TAB_CLOSE.getIcon());
+		jClear.setContentAreaFilled(false);
+		jClear.setFocusPainted(false);
+		jClear.setPressedIcon(Images.TAB_CLOSE_ACTIVE.getIcon());
+		jClear.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				jFilter.setText("");
+			}
+		});
+		jToolBarBottom.addButton(jClear, 0);
 
 		layout.setHorizontalGroup(
 			layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
-				.addGroup(layout.createSequentialGroup()
-					.addComponent(jToolBarLeft, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Integer.MAX_VALUE)
-				)
-				.addComponent(jTableScroll)
+				.addComponent(jToolBarTop, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Integer.MAX_VALUE)
+				.addComponent(jToolBarBottom, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Integer.MAX_VALUE)
+				.addComponent(jTableScroll, 375, 375, Integer.MAX_VALUE)
 		);
 		layout.setVerticalGroup(
 			layout.createSequentialGroup()
-				.addGroup(layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
-					.addComponent(jToolBarLeft, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
-				)
-				.addComponent(jTableScroll, 290, 290, 290)
+				.addComponent(jToolBarTop ,GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+				.addComponent(jToolBarBottom, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+				.addComponent(jTableScroll, 250, 250, Integer.MAX_VALUE)
 		);
 	}
 
