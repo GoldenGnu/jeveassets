@@ -43,7 +43,7 @@ public class FileLockSettings extends Settings implements SettingsFactory {
 
 	@Override
 	public Settings create() {
-		return this;
+		return new FileLockSettings();
 	}
 
 	public String getPathSettings() {
