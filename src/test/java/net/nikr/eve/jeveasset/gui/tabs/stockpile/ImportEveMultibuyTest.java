@@ -45,8 +45,8 @@ Warden II	5	-	-
 Large Capacitor Control Circuit I	3	-	-
 Large Armor Repairer II	2	-	-
 Hobgoblin II	5	499.997,32	2.499.986,60
-Armor Kinetic Hardener II	1	-	-
-Armor Explosive Hardener II	3	-	-
+Kinetic Armor Hardener II	1	-	-
+Explosive Armor Hardener II	3	-	-
 Total:			14.399.957,10
 */
 		String text = "100MN Afterburner II	1	-	-\n" +
@@ -61,8 +61,8 @@ Total:			14.399.957,10
 			"Large Capacitor Control Circuit I	3	-	-\n" +
 			"Large Armor Repairer II	2	-	-\n" +
 			"Hobgoblin II	5	499.997,32	2.499.986,60\n" +
-			"Armor Kinetic Hardener II	1	-	-\n" +
-			"Armor Explosive Hardener II	3	-	-\n" +
+			"Kinetic Armor Hardener II	1	-	-\n" +
+			"Explosive Armor Hardener II	3	-	-\n" +
 			"Total:			14.399.957,10";
 		Map<String, Double> data = test(text, 14);
 		assertEquals(10, data.get("Hammerhead II"), 0.1);

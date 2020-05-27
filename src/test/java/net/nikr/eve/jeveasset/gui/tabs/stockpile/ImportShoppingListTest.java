@@ -64,9 +64,9 @@ Estimated market value: 225.404.694,17 isk
 			"5x Warden II\n" +
 			"2x Large Armor Repairer II\n" +
 			"5x Hobgoblin II\n" +
-			"1x Armor Kinetic Hardener II\n" +
+			"1x Kinetic Armor Hardener II\n" +
 			"3x Large Capacitor Control Circuit I\n" +
-			"3x Armor Explosive Hardener II\n" +
+			"3x Explosive Armor Hardener II\n" +
 			"\n" +
 			"Total m3 to be hauled: 50.665,00\n" +
 			"Estimated market value: 225.404.694,17 isk";
