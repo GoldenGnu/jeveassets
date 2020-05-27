@@ -34,12 +34,12 @@ public class Value implements Comparable<Value> {
 	private final Date date;
 	private final String compare;
 	private double assets = 0;
-	private final Map<AssetValue, Double> assetsFilter = new HashMap<AssetValue, Double>();
+	private final Map<AssetValue, Double> assetsFilter = new HashMap<>();
 	private double sellOrders = 0;
 	private double escrows = 0;
 	private double escrowsToCover = 0;
 	private double balance = 0;
-	private final Map<String, Double> balanceFilter = new HashMap<String, Double>();
+	private final Map<String, Double> balanceFilter = new HashMap<>();
 	private double manufacturing;
 	private double contractCollateral;
 	private double contractValue = 0;
@@ -311,6 +311,13 @@ public class Value implements Comparable<Value> {
 	}
 
 	private double getShipFittedValue(MyAsset patentAsset) {
+		if (patentAsset.getCount() > 1) { //Stack of ships - only count the price of a single ship (not value of all the ships)
+			return patentAsset.getDynamicPrice();
+		} else {
+			return getShipFittedValueInner(patentAsset);
+		}
+	}
+	private double getShipFittedValueInner(MyAsset patentAsset) {
 		double value = (patentAsset.getDynamicPrice() * patentAsset.getCount());
 		for (MyAsset asset : patentAsset.getAssets()) {
 			value = value + getShipFittedValue(asset);
