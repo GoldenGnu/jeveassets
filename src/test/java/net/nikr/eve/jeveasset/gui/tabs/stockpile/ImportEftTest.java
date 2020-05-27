@@ -36,10 +36,10 @@ public class ImportEftTest extends TestUtil {
 				"\n" +
 				"Large Armor Repairer II\n" +
 				"Large Armor Repairer II\n" +
-				"Armor Kinetic Hardener II\n" +
-				"Armor Explosive Hardener II\n" +
-				"Armor Explosive Hardener II\n" +
-				"Armor Explosive Hardener II\n" +
+				"Kinetic Armor Hardener II\n" +
+				"Explosive Armor Hardener II\n" +
+				"Explosive Armor Hardener II\n" +
+				"Explosive Armor Hardener II\n" +
 				"Capacitor Power Relay II\n" +
 				"\n" +
 				"100MN Afterburner II\n" +
@@ -78,10 +78,10 @@ public class ImportEftTest extends TestUtil {
 
 Large Armor Repairer II
 Large Armor Repairer II
-Armor Kinetic Hardener II
-Armor Explosive Hardener II
-Armor Explosive Hardener II
-Armor Explosive Hardener II
+Kinetic Armor Hardener II
+Explosive Armor Hardener II
+Explosive Armor Hardener II
+Explosive Armor Hardener II
 Capacitor Power Relay II
 
 100MN Afterburner II
@@ -111,10 +111,10 @@ Warden II x5
 			"\n" +
 			"Large Armor Repairer II\n" +
 			"Large Armor Repairer II\n" +
-			"Armor Kinetic Hardener II\n" +
-			"Armor Explosive Hardener II\n" +
-			"Armor Explosive Hardener II\n" +
-			"Armor Explosive Hardener II\n" +
+			"Kinetic Armor Hardener II\n" +
+			"Explosive Armor Hardener II\n" +
+			"Explosive Armor Hardener II\n" +
+			"Explosive Armor Hardener II\n" +
 			"Capacitor Power Relay II\n" +
 			"\n" +
 			"100MN Afterburner II\n" +
