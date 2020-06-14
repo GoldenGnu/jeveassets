@@ -190,6 +190,10 @@ public class Settings {
 	private Date publicMarketOrdersLastUpdate = null;
 	//Public Market Orders Next Update
 	private Date publicMarketOrdersNextUpdate = getNow();
+	//Faction Warfare System Owners
+	private Map<Long, String> factionWarfareSystemOwners = new HashMap<>();
+	//Faction Warfare Next Update
+	private Date factionWarfareNextUpdate = getNow();
 	//Market Orders Outbid
 	private final Map<Long, Outbid> marketOrdersOutbid = new HashMap<>();
 	//SellOrderRange
@@ -499,6 +503,22 @@ public class Settings {
 			tagIds.put(tagID, set);
 		}
 		return set;
+	}
+
+	public Map<Long, String> getFactionWarfareSystemOwners() {
+		return factionWarfareSystemOwners;
+	}
+
+	public void setFactionWarfareSystemOwners(Map<Long, String> factionWarfareSystemOwners) {
+		this.factionWarfareSystemOwners = factionWarfareSystemOwners;
+	}
+
+	public Date getFactionWarfareNextUpdate() {
+		return factionWarfareNextUpdate;
+	}
+
+	public void setFactionWarfareNextUpdate(Date factionWarfareNextUpdate) {
+		this.factionWarfareNextUpdate = factionWarfareNextUpdate;
 	}
 
 	public Date getPublicMarketOrdersNextUpdate() {

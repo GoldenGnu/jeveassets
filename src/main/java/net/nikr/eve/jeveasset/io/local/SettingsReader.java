@@ -252,6 +252,12 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 			throw new XmlException("Wrong root element name.");
 		}
 
+		//Faction Warfare System Owners
+		Element factionWarfareSystemOwnersElement = getNodeOptional(element, "factionwarfaresystemowners");
+		if (factionWarfareSystemOwnersElement != null) {
+			parseFactionWarfareSystemOwners(factionWarfareSystemOwnersElement, settings);
+		}
+
 		//Color Settings
 		Element colorSettingsElement = getNodeOptional(element, "colorsettings");
 		if (colorSettingsElement != null) {
@@ -755,6 +761,19 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 			}
 		}
 		Collections.sort(stockpiles);
+	}
+
+	private void parseFactionWarfareSystemOwners(Element factionWarfareSystemOwnersElement, Settings settings) throws XmlException {
+		Date factionWarfareNextUpdate = getDateNotNull(factionWarfareSystemOwnersElement, "factionwarfarenextupdate");
+		settings.setFactionWarfareNextUpdate(factionWarfareNextUpdate);
+		NodeList systemNodes = factionWarfareSystemOwnersElement.getElementsByTagName("system");
+		settings.getFactionWarfareSystemOwners().clear();
+		for (int a = 0; a < systemNodes.getLength(); a++) {
+			Element systemNode = (Element) systemNodes.item(a);
+			long systemID = getLong(systemNode, "system");
+			String faction = getString(systemNode, "faction");
+			settings.getFactionWarfareSystemOwners().put(systemID, faction);
+		}
 	}
 
 	private void parseColorSettings(Element colorSettingsElement, Settings settings) throws XmlException {

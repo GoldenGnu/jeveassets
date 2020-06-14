@@ -23,8 +23,10 @@ package net.nikr.eve.jeveasset.data.sde;
 
 import java.util.HashMap;
 import java.util.Map;
+import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.Security;
 import net.nikr.eve.jeveasset.i18n.General;
+import net.nikr.eve.jeveasset.i18n.GuiShared;
 
 
 public class MyLocation implements Comparable<MyLocation> {
@@ -45,7 +47,6 @@ public class MyLocation implements Comparable<MyLocation> {
 	private boolean empty;
 	private boolean userLocation;
 
-	
 	public static void reset(long locationID) {
 		MyLocation cached = CACHE.get(locationID);
 		if (cached != null) {
@@ -220,6 +221,18 @@ public class MyLocation implements Comparable<MyLocation> {
 	 */
 	public final boolean isRegion() {
 		return getStationID() == 0 && getSystemID() == 0 && getRegionID() != 0;
+	}
+
+	public String getFactionWarfareSystemOwner() {
+		if (Settings.get().getFactionWarfareSystemOwners().isEmpty()) {
+			return GuiShared.get().unknownFaction();
+		}
+		String faction = Settings.get().getFactionWarfareSystemOwners().get(getSystemID());
+		if (faction != null) {
+			return faction;
+		} else {
+			return GuiShared.get().none();
+		}
 	}
 
 	public boolean isEmpty() {

@@ -64,6 +64,7 @@ public abstract class AbstractGetter<O extends OwnerType> implements Runnable {
 		PUBLIC_MARKET_ORDERS("Public Market Orders"),
 		OWNER("Account"),
 		OWNER_ID_TO_NAME("IDs to Names"),
+		FACTION_WARFARE("Faction Warfare"),
 		PLANETARY_INTERACTION("Planetary Assets"),
 		SHIP("Active Ship"),
 		STRUCTURES("Structures"),

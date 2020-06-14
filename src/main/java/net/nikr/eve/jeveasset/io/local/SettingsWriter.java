@@ -141,6 +141,7 @@ public class SettingsWriter extends AbstractXmlWriter {
 		writeMarketOrderOutbid(xmldoc, settings.getPublicMarketOrdersNextUpdate(), settings.getPublicMarketOrdersLastUpdate(), settings.getOutbidOrderRange(), settings.getMarketOrdersOutbid());
 		writeShowTool(xmldoc, settings.getShowTools(), settings.isSaveToolsOnExit());
 		writeColorSettings(xmldoc, settings.getColorSettings());
+		writeFactionWarfareSystemOwners(xmldoc, settings);
 		try {
 			writeXmlFile(xmldoc, filename, true);
 		} catch (XmlException ex) {
@@ -149,6 +150,18 @@ public class SettingsWriter extends AbstractXmlWriter {
 		}
 		LOG.info("Settings saved");
 		return true;
+	}
+
+	private void writeFactionWarfareSystemOwners(Document xmldoc, Settings settings) {
+		Element FactionWarfareSystemOwnersNode = xmldoc.createElementNS(null, "factionwarfaresystemowners");
+		xmldoc.getDocumentElement().appendChild(FactionWarfareSystemOwnersNode);
+		setAttribute(FactionWarfareSystemOwnersNode, "factionwarfarenextupdate", settings.getFactionWarfareNextUpdate());
+		for (Map.Entry<Long, String> entry : settings.getFactionWarfareSystemOwners().entrySet()) {
+			Element colorNode = xmldoc.createElementNS(null, "system");
+			setAttribute(colorNode, "system", entry.getKey());
+			setAttributeOptional(colorNode, "faction", entry.getValue());
+			FactionWarfareSystemOwnersNode.appendChild(colorNode);
+		}
 	}
 
 	private void writeColorSettings(Document xmldoc, ColorSettings colorSettings) {

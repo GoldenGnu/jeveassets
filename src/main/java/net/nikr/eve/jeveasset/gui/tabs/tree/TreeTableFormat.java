@@ -115,6 +115,20 @@ public enum TreeTableFormat implements EnumTableColumn<TreeAsset> {
 			return from.getLocation().getRegion();
 		}
 	},
+	FACTION_WARFARE_SYSTEM_OWNER(String.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsAssets.get().columnFactionWarfareSystemOwner();
+		}
+		@Override
+		public String getColumnToolTip() {
+			return TabsAssets.get().columnFactionWarfareSystemOwnerToolTip();
+		}
+		@Override
+		public Object getColumnValue(final TreeAsset from) {
+			return from.getLocation().getFactionWarfareSystemOwner();
+		}
+	},
 	CONTAINER(String.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
