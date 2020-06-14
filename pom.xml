@@ -1190,6 +1190,11 @@
 			<artifactId>jna-platform</artifactId>
 			<version>4.5.2</version>
 		</dependency>
+		<dependency>
+			<groupId>com.formdev</groupId>
+			<artifactId>flatlaf</artifactId>
+			<version>0.36</version>
+		</dependency>
 	</dependencies>
 
 	<properties>

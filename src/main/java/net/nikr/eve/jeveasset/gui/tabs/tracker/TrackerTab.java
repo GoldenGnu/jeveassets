@@ -86,6 +86,7 @@ import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.api.accounts.OwnerType;
+import net.nikr.eve.jeveasset.data.settings.Colors;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.data.settings.TrackerData;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
@@ -160,18 +161,18 @@ public class TrackerTab extends JMainTabSecondary {
 	private final JDateChooser jTo;
 	private final JMultiSelectionList<String> jOwners;
 	private final JComboBox<QuickDate> jQuickDate;
-	private final JCheckBox jAll;
-	private final JCheckBox jTotal;
-	private final JCheckBox jWalletBalance;
+	private final JCheckBoxMenuItem jAll;
+	private final JCheckBoxMenuItem jTotal;
+	private final JCheckBoxMenuItem jWalletBalance;
 	private final JButton jWalletBalanceFilters;
-	private final JCheckBox jAssets;
+	private final JCheckBoxMenuItem jAssets;
 	private final JButton jAssetsFilters;
-	private final JCheckBox jSellOrders;
-	private final JCheckBox jEscrows;
-	private final JCheckBox jEscrowsToCover;
-	private final JCheckBox jManufacturing;
-	private final JCheckBox jContractCollateral;
-	private final JCheckBox jContractValue;
+	private final JCheckBoxMenuItem jSellOrders;
+	private final JCheckBoxMenuItem jEscrows;
+	private final JCheckBoxMenuItem jEscrowsToCover;
+	private final JCheckBoxMenuItem jManufacturing;
+	private final JCheckBoxMenuItem jContractCollateral;
+	private final JCheckBoxMenuItem jContractValue;
 	private final JCheckBox jAllProfiles;
 	private final JCheckBox jCharacterCorporations;
 	private final JMenuItem jImportFile;
@@ -291,65 +292,79 @@ public class TrackerTab extends JMainTabSecondary {
 
 		JLabel jToLabel = new JLabel(TabsTracker.get().to());
 		jTo = createDateChooser();
+
+		JDropDownButton jShow = new JDropDownButton("Show");
 		
-		jAll = new JCheckBox(General.get().all());
+		jAll = new JCheckBoxMenuItem(General.get().all());
 		jAll.setSelected(true);
 		jAll.setActionCommand(TrackerAction.ALL.name());
 		jAll.addActionListener(listener);
 		jAll.setFont(new Font(jAll.getFont().getName(), Font.ITALIC, jAll.getFont().getSize()));
+		jShow.add(jAll, true);
 
-		jTotal = new JCheckBox(TabsTracker.get().total());
+		jTotal = new JCheckBoxMenuItem(TabsTracker.get().total());
 		jTotal.setSelected(true);
 		jTotal.setActionCommand(TrackerAction.UPDATE_SHOWN.name());
 		jTotal.addActionListener(listener);
+		jShow.add(jTotal, true);
 
-		jWalletBalance = new JCheckBox(TabsTracker.get().walletBalance());
+		jWalletBalance = new JCheckBoxMenuItem(TabsTracker.get().walletBalance());
 		jWalletBalance.setSelected(true);
 		jWalletBalance.setActionCommand(TrackerAction.UPDATE_SHOWN.name());
 		jWalletBalance.addActionListener(listener);
+		jShow.add(jWalletBalance, true);
 
-		jWalletBalanceFilters = new JButton(Images.LOC_INCLUDE.getIcon());
+		jWalletBalanceFilters = new JButton(TabsTracker.get().walletBalanceFilters());
+		jWalletBalanceFilters.setIcon(Images.LOC_INCLUDE.getIcon());
 		jWalletBalanceFilters.setActionCommand(TrackerAction.FILTER_WALLET_BALANCE.name());
 		jWalletBalanceFilters.addActionListener(listener);
 
-		jAssets = new JCheckBox(TabsTracker.get().assets());
+		jAssets = new JCheckBoxMenuItem(TabsTracker.get().assets());
 		jAssets.setSelected(true);
 		jAssets.setActionCommand(TrackerAction.UPDATE_SHOWN.name());
 		jAssets.addActionListener(listener);
+		jShow.add(jAssets, true);
 
-		jAssetsFilters = new JButton(Images.LOC_INCLUDE.getIcon());
+		jAssetsFilters = new JButton(TabsTracker.get().assetsFilters());
+		jAssetsFilters.setIcon(Images.LOC_INCLUDE.getIcon());
 		jAssetsFilters.setActionCommand(TrackerAction.FILTER_ASSETS.name());
 		jAssetsFilters.addActionListener(listener);
 
-		jSellOrders = new JCheckBox(TabsTracker.get().sellOrders());
+		jSellOrders = new JCheckBoxMenuItem(TabsTracker.get().sellOrders());
 		jSellOrders.setSelected(true);
 		jSellOrders.setActionCommand(TrackerAction.UPDATE_SHOWN.name());
 		jSellOrders.addActionListener(listener);
+		jShow.add(jSellOrders, true);
 
-		jEscrows = new JCheckBox(TabsTracker.get().escrows());
+		jEscrows = new JCheckBoxMenuItem(TabsTracker.get().escrows());
 		jEscrows.setSelected(true);
 		jEscrows.setActionCommand(TrackerAction.UPDATE_SHOWN.name());
 		jEscrows.addActionListener(listener);
+		jShow.add(jEscrows, true);
 
-		jEscrowsToCover = new JCheckBox(TabsTracker.get().escrowsToCover());
+		jEscrowsToCover = new JCheckBoxMenuItem(TabsTracker.get().escrowsToCover());
 		jEscrowsToCover.setSelected(true);
 		jEscrowsToCover.setActionCommand(TrackerAction.UPDATE_SHOWN.name());
 		jEscrowsToCover.addActionListener(listener);
+		jShow.add(jEscrowsToCover, true);
 
-		jManufacturing = new JCheckBox(TabsTracker.get().manufacturing());
+		jManufacturing = new JCheckBoxMenuItem(TabsTracker.get().manufacturing());
 		jManufacturing.setSelected(true);
 		jManufacturing.setActionCommand(TrackerAction.UPDATE_SHOWN.name());
 		jManufacturing.addActionListener(listener);
+		jShow.add(jManufacturing, true);
 
-		jContractCollateral = new JCheckBox(TabsTracker.get().contractCollateral());
+		jContractCollateral = new JCheckBoxMenuItem(TabsTracker.get().contractCollateral());
 		jContractCollateral.setSelected(true);
 		jContractCollateral.setActionCommand(TrackerAction.UPDATE_SHOWN.name());
 		jContractCollateral.addActionListener(listener);
+		jShow.add(jContractCollateral, true);
 
-		jContractValue = new JCheckBox(TabsTracker.get().contractValue());
+		jContractValue = new JCheckBoxMenuItem(TabsTracker.get().contractValue());
 		jContractValue.setSelected(true);
 		jContractValue.setActionCommand(TrackerAction.UPDATE_SHOWN.name());
 		jContractValue.addActionListener(listener);
+		jShow.add(jContractValue, true);
 
 		JSeparator jOwnersSeparator = new JSeparator();
 
@@ -442,21 +457,25 @@ public class TrackerTab extends JMainTabSecondary {
 		domainAxis.setAutoTickUnitSelection(true);
 		domainAxis.setAutoRange(true);
 		domainAxis.setTickLabelFont(jFromLabel.getFont());
+		domainAxis.setTickLabelPaint(Colors.TEXTFIELD_FOREGROUND.getColor());
 
 		rangeLogarithmicAxis = new LogarithmicAxis("");
-		rangeLogarithmicAxis.setTickLabelFont(jFromLabel.getFont());
 		rangeLogarithmicAxis.setStrictValuesFlag(false);
 		rangeLogarithmicAxis.setNumberFormatOverride(Formater.AUTO_FORMAT);
+		rangeLogarithmicAxis.setTickLabelFont(jFromLabel.getFont());
+		rangeLogarithmicAxis.setTickLabelPaint(Colors.TEXTFIELD_FOREGROUND.getColor());
 
 		rangeLinearAxis = new NumberAxis();
 		rangeLinearAxis.setAutoRange(true);
 		rangeLinearAxis.setStandardTickUnits(NumberAxis.createStandardTickUnits());
 		rangeLinearAxis.setTickLabelFont(jFromLabel.getFont());
+		rangeLinearAxis.setTickLabelPaint(Colors.TEXTFIELD_FOREGROUND.getColor());
 
 		//XYPlot plot = new XYPlot(dataset, domainAxis, rangeAxis, new XYLineAndShapeRenderer(true, true));
 		render = new MyRender();
 		XYPlot plot = new XYPlot(dataset, domainAxis, rangeLinearAxis, render);
-		plot.setBackgroundPaint(Color.WHITE);
+		
+		plot.setBackgroundPaint(Colors.TEXTFIELD_BACKGROUND.getColor());
 		plot.setRangeGridlinePaint(Color.LIGHT_GRAY);
 		plot.setDomainGridlinePaint(Color.LIGHT_GRAY);
 		plot.setDrawingSupplier(new MyDrawingSupplier());
@@ -495,9 +514,11 @@ public class TrackerTab extends JMainTabSecondary {
 
 		jNextChart = new JFreeChart(plot);
 		jNextChart.setAntiAlias(true);
-		jNextChart.setBackgroundPaint(jPanel.getBackground());
+		jNextChart.setBackgroundPaint(Colors.COMPONENT_BACKGROUND.getColor());
 		jNextChart.addProgressListener(null);
 		jNextChart.getLegend().setItemFont(jFrom.getFont());
+		jNextChart.getLegend().setItemPaint(Colors.TEXTFIELD_FOREGROUND.getColor());
+		jNextChart.getLegend().setBackgroundPaint(Colors.COMPONENT_BACKGROUND.getColor());
 
 		jChartPanel = new ChartPanel(jNextChart);
 		jChartPanel.addMouseListener(listener);
@@ -510,15 +531,6 @@ public class TrackerTab extends JMainTabSecondary {
 		jChartPanel.setMinimumDrawWidth(10);
 		jChartPanel.setMinimumDrawHeight(10);
 
-		int AssetsGapWidth = PANEL_WIDTH - jAssets.getPreferredSize().width - jAssetsFilters.getPreferredSize().width;
-		if (AssetsGapWidth < 0) {
-			AssetsGapWidth = 0;
-		}
-		int WalletGapWidth = PANEL_WIDTH - jWalletBalance.getPreferredSize().width - jWalletBalanceFilters.getPreferredSize().width;
-		if (WalletGapWidth < 0) {
-			WalletGapWidth = 0;
-		}
-		
 		layout.setHorizontalGroup(
 			layout.createSequentialGroup()
 				.addGroup(layout.createParallelGroup()
@@ -548,24 +560,9 @@ public class TrackerTab extends JMainTabSecondary {
 						)
 					)
 					.addComponent(jDateSeparator, PANEL_WIDTH, PANEL_WIDTH, PANEL_WIDTH)
-					.addComponent(jAll, PANEL_WIDTH, PANEL_WIDTH, PANEL_WIDTH)
-					.addComponent(jTotal, PANEL_WIDTH, PANEL_WIDTH, PANEL_WIDTH)
-					.addGroup(layout.createSequentialGroup()
-						.addComponent(jWalletBalance)
-						.addGap(0, 0, WalletGapWidth)
-						.addComponent(jWalletBalanceFilters)
-					)
-					.addGroup(layout.createSequentialGroup()
-						.addComponent(jAssets)
-						.addGap(0, 0, AssetsGapWidth)
-						.addComponent(jAssetsFilters)
-					)
-					.addComponent(jSellOrders, PANEL_WIDTH, PANEL_WIDTH, PANEL_WIDTH)
-					.addComponent(jEscrows, PANEL_WIDTH, PANEL_WIDTH, PANEL_WIDTH)
-					.addComponent(jEscrowsToCover, PANEL_WIDTH, PANEL_WIDTH, PANEL_WIDTH)
-					.addComponent(jManufacturing, PANEL_WIDTH, PANEL_WIDTH, PANEL_WIDTH)
-					.addComponent(jContractCollateral, PANEL_WIDTH, PANEL_WIDTH, PANEL_WIDTH)
-					.addComponent(jContractValue, PANEL_WIDTH, PANEL_WIDTH, PANEL_WIDTH)
+					.addComponent(jShow, PANEL_WIDTH, PANEL_WIDTH, PANEL_WIDTH)
+					.addComponent(jAssetsFilters, PANEL_WIDTH, PANEL_WIDTH, PANEL_WIDTH)
+					.addComponent(jWalletBalanceFilters, PANEL_WIDTH, PANEL_WIDTH, PANEL_WIDTH)
 					.addComponent(jOwnersSeparator, PANEL_WIDTH, PANEL_WIDTH, PANEL_WIDTH)
 					.addComponent(jAllProfiles, PANEL_WIDTH, PANEL_WIDTH, PANEL_WIDTH)
 					.addComponent(jCharacterCorporations, PANEL_WIDTH, PANEL_WIDTH, PANEL_WIDTH)
@@ -594,22 +591,9 @@ public class TrackerTab extends JMainTabSecondary {
 						.addComponent(jTo, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 					)
 					.addComponent(jDateSeparator, 3, 3, 3)
-					.addComponent(jAll, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-					.addComponent(jTotal, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-					.addGroup(layout.createParallelGroup()
-						.addComponent(jWalletBalance, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-						.addComponent(jWalletBalanceFilters, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-					)
-					.addGroup(layout.createParallelGroup()
-						.addComponent(jAssets, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-						.addComponent(jAssetsFilters, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-					)
-					.addComponent(jSellOrders, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-					.addComponent(jEscrows, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-					.addComponent(jEscrowsToCover, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-					.addComponent(jManufacturing, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-					.addComponent(jContractCollateral, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-					.addComponent(jContractValue, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jShow, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jAssetsFilters, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jWalletBalanceFilters, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 					.addComponent(jOwnersSeparator, 3, 3, 3)
 					.addComponent(jAllProfiles, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 					.addComponent(jCharacterCorporations, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())

@@ -37,6 +37,7 @@ public abstract class TabsTracker extends Bundle {
 
 	public abstract String allProfiles();
 	public abstract String assets();
+	public abstract String assetsFilters();
 	public abstract String autoZoom();
 	public abstract String cancel();
 	public abstract String characterCorporations();
@@ -120,6 +121,7 @@ public abstract class TabsTracker extends Bundle {
 	public abstract String total();
 	public abstract String unknownLocations();
 	public abstract String walletBalance();
+	public abstract String walletBalanceFilters();
 	public abstract String week1();
 	public abstract String week2();
 	public abstract String year1();

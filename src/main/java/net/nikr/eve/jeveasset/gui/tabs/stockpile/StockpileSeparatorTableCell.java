@@ -89,26 +89,20 @@ public class StockpileSeparatorTableCell extends SeparatorTableCell<StockpileIte
 		jGroup.setOpaque(false);
 		jGroup.setFont(new Font(jGroup.getFont().getName(), Font.BOLD, jGroup.getFont().getSize() + 1));
 
-		Color color = Color.BLACK;
-
 		//Owner
 		jOwnerLabel = new JLabel(TabsStockpile.get().stockpileOwner());
 		jOwnerLabel.setVerticalAlignment(SwingConstants.BOTTOM);
-		jOwnerLabel.setForeground(color);
 		jOwnerLabel.setFont(new Font(jOwnerLabel.getFont().getName(), Font.BOLD, jOwnerLabel.getFont().getSize()));
 
 		jOwner = new JLabel();
 		jOwner.setVerticalAlignment(SwingConstants.BOTTOM);
-		jOwner.setForeground(color);
 
 		//Location
 		jLocationLabel = new JLabel(TabsStockpile.get().stockpileLocation());
 		jLocationLabel.setVerticalAlignment(SwingConstants.BOTTOM);
-		jLocationLabel.setForeground(color);
 		jLocationLabel.setFont(new Font(jLocationLabel.getFont().getName(), Font.BOLD, jLocationLabel.getFont().getSize()));
 
 		jLocation = new JLabel();
-		jLocation.setForeground(color);
 		jLocation.setVerticalAlignment(SwingConstants.BOTTOM);
 
 		//Stockpile Edit/Add/etc.

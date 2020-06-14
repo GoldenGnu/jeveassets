@@ -113,6 +113,15 @@ public abstract class DialoguesSettings extends Bundle {
 	public abstract String testSelectedText();
 	public abstract String overwriteMsg();
 	public abstract String overwriteTitle();
+	public abstract String theme();
+	public abstract String lookAndFeel();
+	public abstract String lookAndFeelDefault();
+	public abstract String lookAndFeelFlatLight();
+	public abstract String lookAndFeelFlatDark();
+	public abstract String lookAndFeelFlatIntelliJ();
+	public abstract String lookAndFeelFlatDarcula();
+	public abstract String lookAndFeelMsg();
+	public abstract String lookAndFeelTitle();
 
 	// used in PriceDataSettingsPanel
 	public abstract String changeSourceWarning();

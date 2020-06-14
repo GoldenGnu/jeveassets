@@ -780,6 +780,10 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 			colorThemeTypes = ColorThemeTypes.DEFAULT;
 		}
 		settings.getColorSettings().setColorTheme(colorThemeTypes.getInstance(), false);
+		String lookAndFeelClass = getStringOptional(colorSettingsElement, "lookandfeel");
+		if (lookAndFeelClass != null) {
+			settings.getColorSettings().setLookAndFeelClass(lookAndFeelClass);
+		}
 	}
 
 	private void parseTrackerSettings(Element trackerSettingsElement, Settings settings) throws XmlException {

@@ -35,6 +35,7 @@ public abstract class ColorTheme {
 		DEFAULT(new ColorThemeDefault()),
 		STRONG(new ColorThemeStrong()),
 		COLORBLIND(new ColorThemeColorblind()),
+		DARK(new ColorThemeDark()),
 		;
 
 		private final ColorTheme colorTheme;

@@ -11,9 +11,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import javax.swing.Icon;
+import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.JTable;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.gui.images.Images;
@@ -28,18 +29,21 @@ public class MaterialsSeparatorTableCell extends SeparatorTableCell<Material> {
 	private final JLabel jLocation;
 	private final JLabel jGroup;
 	private final JButton jExpandLocation;
-
-	private static final Icon EXPANDED_ICON = Images.MISC_EXPANDED_WHITE.getIcon();
-	private static final Icon COLLAPSED_ICON = Images.MISC_COLLAPSED_WHITE.getIcon();
+	private final JPanel jLocationPanel;
 
 	public MaterialsSeparatorTableCell(final JTable jTable, final SeparatorList<Material> separatorList) {
 		super(jTable, separatorList);
 
+		jLocationPanel = new JPanel();
+		jLocationPanel.setBackground(Color.BLACK);
+		GroupLayout locationLayout = new GroupLayout(jLocationPanel);
+		jLocationPanel.setLayout(locationLayout);
+		locationLayout.setAutoCreateGaps(false);
+		locationLayout.setAutoCreateContainerGaps(false);
+
 		jLocation = new JLabel();
 		jLocation.setBorder(null);
-		jLocation.setBackground(Color.BLACK);
 		jLocation.setForeground(Color.WHITE);
-		jLocation.setOpaque(true);
 		Font font = jLocation.getFont();
 		jLocation.setFont(new Font(font.getName(), Font.BOLD, font.getSize() + 1));
 		jLocation.addMouseListener(new MouseAdapter() {
@@ -52,10 +56,9 @@ public class MaterialsSeparatorTableCell extends SeparatorTableCell<Material> {
 
 		jGroup = new JLabel();
 		jGroup.setFont(new Font(font.getName(), Font.BOLD, font.getSize() + 1));
-
-		jExpandLocation = new JButton(COLLAPSED_ICON);
-		jExpandLocation.setContentAreaFilled(false);
+		jExpandLocation = new JButton(Images.MISC_COLLAPSED_WHITE.getIcon());
 		jExpandLocation.setOpaque(true);
+		jExpandLocation.setContentAreaFilled(false);
 		jExpandLocation.setBorder(EMPTY_TWO_PIXEL_BORDER);
 		jExpandLocation.setBackground(Color.BLACK);
 		jExpandLocation.addActionListener(new ActionListener() {
@@ -65,12 +68,23 @@ public class MaterialsSeparatorTableCell extends SeparatorTableCell<Material> {
 			}
 		});
 
-		layout.setHorizontalGroup(
-			layout.createParallelGroup()
-				.addGroup(layout.createSequentialGroup()
+		locationLayout.setHorizontalGroup(
+			locationLayout.createParallelGroup()
+				.addGroup(locationLayout.createSequentialGroup()
 					.addComponent(jExpandLocation)
 					.addComponent(jLocation, 0, 0, Integer.MAX_VALUE)
 				)
+		);
+		locationLayout.setVerticalGroup(
+			locationLayout.createSequentialGroup()
+				.addGroup(locationLayout.createParallelGroup()
+					.addComponent(jExpandLocation, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jLocation, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+				)
+		);
+		layout.setHorizontalGroup(
+			layout.createParallelGroup()
+				.addComponent(jLocationPanel)
 				.addGroup(layout.createSequentialGroup()
 					.addComponent(jExpand)
 					.addGap(1)
@@ -79,10 +93,7 @@ public class MaterialsSeparatorTableCell extends SeparatorTableCell<Material> {
 		);
 		layout.setVerticalGroup(
 			layout.createSequentialGroup()
-				.addGroup(layout.createParallelGroup()
-					.addComponent(jExpandLocation, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-					.addComponent(jLocation, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-				)
+				.addComponent(jLocationPanel)
 				.addGroup(layout.createParallelGroup()
 					.addComponent(jExpand, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 					.addComponent(jGroup, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
@@ -97,12 +108,11 @@ public class MaterialsSeparatorTableCell extends SeparatorTableCell<Material> {
 		if (material == null) {
 			return;
 		} // handle 'late' rendering calls after this separator is invalid
-		jLocation.setVisible(material.isFirst());
-		jExpandLocation.setVisible(material.isFirst());
+		jLocationPanel.setVisible(material.isFirst());
 		jLocation.setText(material.getHeader());
 		jGroup.setText(material.getGroup());
 		if (material.isFirst()) {
-			jExpandLocation.setIcon(isHeaderCollapsed() ? EXPANDED_ICON : COLLAPSED_ICON);
+			jExpandLocation.setIcon(isHeaderCollapsed() ? Images.MISC_EXPANDED_WHITE.getIcon() : Images.MISC_COLLAPSED_WHITE.getIcon());
 		}
 	}
 

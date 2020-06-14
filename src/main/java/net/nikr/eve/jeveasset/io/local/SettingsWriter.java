@@ -155,6 +155,7 @@ public class SettingsWriter extends AbstractXmlWriter {
 		Element colorSettingsNode = xmldoc.createElementNS(null, "colorsettings");
 		xmldoc.getDocumentElement().appendChild(colorSettingsNode);
 		setAttributeOptional(colorSettingsNode, "theme", colorSettings.getColorTheme().getType());
+		setAttribute(colorSettingsNode, "lookandfeel", colorSettings.getLookAndFeelClass());
 		for (ColorEntry colorEntry : ColorEntry.values()) {
 			Element colorNode = xmldoc.createElementNS(null, "color");
 			setAttribute(colorNode, "name", colorEntry);

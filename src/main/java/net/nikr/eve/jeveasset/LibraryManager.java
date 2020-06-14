@@ -130,6 +130,7 @@ public class LibraryManager {
 			files.add("jna-4.5.2.jar");
 			files.add("jsr250-api-1.0.jar");
 			files.add("jsr305-3.0.2.jar");
+			files.add("flatlaf-0.36.jar");
 		}
 		return files;
 	}
