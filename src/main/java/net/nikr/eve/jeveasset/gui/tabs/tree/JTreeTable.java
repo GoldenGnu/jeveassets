@@ -28,6 +28,7 @@ import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.settings.ColorEntry;
 import net.nikr.eve.jeveasset.data.settings.ColorSettings;
 import net.nikr.eve.jeveasset.data.settings.Settings;
+import net.nikr.eve.jeveasset.gui.shared.ColorUtil;
 import net.nikr.eve.jeveasset.gui.shared.table.JAutoColumnTable;
 import net.nikr.eve.jeveasset.gui.tabs.assets.AssetTableFormat;
 
@@ -50,16 +51,32 @@ public class JTreeTable extends JAutoColumnTable {
 		//Tree
 		if (!isSelected && treeAsset.isParent()) {
 			if (treeAsset.getDepth() == 0) {
-				component.setBackground(new Color(170, 170, 170));
+				if (ColorUtil.isBrightColor(getBackground())) { //Light background color
+					component.setBackground(new Color(170, 170, 170));
+				} else { //Dark background color
+					component.setBackground(Color.DARK_GRAY.darker().darker().darker());
+				}
 				return component;
 			} else if (treeAsset.getDepth() == 1) {
-				component.setBackground(new Color(190, 190, 190));
+				if (ColorUtil.isBrightColor(getBackground())) { //Light background color
+					component.setBackground(new Color(190, 190, 190));
+				} else { //Dark background color
+					component.setBackground(Color.DARK_GRAY.darker().darker());
+				}
 				return component;
 			} else if (treeAsset.getDepth() == 2) {
-				component.setBackground(new Color(210, 210, 210));
+				if (ColorUtil.isBrightColor(getBackground())) { //Light background color
+					component.setBackground(new Color(210, 210, 210));
+				} else { //Dark background color
+					component.setBackground(Color.DARK_GRAY.darker());
+				}
 				return component;
 			} else if (treeAsset.getDepth() > 2) {
-				component.setBackground(new Color(235, 235, 235));
+				if (ColorUtil.isBrightColor(getBackground())) { //Light background color
+					component.setBackground(new Color(235, 235, 235));
+				} else { //Dark background color
+					component.setBackground(Color.DARK_GRAY);
+				}
 				return component;
 			}
 		}

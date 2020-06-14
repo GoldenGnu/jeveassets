@@ -38,6 +38,7 @@ import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.api.accounts.OwnerType;
+import net.nikr.eve.jeveasset.data.settings.Colors;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.CaseInsensitiveComparator;
@@ -67,6 +68,7 @@ public class ValueRetroTab extends JMainTabSecondary {
 	private Value total;
 	private String backgroundHexColor;
 	private String gridHexColor;
+	private String valueHexColor;
 
 	public ValueRetroTab(final Program program) {
 		super(program, TabsValues.get().oldTitle(), Images.TOOL_VALUES.getIcon(), true);
@@ -79,7 +81,10 @@ public class ValueRetroTab extends JMainTabSecondary {
 		gridHexColor = Integer.toHexString(jPanel.getBackground().darker().getRGB());
 		gridHexColor = gridHexColor.substring(2, gridHexColor.length());
 
-		jCharacters = new JComboBox<String>();
+		valueHexColor = Integer.toHexString(Colors.TEXTFIELD_BACKGROUND.getColor().getRGB());
+		valueHexColor = valueHexColor.substring(2, valueHexColor.length());
+
+		jCharacters = new JComboBox<>();
 		jCharacters.setActionCommand(ValueRetroAction.OWNER_SELECTED.name());
 		jCharacters.addActionListener(listener);
 
@@ -90,7 +95,7 @@ public class ValueRetroTab extends JMainTabSecondary {
 		JScrollPane jCharacterScroll = new JScrollPane(jCharacter);
 		jCharacterScroll.setBorder(null);
 
-		jCorporations = new JComboBox<String>();
+		jCorporations = new JComboBox<>();
 		jCorporations.setActionCommand(ValueRetroAction.CORP_SELECTED.name());
 		jCorporations.addActionListener(listener);
 
@@ -161,7 +166,7 @@ public class ValueRetroTab extends JMainTabSecondary {
 	public void updateData() {
 		calcTotal();
 		jCharacters.removeAllItems();
-		List<String> characterNames = new ArrayList<String>(characters.keySet());
+		List<String> characterNames = new ArrayList<>(characters.keySet());
 		Collections.sort(characterNames, new CaseInsensitiveComparator());
 		for (String owner : characterNames) {
 			jCharacters.addItem(owner);
@@ -175,7 +180,7 @@ public class ValueRetroTab extends JMainTabSecondary {
 		jCharacters.setSelectedIndex(0);
 
 		jCorporations.removeAllItems();
-		List<String> corporationNames = new ArrayList<String>(corporations.keySet());
+		List<String> corporationNames = new ArrayList<>(corporations.keySet());
 		Collections.sort(corporationNames, new CaseInsensitiveComparator());
 		for (String corp : corporationNames) {
 			jCorporations.addItem(corp);
@@ -200,8 +205,8 @@ public class ValueRetroTab extends JMainTabSecondary {
 	private boolean calcTotal() {
 		Date date = Settings.getNow();
 		Map<String, Value> values = DataSetCreator.createDataSet(program.getProfileData(), Settings.getNow());
-		characters = new HashMap<String, Value>();
-		corporations = new HashMap<String, Value>();
+		characters = new HashMap<>();
+		corporations = new HashMap<>();
 		total = values.get(TabsValues.get().grandTotal());
 		for (OwnerType owner : program.getOwnerTypes()) {
 			Value value = DataSetCreator.getValue(values, owner.getOwnerName(), date);
@@ -324,7 +329,7 @@ public class ValueRetroTab extends JMainTabSecondary {
 
 		private void addValue(final String value1, final String value2) {
 			if (value1 != null || value2 != null) {
-				moduleOutput = moduleOutput + "<tr><td style=\"background: #ffffff; text-align: right;\">";
+				moduleOutput = moduleOutput + "<tr><td style=\"background: #" + valueHexColor + "; text-align: right;\">";
 			}
 			if (value1 != null) {
 				moduleOutput = moduleOutput + value1;

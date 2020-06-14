@@ -27,7 +27,6 @@ import ca.odell.glazedlists.TextFilterator;
 import ca.odell.glazedlists.matchers.Matcher;
 import ca.odell.glazedlists.matchers.TextMatcherEditor;
 import ca.odell.glazedlists.swing.AutoCompleteSupport;
-import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
@@ -79,6 +78,7 @@ import net.nikr.eve.jeveasset.data.sde.MyLocation;
 import net.nikr.eve.jeveasset.data.sde.StaticData;
 import net.nikr.eve.jeveasset.data.settings.ColorEntry;
 import net.nikr.eve.jeveasset.data.settings.ColorSettings;
+import net.nikr.eve.jeveasset.data.settings.Colors;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.CaseInsensitiveComparator;
@@ -293,7 +293,8 @@ public class StockpileDialog extends JDialogCentered {
 		}
 		if (Settings.get().getStockpiles().contains(getStockpile())) {
 			if (stockpile != null && stockpile.getName().equals(getStockpile().getName())) {
-				jName.setBackground(Color.WHITE);
+				jName.setBackground(Colors.TEXTFIELD_BACKGROUND.getColor());
+				jName.setForeground(Colors.TEXTFIELD_FOREGROUND.getColor());
 			} else {
 				b = false;
 				ColorSettings.config(jName, ColorEntry.GLOBAL_ENTRY_INVALID);
@@ -302,7 +303,8 @@ public class StockpileDialog extends JDialogCentered {
 			ColorSettings.config(jName, ColorEntry.GLOBAL_ENTRY_INVALID);
 			b = false;
 		} else {
-			jName.setBackground(Color.WHITE);
+			jName.setBackground(Colors.TEXTFIELD_BACKGROUND.getColor());
+			jName.setForeground(Colors.TEXTFIELD_FOREGROUND.getColor());
 		}
 		jOK.setEnabled(b);
 	}
