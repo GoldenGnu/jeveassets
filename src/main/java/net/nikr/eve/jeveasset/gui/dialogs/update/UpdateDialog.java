@@ -71,6 +71,7 @@ import net.nikr.eve.jeveasset.io.online.CitadelGetter;
 import net.nikr.eve.jeveasset.io.online.ContractPriceGetter;
 import net.nikr.eve.jeveasset.data.settings.ContractPriceManager;
 import net.nikr.eve.jeveasset.gui.shared.Updatable;
+import net.nikr.eve.jeveasset.io.esi.EsiFactionWarfareGetter;
 import net.nikr.eve.jeveasset.io.online.PriceDataGetter;
 import net.nikr.eve.jeveasset.io.shared.ThreadWoker;
 
@@ -836,6 +837,7 @@ public class UpdateDialog extends JDialogCentered {
 					updates.add(new EsiLocationsGetter(this, esiOwner));
 					updates.add(new EsiShipGetter(this, esiOwner));
 					updates.add(new EsiPlanetaryInteractionGetter(this, esiOwner));
+					updates.add(new EsiFactionWarfareGetter(this));
 				}
 			}
 			//char/corp/alliance IDs to names (ESI)

@@ -202,6 +202,7 @@ public abstract class GuiShared extends Bundle {
 	public abstract String uiOwnerTitle();
 	public abstract String uiStation();
 	public abstract String uiSystem();
+	public abstract String unknownFaction();
 	public abstract String unknownOwner();
 	public abstract String updateStructures();
 	public abstract String updating();
