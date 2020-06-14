@@ -32,10 +32,14 @@ import java.util.Map;
 import java.util.Set;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 import net.nikr.eve.jeveasset.data.api.accounts.OwnerType;
 import net.nikr.eve.jeveasset.data.api.my.MyAccountBalance;
 import net.nikr.eve.jeveasset.data.api.my.MyAsset;
@@ -184,6 +188,8 @@ public class Program implements ActionListener {
 		AssetAddedData.load();
 		ContractPriceManager.load();
 
+		initLookAndFeel(Settings.get().getColorSettings().getLookAndFeelClass());
+
 		updater = new Updater();
 		localData = updater.getLocalData();
 		if (!PROGRAM_DEV_BUILD) {
@@ -330,6 +336,45 @@ public class Program implements ActionListener {
 		profileManager = null;
 		priceDataGetter = null;
 		localData = null;
+	}
+
+	private void initLookAndFeel(String lookAndFeel) {
+		initLookAndFeel(lookAndFeel, true);
+	}
+
+	private void initLookAndFeel(String lookAndFeel, boolean tryDefault) {
+		//Allow users to overwrite LaF
+		if (System.getProperty("swing.defaultlaf") != null) {
+			return;
+		}
+		//lookAndFeel = "com.sun.java.swing.plaf.windows.WindowsLookAndFeel";
+		//lookAndFeel = UIManager.getSystemLookAndFeelClassName(); //System
+		//lookAndFeel = UIManager.getCrossPlatformLookAndFeelClassName(); //Java
+		//lookAndFeel = "javax.swing.plaf.nimbus.NimbusLookAndFeel"; //Nimbus
+		//lookAndFeel = "javax.swing.plaf.metal.MetalLookAndFeel"; //Metal
+		//lookAndFeel = "com.sun.java.swing.plaf.gtk.GTKLookAndFeel"; //GTK+
+		//lookAndFeel = "com.sun.java.swing.plaf.motif.MotifLookAndFeel"; //CDE/Motif
+
+		//flatlaf
+		//lookAndFeel = "com.formdev.flatlaf.FlatLightLaf"; //Flat Light
+		//lookAndFeel = "com.formdev.flatlaf.FlatDarkLaf"; //Flat Dark
+		//lookAndFeel = "com.formdev.flatlaf.FlatIntelliJLaf"; //Flat IntelliJ
+		//lookAndFeel = "com.formdev.flatlaf.FlatDarculaLaf"; //Flat Darcula
+		
+		try {
+			UIManager.setLookAndFeel(lookAndFeel);
+		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ex) {
+			LOG.error(ex.getMessage(), ex);
+			//In case the settings is using an unsupported look and feel
+			//Try system look and feel
+			if (tryDefault) {
+				initLookAndFeel(UIManager.getSystemLookAndFeelClassName(), false);
+			}
+		}
+
+		//Make sure we have nice window decorations.
+		JFrame.setDefaultLookAndFeelDecorated(true);
+		JDialog.setDefaultLookAndFeelDecorated(true);
 	}
 
 	public static int getButtonsHeight() {

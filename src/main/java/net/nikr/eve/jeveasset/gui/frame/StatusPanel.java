@@ -37,6 +37,7 @@ import javax.swing.Timer;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
+import net.nikr.eve.jeveasset.gui.shared.ColorUtil;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.components.JFixedToolBar;
 import net.nikr.eve.jeveasset.gui.shared.components.JGroupLayoutPanel;
@@ -55,8 +56,8 @@ public class StatusPanel extends JGroupLayoutPanel {
 	private final Timer eveTimer;
 	private final Timer updateTimer;
 
-	private final List<Progress> progressStatus = new ArrayList<Progress>();
-	private final List<JLabel> programStatus = new ArrayList<JLabel>();
+	private final List<Progress> progressStatus = new ArrayList<>();
+	private final List<JLabel> programStatus = new ArrayList<>();
 
 	public StatusPanel(final Program program) {
 		super(program);
@@ -194,7 +195,6 @@ public class StatusPanel extends JGroupLayoutPanel {
 	public static JLabel createIcon(final Icon icon, final String toolTip) {
 		JLabel jLabel = new JLabel();
 		jLabel.setIcon(icon);
-		jLabel.setForeground(jLabel.getBackground().darker().darker().darker());
 		jLabel.setMinimumSize(new Dimension(25, 25));
 		jLabel.setPreferredSize(new Dimension(25, 25));
 		jLabel.setMaximumSize(new Dimension(25, 25));
@@ -205,7 +205,11 @@ public class StatusPanel extends JGroupLayoutPanel {
 	public static JLabel createLabel(final String toolTip, final Icon icon) {
 		JLabel jLabel = new JLabel();
 		jLabel.setIcon(icon);
-		jLabel.setForeground(jLabel.getBackground().darker().darker().darker());
+		if (ColorUtil.isBrightColor(jLabel.getBackground())) { //Light background color
+			jLabel.setForeground(jLabel.getBackground().darker().darker().darker());
+		} else { //Dark background color
+			jLabel.setForeground(jLabel.getBackground().brighter().brighter());
+		}
 		jLabel.setToolTipText(toolTip);
 		jLabel.setHorizontalAlignment(JLabel.LEFT);
 		return jLabel;

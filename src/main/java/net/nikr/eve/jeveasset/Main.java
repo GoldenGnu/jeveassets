@@ -25,10 +25,6 @@ import java.io.File;
 import java.net.URISyntaxException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
 import net.nikr.eve.jeveasset.io.local.FileLock;
 import net.nikr.eve.jeveasset.io.online.Updater;
 import org.slf4j.bridge.SLF4JBridgeHandler;
@@ -182,43 +178,12 @@ public final class Main {
 			BackgroundUpdate update = new BackgroundUpdate();
 			update.update();
 		} else {
-			javax.swing.SwingUtilities.invokeLater(
-				new Runnable() {
-					@Override
+			javax.swing.SwingUtilities.invokeLater(new Runnable() {
+				@Override
 				public void run() {
-					createAndShowGUI();
+					Main main = new Main();
 				}
 			});
-		}
-	}
-
-	private static void createAndShowGUI() {
-		initLookAndFeel();
-
-		//Make sure we have nice window decorations.
-		JFrame.setDefaultLookAndFeelDecorated(true);
-		JDialog.setDefaultLookAndFeelDecorated(true);
-
-		Main main = new Main();
-	}
-
-	private static void initLookAndFeel() {
-		//Allow users to overwrite LaF
-		if (System.getProperty("swing.defaultlaf") != null) {
-			return;
-		}
-		String lookAndFeel;
-		//lookAndFeel = "com.sun.java.swing.plaf.windows.WindowsLookAndFeel";
-		lookAndFeel = UIManager.getSystemLookAndFeelClassName(); //System
-		//lookAndFeel = UIManager.getCrossPlatformLookAndFeelClassName(); //Java
-		//lookAndFeel = "javax.swing.plaf.nimbus.NimbusLookAndFeel"; //Nimbus
-		//lookAndFeel = "javax.swing.plaf.metal.MetalLookAndFeel"; //Metal
-		//lookAndFeel = "com.sun.java.swing.plaf.gtk.GTKLookAndFeel"; //GTK+
-		//lookAndFeel = "com.sun.java.swing.plaf.motif.MotifLookAndFeel"; //CDE/Motif
-		try {
-			UIManager.setLookAndFeel(lookAndFeel);
-		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ex) {
-			log.log(Level.SEVERE, "Failed to set LookAndFeel: " + lookAndFeel, ex);
 		}
 	}
 }

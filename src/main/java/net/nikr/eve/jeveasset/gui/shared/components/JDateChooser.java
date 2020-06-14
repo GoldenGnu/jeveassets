@@ -25,6 +25,7 @@ import com.github.lgooddatepicker.components.DatePickerSettings;
 import java.util.Locale;
 import javax.swing.JButton;
 import javax.swing.JTextField;
+import net.nikr.eve.jeveasset.data.settings.Colors;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 
@@ -61,6 +62,15 @@ public class JDateChooser extends DatePicker {
 			setAllowEmptyDates(allowEmptyDates);
 			setFormatForDatesCommonEra(Formater.COLUMN_DATE);
 			setFormatForDatesBeforeCommonEra(Formater.COLUMN_DATE);
+
+			//Use UIManager default
+			setColor(DatePickerSettings.DateArea.BackgroundOverallCalendarPanel, Colors.COMPONENT_BACKGROUND.getColor());
+			setColor(DatePickerSettings.DateArea.BackgroundClearLabel, Colors.BUTTON_BACKGROUND.getColor());
+			setColor(DatePickerSettings.DateArea.TextClearLabel, Colors.BUTTON_FOREGROUND.getColor());
+			setColor(DatePickerSettings.DateArea.BackgroundMonthAndYearMenuLabels, Colors.BUTTON_BACKGROUND.getColor());
+			setColor(DatePickerSettings.DateArea.TextMonthAndYearMenuLabels, Colors.BUTTON_FOREGROUND.getColor());
+			setColor(DatePickerSettings.DateArea.BackgroundTodayLabel, Colors.BUTTON_BACKGROUND.getColor());
+			setColor(DatePickerSettings.DateArea.TextTodayLabel, Colors.BUTTON_FOREGROUND.getColor());
 		}
 
 	}

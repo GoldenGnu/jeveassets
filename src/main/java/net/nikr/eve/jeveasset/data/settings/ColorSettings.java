@@ -28,11 +28,46 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 import javax.swing.JComponent;
+import javax.swing.UIManager;
+import javax.swing.UIManager.LookAndFeelInfo;
 import net.nikr.eve.jeveasset.data.settings.ColorTheme.ColorThemeTypes;
 import net.nikr.eve.jeveasset.gui.shared.ColorUtil;
+import net.nikr.eve.jeveasset.i18n.DialoguesSettings;
 
 public class ColorSettings {
 
+	public static enum PredefinedLookAndFeel {
+		DEFAULT(DialoguesSettings.get().lookAndFeelDefault(), UIManager.getSystemLookAndFeelClassName(), true),
+		FLAT_LIGHT(DialoguesSettings.get().lookAndFeelFlatLight(), "com.formdev.flatlaf.FlatLightLaf"),
+		FLAT_INTELLIJ(DialoguesSettings.get().lookAndFeelFlatIntelliJ(), "com.formdev.flatlaf.FlatIntelliJLaf"),
+		FLAT_DARK(DialoguesSettings.get().lookAndFeelFlatDark(), "com.formdev.flatlaf.FlatDarkLaf"),
+		FLAT_DARCULA(DialoguesSettings.get().lookAndFeelFlatDarcula(), "com.formdev.flatlaf.FlatDarculaLaf"),
+		;
+
+		private final String name;
+        private final String className;
+        private final boolean selected;
+
+		private PredefinedLookAndFeel(String name, String className) {
+			this(name, className, false);
+		}
+
+		private PredefinedLookAndFeel(String name, String className, boolean selected) {
+			this.name = name;
+			this.className = className;
+			this.selected = selected;
+		}
+
+		public boolean isSelected() {
+			return selected;
+		}
+
+		public LookAndFeelInfo getLookAndFeelInfo() {
+			return new LookAndFeelInfo(name, className);
+		}
+	}
+
+	private String lookAndFeelClass = UIManager.getSystemLookAndFeelClassName();
 	private ColorTheme colorTheme = ColorThemeTypes.DEFAULT.getInstance();
 	private final Map<ColorEntry, Color> backgrounds = new EnumMap<>(ColorEntry.class);
 	private final Map<ColorEntry, Color> foregrounds = new EnumMap<>(ColorEntry.class);
@@ -42,6 +77,14 @@ public class ColorSettings {
 			backgrounds.put(colorEntry, colorTheme.getDefaultBackground(colorEntry));
 			foregrounds.put(colorEntry, colorTheme.getDefaultForeground(colorEntry));
 		}
+	}
+
+	public String getLookAndFeelClass() {
+		return lookAndFeelClass;
+	}
+
+	public void setLookAndFeelClass(String lookAndFeelClass) {
+		this.lookAndFeelClass = lookAndFeelClass;
 	}
 
 	public ColorTheme getColorTheme() {

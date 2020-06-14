@@ -43,6 +43,11 @@ public class ColorThemeTest extends TestUtil {
 		test(ColorThemeTypes.COLORBLIND.getInstance());
 	}
 
+	@Test
+	public void testDARKTheme() {
+		test(ColorThemeTypes.DARK.getInstance());
+	}
+
 	private void test(ColorTheme colorTheme) {
 		assertTrue(colorTheme.isValid());
 		

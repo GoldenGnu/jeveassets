@@ -101,6 +101,10 @@ public class JDropDownButton extends JButton {
 		menuScroller = new MenuScroller(jPopupMenu);
 	}
 
+	public JPopupMenu getPopupMenu() {
+		return jPopupMenu;
+	}
+
 	@Override
 	public void removeAll() {
 		jPopupMenu.removeAll();

@@ -75,8 +75,11 @@ public class JSimpleColorPicker {
 			}
 		});
 		JPanel jPanel = new JPanel();
-		jPanel.setBackground(Color.WHITE);
-
+		if (ColorUtil.isBrightColor(jPanel.getBackground())) { //Light background color
+			jPanel.setBackground(Color.WHITE);
+		} else { //Dark background color
+			jPanel.setBackground(Color.BLACK);
+		}
 
 		jPanel.setBorder(new JPopupMenu().getBorder());
 		GroupLayout groupLayout = new GroupLayout(jPanel);
@@ -112,8 +115,8 @@ public class JSimpleColorPicker {
 		List<Colors> colors = new ArrayList<>();
 		colors.add(Colors.LIGHT_GRAY);
 		colors.add(Colors.STRONG_GRAY);
-		colors.add(Colors.DARK_RED);
-		colors.add(Colors.DARK_GREEN);
+		colors.add(Colors.FOREGROUND_RED);
+		colors.add(Colors.FOREGROUND_GREEN);
 		colors.add(Colors.LIGHT_RED);
 		colors.add(Colors.STRONG_RED);
 		colors.add(Colors.LIGHT_ORANGE);
@@ -132,14 +135,15 @@ public class JSimpleColorPicker {
 		jClassicPanel.setLayout(new GridLayout(0, 2, 0, 1));
 
 		for (Colors defaultColors : colors) {
-			add(jClassicPanel, defaultColors.getColor());
+			add(jClassicPanel, defaultColors);
 		}
 
 		List<Colors> blindColors = new ArrayList<>();
-		blindColors.add(Colors.COLORBLIND_DARK_GREEN);
-		blindColors.add(Colors.COLORBLIND_DARK_RED);
+		blindColors.add(Colors.DARK_GRAY);
+		blindColors.add(Colors.COLORBLIND_FOREGROUND_GREEN);
+		blindColors.add(Colors.COLORBLIND_FOREGROUND_RED);
 		blindColors.add(Colors.COLORBLIND_ORANGE);	
-		blindColors.add(Colors.COLORBLIND_YELLOW)		;
+		blindColors.add(Colors.COLORBLIND_YELLOW);
 		blindColors.add(Colors.COLORBLIND_GREEN);
 		blindColors.add(Colors.COLORBLIND_BLUE);
 		blindColors.add(Colors.COLORBLIND_MAGENTA);
@@ -148,9 +152,26 @@ public class JSimpleColorPicker {
 		jBlindPanel.setOpaque(false);
 		jBlindPanel.setLayout(new GridLayout(0, 1, 0, 1));
 
-		add(jBlindPanel, null);
 		for (Colors defaultColors : blindColors) {
-			add(jBlindPanel, defaultColors.getColor());
+			add(jBlindPanel, defaultColors);
+		}
+
+		List<Colors> darkColors = new ArrayList<>();
+		darkColors.add(Colors.DARK_FOREGROUND_GREEN);
+		darkColors.add(Colors.DARK_FOREGROUND_RED);
+		darkColors.add(Colors.DARK_RED);
+		darkColors.add(Colors.DARK_ORANGE);	
+		darkColors.add(Colors.DARK_YELLOW);
+		darkColors.add(Colors.DARK_GREEN);
+		darkColors.add(Colors.DARK_BLUE);
+		darkColors.add(Colors.DARK_MAGENTA);
+
+		JPanel jDarkPanel = new JPanel();
+		jDarkPanel.setOpaque(false);
+		jDarkPanel.setLayout(new GridLayout(0, 1, 0, 1));
+
+		for (Colors defaultColors : darkColors) {
+			add(jDarkPanel, defaultColors);
 		}
 
 		JButton jCustom = createButton(GuiShared.get().colorCustom());
@@ -179,6 +200,8 @@ public class JSimpleColorPicker {
 							.addComponent(jClassicPanel)
 							.addGap(0)
 							.addComponent(jBlindPanel)
+							.addGap(0)
+							.addComponent(jDarkPanel)
 						)
 						.addComponent(jCustom, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Integer.MAX_VALUE)
 		);
@@ -192,11 +215,15 @@ public class JSimpleColorPicker {
 							.addComponent(jColorPanel)
 							.addComponent(jClassicPanel)
 							.addComponent(jBlindPanel)
+							.addComponent(jDarkPanel)
 						)
 						.addComponent(jCustom)
 		);
 	}
 
+	private void add(JPanel jPanel, Colors color) {
+		add(jPanel, color != null ? color.getColor() : null);
+	}
 	private void add(JPanel jPanel, Color color) {
 		if (color == null) {
 			JLabel jLabel = new JLabel();
@@ -207,7 +234,7 @@ public class JSimpleColorPicker {
 			jPanel.add(jLabel);
 			return;
 		}
-		ColorIcon icon = new ColorIcon(color);
+		ColorIcon icon = new ColorIcon(color, ColorUtil.isBrightColor(jPanel.getBackground()));
 		icons.add(icon);
 
 		JButton jButton = createButton(icon);
@@ -258,7 +285,11 @@ public class JSimpleColorPicker {
 
 	private Border getBorderInner(JButton jButton) {
 		if (jButton.isEnabled()) {
-			return BorderFactory.createLineBorder(Color.BLACK, 1);
+			if (ColorUtil.isBrightColor(jButton.getBackground())) { //Light background color
+				return BorderFactory.createLineBorder(Color.BLACK, 1);
+			} else { //Dark background color
+				return BorderFactory.createLineBorder(Color.WHITE, 1);
+			}
 		} else {
 			return BorderFactory.createLineBorder(Color.DARK_GRAY, 1);
 		}
@@ -340,12 +371,14 @@ public class JSimpleColorPicker {
 
 		private final Color color;
 		private final boolean backgroundIsBright;
+		private final boolean colorIsBright;
 		private boolean selected = false;
 		private boolean hover = false;
 
-		public ColorIcon(Color color) {
+		public ColorIcon(Color color, boolean brightBorder) {
 			this.color = color;
-			backgroundIsBright = ColorUtil.isBrightColor(color);
+			this.backgroundIsBright = brightBorder;
+			colorIsBright = ColorUtil.isBrightColor(color);
 		}
 
 		public void setSelect(Color match) {
@@ -368,13 +401,25 @@ public class JSimpleColorPicker {
 				AlphaComposite newValue = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.3f);
 				Composite oldValue = g2d.getComposite();
 				g2d.setComposite(newValue);
-				g2d.setColor(Color.BLACK);
+				if (backgroundIsBright) {
+					g2d.setColor(Color.BLACK);
+				} else {
+					g2d.setColor(Color.WHITE);
+				}
 				fillOval(g2d, 0, x, y);
 				g2d.setComposite(oldValue);
 			}
 
 			//Border
-			g2d.setColor(color.darker());
+			if (backgroundIsBright) {
+				g2d.setColor(color.darker());
+			} else {
+				if (color.equals(Color.BLACK)) {
+					g2d.setColor(Color.DARK_GRAY);
+				} else {
+					g2d.setColor(color.brighter());
+				}
+			}
 			fillOval(g2d, 2, x, y);
 
 			//Background
@@ -383,7 +428,7 @@ public class JSimpleColorPicker {
 
 			//Icon
 			if (selected) {
-				if (backgroundIsBright) {
+				if (colorIsBright) {
 					g2d.drawImage(Images.SETTINGS_COLOR_CHECK_BLACK.getImage(), x + (getIconWidth()-16)/2, y + (getIconWidth()-16)/2, null);
 				} else {
 					g2d.drawImage(Images.SETTINGS_COLOR_CHECK_WHITE.getImage(), x + (getIconWidth()-16)/2, y + (getIconWidth()-16)/2, null);
