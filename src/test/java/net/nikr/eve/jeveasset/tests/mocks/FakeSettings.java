@@ -628,4 +628,24 @@ public abstract class FakeSettings extends Settings {
 	public TransactionProfitPrice getTransactionProfitPrice() {
 		throw new UnsupportedOperationException("not implemented");
 	}
+
+	@Override
+	public void setFactionWarfareNextUpdate(Date factionWarfareNextUpdate) {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public Date getFactionWarfareNextUpdate() {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public void setFactionWarfareSystemOwners(Map<Long, String> factionWarfareSystemOwners) {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public Map<Long, String> getFactionWarfareSystemOwners() {
+		throw new UnsupportedOperationException("not implemented");
+	}
 }
