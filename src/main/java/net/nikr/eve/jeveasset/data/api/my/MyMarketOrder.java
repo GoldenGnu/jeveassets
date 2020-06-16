@@ -120,6 +120,7 @@ public class MyMarketOrder extends RawMarketOrder implements Comparable<MyMarket
 	private String issuedByName = "";
 	private Double brokersFee;
 	private Outbid outbid;
+	private double priceReprocessed;
 	private JButtonComparable jButton = new JButtonComparable(TabsOrders.get().eveUiOpen());
 
 	public MyMarketOrder(final RawMarketOrder rawMarketOrder, final Item item, final OwnerType owner) {
@@ -378,6 +379,14 @@ public class MyMarketOrder extends RawMarketOrder implements Comparable<MyMarket
 
 	public void setOutbid(Outbid outbid) {
 		this.outbid = outbid;
+	}
+
+	public double getPriceReprocessed() {
+		return priceReprocessed;
+	}
+
+	public void setPriceReprocessed(double priceReprocessed) {
+		this.priceReprocessed = priceReprocessed;
 	}
 
 	public JButtonComparable getButton() {

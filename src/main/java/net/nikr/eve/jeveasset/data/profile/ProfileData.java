@@ -553,6 +553,7 @@ public class ProfileData {
 			order.setIssuedByName(ApiIdConverter.getOwnerName(order.getIssuedBy()));
 			order.setBrokersFee(marketOrdersBrokersFee.get(order.getOrderID()));
 			order.setOutbid(Settings.get().getMarketOrdersOutbid().get(order.getOrderID()));
+			order.setPriceReprocessed(ApiIdConverter.getPriceReprocessed(order.getItem()));
 			RawPublicMarketOrder response = marketOrdersUpdates.get(order.getOrderID());
 			if (response != null) {
 				order.setPrice(response.getPrice());
