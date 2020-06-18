@@ -648,4 +648,9 @@ public abstract class FakeSettings extends Settings {
 	public Map<Long, String> getFactionWarfareSystemOwners() {
 		throw new UnsupportedOperationException("not implemented");
 	}
+
+	@Override
+	public Map<Long, Date> getOwnersNextUpdate() {
+		throw new UnsupportedOperationException("not implemented");
+	}
 }
