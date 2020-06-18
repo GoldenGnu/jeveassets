@@ -125,6 +125,7 @@ public class Settings {
 	private Map<Integer, PriceData> priceDatas = new HashMap<>(); //TypeID : int
 //API Data
 	//Api id to owner name		Saved by TaskDialog.update() (on API update)
+	private final Map<Long, Date> ownersNextUpdate = new HashMap<>();
 	private final Map<Long, String> owners = new HashMap<>();
 //!! - Values
 	//OK - Custom Price			Saved by JUserListPanel.edit()/delete() + SettingsDialog.save()
@@ -450,6 +451,10 @@ public class Settings {
 
 	public void setProxyData(ProxyData proxyData) {
 		this.proxyData = proxyData;
+	}
+
+	public Map<Long, Date> getOwnersNextUpdate() {
+		return ownersNextUpdate;
 	}
 
 	public Map<Long, String> getOwners() {
