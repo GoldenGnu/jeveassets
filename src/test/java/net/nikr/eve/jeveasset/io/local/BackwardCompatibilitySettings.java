@@ -179,6 +179,11 @@ public class BackwardCompatibilitySettings extends FakeSettings implements Setti
 	}
 
 	@Override
+	public Map<Long, Date> getOwnersNextUpdate() {
+		return new HashMap<>();
+	}
+
+	@Override
 	public PriceDataSettings getPriceDataSettings() {
 		ok.put(Function.GET_PRICE_DATA_SETTINGS, true);
 		return new PriceDataSettings();

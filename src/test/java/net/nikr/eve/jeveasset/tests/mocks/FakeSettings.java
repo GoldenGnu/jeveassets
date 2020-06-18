@@ -621,4 +621,9 @@ public abstract class FakeSettings extends Settings {
 	public ColorSettings getColorSettings() {
 		throw new UnsupportedOperationException("not implemented");
 	}
+
+	@Override
+	public Map<Long, Date> getOwnersNextUpdate() {
+		throw new UnsupportedOperationException("not implemented");
+	}
 }
