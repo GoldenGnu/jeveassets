@@ -135,7 +135,7 @@ public class SettingsWriter extends AbstractXmlWriter {
 		writeTrackerNotes(xmldoc, settings.getTrackerNotes());
 		writeTrackerFilters(xmldoc, settings.getTrackerFilters(), settings.isTrackerSelectNew());
 		writeTrackerSettings(xmldoc, settings);
-		writeOwners(xmldoc, settings.getOwners());
+		writeOwners(xmldoc, settings.getOwners(), settings.getOwnersNextUpdate());
 		writeTags(xmldoc, settings.getTags());
 		writeRoutingSettings(xmldoc, settings.getRoutingSettings());
 		writeMarketOrderOutbid(xmldoc, settings.getPublicMarketOrdersNextUpdate(), settings.getPublicMarketOrdersLastUpdate(), settings.getOutbidOrderRange(), settings.getMarketOrdersOutbid());
@@ -255,13 +255,14 @@ public class SettingsWriter extends AbstractXmlWriter {
 		}
 	}
 
-	private void writeOwners(final Document xmldoc, final Map<Long, String> owners) {
+	private void writeOwners(final Document xmldoc, final Map<Long, String> owners, final Map<Long, Date> ownersNextUpdate) {
 		Element trackerDataNode = xmldoc.createElementNS(null, "owners");
 		xmldoc.getDocumentElement().appendChild(trackerDataNode);
 		for (Map.Entry<Long, String> entry : owners.entrySet()) {
 			Element ownerNode = xmldoc.createElementNS(null, "owner");
 			setAttribute(ownerNode, "name", entry.getValue());
 			setAttribute(ownerNode, "id", entry.getKey());
+			setAttributeOptional(ownerNode, "date", ownersNextUpdate.get(entry.getKey()));
 			trackerDataNode.appendChild(ownerNode);
 		}
 	}
