@@ -442,13 +442,24 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 	}
 
 	private void parseOwners(final Element element, final Settings settings) throws XmlException {
+		long ONE_DAY = 1000 * 60 * 60 * 24;
 		NodeList ownerNodeList = element.getElementsByTagName("owner");
+		int count = 1;
 		for (int i = 0; i < ownerNodeList.getLength(); i++) {
 			//Read Owner
 			Element ownerNode = (Element) ownerNodeList.item(i);
 			String ownerName = getString(ownerNode, "name");
 			long ownerID = getLong(ownerNode, "id");
+			Date date = getDateOptional(ownerNode, "date");
+			if (date == null) { //1-30 days from now
+				date = new Date(System.currentTimeMillis() + (ONE_DAY * count));
+				count++;
+				if (count > 30) {
+					count = 1;
+				}
+			}
 			settings.getOwners().put(ownerID, ownerName);
+			settings.getOwnersNextUpdate().put(ownerID, date);
 		}
 	}
 

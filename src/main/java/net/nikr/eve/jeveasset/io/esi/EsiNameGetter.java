@@ -34,6 +34,7 @@ import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
 import net.nikr.eve.jeveasset.data.api.raw.RawContainerLog;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
+import net.nikr.eve.jeveasset.gui.shared.Updatable;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 import net.troja.eve.esi.ApiException;
 import net.troja.eve.esi.ApiResponse;
@@ -43,6 +44,7 @@ import net.troja.eve.esi.model.UniverseNamesResponse;
 
 public class EsiNameGetter extends AbstractEsiGetter {
 
+	private static final long ONE_DAY = 1000 * 60 * 60 * 24;
 	private final List<OwnerType> ownerTypes;
 
 	public EsiNameGetter(UpdateTask updateTask, List<OwnerType> ownerTypes) {
@@ -91,9 +93,16 @@ public class EsiNameGetter extends AbstractEsiGetter {
 				}
 			}
 		});
+		int count = 30;
 		for (Map.Entry<List<Integer>, List<UniverseNamesResponse>> entry : retryResponses.entrySet()) {
 			for (UniverseNamesResponse lookup : entry.getValue()) {
 				Settings.get().getOwners().put((long)lookup.getId(), lookup.getName());
+				Date date = new Date(System.currentTimeMillis() + (ONE_DAY * count));
+				count--;
+				if (count < 1) {
+					count = 30;
+				}
+				Settings.get().getOwnersNextUpdate().put((long)lookup.getId(), date);
 			}
 		}
 	}
@@ -136,6 +145,11 @@ public class EsiNameGetter extends AbstractEsiGetter {
 		//Ignore Locations
 		if (!ApiIdConverter.getLocation(number.longValue()).isEmpty()) {
 			return;
+		}
+		//Next Update
+		Date nextUpdate = Settings.get().getOwnersNextUpdate().get(number.longValue());
+		if (nextUpdate != null && !Updatable.isUpdatable(nextUpdate)) {
+			return; 
 		}
 		int l = number.intValue();
 		if (l >= 100) {
