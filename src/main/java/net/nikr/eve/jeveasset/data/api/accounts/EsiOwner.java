@@ -68,9 +68,6 @@ public class EsiOwner extends AbstractOwner implements OwnerType {
 	private String accountName;
 	private String refreshToken;
 	private Set<String> scopes = new HashSet<>();
-	private String tokenType;
-	private String CharacterOwnerHash;
-	private String intellectualProperty;
 	private Date structuresNextUpdate = Settings.getNow();
 	private Date accountNextUpdate = Settings.getNow();
 	private EsiCallbackURL callbackURL;
@@ -84,9 +81,6 @@ public class EsiOwner extends AbstractOwner implements OwnerType {
 		this.accountName = esiOwner.accountName;
 		this.refreshToken = esiOwner.refreshToken;
 		this.scopes = esiOwner.scopes;
-		this.tokenType = esiOwner.tokenType;
-		this.CharacterOwnerHash = esiOwner.CharacterOwnerHash;
-		this.intellectualProperty = esiOwner.intellectualProperty;
 		this.structuresNextUpdate = esiOwner.structuresNextUpdate;
 		this.accountNextUpdate = esiOwner.accountNextUpdate;
 		this.callbackURL = esiOwner.callbackURL;
@@ -114,30 +108,6 @@ public class EsiOwner extends AbstractOwner implements OwnerType {
 
 	public final void setScopes(Set<String> scopes) {
 		this.scopes = scopes;
-	}
-
-	public String getTokenType() {
-		return tokenType;
-	}
-
-	public void setTokenType(String tokenType) {
-		this.tokenType = tokenType;
-	}
-
-	public String getCharacterOwnerHash() {
-		return CharacterOwnerHash;
-	}
-
-	public void setCharacterOwnerHash(String CharacterOwnerHash) {
-		this.CharacterOwnerHash = CharacterOwnerHash;
-	}
-
-	public String getIntellectualProperty() {
-		return intellectualProperty;
-	}
-
-	public void setIntellectualProperty(String intellectualProperty) {
-		this.intellectualProperty = intellectualProperty;
 	}
 
 	public synchronized Date getStructuresNextUpdate() {
@@ -464,7 +434,6 @@ public class EsiOwner extends AbstractOwner implements OwnerType {
 		int hash = 5;
 		hash = 61 * hash + Objects.hashCode(this.refreshToken);
 		hash = 61 * hash + Objects.hashCode(this.scopes);
-		hash = 61 * hash + Objects.hashCode(this.CharacterOwnerHash);
 		return hash;
 	}
 
@@ -484,9 +453,6 @@ public class EsiOwner extends AbstractOwner implements OwnerType {
 			return false;
 		}
 		if (!Objects.equals(this.scopes, other.scopes)) {
-			return false;
-		}
-		if (!Objects.equals(this.CharacterOwnerHash, other.CharacterOwnerHash)) {
 			return false;
 		}
 		return true;
