@@ -155,9 +155,6 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 			String accountName = getString(currentNode, "accountname");
 			String refreshToken = getString(currentNode, "refreshtoken");
 			String scopes = getString(currentNode, "scopes");
-			String tokenType = getString(currentNode, "tokentype");
-			String characterOwnerHash = getString(currentNode, "characterownerhash");
-			String intellectualProperty = getString(currentNode, "intellectualproperty");
 			Date structuresNextUpdate = getDate(currentNode, "structuresnextupdate");
 			Date accountNextUpdate = getDate(currentNode, "accountnextupdate");
 			EsiCallbackURL callbackURL;
@@ -181,9 +178,6 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 			owner.setAccountName(accountName);
 			owner.setRefreshToken(refreshToken);
 			owner.setScopes(scopes);
-			owner.setTokenType(tokenType);
-			owner.setCharacterOwnerHash(characterOwnerHash);
-			owner.setIntellectualProperty(intellectualProperty);
 			owner.setStructuresNextUpdate(structuresNextUpdate);
 			owner.setAccountNextUpdate(accountNextUpdate);
 			owner.setCallbackURL(callbackURL);
