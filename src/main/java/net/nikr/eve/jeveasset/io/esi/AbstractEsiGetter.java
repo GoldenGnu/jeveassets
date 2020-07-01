@@ -70,6 +70,7 @@ public abstract class AbstractEsiGetter extends AbstractGetter<EsiOwner> {
 	private static final ApiClient PUBLIC_CLIENT = new ApiClientBuilder().okHttpClient(getHttpClient()).build();
 	private static final UniverseApi UNIVERSE_API = new UniverseApi(PUBLIC_CLIENT);
 	private static final CharacterApi CHARACTER_API = new CharacterApi(PUBLIC_CLIENT);
+	private static final CorporationApi CORPORATION_API = new CorporationApi(PUBLIC_CLIENT);
 	private static final SovereigntyApi SOVEREIGNTY_API = new SovereigntyApi(PUBLIC_CLIENT);
 	private static final MarketApi MARKET_API = new MarketApi(PUBLIC_CLIENT);
 	public static final UserInterfaceApi USER_INTERFACE_API = new UserInterfaceApi(PUBLIC_CLIENT);
@@ -106,7 +107,8 @@ public abstract class AbstractEsiGetter extends AbstractGetter<EsiOwner> {
 			return true;
 		}
 		if (taskType == TaskType.OWNER && owner != null) {
-			return !"JWT".equals(owner.getTokenType()); //Force update of old tokens
+			OAuth auth = (OAuth) owner.getApiClient().getAuthentication("evesso");
+			return auth.getJWT() == null; //Force update of old tokens
 		}
 		return false;
 	}
@@ -318,6 +320,10 @@ public abstract class AbstractEsiGetter extends AbstractGetter<EsiOwner> {
 	public CharacterApi getCharacterApiOpen() {
 		return CHARACTER_API;
  	}
+
+	public CorporationApi getCorporationApiOpen() {
+		return CORPORATION_API;
+	}
  
 	public SovereigntyApi getSovereigntyApiOpen() {
 		return SOVEREIGNTY_API;
