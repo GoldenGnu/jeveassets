@@ -20,24 +20,21 @@
  */
 package net.nikr.eve.jeveasset.io.esi;
 
-import java.util.Collections;
 import java.util.Date;
 import java.util.EnumSet;
-import java.util.List;
 import java.util.Set;
 import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import static net.nikr.eve.jeveasset.io.esi.AbstractEsiGetter.DATASOURCE;
 import net.nikr.eve.jeveasset.io.shared.AccountAdder;
-import net.nikr.eve.jeveasset.io.shared.RawConverter;
 import net.troja.eve.esi.ApiException;
 import net.troja.eve.esi.ApiResponse;
-import net.troja.eve.esi.model.CharacterAffiliationResponse;
-import net.troja.eve.esi.model.CharacterInfo;
+import net.troja.eve.esi.auth.JWT;
+import net.troja.eve.esi.auth.OAuth;
+import net.troja.eve.esi.model.CharacterResponse;
 import net.troja.eve.esi.model.CharacterRolesResponse;
 import net.troja.eve.esi.model.CharacterRolesResponse.RolesEnum;
-import net.troja.eve.esi.model.EsiVerifyResponse;
-import net.troja.eve.esi.model.UniverseNamesResponse;
+import net.troja.eve.esi.model.CorporationResponse;
 
 
 public class EsiOwnerGetter extends AbstractEsiGetter implements AccountAdder{
@@ -54,42 +51,35 @@ public class EsiOwnerGetter extends AbstractEsiGetter implements AccountAdder{
 
 	@Override
 	protected void update() throws ApiException {
-		EsiVerifyResponse esiVerifyResponse = update(DEFAULT_RETRIES, new EsiHandler<EsiVerifyResponse>() {
-			@Override
-			public ApiResponse<EsiVerifyResponse> get() throws ApiException {
-				return getMetaApiAuth().getVerifyWithHttpInfo(null, null, DATASOURCE, null, null);
-			}
-		});
-		CharacterInfo characterInfo = new CharacterInfo(esiVerifyResponse);
-		Set<RolesEnum> roles = EnumSet.noneOf(RolesEnum.class);
-		Integer characterID = characterInfo.getCharacterID();
-		//CharacterID to CorporationID
-		List<CharacterAffiliationResponse> characters = update(DEFAULT_RETRIES, new EsiHandler<List<CharacterAffiliationResponse>>() {
-			@Override
-			public ApiResponse<List<CharacterAffiliationResponse>> get() throws ApiException {
-				return getCharacterApiOpen().postCharactersAffiliationWithHttpInfo(Collections.singletonList(characterID), DATASOURCE);
-			}
-		});
-		if (characters.isEmpty()) {
-			addError(null, "Characters is empty", null);
+		OAuth auth = (OAuth) owner.getApiClient().getAuthentication("evesso");
+		JWT jwt = auth.getJWT();
+		if (jwt == null) {
+			addError(null, "JWT is null", null);
 			return;
 		}
-		CharacterAffiliationResponse character = characters.get(0);
+		JWT.Payload payload = jwt.getPayload();
+		if (payload == null) {
+			addError(null, "JWT payload is null", null);
+			return;
+		}
+		Set<RolesEnum> roles = EnumSet.noneOf(RolesEnum.class);
+		Integer characterID = payload.getCharacterID();
+		//Character
+		CharacterResponse character = update(DEFAULT_RETRIES, new EsiHandler<CharacterResponse>() {
+			@Override
+			public ApiResponse<CharacterResponse> get() throws ApiException {
+				return getCharacterApiOpen().getCharactersCharacterIdWithHttpInfo(characterID, DATASOURCE, null);
+			}
+		});
 		Integer corporationID = character.getCorporationId();
 		//CorporationID to CorporationName
-		List<UniverseNamesResponse> corporations = update(DEFAULT_RETRIES, new EsiHandler<List<UniverseNamesResponse>>() {
+		CorporationResponse corporation = update(DEFAULT_RETRIES, new EsiHandler<CorporationResponse>() {
 			@Override
-			public ApiResponse<List<UniverseNamesResponse>> get() throws ApiException {
-				return getUniverseApiOpen().postUniverseNamesWithHttpInfo(Collections.singletonList(corporationID), DATASOURCE);
+			public ApiResponse<CorporationResponse> get() throws ApiException {
+				return getCorporationApiOpen().getCorporationsCorporationIdWithHttpInfo(corporationID, DATASOURCE, null);
 			}
 		});
-		if (corporations.isEmpty()) {
-			addError(null, "Corporations is empty", null);
-			return;
-		}
-		UniverseNamesResponse corporation = corporations.get(0);
-		String corporationName = corporation.getName();
-		boolean isCorporation = EsiScopes.CORPORATION_ROLES.isInScope(characterInfo.getScopes());
+		boolean isCorporation = EsiScopes.CORPORATION_ROLES.isInScope(payload.getScopes());
 		if (isCorporation) { //Corporation
 			//Updated Character Roles
 			CharacterRolesResponse characterRolesResponse = getCharacterApiAuth().getCharactersCharacterIdRoles(characterID, DATASOURCE, null, null);
@@ -102,20 +92,16 @@ public class EsiOwnerGetter extends AbstractEsiGetter implements AccountAdder{
 			wrongEntry = true;
 			return;
 		}
-		owner.setCharacterOwnerHash(characterInfo.getCharacterOwnerHash());
-		owner.setScopes(characterInfo.getScopes());
-		owner.setIntellectualProperty(characterInfo.getIntellectualProperty());
-		owner.setTokenType(characterInfo.getTokenType());
+		owner.setScopes(payload.getScopes());
 		owner.setRoles(roles);
-		owner.setCorporationName(corporationName);
+		owner.setCorporationName(corporation.getName());
 		if (owner.isCorporation()) {
 			owner.setOwnerID(corporationID);
-			owner.setOwnerName(corporationName);
+			owner.setOwnerName(corporation.getName());
 		} else {
-			owner.setOwnerID(characterInfo.getCharacterID());
-			owner.setOwnerName(characterInfo.getCharacterName());
+			owner.setOwnerID(payload.getCharacterID());
+			owner.setOwnerName(character.getName());
 		}
-		owner.setAccountNextUpdate(RawConverter.toDate(characterInfo.getExpiresOn()));
 		if (isPrivilegesLimited()) {
 			addWarning("LIMITED ACCOUNT", "Limited account data access\r\n(Fix: Options > Accounts... > Edit)");
 			setError(null);
@@ -124,7 +110,9 @@ public class EsiOwnerGetter extends AbstractEsiGetter implements AccountAdder{
 
 	@Override
 	protected void setNextUpdate(Date date) {
-		//Do nothing
+		if (date.after(owner.getAccountNextUpdate())) {
+			owner.setAccountNextUpdate(date);
+		}
 	}
 
 	@Override
