@@ -104,9 +104,10 @@ public class FileLock {
 			if (tries > MAX_TRIES) {
 				JOptionPane.showMessageDialog(null, getMessage(file), General.get().fileLockTitle(), JOptionPane.ERROR_MESSAGE);
 				System.exit(0);
+			} else {
+				waitForUnlock(file, tries, delay);
+				lock(file, tries, delay);
 			}
-			waitForUnlock(file, tries, delay);
-			lock(file, tries, delay);
 		}
 	}
 
