@@ -661,6 +661,10 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 							continue; //Do not match contract owner - try next filter
 						}
 					}
+				} else if (industryJob != null) {
+					if (!matchOwner(filter, ownerID) && !matchOwner(filter, industryJob.getInstallerID())) {
+						continue; //Do not match owner - try next filter
+					}
 				} else {
 					if (!matchOwner(filter, ownerID)) {
 						continue; //Do not match owner - try next filter
