@@ -21,6 +21,7 @@
 package net.nikr.eve.jeveasset.data.api.raw;
 
 import java.util.Date;
+import java.util.Objects;
 import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder.MarketOrderRange;
 import net.nikr.eve.jeveasset.gui.tabs.orders.MarketLog;
 import net.nikr.eve.jeveasset.io.shared.RawConverter;
@@ -134,5 +135,30 @@ public class RawPublicMarketOrder {
 
 	public Long getLocationId() {
 		return locationId;
+	}
+
+	@Override
+	public int hashCode() {
+		int hash = 7;
+		hash = 37 * hash + Objects.hashCode(this.orderId);
+		return hash;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		final RawPublicMarketOrder other = (RawPublicMarketOrder) obj;
+		if (!Objects.equals(this.orderId, other.orderId)) {
+			return false;
+		}
+		return true;
 	}
 }
