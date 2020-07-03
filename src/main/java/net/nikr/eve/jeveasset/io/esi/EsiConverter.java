@@ -23,6 +23,7 @@ package net.nikr.eve.jeveasset.io.esi;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -71,7 +72,6 @@ import net.troja.eve.esi.model.CorporationWalletJournalResponse;
 import net.troja.eve.esi.model.CorporationWalletTransactionsResponse;
 import net.troja.eve.esi.model.CorporationWalletsResponse;
 import net.troja.eve.esi.model.MarketOrdersResponse;
-import net.troja.eve.esi.model.MarketStructuresResponse;
 import net.troja.eve.esi.model.PlanetContent;
 import net.troja.eve.esi.model.PlanetPin;
 
@@ -256,16 +256,16 @@ public class EsiConverter extends DataConverter {
 		return divisions;
 	}
 
-	public static Map<Integer, List<RawPublicMarketOrder>> toPublicMarketOrders(List<MarketOrdersResponse> responses) {
-		Map<Integer, List<RawPublicMarketOrder>> marketOrders = new HashMap<>();
+	public static Map<Integer, Set<RawPublicMarketOrder>> toPublicMarketOrders(List<MarketOrdersResponse> responses) {
+		Map<Integer, Set<RawPublicMarketOrder>> marketOrders = new HashMap<>();
 		for (MarketOrdersResponse response : responses) {
 			RawPublicMarketOrder marketOrder = new RawPublicMarketOrder(response);
-			List<RawPublicMarketOrder> list = marketOrders.get(marketOrder.getTypeId());
-			if (list == null) {
-				list = new ArrayList<>();
-				marketOrders.put(marketOrder.getTypeId(), list);
+			Set<RawPublicMarketOrder> set = marketOrders.get(marketOrder.getTypeId());
+			if (set == null) {
+				set = new HashSet<>();
+				marketOrders.put(marketOrder.getTypeId(), set);
 			}
-			list.add(marketOrder);
+			set.add(marketOrder);
 		}
 		return marketOrders;
 	}
