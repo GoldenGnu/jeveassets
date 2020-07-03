@@ -18,7 +18,7 @@
 ________________________________________________________________________________
 _6.4.1__________________________________________________________________________
 
-Bug Fixes
+Bug Fixes:
 -Isk/Values best fitted ship including stacks of ships
 -Use universe/names less (since it's being unstable)
 -Fixed unexpected end of JSON input: Use JWT (Issue #163)
