@@ -16,6 +16,42 @@
                   #### #  # #  # #  # #### #### #### #### ####
 
 ________________________________________________________________________________
+_6.4.1__________________________________________________________________________
+
+Bug Fixes:
+-Isk/Values best fitted ship including stacks of ships
+-Use universe/names less (since it's being unstable)
+-Fixed unexpected end of JSON input: Use JWT (Issue #163)
+-Ensure public market orders are unique (Issue #158)
+
+________________________________________________________________________________
+_6.4.0__________________________________________________________________________
+
+New Features:
+-Customizable colors
+-Colorblind friendly color theme
+-Tracker: Edit the order of generated routes
+-Tracker: Added Logarithmic scaling (linear still default)
+-Tracker: Remember selected owners between restarts and updates
+-Added ToolTips to Outbid $/Outbid #/Market Details columns
+-Added SUM of selection/column to the table menu
+-Duplicate filter entries
+-Warning levels for updates
+-Added update warning for missing corporation roles
+-Improved setting dialog GUI on ubuntu
+-Serve html response on SSO callback url instead of redirecting to eve.nikr.net
+
+Code:
+-Updated to routing 2.0.0 and graph 2.0.0 (both now support generics)
+
+Bug Fixes:
+-TaskDialog move a tiny bit when showing/hiding errors
+-Stockpile import had never ending loop of asking what stockpile to import
+-Made Stockpile text import more resilient to crashing (BugID: 800)
+-Made MarketLog import more resilient to crashing (BugID: 823)
+-Made Xml reader more resilient to crashing (BugID: 822, 821, 820, 819)
+
+________________________________________________________________________________
 _6.3.2__________________________________________________________________________
 
 Bug Fixes:
