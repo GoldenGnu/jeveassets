@@ -16,6 +16,15 @@
                   #### #  # #  # #  # #### #### #### #### ####
 
 ________________________________________________________________________________
+_6.4.1__________________________________________________________________________
+
+Bug Fixes
+-Isk/Values best fitted ship including stacks of ships
+-Use universe/names less (since it's being unstable)
+-Fixed unexpected end of JSON input: Use JWT (Issue #163)
+-Ensure public market orders are unique (Issue #158)
+
+________________________________________________________________________________
 _6.4.0__________________________________________________________________________
 
 New Features:
