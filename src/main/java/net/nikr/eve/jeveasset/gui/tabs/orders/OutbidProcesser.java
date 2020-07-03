@@ -94,7 +94,7 @@ public class OutbidProcesser {
 						}
 					} else { //Sell  (outbid is lower)
 						outbid.setPrice(Math.min(outbid.getPrice(), ordersResponse.getPrice()));
-						if (marketOrder.getPrice() > ordersResponse.getPrice()) {
+						if (ordersResponse.getPrice() < marketOrder.getPrice()) {
 							outbid.addCount(ordersResponse.getVolumeRemain());
 						}
 					}
@@ -241,12 +241,12 @@ public class OutbidProcesser {
 			}
 		}
 
-		public void addOrders(Map<Integer, List<RawPublicMarketOrder>> orders, Date date) {
+		public void addOrders(Map<Integer, Set<RawPublicMarketOrder>> orders, Date date) {
 			if (date == null) {
 				return;
 			}
 			synchronized (MARKET_ORDERS) {
-				for (Map.Entry<Integer, List<RawPublicMarketOrder>> entry : orders.entrySet()) {
+				for (Map.Entry<Integer, Set<RawPublicMarketOrder>> entry : orders.entrySet()) {
 					DatedMarketOrders datedMarketOrders = MARKET_ORDERS.get(entry.getKey());
 					if (datedMarketOrders != null && datedMarketOrders.getDate().after(date)) {
 						return; //Current is newer
@@ -317,9 +317,9 @@ public class OutbidProcesser {
 	private static class DatedMarketOrders {
 
 		private final Date date;
-		private final List<RawPublicMarketOrder> marketOrders;
+		private final Set<RawPublicMarketOrder> marketOrders;
 
-		public DatedMarketOrders(Date date, List<RawPublicMarketOrder> marketOrders) {
+		public DatedMarketOrders(Date date, Set<RawPublicMarketOrder> marketOrders) {
 			this.date = date;
 			this.marketOrders = marketOrders;
 		}
@@ -328,7 +328,7 @@ public class OutbidProcesser {
 			return date;
 		}
 
-		public List<RawPublicMarketOrder> getMarketOrders() {
+		public Set<RawPublicMarketOrder> getMarketOrders() {
 			return marketOrders;
 		}
 

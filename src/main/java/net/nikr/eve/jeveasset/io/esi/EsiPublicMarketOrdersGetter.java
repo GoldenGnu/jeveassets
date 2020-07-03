@@ -20,10 +20,11 @@
  */
 package net.nikr.eve.jeveasset.io.esi;
 
-import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import net.nikr.eve.jeveasset.data.api.raw.RawPublicMarketOrder;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
@@ -94,7 +95,7 @@ public class EsiPublicMarketOrdersGetter extends AbstractEsiGetter {
 				}
 			}
 		});
-		Map<Integer, List<RawPublicMarketOrder>> orders = EsiConverter.toPublicMarketOrders(responses);
+		Map<Integer, Set<RawPublicMarketOrder>> orders = EsiConverter.toPublicMarketOrders(responses);
 		for (MarketOrdersResponse ordersResponse : responses) {
 			//Find leaking market structures
 			if (ordersResponse.getLocationId() > 100000000) {
@@ -138,12 +139,12 @@ public class EsiPublicMarketOrdersGetter extends AbstractEsiGetter {
 			});
 			for (MarketStructuresResponse response : structuresResponses) {
 				RawPublicMarketOrder marketOrder = new RawPublicMarketOrder(response, getSystemID(input, response.getLocationId()));
-				List<RawPublicMarketOrder> list = orders.get(marketOrder.getTypeId());
-				if (list == null) {
-					list = new ArrayList<>();
-					orders.put(marketOrder.getTypeId(), list);
+				Set<RawPublicMarketOrder> set =  orders.get(marketOrder.getTypeId());
+				if (set == null) {
+					set = new HashSet<>();
+					orders.put(marketOrder.getTypeId(), set);
 				}
-				list.add(marketOrder);
+				set.add(marketOrder);
 			}
 		} else {
 			addError("NO ENOUGH ACCESS PRIVILEGES", "No character with market orders structure scope found\r\n(Add scope: [Options] > [Acounts...] > [Edit])");

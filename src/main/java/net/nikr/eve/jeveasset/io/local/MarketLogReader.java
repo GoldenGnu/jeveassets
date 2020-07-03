@@ -28,8 +28,10 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import javax.swing.filechooser.FileSystemView;
 import net.nikr.eve.jeveasset.data.api.raw.RawPublicMarketOrder;
 import net.nikr.eve.jeveasset.gui.shared.Formater.DateFormatThreadSafe;
@@ -100,11 +102,11 @@ public class MarketLogReader {
 			LOG.warn("Failed to read: " + filename);
 			return null; 
 		}
-		List<RawPublicMarketOrder> marketOrders = new ArrayList<>();
+		Set<RawPublicMarketOrder> marketOrders = new HashSet<>();
 		for (MarketLog marketLog : marketLogs) {
 			marketOrders.add(new RawPublicMarketOrder(marketLog));
 		}
-		Map<Integer, List<RawPublicMarketOrder>> orders = new HashMap<>();
+		Map<Integer, Set<RawPublicMarketOrder>> orders = new HashMap<>();
 		orders.put(typeID, marketOrders);
 		input.addOrders(orders, date);
 		LOG.info("Read: " + filename);
