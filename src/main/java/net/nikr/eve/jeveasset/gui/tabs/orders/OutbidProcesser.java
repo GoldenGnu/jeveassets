@@ -68,7 +68,7 @@ public class OutbidProcesser {
 	private void process() {
 		//Process the orders
 		for (RawPublicMarketOrder ordersResponse : input.getMarketOrders()) {
-			List<MyMarketOrder> orders = input.getTypeIDs().get(ordersResponse.getTypeId());
+			Set<MyMarketOrder> orders = input.getTypeIDs().get(ordersResponse.getTypeId());
 			if (orders != null) {
 				//Orders to match
 				for (MyMarketOrder marketOrder : orders) {
@@ -191,7 +191,7 @@ public class OutbidProcesser {
 		
 		private final Map<Long, Long> locationToSystem = new HashMap<>();
 		private final Map<Long, Citadel> citadels = new HashMap<>();
-		private final Map<Integer, List<MyMarketOrder>> typeIDs = new HashMap<>();
+		private final Map<Integer, Set<MyMarketOrder>> typeIDs = new HashMap<>();
 		private final Set<Long> structureIDs = new HashSet<>();
 		private final Set<Integer> regionIDs = new HashSet<>();
 		private final MarketOrderRange sellOrderRange;
@@ -209,12 +209,12 @@ public class OutbidProcesser {
 								structureIDs.add(marketOrder.getLocationID());
 							}
 							//TypeIDs
-							List<MyMarketOrder> list = typeIDs.get(marketOrder.getTypeID());
-							if (list == null) {
-								list = new ArrayList<>();
-								typeIDs.put(marketOrder.getTypeID(), list);
+							Set<MyMarketOrder> set = typeIDs.get(marketOrder.getTypeID());
+							if (set == null) {
+								set = new HashSet<>();
+								typeIDs.put(marketOrder.getTypeID(), set);
 							}
-							list.add(marketOrder);
+							set.add(marketOrder);
 							//RegionIDs
 							MyLocation location = marketOrder.getLocation();
 							if (location == null) {
@@ -275,7 +275,7 @@ public class OutbidProcesser {
 			return citadels;
 		}
 
-		public Map<Integer, List<MyMarketOrder>> getTypeIDs() {
+		public Map<Integer, Set<MyMarketOrder>> getTypeIDs() {
 			return typeIDs;
 		}
 
