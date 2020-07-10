@@ -126,6 +126,7 @@ public class LookAndFeelPreview {
 					settingsDialog.removeCard(previewComponent.getOuter());
 					UIManager.setLookAndFeel(currentLAF);
 					SwingUtilities.updateComponentTreeUI(previewWindowMock);
+					SwingUtilities.updateComponentTreeUI(previewComponent.getOuter());
 				} catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ex) {
 					LOG.error(ex.getMessage(), ex);
 				}
