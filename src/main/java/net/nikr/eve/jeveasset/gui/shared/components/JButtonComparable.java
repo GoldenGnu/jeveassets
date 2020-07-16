@@ -48,6 +48,11 @@ public class JButtonComparable extends JButton implements Comparable<JButtonComp
 	}
 
 	@Override
+	public String toString() {
+		return getText();
+	}
+
+	@Override
 	public int hashCode() {
 		int hash = 5;
 		hash = 97 * hash + Objects.hashCode(this.getText());
