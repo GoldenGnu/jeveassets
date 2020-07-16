@@ -332,6 +332,9 @@ public class ContractPriceManager {
 		}
 
 		public List<String> getSecurityValues() {
+			if (contractPriceSecurity.size() == ContractPriceSecurity.values().length) {
+				return null;
+			}
 			List<String> values = new ArrayList<>();
 			for (ContractPriceSecurity security : contractPriceSecurity) {
 				values.add(security.getValue());
