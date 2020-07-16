@@ -340,8 +340,7 @@ public class AccountImportDialog extends JDialogCentered {
 			try {
 				String code = new String(Base64.getUrlDecoder().decode(jImport.getText().trim()), "UTF-8");
 				String[] codes = code.split(" ");
-				esiOwner.setCallbackURL(EsiCallbackURL.valueOf(codes[0]));
-				esiOwner.setRefreshToken(codes[1]);
+				esiOwner.setAuth(EsiCallbackURL.valueOf(codes[0]), codes[1], null);
 			} catch (UnsupportedEncodingException | IllegalArgumentException | ArrayIndexOutOfBoundsException ex) {
 				LOG.error("Failed to import jEveAssets ESI Key", ex); //Will fail the update, so, we just ignore it here
 			}
