@@ -105,7 +105,7 @@ public class RawPublicMarketOrder {
 		return price;
 	}
 
-	public Integer getSystemId() {
+	public Integer getSystemID() {
 		return systemId;
 	}
 
@@ -125,7 +125,7 @@ public class RawPublicMarketOrder {
 		return issued;
 	}
 
-	public Long getOrderId() {
+	public Long getOrderID() {
 		return orderId;
 	}
 
@@ -133,7 +133,7 @@ public class RawPublicMarketOrder {
 		return volumeRemain;
 	}
 
-	public Long getLocationId() {
+	public Long getLocationID() {
 		return locationId;
 	}
 

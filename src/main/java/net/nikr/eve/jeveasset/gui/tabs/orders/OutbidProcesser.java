@@ -32,7 +32,6 @@ import java.util.Set;
 import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
 import net.nikr.eve.jeveasset.data.api.accounts.OwnerType;
 import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder;
-import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder;
 import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder.MarketOrderRange;
 import net.nikr.eve.jeveasset.data.api.raw.RawPublicMarketOrder;
 import net.nikr.eve.jeveasset.data.profile.ProfileData;
@@ -73,7 +72,7 @@ public class OutbidProcesser {
 				//Orders to match
 				for (MyMarketOrder marketOrder : orders) {
 					if (isSameOrder(marketOrder, ordersResponse)) { //Orders to be updated
-						output.getUpdates().put(ordersResponse.getOrderId(), ordersResponse);
+						output.getUpdates().put(ordersResponse.getOrderID(), ordersResponse);
 						continue;
 					}
 					if (!isSameType(marketOrder, ordersResponse)) { //Both buy or both sell
@@ -105,9 +104,9 @@ public class OutbidProcesser {
 		CitadelGetter.set(input.getCitadels().values());
 	}
 
-	private boolean isInRange(MyMarketOrder marketOrder, RawPublicMarketOrder other) {
-		Long fromSystemID = getSystemID(marketOrder.getLocationID());
-		Long toSystemID = RawConverter.toLong(other.getSystemId());
+	private boolean isInRange(MyMarketOrder fromMarketOrder, RawPublicMarketOrder toMarketOrder) {
+		Long fromSystemID = getSystemID(fromMarketOrder.getLocationID());
+		Long toSystemID = RawConverter.toLong(toMarketOrder.getSystemID());
 		MyLocation fromSystemLocation = ApiIdConverter.getLocation(fromSystemID);
 		MyLocation toSystemLocation = ApiIdConverter.getLocation(toSystemID);
 		if (fromSystemLocation.isEmpty() || toSystemLocation.isEmpty()) {
@@ -117,20 +116,21 @@ public class OutbidProcesser {
 		if (!Objects.equals(fromSystemLocation.getRegionID(), toSystemLocation.getRegionID())) {
 			return false; //Must be in same region
 		}
-		RawMarketOrder.MarketOrderRange marketOrderRange;
-		if (marketOrder.isBuyOrder()) {
-			marketOrderRange = marketOrder.getRange();
+		MarketOrderRange fromRange;
+		MarketOrderRange toRange;
+		if (fromMarketOrder.isBuyOrder()) {
+			fromRange = fromMarketOrder.getRange();
+			toRange = toMarketOrder.getRange();
 		} else {
-			marketOrderRange = input.getSellOrderRange();
+			fromRange = input.getSellOrderRange();
+			toRange = input.getSellOrderRange();
 		}
-		if (marketOrderRange == RawMarketOrder.MarketOrderRange.REGION
-				|| other.getRange() == RawMarketOrder.MarketOrderRange.REGION) {
+		if (fromRange == MarketOrderRange.REGION || toRange == MarketOrderRange.REGION) {
 			return true; //Match everything
-		} else if (marketOrderRange == RawMarketOrder.MarketOrderRange.STATION
-				&& other.getRange() == RawMarketOrder.MarketOrderRange.STATION) {
-			return Objects.equals(marketOrder.getLocationID(), other.getLocationId()); //Only match if in the same station
+		} else if (fromRange == MarketOrderRange.STATION && toRange == MarketOrderRange.STATION) {
+			return Objects.equals(fromMarketOrder.getLocationID(), toMarketOrder.getLocationID()); //Only match if in the same station
 		} else {
-			int range = getRange(other.getRange()) + getRange(marketOrderRange); //Find overlapping area
+			int range = getRange(fromRange) + getRange(toRange); //Find overlapping area
 			//int range = Math.max(getRange(response), getRange(marketOrder)); //Use the order with the max range
 			Integer distance = RouteFinder.get().distanceBetween(fromSystemID, toSystemID);
 			if (distance == null) {
@@ -142,9 +142,9 @@ public class OutbidProcesser {
 
 
 
-	public static int getRange(RawMarketOrder.MarketOrderRange range) {
+	public static int getRange(MarketOrderRange range) {
 		switch (range) {
-			case REGION: return Integer.MAX_VALUE;
+			case REGION: return 32767;
 			case SOLARSYSTEM: return 0;
 			case STATION: return 0;
 			case _1: return 1;
@@ -165,7 +165,7 @@ public class OutbidProcesser {
 	}
 
 	private boolean isSameOrder(MyMarketOrder marketOrder, RawPublicMarketOrder response) {
-		return Objects.equals(marketOrder.getOrderID(), response.getOrderId());
+		return Objects.equals(marketOrder.getOrderID(), response.getOrderID());
 	}
 
 	private Long getSystemID(long locationID) {
