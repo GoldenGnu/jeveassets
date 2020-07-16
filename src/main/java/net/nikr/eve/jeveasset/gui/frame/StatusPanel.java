@@ -27,6 +27,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import javax.swing.GroupLayout;
 import javax.swing.Icon;
@@ -55,8 +56,8 @@ public class StatusPanel extends JGroupLayoutPanel {
 	private final Timer eveTimer;
 	private final Timer updateTimer;
 
-	private final List<Progress> progressStatus = new ArrayList<Progress>();
-	private final List<JLabel> programStatus = new ArrayList<JLabel>();
+	private final List<Progress> progressStatus = Collections.synchronizedList(new ArrayList<>());
+	private final List<JLabel> programStatus = new ArrayList<>();
 
 	public StatusPanel(final Program program) {
 		super(program);
@@ -119,9 +120,11 @@ public class StatusPanel extends JGroupLayoutPanel {
 	}
 
 	public boolean updateing(UpdateType updateType) {
-		for (Progress progress : progressStatus) {
-			if (progress.getTaskType() == updateType) {
-				return true;
+		synchronized (progressStatus) {
+			for (Progress progress : progressStatus) {
+				if (progress.getTaskType() == updateType) {
+					return true;
+				}
 			}
 		}
 		return false;
@@ -132,14 +135,18 @@ public class StatusPanel extends JGroupLayoutPanel {
 	}
 
 	public void cancelUpdates() {
-		for (Progress progress : progressStatus) {
-			progress.cancel();
+		synchronized (progressStatus) {
+			for (Progress progress : progressStatus) {
+				progress.cancel();
+			}
 		}
 	}
 
 	public void setPauseUpdates(boolean pause) {
-		for (Progress progress : progressStatus) {
-			progress.setPause(pause);
+		synchronized (progressStatus) {
+			for (Progress progress : progressStatus) {
+				progress.setPause(pause);
+			}
 		}
 	}
 
@@ -162,10 +169,12 @@ public class StatusPanel extends JGroupLayoutPanel {
 		if (jUpdate.isVisible()) {
 			jToolBar.add(jUpdate);
 		}
-		for (Progress progress : progressStatus) {
-			if (progress.isVisible()) {
-				jToolBar.add(progress.getProgress());
-				addSpace(10);
+		synchronized (progressStatus) {
+			for (Progress progress : progressStatus) {
+				if (progress.isVisible()) {
+					jToolBar.add(progress.getProgress());
+					addSpace(10);
+				}
 			}
 		}
 		for (JLabel jLabel : programStatus) {
