@@ -95,7 +95,7 @@ public class ProxyTest extends TestUtil {
 	private void testConnections() {
 		//ESI
 		EsiOwner esiOwner = new EsiOwner();
-		esiOwner.setCallbackURL(EsiCallbackURL.LOCALHOST);
+		esiOwner.setAuth(EsiCallbackURL.LOCALHOST, null, null);
 		EsiOwnerGetter esi = new EsiOwnerGetter(esiOwner, false);
 		esi.start();
 		//Citadels
