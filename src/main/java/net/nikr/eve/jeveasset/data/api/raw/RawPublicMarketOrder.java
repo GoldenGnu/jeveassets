@@ -37,7 +37,8 @@ public class RawPublicMarketOrder {
 	private final Double price;
 	private final Integer systemId;
 	private final Integer typeId;
-	private final MarketOrderRange range;
+	private final String range;
+	private final MarketOrderRange rangeEnum;
 	private final Integer volumeTotal;
 	private final Date issued;
 	private final Long orderId;
@@ -51,7 +52,8 @@ public class RawPublicMarketOrder {
 		this.price = marketOrder.getPrice();
 		this.systemId = marketOrder.getSystemId();
 		this.typeId = marketOrder.getTypeId();
-		this.range = MarketOrderRange.valueOf(marketOrder.getRange().name());
+		this.range = marketOrder.getRangeString();
+		this.rangeEnum = RawConverter.toMarketOrderRange(marketOrder.getRange());
 		this.volumeTotal = marketOrder.getVolumeTotal();
 		this.issued = RawConverter.toDate(marketOrder.getIssued());
 		this.orderId = marketOrder.getOrderId();
@@ -66,7 +68,8 @@ public class RawPublicMarketOrder {
 		this.price = marketOrder.getPrice();
 		this.systemId = RawConverter.toInteger(systemId);
 		this.typeId = marketOrder.getTypeId();
-		this.range = MarketOrderRange.valueOf(marketOrder.getRange().name());
+		this.range = marketOrder.getRangeString();
+		this.rangeEnum = RawConverter.toMarketOrderRange(marketOrder.getRange());
 		this.volumeTotal = marketOrder.getVolumeTotal();
 		this.issued = RawConverter.toDate(marketOrder.getIssued());
 		this.orderId = marketOrder.getOrderId();
@@ -81,7 +84,8 @@ public class RawPublicMarketOrder {
 		this.price = marketLog.getPrice();
 		this.systemId = RawConverter.toInteger(marketLog.getSolarSystemID());
 		this.typeId = marketLog.getTypeID();
-		this.range = RawConverter.toMarketOrderRange(marketLog.getRange());
+		this.range = null;
+		this.rangeEnum = RawConverter.toMarketOrderRange(marketLog.getRange(), null, null);
 		this.volumeTotal = marketLog.getVolEntered();
 		this.issued = marketLog.getIssueDate();
 		this.orderId = marketLog.getOrderID();
@@ -114,6 +118,10 @@ public class RawPublicMarketOrder {
 	}
 
 	public MarketOrderRange getRange() {
+		return rangeEnum;
+	}
+
+	public String getRangeString() {
 		return range;
 	}
 

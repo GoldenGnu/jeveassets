@@ -28,7 +28,6 @@ import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
 import net.nikr.eve.jeveasset.TestUtil;
-import net.nikr.eve.jeveasset.data.api.raw.RawAsset;
 import net.nikr.eve.jeveasset.data.api.raw.RawContract;
 import net.nikr.eve.jeveasset.data.api.raw.RawIndustryJob;
 import net.nikr.eve.jeveasset.data.api.raw.RawJournal.ContextType;
@@ -37,11 +36,22 @@ import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder;
 import net.nikr.eve.jeveasset.data.sde.ItemFlag;
 import net.nikr.eve.jeveasset.data.sde.StaticData;
 import net.nikr.eve.jeveasset.io.shared.RawConverter.LocationFlag;
+import net.troja.eve.esi.model.CharacterContractsResponse;
+import net.troja.eve.esi.model.CharacterIndustryJobsResponse;
+import net.troja.eve.esi.model.CharacterOrdersHistoryResponse;
+import net.troja.eve.esi.model.CharacterOrdersResponse;
 import net.troja.eve.esi.model.CharacterWalletJournalResponse;
+import net.troja.eve.esi.model.CorporationContractsResponse;
+import net.troja.eve.esi.model.CorporationIndustryJobsResponse;
+import net.troja.eve.esi.model.CorporationOrdersHistoryResponse;
+import net.troja.eve.esi.model.CorporationOrdersResponse;
 import net.troja.eve.esi.model.CorporationWalletJournalResponse;
+import net.troja.eve.esi.model.MarketOrdersResponse;
+import net.troja.eve.esi.model.MarketStructuresResponse;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import org.junit.Test;
 
 
@@ -53,10 +63,6 @@ public class RawConverterTest extends TestUtil {
 		OffsetDateTime offsetDateTime = from.toInstant().atOffset(ZoneOffset.UTC);
 		Date to = RawConverter.toDate(offsetDateTime);
 		assertEquals(from, to);
-	}
-
-	@Test
-	public void testToFlag_String() {
 	}
 
 	@Test
@@ -143,77 +149,125 @@ public class RawConverterTest extends TestUtil {
 	}
 
 	@Test
-	public void testToAssetLocationType() {
-		Map<Long, RawAsset.LocationType> map = new HashMap<Long, RawAsset.LocationType>();
-		map.put(100000000L, RawAsset.LocationType.ITEM);
-		map.put(10000002L, RawAsset.LocationType.OTHER);
-		map.put(30000142L, RawAsset.LocationType.SOLAR_SYSTEM);
-		map.put(60003466L, RawAsset.LocationType.STATION);
-		assertEquals(map.size(), RawAsset.LocationType.values().length);
-		for (Map.Entry<Long, RawAsset.LocationType> entry : map.entrySet()) {
-			assertEquals(entry.getValue(), RawConverter.toAssetLocationType(entry.getKey()));
+	public void testToContractAvailability_String_String() {
+		//Enum
+		for (RawContract.ContractAvailability value : RawContract.ContractAvailability.values()) {
+			assertEquals(value, RawConverter.toContractAvailability(value.name(), null));
 		}
-	}
-
-	@Test
-	public void testToContractAvailability() {
-		Map<String, RawContract.ContractAvailability> map = new HashMap<String, RawContract.ContractAvailability>();
-		map.put(RawContract.ContractAvailability.ALLIANCE.name(), RawContract.ContractAvailability.ALLIANCE);
-		map.put(RawContract.ContractAvailability.CORPORATION.name(), RawContract.ContractAvailability.CORPORATION);
-		map.put(RawContract.ContractAvailability.PERSONAL.name(), RawContract.ContractAvailability.PERSONAL);
-		map.put(RawContract.ContractAvailability.PUBLIC.name(), RawContract.ContractAvailability.PUBLIC);
+		//String
+		for (RawContract.ContractAvailability value : RawContract.ContractAvailability.values()) {
+			assertEquals(value, RawConverter.toContractAvailability(null, value.getValue()));
+		}
+		//EveAPI
+		Map<String, RawContract.ContractAvailability> map = new HashMap<>();
 		map.put("public", RawContract.ContractAvailability.PUBLIC);
 		map.put("private", RawContract.ContractAvailability.PERSONAL);
-		assertEquals(map.size(), RawContract.ContractAvailability.values().length + 2);
 		for (Map.Entry<String, RawContract.ContractAvailability> entry : map.entrySet()) {
-			assertEquals(entry.getValue(), RawConverter.toContractAvailability(entry.getKey()));
+			assertEquals(entry.getValue(), RawConverter.toContractAvailability(entry.getKey(), null));
 		}
 	}
 
 	@Test
-	public void testToContractStatus() {
-		Map<String, RawContract.ContractStatus> map = new HashMap<String, RawContract.ContractStatus>();
-		map.put("CANCELLED", RawContract.ContractStatus.CANCELLED);
-		map.put("DELETED", RawContract.ContractStatus.DELETED);
-		map.put("FAILED", RawContract.ContractStatus.FAILED);
-		map.put("FINISHED", RawContract.ContractStatus.FINISHED);
-		map.put("FINISHED_CONTRACTOR", RawContract.ContractStatus.FINISHED_CONTRACTOR);
-		map.put("FINISHED_ISSUER", RawContract.ContractStatus.FINISHED_ISSUER);
-		map.put("INPROGRESS", RawContract.ContractStatus.IN_PROGRESS);
-		map.put("OUTSTANDING", RawContract.ContractStatus.OUTSTANDING);
-		map.put("REJECTED", RawContract.ContractStatus.REJECTED);
-		map.put("REVERSED", RawContract.ContractStatus.REVERSED);
-		//EveAPI ContractStatus
+	public void testToContractAvailability_CharacterContractsResponseAvailabilityEnum() {
+		//Enum
+		for (CharacterContractsResponse.AvailabilityEnum value : CharacterContractsResponse.AvailabilityEnum.values()) {
+			assertEquals(value.name(), RawConverter.toContractAvailability(value).name());
+		}
+	}
+
+	@Test
+	public void testToContractAvailability_CorporationContractsResponseAvailabilityEnum() {
+		//Enum
+		for (CorporationContractsResponse.AvailabilityEnum value : CorporationContractsResponse.AvailabilityEnum.values()) {
+			assertEquals(value.name(), RawConverter.toContractAvailability(value).name());
+		}
+	}
+
+	@Test
+	public void testToContractStatus_String_String() {
+		//Enum
+		for (RawContract.ContractStatus value : RawContract.ContractStatus.values()) {
+			assertEquals(value, RawConverter.toContractStatus(value.name(), null));
+		}
+		//String
+		for (RawContract.ContractStatus value : RawContract.ContractStatus.values()) {
+			assertEquals(value, RawConverter.toContractStatus(null, value.getValue()));
+		}
+		//EveAPI
+		Map<String, RawContract.ContractStatus> map = new HashMap<>();
 		map.put("COMPLETED", RawContract.ContractStatus.FINISHED);
 		map.put("COMPLETEDBYCONTRACTOR", RawContract.ContractStatus.FINISHED_CONTRACTOR);
 		map.put("COMPLETEDBYISSUER", RawContract.ContractStatus.FINISHED_ISSUER);
-		map.put("IN_PROGRESS", RawContract.ContractStatus.IN_PROGRESS);
-		assertEquals(map.size(), RawContract.ContractStatus.values().length + 4);
+		map.put("INPROGRESS", RawContract.ContractStatus.IN_PROGRESS);
 		for (Map.Entry<String, RawContract.ContractStatus> entry : map.entrySet()) {
-			assertEquals(entry.getValue(), RawConverter.toContractStatus(entry.getKey()));
+			assertEquals(entry.getValue(), RawConverter.toContractStatus(entry.getKey(), null));
 		}
 	}
 
 	@Test
-	public void testToContractType() {
-		Map<String, RawContract.ContractType> map = new HashMap<String, RawContract.ContractType>();
-		map.put(RawContract.ContractType.AUCTION.name(), RawContract.ContractType.AUCTION);
-		map.put(RawContract.ContractType.COURIER.name(), RawContract.ContractType.COURIER);
-		map.put(RawContract.ContractType.ITEM_EXCHANGE.name(), RawContract.ContractType.ITEM_EXCHANGE);
-		map.put(RawContract.ContractType.LOAN.name(), RawContract.ContractType.LOAN);
-		map.put(RawContract.ContractType.UNKNOWN.name(), RawContract.ContractType.UNKNOWN);
+	public void testToContractStatus_CharacterContractsResponseStatusEnum() {
+		//Enum
+		for (CharacterContractsResponse.StatusEnum value : CharacterContractsResponse.StatusEnum.values()) {
+			assertEquals(value.name(), RawConverter.toContractStatus(value).name());
+		}
+	}
+
+	@Test
+	public void testToContractStatus_CorporationContractsResponseStatusEnum() {
+		//Enum
+		for (CorporationContractsResponse.StatusEnum value : CorporationContractsResponse.StatusEnum.values()) {
+			assertEquals(value.name(), RawConverter.toContractStatus(value).name());
+		}
+	}
+
+	@Test
+	public void testToContractType_String_String() {
+		//Enum
+		for (RawContract.ContractType value : RawContract.ContractType.values()) {
+			assertEquals(value, RawConverter.toContractType(value.name(), null));
+		}
+		//String
+		for (RawContract.ContractType value : RawContract.ContractType.values()) {
+			assertEquals(value, RawConverter.toContractType(null, value.getValue()));
+		}
+		//EveAPI
+		Map<String, RawContract.ContractType> map = new HashMap<>();
 		map.put("Auction", RawContract.ContractType.AUCTION);
 		map.put("Courier", RawContract.ContractType.COURIER);
 		map.put("ItemExchange", RawContract.ContractType.ITEM_EXCHANGE);
 		map.put("Loan", RawContract.ContractType.LOAN);
-		assertEquals(map.size(), RawContract.ContractType.values().length + 4);
 		for (Map.Entry<String, RawContract.ContractType> entry : map.entrySet()) {
-			assertEquals(entry.getValue(), RawConverter.toContractType(entry.getKey()));
+			assertEquals(entry.getValue(), RawConverter.toContractType(entry.getKey(), null));
 		}
 	}
 
 	@Test
-	public void testToIndustryJobStatus_int() {
+	public void testToContractType_CharacterContractsResponseTypeEnum() {
+		//Enum
+		for (CharacterContractsResponse.TypeEnum value : CharacterContractsResponse.TypeEnum.values()) {
+			assertEquals(value.name(), RawConverter.toContractType(value).name());
+		}
+	}
+
+	@Test
+	public void testToContractType_CorporationContractsResponseTypeEnum() {
+		//Enum
+		for (CorporationContractsResponse.TypeEnum value : CorporationContractsResponse.TypeEnum.values()) {
+			assertEquals(value.name(), RawConverter.toContractType(value).name());
+		}
+	}
+
+	@Test
+	public void testToIndustryJobStatus_3args() {
+		//Enum
+		for (RawIndustryJob.IndustryJobStatus value : RawIndustryJob.IndustryJobStatus.values()) {
+			assertEquals(value, RawConverter.toIndustryJobStatus(null, value.name(), null));
+		}
+		//String
+		for (RawIndustryJob.IndustryJobStatus value : RawIndustryJob.IndustryJobStatus.values()) {
+			assertEquals(value, RawConverter.toIndustryJobStatus(null, null, value.getValue()));
+		}
+		//EveAPI
 		Map<Integer, RawIndustryJob.IndustryJobStatus> map = new HashMap<Integer, RawIndustryJob.IndustryJobStatus>();
 		map.put(1, RawIndustryJob.IndustryJobStatus.ACTIVE);
 		map.put(2, RawIndustryJob.IndustryJobStatus.PAUSED);
@@ -223,52 +277,34 @@ public class RawConverterTest extends TestUtil {
 		map.put(103, RawIndustryJob.IndustryJobStatus.REVERTED);
 		assertEquals(map.size(), RawIndustryJob.IndustryJobStatus.values().length);
 		for (Map.Entry<Integer, RawIndustryJob.IndustryJobStatus> entry : map.entrySet()) {
-			assertEquals(entry.getValue(), RawConverter.toIndustryJobStatus(entry.getKey()));
+			assertEquals(entry.getValue(), RawConverter.toIndustryJobStatus(entry.getKey(), null, null));
 		}
 	}
 
 	@Test
-	public void testToIndustryJobStatus_String() {
-		Map<String, RawIndustryJob.IndustryJobStatus> map = new HashMap<String, RawIndustryJob.IndustryJobStatus>();
-		map.put("active", RawIndustryJob.IndustryJobStatus.ACTIVE);
-		map.put("paused", RawIndustryJob.IndustryJobStatus.PAUSED);
-		map.put("ready", RawIndustryJob.IndustryJobStatus.READY);
-		map.put("delivered", RawIndustryJob.IndustryJobStatus.DELIVERED);
-		map.put("cancelled", RawIndustryJob.IndustryJobStatus.CANCELLED);
-		map.put("reverted", RawIndustryJob.IndustryJobStatus.REVERTED);
-		assertEquals(map.size(), RawIndustryJob.IndustryJobStatus.values().length);
-		for (Map.Entry<String, RawIndustryJob.IndustryJobStatus> entry : map.entrySet()) {
-			assertEquals(entry.getValue(), RawConverter.toIndustryJobStatus(entry.getKey()));
+	public void testToIndustryJobStatus_CharacterIndustryJobsResponseStatusEnum() {
+		//Enum
+		for (CharacterIndustryJobsResponse.StatusEnum value : CharacterIndustryJobsResponse.StatusEnum.values()) {
+			assertEquals(value.name(), RawConverter.toIndustryJobStatus(value).name());
 		}
 	}
 
 	@Test
-	public void testFromIndustryJobStatus() {
-		Map<RawIndustryJob.IndustryJobStatus, Integer> map = new EnumMap<RawIndustryJob.IndustryJobStatus, Integer>(RawIndustryJob.IndustryJobStatus.class);
-		map.put(RawIndustryJob.IndustryJobStatus.ACTIVE, 1);
-		map.put(RawIndustryJob.IndustryJobStatus.PAUSED, 2);
-		map.put(RawIndustryJob.IndustryJobStatus.READY, 3);
-		map.put(RawIndustryJob.IndustryJobStatus.DELIVERED, 101);
-		map.put(RawIndustryJob.IndustryJobStatus.CANCELLED, 102);
-		map.put(RawIndustryJob.IndustryJobStatus.REVERTED, 103);
-		assertEquals(map.size(), RawIndustryJob.IndustryJobStatus.values().length);
-		for (Map.Entry<RawIndustryJob.IndustryJobStatus, Integer> entry : map.entrySet()) {
-			assertEquals(entry.getValue(), (Integer) RawConverter.fromIndustryJobStatus(entry.getKey()));
+	public void testToIndustryJobStatus_CorporationIndustryJobsResponseStatusEnum() {
+		//Enum
+		for (CorporationIndustryJobsResponse.StatusEnum value : CorporationIndustryJobsResponse.StatusEnum.values()) {
+			assertEquals(value.name(), RawConverter.toIndustryJobStatus(value).name());
 		}
 	}
 
 	@Test
-	public void testToJournalRefType_int() {
+	public void testToJournalRefType_Integer_String() {
 		for (RawJournalRefType refType : RawJournalRefType.values()) {
-			RawJournalRefType type = RawConverter.toJournalRefType(refType.getID());
+			RawJournalRefType type = RawConverter.toJournalRefType(refType.getID(), null);
 			assertEquals(type.name(), refType.name());
 		}
-	}
-
-	@Test
-	public void testToJournalRefType_String() {
 		for (CharacterWalletJournalResponse.RefTypeEnum refType : CharacterWalletJournalResponse.RefTypeEnum.values()) {
-			RawJournalRefType type = RawConverter.toJournalRefType(refType.toString());
+			RawJournalRefType type = RawConverter.toJournalRefType(null, refType.toString());
 			if (type == RawJournalRefType.KILL_RIGHT && refType == CharacterWalletJournalResponse.RefTypeEnum.KILL_RIGHT_FEE) {
 				continue;
 			}
@@ -281,7 +317,7 @@ public class RawConverterTest extends TestUtil {
 			assertEquals(type.name(), refType.name());
 		}
 		for (CorporationWalletJournalResponse.RefTypeEnum refType : CorporationWalletJournalResponse.RefTypeEnum.values()) {
-			RawJournalRefType type = RawConverter.toJournalRefType(refType.toString());
+			RawJournalRefType type = RawConverter.toJournalRefType(null, refType.toString());
 			if (type == RawJournalRefType.KILL_RIGHT && refType == CorporationWalletJournalResponse.RefTypeEnum.KILL_RIGHT_FEE) {
 				continue;
 			}
@@ -366,23 +402,14 @@ public class RawConverterTest extends TestUtil {
 	}
 
 	@Test
-	public void testToJournalContextType_String() {
-		Map<String, ContextType> map = new HashMap<>();
-		map.put("ALLIANCE_ID", ContextType.ALLIANCE_ID);
-		map.put("CHARACTER_ID", ContextType.CHARACTER_ID);
-		map.put("CONTRACT_ID", ContextType.CONTRACT_ID);
-		map.put("CORPORATION_ID", ContextType.CORPORATION_ID);
-		map.put("EVE_SYSTEM", ContextType.EVE_SYSTEM);
-		map.put("INDUSTRY_JOB_ID", ContextType.INDUSTRY_JOB_ID);
-		map.put("MARKET_TRANSACTION_ID", ContextType.MARKET_TRANSACTION_ID);
-		map.put("PLANET_ID", ContextType.PLANET_ID);
-		map.put("STATION_ID", ContextType.STATION_ID);
-		map.put("STRUCTURE_ID", ContextType.STRUCTURE_ID);
-		map.put("SYSTEM_ID", ContextType.SYSTEM_ID);
-		map.put("TYPE_ID", ContextType.TYPE_ID);
-		assertEquals(map.size(), ContextType.values().length);
-		for (Map.Entry<String, ContextType> entry : map.entrySet()) {
-			assertEquals(entry.getValue(), RawConverter.toJournalContextType(entry.getKey()));
+	public void testToJournalContextType_String_String() {
+		//Enum
+		for (ContextType value : ContextType.values()) {
+			assertEquals(value, RawConverter.toJournalContextType(value.name(), null));
+		}
+		//String
+		for (ContextType value : ContextType.values()) {
+			assertEquals(value, RawConverter.toJournalContextType(null, value.getValue()));
 		}
 	}
 
@@ -429,7 +456,15 @@ public class RawConverterTest extends TestUtil {
 	}
 
 	@Test
-	public void testToMarketOrderRange_int() {
+	public void testToMarketOrderRange_3args() {
+		//Enum
+		for (RawMarketOrder.MarketOrderRange value : RawMarketOrder.MarketOrderRange.values()) {
+			assertEquals(value, RawConverter.toMarketOrderRange(null, value.name(), null));
+		}
+		//String
+		for (RawMarketOrder.MarketOrderRange value : RawMarketOrder.MarketOrderRange.values()) {
+			assertEquals(value, RawConverter.toMarketOrderRange(null, null, value.getValue()));
+		}
 		Map<Integer, RawMarketOrder.MarketOrderRange> map = new HashMap<Integer, RawMarketOrder.MarketOrderRange>();
 		map.put(-1, RawMarketOrder.MarketOrderRange.STATION);
 		map.put(0, RawMarketOrder.MarketOrderRange.SOLARSYSTEM);
@@ -445,54 +480,68 @@ public class RawConverterTest extends TestUtil {
 		map.put(32767, RawMarketOrder.MarketOrderRange.REGION);
 		assertEquals(map.size(), RawMarketOrder.MarketOrderRange.values().length);
 		for (Map.Entry<Integer, RawMarketOrder.MarketOrderRange> entry : map.entrySet()) {
-			assertEquals(entry.getValue(), RawConverter.toMarketOrderRange(entry.getKey()));
+			assertEquals(entry.getValue(), RawConverter.toMarketOrderRange(entry.getKey(), null, null));
 		}
 	}
 
 	@Test
-	public void testToMarketOrderRange_String() {
-		Map<String, RawMarketOrder.MarketOrderRange> map = new HashMap<String, RawMarketOrder.MarketOrderRange>();
-		map.put("station", RawMarketOrder.MarketOrderRange.STATION);
-		map.put("solarsystem", RawMarketOrder.MarketOrderRange.SOLARSYSTEM);
-		map.put("1", RawMarketOrder.MarketOrderRange._1);
-		map.put("2", RawMarketOrder.MarketOrderRange._2);
-		map.put("3", RawMarketOrder.MarketOrderRange._3);
-		map.put("4", RawMarketOrder.MarketOrderRange._4);
-		map.put("5", RawMarketOrder.MarketOrderRange._5);
-		map.put("10", RawMarketOrder.MarketOrderRange._10);
-		map.put("20", RawMarketOrder.MarketOrderRange._20);
-		map.put("30", RawMarketOrder.MarketOrderRange._30);
-		map.put("40", RawMarketOrder.MarketOrderRange._40);
-		map.put("region", RawMarketOrder.MarketOrderRange.REGION);
-		assertEquals(map.size(), RawMarketOrder.MarketOrderRange.values().length);
-		for (Map.Entry<String, RawMarketOrder.MarketOrderRange> entry : map.entrySet()) {
-			assertEquals(entry.getValue(), RawConverter.toMarketOrderRange(entry.getKey()));
+	public void testToMarketOrderRange_CharacterOrdersResponseRangeEnum() {
+		//Enum
+		for (CharacterOrdersResponse.RangeEnum value : CharacterOrdersResponse.RangeEnum.values()) {
+			assertEquals(value.name(), RawConverter.toMarketOrderRange(value).name());
 		}
 	}
 
 	@Test
-	public void testFromMarketOrderRange() {
-		Map<RawMarketOrder.MarketOrderRange, Integer> map = new EnumMap<RawMarketOrder.MarketOrderRange, Integer>(RawMarketOrder.MarketOrderRange.class);
-		map.put(RawMarketOrder.MarketOrderRange.STATION, -1);
-		map.put(RawMarketOrder.MarketOrderRange.SOLARSYSTEM, 0);
-		map.put(RawMarketOrder.MarketOrderRange._1, 1);
-		map.put(RawMarketOrder.MarketOrderRange._2, 2);
-		map.put(RawMarketOrder.MarketOrderRange._3, 3);
-		map.put(RawMarketOrder.MarketOrderRange._4, 4);
-		map.put(RawMarketOrder.MarketOrderRange._5, 5);
-		map.put(RawMarketOrder.MarketOrderRange._10, 10);
-		map.put(RawMarketOrder.MarketOrderRange._20, 20);
-		map.put(RawMarketOrder.MarketOrderRange._30, 30);
-		map.put(RawMarketOrder.MarketOrderRange._40, 40);
-		map.put(RawMarketOrder.MarketOrderRange.REGION, 32767);
-		assertEquals(map.size(), RawMarketOrder.MarketOrderRange.values().length);
-		for (Map.Entry<RawMarketOrder.MarketOrderRange, Integer> entry : map.entrySet()) {
-			assertEquals(entry.getValue(), (Integer) RawConverter.fromMarketOrderRange(entry.getKey()));
+	public void testToMarketOrderRange_CharacterOrdersHistoryResponseRangeEnum() {
+		//Enum
+		for (CharacterOrdersHistoryResponse.RangeEnum value : CharacterOrdersHistoryResponse.RangeEnum.values()) {
+			assertEquals(value.name(), RawConverter.toMarketOrderRange(value).name());
 		}
 	}
 
 	@Test
-	public void testToMarketOrderState_int() {
+	public void testToMarketOrderRange_CorporationOrdersResponseRangeEnum() {
+		//Enum
+		for (CorporationOrdersResponse.RangeEnum value : CorporationOrdersResponse.RangeEnum.values()) {
+			assertEquals(value.name(), RawConverter.toMarketOrderRange(value).name());
+		}
+	}
+
+	@Test
+	public void testToMarketOrderRange_CorporationOrdersHistoryResponseRangeEnum() {
+		//Enum
+		for (CorporationOrdersHistoryResponse.RangeEnum value : CorporationOrdersHistoryResponse.RangeEnum.values()) {
+			assertEquals(value.name(), RawConverter.toMarketOrderRange(value).name());
+		}
+	}
+
+	@Test
+	public void testToMarketOrderRange_MarketOrdersResponseRangeEnum() {
+		//Enum
+		for (MarketOrdersResponse.RangeEnum value : MarketOrdersResponse.RangeEnum.values()) {
+			assertEquals(value.name(), RawConverter.toMarketOrderRange(value).name());
+		}
+	}
+
+	@Test
+	public void testToMarketOrderRange_MarketStructuresResponseRangeEnum() {
+		//Enum
+		for (MarketStructuresResponse.RangeEnum value : MarketStructuresResponse.RangeEnum.values()) {
+			assertEquals(value.name(), RawConverter.toMarketOrderRange(value).name());
+		}
+	}
+	
+	@Test
+	public void testToMarketOrderState_3args() {
+		//Enum
+		for (RawMarketOrder.MarketOrderState value : RawMarketOrder.MarketOrderState.values()) {
+			assertEquals(value, RawConverter.toMarketOrderState(null, value.name(), null));
+		}
+		//String
+		for (RawMarketOrder.MarketOrderState value : RawMarketOrder.MarketOrderState.values()) {
+			assertEquals(value, RawConverter.toMarketOrderState(null, null, value.getValue()));
+		}
 		Map<Integer, RawMarketOrder.MarketOrderState> map = new HashMap<Integer, RawMarketOrder.MarketOrderState>();
 		map.put(0, RawMarketOrder.MarketOrderState.OPEN);
 		map.put(1, RawMarketOrder.MarketOrderState.CLOSED);
@@ -503,39 +552,23 @@ public class RawConverterTest extends TestUtil {
 		map.put(-100, RawMarketOrder.MarketOrderState.UNKNOWN);
 		assertEquals(map.size(), RawMarketOrder.MarketOrderState.values().length);
 		for (Map.Entry<Integer, RawMarketOrder.MarketOrderState> entry : map.entrySet()) {
-			assertEquals(entry.getValue(), RawConverter.toMarketOrderState(entry.getKey()));
+			assertEquals(entry.getValue(), RawConverter.toMarketOrderState(entry.getKey(), null, null));
 		}
 	}
 
 	@Test
-	public void testToMarketOrderState_String() {
-		Map<String, RawMarketOrder.MarketOrderState> map = new HashMap<String, RawMarketOrder.MarketOrderState>();
-		map.put("open", RawMarketOrder.MarketOrderState.OPEN);
-		map.put("closed", RawMarketOrder.MarketOrderState.CLOSED);
-		map.put("expired", RawMarketOrder.MarketOrderState.EXPIRED);
-		map.put("cancelled", RawMarketOrder.MarketOrderState.CANCELLED);
-		map.put("pending", RawMarketOrder.MarketOrderState.PENDING);
-		map.put("character_deleted", RawMarketOrder.MarketOrderState.CHARACTER_DELETED);
-		map.put("Unknown", RawMarketOrder.MarketOrderState.UNKNOWN);
-		assertEquals(map.size(), RawMarketOrder.MarketOrderState.values().length);
-		for (Map.Entry<String, RawMarketOrder.MarketOrderState> entry : map.entrySet()) {
-			assertEquals(entry.getValue(), RawConverter.toMarketOrderState(entry.getKey()));
+	public void testToMarketOrderState_CharacterOrdersHistoryResponseStateEnum() {
+		//Enum
+		for (CharacterOrdersHistoryResponse.StateEnum value : CharacterOrdersHistoryResponse.StateEnum.values()) {
+			assertEquals(value.name(), RawConverter.toMarketOrderState(value).name());
 		}
 	}
 
 	@Test
-	public void testFromMarketOrderState() {
-		Map<RawMarketOrder.MarketOrderState, Integer> map = new EnumMap<RawMarketOrder.MarketOrderState, Integer>(RawMarketOrder.MarketOrderState.class);
-		map.put(RawMarketOrder.MarketOrderState.OPEN, 0);
-		map.put(RawMarketOrder.MarketOrderState.CLOSED, 1);
-		map.put(RawMarketOrder.MarketOrderState.EXPIRED, 2);
-		map.put(RawMarketOrder.MarketOrderState.CANCELLED, 3);
-		map.put(RawMarketOrder.MarketOrderState.PENDING, 4);
-		map.put(RawMarketOrder.MarketOrderState.CHARACTER_DELETED, 5);
-		map.put(RawMarketOrder.MarketOrderState.UNKNOWN, -100);
-		assertEquals(map.size(), RawMarketOrder.MarketOrderState.values().length);
-		for (Map.Entry<RawMarketOrder.MarketOrderState, Integer> entry : map.entrySet()) {
-			assertEquals(entry.getValue(), (Integer) RawConverter.fromMarketOrderState(entry.getKey()));
+	public void testToMarketOrderState_CorporationOrdersHistoryResponseStateEnum() {
+		//Enum
+		for (CorporationOrdersHistoryResponse.StateEnum value : CorporationOrdersHistoryResponse.StateEnum.values()) {
+			assertEquals(value.name(), RawConverter.toMarketOrderState(value).name());
 		}
 	}
 

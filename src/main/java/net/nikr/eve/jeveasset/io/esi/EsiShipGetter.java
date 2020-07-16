@@ -28,7 +28,6 @@ import net.nikr.eve.jeveasset.data.api.my.MyAsset;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import static net.nikr.eve.jeveasset.io.esi.AbstractEsiGetter.DATASOURCE;
-import net.nikr.eve.jeveasset.io.shared.RawConverter;
 import net.troja.eve.esi.ApiException;
 import net.troja.eve.esi.ApiResponse;
 import net.troja.eve.esi.model.CharacterLocationResponse;
@@ -84,7 +83,6 @@ public class EsiShipGetter extends AbstractEsiGetter {
 					activeShip.addAsset(asset);
 					//Update locationID from ItemID to locationID
 					asset.setLocationID(activeShip.getLocationID());
-					asset.setLocationType(RawConverter.toAssetLocationType(activeShip.getLocationID()));
 					//Add assets that needs to be removed from the root
 					activeShipChildren.add(asset);
 					//Set active ship as parent
