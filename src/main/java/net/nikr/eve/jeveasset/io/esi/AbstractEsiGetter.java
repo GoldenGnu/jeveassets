@@ -163,12 +163,6 @@ public abstract class AbstractEsiGetter extends AbstractGetter<EsiOwner> {
 	}
 
 	private <R> R updateApi(Updater<ApiResponse<R>, ApiException> updater, int retries) throws ApiException {
-		final ApiClient client;
-		if (owner != null) { //Auth
-			client = owner.getApiClient();
-		} else {
-			client = PUBLIC_CLIENT;
-		}
 		checkErrors(); //Update timeframe as needed
 		checkCancelled();
 		try {
@@ -180,8 +174,6 @@ public abstract class AbstractEsiGetter extends AbstractGetter<EsiOwner> {
 			logInfo(updater.getStatus(), "Updated");
 			if (owner != null) {
 				owner.setInvalid(false);
-				OAuth auth = (OAuth) client.getAuthentication("evesso");
-				owner.setRefreshToken(auth.getRefreshToken()); //May have changed, so always update
 			}
 			return apiResponse.getData();
 		} catch (ApiException ex) {

@@ -176,11 +176,10 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 			EsiOwner owner = new EsiOwner();
 			owner.setRoles(roles);
 			owner.setAccountName(accountName);
-			owner.setRefreshToken(refreshToken);
 			owner.setScopes(scopes);
 			owner.setStructuresNextUpdate(structuresNextUpdate);
 			owner.setAccountNextUpdate(accountNextUpdate);
-			owner.setCallbackURL(callbackURL);
+			owner.setAuth(callbackURL, refreshToken, null);
 
 			parseOwnerType(currentNode, owner);
 			esiOwners.add(owner);
