@@ -350,6 +350,10 @@ public class ProfileData {
 				if (outbid != null) {
 					order.setOutbid(outbid);
 					added = true;
+				} else if (output.getRegionIDs().contains(order.getLocation().getRegionID()) || order.getLocation().isEmpty()) {
+					//Reset updated regions
+					order.setOutbid(null);
+					added = true;
 				}
 				RawPublicMarketOrder response = marketOrdersUpdates.get(order.getOrderID());
 				if (response != null) {
