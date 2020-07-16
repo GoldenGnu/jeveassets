@@ -213,6 +213,7 @@ public final class ProfileWriter extends AbstractXmlWriter {
 			}
 			setAttribute(node, "count", count);
 			setAttribute(node, "flagid", asset.getFlagID());
+			setAttributeOptional(node, "flagstring", asset.getLocationFlagString());
 			setAttribute(node, "id", asset.getItemID());
 			setAttribute(node, "typeid", asset.getItem().getTypeID());
 			setAttribute(node, "locationid", asset.getLocationID());
@@ -231,7 +232,8 @@ public final class ProfileWriter extends AbstractXmlWriter {
 			Element contractNode = xmldoc.createElement("contract");
 			setAttribute(contractNode, "acceptorid", contract.getAcceptorID());
 			setAttribute(contractNode, "assigneeid", contract.getAssigneeID());
-			setAttribute(contractNode, "availability", contract.getAvailability());
+			setAttributeOptional(contractNode, "availability", contract.getAvailability());
+			setAttributeOptional(contractNode, "availabilitystring", contract.getAvailabilityString());
 			setAttributeOptional(contractNode, "buyout", contract.getBuyout());
 			setAttributeOptional(contractNode, "collateral", contract.getCollateral());
 			setAttribute(contractNode, "contractid", contract.getContractID());
@@ -246,9 +248,11 @@ public final class ProfileWriter extends AbstractXmlWriter {
 			setAttributeOptional(contractNode, "price", contract.getPrice());
 			setAttributeOptional(contractNode, "reward", contract.getReward());
 			setAttributeOptional(contractNode, "startstationid", contract.getStartLocationID());
-			setAttribute(contractNode, "status", contract.getStatus());
+			setAttributeOptional(contractNode, "status", contract.getStatus());
+			setAttributeOptional(contractNode, "statusstring", contract.getStatusString());
 			setAttributeOptional(contractNode, "title", contract.getTitle());
-			setAttribute(contractNode, "type", contract.getType());
+			setAttributeOptional(contractNode, "typestring", contract.getTypeString());
+			setAttributeOptional(contractNode, "type", contract.getType());
 			setAttributeOptional(contractNode, "volume", contract.getVolume());
 			setAttribute(contractNode, "forcorp", contract.isForCorp());
 			contractsNode.appendChild(contractNode);
@@ -292,9 +296,11 @@ public final class ProfileWriter extends AbstractXmlWriter {
 			setAttribute(childNode, "volentered", marketOrder.getVolumeTotal());
 			setAttribute(childNode, "volremaining", marketOrder.getVolumeRemain());
 			setAttribute(childNode, "minvolume", marketOrder.getMinVolume());
-			setAttribute(childNode, "orderstate", RawConverter.fromMarketOrderState(marketOrder.getState()));
+			setAttributeOptional(childNode, "orderstateenum", marketOrder.getState());
+			setAttributeOptional(childNode, "orderstatestring", marketOrder.getStateString());
 			setAttribute(childNode, "typeid", marketOrder.getTypeID());
-			setAttribute(childNode, "range", RawConverter.fromMarketOrderRange(marketOrder.getRange()));
+			setAttributeOptional(childNode, "rangeenum", marketOrder.getRange());
+			setAttributeOptional(childNode, "rangestring", marketOrder.getRangeString());
 			setAttribute(childNode, "accountkey", marketOrder.getWalletDivision());
 			setAttribute(childNode, "duration", marketOrder.getDuration());
 			setAttribute(childNode, "escrow", marketOrder.getEscrow());
@@ -321,13 +327,17 @@ public final class ProfileWriter extends AbstractXmlWriter {
 			setAttributeOptional(childNode, "balance", journal.getBalance());
 			setAttributeOptional(childNode, "contextid", journal.getContextId());
 			setAttributeOptional(childNode, "contexttype", journal.getContextType());
+			setAttributeOptional(childNode, "contexttypestring", journal.getContextTypeString());
 			setAttribute(childNode, "date", journal.getDate());
 			setAttribute(childNode, "description", journal.getDescription());
 			setAttributeOptional(childNode, "ownerid1", journal.getFirstPartyID());
 			setAttributeOptional(childNode, "ownerid2", journal.getSecondPartyID());
 			setAttributeOptional(childNode, "reason", journal.getReason());
 			setAttribute(childNode, "refid", journal.getRefID());
-			setAttribute(childNode, "reftypeid", journal.getRefType().getID());
+			if (journal.getRefType() != null) {
+				setAttribute(childNode, "reftypeid", journal.getRefType().getID());
+			}
+			setAttribute(childNode, "reftypestring", journal.getRefTypeString());
 			setAttributeOptional(childNode, "taxamount", journal.getTaxAmount());
 			setAttributeOptional(childNode, "taxreceiverid", journal.getTaxReceiverId());
 			//Extra
@@ -385,7 +395,8 @@ public final class ProfileWriter extends AbstractXmlWriter {
 			setAttributeOptional(childNode, "licensedruns", industryJob.getLicensedRuns());
 			setAttributeOptional(childNode, "probability", industryJob.getProbability());
 			setAttributeOptional(childNode, "producttypeid", industryJob.getProductTypeID());
-			setAttribute(childNode, "status", RawConverter.fromIndustryJobStatus(industryJob.getStatus()));
+			setAttributeOptional(childNode, "statusenum", industryJob.getStatus());
+			setAttributeOptional(childNode, "statusstring", industryJob.getStatusString());
 			setAttribute(childNode, "timeinseconds", industryJob.getDuration());
 			setAttribute(childNode, "startdate", industryJob.getStartDate());
 			setAttribute(childNode, "enddate", industryJob.getEndDate());
@@ -409,6 +420,7 @@ public final class ProfileWriter extends AbstractXmlWriter {
 			setAttribute(childNode, "locationid", blueprint.getLocationID());
 			setAttribute(childNode, "typeid", blueprint.getTypeID());
 			setAttribute(childNode, "flagid", blueprint.getFlagID());
+			setAttributeOptional(childNode, "flagstring", blueprint.getLocationFlagString());
 			setAttribute(childNode, "quantity", blueprint.getQuantity());
 			setAttribute(childNode, "timeefficiency", blueprint.getTimeEfficiency());
 			setAttribute(childNode, "materialefficiency", blueprint.getMaterialEfficiency());

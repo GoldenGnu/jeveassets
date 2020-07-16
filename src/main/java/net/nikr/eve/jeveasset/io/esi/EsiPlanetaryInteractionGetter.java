@@ -73,7 +73,7 @@ public class EsiPlanetaryInteractionGetter extends AbstractEsiGetter {
 			CharacterPlanetResponse planetResponse = update(DEFAULT_RETRIES, new EsiHandler<CharacterPlanetResponse>() {
 				@Override
 				public ApiResponse<CharacterPlanetResponse> get() throws ApiException {
-					return getPlanetaryInteractionApiAuth().getCharactersCharacterIdPlanetsPlanetIdWithHttpInfo((int) owner.getOwnerID(), response.getPlanetId(), DATASOURCE, null, null);
+					return getPlanetaryInteractionApiAuth().getCharactersCharacterIdPlanetsPlanetIdWithHttpInfo((int) owner.getOwnerID(), response.getPlanetId(), DATASOURCE, null);
 				}
 			});
 			for (PlanetPin pin : planetResponse.getPins()) { //For each pin on planet

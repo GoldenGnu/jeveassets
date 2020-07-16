@@ -84,8 +84,11 @@ public class RawContainerLog {
 	private Integer characterId = null;
 	private Long locationId = null;
 	private ItemFlag itemFlag;
-	private ContainerAction action = null;
-	private ContainerPasswordType passwordType = null;
+	private String locationFlag;
+	private String action = null;
+	private ContainerAction actionEnum = null;
+	private String passwordType = null;
+	private ContainerPasswordType passwordTypeEnum = null;
 	private Integer typeId = null;
 	private Integer quantity = null;
 	private Integer oldConfigBitmask = null;
@@ -113,8 +116,11 @@ public class RawContainerLog {
 		characterId = response.characterId;
 		locationId = response.locationId;
 		itemFlag = response.itemFlag;
+		locationFlag = response.locationFlag;
 		action = response.action;
+		actionEnum = response.actionEnum;
 		passwordType = response.passwordType;
+		passwordTypeEnum = response.passwordTypeEnum;
 		typeId = response.typeId;
 		quantity = response.quantity;
 		oldConfigBitmask = response.oldConfigBitmask;
@@ -133,8 +139,11 @@ public class RawContainerLog {
 		characterId = response.getCharacterId();
 		locationId = response.getLocationId();
 		itemFlag = RawConverter.toFlag(response.getLocationFlag());
-		action = RawConverter.toContainerLogAction(response.getAction());
-		passwordType = RawConverter.toContainerLogPasswordType(response.getPasswordType());
+		locationFlag = response.getLocationFlagString();
+		action = response.getActionString();
+		actionEnum = RawConverter.toContainerLogAction(response.getAction());
+		passwordType = response.getPasswordTypeString();
+		passwordTypeEnum = RawConverter.toContainerLogPasswordType(response.getPasswordType());
 		typeId = response.getTypeId();
 		quantity = response.getQuantity();
 		oldConfigBitmask = response.getOldConfigBitmask();
@@ -193,20 +202,44 @@ public class RawContainerLog {
 		this.itemFlag = flag;
 	}
 
+	public String getLocationFlagString() {
+		return locationFlag;
+	}
+
+	public void setLocationFlagString(String locationFlagString) {
+		this.locationFlag = locationFlagString;
+	}
+
 	public ContainerAction getAction() {
-		return action;
+		return actionEnum;
 	}
 
 	public void setAction(ContainerAction action) {
-		this.action = action;
+		this.actionEnum = action;
+	}
+
+	public String getActionString() {
+		return action;
+	}
+
+	public void setActionString(String actionString) {
+		this.action = actionString;
 	}
 
 	public ContainerPasswordType getPasswordType() {
-		return passwordType;
+		return passwordTypeEnum;
 	}
 
 	public void setPasswordType(ContainerPasswordType passwordType) {
-		this.passwordType = passwordType;
+		this.passwordTypeEnum = passwordType;
+	}
+
+	public String getPasswordTypeString() {
+		return passwordType;
+	}
+
+	public void setPasswordTypeString(String passwordTypeString) {
+		this.passwordType = passwordTypeString;
 	}
 
 	public Integer getTypeID() {

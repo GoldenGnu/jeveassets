@@ -28,20 +28,67 @@ import net.troja.eve.esi.model.CorporationContractsResponse;
 public class RawContract {
 
 	public enum ContractAvailability {
-		PUBLIC, PERSONAL, CORPORATION, ALLIANCE;
+		PUBLIC("public"),
+		PERSONAL("personal"),
+		CORPORATION("corporation"),
+		ALLIANCE("alliance");
+
+		private final String value;
+
+		ContractAvailability(String value) {
+			this.value = value;
+		}
+
+		public String getValue() {
+			return value;
+		}
 	}
 
 	public enum ContractStatus {
-		OUTSTANDING, IN_PROGRESS, FINISHED_ISSUER, FINISHED_CONTRACTOR, FINISHED, CANCELLED, REJECTED, FAILED, DELETED, REVERSED;
+		OUTSTANDING("outstanding"),
+		IN_PROGRESS("in_progress"),
+		FINISHED_ISSUER("finished_issuer"),
+		FINISHED_CONTRACTOR("finished_contractor"),
+		FINISHED("finished"),
+		CANCELLED("cancelled"),
+		REJECTED("rejected"),
+		FAILED("failed"),
+		DELETED("deleted"),
+		REVERSED("reversed");
+
+		private final String value;
+
+		ContractStatus(String value) {
+			this.value = value;
+		}
+
+		public String getValue() {
+			return value;
+		}
 	}
 
 	public enum ContractType {
-		UNKNOWN, ITEM_EXCHANGE, AUCTION, COURIER, LOAN;
+		UNKNOWN("unknown"),
+		ITEM_EXCHANGE("item_exchange"),
+		AUCTION("auction"),
+		COURIER("courier"),
+		LOAN("loan");
+
+		private final String value;
+
+		ContractType(String value) {
+			this.value = value;
+		}
+
+		public String getValue() {
+			return value;
+		}
 	}
 
 	private Integer acceptorId = null;
 	private Integer assigneeId = null;
-	private ContractAvailability availability = null;
+	private String availability = null;
+	private ContractAvailability availabilityEnum = null;
 	private Double buyout = null;
 	private Double collateral = null;
 	private Integer contractId = null;
@@ -57,9 +104,11 @@ public class RawContract {
 	private Double price = null;
 	private Double reward = null;
 	private Long startLocationId = null;
-	private ContractStatus status = null;
+	private String status = null;
+	private ContractStatus statusEnum = null;
 	private String title = null;
-	private ContractType type = null;
+	private String type = null;
+	private ContractType typeEnum = null;
 	private Double volume = null;
 
 	/**
@@ -81,6 +130,7 @@ public class RawContract {
 		acceptorId = contract.acceptorId;
 		assigneeId = contract.assigneeId;
 		availability = contract.availability;
+		availabilityEnum = contract.availabilityEnum;
 		buyout = contract.buyout;
 		collateral = contract.collateral;
 		contractId = contract.contractId;
@@ -97,8 +147,10 @@ public class RawContract {
 		reward = contract.reward;
 		startLocationId = contract.startLocationId;
 		status = contract.status;
+		statusEnum = contract.statusEnum;
 		title = contract.title;
 		type = contract.type;
+		typeEnum = contract.typeEnum;
 		volume = contract.volume;
 	}
 
@@ -110,7 +162,8 @@ public class RawContract {
 	public RawContract(CharacterContractsResponse contract) {
 		acceptorId = contract.getAcceptorId();
 		assigneeId = contract.getAssigneeId();
-		availability = ContractAvailability.valueOf(contract.getAvailability().name());
+		availability = contract.getAvailabilityString();
+		availabilityEnum = RawConverter.toContractAvailability(contract.getAvailability());
 		buyout = contract.getBuyout();
 		collateral = contract.getCollateral();
 		contractId = contract.getContractId();
@@ -126,9 +179,11 @@ public class RawContract {
 		price = contract.getPrice();
 		reward = contract.getReward();
 		startLocationId = contract.getStartLocationId();
-		status = ContractStatus.valueOf(contract.getStatus().name());
+		status = contract.getStatusString();
+		statusEnum = RawConverter.toContractStatus(contract.getStatus());
 		title = contract.getTitle();
-		type = ContractType.valueOf(contract.getType().name());
+		type = contract.getTypeString();
+		typeEnum = RawConverter.toContractType(contract.getType());
 		volume = contract.getVolume();
 	}
 
@@ -140,7 +195,8 @@ public class RawContract {
 	public RawContract(CorporationContractsResponse contract) {
 		acceptorId = contract.getAcceptorId();
 		assigneeId = contract.getAssigneeId();
-		availability = ContractAvailability.valueOf(contract.getAvailability().name());
+		availability = contract.getAvailabilityString();
+		availabilityEnum = RawConverter.toContractAvailability(contract.getAvailability());
 		buyout = contract.getBuyout();
 		collateral = contract.getCollateral();
 		contractId = contract.getContractId();
@@ -156,9 +212,11 @@ public class RawContract {
 		price = contract.getPrice();
 		reward = contract.getReward();
 		startLocationId = contract.getStartLocationId();
-		status = ContractStatus.valueOf(contract.getStatus().name());
+		status = contract.getStatusString();
+		statusEnum = RawConverter.toContractStatus(contract.getStatus());
 		title = contract.getTitle();
-		type = ContractType.valueOf(contract.getType().name());
+		type = contract.getTypeString();
+		typeEnum = RawConverter.toContractType(contract.getType());
 		volume = contract.getVolume();
 	}
 
@@ -179,11 +237,19 @@ public class RawContract {
 	}
 
 	public ContractAvailability getAvailability() {
-		return availability;
+		return availabilityEnum;
 	}
 
 	public void setAvailability(ContractAvailability availability) {
-		this.availability = availability;
+		this.availabilityEnum = availability;
+	}
+
+	public String getAvailabilityString() {
+		return availability;
+	}
+
+	public void setAvailabilityString(String availabilityString) {
+		this.availability = availabilityString;
 	}
 
 	public Double getBuyout() {
@@ -307,11 +373,19 @@ public class RawContract {
 	}
 
 	public ContractStatus getStatus() {
-		return status;
+		return statusEnum;
 	}
 
 	public void setStatus(ContractStatus status) {
-		this.status = status;
+		this.statusEnum = status;
+	}
+
+	public String getStatusString() {
+		return status;
+	}
+
+	public void setStatusString(String statusString) {
+		this.status = statusString;
 	}
 
 	public String getTitle() {
@@ -323,11 +397,19 @@ public class RawContract {
 	}
 
 	public ContractType getType() {
-		return type;
+		return typeEnum;
 	}
 
 	public void setType(ContractType type) {
-		this.type = type;
+		this.typeEnum = type;
+	}
+
+	public String getTypeString() {
+		return type;
+	}
+
+	public void setTypeString(String typeString) {
+		this.type = typeString;
 	}
 
 	public Double getVolume() {

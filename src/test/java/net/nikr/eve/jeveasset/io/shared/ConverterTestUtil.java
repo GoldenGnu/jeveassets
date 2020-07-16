@@ -218,7 +218,7 @@ public class ConverterTestUtil {
 	}
 
 	public static MyAsset getMyAsset(OwnerType owner, boolean setNull, boolean setValues, ConverterTestOptions options) {
-		MyAsset asset = new MyAsset(getRawAsset(setNull, options), getItem(options), owner, new ArrayList<MyAsset>());
+		MyAsset asset = new MyAsset(getRawAsset(setNull, options), getItem(options), owner, new ArrayList<>());
 		if (setValues) {
 			setValues(asset, options, null, false);
 		}
@@ -415,6 +415,7 @@ public class ConverterTestUtil {
 			fields.addAll(Arrays.asList(object.getClass().getSuperclass().getDeclaredFields()));
 		}
 		fields.addAll(Arrays.asList(object.getClass().getDeclaredFields()));
+		Map<String, Boolean> optional = getOptional(esi);
 		for (Field field : fields) {
 			Class<?> type = field.getType();
 			if (ignore(object, field, type)) {
@@ -425,7 +426,7 @@ public class ConverterTestUtil {
 				if (!overwrite && field.get(object) != null) {
 					continue;
 				}
-				field.set(object, getValue(type, isOptional(esi, field), options));
+				field.set(object, getValue(type, isOptional(optional, field), options));
 			} catch (IllegalArgumentException | IllegalAccessException ex) {
 				fail(ex.getMessage());
 			}
@@ -493,6 +494,8 @@ public class ConverterTestUtil {
 			MyAsset myAsset = (MyAsset) object;
 			myAsset.setItemID(myAsset.getItemID() - 1); //Workaround for itemID == locationID
 			myAsset.setLocationID(options.getLong());
+			myAsset.setLocationFlagString(options.getString());
+			myAsset.setItemFlag(options.getItemFlag());
 		}
 		if (object instanceof MyContract) {
 			MyContract myContract = (MyContract) object;
@@ -505,13 +508,22 @@ public class ConverterTestUtil {
 		if (object instanceof MyMarketOrder) {
 			MyMarketOrder marketOrder = (MyMarketOrder) object;
 			marketOrder.setWalletDivision(options.getInteger());
-			marketOrder.setState(options.getMarketOrderStateRaw());
+			if (marketOrder.getStatus() != null) {
+				marketOrder.setState(options.getMarketOrderStateRaw());
+			}
+			marketOrder.setStateString(options.getString());
 			marketOrder.setIssuedBy(options.getInteger());
 		}
 		if (object instanceof MyJournal) {
 			MyJournal journal = (MyJournal) object;
 			journal.setDescription(options.getString());
 		}
+		if (object instanceof MyContainerLog) {
+			MyContainerLog myContainerLog = (MyContainerLog) object;
+			myContainerLog.setLocationFlagString(options.getString());
+			myContainerLog.setItemFlag(options.getItemFlag());
+		}
+		Map<String, Boolean> optional = getOptional(esi);
 		for (Field field : getField(object, true)) {
 			Class<?> type = field.getType();
 			if (ignore(object, field, type)) {
@@ -519,7 +531,7 @@ public class ConverterTestUtil {
 			}
 			try {
 				field.setAccessible(true);
-				assertEquals(getString(field, object, options.getIndex()), getValue(type, isOptional(esi, field), options), field.get(object));
+				assertEquals(getString(field, object, options.getIndex()), getValue(type, isOptional(optional, field), options), field.get(object));
 			} catch (IllegalArgumentException | IllegalAccessException ex) {
 				fail(ex.getMessage());
 			}
@@ -527,7 +539,7 @@ public class ConverterTestUtil {
 	}
 
 	private static List<Field> getField(Object object, boolean superClassOnly) {
-		List<Field> fields = new ArrayList<Field>();
+		List<Field> fields = new ArrayList<>();
 		if (superClassOnly) {
 			fields.addAll(Arrays.asList(object.getClass().getSuperclass().getDeclaredFields()));
 		} else {
@@ -624,8 +636,6 @@ public class ConverterTestUtil {
 			return options.getDate();
 		} else if (type.equals(ItemFlag.class)) {
 			return options.getItemFlag();
-		} else if (type.equals(RawAsset.LocationType.class)) {
-			return options.getLocationTypeRaw();
 		} else if (type.equals(RawContract.ContractAvailability.class)) {
 			return options.getContractAvailabilityRaw();
 		} else if (type.equals(RawContract.ContractStatus.class)) {
@@ -738,32 +748,41 @@ public class ConverterTestUtil {
 		return object.getClass().getSimpleName() + "->" + field.getName() + " @index: " + index;
 	}
 
-	private static boolean isOptional(Class<?> esi, Field field) {
-		Map<String, Boolean> optional = new HashMap<String, Boolean>();
-		if (esi == null) {
+	private static boolean isOptional(Map<String, Boolean> optional, Field field) {
+		Boolean isOptional = optional.get(field.getName().toLowerCase());
+		if (isOptional == null) {
 			return false;
+		} else {
+			return isOptional;
+		}
+	}
+
+	private static Map<String, Boolean> getOptional(Class<?> esi) {
+		Map<String, Boolean> optional = new HashMap<>();
+		if (esi == null) {
+			return optional;
 		}
 		for (Method method : esi.getDeclaredMethods()) {
 			String methodName = method.getName();
 			String methodId = esi.getSimpleName() + "->" + methodName;
-			if (methodId.equals("CharacterAssetsResponse->getQuantity") //Quantity is not optinal in RawAsset
-					|| methodId.equals("CorporationAssetsResponse->getQuantity") //Quantity is not optinal in RawAsset
-					//RawJournalExtraInfo is not optinal in RawJournal
+			if (methodId.equals("CharacterAssetsResponse->getQuantity") //Quantity is not optional in RawAsset
+					|| methodId.equals("CorporationAssetsResponse->getQuantity") //Quantity is not optional in RawAsset
+					//RawJournalExtraInfo is not optional in RawJournal
 					|| methodId.equals("CharacterWalletJournalResponse->getExtraInfo")
 					|| methodId.equals("CorporationWalletJournalResponse->getExtraInfo")
-					//escrow is not optinal in RawMarketOrder
+					//escrow is not optional in RawMarketOrder
 					|| methodId.equals("CharacterOrdersHistoryResponse->getEscrow") 
 					|| methodId.equals("CorporationOrdersHistoryResponse->getEscrow")
 					|| methodId.equals("CharacterOrdersResponse->getEscrow")
 					|| methodId.equals("CorporationOrdersResponse->getEscrow")
 					// issuedBy workaround for optional in CorporationOrdersHistoryResponse 
 					|| methodId.equals("CorporationOrdersHistoryResponse->getIssuedBy")
-					//isBuyOrder is not optinal in RawMarketOrder
+					//isBuyOrder is not optional in RawMarketOrder
 					|| methodId.equals("CharacterOrdersHistoryResponse->getIsBuyOrder")
 					|| methodId.equals("CorporationOrdersHistoryResponse->getIsBuyOrder")
 					|| methodId.equals("CharacterOrdersResponse->getIsBuyOrder")
 					|| methodId.equals("CorporationOrdersResponse->getIsBuyOrder")
-					//minVolume is not optinal in RawMarketOrder
+					//minVolume is not optional in RawMarketOrder
 					|| methodId.equals("CharacterOrdersHistoryResponse->getMinVolume")
 					|| methodId.equals("CorporationOrdersHistoryResponse->getMinVolume")
 					|| methodId.equals("CharacterOrdersResponse->getMinVolume")
@@ -771,7 +790,12 @@ public class ConverterTestUtil {
 					) { 
 				continue;
 			}
-			if (methodName.startsWith("get")) {
+			if (methodName.startsWith("get") && methodName.endsWith("String") ) {
+				optional.put(methodName.toLowerCase().replaceFirst("get", "").replace("string", ""), false);
+			} else if (Enum.class.isAssignableFrom(method.getReturnType())) {
+				//All enums should be treaded as optional as they can be null for new unknown values
+				optional.put(methodName.toLowerCase().replaceFirst("get", "") + "enum", true);
+			} else if (methodName.startsWith("get")) {
 				Annotation[] annotations = method.getAnnotations();
 				boolean found = false;
 				for (Annotation annotation : annotations) {
@@ -784,7 +808,6 @@ public class ConverterTestUtil {
 				assertTrue(method + " " + Arrays.toString(annotations), found);
 			}
 		}
-		Boolean isOptional = optional.get(field.getName().toLowerCase());
-		return (isOptional != null && isOptional);
+		return optional;
 	}
 }

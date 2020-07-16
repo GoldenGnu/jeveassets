@@ -46,9 +46,6 @@ import net.nikr.eve.jeveasset.data.api.raw.RawAccountBalance;
 import net.nikr.eve.jeveasset.data.api.raw.RawAsset;
 import net.nikr.eve.jeveasset.data.api.raw.RawBlueprint;
 import net.nikr.eve.jeveasset.data.api.raw.RawContract;
-import net.nikr.eve.jeveasset.data.api.raw.RawContract.ContractAvailability;
-import net.nikr.eve.jeveasset.data.api.raw.RawContract.ContractStatus;
-import net.nikr.eve.jeveasset.data.api.raw.RawContract.ContractType;
 import net.nikr.eve.jeveasset.data.api.raw.RawContractItem;
 import net.nikr.eve.jeveasset.data.api.raw.RawIndustryJob;
 import net.nikr.eve.jeveasset.data.api.raw.RawJournal;
@@ -367,7 +364,8 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 		RawContract contract = RawContract.create();
 		Integer acceptorID = getInt(element, "acceptorid");
 		Integer assigneeID = getInt(element, "assigneeid");
-		ContractAvailability availability = RawConverter.toContractAvailability(getString(element, "availability"));
+		String availabilityString = getStringOptional(element, "availabilitystring");
+		String availabilityEnum = getStringOptional(element, "availability");
 		Double buyout = getDoubleOptional(element, "buyout");
 		Double collateral = getDoubleOptional(element, "collateral");
 		Integer contractID = getInt(element, "contractid");
@@ -382,15 +380,18 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 		Double price = getDoubleOptional(element, "price");
 		Double reward = getDoubleOptional(element, "reward");
 		Long startLocationID = getLongOptional(element, "startstationid");
-		ContractStatus status = RawConverter.toContractStatus(getString(element, "status"));
+		String statusString = getStringOptional(element, "statusstring");
+		String statusEnum = getStringOptional(element, "status");
 		String title = getStringOptional(element, "title");
-		ContractType type = RawConverter.toContractType(getString(element, "type"));
+		String typeString = getStringOptional(element, "typestring");
+		String typeEnum = getStringOptional(element, "type");
 		Double volume = getDoubleOptional(element, "volume");
 		boolean forCorporation = getBoolean(element, "forcorp");
 
 		contract.setAcceptorID(acceptorID);
 		contract.setAssigneeID(assigneeID);
-		contract.setAvailability(availability);
+		contract.setAvailability(RawConverter.toContractAvailability(availabilityEnum, availabilityString));
+		contract.setAvailabilityString(availabilityString);
 		contract.setBuyout(buyout);
 		contract.setCollateral(collateral);
 		contract.setContractID(contractID);
@@ -406,9 +407,11 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 		contract.setPrice(price);
 		contract.setReward(reward);
 		contract.setStartLocationID(startLocationID);
-		contract.setStatus(status);
+		contract.setStatus(RawConverter.toContractStatus(statusEnum, statusString));
+		contract.setStatusString(statusString);
 		contract.setTitle(title);
-		contract.setType(type);
+		contract.setTypeString(typeString);
+		contract.setType(RawConverter.toContractType(typeEnum, typeString));
 		contract.setVolume(volume);
 
 		return contract;
@@ -480,9 +483,13 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 		int volEntered = getInt(element, "volentered");
 		int volRemaining = getInt(element, "volremaining");
 		int minVolume = getInt(element, "minvolume");
-		int state = getInt(element, "orderstate");
+		Integer stateInt = getIntOptional(element, "orderstate");
+		String stateEnum = getStringOptional(element, "orderstateenum");
+		String stateString = getStringOptional(element, "orderstatestring");
 		int typeID = getInt(element, "typeid");
-		int range = getInt(element, "range");
+		Integer rangeInt = getIntOptional(element, "range");
+		String rangeEnum = getStringOptional(element, "rangeenum");
+		String rangeString = getStringOptional(element, "rangestring");
 		int accountID = getInt(element, "accountkey");
 		int duration = getInt(element, "duration");
 		Double escrow = getDouble(element, "escrow");
@@ -519,9 +526,11 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 		apiMarketOrder.setMinVolume(minVolume);
 		apiMarketOrder.setOrderID(orderID);
 		apiMarketOrder.setPrice(price);
-		apiMarketOrder.setRange(RawConverter.toMarketOrderRange(range));
+		apiMarketOrder.setRange(RawConverter.toMarketOrderRange(rangeInt, rangeEnum, rangeString));
+		apiMarketOrder.setRangeString(rangeString);
 		apiMarketOrder.setRegionID((int) ApiIdConverter.getLocation(locationID).getRegionID());
-		apiMarketOrder.setState(RawConverter.toMarketOrderState(state));
+		apiMarketOrder.setState(RawConverter.toMarketOrderState(stateInt, stateEnum, stateString));
+		apiMarketOrder.setStateString(stateString);
 		apiMarketOrder.setTypeID(typeID);
 		apiMarketOrder.setVolumeRemain(volRemaining);
 		apiMarketOrder.setVolumeTotal(volEntered);
@@ -553,6 +562,7 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 		Double balance = getDoubleOptional(element, "balance");
 		Long contextID = getLongOptional(element, "contextid");
 		String contextType = getStringOptional(element, "contexttype");
+		String contextTypeString = getStringOptional(element, "contexttypestring");
 		Date date = getDate(element, "date");
 		String description;
 		if (haveAttribute(element, "description")) {
@@ -564,7 +574,8 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 		Integer secondPartyID = getIntOptional(element, "ownerid2");
 		String reason = getStringOptional(element, "reason");
 		long refID = getLong(element, "refid");
-		int refTypeID = getInt(element, "reftypeid");
+		Integer refTypeInt = getIntOptional(element, "reftypeid");
+		String refTypeString = getStringOptional(element, "reftypestring");
 		Double taxAmount = getDoubleOptional(element, "taxamount");
 		Integer taxReceiverID = getIntOptional(element, "taxreceiverid");
 		//Extra
@@ -577,8 +588,9 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 		rawJournal.setFirstPartyID(firstPartyID);
 		rawJournal.setReason(reason);
 		rawJournal.setRefID(refID);
-		RawJournalRefType refType = RawConverter.toJournalRefType(refTypeID);
+		RawJournalRefType refType = RawConverter.toJournalRefType(refTypeInt, refTypeString);
 		rawJournal.setRefType(refType);
+		rawJournal.setRefTypeString(refTypeString);
 		rawJournal.setSecondPartyID(secondPartyID);
 		rawJournal.setTax(taxAmount);
 		rawJournal.setTaxReceiverId(taxReceiverID);
@@ -587,8 +599,9 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 			rawJournal.setContextType(RawConverter.toJournalContextType(refType));
 		} else {
 			rawJournal.setContextId(contextID);
-			rawJournal.setContextType(RawConverter.toJournalContextType(contextType));
+			rawJournal.setContextType(RawConverter.toJournalContextType(contextType, contextTypeString));
 		}
+		rawJournal.setContextTypeString(contextTypeString);
 		rawJournal.setAccountKey(accountKey);
 		return rawJournal;
 	}
@@ -682,7 +695,9 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 		Integer licensedRuns = getIntOptional(element, "licensedruns");
 		Float probability = getFloatOptional(element, "probability");
 		Integer productTypeID = getIntOptional(element, "producttypeid");
-		int status = getInt(element, "status");
+		Integer statusInt = getIntOptional(element, "status");
+		String statusEnum = getStringOptional(element, "statusenum");
+		String statusString = getStringOptional(element, "statusstring");
 		int duration = getInt(element, "timeinseconds");
 		Date startDate = getDate(element, "startdate");
 		Date endDate = getDate(element, "enddate");
@@ -711,7 +726,8 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 		rawIndustryJob.setRuns(runs);
 		rawIndustryJob.setStartDate(startDate);
 		rawIndustryJob.setStationID(stationID);
-		rawIndustryJob.setStatus(RawConverter.toIndustryJobStatus(status));
+		rawIndustryJob.setStatus(RawConverter.toIndustryJobStatus(statusInt, statusEnum, statusString));
+		rawIndustryJob.setStatusString(statusString);
 		rawIndustryJob.setSuccessfulRuns(successfulRuns);
 		return rawIndustryJob;
 	}
@@ -770,10 +786,11 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 				}
 			}
 		}
-		rawAsset.setItemFlag(ApiIdConverter.getFlag(flagID));
+		String locationFlagString = getStringOptional(node, "flagstring");
 		rawAsset.setItemID(itemId);
+		rawAsset.setItemFlag(RawConverter.toFlag(flagID, locationFlagString));
+		rawAsset.setLocationFlagString(locationFlagString);
 		rawAsset.setLocationID(locationID);
-		rawAsset.setLocationType(RawConverter.toAssetLocationType(locationID));
 		rawAsset.setQuantity(RawConverter.toAssetQuantity(count, rawQuantity));
 		rawAsset.setSingleton(singleton);
 		rawAsset.setTypeID(typeID);
@@ -781,7 +798,7 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 	}
 
 	private void parseBlueprints(final Element element, final OwnerType owners) throws XmlException {
-		Map<Long, RawBlueprint> blueprints = new HashMap<Long, RawBlueprint>();
+		Map<Long, RawBlueprint> blueprints = new HashMap<>();
 		NodeList blueprintsNodes = element.getElementsByTagName("blueprints");
 		for (int a = 0; a < blueprintsNodes.getLength(); a++) {
 			Element currentBlueprintsNode = (Element) blueprintsNodes.item(a);
@@ -801,13 +818,14 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 		long locationID = getLong(node, "locationid");
 		int typeID = getInt(node, "typeid");
 		int flagID = getInt(node, "flagid");
+		String locationFlagString = getStringOptional(node, "flagstring");
 		int quantity = getInt(node, "quantity");
 		int timeEfficiency = getInt(node, "timeefficiency");
 		int materialEfficiency = getInt(node, "materialefficiency");
 		int runs = getInt(node, "runs");
 
 		blueprint.setItemID(itemID);
-		blueprint.setItemFlag(ApiIdConverter.getFlag(flagID));
+		blueprint.setItemFlag(RawConverter.toFlag(flagID, locationFlagString));
 		blueprint.setLocationID(locationID);
 		blueprint.setMaterialEfficiency(materialEfficiency);
 		blueprint.setQuantity(quantity);

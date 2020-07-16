@@ -137,34 +137,39 @@ public class MyMarketOrder extends RawMarketOrder implements Comparable<MyMarket
 				status = OrderStatus.PARTIALLY_FULFILLED;
 			}
 		} else {
-			switch (getState()) {
-				case OPEN: //open/active
-					status = OrderStatus.ACTIVE;
-					break;
-				case CLOSED: //closed
-					status = OrderStatus.CLOSED;
-					break;
-				case EXPIRED: //expired (or fulfilled)
-					if (this.getVolumeRemain() == 0) {
-						status = OrderStatus.FULFILLED;
-					} else if (Objects.equals(this.getVolumeRemain(), this.getVolumeTotal())) {
-						status = OrderStatus.EXPIRED;
-					} else {
-						status = OrderStatus.PARTIALLY_FULFILLED;
-					}
-					break;
-				case CANCELLED: //cancelled
-					status = OrderStatus.CANCELLED;
-					break;
-				case PENDING: //pending
-					status = OrderStatus.PENDING;
-					break;
-				case CHARACTER_DELETED: //character deleted
-					status = OrderStatus.CHARACTER_DELETED;
-					break;
-				case UNKNOWN: //character deleted
-					status = OrderStatus.UNKNOWN;
-					break;
+			MarketOrderState state = getState();
+			if (state == null) {
+				status = null;
+			} else {
+				switch (state) {
+					case OPEN: //open/active
+						status = OrderStatus.ACTIVE;
+						break;
+					case CLOSED: //closed
+						status = OrderStatus.CLOSED;
+						break;
+					case EXPIRED: //expired (or fulfilled)
+						if (this.getVolumeRemain() == 0) {
+							status = OrderStatus.FULFILLED;
+						} else if (Objects.equals(this.getVolumeRemain(), this.getVolumeTotal())) {
+							status = OrderStatus.EXPIRED;
+						} else {
+							status = OrderStatus.PARTIALLY_FULFILLED;
+						}
+						break;
+					case CANCELLED: //cancelled
+						status = OrderStatus.CANCELLED;
+						break;
+					case PENDING: //pending
+						status = OrderStatus.PENDING;
+						break;
+					case CHARACTER_DELETED: //character deleted
+						status = OrderStatus.CHARACTER_DELETED;
+						break;
+					case UNKNOWN: //character deleted
+						status = OrderStatus.UNKNOWN;
+						break;
+				}
 			}
 		}
 	}

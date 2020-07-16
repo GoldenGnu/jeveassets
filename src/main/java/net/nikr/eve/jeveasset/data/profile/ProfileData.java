@@ -75,7 +75,6 @@ import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
 import net.nikr.eve.jeveasset.i18n.General;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 import net.nikr.eve.jeveasset.io.shared.DataConverter;
-import net.nikr.eve.jeveasset.io.shared.RawConverter;
 
 public class ProfileData {
 
@@ -1226,7 +1225,6 @@ public class ProfileData {
 		}
 		asset.setLocationID(locationID);
 		asset.setLocation(ApiIdConverter.getLocation(locationID));
-		asset.setLocationType(RawConverter.toAssetLocationType(locationID));
 		for (MyAsset subAsset : asset.getAssets()) { //Update child assets
 			updateStructureAssets(subAsset, structure);
 		}

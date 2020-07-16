@@ -29,6 +29,7 @@ public class RawBlueprint {
 
 	private Long itemId = null;
 	private ItemFlag itemFlag;
+	private String locationFlag = null;
 	private Long locationId = null;
 	private Integer materialEfficiency = null;
 	private Integer quantity = null;
@@ -54,6 +55,7 @@ public class RawBlueprint {
 	private RawBlueprint(RawBlueprint blueprint) {
 		itemId = blueprint.itemId;
 		itemFlag = blueprint.itemFlag;
+		locationFlag = blueprint.getLocationFlagString();
 		locationId = blueprint.locationId;
 		materialEfficiency = blueprint.materialEfficiency;
 		quantity = blueprint.quantity;
@@ -70,6 +72,7 @@ public class RawBlueprint {
 	public RawBlueprint(CharacterBlueprintsResponse blueprint) {
 		itemId = blueprint.getItemId();
 		itemFlag = RawConverter.toFlag(blueprint.getLocationFlag());
+		locationFlag = blueprint.getLocationFlagString();
 		locationId = blueprint.getLocationId();
 		materialEfficiency = blueprint.getMaterialEfficiency();
 		quantity = blueprint.getQuantity();
@@ -86,6 +89,7 @@ public class RawBlueprint {
 	public RawBlueprint(CorporationBlueprintsResponse blueprint) {
 		itemId = blueprint.getItemId();
 		itemFlag = RawConverter.toFlag(blueprint.getLocationFlag());
+		locationFlag = blueprint.getLocationFlagString();
 		locationId = blueprint.getLocationId();
 		materialEfficiency = blueprint.getMaterialEfficiency();
 		quantity = blueprint.getQuantity();
@@ -112,6 +116,14 @@ public class RawBlueprint {
 
 	public String getFlagName() {
 		return itemFlag.getFlagName();
+	}
+
+	public String getLocationFlagString() {
+		return locationFlag;
+	}
+
+	public void setLocationFlagString(String locationFlagString) {
+		this.locationFlag = locationFlagString;
 	}
 
 	public Long getLocationID() {

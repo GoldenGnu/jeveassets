@@ -26,7 +26,6 @@ import java.time.ZoneOffset;
 import java.util.Date;
 import net.nikr.eve.jeveasset.data.api.accounts.EveApiAccount;
 import net.nikr.eve.jeveasset.data.api.accounts.EveApiAccount.KeyType;
-import net.nikr.eve.jeveasset.data.api.raw.RawAsset;
 import net.nikr.eve.jeveasset.data.api.raw.RawBlueprint;
 import net.nikr.eve.jeveasset.data.api.raw.RawContainerLog;
 import net.nikr.eve.jeveasset.data.api.raw.RawContract;
@@ -93,8 +92,6 @@ public interface ConverterTestOptions {
 	public MyLocation getMyLocation();
 
 	public Long getLocationTypeEveApi();
-
-	public RawAsset.LocationType getLocationTypeRaw();
 
 	public CharacterAssetsResponse.LocationTypeEnum getLocationTypeEsiCharacter();
 

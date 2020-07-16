@@ -67,18 +67,13 @@ public class RawMarketOrder {
 			return SORTED;
 		}
 
+		public String getValue() {
+			return value;
+		}
+
 		@Override
 		public String toString() {
 			return text;
-		}
-
-		public static MarketOrderRange fromValue(String text) {
-			for (MarketOrderRange b : MarketOrderRange.values()) {
-				if (String.valueOf(b.value).equals(text)) {
-					return b;
-				}
-			}
-			return null;
 		}
 	}
 
@@ -97,18 +92,8 @@ public class RawMarketOrder {
 			this.value = value;
 		}
 
-		@Override
-		public String toString() {
-			return String.valueOf(value);
-		}
-
-		public static MarketOrderState fromValue(String text) {
-			for (MarketOrderState b : MarketOrderState.values()) {
-				if (String.valueOf(b.value).equals(text)) {
-					return b;
-				}
-			}
-			return null;
+		public String getValue() {
+			return value;
 		}
 	}
 
@@ -124,9 +109,11 @@ public class RawMarketOrder {
 	private Integer minVolume = null;
 	private Long orderId = null;
 	private Double price = null;
-	private MarketOrderRange range = null;
+	private String range = null;
+	private MarketOrderRange rangeEnum = null;
 	private Integer regionId = null;
-	private MarketOrderState state = null;
+	private String state = null;
+	private MarketOrderState stateEnum = null;
 	private Integer typeId = null;
 	private Integer volumeRemain = null;
 	private Integer volumeTotal = null;
@@ -160,8 +147,10 @@ public class RawMarketOrder {
 		orderId = marketOrder.orderId;
 		price = marketOrder.price;
 		range = marketOrder.range;
+		rangeEnum = marketOrder.rangeEnum;
 		regionId = marketOrder.regionId;
 		state = marketOrder.state;
+		stateEnum = marketOrder.stateEnum;
 		typeId = marketOrder.typeId;
 		volumeRemain = marketOrder.volumeRemain;
 		volumeTotal = marketOrder.volumeTotal;
@@ -185,9 +174,11 @@ public class RawMarketOrder {
 		minVolume = RawConverter.toInteger(marketOrder.getMinVolume(), 0);
 		orderId = marketOrder.getOrderId();
 		price = marketOrder.getPrice();
-		range = MarketOrderRange.valueOf(marketOrder.getRange().name());
+		range = marketOrder.getRangeString();
+		rangeEnum = RawConverter.toMarketOrderRange(marketOrder.getRange());
 		regionId = marketOrder.getRegionId();
-		state = MarketOrderState.OPEN;
+		state = MarketOrderState.OPEN.getValue();
+		stateEnum = MarketOrderState.OPEN;
 		typeId = marketOrder.getTypeId();
 		volumeRemain = marketOrder.getVolumeRemain();
 		volumeTotal = marketOrder.getVolumeTotal();
@@ -211,9 +202,11 @@ public class RawMarketOrder {
 		minVolume = RawConverter.toInteger(marketOrder.getMinVolume(), 0);
 		orderId = marketOrder.getOrderId();
 		price = marketOrder.getPrice();
-		range = MarketOrderRange.valueOf(marketOrder.getRange().name());
+		range = marketOrder.getRangeString();
+		rangeEnum = RawConverter.toMarketOrderRange(marketOrder.getRange());
 		regionId = marketOrder.getRegionId();
-		state = MarketOrderState.valueOf(marketOrder.getState().name());
+		state = marketOrder.getStateString();
+		stateEnum = RawConverter.toMarketOrderState(marketOrder.getState());
 		typeId = marketOrder.getTypeId();
 		volumeRemain = marketOrder.getVolumeRemain();
 		volumeTotal = marketOrder.getVolumeTotal();
@@ -237,9 +230,11 @@ public class RawMarketOrder {
 		minVolume = RawConverter.toInteger(marketOrder.getMinVolume(), 0);
 		orderId = marketOrder.getOrderId();
 		price = marketOrder.getPrice();
-		range = MarketOrderRange.valueOf(marketOrder.getRange().name());
+		range = marketOrder.getRangeString();
+		rangeEnum = RawConverter.toMarketOrderRange(marketOrder.getRange());
 		regionId = marketOrder.getRegionId();
-		state = MarketOrderState.OPEN;
+		state = MarketOrderState.OPEN.getValue();
+		stateEnum = MarketOrderState.OPEN;
 		typeId = marketOrder.getTypeId();
 		volumeRemain = marketOrder.getVolumeRemain();
 		volumeTotal = marketOrder.getVolumeTotal();
@@ -263,9 +258,11 @@ public class RawMarketOrder {
 		minVolume = RawConverter.toInteger(marketOrder.getMinVolume(), 0);
 		orderId = marketOrder.getOrderId();
 		price = marketOrder.getPrice();
-		range = MarketOrderRange.valueOf(marketOrder.getRange().name());
+		range = marketOrder.getRangeString();
+		rangeEnum = RawConverter.toMarketOrderRange(marketOrder.getRange());
 		regionId = marketOrder.getRegionId();
-		state = MarketOrderState.valueOf(marketOrder.getState().name());
+		state = marketOrder.getStateString();
+		stateEnum = RawConverter.toMarketOrderState(marketOrder.getState());
 		typeId = marketOrder.getTypeId();
 		volumeRemain = marketOrder.getVolumeRemain();
 		volumeTotal = marketOrder.getVolumeTotal();
@@ -377,11 +374,19 @@ public class RawMarketOrder {
 	}
 
 	public final MarketOrderRange getRange() {
-		return range;
+		return rangeEnum;
 	}
 
 	public void setRange(MarketOrderRange range) {
-		this.range = range;
+		this.rangeEnum = range;
+	}
+
+	public String getRangeString() {
+		return range;
+	}
+
+	public void setRangeString(String rangeString) {
+		this.range = rangeString;
 	}
 
 	public Integer getRegionID() {
@@ -393,11 +398,19 @@ public class RawMarketOrder {
 	}
 
 	public final MarketOrderState getState() {
-		return state;
+		return stateEnum;
 	}
 
 	public void setState(MarketOrderState state) {
-		this.state = state;
+		this.stateEnum = state;
+	}
+
+	public String getStateString() {
+		return state;
+	}
+
+	public void setStateString(String stateString) {
+		this.state = stateString;
 	}
 
 	public Integer getTypeID() {

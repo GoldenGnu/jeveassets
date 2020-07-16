@@ -173,7 +173,6 @@ public abstract class DataConverter {
 		if (!parents.isEmpty()) { //Update locationID from ItemID to locationID
 			MyAsset rootAsset = parents.get(0);
 			rawAsset.setLocationID(rootAsset.getLocationID());
-			rawAsset.setLocationType(RawConverter.toAssetLocationType(rootAsset.getLocationID()));
 		}
 		//Ignore some stuff
 		if (ignoreAsset(rawAsset, owner)) {

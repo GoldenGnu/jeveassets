@@ -70,31 +70,23 @@ public class RawJournal {
 			this.value = value;
 		}
 
-		@Override
-		public String toString() {
-			return String.valueOf(value);
-		}
-
-		public static ContextType fromValue(String text) {
-			for (ContextType b : ContextType.values()) {
-				if (String.valueOf(b.value).equals(text)) {
-					return b;
-				}
-			}
-			return null;
+		public String getValue() {
+			return value;
 		}
 	}
 
 	private Double amount = null;
 	private Double balance = null;
 	private Long contextId;
-	private ContextType contextIdType;
+	private String contextIdType;
+	private ContextType contextIdTypeEnum;
 	private Date date = null;
 	private String description;
 	private Integer firstPartyId = null;
 	private String reason = null;
 	private Long id = null;
-	private RawJournalRefType refType = null;
+	private String refType = null;
+	private RawJournalRefType refTypeEnum = null;
 	private Integer secondPartyId = null;
 	private Double tax = null;
 	private Integer taxReceiverId = null;
@@ -122,10 +114,12 @@ public class RawJournal {
 		description = journal.description;
 		contextId = journal.contextId;
 		contextIdType = journal.contextIdType;
+		contextIdTypeEnum = journal.contextIdTypeEnum;
 		firstPartyId = journal.firstPartyId;
 		reason = journal.reason;
 		id = journal.id;
 		refType = journal.refType;
+		refTypeEnum = journal.refTypeEnum;
 		secondPartyId = journal.secondPartyId;
 		tax = journal.tax;
 		taxReceiverId = journal.taxReceiverId;
@@ -142,13 +136,15 @@ public class RawJournal {
 		amount = journal.getAmount();
 		balance = journal.getBalance();
 		contextId = journal.getContextId();
-		contextIdType = RawConverter.toJournalContextType(journal.getContextIdType());
+		contextIdType = journal.getContextIdTypeString();
+		contextIdTypeEnum = RawConverter.toJournalContextType(journal.getContextIdType());
 		date = RawConverter.toDate(journal.getDate());
 		description = journal.getDescription();
 		firstPartyId = journal.getFirstPartyId();
 		reason = journal.getReason();
 		id = journal.getId();
-		refType = RawConverter.toJournalRefType(journal.getRefType());
+		refType = journal.getRefTypeString();
+		refTypeEnum = RawConverter.toJournalRefType(journal.getRefType());
 		secondPartyId = journal.getSecondPartyId();
 		tax = journal.getTax();
 		taxReceiverId = journal.getTaxReceiverId();
@@ -165,13 +161,15 @@ public class RawJournal {
 		amount = journal.getAmount();
 		balance = journal.getBalance();
 		contextId = journal.getContextId();
-		contextIdType = RawConverter.toJournalContextType(journal.getContextIdType());
+		contextIdType = journal.getContextIdTypeString();
+		contextIdTypeEnum = RawConverter.toJournalContextType(journal.getContextIdType());
 		date = RawConverter.toDate(journal.getDate());
 		description = journal.getDescription();
 		firstPartyId = journal.getFirstPartyId();
 		reason = journal.getReason();
 		id = journal.getId();
-		refType = RawConverter.toJournalRefType(journal.getRefType());
+		refType = journal.getRefTypeString();
+		refTypeEnum = RawConverter.toJournalRefType(journal.getRefType());
 		secondPartyId = journal.getSecondPartyId();
 		tax = journal.getTax();
 		taxReceiverId = journal.getTaxReceiverId();
@@ -204,11 +202,19 @@ public class RawJournal {
 	}
 
 	public ContextType getContextType() {
-		return contextIdType;
+		return contextIdTypeEnum;
 	}
 
 	public void setContextType(ContextType contextType) {
-		this.contextIdType = contextType;
+		this.contextIdTypeEnum = contextType;
+	}
+
+	public String getContextTypeString() {
+		return contextIdType;
+	}
+
+	public void setContextTypeString(String contextIdTypeString) {
+		this.contextIdType = contextIdTypeString;
 	}
 
 	public Date getDate() {
@@ -252,11 +258,19 @@ public class RawJournal {
 	}
 
 	public RawJournalRefType getRefType() {
-		return refType;
+		return refTypeEnum;
 	}
 
 	public void setRefType(RawJournalRefType refType) {
-		this.refType = refType;
+		this.refTypeEnum = refType;
+	}
+
+	public String getRefTypeString() {
+		return refType;
+	}
+
+	public void setRefTypeString(String refTypeString) {
+		this.refType = refTypeString;
 	}
 
 	public final Integer getSecondPartyID() {

@@ -107,7 +107,6 @@ public class ConverterTestOptionsGetter {
 		private static final Percent[] PERCENT = {Percent.create(5.1)};
 		private static final UserPrice[] USER_ITEM = {new UserPrice(DOUBLE[0], INTEGER[0], STRING[0])};
 		//LocationType
-		private static final RawAsset.LocationType[] RAW_LOCATION_TYPE = RawAsset.LocationType.values();
 		private static final CharacterAssetsResponse.LocationTypeEnum[] ESI_LOCATION_TYPE_CHARACTER = CharacterAssetsResponse.LocationTypeEnum.values();
 		private static final CorporationAssetsResponse.LocationTypeEnum[] ESI_LOCATION_TYPE_CORPORATION = CorporationAssetsResponse.LocationTypeEnum.values();
 		private static final Long[] EVE_API_LOCATION_TYPE = {60003466L, 30000142L, 100000000L, 10000002L};
@@ -326,7 +325,6 @@ public class ConverterTestOptionsGetter {
 			tempMax = Math.max(tempMax, PERCENT.length);
 			tempMax = Math.max(tempMax, USER_ITEM.length);
 			//LocationType
-			tempMax = Math.max(tempMax, RAW_LOCATION_TYPE.length);
 			tempMax = Math.max(tempMax, ESI_LOCATION_TYPE_CHARACTER.length);
 			tempMax = Math.max(tempMax, ESI_LOCATION_TYPE_CORPORATION.length);
 			tempMax = Math.max(tempMax, EVE_API_LOCATION_TYPE.length);
@@ -466,11 +464,6 @@ public class ConverterTestOptionsGetter {
 		@Override
 		public Long getLocationTypeEveApi() {
 			return get(EVE_API_LOCATION_TYPE, index);
-		}
-
-		@Override
-		public RawAsset.LocationType getLocationTypeRaw() {
-			return get(RAW_LOCATION_TYPE, index);
 		}
 
 		@Override
