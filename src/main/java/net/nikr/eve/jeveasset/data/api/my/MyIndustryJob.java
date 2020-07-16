@@ -252,29 +252,36 @@ public class MyIndustryJob extends RawIndustryJob implements Comparable<MyIndust
 				activity = IndustryActivity.ACTIVITY_UNKNOWN;
 				break;
 		}
-		switch (getStatus()) {
-			case ACTIVE: //Active
-				if (getEndDate().before(Settings.getNow())) {
+		IndustryJobStatus status = getStatus();
+		if (status == null) {
+			state = null;
+		} else {
+			switch (getStatus()) {
+				case ACTIVE: //Active
+					if (getEndDate().before(Settings.getNow())) {
+						state = IndustryJobState.STATE_DONE;
+					} else {
+						state = IndustryJobState.STATE_ACTIVE;
+					}
+					break;
+				case PAUSED:
+					state = IndustryJobState.STATE_PAUSED;
+					break;
+				case READY:
 					state = IndustryJobState.STATE_DONE;
-				} else {
-					state = IndustryJobState.STATE_ACTIVE;
-				}
-				break;
-			case PAUSED:
-				state = IndustryJobState.STATE_PAUSED;
-				break;
-			case READY:
-				state = IndustryJobState.STATE_DONE;
-				break;
-			case DELIVERED:
-				state = IndustryJobState.STATE_DELIVERED;
-				break;
-			case CANCELLED:
-				state = IndustryJobState.STATE_CANCELLED;
-				break;
-			case REVERTED:
-				state = IndustryJobState.STATE_REVERTED;
-				break;
+					break;
+				case DELIVERED:
+					state = IndustryJobState.STATE_DELIVERED;
+					break;
+				case CANCELLED:
+					state = IndustryJobState.STATE_CANCELLED;
+					break;
+				case REVERTED:
+					state = IndustryJobState.STATE_REVERTED;
+					break;
+				default:
+					state = null;
+			}
 		}
 		switch (activity) {
 			case ACTIVITY_MANUFACTURING:

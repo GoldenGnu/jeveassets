@@ -47,29 +47,11 @@ public class RawAsset {
 	private static final ItemFlag CONTRACT_INCLUDED_FLAG = new ItemFlag(0, General.get().contractIncluded(), General.get().contractIncluded());
 	private static final ItemFlag CONTRACT_EXCLUDED_FLAG = new ItemFlag(0, General.get().contractExcluded(), General.get().contractExcluded());
 
-	public enum LocationType {
-		STATION("station"),
-		SOLAR_SYSTEM("solar_system"),
-		ITEM("item"),
-		OTHER("other");
-
-		private final String value;
-
-		LocationType(String value) {
-			this.value = value;
-		}
-
-		@Override
-		public String toString() {
-			return String.valueOf(value);
-		}
-	}
-
 	private Boolean isSingleton = null;
 	private Long itemId = null;
 	private ItemFlag itemFlag = null;
+	private String locationFlag = null;
 	private Long locationId = null;
-	private LocationType locationType = null;
 	private Integer quantity = null;
 	private Integer typeId = null;
 
@@ -104,7 +86,6 @@ public class RawAsset {
 					itemFlag = ApiIdConverter.getFlag(0); //Should never happen, but, better safe than sorry...
 			}
 			locationId = industryJob.getOutputLocationID();
-			locationType = RawConverter.toAssetLocationType(locationId);
 			quantity = industryJob.getOutputCount();
 			typeId = industryJob.getProductTypeID();
 		} else {
@@ -112,7 +93,6 @@ public class RawAsset {
 			itemId = industryJob.getBlueprintID(); //blueprint itemID
 			itemFlag = INDUSTRY_JOB_FLAG;
 			locationId = industryJob.getLocationID();
-			locationType = RawConverter.toAssetLocationType(locationId);
 			if (industryJob.isBPO()) {
 				quantity = -1;
 			} else {
@@ -136,7 +116,6 @@ public class RawAsset {
 			itemFlag = MARKET_ORDER_SELL_FLAG;
 		}
 		locationId = marketOrder.getLocationID();
-		locationType = RawConverter.toAssetLocationType(locationId);
 		quantity = marketOrder.getVolumeRemain();
 		typeId = marketOrder.getTypeID();
 	}
@@ -159,7 +138,6 @@ public class RawAsset {
 		} else {
 			locationId = 0L;
 		}
-		locationType = RawConverter.toAssetLocationType(locationId);
 		quantity = RawConverter.toAssetQuantity(contractItem.getQuantity(), contractItem.getRawQuantity());
 		typeId = contractItem.getTypeID();
 	}
@@ -174,7 +152,6 @@ public class RawAsset {
 		itemId = asset.itemId;
 		itemFlag = asset.itemFlag;
 		locationId = asset.locationId;
-		locationType = asset.locationType;
 		quantity = asset.quantity;
 		typeId = asset.typeId;
 	}
@@ -192,8 +169,8 @@ public class RawAsset {
 		}
 		itemId = asset.getItemId();
 		itemFlag = RawConverter.toFlag(asset.getLocationFlag());
+		locationFlag = asset.getLocationFlagString();
 		locationId = asset.getLocationId();
-		locationType = LocationType.valueOf(asset.getLocationType().name());
 		if (asset.getQuantity() == 1) {
 			if (asset.getIsBlueprintCopy() != null && asset.getIsBlueprintCopy()) {
 				quantity = -2;
@@ -219,8 +196,8 @@ public class RawAsset {
 		}
 		itemId = asset.getItemId();
 		itemFlag = RawConverter.toFlag(asset.getLocationFlag());
+		locationFlag = asset.getLocationFlagString();
 		locationId = asset.getLocationId();
-		locationType = LocationType.valueOf(asset.getLocationType().name());
 		if (asset.getQuantity() == 1) {
 			if (asset.getIsBlueprintCopy() != null && asset.getIsBlueprintCopy()) {
 				quantity = -2;
@@ -250,7 +227,6 @@ public class RawAsset {
 		} else {
 			locationId = RawConverter.toLong(shipLocation.getSolarSystemId());
 		}
-		locationType = RawConverter.toAssetLocationType(locationId);
 		quantity = 1; //Unpacked AKA always 1
 		typeId = shipType.getShipTypeId();
 	}
@@ -267,7 +243,6 @@ public class RawAsset {
 		itemId = Long.valueOf(pin.getPinId() + "" + content.getTypeId()); //Semi unique
 		itemFlag = ApiIdConverter.getFlag(0); //None
 		locationId = (long) planet.getPlanetId(); //Planet
-		locationType = RawConverter.toAssetLocationType(locationId);
 		quantity = content.getAmount().intValue(); //Not perfect, but, will have to do
 		typeId = content.getTypeId();
 	}
@@ -283,7 +258,6 @@ public class RawAsset {
 		itemId = pin.getPinId(); //Semi unique
 		itemFlag = ApiIdConverter.getFlag(0); //None
 		locationId = (long) planet.getPlanetId(); //Planet
-		locationType = RawConverter.toAssetLocationType(locationId);
 		quantity = 1;
 		typeId = pin.getTypeId();
 	}
@@ -317,20 +291,20 @@ public class RawAsset {
 		this.itemFlag = itemFlag;
 	}
 
+	public String getLocationFlagString() {
+		return locationFlag;
+	}
+
+	public void setLocationFlagString(String locationFlagString) {
+		this.locationFlag = locationFlagString;
+	}
+
 	public long getLocationID() {
 		return locationId;
 	}
 
 	public final void setLocationID(Long locationId) {
 		this.locationId = locationId;
-	}
-
-	public LocationType getLocationType() {
-		return locationType;
-	}
-
-	public final void setLocationType(LocationType locationType) {
-		this.locationType = locationType;
 	}
 
 	public final Integer getQuantity() {
