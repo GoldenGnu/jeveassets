@@ -67,6 +67,11 @@ public class OutbidProcesser {
 	private void process() {
 		//Process the orders
 		for (RawPublicMarketOrder ordersResponse : input.getMarketOrders()) {
+			//Regions with data
+			MyLocation orderLocation = ApiIdConverter.getLocation(ordersResponse.getSystemID());
+			if (!orderLocation.isEmpty()) {
+				output.getRegionIDs().add(orderLocation.getRegionID());
+			}
 			Set<MyMarketOrder> orders = input.getTypeIDs().get(ordersResponse.getTypeId());
 			if (orders != null) {
 				//Orders to match
@@ -303,6 +308,7 @@ public class OutbidProcesser {
 	public static class OutbidProcesserOutput {
 		private final Map<Long, Outbid> outbids = new HashMap<>();
 		private final Map<Long, RawPublicMarketOrder> updates = new HashMap<>();
+		private final Set<Long> regionIDs = new HashSet<>();
 
 		public Map<Long, Outbid> getOutbids() {
 			return outbids;
@@ -312,6 +318,9 @@ public class OutbidProcesser {
 			return updates;
 		}
 
+		public Set<Long> getRegionIDs() {
+			return regionIDs;
+		}
 	}
 
 	private static class DatedMarketOrders {
