@@ -545,10 +545,15 @@ public class MarketOrdersTab extends JMainTabPrimary {
 				timer.start();
 				//Schedule next update
 				schedule();
-				//Sell Order Range
-				jSellOrderRangeLast.setText(TabsOrders.get().sellOrderRangeSelcted(Settings.get().getOutbidOrderRange().toString()));
-				//Last Update
-				updateDates();
+				Program.ensureEDT(new Runnable() {
+					@Override
+					public void run() {
+						//Sell Order Range
+						jSellOrderRangeLast.setText(TabsOrders.get().sellOrderRangeSelcted(Settings.get().getOutbidOrderRange().toString()));
+						//Last Update
+						updateDates();
+					}
+				});
 			}
 
 			@Override
