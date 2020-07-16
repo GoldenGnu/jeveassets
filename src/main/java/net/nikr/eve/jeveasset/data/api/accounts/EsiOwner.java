@@ -66,7 +66,6 @@ public class EsiOwner extends AbstractOwner implements OwnerType {
 	private final PlanetaryInteractionApi planetaryInteractionApi = new PlanetaryInteractionApi(apiClient);
 	private final UserInterfaceApi userInterfaceApi = new UserInterfaceApi(apiClient);
 	private String accountName;
-	private String refreshToken;
 	private Set<String> scopes = new HashSet<>();
 	private Date structuresNextUpdate = Settings.getNow();
 	private Date accountNextUpdate = Settings.getNow();
@@ -79,23 +78,16 @@ public class EsiOwner extends AbstractOwner implements OwnerType {
 	public EsiOwner(EsiOwner esiOwner) {
 		super(esiOwner);
 		this.accountName = esiOwner.accountName;
-		this.refreshToken = esiOwner.refreshToken;
 		this.scopes = esiOwner.scopes;
 		this.structuresNextUpdate = esiOwner.structuresNextUpdate;
 		this.accountNextUpdate = esiOwner.accountNextUpdate;
-		this.callbackURL = esiOwner.callbackURL;
 		this.roles = esiOwner.roles;
 		this.invalid = esiOwner.invalid;
-		updateAuth();
+		setAuth(esiOwner.callbackURL, esiOwner.getOAuth().getRefreshToken(), esiOwner.getOAuth().getAccessToken());
 	}
 
 	public synchronized String getRefreshToken() {
-		return refreshToken;
-	}
-
-	public synchronized void setRefreshToken(String refreshToken) {
-		this.refreshToken = refreshToken;
-		updateAuth();
+		return getOAuth().getRefreshToken();
 	}
 
 	public Set<String> getScopes() {
@@ -128,11 +120,6 @@ public class EsiOwner extends AbstractOwner implements OwnerType {
 
 	public EsiCallbackURL getCallbackURL() {
 		return callbackURL;
-	}
-
-	public void setCallbackURL(EsiCallbackURL callbackURL) {
-		this.callbackURL = callbackURL;
-		updateAuth();
 	}
 
 	public Set<RolesEnum> getRoles() {
@@ -357,11 +344,18 @@ public class EsiOwner extends AbstractOwner implements OwnerType {
 		return EsiScopes.CORPORATION_ROLES.isInScope(scopes);
 	}
 
-	private void updateAuth() {
-		if (getCallbackURL() != null && getRefreshToken() != null) {
-			OAuth auth = (OAuth) apiClient.getAuthentication("evesso");
-			auth.setAuth(getCallbackURL().getA(), getRefreshToken());
+	public synchronized final void setAuth(EsiCallbackURL callbackURL, String refreshToken, String accessToken) {
+		if (callbackURL != null) {
+			this.callbackURL = callbackURL;
 		}
+		if (callbackURL != null && refreshToken != null) {
+			getOAuth().setAuth(callbackURL.getA(), refreshToken);
+			getOAuth().setAccessToken(accessToken);
+		}
+	}
+
+	private OAuth getOAuth() {
+		return (OAuth) apiClient.getAuthentication("evesso");
 	}
 
 	public synchronized ApiClient getApiClient() {
@@ -423,7 +417,7 @@ public class EsiOwner extends AbstractOwner implements OwnerType {
 	@Override
 	public int hashCode() {
 		int hash = 5;
-		hash = 61 * hash + Objects.hashCode(this.refreshToken);
+		hash = 61 * hash + Objects.hashCode(this.getRefreshToken());
 		hash = 61 * hash + Objects.hashCode(this.scopes);
 		return hash;
 	}
@@ -440,7 +434,7 @@ public class EsiOwner extends AbstractOwner implements OwnerType {
 			return false;
 		}
 		final EsiOwner other = (EsiOwner) obj;
-		if (!Objects.equals(this.refreshToken, other.refreshToken)) {
+		if (!Objects.equals(this.getRefreshToken(), other.getRefreshToken())) {
 			return false;
 		}
 		if (!Objects.equals(this.scopes, other.scopes)) {
