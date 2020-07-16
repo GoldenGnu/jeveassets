@@ -990,8 +990,7 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 		@Override
 		public void actionPerformed(final ActionEvent e) {
 			if (StockpileCellAction.SHOPPING_LIST_SINGLE.name().equals(e.getActionCommand())) { //Shopping list single
-				int index = jTable.getSelectedRow();
-				Object o = tableModel.getElementAt(index);
+				Object o = getSelected();
 				if (o instanceof SeparatorList.Separator<?>) {
 					SeparatorList.Separator<?> separator = (SeparatorList.Separator<?>) o;
 					StockpileItem item = (StockpileItem) separator.first();
@@ -1084,8 +1083,7 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 					scrollToSctockpile(stockpile);
 				}
 			} else if (StockpileCellAction.EDIT_STOCKPILE.name().equals(e.getActionCommand())) { //Edit stockpile
-				int index = jTable.getSelectedRow();
-				Object o = tableModel.getElementAt(index);
+				Object o = getSelected();
 				if (o instanceof SeparatorList.Separator<?>) {
 					SeparatorList.Separator<?> separator = (SeparatorList.Separator<?>) o;
 					StockpileItem item = (StockpileItem) separator.first();
@@ -1098,8 +1096,7 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 					}
 				}
 			} else if (StockpileCellAction.CLONE_STOCKPILE.name().equals(e.getActionCommand())) { //Clone stockpile
-				int index = jTable.getSelectedRow();
-				Object o = tableModel.getElementAt(index);
+				Object o = getSelected();
 				if (o instanceof SeparatorList.Separator<?>) {
 					SeparatorList.Separator<?> separator = (SeparatorList.Separator<?>) o;
 					StockpileItem item = (StockpileItem) separator.first();
@@ -1110,8 +1107,7 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 					}
 				}
 			} else if (StockpileCellAction.DELETE_STOCKPILE.name().equals(e.getActionCommand())) { //Delete stockpile
-				int index = jTable.getSelectedRow();
-				Object o = tableModel.getElementAt(index);
+				Object o = getSelected();
 				if (o instanceof SeparatorList.Separator<?>) {
 					SeparatorList.Separator<?> separator = (SeparatorList.Separator<?>) o;
 					StockpileItem item = (StockpileItem) separator.first();
@@ -1126,8 +1122,7 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 					}
 				}
 			} else if (StockpileCellAction.ADD_ITEM.name().equals(e.getActionCommand())) { //Add item
-				int index = jTable.getSelectedRow();
-				Object o = tableModel.getElementAt(index);
+				Object o = getSelected();
 				if (o instanceof SeparatorList.Separator<?>) {
 					SeparatorList.Separator<?> separator = (SeparatorList.Separator<?>) o;
 					StockpileItem item = (StockpileItem) separator.first();
@@ -1144,6 +1139,14 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 		public void columnValueChanged() {
 			program.saveSettings("Stockpile: Target changed");
 		}
+	}
+
+	private Object getSelected() {
+		int index = jTable.getSelectedRow();
+		if (index < 0 || index > tableModel.getColumnCount()) {
+			return null;
+		}
+		return tableModel.getElementAt(index);
 	}
 
 	public static class StockpileSeparatorComparator implements Comparator<StockpileItem> {
