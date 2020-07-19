@@ -45,6 +45,15 @@ public abstract class DialoguesSettings extends Bundle {
 	public abstract String focusEveOnline();
 	public abstract String focusEveOnlineLinuxCmd();
 	public abstract String focusEveOnlineLinuxHelp();
+	public abstract String focusEveOnlineLinuxHelp2();
+	public abstract String transactionsPrice();
+	public abstract String transactionsPriceAverage();
+	public abstract String transactionsPriceLatest();
+	public abstract String transactionsPriceMaximum();
+	public abstract String transactionsPriceMinimum();
+	public abstract String transactionsProfit();
+	public abstract String includeDays();
+	public abstract String days();
 
 	// used in ShowToolSettingsPanel
 	public abstract String show();
@@ -60,8 +69,6 @@ public abstract class DialoguesSettings extends Bundle {
 	public abstract String includeBuyContracts();
 	public abstract String includeBuyOrders();
 	public abstract String includeManufacturing();
-	public abstract String maximumPurchaseAge();
-	public abstract String days();
 
 	// used in OverviewToolSettingsPanel
 	public abstract String overview();
@@ -106,6 +113,15 @@ public abstract class DialoguesSettings extends Bundle {
 	public abstract String testSelectedText();
 	public abstract String overwriteMsg();
 	public abstract String overwriteTitle();
+	public abstract String theme();
+	public abstract String lookAndFeel();
+	public abstract String lookAndFeelDefault();
+	public abstract String lookAndFeelFlatLight();
+	public abstract String lookAndFeelFlatDark();
+	public abstract String lookAndFeelFlatIntelliJ();
+	public abstract String lookAndFeelFlatDarcula();
+	public abstract String lookAndFeelMsg();
+	public abstract String lookAndFeelTitle();
 
 	// used in PriceDataSettingsPanel
 	public abstract String changeSourceWarning();

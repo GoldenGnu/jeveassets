@@ -15,10 +15,12 @@ import javax.swing.border.Border;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import net.nikr.eve.jeveasset.gui.images.Images;
+import net.nikr.eve.jeveasset.gui.shared.ColorUtil;
 
 /**
  *
  * @author <a href="mailto:jesse@swank.ca">Jesse Wilson</a>
+ * @param <E>
  */
 public abstract class SeparatorTableCell<E> extends AbstractCellEditor
 		implements TableCellRenderer, TableCellEditor {
@@ -35,15 +37,17 @@ public abstract class SeparatorTableCell<E> extends AbstractCellEditor
 	protected final GroupLayout layout;
 	protected final JTable jTable;
 
-	private static final Icon EXPANDED_ICON = Images.MISC_EXPANDED.getIcon();
-	private static final Icon COLLAPSED_ICON = Images.MISC_COLLAPSED.getIcon();
-
 	public SeparatorTableCell(final JTable jTable, final SeparatorList<E> separatorList) {
 		this.jTable = jTable;
 		this.separatorList = separatorList;
 
 		jPanel = new JSeparatorPanel(new BorderLayout());
-		jPanel.setBackground(Color.LIGHT_GRAY);
+		if (ColorUtil.isBrightColor(jPanel.getBackground())) { //Light background color
+			jPanel.setBackground(Color.LIGHT_GRAY);
+		} else { //Dark background color
+			jPanel.setBackground(Color.DARK_GRAY);
+		}
+
 		jPanel.addMouseListener(new MouseAdapter() {
 			@Override public void mouseClicked(final MouseEvent e) {
 				if (e.getClickCount() >= 2) {
@@ -57,11 +61,10 @@ public abstract class SeparatorTableCell<E> extends AbstractCellEditor
 		layout.setAutoCreateGaps(false);
 		layout.setAutoCreateContainerGaps(false);
 
-		jExpand = new JButton(EXPANDED_ICON);
+		jExpand = new JButton(Images.MISC_EXPANDED.getIcon());
 		jExpand.setOpaque(false);
 		jExpand.setContentAreaFilled(false);
 		jExpand.setBorder(EMPTY_TWO_PIXEL_BORDER);
-		jExpand.setIcon(EXPANDED_ICON);
 		jExpand.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
@@ -91,7 +94,7 @@ public abstract class SeparatorTableCell<E> extends AbstractCellEditor
 		if (value instanceof SeparatorList.Separator<?>) {
 			this.currentRow = row;
 			this.currentSeparator = (SeparatorList.Separator<?>) value;
-			jExpand.setIcon(currentSeparator.getLimit() == 0 ? EXPANDED_ICON : COLLAPSED_ICON);
+			jExpand.setIcon(currentSeparator.getLimit() == 0 ? Images.MISC_EXPANDED.getIcon() : Images.MISC_COLLAPSED.getIcon());
 			configure(currentSeparator);
 		}
 	}

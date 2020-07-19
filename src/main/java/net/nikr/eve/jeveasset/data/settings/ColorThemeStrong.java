@@ -63,9 +63,10 @@ public class ColorThemeStrong extends ColorTheme {
 		colors.put(ColorEntry.MARKET_ORDERS_EXPIRED, new ColorThemeEntry(Colors.STRONG_RED));
 		colors.put(ColorEntry.TRANSACTIONS_BOUGHT, new ColorThemeEntry(Colors.STRONG_RED));
 		colors.put(ColorEntry.TRANSACTIONS_SOLD, new ColorThemeEntry(Colors.STRONG_GREEN));
+		colors.put(ColorEntry.GLOBAL_BPC, new ColorThemeEntry(Colors.STRONG_MAGENTA));
 		colors.put(ColorEntry.GLOBAL_BPO, new ColorThemeEntry(Colors.STRONG_YELLOW));
-		colors.put(ColorEntry.GLOBAL_VALUE_NEGATIVE, new ColorThemeEntry(null, Colors.DARK_RED));
-		colors.put(ColorEntry.GLOBAL_VALUE_POSITIVE, new ColorThemeEntry(null, Colors.DARK_GREEN));
+		colors.put(ColorEntry.GLOBAL_VALUE_NEGATIVE, new ColorThemeEntry(null, Colors.FOREGROUND_RED));
+		colors.put(ColorEntry.GLOBAL_VALUE_POSITIVE, new ColorThemeEntry(null, Colors.FOREGROUND_GREEN));
 		colors.put(ColorEntry.GLOBAL_ENTRY_INVALID, new ColorThemeEntry(Colors.STRONG_RED));
 		colors.put(ColorEntry.GLOBAL_ENTRY_WARNING, new ColorThemeEntry(Colors.STRONG_YELLOW));
 		colors.put(ColorEntry.GLOBAL_ENTRY_VALID, new ColorThemeEntry(Colors.STRONG_GREEN));

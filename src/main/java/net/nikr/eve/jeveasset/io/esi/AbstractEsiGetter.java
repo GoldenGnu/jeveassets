@@ -46,6 +46,7 @@ import net.troja.eve.esi.api.BookmarksApi;
 import net.troja.eve.esi.api.CharacterApi;
 import net.troja.eve.esi.api.ContractsApi;
 import net.troja.eve.esi.api.CorporationApi;
+import net.troja.eve.esi.api.FactionWarfareApi;
 import net.troja.eve.esi.api.IndustryApi;
 import net.troja.eve.esi.api.LocationApi;
 import net.troja.eve.esi.api.MarketApi;
@@ -73,6 +74,7 @@ public abstract class AbstractEsiGetter extends AbstractGetter<EsiOwner> {
 	private static final CorporationApi CORPORATION_API = new CorporationApi(PUBLIC_CLIENT);
 	private static final SovereigntyApi SOVEREIGNTY_API = new SovereigntyApi(PUBLIC_CLIENT);
 	private static final MarketApi MARKET_API = new MarketApi(PUBLIC_CLIENT);
+	private static final FactionWarfareApi FACTION_WARFARE_API = new FactionWarfareApi(PUBLIC_CLIENT);
 	public static final UserInterfaceApi USER_INTERFACE_API = new UserInterfaceApi(PUBLIC_CLIENT);
 	public static final String DATASOURCE = "tranquility";
 	protected static final int UNIVERSE_BATCH_SIZE = 100;
@@ -323,6 +325,10 @@ public abstract class AbstractEsiGetter extends AbstractGetter<EsiOwner> {
 
 	public static MarketApi getMarketApiOpen() {
 		return MARKET_API;
+	}
+
+	public static FactionWarfareApi getFactionWarfareApiOpen() {
+		return FACTION_WARFARE_API;
 	}
 
 	protected final <K, V> Map<K, V> updateListSlow(Collection<K> list, boolean trackProgress, int maxRetries, ListHandlerSlow<K, V> handler) throws ApiException {

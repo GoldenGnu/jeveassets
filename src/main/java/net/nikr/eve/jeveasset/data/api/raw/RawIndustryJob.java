@@ -41,18 +41,8 @@ public class RawIndustryJob {
 			this.value = value;
 		}
 
-		@Override
-		public String toString() {
-			return String.valueOf(value);
-		}
-
-		public static IndustryJobStatus fromValue(String text) {
-			for (IndustryJobStatus b : IndustryJobStatus.values()) {
-				if (String.valueOf(b.value).equals(text)) {
-					return b;
-				}
-			}
-			return null;
+		public String getValue() {
+			return value;
 		}
 	}
 
@@ -76,7 +66,8 @@ public class RawIndustryJob {
 	private Integer runs = null;
 	private Date startDate = null;
 	private Long stationId = null;
-	private IndustryJobStatus status = null;
+	private String status = null;
+	private IndustryJobStatus statusEnum = null;
 	private Integer successfulRuns = null;
 
 	/**
@@ -116,6 +107,7 @@ public class RawIndustryJob {
 		startDate = industryJob.startDate;
 		stationId = industryJob.stationId;
 		status = industryJob.status;
+		statusEnum = industryJob.statusEnum;
 		successfulRuns = industryJob.successfulRuns;
 	}
 
@@ -145,7 +137,8 @@ public class RawIndustryJob {
 		runs = industryJob.getRuns();
 		startDate = RawConverter.toDate(industryJob.getStartDate());
 		stationId = industryJob.getStationId();
-		status = IndustryJobStatus.valueOf(industryJob.getStatus().name());
+		status = industryJob.getStatusString();
+		statusEnum = RawConverter.toIndustryJobStatus(industryJob.getStatus());
 		successfulRuns = industryJob.getSuccessfulRuns();
 	}
 
@@ -175,7 +168,8 @@ public class RawIndustryJob {
 		runs = industryJob.getRuns();
 		startDate = RawConverter.toDate(industryJob.getStartDate());
 		stationId = industryJob.getLocationId();
-		status = IndustryJobStatus.valueOf(industryJob.getStatus().name());
+		status = industryJob.getStatusString();
+		statusEnum = RawConverter.toIndustryJobStatus(industryJob.getStatus());
 		successfulRuns = industryJob.getSuccessfulRuns();
 	}
 
@@ -340,11 +334,19 @@ public class RawIndustryJob {
 	}
 
 	public final IndustryJobStatus getStatus() {
-		return status;
+		return statusEnum;
 	}
 
 	public void setStatus(IndustryJobStatus status) {
-		this.status = status;
+		this.statusEnum = status;
+	}
+
+	public String getStatusString() {
+		return status;
+	}
+
+	public void setStatusString(String statusString) {
+		this.status = statusString;
 	}
 
 	public Integer getSuccessfulRuns() {

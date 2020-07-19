@@ -44,6 +44,7 @@ import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel.UpdateType;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
+import net.nikr.eve.jeveasset.gui.shared.Updatable;
 import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
 import net.nikr.eve.jeveasset.gui.shared.components.ListComboBoxModel;
 import net.nikr.eve.jeveasset.gui.tabs.values.AssetValue;
@@ -65,7 +66,7 @@ public class StructureUpdateDialog extends JDialogCentered {
 	private final JButton jOk;
 	private final JButton jCancel;
 
-	private final List<EsiOwner> owners = new ArrayList<EsiOwner>();;
+	private final List<EsiOwner> owners = new ArrayList<>();;
 	private Set<MyLocation> locations;
 	
 	public StructureUpdateDialog(Program program) {
@@ -93,7 +94,7 @@ public class StructureUpdateDialog extends JDialogCentered {
 		});
 		ownersGroup.add(jOwnersSingle);
 
-		jOwners = new JComboBox<EsiOwner>();
+		jOwners = new JComboBox<>();
 		jOwners.setEnabled(false);
 
 		ButtonGroup LocationsGroup = new ButtonGroup();
@@ -267,7 +268,7 @@ public class StructureUpdateDialog extends JDialogCentered {
 				JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), DialoguesStructure.get().invalid(), DialoguesStructure.get().title(), JOptionPane.PLAIN_MESSAGE);
 				return; //Do not show
 			}
-			if (!Settings.get().isUpdatable(structuresNextUpdate)) { //Update not allowed yet...
+			if (!Updatable.isUpdatable(structuresNextUpdate)) { //Update not allowed yet...
 				long time = structuresNextUpdate.getTime() - Settings.getNow().getTime();
 				String updatableIn;
 				if (time <= 1000) { //less than 1 second
@@ -280,7 +281,7 @@ public class StructureUpdateDialog extends JDialogCentered {
 				JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), DialoguesStructure.get().nextUpdate(updatableIn), DialoguesStructure.get().title(), JOptionPane.PLAIN_MESSAGE);
 				return; //Do not show
 			}
-			jOwners.setModel(new ListComboBoxModel<EsiOwner>(owners));
+			jOwners.setModel(new ListComboBoxModel<>(owners));
 			jOwnersAll.setSelected(true);
 			if (locations != null) {
 				jLocationsSelected.setEnabled(true);
@@ -326,7 +327,7 @@ public class StructureUpdateDialog extends JDialogCentered {
 			if (esiOwner.isShowOwner() && esiOwner.isStructures()) {
 				structures = true;
 				if (esiOwner.getStructuresNextUpdate() != null
-						&& !Settings.get().isUpdatable(esiOwner.getStructuresNextUpdate())) {
+						&& !Updatable.isUpdatable(esiOwner.getStructuresNextUpdate())) {
 					updatable = false;
 					break;
 				}

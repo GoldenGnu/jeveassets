@@ -141,6 +141,7 @@ public class SettingsWriter extends AbstractXmlWriter {
 		writeMarketOrderOutbid(xmldoc, settings.getPublicMarketOrdersNextUpdate(), settings.getPublicMarketOrdersLastUpdate(), settings.getOutbidOrderRange(), settings.getMarketOrdersOutbid());
 		writeShowTool(xmldoc, settings.getShowTools(), settings.isSaveToolsOnExit());
 		writeColorSettings(xmldoc, settings.getColorSettings());
+		writeFactionWarfareSystemOwners(xmldoc, settings);
 		try {
 			writeXmlFile(xmldoc, filename, true);
 		} catch (XmlException ex) {
@@ -151,10 +152,23 @@ public class SettingsWriter extends AbstractXmlWriter {
 		return true;
 	}
 
+	private void writeFactionWarfareSystemOwners(Document xmldoc, Settings settings) {
+		Element FactionWarfareSystemOwnersNode = xmldoc.createElementNS(null, "factionwarfaresystemowners");
+		xmldoc.getDocumentElement().appendChild(FactionWarfareSystemOwnersNode);
+		setAttribute(FactionWarfareSystemOwnersNode, "factionwarfarenextupdate", settings.getFactionWarfareNextUpdate());
+		for (Map.Entry<Long, String> entry : settings.getFactionWarfareSystemOwners().entrySet()) {
+			Element colorNode = xmldoc.createElementNS(null, "system");
+			setAttribute(colorNode, "system", entry.getKey());
+			setAttributeOptional(colorNode, "faction", entry.getValue());
+			FactionWarfareSystemOwnersNode.appendChild(colorNode);
+		}
+	}
+
 	private void writeColorSettings(Document xmldoc, ColorSettings colorSettings) {
 		Element colorSettingsNode = xmldoc.createElementNS(null, "colorsettings");
 		xmldoc.getDocumentElement().appendChild(colorSettingsNode);
 		setAttributeOptional(colorSettingsNode, "theme", colorSettings.getColorTheme().getType());
+		setAttribute(colorSettingsNode, "lookandfeel", colorSettings.getLookAndFeelClass());
 		for (ColorEntry colorEntry : ColorEntry.values()) {
 			Element colorNode = xmldoc.createElementNS(null, "color");
 			setAttribute(colorNode, "name", colorEntry);
@@ -391,6 +405,7 @@ public class SettingsWriter extends AbstractXmlWriter {
 		Element parentNode = xmldoc.createElementNS(null, "assetsettings");
 		xmldoc.getDocumentElement().appendChild(parentNode);
 		setAttribute(parentNode, "maximumpurchaseage", settings.getMaximumPurchaseAge());
+		setAttribute(parentNode, "transactionprofitprice", settings.getTransactionProfitPrice());
 	}
 
 	private void writeStockpileGroups(final Document xmldoc, final Settings settings) {

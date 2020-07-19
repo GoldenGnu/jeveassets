@@ -21,7 +21,6 @@
 package net.nikr.eve.jeveasset.data.settings.tag;
 
 import ca.odell.glazedlists.GlazedLists;
-import java.awt.Color;
 import java.awt.Font;
 import java.util.Collection;
 import java.util.Objects;
@@ -31,6 +30,7 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import net.nikr.eve.jeveasset.gui.shared.ColorUtil;
 import net.nikr.eve.jeveasset.i18n.General;
 
 
@@ -127,7 +127,11 @@ public class Tags extends TreeSet<Tag> implements Comparable<Tags>{
 			JLabel jLabel = new JLabel(General.get().none());
 			Font font = jLabel.getFont();
 			jLabel.setFont(new Font(font.getName(), Font.ITALIC, font.getSize()));
-			jLabel.setForeground(Color.DARK_GRAY);
+			if (ColorUtil.isBrightColor(jLabel.getBackground())) { //Light background color
+				jLabel.setForeground(jLabel.getBackground().darker().darker().darker());
+			} else { //Dark background color
+				jLabel.setForeground(jLabel.getBackground().brighter().brighter());
+			}
 			jPanel.add(jLabel);
 		}
 	}

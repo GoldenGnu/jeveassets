@@ -37,6 +37,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import javax.swing.ButtonGroup;
@@ -47,10 +49,13 @@ import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
+import javax.swing.UIManager.LookAndFeelInfo;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.settings.ColorTheme;
 import net.nikr.eve.jeveasset.data.settings.ColorTheme.ColorThemeTypes;
 import net.nikr.eve.jeveasset.data.settings.ColorSettings.ColorRow;
+import net.nikr.eve.jeveasset.data.settings.ColorSettings.PredefinedLookAndFeel;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.JSimpleColorPicker;
@@ -59,15 +64,11 @@ import net.nikr.eve.jeveasset.gui.shared.components.JFixedToolBar;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.EventListManager;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
-import net.nikr.eve.jeveasset.i18n.DataColors;
 import net.nikr.eve.jeveasset.i18n.DialoguesSettings;
 
 
 public class ColorSettingsPanel extends JSettingsPanel {
 
-	private final JRadioButtonMenuItem jDefault;
-	private final JRadioButtonMenuItem jStrong;
-	private final JRadioButtonMenuItem jColorblind;
 	private final JTextField jFilter;
 	//Table
 	private final JColorTable jTable;
@@ -76,13 +77,16 @@ public class ColorSettingsPanel extends JSettingsPanel {
 	private final EventList<ColorRow> eventList;
 	private final DefaultEventSelectionModel<ColorRow> selectionModel;
 	private ColorThemeTypes colorThemeTypes;
+	private String lookAndFeelClass;
 	private boolean updateLock = false;
+	private final List<JThemeMenuItem> jThemeMenuItems = new ArrayList<>();
+	private final List<JLookAndFeelMenuItem> jLafMenuItems = new ArrayList<>();
 
 	public ColorSettingsPanel(final Program program, final SettingsDialog settingsDialog) {
 		super(program, settingsDialog, DialoguesSettings.get().colors(), Images.SETTINGS_COLORS.getIcon());
 		
 		JSimpleColorPicker jSimpleColorPicker = new JSimpleColorPicker(settingsDialog.getDialog());
-		
+
 		//Table Format
 		tableFormat = new EnumTableFormatAdaptor<>(ColorsTableFormat.class);
 		//Backend
@@ -204,8 +208,60 @@ public class ColorSettingsPanel extends JSettingsPanel {
 
 		JScrollPane jTableScroll = new JScrollPane(jTable);
 
-		JFixedToolBar jToolBarLeft = new JFixedToolBar();
-		jToolBarLeft.add(jFilter);
+		JFixedToolBar jToolBarTop = new JFixedToolBar();
+
+		JDropDownButton jLookAndFeel = new JDropDownButton(DialoguesSettings.get().lookAndFeel(), Images.FILTER_LOAD.getIcon());
+		jToolBarTop.addButton(jLookAndFeel);
+
+		ButtonGroup lafButtonGroup = new ButtonGroup();
+		//Predefined LookAndFeels
+		for (PredefinedLookAndFeel predefinedLookAndFeel : PredefinedLookAndFeel.values()) {
+			JLookAndFeelMenuItem jMenuItem = new JLookAndFeelMenuItem(predefinedLookAndFeel.getLookAndFeelInfo(), jLookAndFeel, settingsDialog);
+			jMenuItem.setSelected(predefinedLookAndFeel.isSelected());
+			jLookAndFeel.add(jMenuItem);
+			lafButtonGroup.add(jMenuItem);
+			jLafMenuItems.add(jMenuItem);
+		}
+		//Installed LookAndFeels
+		for (LookAndFeelInfo laf : Arrays.asList(UIManager.getInstalledLookAndFeels())) {
+			JLookAndFeelMenuItem jMenuItem = new JLookAndFeelMenuItem(laf, jLookAndFeel, settingsDialog);
+			jLookAndFeel.add(jMenuItem);
+			lafButtonGroup.add(jMenuItem);
+			jLafMenuItems.add(jMenuItem);
+		}
+
+		JDropDownButton jTheme = new JDropDownButton(DialoguesSettings.get().theme(), Images.FILTER_LOAD.getIcon());
+		jToolBarTop.addButton(jTheme);
+
+		ButtonGroup buttonGroup = new ButtonGroup();
+		for (ColorThemeTypes theme : ColorThemeTypes.values()) {
+			JThemeMenuItem jMenuItem = new JThemeMenuItem(theme);
+			jTheme.add(jMenuItem);
+			buttonGroup.add(jMenuItem);
+			jThemeMenuItems.add(jMenuItem);
+		}
+
+		JButton jCollapse = new JButton(DialoguesSettings.get().collapse(), Images.MISC_COLLAPSED.getIcon());
+		jCollapse.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				jTable.expandSeparators(false);
+			}
+		});
+		jToolBarTop.addButton(jCollapse);
+
+		JButton jExpand = new JButton(DialoguesSettings.get().expand(), Images.MISC_EXPANDED.getIcon());
+		jExpand.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				jTable.expandSeparators(true);
+			}
+		});
+		jToolBarTop.addButton(jExpand);
+
+		JFixedToolBar jToolBarBottom = new JFixedToolBar();
+
+		jToolBarBottom.add(jFilter);
 
 		JButton jClear = new JButton(Images.TAB_CLOSE.getIcon());
 		jClear.setContentAreaFilled(false);
@@ -217,90 +273,30 @@ public class ColorSettingsPanel extends JSettingsPanel {
 				jFilter.setText("");
 			}
 		});
-		jToolBarLeft.addButton(jClear, 0);
-
-		JDropDownButton jTheme = new JDropDownButton("Theme", Images.FILTER_LOAD.getIcon());
-		jToolBarLeft.addButton(jTheme);
-
-		ButtonGroup buttonGroup = new ButtonGroup();
-		jDefault = new JRadioButtonMenuItem(DataColors.get().colorThemeDefault());
-		jDefault.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				if (updateLock) {
-					return;
-				}
-				updateTheme(ColorThemeTypes.DEFAULT);
-			}
-		});
-		jTheme.add(jDefault);
-		buttonGroup.add(jDefault);
-
-		jStrong = new JRadioButtonMenuItem(DataColors.get().colorThemeStrong());
-		jStrong.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				if (updateLock) {
-					return;
-				}
-				updateTheme(ColorThemeTypes.STRONG);
-			}
-		});
-		jTheme.add(jStrong);
-		buttonGroup.add(jStrong);
-
-		jColorblind = new JRadioButtonMenuItem(DataColors.get().colorThemeColorblind());
-		jColorblind.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				if (updateLock) {
-					return;
-				}
-				updateTheme(ColorThemeTypes.COLORBLIND);
-			}
-		});
-		jTheme.add(jColorblind);
-		buttonGroup.add(jColorblind);
-
-		JButton jCollapse = new JButton(DialoguesSettings.get().collapse(), Images.MISC_COLLAPSED.getIcon());
-		jCollapse.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				jTable.expandSeparators(false);
-			}
-		});
-		jToolBarLeft.addButton(jCollapse);
-
-		JButton jExpand = new JButton(DialoguesSettings.get().expand(), Images.MISC_EXPANDED.getIcon());
-		jExpand.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				jTable.expandSeparators(true);
-			}
-		});
-		jToolBarLeft.addButton(jExpand);
+		jToolBarBottom.addButton(jClear, 0);
 
 		layout.setHorizontalGroup(
 			layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
-				.addGroup(layout.createSequentialGroup()
-					.addComponent(jToolBarLeft, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Integer.MAX_VALUE)
-				)
-				.addComponent(jTableScroll)
+				.addComponent(jToolBarTop, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Integer.MAX_VALUE)
+				.addComponent(jToolBarBottom, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Integer.MAX_VALUE)
+				.addComponent(jTableScroll, 375, 375, Integer.MAX_VALUE)
 		);
 		layout.setVerticalGroup(
 			layout.createSequentialGroup()
-				.addGroup(layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
-					.addComponent(jToolBarLeft, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
-				)
-				.addComponent(jTableScroll, 290, 290, 290)
+				.addComponent(jToolBarTop ,GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+				.addComponent(jToolBarBottom, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+				.addComponent(jTableScroll, 250, 250, Integer.MAX_VALUE)
 		);
 	}
 
 	@Override
 	public boolean save() {
 		ColorTheme colorTheme = colorThemeTypes.getInstance();
-		boolean update = !colorTheme.equals(Settings.get().getColorSettings().getColorTheme());
+		boolean lookAndfeelChanged = !Settings.get().getColorSettings().getLookAndFeelClass().equals(lookAndFeelClass);
+		boolean update = !colorTheme.equals(Settings.get().getColorSettings().getColorTheme())
+						|| lookAndfeelChanged;
 		Settings.get().getColorSettings().setColorTheme(colorTheme, true); //Later overwritten by table values, but, set uneditable values
+		Settings.get().getColorSettings().setLookAndFeelClass(lookAndFeelClass);
 		try {
 			eventList.getReadWriteLock().readLock().lock();
 			for (ColorRow row : eventList) {
@@ -308,6 +304,9 @@ public class ColorSettingsPanel extends JSettingsPanel {
 			}
 		} finally {
 			eventList.getReadWriteLock().readLock().unlock();
+		}
+		if (lookAndfeelChanged && !UIManager.getLookAndFeel().getClass().getName().equals(lookAndFeelClass)) {
+			JOptionPane.showMessageDialog(parent, DialoguesSettings.get().lookAndFeelMsg(), DialoguesSettings.get().lookAndFeelTitle(), JOptionPane.PLAIN_MESSAGE);
 		}
 		return update;
 	}
@@ -318,7 +317,13 @@ public class ColorSettingsPanel extends JSettingsPanel {
 		updateTable(Settings.get().getColorSettings().get());
 		colorThemeTypes = Settings.get().getColorSettings().getColorTheme().getType();
 		select(colorThemeTypes);
+		lookAndFeelClass = Settings.get().getColorSettings().getLookAndFeelClass();
+		select(lookAndFeelClass);
 		updateLock = false;
+	}
+
+	private void updateLookAndFeelClass(String lookAndFeelClass) {
+		this.lookAndFeelClass = lookAndFeelClass;
 	}
 
 	private void updateTheme(ColorThemeTypes colorTheme) {
@@ -350,16 +355,20 @@ public class ColorSettingsPanel extends JSettingsPanel {
 	}
 
 	private void select(ColorThemeTypes colorTheme) {
-		switch(colorTheme) {
-			case DEFAULT:
-				jDefault.setSelected(true);
+		for (JThemeMenuItem jThemeMenuItem : jThemeMenuItems) {
+			if (jThemeMenuItem.getTheme().equals(colorTheme)) {
+				jThemeMenuItem.setSelected(true);
 				break;
-			case STRONG:
-				jStrong.setSelected(true);
+			}
+		}
+	}
+
+	private void select(String lookAndFeelClass) {
+		for (JLookAndFeelMenuItem jLookAndFeelMenuItem : jLafMenuItems) {
+			if (jLookAndFeelMenuItem.getLookAndFeelClass().equals(lookAndFeelClass)) {
+				jLookAndFeelMenuItem.setSelected(true);
 				break;
-			case COLORBLIND:
-				jColorblind.setSelected(true);
-				break;
+			}
 		}
 	}
 
@@ -392,5 +401,51 @@ public class ColorSettingsPanel extends JSettingsPanel {
 			baseList.add(element.getColorEntry().getGroup().getName());
 		}
 	}
-}
 
+	private final class JThemeMenuItem extends JRadioButtonMenuItem {
+		private final ColorThemeTypes theme;
+
+		public JThemeMenuItem(ColorThemeTypes theme) {
+			super(theme.toString());
+			this.theme = theme;
+			addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					if (updateLock) {
+						return;
+					}
+					updateTheme(theme);
+				}
+			});
+		}
+
+		public ColorThemeTypes getTheme() {
+			return theme;
+		}
+
+	}
+
+	private final class JLookAndFeelMenuItem extends JRadioButtonMenuItem {
+		private final String lookAndFeelClass;
+
+		public JLookAndFeelMenuItem(LookAndFeelInfo lookAndFeel, JDropDownButton jDropDownButton, final SettingsDialog settingsDialog) {
+			super(lookAndFeel.getName());
+			this.lookAndFeelClass = lookAndFeel.getClassName();
+			addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					if (updateLock) {
+						return;
+					}
+					updateLookAndFeelClass(lookAndFeelClass);
+				}
+			});
+			LookAndFeelPreview.install(lookAndFeelClass, jDropDownButton, this, settingsDialog);
+		}
+
+		public String getLookAndFeelClass() {
+			return lookAndFeelClass;
+		}
+
+	}
+}

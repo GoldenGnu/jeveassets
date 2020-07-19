@@ -113,11 +113,6 @@ public abstract class FakeSettings extends Settings {
 	}
 
 	@Override
-	public boolean isUpdatable(final Date date) {
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	@Override
 	public boolean isWindowAutoSave() {
 		throw new UnsupportedOperationException("not implemented");
 	}
@@ -619,6 +614,36 @@ public abstract class FakeSettings extends Settings {
 
 	@Override
 	public ColorSettings getColorSettings() {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public void setTransactionProfitPrice(TransactionProfitPrice transactionProfitPrice) {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public TransactionProfitPrice getTransactionProfitPrice() {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public void setFactionWarfareNextUpdate(Date factionWarfareNextUpdate) {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public Date getFactionWarfareNextUpdate() {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public void setFactionWarfareSystemOwners(Map<Long, String> factionWarfareSystemOwners) {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public Map<Long, String> getFactionWarfareSystemOwners() {
 		throw new UnsupportedOperationException("not implemented");
 	}
 

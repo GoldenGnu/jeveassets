@@ -16,6 +16,38 @@
                   #### #  # #  # #  # #### #### #### #### ####
 
 ________________________________________________________________________________
+_6.5.0__________________________________________________________________________
+
+New Features:
+-BPC colors can now be changed (Issue #150)
+-Added assets colors to the tree table
+-Better GUI on the color settings panel (tested on Ubuntu and Windows)
+-Improved math for Transaction Profit/Price columns (Issue #152)
+-Added option to select what price to use for profit calculations
+-Added ToolTips to a lot of columns
+-Changeable Look and Feel + Dark Theme (Issue #66)
+-Faction warfare system ownership column to Assets/Tree
+-Added Reprocessed price column to Market Orders tool
+-Stockpile match installer for industry jobs (Issue #164)
+
+Changed:
+-Stockpiles are now sorted case-insensitive
+
+Code:
+-Updated dom4j library to 2.1.3 (security vulnerability)
+-Updated eve-esi to 4.0.0 (major change: all enums can now be null)
+
+Bug Fixes:
+-Possible fix for outbid count being wrong (Issue #158)
+-Possible fix for account error JWT is null (Issue #171)
+-Contracts Appraisal API failing when including private structures (Issue #172)
+-Outbid range for sell orders always used region (Issue #170)
+-Made StatusPanel.progressStatus thread safe (BugID: 830)
+-Fixed Market Orders export having a bad value for Market Details column
+-Possible fix for Stockpile CtD (BugId: 833)
+-Ensure outbid doesn't have outdated data (Possible fix for #158 and #170)
+
+________________________________________________________________________________
 _6.4.1__________________________________________________________________________
 
 Bug Fixes:

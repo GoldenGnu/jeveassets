@@ -56,6 +56,7 @@ import net.nikr.eve.jeveasset.data.settings.RouteResult;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.data.settings.Settings.SettingFlag;
 import net.nikr.eve.jeveasset.data.settings.Settings.SettingsFactory;
+import net.nikr.eve.jeveasset.data.settings.Settings.TransactionProfitPrice;
 import net.nikr.eve.jeveasset.data.settings.TrackerData;
 import net.nikr.eve.jeveasset.data.settings.UserItem;
 import net.nikr.eve.jeveasset.data.settings.tag.Tag;
@@ -249,6 +250,12 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 	private Settings loadSettings(final Element element, final Settings settings) throws XmlException {
 		if (!element.getNodeName().equals("settings")) {
 			throw new XmlException("Wrong root element name.");
+		}
+
+		//Faction Warfare System Owners
+		Element factionWarfareSystemOwnersElement = getNodeOptional(element, "factionwarfaresystemowners");
+		if (factionWarfareSystemOwnersElement != null) {
+			parseFactionWarfareSystemOwners(factionWarfareSystemOwnersElement, settings);
 		}
 
 		//Color Settings
@@ -568,6 +575,15 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 
 	private void parseAssetSettings(final Element assetSettingsElement, final Settings settings) throws XmlException {
 		int maximumPurchaseAge = getInt(assetSettingsElement, "maximumpurchaseage");
+		TransactionProfitPrice transactionProfitPrice = TransactionProfitPrice.LASTEST;
+		if (haveAttribute(assetSettingsElement, "transactionprofitprice")) {
+			try {
+				transactionProfitPrice = TransactionProfitPrice.valueOf(getString(assetSettingsElement, "transactionprofitprice"));
+			} catch (IllegalArgumentException ex) {
+				//No problem already set
+			}
+		}
+		settings.setTransactionProfitPrice(transactionProfitPrice);
 		settings.setMaximumPurchaseAge(maximumPurchaseAge);
 	}
 
@@ -758,6 +774,19 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		Collections.sort(stockpiles);
 	}
 
+	private void parseFactionWarfareSystemOwners(Element factionWarfareSystemOwnersElement, Settings settings) throws XmlException {
+		Date factionWarfareNextUpdate = getDateNotNull(factionWarfareSystemOwnersElement, "factionwarfarenextupdate");
+		settings.setFactionWarfareNextUpdate(factionWarfareNextUpdate);
+		NodeList systemNodes = factionWarfareSystemOwnersElement.getElementsByTagName("system");
+		settings.getFactionWarfareSystemOwners().clear();
+		for (int a = 0; a < systemNodes.getLength(); a++) {
+			Element systemNode = (Element) systemNodes.item(a);
+			long systemID = getLong(systemNode, "system");
+			String faction = getString(systemNode, "faction");
+			settings.getFactionWarfareSystemOwners().put(systemID, faction);
+		}
+	}
+
 	private void parseColorSettings(Element colorSettingsElement, Settings settings) throws XmlException {
 		NodeList colorNodes = colorSettingsElement.getElementsByTagName("color");
 		for (int a = 0; a < colorNodes.getLength(); a++) {
@@ -781,6 +810,10 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 			colorThemeTypes = ColorThemeTypes.DEFAULT;
 		}
 		settings.getColorSettings().setColorTheme(colorThemeTypes.getInstance(), false);
+		String lookAndFeelClass = getStringOptional(colorSettingsElement, "lookandfeel");
+		if (lookAndFeelClass != null) {
+			settings.getColorSettings().setLookAndFeelClass(lookAndFeelClass);
+		}
 	}
 
 	private void parseTrackerSettings(Element trackerSettingsElement, Settings settings) throws XmlException {

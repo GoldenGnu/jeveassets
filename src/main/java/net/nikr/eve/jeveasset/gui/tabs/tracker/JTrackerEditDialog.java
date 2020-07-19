@@ -20,7 +20,6 @@
  */
 package net.nikr.eve.jeveasset.gui.tabs.tracker;
 
-import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
@@ -43,6 +42,7 @@ import javax.swing.JTextField;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.settings.ColorEntry;
 import net.nikr.eve.jeveasset.data.settings.ColorSettings;
+import net.nikr.eve.jeveasset.data.settings.Colors;
 import net.nikr.eve.jeveasset.data.settings.TrackerData;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
@@ -488,15 +488,16 @@ public class JTrackerEditDialog extends JDialogCentered {
 		@Override
 		public void focusGained(FocusEvent e) {
 			JTextField jTextField = (JTextField) e.getSource();
-			jTextField.setBackground(Color.WHITE);
+			jTextField.setBackground(Colors.TEXTFIELD_BACKGROUND.getColor());
+			jTextField.setForeground(Colors.TEXTFIELD_FOREGROUND.getColor());
 		}
-
 		@Override
 		public void focusLost(FocusEvent e) {
 			JTextField jTextField = (JTextField) e.getSource();
 			try {
 				parse(jTextField.getText());
-				jTextField.setBackground(Color.WHITE);
+				jTextField.setBackground(Colors.TEXTFIELD_BACKGROUND.getColor());
+				jTextField.setForeground(Colors.TEXTFIELD_FOREGROUND.getColor());
 			} catch (ParseException ex) {
 				ColorSettings.config(jTextField, ColorEntry.GLOBAL_ENTRY_INVALID);
 			}

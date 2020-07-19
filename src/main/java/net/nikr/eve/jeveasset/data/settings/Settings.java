@@ -32,7 +32,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.SplashUpdater;
 import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder.MarketOrderRange;
 import net.nikr.eve.jeveasset.data.settings.ContractPriceManager.ContractPriceSettings;
@@ -49,6 +48,7 @@ import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewGroup;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile;
 import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerDate;
 import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerNote;
+import net.nikr.eve.jeveasset.i18n.DialoguesSettings;
 import net.nikr.eve.jeveasset.io.local.SettingsReader;
 import net.nikr.eve.jeveasset.io.local.SettingsWriter;
 import net.nikr.eve.jeveasset.io.shared.FileUtil;
@@ -80,6 +80,40 @@ public class Settings {
 		FLAG_TRACKER_USE_ASSET_PRICE_FOR_SELL_ORDERS,
 		FLAG_FOCUS_EVE_ONLINE_ON_ESI_UI_CALLS,
 		FLAG_SAVE_TOOLS_ON_EXIT
+	}
+
+	public static enum TransactionProfitPrice {
+		LASTEST() {
+			@Override
+			public String getText() {
+				return DialoguesSettings.get().transactionsPriceLatest();
+			}
+		},
+		AVERAGE() {
+			@Override
+			public String getText() {
+				return DialoguesSettings.get().transactionsPriceAverage();
+			}
+		},
+		MINIMUM() {
+			@Override
+			public String getText() {
+				return DialoguesSettings.get().transactionsPriceMinimum();
+			}
+		},
+		MAXIMUM() {
+			@Override
+			public String getText() {
+				return DialoguesSettings.get().transactionsPriceMaximum();
+			}
+		};
+
+		@Override
+		public String toString() {
+			return getText();
+		}
+
+		protected abstract String getText();
 	}
 
 	private static final SettingsLock LOCK = new SettingsLock();
@@ -150,12 +184,17 @@ public class Settings {
 	private boolean windowAlwaysOnTop = false;
 	//Assets
 	private int maximumPurchaseAge = 0;
+	private TransactionProfitPrice transactionProfitPrice = TransactionProfitPrice.LASTEST;
 	//Reprocess price
 	private ReprocessSettings reprocessSettings = new ReprocessSettings();
 	//Public Market Orders Last Update
 	private Date publicMarketOrdersLastUpdate = null;
 	//Public Market Orders Next Update
 	private Date publicMarketOrdersNextUpdate = getNow();
+	//Faction Warfare System Owners
+	private Map<Long, String> factionWarfareSystemOwners = new HashMap<>();
+	//Faction Warfare Next Update
+	private Date factionWarfareNextUpdate = getNow();
 	//Market Orders Outbid
 	private final Map<Long, Outbid> marketOrdersOutbid = new HashMap<>();
 	//SellOrderRange
@@ -471,6 +510,22 @@ public class Settings {
 		return set;
 	}
 
+	public Map<Long, String> getFactionWarfareSystemOwners() {
+		return factionWarfareSystemOwners;
+	}
+
+	public void setFactionWarfareSystemOwners(Map<Long, String> factionWarfareSystemOwners) {
+		this.factionWarfareSystemOwners = factionWarfareSystemOwners;
+	}
+
+	public Date getFactionWarfareNextUpdate() {
+		return factionWarfareNextUpdate;
+	}
+
+	public void setFactionWarfareNextUpdate(Date factionWarfareNextUpdate) {
+		this.factionWarfareNextUpdate = factionWarfareNextUpdate;
+	}
+
 	public Date getPublicMarketOrdersNextUpdate() {
 		return publicMarketOrdersNextUpdate;
 	}
@@ -509,6 +564,14 @@ public class Settings {
 
 	public void setMaximumPurchaseAge(final int maximumPurchaseAge) {
 		this.maximumPurchaseAge = maximumPurchaseAge;
+	}
+
+	public TransactionProfitPrice getTransactionProfitPrice() {
+		return transactionProfitPrice;
+	}
+
+	public void setTransactionProfitPrice(TransactionProfitPrice transactionProfitPrice) {
+		this.transactionProfitPrice = transactionProfitPrice;
 	}
 
 	public boolean isFilterOnEnter() {
@@ -764,15 +827,6 @@ public class Settings {
 
 	public static DateFormat getSettingsDateFormat() {
 		return new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
-	}
-
-	public boolean isUpdatable(final Date date) {
-		Date now = Settings.getNow();
-		return date != null &&
-				((now.after(date)
-				|| now.equals(date)
-				|| Program.isForceUpdate())
-				&& !Program.isForceNoUpdate());
 	}
 
 	private static class SettingsLock {

@@ -30,7 +30,19 @@ public class AssetAndTreeTableFormatTest extends TestUtil {
 
 	@Test
 	public void testColumns() {
-		assertEquals("A column is missing from TreeTableFormat or AssetTableFormat", TreeTableFormat.values().length, AssetTableFormat.values().length);
+		for (AssetTableFormat format : AssetTableFormat.values()) {
+			try {
+				TreeTableFormat.valueOf(format.name());
+			} catch (IllegalArgumentException es) {
+				fail(format.name() + " is missing from TreeTableFormat");
+			}
+		}
+		for (TreeTableFormat format : TreeTableFormat.values()) {
+			try {
+				AssetTableFormat.valueOf(format.name());
+			} catch (IllegalArgumentException es) {
+				fail(format.name() + " is missing from AssetTableFormat");
+			}
+		}
 	}
-	
 }

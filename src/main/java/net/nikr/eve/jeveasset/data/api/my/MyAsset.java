@@ -54,7 +54,6 @@ import net.nikr.eve.jeveasset.gui.tabs.assets.AssetsTab;
 import net.nikr.eve.jeveasset.i18n.DataModelAsset;
 import net.nikr.eve.jeveasset.i18n.General;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
-import net.nikr.eve.jeveasset.io.shared.RawConverter;
 
 public class MyAsset extends RawAsset implements Comparable<MyAsset>, InfoItem, JumpType, ItemType, BlueprintType, EditablePriceType, ContractPriceType, TagsType, EditableLocationType, OwnersType {
 
@@ -135,7 +134,6 @@ public class MyAsset extends RawAsset implements Comparable<MyAsset>, InfoItem, 
 		setItemID(0L);
 		setItemFlag(ApiIdConverter.getFlag(0));
 		setLocationID(location.getLocationID());
-		setLocationType(RawConverter.toAssetLocationType(location.getLocationID()));
 	}
 
 	public MyAsset(final RawAsset rawAsset, final Item item, final OwnerType owner, final List<MyAsset> parents) {

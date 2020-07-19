@@ -115,6 +115,20 @@ public enum TreeTableFormat implements EnumTableColumn<TreeAsset> {
 			return from.getLocation().getRegion();
 		}
 	},
+	FACTION_WARFARE_SYSTEM_OWNER(String.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsAssets.get().columnFactionWarfareSystemOwner();
+		}
+		@Override
+		public String getColumnToolTip() {
+			return TabsAssets.get().columnFactionWarfareSystemOwnerToolTip();
+		}
+		@Override
+		public Object getColumnValue(final TreeAsset from) {
+			return from.getLocation().getFactionWarfareSystemOwner();
+		}
+	},
 	CONTAINER(String.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
@@ -141,6 +155,10 @@ public enum TreeTableFormat implements EnumTableColumn<TreeAsset> {
 			return TabsAssets.get().columnPrice();
 		}
 		@Override
+		public String getColumnToolTip() {
+			return TabsAssets.get().columnPriceToolTip();
+		}
+		@Override
 		public Object getColumnValue(final TreeAsset from) {
 			return from.getDynamicPrice();
 		}
@@ -149,6 +167,10 @@ public enum TreeTableFormat implements EnumTableColumn<TreeAsset> {
 		@Override
 		public String getColumnName() {
 			return TabsAssets.get().columnPriceSellMin();
+		}
+		@Override
+		public String getColumnToolTip() {
+			return TabsAssets.get().columnPriceSellMinToolTip();
 		}
 		@Override
 		public Object getColumnValue(final TreeAsset from) {
@@ -161,6 +183,10 @@ public enum TreeTableFormat implements EnumTableColumn<TreeAsset> {
 			return TabsAssets.get().columnPriceBuyMax();
 		}
 		@Override
+		public String getColumnToolTip() {
+			return TabsAssets.get().columnPriceBuyMaxToolTip();
+		}
+		@Override
 		public Object getColumnValue(final TreeAsset from) {
 			return from.getPriceBuyMax();
 		}
@@ -169,6 +195,10 @@ public enum TreeTableFormat implements EnumTableColumn<TreeAsset> {
 		@Override
 		public String getColumnName() {
 			return TabsAssets.get().columnPriceContract();
+		}
+		@Override
+		public String getColumnToolTip() {
+			return TabsAssets.get().columnPriceContractToolTip();
 		}
 		@Override
 		public Object getColumnValue(final TreeAsset from) {
@@ -181,44 +211,64 @@ public enum TreeTableFormat implements EnumTableColumn<TreeAsset> {
 			return TabsAssets.get().columnPriceReprocessed();
 		}
 		@Override
+		public String getColumnToolTip() {
+			return TabsAssets.get().columnPriceReprocessedToolTip();
+		}
+		@Override
 		public Object getColumnValue(final TreeAsset from) {
 			return from.getPriceReprocessed();
 		}
 	},
-	MARKET_ORDER_LATEST(Double.class, GlazedLists.comparableComparator()) {
+	TRANSACTION_PRICE_LATEST(Double.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
-			return TabsAssets.get().columnMarketOrderLatest();
+			return TabsAssets.get().columnTransactionPriceLatest();
+		}
+		@Override
+		public String getColumnToolTip() {
+			return TabsAssets.get().columnTransactionPriceLatestToolTip();
 		}
 		@Override
 		public Object getColumnValue(final TreeAsset from) {
 			return from.getPriceMarketLatest();
 		}
 	},
-	MARKET_ORDER_AVERAGE(Double.class, GlazedLists.comparableComparator()) {
+	TRANSACTION_PRICE_AVERAGE(Double.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
-			return TabsAssets.get().columnMarketOrderAverage();
+			return TabsAssets.get().columnTransactionPriceAverage();
+		}
+		@Override
+		public String getColumnToolTip() {
+			return TabsAssets.get().columnTransactionPriceAverageToolTip();
 		}
 		@Override
 		public Object getColumnValue(final TreeAsset from) {
 			return from.getPriceMarketAverage();
 		}
 	},
-	MARKET_ORDER_MAXIMUM(Double.class, GlazedLists.comparableComparator()) {
+	TRANSACTION_PRICE_MAXIMUM(Double.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
-			return TabsAssets.get().columnMarketOrderMaximum();
+			return TabsAssets.get().columnTransactionPriceMaximum();
+		}
+		@Override
+		public String getColumnToolTip() {
+			return TabsAssets.get().columnTransactionPriceMaximumToolTip();
 		}
 		@Override
 		public Object getColumnValue(final TreeAsset from) {
 			return from.getPriceMarketMaximum();
 		}
 	},
-	MARKET_ORDER_MINIMUM(Double.class, GlazedLists.comparableComparator()) {
+	TRANSACTION_PRICE_MINIMUM(Double.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
-			return TabsAssets.get().columnMarketOrderMinimum();
+			return TabsAssets.get().columnTransactionPriceMinimum();
+		}
+		@Override
+		public String getColumnToolTip() {
+			return TabsAssets.get().columnTransactionPriceMinimumToolTip();
 		}
 		@Override
 		public Object getColumnValue(final TreeAsset from) {
@@ -231,6 +281,10 @@ public enum TreeTableFormat implements EnumTableColumn<TreeAsset> {
 			return TabsAssets.get().columnPriceBase();
 		}
 		@Override
+		public String getColumnToolTip() {
+			return TabsAssets.get().columnPriceBaseToolTip();
+		}
+		@Override
 		public Object getColumnValue(final TreeAsset from) {
 			return from.getPriceBase();
 		}
@@ -239,6 +293,10 @@ public enum TreeTableFormat implements EnumTableColumn<TreeAsset> {
 		@Override
 		public String getColumnName() {
 			return TabsAssets.get().columnValueReprocessed();
+		}
+		@Override
+		public String getColumnToolTip() {
+			return TabsAssets.get().columnValueReprocessedToolTip();
 		}
 		@Override
 		public Object getColumnValue(final TreeAsset from) {
@@ -251,6 +309,10 @@ public enum TreeTableFormat implements EnumTableColumn<TreeAsset> {
 			return TabsAssets.get().columnValue();
 		}
 		@Override
+		public String getColumnToolTip() {
+			return TabsAssets.get().columnValueToolTip();
+		}
+		@Override
 		public Object getColumnValue(final TreeAsset from) {
 			return from.getValue();
 		}
@@ -261,6 +323,10 @@ public enum TreeTableFormat implements EnumTableColumn<TreeAsset> {
 			return TabsAssets.get().columnPriceReprocessedDifference();
 		}
 		@Override
+		public String getColumnToolTip() {
+			return TabsAssets.get().columnPriceReprocessedDifferenceToolTip();
+		}
+		@Override
 		public Object getColumnValue(final TreeAsset from) {
 			return from.getPriceReprocessedDifference();
 		}
@@ -269,6 +335,10 @@ public enum TreeTableFormat implements EnumTableColumn<TreeAsset> {
 		@Override
 		public String getColumnName() {
 			return TabsAssets.get().columnPriceReprocessedPercent();
+		}
+		@Override
+		public String getColumnToolTip() {
+			return TabsAssets.get().columnPriceReprocessedPercentToolTip();
 		}
 		@Override
 		public Object getColumnValue(final TreeAsset from) {
@@ -289,6 +359,10 @@ public enum TreeTableFormat implements EnumTableColumn<TreeAsset> {
 		@Override
 		public String getColumnName() {
 			return TabsAssets.get().columnTypeCount();
+		}
+		@Override
+		public String getColumnToolTip() {
+			return TabsAssets.get().columnTypeCountToolTip();
 		}
 		@Override
 		public Object getColumnValue(final TreeAsset from) {
@@ -331,6 +405,10 @@ public enum TreeTableFormat implements EnumTableColumn<TreeAsset> {
 			return TabsAssets.get().columnVolumeTotal();
 		}
 		@Override
+		public String getColumnToolTip() {
+			return TabsAssets.get().columnVolumeTotalToolTip();
+		}
+		@Override
 		public Object getColumnValue(final TreeAsset from) {
 			return from.getVolumeTotal();
 		}
@@ -361,6 +439,10 @@ public enum TreeTableFormat implements EnumTableColumn<TreeAsset> {
 			return TabsAssets.get().columnAdded();
 		}
 		@Override
+		public String getColumnToolTip() {
+			return TabsAssets.get().columnAddedToolTip();
+		}
+		@Override
 		public Object getColumnValue(final TreeAsset from) {
 			return from.getAdded();
 		}
@@ -375,6 +457,10 @@ public enum TreeTableFormat implements EnumTableColumn<TreeAsset> {
 			return TabsAssets.get().columnMaterialEfficiency();
 		}
 		@Override
+		public String getColumnToolTip() {
+			return TabsAssets.get().columnMaterialEfficiencyToolTip();
+		}
+		@Override
 		public Object getColumnValue(final TreeAsset from) {
 			return from.getMaterialEfficiency();
 		}
@@ -383,6 +469,10 @@ public enum TreeTableFormat implements EnumTableColumn<TreeAsset> {
 		@Override
 		public String getColumnName() {
 			return TabsAssets.get().columnTimeEfficiency();
+		}
+		@Override
+		public String getColumnToolTip() {
+			return TabsAssets.get().columnTimeEfficiencyToolTip();
 		}
 		@Override
 		public Object getColumnValue(final TreeAsset from) {
@@ -395,6 +485,10 @@ public enum TreeTableFormat implements EnumTableColumn<TreeAsset> {
 			return TabsAssets.get().columnRuns();
 		}
 		@Override
+		public String getColumnToolTip() {
+			return TabsAssets.get().columnRunsToolTip();
+		}
+		@Override
 		public Object getColumnValue(final TreeAsset from) {
 			return new Runs(from.getRuns());
 		}
@@ -402,7 +496,11 @@ public enum TreeTableFormat implements EnumTableColumn<TreeAsset> {
 	CITADEL(YesNo.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
-			return TabsAssets.get().columnCitadel();
+			return TabsAssets.get().columnStructure();
+		}
+		@Override
+		public String getColumnToolTip() {
+			return TabsAssets.get().columnStructureToolTip();
 		}
 		@Override
 		public Object getColumnValue(final TreeAsset from) {
@@ -419,6 +517,10 @@ public enum TreeTableFormat implements EnumTableColumn<TreeAsset> {
 			return TabsAssets.get().columnItemID();
 		}
 		@Override
+		public String getColumnToolTip() {
+			return TabsAssets.get().columnItemIDToolTip();
+		}
+		@Override
 		public Object getColumnValue(final TreeAsset from) {
 			return new LongInt(from.getItemID());
 		}
@@ -427,6 +529,10 @@ public enum TreeTableFormat implements EnumTableColumn<TreeAsset> {
 		@Override
 		public String getColumnName() {
 			return TabsAssets.get().columnTypeID();
+		}
+		@Override
+		public String getColumnToolTip() {
+			return TabsAssets.get().columnTypeIDToolTip();
 		}
 		@Override
 		public Object getColumnValue(final TreeAsset from) {

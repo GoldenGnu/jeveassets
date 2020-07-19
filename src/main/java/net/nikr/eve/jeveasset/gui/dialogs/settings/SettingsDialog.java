@@ -206,6 +206,14 @@ public class SettingsDialog extends JDialogCentered {
 		add(jSettingsPanel, null);
 	}
 
+	protected void addCard(final JPanel jPanel, final String title) {
+		jContent.add(jPanel, title);
+	}
+
+	protected void removeCard(final JPanel jPanel) {
+		jContent.remove(jPanel);
+	}
+
 	private void add(final JSettingsPanel jSettingsPanel, final DefaultMutableTreeNode parentNode) {
 		settingsPanels.put(jSettingsPanel.getTitle(), jSettingsPanel);
 		icons.put(jSettingsPanel.getTitle(), jSettingsPanel.getIcon());

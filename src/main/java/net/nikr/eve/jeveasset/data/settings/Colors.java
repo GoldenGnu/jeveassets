@@ -21,8 +21,11 @@
 package net.nikr.eve.jeveasset.data.settings;
 
 import java.awt.Color;
+import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.UIManager;
 
 public enum Colors {
 	/**
@@ -38,6 +41,10 @@ public enum Colors {
 	 */
 	COLORBLIND_GRAY(190, 190, 190),
 	/**
+	 * 81, 81, 81
+	 */
+	DARK_GRAY(81, 81, 81),
+	/**
 	 * 255, 200, 200
 	 */
 	LIGHT_RED(255, 200, 200),
@@ -48,11 +55,19 @@ public enum Colors {
 	/**
 	 * Dark Red
 	 */
-	DARK_RED(Color.RED.darker()),
+	FOREGROUND_RED(Color.RED.darker()),
+	/**
+	 * Dark Red
+	 */
+	DARK_FOREGROUND_RED(239, 143, 143),
+	/**
+	 * 120, 45, 30
+	 */
+	DARK_RED(120, 45, 30),
 	/**
 	 * 213, 94, 0
 	 */
-	COLORBLIND_DARK_RED(213, 94, 0),
+	COLORBLIND_FOREGROUND_RED(213, 94, 0),
 	/**
 	 * 200, 255, 200
 	 */
@@ -68,11 +83,19 @@ public enum Colors {
 	/**
 	 * Dark Green
 	 */
-	DARK_GREEN(Color.GREEN.darker()),
+	FOREGROUND_GREEN(Color.GREEN.darker()),
+	/**
+	 * 22, 153, 0
+	 */
+	DARK_FOREGROUND_GREEN(152, 229, 152),
+	/**
+	 * 45, 67, 34
+	 */
+	DARK_GREEN(45, 67, 34),
 	/**
 	 * 0, 114, 178 (not really green, it's blue)
 	 */
-	COLORBLIND_DARK_GREEN(0, 114, 178),
+	COLORBLIND_FOREGROUND_GREEN(0, 114, 178),
 	/**
 	 * 255, 255, 200
 	 */
@@ -86,6 +109,10 @@ public enum Colors {
 	 */
 	COLORBLIND_YELLOW(240, 228, 66),
 	/**
+	 * 132, 103, 14
+	 */
+	DARK_YELLOW(132, 103, 14),
+	/**
 	 * 220, 240, 255
 	 */
 	LIGHT_BLUE(220, 240, 255),
@@ -93,6 +120,10 @@ public enum Colors {
 	 * 180, 220, 255
 	 */
 	STRONG_BLUE(180, 220, 255),
+	/**
+	 * 86, 106, 143
+	 */
+	DARK_BLUE(86, 106, 143),
 	/**
 	 * 100, 143, 255
 	 */
@@ -110,6 +141,10 @@ public enum Colors {
 	 */
 	COLORBLIND_ORANGE(230, 159, 0),
 	/**
+	 * 114, 77, 38
+	 */
+	DARK_ORANGE(114, 77, 38),
+	/**
 	 * 255, 220, 255
 	 */
 	LIGHT_MAGENTA(255, 220, 255),
@@ -122,31 +157,121 @@ public enum Colors {
 	 */
 	COLORBLIND_MAGENTA(204, 121, 167),
 	/**
+	 * 77, 50, 64
+	 */
+	DARK_MAGENTA(77, 50, 64),
+	/**
 	 * Table selection background
 	 */
-	TABLE_SELECTION_BACKGROUND(new JTable().getSelectionBackground()),
+	TABLE_SELECTION_BACKGROUND("Table.selectionBackground") {
+		@Override
+		public Color getComponentColor() {
+			return new JTable().getSelectionBackground();
+		}
+	},
 	/**
 	 * Table selection foreground
 	 */
-	TABLE_SELECTION_FOREGROUND(new JTable().getSelectionForeground()),
+	TABLE_SELECTION_FOREGROUND("Table.selectionForeground") {
+		@Override
+		public Color getComponentColor() {
+			return new JTable().getSelectionForeground();
+		}
+	},
+	/**
+	 * TextField background
+	 */
+	TEXTFIELD_BACKGROUND("TextField.background") {
+		@Override
+		public Color getComponentColor() {
+			return new JTextField().getBackground();
+		}
+	},
+	/**
+	 * TextField foreground
+	 */
+	TEXTFIELD_FOREGROUND("TextField.foreground") {
+		@Override
+		public Color getComponentColor() {
+			return new JTextField().getForeground();
+		}
+	},
+	/**
+	 * Component background
+	 */
+	COMPONENT_BACKGROUND("Panel.background") {
+		@Override
+		public Color getComponentColor() {
+			return new JPanel().getBackground();
+		}
+	},
 	/**
 	 * Component foreground
 	 */
-	COMPONENT_FOREGROUND(new JPanel().getForeground()),
+	COMPONENT_FOREGROUND("Panel.foreground") {
+		@Override
+		public Color getComponentColor() {
+			return new JPanel().getForeground();
+		}
+	},
+	/**
+	 * Component background
+	 */
+	BUTTON_BACKGROUND("Button.background") {
+		@Override
+		public Color getComponentColor() {
+			return new JButton().getBackground();
+		}
+	},
+	/**
+	 * Component foreground
+	 */
+	BUTTON_FOREGROUND("Button.foreground") {
+		@Override
+		public Color getComponentColor() {
+			return new JButton().getForeground();
+		}
+	},
 	;
 
 	private final Color color;
+	private final String key;
+
+	private Colors(String key) {
+		this.color = null;
+		this.key = key;
+	}
 
 	private Colors(Color color) {
 		this.color = color;
+		this.key = null;
 	}
 
 	private Colors(int r, int g, int b) {
 		this.color = new Color(r, g, b);
+		this.key = null;
 	}
 
 	public Color getColor() {
-		return color;
+		if (color != null) {
+			return color;
+		}
+		if (key != null) {
+			Color ui = UIManager.getColor(key);
+			if (ui != null) {
+				return ui;
+			}
+		}
+		Color component = getComponentColor();
+		if (component != null) {
+			return component;
+		} else {
+			throw new RuntimeException(name() + " have no valid color");
+		}
+	}
+
+	public Color getComponentColor() {
+		return null;
 	}
 
 }

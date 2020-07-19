@@ -54,6 +54,7 @@ import javax.swing.event.CaretListener;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.settings.ColorEntry;
 import net.nikr.eve.jeveasset.data.settings.ColorSettings;
+import net.nikr.eve.jeveasset.data.settings.Colors;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.data.settings.tag.Tag;
 import net.nikr.eve.jeveasset.data.settings.tag.TagColor;
@@ -216,8 +217,9 @@ public class JTagsDialog extends JDialogCentered {
 				ColorSettings.config(jTextField, ColorEntry.GLOBAL_ENTRY_INVALID);
 				jOK.setEnabled(false);
 			} else {
+				jTextField.setBackground(Colors.TEXTFIELD_BACKGROUND.getColor());
+				jTextField.setForeground(Colors.TEXTFIELD_FOREGROUND.getColor());
 				jOK.setEnabled(true);
-				jTextField.setBackground(Color.WHITE);
 			}
 		}
 	}

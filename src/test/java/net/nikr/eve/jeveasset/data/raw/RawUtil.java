@@ -66,7 +66,13 @@ public class RawUtil {
 			if (value.getName().equals("itemFlag") && (raw.equals(RawAsset.class) || raw.equals(RawBlueprint.class))) {
 				continue;
 			}
-			if (value.getName().equals("locationFlag") && (raw.equals(RawAsset.class) || raw.equals(RawBlueprint.class))) {
+			if (value.getName().equals("locationFlagEnum") && (raw.equals(RawAsset.class) || raw.equals(RawBlueprint.class))) {
+				continue;
+			}
+			if (value.getName().equals("locationType") && (raw.equals(RawAsset.class))) { //Note used be jEveAssets
+				continue;
+			}
+			if (value.getName().equals("locationTypeEnum") && (raw.equals(RawAsset.class))) { //Note used be jEveAssets
 				continue;
 			}
 			if (value.getName().equals("isBlueprintCopy") && raw.equals(RawAsset.class)) { //Converted to quantity
@@ -91,6 +97,12 @@ public class RawUtil {
 				continue;
 			}
 			if (value.getName().equals("issuedBy") && raw.equals(RawMarketOrder.class)) { //Only in corporation endpoint
+				continue;
+			}
+			if (value.getName().equals("state") && raw.equals(RawMarketOrder.class)) { //Only in history endpoints
+				continue;
+			}
+			if (value.getName().equals("stateEnum") && raw.equals(RawMarketOrder.class)) { //Only in history endpoints
 				continue;
 			}
 			if (value.getName().equals("isCorp") && raw.equals(RawMarketOrder.class)) { //Only in character endpoint
@@ -128,7 +140,13 @@ public class RawUtil {
 			if (value.getName().equals("itemFlag") && (raw.equals(RawAsset.class) || raw.equals(RawBlueprint.class))) {
 				continue;
 			}
-			if (value.getName().equals("locationFlag") && (raw.equals(RawAsset.class) || raw.equals(RawBlueprint.class))) {
+			if (value.getName().equals("locationFlagEnum") && (raw.equals(RawAsset.class) || raw.equals(RawBlueprint.class))) {
+				continue;
+			}
+			if (value.getName().equals("locationType") && (raw.equals(RawAsset.class))) { //Note used be jEveAssets
+				continue;
+			}
+			if (value.getName().equals("locationTypeEnum") && (raw.equals(RawAsset.class))) { //Note used be jEveAssets
 				continue;
 			}
 			if (value.getName().equals("isBlueprintCopy") && raw.equals(RawAsset.class)) { //Converted to quantity
@@ -162,6 +180,9 @@ public class RawUtil {
 				continue;
 			}
 			if (value.getName().equals("state") && raw.equals(RawMarketOrder.class)) { //Only in history endpoints
+				continue;
+			}
+			if (value.getName().equals("stateEnum") && raw.equals(RawMarketOrder.class)) { //Only in history endpoints
 				continue;
 			}
 			if (value.getName().equals("changed") && raw.equals(RawMarketOrder.class)) { //jEveAssets value

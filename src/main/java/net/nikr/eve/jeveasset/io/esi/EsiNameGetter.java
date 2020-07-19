@@ -33,6 +33,7 @@ import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder;
 import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
+import net.nikr.eve.jeveasset.gui.shared.Updatable;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 import net.troja.eve.esi.ApiException;
 import net.troja.eve.esi.ApiResponse;
@@ -143,7 +144,7 @@ public class EsiNameGetter extends AbstractEsiGetter {
 		}
 		//Next Update
 		Date nextUpdate = Settings.get().getOwnersNextUpdate().get(number.longValue());
-		if (nextUpdate != null && !Settings.get().isUpdatable(nextUpdate)) {
+		if (nextUpdate != null && !Updatable.isUpdatable(nextUpdate)) {
 			return; 
 		}
 		int l = number.intValue();

@@ -114,12 +114,13 @@ public class MyMarketOrder extends RawMarketOrder implements Comparable<MyMarket
 	private OwnerType owner;
 	private double price;
 	private double contractPrice;
-	private double lastTransactionPrice;
-	private double lastTransactionValue;
-	private Percent lastTransactionPercent;
+	private double transactionPrice;
+	private double transactionProfitDifference;
+	private Percent transactionProfitPercent;
 	private String issuedByName = "";
 	private Double brokersFee;
 	private Outbid outbid;
+	private double priceReprocessed;
 	private JButtonComparable jButton = new JButtonComparable(TabsOrders.get().eveUiOpen());
 
 	public MyMarketOrder(final RawMarketOrder rawMarketOrder, final Item item, final OwnerType owner) {
@@ -136,34 +137,39 @@ public class MyMarketOrder extends RawMarketOrder implements Comparable<MyMarket
 				status = OrderStatus.PARTIALLY_FULFILLED;
 			}
 		} else {
-			switch (getState()) {
-				case OPEN: //open/active
-					status = OrderStatus.ACTIVE;
-					break;
-				case CLOSED: //closed
-					status = OrderStatus.CLOSED;
-					break;
-				case EXPIRED: //expired (or fulfilled)
-					if (this.getVolumeRemain() == 0) {
-						status = OrderStatus.FULFILLED;
-					} else if (Objects.equals(this.getVolumeRemain(), this.getVolumeTotal())) {
-						status = OrderStatus.EXPIRED;
-					} else {
-						status = OrderStatus.PARTIALLY_FULFILLED;
-					}
-					break;
-				case CANCELLED: //cancelled
-					status = OrderStatus.CANCELLED;
-					break;
-				case PENDING: //pending
-					status = OrderStatus.PENDING;
-					break;
-				case CHARACTER_DELETED: //character deleted
-					status = OrderStatus.CHARACTER_DELETED;
-					break;
-				case UNKNOWN: //character deleted
-					status = OrderStatus.UNKNOWN;
-					break;
+			MarketOrderState state = getState();
+			if (state == null) {
+				status = null;
+			} else {
+				switch (state) {
+					case OPEN: //open/active
+						status = OrderStatus.ACTIVE;
+						break;
+					case CLOSED: //closed
+						status = OrderStatus.CLOSED;
+						break;
+					case EXPIRED: //expired (or fulfilled)
+						if (this.getVolumeRemain() == 0) {
+							status = OrderStatus.FULFILLED;
+						} else if (Objects.equals(this.getVolumeRemain(), this.getVolumeTotal())) {
+							status = OrderStatus.EXPIRED;
+						} else {
+							status = OrderStatus.PARTIALLY_FULFILLED;
+						}
+						break;
+					case CANCELLED: //cancelled
+						status = OrderStatus.CANCELLED;
+						break;
+					case PENDING: //pending
+						status = OrderStatus.PENDING;
+						break;
+					case CHARACTER_DELETED: //character deleted
+						status = OrderStatus.CHARACTER_DELETED;
+						break;
+					case UNKNOWN: //character deleted
+						status = OrderStatus.UNKNOWN;
+						break;
+				}
 			}
 		}
 	}
@@ -241,33 +247,33 @@ public class MyMarketOrder extends RawMarketOrder implements Comparable<MyMarket
 	}
 
 	@Override
-	public double getLastTransactionPrice() {
-		return lastTransactionPrice;
+	public double getTransactionPrice() {
+		return transactionPrice;
 	}
 
 	@Override
-	public double getLastTransactionValue() {
-		return lastTransactionValue;
+	public double getTransactionProfitDifference() {
+		return transactionProfitDifference;
 	}
 
 	@Override
-	public Percent getLastTransactionPercent() {
-		return lastTransactionPercent;
+	public Percent getTransactionProfitPercent() {
+		return transactionProfitPercent;
 	}
 
 	@Override
-	public void setLastTransactionPrice(double lastTransactionPrice) {
-		this.lastTransactionPrice = lastTransactionPrice;
+	public void setTransactionPrice(double transactionPrice) {
+		this.transactionPrice = transactionPrice;
 	}
 
 	@Override
-	public void setLastTransactionValue(double lastTransactionValue) {
-		this.lastTransactionValue = lastTransactionValue;
+	public void setTransactionProfit(double transactionProfitDifference) {
+		this.transactionProfitDifference = transactionProfitDifference;
 	}
 
 	@Override
-	public void setLastTransactionPercent(Percent lastTransactionPercent) {
-		this.lastTransactionPercent = lastTransactionPercent;
+	public void setTransactionProfitPercent(Percent transactionProfitPercent) {
+		this.transactionProfitPercent = transactionProfitPercent;
 	}
 
 	public Date getCreatedOrIssued() {
@@ -378,6 +384,14 @@ public class MyMarketOrder extends RawMarketOrder implements Comparable<MyMarket
 
 	public void setOutbid(Outbid outbid) {
 		this.outbid = outbid;
+	}
+
+	public double getPriceReprocessed() {
+		return priceReprocessed;
+	}
+
+	public void setPriceReprocessed(double priceReprocessed) {
+		this.priceReprocessed = priceReprocessed;
 	}
 
 	public JButtonComparable getButton() {

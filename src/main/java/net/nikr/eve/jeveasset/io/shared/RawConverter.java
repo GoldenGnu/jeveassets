@@ -24,18 +24,29 @@ import java.time.OffsetDateTime;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import net.nikr.eve.jeveasset.data.api.raw.RawAsset;
 import net.nikr.eve.jeveasset.data.api.raw.RawContract;
 import net.nikr.eve.jeveasset.data.api.raw.RawIndustryJob;
-import net.nikr.eve.jeveasset.data.api.raw.RawJournal.ContextType;
+import net.nikr.eve.jeveasset.data.api.raw.RawJournal;
 import net.nikr.eve.jeveasset.data.api.raw.RawJournalRefType;
 import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder;
-import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder.MarketOrderRange;
-import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder.MarketOrderState;
 import net.nikr.eve.jeveasset.data.sde.ItemFlag;
-import net.nikr.eve.jeveasset.data.sde.MyLocation;
+import net.nikr.eve.jeveasset.data.sde.StaticData;
+import net.troja.eve.esi.model.CharacterAssetsResponse;
+import net.troja.eve.esi.model.CharacterBlueprintsResponse;
+import net.troja.eve.esi.model.CharacterContractsResponse;
+import net.troja.eve.esi.model.CharacterIndustryJobsResponse;
+import net.troja.eve.esi.model.CharacterOrdersHistoryResponse;
+import net.troja.eve.esi.model.CharacterOrdersResponse;
 import net.troja.eve.esi.model.CharacterWalletJournalResponse;
+import net.troja.eve.esi.model.CorporationAssetsResponse;
+import net.troja.eve.esi.model.CorporationBlueprintsResponse;
+import net.troja.eve.esi.model.CorporationContractsResponse;
+import net.troja.eve.esi.model.CorporationIndustryJobsResponse;
+import net.troja.eve.esi.model.CorporationOrdersHistoryResponse;
+import net.troja.eve.esi.model.CorporationOrdersResponse;
 import net.troja.eve.esi.model.CorporationWalletJournalResponse;
+import net.troja.eve.esi.model.MarketOrdersResponse;
+import net.troja.eve.esi.model.MarketStructuresResponse;
 
 public class RawConverter {
 
@@ -43,7 +54,7 @@ public class RawConverter {
 
 	private static synchronized void createJournalRefTypesIDs() {
 		if (journalRefTypesIDs == null) {
-			journalRefTypesIDs = new HashMap<Integer, RawJournalRefType>();
+			journalRefTypesIDs = new HashMap<>();
 			for (RawJournalRefType journalRefType : RawJournalRefType.values()) {
 				journalRefTypesIDs.put(journalRefType.getID(), journalRefType);
 			}
@@ -128,103 +139,148 @@ public class RawConverter {
 		}
 	}
 
-	public static ItemFlag toFlag(net.troja.eve.esi.model.CharacterAssetsResponse.LocationFlagEnum locationFlagEnum) {
-		LocationFlag locationFlag = LocationFlag.valueOf(locationFlagEnum.name());
-		return ApiIdConverter.getFlag(locationFlag.getID());
+	public static ItemFlag toFlag(CharacterAssetsResponse.LocationFlagEnum value) {
+		return toFlagEnum(value);
 	}
 
-	public static ItemFlag toFlag(net.troja.eve.esi.model.CorporationBlueprintsResponse.LocationFlagEnum locationFlagEnum) {
-		LocationFlag locationFlag = LocationFlag.valueOf(locationFlagEnum.name());
-		return ApiIdConverter.getFlag(locationFlag.getID());
+	public static ItemFlag toFlag(CorporationBlueprintsResponse.LocationFlagEnum value) {
+		return toFlagEnum(value);
 	}
 
-	public static ItemFlag toFlag(net.troja.eve.esi.model.CorporationAssetsResponse.LocationFlagEnum locationFlagEnum) {
-		LocationFlag locationFlag = LocationFlag.valueOf(locationFlagEnum.name());
-		return ApiIdConverter.getFlag(locationFlag.getID());
+	public static ItemFlag toFlag(CorporationAssetsResponse.LocationFlagEnum value) {
+		return toFlagEnum(value);
 	}
 
-	public static ItemFlag toFlag(net.troja.eve.esi.model.CharacterBlueprintsResponse.LocationFlagEnum locationFlagEnum) {
-		LocationFlag locationFlag = LocationFlag.valueOf(locationFlagEnum.name());
-		return ApiIdConverter.getFlag(locationFlag.getID());
+	public static ItemFlag toFlag(CharacterBlueprintsResponse.LocationFlagEnum value) {
+		return toFlagEnum(value);
 	}
 
-	public static ItemFlag toFlag(String locationFlag) {
-		LocationFlag locationFlagEnum = LocationFlag.valueOf(locationFlag.toUpperCase());
-		if (locationFlagEnum == null) {
+	private static <E extends Enum<E>> ItemFlag toFlagEnum(E value) {
+		if (value == null) {
 			return ApiIdConverter.getFlag(0);
 		}
-		return ApiIdConverter.getFlag(locationFlagEnum.getID());
-	}
-
-	public static RawAsset.LocationType toAssetLocationType(Long locationID) {
-		if (locationID >= 30000000 &&  locationID <= 39999999) { //Not planet
-			return RawAsset.LocationType.SOLAR_SYSTEM;
-		} else if (locationID >= 60000000 &&  locationID <= 64000000) { //Not planet
-			return RawAsset.LocationType.STATION;
-		} else if (locationID >= 100000000) { //Not planet
-			return RawAsset.LocationType.ITEM;
-		} else {
-			return RawAsset.LocationType.OTHER;
+		try {
+			LocationFlag locationFlag = LocationFlag.valueOf(value.name());
+			return ApiIdConverter.getFlag(locationFlag.getID());
+		} catch (IllegalArgumentException ex) {
+			return ApiIdConverter.getFlag(0);
 		}
 	}
 
-	public static RawContract.ContractAvailability toContractAvailability(String value) {
-		switch (value.toLowerCase()) {
-			case "private":
-				return RawContract.ContractAvailability.PERSONAL;
-			case "public":
-				return RawContract.ContractAvailability.PUBLIC;
-			case "alliance":
-				return RawContract.ContractAvailability.ALLIANCE;
-			case "corporation":
-				return RawContract.ContractAvailability.CORPORATION;
-			case "personal":
-				return RawContract.ContractAvailability.PERSONAL;
-			default:
-				throw new RuntimeException("Can't convert: " + value + " to ContractAvailability");
+	public static ItemFlag toFlag(final int flagID, final String valueString) {
+		ItemFlag itemFlag = StaticData.get().getItemFlags().get(flagID);
+		if (itemFlag != null) {
+			return itemFlag;
 		}
+		if (valueString != null) {
+			for (LocationFlag value : LocationFlag.values()) {
+				if (value.getValue().equals(valueString)) {
+					return ApiIdConverter.getFlag(value.getID());
+				}
+			}
+		}
+		return ApiIdConverter.getFlag(0);
 	}
 
-	public static RawContract.ContractStatus toContractStatus(String value) {
-		switch (value.toUpperCase()) {
-			case "CANCELLED":
-				return RawContract.ContractStatus.CANCELLED;
-			case "DELETED":
-				return RawContract.ContractStatus.DELETED;
-			case "FAILED":
-				return RawContract.ContractStatus.FAILED;
-			case "FINISHED":
-				return RawContract.ContractStatus.FINISHED;
-			case "COMPLETED":
-				return RawContract.ContractStatus.FINISHED;
-			case "FINISHED_CONTRACTOR":
-				return RawContract.ContractStatus.FINISHED_CONTRACTOR;
-			case "COMPLETEDBYCONTRACTOR":
-				return RawContract.ContractStatus.FINISHED_CONTRACTOR;
-			case "FINISHED_ISSUER":
-				return RawContract.ContractStatus.FINISHED_ISSUER;
-			case "COMPLETEDBYISSUER":
-				return RawContract.ContractStatus.FINISHED_ISSUER;
-			case "IN_PROGRESS":
-				return RawContract.ContractStatus.IN_PROGRESS;
-			case "INPROGRESS":
-				return RawContract.ContractStatus.IN_PROGRESS;
-			case "OUTSTANDING":
-				return RawContract.ContractStatus.OUTSTANDING;
-			case "REJECTED":
-				return RawContract.ContractStatus.REJECTED;
-			case "REVERSED":
-				return RawContract.ContractStatus.REVERSED;
-			default:
-				throw new RuntimeException("Can't convert: " + value + " to ContractStatus");
+	public static RawContract.ContractAvailability toContractAvailability(String valueEnum, String valueString) {
+		if (valueEnum != null) {
+			try {
+				return RawContract.ContractAvailability.valueOf(valueEnum);
+			} catch (IllegalArgumentException ex) {
+				
+			}
+			switch (valueEnum.toLowerCase()) {
+				case "private":
+					return RawContract.ContractAvailability.PERSONAL;
+				case "public":
+					return RawContract.ContractAvailability.PUBLIC;
+			}
 		}
+		if (valueString != null) {
+			for (RawContract.ContractAvailability value : RawContract.ContractAvailability.values()) {
+				if (value.getValue().equals(valueString)) {
+					return value;
+				}
+			}
+		}
+		return null;
+		
 	}
 
-	public static RawContract.ContractType toContractType(String value) {
+	public static RawContract.ContractAvailability toContractAvailability(CharacterContractsResponse.AvailabilityEnum value) {
+		return toContractAvailabilityEnum(value);
+	}
+
+	public static RawContract.ContractAvailability toContractAvailability(CorporationContractsResponse.AvailabilityEnum value) {
+		return toContractAvailabilityEnum(value);
+	}
+
+	private static <E extends Enum<E>> RawContract.ContractAvailability toContractAvailabilityEnum(E value) {
 		if (value == null) {
-			return RawContract.ContractType.UNKNOWN;
-		} else {
-			switch (value.toLowerCase()) {
+			return null;
+		}
+		try {
+			return RawContract.ContractAvailability.valueOf(value.name());
+		} catch (IllegalArgumentException ex) {
+			return null;
+		}
+	}
+
+	public static RawContract.ContractStatus toContractStatus(String valueEnum, String valueString) {
+		if (valueEnum != null) {
+			try {
+				return RawContract.ContractStatus.valueOf(valueEnum);
+			} catch (IllegalArgumentException ex) {
+				
+			}
+			switch (valueEnum.toUpperCase()) {
+				case "COMPLETED":
+					return RawContract.ContractStatus.FINISHED;
+				case "COMPLETEDBYCONTRACTOR":
+					return RawContract.ContractStatus.FINISHED_CONTRACTOR;
+				case "COMPLETEDBYISSUER":
+					return RawContract.ContractStatus.FINISHED_ISSUER;
+				case "INPROGRESS":
+					return RawContract.ContractStatus.IN_PROGRESS;
+			}
+		}
+		if (valueString != null) {
+			for (RawContract.ContractStatus value : RawContract.ContractStatus.values()) {
+				if (value.getValue().equals(valueString)) {
+					return value;
+				}
+			}
+		}
+		return null;
+	}
+
+	public static RawContract.ContractStatus toContractStatus(CharacterContractsResponse.StatusEnum value) {
+		return toContractStatusEnum(value);
+	}
+
+	public static RawContract.ContractStatus toContractStatus(CorporationContractsResponse.StatusEnum value) {
+		return toContractStatusEnum(value);
+	}
+
+	private static <E extends Enum<E>> RawContract.ContractStatus toContractStatusEnum(E value) {
+		if (value == null) {
+			return null;
+		}
+		try {
+			return RawContract.ContractStatus.valueOf(value.name());
+		} catch (IllegalArgumentException ex) {
+			return null;
+		}
+	}
+
+	public static RawContract.ContractType toContractType(String valueEnum, String valueString) {
+		if (valueEnum != null) {
+			try {
+				return RawContract.ContractType.valueOf(valueEnum);
+			} catch (IllegalArgumentException ex) {
+				
+			}
+			switch (valueEnum.toLowerCase()) {
 				case "item_exchange":
 					return RawContract.ContractType.ITEM_EXCHANGE;
 				case "itemexchange":
@@ -239,68 +295,108 @@ public class RawConverter {
 					return RawContract.ContractType.UNKNOWN;
 			}
 		}
+		if (valueString != null) {
+			for (RawContract.ContractType value : RawContract.ContractType.values()) {
+				if (value.getValue().equals(valueString)) {
+					return value;
+				}
+			}
+		}
+		return null;
 	}
 
-	public static RawIndustryJob.IndustryJobStatus toIndustryJobStatus(int value) {
-		switch (value) {
-			case 1:
-				return RawIndustryJob.IndustryJobStatus.ACTIVE;
-			case 2:
-				return RawIndustryJob.IndustryJobStatus.PAUSED;
-			case 3:
-				return RawIndustryJob.IndustryJobStatus.READY;
-			case 101:
-				return RawIndustryJob.IndustryJobStatus.DELIVERED;
-			case 102:
-				return RawIndustryJob.IndustryJobStatus.CANCELLED;
-			case 103:
-				return RawIndustryJob.IndustryJobStatus.REVERTED;
-			default:
-				throw new RuntimeException("Can't convert: " + value + " to IndustryJobStatus");
+	public static RawContract.ContractType toContractType(CharacterContractsResponse.TypeEnum value) {
+		return toContractTypeEnum(value);
+	}
+
+	public static RawContract.ContractType toContractType(CorporationContractsResponse.TypeEnum value) {
+		return toContractTypeEnum(value);
+	}
+
+	private static <E extends Enum<E>> RawContract.ContractType toContractTypeEnum(E value) {
+		if (value == null) {
+			return null;
+		}
+		try {
+			return RawContract.ContractType.valueOf(value.name());
+		} catch (IllegalArgumentException ex) {
+			return null;
 		}
 	}
 
-	public static RawIndustryJob.IndustryJobStatus toIndustryJobStatus(String value) {
-		return RawIndustryJob.IndustryJobStatus.fromValue(value);
+	public static RawIndustryJob.IndustryJobStatus toIndustryJobStatus(Integer valueInt, String valueEnum, String valueString) {
+		if (valueEnum != null) {
+			try {
+				return RawIndustryJob.IndustryJobStatus.valueOf(valueEnum);
+			} catch (IllegalArgumentException ex) {
+				
+			}
+		}
+		if (valueString != null) {
+			for (RawIndustryJob.IndustryJobStatus value : RawIndustryJob.IndustryJobStatus.values()) {
+				if (value.getValue().equals(valueString)) {
+					return value;
+				}
+			}
+		}
+		if (valueInt != null) {
+			switch (valueInt) {
+				case 1:
+					return RawIndustryJob.IndustryJobStatus.ACTIVE;
+				case 2:
+					return RawIndustryJob.IndustryJobStatus.PAUSED;
+				case 3:
+					return RawIndustryJob.IndustryJobStatus.READY;
+				case 101:
+					return RawIndustryJob.IndustryJobStatus.DELIVERED;
+				case 102:
+					return RawIndustryJob.IndustryJobStatus.CANCELLED;
+				case 103:
+					return RawIndustryJob.IndustryJobStatus.REVERTED;
+			}
+		}
+		return null;
 	}
 
-	public static int fromIndustryJobStatus(RawIndustryJob.IndustryJobStatus value) {
-		switch (value) {
-			case ACTIVE:
-				return 1;
-			case PAUSED:
-				return 2;
-			case READY:
-				return 3;
-			case DELIVERED:
-				return 101;
-			case CANCELLED:
-				return 102;
-			case REVERTED:
-				return 103;
-			default:
-				throw new RuntimeException("Can't convert: " + value + " to IndustryJobStatus");
+	public static RawIndustryJob.IndustryJobStatus toIndustryJobStatus(CharacterIndustryJobsResponse.StatusEnum value) {
+		return toIndustryJobStatusEnum(value);
+	}
+
+	public static RawIndustryJob.IndustryJobStatus toIndustryJobStatus(CorporationIndustryJobsResponse.StatusEnum value) {
+		return toIndustryJobStatusEnum(value);
+	}
+
+	private static <E extends Enum<E>> RawIndustryJob.IndustryJobStatus toIndustryJobStatusEnum(E value) {
+		if (value == null) {
+			return null;
+		}
+		try {
+			return RawIndustryJob.IndustryJobStatus.valueOf(value.name());
+		} catch (IllegalArgumentException ex) {
+			return null;
 		}
 	}
 
-	public static RawJournalRefType toJournalRefType(int value) {
-		createJournalRefTypesIDs();
-		return journalRefTypesIDs.get(value);
-	}
-
-	public static RawJournalRefType toJournalRefType(String value) {
-		CharacterWalletJournalResponse.RefTypeEnum charValue = CharacterWalletJournalResponse.RefTypeEnum.fromValue(value);
+	public static RawJournalRefType toJournalRefType(Integer valueInt, String valueString) {
+		CharacterWalletJournalResponse.RefTypeEnum charValue = CharacterWalletJournalResponse.RefTypeEnum.fromValue(valueString);
 		if (charValue != null) {
 			return toJournalRefType(charValue);
 		}
-		CorporationWalletJournalResponse.RefTypeEnum corpValue = CorporationWalletJournalResponse.RefTypeEnum.fromValue(value);
+		CorporationWalletJournalResponse.RefTypeEnum corpValue = CorporationWalletJournalResponse.RefTypeEnum.fromValue(valueString);
 		if (corpValue != null) {
 			return toJournalRefType(corpValue);
+		}
+		if (valueInt != null) {
+			createJournalRefTypesIDs();
+			return journalRefTypesIDs.get(valueInt);
 		}
 		return null;
 	}
 
 	public static RawJournalRefType toJournalRefType(CharacterWalletJournalResponse.RefTypeEnum value) {
+		if (value == null) {
+			return null;
+		}
 		try {
 			return RawJournalRefType.valueOf(value.name());
 		} catch (IllegalArgumentException ex) {
@@ -317,6 +413,9 @@ public class RawConverter {
 	}
 
 	public static RawJournalRefType toJournalRefType(CorporationWalletJournalResponse.RefTypeEnum value) {
+		if (value == null) {
+			return null;
+		}
 		try {
 			return RawJournalRefType.valueOf(value.name());
 		} catch (IllegalArgumentException ex) {
@@ -332,68 +431,72 @@ public class RawConverter {
 		}
 	}
 
-	public static ContextType toJournalContextType(CharacterWalletJournalResponse.ContextIdTypeEnum value) {
+	public static RawJournal.ContextType toJournalContextType(CharacterWalletJournalResponse.ContextIdTypeEnum value) {
+		return toJournalContextTypeEnum(value);
+	}
+
+	public static RawJournal.ContextType toJournalContextType(CorporationWalletJournalResponse.ContextIdTypeEnum value) {
+		return toJournalContextTypeEnum(value);
+	}
+
+	private static <E extends Enum<E>> RawJournal.ContextType toJournalContextTypeEnum(E value) {
 		if (value == null) {
 			return null;
 		}
 		try {
-			return ContextType.valueOf(value.name());
+			return RawJournal.ContextType.valueOf(value.name());
 		} catch (IllegalArgumentException ex) {
 			return null;
 		}
 	}
 
-	public static ContextType toJournalContextType(CorporationWalletJournalResponse.ContextIdTypeEnum value) {
-		if (value == null) {
-			return null;
+	public static RawJournal.ContextType toJournalContextType(String valueEnum, String valueString){
+		if (valueEnum != null) {
+			try {
+				return RawJournal.ContextType.valueOf(valueEnum);
+			} catch (IllegalArgumentException ex) {
+
+			}
 		}
-		try {
-			return ContextType.valueOf(value.name());
-		} catch (IllegalArgumentException ex) {
-			return null;
+		if (valueString != null) {
+			for (RawJournal.ContextType value : RawJournal.ContextType.values()) {
+				if (value.getValue().equals(valueString)) {
+					return value;
+				}
+			}
 		}
+		return null;
 	}
 
-	public static ContextType toJournalContextType(String value) {
-		if (value == null) {
-			return null;
-		}
-		try {
-			return ContextType.valueOf(value);
-		} catch (IllegalArgumentException ex) {
-			return null;
-		}
-	}
-
-	public static ContextType toJournalContextType(RawJournalRefType refType) {
+	public static RawJournal.ContextType toJournalContextType(RawJournalRefType refType) {
 		if (refType.getArgName() != null) {
 			switch (refType.getArgName()) {
 				case CONTRACT_ID:
-					return ContextType.CONTRACT_ID;
+					return RawJournal.ContextType.CONTRACT_ID;
 				case DESTROYED_SHIP_TYPE_ID:
-					return ContextType.TYPE_ID;
+					return RawJournal.ContextType.TYPE_ID;
 				case JOB_ID:
-					return ContextType.INDUSTRY_JOB_ID;
+					return RawJournal.ContextType.INDUSTRY_JOB_ID;
 				case TRANSACTION_ID:
-					return ContextType.MARKET_TRANSACTION_ID;
+					return RawJournal.ContextType.MARKET_TRANSACTION_ID;
 			}
 		}
 		if (refType.getArgID() != null) {
 			switch (refType.getArgID()) {
 				case NPC_ID:
-					return ContextType.TYPE_ID;
+					return RawJournal.ContextType.TYPE_ID;
 				case PLAYER_ID:
-					return ContextType.CHARACTER_ID;
+					return RawJournal.ContextType.CHARACTER_ID;
 				case STATION_ID:
-					return ContextType.STATION_ID;
+					return RawJournal.ContextType.STATION_ID;
 				case SYSTEM_ID:
-					return ContextType.SYSTEM_ID;
+					return RawJournal.ContextType.SYSTEM_ID;
 				case CORPORATION_ID:
-					return ContextType.CORPORATION_ID;
+					return RawJournal.ContextType.CORPORATION_ID;
 				case ALLIANCE_ID:
-					return ContextType.ALLIANCE_ID;
+					return RawJournal.ContextType.ALLIANCE_ID;
 				case PLANET_ID:
-					return ContextType.PLANET_ID;
+					return RawJournal.ContextType.PLANET_ID;
 			}
 		}
 		return null;
@@ -415,115 +518,143 @@ public class RawConverter {
 		return argID;
 	}
 
-	public static RawMarketOrder.MarketOrderRange toMarketOrderRange(String value) {
-		return MarketOrderRange.fromValue(value);
+	public static RawMarketOrder.MarketOrderRange toMarketOrderRange(Integer valueInt, String valueEnum, String valueString) {
+		if (valueEnum != null) {
+			try {
+				return RawMarketOrder.MarketOrderRange.valueOf(valueEnum);
+			} catch (IllegalArgumentException ex) {
+				
+			}
+		}
+		if (valueString != null) {
+			for (RawMarketOrder.MarketOrderRange value : RawMarketOrder.MarketOrderRange.values()) {
+				if (value.getValue().equals(valueString)) {
+					return value;
+				}
+			}
+		}
+		if (valueInt != null) {
+			switch (valueInt) {
+				case -1:
+					return RawMarketOrder.MarketOrderRange.STATION;
+				case 0:
+					return RawMarketOrder.MarketOrderRange.SOLARSYSTEM;
+				case 1:
+					return RawMarketOrder.MarketOrderRange._1;
+				case 2:
+					return RawMarketOrder.MarketOrderRange._2;
+				case 3:
+					return RawMarketOrder.MarketOrderRange._3;
+				case 4:
+					return RawMarketOrder.MarketOrderRange._4;
+				case 5:
+					return RawMarketOrder.MarketOrderRange._5;
+				case 10:
+					return RawMarketOrder.MarketOrderRange._10;
+				case 20:
+					return RawMarketOrder.MarketOrderRange._20;
+				case 30:
+					return RawMarketOrder.MarketOrderRange._30;
+				case 40:
+					return RawMarketOrder.MarketOrderRange._40;
+				case 32767:
+					return RawMarketOrder.MarketOrderRange.REGION;
+				default:
+					throw new RuntimeException("Can't convert: " + valueInt + " to MarketOrderRange");
+			}
+		}
+		return null;
 	}
 
-	public static RawMarketOrder.MarketOrderRange toMarketOrderRange(int value) {
-		switch (value) {
-			case -1:
-				return RawMarketOrder.MarketOrderRange.STATION;
-			case 0:
-				return RawMarketOrder.MarketOrderRange.SOLARSYSTEM;
-			case 1:
-				return RawMarketOrder.MarketOrderRange._1;
-			case 2:
-				return RawMarketOrder.MarketOrderRange._2;
-			case 3:
-				return RawMarketOrder.MarketOrderRange._3;
-			case 4:
-				return RawMarketOrder.MarketOrderRange._4;
-			case 5:
-				return RawMarketOrder.MarketOrderRange._5;
-			case 10:
-				return RawMarketOrder.MarketOrderRange._10;
-			case 20:
-				return RawMarketOrder.MarketOrderRange._20;
-			case 30:
-				return RawMarketOrder.MarketOrderRange._30;
-			case 40:
-				return RawMarketOrder.MarketOrderRange._40;
-			case 32767:
-				return RawMarketOrder.MarketOrderRange.REGION;
-			default:
-				throw new RuntimeException("Can't convert: " + value + " to MarketOrderRange");
+	public static RawMarketOrder.MarketOrderRange toMarketOrderRange(CharacterOrdersResponse.RangeEnum value) {
+		return toMarketOrderRangeEnum(value);
+	}
+
+	public static RawMarketOrder.MarketOrderRange toMarketOrderRange(CharacterOrdersHistoryResponse.RangeEnum value) {
+		return toMarketOrderRangeEnum(value);
+	}
+
+	public static RawMarketOrder.MarketOrderRange toMarketOrderRange(CorporationOrdersResponse.RangeEnum value) {
+		return toMarketOrderRangeEnum(value);
+	}
+
+	public static RawMarketOrder.MarketOrderRange toMarketOrderRange(CorporationOrdersHistoryResponse.RangeEnum value) {
+		return toMarketOrderRangeEnum(value);
+	}
+
+	public static RawMarketOrder.MarketOrderRange toMarketOrderRange(MarketOrdersResponse.RangeEnum value) {
+		return toMarketOrderRangeEnum(value);
+	}
+
+	public static RawMarketOrder.MarketOrderRange toMarketOrderRange(MarketStructuresResponse.RangeEnum value) {
+		return toMarketOrderRangeEnum(value);
+	}
+
+	private static <E extends Enum<E>> RawMarketOrder.MarketOrderRange toMarketOrderRangeEnum(E value) {
+		if (value == null) {
+			return null;
+		}
+		try {
+			return RawMarketOrder.MarketOrderRange.valueOf(value.name());
+		} catch (IllegalArgumentException ex) {
+			return null;
 		}
 	}
 
-	public static int fromMarketOrderRange(RawMarketOrder.MarketOrderRange value) {
-		switch (value) {
-			case STATION:
-				return -1;
-			case SOLARSYSTEM:
-				return 0;
-			case _1:
-				return 1;
-			case _2:
-				return 2;
-			case _3:
-				return 3;
-			case _4:
-				return 4;
-			case _5:
-				return 5;
-			case _10:
-				return 10;
-			case _20:
-				return 20;
-			case _30:
-				return 30;
-			case _40:
-				return 40;
-			case REGION:
-				return 32767;
-			default:
-				throw new RuntimeException("Can't convert: " + value + " to MarketOrderRange");
+	public static RawMarketOrder.MarketOrderState toMarketOrderState(Integer valueInt, String valueEnum, String valueString) {
+		if (valueEnum != null) {
+			try {
+				return RawMarketOrder.MarketOrderState.valueOf(valueEnum);
+			} catch (IllegalArgumentException ex) {
+				
+			}
 		}
-	}
-
-	public static RawMarketOrder.MarketOrderState toMarketOrderState(String value) {
-		return MarketOrderState.fromValue(value);
-	}
-
-	public static RawMarketOrder.MarketOrderState toMarketOrderState(int value) {
-		switch (value) {
-			case 0:
-				return RawMarketOrder.MarketOrderState.OPEN;
-			case 1:
-				return RawMarketOrder.MarketOrderState.CLOSED;
-			case 2:
-				return RawMarketOrder.MarketOrderState.EXPIRED;
-			case 3:
-				return RawMarketOrder.MarketOrderState.CANCELLED;
-			case 4:
-				return RawMarketOrder.MarketOrderState.PENDING;
-			case 5:
-				return RawMarketOrder.MarketOrderState.CHARACTER_DELETED;
-			case -100:
-				return RawMarketOrder.MarketOrderState.UNKNOWN;
-			default:
-				throw new RuntimeException("Can't convert: " + value + " to MarketOrderState");
+		if (valueString != null) {
+			for (RawMarketOrder.MarketOrderState value : RawMarketOrder.MarketOrderState.values()) {
+				if (value.getValue().equals(valueString)) {
+					return value;
+				}
+			}
 		}
+		if (valueInt != null) {
+			switch (valueInt) {
+				case 0:
+					return RawMarketOrder.MarketOrderState.OPEN;
+				case 1:
+					return RawMarketOrder.MarketOrderState.CLOSED;
+				case 2:
+					return RawMarketOrder.MarketOrderState.EXPIRED;
+				case 3:
+					return RawMarketOrder.MarketOrderState.CANCELLED;
+				case 4:
+					return RawMarketOrder.MarketOrderState.PENDING;
+				case 5:
+					return RawMarketOrder.MarketOrderState.CHARACTER_DELETED;
+				case -100:
+					return RawMarketOrder.MarketOrderState.UNKNOWN;
+				default:
+					throw new RuntimeException("Can't convert: " + valueInt + " to MarketOrderState");
+			}
+		}
+		return null;
 	}
 
-	public static int fromMarketOrderState(RawMarketOrder.MarketOrderState value) {
-		switch (value) {
-			case OPEN:
-				return 0;
-			case CLOSED:
-				return 1;
-			case EXPIRED:
-				return 2;
-			case CANCELLED:
-				return 3;
-			case PENDING:
-				return 4;
-			case CHARACTER_DELETED:
-				return 5;
-			case UNKNOWN:
-				return -100;
-			default:
-				throw new RuntimeException("Can't convert: " + value + " to MarketOrderState");
+	public static RawMarketOrder.MarketOrderState toMarketOrderState(CharacterOrdersHistoryResponse.StateEnum value) {
+		return toMarketOrderStateEnum(value);
+	}
+
+	public static RawMarketOrder.MarketOrderState toMarketOrderState(CorporationOrdersHistoryResponse.StateEnum value) {
+		return toMarketOrderStateEnum(value);
+	}
+
+	private static <E extends Enum<E>> RawMarketOrder.MarketOrderState toMarketOrderStateEnum(E value) {
+		if (value == null) {
+			return null;
+		}
+		try {
+			return RawMarketOrder.MarketOrderState.valueOf(value.name());
+		} catch (IllegalArgumentException ex) {
+			return null;
 		}
 	}
 
@@ -690,6 +821,10 @@ public class RawConverter {
 		LocationFlag(String value, int id) {
 			this.value = value;
 			this.id = id;
+		}
+
+		public String getValue() {
+			return value;
 		}
 
 		public int getID() {

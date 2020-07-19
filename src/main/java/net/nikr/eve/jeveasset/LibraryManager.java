@@ -111,7 +111,7 @@ public class LibraryManager {
 			files.add("translations-3.0.0.jar");
 			files.add("swagger-annotations-1.5.22.jar");
 			files.add("hamcrest-core-1.3.jar");
-			files.add("eve-esi-3.7.0.jar");
+			files.add("eve-esi-4.0.0.jar");
 			files.add("hamcrest-core-1.3.jar");
 			files.add("jaxb-api-2.3.0.jar");
 			files.add("sqlite-jdbc-3.23.1.jar");
@@ -130,6 +130,7 @@ public class LibraryManager {
 			files.add("jna-4.5.2.jar");
 			files.add("jsr250-api-1.0.jar");
 			files.add("jsr305-3.0.2.jar");
+			files.add("flatlaf-0.36.jar");
 		}
 		return files;
 	}
