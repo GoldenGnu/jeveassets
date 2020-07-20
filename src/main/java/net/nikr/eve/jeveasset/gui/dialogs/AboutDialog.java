@@ -128,6 +128,7 @@ public class AboutDialog extends JDialogCentered {
 				+ "&nbsp;<a href=\"http://www.slf4j.org/\">slf4J</a> (logging)<br>"
 				+ "&nbsp;<a href=\"https://logback.qos.ch/\">logback</a> (logging)<br>"
 				+ "&nbsp;<a href=\"https://github.com/xerial/sqlite-jdbc\">SQLite</a> (database)<br>"
+				+ "&nbsp;<a href=\"https://www.formdev.com/flatlaf\">FlatLaf</a> (look and feel)<br>"
 				+ "&nbsp;<a href=\"" + Program.PROGRAM_HOMEPAGE + "\">OSXAdapter</a> (native mac os x support)<br>"
 				+ "&nbsp;<a href=\"https://github.com/GoldenGnu/price\">Pricing</a> (parsing price data api)<br>"
 				+ "&nbsp;<a href=\"https://github.com/GoldenGnu/routing\">Routing</a> (routing tool)<br>"
