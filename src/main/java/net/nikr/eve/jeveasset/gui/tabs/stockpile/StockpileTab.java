@@ -1143,7 +1143,7 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 
 	private Object getSelected() {
 		int index = jTable.getSelectedRow();
-		if (index < 0 || index > tableModel.getColumnCount()) {
+		if (index < 0 || index > tableModel.getRowCount()) {
 			return null;
 		}
 		return tableModel.getElementAt(index);
