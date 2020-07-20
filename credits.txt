@@ -58,7 +58,7 @@ _EVE-ONLINE_____________________________________________________________________
 jEveAssets use EVE-Online API and SDE
 
 Link:
-  Main site: http://www.eveonline.com/
+  Main site: http://www.eveonline.com
   Toolkit: https://developers.eveonline.com/resource/resources
   API: https://esi.evetech.net/ui
 
@@ -71,7 +71,7 @@ _FUZZWORK_______________________________________________________________________
 jEveAssets use fuzzwork API to get price data
 
 Link:
-  https://market.fuzzwork.co.uk/api/
+  https://market.fuzzwork.co.uk/api
 
 ________________________________________________________________________________
 _EVEMARKETER____________________________________________________________________
@@ -79,7 +79,7 @@ _EVEMARKETER____________________________________________________________________
 jEveAssets use evemarketer.com API to get price data
 
 Link:
-  https://evemarketer.com/
+  https://evemarketer.com
 
 ________________________________________________________________________________
 _CONTRACTS_APPRAISAL____________________________________________________________
@@ -87,7 +87,7 @@ _CONTRACTS_APPRAISAL____________________________________________________________
 jEveAssets use Contracts Appraisal API to get contract price data
 
 Link:
-  https://app.swaggerhub.com/apis-docs/rihanshazih/contracts-appraisal/
+  https://app.swaggerhub.com/apis/rihanshazih/contracts-appraisal
 
 ________________________________________________________________________________
 _STOP.HAMMERTI.ME.UK____________________________________________________________
@@ -95,7 +95,7 @@ _STOP.HAMMERTI.ME.UK____________________________________________________________
 jEveAssets use stop.hammerti.me.uk API to get citadel names and locations
 
 Link:
-  https://stop.hammerti.me.uk/api/
+  https://stop.hammerti.me.uk/api
 
 ________________________________________________________________________________
 _SILK_ICONS_____________________________________________________________________
@@ -106,11 +106,11 @@ Copyright:
   Mark James
 
 Link:
-  http://www.famfamfam.com/lab/icons/silk/
+  http://www.famfamfam.com/lab/icons/silk
 
 License:
   Creative Commons Attribution 3.0 License
-  http://creativecommons.org/licenses/by/3.0/
+  http://creativecommons.org/licenses/by/3.0
 
 ________________________________________________________________________________
 _GLAZED_LISTS___________________________________________________________________
@@ -118,7 +118,7 @@ _GLAZED_LISTS___________________________________________________________________
 jEveAssets use Glazed Lists to sort and filter tables
 
 Link:
-  http://publicobject.com/glazedlists/
+  http://publicobject.com/glazedlists
 
 License:
   GNU Lesser General Public License (http://www.gnu.org/copyleft/lesser.html)
@@ -130,7 +130,7 @@ _SUPER_CSV______________________________________________________________________
 jEveAssets use Super CSV to export CSV
 
 Link:
-  http://super-csv.github.io/super-csv/
+  http://super-csv.github.io/super-csv
 
 License:
   Apache License (http://www.apache.org/licenses/LICENSE-2.0)
@@ -207,7 +207,7 @@ _SLF4J__________________________________________________________________________
 jEveAssets use SLF4J as logging facade
 
 Link:
-  http://www.slf4j.org/
+  http://www.slf4j.org
 
 License:
   MIT License (http://en.wikipedia.org/wiki/MIT_License)
@@ -218,7 +218,7 @@ _LOGBACK________________________________________________________________________
 jEveAssets use logback to log events and errors
 
 Link:
-  https://logback.qos.ch/
+  https://logback.qos.ch
 
 License:
   LGPL 2.1 (https://www.gnu.org/licenses/old-licenses/lgpl-2.1.html)
@@ -262,10 +262,21 @@ _JFREECHART_____________________________________________________________________
 jEveAssets use JFreeChart to make charts (used in the Tracker Tool)
 
 Link:
-  http://www.jfree.org/jfreechart/
+  http://www.jfree.org/jfreechart
 
 License:
   GNU Lesser General Public Licence (http://www.gnu.org/licenses/lgpl.html)
+
+________________________________________________________________________________
+_FLATLAF _______________________________________________________________________
+
+jEveAssets use FlatLaf for themes
+
+Link:
+  https://www.formdev.com/flatlaf
+
+License:
+  Apache License (http://www.apache.org/licenses/LICENSE-2.0)
 
 ________________________________________________________________________________
 _COPYRIGHT______________________________________________________________________
