@@ -70,6 +70,7 @@ public class BackwardCompatibilitySettings extends FakeSettings implements Setti
 		GET_USER_PRICES,
 		SET_MAXIMUM_PURCHASE_AGE,
 		SET_TRANSACTION_PROFIT_PRICE,
+		SET_TRANSACTION_PROFIT_MARGIN,
 		SET_PRICE_DATA_SETTINGS,
 		SET_PROXY_DATA,
 		SET_REPROCESS_SETTINGS,
@@ -268,6 +269,11 @@ public class BackwardCompatibilitySettings extends FakeSettings implements Setti
 	@Override
 	public void setTransactionProfitPrice(TransactionProfitPrice transactionProfitPrice) {
 		ok.put(Function.SET_TRANSACTION_PROFIT_PRICE, true);
+	}
+
+	@Override
+	public void setTransactionProfitMargin(int transactionProfitMargin) {
+		ok.put(Function.SET_TRANSACTION_PROFIT_MARGIN, true);
 	}
 
 	@Override
