@@ -583,8 +583,13 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 				//No problem already set
 			}
 		}
+		int transactionProfitMargin = 0;
+		if (haveAttribute(assetSettingsElement, "transactionprofitmargin")) {
+			transactionProfitMargin = getInt(assetSettingsElement, "transactionprofitmargin");
+		}
 		settings.setTransactionProfitPrice(transactionProfitPrice);
 		settings.setMaximumPurchaseAge(maximumPurchaseAge);
+		settings.setTransactionProfitMargin(transactionProfitMargin);
 	}
 
 	private void parseStockpileGroups(final Element stockpilesElement, final Settings settings) throws XmlException {

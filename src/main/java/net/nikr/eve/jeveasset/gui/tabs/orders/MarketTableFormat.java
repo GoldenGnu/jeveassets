@@ -303,6 +303,20 @@ public enum MarketTableFormat implements EnumTableColumn<MyMarketOrder> {
 			return from.getTransactionPrice();
 		}
 	},
+	TRANSACTION_MARGIN(Double.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsOrders.get().columnTransactionMargin();
+		}
+		@Override
+		public String getColumnToolTip() {
+			return TabsOrders.get().columnTransactionMarginToolTip();
+		}
+		@Override
+		public Object getColumnValue(final MyMarketOrder from) {
+			return from.getTransactionMargin();
+		}
+	},
 	TRANSACTION_PROFIT(Double.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
