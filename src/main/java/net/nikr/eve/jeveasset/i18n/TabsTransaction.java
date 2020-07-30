@@ -61,6 +61,8 @@ public abstract class TabsTransaction extends Bundle {
 	public abstract String columnRegion();
 	public abstract String columnTransactionPrice();
 	public abstract String columnTransactionPriceToolTip();
+	public abstract String columnTransactionMargin();
+	public abstract String columnTransactionMarginToolTip();
 	public abstract String columnTransactionProfitDifference();
 	public abstract String columnTransactionProfitDifferenceToolTip();
 	public abstract String columnTransactionProfitPercent();
