@@ -37,23 +37,38 @@ import java.util.Map;
 import java.util.Set;
 import java.util.zip.GZIPInputStream;
 import net.nikr.eve.jeveasset.Program;
+import net.nikr.eve.jeveasset.data.sde.MyLocation;
 import net.nikr.eve.jeveasset.data.settings.Citadel;
 import net.nikr.eve.jeveasset.data.settings.CitadelSettings;
+import net.nikr.eve.jeveasset.data.settings.ZKillStructure;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import net.nikr.eve.jeveasset.i18n.DialoguesUpdate;
-import net.nikr.eve.jeveasset.io.local.AbstractXmlWriter;
 import net.nikr.eve.jeveasset.io.local.CitadelReader;
 import net.nikr.eve.jeveasset.io.local.CitadelWriter;
+import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
-public class CitadelGetter extends AbstractXmlWriter {
+public class CitadelGetter {
 
 	private static final Logger LOG = LoggerFactory.getLogger(CitadelGetter.class);
 
-	private static final String HAMMERTI_URL = "https://stop.hammerti.me.uk/api/citadel/all";
-	private static final String NIKR_URL = "https://eve.nikr.net/jeveassets/citadel/";
+	protected static enum StructureHost {
+		HAMMERTIME("https://stop.hammerti.me.uk/api/citadel/all"),
+		NIKR("https://eve.nikr.net/jeveassets/citadel/"),
+		ZKILL("https://zkillboard.com/api/structures.json"),;
+
+		private final String url;
+
+		private StructureHost(String url) {
+			this.url = url;
+		}
+
+		public String getUrl() {
+			return url;
+		}
+	}
 
 	private static CitadelGetter citadelGetter;
 	private CitadelSettings citadelSettings = new CitadelSettings();
@@ -74,7 +89,39 @@ public class CitadelGetter extends AbstractXmlWriter {
 		}
 		List<Exception> exceptions = new ArrayList<>();
 		try {
-			boolean updated = getCitadelGetter().updateCache(updateTask, NIKR_URL); //Get the cached version
+			getCitadelGetter().updateCache(updateTask, StructureHost.ZKILL, getCitadelGetter().citadelSettings.getZKillETag(), 0, 50, new TypeToken<Map<Long, ZKillStructure>>() {}, new Setter<ZKillStructure>() {
+				@Override
+				public void setETag(CitadelSettings citadelSettings, String eTag) {
+					citadelSettings.setZKillETag(eTag);
+				}
+				@Override
+				public void setData(CitadelSettings citadelSettings, Map<Long, ZKillStructure> results) {
+					for (Map.Entry<Long, ZKillStructure> entry : results.entrySet()) {
+						MyLocation system = ApiIdConverter.getLocation(entry.getValue().getSystemID());
+						citadelSettings.put(entry.getKey(), new Citadel(entry.getKey(), entry.getValue(), system));
+					}
+				}
+			});
+		} catch (IOException | JsonParseException ex) {
+			LOG.error("	ZKill Structures failed to update", ex);
+			if (updateTask != null) {
+				updateTask.addError(DialoguesUpdate.get().citadel(), ex.getMessage());
+			}
+		}
+		try {
+			//Get the cached version
+			boolean updated = getCitadelGetter().updateCache(updateTask, StructureHost.NIKR, null, 50, 100, new TypeToken<Map<Long, Citadel>>() {}, new Setter<Citadel>() {
+				@Override
+				public void setETag(CitadelSettings citadelSettings, String eTag) { }
+				@Override
+				public void setData(CitadelSettings citadelSettings, Map<Long, Citadel> results) {
+					//Updated OK
+					for (Map.Entry<Long, Citadel> entry : results.entrySet()) {
+						entry.getValue().setID(entry.getKey()); //Update locationID
+						citadelSettings.put(entry.getKey(), entry.getValue());
+					}
+				}
+			});
 			if (updated) {
 				return;
 			}
@@ -83,14 +130,25 @@ public class CitadelGetter extends AbstractXmlWriter {
 			exceptions.add(ex);
 		}
 		try {
-			boolean updated = getCitadelGetter().updateCache(updateTask, HAMMERTI_URL); //Get it from the source
+			//Get it from the source
+			boolean updated = getCitadelGetter().updateCache(updateTask, StructureHost.HAMMERTIME, null, 50, 100, new TypeToken<Map<Long, Citadel>>() {}, new Setter<Citadel>() {
+				@Override
+				public void setETag(CitadelSettings citadelSettings, String eTag) { }
+				@Override
+				public void setData(CitadelSettings citadelSettings, Map<Long, Citadel> results) {
+					//Updated OK
+					for (Map.Entry<Long, Citadel> entry : results.entrySet()) {
+						entry.getValue().setID(entry.getKey()); //Update locationID
+						citadelSettings.put(entry.getKey(), entry.getValue());
+					}
+				}
+			});
 			if (updated) {
 				return;
 			}
 		} catch (IOException | JsonParseException ex) {
 			LOG.error("	Citadels failed to update", ex);
 			exceptions.add(ex);
-			
 		}
 		for (Exception ex : exceptions) {
 			if (updateTask != null) {
@@ -142,17 +200,20 @@ public class CitadelGetter extends AbstractXmlWriter {
 		return true;
 	}
 
-	protected boolean updateCache(UpdateTask updateTask, String hostUrl) throws IOException, JsonParseException {
-		LOG.info("Citadels updating from: " + hostUrl);
+	protected <T> boolean  updateCache(UpdateTask updateTask, StructureHost structureHost, String eTag, int progressStart, int progressEnd, TypeToken<Map<Long, T>> type, Setter<T> setter) throws IOException, JsonParseException {
+		LOG.info("Citadels updating from: " + structureHost.getUrl());
 		//Update citadel
 		InputStream in = null;
 		GZIPInputStream gZipIn = null;
 		UpdateTaskInputStream updateTaskIn = null;
 		InputStreamReader reader = null;
 		try { //Update from API
-			URL url = new URL(hostUrl);
+			URL url = new URL(structureHost.getUrl());
 			HttpURLConnection con = (HttpURLConnection) url.openConnection();
 			con.setRequestProperty("Accept-Encoding", "gzip");
+			if (eTag != null) {
+				con.setRequestProperty("If-None-Match", eTag);
+			}
 			long contentLength = con.getContentLengthLong();
 			String contentEncoding = con.getContentEncoding();
 			in = con.getInputStream();
@@ -163,18 +224,19 @@ public class CitadelGetter extends AbstractXmlWriter {
 			} else {
 				temp = in;
 			}
-			updateTaskIn = new UpdateTaskInputStream(temp, contentLength, updateTask);
+			updateTaskIn = new UpdateTaskInputStream(temp, contentLength, updateTask, progressStart, progressEnd);
 			reader = new InputStreamReader(updateTaskIn);
 			Gson gson = new GsonBuilder().create();
-			Map<Long, Citadel> results = gson.fromJson(reader, new TypeToken<Map<Long, Citadel>>() {}.getType());
+			Map<Long, T> results = gson.fromJson(reader, type.getType());
 			if (results == null) { 
 				return false;
 			}
 			//Updated OK
-			for (Map.Entry<Long, Citadel> entry : results.entrySet()) {
-				entry.getValue().setID(entry.getKey()); //Update locationID
-				citadelSettings.put(entry.getKey(), entry.getValue());
+			eTag = con.getHeaderField("etag");
+			if (eTag != null) {
+				setter.setETag(citadelSettings, eTag);
 			}
+			setter.setData(citadelSettings, results);
 			citadelSettings.setNextUpdate();
 			saveXml();
 			LOG.info("	Updated citadels for jEveAssets");
@@ -209,6 +271,11 @@ public class CitadelGetter extends AbstractXmlWriter {
 				}
 			}
 		}
+	}
+
+	protected static interface Setter<T> {
+		public void setETag(CitadelSettings citadelSettings, String eTag);
+		public void setData(CitadelSettings citadelSettings, Map<Long, T> results);
 	}
 
 	private void removeCitadel(long locationID) {

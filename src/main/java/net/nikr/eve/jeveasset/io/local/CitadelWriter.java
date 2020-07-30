@@ -66,15 +66,15 @@ public final class CitadelWriter extends AbstractXmlWriter {
 		for (Map.Entry<Long, Citadel> entry : settings.getCache()) {
 			Element node = xmldoc.createElementNS(null, "citadel");
 			Citadel citadel = entry.getValue();
-			setAttribute(node, "stationid", String.valueOf(entry.getKey()));
-			setAttribute(node, "systemid", String.valueOf(citadel.systemId));
+			setAttribute(node, "stationid", entry.getKey());
+			setAttribute(node, "systemid", citadel.systemId);
 			setAttribute(node, "name", citadel.name);
 			setAttribute(node, "systemname", citadel.systemName);
-			setAttribute(node, "regionid", String.valueOf(citadel.regionId));
+			setAttribute(node, "regionid", citadel.regionId);
 			setAttribute(node, "regionname", citadel.regionName);
-			setAttribute(node, "userlocation", String.valueOf(citadel.userLocation));
-			setAttribute(node, "citadel", String.valueOf(citadel.citadel));
-			setAttribute(node, "source", citadel.source.name());
+			setAttribute(node, "userlocation", citadel.userLocation);
+			setAttribute(node, "citadel", citadel.citadel);
+			setAttribute(node, "source", citadel.source);
 			parentNode.appendChild(node);
 		}
 	}
@@ -82,7 +82,8 @@ public final class CitadelWriter extends AbstractXmlWriter {
 	private void writeSettings(final Document xmldoc, final CitadelSettings settings) {
 		Element parentNode = xmldoc.getDocumentElement();
 		Element node = xmldoc.createElementNS(null, "settings");
-		setAttribute(node, "nextupdate", String.valueOf(settings.getNextUpdate().getTime()));
+		setAttribute(node, "nextupdate", settings.getNextUpdate());
+		setAttributeOptional(node, "zkilletag",settings.getZKillETag());
 		parentNode.appendChild(node);
 	}
 
