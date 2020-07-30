@@ -99,7 +99,9 @@ public final class CitadelReader extends AbstractXmlReader<CitadelSettings> {
 		for (int i = 0; i < filterNodes.getLength(); i++) {
 			Element currentNode = (Element) filterNodes.item(i);
 			Date nextUpdate = getDate(currentNode, "nextupdate");
+			String zKillETag = getStringOptional(currentNode, "zkilletag");
 			settings.setNextUpdate(nextUpdate);
+			settings.setZKillETag(zKillETag);
 		}
 	}
 
