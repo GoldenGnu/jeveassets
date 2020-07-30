@@ -20,6 +20,7 @@
  */
 package net.nikr.eve.jeveasset.data.settings.types;
 
+import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.Percent;
 
 
@@ -28,6 +29,9 @@ public interface LastTransactionType {
 	public double getTransactionPrice();
 	public double getTransactionProfitDifference();
 	public Percent getTransactionProfitPercent();
+	default double getTransactionMargin() {
+		return getTransactionPrice() + (getTransactionPrice() / 100.0 * Settings.get().getTransactionProfitMargin());
+	}
 	public void setTransactionPrice(double transactionPrice);
 	public void setTransactionProfit(double transactionProfit);
 	public void setTransactionProfitPercent(Percent transactionProfitPercent);

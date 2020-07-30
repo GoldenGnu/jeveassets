@@ -184,6 +184,7 @@ public class Settings {
 	private boolean windowAlwaysOnTop = false;
 	//Assets
 	private int maximumPurchaseAge = 0;
+	private int transactionProfitMargin = 0;
 	private TransactionProfitPrice transactionProfitPrice = TransactionProfitPrice.LASTEST;
 	//Reprocess price
 	private ReprocessSettings reprocessSettings = new ReprocessSettings();
@@ -572,6 +573,14 @@ public class Settings {
 
 	public void setTransactionProfitPrice(TransactionProfitPrice transactionProfitPrice) {
 		this.transactionProfitPrice = transactionProfitPrice;
+	}
+
+	public int getTransactionProfitMargin() {
+		return transactionProfitMargin;
+	}
+
+	public void setTransactionProfitMargin(int transactionProfitMargin) {
+		this.transactionProfitMargin = transactionProfitMargin;
 	}
 
 	public boolean isFilterOnEnter() {

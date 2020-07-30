@@ -44,6 +44,7 @@ public class GeneralSettingsPanel extends JSettingsPanel {
 	private final JCheckBox jHighlightSelectedRow;
 	private final JCheckBox jFocusEveOnline;
 	private final JTextField jMaxOrderAge;
+	private final JTextField jTransactionProfitMargin;
 	private final JComboBox<TransactionProfitPrice> jTransactionProfitPrice;
 
 
@@ -70,14 +71,18 @@ public class GeneralSettingsPanel extends JSettingsPanel {
 		jFocusEveOnlineLinuxCmd.setEditable(false);
 		jFocusEveOnlineLinuxCmd.setVisible(Platform.isLinux());
 
-		jMaxOrderAge = new JIntegerField("0", DocumentFactory.ValueFlag.POSITIVE_AND_ZERO);
+		JLabel jTransactionProfitLabel = new JLabel(DialoguesSettings.get().transactionsProfit());
+
 		JLabel jMaxOrderAgeLabel = new JLabel(DialoguesSettings.get().includeDays());
+		jMaxOrderAge = new JIntegerField("0", DocumentFactory.ValueFlag.POSITIVE_AND_ZERO);
 		JLabel jDaysLabel = new JLabel(DialoguesSettings.get().days());
 
-		JLabel jTransactionProfitLabel = new JLabel(DialoguesSettings.get().transactionsProfit());
 		JLabel jTransactionProfitPriceLabel = new JLabel(DialoguesSettings.get().transactionsPrice());
 		jTransactionProfitPrice = new JComboBox<>(TransactionProfitPrice.values());
 		jTransactionProfitPrice.setPrototypeDisplayValue(TransactionProfitPrice.LASTEST);
+
+		JLabel jTransactionProfitMarginLabel = new JLabel(DialoguesSettings.get().transactionsMargin());
+		jTransactionProfitMargin = new JIntegerField("0", DocumentFactory.ValueFlag.POSITIVE_AND_ZERO);
 
 		layout.setHorizontalGroup(
 			layout.createParallelGroup(GroupLayout.Alignment.LEADING)
@@ -98,10 +103,12 @@ public class GeneralSettingsPanel extends JSettingsPanel {
 					.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
 						.addComponent(jTransactionProfitPriceLabel)
 						.addComponent(jMaxOrderAgeLabel)
+						.addComponent(jTransactionProfitMarginLabel)
 					)
 					.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
 						.addComponent(jMaxOrderAge)
 						.addComponent(jTransactionProfitPrice)
+						.addComponent(jTransactionProfitMargin)
 					)
 					.addComponent(jDaysLabel)
 				)
@@ -125,6 +132,10 @@ public class GeneralSettingsPanel extends JSettingsPanel {
 					.addComponent(jTransactionProfitPriceLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 					.addComponent(jTransactionProfitPrice, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 				)
+				.addGroup(layout.createParallelGroup()
+					.addComponent(jTransactionProfitMarginLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jTransactionProfitMargin, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+				)
 		);
 	}
 
@@ -137,6 +148,12 @@ public class GeneralSettingsPanel extends JSettingsPanel {
 			maximumPurchaseAge = 0;
 		}
 		TransactionProfitPrice transactionProfitPrice = jTransactionProfitPrice.getItemAt(jTransactionProfitPrice.getSelectedIndex());
+		int transactionProfitMargin;
+		try {
+			transactionProfitMargin = Integer.valueOf(jTransactionProfitMargin.getText());
+		} catch (NumberFormatException ex) {
+			transactionProfitMargin = 0;
+		}
 		boolean update = jHighlightSelectedRow.isSelected() != Settings.get().isHighlightSelectedRows()
 						|| maximumPurchaseAge != Settings.get().getMaximumPurchaseAge()
 						|| transactionProfitPrice != Settings.get().getTransactionProfitPrice()
@@ -146,6 +163,7 @@ public class GeneralSettingsPanel extends JSettingsPanel {
 		Settings.get().setFocusEveOnlineOnEsiUiCalls(jFocusEveOnline.isSelected());
 		Settings.get().setMaximumPurchaseAge(maximumPurchaseAge);
 		Settings.get().setTransactionProfitPrice(transactionProfitPrice);
+		Settings.get().setTransactionProfitMargin(transactionProfitMargin);
 		return update;
 	}
 
@@ -156,5 +174,6 @@ public class GeneralSettingsPanel extends JSettingsPanel {
 		jFocusEveOnline.setSelected(Settings.get().isFocusEveOnlineOnEsiUiCalls());
 		jMaxOrderAge.setText(String.valueOf(Settings.get().getMaximumPurchaseAge()));
 		jTransactionProfitPrice.setSelectedItem(Settings.get().getTransactionProfitPrice());
+		jTransactionProfitMargin.setText(String.valueOf(Settings.get().getTransactionProfitMargin()));
 	}
 }
