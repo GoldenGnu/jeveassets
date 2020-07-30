@@ -21,6 +21,7 @@
 package net.nikr.eve.jeveasset.io.online;
 
 import com.google.gson.JsonParseException;
+import com.google.gson.reflect.TypeToken;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -28,13 +29,17 @@ import java.net.Proxy;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import net.nikr.eve.jeveasset.TestUtil;
 import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
 import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.data.sde.StaticData;
+import net.nikr.eve.jeveasset.data.settings.Citadel;
+import net.nikr.eve.jeveasset.data.settings.CitadelSettings;
 import net.nikr.eve.jeveasset.data.settings.PriceDataSettings.PriceSource;
 import net.nikr.eve.jeveasset.data.settings.ProxyData;
+import net.nikr.eve.jeveasset.data.settings.ZKillStructure;
 import net.nikr.eve.jeveasset.io.esi.EsiCallbackURL;
 import net.nikr.eve.jeveasset.io.esi.EsiOwnerGetter;
 import org.junit.AfterClass;
@@ -101,6 +106,7 @@ public class ProxyTest extends TestUtil {
 		//Citadels
 		CitadelGetterMock citadel = new CitadelGetterMock();
 		citadel.update();
+		citadel.updateZKill();
 		//Price
 		PriceDataGetterMock price = new PriceDataGetterMock();
 		price.update();
@@ -114,9 +120,29 @@ public class ProxyTest extends TestUtil {
 
 	private static class CitadelGetterMock extends CitadelGetter {
 
+		public boolean updateZKill() {
+			try {
+				return super.updateCache(null, StructureHost.ZKILL, null, 0, 100, new TypeToken<Map<Long, ZKillStructure>>() {}, new Setter<ZKillStructure>() {
+					@Override
+					public void setETag(CitadelSettings citadelSettings, String eTag) { }
+
+					@Override
+					public void setData(CitadelSettings citadelSettings, Map<Long, ZKillStructure> results) { }
+				});
+			} catch (IOException | JsonParseException ex) {
+				throw new RuntimeException(ex);
+			}
+		}
+
 		public boolean update() {
 			try {
-				return super.updateCache(null, "https://niklaskr.dk/jeveassets/citadel/");
+				return super.updateCache(null, StructureHost.NIKR, null, 0, 100, new TypeToken<Map<Long, Citadel>>() {}, new Setter<Citadel>() {
+					@Override
+					public void setETag(CitadelSettings citadelSettings, String eTag) { }
+
+					@Override
+					public void setData(CitadelSettings citadelSettings, Map<Long, Citadel> results) { }
+				});
 			} catch (IOException | JsonParseException ex) {
 				throw new RuntimeException(ex);
 			}
