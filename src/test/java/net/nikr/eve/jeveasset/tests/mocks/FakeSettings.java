@@ -651,4 +651,14 @@ public abstract class FakeSettings extends Settings {
 	public Map<Long, Date> getOwnersNextUpdate() {
 		throw new UnsupportedOperationException("not implemented");
 	}
+
+	@Override
+	public void setTransactionProfitMargin(int transactionProfitMargin) {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public int getTransactionProfitMargin() {
+		throw new UnsupportedOperationException("not implemented");
+	}
 }
