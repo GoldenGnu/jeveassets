@@ -241,6 +241,11 @@ public class EveKitOwner extends DeprecatedOwner implements OwnerType {
 	}
 
 	@Override
+	public boolean isSkills() {
+		return false; //Not supported by the EveKit, Yet?
+	}
+
+	@Override
 	public String getComparator() {
 		return "evekit" + getAccountName() + getAccessKey();
 	}

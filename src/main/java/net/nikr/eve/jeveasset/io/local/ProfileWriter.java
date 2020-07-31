@@ -36,6 +36,7 @@ import net.nikr.eve.jeveasset.data.api.my.MyContractItem;
 import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob;
 import net.nikr.eve.jeveasset.data.api.my.MyJournal;
 import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder;
+import net.nikr.eve.jeveasset.data.api.raw.RawSkill;
 import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
 import net.nikr.eve.jeveasset.data.api.raw.RawBlueprint;
 import net.nikr.eve.jeveasset.data.profile.Profile;
@@ -102,7 +103,7 @@ public final class ProfileWriter extends AbstractXmlWriter {
 			setAttribute(node, "structuresnextupdate", owner.getStructuresNextUpdate());
 			setAttribute(node, "accountnextupdate", owner.getAccountNextUpdate());
 			setAttribute(node, "callbackurl", owner.getCallbackURL());
-			Set<String> roles = new HashSet<String>();
+			Set<String> roles = new HashSet<>();
 			for (RolesEnum role : owner.getRoles()) {
 				roles.add(role.name());
 			}
@@ -182,6 +183,7 @@ public final class ProfileWriter extends AbstractXmlWriter {
 		setAttribute(node, "locationsnextupdate", owner.getLocationsNextUpdate());
 		setAttribute(node, "blueprintsnextupdate", owner.getBlueprintsNextUpdate());
 		setAttribute(node, "bookmarksnextupdate", owner.getBookmarksNextUpdate());
+		setAttribute(node, "skillsnextupdate", owner.getSkillsNextUpdate());
 		setAttribute(node, "containerlogsnextupdate", owner.getContainerLogsNextUpdate());
 
 		Element childNode = xmldoc.createElement("assets");
@@ -196,6 +198,7 @@ public final class ProfileWriter extends AbstractXmlWriter {
 		writeBlueprints(xmldoc, node, owner.getBlueprints(), owner.isCorporation());
 		writeAssetDivisions(xmldoc, node, owner.getAssetDivisions());
 		writeWalletDivisions(xmldoc, node, owner.getWalletDivisions());
+		writeSkills(xmldoc, node, owner.getSkills(), owner.getTotalSkillPoints(), owner.getUnallocatedSkillPoints());
 	}
 
 	private void writeAssets(final Document xmldoc, final Element parentNode, final List<MyAsset> assets) {
@@ -441,6 +444,7 @@ public final class ProfileWriter extends AbstractXmlWriter {
 			node.appendChild(childNode);
 		}
 	}
+
 	private void writeWalletDivisions(final Document xmldoc, final Element parentNode, final Map<Integer, String> divisions) {
 		Element node = xmldoc.createElement("walletdivisions");
 		if (!divisions.isEmpty()) {
@@ -450,6 +454,21 @@ public final class ProfileWriter extends AbstractXmlWriter {
 			Element childNode = xmldoc.createElement("walletdivision");
 			setAttribute(childNode, "id", entry.getKey());
 			setAttributeOptional(childNode, "name", entry.getValue());
+			node.appendChild(childNode);
+		}
+	}
+
+	private void writeSkills(final Document xmldoc, final Element parentNode, final List<RawSkill> skills, Long totalSkillPoints, Integer unallocatedSkillPoints) {
+		Element node = xmldoc.createElement("skills");
+		parentNode.appendChild(node);
+		setAttributeOptional(node, "total", totalSkillPoints);
+		setAttributeOptional(node, "unallocated", unallocatedSkillPoints);
+		for (RawSkill skill : skills) {
+			Element childNode = xmldoc.createElement("skill");
+			setAttribute(childNode, "id", skill.getTypeID());
+			setAttribute(childNode, "sp", skill.getSkillpoints());
+			setAttribute(childNode, "active", skill.getActiveSkillLevel());
+			setAttribute(childNode, "trained", skill.getTrainedSkillLevel());
 			node.appendChild(childNode);
 		}
 	}

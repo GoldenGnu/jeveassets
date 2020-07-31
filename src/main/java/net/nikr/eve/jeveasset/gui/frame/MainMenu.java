@@ -68,6 +68,7 @@ public class MainMenu extends JMenuBar {
 		TRACKER,
 		REPROCESSED,
 		CONTRACTS,
+		INDUSTRY_SLOT,
 		EXIT_PROGRAM
 	}
 
@@ -175,6 +176,12 @@ public class MainMenu extends JMenuBar {
 		menuItem = new JMenuItem(GuiFrame.get().industry());
 		menuItem.setIcon(Images.TOOL_INDUSTRY_JOBS.getIcon());
 		menuItem.setActionCommand(MainMenuAction.INDUSTRY_JOBS.name());
+		menuItem.addActionListener(program);
+		submenu.add(menuItem);
+
+		menuItem = new JMenuItem(GuiFrame.get().industrySlots());
+		menuItem.setIcon(Images.TOOL_INDUSTRY_SLOTS.getIcon());
+		menuItem.setActionCommand(MainMenuAction.INDUSTRY_SLOT.name());
 		menuItem.addActionListener(program);
 		submenu.add(menuItem);
 

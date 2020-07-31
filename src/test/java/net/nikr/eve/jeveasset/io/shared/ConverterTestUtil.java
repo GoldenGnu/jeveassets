@@ -82,6 +82,7 @@ import net.troja.eve.esi.api.LocationApi;
 import net.troja.eve.esi.api.MarketApi;
 import net.troja.eve.esi.api.MetaApi;
 import net.troja.eve.esi.api.PlanetaryInteractionApi;
+import net.troja.eve.esi.api.SkillsApi;
 import net.troja.eve.esi.api.UniverseApi;
 import net.troja.eve.esi.api.UserInterfaceApi;
 import net.troja.eve.esi.api.WalletApi;
@@ -605,6 +606,9 @@ public class ConverterTestUtil {
 			return true;
 		}
 		if (type.equals(PlanetaryInteractionApi.class)) {
+			return true;
+		}
+		if (type.equals(SkillsApi.class)) {
 			return true;
 		}
 		return false;

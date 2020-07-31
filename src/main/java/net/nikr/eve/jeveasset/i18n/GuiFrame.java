@@ -52,7 +52,7 @@ public abstract class GuiFrame extends Bundle {
 	public abstract String inventory();
 	public abstract String items();
 	public abstract String industry();
-	public abstract String industryPlot();
+	public abstract String industrySlots();
 	public abstract String journal();
 	public abstract String license();
 	public abstract String linkFaq();

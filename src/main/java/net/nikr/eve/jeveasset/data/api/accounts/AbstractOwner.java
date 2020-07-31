@@ -35,6 +35,7 @@ import net.nikr.eve.jeveasset.data.api.my.MyContractItem;
 import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob;
 import net.nikr.eve.jeveasset.data.api.my.MyJournal;
 import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder;
+import net.nikr.eve.jeveasset.data.api.raw.RawSkill;
 import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
 import net.nikr.eve.jeveasset.data.api.raw.RawBlueprint;
 import net.nikr.eve.jeveasset.data.settings.Settings;
@@ -52,6 +53,9 @@ public abstract class AbstractOwner implements OwnerType, Comparable<OwnerType> 
 	private Map<Long, RawBlueprint> blueprints = new HashMap<>();
 	private Map<Integer, String> walletDivisions = new HashMap<>();
 	private Map<Integer, String> assetDivisions = new HashMap<>();
+	private List<RawSkill> skills = new ArrayList<>();
+	private Long totalSkillPoints = null;
+	private Integer unallocatedSkillPoints = null;
 	private List<MyContainerLog> containerLogs = new ArrayList<>();
 
 	private String ownerName;
@@ -71,6 +75,7 @@ public abstract class AbstractOwner implements OwnerType, Comparable<OwnerType> 
 	private Date locationsNextUpdate = Settings.getNow();
 	private Date blueprintsNextUpdate = Settings.getNow();
 	private Date bookmarksNextUpdate = Settings.getNow();
+	private Date skillsNextUpdate = Settings.getNow();
 	private Date containerLogsNextUpdate = Settings.getNow();
 
 	public AbstractOwner() { }
@@ -89,6 +94,9 @@ public abstract class AbstractOwner implements OwnerType, Comparable<OwnerType> 
 		this.contracts = abstractOwner.contracts;
 		this.assets = abstractOwner.assets;
 		this.blueprints = abstractOwner.blueprints;
+		this.skills = abstractOwner.skills;
+		this.totalSkillPoints = abstractOwner.totalSkillPoints;
+		this.unallocatedSkillPoints = abstractOwner.unallocatedSkillPoints;
 		this.containerLogs = abstractOwner.containerLogs;
 		this.ownerName = abstractOwner.ownerName;
 		this.ownerID = abstractOwner.ownerID;
@@ -154,6 +162,11 @@ public abstract class AbstractOwner implements OwnerType, Comparable<OwnerType> 
 	}
 
 	@Override
+	public void setSkillsNextUpdate(Date skillsNextUpdate) {
+		this.skillsNextUpdate = skillsNextUpdate;
+	}
+
+	@Override
 	public synchronized void setTransactionsNextUpdate(final Date transactionsNextUpdate) {
 		this.transactionsNextUpdate = transactionsNextUpdate;
 	}
@@ -216,6 +229,11 @@ public abstract class AbstractOwner implements OwnerType, Comparable<OwnerType> 
 	@Override
 	public synchronized void setContainerLogsNextUpdate(final Date containerLogsNextUpdate) {
 		this.containerLogsNextUpdate = containerLogsNextUpdate;
+	}
+
+	@Override
+	public Date getSkillsNextUpdate() {
+		return skillsNextUpdate;
 	}
 
 	@Override
@@ -351,6 +369,21 @@ public abstract class AbstractOwner implements OwnerType, Comparable<OwnerType> 
 	}
 
 	@Override
+	public List<RawSkill> getSkills() {
+		return skills;
+	}
+
+	@Override
+	public Long getTotalSkillPoints() {
+		return totalSkillPoints;
+	}
+
+	@Override
+	public Integer getUnallocatedSkillPoints() {
+		return unallocatedSkillPoints;
+	}
+
+	@Override
 	public final void setShowOwner(final boolean showOwner) {
 		this.showOwner = showOwner;
 	}
@@ -423,6 +456,21 @@ public abstract class AbstractOwner implements OwnerType, Comparable<OwnerType> 
 	@Override
 	public void setAssetDivisions(Map<Integer, String> assetDivisions) {
 		this.assetDivisions = assetDivisions;
+	}
+
+	@Override
+	public void setSkills(List<RawSkill> skills) {
+		this.skills = skills;
+	}
+
+	@Override
+	public void setTotalSkillPoints(Long totalSkillPoints) {
+		this.totalSkillPoints = totalSkillPoints;
+	}
+
+	@Override
+	public void setUnallocatedSkillPoints(Integer unallocatedSkillPoints) {
+		this.unallocatedSkillPoints = unallocatedSkillPoints;
 	}
 
 	@Override

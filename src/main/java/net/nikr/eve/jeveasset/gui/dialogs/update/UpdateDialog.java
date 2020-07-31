@@ -73,6 +73,7 @@ import net.nikr.eve.jeveasset.io.online.ContractPriceGetter;
 import net.nikr.eve.jeveasset.data.settings.ContractPriceManager;
 import net.nikr.eve.jeveasset.gui.shared.Updatable;
 import net.nikr.eve.jeveasset.io.esi.EsiFactionWarfareGetter;
+import net.nikr.eve.jeveasset.io.esi.EsiSkillGetter;
 import net.nikr.eve.jeveasset.io.online.PriceDataGetter;
 import net.nikr.eve.jeveasset.io.shared.ThreadWoker;
 
@@ -111,6 +112,9 @@ public class UpdateDialog extends JDialogCentered {
 	private final JCheckBox jBookmarks;
 	private final JLabel jBookmarksLeftFirst;
 	private final JLabel jBookmarksLeftLast;
+	private final JCheckBox jSkills;
+	private final JLabel jSkillsLeftFirst;
+	private final JLabel jSkillLeftLast;
 	private final JRadioButton jContractPricesAll;
 	private final JRadioButton jContractPricesNew;
 	private final JRadioButton jContractPricesNone;
@@ -142,7 +146,6 @@ public class UpdateDialog extends JDialogCentered {
 		jCheckAll = new JCheckBox(General.get().all());
 		jCheckAll.setActionCommand(UpdateDialogAction.CHECK_ALL.name());
 		jCheckAll.addActionListener(listener);
-
 		jMarketOrders = new JCheckBox(DialoguesUpdate.get().marketOrders());
 		jJournal = new JCheckBox(DialoguesUpdate.get().journal());
 		jTransactions = new JCheckBox(DialoguesUpdate.get().transactions());
@@ -153,6 +156,7 @@ public class UpdateDialog extends JDialogCentered {
 		jBlueprints = new JCheckBox(DialoguesUpdate.get().blueprints());
 		jBookmarks = new JCheckBox(DialoguesUpdate.get().bookmarks());
 		jContainerLogs = new JCheckBox(DialoguesUpdate.get().containerLogs());
+		jSkills = new JCheckBox(DialoguesUpdate.get().skills());
 		jContractPricesAll = new JRadioButton(DialoguesUpdate.get().contractPrices());
 		jContractPricesAll.setActionCommand(UpdateDialogAction.CHANGED.name());
 		jContractPricesAll.addActionListener(listener);
@@ -189,6 +193,7 @@ public class UpdateDialog extends JDialogCentered {
 		jCheckBoxes.add(jAssets);
 		jCheckBoxes.add(jBlueprints);
 		jCheckBoxes.add(jBookmarks);
+		jCheckBoxes.add(jSkills);
 		jCheckBoxes.add(jContainerLogs);
 		for (JCheckBox jCheckBox : jCheckBoxes) {
 			jCheckBox.setActionCommand(UpdateDialogAction.CHANGED.name());
@@ -206,6 +211,7 @@ public class UpdateDialog extends JDialogCentered {
 		jBlueprintsLeftFirst = new JLabel();
 		jBookmarksLeftFirst = new JLabel();
 		jContainerLogsLeftFirst = new JLabel();
+		jSkillsLeftFirst = new JLabel();
 		jPriceDataLeft = new JLabel();
 
 		JLabel jLeftLast = new JLabel(DialoguesUpdate.get().allAccounts());
@@ -218,6 +224,7 @@ public class UpdateDialog extends JDialogCentered {
 		jAssetsLeftLast = new JLabel();
 		jBlueprintsLeftLast = new JLabel();
 		jBookmarksLeftLast = new JLabel();
+		jSkillLeftLast = new JLabel();
 		jContainerLogsLeftLast = new JLabel();
 		jContractPricesLeft = new JLabel();
 
@@ -245,6 +252,7 @@ public class UpdateDialog extends JDialogCentered {
 								.addComponent(jAssets)
 								.addComponent(jBlueprints)
 								.addComponent(jBookmarks)
+								.addComponent(jSkills)
 								.addComponent(jContainerLogs)
 							)
 							.addGap(20)
@@ -259,6 +267,7 @@ public class UpdateDialog extends JDialogCentered {
 								.addComponent(jAssetsLeftFirst)
 								.addComponent(jBlueprintsLeftFirst)
 								.addComponent(jBookmarksLeftFirst)
+								.addComponent(jSkillsLeftFirst)
 								.addComponent(jContainerLogsLeftFirst)
 							)
 							.addGap(20)
@@ -291,6 +300,7 @@ public class UpdateDialog extends JDialogCentered {
 						.addComponent(jAssetsLeftLast)
 						.addComponent(jBlueprintsLeftLast)
 						.addComponent(jBookmarksLeftLast)
+						.addComponent(jSkillLeftLast)
 						.addComponent(jContainerLogsLeftLast)
 						.addComponent(jContractPricesLeft)
 						.addComponent(jPriceDataLeft)
@@ -357,6 +367,11 @@ public class UpdateDialog extends JDialogCentered {
 					.addComponent(jBookmarks, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 					.addComponent(jBookmarksLeftFirst, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 					.addComponent(jBookmarksLeftLast, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+				)
+				.addGroup(layout.createParallelGroup()
+					.addComponent(jSkills, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jSkillsLeftFirst, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jSkillLeftLast, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 				)
 				.addGroup(layout.createParallelGroup()
 					.addComponent(jContractPricesAll, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
@@ -432,6 +447,7 @@ public class UpdateDialog extends JDialogCentered {
 		Date assetsFirst = null;
 		Date blueprintsFirst = null;
 		Date bookmarksFirst = null;
+		Date skillsFirst = null;
 		Date containerLogsFirst  = null;
 		Date accountBalanceFirst = null;
 
@@ -443,6 +459,7 @@ public class UpdateDialog extends JDialogCentered {
 		Date assetsLast = null;
 		Date blueprintsLast = null;
 		Date bookmarksLast = null;
+		Date skillsksLast = null;
 		Date containerLogsLast  = null;
 		Date accountBalanceLast = null;
 
@@ -492,6 +509,10 @@ public class UpdateDialog extends JDialogCentered {
 				containerLogsFirst = updateFirst(containerLogsFirst, owner.getContainerLogsNextUpdate());
 				containerLogsLast = updateLast(containerLogsLast, owner.getContainerLogsNextUpdate());
 			}
+			if (owner.isSkills()) {
+				skillsFirst = updateFirst(skillsFirst, owner.getSkillsNextUpdate());
+				skillsksLast = updateLast(skillsksLast, owner.getSkillsNextUpdate());
+			}
 		}
 		if (program.getOwnerTypes().isEmpty()) {
 			jPriceDataNone.setSelected(true);
@@ -530,6 +551,7 @@ public class UpdateDialog extends JDialogCentered {
 		setUpdateLabel(jBlueprintsLeftFirst, jBlueprintsLeftLast, jBlueprints, blueprintsFirst, blueprintsLast, check);
 		setUpdateLabel(jBookmarksLeftFirst, jBookmarksLeftLast, jBookmarks, bookmarksFirst, bookmarksLast, check);
 		setUpdateLabel(jContainerLogsLeftFirst, jContainerLogsLeftLast, jContainerLogs, containerLogsFirst, containerLogsLast, check);
+		setUpdateLabel(jSkillsLeftFirst, jSkillLeftLast, jSkills, skillsFirst, skillsksLast, check);
 		changed();
 
 	}
@@ -624,6 +646,7 @@ public class UpdateDialog extends JDialogCentered {
 			jAssets.setSelected(true);
 			jBlueprints.setSelected(true);
 			jBookmarks.setSelected(true);
+			jSkills.setSelected(true);
 			jContainerLogs.setSelected(true);
 			jContractPricesAll.setSelected(true);
 			jPriceDataAll.setSelected(true);
@@ -668,6 +691,7 @@ public class UpdateDialog extends JDialogCentered {
 						|| jAssets.isSelected()
 						|| jBlueprints.isSelected()
 						|| jBookmarks.isSelected()
+						|| jSkills.isSelected()
 						|| jContainerLogs.isSelected()
 						) {
 					updateTasks.add(new CitadelTask());
@@ -682,7 +706,8 @@ public class UpdateDialog extends JDialogCentered {
 							jIndustryJobs.isSelected(),
 							jJournal.isSelected(),
 							jMarketOrders.isSelected(),
-							jTransactions.isSelected()));
+							jTransactions.isSelected(),
+							jSkills.isSelected()));
 					updateTasks.add(new Step3Task(program.getProfileManager(),
 							jAssets.isSelected(),
 							jContracts.isSelected()));
@@ -795,7 +820,7 @@ public class UpdateDialog extends JDialogCentered {
 
 		private final List<Runnable> updates = new ArrayList<>();
 
-		public Step2Task(final ProfileManager profileManager, final boolean assets, final boolean balance, final boolean blueprints, final boolean bookmarks, final boolean container, final boolean contracts, final boolean industry, final boolean journal, final boolean orders, final boolean transactions) {
+		public Step2Task(final ProfileManager profileManager, final boolean assets, final boolean balance, final boolean blueprints, final boolean bookmarks, final boolean container, final boolean contracts, final boolean industry, final boolean journal, final boolean orders, final boolean transactions, final boolean skills) {
 			super(DialoguesUpdate.get().step2());
 			if (balance) {
 				//Esi
@@ -858,6 +883,12 @@ public class UpdateDialog extends JDialogCentered {
 				//Esi
 				for (EsiOwner esiOwner : profileManager.getEsiOwners()) {
 					updates.add(new EsiBookmarksGetter(this, esiOwner));
+				}
+			}
+			if (skills) {
+				//Esi
+				for (EsiOwner esiOwner : profileManager.getEsiOwners()) {
+					updates.add(new EsiSkillGetter(this, esiOwner));
 				}
 			}
 		}

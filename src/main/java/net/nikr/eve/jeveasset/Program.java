@@ -98,6 +98,7 @@ import net.nikr.eve.jeveasset.gui.tabs.values.ValueTableTab;
 import net.nikr.eve.jeveasset.i18n.GuiFrame;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 import net.nikr.eve.jeveasset.data.settings.ContractPriceManager;
+import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustrySlotsTab;
 import net.nikr.eve.jeveasset.gui.tabs.orders.OutbidProcesser.OutbidProcesserOutput;
 import net.nikr.eve.jeveasset.io.online.PriceDataGetter;
 import net.nikr.eve.jeveasset.io.online.Updater;
@@ -145,6 +146,7 @@ public class Program implements ActionListener {
 	private JournalTab journalTab;
 	private TransactionTab transactionsTab;
 	private IndustryJobsTab industryJobsTab;
+	private IndustrySlotsTab industrySlotsTab;
 	private AssetsTab assetsTab;
 	private OverviewTab overviewTab;
 	private StockpileTab stockpileTab;
@@ -230,6 +232,8 @@ public class Program implements ActionListener {
 		SplashUpdater.setProgress(54);
 		LOG.info("Loading: Industry Jobs Tab");
 		industryJobsTab = new IndustryJobsTab(this);
+		LOG.info("Loading: Industry Slot Tab");
+		industrySlotsTab = new IndustrySlotsTab(this);
 		LOG.info("Loading: Industry Plot Tab");
 		//FIXME - - > IndustryPlotTab - remove or ?
 		//industryPlotTab = new IndustryPlotTab(this);
@@ -944,6 +948,8 @@ public class Program implements ActionListener {
 			mainWindow.addTab(transactionsTab);
 		} else if (MainMenuAction.INDUSTRY_JOBS.name().equals(e.getActionCommand())) {
 			mainWindow.addTab(industryJobsTab);
+		} else if (MainMenuAction.INDUSTRY_SLOT.name().equals(e.getActionCommand())) {
+			mainWindow.addTab(industrySlotsTab);
 		} else if (MainMenuAction.OVERVIEW.name().equals(e.getActionCommand())) {
 			mainWindow.addTab(overviewTab);
 			overviewTab.resetViews();

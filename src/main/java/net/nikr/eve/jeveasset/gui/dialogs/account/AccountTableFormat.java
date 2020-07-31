@@ -260,6 +260,16 @@ public enum AccountTableFormat implements EnumTableColumn<OwnerType> {
 			return new YesNo(from.isContainerLogs());
 		}
 	},
+	SKILLS(YesNo.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return DialoguesAccount.get().tableFormatSkills();
+		}
+		@Override
+		public Object getColumnValue(final OwnerType from) {
+			return new YesNo(from.isSkills());
+		}
+	},
 	EXPIRES(ExpirerDate.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {

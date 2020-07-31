@@ -71,6 +71,7 @@ public abstract class DialoguesUpdate extends Bundle {
 	public abstract String names();
 	public abstract String blueprints();
 	public abstract String bookmarks();
+	public abstract String skills();
 	public abstract String containerLogs();
 	public abstract String structures();
 	public abstract String publicMarkerOrders();
