@@ -35,6 +35,7 @@ import net.nikr.eve.jeveasset.data.api.my.MyContractItem;
 import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob;
 import net.nikr.eve.jeveasset.data.api.my.MyJournal;
 import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder;
+import net.nikr.eve.jeveasset.data.api.raw.RawSkill;
 import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
 import net.nikr.eve.jeveasset.data.api.raw.RawAccountBalance;
 import net.nikr.eve.jeveasset.data.api.raw.RawAsset;
@@ -74,6 +75,7 @@ import net.troja.eve.esi.model.CorporationWalletsResponse;
 import net.troja.eve.esi.model.MarketOrdersResponse;
 import net.troja.eve.esi.model.PlanetContent;
 import net.troja.eve.esi.model.PlanetPin;
+import net.troja.eve.esi.model.Skill;
 
 
 public class EsiConverter extends DataConverter {
@@ -268,5 +270,13 @@ public class EsiConverter extends DataConverter {
 			set.add(marketOrder);
 		}
 		return marketOrders;
+	}
+
+	public static List<RawSkill> toSkills(List<Skill> responses) {
+		List<RawSkill> skills = new ArrayList<>();
+		for (Skill response : responses) {
+			skills.add(new RawSkill(response));
+		}
+		return skills;
 	}
 }

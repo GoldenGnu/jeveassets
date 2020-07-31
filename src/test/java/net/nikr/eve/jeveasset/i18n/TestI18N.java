@@ -139,6 +139,11 @@ public class TestI18N extends TestUtil {
 		assertNotNull(g.all());
 	}
 
+	@Test public void testTabsIndustrySlotsBundle_en() throws Exception {
+		TabsIndustrySlots g = BundleServiceFactory.getBundleService().get(TabsIndustrySlots.class);
+		assertNotNull(g.title());
+	}
+
 	@Test public void testTabsLoadoutBundle_en() throws Exception {
 		TabsLoadout g = BundleServiceFactory.getBundleService().get(TabsLoadout.class);
 		assertNotNull(g.cancel());
