@@ -69,6 +69,7 @@ public abstract class AbstractGetter<O extends OwnerType> implements Runnable {
 		SHIP("Active Ship"),
 		STRUCTURES("Structures"),
 		TRANSACTIONS("Transactions"),
+		SKILLS("Skills"),
 		;
 
 		private final String taskName;
