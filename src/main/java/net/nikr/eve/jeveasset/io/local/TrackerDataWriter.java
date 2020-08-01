@@ -101,6 +101,7 @@ public class TrackerDataWriter extends AbstractBackup {
 			valueObject.addProperty("manufacturing", value.getManufacturing());
 			valueObject.addProperty("contractcollateral", value.getContractCollateral());
 			valueObject.addProperty("contractvalue", value.getContractValue());
+			valueObject.addProperty("skillpoints", value.getSkillPoints());
 			if (!value.getBalanceFilter().isEmpty()) {
 				JsonArray  balanceObject = new JsonArray();
 				valueObject.add("balance", balanceObject);

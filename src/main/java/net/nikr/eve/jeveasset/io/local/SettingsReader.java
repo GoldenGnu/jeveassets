@@ -99,6 +99,7 @@ import net.nikr.eve.jeveasset.gui.tabs.stockpile.StockpileTab;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.StockpileTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerDate;
 import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerNote;
+import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerSkillPointFilter;
 import net.nikr.eve.jeveasset.gui.tabs.transaction.TransactionTab;
 import net.nikr.eve.jeveasset.gui.tabs.transaction.TransactionTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.tree.TreeTab;
@@ -570,6 +571,14 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 			String id = getString(trackerFilterNode, "id");
 			boolean selected = getBoolean(trackerFilterNode, "selected");
 			settings.getTrackerFilters().put(id, selected);
+		}
+		NodeList skillPointFiltersList = element.getElementsByTagName("skillpointfilters");
+		for (int a = 0; a < skillPointFiltersList.getLength(); a++) {
+			Element filterNode = (Element) skillPointFiltersList.item(a);
+			String id = getString(filterNode, "id");
+			boolean selected = getBoolean(filterNode, "selected");
+			long mimimum = getLong(filterNode, "mimimum");
+			settings.getTrackerSkillPointFilters().put(id, new TrackerSkillPointFilter(id, selected, mimimum));
 		}
 	}
 

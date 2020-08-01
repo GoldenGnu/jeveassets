@@ -56,6 +56,7 @@ import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileFilter;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
 import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerDate;
 import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerNote;
+import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerSkillPointFilter;
 import net.nikr.eve.jeveasset.io.shared.FileUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -133,7 +134,7 @@ public class SettingsWriter extends AbstractXmlWriter {
 		writeTablesViews(xmldoc, settings.getTableViews());
 		writeExportSettings(xmldoc, settings.getExportSettings());
 		writeTrackerNotes(xmldoc, settings.getTrackerNotes());
-		writeTrackerFilters(xmldoc, settings.getTrackerFilters(), settings.isTrackerSelectNew());
+		writeTrackerFilters(xmldoc, settings.getTrackerFilters(), settings.isTrackerSelectNew(), settings.getTrackerSkillPointFilters());
 		writeTrackerSettings(xmldoc, settings);
 		writeOwners(xmldoc, settings.getOwners(), settings.getOwnersNextUpdate());
 		writeTags(xmldoc, settings.getTags());
@@ -281,7 +282,7 @@ public class SettingsWriter extends AbstractXmlWriter {
 		}
 	}
 
-	private void writeTrackerFilters(final Document xmldoc, final Map<String, Boolean> trackerFilters, boolean selectNew) {
+	private void writeTrackerFilters(final Document xmldoc, final Map<String, Boolean> trackerFilters, boolean selectNew, Map<String, TrackerSkillPointFilter> trackerSkillPointFilters) {
 		Element trackerDataNode = xmldoc.createElementNS(null, "trackerfilters");
 		xmldoc.getDocumentElement().appendChild(trackerDataNode);
 		setAttribute(trackerDataNode, "selectnew", selectNew);
@@ -289,6 +290,14 @@ public class SettingsWriter extends AbstractXmlWriter {
 			Element ownerNode = xmldoc.createElementNS(null, "trackerfilter");
 			setAttribute(ownerNode, "id", entry.getKey());
 			setAttribute(ownerNode, "selected", entry.getValue());
+			trackerDataNode.appendChild(ownerNode);
+		}
+		for (Map.Entry<String, TrackerSkillPointFilter> entry : trackerSkillPointFilters.entrySet()) {
+			Element ownerNode = xmldoc.createElementNS(null, "skillpointfilters");
+			TrackerSkillPointFilter filter = entry.getValue();
+			setAttribute(ownerNode, "id", entry.getKey());
+			setAttribute(ownerNode, "selected", filter.isEnabled());
+			setAttribute(ownerNode, "mimimum", filter.getMinimum());
 			trackerDataNode.appendChild(ownerNode);
 		}
 	}

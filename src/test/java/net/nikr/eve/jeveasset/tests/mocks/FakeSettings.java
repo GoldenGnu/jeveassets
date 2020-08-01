@@ -50,6 +50,7 @@ import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewGroup;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile;
 import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerDate;
 import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerNote;
+import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerSkillPointFilter;
 
 /**
  *
@@ -661,6 +662,11 @@ public abstract class FakeSettings extends Settings {
 
 	@Override
 	public int getTransactionProfitMargin() {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public Map<String, TrackerSkillPointFilter> getTrackerSkillPointFilters() {
 		throw new UnsupportedOperationException("not implemented");
 	}
 }

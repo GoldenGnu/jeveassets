@@ -106,6 +106,10 @@ public abstract class TabsTracker extends Bundle {
 	public abstract String selectionShortIsk();
 	public abstract String selectionShortNote();
 	public abstract String sellOrders();
+	public abstract String show();
+	public abstract String skillPointFilters();
+	public abstract String skillPointValue();
+	public abstract String skillPoints();
 	public abstract String statusAssets();
 	public abstract String statusBalance();
 	public abstract String statusContractCollateral();
@@ -114,6 +118,7 @@ public abstract class TabsTracker extends Bundle {
 	public abstract String statusEscrowsToCover();
 	public abstract String statusManufacturing();
 	public abstract String statusSellOrders();
+	public abstract String statusSkillPointValue();
 	public abstract String statusTotal();
 	public abstract String title();
 	public abstract String to();
@@ -126,5 +131,9 @@ public abstract class TabsTracker extends Bundle {
 	public abstract String week2();
 	public abstract String year1();
 	public abstract String years2();
-	
+
+	public abstract String columnShow();
+	public abstract String columnName();
+	public abstract String columnMinimum();
+
 }
