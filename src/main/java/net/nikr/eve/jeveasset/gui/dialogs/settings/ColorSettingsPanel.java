@@ -37,8 +37,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import javax.swing.ButtonGroup;
@@ -223,12 +224,25 @@ public class ColorSettingsPanel extends JSettingsPanel {
 			jLafMenuItems.add(jMenuItem);
 		}
 		//Installed LookAndFeels
-		for (LookAndFeelInfo laf : Arrays.asList(UIManager.getInstalledLookAndFeels())) {
+		for (LookAndFeelInfo laf : UIManager.getInstalledLookAndFeels()) {
 			JLookAndFeelMenuItem jMenuItem = new JLookAndFeelMenuItem(laf, jLookAndFeel, settingsDialog);
 			jLookAndFeel.add(jMenuItem);
 			lafButtonGroup.add(jMenuItem);
 			jLafMenuItems.add(jMenuItem);
 		}
+
+		//Ensure layout is correct
+		settingsDialog.getDialog().addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowOpened(WindowEvent e) {
+				SwingUtilities.invokeLater(new Runnable() {
+					@Override
+					public void run() {
+						settingsDialog.getDialog().pack();
+					}
+				});
+			}
+		});
 
 		JDropDownButton jTheme = new JDropDownButton(DialoguesSettings.get().theme(), Images.FILTER_LOAD.getIcon());
 		jToolBarTop.addButton(jTheme);
