@@ -46,6 +46,7 @@ public abstract class TabsValues extends Bundle {
 	public abstract String columnManufacturing();
 	public abstract String columnOwner();
 	public abstract String columnSellOrders();
+	public abstract String columnSkillPointValue();
 	public abstract String columnTotal();
 	public abstract String columnWalletBalance();
 	public abstract String grandTotal();

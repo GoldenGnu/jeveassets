@@ -75,6 +75,7 @@ public class JTrackerEditDialog extends JDialogCentered {
 	private final JTextField jManufacturing;
 	private final JTextField jContractCollateral;
 	private final JTextField jContractValue;
+	private final JTextField jSkillPoints;
 	private final JButton jOK;
 	private final JSelectionDialog<String> jSelectionDialog;
 
@@ -146,6 +147,11 @@ public class JTrackerEditDialog extends JDialogCentered {
 		jContractValue.setHorizontalAlignment(JTextField.RIGHT);
 		jContractValue.addFocusListener(listener);
 
+		JLabel jSkillPointValueLabel = new JLabel(TabsTracker.get().skillPoints());
+		jSkillPoints = new JTextField();
+		jSkillPoints.setHorizontalAlignment(JTextField.RIGHT);
+		jSkillPoints.addFocusListener(listener);
+
 		jOK = new JButton(TabsTracker.get().ok());
 		jOK.setActionCommand(TrackerEditAction.OK.name());
 		jOK.addActionListener(listener);
@@ -167,6 +173,7 @@ public class JTrackerEditDialog extends JDialogCentered {
 						.addComponent(jManufacturingLabel)
 						.addComponent(jContractCollateralLabel)
 						.addComponent(jContractValueLabel)
+						.addComponent(jSkillPointValueLabel)
 					)
 					.addGroup(layout.createParallelGroup()
 						.addComponent(jDate, 100, 100, 100)
@@ -178,6 +185,7 @@ public class JTrackerEditDialog extends JDialogCentered {
 						.addComponent(jManufacturing, 100, 100, 100)
 						.addComponent(jContractCollateral, 100, 100, 100)
 						.addComponent(jContractValue, 100, 100, 100)
+						.addComponent(jSkillPoints, 100, 100, 100)
 					)
 					.addGroup(layout.createParallelGroup()
 						.addComponent(jWalletBalanceFilterable)
@@ -231,6 +239,10 @@ public class JTrackerEditDialog extends JDialogCentered {
 					.addComponent(jContractValue, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 				)
 				.addGroup(layout.createParallelGroup()
+					.addComponent(jSkillPointValueLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jSkillPoints, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+				)
+				.addGroup(layout.createParallelGroup()
 					.addComponent(jOK, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 					.addComponent(jCancel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 				)
@@ -264,6 +276,7 @@ public class JTrackerEditDialog extends JDialogCentered {
 		jManufacturing.setText(format(value.getManufacturing()));
 		jContractCollateral.setText(format(value.getContractCollateral()));
 		jContractValue.setText(format(value.getContractValue()));
+		jSkillPoints.setText(format(value.getSkillPoints()));
 		jDate.setText(format(value.getDate()));
 		setVisible(true);
 		return update;
@@ -308,6 +321,7 @@ public class JTrackerEditDialog extends JDialogCentered {
 			double manufacturing = parse(jManufacturing.getText());
 			double contractCollateral = parse(jContractCollateral.getText());
 			double contractValue = parse(jContractValue.getText());
+			double skillPointValue = parse(jSkillPoints.getText());
 			try {
 				TrackerData.writeLock();
 				if (value.getBalanceFilter().isEmpty()) {
@@ -345,6 +359,7 @@ public class JTrackerEditDialog extends JDialogCentered {
 				value.setManufacturing(manufacturing);
 				value.setContractCollateral(contractCollateral);
 				value.setContractValue(contractValue);
+				value.setSkillPoints((long)skillPointValue);
 			} finally {
 				TrackerData.writeUnlock();
 			}
