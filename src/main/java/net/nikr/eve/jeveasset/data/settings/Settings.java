@@ -48,6 +48,7 @@ import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewGroup;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile;
 import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerDate;
 import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerNote;
+import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerSkillPointFilter;
 import net.nikr.eve.jeveasset.i18n.DialoguesSettings;
 import net.nikr.eve.jeveasset.io.local.SettingsReader;
 import net.nikr.eve.jeveasset.io.local.SettingsWriter;
@@ -155,6 +156,7 @@ public class Settings {
 //Tracker						Saved by TaskDialog.update() (on API update)
 	private final Map<TrackerDate, TrackerNote> trackerNotes = new HashMap<>();
 	private final Map<String, Boolean> trackerFilters = new HashMap<>();
+	private final Map<String, TrackerSkillPointFilter> trackerSkillPointFilters = new HashMap<>();
 	private boolean trackerSelectNew = true;
 	private boolean trackerCharacterCorporations = false;
 	private boolean trackerAllProfiles = false;
@@ -326,6 +328,10 @@ public class Settings {
 
 	public Map<String, Boolean> getTrackerFilters() {
 		return trackerFilters;
+	}
+
+	public Map<String, TrackerSkillPointFilter> getTrackerSkillPointFilters() {
+		return trackerSkillPointFilters;
 	}
 
 	public boolean isTrackerSelectNew() {

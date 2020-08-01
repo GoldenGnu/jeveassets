@@ -147,7 +147,8 @@ public class TrackerTab extends JMainTabSecondary {
 		NOTE_DELETE,
 		PROFILE,
 		FILTER_ASSETS,
-		FILTER_WALLET_BALANCE
+		FILTER_WALLET_BALANCE,
+		FILTER_SKILL_POINTS
 	}
 
 	private final int PANEL_WIDTH = 160;
@@ -161,6 +162,7 @@ public class TrackerTab extends JMainTabSecondary {
 	private final JDateChooser jTo;
 	private final JMultiSelectionList<String> jOwners;
 	private final JComboBox<QuickDate> jQuickDate;
+	private final JDropDownButton jShow;
 	private final JCheckBoxMenuItem jAll;
 	private final JCheckBoxMenuItem jTotal;
 	private final JCheckBoxMenuItem jWalletBalance;
@@ -173,6 +175,8 @@ public class TrackerTab extends JMainTabSecondary {
 	private final JCheckBoxMenuItem jManufacturing;
 	private final JCheckBoxMenuItem jContractCollateral;
 	private final JCheckBoxMenuItem jContractValue;
+	private final JCheckBoxMenuItem jSkillPointsValue;
+	private final JButton jSkillPointsFilters;
 	private final JCheckBox jAllProfiles;
 	private final JCheckBox jCharacterCorporations;
 	private final JMenuItem jImportFile;
@@ -184,6 +188,7 @@ public class TrackerTab extends JMainTabSecondary {
 	private final ChartPanel jChartPanel;
 	private final TrackerFilterDialog filterDialog;
 	private final TrackerAssetFilterDialog assetFilterDialog;
+	private final TrackerSkillPointsFilterDialog skillPointsFilterDialog;
 	private final MyRender render;
 	private final Shape NO_FILTER = new Rectangle(-3, -3, 6, 6);
 	private final Shape FILTER_AND_DEFAULT = new Ellipse2D.Float(-3.0f, -3.0f, 6.0f, 6.0f);
@@ -201,6 +206,7 @@ public class TrackerTab extends JMainTabSecondary {
 	private final JLabel jManufacturingStatus;
 	private final JLabel jContractCollateralStatus;
 	private final JLabel jContractValueStatus;
+	private final JLabel jSkillPointsStatus;
 
 	private final ListenerClass listener = new ListenerClass();
 	private final List<JMenuInfo.MenuItemValue> values;
@@ -216,6 +222,7 @@ public class TrackerTab extends JMainTabSecondary {
 	private TimePeriodValues manufacturing;
 	private TimePeriodValues contractCollateral;
 	private TimePeriodValues contractValue;
+	private TimePeriodValues skillPointsValue;
 	private Map<SimpleTimePeriod, Value> cache;
 	private final Map<String, CheckBoxNode> accountNodes = new TreeMap<>();
 	private final Map<String, CheckBoxNode> assetNodes = new TreeMap<>();
@@ -228,6 +235,7 @@ public class TrackerTab extends JMainTabSecondary {
 
 		filterDialog = new TrackerFilterDialog(program);
 		assetFilterDialog = new TrackerAssetFilterDialog(program);
+		skillPointsFilterDialog = new TrackerSkillPointsFilterDialog(program);
 
 		List<String> extensions = new ArrayList<>();
 		extensions.add("xml");
@@ -293,7 +301,8 @@ public class TrackerTab extends JMainTabSecondary {
 		JLabel jToLabel = new JLabel(TabsTracker.get().to());
 		jTo = createDateChooser();
 
-		JDropDownButton jShow = new JDropDownButton("Show");
+		jShow = new JDropDownButton(TabsTracker.get().show(), Images.LOC_INCLUDE.getIcon());
+		jShow.setHorizontalAlignment(JButton.LEFT);
 		
 		jAll = new JCheckBoxMenuItem(General.get().all());
 		jAll.setSelected(true);
@@ -316,6 +325,7 @@ public class TrackerTab extends JMainTabSecondary {
 
 		jWalletBalanceFilters = new JButton(TabsTracker.get().walletBalanceFilters());
 		jWalletBalanceFilters.setIcon(Images.LOC_INCLUDE.getIcon());
+		jWalletBalanceFilters.setHorizontalAlignment(JButton.LEFT);
 		jWalletBalanceFilters.setActionCommand(TrackerAction.FILTER_WALLET_BALANCE.name());
 		jWalletBalanceFilters.addActionListener(listener);
 
@@ -327,6 +337,7 @@ public class TrackerTab extends JMainTabSecondary {
 
 		jAssetsFilters = new JButton(TabsTracker.get().assetsFilters());
 		jAssetsFilters.setIcon(Images.LOC_INCLUDE.getIcon());
+		jAssetsFilters.setHorizontalAlignment(JButton.LEFT);
 		jAssetsFilters.setActionCommand(TrackerAction.FILTER_ASSETS.name());
 		jAssetsFilters.addActionListener(listener);
 
@@ -365,6 +376,18 @@ public class TrackerTab extends JMainTabSecondary {
 		jContractValue.setActionCommand(TrackerAction.UPDATE_SHOWN.name());
 		jContractValue.addActionListener(listener);
 		jShow.add(jContractValue, true);
+
+		jSkillPointsValue = new JCheckBoxMenuItem(TabsTracker.get().skillPointValue());
+		jSkillPointsValue.setSelected(true);
+		jSkillPointsValue.setActionCommand(TrackerAction.UPDATE_SHOWN.name());
+		jSkillPointsValue.addActionListener(listener);
+		jShow.add(jSkillPointsValue, true);
+
+		jSkillPointsFilters = new JButton(TabsTracker.get().skillPointFilters());
+		jSkillPointsFilters.setIcon(Images.LOC_INCLUDE.getIcon());
+		jSkillPointsFilters.setHorizontalAlignment(JButton.LEFT);
+		jSkillPointsFilters.setActionCommand(TrackerAction.FILTER_SKILL_POINTS.name());
+		jSkillPointsFilters.addActionListener(listener);
 
 		JSeparator jOwnersSeparator = new JSeparator();
 
@@ -408,6 +431,9 @@ public class TrackerTab extends JMainTabSecondary {
 
 		jContractValueStatus = StatusPanel.createLabel(TabsTracker.get().statusContractValue(), new ColorIcon(Color.ORANGE));
 		this.addStatusbarLabel(jContractValueStatus);
+
+		jSkillPointsStatus = StatusPanel.createLabel(TabsTracker.get().statusSkillPointValue(), new ColorIcon(Color.YELLOW));
+		this.addStatusbarLabel(jSkillPointsStatus);
 
 		JLabel jHelp = new JLabel(TabsTracker.get().help());
 		jHelp.setIcon(Images.MISC_HELP.getIcon());
@@ -563,6 +589,7 @@ public class TrackerTab extends JMainTabSecondary {
 					.addComponent(jShow, PANEL_WIDTH, PANEL_WIDTH, PANEL_WIDTH)
 					.addComponent(jAssetsFilters, PANEL_WIDTH, PANEL_WIDTH, PANEL_WIDTH)
 					.addComponent(jWalletBalanceFilters, PANEL_WIDTH, PANEL_WIDTH, PANEL_WIDTH)
+					.addComponent(jSkillPointsFilters, PANEL_WIDTH, PANEL_WIDTH, PANEL_WIDTH)
 					.addComponent(jOwnersSeparator, PANEL_WIDTH, PANEL_WIDTH, PANEL_WIDTH)
 					.addComponent(jAllProfiles, PANEL_WIDTH, PANEL_WIDTH, PANEL_WIDTH)
 					.addComponent(jCharacterCorporations, PANEL_WIDTH, PANEL_WIDTH, PANEL_WIDTH)
@@ -594,6 +621,7 @@ public class TrackerTab extends JMainTabSecondary {
 					.addComponent(jShow, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 					.addComponent(jAssetsFilters, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 					.addComponent(jWalletBalanceFilters, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jSkillPointsFilters, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 					.addComponent(jOwnersSeparator, 3, 3, 3)
 					.addComponent(jAllProfiles, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 					.addComponent(jCharacterCorporations, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
@@ -853,6 +881,7 @@ public class TrackerTab extends JMainTabSecondary {
 		manufacturing = new TimePeriodValues(TabsTracker.get().manufacturing());
 		contractCollateral = new TimePeriodValues(TabsTracker.get().contractCollateral());
 		contractValue = new TimePeriodValues(TabsTracker.get().contractValue());
+		skillPointsValue = new TimePeriodValues(TabsTracker.get().skillPointValue());
 		Date from = getFromDate();
 		Date to = getToDate();
 		cache = new TreeMap<>();
@@ -907,6 +936,14 @@ public class TrackerTab extends JMainTabSecondary {
 						value.addManufacturing(data.getManufacturing());
 						value.addContractCollateral(data.getContractCollateral());
 						value.addContractValue(data.getContractValue());
+						TrackerSkillPointFilter skillPointFilter = Settings.get().getTrackerSkillPointFilters().get(ownerEntry.getKey());
+						if (skillPointFilter != null) {
+							if (skillPointFilter.isEnabled()) {
+								value.addSkillPointValue(data.getSkillPoints(), skillPointFilter.getMinimum());
+							}
+						} else {
+							value.addSkillPointValue(data.getSkillPoints(), 0);
+						}
 						value.addSellOrders(data.getSellOrders());
 						if (data.getBalanceFilter().isEmpty()) {
 							value.addBalance(data.getBalanceTotal());
@@ -937,6 +974,7 @@ public class TrackerTab extends JMainTabSecondary {
 				manufacturing.add(entry.getKey(), entry.getValue().getManufacturing());
 				contractCollateral.add(entry.getKey(), entry.getValue().getContractCollateral());
 				contractValue.add(entry.getKey(), entry.getValue().getContractValue());
+				skillPointsValue.add(entry.getKey(), entry.getValue().getSkillPointValue());
 			}
 		}
 		int count;
@@ -1020,6 +1058,18 @@ public class TrackerTab extends JMainTabSecondary {
 		} else {
 			jWalletBalanceFilters.setIcon(Images.UPDATE_DONE_ERROR.getIcon());
 		}
+		isAll = true;
+		for (TrackerSkillPointFilter filter : Settings.get().getTrackerSkillPointFilters().values()) {
+			if (!filter.isEmpty()) {
+				isAll = false;
+				break;
+			}
+		}
+		if (isAll) {
+			jSkillPointsFilters.setIcon(Images.LOC_INCLUDE.getIcon());
+		} else {
+			jSkillPointsFilters.setIcon(Images.EDIT_EDIT_WHITE.getIcon());
+		}
 	}
 
 	private void updateShown() {
@@ -1061,6 +1111,9 @@ public class TrackerTab extends JMainTabSecondary {
 			}
 			if (jContractValue.isSelected() && contractValue != null) {
 				t += entry.getValue().getContractValue();
+			}
+			if (jSkillPointsValue.isSelected() && skillPointsValue != null) {
+				t += entry.getValue().getSkillPointValue();
 			}
 			total.add(entry.getKey(), t);
 			if (firstTotal == null) {
@@ -1125,6 +1178,12 @@ public class TrackerTab extends JMainTabSecondary {
 		} else {
 			jContractValueStatus.setText(Formater.iskFormat(0.0));
 		}
+		jSkillPointsStatus.setVisible(jSkillPointsValue.isSelected());
+		if (first != null && last != null) {
+			jSkillPointsStatus.setText(Formater.iskFormat(last.getSkillPointValue()- first.getSkillPointValue()));
+		} else {
+			jSkillPointsStatus.setText(Formater.iskFormat(0.0));
+		}
 		if (jTotal.isSelected()) { //Update total
 			dataset.addSeries(total);
 			Integer minColumn = null;
@@ -1175,6 +1234,10 @@ public class TrackerTab extends JMainTabSecondary {
 		if (jContractValue.isSelected() && contractValue != null) {
 			dataset.addSeries(contractValue);
 			updateRender(dataset.getSeriesCount() - 1, Color.ORANGE);
+		}
+		if (jSkillPointsValue.isSelected() && skillPointsValue != null) {
+			dataset.addSeries(skillPointsValue);
+			updateRender(dataset.getSeriesCount() - 1, Color.YELLOW);
 		}
 		//Add empty dataset
 		if (dataset.getSeriesCount() == 0) {
@@ -1452,7 +1515,13 @@ public class TrackerTab extends JMainTabSecondary {
 						&& jEscrowsToCover.isSelected()
 						&& jManufacturing.isSelected()
 						&& jContractCollateral.isSelected()
-						&& jContractValue.isSelected());
+						&& jContractValue.isSelected()
+						&& jSkillPointsValue.isSelected());
+				if (jAll.isSelected()) {
+					jShow.setIcon(Images.LOC_INCLUDE.getIcon());
+				} else {
+					jShow.setIcon(Images.EDIT_EDIT_WHITE.getIcon());
+				}
 			} else if (TrackerAction.ALL.name().equals(e.getActionCommand())) {
 				jTotal.setSelected(jAll.isSelected());
 				jWalletBalance.setSelected(jAll.isSelected());
@@ -1463,6 +1532,12 @@ public class TrackerTab extends JMainTabSecondary {
 				jManufacturing.setSelected(jAll.isSelected());
 				jContractCollateral.setSelected(jAll.isSelected());
 				jContractValue.setSelected(jAll.isSelected());
+				jSkillPointsValue.setSelected(jAll.isSelected());
+				if (jAll.isSelected()) {
+					jShow.setIcon(Images.LOC_INCLUDE.getIcon());
+				} else {
+					jShow.setIcon(Images.EDIT_EDIT_WHITE.getIcon());
+				}
 				updateShown();
 			} else if (TrackerAction.EDIT.name().equals(e.getActionCommand())) {
 				jNextChart.getXYPlot().setDomainCrosshairVisible(true);
@@ -1538,6 +1613,12 @@ public class TrackerTab extends JMainTabSecondary {
 				}
 			} else if (TrackerAction.FILTER_ASSETS.name().equals(e.getActionCommand())) {
 				showLocationFilter();
+			} else if (TrackerAction.FILTER_SKILL_POINTS.name().equals(e.getActionCommand())) {
+				boolean save = skillPointsFilterDialog.show();
+				if (save) {
+					createData();
+					updateButtonIcons();
+				}
 			} else if (TrackerAction.IMPORT_FILE.name().equals(e.getActionCommand())) {
 				jFileChooser.setCurrentDirectory(new File(FileUtil.getPathDataDirectory()));
 				int value = jFileChooser.showOpenDialog(program.getMainWindow().getFrame());

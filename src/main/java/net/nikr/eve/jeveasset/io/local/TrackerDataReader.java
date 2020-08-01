@@ -96,7 +96,7 @@ public class TrackerDataReader extends AbstractBackup {
 		return null;
 	}
 
-		public static class ValueDeserializerJSon implements JsonDeserializer<Value> {
+	public static class ValueDeserializerJSon implements JsonDeserializer<Value> {
 
 		@Override
 		public Value deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
@@ -111,10 +111,15 @@ public class TrackerDataReader extends AbstractBackup {
 			double manufacturing = node.get("manufacturing").getAsDouble();
 			double contractCollateral = node.get("contractcollateral").getAsDouble();
 			double contractValue = node.get("contractvalue").getAsDouble();
+			//Skills
+			JsonElement skillPointElement = node.get("skillpoints");
+			long skillPoints = 0;
+			if (skillPointElement != null) {
+				skillPoints = skillPointElement.getAsLong();
+			}
 			//Add data
 			Value value = new Value(date);
 			//Balance
-
 			JsonElement balanceElement = node.get("balance");
 			if (balanceElement != null && balanceElement.isJsonArray()) {
 				for (JsonElement itemElement : balanceElement.getAsJsonArray()) {
@@ -126,7 +131,7 @@ public class TrackerDataReader extends AbstractBackup {
 			} else {
 				value.setBalanceTotal(balanceTotal);
 			}
-
+			//Assets
 			JsonElement assetElement = node.get("asset");
 			if (assetElement != null && assetElement.isJsonArray()) {
 				for (JsonElement itemElement : assetElement.getAsJsonArray()) {
@@ -153,6 +158,7 @@ public class TrackerDataReader extends AbstractBackup {
 			value.setManufacturing(manufacturing);
 			value.setContractCollateral(contractCollateral);
 			value.setContractValue(contractValue);
+			value.setSkillPoints(skillPoints);
 			return value;
 		}
 	}

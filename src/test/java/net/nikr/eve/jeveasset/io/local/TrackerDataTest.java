@@ -61,6 +61,7 @@ public class TrackerDataTest extends TestUtil {
 		value.setSellOrders(8);
 		value.addAssets(AssetValue.create("location", "flag", 1000L), 9.0);
 		value.addBalance("balence-id", 10);
+		value.setSkillPoints(11);
 		values.add(value);
 		testWriteRead(out);
 		testRead(out, "tracker_filters.json");
@@ -80,6 +81,7 @@ public class TrackerDataTest extends TestUtil {
 		value.setEscrowsToCover(6);
 		value.setManufacturing(7);
 		value.setSellOrders(8);
+		value.setSkillPoints(11);
 		values.add(value);
 		testWriteRead(out);
 		testRead(out, "tracker_total.json");
@@ -122,6 +124,7 @@ public class TrackerDataTest extends TestUtil {
 				assertThat(inValue.getBestShipValue(), equalTo(outValue.getBestShipValue()));
 				assertThat(inValue.getContractCollateral(), equalTo(outValue.getContractCollateral()));
 				assertThat(inValue.getContractValue(), equalTo(outValue.getContractValue()));
+				assertThat(inValue.getSkillPointValue(), equalTo(outValue.getSkillPointValue()));
 				assertThat(inValue.getDate(), equalTo(outValue.getDate()));
 				assertThat(inValue.getBestAssetName(), equalTo(outValue.getBestAssetName()));
 				assertThat(inValue.getBestModuleName(), equalTo(outValue.getBestModuleName()));
