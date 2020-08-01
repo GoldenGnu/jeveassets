@@ -892,6 +892,7 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 				skill.setSkillpoints(skillpoints);
 				skill.setActiveSkillLevel(activeSkillLevel);
 				skill.setTrainedSkillLevel(trainedSkillLevel);
+				skills.add(skill);
 			}
 			owners.setSkills(skills);
 			owners.setTotalSkillPoints(totalSkillPoints);
