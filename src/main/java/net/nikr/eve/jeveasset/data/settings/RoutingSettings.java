@@ -23,6 +23,7 @@ package net.nikr.eve.jeveasset.data.settings;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 import net.nikr.eve.jeveasset.gui.tabs.routing.SolarSystem;
 
 public class RoutingSettings {
@@ -30,7 +31,7 @@ public class RoutingSettings {
 	private double secMax;
 	private final Map<Long, SolarSystem> avoid = new HashMap<Long, SolarSystem>();
 	private final Map<String, Set<Long>> presets = new HashMap<String, Set<Long>>();
-	private final Map<String, RouteResult> routes = new HashMap<String, RouteResult>();
+	private final Map<String, RouteResult> routes = new TreeMap<String, RouteResult>();
 
 	public RoutingSettings() {
 		secMin = 0.0;
