@@ -19,7 +19,7 @@
  *
  */
 
-package net.nikr.eve.jeveasset.gui.tabs.stockpile;
+package net.nikr.eve.jeveasset.gui.shared.components;
 
 import java.awt.Font;
 import java.awt.event.ActionEvent;
@@ -32,11 +32,10 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JRadioButton;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
-import net.nikr.eve.jeveasset.i18n.TabsStockpile;
+import net.nikr.eve.jeveasset.i18n.GuiShared;
 
 
-public class StockpileImportDialog extends JDialogCentered {
+public class JImportDialog extends JDialogCentered {
 
 	private enum StockpileImportAction {
 		OK,
@@ -67,24 +66,35 @@ public class StockpileImportDialog extends JDialogCentered {
 	private final JButton jOK;
 	private final JButton jCancel;
 	private final ListenerClass listenerClass;
+	private final ImportOptions importOptions;
 
 	private ImportReturn importReturn;
 	
-	public StockpileImportDialog(Program program) {
-		super(program, TabsStockpile.get().importOptions());
+	public JImportDialog(Program program, ImportOptions importOptions) {
+		super(program, GuiShared.get().importOptions());
+		this.importOptions = importOptions;
 
 		listenerClass = new ListenerClass();
 
 		jName = new JLabel();
 		jName.setFont(new Font(jName.getFont().getName(), Font.BOLD, jName.getFont().getSize() + 1));
-		jRenameLabel = new JLabel(TabsStockpile.get().importOptionsRenameHelp());
-		jRename = new JRadioButton(TabsStockpile.get().importOptionsRename());
-		jMergeLabel = new JLabel(TabsStockpile.get().importOptionsMergeHelp());
-		jMerge = new JRadioButton(TabsStockpile.get().importOptionsMerge());
-		jOverwriteLabel = new JLabel(TabsStockpile.get().importOptionsOverwriteHelp());
-		jOverwrite = new JRadioButton(TabsStockpile.get().importOptionsOverwrite());
-		jSkipLabel = new JLabel(TabsStockpile.get().importOptionsSkipHelp());
-		jSkip = new JRadioButton(TabsStockpile.get().importOptionsSkip());
+		jRenameLabel = new JLabel(importOptions.getTextRenameHelp());
+		jRename = new JRadioButton(GuiShared.get().importOptionsRename());
+		jMergeLabel = new JLabel(importOptions.getTextMergeHelp());
+		jMerge = new JRadioButton(GuiShared.get().importOptionsMerge());
+		jOverwriteLabel = new JLabel(importOptions.getTextOverwriteHelp());
+		jOverwrite = new JRadioButton(GuiShared.get().importOptionsOverwrite());
+		jSkipLabel = new JLabel(importOptions.getTextSkipHelp());
+		jSkip = new JRadioButton(GuiShared.get().importOptionsSkip());
+
+		jRenameLabel.setVisible(importOptions.isRenameSupported());
+		jRename.setVisible(importOptions.isRenameSupported());
+		jMergeLabel.setVisible(importOptions.isMergeSupported());
+		jMerge.setVisible(importOptions.isMergeSupported());
+		jOverwriteLabel.setVisible(importOptions.isOverwriteSupported());
+		jOverwrite.setVisible(importOptions.isOverwriteSupported());
+		jSkipLabel.setVisible(importOptions.isSkipSupported());
+		jSkip.setVisible(importOptions.isSkipSupported());
 
 		ButtonGroup buttonGroup = new ButtonGroup();
 		buttonGroup.add(jRename);
@@ -94,11 +104,11 @@ public class StockpileImportDialog extends JDialogCentered {
 
 		jAll = new JCheckBox();
 
-		jOK = new JButton(TabsStockpile.get().ok());
+		jOK = new JButton(GuiShared.get().ok());
 		jOK.setActionCommand(StockpileImportAction.OK.name());
 		jOK.addActionListener(listenerClass);
 
-		jCancel = new JButton(TabsStockpile.get().cancel());
+		jCancel = new JButton(GuiShared.get().cancel());
 		jCancel.setActionCommand(StockpileImportAction.CANCEL.name());
 		jCancel.addActionListener(listenerClass);
 
@@ -165,7 +175,7 @@ public class StockpileImportDialog extends JDialogCentered {
 
 	public ImportReturn show(String name, int count) {
 		jName.setText(name);
-		jAll.setText(TabsStockpile.get().importOptionsAll(count));
+		jAll.setText(importOptions.getTextAll(count));
 		jAll.setEnabled(count > 1);
 		setVisible(true);
 		return importReturn;
@@ -215,8 +225,18 @@ public class StockpileImportDialog extends JDialogCentered {
 				setVisible(false);
 			}
 		}
+	}
+
+	public static interface ImportOptions {
+		public boolean isRenameSupported();
+		public boolean isMergeSupported();
+		public boolean isOverwriteSupported();
+		public boolean isSkipSupported();
+		public String getTextRenameHelp();
+		public String getTextMergeHelp();
+		public String getTextOverwriteHelp();
+		public String getTextSkipHelp();
+		public String getTextAll(int count);
 		
 	}
-	
-	
 }

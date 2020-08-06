@@ -61,6 +61,11 @@ public abstract class TabsRouting extends Bundle {
 	public abstract String filteredAssets();
 	public abstract String filters();
 	public abstract String filtersTab();
+	public abstract String importOptionsAll(int count);
+	public abstract String importOptionsOverwriteHelp();
+	public abstract String importOptionsRenameHelp();
+	public abstract String importOptionsSkipHelp();
+	public abstract String importOptionsTitle();
 	public abstract String manageFiltersTitle();
 	public abstract String noSystems();
 	public abstract String noSystemsTitle();
@@ -76,11 +81,14 @@ public abstract class TabsRouting extends Bundle {
 	public abstract String resultEditTitle();
 	public abstract String resultEdited();
 	public abstract String resultEmpty();
+	public abstract String resultExport();
+	public abstract String resultImport();
 	public abstract String resultLoad();
 	public abstract String resultManage();
 	public abstract String resultManageTitle();
 	public abstract String resultOverwrite();
 	public abstract String resultSave();
+	public abstract String resultSelectRoutes();
 	public abstract String resultTabFull();
 	public abstract String resultTabInfo();
 	public abstract String resultTabShort();

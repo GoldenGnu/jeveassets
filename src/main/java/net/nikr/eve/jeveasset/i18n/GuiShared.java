@@ -72,6 +72,11 @@ public abstract class GuiShared extends Bundle {
 	public abstract String fuzzworkBlueprints();
 	public abstract String fuzzworkItems();
 	public abstract String fuzzworkMarket();
+	public abstract String importOptions();
+	public abstract String importOptionsMerge();
+	public abstract String importOptionsOverwrite();
+	public abstract String importOptionsRename();
+	public abstract String importOptionsSkip();
 	public abstract String industry();
 	public abstract String item();
 	public abstract String itemDatabase();

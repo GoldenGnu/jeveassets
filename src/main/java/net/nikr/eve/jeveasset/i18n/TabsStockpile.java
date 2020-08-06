@@ -95,14 +95,9 @@ public abstract class TabsStockpile extends Bundle {
 	public abstract String importOptionsCancelledTitle();
 	public abstract String importXmlFailedMsg();
 	public abstract String importFailedTitle();
-	public abstract String importOptions();
-	public abstract String importOptionsMerge();
 	public abstract String importOptionsMergeHelp();
-	public abstract String importOptionsOverwrite();
 	public abstract String importOptionsOverwriteHelp();
-	public abstract String importOptionsRename();
 	public abstract String importOptionsRenameHelp();
-	public abstract String importOptionsSkip();
 	public abstract String importOptionsSkipHelp();
 	public abstract String include();
 	public abstract String includeContainer();

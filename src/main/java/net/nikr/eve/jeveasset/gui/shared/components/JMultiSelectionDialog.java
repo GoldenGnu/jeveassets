@@ -19,7 +19,7 @@
  *
  */
 
-package net.nikr.eve.jeveasset.gui.tabs.stockpile;
+package net.nikr.eve.jeveasset.gui.shared.components;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -34,14 +34,12 @@ import javax.swing.JScrollPane;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
-import net.nikr.eve.jeveasset.gui.shared.components.JMultiSelectionList;
-import net.nikr.eve.jeveasset.i18n.TabsStockpile;
+import net.nikr.eve.jeveasset.i18n.GuiShared;
 
 
-public class StockpileSelectionDialog<T> extends JDialogCentered {
+public class JMultiSelectionDialog<T> extends JDialogCentered {
 
-	private enum StockpileSelection {
+	private enum MultiSelectionActions {
 		OK, CANCEL
 	}
 
@@ -53,22 +51,22 @@ public class StockpileSelectionDialog<T> extends JDialogCentered {
 	private List<T> data;
 	private boolean emptyAllowed;
 
-	public StockpileSelectionDialog(final Program program, String title) {
+	public JMultiSelectionDialog(final Program program, String title) {
 		super(program, title);
 
 		ListenerClass listener = new ListenerClass();
 
-		jList = new JMultiSelectionList<T>();
+		jList = new JMultiSelectionList<>();
 		jList.addListSelectionListener(listener);
 		JScrollPane jListScroll = new JScrollPane(jList);
 
-		jOK = new JButton(TabsStockpile.get().ok());
-		jOK.setActionCommand(StockpileSelection.OK.name());
+		jOK = new JButton(GuiShared.get().ok());
+		jOK.setActionCommand(MultiSelectionActions.OK.name());
 		jOK.addActionListener(listener);
 		jOK.setEnabled(false);
 
-		JButton jCancel = new JButton(TabsStockpile.get().cancel());
-		jCancel.setActionCommand(StockpileSelection.CANCEL.name());
+		JButton jCancel = new JButton(GuiShared.get().cancel());
+		jCancel.setActionCommand(MultiSelectionActions.CANCEL.name());
 		jCancel.addActionListener(listener);
 
 		layout.setHorizontalGroup(
@@ -99,14 +97,13 @@ public class StockpileSelectionDialog<T> extends JDialogCentered {
 		return jOK;
 	}
 
-	public List<T> show(List<T> stockpiles) {
-		emptyAllowed = false;
-		return show(stockpiles, new ArrayList<Integer>());
+	public List<T> show(Collection<T> items, boolean emptyAllowed) {
+		return show(items, new ArrayList<>(), emptyAllowed);
 	}
 
-	public List<T> show(List<T> stockpiles, Collection<Integer> selected) {
-		emptyAllowed = true;
-		jList.setModel(new DataListModel<>(stockpiles));
+	public List<T> show(Collection<T> items, Collection<Integer> selected, boolean emptyAllowed) {
+		this.emptyAllowed = emptyAllowed;
+		jList.setModel(new DataListModel<>(new ArrayList<>(items)));
 		int[] indices = new int[selected.size()];
 		int i = 0;
 		for (int index : selected) {
@@ -136,10 +133,10 @@ public class StockpileSelectionDialog<T> extends JDialogCentered {
 
 		@Override
 		public void actionPerformed(final ActionEvent e) {
-			if (StockpileSelection.OK.name().equals(e.getActionCommand())) {
+			if (MultiSelectionActions.OK.name().equals(e.getActionCommand())) {
 				save();
 			}
-			if (StockpileSelection.CANCEL.name().equals(e.getActionCommand())) {
+			if (MultiSelectionActions.CANCEL.name().equals(e.getActionCommand())) {
 				setVisible(false);
 			}
 		}
