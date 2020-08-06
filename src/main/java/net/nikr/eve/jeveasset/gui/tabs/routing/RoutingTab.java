@@ -30,6 +30,7 @@ import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -46,6 +47,7 @@ import javax.swing.ButtonGroup;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JMenuItem;
@@ -73,9 +75,13 @@ import net.nikr.eve.jeveasset.data.settings.RouteResult;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
+import net.nikr.eve.jeveasset.gui.shared.components.JCustomFileChooser;
 import net.nikr.eve.jeveasset.gui.shared.components.JDropDownButton;
 import net.nikr.eve.jeveasset.gui.shared.components.JFixedToolBar;
+import net.nikr.eve.jeveasset.gui.shared.components.JImportDialog;
+import net.nikr.eve.jeveasset.gui.shared.components.JImportDialog.ImportReturn;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTabSecondary;
+import net.nikr.eve.jeveasset.gui.shared.components.JMultiSelectionDialog;
 import net.nikr.eve.jeveasset.gui.shared.components.ListComboBoxModel;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuUI;
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewGroup;
@@ -85,6 +91,8 @@ import net.nikr.eve.jeveasset.i18n.General;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 import net.nikr.eve.jeveasset.i18n.TabsRouting;
 import net.nikr.eve.jeveasset.io.esi.AbstractEsiGetter;
+import net.nikr.eve.jeveasset.io.local.SettingsReader;
+import net.nikr.eve.jeveasset.io.local.SettingsWriter;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -121,6 +129,8 @@ public class RoutingTab extends JMainTabSecondary {
 		ROUTE_SAVE,
 		ROUTE_EDIT,
 		ROUTE_MANAGE,
+		ROUTE_IMPORT,
+		ROUTE_EXPORT,
 		AVOID_ADD,
 		AVOID_REMOVE,
 		AVOID_CLEAR,
@@ -180,6 +190,9 @@ public class RoutingTab extends JMainTabSecondary {
 	private JRouteSaveDialog jSaveRouteDialog;
 	private JRouteManageDialog jManageRoutesDialog;
 	private JRouteEditDialog jRouteEditDialog;
+	private JMultiSelectionDialog<String> jRouteSelectionDialog;
+	private JCustomFileChooser jFileChooser;
+	private JImportDialog jImportDialog;
 
 	private ListenerClass listener;
 	private RouteFind routeFind;
@@ -213,6 +226,39 @@ public class RoutingTab extends JMainTabSecondary {
 		jSaveRouteDialog = new JRouteSaveDialog(program);
 		jManageRoutesDialog = new JRouteManageDialog(this, program);
 		jRouteEditDialog = new JRouteEditDialog(program);
+		jRouteSelectionDialog = new JMultiSelectionDialog<>(program, TabsRouting.get().resultSelectRoutes());
+		jFileChooser = JCustomFileChooser.createFileChooser(program.getMainWindow().getFrame(), "xml");
+		jFileChooser.setMultiSelectionEnabled(false);
+		jFileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+		jImportDialog = new JImportDialog(program, new JImportDialog.ImportOptions() {
+			@Override public boolean isRenameSupported() {
+				return true;
+			}
+			@Override public boolean isMergeSupported() {
+				return false;
+			}
+			@Override public boolean isOverwriteSupported() {
+				return true;
+			}
+			@Override public boolean isSkipSupported() {
+				return true;
+			}
+			@Override public String getTextRenameHelp() {
+				return TabsRouting.get().importOptionsRenameHelp();
+			}
+			@Override public String getTextMergeHelp() {
+				return "";
+			}
+			@Override public String getTextOverwriteHelp() {
+				return TabsRouting.get().importOptionsOverwriteHelp();
+			}
+			@Override public String getTextSkipHelp() {
+				return TabsRouting.get().importOptionsSkipHelp();
+			}
+			@Override public String getTextAll(int count) {
+				return TabsRouting.get().importOptionsAll(count);
+			}
+		});
 
 	//Routing
 		JPanel jRoutingPanel = new JPanel();
@@ -787,7 +833,7 @@ public class RoutingTab extends JMainTabSecondary {
 				}
 			}
 		}
-		SortedSet<SolarSystem> allLocs = new TreeSet<SolarSystem>(new Comparator<SolarSystem>() {
+		SortedSet<SolarSystem> allLocs = new TreeSet<>(new Comparator<SolarSystem>() {
 			@Override
 			public int compare(final SolarSystem o1, final SolarSystem o2) {
 				String n1 = o1.getName();
@@ -1272,6 +1318,31 @@ public class RoutingTab extends JMainTabSecondary {
 		updateFilterLabels();
 	}
 
+	private ImportReturn importOptions(final RouteResult routeResult, final String routeName, ImportReturn importReturn, final int count) {
+		if (importReturn != ImportReturn.OVERWRITE_ALL
+				&& importReturn != ImportReturn.MERGE_ALL
+				&& importReturn != ImportReturn.RENAME_ALL
+				&& importReturn != ImportReturn.SKIP_ALL) { //Not decided - ask what to do
+			importReturn = jImportDialog.show(routeName, count);
+		}
+		//Rename
+		if (importReturn == ImportReturn.RENAME || importReturn == ImportReturn.RENAME_ALL) {
+			String name = jSaveRouteDialog.show(routeName);
+			if (name == null) {
+				return importOptions(routeResult, routeName, ImportReturn.RENAME, count);
+			}
+			Settings.get().getRoutingSettings().getRoutes().put(name, routeResult);
+			updateRoutes();
+		}
+		//Overwrite
+		if (importReturn == ImportReturn.OVERWRITE || importReturn == ImportReturn.OVERWRITE_ALL) {
+			Settings.get().getRoutingSettings().getRoutes().put(routeName, routeResult);
+			updateRoutes();
+		}
+		//Skip - Do nothing
+		return importReturn;
+	}
+
 	private class ListenerClass extends MouseAdapter implements ActionListener, ListSelectionListener {
 
 		@Override
@@ -1428,6 +1499,74 @@ public class RoutingTab extends JMainTabSecondary {
 			} else if (RoutingAction.ROUTE_MANAGE.name().equals(e.getActionCommand())) {
 				jManageRoutesDialog.updateData();
 				jManageRoutesDialog.setVisible(true);
+			} else if (RoutingAction.ROUTE_IMPORT.name().equals(e.getActionCommand())) {
+				jFileChooser.setSelectedFile(null);
+				jFileChooser.setCurrentDirectory(null);
+				int returnValue = jFileChooser.showOpenDialog(program.getMainWindow().getFrame());
+				if (returnValue != JCustomFileChooser.APPROVE_OPTION)  {
+					return;
+				}
+				File file = jFileChooser.getSelectedFile();
+				if (file == null || !file.exists()) {
+					return;
+				}
+				Map<String, RouteResult> routes = SettingsReader.loadRoutes(file.getAbsolutePath());
+				if (routes == null) {
+					routes = new HashMap<>();
+				}
+				List<String> selected = jRouteSelectionDialog.show(routes.keySet(), false);
+				if (selected == null) {
+					return;
+				}
+				List<String> added = new ArrayList<>();
+				List<String> existing = new ArrayList<>();
+				for (String routeName : selected) {
+					if (Settings.get().getRoutingSettings().getRoutes().containsKey(routeName)) {
+						existing.add(routeName);
+					} else {
+						added.add(routeName);
+					}
+				}
+				
+				int count = existing.size();
+				ImportReturn importReturn = null;
+				jImportDialog.resetToDefault();
+				Settings.lock("Routing (Import Route)");
+				for (String routeName : added) {
+					RouteResult result = routes.get(routeName);
+					Settings.get().getRoutingSettings().getRoutes().put(routeName, result);
+				}
+				updateRoutes();
+				for (String routeName : existing) {
+					RouteResult routeResult = routes.get(routeName);
+					importReturn = importOptions(routeResult, routeName, importReturn, count);
+					count--;
+				}
+				Settings.unlock("Routing (Import Route)");
+				program.saveSettings("Routing (Import Route)");
+			} else if (RoutingAction.ROUTE_EXPORT.name().equals(e.getActionCommand())) {
+				List<String> selected = jRouteSelectionDialog.show(Settings.get().getRoutingSettings().getRoutes().keySet(), false);
+				if (selected == null) {
+					return;
+				}
+				jFileChooser.setSelectedFile(null);
+				jFileChooser.setCurrentDirectory(null);
+				int returnValue = jFileChooser.showSaveDialog(program.getMainWindow().getFrame());
+				if (returnValue != JCustomFileChooser.APPROVE_OPTION)  {
+					return;
+				}
+				File file = jFileChooser.getSelectedFile();
+				if (file == null) {
+					return;
+				}
+				Map<String, RouteResult> routes = new HashMap<>();
+				for (String routeName : selected) {
+					RouteResult result = Settings.get().getRoutingSettings().getRoutes().get(routeName);
+					if (result != null) {
+						routes.put(routeName, result);
+					}
+				}
+				SettingsWriter.saveRoutes(routes, file.getAbsolutePath());
 			}
 		}
 
@@ -1463,8 +1602,10 @@ public class RoutingTab extends JMainTabSecondary {
 		private final JToolBar jToolBar;
 		private final JLabel jName;
 		private final JButton jEveUiSetRoute;
-		private final JButton jSaveRoute;
 		private final JButton jEditRoute;
+		private final JButton jExportRoute;
+		private final JButton jImportRoute;
+		private final JButton jSaveRoute;
 		private final JDropDownButton jLoadRoute;
 		private final JMenuItem jManageRoutes;
 		private final Font plain;
@@ -1495,6 +1636,17 @@ public class RoutingTab extends JMainTabSecondary {
 			jEditRoute.addActionListener(listener);
 			jEditRoute.setEnabled(false);
 
+			jExportRoute = new JButton(TabsRouting.get().resultExport(), Images.DIALOG_CSV_EXPORT.getIcon());
+			jExportRoute.setHorizontalAlignment(JButton.LEFT);
+			jExportRoute.setActionCommand(RoutingAction.ROUTE_EXPORT.name());
+			jExportRoute.addActionListener(listener);
+			jExportRoute.setEnabled(false);
+
+			jImportRoute = new JButton(TabsRouting.get().resultImport(), Images.EDIT_IMPORT.getIcon());
+			jImportRoute.setHorizontalAlignment(JButton.LEFT);
+			jImportRoute.setActionCommand(RoutingAction.ROUTE_IMPORT.name());
+			jImportRoute.addActionListener(listener);
+
 			jSaveRoute = new JButton(TabsRouting.get().resultSave(), Images.FILTER_SAVE.getIcon());
 			jSaveRoute.setHorizontalAlignment(JButton.LEFT);
 			jSaveRoute.setActionCommand(RoutingAction.ROUTE_SAVE.name());
@@ -1511,6 +1663,8 @@ public class RoutingTab extends JMainTabSecondary {
 					.addGap(0, 0, Integer.MAX_VALUE)
 					.addComponent(jEveUiSetRoute)
 					.addComponent(jEditRoute, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, 100)
+					.addComponent(jExportRoute, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, 100)
+					.addComponent(jImportRoute, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, 100)
 					.addComponent(jSaveRoute, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, 100)
 					.addComponent(jLoadRoute, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, 100)
 					.addContainerGap()
@@ -1520,6 +1674,8 @@ public class RoutingTab extends JMainTabSecondary {
 					.addComponent(jName)
 					.addComponent(jEveUiSetRoute)
 					.addComponent(jEditRoute)
+					.addComponent(jExportRoute)
+					.addComponent(jImportRoute)
 					.addComponent(jSaveRoute)
 					.addComponent(jLoadRoute)
 			);
@@ -1577,6 +1733,7 @@ public class RoutingTab extends JMainTabSecondary {
 				});
 				jLoadRoute.add(jMenuItem);
 			}
+			jExportRoute.setEnabled(!Settings.get().getRoutingSettings().getRoutes().isEmpty());
 		}
 
 		public void setEnabledResult(boolean b) {

@@ -103,6 +103,32 @@ public class SettingsWriter extends AbstractXmlWriter {
 		return true;
 	}
 
+	public static boolean saveRoutes(final Map<String, RouteResult> routes, final String filename) {
+		SettingsWriter writer = new SettingsWriter();
+		return writer.writeRoutes(routes, filename);
+	}
+
+	private boolean writeRoutes(final Map<String, RouteResult> routes, final String filename) {
+		Document xmldoc;
+		try {
+			xmldoc = getXmlDocument("settings");
+		} catch (XmlException ex) {
+			LOG.error("Stockpile not saved " + ex.getMessage(), ex);
+			return false;
+		}
+		Element routingNode = xmldoc.createElementNS(null, "routingsettings");
+		xmldoc.getDocumentElement().appendChild(routingNode);
+		writeRoutes(xmldoc, routingNode, routes);
+		try {
+			writeXmlFile(xmldoc, filename, false);
+		} catch (XmlException ex) {
+			LOG.error("Stockpile not saved " + ex.getMessage(), ex);
+			return false;
+		}
+		LOG.info("Stockpile saved");
+		return true;
+	}
+
 	private boolean write(final Settings settings, final String filename) {
 		Document xmldoc;
 		try {
@@ -221,7 +247,11 @@ public class SettingsWriter extends AbstractXmlWriter {
 				presetNode.appendChild(systemNode);
 			}
 		}
-		for (Map.Entry<String, RouteResult> entry : routingSettings.getRoutes().entrySet()) {
+		writeRoutes(xmldoc, routingNode, routingSettings.getRoutes());
+	}
+
+	private void writeRoutes(Document xmldoc, Element routingNode, Map<String, RouteResult> routes) {
+		for (Map.Entry<String, RouteResult> entry : routes.entrySet()) {
 			Element routeNode = xmldoc.createElementNS(null, "route");
 			RouteResult routeResult = entry.getValue();
 			setAttribute(routeNode, "name", entry.getKey());
