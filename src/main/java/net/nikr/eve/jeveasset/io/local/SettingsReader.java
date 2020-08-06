@@ -125,13 +125,14 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 	private static final Logger LOG = LoggerFactory.getLogger(SettingsReader.class);
 
 	private enum ReaderType {
-		SETTINGS, STOCKPILE, TRACKER
+		SETTINGS, STOCKPILE, TRACKER, ROUTES
 	}
 
 	private Settings settings;
 	private SettingsFactory settingsFactory;
 	private List<Stockpile> stockpilesList;
 	private Map<String, List<Value>> trackerDataMap;
+	private Map<String, RouteResult> routes;
 	private final ReaderType readerType;
 
 	private SettingsReader(ReaderType readerType) {
@@ -177,6 +178,10 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		return trackerDataMap;
 	}
 
+	private Map<String, RouteResult> getRoutes() {
+		return routes;
+	}
+
 	public static List<Stockpile> loadStockpile(final String filename) {
 		SettingsReader reader = new SettingsReader(ReaderType.STOCKPILE);
 		if (reader.read(filename, filename, XmlType.IMPORT)) {
@@ -195,6 +200,15 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		}
 	}
 
+	public static Map<String, RouteResult> loadRoutes(final String filename) {
+		SettingsReader reader = new SettingsReader(ReaderType.ROUTES);
+		if (reader.read(filename, filename, XmlType.IMPORT)) {
+			return reader.getRoutes();
+		} else {
+			return null;
+		}
+	}
+
 	@Override
 	protected Boolean parse(Element element) throws XmlException {
 		switch (readerType) {
@@ -206,6 +220,9 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 				break;
 			case TRACKER:
 				trackerDataMap = loadTracker(element);
+				break;
+			case ROUTES:
+				routes = loadRoutes(element);
 				break;
 		}
 		return true;
@@ -246,6 +263,19 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 			parseStockpiles(stockpilesElement, stockpiles);
 		}
 		return stockpiles;
+	}
+
+	private Map<String, RouteResult> loadRoutes(final Element element) throws XmlException {
+		if (!element.getNodeName().equals("settings")) {
+			throw new XmlException("Wrong root element name.");
+		}
+		//Routing
+		Map<String, RouteResult> map = new HashMap<>();
+		Element routingElement = getNodeOptional(element, "routingsettings");
+		if (routingElement != null) {
+			parseRoutes(routingElement, map);
+		}
+		return map;
 	}
 
 	private Settings loadSettings(final Element element, final Settings settings) throws XmlException {
@@ -893,6 +923,10 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 			}
 			settings.getRoutingSettings().getPresets().put(name, systemIDs);
 		}
+		parseRoutes(routingElement, settings.getRoutingSettings().getRoutes());
+	}
+
+	private void parseRoutes(Element routingElement, Map<String, RouteResult> map) throws XmlException {
 		NodeList routeNodes = routingElement.getElementsByTagName("route");
 		for (int a = 0; a < routeNodes.getLength(); a++) {
 			Element routeNode = (Element) routeNodes.item(a);
@@ -930,7 +964,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 					stationsList.add(station);
 				}
 			}
-			settings.getRoutingSettings().getRoutes().put(name, new RouteResult(route, stationsMap, waypoints, algorithmName, algorithmTime, jumps, avoid, security));
+			map.put(name, new RouteResult(route, stationsMap, waypoints, algorithmName, algorithmTime, jumps, avoid, security));
 		}
 	}
 

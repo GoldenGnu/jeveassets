@@ -75,7 +75,10 @@ import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.components.JCustomFileChooser;
 import net.nikr.eve.jeveasset.gui.shared.components.JDropDownButton;
 import net.nikr.eve.jeveasset.gui.shared.components.JFixedToolBar;
+import net.nikr.eve.jeveasset.gui.shared.components.JImportDialog;
+import net.nikr.eve.jeveasset.gui.shared.components.JImportDialog.ImportReturn;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTabSecondary;
+import net.nikr.eve.jeveasset.gui.shared.components.JMultiSelectionDialog;
 import net.nikr.eve.jeveasset.gui.shared.components.JTextDialog;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
@@ -93,7 +96,6 @@ import net.nikr.eve.jeveasset.gui.shared.table.PaddingTableCellRenderer;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileFilter;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileTotal;
-import net.nikr.eve.jeveasset.gui.tabs.stockpile.StockpileImportDialog.ImportReturn;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.StockpileSeparatorTableCell.StockpileCellAction;
 import net.nikr.eve.jeveasset.i18n.TabsStockpile;
 import net.nikr.eve.jeveasset.io.local.SettingsReader;
@@ -131,8 +133,8 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 	private final StockpileDialog stockpileDialog;
 	private final StockpileItemDialog stockpileItemDialog;
 	private final StockpileShoppingListDialog stockpileShoppingListDialog;
-	private final StockpileSelectionDialog<Stockpile> stockpileSelectionDialog;
-	private final StockpileImportDialog stockpileImportDialog;
+	private final JMultiSelectionDialog<Stockpile> stockpileSelectionDialog;
+	private final JImportDialog stockpileImportDialog;
 	private final JTextDialog jTextDialog;
 
 	//Table
@@ -161,8 +163,36 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 		stockpileDialog = new StockpileDialog(program);
 		stockpileItemDialog = new StockpileItemDialog(program);
 		stockpileShoppingListDialog = new StockpileShoppingListDialog(program);
-		stockpileSelectionDialog = new StockpileSelectionDialog<>(program, TabsStockpile.get().selectStockpiles());
-		stockpileImportDialog = new StockpileImportDialog(program);
+		stockpileSelectionDialog = new JMultiSelectionDialog<>(program, TabsStockpile.get().selectStockpiles());
+		stockpileImportDialog = new JImportDialog(program, new JImportDialog.ImportOptions() {
+			@Override public boolean isRenameSupported() {
+				return true;
+			}
+			@Override public boolean isMergeSupported() {
+				return true;
+			}
+			@Override public boolean isOverwriteSupported() {
+				return true;
+			}
+			@Override public boolean isSkipSupported() {
+				return true;
+			}
+			@Override public String getTextRenameHelp() {
+				return TabsStockpile.get().importOptionsRenameHelp();
+			}
+			@Override public String getTextMergeHelp() {
+				return TabsStockpile.get().importOptionsMergeHelp();
+			}
+			@Override public String getTextOverwriteHelp() {
+				return TabsStockpile.get().importOptionsOverwriteHelp();
+			}
+			@Override public String getTextSkipHelp() {
+				return TabsStockpile.get().importOptionsSkipHelp();
+			}
+			@Override public String getTextAll(int count) {
+				return TabsStockpile.get().importOptionsAll(count);
+			}
+		});
 		jTextDialog = new JTextDialog(program.getMainWindow().getFrame());
 
 		JFixedToolBar jToolBarLeft = new JFixedToolBar();
@@ -797,7 +827,7 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 		if (stockpiles == null) {
 			return;
 		}
-		stockpiles = stockpileSelectionDialog.show(stockpiles);
+		stockpiles = stockpileSelectionDialog.show(stockpiles, false);
 		if (stockpiles == null) {
 			return;
 		}
@@ -895,7 +925,7 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 	}
 
 	private void exportXml() {
-		List<Stockpile> stockpiles = stockpileSelectionDialog.show(getShownStockpiles());
+		List<Stockpile> stockpiles = stockpileSelectionDialog.show(getShownStockpiles(), false);
 		if (stockpiles != null) {
 			int value = jFileChooser.showSaveDialog(program.getMainWindow().getFrame());
 			if (value == JFileChooser.APPROVE_OPTION) {
@@ -905,7 +935,7 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 	}
 
 	private void exportText() {
-		List<Stockpile> stockpiles = stockpileSelectionDialog.show(getShownStockpiles());
+		List<Stockpile> stockpiles = stockpileSelectionDialog.show(getShownStockpiles(), false);
 		if (stockpiles != null) {
 			String json = StockpileDataWriter.save(stockpiles);
 			if (json != null) {
@@ -997,7 +1027,7 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 					stockpileShoppingListDialog.show(item.getStockpile());
 				}
 			} else if (StockpileAction.SHOPPING_LIST_MULTI.name().equals(e.getActionCommand())) { //Shopping list multi
-				List<Stockpile> stockpiles = stockpileSelectionDialog.show(getShownStockpiles());
+				List<Stockpile> stockpiles = stockpileSelectionDialog.show(getShownStockpiles(), false);
 				if (stockpiles != null) {
 					stockpileShoppingListDialog.show(stockpiles);
 				}
@@ -1009,7 +1039,7 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 					}
 				}
 				program.getProfileManager().getActiveProfile().getStockpileIDs();
-				List<Stockpile> stockpiles = stockpileSelectionDialog.show(Settings.get().getStockpiles(), selected);
+				List<Stockpile> stockpiles = stockpileSelectionDialog.show(Settings.get().getStockpiles(), selected, true);
 				if (stockpiles == null) {
 					return; //Cancel
 				}
