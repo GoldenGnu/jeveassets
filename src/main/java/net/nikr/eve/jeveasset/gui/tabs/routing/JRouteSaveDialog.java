@@ -32,7 +32,7 @@ import net.nikr.eve.jeveasset.i18n.TabsRouting;
 public class JRouteSaveDialog extends JAutoCompleteDialog<String> {
 
 	public JRouteSaveDialog(Program program) {
-		super(program, TabsRouting.get().routeSaveTitle(), Images.TOOL_ROUTING.getImage(), TabsRouting.get().routeSaveMsg(), false, true);
+		super(program, TabsRouting.get().routeSaveTitle(), Images.TOOL_ROUTING.getImage(), TabsRouting.get().routeSaveMsg(), false, false);
 	}
 
 	@Override
