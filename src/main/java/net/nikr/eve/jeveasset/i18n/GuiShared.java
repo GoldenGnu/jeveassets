@@ -38,6 +38,7 @@ public abstract class GuiShared extends Bundle {
 	public abstract String add();
 	public abstract String addFilter();
 	public abstract String addStockpileItem();
+	public abstract String all();
 	public abstract String background();
 	public abstract String checkAll();
 	public abstract String chruker();
