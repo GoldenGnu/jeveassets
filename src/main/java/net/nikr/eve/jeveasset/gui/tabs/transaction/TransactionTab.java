@@ -86,16 +86,16 @@ public class TransactionTab extends JMainTabPrimary {
 
 		ListenerClass listener = new ListenerClass();
 		//Table Format
-		tableFormat = new EnumTableFormatAdaptor<TransactionTableFormat, MyTransaction>(TransactionTableFormat.class);
+		tableFormat = new EnumTableFormatAdaptor<>(TransactionTableFormat.class);
 		//Backend
 		eventList = program.getProfileData().getTransactionsEventList();
 		//Sorting (per column)
 		eventList.getReadWriteLock().readLock().lock();
-		SortedList<MyTransaction> sortedList = new SortedList<MyTransaction>(eventList);
+		SortedList<MyTransaction> sortedList = new SortedList<>(eventList);
 		eventList.getReadWriteLock().readLock().unlock();
 		//Filter
 		eventList.getReadWriteLock().readLock().lock();
-		filterList = new FilterList<MyTransaction>(sortedList);
+		filterList = new FilterList<>(sortedList);
 		eventList.getReadWriteLock().readLock().unlock();
 		filterList.addListEventListener(listener);
 		//Table Model
@@ -115,12 +115,12 @@ public class TransactionTab extends JMainTabPrimary {
 		//Scroll Panels
 		JScrollPane jTableScroll = new JScrollPane(jTable);
 		//Table Filter
-		Map<String, List<Filter>> defaultFilters = new HashMap<String, List<Filter>>();
+		Map<String, List<Filter>> defaultFilters = new HashMap<>();
 		List<Filter> filter;
-		filter = new ArrayList<Filter>();
+		filter = new ArrayList<>();
 		filter.add(new Filter(LogicType.AND, TransactionTableFormat.TYPE, CompareType.EQUALS, TabsTransaction.get().buy()));
 		defaultFilters.put(TabsTransaction.get().buy(), filter);
-		filter = new ArrayList<Filter>();
+		filter = new ArrayList<>();
 		filter.add(new Filter(LogicType.AND, TransactionTableFormat.TYPE, CompareType.EQUALS, TabsTransaction.get().sell()));
 		defaultFilters.put(TabsTransaction.get().sell(), filter);
 		filterControl = new TransactionsFilterControl(
@@ -197,6 +197,10 @@ public class TransactionTab extends JMainTabPrimary {
 		filterControl.createCache();
 	}
 
+	public void addFilter(final Filter filter) {
+		filterControl.addFilter(filter);
+	}
+
 	private class TransactionTableMenu implements TableMenu<MyTransaction> {
 
 		@Override
@@ -211,7 +215,7 @@ public class TransactionTab extends JMainTabPrimary {
 
 		@Override
 		public MenuData<MyTransaction> getMenuData() {
-			return new MenuData<MyTransaction>(selectionModel.getSelected());
+			return new MenuData<>(selectionModel.getSelected());
 		}
 
 		@Override
@@ -294,7 +298,7 @@ public class TransactionTab extends JMainTabPrimary {
 
 		@Override
 		protected List<EnumTableColumn<MyTransaction>> getShownColumns() {
-			return new ArrayList<EnumTableColumn<MyTransaction>>(tableFormat.getShownColumns());
+			return new ArrayList<>(tableFormat.getShownColumns());
 		}
 
 		@Override

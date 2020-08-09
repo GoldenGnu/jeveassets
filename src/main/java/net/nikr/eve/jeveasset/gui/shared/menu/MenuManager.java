@@ -37,6 +37,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.api.my.MyAsset;
+import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
 import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.data.settings.types.ItemType;
 import net.nikr.eve.jeveasset.data.settings.types.JumpType;
@@ -53,6 +54,7 @@ public class MenuManager<Q> {
 
 	public enum MenuEnum {
 		ASSET_FILTER,
+		TRANSACTION_FILTER,
 		TAGS,
 		STOCKPILE,
 		LOOKUP,
@@ -72,6 +74,7 @@ public class MenuManager<Q> {
 	private boolean locationSupported = false;
 	private boolean jumpsSupported = false;
 	private boolean assets = false;
+	private boolean transactions = false;
 	private boolean stockpile = false;
 	private boolean tagsSupported = false;
 
@@ -107,6 +110,7 @@ public class MenuManager<Q> {
 		this.tableMenu = tableMenu;
 		this.jTable = jTable;
 		assets = MyAsset.class.isAssignableFrom(clazz) && !TreeAsset.class.isAssignableFrom(clazz);
+		transactions = MyTransaction.class.isAssignableFrom(clazz);
 		stockpile = Stockpile.StockpileItem.class.isAssignableFrom(clazz);
 		locationSupported = LocationType.class.isAssignableFrom(clazz) || LocationsType.class.isAssignableFrom(clazz);
 		jumpsSupported = JumpType.class.isAssignableFrom(clazz);
@@ -131,6 +135,10 @@ public class MenuManager<Q> {
 	//ASSET FILTER
 		if (!assets && (itemSupported || locationSupported)) {
 			menus.put(MenuEnum.ASSET_FILTER, new JMenuAssetFilter<>(program));
+		}
+	//TRANSACTION FILTER
+		if (!transactions && (itemSupported || locationSupported)) {
+			menus.put(MenuEnum.TRANSACTION_FILTER, new JMenuTransactionFilter<>(program));
 		}
 	//STOCKPILE (Add To)
 		if (!stockpile && itemSupported) {
@@ -216,6 +224,16 @@ public class MenuManager<Q> {
 			notEmpty = true;
 			if (jAssetFilter instanceof JMenuAssetFilter) {
 				JMenuAssetFilter<?> jMenuAssetFilter = (JMenuAssetFilter) jAssetFilter;
+				jMenuAssetFilter.setTool(tableMenu);
+			}
+		}
+	//TRANSACTION FILTER
+		AutoMenu<Q> jTransactionFilter = menus.get(MenuEnum.TRANSACTION_FILTER);
+		if (jTransactionFilter != null) {
+			jComponent.add(jTransactionFilter.getComponent());
+			notEmpty = true;
+			if (jTransactionFilter instanceof JMenuTransactionFilter) {
+				JMenuTransactionFilter<?> jMenuAssetFilter = (JMenuTransactionFilter) jTransactionFilter;
 				jMenuAssetFilter.setTool(tableMenu);
 			}
 		}

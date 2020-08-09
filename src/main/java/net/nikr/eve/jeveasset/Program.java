@@ -751,9 +751,15 @@ public class Program implements ActionListener {
 	public TreeTab getTreeTab() {
 		return treeTab;
 	}
+
+	public TransactionTab getTransactionsTab() {
+		return transactionsTab;
+	}
+
 	public StatusPanel getStatusPanel() {
 		return this.getMainWindow().getStatusPanel();
 	}
+
 	public UserNameSettingsPanel getUserNameSettingsPanel() {
 		if (settingsDialog != null) {
 			return settingsDialog.getUserNameSettingsPanel();
