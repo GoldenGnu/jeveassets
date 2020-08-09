@@ -1032,10 +1032,10 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 					stockpileShoppingListDialog.show(stockpiles);
 				}
 			} else if (StockpileAction.SHOW_HIDE.name().equals(e.getActionCommand())) { //Shopping list multi
-				Set<Integer> selected = new HashSet<>();
-				for (int index = 0; index < Settings.get().getStockpiles().size(); index++) {
-					if (program.getProfileManager().getActiveProfile().getStockpileIDs().contains(Settings.get().getStockpiles().get(index).getId())) {
-						selected.add(index);
+				List<Stockpile> selected = new ArrayList<>();
+				for (Stockpile stockpile : Settings.get().getStockpiles()) {
+					if (program.getProfileManager().getActiveProfile().getStockpileIDs().contains(stockpile.getId())) {
+						selected.add(stockpile);
 					}
 				}
 				program.getProfileManager().getActiveProfile().getStockpileIDs();
