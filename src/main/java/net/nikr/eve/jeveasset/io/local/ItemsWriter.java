@@ -74,7 +74,12 @@ public class ItemsWriter extends AbstractXmlWriter {
 				setAttribute(node, "category", item.getCategory());
 				setAttribute(node, "price", item.getPriceBase());
 				setAttribute(node, "volume", item.getVolume());
-				setAttributeOptional(node, "packagedvolume", item.getPackagedVolume());
+				if (item.getPackagedVolume() > 0) {
+					setAttribute(node, "packagedvolume", item.getPackagedVolume());
+				}
+				if (item.getCapacity() > 0) {
+					setAttribute(node, "capacity", item.getCapacity());
+				}
 				setAttribute(node, "meta", item.getMeta());
 				setAttribute(node, "tech", item.getTech());
 				setAttribute(node, "marketgroup", item.isMarketGroup());

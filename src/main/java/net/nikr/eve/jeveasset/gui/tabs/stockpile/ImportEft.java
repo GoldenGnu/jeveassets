@@ -27,6 +27,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import net.nikr.eve.jeveasset.data.sde.Item;
+import net.nikr.eve.jeveasset.data.sde.StaticData;
 import net.nikr.eve.jeveasset.i18n.TabsStockpile;
 
 
@@ -45,7 +47,7 @@ public class ImportEft extends StockpileImport {
 	@Override
 	protected Map<String, Double> doImport(String data) {
 		//Format and split
-		List<String> modules = new ArrayList<String>(Arrays.asList(data.split("[\r\n]+")));
+		List<String> modules = new ArrayList<>(Arrays.asList(data.split("[\r\n]+")));
 
 		if (modules.isEmpty()) {
 			return null; //Malformed
@@ -63,37 +65,70 @@ public class ImportEft extends StockpileImport {
 		String  name = first[1].replace("[", "").replace("]", "").trim();
 		modules.add(0, ship);
 		setName(name);
+		Map<String, Item> typeNames = new HashMap<>();
+		for (Item item : StaticData.get().getItems().values()) {
+			typeNames.put(item.getTypeName(), item);
+		}
 
 		//Add modules
-		Map<String, Double> items = new HashMap<String, Double>();
+		Map<String, Double> items = new HashMap<>();
 		for (String line : modules) {
 			line = line.trim(); //Format line
 			if (line.startsWith("[")) {
 				continue;
 			}
-			//Find x[Number] - used for drones and cargo
-			Pattern p = Pattern.compile("x\\d+$");
-			Matcher m = p.matcher(line);
-			double count = 0;
-			while (m.find()) {
-				String group = m.group().replace("x", "");
-				count = count + Long.valueOf(group);
-			}
-			if (count == 0) {
-				count = 1;
-			}
+			double count = getNumber(line);
 			String module = line.replaceAll("x\\d+$", "").trim();
-			if (module.isEmpty()) { //Skip empty lines
-				continue;
+			if (typeNames.containsKey(module)) {
+				add(items, module, count);
+			} else if (line.contains(",")) { //Handle module and charge on the same line
+				int index = line.lastIndexOf(","); //Charge is always after the last ,
+				if (index > 0 && index + 1 < line.length()) {
+					//Module
+					module = line.substring(0, index).trim(); //Get module part of the line
+					count = getNumber(module); //count
+					module = module.replaceAll("x\\d+$", "").trim(); //Remove number
+					Item moduleItem = typeNames.get(module);
+					if (moduleItem != null) { //module exist
+						add(items, module, count);
+					}
+					//Charge
+					String charge = line.substring(index + 1).trim(); //Get the charge part of the line
+					Item chargeItem = typeNames.get(charge);
+					if (chargeItem != null && moduleItem != null) { //charge exist
+						double chargeCount = Math.floor(moduleItem.getCapacity() / chargeItem.getVolume());
+						add(items, charge, chargeCount);
+					}
+				}
 			}
-			//Search for item name
-			Double d = items.get(module);
-			if (d == null) {
-				d = 0.0;
-			}
-			items.put(module, count + d);
 		}
 		return items;
 	}
-	
+
+	private void add(final Map<String, Double> items, final String module, final double count) {
+		if (module.isEmpty()) { //Skip empty lines
+			return;
+		}
+		//Search for item name
+		Double d = items.get(module);
+		if (d == null) {
+			d = 0.0;
+		}
+		items.put(module, count + d);
+	}
+
+	private double getNumber(String line) {
+		//Find x[Number] - used for drones and cargo
+		Pattern p = Pattern.compile("x\\d+$");
+		Matcher m = p.matcher(line);
+		double count = 0;
+		while (m.find()) {
+			String group = m.group().replace("x", "");
+			count = count + Long.valueOf(group);
+		}
+		if (count == 0) {
+			count = 1;
+		}
+		return count;
+	}
 }
