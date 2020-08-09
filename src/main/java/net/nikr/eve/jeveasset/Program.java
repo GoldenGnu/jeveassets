@@ -115,7 +115,7 @@ public class Program implements ActionListener {
 	public static final String PROGRAM_VERSION = "6.6.0 DEV BUILD 1";
 	public static final String PROGRAM_NAME = "jEveAssets";
 	public static final String PROGRAM_HOMEPAGE = "https://eve.nikr.net/jeveasset";
-	public static final boolean PROGRAM_DEV_BUILD = false;
+	public static final boolean PROGRAM_DEV_BUILD = true;
 
 	private static boolean debug = false;
 	private static boolean forceUpdate = false;
