@@ -30,14 +30,18 @@ import ca.odell.glazedlists.event.ListEventListener;
 import ca.odell.glazedlists.swing.DefaultEventSelectionModel;
 import ca.odell.glazedlists.swing.DefaultEventTableModel;
 import ca.odell.glazedlists.swing.TableComparatorChooser;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import javax.swing.GroupLayout;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JScrollPane;
+import javax.swing.JToggleButton;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.api.my.MyAsset;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
@@ -46,6 +50,7 @@ import net.nikr.eve.jeveasset.data.settings.tag.TagUpdate;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
+import net.nikr.eve.jeveasset.gui.shared.components.JFixedToolBar;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTabPrimary;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
@@ -64,8 +69,13 @@ import net.nikr.eve.jeveasset.i18n.TabsAssets;
 
 public class AssetsTab extends JMainTabPrimary implements TagUpdate {
 
+	private enum AssetsAction {
+		REPROCESS_COLORS
+	}
+
 	//GUI
 	private final JAssetTable jTable;
+	private final JToggleButton jReprocessColors;
 	private final JLabel jValue;
 	private final JLabel jReprocessed;
 	private final JLabel jCount;
@@ -87,18 +97,27 @@ public class AssetsTab extends JMainTabPrimary implements TagUpdate {
 
 		ListenerClass listener = new ListenerClass();
 
+		JFixedToolBar jToolBar = new JFixedToolBar();
+
+		jReprocessColors = new JToggleButton(TabsAssets.get().reprocessColors(), Images.TOOL_REPROCESSED.getIcon());
+		jReprocessColors.setToolTipText(TabsAssets.get().reprocessColorsToolTip());
+		jReprocessColors.setSelected(Settings.get().isReprocessColors());
+		jReprocessColors.setActionCommand(AssetsAction.REPROCESS_COLORS.name());
+		jReprocessColors.addActionListener(listener);
+		jToolBar.addButton(jReprocessColors);
+
 		//Table Format
-		tableFormat = new EnumTableFormatAdaptor<AssetTableFormat, MyAsset>(AssetTableFormat.class);
+		tableFormat = new EnumTableFormatAdaptor<>(AssetTableFormat.class);
 		//Backend
 		EventList<MyAsset> eventList = program.getProfileData().getAssetsEventList();
 		//Sorting (per column)
 		eventList.getReadWriteLock().readLock().lock();
-		SortedList<MyAsset> sortedList = new SortedList<MyAsset>(eventList);
+		SortedList<MyAsset> sortedList = new SortedList<>(eventList);
 		eventList.getReadWriteLock().readLock().unlock();
 		
 		//Filter
 		eventList.getReadWriteLock().readLock().lock();
-		filterList = new FilterList<MyAsset>(sortedList);
+		filterList = new FilterList<>(sortedList);
 		eventList.getReadWriteLock().readLock().unlock();
 
 		filterList.addListEventListener(listener);
@@ -150,11 +169,13 @@ public class AssetsTab extends JMainTabPrimary implements TagUpdate {
 		layout.setHorizontalGroup(
 			layout.createParallelGroup()
 				.addComponent(filterControl.getPanel())
+				.addComponent(jToolBar)
 				.addComponent(jTableScroll, 0, 0, Short.MAX_VALUE)
 		);
 		layout.setVerticalGroup(
 			layout.createSequentialGroup()
 				.addComponent(filterControl.getPanel())
+				.addComponent(jToolBar, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
 				.addComponent(jTableScroll, 0, 0, Short.MAX_VALUE)
 		);
 	}
@@ -194,17 +215,17 @@ public class AssetsTab extends JMainTabPrimary implements TagUpdate {
 		return filterControl.getCurrentFilterName();
 	}
 	public FilterLogicalMatcher<MyAsset> getFilterLogicalMatcher(final List<Filter> filters) {
-		return new FilterLogicalMatcher<MyAsset>(filterControl, filters);
+		return new FilterLogicalMatcher<>(filterControl, filters);
 	}
 	public FilterLogicalMatcher<MyAsset> getFilterLogicalMatcher() {
-		return new FilterLogicalMatcher<MyAsset>(filterControl, getFilters());
+		return new FilterLogicalMatcher<>(filterControl, getFilters());
 	}
 	public void addColumn(MyLocation location) {
-		tableFormat.addColumn(new JMenuJumps.Column<MyAsset>(location.getSystem(), location.getSystemID()));
+		tableFormat.addColumn(new JMenuJumps.Column<>(location.getSystem(), location.getSystemID()));
 		filterControl.setColumns(tableFormat.getOrderColumns());
 	}
 	public void removeColumn(MyLocation location) {
-		tableFormat.removeColumn(new JMenuJumps.Column<MyAsset>(location.getSystem(), location.getSystemID()));
+		tableFormat.removeColumn(new JMenuJumps.Column<>(location.getSystem(), location.getSystemID()));
 		filterControl.setColumns(tableFormat.getOrderColumns());
 	}
 
@@ -228,6 +249,10 @@ public class AssetsTab extends JMainTabPrimary implements TagUpdate {
 		jAverage.setText(Formater.iskFormat(averageValue));
 		jReprocessed.setText(Formater.iskFormat(totalReprocessed));
 		jValue.setText(Formater.iskFormat(totalValue));
+	}
+
+	public void updateReprocessColors() {
+		jReprocessColors.setSelected(Settings.get().isReprocessColors());
 	}
 
 	public MyAsset getSelectedAsset() {
@@ -268,11 +293,27 @@ public class AssetsTab extends JMainTabPrimary implements TagUpdate {
 	}
 
 
-	private class ListenerClass implements ListEventListener<MyAsset> {
+	private class ListenerClass implements ListEventListener<MyAsset>, ActionListener {
 		@Override
 		public void listChanged(final ListEvent<MyAsset> listChanges) {
 			updateStatusbar();
 			program.getOverviewTab().updateTable();
+		}
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			if (e.getActionCommand().equals(AssetsAction.REPROCESS_COLORS.name())) {
+				boolean oldValue = Settings.get().isReprocessColors();
+				boolean newValue = jReprocessColors.isSelected();
+				if (oldValue != newValue) {
+					Settings.lock("Reprocess Colors");
+					Settings.get().setReprocessColors(newValue);
+					Settings.unlock("Reprocess Colors");
+					program.saveSettings("Reprocess Colors");
+					jTable.repaint();
+					program.getTreeTab().updateReprocessColors();
+				}
+			}
 		}
 	}
 
@@ -294,12 +335,12 @@ public class AssetsTab extends JMainTabPrimary implements TagUpdate {
 
 		@Override
 		protected List<EnumTableColumn<MyAsset>> getColumns() {
-			return new ArrayList<EnumTableColumn<MyAsset>>(tableFormat.getOrderColumns());
+			return new ArrayList<>(tableFormat.getOrderColumns());
 		}
 
 		@Override
 		protected List<EnumTableColumn<MyAsset>> getShownColumns() {
-			return new ArrayList<EnumTableColumn<MyAsset>>(tableFormat.getShownColumns());
+			return new ArrayList<>(tableFormat.getShownColumns());
 		}
 
 		@Override
