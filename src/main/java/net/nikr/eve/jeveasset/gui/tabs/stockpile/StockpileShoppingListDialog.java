@@ -94,7 +94,7 @@ class StockpileShoppingListDialog extends JDialogCentered {
 		jCopyToClipboard.addActionListener(listener);
 
 		String[] formats = {TabsStockpile.get().shoppingList(), TabsStockpile.get().eveMultibuy()};
-		jEveMultiBuy = new JComboBox<String>(formats);
+		jEveMultiBuy = new JComboBox<>(formats);
 		IconListCellRendererRenderer renderer = new IconListCellRendererRenderer();
 		renderer.add(TabsStockpile.get().shoppingList(), Images.STOCKPILE_SHOPPING_LIST.getIcon());
 		renderer.add(TabsStockpile.get().eveMultibuy(), Images.MISC_EVE.getIcon());
@@ -209,7 +209,7 @@ class StockpileShoppingListDialog extends JDialogCentered {
 		}
 
 	//All claims
-		Map<TypeIdentifier, List<StockClaim>> claims = new HashMap<TypeIdentifier, List<StockClaim>>();
+		Map<TypeIdentifier, List<StockClaim>> claims = new HashMap<>();
 		String stockpileNames = "";
 		for (Stockpile stockpile : stockpiles) {
 			//Stockpile names
@@ -217,12 +217,12 @@ class StockpileShoppingListDialog extends JDialogCentered {
 				stockpileNames = stockpileNames + ", ";
 			}
 			stockpileNames = stockpileNames + stockpile.getName();
-			for (StockpileItem stockpileItem : stockpile.getItems()) {
+			for (StockpileItem stockpileItem : stockpile.getClaims()) {
 				TypeIdentifier typeID = new TypeIdentifier(stockpileItem);
 				if (!typeID.isEmpty()) { //Ignore Total
 					List<StockClaim> claimList  = claims.get(typeID);
 					if (claimList == null) {
-						claimList = new ArrayList<StockClaim>();
+						claimList = new ArrayList<>();
 						claims.put(typeID, claimList);
 					}
 					claimList.add(new StockClaim(stockpileItem, percent));
@@ -231,7 +231,7 @@ class StockpileShoppingListDialog extends JDialogCentered {
 		}
 
 	//All items
-		Map<TypeIdentifier, List<StockItem>> items = new HashMap<TypeIdentifier, List<StockItem>>();
+		Map<TypeIdentifier, List<StockItem>> items = new HashMap<>();
 		//Assets
 		for (MyAsset asset : program.getAssetList()) {
 			if (asset.isGenerated()) { //Skip generated assets
@@ -351,7 +351,7 @@ class StockpileShoppingListDialog extends JDialogCentered {
 		//Get item list by typeID
 		List<StockItem> itemList = items.get(typeID);
 		if (itemList == null) {
-			itemList = new ArrayList<StockItem>();
+			itemList = new ArrayList<>();
 			items.put(typeID, itemList);
 		}
 
@@ -473,14 +473,14 @@ class StockpileShoppingListDialog extends JDialogCentered {
 	}
 
 	private static class StockItem {
-		private final Map<Count, List<StockClaim>> claims = new HashMap<Count, List<StockClaim>>();
+		private final Map<Count, List<StockClaim>> claims = new HashMap<>();
 
 		public StockItem() { }
 
 		public void addClaim(StockClaim stockMinimum, long count) {
 			List<StockClaim> claimList = claims.get(new Count(count));
 			if (claimList == null) {
-				claimList = new ArrayList<StockClaim>();
+				claimList = new ArrayList<>();
 				claims.put(new Count(count), claimList);
 			}
 			claimList.add(stockMinimum);

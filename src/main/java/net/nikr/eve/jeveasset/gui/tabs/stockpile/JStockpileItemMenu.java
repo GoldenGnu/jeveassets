@@ -53,7 +53,7 @@ public class JStockpileItemMenu extends JMenu {
 
 	private Program program;
 
-	public JStockpileItemMenu(final Program program, final List<StockpileItem> items) {
+	public JStockpileItemMenu(final Program program, final List<StockpileItem> edit, final List<StockpileItem> delete, final List<StockpileItem> items) {
 		super(TabsStockpile.get().stockpile());
 		this.program = program;
 		this.setIcon(Images.TOOL_STOCKPILE.getIcon());
@@ -83,16 +83,16 @@ public class JStockpileItemMenu extends JMenu {
 			}
 		}
 
-		jMenuItem = new JStockpileMenuItem(TabsStockpile.get().editItem(), Images.EDIT_EDIT.getIcon(), items);
+		jMenuItem = new JStockpileMenuItem(TabsStockpile.get().editItem(), Images.EDIT_EDIT.getIcon(), edit);
 		jMenuItem.setActionCommand(StockpileItemMenuAction.EDIT_ITEM.name());
 		jMenuItem.addActionListener(listener);
-		jMenuItem.setEnabled(items.size() == 1);
+		jMenuItem.setEnabled(edit.size() == 1);
 		this.add(jMenuItem);
 
-		jMenuItem = new JStockpileMenuItem(TabsStockpile.get().deleteItem(), Images.EDIT_DELETE.getIcon(), items);
+		jMenuItem = new JStockpileMenuItem(TabsStockpile.get().deleteItem(), Images.EDIT_DELETE.getIcon(), delete);
 		jMenuItem.setActionCommand(StockpileItemMenuAction.DELETE_ITEM.name());
 		jMenuItem.addActionListener(listener);
-		jMenuItem.setEnabled(!items.isEmpty());
+		jMenuItem.setEnabled(!delete.isEmpty());
 		this.add(jMenuItem);
 
 		boolean blueprint = false;
@@ -333,7 +333,7 @@ public class JStockpileItemMenu extends JMenu {
 
 	public static class JStockpileMenuItem extends JMenuItem {
 
-		private final List<StockpileItem> items = new ArrayList<StockpileItem>();
+		private final List<StockpileItem> items = new ArrayList<>();
 		private final Stockpile stockpile;
 
 		public JStockpileMenuItem(final Stockpile stockpile, final Icon icon, final List<StockpileItem> items) {

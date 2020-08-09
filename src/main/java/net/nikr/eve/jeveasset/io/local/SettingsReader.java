@@ -647,6 +647,8 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 	 */
 	private void parseStockpiles(final Element stockpilesElement, final List<Stockpile> stockpiles) throws XmlException {
 		NodeList stockpileNodes = stockpilesElement.getElementsByTagName("stockpile");
+		Map<String, Stockpile> stockpileMap = new HashMap<>();
+		Map<Stockpile, Map<String, Double>> subpileMap = new HashMap<>();
 		for (int a = 0; a < stockpileNodes.getLength(); a++) {
 			Element stockpileNode = (Element) stockpileNodes.item(a);
 			String name = getString(stockpileNode, "name");
@@ -784,6 +786,15 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 				StockpileFilter stockpileFilter = new StockpileFilter(location, filterFlagIDs, filterContainers, filterOwnerIDs, filterExclude, filterSingleton, filterInventory, filterSellOrders, filterBuyOrders, filterJobs, filterBuyTransactions, filterSellTransactions, filterSellingContracts, filterSoldBuy, filterBuyingContracts, filterBoughtContracts);
 				filters.add(stockpileFilter);
 			}
+		//SUBPILES
+			NodeList subpileNodes = stockpileNode.getElementsByTagName("subpile");
+			Map<String, Double> subpileNames = new HashMap<>();
+			for (int b = 0; b < subpileNodes.getLength(); b++) {
+				Element subpileNode = (Element) subpileNodes.item(b);
+				String subpileName = getString(subpileNode, "name");
+				Double minimum = getDouble(subpileNode, "minimum");
+				subpileNames.put(subpileName, minimum);
+			}
 		//MULTIPLIER
 			double multiplier = 1;
 			if (haveAttribute(stockpileNode, "multiplier")){
@@ -792,6 +803,8 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		
 			Stockpile stockpile = new Stockpile(name, stockpileID, filters, multiplier);
 			stockpiles.add(stockpile);
+			subpileMap.put(stockpile, subpileNames);
+			stockpileMap.put(name, stockpile);
 		//ITEMS
 			NodeList itemNodes = stockpileNode.getElementsByTagName("item");
 			for (int b = 0; b < itemNodes.getLength(); b++) {
@@ -815,6 +828,17 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 				}
 			}
 		}
+		for (Map.Entry<Stockpile, Map<String, Double>> entry : subpileMap.entrySet()) {
+			for (Map.Entry<String, Double> entry1 : entry.getValue().entrySet()) {
+				Stockpile stockpile = stockpileMap.get(entry1.getKey());
+				if (stockpile != null) {
+					entry.getKey().getSubpiles().put(stockpile, entry1.getValue());
+					stockpile.addSubpileLink(entry.getKey());
+				}
+			}
+		}
+		subpileMap.clear();
+		stockpileMap.clear();
 		Collections.sort(stockpiles);
 	}
 
