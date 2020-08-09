@@ -85,8 +85,9 @@ public class EsiItemsGetter extends AbstractEsiGetter {
 		String group = groupResponse.getName();
 		String category = categoryResponse.getName();
 		long price = -1; //Base Price
-		float volume = typeResponse.getVolume();
-		float packagedVolume = typeResponse.getPackagedVolume();
+		float volume = getNotNull(typeResponse.getVolume());
+		float packagedVolume = getNotNull(typeResponse.getPackagedVolume());
+		float capacity = getNotNull(typeResponse.getCapacity());
 		TypeDogmaAttribute techLevel = null;
 		TypeDogmaAttribute metaLevel = null;
 		TypeDogmaAttribute metaGroup = null;
@@ -153,8 +154,16 @@ public class EsiItemsGetter extends AbstractEsiGetter {
 		int portion = typeResponse.getPortionSize();
 		int productTypeID = 0; //Product
 		int productQuantity = 1; //Product Quantity
-		item = new Item(typeID, name, group, category, price, volume, packagedVolume, meta, tech, marketGroup, portion, productTypeID, productQuantity, ESI_ITEM_VERSION);
+		item = new Item(typeID, name, group, category, price, volume, packagedVolume, capacity, meta, tech, marketGroup, portion, productTypeID, productQuantity, ESI_ITEM_VERSION);
 		
+	}
+
+	private float getNotNull(Float f) {
+		if (f != null) {
+			return f;
+		} else {
+			return 0f;
+		}
 	}
 
 	public Item getItem() {
