@@ -435,21 +435,24 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 	public void updateTotal() {
 		totalItem.reset();
 		percentFull = Double.MAX_VALUE;
+		Map<Integer, StockpileItem> map = new HashMap<>();
+		//Items
 		for (StockpileItem item : items) {
 			if (item.getTypeID() == 0) {
 				continue;
 			}
-			double percent;
-			if (item.getCountNow() == 0) {
-				percent = 0;
-			} else {
-				percent = item.getCountNow() / ((double) item.getCountMinimumMultiplied());
-			}
-			percentFull = Math.min(percent, percentFull);
-			totalItem.updateTotal(item);
+			map.put(item.getItemTypeID(), item);
 		}
+		//SubpileItem (Overwrites StockpileItem items)
 		for (SubpileItem item : subpileItems) {
 			if (item instanceof SubpileStock) {
+				continue;
+			}
+			map.put(item.getItemTypeID(), item);
+		}
+		//For each item type
+		for (StockpileItem item : map.values()) {
+			if (item.getTypeID() == 0) {
 				continue;
 			}
 			double percent;
