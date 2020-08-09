@@ -26,7 +26,6 @@ import net.nikr.eve.jeveasset.data.settings.tag.Tags;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.Percent;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
-import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileTotal;
 import net.nikr.eve.jeveasset.i18n.TabsStockpile;
 
 
@@ -82,7 +81,10 @@ public enum StockpileTableFormat implements EnumTableColumn<StockpileItem> {
 		}
 		@Override
 		public boolean isColumnEditable(final Object baseObject) {
-			return !(baseObject instanceof StockpileTotal);
+			if (baseObject instanceof StockpileItem) {
+				return ((StockpileItem)baseObject).isEditable();
+			}
+			return false;
 		}
 
 		@Override

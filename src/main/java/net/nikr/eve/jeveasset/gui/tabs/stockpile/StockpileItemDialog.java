@@ -55,6 +55,7 @@ import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
 import net.nikr.eve.jeveasset.gui.shared.table.EventListManager;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
+import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.SubpileStock;
 import net.nikr.eve.jeveasset.i18n.TabsStockpile;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 
@@ -70,6 +71,7 @@ public class StockpileItemDialog extends JDialogCentered {
 	private final JButton jOK;
 	private final JButton jCancel;
 	private final JComboBox<Item> jItems;
+	private final JLabel jSubpile;
 	private JTextField jCountMinimum;
 	private final JCheckBox jCopy;
 	private final JCheckBox jRuns;
@@ -89,6 +91,8 @@ public class StockpileItemDialog extends JDialogCentered {
 		itemAutoComplete.setStrict(true);
 		itemAutoComplete.setCorrectsCase(true);
 		jItems.addItemListener(listener); //Must be added after AutoCompleteSupport
+
+		jSubpile = new JLabel();
 
 		JLabel jCountMinimumLabel = new JLabel(TabsStockpile.get().countMinimum());
 		jCountMinimum = new JTextField();
@@ -126,6 +130,7 @@ public class StockpileItemDialog extends JDialogCentered {
 					)
 					.addGroup(layout.createParallelGroup()
 						.addComponent(jItems, 300, 300, 300)
+						.addComponent(jSubpile, 300, 300, 300)
 						.addComponent(jCountMinimum, 300, 300, 300)
 					)
 					.addGroup(layout.createParallelGroup()
@@ -143,6 +148,7 @@ public class StockpileItemDialog extends JDialogCentered {
 				.addGroup(layout.createParallelGroup()
 					.addComponent(jItemsLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 					.addComponent(jItems, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jSubpile, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 					.addComponent(jCopy, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 				)
 				.addGroup(layout.createParallelGroup()
@@ -163,7 +169,15 @@ public class StockpileItemDialog extends JDialogCentered {
 		this.stockpileItem = editStockpileItem;
 		this.getDialog().setTitle(TabsStockpile.get().editStockpileItem());
 		Item item = ApiIdConverter.getItem(editStockpileItem.getTypeID());
-		jItems.setSelectedItem(item);
+		if (editStockpileItem instanceof SubpileStock) {
+			jSubpile.setText(editStockpileItem.getName());
+			jSubpile.setVisible(true);
+			jItems.setVisible(false);
+		} else {
+			jItems.setSelectedItem(item);
+			jSubpile.setVisible(false);
+			jItems.setVisible(true);
+		}
 		jCopy.setSelected(editStockpileItem.isBPC());
 		jRuns.setSelected(editStockpileItem.isRuns());
 		jCountMinimum.setText(String.valueOf(editStockpileItem.getCountMinimum()));
@@ -192,6 +206,8 @@ public class StockpileItemDialog extends JDialogCentered {
 		} finally {
 			items.getReadWriteLock().writeLock().unlock();
 		}
+		jSubpile.setVisible(false);
+		jItems.setVisible(true);
 		jItems.setSelectedIndex(0);
 		jCountMinimum.setText("");
 		jItems.setEnabled(true);
@@ -336,7 +352,11 @@ public class StockpileItemDialog extends JDialogCentered {
 	@Override
 	protected void save() {
 		Settings.lock("Stockpile (Items Dialog)"); //Lock for Stockpile (Items Dialog)
-		if (stockpileItem != null) { //EDIT
+		if (stockpileItem instanceof SubpileStock) { //Edit SubpileStock
+			SubpileStock subpileStock = (SubpileStock) stockpileItem;
+			StockpileItem editItem = getStockpileItem();
+			subpileStock.setCountMinimum(editItem.getCountMinimum());
+		} else if (stockpileItem != null) { //EDIT
 			if (itemExist()) { //EDIT + UPDATING (Editing to an existing item)
 				StockpileItem existingItem = getExistingItem();
 				existingItem.getStockpile().remove(existingItem);
@@ -360,11 +380,9 @@ public class StockpileItemDialog extends JDialogCentered {
 		public void actionPerformed(final ActionEvent e) {
 			if (StockpileItemAction.OK.name().equals(e.getActionCommand())) {
 				save();
-			}
-			if (StockpileItemAction.CANCEL.name().equals(e.getActionCommand())) {
+			} else if (StockpileItemAction.CANCEL.name().equals(e.getActionCommand())) {
 				setVisible(false);
-			}
-			if (StockpileItemAction.TYPE_CHANGE.name().equals(e.getActionCommand())) {
+			} else if (StockpileItemAction.TYPE_CHANGE.name().equals(e.getActionCommand())) {
 				autoSet();
 				autoValidate();
 			}

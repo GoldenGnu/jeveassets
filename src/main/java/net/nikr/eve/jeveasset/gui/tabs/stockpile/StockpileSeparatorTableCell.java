@@ -37,6 +37,7 @@ public class StockpileSeparatorTableCell extends SeparatorTableCell<StockpileIte
 		CLONE_STOCKPILE,
 		SHOPPING_LIST_SINGLE,
 		ADD_ITEM,
+		SUBPILES,
 		UPDATE_MULTIPLIER
 	}
 
@@ -132,6 +133,13 @@ public class StockpileSeparatorTableCell extends SeparatorTableCell<StockpileIte
 		jMenuItem.setActionCommand(StockpileCellAction.DELETE_STOCKPILE.name());
 		jMenuItem.addActionListener(actionListener);
 		jStockpile.add(jMenuItem);
+
+		jStockpile.addSeparator();
+
+		JMenuItem jSubStockpile = new JMenuItem(TabsStockpile.get().subpiles(), Images.TOOL_STOCKPILE.getIcon());
+		jSubStockpile.setActionCommand(StockpileCellAction.SUBPILES.name());
+		jSubStockpile.addActionListener(actionListener);
+		jStockpile.add(jSubStockpile);
 
 		jStockpile.addSeparator();
 

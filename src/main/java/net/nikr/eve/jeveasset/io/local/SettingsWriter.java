@@ -463,12 +463,14 @@ public class SettingsWriter extends AbstractXmlWriter {
 		Element parentNode = xmldoc.createElementNS(null, "stockpiles");
 		xmldoc.getDocumentElement().appendChild(parentNode);
 		for (Stockpile strockpile : stockpiles) {
+			//STOCKPILE
 			Element strockpileNode = xmldoc.createElementNS(null, "stockpile");
 			setAttribute(strockpileNode, "name", strockpile.getName());
 			if (!export) { //Risk of collision, better to generate a new one on import
 				setAttribute(strockpileNode, "id", strockpile.getId());
 			}
 			setAttribute(strockpileNode, "multiplier", strockpile.getMultiplier());
+			//ITEMS
 			for (StockpileItem item : strockpile.getItems()) {
 				if (item.getItemTypeID() != 0) { //Ignore Total
 					Element itemNode = xmldoc.createElementNS(null, "item");
@@ -481,7 +483,14 @@ public class SettingsWriter extends AbstractXmlWriter {
 					strockpileNode.appendChild(itemNode);
 				}
 			}
-			
+			//SUBPILES
+			for (Map.Entry<Stockpile, Double> entry : strockpile.getSubpiles().entrySet()) {
+				Element itemNode = xmldoc.createElementNS(null, "subpile");
+				itemNode.setAttributeNS(null, "name", entry.getKey().getName());
+				itemNode.setAttributeNS(null, "minimum", String.valueOf(entry.getValue()));
+				strockpileNode.appendChild(itemNode);
+			}
+			//FILTERS
 			for (StockpileFilter filter : strockpile.getFilters()) {
 				Element locationNode = xmldoc.createElementNS(null, "stockpilefilter");
 				setAttribute(locationNode, "locationid", filter.getLocation().getLocationID());
