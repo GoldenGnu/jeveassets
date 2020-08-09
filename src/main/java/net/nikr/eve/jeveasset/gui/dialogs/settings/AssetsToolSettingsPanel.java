@@ -31,7 +31,6 @@ import net.nikr.eve.jeveasset.i18n.DialoguesSettings;
 
 public class AssetsToolSettingsPanel extends JSettingsPanel {
 
-	private final JCheckBox jReprocessColors;
 	private final JCheckBox jSellOrders;
 	private final JCheckBox jBuyOrders;
 	private final JCheckBox jSellContracts;
@@ -41,7 +40,6 @@ public class AssetsToolSettingsPanel extends JSettingsPanel {
 	public AssetsToolSettingsPanel(final Program program, final SettingsDialog settingsDialog) {
 		super(program, settingsDialog, DialoguesSettings.get().assets(), Images.TOOL_ASSETS.getIcon());
 
-		jReprocessColors = new JCheckBox(DialoguesSettings.get().showSellOrReprocessColours());
 		jSellOrders = new JCheckBox(DialoguesSettings.get().includeSellOrders());
 		jBuyOrders = new JCheckBox(DialoguesSettings.get().includeBuyOrders());
 		jSellContracts = new JCheckBox(DialoguesSettings.get().includeSellContracts());
@@ -50,7 +48,6 @@ public class AssetsToolSettingsPanel extends JSettingsPanel {
 
 		layout.setHorizontalGroup(
 			layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-				.addComponent(jReprocessColors)
 				.addComponent(jSellOrders)
 				.addComponent(jBuyOrders)
 				.addComponent(jSellContracts)
@@ -59,7 +56,6 @@ public class AssetsToolSettingsPanel extends JSettingsPanel {
 		);
 		layout.setVerticalGroup(
 			layout.createSequentialGroup()
-				.addComponent(jReprocessColors, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 				.addComponent(jSellOrders, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 				.addComponent(jBuyOrders, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 				.addComponent(jSellContracts, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
@@ -70,14 +66,12 @@ public class AssetsToolSettingsPanel extends JSettingsPanel {
 
 	@Override
 	public boolean save() {
-		boolean update = jReprocessColors.isSelected() != Settings.get().isReprocessColors()
-						|| jSellOrders.isSelected() != Settings.get().isIncludeSellOrders()
+		boolean update = jSellOrders.isSelected() != Settings.get().isIncludeSellOrders()
 						|| jBuyOrders.isSelected() != Settings.get().isIncludeBuyOrders()
 						|| jSellContracts.isSelected() != Settings.get().isIncludeSellContracts()
 						|| jBuyContracts.isSelected() != Settings.get().isIncludeBuyContracts()
 						|| jManufacturing.isSelected() != Settings.get().isIncludeManufacturing()
 						;
-		Settings.get().setReprocessColors(jReprocessColors.isSelected());
 		Settings.get().setIncludeSellOrders(jSellOrders.isSelected());
 		Settings.get().setIncludeBuyOrders(jBuyOrders.isSelected());
 		Settings.get().setIncludeSellContracts(jSellContracts.isSelected());
@@ -88,7 +82,6 @@ public class AssetsToolSettingsPanel extends JSettingsPanel {
 
 	@Override
 	public void load() {
-		jReprocessColors.setSelected(Settings.get().isReprocessColors());
 		jSellOrders.setSelected(Settings.get().isIncludeSellOrders());
 		jBuyOrders.setSelected(Settings.get().isIncludeBuyOrders());
 		jSellContracts.setSelected(Settings.get().isIncludeSellContracts());
