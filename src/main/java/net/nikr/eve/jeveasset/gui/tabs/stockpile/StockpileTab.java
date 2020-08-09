@@ -805,7 +805,9 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 		try {
 			eventList.getReadWriteLock().writeLock().lock();
 			eventList.removeAll(subpileItems);
-			eventList.addAll(parent.getSubpileItems());
+			if (program.getProfileManager().getActiveProfile().getStockpileIDs().contains(parent.getId())) {
+				eventList.addAll(parent.getSubpileItems());
+			}
 		} finally {
 			eventList.getReadWriteLock().writeLock().unlock();
 		}
@@ -813,37 +815,40 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 		afterUpdateData();
 	}
 
-	private void updateSubpile(Stockpile parent, Stockpile origianlParentStockpile, Map<Integer, StockpileItem> parentItems, SubpileStock parentStock, int parentLevel, String parentPath) {
-		for (Map.Entry<Stockpile, Double> entry : origianlParentStockpile.getSubpiles().entrySet()) {
+	private void updateSubpile(Stockpile topStockpile, Stockpile parentStockpile, Map<Integer, StockpileItem> topItems, SubpileStock parentStock, int parentLevel, String parentPath) {
+		for (Map.Entry<Stockpile, Double> entry : parentStockpile.getSubpiles().entrySet()) {
 			//For each subpile (stockpile)
-			Stockpile originalStockpile = entry.getKey();
+			Stockpile currentStockpile = entry.getKey();
+			if (!program.getProfileManager().getActiveProfile().getStockpileIDs().contains(currentStockpile.getId())) {
+				continue;
+			}
 			Double value = entry.getValue();
-			String path = parentPath + originalStockpile.getName();
+			String path = parentPath + currentStockpile.getName() + "\r\n";
 			int level = parentLevel + 1;
-			SubpileStock subpileStock = new SubpileStock(parent, originalStockpile, origianlParentStockpile, parentStock, value, parentLevel, path);
-			parent.getSubpileItems().add(subpileStock);
-			for (StockpileItem stockpileItem : originalStockpile.getItems()) {
+			SubpileStock subpileStock = new SubpileStock(topStockpile, currentStockpile, parentStockpile, parentStock, value, parentLevel, path);
+			topStockpile.getSubpileItems().add(subpileStock);
+			for (StockpileItem stockpileItem : currentStockpile.getItems()) {
 				//For each StockpileItem
 				if (stockpileItem.getTypeID() != 0) {
-					StockpileItem parentItem = parentItems.get(stockpileItem.getItemTypeID());
-					SubpileItem subpileItem = new SubpileItem(parent, stockpileItem, subpileStock, parentLevel, path);
-					int linkIndex = parent.getSubpileItems().indexOf(subpileItem);
+					StockpileItem parentItem = topItems.get(stockpileItem.getItemTypeID());
+					SubpileItem subpileItem = new SubpileItem(topStockpile, stockpileItem, subpileStock, parentLevel, path);
+					int linkIndex = topStockpile.getSubpileItems().indexOf(subpileItem);
 					if (parentItem != null) { //Add link (Advanced: Item + Link)
 						subpileItem.addItemLink(parentItem, null); //Add link
 					}
 					if (linkIndex >= 0) { //Update item (Advanced: Link + Link = MultiLink)
-						SubpileItem linkItem = parent.getSubpileItems().get(linkIndex);
+						SubpileItem linkItem = topStockpile.getSubpileItems().get(linkIndex);
 						linkItem.addItemLink(stockpileItem, subpileStock);
 						if (level >= linkItem.getLevel()) {
 							linkItem.setPath(path);
 							linkItem.setLevel(level);
 						}
 					} else { //Add new item (Simple)
-						parent.getSubpileItems().add(subpileItem);
+						topStockpile.getSubpileItems().add(subpileItem);
 					}
 				}
 			}
-			updateSubpile(parent, originalStockpile, parentItems, subpileStock, level, path);
+			updateSubpile(topStockpile, currentStockpile, topItems, subpileStock, level, path);
 		}
 	}
 	private void importText(StockpileImport stockpileImport) {
