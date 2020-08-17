@@ -35,6 +35,7 @@ public class Item implements Comparable<Item>, ItemType {
 	private final long price;
 	private final float volume;
 	private final float packagedVolume;
+	private final float capacity;
 	private final int meta;
 	private final String tech;
 	private final boolean marketGroup;
@@ -45,18 +46,18 @@ public class Item implements Comparable<Item>, ItemType {
 	private final int productQuantity;
 	private final boolean blueprint;
 	private final String version;
-	private final List<ReprocessedMaterial> reprocessedMaterials = new ArrayList<ReprocessedMaterial>();
+	private final List<ReprocessedMaterial> reprocessedMaterials = new ArrayList<>();
 	private double priceReprocessed;
 
 	public Item(int typeID) {
-		this(typeID, emptyType(typeID), "", "", -1, -1, -1, -1, "", false, 0, 0, 1, null);
+		this(typeID, emptyType(typeID), "", "", -1, -1, -1, -1, -1, "", false, 0, 0, 1, null);
 	}
 
 	public Item(int typeID, String version) {
-		this(typeID, emptyType(typeID), "", "", -1, -1, -1, -1, "", false, 0, 0, 1, version);
+		this(typeID, emptyType(typeID), "", "", -1, -1, -1, -1, -1, "", false, 0, 0, 1, version);
 	}
 
-	public Item(final int typeID, final String name, final String group, final String category, final long price, final float volume, final float packagedVolume, final int meta, final String tech, final boolean marketGroup, final int portion, final int productTypeID, final int productQuantity, String version) {
+	public Item(final int typeID, final String name, final String group, final String category, final long price, final float volume, final float packagedVolume, final float capacity, final int meta, final String tech, final boolean marketGroup, final int portion, final int productTypeID, final int productQuantity, String version) {
 		this.typeID = typeID;
 		this.name = name;
 		this.group = group.intern();
@@ -64,6 +65,7 @@ public class Item implements Comparable<Item>, ItemType {
 		this.price = price;
 		this.volume = volume;
 		this.packagedVolume = packagedVolume;
+		this.capacity = capacity;
 		this.meta = meta;
 		this.tech = tech.intern();
 		this.marketGroup = marketGroup;
@@ -133,6 +135,10 @@ public class Item implements Comparable<Item>, ItemType {
 
 	public float getPackagedVolume() {
 		return packagedVolume;
+	}
+
+	public float getCapacity() {
+		return capacity;
 	}
 
 	public boolean isPiMaterial() {

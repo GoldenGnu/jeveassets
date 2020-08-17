@@ -96,6 +96,10 @@ public final class ItemsReader extends AbstractXmlReader<Boolean> {
 		if (packagedVolume == null) {
 			packagedVolume = volume;
 		}
+		Float capacity = getFloatOptional(node, "capacity");
+		if (capacity == null) {
+			capacity = 0f;
+		}
 		int meta = getInt(node, "meta");
 		String tech = getString(node, "tech");
 		boolean marketGroup = getBoolean(node, "marketgroup");
@@ -110,7 +114,7 @@ public final class ItemsReader extends AbstractXmlReader<Boolean> {
 		if (haveAttribute(node, "productquantity")) {
 			productQuantity = getInt(node, "productquantity");
 		}
-		return new Item(id, name, group, category, price, volume, packagedVolume, meta, tech, marketGroup, portion, product, productQuantity, version);
+		return new Item(id, name, group, category, price, volume, packagedVolume, capacity, meta, tech, marketGroup, portion, product, productQuantity, version);
 	}
 
 	private void parseMaterials(final Element element, final Item item) throws XmlException {

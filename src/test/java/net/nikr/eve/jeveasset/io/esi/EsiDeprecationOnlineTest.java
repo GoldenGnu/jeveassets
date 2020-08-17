@@ -20,11 +20,17 @@
  */
 package net.nikr.eve.jeveasset.io.esi;
 
-import static org.junit.Assert.*;
-
+import java.awt.Desktop;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import net.nikr.eve.jeveasset.TestUtil;
 import net.troja.eve.esi.ApiClient;
 import net.troja.eve.esi.ApiClientBuilder;
@@ -40,10 +46,14 @@ import net.troja.eve.esi.api.LocationApi;
 import net.troja.eve.esi.api.MarketApi;
 import net.troja.eve.esi.api.MetaApi;
 import net.troja.eve.esi.api.PlanetaryInteractionApi;
+import net.troja.eve.esi.api.SkillsApi;
 import net.troja.eve.esi.api.SovereigntyApi;
 import net.troja.eve.esi.api.UniverseApi;
 import net.troja.eve.esi.api.UserInterfaceApi;
 import net.troja.eve.esi.api.WalletApi;
+import net.troja.eve.esi.auth.JWT;
+import net.troja.eve.esi.auth.JWT.Payload;
+import net.troja.eve.esi.auth.OAuth;
 import net.troja.eve.esi.model.CharacterAffiliationResponse;
 import net.troja.eve.esi.model.CharacterAssetsLocationsResponse;
 import net.troja.eve.esi.model.CharacterAssetsResponse;
@@ -58,6 +68,7 @@ import net.troja.eve.esi.model.CharacterOrdersResponse;
 import net.troja.eve.esi.model.CharacterPlanetResponse;
 import net.troja.eve.esi.model.CharacterPlanetsResponse;
 import net.troja.eve.esi.model.CharacterShipResponse;
+import net.troja.eve.esi.model.CharacterSkillsResponse;
 import net.troja.eve.esi.model.CharacterWalletJournalResponse;
 import net.troja.eve.esi.model.CharacterWalletTransactionsResponse;
 import net.troja.eve.esi.model.CorporationAssetsNamesResponse;
@@ -76,6 +87,7 @@ import net.troja.eve.esi.model.SovereigntyStructuresResponse;
 import net.troja.eve.esi.model.StructureResponse;
 import net.troja.eve.esi.model.UniverseNamesResponse;
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.junit.Assert.*;
 import static org.junit.Assume.assumeTrue;
 import org.junit.Test;
 
@@ -96,6 +108,7 @@ public class EsiDeprecationOnlineTest extends TestUtil {
 	private final static PlanetaryInteractionApi PLANETARY_INTERACTION_API = new PlanetaryInteractionApi(API_CLIENT);
 	private final static LocationApi LOCATION_API = new LocationApi(API_CLIENT);
 	private final static UserInterfaceApi USER_INTERFACE_API = new UserInterfaceApi(API_CLIENT);
+	private final static SkillsApi SKILLS_API = new SkillsApi(API_CLIENT);
 
 	public EsiDeprecationOnlineTest() { }
 
@@ -106,6 +119,52 @@ public class EsiDeprecationOnlineTest extends TestUtil {
 			return new ApiClientBuilder().clientID(clientId).refreshToken(refreshToken).build();
 		} else {
 			return new ApiClient();
+		}
+	}
+
+	/**
+	 * This main method can be used to generate a refresh token to run the unit
+	 * tests that need authentication.
+	 *
+	 * @param args
+	 * @throws java.io.IOException
+	 * @throws java.net.URISyntaxException
+	 * @throws net.troja.eve.esi.ApiException
+	 */
+	public static void main(final String... args) throws IOException, URISyntaxException, ApiException {
+		final String state = "somesecret";
+		final ApiClient client = new ApiClientBuilder().clientID(EsiCallbackURL.LOCALHOST.getA()).build();
+		final OAuth auth = (OAuth) client.getAuthentication("evesso");
+		final Set<String> scopes = new HashSet<>();
+		for (EsiScopes scope : EsiScopes.values()) {
+			if (scope.isPublicScope()) {
+				continue;
+			}
+			scopes.add(scope.getScope());
+		}
+		final String authorizationUri = auth.getAuthorizationUri(EsiCallbackURL.LOCALHOST.getUrl(), scopes, state);
+		System.out.println("Authorization URL: " + authorizationUri);
+		Desktop.getDesktop().browse(new URI(authorizationUri));
+		System.out.println("Code from Answer: ");
+		final BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		final String code = br.readLine();
+		auth.finishFlow(code, state);
+		System.out.println("Refresh Token: " + auth.getRefreshToken());
+	}
+
+	@Test
+	public void esiTestScopes() {
+		OAuth oAuth = (OAuth) API_CLIENT.getAuthentication("evesso");
+		JWT jwt = oAuth.getJWT();
+		assumeTrue(jwt != null);
+		assertNotNull("JWT is null", jwt);
+		Payload payload = jwt.getPayload();
+		assertNotNull("Payload is null", payload);
+		for (EsiScopes scope : EsiScopes.values()) {
+			if (scope.isPublicScope()) {
+				continue;
+			}
+			assertTrue(scope.getScope() + " not included", payload.getScopes().contains(scope.getScope()));
 		}
 	}
 
@@ -393,6 +452,16 @@ public class EsiDeprecationOnlineTest extends TestUtil {
 	public void esiShipTypeGetter() {
 		try {
 			ApiResponse<CharacterShipResponse> apiResponse = LOCATION_API.getCharactersCharacterIdShipWithHttpInfo(1, DATASOURCE, null, null);
+			validate(apiResponse.getHeaders());
+		} catch (ApiException ex) {
+			validate(ex.getResponseHeaders());
+		}
+	}
+
+	@Test
+	public void esiSkillsGetter() {
+		try {
+			ApiResponse<CharacterSkillsResponse> apiResponse = SKILLS_API.getCharactersCharacterIdSkillsWithHttpInfo(1, DATASOURCE, null, null);
 			validate(apiResponse.getHeaders());
 		} catch (ApiException ex) {
 			validate(ex.getResponseHeaders());

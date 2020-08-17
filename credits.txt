@@ -63,7 +63,7 @@ Link:
   API: https://esi.evetech.net/ui
 
 Toolkit License:
-  ©CCP hf. All rights reserved. Used with permission.
+  Â©CCP hf. All rights reserved. Used with permission.
 
 ________________________________________________________________________________
 _FUZZWORK_______________________________________________________________________
@@ -92,10 +92,18 @@ Link:
 ________________________________________________________________________________
 _STOP.HAMMERTI.ME.UK____________________________________________________________
 
-jEveAssets use stop.hammerti.me.uk API to get citadel names and locations
+jEveAssets use stop.hammerti.me.uk API to get structure names and locations
 
 Link:
   https://stop.hammerti.me.uk/api
+
+________________________________________________________________________________
+_ZKILLBOARD_STRUCTURE_API_______________________________________________________
+
+jEveAssets use zKillboard API to get structure names and locations
+
+Link:
+  https://zkillboard.com/api/structures.json
 
 ________________________________________________________________________________
 _SILK_ICONS_____________________________________________________________________

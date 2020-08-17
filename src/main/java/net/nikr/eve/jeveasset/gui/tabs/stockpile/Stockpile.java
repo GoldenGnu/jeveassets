@@ -24,8 +24,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
@@ -67,6 +69,9 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 	private List<StockpileFilter> filters = new ArrayList<>();
 	private final List<StockpileItem> items = new ArrayList<>();
 	private final StockpileTotal totalItem = new StockpileTotal(this);
+	private final Map<Stockpile, Double> subpiles = new HashMap<>();
+	private final List<Stockpile> subpileLinks = new ArrayList<>();
+	private final List<SubpileItem> subpileItems = new ArrayList<>();
 	private double percentFull;
 	private double multiplier;
 	private boolean assets = false;
@@ -140,6 +145,26 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 			if (TS.compareAndSet(value, micros))
 				return micros;
 		}
+	}
+
+	public void addSubpileLink(Stockpile subpile) {
+		subpileLinks.add(subpile);
+	}
+
+	public void removeSubpileLink(Stockpile subpile) {
+		subpileLinks.remove(subpile);
+	}
+
+	public List<Stockpile> getSubpileLinks() {
+		return Collections.unmodifiableList(subpileLinks);
+	}
+
+	public Map<Stockpile, Double> getSubpiles() {
+		return subpiles;
+	}
+
+	public List<SubpileItem> getSubpileItems() {
+		return subpileItems;
 	}
 
 	private void createLocationName() {
@@ -366,6 +391,13 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 		return items;
 	}
 
+	public List<StockpileItem> getClaims() {
+		List<StockpileItem> list = new ArrayList<>();
+		list.addAll(items);
+		list.addAll(subpileItems);
+		return list;
+	}
+
 	@Override
 	public Set<MyLocation> getLocations() {
 		Set<MyLocation> locations = new HashSet<>();
@@ -403,7 +435,23 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 	public void updateTotal() {
 		totalItem.reset();
 		percentFull = Double.MAX_VALUE;
+		Map<Integer, StockpileItem> map = new HashMap<>();
+		//Items
 		for (StockpileItem item : items) {
+			if (item.getTypeID() == 0) {
+				continue;
+			}
+			map.put(item.getItemTypeID(), item);
+		}
+		//SubpileItem (Overwrites StockpileItem items)
+		for (SubpileItem item : subpileItems) {
+			if (item instanceof SubpileStock) {
+				continue;
+			}
+			map.put(item.getItemTypeID(), item);
+		}
+		//For each item type
+		for (StockpileItem item : map.values()) {
 			if (item.getTypeID() == 0) {
 				continue;
 			}
@@ -519,6 +567,10 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 
 		private void updateTags() {
 			setTags(Settings.get().getTags(getTagID()));
+		}
+
+		public boolean isEditable() {
+			return true;
 		}
 
 		private void reset() {
@@ -1338,6 +1390,11 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 		}
 
 		@Override
+		public boolean isEditable() {
+			return false;
+		}
+
+		@Override
 		public double getCountMinimum() {
 			return countMinimum;
 		}
@@ -1613,5 +1670,192 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 			}
 
 		}
+	}
+
+	public static class SubpileItem extends StockpileItem {
+
+		private final List<SubpileItemLinks> itemLinks = new ArrayList<>();
+		private String path;
+		private String name = "";
+		private String space = "";
+		private int level;
+		
+
+		public SubpileItem(Stockpile stockpile, StockpileItem parentItem, SubpileStock subpileStock, int level, String path) {
+			super(stockpile, parentItem);
+			itemLinks.add(new SubpileItemLinks(parentItem, subpileStock));
+			setLevel(level);
+			this.path = path;
+			updateText();
+		}
+
+		private SubpileItem(Stockpile stockpile, int level, String path) {
+			super(stockpile, new Item(0, "!"+0, "Stockpile", "", 0, 0, 0, 0, 0, "", false, 0, 0, 1, null), 0, 0.0, false);
+			setLevel(level);
+			this.path = path;
+			updateText();
+		}
+		private String getPath() {
+			return path;
+		}
+
+		public void setPath(String path) {
+			this.path = path;
+		}
+
+		public int getLevel() {
+			return level;
+		}
+
+		public final void setLevel(int level) {
+			this.level = level;
+			StringBuilder spaceString = new StringBuilder();
+			for (int i = 0; i < level; i++) {
+				spaceString.append("    ");
+			}
+			space = spaceString.toString();
+		}
+
+		private String getSpace() {
+			return space;
+		}
+
+		private void updateText() {
+			if (!itemLinks.isEmpty()) {
+				name = itemLinks.get(0).getStockpileItem().getName().trim();
+			} else {
+				name = "";
+			}
+		}
+
+		public String getOrder() {
+			return "1" + getPath();
+		}
+
+		public void addItemLink(StockpileItem parentItem, SubpileStock subpileStock) {
+			itemLinks.add(new SubpileItemLinks(parentItem, subpileStock));
+			updateText();
+		}
+
+		public void clearItemLinks() {
+			itemLinks.clear();
+		}
+
+		@Override
+		public boolean isEditable() {
+			return false;
+		}
+
+		@Override
+		public String getName() {
+			return "Total: " + name;
+			//return getSpace() + " - " + name + " Total";
+		}
+
+		@Override
+		public double getCountMinimum() {
+			double countMinimum = 0;
+			for (SubpileItemLinks item : itemLinks) {
+				SubpileStock stock = item.getSubpileStock();
+				if (stock != null) {
+					countMinimum = + countMinimum + (item.getStockpileItem().getCountMinimum() * item.getSubpileStock().getSubMultiplier());
+				} else {
+					countMinimum = + countMinimum + item.getStockpileItem().getCountMinimum();
+				}
+				
+			}
+			return countMinimum;
+		}
+	
+		@Override
+		public long getCountMinimumMultiplied() {
+			return (long) Math.ceil(getStockpile().getMultiplier() * getCountMinimum());
+		}
+
+		private static class SubpileItemLinks {
+			private final StockpileItem stockpileItem;
+			private final SubpileStock subpileStock;
+
+			public SubpileItemLinks(StockpileItem stockpileItem, SubpileStock subpileStock) {
+				this.stockpileItem = stockpileItem;
+				this.subpileStock = subpileStock;
+			}
+
+			public StockpileItem getStockpileItem() {
+				return stockpileItem;
+			}
+
+			public SubpileStock getSubpileStock() {
+				return subpileStock;
+			}
+		}
+	}
+
+	public static class SubpileStock extends SubpileItem {
+
+		private final Stockpile originalStockpile;
+		private final Stockpile originalParentStockpile;
+		private final SubpileStock parentStock;
+		private double subMultiplier;
+
+		public SubpileStock(Stockpile stockpile, Stockpile originalStockpile, Stockpile originalParentStockpile, SubpileStock parentStock, double subMultiplier, int level, String path) {
+			super(stockpile, level, path);
+			this.originalStockpile = originalStockpile;
+			this.originalParentStockpile = originalParentStockpile;
+			this.parentStock = parentStock;
+			this.subMultiplier = subMultiplier;
+		}
+
+		@Override
+		public String getOrder() {
+			return "0" + super.getPath();
+		}
+
+		@Override
+		public String getName() {
+			return super.getSpace() + originalStockpile.getName();
+		}
+
+		public double getSubMultiplier() {
+			Double value = originalParentStockpile.getSubpiles().get(originalStockpile);
+			if (value != null && parentStock != null) {
+				return value * parentStock.getSubMultiplier();
+			} else if (value != null) {
+				return value;
+			} else {
+				return subMultiplier;
+			}
+		}
+
+		@Override
+		public boolean isEditable() {
+			return parentStock == null;
+		}
+
+		@Override
+		public double getCountMinimum() {
+			return getSubMultiplier();
+		}
+
+		@Override
+		public void setCountMinimum(double subMultiplier) {
+			this.subMultiplier = subMultiplier;
+			getStockpile().getSubpiles().put(originalStockpile, subMultiplier);
+			getStockpile().updateTotal();
+		}
+
+		@Override
+		public long getCountNow() { return 0; }
+		@Override
+		public long getCountNeeded() { return 0; }
+		@Override
+		public double getValueNow() { return 0; };
+		@Override
+		public double getValueNeeded() { return 0; };
+		@Override
+		public double getVolumeNow() { return 0; };
+		@Override
+		public double getVolumeNeeded() { return 0; };
+
 	}
 }

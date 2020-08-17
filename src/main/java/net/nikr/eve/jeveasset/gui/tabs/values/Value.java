@@ -27,9 +27,12 @@ import java.util.Map;
 import net.nikr.eve.jeveasset.data.api.my.MyAsset;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.i18n.TabsValues;
+import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 
 
 public class Value implements Comparable<Value> {
+	private final static long MINIMUM_SKILL_POINTS = 5000000;
+	private final static double SKILL_EXTRACTOR_SIZE = 500000.0;
 	private final String name;
 	private final Date date;
 	private final String compare;
@@ -43,6 +46,8 @@ public class Value implements Comparable<Value> {
 	private double manufacturing;
 	private double contractCollateral;
 	private double contractValue = 0;
+	private long skillPoints = 0;
+	private double skillPointValue = 0;
 	private MyAsset bestAsset = null;
 	private MyAsset bestShip = null;
 	private MyAsset bestShipFitted = null;
@@ -129,6 +134,10 @@ public class Value implements Comparable<Value> {
 		this.contractValue = this.contractValue + contractValue;
 	}
 
+	public void addSkillPointValue(long skillPoints, long minimum) {
+		skillPointValue = skillPointValue + calcSkillPointValue(skillPoints, minimum);
+	}
+
 	public Date getDate() {
 		return date;
 	}
@@ -175,6 +184,28 @@ public class Value implements Comparable<Value> {
 
 	public double getContractValue() {
 		return contractValue;
+	}
+
+	public long getSkillPoints() {
+		return skillPoints;
+	}
+
+	public double getSkillPointValue() {
+		return skillPointValue;
+	}
+
+	private double calcSkillPointValue(long totalSkillPoints, long mimumum) {
+		double extractorPrice = ApiIdConverter.getPriceSimple(40519, false); //Skill Extractor
+		double injectorPrice = ApiIdConverter.getPriceSimple(40520, false); //Large Skill Injector
+		if (totalSkillPoints < MINIMUM_SKILL_POINTS) {
+			return 0;
+		}
+		long extractableSkillPoints = totalSkillPoints - (MINIMUM_SKILL_POINTS + mimumum);
+		double injecters = Math.floor(extractableSkillPoints / SKILL_EXTRACTOR_SIZE);
+		if (injecters < 1) {
+			return 0;
+		}
+		return injecters * (injectorPrice - extractorPrice);
 	}
 
 	public String getBestAssetName() {
@@ -234,7 +265,7 @@ public class Value implements Comparable<Value> {
 	}
 
 	public double getTotal() {
-		return getAssetsTotal() + getBalanceTotal() + getEscrows() + getSellOrders() + getManufacturing() + getContractCollateral() + + getContractValue();
+		return getAssetsTotal() + getBalanceTotal() + getEscrows() + getSellOrders() + getManufacturing() + getContractCollateral() + getContractValue() + getSkillPointValue();
 	}
 
 	public void setAssetsTotal(double assets) {
@@ -267,6 +298,11 @@ public class Value implements Comparable<Value> {
 
 	public void setContractValue(double contractValue) {
 		this.contractValue = contractValue;
+	}
+
+	public void setSkillPoints(long skillPoints) {
+		this.skillPoints = skillPoints;
+		skillPointValue = calcSkillPointValue(skillPoints, 0);
 	}
 
 	private void setBestAsset(MyAsset bestAsset) {

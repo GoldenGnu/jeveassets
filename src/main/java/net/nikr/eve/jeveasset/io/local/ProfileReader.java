@@ -41,6 +41,7 @@ import net.nikr.eve.jeveasset.data.api.my.MyContractItem;
 import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob;
 import net.nikr.eve.jeveasset.data.api.my.MyJournal;
 import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder;
+import net.nikr.eve.jeveasset.data.api.raw.RawSkill;
 import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
 import net.nikr.eve.jeveasset.data.api.raw.RawAccountBalance;
 import net.nikr.eve.jeveasset.data.api.raw.RawAsset;
@@ -301,6 +302,7 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 		Date locationsNextUpdate = getDateNotNull(node, "locationsnextupdate");
 		Date blueprintsNextUpdate = getDateNotNull(node, "blueprintsnextupdate");
 		Date bookmarksNextUpdate = getDateNotNull(node, "bookmarksnextupdate");
+		Date skillsNextUpdate = getDateNotNull(node, "skillsnextupdate");
 		owner.setOwnerName(ownerName);
 		owner.setCorporationName(corporationName);
 		owner.setOwnerID(ownerID);
@@ -317,6 +319,7 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 		owner.setLocationsNextUpdate(locationsNextUpdate);
 		owner.setBlueprintsNextUpdate(blueprintsNextUpdate);
 		owner.setBookmarksNextUpdate(bookmarksNextUpdate);
+		owner.setSkillsNextUpdate(skillsNextUpdate);
 
 		NodeList assetNodes = node.getElementsByTagName("assets");
 		if (assetNodes.getLength() == 1) {
@@ -331,6 +334,7 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 		parseBlueprints(node, owner);
 		parseAssetDivisions(node, owner);
 		parseWalletDivisions(node, owner);
+		parseSkills(node, owner);
 	}
 
 	private void parseContracts(final Element element, final OwnerType owner) throws XmlException {
@@ -863,5 +867,34 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 			}
 		}
 		owners.setWalletDivisions(divisions);
+	}
+
+	private void parseSkills(final Element element, final OwnerType owners) throws XmlException {
+		NodeList skillsNodes = element.getElementsByTagName("skills");
+		for (int a = 0; a < skillsNodes.getLength(); a++) {
+			Element currentSkillsNode = (Element) skillsNodes.item(a);
+			Integer unallocatedSkillPoints =  getIntOptional(currentSkillsNode, "unallocated");
+			Long totalSkillPoints =  getLongOptional(currentSkillsNode, "total");
+			List<RawSkill> skills = new ArrayList<>();
+			NodeList skillNodes = currentSkillsNode.getElementsByTagName("skill");
+			for (int b = 0; b < skillNodes.getLength(); b++) {
+				Element currentNode = (Element) skillNodes.item(b);
+				
+				int typeID =  getInt(currentNode, "id");
+				long skillpoints = getLong(currentNode, "sp");
+				int activeSkillLevel = getInt(currentNode, "active");
+				int trainedSkillLevel = getInt(currentNode, "trained");
+				
+				RawSkill skill = RawSkill.create();
+				skill.setTypeID(typeID);
+				skill.setSkillpoints(skillpoints);
+				skill.setActiveSkillLevel(activeSkillLevel);
+				skill.setTrainedSkillLevel(trainedSkillLevel);
+				skills.add(skill);
+			}
+			owners.setSkills(skills);
+			owners.setTotalSkillPoints(totalSkillPoints);
+			owners.setUnallocatedSkillPoints(unallocatedSkillPoints);
+		}
 	}
 }

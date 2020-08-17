@@ -53,6 +53,7 @@ import net.troja.eve.esi.api.MarketApi;
 import net.troja.eve.esi.api.PlanetaryInteractionApi;
 import net.troja.eve.esi.api.SovereigntyApi;
 import net.troja.eve.esi.api.MetaApi;
+import net.troja.eve.esi.api.SkillsApi;
 import net.troja.eve.esi.api.UniverseApi;
 import net.troja.eve.esi.api.UserInterfaceApi;
 import net.troja.eve.esi.api.WalletApi;
@@ -305,6 +306,10 @@ public abstract class AbstractEsiGetter extends AbstractGetter<EsiOwner> {
 
 	public PlanetaryInteractionApi getPlanetaryInteractionApiAuth() {
 		return owner.getPlanetaryInteractionApiAuth();
+ 	}
+
+	public SkillsApi getSkillsApiAuth() {
+		return owner.getSkillsApi();
  	}
  
 	public UniverseApi getUniverseApiOpen() {
@@ -612,7 +617,7 @@ public abstract class AbstractEsiGetter extends AbstractGetter<EsiOwner> {
 	}
 
 	protected <K> K update(int maxRetries, EsiHandler<K> handler) throws ApiException {
-		EsiUpdater<K> esiUpdater = new EsiUpdater<K>(maxRetries, handler);
+		EsiUpdater<K> esiUpdater = new EsiUpdater<>(maxRetries, handler);
 		return esiUpdater.go();
 	}
 

@@ -89,6 +89,7 @@ public abstract class DialoguesAccount extends Bundle {
 	public abstract String scopePlanetaryInteraction();
 	public abstract String scopeAutopilot();
 	public abstract String scopeDivisions();
+	public abstract String scopeSkills();
 
 	public abstract String dialogueNameAccountManagement();
 
@@ -159,6 +160,7 @@ public abstract class DialoguesAccount extends Bundle {
 	public abstract String tableFormatPlanetaryInteraction();
 	public abstract String tableFormatOpenWindows();
 	public abstract String tableFormatAutopilot();
+	public abstract String tableFormatSkills();
 	public abstract String tableFormatYes();
 	public abstract String tableFormatNo();
 	public abstract String tableFormatExpires();

@@ -56,6 +56,7 @@ import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileFilter;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
 import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerDate;
 import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerNote;
+import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerSkillPointFilter;
 import net.nikr.eve.jeveasset.io.shared.FileUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -102,6 +103,32 @@ public class SettingsWriter extends AbstractXmlWriter {
 		return true;
 	}
 
+	public static boolean saveRoutes(final Map<String, RouteResult> routes, final String filename) {
+		SettingsWriter writer = new SettingsWriter();
+		return writer.writeRoutes(routes, filename);
+	}
+
+	private boolean writeRoutes(final Map<String, RouteResult> routes, final String filename) {
+		Document xmldoc;
+		try {
+			xmldoc = getXmlDocument("settings");
+		} catch (XmlException ex) {
+			LOG.error("Stockpile not saved " + ex.getMessage(), ex);
+			return false;
+		}
+		Element routingNode = xmldoc.createElementNS(null, "routingsettings");
+		xmldoc.getDocumentElement().appendChild(routingNode);
+		writeRoutes(xmldoc, routingNode, routes);
+		try {
+			writeXmlFile(xmldoc, filename, false);
+		} catch (XmlException ex) {
+			LOG.error("Stockpile not saved " + ex.getMessage(), ex);
+			return false;
+		}
+		LOG.info("Stockpile saved");
+		return true;
+	}
+
 	private boolean write(final Settings settings, final String filename) {
 		Document xmldoc;
 		try {
@@ -133,7 +160,7 @@ public class SettingsWriter extends AbstractXmlWriter {
 		writeTablesViews(xmldoc, settings.getTableViews());
 		writeExportSettings(xmldoc, settings.getExportSettings());
 		writeTrackerNotes(xmldoc, settings.getTrackerNotes());
-		writeTrackerFilters(xmldoc, settings.getTrackerFilters(), settings.isTrackerSelectNew());
+		writeTrackerFilters(xmldoc, settings.getTrackerFilters(), settings.isTrackerSelectNew(), settings.getTrackerSkillPointFilters());
 		writeTrackerSettings(xmldoc, settings);
 		writeOwners(xmldoc, settings.getOwners(), settings.getOwnersNextUpdate());
 		writeTags(xmldoc, settings.getTags());
@@ -220,7 +247,11 @@ public class SettingsWriter extends AbstractXmlWriter {
 				presetNode.appendChild(systemNode);
 			}
 		}
-		for (Map.Entry<String, RouteResult> entry : routingSettings.getRoutes().entrySet()) {
+		writeRoutes(xmldoc, routingNode, routingSettings.getRoutes());
+	}
+
+	private void writeRoutes(Document xmldoc, Element routingNode, Map<String, RouteResult> routes) {
+		for (Map.Entry<String, RouteResult> entry : routes.entrySet()) {
 			Element routeNode = xmldoc.createElementNS(null, "route");
 			RouteResult routeResult = entry.getValue();
 			setAttribute(routeNode, "name", entry.getKey());
@@ -281,7 +312,7 @@ public class SettingsWriter extends AbstractXmlWriter {
 		}
 	}
 
-	private void writeTrackerFilters(final Document xmldoc, final Map<String, Boolean> trackerFilters, boolean selectNew) {
+	private void writeTrackerFilters(final Document xmldoc, final Map<String, Boolean> trackerFilters, boolean selectNew, Map<String, TrackerSkillPointFilter> trackerSkillPointFilters) {
 		Element trackerDataNode = xmldoc.createElementNS(null, "trackerfilters");
 		xmldoc.getDocumentElement().appendChild(trackerDataNode);
 		setAttribute(trackerDataNode, "selectnew", selectNew);
@@ -289,6 +320,14 @@ public class SettingsWriter extends AbstractXmlWriter {
 			Element ownerNode = xmldoc.createElementNS(null, "trackerfilter");
 			setAttribute(ownerNode, "id", entry.getKey());
 			setAttribute(ownerNode, "selected", entry.getValue());
+			trackerDataNode.appendChild(ownerNode);
+		}
+		for (Map.Entry<String, TrackerSkillPointFilter> entry : trackerSkillPointFilters.entrySet()) {
+			Element ownerNode = xmldoc.createElementNS(null, "skillpointfilters");
+			TrackerSkillPointFilter filter = entry.getValue();
+			setAttribute(ownerNode, "id", entry.getKey());
+			setAttribute(ownerNode, "selected", filter.isEnabled());
+			setAttribute(ownerNode, "mimimum", filter.getMinimum());
 			trackerDataNode.appendChild(ownerNode);
 		}
 	}
@@ -406,6 +445,7 @@ public class SettingsWriter extends AbstractXmlWriter {
 		xmldoc.getDocumentElement().appendChild(parentNode);
 		setAttribute(parentNode, "maximumpurchaseage", settings.getMaximumPurchaseAge());
 		setAttribute(parentNode, "transactionprofitprice", settings.getTransactionProfitPrice());
+		setAttribute(parentNode, "transactionprofitmargin", settings.getTransactionProfitMargin());
 	}
 
 	private void writeStockpileGroups(final Document xmldoc, final Settings settings) {
@@ -423,12 +463,14 @@ public class SettingsWriter extends AbstractXmlWriter {
 		Element parentNode = xmldoc.createElementNS(null, "stockpiles");
 		xmldoc.getDocumentElement().appendChild(parentNode);
 		for (Stockpile strockpile : stockpiles) {
+			//STOCKPILE
 			Element strockpileNode = xmldoc.createElementNS(null, "stockpile");
 			setAttribute(strockpileNode, "name", strockpile.getName());
 			if (!export) { //Risk of collision, better to generate a new one on import
 				setAttribute(strockpileNode, "id", strockpile.getId());
 			}
 			setAttribute(strockpileNode, "multiplier", strockpile.getMultiplier());
+			//ITEMS
 			for (StockpileItem item : strockpile.getItems()) {
 				if (item.getItemTypeID() != 0) { //Ignore Total
 					Element itemNode = xmldoc.createElementNS(null, "item");
@@ -441,7 +483,14 @@ public class SettingsWriter extends AbstractXmlWriter {
 					strockpileNode.appendChild(itemNode);
 				}
 			}
-			
+			//SUBPILES
+			for (Map.Entry<Stockpile, Double> entry : strockpile.getSubpiles().entrySet()) {
+				Element itemNode = xmldoc.createElementNS(null, "subpile");
+				itemNode.setAttributeNS(null, "name", entry.getKey().getName());
+				itemNode.setAttributeNS(null, "minimum", String.valueOf(entry.getValue()));
+				strockpileNode.appendChild(itemNode);
+			}
+			//FILTERS
 			for (StockpileFilter filter : strockpile.getFilters()) {
 				Element locationNode = xmldoc.createElementNS(null, "stockpilefilter");
 				setAttribute(locationNode, "locationid", filter.getLocation().getLocationID());

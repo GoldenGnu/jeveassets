@@ -42,6 +42,7 @@ import net.troja.eve.esi.api.LocationApi;
 import net.troja.eve.esi.api.MarketApi;
 import net.troja.eve.esi.api.MetaApi;
 import net.troja.eve.esi.api.PlanetaryInteractionApi;
+import net.troja.eve.esi.api.SkillsApi;
 import net.troja.eve.esi.api.UniverseApi;
 import net.troja.eve.esi.api.UserInterfaceApi;
 import net.troja.eve.esi.api.WalletApi;
@@ -65,6 +66,7 @@ public class EsiOwner extends AbstractOwner implements OwnerType {
 	private final BookmarksApi bookmarksApi = new BookmarksApi(apiClient);
 	private final PlanetaryInteractionApi planetaryInteractionApi = new PlanetaryInteractionApi(apiClient);
 	private final UserInterfaceApi userInterfaceApi = new UserInterfaceApi(apiClient);
+	private final SkillsApi skillsApi = new SkillsApi(apiClient);
 	private String accountName;
 	private Set<String> scopes = new HashSet<>();
 	private Date structuresNextUpdate = Settings.getNow();
@@ -340,6 +342,11 @@ public class EsiOwner extends AbstractOwner implements OwnerType {
 		return EsiScopes.isPrivilegesInvalid(isCorporation(), scopes);
 	}
 
+	@Override
+	public boolean isSkills() {
+		return EsiScopes.CHARACTER_SKILLS.isInScope(scopes);
+	}
+
 	public boolean isRoles() {
 		return EsiScopes.CORPORATION_ROLES.isInScope(scopes);
 	}
@@ -412,6 +419,10 @@ public class EsiOwner extends AbstractOwner implements OwnerType {
 
 	public PlanetaryInteractionApi getPlanetaryInteractionApiAuth() {
 		return planetaryInteractionApi;
+	}
+
+	public SkillsApi getSkillsApi() {
+		return skillsApi;
 	}
 
 	@Override

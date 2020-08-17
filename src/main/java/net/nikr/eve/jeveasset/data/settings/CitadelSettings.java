@@ -31,6 +31,7 @@ import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 public class CitadelSettings {
 	private final Map<Long, Citadel> cache = new HashMap<>();
 	private Date nextUpdate = new Date(); //Default
+	private String zKillETag = null;
 	private final long priceCacheTimer = 2 * 60 * 60 * 1000L; // 2 hours (hours*min*sec*ms)
 
 	public Citadel get(long location) {
@@ -65,6 +66,14 @@ public class CitadelSettings {
 
 	public void setNextUpdate(Date nextUpdate) {
 		this.nextUpdate = nextUpdate;
+	}
+
+	public String getZKillETag() {
+		return zKillETag;
+	}
+
+	public void setZKillETag(String zKillETag) {
+		this.zKillETag = zKillETag;
 	}
 
 	public void setNextUpdate() {

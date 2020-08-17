@@ -135,6 +135,20 @@ public enum TransactionTableFormat implements EnumTableColumn<MyTransaction> {
 			return from.getTransactionPrice();
 		}
 	},
+	TRANSACTION_MARGIN(Double.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsTransaction.get().columnTransactionMargin();
+		}
+		@Override
+		public String getColumnToolTip() {
+			return TabsTransaction.get().columnTransactionMarginToolTip();
+		}
+		@Override
+		public Object getColumnValue(final MyTransaction from) {
+			return from.getTransactionMargin();
+		}
+	},
 	TRANSACTION_PROFIT(Double.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {

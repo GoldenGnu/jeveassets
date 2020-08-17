@@ -99,6 +99,7 @@ import net.nikr.eve.jeveasset.gui.tabs.stockpile.StockpileTab;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.StockpileTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerDate;
 import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerNote;
+import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerSkillPointFilter;
 import net.nikr.eve.jeveasset.gui.tabs.transaction.TransactionTab;
 import net.nikr.eve.jeveasset.gui.tabs.transaction.TransactionTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.tree.TreeTab;
@@ -124,13 +125,14 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 	private static final Logger LOG = LoggerFactory.getLogger(SettingsReader.class);
 
 	private enum ReaderType {
-		SETTINGS, STOCKPILE, TRACKER
+		SETTINGS, STOCKPILE, TRACKER, ROUTES
 	}
 
 	private Settings settings;
 	private SettingsFactory settingsFactory;
 	private List<Stockpile> stockpilesList;
 	private Map<String, List<Value>> trackerDataMap;
+	private Map<String, RouteResult> routes;
 	private final ReaderType readerType;
 
 	private SettingsReader(ReaderType readerType) {
@@ -176,6 +178,10 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		return trackerDataMap;
 	}
 
+	private Map<String, RouteResult> getRoutes() {
+		return routes;
+	}
+
 	public static List<Stockpile> loadStockpile(final String filename) {
 		SettingsReader reader = new SettingsReader(ReaderType.STOCKPILE);
 		if (reader.read(filename, filename, XmlType.IMPORT)) {
@@ -194,6 +200,15 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		}
 	}
 
+	public static Map<String, RouteResult> loadRoutes(final String filename) {
+		SettingsReader reader = new SettingsReader(ReaderType.ROUTES);
+		if (reader.read(filename, filename, XmlType.IMPORT)) {
+			return reader.getRoutes();
+		} else {
+			return null;
+		}
+	}
+
 	@Override
 	protected Boolean parse(Element element) throws XmlException {
 		switch (readerType) {
@@ -205,6 +220,9 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 				break;
 			case TRACKER:
 				trackerDataMap = loadTracker(element);
+				break;
+			case ROUTES:
+				routes = loadRoutes(element);
 				break;
 		}
 		return true;
@@ -245,6 +263,19 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 			parseStockpiles(stockpilesElement, stockpiles);
 		}
 		return stockpiles;
+	}
+
+	private Map<String, RouteResult> loadRoutes(final Element element) throws XmlException {
+		if (!element.getNodeName().equals("settings")) {
+			throw new XmlException("Wrong root element name.");
+		}
+		//Routing
+		Map<String, RouteResult> map = new HashMap<>();
+		Element routingElement = getNodeOptional(element, "routingsettings");
+		if (routingElement != null) {
+			parseRoutes(routingElement, map);
+		}
+		return map;
 	}
 
 	private Settings loadSettings(final Element element, final Settings settings) throws XmlException {
@@ -571,6 +602,14 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 			boolean selected = getBoolean(trackerFilterNode, "selected");
 			settings.getTrackerFilters().put(id, selected);
 		}
+		NodeList skillPointFiltersList = element.getElementsByTagName("skillpointfilters");
+		for (int a = 0; a < skillPointFiltersList.getLength(); a++) {
+			Element filterNode = (Element) skillPointFiltersList.item(a);
+			String id = getString(filterNode, "id");
+			boolean selected = getBoolean(filterNode, "selected");
+			long mimimum = getLong(filterNode, "mimimum");
+			settings.getTrackerSkillPointFilters().put(id, new TrackerSkillPointFilter(id, selected, mimimum));
+		}
 	}
 
 	private void parseAssetSettings(final Element assetSettingsElement, final Settings settings) throws XmlException {
@@ -583,8 +622,13 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 				//No problem already set
 			}
 		}
+		int transactionProfitMargin = 0;
+		if (haveAttribute(assetSettingsElement, "transactionprofitmargin")) {
+			transactionProfitMargin = getInt(assetSettingsElement, "transactionprofitmargin");
+		}
 		settings.setTransactionProfitPrice(transactionProfitPrice);
 		settings.setMaximumPurchaseAge(maximumPurchaseAge);
+		settings.setTransactionProfitMargin(transactionProfitMargin);
 	}
 
 	private void parseStockpileGroups(final Element stockpilesElement, final Settings settings) throws XmlException {
@@ -603,6 +647,8 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 	 */
 	private void parseStockpiles(final Element stockpilesElement, final List<Stockpile> stockpiles) throws XmlException {
 		NodeList stockpileNodes = stockpilesElement.getElementsByTagName("stockpile");
+		Map<String, Stockpile> stockpileMap = new HashMap<>();
+		Map<Stockpile, Map<String, Double>> subpileMap = new HashMap<>();
 		for (int a = 0; a < stockpileNodes.getLength(); a++) {
 			Element stockpileNode = (Element) stockpileNodes.item(a);
 			String name = getString(stockpileNode, "name");
@@ -740,6 +786,15 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 				StockpileFilter stockpileFilter = new StockpileFilter(location, filterFlagIDs, filterContainers, filterOwnerIDs, filterExclude, filterSingleton, filterInventory, filterSellOrders, filterBuyOrders, filterJobs, filterBuyTransactions, filterSellTransactions, filterSellingContracts, filterSoldBuy, filterBuyingContracts, filterBoughtContracts);
 				filters.add(stockpileFilter);
 			}
+		//SUBPILES
+			NodeList subpileNodes = stockpileNode.getElementsByTagName("subpile");
+			Map<String, Double> subpileNames = new HashMap<>();
+			for (int b = 0; b < subpileNodes.getLength(); b++) {
+				Element subpileNode = (Element) subpileNodes.item(b);
+				String subpileName = getString(subpileNode, "name");
+				Double minimum = getDouble(subpileNode, "minimum");
+				subpileNames.put(subpileName, minimum);
+			}
 		//MULTIPLIER
 			double multiplier = 1;
 			if (haveAttribute(stockpileNode, "multiplier")){
@@ -748,6 +803,8 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		
 			Stockpile stockpile = new Stockpile(name, stockpileID, filters, multiplier);
 			stockpiles.add(stockpile);
+			subpileMap.put(stockpile, subpileNames);
+			stockpileMap.put(name, stockpile);
 		//ITEMS
 			NodeList itemNodes = stockpileNode.getElementsByTagName("item");
 			for (int b = 0; b < itemNodes.getLength(); b++) {
@@ -771,6 +828,17 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 				}
 			}
 		}
+		for (Map.Entry<Stockpile, Map<String, Double>> entry : subpileMap.entrySet()) {
+			for (Map.Entry<String, Double> entry1 : entry.getValue().entrySet()) {
+				Stockpile stockpile = stockpileMap.get(entry1.getKey());
+				if (stockpile != null) {
+					entry.getKey().getSubpiles().put(stockpile, entry1.getValue());
+					stockpile.addSubpileLink(entry.getKey());
+				}
+			}
+		}
+		subpileMap.clear();
+		stockpileMap.clear();
 		Collections.sort(stockpiles);
 	}
 
@@ -879,6 +947,10 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 			}
 			settings.getRoutingSettings().getPresets().put(name, systemIDs);
 		}
+		parseRoutes(routingElement, settings.getRoutingSettings().getRoutes());
+	}
+
+	private void parseRoutes(Element routingElement, Map<String, RouteResult> map) throws XmlException {
 		NodeList routeNodes = routingElement.getElementsByTagName("route");
 		for (int a = 0; a < routeNodes.getLength(); a++) {
 			Element routeNode = (Element) routeNodes.item(a);
@@ -916,7 +988,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 					stationsList.add(station);
 				}
 			}
-			settings.getRoutingSettings().getRoutes().put(name, new RouteResult(route, stationsMap, waypoints, algorithmName, algorithmTime, jumps, avoid, security));
+			map.put(name, new RouteResult(route, stationsMap, waypoints, algorithmName, algorithmTime, jumps, avoid, security));
 		}
 	}
 

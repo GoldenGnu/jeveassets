@@ -201,6 +201,7 @@ public enum Images {
 	TOOL_VALUES ("tool_values.png"),
 	TOOL_VALUE_TABLE ("tool_value_table.png"),
 	TOOL_INDUSTRY_JOBS ("tool_industry_jobs.png"),
+	TOOL_INDUSTRY_SLOTS ("tool_industry_slots.png"),
 	TOOL_ROUTING ("tool_routing.png"),
 	TOOL_MATERIALS ("tool_materials.png"),
 	TOOL_SHIP_LOADOUTS ("tool_ship_loadouts.png"),

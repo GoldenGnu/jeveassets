@@ -94,6 +94,7 @@ public class ProfileData {
 	private final List<MyAsset> assetsList = new ArrayList<>();
 	private final List<MyAccountBalance> accountBalanceList = new ArrayList<>();
 	private final List<MyContract> contractList = new ArrayList<>();
+	private final Map<String, Long> skillPointsTotal = new HashMap<>();
 	private Map<Integer, List<MyAsset>> uniqueAssetsDuplicates = null; //TypeID : int
 	private Map<Integer, MarketPriceData> transactionSellPriceData; //TypeID : int
 	private Map<Integer, MarketPriceData> transactionBuyPriceData; //TypeID : int
@@ -182,6 +183,10 @@ public class ProfileData {
 		return contractList;
 	}
 
+	public Map<String, Long> getSkillPointsTotal() {
+		return skillPointsTotal;
+	}
+
 	public List<String> getOwnerNames(boolean all) {
 		List<String> sortedOwners = new ArrayList<>(ownerNames);
 		if (all) {
@@ -218,6 +223,8 @@ public class ProfileData {
 	
 	private Set<Integer> createPriceTypeIDs() {
 		Set<Integer> priceTypeIDs = new HashSet<>();
+		priceTypeIDs.add(40519); //Skill Extractor
+		priceTypeIDs.add(40520); //Large Skill Injector
 		for (OwnerType owner : profileManager.getOwnerTypes()) {
 			//Add Assets to uniqueIds
 			deepAssets(owner.getAssets(), priceTypeIDs);
@@ -444,6 +451,7 @@ public class ProfileData {
 		Set<MyContract> contracts = new HashSet<>();
 		Map<Long, OwnerType> blueprintsMap = new HashMap<>();
 		Map<Long, RawBlueprint> blueprints = new HashMap<>();
+		Map<String, Long> skillPointsTotalCache = new HashMap<>();
 
 		calcTransactionsPriceData();
 		for (OwnerType owner : profileManager.getOwnerTypes()) {
@@ -509,6 +517,14 @@ public class ProfileData {
 				OwnerType ownerType = accountBalanceMap.get(owner.getOwnerID());
 				if (ownerType == null || (owner.getBalanceNextUpdate() != null && ownerType.getBalanceNextUpdate() != null && owner.getBalanceNextUpdate().after(ownerType.getBalanceNextUpdate()))) {
 					accountBalanceMap.put(owner.getOwnerID(), owner);
+				}
+			}
+			//Skills
+			if (owner.getTotalSkillPoints() != null) {
+				if (owner.getUnallocatedSkillPoints() != null) {
+					skillPointsTotalCache.put(owner.getOwnerName(), owner.getTotalSkillPoints() + owner.getUnallocatedSkillPoints());
+				} else {
+					skillPointsTotalCache.put(owner.getOwnerName(), owner.getTotalSkillPoints());
 				}
 			}
 		}
@@ -664,6 +680,8 @@ public class ProfileData {
 		contractList.addAll(contracts);
 		accountBalanceList.clear();
 		accountBalanceList.addAll(accountBalance);
+		skillPointsTotal.clear();
+		skillPointsTotal.putAll(skillPointsTotalCache);
 		Program.ensureEDT(new Runnable() {
 			@Override
 			public void run() {

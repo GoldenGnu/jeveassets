@@ -179,6 +179,14 @@ public class DataSetCreator {
 		} finally {
 			profileData.getContractItemEventList().getReadWriteLock().readLock().unlock();
 		}
+		//Skills
+		for (Map.Entry<String, Long> entry : profileData.getSkillPointsTotal().entrySet()) {
+			final String owner = entry.getKey();
+			final Long totalSkillPoints = entry.getValue();
+			Value value = getValueInner(values, owner, date);
+			value.setSkillPoints(totalSkillPoints);
+			total.addSkillPointValue(totalSkillPoints, 0);
+		}
 		return values;
 	}
 

@@ -101,7 +101,8 @@ public class TreeTab extends JMainTabSecondary implements TagUpdate {
 	private enum TreeAction {
 		UPDATE,
 		COLLAPSE,
-		EXPAND
+		EXPAND,
+		REPROCESS_COLORS
 	}
 
 	private final int INDENT = 10;
@@ -114,6 +115,7 @@ public class TreeTab extends JMainTabSecondary implements TagUpdate {
 	private final JLabel jAverage;
 	private final JLabel jVolume;
 	private final JToggleButton jCategories;
+	private final JToggleButton jReprocessColors;
 
 	//Table
 	private final DefaultEventTableModel<TreeAsset> tableModel;
@@ -157,6 +159,15 @@ public class TreeTab extends JMainTabSecondary implements TagUpdate {
 		jLocation.setSelected(true);
 		buttonGroup.add(jLocation);
 		jToolBarLeft.addButton(jLocation);
+
+		jToolBarLeft.addSeparator();
+
+		jReprocessColors = new JToggleButton(TabsAssets.get().reprocessColors(), Images.TOOL_REPROCESSED.getIcon());
+		jReprocessColors.setToolTipText(TabsAssets.get().reprocessColorsToolTip());
+		jReprocessColors.setSelected(Settings.get().isReprocessColors());
+		jReprocessColors.setActionCommand(TreeAction.REPROCESS_COLORS.name());
+		jReprocessColors.addActionListener(listener);
+		jToolBarLeft.addButton(jReprocessColors);
 
 		JFixedToolBar jToolBarRight = new JFixedToolBar();
 
@@ -494,6 +505,10 @@ public class TreeTab extends JMainTabSecondary implements TagUpdate {
 		jTable.unlock();
 	}
 
+	public void updateReprocessColors() {
+		jReprocessColors.setSelected(Settings.get().isReprocessColors());
+	}
+
 	private void updateTotals() {
 		if (jCategories.isSelected()) {
 			for (TreeAsset treeAsset : categoriesExport) {
@@ -599,6 +614,17 @@ public class TreeTab extends JMainTabSecondary implements TagUpdate {
 				expansionModel.setState(ExpandedState.EXPAND);
 				updateTable();
 				expansionModel.setState(ExpandedState.LOAD);
+			} else if (TreeAction.REPROCESS_COLORS.name().equals(e.getActionCommand())) {
+				boolean oldValue = Settings.get().isReprocessColors();
+				boolean newValue = jReprocessColors.isSelected();
+				if (oldValue != newValue) {
+					Settings.lock("Reprocess Colors");
+					Settings.get().setReprocessColors(newValue);
+					Settings.unlock("Reprocess Colors");
+					program.saveSettings("Reprocess Colors");
+					jTable.repaint();
+					program.getAssetsTab().updateReprocessColors();
+				}
 			}
 		}
 

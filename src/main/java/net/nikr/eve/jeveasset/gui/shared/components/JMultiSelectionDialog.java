@@ -19,7 +19,7 @@
  *
  */
 
-package net.nikr.eve.jeveasset.gui.tabs.stockpile;
+package net.nikr.eve.jeveasset.gui.shared.components;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -29,23 +29,23 @@ import java.util.List;
 import javax.swing.AbstractListModel;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JScrollPane;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
-import net.nikr.eve.jeveasset.gui.shared.components.JMultiSelectionList;
-import net.nikr.eve.jeveasset.i18n.TabsStockpile;
+import net.nikr.eve.jeveasset.i18n.GuiShared;
 
 
-public class StockpileSelectionDialog<T> extends JDialogCentered {
+public class JMultiSelectionDialog<T> extends JDialogCentered {
 
-	private enum StockpileSelection {
-		OK, CANCEL
+	private enum MultiSelectionActions {
+		OK, CANCEL, CHECK_ALL
 	}
 
 	//GUI
+	private final JCheckBox jAll;
 	private final JMultiSelectionList<T> jList;
 	private final JButton jOK;
 
@@ -53,34 +53,41 @@ public class StockpileSelectionDialog<T> extends JDialogCentered {
 	private List<T> data;
 	private boolean emptyAllowed;
 
-	public StockpileSelectionDialog(final Program program, String title) {
+	public JMultiSelectionDialog(final Program program, String title) {
 		super(program, title);
 
 		ListenerClass listener = new ListenerClass();
 
-		jList = new JMultiSelectionList<T>();
+		jAll = new JCheckBox(GuiShared.get().all());
+		jAll.setActionCommand(MultiSelectionActions.CHECK_ALL.name());
+		jAll.addActionListener(listener);
+
+		jList = new JMultiSelectionList<>();
 		jList.addListSelectionListener(listener);
 		JScrollPane jListScroll = new JScrollPane(jList);
 
-		jOK = new JButton(TabsStockpile.get().ok());
-		jOK.setActionCommand(StockpileSelection.OK.name());
+		jOK = new JButton(GuiShared.get().ok());
+		jOK.setActionCommand(MultiSelectionActions.OK.name());
 		jOK.addActionListener(listener);
 		jOK.setEnabled(false);
 
-		JButton jCancel = new JButton(TabsStockpile.get().cancel());
-		jCancel.setActionCommand(StockpileSelection.CANCEL.name());
+		JButton jCancel = new JButton(GuiShared.get().cancel());
+		jCancel.setActionCommand(MultiSelectionActions.CANCEL.name());
 		jCancel.addActionListener(listener);
 
 		layout.setHorizontalGroup(
-			layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
+			layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+				.addComponent(jAll)
 				.addComponent(jListScroll, 300, 300, 300)
 				.addGroup(layout.createSequentialGroup()
+					.addGap(0, 0, Integer.MAX_VALUE)
 					.addComponent(jOK, Program.getButtonsWidth(), Program.getButtonsWidth(), Program.getButtonsWidth())
 					.addComponent(jCancel, Program.getButtonsWidth(), Program.getButtonsWidth(), Program.getButtonsWidth())
 				)
 		);
 		layout.setVerticalGroup(
 			layout.createSequentialGroup()
+				.addComponent(jAll)
 				.addComponent(jListScroll, 200, 200, 200)
 				.addGroup(layout.createParallelGroup()
 					.addComponent(jOK, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
@@ -99,21 +106,21 @@ public class StockpileSelectionDialog<T> extends JDialogCentered {
 		return jOK;
 	}
 
-	public List<T> show(List<T> stockpiles) {
-		emptyAllowed = false;
-		return show(stockpiles, new ArrayList<Integer>());
+	public List<T> show(Collection<T> items, boolean emptyAllowed) {
+		return show(items, new ArrayList<>(), emptyAllowed);
 	}
 
-	public List<T> show(List<T> stockpiles, Collection<Integer> selected) {
-		emptyAllowed = true;
-		jList.setModel(new DataListModel<>(stockpiles));
-		int[] indices = new int[selected.size()];
-		int i = 0;
-		for (int index : selected) {
-			indices[i] = index;
-			i++;
+	public List<T> show(Collection<T> items, Collection<T> selected, boolean emptyAllowed) {
+		this.emptyAllowed = emptyAllowed;
+		ArrayList<T> list = new ArrayList<>(items);
+		jList.setModel(new DataListModel<>(list));
+		for (T item : selected) {
+			int index = list.indexOf(item);
+			if (index >= 0) {
+				jList.addSelectionInterval(index, index);
+			}
 		}
-		jList.setSelectedIndices(indices);
+		jAll.setSelected(jList.getSelectedIndices().length  == list.size());
 		this.data = null;
 		this.setVisible(true);
 		return this.data;
@@ -132,15 +139,21 @@ public class StockpileSelectionDialog<T> extends JDialogCentered {
 		@Override
 		public void valueChanged(final ListSelectionEvent e) {
 			jOK.setEnabled(emptyAllowed || jList.getSelectedIndices().length > 0);
+			jAll.setSelected(jList.getSelectedIndices().length == jList.getModel().getSize());
 		}
 
 		@Override
 		public void actionPerformed(final ActionEvent e) {
-			if (StockpileSelection.OK.name().equals(e.getActionCommand())) {
+			if (MultiSelectionActions.OK.name().equals(e.getActionCommand())) {
 				save();
-			}
-			if (StockpileSelection.CANCEL.name().equals(e.getActionCommand())) {
+			} else if (MultiSelectionActions.CANCEL.name().equals(e.getActionCommand())) {
 				setVisible(false);
+			} else if (MultiSelectionActions.CHECK_ALL.name().equals(e.getActionCommand())) {
+				if (jAll.isSelected()) {
+					jList.selectAll();
+				} else {
+					jList.clearSelection();
+				}
 			}
 		}
 	}
