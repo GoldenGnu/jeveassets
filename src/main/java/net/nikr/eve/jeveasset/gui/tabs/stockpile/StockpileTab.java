@@ -149,12 +149,11 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 
 	//Data
 	private Map<Long, String> ownersName;
-	private final Set<Integer> typeIDs = new HashSet<>();
-	private final Map<Integer, List<MyContractItem>> contractItems = new HashMap<>();
-	private final Map<Integer, List<MyAsset>> assets = new HashMap<>();
-	private final Map<Integer, List<MyMarketOrder>> marketOrders = new HashMap<>();
-	private final Map<Integer, List<MyIndustryJob>> industryJobs = new HashMap<>();
-	private final Map<Integer, List<MyTransaction>> transactions = new HashMap<>();
+	private final Map<Integer, Set<MyContractItem>> contractItems = new HashMap<>();
+	private final Map<Integer, Set<MyAsset>> assets = new HashMap<>();
+	private final Map<Integer, Set<MyMarketOrder>> marketOrders = new HashMap<>();
+	private final Map<Integer, Set<MyIndustryJob>> industryJobs = new HashMap<>();
+	private final Map<Integer, Set<MyTransaction>> transactions = new HashMap<>();
 
 	public static final String NAME = "stockpile"; //Not to be changed!
 
@@ -377,7 +376,6 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 		marketOrders.clear();
 		industryJobs.clear();
 		transactions.clear();
-		typeIDs.clear();
 
 		for (Stockpile stockpile : getShownStockpiles()) {
 			stockpile.updateDynamicValues();
@@ -618,13 +616,9 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 			}
 		}
 	//Create lookup set of TypeIDs
-		Set<Integer> newTypeIDs = new HashSet<>();
+		Set<Integer> typeIDs = new HashSet<>();
 		for (StockpileItem item : stockpile.getItems()) {
-			int typeID = item.getItemTypeID();
-			if (!typeIDs.contains(typeID)) {
-				newTypeIDs.add(typeID);
-				typeIDs.add(typeID);
-			}
+			typeIDs.add(item.getItemTypeID());
 		}
 	//Create lookup maps of Items
 		//ContractItems
@@ -634,12 +628,12 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 					continue;
 				}
 				int typeID = contractItem.isBPC() ? -contractItem.getTypeID() : contractItem.getTypeID(); //BPC has negative value
-				if (!newTypeIDs.contains(typeID)) {
+				if (!typeIDs.contains(typeID)) {
 					continue; //Ignore wrong typeID
 				}
-				List<MyContractItem> items = contractItems.get(typeID);
+				Set<MyContractItem> items = contractItems.get(typeID);
 				if (items == null) {
-					items = new ArrayList<>();
+					items = new HashSet<>();
 					contractItems.put(typeID, items);
 				}
 				items.add(contractItem);
@@ -652,12 +646,12 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 					continue;
 				}
 				int typeID = asset.isBPC() ? -asset.getTypeID() : asset.getTypeID(); //BPC has negative value
-				if (!newTypeIDs.contains(typeID)) {
+				if (!typeIDs.contains(typeID)) {
 					continue; //Ignore wrong typeID
 				}
-				List<MyAsset> items = assets.get(typeID);
+				Set<MyAsset> items = assets.get(typeID);
 				if (items == null) {
-					items = new ArrayList<>();
+					items = new HashSet<>();
 					assets.put(typeID, items);
 				}
 				items.add(asset);
@@ -667,12 +661,12 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 		if (stockpile.isBuyOrders() || stockpile.isSellOrders()) {
 			for (MyMarketOrder marketOrder : program.getMarketOrdersList()) {
 				int typeID = marketOrder.getItem().getTypeID();
-				if (!newTypeIDs.contains(typeID)) {
+				if (!typeIDs.contains(typeID)) {
 					continue; //Ignore wrong typeID
 				}
-				List<MyMarketOrder> items = marketOrders.get(typeID);
+				Set<MyMarketOrder> items = marketOrders.get(typeID);
 				if (items == null) {
-					items = new ArrayList<>();
+					items = new HashSet<>();
 					marketOrders.put(typeID, items);
 				}
 				items.add(marketOrder);
@@ -682,19 +676,19 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 		if (stockpile.isJobs()) {
 			for (MyIndustryJob industryJob : program.getIndustryJobsList()) {
 				int productTypeID = industryJob.getProductTypeID();
-				if (newTypeIDs.contains(productTypeID)) {
-					List<MyIndustryJob> items = industryJobs.get(productTypeID);
+				if (typeIDs.contains(productTypeID)) {
+					Set<MyIndustryJob> items = industryJobs.get(productTypeID);
 					if (items == null) {
-						items = new ArrayList<>();
+						items = new HashSet<>();
 						industryJobs.put(productTypeID, items);
 					}
 					items.add(industryJob);
 				}
 				int blueprintTypeID = -industryJob.getBlueprintTypeID(); //Negative - match blueprints copies
-				if (newTypeIDs.contains(blueprintTypeID)) {
-					List<MyIndustryJob> items = industryJobs.get(blueprintTypeID);
+				if (typeIDs.contains(blueprintTypeID)) {
+					Set<MyIndustryJob> items = industryJobs.get(blueprintTypeID);
 					if (items == null) {
-						items = new ArrayList<>();
+						items = new HashSet<>();
 						industryJobs.put(blueprintTypeID, items);
 					}
 					items.add(industryJob);
@@ -705,12 +699,12 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 		if (stockpile.isTransactions()) {
 			for (MyTransaction transaction : program.getTransactionsList()) {
 				int typeID = transaction.getItem().getTypeID();
-				if (!newTypeIDs.contains(typeID)) {
+				if (!typeIDs.contains(typeID)) {
 					continue; //Ignore wrong typeID
 				}
-				List<MyTransaction> items = transactions.get(typeID);
+				Set<MyTransaction> items = transactions.get(typeID);
 				if (items == null) {
-					items = new ArrayList<>();
+					items = new HashSet<>();
 					transactions.put(typeID, items);
 				}
 				items.add(transaction);
@@ -737,7 +731,7 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 		item.updateValues(price, volume);
 		//ContractItems
 		if (stockpile.isContracts()) {
-			List<MyContractItem> items = contractItems.get(TYPE_ID);
+			Set<MyContractItem> items = contractItems.get(TYPE_ID);
 			if (items != null) {
 				for (MyContractItem contractItem : items) {
 					item.updateContract(contractItem);
@@ -746,7 +740,7 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 		}
 		//Inventory AKA Assets
 		if (stockpile.isAssets()) {
-			List<MyAsset> items = assets.get(TYPE_ID);
+			Set<MyAsset> items = assets.get(TYPE_ID);
 			if (items != null) {
 				for (MyAsset asset : items) {
 					item.updateAsset(asset);
@@ -755,7 +749,7 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 		}
 		//Market Orders
 		if (stockpile.isBuyOrders() || stockpile.isSellOrders()) {
-			List<MyMarketOrder> items = marketOrders.get(TYPE_ID);
+			Set<MyMarketOrder> items = marketOrders.get(TYPE_ID);
 			if (items != null) {
 				for (MyMarketOrder marketOrder : items) {
 					item.updateMarketOrder(marketOrder);
@@ -764,7 +758,7 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 		}
 		//Industry Job
 		if (stockpile.isJobs()) {
-			List<MyIndustryJob> items = industryJobs.get(TYPE_ID);
+			Set<MyIndustryJob> items = industryJobs.get(TYPE_ID);
 			if (items != null) {
 				for (MyIndustryJob industryJob : items) {
 					item.updateIndustryJob(industryJob);
@@ -773,7 +767,7 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 		}
 		//Transactions
 		if (stockpile.isTransactions()) {
-			List<MyTransaction> items = transactions.get(TYPE_ID);
+			Set<MyTransaction> items = transactions.get(TYPE_ID);
 			if (items != null) {
 				for (MyTransaction transaction : items) {
 					item.updateTransaction(transaction);
