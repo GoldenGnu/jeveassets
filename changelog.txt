@@ -19,7 +19,7 @@ ________________________________________________________________________________
 _6.6.1__________________________________________________________________________
 
 New Features:
--Skill point filters are now shated between the Isk and Tracker (Issue #187)
+-Skill point filters are now shared between the Isk and Tracker (Issue #187)
 
 Bug Fixes:
 -Stockpile did not handle editing correctly (Issue #186)
