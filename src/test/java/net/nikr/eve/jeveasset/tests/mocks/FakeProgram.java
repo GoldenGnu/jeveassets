@@ -49,8 +49,10 @@ import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewTab;
 import net.nikr.eve.jeveasset.gui.tabs.reprocessed.ReprocessedTab;
 import net.nikr.eve.jeveasset.gui.tabs.routing.RoutingTab;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.StockpileTab;
+import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerTab;
 import net.nikr.eve.jeveasset.gui.tabs.transaction.TransactionTab;
 import net.nikr.eve.jeveasset.gui.tabs.tree.TreeTab;
+import net.nikr.eve.jeveasset.gui.tabs.values.ValueTableTab;
 import net.nikr.eve.jeveasset.io.online.PriceDataGetter;
 
 /**
@@ -285,6 +287,16 @@ public abstract class FakeProgram extends Program {
 
 	@Override
 	public TransactionTab getTransactionsTab() {
+		throw new UnsupportedOperationException("Not implemented");
+	}
+
+	@Override
+	public ValueTableTab getValueTableTab() {
+		throw new UnsupportedOperationException("Not implemented");
+	}
+
+	@Override
+	public TrackerTab getTrackerTab() {
 		throw new UnsupportedOperationException("Not implemented");
 	}
 }
