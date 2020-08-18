@@ -52,6 +52,7 @@ public abstract class TabsValues extends Bundle {
 	public abstract String grandTotal();
 	public abstract String none();
 	public abstract String title();
+	public abstract String skillPointFilters();
 
 	public abstract String oldTitle();
 	public abstract String oldNoCharacter();
