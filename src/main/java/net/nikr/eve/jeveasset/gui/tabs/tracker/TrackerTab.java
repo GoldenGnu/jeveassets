@@ -685,6 +685,21 @@ public class TrackerTab extends JMainTabSecondary {
 		}
 	}
 
+	public void showSkillPointsFilter() {
+		boolean save = skillPointsFilterDialog.show();
+		if (save) {
+			//Tracker
+			if (program.getMainWindow().isOpen(this)) {
+				createData();
+				updateButtonIcons();
+			}
+			//Isk
+			if (program.getMainWindow().isOpen(program.getValueTableTab())) {
+				program.getValueTableTab().updateData();
+			}
+		}
+	}
+
 	private JDateChooser createDateChooser() {
 		JDateChooser jDate = new JDateChooser(true);
 		jDate.addDateChangeListener(listener);
@@ -1614,11 +1629,7 @@ public class TrackerTab extends JMainTabSecondary {
 			} else if (TrackerAction.FILTER_ASSETS.name().equals(e.getActionCommand())) {
 				showLocationFilter();
 			} else if (TrackerAction.FILTER_SKILL_POINTS.name().equals(e.getActionCommand())) {
-				boolean save = skillPointsFilterDialog.show();
-				if (save) {
-					createData();
-					updateButtonIcons();
-				}
+				showSkillPointsFilter();
 			} else if (TrackerAction.IMPORT_FILE.name().equals(e.getActionCommand())) {
 				jFileChooser.setCurrentDirectory(new File(FileUtil.getPathDataDirectory()));
 				int value = jFileChooser.showOpenDialog(program.getMainWindow().getFrame());

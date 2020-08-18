@@ -305,6 +305,10 @@ public class Value implements Comparable<Value> {
 		skillPointValue = calcSkillPointValue(skillPoints, 0);
 	}
 
+	public void setSkillPointsMinimum(long minimum) {
+		skillPointValue = calcSkillPointValue(skillPoints, minimum);
+	}
+
 	private void setBestAsset(MyAsset bestAsset) {
 		if (this.bestAsset == null) { //First
 			this.bestAsset = bestAsset;

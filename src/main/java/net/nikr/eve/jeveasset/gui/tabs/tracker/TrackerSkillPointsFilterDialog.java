@@ -62,7 +62,7 @@ public class TrackerSkillPointsFilterDialog extends JDialogCentered {
 	private boolean save = false;
 
 	public TrackerSkillPointsFilterDialog(Program program) {
-		super(program, TabsTracker.get().filterTitle(), Images.TOOL_TRACKER.getImage());
+		super(program, TabsTracker.get().skillPointFilters(), Images.TOOL_TRACKER.getImage());
 
 		eventList = EventListManager.create();
 
