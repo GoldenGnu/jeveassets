@@ -16,6 +16,36 @@
                   #### #  # #  # #  # #### #### #### #### ####
 
 ________________________________________________________________________________
+_6.6.1__________________________________________________________________________
+
+New Features:
+-Skill point filters are now shared between the Isk and Tracker (Issue #187)
+
+Bug Fixes:
+-Stockpile did not handle editing correctly (Issue #186)
+
+________________________________________________________________________________
+_6.6.0__________________________________________________________________________
+
+New Features:
+-Use ZKillboard's Structure API
+-Transaction Margin (Issue #153)
+-New Tool: Industry Slots (Issue #179)
+-Added skill points value to Tracker and Isk Tools (Issue #116)
+-Import/Export Routes (Issue #167)
+-Cascading Stockpiles AKA Subpiles (Issue #141)
+-Toggle reprocessing colors on toolbar Assets/Tree (Issue #151)
+-Add Transaction Filter Table Menu (Issue #165)
+
+Code:
+-Updated pricing library to 2.1.2
+
+Bug Fixes:
+-Bad layout in SettingsDialog when opened the first time on some look and feels
+-Ask before overwriting a route when saving and order saved routes alphabetical
+-Stockpile EFT import ignore loaded charges (Issue #154)
+
+________________________________________________________________________________
 _6.5.1__________________________________________________________________________
 
 Bug Fixes:
