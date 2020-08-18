@@ -794,6 +794,14 @@ public class Program implements ActionListener {
 		return routingTab;
 	}
 
+	public TrackerTab getTrackerTab() {
+		return trackerTab;
+	}
+
+	public ValueTableTab getValueTableTab() {
+		return valueTableTab;
+	}
+
 	public ProfileData getProfileData() {
 		return profileData;
 	}

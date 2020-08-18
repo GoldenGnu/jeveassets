@@ -28,10 +28,13 @@ import ca.odell.glazedlists.SortedList;
 import ca.odell.glazedlists.swing.DefaultEventSelectionModel;
 import ca.odell.glazedlists.swing.DefaultEventTableModel;
 import ca.odell.glazedlists.swing.TableComparatorChooser;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -39,6 +42,7 @@ import javax.swing.JScrollPane;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
+import net.nikr.eve.jeveasset.gui.shared.components.JFixedToolBar;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTabSecondary;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
@@ -50,6 +54,7 @@ import net.nikr.eve.jeveasset.gui.shared.table.EventListManager;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
 import net.nikr.eve.jeveasset.gui.shared.table.JAutoColumnTable;
 import net.nikr.eve.jeveasset.gui.shared.table.PaddingTableCellRenderer;
+import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerSkillPointFilter;
 import net.nikr.eve.jeveasset.i18n.TabsValues;
 
 
@@ -57,6 +62,7 @@ public class ValueTableTab extends JMainTabSecondary {
 
 	//GUI
 	private final JAutoColumnTable jTable;
+	private final JButton jSkillPointsFilters;
 
 	//Table
 	private final ValueFilterControl filterControl;
@@ -70,6 +76,18 @@ public class ValueTableTab extends JMainTabSecondary {
 
 	public ValueTableTab(final Program program) {
 		super(program, TabsValues.get().title(), Images.TOOL_VALUE_TABLE.getIcon(), true);
+
+		JFixedToolBar jToolBar = new JFixedToolBar();
+
+		jSkillPointsFilters = new JButton(TabsValues.get().skillPointFilters(), Images.LOC_INCLUDE.getIcon());
+		jSkillPointsFilters.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				program.getTrackerTab().showSkillPointsFilter();
+			}
+		});
+		jToolBar.addButton(jSkillPointsFilters);
+
 		//Table Format
 		tableFormat = new EnumTableFormatAdaptor<>(ValueTableFormat.class);
 		//Backend
@@ -120,21 +138,51 @@ public class ValueTableTab extends JMainTabSecondary {
 		layout.setHorizontalGroup(
 			layout.createParallelGroup()
 				.addComponent(filterControl.getPanel())
+				.addComponent(jToolBar)
 				.addComponent(jTableScroll, 0, 0, Short.MAX_VALUE)
 		);
 		layout.setVerticalGroup(
 			layout.createSequentialGroup()
 				.addComponent(filterControl.getPanel())
+				.addComponent(jToolBar)
 				.addComponent(jTableScroll, 0, 0, Short.MAX_VALUE)
 		);
 	}
 
 	@Override
 	public void updateData() {
+		boolean isAll = true;
+		for (TrackerSkillPointFilter filter : Settings.get().getTrackerSkillPointFilters().values()) {
+			if (!filter.isEmpty()) {
+				isAll = false;
+				break;
+			}
+		}
+		if (isAll) {
+			jSkillPointsFilters.setIcon(Images.LOC_INCLUDE.getIcon());
+		} else {
+			jSkillPointsFilters.setIcon(Images.EDIT_EDIT_WHITE.getIcon());
+		}
+		Map<String, Value> values = DataSetCreator.createDataSet(program.getProfileData(), Settings.getNow());
+		Value total = values.get(TabsValues.get().grandTotal());
+		total.setSkillPoints(0);
+		for (Value value : values.values()) {
+			TrackerSkillPointFilter skillPointFilter = Settings.get().getTrackerSkillPointFilters().get(value.getName());
+			if (skillPointFilter != null) {
+				if (skillPointFilter.isEnabled()) {
+					value.setSkillPointsMinimum(skillPointFilter.getMinimum());
+					total.addSkillPointValue(value.getSkillPoints(), skillPointFilter.getMinimum());
+				} else {
+					value.setSkillPoints(0);
+				}
+			} else {
+				total.addSkillPointValue(value.getSkillPoints(), 0);
+			}
+		}
 		try {
 			eventList.getReadWriteLock().writeLock().lock();
 			eventList.clear();
-			eventList.addAll(DataSetCreator.createDataSet(program.getProfileData(), Settings.getNow()).values());
+			eventList.addAll(values.values());
 		} finally {
 			eventList.getReadWriteLock().writeLock().unlock();
 		}
