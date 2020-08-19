@@ -33,9 +33,9 @@ import java.awt.event.ItemListener;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -44,6 +44,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
 import net.nikr.eve.jeveasset.Program;
+import net.nikr.eve.jeveasset.data.sde.IndustryMaterial;
 import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.data.sde.StaticData;
 import net.nikr.eve.jeveasset.data.settings.ColorEntry;
@@ -68,16 +69,43 @@ public class StockpileItemDialog extends JDialogCentered {
 		TYPE_CHANGE
 	}
 
+	public static enum BlueprintAddType {
+		NONE(TabsStockpile.get().none()),
+		BPO(TabsStockpile.get().original()),
+		BPC(TabsStockpile.get().copy()),
+		RUNS(TabsStockpile.get().runs()),
+		MANUFACTURING_MATERIALS(TabsStockpile.get().materialsManufacturing()),
+		REACTION_MATERIALS(TabsStockpile.get().materialsReaction()),
+		;
+		final String name;
+
+		public static BlueprintAddType[] EMPTY = {NONE};
+		public static BlueprintAddType[] EDIT_BLUEPRINT = {BPO, BPC, RUNS};
+		public static BlueprintAddType[] EDIT_FORMULA = {BPO};
+		public static BlueprintAddType[] ADD_BLUEPRINT = {BPO, BPC, RUNS, MANUFACTURING_MATERIALS};
+		public static BlueprintAddType[] ADD_FORMULA = {BPO, REACTION_MATERIALS};
+
+		private BlueprintAddType(String name) {
+			this.name = name;
+		}
+
+		@Override
+		public String toString() {
+			return name;
+		}
+	}
+
 	private final JButton jOK;
 	private final JComboBox<Item> jItems;
 	private final JLabel jSubpile;
 	private JTextField jCountMinimum;
-	private final JCheckBox jCopy;
-	private final JCheckBox jRuns;
+	private final JComboBox<BlueprintAddType> jBlueprintType;
 
 	private final EventList<Item> items = EventListManager.create();
 	private Stockpile stockpile;
 	private StockpileItem stockpileItem;
+	private List<StockpileItem> stockpileItems;
+	private boolean updating = false;
 
 	public StockpileItemDialog(final Program program) {
 		super(program, TabsStockpile.get().addStockpileItem(), Images.TOOL_STOCKPILE.getImage());
@@ -103,13 +131,10 @@ public class StockpileItemDialog extends JDialogCentered {
 		});
 		jCountMinimum.addCaretListener(listener);
 
-		jCopy = new JCheckBox(TabsStockpile.get().copy());
-		jCopy.setActionCommand(StockpileItemAction.TYPE_CHANGE.name());
-		jCopy.addActionListener(listener);
-
-		jRuns = new JCheckBox(TabsStockpile.get().runs());
-		jRuns.setActionCommand(StockpileItemAction.TYPE_CHANGE.name());
-		jRuns.addActionListener(listener);
+		JLabel jBlueprintTypeLabel = new JLabel(TabsStockpile.get().blueprintType());
+		jBlueprintType = new JComboBox<>(BlueprintAddType.values());
+		jBlueprintType.setActionCommand(StockpileItemAction.TYPE_CHANGE.name());
+		jBlueprintType.addActionListener(listener);
 
 		jOK = new JButton(TabsStockpile.get().ok());
 		jOK.setActionCommand(StockpileItemAction.OK.name());
@@ -125,16 +150,14 @@ public class StockpileItemDialog extends JDialogCentered {
 				.addGroup(layout.createSequentialGroup()
 					.addGroup(layout.createParallelGroup()
 						.addComponent(jItemsLabel)
+						.addComponent(jBlueprintTypeLabel)
 						.addComponent(jCountMinimumLabel)
 					)
 					.addGroup(layout.createParallelGroup()
 						.addComponent(jItems, 300, 300, 300)
 						.addComponent(jSubpile, 300, 300, 300)
+						.addComponent(jBlueprintType, 300, 300, 300)
 						.addComponent(jCountMinimum, 300, 300, 300)
-					)
-					.addGroup(layout.createParallelGroup()
-						.addComponent(jCopy)
-						.addComponent(jRuns)
 					)
 				)
 				.addGroup(layout.createSequentialGroup()
@@ -148,13 +171,14 @@ public class StockpileItemDialog extends JDialogCentered {
 					.addComponent(jItemsLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 					.addComponent(jItems, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 					.addComponent(jSubpile, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-					.addComponent(jCopy, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+				)
+				.addGroup(layout.createParallelGroup()
+					.addComponent(jBlueprintTypeLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jBlueprintType, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 				)
 				.addGroup(layout.createParallelGroup()
 					.addComponent(jCountMinimumLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 					.addComponent(jCountMinimum, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-					.addComponent(jRuns, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-					
 				)
 				.addGroup(layout.createParallelGroup()
 					.addComponent(jOK, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
@@ -177,25 +201,45 @@ public class StockpileItemDialog extends JDialogCentered {
 			jSubpile.setVisible(false);
 			jItems.setVisible(true);
 		}
-		jCopy.setSelected(editStockpileItem.isBPC());
-		jRuns.setSelected(editStockpileItem.isRuns());
+		if (item.isBlueprint()) {
+			jBlueprintType.setModel(new DefaultComboBoxModel<>(BlueprintAddType.EDIT_BLUEPRINT));
+		} else if (item.isFormula()) {
+			jBlueprintType.setModel(new DefaultComboBoxModel<>(BlueprintAddType.EDIT_FORMULA));
+		} else {
+			jBlueprintType.setModel(new DefaultComboBoxModel<>(BlueprintAddType.EMPTY));
+		}
+		if (editStockpileItem.isBPO()) {
+			jBlueprintType.setSelectedItem(BlueprintAddType.BPO);
+		} else if (editStockpileItem.isBPC()) {
+			jBlueprintType.setSelectedItem(BlueprintAddType.BPC);
+		} else if (editStockpileItem.isRuns()) {
+			jBlueprintType.setSelectedItem(BlueprintAddType.RUNS);
+		}
+		jBlueprintType.setEnabled(item.isBlueprint());
 		jCountMinimum.setText(String.valueOf(editStockpileItem.getCountMinimum()));
 		show();
 		return stockpileItem;
 	}
 
-	protected StockpileItem showAdd(final Stockpile addStockpile) {
+	protected List<StockpileItem> showAdd(final Stockpile addStockpile) {
 		updateData();
 		this.stockpile = addStockpile;
 		this.getDialog().setTitle(TabsStockpile.get().addStockpileItem());
-		jCopy.setSelected(false);
+		jBlueprintType.setModel(new DefaultComboBoxModel<>(BlueprintAddType.EMPTY));
 		show();
-		return stockpileItem;
+		if (stockpileItems != null) {
+			return stockpileItems;
+		} else if (stockpileItem != null){
+			return Collections.singletonList(stockpileItem);
+		} else {
+			return null;
+		}
 	}
 
 	private void updateData() {
 		stockpile = null;
 		stockpileItem = null;
+		this.stockpileItems = null;
 		List<Item> itemsList = new ArrayList<>(StaticData.get().getItems().values());
 		Collections.sort(itemsList);
 		try {
@@ -236,8 +280,8 @@ public class StockpileItemDialog extends JDialogCentered {
 		} catch (NumberFormatException ex) {
 			countMinimum = 0;
 		}
-		boolean copy = jCopy.isSelected() && jCopy.isEnabled();
-		boolean runs = jRuns.isSelected() && jRuns.isEnabled();
+		boolean runs = jBlueprintType.isEnabled() && jBlueprintType.getItemAt(jBlueprintType.getSelectedIndex()) == BlueprintAddType.RUNS;
+		boolean copy = runs || (jBlueprintType.isEnabled() && jBlueprintType.getItemAt(jBlueprintType.getSelectedIndex()) == BlueprintAddType.BPC);
 		int typeID;
 		if (copy) {
 			typeID = -item.getTypeID();
@@ -245,6 +289,35 @@ public class StockpileItemDialog extends JDialogCentered {
 			typeID = item.getTypeID();
 		}
 		return new StockpileItem(getStockpile(), item, typeID, countMinimum, runs);
+	}
+
+	private List<StockpileItem> getStockpileItems() {
+		List<StockpileItem> itemsMaterial = new ArrayList<>();
+		Item item = (Item) jItems.getSelectedItem();
+		double countMinimum;
+		try {
+			countMinimum = Double.valueOf(jCountMinimum.getText());
+		} catch (NumberFormatException ex) {
+			countMinimum = 0;
+		}
+		boolean manufacturingMaterials = jBlueprintType.isEnabled()
+				&& jBlueprintType.getItemAt(jBlueprintType.getSelectedIndex()) == BlueprintAddType.MANUFACTURING_MATERIALS;
+		boolean reactionMaterials = jBlueprintType.isEnabled()
+				&& jBlueprintType.getItemAt(jBlueprintType.getSelectedIndex()) == BlueprintAddType.REACTION_MATERIALS;
+		if (manufacturingMaterials) {
+			for (IndustryMaterial material : item.getManufacturingMaterials()) {
+				Item materialItem = ApiIdConverter.getItem(material.getTypeID());
+				itemsMaterial.add(new StockpileItem(getStockpile(), materialItem, material.getTypeID(), material.getQuantity() * countMinimum, false));
+			}
+		} else if (reactionMaterials) {
+			for (IndustryMaterial material : item.getReactionMaterials()) {
+				Item materialItem = ApiIdConverter.getItem(material.getTypeID());
+				itemsMaterial.add(new StockpileItem(getStockpile(), materialItem, material.getTypeID(), material.getQuantity() * countMinimum, false));
+			}
+		} else {
+			return null;
+		}
+		return itemsMaterial;
 	}
 
 	private boolean itemExist() {
@@ -264,8 +337,14 @@ public class StockpileItemDialog extends JDialogCentered {
 		if (existing == null) {
 			return null;
 		}
-		boolean copy = jCopy.isSelected() && jCopy.isEnabled();
-		boolean runs = jRuns.isSelected() && jRuns.isEnabled();
+		boolean materials = jBlueprintType.isEnabled() && 
+				(jBlueprintType.getItemAt(jBlueprintType.getSelectedIndex()) == BlueprintAddType.MANUFACTURING_MATERIALS
+				|| jBlueprintType.getItemAt(jBlueprintType.getSelectedIndex()) == BlueprintAddType.REACTION_MATERIALS);
+		if (materials) { //Never exists
+			return null;
+		}
+		boolean runs = jBlueprintType.isEnabled() && jBlueprintType.getItemAt(jBlueprintType.getSelectedIndex()) == BlueprintAddType.RUNS;
+		boolean copy = runs || (jBlueprintType.isEnabled() && jBlueprintType.getItemAt(jBlueprintType.getSelectedIndex()) == BlueprintAddType.BPC);
 		for (StockpileItem item : existing.getItems()) {
 			if (item.getTypeID() == typeItem.getTypeID() && copy == item.isBPC() && runs == item.isRuns()) {
 				return item;
@@ -275,24 +354,48 @@ public class StockpileItemDialog extends JDialogCentered {
 	}
 
 	private void autoValidate() {
+		if (updating) {
+			return;
+		}
+		boolean oldUpdateValue = updating;
+		updating = true;
 		boolean valid = true;
 		boolean colorIsSet = false;
 		if (jItems.getSelectedItem() == null || !(jItems.getSelectedItem() instanceof Item)) {
 			valid = false;
-			jCopy.setEnabled(false);
-			jCopy.setSelected(false);
+			jBlueprintType.setEnabled(false);
+			jBlueprintType.setModel(new DefaultComboBoxModel<>(BlueprintAddType.EMPTY));
 		} else {
 			Item item = (Item) jItems.getSelectedItem();
-			boolean blueprint = item.getTypeName().toLowerCase().contains("blueprint");
-			jCopy.setEnabled(blueprint);
-			if (!blueprint) {
-				jCopy.setSelected(blueprint);
+			BlueprintAddType oldValue = jBlueprintType.getItemAt(jBlueprintType.getSelectedIndex());
+			if (stockpileItem != null) { //Can not add Materials
+				if (item.isBlueprint()) {
+					jBlueprintType.setModel(new DefaultComboBoxModel<>(BlueprintAddType.EDIT_BLUEPRINT));
+					jBlueprintType.setEnabled(true);
+				} else if (item.isFormula()) {
+					jBlueprintType.setModel(new DefaultComboBoxModel<>(BlueprintAddType.EDIT_FORMULA));
+					jBlueprintType.setEnabled(false);
+				} else {
+					jBlueprintType.setModel(new DefaultComboBoxModel<>(BlueprintAddType.EMPTY));
+					jBlueprintType.setEnabled(false);
+				}
+			} else if (!item.getManufacturingMaterials().isEmpty()) {
+				jBlueprintType.setModel(new DefaultComboBoxModel<>(BlueprintAddType.ADD_BLUEPRINT));
+				jBlueprintType.setEnabled(true);
+			} else if (!item.getReactionMaterials().isEmpty()) {
+				jBlueprintType.setModel(new DefaultComboBoxModel<>(BlueprintAddType.ADD_FORMULA));
+				jBlueprintType.setEnabled(true);
+			} else if (item.isBlueprint()){
+				jBlueprintType.setModel(new DefaultComboBoxModel<>(BlueprintAddType.EDIT_BLUEPRINT));
+				jBlueprintType.setEnabled(true);
+			} else if (item.isFormula()){
+				jBlueprintType.setModel(new DefaultComboBoxModel<>(BlueprintAddType.EDIT_FORMULA));
+				jBlueprintType.setEnabled(true);
+			} else {
+				jBlueprintType.setModel(new DefaultComboBoxModel<>(BlueprintAddType.EMPTY));
+				jBlueprintType.setEnabled(false);
 			}
-		}
-		if (jCopy.isSelected()) {
-			jRuns.setEnabled(true);
-		} else {
-			jRuns.setEnabled(false);
+			jBlueprintType.setSelectedItem(oldValue);
 		}
 		if (itemExist()) { //Editing existing item
 			colorIsSet = true;
@@ -317,6 +420,7 @@ public class StockpileItemDialog extends JDialogCentered {
 			jCountMinimum.setForeground(Colors.TEXTFIELD_FOREGROUND.getColor());
 		}
 		jOK.setEnabled(valid);
+		updating = oldUpdateValue;
 	}
 
 	private void autoSet() {
@@ -325,7 +429,13 @@ public class StockpileItemDialog extends JDialogCentered {
 			SwingUtilities.invokeLater(new Runnable() {
 				@Override
 				public void run() {
+					if (updating) {
+						return;
+					}
+					boolean oldUpdateValue = updating;
+					updating = true;
 					jCountMinimum.setText(String.valueOf(item.getCountMinimum()));
+					updating = oldUpdateValue;
 				}
 			});
 		}
@@ -366,8 +476,15 @@ public class StockpileItemDialog extends JDialogCentered {
 			stockpileItem = getExistingItem();
 			stockpileItem.update(getStockpileItem());
 		} else { //ADD 
-			stockpileItem = getStockpileItem();
-			stockpile.add(stockpileItem);
+			stockpileItems = getStockpileItems();
+			if (stockpileItems != null) {
+				for (StockpileItem item : stockpileItems) {
+					stockpile.add(item);
+				}
+			} else {
+				stockpileItem = getStockpileItem();
+				stockpile.add(stockpileItem);
+			}
 		}
 		Settings.unlock("Stockpile (Items Dialog)"); //Unlock for Stockpile (Items Dialog)
 		program.saveSettings("Stockpile (Items Dialog)");
