@@ -1262,9 +1262,9 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 			} else if (StockpileCellAction.ADD_ITEM.name().equals(e.getActionCommand())) { //Add item
 				Stockpile stockpile = getSelectedStockpile();
 				if (stockpile != null) {
-					StockpileItem addItem = stockpileItemDialog.showAdd(stockpile);
-					if (addItem != null) { //Edit/Add/Update existing or cancel
-						addToStockpile(addItem.getStockpile(), addItem);
+					List<StockpileItem> stockpileItems = stockpileItemDialog.showAdd(stockpile);
+					if (stockpileItems != null) { //Edit/Add/Update existing or cancel
+						addToStockpile(stockpile, stockpileItems);
 					}
 				}
 			} else if (StockpileCellAction.SUBPILES.name().equals(e.getActionCommand())) {

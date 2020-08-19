@@ -23,6 +23,7 @@ package net.nikr.eve.jeveasset.io.local;
 
 import java.util.HashMap;
 import java.util.Map;
+import net.nikr.eve.jeveasset.data.sde.IndustryMaterial;
 import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.data.sde.ReprocessedMaterial;
 import net.nikr.eve.jeveasset.io.shared.FileUtil;
@@ -68,6 +69,8 @@ public final class ItemsReader extends AbstractXmlReader<Boolean> {
 			Element itemElement = (Element) nodes.item(i);
 			Item item = parseItem(itemElement);
 			parseMaterials(itemElement, item);
+			parseManufacturing(itemElement, item);
+			parseReaction(itemElement, item);
 			items.put(item.getTypeID(), item);
 			if (item.isBlueprint()) {
 				blueprints.put(item.getTypeID(), item.getProductTypeID());
@@ -129,5 +132,27 @@ public final class ItemsReader extends AbstractXmlReader<Boolean> {
 		int quantity = getInt(node, "quantity");
 		int portionSize = getInt(node, "portionsize");
 		item.addReprocessedMaterial(new ReprocessedMaterial(id, quantity, portionSize));
+	}
+
+	private void parseManufacturing(final Element element, final Item item) throws XmlException {
+		NodeList nodes = element.getElementsByTagName("mfg");
+		for (int i = 0; i < nodes.getLength(); i++) {
+			IndustryMaterial material = parseIndustryMaterial(nodes.item(i), item);
+			item.addManufacturingMaterial(material);
+		}
+	}
+
+	private void parseReaction(final Element element, final Item item) throws XmlException {
+		NodeList nodes = element.getElementsByTagName("rxn");
+		for (int i = 0; i < nodes.getLength(); i++) {
+			IndustryMaterial material = parseIndustryMaterial(nodes.item(i), item);
+			item.addReactionMaterial(material);
+		}
+	}
+
+	private IndustryMaterial parseIndustryMaterial(final Node node, final Item item) throws XmlException {
+		int typeID = getInt(node, "id");
+		int quantity = getInt(node, "q");
+		return new IndustryMaterial(typeID, quantity);
 	}
 }

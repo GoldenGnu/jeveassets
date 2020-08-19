@@ -45,8 +45,11 @@ public class Item implements Comparable<Item>, ItemType {
 	private int blueprintTypeID = 0;
 	private final int productQuantity;
 	private final boolean blueprint;
+	private final boolean formula;
 	private final String version;
 	private final List<ReprocessedMaterial> reprocessedMaterials = new ArrayList<>();
+	private final List<IndustryMaterial> manufacturingMaterials = new ArrayList<>();
+	private final List<IndustryMaterial> reactionMaterials = new ArrayList<>();
 	private double priceReprocessed;
 
 	public Item(int typeID) {
@@ -73,7 +76,8 @@ public class Item implements Comparable<Item>, ItemType {
 		this.portion = portion;
 		this.productTypeID = productTypeID;
 		this.productQuantity = productQuantity;
-		this.blueprint = (name.toLowerCase().contains("blueprint"));
+		this.blueprint = this.category.toLowerCase().equals("blueprint") && group.toLowerCase().contains("blueprint");
+		this.formula = this.category.toLowerCase().equals("blueprint") && group.toLowerCase().contains("reaction formula");
 		this.version = version;
 	}
 
@@ -91,6 +95,22 @@ public class Item implements Comparable<Item>, ItemType {
 
 	public List<ReprocessedMaterial> getReprocessedMaterial() {
 		return reprocessedMaterials;
+	}
+
+	public void addManufacturingMaterial(IndustryMaterial industryMaterial) {
+		manufacturingMaterials.add(industryMaterial);
+	}
+
+	public List<IndustryMaterial> getManufacturingMaterials() {
+		return manufacturingMaterials;
+	}
+
+	public void addReactionMaterial(IndustryMaterial industryMaterial) {
+		reactionMaterials.add(industryMaterial);
+	}
+
+	public List<IndustryMaterial> getReactionMaterials() {
+		return reactionMaterials;
 	}
 
 	public String getCategory() {
@@ -147,6 +167,10 @@ public class Item implements Comparable<Item>, ItemType {
 
 	public boolean isBlueprint() {
 		return blueprint;
+	}
+
+	public boolean isFormula() {
+		return formula;
 	}
 
 	public int getPortion() {
