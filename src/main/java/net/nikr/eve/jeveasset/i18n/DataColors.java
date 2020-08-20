@@ -56,6 +56,8 @@ public abstract class DataColors extends Bundle {
 	public abstract String marketOrdersOutbidBest();
 	public abstract String marketOrdersOutbidUnknown();
 	public abstract String marketOrdersExpired();
+	public abstract String industryJobsDelivered();
+	public abstract String industryJobsDone();
 	public abstract String industrySlotsFree();
 	public abstract String industrySlotsDone();
 	public abstract String industrySlotsFull();
@@ -85,6 +87,7 @@ public abstract class DataColors extends Bundle {
 	public abstract String groupContracts();
 	public abstract String groupOverview();
 	public abstract String groupMarketOrders();
+	public abstract String groupIndustryJobs();
 	public abstract String groupIndustrySlots();
 	public abstract String groupTransactions();
 	public abstract String groupGlobal();
