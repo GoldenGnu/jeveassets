@@ -30,6 +30,7 @@ import ca.odell.glazedlists.swing.DefaultEventTableModel;
 import ca.odell.glazedlists.swing.TableComparatorChooser;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.swing.JComponent;
@@ -38,6 +39,7 @@ import javax.swing.JMenu;
 import javax.swing.JScrollPane;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.api.accounts.OwnerType;
+import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTabSecondary;
@@ -132,20 +134,33 @@ public class IndustrySlotsTab extends JMainTabSecondary {
 
 	@Override
 	public void updateData() {
-		List<IndustrySlot> industrySlots = new ArrayList<>();
+		Map<Long, IndustrySlot> industrySlots = new HashMap<>();
 		IndustrySlot total = new IndustrySlot(TabsIndustrySlots.get().grandTotal());
 		for (OwnerType ownerType : program.getOwnerTypes()) {
 			if (ownerType.isCorporation()) {
 				continue;
 			}
-			industrySlots.add(new IndustrySlot(ownerType));
-			total.count(ownerType);
+			IndustrySlot old = industrySlots.put(ownerType.getOwnerID(), new IndustrySlot(ownerType));
+			if (old == null) {
+				total.count(ownerType);
+			}
 		}
-		industrySlots.add(total);
+		for (MyIndustryJob industryJob : program.getIndustryJobsList()) {
+			IndustrySlot industrySlot = industrySlots.get(industryJob.getInstallerID());
+			if (industrySlot == null) {
+				industrySlot = industrySlots.get(industryJob.getOwnerID());
+			}
+			if (industrySlot == null) {
+				continue;
+			}
+			industrySlot.count(industryJob);
+			total.count(industryJob);
+		}
+		industrySlots.put(0L, total);
 		try {
 			eventList.getReadWriteLock().writeLock().lock();
 			eventList.clear();
-			eventList.addAll(industrySlots);
+			eventList.addAll(industrySlots.values());
 		} finally {
 			eventList.getReadWriteLock().writeLock().unlock();
 		}
