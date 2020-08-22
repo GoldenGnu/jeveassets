@@ -56,39 +56,39 @@ public class IndustrySlot implements Comparable<IndustrySlot> {
 		this.empty = false;
 	}
 
-	public final void count(OwnerType ownerType) {
-		Set<MyIndustryJob> industryJobs = new HashSet<>(ownerType.getIndustryJobs());
-		for (MyIndustryJob industryJob : industryJobs) {
-			if (industryJob.isDelivered()) {
-				continue; //Doesn't count as active
-			}
-			switch (industryJob.getActivity()) {
-				case ACTIVITY_MANUFACTURING:
-					if (industryJob.getState() == IndustryJobState.STATE_DONE) {
-						manufacturingDone++;
-					}
-					manufacturingActive++;
-					break;
-				case ACTIVITY_REACTIONS:
-					if (industryJob.getState() == IndustryJobState.STATE_DONE) {
-						reactionsDone++;
-					}
-					reactionsActive++;
-					break;
-				case ACTIVITY_RESEARCHING_METERIAL_PRODUCTIVITY:
-				case ACTIVITY_RESEARCHING_TECHNOLOGY:
-				case ACTIVITY_RESEARCHING_TIME_PRODUCTIVITY:
-				case ACTIVITY_REVERSE_ENGINEERING:
-				case ACTIVITY_REVERSE_INVENTION:
-				case ACTIVITY_DUPLICATING:
-				case ACTIVITY_COPYING:
-					if (industryJob.getState() == IndustryJobState.STATE_DONE) {
-						researchDone++;
-					}
-					researchActive++;
-					break;
-			}
+	public final void count(MyIndustryJob industryJob) {
+		if (industryJob.isDelivered()) {
+			return; //Doesn't count as active
 		}
+		switch (industryJob.getActivity()) {
+			case ACTIVITY_MANUFACTURING:
+				if (industryJob.getState() == IndustryJobState.STATE_DONE) {
+					manufacturingDone++;
+				}
+				manufacturingActive++;
+				break;
+			case ACTIVITY_REACTIONS:
+				if (industryJob.getState() == IndustryJobState.STATE_DONE) {
+					reactionsDone++;
+				}
+				reactionsActive++;
+				break;
+			case ACTIVITY_RESEARCHING_METERIAL_PRODUCTIVITY:
+			case ACTIVITY_RESEARCHING_TECHNOLOGY:
+			case ACTIVITY_RESEARCHING_TIME_PRODUCTIVITY:
+			case ACTIVITY_REVERSE_ENGINEERING:
+			case ACTIVITY_REVERSE_INVENTION:
+			case ACTIVITY_DUPLICATING:
+			case ACTIVITY_COPYING:
+				if (industryJob.getState() == IndustryJobState.STATE_DONE) {
+					researchDone++;
+				}
+				researchActive++;
+				break;
+		}
+	}
+
+	public final void count(OwnerType ownerType) {
 		//Default
 		manufacturingMax = manufacturingMax + 1;
 		reactionsMax = reactionsMax + 1;
