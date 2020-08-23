@@ -57,6 +57,7 @@ import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
 import net.nikr.eve.jeveasset.gui.shared.components.JIntegerField;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
+import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.SubpileStock;
 import net.nikr.eve.jeveasset.i18n.TabsStockpile;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 
@@ -210,14 +211,19 @@ class StockpileShoppingListDialog extends JDialogCentered {
 
 	//All claims
 		Map<TypeIdentifier, List<StockClaim>> claims = new HashMap<>();
-		String stockpileNames = "";
+		Map<String, Double> subpiles = new HashMap<>();
+		StringBuilder stockpileNamesBuilder = new StringBuilder();
 		for (Stockpile stockpile : stockpiles) {
-			//Stockpile names
-			if (!stockpileNames.isEmpty()) {
-				stockpileNames = stockpileNames + ", ";
-			}
-			stockpileNames = stockpileNames + stockpile.getName();
+			stockpileNamesBuilder.append(Formater.copyFormat(stockpile.getMultiplier()));
+			stockpileNamesBuilder.append("x ");
+			stockpileNamesBuilder.append(stockpile.getName());
+			stockpileNamesBuilder.append("\r\n");
 			for (StockpileItem stockpileItem : stockpile.getClaims()) {
+				if (stockpileItem instanceof SubpileStock) {
+					String key = stockpileItem.getName().trim();
+					double value = subpiles.getOrDefault(key, 0.0);
+					subpiles.put(key, value + stockpileItem.getCountMinimumMultiplied());
+				}
 				TypeIdentifier typeID = new TypeIdentifier(stockpileItem);
 				if (!typeID.isEmpty()) { //Ignore Total
 					List<StockClaim> claimList  = claims.get(typeID);
@@ -322,20 +328,46 @@ class StockpileShoppingListDialog extends JDialogCentered {
 				shoppingListBuilder.append("\r\n");
 			}
 		}
-		String s = shoppingListBuilder.toString();
-		if (s.isEmpty()) { //if string is empty, nothing is needed
-			s = TabsStockpile.get().nothingNeeded();
+		StringBuilder subpileNamesBuilder = new StringBuilder();
+		for (Map.Entry<String, Double> entry : subpiles.entrySet()) {
+			subpileNamesBuilder.append(Formater.copyFormat(entry.getValue()));
+			subpileNamesBuilder.append("x ");
+			subpileNamesBuilder.append(entry.getKey());
+			subpileNamesBuilder.append("\r\n");
+		}
+		if (shoppingListBuilder.length() == 0) { //if string is empty, nothing is needed
+			shoppingListBuilder.append(TabsStockpile.get().nothingNeeded());
 		} else { //Add total volume and value
-			s = s + "\r\n";
-			s = s + TabsStockpile.get().totalToHaul() + Formater.doubleFormat(Math.abs(volume)) + "\r\n";
-			s = s + TabsStockpile.get().estimatedMarketValue() + Formater.iskFormat(Math.abs(value)) + "\r\n";
+			shoppingListBuilder.append("\r\n");
+			shoppingListBuilder.append(TabsStockpile.get().totalToHaul());
+			shoppingListBuilder.append(Formater.doubleFormat(Math.abs(volume)));
+			shoppingListBuilder.append("\r\n");
+			shoppingListBuilder.append(TabsStockpile.get().estimatedMarketValue());
+			shoppingListBuilder.append(Formater.iskFormat(Math.abs(value)));
 		}
-		if (percent != 100) { //Add stockpile names (adds percent if it's not 100%)
-			s = stockpileNames + " (" + percent + TabsStockpile.get().percent() + ")\r\n\r\n" + s;
-		} else { //(without percent)
-			s = stockpileNames + "\r\n\r\n" + s;
+		StringBuilder resultBuilder = new StringBuilder();
+		//Add stockpile
+		resultBuilder.append(TabsStockpile.get().stockpileShoppingList());
+		if (percent != 100) { //adds percent if it's not 100%
+			resultBuilder.append(" (");
+			resultBuilder.append(percent);
+			resultBuilder.append(TabsStockpile.get().percent());
+			resultBuilder.append(")");
 		}
-		shoppingList = s;
+		resultBuilder.append(":\r\n");
+		resultBuilder.append(stockpileNamesBuilder.toString());
+		resultBuilder.append("\r\n");
+		//Add subpiles
+		if (!subpiles.isEmpty()) {
+			resultBuilder.append(TabsStockpile.get().subpileShoppingList());
+			resultBuilder.append("\r\n");
+			resultBuilder.append(subpileNamesBuilder.toString());
+			resultBuilder.append("\r\n");
+		}
+		resultBuilder.append(TabsStockpile.get().itemsShoppingList());
+		resultBuilder.append("\r\n");
+		resultBuilder.append(shoppingListBuilder.toString());
+		shoppingList = resultBuilder.toString();
 		eveMultibuy = eveMultibuyBuilder.toString();
 		setText();
 	}
