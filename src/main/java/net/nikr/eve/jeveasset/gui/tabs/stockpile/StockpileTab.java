@@ -819,9 +819,6 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 		for (Map.Entry<Stockpile, Double> entry : parentStockpile.getSubpiles().entrySet()) {
 			//For each subpile (stockpile)
 			Stockpile currentStockpile = entry.getKey();
-			if (!program.getProfileManager().getActiveProfile().getStockpileIDs().contains(currentStockpile.getId())) {
-				continue;
-			}
 			Double value = entry.getValue();
 			String path = parentPath + currentStockpile.getName() + "\r\n";
 			int level = parentLevel + 1;
