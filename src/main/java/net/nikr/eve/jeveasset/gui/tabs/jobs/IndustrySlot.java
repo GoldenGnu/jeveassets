@@ -20,8 +20,6 @@
  */
 package net.nikr.eve.jeveasset.gui.tabs.jobs;
 
-import java.util.HashSet;
-import java.util.Set;
 import net.nikr.eve.jeveasset.data.api.accounts.OwnerType;
 import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob;
 import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob.IndustryJobState;
