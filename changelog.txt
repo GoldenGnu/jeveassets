@@ -16,6 +16,18 @@
                   #### #  # #  # #  # #### #### #### #### ####
 
 ________________________________________________________________________________
+_6.6.2__________________________________________________________________________
+
+New Features:
+-Added stockpile multiplier and subpile target in the shopping list (Issue #189)
+
+Changed:
+-Subpiles are now include when hidden (Issue #188)
+
+Bug Fixes:
+-Industry Slots did not include corporation jobs
+
+________________________________________________________________________________
 _6.6.1__________________________________________________________________________
 
 New Features:
