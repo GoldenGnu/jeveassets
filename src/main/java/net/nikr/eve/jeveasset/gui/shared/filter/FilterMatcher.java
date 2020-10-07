@@ -63,18 +63,22 @@ public class FilterMatcher<E> implements Matcher<E> {
 		this.enumColumn = enumColumn;
 		this.compare = compare;
 		Pattern compiled;
-		try {
-			compiled = Pattern.compile(format(text), Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
-		} catch (PatternSyntaxException ex){
-			compiled = Pattern.compile("", Pattern.CASE_INSENSITIVE);
+		if (text == null) {
+			this.pattern = null;
+		} else {
+			try {
+				compiled = Pattern.compile(format(text), Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
+			} catch (PatternSyntaxException ex){
+				compiled = Pattern.compile("", Pattern.CASE_INSENSITIVE);
+			}
+			this.pattern = compiled;
 		}
-		this.pattern = compiled;
 		if (CompareType.isColumnCompare(compare)) {
 			this.text = text;
 		} else {
-			this.text = format(text, true).toLowerCase();
+			this.text = format(text, true);
 		}
-		empty = !enabled || text.isEmpty();
+		empty = !enabled || text == null || text.isEmpty();
 		and = logic == Filter.LogicType.AND;
 	}
 
@@ -129,13 +133,13 @@ public class FilterMatcher<E> implements Matcher<E> {
 			case LESS_THAN_COLUMN:
 				return less(column, filterControl.getColumnValue(item, text));
 			case EQUALS_COLUMN:
-				return equals(column, format(filterControl.getColumnValue(item, text), false).toLowerCase());
+				return equals(column, format(filterControl.getColumnValue(item, text), false));
 			case EQUALS_NOT_COLUMN:
-				return !equals(column, format(filterControl.getColumnValue(item, text), false).toLowerCase());
+				return !equals(column, format(filterControl.getColumnValue(item, text), false));
 			case CONTAINS_COLUMN:
-				return contains(column, format(filterControl.getColumnValue(item, text), false).toLowerCase());
+				return contains(column, format(filterControl.getColumnValue(item, text), false));
 			case CONTAINS_NOT_COLUMN:
-				return !contains(column, format(filterControl.getColumnValue(item, text), false).toLowerCase());
+				return !contains(column, format(filterControl.getColumnValue(item, text), false));
 			case BEFORE_COLUMN:
 				return before(column, filterControl.getColumnValue(item, text));
 			case AFTER_COLUMN:
@@ -160,7 +164,7 @@ public class FilterMatcher<E> implements Matcher<E> {
 				builder.append("\r");
 			}
 		}
-		return builder.toString().toLowerCase();
+		return builder.toString();
 	}
 
 	private boolean matchesAll(final E item) {
@@ -169,7 +173,7 @@ public class FilterMatcher<E> implements Matcher<E> {
 			haystack = buildItemCache(filterControl, item);
 			filterControl.addCache(item, haystack);
 		}
-		if (null == compare) {
+		if (compare == null || text == null) {
 			return true;
 		} else switch (compare) {
 			case CONTAINS:
@@ -194,7 +198,7 @@ public class FilterMatcher<E> implements Matcher<E> {
 		}
 
 		//Equals (case insentive)
-		return format(object1, false).toLowerCase().equals(formatedText);
+		return format(object1, false).equals(formatedText);
 	}
 
 	private boolean regex(final Object object1, final Pattern pattern) {
@@ -214,7 +218,7 @@ public class FilterMatcher<E> implements Matcher<E> {
 		}
 
 		//Contains (case insentive)
-		return format(object1, false).toLowerCase().contains(formatedText);
+		return format(object1, false).contains(formatedText);
 	}
 
 	private boolean less(final Object object1, final Object object2) {
@@ -425,17 +429,17 @@ public class FilterMatcher<E> implements Matcher<E> {
 		//Number
 		Number number = getNumber(object, userInput);
 		if (number != null) {
-			return Formater.compareFormat(number);
+			return Formater.compareFormat(number).toLowerCase();
 		}
 
 		//Date
 		Date date = getDate(object, userInput);
 		if (date != null) {
-			return Formater.columnDate(date);
+			return Formater.columnDate(date).toLowerCase();
 		}
 
 		//String
-		return format(object.toString());
+		return format(object.toString()).toLowerCase();
 	}
 
 	private static String format(String string) {
