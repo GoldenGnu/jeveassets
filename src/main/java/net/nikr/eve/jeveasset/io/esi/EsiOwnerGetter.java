@@ -54,12 +54,14 @@ public class EsiOwnerGetter extends AbstractEsiGetter implements AccountAdder{
 		OAuth auth = (OAuth) owner.getApiClient().getAuthentication("evesso");
 		JWT jwt = auth.getJWT();
 		if (jwt == null) {
-			addError(null, "JWT is null", null);
+			addError("INVALID AUTHORIZATION (JWT)", "Account Authorization Invalid\r\n(Fix: Options > Options... > Edit the invalid account > Authorize)", null);
+			owner.setInvalid(true);
 			return;
 		}
 		JWT.Payload payload = jwt.getPayload();
 		if (payload == null) {
-			addError(null, "JWT payload is null", null);
+			addError("INVALID AUTHORIZATION (PAYLOAD)", "Account Authorization Invalid\r\n(Fix: Options > Options... > Edit the invalid account > Authorize)", null);
+			owner.setInvalid(true);
 			return;
 		}
 		Set<RolesEnum> roles = EnumSet.noneOf(RolesEnum.class);
