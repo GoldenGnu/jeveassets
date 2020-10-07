@@ -86,6 +86,12 @@ public final class Formater {
 	}
 
 	public static String copyFormat(final Number number) {
+		DecimalFormatSymbols otherSymbols = new DecimalFormatSymbols(Locale.ENGLISH);
+		switch (Settings.get().getExportSettings().getCopyDecimalSeparator()) {
+			case COMMA: otherSymbols.setDecimalSeparator(','); break;
+			case DOT: otherSymbols.setDecimalSeparator('.'); break;
+		}
+		COPY_FORMAT.setDecimalFormatSymbols(otherSymbols);
 		return COPY_FORMAT.format(number);
 	}
 	public static String iskFormat(final Number number) {

@@ -46,6 +46,7 @@ public abstract class DialoguesSettings extends Bundle {
 	public abstract String focusEveOnlineLinuxCmd();
 	public abstract String focusEveOnlineLinuxHelp();
 	public abstract String focusEveOnlineLinuxHelp2();
+	public abstract String copyDecimalSeparator();
 	public abstract String transactionsMargin();
 	public abstract String transactionsPrice();
 	public abstract String transactionsPriceAverage();
