@@ -123,6 +123,9 @@ public class Program implements ActionListener {
 	private static boolean portable = false;
 	private static boolean lazySave = false;
 
+	//Height
+	private static int height = 22; //Defaults to 22
+
 	//GUI
 	private MainWindow mainWindow;
 
@@ -167,11 +170,7 @@ public class Program implements ActionListener {
 	private final PriceDataGetter priceDataGetter;
 	private final String localData;
 
-	//Height
-	private static int height = 0;
-
 	public Program() {
-		height = calcButtonsHeight();
 		if (debug) {
 			LOG.debug("Force Update: {} Force No Update: {}", forceUpdate, forceNoUpdate);
 			DetectEdtViolationRepaintManager.install();
@@ -191,6 +190,8 @@ public class Program implements ActionListener {
 		ContractPriceManager.load();
 
 		initLookAndFeel(Settings.get().getColorSettings().getLookAndFeelClass());
+
+		calcButtonsHeight(); //Must be done after setting the LAF
 
 		updater = new Updater();
 		localData = updater.getLocalData();
@@ -385,24 +386,10 @@ public class Program implements ActionListener {
 		return height;
 	}
 
-	private int calcButtonsHeight() {
-		int comboBox = new JComboBox<>().getPreferredSize().height;
-		int textField = new JTextField().getPreferredSize().height;
-		int button = new JButton().getPreferredSize().height;
-		int buttonsHeight = 0;
-		if (buttonsHeight < comboBox) {
-			buttonsHeight = comboBox;
-		}
-		if (buttonsHeight < textField) {
-			buttonsHeight = textField;
-		}
-		if (buttonsHeight < button) {
-			buttonsHeight = button;
-		}
-		if (buttonsHeight < 22) {
-			buttonsHeight = 22;
-		}
-		return buttonsHeight;
+	private void calcButtonsHeight() {
+		height = Math.max(height, new JComboBox<>().getPreferredSize().height);
+		height = Math.max(height, new JTextField().getPreferredSize().height);
+		height = Math.max(height, new JButton().getPreferredSize().height);
 	}
 
 	public static int getButtonsWidth() {
