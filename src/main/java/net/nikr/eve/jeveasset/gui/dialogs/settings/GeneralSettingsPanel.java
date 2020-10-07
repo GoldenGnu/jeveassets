@@ -30,6 +30,7 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 import net.nikr.eve.jeveasset.Program;
+import net.nikr.eve.jeveasset.data.settings.ExportSettings.DecimalSeparator;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.data.settings.Settings.TransactionProfitPrice;
 import net.nikr.eve.jeveasset.gui.images.Images;
@@ -39,13 +40,14 @@ import net.nikr.eve.jeveasset.i18n.DialoguesSettings;
 
 
 public class GeneralSettingsPanel extends JSettingsPanel {
-
+	
 	private final JCheckBox jEnterFilters;
 	private final JCheckBox jHighlightSelectedRow;
 	private final JCheckBox jFocusEveOnline;
 	private final JTextField jMaxOrderAge;
 	private final JTextField jTransactionProfitMargin;
 	private final JComboBox<TransactionProfitPrice> jTransactionProfitPrice;
+	private final JComboBox<DecimalSeparator> jDecimalSeparator;
 
 
 	public GeneralSettingsPanel(final Program program, final SettingsDialog optionsDialog) {
@@ -56,6 +58,9 @@ public class GeneralSettingsPanel extends JSettingsPanel {
 		jHighlightSelectedRow = new JCheckBox(DialoguesSettings.get().highlightSelectedRow());
 
 		jFocusEveOnline = new JCheckBox(DialoguesSettings.get().focusEveOnline());
+
+		JLabel jDecimalSeparatorLabel = new JLabel(DialoguesSettings.get().copyDecimalSeparator());
+		jDecimalSeparator = new JComboBox<>(DecimalSeparator.values());
 
 		JLabel jFocusEveOnlineLinuxHelp = new JLabel(DialoguesSettings.get().focusEveOnlineLinuxHelp());
 		jFocusEveOnlineLinuxHelp.setVisible(Platform.isLinux());
@@ -89,7 +94,6 @@ public class GeneralSettingsPanel extends JSettingsPanel {
 				.addComponent(jEnterFilters)
 				.addComponent(jHighlightSelectedRow)
 				.addComponent(jFocusEveOnline)
-				.addComponent(jTransactionProfitLabel)
 				.addGroup(layout.createSequentialGroup()
 					.addGap(25)
 					.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
@@ -98,17 +102,24 @@ public class GeneralSettingsPanel extends JSettingsPanel {
 						.addComponent(jFocusEveOnlineLinuxCmd)
 					)
 				)
+				.addComponent(jTransactionProfitLabel)
 				.addGroup(layout.createSequentialGroup()
-					.addGap(25)
 					.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-						.addComponent(jTransactionProfitPriceLabel)
-						.addComponent(jMaxOrderAgeLabel)
-						.addComponent(jTransactionProfitMarginLabel)
+						.addComponent(jDecimalSeparatorLabel)
+						.addGroup(layout.createSequentialGroup()
+							.addGap(25)
+							.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+								.addComponent(jTransactionProfitPriceLabel)
+								.addComponent(jMaxOrderAgeLabel)
+								.addComponent(jTransactionProfitMarginLabel)
+							)
+						)
 					)
 					.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
 						.addComponent(jMaxOrderAge)
 						.addComponent(jTransactionProfitPrice)
 						.addComponent(jTransactionProfitMargin)
+						.addComponent(jDecimalSeparator)
 					)
 					.addComponent(jDaysLabel)
 				)
@@ -122,6 +133,10 @@ public class GeneralSettingsPanel extends JSettingsPanel {
 				.addComponent(jFocusEveOnlineLinuxHelp2, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 				.addComponent(jFocusEveOnlineLinuxCmd, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 				.addGap(10)
+				.addGroup(layout.createParallelGroup()
+					.addComponent(jDecimalSeparatorLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jDecimalSeparator, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+				)
 				.addComponent(jTransactionProfitLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 				.addGroup(layout.createParallelGroup()
 					.addComponent(jMaxOrderAgeLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
@@ -154,9 +169,11 @@ public class GeneralSettingsPanel extends JSettingsPanel {
 		} catch (NumberFormatException ex) {
 			transactionProfitMargin = 0;
 		}
+		DecimalSeparator copyDecimalSeparator = jDecimalSeparator.getItemAt(jDecimalSeparator.getSelectedIndex());
 		boolean update = jHighlightSelectedRow.isSelected() != Settings.get().isHighlightSelectedRows()
 						|| maximumPurchaseAge != Settings.get().getMaximumPurchaseAge()
 						|| transactionProfitPrice != Settings.get().getTransactionProfitPrice()
+						|| copyDecimalSeparator != 	Settings.get().getExportSettings().getCopyDecimalSeparator()
 						;
 		Settings.get().setFilterOnEnter(jEnterFilters.isSelected());
 		Settings.get().setHighlightSelectedRows(jHighlightSelectedRow.isSelected());
@@ -164,6 +181,7 @@ public class GeneralSettingsPanel extends JSettingsPanel {
 		Settings.get().setMaximumPurchaseAge(maximumPurchaseAge);
 		Settings.get().setTransactionProfitPrice(transactionProfitPrice);
 		Settings.get().setTransactionProfitMargin(transactionProfitMargin);
+		Settings.get().getExportSettings().setCopyDecimalSeparator(copyDecimalSeparator);
 		return update;
 	}
 
@@ -175,5 +193,6 @@ public class GeneralSettingsPanel extends JSettingsPanel {
 		jMaxOrderAge.setText(String.valueOf(Settings.get().getMaximumPurchaseAge()));
 		jTransactionProfitPrice.setSelectedItem(Settings.get().getTransactionProfitPrice());
 		jTransactionProfitMargin.setText(String.valueOf(Settings.get().getTransactionProfitMargin()));
+		jDecimalSeparator.setSelectedItem(Settings.get().getExportSettings().getCopyDecimalSeparator());
 	}
 }

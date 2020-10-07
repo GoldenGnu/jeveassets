@@ -188,15 +188,8 @@ public class CopyHandler {
 
 				//Add value
 				if (value != null) { //Ignore null
-					//Format value to displayed value
-					if (value instanceof Float) {
-						rowText.append(Formater.floatFormat(value));
-					} else if (value instanceof Double) {
-						rowText.append(Formater.doubleFormat(value));
-					} else if (value instanceof Integer) {
-						rowText.append(Formater.integerFormat(value));
-					} else if (value instanceof Long) {
-						rowText.append(Formater.longFormat(value));
+					if (value instanceof Number) {
+						rowText.append(Formater.copyFormat((Number)value));
 					} else if (value instanceof Date) {
 						rowText.append(Formater.columnDate(value));
 					} else if (value instanceof HierarchyColumn) {

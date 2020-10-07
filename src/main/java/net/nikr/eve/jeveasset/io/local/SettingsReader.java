@@ -1515,11 +1515,16 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 	}
 
 	private void parseExportSettings(final Element element, final Settings settings) throws XmlException {
+		//Copy
+		String copy = getStringOptional(element, "copy");
+		if (copy != null) {
+			settings.getExportSettings().setCopyDecimalSeparator(DecimalSeparator.valueOf(copy));
+		}
 		//CSV
 		DecimalSeparator decimal = DecimalSeparator.valueOf(getString(element, "decimal"));
 		FieldDelimiter field = FieldDelimiter.valueOf(getString(element, "field"));
 		LineDelimiter line = LineDelimiter.valueOf(getString(element, "line"));
-		settings.getExportSettings().setDecimalSeparator(decimal);
+		settings.getExportSettings().setCsvDecimalSeparator(decimal);
 		settings.getExportSettings().setFieldDelimiter(field);
 		settings.getExportSettings().setLineDelimiter(line);
 		//SQL

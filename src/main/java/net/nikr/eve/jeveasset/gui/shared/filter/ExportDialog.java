@@ -202,18 +202,18 @@ public class ExportDialog<E> extends JDialogCentered {
 		jOptionPanel.add(jCsvPanel, ExportFormat.CSV.name());
 
 		JLabel jFieldDelimiterLabel = new JLabel(DialoguesExport.get().fieldTerminated());
-		jFieldDelimiter = new JComboBox<FieldDelimiter>(FieldDelimiter.values());
+		jFieldDelimiter = new JComboBox<>(FieldDelimiter.values());
 		jCsvPanel.add(jFieldDelimiterLabel);
 		jCsvPanel.add(jFieldDelimiter);
 
 		JLabel jLineDelimiterLabel = new JLabel(DialoguesExport.get().linesTerminated());
-		jLineDelimiter = new JComboBox<LineDelimiter>(LineDelimiter.values());
+		jLineDelimiter = new JComboBox<>(LineDelimiter.values());
 		jCsvPanel.add(jLineDelimiterLabel);
 		jCsvPanel.add(jLineDelimiter);
 
 		//FIXME - - > ExportDialog: DecimalSeparator also used by HTML export...
 		JLabel jDecimalSeparatorLabel = new JLabel(DialoguesExport.get().decimalSeparator());
-		jDecimalSeparator = new JComboBox<DecimalSeparator>(DecimalSeparator.values());
+		jDecimalSeparator = new JComboBox<>(DecimalSeparator.values());
 		jCsvPanel.add(jDecimalSeparatorLabel);
 		jCsvPanel.add(jDecimalSeparator);
 	//Sql
@@ -280,7 +280,7 @@ public class ExportDialog<E> extends JDialogCentered {
 		jFilterButtonGroup.add(jSavedFilter);
 		jFilterButtonGroup.add(jCurrentFilter);
 
-		jFilters = new JComboBox<String>();
+		jFilters = new JComboBox<>();
 
 		filterLayout.setHorizontalGroup(
 			filterLayout.createParallelGroup()
@@ -318,7 +318,7 @@ public class ExportDialog<E> extends JDialogCentered {
 		jViewSaved.setActionCommand(ExportAction.VIEW_CHANGED.name());
 		jViewSaved.addActionListener(listener);
 
-		jViews = new JComboBox<String>();
+		jViews = new JComboBox<>();
 
 		jViewSelect = new JRadioButton(DialoguesExport.get().viewSelect());
 		jViewSelect.setActionCommand(ExportAction.VIEW_CHANGED.name());
@@ -338,7 +338,7 @@ public class ExportDialog<E> extends JDialogCentered {
 		});
 		jViewSelectAll.setEnabled(false);
 
-		jColumnSelection = new JMultiSelectionList<EnumTableColumn<E>>(columnIndex);
+		jColumnSelection = new JMultiSelectionList<>(columnIndex);
 		jColumnSelection.clearSelection();
 		jColumnSelection.setEnabled(false);
 
@@ -455,7 +455,7 @@ public class ExportDialog<E> extends JDialogCentered {
 	}
 
 	private List<String> getExportColumns() {
-		List<String> selectedColumns = new ArrayList<String>();
+		List<String> selectedColumns = new ArrayList<>();
 		for (EnumTableColumn<E> column : jColumnSelection.getSelectedValuesList()) {
 			selectedColumns.add(column.name());
 		}
@@ -510,7 +510,7 @@ public class ExportDialog<E> extends JDialogCentered {
 		//CSV
 		Settings.get().getExportSettings().setFieldDelimiter((FieldDelimiter) jFieldDelimiter.getSelectedItem());
 		Settings.get().getExportSettings().setLineDelimiter((LineDelimiter) jLineDelimiter.getSelectedItem());
-		Settings.get().getExportSettings().setDecimalSeparator((DecimalSeparator) jDecimalSeparator.getSelectedItem());
+		Settings.get().getExportSettings().setCsvDecimalSeparator((DecimalSeparator) jDecimalSeparator.getSelectedItem());
 		//SQL
 		Settings.get().getExportSettings().putTableName(toolName, jTableName.getText());
 		Settings.get().getExportSettings().setDropTable(jDropTable.isSelected());
@@ -534,7 +534,7 @@ public class ExportDialog<E> extends JDialogCentered {
 		//CSV
 		jFieldDelimiter.setSelectedItem(Settings.get().getExportSettings().getFieldDelimiter());
 		jLineDelimiter.setSelectedItem(Settings.get().getExportSettings().getLineDelimiter());
-		jDecimalSeparator.setSelectedItem(Settings.get().getExportSettings().getDecimalSeparator());
+		jDecimalSeparator.setSelectedItem(Settings.get().getExportSettings().getCsvDecimalSeparator());
 		//SQL
 		jTableName.setText(Settings.get().getExportSettings().getTableName(toolName));
 		jDropTable.setSelected(Settings.get().getExportSettings().isDropTable());
@@ -564,7 +564,7 @@ public class ExportDialog<E> extends JDialogCentered {
 		if (list == null) {
 			jColumnSelection.clearSelection();
 		} else {
-			List<Integer> selections = new ArrayList<Integer>();
+			List<Integer> selections = new ArrayList<>();
 			for (String column : list) {
 				try {
 					EnumTableColumn<?> enumColumn = exportFilterControl.valueOf(column);
@@ -587,7 +587,7 @@ public class ExportDialog<E> extends JDialogCentered {
 		//CSV
 		Settings.get().getExportSettings().setFieldDelimiter(FieldDelimiter.COMMA);
 		Settings.get().getExportSettings().setLineDelimiter(LineDelimiter.DOS);
-		Settings.get().getExportSettings().setDecimalSeparator(DecimalSeparator.DOT);
+		Settings.get().getExportSettings().setCsvDecimalSeparator(DecimalSeparator.DOT);
 		//SQL
 		Settings.get().getExportSettings().putTableName(toolName, "");
 		Settings.get().getExportSettings().setDropTable(true);
@@ -621,10 +621,10 @@ public class ExportDialog<E> extends JDialogCentered {
 					jFilters.setEnabled(true);
 				}
 				jSavedFilter.setEnabled(true);
-				List<String> filterNames = new ArrayList<String>(exportFilterControl.getAllFilters().keySet());
+				List<String> filterNames = new ArrayList<>(exportFilterControl.getAllFilters().keySet());
 				Collections.sort(filterNames, new CaseInsensitiveComparator());
 				Object selectedItem = jFilters.getSelectedItem(); //Save selection
-				jFilters.setModel(new ListComboBoxModel<String>(filterNames));
+				jFilters.setModel(new ListComboBoxModel<>(filterNames));
 				if (selectedItem != null) { //Restore selection
 					jFilters.setSelectedItem(selectedItem);
 				}
@@ -653,7 +653,7 @@ public class ExportDialog<E> extends JDialogCentered {
 				}
 				jViewSaved.setEnabled(true);
 				Object selectedItem = jViews.getSelectedItem(); //Save selection
-				jViews.setModel(new ListComboBoxModel<String>(tableViews.keySet()));
+				jViews.setModel(new ListComboBoxModel<>(tableViews.keySet()));
 				if (selectedItem != null) { //Restore selection
 					jViews.setSelectedItem(selectedItem);
 				}
@@ -677,10 +677,10 @@ public class ExportDialog<E> extends JDialogCentered {
 
 	@Override
 	protected void save() {
-		List<E> items = new ArrayList<E>();
+		List<E> items = new ArrayList<>();
 
 	//Columns + Header
-		List<EnumTableColumn<E>> header = new ArrayList<EnumTableColumn<E>>();
+		List<EnumTableColumn<E>> header = new ArrayList<>();
 		if (jViewCurrent.isSelected()) {
 			//Use the tool current shown columns + order
 			header = exportFilterControl.getShownColumns();
@@ -703,7 +703,7 @@ public class ExportDialog<E> extends JDialogCentered {
 			return;
 		}
 	//Bad options
-		if (jCsv.isSelected() && Settings.get().getExportSettings().getDecimalSeparator() == DecimalSeparator.COMMA && Settings.get().getExportSettings().getFieldDelimiter() == FieldDelimiter.COMMA) {
+		if (jCsv.isSelected() && Settings.get().getExportSettings().getCsvDecimalSeparator() == DecimalSeparator.COMMA && Settings.get().getExportSettings().getFieldDelimiter() == FieldDelimiter.COMMA) {
 			int nReturn = JOptionPane.showConfirmDialog(
 					getDialog(),
 					DialoguesExport.get().confirmStupidDecision(),
@@ -734,9 +734,9 @@ public class ExportDialog<E> extends JDialogCentered {
 			for (EventList<E> eventList : eventLists) {
 				try {
 					eventList.getReadWriteLock().readLock().lock();
-					FilterList<E> filterList = new FilterList<E>(eventList, new FilterLogicalMatcher<E>(filterControl, filter));
+					FilterList<E> filterList = new FilterList<>(eventList, new FilterLogicalMatcher<>(filterControl, filter));
 					if (!filterList.isEmpty() && filterList.get(0) instanceof TreeAsset) {
-						FilterList<E> treeFilterList = new FilterList<E>(eventList, new TreeMatcher<E>(filterList));
+						FilterList<E> treeFilterList = new FilterList<>(eventList, new TreeMatcher<>(filterList));
 						items.addAll(treeFilterList);
 					} else {
 						items.addAll(filterList);
@@ -751,9 +751,9 @@ public class ExportDialog<E> extends JDialogCentered {
 			for (EventList<E> eventList : eventLists) {
 				try {
 					eventList.getReadWriteLock().readLock().lock();
-					FilterList<E> filterList = new FilterList<E>(eventList, new FilterLogicalMatcher<E>(filterControl, filter));
+					FilterList<E> filterList = new FilterList<>(eventList, new FilterLogicalMatcher<>(filterControl, filter));
 					if (!filterList.isEmpty() && filterList.get(0) instanceof TreeAsset) {
-						FilterList<E> treeFilterList = new FilterList<E>(eventList, new TreeMatcher<E>(filterList));
+						FilterList<E> treeFilterList = new FilterList<>(eventList, new TreeMatcher<>(filterList));
 						items.addAll(treeFilterList);
 					} else {
 						items.addAll(filterList);
@@ -770,17 +770,17 @@ public class ExportDialog<E> extends JDialogCentered {
 		if (jCsv.isSelected()) {
 	//CSV
 			//Create data
-			List<String> headerStrings = new ArrayList<String>(header.size());
-			List<String> headerKeys = new ArrayList<String>(header.size());
+			List<String> headerStrings = new ArrayList<>(header.size());
+			List<String> headerKeys = new ArrayList<>(header.size());
 			for (EnumTableColumn<E> column : header) {
 				headerStrings.add(column.getColumnName());
 				headerKeys.add(column.name());
 			}
-			List<Map<String, String>> rows = new ArrayList<Map<String, String>>();
+			List<Map<String, String>> rows = new ArrayList<>();
 			for (E e : items) {
-				Map<String, String> row = new HashMap<String, String>();
+				Map<String, String> row = new HashMap<>();
 				for (EnumTableColumn<E> column : header) {
-					row.put(column.name(), format(column.getColumnValue(e), Settings.get().getExportSettings().getDecimalSeparator(), false));
+					row.put(column.name(), format(column.getColumnValue(e), Settings.get().getExportSettings().getCsvDecimalSeparator(), false));
 				}
 				rows.add(row);
 			}
@@ -793,28 +793,28 @@ public class ExportDialog<E> extends JDialogCentered {
 		} else if (jHtml.isSelected()) {
 	//HTML
 			//Create data
-			List<Map<EnumTableColumn<?>, String>> rows = new ArrayList<Map<EnumTableColumn<?>, String>>();
+			List<Map<EnumTableColumn<?>, String>> rows = new ArrayList<>();
 			for (E e : items) {
-				Map<EnumTableColumn<?>, String> row = new HashMap<EnumTableColumn<?>, String>();
+				Map<EnumTableColumn<?>, String> row = new HashMap<>();
 				for (EnumTableColumn<E> column : header) {
-					row.put(column, format(column.getColumnValue(e), Settings.get().getExportSettings().getDecimalSeparator(), Settings.get().getExportSettings().isHtmlStyled()));
+					row.put(column, format(column.getColumnValue(e), Settings.get().getExportSettings().getCsvDecimalSeparator(), Settings.get().getExportSettings().isHtmlStyled()));
 				}
 				rows.add(row);
 			}
 			//Save data
 			saved = HtmlWriter.save(Settings.get().getExportSettings().getFilename(toolName),
 					rows,
-					new ArrayList<EnumTableColumn<?>>(header),
-					jHtmlIGB.isSelected() ? new ArrayList<Object>(items) : null,
+					new ArrayList<>(header),
+					jHtmlIGB.isSelected() ? new ArrayList<>(items) : null,
 					Settings.get().getExportSettings().isHtmlStyled(),
 					Settings.get().getExportSettings().getHtmlRepeatHeader(),
 					toolName.equals(TreeTab.NAME));
 		} else if (jSql.isSelected()) {
 	//SQL
 			//Create data
-			List<Map<EnumTableColumn<?>, Object>> rows = new ArrayList<Map<EnumTableColumn<?>, Object>>();
+			List<Map<EnumTableColumn<?>, Object>> rows = new ArrayList<>();
 			for (E e : items) {
-				Map<EnumTableColumn<?>, Object> row = new HashMap<EnumTableColumn<?>, Object>();
+				Map<EnumTableColumn<?>, Object> row = new HashMap<>();
 				for (EnumTableColumn<E> column : header) {
 					row.put(column, column.getColumnValue(e));
 				}
@@ -823,7 +823,7 @@ public class ExportDialog<E> extends JDialogCentered {
 			//Save data
 			saved = SqlWriter.save(Settings.get().getExportSettings().getFilename(toolName),
 					rows,
-					new ArrayList<EnumTableColumn<?>>(header),
+					new ArrayList<>(header),
 					Settings.get().getExportSettings().getTableName(toolName),
 					Settings.get().getExportSettings().isDropTable(),
 					Settings.get().getExportSettings().isCreateTable(),
@@ -928,7 +928,7 @@ public class ExportDialog<E> extends JDialogCentered {
 
 		public TreeMatcher(EventList<E> eventList) {
 			this.eventList = eventList;
-			Set<TreeAsset> items = new TreeSet<TreeAsset>(new AssetTreeComparator());
+			Set<TreeAsset> items = new TreeSet<>(new AssetTreeComparator());
 			for (E e : eventList) {
 				if (e instanceof TreeAsset) {
 					TreeAsset tree = (TreeAsset) e;
