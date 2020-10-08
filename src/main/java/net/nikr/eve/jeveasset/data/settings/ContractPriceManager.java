@@ -395,6 +395,10 @@ public class ContractPriceManager {
 		private final int te;
 		private final int runs;
 
+		public ContractPriceItem() {
+			this(0, false, false, 0, 0, 0);
+		}
+
 		public ContractPriceItem(int typeID, boolean bpc, boolean bpo, int me, int te, int runs) {
 			this.typeID = typeID;
 			this.bpc = bpc;
