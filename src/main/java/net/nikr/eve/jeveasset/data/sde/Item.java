@@ -73,7 +73,7 @@ public class Item implements Comparable<Item>, ItemType {
 		this.portion = portion;
 		this.productTypeID = productTypeID;
 		this.productQuantity = productQuantity;
-		this.blueprint = (name.toLowerCase().contains("blueprint"));
+		this.blueprint = category.toLowerCase().equals("blueprint");
 		this.version = version;
 	}
 
