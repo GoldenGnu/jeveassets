@@ -75,6 +75,10 @@ public class StaticData {
 		if (frigateEscapeBay == null) {
 			flags.put(179, new ItemFlag(179, "FrigateEscapeBay", "Frigate Escape Bay"));
 		}
+		ItemFlag quantumCoreRoom = flags.get(180);
+		if (quantumCoreRoom == null) {
+			flags.put(180, new ItemFlag(180, "QuantumCoreRoom", "Quantum Core Room"));
+		}
 		SplashUpdater.setProgress(25);
 	}
 

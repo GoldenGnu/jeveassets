@@ -813,6 +813,7 @@ public class RawConverter {
 		BOOSTERBAY("BoosterBay", 176),
 		SUBSYSTEMBAY("SubSystemBay", 177),
 		FRIGATEESCAPEBAY("FrigateEscapeBay", 179),
+		QUANTUMCOREROOM("QuantumCoreRoom", 180),
 		;
 
 		private final String value;
