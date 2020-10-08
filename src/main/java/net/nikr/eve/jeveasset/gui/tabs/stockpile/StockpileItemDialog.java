@@ -283,10 +283,9 @@ public class StockpileItemDialog extends JDialogCentered {
 			jCopy.setSelected(false);
 		} else {
 			Item item = (Item) jItems.getSelectedItem();
-			boolean blueprint = item.getTypeName().toLowerCase().contains("blueprint");
-			jCopy.setEnabled(blueprint);
-			if (!blueprint) {
-				jCopy.setSelected(blueprint);
+			jCopy.setEnabled(item.isBlueprint());
+			if (!item.isBlueprint()) {
+				jCopy.setSelected(item.isBlueprint());
 			}
 		}
 		if (jCopy.isSelected()) {
