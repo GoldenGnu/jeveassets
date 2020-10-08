@@ -1057,7 +1057,6 @@ public class StockpileDialog extends JDialogCentered {
 			jAssets.setHorizontalAlignment(JButton.LEFT);
 			jAssets.setActionCommand(StockpileDialogAction.VALIDATE.name());
 			jAssets.addActionListener(listener);
-			jAssets.setSelected(true);
 			jInclude.add(jAssets, true);
 
 			jJobs = new JCheckBoxMenuItem(TabsStockpile.get().includeJobs());
