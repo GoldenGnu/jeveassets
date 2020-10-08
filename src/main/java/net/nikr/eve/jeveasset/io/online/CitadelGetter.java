@@ -192,7 +192,7 @@ public class CitadelGetter {
 	protected boolean canUpdate(UpdateTask updateTask) {
 		if (citadelSettings.getNextUpdate().after(new Date()) && !Program.isForceUpdate()) { //Check if we can update now
 			if (updateTask != null) {
-				updateTask.addWarning(DialoguesUpdate.get().citadel(), "Waiting for cache to expire.\r\n(Fix: Just wait a bit)");
+				updateTask.addWarning(DialoguesUpdate.get().citadel(), "Not updated: Waiting for cache to expire.\r\n(Not an error: Will be updatable when the cache expires)");
 			}
 			LOG.info("	Citadels failed to update (NOT ALLOWED YET)");
 			return false;
