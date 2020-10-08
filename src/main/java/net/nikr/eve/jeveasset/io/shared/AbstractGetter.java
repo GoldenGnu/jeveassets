@@ -151,7 +151,7 @@ public abstract class AbstractGetter<O extends OwnerType> implements Runnable {
 		}
 		//Check API cache time
 		if (wait) {
-			addWarning("NOT ALLOWED YET", "Waiting for cache to expire.\r\n(Fix: Just wait a bit)");
+			addWarning("NOT ALLOWED YET", "Not updated: Waiting for cache to expire.\r\n(Not an error: Will be updatable when the cache expires)");
 			return false;
 		}
 		//Check if the owner have accesss to the endpoint 
