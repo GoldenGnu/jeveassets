@@ -12,6 +12,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import javax.swing.BorderFactory;
+import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JTable;
@@ -48,7 +49,6 @@ public class AccountSeparatorTableCell extends SeparatorTableCell<OwnerType> {
 	private final JLabel jExpiredLabel;
 	private final JLabel jMigratedLabel;
 	private final JLabel jCanMigrateLabel;
-	private final JLabel jSpaceLabel;
 	private final JLabel jSeparatorLabel;
 
 	private final Color defaultColor;
@@ -98,8 +98,6 @@ public class AccountSeparatorTableCell extends SeparatorTableCell<OwnerType> {
 
 		jCanMigrateLabel = new JLabel(DialoguesAccount.get().accountCanMigrate());
 
-		jSpaceLabel = new JLabel();
-
 		layout.setHorizontalGroup(
 			layout.createParallelGroup()
 				.addComponent(jSeparatorLabel, 0, 0, Integer.MAX_VALUE)
@@ -112,13 +110,12 @@ public class AccountSeparatorTableCell extends SeparatorTableCell<OwnerType> {
 					.addGap(5)
 					.addComponent(jAccountType)
 					.addGap(5)
-					.addComponent(jAccountName, 20, 20, Integer.MAX_VALUE)
+					.addComponent(jAccountName, 120, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
 					.addGap(10)
 					.addComponent(jExpiredLabel)
 					.addComponent(jInvalidLabel)
 					.addComponent(jMigratedLabel)
 					.addComponent(jCanMigrateLabel)
-					.addComponent(jSpaceLabel, 20, 20, Integer.MAX_VALUE)
 				)
 		);
 		layout.setVerticalGroup(
@@ -136,7 +133,6 @@ public class AccountSeparatorTableCell extends SeparatorTableCell<OwnerType> {
 					.addComponent(jExpiredLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 					.addComponent(jMigratedLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 					.addComponent(jCanMigrateLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-					.addComponent(jSpaceLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 				)
 				.addGap(2)
 		);
@@ -199,7 +195,6 @@ public class AccountSeparatorTableCell extends SeparatorTableCell<OwnerType> {
 		jCanMigrateLabel.setVisible(canMigrate);
 
 		//Invalid / Expired
-		jSpaceLabel.setVisible(owner.isInvalid() || owner.isExpired() || allMigrated || canMigrate);
 		if (owner.isInvalid() || owner.isExpired()) {
 			ColorSettings.config(jPanel, ColorEntry.GLOBAL_ENTRY_INVALID);
 		} else if (allMigrated) {
