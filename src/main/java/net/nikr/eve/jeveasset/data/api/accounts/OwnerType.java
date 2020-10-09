@@ -55,6 +55,7 @@ public interface OwnerType extends Comparable<OwnerType> {
 	public boolean isInvalid();
 	public ApiType getAccountAPI();
 	public void setShowOwner(final boolean showOwner);
+	public void setInvalid(boolean invalid);
 	public void setResetAccountName();
 	public void setAccountName(final String accountName);
 	//Data

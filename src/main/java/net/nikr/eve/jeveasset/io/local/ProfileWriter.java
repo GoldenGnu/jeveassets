@@ -171,6 +171,7 @@ public final class ProfileWriter extends AbstractXmlWriter {
 		setAttribute(node, "name", owner.getOwnerName());
 		setAttributeOptional(node, "corp", owner.getCorporationName());
 		setAttribute(node, "show", owner.isShowOwner());
+		setAttribute(node, "invalid", owner.isInvalid());
 		setAttributeOptional(node, "assetslastupdate", owner.getAssetLastUpdate());
 		setAttribute(node, "assetsnextupdate", owner.getAssetNextUpdate());
 		setAttributeOptional(node, "balancelastupdate", owner.getBalanceLastUpdate());
