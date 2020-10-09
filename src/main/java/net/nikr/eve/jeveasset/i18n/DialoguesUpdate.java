@@ -64,7 +64,6 @@ public abstract class DialoguesUpdate extends Bundle {
 	public abstract String noAccounts();
 	public abstract String now();
 	public abstract String conqStations();
-	public abstract String citadel();
 	public abstract String balance();
 	public abstract String journal();
 	public abstract String transactions();
