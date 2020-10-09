@@ -105,7 +105,7 @@ public class CitadelGetter {
 		} catch (IOException | JsonParseException ex) {
 			LOG.error("	ZKill Structures failed to update", ex);
 			if (updateTask != null) {
-				updateTask.addError(DialoguesUpdate.get().citadel(), ex.getMessage());
+				updateTask.addError("zKillboard > " + DialoguesUpdate.get().structures(), ex.getMessage());
 			}
 		}
 		try {
@@ -152,7 +152,7 @@ public class CitadelGetter {
 		}
 		for (Exception ex : exceptions) {
 			if (updateTask != null) {
-				updateTask.addError(DialoguesUpdate.get().citadel(), ex.getMessage());
+				updateTask.addError("HammerTime > " + DialoguesUpdate.get().structures(), ex.getMessage());
 			}
 		}
 	}
@@ -192,7 +192,7 @@ public class CitadelGetter {
 	protected boolean canUpdate(UpdateTask updateTask) {
 		if (citadelSettings.getNextUpdate().after(new Date()) && !Program.isForceUpdate()) { //Check if we can update now
 			if (updateTask != null) {
-				updateTask.addWarning(DialoguesUpdate.get().citadel(), "Not updated: Waiting for cache to expire.\r\n(Not an error: Will be updatable when the cache expires)");
+				updateTask.addWarning(DialoguesUpdate.get().structures(), "Update skipped: Waiting for cache to expire.\r\n(Updatable again after cache expires)");
 			}
 			LOG.info("	Citadels failed to update (NOT ALLOWED YET)");
 			return false;
