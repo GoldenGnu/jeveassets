@@ -30,7 +30,6 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
-import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.api.accounts.OwnerType;
 import net.nikr.eve.jeveasset.data.api.my.MyAsset;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
@@ -151,7 +150,7 @@ public abstract class AbstractGetter<O extends OwnerType> implements Runnable {
 		}
 		//Check API cache time
 		if (wait) {
-			addWarning("NOT ALLOWED YET", "Not updated: Waiting for cache to expire.\r\n(Not an error: Will be updatable when the cache expires)");
+			addWarning("NOT ALLOWED YET", "Update skipped: Waiting for cache to expire.\r\n(Updatable again after cache expires)");
 			return false;
 		}
 		//Check if the owner have accesss to the endpoint 
@@ -225,8 +224,10 @@ public abstract class AbstractGetter<O extends OwnerType> implements Runnable {
 		ownerBuilder.append(apiName);
 		ownerBuilder.append(" > ");
 		ownerBuilder.append(taskName);
-		ownerBuilder.append(" > ");
-		ownerBuilder.append(getOwnerName(owner));
+		if (owner != null) {
+			ownerBuilder.append(" > ");
+			ownerBuilder.append(owner.getOwnerName());
+		}
 		return ownerBuilder.toString();
 	}
 
@@ -260,7 +261,10 @@ public abstract class AbstractGetter<O extends OwnerType> implements Runnable {
 		builder.append(" ");
 		builder.append(taskName);
 		builder.append(" failed to update for: ");
-		builder.append(getOwnerName(owner));
+		if (owner != null) {
+			builder.append(" > ");
+			builder.append(owner.getOwnerName());
+		}
 		if (logMsg != null) {
 			builder.append(" ERROR: ");
 			builder.append(logMsg);
@@ -278,22 +282,16 @@ public abstract class AbstractGetter<O extends OwnerType> implements Runnable {
 		builder.append(apiName);
 		builder.append(" > ");
 		builder.append(taskName);
-		builder.append(" > ");
-		builder.append(getOwnerName(owner));
+		if (owner != null) {
+			builder.append(" > ");
+			builder.append(owner.getOwnerName());
+		}
 		if (update != null) {
 			builder.append(" (");
 			builder.append(update);
 			builder.append(")");
 		}
 		LOG.info(builder.toString());
-	}
-
-	protected final String getOwnerName(O owner) {
-		if (owner != null) {
-			return owner.getOwnerName();
-		} else {
-			return Program.PROGRAM_NAME;
-		}
 	}
 
 	protected final <T> List<List<T>> splitList(Collection<T> list, final int L) {
