@@ -294,6 +294,10 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 		if (haveAttribute(node, "show")) {
 			showOwner = getBoolean(node, "show");
 		}
+		boolean invalid = false;
+		if (haveAttribute(node, "invalid")) {
+			invalid = getBoolean(node, "invalid");
+		}
 		Date marketOrdersNextUpdate = getDateNotNull(node, "marketordersnextupdate");
 		Date journalNextUpdate = getDateNotNull(node, "journalnextupdate");
 		Date transactionsNextUpdate = getDateNotNull(node, "wallettransactionsnextupdate");
@@ -311,6 +315,7 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 		owner.setBalanceNextUpdate(balanceNextUpdate);
 		owner.setBalanceLastUpdate(balanceLastUpdate);
 		owner.setShowOwner(showOwner);
+		owner.setInvalid(invalid);
 		owner.setMarketOrdersNextUpdate(marketOrdersNextUpdate);
 		owner.setJournalNextUpdate(journalNextUpdate);
 		owner.setTransactionsNextUpdate(transactionsNextUpdate);
