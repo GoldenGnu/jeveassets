@@ -657,7 +657,7 @@ public class UpdateDialog extends JDialogCentered {
 						|| jBookmarks.isSelected()
 						|| jSkills.isSelected()
 						) {
-					updateTasks.add(new CitadelTask());
+					updateTasks.add(new StructureTask());
 					updateTasks.add(new Step1Task(program.getProfileManager()));
 					updateTasks.add(new Step2Task(program.getProfileManager(),
 							jAssets.isSelected(),
@@ -869,9 +869,9 @@ public class UpdateDialog extends JDialogCentered {
 					updates.add(new EsiLocationsGetter(this, esiOwner));
 					updates.add(new EsiShipGetter(this, esiOwner));
 					updates.add(new EsiPlanetaryInteractionGetter(this, esiOwner));
-					updates.add(new EsiFactionWarfareGetter(this));
 				}
 			}
+			updates.add(new EsiFactionWarfareGetter(this));
 			//char/corp/alliance IDs to names (ESI)
 			updates.add(new EsiNameGetter(this, profileManager.getOwnerTypes()));
 		}
@@ -906,10 +906,10 @@ public class UpdateDialog extends JDialogCentered {
 		}
 	}
 
-	public static class CitadelTask extends UpdateTask {
+	public static class StructureTask extends UpdateTask {
 
-		public CitadelTask() {
-			super(DialoguesUpdate.get().citadel());
+		public StructureTask() {
+			super(DialoguesUpdate.get().structures() + " (zKillboard/HammerTime)");
 		}
 
 		@Override
