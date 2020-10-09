@@ -143,7 +143,7 @@ public abstract class AbstractEsiGetter extends AbstractGetter<EsiOwner> {
 		}
 		//Check if API key is invalid (still update when editing account AKA forceUpdate)
 		if (!isForceUpdate() && owner != null && owner.isInvalid()) {
-			addError("REFRESH TOKEN INVALID", "Auth invalid\r\n(Fix: Options > Accounts... > Edit)");
+			addError("INVALID AUTHORIZATION (OWNER)", "Account Authorization Invalid\r\n(Fix: Options > Accounts... > Edit the account)");
 			return;
 		}
 		try {
@@ -153,7 +153,7 @@ public abstract class AbstractEsiGetter extends AbstractGetter<EsiOwner> {
 		} catch (TaskCancelledException ex) {
 			logInfo(null, "Cancelled");
 		} catch (InvalidAuthException ex) {
-			addError("REFRESH TOKEN INVALID", "Auth invalid\r\n(Fix: Options > Accounts... > Edit)");
+			addError("INVALID AUTHORIZATION (API)", "Account Authorization Invalid\r\n(Fix: Options > Accounts... > Edit the account)");
 		} catch (Error ex) {
 			throw ex;
 		} catch (Exception ex) {
