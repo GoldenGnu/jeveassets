@@ -60,6 +60,7 @@ public abstract class AbstractOwner implements OwnerType, Comparable<OwnerType> 
 	private String corporationName = null;
 	private long ownerID;
 	private boolean showOwner = true;
+	private boolean invalid = false;
 
 	private Date assetLastUpdate = null;
 	private Date assetNextUpdate = Settings.getNow();
@@ -97,6 +98,7 @@ public abstract class AbstractOwner implements OwnerType, Comparable<OwnerType> 
 		this.ownerName = abstractOwner.ownerName;
 		this.ownerID = abstractOwner.ownerID;
 		this.showOwner = abstractOwner.showOwner;
+		this.invalid = abstractOwner.invalid;
 		this.assetLastUpdate = abstractOwner.assetLastUpdate;
 		this.assetNextUpdate = abstractOwner.assetNextUpdate;
 		this.balanceLastUpdate = abstractOwner.balanceLastUpdate;
@@ -281,6 +283,11 @@ public abstract class AbstractOwner implements OwnerType, Comparable<OwnerType> 
 	}
 
 	@Override
+	public synchronized boolean isInvalid() {
+		return invalid;
+	}
+
+	@Override
 	public final Date getAssetLastUpdate() {
 		return assetLastUpdate;
 	}
@@ -371,6 +378,11 @@ public abstract class AbstractOwner implements OwnerType, Comparable<OwnerType> 
 	@Override
 	public final void setShowOwner(boolean showOwner) {
 		this.showOwner = showOwner;
+	}
+
+	@Override
+	public synchronized void setInvalid(boolean invalid) {
+		this.invalid = invalid;
 	}
 
 	@Override
