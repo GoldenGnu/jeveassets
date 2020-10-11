@@ -809,11 +809,11 @@ public class RawConverter {
 		STRUCTUREFUEL("StructureFuel", 172),
 		DELIVERIES("Deliveries", 173),
 		CRATELOOT("CrateLoot", 174),
-		CORPSEBAY("CrateLoot", 174), //CorpseBay
+		CORPSEBAY("CrateLoot", 174), //CorpseBay 175?
 		BOOSTERBAY("BoosterBay", 176),
 		SUBSYSTEMBAY("SubSystemBay", 177),
 		FRIGATEESCAPEBAY("FrigateEscapeBay", 179),
-		QUANTUMCOREROOM("QuantumCoreRoom", 180),
+		QUANTUMCOREROOM("StructureDeedBay", 180), //QuantumCoreRoom
 		;
 
 		private final String value;
