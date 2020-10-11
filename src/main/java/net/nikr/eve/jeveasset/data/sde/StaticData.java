@@ -71,14 +71,6 @@ public class StaticData {
 		JumpsReader.load(jumps); //Jumps
 		SplashUpdater.setProgress(20);
 		FlagsReader.load(flags); //Item Flags
-		ItemFlag frigateEscapeBay = flags.get(179);
-		if (frigateEscapeBay == null) {
-			flags.put(179, new ItemFlag(179, "FrigateEscapeBay", "Frigate Escape Bay"));
-		}
-		ItemFlag quantumCoreRoom = flags.get(180);
-		if (quantumCoreRoom == null) {
-			flags.put(180, new ItemFlag(180, "QuantumCoreRoom", "Quantum Core Room"));
-		}
 		SplashUpdater.setProgress(25);
 	}
 
