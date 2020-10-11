@@ -133,4 +133,6 @@
     <row flagid="176" flagname="BoosterBay" flagtext="Booster Hold"/>
     <row flagid="177" flagname="SubsystemBay" flagtext="Subsystem Hold"/>
     <row flagid="178" flagname="Raffles" flagtext="Raffles Hangar"/>
+    <row flagid="179" flagname="FrigateEscapeBay" flagtext="Frigate escape bay Hangar"/>
+    <row flagid="180" flagname="StructureDeedBay" flagtext="Structure Deed Bay"/>
 </rows>
