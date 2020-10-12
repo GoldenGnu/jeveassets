@@ -49,7 +49,8 @@ public class TaskDialog {
 	private enum TaskAction {
 		OK, CANCEL, MINIMIZE
 	}
-	public static final int WIDTH = 260;
+
+	private static final int WIDTH_LOG = 280;
 
 	//GUI
 	private final JDialog jWindow;
@@ -105,7 +106,7 @@ public class TaskDialog {
 		jWindow.add(jPanel);
 
 		JLabel jUpdate = new JLabel(DialoguesUpdate.get().updating());
-		jUpdate.setFont(new Font(jUpdate.getFont().getName(), Font.BOLD, jUpdate.getFont().getSize() + 4));
+		jUpdate.setFont(new Font(jUpdate.getFont().getName(), Font.BOLD, 15));
 
 		jMinimize = new JButton(DialoguesUpdate.get().minimize());
 		jMinimize.setActionCommand(TaskAction.MINIMIZE.name());
@@ -161,7 +162,7 @@ public class TaskDialog {
 		jCancel.addActionListener(listener);
 
 		jErrorName = new JLabel("");
-		jErrorName.setFont(new Font(jErrorName.getFont().getName(), Font.BOLD, jErrorName.getFont().getSize() + 4));
+		jErrorName.setFont(new Font(jErrorName.getFont().getName(), Font.BOLD, 15));
 		jErrorName.setVisible(false);
 
 		jErrorMessage = new JTextPane();
@@ -179,14 +180,21 @@ public class TaskDialog {
 				.addGap(0, 0, Integer.MAX_VALUE)
 				.addComponent(jMinimize)
 		);
+		int taskWidth = 0;
 		for (UpdateTask updateTaskLoop : updateTasks) {
-			horizontalGroup.addComponent(updateTaskLoop.getTextLabel(), WIDTH, WIDTH, WIDTH);
-			updateTaskLoop.getTextLabel().addMouseListener(new ErrorMouseListener(updateTaskLoop));
+			horizontalGroup.addGroup(layout.createSequentialGroup()
+					.addComponent(updateTaskLoop.getTextLabel(), 100, 100, Integer.MAX_VALUE)
+					.addComponent(updateTaskLoop.getShowButton(), 20, 20, 20)
+					.addGap(5)
+			);
+			updateTaskLoop.getShowButton().addActionListener(new ErrorListener(updateTaskLoop));
+			updateTaskLoop.getTextLabel().addMouseListener(new ErrorListener(updateTaskLoop));
+			taskWidth = Math.max(taskWidth, updateTaskLoop.getWidth() + 25);
 		}
 		horizontalGroup.addGroup(layout.createSequentialGroup()
 			.addComponent(jIcon, 16, 16, 16)
 			.addGap(5)
-			.addComponent(jProgressBar, WIDTH - 21, WIDTH - 21, WIDTH - 21)
+			.addComponent(jProgressBar, taskWidth, taskWidth, taskWidth)
 		);
 		if (totalProgress) {
 			horizontalGroup.addComponent(jTotalProgressBar);
@@ -201,7 +209,7 @@ public class TaskDialog {
 				.addGap(5)
 				.addGroup(layout.createParallelGroup()
 					.addComponent(jErrorName)
-					.addComponent(jErrorScroll, WIDTH, WIDTH, WIDTH)
+					.addComponent(jErrorScroll, WIDTH_LOG, WIDTH_LOG, WIDTH_LOG)
 				)
 		);
 
@@ -211,7 +219,10 @@ public class TaskDialog {
 				.addComponent(jMinimize, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 		);
 		for (UpdateTask updateTaskLoop : updateTasks) {
-			verticalGroup.addComponent(updateTaskLoop.getTextLabel(), Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight());
+			verticalGroup.addGroup(layout.createParallelGroup()
+				.addComponent(updateTaskLoop.getTextLabel(), Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+				.addComponent(updateTaskLoop.getShowButton(), Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+			);
 		}
 		verticalGroup.addGroup(
 			layout.createParallelGroup()
@@ -472,17 +483,40 @@ public class TaskDialog {
 
 	}
 
-	private class ErrorMouseListener implements MouseListener {
+	private class ErrorListener implements MouseListener, ActionListener {
 
 		private final UpdateTask mouseTask;
 
-		public ErrorMouseListener(final UpdateTask mouseTask) {
+		public ErrorListener(final UpdateTask mouseTask) {
 			this.mouseTask = mouseTask;
 		}
 
 		@Override
+		public void actionPerformed(ActionEvent e) {
+			handleEvent();
+		}
+
+		@Override
 		public void mouseClicked(final MouseEvent e) {
-			if (e.getButton() == MouseEvent.BUTTON1 && mouseTask.hasLog()) {
+			if (e.getButton() == MouseEvent.BUTTON1) {
+				handleEvent();
+			}
+		}
+
+		@Override
+		public void mousePressed(final MouseEvent e) { }
+
+		@Override
+		public void mouseReleased(final MouseEvent e) { }
+
+		@Override
+		public void mouseEntered(final MouseEvent e) { }
+
+		@Override
+		public void mouseExited(final MouseEvent e) { }
+
+		private void handleEvent() {
+			if (mouseTask.hasLog()) {
 				jErrorMessage.setText("");
 				jErrorName.setText("");
 				boolean shown = mouseTask.isErrorShown();
@@ -500,22 +534,10 @@ public class TaskDialog {
 					jWindow.pack();
 					mouseTask.showLog(true);
 					mouseTask.insertLog(jErrorMessage);
-					jErrorName.setText(DialoguesUpdate.get().errors(mouseTask.getName()));
+					jErrorName.setText(mouseTask.getName());
 				}
 			}
 		}
-
-		@Override
-		public void mousePressed(final MouseEvent e) { }
-
-		@Override
-		public void mouseReleased(final MouseEvent e) { }
-
-		@Override
-		public void mouseEntered(final MouseEvent e) { }
-
-		@Override
-		public void mouseExited(final MouseEvent e) { }
 	}
 
 	public static interface TasksCompleted {

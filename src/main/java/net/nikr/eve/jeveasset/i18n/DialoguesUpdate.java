@@ -43,7 +43,6 @@ public abstract class DialoguesUpdate extends Bundle {
 	public abstract String cancel();
 	public abstract String cancelQuestion();
 	public abstract String cancelQuestionTitle();
-	public abstract String errors(String mouseTask);
 	public abstract String minimize();
 
 	// used in UpdateDialog
@@ -77,9 +76,4 @@ public abstract class DialoguesUpdate extends Bundle {
 	public abstract String step2();
 	public abstract String step3();
 	public abstract String step4();
-
-	public abstract String clickToShowErrors(String name);
-	public abstract String clickToHideErrors(String name);
-	public abstract String clickToShowWarnings(String name);
-	public abstract String clickToHideWarnings(String name);
 }
