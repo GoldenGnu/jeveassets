@@ -66,6 +66,7 @@ import javax.swing.text.html.HTMLDocument;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.api.accounts.ApiType;
 import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
+import net.nikr.eve.jeveasset.data.settings.Colors;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.CopyHandler;
 import net.nikr.eve.jeveasset.gui.shared.components.JCustomFileChooser;
@@ -154,7 +155,7 @@ public class AccountImportDialog extends JDialogCentered {
 	private ApiType apiType;
 	private Share share;
 	private AddTask addTask;
-	private final Map<EsiScopes, JCheckBoxMenuItem> scopesMap = new EnumMap<EsiScopes, JCheckBoxMenuItem>(EsiScopes.class);
+	private final Map<EsiScopes, JCheckBoxMenuItem> scopesMap = new EnumMap<>(EsiScopes.class);
 
 	public AccountImportDialog(final AccountManagerDialog apiManager, final Program program) {
 		super(program, DialoguesAccount.get().dialogueNameAccountImport(), apiManager.getDialog());
@@ -662,7 +663,7 @@ public class AccountImportDialog extends JDialogCentered {
 			jBrowse.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					Set<String> scopes = new HashSet<String>();
+					Set<String> scopes = new HashSet<>();
 					for (Map.Entry<EsiScopes, JCheckBoxMenuItem> entry : scopesMap.entrySet()) {
 						if (entry.getValue().isSelected()) {
 							scopes.add(entry.getKey().getScope());
@@ -724,6 +725,7 @@ public class AccountImportDialog extends JDialogCentered {
 			jHelp.setEditable(false);
 			jHelp.setFocusable(false);
 			jHelp.setOpaque(false);
+			jHelp.setBackground(Colors.COMPONENT_TRANSPARENT.getColor());
 			jHelp.addHyperlinkListener(DesktopUtil.getHyperlinkListener(getDialog()));
 
 			cardLayout.setHorizontalGroup(
@@ -810,6 +812,7 @@ public class AccountImportDialog extends JDialogCentered {
 			jHelp.setFont(this.getFont());
 			jHelp.setEditable(false);
 			jHelp.setOpaque(false);
+			jHelp.setBackground(Colors.COMPONENT_TRANSPARENT.getColor());
 			jHelp.setFocusable(false);
 			jHelp.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
@@ -853,6 +856,7 @@ public class AccountImportDialog extends JDialogCentered {
 			jHelp.setEditable(false);
 			jHelp.setFocusable(false);
 			jHelp.setOpaque(false);
+			jHelp.setBackground(Colors.COMPONENT_TRANSPARENT.getColor());
 
 			jImportClipboard = new JButton(DialoguesAccount.get().shareImportClipboard() , Images.EDIT_PASTE.getIcon());
 			jImportClipboard.setActionCommand(AccountImportAction.SHARE_FROM_CLIPBOARD.name());
@@ -917,6 +921,7 @@ public class AccountImportDialog extends JDialogCentered {
 			jExport.setEditable(false);
 			jExport.setFocusable(true);
 			jExport.setOpaque(false);
+			jExport.setBackground(Colors.COMPONENT_TRANSPARENT.getColor());
 			jExport.setLineWrap(true);
 			jExport.setWrapStyleWord(false);
 

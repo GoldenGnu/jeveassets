@@ -35,6 +35,7 @@ import javax.swing.GroupLayout.SequentialGroup;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.StyledDocument;
 import net.nikr.eve.jeveasset.Program;
+import net.nikr.eve.jeveasset.data.settings.Colors;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel.Progress;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel.UpdateType;
@@ -170,6 +171,7 @@ public class TaskDialog {
 		jErrorMessage.setEditable(false);
 		jErrorMessage.setFocusable(true);
 		jErrorMessage.setOpaque(false);
+		jErrorMessage.setBackground(Colors.COMPONENT_TRANSPARENT.getColor());
 
 		jErrorScroll = new JScrollPane(jErrorMessage);
 		jErrorScroll.setVisible(false);

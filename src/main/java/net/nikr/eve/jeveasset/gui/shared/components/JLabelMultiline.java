@@ -20,10 +20,9 @@
  */
 package net.nikr.eve.jeveasset.gui.shared.components;
 
-import java.awt.Color;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
 import javax.swing.JTextArea;
+import net.nikr.eve.jeveasset.data.settings.Colors;
 
 
 public class JLabelMultiline extends JTextArea {
@@ -37,7 +36,7 @@ public class JLabelMultiline extends JTextArea {
 		//Init
 		JLabel jLabel = new JLabel();
 		setFont(jLabel.getFont());
-		setBackground(new Color(new JPanel().getBackground().getRGB()));
+		setBackground(Colors.COMPONENT_TRANSPARENT.getColor());
 		setLineWrap(true);
 		setWrapStyleWord(true);
 		setFocusable(false);

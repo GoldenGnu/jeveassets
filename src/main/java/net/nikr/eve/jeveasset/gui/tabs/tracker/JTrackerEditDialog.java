@@ -97,6 +97,7 @@ public class JTrackerEditDialog extends JDialogCentered {
 		jDate = new JTextField();
 		jDate.setEditable(false);
 		jDate.setOpaque(false);
+		jDate.setBackground(Colors.COMPONENT_TRANSPARENT.getColor());
 		jDate.setHorizontalAlignment(JLabel.RIGHT);
 
 		JLabel jWalletBalanceLabel = new JLabel(TabsTracker.get().walletBalance());

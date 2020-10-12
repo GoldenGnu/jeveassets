@@ -206,6 +206,15 @@ public enum Colors {
 		}
 	},
 	/**
+	 * Transparent component background
+	 */
+	COMPONENT_TRANSPARENT("Panel.background", 0) {
+		@Override
+		public Color getComponentColor() {
+			return new JPanel().getBackground();
+		}
+	},
+	/**
 	 * Component foreground
 	 */
 	COMPONENT_FOREGROUND("Panel.foreground") {
@@ -236,23 +245,40 @@ public enum Colors {
 
 	private final Color color;
 	private final String key;
+	private final Integer alpha;
 
 	private Colors(String key) {
+		this(key, null);
+	}
+
+	private Colors(String key, Integer alpha) {
 		this.color = null;
 		this.key = key;
+		this.alpha = alpha;
 	}
 
 	private Colors(Color color) {
 		this.color = color;
 		this.key = null;
+		this.alpha = null;
 	}
 
 	private Colors(int r, int g, int b) {
 		this.color = new Color(r, g, b);
 		this.key = null;
+		this.alpha = null;
 	}
 
 	public Color getColor() {
+		if (alpha != null) {
+			Color c = getColorWithoutAlpha();
+			return new Color(c.getRed(), c.getGreen(), c.getBlue(), alpha);
+		} else {
+			return getColorWithoutAlpha();
+		}
+	}
+
+	private Color getColorWithoutAlpha() {
 		if (color != null) {
 			return color;
 		}
