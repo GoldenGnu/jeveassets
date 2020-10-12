@@ -151,8 +151,7 @@ public class TrackerTab extends JMainTabSecondary {
 		FILTER_SKILL_POINTS
 	}
 
-	private final int PANEL_WIDTH = 160;
-	private final int LABEL_WIDTH = 45;
+	private final int PANEL_WIDTH_MINIMUM = 160;
 
 	private final NumberFormat iskFormat = new DecimalFormat("#,##0.00 isk");
 	private final DateFormat dateFormat = new SimpleDateFormat(Formater.COLUMN_DATE);
@@ -557,6 +556,13 @@ public class TrackerTab extends JMainTabSecondary {
 		jChartPanel.setMinimumDrawWidth(10);
 		jChartPanel.setMinimumDrawHeight(10);
 
+		int gapWidth = 5;
+		int labelWidth = Math.max(jFromLabel.getPreferredSize().width, jToLabel.getPreferredSize().width);
+		int panelWidth = Math.max(PANEL_WIDTH_MINIMUM, jCharacterCorporations.getPreferredSize().width);
+		panelWidth = Math.max(panelWidth, jFrom.getPreferredSize().width + labelWidth + gapWidth);
+		panelWidth = Math.max(panelWidth, jTo.getPreferredSize().width + labelWidth + gapWidth);
+		int dateWidth = panelWidth - labelWidth - gapWidth;
+
 		layout.setHorizontalGroup(
 			layout.createSequentialGroup()
 				.addGroup(layout.createParallelGroup()
@@ -573,27 +579,27 @@ public class TrackerTab extends JMainTabSecondary {
 					.addComponent(jChartPanel)
 				)
 				.addGroup(layout.createParallelGroup()
-					.addComponent(jQuickDate, PANEL_WIDTH, PANEL_WIDTH, PANEL_WIDTH)
+					.addComponent(jQuickDate, panelWidth, panelWidth, panelWidth)
 					.addGroup(layout.createSequentialGroup()
 						.addGroup(layout.createParallelGroup()
-							.addComponent(jFromLabel, LABEL_WIDTH, LABEL_WIDTH, LABEL_WIDTH)
-							.addComponent(jToLabel, LABEL_WIDTH, LABEL_WIDTH, LABEL_WIDTH)
+							.addComponent(jFromLabel, labelWidth, labelWidth, labelWidth)
+							.addComponent(jToLabel, labelWidth, labelWidth, labelWidth)
 						)
-						.addGap(0)
+						.addGap(gapWidth)
 						.addGroup(layout.createParallelGroup()	
-							.addComponent(jFrom, PANEL_WIDTH - LABEL_WIDTH, PANEL_WIDTH - LABEL_WIDTH, PANEL_WIDTH - LABEL_WIDTH)
-							.addComponent(jTo, PANEL_WIDTH - LABEL_WIDTH, PANEL_WIDTH - LABEL_WIDTH, PANEL_WIDTH - LABEL_WIDTH)
+							.addComponent(jFrom, dateWidth, dateWidth, dateWidth)
+							.addComponent(jTo, dateWidth, dateWidth, dateWidth)
 						)
 					)
-					.addComponent(jDateSeparator, PANEL_WIDTH, PANEL_WIDTH, PANEL_WIDTH)
-					.addComponent(jShow, PANEL_WIDTH, PANEL_WIDTH, PANEL_WIDTH)
-					.addComponent(jAssetsFilters, PANEL_WIDTH, PANEL_WIDTH, PANEL_WIDTH)
-					.addComponent(jWalletBalanceFilters, PANEL_WIDTH, PANEL_WIDTH, PANEL_WIDTH)
-					.addComponent(jSkillPointsFilters, PANEL_WIDTH, PANEL_WIDTH, PANEL_WIDTH)
-					.addComponent(jOwnersSeparator, PANEL_WIDTH, PANEL_WIDTH, PANEL_WIDTH)
-					.addComponent(jAllProfiles, PANEL_WIDTH, PANEL_WIDTH, PANEL_WIDTH)
-					.addComponent(jCharacterCorporations, PANEL_WIDTH, PANEL_WIDTH, PANEL_WIDTH)
-					.addComponent(jOwnersScroll, PANEL_WIDTH, PANEL_WIDTH, PANEL_WIDTH)
+					.addComponent(jDateSeparator, panelWidth, panelWidth, panelWidth)
+					.addComponent(jShow, panelWidth, panelWidth, panelWidth)
+					.addComponent(jAssetsFilters, panelWidth, panelWidth, panelWidth)
+					.addComponent(jWalletBalanceFilters, panelWidth, panelWidth, panelWidth)
+					.addComponent(jSkillPointsFilters, panelWidth, panelWidth, panelWidth)
+					.addComponent(jOwnersSeparator, panelWidth, panelWidth, panelWidth)
+					.addComponent(jAllProfiles, panelWidth, panelWidth, panelWidth)
+					.addComponent(jCharacterCorporations, panelWidth, panelWidth, panelWidth)
+					.addComponent(jOwnersScroll, panelWidth, panelWidth, panelWidth)
 				)
 		);
 		layout.setVerticalGroup(
