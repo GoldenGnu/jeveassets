@@ -23,6 +23,7 @@ import net.nikr.eve.jeveasset.data.api.accounts.DeprecatedOwner;
 import net.nikr.eve.jeveasset.data.api.accounts.OwnerType;
 import net.nikr.eve.jeveasset.data.settings.ColorEntry;
 import net.nikr.eve.jeveasset.data.settings.ColorSettings;
+import net.nikr.eve.jeveasset.data.settings.Colors;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.table.SeparatorTableCell;
 import net.nikr.eve.jeveasset.i18n.DialoguesAccount;
@@ -87,6 +88,7 @@ public class AccountSeparatorTableCell extends SeparatorTableCell<OwnerType> {
 		jAccountName.addFocusListener(listener);
 		jAccountName.setBorder(null);
 		jAccountName.setOpaque(false);
+		jAccountName.setBackground(Colors.COMPONENT_TRANSPARENT.getColor());
 		jAccountName.setActionCommand(AccountCellAction.ACCOUNT_NAME.name());
 		jAccountName.addActionListener(listener);
 

@@ -30,6 +30,7 @@ import javax.swing.JTextPane;
 import javax.swing.text.DefaultStyledDocument;
 import javax.swing.text.StyledDocument;
 import net.nikr.eve.jeveasset.Program;
+import net.nikr.eve.jeveasset.data.settings.Colors;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
 import net.nikr.eve.jeveasset.i18n.TabsOrders;
@@ -48,6 +49,7 @@ public class MarketOrdersErrorDialog extends JDialogCentered {
 		JTextPane jText = new JTextPane(document);
 		jText.setEditable(false);
 		jText.setOpaque(false);
+		jText.setBackground(Colors.COMPONENT_TRANSPARENT.getColor());
 
 		jClose = new JButton(TabsOrders.get().logClose());
 		jClose.addActionListener(new ActionListener() {

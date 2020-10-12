@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.swing.*;
 import net.nikr.eve.jeveasset.Program;
+import net.nikr.eve.jeveasset.data.settings.Colors;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.SimpleColumn;
@@ -44,7 +45,7 @@ public class EditColumnsDialog<T extends Enum<T> & EnumTableColumn<Q>, Q> extend
 		CHECK_ALL
 	}
 
-	private final DefaultListModel<SimpleColumn> listModel = new DefaultListModel<SimpleColumn>();
+	private final DefaultListModel<SimpleColumn> listModel = new DefaultListModel<>();
 	private final JList<SimpleColumn> jColumns;
 	private final JCheckBox jAll;
 	private final JButton jOk;
@@ -62,13 +63,15 @@ public class EditColumnsDialog<T extends Enum<T> & EnumTableColumn<Q>, Q> extend
 		jInfo = new JTextArea();
 		jInfo.setFont(jPanel.getFont());
 		jInfo.setOpaque(false);
+		jInfo.setBackground(Colors.COMPONENT_TRANSPARENT.getColor());
+		jInfo.setBorder(null);
 		jInfo.setFocusable(false);
 		jInfo.setEditable(false);
 		jInfo.setLineWrap(true);
 		jInfo.setWrapStyleWord(true);
 		jInfo.setText(GuiShared.get().tableColumnsTip());
 
-		jColumns = new JList<SimpleColumn>(listModel);
+		jColumns = new JList<>(listModel);
 		jColumns.setCellRenderer(new JCheckBoxListRenderer(jColumns.getCellRenderer()));
 		jColumns.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		//jList.setBorder(BorderFactory.createLineBorder(Color.GRAY, 1));
@@ -174,7 +177,7 @@ public class EditColumnsDialog<T extends Enum<T> & EnumTableColumn<Q>, Q> extend
 
 	@Override
 	protected void save() {
-		List<SimpleColumn> columns = new ArrayList<SimpleColumn>();
+		List<SimpleColumn> columns = new ArrayList<>();
 		for (int i = 0; i < listModel.size(); i++) {
 			columns.add(listModel.getElementAt(i));
 		}

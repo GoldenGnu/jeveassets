@@ -31,6 +31,7 @@ import javax.swing.JEditorPane;
 import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 import net.nikr.eve.jeveasset.Program;
+import net.nikr.eve.jeveasset.data.settings.Colors;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
 import net.nikr.eve.jeveasset.i18n.DialoguesAbout;
@@ -177,6 +178,7 @@ public class AboutDialog extends JDialogCentered {
 		jEditorPane.setEditable(false);
 		jEditorPane.setFocusable(false);
 		jEditorPane.setOpaque(false);
+		jEditorPane.setBackground(Colors.COMPONENT_TRANSPARENT.getColor());
 		jEditorPane.setFont(jPanel.getFont());
 		jEditorPane.addHyperlinkListener(DesktopUtil.getHyperlinkListener(getDialog()));
 		if (addBorder) {
