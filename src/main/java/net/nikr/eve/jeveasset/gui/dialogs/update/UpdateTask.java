@@ -38,6 +38,7 @@ import java.util.concurrent.CancellationException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.swing.Icon;
+import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JTextPane;
 import javax.swing.SwingWorker;
@@ -54,6 +55,7 @@ public abstract class UpdateTask extends SwingWorker<Void, Void> {
 
 	private Icon icon;
 	private final JLabel jText;
+	private final JButton jShow;
 	private final List<LogClass> log;
 	private final String name;
 	private Integer totalProgress = null;
@@ -69,7 +71,11 @@ public abstract class UpdateTask extends SwingWorker<Void, Void> {
 		this.addPropertyChangeListener(new ListenerClass());
 		jText = new JLabel(name);
 		jText.setIcon(Images.UPDATE_NOT_STARTED.getIcon());
-
+		jText.setFont(jText.getFont().deriveFont(Font.PLAIN));
+		jShow = new JButton();
+		jShow.setFocusPainted(false);
+		jShow.setIcon(Images.MISC_EXPANDED.getIcon());
+		jShow.setVisible(false);
 		log = Collections.synchronizedList(new ArrayList<>());
 	}
 
@@ -118,6 +124,17 @@ public abstract class UpdateTask extends SwingWorker<Void, Void> {
 
 	public JLabel getTextLabel() {
 		return jText;
+	}
+
+	public int getWidth() {
+		int width = jText.getPreferredSize().width;
+		int plain = jText.getFontMetrics(jText.getFont()).stringWidth(name);
+		int bold = jText.getFontMetrics(jText.getFont().deriveFont(Font.BOLD)).stringWidth(name);
+		return width + (bold - plain);
+	}
+
+	public JButton getShowButton() {
+		return jShow;
 	}
 
 	public void addError(final String owner, final String msg) {
@@ -234,23 +251,17 @@ public abstract class UpdateTask extends SwingWorker<Void, Void> {
 
 	public void showLog(final boolean b) {
 		if (!log.isEmpty()) {
-			Font font = jText.getFont();
 			if (b) {
 				errorShown = true;
-				jText.setFont(new Font(font.getName(), Font.BOLD, font.getSize()));
-				if (error) {
-					jText.setText(DialoguesUpdate.get().clickToHideErrors(name));
-				} else {
-					jText.setText(DialoguesUpdate.get().clickToHideWarnings(name));
-				}
+				jText.setFont(jText.getFont().deriveFont(Font.BOLD));
+				jShow.setIcon(Images.MISC_COLLAPSED.getIcon());
+				jShow.setSelected(true);
+				jShow.requestFocusInWindow();
 			} else {
+				jText.setFont(jText.getFont().deriveFont(Font.PLAIN));
+				jShow.setIcon(Images.MISC_EXPANDED.getIcon());
+				jShow.setSelected(false);
 				errorShown = false;
-				jText.setFont(new Font(font.getName(), Font.PLAIN, font.getSize()));
-				if (error) {
-					jText.setText(DialoguesUpdate.get().clickToShowErrors(name));
-				} else {
-					jText.setText(DialoguesUpdate.get().clickToShowWarnings(name));
-				}
 			}
 		}
 	}
@@ -290,11 +301,12 @@ public abstract class UpdateTask extends SwingWorker<Void, Void> {
 			if (value == 100) {
 				if (error) {
 					jText.setIcon(Images.UPDATE_DONE_ERROR.getIcon());
-					jText.setText(DialoguesUpdate.get().clickToShowErrors(name));
+					jShow.setVisible(true);
 				} else if (isCancelled() || warning) {
 					jText.setIcon(Images.UPDATE_DONE_SOME.getIcon());
-					jText.setText(DialoguesUpdate.get().clickToShowWarnings(name));
+					jShow.setVisible(true);
 				} else {
+					jShow.setVisible(false);
 					jText.setIcon(Images.UPDATE_DONE_OK.getIcon());
 				}
 				if (!log.isEmpty()) {
