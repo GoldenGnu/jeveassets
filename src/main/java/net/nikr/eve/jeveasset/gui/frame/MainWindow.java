@@ -56,7 +56,7 @@ public class MainWindow {
 
 	//Data
 	private final Program program;
-	private final List<JMainTab> tabs = new ArrayList<JMainTab>();
+	private final List<JMainTab> tabs = new ArrayList<>();
 
 	public MainWindow(final Program program) {
 		this.program = program;
@@ -70,7 +70,7 @@ public class MainWindow {
 		updateTitle();
 		setSizeAndLocation(Settings.get().getWindowSize(),  Settings.get().getWindowLocation(), Settings.get().isWindowMaximized());
 		jFrame.setAlwaysOnTop(Settings.get().isWindowAlwaysOnTop());
-		List<Image> icons = new ArrayList<Image>();
+		List<Image> icons = new ArrayList<>();
 		icons.add(Images.TOOL_ASSETS.getImage());
 		icons.add(Images.MISC_ASSETS_32.getImage());
 		icons.add(Images.MISC_ASSETS_64.getImage());
@@ -103,7 +103,7 @@ public class MainWindow {
 		layout.setVerticalGroup(
 			layout.createSequentialGroup()
 				.addComponent(jTabbedPane, 0, 0, Short.MAX_VALUE)
-				.addComponent(statusPanel.getPanel(), 25, 25, 25)
+				.addComponent(statusPanel.getPanel(), Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 		);
 	}
 
