@@ -27,6 +27,7 @@ import java.util.List;
 import javax.swing.JEditorPane;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import net.nikr.eve.jeveasset.data.settings.Colors;
 import net.nikr.eve.jeveasset.i18n.General;
 import net.nikr.eve.jeveasset.io.shared.DesktopUtil;
 import net.nikr.eve.jeveasset.io.shared.FileUtil;
@@ -154,6 +155,7 @@ public class FileLock {
 		jEditorPane.setEditable(false);
 		jEditorPane.setFocusable(false);
 		jEditorPane.setOpaque(false);
+		jEditorPane.setBackground(Colors.COMPONENT_TRANSPARENT.getColor());
 		jEditorPane.setText("<html><body style=\"font-family: " + jLabel.getFont().getName() + "; font-size: " + jLabel.getFont().getSize() + "pt\">"
 				+ General.get().fileLockMsg(file.getName())
 				+ "</body></html>");

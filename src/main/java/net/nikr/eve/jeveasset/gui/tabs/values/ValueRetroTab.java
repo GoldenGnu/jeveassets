@@ -91,6 +91,7 @@ public class ValueRetroTab extends JMainTabSecondary {
 		jCharacter = new JEditorPane("text/html", "<html>");
 		jCharacter.setEditable(false);
 		jCharacter.setOpaque(false);
+		jCharacter.setBackground(Colors.COMPONENT_TRANSPARENT.getColor());
 		jCharacter.setBorder(null);
 		JScrollPane jCharacterScroll = new JScrollPane(jCharacter);
 		jCharacterScroll.setBorder(null);
@@ -102,6 +103,7 @@ public class ValueRetroTab extends JMainTabSecondary {
 		jCorporation = new JEditorPane("text/html", "<html>");
 		jCorporation.setEditable(false);
 		jCorporation.setOpaque(false);
+		jCorporation.setBackground(Colors.COMPONENT_TRANSPARENT.getColor());
 		jCorporation.setBorder(null);
 		JScrollPane jCorporationScroll = new JScrollPane(jCorporation);
 		jCorporationScroll.setBorder(null);
@@ -116,6 +118,7 @@ public class ValueRetroTab extends JMainTabSecondary {
 		jTotal = new JEditorPane("text/html", "<html>");
 		jTotal.setEditable(false);
 		jTotal.setOpaque(false);
+		jTotal.setBackground(Colors.COMPONENT_TRANSPARENT.getColor());
 		jTotal.setBorder(null);
 		JScrollPane jTotalScroll = new JScrollPane(jTotal);
 		jTotalScroll.setBorder(null);

@@ -22,9 +22,12 @@ package net.nikr.eve.jeveasset.gui.shared.components;
 
 import com.github.lgooddatepicker.components.DatePicker;
 import com.github.lgooddatepicker.components.DatePickerSettings;
+import com.github.lgooddatepicker.optionalusertools.DateChangeListener;
+import com.github.lgooddatepicker.zinternaltools.DateChangeEvent;
 import java.util.Locale;
 import javax.swing.JButton;
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 import net.nikr.eve.jeveasset.data.settings.Colors;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
@@ -39,10 +42,24 @@ public class JDateChooser extends DatePicker {
 		jTextField.setEditable(false);
 		jTextField.setBorder(null);
 		jTextField.setOpaque(false);
+		jTextField.setBackground(Colors.COMPONENT_TRANSPARENT.getColor());
 		jTextField.setHorizontalAlignment(JTextField.CENTER);
 		JButton jButton = getComponentToggleCalendarButton();
 		jButton.setIcon(Images.EDIT_DATE.getIcon());
 		jButton.setText("");
+
+		addDateChangeListener(new DateChangeListener() {
+			@Override
+			public void dateChanged(DateChangeEvent event) {
+				SwingUtilities.invokeLater(new Runnable(){
+					@Override
+					public void run() {
+						jTextField.setBackground(Colors.COMPONENT_TRANSPARENT.getColor());
+					}
+				});
+				
+			}
+		});
 	}
 
 	@Override
