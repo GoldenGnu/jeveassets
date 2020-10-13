@@ -28,7 +28,7 @@ import net.nikr.eve.jeveasset.data.settings.ContractPriceManager.ContractPriceDa
 import net.nikr.eve.jeveasset.data.settings.ContractPriceManager.ContractPriceItem;
 import net.nikr.eve.jeveasset.data.settings.ContractPriceManager.ReturnData;
 import static org.hamcrest.CoreMatchers.equalTo;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 import org.junit.Test;
 
 
