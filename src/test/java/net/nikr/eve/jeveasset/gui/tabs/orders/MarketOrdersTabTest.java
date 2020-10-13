@@ -22,8 +22,8 @@ package net.nikr.eve.jeveasset.gui.tabs.orders;
 
 import net.nikr.eve.jeveasset.TestUtil;
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.MatcherAssert.assertThat;
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 
 public class MarketOrdersTabTest extends TestUtil {
