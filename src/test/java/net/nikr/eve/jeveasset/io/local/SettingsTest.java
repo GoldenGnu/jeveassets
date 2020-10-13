@@ -20,8 +20,6 @@
  */
 package net.nikr.eve.jeveasset.io.local;
 
-import static org.junit.Assert.*;
-
 import ch.qos.logback.classic.Level;
 import java.io.File;
 import java.net.URISyntaxException;
@@ -33,8 +31,14 @@ import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.data.settings.Settings.SettingFlag;
 import net.nikr.eve.jeveasset.data.settings.Settings.SettingsFactory;
 import net.nikr.eve.jeveasset.io.local.BackwardCompatibilitySettings.Function;
-import static org.hamcrest.Matchers.equalTo;
-import org.junit.*;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.MatcherAssert.assertThat;
+import org.junit.AfterClass;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 
 public class SettingsTest extends TestUtil {
