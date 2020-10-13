@@ -504,16 +504,15 @@ public class JTrackerEditDialog extends JDialogCentered {
 		@Override
 		public void focusGained(FocusEvent e) {
 			JTextField jTextField = (JTextField) e.getSource();
-			jTextField.setBackground(Colors.TEXTFIELD_BACKGROUND.getColor());
-			jTextField.setForeground(Colors.TEXTFIELD_FOREGROUND.getColor());
+			ColorSettings.configReset(jTextField);
 		}
+
 		@Override
 		public void focusLost(FocusEvent e) {
 			JTextField jTextField = (JTextField) e.getSource();
 			try {
 				parse(jTextField.getText());
-				jTextField.setBackground(Colors.TEXTFIELD_BACKGROUND.getColor());
-				jTextField.setForeground(Colors.TEXTFIELD_FOREGROUND.getColor());
+				ColorSettings.configReset(jTextField);
 			} catch (ParseException ex) {
 				ColorSettings.config(jTextField, ColorEntry.GLOBAL_ENTRY_INVALID);
 			}

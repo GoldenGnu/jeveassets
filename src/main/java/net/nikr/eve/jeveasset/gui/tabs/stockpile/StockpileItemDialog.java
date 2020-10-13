@@ -48,7 +48,6 @@ import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.data.sde.StaticData;
 import net.nikr.eve.jeveasset.data.settings.ColorEntry;
 import net.nikr.eve.jeveasset.data.settings.ColorSettings;
-import net.nikr.eve.jeveasset.data.settings.Colors;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
@@ -312,8 +311,7 @@ public class StockpileItemDialog extends JDialogCentered {
 			}
 		}
 		if (!colorIsSet) {
-			jCountMinimum.setBackground(Colors.TEXTFIELD_BACKGROUND.getColor());
-			jCountMinimum.setForeground(Colors.TEXTFIELD_FOREGROUND.getColor());
+			ColorSettings.configReset(jCountMinimum);
 		}
 		jOK.setEnabled(valid);
 	}

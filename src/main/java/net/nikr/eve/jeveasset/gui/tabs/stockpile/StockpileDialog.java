@@ -78,7 +78,6 @@ import net.nikr.eve.jeveasset.data.sde.MyLocation;
 import net.nikr.eve.jeveasset.data.sde.StaticData;
 import net.nikr.eve.jeveasset.data.settings.ColorEntry;
 import net.nikr.eve.jeveasset.data.settings.ColorSettings;
-import net.nikr.eve.jeveasset.data.settings.Colors;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.CaseInsensitiveComparator;
@@ -293,8 +292,7 @@ public class StockpileDialog extends JDialogCentered {
 		}
 		if (Settings.get().getStockpiles().contains(getStockpile())) {
 			if (stockpile != null && stockpile.getName().equals(getStockpile().getName())) {
-				jName.setBackground(Colors.TEXTFIELD_BACKGROUND.getColor());
-				jName.setForeground(Colors.TEXTFIELD_FOREGROUND.getColor());
+				ColorSettings.configReset(jName);
 			} else {
 				b = false;
 				ColorSettings.config(jName, ColorEntry.GLOBAL_ENTRY_INVALID);
@@ -303,8 +301,7 @@ public class StockpileDialog extends JDialogCentered {
 			ColorSettings.config(jName, ColorEntry.GLOBAL_ENTRY_INVALID);
 			b = false;
 		} else {
-			jName.setBackground(Colors.TEXTFIELD_BACKGROUND.getColor());
-			jName.setForeground(Colors.TEXTFIELD_FOREGROUND.getColor());
+			ColorSettings.configReset(jName);
 		}
 		jOK.setEnabled(b);
 	}
