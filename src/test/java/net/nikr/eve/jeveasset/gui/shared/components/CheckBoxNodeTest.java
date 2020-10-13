@@ -23,8 +23,8 @@ package net.nikr.eve.jeveasset.gui.shared.components;
 import java.util.ArrayList;
 import java.util.List;
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.MatcherAssert.assertThat;
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 
 public class CheckBoxNodeTest {
