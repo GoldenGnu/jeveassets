@@ -1124,7 +1124,6 @@ public class StockpileDialog extends JDialogCentered {
 
 		//INCLIDE LABELS
 			jErrorLabel = new JLabel();
-			jErrorLabel.setDisabledIcon(Images.UPDATE_DONE_ERROR.getIcon());
 			jErrorLabel.setEnabled(false);
 			jAssetsLabel = new JLabel();
 			jAssetsLabel.setDisabledIcon(Images.INCLUDE_ASSETS.getIcon());
