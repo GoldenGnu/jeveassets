@@ -68,7 +68,6 @@ import javax.swing.plaf.synth.SynthFormattedTextFieldUI;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.settings.ColorEntry;
 import net.nikr.eve.jeveasset.data.settings.ColorSettings;
-import net.nikr.eve.jeveasset.data.settings.Colors;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
@@ -485,8 +484,7 @@ class FilterPanel<E> implements Comparable<FilterPanel<E>> {
 			if (isInvalidRegex()) {
 				ColorSettings.config(jText, ColorEntry.GLOBAL_ENTRY_WARNING);
 			} else {
-				jText.setBackground(Colors.TEXTFIELD_BACKGROUND.getColor());
-				jText.setForeground(Colors.TEXTFIELD_FOREGROUND.getColor());
+				ColorSettings.configReset(jText);
 			}
 		} else {
 			ColorSettings.config(jText, ColorEntry.GLOBAL_ENTRY_INVALID);
