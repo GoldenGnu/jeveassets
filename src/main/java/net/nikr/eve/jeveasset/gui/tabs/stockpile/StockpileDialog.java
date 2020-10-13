@@ -119,7 +119,7 @@ public class StockpileDialog extends JDialogCentered {
 		CHANGE_LOCATION_TYPE
 	}
 
-	private static final int FIELD_WIDTH = 480;
+	private static final int FIELD_WIDTH = 600;
 
 	private final JTextField jName;
 	private final JDoubleField jMultiplier;
