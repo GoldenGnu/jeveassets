@@ -25,11 +25,15 @@ import java.awt.Color;
 import java.awt.Component;
 import java.util.ArrayList;
 import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javax.swing.BorderFactory;
 import javax.swing.JComponent;
+import javax.swing.JTextField;
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
+import javax.swing.border.Border;
 import net.nikr.eve.jeveasset.data.settings.ColorTheme.ColorThemeTypes;
 import net.nikr.eve.jeveasset.gui.shared.ColorUtil;
 import net.nikr.eve.jeveasset.i18n.DialoguesSettings;
@@ -71,6 +75,7 @@ public class ColorSettings {
 	private ColorTheme colorTheme = ColorThemeTypes.DEFAULT.getInstance();
 	private final Map<ColorEntry, Color> backgrounds = new EnumMap<>(ColorEntry.class);
 	private final Map<ColorEntry, Color> foregrounds = new EnumMap<>(ColorEntry.class);
+	private static final Map<JTextField, BorderWrap> BORDERS = new HashMap<>();
 
 	public ColorSettings() {
 		for (ColorEntry colorEntry : ColorEntry.values()) {
@@ -187,6 +192,24 @@ public class ColorSettings {
 		if (background != null) {
 			component.setOpaque(true);
 			component.setBackground(background);
+			/**
+			 * GTK JTextField background workaround.
+			 * Use Borders instead of background color on GTK, as setting background color have no effect
+			 * Save the original border and set new border with the background color
+			 */
+			if ("GTK".equals(UIManager.getLookAndFeel().getID()) && component instanceof JTextField) {
+				JTextField jTextField = (JTextField) component;
+				BorderWrap borderWrap = BORDERS.get(jTextField);
+				if (borderWrap == null) { //Original border
+					//Save original border
+					borderWrap = new BorderWrap(jTextField.getBorder());
+					BORDERS.put(jTextField, borderWrap);
+				}
+				//Set background color border
+				jTextField.setBorder(BorderFactory.createCompoundBorder(
+						BorderFactory.createMatteBorder(4, 4, 4, 4, background),
+						BorderFactory.createEmptyBorder(0, 7, 0, 7)));
+			}
 		} else {
 			component.setOpaque(false);
 		}
@@ -194,6 +217,23 @@ public class ColorSettings {
 			component.setForeground(foreground);
 		} else {
 			component.setForeground(Colors.COMPONENT_FOREGROUND.getColor());
+		}
+	}
+
+	public static void configReset(JTextField jTextField) {
+		jTextField.setBackground(Colors.TEXTFIELD_BACKGROUND.getColor());
+		jTextField.setForeground(Colors.TEXTFIELD_FOREGROUND.getColor());
+		/**
+		 * GTK JTextField background workaround.
+		 * Use Borders instead of background color on GTK, as setting background color have no effect
+		 * Load the original border
+		 */
+		if ("GTK".equals(UIManager.getLookAndFeel().getID())) {
+			BorderWrap borderWrap = BORDERS.get(jTextField);
+			if (borderWrap != null) {
+				//Restore original border (if saved)
+				jTextField.setBorder(borderWrap.getBorder());
+			}
 		}
 	}
 
@@ -299,4 +339,19 @@ public class ColorSettings {
 
 	}
 
+	/**
+	 * Wrap border.
+	 * Differentiate null border from null map value (unset)
+	 */
+	private static class BorderWrap {
+		private final Border border;
+
+		public BorderWrap(Border border) {
+			this.border = border;
+		}
+
+		public Border getBorder() {
+			return border;
+		}
+	}
 }
