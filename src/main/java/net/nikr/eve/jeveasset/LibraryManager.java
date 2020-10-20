@@ -93,18 +93,18 @@ public class LibraryManager {
 			files.add("glazedlists-1.11.0.jar");
 			files.add("graph-2.0.0.jar");
 			files.add("guava-r09.jar");
-			files.add("jaxen-1.1.6.jar");
-			files.add("javax.activation-1.2.0.jar");
+			files.add("jaxen-1.2.0.jar");
+			files.add("javax.activation-api-1.2.0.jar");
 			files.add("guava-r09.jar");
-			files.add("LGoodDatePicker-10.2.3.jar");
+			files.add("LGoodDatePicker-11.1.0.jar");
 			files.add("jfreechart-1.5.0.jar");
 			files.add("osxadapter-1.1.0.jar");
 			files.add("pricing-2.1.2.jar");
 			files.add("routing-2.0.0.jar");
-			files.add("slf4j-api-1.7.25.jar");
-			files.add("log4j-over-slf4j-1.7.25.jar");
-			files.add("jcl-over-slf4j-1.7.25.jar");
-			files.add("jul-to-slf4j-1.7.25.jar");
+			files.add("slf4j-api-1.7.30.jar");
+			files.add("log4j-over-slf4j-1.7.30.jar");
+			files.add("jcl-over-slf4j-1.7.30.jar");
+			files.add("jul-to-slf4j-1.7.30.jar");
 			files.add("logback-core-1.2.3.jar");
 			files.add("logback-classic-1.2.3.jar");
 			files.add("super-csv-2.4.0.jar");
@@ -113,8 +113,8 @@ public class LibraryManager {
 			files.add("hamcrest-core-1.3.jar");
 			files.add("eve-esi-4.1.0.jar");
 			files.add("hamcrest-core-1.3.jar");
-			files.add("jaxb-api-2.3.0.jar");
-			files.add("sqlite-jdbc-3.23.1.jar");
+			files.add("jaxb-api-2.3.1.jar");
+			files.add("sqlite-jdbc-3.32.3.2.jar");
 			files.add("okhttp-3.14.2.jar");
 			files.add("gson-fire-1.8.3.jar");
 			files.add("gson-2.8.5.jar");
@@ -126,11 +126,11 @@ public class LibraryManager {
 			files.add("commons-codec-1.9.jar");
 			files.add("contracts-pricing-2.0.0.jar");
 			files.add("commons-lang3-3.9.jar");
-			files.add("jna-platform-4.5.2.jar");
-			files.add("jna-4.5.2.jar");
+			files.add("jna-platform-5.6.0.jar");
+			files.add("jna-5.6.0.jar");
 			files.add("jsr250-api-1.0.jar");
 			files.add("jsr305-3.0.2.jar");
-			files.add("flatlaf-0.36.jar");
+			files.add("flatlaf-0.43.jar");
 		}
 		return files;
 	}
