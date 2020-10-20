@@ -75,7 +75,10 @@ public class AboutDialog extends JDialogCentered {
 
 		JEditorPane jInfo = createEditorPane(
 				  "<b>Version</b><br>"
-				+ "&nbsp;" + Program.PROGRAM_VERSION + " (" + program.getProgramDataVersion() + ")<br>"
+				+ "&nbsp;" + Program.PROGRAM_VERSION + "<br>"
+				+ "<br>"
+				+ "<b>Data</b><br>"
+				+ "&nbsp;" + program.getProgramDataVersion() + "<br>"
 				+ "<br>"
 				+ "<b>License</b><br>"
 				+ "&nbsp;<a href=\"http://www.gnu.org/licenses/old-licenses/gpl-2.0.html\">GNU General Public License 2.0</a><br>"
