@@ -805,12 +805,23 @@ public class MarketOrdersTab extends JMainTabPrimary {
 		public void run() {
 			Path dir = MarketLogReader.getMarketlogsDirectory().toPath();
 			WatchService watcher;
-			try {
-				watcher = FileSystems.getDefault().newWatchService();
-				dir.register(watcher, StandardWatchEventKinds.ENTRY_CREATE);
-			} catch (IOException ex) {
-				LOG.error(ex.getMessage(), ex);
-				return;
+			while (true) {
+				if (MarketLogReader.getMarketlogsDirectory().exists()) {
+					try {
+						watcher = FileSystems.getDefault().newWatchService();
+						dir.register(watcher, StandardWatchEventKinds.ENTRY_CREATE);
+						break;
+					} catch (IOException ex) {
+						LOG.error(ex.getMessage(), ex);
+						return;
+					}
+				} else {
+					try {
+						Thread.sleep(15000); //Sleep 15 seconds, then tries again
+					} catch (InterruptedException ex1) {
+						//No problem
+					}
+				}
 			}
 			while (true) {
 				WatchKey key;
