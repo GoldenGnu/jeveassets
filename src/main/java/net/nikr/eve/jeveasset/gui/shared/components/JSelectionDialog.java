@@ -47,7 +47,7 @@ public class JSelectionDialog<T> extends JDialogCentered {
 
 		ListenerClass listenerClass = new ListenerClass();
 
-		jLocations = new JComboBox<T>();
+		jLocations = new JComboBox<>();
 
 		jOK = new JButton(GuiShared.get().ok());
 		jOK.setActionCommand(ContainerDialogAction.OK.name());
@@ -60,7 +60,7 @@ public class JSelectionDialog<T> extends JDialogCentered {
 		layout.setHorizontalGroup(
 			layout.createParallelGroup(GroupLayout.Alignment.LEADING)
 				.addGroup(layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
-					.addComponent(jLocations, 220, 220, 220)
+					.addComponent(jLocations, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, 600)
 					.addGroup(layout.createSequentialGroup()
 						.addComponent(jOK, Program.getButtonsWidth(), Program.getButtonsWidth(), Program.getButtonsWidth())
 						.addComponent(jCancel, Program.getButtonsWidth(), Program.getButtonsWidth(), Program.getButtonsWidth())
@@ -83,7 +83,7 @@ public class JSelectionDialog<T> extends JDialogCentered {
 		}
 		getDialog().setTitle(title);
 		selected = null;
-		jLocations.setModel(new ListComboBoxModel<T>(data));
+		jLocations.setModel(new ListComboBoxModel<>(data));
 		setVisible(true);
 		return selected;
 		
