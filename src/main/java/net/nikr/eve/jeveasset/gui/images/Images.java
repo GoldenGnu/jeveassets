@@ -105,7 +105,6 @@ public enum Images {
 	LINK_ADAM4EVE ("link_adam4eve.png"),
 	LINK_EVEHUB ("link_evehub.png"),
 	LINK_KHON_SPACE ("link_khon_space.png"),
-	LINK_EVEMARKETHELPER ("link_evemarkethelper.png"),
 
 	LOC_GROUPS ("loc_groups.png"),
 	LOC_PIN_COMMAND ("loc_pin_command.png"),
