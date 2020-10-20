@@ -42,7 +42,6 @@ import javax.swing.JTextField;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.settings.ColorEntry;
 import net.nikr.eve.jeveasset.data.settings.ColorSettings;
-import net.nikr.eve.jeveasset.data.settings.Colors;
 import net.nikr.eve.jeveasset.data.settings.TrackerData;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
@@ -62,6 +61,8 @@ public class JTrackerEditDialog extends JDialogCentered {
 		EDIT_WALLET,
 		EDIT_ASSETS
 	}
+
+	private static final int FIELD_WIDTH = 140;
 
 	//GUI
 	private final JTextField jDate;
@@ -96,8 +97,7 @@ public class JTrackerEditDialog extends JDialogCentered {
 		JLabel jDateLabel = new JLabel(TabsTracker.get().date());
 		jDate = new JTextField();
 		jDate.setEditable(false);
-		jDate.setOpaque(false);
-		jDate.setBackground(Colors.COMPONENT_TRANSPARENT.getColor());
+		jDate.setEnabled(false);
 		jDate.setHorizontalAlignment(JLabel.RIGHT);
 
 		JLabel jWalletBalanceLabel = new JLabel(TabsTracker.get().walletBalance());
@@ -177,16 +177,16 @@ public class JTrackerEditDialog extends JDialogCentered {
 						.addComponent(jSkillPointValueLabel)
 					)
 					.addGroup(layout.createParallelGroup()
-						.addComponent(jDate, 100, 100, 100)
-						.addComponent(jWalletBalance, 100, 100, 100)
-						.addComponent(jAssets, 100, 100, 100)
-						.addComponent(jSellOrders, 100, 100, 100)
-						.addComponent(jEscrows, 100, 100, 100)
-						.addComponent(jEscrowsToCover, 100, 100, 100)
-						.addComponent(jManufacturing, 100, 100, 100)
-						.addComponent(jContractCollateral, 100, 100, 100)
-						.addComponent(jContractValue, 100, 100, 100)
-						.addComponent(jSkillPoints, 100, 100, 100)
+						.addComponent(jDate, FIELD_WIDTH, FIELD_WIDTH, FIELD_WIDTH)
+						.addComponent(jWalletBalance, FIELD_WIDTH, FIELD_WIDTH, FIELD_WIDTH)
+						.addComponent(jAssets, FIELD_WIDTH, FIELD_WIDTH, FIELD_WIDTH)
+						.addComponent(jSellOrders, FIELD_WIDTH, FIELD_WIDTH, FIELD_WIDTH)
+						.addComponent(jEscrows, FIELD_WIDTH, FIELD_WIDTH, FIELD_WIDTH)
+						.addComponent(jEscrowsToCover, FIELD_WIDTH, FIELD_WIDTH, FIELD_WIDTH)
+						.addComponent(jManufacturing, FIELD_WIDTH, FIELD_WIDTH, FIELD_WIDTH)
+						.addComponent(jContractCollateral, FIELD_WIDTH, FIELD_WIDTH, FIELD_WIDTH)
+						.addComponent(jContractValue, FIELD_WIDTH, FIELD_WIDTH, FIELD_WIDTH)
+						.addComponent(jSkillPoints, FIELD_WIDTH, FIELD_WIDTH, FIELD_WIDTH)
 					)
 					.addGroup(layout.createParallelGroup()
 						.addComponent(jWalletBalanceFilterable)
