@@ -128,10 +128,12 @@ public class ExportSettings {
 	}
 
 	private static final String PATH = FileUtil.getUserDirectory();
+//Copy
+	private DecimalSeparator copyDecimalSeparator;
 //CSV - shared by all tools
 	private FieldDelimiter fieldDelimiter;
 	private LineDelimiter lineDelimiter;
-	private DecimalSeparator decimalSeparator;
+	private DecimalSeparator csvDecimalSeparator;
 //SQL
 	//Shared
 	private boolean createTable; 
@@ -151,9 +153,10 @@ public class ExportSettings {
 	private final Map<String, String> filenames = new HashMap<>();
 
 	public ExportSettings() {
+		copyDecimalSeparator = DecimalSeparator.DOT;
 		fieldDelimiter = FieldDelimiter.COMMA;
 		lineDelimiter = LineDelimiter.DOS;
-		decimalSeparator = DecimalSeparator.DOT;
+		csvDecimalSeparator = DecimalSeparator.DOT;
 		exportFormat = ExportFormat.CSV;
 		createTable = true;
 		dropTable = true;
@@ -162,12 +165,20 @@ public class ExportSettings {
 		htmlIGB = false;
 	}
 
-	public DecimalSeparator getDecimalSeparator() {
-		return decimalSeparator;
+	public DecimalSeparator getCopyDecimalSeparator() {
+		return copyDecimalSeparator;
 	}
 
-	public void setDecimalSeparator(final DecimalSeparator decimalSeparator) {
-		this.decimalSeparator = decimalSeparator;
+	public void setCopyDecimalSeparator(DecimalSeparator copyDecimalSeparator) {
+		this.copyDecimalSeparator = copyDecimalSeparator;
+	}
+
+	public DecimalSeparator getCsvDecimalSeparator() {
+		return csvDecimalSeparator;
+	}
+
+	public void setCsvDecimalSeparator(final DecimalSeparator decimalSeparator) {
+		this.csvDecimalSeparator = decimalSeparator;
 	}
 
 	public FieldDelimiter getFieldDelimiter() {
