@@ -48,30 +48,30 @@ import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 
 public class MenuData<T> {
 
-	private final Set<Integer> typeIDs = new HashSet<Integer>();
-	private final Set<MyLocation> autopilotStationLocations = new HashSet<MyLocation>();
-	private final Set<MyLocation> systemLocations = new HashSet<MyLocation>();
-	private final Set<MyLocation> regionLocations = new HashSet<MyLocation>();
-	private final Set<MyLocation> editableCitadelLocations = new HashSet<MyLocation>();
-	private final Set<MyLocation> userLocations = new HashSet<MyLocation>();
-	private final Map<Integer, Double> prices = new HashMap<Integer, Double>();
-	private final Set<String> typeNames = new HashSet<String>();
-	private final Set<String> stationsAndCitadelsNames = new HashSet<String>();
-	private final Set<String> stationNames = new HashSet<String>();
-	private final Set<String> planetNames = new HashSet<String>();
-	private final Set<String> systemNames = new HashSet<String>();
-	private final Set<String> regionNames = new HashSet<String>();
-	private final Set<Integer> marketTypeIDs = new HashSet<Integer>();
-	private final Set<Integer> blueprintTypeIDs = new HashSet<Integer>();
-	private final Set<Integer> inventionTypeIDs = new HashSet<Integer>();
-	private final Set<Integer> bpcTypeIDs = new HashSet<Integer>();
-	private final Set<Long> ownerIDs = new HashSet<Long>();
-	private final Map<Tag, Integer> tagCount = new HashMap<Tag, Integer>();
-	private final List<TagsType> tags = new ArrayList<TagsType>();
-	private final List<MyAsset> assets = new ArrayList<MyAsset>();
-	private final Set<MyContract> contracts = new HashSet<MyContract>();
+	private final Set<Integer> typeIDs = new HashSet<>();
+	private final Set<MyLocation> autopilotStationLocations = new HashSet<>();
+	private final Set<MyLocation> systemLocations = new HashSet<>();
+	private final Set<MyLocation> regionLocations = new HashSet<>();
+	private final Set<MyLocation> editableCitadelLocations = new HashSet<>();
+	private final Set<MyLocation> userLocations = new HashSet<>();
+	private final Map<Integer, Double> prices = new HashMap<>();
+	private final Set<String> typeNames = new HashSet<>();
+	private final Set<String> stationsAndCitadelsNames = new HashSet<>();
+	private final Set<String> stationNames = new HashSet<>();
+	private final Set<String> planetNames = new HashSet<>();
+	private final Set<String> systemNames = new HashSet<>();
+	private final Set<String> regionNames = new HashSet<>();
+	private final Set<Integer> marketTypeIDs = new HashSet<>();
+	private final Set<Integer> blueprintTypeIDs = new HashSet<>();
+	private final Set<Integer> inventionTypeIDs = new HashSet<>();
+	private final Set<Integer> bpcTypeIDs = new HashSet<>();
+	private final Set<Long> ownerIDs = new HashSet<>();
+	private final Map<Tag, Integer> tagCount = new HashMap<>();
+	private final List<TagsType> tags = new ArrayList<>();
+	private final List<MyAsset> assets = new ArrayList<>();
+	private final Set<MyContract> contracts = new HashSet<>();
 	private final Map<Item, Long> itemCounts = new HashMap<>();
-	private final List<ContractPriceItem> contractPriceItems = new ArrayList<ContractPriceItem>();
+	private final List<ContractPriceItem> contractPriceItems = new ArrayList<>();
 
 	public MenuData() { }
 
@@ -85,7 +85,7 @@ public class MenuData<T> {
 				continue;
 			}
 
-			Set<MyLocation> locations = new HashSet<MyLocation>();
+			Set<MyLocation> locations = new HashSet<>();
 			if (t instanceof LocationType) {
 				LocationType type = (LocationType) t;
 				locations.add(type.getLocation());
@@ -96,7 +96,7 @@ public class MenuData<T> {
 				locations.addAll(type.getLocations());
 			}
 
-			Set<Long> owners = new HashSet<Long>();
+			Set<Long> owners = new HashSet<>();
 			if (t instanceof OwnersType) {
 				OwnersType ownersType = (OwnersType) t;
 				owners.addAll(ownersType.getOwners());
@@ -158,7 +158,7 @@ public class MenuData<T> {
 
 			if (item.isBlueprint()) {
 				blueprintTypeIDs.add(item.getTypeID());
-				if (item.getMeta() == 0 && item.getTypeName().endsWith(" I")) {
+				if (item.getMeta() == 0 && item.getTypeName().contains(" I ")) {
 					inventionTypeIDs.add(item.getTypeID());
 				}
 			} else if (item.isProduct()) {
