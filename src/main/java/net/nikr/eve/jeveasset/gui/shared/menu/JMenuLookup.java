@@ -28,7 +28,6 @@ import java.util.Set;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.JAutoMenu;
@@ -37,14 +36,13 @@ import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewTab.OverviewAction;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 import net.nikr.eve.jeveasset.i18n.TabsOverview;
 import net.nikr.eve.jeveasset.io.online.EvepraisalGetter;
-import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 import net.nikr.eve.jeveasset.io.shared.DesktopUtil;
 
 
 public class JMenuLookup<T> extends JAutoMenu<T> {
 
 	private enum MenuLookupAction {
-		EVE_MARKETDATA,
+		//EVE_MARKETDATA,
 		EVEMARKETER,
 		GAMES_CHRUKER,
 		FUZZWORK_ITEMS,
@@ -65,7 +63,6 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 		EVEPRAISAL,
 		ADAM4EVE,
 		EVEHUB,
-		EVEMARKETHELPER,
 	}
 
 	private final JMenu jLocations;
@@ -78,12 +75,11 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 	private final JMenuItem jzKillboardSystem;
 	private final JMenuItem jzKillboardRegion;
 	private final JMenu jMarket;
-	private final JMenuItem jEveMarketdata;
+	//private final JMenuItem jEveMarketdata;
 	private final JMenuItem jEveMarketer;
 	private final JMenuItem jFuzzworkMarket;
 	private final JMenuItem jEvepraisal;
 	private final JMenuItem jEveHub;
-	private final JMenuItem jEveMarketHelper;
 	private final JMenu jItemDatabase;
 	private final JMenuItem jFuzzworkItems;
 	private final JMenuItem jChruker;
@@ -159,11 +155,13 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 		jMarket.setIcon(Images.ORDERS_SELL.getIcon());
 		add(jMarket);
 
+		/*
 		jEveMarketdata = new JMenuItem(GuiShared.get().eveMarketData());
 		jEveMarketdata.setIcon(Images.LINK_EVE_MARKETDATA.getIcon());
 		jEveMarketdata.setActionCommand(MenuLookupAction.EVE_MARKETDATA.name());
 		jEveMarketdata.addActionListener(listener);
 		jMarket.add(jEveMarketdata);
+		*/
 
 		jEveMarketer = new JMenuItem(GuiShared.get().eveMarketer());
 		jEveMarketer.setIcon(Images.LINK_EVEMARKETER.getIcon());
@@ -194,12 +192,6 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 		jEveHub.setActionCommand(MenuLookupAction.EVEHUB.name());
 		jEveHub.addActionListener(listener);
 		jMarket.add(jEveHub);
-
-		jEveMarketHelper = new JMenuItem(GuiShared.get().eveMarketHelper());
-		jEveMarketHelper.setIcon(Images.LINK_EVEMARKETHELPER.getIcon());
-		jEveMarketHelper.setActionCommand(MenuLookupAction.EVEMARKETHELPER.name());
-		jEveMarketHelper.addActionListener(listener);
-		jMarket.add(jEveMarketHelper);
 		
 		jItemDatabase = new JMenu(GuiShared.get().itemDatabase());
 		jItemDatabase.setIcon(Images.TOOL_ASSETS.getIcon());
@@ -280,12 +272,11 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 		jzKillboardRegion.setEnabled(!menuData.getRegionLocations().isEmpty());
 	//Market
 		jMarket.setEnabled(!menuData.getMarketTypeIDs().isEmpty());
-		jEveMarketdata.setEnabled(!menuData.getMarketTypeIDs().isEmpty());
+		//jEveMarketdata.setEnabled(!menuData.getMarketTypeIDs().isEmpty());
 		jEveMarketer.setEnabled(!menuData.getMarketTypeIDs().isEmpty());
 		jFuzzworkMarket.setEnabled(!menuData.getMarketTypeIDs().isEmpty());
 		jAdam4eve.setEnabled(!menuData.getMarketTypeIDs().isEmpty());
 		jEveHub.setEnabled(!menuData.getMarketTypeIDs().isEmpty());
-		jEveMarketHelper.setEnabled(!menuData.getMarketTypeIDs().isEmpty());
 	//Info
 		jItemDatabase.setEnabled(!menuData.getTypeIDs().isEmpty());
 		jFuzzworkItems.setEnabled(!menuData.getTypeIDs().isEmpty());
@@ -367,13 +358,15 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 					urls.add("https://zkillboard.com/region/" + location.getLocationID()+ "/");
 				}
 				DesktopUtil.browse(urls, program);
+		//Market
+			/*
 			} else if (MenuLookupAction.EVE_MARKETDATA.name().equals(e.getActionCommand())) {
 				Set<String> urls = new HashSet<String>();
 				for (int marketTypeID : menuData.getMarketTypeIDs()) {
 					urls.add("http://eve-marketdata.com/price_check.php?type_id=" + marketTypeID);
 				}
 				DesktopUtil.browse(urls, program);
-		//Market
+			*/
 			} else if (MenuLookupAction.EVEMARKETER.name().equals(e.getActionCommand())) {
 				Set<String> urls = new HashSet<String>();
 				for (int marketTypeID : menuData.getMarketTypeIDs()) {
@@ -390,13 +383,6 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 				Set<String> urls = new HashSet<String>();
 				for (int typeID : menuData.getMarketTypeIDs()) {
 					urls.add("https://eve-hub.com/market/chart/10000002/" + typeID);
-				}
-				DesktopUtil.browse(urls, program);
-			} else if (MenuLookupAction.EVEMARKETHELPER.name().equals(e.getActionCommand())) {
-				Set<String> urls = new HashSet<String>();
-				for (int typeID : menuData.getMarketTypeIDs()) {
-					Item item = ApiIdConverter.getItem(typeID);
-					urls.add("https://www.evemarkethelper.net/Market/" + typeID +"-" + item.getTypeName().replace(" ", "-").replace("'", "").toLowerCase());
 				}
 				DesktopUtil.browse(urls, program);
 			} else if (MenuLookupAction.EVEPRAISAL.name().equals(e.getActionCommand())) {
