@@ -182,7 +182,7 @@ public class TaskDialog {
 				.addGap(0, 0, Integer.MAX_VALUE)
 				.addComponent(jMinimize)
 		);
-		int taskWidth = 0;
+		int taskWidth = 230;
 		for (UpdateTask updateTaskLoop : updateTasks) {
 			horizontalGroup.addGroup(layout.createSequentialGroup()
 					.addComponent(updateTaskLoop.getTextLabel(), 100, 100, Integer.MAX_VALUE)
