@@ -52,7 +52,7 @@ public class NativeUtil {
 	public static boolean focusEveOnline(String characterName) {
 		final String windowName = "EVE - " + characterName;
 		if (Platform.isWindows()) {
-			final User32 user32 = Native.loadLibrary("User32.dll", User32.class);
+			final User32 user32 = Native.load("User32.dll", User32.class);
 			HWND window = user32.FindWindowA(null, windowName);
 			WINDOWPLACEMENT windowPlacement = new WINDOWPLACEMENT();
 			user32.GetWindowPlacement(window, windowPlacement);
