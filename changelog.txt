@@ -35,7 +35,7 @@ Code:
 Bug Fixes:
 -Skill point filter was always adding 5m (now it just enforce 5m minimum)
 -NPE in FilterMatcher (BugId: 850)
-components size was not adjusted to LAF
+-Components size was not adjusted to LAF
 -Missing constructor for ContractPriceItem on Java 14 (BugId: 854)
 -Fixed default market orders table sort order
 -Incorrectly mark some assets and stockpile items as blueprints
