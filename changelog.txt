@@ -16,6 +16,36 @@
                   #### #  # #  # #  # #### #### #### #### ####
 
 ________________________________________________________________________________
+_6.6.3__________________________________________________________________________
+
+New Features:
+-Added option to change decimal separator used when copying (Issue #195)
+-Greatly improved the GUI on the Nimbus and GTK+ (Linux) look and feels
+-Improved the GUI on all look and feels
+
+Changed:
+-Better error message for invalid authorization (JWT is null) (Issue #193)
+-Better warning message for "waiting for cache to expire"
+-Stockpile include now start blank (forcing discovery of the options)
+
+Code:
+-Updated eve-esi to 4.1.0
+-Updated all 3rd party libraries to the latest version 
+
+Bug Fixes:
+-Skill point filter was always adding 5m (now it just enforce 5m minimum)
+-NPE in FilterMatcher (BugId: 850)
+components size was not adjusted to LAF
+-Missing constructor for ContractPriceItem on Java 14 (BugId: 854)
+-Fixed default market orders table sort order
+-Incorrectly mark some assets and stockpile items as blueprints
+-Save/load invalid account state
+-Only run Faction Warfare once on update
+-Fixed khon.space invention lookup not working for blueprints
+-Removed eve-marketdata.com and evemarkethelper.net from the lookup menu
+-Checks periodical if the marketlogs directory exist (if missing on startup)
+
+________________________________________________________________________________
 _6.6.2__________________________________________________________________________
 
 New Features:
