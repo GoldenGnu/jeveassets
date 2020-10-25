@@ -36,6 +36,7 @@ import javax.swing.AbstractButton;
 import javax.swing.JTable;
 import javax.swing.text.JTextComponent;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.HierarchyColumn;
+import net.nikr.eve.jeveasset.gui.shared.table.containers.NumberValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -190,6 +191,8 @@ public class CopyHandler {
 				if (value != null) { //Ignore null
 					if (value instanceof Number) {
 						rowText.append(Formater.copyFormat((Number)value));
+					} else if (value instanceof NumberValue) {
+						rowText.append(Formater.copyFormat(((NumberValue)value).getNumber()));
 					} else if (value instanceof Date) {
 						rowText.append(Formater.columnDate(value));
 					} else if (value instanceof HierarchyColumn) {
