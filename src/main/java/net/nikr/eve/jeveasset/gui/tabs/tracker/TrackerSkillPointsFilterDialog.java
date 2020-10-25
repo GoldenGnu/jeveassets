@@ -31,10 +31,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -73,7 +73,7 @@ public class TrackerSkillPointsFilterDialog extends JDialogCentered {
 
 		jTableScroll = new JScrollPane(jTable);
 		jTableScroll.getVerticalScrollBar().setUnitIncrement(19);
-		jTableScroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		jTableScroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 
 		selectionModel = EventModels.createSelectionModel(eventList);
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
@@ -114,7 +114,7 @@ public class TrackerSkillPointsFilterDialog extends JDialogCentered {
 	}
 
 	public boolean show() {
-		Set<TrackerSkillPointFilter> filters = new HashSet<>();
+		Set<TrackerSkillPointFilter> filters = new TreeSet<>();
 		for (OwnerType ownerType : program.getOwnerTypes()) {
 			if (ownerType.isCorporation()) {
 				continue; //Corporation can not have skill points
