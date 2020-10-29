@@ -45,7 +45,6 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
-import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.gui.shared.components.JDropDownButton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -197,6 +196,10 @@ public class LookAndFeelPreview {
 
 			JRadioButton jRadioButton = new JRadioButton("RadioButton");
 			jRadioButton.setSelected(true);
+			int height = 22;
+			height = Math.max(height, new JComboBox<>().getPreferredSize().height);
+			height = Math.max(height, new JTextField().getPreferredSize().height);
+			height = Math.max(height, new JButton().getPreferredSize().height);
 
 			innerLayout.setHorizontalGroup(
 					innerLayout.createSequentialGroup()
@@ -214,16 +217,16 @@ public class LookAndFeelPreview {
 			innerLayout.setVerticalGroup(
 					innerLayout.createSequentialGroup()
 						.addGroup(innerLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
-							.addComponent(jTextField, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-							.addComponent(jComboBox, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+							.addComponent(jTextField, height, height, height)
+							.addComponent(jComboBox, height, height, height)
 						)
 						.addGroup(innerLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
-							.addComponent(jLabel)
-							.addComponent(jButton)
+							.addComponent(jLabel, height, height, height)
+							.addComponent(jButton, height, height, height)
 						)
 						.addGroup(innerLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
-							.addComponent(jCheckBox)
-							.addComponent(jRadioButton)
+							.addComponent(jCheckBox, height, height, height)
+							.addComponent(jRadioButton, height, height, height)
 						)
 			);
 
