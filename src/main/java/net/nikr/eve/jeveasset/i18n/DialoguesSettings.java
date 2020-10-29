@@ -121,6 +121,7 @@ public abstract class DialoguesSettings extends Bundle {
 	public abstract String lookAndFeelFlatDark();
 	public abstract String lookAndFeelFlatIntelliJ();
 	public abstract String lookAndFeelFlatDarcula();
+	public abstract String lookAndFeelNimbusDark();
 	public abstract String lookAndFeelMsg();
 	public abstract String lookAndFeelTitle();
 
