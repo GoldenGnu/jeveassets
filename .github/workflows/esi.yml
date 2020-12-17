@@ -11,9 +11,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
-      uses: actions/checkout@v1
+      uses: actions/checkout@v2
     - name: Cache
-      uses: actions/cache@v1
+      uses: actions/cache@v2
       with:
         path: ~/.m2/repository
         key: build-${{ hashFiles('**/pom.xml') }}
