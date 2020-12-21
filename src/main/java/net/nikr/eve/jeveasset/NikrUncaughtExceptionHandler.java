@@ -90,13 +90,13 @@ public class NikrUncaughtExceptionHandler implements Thread.UncaughtExceptionHan
 						+ "Press OK to close jEveAssets"
 						+ "\r\n"
 						+ "\r\n"
-						, "Critical Error", JOptionPane.ERROR_MESSAGE);
+						, Program.PROGRAM_NAME + " - Critical Error", JOptionPane.ERROR_MESSAGE);
 			} else if (causes.contains(OutOfMemoryError.class)) { //Out of memory
 				int value = JOptionPane.showConfirmDialog(null,
 						"Java has run out of memory. jEveAssets will now close\r\n"
 						+ "Do you want to browse to the wiki article explaining how to fix this?\r\n"
 						+ "\r\n"
-						, "Critical Error", JOptionPane.OK_CANCEL_OPTION, JOptionPane.ERROR_MESSAGE);
+						, Program.PROGRAM_NAME + " - Critical Error", JOptionPane.OK_CANCEL_OPTION, JOptionPane.ERROR_MESSAGE);
 				if (value == JOptionPane.OK_OPTION) {
 					try {
 						Desktop.getDesktop().browse(new URI("https://jeveassets.nikr.net/jmemory"));
@@ -112,7 +112,7 @@ public class NikrUncaughtExceptionHandler implements Thread.UncaughtExceptionHan
 					JOptionPane.showMessageDialog(null,
 							"Please, re-download jEveAssets and leave the unzipped directory intact\r\n"
 							+ "Press OK to close jEveAssets"
-							, "Critical Error", JOptionPane.ERROR_MESSAGE);
+							, Program.PROGRAM_NAME + " - Critical Error", JOptionPane.ERROR_MESSAGE);
 				}
 			} else if (causes.contains(UnsatisfiedLinkError.class) && t.getMessage().contains("splashscreen")) { //Headless Java
 				System.err.println("ERROR: Your version of java does not support a GUI");
@@ -120,7 +120,10 @@ public class NikrUncaughtExceptionHandler implements Thread.UncaughtExceptionHan
 				System.out.println("ERROR: Your version of java does not support a GUI");
 				System.out.println("       Please, install in non-headless version of " + JAVA + " (or later) to run jEveAssets");
 				try {
-					JOptionPane.showMessageDialog(null, "Your version of java does not support a GUI\r\nPlease, install in non-headless version of " + JAVA + " (or later) to run jEveAssets", "Critical Error", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(null, "Your version of java does not support a GUI\r\n"
+							+ "Please, install in non-headless version of " + JAVA + " (or later) to run jEveAssets",
+							Program.PROGRAM_NAME + " - Critical Error",
+							JOptionPane.ERROR_MESSAGE);
 				} catch (Throwable ex) {
 					//We tried our best, nothing more to do now...
 				}
@@ -134,7 +137,7 @@ public class NikrUncaughtExceptionHandler implements Thread.UncaughtExceptionHan
 						+ "Press OK to continue\r\n"
 						+ "\r\n"
 						+ "\r\n"
-						, "Critical Error", JOptionPane.ERROR_MESSAGE);
+						, Program.PROGRAM_NAME + " - Critical Error", JOptionPane.ERROR_MESSAGE);
 				}
 				int value = JOptionPane.showConfirmDialog(null,
 						"Send bug report?\r\n"
@@ -147,7 +150,7 @@ public class NikrUncaughtExceptionHandler implements Thread.UncaughtExceptionHan
 						+ "-Java stack trace (bug)\r\n"
 						+ "\r\n"
 						+ "\r\n"
-						, "Critical Error", JOptionPane.OK_CANCEL_OPTION, JOptionPane.ERROR_MESSAGE);
+						, Program.PROGRAM_NAME + " - Critical Error", JOptionPane.OK_CANCEL_OPTION, JOptionPane.ERROR_MESSAGE);
 				if (value == JOptionPane.OK_OPTION) {
 					String result = send(t);
 					JOptionPane.showMessageDialog(null, result, "Bug Report", JOptionPane.PLAIN_MESSAGE);
