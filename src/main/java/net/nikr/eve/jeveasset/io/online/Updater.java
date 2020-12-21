@@ -97,7 +97,7 @@ public class Updater {
 				"One of the data files in the data folder is corrupted or missing\r\n"
 				+ "jEveAssets will not work without it\r\n"
 				+ "Please use your package manager to correct the problem\r\n"
-				, "Critical Error", JOptionPane.ERROR_MESSAGE);
+				, "jEveAssets - Critical Error", JOptionPane.ERROR_MESSAGE);
 			System.exit(-1);
 		}
 		int value = JOptionPane.showConfirmDialog(null, 
@@ -105,7 +105,7 @@ public class Updater {
 				+ "jEveAssets will not work without it\r\n"
 				+ "Download the latest version with auto update?\r\n"
 				,
-				"Critical Error",
+				"jEveAssets - Critical Error",
 				JOptionPane.OK_CANCEL_OPTION, JOptionPane.ERROR_MESSAGE);
 		if (value == JOptionPane.OK_OPTION) {
 			LOG.info("Updating data");
@@ -113,11 +113,19 @@ public class Updater {
 			if (download) {
 				runUpdate(DATA, null);
 			} else {
-				JOptionPane.showMessageDialog(null, "Auto update failed\r\nPlease, re-download jEveAssets and leave the unzipped directory intact\r\nPress OK to close jEveAssets", "Critical Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(null, "Auto update failed\r\n"
+						+ "Please, re-download jEveAssets and leave the unzipped directory intact\r\n"
+						+ "Press OK to close jEveAssets",
+						"jEveAssets - Critical Error",
+						JOptionPane.ERROR_MESSAGE);
 				System.exit(-1);
 			}
 		} else {
-			JOptionPane.showMessageDialog(null, "Please, re-download jEveAssets and leave the unzipped directory intact\r\nRestart jEveAssets to use auto update to fix the problem\r\nPress OK to close jEveAssets", "Critical Error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(null, "Please, re-download jEveAssets and leave the unzipped directory intact\r\n"
+					+ "Restart jEveAssets to use auto update to fix the problem\r\n"
+					+ "Press OK to close jEveAssets",
+					"jEveAssets - Critical Error",
+					JOptionPane.ERROR_MESSAGE);
 			System.exit(-1);
 		}
 	}
@@ -128,7 +136,7 @@ public class Updater {
 				"One of the libraies in the lib folder is corrupted or missing\r\n"
 				+ "jEveAssets will not work without it\r\n"
 				+ "Please use your package manager to correct the problem\r\n"
-				, "Critical Error", JOptionPane.ERROR_MESSAGE);
+				, "jEveAssets - Critical Error", JOptionPane.ERROR_MESSAGE);
 			System.exit(-1);
 		}
 		int value = JOptionPane.showConfirmDialog(null, 
@@ -136,7 +144,7 @@ public class Updater {
 				+ "jEveAssets will not work without it\r\n"
 				+ "Download the latest version with auto update?\r\n"
 				,
-				"Critical Error",
+				"jEveAssets - Critical Error",
 				JOptionPane.OK_CANCEL_OPTION, JOptionPane.ERROR_MESSAGE);
 		if (value == JOptionPane.OK_OPTION) {
 			LOG.info("Updating program");
@@ -144,11 +152,19 @@ public class Updater {
 			if (download) {
 				runUpdate(PROGRAM, null);
 			} else {
-				JOptionPane.showMessageDialog(null, "Auto update failed\r\nPlease, re-download jEveAssets and leave the unzipped directory intact\r\nPress OK to close jEveAssets", "Critical Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(null, "Auto update failed\r\n"
+						+ "Please, re-download jEveAssets and leave the unzipped directory intact\r\n"
+						+ "Press OK to close jEveAssets",
+						"jEveAssets - Critical Error",
+						JOptionPane.ERROR_MESSAGE);
 				System.exit(-1);
 			}
 		} else {
-			JOptionPane.showMessageDialog(null, "Please, re-download jEveAssets and leave the unzipped directory intact\r\nRestart jEveAssets to use auto update to fix the problem\r\nPress OK to close jEveAssets", "Critical Error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(null, "Please, re-download jEveAssets and leave the unzipped directory intact\r\n"
+					+ "Restart jEveAssets to use auto update to fix the problem\r\n"
+					+ "Press OK to close jEveAssets",
+					"jEveAssets - Critical Error",
+					JOptionPane.ERROR_MESSAGE);
 			System.exit(-1);
 		}
 	}
@@ -158,14 +174,14 @@ public class Updater {
 			JOptionPane.showMessageDialog(null, 
 				"jEveAssets have been corrupted\r\n"
 				+ "Please use your package manager to correct the problem\r\n"
-				, "Critical Error", JOptionPane.ERROR_MESSAGE);
+				, "jEveAssets - Critical Error", JOptionPane.ERROR_MESSAGE);
 			System.exit(-1);
 		}
 		int value = JOptionPane.showConfirmDialog(null, 
 				"jEveAssets have been corrupted\r\n"
 				+ "You may be able to use auto update to fix the problem\r\n"
 				+ "Download the latest version with auto update?\r\n"
-				, "Critical Error", JOptionPane.OK_CANCEL_OPTION, JOptionPane.ERROR_MESSAGE);
+				, "jEveAssets - Critical Error", JOptionPane.OK_CANCEL_OPTION, JOptionPane.ERROR_MESSAGE);
 		if (value == JOptionPane.OK_OPTION) {
 			LOG.info("Updating program");
 			boolean download = downloadUpdater();
@@ -176,7 +192,7 @@ public class Updater {
 						"Auto update failed\r\n"
 						+ "Please, re-download jEveAssets and leave the unzipped directory intact\r\n"
 						+ "Press OK to close jEveAssets"
-						, "Critical Error", JOptionPane.ERROR_MESSAGE);
+						, "jEveAssets - Critical Error", JOptionPane.ERROR_MESSAGE);
 				System.exit(-1);
 			}
 		} else {
@@ -184,7 +200,7 @@ public class Updater {
 					"Please, re-download jEveAssets and leave the unzipped directory intact\r\n"
 					+ "Restart jEveAssets to use auto update to fix the problem\r\n"
 					+ "Press OK to close jEveAssets"
-					, "Critical Error", JOptionPane.ERROR_MESSAGE);
+					, "jEveAssets - Critical Error", JOptionPane.ERROR_MESSAGE);
 			System.exit(-1);
 		}
 	}
@@ -207,7 +223,7 @@ public class Updater {
 					+ "Please use your package manager to update\r\n"
 					+ "\r\n"
 					,
-					"Auto Update",
+					"jEveAssets - Auto Update",
 					JOptionPane.PLAIN_MESSAGE);
 				return;
 			}
@@ -220,7 +236,7 @@ public class Updater {
 					+ "Update " + title.toLowerCase() + " now?\r\n"
 					+ "\r\n"
 					,
-					"Auto Update",
+					"jEveAssets - Auto Update",
 					JOptionPane.OK_CANCEL_OPTION);
 			if (value == JOptionPane.OK_OPTION) {
 				LOG.log(Level.INFO, "Updating {0}", title);
@@ -228,7 +244,10 @@ public class Updater {
 				if (download) {
 					runUpdate(link, proxyData);
 				} else {
-					JOptionPane.showMessageDialog(null, "Auto update failed\r\nRestart jEveAssets to try again...", "Auto Update", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(null, "Auto update failed\r\n"
+							+ "Restart jEveAssets to try again...",
+							"jEveAssets - Auto Update",
+							JOptionPane.ERROR_MESSAGE);
 				}
 			}
 		}
