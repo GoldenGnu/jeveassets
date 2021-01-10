@@ -1432,7 +1432,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 
 		}
 		//All
-		if (column.equals("ALL")) {
+		if (column.equals("ALL") || column.equals("all")) {
 			return AllColumn.ALL;
 		}
 		return null;
