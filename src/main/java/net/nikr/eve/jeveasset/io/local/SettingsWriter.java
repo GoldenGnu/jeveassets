@@ -366,7 +366,7 @@ public class SettingsWriter extends AbstractXmlWriter {
 					Element childNode = xmldoc.createElementNS(null, "row");
 					setAttribute(childNode, "group", filter.getGroup());
 					setAttribute(childNode, "text", filter.getText());
-					setAttribute(childNode, "column",  filter.getColumn());
+					setAttribute(childNode, "column",  filter.getColumn().name());
 					setAttribute(childNode, "compare", filter.getCompareType());
 					setAttribute(childNode, "logic", filter.getLogic());
 					filterNode.appendChild(childNode);
