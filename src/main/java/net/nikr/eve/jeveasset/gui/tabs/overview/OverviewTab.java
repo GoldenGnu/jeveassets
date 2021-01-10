@@ -143,10 +143,10 @@ public class OverviewTab extends JMainTabSecondary {
 		jToolBarLeft.addSpace(10);
 
 		jStations = new JToggleButton(Images.LOC_STATION.getIcon());
+		jStations.setSelected(true);
 		jStations.setToolTipText(TabsOverview.get().stations());
 		jStations.setActionCommand(OverviewAction.UPDATE_LIST.name());
 		jStations.addActionListener(listener);
-		jStations.setSelected(true);
 		jToolBarLeft.addButton(jStations, 1, SwingConstants.CENTER);
 
 		jPlanets = new JToggleButton(Images.LOC_PLANET.getIcon());
@@ -277,8 +277,12 @@ public class OverviewTab extends JMainTabSecondary {
 
 	@Override
 	public void updateData() {
+		Object object = jOwner.getSelectedItem();
 		jOwner.setModel(new ListComboBoxModel<>(program.getOwnerNames(true)));
-		updateTable();
+		if (object != null) {
+			jOwner.setSelectedItem(object);
+		}
+		updateTableInner();
 	}
 
 	@Override
@@ -490,11 +494,16 @@ public class OverviewTab extends JMainTabSecondary {
 	}
 
 	public void updateTable() {
-		beforeUpdateData();
 		//Only need to update when added to the main window
 		if (!program.getMainWindow().getTabs().contains(this)) {
 			return;
 		}
+		updateTableInner();
+	}
+
+	private void updateTableInner() {
+		System.out.println("updateTable");
+		beforeUpdateData();
 		String owner = (String) jOwner.getSelectedItem();
 		View view = getSelectedView();
 		if (view == View.REGIONS) {
@@ -539,11 +548,6 @@ public class OverviewTab extends JMainTabSecondary {
 
 		jShowing.setText(TabsOverview.get().filterShowing(rowCount, EventListManager.size(program.getProfileData().getAssetsEventList()), program.getAssetsTab().getCurrentFilterName()));
 		afterUpdateData();
-	}
-
-	public void resetViews() {
-		jStations.setSelected(true);
-		jOwner.setSelectedIndex(0);
 	}
 
 	protected List<OverviewLocation> getSelectedLocations() {
