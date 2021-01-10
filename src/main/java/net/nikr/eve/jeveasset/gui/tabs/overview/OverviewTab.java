@@ -502,7 +502,6 @@ public class OverviewTab extends JMainTabSecondary {
 	}
 
 	private void updateTableInner() {
-		System.out.println("updateTable");
 		beforeUpdateData();
 		String owner = (String) jOwner.getSelectedItem();
 		View view = getSelectedView();
