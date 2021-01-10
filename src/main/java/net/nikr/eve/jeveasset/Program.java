@@ -310,11 +310,10 @@ public class Program implements ActionListener {
 		for (String title : Settings.get().getShowTools()) {
 			for (JMainTab jMainTab : jMainTabs) {
 				if (title.equals(jMainTab.getTitle())) {
-					mainWindow.addTab(jMainTab);
+					mainWindow.addTab(jMainTab, false);
 				}
 			}
 		}
-		mainWindow.addTab(assetsTab, true);
 		SplashUpdater.setProgress(100);
 		LOG.info("Showing GUI");
 		mainWindow.show();
@@ -953,7 +952,6 @@ public class Program implements ActionListener {
 			mainWindow.addTab(industrySlotsTab);
 		} else if (MainMenuAction.OVERVIEW.name().equals(e.getActionCommand())) {
 			mainWindow.addTab(overviewTab);
-			overviewTab.resetViews();
 		} else if (MainMenuAction.ROUTING.name().equals(e.getActionCommand())) {
 			mainWindow.addTab(routingTab);
 		} else if (MainMenuAction.STOCKPILE.name().equals(e.getActionCommand())) {
