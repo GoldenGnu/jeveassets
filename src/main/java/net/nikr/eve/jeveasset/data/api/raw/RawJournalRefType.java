@@ -158,6 +158,7 @@ public enum RawJournalRefType {
 	STRUCTURE_GATE_JUMP(140, "Structure Gate Jump"),
 	SKILL_PURCHASE(141, "Skill Purchase"),
 	ITEM_TRADER_PAYMENT(142, "Item Trader Payment"),
+	ESS_ESCROW_TRANSFER(155, "ESS Escrow Transfer"),
 	MODIFY_ISK(10001, "Modify ISK"),
 	PRIMARY_MARKETPLACE_PURCHASE(10002, "Primary Marketplace Purchase"),
 	BATTLE_REWARD(10003, "Battle Reward"),
