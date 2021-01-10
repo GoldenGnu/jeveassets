@@ -1016,7 +1016,7 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 	}
 
 	private void exportXml() {
-		List<Stockpile> stockpiles = stockpileSelectionDialog.show(getShownStockpiles(), false);
+		List<Stockpile> stockpiles = stockpileSelectionDialog.show(getShownStockpiles(), Settings.get().getStockpiles(), TabsStockpile.get().showHidden(), false);
 		if (stockpiles != null) {
 			int value = jFileChooser.showSaveDialog(program.getMainWindow().getFrame());
 			if (value == JFileChooser.APPROVE_OPTION) {
@@ -1026,7 +1026,7 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 	}
 
 	private void exportText() {
-		List<Stockpile> stockpiles = stockpileSelectionDialog.show(getShownStockpiles(), false);
+		List<Stockpile> stockpiles = stockpileSelectionDialog.show(getShownStockpiles(), Settings.get().getStockpiles(), TabsStockpile.get().showHidden(), false);
 		if (stockpiles != null) {
 			String json = StockpileDataWriter.save(stockpiles);
 			if (json != null) {
@@ -1147,7 +1147,7 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 					stockpileShoppingListDialog.show(stockpile);
 				}
 			} else if (StockpileAction.SHOPPING_LIST_MULTI.name().equals(e.getActionCommand())) { //Shopping list multi
-				List<Stockpile> stockpiles = stockpileSelectionDialog.show(getShownStockpiles(), false);
+				List<Stockpile> stockpiles = stockpileSelectionDialog.show(getShownStockpiles(), Settings.get().getStockpiles(), TabsStockpile.get().showHidden(), false);
 				if (stockpiles != null) {
 					stockpileShoppingListDialog.show(stockpiles);
 				}
