@@ -38,6 +38,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import net.nikr.eve.jeveasset.Program;
+import net.nikr.eve.jeveasset.data.settings.Colors;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.CopyHandler;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
@@ -61,7 +62,6 @@ public class JTextDialog extends JDialogCentered {
 	private final JButton jFromFile;
 	private final JButton jOK;
 	private final JButton jCancel;
-	private final Color exportColor;
 	private final Color importColor;
 	private final JCustomFileChooser jFileChooser;
 
@@ -104,8 +104,7 @@ public class JTextDialog extends JDialogCentered {
 		jText.setEditable(false);
 		jText.setFont(jPanel.getFont());
 
-		exportColor = jPanel.getBackground();
-		importColor = new Color(jText.getBackground().getRGB());
+		importColor = jText.getBackground();
 
 		JScrollPane jTextScroll = new JScrollPane(jText);
 
@@ -172,6 +171,7 @@ public class JTextDialog extends JDialogCentered {
 	public String importText(String text) {
 		getDialog().setTitle(GuiShared.get().textImport());
 		jText.setEditable(true);
+		jText.setOpaque(true);
 		jText.setBackground(importColor);
 		jText.setText(text);
 		jOK.setText(GuiShared.get().ok());
@@ -188,7 +188,8 @@ public class JTextDialog extends JDialogCentered {
 	public void exportText(String text) {
 		getDialog().setTitle(GuiShared.get().textExport());
 		jText.setEditable(false);
-		jText.setBackground(exportColor);
+		jText.setOpaque(false);
+		jText.setBackground(Colors.COMPONENT_TRANSPARENT.getColor());
 		jText.setText(text);
 		jOK.setText(GuiShared.get().textClose());
 		jCancel.setVisible(false);
