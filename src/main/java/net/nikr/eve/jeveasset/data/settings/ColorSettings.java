@@ -186,18 +186,30 @@ public class ColorSettings {
 			component.setForeground(Colors.COMPONENT_FOREGROUND.getColor());
 		}
 	}
+
 	public static void config(JComponent component, ColorEntry colorEntry) {
 		Color foreground = foreground(colorEntry);
 		Color background = background(colorEntry);
+		if (component == null) {
+			return;
+		}
 		if (background != null) {
-			component.setOpaque(true);
+			/**
+			 * Nimbus JTextField opaque workaround.
+			 * Making the JTextField opaque on Nimbus makes it look very ugly
+			 */
+			if ("Nimbus".equalsIgnoreCase(UIManager.getLookAndFeel().getID()) && component instanceof JTextField) {
+				component.setOpaque(false);
+			} else {
+				component.setOpaque(true);
+			}
 			component.setBackground(background);
 			/**
 			 * GTK JTextField background workaround.
 			 * Use Borders instead of background color on GTK, as setting background color have no effect
 			 * Save the original border and set new border with the background color
 			 */
-			if ("GTK".equals(UIManager.getLookAndFeel().getID()) && component instanceof JTextField) {
+			if ("GTK".equalsIgnoreCase(UIManager.getLookAndFeel().getID()) && component instanceof JTextField) {
 				JTextField jTextField = (JTextField) component;
 				BorderWrap borderWrap = BORDERS.get(jTextField);
 				if (borderWrap == null) { //Original border
