@@ -86,6 +86,7 @@ import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.CopyHandler;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
+import net.nikr.eve.jeveasset.gui.shared.InstantToolTip;
 import net.nikr.eve.jeveasset.gui.shared.Updatable;
 import net.nikr.eve.jeveasset.gui.shared.components.JFixedToolBar;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTabPrimary;
@@ -172,18 +173,30 @@ public class MarketOrdersTab extends JMainTabPrimary {
 		jOrderRangeNext.addActionListener(listener);
 		jToolBar.add(jOrderRangeNext, 95);
 
-		jToolBar.addSpace(5);
+		jToolBar.addSpace(1);
+
+		JLabel jOrderRangeNextLabel = new JLabel(Images.MISC_HELP.getIcon());
+		jOrderRangeNextLabel.setToolTipText(TabsOrders.get().sellOrderRangeToolTip());
+		InstantToolTip.install(jOrderRangeNextLabel);
+		jToolBar.add(jOrderRangeNextLabel);
+
+		jToolBar.addSpace(7);
 
 		String[] orderTypes = {TabsOrders.get().updateOutbidFileBuy(), TabsOrders.get().updateOutbidFileSell()};
 		jOrderType = new JComboBox<>(orderTypes);
-		jOrderType.setSelectedItem(Settings.get().getOutbidOrderRange());
+		jOrderType.setSelectedItem(TabsOrders.get().updateOutbidFileBuy());
 		jOrderType.setActionCommand(MarketOrdersAction.ORDER_TYPE.name());
 		jOrderType.addActionListener(listener);
 		jToolBar.add(jOrderType, 95);
 
-		jToolBar.addSpace(5);
+		jToolBar.addSpace(1);
 
-		jToolBar.addSeparator();
+		JLabel jOrderTypeLabelLabel = new JLabel(Images.MISC_HELP.getIcon());
+		jOrderTypeLabelLabel.setToolTipText(TabsOrders.get().marketLogTypeToolTip());
+		InstantToolTip.install(jOrderTypeLabelLabel);
+		jToolBar.add(jOrderTypeLabelLabel);
+
+		jToolBar.addSpace(7);
 
 		jErrors = new JButton(TabsOrders.get().logOK(), Images.UPDATE_DONE_ERROR.getIcon());
 		jErrors.setActionCommand(MarketOrdersAction.ERROR_LOG.name());
