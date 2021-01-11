@@ -33,8 +33,6 @@ import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -42,7 +40,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.GroupLayout;
@@ -62,7 +59,6 @@ import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
-import javax.swing.ToolTipManager;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
 import javax.swing.event.DocumentEvent;
@@ -83,6 +79,7 @@ import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.CaseInsensitiveComparator;
 import net.nikr.eve.jeveasset.gui.shared.DocumentFactory;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
+import net.nikr.eve.jeveasset.gui.shared.InstantToolTip;
 import net.nikr.eve.jeveasset.gui.shared.TextManager;
 import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
 import net.nikr.eve.jeveasset.gui.shared.components.JDoubleField;
@@ -538,25 +535,8 @@ public class StockpileDialog extends JDialogCentered {
 	private static JLabel createToolTipLabel(Icon icon, String toolTip) {
 			JLabel jLabel = new JLabel(icon);
 			jLabel.setToolTipText(toolTip);
-			jLabel.addMouseListener(new MouseAdapter() {
-				final int defaultInitialDelay = ToolTipManager.sharedInstance().getInitialDelay();
-				final int defaultDismissTimeout = ToolTipManager.sharedInstance().getDismissDelay();
-				final int dismissDelayMinutes = (int) TimeUnit.MINUTES.toMillis(10); // 10 minutes
-				@Override
-				public void mouseEntered(MouseEvent me) {
-					ToolTipManager.sharedInstance().setInitialDelay(0);
-					ToolTipManager.sharedInstance().setDismissDelay(dismissDelayMinutes);
-				}
-
-				@Override
-				public void mouseExited(MouseEvent me) {
-					ToolTipManager.sharedInstance().setDismissDelay(defaultDismissTimeout);
-					ToolTipManager.sharedInstance().setInitialDelay(defaultInitialDelay);
-				}
-
-			});
+			InstantToolTip.install(jLabel);
 			return jLabel;
-		
 	}
 
 	private class ListenerClass implements ActionListener, CaretListener {
