@@ -432,7 +432,7 @@ public class MarketOrdersTab extends JMainTabPrimary {
 		}
 		//Issuer missing scope
 		if (!owner.isOpenWindows()) {
-			int value = JOptionPane.showConfirmDialog(program.getMainWindow().getFrame(), TabsOrders.get().ownerInvalidScopeMsg(), TabsOrders.get().ownerInvalidScopeTital(), JOptionPane.OK_CANCEL_OPTION);
+			int value = JOptionPane.showConfirmDialog(program.getMainWindow().getFrame(), TabsOrders.get().ownerInvalidScopeMsg(), TabsOrders.get().ownerInvalidScopeTitle(), JOptionPane.OK_CANCEL_OPTION);
 			if (value != JOptionPane.OK_OPTION) {
 				return;
 			}
@@ -519,6 +519,15 @@ public class MarketOrdersTab extends JMainTabPrimary {
 		jUpdate.setText(TabsOrders.get().updateOutbidUpdating());
 		jUpdate.setEnabled(false);
 		OutbidProcesserInput input = new OutbidProcesserInput(program.getProfileData(), Settings.get().getOutbidOrderRange());
+		if (input.getRegionIDs().isEmpty() || true) {
+			LOG.info("no active orders found");
+			if (jAutoUpdate.isSelected()) {
+				jAutoUpdate.setSelected(false);
+			}
+			updateDates();
+			JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), TabsOrders.get().updateNoActiveMsg(), TabsOrders.get().updateNoActiveTitle(), JOptionPane.PLAIN_MESSAGE);
+			return;
+		}
 		OutbidProcesserOutput output = new OutbidProcesserOutput();
 		TaskDialog taskDialog = new TaskDialog(program, new PublicMarkerOrdersUpdateTask(input, output), false, jAutoUpdate.isSelected(), jAutoUpdate.isSelected(), StatusPanel.UpdateType.PUBLIC_MARKET_ORDERS, new TaskDialog.TasksCompletedAdvanced() {
 			@Override
