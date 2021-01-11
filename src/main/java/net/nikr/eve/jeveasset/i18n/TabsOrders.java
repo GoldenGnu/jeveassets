@@ -101,6 +101,8 @@ public abstract class TabsOrders extends Bundle {
 	public abstract String totalBuyOrders();
 	public abstract String totalEscrow();
 	public abstract String totalToCover();
+	public abstract String updateNoActiveMsg();
+	public abstract String updateNoActiveTitle();
 	public abstract String updateOutbidEsi();
 	public abstract String updateOutbidEsiAuto();
 	public abstract String updateOutbidFileBuy();
@@ -115,7 +117,7 @@ public abstract class TabsOrders extends Bundle {
 	public abstract String lastClipboardToolTip();
 	public abstract String none();
 	public abstract String ownerInvalidScopeMsg();
-	public abstract String ownerInvalidScopeTital();
+	public abstract String ownerInvalidScopeTitle();
 	public abstract String ownerNotFoundMsg();
 	public abstract String ownerNotFoundTitle();
 	public abstract String sellOrderRangeSelcted(String selected);
