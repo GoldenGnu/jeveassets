@@ -34,8 +34,6 @@ import java.awt.RenderingHints;
 import java.awt.Shape;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
 import java.io.File;
@@ -79,7 +77,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.ListModel;
 import javax.swing.SwingUtilities;
-import javax.swing.ToolTipManager;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.PopupMenuEvent;
@@ -92,6 +89,7 @@ import net.nikr.eve.jeveasset.data.settings.TrackerData;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
+import net.nikr.eve.jeveasset.gui.shared.InstantToolTip;
 import net.nikr.eve.jeveasset.gui.shared.JOptionInput;
 import net.nikr.eve.jeveasset.gui.shared.components.CheckBoxNode;
 import net.nikr.eve.jeveasset.gui.shared.components.JCustomFileChooser;
@@ -546,7 +544,7 @@ public class TrackerTab extends JMainTabSecondary {
 		jNextChart.getLegend().setBackgroundPaint(Colors.COMPONENT_BACKGROUND.getColor());
 
 		jChartPanel = new ChartPanel(jNextChart);
-		jChartPanel.addMouseListener(listener);
+		InstantToolTip.install(jChartPanel);
 		jChartPanel.setDomainZoomable(false);
 		jChartPanel.setRangeZoomable(false);
 		jChartPanel.setPopupMenu(null);
@@ -1477,26 +1475,9 @@ public class TrackerTab extends JMainTabSecondary {
 		}
 	}
 
-	private class ListenerClass extends MouseAdapter implements 
+	private class ListenerClass implements 
 			ActionListener, PopupMenuListener,
 			ChartMouseListener, ListSelectionListener, DateChangeListener {
-
-		private int defaultDismissTimeout;
-		private int defaultInitialDelay;
-
-		@Override
-		public void mouseEntered(MouseEvent me) {
-			defaultDismissTimeout = ToolTipManager.sharedInstance().getDismissDelay();
-			defaultInitialDelay = ToolTipManager.sharedInstance().getInitialDelay();
-			ToolTipManager.sharedInstance().setDismissDelay(60000);
-			ToolTipManager.sharedInstance().setInitialDelay(0);
-		}
-
-		@Override
-		public void mouseExited(MouseEvent me) {
-			ToolTipManager.sharedInstance().setDismissDelay(defaultDismissTimeout);
-			ToolTipManager.sharedInstance().setInitialDelay(defaultInitialDelay);
-		}
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
