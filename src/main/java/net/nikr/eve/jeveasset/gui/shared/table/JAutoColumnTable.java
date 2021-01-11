@@ -39,7 +39,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JViewport;
 import javax.swing.SwingConstants;
-import javax.swing.ToolTipManager;
 import javax.swing.event.AncestorEvent;
 import javax.swing.event.AncestorListener;
 import javax.swing.event.ChangeEvent;
@@ -61,6 +60,7 @@ import net.nikr.eve.jeveasset.data.settings.ColorSettings;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.data.settings.tag.Tags;
 import net.nikr.eve.jeveasset.gui.shared.CopyHandler;
+import net.nikr.eve.jeveasset.gui.shared.InstantToolTip;
 import net.nikr.eve.jeveasset.gui.shared.TextManager;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.ResizeMode;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.SimpleColumn;
@@ -155,24 +155,7 @@ public class JAutoColumnTable extends JTable {
 				return getEnumTableFormatAdaptor().getColumnToolTip(realIndex);
 			}
 		};
-		jTableHeader.addMouseListener(new MouseAdapter() { //Instant ToolTips
-			private int defaultDismissTimeout;
-			private int defaultInitialDelay;
-
-			@Override
-			public void mouseEntered(MouseEvent me) {
-				defaultDismissTimeout = ToolTipManager.sharedInstance().getDismissDelay();
-				defaultInitialDelay = ToolTipManager.sharedInstance().getInitialDelay();
-				ToolTipManager.sharedInstance().setDismissDelay(60000);
-				ToolTipManager.sharedInstance().setInitialDelay(0);
-			}
-
-			@Override
-			public void mouseExited(MouseEvent me) {
-				ToolTipManager.sharedInstance().setDismissDelay(defaultDismissTimeout);
-				ToolTipManager.sharedInstance().setInitialDelay(defaultInitialDelay);
-			}
-		});
+		InstantToolTip.install(jTableHeader);
 		return jTableHeader;
 	}
 
