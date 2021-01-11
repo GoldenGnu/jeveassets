@@ -520,7 +520,7 @@ public class MarketOrdersTab extends JMainTabPrimary {
 		jUpdate.setText(TabsOrders.get().updateOutbidUpdating());
 		jUpdate.setEnabled(false);
 		OutbidProcesserInput input = new OutbidProcesserInput(program.getProfileData(), Settings.get().getOutbidOrderRange());
-		if (input.getRegionIDs().isEmpty() || true) {
+		if (input.getRegionIDs().isEmpty()) {
 			LOG.info("no active orders found");
 			if (jAutoUpdate.isSelected()) {
 				jAutoUpdate.setSelected(false);
