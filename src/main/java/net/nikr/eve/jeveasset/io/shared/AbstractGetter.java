@@ -91,7 +91,7 @@ public abstract class AbstractGetter<O extends OwnerType> implements Runnable {
 	protected final O owner;
 	private String error = null;
 
-	public AbstractGetter(UpdateTask updateTask, O owner, boolean forceUpdate, Date nextUpdate, TaskType taskType, String ApiName) {
+	public AbstractGetter(UpdateTask updateTask, O owner, boolean forceUpdate, Date nextUpdate, TaskType taskType, String apiName) {
 		this.updateTask = updateTask;
 		this.owner = owner;
 		this.forceUpdate = forceUpdate;
@@ -103,7 +103,7 @@ public abstract class AbstractGetter<O extends OwnerType> implements Runnable {
 			taskName = taskType.getTaskName();
 		}
 		//this.taskName = taskType;
-		this.apiName = ApiName;
+		this.apiName = apiName;
 	}
 
 	public void start() {
