@@ -82,6 +82,7 @@ public abstract class TabsOrders extends Bundle {
 	public abstract String logOK();
 	public abstract String logTitle();
 	public abstract String market();
+	public abstract String marketLogTypeToolTip();
 	public abstract String rangeStation();
 	public abstract String rangeSolarSystem();
 	public abstract String rangeRegion();
@@ -111,6 +112,7 @@ public abstract class TabsOrders extends Bundle {
 	public abstract String updateOutbidWhen(String time);
 	public abstract String updateOutbidUpdating();
 	public abstract String sellOrderRange();
+	public abstract String sellOrderRangeToolTip();
 	public abstract String sellOrderRangeLastToolTip();
 	public abstract String lastEsiUpdateToolTip();
 	public abstract String lastLogUpdateToolTip();
