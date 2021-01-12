@@ -47,7 +47,7 @@ public final class SqlWriter {
 	private final DecimalFormat FLOAT_FORMAT  = new DecimalFormat("0.####", new DecimalFormatSymbols(Locale.ENGLISH));
 	private final DecimalFormat LONG_FORMAT  = new DecimalFormat("0", new DecimalFormatSymbols(Locale.ENGLISH));
 	private final int MAX_LENGTH = 944000; //a little less than 1MB
-	private final DateFormat SQL_DATE_FORMATTER = new SimpleDateFormat("yyyy-MM-dd");
+	private final DateFormat SQL_DATETIME_FORMATTER = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 
 	private SqlWriter() { }
 
@@ -89,7 +89,7 @@ public final class SqlWriter {
 		} else if (object instanceof Double) {
 			return "double";
 		} else if (object instanceof Date) {
-			return "date";
+			return "datetime";
 		} else {
 			return "text";
 		}
@@ -193,13 +193,13 @@ public final class SqlWriter {
 			return LONG_FORMAT.format(object);
 		} else if (object instanceof Date) {
 			//Date
-			return "'" + SQL_DATE_FORMATTER.format(object) + "'";
+			return "'" + SQL_DATETIME_FORMATTER.format(object) + "'";
 		} else { //String etc.
 			String string = String.valueOf(object);
 			if (string == null) {
 				return "''";
 			} else {
-				return "'" + String.valueOf(object).replace("'", "\\'") + "'";
+				return "'" + String.valueOf(object).replace("'", "''") + "'";
 			}
 		}
 	}
