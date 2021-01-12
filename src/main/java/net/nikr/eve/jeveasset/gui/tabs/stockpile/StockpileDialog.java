@@ -490,6 +490,9 @@ public class StockpileDialog extends JDialogCentered {
 			myLocations.add(industryJob.getLocation().getRegion());
 		}
 		for (MyMarketOrder marketOrder : program.getMarketOrdersList()) {
+			if (!marketOrder.isActive()) {
+				continue; //Only include active orders
+			}
 			myLocations.add(marketOrder.getLocation().getLocation());
 			myLocations.add(marketOrder.getLocation().getSystem());
 			myLocations.add(marketOrder.getLocation().getRegion());
