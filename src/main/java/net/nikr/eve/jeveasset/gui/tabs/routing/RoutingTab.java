@@ -20,6 +20,9 @@
  */
 package net.nikr.eve.jeveasset.gui.tabs.routing;
 
+import ca.odell.glazedlists.EventList;
+import ca.odell.glazedlists.TextFilterator;
+import ca.odell.glazedlists.swing.AutoCompleteSupport;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
@@ -57,7 +60,6 @@ import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
-import javax.swing.JTextField;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 import javax.swing.SwingUtilities;
@@ -84,6 +86,8 @@ import net.nikr.eve.jeveasset.gui.shared.components.JMainTabSecondary;
 import net.nikr.eve.jeveasset.gui.shared.components.JMultiSelectionDialog;
 import net.nikr.eve.jeveasset.gui.shared.components.ListComboBoxModel;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuUI;
+import net.nikr.eve.jeveasset.gui.shared.table.EventListManager;
+import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewGroup;
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewLocation;
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewLocation.LocationType;
@@ -153,7 +157,8 @@ public class RoutingTab extends JMainTabSecondary {
 	private JToggleButton jSystems;
 	private JToggleButton jStations;
 	private JLabel jStartLabel;
-	private JTextField jStart;
+	private JComboBox<String> jStart;
+	private EventList<String> startEventList;
 	private MoveJList<SolarSystem> jAvailable;
 	private JLabel jAvailableRemaining;
 	private JButton jAdd;
@@ -307,9 +312,18 @@ public class RoutingTab extends JMainTabSecondary {
 		//Start system
 		jStartLabel = new JLabel(TabsRouting.get().startSystem());
 
-		jStart = new JTextField();
-		jStart.setEditable(false);
-		jStart.setFocusable(false);
+		jStart = new JComboBox<>();
+		jStart.setEnabled(false);
+		startEventList = EventListManager.create();
+		AutoCompleteSupport<String> startAutoComplete = AutoCompleteSupport.install(jStart, EventModels.createSwingThreadProxyList(startEventList), new StringFilterator());
+		try {
+			startEventList.getReadWriteLock().writeLock().lock();
+			startEventList.add(TabsRouting.get().startEmpty());
+			startAutoComplete.setStrict(true);
+		} finally {
+			startEventList.getReadWriteLock().writeLock().unlock();
+		}
+		jStart.setSelectedItem(TabsRouting.get().startEmpty());
 
 		Comparator<SolarSystem> comp = new Comparator<SolarSystem>() {
 			@Override
@@ -972,7 +986,7 @@ public class RoutingTab extends JMainTabSecondary {
 			}
 			List<SolarSystem> inputWaypoints = new ArrayList<>(waypoints);
 			//Move frist system to the top....
-			final String text = jStart.getText();
+			String text = jStart.getItemAt(jStart.getSelectedIndex());
 			if (!text.contains(TabsRouting.get().startEmpty())) {
 				Collections.sort(inputWaypoints, new Comparator<SolarSystem>() {
 					@Override
@@ -1120,7 +1134,7 @@ public class RoutingTab extends JMainTabSecondary {
 		jSourceLabel.setEnabled(b);
 		jSource.setEnabled(b);
 		jStartLabel.setEnabled(b);
-		if (jStart.getText().contains(TabsRouting.get().startEmpty())) {
+		if (jStart.getItemAt(jStart.getSelectedIndex()).contains(TabsRouting.get().startEmpty())) {
 			jStart.setEnabled(false);
 		} else {
 			jStart.setEnabled(b);
@@ -1182,17 +1196,35 @@ public class RoutingTab extends JMainTabSecondary {
 			jAdd.setEnabled(jAvailable.getSelectedIndices().length > 0);
 		}
 		jCalculate.setEnabled(waypointsSize <= ((RoutingAlgorithmContainer) jAlgorithm.getSelectedItem()).getWaypointLimit());
-		if (jWaypoints.getSelectedIndices().length == 1) { //Selected OK
-			jStart.setText(jWaypoints.getSelectedValue().getSystem());
-			jStart.setEnabled(uiEnabled);
-		} else { //Empty List
-			List<? extends SolarSystem> all = jWaypoints.getEditableModel().getAll();
-			if (!all.isEmpty()) {
-				jStart.setText(TabsRouting.get().startEmptyAuto(all.get(0).getSystem()));
-			} else {
-				jStart.setText(TabsRouting.get().startEmpty());
+		if (jWaypoints.getEditableModel().getAll().isEmpty()) {
+			try {
+				startEventList.getReadWriteLock().writeLock().lock();
+				startEventList.clear();
+				startEventList.add(TabsRouting.get().startEmpty());
+			} finally {
+				startEventList.getReadWriteLock().writeLock().unlock();
 			}
+			jStart.setSelectedItem(TabsRouting.get().startEmpty());
 			jStart.setEnabled(false);
+		} else {
+			String selected = jStart.getItemAt(jStart.getSelectedIndex());
+			Set<String> systems = new TreeSet<>();
+			for (SolarSystem system : jWaypoints.getEditableModel().getAll()) {
+				systems.add(system.getName());
+			}
+			try {
+				startEventList.getReadWriteLock().writeLock().lock();
+				startEventList.clear();
+				startEventList.addAll(systems);
+			} finally {
+				startEventList.getReadWriteLock().writeLock().unlock();
+			}
+			jStart.setEnabled(true);
+			if (systems.contains(selected)) {
+				jStart.setSelectedItem(selected);
+			} else {
+				jStart.setSelectedItem(systems.iterator().next());
+			}
 		}
 	}
 
@@ -1920,6 +1952,13 @@ public class RoutingTab extends JMainTabSecondary {
 
 		public Set<Long> getSystemIDs() {
 			return systemIDs;
+		}
+	}
+
+	static class StringFilterator implements TextFilterator<String> {
+		@Override
+		public void getFilterStrings(final List<String> baseList, final String element) {
+			baseList.add(element);
 		}
 	}
 }

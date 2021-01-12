@@ -109,7 +109,6 @@ public abstract class TabsRouting extends Bundle {
 	public abstract String saveFilterTitle();
 	public abstract String security();
 	public abstract String source();
-	public abstract String startEmptyAuto(Object arg0);
 	public abstract String startEmpty();
 	public abstract String startSystem();
 	public abstract String total(Object arg0, Object arg1);
