@@ -458,13 +458,14 @@ public class MarketOrdersTab extends JMainTabPrimary {
 			return;
 		}
 		EsiOwner esiOwner = (EsiOwner) owner;
-		copy(marketOrder);
+		if (marketOrder.isOutbid()) {
+			copy(marketOrder, marketOrder.getOutbidPrice());
+		}
 		JMenuUI.openMarketDetails(program, esiOwner, marketOrder.getTypeID(), false);
 	}
 
-	private static void copy(MyMarketOrder marketOrder) {
-		Double price = marketOrder.getOutbidPrice();
-		if (marketOrder.isOutbid() && price != null) {
+	private static void copy(MyMarketOrder marketOrder, Double price) {
+		if (price != null) {
 			if (marketOrder.isBuyOrder()) {
 				price = significantIncrement(price);
 			} else { //Sell
@@ -927,24 +928,37 @@ public class MarketOrdersTab extends JMainTabPrimary {
 				return false;
 			}
 			//Copy to clipart
+			MyMarketOrder marketOrderCopy = null;
 			for (OwnerType ownerType : program.getProfileData().getOwners().values()) { //Copy = thread safe
 				synchronized (ownerType) {
 					for (MyMarketOrder marketOrder : ownerType.getMarketOrders()) { //Synchronized on owner = thread safe
 						if (!Objects.equals(isBuy(), marketOrder.isBuyOrder())) {
 							continue;
 						}
-						if (!marketOrder.isOutbid()) {
-							continue;	
-						}
-						for (MarketLog raw : marketLogs) {
-							if (Objects.equals(raw.getOrderID(), marketOrder.getOrderID())) {
-								LOG.info("Found matching order");
-								copy(marketOrder);
-								setLastLogUpdate();
-								return true;
+						Outbid outbid = output.getOutbids().get(marketOrder.getOrderID());
+						if (outbid != null) {
+							if (marketOrder.isBuyOrder()) {
+								//Outbid and highest buy price
+								if (outbid.getPrice() > marketOrder.getPrice() && (marketOrderCopy == null || marketOrder.getPrice() > marketOrderCopy.getPrice()) ) {
+									marketOrderCopy = marketOrder;
+								}
+							} else {
+								//Outbid and lowest sell price
+								if (outbid.getPrice() < marketOrder.getPrice() &&  (marketOrderCopy == null || marketOrder.getPrice() < marketOrderCopy.getPrice())) {
+									marketOrderCopy = marketOrder;
+								}
 							}
 						}
 					}
+				}
+			}
+			if (marketOrderCopy != null) {
+				LOG.info("Found matching order");
+				Outbid outbid = output.getOutbids().get(marketOrderCopy.getOrderID());
+				if (outbid != null) { //Better safe than sorry
+					copy(marketOrderCopy, outbid.getPrice());
+					setLastLogUpdate();
+					return true;
 				}
 			}
 			//Nothing found - going region wide
