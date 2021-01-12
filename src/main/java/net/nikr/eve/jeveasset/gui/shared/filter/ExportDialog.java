@@ -134,8 +134,8 @@ public class ExportDialog<E> extends JDialogCentered {
 
 	private final JButton jOK;
 
-	private static final DecimalFormat EN_NUMBER_FORMAT  = new DecimalFormat("0.####", new DecimalFormatSymbols(new Locale("en")));
-	private static final DecimalFormat EU_NUMBER_FORMAT  = new DecimalFormat("0.####", new DecimalFormatSymbols(new Locale("da")));
+	private static final DecimalFormat HTML_EN_NUMBER_FORMAT  = new DecimalFormat("#,##0.####", new DecimalFormatSymbols(new Locale("en")));
+	private static final DecimalFormat HTML_EU_NUMBER_FORMAT  = new DecimalFormat("#,##0.####", new DecimalFormatSymbols(new Locale("da")));
 
 	private final JCustomFileChooser jFileChooser;
 
@@ -491,9 +491,9 @@ public class ExportDialog<E> extends JDialogCentered {
 		} else if (object instanceof Number) {
 			Number number = (Number) object;
 			if (decimalSeparator == DecimalSeparator.DOT) {
-				return EN_NUMBER_FORMAT.format(number);
+				return HTML_EN_NUMBER_FORMAT.format(number);
 			} else {
-				return EU_NUMBER_FORMAT.format(number);
+				return HTML_EU_NUMBER_FORMAT.format(number);
 			}
 		} else if (object instanceof Tags && html) {
 			Tags tags = (Tags) object;
