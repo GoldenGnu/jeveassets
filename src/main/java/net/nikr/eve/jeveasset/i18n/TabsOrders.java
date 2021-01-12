@@ -46,6 +46,8 @@ public abstract class TabsOrders extends Bundle {
 	public abstract String columnOutbidPriceToolTip();
 	public abstract String columnOutbidCount();
 	public abstract String columnOutbidCountToolTip();
+	public abstract String columnOutbidDelta();
+	public abstract String columnOutbidDeltaToolTip();
 	public abstract String columnEveUi();
 	public abstract String columnEveUiToolTip();
 	public abstract String columnBrokersFee();

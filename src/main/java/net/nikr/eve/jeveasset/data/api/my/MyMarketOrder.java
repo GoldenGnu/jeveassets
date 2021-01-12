@@ -380,6 +380,18 @@ public class MyMarketOrder extends RawMarketOrder implements Comparable<MyMarket
 		return outbid.getCount();
 	}
 
+	public Double getOutbidDelta() {
+		if (outbid == null) {
+			return null;
+		}
+		if (isBuyOrder()) {
+			return getPrice() - outbid.getPrice();
+		} else {
+			return outbid.getPrice() - getPrice();
+		}
+		
+	}
+
 	public void setOutbid(Outbid outbid) {
 		this.outbid = outbid;
 	}
