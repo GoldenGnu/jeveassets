@@ -558,22 +558,11 @@ public class ProfileData {
 			order.setBrokersFee(marketOrdersBrokersFee.get(order.getOrderID()));
 			order.setOutbid(Settings.get().getMarketOrdersOutbid().get(order.getOrderID()));
 			order.setPriceReprocessed(ApiIdConverter.getPriceReprocessed(order.getItem()));
-			order.setMarketPrice(ApiIdConverter.getPriceSimple(order.getItem().getTypeID(), false));
 			RawPublicMarketOrder response = marketOrdersUpdates.get(order.getOrderID());
 			if (response != null) {
 				order.setPrice(response.getPrice());
 				order.setVolumeRemain(response.getVolumeRemain());
 				order.addChanged(response.getIssued());
-			}
-			//Update these after the response so they will reflect the new price, they still need to be updated without a response however
-			//since the market price can change without a market order update.
-			if (order.isBuyOrder()) {
-				order.setMarketMargin(Percent.create( (order.getMarketPrice() - order.getPrice()) / order.getMarketPrice() ));
-				order.setMarketProfit(order.getMarketPrice() - order.getPrice());
-			}
-			else {
-				order.setMarketMargin(Percent.create( (order.getPrice() - order.getMarketPrice()) / order.getPrice() ));
-				order.setMarketProfit(order.getPrice() - order.getMarketPrice());
 			}
 		}
 		marketOrdersUpdates.clear(); //update complete - we only want to do this once

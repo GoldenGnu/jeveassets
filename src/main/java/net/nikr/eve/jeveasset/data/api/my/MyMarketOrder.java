@@ -117,9 +117,6 @@ public class MyMarketOrder extends RawMarketOrder implements Comparable<MyMarket
 	private double transactionPrice;
 	private double transactionProfitDifference;
 	private Percent transactionProfitPercent;
-	private double marketPrice;
-	private Percent marketMargin;
-	private double marketProfit;
 	private String issuedByName = "";
 	private Double brokersFee;
 	private Outbid outbid;
@@ -277,28 +274,24 @@ public class MyMarketOrder extends RawMarketOrder implements Comparable<MyMarket
 		this.transactionProfitPercent = transactionProfitPercent;
 	}
 
-	public double getMarketPrice() {
-		return marketPrice;
-	}
-
-	public Percent getMarketMargin() {
-		return marketMargin;
+	public double getMarketMargin() {
+		if (getDynamicPrice() > 0 && getPrice() > 0) {
+			if (isBuyOrder()) {
+				return (getDynamicPrice() - getPrice()) / getPrice();
+			} else {
+				return (getPrice() - getDynamicPrice()) / getPrice();
+			}
+		} else {
+			return 0;
+		}
 	}
 
 	public double getMarketProfit() {
-		return marketProfit;
-	}
-
-	public void setMarketPrice(double marketPrice) {
-		this.marketPrice = marketPrice;
-	}
-
-	public void setMarketMargin(Percent marketMargin) {
-		this.marketMargin = marketMargin;
-	}
-
-	public void setMarketProfit(double marketProfit) {
-		this.marketProfit = marketProfit;
+		if (isBuyOrder()) {
+			return getDynamicPrice() - getPrice();
+		} else {
+			return getPrice() - getDynamicPrice();
+		}
 	}
 
 	public Date getCreatedOrIssued() {

@@ -356,7 +356,7 @@ public enum MarketTableFormat implements EnumTableColumn<MyMarketOrder> {
 		}
 		@Override
 		public Object getColumnValue(final MyMarketOrder from) {
-			return from.getMarketPrice();
+			return from.getDynamicPrice();
 		}
 	},
 	MARKET_MARGIN(Percent.class, GlazedLists.comparableComparator()) {
@@ -370,7 +370,7 @@ public enum MarketTableFormat implements EnumTableColumn<MyMarketOrder> {
 		}
 		@Override
 		public Object getColumnValue(final MyMarketOrder from) {
-			return from.getMarketMargin();
+			return Percent.create(from.getMarketMargin());
 		}
 	},
 	MARKET_PROFIT(Double.class, GlazedLists.comparableComparator()) {
