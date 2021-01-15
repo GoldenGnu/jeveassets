@@ -558,11 +558,14 @@ public class ProfileData {
 			order.setBrokersFee(marketOrdersBrokersFee.get(order.getOrderID()));
 			order.setOutbid(Settings.get().getMarketOrdersOutbid().get(order.getOrderID()));
 			order.setPriceReprocessed(ApiIdConverter.getPriceReprocessed(order.getItem()));
+			order.setMarketPrice(ApiIdConverter.getPriceSimple(order.getItem().getTypeID(), false));
 			RawPublicMarketOrder response = marketOrdersUpdates.get(order.getOrderID());
 			if (response != null) {
 				order.setPrice(response.getPrice());
 				order.setVolumeRemain(response.getVolumeRemain());
 				order.addChanged(response.getIssued());
+				order.setMarketMargin(Percent.create( (order.getMarketPrice() - response.getPrice()) / order.getMarketPrice() ));
+				order.setMarketProfit(order.getMarketPrice() - response.getPrice());
 			}
 		}
 		marketOrdersUpdates.clear(); //update complete - we only want to do this once
