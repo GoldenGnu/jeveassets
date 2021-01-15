@@ -564,9 +564,11 @@ public class ProfileData {
 				order.setPrice(response.getPrice());
 				order.setVolumeRemain(response.getVolumeRemain());
 				order.addChanged(response.getIssued());
-				order.setMarketMargin(Percent.create( (order.getMarketPrice() - response.getPrice()) / order.getMarketPrice() ));
-				order.setMarketProfit(order.getMarketPrice() - response.getPrice());
 			}
+			//Update these after the response so they will reflect the new price, they still need to be updated without a response however
+			//since the market price can change without a market order update.
+			order.setMarketMargin(Percent.create( (order.getMarketPrice() - order.getPrice()) / order.getMarketPrice() ));
+			order.setMarketProfit(order.getMarketPrice() - order.getPrice());
 		}
 		marketOrdersUpdates.clear(); //update complete - we only want to do this once
 		//Update IndustryJobs dynamic values
