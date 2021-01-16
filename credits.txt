@@ -32,6 +32,7 @@ Retired Developers:
   Ima Sohmbadi
   Saulvin
   AnrDaemon
+  Dultas
 
 Retired Testers:
   Varo Jan
