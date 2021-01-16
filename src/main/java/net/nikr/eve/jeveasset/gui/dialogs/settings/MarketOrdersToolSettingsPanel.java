@@ -40,8 +40,6 @@ public class MarketOrdersToolSettingsPanel extends JSettingsPanel {
 	public MarketOrdersToolSettingsPanel(final Program program, final SettingsDialog settingsDialog) {
 		super(program, settingsDialog, DialoguesSettings.get().marketOrders(), Images.TOOL_MARKET_ORDERS.getIcon());
 
-		int warnDays = 0;
-
 		jSaveHistory = new JCheckBox(DialoguesSettings.get().marketOrdersSaveHistory());
 
 		JLabelMultiline jSaveHistoryWarning = new JLabelMultiline(DialoguesSettings.get().saveHistoryWarning(), 2);
@@ -90,6 +88,6 @@ public class MarketOrdersToolSettingsPanel extends JSettingsPanel {
 		final MarketOrdersSettings marketOrdersSettings = Settings.get().getMarketOrdersSettings();
 
 		jSaveHistory.setSelected(Settings.get().isMarketOrderHistory());
-		jExpireWarnDays.setPrototypeDisplayValue(marketOrdersSettings.getExpireWarnDays());
+		jExpireWarnDays.setSelectedItem(marketOrdersSettings.getExpireWarnDays());
 	}
 }
