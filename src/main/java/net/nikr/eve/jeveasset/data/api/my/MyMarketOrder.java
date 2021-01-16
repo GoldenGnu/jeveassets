@@ -20,6 +20,7 @@
  */
 package net.nikr.eve.jeveasset.data.api.my;
 
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Objects;
@@ -29,6 +30,8 @@ import net.nikr.eve.jeveasset.data.api.accounts.OwnerType;
 import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder;
 import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
+import net.nikr.eve.jeveasset.data.settings.Settings;
+import net.nikr.eve.jeveasset.data.settings.MarketOrdersSettings;
 import net.nikr.eve.jeveasset.data.settings.types.BlueprintType;
 import net.nikr.eve.jeveasset.data.settings.types.ContractPriceType;
 import net.nikr.eve.jeveasset.data.settings.types.EditableLocationType;
@@ -193,6 +196,12 @@ public class MyMarketOrder extends RawMarketOrder implements Comparable<MyMarket
 
 	public final boolean isExpired() {
 		return getExpires().before(new Date());
+	}
+
+	public final boolean isNearExpired() {
+		Calendar cal = Calendar.getInstance();
+		cal.add(Calendar.DATE, Settings.get().getMarketOrdersSettings().getExpireWarnDays());
+		return getExpires().before(cal.getTime());
 	}
 
 	public boolean isActive() {

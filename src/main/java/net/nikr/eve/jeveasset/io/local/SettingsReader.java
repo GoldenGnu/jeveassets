@@ -47,6 +47,7 @@ import net.nikr.eve.jeveasset.data.settings.ExportSettings.DecimalSeparator;
 import net.nikr.eve.jeveasset.data.settings.ExportSettings.ExportFormat;
 import net.nikr.eve.jeveasset.data.settings.ExportSettings.FieldDelimiter;
 import net.nikr.eve.jeveasset.data.settings.ExportSettings.LineDelimiter;
+import net.nikr.eve.jeveasset.data.settings.MarketOrdersSettings;
 import net.nikr.eve.jeveasset.data.settings.PriceDataSettings;
 import net.nikr.eve.jeveasset.data.settings.PriceDataSettings.PriceMode;
 import net.nikr.eve.jeveasset.data.settings.PriceDataSettings.PriceSource;
@@ -416,6 +417,12 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		Element contractPriceSettingsElement = getNodeOptional(element, "contractpricesettings");
 		if (contractPriceSettingsElement != null) {
 			parseContractPriceSettings(contractPriceSettingsElement, settings);
+		}
+
+		//MarketOrdersSettings
+		Element marketOrdersSettingsElement = getNodeOptional(element, "marketorderssettings");
+		if (marketOrdersSettingsElement != null) {
+			parseMarketOrdersSettings(marketOrdersSettingsElement, settings);
 		}
 
 		//Flags
@@ -1194,6 +1201,13 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		contractPriceSettings.setContractPriceSecurity(security);
 		contractPriceSettings.setFeedback(feedback);
 		contractPriceSettings.setFeedbackAsked(feedbackAsked);
+	}
+
+	private void parseMarketOrdersSettings(final Element element, final Settings settings) throws XmlException {
+		int expireWarnDays = getInt(element, "expirewarndays");
+
+		MarketOrdersSettings marketOrdersSettings = settings.getMarketOrdersSettings();
+		marketOrdersSettings.setExpireWarnDays(expireWarnDays);
 	}
 
 	private void parseFlags(final Element element, final Settings settings) throws XmlException {

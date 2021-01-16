@@ -22,8 +22,11 @@ package net.nikr.eve.jeveasset.gui.dialogs.settings;
 
 import javax.swing.GroupLayout;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.settings.Settings;
+import net.nikr.eve.jeveasset.data.settings.MarketOrdersSettings;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.JLabelMultiline;
 import net.nikr.eve.jeveasset.i18n.DialoguesSettings;
@@ -32,34 +35,61 @@ import net.nikr.eve.jeveasset.i18n.DialoguesSettings;
 public class MarketOrdersToolSettingsPanel extends JSettingsPanel {
 
 	private final JCheckBox jSaveHistory;
+	private final JComboBox<Integer> jExpireWarnDays;
 
 	public MarketOrdersToolSettingsPanel(final Program program, final SettingsDialog settingsDialog) {
 		super(program, settingsDialog, DialoguesSettings.get().marketOrders(), Images.TOOL_MARKET_ORDERS.getIcon());
+
+		int warnDays = 0;
 
 		jSaveHistory = new JCheckBox(DialoguesSettings.get().marketOrdersSaveHistory());
 
 		JLabelMultiline jSaveHistoryWarning = new JLabelMultiline(DialoguesSettings.get().saveHistoryWarning(), 2);
 
+		JLabel jExpireWarnDaysLabel = new JLabel(DialoguesSettings.get().expireWarnDays());
+                jExpireWarnDays = new JComboBox<Integer>();
+
+		for (int i = 0; i <= 90; i++) {
+			jExpireWarnDays.addItem(i);
+		}
+
 		layout.setHorizontalGroup(
 			layout.createParallelGroup(GroupLayout.Alignment.LEADING)
 				.addComponent(jSaveHistory)
 				.addComponent(jSaveHistoryWarning, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Integer.MAX_VALUE)
+				.addGroup(layout.createSequentialGroup()
+					.addComponent(jExpireWarnDaysLabel)
+					.addComponent(jExpireWarnDays)
+				)
 		);
 		layout.setVerticalGroup(
 			layout.createSequentialGroup()
 				.addComponent(jSaveHistory, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 				.addComponent(jSaveHistoryWarning, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+				.addGroup(layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
+					.addComponent(jExpireWarnDaysLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jExpireWarnDays, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+				)
 		);
 	}
 		
 	@Override
 	public boolean save() {
-		Settings.get().setMarketOrderHistory(jSaveHistory.isSelected());
+		final MarketOrdersSettings old = Settings.get().getMarketOrdersSettings();
+		boolean marketOrderHistory = jSaveHistory.isSelected();
+		int expireWarnDays = (Integer)jExpireWarnDays.getSelectedItem();
+
+		Settings.get().setMarketOrderHistory(marketOrderHistory);
+		old.setExpireWarnDays(expireWarnDays);
+
 		return false;
 	}
 
 	@Override
 	public void load() {
+		final MarketOrdersSettings marketOrdersSettings = Settings.get().getMarketOrdersSettings();
+
 		jSaveHistory.setSelected(Settings.get().isMarketOrderHistory());
+		jExpireWarnDays.setPrototypeDisplayValue(marketOrdersSettings.getExpireWarnDays());
 	}
 }
