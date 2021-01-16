@@ -369,6 +369,48 @@ public enum MarketTableFormat implements EnumTableColumn<MyMarketOrder> {
 			return from.getTransactionProfitPercent();
 		}
 	},
+	MARKET_PRICE(Double.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsOrders.get().columnMarketPrice();
+		}
+		@Override
+		public String getColumnToolTip() {
+			return TabsOrders.get().columnMarketPriceToolTip();
+		}
+		@Override
+		public Object getColumnValue(final MyMarketOrder from) {
+			return from.getDynamicPrice();
+		}
+	},
+	MARKET_MARGIN(Percent.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsOrders.get().columnMarketMargin();
+		}
+		@Override
+		public String getColumnToolTip() {
+			return TabsOrders.get().columnMarketMarginToolTip();
+		}
+		@Override
+		public Object getColumnValue(final MyMarketOrder from) {
+			return Percent.create(from.getMarketMargin());
+		}
+	},
+	MARKET_PROFIT(Double.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsOrders.get().columnMarketProfit();
+		}
+		@Override
+		public String getColumnToolTip() {
+			return TabsOrders.get().columnMarketProfitToolTip();
+		}
+		@Override
+		public Object getColumnValue(final MyMarketOrder from) {
+			return from.getMarketProfit();
+		}
+	},
 	TYPE_ID(Integer.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
