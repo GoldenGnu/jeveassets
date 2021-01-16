@@ -47,7 +47,7 @@ public class MarketOrdersToolSettingsPanel extends JSettingsPanel {
 		JLabelMultiline jSaveHistoryWarning = new JLabelMultiline(DialoguesSettings.get().saveHistoryWarning(), 2);
 
 		JLabel jExpireWarnDaysLabel = new JLabel(DialoguesSettings.get().expireWarnDays());
-                jExpireWarnDays = new JComboBox<Integer>();
+		jExpireWarnDays = new JComboBox<Integer>();
 
 		for (int i = 0; i <= 90; i++) {
 			jExpireWarnDays.addItem(i);
