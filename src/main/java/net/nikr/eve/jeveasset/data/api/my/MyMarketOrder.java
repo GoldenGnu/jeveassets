@@ -277,7 +277,7 @@ public class MyMarketOrder extends RawMarketOrder implements Comparable<MyMarket
 	public double getMarketMargin() {
 		if (getDynamicPrice() > 0 && getPrice() > 0) {
 			if (isBuyOrder()) {
-				return (getDynamicPrice() - getPrice()) / getPrice();
+				return (getDynamicPrice() - getPrice()) / getDynamicPrice();
 			} else {
 				return (getPrice() - getDynamicPrice()) / getPrice();
 			}
