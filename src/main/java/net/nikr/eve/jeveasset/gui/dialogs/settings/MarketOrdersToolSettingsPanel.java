@@ -22,34 +22,30 @@ package net.nikr.eve.jeveasset.gui.dialogs.settings;
 
 import javax.swing.GroupLayout;
 import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.data.settings.MarketOrdersSettings;
 import net.nikr.eve.jeveasset.gui.images.Images;
+import net.nikr.eve.jeveasset.gui.shared.components.JIntegerField;
 import net.nikr.eve.jeveasset.gui.shared.components.JLabelMultiline;
+import net.nikr.eve.jeveasset.gui.shared.DocumentFactory.ValueFlag;
 import net.nikr.eve.jeveasset.i18n.DialoguesSettings;
 
 
 public class MarketOrdersToolSettingsPanel extends JSettingsPanel {
 
 	private final JCheckBox jSaveHistory;
-	private final JComboBox<Integer> jExpireWarnDays;
+	private final JIntegerField jExpireWarnDays;
 
 	public MarketOrdersToolSettingsPanel(final Program program, final SettingsDialog settingsDialog) {
 		super(program, settingsDialog, DialoguesSettings.get().marketOrders(), Images.TOOL_MARKET_ORDERS.getIcon());
 
-		jSaveHistory = new JCheckBox(DialoguesSettings.get().marketOrdersSaveHistory());
-
 		JLabelMultiline jSaveHistoryWarning = new JLabelMultiline(DialoguesSettings.get().saveHistoryWarning(), 2);
-
 		JLabel jExpireWarnDaysLabel = new JLabel(DialoguesSettings.get().expireWarnDays());
-		jExpireWarnDays = new JComboBox<Integer>();
 
-		for (int i = 0; i <= 90; i++) {
-			jExpireWarnDays.addItem(i);
-		}
+		jSaveHistory = new JCheckBox(DialoguesSettings.get().marketOrdersSaveHistory());
+		jExpireWarnDays = new JIntegerField("0", ValueFlag.POSITIVE_AND_ZERO);
 
 		layout.setHorizontalGroup(
 			layout.createParallelGroup(GroupLayout.Alignment.LEADING)
@@ -75,12 +71,26 @@ public class MarketOrdersToolSettingsPanel extends JSettingsPanel {
 	public boolean save() {
 		final MarketOrdersSettings old = Settings.get().getMarketOrdersSettings();
 		boolean marketOrderHistory = jSaveHistory.isSelected();
-		int expireWarnDays = (Integer)jExpireWarnDays.getSelectedItem();
+		boolean update = false;
+
+		int expireWarnDays;
+
+		try {
+			expireWarnDays = Integer.parseInt(jExpireWarnDays.getText());
+			//Max time of contracts is 90 days so anything over that doesn't make sense
+			if(expireWarnDays > 90) {
+				expireWarnDays = 90;
+				jExpireWarnDays.setText("90");
+				update = true;
+			}
+		} catch (NumberFormatException ex) {
+			expireWarnDays = 0;
+		}
 
 		Settings.get().setMarketOrderHistory(marketOrderHistory);
 		old.setExpireWarnDays(expireWarnDays);
 
-		return false;
+		return update;
 	}
 
 	@Override
@@ -88,6 +98,6 @@ public class MarketOrdersToolSettingsPanel extends JSettingsPanel {
 		final MarketOrdersSettings marketOrdersSettings = Settings.get().getMarketOrdersSettings();
 
 		jSaveHistory.setSelected(Settings.get().isMarketOrderHistory());
-		jExpireWarnDays.setSelectedItem(marketOrdersSettings.getExpireWarnDays());
+		jExpireWarnDays.setText(String.valueOf(marketOrdersSettings.getExpireWarnDays()));
 	}
 }
