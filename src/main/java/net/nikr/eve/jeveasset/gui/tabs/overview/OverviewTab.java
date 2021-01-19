@@ -33,10 +33,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import javax.swing.ButtonGroup;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
@@ -63,11 +61,8 @@ import net.nikr.eve.jeveasset.gui.shared.components.ListComboBoxModel;
 import net.nikr.eve.jeveasset.gui.shared.filter.ExportDialog;
 import net.nikr.eve.jeveasset.gui.shared.filter.ExportFilterControl;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
-import net.nikr.eve.jeveasset.gui.shared.filter.Filter.CompareType;
-import net.nikr.eve.jeveasset.gui.shared.filter.Filter.LogicType;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo.InfoItem;
-import net.nikr.eve.jeveasset.gui.shared.menu.JMenuLookup;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuData;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.TableMenu;
@@ -75,7 +70,6 @@ import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.EventListManager;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
-import net.nikr.eve.jeveasset.gui.tabs.assets.AssetTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.assets.AssetsTab;
 import net.nikr.eve.jeveasset.i18n.General;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
@@ -88,8 +82,6 @@ public class OverviewTab extends JMainTabSecondary {
 	public static enum OverviewAction {
 		UPDATE_LIST,
 		LOAD_FILTER,
-		GROUP_ASSET_FILTER,
-		GROUP_LOOKUP,
 		EXPORT
 	}
 
@@ -307,13 +299,8 @@ public class OverviewTab extends JMainTabSecondary {
 	}
 
 	public boolean isGroupAndNotEmpty() {
-		int index = jTable.getSelectedRow();
-		if (index < 0) {
-			return false;
-		}
-		Overview overview = tableModel.getElementAt(index);
-		OverviewGroup overviewGroup = Settings.get().getOverviewGroups().get(overview.getName());
-		return isGroup() && !overviewGroup.getLocations().isEmpty();
+		OverviewGroup overviewGroup = getSelectGroup();
+		return isGroup() && overviewGroup != null && !overviewGroup.getLocations().isEmpty();
 	}
 
 	private void updateStatusbar() {
@@ -570,7 +557,7 @@ public class OverviewTab extends JMainTabSecondary {
 		return locations;
 	}
 
-	protected OverviewGroup getSelectGroup() {
+	public OverviewGroup getSelectGroup() {
 		int index = jTable.getSelectedRow();
 		if (index < 0) {
 			return null;
@@ -582,7 +569,12 @@ public class OverviewTab extends JMainTabSecondary {
 		return Settings.get().getOverviewGroups().get(overview.getName());
 	}
 
-	private class OverviewTableMenu implements TableMenu<Overview> {
+	public class OverviewTableMenu implements TableMenu<Overview> {
+
+		public OverviewTab getOverviewTab() {
+			return OverviewTab.this;
+		}
+
 		@Override
 		public MenuData<Overview> getMenuData() {
 			return new MenuData<>(selectionModel.getSelected());
@@ -615,70 +607,8 @@ public class OverviewTab extends JMainTabSecondary {
 		@Override
 		public void actionPerformed(final ActionEvent e) {
 			if (OverviewAction.UPDATE_LIST.name().equals(e.getActionCommand())) {
-				//XXX - set default comparator or we can get IndexOutOfBoundsException
-				/*
-				if (e.getSource().equals(jStations)
-						|| e.getSource().equals(jSystems)
-						|| e.getSource().equals(jRegions)
-						|| e.getSource().equals(jGroups)
-						) {
-					sortedList.setComparator(GlazedLists.comparableComparator());
-				}
-				*/
 				updateTable();
-			}
-			//Filter
-			if (OverviewAction.GROUP_ASSET_FILTER.name().equals(e.getActionCommand())) {
-				int index = jTable.getSelectedRow();
-				Overview overview = tableModel.getElementAt(index);
-				OverviewGroup overviewGroup = Settings.get().getOverviewGroups().get(overview.getName());
-				List<Filter> filters = new ArrayList<>();
-				for (OverviewLocation location : overviewGroup.getLocations()) {
-					if (location.isStation()) {
-						Filter filter = new Filter(LogicType.OR, AssetTableFormat.LOCATION, CompareType.EQUALS, location.getName());
-						filters.add(filter);
-					}
-					if (location.isPlanet()) {
-						Filter filter = new Filter(LogicType.OR, AssetTableFormat.LOCATION, CompareType.EQUALS, location.getName());
-						filters.add(filter);
-					}
-					if (location.isSystem()) {
-						Filter filter = new Filter(LogicType.OR, AssetTableFormat.LOCATION, CompareType.CONTAINS, location.getName());
-						filters.add(filter);
-					}
-					if (location.isRegion()) {
-						Filter filter = new Filter(LogicType.OR, AssetTableFormat.REGION, CompareType.EQUALS, location.getName());
-						filters.add(filter);
-					}
-				}
-				program.getAssetsTab().addFilters(filters);
-				program.getMainWindow().addTab(program.getAssetsTab());
-			}
-			if (OverviewAction.GROUP_LOOKUP.name().equals(e.getActionCommand())) {
-				int index = jTable.getSelectedRow();
-				Overview overview = tableModel.getElementAt(index);
-				OverviewGroup overviewGroup = Settings.get().getOverviewGroups().get(overview.getName());
-				Set<String> planets = new HashSet<>();
-				Set<String> stations = new HashSet<>();
-				Set<String> systems = new HashSet<>();
-				Set<String> regions = new HashSet<>();
-				for (OverviewLocation location : overviewGroup.getLocations()) {
-					if (location.isStation()) {
-						stations.add(location.getName());
-					}
-					if (location.isPlanet()) {
-						planets.add(location.getName());
-					}
-					if (location.isSystem()) {
-						systems.add(location.getName());
-					}
-					if (location.isRegion()) {
-						regions.add(location.getName());
-					}
-				}
-				JMenuLookup.browseDotlan(program, stations, planets, systems, regions);
-			}
-			if (OverviewAction.LOAD_FILTER.name().equals(e.getActionCommand())) {
+			} else if (OverviewAction.LOAD_FILTER.name().equals(e.getActionCommand())) {
 				Object source = e.getSource();
 				if (source instanceof FilterMenuItem) {
 					FilterMenuItem menuItem = (FilterMenuItem) source;
@@ -687,8 +617,7 @@ public class OverviewTab extends JMainTabSecondary {
 						program.getAssetsTab().addFilters(menuItem.getFilters());
 					}
 				}
-			}
-			if (OverviewAction.EXPORT.name().equals(e.getActionCommand())) {
+			} else if (OverviewAction.EXPORT.name().equals(e.getActionCommand())) {
 				exportDialog.setVisible(true);
 			}
 		}
