@@ -64,7 +64,7 @@ Link:
   API: https://esi.evetech.net/ui
 
 Toolkit License:
-  ©CCP hf. All rights reserved. Used with permission.
+  Â©CCP hf. All rights reserved. Used with permission.
 
 ________________________________________________________________________________
 _FUZZWORK_______________________________________________________________________

@@ -20,46 +20,95 @@
  */
 package net.nikr.eve.jeveasset.gui.dialogs.settings;
 
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import javax.swing.GroupLayout;
 import javax.swing.JCheckBox;
+import javax.swing.JLabel;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.settings.Settings;
+import net.nikr.eve.jeveasset.data.settings.MarketOrdersSettings;
 import net.nikr.eve.jeveasset.gui.images.Images;
+import net.nikr.eve.jeveasset.gui.shared.components.JIntegerField;
 import net.nikr.eve.jeveasset.gui.shared.components.JLabelMultiline;
+import net.nikr.eve.jeveasset.gui.shared.DocumentFactory.ValueFlag;
 import net.nikr.eve.jeveasset.i18n.DialoguesSettings;
 
 
 public class MarketOrdersToolSettingsPanel extends JSettingsPanel {
 
 	private final JCheckBox jSaveHistory;
+	private final JIntegerField jExpireWarnDays;
 
 	public MarketOrdersToolSettingsPanel(final Program program, final SettingsDialog settingsDialog) {
 		super(program, settingsDialog, DialoguesSettings.get().marketOrders(), Images.TOOL_MARKET_ORDERS.getIcon());
 
-		jSaveHistory = new JCheckBox(DialoguesSettings.get().marketOrdersSaveHistory());
-
 		JLabelMultiline jSaveHistoryWarning = new JLabelMultiline(DialoguesSettings.get().saveHistoryWarning(), 2);
+		JLabel jExpireWarnDaysLabel = new JLabel(DialoguesSettings.get().expireWarnDays());
+
+		jSaveHistory = new JCheckBox(DialoguesSettings.get().marketOrdersSaveHistory());
+		jExpireWarnDays = new JIntegerField("0", ValueFlag.POSITIVE_AND_ZERO);
+		jExpireWarnDays.addFocusListener(new FocusListener() {
+			@Override
+			public void focusGained(FocusEvent e) {}
+
+			@Override
+			public void focusLost(FocusEvent e) {
+				try {
+					//Max time of market orders is 90 days so anything over that doesn't make sense
+					if(Integer.parseInt(jExpireWarnDays.getText()) > 90) {
+						jExpireWarnDays.setText("90");
+					}
+				} catch (NumberFormatException ex) {
+					//No problem
+				}
+			}
+		});
 
 		layout.setHorizontalGroup(
 			layout.createParallelGroup(GroupLayout.Alignment.LEADING)
 				.addComponent(jSaveHistory)
 				.addComponent(jSaveHistoryWarning, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Integer.MAX_VALUE)
+				.addGroup(layout.createSequentialGroup()
+					.addComponent(jExpireWarnDaysLabel)
+					.addComponent(jExpireWarnDays)
+				)
 		);
 		layout.setVerticalGroup(
 			layout.createSequentialGroup()
 				.addComponent(jSaveHistory, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 				.addComponent(jSaveHistoryWarning, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+				.addGroup(layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
+					.addComponent(jExpireWarnDaysLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jExpireWarnDays, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+				)
 		);
 	}
 		
 	@Override
 	public boolean save() {
-		Settings.get().setMarketOrderHistory(jSaveHistory.isSelected());
-		return false;
+		int oldExpireWarnDays = Settings.get().getMarketOrdersSettings().getExpireWarnDays();
+
+		boolean marketOrderHistory = jSaveHistory.isSelected();
+
+		int expireWarnDays;
+		try {
+			expireWarnDays = Integer.parseInt(jExpireWarnDays.getText());
+		} catch (NumberFormatException ex) {
+			expireWarnDays = 0;
+		}
+
+		Settings.get().setMarketOrderHistory(marketOrderHistory);
+		Settings.get().getMarketOrdersSettings().setExpireWarnDays(expireWarnDays);
+
+		return oldExpireWarnDays != expireWarnDays;
 	}
 
 	@Override
 	public void load() {
+		final MarketOrdersSettings marketOrdersSettings = Settings.get().getMarketOrdersSettings();
+
 		jSaveHistory.setSelected(Settings.get().isMarketOrderHistory());
+		jExpireWarnDays.setText(String.valueOf(marketOrdersSettings.getExpireWarnDays()));
 	}
 }
