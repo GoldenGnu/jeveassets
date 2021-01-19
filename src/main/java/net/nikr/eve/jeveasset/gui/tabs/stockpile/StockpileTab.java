@@ -37,6 +37,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -424,7 +425,7 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 		stockpileDialog.updateData();
 	}
 
-	public Stockpile addToStockpile(Stockpile stockpile, List<StockpileItem> items) {
+	public Stockpile addToStockpile(Stockpile stockpile, Collection<StockpileItem> items) {
 		return addToStockpile(stockpile, items, false);
 	}
 
@@ -432,7 +433,7 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 		return addToStockpile(stockpile, Collections.singletonList(item), false);
 	}
 
-	protected Stockpile addToStockpile(Stockpile stockpile, List<StockpileItem> items, boolean merge) {
+	protected Stockpile addToStockpile(Stockpile stockpile, Collection<StockpileItem> items, boolean merge) {
 		updateOwners();
 		if (stockpile == null) { //new stockpile
 			stockpile = stockpileDialog.showAdd();
@@ -540,12 +541,12 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 		removeItems(Collections.singletonList(item));
 	}
 
-	protected void removeItems(List<StockpileItem> items) {
+	protected void removeItems(Collection<StockpileItem> items) {
 		for (StockpileItem item : items) {
 			item.getStockpile().updateTotal();
 		}
 		if (!items.isEmpty()) {
-			updateSubpile(items.get(0).getStockpile());
+			updateSubpile(items.iterator().next().getStockpile());
 		}
 		//Lock Table
 		beforeUpdateData();
