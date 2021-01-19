@@ -201,6 +201,10 @@ public class TransactionTab extends JMainTabPrimary {
 		filterControl.addFilter(filter);
 	}
 
+	public void addFilters(final List<Filter> filters) {
+		filterControl.addFilters(filters);
+	}
+
 	private class TransactionTableMenu implements TableMenu<MyTransaction> {
 
 		@Override

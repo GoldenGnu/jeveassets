@@ -23,6 +23,8 @@ package net.nikr.eve.jeveasset.gui.shared.menu;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.List;
 import javax.swing.JMenuItem;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.gui.images.Images;
@@ -31,8 +33,11 @@ import net.nikr.eve.jeveasset.gui.shared.filter.Filter.CompareType;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter.LogicType;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.JAutoMenu;
 import net.nikr.eve.jeveasset.gui.tabs.assets.AssetTableFormat;
+import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewGroup;
+import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewLocation;
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewTab;
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewTab.OverviewAction;
+import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewTab.OverviewTableMenu;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 import net.nikr.eve.jeveasset.i18n.TabsOverview;
 
@@ -44,6 +49,7 @@ public class JMenuAssetFilter<T> extends JAutoMenu<T> {
 		PLANET_FILTER,
 		SYSTEM_FILTER,
 		REGION_FILTER,
+		OVERVIEW_GROUP_FILTER,
 		ITEM_TYPE_FILTER
 	}
 
@@ -95,6 +101,8 @@ public class JMenuAssetFilter<T> extends JAutoMenu<T> {
 
 		jLocations = new JMenuItem(TabsOverview.get().locations());
 		jLocations.setIcon(Images.LOC_LOCATIONS.getIcon());
+		jLocations.setActionCommand(MenuAssetFilterAction.OVERVIEW_GROUP_FILTER.name());
+		jLocations.addActionListener(listener);
 	}
 
 	@Override
@@ -107,18 +115,12 @@ public class JMenuAssetFilter<T> extends JAutoMenu<T> {
 	}
 
 	public void setTool(Object object) {
-		if (object instanceof OverviewTab) {
-			OverviewTab overviewTab = (OverviewTab) object;
-			//Remove all action listeners
-			for (ActionListener listener : jLocations.getActionListeners()) {
-				jLocations.removeActionListener(listener);
-			}
-			jLocations.setActionCommand(OverviewAction.GROUP_ASSET_FILTER.name());
-			jLocations.addActionListener(overviewTab.getListenerClass());
+		if (object instanceof OverviewTableMenu) {
+			OverviewTab overviewTab = ((OverviewTableMenu)object).getOverviewTab();
 			jLocations.setEnabled(overviewTab.isGroupAndNotEmpty());
-			this.add(jLocations);
+			add(jLocations);
 		} else {
-			this.remove(jLocations);
+			remove(jLocations);
 		}
 	}
 
@@ -148,6 +150,32 @@ public class JMenuAssetFilter<T> extends JAutoMenu<T> {
 					Filter filter = new Filter(LogicType.AND, AssetTableFormat.REGION, CompareType.EQUALS, region);
 					program.getAssetsTab().addFilter(filter);
 				}
+				program.getMainWindow().addTab(program.getAssetsTab());
+			} else if (MenuAssetFilterAction.OVERVIEW_GROUP_FILTER.name().equals(e.getActionCommand())) {
+				OverviewGroup overviewGroup = program.getOverviewTab().getSelectGroup();
+				if (overviewGroup == null) {
+					return;
+				}
+				List<Filter> filters = new ArrayList<>();
+				for (OverviewLocation location : overviewGroup.getLocations()) {
+					if (location.isStation()) {
+						Filter filter = new Filter(LogicType.OR, AssetTableFormat.LOCATION, CompareType.EQUALS, location.getName());
+						filters.add(filter);
+					}
+					if (location.isPlanet()) {
+						Filter filter = new Filter(LogicType.OR, AssetTableFormat.LOCATION, CompareType.EQUALS, location.getName());
+						filters.add(filter);
+					}
+					if (location.isSystem()) {
+						Filter filter = new Filter(LogicType.OR, AssetTableFormat.LOCATION, CompareType.CONTAINS, location.getName());
+						filters.add(filter);
+					}
+					if (location.isRegion()) {
+						Filter filter = new Filter(LogicType.OR, AssetTableFormat.REGION, CompareType.EQUALS, location.getName());
+						filters.add(filter);
+					}
+				}
+				program.getAssetsTab().addFilters(filters);
 				program.getMainWindow().addTab(program.getAssetsTab());
 			} else if (MenuAssetFilterAction.ITEM_TYPE_FILTER.name().equals(e.getActionCommand())) {
 				for (String typeName : menuData.getTypeNames()) {

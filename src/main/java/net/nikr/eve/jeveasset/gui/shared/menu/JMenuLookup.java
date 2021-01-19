@@ -23,16 +23,20 @@ package net.nikr.eve.jeveasset.gui.shared.menu;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
+import net.nikr.eve.jeveasset.data.sde.StaticData;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.JAutoMenu;
+import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewGroup;
+import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewLocation;
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewTab;
-import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewTab.OverviewAction;
+import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewTab.OverviewTableMenu;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 import net.nikr.eve.jeveasset.i18n.TabsOverview;
 import net.nikr.eve.jeveasset.io.online.EvepraisalGetter;
@@ -42,27 +46,239 @@ import net.nikr.eve.jeveasset.io.shared.DesktopUtil;
 public class JMenuLookup<T> extends JAutoMenu<T> {
 
 	private enum MenuLookupAction {
-		//EVE_MARKETDATA,
 		EVEMARKETER,
 		GAMES_CHRUKER,
 		FUZZWORK_ITEMS,
 		ZKILLBOARD_ITEM,
 		ZKILLBOARD_SYSTEM,
 		ZKILLBOARD_REGION,
+		ZKILLBOARD_OVERVIEW_GROUP,
 		EVE_REF,
 		FUZZWORK_BLUEPRINTS,
-		KHON_SPACE_INVENTION,
-		KHON_SPACE_RESEARCH,
-		KHON_SPACE_MANUFACTURING,
+		LAZY_BLACKSMITH_INVENTION,
+		LAZY_BLACKSMITH_RESEARCH,
+		LAZY_BLACKSMITH_MANUFACTURING,
 		FUZZWORK_MARKET,
 		EVEMAPS_DOTLAN_STATION,
 		EVEMAPS_DOTLAN_PLANET,
 		EVEMAPS_DOTLAN_SYSTEM,
 		EVEMAPS_DOTLAN_REGION,
+		EVEMAPS_DOTLAN_OVERVIEW_GROUP,
 		EVE_INFO,
 		EVEPRAISAL,
 		ADAM4EVE,
 		EVEHUB,
+	}
+
+	public static enum LookupLinks {
+	//Locations
+		EVEMAPS_DOTLAN_STATION() {
+			@Override
+			public Set<String> getLinks(MenuData<?> menuData) {
+				Set<String> urls = new HashSet<>();
+				for (String station : menuData.getStationNames()) {
+					urls.add("https://evemaps.dotlan.net/station/" + station.replace(" ", "_"));
+				}
+				return urls;
+			}
+		},
+		EVEMAPS_DOTLAN_PLANET() {
+			@Override
+			public Set<String> getLinks(MenuData<?> menuData) {
+				Set<String> urls = new HashSet<>();
+				for (String planet : menuData.getPlanetNames()) {
+					urls.add("https://evemaps.dotlan.net/system/" + replaceLast(planet, " ", "/").replace(" ", "_"));
+				}
+				return urls;
+			}
+		},
+		EVEMAPS_DOTLAN_SYSTEM() {
+			@Override
+			public Set<String> getLinks(MenuData<?> menuData) {
+				Set<String> urls = new HashSet<>();
+				for (String system : menuData.getSystemNames()) {
+					urls.add("https://evemaps.dotlan.net/system/" + system.replace(" ", "_"));
+				}
+				return urls;
+			}
+		},
+		EVEMAPS_DOTLAN_REGION() {
+			@Override
+			public Set<String> getLinks(MenuData<?> menuData) {
+				Set<String> urls = new HashSet<>();
+				for (String region : menuData.getRegionNames()) {
+					urls.add("https://evemaps.dotlan.net/map/" + region.replace(" ", "_"));
+				}
+				return urls;
+			}
+		},
+		ZKILLBOARD_SYSTEM() {
+			@Override
+			public Set<String> getLinks(MenuData<?> menuData) {
+				Set<String> urls = new HashSet<>();
+				for (MyLocation location : menuData.getSystemLocations()) {
+					urls.add("https://zkillboard.com/system/" +location.getLocationID() + "/");
+				}
+				return urls;
+			}
+		},
+		ZKILLBOARD_REGION() {
+			@Override
+			public Set<String> getLinks(MenuData<?> menuData) {
+				Set<String> urls = new HashSet<>();
+				for (MyLocation location : menuData.getRegionLocations()) {
+					urls.add("https://zkillboard.com/region/" +location.getLocationID() + "/");
+				}
+				return urls;
+			}
+		},
+	//Market
+		EVEMARKETER() {
+			@Override
+			public Set<String> getLinks(MenuData<?> menuData) {
+				Set<String> urls = new HashSet<>();
+				for (int marketTypeID : menuData.getMarketTypeIDs()) {
+					urls.add("https://evemarketer.com/types/" + marketTypeID);
+				}
+				return urls;
+			}
+		},
+		ADAM4EVE() {
+			@Override
+			public Set<String> getLinks(MenuData<?> menuData) {
+				Set<String> urls = new HashSet<>();
+				for (int marketTypeID : menuData.getMarketTypeIDs()) {
+					urls.add("https://www.adam4eve.eu/commodity.php?typeID=" + marketTypeID);
+				}
+				return urls;
+			}
+		},
+		EVEHUB() {
+			@Override
+			public Set<String> getLinks(MenuData<?> menuData) {
+				Set<String> urls = new HashSet<>();
+				for (int marketTypeID : menuData.getMarketTypeIDs()) {
+					urls.add("https://eve-hub.com/market/chart/10000002/" + marketTypeID);
+				}
+				return urls;
+			}
+		},
+		EVEPRAISAL() {
+			@Override
+			public Set<String> getLinks(MenuData<?> menuData) {
+				String evepraisal = EvepraisalGetter.post(menuData.getItemCounts());
+				if (evepraisal != null) {
+					return Collections.singleton("https://evepraisal.com/a/" + evepraisal);
+				}
+				return new HashSet<>();
+			}
+		},
+		FUZZWORK_MARKET() {
+			@Override
+			public Set<String> getLinks(MenuData<?> menuData) {
+				Set<String> urls = new HashSet<>();
+				for (int marketTypeID : menuData.getMarketTypeIDs()) {
+					urls.add("https://market.fuzzwork.co.uk/hub/type/" + marketTypeID + "/");
+				}
+				return urls;
+			}
+		},
+	//Info
+		GAMES_CHRUKER() {
+			@Override
+			public Set<String> getLinks(MenuData<?> menuData) {
+				Set<String> urls = new HashSet<>();
+				for (int typeID : menuData.getTypeIDs()) {
+					urls.add("http://games.chruker.dk/eve_online/item.php?type_id=" + typeID);
+				}
+				return urls;
+			}
+		},
+		FUZZWORK_ITEMS() {
+			@Override
+			public Set<String> getLinks(MenuData<?> menuData) {
+				Set<String> urls = new HashSet<>();
+				for (int typeID : menuData.getTypeIDs()) {
+					urls.add("https://www.fuzzwork.co.uk/info/?typeid=" + typeID);
+				}
+				return urls;
+			}
+		},
+		ZKILLBOARD_ITEM() {
+			@Override
+			public Set<String> getLinks(MenuData<?> menuData) {
+				Set<String> urls = new HashSet<>();
+				for (int typeID : menuData.getTypeIDs()) {
+					urls.add("https://zkillboard.com/item/" + typeID + "/");
+				}
+				return urls;
+			}
+		},
+		EVE_REF() {
+			@Override
+			public Set<String> getLinks(MenuData<?> menuData) {
+				Set<String> urls = new HashSet<>();
+				for (int typeID : menuData.getTypeIDs()) {
+					urls.add("https://everef.net/type/" + typeID+ "?utm_source=jeveassets");
+				}
+				return urls;
+			}
+		},
+		EVE_INFO() {
+			@Override
+			public Set<String> getLinks(MenuData<?> menuData) {
+				Set<String> urls = new HashSet<>();
+				for (int typeID : menuData.getTypeIDs()) {
+					urls.add("https://eveinfo.com/item/" + typeID);
+				}
+				return urls;
+			}
+		},
+	//Industry
+		FUZZWORK_BLUEPRINTS() {
+			@Override
+			public Set<String> getLinks(MenuData<?> menuData) {
+				Set<String> urls = new HashSet<>();
+				for (int typeID : menuData.getBlueprintTypeIDs()) {
+					urls.add("https://www.fuzzwork.co.uk/blueprint/?typeid=" + typeID);
+				}
+				return urls;
+			}
+		},
+		LAZY_BLACKSMITH_INVENTION() {
+			@Override
+			public Set<String> getLinks(MenuData<?> menuData) {
+				Set<String> urls = new HashSet<>();
+				for (int typeID : menuData.getInventionTypeIDs()) {
+					urls.add("https://lazy-blacksmith.space/blueprint/invention/" + typeID);
+				}
+				return urls;
+			}
+		},
+		LAZY_BLACKSMITH_MANUFACTURING() {
+			@Override
+			public Set<String> getLinks(MenuData<?> menuData) {
+				Set<String> urls = new HashSet<>();
+				for (int typeID : menuData.getBlueprintTypeIDs()) {
+					urls.add("https://lazy-blacksmith.space/blueprint/manufacturing/" + typeID);
+				}
+				return urls;
+			}
+		},
+		LAZY_BLACKSMITH_RESEARCH() {
+			@Override
+			public Set<String> getLinks(MenuData<?> menuData) {
+				Set<String> urls = new HashSet<>();
+				for (int typeID : menuData.getBlueprintTypeIDs()) {
+					urls.add("https://lazy-blacksmith.space/blueprint/research_copy/" + typeID);
+				}
+				return urls;
+			}
+		}
+
+		;
+
+		public abstract Set<String> getLinks( MenuData<?> menuData);
 	}
 
 	private final JMenu jLocations;
@@ -72,10 +288,11 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 	private final JMenuItem jDotlanSystem;
 	private final JMenuItem jDotlanRegion;
 	private final JMenuItem jDotlanLocations;
+	private final JMenu jzKillboard;
 	private final JMenuItem jzKillboardSystem;
 	private final JMenuItem jzKillboardRegion;
+	private final JMenuItem jzKillboardLocations;
 	private final JMenu jMarket;
-	//private final JMenuItem jEveMarketdata;
 	private final JMenuItem jEveMarketer;
 	private final JMenuItem jFuzzworkMarket;
 	private final JMenuItem jEvepraisal;
@@ -88,9 +305,9 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 	private final JMenuItem jEveInfo;
 	private final JMenu jIndustry;
 	private final JMenuItem jFuzzworkBlueprints;
-	private final JMenuItem jKhonSpaceInvention;
-	private final JMenuItem jKhonSpaceResearch;
-	private final JMenuItem jKhonSpaceManufacturing;
+	private final JMenuItem jLazyBlacksmithInvention;
+	private final JMenuItem jLazyBlacksmithResearch;
+	private final JMenuItem jLazyBlacksmithManufacturing;
 	private final JMenuItem jAdam4eve;
 
 	public JMenuLookup(final Program program) {
@@ -104,7 +321,7 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 		jLocations.setIcon(Images.LOC_LOCATIONS.getIcon());
 		add(jLocations);
 
-		JMenu jzKillboard = new JMenu(GuiShared.get().zKillboard());
+		jzKillboard = new JMenu(GuiShared.get().zKillboard());
 		jzKillboard.setIcon(Images.LINK_ZKILLBOARD.getIcon());
 		jLocations.add(jzKillboard);
 
@@ -119,6 +336,11 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 		jzKillboardRegion.setActionCommand(MenuLookupAction.ZKILLBOARD_REGION.name());
 		jzKillboardRegion.addActionListener(listener);
 		jzKillboard.add(jzKillboardRegion);
+
+		jzKillboardLocations = new JMenuItem(TabsOverview.get().locations());
+		jzKillboardLocations.setIcon(Images.LOC_REGION.getIcon());
+		jzKillboardLocations.setActionCommand(MenuLookupAction.ZKILLBOARD_OVERVIEW_GROUP.name());
+		jzKillboardLocations.addActionListener(listener);
 
 		jDotlan = new JMenu(GuiShared.get().dotlan());
 		jDotlan.setIcon(Images.LINK_DOTLAN_EVEMAPS.getIcon());
@@ -150,18 +372,12 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 
 		jDotlanLocations = new JMenuItem(TabsOverview.get().locations());
 		jDotlanLocations.setIcon(Images.LOC_LOCATIONS.getIcon());
+		jDotlanLocations.setActionCommand(MenuLookupAction.EVEMAPS_DOTLAN_OVERVIEW_GROUP.name());
+		jDotlanLocations.addActionListener(listener);
 
 		jMarket = new JMenu(GuiShared.get().market());
 		jMarket.setIcon(Images.ORDERS_SELL.getIcon());
 		add(jMarket);
-
-		/*
-		jEveMarketdata = new JMenuItem(GuiShared.get().eveMarketData());
-		jEveMarketdata.setIcon(Images.LINK_EVE_MARKETDATA.getIcon());
-		jEveMarketdata.setActionCommand(MenuLookupAction.EVE_MARKETDATA.name());
-		jEveMarketdata.addActionListener(listener);
-		jMarket.add(jEveMarketdata);
-		*/
 
 		jEveMarketer = new JMenuItem(GuiShared.get().eveMarketer());
 		jEveMarketer.setIcon(Images.LINK_EVEMARKETER.getIcon());
@@ -192,7 +408,7 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 		jEveHub.setActionCommand(MenuLookupAction.EVEHUB.name());
 		jEveHub.addActionListener(listener);
 		jMarket.add(jEveHub);
-		
+
 		jItemDatabase = new JMenu(GuiShared.get().itemDatabase());
 		jItemDatabase.setIcon(Images.TOOL_ASSETS.getIcon());
 		add(jItemDatabase);
@@ -237,27 +453,27 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 		jFuzzworkBlueprints.addActionListener(listener);
 		jIndustry.add(jFuzzworkBlueprints);
 
-		JMenu jKhonSpace = new JMenu(GuiShared.get().khonSpace());
+		JMenu jKhonSpace = new JMenu(GuiShared.get().lazyBlacksmith());
 		jKhonSpace.setIcon(Images.LINK_KHON_SPACE.getIcon());
 		jIndustry.add(jKhonSpace);
 		
-		jKhonSpaceInvention = new JMenuItem(GuiShared.get().khonSpaceInvention());
-		jKhonSpaceInvention.setIcon(Images.MISC_INVENTION.getIcon());
-		jKhonSpaceInvention.setActionCommand(MenuLookupAction.KHON_SPACE_INVENTION.name());
-		jKhonSpaceInvention.addActionListener(listener);
-		jKhonSpace.add(jKhonSpaceInvention);
+		jLazyBlacksmithInvention = new JMenuItem(GuiShared.get().lazyBlacksmithInvention());
+		jLazyBlacksmithInvention.setIcon(Images.MISC_INVENTION.getIcon());
+		jLazyBlacksmithInvention.setActionCommand(MenuLookupAction.LAZY_BLACKSMITH_INVENTION.name());
+		jLazyBlacksmithInvention.addActionListener(listener);
+		jKhonSpace.add(jLazyBlacksmithInvention);
 
-		jKhonSpaceResearch = new JMenuItem(GuiShared.get().khonSpaceResearch());
-		jKhonSpaceResearch.setIcon(Images.MISC_COPYING.getIcon());
-		jKhonSpaceResearch.setActionCommand(MenuLookupAction.KHON_SPACE_RESEARCH.name());
-		jKhonSpaceResearch.addActionListener(listener);
-		jKhonSpace.add(jKhonSpaceResearch);
+		jLazyBlacksmithResearch = new JMenuItem(GuiShared.get().lazyBlacksmithResearch());
+		jLazyBlacksmithResearch.setIcon(Images.MISC_COPYING.getIcon());
+		jLazyBlacksmithResearch.setActionCommand(MenuLookupAction.LAZY_BLACKSMITH_RESEARCH.name());
+		jLazyBlacksmithResearch.addActionListener(listener);
+		jKhonSpace.add(jLazyBlacksmithResearch);
 
-		jKhonSpaceManufacturing = new JMenuItem(GuiShared.get().khonSpaceManufacturing());
-		jKhonSpaceManufacturing.setIcon(Images.MISC_MANUFACTURING.getIcon());
-		jKhonSpaceManufacturing.setActionCommand(MenuLookupAction.KHON_SPACE_MANUFACTURING.name());
-		jKhonSpaceManufacturing.addActionListener(listener);
-		jKhonSpace.add(jKhonSpaceManufacturing);
+		jLazyBlacksmithManufacturing = new JMenuItem(GuiShared.get().lazyBlacksmithManufacturing());
+		jLazyBlacksmithManufacturing.setIcon(Images.MISC_MANUFACTURING.getIcon());
+		jLazyBlacksmithManufacturing.setActionCommand(MenuLookupAction.LAZY_BLACKSMITH_MANUFACTURING.name());
+		jLazyBlacksmithManufacturing.addActionListener(listener);
+		jKhonSpace.add(jLazyBlacksmithManufacturing);
 	}
 
 	@Override
@@ -286,172 +502,131 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 	//Industry
 		jIndustry.setEnabled(!menuData.getBlueprintTypeIDs().isEmpty());
 		jFuzzworkBlueprints.setEnabled(!menuData.getBlueprintTypeIDs().isEmpty());
-		jKhonSpaceInvention.setEnabled(!menuData.getInventionTypeIDs().isEmpty());
-		jKhonSpaceResearch.setEnabled(!menuData.getBlueprintTypeIDs().isEmpty());
-		jKhonSpaceManufacturing.setEnabled(!menuData.getBlueprintTypeIDs().isEmpty());
+		jLazyBlacksmithInvention.setEnabled(!menuData.getInventionTypeIDs().isEmpty());
+		jLazyBlacksmithResearch.setEnabled(!menuData.getBlueprintTypeIDs().isEmpty());
+		jLazyBlacksmithManufacturing.setEnabled(!menuData.getBlueprintTypeIDs().isEmpty());
 	}
 
 	public void setTool(Object object) {
-		if (object instanceof OverviewTab) {
-			OverviewTab overviewTab = (OverviewTab) object;
-			//Remove all action listeners
-			for (ActionListener listener : jDotlanLocations.getActionListeners()) {
-				jDotlanLocations.removeActionListener(listener);
-			}
+		if (object instanceof OverviewTableMenu) {
+			OverviewTab overviewTab = ((OverviewTableMenu)object).getOverviewTab();
 			boolean enabled = overviewTab.isGroupAndNotEmpty();
-			jDotlanLocations.setActionCommand(OverviewAction.GROUP_LOOKUP.name());
-			jDotlanLocations.addActionListener(overviewTab.getListenerClass());
 			jDotlanLocations.setEnabled(enabled);
 			jDotlan.add(jDotlanLocations);
-			jLocations.setEnabled(enabled || !overviewTab.isGroup());
+
+			jzKillboardLocations.setEnabled(enabled);
+			jzKillboard.add(jzKillboardLocations);
+
+			jLocations.setEnabled(enabled || overviewTab.isGroup());
 		} else {
 			jDotlan.remove(jDotlanLocations);
+			jzKillboard.remove(jzKillboardLocations);
 		}
-	}
-
-	public static void browseDotlan(final Program program, Set<String> stations, Set<String> planets, Set<String> systems, Set<String> regions) {
-		Set<String> urls = new HashSet<String>();
-		if (planets != null) {
-			for (String planet : planets) {
-				urls.add("http://evemaps.dotlan.net/system/" + replaceLast(planet, " ", "/").replace(" ", "_"));
-			}
-		}
-		if (stations != null) {
-			for (String station : stations) {
-				urls.add("http://evemaps.dotlan.net/outpost/" + station.replace(" ", "_"));
-			}
-		}
-		if (systems != null) {
-			for (String system : systems) {
-				urls.add("http://evemaps.dotlan.net/system/" + system.replace(" ", "_"));
-			}
-		}
-		if (regions != null) {
-			for (String region : regions) {
-				urls.add("http://evemaps.dotlan.net/map/" + region.replace(" ", "_"));
-			}
-		}
-		DesktopUtil.browse(urls, program);
 	}
 
 	private class ListenerClass implements ActionListener {
 		@Override
 		public void actionPerformed(final ActionEvent e) {
 		//Locations
-			if (MenuLookupAction.EVEMAPS_DOTLAN_STATION.name().equals(e.getActionCommand())) {
-				browseDotlan(program, menuData.getStationNames(), null, null, null);
-			} else if (MenuLookupAction.EVEMAPS_DOTLAN_PLANET.name().equals(e.getActionCommand())) {
-				browseDotlan(program, null, menuData.getPlanetNames(), null, null);
-			} else if (MenuLookupAction.EVEMAPS_DOTLAN_SYSTEM.name().equals(e.getActionCommand())) {
-				browseDotlan(program, null, null, menuData.getSystemNames(), null);
-			} else if (MenuLookupAction.EVEMAPS_DOTLAN_REGION.name().equals(e.getActionCommand())) {
-				browseDotlan(program, null, null, null, menuData.getRegionNames());
-			} else if (MenuLookupAction.ZKILLBOARD_SYSTEM.name().equals(e.getActionCommand())) {
-				Set<String> urls = new HashSet<String>();
-				for (MyLocation location : menuData.getSystemLocations()) {
-					urls.add("https://zkillboard.com/system/" + location.getLocationID()+ "/");
-				}
-				DesktopUtil.browse(urls, program);
+			if (MenuLookupAction.ZKILLBOARD_SYSTEM.name().equals(e.getActionCommand())) {
+				DesktopUtil.browse(LookupLinks.ZKILLBOARD_SYSTEM.getLinks(menuData), program);
 			} else if (MenuLookupAction.ZKILLBOARD_REGION.name().equals(e.getActionCommand())) {
-				Set<String> urls = new HashSet<String>();
-				for (MyLocation location : menuData.getRegionLocations()) {
-					urls.add("https://zkillboard.com/region/" + location.getLocationID()+ "/");
+				DesktopUtil.browse(LookupLinks.ZKILLBOARD_REGION.getLinks(menuData), program);
+			} else if (MenuLookupAction.ZKILLBOARD_OVERVIEW_GROUP.name().equals(e.getActionCommand())) {
+				OverviewGroup overviewGroup = program.getOverviewTab().getSelectGroup();
+				if (overviewGroup == null) {
+					return;
 				}
+				MenuData<String> menuData = new MenuData<>();
+				for (OverviewLocation location : overviewGroup.getLocations()) {
+					if (location.isStation()) {
+						continue;
+					}
+					if (location.isPlanet()) {
+						continue;
+					}
+					for (MyLocation myLocation : StaticData.get().getLocations()) {
+						if (!myLocation.getLocation().equals(location.getName())) {
+							continue; //Not the location you're looking for
+						}
+						if (location.isSystem()) {
+							menuData.getSystemLocations().add(myLocation);
+						}
+						if (location.isRegion()) {
+							menuData.getRegionLocations().add(myLocation);
+						}
+						break; //Location found
+					}
+				}
+				Set<String> urls = new HashSet<>();
+				urls.addAll(LookupLinks.ZKILLBOARD_SYSTEM.getLinks(menuData));
+				urls.addAll(LookupLinks.ZKILLBOARD_REGION.getLinks(menuData));
+				DesktopUtil.browse(urls, program);
+			}else if (MenuLookupAction.EVEMAPS_DOTLAN_STATION.name().equals(e.getActionCommand())) {
+				DesktopUtil.browse(LookupLinks.EVEMAPS_DOTLAN_STATION.getLinks(menuData), program);
+			} else if (MenuLookupAction.EVEMAPS_DOTLAN_PLANET.name().equals(e.getActionCommand())) {
+				DesktopUtil.browse(LookupLinks.EVEMAPS_DOTLAN_PLANET.getLinks(menuData), program);
+			} else if (MenuLookupAction.EVEMAPS_DOTLAN_SYSTEM.name().equals(e.getActionCommand())) {
+				DesktopUtil.browse(LookupLinks.EVEMAPS_DOTLAN_SYSTEM.getLinks(menuData), program);
+			} else if (MenuLookupAction.EVEMAPS_DOTLAN_REGION.name().equals(e.getActionCommand())) {
+				DesktopUtil.browse(LookupLinks.EVEMAPS_DOTLAN_REGION.getLinks(menuData), program);
+			} else if (MenuLookupAction.EVEMAPS_DOTLAN_OVERVIEW_GROUP.name().equals(e.getActionCommand())) {
+				OverviewGroup overviewGroup = program.getOverviewTab().getSelectGroup();
+				if (overviewGroup == null) {
+					return;
+				}
+				MenuData<String> menuData = new MenuData<>();
+				for (OverviewLocation location : overviewGroup.getLocations()) {
+					if (location.isStation()) {
+						menuData.getStationNames().add(location.getName());
+					}
+					if (location.isPlanet()) {
+						menuData.getPlanetNames().add(location.getName());
+					}
+					if (location.isSystem()) {
+						menuData.getSystemNames().add(location.getName());
+					}
+					if (location.isRegion()) {
+						menuData.getRegionNames().add(location.getName());
+					}
+				}
+				Set<String> urls = new HashSet<>();
+				urls.addAll(LookupLinks.EVEMAPS_DOTLAN_STATION.getLinks(menuData));
+				urls.addAll(LookupLinks.EVEMAPS_DOTLAN_PLANET.getLinks(menuData));
+				urls.addAll(LookupLinks.EVEMAPS_DOTLAN_SYSTEM.getLinks(menuData));
+				urls.addAll(LookupLinks.EVEMAPS_DOTLAN_REGION.getLinks(menuData));
 				DesktopUtil.browse(urls, program);
 		//Market
-			/*
-			} else if (MenuLookupAction.EVE_MARKETDATA.name().equals(e.getActionCommand())) {
-				Set<String> urls = new HashSet<String>();
-				for (int marketTypeID : menuData.getMarketTypeIDs()) {
-					urls.add("http://eve-marketdata.com/price_check.php?type_id=" + marketTypeID);
-				}
-				DesktopUtil.browse(urls, program);
-			*/
 			} else if (MenuLookupAction.EVEMARKETER.name().equals(e.getActionCommand())) {
-				Set<String> urls = new HashSet<String>();
-				for (int marketTypeID : menuData.getMarketTypeIDs()) {
-					urls.add("https://evemarketer.com/types/" + marketTypeID);
-				}
-				DesktopUtil.browse(urls, program);
+				DesktopUtil.browse(LookupLinks.EVEMARKETER.getLinks(menuData), program);
 			} else if (MenuLookupAction.ADAM4EVE.name().equals(e.getActionCommand())) {
-				Set<String> urls = new HashSet<String>();
-				for (int typeID : menuData.getMarketTypeIDs()) {
-					urls.add("https://www.adam4eve.eu/commodity.php?typeID=" + typeID);
-				}
-				DesktopUtil.browse(urls, program);
+				DesktopUtil.browse(LookupLinks.ADAM4EVE.getLinks(menuData), program);
 			} else if (MenuLookupAction.EVEHUB.name().equals(e.getActionCommand())) {
-				Set<String> urls = new HashSet<String>();
-				for (int typeID : menuData.getMarketTypeIDs()) {
-					urls.add("https://eve-hub.com/market/chart/10000002/" + typeID);
-				}
-				DesktopUtil.browse(urls, program);
+				DesktopUtil.browse(LookupLinks.EVEHUB.getLinks(menuData), program);
 			} else if (MenuLookupAction.EVEPRAISAL.name().equals(e.getActionCommand())) {
-				String evepraisal = EvepraisalGetter.post(menuData.getItemCounts());
-				if (evepraisal != null) {
-					DesktopUtil.browse("https://evepraisal.com/a/" + evepraisal, program);
-				}
+				DesktopUtil.browse(LookupLinks.EVEPRAISAL.getLinks(menuData), program);
 			} else if (MenuLookupAction.FUZZWORK_MARKET.name().equals(e.getActionCommand())) {
-				Set<String> urls = new HashSet<String>();
-				for (int typeID : menuData.getMarketTypeIDs()) {
-					urls.add("https://market.fuzzwork.co.uk/hub/type/" + typeID + "/");
-				}
-				DesktopUtil.browse(urls, program);
+				DesktopUtil.browse(LookupLinks.FUZZWORK_MARKET.getLinks(menuData), program);
 		//Info
 			} else if (MenuLookupAction.GAMES_CHRUKER.name().equals(e.getActionCommand())) {
-				Set<String> urls = new HashSet<String>();
-				for (int typeID : menuData.getTypeIDs()) {
-					urls.add("http://games.chruker.dk/eve_online/item.php?type_id=" + typeID);
-				}
-				DesktopUtil.browse(urls, program);
+				DesktopUtil.browse(LookupLinks.GAMES_CHRUKER.getLinks(menuData), program);
 			} else if (MenuLookupAction.FUZZWORK_ITEMS.name().equals(e.getActionCommand())) {
-				Set<String> urls = new HashSet<String>();
-				for (int typeID : menuData.getTypeIDs()) {
-					urls.add("https://www.fuzzwork.co.uk/info/?typeid=" + typeID);
-				}
-				DesktopUtil.browse(urls, program);
+				DesktopUtil.browse(LookupLinks.FUZZWORK_ITEMS.getLinks(menuData), program);
 			} else if (MenuLookupAction.ZKILLBOARD_ITEM.name().equals(e.getActionCommand())) {
-				Set<String> urls = new HashSet<String>();
-				for (int typeID : menuData.getTypeIDs()) {
-					urls.add("https://zkillboard.com/item/" + typeID + "/");
-				}
-				DesktopUtil.browse(urls, program);
+				DesktopUtil.browse(LookupLinks.ZKILLBOARD_ITEM.getLinks(menuData), program);
 			} else if (MenuLookupAction.EVE_REF.name().equals(e.getActionCommand())) {
-				Set<String> urls = new HashSet<String>();
-				for (int typeID : menuData.getTypeIDs()) {
-					urls.add("https://everef.net/type/" + typeID+ "?utm_source=jeveassets");
-				}
-				DesktopUtil.browse(urls, program);
+				DesktopUtil.browse(LookupLinks.EVE_REF.getLinks(menuData), program);
 			} else if (MenuLookupAction.EVE_INFO.name().equals(e.getActionCommand())) {
-				Set<String> urls = new HashSet<String>();
-				for (int typeID : menuData.getTypeIDs()) {
-					urls.add("https://eveinfo.com/item/" + typeID);
-				}
-				DesktopUtil.browse(urls, program);
+				DesktopUtil.browse(LookupLinks.EVE_INFO.getLinks(menuData), program);
 		//Industry
 			} else if (MenuLookupAction.FUZZWORK_BLUEPRINTS.name().equals(e.getActionCommand())) {
-				Set<String> urls = new HashSet<String>();
-				for (int typeID : menuData.getBlueprintTypeIDs()) {
-					urls.add("https://www.fuzzwork.co.uk/blueprint/?typeid=" + typeID);
-				}
-				DesktopUtil.browse(urls, program);
-			} else if (MenuLookupAction.KHON_SPACE_INVENTION.name().equals(e.getActionCommand())) {
-				Set<String> urls = new HashSet<String>();
-				for (int typeID : menuData.getInventionTypeIDs()) {
-					urls.add("https://khon.space/blueprint/invention/" + typeID);
-				}
-				DesktopUtil.browse(urls, program);
-			} else if (MenuLookupAction.KHON_SPACE_MANUFACTURING.name().equals(e.getActionCommand())) {
-				Set<String> urls = new HashSet<String>();
-				for (int typeID : menuData.getBlueprintTypeIDs()) {
-					urls.add("https://khon.space/blueprint/manufacturing/" + typeID);
-				}
-				DesktopUtil.browse(urls, program);
-			} else if (MenuLookupAction.KHON_SPACE_RESEARCH.name().equals(e.getActionCommand())) {
-				Set<String> urls = new HashSet<String>();
-				for (int typeID : menuData.getBlueprintTypeIDs()) {
-					urls.add("https://khon.space/blueprint/research_copy/" + typeID);
-				}
-				DesktopUtil.browse(urls, program);
+				DesktopUtil.browse(LookupLinks.FUZZWORK_BLUEPRINTS.getLinks(menuData), program);
+			} else if (MenuLookupAction.LAZY_BLACKSMITH_INVENTION.name().equals(e.getActionCommand())) {
+				DesktopUtil.browse(LookupLinks.LAZY_BLACKSMITH_INVENTION.getLinks(menuData), program);
+			} else if (MenuLookupAction.LAZY_BLACKSMITH_MANUFACTURING.name().equals(e.getActionCommand())) {
+				DesktopUtil.browse(LookupLinks.LAZY_BLACKSMITH_MANUFACTURING.getLinks(menuData), program);
+			} else if (MenuLookupAction.LAZY_BLACKSMITH_RESEARCH.name().equals(e.getActionCommand())) {
+				DesktopUtil.browse(LookupLinks.LAZY_BLACKSMITH_RESEARCH.getLinks(menuData), program);
 			}
 		}
 	}
