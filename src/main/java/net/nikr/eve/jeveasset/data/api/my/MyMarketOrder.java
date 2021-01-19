@@ -31,7 +31,6 @@ import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder;
 import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
 import net.nikr.eve.jeveasset.data.settings.Settings;
-import net.nikr.eve.jeveasset.data.settings.MarketOrdersSettings;
 import net.nikr.eve.jeveasset.data.settings.types.BlueprintType;
 import net.nikr.eve.jeveasset.data.settings.types.ContractPriceType;
 import net.nikr.eve.jeveasset.data.settings.types.EditableLocationType;
