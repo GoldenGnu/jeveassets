@@ -23,7 +23,7 @@ package net.nikr.eve.jeveasset.data.settings;
 
 public class MarketOrdersSettings {
 
-	private int expireWarnDays = 0;
+	private int expireWarnDays = 1; //Default, one day
 
 	public MarketOrdersSettings() { }
 
