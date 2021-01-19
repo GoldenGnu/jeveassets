@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.concurrent.atomic.AtomicLong;
 import net.nikr.eve.jeveasset.data.api.my.MyAsset;
 import net.nikr.eve.jeveasset.data.api.my.MyContractItem;
@@ -67,7 +68,7 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 	private String locationName;
 	private String containerName;
 	private List<StockpileFilter> filters = new ArrayList<>();
-	private final List<StockpileItem> items = new ArrayList<>();
+	private final Set<StockpileItem> items = new TreeSet<>();
 	private final StockpileTotal totalItem = new StockpileTotal(this);
 	private final Map<Stockpile, Double> subpiles = new HashMap<>();
 	private final List<Stockpile> subpileLinks = new ArrayList<>();
@@ -274,11 +275,8 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 		return (items.size() <= 1);
 	}
 
-	public void add(final StockpileItem item) {
-		if (!items.contains(item)) { //Only one of each type
-			items.add(item);
-			Collections.sort(items);
-		}
+	public boolean add(final StockpileItem item) {
+		return items.add(item);
 	}
 
 	public void remove(final StockpileItem item) {
@@ -387,7 +385,7 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 		}
 	}
 
-	public List<StockpileItem> getItems() {
+	public Collection<StockpileItem> getItems() {
 		return items;
 	}
 
