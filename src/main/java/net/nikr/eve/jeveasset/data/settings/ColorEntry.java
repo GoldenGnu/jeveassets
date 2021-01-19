@@ -46,6 +46,7 @@ public enum ColorEntry {
 	MARKET_ORDERS_OUTBID_BEST(ColorEntryGroup.MARKET_ORDERS, DataColors.get().marketOrdersOutbidBest()),
 	MARKET_ORDERS_OUTBID_UNKNOWN(ColorEntryGroup.MARKET_ORDERS, DataColors.get().marketOrdersOutbidUnknown()),
 	MARKET_ORDERS_EXPIRED(ColorEntryGroup.MARKET_ORDERS, DataColors.get().marketOrdersExpired()),
+	MARKET_ORDERS_NEAR_EXPIRED(ColorEntryGroup.MARKET_ORDERS, DataColors.get().marketOrdersNearExpired()),
 	INDUSTRY_JOBS_DELIVERED(ColorEntryGroup.INDUSTRY_SLOTS, DataColors.get().industryJobsDelivered()),
 	INDUSTRY_JOBS_DONE(ColorEntryGroup.INDUSTRY_SLOTS, DataColors.get().industryJobsDone()),
 	INDUSTRY_SLOTS_FREE(ColorEntryGroup.INDUSTRY_SLOTS, DataColors.get().industrySlotsFree()),
