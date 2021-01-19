@@ -20,6 +20,8 @@
  */
 package net.nikr.eve.jeveasset.gui.dialogs.settings;
 
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import javax.swing.GroupLayout;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
@@ -46,6 +48,22 @@ public class MarketOrdersToolSettingsPanel extends JSettingsPanel {
 
 		jSaveHistory = new JCheckBox(DialoguesSettings.get().marketOrdersSaveHistory());
 		jExpireWarnDays = new JIntegerField("0", ValueFlag.POSITIVE_AND_ZERO);
+		jExpireWarnDays.addFocusListener(new FocusListener() {
+			@Override
+			public void focusGained(FocusEvent e) {}
+
+			@Override
+			public void focusLost(FocusEvent e) {
+				try {
+					//Max time of market orders is 90 days so anything over that doesn't make sense
+					if(Integer.parseInt(jExpireWarnDays.getText()) > 90) {
+						jExpireWarnDays.setText("90");
+					}
+				} catch (NumberFormatException ex) {
+					//No problem
+				}
+			}
+		});
 
 		layout.setHorizontalGroup(
 			layout.createParallelGroup(GroupLayout.Alignment.LEADING)
@@ -69,28 +87,21 @@ public class MarketOrdersToolSettingsPanel extends JSettingsPanel {
 		
 	@Override
 	public boolean save() {
-		final MarketOrdersSettings old = Settings.get().getMarketOrdersSettings();
+		int oldExpireWarnDays = Settings.get().getMarketOrdersSettings().getExpireWarnDays();
+
 		boolean marketOrderHistory = jSaveHistory.isSelected();
-		boolean update = false;
 
 		int expireWarnDays;
-
 		try {
 			expireWarnDays = Integer.parseInt(jExpireWarnDays.getText());
-			//Max time of contracts is 90 days so anything over that doesn't make sense
-			if(expireWarnDays > 90) {
-				expireWarnDays = 90;
-				jExpireWarnDays.setText("90");
-				update = true;
-			}
 		} catch (NumberFormatException ex) {
 			expireWarnDays = 0;
 		}
 
 		Settings.get().setMarketOrderHistory(marketOrderHistory);
-		old.setExpireWarnDays(expireWarnDays);
+		Settings.get().getMarketOrdersSettings().setExpireWarnDays(expireWarnDays);
 
-		return update;
+		return oldExpireWarnDays != expireWarnDays;
 	}
 
 	@Override
