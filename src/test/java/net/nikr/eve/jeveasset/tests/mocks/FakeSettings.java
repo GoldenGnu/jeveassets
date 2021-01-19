@@ -31,6 +31,7 @@ import net.nikr.eve.jeveasset.data.sde.MyLocation;
 import net.nikr.eve.jeveasset.data.settings.ColorSettings;
 import net.nikr.eve.jeveasset.data.settings.ContractPriceManager;
 import net.nikr.eve.jeveasset.data.settings.ExportSettings;
+import net.nikr.eve.jeveasset.data.settings.MarketOrdersSettings;
 import net.nikr.eve.jeveasset.data.settings.PriceData;
 import net.nikr.eve.jeveasset.data.settings.PriceDataSettings;
 import net.nikr.eve.jeveasset.data.settings.ProxyData;
@@ -430,6 +431,11 @@ public abstract class FakeSettings extends Settings {
 
 	@Override
 	public boolean isMarketOrderHistory() {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public MarketOrdersSettings getMarketOrdersSettings() {
 		throw new UnsupportedOperationException("not implemented");
 	}
 

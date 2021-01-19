@@ -50,6 +50,8 @@ public class JMarketOrdersTable extends JAutoColumnTable {
 		if (columnName.equals(MarketTableFormat.EXPIRES.getColumnName())) {
 			if (marketOrder.isExpired()) {
 				ColorSettings.configCell(component, ColorEntry.MARKET_ORDERS_EXPIRED, isSelected);
+			} else if (marketOrder.isNearExpired()) {
+				ColorSettings.configCell(component, ColorEntry.MARKET_ORDERS_NEAR_EXPIRED, isSelected);
 			}
 		}
 		if (columnName.equals(MarketTableFormat.OUTBID_PRICE.getColumnName())) {

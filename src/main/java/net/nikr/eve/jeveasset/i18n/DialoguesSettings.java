@@ -88,6 +88,7 @@ public abstract class DialoguesSettings extends Bundle {
 	// used in MarketOrdersToolSettingsPanel
 	public abstract String marketOrders();
 	public abstract String marketOrdersSaveHistory();
+	public abstract String expireWarnDays();
 
 	// used in TransactionsToolSettingsPanel
 	public abstract String transactions();
