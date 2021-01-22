@@ -203,6 +203,16 @@ public class MyMarketOrder extends RawMarketOrder implements Comparable<MyMarket
 		return getExpires().before(cal.getTime());
 	}
 
+	public final boolean isNearFilled() {
+		//How much do we want to worry about precision vs cost of converting to doubles for possibly
+		//thousands of orders in history, if we want more accuracy cast to doubles first and change
+		//comparison to Double.compare
+
+		//Multiply by 100 since we are dealing with percents as integers.
+		//This will be slightly inaccurate since int are essentially floored if they have a remainder.
+		return ( (getVolumeRemain() * 100) / getVolumeTotal() <= Settings.get().getMarketOrdersSettings().getRemainingWarnPercent());
+	}
+
 	public boolean isActive() {
 		return getState() == MarketOrderState.OPEN && !isExpired();
 	}

@@ -628,6 +628,7 @@ public class SettingsWriter extends AbstractXmlWriter {
 	private void writeMarketOrdersSettings(final Document xmldoc, final MarketOrdersSettings marketOrdersSettings) {
 		Element parentNode = xmldoc.createElementNS(null, "marketorderssettings");
 		setAttribute(parentNode, "expirewarndays", marketOrdersSettings.getExpireWarnDays());
+		setAttribute(parentNode, "remainingwarnpercent", marketOrdersSettings.getRemainingWarnPercent());
 		xmldoc.getDocumentElement().appendChild(parentNode);
 	}
 
