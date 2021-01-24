@@ -65,7 +65,18 @@ public class OutbidProcesser {
 	}
 	
 	private void process() {
-		//Process the orders
+		//Process order updates
+		for (RawPublicMarketOrder ordersResponse : input.getMarketOrders()) {
+			Set<MyMarketOrder> orders = input.getTypeIDs().get(ordersResponse.getTypeId());
+			if (orders != null) {
+				for (MyMarketOrder marketOrder : orders) {
+					if (isSameOrder(marketOrder, ordersResponse)) { //Orders to be updated
+						output.getUpdates().put(ordersResponse.getOrderID(), ordersResponse);
+					}
+				}
+			}
+		}
+		//Process outbid
 		for (RawPublicMarketOrder ordersResponse : input.getMarketOrders()) {
 			//Regions with data
 			MyLocation orderLocation = ApiIdConverter.getLocation(ordersResponse.getSystemID());
@@ -77,7 +88,6 @@ public class OutbidProcesser {
 				//Orders to match
 				for (MyMarketOrder marketOrder : orders) {
 					if (isSameOrder(marketOrder, ordersResponse)) { //Orders to be updated
-						output.getUpdates().put(ordersResponse.getOrderID(), ordersResponse);
 						continue;
 					}
 					if (!isSameType(marketOrder, ordersResponse)) { //Both buy or both sell
@@ -91,14 +101,21 @@ public class OutbidProcesser {
 						outbid = new Outbid(ordersResponse);
 						output.getOutbids().put(marketOrder.getOrderID(), outbid);
 					}
+					RawPublicMarketOrder rawPublicMarketOrder = output.getUpdates().get(marketOrder.getOrderID());
+					final double price;
+					if (rawPublicMarketOrder != null) { //Updated price
+						price = rawPublicMarketOrder.getPrice();
+					} else { //Old price (better than nothing)
+						price = marketOrder.getPrice();
+					}
 					if (marketOrder.isBuyOrder()) { //Buy (outbid is higher)
 						outbid.setPrice(Math.max(outbid.getPrice(), ordersResponse.getPrice()));
-						if (ordersResponse.getPrice() > marketOrder.getPrice()) {
+						if (ordersResponse.getPrice() > price) {
 							outbid.addCount(ordersResponse.getVolumeRemain());
 						}
 					} else { //Sell  (outbid is lower)
 						outbid.setPrice(Math.min(outbid.getPrice(), ordersResponse.getPrice()));
-						if (ordersResponse.getPrice() < marketOrder.getPrice()) {
+						if (ordersResponse.getPrice() < price) {
 							outbid.addCount(ordersResponse.getVolumeRemain());
 						}
 					}
