@@ -188,11 +188,12 @@ public class CopyHandler {
 				}
 
 				//Add value
+				if (value instanceof NumberValue) {
+					value = ((NumberValue)value).getNumber();
+				}
 				if (value != null) { //Ignore null
 					if (value instanceof Number) {
 						rowText.append(Formater.copyFormat((Number)value));
-					} else if (value instanceof NumberValue) {
-						rowText.append(Formater.copyFormat(((NumberValue)value).getNumber()));
 					} else if (value instanceof Date) {
 						rowText.append(Formater.columnDate(value));
 					} else if (value instanceof HierarchyColumn) {
