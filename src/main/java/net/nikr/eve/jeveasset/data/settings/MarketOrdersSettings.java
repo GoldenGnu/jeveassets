@@ -24,6 +24,7 @@ package net.nikr.eve.jeveasset.data.settings;
 public class MarketOrdersSettings {
 
 	private int expireWarnDays = 1; //Default, one day
+	private int remainingWarnPercent = 10; //Default, 10 percent
 
 	public MarketOrdersSettings() { }
 
@@ -33,5 +34,13 @@ public class MarketOrdersSettings {
 
 	public void setExpireWarnDays(int expireWarnDays) {
 		this.expireWarnDays = expireWarnDays;
+	}
+
+	public int getRemainingWarnPercent() {
+		return remainingWarnPercent;
+	}
+
+	public void setRemainingWarnPercent(int remainingWarnPercent) {
+		this.remainingWarnPercent = remainingWarnPercent;
 	}
 }
