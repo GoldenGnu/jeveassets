@@ -57,6 +57,7 @@ public abstract class DataColors extends Bundle {
 	public abstract String marketOrdersOutbidUnknown();
 	public abstract String marketOrdersExpired();
 	public abstract String marketOrdersNearExpired();
+	public abstract String marketOrdersNearFilled();
 	public abstract String industryJobsDelivered();
 	public abstract String industryJobsDone();
 	public abstract String industrySlotsFree();

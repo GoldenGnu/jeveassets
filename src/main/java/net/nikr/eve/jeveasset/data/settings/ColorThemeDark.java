@@ -62,6 +62,7 @@ public class ColorThemeDark extends ColorTheme {
 		colors.put(ColorEntry.MARKET_ORDERS_OUTBID_UNKNOWN, new ColorThemeEntry(Colors.DARK_GRAY));
 		colors.put(ColorEntry.MARKET_ORDERS_EXPIRED, new ColorThemeEntry(Colors.DARK_RED));
 		colors.put(ColorEntry.MARKET_ORDERS_NEAR_EXPIRED, new ColorThemeEntry(Colors.DARK_YELLOW));
+		colors.put(ColorEntry.MARKET_ORDERS_NEAR_FILLED, new ColorThemeEntry(Colors.DARK_YELLOW));
 		colors.put(ColorEntry.INDUSTRY_JOBS_DELIVERED, new ColorThemeEntry(Colors.DARK_YELLOW));
 		colors.put(ColorEntry.INDUSTRY_JOBS_DONE, new ColorThemeEntry(Colors.DARK_GREEN));
 		colors.put(ColorEntry.INDUSTRY_SLOTS_FREE, new ColorThemeEntry(Colors.DARK_GREEN));
