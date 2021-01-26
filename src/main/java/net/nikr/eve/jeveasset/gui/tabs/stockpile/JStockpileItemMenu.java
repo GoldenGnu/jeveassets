@@ -32,12 +32,15 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import net.nikr.eve.jeveasset.Program;
+import net.nikr.eve.jeveasset.data.sde.IndustryMaterial;
+import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.JOptionInput;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileTotal;
 import net.nikr.eve.jeveasset.i18n.TabsStockpile;
+import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 
 
 public class JStockpileItemMenu extends JMenu {
@@ -140,52 +143,47 @@ public class JStockpileItemMenu extends JMenu {
 				Object source = e.getSource();
 				if (source instanceof JStockpileMenuItem) {
 					JStockpileMenuItem jMenuItem = (JStockpileMenuItem) source;
-					boolean blueprint = false;
-					for (StockpileItem item : jMenuItem.getItems()) {
-						if (item.isBlueprint()) {
-							blueprint = true;
-							break;
-						}
-					}
 					List<StockpileItem> items = new ArrayList<>();
-					if (blueprint) {
-						String[] options = {TabsStockpile.get().source(), TabsStockpile.get().original(), TabsStockpile.get().copy(), TabsStockpile.get().runs()};
-						Object object = JOptionInput.showInputDialog(program.getMainWindow().getFrame(), TabsStockpile.get().addBlueprintMsg(), TabsStockpile.get().addBlueprintTitle(), JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
-						if (object == null) {
-							return;
+					Object blueprintSelect = null;
+					Object formulaSelect = null;
+					for (StockpileItem item : jMenuItem.getItems()) {
+						Stockpile stockpile = item.getStockpile();
+						if (item.isBlueprint() && blueprintSelect == null) {
+							String[] options = {TabsStockpile.get().source(), TabsStockpile.get().original(), TabsStockpile.get().copy(), TabsStockpile.get().runs(), TabsStockpile.get().materialsManufacturing()};
+							blueprintSelect = JOptionInput.showInputDialog(program.getMainWindow().getFrame(), TabsStockpile.get().addBlueprintMsg(), TabsStockpile.get().addBlueprintTitle(), JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+							if (blueprintSelect == null) {
+								return; //Cancel
+							}
 						}
-						if (object.equals(TabsStockpile.get().original())) {
-							for (StockpileItem item : jMenuItem.getItems()) {
-								if (item.isBlueprint()) {
-									items.add(new StockpileItem(item.getStockpile(), item.getItem(), Math.abs(item.getTypeID()), item.getCountMinimum(), false));
-								} else {
-									items.add(item);
-								}
+						if (item.getItem().isFormula() && formulaSelect == null) {
+							String[] options = {TabsStockpile.get().original(), TabsStockpile.get().materialsReaction()};
+							formulaSelect = JOptionInput.showInputDialog(program.getMainWindow().getFrame(), TabsStockpile.get().addFormulaMsg(), TabsStockpile.get().addFormulaTitle(), JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+							if (formulaSelect == null) {
+								return; //Cancel
 							}
-							
-						} else if (object.equals(TabsStockpile.get().copy())) {
-							for (StockpileItem item : jMenuItem.getItems()) {
-								if (item.isBlueprint()) {
-									items.add(new StockpileItem(item.getStockpile(), item.getItem(), -Math.abs(item.getTypeID()), item.getCountMinimum(), false));
-								} else {
-									items.add(item);
-								}
-							}
-						} else if (object.equals(TabsStockpile.get().runs())) {
-							for (StockpileItem item : jMenuItem.getItems()) {
-								if (item.isBlueprint()) {
-									items.add(new StockpileItem(item.getStockpile(), item.getItem(), -Math.abs(item.getTypeID()), item.getCountMinimum(), true));
-								} else {
-									items.add(item);
-								}
-							}
-						} else { //source
-							items.addAll(jMenuItem.getItems());
 						}
-						program.getStockpileTool().addToStockpile(jMenuItem.getStockpile(), items, true);
-					} else { //No bluepints
-						program.getStockpileTool().addToStockpile(jMenuItem.getStockpile(), jMenuItem.getItems(), true);
+						if ((item.isBlueprint() && blueprintSelect != null && blueprintSelect.equals(TabsStockpile.get().original()))
+								|| (item.getItem().isFormula() && formulaSelect != null && formulaSelect.equals(TabsStockpile.get().original()))) {
+							items.add(new StockpileItem(stockpile, item.getItem(), Math.abs(item.getTypeID()), item.getCountMinimum(), false));
+						} else if (item.isBlueprint() && blueprintSelect != null && blueprintSelect.equals(TabsStockpile.get().copy())) {
+							items.add(new StockpileItem(stockpile, item.getItem(), -Math.abs(item.getTypeID()), item.getCountMinimum(), false));
+						} else if (item.isBlueprint() && blueprintSelect != null && blueprintSelect.equals(TabsStockpile.get().runs())) {
+							items.add(new StockpileItem(stockpile, item.getItem(), -Math.abs(item.getTypeID()), item.getCountMinimum(), true));
+						} else if (item.isBlueprint() && blueprintSelect != null && blueprintSelect.equals(TabsStockpile.get().materialsManufacturing())) {
+							for (IndustryMaterial material : item.getItem().getManufacturingMaterials()) {
+								Item materialItem = ApiIdConverter.getItem(material.getTypeID());
+								items.add(new StockpileItem(stockpile, materialItem, material.getTypeID(), material.getQuantity(), false));
+							}
+						} else if (item.getItem().isFormula() && formulaSelect != null && formulaSelect.equals(TabsStockpile.get().materialsReaction())){
+							for (IndustryMaterial material : item.getItem().getReactionMaterials()) {
+								Item materialItem = ApiIdConverter.getItem(material.getTypeID());
+								items.add(new StockpileItem(stockpile, materialItem, material.getTypeID(), material.getQuantity(), false));
+							}
+						} else { //source or not bluepint/formula
+							items.add(item);
+						}
 					}
+					program.getStockpileTool().addToStockpile(jMenuItem.getStockpile(), items, true);
 				}
 			} else if (StockpileItemMenuAction.RUNS.name().equals(e.getActionCommand())) { //Runs
 				Object source = e.getSource();

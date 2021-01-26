@@ -56,6 +56,16 @@ public enum MarketTableFormat implements EnumTableColumn<MyMarketOrder> {
 			return from.getItem().getTypeName();
 		}
 	},
+	GROUP(String.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsOrders.get().columnGroup();
+		}
+		@Override
+		public Object getColumnValue(final MyMarketOrder from) {
+			return from.getItem().getGroup();
+		}
+	},
 	QUANTITY(Integer.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
@@ -112,6 +122,20 @@ public enum MarketTableFormat implements EnumTableColumn<MyMarketOrder> {
 		@Override
 		public Object getColumnValue(final MyMarketOrder from) {
 			return from.getOutbidCount();
+		}
+	},
+	OUTBID_DELTA(Long.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsOrders.get().columnOutbidDelta();
+		}
+		@Override
+		public String getColumnToolTip() {
+			return  TabsOrders.get().columnOutbidDeltaToolTip();
+		}
+		@Override
+		public Object getColumnValue(final MyMarketOrder from) {
+			return from.getOutbidDelta();
 		}
 	},
 	EVE_UI(Component.class, GlazedLists.comparableComparator()) {
@@ -343,6 +367,48 @@ public enum MarketTableFormat implements EnumTableColumn<MyMarketOrder> {
 		@Override
 		public Object getColumnValue(final MyMarketOrder from) {
 			return from.getTransactionProfitPercent();
+		}
+	},
+	MARKET_PRICE(Double.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsOrders.get().columnMarketPrice();
+		}
+		@Override
+		public String getColumnToolTip() {
+			return TabsOrders.get().columnMarketPriceToolTip();
+		}
+		@Override
+		public Object getColumnValue(final MyMarketOrder from) {
+			return from.getDynamicPrice();
+		}
+	},
+	MARKET_MARGIN(Percent.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsOrders.get().columnMarketMargin();
+		}
+		@Override
+		public String getColumnToolTip() {
+			return TabsOrders.get().columnMarketMarginToolTip();
+		}
+		@Override
+		public Object getColumnValue(final MyMarketOrder from) {
+			return Percent.create(from.getMarketMargin());
+		}
+	},
+	MARKET_PROFIT(Double.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsOrders.get().columnMarketProfit();
+		}
+		@Override
+		public String getColumnToolTip() {
+			return TabsOrders.get().columnMarketProfitToolTip();
+		}
+		@Override
+		public Object getColumnValue(final MyMarketOrder from) {
+			return from.getMarketProfit();
 		}
 	},
 	TYPE_ID(Integer.class, GlazedLists.comparableComparator()) {

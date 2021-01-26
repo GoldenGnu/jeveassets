@@ -23,6 +23,8 @@ package net.nikr.eve.jeveasset.gui.tabs.tracker;
 import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.GlazedLists;
 import ca.odell.glazedlists.ListSelection;
+import ca.odell.glazedlists.event.ListEvent;
+import ca.odell.glazedlists.event.ListEventListener;
 import ca.odell.glazedlists.swing.DefaultEventSelectionModel;
 import ca.odell.glazedlists.swing.DefaultEventTableModel;
 import java.awt.event.ActionEvent;
@@ -37,6 +39,7 @@ import java.util.Set;
 import java.util.TreeSet;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JScrollPane;
 import net.nikr.eve.jeveasset.Program;
@@ -53,29 +56,42 @@ import net.nikr.eve.jeveasset.i18n.TabsTracker;
 
 public class TrackerSkillPointsFilterDialog extends JDialogCentered {
 
+	private final JCheckBox jAll; 
 	private final JAutoColumnTable jTable;
 	private final EventList<TrackerSkillPointFilter> eventList;
 	private final DefaultEventTableModel<TrackerSkillPointFilter> tableModel;
-	private final DefaultEventSelectionModel<TrackerSkillPointFilter> selectionModel;
-	private final JScrollPane jTableScroll;
 	private final JButton jOK;
 	private boolean save = false;
 
 	public TrackerSkillPointsFilterDialog(Program program) {
 		super(program, TabsTracker.get().skillPointFilters(), Images.TOOL_TRACKER.getImage());
 
+		jAll = new JCheckBox(TabsTracker.get().all());
+		jAll.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				selectAll(jAll.isSelected());
+			}
+		});
+
 		eventList = EventListManager.create();
+		eventList.addListEventListener(new ListEventListener<TrackerSkillPointFilter>() {
+			@Override
+			public void listChanged(ListEvent<TrackerSkillPointFilter> listChanges) {
+				updateSelected();
+			}
+		});
 
 		EnumTableFormatAdaptor<TrackerSkillPointsFilterTableFormat, TrackerSkillPointFilter> tableFormat = new EnumTableFormatAdaptor<>(TrackerSkillPointsFilterTableFormat.class);
 		tableModel = EventModels.createTableModel(eventList, tableFormat);
 		jTable = new JAutoColumnTable(program, tableModel);
 		jTable.getTableHeader().setReorderingAllowed(false);
 
-		jTableScroll = new JScrollPane(jTable);
+		JScrollPane jTableScroll = new JScrollPane(jTable);
 		jTableScroll.getVerticalScrollBar().setUnitIncrement(19);
 		jTableScroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 
-		selectionModel = EventModels.createSelectionModel(eventList);
+		DefaultEventSelectionModel<TrackerSkillPointFilter> selectionModel = EventModels.createSelectionModel(eventList);
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
 		jTable.setSelectionModel(selectionModel);
 
@@ -96,6 +112,7 @@ public class TrackerSkillPointsFilterDialog extends JDialogCentered {
 
 		layout.setHorizontalGroup(
 			layout.createParallelGroup()
+				.addComponent(jAll)
 				.addComponent(jTableScroll, 0, GroupLayout.PREFERRED_SIZE, 750)
 				.addGroup(layout.createSequentialGroup()
 					.addGap(0, 0, Integer.MAX_VALUE)
@@ -105,6 +122,7 @@ public class TrackerSkillPointsFilterDialog extends JDialogCentered {
 		);
 		layout.setVerticalGroup(
 			layout.createSequentialGroup()
+				.addComponent(jAll)
 				.addComponent(jTableScroll, 0, GroupLayout.PREFERRED_SIZE, 450)
 				.addGroup(layout.createParallelGroup()
 					.addComponent(jOK, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
@@ -138,6 +156,35 @@ public class TrackerSkillPointsFilterDialog extends JDialogCentered {
 		save = false;
 		setVisible(true);
 		return save;
+	}
+
+	private void selectAll(final boolean selected) {
+		try {
+			eventList.getReadWriteLock().writeLock().lock();
+			for (TrackerSkillPointFilter filter : eventList) {
+				filter.setEnabled(selected);
+			}
+		} finally {
+			eventList.getReadWriteLock().writeLock().unlock();
+		}
+		for (int row = 0; row < jTable.getRowCount(); row++) {
+			tableModel.fireTableCellUpdated(row, 0);
+		}
+	}
+
+	private void updateSelected() {
+		try {
+			eventList.getReadWriteLock().readLock().lock();
+			for (TrackerSkillPointFilter filter : eventList) {
+				if (!filter.isEnabled()) {
+					jAll.setSelected(false);
+					return;
+				}
+			}
+			jAll.setSelected(true);
+		} finally {
+			eventList.getReadWriteLock().readLock().unlock();
+		}
 	}
 
 	@Override

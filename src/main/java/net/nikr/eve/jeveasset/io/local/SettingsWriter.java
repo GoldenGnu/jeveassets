@@ -32,6 +32,7 @@ import net.nikr.eve.jeveasset.data.settings.ColorEntry;
 import net.nikr.eve.jeveasset.data.settings.ColorSettings;
 import net.nikr.eve.jeveasset.data.settings.ContractPriceManager.ContractPriceSettings;
 import net.nikr.eve.jeveasset.data.settings.ExportSettings;
+import net.nikr.eve.jeveasset.data.settings.MarketOrdersSettings;
 import net.nikr.eve.jeveasset.data.settings.PriceDataSettings;
 import net.nikr.eve.jeveasset.data.settings.ProxyData;
 import net.nikr.eve.jeveasset.data.settings.ReprocessSettings;
@@ -166,6 +167,7 @@ public class SettingsWriter extends AbstractXmlWriter {
 		writeTags(xmldoc, settings.getTags());
 		writeRoutingSettings(xmldoc, settings.getRoutingSettings());
 		writeMarketOrderOutbid(xmldoc, settings.getPublicMarketOrdersNextUpdate(), settings.getPublicMarketOrdersLastUpdate(), settings.getOutbidOrderRange(), settings.getMarketOrdersOutbid());
+		writeMarketOrdersSettings(xmldoc, settings.getMarketOrdersSettings());
 		writeShowTool(xmldoc, settings.getShowTools(), settings.isSaveToolsOnExit());
 		writeColorSettings(xmldoc, settings.getColorSettings());
 		writeFactionWarfareSystemOwners(xmldoc, settings);
@@ -620,6 +622,13 @@ public class SettingsWriter extends AbstractXmlWriter {
 		setAttribute(parentNode, "sec", contractPriceSettings.getSecurityString());
 		setAttribute(parentNode, "feedback", contractPriceSettings.isFeedback());
 		setAttribute(parentNode, "feedbackasked", contractPriceSettings.isFeedbackAsked());
+		xmldoc.getDocumentElement().appendChild(parentNode);
+	}
+
+	private void writeMarketOrdersSettings(final Document xmldoc, final MarketOrdersSettings marketOrdersSettings) {
+		Element parentNode = xmldoc.createElementNS(null, "marketorderssettings");
+		setAttribute(parentNode, "expirewarndays", marketOrdersSettings.getExpireWarnDays());
+		setAttribute(parentNode, "remainingwarnpercent", marketOrdersSettings.getRemainingWarnPercent());
 		xmldoc.getDocumentElement().appendChild(parentNode);
 	}
 

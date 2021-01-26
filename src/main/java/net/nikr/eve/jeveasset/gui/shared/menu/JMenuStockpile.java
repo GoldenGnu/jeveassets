@@ -28,6 +28,7 @@ import java.util.List;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import net.nikr.eve.jeveasset.Program;
+import net.nikr.eve.jeveasset.data.sde.IndustryMaterial;
 import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
@@ -69,7 +70,7 @@ public class JMenuStockpile<T> extends JAutoMenu<T> {
 	public void updateMenuData() {
 		List<Stockpile> newValue = StockpileTab.getShownStockpiles(program);
 		if (stockpilesCashe == null || !stockpilesCashe.equals(newValue)) {
-			stockpilesCashe = new ArrayList<Stockpile>(newValue); //Update Cache
+			stockpilesCashe = new ArrayList<>(newValue); //Update Cache
 			updateMenu(); //Stockpiles changed...
 		}
 		boolean enabled = !menuData.getTypeIDs().isEmpty();
@@ -109,57 +110,43 @@ public class JMenuStockpile<T> extends JAutoMenu<T> {
 				if (source instanceof JStockpileMenu) {
 					JStockpileMenu jStockpileMenu = (JStockpileMenu) source;
 					Stockpile stockpile = jStockpileMenu.getStockpile();
-					boolean blueprint = false;
+					List<StockpileItem> items = new ArrayList<>();
+					Object blueprintSelect = null;
+					Object formulaSelect = null;
 					for (int typeID : menuData.getBpcTypeIDs()) {
 						Item item = ApiIdConverter.getItem(Math.abs(typeID));
-						if (item.isBlueprint()) {
-							blueprint = true;
-							break;
-						}
-					}
-					List<StockpileItem> items = new ArrayList<>();
-					if (blueprint) {
-						String[] options = {TabsStockpile.get().source(), TabsStockpile.get().original(), TabsStockpile.get().copy(), TabsStockpile.get().runs()};
-						Object object = JOptionInput.showInputDialog(program.getMainWindow().getFrame(), TabsStockpile.get().addBlueprintMsg(), TabsStockpile.get().addBlueprintTitle(), JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
-						if (object == null) {
-							return;
-						}
-						if (object.equals(TabsStockpile.get().original())) {
-							for (int typeID : menuData.getBpcTypeIDs()) {
-								Item item = ApiIdConverter.getItem(Math.abs(typeID));
-								if (item.isBlueprint()) {
-									items.add(new StockpileItem(stockpile, item, Math.abs(item.getTypeID()), DEFAULT_ADD_COUNT, false));
-								} else {
-									items.add(new StockpileItem(stockpile, item, typeID, DEFAULT_ADD_COUNT, false));
-								}
-							}
-						} else if (object.equals(TabsStockpile.get().copy())) {
-							for (int typeID : menuData.getBpcTypeIDs()) {
-								Item item = ApiIdConverter.getItem(Math.abs(typeID));
-								if (item.isBlueprint()) {
-									items.add(new StockpileItem(stockpile, item, -Math.abs(item.getTypeID()), DEFAULT_ADD_COUNT, false));
-								} else {
-									items.add(new StockpileItem(stockpile, item, typeID, DEFAULT_ADD_COUNT, false));
-								}
-							}
-						} else if (object.equals(TabsStockpile.get().runs())) {
-							for (int typeID : menuData.getBpcTypeIDs()) {
-								Item item = ApiIdConverter.getItem(Math.abs(typeID));
-								if (item.isBlueprint()) {
-									items.add(new StockpileItem(stockpile, item, -Math.abs(item.getTypeID()), DEFAULT_ADD_COUNT, true));
-								} else {
-									items.add(new StockpileItem(stockpile, item, typeID, DEFAULT_ADD_COUNT, false));
-								}
-							}
-						} else { //source
-							for (int typeID : menuData.getBpcTypeIDs()) {
-								Item item = ApiIdConverter.getItem(Math.abs(typeID));
-								items.add(new StockpileItem(stockpile, item, typeID, DEFAULT_ADD_COUNT, false));
+						if (item.isBlueprint() && blueprintSelect == null) {
+							String[] options = {TabsStockpile.get().source(), TabsStockpile.get().original(), TabsStockpile.get().copy(), TabsStockpile.get().runs(), TabsStockpile.get().materialsManufacturing()};
+							blueprintSelect = JOptionInput.showInputDialog(program.getMainWindow().getFrame(), TabsStockpile.get().addBlueprintMsg(), TabsStockpile.get().addBlueprintTitle(), JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+							if (blueprintSelect == null) {
+								return; //Cancel
 							}
 						}
-					} else { //No bluepints
-						for (int typeID : menuData.getBpcTypeIDs()) {
-							Item item = ApiIdConverter.getItem(Math.abs(typeID));
+						if (item.getItem().isFormula() && formulaSelect == null) {
+							String[] options = {TabsStockpile.get().original(), TabsStockpile.get().materialsReaction()};
+							formulaSelect = JOptionInput.showInputDialog(program.getMainWindow().getFrame(), TabsStockpile.get().addFormulaMsg(), TabsStockpile.get().addFormulaTitle(), JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+							if (formulaSelect == null) {
+								return; //Cancel
+							}
+						}
+						if ((item.isBlueprint() && blueprintSelect != null && blueprintSelect.equals(TabsStockpile.get().original()))
+								|| (item.isFormula() && formulaSelect != null && formulaSelect.equals(TabsStockpile.get().original()))) {
+							items.add(new StockpileItem(stockpile, item.getItem(), Math.abs(item.getTypeID()), DEFAULT_ADD_COUNT, false));
+						} else if (item.isBlueprint() && blueprintSelect != null && blueprintSelect.equals(TabsStockpile.get().copy())) {
+							items.add(new StockpileItem(stockpile, item.getItem(), -Math.abs(item.getTypeID()), DEFAULT_ADD_COUNT, false));
+						} else if (item.isBlueprint() && blueprintSelect != null && blueprintSelect.equals(TabsStockpile.get().runs())) {
+							items.add(new StockpileItem(stockpile, item.getItem(), -Math.abs(item.getTypeID()), DEFAULT_ADD_COUNT, true));
+						} else if (item.isBlueprint() && blueprintSelect != null && blueprintSelect.equals(TabsStockpile.get().materialsManufacturing())) {
+							for (IndustryMaterial material : item.getItem().getManufacturingMaterials()) {
+								Item materialItem = ApiIdConverter.getItem(material.getTypeID());
+								items.add(new StockpileItem(stockpile, materialItem, material.getTypeID(), material.getQuantity(), false));
+							}
+						} else if (formulaSelect != null && formulaSelect.equals(TabsStockpile.get().materialsReaction())){
+							for (IndustryMaterial material : item.getItem().getReactionMaterials()) {
+								Item materialItem = ApiIdConverter.getItem(material.getTypeID());
+								items.add(new StockpileItem(stockpile, materialItem, material.getTypeID(), material.getQuantity(), false));
+							}
+						} else { //source or not bluepint/formula
 							items.add(new StockpileItem(stockpile, item, typeID, DEFAULT_ADD_COUNT, false));
 						}
 					}

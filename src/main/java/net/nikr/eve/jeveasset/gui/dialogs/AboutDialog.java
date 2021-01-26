@@ -100,6 +100,7 @@ public class AboutDialog extends JDialogCentered {
 				+ "&nbsp;Ima Sohmbadi<br>"
 				+ "&nbsp;Saulvin<br>"
 				+ "&nbsp;AnrDaemon<br>"
+				+ "&nbsp;Dultas<br>"
 				+ "<br>"
 				+ "<b>Testers</b><br>"
 				+ "&nbsp;Tomasz (kitsibas) Wiktorski<br>"

@@ -202,6 +202,8 @@ public class Settings {
 	private final Map<Long, Outbid> marketOrdersOutbid = new HashMap<>();
 	//SellOrderRange
 	private MarketOrderRange outbidOrderRange = MarketOrderRange.REGION;
+	//Expire Warning Days
+	private final MarketOrdersSettings marketOrdersSettings = new MarketOrdersSettings();
 	//Cache
 	private Boolean filterOnEnter = null; //Filter tools
 	private Boolean highlightSelectedRows = null;  //Assets
@@ -721,6 +723,10 @@ public class Settings {
 
 	public void setMarketOrderHistory(final boolean marketOrderHistory) {
 		flags.put(SettingFlag.FLAG_MARKET_ORDER_HISTORY, marketOrderHistory);
+	}
+
+	public MarketOrdersSettings getMarketOrdersSettings() {
+		return marketOrdersSettings;
 	}
 
 	public boolean isAskedCheckAllTracker() {

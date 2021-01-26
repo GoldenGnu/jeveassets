@@ -37,6 +37,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -424,7 +425,7 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 		stockpileDialog.updateData();
 	}
 
-	public Stockpile addToStockpile(Stockpile stockpile, List<StockpileItem> items) {
+	public Stockpile addToStockpile(Stockpile stockpile, Collection<StockpileItem> items) {
 		return addToStockpile(stockpile, items, false);
 	}
 
@@ -432,7 +433,7 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 		return addToStockpile(stockpile, Collections.singletonList(item), false);
 	}
 
-	protected Stockpile addToStockpile(Stockpile stockpile, List<StockpileItem> items, boolean merge) {
+	protected Stockpile addToStockpile(Stockpile stockpile, Collection<StockpileItem> items, boolean merge) {
 		updateOwners();
 		if (stockpile == null) { //new stockpile
 			stockpile = stockpileDialog.showAdd();
@@ -540,12 +541,12 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 		removeItems(Collections.singletonList(item));
 	}
 
-	protected void removeItems(List<StockpileItem> items) {
+	protected void removeItems(Collection<StockpileItem> items) {
 		for (StockpileItem item : items) {
 			item.getStockpile().updateTotal();
 		}
 		if (!items.isEmpty()) {
-			updateSubpile(items.get(0).getStockpile());
+			updateSubpile(items.iterator().next().getStockpile());
 		}
 		//Lock Table
 		beforeUpdateData();
@@ -1016,7 +1017,7 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 	}
 
 	private void exportXml() {
-		List<Stockpile> stockpiles = stockpileSelectionDialog.show(getShownStockpiles(), false);
+		List<Stockpile> stockpiles = stockpileSelectionDialog.show(getShownStockpiles(), Settings.get().getStockpiles(), TabsStockpile.get().showHidden(), false);
 		if (stockpiles != null) {
 			int value = jFileChooser.showSaveDialog(program.getMainWindow().getFrame());
 			if (value == JFileChooser.APPROVE_OPTION) {
@@ -1026,7 +1027,7 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 	}
 
 	private void exportText() {
-		List<Stockpile> stockpiles = stockpileSelectionDialog.show(getShownStockpiles(), false);
+		List<Stockpile> stockpiles = stockpileSelectionDialog.show(getShownStockpiles(), Settings.get().getStockpiles(), TabsStockpile.get().showHidden(), false);
 		if (stockpiles != null) {
 			String json = StockpileDataWriter.save(stockpiles);
 			if (json != null) {
@@ -1147,7 +1148,7 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 					stockpileShoppingListDialog.show(stockpile);
 				}
 			} else if (StockpileAction.SHOPPING_LIST_MULTI.name().equals(e.getActionCommand())) { //Shopping list multi
-				List<Stockpile> stockpiles = stockpileSelectionDialog.show(getShownStockpiles(), false);
+				List<Stockpile> stockpiles = stockpileSelectionDialog.show(getShownStockpiles(), Settings.get().getStockpiles(), TabsStockpile.get().showHidden(), false);
 				if (stockpiles != null) {
 					stockpileShoppingListDialog.show(stockpiles);
 				}
@@ -1259,9 +1260,9 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 			} else if (StockpileCellAction.ADD_ITEM.name().equals(e.getActionCommand())) { //Add item
 				Stockpile stockpile = getSelectedStockpile();
 				if (stockpile != null) {
-					StockpileItem addItem = stockpileItemDialog.showAdd(stockpile);
-					if (addItem != null) { //Edit/Add/Update existing or cancel
-						addToStockpile(addItem.getStockpile(), addItem);
+					List<StockpileItem> stockpileItems = stockpileItemDialog.showAdd(stockpile);
+					if (stockpileItems != null) { //Edit/Add/Update existing or cancel
+						addToStockpile(stockpile, stockpileItems);
 					}
 				}
 			} else if (StockpileCellAction.SUBPILES.name().equals(e.getActionCommand())) {

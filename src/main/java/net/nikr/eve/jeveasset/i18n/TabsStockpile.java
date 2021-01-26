@@ -38,12 +38,19 @@ public abstract class TabsStockpile extends Bundle {
 	public abstract String addBlueprintMsg();
 	public abstract String addBlueprintTitle();
 	public abstract String addFilter();
+	public abstract String addFormulaMsg();
+	public abstract String addFormulaTitle();
 	public abstract String addItem();
 	public abstract String addLocation();
 	public abstract String addStockpileItem();
 	public abstract String addStockpileTitle();
 	public abstract String addToNewStockpile();
 	public abstract String addToStockpile();
+	public abstract String blueprintEngineeringComplex();
+	public abstract String blueprintFacility();
+	public abstract String blueprintMe();
+	public abstract String blueprintPercent();
+	public abstract String blueprintType();
 	public abstract String blueprints();
 	public abstract String cancel();
 	public abstract String clipboardStockpile();
@@ -128,6 +135,8 @@ public abstract class TabsStockpile extends Bundle {
 	public abstract String location();
 	public abstract String matchExclude();
 	public abstract String matchInclude();
+	public abstract String materialsManufacturing();
+	public abstract String materialsReaction();
 	public abstract String multiple();
 	public abstract String multiplier();
 	public abstract String multiplierSign();
@@ -136,6 +145,7 @@ public abstract class TabsStockpile extends Bundle {
 	public abstract String needed();
 	public abstract String newStockpile();
 	public abstract String noLocationsFound();
+	public abstract String none();
 	public abstract String nothingNeeded();
 	public abstract String now();
 	public abstract String ok();
@@ -151,6 +161,7 @@ public abstract class TabsStockpile extends Bundle {
 	public abstract String runs();
 	public abstract String selectStockpiles();
 	public abstract String shoppingList();
+	public abstract String showHidden();
 	public abstract String showHide();
 	public abstract String shownValueNeeded();
 	public abstract String shownValueNow();

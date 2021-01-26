@@ -46,6 +46,7 @@ public class ColorSettings {
 		FLAT_INTELLIJ(DialoguesSettings.get().lookAndFeelFlatIntelliJ(), "com.formdev.flatlaf.FlatIntelliJLaf"),
 		FLAT_DARK(DialoguesSettings.get().lookAndFeelFlatDark(), "com.formdev.flatlaf.FlatDarkLaf"),
 		FLAT_DARCULA(DialoguesSettings.get().lookAndFeelFlatDarcula(), "com.formdev.flatlaf.FlatDarculaLaf"),
+		DARK_NIMBUS(DialoguesSettings.get().lookAndFeelNimbusDark(), DarkNimbus.class.getName()),
 		;
 
 		private final String name;

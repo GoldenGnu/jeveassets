@@ -41,16 +41,19 @@ import net.nikr.eve.jeveasset.i18n.GuiShared;
 public class JMultiSelectionDialog<T> extends JDialogCentered {
 
 	private enum MultiSelectionActions {
-		OK, CANCEL, CHECK_ALL
+		OK, CANCEL, CHECK_ALL, SUBSET
 	}
 
 	//GUI
 	private final JCheckBox jAll;
+	private final JCheckBox jSubset;
 	private final JMultiSelectionList<T> jList;
 	private final JButton jOK;
 
 	//Data
 	private List<T> data;
+	private List<T> list;
+	private List<T> list2;
 	private boolean emptyAllowed;
 
 	public JMultiSelectionDialog(final Program program, String title) {
@@ -61,6 +64,10 @@ public class JMultiSelectionDialog<T> extends JDialogCentered {
 		jAll = new JCheckBox(GuiShared.get().all());
 		jAll.setActionCommand(MultiSelectionActions.CHECK_ALL.name());
 		jAll.addActionListener(listener);
+
+		jSubset = new JCheckBox();
+		jSubset.setActionCommand(MultiSelectionActions.SUBSET.name());
+		jSubset.addActionListener(listener);
 
 		jList = new JMultiSelectionList<>();
 		jList.addListSelectionListener(listener);
@@ -77,7 +84,11 @@ public class JMultiSelectionDialog<T> extends JDialogCentered {
 
 		layout.setHorizontalGroup(
 			layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-				.addComponent(jAll)
+				.addGroup(layout.createSequentialGroup()
+					.addComponent(jAll)
+					.addGap(0, 0, Integer.MAX_VALUE)
+					.addComponent(jSubset)
+				)
 				.addComponent(jListScroll, 300, 300, 300)
 				.addGroup(layout.createSequentialGroup()
 					.addGap(0, 0, Integer.MAX_VALUE)
@@ -87,7 +98,10 @@ public class JMultiSelectionDialog<T> extends JDialogCentered {
 		);
 		layout.setVerticalGroup(
 			layout.createSequentialGroup()
-				.addComponent(jAll)
+				.addGroup(layout.createParallelGroup()
+					.addComponent(jAll, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jSubset, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+				)
 				.addComponent(jListScroll, 200, 200, 200)
 				.addGroup(layout.createParallelGroup()
 					.addComponent(jOK, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
@@ -107,12 +121,29 @@ public class JMultiSelectionDialog<T> extends JDialogCentered {
 	}
 
 	public List<T> show(Collection<T> items, boolean emptyAllowed) {
-		return show(items, new ArrayList<>(), emptyAllowed);
+		return show(items, new ArrayList<>(), null, null, emptyAllowed);
 	}
 
 	public List<T> show(Collection<T> items, Collection<T> selected, boolean emptyAllowed) {
+		return show(items, selected, null, null, emptyAllowed);
+	}
+
+	public List<T> show(Collection<T> items, Collection<T> other, String otherTitle, boolean emptyAllowed) {
+		return show(items, new ArrayList<>(), other, otherTitle, emptyAllowed);
+	}
+
+	public List<T> show(Collection<T> items, Collection<T> selected, Collection<T> other, String otherTitle, boolean emptyAllowed) {
 		this.emptyAllowed = emptyAllowed;
-		ArrayList<T> list = new ArrayList<>(items);
+		list = new ArrayList<>(items);
+		if (other != null && otherTitle != null) {
+			list2 = new ArrayList<>(other);
+			jSubset.setText(otherTitle);
+			jSubset.setSelected(false);
+			jSubset.setVisible(true);
+		} else {
+			list2 = null;
+			jSubset.setVisible(false);
+		}
 		jList.setModel(new DataListModel<>(list));
 		for (T item : selected) {
 			int index = list.indexOf(item);
@@ -153,6 +184,28 @@ public class JMultiSelectionDialog<T> extends JDialogCentered {
 					jList.selectAll();
 				} else {
 					jList.clearSelection();
+				}
+			} else if (MultiSelectionActions.SUBSET.name().equals(e.getActionCommand())) {
+				if (jSubset.isSelected() && list2 != null)  {
+					List<T> selected = jList.getSelectedValuesList();
+					jList.clearSelection();
+					jList.setModel(new DataListModel<>(list2));
+					for (T item : selected) {
+						int index = list.indexOf(item);
+						if (index >= 0) {
+							jList.addSelectionInterval(index, index);
+						}
+					}
+				} else {
+					List<T> selected = jList.getSelectedValuesList();
+					jList.clearSelection();
+					jList.setModel(new DataListModel<>(list));
+					for (T item : selected) {
+						int index = list.indexOf(item);
+						if (index >= 0) {
+							jList.addSelectionInterval(index, index);
+						}
+					}
 				}
 			}
 		}

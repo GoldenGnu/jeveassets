@@ -35,6 +35,7 @@ public abstract class TabsTracker extends Bundle {
 		super(locale);
 	}
 
+	public abstract String all();
 	public abstract String allProfiles();
 	public abstract String assets();
 	public abstract String assetsFilters();

@@ -194,13 +194,13 @@ public class Value implements Comparable<Value> {
 		return skillPointValue;
 	}
 
-	private double calcSkillPointValue(long totalSkillPoints, long minimum) {
+	private double calcSkillPointValue(long totalSkillPoints, long mimimum) {
 		double extractorPrice = ApiIdConverter.getPriceSimple(40519, false); //Skill Extractor
 		double injectorPrice = ApiIdConverter.getPriceSimple(40520, false); //Large Skill Injector
 		if (totalSkillPoints < MINIMUM_SKILL_POINTS) {
 			return 0;
 		}
-		long extractableSkillPoints = totalSkillPoints - Math.max(MINIMUM_SKILL_POINTS, minimum);
+		long extractableSkillPoints = totalSkillPoints - Math.max(MINIMUM_SKILL_POINTS, mimimum);
 		double injecters = Math.floor(extractableSkillPoints / SKILL_EXTRACTOR_SIZE);
 		if (injecters < 1) {
 			return 0;

@@ -47,6 +47,7 @@ import net.nikr.eve.jeveasset.data.settings.ExportSettings.DecimalSeparator;
 import net.nikr.eve.jeveasset.data.settings.ExportSettings.ExportFormat;
 import net.nikr.eve.jeveasset.data.settings.ExportSettings.FieldDelimiter;
 import net.nikr.eve.jeveasset.data.settings.ExportSettings.LineDelimiter;
+import net.nikr.eve.jeveasset.data.settings.MarketOrdersSettings;
 import net.nikr.eve.jeveasset.data.settings.PriceDataSettings;
 import net.nikr.eve.jeveasset.data.settings.PriceDataSettings.PriceMode;
 import net.nikr.eve.jeveasset.data.settings.PriceDataSettings.PriceSource;
@@ -416,6 +417,12 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		Element contractPriceSettingsElement = getNodeOptional(element, "contractpricesettings");
 		if (contractPriceSettingsElement != null) {
 			parseContractPriceSettings(contractPriceSettingsElement, settings);
+		}
+
+		//MarketOrdersSettings
+		Element marketOrdersSettingsElement = getNodeOptional(element, "marketorderssettings");
+		if (marketOrdersSettingsElement != null) {
+			parseMarketOrdersSettings(marketOrdersSettingsElement, settings);
 		}
 
 		//Flags
@@ -1194,6 +1201,23 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		contractPriceSettings.setContractPriceSecurity(security);
 		contractPriceSettings.setFeedback(feedback);
 		contractPriceSettings.setFeedbackAsked(feedbackAsked);
+	}
+
+	private void parseMarketOrdersSettings(final Element element, final Settings settings) throws XmlException {
+		int expireWarnDays = settings.getMarketOrdersSettings().getExpireWarnDays(); //Default
+		int remainingWarnPercent = settings.getMarketOrdersSettings().getExpireWarnDays(); //Default
+
+		if (haveAttribute(element, "expirewarndays")) {
+			expireWarnDays = getInt(element, "expirewarndays");
+		}
+
+		if (haveAttribute(element, "remainingwarnpercent")) {
+			remainingWarnPercent = getInt(element, "remainingwarnpercent");
+		}
+
+		MarketOrdersSettings marketOrdersSettings = settings.getMarketOrdersSettings();
+		marketOrdersSettings.setExpireWarnDays(expireWarnDays);
+		marketOrdersSettings.setRemainingWarnPercent(remainingWarnPercent);
 	}
 
 	private void parseFlags(final Element element, final Settings settings) throws XmlException {

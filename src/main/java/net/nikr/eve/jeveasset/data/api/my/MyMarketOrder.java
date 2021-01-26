@@ -20,6 +20,7 @@
  */
 package net.nikr.eve.jeveasset.data.api.my;
 
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Objects;
@@ -29,6 +30,7 @@ import net.nikr.eve.jeveasset.data.api.accounts.OwnerType;
 import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder;
 import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
+import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.data.settings.types.BlueprintType;
 import net.nikr.eve.jeveasset.data.settings.types.ContractPriceType;
 import net.nikr.eve.jeveasset.data.settings.types.EditableLocationType;
@@ -195,6 +197,22 @@ public class MyMarketOrder extends RawMarketOrder implements Comparable<MyMarket
 		return getExpires().before(new Date());
 	}
 
+	public final boolean isNearExpired() {
+		Calendar cal = Calendar.getInstance();
+		cal.add(Calendar.DATE, Settings.get().getMarketOrdersSettings().getExpireWarnDays());
+		return getExpires().before(cal.getTime());
+	}
+
+	public final boolean isNearFilled() {
+		//How much do we want to worry about precision vs cost of converting to doubles for possibly
+		//thousands of orders in history, if we want more accuracy cast to doubles first and change
+		//comparison to Double.compare
+
+		//Multiply by 100 since we are dealing with percents as integers.
+		//This will be slightly inaccurate since int are essentially floored if they have a remainder.
+		return ( (getVolumeRemain() * 100) / getVolumeTotal() <= Settings.get().getMarketOrdersSettings().getRemainingWarnPercent());
+	}
+
 	public boolean isActive() {
 		return getState() == MarketOrderState.OPEN && !isExpired();
 	}
@@ -272,6 +290,26 @@ public class MyMarketOrder extends RawMarketOrder implements Comparable<MyMarket
 	@Override
 	public void setTransactionProfitPercent(Percent transactionProfitPercent) {
 		this.transactionProfitPercent = transactionProfitPercent;
+	}
+
+	public double getMarketMargin() {
+		if (getDynamicPrice() > 0 && getPrice() > 0) {
+			if (isBuyOrder()) {
+				return (getDynamicPrice() - getPrice()) / getDynamicPrice();
+			} else {
+				return (getPrice() - getDynamicPrice()) / getPrice();
+			}
+		} else {
+			return 0;
+		}
+	}
+
+	public double getMarketProfit() {
+		if (isBuyOrder()) {
+			return getDynamicPrice() - getPrice();
+		} else {
+			return getPrice() - getDynamicPrice();
+		}
 	}
 
 	public Date getCreatedOrIssued() {
@@ -378,6 +416,18 @@ public class MyMarketOrder extends RawMarketOrder implements Comparable<MyMarket
 			return null;
 		}
 		return outbid.getCount();
+	}
+
+	public Double getOutbidDelta() {
+		if (outbid == null) {
+			return null;
+		}
+		if (isBuyOrder()) {
+			return getPrice() - outbid.getPrice();
+		} else {
+			return outbid.getPrice() - getPrice();
+		}
+		
 	}
 
 	public void setOutbid(Outbid outbid) {

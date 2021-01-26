@@ -39,6 +39,7 @@ public abstract class TabsOrders extends Bundle {
 	public abstract String buy();
 	public abstract String columnOrderType();
 	public abstract String columnName();
+	public abstract String columnGroup();
 	public abstract String columnVolumeRemain();
 	public abstract String columnVolumeTotal();
 	public abstract String columnPrice();
@@ -46,6 +47,8 @@ public abstract class TabsOrders extends Bundle {
 	public abstract String columnOutbidPriceToolTip();
 	public abstract String columnOutbidCount();
 	public abstract String columnOutbidCountToolTip();
+	public abstract String columnOutbidDelta();
+	public abstract String columnOutbidDeltaToolTip();
 	public abstract String columnEveUi();
 	public abstract String columnEveUiToolTip();
 	public abstract String columnBrokersFee();
@@ -74,6 +77,12 @@ public abstract class TabsOrders extends Bundle {
 	public abstract String columnTransactionProfitDifferenceToolTip();
 	public abstract String columnTransactionProfitPercent();
 	public abstract String columnTransactionProfitPercentToolTip();
+	public abstract String columnMarketPrice();
+	public abstract String columnMarketPriceToolTip();
+	public abstract String columnMarketMargin();
+	public abstract String columnMarketMarginToolTip();
+	public abstract String columnMarketProfit();
+	public abstract String columnMarketProfitToolTip();
 	public abstract String columnTypeID();
 	public abstract String eveUiOpen();
 	public abstract String logClear();

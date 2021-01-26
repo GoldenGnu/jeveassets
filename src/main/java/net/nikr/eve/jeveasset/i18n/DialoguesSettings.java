@@ -88,6 +88,8 @@ public abstract class DialoguesSettings extends Bundle {
 	// used in MarketOrdersToolSettingsPanel
 	public abstract String marketOrders();
 	public abstract String marketOrdersSaveHistory();
+	public abstract String expireWarnDays();
+	public abstract String remainingWarnPercent();
 
 	// used in TransactionsToolSettingsPanel
 	public abstract String transactions();
@@ -121,6 +123,7 @@ public abstract class DialoguesSettings extends Bundle {
 	public abstract String lookAndFeelFlatDark();
 	public abstract String lookAndFeelFlatIntelliJ();
 	public abstract String lookAndFeelFlatDarcula();
+	public abstract String lookAndFeelNimbusDark();
 	public abstract String lookAndFeelMsg();
 	public abstract String lookAndFeelTitle();
 
