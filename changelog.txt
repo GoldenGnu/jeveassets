@@ -16,6 +16,46 @@
                   #### #  # #  # #  # #### #### #### #### ####
 
 ________________________________________________________________________________
+_6.7.0__________________________________________________________________________
+
+New Features:
+-Add Blueprint materials (with ME) as Stockpile items (Issue #182)
+-Changeable color for completed/delivered Industry Jobs (Issue #190)
+-Added Dark Nimbus look and feel
+-Added toggle all for Tracker skill points filter dialog
+-Include hidden stockpiles in Export (Issue #211)
+-Added Outbid delta column to the Marker Order tool (Issue #204)
+-Added Group column to the Market Orders tool (Issue #220)
+-Added Market Price/Margin/Profit columns to the Market Orders tool (Issue #222)
+-Highlight Market Orders prior to expiring (Issue #219)
+-Highlight Market Orders with remaining quantity below x percent (Issue #225)
+
+Changed:
+-Better tool tip for the Market detail column
+-Added tool tip label for the market orders JComboBoxes
+-Stockpile "my locations" no longer include closed market order locations
+-Routing start system is now select via an auto completed JComboBox (Issue #209)
+-Export DATETIME instead of DATE in SQL Export (Issue #215)
+-Added thousand separator to HTML export numbers
+
+Code:
+-Updated eve-esi to 4.2.0
+-Made Lookup menu links testable
+
+Bug Fixes:
+-Fixed the width for Tracker skill points filter dialog
+-NumberValue sub classes not respecting the copy decimal separator (Issue #195)
+-Better look and feel preview (Now use previewed LAF height)
+-Include "jEveAssets" in error and update message dialogs
+-All column filters could not be saved/loaded
+-Overview Tool did not display any data when opened on startup (work from menu)
+-Workaround JTextField with backgrounds on Nimbus look and feel
+-Prevent updating outbid when there is no active orders
+-MarketLog import did not use the latest outbid data
+-Fixed Overview table menu not work with groups
+-Update Khon.Space to Lazy-Blacksmith (Issue #217)
+
+________________________________________________________________________________
 _6.6.3__________________________________________________________________________
 
 New Features:
