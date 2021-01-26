@@ -1204,10 +1204,20 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 	}
 
 	private void parseMarketOrdersSettings(final Element element, final Settings settings) throws XmlException {
-		int expireWarnDays = getInt(element, "expirewarndays");
+		int expireWarnDays = settings.getMarketOrdersSettings().getExpireWarnDays(); //Default
+		int remainingWarnPercent = settings.getMarketOrdersSettings().getExpireWarnDays(); //Default
+
+		if (haveAttribute(element, "expirewarndays")) {
+			expireWarnDays = getInt(element, "expirewarndays");
+		}
+
+		if (haveAttribute(element, "remainingwarnpercent")) {
+			remainingWarnPercent = getInt(element, "remainingwarnpercent");
+		}
 
 		MarketOrdersSettings marketOrdersSettings = settings.getMarketOrdersSettings();
 		marketOrdersSettings.setExpireWarnDays(expireWarnDays);
+		marketOrdersSettings.setRemainingWarnPercent(remainingWarnPercent);
 	}
 
 	private void parseFlags(final Element element, final Settings settings) throws XmlException {

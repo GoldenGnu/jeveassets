@@ -65,11 +65,18 @@ public class JMarketOrdersTable extends JAutoColumnTable {
 				ColorSettings.configCell(component, ColorEntry.MARKET_ORDERS_OUTBID_UNKNOWN, isSelected);
 			}
 		}
+		//Order filled warning
+		if (columnName.equals(MarketTableFormat.QUANTITY.getColumnName())) {
+			if (marketOrder.isNearFilled()) {
+				ColorSettings.configCell(component, ColorEntry.MARKET_ORDERS_NEAR_FILLED, isSelected);
+			}
+		}
 		//User set location
 		if (marketOrder.getLocation().isUserLocation() && columnName.equals(MarketTableFormat.LOCATION.getColumnName())) {
 			ColorSettings.configCell(component, ColorEntry.CUSTOM_USER_LOCATION, isSelected);
 			return component;
 		}
+
 		return component;
 	}
 }
