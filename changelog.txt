@@ -16,6 +16,15 @@
                   #### #  # #  # #  # #### #### #### #### ####
 
 ________________________________________________________________________________
+_6.7.1__________________________________________________________________________
+
+Bug Fixes:
+-Crash when copying from tables (BugID: 883, 884, 888, 889)
+-Possible fix for AIOOBE crash in StockpileDialog (BugID: 887)
+-Deleting a stockpile did not work correctly for subpiles
+-Subpiles was missing items (Thanks to Lak Moore)
+
+________________________________________________________________________________
 _6.7.0__________________________________________________________________________
 
 New Features:
