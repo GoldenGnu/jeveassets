@@ -621,6 +621,7 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 		for (StockpileItem item : stockpile.getItems()) {
 			typeIDs.add(item.getItemTypeID());
 		}
+		addTypeIDs(typeIDs, stockpile);
 	//Create lookup maps of Items
 		//ContractItems
 		if (stockpile.isContracts()) {
@@ -723,6 +724,15 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 		}
 		stockpile.updateTotal();
 		stockpile.updateTags();
+	}
+
+	private void addTypeIDs(Set<Integer> typeIDs, Stockpile stockpile) {
+		for (StockpileItem item : stockpile.getItems()) {
+			typeIDs.add(item.getItemTypeID());
+		}
+		for (Stockpile subpile : stockpile.getSubpiles().keySet()) {
+			addTypeIDs(typeIDs, subpile);
+		}
 	}
 
 	private void updateItem(StockpileItem item, Stockpile stockpile) {
