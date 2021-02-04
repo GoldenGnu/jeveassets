@@ -1523,7 +1523,7 @@ public class StockpileDialog extends JDialogCentered {
 			}
 			if (EventListManager.contains(filterList, location)) {
 				jLocation.setSelectedItem(location);
-			} else {
+			} else if (!filterList.isEmpty()) {
 				jLocation.setSelectedIndex(0);
 			}
 		}
