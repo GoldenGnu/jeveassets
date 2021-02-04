@@ -87,15 +87,15 @@ public abstract class AbstractOwner implements OwnerType, Comparable<OwnerType> 
 	}
 
 	public AbstractOwner(AbstractOwner abstractOwner) {
-		this.accountBalances = abstractOwner.accountBalances;
-		this.marketOrders = abstractOwner.marketOrders;
-		this.transactions = abstractOwner.transactions;
-		this.journal = abstractOwner.journal;
-		this.industryJobs = abstractOwner.industryJobs;
-		this.contracts = abstractOwner.contracts;
-		this.assets = abstractOwner.assets;
-		this.blueprints = abstractOwner.blueprints;
-		this.skills = abstractOwner.skills;
+		accountBalances.addAll(abstractOwner.accountBalances);
+		marketOrders.addAll(abstractOwner.marketOrders);
+		transactions.addAll(abstractOwner.transactions);
+		journal.addAll(abstractOwner.journal);
+		industryJobs.addAll(abstractOwner.industryJobs);
+		contracts.putAll(abstractOwner.contracts);
+		assets.addAll(abstractOwner.assets);
+		blueprints.putAll(abstractOwner.blueprints);
+		skills.addAll(abstractOwner.skills);
 		this.totalSkillPoints = abstractOwner.totalSkillPoints;
 		this.unallocatedSkillPoints = abstractOwner.unallocatedSkillPoints;
 		this.containerLogs = abstractOwner.containerLogs;
@@ -395,7 +395,7 @@ public abstract class AbstractOwner implements OwnerType, Comparable<OwnerType> 
 		this.showOwner = showOwner;
 	}
 
- 	@Override
+	@Override
 	public synchronized void setInvalid(boolean invalid) {
 		this.invalid = invalid;
 	}

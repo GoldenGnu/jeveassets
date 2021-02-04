@@ -146,6 +146,7 @@ public class UpdateDialog extends JDialogCentered {
 		jCheckAll = new JCheckBox(General.get().all());
 		jCheckAll.setActionCommand(UpdateDialogAction.CHECK_ALL.name());
 		jCheckAll.addActionListener(listener);
+
 		jMarketOrders = new JCheckBox(DialoguesUpdate.get().marketOrders());
 		jJournal = new JCheckBox(DialoguesUpdate.get().journal());
 		jTransactions = new JCheckBox(DialoguesUpdate.get().transactions());

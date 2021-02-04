@@ -140,7 +140,6 @@ public class AccountImportDialog extends JDialogCentered {
 	private JButton jImportFile;
 	private final JButton jNext;
 	private final JButton jPrevious;
-	private final JButton jCancel;
 	private final CardLayout cardLayout;
 	private final JPanel jContent;
 	private final ListenerClass listener = new ListenerClass();
@@ -185,7 +184,7 @@ public class AccountImportDialog extends JDialogCentered {
 		jNext.setActionCommand(AccountImportAction.NEXT.name());
 		jNext.addActionListener(listener);
 
-		jCancel = new JButton(DialoguesAccount.get().cancel());
+		JButton jCancel = new JButton(DialoguesAccount.get().cancel());
 		jCancel.setActionCommand(AccountImportAction.ADD_KEY_CANCEL.name());
 		jCancel.addActionListener(listener);
 

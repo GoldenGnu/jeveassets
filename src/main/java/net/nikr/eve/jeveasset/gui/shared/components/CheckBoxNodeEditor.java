@@ -37,9 +37,9 @@ import javax.swing.tree.TreePath;
 
 public class CheckBoxNodeEditor extends AbstractCellEditor implements TreeCellEditor {
 
-	CheckBoxNodeRenderer renderer = new CheckBoxNodeRenderer();
+	private final CheckBoxNodeRenderer renderer = new CheckBoxNodeRenderer();
 
-	JTree tree;
+	private final JTree tree;
 
 	public CheckBoxNodeEditor(JTree tree) {
 		this.tree = tree;

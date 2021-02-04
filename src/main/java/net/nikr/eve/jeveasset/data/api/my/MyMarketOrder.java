@@ -292,14 +292,6 @@ public class MyMarketOrder extends RawMarketOrder implements Comparable<MyMarket
 		this.transactionProfitPercent = transactionProfitPercent;
 	}
 
-	public Date getCreatedOrIssued() {
-		if (!getChanged().isEmpty()) {
-			return getChanged().iterator().next();
-		} else {
-			return getIssued();
-		}
-	}
-
 	public double getMarketMargin() {
 		if (getDynamicPrice() > 0 && getPrice() > 0) {
 			if (isBuyOrder()) {
@@ -317,6 +309,14 @@ public class MyMarketOrder extends RawMarketOrder implements Comparable<MyMarket
 			return getDynamicPrice() - getPrice();
 		} else {
 			return getPrice() - getDynamicPrice();
+		}
+	}
+
+	public Date getCreatedOrIssued() {
+		if (!getChanged().isEmpty()) {
+			return getChanged().iterator().next();
+		} else {
+			return getIssued();
 		}
 	}
 

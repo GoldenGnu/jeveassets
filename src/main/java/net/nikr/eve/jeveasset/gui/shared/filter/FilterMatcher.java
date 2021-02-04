@@ -86,7 +86,7 @@ public class FilterMatcher<E> implements Matcher<E> {
 		return group;
 	}
 
-	boolean isAnd() {
+	protected boolean isAnd() {
 		return and;
 	}
 
@@ -421,7 +421,7 @@ public class FilterMatcher<E> implements Matcher<E> {
 		}
 	}
 
-	static String format(final Object object, final boolean userInput) {
+	protected static String format(final Object object, final boolean userInput) {
 		if (object == null) {
 			return null;
 		}

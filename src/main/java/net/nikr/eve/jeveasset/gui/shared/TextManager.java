@@ -35,7 +35,6 @@ import javax.swing.event.UndoableEditListener;
 import javax.swing.text.AbstractDocument;
 import javax.swing.text.Document;
 import javax.swing.text.JTextComponent;
-import javax.swing.undo.CompoundEdit;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.CompoundUndoManager;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
@@ -54,7 +53,6 @@ public final class TextManager {
 	private final JMenuItem jPaste;
 	private final JMenuItem jUndo;
 	private final JMenuItem jRedo;
-	private final CompoundUndoManager undoManager;
 	
 	public static void installAll(final Container container) {
 		for (Component component : container.getComponents()) {
@@ -82,7 +80,7 @@ public final class TextManager {
 			}
 		}
 		if (!found) {
-			TextManager jCopyPopup = new TextManager(component);
+			new TextManager(component);
 		}
 	}
 
@@ -113,7 +111,7 @@ public final class TextManager {
 		jPaste.setActionCommand(CopyPopupAction.PASTE.name());
 		jPaste.addActionListener(listener);
 
-		undoManager = new CompoundUndoManager(component);
+		CompoundUndoManager undoManager = new CompoundUndoManager(component);
 
 		jUndo = new JMenuItem(undoManager.getUndoAction());
 		jUndo.setIcon(Images.EDIT_UNDO.getIcon());
@@ -160,8 +158,6 @@ public final class TextManager {
 	}
 
 	private class ListenerClass implements MouseListener, ActionListener {
-
-		CompoundEdit compoundEdit;
 
 		@Override
 		public void mouseClicked(final MouseEvent e) {

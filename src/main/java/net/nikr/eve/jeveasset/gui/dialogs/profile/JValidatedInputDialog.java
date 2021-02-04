@@ -41,10 +41,9 @@ public class JValidatedInputDialog extends JDialogCentered {
 		OK, CANCEL
 	}
 
-	private JTextArea jMessage;
-	private JTextField jName;
-	private JButton jOK;
-	private JButton jCancel;
+	private final JTextArea jMessage;
+	private final JTextField jName;
+	private final JButton jOK;
 
 	private boolean failed = false;
 
@@ -65,7 +64,7 @@ public class JValidatedInputDialog extends JDialogCentered {
 		jOK.setActionCommand(InputDialogAction.OK.name());
 		jOK.addActionListener(listener);
 
-		jCancel = new JButton(DialoguesProfiles.get().cancel());
+		JButton jCancel = new JButton(DialoguesProfiles.get().cancel());
 		jCancel.setActionCommand(InputDialogAction.CANCEL.name());
 		jCancel.addActionListener(listener);
 
@@ -111,8 +110,11 @@ public class JValidatedInputDialog extends JDialogCentered {
 				jName.setDocument(DocumentFactory.getDoublePlainDocument());
 				break;
 			case NO_RESTRICTIONS:
+				jName.setDocument(new PlainDocument());
+				break;
 			default:
 				jName.setDocument(new PlainDocument());
+				break;
 		}
 		if (defaultValue != null) {
 			jName.setText(defaultValue);

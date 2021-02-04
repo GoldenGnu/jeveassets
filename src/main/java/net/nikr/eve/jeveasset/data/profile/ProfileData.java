@@ -221,9 +221,9 @@ public class ProfileData {
 					jumps = -1;
 				}
 				jumpType.addJump(jumpSystemID, jumps);
-				}
 			}
 		}
+	}
 
 	public synchronized void setMarketOrdersUpdates(Map<Long, RawPublicMarketOrder> updates) {
 		marketOrdersUpdates.putAll(updates);
@@ -513,21 +513,21 @@ public class ProfileData {
 				OwnerType ownerType = blueprintsMap.get(owner.getOwnerID());
 				if (ownerType == null || (owner.getBlueprintsNextUpdate() != null && ownerType.getBalanceNextUpdate() != null && owner.getBlueprintsNextUpdate().after(ownerType.getBalanceNextUpdate()))) {
 					blueprintsMap.put(owner.getOwnerID(), owner);
- 				}
+				}
 			}
 			//Assets (Newest)
 			if (!owner.getAssets().isEmpty()) {
 				OwnerType ownerType = assetsMap.get(owner.getOwnerID());
 				if (ownerType == null || (owner.getAssetNextUpdate() != null && ownerType.getAssetNextUpdate() != null && owner.getAssetNextUpdate().after(ownerType.getAssetNextUpdate()))) {
 					assetsMap.put(owner.getOwnerID(), owner);
- 				}
+				}
 			}
 			//Account Balance (Newest)
 			if (!owner.getAccountBalances().isEmpty()) {
 				OwnerType ownerType = accountBalanceMap.get(owner.getOwnerID());
 				if (ownerType == null || (owner.getBalanceNextUpdate() != null && ownerType.getBalanceNextUpdate() != null && owner.getBalanceNextUpdate().after(ownerType.getBalanceNextUpdate()))) {
 					accountBalanceMap.put(owner.getOwnerID(), owner);
- 				}
+				}
 			}
 			//Skills
 			if (owner.getTotalSkillPoints() != null) {
@@ -547,12 +547,12 @@ public class ProfileData {
 		//Fill accountBalance
 		for (OwnerType owner : accountBalanceMap.values()) {
 			accountBalance.addAll(owner.getAccountBalances());
- 		}
+		}
 
 		//Fill blueprints
 		for (OwnerType owner : blueprintsMap.values()) {
 			blueprints.putAll(owner.getBlueprints());
- 		}
+		}
 
 		for (MyMarketOrder marketOrder : charMarketOrders) {
 			if (!marketOrder.isCorp()) { //Remove non-corporation orders

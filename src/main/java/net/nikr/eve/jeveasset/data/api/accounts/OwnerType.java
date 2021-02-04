@@ -81,11 +81,11 @@ public interface OwnerType extends Comparable<OwnerType> {
 	public void setContracts(final Map<MyContract, List<MyContractItem>> contracts);
 	public void setAssets(final List<MyAsset> assets);
 	public void setAccountBalances(final List<MyAccountBalance> accountBalances);
-	public void setWalletDivisions(Map<Integer, String> walletDivisions);
-	public void setAssetDivisions(Map<Integer, String> assetDivisions);
-	public void setSkills(List<RawSkill> skills);
-	public void setTotalSkillPoints(Long totalSkillPoints);
-	public void setUnallocatedSkillPoints(Integer unallocatedSkillPoints);
+	public void setWalletDivisions(final Map<Integer, String> walletDivisions);
+	public void setAssetDivisions(final Map<Integer, String> assetDivisions);
+	public void setSkills(final List<RawSkill> skills);
+	public void setTotalSkillPoints(final Long totalSkillPoints);
+	public void setUnallocatedSkillPoints(final Integer unallocatedSkillPoints);
 	public void setContainerLogs(final List<MyContainerLog> containersLogs);
 	//Account Mask
 	public boolean isCharacter();

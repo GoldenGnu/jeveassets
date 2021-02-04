@@ -80,9 +80,9 @@ class FilterGui<E> {
 	private final ExportDialog<E> exportDialog;
 	private boolean multiUpdate = false;
 
-	ListenerClass listener = new ListenerClass();
+	private final ListenerClass listener = new ListenerClass();
 
-	FilterGui(final JFrame jFrame, final FilterControl<E> filterControl) {
+	protected FilterGui(final JFrame jFrame, final FilterControl<E> filterControl) {
 		this.jFrame = jFrame;
 		this.filterControl = filterControl;
 
@@ -173,7 +173,7 @@ class FilterGui<E> {
 		filterManager = new FilterManager<>(jFrame, filterControl.getName(), this, filterControl.getFilters(), filterControl.getDefaultFilters());
 	}
 
-	JPanel getPanel() {
+	protected JPanel getPanel() {
 		return jPanel;
 	}
 
@@ -181,7 +181,7 @@ class FilterGui<E> {
 		exportDialog.setColumns(enumColumns);
 	}
 
-	final void addExportOption(final JMenuItem jMenuItem) {
+	protected final void addExportOption(final JMenuItem jMenuItem) {
 		if (!jExportMenu.isVisible()) { //First
 			jExportMenu.setVisible(true);
 			jExportButton.setVisible(false);
@@ -189,11 +189,11 @@ class FilterGui<E> {
 		jExportMenu.add(jMenuItem);
 	}
 
-	void updateShowing() {
+	protected void updateShowing() {
 		jShowing.setText(GuiShared.get().filterShowing(EventListManager.size(filterControl.getFilterList()), EventListManager.size(filterControl.getEventList()), getCurrentFilterName()));
 	}
 
-	String getCurrentFilterName() {
+	protected String getCurrentFilterName() {
 		String filterName = GuiShared.get().filterUntitled();
 		List<Filter> filters = getFilters(true);
 		if (filters.isEmpty()) {
@@ -211,7 +211,7 @@ class FilterGui<E> {
 		return filterName;
 	}
 
-	List<Filter> getFilters(boolean includeDisabled) {
+	protected List<Filter> getFilters(boolean includeDisabled) {
 		List<Filter> filters = new ArrayList<>();
 		for (FilterPanel<E> filterPanel : filterPanels) {
 			Filter filter = filterPanel.getFilter();
@@ -233,7 +233,7 @@ class FilterGui<E> {
 		return matchers;
 	}
 
-	void update() {
+	protected void update() {
 		update(true);
 	}
 
@@ -284,7 +284,7 @@ class FilterGui<E> {
 		}
 	}
 
-	void updateGroupSize() {
+	protected void updateGroupSize() {
 		Set<Integer> groups = new HashSet<>();
 		for (FilterPanel<E> filterPanel : filterPanels) {
 			if (!filterPanel.isAnd()) {
@@ -297,23 +297,23 @@ class FilterGui<E> {
 		}
 	}
 
-	int getFromIndex(FilterPanel<E> filterPanel) {
+	protected int getFromIndex(FilterPanel<E> filterPanel) {
 		return filterPanels.indexOf(filterPanel);
 	}
 
-	int getToIndex(FilterPanel<E> filterPanel) {
+	protected int getToIndex(FilterPanel<E> filterPanel) {
 		List<FilterPanel<E>> list = new ArrayList<>(filterPanels);
 		Collections.sort(list);
 		return list.indexOf(filterPanel);
 	}
 
-	void move(FilterPanel<E> filterPanel, int index) {
+	protected void move(FilterPanel<E> filterPanel, int index) {
 		filterPanels.remove(filterPanel);
 		filterPanels.add(index, filterPanel);
 		update(false);
 	}
 
-	boolean fade(FilterPanel<E> filterPanel) {
+	protected boolean fade(FilterPanel<E> filterPanel) {
 		int index = filterPanels.indexOf(filterPanel);
 		List<FilterPanel<E>> list = new ArrayList<>(filterPanels);
 		Collections.sort(list);
@@ -330,7 +330,7 @@ class FilterGui<E> {
 		}
 	}
 
-	void remove(final FilterPanel<E> filterPanel) {
+	protected void remove(final FilterPanel<E> filterPanel) {
 		filterPanels.remove(filterPanel);
 		if (!multiUpdate) {
 			update();
@@ -348,7 +348,7 @@ class FilterGui<E> {
 		}
 	}
 
-	void addEmpty() {
+	protected void addEmpty() {
 		if (filterPanels.isEmpty()) {
 			add();
 		}
@@ -360,7 +360,7 @@ class FilterGui<E> {
 		}
 	}
 
-	void clear() {
+	protected void clear() {
 		multiUpdate = true;
 		while (filterPanels.size() > 0) {
 			remove(filterPanels.get(0));
@@ -385,7 +385,7 @@ class FilterGui<E> {
 		}
 	}
 
-	void setFilters(final List<Filter> filters) {
+	protected void setFilters(final List<Filter> filters) {
 		multiUpdate = true;
 		while (filterPanels.size() > 0) {
 			remove(filterPanels.get(0));
@@ -394,11 +394,11 @@ class FilterGui<E> {
 		addFilters(filters);
 	}
 
-	void addFilter(final Filter filter) {
+	protected void addFilter(final Filter filter) {
 		addFilters(Collections.singletonList(filter));
 	}
 
-	void addFilters(final List<Filter> filters) {
+	protected void addFilters(final List<Filter> filters) {
 		multiUpdate = true;
 		clearEmpty(); //Remove single empty filter...
 		for (Filter filter : filters) {
@@ -412,7 +412,7 @@ class FilterGui<E> {
 		refilter();
 	}
 
-	final void updateFilters() {
+	protected final void updateFilters() {
 		jLoadFilter.removeAll();
 		JMenuItem jMenuItem;
 
@@ -451,11 +451,11 @@ class FilterGui<E> {
 		filterControl.updateFilters();
 	}
 
-	void saveSettings(String msg) {
+	protected void saveSettings(String msg) {
 		filterControl.saveSettings(msg);
 	}
 
-	void refilter() {
+	protected void refilter() {
 		filterControl.beforeFilter();
 		List<FilterMatcher<E>> matchers = getMatchers();
 		boolean empty = true;
@@ -475,7 +475,7 @@ class FilterGui<E> {
 		updateShowing();
 	}
 
-	String getFilterName() {
+	protected String getFilterName() {
 		return filterSave.show(new ArrayList<>(filterControl.getFilters().keySet()), new ArrayList<>(filterControl.getDefaultFilters().keySet()));
 	}
 

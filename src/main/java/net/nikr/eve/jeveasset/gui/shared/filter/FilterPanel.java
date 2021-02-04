@@ -161,8 +161,8 @@ class FilterPanel<E> implements Comparable<FilterPanel<E>> {
 				boolean oldValue = loading;
 				loading = true;
 				Dimension preferredSize = ((JSpinner.DefaultEditor) jGroup.getEditor()).getTextField().getPreferredSize();
+				groupModel.removeChangeListener(listener);
 				if (isAnd()) {
-					groupModel.removeChangeListener(listener);
 					groupModel.setMinimum(0);
 					groupModel.setValue(0);
 					jGroup.setEditor(new JSpinner.DefaultEditor(jGroup));
@@ -633,8 +633,10 @@ class FilterPanel<E> implements Comparable<FilterPanel<E>> {
 
 		@Override
 		public void stateChanged(ChangeEvent e) {
-			groupTimer.stop();
-			groupTimer.start();
+			if (!loading) {
+				groupTimer.stop();
+				groupTimer.start();
+			}
 		}
 	}
 
