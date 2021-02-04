@@ -50,8 +50,8 @@ public class ColorSettings {
 		;
 
 		private final String name;
-        private final String className;
-        private final boolean selected;
+		private final String className;
+		private final boolean selected;
 
 		private PredefinedLookAndFeel(String name, String className) {
 			this(name, className, false);
