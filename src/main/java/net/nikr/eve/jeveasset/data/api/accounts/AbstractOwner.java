@@ -52,9 +52,9 @@ public abstract class AbstractOwner implements OwnerType, Comparable<OwnerType> 
 	private Map<Long, RawBlueprint> blueprints = new HashMap<>();
 	private Map<Integer, String> walletDivisions = new HashMap<>();
 	private Map<Integer, String> assetDivisions = new HashMap<>();
-    private List<RawSkill> skills = new ArrayList<>();
-    private Long totalSkillPoints = null;
-    private Integer unallocatedSkillPoints = null;
+	private List<RawSkill> skills = new ArrayList<>();
+	private Long totalSkillPoints = null;
+	private Integer unallocatedSkillPoints = null;
 
 	private String ownerName;
 	private String corporationName = null;
@@ -124,7 +124,7 @@ public abstract class AbstractOwner implements OwnerType, Comparable<OwnerType> 
 	}
 
 	@Override
-	public synchronized void setBlueprintsNextUpdate(Date blueprintsNextUpdate) {
+	public synchronized void setBlueprintsNextUpdate(final Date blueprintsNextUpdate) {
 		this.blueprintsNextUpdate = blueprintsNextUpdate;
 	}
 
@@ -144,7 +144,7 @@ public abstract class AbstractOwner implements OwnerType, Comparable<OwnerType> 
 	}
 
 	@Override
-	public synchronized void setLocationsNextUpdate(Date locationsNextUpdate) {
+	public synchronized void setLocationsNextUpdate(final Date locationsNextUpdate) {
 		this.locationsNextUpdate = locationsNextUpdate;
 	}
 
@@ -154,7 +154,7 @@ public abstract class AbstractOwner implements OwnerType, Comparable<OwnerType> 
 	}
 
 	@Override
-	public synchronized void setJournalNextUpdate(Date journalNextUpdate) {
+	public synchronized void setJournalNextUpdate(final Date journalNextUpdate) {
 		this.journalNextUpdate = journalNextUpdate;
 	}
 
@@ -174,12 +174,12 @@ public abstract class AbstractOwner implements OwnerType, Comparable<OwnerType> 
 	}
 
 	@Override
-	public synchronized  Date getAssetNextUpdate() {
+	public synchronized Date getAssetNextUpdate() {
 		return assetNextUpdate;
 	}
 
 	@Override
-	public synchronized  Date getBalanceNextUpdate() {
+	public synchronized Date getBalanceNextUpdate() {
 		return balanceNextUpdate;
 	}
 
@@ -230,22 +230,22 @@ public abstract class AbstractOwner implements OwnerType, Comparable<OwnerType> 
 	public abstract boolean equals(Object obj);
 
 	@Override
-	public final void setOwnerName(String ownerName) {
+	public final void setOwnerName(final String ownerName) {
 		this.ownerName = ownerName;
 	}
 
 	@Override
-	public final void setAssetLastUpdate(Date assetLastUpdate) {
+	public final void setAssetLastUpdate(final Date assetLastUpdate) {
 		this.assetLastUpdate = assetLastUpdate;
 	}
 
 	@Override
-	public final void setBalanceLastUpdate(Date balanceLastUpdate) {
+	public final void setBalanceLastUpdate(final Date balanceLastUpdate) {
 		this.balanceLastUpdate = balanceLastUpdate;
 	}
 
 	@Override
-	public final void setOwnerID(long ownerID) {
+	public final void setOwnerID(final long ownerID) {
 		this.ownerID = ownerID;
 	}
 
@@ -376,7 +376,7 @@ public abstract class AbstractOwner implements OwnerType, Comparable<OwnerType> 
 	}
 
 	@Override
-	public final void setShowOwner(boolean showOwner) {
+	public final void setShowOwner(final boolean showOwner) {
 		this.showOwner = showOwner;
 	}
 
@@ -386,42 +386,42 @@ public abstract class AbstractOwner implements OwnerType, Comparable<OwnerType> 
 	}
 
 	@Override
-	public final void setBlueprints(Map<Long, RawBlueprint> blueprints) {
+	public final void setBlueprints(final Map<Long, RawBlueprint> blueprints) {
 		this.blueprints = blueprints;
 	}
 
 	@Override
-	public final void setIndustryJobs(List<MyIndustryJob> industryJobs) {
+	public final void setIndustryJobs(final List<MyIndustryJob> industryJobs) {
 		this.industryJobs = industryJobs;
 	}
 
 	@Override
-	public final void setTransactions(Set<MyTransaction> transactions) {
+	public final void setTransactions(final Set<MyTransaction> transactions) {
 		this.transactions = transactions;
 	}
 
 	@Override
-	public final void setJournal(Set<MyJournal> journal) {
+	public final void setJournal(final Set<MyJournal> journal) {
 		this.journal = journal;
 	}
 
 	@Override
-	public synchronized final void setMarketOrders(Set<MyMarketOrder> marketOrders) {
+	public final void setMarketOrders(final Set<MyMarketOrder> marketOrders) {
 		this.marketOrders = marketOrders;
 	}
 
 	@Override
-	public final void setContracts(Map<MyContract, List<MyContractItem>> contracts) {
+	public final void setContracts(final Map<MyContract, List<MyContractItem>> contracts) {
 		this.contracts = contracts;
 	}
 
 	@Override
-	public final synchronized void setAssets(List<MyAsset> assets) {
+	public final synchronized void setAssets(final List<MyAsset> assets) {
 		this.assets = assets;
 	}
 
 	@Override
-	public final void setAccountBalances(List<MyAccountBalance> accountBalances) {
+	public final void setAccountBalances(final List<MyAccountBalance> accountBalances) {
 		this.accountBalances = accountBalances;
 	}
 
