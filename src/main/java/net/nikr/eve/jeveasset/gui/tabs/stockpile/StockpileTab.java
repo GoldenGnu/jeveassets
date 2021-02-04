@@ -1252,6 +1252,17 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 					if (value == JOptionPane.OK_OPTION) {
 						Settings.lock("Stockpile (Delete Stockpile)");
 						Settings.get().getStockpiles().remove(stockpile);
+						//Remove subpile links
+						for (Stockpile parentStockpile : stockpile.getSubpiles().keySet()) {
+							parentStockpile.removeSubpileLink(stockpile);
+						}
+						stockpile.getSubpiles().clear(); //Remove all Subpiles
+						updateSubpile(stockpile); //Remove SubpileItems from Table
+						//Remove deleted stockpile from all subpiles
+						for (Stockpile parentStockpile : stockpile.getSubpileLinks()) {
+							parentStockpile.getSubpiles().remove(stockpile);
+							updateSubpile(parentStockpile);
+						}
 						Settings.unlock("Stockpile (Delete Stockpile)");
 						program.saveSettings("Stockpile (Delete Stockpile)");
 						removeStockpile(stockpile);
