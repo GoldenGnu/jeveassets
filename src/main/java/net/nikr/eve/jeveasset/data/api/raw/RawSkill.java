@@ -24,10 +24,10 @@ import net.troja.eve.esi.model.Skill;
 
 
 public class RawSkill {
-    private Integer activeSkillLevel;
-    private Integer skillId;
-    private Long skillpointsInSkill;
-    private Integer trainedSkillLevel;
+	private Integer activeSkillLevel;
+	private Integer skillId;
+	private Long skillpointsInSkill;
+	private Integer trainedSkillLevel;
 
 	/**
 	 * New

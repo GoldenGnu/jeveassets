@@ -435,9 +435,9 @@ public abstract class FakeSettings extends Settings {
 	}
 
 	@Override
-        public MarketOrdersSettings getMarketOrdersSettings() {
+	public MarketOrdersSettings getMarketOrdersSettings() {
 		throw new UnsupportedOperationException("not implemented");
-        }
+	}
 
 	@Override
 	public void clearJumpLocations(Class<?> clazz) {

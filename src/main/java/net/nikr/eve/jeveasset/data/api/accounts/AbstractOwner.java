@@ -52,9 +52,9 @@ public abstract class AbstractOwner implements OwnerType, Comparable<OwnerType> 
 	private Map<Long, RawBlueprint> blueprints = new HashMap<>();
 	private Map<Integer, String> walletDivisions = new HashMap<>();
 	private Map<Integer, String> assetDivisions = new HashMap<>();
-    private List<RawSkill> skills = new ArrayList<>();
-    private Long totalSkillPoints = null;
-    private Integer unallocatedSkillPoints = null;
+	private List<RawSkill> skills = new ArrayList<>();
+	private Long totalSkillPoints = null;
+	private Integer unallocatedSkillPoints = null;
 
 	private String ownerName;
 	private String corporationName = null;
