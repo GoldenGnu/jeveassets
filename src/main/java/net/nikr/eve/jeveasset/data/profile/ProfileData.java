@@ -786,7 +786,7 @@ public class ProfileData {
 		owners.putAll(uniqueOwners);
 	}
 
-	public static void updateNames(EventList<MyAsset> eventList, Set<Long> itemIDs) {
+	public void updateNames(EventList<MyAsset> eventList, Set<Long> itemIDs) {
 		if (itemIDs == null || itemIDs.isEmpty()) {
 			return;
 		}
@@ -1174,7 +1174,7 @@ public class ProfileData {
 		asset.setContractPrice(ContractPriceManager.get().getContractPrice(ContractPriceItem.create(asset)));
 	}
 
-	private static void updateName(MyAsset asset) {
+	private void updateName(MyAsset asset) {
 		if (Settings.get().getUserItemNames().containsKey(asset.getItemID())) {
 			asset.setName(Settings.get().getUserItemNames().get(asset.getItemID()).getValue(), true, false);
 		} else if (Settings.get().getEveNames().containsKey(asset.getItemID())) {
@@ -1185,7 +1185,7 @@ public class ProfileData {
 		}
 	}
 
-	private static void updateContainerChildren(List<MyAsset> found, List<MyAsset> assets) {
+	private void updateContainerChildren(List<MyAsset> found, List<MyAsset> assets) {
 		for (MyAsset asset : assets) {
 			found.add(asset);
 			updateContainer(asset);
@@ -1193,7 +1193,7 @@ public class ProfileData {
 		}
 	}
 
-	private static void updateContainer(MyAsset asset) {
+	private void updateContainer(MyAsset asset) {
 		StringBuilder builder = new StringBuilder();
 		if (asset.getParents().isEmpty()) {
 			builder.append(General.get().none());
