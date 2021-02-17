@@ -32,6 +32,6 @@ jobs:
       if: failure()
       env:
         DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
-      uses: Ilshidur/action-discord@05a28ef
+      uses: Ilshidur/action-discord@cf9b729d74ae8cd2de75a32a02594d4d4a1d4a77
       with:
         args: ':exclamation: eve-esi library needs to be updated'
