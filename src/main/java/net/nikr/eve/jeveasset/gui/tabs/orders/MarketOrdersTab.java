@@ -546,7 +546,6 @@ public class MarketOrdersTab extends JMainTabPrimary {
 		TaskDialog taskDialog = new TaskDialog(program, new PublicMarkerOrdersUpdateTask(input, output), false, jAutoUpdate.isSelected(), jAutoUpdate.isSelected(), StatusPanel.UpdateType.PUBLIC_MARKET_ORDERS, new TaskDialog.TasksCompletedAdvanced() {
 			@Override
 			public void tasksCompleted(TaskDialog taskDialog) {
-				program.getProfileData().setMarketOrdersUpdates(output.getUpdates());
 				Settings.lock("Outbid (ESI)");
 				Settings.get().setMarketOrdersOutbid(output.getOutbids());
 				Settings.unlock("Outbid (ESI)");
@@ -893,8 +892,6 @@ public class MarketOrdersTab extends JMainTabPrimary {
 				public void run() {
 					LOG.info("Starting marketlog update thread for " + file.getName());
 					long start = System.currentTimeMillis();
-					LOG.info("Setting profile data");
-					program.getProfileData().setMarketOrdersUpdates(output.getUpdates());
 					LOG.info("Setting setting");
 					Settings.lock("Outbids (files)");
 					Settings.get().setMarketOrdersOutbid(output.getOutbids());
