@@ -107,7 +107,6 @@ public class ProfileData {
 	private Map<Long, Double> marketOrdersBrokersFee; //OrderID : long
 	private final List<String> ownerNames = new ArrayList<>();
 	private final Map<Long, OwnerType> owners = new HashMap<>();
-	private final Map<Long, RawPublicMarketOrder> marketOrdersUpdates = new HashMap<>();
 
 	public ProfileData(ProfileManager profileManager) {
 		this.profileManager = profileManager;
@@ -225,10 +224,6 @@ public class ProfileData {
 		}
 	}
 
-	public synchronized void setMarketOrdersUpdates(Map<Long, RawPublicMarketOrder> updates) {
-		marketOrdersUpdates.putAll(updates);
-	}
-	
 	private Set<Integer> createPriceTypeIDs() {
 		Set<Integer> priceTypeIDs = new HashSet<>();
 		priceTypeIDs.add(40519); //Skill Extractor
@@ -367,7 +362,7 @@ public class ProfileData {
 					order.setOutbid(null);
 					added = true;
 				}
-				RawPublicMarketOrder response = marketOrdersUpdates.get(order.getOrderID());
+				RawPublicMarketOrder response = output.getUpdates().get(order.getOrderID());
 				if (response != null) {
 					order.setPrice(response.getPrice());
 					order.setVolumeRemain(response.getVolumeRemain());
@@ -573,14 +568,7 @@ public class ProfileData {
 			order.setBrokersFee(marketOrdersBrokersFee.get(order.getOrderID()));
 			order.setOutbid(Settings.get().getMarketOrdersOutbid().get(order.getOrderID()));
 			order.setPriceReprocessed(ApiIdConverter.getPriceReprocessed(order.getItem()));
-			RawPublicMarketOrder response = marketOrdersUpdates.get(order.getOrderID());
-			if (response != null) {
-				order.setPrice(response.getPrice());
-				order.setVolumeRemain(response.getVolumeRemain());
-				order.addChanged(response.getIssued());
-			}
 		}
-		marketOrdersUpdates.clear(); //update complete - we only want to do this once
 		//Update IndustryJobs dynamic values
 		for (MyIndustryJob industryJob : industryJobs) {
 			//Update Owners
