@@ -169,11 +169,10 @@ public class AssetAddedData {
 			while (rs.next()) {
 				map.put(rs.getLong("itemid"), new Date(rs.getLong("date")));
 			}
-			return map;
 		} catch (SQLException ex) {
 			LOG.error(ex.getMessage(), ex);
 		}
-		return null;
+		return map; //can not return null
 	}
 
 	private static void createTable() {
