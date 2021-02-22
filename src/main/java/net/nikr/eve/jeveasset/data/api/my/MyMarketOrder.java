@@ -393,11 +393,7 @@ public class MyMarketOrder extends RawMarketOrder implements Comparable<MyMarket
 		if (outbid == null) {
 			return false;
 		}
-		if (isBuyOrder()) {
-			return outbid.getPrice() > getPrice();
-		} else {
-			return outbid.getPrice() < getPrice();
-		}
+		return outbid.getCount() > 0;
 	}
 
 	public boolean haveOutbid() {

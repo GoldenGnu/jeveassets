@@ -103,20 +103,25 @@ public class OutbidProcesser {
 					}
 					RawPublicMarketOrder rawPublicMarketOrder = output.getUpdates().get(marketOrder.getOrderID());
 					final double price;
-					if (rawPublicMarketOrder != null) { //Updated price
+					final Date issued;
+					if (rawPublicMarketOrder != null) { //Updated price/issued
 						price = rawPublicMarketOrder.getPrice();
-					} else { //Old price (better than nothing)
+						issued = rawPublicMarketOrder.getIssued();
+					} else { //Old price/issued (better than nothing)
 						price = marketOrder.getPrice();
+						issued = marketOrder.getIssued();
 					}
 					if (marketOrder.isBuyOrder()) { //Buy (outbid is higher)
 						outbid.setPrice(Math.max(outbid.getPrice(), ordersResponse.getPrice()));
-						if (ordersResponse.getPrice() > price) {
+						if (ordersResponse.getPrice() > price || (ordersResponse.getPrice() == price && ordersResponse.getIssued().before(issued))) {
 							outbid.addCount(ordersResponse.getVolumeRemain());
 						}
 					} else { //Sell  (outbid is lower)
 						outbid.setPrice(Math.min(outbid.getPrice(), ordersResponse.getPrice()));
-						if (ordersResponse.getPrice() < price) {
+						if (ordersResponse.getPrice() < price || (ordersResponse.getPrice() == price && ordersResponse.getIssued().before(issued))) {
 							outbid.addCount(ordersResponse.getVolumeRemain());
+						} else if (ordersResponse.getPrice() == price) {
+							
 						}
 					}
 
