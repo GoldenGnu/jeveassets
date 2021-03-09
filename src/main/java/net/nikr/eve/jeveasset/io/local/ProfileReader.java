@@ -343,9 +343,9 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 
 		//Look for active ship in existing assets if ID is set
 		if (haveAttribute(node, "activeshipid")) {
-			Long activeShipId = getLong(node, "activeshipid");
+			long activeShipId = getLong(node, "activeshipid");
 			for (MyAsset asset : owner.getAssets()) {
-				if(activeShipId.equals(asset.getItemID())) {
+				if(Long.compare(activeShipId, asset.getItemID()) == 0) {
 					owner.setActiveShip(asset);
 					break;
 				}
