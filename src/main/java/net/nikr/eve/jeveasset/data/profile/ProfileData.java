@@ -44,10 +44,10 @@ import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
 import net.nikr.eve.jeveasset.data.api.raw.RawBlueprint;
 import net.nikr.eve.jeveasset.data.api.raw.RawJournalRefType;
 import net.nikr.eve.jeveasset.data.api.raw.RawPublicMarketOrder;
-import net.nikr.eve.jeveasset.data.sde.RouteFinder;
 import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
 import net.nikr.eve.jeveasset.data.sde.ReprocessedMaterial;
+import net.nikr.eve.jeveasset.data.sde.RouteFinder;
 import net.nikr.eve.jeveasset.data.sde.StaticData;
 import net.nikr.eve.jeveasset.data.settings.AssetAddedData;
 import net.nikr.eve.jeveasset.data.settings.ContractPriceManager;
@@ -201,6 +201,9 @@ public class ProfileData {
 	public void updateJumps(Collection<JumpType> jumpTypes, Class<?> clazz) {
 		for (JumpType jumpType : jumpTypes) {
 			jumpType.clearJumps(); //Clear old
+			if (jumpType.getLocation() == null) {
+				continue;
+			}
 			long systemID = jumpType.getLocation().getSystemID();
 			if (systemID <= 0) {
 				continue;

@@ -217,4 +217,6 @@ public enum IndustryJobTableFormat implements EnumTableColumn<MyIndustryJob> {
 	}
 	//XXX - TableFormat.getColumnValue(...) Workaround
 	@Override public abstract Object getColumnValue(final MyIndustryJob from);
+	//XXX - TableFormat.getColumnName() Workaround
+	@Override public abstract String getColumnName();
 }

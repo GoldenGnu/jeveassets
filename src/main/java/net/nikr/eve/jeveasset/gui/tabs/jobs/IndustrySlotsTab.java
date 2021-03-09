@@ -40,11 +40,13 @@ import javax.swing.JScrollPane;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.api.accounts.OwnerType;
 import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob;
+import net.nikr.eve.jeveasset.data.sde.MyLocation;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTabSecondary;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
+import net.nikr.eve.jeveasset.gui.shared.menu.JMenuJumps;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuData;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.TableMenu;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
@@ -180,6 +182,19 @@ public class IndustrySlotsTab extends JMainTabSecondary {
 	@Override
 	public void updateCache() {
 		filterControl.createCache();
+	}
+
+	public void addColumn(MyLocation location) {
+		tableFormat.addColumn(new JMenuJumps.Column<>(location.getSystem(), location.getSystemID()));
+		filterControl.setColumns(tableFormat.getOrderColumns());
+	}
+	public void removeColumn(MyLocation location) {
+		tableFormat.removeColumn(new JMenuJumps.Column<>(location.getSystem(), location.getSystemID()));
+		filterControl.setColumns(tableFormat.getOrderColumns());
+	}
+
+	public EventList<IndustrySlot> getEventList() {
+		return eventList;
 	}
 
 	private class IndustrySlotTableMenu implements TableMenu<IndustrySlot> {
