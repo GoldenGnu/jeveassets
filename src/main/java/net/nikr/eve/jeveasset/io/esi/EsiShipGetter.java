@@ -27,7 +27,7 @@ import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
 import net.nikr.eve.jeveasset.data.api.my.MyAsset;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
-import static net.nikr.eve.jeveasset.io.esi.AbstractEsiGetter.DATASOURCE;
+import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 import net.troja.eve.esi.ApiException;
 import net.troja.eve.esi.ApiResponse;
 import net.troja.eve.esi.model.CharacterLocationResponse;
@@ -62,6 +62,9 @@ public class EsiShipGetter extends AbstractEsiGetter {
 		});
 		//Create assets
 		MyAsset activeShip = EsiConverter.toAssetsShip(shipType, shipLocation, owner);
+		activeShip.setLocation(ApiIdConverter.getLocation(activeShip.getLocationID()));
+		owner.setActiveShip(activeShip);
+
 		//Search for active ship
 		List<MyAsset> assets;
 		synchronized (owner) {

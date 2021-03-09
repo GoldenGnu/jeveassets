@@ -21,6 +21,7 @@
 package net.nikr.eve.jeveasset.gui.tabs.jobs;
 
 import net.nikr.eve.jeveasset.data.api.accounts.OwnerType;
+import net.nikr.eve.jeveasset.data.api.my.MyAsset;
 import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob;
 import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob.IndustryJobState;
 import net.nikr.eve.jeveasset.data.api.raw.RawSkill;
@@ -40,11 +41,15 @@ public class IndustrySlot implements Comparable<IndustrySlot> {
 	private int manufacturingMax = 0;
 	private int reactionsMax = 0;
 	private int researchMax = 0;
+	private MyAsset currentShip = null;
 
 	public IndustrySlot(OwnerType ownerType) {
 		this.name = ownerType.getOwnerName();
 		this.total = false;
 		this.empty = ownerType.getSkills().isEmpty();
+		if(ownerType.isCharacter() && ownerType.getActiveShip() != null && ownerType.getActiveShip().getLocation() != null) {
+			this.currentShip = ownerType.getActiveShip();
+		}
 		count(ownerType);
 	}
 
@@ -161,6 +166,34 @@ public class IndustrySlot implements Comparable<IndustrySlot> {
 
 	public int getResearchMax() {
 		return researchMax;
+	}
+
+	public String getCurrentShip() {
+		if (currentShip != null) {
+			return currentShip.getName();
+		}
+		return null;
+	}
+
+	public String getCurrentStation() {
+		if (currentShip != null) {
+			return currentShip.getLocation().getStation();
+		}
+		return null;
+	}
+
+	public String getCurrentSystem() {
+		if (currentShip != null) {
+			return currentShip.getLocation().getSystem();
+		}
+		return null;
+	}
+
+	public String getCurrentRegion() {
+		if (currentShip != null) {
+			return currentShip.getLocation().getRegion();
+		}
+		return null;
 	}
 
 	public boolean isGrandTotal() {

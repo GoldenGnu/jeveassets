@@ -31,9 +31,9 @@ import net.nikr.eve.jeveasset.data.api.my.MyContractItem;
 import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob;
 import net.nikr.eve.jeveasset.data.api.my.MyJournal;
 import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder;
-import net.nikr.eve.jeveasset.data.api.raw.RawSkill;
 import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
 import net.nikr.eve.jeveasset.data.api.raw.RawBlueprint;
+import net.nikr.eve.jeveasset.data.api.raw.RawSkill;
 
 
 public interface OwnerType extends Comparable<OwnerType> {
@@ -57,6 +57,8 @@ public interface OwnerType extends Comparable<OwnerType> {
 	public void setInvalid(boolean invalid);
 	public void setResetAccountName();
 	public void setAccountName(final String accountName);
+	public MyAsset getActiveShip();
+	public void setActiveShip(MyAsset activeShip);
 	//Data
 	public List<MyAccountBalance> getAccountBalances();
 	public Set<MyMarketOrder> getMarketOrders();

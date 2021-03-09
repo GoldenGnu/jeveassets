@@ -34,9 +34,9 @@ import net.nikr.eve.jeveasset.data.api.my.MyContractItem;
 import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob;
 import net.nikr.eve.jeveasset.data.api.my.MyJournal;
 import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder;
-import net.nikr.eve.jeveasset.data.api.raw.RawSkill;
 import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
 import net.nikr.eve.jeveasset.data.api.raw.RawBlueprint;
+import net.nikr.eve.jeveasset.data.api.raw.RawSkill;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 
 
@@ -61,6 +61,7 @@ public abstract class AbstractOwner implements OwnerType, Comparable<OwnerType> 
 	private long ownerID;
 	private boolean showOwner = true;
 	private boolean invalid = false;
+	private MyAsset activeShip;
 
 	private Date assetLastUpdate = null;
 	private Date assetNextUpdate = Settings.getNow();
@@ -99,6 +100,7 @@ public abstract class AbstractOwner implements OwnerType, Comparable<OwnerType> 
 		this.ownerID = abstractOwner.ownerID;
 		this.showOwner = abstractOwner.showOwner;
 		this.invalid = abstractOwner.invalid;
+		this.activeShip = abstractOwner.activeShip;
 		this.assetLastUpdate = abstractOwner.assetLastUpdate;
 		this.assetNextUpdate = abstractOwner.assetNextUpdate;
 		this.balanceLastUpdate = abstractOwner.balanceLastUpdate;
@@ -308,6 +310,11 @@ public abstract class AbstractOwner implements OwnerType, Comparable<OwnerType> 
 	}
 
 	@Override
+	public MyAsset getActiveShip() {
+		return activeShip;
+	}
+
+	@Override
 	public void setCorporationName(String corporationName) {
 		this.corporationName = corporationName;
 	}
@@ -458,6 +465,10 @@ public abstract class AbstractOwner implements OwnerType, Comparable<OwnerType> 
 	@Override
 	public void setUnallocatedSkillPoints(Integer unallocatedSkillPoints) {
 		this.unallocatedSkillPoints = unallocatedSkillPoints;
+	}
+	@Override
+	public void setActiveShip(MyAsset activeShip) {
+		this.activeShip = activeShip;
 	}
 
 	@Override

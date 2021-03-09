@@ -706,6 +706,8 @@ public class ConverterTestUtil {
 			return options.getMarketOrderStateEsiCharacterHistory();
 		} else if (type.equals(Outbid.class)) {
 			return options.getMarketOrdersOutbid();
+		} else if (type.equals(MyAsset.class)) {
+			return options.getMyAsset();
 		} else {
 			fail("No test value for: " + type.getSimpleName());
 			return null;

@@ -52,6 +52,7 @@ public class Value implements Comparable<Value> {
 	private MyAsset bestShip = null;
 	private MyAsset bestShipFitted = null;
 	private MyAsset bestModule = null;
+	private MyAsset currentShip = null;
 
 	public Value(Date date) {
 		this("", date);
@@ -83,6 +84,9 @@ public class Value implements Comparable<Value> {
 		setBestShip(asset);
 		setBestShipFitted(asset);
 		setBestModule(asset);
+		if(!isGrandTotal()) {
+			setCurrentShip(asset);
+		}
 	}
 
 	public void removeAssets(AssetValue id) {
@@ -244,6 +248,35 @@ public class Value implements Comparable<Value> {
 		return getDynamicPrice(bestModule);
 	}
 
+	public String getCurrentShip() {
+		if (currentShip != null) {
+			return currentShip.getName();
+		}
+		return TabsValues.get().empty();
+	}
+
+	public String getCurrentStation() {
+		if (currentShip != null) {
+			return currentShip.getLocation().getStation();
+		}
+		return TabsValues.get().empty();
+	}
+
+	public String getCurrentSystem() {
+		if (currentShip != null) {
+			return currentShip.getLocation().getSystem();
+		}
+		return TabsValues.get().empty();
+	}
+
+	public String getCurrentRegion() {
+		if (currentShip != null) {
+			return currentShip.getLocation().getRegion();
+		}
+		return TabsValues.get().empty();
+	}
+
+
 	private String getName(MyAsset asset) {
 		if (asset != null) {
 			return asset.getName();
@@ -347,6 +380,14 @@ public class Value implements Comparable<Value> {
 			this.bestModule = bestModule;
 		} else if (bestModule.getDynamicPrice() > this.bestModule.getDynamicPrice()) { //Higher
 			this.bestModule = bestModule;
+		}
+	}
+
+	private void setCurrentShip(MyAsset asset) {
+		if (this.currentShip == null) {
+			if (asset.getOwner().getActiveShip() != null && asset.getOwner().getActiveShip().getLocation() != null) {
+				this.currentShip = asset.getOwner().getActiveShip();
+			}
 		}
 	}
 
