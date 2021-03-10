@@ -613,7 +613,11 @@ public class ProfileData {
 			if (transaction.isBuy()) { //Buy
 				setLastTransaction(transaction, transaction.getTypeID(), transaction.isBuy(), transaction.getPrice(), transactionBuyTax.get(transaction.getTypeID()));
 			} else { //Sell
-				setLastTransaction(transaction, transaction.getTypeID(), transaction.isBuy(), transaction.getPrice(), transaction.getTax());
+				double tax = 0;
+				if (transaction.getTax() != null) {
+					tax = transaction.getTax() / transaction.getItemCount();
+				} 
+				setLastTransaction(transaction, transaction.getTypeID(), transaction.isBuy(), transaction.getPrice(), tax);
 			}
 		}
 		//Update Journal dynamic values
@@ -1001,7 +1005,7 @@ public class ProfileData {
 				if (tax != null) {
 					transactionSellTax.put(transaction.getTransactionID(), tax);
 					if ((lastTaxDate == null || lastTaxDate.before(transaction.getDate()))) {
-						transactionBuyTax.put(transaction.getTypeID(), tax);
+						transactionBuyTax.put(transaction.getTypeID(), tax / transaction.getItemCount());
 						lastTaxDate = transaction.getDate();
 					}
 				}
@@ -1068,13 +1072,15 @@ public class ProfileData {
 					transactionPrice = marketPriceData.getLatest();
 			}
 			if (buy) { //Buy
-				item.setTransactionPrice(transactionPrice - tax);
-				item.setTransactionProfit(transactionPrice - (price + tax));
-				item.setTransactionProfitPercent(Percent.create(transactionPrice / (price + tax)));
-			} else { //Sell
+				transactionPrice = transactionPrice + tax;
 				item.setTransactionPrice(transactionPrice);
-				item.setTransactionProfit((price - tax) - (transactionPrice));
-				item.setTransactionProfitPercent(Percent.create((price - tax) / (transactionPrice)));
+				item.setTransactionProfit(transactionPrice - price);
+				item.setTransactionProfitPercent(Percent.create(transactionPrice / price));
+			} else { //Sell
+				price = price + tax;
+				item.setTransactionPrice(transactionPrice);
+				item.setTransactionProfit(price - (transactionPrice));
+				item.setTransactionProfitPercent(Percent.create(price / (transactionPrice)));
 			}
 		} else {
 			item.setTransactionPrice(0);
