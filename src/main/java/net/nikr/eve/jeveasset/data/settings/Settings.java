@@ -199,7 +199,7 @@ public class Settings {
 	//Faction Warfare Next Update
 	private Date factionWarfareNextUpdate = getNow();
 	//Market Orders Outbid
-	private final Map<Long, Outbid> marketOrdersOutbid = new HashMap<>();
+	private Map<Long, Outbid> marketOrdersOutbid = new HashMap<>();
 	//SellOrderRange
 	private MarketOrderRange outbidOrderRange = MarketOrderRange.REGION;
 	//Expire Warning Days
@@ -563,8 +563,8 @@ public class Settings {
 		return marketOrdersOutbid;
 	}
 
-	public void setMarketOrdersOutbid(Map<Long, Outbid> outbids) {
-		marketOrdersOutbid.putAll(outbids);
+	public void setMarketOrdersOutbid(Map<Long, Outbid> marketOrdersOutbid) {
+		this.marketOrdersOutbid = marketOrdersOutbid;
 	}
 
 	public int getMaximumPurchaseAge() {
