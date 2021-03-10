@@ -66,7 +66,6 @@ import net.nikr.eve.jeveasset.data.settings.types.LocationsType;
 import net.nikr.eve.jeveasset.gui.shared.CaseInsensitiveComparator;
 import net.nikr.eve.jeveasset.gui.shared.table.EventListManager;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.Percent;
-import net.nikr.eve.jeveasset.gui.tabs.orders.Outbid;
 import net.nikr.eve.jeveasset.gui.tabs.orders.OutbidProcesser.OutbidProcesserOutput;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
@@ -338,37 +337,18 @@ public class ProfileData {
 		}
 	}
 
-	public synchronized void updateMarketOrders(OutbidProcesserOutput output) {
-		List<MyMarketOrder> found = new ArrayList<>();
-		try {
-			marketOrdersEventList.getReadWriteLock().readLock().lock();
-			boolean added;
-			for (MyMarketOrder order : marketOrdersEventList) {
-				added = false;
-				Outbid outbid = output.getOutbids().get(order.getOrderID());
-				if (outbid != null) {
-					order.setOutbid(outbid);
-					added = true;
-				} else if (output.getRegionIDs().contains(order.getLocation().getRegionID()) || order.getLocation().isEmpty()) {
-					//Reset updated regions
-					order.setOutbid(null);
-					added = true;
-				}
+	public synchronized void updateMarketOrders(OutbidProcesserOutput output) { //synchronized as owners are modified by updateEventLists
+		for (OwnerType ownerType : owners.values()) {
+			for (MyMarketOrder order : ownerType.getMarketOrders()) { // getMarketOrders() is thread safe
+				order.setOutbid(output.getOutbids().get(order.getOrderID()));
 				RawPublicMarketOrder response = output.getUpdates().get(order.getOrderID());
 				if (response != null) {
 					order.setPrice(response.getPrice());
 					order.setVolumeRemain(response.getVolumeRemain());
 					order.addChanged(response.getIssued());
-					added = true;
-				}
-				if (added) {
-					found.add(order);
 				}
 			}
-		} finally {
-			marketOrdersEventList.getReadWriteLock().readLock().unlock();
 		}
-		updateList(marketOrdersEventList, found);
 		Program.ensureEDT(new Runnable() {
 			@Override
 			public void run() {
