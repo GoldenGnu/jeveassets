@@ -30,7 +30,6 @@ import net.nikr.eve.jeveasset.data.settings.Citadel.CitadelSource;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import net.nikr.eve.jeveasset.io.online.CitadelGetter;
-import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 import net.troja.eve.esi.ApiException;
 import net.troja.eve.esi.ApiResponse;
 import net.troja.eve.esi.model.CharacterAssetsNamesResponse;
@@ -65,7 +64,7 @@ public class EsiLocationsGetter extends AbstractEsiGetter {
 							Settings.get().getEveNames().put(itemID, eveName);
 							MyAsset asset = iDs.get(itemID);
 							if (asset.getItem().getCategory().equals("Structure")) {
-								CitadelGetter.set(new Citadel(asset.getItemID(), eveName, ApiIdConverter.getLocation(asset.getLocationID()), CitadelSource.ESI_LOCATIONS));
+								CitadelGetter.set(new Citadel(asset.getItemID(), eveName, asset.getLocationID(), false, true, CitadelSource.ESI_LOCATIONS));
 							}
 						} else { //Remove name (Empty)
 							Settings.get().getEveNames().remove(itemID);
@@ -92,7 +91,7 @@ public class EsiLocationsGetter extends AbstractEsiGetter {
 							Settings.get().getEveNames().put(itemID, eveName);
 							MyAsset asset = iDs.get(itemID);
 							if (asset.getItem().getCategory().equals("Structure")) {
-								CitadelGetter.set(new Citadel(asset.getItemID(), eveName, ApiIdConverter.getLocation(asset.getLocationID()), CitadelSource.ESI_LOCATIONS));
+								CitadelGetter.set(new Citadel(asset.getItemID(), eveName, asset.getLocationID(), false, true, CitadelSource.ESI_LOCATIONS));
 							}
 						} else { //Remove name (Empty)
 							Settings.get().getEveNames().remove(itemID);

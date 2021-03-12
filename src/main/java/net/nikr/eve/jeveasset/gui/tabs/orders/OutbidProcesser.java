@@ -206,7 +206,7 @@ public class OutbidProcesser {
 		}
 		Citadel citadel = input.getCitadels().get(locationID);
 		if (citadel != null) {
-			return citadel.systemId;
+			return citadel.getSystemID();
 		}
 		LOG.warn("Unknown market location");
 		return null;
