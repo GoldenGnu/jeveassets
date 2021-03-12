@@ -72,9 +72,17 @@ public final class LocationsReader extends AbstractXmlReader<Boolean> {
 		String station = getString(node, "s");
 		long systemID = getLong(node, "syi");
 		String system = getString(node, "sy");
+		long constellationID = 0;
+		if (haveAttribute(node, "ci")) {
+			constellationID = getLong(node, "ci");
+		}
+		String constellation = "";
+		if (haveAttribute(node, "ci")) {
+			constellation = getString(node, "c");
+		}
 		long regionID = getLong(node, "ri");
 		String region = getString(node, "r");
 		String security = getString(node, "se");
-		return MyLocation.create(stationID, station, systemID, system, regionID, region, security, false, false);
+		return MyLocation.create(stationID, station, systemID, system, constellationID, constellation, regionID, region, security, false, false);
 	}
 }
