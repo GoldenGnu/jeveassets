@@ -95,7 +95,7 @@ public class TableFormatTest extends TestUtil {
 			Tags tags = new Tags();
 			EsiOwner owner = ConverterTestUtil.getEsiOwner(options);
 			Item item = new Item(INTEGER_VALUE, STRING_VALUE, STRING_VALUE, STRING_VALUE, LONG_VALUE, FLOAT_VALUE, FLOAT_VALUE, FLOAT_VALUE, INTEGER_VALUE, STRING_VALUE, BOOLEAN_VALUE, INTEGER_VALUE, INTEGER_VALUE, INTEGER_VALUE, STRING_VALUE);
-			MyLocation location = new MyLocation(LONG_VALUE, STRING_VALUE, LONG_VALUE, STRING_VALUE, LONG_VALUE, STRING_VALUE, STRING_VALUE);
+			MyLocation location = new MyLocation(LONG_VALUE, STRING_VALUE, LONG_VALUE, STRING_VALUE, LONG_VALUE, STRING_VALUE, LONG_VALUE, STRING_VALUE, STRING_VALUE);
 		//Primary Tools
 			//Asset
 			MyAsset asset = ConverterTestUtil.getMyAsset(owner, setNull, setValues, options);

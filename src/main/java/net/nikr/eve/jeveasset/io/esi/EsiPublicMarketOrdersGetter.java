@@ -197,7 +197,7 @@ public class EsiPublicMarketOrdersGetter extends AbstractEsiGetter {
 		}
 		Citadel citadel = data.getCitadels().get(locationID);
 		if (citadel != null) {
-			return citadel.systemId;
+			return citadel.getSystemID();
 		}
 		UniverseApi structuresApi = data.getStructuresApi();
 		if (structuresApi != null) {

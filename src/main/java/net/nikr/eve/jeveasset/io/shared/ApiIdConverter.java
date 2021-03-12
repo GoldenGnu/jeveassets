@@ -338,7 +338,7 @@ public final class ApiIdConverter {
 				return location;
 			}
 		}
-		location = CitadelGetter.get(locationID).getLocation();
+		location = CitadelGetter.get(locationID).toLocation();
 		if (location != null) {
 			return location;
 		}
@@ -346,7 +346,7 @@ public final class ApiIdConverter {
 	}
 
 	public static void addLocation(final Citadel citadel, long locationID) {
-		MyLocation location = citadel.getLocation();
+		MyLocation location = citadel.toLocation();
 		if (location != null) {
 			StaticData.get().addLocation(location);
 		}
@@ -357,8 +357,7 @@ public final class ApiIdConverter {
 	}
 
 	public static Citadel getCitadel(final StructureResponse response, final long locationID) {
-		MyLocation system = getLocation(response.getSolarSystemId());
-		return new Citadel(locationID, response.getName(), response.getSolarSystemId(), system.getSystem(), system.getRegionID(), system.getRegion(), false, true, CitadelSource.ESI_STRUCTURES);
+		return new Citadel(locationID, response.getName(), response.getSolarSystemId(), false, true, CitadelSource.ESI_STRUCTURES);
 	}
 
 	public static Citadel getCitadel(final CorporationBookmarksResponse response) {
@@ -381,20 +380,18 @@ public final class ApiIdConverter {
 
 	private static Citadel getCitadel(Integer systemID, Long locationID, String label, CitadelSource source) {
 		MyLocation system = getLocation(systemID);
-		return new Citadel(locationID, General.get().bookmarkLocation(system.getSystem(), label.trim(), String.valueOf(locationID)), systemID, system.getSystem(), system.getRegionID(), system.getRegion(), false, true, source);
+		return new Citadel(locationID, General.get().bookmarkLocation(system.getSystem(), label.trim(), String.valueOf(locationID)), systemID, false, true, source);
 	}
 
 	public static Citadel getCitadel(PlanetResponse planet) {
-		MyLocation system = getLocation(planet.getSystemId());
-		return new Citadel(planet.getPlanetId(), planet.getName(), planet.getSystemId(), system.getSystem(), system.getRegionID(), system.getRegion(), false, false, CitadelSource.ESI_PLANET);
+		return new Citadel(planet.getPlanetId(), planet.getName(), planet.getSystemId(), false, false, CitadelSource.ESI_PLANET);
 	}
 
 	public static Citadel getCitadel(Planet planet) {
 		if (planet == null) {
 			return null;
 		}
-		MyLocation system = getLocation(planet.getSystemId());
-		return new Citadel(planet.getPlanetId(), planet.getName(), planet.getSystemId(), system.getSystem(), system.getRegionID(), system.getRegion(), false, false, CitadelSource.FUZZWORK_PLANET);
+		return new Citadel(planet.getPlanetId(), planet.getName(), planet.getSystemId(), false, false, CitadelSource.FUZZWORK_PLANET);
 	}
 
 }

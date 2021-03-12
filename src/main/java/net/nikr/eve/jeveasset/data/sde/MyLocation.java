@@ -39,6 +39,8 @@ public class MyLocation implements Comparable<MyLocation> {
 	private String station;
 	private long systemID; //LocationID : long
 	private String system;
+	private long constellationID; //LocationID : long
+	private String constellation;
 	private long regionID; //LocationID : long
 	private String region;
 	private String security;
@@ -63,8 +65,8 @@ public class MyLocation implements Comparable<MyLocation> {
 		return cached;
 	}
 
-	public static MyLocation create(long stationID, String station, long systemID, String system, long regionID, String region, String security, boolean citadel, boolean userLocation) {
-		final MyLocation newLocation = new MyLocation(stationID, station, systemID, system, regionID, region, security, citadel, userLocation);
+	public static MyLocation create(long stationID, String station, long systemID, String system, long constellationID, String constellation, long regionID, String region, String security, boolean citadel, boolean userLocation) {
+		final MyLocation newLocation = new MyLocation(stationID, station, systemID, system, constellationID, constellation, regionID, region, security, citadel, userLocation);
 		MyLocation cached = CACHE.get(newLocation.getLocationID());
 		if (cached == null) { //New
 			cached = newLocation;
@@ -80,18 +82,21 @@ public class MyLocation implements Comparable<MyLocation> {
 			this.location = General.get().assetSafety();
 			this.station = General.get().assetSafety();
 			this.system = General.get().assetSafety();
+			this.constellation = General.get().assetSafety();
 			this.region = General.get().assetSafety();
 			this.empty = false;
 		} else {
 			this.location = General.get().emptyLocation(String.valueOf(locationID));
 			this.station = General.get().emptyLocation(String.valueOf(locationID));
 			this.system = General.get().emptyLocation(String.valueOf(locationID));
+			this.constellation = General.get().emptyLocation(String.valueOf(locationID));
 			this.region = General.get().emptyLocation(String.valueOf(locationID));
 			this.empty = true;
 		}
 		this.locationID = locationID;
 		this.stationID = 0;
 		this.systemID = 0;
+		this.constellationID = 0;
 		this.regionID = 0;
 		this.security = "0.0";
 		this.securityObject = Security.create(security);
@@ -99,15 +104,17 @@ public class MyLocation implements Comparable<MyLocation> {
 		this.userLocation = false;
 	}
 
-	public MyLocation(long stationID, String station, long systemID, String system, long regionID, String region, String security) {
-		this(stationID, station, systemID, system, regionID, region, security, false, false);
+	public MyLocation(long stationID, String station, long systemID, String system, long constellationID, String constellation, long regionID, String region, String security) {
+		this(stationID, station, systemID, system, constellationID, constellation, regionID, region, security, false, false);
 	}
 
-	private MyLocation(long stationID, String station, long systemID, String system, long regionID, String region, String security, boolean citadel, boolean userLocation) {
+	private MyLocation(long stationID, String station, long systemID, String system, long constellationID, String constellation, long regionID, String region, String security, boolean citadel, boolean userLocation) {
 		this.stationID = stationID;
 		this.station = station;
 		this.systemID = systemID;
 		this.system = system.intern();
+		this.constellationID = constellationID;
+		this.constellation = constellation.intern();
 		this.regionID = regionID;
 		this.region = region.intern();
 		this.security = security.intern();
@@ -138,6 +145,8 @@ public class MyLocation implements Comparable<MyLocation> {
 		this.station = newLocation.station;
 		this.systemID = newLocation.systemID;
 		this.system = newLocation.system.intern();
+		this.constellationID = newLocation.constellationID;
+		this.constellation = newLocation.constellation.intern();
 		this.regionID = newLocation.regionID;
 		this.region = newLocation.region.intern();
 		this.security = newLocation.security.intern();
@@ -172,6 +181,14 @@ public class MyLocation implements Comparable<MyLocation> {
 		return systemID;
 	}
 
+	public long getConstellationID() {
+		return constellationID;
+	}
+
+	public String getConstellation() {
+		return constellation;
+	}
+
 	public String getRegion() {
 		return region;
 	}
@@ -190,37 +207,45 @@ public class MyLocation implements Comparable<MyLocation> {
 
 	/**
 	 * Return true if this location is a Station
-	 * Will return false if this location is a Planet, System, Region or Unknown/Empty locations
+	 * Will return false if this location is a Planet, System, Constellation, Region or Unknown/Empty locations
 	 * @return 
 	 */
 	public final boolean isStation() {
-		return getStationID() != 0 && getSystemID() != 0 && getRegionID() != 0 && (locationID < 40000000 || locationID > 50000000);
+		return getStationID() != 0 && getSystemID() != 0 && !isConstellation() && getRegionID() != 0 && (locationID < 40000000 || locationID > 50000000);
 	}
 
 	/**
 	 * Return true if this location is a Planet
-	 * Will return false if this location is a Station, System, Region or Unknown/Empty locations
+	 * Will return false if this location is a Station, System, Constellation, Region or Unknown/Empty locations
 	 * @return 
 	 */
 	public final boolean isPlanet() {
-		return getStationID() != 0 && getSystemID() != 0 && getRegionID() != 0 && locationID >= 40000000 && locationID <= 50000000;
+		return getStationID() != 0 && getSystemID() != 0 && !isConstellation() && getRegionID() != 0 && locationID >= 40000000 && locationID <= 50000000;
 	}
 
 	/**
 	 * Return true if this location is a System
-	 * Will return false if this location is a Station, Planet, Region or Unknown/Empty locations
+	 * Will return false if this location is a Station, Planet, Constellation, Region or Unknown/Empty locations
 	 * @return 
 	 */
 	public final boolean isSystem() {
-		return getStationID() == 0 && getSystemID() != 0 && getRegionID() != 0;
+		return getStationID() == 0 && getSystemID() != 0 && !isConstellation() && getRegionID() != 0;
+	}
+	/**
+	 * Return true if this location is a Constellation
+	 * Will return false if this location is a Station, Planet, System, Region or Unknown/Empty locations
+	 * @return 
+	 */
+	public final boolean isConstellation() {
+		return locationID >= 20000000 && locationID <= 23000000 && getRegionID() != 0;
 	}
 	/**
 	 * Return true if this location is a Region
-	 * Will return false if this location is a Station, Planet, System or Unknown/Empty locations
+	 * Will return false if this location is a Station, Planet, System, Constellation or Unknown/Empty locations
 	 * @return 
 	 */
 	public final boolean isRegion() {
-		return getStationID() == 0 && getSystemID() == 0 && getRegionID() != 0;
+		return getStationID() == 0 && getSystemID() == 0 && !isConstellation() && getRegionID() != 0;
 	}
 
 	public String getFactionWarfareSystemOwner() {

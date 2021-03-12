@@ -67,14 +67,11 @@ public final class CitadelWriter extends AbstractXmlWriter {
 			Element node = xmldoc.createElementNS(null, "citadel");
 			Citadel citadel = entry.getValue();
 			setAttribute(node, "stationid", entry.getKey());
-			setAttribute(node, "systemid", citadel.systemId);
-			setAttribute(node, "name", citadel.name);
-			setAttribute(node, "systemname", citadel.systemName);
-			setAttribute(node, "regionid", citadel.regionId);
-			setAttribute(node, "regionname", citadel.regionName);
-			setAttribute(node, "userlocation", citadel.userLocation);
-			setAttribute(node, "citadel", citadel.citadel);
-			setAttribute(node, "source", citadel.source);
+			setAttribute(node, "systemid", citadel.getSystemID());
+			setAttribute(node, "name", citadel.getLocation());
+			setAttribute(node, "userlocation", citadel.isUserLocation());
+			setAttribute(node, "citadel", citadel.isCitadel());
+			setAttribute(node, "source", citadel.getSource());
 			parentNode.appendChild(node);
 		}
 	}

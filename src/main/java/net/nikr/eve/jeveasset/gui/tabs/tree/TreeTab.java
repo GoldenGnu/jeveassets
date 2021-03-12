@@ -315,7 +315,7 @@ public class TreeTab extends JMainTabSecondary implements TagUpdate {
 		flags.put(new Flag("Market Orders", Images.LOC_MARKET.getIcon()), marketOrders);
 		Map<String, TreeAsset> categoryCache = new HashMap<>();
 		Map<String, TreeAsset> locationCache = new HashMap<>();
-		MyLocation emptyLocation = new MyLocation(0, "", 0, "", 0, "", "");
+		MyLocation emptyLocation = new MyLocation(0, "", 0, "", 0, "", 0, "", "");
 		for (MyAsset asset : program.getAssetList()) {
 		//LOCATION
 			List<TreeAsset> locationTree = new ArrayList<>();
