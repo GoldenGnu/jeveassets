@@ -68,6 +68,8 @@ public abstract class TabsOrders extends Bundle {
 	public abstract String columnOwner();
 	public abstract String columnIssuedBy();
 	public abstract String columnLocation();
+	public abstract String columnSystem();
+	public abstract String columnConstellation();
 	public abstract String columnRegion();
 	public abstract String columnTransactionPrice();
 	public abstract String columnTransactionPriceToolTip();
