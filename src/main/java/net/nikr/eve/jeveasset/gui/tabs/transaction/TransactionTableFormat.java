@@ -111,6 +111,26 @@ public enum TransactionTableFormat implements EnumTableColumn<MyTransaction> {
 			return from.getLocation();
 		}
 	},
+	SYSTEM(String.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsTransaction.get().columnSystem();
+		}
+		@Override
+		public Object getColumnValue(final MyTransaction from) {
+			return from.getLocation().getSystem();
+		}
+	},
+	CONSTELLATION(String.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsTransaction.get().columnConstellation();
+		}
+		@Override
+		public Object getColumnValue(final MyTransaction from) {
+			return from.getLocation().getConstellation();
+		}
+	},
 	REGION(String.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
