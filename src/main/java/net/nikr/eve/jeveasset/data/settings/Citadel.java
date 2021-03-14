@@ -54,7 +54,6 @@ public class Citadel {
 	private long locationID;
 	private String location;
 	private long systemID;
-	private MyLocation system;
 	private boolean userLocation;
 	private boolean citadel;
 	private CitadelSource source;
@@ -72,7 +71,7 @@ public class Citadel {
 	 * 
 	 * @param locationID
 	 * @param location
-	 * @param system
+	 * @param systemID
 	 * @param userLocation
 	 * @param citadel
 	 * @param source 
@@ -98,11 +97,8 @@ public class Citadel {
 	}
 
 	private void updateLocation() {
-		system = StaticData.get().getLocation(systemID);
-		if (system == null) {
-			system = MyLocation.create(locationID);
-		}
-		if (!isEmpty()) { //Location is valid -> return locations
+		MyLocation system = StaticData.get().getLocation(systemID);
+		if (!isEmpty() && system != null) { //Location is valid -> return locations
 			if (userLocation) {
 				myLocation =  MyLocation.create(locationID, system.getSystem() + " - " + location, systemID, system.getSystem(), system.getConstellationID(), system.getConstellation(), system.getRegionID(), system.getRegion(), system.getSecurity(), citadel, userLocation);
 			} else {
@@ -126,7 +122,7 @@ public class Citadel {
 	}
 
 	public boolean isEmpty() {
-		return systemID != 0 && !system.isEmpty();
+		return systemID == 0;
 	}
 
 	public boolean isUserLocation() {
