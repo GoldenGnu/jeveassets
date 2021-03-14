@@ -77,7 +77,7 @@ public final class LocationsReader extends AbstractXmlReader<Boolean> {
 			constellationID = getLong(node, "ci");
 		}
 		String constellation = "";
-		if (haveAttribute(node, "ci")) {
+		if (haveAttribute(node, "c")) {
 			constellation = getString(node, "c");
 		}
 		long regionID = getLong(node, "ri");
