@@ -293,6 +293,26 @@ public enum MarketTableFormat implements EnumTableColumn<MyMarketOrder> {
 			return from.getLocation().getLocation();
 		}
 	},
+	SYSTEM(String.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsOrders.get().columnSystem();
+		}
+		@Override
+		public Object getColumnValue(final MyMarketOrder from) {
+			return from.getLocation().getSystem();
+		}
+	},
+	CONSTELLATION(String.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsOrders.get().columnConstellation();
+		}
+		@Override
+		public Object getColumnValue(final MyMarketOrder from) {
+			return from.getLocation().getConstellation();
+		}
+	},
 	REGION(String.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
