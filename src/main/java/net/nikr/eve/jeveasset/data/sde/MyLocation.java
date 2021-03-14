@@ -241,7 +241,7 @@ public class MyLocation implements Comparable<MyLocation> {
 	 * @return 
 	 */
 	public final boolean isConstellation() {
-		return locationID >= 20000000 && locationID <= 23000000 && getRegionID() != 0;
+		return getStationID() == 0 && getSystemID() == 0 && getConstellationID() != 0 && getRegionID() != 0;
 	}
 	/**
 	 * Return true if this location is a Region
