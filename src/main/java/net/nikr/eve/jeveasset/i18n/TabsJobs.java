@@ -52,6 +52,8 @@ public abstract class TabsJobs extends Bundle {
 	public abstract String columnOwner();
 	public abstract String columnInstaller();
 	public abstract String columnLocation();
+	public abstract String columnSystem();
+	public abstract String columnConstellation();
 	public abstract String columnRegion();
 	public abstract String columnStartDate();
 	public abstract String columnEndDate();
