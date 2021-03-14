@@ -80,13 +80,13 @@ public class EnumTableFormatAdaptor<T extends Enum<T> & EnumTableColumn<Q>, Q> i
 		}
 	}
 
-	private final List<ColumnValueChangeListener> listeners = new ArrayList<ColumnValueChangeListener>();
+	private final List<ColumnValueChangeListener> listeners = new ArrayList<>();
 
 	private final Class<T> enumClass;
 	private List<EnumTableColumn<Q>> shownColumns;
 	private Map<String, EnumTableColumn<Q>> orderColumnsName;
 	private List<EnumTableColumn<Q>> orderColumns;
-	private List<EnumTableColumn<Q>> tempColumns = new ArrayList<EnumTableColumn<Q>>();
+	private List<EnumTableColumn<Q>> tempColumns = new ArrayList<>();
 	private final ColumnComparator columnComparator;
 
 	private EditColumnsDialog<T, Q> editColumns;
@@ -102,15 +102,15 @@ public class EnumTableFormatAdaptor<T extends Enum<T> & EnumTableColumn<Q>, Q> i
 	}
 
 	private void reset() {
-		shownColumns = new ArrayList<EnumTableColumn<Q>>();
-		orderColumnsName = new HashMap<String, EnumTableColumn<Q>>();
+		shownColumns = new ArrayList<>();
+		orderColumnsName = new HashMap<>();
 		for (T t : enumClass.getEnumConstants()) {
 			if (t.isShowDefault()) {
 				shownColumns.add(t);
 			}
 			orderColumnsName.put(t.name(), t);
 		}
-		orderColumns = new ArrayList<EnumTableColumn<Q>>(Arrays.asList(enumClass.getEnumConstants()));
+		orderColumns = new ArrayList<>(Arrays.asList(enumClass.getEnumConstants()));
 		addTempColumns();
 	}
 
@@ -165,10 +165,10 @@ public class EnumTableFormatAdaptor<T extends Enum<T> & EnumTableColumn<Q>, Q> i
 		if (columns == null) {
 			return;
 		}
-		orderColumns = new ArrayList<EnumTableColumn<Q>>();
-		shownColumns = new ArrayList<EnumTableColumn<Q>>();
-		orderColumnsName = new HashMap<String, EnumTableColumn<Q>>();
-		List<T> originalColumns = new ArrayList<T>(Arrays.asList(enumClass.getEnumConstants()));
+		orderColumns = new ArrayList<>();
+		shownColumns = new ArrayList<>();
+		orderColumnsName = new HashMap<>();
+		List<T> originalColumns = new ArrayList<>(Arrays.asList(enumClass.getEnumConstants()));
 		for (SimpleColumn column : columns) {
 			try {
 				T t = Enum.valueOf(enumClass, column.getEnumName());
@@ -186,8 +186,8 @@ public class EnumTableFormatAdaptor<T extends Enum<T> & EnumTableColumn<Q>, Q> i
 			if (!orderColumns.contains(t)) {
 				LOG.info("Adding column: " + t.getColumnName());
 				int index = originalColumns.indexOf(t);
-				if (index >= orderColumns.size()) {
-					index = orderColumns.size() - 1;
+				if (index > orderColumns.size()) {
+					index = orderColumns.size();
 				}
 				orderColumns.add(index, t);
 				orderColumnsName.put(t.name(), t);
@@ -201,7 +201,7 @@ public class EnumTableFormatAdaptor<T extends Enum<T> & EnumTableColumn<Q>, Q> i
 	}
 
 	public List<SimpleColumn> getColumns() {
-		List<SimpleColumn> columns = new ArrayList<SimpleColumn>(orderColumns.size());
+		List<SimpleColumn> columns = new ArrayList<>(orderColumns.size());
 		for (EnumTableColumn<Q> t : orderColumns) {
 			if (tempColumns.contains(t)) { //Ignore temp columns
 				continue;
@@ -261,7 +261,7 @@ public class EnumTableFormatAdaptor<T extends Enum<T> & EnumTableColumn<Q>, Q> i
 
 		if (editable) {
 			if (editColumns == null) { //Create dialog (only once)
-				editColumns = new EditColumnsDialog<T, Q>(program, this);
+				editColumns = new EditColumnsDialog<>(program, this);
 			}
 			if (viewSave == null) { //Create dialog (only once)
 				viewSave = new ViewSave(program);
@@ -288,7 +288,7 @@ public class EnumTableFormatAdaptor<T extends Enum<T> & EnumTableColumn<Q>, Q> i
 				public void actionPerformed(final ActionEvent e) {
 					//Get views...
 					Map<String, View> views = Settings.get().getTableViews(name);
-					viewSave.updateData(new ArrayList<View>(views.values())); //Update views
+					viewSave.updateData(new ArrayList<>(views.values())); //Update views
 					View view = viewSave.show();
 					if (view != null ) { //Validate
 						view.setColumns(getColumns()); //Set data
