@@ -127,6 +127,10 @@ public class MyLocation implements Comparable<MyLocation> {
 			empty = false;
 			this.locationID = systemID;
 			this.location = system.intern();
+		} else if (isConstellation()) {
+			empty = false;
+			this.locationID = constellationID;
+			this.location = constellation.intern();
 		} else if (isRegion()) {
 			empty = false;
 			this.locationID = regionID;
