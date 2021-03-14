@@ -106,6 +106,26 @@ public enum AssetTableFormat implements EnumTableColumn<MyAsset> {
 			return from.getLocation().getSecurityObject();
 		}
 	},
+	SYSTEM(String.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsAssets.get().columnSystem();
+		}
+		@Override
+		public Object getColumnValue(final MyAsset from) {
+			return from.getLocation().getSystem();
+		}
+	},
+	CONSTELLATION(String.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsAssets.get().columnConstellation();
+		}
+		@Override
+		public Object getColumnValue(final MyAsset from) {
+			return from.getLocation().getConstellation();
+		}
+	},
 	REGION(String.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
