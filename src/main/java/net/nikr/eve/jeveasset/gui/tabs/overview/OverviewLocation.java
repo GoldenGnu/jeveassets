@@ -26,7 +26,7 @@ import net.nikr.eve.jeveasset.data.api.my.MyAsset;
 
 public class OverviewLocation {
 	public enum LocationType {
-		TYPE_PLANET, TYPE_STATION, TYPE_SYSTEM, TYPE_REGION;
+		TYPE_PLANET, TYPE_STATION, TYPE_SYSTEM, TYPE_CONSTELLATION, TYPE_REGION;
 	}
 
 	private String name;
@@ -61,16 +61,26 @@ public class OverviewLocation {
 		return type.equals(LocationType.TYPE_SYSTEM);
 	}
 
+	public boolean isConstellation() {
+		return type.equals(LocationType.TYPE_CONSTELLATION);
+	}
+
 	public boolean isRegion() {
 		return type.equals(LocationType.TYPE_REGION);
 	}
 
 	public boolean equalsLocation(final MyAsset asset) {
-		return (name.equals(asset.getLocation().getLocation()) || name.equals(asset.getLocation().getSystem()) || name.equals(asset.getLocation().getRegion()));
+		return (name.equals(asset.getLocation().getLocation()) 
+				|| name.equals(asset.getLocation().getSystem())
+				|| name.equals(asset.getLocation().getConstellation())
+				|| name.equals(asset.getLocation().getRegion()));
 	}
 
 	public boolean equalsLocation(final Overview overview) {
-		return (name.equals(overview.getName()) || name.equals(overview.getLocation().getSystem()) || name.equals(overview.getLocation().getRegion()));
+		return (name.equals(overview.getName())
+				|| name.equals(overview.getLocation().getSystem())
+				|| name.equals(overview.getLocation().getConstellation())
+				|| name.equals(overview.getLocation().getRegion()));
 	}
 
 	@Override
