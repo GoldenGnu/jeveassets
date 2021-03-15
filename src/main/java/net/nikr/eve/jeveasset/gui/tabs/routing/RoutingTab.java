@@ -840,6 +840,7 @@ public class RoutingTab extends JMainTabSecondary {
 				for (MyAsset asset : program.getAssetList()) {
 					if ((location.getName().equals(asset.getLocation().getLocation()))
 						|| (location.getType() == LocationType.TYPE_SYSTEM && location.getName().equals(asset.getLocation().getSystem()))
+						|| (location.getType() == LocationType.TYPE_CONSTELLATION && location.getName().equals(asset.getLocation().getConstellation()))
 						|| (location.getType() == LocationType.TYPE_REGION && location.getName().equals(asset.getLocation().getRegion()))
 						) {
 						assets.add(asset);
