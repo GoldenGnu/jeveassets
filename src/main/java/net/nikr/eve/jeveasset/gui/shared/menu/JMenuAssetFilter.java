@@ -36,7 +36,6 @@ import net.nikr.eve.jeveasset.gui.tabs.assets.AssetTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewGroup;
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewLocation;
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewTab;
-import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewTab.OverviewAction;
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewTab.OverviewTableMenu;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 import net.nikr.eve.jeveasset.i18n.TabsOverview;
@@ -49,6 +48,7 @@ public class JMenuAssetFilter<T> extends JAutoMenu<T> {
 		PLANET_FILTER,
 		SYSTEM_FILTER,
 		REGION_FILTER,
+		CONSTELLATION_FILTER,
 		OVERVIEW_GROUP_FILTER,
 		ITEM_TYPE_FILTER
 	}
@@ -57,6 +57,7 @@ public class JMenuAssetFilter<T> extends JAutoMenu<T> {
 	private final JMenuItem jPlanet;
 	private final JMenuItem jStation;
 	private final JMenuItem jSystem;
+	private final JMenuItem jConstellation;
 	private final JMenuItem jRegion;
 	private final JMenuItem jLocations;
 
@@ -93,6 +94,12 @@ public class JMenuAssetFilter<T> extends JAutoMenu<T> {
 		jSystem.addActionListener(listener);
 		add(jSystem);
 
+		jConstellation = new JMenuItem(GuiShared.get().constellation());
+		jConstellation.setIcon(Images.LOC_CONSTELLATION.getIcon());
+		jConstellation.setActionCommand(MenuAssetFilterAction.CONSTELLATION_FILTER.name());
+		jConstellation.addActionListener(listener);
+		add(jConstellation);
+
 		jRegion = new JMenuItem(GuiShared.get().region());
 		jRegion.setIcon(Images.LOC_REGION.getIcon());
 		jRegion.setActionCommand(MenuAssetFilterAction.REGION_FILTER.name());
@@ -111,6 +118,7 @@ public class JMenuAssetFilter<T> extends JAutoMenu<T> {
 		jStation.setEnabled(!menuData.getStationAndCitadelNames().isEmpty());
 		jPlanet.setEnabled(!menuData.getPlanetNames().isEmpty());
 		jSystem.setEnabled(!menuData.getSystemNames().isEmpty());
+		jConstellation.setEnabled(!menuData.getConstellationNames().isEmpty());
 		jRegion.setEnabled(!menuData.getRegionNames().isEmpty());
 	}
 
@@ -141,7 +149,13 @@ public class JMenuAssetFilter<T> extends JAutoMenu<T> {
 				program.getMainWindow().addTab(program.getAssetsTab());
 			} else if (MenuAssetFilterAction.SYSTEM_FILTER.name().equals(e.getActionCommand())) {
 				for (String system : menuData.getSystemNames()) {
-					Filter filter = new Filter(LogicType.AND, AssetTableFormat.LOCATION, CompareType.CONTAINS, system);
+					Filter filter = new Filter(LogicType.AND, AssetTableFormat.SYSTEM, CompareType.EQUALS, system);
+					program.getAssetsTab().addFilter(filter);
+				}
+				program.getMainWindow().addTab(program.getAssetsTab());
+			} else if (MenuAssetFilterAction.CONSTELLATION_FILTER.name().equals(e.getActionCommand())) {
+				for (String constellation : menuData.getConstellationNames()) {
+					Filter filter = new Filter(LogicType.AND, AssetTableFormat.CONSTELLATION, CompareType.EQUALS, constellation);
 					program.getAssetsTab().addFilter(filter);
 				}
 				program.getMainWindow().addTab(program.getAssetsTab());
@@ -167,7 +181,11 @@ public class JMenuAssetFilter<T> extends JAutoMenu<T> {
 						filters.add(filter);
 					}
 					if (location.isSystem()) {
-						Filter filter = new Filter(LogicType.OR, AssetTableFormat.LOCATION, CompareType.CONTAINS, location.getName());
+						Filter filter = new Filter(LogicType.OR, AssetTableFormat.SYSTEM, CompareType.EQUALS, location.getName());
+						filters.add(filter);
+					}
+					if (location.isConstellation()) {
+						Filter filter = new Filter(LogicType.OR, AssetTableFormat.CONSTELLATION, CompareType.EQUALS, location.getName());
 						filters.add(filter);
 					}
 					if (location.isRegion()) {
