@@ -47,6 +47,7 @@ public class JMenuTransactionFilter<T> extends JAutoMenu<T> {
 		STATION_FILTER,
 		PLANET_FILTER,
 		SYSTEM_FILTER,
+		CONSTELLATION_FILTER,
 		REGION_FILTER,
 		OVERVIEW_GROUP_FILTER,
 		ITEM_TYPE_FILTER
@@ -56,6 +57,7 @@ public class JMenuTransactionFilter<T> extends JAutoMenu<T> {
 	private final JMenuItem jPlanet;
 	private final JMenuItem jStation;
 	private final JMenuItem jSystem;
+	private final JMenuItem jConstellation;
 	private final JMenuItem jRegion;
 	private final JMenuItem jLocations;
 
@@ -91,6 +93,12 @@ public class JMenuTransactionFilter<T> extends JAutoMenu<T> {
 		jSystem.setActionCommand(MenuTransactionFilterAction.SYSTEM_FILTER.name());
 		jSystem.addActionListener(listener);
 		add(jSystem);
+
+		jConstellation = new JMenuItem(GuiShared.get().constellation());
+		jConstellation.setIcon(Images.LOC_CONSTELLATION.getIcon());
+		jConstellation.setActionCommand(MenuTransactionFilterAction.CONSTELLATION_FILTER.name());
+		jConstellation.addActionListener(listener);
+		add(jConstellation);
 
 		jRegion = new JMenuItem(GuiShared.get().region());
 		jRegion.setIcon(Images.LOC_REGION.getIcon());
@@ -140,7 +148,13 @@ public class JMenuTransactionFilter<T> extends JAutoMenu<T> {
 				program.getMainWindow().addTab(program.getTransactionsTab());
 			} else if (MenuTransactionFilterAction.SYSTEM_FILTER.name().equals(e.getActionCommand())) {
 				for (String system : menuData.getSystemNames()) {
-					Filter filter = new Filter(LogicType.AND, TransactionTableFormat.LOCATION, CompareType.CONTAINS, system);
+					Filter filter = new Filter(LogicType.AND, TransactionTableFormat.SYSTEM, CompareType.EQUALS, system);
+					program.getTransactionsTab().addFilter(filter);
+				}
+				program.getMainWindow().addTab(program.getTransactionsTab());
+			} else if (MenuTransactionFilterAction.CONSTELLATION_FILTER.name().equals(e.getActionCommand())) {
+				for (String constellation : menuData.getConstellationNames()) {
+					Filter filter = new Filter(LogicType.AND, TransactionTableFormat.CONSTELLATION, CompareType.EQUALS, constellation);
 					program.getTransactionsTab().addFilter(filter);
 				}
 				program.getMainWindow().addTab(program.getTransactionsTab());
@@ -166,7 +180,11 @@ public class JMenuTransactionFilter<T> extends JAutoMenu<T> {
 						filters.add(filter);
 					}
 					if (location.isSystem()) {
-						Filter filter = new Filter(LogicType.OR, TransactionTableFormat.LOCATION, CompareType.CONTAINS, location.getName());
+						Filter filter = new Filter(LogicType.OR, TransactionTableFormat.SYSTEM, CompareType.EQUALS, location.getName());
+						filters.add(filter);
+					}
+					if (location.isConstellation()) {
+						Filter filter = new Filter(LogicType.OR, TransactionTableFormat.CONSTELLATION, CompareType.EQUALS, location.getName());
 						filters.add(filter);
 					}
 					if (location.isRegion()) {
