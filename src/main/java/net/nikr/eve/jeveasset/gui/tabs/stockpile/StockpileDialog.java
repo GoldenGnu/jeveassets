@@ -105,6 +105,7 @@ public class StockpileDialog extends JDialogCentered {
 		ADD_STATION,
 		ADD_SYSTEM,
 		ADD_REGION,
+		ADD_CONSTELLATION,
 		ADD_UNIVERSE,
 		ADD_OWNER,
 		ADD_FLAG,
@@ -132,6 +133,7 @@ public class StockpileDialog extends JDialogCentered {
 	private final EventList<MyLocation> planets;
 	private final EventList<MyLocation> stations;
 	private final EventList<MyLocation> systems;
+	private final EventList<MyLocation> constellations;
 	private final EventList<MyLocation> regions;
 	private final Set<String> myLocations;
 	private final List<OwnerType> owners;
@@ -148,6 +150,7 @@ public class StockpileDialog extends JDialogCentered {
 		planets = EventListManager.create();
 		stations = EventListManager.create();
 		systems = EventListManager.create();
+		constellations = EventListManager.create();
 		regions = EventListManager.create();
 		//Owners - not static
 		owners = new ArrayList<>();
@@ -195,6 +198,12 @@ public class StockpileDialog extends JDialogCentered {
 		jSystem.setActionCommand(StockpileDialogAction.ADD_SYSTEM.name());
 		jSystem.addActionListener(listener);
 		jToolBar.addButton(jSystem);
+
+		JButton jConstellation = new JButton(TabsStockpile.get().constellation(), Images.LOC_CONSTELLATION.getIcon());
+		jConstellation.setHorizontalAlignment(JButton.LEFT);
+		jConstellation.setActionCommand(StockpileDialogAction.ADD_CONSTELLATION.name());
+		jConstellation.addActionListener(listener);
+		jToolBar.addButton(jConstellation);
 
 		JButton jRegion = new JButton(TabsStockpile.get().region(), Images.LOC_REGION.getIcon());
 		jRegion.setHorizontalAlignment(JButton.LEFT);
@@ -416,6 +425,7 @@ public class StockpileDialog extends JDialogCentered {
 		List<MyLocation> planetList = new ArrayList<>();
 		List<MyLocation> stationList = new ArrayList<>();
 		List<MyLocation> systemList = new ArrayList<>();
+		List<MyLocation> constellationList = new ArrayList<>();
 		List<MyLocation> regionList = new ArrayList<>();
 		for (MyLocation location : StaticData.get().getLocations()) {
 			if (location.isPlanet()) {
@@ -424,6 +434,8 @@ public class StockpileDialog extends JDialogCentered {
 				stationList.add(location);
 			} else if (location.isSystem()) {
 				systemList.add(location);
+			} else if (location.isConstellation()) {
+				constellationList.add(location);
 			} else if (location.isRegion()) {
 				regionList.add(location);
 			}
@@ -431,6 +443,7 @@ public class StockpileDialog extends JDialogCentered {
 		Collections.sort(planetList);
 		Collections.sort(stationList);
 		Collections.sort(systemList);
+		Collections.sort(constellationList);
 		Collections.sort(regionList);
 		try {
 			planets.getReadWriteLock().writeLock().lock();
@@ -452,6 +465,13 @@ public class StockpileDialog extends JDialogCentered {
 			systems.addAll(systemList);
 		} finally {
 			systems.getReadWriteLock().writeLock().unlock();
+		}
+		try {
+			constellations.getReadWriteLock().writeLock().lock();
+			constellations.clear();
+			constellations.addAll(constellationList);
+		} finally {
+			constellations.getReadWriteLock().writeLock().unlock();
 		}
 		try {
 			regions.getReadWriteLock().writeLock().lock();
@@ -482,11 +502,13 @@ public class StockpileDialog extends JDialogCentered {
 			}
 			myLocations.add(asset.getLocation().getLocation());
 			myLocations.add(asset.getLocation().getSystem());
+			myLocations.add(asset.getLocation().getConstellation());
 			myLocations.add(asset.getLocation().getRegion());
 		}
 		for (MyIndustryJob industryJob : program.getIndustryJobsList()) {
 			myLocations.add(industryJob.getLocation().getLocation());
 			myLocations.add(industryJob.getLocation().getSystem());
+			myLocations.add(industryJob.getLocation().getConstellation());
 			myLocations.add(industryJob.getLocation().getRegion());
 		}
 		for (MyMarketOrder marketOrder : program.getMarketOrdersList()) {
@@ -495,6 +517,7 @@ public class StockpileDialog extends JDialogCentered {
 			}
 			myLocations.add(marketOrder.getLocation().getLocation());
 			myLocations.add(marketOrder.getLocation().getSystem());
+			myLocations.add(marketOrder.getLocation().getConstellation());
 			myLocations.add(marketOrder.getLocation().getRegion());
 		}
 		//Containers
@@ -558,6 +581,9 @@ public class StockpileDialog extends JDialogCentered {
 			} else if (StockpileDialogAction.ADD_SYSTEM.name().equals(e.getActionCommand())) {
 				locationPanels.add(new LocationPanel(LocationType.SYSTEM));
 				updatePanels();
+			} else if (StockpileDialogAction.ADD_CONSTELLATION.name().equals(e.getActionCommand())) {
+				locationPanels.add(new LocationPanel(LocationType.CONSTELLATION));
+				updatePanels();
 			} else if (StockpileDialogAction.ADD_REGION.name().equals(e.getActionCommand())) {
 				locationPanels.add(new LocationPanel(LocationType.REGION));
 				updatePanels();
@@ -605,6 +631,7 @@ public class StockpileDialog extends JDialogCentered {
 		PLANET,
 		STATION,
 		SYSTEM,
+		CONSTELLATION,
 		REGION,
 		UNIVERSE,
 	}
@@ -894,6 +921,7 @@ public class StockpileDialog extends JDialogCentered {
 		private final JRadioButtonMenuItem jPlanet;
 		private final JRadioButtonMenuItem jStation;
 		private final JRadioButtonMenuItem jSystem;
+		private final JRadioButtonMenuItem jConstellation;
 		private final JRadioButtonMenuItem jRegion;
 		private final JRadioButtonMenuItem jUniverse;
 		
@@ -909,6 +937,8 @@ public class StockpileDialog extends JDialogCentered {
 				setLocationType(LocationType.STATION);
 			} else if (stockpileFilter.getLocation().isSystem()) {
 				setLocationType(LocationType.SYSTEM);
+			} else if (stockpileFilter.getLocation().isConstellation()) {
+				setLocationType(LocationType.CONSTELLATION);
 			} else if (stockpileFilter.getLocation().isRegion()) {
 				setLocationType(LocationType.REGION);
 			} else {
@@ -1164,6 +1194,12 @@ public class StockpileDialog extends JDialogCentered {
 			jSystem.addActionListener(listener);
 			jOptions.add(jSystem);
 
+			jConstellation = new JRadioButtonMenuItem(TabsStockpile.get().constellation(), Images.LOC_CONSTELLATION.getIcon());
+			jConstellation.setHorizontalAlignment(JButton.LEFT);
+			jConstellation.setActionCommand(StockpileDialogAction.CHANGE_LOCATION_TYPE.name());
+			jConstellation.addActionListener(listener);
+			jOptions.add(jConstellation);
+
 			jRegion = new JRadioButtonMenuItem(TabsStockpile.get().region(), Images.LOC_REGION.getIcon());
 			jRegion.setHorizontalAlignment(JButton.LEFT);
 			jRegion.setActionCommand(StockpileDialogAction.CHANGE_LOCATION_TYPE.name());
@@ -1180,6 +1216,7 @@ public class StockpileDialog extends JDialogCentered {
 			buttonGroup.add(jPlanet);
 			buttonGroup.add(jStation);
 			buttonGroup.add(jSystem);
+			buttonGroup.add(jConstellation);
 			buttonGroup.add(jRegion);
 			buttonGroup.add(jUniverse);
 
@@ -1303,6 +1340,18 @@ public class StockpileDialog extends JDialogCentered {
 					systems.getReadWriteLock().readLock().unlock();
 				}
 				jSystem.setSelected(true);
+			} else if (locationType == LocationType.CONSTELLATION) {
+				jLocationType.setIcon(Images.LOC_CONSTELLATION.getIcon());
+				jLocationType.setToolTipText(TabsStockpile.get().constellation());
+				jPanel.setBorder(BorderFactory.createTitledBorder(TabsStockpile.get().constellation()));
+				try {
+					constellations.getReadWriteLock().readLock().lock();
+					empty = constellations.isEmpty();
+					filterList = new FilterList<>(constellations);
+				} finally {
+					constellations.getReadWriteLock().readLock().unlock();
+				}
+				jConstellation.setSelected(true);
 			} else if (locationType == LocationType.REGION) {
 				jLocationType.setIcon(Images.LOC_REGION.getIcon());
 				jLocationType.setToolTipText(TabsStockpile.get().region());
@@ -1586,6 +1635,8 @@ public class StockpileDialog extends JDialogCentered {
 				setLocationType(LocationType.STATION);
 			} else if (jSystem.isSelected()) {
 				setLocationType(LocationType.SYSTEM);
+			} else if (jConstellation.isSelected()) {
+				setLocationType(LocationType.CONSTELLATION);
 			} else if (jRegion.isSelected()) {
 				setLocationType(LocationType.REGION);
 			} else {
