@@ -517,7 +517,7 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 			jzKillboardLocations.setEnabled(enabled);
 			jzKillboard.add(jzKillboardLocations);
 
-			jLocations.setEnabled(enabled || overviewTab.isGroup());
+			jLocations.setEnabled(enabled || !overviewTab.isGroup());
 		} else {
 			jDotlan.remove(jDotlanLocations);
 			jzKillboard.remove(jzKillboardLocations);
