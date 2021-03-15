@@ -89,6 +89,7 @@ public class OverviewTab extends JMainTabSecondary {
 		STATIONS,
 		PLANETS,
 		SYSTEMS,
+		CONSTELLATIONS,
 		REGIONS,
 		GROUPS,
 	}
@@ -97,6 +98,7 @@ public class OverviewTab extends JMainTabSecondary {
 	private final JToggleButton jStations;
 	private final JToggleButton jPlanets;
 	private final JToggleButton jSystems;
+	private final JToggleButton jConstellations;
 	private final JToggleButton jRegions;
 	private final JToggleButton jGroups;
 	private final JDropDownButton jLoadFilter;
@@ -153,6 +155,12 @@ public class OverviewTab extends JMainTabSecondary {
 		jSystems.addActionListener(listener);
 		jToolBarLeft.addButton(jSystems, 1, SwingConstants.CENTER);
 
+		jConstellations = new JToggleButton(Images.LOC_CONSTELLATION.getIcon());
+		jConstellations.setToolTipText(TabsOverview.get().constellations());
+		jConstellations.setActionCommand(OverviewAction.UPDATE_LIST.name());
+		jConstellations.addActionListener(listener);
+		jToolBarLeft.addButton(jConstellations, 1, SwingConstants.CENTER);
+
 		jRegions = new JToggleButton(Images.LOC_REGION.getIcon());
 		jRegions.setToolTipText(TabsOverview.get().regions());
 		jRegions.setActionCommand(OverviewAction.UPDATE_LIST.name());
@@ -169,6 +177,7 @@ public class OverviewTab extends JMainTabSecondary {
 		group.add(jStations);
 		group.add(jPlanets);
 		group.add(jSystems);
+		group.add(jConstellations);
 		group.add(jRegions);
 		group.add(jGroups);
 
@@ -340,6 +349,9 @@ public class OverviewTab extends JMainTabSecondary {
 		if (jSystems.isSelected()) {
 			return View.SYSTEMS;
 		}
+		if (jConstellations.isSelected()) {
+			return View.CONSTELLATIONS;
+		}
 		if (jRegions.isSelected()) {
 			return View.REGIONS;
 		}
@@ -409,6 +421,9 @@ public class OverviewTab extends JMainTabSecondary {
 					if (view == View.REGIONS) {
 						locationName = asset.getLocation().getRegion();
 						location = ApiIdConverter.getLocation(asset.getLocation().getRegionID());
+					} else if (view == View.CONSTELLATIONS) {
+						locationName = asset.getLocation().getConstellation();
+						location = ApiIdConverter.getLocation(asset.getLocation().getConstellationID());
 					} else if (view == View.SYSTEMS) {
 						locationName = asset.getLocation().getSystem();
 						location = ApiIdConverter.getLocation(asset.getLocation().getSystemID());
@@ -495,25 +510,36 @@ public class OverviewTab extends JMainTabSecondary {
 		if (view == View.REGIONS) {
 			tableFormat.hideColumn(OverviewTableFormat.SYSTEM);
 			tableFormat.hideColumn(OverviewTableFormat.REGION);
+			tableFormat.hideColumn(OverviewTableFormat.CONSTELLATION);
+			tableFormat.hideColumn(OverviewTableFormat.SECURITY);
+			tableModel.fireTableStructureChanged();
+		} else if (view == View.CONSTELLATIONS) {
+			tableFormat.hideColumn(OverviewTableFormat.SYSTEM);
+			tableFormat.hideColumn(OverviewTableFormat.CONSTELLATION);
+			tableFormat.showColumn(OverviewTableFormat.REGION);
 			tableFormat.hideColumn(OverviewTableFormat.SECURITY);
 			tableModel.fireTableStructureChanged();
 		} else if (view == View.SYSTEMS) {
 			tableFormat.hideColumn(OverviewTableFormat.SYSTEM);
+			tableFormat.showColumn(OverviewTableFormat.CONSTELLATION);
 			tableFormat.showColumn(OverviewTableFormat.REGION);
 			tableFormat.showColumn(OverviewTableFormat.SECURITY);
 			tableModel.fireTableStructureChanged();
 		} else if (view == View.PLANETS) {
 			tableFormat.showColumn(OverviewTableFormat.SYSTEM);
+			tableFormat.showColumn(OverviewTableFormat.CONSTELLATION);
 			tableFormat.showColumn(OverviewTableFormat.REGION);
 			tableFormat.showColumn(OverviewTableFormat.SECURITY);
 			tableModel.fireTableStructureChanged();
 		} else if (view == View.STATIONS) {
 			tableFormat.showColumn(OverviewTableFormat.SYSTEM);
+			tableFormat.showColumn(OverviewTableFormat.CONSTELLATION);
 			tableFormat.showColumn(OverviewTableFormat.REGION);
 			tableFormat.showColumn(OverviewTableFormat.SECURITY);
 			tableModel.fireTableStructureChanged();
 		} else if (view == View.GROUPS) {
 			tableFormat.hideColumn(OverviewTableFormat.SYSTEM);
+			tableFormat.hideColumn(OverviewTableFormat.CONSTELLATION);
 			tableFormat.hideColumn(OverviewTableFormat.REGION);
 			tableFormat.hideColumn(OverviewTableFormat.SECURITY);
 			tableModel.fireTableStructureChanged();
@@ -547,6 +573,8 @@ public class OverviewTab extends JMainTabSecondary {
 				overviewLocation = new OverviewLocation(overview.getName(), OverviewLocation.LocationType.TYPE_PLANET);
 			} else if (getSelectedView() == View.SYSTEMS) {
 				overviewLocation = new OverviewLocation(overview.getName(), OverviewLocation.LocationType.TYPE_SYSTEM);
+			} else if (getSelectedView() == View.CONSTELLATIONS) {
+				overviewLocation = new OverviewLocation(overview.getName(), OverviewLocation.LocationType.TYPE_CONSTELLATION);
 			} else if (getSelectedView() == View.REGIONS) {
 				overviewLocation = new OverviewLocation(overview.getName(), OverviewLocation.LocationType.TYPE_REGION);
 			}

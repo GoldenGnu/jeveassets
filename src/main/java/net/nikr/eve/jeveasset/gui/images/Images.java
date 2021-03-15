@@ -115,6 +115,7 @@ public enum Images {
 	LOC_PLANET ("loc_planet.png"),
 	LOC_STATION ("loc_station.png"),
 	LOC_SYSTEM ("loc_system.png"),
+	LOC_CONSTELLATION ("loc_constellation.png"),
 	LOC_REGION ("loc_region.png"),
 	LOC_CONTAINER ("loc_container.png"),
 	LOC_CONTAINER_WHITE ("loc_container_white.png"),

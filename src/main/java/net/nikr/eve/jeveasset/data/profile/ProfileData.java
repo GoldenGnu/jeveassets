@@ -66,7 +66,6 @@ import net.nikr.eve.jeveasset.data.settings.types.LocationsType;
 import net.nikr.eve.jeveasset.gui.shared.CaseInsensitiveComparator;
 import net.nikr.eve.jeveasset.gui.shared.table.EventListManager;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.Percent;
-import net.nikr.eve.jeveasset.gui.tabs.orders.Outbid;
 import net.nikr.eve.jeveasset.gui.tabs.orders.OutbidProcesser.OutbidProcesserOutput;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
@@ -341,37 +340,18 @@ public class ProfileData {
 		}
 	}
 
-	public synchronized void updateMarketOrders(OutbidProcesserOutput output) {
-		List<MyMarketOrder> found = new ArrayList<>();
-		try {
-			marketOrdersEventList.getReadWriteLock().readLock().lock();
-			boolean added;
-			for (MyMarketOrder order : marketOrdersEventList) {
-				added = false;
-				Outbid outbid = output.getOutbids().get(order.getOrderID());
-				if (outbid != null) {
-					order.setOutbid(outbid);
-					added = true;
-				} else if (output.getRegionIDs().contains(order.getLocation().getRegionID()) || order.getLocation().isEmpty()) {
-					//Reset updated regions
-					order.setOutbid(null);
-					added = true;
-				}
+	public synchronized void updateMarketOrders(OutbidProcesserOutput output) { //synchronized as owners are modified by updateEventLists
+		for (OwnerType ownerType : owners.values()) {
+			for (MyMarketOrder order : ownerType.getMarketOrders()) { // getMarketOrders() is thread safe
+				order.setOutbid(output.getOutbids().get(order.getOrderID()));
 				RawPublicMarketOrder response = output.getUpdates().get(order.getOrderID());
 				if (response != null) {
 					order.setPrice(response.getPrice());
 					order.setVolumeRemain(response.getVolumeRemain());
 					order.addChanged(response.getIssued());
-					added = true;
-				}
-				if (added) {
-					found.add(order);
 				}
 			}
-		} finally {
-			marketOrdersEventList.getReadWriteLock().readLock().unlock();
 		}
-		updateList(marketOrdersEventList, found);
 		Program.ensureEDT(new Runnable() {
 			@Override
 			public void run() {
@@ -601,7 +581,11 @@ public class ProfileData {
 			if (transaction.isBuy()) { //Buy
 				setLastTransaction(transaction, transaction.getTypeID(), transaction.isBuy(), transaction.getPrice(), transactionBuyTax.get(transaction.getTypeID()));
 			} else { //Sell
-				setLastTransaction(transaction, transaction.getTypeID(), transaction.isBuy(), transaction.getPrice(), transaction.getTax());
+				double tax = 0;
+				if (transaction.getTax() != null) {
+					tax = transaction.getTax() / transaction.getItemCount();
+				} 
+				setLastTransaction(transaction, transaction.getTypeID(), transaction.isBuy(), transaction.getPrice(), tax);
 			}
 		}
 		//Update Journal dynamic values
@@ -989,7 +973,7 @@ public class ProfileData {
 				if (tax != null) {
 					transactionSellTax.put(transaction.getTransactionID(), tax);
 					if ((lastTaxDate == null || lastTaxDate.before(transaction.getDate()))) {
-						transactionBuyTax.put(transaction.getTypeID(), tax);
+						transactionBuyTax.put(transaction.getTypeID(), tax / transaction.getItemCount());
 						lastTaxDate = transaction.getDate();
 					}
 				}
@@ -1056,13 +1040,15 @@ public class ProfileData {
 					transactionPrice = marketPriceData.getLatest();
 			}
 			if (buy) { //Buy
-				item.setTransactionPrice(transactionPrice - tax);
-				item.setTransactionProfit(transactionPrice - (price + tax));
-				item.setTransactionProfitPercent(Percent.create(transactionPrice / (price + tax)));
-			} else { //Sell
+				transactionPrice = transactionPrice + tax;
 				item.setTransactionPrice(transactionPrice);
-				item.setTransactionProfit((price - tax) - (transactionPrice));
-				item.setTransactionProfitPercent(Percent.create((price - tax) / (transactionPrice)));
+				item.setTransactionProfit(transactionPrice - price);
+				item.setTransactionProfitPercent(Percent.create(transactionPrice / price));
+			} else { //Sell
+				price = price + tax;
+				item.setTransactionPrice(transactionPrice);
+				item.setTransactionProfit(price - (transactionPrice));
+				item.setTransactionProfitPercent(Percent.create(price / (transactionPrice)));
 			}
 		} else {
 			item.setTransactionPrice(0);

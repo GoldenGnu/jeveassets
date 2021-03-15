@@ -21,7 +21,7 @@
 package net.nikr.eve.jeveasset.data.settings;
 
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
-import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
+import net.nikr.eve.jeveasset.data.sde.StaticData;
 
 public class Citadel {
 
@@ -51,78 +51,45 @@ public class Citadel {
 
 	}
 
-	public long id;
-	public String name;
-	public long systemId;
-	public String systemName;
-	public long regionId;
-	public String regionName;
-	public boolean userLocation;
-	public boolean citadel;
-	public CitadelSource source;
-	public MyLocation myLocation;
-
-	/**
-	 * Used by hammerti.me.uk API
-	 */
-	public Citadel() {
-		this(0, "", 0, "", 0, "", false, true, CitadelSource.HAMMERTIME);
-	}
+	private long locationID;
+	private String location;
+	private long systemID;
+	private boolean userLocation;
+	private boolean citadel;
+	private CitadelSource source;
+	private MyLocation myLocation;
 
 	/**
 	 * Empty location
 	 * @param id locationID
 	 */
 	public Citadel(long id) {
-		this(id, "", 0, "", 0, "", false, true, CitadelSource.EMPTY);
+		this(id, "", 0, false, true, CitadelSource.EMPTY);
 	}
 
 	/**
-	 * ZKillStructure location
+	 * 
 	 * @param locationID
-	 * @param zKillStructure
-	 * @param system
-	 */
-	public Citadel(long locationID, ZKillStructure zKillStructure, MyLocation system) {
-		this(locationID, zKillStructure.getName(), system.getSystemID(), system.getSystem(), system.getRegionID(), system.getRegion(), false, true, CitadelSource.ZKILL);
-	}
-
-	/**
-	 * Asset Locations
-	 * @param locationID
-	 * @param name
-	 * @param location 
+	 * @param location
+	 * @param systemID
+	 * @param userLocation
+	 * @param citadel
 	 * @param source 
 	 */
-	public Citadel(long locationID, String name, MyLocation location, CitadelSource source) {
-		this(locationID, name, location.getSystemID(), location.getSystem(), location.getRegionID(), location.getRegion(), false, true, source);
-	}
-
-	public Citadel(long id, String name, long systemId, String systemName, long regionId, String regionName, boolean userLocation, boolean citadel, CitadelSource source) {
-		this.id = id;
-		this.name = name;
-		this.systemId = systemId;
-		this.systemName = systemName.intern();
-		this.regionId = regionId;
-		this.regionName = regionName.intern();
+	public Citadel(long locationID, String location, long systemID, boolean userLocation, boolean citadel, CitadelSource source) {
+		this.locationID = locationID;
+		this.location = location;
+		this.systemID = systemID;
 		this.userLocation = userLocation;
 		this.citadel = citadel;
 		this.source = source;
 		updateLocation();
 	}
 
-	public void setID(long id) {
-		this.id = id;
-		updateLocation();
-	}
-
 	public void update(Citadel citadel) {
-		this.id = citadel.id;
-		this.name = citadel.name;
-		this.systemId = citadel.systemId;
-		this.systemName = citadel.systemName.intern();
-		this.regionId = citadel.regionId;
-		this.regionName = citadel.regionName.intern();
+		this.locationID = citadel.locationID;
+		this.location = citadel.location;
+		this.systemID = citadel.systemID;
 		this.userLocation = citadel.userLocation;
 		this.citadel = citadel.citadel;
 		this.source = citadel.source;
@@ -130,26 +97,47 @@ public class Citadel {
 	}
 
 	private void updateLocation() {
-		if (!isEmpty()) { //Location is valid -> return locations
+		MyLocation system = StaticData.get().getLocation(systemID);
+		if (!isEmpty() && system != null) { //Location is valid -> return locations
 			if (userLocation) {
-				this.myLocation =  MyLocation.create(id, systemName + " - " + name, systemId, systemName, regionId, regionName, ApiIdConverter.getLocation(systemId).getSecurity(), citadel, userLocation);
+				myLocation =  MyLocation.create(locationID, system.getSystem() + " - " + location, systemID, system.getSystem(), system.getConstellationID(), system.getConstellation(), system.getRegionID(), system.getRegion(), system.getSecurity(), citadel, userLocation);
 			} else {
-				this.myLocation = MyLocation.create(id, name, systemId, systemName, regionId, regionName, ApiIdConverter.getLocation(systemId).getSecurity(), citadel, userLocation);
+				myLocation = MyLocation.create(locationID, location, systemID, system.getSystem(), system.getConstellationID(), system.getConstellation(), system.getRegionID(), system.getRegion(), system.getSecurity(), citadel, userLocation);
 			}
 		} else { //Location not valid -> return fallback location
-			this.myLocation = null;
+			myLocation = null;
 		}
 	}
 
-	public String getName() {
-		return name;
+	public long getLocationID() {
+		return locationID;
+	}
+
+	public String getLocation() {
+		return location;
+	}
+
+	public long getSystemID() {
+		return systemID;
 	}
 
 	public boolean isEmpty() {
-		return systemId == 0 || regionId == 0;
+		return systemID == 0;
 	}
 
-	public MyLocation getLocation() {
+	public boolean isUserLocation() {
+		return userLocation;
+	}
+
+	public boolean isCitadel() {
+		return citadel;
+	}
+
+	public CitadelSource getSource() {
+		return source;
+	}
+
+	public MyLocation toLocation() {
 		return myLocation;
 	}
 

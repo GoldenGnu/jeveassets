@@ -51,6 +51,7 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 		FUZZWORK_ITEMS,
 		ZKILLBOARD_ITEM,
 		ZKILLBOARD_SYSTEM,
+		ZKILLBOARD_CONSTELLATION,
 		ZKILLBOARD_REGION,
 		ZKILLBOARD_OVERVIEW_GROUP,
 		EVE_REF,
@@ -62,6 +63,7 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 		EVEMAPS_DOTLAN_STATION,
 		EVEMAPS_DOTLAN_PLANET,
 		EVEMAPS_DOTLAN_SYSTEM,
+		EVEMAPS_DOTLAN_CONSTELLATION,
 		EVEMAPS_DOTLAN_REGION,
 		EVEMAPS_DOTLAN_OVERVIEW_GROUP,
 		EVE_INFO,
@@ -102,6 +104,16 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 				return urls;
 			}
 		},
+		EVEMAPS_DOTLAN_CONSTELLATION() {
+			@Override
+			public Set<String> getLinks(MenuData<?> menuData) {
+				Set<String> urls = new HashSet<>();
+				for (MyLocation constellation : menuData.getConstellationLocations()) {
+					urls.add("https://evemaps.dotlan.net/map/" + constellation.getRegion().replace(" ", "_") + "/" + constellation.getConstellation());
+				}
+				return urls;
+			}
+		},
 		EVEMAPS_DOTLAN_REGION() {
 			@Override
 			public Set<String> getLinks(MenuData<?> menuData) {
@@ -118,6 +130,16 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 				Set<String> urls = new HashSet<>();
 				for (MyLocation location : menuData.getSystemLocations()) {
 					urls.add("https://zkillboard.com/system/" +location.getLocationID() + "/");
+				}
+				return urls;
+			}
+		},
+		ZKILLBOARD_CONSTELLATION() {
+			@Override
+			public Set<String> getLinks(MenuData<?> menuData) {
+				Set<String> urls = new HashSet<>();
+				for (MyLocation location : menuData.getConstellationLocations()) {
+					urls.add("https://zkillboard.com/constellation/" +location.getLocationID() + "/");
 				}
 				return urls;
 			}
@@ -286,10 +308,12 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 	private final JMenuItem jDotlanStation;
 	private final JMenuItem jDotlanPlanet;
 	private final JMenuItem jDotlanSystem;
+	private final JMenuItem jDotlanConstellation;
 	private final JMenuItem jDotlanRegion;
 	private final JMenuItem jDotlanLocations;
 	private final JMenu jzKillboard;
 	private final JMenuItem jzKillboardSystem;
+	private final JMenuItem jzKillboardConstellation;
 	private final JMenuItem jzKillboardRegion;
 	private final JMenuItem jzKillboardLocations;
 	private final JMenu jMarket;
@@ -331,6 +355,12 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 		jzKillboardSystem.addActionListener(listener);
 		jzKillboard.add(jzKillboardSystem);
 
+		jzKillboardConstellation = new JMenuItem(GuiShared.get().constellation());
+		jzKillboardConstellation.setIcon(Images.LOC_CONSTELLATION.getIcon());
+		jzKillboardConstellation.setActionCommand(MenuLookupAction.ZKILLBOARD_CONSTELLATION.name());
+		jzKillboardConstellation.addActionListener(listener);
+		jzKillboard.add(jzKillboardConstellation);
+
 		jzKillboardRegion = new JMenuItem(GuiShared.get().region());
 		jzKillboardRegion.setIcon(Images.LOC_REGION.getIcon());
 		jzKillboardRegion.setActionCommand(MenuLookupAction.ZKILLBOARD_REGION.name());
@@ -363,6 +393,12 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 		jDotlanSystem.setActionCommand(MenuLookupAction.EVEMAPS_DOTLAN_SYSTEM.name());
 		jDotlanSystem.addActionListener(listener);
 		jDotlan.add(jDotlanSystem);
+
+		jDotlanConstellation = new JMenuItem(GuiShared.get().constellation());
+		jDotlanConstellation.setIcon(Images.LOC_CONSTELLATION.getIcon());
+		jDotlanConstellation.setActionCommand(MenuLookupAction.EVEMAPS_DOTLAN_CONSTELLATION.name());
+		jDotlanConstellation.addActionListener(listener);
+		jDotlan.add(jDotlanConstellation);
 
 		jDotlanRegion = new JMenuItem(GuiShared.get().region());
 		jDotlanRegion.setIcon(Images.LOC_REGION.getIcon());
@@ -483,8 +519,10 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 		jDotlanStation.setEnabled(!menuData.getStationNames().isEmpty());
 		jDotlanPlanet.setEnabled(!menuData.getPlanetNames().isEmpty());
 		jDotlanSystem.setEnabled(!menuData.getSystemNames().isEmpty());
+		jDotlanConstellation.setEnabled(!menuData.getConstellationLocations().isEmpty());
 		jDotlanRegion.setEnabled(!menuData.getRegionNames().isEmpty());
 		jzKillboardSystem.setEnabled(!menuData.getSystemLocations().isEmpty());
+		jzKillboardConstellation.setEnabled(!menuData.getConstellationLocations().isEmpty());
 		jzKillboardRegion.setEnabled(!menuData.getRegionLocations().isEmpty());
 	//Market
 		jMarket.setEnabled(!menuData.getMarketTypeIDs().isEmpty());
@@ -517,7 +555,7 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 			jzKillboardLocations.setEnabled(enabled);
 			jzKillboard.add(jzKillboardLocations);
 
-			jLocations.setEnabled(enabled || overviewTab.isGroup());
+			jLocations.setEnabled(enabled || !overviewTab.isGroup());
 		} else {
 			jDotlan.remove(jDotlanLocations);
 			jzKillboard.remove(jzKillboardLocations);
@@ -532,6 +570,8 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 				DesktopUtil.browse(LookupLinks.ZKILLBOARD_SYSTEM.getLinks(menuData), program);
 			} else if (MenuLookupAction.ZKILLBOARD_REGION.name().equals(e.getActionCommand())) {
 				DesktopUtil.browse(LookupLinks.ZKILLBOARD_REGION.getLinks(menuData), program);
+			} else if (MenuLookupAction.ZKILLBOARD_CONSTELLATION.name().equals(e.getActionCommand())) {
+				DesktopUtil.browse(LookupLinks.ZKILLBOARD_CONSTELLATION.getLinks(menuData), program);
 			} else if (MenuLookupAction.ZKILLBOARD_OVERVIEW_GROUP.name().equals(e.getActionCommand())) {
 				OverviewGroup overviewGroup = program.getOverviewTab().getSelectGroup();
 				if (overviewGroup == null) {
@@ -552,6 +592,9 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 						if (location.isSystem()) {
 							menuData.getSystemLocations().add(myLocation);
 						}
+						if (location.isConstellation()) {
+							menuData.getConstellationLocations().add(myLocation);
+						}
 						if (location.isRegion()) {
 							menuData.getRegionLocations().add(myLocation);
 						}
@@ -560,6 +603,7 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 				}
 				Set<String> urls = new HashSet<>();
 				urls.addAll(LookupLinks.ZKILLBOARD_SYSTEM.getLinks(menuData));
+				urls.addAll(LookupLinks.ZKILLBOARD_CONSTELLATION.getLinks(menuData));
 				urls.addAll(LookupLinks.ZKILLBOARD_REGION.getLinks(menuData));
 				DesktopUtil.browse(urls, program);
 			}else if (MenuLookupAction.EVEMAPS_DOTLAN_STATION.name().equals(e.getActionCommand())) {
@@ -568,6 +612,8 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 				DesktopUtil.browse(LookupLinks.EVEMAPS_DOTLAN_PLANET.getLinks(menuData), program);
 			} else if (MenuLookupAction.EVEMAPS_DOTLAN_SYSTEM.name().equals(e.getActionCommand())) {
 				DesktopUtil.browse(LookupLinks.EVEMAPS_DOTLAN_SYSTEM.getLinks(menuData), program);
+			} else if (MenuLookupAction.EVEMAPS_DOTLAN_CONSTELLATION.name().equals(e.getActionCommand())) {
+				DesktopUtil.browse(LookupLinks.EVEMAPS_DOTLAN_CONSTELLATION.getLinks(menuData), program);
 			} else if (MenuLookupAction.EVEMAPS_DOTLAN_REGION.name().equals(e.getActionCommand())) {
 				DesktopUtil.browse(LookupLinks.EVEMAPS_DOTLAN_REGION.getLinks(menuData), program);
 			} else if (MenuLookupAction.EVEMAPS_DOTLAN_OVERVIEW_GROUP.name().equals(e.getActionCommand())) {
@@ -589,11 +635,21 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 					if (location.isRegion()) {
 						menuData.getRegionNames().add(location.getName());
 					}
+					for (MyLocation myLocation : StaticData.get().getLocations()) {
+						if (!myLocation.getLocation().equals(location.getName())) {
+							continue; //Not the location you're looking for
+						}
+						if (location.isConstellation()) {
+							menuData.getConstellationLocations().add(myLocation);
+						}
+						break; //Location found
+					}
 				}
 				Set<String> urls = new HashSet<>();
 				urls.addAll(LookupLinks.EVEMAPS_DOTLAN_STATION.getLinks(menuData));
 				urls.addAll(LookupLinks.EVEMAPS_DOTLAN_PLANET.getLinks(menuData));
 				urls.addAll(LookupLinks.EVEMAPS_DOTLAN_SYSTEM.getLinks(menuData));
+				urls.addAll(LookupLinks.EVEMAPS_DOTLAN_CONSTELLATION.getLinks(menuData));
 				urls.addAll(LookupLinks.EVEMAPS_DOTLAN_REGION.getLinks(menuData));
 				DesktopUtil.browse(urls, program);
 		//Market

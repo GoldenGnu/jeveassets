@@ -366,7 +366,7 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 		} else {
 			jRegions.setEnabled(false);
 			jRadioRegions.setEnabled(false);
-			regionsAutoComplete.setFirstItem(new MyLocation(-1, DialoguesSettings.get().notConfigurable(), -1, "", -1, "", ""));
+			regionsAutoComplete.setFirstItem(new MyLocation(-1, DialoguesSettings.get().notConfigurable(), -1, "", -1, "", -1, "", ""));
 		}
 		if (locationType == LocationType.REGION && jRadioRegions.isEnabled()) {
 			if (locationID != null) {
@@ -384,7 +384,7 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 		} else {
 			jRadioSystems.setEnabled(false);
 			jSystems.setEnabled(false);
-			systemsAutoComplete.setFirstItem(new MyLocation(-1, DialoguesSettings.get().notConfigurable(), -1, "", -1, "", ""));
+			systemsAutoComplete.setFirstItem(new MyLocation(-1, DialoguesSettings.get().notConfigurable(), -1, "", -1, "", -1, "", ""));
 		}
 		if (locationType == LocationType.SYSTEM && jRadioSystems.isEnabled()) {
 			if (locationID != null) {
@@ -420,7 +420,7 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 		} else {
 			jRadioStations.setEnabled(false);
 			jStations.setEnabled(false);
-			stationsAutoComplete.setFirstItem(new MyLocation(-1, DialoguesSettings.get().notConfigurable(), -1, "", -1, "", ""));
+			stationsAutoComplete.setFirstItem(new MyLocation(-1, DialoguesSettings.get().notConfigurable(), -1, "", -1, "", -1, "", ""));
 		}
 		if (locationType == LocationType.STATION && jRadioStations.isEnabled()) {
 			if (locationID != null) {

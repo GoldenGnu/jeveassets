@@ -52,6 +52,7 @@ public class MenuData<T> {
 	private final Set<MyLocation> autopilotStationLocations = new HashSet<>();
 	private final Set<MyLocation> systemLocations = new HashSet<>();
 	private final Set<MyLocation> regionLocations = new HashSet<>();
+	private final Set<MyLocation> constellationLocations = new HashSet<>();
 	private final Set<MyLocation> editableCitadelLocations = new HashSet<>();
 	private final Set<MyLocation> userLocations = new HashSet<>();
 	private final Map<Integer, Double> prices = new HashMap<>();
@@ -60,6 +61,7 @@ public class MenuData<T> {
 	private final Set<String> stationNames = new HashSet<>();
 	private final Set<String> planetNames = new HashSet<>();
 	private final Set<String> systemNames = new HashSet<>();
+	private final Set<String> constellationNames = new HashSet<>();
 	private final Set<String> regionNames = new HashSet<>();
 	private final Set<Integer> marketTypeIDs = new HashSet<>();
 	private final Set<Integer> blueprintTypeIDs = new HashSet<>();
@@ -217,7 +219,7 @@ public class MenuData<T> {
 				planetNames.add(location.getLocation()); //Dotlan + Assets Planet
 			}
 			//System
-			if (location.isStation()  || location.isPlanet() || location.isSystem()) { //Station or Planet or System
+			if (location.isStation()  || location.isPlanet() || location.isSystem()) { //Station, Planet, or System
 				systemNames.add(location.getSystem()); //Dotlan + Assets System
 				//Jumps
 				MyLocation system = ApiIdConverter.getLocation(location.getSystemID());
@@ -225,8 +227,16 @@ public class MenuData<T> {
 					systemLocations.add(system); //Jumps + Autopilot + zKillboard System 
 				}
 			}
-			//Staion, System, or Region
-			if (location.isStation()  || location.isPlanet() || location.isSystem() || location.isRegion()) {  //Station or Planet or System or Region
+			//Constellation
+			if (location.isStation()  || location.isPlanet() || location.isSystem() || location.isConstellation()) {  //Station, Planet, System or Constellation
+				constellationNames.add(location.getConstellation()); //Assets Constellation
+				MyLocation constellation = ApiIdConverter.getLocation(location.getConstellationID());
+				if (!constellation.isEmpty()) {
+					constellationLocations.add(constellation); //Dotlan + zKillboard Constellation
+				}
+			}
+			//Region
+			if (location.isStation()  || location.isPlanet() || location.isSystem() || location.isConstellation() || location.isRegion()) {  //Station, Planet, System, Constellation or Region
 				regionNames.add(location.getRegion()); //Dotlan + Assets Region
 				MyLocation region = ApiIdConverter.getLocation(location.getRegionID());
 				if (!region.isEmpty()) {
@@ -289,13 +299,24 @@ public class MenuData<T> {
 		return systemNames;
 	}
 
+	//JMenuAssetFilter
+	public Set<String> getConstellationNames() {
+		return constellationNames;
+	}
+
 	//JMenuLookup + JMenuAssetFilter
 	public Set<String> getRegionNames() {
 		return regionNames;
 	}
 
+	//JMenuLookup
 	public Set<MyLocation> getRegionLocations() {
 		return regionLocations;
+	}
+
+	//JMenuLookup
+	public Set<MyLocation> getConstellationLocations() {
+		return constellationLocations;
 	}
 
 	//JMenuJumps and JMenuUI

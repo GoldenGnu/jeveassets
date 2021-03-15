@@ -61,14 +61,18 @@ public class PriceDataGetter implements PricingListener {
 
 	private static final Logger LOG = LoggerFactory.getLogger(PriceDataGetter.class);
 
-	private final long priceCacheTimer = 1 * 60 * 60 * 1000L; // 1 hour (hours*min*sec*ms)
-	private final int attemptCount = 2;
+	private static final long PRICE_CACHE_TIMER = 1 * 60 * 60 * 1000L; // 1 hour (hours*min*sec*ms)
+	private static final int ATTEMPT_COUNT = 2;
+	private static final int ZERO_PRICES_WARNING_LIMIT = 10;
+	private static final int FAILED_PERCENT_CANCEL_LIMIT = 5;
+	private static final int ZERO_PERCENT_CANCEL_LIMIT = 10;
 
 	private UpdateTask updateTask;
 	private boolean update;
 	private Set<Integer> typeIDs;
 	private Set<Integer> failed;
 	private Set<Integer> okay;
+	private Set<Integer> zero;
 	private Set<Integer> queue;
 	private final Map<Integer, PriceData> priceDataList = Collections.synchronizedMap(new HashMap<>());
 	
@@ -180,6 +184,7 @@ public class PriceDataGetter implements PricingListener {
 		this.update = updateAll;
 		this.typeIDs =  Collections.synchronizedSet(new HashSet<>(typeIDs));
 		this.failed = Collections.synchronizedSet(new HashSet<>());
+		this.zero = Collections.synchronizedSet(new HashSet<>());
 		this.okay = Collections.synchronizedSet(new HashSet<>());
 		this.queue = Collections.synchronizedSet(new HashSet<>(typeIDs));
 
@@ -218,12 +223,15 @@ public class PriceDataGetter implements PricingListener {
 				return null;
 			}
 		}
-		boolean updated = (!okay.isEmpty() && (typeIDs.size() * 5 / 100) > failed.size()); //
+		boolean updated = (!okay.isEmpty() && (typeIDs.size() * FAILED_PERCENT_CANCEL_LIMIT / 100) > failed.size() && (typeIDs.size() * ZERO_PERCENT_CANCEL_LIMIT / 100) > zero.size());
 		if (updated && !failed.isEmpty()) {
 			StringBuilder errorString = new StringBuilder();
+			boolean first = true;
 			synchronized (failed) {
 				for (int typeID : failed) {
-					if (!errorString.toString().isEmpty()) {
+					if (first) {
+						first = false;
+					} else {
 						errorString.append(", ");
 					}
 					errorString.append(typeID);
@@ -232,6 +240,24 @@ public class PriceDataGetter implements PricingListener {
 			LOG.error("Failed to update price data for the following typeIDs: " + errorString.toString());
 			if (updateTask != null) {
 				updateTask.addError("Price data", "Failed to update price data for " + failed.size() + " of " + typeIDs.size() + " item types");
+			}
+		}
+		if (updated && !zero.isEmpty()) {
+			StringBuilder errorString = new StringBuilder();
+			synchronized (zero) {
+				boolean first = true;
+				for (int typeID : zero) {
+					if (first) {
+						first = false;
+					} else {
+						errorString.append(", ");
+					}
+					errorString.append(typeID);
+				}
+			}
+			LOG.warn("Price data is zero for the following typeIDs: " + errorString.toString());
+			if (updateTask != null && zero.size() > ZERO_PRICES_WARNING_LIMIT) {
+				updateTask.addWarning("Price data", "Price data is zero for " + zero.size() + " of " + typeIDs.size() + " item types");
 			}
 		}
 		if (updated) { //All Updated
@@ -251,7 +277,7 @@ public class PriceDataGetter implements PricingListener {
 				//return new HashMap<Integer, PriceData>(priceDataList);
 				// XXX - Workaround for ConcurrentModificationException in HashMap constructor
 				Map<Integer, PriceData> hashMap = new HashMap<>();
-				priceDataList.keySet().removeAll(failed);
+				priceDataList.keySet().removeAll(failed); //Remove failed
 				hashMap.putAll(priceDataList);
 				return hashMap;
 			} finally {
@@ -269,7 +295,7 @@ public class PriceDataGetter implements PricingListener {
 	}
 
 	public synchronized Date getNextUpdate() {
-		return new Date(nextUpdate + priceCacheTimer);
+		return new Date(nextUpdate + PRICE_CACHE_TIMER);
 	}
 
 	private synchronized long getNextUpdateTime() {
@@ -314,6 +340,7 @@ public class PriceDataGetter implements PricingListener {
 			priceDataList.put(typeID, priceData);
 		}
 		boolean ok = false;
+		boolean isZero = true;
 		for (PriceMode priceMode : PriceMode.values()) {
 			PricingType pricingType = priceMode.getPricingType();
 			PricingNumber pricingNumber = priceMode.getPricingNumber();
@@ -324,9 +351,15 @@ public class PriceDataGetter implements PricingListener {
 			if (price != null) {
 				ok = true; //Something is set
 				PriceMode.setDefaultPrice(priceData, priceMode, price);
+				if (price != 0) {
+					isZero = false;
+				}
 			}
 		}
 		if (ok) {
+			if (isZero) {
+				zero.add(typeID);
+			}
 			okay.add(typeID);
 			failed.remove(typeID);
 			queue.remove(typeID); //Load price...
@@ -350,7 +383,7 @@ public class PriceDataGetter implements PricingListener {
 
 		@Override
 		public long getPriceCacheTimer() {
-			return priceCacheTimer;
+			return PRICE_CACHE_TIMER;
 		}
 
 		@Override
@@ -404,7 +437,7 @@ public class PriceDataGetter implements PricingListener {
 
 		@Override
 		public int getAttemptCount() {
-			return attemptCount;
+			return ATTEMPT_COUNT;
 		}
 
 		@Override
