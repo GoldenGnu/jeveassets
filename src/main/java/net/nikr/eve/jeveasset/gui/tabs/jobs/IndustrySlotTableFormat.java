@@ -160,15 +160,19 @@ public enum IndustrySlotTableFormat implements EnumTableColumn<IndustrySlot> {
 	},
 	CURRENT_SHIP(String.class, GlazedLists.comparableComparator()) {
 		@Override
-		public String getColumnName() { return TabsIndustrySlots.get().columnCurrentShip(); }
+		public String getColumnName() {
+			return TabsIndustrySlots.get().columnCurrentShip();
+		}
 		@Override
 		public Object getColumnValue(final IndustrySlot from) {
-			return from.getCurrentShip();
+			return from.getActiveShip();
 		}
 	},
 	CURRENT_STATION(String.class, GlazedLists.comparableComparator()) {
 		@Override
-		public String getColumnName() { return TabsIndustrySlots.get().columnCurrentStation(); }
+		public String getColumnName() {
+			return TabsIndustrySlots.get().columnCurrentStation();
+		}
 		@Override
 		public Object getColumnValue(final IndustrySlot from) {
 			return from.getCurrentStation();
@@ -176,7 +180,9 @@ public enum IndustrySlotTableFormat implements EnumTableColumn<IndustrySlot> {
 	},
 	CURRENT_SYSTEM(String.class, GlazedLists.comparableComparator()) {
 		@Override
-		public String getColumnName() { return TabsIndustrySlots.get().columnCurrentSystem(); }
+		public String getColumnName() {
+			return TabsIndustrySlots.get().columnCurrentSystem();
+		}
 		@Override
 		public Object getColumnValue(final IndustrySlot from) {
 			return from.getCurrentSystem();
@@ -184,9 +190,13 @@ public enum IndustrySlotTableFormat implements EnumTableColumn<IndustrySlot> {
 	},
 	CURRENT_REGION(String.class, GlazedLists.comparableComparator()) {
 		@Override
-		public String getColumnName() { return TabsIndustrySlots.get().columnCurrentRegion(); }
+		public String getColumnName() {
+			return TabsIndustrySlots.get().columnCurrentRegion();
+		}
 		@Override
-		public Object getColumnValue(final IndustrySlot from) { return from.getCurrentRegion(); }
+		public Object getColumnValue(final IndustrySlot from) {
+			return from.getCurrentRegion();
+		}
 	};
 
 	private final Class<?> type;

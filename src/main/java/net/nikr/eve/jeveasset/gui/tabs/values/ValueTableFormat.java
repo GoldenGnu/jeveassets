@@ -220,21 +220,29 @@ public enum ValueTableFormat implements EnumTableColumn<Value> {
 	},
 	CURRENT_SHIP(String.class, GlazedLists.comparableComparator()) {
 		@Override
-		public String getColumnName() { return TabsValues.get().columnCurrentShip(); }
+		public String getColumnName() {
+			return TabsValues.get().columnCurrentShip();
+		}
 		@Override
 		public Object getColumnValue(final Value from) {
-			return from.getCurrentShip();
+			return from.getActiveShip();
 		}
 	},
 	CURRENT_STATION(String.class, GlazedLists.comparableComparator()) {
 		@Override
-		public String getColumnName() { return TabsValues.get().columnCurrentStation(); }
+		public String getColumnName() {
+			return TabsValues.get().columnCurrentStation();
+		}
 		@Override
-		public Object getColumnValue(final Value from) { return from.getCurrentStation(); }
+		public Object getColumnValue(final Value from) {
+			return from.getCurrentStation();
+		}
 	},
 	CURRENT_SYSTEM(String.class, GlazedLists.comparableComparator()) {
 		@Override
-		public String getColumnName() { return TabsValues.get().columnCurrentSystem(); }
+		public String getColumnName() {
+			return TabsValues.get().columnCurrentSystem();
+		}
 		@Override
 		public Object getColumnValue(final Value from) {
 			return from.getCurrentSystem();
@@ -242,9 +250,13 @@ public enum ValueTableFormat implements EnumTableColumn<Value> {
 	},
 	CURRENT_REGION(String.class, GlazedLists.comparableComparator()) {
 		@Override
-		public String getColumnName() { return TabsValues.get().columnCurrentRegion(); }
+		public String getColumnName() {
+			return TabsValues.get().columnCurrentRegion();
+		}
 		@Override
-		public Object getColumnValue(final Value from) { return from.getCurrentRegion(); }
+		public Object getColumnValue(final Value from) {
+			return from.getCurrentRegion();
+		}
 	};
 
 	private final Class<?> type;

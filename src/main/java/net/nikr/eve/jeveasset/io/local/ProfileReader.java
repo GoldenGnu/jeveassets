@@ -41,6 +41,7 @@ import net.nikr.eve.jeveasset.data.api.my.MyContractItem;
 import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob;
 import net.nikr.eve.jeveasset.data.api.my.MyJournal;
 import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder;
+import net.nikr.eve.jeveasset.data.api.my.MyShip;
 import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
 import net.nikr.eve.jeveasset.data.api.raw.RawAccountBalance;
 import net.nikr.eve.jeveasset.data.api.raw.RawAsset;
@@ -330,6 +331,7 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 		if (assetNodes.getLength() == 1) {
 			parseAssets(assetNodes.item(0), owner, owner.getAssets(), null);
 		}
+		parseActiveShip(node, owner);
 		parseContracts(node, owner);
 		parseBalances(node, owner);
 		parseMarketOrders(node, owner);
@@ -340,16 +342,18 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 		parseAssetDivisions(node, owner);
 		parseWalletDivisions(node, owner);
 		parseSkills(node, owner);
+	}
 
-		//Look for active ship in existing assets if ID is set
-		if (haveAttribute(node, "activeshipid")) {
-			long activeShipId = getLong(node, "activeshipid");
-			for (MyAsset asset : owner.getAssets()) {
-				if(Long.compare(activeShipId, asset.getItemID()) == 0) {
-					owner.setActiveShip(asset);
-					break;
-				}
-			}
+	private void parseActiveShip(final Element element, final OwnerType owner) throws XmlException {
+		NodeList activeShipNodes = element.getElementsByTagName("activeship");
+		if(activeShipNodes.getLength() == 1) {
+			Element activeShipNode = (Element) activeShipNodes.item(0);
+			long itemId = getLong(activeShipNode, "itemid");
+			int typeId = getInt(activeShipNode, "typeid");
+			long locationId = getLong(activeShipNode, "locationid");
+
+			MyShip activeShip = new MyShip(itemId, typeId, locationId, owner);
+			owner.setActiveShip(activeShip);
 		}
 	}
 

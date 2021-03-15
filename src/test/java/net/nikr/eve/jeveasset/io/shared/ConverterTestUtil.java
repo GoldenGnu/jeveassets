@@ -47,6 +47,7 @@ import net.nikr.eve.jeveasset.data.api.my.MyContractItem;
 import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob;
 import net.nikr.eve.jeveasset.data.api.my.MyJournal;
 import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder;
+import net.nikr.eve.jeveasset.data.api.my.MyShip;
 import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
 import net.nikr.eve.jeveasset.data.api.raw.RawAccountBalance;
 import net.nikr.eve.jeveasset.data.api.raw.RawAsset;
@@ -708,6 +709,8 @@ public class ConverterTestUtil {
 			return options.getMarketOrdersOutbid();
 		} else if (type.equals(MyAsset.class)) {
 			return options.getMyAsset();
+		} else if (type.equals(MyShip.class)) {
+			return options.getMyShip();
 		} else {
 			fail("No test value for: " + type.getSimpleName());
 			return null;

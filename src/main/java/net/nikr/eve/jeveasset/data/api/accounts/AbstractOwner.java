@@ -34,6 +34,7 @@ import net.nikr.eve.jeveasset.data.api.my.MyContractItem;
 import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob;
 import net.nikr.eve.jeveasset.data.api.my.MyJournal;
 import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder;
+import net.nikr.eve.jeveasset.data.api.my.MyShip;
 import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
 import net.nikr.eve.jeveasset.data.api.raw.RawBlueprint;
 import net.nikr.eve.jeveasset.data.api.raw.RawSkill;
@@ -61,7 +62,7 @@ public abstract class AbstractOwner implements OwnerType, Comparable<OwnerType> 
 	private long ownerID;
 	private boolean showOwner = true;
 	private boolean invalid = false;
-	private MyAsset activeShip;
+	private MyShip activeShip;
 
 	private Date assetLastUpdate = null;
 	private Date assetNextUpdate = Settings.getNow();
@@ -310,7 +311,7 @@ public abstract class AbstractOwner implements OwnerType, Comparable<OwnerType> 
 	}
 
 	@Override
-	public MyAsset getActiveShip() {
+	public MyShip getActiveShip() {
 		return activeShip;
 	}
 
@@ -467,7 +468,7 @@ public abstract class AbstractOwner implements OwnerType, Comparable<OwnerType> 
 		this.unallocatedSkillPoints = unallocatedSkillPoints;
 	}
 	@Override
-	public void setActiveShip(MyAsset activeShip) {
+	public void setActiveShip(MyShip activeShip) {
 		this.activeShip = activeShip;
 	}
 

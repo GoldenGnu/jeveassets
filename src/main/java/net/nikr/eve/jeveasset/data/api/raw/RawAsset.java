@@ -27,6 +27,7 @@ import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob.IndustryActivity;
 import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder;
 import net.nikr.eve.jeveasset.data.sde.ItemFlag;
 import net.nikr.eve.jeveasset.i18n.General;
+import net.nikr.eve.jeveasset.io.esi.EsiConverter;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 import net.nikr.eve.jeveasset.io.shared.RawConverter;
 import net.troja.eve.esi.model.CharacterAssetsResponse;
@@ -220,13 +221,7 @@ public class RawAsset {
 		isSingleton = true; //Unpacked
 		itemId = shipType.getShipItemId();
 		itemFlag = ApiIdConverter.getFlag(0); //None
-		if (shipLocation.getStationId() != null) {
-			locationId = RawConverter.toLong(shipLocation.getStationId());
-		} else if (shipLocation.getStructureId() != null) {
-			locationId = shipLocation.getStructureId();
-		} else {
-			locationId = RawConverter.toLong(shipLocation.getSolarSystemId());
-		}
+		locationId = EsiConverter.toLocationID(shipLocation);
 		quantity = 1; //Unpacked AKA always 1
 		typeId = shipType.getShipTypeId();
 	}

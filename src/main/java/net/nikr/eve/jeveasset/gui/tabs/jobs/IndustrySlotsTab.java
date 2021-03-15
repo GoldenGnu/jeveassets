@@ -188,6 +188,7 @@ public class IndustrySlotsTab extends JMainTabSecondary {
 		tableFormat.addColumn(new JMenuJumps.Column<>(location.getSystem(), location.getSystemID()));
 		filterControl.setColumns(tableFormat.getOrderColumns());
 	}
+
 	public void removeColumn(MyLocation location) {
 		tableFormat.removeColumn(new JMenuJumps.Column<>(location.getSystem(), location.getSystemID()));
 		filterControl.setColumns(tableFormat.getOrderColumns());
@@ -200,7 +201,7 @@ public class IndustrySlotsTab extends JMainTabSecondary {
 	private class IndustrySlotTableMenu implements TableMenu<IndustrySlot> {
 		@Override
 		public MenuData<IndustrySlot> getMenuData() {
-			return new MenuData<>();
+			return new MenuData<>(selectionModel.getSelected());
 		}
 
 		@Override
@@ -222,17 +223,13 @@ public class IndustrySlotsTab extends JMainTabSecondary {
 
 	private class IndustrySlotFilterControl extends FilterControl<IndustrySlot> {
 
-		private final EnumTableFormatAdaptor<IndustrySlotTableFormat, IndustrySlot> tableFormat;
-
 		public IndustrySlotFilterControl(EnumTableFormatAdaptor<IndustrySlotTableFormat, IndustrySlot> tableFormat, JFrame jFrame, EventList<IndustrySlot> eventList, EventList<IndustrySlot> exportEventList, FilterList<IndustrySlot> filterList, Map<String, List<Filter>> filters) {
 			super(jFrame, NAME, eventList, exportEventList, filterList, filters);
-			this.tableFormat = tableFormat;
 		}
 
 		@Override
 		protected Object getColumnValue(final IndustrySlot value, final String column) {
-			IndustrySlotTableFormat format = IndustrySlotTableFormat.valueOf(column);
-			return format.getColumnValue(value);
+			return tableFormat.getColumnValue(value, column);
 		}
 
 		@Override
