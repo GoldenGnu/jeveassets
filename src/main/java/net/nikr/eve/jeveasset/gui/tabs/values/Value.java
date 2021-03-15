@@ -268,6 +268,13 @@ public class Value implements Comparable<Value> {
 		return TabsValues.get().empty();
 	}
 
+	public String getCurrentConstellation() {
+		if (activeShip != null) {
+			return activeShip.getLocation().getConstellation();
+		}
+		return TabsValues.get().empty();
+	}
+
 	public String getCurrentRegion() {
 		if (activeShip != null) {
 			return activeShip.getLocation().getRegion();

@@ -188,6 +188,16 @@ public enum IndustrySlotTableFormat implements EnumTableColumn<IndustrySlot> {
 			return from.getCurrentSystem();
 		}
 	},
+	CURRENT_CONSTELLATION(String.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsIndustrySlots.get().columnCurrentConstellation();
+		}
+		@Override
+		public Object getColumnValue(final IndustrySlot from) {
+			return from.getCurrentConstellation();
+		}
+	},
 	CURRENT_REGION(String.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {

@@ -52,6 +52,7 @@ public abstract class TabsValues extends Bundle {
 	public abstract String columnCurrentShip();
 	public abstract String columnCurrentStation();
 	public abstract String columnCurrentSystem();
+	public abstract String columnCurrentConstellation();
 	public abstract String columnCurrentRegion();
 	public abstract String grandTotal();
 	public abstract String none();

@@ -24,6 +24,8 @@ package net.nikr.eve.jeveasset.gui.tabs.values;
 import ca.odell.glazedlists.GlazedLists;
 import java.util.Comparator;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
+import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustrySlot;
+import net.nikr.eve.jeveasset.i18n.TabsIndustrySlots;
 import net.nikr.eve.jeveasset.i18n.TabsValues;
 
 
@@ -246,6 +248,16 @@ public enum ValueTableFormat implements EnumTableColumn<Value> {
 		@Override
 		public Object getColumnValue(final Value from) {
 			return from.getCurrentSystem();
+		}
+	},
+	CURRENT_CONSTELLATION(String.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsValues.get().columnCurrentConstellation();
+		}
+		@Override
+		public Object getColumnValue(final Value from) {
+			return from.getCurrentConstellation();
 		}
 	},
 	CURRENT_REGION(String.class, GlazedLists.comparableComparator()) {

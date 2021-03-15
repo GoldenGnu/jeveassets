@@ -194,6 +194,13 @@ public class IndustrySlot implements Comparable<IndustrySlot>, JumpType {
 		return null;
 	}
 
+	public String getCurrentConstellation() {
+		if (activeShip != null) {
+			return activeShip.getLocation().getConstellation();
+		}
+		return null;
+	}
+
 	public String getCurrentRegion() {
 		if (activeShip != null) {
 			return activeShip.getLocation().getRegion();
