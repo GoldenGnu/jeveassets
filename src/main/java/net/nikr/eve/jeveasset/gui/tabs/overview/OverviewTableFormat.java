@@ -50,6 +50,16 @@ public enum OverviewTableFormat implements EnumTableColumn<Overview> {
 			return from.getLocation().getSystem();
 		}
 	},
+	CONSTELLATION(String.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsOverview.get().columnConstellation();
+		}
+		@Override
+		public Object getColumnValue(final Overview from) {
+			return from.getLocation().getConstellation();
+		}
+	},
 	REGION(String.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {

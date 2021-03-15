@@ -81,6 +81,8 @@ public class JOverviewMenu extends JMenu {
 					jCheckBoxMenuItem.setIcon(Images.LOC_STATION.getIcon());
 				} else if (overviewTab.getSelectedView() == OverviewTab.View.SYSTEMS) {
 					jCheckBoxMenuItem.setIcon(Images.LOC_SYSTEM.getIcon());
+				} else if (overviewTab.getSelectedView() == OverviewTab.View.CONSTELLATIONS) {
+					jCheckBoxMenuItem.setIcon(Images.LOC_CONSTELLATION.getIcon());
 				} else if (overviewTab.getSelectedView() == OverviewTab.View.REGIONS) {
 					jCheckBoxMenuItem.setIcon(Images.LOC_REGION.getIcon());
 				}
@@ -124,6 +126,9 @@ public class JOverviewMenu extends JMenu {
 						}
 						if (location.isSystem()) {
 							jCheckBoxMenuItem.setIcon(Images.LOC_SYSTEM.getIcon());
+						}
+						if (location.isConstellation()) {
+							jCheckBoxMenuItem.setIcon(Images.LOC_CONSTELLATION.getIcon());
 						}
 						if (location.isRegion()) {
 							jCheckBoxMenuItem.setIcon(Images.LOC_REGION.getIcon());
