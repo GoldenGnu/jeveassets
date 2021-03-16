@@ -22,6 +22,7 @@ package net.nikr.eve.jeveasset.gui.tabs.jobs;
 
 import java.util.HashMap;
 import java.util.Map;
+import net.nikr.eve.jeveasset.constants.SkillConstants;
 import net.nikr.eve.jeveasset.data.api.accounts.OwnerType;
 import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob;
 import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob.IndustryJobState;
@@ -104,16 +105,16 @@ public class IndustrySlot implements Comparable<IndustrySlot>, JumpType {
 		//From Skills
 		for (RawSkill skill : ownerType.getSkills()) {
 			switch (skill.getTypeID()) {
-				case 3387:
-				case 24625:
+				case SkillConstants.MASS_PRODUCTION:
+				case SkillConstants.ADVANCED_MASS_PRODUCTION:
 					manufacturingMax = manufacturingMax + skill.getActiveSkillLevel();
 					break;
-				case 45748:
-				case 45749:
+				case SkillConstants.MASS_REACTIONS:
+				case SkillConstants.ADVANCED_MASS_REACTIONS:
 					reactionsMax = reactionsMax + skill.getActiveSkillLevel();
 					break;
-				case 3406:
-				case 24624:
+				case SkillConstants.LABORATORY_OPERATION:
+				case SkillConstants.ADVANCED_LABORATORY_OPERATION:
 					researchMax = researchMax + skill.getActiveSkillLevel();
 					break;
 			}
