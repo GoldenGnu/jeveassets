@@ -36,6 +36,7 @@ import net.nikr.eve.jeveasset.data.api.my.MyContractItem;
 import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob;
 import net.nikr.eve.jeveasset.data.api.my.MyJournal;
 import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder;
+import net.nikr.eve.jeveasset.data.api.my.MyShip;
 import net.nikr.eve.jeveasset.data.api.raw.RawSkill;
 import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
 import net.nikr.eve.jeveasset.data.api.raw.RawAccountBalance;
@@ -96,6 +97,10 @@ public class EsiConverter extends DataConverter {
 			rawAccountBalances.add(new RawAccountBalance(response));
 		}
 		return convertRawAccountBalance(rawAccountBalances, owner);
+	}
+
+	public static MyShip toActiveShip(CharacterShipResponse shipType, CharacterLocationResponse shipLocation) {
+		return new MyShip(shipType, shipLocation);
 	}
 
 	public static List<MyAsset> toAssets(List<CharacterAssetsResponse> responses, OwnerType owner) {

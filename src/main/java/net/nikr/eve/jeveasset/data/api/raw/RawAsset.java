@@ -220,13 +220,7 @@ public class RawAsset {
 		isSingleton = true; //Unpacked
 		itemId = shipType.getShipItemId();
 		itemFlag = ApiIdConverter.getFlag(0); //None
-		if (shipLocation.getStationId() != null) {
-			locationId = RawConverter.toLong(shipLocation.getStationId());
-		} else if (shipLocation.getStructureId() != null) {
-			locationId = shipLocation.getStructureId();
-		} else {
-			locationId = RawConverter.toLong(shipLocation.getSolarSystemId());
-		}
+		locationId = RawConverter.toLocationID(shipLocation);
 		quantity = 1; //Unpacked AKA always 1
 		typeId = shipType.getShipTypeId();
 	}
