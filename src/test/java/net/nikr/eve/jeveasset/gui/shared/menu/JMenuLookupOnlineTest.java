@@ -43,6 +43,7 @@ public class JMenuLookupOnlineTest extends TestUtil {
 		MenuData<String> menuData = new MenuData<>();
 		menuData.getSystemLocations().add(ApiIdConverter.getLocation(30003392));
 		menuData.getRegionLocations().add(ApiIdConverter.getLocation(10000042));
+		menuData.getConstellationLocations().add(ApiIdConverter.getLocation(20000001)); //San Matar
 		menuData.getStationNames().add("Eygfe VII - Moon 19 - Minmatar Mining Corporation Refinery");
 		menuData.getPlanetNames().add("Balle III");
 		menuData.getSystemNames().add("Eygfe");
