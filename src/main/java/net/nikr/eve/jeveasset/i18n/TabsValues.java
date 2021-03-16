@@ -49,8 +49,14 @@ public abstract class TabsValues extends Bundle {
 	public abstract String columnSkillPointValue();
 	public abstract String columnTotal();
 	public abstract String columnWalletBalance();
+	public abstract String columnCurrentShip();
+	public abstract String columnCurrentStation();
+	public abstract String columnCurrentSystem();
+	public abstract String columnCurrentConstellation();
+	public abstract String columnCurrentRegion();
 	public abstract String grandTotal();
 	public abstract String none();
+	public abstract String empty();
 	public abstract String title();
 	public abstract String skillPointFilters();
 

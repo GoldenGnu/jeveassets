@@ -35,6 +35,7 @@ import net.troja.eve.esi.model.CharacterAssetsResponse;
 import net.troja.eve.esi.model.CharacterBlueprintsResponse;
 import net.troja.eve.esi.model.CharacterContractsResponse;
 import net.troja.eve.esi.model.CharacterIndustryJobsResponse;
+import net.troja.eve.esi.model.CharacterLocationResponse;
 import net.troja.eve.esi.model.CharacterOrdersHistoryResponse;
 import net.troja.eve.esi.model.CharacterOrdersResponse;
 import net.troja.eve.esi.model.CharacterWalletJournalResponse;
@@ -136,6 +137,18 @@ public class RawConverter {
 			return null;
 		} else {
 			return Date.from(dateTime.toInstant());
+		}
+	}
+
+	public static long toLocationID(CharacterLocationResponse shipLocation) {
+		if (shipLocation.getStationId() != null) {
+			return RawConverter.toLong(shipLocation.getStationId());
+		} else if (shipLocation.getStructureId() != null) {
+			return shipLocation.getStructureId();
+		} else if (shipLocation.getSolarSystemId() != null){
+			return RawConverter.toLong(shipLocation.getSolarSystemId());
+		} else {
+			return 0; //Fallback
 		}
 	}
 

@@ -710,6 +710,10 @@ public class Program implements ActionListener {
 		return assetsTab;
 	}
 
+	public IndustrySlotsTab getIndustrySlotsTab() {
+		return industrySlotsTab;
+	}
+
 	public OverviewTab getOverviewTab() {
 		return overviewTab;
 	}

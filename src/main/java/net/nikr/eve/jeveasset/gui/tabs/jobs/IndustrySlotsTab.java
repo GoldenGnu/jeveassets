@@ -40,11 +40,13 @@ import javax.swing.JScrollPane;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.api.accounts.OwnerType;
 import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob;
+import net.nikr.eve.jeveasset.data.sde.MyLocation;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTabSecondary;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
+import net.nikr.eve.jeveasset.gui.shared.menu.JMenuJumps;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuData;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.TableMenu;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
@@ -182,10 +184,24 @@ public class IndustrySlotsTab extends JMainTabSecondary {
 		filterControl.createCache();
 	}
 
+	public void addColumn(MyLocation location) {
+		tableFormat.addColumn(new JMenuJumps.Column<>(location.getSystem(), location.getSystemID()));
+		filterControl.setColumns(tableFormat.getOrderColumns());
+	}
+
+	public void removeColumn(MyLocation location) {
+		tableFormat.removeColumn(new JMenuJumps.Column<>(location.getSystem(), location.getSystemID()));
+		filterControl.setColumns(tableFormat.getOrderColumns());
+	}
+
+	public EventList<IndustrySlot> getEventList() {
+		return eventList;
+	}
+
 	private class IndustrySlotTableMenu implements TableMenu<IndustrySlot> {
 		@Override
 		public MenuData<IndustrySlot> getMenuData() {
-			return new MenuData<>();
+			return new MenuData<>(selectionModel.getSelected());
 		}
 
 		@Override
@@ -207,17 +223,13 @@ public class IndustrySlotsTab extends JMainTabSecondary {
 
 	private class IndustrySlotFilterControl extends FilterControl<IndustrySlot> {
 
-		private final EnumTableFormatAdaptor<IndustrySlotTableFormat, IndustrySlot> tableFormat;
-
 		public IndustrySlotFilterControl(EnumTableFormatAdaptor<IndustrySlotTableFormat, IndustrySlot> tableFormat, JFrame jFrame, EventList<IndustrySlot> eventList, EventList<IndustrySlot> exportEventList, FilterList<IndustrySlot> filterList, Map<String, List<Filter>> filters) {
 			super(jFrame, NAME, eventList, exportEventList, filterList, filters);
-			this.tableFormat = tableFormat;
 		}
 
 		@Override
 		protected Object getColumnValue(final IndustrySlot value, final String column) {
-			IndustrySlotTableFormat format = IndustrySlotTableFormat.valueOf(column);
-			return format.getColumnValue(value);
+			return tableFormat.getColumnValue(value, column);
 		}
 
 		@Override

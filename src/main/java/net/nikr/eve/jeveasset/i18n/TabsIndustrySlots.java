@@ -49,4 +49,9 @@ public abstract class TabsIndustrySlots extends Bundle {
 	public abstract String columnReactionsDone();
 	public abstract String columnReactionsActive();
 	public abstract String columnReactionsMax();
+	public abstract String columnCurrentShip();
+	public abstract String columnCurrentStation();
+	public abstract String columnCurrentSystem();
+	public abstract String columnCurrentConstellation();
+	public abstract String columnCurrentRegion();
 }

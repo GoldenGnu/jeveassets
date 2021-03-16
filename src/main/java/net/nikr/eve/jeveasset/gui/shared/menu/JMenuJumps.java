@@ -36,6 +36,7 @@ import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.data.settings.types.JumpType;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
+import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustrySlot;
 import net.nikr.eve.jeveasset.gui.tabs.routing.SolarSystem;
 import net.nikr.eve.jeveasset.gui.tabs.tree.TreeAsset;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
@@ -115,11 +116,13 @@ public class JMenuJumps<T> extends MenuManager.JAutoMenu<T> {
 	private void updateJumpsData() {
 		program.getProfileData().updateJumps(new ArrayList<>(program.getProfileData().getAssetsEventList()), MyAsset.class);
 		program.getProfileData().updateJumps(new ArrayList<>(program.getTreeTab().getEventList()), TreeAsset.class);
+		program.getProfileData().updateJumps(new ArrayList<>(program.getIndustrySlotsTab().getEventList()), IndustrySlot.class);
 	}
 
 	private void updateJumpsGUI() {
 		program.getTreeTab().tableStructureChanged();
 		program.getAssetsTab().tableStructureChanged();
+		program.getIndustrySlotsTab().tableStructureChanged();
 	}
 
 	private void addColumn(MyLocation location) {
@@ -127,6 +130,8 @@ public class JMenuJumps<T> extends MenuManager.JAutoMenu<T> {
 			program.getTreeTab().addColumn(location);
 		} else if (MyAsset.class.isAssignableFrom(clazz)) {
 			program.getAssetsTab().addColumn(location);
+		} else if (IndustrySlot.class.isAssignableFrom(clazz)) {
+			program.getIndustrySlotsTab().addColumn(location);
 		}
 	}
 
@@ -135,6 +140,8 @@ public class JMenuJumps<T> extends MenuManager.JAutoMenu<T> {
 			program.getTreeTab().removeColumn(location);
 		} else if (MyAsset.class.isAssignableFrom(clazz)) {
 			program.getAssetsTab().removeColumn(location);
+		} else if (IndustrySlot.class.isAssignableFrom(clazz)) {
+			program.getIndustrySlotsTab().removeColumn(location);
 		}
 	}
 
