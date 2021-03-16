@@ -467,6 +467,7 @@ public abstract class AbstractOwner implements OwnerType, Comparable<OwnerType> 
 	public void setUnallocatedSkillPoints(Integer unallocatedSkillPoints) {
 		this.unallocatedSkillPoints = unallocatedSkillPoints;
 	}
+
 	@Override
 	public void setActiveShip(MyShip activeShip) {
 		this.activeShip = activeShip;

@@ -173,7 +173,6 @@ public final class ProfileWriter extends AbstractXmlWriter {
 		setAttributeOptional(node, "corp", owner.getCorporationName());
 		setAttribute(node, "show", owner.isShowOwner());
 		setAttribute(node, "invalid", owner.isInvalid());
-
 		setAttributeOptional(node, "assetslastupdate", owner.getAssetLastUpdate());
 		setAttribute(node, "assetsnextupdate", owner.getAssetNextUpdate());
 		setAttributeOptional(node, "balancelastupdate", owner.getBalanceLastUpdate());
@@ -203,7 +202,6 @@ public final class ProfileWriter extends AbstractXmlWriter {
 		writeWalletDivisions(xmldoc, node, owner.getWalletDivisions());
 		writeSkills(xmldoc, node, owner.getSkills(), owner.getTotalSkillPoints(), owner.getUnallocatedSkillPoints());
 	}
-
 
 	private void writeAssets(final Document xmldoc, final Element parentNode, final List<MyAsset> assets) {
 		for (MyAsset asset : assets) {

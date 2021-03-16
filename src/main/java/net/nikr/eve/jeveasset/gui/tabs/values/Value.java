@@ -282,7 +282,6 @@ public class Value implements Comparable<Value> {
 		return TabsValues.get().empty();
 	}
 
-
 	private String getName(MyAsset asset) {
 		if (asset != null) {
 			return asset.getName();
