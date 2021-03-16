@@ -118,6 +118,7 @@ public class JMenuTransactionFilter<T> extends JAutoMenu<T> {
 		jStation.setEnabled(!menuData.getStationAndCitadelNames().isEmpty());
 		jPlanet.setEnabled(!menuData.getPlanetNames().isEmpty());
 		jSystem.setEnabled(!menuData.getSystemNames().isEmpty());
+		jConstellation.setEnabled(!menuData.getConstellationNames().isEmpty());
 		jRegion.setEnabled(!menuData.getRegionNames().isEmpty());
 	}
 
