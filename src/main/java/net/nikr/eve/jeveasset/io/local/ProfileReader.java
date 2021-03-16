@@ -352,7 +352,7 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 			int typeId = getInt(activeShipNode, "typeid");
 			long locationId = getLong(activeShipNode, "locationid");
 
-			MyShip activeShip = new MyShip(itemId, typeId, locationId, owner);
+			MyShip activeShip = new MyShip(itemId, typeId, locationId);
 			owner.setActiveShip(activeShip);
 		}
 	}

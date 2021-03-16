@@ -25,10 +25,9 @@ import java.util.Date;
 import java.util.List;
 import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
 import net.nikr.eve.jeveasset.data.api.my.MyAsset;
-import net.nikr.eve.jeveasset.data.api.my.MyShip;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
-import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
+import static net.nikr.eve.jeveasset.io.esi.AbstractEsiGetter.DATASOURCE;
 import net.troja.eve.esi.ApiException;
 import net.troja.eve.esi.ApiResponse;
 import net.troja.eve.esi.model.CharacterLocationResponse;
@@ -62,12 +61,7 @@ public class EsiShipGetter extends AbstractEsiGetter {
 			}
 		});
 		//Create assets
-		MyAsset activeShipAsset = EsiConverter.toAssetsShip(shipType, shipLocation, owner);
-		activeShipAsset.setLocation(ApiIdConverter.getLocation(activeShipAsset.getLocationID()));
-
-		MyShip activeShip = new MyShip(shipType.getShipItemId(), shipType.getShipTypeId(), EsiConverter.toLocation(shipLocation).getLocationID(), owner);
-		owner.setActiveShip(activeShip);
-
+		MyAsset activeShip = EsiConverter.toAssetsShip(shipType, shipLocation, owner);
 		//Search for active ship
 		List<MyAsset> assets;
 		synchronized (owner) {
@@ -75,7 +69,7 @@ public class EsiShipGetter extends AbstractEsiGetter {
 		}
 		boolean activeShipInAssets = false;
 		for (MyAsset asset : assets) {
-			if (asset.getItemID().equals(activeShipAsset.getItemID())) {
+			if (asset.getItemID().equals(activeShip.getItemID())) {
 				activeShipInAssets = true;
 				break;
 			}
@@ -84,20 +78,20 @@ public class EsiShipGetter extends AbstractEsiGetter {
 		if (!activeShipInAssets) {
 			List<MyAsset> activeShipChildren = new ArrayList<>();
 			for (MyAsset asset : assets) { //Root assets only
-				if (asset.getParents().isEmpty() && activeShipAsset.getItemID().equals(asset.getLocationID())) { //Found Child
+				if (asset.getParents().isEmpty() && activeShip.getItemID().equals(asset.getLocationID())) { //Found Child
 					//Add asset to active ship
-					activeShipAsset.addAsset(asset);
+					activeShip.addAsset(asset);
 					//Update locationID from ItemID to locationID
-					asset.setLocationID(activeShipAsset.getLocationID());
+					asset.setLocationID(activeShip.getLocationID());
 					//Add assets that needs to be removed from the root
 					activeShipChildren.add(asset);
 					//Set active ship as parent
-					asset.getParents().add(activeShipAsset);
+					asset.getParents().add(activeShip);
 				}
 
 			}
 			//Add active ship to root
-			owner.addAsset(activeShipAsset);
+			owner.addAsset(activeShip);
 			//Remove active ship children from root
 			owner.removeAssets(activeShipChildren);
 			//Save ship name
@@ -107,7 +101,9 @@ public class EsiShipGetter extends AbstractEsiGetter {
 			} finally {
 				Settings.unlock("Active Ship Name");
 			}
-		} 
+		}
+		//Active Ship - Must be after getEveNames is updated
+		owner.setActiveShip(EsiConverter.toActiveShip(shipType, shipLocation));
 	}
 
 	@Override

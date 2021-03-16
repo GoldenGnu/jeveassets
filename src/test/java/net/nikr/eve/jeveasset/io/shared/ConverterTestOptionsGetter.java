@@ -29,7 +29,6 @@ import java.util.Map;
 import java.util.Set;
 import net.nikr.eve.jeveasset.data.api.accounts.EveApiAccount;
 import net.nikr.eve.jeveasset.data.api.accounts.EveApiAccount.KeyType;
-import net.nikr.eve.jeveasset.data.api.my.MyAsset;
 import net.nikr.eve.jeveasset.data.api.my.MyShip;
 import net.nikr.eve.jeveasset.data.api.raw.RawBlueprint;
 import net.nikr.eve.jeveasset.data.api.raw.RawContract;
@@ -105,8 +104,7 @@ public class ConverterTestOptionsGetter {
 		private static final Tags[] TAGS = {new Tags()};
 		private static final Percent[] PERCENT = {Percent.create(5.1)};
 		private static final UserPrice[] USER_ITEM = {new UserPrice(DOUBLE[0], INTEGER[0], STRING[0])};
-		private static final MyAsset MY_ASSET = new MyAsset(ApiIdConverter.getLocation(60003466));
-		private static final MyShip MY_SHIP = new MyShip(LONG[0], INTEGER[0], 60003466L, MY_ASSET.getOwner());
+		private static final MyShip MY_SHIP = new MyShip(LONG[0], INTEGER[0], 60003466L);
 		//LocationType
 		private static final CharacterAssetsResponse.LocationTypeEnum[] ESI_LOCATION_TYPE_CHARACTER = CharacterAssetsResponse.LocationTypeEnum.values();
 		private static final CorporationAssetsResponse.LocationTypeEnum[] ESI_LOCATION_TYPE_CORPORATION = CorporationAssetsResponse.LocationTypeEnum.values();
@@ -424,11 +422,6 @@ public class ConverterTestOptionsGetter {
 		@Override
 		public UserItem<Integer, Double> getUserPrice() {
 			return get(USER_ITEM, index);
-		}
-
-		@Override
-		public MyAsset getMyAsset() {
-			return MY_ASSET;
 		}
 
 		@Override

@@ -26,7 +26,6 @@ import java.time.ZoneOffset;
 import java.util.Date;
 import net.nikr.eve.jeveasset.data.api.accounts.EveApiAccount;
 import net.nikr.eve.jeveasset.data.api.accounts.EveApiAccount.KeyType;
-import net.nikr.eve.jeveasset.data.api.my.MyAsset;
 import net.nikr.eve.jeveasset.data.api.my.MyShip;
 import net.nikr.eve.jeveasset.data.api.raw.RawBlueprint;
 import net.nikr.eve.jeveasset.data.api.raw.RawContract;
@@ -79,8 +78,6 @@ public interface ConverterTestOptions {
 	public PriceData getPriceData();
 
 	public UserItem<Integer, Double> getUserPrice();
-
-	public MyAsset getMyAsset();
 
 	public MyShip getMyShip();
 

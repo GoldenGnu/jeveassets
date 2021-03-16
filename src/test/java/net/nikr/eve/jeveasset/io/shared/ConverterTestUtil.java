@@ -707,8 +707,6 @@ public class ConverterTestUtil {
 			return options.getMarketOrderStateEsiCharacterHistory();
 		} else if (type.equals(Outbid.class)) {
 			return options.getMarketOrdersOutbid();
-		} else if (type.equals(MyAsset.class)) {
-			return options.getMyAsset();
 		} else if (type.equals(MyShip.class)) {
 			return options.getMyShip();
 		} else {

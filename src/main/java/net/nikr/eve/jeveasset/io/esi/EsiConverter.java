@@ -35,6 +35,7 @@ import net.nikr.eve.jeveasset.data.api.my.MyContractItem;
 import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob;
 import net.nikr.eve.jeveasset.data.api.my.MyJournal;
 import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder;
+import net.nikr.eve.jeveasset.data.api.my.MyShip;
 import net.nikr.eve.jeveasset.data.api.raw.RawSkill;
 import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
 import net.nikr.eve.jeveasset.data.api.raw.RawAccountBalance;
@@ -47,10 +48,7 @@ import net.nikr.eve.jeveasset.data.api.raw.RawJournal;
 import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder;
 import net.nikr.eve.jeveasset.data.api.raw.RawPublicMarketOrder;
 import net.nikr.eve.jeveasset.data.api.raw.RawTransaction;
-import net.nikr.eve.jeveasset.data.sde.MyLocation;
-import net.nikr.eve.jeveasset.data.sde.StaticData;
 import net.nikr.eve.jeveasset.io.shared.DataConverter;
-import net.nikr.eve.jeveasset.io.shared.RawConverter;
 import net.troja.eve.esi.model.CharacterAssetsResponse;
 import net.troja.eve.esi.model.CharacterBlueprintsResponse;
 import net.troja.eve.esi.model.CharacterContractsItemsResponse;
@@ -96,6 +94,10 @@ public class EsiConverter extends DataConverter {
 			rawAccountBalances.add(new RawAccountBalance(response));
 		}
 		return convertRawAccountBalance(rawAccountBalances, owner);
+	}
+
+	public static MyShip toActiveShip(CharacterShipResponse shipType, CharacterLocationResponse shipLocation) {
+		return new MyShip(shipType, shipLocation);
 	}
 
 	public static List<MyAsset> toAssets(List<CharacterAssetsResponse> responses, OwnerType owner) {
@@ -205,26 +207,6 @@ public class EsiConverter extends DataConverter {
 			rawContractItems.add(new RawContractItem(response));
 		}
 		return convertRawContractItems(contract, rawContractItems, owner);
-	}
-
-	public static MyLocation toLocation(CharacterLocationResponse response) {
-		Long locationID = toLocationID(response);
-		MyLocation myLocation = StaticData.get().getLocation(locationID);
-		if(myLocation == null) {
-			myLocation = MyLocation.create(locationID);
-		}
-		return myLocation;
-	}
-
-	public static Long toLocationID(CharacterLocationResponse response) {
-		if (response.getStationId() != null) {
-			return RawConverter.toLong(response.getStationId());
-		} else if (response.getStructureId() != null) {
-			return response.getStructureId();
-		} else {
-			return RawConverter.toLong(response.getSolarSystemId());
-		}
-
 	}
 
 	public static Set<MyMarketOrder> toMarketOrders(List<CharacterOrdersResponse> responses, List<CharacterOrdersHistoryResponse> responsesHistory, OwnerType owner, boolean saveHistory) {

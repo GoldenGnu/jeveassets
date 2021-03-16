@@ -23,12 +23,13 @@ package net.nikr.eve.jeveasset.data.api.my;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-import net.nikr.eve.jeveasset.data.api.accounts.OwnerType;
-import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
-import net.nikr.eve.jeveasset.data.sde.StaticData;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.data.settings.types.JumpType;
+import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
+import net.nikr.eve.jeveasset.io.shared.RawConverter;
+import net.troja.eve.esi.model.CharacterLocationResponse;
+import net.troja.eve.esi.model.CharacterShipResponse;
 
 
 public class MyShip implements Comparable<MyShip>, JumpType {
@@ -36,7 +37,6 @@ public class MyShip implements Comparable<MyShip>, JumpType {
 	//Static values (set by constructor)
 	private final Long itemID;
 	private final Integer typeID;
-	private final OwnerType owner;
 
 	private final MyLocation location;
 
@@ -47,35 +47,25 @@ public class MyShip implements Comparable<MyShip>, JumpType {
 	//Dynamic values cache
 	private final Map<Long, Integer> jumpsList = new HashMap<>();
 
-	public MyShip(final Long itemID, final Integer typeID, final Long locationID, final OwnerType owner) {
+	public MyShip(final CharacterShipResponse shipType, final CharacterLocationResponse response) {
+		this(shipType.getShipItemId(), shipType.getShipTypeId(), RawConverter.toLocationID(response));
+	}
+
+	public MyShip(final Long itemID, final Integer typeID, final Long locationID) {
 		this.itemID = itemID;
 		this.typeID = typeID;
-		this.owner = owner;
 
-		//TODO: Should we add a static get to MyLocation to pull from the cache?
-		//TODO: Should we update StaticData.get().getLocation(Long) to create a new location if it doesn't exist?
-		//Pulling from static data will cause issues if the location in unknown.
-		this.location = MyLocation.create(locationID);
+		this.location = ApiIdConverter.getLocation(locationID);
 
-		Item shipItem = StaticData.get().getItems().get(typeID);
+		this.typeName = ApiIdConverter.getItemUpdate(typeID).getTypeName();
 
-		//If type is not found for ship then set it to blank
-		//This could happen if users static data does not contain their current ship
-		//TODO: Localize UNKNOWN?
-		if (shipItem != null) {
-			this.typeName = StaticData.get().getItems().get(typeID).getTypeName();
-		} else {
-			this.typeName = "UNKNOWN";
-		}
-
-		//If eve name is null don't use it
 		if (Settings.get().getEveNames().get(itemID) != null) {
 			this.eveName = Settings.get().getEveNames().get(itemID);
+			this.name = this.eveName + " (" + this.typeName + ")";
 		} else {
 			this.eveName = "";
+			this.name = this.typeName;
 		}
-
-		this.name = this.eveName + " (" + this.typeName + ")";
 	}
 
 	public Long getItemID() {
@@ -114,28 +104,12 @@ public class MyShip implements Comparable<MyShip>, JumpType {
 		return eveName;
 	}
 
-	public OwnerType getOwner() {
-		return owner;
-	}
-
-	public long getOwnerID() {
-		return owner.getOwnerID();
-	}
-
-	public String getOwnerName() {
-		return owner.getOwnerName();
-	}
-
 	public int getTypeID() {
 		return typeID;
 	}
 
 	public final String getTypeName() {
 		return typeName;
-	}
-
-	public boolean isCorporation() {
-		return owner.isCorporation();
 	}
 
 	@Override
@@ -150,14 +124,16 @@ public class MyShip implements Comparable<MyShip>, JumpType {
 
 	@Override
 	public int hashCode() {
-		int hash = 7;
-		hash = 97 * hash + (this.owner != null ? this.owner.hashCode() : 0);
-		hash = 97 * hash + (int) (this.getItemID() ^ (this.getItemID() >>> 32));
+		int hash = 5;
+		hash = 97 * hash + Objects.hashCode(this.itemID);
 		return hash;
 	}
 
 	@Override
 	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
 		if (obj == null) {
 			return false;
 		}
@@ -165,9 +141,9 @@ public class MyShip implements Comparable<MyShip>, JumpType {
 			return false;
 		}
 		final MyShip other = (MyShip) obj;
-		if (this.owner != other.owner && (this.owner == null || !this.owner.equals(other.owner))) {
+		if (!Objects.equals(this.itemID, other.itemID)) {
 			return false;
 		}
-		return Objects.equals(this.getItemID(), other.getItemID());
+		return true;
 	}
 }
