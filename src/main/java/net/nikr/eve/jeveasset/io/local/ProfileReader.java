@@ -41,7 +41,7 @@ import net.nikr.eve.jeveasset.data.api.my.MyContractItem;
 import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob;
 import net.nikr.eve.jeveasset.data.api.my.MyJournal;
 import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder;
-import net.nikr.eve.jeveasset.data.api.raw.RawSkill;
+import net.nikr.eve.jeveasset.data.api.my.MyShip;
 import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
 import net.nikr.eve.jeveasset.data.api.raw.RawAccountBalance;
 import net.nikr.eve.jeveasset.data.api.raw.RawAsset;
@@ -52,6 +52,7 @@ import net.nikr.eve.jeveasset.data.api.raw.RawIndustryJob;
 import net.nikr.eve.jeveasset.data.api.raw.RawJournal;
 import net.nikr.eve.jeveasset.data.api.raw.RawJournalRefType;
 import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder;
+import net.nikr.eve.jeveasset.data.api.raw.RawSkill;
 import net.nikr.eve.jeveasset.data.api.raw.RawTransaction;
 import net.nikr.eve.jeveasset.data.profile.Profile;
 import net.nikr.eve.jeveasset.data.profile.ProfileManager;
@@ -330,6 +331,7 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 		if (assetNodes.getLength() == 1) {
 			parseAssets(assetNodes.item(0), owner, owner.getAssets(), null);
 		}
+		parseActiveShip(node, owner);
 		parseContracts(node, owner);
 		parseBalances(node, owner);
 		parseMarketOrders(node, owner);
@@ -340,6 +342,19 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 		parseAssetDivisions(node, owner);
 		parseWalletDivisions(node, owner);
 		parseSkills(node, owner);
+	}
+
+	private void parseActiveShip(final Element element, final OwnerType owner) throws XmlException {
+		NodeList activeShipNodes = element.getElementsByTagName("activeship");
+		if(activeShipNodes.getLength() == 1) {
+			Element activeShipNode = (Element) activeShipNodes.item(0);
+			long itemId = getLong(activeShipNode, "itemid");
+			int typeId = getInt(activeShipNode, "typeid");
+			long locationId = getLong(activeShipNode, "locationid");
+
+			MyShip activeShip = new MyShip(itemId, typeId, locationId);
+			owner.setActiveShip(activeShip);
+		}
 	}
 
 	private void parseContracts(final Element element, final OwnerType owner) throws XmlException {

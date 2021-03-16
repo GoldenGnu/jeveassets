@@ -20,13 +20,18 @@
  */
 package net.nikr.eve.jeveasset.gui.tabs.jobs;
 
+import java.util.HashMap;
+import java.util.Map;
 import net.nikr.eve.jeveasset.data.api.accounts.OwnerType;
 import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob;
 import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob.IndustryJobState;
+import net.nikr.eve.jeveasset.data.api.my.MyShip;
 import net.nikr.eve.jeveasset.data.api.raw.RawSkill;
+import net.nikr.eve.jeveasset.data.sde.MyLocation;
+import net.nikr.eve.jeveasset.data.settings.types.JumpType;
 
 
-public class IndustrySlot implements Comparable<IndustrySlot> {
+public class IndustrySlot implements Comparable<IndustrySlot>, JumpType {
 
 	private final String name;
 	private final boolean total;
@@ -40,11 +45,16 @@ public class IndustrySlot implements Comparable<IndustrySlot> {
 	private int manufacturingMax = 0;
 	private int reactionsMax = 0;
 	private int researchMax = 0;
+	private MyShip activeShip = null;
+	private final Map<Long, Integer> jumpsList = new HashMap<>();
 
 	public IndustrySlot(OwnerType ownerType) {
 		this.name = ownerType.getOwnerName();
 		this.total = false;
 		this.empty = ownerType.getSkills().isEmpty();
+		if(ownerType.isCharacter() && ownerType.getActiveShip() != null && ownerType.getActiveShip().getLocation() != null) {
+			this.activeShip = ownerType.getActiveShip();
+		}
 		count(ownerType);
 	}
 
@@ -163,6 +173,41 @@ public class IndustrySlot implements Comparable<IndustrySlot> {
 		return researchMax;
 	}
 
+	public String getActiveShip() {
+		if (activeShip != null) {
+			return activeShip.getName();
+		}
+		return null;
+	}
+
+	public String getCurrentStation() {
+		if (activeShip != null) {
+			return activeShip.getLocation().getStation();
+		}
+		return null;
+	}
+
+	public String getCurrentSystem() {
+		if (activeShip != null) {
+			return activeShip.getLocation().getSystem();
+		}
+		return null;
+	}
+
+	public String getCurrentConstellation() {
+		if (activeShip != null) {
+			return activeShip.getLocation().getConstellation();
+		}
+		return null;
+	}
+
+	public String getCurrentRegion() {
+		if (activeShip != null) {
+			return activeShip.getLocation().getRegion();
+		}
+		return null;
+	}
+
 	public boolean isGrandTotal() {
 		return total;
 	}
@@ -207,6 +252,31 @@ public class IndustrySlot implements Comparable<IndustrySlot> {
 		return !isReactionsFree();
 	}
 
+	//JumpType Impl
+	@Override
+	public void addJump(Long systemID, int jumps) {
+		jumpsList.put(systemID, jumps);
+	}
+
+	@Override
+	public Integer getJumps(Long systemID) {
+		return jumpsList.get(systemID);
+	}
+
+	@Override
+	public void clearJumps() {
+		jumpsList.clear();
+	}
+
+	@Override
+	public MyLocation getLocation() {
+		if(activeShip != null) {
+			return activeShip.getLocation();
+		}
+		return null;
+	}
+
+	//Comparable Impl
 	@Override
 	public int compareTo(IndustrySlot o) {
 		return this.getName().compareTo(o.getName());
