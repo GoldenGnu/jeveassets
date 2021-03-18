@@ -22,6 +22,7 @@
  */
 package net.nikr.eve.jeveasset.gui.shared.components;
 
+import com.sun.jna.Platform;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
@@ -71,16 +72,12 @@ public class CompoundUndoManager extends UndoManager
 		undoAction = new UndoAction();
 		redoAction = new RedoAction();
 
-		KeyStroke undoKeystrokeOther = KeyStroke.getKeyStroke(KeyEvent.VK_Z, InputEvent.CTRL_DOWN_MASK);
-		KeyStroke undoKeystrokeMac = KeyStroke.getKeyStroke(KeyEvent.VK_Z, InputEvent.META_DOWN_MASK);
-		component.getInputMap().put(undoKeystrokeOther, "undoKeystroke");
-		component.getInputMap().put(undoKeystrokeMac, "undoKeystroke");
+		component.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_Z, InputEvent.CTRL_DOWN_MASK), "undoKeystroke");
+		component.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_Z, InputEvent.META_DOWN_MASK), "undoKeystroke");
 		component.getActionMap().put("undoKeystroke", undoAction);
 
-		KeyStroke redoKeystrokeOther = KeyStroke.getKeyStroke(KeyEvent.VK_Y, InputEvent.CTRL_DOWN_MASK);
-		KeyStroke redoKeystrokeMac = KeyStroke.getKeyStroke(KeyEvent.VK_Y, InputEvent.META_DOWN_MASK);
-		component.getInputMap().put(redoKeystrokeOther, "redoKeystroke");
-		component.getInputMap().put(redoKeystrokeMac, "redoKeystroke");
+		component.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_Y, InputEvent.CTRL_DOWN_MASK), "redoKeystroke");
+		component.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_Z, InputEvent.META_DOWN_MASK + InputEvent.SHIFT_DOWN_MASK), "redoKeystroke");
 		component.getActionMap().put("redoKeystroke", redoAction);
 
 		component.addPropertyChangeListener("document", new PropertyChangeListener() {
@@ -281,7 +278,11 @@ public class CompoundUndoManager extends UndoManager
 			putValue(Action.NAME, "Undo");
 			putValue(Action.SHORT_DESCRIPTION, getValue(Action.NAME));
 			putValue(Action.MNEMONIC_KEY, KeyEvent.VK_U);
-			putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_Z, InputEvent.CTRL_DOWN_MASK));
+			if (Platform.isMac()) {
+				putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_Z, InputEvent.META_DOWN_MASK));
+			} else {
+				putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_Z, InputEvent.CTRL_DOWN_MASK));
+			}
 			setEnabled(false);
 		}
 
@@ -311,7 +312,11 @@ public class CompoundUndoManager extends UndoManager
 			putValue(Action.NAME, "Redo");
 			putValue(Action.SHORT_DESCRIPTION, getValue(Action.NAME));
 			putValue(Action.MNEMONIC_KEY, KeyEvent.VK_R);
-			putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_Y, InputEvent.CTRL_DOWN_MASK));
+			if (Platform.isMac()) {
+				putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_Z, InputEvent.META_DOWN_MASK + InputEvent.SHIFT_DOWN_MASK));
+			} else {
+				putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_Y, InputEvent.CTRL_DOWN_MASK));
+			}
 			setEnabled(false);
 		}
 

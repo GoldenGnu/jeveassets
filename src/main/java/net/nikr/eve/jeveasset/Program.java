@@ -25,22 +25,26 @@ import apple.dts.samplecode.osxadapter.OSXAdapter;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import javax.swing.InputMap;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
+import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
+import javax.swing.text.DefaultEditorKit;
 import net.nikr.eve.jeveasset.data.api.accounts.OwnerType;
 import net.nikr.eve.jeveasset.data.api.my.MyAccountBalance;
 import net.nikr.eve.jeveasset.data.api.my.MyAsset;
@@ -382,10 +386,44 @@ public class Program implements ActionListener {
 				initLookAndFeel(UIManager.getSystemLookAndFeelClassName(), false);
 			}
 		}
+		setMacKeys(); // This must be performed immediately after the LaF has been set
 
 		//Make sure we have nice window decorations.
 		JFrame.setDefaultLookAndFeelDecorated(true);
 		JDialog.setDefaultLookAndFeelDecorated(true);
+	}
+
+	private void setMacKeys() {
+		// Ensure Max OSX key bindings are useable for copy, cut, paste, and select all
+		addMacKeysText(UIManager.get("EditorPane.focusInputMap"));
+		addMacKeysText(UIManager.get("FormattedTextField.focusInputMap"));
+		addMacKeysText(UIManager.get("PasswordField.focusInputMap"));
+		addMacKeysText(UIManager.get("TextField.focusInputMap"));
+		addMacKeysText(UIManager.get("TextPane.focusInputMap"));
+		addMacKeysText(UIManager.get("TextArea.focusInputMap"));
+		addMacKeysMisc(UIManager.get("Table.ancestorInputMap"));
+		addMacKeysMisc(UIManager.get("Tree.focusInputMap"));
+		addMacKeysMisc(UIManager.get("List.focusInputMap"));
+	}
+
+	private void addMacKeysText(Object object) {
+		if (object instanceof InputMap) { //Better safe than sorry
+			InputMap inputMap = (InputMap) object;
+			inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_C, KeyEvent.META_DOWN_MASK), DefaultEditorKit.copyAction);
+			inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_X, KeyEvent.META_DOWN_MASK), DefaultEditorKit.cutAction);
+			inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_V, KeyEvent.META_DOWN_MASK), DefaultEditorKit.pasteAction);
+			inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_A, KeyEvent.META_DOWN_MASK), DefaultEditorKit.selectAllAction);
+		}
+	}
+
+	private void addMacKeysMisc(Object object) {
+		if (object instanceof InputMap) { //Better safe than sorry
+			InputMap inputMap = (InputMap) object;
+			inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_C, KeyEvent.META_DOWN_MASK), "copy");
+			inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_X, KeyEvent.META_DOWN_MASK), "cut");
+			inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_V, KeyEvent.META_DOWN_MASK), "parse");
+			inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_A, KeyEvent.META_DOWN_MASK), "selectAll");
+		}
 	}
 
 	public static int getButtonsHeight() {
