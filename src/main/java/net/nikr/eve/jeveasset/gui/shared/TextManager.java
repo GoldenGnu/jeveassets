@@ -20,6 +20,7 @@
  */
 package net.nikr.eve.jeveasset.gui.shared;
 
+import com.sun.jna.Platform;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.event.ActionEvent;
@@ -68,20 +69,17 @@ public final class TextManager {
 	public static void installTextComponent(final JTextComponent component) {
 		//Make sure this component does not already have a UndoManager
 		Document document = component.getDocument();
-		boolean found = false;
 		if (document instanceof AbstractDocument) {
 			AbstractDocument abstractDocument = (AbstractDocument) document;
 			for (UndoableEditListener editListener : abstractDocument.getUndoableEditListeners()) {
 				if (editListener.getClass().equals(CompoundUndoManager.class)) {
 					CompoundUndoManager undoManager = (CompoundUndoManager) editListener;
 					undoManager.reset();
-					return;
+					return; //already installed
 				}
 			}
 		}
-		if (!found) {
-			new TextManager(component);
-		}
+		new TextManager(component);
 	}
 
 	private TextManager(final JTextComponent component) {
@@ -95,19 +93,31 @@ public final class TextManager {
 
 		jCut = new JMenuItem(GuiShared.get().cut());
 		jCut.setIcon(Images.EDIT_CUT.getIcon());
-		jCut.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, InputEvent.CTRL_DOWN_MASK));
+		if (Platform.isMac()) {
+			jCut.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, InputEvent.META_DOWN_MASK));
+		} else {
+			jCut.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, InputEvent.CTRL_DOWN_MASK));
+		}
 		jCut.setActionCommand(CopyPopupAction.CUT.name());
 		jCut.addActionListener(listener);
 
 		jCopy = new JMenuItem(GuiShared.get().copy());
-		jCopy.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, InputEvent.CTRL_DOWN_MASK));
+		if (Platform.isMac()) {
+			jCopy.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, InputEvent.META_DOWN_MASK));
+		} else {
+			jCopy.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, InputEvent.CTRL_DOWN_MASK));
+		}
 		jCopy.setIcon(Images.EDIT_COPY.getIcon());
 		jCopy.setActionCommand(CopyPopupAction.COPY.name());
 		jCopy.addActionListener(listener);
 
 		jPaste = new JMenuItem(GuiShared.get().paste());
 		jPaste.setIcon(Images.EDIT_PASTE.getIcon());
-		jPaste.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V, InputEvent.CTRL_DOWN_MASK));
+		if (Platform.isMac()) {
+			jPaste.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V, InputEvent.META_DOWN_MASK));
+		} else {
+			jPaste.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V, InputEvent.CTRL_DOWN_MASK));
+		}
 		jPaste.setActionCommand(CopyPopupAction.PASTE.name());
 		jPaste.addActionListener(listener);
 
