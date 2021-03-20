@@ -424,6 +424,7 @@ public class ProfileData {
 		Set<MyMarketOrder> charMarketOrders = new HashSet<>();
 		Set<MyJournal> journals = new HashSet<>();
 		Set<MyTransaction> transactions = new HashSet<>();
+		Set<MyTransaction> charTransactions = new HashSet<>();
 		Set<MyIndustryJob> industryJobs = new HashSet<>();
 		Set<MyContractItem> contractItems = new HashSet<>();
 		Set<MyContract> contracts = new HashSet<>();
@@ -454,7 +455,11 @@ public class ProfileData {
 			//Journal
 			journals.addAll(owner.getJournal());
 			//Transactions
-			transactions.addAll(owner.getTransactions());
+			if (owner.isCorporation()) {
+				transactions.addAll(owner.getTransactions());
+			} else {
+				charTransactions.addAll(owner.getTransactions());
+			}
 			//Industry Jobs
 			industryJobs.addAll(owner.getIndustryJobs());
 			//Contracts & Contract Items
@@ -516,14 +521,20 @@ public class ProfileData {
 		for (OwnerType owner : blueprintsMap.values()) {
 			blueprints.putAll(owner.getBlueprints());
 		}
-
+		//Prioritize corp market orders over char
 		for (MyMarketOrder marketOrder : charMarketOrders) {
 			if (!marketOrder.isCorp()) { //Remove non-corporation orders
 				marketOrders.remove(marketOrder);
 			}
 			marketOrders.add(marketOrder);
 		}
-
+		//Prioritize corp transactions over char
+		for (MyTransaction transaction : charTransactions) {
+			if (!transaction.isCorporation()) { //Remove non-corporation orders
+				transactions.remove(transaction);
+			}
+			transactions.add(transaction);
+		}
 		//Update MarketOrders dynamic values
 		for (MyMarketOrder order : marketOrders) {
 			//Last Transaction
