@@ -195,7 +195,7 @@ class FilterGui<E> {
 
 	protected String getCurrentFilterName() {
 		String filterName = GuiShared.get().filterUntitled();
-		List<Filter> filters = getFilters(true);
+		List<Filter> filters = getFilters(true, true);
 		if (filters.isEmpty()) {
 			filterName = GuiShared.get().filterEmpty();
 		} else {
@@ -211,11 +211,11 @@ class FilterGui<E> {
 		return filterName;
 	}
 
-	protected List<Filter> getFilters(boolean includeDisabled) {
+	protected List<Filter> getFilters(boolean includeDisabled, boolean includeEmpty) {
 		List<Filter> filters = new ArrayList<>();
 		for (FilterPanel<E> filterPanel : filterPanels) {
 			Filter filter = filterPanel.getFilter();
-			if (!filter.isEmpty() && (filter.isEnabled() || includeDisabled)) {
+			if ((includeEmpty || !filter.isEmpty()) && (filter.isEnabled() || includeDisabled)) {
 				filters.add(filter);
 			}
 		}
@@ -500,7 +500,7 @@ class FilterGui<E> {
 				return;
 			}
 			if (FilterGuiAction.SAVE.name().equals(e.getActionCommand())) {
-				List<Filter> filters = getFilters(true);
+				List<Filter> filters = getFilters(true, true);
 				if (filters.isEmpty()) {
 					JOptionPane.showMessageDialog(jFrame, GuiShared.get().nothingToSave(), GuiShared.get().saveFilter(), JOptionPane.PLAIN_MESSAGE);
 				} else {
