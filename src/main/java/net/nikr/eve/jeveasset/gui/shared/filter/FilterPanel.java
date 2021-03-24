@@ -337,7 +337,7 @@ class FilterPanel<E> implements Comparable<FilterPanel<E>> {
 	void setFilter(final Filter filter) {
 		boolean oldValue = loading;
 		loading = true;
-		jEnabled.setSelected(true);
+		jEnabled.setSelected(filter.isEnabled());
 		jLogic.setSelectedItem(filter.getLogic());
 		groupModel.setValue(filter.getGroup());
 		updateGroupColor();

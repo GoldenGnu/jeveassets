@@ -1339,13 +1339,17 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 					if (haveAttribute(rowNode, "group")) {
 						group = getInt(rowNode, "group");
 					}
+					boolean enabled = true;
+					if (haveAttribute(rowNode, "enabled")) {
+						enabled = getBoolean(rowNode, "enabled");
+					}
 					String text = getString(rowNode, "text");
 					String columnString = getString(rowNode, "column");
 					EnumTableColumn<?> column =  getColumn(columnString, tableName);
 					if (column != null) {
 						String compare = getString(rowNode, "compare");
 						String logic = getString(rowNode, "logic");
-						filter.add(new Filter(group, logic, column, compare, text));
+						filter.add(new Filter(group, logic, column, compare, text, enabled));
 					} else {
 						LOG.warn(columnString + " column removed from filter");
 					}

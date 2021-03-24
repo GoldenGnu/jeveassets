@@ -121,6 +121,8 @@ public class FilterManager<E> extends JManageDialog {
 				builder.append(filter.getCompareType().name());
 				builder.append("] [");
 				builder.append(wrap(filter.getText()));
+				builder.append("] [");
+				builder.append(wrap(Boolean.toString(filter.isEnabled())));
 				builder.append("]\r\n");
 			}
 			builder.append("\r\n");
@@ -195,7 +197,7 @@ public class FilterManager<E> extends JManageDialog {
 					filterList.add(filter);
 				}
 			}
-			if (groups.size() == 5 && headerLoaded) {
+			if ((groups.size() == 5 || groups.size() == 6) && headerLoaded) {
 				//Group
 				Integer group = null;
 				try {
@@ -230,8 +232,14 @@ public class FilterManager<E> extends JManageDialog {
 				} else {
 					text = unwrap(groups.get(4));
 				}
+
+				boolean enabled = true;
+				if (groups.size() >= 6) {
+					enabled = Boolean.valueOf(unwrap(groups.get(5)));
+				}
+
 				if (group != null && logic != null && column != null && compare != null && (text != null || compareColumn != null)) {
-					Filter filter = new Filter(group, logic, column, compare, text, true);
+					Filter filter = new Filter(group, logic, column, compare, text, enabled);
 					filterList.add(filter);
 				}
 			}

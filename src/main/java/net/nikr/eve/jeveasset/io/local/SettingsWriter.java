@@ -371,6 +371,7 @@ public class SettingsWriter extends AbstractXmlWriter {
 					setAttribute(childNode, "column",  filter.getColumn().name());
 					setAttribute(childNode, "compare", filter.getCompareType());
 					setAttribute(childNode, "logic", filter.getLogic());
+					setAttribute(childNode, "enabled", filter.isEnabled());
 					filterNode.appendChild(childNode);
 				}
 			}
