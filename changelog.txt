@@ -16,10 +16,10 @@
                   #### #  # #  # #  # #### #### #### #### ####
 
 ________________________________________________________________________________
-_6.8.0_BETA_1___________________________________________________________________
+_6.8.0__________________________________________________________________________
 
 New Features:
--Added current location and ship columns to Industry Slot and Isk (by crmason2)
+-Added current location and ship columns to Industry Slot and Isk (by Dutlas)
 -Added system and constellation columns to all tools with a location column
 -Added constellation view to Overview
 -Added constellations to zKillboard and Dotlan location lookup
