@@ -20,9 +20,7 @@ _CONTRIBUTORS___________________________________________________________________
 
 Developers:
   Niklas Kyster Rasmussen (Golden Gnu)
-
-Testers:
-  Tomasz (kitsibas) Wiktorski
+  Dultas
 
 Retired Developers:
   Flaming Candle
@@ -32,12 +30,12 @@ Retired Developers:
   Ima Sohmbadi
   Saulvin
   AnrDaemon
-  Dultas
 
 Retired Testers:
   Varo Jan
   Scrapyard Bob
   Johann Hemphill
+  Tomasz (kitsibas) Wiktorski
 
 ________________________________________________________________________________
 _SPECIAL_THANKS_________________________________________________________________
