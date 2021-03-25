@@ -49,6 +49,8 @@ public abstract class TabsAssets extends Bundle {
 	public abstract String columnOwner();
 	public abstract String columnLocation();
 	public abstract String columnSecurity();
+	public abstract String columnSystem();
+	public abstract String columnConstellation();
 	public abstract String columnRegion();
 	public abstract String columnFactionWarfareSystemOwner();
 	public abstract String columnFactionWarfareSystemOwnerToolTip();

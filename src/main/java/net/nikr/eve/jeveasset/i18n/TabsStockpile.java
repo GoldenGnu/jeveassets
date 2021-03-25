@@ -59,6 +59,7 @@ public abstract class TabsStockpile extends Bundle {
 	public abstract String cloneStockpileTitle();
 	public abstract String close();
 	public abstract String collapse();
+	public abstract String constellation();
 	public abstract String container();
 	public abstract String copy();
 	public abstract String countMinimum();

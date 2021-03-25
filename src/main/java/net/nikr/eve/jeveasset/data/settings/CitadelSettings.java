@@ -44,7 +44,7 @@ public class CitadelSettings {
 
 	public void put(long locationID, Citadel citadel) {
 		Citadel old = cache.get(locationID);
-		if (old != null && !old.isEmpty() && old.source.getPriority() > citadel.source.getPriority()) {
+		if (old != null && !old.isEmpty() && old.getSource().getPriority() > citadel.getSource().getPriority()) {
 			return;
 		}
 		if (old == null) {

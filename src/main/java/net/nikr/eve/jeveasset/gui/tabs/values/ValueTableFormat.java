@@ -217,6 +217,56 @@ public enum ValueTableFormat implements EnumTableColumn<Value> {
 		public Object getColumnValue(final Value from) {
 			return from.getBestModuleValue();
 		}
+	},
+	CURRENT_SHIP(String.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsValues.get().columnCurrentShip();
+		}
+		@Override
+		public Object getColumnValue(final Value from) {
+			return from.getActiveShip();
+		}
+	},
+	CURRENT_STATION(String.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsValues.get().columnCurrentStation();
+		}
+		@Override
+		public Object getColumnValue(final Value from) {
+			return from.getCurrentStation();
+		}
+	},
+	CURRENT_SYSTEM(String.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsValues.get().columnCurrentSystem();
+		}
+		@Override
+		public Object getColumnValue(final Value from) {
+			return from.getCurrentSystem();
+		}
+	},
+	CURRENT_CONSTELLATION(String.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsValues.get().columnCurrentConstellation();
+		}
+		@Override
+		public Object getColumnValue(final Value from) {
+			return from.getCurrentConstellation();
+		}
+	},
+	CURRENT_REGION(String.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsValues.get().columnCurrentRegion();
+		}
+		@Override
+		public Object getColumnValue(final Value from) {
+			return from.getCurrentRegion();
+		}
 	};
 
 	private final Class<?> type;

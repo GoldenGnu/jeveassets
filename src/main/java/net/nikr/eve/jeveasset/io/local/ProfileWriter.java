@@ -36,9 +36,10 @@ import net.nikr.eve.jeveasset.data.api.my.MyContractItem;
 import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob;
 import net.nikr.eve.jeveasset.data.api.my.MyJournal;
 import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder;
-import net.nikr.eve.jeveasset.data.api.raw.RawSkill;
+import net.nikr.eve.jeveasset.data.api.my.MyShip;
 import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
 import net.nikr.eve.jeveasset.data.api.raw.RawBlueprint;
+import net.nikr.eve.jeveasset.data.api.raw.RawSkill;
 import net.nikr.eve.jeveasset.data.profile.Profile;
 import net.nikr.eve.jeveasset.data.profile.ProfileManager;
 import net.nikr.eve.jeveasset.io.shared.RawConverter;
@@ -189,6 +190,7 @@ public final class ProfileWriter extends AbstractXmlWriter {
 		Element childNode = xmldoc.createElement("assets");
 		node.appendChild(childNode);
 		writeAssets(xmldoc, childNode, owner.getAssets());
+		writeActiveShip(xmldoc, node, owner.getActiveShip());
 		writeContractItems(xmldoc, node, owner.getContracts());
 		writeAccountBalances(xmldoc, node, owner.getAccountBalances(), owner.isCorporation());
 		writeMarketOrders(xmldoc, node, owner.getMarketOrders(), owner.isCorporation());
@@ -224,6 +226,16 @@ public final class ProfileWriter extends AbstractXmlWriter {
 			setAttributeOptional(node, "rawquantity", rawQuantity);
 			parentNode.appendChild(node);
 			writeAssets(xmldoc, node, asset.getAssets());
+		}
+	}
+
+	private void writeActiveShip(Document xmldoc, Element parentNode, MyShip activeShip) {
+		if (activeShip != null) {
+			Element node = xmldoc.createElement("activeship");
+			setAttribute(node, "itemid", activeShip.getItemID());
+			setAttribute(node, "typeid", activeShip.getTypeID());
+			setAttribute(node, "locationid", activeShip.getLocationID());
+			parentNode.appendChild(node);
 		}
 	}
 

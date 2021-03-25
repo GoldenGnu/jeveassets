@@ -984,6 +984,9 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 				if (stockpileLocation.getLocation().equals(location.getSystem())) {
 					return true;
 				}
+				if (stockpileLocation.getLocation().equals(location.getConstellation())) {
+					return true;
+				}
 				if (stockpileLocation.getLocation().equals(location.getRegion())) {
 					return true;
 				}

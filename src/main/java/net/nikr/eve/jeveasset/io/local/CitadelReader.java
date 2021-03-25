@@ -71,9 +71,6 @@ public final class CitadelReader extends AbstractXmlReader<CitadelSettings> {
 			long id = getLong(currentNode, "stationid");
 			String name = getString(currentNode, "name");
 			long systemId = getLong(currentNode, "systemid");
-			String systemName = getString(currentNode, "systemname");
-			long regionId = getLong(currentNode, "regionid");
-			String regionName = getString(currentNode, "regionname");
 			boolean userLocation = false;
 			if (haveAttribute(currentNode, "userlocation")) {
 				userLocation = getBoolean(currentNode, "userlocation");
@@ -90,7 +87,7 @@ public final class CitadelReader extends AbstractXmlReader<CitadelSettings> {
 					source = CitadelSource.OLD;
 				}
 			}
-			settings.put(id, new Citadel(id, name, systemId, systemName, regionId, regionName, userLocation, citadel, source));
+			settings.put(id, new Citadel(id, name, systemId, userLocation, citadel, source));
 		}
 	}
 

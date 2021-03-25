@@ -101,7 +101,9 @@ public class EsiShipGetter extends AbstractEsiGetter {
 			} finally {
 				Settings.unlock("Active Ship Name");
 			}
-		} 
+		}
+		//Active Ship - Must be after getEveNames is updated
+		owner.setActiveShip(EsiConverter.toActiveShip(shipType, shipLocation));
 	}
 
 	@Override

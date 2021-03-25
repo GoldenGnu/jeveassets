@@ -16,6 +16,28 @@
                   #### #  # #  # #  # #### #### #### #### ####
 
 ________________________________________________________________________________
+_6.8.0__________________________________________________________________________
+
+New Features:
+-Added current location and ship columns to Industry Slot and Isk (by Dutlas)
+-Added system and constellation columns to all tools with a location column
+-Added constellation view to Overview
+-Added constellations to zKillboard and Dotlan location lookup
+-Added constellations to Stockpile locations
+
+Bug Fixes:
+-Fix spelling error in Tracker delete-item warning (by jhmartin)
+-NPE in AssetAddedData.getAdd() (BugID: 893)
+-Outbid did not handle equal prices
+-Market order outbid was never being cleared of old entries (Issue #239)
+-Fixed Transactions Profit % column giving the wrong value
+-Better handle when price APIs return zero prices
+-Industry Slots won't load filters (Issue #242)
+-New columns at the end of the TableFormat was added at the wrong index
+-Ensured Copy, Paste, Cut, and Select All shortcuts works on a Mac (Issue #243)
+-Fixed corporation transactions wallet division incorrectly showing division 1
+
+________________________________________________________________________________
 _6.7.1__________________________________________________________________________
 
 Bug Fixes:

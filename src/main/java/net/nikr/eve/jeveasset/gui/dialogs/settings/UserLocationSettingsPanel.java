@@ -115,8 +115,8 @@ public class UserLocationSettingsPanel extends JSettingsPanel {
 		edit.clear();
 		citadels.clear();
 		for (Map.Entry<Long, Citadel> entry : CitadelGetter.getAll()) {
-			if (entry.getValue().userLocation) {
-				citadels.put(entry.getKey(), entry.getValue().getLocation());
+			if (entry.getValue().isUserLocation()) {
+				citadels.put(entry.getKey(), entry.getValue().toLocation());
 			}
 		}
 		if (citadels.isEmpty()) {
@@ -174,7 +174,7 @@ public class UserLocationSettingsPanel extends JSettingsPanel {
 		}
 		String locationName;
 		if (renameLocation.isUserLocation()) { //Input previous value
-			locationName = getLocationName(CitadelGetter.get(renameLocation.getLocationID()).getName());
+			locationName = getLocationName(CitadelGetter.get(renameLocation.getLocationID()).getLocation());
 		} else {
 			locationName = getLocationName("");
 		}
@@ -200,7 +200,7 @@ public class UserLocationSettingsPanel extends JSettingsPanel {
 		if (system == null) { //Cancel
 			return null;
 		}
-		return new Citadel(renameLocation.getLocationID(), locationName, system.getSystemID(), system.getSystem(), system.getRegionID(), system.getRegion(), true, true, CitadelSource.USER);
+		return new Citadel(renameLocation.getLocationID(), locationName, system.getSystemID(), true, true, CitadelSource.USER);
 	}
 
 	private String getLocationName(String text) {
@@ -235,7 +235,7 @@ public class UserLocationSettingsPanel extends JSettingsPanel {
 					Citadel citadel = editLocation(location);
 					if (citadel != null) {
 						edit.add(citadel);
-						citadels.put(citadel.id, citadel.getLocation());
+						citadels.put(citadel.getLocationID(), citadel.toLocation());
 						updateGUI();
 					}
 				}

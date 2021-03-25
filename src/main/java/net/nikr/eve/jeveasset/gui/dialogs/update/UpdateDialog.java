@@ -228,6 +228,7 @@ public class UpdateDialog extends JDialogCentered {
 		jCancel = new JButton(DialoguesUpdate.get().cancel());
 		jCancel.setActionCommand(UpdateDialogAction.CANCEL.name());
 		jCancel.addActionListener(listener);
+
 		layout.setHorizontalGroup(
 			layout.createParallelGroup()
 				.addGroup(layout.createSequentialGroup()

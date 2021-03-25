@@ -31,9 +31,10 @@ import net.nikr.eve.jeveasset.data.api.my.MyContractItem;
 import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob;
 import net.nikr.eve.jeveasset.data.api.my.MyJournal;
 import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder;
-import net.nikr.eve.jeveasset.data.api.raw.RawSkill;
+import net.nikr.eve.jeveasset.data.api.my.MyShip;
 import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
 import net.nikr.eve.jeveasset.data.api.raw.RawBlueprint;
+import net.nikr.eve.jeveasset.data.api.raw.RawSkill;
 
 
 public interface OwnerType extends Comparable<OwnerType> {
@@ -41,10 +42,10 @@ public interface OwnerType extends Comparable<OwnerType> {
 	//Info
 	public String getOwnerName();
 	public String getCorporationName();
-	public void setOwnerName(String ownerName);
+	public void setOwnerName(final String ownerName);
 	public void setCorporationName(String corporationName);
 	public long getOwnerID();
-	public void setOwnerID(long ownerID);
+	public void setOwnerID(final long ownerID);
 	public boolean isCorporation();
 	public boolean isShowOwner();
 	public Date getExpire();
@@ -56,7 +57,9 @@ public interface OwnerType extends Comparable<OwnerType> {
 	public void setShowOwner(final boolean showOwner);
 	public void setInvalid(boolean invalid);
 	public void setResetAccountName();
-	public void setAccountName(String accountName);
+	public void setAccountName(final String accountName);
+	public MyShip getActiveShip();
+	public void setActiveShip(MyShip activeShip);
 	//Data
 	public List<MyAccountBalance> getAccountBalances();
 	public Set<MyMarketOrder> getMarketOrders();
@@ -71,19 +74,19 @@ public interface OwnerType extends Comparable<OwnerType> {
 	public List<RawSkill> getSkills();
 	public Long getTotalSkillPoints();
 	public Integer getUnallocatedSkillPoints();
-	public void setBlueprints(Map<Long, RawBlueprint> blueprints);
+	public void setBlueprints(final Map<Long, RawBlueprint> blueprints);
 	public void setIndustryJobs(final List<MyIndustryJob> industryJobs);
 	public void setTransactions(final Set<MyTransaction> transactions);
 	public void setJournal(final Set<MyJournal> journal);
 	public void setMarketOrders(final Set<MyMarketOrder> marketOrders);
 	public void setContracts(final Map<MyContract, List<MyContractItem>> contracts);
 	public void setAssets(final List<MyAsset> assets);
-	public void setAccountBalances(List<MyAccountBalance> accountBalances);
-	public void setWalletDivisions(Map<Integer, String> walletDivisions);
-	public void setAssetDivisions(Map<Integer, String> assetDivisions);
-	public void setSkills(List<RawSkill> skills);
-	public void setTotalSkillPoints(Long totalSkillPoints);
-	public void setUnallocatedSkillPoints(Integer unallocatedSkillPoints);
+	public void setAccountBalances(final List<MyAccountBalance> accountBalances);
+	public void setWalletDivisions(final Map<Integer, String> walletDivisions);
+	public void setAssetDivisions(final Map<Integer, String> assetDivisions);
+	public void setSkills(final List<RawSkill> skills);
+	public void setTotalSkillPoints(final Long totalSkillPoints);
+	public void setUnallocatedSkillPoints(final Integer unallocatedSkillPoints);
 	//Account Mask
 	public boolean isCharacter();
 	public boolean isAssetList();
@@ -109,8 +112,8 @@ public interface OwnerType extends Comparable<OwnerType> {
 	//Last Update
 	public Date getAssetLastUpdate();
 	public Date getBalanceLastUpdate();
-	public void setAssetLastUpdate(Date assetLastUpdate);
-	public void setBalanceLastUpdate(Date balanceLastUpdate);
+	public void setAssetLastUpdate(final Date assetLastUpdate);
+	public void setBalanceLastUpdate(final Date balanceLastUpdate);
 	//Next Update
 	public void setAssetNextUpdate(final Date nextUpdate);
 	public void setBalanceNextUpdate(final Date balanceNextUpdate);
@@ -118,9 +121,9 @@ public interface OwnerType extends Comparable<OwnerType> {
 	public void setBookmarksNextUpdate(Date bookmarksNextUpdate);
 	public void setContractsNextUpdate(final Date contractsNextUpdate);
 	public void setIndustryJobsNextUpdate(final Date industryJobsNextUpdate);
-	public void setLocationsNextUpdate(Date locationsNextUpdate);
+	public void setLocationsNextUpdate(final Date locationsNextUpdate);
 	public void setMarketOrdersNextUpdate(final Date marketOrdersNextUpdate);
-	public void setJournalNextUpdate(Date journalNextUpdate);
+	public void setJournalNextUpdate(final Date journalNextUpdate);
 	public void setTransactionsNextUpdate(final Date transactionsNextUpdate);
 	public void setSkillsNextUpdate(final Date skillsNextUpdate);
 	public Date getTransactionsNextUpdate();

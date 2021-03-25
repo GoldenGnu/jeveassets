@@ -25,6 +25,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import net.nikr.eve.jeveasset.data.api.my.MyAsset;
+import net.nikr.eve.jeveasset.data.api.my.MyShip;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.i18n.TabsValues;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
@@ -52,6 +53,7 @@ public class Value implements Comparable<Value> {
 	private MyAsset bestShip = null;
 	private MyAsset bestShipFitted = null;
 	private MyAsset bestModule = null;
+	private MyShip activeShip = null;
 
 	public Value(Date date) {
 		this("", date);
@@ -83,6 +85,7 @@ public class Value implements Comparable<Value> {
 		setBestShip(asset);
 		setBestShipFitted(asset);
 		setBestModule(asset);
+		setCurrentShip(asset);
 	}
 
 	public void removeAssets(AssetValue id) {
@@ -244,6 +247,41 @@ public class Value implements Comparable<Value> {
 		return getDynamicPrice(bestModule);
 	}
 
+	public String getActiveShip() {
+		if (activeShip != null) {
+			return activeShip.getName();
+		}
+		return TabsValues.get().empty();
+	}
+
+	public String getCurrentStation() {
+		if (activeShip != null) {
+			return activeShip.getLocation().getStation();
+		}
+		return TabsValues.get().empty();
+	}
+
+	public String getCurrentSystem() {
+		if (activeShip != null) {
+			return activeShip.getLocation().getSystem();
+		}
+		return TabsValues.get().empty();
+	}
+
+	public String getCurrentConstellation() {
+		if (activeShip != null) {
+			return activeShip.getLocation().getConstellation();
+		}
+		return TabsValues.get().empty();
+	}
+
+	public String getCurrentRegion() {
+		if (activeShip != null) {
+			return activeShip.getLocation().getRegion();
+		}
+		return TabsValues.get().empty();
+	}
+
 	private String getName(MyAsset asset) {
 		if (asset != null) {
 			return asset.getName();
@@ -347,6 +385,12 @@ public class Value implements Comparable<Value> {
 			this.bestModule = bestModule;
 		} else if (bestModule.getDynamicPrice() > this.bestModule.getDynamicPrice()) { //Higher
 			this.bestModule = bestModule;
+		}
+	}
+
+	private void setCurrentShip(MyAsset asset) {
+		if (!isGrandTotal() && this.activeShip == null) {
+			this.activeShip = asset.getOwner().getActiveShip();
 		}
 	}
 

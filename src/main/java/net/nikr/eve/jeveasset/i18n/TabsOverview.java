@@ -38,6 +38,7 @@ public abstract class TabsOverview extends Bundle {
 	public abstract String addGroup();
 	public abstract String average();
 	public abstract String clear();
+	public abstract String constellations();
 	public abstract String deleteGroup();
 	public abstract String deleteTheGroup(Object arg0);
 	public abstract String filterShowing(int rowCount, int size, String filterName);
@@ -59,6 +60,7 @@ public abstract class TabsOverview extends Bundle {
 	public abstract String view();
 	public abstract String columnName();
 	public abstract String columnSystem();
+	public abstract String columnConstellation();
 	public abstract String columnRegion();
 	public abstract String columnSecurity();
 	public abstract String columnVolume();

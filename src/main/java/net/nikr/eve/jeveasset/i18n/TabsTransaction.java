@@ -58,6 +58,8 @@ public abstract class TabsTransaction extends Bundle {
 	public abstract String columnTax();
 	public abstract String columnClientName();
 	public abstract String columnStationName();
+	public abstract String columnSystem();
+	public abstract String columnConstellation();
 	public abstract String columnRegion();
 	public abstract String columnTransactionPrice();
 	public abstract String columnTransactionPriceToolTip();

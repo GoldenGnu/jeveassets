@@ -44,10 +44,10 @@ import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
 import net.nikr.eve.jeveasset.data.api.raw.RawBlueprint;
 import net.nikr.eve.jeveasset.data.api.raw.RawJournalRefType;
 import net.nikr.eve.jeveasset.data.api.raw.RawPublicMarketOrder;
-import net.nikr.eve.jeveasset.data.sde.RouteFinder;
 import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
 import net.nikr.eve.jeveasset.data.sde.ReprocessedMaterial;
+import net.nikr.eve.jeveasset.data.sde.RouteFinder;
 import net.nikr.eve.jeveasset.data.sde.StaticData;
 import net.nikr.eve.jeveasset.data.settings.AssetAddedData;
 import net.nikr.eve.jeveasset.data.settings.ContractPriceManager;
@@ -200,6 +200,9 @@ public class ProfileData {
 	public void updateJumps(Collection<JumpType> jumpTypes, Class<?> clazz) {
 		for (JumpType jumpType : jumpTypes) {
 			jumpType.clearJumps(); //Clear old
+			if (jumpType.getLocation() == null) {
+				continue;
+			}
 			long systemID = jumpType.getLocation().getSystemID();
 			if (systemID <= 0) {
 				continue;
@@ -769,7 +772,7 @@ public class ProfileData {
 		owners.putAll(uniqueOwners);
 	}
 
-	public static void updateNames(EventList<MyAsset> eventList, Set<Long> itemIDs) {
+	public void updateNames(EventList<MyAsset> eventList, Set<Long> itemIDs) {
 		if (itemIDs == null || itemIDs.isEmpty()) {
 			return;
 		}
@@ -1159,7 +1162,7 @@ public class ProfileData {
 		asset.setContractPrice(ContractPriceManager.get().getContractPrice(ContractPriceItem.create(asset)));
 	}
 
-	private static void updateName(MyAsset asset) {
+	private void updateName(MyAsset asset) {
 		if (Settings.get().getUserItemNames().containsKey(asset.getItemID())) {
 			asset.setName(Settings.get().getUserItemNames().get(asset.getItemID()).getValue(), true, false);
 		} else if (Settings.get().getEveNames().containsKey(asset.getItemID())) {
@@ -1170,7 +1173,7 @@ public class ProfileData {
 		}
 	}
 
-	private static void updateContainerChildren(List<MyAsset> found, List<MyAsset> assets) {
+	private void updateContainerChildren(List<MyAsset> found, List<MyAsset> assets) {
 		for (MyAsset asset : assets) {
 			found.add(asset);
 			updateContainer(asset);
@@ -1178,7 +1181,7 @@ public class ProfileData {
 		}
 	}
 
-	private static void updateContainer(MyAsset asset) {
+	private void updateContainer(MyAsset asset) {
 		StringBuilder builder = new StringBuilder();
 		if (asset.getParents().isEmpty()) {
 			builder.append(General.get().none());

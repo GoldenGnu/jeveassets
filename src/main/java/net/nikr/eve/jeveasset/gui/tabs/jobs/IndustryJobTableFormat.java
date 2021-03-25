@@ -90,6 +90,26 @@ public enum IndustryJobTableFormat implements EnumTableColumn<MyIndustryJob> {
 			return from.getLocation().getLocation();
 		}
 	},
+	SYSTEM(String.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsJobs.get().columnSystem();
+		}
+		@Override
+		public Object getColumnValue(final MyIndustryJob from) {
+			return from.getLocation().getSystem();
+		}
+	},
+	CONSTELLATION(String.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsJobs.get().columnConstellation();
+		}
+		@Override
+		public Object getColumnValue(final MyIndustryJob from) {
+			return from.getLocation().getConstellation();
+		}
+	},
 	REGION(String.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
@@ -217,4 +237,6 @@ public enum IndustryJobTableFormat implements EnumTableColumn<MyIndustryJob> {
 	}
 	//XXX - TableFormat.getColumnValue(...) Workaround
 	@Override public abstract Object getColumnValue(final MyIndustryJob from);
+	//XXX - TableFormat.getColumnName() Workaround
+	@Override public abstract String getColumnName();
 }

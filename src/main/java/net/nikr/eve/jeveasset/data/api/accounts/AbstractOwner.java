@@ -34,9 +34,10 @@ import net.nikr.eve.jeveasset.data.api.my.MyContractItem;
 import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob;
 import net.nikr.eve.jeveasset.data.api.my.MyJournal;
 import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder;
-import net.nikr.eve.jeveasset.data.api.raw.RawSkill;
+import net.nikr.eve.jeveasset.data.api.my.MyShip;
 import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
 import net.nikr.eve.jeveasset.data.api.raw.RawBlueprint;
+import net.nikr.eve.jeveasset.data.api.raw.RawSkill;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 
 
@@ -61,6 +62,7 @@ public abstract class AbstractOwner implements OwnerType, Comparable<OwnerType> 
 	private long ownerID;
 	private boolean showOwner = true;
 	private boolean invalid = false;
+	private MyShip activeShip;
 
 	private Date assetLastUpdate = null;
 	private Date assetNextUpdate = Settings.getNow();
@@ -99,6 +101,7 @@ public abstract class AbstractOwner implements OwnerType, Comparable<OwnerType> 
 		this.ownerID = abstractOwner.ownerID;
 		this.showOwner = abstractOwner.showOwner;
 		this.invalid = abstractOwner.invalid;
+		this.activeShip = abstractOwner.activeShip;
 		this.assetLastUpdate = abstractOwner.assetLastUpdate;
 		this.assetNextUpdate = abstractOwner.assetNextUpdate;
 		this.balanceLastUpdate = abstractOwner.balanceLastUpdate;
@@ -124,7 +127,7 @@ public abstract class AbstractOwner implements OwnerType, Comparable<OwnerType> 
 	}
 
 	@Override
-	public synchronized void setBlueprintsNextUpdate(Date blueprintsNextUpdate) {
+	public synchronized void setBlueprintsNextUpdate(final Date blueprintsNextUpdate) {
 		this.blueprintsNextUpdate = blueprintsNextUpdate;
 	}
 
@@ -144,7 +147,7 @@ public abstract class AbstractOwner implements OwnerType, Comparable<OwnerType> 
 	}
 
 	@Override
-	public synchronized void setLocationsNextUpdate(Date locationsNextUpdate) {
+	public synchronized void setLocationsNextUpdate(final Date locationsNextUpdate) {
 		this.locationsNextUpdate = locationsNextUpdate;
 	}
 
@@ -154,7 +157,7 @@ public abstract class AbstractOwner implements OwnerType, Comparable<OwnerType> 
 	}
 
 	@Override
-	public synchronized void setJournalNextUpdate(Date journalNextUpdate) {
+	public synchronized void setJournalNextUpdate(final Date journalNextUpdate) {
 		this.journalNextUpdate = journalNextUpdate;
 	}
 
@@ -174,12 +177,12 @@ public abstract class AbstractOwner implements OwnerType, Comparable<OwnerType> 
 	}
 
 	@Override
-	public synchronized  Date getAssetNextUpdate() {
+	public synchronized Date getAssetNextUpdate() {
 		return assetNextUpdate;
 	}
 
 	@Override
-	public synchronized  Date getBalanceNextUpdate() {
+	public synchronized Date getBalanceNextUpdate() {
 		return balanceNextUpdate;
 	}
 
@@ -230,22 +233,22 @@ public abstract class AbstractOwner implements OwnerType, Comparable<OwnerType> 
 	public abstract boolean equals(Object obj);
 
 	@Override
-	public final void setOwnerName(String ownerName) {
+	public final void setOwnerName(final String ownerName) {
 		this.ownerName = ownerName;
 	}
 
 	@Override
-	public final void setAssetLastUpdate(Date assetLastUpdate) {
+	public final void setAssetLastUpdate(final Date assetLastUpdate) {
 		this.assetLastUpdate = assetLastUpdate;
 	}
 
 	@Override
-	public final void setBalanceLastUpdate(Date balanceLastUpdate) {
+	public final void setBalanceLastUpdate(final Date balanceLastUpdate) {
 		this.balanceLastUpdate = balanceLastUpdate;
 	}
 
 	@Override
-	public final void setOwnerID(long ownerID) {
+	public final void setOwnerID(final long ownerID) {
 		this.ownerID = ownerID;
 	}
 
@@ -305,6 +308,11 @@ public abstract class AbstractOwner implements OwnerType, Comparable<OwnerType> 
 	@Override
 	public String getCorporationName() {
 		return corporationName;
+	}
+
+	@Override
+	public MyShip getActiveShip() {
+		return activeShip;
 	}
 
 	@Override
@@ -376,7 +384,7 @@ public abstract class AbstractOwner implements OwnerType, Comparable<OwnerType> 
 	}
 
 	@Override
-	public final void setShowOwner(boolean showOwner) {
+	public final void setShowOwner(final boolean showOwner) {
 		this.showOwner = showOwner;
 	}
 
@@ -386,42 +394,42 @@ public abstract class AbstractOwner implements OwnerType, Comparable<OwnerType> 
 	}
 
 	@Override
-	public final void setBlueprints(Map<Long, RawBlueprint> blueprints) {
+	public final void setBlueprints(final Map<Long, RawBlueprint> blueprints) {
 		this.blueprints = blueprints;
 	}
 
 	@Override
-	public final void setIndustryJobs(List<MyIndustryJob> industryJobs) {
+	public final void setIndustryJobs(final List<MyIndustryJob> industryJobs) {
 		this.industryJobs = industryJobs;
 	}
 
 	@Override
-	public final void setTransactions(Set<MyTransaction> transactions) {
+	public final void setTransactions(final Set<MyTransaction> transactions) {
 		this.transactions = transactions;
 	}
 
 	@Override
-	public final void setJournal(Set<MyJournal> journal) {
+	public final void setJournal(final Set<MyJournal> journal) {
 		this.journal = journal;
 	}
 
 	@Override
-	public synchronized final void setMarketOrders(Set<MyMarketOrder> marketOrders) {
+	public final void setMarketOrders(final Set<MyMarketOrder> marketOrders) {
 		this.marketOrders = marketOrders;
 	}
 
 	@Override
-	public final void setContracts(Map<MyContract, List<MyContractItem>> contracts) {
+	public final void setContracts(final Map<MyContract, List<MyContractItem>> contracts) {
 		this.contracts = contracts;
 	}
 
 	@Override
-	public final synchronized void setAssets(List<MyAsset> assets) {
+	public final synchronized void setAssets(final List<MyAsset> assets) {
 		this.assets = assets;
 	}
 
 	@Override
-	public final void setAccountBalances(List<MyAccountBalance> accountBalances) {
+	public final void setAccountBalances(final List<MyAccountBalance> accountBalances) {
 		this.accountBalances = accountBalances;
 	}
 
@@ -458,6 +466,11 @@ public abstract class AbstractOwner implements OwnerType, Comparable<OwnerType> 
 	@Override
 	public void setUnallocatedSkillPoints(Integer unallocatedSkillPoints) {
 		this.unallocatedSkillPoints = unallocatedSkillPoints;
+	}
+
+	@Override
+	public void setActiveShip(MyShip activeShip) {
+		this.activeShip = activeShip;
 	}
 
 	@Override
