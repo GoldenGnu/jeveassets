@@ -40,6 +40,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import net.nikr.eve.jeveasset.data.settings.Settings;
+import net.nikr.eve.jeveasset.data.settings.SettingsUpdateListener;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.CaseInsensitiveComparator;
 import net.nikr.eve.jeveasset.gui.shared.components.JDropDownButton;
@@ -479,16 +480,27 @@ class FilterGui<E> {
 		return filterSave.show(new ArrayList<>(filterControl.getFilters().keySet()), new ArrayList<>(filterControl.getDefaultFilters().keySet()));
 	}
 
+	/**
+	 * Loop though set update listeners and trigger their action.
+	 */
+	private void fireSettingsUpdate() {
+		for (SettingsUpdateListener listener : filterControl.getSettingsUpdateListenerList()) {
+			listener.settingChanged();
+		}
+	}
+
 	private class ListenerClass implements ActionListener {
 
 		@Override
 		public void actionPerformed(final ActionEvent e) {
 			if (FilterGuiAction.ADD.name().equals(e.getActionCommand())) {
 				add();
+				fireSettingsUpdate();
 				return;
 			}
 			if (FilterGuiAction.CLEAR.name().equals(e.getActionCommand())) {
 				clear();
+				fireSettingsUpdate();
 				return;
 			}
 			if (FilterGuiAction.MANAGER.name().equals(e.getActionCommand())) {

@@ -437,6 +437,12 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 			parseTableFilters(tablefiltersElement, settings);
 		}
 
+		//Current Table Filters (Must be loaded before Asset Filters)
+		Element currenttablefiltersElement = getNodeOptional(element, "currenttablefilters");
+		if (currenttablefiltersElement != null) {
+			parseCurrentTableFilters(currenttablefiltersElement, settings);
+		}
+
 		//Asset Filters
 		Element filtersElement = getNodeOptional(element, "filters");
 		if (filtersElement != null) {
@@ -1321,6 +1327,13 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		}
 	}
 
+	/***
+	 * Parse the table filters elements of the settings file.
+	 *
+	 * @param element The 'tablefilters' element of the xml.
+	 * @param settings The settings to be loaded to.
+	 * @throws XmlException
+	 */
 	private void parseTableFilters(final Element element, final Settings settings) throws XmlException {
 		NodeList tableNodeList = element.getElementsByTagName("table");
 		for (int a = 0; a < tableNodeList.getLength(); a++) {
@@ -1331,29 +1344,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 			for (int b = 0; b < filterNodeList.getLength(); b++) {
 				Element filterNode = (Element) filterNodeList.item(b);
 				String filterName = getString(filterNode, "name");
-				List<Filter> filter = new ArrayList<>();
-				NodeList rowNodes = filterNode.getElementsByTagName("row");
-				for (int c = 0; c < rowNodes.getLength(); c++) {
-					Element rowNode = (Element) rowNodes.item(c);
-					int group = 1;
-					if (haveAttribute(rowNode, "group")) {
-						group = getInt(rowNode, "group");
-					}
-					boolean enabled = true;
-					if (haveAttribute(rowNode, "enabled")) {
-						enabled = getBoolean(rowNode, "enabled");
-					}
-					String text = getString(rowNode, "text");
-					String columnString = getString(rowNode, "column");
-					EnumTableColumn<?> column =  getColumn(columnString, tableName);
-					if (column != null) {
-						String compare = getString(rowNode, "compare");
-						String logic = getString(rowNode, "logic");
-						filter.add(new Filter(group, logic, column, compare, text, enabled));
-					} else {
-						LOG.warn(columnString + " column removed from filter");
-					}
-				}
+				List<Filter> filter = parseFilters(filterNode, tableName);
 				if (!filter.isEmpty()) {
 					filters.put(filterName, filter);
 				} else {
@@ -1362,6 +1353,70 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 			}
 			settings.getTableFilters().put(tableName, filters);
 		}
+	}
+
+	/***
+	 * Parse the current table filters elements of the settings file.
+	 *
+	 * @param element The 'currenttablefilters' element of the xml.
+	 * @param settings The settings to be loaded to.
+	 * @throws XmlException
+	 */
+	private void parseCurrentTableFilters(final Element element, final Settings settings) throws XmlException {
+		NodeList tableNodeList = element.getElementsByTagName("table");
+		for (int a = 0; a < tableNodeList.getLength(); a++) {
+			Element tableNode = (Element) tableNodeList.item(a);
+			String tableName = getString(tableNode, "name");
+			NodeList filterNodeList = tableNode.getElementsByTagName("filter");
+			List<Filter> filters = new ArrayList<>();
+
+			if (filterNodeList.getLength() == 1) {
+				Element filterNode = (Element) filterNodeList.item(0);
+				filters = parseFilters(filterNode, tableName);
+			} else {
+				LOG.warn(tableName + " current filter not found");
+			}
+
+			if (filters.isEmpty()) {
+				LOG.warn(tableName + " current filter empty");
+			}
+			settings.getCurrentTableFilters().put(tableName, filters);
+		}
+	}
+
+	/***
+	 * Parse a filter element of the settings file. This can be used on both table and current table filters.
+	 *
+	 * @param filterNode The node of the filter element of the xml.
+	 * @param tableName The name of the table the filter is for.
+	 * @return A list of filters if the element had one. If not an empty list is returned.
+	 * @throws XmlException
+	 */
+	private List<Filter> parseFilters(Element filterNode, String tableName) throws XmlException {
+		List<Filter> filter = new ArrayList<>();
+		NodeList rowNodes = filterNode.getElementsByTagName("row");
+		for (int c = 0; c < rowNodes.getLength(); c++) {
+			Element rowNode = (Element) rowNodes.item(c);
+			int group = 1;
+			if (haveAttribute(rowNode, "group")) {
+				group = getInt(rowNode, "group");
+			}
+			boolean enabled = true;
+			if (haveAttribute(rowNode, "enabled")) {
+				enabled = getBoolean(rowNode, "enabled");
+			}
+			String text = getString(rowNode, "text");
+			String columnString = getString(rowNode, "column");
+			EnumTableColumn<?> column = getColumn(columnString, tableName);
+			if (column != null) {
+				String compare = getString(rowNode, "compare");
+				String logic = getString(rowNode, "logic");
+				filter.add(new Filter(group, logic, column, compare, text, enabled));
+			} else {
+				LOG.warn(columnString + " column removed from filter");
+			}
+		}
+		return filter;
 	}
 
 	public static EnumTableColumn<?> getColumn(final String column, final String tableName) {

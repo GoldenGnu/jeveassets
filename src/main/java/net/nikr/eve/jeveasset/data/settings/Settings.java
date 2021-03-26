@@ -218,6 +218,7 @@ public class Settings {
 	//									 JAutoColumnTable.ListenerClass.mouseReleased() - Moved
 	//									 ViewManager.loadView() - Load View
 	//Lock OK
+	private final Map<String, List<Filter>> currentTableFilters = new HashMap<>();
 	private final Map<String, List<SimpleColumn>> tableColumns = new HashMap<>();
 	//Column Width				Saved by JAutoColumnTable.saveColumnsWidth()
 	//Lock OK
@@ -479,6 +480,25 @@ public class Settings {
 			tableFilters.put(key, new HashMap<>());
 		}
 		return tableFilters.get(key);
+	}
+
+	/***
+	 * @return current table filters, list may be empty but should never be null.
+	 */
+	public Map<String, List<Filter>> getCurrentTableFilters() {
+		return currentTableFilters;
+	}
+
+	/***
+	 * @param key Key of the element to look up.
+	 * @return The value of the filter if key is found. If key is not found it will be added with an empty list and
+	 * then returned.
+	 */
+	public List<Filter> getCurrentTableFilters(final String key) {
+		if (!currentTableFilters.containsKey(key)) {
+			currentTableFilters.put(key, new ArrayList<>());
+		}
+		return currentTableFilters.get(key);
 	}
 
 	public Map<String, List<SimpleColumn>> getTableColumns() {

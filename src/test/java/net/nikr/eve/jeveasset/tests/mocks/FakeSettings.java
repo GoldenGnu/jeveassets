@@ -220,6 +220,16 @@ public abstract class FakeSettings extends Settings {
 	}
 
 	@Override
+	public Map<String, List<Filter>> getCurrentTableFilters() {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public List<Filter> getCurrentTableFilters(final String key) {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
 	public boolean isStockpileFocusTab() {
 		throw new UnsupportedOperationException("not implemented");
 	}

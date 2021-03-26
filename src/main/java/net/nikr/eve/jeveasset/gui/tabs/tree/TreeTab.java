@@ -238,7 +238,7 @@ public class TreeTab extends JMainTabSecondary implements TagUpdate {
 				filterList,
 				Settings.get().getTableFilters(NAME)
 				);
-
+		installFilterControl(filterControl, NAME);
 		//Menu
 		installMenu(program, new TreeTableMenu(), jTable, TreeAsset.class);
 

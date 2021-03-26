@@ -131,7 +131,7 @@ public class ValueTableTab extends JMainTabSecondary {
 				filterList,
 				Settings.get().getTableFilters(NAME)
 				);
-
+		installFilterControl(filterControl, NAME);
 		//Menu
 		installMenu(program, new ValueTableMenu(), jTable, Value.class);
 
