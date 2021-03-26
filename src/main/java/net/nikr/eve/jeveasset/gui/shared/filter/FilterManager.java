@@ -42,6 +42,10 @@ public class FilterManager<E> extends JManageDialog {
 	private final String toolName;
 	private final JTextDialog jTextDialog;
 
+	//Constants
+	private final String ENABLED = "enabled";
+	private final String DISABLED = "disabled";
+
 	FilterManager(final JFrame jFrame, final String toolName, final FilterGui<E> gui, final Map<String, List<Filter>> filters, final Map<String, List<Filter>> defaultFilters) {
 		super(null, jFrame, GuiShared.get().filterManager(), true, true);
 		this.toolName = toolName;
@@ -122,7 +126,7 @@ public class FilterManager<E> extends JManageDialog {
 				builder.append("] [");
 				builder.append(wrap(filter.getText()));
 				builder.append("] [");
-				builder.append(wrap(Boolean.toString(filter.isEnabled())));
+				builder.append(convertEnabled(filter.isEnabled()));
 				builder.append("]\r\n");
 			}
 			builder.append("\r\n");
@@ -235,7 +239,7 @@ public class FilterManager<E> extends JManageDialog {
 
 				boolean enabled = true;
 				if (groups.size() >= 6) {
-					enabled = Boolean.valueOf(unwrap(groups.get(5)));
+					enabled = unwrapEnabled(groups.get(5));
 				}
 
 				if (group != null && logic != null && column != null && compare != null && (text != null || compareColumn != null)) {
@@ -284,6 +288,34 @@ public class FilterManager<E> extends JManageDialog {
 		text = text.substring(1, text.length() - 1);
 		text = text.replace("]]", "]");
 		return text;
+	}
+
+	/***
+	 * Convert the enabled disable flag into a readable format for export.
+	 * @param enabled The state of the flag.
+	 * @return A string that contains an export element in human readable form, either "enabled" or "disabled".
+	 */
+	private String convertEnabled(boolean enabled) {
+		if(enabled) {
+			return ENABLED;
+		}
+		return wrap(DISABLED);
+	}
+
+	/***
+	 * Unwrap and convert the human readable enable disable flag to a boolean, case insensitive.
+	 * @param text The text of the element to be unwrapped and converted.
+	 * @return "disabled" returns false, all others (including invalid data) return true.
+	 */
+	private boolean unwrapEnabled(String text) {
+		String unwrapped = unwrap(text);
+		if(DISABLED.compareToIgnoreCase(unwrapped) == 0) {
+			return false;
+		} else if (ENABLED.compareToIgnoreCase(unwrapped) == 0) {
+			return true;
+		}
+		//Assume true if no match.
+		return true;
 	}
 
 	@Override
