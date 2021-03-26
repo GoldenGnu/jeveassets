@@ -225,7 +225,17 @@ public abstract class FakeSettings extends Settings {
 	}
 
 	@Override
-	public List<Filter> getCurrentTableFilters(final String key) {
+	public List<Filter> getCurrentTableFilters(final String tableName) {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public Map<String, Boolean> getCurrentTableFiltersShown() {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public boolean getCurrentTableFiltersShown(final String tableName) {
 		throw new UnsupportedOperationException("not implemented");
 	}
 

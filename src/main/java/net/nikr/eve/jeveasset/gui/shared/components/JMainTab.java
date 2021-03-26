@@ -100,6 +100,7 @@ public abstract class JMainTab {
 		if(filterControl != null && toolName != null && !toolName.isEmpty()) {
 			filterControl.clearCurrentFilters();
 			filterControl.addFilters(Settings.get().getCurrentTableFilters(toolName));
+			filterControl.setFilterShown(Settings.get().getCurrentTableFiltersShown(toolName));
 			SettingsUpdateListener listener = new ListenerClass();
 			filterControl.getSettingsUpdateListenerList().add(listener);
 			this.filterControl = filterControl;

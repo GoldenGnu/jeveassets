@@ -182,6 +182,21 @@ class FilterGui<E> {
 		exportDialog.setColumns(enumColumns);
 	}
 
+	/***
+	 * @return Is the filter panel shown
+	 */
+	public boolean isFilterShown() {
+		return jShowFilters.isSelected();
+	}
+
+	/***
+	 * @param shown Whether to show the filter panel
+	 */
+	public void setFilterShown(boolean shown) {
+		jShowFilters.setSelected(shown);
+		update();
+	}
+
 	protected final void addExportOption(final JMenuItem jMenuItem) {
 		if (!jExportMenu.isVisible()) { //First
 			jExportMenu.setVisible(true);
@@ -509,6 +524,8 @@ class FilterGui<E> {
 			}
 			if (FilterGuiAction.SHOW_FILTERS.name().equals(e.getActionCommand())) {
 				update();
+				Settings.get().getCurrentTableFiltersShown().put(filterControl.getName(), isFilterShown());
+				fireSettingsUpdate();
 				return;
 			}
 			if (FilterGuiAction.SAVE.name().equals(e.getActionCommand())) {

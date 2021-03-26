@@ -1372,6 +1372,13 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 
 			if (filterNodeList.getLength() == 1) {
 				Element filterNode = (Element) filterNodeList.item(0);
+
+				if(haveAttribute(filterNode, "show")) {
+					settings.getCurrentTableFiltersShown().put(tableName, getBoolean(filterNode, "show"));
+				} else {
+					settings.getCurrentTableFiltersShown().put(tableName, true);
+				}
+
 				filters = parseFilters(filterNode, tableName);
 			} else {
 				LOG.warn(tableName + " current filter not found");

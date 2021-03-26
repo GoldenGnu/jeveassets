@@ -270,6 +270,20 @@ public abstract class FilterControl<E> extends ExportFilterControl<E> {
 		return settingsUpdateListenerList;
 	}
 
+	/***
+	 * @return Is the filter panel shown
+	 */
+	public boolean isFilterShown() {
+		return gui.isFilterShown();
+	}
+
+	/***
+	 * @param shown Whether to show the filter panel
+	 */
+	public void setFilterShown(boolean shown) {
+		gui.setFilterShown(shown);
+	}
+
 	protected abstract List<EnumTableColumn<E>> getColumns();
 
 	protected abstract Object getColumnValue(E item, String column);

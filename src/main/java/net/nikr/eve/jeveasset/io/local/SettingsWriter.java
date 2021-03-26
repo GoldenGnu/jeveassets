@@ -155,7 +155,7 @@ public class SettingsWriter extends AbstractXmlWriter {
 		writeUserItemNames(xmldoc, settings.getUserItemNames());
 		writeEveNames(xmldoc, settings.getEveNames());
 		writeTableFilters(xmldoc, settings.getTableFilters());
-		writeCurrentTableFilters(xmldoc, settings.getCurrentTableFilters());
+		writeCurrentTableFilters(xmldoc, settings.getCurrentTableFilters(), settings.getCurrentTableFiltersShown());
 		writeTableColumns(xmldoc, settings.getTableColumns());
 		writeTableColumnsWidth(xmldoc, settings.getTableColumnsWidth());
 		writeTablesResize(xmldoc, settings.getTableResize());
@@ -381,8 +381,9 @@ public class SettingsWriter extends AbstractXmlWriter {
 	 *
 	 * @param xmldoc Settings document to write to.
 	 * @param tableFilters Current filters to be written to the document one per table.
+	 * @param tableFiltersShow Current filters visibility state to be written to the document one per table.
 	 */
-	private void writeCurrentTableFilters(final Document xmldoc, final Map<String, List<Filter>> tableFilters) {
+	private void writeCurrentTableFilters(final Document xmldoc, final Map<String, List<Filter>> tableFilters, final Map<String, Boolean> tableFiltersShow) {
 		Element currenttablefiltersNode = xmldoc.createElementNS(null, "currenttablefilters");
 		xmldoc.getDocumentElement().appendChild(currenttablefiltersNode);
 		for (Map.Entry<String, List<Filter>> filters : tableFilters.entrySet()) {
@@ -390,6 +391,7 @@ public class SettingsWriter extends AbstractXmlWriter {
 			setAttribute(nameNode, "name", filters.getKey());
 			currenttablefiltersNode.appendChild(nameNode);
 			Element filterNode = xmldoc.createElementNS(null, "filter");
+			setAttribute(filterNode, "show", tableFiltersShow.getOrDefault(filters.getKey(), true));
 			nameNode.appendChild(filterNode);
 			writeFilters(xmldoc, filterNode, filters);
 		}
