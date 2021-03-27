@@ -253,7 +253,10 @@ class StockpileShoppingListDialog extends JDialogCentered {
 		}
 		//Industry Jobs
 		for (MyIndustryJob industryJob : program.getIndustryJobsList()) {
-			add(new TypeIdentifier(industryJob.getProductTypeID(), false), industryJob, claims, items);
+			Integer productTypeID = industryJob.getProductTypeID();
+			if (productTypeID != null) {
+				add(new TypeIdentifier(productTypeID, false), industryJob, claims, items);
+			}
 			add(new TypeIdentifier(-industryJob.getBlueprintTypeID(), true), industryJob, claims, items);
 		}
 		//Transactions

@@ -677,8 +677,8 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 		//Industry Job
 		if (stockpile.isJobs()) {
 			for (MyIndustryJob industryJob : program.getIndustryJobsList()) {
-				int productTypeID = industryJob.getProductTypeID();
-				if (typeIDs.contains(productTypeID)) {
+				Integer productTypeID = industryJob.getProductTypeID();
+				if (productTypeID  != null && typeIDs.contains(productTypeID)) {
 					Set<MyIndustryJob> items = industryJobs.get(productTypeID);
 					if (items == null) {
 						items = new HashSet<>();
