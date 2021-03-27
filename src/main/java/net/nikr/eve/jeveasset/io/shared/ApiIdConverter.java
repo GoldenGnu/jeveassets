@@ -241,7 +241,10 @@ public final class ApiIdConverter {
 		return 0;
 	}
 
-	public static Item getItem(final int typeID) {
+	public static Item getItem(final Integer typeID) {
+		if (typeID == null) {
+			return new Item(0);
+		}
 		Item item = StaticData.get().getItems().get(typeID);
 		if (item == null) {
 			item = new Item(typeID);
@@ -249,7 +252,10 @@ public final class ApiIdConverter {
 		return item;
 	}
 
-	public static Item getItemUpdate(final int typeID) {
+	public static Item getItemUpdate(final Integer typeID) {
+		if (typeID == null) {
+			return new Item(0);
+		}
 		Item item = StaticData.get().getItems().get(typeID);
 		if (item == null || 
 				(item.getVersion() != null && !item.getVersion().equals(EsiItemsGetter.ESI_ITEM_VERSION))) { //New ESI item version

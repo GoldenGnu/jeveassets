@@ -831,7 +831,9 @@ public class ProfileData {
 		try {
 			eventList.getReadWriteLock().readLock().lock();
 			for (MyIndustryJob industryJob : eventList) {
-				if (typeIDs.contains(getTypeID(industryJob.isBPC(), industryJob.getItem().getTypeID())) || typeIDs.contains(getTypeID(industryJob.isCopying(), industryJob.getProductTypeID()))) {
+				Integer productTypeID = industryJob.getProductTypeID();
+				if (typeIDs.contains(getTypeID(industryJob.isBPC(), industryJob.getItem().getTypeID())) 
+						|| (productTypeID != null && typeIDs.contains(getTypeID(industryJob.isCopying(), productTypeID)))) {
 					found.add(industryJob); //Save for update
 					updatePrice(industryJob); //Update data
 				}

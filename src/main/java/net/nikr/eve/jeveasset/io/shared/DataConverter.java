@@ -56,7 +56,7 @@ public abstract class DataConverter {
 			if (!industryJob.isDelivered()) {
 				MyAsset asset = new MyAsset(industryJob, false);
 				assets.add(asset);
-				if (includeManufacturing && industryJob.isManufacturing()) {
+				if (includeManufacturing && industryJob.isManufacturing() && industryJob.getProductTypeID() != null) {
 					MyAsset product = new MyAsset(industryJob, true);
 					assets.add(product);
 				}
