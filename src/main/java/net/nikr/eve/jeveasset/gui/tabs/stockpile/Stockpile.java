@@ -636,7 +636,11 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 
 		private Long matchesIndustryJob(final MyIndustryJob industryJob, boolean add) {
 			if (industryJob != null) { //better safe then sorry
-				Long productCount = matches(add, industryJob.getProductTypeID(), industryJob.getOwnerID(), null, industryJob.getLocation(), null, null, industryJob, null, null);
+				Integer productTypeID = industryJob.getProductTypeID();
+				Long productCount = null;
+				if (productTypeID != null) {
+					productCount = matches(add, productTypeID, industryJob.getOwnerID(), null, industryJob.getLocation(), null, null, industryJob, null, null);
+				}
 				Long runsCount = matches(add, -industryJob.getBlueprintTypeID(), industryJob.getOwnerID(), null, industryJob.getLocation(), null, null, industryJob, null, null);
 				if (productCount != null && runsCount != null) {
 					return productCount + runsCount;

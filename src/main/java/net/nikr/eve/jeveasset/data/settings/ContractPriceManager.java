@@ -379,10 +379,11 @@ public class ContractPriceManager {
 
 		public static ContractPriceItem create(MyIndustryJob industryJob, boolean product) {
 			if (product) {
-				if (industryJob.getProductTypeID() == null) {
+				Integer productTypeID = industryJob.getProductTypeID();
+				if (productTypeID == null) {
 					return null;
 				}
-				return new ContractPriceItem(industryJob.getProductTypeID(), industryJob.isCopying(), false, industryJob.getMaterialEfficiency(), industryJob.getTimeEfficiency(), industryJob.getRuns() * industryJob.getLicensedRuns());
+				return new ContractPriceItem(productTypeID, industryJob.isCopying(), false, industryJob.getMaterialEfficiency(), industryJob.getTimeEfficiency(), industryJob.getRuns() * industryJob.getLicensedRuns());
 			} else {
 				return new ContractPriceItem(industryJob.getBlueprintTypeID(), industryJob.isBPC(), industryJob.isBPO(), industryJob.getMaterialEfficiency(), industryJob.getTimeEfficiency(), industryJob.getRuns());
 			}
