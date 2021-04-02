@@ -45,9 +45,11 @@ import net.nikr.eve.jeveasset.data.settings.ContractPriceManager.ContractPriceSe
 import net.nikr.eve.jeveasset.data.settings.ContractPriceManager.ContractPriceSettings.ContractPriceMode;
 import net.nikr.eve.jeveasset.data.settings.ContractPriceManager.ContractPriceSettings.ContractPriceSecurity;
 import net.nikr.eve.jeveasset.data.settings.ExportSettings;
+import net.nikr.eve.jeveasset.data.settings.ExportSettings.ColumnSelection;
 import net.nikr.eve.jeveasset.data.settings.ExportSettings.DecimalSeparator;
 import net.nikr.eve.jeveasset.data.settings.ExportSettings.ExportFormat;
 import net.nikr.eve.jeveasset.data.settings.ExportSettings.FieldDelimiter;
+import net.nikr.eve.jeveasset.data.settings.ExportSettings.FilterSelection;
 import net.nikr.eve.jeveasset.data.settings.ExportSettings.LineDelimiter;
 import net.nikr.eve.jeveasset.data.settings.MarketOrdersSettings;
 import net.nikr.eve.jeveasset.data.settings.PriceDataSettings;
@@ -1786,12 +1788,48 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 	private ExportSettings parseExportSetting(final Element exportNode, final String toolName) throws XmlException {
 		ExportSettings exportSetting = new ExportSettings(toolName);
 
-		ExportFormat exportFormat = ExportFormat.valueOf(getString(exportNode, "exportformat"));
-		exportSetting.setExportFormat(exportFormat);
+		//Common
+		String exportFormat = getStringOptional(exportNode, "exportformat");
+		if (exportFormat != null) {
+			exportSetting.setExportFormat(ExportFormat.valueOf(exportFormat));
+		}
 
-		//Shared
 		String fileName = getString(exportNode, "filename");
-		exportSetting.setFilename(fileName);
+		if (fileName != null) {
+			exportSetting.setFilename(fileName);
+		}
+
+		String columnSelection = getStringOptional(exportNode, "columnselection");
+		if (columnSelection != null) {
+			exportSetting.setColumnSelection(ColumnSelection.valueOf(columnSelection));
+		}
+
+		String viewName = getStringOptional(exportNode, "viewname");
+		if (viewName != null) {
+			exportSetting.setViewName(viewName);
+		}
+
+		String filterSelection = getStringOptional(exportNode, "filterselection");
+		if (filterSelection != null) {
+			exportSetting.setFilterSelection(FilterSelection.valueOf(filterSelection));
+		}
+
+		String filterName = getStringOptional(exportNode, "filtername");
+		if (filterName != null) {
+			exportSetting.setFilterName(filterName);
+		}
+
+		Element tableNode = getNodeOptional(exportNode, "table");
+		if (tableNode != null) {
+			List<String> columns = new ArrayList<>();
+			NodeList columnNodeList = tableNode.getElementsByTagName("column");
+			for (int b = 0; b < columnNodeList.getLength(); b++) {
+				Element columnNode = (Element) columnNodeList.item(b);
+				String name = getString(columnNode, "name");
+				columns.add(name);
+			}
+			exportSetting.putTableExportColumns(columns);
+		}
 
 		//CSV
 		Element csvElement = getNodeOptional(exportNode, "csv");
@@ -1833,18 +1871,6 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 
 			int htmlRepeatHeader = getInt(htmlElement, "repeatheader");
 			exportSetting.setHtmlRepeatHeader(htmlRepeatHeader);
-		}
-
-		Element tableNode = getNode(exportNode, "table");
-		if (tableNode != null) {
-			List<String> columns = new ArrayList<>();
-			NodeList columnNodeList = tableNode.getElementsByTagName("column");
-			for (int b = 0; b < columnNodeList.getLength(); b++) {
-				Element columnNode = (Element) columnNodeList.item(b);
-				String name = getString(columnNode, "name");
-				columns.add(name);
-			}
-			exportSetting.putTableExportColumns(columns);
 		}
 
 		return exportSetting;

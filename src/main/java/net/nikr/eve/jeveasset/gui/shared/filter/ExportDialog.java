@@ -59,9 +59,11 @@ import javax.swing.JSeparator;
 import javax.swing.JSlider;
 import javax.swing.JTextField;
 import net.nikr.eve.jeveasset.Program;
+import net.nikr.eve.jeveasset.data.settings.ExportSettings.ColumnSelection;
 import net.nikr.eve.jeveasset.data.settings.ExportSettings.DecimalSeparator;
 import net.nikr.eve.jeveasset.data.settings.ExportSettings.ExportFormat;
 import net.nikr.eve.jeveasset.data.settings.ExportSettings.FieldDelimiter;
+import net.nikr.eve.jeveasset.data.settings.ExportSettings.FilterSelection;
 import net.nikr.eve.jeveasset.data.settings.ExportSettings.LineDelimiter;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.data.settings.tag.Tags;
@@ -526,6 +528,20 @@ public class ExportDialog<E> extends JDialogCentered {
 		} else {
 			Settings.get().getExportSettings(toolName).putTableExportColumns(getExportColumns());
 		}
+		//Make sure there is a selected item and that it is not the filler text for empty list.
+		if (jFilters.getSelectedItem() != null
+				&& DialoguesExport.get().noSavedFilter().compareTo((String) jFilters.getSelectedItem()) != 0) {
+			Settings.get().getExportSettings(toolName).setFilterName((String) jFilters.getSelectedItem());
+		} else  {
+			Settings.get().getExportSettings(toolName).setFilterName(null);
+		}
+		//Make sure there is a selected item and that is is not filler text for empty list.
+		if (jViews.getSelectedItem() != null
+				&& DialoguesExport.get().viewNoSaved().compareTo((String) jViews.getSelectedItem()) != 0) {
+			Settings.get().getExportSettings(toolName).setViewName((String) jViews.getSelectedItem());
+		} else  {
+			Settings.get().getExportSettings(toolName).setViewName(null);
+		}
 		Settings.unlock("Export Settings (Save)"); //Unlock for Export Settings (Save)
 		exportFilterControl.saveSettings("Export Settings (Save)");
 	}
@@ -580,6 +596,54 @@ public class ExportDialog<E> extends JDialogCentered {
 			}
 			jColumnSelection.setSelectedIndices(indices);
 		}
+
+		FilterSelection filterSelection = Settings.get().getExportSettings(toolName).getFilterSelection();
+		String filterName = Settings.get().getExportSettings(toolName).getFilterName();
+		List<String> filterNames = new ArrayList<>(exportFilterControl.getAllFilters().keySet());
+		if (!filterNames.isEmpty()) {
+			Collections.sort(filterNames, new CaseInsensitiveComparator());
+			jFilters.setModel(new ListComboBoxModel<>(filterNames));
+			if(hasItem(jFilters, filterName)) {
+				jFilters.setSelectedItem(filterName);
+			}
+		}
+		if (filterSelection == FilterSelection.NONE) {
+			jNoFilter.setSelected(true);
+		} else if (filterSelection == FilterSelection.CURRENT) {
+			jCurrentFilter.setSelected(true);
+		} else if (filterSelection == FilterSelection.SAVED && hasItem(jFilters, filterName)) {
+			jSavedFilter.setSelected(true);
+		} else {
+			//If we got here then the view selection didn't match the data and we had to default, so reset the value
+			//in the settings.
+			jNoFilter.setSelected(true);
+			Settings.get().getExportSettings(toolName).setFilterSelection(FilterSelection.NONE);
+		}
+		jFilters.setEnabled(jSavedFilter.isSelected());
+
+		ColumnSelection columnSelection = Settings.get().getExportSettings(toolName).getColumnSelection();
+		String viewName = Settings.get().getExportSettings(toolName).getViewName();
+		List<String> viewNames = new ArrayList<>(Settings.get().getTableViews(toolName).keySet());
+		if (!viewNames.isEmpty()) {
+			Collections.sort(viewNames, new CaseInsensitiveComparator());
+			jViews.setModel(new ListComboBoxModel<>(viewNames));
+			if (hasItem(jViews, viewName)) {
+				jViews.setSelectedItem(viewName);
+			}
+		}
+		if (columnSelection == ColumnSelection.SHOWN) {
+			jViewCurrent.setSelected(true);
+		} else if (columnSelection == ColumnSelection.SAVED && hasItem(jViews, viewName)) {
+			jViewSaved.setSelected(true);
+		} else if (columnSelection == ColumnSelection.SELECTED) {
+			jViewSelect.setSelected(true);
+		} else {
+			//If we got here then the column selection didn't match the data and we had to default, so reset the value
+			//in the settings.
+			jViewCurrent.setSelected(true);
+			Settings.get().getExportSettings(toolName).setColumnSelection(ColumnSelection.SHOWN);
+		}
+		jViews.setEnabled(jViewSaved.isSelected());
 	}
 
 	private void resetSettings() {
@@ -600,6 +664,10 @@ public class ExportDialog<E> extends JDialogCentered {
 		Settings.get().getExportSettings(toolName).setFilename(Settings.get().getExportSettings(toolName).getDefaultFilename());
 		Settings.get().getExportSettings(toolName).putTableExportColumns(null);
 		Settings.get().getExportSettings(toolName).setExportFormat(ExportFormat.CSV);
+		Settings.get().getExportSettings(toolName).setColumnSelection(ColumnSelection.SHOWN);
+		Settings.get().getExportSettings(toolName).setFilterSelection(FilterSelection.NONE);
+		Settings.get().getExportSettings(toolName).setViewName(null);
+		Settings.get().getExportSettings(toolName).setFilterName(null);
 		Settings.unlock("Export Settings (Reset)"); //Unlock for Export Settings (Reset)
 		loadSettings();
 	}
@@ -652,8 +720,10 @@ public class ExportDialog<E> extends JDialogCentered {
 					jViews.setEnabled(true);
 				}
 				jViewSaved.setEnabled(true);
+				List<String> viewNames = new ArrayList<>(tableViews.keySet());
+				Collections.sort(viewNames, new CaseInsensitiveComparator());
 				Object selectedItem = jViews.getSelectedItem(); //Save selection
-				jViews.setModel(new ListComboBoxModel<>(tableViews.keySet()));
+				jViews.setModel(new ListComboBoxModel<>(viewNames));
 				if (selectedItem != null) { //Restore selection
 					jViews.setSelectedItem(selectedItem);
 				}
@@ -841,6 +911,27 @@ public class ExportDialog<E> extends JDialogCentered {
 		setVisible(false);
 	}
 
+	/***
+	 * Helper function to return if the comboBox has the item. Null string or item will return false.
+	 * @param comboBox The combo box to look for the item in.
+	 * @param item The item to look for int he combo box.
+	 * @return True if the item is found (case sensitive). False if it is not found or either parameter is null.
+	 */
+	private boolean hasItem(JComboBox<String> comboBox, String item) {
+		if (comboBox == null || item == null) {
+			return false;
+		}
+
+		for (int i = 0; i < comboBox.getModel().getSize(); i++) {
+			String comboItem = comboBox.getModel().getElementAt(i);
+			if (item.compareTo(comboItem) == 0) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
 	private class ListenerClass implements ActionListener {
 
 		@Override
@@ -869,10 +960,28 @@ public class ExportDialog<E> extends JDialogCentered {
 				jFileChooser.setExtension(exportFormat.getExtension());
 			} else if (ExportAction.FILTER_CHANGED.name().equals(e.getActionCommand())) {
 				jFilters.setEnabled(jSavedFilter.isSelected());
+				FilterSelection filterSelection = FilterSelection.NONE;
+				if (jNoFilter.isSelected()) {
+					filterSelection = FilterSelection.NONE;
+				} else if (jCurrentFilter.isSelected()) {
+					filterSelection = FilterSelection.CURRENT;
+				} else if (jSavedFilter.isSelected()) {
+					filterSelection = FilterSelection.SAVED;
+				}
+				Settings.get().getExportSettings(toolName).setFilterSelection(filterSelection);
 			} else if (ExportAction.VIEW_CHANGED.name().equals(e.getActionCommand())) {
 				jViews.setEnabled(jViewSaved.isSelected());
 				jColumnSelection.setEnabled(jViewSelect.isSelected());
 				jViewSelectAll.setEnabled(jViewSelect.isSelected());
+				ColumnSelection columnSelection = ColumnSelection.SHOWN;
+				if (jViewCurrent.isSelected()) {
+					columnSelection = ColumnSelection.SHOWN;
+				} else if (jViewSaved.isSelected()) {
+					columnSelection = ColumnSelection.SAVED;
+				} else if (jViewSelect.isSelected()) {
+					columnSelection = ColumnSelection.SELECTED;
+				}
+				Settings.get().getExportSettings(toolName).setColumnSelection(columnSelection);
 			}
 		}
 	}

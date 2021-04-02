@@ -704,11 +704,28 @@ public class SettingsWriter extends AbstractXmlWriter {
 		setAttribute(node, "copy", copySettings.getCopyDecimalSeparator());
 
 		for(Map.Entry<String, ExportSettings> exportSetting : exportSettings.entrySet()) {
+			//Common
 			Element exportNode = xmldoc.createElementNS(null, "export");
 			setAttribute(exportNode, "name", exportSetting.getKey());
 			setAttributeOptional(exportNode, "exportformat", exportSetting.getValue().getExportFormat());
 			setAttributeOptional(exportNode, "filename", exportSetting.getValue().getFilename());
+			setAttributeOptional(exportNode, "columnselection", exportSetting.getValue().getColumnSelection());
+			setAttributeOptional(exportNode, "viewname", exportSetting.getValue().getViewName());
+			setAttributeOptional(exportNode, "filterselection", exportSetting.getValue().getFilterSelection());
+			setAttributeOptional(exportNode, "filtername", exportSetting.getValue().getFilterName());
 			node.appendChild(exportNode);
+
+			if (exportSetting.getValue().getTableExportColumns() != null &&
+					!exportSetting.getValue().getTableExportColumns().isEmpty()) {
+
+				Element tableNode = xmldoc.createElementNS(null, "table");
+				for (String column : exportSetting.getValue().getTableExportColumns()) {
+					Element columnNode = xmldoc.createElementNS(null, "column");
+					setAttribute(columnNode, "name", column);
+					tableNode.appendChild(columnNode);
+				}
+				exportNode.appendChild(tableNode);
+			}
 
 			//CSV
 			Element csvNode = xmldoc.createElementNS(null, "csv");
@@ -732,17 +749,6 @@ public class SettingsWriter extends AbstractXmlWriter {
 			setAttribute(htmlNode, "repeatheader", exportSetting.getValue().getHtmlRepeatHeader());
 			exportNode.appendChild(htmlNode);
 
-			if (exportSetting.getValue().getTableExportColumns() != null &&
-					!exportSetting.getValue().getTableExportColumns().isEmpty()) {
-
-				Element tableNode = xmldoc.createElementNS(null, "table");
-				for (String column : exportSetting.getValue().getTableExportColumns()) {
-					Element columnNode = xmldoc.createElementNS(null, "column");
-					setAttribute(columnNode, "name", column);
-					tableNode.appendChild(columnNode);
-				}
-				exportNode.appendChild(tableNode);
-			}
 		}
 		xmldoc.getDocumentElement().appendChild(node);
 	}

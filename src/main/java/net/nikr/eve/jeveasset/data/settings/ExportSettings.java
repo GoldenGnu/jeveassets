@@ -129,6 +129,44 @@ public class ExportSettings {
 		}
 	}
 
+	/***
+	 * Enum that contains the options for column selection in column jcombobox.
+	 */
+	public enum ColumnSelection {
+		SHOWN("shown"),
+		SAVED("saved"),
+		SELECTED("selected");
+
+		private final String selection;
+
+		private ColumnSelection(String selection) {
+			this.selection = selection;
+		}
+
+		public String getSelection() {
+			return selection;
+		}
+	}
+
+	/***
+	 * Enum that contains the options for filter selection in filter jcombobox.
+	 */
+	public enum FilterSelection {
+		NONE("none"),
+		CURRENT("current"),
+		SAVED("saved");
+
+		private final String selection;
+
+		private FilterSelection(String selection) {
+			this.selection = selection;
+		}
+
+		public String getSelection() {
+			return selection;
+		}
+	}
+
 	private static final String PATH = FileUtil.getUserDirectory();
 
 	//Common
@@ -136,6 +174,10 @@ public class ExportSettings {
 	private final List<String> tableExportColumns = new ArrayList<>();
 	private String fileName;
 	private ExportFormat exportFormat;
+	private FilterSelection filterSelection;
+	private ColumnSelection columnSelection;
+	private String filterName;
+	private String viewName;
 
 	//CSV
 	private FieldDelimiter fieldDelimiter;
@@ -157,6 +199,10 @@ public class ExportSettings {
 		this.toolName = toolName;
 		fileName = "";
 		exportFormat = ExportFormat.CSV;
+		filterSelection = FilterSelection.NONE;
+		columnSelection = ColumnSelection.SHOWN;
+		filterName = "";
+		viewName = "";
 
 		fieldDelimiter = FieldDelimiter.COMMA;
 		lineDelimiter = LineDelimiter.DOS;
@@ -252,12 +298,44 @@ public class ExportSettings {
 		this.exportFormat = exportFormat;
 	}
 
+	public FilterSelection getFilterSelection() {
+		return filterSelection;
+	}
+
+	public void setFilterSelection(FilterSelection filterSelection) {
+		this.filterSelection = filterSelection;
+	}
+
+	public ColumnSelection getColumnSelection() {
+		return columnSelection;
+	}
+
+	public void setColumnSelection(ColumnSelection columnSelection) {
+		this.columnSelection = columnSelection;
+	}
+
 	public String getTableName() {
 		return tableName;
 	}
 
 	public void setTableName(String tableName) {
 		this.tableName = tableName;
+	}
+
+	public String getFilterName() {
+		return filterName;
+	}
+
+	public void setFilterName(String filterName) {
+		this.filterName = filterName;
+	}
+
+	public String getViewName() {
+		return viewName;
+	}
+
+	public void setViewName(String viewName) {
+		this.viewName = viewName;
 	}
 
 	public String getFilename() {
@@ -286,7 +364,9 @@ public class ExportSettings {
 	}
 	public void putTableExportColumns(final List<String> list) {
 			tableExportColumns.clear();
-			tableExportColumns.addAll(list);
+			if (list != null) {
+				tableExportColumns.addAll(list);
+			}
 	}
 
 	public String getDefaultPath() {
