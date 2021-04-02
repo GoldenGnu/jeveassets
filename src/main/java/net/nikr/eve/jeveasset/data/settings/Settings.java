@@ -18,6 +18,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
  */
+
 package net.nikr.eve.jeveasset.data.settings;
 
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
@@ -152,7 +153,8 @@ public class Settings {
 	private final Map<String, OverviewGroup> overviewGroups = new HashMap<>();
 //Export						Saved in ExportDialog.saveSettings()
 	//Lock OK
-	private final ExportSettings exportSettings = new ExportSettings();
+	private final CopySettings copySettings = new CopySettings();
+	private final Map<String, ExportSettings> exportSettings = new HashMap<>();
 //Tracker						Saved by TaskDialog.update() (on API update)
 	private final Map<TrackerDate, TrackerNote> trackerNotes = new HashMap<>();
 	private final Map<String, Boolean> trackerFilters = new HashMap<>();
@@ -313,8 +315,28 @@ public class Settings {
 		}
 	}
 
-	public ExportSettings getExportSettings() {
+	/***
+	 *
+	 * @return
+	 */
+	public Map<String, ExportSettings> getExportSettings() {
 		return exportSettings;
+	}
+
+	/***
+	 *
+	 * @param toolName
+	 * @return
+	 */
+	public ExportSettings getExportSettings(String toolName) {
+		if (!exportSettings.containsKey(toolName)) {
+			exportSettings.put(toolName, new ExportSettings(toolName));
+		}
+		return exportSettings.get(toolName);
+	}
+
+	public CopySettings getCopySettings() {
+		return copySettings;
 	}
 
 	public static void saveSettings() {

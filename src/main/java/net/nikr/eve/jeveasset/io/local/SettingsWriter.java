@@ -31,6 +31,7 @@ import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder.MarketOrderRange;
 import net.nikr.eve.jeveasset.data.settings.ColorEntry;
 import net.nikr.eve.jeveasset.data.settings.ColorSettings;
 import net.nikr.eve.jeveasset.data.settings.ContractPriceManager.ContractPriceSettings;
+import net.nikr.eve.jeveasset.data.settings.CopySettings;
 import net.nikr.eve.jeveasset.data.settings.ExportSettings;
 import net.nikr.eve.jeveasset.data.settings.MarketOrdersSettings;
 import net.nikr.eve.jeveasset.data.settings.PriceDataSettings;
@@ -160,7 +161,7 @@ public class SettingsWriter extends AbstractXmlWriter {
 		writeTableColumnsWidth(xmldoc, settings.getTableColumnsWidth());
 		writeTablesResize(xmldoc, settings.getTableResize());
 		writeTablesViews(xmldoc, settings.getTableViews());
-		writeExportSettings(xmldoc, settings.getExportSettings());
+		writeExportSettings(xmldoc, settings.getExportSettings(), settings.getCopySettings());
 		writeTrackerNotes(xmldoc, settings.getTrackerNotes());
 		writeTrackerFilters(xmldoc, settings.getTrackerFilters(), settings.isTrackerSelectNew(), settings.getTrackerSkillPointFilters());
 		writeTrackerSettings(xmldoc, settings);
@@ -697,46 +698,52 @@ public class SettingsWriter extends AbstractXmlWriter {
 		}
 	}
 
-	private void writeExportSettings(final Document xmldoc, final ExportSettings exportSettings) {
-		Element node = xmldoc.createElementNS(null, "csvexport");
-		xmldoc.getDocumentElement().appendChild(node);
+	private void writeExportSettings(final Document xmldoc, final Map<String, ExportSettings> exportSettings, final CopySettings copySettings) {
+		Element node = xmldoc.createElementNS(null, "exports");
 		//Copy
-		setAttribute(node, "copy", exportSettings.getCopyDecimalSeparator());
-		//CSV
-		setAttribute(node, "decimal", exportSettings.getCsvDecimalSeparator());
-		setAttribute(node, "field", exportSettings.getFieldDelimiter());
-		setAttribute(node, "line", exportSettings.getLineDelimiter());
-		//SQL
-		setAttribute(node, "sqlcreatetable", exportSettings.isCreateTable());
-		setAttribute(node, "sqldroptable", exportSettings.isDropTable());
-		setAttribute(node, "sqlextendedinserts", exportSettings.isExtendedInserts());
-		//Html
-		setAttribute(node, "htmlstyled", exportSettings.isHtmlStyled());
-		setAttribute(node, "htmligb", exportSettings.isHtmlIGB());
-		setAttribute(node, "htmlrepeatheader", exportSettings.getHtmlRepeatHeader());
-		for (Map.Entry<String, String> entry : exportSettings.getTableNames().entrySet()) {
-			Element nameNode = xmldoc.createElementNS(null, "sqltablenames");
-			setAttribute(nameNode, "tool", entry.getKey());
-			setAttribute(nameNode, "tablename", entry.getValue());
-			node.appendChild(nameNode);
-		}
-		//Shared
-		setAttribute(node, "exportformat", exportSettings.getExportFormat());
-		for (Map.Entry<String, String> entry : exportSettings.getFilenames().entrySet()) {
-			Element nameNode = xmldoc.createElementNS(null, "filenames");
-			setAttribute(nameNode, "tool", entry.getKey());
-			setAttribute(nameNode, "filename", entry.getValue());
-			node.appendChild(nameNode);
-		}
-		for (Map.Entry<String, List<String>> entry : exportSettings.getTableExportColumns()) {
-			Element nameNode = xmldoc.createElementNS(null, "table");
-			setAttribute(nameNode, "name", entry.getKey());
-			node.appendChild(nameNode);
-			for (String column : entry.getValue()) {
-				Element columnNode = xmldoc.createElementNS(null, "column");
-				setAttribute(columnNode, "name", column);
-				nameNode.appendChild(columnNode);
+		setAttribute(node, "copy", copySettings.getCopyDecimalSeparator());
+
+		for(Map.Entry<String, ExportSettings> exportSetting : exportSettings.entrySet()) {
+			Element exportNode = xmldoc.createElementNS(null, "export");
+			setAttribute(exportNode, "name", exportSetting.getKey());
+			setAttributeOptional(exportNode, "exportformat", exportSetting.getValue().getExportFormat());
+			setAttributeOptional(exportNode, "filename", exportSetting.getValue().getFilename());
+			node.appendChild(exportNode);
+
+			//CSV
+			Element csvNode = xmldoc.createElementNS(null, "csv");
+			setAttribute(csvNode, "decimal", exportSetting.getValue().getCsvDecimalSeparator());
+			setAttribute(csvNode, "field", exportSetting.getValue().getFieldDelimiter());
+			setAttribute(csvNode, "line", exportSetting.getValue().getLineDelimiter());
+			exportNode.appendChild(csvNode);
+
+			//SQL
+			Element sqlNode = xmldoc.createElementNS(null, "sql");
+			setAttribute(sqlNode, "tablename", exportSetting.getValue().getTableName());
+			setAttribute(sqlNode, "createtable", exportSetting.getValue().isCreateTable());
+			setAttribute(sqlNode, "droptable", exportSetting.getValue().isDropTable());
+			setAttribute(sqlNode, "extendedinserts", exportSetting.getValue().isExtendedInserts());
+			exportNode.appendChild(sqlNode);
+
+			//Html
+			Element htmlNode = xmldoc.createElementNS(null, "html");
+			setAttribute(htmlNode, "styled", exportSetting.getValue().isHtmlStyled());
+			setAttribute(htmlNode, "igb", exportSetting.getValue().isHtmlIGB());
+			setAttribute(htmlNode, "repeatheader", exportSetting.getValue().getHtmlRepeatHeader());
+			exportNode.appendChild(htmlNode);
+
+			if (exportSetting.getValue().getTableExportColumns() != null &&
+					!exportSetting.getValue().getTableExportColumns().isEmpty()) {
+
+				Element tableNode = xmldoc.createElementNS(null, "table");
+				for (String column : exportSetting.getValue().getTableExportColumns()) {
+					Element columnNode = xmldoc.createElementNS(null, "column");
+					setAttribute(columnNode, "name", column);
+					tableNode.appendChild(columnNode);
+				}
+				exportNode.appendChild(tableNode);
 			}
 		}
+		xmldoc.getDocumentElement().appendChild(node);
 	}
 }

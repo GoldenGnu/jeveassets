@@ -30,6 +30,7 @@ import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder.MarketOrderRange;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
 import net.nikr.eve.jeveasset.data.settings.ColorSettings;
 import net.nikr.eve.jeveasset.data.settings.ContractPriceManager;
+import net.nikr.eve.jeveasset.data.settings.CopySettings;
 import net.nikr.eve.jeveasset.data.settings.ExportSettings;
 import net.nikr.eve.jeveasset.data.settings.MarketOrdersSettings;
 import net.nikr.eve.jeveasset.data.settings.PriceData;
@@ -320,7 +321,17 @@ public abstract class FakeSettings extends Settings {
 	}
 
 	@Override
-	public ExportSettings getExportSettings() {
+	public CopySettings getCopySettings() {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public Map<String, ExportSettings> getExportSettings() {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public ExportSettings getExportSettings(String toolName) {
 		throw new UnsupportedOperationException("not implemented");
 	}
 

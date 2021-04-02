@@ -26,6 +26,7 @@ import java.awt.Dimension;
 import java.awt.Point;
 import java.net.Proxy;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -43,6 +44,7 @@ import net.nikr.eve.jeveasset.data.settings.ColorTheme.ColorThemeTypes;
 import net.nikr.eve.jeveasset.data.settings.ContractPriceManager.ContractPriceSettings;
 import net.nikr.eve.jeveasset.data.settings.ContractPriceManager.ContractPriceSettings.ContractPriceMode;
 import net.nikr.eve.jeveasset.data.settings.ContractPriceManager.ContractPriceSettings.ContractPriceSecurity;
+import net.nikr.eve.jeveasset.data.settings.ExportSettings;
 import net.nikr.eve.jeveasset.data.settings.ExportSettings.DecimalSeparator;
 import net.nikr.eve.jeveasset.data.settings.ExportSettings.ExportFormat;
 import net.nikr.eve.jeveasset.data.settings.ExportSettings.FieldDelimiter;
@@ -372,7 +374,15 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		}
 
 		//Export Settings
-		Element exportElement = getNodeOptional(element, "csvexport");
+		//Legacy support for 6.8.0 and later
+		//TODO: Remove support at some future date
+		Element exportElementLegacy = getNodeOptional(element, "csvexport");
+		if (exportElementLegacy != null) {
+			parseExportSettingsLegacy(exportElementLegacy, settings);
+		}
+
+		//Export Settings
+		Element exportElement = getNodeOptional(element, "exports");
 		if (exportElement != null) {
 			parseExportSettings(exportElement, settings);
 		}
@@ -1614,54 +1624,65 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		return CompareType.CONTAINS;
 	}
 
-	private void parseExportSettings(final Element element, final Settings settings) throws XmlException {
+	/***
+	 * Old method to process export settings for 6.8.0 and older
+	 */
+	@Deprecated
+	private void parseExportSettingsLegacy(final Element element, final Settings settings) throws XmlException {
 		//Copy
 		String copy = getStringOptional(element, "copy");
 		if (copy != null) {
-			settings.getExportSettings().setCopyDecimalSeparator(DecimalSeparator.valueOf(copy));
+			settings.getCopySettings().setCopyDecimalSeparator(DecimalSeparator.valueOf(copy));
 		}
+
+		ExportFormat exportFormat = null;
+		if (haveAttribute(element, "exportformat")) {
+			exportFormat = ExportFormat.valueOf(getString(element, "exportformat"));
+		}
+
 		//CSV
 		DecimalSeparator decimal = DecimalSeparator.valueOf(getString(element, "decimal"));
 		FieldDelimiter field = FieldDelimiter.valueOf(getString(element, "field"));
 		LineDelimiter line = LineDelimiter.valueOf(getString(element, "line"));
-		settings.getExportSettings().setCsvDecimalSeparator(decimal);
-		settings.getExportSettings().setFieldDelimiter(field);
-		settings.getExportSettings().setLineDelimiter(line);
+
 		//SQL
+		Boolean createTable = null;
+		Boolean dropTable = null;
+		Boolean extendedInserts = null;
 		if (haveAttribute(element, "sqlcreatetable")) {
-			boolean createTable = getBoolean(element, "sqlcreatetable");
-			settings.getExportSettings().setCreateTable(createTable);
+			createTable = getBoolean(element, "sqlcreatetable");
 		}
 		if (haveAttribute(element, "sqldroptable")) {
-			boolean dropTable = getBoolean(element, "sqldroptable");
-			settings.getExportSettings().setDropTable(dropTable);
+			dropTable = getBoolean(element, "sqldroptable");
 		}
 		if (haveAttribute(element, "sqlextendedinserts")) {
-			boolean extendedInserts = getBoolean(element, "sqlextendedinserts");
-			settings.getExportSettings().setExtendedInserts(extendedInserts);
+			extendedInserts = getBoolean(element, "sqlextendedinserts");
 		}
+
+		//HTML
+		Boolean htmlStyled = null;
+		Boolean htmlIGB = null;
+		Integer htmlRepeatHeader = null;
 		if (haveAttribute(element, "htmlstyled")) {
-			boolean htmlStyled = getBoolean(element, "htmlstyled");
-			settings.getExportSettings().setHtmlStyled(htmlStyled);
+			htmlStyled = getBoolean(element, "htmlstyled");
 		}
 		if (haveAttribute(element, "htmligb")) {
-			boolean htmlIGB = getBoolean(element, "htmligb");
-			settings.getExportSettings().setHtmlIGB(htmlIGB);
+			htmlIGB = getBoolean(element, "htmligb");
 		}
 		if (haveAttribute(element, "htmlrepeatheader")) {
-			int htmlRepeatHeader = getInt(element, "htmlrepeatheader");
-			settings.getExportSettings().setHtmlRepeatHeader(htmlRepeatHeader);
+			htmlRepeatHeader = getInt(element, "htmlrepeatheader");
 		}
-		if (haveAttribute(element, "exportformat")) {
-			ExportFormat exportFormat = ExportFormat.valueOf(getString(element, "exportformat"));
-			settings.getExportSettings().setExportFormat(exportFormat);
-		}
+
+		Map<String, String> tableNames = new HashMap<>();
+		Map<String, String> fileNames = new HashMap<>();
+		Map<String, List<String>> columnNames = new HashMap<>();
+
 		NodeList tableNamesNodeList = element.getElementsByTagName("sqltablenames");
 		for (int a = 0; a < tableNamesNodeList.getLength(); a++) {
 			Element tableNameNode = (Element) tableNamesNodeList.item(a);
 			String tool = getString(tableNameNode, "tool");
 			String tableName = getString(tableNameNode, "tablename");
-			settings.getExportSettings().putTableName(tool, tableName);
+			tableNames.put(tool, tableName);
 		}
 		//Shared
 		NodeList fileNamesNodeList = element.getElementsByTagName("filenames");
@@ -1669,7 +1690,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 			Element tableNameNode = (Element) fileNamesNodeList.item(a);
 			String tool = getString(tableNameNode, "tool");
 			String fileName = getString(tableNameNode, "filename");
-			settings.getExportSettings().putFilename(tool, fileName);
+			fileNames.put(tool, fileName);
 		}
 		NodeList tableNodeList = element.getElementsByTagName("table");
 		for (int a = 0; a < tableNodeList.getLength(); a++) {
@@ -1682,8 +1703,151 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 				String name = getString(columnNode, "name");
 				columns.add(name);
 			}
-			settings.getExportSettings().putTableExportColumns(tableName, columns);
+			columnNames.put(tableName, columns);
 		}
+
+		//List of existing tools at the time when the data format was changed 6.8.0
+		List<String> toolNames = Arrays.asList("industryjobs", "overview", "marketorders", "loadouts", "stockpile",
+				"reprocessed", "contracts", "industryslots", "journal", "assets", "materials", "treeassets", "value",
+				"items", "transaction");
+		for (String toolName : toolNames) {
+			ExportSettings exportSettings = new ExportSettings(toolName);
+			//Common
+			if (exportFormat != null) {
+				exportSettings.setExportFormat(exportFormat);
+			}
+			//CSV
+			exportSettings.setCsvDecimalSeparator(decimal);
+			exportSettings.setFieldDelimiter(field);
+			exportSettings.setLineDelimiter(line);
+			//SQL
+			if (createTable != null) {
+				exportSettings.setCreateTable(createTable);
+			}
+			if (dropTable != null) {
+				exportSettings.setDropTable(dropTable);
+			}
+			if (extendedInserts != null) {
+				exportSettings.setExtendedInserts(extendedInserts);
+			}
+			//HTML
+			if (htmlStyled != null) {
+				exportSettings.setHtmlStyled(htmlStyled);
+			}
+			if (htmlIGB != null) {
+				exportSettings.setHtmlIGB(htmlIGB);
+			}
+			if (htmlRepeatHeader != null) {
+				exportSettings.setHtmlRepeatHeader(htmlRepeatHeader);
+			}
+			//Lists
+			if (tableNames.containsKey(toolName)) {
+				exportSettings.setTableName(tableNames.get(toolName));
+			}
+			if (fileNames.containsKey(toolName)) {
+				exportSettings.setFilename(fileNames.get(toolName));
+			}
+			if (columnNames.containsKey(toolName)) {
+				exportSettings.getTableExportColumns().addAll(columnNames.get(toolName));
+			}
+			settings.getExportSettings().put(toolName, exportSettings);
+		}
+	}
+
+	/***
+	 *
+	 * @param element
+	 * @param settings
+	 * @throws XmlException
+	 */
+	private void parseExportSettings(final Element element, final Settings settings) throws XmlException {
+		//Copy
+		String copy = getStringOptional(element, "copy");
+		if (copy != null) {
+			settings.getCopySettings().setCopyDecimalSeparator(DecimalSeparator.valueOf(copy));
+		}
+
+		NodeList tableNodeList = element.getElementsByTagName("export");
+		for (int a = 0; a < tableNodeList.getLength(); a++) {
+			Element exportNode = (Element) tableNodeList.item(a);
+			String toolName = getString(exportNode, "name");
+			ExportSettings exportSettings = parseExportSetting(exportNode, toolName);
+			settings.getExportSettings().put(toolName, exportSettings);
+		}
+	}
+
+	/***
+	 *
+	 * @param exportNode
+	 * @param toolName
+	 * @return
+	 * @throws XmlException
+	 */
+	private ExportSettings parseExportSetting(final Element exportNode, final String toolName) throws XmlException {
+		ExportSettings exportSetting = new ExportSettings(toolName);
+
+		ExportFormat exportFormat = ExportFormat.valueOf(getString(exportNode, "exportformat"));
+		exportSetting.setExportFormat(exportFormat);
+
+		//Shared
+		String fileName = getString(exportNode, "filename");
+		exportSetting.setFilename(fileName);
+
+		//CSV
+		Element csvElement = getNodeOptional(exportNode, "csv");
+		if (csvElement != null) {
+			DecimalSeparator decimal = DecimalSeparator.valueOf(getString(csvElement, "decimal"));
+			exportSetting.setCsvDecimalSeparator(decimal);
+
+			FieldDelimiter field = FieldDelimiter.valueOf(getString(csvElement, "field"));
+			exportSetting.setFieldDelimiter(field);
+
+			LineDelimiter line = LineDelimiter.valueOf(getString(csvElement, "line"));
+			exportSetting.setLineDelimiter(line);
+		}
+
+		//SQL
+		Element sqlElement = getNodeOptional(exportNode, "sql");
+		if (sqlElement != null) {
+			String tableName = getString(sqlElement, "tablename");
+			exportSetting.setTableName(tableName);
+
+			boolean createTable = getBoolean(sqlElement, "createtable");
+			exportSetting.setCreateTable(createTable);
+
+			boolean dropTable = getBoolean(sqlElement, "droptable");
+			exportSetting.setDropTable(dropTable);
+
+			boolean extendedInserts = getBoolean(sqlElement, "extendedinserts");
+			exportSetting.setExtendedInserts(extendedInserts);
+		}
+
+		//html
+		Element htmlElement = getNodeOptional(exportNode, "html");
+		if (htmlElement != null) {
+			boolean htmlStyled = getBoolean(htmlElement, "styled");
+			exportSetting.setHtmlStyled(htmlStyled);
+
+			boolean htmlIGB = getBoolean(htmlElement, "igb");
+			exportSetting.setHtmlIGB(htmlIGB);
+
+			int htmlRepeatHeader = getInt(htmlElement, "repeatheader");
+			exportSetting.setHtmlRepeatHeader(htmlRepeatHeader);
+		}
+
+		Element tableNode = getNode(exportNode, "table");
+		if (tableNode != null) {
+			List<String> columns = new ArrayList<>();
+			NodeList columnNodeList = tableNode.getElementsByTagName("column");
+			for (int b = 0; b < columnNodeList.getLength(); b++) {
+				Element columnNode = (Element) columnNodeList.item(b);
+				String name = getString(columnNode, "name");
+				columns.add(name);
+			}
+			exportSetting.putTableExportColumns(columns);
+		}
+
+		return exportSetting;
 	}
 
 	private void parseAssetAdded(final Element element) throws XmlException {

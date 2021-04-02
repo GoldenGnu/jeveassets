@@ -156,7 +156,7 @@ public class ExportDialog<E> extends JDialogCentered {
 		ListenerClass listener = new ListenerClass();
 		layout.setAutoCreateContainerGaps(false);
 
-		jFileChooser = JCustomFileChooser.createFileChooser(jFrame, Settings.get().getExportSettings().getExportFormat().getExtension());
+		jFileChooser = JCustomFileChooser.createFileChooser(jFrame, Settings.get().getExportSettings(toolName).getExportFormat().getExtension());
 	//Format
 		JPanel jFormatPanel = new JPanel();
 		jFormatPanel.setBorder(BorderFactory.createTitledBorder(DialoguesExport.get().format()));
@@ -463,19 +463,19 @@ public class ExportDialog<E> extends JDialogCentered {
 	}
 
 	private boolean browse() {
-		File file = new File(Settings.get().getExportSettings().getFilename(toolName));
-		File path = new File(Settings.get().getExportSettings().getPath(toolName));
+		File file = new File(Settings.get().getExportSettings(toolName).getFilename());
+		File path = new File(Settings.get().getExportSettings(toolName).getPath());
 		if (path.exists()) {
 			jFileChooser.setCurrentDirectory(path);
 			jFileChooser.setSelectedFile(file);
 		} else {
-			jFileChooser.setCurrentDirectory(new File(Settings.get().getExportSettings().getDefaultPath()));
-			jFileChooser.setSelectedFile(new File(Settings.get().getExportSettings().getDefaultFilename(toolName)));
+			jFileChooser.setCurrentDirectory(new File(Settings.get().getExportSettings(toolName).getDefaultPath()));
+			jFileChooser.setSelectedFile(new File(Settings.get().getExportSettings(toolName).getDefaultFilename()));
 		}
 		int bFound = jFileChooser.showDialog(getDialog(), DialoguesExport.get().ok());
 		if (bFound  == JFileChooser.APPROVE_OPTION) {
 			file = jFileChooser.getSelectedFile();
-			Settings.get().getExportSettings().putFilename(toolName, file.getAbsolutePath());
+			Settings.get().getExportSettings(toolName).setFilename(file.getAbsolutePath());
 			return true;
 		} else {
 			return false;
@@ -508,23 +508,23 @@ public class ExportDialog<E> extends JDialogCentered {
 	private void saveSettings() {
 		Settings.lock("Export Settings (Save)"); //Lock for Export Settings (Save)
 		//CSV
-		Settings.get().getExportSettings().setFieldDelimiter((FieldDelimiter) jFieldDelimiter.getSelectedItem());
-		Settings.get().getExportSettings().setLineDelimiter((LineDelimiter) jLineDelimiter.getSelectedItem());
-		Settings.get().getExportSettings().setCsvDecimalSeparator((DecimalSeparator) jDecimalSeparator.getSelectedItem());
+		Settings.get().getExportSettings(toolName).setFieldDelimiter((FieldDelimiter) jFieldDelimiter.getSelectedItem());
+		Settings.get().getExportSettings(toolName).setLineDelimiter((LineDelimiter) jLineDelimiter.getSelectedItem());
+		Settings.get().getExportSettings(toolName).setCsvDecimalSeparator((DecimalSeparator) jDecimalSeparator.getSelectedItem());
 		//SQL
-		Settings.get().getExportSettings().putTableName(toolName, jTableName.getText());
-		Settings.get().getExportSettings().setDropTable(jDropTable.isSelected());
-		Settings.get().getExportSettings().setCreateTable(jCreateTable.isSelected());
-		Settings.get().getExportSettings().setExtendedInserts(jExtendedInserts.isSelected());
+		Settings.get().getExportSettings(toolName).setTableName(jTableName.getText());
+		Settings.get().getExportSettings(toolName).setDropTable(jDropTable.isSelected());
+		Settings.get().getExportSettings(toolName).setCreateTable(jCreateTable.isSelected());
+		Settings.get().getExportSettings(toolName).setExtendedInserts(jExtendedInserts.isSelected());
 		//HTML
-		Settings.get().getExportSettings().setHtmlStyled(jHtmlStyle.isSelected());
-		Settings.get().getExportSettings().setHtmlIGB(jHtmlIGB.isSelected());
-		Settings.get().getExportSettings().setHtmlRepeatHeader(jHtmlHeaderRepeat.getValue());
+		Settings.get().getExportSettings(toolName).setHtmlStyled(jHtmlStyle.isSelected());
+		Settings.get().getExportSettings(toolName).setHtmlIGB(jHtmlIGB.isSelected());
+		Settings.get().getExportSettings(toolName).setHtmlRepeatHeader(jHtmlHeaderRepeat.getValue());
 		//Shared
 		if (jColumnSelection.getSelectedIndices().length == columns.size()) { //All is selected - nothing worth saving...
-			Settings.get().getExportSettings().putTableExportColumns(toolName, null);
+			Settings.get().getExportSettings(toolName).putTableExportColumns(null);
 		} else {
-			Settings.get().getExportSettings().putTableExportColumns(toolName, getExportColumns());
+			Settings.get().getExportSettings(toolName).putTableExportColumns(getExportColumns());
 		}
 		Settings.unlock("Export Settings (Save)"); //Unlock for Export Settings (Save)
 		exportFilterControl.saveSettings("Export Settings (Save)");
@@ -532,20 +532,20 @@ public class ExportDialog<E> extends JDialogCentered {
 
 	private void loadSettings() {
 		//CSV
-		jFieldDelimiter.setSelectedItem(Settings.get().getExportSettings().getFieldDelimiter());
-		jLineDelimiter.setSelectedItem(Settings.get().getExportSettings().getLineDelimiter());
-		jDecimalSeparator.setSelectedItem(Settings.get().getExportSettings().getCsvDecimalSeparator());
+		jFieldDelimiter.setSelectedItem(Settings.get().getExportSettings(toolName).getFieldDelimiter());
+		jLineDelimiter.setSelectedItem(Settings.get().getExportSettings(toolName).getLineDelimiter());
+		jDecimalSeparator.setSelectedItem(Settings.get().getExportSettings(toolName).getCsvDecimalSeparator());
 		//SQL
-		jTableName.setText(Settings.get().getExportSettings().getTableName(toolName));
-		jDropTable.setSelected(Settings.get().getExportSettings().isDropTable());
-		jCreateTable.setSelected(Settings.get().getExportSettings().isCreateTable());
-		jExtendedInserts.setSelected(Settings.get().getExportSettings().isExtendedInserts());
+		jTableName.setText(Settings.get().getExportSettings(toolName).getTableName());
+		jDropTable.setSelected(Settings.get().getExportSettings(toolName).isDropTable());
+		jCreateTable.setSelected(Settings.get().getExportSettings(toolName).isCreateTable());
+		jExtendedInserts.setSelected(Settings.get().getExportSettings(toolName).isExtendedInserts());
 		//HTML
-		jHtmlStyle.setSelected(Settings.get().getExportSettings().isHtmlStyled());
-		jHtmlIGB.setSelected(Settings.get().getExportSettings().isHtmlIGB());
-		jHtmlHeaderRepeat.setValue(Settings.get().getExportSettings().getHtmlRepeatHeader());
+		jHtmlStyle.setSelected(Settings.get().getExportSettings(toolName).isHtmlStyled());
+		jHtmlIGB.setSelected(Settings.get().getExportSettings(toolName).isHtmlIGB());
+		jHtmlHeaderRepeat.setValue(Settings.get().getExportSettings(toolName).getHtmlRepeatHeader());
 		//Filename
-		ExportFormat exportFormat = Settings.get().getExportSettings().getExportFormat();
+		ExportFormat exportFormat = Settings.get().getExportSettings(toolName).getExportFormat();
 		cardLayout.show(jOptionPanel, exportFormat.name());
 		if (exportFormat == ExportFormat.HTML) {
 			jHtml.setSelected(true);
@@ -560,7 +560,7 @@ public class ExportDialog<E> extends JDialogCentered {
 		jFileChooser.setExtension(exportFormat.getExtension());
 		//Columns (Shared)
 		jColumnSelection.clearSelection();
-		List<String> list = Settings.get().getExportSettings().getTableExportColumns(toolName);
+		List<String> list = Settings.get().getExportSettings(toolName).getTableExportColumns();
 		if (list == null) {
 			jColumnSelection.clearSelection();
 		} else {
@@ -585,21 +585,21 @@ public class ExportDialog<E> extends JDialogCentered {
 	private void resetSettings() {
 		Settings.lock("Export Settings (Reset)"); //Lock for Export Settings (Reset)
 		//CSV
-		Settings.get().getExportSettings().setFieldDelimiter(FieldDelimiter.COMMA);
-		Settings.get().getExportSettings().setLineDelimiter(LineDelimiter.DOS);
-		Settings.get().getExportSettings().setCsvDecimalSeparator(DecimalSeparator.DOT);
+		Settings.get().getExportSettings(toolName).setFieldDelimiter(FieldDelimiter.COMMA);
+		Settings.get().getExportSettings(toolName).setLineDelimiter(LineDelimiter.DOS);
+		Settings.get().getExportSettings(toolName).setCsvDecimalSeparator(DecimalSeparator.DOT);
 		//SQL
-		Settings.get().getExportSettings().putTableName(toolName, "");
-		Settings.get().getExportSettings().setDropTable(true);
-		Settings.get().getExportSettings().setCreateTable(true);
-		Settings.get().getExportSettings().setExtendedInserts(true);
+		Settings.get().getExportSettings(toolName).setTableName("");
+		Settings.get().getExportSettings(toolName).setDropTable(true);
+		Settings.get().getExportSettings(toolName).setCreateTable(true);
+		Settings.get().getExportSettings(toolName).setExtendedInserts(true);
 		//HTML
-		Settings.get().getExportSettings().setHtmlStyled(true);
-		Settings.get().getExportSettings().setHtmlRepeatHeader(0);
+		Settings.get().getExportSettings(toolName).setHtmlStyled(true);
+		Settings.get().getExportSettings(toolName).setHtmlRepeatHeader(0);
 		//Shared
-		Settings.get().getExportSettings().putFilename(toolName, Settings.get().getExportSettings().getDefaultFilename(toolName));
-		Settings.get().getExportSettings().putTableExportColumns(toolName, null);
-		Settings.get().getExportSettings().setExportFormat(ExportFormat.CSV);
+		Settings.get().getExportSettings(toolName).setFilename(Settings.get().getExportSettings(toolName).getDefaultFilename());
+		Settings.get().getExportSettings(toolName).putTableExportColumns(null);
+		Settings.get().getExportSettings(toolName).setExportFormat(ExportFormat.CSV);
 		Settings.unlock("Export Settings (Reset)"); //Unlock for Export Settings (Reset)
 		loadSettings();
 	}
@@ -703,7 +703,7 @@ public class ExportDialog<E> extends JDialogCentered {
 			return;
 		}
 	//Bad options
-		if (jCsv.isSelected() && Settings.get().getExportSettings().getCsvDecimalSeparator() == DecimalSeparator.COMMA && Settings.get().getExportSettings().getFieldDelimiter() == FieldDelimiter.COMMA) {
+		if (jCsv.isSelected() && Settings.get().getExportSettings(toolName).getCsvDecimalSeparator() == DecimalSeparator.COMMA && Settings.get().getExportSettings(toolName).getFieldDelimiter() == FieldDelimiter.COMMA) {
 			int nReturn = JOptionPane.showConfirmDialog(
 					getDialog(),
 					DialoguesExport.get().confirmStupidDecision(),
@@ -780,16 +780,16 @@ public class ExportDialog<E> extends JDialogCentered {
 			for (E e : items) {
 				Map<String, String> row = new HashMap<>();
 				for (EnumTableColumn<E> column : header) {
-					row.put(column.name(), format(column.getColumnValue(e), Settings.get().getExportSettings().getCsvDecimalSeparator(), false));
+					row.put(column.name(), format(column.getColumnValue(e), Settings.get().getExportSettings(toolName).getCsvDecimalSeparator(), false));
 				}
 				rows.add(row);
 			}
 			//Save data
-			saved = CsvWriter.save(Settings.get().getExportSettings().getFilename(toolName),
+			saved = CsvWriter.save(Settings.get().getExportSettings(toolName).getFilename(),
 					rows,
 					headerStrings.toArray(new String[headerStrings.size()]),
 					headerKeys.toArray(new String[headerKeys.size()]),
-					new CsvPreference.Builder('\"', Settings.get().getExportSettings().getFieldDelimiter().getValue(), Settings.get().getExportSettings().getLineDelimiter().getValue()).build());
+					new CsvPreference.Builder('\"', Settings.get().getExportSettings(toolName).getFieldDelimiter().getValue(), Settings.get().getExportSettings(toolName).getLineDelimiter().getValue()).build());
 		} else if (jHtml.isSelected()) {
 	//HTML
 			//Create data
@@ -797,17 +797,17 @@ public class ExportDialog<E> extends JDialogCentered {
 			for (E e : items) {
 				Map<EnumTableColumn<?>, String> row = new HashMap<>();
 				for (EnumTableColumn<E> column : header) {
-					row.put(column, format(column.getColumnValue(e), Settings.get().getExportSettings().getCsvDecimalSeparator(), Settings.get().getExportSettings().isHtmlStyled()));
+					row.put(column, format(column.getColumnValue(e), Settings.get().getExportSettings(toolName).getCsvDecimalSeparator(), Settings.get().getExportSettings(toolName).isHtmlStyled()));
 				}
 				rows.add(row);
 			}
 			//Save data
-			saved = HtmlWriter.save(Settings.get().getExportSettings().getFilename(toolName),
+			saved = HtmlWriter.save(Settings.get().getExportSettings(toolName).getFilename(),
 					rows,
 					new ArrayList<>(header),
 					jHtmlIGB.isSelected() ? new ArrayList<>(items) : null,
-					Settings.get().getExportSettings().isHtmlStyled(),
-					Settings.get().getExportSettings().getHtmlRepeatHeader(),
+					Settings.get().getExportSettings(toolName).isHtmlStyled(),
+					Settings.get().getExportSettings(toolName).getHtmlRepeatHeader(),
 					toolName.equals(TreeTab.NAME));
 		} else if (jSql.isSelected()) {
 	//SQL
@@ -821,13 +821,13 @@ public class ExportDialog<E> extends JDialogCentered {
 				rows.add(row);
 			}
 			//Save data
-			saved = SqlWriter.save(Settings.get().getExportSettings().getFilename(toolName),
+			saved = SqlWriter.save(Settings.get().getExportSettings(toolName).getFilename(),
 					rows,
 					new ArrayList<>(header),
-					Settings.get().getExportSettings().getTableName(toolName),
-					Settings.get().getExportSettings().isDropTable(),
-					Settings.get().getExportSettings().isCreateTable(),
-					Settings.get().getExportSettings().isExtendedInserts());
+					Settings.get().getExportSettings(toolName).getTableName(),
+					Settings.get().getExportSettings(toolName).isDropTable(),
+					Settings.get().getExportSettings(toolName).isCreateTable(),
+					Settings.get().getExportSettings(toolName).isExtendedInserts());
 		} else {
 			saved = false;
 		}
@@ -864,7 +864,7 @@ public class ExportDialog<E> extends JDialogCentered {
 					exportFormat = ExportFormat.SQL;
 					jOptionPanel.setBorder(BorderFactory.createTitledBorder(DialoguesExport.get().sql()));
 				}
-				Settings.get().getExportSettings().setExportFormat(exportFormat);
+				Settings.get().getExportSettings(toolName).setExportFormat(exportFormat);
 				cardLayout.show(jOptionPanel, exportFormat.name());
 				jFileChooser.setExtension(exportFormat.getExtension());
 			} else if (ExportAction.FILTER_CHANGED.name().equals(e.getActionCommand())) {
