@@ -31,11 +31,11 @@ import ca.odell.glazedlists.swing.DefaultEventSelectionModel;
 import ca.odell.glazedlists.swing.DefaultEventTableModel;
 import ca.odell.glazedlists.swing.TableComparatorChooser;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.swing.JComponent;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JScrollPane;
@@ -43,6 +43,7 @@ import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob;
 import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob.IndustryJobState;
 import net.nikr.eve.jeveasset.data.settings.Settings;
+import net.nikr.eve.jeveasset.data.settings.types.LocationType;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
@@ -54,6 +55,7 @@ import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuData;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.TableMenu;
+import net.nikr.eve.jeveasset.gui.shared.table.ColumnManager;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
@@ -80,7 +82,7 @@ public class IndustryJobsTab extends JMainTabPrimary {
 	public static final String NAME = "industryjobs"; //Not to be changed!
 
 	public IndustryJobsTab(final Program program) {
-		super(program, TabsJobs.get().industry(), Images.TOOL_INDUSTRY_JOBS.getIcon(), true);
+		super(program, NAME, TabsJobs.get().industry(), Images.TOOL_INDUSTRY_JOBS.getIcon(), true);
 
 		ListenerClass listener = new ListenerClass();
 		//Table Format
@@ -110,7 +112,7 @@ public class IndustryJobsTab extends JMainTabPrimary {
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
 		jTable.setSelectionModel(selectionModel);
 		//Listeners
-		installTable(jTable, NAME);
+		installTable(jTable);
 		//Scroll
 		JScrollPane jTableScroll = new JScrollPane(jTable);
 		//Table Filter
@@ -122,18 +124,10 @@ public class IndustryJobsTab extends JMainTabPrimary {
 		filter = new ArrayList<Filter>();
 		filter.add(new Filter(LogicType.AND, IndustryJobTableFormat.STATE, CompareType.EQUALS, IndustryJobState.STATE_DELIVERED.toString()));
 		defaultFilters.put(TabsJobs.get().completed(), filter);
-		filterControl = new IndustryJobsFilterControl(
-				tableFormat,
-				program.getMainWindow().getFrame(),
-				eventList,
-				sortedList,
-				filterList,
-				Settings.get().getTableFilters(NAME),
-				defaultFilters
-				);
+		filterControl = new IndustryJobsFilterControl(sortedList, defaultFilters);
 
 		//Menu
-		installMenu(program, new JobsTableMenu(), jTable, MyIndustryJob.class);
+		installMenu(new JobsTableMenu(), new ColumnManager<>(program, NAME, tableFormat, tableModel, jTable, filterControl), MyIndustryJob.class);
 
 		jInventionSuccess = StatusPanel.createLabel(TabsJobs.get().inventionSuccess(), Images.JOBS_INVENTION_SUCCESS.getIcon());
 		this.addStatusbarLabel(jInventionSuccess);
@@ -164,6 +158,16 @@ public class IndustryJobsTab extends JMainTabPrimary {
 	@Override
 	public void updateCache() {
 		filterControl.createCache();
+	}
+
+	@Override
+	public Collection<LocationType> getLocations() {
+		try {
+			eventList.getReadWriteLock().readLock().lock();
+			return new ArrayList<>(eventList);
+		} finally {
+			eventList.getReadWriteLock().readLock().unlock();
+		}
 	}
 
 	private class JobsTableMenu implements TableMenu<MyIndustryJob> {
@@ -222,17 +226,20 @@ public class IndustryJobsTab extends JMainTabPrimary {
 
 	public class IndustryJobsFilterControl extends FilterControl<MyIndustryJob> {
 
-		private final EnumTableFormatAdaptor<IndustryJobTableFormat, MyIndustryJob> tableFormat;
-
-		public IndustryJobsFilterControl(EnumTableFormatAdaptor<IndustryJobTableFormat, MyIndustryJob> tableFormat, JFrame jFrame, EventList<MyIndustryJob> eventList, EventList<MyIndustryJob> exportEventList, FilterList<MyIndustryJob> filterList, Map<String, List<Filter>> filters, Map<String, List<Filter>> defaultFilters) {
-			super(jFrame, NAME, eventList, exportEventList, filterList, filters, defaultFilters);
-			this.tableFormat = tableFormat;
+		public IndustryJobsFilterControl(EventList<MyIndustryJob> exportEventList, Map<String, List<Filter>> defaultFilters) {
+			super(program.getMainWindow().getFrame(),
+					NAME,
+					eventList,
+					exportEventList,
+					filterList,
+					Settings.get().getTableFilters(NAME),
+					defaultFilters
+					);
 		}
 
 		@Override
 		protected Object getColumnValue(final MyIndustryJob item, final String column) {
-			IndustryJobTableFormat format = IndustryJobTableFormat.valueOf(column);
-			return format.getColumnValue(item);
+			return tableFormat.getColumnValue(item, column);
 		}
 
 		@Override
@@ -242,12 +249,12 @@ public class IndustryJobsTab extends JMainTabPrimary {
 
 		@Override
 		protected List<EnumTableColumn<MyIndustryJob>> getColumns() {
-			return columnsAsList(IndustryJobTableFormat.values());
+			return new ArrayList<>(tableFormat.getOrderColumns());
 		}
 
 		@Override
 		protected List<EnumTableColumn<MyIndustryJob>> getShownColumns() {
-			return new ArrayList<EnumTableColumn<MyIndustryJob>>(tableFormat.getShownColumns());
+			return new ArrayList<>(tableFormat.getShownColumns());
 		}
 
 		@Override

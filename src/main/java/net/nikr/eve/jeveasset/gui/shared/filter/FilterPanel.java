@@ -282,6 +282,37 @@ class FilterPanel<E> implements Comparable<FilterPanel<E>> {
 		updateNumeric(false);
 	}
 
+	protected void updateColumns() {
+		EnumTableColumn<E> selectedItem = jColumn.getItemAt(jColumn.getSelectedIndex());
+		allColumns.clear();
+		allColumns.add(new AllColumn<>());
+		allColumns.addAll(filterControl.getColumns());
+		numericColumns.clear();
+		for (EnumTableColumn<E> object : filterControl.getColumns()) {
+			if (filterControl.isNumeric(object)) {
+				numericColumns.add(object);
+			}
+		}
+
+		dateColumns.clear();
+		for (EnumTableColumn<E> object : filterControl.getColumns()) {
+			if (filterControl.isDate(object)) {
+				dateColumns.add(object);
+			}
+		}
+		jColumn.setActionCommand("");
+		jColumn.setModel(new ListComboBoxModel<>(allColumns));
+		if (allColumns.contains(selectedItem)) {
+			jColumn.setSelectedItem(selectedItem);
+		} else if (!allColumns.isEmpty()) {
+			jColumn.setActionCommand(FilterPanelAction.FILTER.name());
+			jColumn.setSelectedIndex(0);
+		} else {
+			jColumn.setActionCommand(FilterPanelAction.FILTER.name());
+		}
+		
+	}
+
 	boolean isAnd() {
 		return ((LogicType) jLogic.getSelectedItem()) == LogicType.AND;
 	}

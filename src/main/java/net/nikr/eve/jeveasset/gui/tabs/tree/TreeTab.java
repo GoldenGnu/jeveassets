@@ -41,6 +41,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -55,7 +56,6 @@ import javax.swing.GroupLayout;
 import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JPanel;
@@ -72,17 +72,17 @@ import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob.IndustryActivity;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.data.settings.tag.TagUpdate;
+import net.nikr.eve.jeveasset.data.settings.types.LocationType;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.components.JFixedToolBar;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTabSecondary;
-import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo;
-import net.nikr.eve.jeveasset.gui.shared.menu.JMenuJumps;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuData;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.TableMenu;
+import net.nikr.eve.jeveasset.gui.shared.table.ColumnManager;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.EventListManager;
@@ -125,7 +125,7 @@ public class TreeTab extends JMainTabSecondary implements TagUpdate {
 	private final SortedList<TreeAsset> sortedListEmpty;
 	private final FilterList<TreeAsset> filterList;
 	private final TreeList<TreeAsset> treeList;
-	private final AssetFilterControl filterControl;
+	private final TreeFilterControl filterControl;
 	private final EnumTableFormatAdaptor<TreeTableFormat, TreeAsset> tableFormat;
 	private final DefaultEventSelectionModel<TreeAsset> selectionModel;
 	private final AssetTreeExpansionModel expansionModel;
@@ -138,7 +138,7 @@ public class TreeTab extends JMainTabSecondary implements TagUpdate {
 
 	//FIXME - - - - > Sorted export not tested/working
 	public TreeTab(final Program program) {
-		super(program, TabsTree.get().title(), Images.TOOL_TREE.getIcon(), true);
+		super(program, NAME, TabsTree.get().title(), Images.TOOL_TREE.getIcon(), true);
 		layout.setAutoCreateGaps(true);
 
 		ListenerClass listener = new ListenerClass();
@@ -227,20 +227,14 @@ public class TreeTab extends JMainTabSecondary implements TagUpdate {
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
 		jTable.setSelectionModel(selectionModel);
 		//Listeners
-		installTable(jTable, NAME);
+		installTable(jTable);
 		//Scroll
 		JScrollPane jTableScroll = new JScrollPane(jTable);
 		//Table Filter
-		filterControl = new AssetFilterControl(
-				program.getMainWindow().getFrame(),
-				eventList,
-				exportEventList,
-				filterList,
-				Settings.get().getTableFilters(NAME)
-				);
+		filterControl = new TreeFilterControl();
 
 		//Menu
-		installMenu(program, new TreeTableMenu(), jTable, TreeAsset.class);
+		installMenu(new TreeTableMenu(), new ColumnManager<>(program, NAME, tableFormat, tableModel, jTable, filterControl), TreeAsset.class);
 
 		jVolume = StatusPanel.createLabel(TabsAssets.get().totalVolume(), Images.ASSETS_VOLUME.getIcon());
 		this.addStatusbarLabel(jVolume);
@@ -463,14 +457,14 @@ public class TreeTab extends JMainTabSecondary implements TagUpdate {
 		filterControl.createCache();
 	}
 
-	public void addColumn(MyLocation location) {
-		tableFormat.addColumn(new JMenuJumps.Column<>(location.getSystem(), location.getSystemID()));
-		filterControl.setColumns(tableFormat.getOrderColumns());
-	}
-
-	public void removeColumn(MyLocation location) {
-		tableFormat.removeColumn(new JMenuJumps.Column<>(location.getSystem(), location.getSystemID()));
-		filterControl.setColumns(tableFormat.getOrderColumns());
+	@Override
+	public Collection<LocationType> getLocations() {
+		try {
+			eventList.getReadWriteLock().readLock().lock();
+			return new ArrayList<>(eventList);
+		} finally {
+			eventList.getReadWriteLock().readLock().unlock();
+		}
 	}
 
 	public EventList<TreeAsset> getEventList() {
@@ -486,7 +480,6 @@ public class TreeTab extends JMainTabSecondary implements TagUpdate {
 			treeAssetsExport = categoriesExport;
 		}
 		//Update Jumps
-		program.getProfileData().updateJumps(new ArrayList<>(treeAssets), TreeAsset.class);
 		eventList.getReadWriteLock().writeLock().lock();
 		try {
 			eventList.clear();
@@ -850,10 +843,16 @@ public class TreeTab extends JMainTabSecondary implements TagUpdate {
 		}
 	}
 
-	private class AssetFilterControl extends FilterControl<TreeAsset> {
+	private class TreeFilterControl extends FilterControl<TreeAsset> {
 
-		public AssetFilterControl(JFrame jFrame, EventList<TreeAsset> eventList, EventList<TreeAsset> exportEventList, FilterList<TreeAsset> filterList, Map<String, List<Filter>> filters) {
-			super(jFrame, NAME, eventList, exportEventList, filterList, filters);
+		public TreeFilterControl() {
+			super(program.getMainWindow().getFrame(),
+					NAME,
+					eventList,
+					exportEventList,
+					filterList,
+					Settings.get().getTableFilters(NAME)
+					);
 		}
 
 		@Override

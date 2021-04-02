@@ -27,8 +27,8 @@ import net.nikr.eve.jeveasset.Program;
 
 public abstract class JMainTabPrimary extends JMainTab {
 
-	public JMainTabPrimary(Program program, String title, Icon icon, boolean closeable) {
-		super(program, title, icon, closeable);
+	public JMainTabPrimary(Program program, final String toolName, String title, Icon icon, boolean closeable) {
+		super(program, toolName, title, icon, closeable);
 	}
 
 	@Override

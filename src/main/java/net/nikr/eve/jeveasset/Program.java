@@ -27,7 +27,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -116,10 +116,10 @@ public class Program implements ActionListener {
 		TIMER
 	}
 	//Major.Minor.Bugfix [Release Candidate n] [BETA n] [DEV BUILD #n];
-	public static final String PROGRAM_VERSION = "6.9.0 DEV BUILD 1";
+	public static final String PROGRAM_VERSION = "6.9.0 DEV BUILD 1 [Formulas Feedback Preview]";
 	public static final String PROGRAM_NAME = "jEveAssets";
 	public static final String PROGRAM_HOMEPAGE = "https://eve.nikr.net/jeveasset";
-	public static final boolean PROGRAM_DEV_BUILD = false;
+	public static final boolean PROGRAM_DEV_BUILD = true;
 
 	private static boolean debug = false;
 	private static boolean forceUpdate = false;
@@ -166,7 +166,7 @@ public class Program implements ActionListener {
 	private Timer timer;
 	private Updatable updatable;
 
-	private final List<JMainTab> jMainTabs = new ArrayList<>();
+	private final Map<String, JMainTab> jMainTabs = new HashMap<>();
 
 	//Data
 	private final ProfileData profileData;
@@ -305,7 +305,7 @@ public class Program implements ActionListener {
 		macOsxCode();
 	//Open Tools
 		for (String title : Settings.get().getShowTools()) {
-			for (JMainTab jMainTab : jMainTabs) {
+			for (JMainTab jMainTab : jMainTabs.values()) {
 				if (title.equals(jMainTab.getTitle())) {
 					mainWindow.addTab(jMainTab, false);
 				}
@@ -433,11 +433,14 @@ public class Program implements ActionListener {
 		return 90;
 	}
 
-	public void addMainTab(final JMainTab jMainTab) {
-		jMainTabs.add(jMainTab);
+	public void addMainTab(final String toolName, final JMainTab jMainTab) {
+		JMainTab old = jMainTabs.put(toolName, jMainTab);
+		if (old != null) {
+			throw new RuntimeException("toolName: " + toolName + " is duplicated");
+		}
 	}
 
-	public List<JMainTab> getMainTabs() {
+	public Map<String, JMainTab> getMainTabs() {
 		return jMainTabs;
 	}
 
@@ -657,7 +660,7 @@ public class Program implements ActionListener {
 		LOG.info("Saving Settings: " + msg);
 		Settings.lock("Table (Column/Width/Resize) and Window Settings"); //Lock for Table (Column/Width/Resize) and Window Settings
 		mainWindow.updateSettings();
-		for (JMainTab jMainTab : jMainTabs) {
+		for (JMainTab jMainTab : jMainTabs.values()) {
 			jMainTab.saveSettings();
 		}
 		Settings.unlock("Table (Column/Width/Resize) and Window Settings"); //Unlock for Table (Column/Width/Resize) and Window Settings
@@ -912,7 +915,7 @@ public class Program implements ActionListener {
 		jLockWindow.show(GuiShared.get().updating(), new JLockWindow.LockWorker() {
 			@Override
 			public void task() {
-				for (JMainTab mainTab : jMainTabs) {
+				for (JMainTab mainTab : jMainTabs.values()) {
 					if (mainTab instanceof TagUpdate) {
 						mainTab.updateCache();
 					}
@@ -920,7 +923,7 @@ public class Program implements ActionListener {
 			}
 			@Override
 			public void gui() {
-				for (JMainTab mainTab : jMainTabs) {
+				for (JMainTab mainTab : jMainTabs.values()) {
 					if (mainTab instanceof TagUpdate) {
 						TagUpdate tagUpdate = (TagUpdate) mainTab;
 						tagUpdate.updateTags();

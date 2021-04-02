@@ -26,12 +26,14 @@ import java.util.HashMap;
 import java.util.Map;
 import net.nikr.eve.jeveasset.data.api.my.MyAsset;
 import net.nikr.eve.jeveasset.data.api.my.MyShip;
+import net.nikr.eve.jeveasset.data.sde.MyLocation;
+import net.nikr.eve.jeveasset.data.settings.types.LocationType;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.i18n.TabsValues;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 
 
-public class Value implements Comparable<Value> {
+public class Value implements Comparable<Value>, LocationType {
 	private final static long MINIMUM_SKILL_POINTS = 5000000;
 	private final static double SKILL_EXTRACTOR_SIZE = 500000.0;
 	private final String name;
@@ -245,6 +247,15 @@ public class Value implements Comparable<Value> {
 
 	public double getBestModuleValue() {
 		return getDynamicPrice(bestModule);
+	}
+
+	@Override
+	public MyLocation getLocation() {
+		if (activeShip != null) {
+			return activeShip.getLocation();
+		} else {
+			return ApiIdConverter.getLocation(0);
+		}
 	}
 
 	public String getActiveShip() {

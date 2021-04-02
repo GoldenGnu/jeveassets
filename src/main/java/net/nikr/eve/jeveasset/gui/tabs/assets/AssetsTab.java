@@ -33,20 +33,19 @@ import ca.odell.glazedlists.swing.TableComparatorChooser;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import javax.swing.GroupLayout;
 import javax.swing.JComponent;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JToggleButton;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.api.my.MyAsset;
-import net.nikr.eve.jeveasset.data.sde.MyLocation;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.data.settings.tag.TagUpdate;
+import net.nikr.eve.jeveasset.data.settings.types.LocationType;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
@@ -56,10 +55,10 @@ import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterLogicalMatcher;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo;
-import net.nikr.eve.jeveasset.gui.shared.menu.JMenuJumps;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuName.AssetMenuData;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuData;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.TableMenu;
+import net.nikr.eve.jeveasset.gui.shared.table.ColumnManager;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.EventListManager;
@@ -84,6 +83,7 @@ public class AssetsTab extends JMainTabPrimary implements TagUpdate {
 
 	//Table
 	private final DefaultEventTableModel<MyAsset> tableModel;
+	private final EventList<MyAsset> eventList;
 	private final FilterList<MyAsset> filterList;
 	private final AssetFilterControl filterControl;
 	private final EnumTableFormatAdaptor<AssetTableFormat, MyAsset> tableFormat;
@@ -92,7 +92,7 @@ public class AssetsTab extends JMainTabPrimary implements TagUpdate {
 	public static final String NAME = "assets"; //Not to be changed!
 
 	public AssetsTab(final Program program) {
-		super(program, TabsAssets.get().assets(), Images.TOOL_ASSETS.getIcon(), false);
+		super(program, NAME, TabsAssets.get().assets(), Images.TOOL_ASSETS.getIcon(), false);
 		layout.setAutoCreateGaps(true);
 
 		ListenerClass listener = new ListenerClass();
@@ -109,7 +109,7 @@ public class AssetsTab extends JMainTabPrimary implements TagUpdate {
 		//Table Format
 		tableFormat = new EnumTableFormatAdaptor<>(AssetTableFormat.class);
 		//Backend
-		EventList<MyAsset> eventList = program.getProfileData().getAssetsEventList();
+		eventList = program.getProfileData().getAssetsEventList();
 		//Sorting (per column)
 		eventList.getReadWriteLock().readLock().lock();
 		SortedList<MyAsset> sortedList = new SortedList<>(eventList);
@@ -134,22 +134,16 @@ public class AssetsTab extends JMainTabPrimary implements TagUpdate {
 		selectionModel = EventModels.createSelectionModel(filterList);
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
 		jTable.setSelectionModel(selectionModel);
-		
+
 		//Listeners
-		installTable(jTable, NAME);
+		installTable(jTable);
 		//Scroll
 		JScrollPane jTableScroll = new JScrollPane(jTable);
 		//Table Filter
-		filterControl = new AssetFilterControl(
-				program.getMainWindow().getFrame(),
-				eventList,
-				sortedList,
-				filterList,
-				Settings.get().getTableFilters(NAME)
-				);
+		filterControl = new AssetFilterControl(sortedList);
 
 		//Menu
-		installMenu(program, new AssetTableMenu(), jTable, MyAsset.class);
+		installMenu(new AssetTableMenu(), new ColumnManager<>(program, NAME, tableFormat, tableModel, jTable, filterControl), MyAsset.class);
 
 		jVolume = StatusPanel.createLabel(TabsAssets.get().totalVolume(), Images.ASSETS_VOLUME.getIcon());
 		this.addStatusbarLabel(jVolume);
@@ -196,6 +190,16 @@ public class AssetsTab extends JMainTabPrimary implements TagUpdate {
 		filterControl.createCache();
 	}
 
+	@Override
+	public Collection<LocationType> getLocations() {
+		try {
+			eventList.getReadWriteLock().readLock().lock();
+			return new ArrayList<>(eventList);
+		} finally {
+			eventList.getReadWriteLock().readLock().unlock();
+		}
+	}
+
 	public boolean isFiltersEmpty() {
 		return getFilters().isEmpty();
 	}
@@ -219,14 +223,6 @@ public class AssetsTab extends JMainTabPrimary implements TagUpdate {
 	}
 	public FilterLogicalMatcher<MyAsset> getFilterLogicalMatcher() {
 		return new FilterLogicalMatcher<>(filterControl, getFilters());
-	}
-	public void addColumn(MyLocation location) {
-		tableFormat.addColumn(new JMenuJumps.Column<>(location.getSystem(), location.getSystemID()));
-		filterControl.setColumns(tableFormat.getOrderColumns());
-	}
-	public void removeColumn(MyLocation location) {
-		tableFormat.removeColumn(new JMenuJumps.Column<>(location.getSystem(), location.getSystemID()));
-		filterControl.setColumns(tableFormat.getOrderColumns());
 	}
 
 	private void updateStatusbar() {
@@ -319,8 +315,14 @@ public class AssetsTab extends JMainTabPrimary implements TagUpdate {
 
 	private class AssetFilterControl extends FilterControl<MyAsset> {
 
-		public AssetFilterControl(JFrame jFrame, EventList<MyAsset> eventList, EventList<MyAsset> exportEventList, FilterList<MyAsset> filterList, Map<String, List<Filter>> filters) {
-			super(jFrame, NAME, eventList, exportEventList, filterList, filters);
+		public AssetFilterControl(EventList<MyAsset> exportEventList) {
+			super(program.getMainWindow().getFrame(), 
+					NAME,
+					eventList,
+					exportEventList,
+					filterList,
+					Settings.get().getTableFilters(NAME)
+					);
 		}
 
 		@Override

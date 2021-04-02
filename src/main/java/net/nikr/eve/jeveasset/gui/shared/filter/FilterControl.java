@@ -168,9 +168,12 @@ public abstract class FilterControl<E> extends ExportFilterControl<E> {
 		}
 	}
 
-	public void setColumns(final List<EnumTableColumn<E>> enumColumns) {
-		gui.setColumns(enumColumns);
-		cacheRebuild(); //Add or Remove column means everything have to be rebuild...
+	public void updateColumns(boolean rebuildCache) {
+		gui.updateColumns();
+		if (rebuildCache) {
+			cacheRebuild(); //Add or Remove column means everything have to be rebuild...
+			refilter();
+		}
 	}
 
 	@Override

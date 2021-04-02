@@ -434,7 +434,8 @@ public class ExportDialog<E> extends JDialogCentered {
 		);
 	}
 
-	public void setColumns(final List<EnumTableColumn<E>> enumColumns) {
+	private void updateColumns() {
+		final List<EnumTableColumn<E>> enumColumns = filterControl.getColumns();
 		columns.clear();
 		columnIndex.clear();
 		columnIndex.addAll(enumColumns);
@@ -607,6 +608,9 @@ public class ExportDialog<E> extends JDialogCentered {
 	@Override
 	public void setVisible(final boolean b) {
 		if (b) {
+			//Columns
+			updateColumns();
+			//Settings
 			loadSettings();
 			//Filters (Saved)
 			jFilters.setEnabled(false);

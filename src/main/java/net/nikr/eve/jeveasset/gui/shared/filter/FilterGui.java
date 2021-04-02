@@ -44,7 +44,6 @@ import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.CaseInsensitiveComparator;
 import net.nikr.eve.jeveasset.gui.shared.components.JDropDownButton;
 import net.nikr.eve.jeveasset.gui.shared.components.JFixedToolBar;
-import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.EventListManager;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 
@@ -177,8 +176,10 @@ class FilterGui<E> {
 		return jPanel;
 	}
 
-	public void setColumns(final List<EnumTableColumn<E>> enumColumns) {
-		exportDialog.setColumns(enumColumns);
+	public void updateColumns() {
+		for (FilterPanel<E> filterPanel : filterPanels) {
+			filterPanel.updateColumns();
+		}
 	}
 
 	protected final void addExportOption(final JMenuItem jMenuItem) {

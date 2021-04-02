@@ -49,6 +49,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -227,8 +228,10 @@ public class TrackerTab extends JMainTabSecondary {
 	private Integer walletColumn = null;
 	private boolean updateLock = false;
 
+	public static final String NAME = "tracker"; //Not to be changed!
+
 	public TrackerTab(Program program) {
-		super(program, TabsTracker.get().title(), Images.TOOL_TRACKER.getIcon(), true);
+		super(program, NAME, TabsTracker.get().title(), Images.TOOL_TRACKER.getIcon(), true);
 
 		filterDialog = new TrackerFilterDialog(program);
 		assetFilterDialog = new TrackerAssetFilterDialog(program);
@@ -649,6 +652,11 @@ public class TrackerTab extends JMainTabSecondary {
 
 	@Override
 	public void updateCache() { }
+
+	@Override
+	public Collection<net.nikr.eve.jeveasset.data.settings.types.LocationType> getLocations() {
+		return new ArrayList<>(); //No Location
+	}
 
 	public void checkAll() {
 		if (!Settings.get().isAskedCheckAllTracker()) {

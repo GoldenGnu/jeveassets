@@ -40,19 +40,20 @@ import net.nikr.eve.jeveasset.data.api.my.MyAsset;
 import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
 import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.data.settings.types.ItemType;
-import net.nikr.eve.jeveasset.data.settings.types.JumpType;
 import net.nikr.eve.jeveasset.data.settings.types.LocationType;
 import net.nikr.eve.jeveasset.data.settings.types.LocationsType;
 import net.nikr.eve.jeveasset.data.settings.types.PriceType;
 import net.nikr.eve.jeveasset.data.settings.types.TagsType;
 import net.nikr.eve.jeveasset.gui.shared.components.JDropDownButton;
+import net.nikr.eve.jeveasset.gui.shared.table.ColumnManager;
+import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile;
 import net.nikr.eve.jeveasset.gui.tabs.tree.TreeAsset;
 
 
-public class MenuManager<Q> {
+public class MenuManager<T extends Enum<T> & EnumTableColumn<Q>, Q> {
 
-	public enum MenuEnum {
+	private enum MenuEnum {
 		ASSET_FILTER,
 		TRANSACTION_FILTER,
 		TAGS,
@@ -67,6 +68,7 @@ public class MenuManager<Q> {
 		ROUTING,
 		COPY_PLUS,
 		SUM,
+		FORMULA,
 	}
 
 	private boolean priceSupported = false;
@@ -84,18 +86,19 @@ public class MenuManager<Q> {
 	private final TableMenu<Q> tableMenu;
 	private final JTable jTable;
 	private final Program program;
-	private static final Map<Class<?>, MenuManager<?>> MANAGERS = new HashMap<Class<?>, MenuManager<?>>();
+	private final ColumnManager<T, Q> columnManager;
+	private static final Map<Class<?>, MenuManager<?, ?>> MANAGERS = new HashMap<Class<?>, MenuManager<?, ?>>();
 
-	public static <Q> void install(final Program program, final TableMenu<Q> tableMenu, final JTable jTable, final Class<Q> clazz) {
-		MenuManager<Q> menuManager = new MenuManager<>(program, tableMenu, jTable, clazz);
-		MenuManager<?> put = MANAGERS.put(clazz, menuManager);
+	public static <T extends Enum<T> & EnumTableColumn<Q>, Q> void install(final Program program, final TableMenu<Q> tableMenu, JTable jTable, final ColumnManager<T, Q> columnManager, final Class<Q> clazz) {
+		MenuManager<T, Q> menuManager = new MenuManager<>(program, tableMenu, jTable, columnManager, clazz);
+		MenuManager<?, ?> put = MANAGERS.put(clazz, menuManager);
 		if (put != null)  {
 			throw new RuntimeException("Duplicated MenuManager Class");
 		}
 	}
 
 	public static void update(final Program program, final Class<?> clazz) {
-		MenuManager<?> menuManager = MANAGERS.get(clazz);
+		MenuManager<?, ?> menuManager = MANAGERS.get(clazz);
 		if (menuManager != null) {
 			menuManager.updateMainTableMenu();
 		} else { //No table menu
@@ -104,21 +107,36 @@ public class MenuManager<Q> {
 			jMenu.setEnabled(false);
 		}
 	}
-	
-	private MenuManager(final Program program, final TableMenu<Q> tableMenu, final JTable jTable, final Class<Q> clazz) {
+
+	public static void updateFormula(final Class<?> clazz) {
+		MenuManager<?, ?> menuManager = MANAGERS.get(clazz);
+		if (menuManager != null) {
+			menuManager.columnManager.resetFormulaData();
+		}
+	}
+
+	public static void updateJumps(final Class<?> clazz) {
+		MenuManager<?, ?> menuManager = MANAGERS.get(clazz);
+		if (menuManager != null) {
+			menuManager.columnManager.updateJumpsData();
+		}
+	}
+
+	private MenuManager(final Program program, final TableMenu<Q> tableMenu, JTable jTable, ColumnManager<T, Q> columnManager, final Class<Q> clazz) {
 		this.program = program;
 		this.tableMenu = tableMenu;
 		this.jTable = jTable;
+		this.columnManager = columnManager;
 		assets = MyAsset.class.isAssignableFrom(clazz) && !TreeAsset.class.isAssignableFrom(clazz);
 		transactions = MyTransaction.class.isAssignableFrom(clazz);
 		stockpile = Stockpile.StockpileItem.class.isAssignableFrom(clazz);
 		locationSupported = LocationType.class.isAssignableFrom(clazz) || LocationsType.class.isAssignableFrom(clazz);
-		jumpsSupported = JumpType.class.isAssignableFrom(clazz);
+		jumpsSupported = LocationType.class.isAssignableFrom(clazz);
 		itemSupported = ItemType.class.isAssignableFrom(clazz);
 		tagsSupported = TagsType.class.isAssignableFrom(clazz);
 		priceSupported = PriceType.class.isAssignableFrom(clazz) || Item.class.isAssignableFrom(clazz);
-		createCashe(program, mainMenu, clazz);
-		createCashe(program, tablePopupMenu, clazz);
+		createCashe(program, mainMenu, columnManager);
+		createCashe(program, tablePopupMenu, columnManager);
 		ListenerClass listener  = new ListenerClass();
 		jTable.addMouseListener(listener);
 		jTable.getTableHeader().addMouseListener(listener);
@@ -127,7 +145,7 @@ public class MenuManager<Q> {
 		updateMainTableMenu();
 	}
 
-	public final void createCashe(final Program program, final Map<MenuEnum, AutoMenu<Q>> menus, final Class<Q> clazz) {
+	private void createCashe(final Program program, final Map<MenuEnum, AutoMenu<Q>> menus, ColumnManager<T, Q> columnManager) {
 	//COPY SIMPLE
 		if (itemSupported) {
 			menus.put(MenuEnum.COPY_PLUS, new JMenuCopyPlus<>(program));
@@ -164,7 +182,7 @@ public class MenuManager<Q> {
 		}
 	//JUMPS
 		if (jumpsSupported) {
-			menus.put(MenuEnum.JUMPS, new JMenuJumps<>(program, clazz));
+			menus.put(MenuEnum.JUMPS, new JMenuJumps<>(program, columnManager));
 		}
 		if (locationSupported) {
 			menus.put(MenuEnum.ROUTING, new JMenuRouting<>(program));
@@ -176,6 +194,8 @@ public class MenuManager<Q> {
 		if (locationSupported || priceSupported || itemSupported) {
 			menus.put(MenuEnum.UI, new JMenuUI<>(program));
 		}
+	//FORMULA
+		menus.put(MenuEnum.FORMULA, new JMenuFormula<>(program, columnManager));
 	//SUM
 		menus.put(MenuEnum.SUM, new JMenuSum<>(program, jTable));
 	
@@ -286,6 +306,12 @@ public class MenuManager<Q> {
 			jComponent.add(jRouting.getComponent());
 			notEmpty = true;
 		}
+	//FORMULA
+		AutoMenu<Q> jFormula = menus.get(MenuEnum.FORMULA);
+		if (jFormula != null) {
+			jComponent.add(jFormula.getComponent());
+			notEmpty = true;
+		}
 	//LOCATION
 		AutoMenu<Q> jLocation = menus.get(MenuEnum.LOCATION);
 		if (jLocation != null) {
@@ -304,9 +330,6 @@ public class MenuManager<Q> {
 			notEmpty = true;
 		}
 	//INFO
-		if (assets) {
-			JMenuInfo.asset(jTable, menuData.getAssets());
-		}
 		tableMenu.addInfoMenu(jComponent);
 	//SUM
 		AutoMenu<Q> jSum = menus.get(MenuEnum.SUM);

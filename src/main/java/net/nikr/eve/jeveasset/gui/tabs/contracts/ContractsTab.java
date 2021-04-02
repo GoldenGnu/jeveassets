@@ -32,26 +32,26 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JComponent;
-import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JScrollPane;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.api.my.MyContractItem;
 import net.nikr.eve.jeveasset.data.settings.Settings;
+import net.nikr.eve.jeveasset.data.settings.types.LocationType;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.JFixedToolBar;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTabPrimary;
-import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuUI.ContractMenuData;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuData;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.TableMenu;
+import net.nikr.eve.jeveasset.gui.shared.table.ColumnManager;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
@@ -84,7 +84,7 @@ public class ContractsTab extends JMainTabPrimary {
 	public static final String NAME = "contracts"; //Not to be changed!
 
 	public ContractsTab(Program program) {
-		super(program, TabsContracts.get().title(), Images.TOOL_CONTRACTS.getIcon(), true);
+		super(program, NAME, TabsContracts.get().title(), Images.TOOL_CONTRACTS.getIcon(), true);
 
 		JFixedToolBar jToolBarLeft = new JFixedToolBar();
 
@@ -135,21 +135,14 @@ public class ContractsTab extends JMainTabPrimary {
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
 		jTable.setSelectionModel(selectionModel);
 		//Listeners
-		installTable(jTable, NAME);
+		installTable(jTable);
 		//Scroll
 		JScrollPane jTableScroll = new JScrollPane(jTable);
 		//Table Filter
-		filterControl = new ContractsFilterControl(
-				tableFormat,
-				program.getMainWindow().getFrame(),
-				eventList,
-				sortedListSeparator,
-				filterList,
-				Settings.get().getTableFilters(NAME)
-		);
+		filterControl = new ContractsFilterControl(sortedListSeparator);
 
 		//Menu
-		installMenu(program, new ContractsTableMenu(), jTable, MyContractItem.class);
+		installMenu(new ContractsTableMenu(), new ColumnManager<>(program, NAME, tableFormat, tableModel, jTable, filterControl), MyContractItem.class);
 
 		layout.setHorizontalGroup(
 				layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
@@ -180,6 +173,11 @@ public class ContractsTab extends JMainTabPrimary {
 	@Override
 	public void updateCache() {
 		filterControl.createCache();
+	}
+
+	@Override
+	public Collection<LocationType> getLocations() {
+		return new ArrayList<>(); //LocationsType
 	}
 
 	private class ContractsTableMenu implements TableMenu<MyContractItem> {
@@ -231,27 +229,25 @@ public class ContractsTab extends JMainTabPrimary {
 
 	private class ContractsFilterControl extends FilterControl<MyContractItem> {
 
-		private List<EnumTableColumn<MyContractItem>> columns = null;
-		private final EnumTableFormatAdaptor<ContractsTableFormat, MyContractItem> tableFormat;
-
-		public ContractsFilterControl(EnumTableFormatAdaptor<ContractsTableFormat, MyContractItem> tableFormat, JFrame jFrame, EventList<MyContractItem> eventList, EventList<MyContractItem> exportEventList, FilterList<MyContractItem> filterList, Map<String, List<Filter>> filters) {
-			super(jFrame, NAME, eventList, exportEventList, filterList, filters);
-			this.tableFormat = tableFormat;
+		public ContractsFilterControl(EventList<MyContractItem> exportEventList) {
+			super(program.getMainWindow().getFrame(),
+					NAME,
+					eventList,
+					exportEventList,
+					filterList,
+					Settings.get().getTableFilters(NAME)
+					);
 		}
 
 		@Override
-		protected List<EnumTableColumn<MyContractItem>> getColumns() {
-			if (columns == null) {
-				columns = new ArrayList<EnumTableColumn<MyContractItem>>();
-				columns.addAll(Arrays.asList(ContractsExtendedTableFormat.values()));
-				columns.addAll(Arrays.asList(ContractsTableFormat.values()));
+		protected Object getColumnValue(MyContractItem contract, String column) {
+			EnumTableColumn<?> tableColumn = valueOf(column);
+			if (tableColumn instanceof ContractsExtendedTableFormat) {
+				ContractsExtendedTableFormat format = (ContractsExtendedTableFormat) tableColumn;
+				return format.getColumnValue(contract);
+			} else {
+				return tableFormat.getColumnValue(contract, column);
 			}
-			return columns;
-		}
-
-		@Override
-		protected List<EnumTableColumn<MyContractItem>> getShownColumns() {
-			return new ArrayList<EnumTableColumn<MyContractItem>>(tableFormat.getShownColumns());
 		}
 
 		@Override
@@ -266,21 +262,19 @@ public class ContractsTab extends JMainTabPrimary {
 			} catch (IllegalArgumentException exception) {
 
 			}
-			throw new RuntimeException("Fail to parse filter column: " + column);
+			return null;
 		}
 
 		@Override
-		protected Object getColumnValue(MyContractItem item, String columnString) {
-			EnumTableColumn<?> column = valueOf(columnString);
-			if (column instanceof ContractsTableFormat) {
-				ContractsTableFormat format = (ContractsTableFormat) column;
-				return format.getColumnValue(item);
-			}
-			if (column instanceof ContractsExtendedTableFormat) {
-				ContractsExtendedTableFormat format = (ContractsExtendedTableFormat) column;
-				return format.getColumnValue(item);
-			}
-			return null; //Fallback: show all...
+		protected List<EnumTableColumn<MyContractItem>> getColumns() {
+			ArrayList<EnumTableColumn<MyContractItem>> columns = new ArrayList<>(tableFormat.getOrderColumns());
+			columns.addAll(Arrays.asList(ContractsExtendedTableFormat.values()));
+			return columns;
+		}
+
+		@Override
+		protected List<EnumTableColumn<MyContractItem>> getShownColumns() {
+			return new ArrayList<>(tableFormat.getShownColumns());
 		}
 
 		@Override

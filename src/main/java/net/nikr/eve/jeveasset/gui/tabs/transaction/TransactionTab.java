@@ -30,17 +30,18 @@ import ca.odell.glazedlists.swing.DefaultEventSelectionModel;
 import ca.odell.glazedlists.swing.DefaultEventTableModel;
 import ca.odell.glazedlists.swing.TableComparatorChooser;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.swing.JComponent;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JScrollPane;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
 import net.nikr.eve.jeveasset.data.settings.Settings;
+import net.nikr.eve.jeveasset.data.settings.types.LocationType;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
@@ -49,8 +50,10 @@ import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter.CompareType;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter.LogicType;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
-import net.nikr.eve.jeveasset.gui.shared.menu.*;
+import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo;
+import net.nikr.eve.jeveasset.gui.shared.menu.MenuData;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.TableMenu;
+import net.nikr.eve.jeveasset.gui.shared.table.ColumnManager;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
@@ -82,7 +85,7 @@ public class TransactionTab extends JMainTabPrimary {
 	public static final String NAME = "transaction"; //Not to be changed!
 
 	public TransactionTab(final Program program) {
-		super(program, TabsTransaction.get().title(), Images.TOOL_TRANSACTION.getIcon(), true);
+		super(program, NAME, TabsTransaction.get().title(), Images.TOOL_TRANSACTION.getIcon(), true);
 
 		ListenerClass listener = new ListenerClass();
 		//Table Format
@@ -111,7 +114,7 @@ public class TransactionTab extends JMainTabPrimary {
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
 		jTable.setSelectionModel(selectionModel);
 		//Listeners
-		installTable(jTable, NAME);
+		installTable(jTable);
 		//Scroll Panels
 		JScrollPane jTableScroll = new JScrollPane(jTable);
 		//Table Filter
@@ -123,18 +126,10 @@ public class TransactionTab extends JMainTabPrimary {
 		filter = new ArrayList<>();
 		filter.add(new Filter(LogicType.AND, TransactionTableFormat.TYPE, CompareType.EQUALS, TabsTransaction.get().sell()));
 		defaultFilters.put(TabsTransaction.get().sell(), filter);
-		filterControl = new TransactionsFilterControl(
-				tableFormat,
-				program.getMainWindow().getFrame(),
-				eventList,
-				sortedList,
-				filterList,
-				Settings.get().getTableFilters(NAME),
-				defaultFilters
-		);
+		filterControl = new TransactionsFilterControl(sortedList, defaultFilters);
 
 		//Menu
-		installMenu(program, new TransactionTableMenu(), jTable, MyTransaction.class);
+		installMenu(new TransactionTableMenu(), new ColumnManager<>(program, NAME, tableFormat, tableModel, jTable, filterControl), MyTransaction.class);
 
 		//Sell
 		JLabel jSellOrders = StatusPanel.createLabel(TabsTransaction.get().sellTitle(), Images.ORDERS_SELL.getIcon());
@@ -195,6 +190,16 @@ public class TransactionTab extends JMainTabPrimary {
 	@Override
 	public void updateCache() {
 		filterControl.createCache();
+	}
+
+	@Override
+	public Collection<LocationType> getLocations() {
+		try {
+			eventList.getReadWriteLock().readLock().lock();
+			return new ArrayList<>(eventList);
+		} finally {
+			eventList.getReadWriteLock().readLock().unlock();
+		}
 	}
 
 	public void addFilter(final Filter filter) {
@@ -277,17 +282,20 @@ public class TransactionTab extends JMainTabPrimary {
 
 	private class TransactionsFilterControl extends FilterControl<MyTransaction> {
 
-		private final EnumTableFormatAdaptor<TransactionTableFormat, MyTransaction> tableFormat;
-
-		public TransactionsFilterControl(EnumTableFormatAdaptor<TransactionTableFormat, MyTransaction> tableFormat, JFrame jFrame, EventList<MyTransaction> eventList, EventList<MyTransaction> exportEventList, FilterList<MyTransaction> filterList, Map<String, List<Filter>> filters, Map<String, List<Filter>> defaultFilters) {
-			super(jFrame, NAME, eventList, exportEventList, filterList, filters, defaultFilters);
-			this.tableFormat = tableFormat;
+		public TransactionsFilterControl(EventList<MyTransaction> exportEventList, Map<String, List<Filter>> defaultFilters) {
+			super(program.getMainWindow().getFrame(),
+					NAME,
+					eventList,
+					exportEventList,
+					filterList,
+					Settings.get().getTableFilters(NAME),
+					defaultFilters
+					);
 		}
 
 		@Override
-		protected Object getColumnValue(final MyTransaction item, final String column) {
-			TransactionTableFormat format = TransactionTableFormat.valueOf(column);
-			return format.getColumnValue(item);
+		protected Object getColumnValue(final MyTransaction transaction, final String column) {
+			return tableFormat.getColumnValue(transaction, column);
 		}
 
 		@Override
@@ -297,7 +305,7 @@ public class TransactionTab extends JMainTabPrimary {
 
 		@Override
 		protected List<EnumTableColumn<MyTransaction>> getColumns() {
-			return columnsAsList(TransactionTableFormat.values());
+			return new ArrayList<>(tableFormat.getOrderColumns());
 		}
 
 		@Override

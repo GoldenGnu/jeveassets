@@ -71,6 +71,13 @@ public abstract class GuiShared extends Bundle {
 	public abstract String eveRef();
 	public abstract String evepraisal();
 	public abstract String foreground();
+	public abstract String formulaColumns();
+	public abstract String formulaFunctions();
+	public abstract String formulaMenu();
+	public abstract String formulaName();
+	public abstract String formulaOperations();
+	public abstract String formulaString();
+	public abstract String formulaTitle();
 	public abstract String fuzzworkBlueprints();
 	public abstract String fuzzworkItems();
 	public abstract String fuzzworkMarket();

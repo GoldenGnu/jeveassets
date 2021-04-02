@@ -29,22 +29,22 @@ import ca.odell.glazedlists.swing.DefaultEventSelectionModel;
 import ca.odell.glazedlists.swing.DefaultEventTableModel;
 import ca.odell.glazedlists.swing.TableComparatorChooser;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import javax.swing.JComponent;
-import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JScrollPane;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.data.sde.StaticData;
 import net.nikr.eve.jeveasset.data.settings.Settings;
+import net.nikr.eve.jeveasset.data.settings.types.LocationType;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTabPrimary;
-import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuData;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.TableMenu;
+import net.nikr.eve.jeveasset.gui.shared.table.ColumnManager;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.EventListManager;
@@ -68,7 +68,7 @@ public class ItemsTab extends JMainTabPrimary {
 	public static final String NAME = "items"; //Not to be changed!
 
 	public ItemsTab(final Program program) {
-		super(program, TabsItems.get().items(), Images.TOOL_ITEMS.getIcon(), true);
+		super(program, NAME, TabsItems.get().items(), Images.TOOL_ITEMS.getIcon(), true);
 
 		//Table Format
 		tableFormat = new EnumTableFormatAdaptor<>(ItemTableFormat.class);
@@ -95,21 +95,14 @@ public class ItemsTab extends JMainTabPrimary {
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
 		jTable.setSelectionModel(selectionModel);
 		//Listeners
-		installTable(jTable, NAME);
+		installTable(jTable);
 		//Scroll
 		JScrollPane jTableScroll = new JScrollPane(jTable);
 		//Table Filter
-		filterControl = new ItemsFilterControl(
-				tableFormat,
-				program.getMainWindow().getFrame(),
-				eventList,
-				sortedList,
-				filterList,
-				Settings.get().getTableFilters(NAME)
-				);
+		filterControl = new ItemsFilterControl(sortedList);
 
 		//Menu
-		installMenu(program, new ItemTableMenu(), jTable, Item.class);
+		installMenu(new ItemTableMenu(), new ColumnManager<>(program, NAME, tableFormat, tableModel, jTable, filterControl), Item.class);
 
 		layout.setHorizontalGroup(
 			layout.createParallelGroup()
@@ -141,6 +134,11 @@ public class ItemsTab extends JMainTabPrimary {
 		filterControl.createCache();
 	}
 
+	@Override
+	public Collection<LocationType> getLocations() {
+		return new ArrayList<>(); //No Location
+	}
+
 	private class ItemTableMenu implements TableMenu<Item> {
 		@Override
 		public MenuData<Item> getMenuData() {
@@ -166,17 +164,19 @@ public class ItemsTab extends JMainTabPrimary {
 
 	private class ItemsFilterControl extends FilterControl<Item> {
 
-		private final EnumTableFormatAdaptor<ItemTableFormat, Item> tableFormat;
-
-		public ItemsFilterControl(EnumTableFormatAdaptor<ItemTableFormat, Item> tableFormat, JFrame jFrame, EventList<Item> eventList, SortedList<Item> sortedList, FilterList<Item> filterList, Map<String, List<Filter>> filters) {
-			super(jFrame, NAME, eventList, sortedList, filterList, filters);
-			this.tableFormat = tableFormat;
+		public ItemsFilterControl(SortedList<Item> exportEventList) {
+			super(program.getMainWindow().getFrame(),
+					NAME,
+					eventList,
+					exportEventList,
+					filterList,
+					Settings.get().getTableFilters(NAME)
+					);
 		}
 
 		@Override
 		protected Object getColumnValue(final Item item, final String column) {
-			ItemTableFormat format = ItemTableFormat.valueOf(column);
-			return format.getColumnValue(item);
+			return tableFormat.getColumnValue(item, column);
 		}
 
 		@Override
@@ -186,7 +186,7 @@ public class ItemsTab extends JMainTabPrimary {
 
 		@Override
 		protected List<EnumTableColumn<Item>> getColumns() {
-			return columnsAsList(ItemTableFormat.values());
+			return new ArrayList<>(tableFormat.getOrderColumns());
 		}
 
 		@Override

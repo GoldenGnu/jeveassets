@@ -32,6 +32,7 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -49,6 +50,7 @@ import javax.swing.JScrollPane;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.api.my.MyAsset;
 import net.nikr.eve.jeveasset.data.sde.Item;
+import net.nikr.eve.jeveasset.data.settings.types.LocationType;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.CaseInsensitiveComparator;
 import net.nikr.eve.jeveasset.gui.shared.JOptionInput;
@@ -60,8 +62,10 @@ import net.nikr.eve.jeveasset.gui.shared.components.JTextDialog;
 import net.nikr.eve.jeveasset.gui.shared.components.ListComboBoxModel;
 import net.nikr.eve.jeveasset.gui.shared.filter.ExportDialog;
 import net.nikr.eve.jeveasset.gui.shared.filter.ExportFilterControl;
-import net.nikr.eve.jeveasset.gui.shared.menu.*;
+import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo;
+import net.nikr.eve.jeveasset.gui.shared.menu.MenuData;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.TableMenu;
+import net.nikr.eve.jeveasset.gui.shared.table.ColumnManager;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.EventListManager;
@@ -120,7 +124,7 @@ public class LoadoutsTab extends JMainTabSecondary {
 	public static final String NAME = "loadouts"; //Not to be changed!
 
 	public LoadoutsTab(final Program program) {
-		super(program, TabsLoadout.get().ship(), Images.TOOL_SHIP_LOADOUTS.getIcon(), true);
+		super(program, NAME, TabsLoadout.get().ship(), Images.TOOL_SHIP_LOADOUTS.getIcon(), true);
 
 		loadoutsExportDialog = new LoadoutsExportDialog(program, this);
 
@@ -212,11 +216,11 @@ public class LoadoutsTab extends JMainTabSecondary {
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
 		jTable.setSelectionModel(selectionModel);
 		//Listeners
-		installTable(jTable, NAME);
+		installTable(jTable);
 		//Scroll
 		JScrollPane jTableScroll = new JScrollPane(jTable);
 		//Menu
-		installMenu(program, new LoadoutTableMenu(), jTable, Loadout.class);
+		installMenu(new LoadoutTableMenu(), new ColumnManager<>(program, NAME, tableFormat, tableModel, jTable), Loadout.class);
 
 		List<EnumTableColumn<Loadout>> enumColumns = new ArrayList<>();
 		enumColumns.addAll(Arrays.asList(LoadoutExtendedTableFormat.values()));
@@ -279,6 +283,16 @@ public class LoadoutsTab extends JMainTabSecondary {
 
 	@Override
 	public void updateCache() { }
+
+	@Override
+	public Collection<LocationType> getLocations() {
+		try {
+			eventList.getReadWriteLock().readLock().lock();
+			return new ArrayList<>(eventList);
+		} finally {
+			eventList.getReadWriteLock().readLock().unlock();
+		}
+	}
 
 	private String browse() {
 		File windows = new File(javax.swing.filechooser.FileSystemView.getFileSystemView().getDefaultDirectory()

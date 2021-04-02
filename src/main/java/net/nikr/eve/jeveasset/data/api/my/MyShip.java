@@ -20,19 +20,17 @@
  */
 package net.nikr.eve.jeveasset.data.api.my;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
 import net.nikr.eve.jeveasset.data.settings.Settings;
-import net.nikr.eve.jeveasset.data.settings.types.JumpType;
+import net.nikr.eve.jeveasset.data.settings.types.LocationType;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 import net.nikr.eve.jeveasset.io.shared.RawConverter;
 import net.troja.eve.esi.model.CharacterLocationResponse;
 import net.troja.eve.esi.model.CharacterShipResponse;
 
 
-public class MyShip implements Comparable<MyShip>, JumpType {
+public class MyShip implements Comparable<MyShip>, LocationType {
 
 	//Static values (set by constructor)
 	private final Long itemID;
@@ -43,9 +41,6 @@ public class MyShip implements Comparable<MyShip>, JumpType {
 	private final String name;
 	private final String typeName;
 	private final String eveName;
-
-	//Dynamic values cache
-	private final Map<Long, Integer> jumpsList = new HashMap<>();
 
 	public MyShip(final CharacterShipResponse shipType, final CharacterLocationResponse response) {
 		this(shipType.getShipItemId(), shipType.getShipTypeId(), RawConverter.toLocationID(response));
@@ -79,21 +74,6 @@ public class MyShip implements Comparable<MyShip>, JumpType {
 
 	public long getLocationID() {
 		return location.getLocationID();
-	}
-
-	@Override
-	public void addJump(Long systemID, int jumps) {
-		jumpsList.put(systemID, jumps);
-	}
-
-	@Override
-	public Integer getJumps(Long systemID) {
-		return jumpsList.get(systemID);
-	}
-
-	@Override
-	public void clearJumps() {
-		jumpsList.clear();
 	}
 
 	public String getName() {

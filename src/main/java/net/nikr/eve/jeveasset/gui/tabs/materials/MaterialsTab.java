@@ -31,6 +31,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -44,6 +45,7 @@ import javax.swing.JMenu;
 import javax.swing.JScrollPane;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.api.my.MyAsset;
+import net.nikr.eve.jeveasset.data.settings.types.LocationType;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.JFixedToolBar;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTabSecondary;
@@ -53,6 +55,7 @@ import net.nikr.eve.jeveasset.gui.shared.filter.ExportFilterControl;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuData;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.TableMenu;
+import net.nikr.eve.jeveasset.gui.shared.table.ColumnManager;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.EventListManager;
@@ -96,7 +99,7 @@ public class MaterialsTab extends JMainTabSecondary {
 	public static final String NAME = "materials"; //Not to be changed!
 
 	public MaterialsTab(final Program program) {
-		super(program, TabsMaterials.get().materials(), Images.TOOL_MATERIALS.getIcon(), true);
+		super(program, NAME, TabsMaterials.get().materials(), Images.TOOL_MATERIALS.getIcon(), true);
 		//Category: Asteroid
 		//Category: Material
 
@@ -155,11 +158,11 @@ public class MaterialsTab extends JMainTabSecondary {
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
 		jTable.setSelectionModel(selectionModel);
 		//Listeners
-		installTable(jTable, NAME);
+		installTable(jTable);
 		//Scroll
 		jTableScroll = new JScrollPane(jTable);
 		//Menu
-		installMenu(program, new MaterialTableMenu(), jTable, Material.class);
+		installMenu(new MaterialTableMenu(), new ColumnManager<>(program, NAME, tableFormat, tableModel, jTable), Material.class);
 
 		List<EnumTableColumn<Material>> enumColumns = new ArrayList<>();
 		enumColumns.addAll(Arrays.asList(MaterialExtenedTableFormat.values()));
@@ -221,6 +224,16 @@ public class MaterialsTab extends JMainTabSecondary {
 
 	@Override
 	public void updateCache() { }
+
+	@Override
+	public Collection<LocationType> getLocations() {
+		try {
+			eventList.getReadWriteLock().readLock().lock();
+			return new ArrayList<>(eventList);
+		} finally {
+			eventList.getReadWriteLock().readLock().unlock();
+		}
+	}
 
 	private void updateTable() {
 		beforeUpdateData();

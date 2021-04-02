@@ -31,23 +31,24 @@ import ca.odell.glazedlists.swing.TableComparatorChooser;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import javax.swing.JButton;
 import javax.swing.JComponent;
-import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JScrollPane;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.settings.Settings;
+import net.nikr.eve.jeveasset.data.settings.types.LocationType;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.JFixedToolBar;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTabSecondary;
-import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuData;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.TableMenu;
+import net.nikr.eve.jeveasset.gui.shared.table.ColumnManager;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.EventListManager;
@@ -75,7 +76,7 @@ public class ValueTableTab extends JMainTabSecondary {
 	public static final String NAME = "value"; //Not to be changed!
 
 	public ValueTableTab(final Program program) {
-		super(program, TabsValues.get().title(), Images.TOOL_VALUE_TABLE.getIcon(), true);
+		super(program, NAME, TabsValues.get().title(), Images.TOOL_VALUE_TABLE.getIcon(), true);
 
 		JFixedToolBar jToolBar = new JFixedToolBar();
 
@@ -119,21 +120,14 @@ public class ValueTableTab extends JMainTabSecondary {
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
 		jTable.setSelectionModel(selectionModel);
 		//Listeners
-		installTable(jTable, NAME);
+		installTable(jTable);
 		//Scroll
 		JScrollPane jTableScroll = new JScrollPane(jTable);
 		//Table Filter
-		filterControl = new ValueFilterControl(
-				tableFormat,
-				program.getMainWindow().getFrame(),
-				eventList,
-				totalSortedList,
-				filterList,
-				Settings.get().getTableFilters(NAME)
-				);
+		filterControl = new ValueFilterControl(totalSortedList);
 
 		//Menu
-		installMenu(program, new ValueTableMenu(), jTable, Value.class);
+		installMenu(new ValueTableMenu(), new ColumnManager<>(program, NAME, tableFormat, tableModel, jTable, filterControl), Value.class);
 
 		layout.setHorizontalGroup(
 			layout.createParallelGroup()
@@ -204,10 +198,20 @@ public class ValueTableTab extends JMainTabSecondary {
 		filterControl.createCache();
 	}
 
+	@Override
+	public Collection<LocationType> getLocations() {
+		try {
+			eventList.getReadWriteLock().readLock().lock();
+			return new ArrayList<>(eventList);
+		} finally {
+			eventList.getReadWriteLock().readLock().unlock();
+		}
+	}
+
 	private class ValueTableMenu implements TableMenu<Value> {
 		@Override
 		public MenuData<Value> getMenuData() {
-			return new MenuData<>();
+			return new MenuData<>(selectionModel.getSelected());
 		}
 
 		@Override
@@ -229,17 +233,19 @@ public class ValueTableTab extends JMainTabSecondary {
 
 	private class ValueFilterControl extends FilterControl<Value> {
 
-		private final EnumTableFormatAdaptor<ValueTableFormat, Value> tableFormat;
-
-		public ValueFilterControl(EnumTableFormatAdaptor<ValueTableFormat, Value> tableFormat, JFrame jFrame, EventList<Value> eventList, EventList<Value> exportEventList, FilterList<Value> filterList, Map<String, List<Filter>> filters) {
-			super(jFrame, NAME, eventList, exportEventList, filterList, filters);
-			this.tableFormat = tableFormat;
+		public ValueFilterControl(EventList<Value> exportEventList) {
+			super(program.getMainWindow().getFrame(),
+					NAME,
+					eventList,
+					exportEventList,
+					filterList,
+					Settings.get().getTableFilters(NAME)
+					);
 		}
 
 		@Override
 		protected Object getColumnValue(final Value value, final String column) {
-			ValueTableFormat format = ValueTableFormat.valueOf(column);
-			return format.getColumnValue(value);
+			return tableFormat.getColumnValue(value, column);
 		}
 
 		@Override
@@ -249,7 +255,7 @@ public class ValueTableTab extends JMainTabSecondary {
 
 		@Override
 		protected List<EnumTableColumn<Value>> getColumns() {
-			return columnsAsList(ValueTableFormat.values());
+			return new ArrayList<>(tableFormat.getOrderColumns());
 		}
 
 		@Override

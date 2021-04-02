@@ -131,6 +131,7 @@ public class LibraryManager {
 			files.add("jsr250-api-1.0.jar");
 			files.add("jsr305-3.0.2.jar");
 			files.add("flatlaf-0.43.jar");
+			files.add("EvalEx-2.5.jar");
 		}
 		return files;
 	}
