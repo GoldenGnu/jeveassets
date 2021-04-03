@@ -562,17 +562,6 @@ public class ExportDialog<E> extends JDialogCentered {
 		jHtmlHeaderRepeat.setValue(Settings.get().getExportSettings(toolName).getHtmlRepeatHeader());
 		//Filename
 		ExportFormat exportFormat = Settings.get().getExportSettings(toolName).getExportFormat();
-		cardLayout.show(jOptionPanel, exportFormat.name());
-		if (exportFormat == ExportFormat.HTML) {
-			jHtml.setSelected(true);
-			jOptionPanel.setBorder(BorderFactory.createTitledBorder(DialoguesExport.get().html()));
-		} else if (exportFormat == ExportFormat.SQL) {
-			jSql.setSelected(true);
-			jOptionPanel.setBorder(BorderFactory.createTitledBorder(DialoguesExport.get().sql()));
-		} else { //CSV and Default
-			jCsv.setSelected(true);
-			jOptionPanel.setBorder(BorderFactory.createTitledBorder(DialoguesExport.get().csv()));
-		}
 		jFileChooser.setExtension(exportFormat.getExtension());
 		//Columns (Shared)
 		jColumnSelection.clearSelection();
@@ -597,7 +586,6 @@ public class ExportDialog<E> extends JDialogCentered {
 			jColumnSelection.setSelectedIndices(indices);
 		}
 
-		FilterSelection filterSelection = Settings.get().getExportSettings(toolName).getFilterSelection();
 		String filterName = Settings.get().getExportSettings(toolName).getFilterName();
 		List<String> filterNames = new ArrayList<>(exportFilterControl.getAllFilters().keySet());
 		if (!filterNames.isEmpty()) {
@@ -606,22 +594,10 @@ public class ExportDialog<E> extends JDialogCentered {
 			if(hasItem(jFilters, filterName)) {
 				jFilters.setSelectedItem(filterName);
 			}
-		}
-		if (filterSelection == FilterSelection.NONE) {
-			jNoFilter.setSelected(true);
-		} else if (filterSelection == FilterSelection.CURRENT) {
-			jCurrentFilter.setSelected(true);
-		} else if (filterSelection == FilterSelection.SAVED && hasItem(jFilters, filterName)) {
-			jSavedFilter.setSelected(true);
 		} else {
-			//If we got here then the view selection didn't match the data and we had to default, so reset the value
-			//in the settings.
-			jNoFilter.setSelected(true);
-			Settings.get().getExportSettings(toolName).setFilterSelection(FilterSelection.NONE);
+			jFilters.setModel(new ListComboBoxModel<>());
 		}
-		jFilters.setEnabled(jSavedFilter.isSelected());
 
-		ColumnSelection columnSelection = Settings.get().getExportSettings(toolName).getColumnSelection();
 		String viewName = Settings.get().getExportSettings(toolName).getViewName();
 		List<String> viewNames = new ArrayList<>(Settings.get().getTableViews(toolName).keySet());
 		if (!viewNames.isEmpty()) {
@@ -630,20 +606,10 @@ public class ExportDialog<E> extends JDialogCentered {
 			if (hasItem(jViews, viewName)) {
 				jViews.setSelectedItem(viewName);
 			}
-		}
-		if (columnSelection == ColumnSelection.SHOWN) {
-			jViewCurrent.setSelected(true);
-		} else if (columnSelection == ColumnSelection.SAVED && hasItem(jViews, viewName)) {
-			jViewSaved.setSelected(true);
-		} else if (columnSelection == ColumnSelection.SELECTED) {
-			jViewSelect.setSelected(true);
 		} else {
-			//If we got here then the column selection didn't match the data and we had to default, so reset the value
-			//in the settings.
-			jViewCurrent.setSelected(true);
-			Settings.get().getExportSettings(toolName).setColumnSelection(ColumnSelection.SHOWN);
+			jViews.setModel(new ListComboBoxModel<>());
 		}
-		jViews.setEnabled(jViewSaved.isSelected());
+		updateDisplayElements();
 	}
 
 	private void resetSettings() {
@@ -672,62 +638,91 @@ public class ExportDialog<E> extends JDialogCentered {
 		loadSettings();
 	}
 
+	/***
+	 *Updates the UI elements that are displayed based on the current data. This will hide or show panels. Enable
+	 *combo boxes. Etc.
+	 */
+	public void updateDisplayElements() {
+		ExportFormat exportFormat = Settings.get().getExportSettings(toolName).getExportFormat();
+		cardLayout.show(jOptionPanel, exportFormat.name());
+		if (exportFormat == ExportFormat.HTML) {
+			jHtml.setSelected(true);
+			jOptionPanel.setBorder(BorderFactory.createTitledBorder(DialoguesExport.get().html()));
+		} else if (exportFormat == ExportFormat.SQL) {
+			jSql.setSelected(true);
+			jOptionPanel.setBorder(BorderFactory.createTitledBorder(DialoguesExport.get().sql()));
+		} else { //CSV and Default
+			jCsv.setSelected(true);
+			jOptionPanel.setBorder(BorderFactory.createTitledBorder(DialoguesExport.get().csv()));
+		}
+
+		FilterSelection filterSelection = Settings.get().getExportSettings(toolName).getFilterSelection();
+		String filterName = Settings.get().getExportSettings(toolName).getFilterName();
+		if (filterSelection == FilterSelection.NONE) {
+			jNoFilter.setSelected(true);
+			jFilters.setEnabled(false);
+		} else if (filterSelection == FilterSelection.CURRENT && !exportFilterControl.getCurrentFilters().isEmpty()) {
+			jCurrentFilter.setSelected(true);
+			jFilters.setEnabled(false);
+		} else if (filterSelection == FilterSelection.SAVED && hasItem(jFilters, filterName)) {
+			jSavedFilter.setSelected(true);
+			jFilters.setEnabled(true);
+		} else {
+			//If we got here then the view selection didn't match the data and we had to default, so reset the value
+			//in the settings.
+			jNoFilter.setSelected(true);
+			jFilters.setEnabled(false);
+			Settings.get().getExportSettings(toolName).setFilterSelection(FilterSelection.NONE);
+		}
+
+		//Filters current
+		if (exportFilterControl.getCurrentFilters().isEmpty()) {
+			jCurrentFilter.setEnabled(false);
+		} else {
+			jCurrentFilter.setEnabled(true);
+		}
+
+		//Filters saved
+		if (exportFilterControl.getAllFilters().isEmpty()) {
+			jSavedFilter.setEnabled(false);
+			jFilters.getModel().setSelectedItem(DialoguesExport.get().noSavedFilter());
+		} else {
+			jSavedFilter.setEnabled(true);
+		}
+
+		ColumnSelection columnSelection = Settings.get().getExportSettings(toolName).getColumnSelection();
+		String viewName = Settings.get().getExportSettings(toolName).getViewName();
+		if (columnSelection == ColumnSelection.SHOWN) {
+			jViewCurrent.setSelected(true);
+			jViews.setEnabled(false);
+		} else if (columnSelection == ColumnSelection.SAVED && hasItem(jViews, viewName)) {
+			jViewSaved.setSelected(true);
+			jViews.setEnabled(true);
+		} else if (columnSelection == ColumnSelection.SELECTED) {
+			jViewSelect.setSelected(true);
+			jViews.setEnabled(false);
+		} else {
+			//If we got here then the column selection didn't match the data and we had to default, so reset the value
+			//in the settings.
+			jViewCurrent.setSelected(true);
+			jViews.setEnabled(false);
+			Settings.get().getExportSettings(toolName).setColumnSelection(ColumnSelection.SHOWN);
+		}
+
+		//Views
+		Map<String, View> tableViews = Settings.get().getTableViews(toolName);
+		if (tableViews.isEmpty()) {
+			jViewSaved.setEnabled(false);
+			jViews.getModel().setSelectedItem(DialoguesExport.get().viewNoSaved());
+		} else {
+			jViewSaved.setEnabled(true);
+		}
+	}
+
 	@Override
 	public void setVisible(final boolean b) {
 		if (b) {
 			loadSettings();
-			//Filters (Saved)
-			jFilters.setEnabled(false);
-			if (exportFilterControl.getAllFilters().isEmpty()) {
-				if (jSavedFilter.isSelected()) {
-					jNoFilter.setSelected(true);
-				}
-				jSavedFilter.setEnabled(false);
-				jFilters.getModel().setSelectedItem(DialoguesExport.get().noSavedFilter());
-			} else {
-				if (jSavedFilter.isSelected()) {
-					jFilters.setEnabled(true);
-				}
-				jSavedFilter.setEnabled(true);
-				List<String> filterNames = new ArrayList<>(exportFilterControl.getAllFilters().keySet());
-				Collections.sort(filterNames, new CaseInsensitiveComparator());
-				Object selectedItem = jFilters.getSelectedItem(); //Save selection
-				jFilters.setModel(new ListComboBoxModel<>(filterNames));
-				if (selectedItem != null) { //Restore selection
-					jFilters.setSelectedItem(selectedItem);
-				}
-			}
-			//Filters (Current)
-			if (exportFilterControl.getCurrentFilters().isEmpty()) {
-				if (jCurrentFilter.isSelected()) {
-					jNoFilter.setSelected(true);
-				}
-				jCurrentFilter.setEnabled(false);
-			} else {
-				jCurrentFilter.setEnabled(true);
-			}
-			//Views
-			jViews.setEnabled(false);
-			Map<String, View> tableViews = Settings.get().getTableViews(toolName);
-			if (tableViews.isEmpty()) {
-				if (jViewSaved.isSelected()) {
-					jViewCurrent.setSelected(true);
-				}
-				jViewSaved.setEnabled(false);
-				jViews.getModel().setSelectedItem(DialoguesExport.get().viewNoSaved());
-			} else {
-				if (jViewSaved.isSelected()) {
-					jViews.setEnabled(true);
-				}
-				jViewSaved.setEnabled(true);
-				List<String> viewNames = new ArrayList<>(tableViews.keySet());
-				Collections.sort(viewNames, new CaseInsensitiveComparator());
-				Object selectedItem = jViews.getSelectedItem(); //Save selection
-				jViews.setModel(new ListComboBoxModel<>(viewNames));
-				if (selectedItem != null) { //Restore selection
-					jViews.setSelectedItem(selectedItem);
-				}
-			}
 		}
 		super.setVisible(b);
 	}
