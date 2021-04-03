@@ -1348,9 +1348,8 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 				Element formulaNode = (Element) formulaNodeList.item(b);
 				String name = getString(formulaNode, "name");
 				String expression = getString(formulaNode, "expression");
-				boolean bool = getBoolean(formulaNode, "boolean");
 				Integer index = getIntOptional(formulaNode, "index");
-				tableFormulas.add(new Formula(name, expression, bool, index));
+				tableFormulas.add(new Formula(name, expression, index));
 			}
 		}
 	}
@@ -1409,10 +1408,6 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 			}
 			settings.getTableFilters().put(tableName, filters);
 		}
-	}
-
-	public static EnumTableColumn<?> getColumn(final String column, final String tableName) {
-		return getColumn(column, tableName, null);
 	}
 
 	public static EnumTableColumn<?> getColumn(final String column, final String tableName, Settings settings) {

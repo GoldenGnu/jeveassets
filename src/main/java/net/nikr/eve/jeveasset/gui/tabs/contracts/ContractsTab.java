@@ -101,25 +101,25 @@ public class ContractsTab extends JMainTabPrimary {
 		jToolBarRight.addButton(jExpand);
 
 		//Table Format
-		tableFormat = new EnumTableFormatAdaptor<ContractsTableFormat, MyContractItem>(ContractsTableFormat.class);
+		tableFormat = new EnumTableFormatAdaptor<>(ContractsTableFormat.class);
 		//Backend
 		eventList = program.getProfileData().getContractItemEventList();
 		//Sorting (per column)
 		eventList.getReadWriteLock().readLock().lock();
-		SortedList<MyContractItem> sortedListColumn = new SortedList<MyContractItem>(eventList);
+		SortedList<MyContractItem> sortedListColumn = new SortedList<>(eventList);
 		eventList.getReadWriteLock().readLock().unlock();
 
 		//Sorting Separator (ensure export always has the right order)
 		eventList.getReadWriteLock().readLock().lock();
-		SortedList<MyContractItem> sortedListSeparator = new SortedList<MyContractItem>(sortedListColumn, new SeparatorComparator());
+		SortedList<MyContractItem> sortedListSeparator = new SortedList<>(sortedListColumn, new SeparatorComparator());
 		eventList.getReadWriteLock().readLock().unlock();
 
 		//Filter
 		eventList.getReadWriteLock().readLock().lock();
-		filterList = new FilterList<MyContractItem>(sortedListSeparator);
+		filterList = new FilterList<>(sortedListSeparator);
 		eventList.getReadWriteLock().readLock().unlock();
 		//Separator
-		separatorList = new SeparatorList<MyContractItem>(filterList, new SeparatorComparator(), 1, Integer.MAX_VALUE);
+		separatorList = new SeparatorList<>(filterList, new SeparatorComparator(), 1, Integer.MAX_VALUE);
 		//Table Model
 		tableModel = EventModels.createTableModel(separatorList, tableFormat);
 		//Table

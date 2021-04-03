@@ -20,7 +20,6 @@
  */
 package net.nikr.eve.jeveasset.data.settings;
 
-import net.nikr.eve.jeveasset.data.sde.MyLocation;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.text.DateFormat;

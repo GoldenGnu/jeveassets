@@ -82,11 +82,11 @@ public class AssetsTab extends JMainTabPrimary implements TagUpdate {
 	private final JLabel jVolume;
 
 	//Table
+	private final AssetFilterControl filterControl;
+	private final EnumTableFormatAdaptor<AssetTableFormat, MyAsset> tableFormat;
 	private final DefaultEventTableModel<MyAsset> tableModel;
 	private final EventList<MyAsset> eventList;
 	private final FilterList<MyAsset> filterList;
-	private final AssetFilterControl filterControl;
-	private final EnumTableFormatAdaptor<AssetTableFormat, MyAsset> tableFormat;
 	private final DefaultEventSelectionModel<MyAsset> selectionModel;
 
 	public static final String NAME = "assets"; //Not to be changed!

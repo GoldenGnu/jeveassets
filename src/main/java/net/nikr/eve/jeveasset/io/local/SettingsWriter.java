@@ -457,7 +457,6 @@ public class SettingsWriter extends AbstractXmlWriter {
 				Element formulaNode = xmldoc.createElementNS(null, "formula");
 				setAttribute(formulaNode, "name", formula.getColumnName());
 				setAttribute(formulaNode, "expression", formula.getOriginalExpression());
-				setAttribute(formulaNode, "boolean", formula.isBoolean());
 				setAttributeOptional(formulaNode, "index", formula.getIndex());
 				formulasNode.appendChild(formulaNode);
 			}

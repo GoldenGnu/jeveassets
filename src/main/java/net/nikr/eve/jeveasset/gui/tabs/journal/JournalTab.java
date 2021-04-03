@@ -67,17 +67,17 @@ public class JournalTab extends JMainTabPrimary {
 		super(program, NAME, TabsJournal.get().title(), Images.TOOL_JOURNAL.getIcon(), true);
 
 		//Table Format
-		tableFormat = new EnumTableFormatAdaptor<JournalTableFormat, MyJournal>(JournalTableFormat.class);
+		tableFormat = new EnumTableFormatAdaptor<>(JournalTableFormat.class);
 		//Backend
 		eventList = program.getProfileData().getJournalEventList();
 		//Sorting (per column)
 		eventList.getReadWriteLock().readLock().lock();
-		SortedList<MyJournal> sortedList = new SortedList<MyJournal>(eventList);
+		SortedList<MyJournal> sortedList = new SortedList<>(eventList);
 		eventList.getReadWriteLock().readLock().unlock();
 
 		//Filter
 		eventList.getReadWriteLock().readLock().lock();
-		filterList = new FilterList<MyJournal>(sortedList);
+		filterList = new FilterList<>(sortedList);
 		eventList.getReadWriteLock().readLock().unlock();
 		//Table Model
 		tableModel = EventModels.createTableModel(filterList, tableFormat);
@@ -141,7 +141,7 @@ public class JournalTab extends JMainTabPrimary {
 
 		@Override
 		public MenuData<MyJournal> getMenuData() {
-			return new MenuData<MyJournal>(selectionModel.getSelected());
+			return new MenuData<>(selectionModel.getSelected());
 		}
 
 		@Override

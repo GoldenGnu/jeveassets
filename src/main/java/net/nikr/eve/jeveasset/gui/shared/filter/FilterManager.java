@@ -27,15 +27,24 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import net.nikr.eve.jeveasset.data.sde.MyLocation;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.shared.components.JManageDialog;
 import net.nikr.eve.jeveasset.gui.shared.components.JTextDialog;
+import net.nikr.eve.jeveasset.gui.shared.menu.JFormulaDialog.Formula;
+import net.nikr.eve.jeveasset.gui.shared.menu.JMenuJumps.Jump;
+import net.nikr.eve.jeveasset.gui.shared.table.ColumnManager;
+import net.nikr.eve.jeveasset.gui.shared.table.ColumnManager.FormulaColumn;
+import net.nikr.eve.jeveasset.gui.shared.table.ColumnManager.JumpColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 import net.nikr.eve.jeveasset.io.local.SettingsReader;
+import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 
 public class FilterManager<E> extends JManageDialog {
 
+	private final String FORMULA = "FORMULA";
+	private final String JUMP = "JUMP";
 	private final Map<String, List<Filter>> filters;
 	private final Map<String, List<Filter>> defaultFilters;
 	private final FilterGui<E> gui;
@@ -116,12 +125,28 @@ public class FilterManager<E> extends JManageDialog {
 				builder.append("] [");
 				builder.append(filter.getLogic().name());
 				builder.append("] [");
-				builder.append(filter.getColumn().name());
+				EnumTableColumn<?> column = filter.getColumn();
+				builder.append(column.name());
 				builder.append("] [");
 				builder.append(filter.getCompareType().name());
 				builder.append("] [");
 				builder.append(wrap(filter.getText()));
-				builder.append("]\r\n");
+				builder.append("]");
+				if (column instanceof FormulaColumn) {
+					FormulaColumn<?> formulaColumn = (FormulaColumn) column;
+					builder.append("[");
+					builder.append(FORMULA);
+					builder.append(formulaColumn.getFormula().getOriginalExpression().replace(":", "::"));
+					builder.append("]");
+				}
+				if (column instanceof JumpColumn) {
+					JumpColumn<?> jumpColumn = (JumpColumn) column;
+					builder.append("[");
+					builder.append(JUMP);
+					builder.append(jumpColumn.getJump().getSystemID());
+					builder.append("]");
+				}
+				builder.append("\r\n");
 			}
 			builder.append("\r\n");
 		}
@@ -171,7 +196,7 @@ public class FilterManager<E> extends JManageDialog {
 					//Already null;
 				}
 				//Column
-				EnumTableColumn<?> column = SettingsReader.getColumn(unwrap(groups.get(1)), toolName);
+				EnumTableColumn<?> column = SettingsReader.getColumn(unwrap(groups.get(1)), toolName, Settings.get());
 
 				//Compare
 				Filter.CompareType compare = null;
@@ -183,7 +208,7 @@ public class FilterManager<E> extends JManageDialog {
 				String text = null;
 				EnumTableColumn<?> compareColumn = null;
 				if (Filter.CompareType.isColumnCompare(compare)) {
-					compareColumn = SettingsReader.getColumn(unwrap(groups.get(3)), toolName);
+					compareColumn = SettingsReader.getColumn(unwrap(groups.get(3)), toolName, Settings.get());
 					if (compareColumn != null) { //Valid
 						text = unwrap(groups.get(3));
 					}
@@ -195,7 +220,7 @@ public class FilterManager<E> extends JManageDialog {
 					filterList.add(filter);
 				}
 			}
-			if (groups.size() == 5 && headerLoaded) {
+			if ((groups.size() == 5 || groups.size() == 6) && headerLoaded) {
 				//Group
 				Integer group = null;
 				try {
@@ -211,7 +236,8 @@ public class FilterManager<E> extends JManageDialog {
 					//Already null;
 				}
 				//Column
-				EnumTableColumn<?> column = SettingsReader.getColumn(unwrap(groups.get(2)), toolName);
+				String columnName = unwrap(groups.get(2));
+				EnumTableColumn<?> column = SettingsReader.getColumn(columnName, toolName, Settings.get());
 
 				//Compare
 				Filter.CompareType compare = null;
@@ -223,17 +249,46 @@ public class FilterManager<E> extends JManageDialog {
 				String text = null;
 				EnumTableColumn<?> compareColumn = null;
 				if (Filter.CompareType.isColumnCompare(compare)) {
-					compareColumn = SettingsReader.getColumn(unwrap(groups.get(4)), toolName);
+					compareColumn = SettingsReader.getColumn(unwrap(groups.get(4)), toolName, Settings.get());
 					if (compareColumn != null) { //Valid
 						text = unwrap(groups.get(4));
 					}
 				} else {
 					text = unwrap(groups.get(4));
 				}
+				//Column
+				if (groups.size() == 6 && column == null) { //Only if the column doesn't already exist
+					String columnData = unwrap(groups.get(5));
+					if (columnData.startsWith(FORMULA)) {
+						String expresion = columnData.replaceFirst(FORMULA, "");
+						Formula formula = new Formula(columnName, expresion, null);
+						//Update GUI?
+						ColumnManager<?, ?> columnManager = ColumnManager.getColumnManager(toolName);
+						if (columnManager != null) {
+							column = columnManager.addColumn(formula);
+						}
+					} else if (columnData.startsWith(JUMP)) {
+						String system = columnData.replaceFirst(JUMP, "");
+						try {
+							long systemID = Long.valueOf(system);
+							MyLocation from = ApiIdConverter.getLocation(systemID);
+							Jump jump = new Jump(from);
+							//Update GUI?
+							ColumnManager<?, ?> columnManager = ColumnManager.getColumnManager(toolName);
+							if (columnManager != null) {
+								column = columnManager.addColumn(jump);
+							}
+						} catch (NumberFormatException ex) {
+							//No nothing
+						}
+					}
+				}
 				if (group != null && logic != null && column != null && compare != null && (text != null || compareColumn != null)) {
 					Filter filter = new Filter(group, logic, column, compare, text, true);
 					filterList.add(filter);
 				}
+				
+				
 			}
 			//Ignore everything that does not match the syntax
 		}

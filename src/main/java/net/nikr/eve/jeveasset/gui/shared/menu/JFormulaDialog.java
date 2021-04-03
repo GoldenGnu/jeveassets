@@ -236,7 +236,7 @@ public class JFormulaDialog<T extends Enum<T> & EnumTableColumn<Q>, Q> extends J
 
 	@Override
 	protected void save() {
-		returnValue = new Formula(jName.getText(), getExpressionString(), getExpression().isBoolean(), null);
+		returnValue = new Formula(jName.getText(), getExpressionString(), null);
 		setVisible(false);
 	}
 
@@ -371,16 +371,15 @@ public class JFormulaDialog<T extends Enum<T> & EnumTableColumn<Q>, Q> extends J
 
 	public static class Formula {
 		private final String columnName;
-		private final boolean isBoolean;
 		private final Expression expression;
 		private final Map<Object, Object> values = new HashMap<>();
 		private Integer index;
 
-		public Formula(String columnName, String expressionString, boolean isBoolean, Integer index) {
-			this.columnName = columnName;
-			this.isBoolean = isBoolean;
-			this.index = index;
+		public Formula(String columnName, String expressionString, Integer index) {
 			this.expression = new Expression(expressionString);
+			this.columnName = columnName;
+			this.index = index;
+			
 		}
 
 		public String getColumnName() {
@@ -396,7 +395,7 @@ public class JFormulaDialog<T extends Enum<T> & EnumTableColumn<Q>, Q> extends J
 		}
 
 		public boolean isBoolean() {
-			return isBoolean;
+			return expression.isBoolean();
 		}
 
 		public Integer getIndex() {

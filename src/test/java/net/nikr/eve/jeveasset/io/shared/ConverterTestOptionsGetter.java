@@ -68,7 +68,7 @@ public class ConverterTestOptionsGetter {
 
 	public static synchronized List<ConverterTestOptions> getConverterOptions() {
 		if (options == null) {
-			options = new ArrayList<ConverterTestOptions>();
+			options = new ArrayList<>();
 			int index = 0;
 			while (add(options, index)) {
 				index++;
@@ -191,7 +191,7 @@ public class ConverterTestOptionsGetter {
 		}
 
 		private static List<LocationFlag> createLocationTypes() {
-			Map<Integer, LocationFlag> locationFlags = new HashMap<Integer, LocationFlag>();
+			Map<Integer, LocationFlag> locationFlags = new HashMap<>();
 			//Character Blueprints
 			for (CharacterBlueprintsResponse.LocationFlagEnum locationFlagEnum : CharacterBlueprintsResponse.LocationFlagEnum.values()) {
 				ItemFlag itemFlag = RawConverter.toFlag(locationFlagEnum);
@@ -236,7 +236,7 @@ public class ConverterTestOptionsGetter {
 				locationFlag.setLocationFlag(locationFlagEnum);
 				locationFlag.setLocationFlag(locationFlagEnum.toString());
 			}
-			Set<Integer> remove = new HashSet<Integer>();
+			Set<Integer> remove = new HashSet<>();
 			for (LocationFlag locationType : locationFlags.values()) {
 				if (locationType.isEmpty()) {
 					remove.add(locationType.getItemFlag().getFlagID());
@@ -245,11 +245,11 @@ public class ConverterTestOptionsGetter {
 			for (Integer index : remove) {
 				locationFlags.remove(index);
 			}
-			return new ArrayList<LocationFlag>(locationFlags.values());
+			return new ArrayList<>(locationFlags.values());
 		}
 
 		private static List<JournalData> createJournalData() {
-			Map<Integer, JournalData> journalDatas = new HashMap<Integer, JournalData>();
+			Map<Integer, JournalData> journalDatas = new HashMap<>();
 			//ESI Character
 			for (CharacterWalletJournalResponse.RefTypeEnum refTypeEnum : CharacterWalletJournalResponse.RefTypeEnum.values()) {
 				RawJournalRefType rawJournalRefType = RawConverter.toJournalRefType(refTypeEnum);
@@ -280,7 +280,7 @@ public class ConverterTestOptionsGetter {
 				journalData.setRefType(refTypeEnum);
 				journalData.setContextType(RawConverter.toJournalContextType(rawJournalRefType));
 			}
-			Set<Integer> remove = new HashSet<Integer>();
+			Set<Integer> remove = new HashSet<>();
 			for (JournalData refType : journalDatas.values()) {
 				if (refType.isEmpty()) {
 					remove.add(refType.getRawJournalRefType().getID());
@@ -289,7 +289,7 @@ public class ConverterTestOptionsGetter {
 			for (Integer index : remove) {
 				journalDatas.remove(index);
 			}
-			return new ArrayList<JournalData>(journalDatas.values());
+			return new ArrayList<>(journalDatas.values());
 		}
 
 		private static int createMax() {

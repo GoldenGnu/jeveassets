@@ -86,17 +86,17 @@ public class IndustryJobsTab extends JMainTabPrimary {
 
 		ListenerClass listener = new ListenerClass();
 		//Table Format
-		tableFormat = new EnumTableFormatAdaptor<IndustryJobTableFormat, MyIndustryJob>(IndustryJobTableFormat.class);
+		tableFormat = new EnumTableFormatAdaptor<>(IndustryJobTableFormat.class);
 		//Backend
 		eventList = program.getProfileData().getIndustryJobsEventList();
 		//Sorting (per column)
 		eventList.getReadWriteLock().readLock().lock();
-		SortedList<MyIndustryJob> sortedList = new SortedList<MyIndustryJob>(eventList);
+		SortedList<MyIndustryJob> sortedList = new SortedList<>(eventList);
 		eventList.getReadWriteLock().readLock().unlock();
 
 		//Filter
 		eventList.getReadWriteLock().readLock().lock();
-		filterList = new FilterList<MyIndustryJob>(sortedList);
+		filterList = new FilterList<>(sortedList);
 		eventList.getReadWriteLock().readLock().unlock();
 		filterList.addListEventListener(listener);
 		//Table Model
@@ -116,12 +116,12 @@ public class IndustryJobsTab extends JMainTabPrimary {
 		//Scroll
 		JScrollPane jTableScroll = new JScrollPane(jTable);
 		//Table Filter
-		Map<String, List<Filter>> defaultFilters = new HashMap<String, List<Filter>>();
+		Map<String, List<Filter>> defaultFilters = new HashMap<>();
 		List<Filter> filter;
-		filter = new ArrayList<Filter>();
+		filter = new ArrayList<>();
 		filter.add(new Filter(LogicType.AND, IndustryJobTableFormat.STATE, CompareType.EQUALS_NOT, IndustryJobState.STATE_DELIVERED.toString()));
 		defaultFilters.put(TabsJobs.get().active(), filter);
-		filter = new ArrayList<Filter>();
+		filter = new ArrayList<>();
 		filter.add(new Filter(LogicType.AND, IndustryJobTableFormat.STATE, CompareType.EQUALS, IndustryJobState.STATE_DELIVERED.toString()));
 		defaultFilters.put(TabsJobs.get().completed(), filter);
 		filterControl = new IndustryJobsFilterControl(sortedList, defaultFilters);
@@ -173,7 +173,7 @@ public class IndustryJobsTab extends JMainTabPrimary {
 	private class JobsTableMenu implements TableMenu<MyIndustryJob> {
 		@Override
 		public MenuData<MyIndustryJob> getMenuData() {
-			return new MenuData<MyIndustryJob>(selectionModel.getSelected());
+			return new MenuData<>(selectionModel.getSelected());
 		}
 
 		@Override

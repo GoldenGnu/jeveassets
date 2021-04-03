@@ -49,6 +49,7 @@ import net.nikr.eve.jeveasset.i18n.GuiShared;
 
 public class ColumnManager<T extends Enum<T> & EnumTableColumn<Q>, Q> {
 
+	private static final Map<String, ColumnManager<?, ?>> COLUMN_MANAGERS = new HashMap<>();
 	private static final Set<String> loaded = new HashSet<>();
 	private final Program program;
 	private final String toolName;
@@ -56,7 +57,6 @@ public class ColumnManager<T extends Enum<T> & EnumTableColumn<Q>, Q> {
 	private final DefaultEventTableModel<Q> tableModel;
 	private final JAutoColumnTable jTable;
 	private final FilterControl<Q> filterControl;
-	
 
 	private final Map<Formula, FormulaColumn<Q>> formulaColumns = new HashMap<>();
 	private final Map<Jump, JumpColumn<Q>> jumpColumns = new HashMap<>();
@@ -100,6 +100,11 @@ public class ColumnManager<T extends Enum<T> & EnumTableColumn<Q>, Q> {
 			@Override
 			public void columnSelectionChanged(ListSelectionEvent e) { }
 		});
+		COLUMN_MANAGERS.put(toolName, this);
+	}
+
+	public static ColumnManager<?, ?> getColumnManager(String toolName) {
+		return COLUMN_MANAGERS.get(toolName);
 	}
 
 	public Set<Formula> getFormulas() {
@@ -148,18 +153,20 @@ public class ColumnManager<T extends Enum<T> & EnumTableColumn<Q>, Q> {
 		jumpColumns.remove(remove);
 	}
 
-	private void add(Formula add) {
+	private FormulaColumn<Q> add(Formula add) {
 		FormulaColumn<Q> toColumn = get(add);
 		tableFormat.addColumn(toColumn);
 		formulaColumns.put(add, toColumn);
+		return toColumn;
 	}
 
-	private void add(Jump add) {
+	private JumpColumn<Q>  add(Jump add) {
 		JumpColumn<Q> toColumn = get(add);
 		tableFormat.addColumn(toColumn);
 		jumpColumns.put(add, toColumn);
 		//Update Data
 		updateJumpsData(add);
+		return toColumn;
 	}
 
 	private boolean contains(Jump add) {
@@ -217,9 +224,9 @@ public class ColumnManager<T extends Enum<T> & EnumTableColumn<Q>, Q> {
 		updateGUI();
 	}
 
-	public void addColumn(Formula add) {
+	public FormulaColumn<Q> addColumn(Formula add) {
 		//Add
-		add(add);
+		FormulaColumn<Q> column = add(add);
 		//Update GUI
 		updateGUI();
 		//Settings
@@ -227,14 +234,15 @@ public class ColumnManager<T extends Enum<T> & EnumTableColumn<Q>, Q> {
 		Settings.get().getTableFormulas(toolName).add(add);
 		Settings.unlock("Formulas (add)");
 		program.saveSettings("Formulas (add)");
+		return column;
 	}
 
-	public void addColumn(Jump add) {
+	public JumpColumn<Q> addColumn(Jump add) {
 		if (contains(add)) {
-			return; //Skip existing
+			return null; //Skip existing
 		}
 		//Add
-		add(add);
+		JumpColumn<Q> column = add(add);
 		//Update GUI
 		updateGUI();
 		//Settings
@@ -242,6 +250,7 @@ public class ColumnManager<T extends Enum<T> & EnumTableColumn<Q>, Q> {
 		Settings.get().getTableJumps(toolName).add(add);
 		Settings.unlock("Jumps (add)");
 		program.saveSettings("Jumps (add)");
+		return column;
 	}
 
 	public void addColumns(Collection<MyLocation> locations) {
@@ -331,6 +340,10 @@ public class ColumnManager<T extends Enum<T> & EnumTableColumn<Q>, Q> {
 
 		public FormulaColumn(Formula formula) {
 			this.formula = formula;
+		}
+
+		public Formula getFormula() {
+			return formula;
 		}
 
 		@Override
@@ -429,6 +442,10 @@ public class ColumnManager<T extends Enum<T> & EnumTableColumn<Q>, Q> {
 
 		public JumpColumn(Jump jump) {
 			this.jump = jump;
+		}
+
+		public Jump getJump() {
+			return jump;
 		}
 
 		@Override

@@ -116,10 +116,10 @@ public class Program implements ActionListener {
 		TIMER
 	}
 	//Major.Minor.Bugfix [Release Candidate n] [BETA n] [DEV BUILD #n];
-	public static final String PROGRAM_VERSION = "6.9.0 DEV BUILD 1 [Formulas Feedback Preview]";
+	public static final String PROGRAM_VERSION = "6.9.0 DEV BUILD 1";
 	public static final String PROGRAM_NAME = "jEveAssets";
 	public static final String PROGRAM_HOMEPAGE = "https://eve.nikr.net/jeveasset";
-	public static final boolean PROGRAM_DEV_BUILD = true;
+	public static final boolean PROGRAM_DEV_BUILD = false;
 
 	private static boolean debug = false;
 	private static boolean forceUpdate = false;

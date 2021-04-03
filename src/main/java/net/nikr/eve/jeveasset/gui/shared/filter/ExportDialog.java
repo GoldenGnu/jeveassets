@@ -140,8 +140,8 @@ public class ExportDialog<E> extends JDialogCentered {
 	private final JCustomFileChooser jFileChooser;
 
 	private final List<EventList<E>> eventLists;
-	private final Map<String, EnumTableColumn<E>> columns = new HashMap<String, EnumTableColumn<E>>();
-	private final List<EnumTableColumn<E>> columnIndex = new ArrayList<EnumTableColumn<E>>();
+	private final Map<String, EnumTableColumn<E>> columns = new HashMap<>();
+	private final List<EnumTableColumn<E>> columnIndex = new ArrayList<>();
 	private final FilterControl<E> filterControl;
 	private final ExportFilterControl<E> exportFilterControl;
 	private final String toolName;
@@ -883,7 +883,7 @@ public class ExportDialog<E> extends JDialogCentered {
 
 	public static class JOptionPanel extends JPanel {
 		protected final GroupLayout layout;
-		private final List<JComponent> components = new ArrayList<JComponent>();
+		private final List<JComponent> components = new ArrayList<>();
 
 		private JOptionPanel() {
 			layout = new GroupLayout(this);
@@ -928,7 +928,7 @@ public class ExportDialog<E> extends JDialogCentered {
 	private class TreeMatcher<E> implements Matcher<E> {
 
 		private final EventList<E> eventList;
-		private final Set<TreeAsset> parentTree = new HashSet<TreeAsset>();
+		private final Set<TreeAsset> parentTree = new HashSet<>();
 
 		public TreeMatcher(EventList<E> eventList) {
 			this.eventList = eventList;
