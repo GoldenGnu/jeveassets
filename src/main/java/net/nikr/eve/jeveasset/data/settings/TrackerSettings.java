@@ -23,7 +23,12 @@ package net.nikr.eve.jeveasset.data.settings;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerDate;
+import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerNote;
+import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerSkillPointFilter;
 
 
 public class TrackerSettings {
@@ -47,14 +52,85 @@ public class TrackerSettings {
 		LOGARITHMIC;
 	}
 
-	private final List<ShowOption> showOptions = new ArrayList<>();
+	private boolean allProfiles = false;
+	private boolean characterCorporations = false;
 	private DisplayType displayType = DisplayType.LINEAR;
+	private final Map<String, Boolean> filters = new HashMap<>();
 	private Date fromDate = null;
+	private boolean includeZero = true;
+	private final Map<TrackerDate, TrackerNote> notes = new HashMap<>();
+	private boolean selectNew = true;
+	private List<String> selectedOwners = null;
+	private final List<ShowOption> showOptions = new ArrayList<>();
+	private final Map<String, TrackerSkillPointFilter> skillPointFilters = new HashMap<>();
 	private Date toDate = null;
-	private boolean trackerIncludeZero = true;
 
 	public TrackerSettings() {
 		showOptions.add(ShowOption.ALL);
+	}
+
+	public boolean isAllProfiles() {
+		return allProfiles;
+	}
+
+	public void setAllProfiles(boolean allProfiles) {
+		this.allProfiles = allProfiles;
+	}
+
+	public boolean isCharacterCorporations() {
+		return characterCorporations;
+	}
+
+	public void setCharacterCorporations(boolean characterCorporations) {
+		this.characterCorporations = characterCorporations;
+	}
+
+	public DisplayType getDisplayType() {
+		return displayType;
+	}
+
+	public void setDisplayType(DisplayType displayType) {
+		this.displayType = displayType;
+	}
+
+	public Map<String, Boolean> getFilters() {
+		return filters;
+	}
+
+	public Date getFromDate() {
+		return fromDate;
+	}
+
+	public void setFromDate(Date fromDate) {
+		this.fromDate = fromDate;
+	}
+
+	public boolean isIncludeZero() {
+		return includeZero;
+	}
+
+	public void setIncludeZero(boolean includeZero) {
+		this.includeZero = includeZero;
+	}
+
+	public Map<TrackerDate, TrackerNote> getNotes() {
+		return notes;
+	}
+
+	public boolean isSelectNew() {
+		return selectNew;
+	}
+
+	public void setSelectNew(boolean selectNew) {
+		this.selectNew = selectNew;
+	}
+
+	public List<String> getSelectedOwners() {
+		return selectedOwners;
+	}
+
+	public void setSelectedOwners(List<String> trackerOwners) {
+		this.selectedOwners = trackerOwners;
 	}
 
 	public List<ShowOption> getShowOptions() {
@@ -79,20 +155,8 @@ public class TrackerSettings {
 		return false;
 	}
 
-	public DisplayType getDisplayType() {
-		return displayType;
-	}
-
-	public void setDisplayType(DisplayType displayType) {
-		this.displayType = displayType;
-	}
-
-	public Date getFromDate() {
-		return fromDate;
-	}
-
-	public void setFromDate(Date fromDate) {
-		this.fromDate = fromDate;
+	public Map<String, TrackerSkillPointFilter> getSkillPointFilters() {
+		return skillPointFilters;
 	}
 
 	public Date getToDate() {
@@ -101,13 +165,5 @@ public class TrackerSettings {
 
 	public void setToDate(Date toDate) {
 		this.toDate = toDate;
-	}
-
-	public boolean isTrackerIncludeZero() {
-		return trackerIncludeZero;
-	}
-
-	public void setTrackerIncludeZero(boolean trackerIncludeZero) {
-		this.trackerIncludeZero = trackerIncludeZero;
 	}
 }

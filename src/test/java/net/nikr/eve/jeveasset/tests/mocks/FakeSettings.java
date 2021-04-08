@@ -51,9 +51,6 @@ import net.nikr.eve.jeveasset.gui.shared.table.View;
 import net.nikr.eve.jeveasset.gui.tabs.orders.Outbid;
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewGroup;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile;
-import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerDate;
-import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerNote;
-import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerSkillPointFilter;
 
 /**
  *
@@ -492,26 +489,6 @@ public abstract class FakeSettings extends Settings {
 	}
 
 	@Override
-	public void setTrackerSelectNew(boolean trackerSelectNew) {
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	@Override
-	public boolean isTrackerSelectNew() {
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	@Override
-	public Map<String, Boolean> getTrackerFilters() {
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	@Override
-	public Map<TrackerDate, TrackerNote> getTrackerNotes() {
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	@Override
 	public void setProxyData(ProxyData proxyData) {
 		throw new UnsupportedOperationException("not implemented");
 	}
@@ -622,36 +599,6 @@ public abstract class FakeSettings extends Settings {
 	}
 
 	@Override
-	public void setTrackerSelectedOwners(List<String> trackerOwners) {
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	@Override
-	public List<String> getTrackerSelectedOwners() {
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	@Override
-	public void setTrackerCharacterCorporations(boolean trackerCharacterCorporations) {
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	@Override
-	public boolean isTrackerCharacterCorporations() {
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	@Override
-	public void setTrackerAllProfiles(boolean trackerAllProfiles) {
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	@Override
-	public boolean isTrackerAllProfiles() {
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	@Override
 	public ColorSettings getColorSettings() {
 		throw new UnsupportedOperationException("not implemented");
 	}
@@ -698,11 +645,6 @@ public abstract class FakeSettings extends Settings {
 
 	@Override
 	public int getTransactionProfitMargin() {
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	@Override
-	public Map<String, TrackerSkillPointFilter> getTrackerSkillPointFilters() {
 		throw new UnsupportedOperationException("not implemented");
 	}
 

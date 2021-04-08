@@ -140,7 +140,7 @@ public class TrackerAssetFilterDialog extends JDialogCentered {
 		
 		
 		jNewSelected = new JCheckBox(TabsTracker.get().newSelected());
-		jNewSelected.setSelected(Settings.get().isTrackerSelectNew());
+		jNewSelected.setSelected(Settings.get().getTrackerSettings().isSelectNew());
 
 		JButton jOK = new JButton(TabsTracker.get().ok());
 		jOK.addActionListener(new ActionListener() {

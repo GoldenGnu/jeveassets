@@ -162,8 +162,8 @@ public class SettingsWriter extends AbstractXmlWriter {
 		writeTablesResize(xmldoc, settings.getTableResize());
 		writeTablesViews(xmldoc, settings.getTableViews());
 		writeExportSettings(xmldoc, settings.getExportSettings(), settings.getCopySettings());
-		writeTrackerNotes(xmldoc, settings.getTrackerNotes());
-		writeTrackerFilters(xmldoc, settings.getTrackerFilters(), settings.isTrackerSelectNew(), settings.getTrackerSkillPointFilters());
+		writeTrackerNotes(xmldoc, settings.getTrackerSettings().getNotes());
+		writeTrackerFilters(xmldoc, settings.getTrackerSettings().getFilters(), settings.getTrackerSettings().isSelectNew(), settings.getTrackerSettings().getSkillPointFilters());
 		writeTrackerSettings(xmldoc, settings);
 		writeOwners(xmldoc, settings.getOwners(), settings.getOwnersNextUpdate());
 		writeTags(xmldoc, settings.getTags());
@@ -339,13 +339,13 @@ public class SettingsWriter extends AbstractXmlWriter {
 	private void writeTrackerSettings(final Document xmldoc,  Settings settings) {
 		Element trackerSettingsNode = xmldoc.createElementNS(null, "trackersettings");
 		xmldoc.getDocumentElement().appendChild(trackerSettingsNode);
-		setAttribute(trackerSettingsNode, "allprofiles", settings.isTrackerAllProfiles());
-		setAttribute(trackerSettingsNode, "charactercorporations", settings.isTrackerCharacterCorporations());
-		setAttributeOptional(trackerSettingsNode, "selectedowners", settings.getTrackerSelectedOwners());
+		setAttribute(trackerSettingsNode, "allprofiles", settings.getTrackerSettings().isAllProfiles());
+		setAttribute(trackerSettingsNode, "charactercorporations", settings.getTrackerSettings().isCharacterCorporations());
+		setAttributeOptional(trackerSettingsNode, "selectedowners", settings.getTrackerSettings().getSelectedOwners());
 		setAttributeOptional(trackerSettingsNode, "fromdate", settings.getTrackerSettings().getFromDate());
 		setAttributeOptional(trackerSettingsNode, "todate", settings.getTrackerSettings().getToDate());
 		setAttribute(trackerSettingsNode, "displaytype", settings.getTrackerSettings().getDisplayType());
-		setAttribute(trackerSettingsNode, "includezero", settings.getTrackerSettings().isTrackerIncludeZero());
+		setAttribute(trackerSettingsNode, "includezero", settings.getTrackerSettings().isIncludeZero());
 		setAttribute(trackerSettingsNode, "showoptions", settings.getTrackerSettings().getShowOptions());
 	}
 

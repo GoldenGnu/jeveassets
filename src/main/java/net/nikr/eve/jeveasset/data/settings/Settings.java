@@ -47,9 +47,6 @@ import net.nikr.eve.jeveasset.gui.shared.table.View;
 import net.nikr.eve.jeveasset.gui.tabs.orders.Outbid;
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewGroup;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile;
-import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerDate;
-import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerNote;
-import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerSkillPointFilter;
 import net.nikr.eve.jeveasset.i18n.DialoguesSettings;
 import net.nikr.eve.jeveasset.io.local.SettingsReader;
 import net.nikr.eve.jeveasset.io.local.SettingsWriter;
@@ -156,14 +153,7 @@ public class Settings {
 	private final CopySettings copySettings = new CopySettings();
 	private final Map<String, ExportSettings> exportSettings = new HashMap<>();
 //Tracker						Saved by TaskDialog.update() (on API update)
-	private final Map<TrackerDate, TrackerNote> trackerNotes = new HashMap<>();
-	private final Map<String, Boolean> trackerFilters = new HashMap<>();
-	private final Map<String, TrackerSkillPointFilter> trackerSkillPointFilters = new HashMap<>();
 	private final TrackerSettings trackerSettings = new TrackerSettings();
-	private boolean trackerSelectNew = true;
-	private boolean trackerCharacterCorporations = false;
-	private boolean trackerAllProfiles = false;
-	private List<String> trackerSelectedOwners = null;
 //Runtime flags					Is not saved to file
 	private boolean settingsLoadError = false;
 //Settings Dialog:				Saved by SettingsDialog.save()
@@ -347,50 +337,6 @@ public class Settings {
 		} finally {
 			LOCK.unlock("Save Settings");
 		}
-	}
-
-	public Map<TrackerDate, TrackerNote> getTrackerNotes() {
-		return trackerNotes;
-	}
-
-	public Map<String, Boolean> getTrackerFilters() {
-		return trackerFilters;
-	}
-
-	public Map<String, TrackerSkillPointFilter> getTrackerSkillPointFilters() {
-		return trackerSkillPointFilters;
-	}
-
-	public boolean isTrackerSelectNew() {
-		return trackerSelectNew;
-	}
-
-	public void setTrackerSelectNew(boolean trackerSelectNew) {
-		this.trackerSelectNew = trackerSelectNew;
-	}
-
-	public boolean isTrackerAllProfiles() {
-		return trackerAllProfiles;
-	}
-
-	public void setTrackerAllProfiles(boolean trackerAllProfiles) {
-		this.trackerAllProfiles = trackerAllProfiles;
-	}
-
-	public boolean isTrackerCharacterCorporations() {
-		return trackerCharacterCorporations;
-	}
-
-	public void setTrackerCharacterCorporations(boolean trackerCharacterCorporations) {
-		this.trackerCharacterCorporations = trackerCharacterCorporations;
-	}
-
-	public List<String> getTrackerSelectedOwners() {
-		return trackerSelectedOwners;
-	}
-
-	public void setTrackerSelectedOwners(List<String> trackerOwners) {
-		this.trackerSelectedOwners = trackerOwners;
 	}
 
 	public TrackerSettings getTrackerSettings() {
