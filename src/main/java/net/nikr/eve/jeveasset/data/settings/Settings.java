@@ -159,6 +159,7 @@ public class Settings {
 	private final Map<TrackerDate, TrackerNote> trackerNotes = new HashMap<>();
 	private final Map<String, Boolean> trackerFilters = new HashMap<>();
 	private final Map<String, TrackerSkillPointFilter> trackerSkillPointFilters = new HashMap<>();
+	private final TrackerSettings trackerSettings = new TrackerSettings();
 	private boolean trackerSelectNew = true;
 	private boolean trackerCharacterCorporations = false;
 	private boolean trackerAllProfiles = false;
@@ -390,6 +391,10 @@ public class Settings {
 
 	public void setTrackerSelectedOwners(List<String> trackerOwners) {
 		this.trackerSelectedOwners = trackerOwners;
+	}
+
+	public TrackerSettings getTrackerSettings() {
+		return trackerSettings;
 	}
 
 	public PriceDataSettings getPriceDataSettings() {

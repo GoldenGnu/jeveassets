@@ -342,6 +342,11 @@ public class SettingsWriter extends AbstractXmlWriter {
 		setAttribute(trackerSettingsNode, "allprofiles", settings.isTrackerAllProfiles());
 		setAttribute(trackerSettingsNode, "charactercorporations", settings.isTrackerCharacterCorporations());
 		setAttributeOptional(trackerSettingsNode, "selectedowners", settings.getTrackerSelectedOwners());
+		setAttributeOptional(trackerSettingsNode, "fromdate", settings.getTrackerSettings().getFromDate());
+		setAttributeOptional(trackerSettingsNode, "todate", settings.getTrackerSettings().getToDate());
+		setAttribute(trackerSettingsNode, "displaytype", settings.getTrackerSettings().getDisplayType());
+		setAttribute(trackerSettingsNode, "includezero", settings.getTrackerSettings().isTrackerIncludeZero());
+		setAttribute(trackerSettingsNode, "showoptions", settings.getTrackerSettings().getShowOptions());
 	}
 
 	private void writeTrackerNotes(final Document xmldoc, final Map<TrackerDate, TrackerNote> trackerNotes) {

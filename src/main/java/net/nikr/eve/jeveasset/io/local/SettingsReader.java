@@ -63,6 +63,8 @@ import net.nikr.eve.jeveasset.data.settings.Settings.SettingFlag;
 import net.nikr.eve.jeveasset.data.settings.Settings.SettingsFactory;
 import net.nikr.eve.jeveasset.data.settings.Settings.TransactionProfitPrice;
 import net.nikr.eve.jeveasset.data.settings.TrackerData;
+import net.nikr.eve.jeveasset.data.settings.TrackerSettings.DisplayType;
+import net.nikr.eve.jeveasset.data.settings.TrackerSettings.ShowOption;
 import net.nikr.eve.jeveasset.data.settings.UserItem;
 import net.nikr.eve.jeveasset.data.settings.tag.Tag;
 import net.nikr.eve.jeveasset.data.settings.tag.TagColor;
@@ -913,11 +915,48 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 
 	private void parseTrackerSettings(Element trackerSettingsElement, Settings settings) throws XmlException {
 		boolean allProfiles = getBoolean(trackerSettingsElement, "allprofiles");
-		boolean characterCorporations = getBoolean(trackerSettingsElement, "charactercorporations");
-		List<String> selectedOwners = getStringListOptional(trackerSettingsElement, "selectedowners");
 		settings.setTrackerAllProfiles(allProfiles);
+
+		boolean characterCorporations = getBoolean(trackerSettingsElement, "charactercorporations");
 		settings.setTrackerCharacterCorporations(characterCorporations);
+
+		List<String> selectedOwners = getStringListOptional(trackerSettingsElement, "selectedowners");
 		settings.setTrackerSelectedOwners(selectedOwners);
+
+		Date fromDate = getDateOptional(trackerSettingsElement, "fromdate");
+		settings.getTrackerSettings().setFromDate(fromDate);
+
+		Date toDate = getDateOptional(trackerSettingsElement, "todate");
+		settings.getTrackerSettings().setToDate(toDate);
+
+		String displayType = getStringOptional(trackerSettingsElement, "displaytype");
+		if (displayType != null) {
+			try {
+				settings.getTrackerSettings().setDisplayType(DisplayType.valueOf(displayType));
+			}
+			catch (IllegalArgumentException e) {
+				LOG.warn("Could not parse trackersettigns displaytype: " + displayType);
+			}
+		}
+
+		Boolean includeZero = getBooleanOptional(trackerSettingsElement, "includezero");
+		if (includeZero != null) {
+			settings.getTrackerSettings().setTrackerIncludeZero(includeZero);
+		}
+
+		List<String> showOptions = getStringListOptional(trackerSettingsElement, "showoptions");
+		if (showOptions != null) {
+			settings.getTrackerSettings().getShowOptions().clear();
+			if (!showOptions.isEmpty()) {
+				for (String showOption : showOptions) {
+					try {
+						settings.getTrackerSettings().getShowOptions().add(ShowOption.valueOf(showOption));
+					} catch (IllegalArgumentException e) {
+						LOG.warn("Could not parse trackersettigns showoptions: " + showOption);
+					}
+				}
+			}
+		}
 	}
 
 	private void parseShowToolsNodes(Element showToolsElement, Settings settings) throws XmlException {

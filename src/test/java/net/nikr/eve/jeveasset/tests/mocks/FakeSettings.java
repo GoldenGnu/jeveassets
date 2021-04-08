@@ -39,6 +39,7 @@ import net.nikr.eve.jeveasset.data.settings.ProxyData;
 import net.nikr.eve.jeveasset.data.settings.ReprocessSettings;
 import net.nikr.eve.jeveasset.data.settings.RoutingSettings;
 import net.nikr.eve.jeveasset.data.settings.Settings;
+import net.nikr.eve.jeveasset.data.settings.TrackerSettings;
 import net.nikr.eve.jeveasset.data.settings.UserItem;
 import net.nikr.eve.jeveasset.data.settings.tag.Tag;
 import net.nikr.eve.jeveasset.data.settings.tag.TagID;
@@ -702,6 +703,11 @@ public abstract class FakeSettings extends Settings {
 
 	@Override
 	public Map<String, TrackerSkillPointFilter> getTrackerSkillPointFilters() {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public TrackerSettings getTrackerSettings() {
 		throw new UnsupportedOperationException("not implemented");
 	}
 }

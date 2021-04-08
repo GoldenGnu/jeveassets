@@ -86,6 +86,9 @@ import net.nikr.eve.jeveasset.data.api.accounts.OwnerType;
 import net.nikr.eve.jeveasset.data.settings.Colors;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.data.settings.TrackerData;
+import net.nikr.eve.jeveasset.data.settings.TrackerSettings;
+import net.nikr.eve.jeveasset.data.settings.TrackerSettings.DisplayType;
+import net.nikr.eve.jeveasset.data.settings.TrackerSettings.ShowOption;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
@@ -233,6 +236,7 @@ public class TrackerTab extends JMainTabSecondary {
 		filterDialog = new TrackerFilterDialog(program);
 		assetFilterDialog = new TrackerAssetFilterDialog(program);
 		skillPointsFilterDialog = new TrackerSkillPointsFilterDialog(program);
+		TrackerSettings trackerSettings = Settings.get().getTrackerSettings();
 
 		List<String> extensions = new ArrayList<>();
 		extensions.add("xml");
@@ -293,29 +297,37 @@ public class TrackerTab extends JMainTabSecondary {
 		jQuickDate.addActionListener(listener);
 
 		JLabel jFromLabel = new JLabel(TabsTracker.get().from());
-		jFrom = createDateChooser();
+		jFrom = new JDateChooser(true);
+		if (trackerSettings.getFromDate() != null) {
+			jFrom.setDate(dateToLocalDate(trackerSettings.getFromDate()));
+		}
+		jFrom.addDateChangeListener(listener);
 
 		JLabel jToLabel = new JLabel(TabsTracker.get().to());
-		jTo = createDateChooser();
+		jTo = new JDateChooser(true);
+		if (trackerSettings.getToDate() != null) {
+			jTo.setDate(dateToLocalDate(trackerSettings.getToDate()));
+		}
+		jTo.addDateChangeListener(listener);
 
 		jShow = new JDropDownButton(TabsTracker.get().show(), Images.LOC_INCLUDE.getIcon());
 		jShow.setHorizontalAlignment(JButton.LEFT);
-		
+
 		jAll = new JCheckBoxMenuItem(General.get().all());
-		jAll.setSelected(true);
+		jAll.setSelected(trackerSettings.hasShowOption(ShowOption.ALL));
 		jAll.setActionCommand(TrackerAction.ALL.name());
 		jAll.addActionListener(listener);
 		jAll.setFont(new Font(jAll.getFont().getName(), Font.ITALIC, jAll.getFont().getSize()));
 		jShow.add(jAll, true);
 
 		jTotal = new JCheckBoxMenuItem(TabsTracker.get().total());
-		jTotal.setSelected(true);
+		jTotal.setSelected(trackerSettings.hasShowOption(ShowOption.ALL) || trackerSettings.hasShowOption(ShowOption.TOTAL));
 		jTotal.setActionCommand(TrackerAction.UPDATE_SHOWN.name());
 		jTotal.addActionListener(listener);
 		jShow.add(jTotal, true);
 
 		jWalletBalance = new JCheckBoxMenuItem(TabsTracker.get().walletBalance());
-		jWalletBalance.setSelected(true);
+		jWalletBalance.setSelected(trackerSettings.hasShowOption(ShowOption.ALL) || trackerSettings.hasShowOption(ShowOption.WALLET));
 		jWalletBalance.setActionCommand(TrackerAction.UPDATE_SHOWN.name());
 		jWalletBalance.addActionListener(listener);
 		jShow.add(jWalletBalance, true);
@@ -327,7 +339,7 @@ public class TrackerTab extends JMainTabSecondary {
 		jWalletBalanceFilters.addActionListener(listener);
 
 		jAssets = new JCheckBoxMenuItem(TabsTracker.get().assets());
-		jAssets.setSelected(true);
+		jAssets.setSelected(trackerSettings.hasShowOption(ShowOption.ALL) || trackerSettings.hasShowOption(ShowOption.ASSET));
 		jAssets.setActionCommand(TrackerAction.UPDATE_SHOWN.name());
 		jAssets.addActionListener(listener);
 		jShow.add(jAssets, true);
@@ -339,43 +351,43 @@ public class TrackerTab extends JMainTabSecondary {
 		jAssetsFilters.addActionListener(listener);
 
 		jSellOrders = new JCheckBoxMenuItem(TabsTracker.get().sellOrders());
-		jSellOrders.setSelected(true);
+		jSellOrders.setSelected(trackerSettings.hasShowOption(ShowOption.ALL) || trackerSettings.hasShowOption(ShowOption.SELL_ORDER));
 		jSellOrders.setActionCommand(TrackerAction.UPDATE_SHOWN.name());
 		jSellOrders.addActionListener(listener);
 		jShow.add(jSellOrders, true);
 
 		jEscrows = new JCheckBoxMenuItem(TabsTracker.get().escrows());
-		jEscrows.setSelected(true);
+		jEscrows.setSelected(trackerSettings.hasShowOption(ShowOption.ALL) || trackerSettings.hasShowOption(ShowOption.ESCROW));
 		jEscrows.setActionCommand(TrackerAction.UPDATE_SHOWN.name());
 		jEscrows.addActionListener(listener);
 		jShow.add(jEscrows, true);
 
 		jEscrowsToCover = new JCheckBoxMenuItem(TabsTracker.get().escrowsToCover());
-		jEscrowsToCover.setSelected(true);
+		jEscrowsToCover.setSelected(trackerSettings.hasShowOption(ShowOption.ALL) || trackerSettings.hasShowOption(ShowOption.ESCROW_TO_COVER));
 		jEscrowsToCover.setActionCommand(TrackerAction.UPDATE_SHOWN.name());
 		jEscrowsToCover.addActionListener(listener);
 		jShow.add(jEscrowsToCover, true);
 
 		jManufacturing = new JCheckBoxMenuItem(TabsTracker.get().manufacturing());
-		jManufacturing.setSelected(true);
+		jManufacturing.setSelected(trackerSettings.hasShowOption(ShowOption.ALL) || trackerSettings.hasShowOption(ShowOption.MANUFACTURING));
 		jManufacturing.setActionCommand(TrackerAction.UPDATE_SHOWN.name());
 		jManufacturing.addActionListener(listener);
 		jShow.add(jManufacturing, true);
 
 		jContractCollateral = new JCheckBoxMenuItem(TabsTracker.get().contractCollateral());
-		jContractCollateral.setSelected(true);
+		jContractCollateral.setSelected(trackerSettings.hasShowOption(ShowOption.ALL) || trackerSettings.hasShowOption(ShowOption.COLLATERAL));
 		jContractCollateral.setActionCommand(TrackerAction.UPDATE_SHOWN.name());
 		jContractCollateral.addActionListener(listener);
 		jShow.add(jContractCollateral, true);
 
 		jContractValue = new JCheckBoxMenuItem(TabsTracker.get().contractValue());
-		jContractValue.setSelected(true);
+		jContractValue.setSelected(trackerSettings.hasShowOption(ShowOption.ALL) || trackerSettings.hasShowOption(ShowOption.CONTRACT));
 		jContractValue.setActionCommand(TrackerAction.UPDATE_SHOWN.name());
 		jContractValue.addActionListener(listener);
 		jShow.add(jContractValue, true);
 
 		jSkillPointsValue = new JCheckBoxMenuItem(TabsTracker.get().skillPointValue());
-		jSkillPointsValue.setSelected(true);
+		jSkillPointsValue.setSelected(trackerSettings.hasShowOption(ShowOption.ALL) || trackerSettings.hasShowOption(ShowOption.SKILL_POINT));
 		jSkillPointsValue.setActionCommand(TrackerAction.UPDATE_SHOWN.name());
 		jSkillPointsValue.addActionListener(listener);
 		jShow.add(jSkillPointsValue, true);
@@ -452,7 +464,7 @@ public class TrackerTab extends JMainTabSecondary {
 		jSettings.addSeparator();
 
 		jIncludeZero = new JCheckBoxMenuItem(TabsTracker.get().includeZero());
-		jIncludeZero.setSelected(true);
+		jIncludeZero.setSelected(trackerSettings.isTrackerIncludeZero());
 		jIncludeZero.setActionCommand(TrackerAction.INCLUDE_ZERO.name());
 		jIncludeZero.addActionListener(listener);
 		jSettings.add(jIncludeZero);
@@ -462,13 +474,14 @@ public class TrackerTab extends JMainTabSecondary {
 		ButtonGroup buttonGroup = new ButtonGroup();
 
 		JRadioButtonMenuItem jLinear = new JRadioButtonMenuItem(TabsTracker.get().scaleLinear());
-		jLinear.setSelected(true);
+		jLinear.setSelected(trackerSettings.getDisplayType() == DisplayType.LINEAR);
 		jLinear.setActionCommand(TrackerAction.LOGARITHMIC.name());
 		jLinear.addActionListener(listener);
 		jSettings.add(jLinear);
 		buttonGroup.add(jLinear);
 
 		jLogarithmic = new JRadioButtonMenuItem(TabsTracker.get().scaleLogarithmic());
+		jLogarithmic.setSelected(trackerSettings.getDisplayType() == DisplayType.LOGARITHMIC);
 		jLogarithmic.setActionCommand(TrackerAction.LOGARITHMIC.name());
 		jLogarithmic.addActionListener(listener);
 		jSettings.add(jLogarithmic);
@@ -487,16 +500,23 @@ public class TrackerTab extends JMainTabSecondary {
 		rangeLogarithmicAxis.setNumberFormatOverride(Formater.AUTO_FORMAT);
 		rangeLogarithmicAxis.setTickLabelFont(jFromLabel.getFont());
 		rangeLogarithmicAxis.setTickLabelPaint(Colors.TEXTFIELD_FOREGROUND.getColor());
+		rangeLogarithmicAxis.setAutoRangeIncludesZero(trackerSettings.isTrackerIncludeZero());
 
 		rangeLinearAxis = new NumberAxis();
 		rangeLinearAxis.setAutoRange(true);
 		rangeLinearAxis.setStandardTickUnits(NumberAxis.createStandardTickUnits());
 		rangeLinearAxis.setTickLabelFont(jFromLabel.getFont());
 		rangeLinearAxis.setTickLabelPaint(Colors.TEXTFIELD_FOREGROUND.getColor());
+		rangeLinearAxis.setAutoRangeIncludesZero(trackerSettings.isTrackerIncludeZero());
 
 		//XYPlot plot = new XYPlot(dataset, domainAxis, rangeAxis, new XYLineAndShapeRenderer(true, true));
 		render = new MyRender();
-		XYPlot plot = new XYPlot(dataset, domainAxis, rangeLinearAxis, render);
+		XYPlot plot;
+		if (trackerSettings.getDisplayType() == DisplayType.LINEAR) {
+			plot = new XYPlot(dataset, domainAxis, rangeLinearAxis, render);
+		} else {
+			plot = new XYPlot(dataset, domainAxis, rangeLogarithmicAxis, render);
+		}
 		
 		plot.setBackgroundPaint(Colors.TEXTFIELD_BACKGROUND.getColor());
 		plot.setRangeGridlinePaint(Color.LIGHT_GRAY);
@@ -702,12 +722,6 @@ public class TrackerTab extends JMainTabSecondary {
 				program.getValueTableTab().updateData();
 			}
 		}
-	}
-
-	private JDateChooser createDateChooser() {
-		JDateChooser jDate = new JDateChooser(true);
-		jDate.addDateChangeListener(listener);
-		return jDate;
 	}
 
 	private void updateFilterButtons() {
@@ -1496,15 +1510,23 @@ public class TrackerTab extends JMainTabSecondary {
 						jFrom.setDate(dateToLocalDate(fromDate));
 					}
 				}
+				Settings.get().getTrackerSettings().setFromDate(getFromDate());
+				Settings.get().getTrackerSettings().setToDate(getToDate());
+				updateSettings();
 			} else if (TrackerAction.INCLUDE_ZERO.name().equals(e.getActionCommand())) {
 				rangeLogarithmicAxis.setAutoRangeIncludesZero(jIncludeZero.isSelected());
 				rangeLinearAxis.setAutoRangeIncludesZero(jIncludeZero.isSelected());
+				Settings.get().getTrackerSettings().setTrackerIncludeZero(jIncludeZero.isSelected());
+				updateSettings();
 			} else if (TrackerAction.LOGARITHMIC.name().equals(e.getActionCommand())) {
 				if (jLogarithmic.isSelected()) {
 					jNextChart.getXYPlot().setRangeAxis(rangeLogarithmicAxis);
+					Settings.get().getTrackerSettings().setDisplayType(DisplayType.LOGARITHMIC);
 				} else {
 					jNextChart.getXYPlot().setRangeAxis(rangeLinearAxis);
+					Settings.get().getTrackerSettings().setDisplayType(DisplayType.LINEAR);
 				}
+				updateSettings();
 			} else if (TrackerAction.UPDATE_DATA.name().equals(e.getActionCommand())) {
 				createData();
 			} else if (TrackerAction.UPDATE_SHOWN.name().equals(e.getActionCommand())) {
@@ -1521,9 +1543,43 @@ public class TrackerTab extends JMainTabSecondary {
 						&& jSkillPointsValue.isSelected());
 				if (jAll.isSelected()) {
 					jShow.setIcon(Images.LOC_INCLUDE.getIcon());
+					Settings.get().getTrackerSettings().getShowOptions().clear();
+					Settings.get().getTrackerSettings().getShowOptions().add(ShowOption.ALL);
 				} else {
 					jShow.setIcon(Images.EDIT_EDIT_WHITE.getIcon());
+					Settings.get().getTrackerSettings().getShowOptions().clear();
+					if (jTotal.isSelected()) {
+						Settings.get().getTrackerSettings().getShowOptions().add(ShowOption.TOTAL);
+					}
+					if (jWalletBalance.isSelected()) {
+						Settings.get().getTrackerSettings().getShowOptions().add(ShowOption.WALLET);
+					}
+					if (jAssets.isSelected()) {
+						Settings.get().getTrackerSettings().getShowOptions().add(ShowOption.ASSET);
+					}
+					if (jSellOrders.isSelected()) {
+						Settings.get().getTrackerSettings().getShowOptions().add(ShowOption.SELL_ORDER);
+					}
+					if (jEscrows.isSelected()) {
+						Settings.get().getTrackerSettings().getShowOptions().add(ShowOption.ESCROW);
+					}
+					if (jEscrowsToCover.isSelected()) {
+						Settings.get().getTrackerSettings().getShowOptions().add(ShowOption.ESCROW_TO_COVER);
+					}
+					if (jManufacturing.isSelected()) {
+						Settings.get().getTrackerSettings().getShowOptions().add(ShowOption.MANUFACTURING);
+					}
+					if (jContractCollateral.isSelected()) {
+						Settings.get().getTrackerSettings().getShowOptions().add(ShowOption.COLLATERAL);
+					}
+					if (jContractValue.isSelected()) {
+						Settings.get().getTrackerSettings().getShowOptions().add(ShowOption.CONTRACT);
+					}
+					if (jSkillPointsValue.isSelected()) {
+						Settings.get().getTrackerSettings().getShowOptions().add(ShowOption.SKILL_POINT);
+					}
 				}
+				updateSettings();
 			} else if (TrackerAction.ALL.name().equals(e.getActionCommand())) {
 				jTotal.setSelected(jAll.isSelected());
 				jWalletBalance.setSelected(jAll.isSelected());
@@ -1535,12 +1591,15 @@ public class TrackerTab extends JMainTabSecondary {
 				jContractCollateral.setSelected(jAll.isSelected());
 				jContractValue.setSelected(jAll.isSelected());
 				jSkillPointsValue.setSelected(jAll.isSelected());
+				Settings.get().getTrackerSettings().getShowOptions().clear();
 				if (jAll.isSelected()) {
 					jShow.setIcon(Images.LOC_INCLUDE.getIcon());
+					Settings.get().getTrackerSettings().getShowOptions().add(ShowOption.ALL);
 				} else {
 					jShow.setIcon(Images.EDIT_EDIT_WHITE.getIcon());
 				}
 				updateShown();
+				updateSettings();
 			} else if (TrackerAction.EDIT.name().equals(e.getActionCommand())) {
 				jNextChart.getXYPlot().setDomainCrosshairVisible(true);
 				String owner = getSelectedOwner(false);
@@ -1639,6 +1698,8 @@ public class TrackerTab extends JMainTabSecondary {
 			if (from != null && to != null && from.after(to)) {
 				jTo.setDate(dateToLocalDate(from));
 			}
+			Settings.get().getTrackerSettings().setFromDate(getFromDate());
+			Settings.get().getTrackerSettings().setToDate(getToDate());
 			createData();
 		}
 
