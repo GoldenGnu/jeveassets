@@ -22,6 +22,7 @@ package net.nikr.eve.jeveasset.gui.shared.menu;
 
 import com.udojava.evalex.Expression;
 import com.udojava.evalex.Expression.ExpressionException;
+import com.udojava.evalex.LazyFunction;
 import com.udojava.evalex.LazyOperator;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -111,7 +112,7 @@ public class JFormulaDialog<T extends Enum<T> & EnumTableColumn<Q>, Q> extends J
 		JDropDownButton jFunctions = new JDropDownButton(GuiShared.get().formulaFunctions());
 
 		ExpressionValues expression = new ExpressionValues("");
-		for (com.udojava.evalex.LazyFunction function : expression.getFunctions()) {
+		for (LazyFunction function : expression.getFunctions()) {
 			StringBuilder builder = new StringBuilder();
 			for (int i = 1; i < function.getNumParams(); i++) {
 				builder.append(",");
