@@ -147,12 +147,8 @@ public final class SqlWriter {
 				//End Line
 				if (firstRow) {
 					firstRow = false;
-				} else {
-					if (extendedInserts) {
-						values = values + ",\r\n";
-					} else {
-						values = values + ";\r\n";
-					}
+				} else if (extendedInserts) {
+					values = values + ",\r\n";
 				}
 				//Values
 				values = values + "	(";
@@ -167,6 +163,7 @@ public final class SqlWriter {
 				}
 				values = values + ")";
 				if (!extendedInserts) {
+					values = values + ";\r\n";
 					writer.write(insert);
 				}
 				length = length + values.getBytes("UTF-8").length; //Bytes
