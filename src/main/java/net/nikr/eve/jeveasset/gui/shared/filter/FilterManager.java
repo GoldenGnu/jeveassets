@@ -136,7 +136,7 @@ public class FilterManager<E> extends JManageDialog {
 					FormulaColumn<?> formulaColumn = (FormulaColumn) column;
 					builder.append("[");
 					builder.append(FORMULA);
-					builder.append(formulaColumn.getFormula().getOriginalExpression().replace(":", "::"));
+					builder.append(wrap(formulaColumn.getFormula().getOriginalExpression()).replace(" ", ""));
 					builder.append("]");
 				}
 				if (column instanceof JumpColumn) {
