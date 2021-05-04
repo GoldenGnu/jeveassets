@@ -519,7 +519,7 @@ public class EnumTableFormatAdaptor<T extends Enum<T> & EnumTableColumn<Q>, Q> i
 			}
 		}
 		if (expression.isBoolean()) {
-			return expression.eval().doubleValue() > 0 ? "True" : "False";
+			return expression.eval().compareTo(BigDecimal.ZERO) > 0 ? "True" : "False";
 		} else {
 			return expression.eval().doubleValue();
 		}
