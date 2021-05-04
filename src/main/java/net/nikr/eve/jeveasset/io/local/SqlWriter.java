@@ -43,7 +43,7 @@ public final class SqlWriter {
 
 	private static final Logger LOG = LoggerFactory.getLogger(SqlWriter.class);
 
-	private final DecimalFormat DOUBLE_FORMAT  = new DecimalFormat("0.#", new DecimalFormatSymbols(Locale.ENGLISH));
+	private final DecimalFormat DOUBLE_FORMAT  = new DecimalFormat("0.##", new DecimalFormatSymbols(Locale.ENGLISH));
 	private final DecimalFormat FLOAT_FORMAT  = new DecimalFormat("0.####", new DecimalFormatSymbols(Locale.ENGLISH));
 	private final DecimalFormat LONG_FORMAT  = new DecimalFormat("0", new DecimalFormatSymbols(Locale.ENGLISH));
 	private final int MAX_LENGTH = 944000; //a little less than 1MB
