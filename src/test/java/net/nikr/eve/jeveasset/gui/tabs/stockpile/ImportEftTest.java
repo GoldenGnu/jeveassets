@@ -197,7 +197,7 @@ Warden II x5
 			"\n" +
 			"\n" +
 			"Blood Dagger Firework x1\n" +
-			"Easter Firework x1\n" +
+			"Ace of Podhunters Firework x1\n" + //Formerly known as "Easter Firework"
 			"Sodium Firework x1\n" +
 			"Yoiul Festival Firework x1\n" +
 			"Armor EM Resistance Script x1\n" +
