@@ -146,6 +146,7 @@ public class RawConverterTest extends TestUtil {
 					|| (locationFlagEnum.toString().equals("DustBattle") && itemFlag.getFlagName().equals("DustCharacterBattle"))
 					|| (locationFlagEnum.toString().equals("DustDatabank") && itemFlag.getFlagName().equals("DustCharacterDatabank"))
 					|| (locationFlagEnum.toString().equals("HiddenModifers") && itemFlag.getFlagName().equals("HiddenModifiers"))
+					|| (locationFlagEnum.toString().equals("QuantumCoreRoom") && itemFlag.getFlagName().equals("StructureDeedBay"))
 			);
 		}
 	}

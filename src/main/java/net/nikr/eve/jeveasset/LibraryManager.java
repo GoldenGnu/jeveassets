@@ -110,16 +110,17 @@ public class LibraryManager {
 			files.add("super-csv-2.4.0.jar");
 			files.add("translations-3.0.0.jar");
 			files.add("swagger-annotations-1.6.2.jar");
+			files.add("annotations-13.0.jar");
 			files.add("hamcrest-core-1.3.jar");
-			files.add("eve-esi-4.2.0.jar");
+			files.add("eve-esi-4.4.0.jar");
 			files.add("hamcrest-core-1.3.jar");
 			files.add("jaxb-api-2.3.1.jar");
 			files.add("sqlite-jdbc-3.32.3.2.jar");
-			files.add("okhttp-3.14.9.jar");
+			files.add("okhttp-4.9.1.jar");
 			files.add("gson-fire-1.8.5.jar");
 			files.add("gson-2.8.6.jar");
-			files.add("okio-1.17.2.jar");
-			files.add("logging-interceptor-3.14.9.jar");
+			files.add("okio-2.8.0.jar");
+			files.add("logging-interceptor-4.9.1.jar");
 			files.add("org.apache.oltu.oauth2.common-1.0.1.jar");
 			files.add("org.apache.oltu.oauth2.client-1.0.1.jar");
 			files.add("json-20140107.jar");
@@ -131,6 +132,10 @@ public class LibraryManager {
 			files.add("jsr250-api-1.0.jar");
 			files.add("jsr305-3.0.2.jar");
 			files.add("flatlaf-0.43.jar");
+			files.add("kotlin-stdlib-jdk7-1.4.10.jar");
+			files.add("kotlin-stdlib-1.4.10.jar");
+			files.add("kotlin-stdlib-jdk8-1.4.10.jar");
+			files.add("kotlin-stdlib-common-1.4.0.jar");
 		}
 		return files;
 	}
