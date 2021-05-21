@@ -96,6 +96,7 @@ public class JMenuFormula<T extends Enum<T> & EnumTableColumn<Q>, Q> extends JAu
 					if (edited == null) {
 						return; //Cancel
 					}
+					edited.setIndex(formula.getIndex()); //Stay at the same index...
 					columnManager.editColumn(formula, edited);
 				}
 			});
