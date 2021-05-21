@@ -313,7 +313,7 @@ public class JFormulaDialog<T extends Enum<T> & EnumTableColumn<Q>, Q> extends J
 		try {
 			expression.eval();
 			return true;
-		} catch (ExpressionException | NumberFormatException | ArithmeticException ex) {
+		} catch (ExpressionException | NumberFormatException | ArithmeticException | NullPointerException ex) {
 			return false;
 		}
 	}
