@@ -268,7 +268,13 @@ public class PriceDataSettings {
 					return priceData.getSellMin();
 				}
 				if (priceMode == PriceMode.PRICE_MIDPOINT) {
-					return (priceData.getSellMin() + priceData.getBuyMax()) / 2;
+					if (priceData.getSellMin() > 0 && priceData.getBuyMax() > 0) { //Working as intended
+						return (priceData.getSellMin() + priceData.getBuyMax()) / 2;
+					} else if (priceData.getBuyMax() > 0) { //Using BuyMax (fallback)
+						return priceData.getBuyMax(); 
+					} else { //Using SellMin (fallback)
+						return priceData.getSellMin(); //SellMin or Zero
+					}
 				}
 				if (priceMode == PriceMode.PRICE_BUY_MAX) {
 					return priceData.getBuyMax();
