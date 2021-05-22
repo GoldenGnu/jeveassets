@@ -82,13 +82,12 @@ public class EsiShipGetter extends AbstractEsiGetter {
 					//Add asset to active ship
 					activeShip.addAsset(asset);
 					//Update locationID from ItemID to locationID
-					asset.setLocationID(activeShip.getLocationID());
+					setLocationID(asset, activeShip.getLocationID());
 					//Add assets that needs to be removed from the root
 					activeShipChildren.add(asset);
 					//Set active ship as parent
 					asset.getParents().add(activeShip);
 				}
-
 			}
 			//Add active ship to root
 			owner.addAsset(activeShip);
@@ -104,6 +103,18 @@ public class EsiShipGetter extends AbstractEsiGetter {
 		}
 		//Active Ship - Must be after getEveNames is updated
 		owner.setActiveShip(EsiConverter.toActiveShip(shipType, shipLocation));
+	}
+
+	/**
+	 * Set locationID for asset and children.
+	 * @param asset
+	 * @param locationID 
+	 */
+	private void setLocationID(MyAsset asset, long locationID) {
+		asset.setLocationID(locationID);
+		for (MyAsset child : asset.getAssets()) {
+			setLocationID(child, locationID);
+		}
 	}
 
 	@Override
