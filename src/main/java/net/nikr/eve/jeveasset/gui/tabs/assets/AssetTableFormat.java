@@ -546,6 +546,20 @@ public enum AssetTableFormat implements EnumTableColumn<MyAsset> {
 			return new LongInt(from.getItemID());
 		}
 	},
+	LOCATION_ID(LongInt.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsAssets.get().columnLocationID();
+		}
+		@Override
+		public String getColumnToolTip() {
+			return TabsAssets.get().columnLocationIDToolTip();
+		}
+		@Override
+		public Object getColumnValue(final MyAsset from) {
+			return new LongInt(from.getLocationID());
+		}
+	},
 	TYPE_ID(Integer.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
