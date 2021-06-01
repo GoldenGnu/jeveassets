@@ -183,7 +183,7 @@ public abstract class FilterControl<E> extends ExportFilterControl<E> {
 
 	@Override
 	public List<Filter> getCurrentFilters() {
-		return gui.getFilters(true, true);
+		return gui.getFilters();
 	}
 
 	public void clearCurrentFilters() {

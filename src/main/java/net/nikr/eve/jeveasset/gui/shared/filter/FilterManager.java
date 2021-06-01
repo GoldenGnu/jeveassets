@@ -297,7 +297,7 @@ public class FilterManager<E> extends JManageDialog {
 	 */
 	private String convertEnabled(boolean enabled) {
 		if(enabled) {
-			return ENABLED;
+			return wrap(ENABLED);
 		}
 		return wrap(DISABLED);
 	}
@@ -309,9 +309,9 @@ public class FilterManager<E> extends JManageDialog {
 	 */
 	private boolean unwrapEnabled(String text) {
 		String unwrapped = unwrap(text);
-		if(DISABLED.compareToIgnoreCase(unwrapped) == 0) {
+		if(DISABLED.equalsIgnoreCase(unwrapped)) {
 			return false;
-		} else if (ENABLED.compareToIgnoreCase(unwrapped) == 0) {
+		} else if (ENABLED.equalsIgnoreCase(unwrapped)) {
 			return true;
 		}
 		//Assume true if no match.

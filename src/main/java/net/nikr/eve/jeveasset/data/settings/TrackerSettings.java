@@ -147,12 +147,7 @@ public class TrackerSettings {
 		if (searchOption == null) {
 			return false;
 		}
-		for (ShowOption currentOption : this.showOptions) {
-			if (currentOption == searchOption) {
-				return true;
-			}
-		}
-		return false;
+		return this.showOptions.contains(searchOption);
 	}
 
 	public Map<String, TrackerSkillPointFilter> getSkillPointFilters() {

@@ -30,7 +30,6 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.data.settings.CopySettings;
 import net.nikr.eve.jeveasset.data.settings.ExportSettings.DecimalSeparator;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.data.settings.Settings.TransactionProfitPrice;

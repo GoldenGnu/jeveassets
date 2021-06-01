@@ -530,14 +530,14 @@ public class ExportDialog<E> extends JDialogCentered {
 		}
 		//Make sure there is a selected item and that it is not the filler text for empty list.
 		if (jFilters.getSelectedItem() != null
-				&& DialoguesExport.get().noSavedFilter().compareTo((String) jFilters.getSelectedItem()) != 0) {
+				&& !DialoguesExport.get().noSavedFilter().equals(jFilters.getSelectedItem())) {
 			Settings.get().getExportSettings(toolName).setFilterName((String) jFilters.getSelectedItem());
 		} else  {
 			Settings.get().getExportSettings(toolName).setFilterName(null);
 		}
 		//Make sure there is a selected item and that is is not filler text for empty list.
 		if (jViews.getSelectedItem() != null
-				&& DialoguesExport.get().viewNoSaved().compareTo((String) jViews.getSelectedItem()) != 0) {
+				&& !DialoguesExport.get().viewNoSaved().equals(jViews.getSelectedItem())) {
 			Settings.get().getExportSettings(toolName).setViewName((String) jViews.getSelectedItem());
 		} else  {
 			Settings.get().getExportSettings(toolName).setViewName(null);
@@ -919,7 +919,7 @@ public class ExportDialog<E> extends JDialogCentered {
 
 		for (int i = 0; i < comboBox.getModel().getSize(); i++) {
 			String comboItem = comboBox.getModel().getElementAt(i);
-			if (item.compareTo(comboItem) == 0) {
+			if (item.equals(comboItem)) {
 				return true;
 			}
 		}
