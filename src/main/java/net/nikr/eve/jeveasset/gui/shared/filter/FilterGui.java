@@ -81,7 +81,7 @@ class FilterGui<E> {
 	private final ExportDialog<E> exportDialog;
 	private boolean multiUpdate = false;
 
-	private final ListenerClass listener = new ListenerClass();
+	private final ListenerClass settingsUpdateListener = new ListenerClass();
 
 	protected FilterGui(final JFrame jFrame, final FilterControl<E> filterControl) {
 		this.jFrame = jFrame;
@@ -102,14 +102,14 @@ class FilterGui<E> {
 		JButton jAddField = new JButton(GuiShared.get().addField());
 		jAddField.setIcon(Images.EDIT_ADD.getIcon());
 		jAddField.setActionCommand(FilterGuiAction.ADD.name());
-		jAddField.addActionListener(listener);
+		jAddField.addActionListener(settingsUpdateListener);
 		jToolBarLeft.addButton(jAddField);
 
 		//Reset
 		JButton jClearFields = new JButton(GuiShared.get().clearField());
 		jClearFields.setIcon(Images.FILTER_CLEAR.getIcon());
 		jClearFields.setActionCommand(FilterGuiAction.CLEAR.name());
-		jClearFields.addActionListener(listener);
+		jClearFields.addActionListener(settingsUpdateListener);
 		jToolBarLeft.addButton(jClearFields);
 
 		jToolBarLeft.addSeparator();
@@ -118,7 +118,7 @@ class FilterGui<E> {
 		JButton jSaveFilter = new JButton(GuiShared.get().saveFilter());
 		jSaveFilter.setIcon(Images.FILTER_SAVE.getIcon());
 		jSaveFilter.setActionCommand(FilterGuiAction.SAVE.name());
-		jSaveFilter.addActionListener(listener);
+		jSaveFilter.addActionListener(settingsUpdateListener);
 		jToolBarLeft.addButton(jSaveFilter);
 
 		//Load Filter
@@ -135,7 +135,7 @@ class FilterGui<E> {
 		jExportButton = new JButton(GuiShared.get().export());
 		jExportButton.setIcon(Images.DIALOG_CSV_EXPORT.getIcon());
 		jExportButton.setActionCommand(FilterGuiAction.EXPORT.name());
-		jExportButton.addActionListener(listener);
+		jExportButton.addActionListener(settingsUpdateListener);
 		jToolBarLeft.addButton(jExportButton);
 
 		jExportMenu = new JDropDownButton(GuiShared.get().export(), Images.DIALOG_CSV_EXPORT.getIcon());
@@ -145,7 +145,7 @@ class FilterGui<E> {
 		JMenuItem jExportMenuItem = new JMenuItem(GuiShared.get().exportTableData());
 		jExportMenuItem.setIcon(Images.DIALOG_CSV_EXPORT.getIcon());
 		jExportMenuItem.setActionCommand(FilterGuiAction.EXPORT.name());
-		jExportMenuItem.addActionListener(listener);
+		jExportMenuItem.addActionListener(settingsUpdateListener);
 		jExportMenu.add(jExportMenuItem);
 
 		jToolBarLeft.addSeparator();
@@ -153,7 +153,7 @@ class FilterGui<E> {
 		//Show Filters
 		jShowFilters = new JCheckBox(GuiShared.get().showFilters());
 		jShowFilters.setActionCommand(FilterGuiAction.SHOW_FILTERS.name());
-		jShowFilters.addActionListener(listener);
+		jShowFilters.addActionListener(settingsUpdateListener);
 		jShowFilters.setSelected(true);
 		jToolBarLeft.addButton(jShowFilters, 70, SwingConstants.CENTER);
 
@@ -432,7 +432,7 @@ class FilterGui<E> {
 
 		jMenuItem = new JMenuItem(GuiShared.get().manageFilters(), Images.DIALOG_SETTINGS.getIcon());
 		jMenuItem.setActionCommand(FilterGuiAction.MANAGER.name());
-		jMenuItem.addActionListener(listener);
+		jMenuItem.addActionListener(settingsUpdateListener);
 		jMenuItem.setRolloverEnabled(true);
 		jLoadFilter.add(jMenuItem);
 
@@ -450,7 +450,7 @@ class FilterGui<E> {
 			jMenuItem = new JMenuItem(s, Images.FILTER_LOAD_DEFAULT.getIcon());
 			jMenuItem.setRolloverEnabled(true);
 			jMenuItem.setActionCommand(s);
-			jMenuItem.addActionListener(listener);
+			jMenuItem.addActionListener(settingsUpdateListener);
 			jLoadFilter.add(jMenuItem);
 		}
 
@@ -458,7 +458,7 @@ class FilterGui<E> {
 			jMenuItem = new JMenuItem(s, Images.FILTER_LOAD.getIcon());
 			jMenuItem.setRolloverEnabled(true);
 			jMenuItem.setActionCommand(s);
-			jMenuItem.addActionListener(listener);
+			jMenuItem.addActionListener(settingsUpdateListener);
 			jLoadFilter.add(jMenuItem);
 		}
 		updateShowing();

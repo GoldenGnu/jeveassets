@@ -21,11 +21,12 @@
 
 package net.nikr.eve.jeveasset.data.settings;
 
-import java.util.ArrayList;
 import java.util.Date;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerDate;
 import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerNote;
 import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerSkillPointFilter;
@@ -61,7 +62,7 @@ public class TrackerSettings {
 	private final Map<TrackerDate, TrackerNote> notes = new HashMap<>();
 	private boolean selectNew = true;
 	private List<String> selectedOwners = null;
-	private final List<ShowOption> showOptions = new ArrayList<>();
+	private final Set<ShowOption> showOptions = EnumSet.noneOf(ShowOption.class);
 	private final Map<String, TrackerSkillPointFilter> skillPointFilters = new HashMap<>();
 	private Date toDate = null;
 
@@ -133,7 +134,7 @@ public class TrackerSettings {
 		this.selectedOwners = trackerOwners;
 	}
 
-	public List<ShowOption> getShowOptions() {
+	public Set<ShowOption> getShowOptions() {
 		return showOptions;
 	}
 
