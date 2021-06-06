@@ -672,6 +672,13 @@ public class ConverterTestOptionsGetter {
 			return get(EVE_API_MARKET_ORDER_STATE, index);
 		}
 
+//MarketOrder Outbid
+		@Override
+		public Outbid getMarketOrdersOutbid() {
+			return ESI_MARKET_ORDER_OUTBID;
+		}
+
+//Owner
 		@Override
 		public EsiCallbackURL getEsiCallbackURL() {
 			return get(ESI_CALLBACK_URL, index);
@@ -685,12 +692,6 @@ public class ConverterTestOptionsGetter {
 		@Override
 		public EveApiAccount getEveApiAccount() {
 			return ConverterTestUtil.getEveApiAccount(this);
-		}
-
-//MarketOrder Outbid
-		@Override
-		public Outbid getMarketOrdersOutbid() {
-			return ESI_MARKET_ORDER_OUTBID;
 		}
 	}
 
