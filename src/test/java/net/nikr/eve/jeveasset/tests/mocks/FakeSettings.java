@@ -30,6 +30,7 @@ import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder.MarketOrderRange;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
 import net.nikr.eve.jeveasset.data.settings.ColorSettings;
 import net.nikr.eve.jeveasset.data.settings.ContractPriceManager;
+import net.nikr.eve.jeveasset.data.settings.CopySettings;
 import net.nikr.eve.jeveasset.data.settings.ExportSettings;
 import net.nikr.eve.jeveasset.data.settings.MarketOrdersSettings;
 import net.nikr.eve.jeveasset.data.settings.PriceData;
@@ -38,6 +39,7 @@ import net.nikr.eve.jeveasset.data.settings.ProxyData;
 import net.nikr.eve.jeveasset.data.settings.ReprocessSettings;
 import net.nikr.eve.jeveasset.data.settings.RoutingSettings;
 import net.nikr.eve.jeveasset.data.settings.Settings;
+import net.nikr.eve.jeveasset.data.settings.TrackerSettings;
 import net.nikr.eve.jeveasset.data.settings.UserItem;
 import net.nikr.eve.jeveasset.data.settings.tag.Tag;
 import net.nikr.eve.jeveasset.data.settings.tag.TagID;
@@ -49,9 +51,6 @@ import net.nikr.eve.jeveasset.gui.shared.table.View;
 import net.nikr.eve.jeveasset.gui.tabs.orders.Outbid;
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewGroup;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile;
-import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerDate;
-import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerNote;
-import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerSkillPointFilter;
 
 /**
  *
@@ -220,6 +219,26 @@ public abstract class FakeSettings extends Settings {
 	}
 
 	@Override
+	public Map<String, List<Filter>> getCurrentTableFilters() {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public List<Filter> getCurrentTableFilters(final String tableName) {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public Map<String, Boolean> getCurrentTableFiltersShown() {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public boolean getCurrentTableFiltersShown(final String tableName) {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
 	public boolean isStockpileFocusTab() {
 		throw new UnsupportedOperationException("not implemented");
 	}
@@ -300,7 +319,17 @@ public abstract class FakeSettings extends Settings {
 	}
 
 	@Override
-	public ExportSettings getExportSettings() {
+	public CopySettings getCopySettings() {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public Map<String, ExportSettings> getExportSettings() {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public ExportSettings getExportSettings(String toolName) {
 		throw new UnsupportedOperationException("not implemented");
 	}
 
@@ -460,26 +489,6 @@ public abstract class FakeSettings extends Settings {
 	}
 
 	@Override
-	public void setTrackerSelectNew(boolean trackerSelectNew) {
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	@Override
-	public boolean isTrackerSelectNew() {
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	@Override
-	public Map<String, Boolean> getTrackerFilters() {
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	@Override
-	public Map<TrackerDate, TrackerNote> getTrackerNotes() {
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	@Override
 	public void setProxyData(ProxyData proxyData) {
 		throw new UnsupportedOperationException("not implemented");
 	}
@@ -590,36 +599,6 @@ public abstract class FakeSettings extends Settings {
 	}
 
 	@Override
-	public void setTrackerSelectedOwners(List<String> trackerOwners) {
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	@Override
-	public List<String> getTrackerSelectedOwners() {
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	@Override
-	public void setTrackerCharacterCorporations(boolean trackerCharacterCorporations) {
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	@Override
-	public boolean isTrackerCharacterCorporations() {
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	@Override
-	public void setTrackerAllProfiles(boolean trackerAllProfiles) {
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	@Override
-	public boolean isTrackerAllProfiles() {
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	@Override
 	public ColorSettings getColorSettings() {
 		throw new UnsupportedOperationException("not implemented");
 	}
@@ -670,7 +649,7 @@ public abstract class FakeSettings extends Settings {
 	}
 
 	@Override
-	public Map<String, TrackerSkillPointFilter> getTrackerSkillPointFilters() {
+	public TrackerSettings getTrackerSettings() {
 		throw new UnsupportedOperationException("not implemented");
 	}
 }

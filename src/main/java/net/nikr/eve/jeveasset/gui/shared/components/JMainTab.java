@@ -39,6 +39,8 @@ import javax.swing.ListSelectionModel;
 import javax.swing.table.TableModel;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.settings.Settings;
+import net.nikr.eve.jeveasset.data.settings.SettingsUpdateListener;
+import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.TableMenu;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
@@ -58,6 +60,7 @@ public abstract class JMainTab {
 	private JAutoColumnTable jTable;
 	private DefaultEventSelectionModel<?> eventSelectionModel;
 	private DefaultEventTableModel<?> eventTableModel;
+	private FilterControl<?> filterControl;
 	private List<Object> selected;
 	private int[] selectedColumns;
 	private String toolName;
@@ -85,6 +88,25 @@ public abstract class JMainTab {
 		MenuManager.install(program, tableMenu, jTable, clazz);
 	}
 
+	/**
+	 * Method to install a filter controller on a tool. The filter is installed for the tool and any current
+	 * filters found in settings are set. Listeners are added to enable update of settings on filter changes.
+	 *
+	 * @param filterControl The filter controller to be installed.
+	 * @param toolName The name of the tool the filter control is being installed for.
+	 * @param <T> The type of the parameter.
+	 */
+	protected final <T> void installFilterControl(final FilterControl<T> filterControl, String toolName) {
+		if(filterControl != null && toolName != null && !toolName.isEmpty()) {
+			filterControl.clearCurrentFilters();
+			filterControl.addFilters(Settings.get().getCurrentTableFilters(toolName));
+			filterControl.setFilterShown(Settings.get().getCurrentTableFiltersShown(toolName));
+			SettingsUpdateListener listener = new ListenerClass();
+			filterControl.getSettingsUpdateListenerList().add(listener);
+			this.filterControl = filterControl;
+		}
+	}
+
 	public void updateTableMenu() {
 		MenuManager.update(program ,clazz);
 	}
@@ -100,14 +122,16 @@ public abstract class JMainTab {
 		//Save Settings
 		if (eventTableModel != null && jTable != null && toolName != null) {
 			TableFormat<?> tableFormat = eventTableModel.getTableFormat();
-			if (tableFormat instanceof  EnumTableFormatAdaptor) {
+			if (tableFormat instanceof EnumTableFormatAdaptor) {
 				EnumTableFormatAdaptor<?, ?> formatAdaptor = (EnumTableFormatAdaptor<?, ?>) tableFormat;
 				Settings.get().getTableColumns().put(toolName, formatAdaptor.getColumns());
 				Settings.get().getTableResize().put(toolName, formatAdaptor.getResizeMode());
 				Settings.get().getTableColumnsWidth().put(toolName, jTable.getColumnsWidth());
+				if(filterControl != null) {
+					Settings.get().getCurrentTableFilters().put(toolName, filterControl.getCurrentFilters());
+				}
 			}
 		}
-		
 	}
 
 	public final void addStatusbarLabel(final JLabel jLabel) {
@@ -234,6 +258,17 @@ public abstract class JMainTab {
 				jTable.setColumnsWidth(Settings.get().getTableColumnsWidth().get(toolName));
 				eventTableModel.fireTableStructureChanged();
 			}
+		}
+	}
+
+	/***
+	 * Inner class to define the listener for settings updates and perform actions when the event fires.
+	 */
+	private class ListenerClass implements SettingsUpdateListener {
+		@Override
+		public void settingChanged() {
+			//Shows in a primitive so we need to update it before saving
+			program.saveSettings("Save current filter change.");
 		}
 	}
 }
