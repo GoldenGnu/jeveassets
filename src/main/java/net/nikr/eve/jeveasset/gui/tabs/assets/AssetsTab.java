@@ -148,7 +148,7 @@ public class AssetsTab extends JMainTabPrimary implements TagUpdate {
 				filterList,
 				Settings.get().getTableFilters(NAME)
 				);
-
+		installFilterControl(filterControl, NAME);
 		//Menu
 		installMenu(program, new AssetTableMenu(), jTable, MyAsset.class);
 

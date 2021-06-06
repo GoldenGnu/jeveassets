@@ -130,6 +130,7 @@ public class LogTab extends JMainTabSecondary {
 				filterList,
 				Settings.get().getTableFilters(NAME)
 				);
+		installFilterControl(filterControl, NAME);
 
 		JFixedToolBar jToolBar = new JFixedToolBar();
 

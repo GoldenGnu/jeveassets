@@ -131,7 +131,7 @@ public class IndustryJobsTab extends JMainTabPrimary {
 				Settings.get().getTableFilters(NAME),
 				defaultFilters
 				);
-
+		installFilterControl(filterControl, NAME);
 		//Menu
 		installMenu(program, new JobsTableMenu(), jTable, MyIndustryJob.class);
 

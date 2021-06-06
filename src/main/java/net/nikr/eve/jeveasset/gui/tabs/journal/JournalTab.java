@@ -104,7 +104,7 @@ public class JournalTab extends JMainTabPrimary {
 				filterList,
 				Settings.get().getTableFilters(NAME)
 				);
-
+		installFilterControl(filterControl, NAME);
 		//Menu
 		installMenu(program, new JournalTableMenu(), jTable, MyJournal.class);
 
