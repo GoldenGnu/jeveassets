@@ -50,6 +50,7 @@ import java.nio.file.WatchEvent;
 import java.nio.file.WatchKey;
 import java.nio.file.WatchService;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -61,7 +62,6 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JOptionPane;
@@ -80,6 +80,7 @@ import net.nikr.eve.jeveasset.data.settings.ColorEntry;
 import net.nikr.eve.jeveasset.data.settings.ColorSettings;
 import net.nikr.eve.jeveasset.data.settings.Colors;
 import net.nikr.eve.jeveasset.data.settings.Settings;
+import net.nikr.eve.jeveasset.data.settings.types.LocationType;
 import net.nikr.eve.jeveasset.gui.dialogs.update.TaskDialog;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
@@ -98,6 +99,7 @@ import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuUI;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuData;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.TableMenu;
+import net.nikr.eve.jeveasset.gui.shared.table.ColumnManager;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
@@ -152,14 +154,14 @@ public class MarketOrdersTab extends JMainTabPrimary {
 	private final MarketOrdersFilterControl filterControl;
 	private final EnumTableFormatAdaptor<MarketTableFormat, MyMarketOrder> tableFormat;
 	private final DefaultEventTableModel<MyMarketOrder> tableModel;
-	private final FilterList<MyMarketOrder> filterList;
 	private final EventList<MyMarketOrder> eventList;
+	private final FilterList<MyMarketOrder> filterList;
 	private final DefaultEventSelectionModel<MyMarketOrder> selectionModel;
 
 	public static final String NAME = "marketorders"; //Not to be changed!
 
 	public MarketOrdersTab(final Program program) {
-		super(program, TabsOrders.get().market(), Images.TOOL_MARKET_ORDERS.getIcon(), true);
+		super(program, NAME, TabsOrders.get().market(), Images.TOOL_MARKET_ORDERS.getIcon(), true);
 
 		ListenerClass listener = new ListenerClass();
 
@@ -289,7 +291,7 @@ public class MarketOrdersTab extends JMainTabPrimary {
 		});
 
 		//Listeners
-		installTable(jTable, NAME);
+		installTable(jTable);
 		//Scroll Panels
 		JScrollPane jTableScroll = new JScrollPane(jTable);
 		//Table Filter
@@ -303,18 +305,10 @@ public class MarketOrdersTab extends JMainTabPrimary {
 		filter.add(new Filter(LogicType.AND, MarketTableFormat.ORDER_TYPE, CompareType.EQUALS, TabsOrders.get().sell()));
 		filter.add(new Filter(LogicType.AND, MarketTableFormat.STATUS, CompareType.EQUALS, TabsOrders.get().statusActive()));
 		defaultFilters.put(TabsOrders.get().activeSellOrders(), filter);
-		filterControl = new MarketOrdersFilterControl(
-				tableFormat,
-				program.getMainWindow().getFrame(),
-				eventList,
-				sortedList,
-				filterList,
-				Settings.get().getTableFilters(NAME),
-				defaultFilters
-		);
-		installFilterControl(filterControl, NAME);
+		filterControl = new MarketOrdersFilterControl(sortedList, defaultFilters);
+		installFilterControl(filterControl);
 		//Menu
-		installMenu(program, new OrdersTableMenu(), jTable, MyMarketOrder.class);
+		installMenu(new OrdersTableMenu(), new ColumnManager<>(program, NAME, tableFormat, tableModel, jTable, filterControl), MyMarketOrder.class);
 
 		jSellOrdersTotal = StatusPanel.createLabel(TabsOrders.get().totalSellOrders(), Images.ORDERS_SELL.getIcon());
 		this.addStatusbarLabel(jSellOrdersTotal);
@@ -377,6 +371,16 @@ public class MarketOrdersTab extends JMainTabPrimary {
 	@Override
 	public void updateCache() {
 		filterControl.createCache();
+	}
+
+	@Override
+	public Collection<LocationType> getLocations() {
+		try {
+			eventList.getReadWriteLock().readLock().lock();
+			return new ArrayList<>(eventList);
+		} finally {
+			eventList.getReadWriteLock().readLock().unlock();
+		}
 	}
 
 	private void schedule() {
@@ -709,17 +713,20 @@ public class MarketOrdersTab extends JMainTabPrimary {
 
 	private class MarketOrdersFilterControl extends FilterControl<MyMarketOrder> {
 
-		private final EnumTableFormatAdaptor<MarketTableFormat, MyMarketOrder> tableFormat;
-
-		public MarketOrdersFilterControl(EnumTableFormatAdaptor<MarketTableFormat, MyMarketOrder> tableFormat, JFrame jFrame, EventList<MyMarketOrder> eventList, EventList<MyMarketOrder> exportEventList, FilterList<MyMarketOrder> filterList, Map<String, List<Filter>> filters, Map<String, List<Filter>> defaultFilters) {
-			super(jFrame, NAME, eventList, exportEventList, filterList, filters, defaultFilters);
-			this.tableFormat = tableFormat;
+		public MarketOrdersFilterControl(EventList<MyMarketOrder> exportEventList, Map<String, List<Filter>> defaultFilters) {
+			super(program.getMainWindow().getFrame(),
+					NAME,
+					eventList,
+					exportEventList,
+					filterList,
+					Settings.get().getTableFilters(NAME),
+					defaultFilters
+					);
 		}
 
 		@Override
-		protected Object getColumnValue(final MyMarketOrder item, final String column) {
-			MarketTableFormat format = MarketTableFormat.valueOf(column);
-			return format.getColumnValue(item);
+		protected Object getColumnValue(final MyMarketOrder marketOrder, final String column) {
+			return tableFormat.getColumnValue(marketOrder, column);
 		}
 
 		@Override
@@ -729,7 +736,7 @@ public class MarketOrdersTab extends JMainTabPrimary {
 
 		@Override
 		protected List<EnumTableColumn<MyMarketOrder>> getColumns() {
-			return columnsAsList(MarketTableFormat.values());
+			return new ArrayList<>(tableFormat.getOrderColumns());
 		}
 
 		@Override

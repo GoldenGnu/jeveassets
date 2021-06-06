@@ -23,10 +23,8 @@ package net.nikr.eve.jeveasset.data.api.my;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import net.nikr.eve.jeveasset.data.api.accounts.OwnerType;
@@ -45,7 +43,6 @@ import net.nikr.eve.jeveasset.data.settings.types.ContractPriceType;
 import net.nikr.eve.jeveasset.data.settings.types.EditableLocationType;
 import net.nikr.eve.jeveasset.data.settings.types.EditablePriceType;
 import net.nikr.eve.jeveasset.data.settings.types.ItemType;
-import net.nikr.eve.jeveasset.data.settings.types.JumpType;
 import net.nikr.eve.jeveasset.data.settings.types.OwnersType;
 import net.nikr.eve.jeveasset.data.settings.types.TagsType;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
@@ -55,7 +52,7 @@ import net.nikr.eve.jeveasset.i18n.DataModelAsset;
 import net.nikr.eve.jeveasset.i18n.General;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 
-public class MyAsset extends RawAsset implements Comparable<MyAsset>, InfoItem, JumpType, ItemType, BlueprintType, EditablePriceType, ContractPriceType, TagsType, EditableLocationType, OwnersType {
+public class MyAsset extends RawAsset implements Comparable<MyAsset>, InfoItem, ItemType, BlueprintType, EditablePriceType, ContractPriceType, TagsType, EditableLocationType, OwnersType {
 
 //Static values (set by constructor)
 	private final List<MyAsset> assets = new ArrayList<>();
@@ -90,7 +87,6 @@ public class MyAsset extends RawAsset implements Comparable<MyAsset>, InfoItem, 
 	private boolean userNameSet = false;
 	private boolean eveNameSet = false;
 	private boolean userPriceSet = false;
-	private final Map<Long, Integer> jumpsList = new HashMap<>();
 
 	protected MyAsset(MyAsset asset) {
 		this(asset.rawAsset,
@@ -263,21 +259,6 @@ public class MyAsset extends RawAsset implements Comparable<MyAsset>, InfoItem, 
 	@Override
 	public void setLocation(MyLocation location) {
 		this.location = location;
-	}
-
-	@Override
-	public void addJump(Long systemID, int jumps) {
-		jumpsList.put(systemID, jumps);
-	}
-
-	@Override
-	public Integer getJumps(Long systemID) {
-		return jumpsList.get(systemID);
-	}
-
-	@Override
-	public void clearJumps() {
-		jumpsList.clear();
 	}
 
 	public MarketPriceData getMarketPriceData() {

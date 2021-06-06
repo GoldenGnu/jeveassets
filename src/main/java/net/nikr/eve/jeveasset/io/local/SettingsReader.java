@@ -77,6 +77,10 @@ import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter.AllColumn;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter.CompareType;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter.LogicType;
+import net.nikr.eve.jeveasset.gui.shared.menu.JFormulaDialog.Formula;
+import net.nikr.eve.jeveasset.gui.shared.menu.JMenuJumps.Jump;
+import net.nikr.eve.jeveasset.gui.shared.table.ColumnManager.FormulaColumn;
+import net.nikr.eve.jeveasset.gui.shared.table.ColumnManager.JumpColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.ResizeMode;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.SimpleColumn;
@@ -445,6 +449,18 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		//Flags
 		Element flagsElement = getNode(element, "flags");
 		parseFlags(flagsElement, settings);
+
+		//Table Formulas (Must be loaded before filters)
+		Element tableFormulasElement = getNodeOptional(element, "tableformulas");
+		if (tableFormulasElement != null) {
+			parseTableFormulas(tableFormulasElement, settings);
+		}
+
+		//Table Jumps (Must be loaded before filters)
+		Element tableJumpsElement = getNodeOptional(element, "tablejumps");
+		if (tableJumpsElement != null) {
+			parseTableJumps(tableJumpsElement, settings);
+		}
 
 		//Table Filters (Must be loaded before Asset Filters)
 		Element tablefiltersElement = getNodeOptional(element, "tablefilters");
@@ -1380,6 +1396,42 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		}
 	}
 
+
+	private void parseTableFormulas(final Element element, final Settings settings) throws XmlException {
+		NodeList formulasNodeList = element.getElementsByTagName("formulas");
+		for (int a = 0; a < formulasNodeList.getLength(); a++) {
+			Element formulasNode = (Element) formulasNodeList.item(a);
+			String toolName = getString(formulasNode, "tool");
+			List<Formula> tableFormulas = settings.getTableFormulas(toolName);
+			NodeList formulaNodeList = formulasNode.getElementsByTagName("formula");
+			for (int b = 0; b < formulaNodeList.getLength(); b++) {
+				Element formulaNode = (Element) formulaNodeList.item(b);
+				String name = getString(formulaNode, "name");
+				String expression = getString(formulaNode, "expression");
+				Integer index = getIntOptional(formulaNode, "index");
+				tableFormulas.add(new Formula(name, expression, index));
+			}
+		}
+	}
+
+	private void parseTableJumps(final Element element, final Settings settings) throws XmlException {
+		NodeList jumpsNodeList = element.getElementsByTagName("jumps");
+		for (int a = 0; a < jumpsNodeList.getLength(); a++) {
+			Element jumpsNode = (Element) jumpsNodeList.item(a);
+			String toolName = getString(jumpsNode, "tool");
+			List<Jump> tableJumps = settings.getTableJumps(toolName);
+			NodeList jumpNodeList = jumpsNode.getElementsByTagName("jump");
+			for (int b = 0; b < jumpNodeList.getLength(); b++) {
+				Element jumpNode = (Element) jumpNodeList.item(b);
+				long systemID = getLong(jumpNode, "systemid");
+				Integer index = getIntOptional(jumpNode, "index");
+				MyLocation from = ApiIdConverter.getLocation(systemID);
+				tableJumps.add(new Jump(from, index));
+			}
+		}
+	}
+
+
 	/***
 	 * Parse the table filters elements of the settings file.
 	 *
@@ -1397,7 +1449,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 			for (int b = 0; b < filterNodeList.getLength(); b++) {
 				Element filterNode = (Element) filterNodeList.item(b);
 				String filterName = getString(filterNode, "name");
-				List<Filter> filter = parseFilters(filterNode, tableName);
+				List<Filter> filter = parseFilters(filterNode, tableName, settings);
 				if (!filter.isEmpty()) {
 					filters.put(filterName, filter);
 				} else {
@@ -1432,7 +1484,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 					settings.getCurrentTableFiltersShown().put(tableName, true);
 				}
 
-				filters = parseFilters(filterNode, tableName);
+				filters = parseFilters(filterNode, tableName, settings);
 			} else {
 				LOG.warn(tableName + " current filter not found");
 			}
@@ -1452,7 +1504,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 	 * @return A list of filters if the element had one. If not an empty list is returned.
 	 * @throws XmlException
 	 */
-	private List<Filter> parseFilters(Element filterNode, String tableName) throws XmlException {
+	private List<Filter> parseFilters(Element filterNode, String tableName, Settings settings) throws XmlException {
 		List<Filter> filter = new ArrayList<>();
 		NodeList rowNodes = filterNode.getElementsByTagName("row");
 		for (int c = 0; c < rowNodes.getLength(); c++) {
@@ -1467,7 +1519,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 			}
 			String text = getString(rowNode, "text");
 			String columnString = getString(rowNode, "column");
-			EnumTableColumn<?> column = getColumn(columnString, tableName);
+			EnumTableColumn<?> column = getColumn(columnString, tableName, settings);
 			if (column != null) {
 				String compare = getString(rowNode, "compare");
 				String logic = getString(rowNode, "logic");
@@ -1479,7 +1531,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		return filter;
 	}
 
-	public static EnumTableColumn<?> getColumn(final String column, final String tableName) {
+	public static EnumTableColumn<?> getColumn(final String column, final String tableName, Settings settings) {
 		//Stockpile
 		try {
 			if (tableName.equals(StockpileTab.NAME)) {
@@ -1583,6 +1635,18 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 			}
 		} catch (IllegalArgumentException exception) {
 
+		}
+		if (settings != null) {
+			for (Formula formula : settings.getTableFormulas(tableName)) {
+				if (formula.getColumnName().equals(column)) {
+					return new FormulaColumn<>(formula);
+				}
+			}
+			for (Jump jump : settings.getTableJumps(tableName)) {
+				if (jump.getName().equals(column)) {
+					return new JumpColumn<>(jump);
+				}
+			}
 		}
 		//All
 		if (column.equals("ALL") || column.equals("all")) {

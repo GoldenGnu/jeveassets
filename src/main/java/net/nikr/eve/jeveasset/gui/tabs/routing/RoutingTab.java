@@ -35,6 +35,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -211,6 +212,8 @@ public class RoutingTab extends JMainTabSecondary {
 	private List<Long> lastAvoid = new ArrayList<>();
 	private boolean uiEnabled = true;
 	private RouteResult routeResult = null;
+
+	public static final String NAME = "routing"; //Not to be changed!
 	/**
 	 *
 	 * @param load does nothing except change the signature.
@@ -220,7 +223,7 @@ public class RoutingTab extends JMainTabSecondary {
 	}
 
 	public RoutingTab(final Program program) {
-		super(program, TabsRouting.get().routingTitle(), Images.TOOL_ROUTING.getIcon(), true);
+		super(program, NAME, TabsRouting.get().routingTitle(), Images.TOOL_ROUTING.getIcon(), true);
 
 		listener = new ListenerClass();
 
@@ -742,6 +745,11 @@ public class RoutingTab extends JMainTabSecondary {
 
 	@Override
 	public void updateCache() {}
+
+	@Override
+	public Collection<net.nikr.eve.jeveasset.data.settings.types.LocationType> getLocations() {
+		return new ArrayList<>(); //No Location
+	}
 
 	public void updateRoutes() {
 		for (ResultToolbar resultToolbar : resultToolbars) {

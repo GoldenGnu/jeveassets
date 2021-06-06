@@ -27,7 +27,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder.MarketOrderRange;
-import net.nikr.eve.jeveasset.data.sde.MyLocation;
 import net.nikr.eve.jeveasset.data.settings.ColorSettings;
 import net.nikr.eve.jeveasset.data.settings.ContractPriceManager;
 import net.nikr.eve.jeveasset.data.settings.CopySettings;
@@ -45,6 +44,8 @@ import net.nikr.eve.jeveasset.data.settings.tag.Tag;
 import net.nikr.eve.jeveasset.data.settings.tag.TagID;
 import net.nikr.eve.jeveasset.data.settings.tag.Tags;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
+import net.nikr.eve.jeveasset.gui.shared.menu.JFormulaDialog;
+import net.nikr.eve.jeveasset.gui.shared.menu.JMenuJumps;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.ResizeMode;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.SimpleColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.View;
@@ -471,26 +472,6 @@ public abstract class FakeSettings extends Settings {
 	}
 
 	@Override
-	public void clearJumpLocations(Class<?> clazz) {
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	@Override
-	public void removeJumpLocation(Class<?> clazz, MyLocation location) {
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	@Override
-	public void addJumpLocation(Class<?> clazz, MyLocation location) {
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	@Override
-	public List<MyLocation> getJumpLocations(Class<?> clazz) {
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	@Override
 	public void setProxyData(ProxyData proxyData) {
 		throw new UnsupportedOperationException("not implemented");
 	}
@@ -652,6 +633,26 @@ public abstract class FakeSettings extends Settings {
 
 	@Override
 	public TrackerSettings getTrackerSettings() {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public List<JFormulaDialog.Formula> getTableFormulas(String name) {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public Map<String, List<JFormulaDialog.Formula>> getTableFormulas() {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public List<JMenuJumps.Jump> getTableJumps(String toolName) {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public Map<String, List<JMenuJumps.Jump>> getTableJumps() {
 		throw new UnsupportedOperationException("not implemented");
 	}
 }

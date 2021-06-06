@@ -26,6 +26,7 @@ import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -40,6 +41,7 @@ import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.api.accounts.OwnerType;
 import net.nikr.eve.jeveasset.data.settings.Colors;
 import net.nikr.eve.jeveasset.data.settings.Settings;
+import net.nikr.eve.jeveasset.data.settings.types.LocationType;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.CaseInsensitiveComparator;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
@@ -70,8 +72,10 @@ public class ValueRetroTab extends JMainTabSecondary {
 	private String gridHexColor;
 	private String valueHexColor;
 
+	public static final String NAME = "valueretro"; //Not to be changed!
+
 	public ValueRetroTab(final Program program) {
-		super(program, TabsValues.get().oldTitle(), Images.TOOL_VALUES.getIcon(), true);
+		super(program, NAME, TabsValues.get().oldTitle(), Images.TOOL_VALUES.getIcon(), true);
 
 		ListenerClass listener = new ListenerClass();
 
@@ -204,6 +208,11 @@ public class ValueRetroTab extends JMainTabSecondary {
 
 	@Override
 	public void updateCache() {}
+
+	@Override
+	public Collection<LocationType> getLocations() {
+		return new ArrayList<>(); //No Location
+	}
 
 	private boolean calcTotal() {
 		Date date = Settings.getNow();

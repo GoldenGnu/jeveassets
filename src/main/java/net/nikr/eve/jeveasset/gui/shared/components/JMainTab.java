@@ -25,6 +25,7 @@ import ca.odell.glazedlists.gui.TableFormat;
 import ca.odell.glazedlists.swing.DefaultEventSelectionModel;
 import ca.odell.glazedlists.swing.DefaultEventTableModel;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import javax.swing.GroupLayout;
@@ -34,15 +35,17 @@ import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
-import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.table.TableModel;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.settings.Settings;
+import net.nikr.eve.jeveasset.data.settings.types.LocationType;
 import net.nikr.eve.jeveasset.data.settings.SettingsUpdateListener;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.TableMenu;
+import net.nikr.eve.jeveasset.gui.shared.table.ColumnManager;
+import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.JAutoColumnTable;
 import net.nikr.eve.jeveasset.gui.shared.table.JSeparatorTable;
@@ -53,7 +56,7 @@ public abstract class JMainTab {
 	private String title;
 	private Icon icon;
 	private boolean closeable;
-	private final List<JLabel> statusbarLabels = new ArrayList<JLabel>();
+	private final List<JLabel> statusbarLabels = new ArrayList<>();
 	protected Program program;
 	protected JPanel jPanel;
 	protected GroupLayout layout;
@@ -67,13 +70,14 @@ public abstract class JMainTab {
 	private Class<?> clazz;
 	protected JMainTab(final boolean load) { }
 
-	public JMainTab(final Program program, final String title, final Icon icon, final boolean closeable) {
+	public JMainTab(final Program program, final String toolName, final String title, final Icon icon, final boolean closeable) {
 		this.program = program;
+		this.toolName = toolName;
 		this.title = title;
 		this.icon = icon;
 		this.closeable = closeable;
 
-		program.addMainTab(this);
+		program.addMainTab(toolName, this);
 
 		jPanel = new JPanel();
 
@@ -83,9 +87,9 @@ public abstract class JMainTab {
 		layout.setAutoCreateContainerGaps(true);
 	}
 
-	public final <T> void installMenu(final Program program, final TableMenu<T> tableMenu, final JTable jTable, final Class<T> clazz) {
+	public final <T extends Enum<T> & EnumTableColumn<Q>, Q> void installMenu(final TableMenu<Q> tableMenu, ColumnManager<T, Q> columnManager, final Class<Q> clazz) {
 		this.clazz = clazz;
-		MenuManager.install(program, tableMenu, jTable, clazz);
+		MenuManager.install(program, tableMenu, jTable, columnManager, clazz);
 	}
 
 	/**
@@ -93,10 +97,9 @@ public abstract class JMainTab {
 	 * filters found in settings are set. Listeners are added to enable update of settings on filter changes.
 	 *
 	 * @param filterControl The filter controller to be installed.
-	 * @param toolName The name of the tool the filter control is being installed for.
 	 * @param <T> The type of the parameter.
 	 */
-	protected final <T> void installFilterControl(final FilterControl<T> filterControl, String toolName) {
+	protected final <T> void installFilterControl(final FilterControl<T> filterControl) {
 		if(filterControl != null && toolName != null && !toolName.isEmpty()) {
 			filterControl.clearCurrentFilters();
 			filterControl.addFilters(Settings.get().getCurrentTableFilters(toolName));
@@ -144,7 +147,7 @@ public abstract class JMainTab {
 
 	public final void beforeUpdateData() {
 		if (eventSelectionModel != null) {
-			selected = new ArrayList<Object>(eventSelectionModel.getSelected());
+			selected = new ArrayList<>(eventSelectionModel.getSelected());
 		}
 		if (jTable != null) {
 			selectedColumns = jTable.getColumnModel().getSelectedColumns();
@@ -156,9 +159,11 @@ public abstract class JMainTab {
 			JSeparatorTable jSeparatorTable = (JSeparatorTable) jTable;
 			jSeparatorTable.saveExpandedState();
 		}
+		MenuManager.updateFormula(clazz);
 	}
 
 	public final void afterUpdateData() {
+		MenuManager.updateJumps(clazz);
 		if (eventSelectionModel != null && eventTableModel != null && selected != null) {
 			eventSelectionModel.setValueIsAdjusting(true);
 			for (int i = 0; i < eventTableModel.getRowCount(); i++) {
@@ -190,6 +195,7 @@ public abstract class JMainTab {
 	public abstract void updateData();
 	public abstract void updateCache();
 	public abstract void clearData();
+	public abstract Collection<LocationType> getLocations();
 
 	public Icon getIcon() {
 		return icon;
@@ -230,11 +236,8 @@ public abstract class JMainTab {
 	 * 4. Lock/unlock table doing update
 	 * 
 	 * @param jTable
-	 * @param toolName unique tool name
 	 */
-	protected final void installTable(final JAutoColumnTable jTable, String toolName) {
-		this.toolName = toolName;
-
+	protected final void installTable(final JAutoColumnTable jTable) {
 		//Table Selection
 		ListSelectionModel selectionModel = jTable.getSelectionModel();
 		if (selectionModel instanceof  DefaultEventSelectionModel) {

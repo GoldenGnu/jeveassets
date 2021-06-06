@@ -21,7 +21,6 @@
 
 package net.nikr.eve.jeveasset.data.settings;
 
-import net.nikr.eve.jeveasset.data.sde.MyLocation;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.text.DateFormat;
@@ -41,6 +40,8 @@ import net.nikr.eve.jeveasset.data.settings.tag.TagID;
 import net.nikr.eve.jeveasset.data.settings.tag.Tags;
 import net.nikr.eve.jeveasset.gui.shared.CaseInsensitiveComparator;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
+import net.nikr.eve.jeveasset.gui.shared.menu.JFormulaDialog.Formula;
+import net.nikr.eve.jeveasset.gui.shared.menu.JMenuJumps.Jump;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.ResizeMode;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.SimpleColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.View;
@@ -225,12 +226,15 @@ public class Settings {
 	//									 ViewManager.delete() - Delete
 	//Lock OK
 	private final Map<String, Map<String, View>> tableViews = new HashMap<>();
+	//Formula Columns
+	private final Map<String, List<Formula>> tableFormulas = new HashMap<>();
+	//Jump Columns
+	private final Map<String, List<Jump>> tableJumps = new HashMap<>();
 //Tags						Saved by JMenuTags.addTag()/removeTag() + SettingsDialog.save()
 	//Lock OK
 	private final Map<String, Tag> tags = new HashMap<>();
 	private final Map<TagID, Tags> tagIds = new HashMap<>();
-//Jumps
-	private final Map<Class<?>, List<MyLocation>> jumpLocations = new HashMap<>();
+
 //Tools
 	private final List<String> showTools = new ArrayList<>();
 //Colors
@@ -410,23 +414,17 @@ public class Settings {
 		return routingSettings;
 	}
 
-	public List<MyLocation> getJumpLocations(Class<?> clazz) {
-		List<MyLocation> locations = jumpLocations.get(clazz);
-		if (locations == null) {
-			locations = new ArrayList<>();
-			jumpLocations.put(clazz, locations);
-		}
-		return locations;
+	public Map<String, List<Jump>> getTableJumps() {
+		return tableJumps;
 	}
 
-	public void addJumpLocation(Class<?> clazz, MyLocation location) {
-		getJumpLocations(clazz).add(location);
-	}
-	public void removeJumpLocation(Class<?> clazz, MyLocation location) {
-		getJumpLocations(clazz).remove(location);
-	}
-	public void clearJumpLocations(Class<?> clazz) {
-		getJumpLocations(clazz).clear();
+	public List<Jump> getTableJumps(String toolName) {
+		List<Jump> jumps = tableJumps.get(toolName);
+		if (jumps == null) {
+			jumps = new ArrayList<>();
+			tableJumps.put(toolName, jumps);
+		}
+		return jumps;
 	}
 
 	public ProxyData getProxyData() {
@@ -517,6 +515,19 @@ public class Settings {
 			tableViews.put(name, views);
 		}
 		return views;
+	}
+
+	public Map<String, List<Formula>> getTableFormulas() {
+		return tableFormulas;
+	}
+
+	public List<Formula> getTableFormulas(String name) {
+		List<Formula> formula = tableFormulas.get(name);
+		if (formula == null) {
+			formula = new ArrayList<>();
+			tableFormulas.put(name, formula);
+		}
+		return formula;
 	}
 
 	public Map<String, Tag> getTags() {

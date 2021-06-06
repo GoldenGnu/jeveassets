@@ -31,24 +31,24 @@ import ca.odell.glazedlists.swing.TableComparatorChooser;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JComponent;
-import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JScrollPane;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.settings.LogManager;
 import net.nikr.eve.jeveasset.data.settings.Settings;
+import net.nikr.eve.jeveasset.data.settings.types.LocationType;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.JFixedToolBar;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTabSecondary;
-import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuData;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager;
+import net.nikr.eve.jeveasset.gui.shared.table.ColumnManager;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.EventListManager;
@@ -78,7 +78,7 @@ public class LogTab extends JMainTabSecondary {
 	public static final String NAME = "log"; //Not to be changed!
 
 	public LogTab(final Program program) {
-		super(program, TabsLog.get().toolTitle(), Images.TOOL_LOG.getIcon(), true);
+		super(program, NAME, TabsLog.get().toolTitle(), Images.TOOL_LOG.getIcon(), true);
 
 		layout.setAutoCreateGaps(true);
 
@@ -119,18 +119,12 @@ public class LogTab extends JMainTabSecondary {
 		jTable.setSelectionModel(selectionModel);
 		
 		//Listeners
-		installTable(jTable, NAME);
+		installTable(jTable);
 		//Scroll
 		JScrollPane jTableScroll = new JScrollPane(jTable);
 		//Table Filter
-		filterControl = new LogFilterControl(
-				program.getMainWindow().getFrame(),
-				eventList,
-				sortedList,
-				filterList,
-				Settings.get().getTableFilters(NAME)
-				);
-		installFilterControl(filterControl, NAME);
+		filterControl = new LogFilterControl(sortedList);
+		installFilterControl(filterControl);
 
 		JFixedToolBar jToolBar = new JFixedToolBar();
 
@@ -145,7 +139,7 @@ public class LogTab extends JMainTabSecondary {
 		jToolBar.addButton(jExpand);
 
 		//Menu
-		installMenu(program, new LogTableMenu(), jTable, AssetLogSource.class);
+		installMenu(new LogTableMenu(), new ColumnManager<>(program, NAME, tableFormat, tableModel, jTable, filterControl), AssetLogSource.class);
 
 		layout.setHorizontalGroup(
 			layout.createParallelGroup()
@@ -159,6 +153,17 @@ public class LogTab extends JMainTabSecondary {
 				.addComponent(jToolBar, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
 				.addComponent(jTableScroll, 0, 0, Short.MAX_VALUE)
 		);
+	}
+
+	@Override
+	public void updateData() {
+		try {
+			eventList.getReadWriteLock().writeLock().lock();
+			eventList.clear();
+			eventList.addAll(LogManager.getList());
+		} finally {
+			eventList.getReadWriteLock().writeLock().unlock();
+		}
 	}
 
 	@Override
@@ -177,14 +182,8 @@ public class LogTab extends JMainTabSecondary {
 	}
 
 	@Override
-	public void updateData() {
-		try {
-			eventList.getReadWriteLock().writeLock().lock();
-			eventList.clear();
-			eventList.addAll(LogManager.getList());
-		} finally {
-			eventList.getReadWriteLock().writeLock().unlock();
-		}
+	public Collection<LocationType> getLocations() {
+		return new ArrayList<>(); //No Location
 	}
 
 	private class ListenerClass implements ActionListener {
@@ -224,8 +223,14 @@ public class LogTab extends JMainTabSecondary {
 
 	private class LogFilterControl extends FilterControl<AssetLogSource> {
 
-		public LogFilterControl(JFrame jFrame, EventList<AssetLogSource> eventList, EventList<AssetLogSource> exportEventList, FilterList<AssetLogSource> filterList, Map<String, List<Filter>> filters) {
-			super(jFrame, NAME, eventList, exportEventList, filterList, filters);
+		public LogFilterControl(EventList<AssetLogSource> exportEventList) {
+			super(program.getMainWindow().getFrame(),
+					NAME,
+					eventList,
+					exportEventList,
+					filterList,
+					Settings.get().getTableFilters(NAME)
+					);
 		}
 
 		@Override

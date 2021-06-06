@@ -117,11 +117,6 @@ public abstract class FakeProgram extends Program {
 	}
 
 	@Override
-	public void addMainTab(final JMainTab jMainTab) {
-		throw new UnsupportedOperationException("Not implemented");
-	}
-
-	@Override
 	public StockpileTab getStockpileTool() {
 		throw new UnsupportedOperationException("Not implemented");
 	}
@@ -287,11 +282,6 @@ public abstract class FakeProgram extends Program {
 	}
 
 	@Override
-	public List<JMainTab> getMainTabs() {
-		throw new UnsupportedOperationException("Not implemented");
-	}
-
-	@Override
 	public TransactionTab getTransactionsTab() {
 		throw new UnsupportedOperationException("Not implemented");
 	}
@@ -303,6 +293,16 @@ public abstract class FakeProgram extends Program {
 
 	@Override
 	public TrackerTab getTrackerTab() {
+		throw new UnsupportedOperationException("Not implemented");
+	}
+
+	@Override
+	public Map<String, JMainTab> getMainTabs() {
+		throw new UnsupportedOperationException("Not implemented");
+	}
+
+	@Override
+	public void addMainTab(String toolName, JMainTab jMainTab) {
 		throw new UnsupportedOperationException("Not implemented");
 	}
 }
