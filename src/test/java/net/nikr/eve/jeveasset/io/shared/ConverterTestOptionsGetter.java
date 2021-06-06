@@ -720,6 +720,7 @@ public class ConverterTestOptionsGetter {
 		public CorporationContainersLogsResponse.PasswordTypeEnum getContainerPasswordTypeEsi() {
 			return get(ESI_CONTAINER_PASSWORD_TYPE, index);
 		}
+
 //Owner
 		@Override
 		public EsiCallbackURL getEsiCallbackURL() {

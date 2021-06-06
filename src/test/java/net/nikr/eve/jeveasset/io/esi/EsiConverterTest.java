@@ -488,7 +488,7 @@ public class EsiConverterTest extends TestUtil {
 			ConverterTestUtil.testValues(transactions.iterator().next(), options, esi);
 		}
 	}
-	
+
 	@Test
 	public void testToAssetsShip() {
 		testToAssetsShip(null, null);

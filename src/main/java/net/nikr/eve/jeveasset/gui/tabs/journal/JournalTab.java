@@ -38,7 +38,7 @@ import net.nikr.eve.jeveasset.data.settings.types.LocationType;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTabPrimary;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
-import net.nikr.eve.jeveasset.gui.shared.menu.*;
+import net.nikr.eve.jeveasset.gui.shared.menu.MenuData;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.TableMenu;
 import net.nikr.eve.jeveasset.gui.shared.table.ColumnManager;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
@@ -57,8 +57,8 @@ public class JournalTab extends JMainTabPrimary {
 	private final JournalFilterControl filterControl;
 	private final EnumTableFormatAdaptor<JournalTableFormat, MyJournal> tableFormat;
 	private final DefaultEventTableModel<MyJournal> tableModel;
-	private final FilterList<MyJournal> filterList;
 	private final EventList<MyJournal> eventList;
+	private final FilterList<MyJournal> filterList;
 	private final DefaultEventSelectionModel<MyJournal> selectionModel;
 
 	public static final String NAME = "journal"; //Not to be changed!

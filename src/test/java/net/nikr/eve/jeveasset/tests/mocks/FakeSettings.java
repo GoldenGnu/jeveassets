@@ -59,8 +59,6 @@ import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile;
  */
 public abstract class FakeSettings extends Settings {
 
-	public FakeSettings() { }
-
 	@Override
 	public Map<SettingFlag, Boolean> getFlags() {
 		throw new UnsupportedOperationException("not implemented");

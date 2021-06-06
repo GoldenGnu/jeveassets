@@ -33,6 +33,7 @@ import net.nikr.eve.jeveasset.TestUtil;
 import net.nikr.eve.jeveasset.data.profile.ProfileManager;
 import net.nikr.eve.jeveasset.io.shared.FileUtil;
 import org.junit.AfterClass;
+import static org.junit.Assert.assertFalse;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -147,7 +148,7 @@ public class FileLockTest extends TestUtil {
 		assertTrue("LockTest: Backup - Create settings failed", created);
 		System.out.println("\"Premature end of file\": Is an expected error:");
 		SettingsReader.load(settings, settings.getPathSettings());
-		assertTrue("LockTest: Backup - Load settings failed", !settings.isSettingsLoadError());
+		assertFalse("LockTest: Backup - Load settings failed", settings.isSettingsLoadError());
 	}
 
 	@Test
