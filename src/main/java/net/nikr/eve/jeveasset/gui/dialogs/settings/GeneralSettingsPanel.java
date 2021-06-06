@@ -173,7 +173,7 @@ public class GeneralSettingsPanel extends JSettingsPanel {
 		boolean update = jHighlightSelectedRow.isSelected() != Settings.get().isHighlightSelectedRows()
 						|| maximumPurchaseAge != Settings.get().getMaximumPurchaseAge()
 						|| transactionProfitPrice != Settings.get().getTransactionProfitPrice()
-						|| copyDecimalSeparator != 	Settings.get().getExportSettings().getCopyDecimalSeparator()
+						|| copyDecimalSeparator != 	Settings.get().getCopySettings().getCopyDecimalSeparator()
 						;
 		Settings.get().setFilterOnEnter(jEnterFilters.isSelected());
 		Settings.get().setHighlightSelectedRows(jHighlightSelectedRow.isSelected());
@@ -181,7 +181,7 @@ public class GeneralSettingsPanel extends JSettingsPanel {
 		Settings.get().setMaximumPurchaseAge(maximumPurchaseAge);
 		Settings.get().setTransactionProfitPrice(transactionProfitPrice);
 		Settings.get().setTransactionProfitMargin(transactionProfitMargin);
-		Settings.get().getExportSettings().setCopyDecimalSeparator(copyDecimalSeparator);
+		Settings.get().getCopySettings().setCopyDecimalSeparator(copyDecimalSeparator);
 		return update;
 	}
 
@@ -193,6 +193,6 @@ public class GeneralSettingsPanel extends JSettingsPanel {
 		jMaxOrderAge.setText(String.valueOf(Settings.get().getMaximumPurchaseAge()));
 		jTransactionProfitPrice.setSelectedItem(Settings.get().getTransactionProfitPrice());
 		jTransactionProfitMargin.setText(String.valueOf(Settings.get().getTransactionProfitMargin()));
-		jDecimalSeparator.setSelectedItem(Settings.get().getExportSettings().getCopyDecimalSeparator());
+		jDecimalSeparator.setSelectedItem(Settings.get().getCopySettings().getCopyDecimalSeparator());
 	}
 }
