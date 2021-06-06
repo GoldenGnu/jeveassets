@@ -140,14 +140,14 @@ public class FilterManager<E> extends JManageDialog {
 				builder.append("]");
 				if (column instanceof FormulaColumn) {
 					FormulaColumn<?> formulaColumn = (FormulaColumn) column;
-					builder.append("[");
+					builder.append(" [");
 					builder.append(FORMULA);
 					builder.append(wrap(formulaColumn.getFormula().getOriginalExpression()).replace(" ", ""));
 					builder.append("]");
 				}
 				if (column instanceof JumpColumn) {
 					JumpColumn<?> jumpColumn = (JumpColumn) column;
-					builder.append("[");
+					builder.append(" [");
 					builder.append(JUMP);
 					builder.append(jumpColumn.getJump().getSystemID());
 					builder.append("]");
@@ -226,7 +226,7 @@ public class FilterManager<E> extends JManageDialog {
 					filterList.add(filter);
 				}
 			}
-			if ((groups.size() == 5 || groups.size() == 6) && headerLoaded) {
+			if (groups.size() >= 5 && headerLoaded) {
 				//Group
 				Integer group = null;
 				try {
@@ -269,7 +269,7 @@ public class FilterManager<E> extends JManageDialog {
 				}
 				//Column
 				if (groups.size() == 7 && column == null) { //Only if the column doesn't already exist
-					String columnData = unwrap(groups.get(5));
+					String columnData = unwrap(groups.get(6));
 					if (columnData.startsWith(FORMULA)) {
 						String expresion = columnData.replaceFirst(FORMULA, "");
 						Formula formula = new Formula(columnName, expresion, null);

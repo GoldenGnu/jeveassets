@@ -1449,7 +1449,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 			for (int b = 0; b < filterNodeList.getLength(); b++) {
 				Element filterNode = (Element) filterNodeList.item(b);
 				String filterName = getString(filterNode, "name");
-				List<Filter> filter = parseFilters(filterNode, tableName);
+				List<Filter> filter = parseFilters(filterNode, tableName, settings);
 				if (!filter.isEmpty()) {
 					filters.put(filterName, filter);
 				} else {
@@ -1484,7 +1484,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 					settings.getCurrentTableFiltersShown().put(tableName, true);
 				}
 
-				filters = parseFilters(filterNode, tableName);
+				filters = parseFilters(filterNode, tableName, settings);
 			} else {
 				LOG.warn(tableName + " current filter not found");
 			}
@@ -1504,7 +1504,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 	 * @return A list of filters if the element had one. If not an empty list is returned.
 	 * @throws XmlException
 	 */
-	private List<Filter> parseFilters(Element filterNode, String tableName) throws XmlException {
+	private List<Filter> parseFilters(Element filterNode, String tableName, Settings settings) throws XmlException {
 		List<Filter> filter = new ArrayList<>();
 		NodeList rowNodes = filterNode.getElementsByTagName("row");
 		for (int c = 0; c < rowNodes.getLength(); c++) {
@@ -1519,7 +1519,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 			}
 			String text = getString(rowNode, "text");
 			String columnString = getString(rowNode, "column");
-			EnumTableColumn<?> column = getColumn(columnString, tableName);
+			EnumTableColumn<?> column = getColumn(columnString, tableName, settings);
 			if (column != null) {
 				String compare = getString(rowNode, "compare");
 				String logic = getString(rowNode, "logic");
@@ -1531,7 +1531,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		return filter;
 	}
 
-	public static EnumTableColumn<?> getColumn(final String column, final String tableName) {
+	public static EnumTableColumn<?> getColumn(final String column, final String tableName, Settings settings) {
 		//Stockpile
 		try {
 			if (tableName.equals(StockpileTab.NAME)) {
