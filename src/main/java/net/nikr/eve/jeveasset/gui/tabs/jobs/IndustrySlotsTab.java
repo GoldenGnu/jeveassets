@@ -29,26 +29,25 @@ import ca.odell.glazedlists.swing.DefaultEventSelectionModel;
 import ca.odell.glazedlists.swing.DefaultEventTableModel;
 import ca.odell.glazedlists.swing.TableComparatorChooser;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.swing.JComponent;
-import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JScrollPane;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.api.accounts.OwnerType;
 import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob;
-import net.nikr.eve.jeveasset.data.sde.MyLocation;
 import net.nikr.eve.jeveasset.data.settings.Settings;
+import net.nikr.eve.jeveasset.data.settings.types.LocationType;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTabSecondary;
-import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
-import net.nikr.eve.jeveasset.gui.shared.menu.JMenuJumps;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuData;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.TableMenu;
+import net.nikr.eve.jeveasset.gui.shared.table.ColumnManager;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.EventListManager;
@@ -74,7 +73,7 @@ public class IndustrySlotsTab extends JMainTabSecondary {
 	public static final String NAME = "industryslots"; //Not to be changed!
 
 	public IndustrySlotsTab(final Program program) {
-		super(program, TabsIndustrySlots.get().title(), Images.TOOL_INDUSTRY_SLOTS.getIcon(), true);
+		super(program, NAME, TabsIndustrySlots.get().title(), Images.TOOL_INDUSTRY_SLOTS.getIcon(), true);
 		//Table Format
 		tableFormat = new EnumTableFormatAdaptor<>(IndustrySlotTableFormat.class);
 		//Backend
@@ -106,21 +105,14 @@ public class IndustrySlotsTab extends JMainTabSecondary {
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
 		jTable.setSelectionModel(selectionModel);
 		//Listeners
-		installTable(jTable, NAME);
+		installTable(jTable);
 		//Scroll
 		JScrollPane jTableScroll = new JScrollPane(jTable);
 		//Table Filter
-		filterControl = new IndustrySlotFilterControl(
-				tableFormat,
-				program.getMainWindow().getFrame(),
-				eventList,
-				totalSortedList,
-				filterList,
-				Settings.get().getTableFilters(NAME)
-				);
-		installFilterControl(filterControl, NAME);
+		filterControl = new IndustrySlotFilterControl(totalSortedList);
+		installFilterControl(filterControl);
 		//Menu
-		installMenu(program, new IndustrySlotTableMenu(), jTable, IndustrySlot.class);
+		installMenu(new IndustrySlotTableMenu(), new ColumnManager<>(program, NAME, tableFormat, tableModel, jTable, filterControl), IndustrySlot.class);
 
 		layout.setHorizontalGroup(
 			layout.createParallelGroup()
@@ -184,14 +176,14 @@ public class IndustrySlotsTab extends JMainTabSecondary {
 		filterControl.createCache();
 	}
 
-	public void addColumn(MyLocation location) {
-		tableFormat.addColumn(new JMenuJumps.Column<>(location.getSystem(), location.getSystemID()));
-		filterControl.setColumns(tableFormat.getOrderColumns());
-	}
-
-	public void removeColumn(MyLocation location) {
-		tableFormat.removeColumn(new JMenuJumps.Column<>(location.getSystem(), location.getSystemID()));
-		filterControl.setColumns(tableFormat.getOrderColumns());
+	@Override
+	public Collection<LocationType> getLocations() {
+		try {
+			eventList.getReadWriteLock().readLock().lock();
+			return new ArrayList<>(eventList);
+		} finally {
+			eventList.getReadWriteLock().readLock().unlock();
+		}
 	}
 
 	public EventList<IndustrySlot> getEventList() {
@@ -223,8 +215,14 @@ public class IndustrySlotsTab extends JMainTabSecondary {
 
 	private class IndustrySlotFilterControl extends FilterControl<IndustrySlot> {
 
-		public IndustrySlotFilterControl(EnumTableFormatAdaptor<IndustrySlotTableFormat, IndustrySlot> tableFormat, JFrame jFrame, EventList<IndustrySlot> eventList, EventList<IndustrySlot> exportEventList, FilterList<IndustrySlot> filterList, Map<String, List<Filter>> filters) {
-			super(jFrame, NAME, eventList, exportEventList, filterList, filters);
+		public IndustrySlotFilterControl(EventList<IndustrySlot> exportEventList) {
+			super(program.getMainWindow().getFrame(),
+					NAME,
+					eventList,
+					exportEventList,
+					filterList,
+					Settings.get().getTableFilters(NAME)
+					);
 		}
 
 		@Override
@@ -239,7 +237,7 @@ public class IndustrySlotsTab extends JMainTabSecondary {
 
 		@Override
 		protected List<EnumTableColumn<IndustrySlot>> getColumns() {
-			return columnsAsList(IndustrySlotTableFormat.values());
+			return new ArrayList<>(tableFormat.getOrderColumns());
 		}
 
 		@Override

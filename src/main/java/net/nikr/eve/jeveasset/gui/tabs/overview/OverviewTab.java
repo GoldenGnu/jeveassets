@@ -31,6 +31,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -50,6 +51,7 @@ import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.api.my.MyAsset;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
 import net.nikr.eve.jeveasset.data.settings.Settings;
+import net.nikr.eve.jeveasset.data.settings.types.LocationType;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.CaseInsensitiveComparator;
@@ -66,6 +68,7 @@ import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo.InfoItem;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuData;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.TableMenu;
+import net.nikr.eve.jeveasset.gui.shared.table.ColumnManager;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.EventListManager;
@@ -127,7 +130,7 @@ public class OverviewTab extends JMainTabSecondary {
 	public static final String NAME = "overview"; //Not to be changed!
 
 	public OverviewTab(final Program program) {
-		super(program, TabsOverview.get().overview(), Images.TOOL_OVERVIEW.getIcon(), true);
+		super(program, NAME, TabsOverview.get().overview(), Images.TOOL_OVERVIEW.getIcon(), true);
 
 		JFixedToolBar jToolBarLeft = new JFixedToolBar();
 
@@ -230,11 +233,11 @@ public class OverviewTab extends JMainTabSecondary {
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
 		jTable.setSelectionModel(selectionModel);
 		//Listeners
-		installTable(jTable, NAME);
+		installTable(jTable);
 		//Scroll
 		JScrollPane jTableScroll = new JScrollPane(jTable);
 		//Menu
-		installMenu(program, new OverviewTableMenu(), jTable, Overview.class);
+		installMenu(new OverviewTableMenu(), new ColumnManager<>(program, NAME, tableFormat, tableModel, jTable), Overview.class);
 
 		List<EnumTableColumn<Overview>> enumColumns = new ArrayList<>();
 		enumColumns.addAll(Arrays.asList(OverviewTableFormat.values()));
@@ -298,6 +301,16 @@ public class OverviewTab extends JMainTabSecondary {
 
 	@Override
 	public void updateCache() { }
+
+	@Override
+	public Collection<LocationType> getLocations() {
+		try {
+			eventList.getReadWriteLock().readLock().lock();
+			return new ArrayList<>(eventList);
+		} finally {
+			eventList.getReadWriteLock().readLock().unlock();
+		}
+	}
 
 	public ActionListener getListenerClass() {
 		return listener;
@@ -496,7 +509,7 @@ public class OverviewTab extends JMainTabSecondary {
 	}
 
 	public void updateTable() {
-		//Only need to update when added to the main window
+		//Only need to updateFormula when added to the main window
 		if (!program.getMainWindow().getTabs().contains(this)) {
 			return;
 		}
@@ -544,10 +557,6 @@ public class OverviewTab extends JMainTabSecondary {
 			tableFormat.hideColumn(OverviewTableFormat.SECURITY);
 			tableModel.fireTableStructureChanged();
 		}
-		//Update Export Columns
-		List<EnumTableColumn<Overview>> enumColumns = new ArrayList<>();
-		enumColumns.addAll(tableFormat.getShownColumns());
-		exportDialog.setColumns(enumColumns);
 		try {
 			eventList.getReadWriteLock().writeLock().lock();
 			eventList.clear();

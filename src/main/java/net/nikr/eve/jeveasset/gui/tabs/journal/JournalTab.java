@@ -26,21 +26,21 @@ import ca.odell.glazedlists.swing.DefaultEventSelectionModel;
 import ca.odell.glazedlists.swing.DefaultEventTableModel;
 import ca.odell.glazedlists.swing.TableComparatorChooser;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import javax.swing.JComponent;
-import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JScrollPane;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.api.my.MyJournal;
 import net.nikr.eve.jeveasset.data.settings.Settings;
+import net.nikr.eve.jeveasset.data.settings.types.LocationType;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTabPrimary;
-import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
-import net.nikr.eve.jeveasset.gui.shared.menu.*;
+import net.nikr.eve.jeveasset.gui.shared.menu.MenuData;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.TableMenu;
+import net.nikr.eve.jeveasset.gui.shared.table.ColumnManager;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
@@ -57,25 +57,27 @@ public class JournalTab extends JMainTabPrimary {
 	private final JournalFilterControl filterControl;
 	private final EnumTableFormatAdaptor<JournalTableFormat, MyJournal> tableFormat;
 	private final DefaultEventTableModel<MyJournal> tableModel;
+	private final EventList<MyJournal> eventList;
+	private final FilterList<MyJournal> filterList;
 	private final DefaultEventSelectionModel<MyJournal> selectionModel;
 
 	public static final String NAME = "journal"; //Not to be changed!
 
 	public JournalTab(final Program program) {
-		super(program, TabsJournal.get().title(), Images.TOOL_JOURNAL.getIcon(), true);
+		super(program, NAME, TabsJournal.get().title(), Images.TOOL_JOURNAL.getIcon(), true);
 
 		//Table Format
-		tableFormat = new EnumTableFormatAdaptor<JournalTableFormat, MyJournal>(JournalTableFormat.class);
+		tableFormat = new EnumTableFormatAdaptor<>(JournalTableFormat.class);
 		//Backend
-		EventList<MyJournal> eventList = program.getProfileData().getJournalEventList();
+		eventList = program.getProfileData().getJournalEventList();
 		//Sorting (per column)
 		eventList.getReadWriteLock().readLock().lock();
-		SortedList<MyJournal> sortedList = new SortedList<MyJournal>(eventList);
+		SortedList<MyJournal> sortedList = new SortedList<>(eventList);
 		eventList.getReadWriteLock().readLock().unlock();
 
 		//Filter
 		eventList.getReadWriteLock().readLock().lock();
-		FilterList<MyJournal> filterList = new FilterList<MyJournal>(sortedList);
+		filterList = new FilterList<>(sortedList);
 		eventList.getReadWriteLock().readLock().unlock();
 		//Table Model
 		tableModel = EventModels.createTableModel(filterList, tableFormat);
@@ -90,21 +92,14 @@ public class JournalTab extends JMainTabPrimary {
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
 		jTable.setSelectionModel(selectionModel);
 		//Listeners
-		installTable(jTable, NAME);
+		installTable(jTable);
 		//Scroll Panels
 		JScrollPane jTableScroll = new JScrollPane(jTable);
 		//Table Filter
-		filterControl = new JournalFilterControl(
-				tableFormat,
-				program.getMainWindow().getFrame(),
-				eventList,
-				sortedList,
-				filterList,
-				Settings.get().getTableFilters(NAME)
-				);
-		installFilterControl(filterControl, NAME);
+		filterControl = new JournalFilterControl(sortedList);
+		installFilterControl(filterControl);
 		//Menu
-		installMenu(program, new JournalTableMenu(), jTable, MyJournal.class);
+		installMenu(new JournalTableMenu(), new ColumnManager<>(program, NAME, tableFormat, tableModel, jTable, filterControl), MyJournal.class);
 
 		layout.setHorizontalGroup(
 			layout.createParallelGroup()
@@ -128,6 +123,11 @@ public class JournalTab extends JMainTabPrimary {
 		filterControl.createCache();
 	}
 
+	@Override
+	public Collection<LocationType> getLocations() {
+		return new ArrayList<>(); //No Location
+	}
+
 	private class JournalTableMenu implements TableMenu<MyJournal> {
 		@Override
 		public JMenu getFilterMenu() {
@@ -141,7 +141,7 @@ public class JournalTab extends JMainTabPrimary {
 
 		@Override
 		public MenuData<MyJournal> getMenuData() {
-			return new MenuData<MyJournal>(selectionModel.getSelected());
+			return new MenuData<>(selectionModel.getSelected());
 		}
 
 		@Override
@@ -156,17 +156,19 @@ public class JournalTab extends JMainTabPrimary {
 
 	private class JournalFilterControl extends FilterControl<MyJournal> {
 
-		private final EnumTableFormatAdaptor<JournalTableFormat, MyJournal> tableFormat;
-
-		public JournalFilterControl(EnumTableFormatAdaptor<JournalTableFormat, MyJournal> tableFormat, JFrame jFrame, EventList<MyJournal> eventList, SortedList<MyJournal> sortedList, FilterList<MyJournal> filterList, Map<String, List<Filter>> filters) {
-			super(jFrame, NAME, eventList, sortedList, filterList, filters);
-			this.tableFormat = tableFormat;
+		public JournalFilterControl(SortedList<MyJournal> exportEventList) {
+			super(program.getMainWindow().getFrame(),
+					NAME,
+					eventList,
+					exportEventList,
+					filterList,
+					Settings.get().getTableFilters(NAME)
+					);
 		}
 
 		@Override
-		protected Object getColumnValue(final MyJournal item, final String column) {
-			JournalTableFormat format = JournalTableFormat.valueOf(column);
-			return format.getColumnValue(item);
+		protected Object getColumnValue(final MyJournal journal, final String column) {
+			return tableFormat.getColumnValue(journal, column);
 		}
 
 		@Override
@@ -176,12 +178,12 @@ public class JournalTab extends JMainTabPrimary {
 
 		@Override
 		protected List<EnumTableColumn<MyJournal>> getColumns() {
-			return columnsAsList(JournalTableFormat.values());
+			return new ArrayList<>(tableFormat.getOrderColumns());
 		}
 
 		@Override
 		protected List<EnumTableColumn<MyJournal>> getShownColumns() {
-			return new ArrayList<EnumTableColumn<MyJournal>>(tableFormat.getShownColumns());
+			return new ArrayList<>(tableFormat.getShownColumns());
 		}
 
 		@Override

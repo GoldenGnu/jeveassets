@@ -22,7 +22,6 @@ package net.nikr.eve.jeveasset.data.profile;
 
 import ca.odell.glazedlists.EventList;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -60,7 +59,6 @@ import net.nikr.eve.jeveasset.data.settings.types.ContractPriceType;
 import net.nikr.eve.jeveasset.data.settings.types.EditableLocationType;
 import net.nikr.eve.jeveasset.data.settings.types.EditablePriceType;
 import net.nikr.eve.jeveasset.data.settings.types.ItemType;
-import net.nikr.eve.jeveasset.data.settings.types.JumpType;
 import net.nikr.eve.jeveasset.data.settings.types.LastTransactionType;
 import net.nikr.eve.jeveasset.data.settings.types.LocationsType;
 import net.nikr.eve.jeveasset.gui.shared.CaseInsensitiveComparator;
@@ -195,27 +193,6 @@ public class ProfileData {
 
 	public synchronized Map<Long, OwnerType> getOwners() { //synchronized as owners are modified by updateEventLists
 		return new HashMap<>(owners);
-	}
-
-	public void updateJumps(Collection<JumpType> jumpTypes, Class<?> clazz) {
-		for (JumpType jumpType : jumpTypes) {
-			jumpType.clearJumps(); //Clear old
-			if (jumpType.getLocation() == null) {
-				continue;
-			}
-			long systemID = jumpType.getLocation().getSystemID();
-			if (systemID <= 0) {
-				continue;
-			}
-			for (MyLocation jumpLocation : Settings.get().getJumpLocations(clazz)) {
-				long jumpSystemID = jumpLocation.getSystemID();
-				Integer jumps = RouteFinder.get().distanceBetween(jumpSystemID, systemID);
-				if (jumps == null) {
-					jumps = -1;
-				}
-				jumpType.addJump(jumpSystemID, jumps);
-			}
-		}
 	}
 
 	private Set<Integer> createPriceTypeIDs() {
@@ -647,8 +624,6 @@ public class ProfileData {
 		for (EditablePriceType editablePriceType : editablePriceTypes) {
 			updatePrice(editablePriceType);
 		}
-		//Update Jumps (Must be updated after locations!)
-		updateJumps(new ArrayList<>(assets), MyAsset.class);
 
 		assetsList.clear();
 		assetsList.addAll(assets);

@@ -21,28 +21,25 @@
 
 package net.nikr.eve.jeveasset.gui.shared.menu;
 
-import ca.odell.glazedlists.GlazedLists;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 import javax.swing.JMenuItem;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.data.api.my.MyAsset;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
 import net.nikr.eve.jeveasset.data.sde.StaticData;
-import net.nikr.eve.jeveasset.data.settings.Settings;
-import net.nikr.eve.jeveasset.data.settings.types.JumpType;
 import net.nikr.eve.jeveasset.gui.images.Images;
+import net.nikr.eve.jeveasset.gui.shared.menu.JMenuJumps.Jump;
+import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.JAutoMenu;
+import net.nikr.eve.jeveasset.gui.shared.table.ColumnManager;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
-import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustrySlot;
 import net.nikr.eve.jeveasset.gui.tabs.routing.SolarSystem;
-import net.nikr.eve.jeveasset.gui.tabs.tree.TreeAsset;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 
 
-public class JMenuJumps<T> extends MenuManager.JAutoMenu<T> {
+public class JMenuJumps<T extends Enum<T> & EnumTableColumn<Q>, Q> extends JAutoMenu<Q> {
 
 	private enum MenuJumpsAction {
 		ADD_SELECTED, ADD_OTHER, CLEAR
@@ -51,11 +48,11 @@ public class JMenuJumps<T> extends MenuManager.JAutoMenu<T> {
 	private final JMenuItem jAddOther;
 	private final JMenuItem jAddSelected;
 	private final JMenuItem jClear;
-	private final Class<T> clazz;
+	private final ColumnManager<T, Q> columnManager;
 
-	public JMenuJumps(Program program, Class<T> clazz) {
+	public JMenuJumps(Program program, ColumnManager<T, Q> columnManager) {
 		super(GuiShared.get().jumps(), program);
-		this.clazz = clazz;
+		this.columnManager = columnManager;
 		ListenerClass listener = new ListenerClass();
 
 		this.setIcon(Images.TOOL_ROUTING.getIcon());
@@ -86,62 +83,27 @@ public class JMenuJumps<T> extends MenuManager.JAutoMenu<T> {
 		add(jAddOther);
 
 		add(jClear);
-		jClear.setEnabled(!Settings.get().getJumpLocations(clazz).isEmpty());
+		
+		Set<Jump> locations = columnManager.getJumps();
+		
+		jClear.setEnabled(!locations.isEmpty());
 
-		if (!Settings.get().getJumpLocations(clazz).isEmpty()) {
+		if (!locations.isEmpty()) {
 			addSeparator();
 		}
 
-		for (final MyLocation location : Settings.get().getJumpLocations(clazz)) {
+		for (final Jump jump : locations) {
 			//Add to menu
-			final JMenuItem jMenuItem = new JMenuItem(location.getSystem()); //FIXME !Jumps i18n - Clear System
+			final JMenuItem jMenuItem = new JMenuItem(jump.getName()); //FIXME !Jumps i18n - Clear System
 			jMenuItem.setIcon(Images.EDIT_DELETE.getIcon());
 			jMenuItem.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					//Remove from settings
-					Settings.get().removeJumpLocation(clazz, location);
-					//Update Data
-					updateJumpsData();
-					//Remove from asset tab
-					removeColumn(location);
-					//Update GUI
-					updateJumpsGUI();
+					columnManager.removeColumn(jump);
 				}
 			});
 			add(jMenuItem);
-		}
-	}
-
-	private void updateJumpsData() {
-		program.getProfileData().updateJumps(new ArrayList<>(program.getProfileData().getAssetsEventList()), MyAsset.class);
-		program.getProfileData().updateJumps(new ArrayList<>(program.getTreeTab().getEventList()), TreeAsset.class);
-		program.getProfileData().updateJumps(new ArrayList<>(program.getIndustrySlotsTab().getEventList()), IndustrySlot.class);
-	}
-
-	private void updateJumpsGUI() {
-		program.getTreeTab().tableStructureChanged();
-		program.getAssetsTab().tableStructureChanged();
-		program.getIndustrySlotsTab().tableStructureChanged();
-	}
-
-	private void addColumn(MyLocation location) {
-		if (TreeAsset.class.isAssignableFrom(clazz)) {
-			program.getTreeTab().addColumn(location);
-		} else if (MyAsset.class.isAssignableFrom(clazz)) {
-			program.getAssetsTab().addColumn(location);
-		} else if (IndustrySlot.class.isAssignableFrom(clazz)) {
-			program.getIndustrySlotsTab().addColumn(location);
-		}
-	}
-
-	private void removeColumn(MyLocation location) {
-		if (TreeAsset.class.isAssignableFrom(clazz)) {
-			program.getTreeTab().removeColumn(location);
-		} else if (MyAsset.class.isAssignableFrom(clazz)) {
-			program.getAssetsTab().removeColumn(location);
-		} else if (IndustrySlot.class.isAssignableFrom(clazz)) {
-			program.getIndustrySlotsTab().removeColumn(location);
 		}
 	}
 
@@ -149,32 +111,10 @@ public class JMenuJumps<T> extends MenuManager.JAutoMenu<T> {
 		@Override
 		public void actionPerformed(final ActionEvent e) {
 			if (MenuJumpsAction.ADD_SELECTED.name().equals(e.getActionCommand())) {
-				//Add to settings
-				for (final MyLocation location : menuData.getSystemLocations()) {
-					Settings.get().addJumpLocation(clazz, location);
-				}
-				//Update Data
-				updateJumpsData();
-				//Add to tab
-				for (final MyLocation location : menuData.getSystemLocations()) {
-					addColumn(location);
-				}
-				//Update GUI
-				updateJumpsGUI();
+				columnManager.addColumns(menuData.getSystemLocations());
 			}
 			if (MenuJumpsAction.CLEAR.name().equals(e.getActionCommand())) {
-				//Save locations for removal
-				List<MyLocation> locations = new ArrayList<>(Settings.get().getJumpLocations(clazz));
-				//Clear settings
-				Settings.get().clearJumpLocations(clazz);
-				//Update Data
-				updateJumpsData();
-				//Clear tab
-				for (MyLocation location : locations) {
-					removeColumn(location);
-				}
-				//Update GUI
-				updateJumpsGUI();
+				columnManager.clearJumpColumns();
 			}
 			if (MenuJumpsAction.ADD_OTHER.name().equals(e.getActionCommand())) {
 				//Clear tab
@@ -182,98 +122,70 @@ public class JMenuJumps<T> extends MenuManager.JAutoMenu<T> {
 				if (solarSystem != null) {
 					MyLocation location = StaticData.get().getLocation(solarSystem.getSystemID());
 					if (location != null) {
-						//Add to settings
-						Settings.get().addJumpLocation(clazz, location);
-						//Update Data
-						updateJumpsData();
-						//Add to tab
-						addColumn(location);
-						//Update GUI
-						updateJumpsGUI();
+						columnManager.addColumn(new Jump(location));
 					}
 				}
 			}
 		}
 	}
 
-	public static class Column<Q extends JumpType> implements EnumTableColumn<Q> {
+	public static class Jump {
+		private final MyLocation from;
+		private final Map<Object, Integer> jumps = new HashMap<>();
+		private Integer index;
 
-		private final String systemName;
-		private final long systemID;
-
-		public Column(String systemName, long systemID) {
-			this.systemName = systemName;
-			this.systemID = systemID;
-
+		public Jump(MyLocation from) {
+			this(from, null);
 		}
 
-		@Override
-		public Class<?> getType() {
-			return Integer.class;
+		public Jump(MyLocation from, Integer index) {
+			this.from = from;
+			this.index = index;
 		}
 
-		@Override
-		public Comparator<?> getComparator() {
-			return GlazedLists.<Integer>comparableComparator();
+		public String getName() {
+			return from.getSystem();
 		}
 
-		@Override
-		public String getColumnName() {
-			return systemName;
+		public long getSystemID() {
+			return from.getSystemID();
 		}
 
-		@Override
-		public String getColumnToolTip() {
-			return GuiShared.get().jumpsColumnToolTip(systemName);
+		public Map<Object, Integer> getJumps() {
+			return jumps;
 		}
 
-		@Override
-		public Object getColumnValue(Q from) {
-			return from.getJumps(systemID);
+		public Integer getIndex() {
+			return index;
 		}
 
-		@Override
-		public String name() {
-			return systemName;
-		}
-
-		@Override
-		public boolean isColumnEditable(Object baseObject) {
-			return false;
-		}
-
-		@Override
-		public boolean isShowDefault() {
-			return true;
-		}
-
-		@Override
-		public boolean setColumnValue(Object baseObject, Object editedValue) {
-			return false;
-		}
-
-		@Override
-		public String toString() {
-			return getColumnName();
+		public void setIndex(Integer index) {
+			this.index = index;
 		}
 
 		@Override
 		public int hashCode() {
-			int hash = 3;
-			hash = 59 * hash + (int) (this.systemID ^ (this.systemID >>> 32));
+			int hash = 7;
+			hash = 89 * hash + (int) (this.from.getSystemID() ^ (this.from.getSystemID() >>> 32));
 			return hash;
 		}
 
 		@Override
 		public boolean equals(Object obj) {
+			if (this == obj) {
+				return true;
+			}
 			if (obj == null) {
 				return false;
 			}
 			if (getClass() != obj.getClass()) {
 				return false;
 			}
-			final Column<?> other = (Column<?>) obj;
-			return this.systemID == other.systemID;
+			final Jump other = (Jump) obj;
+			if (this.from.getSystemID() != other.from.getSystemID()) {
+				return false;
+			}
+			return true;
 		}
 	}
 }
