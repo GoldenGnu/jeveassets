@@ -326,9 +326,9 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 				filterList,
 				Settings.get().getTableFilters(NAME)
 				);
+
 		filterControl.addExportOption(jExportXml);
 		filterControl.addExportOption(jExportText);
-		installFilterControl(filterControl, NAME);
 		//Menu
 		installMenu(program, new StockpileTableMenu(), jTable, StockpileItem.class);
 

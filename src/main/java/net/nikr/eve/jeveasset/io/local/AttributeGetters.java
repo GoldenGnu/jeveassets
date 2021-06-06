@@ -228,14 +228,6 @@ public class AttributeGetters {
 		return (value.equals("true") || value.equals("1"));
 	}
 
-	protected Boolean getBooleanOptional(final Node node, final String attributeName) throws XmlException {
-		String value = getNodeValueOptional(node, attributeName);
-		if (value == null) {
-			return null;
-		}
-		return (value.equals("true") || value.equals("1"));
-	}
-
 	private Long safeStringToLong(final String s) {
 		int nE = s.indexOf("E");
 		if (nE == -1) {

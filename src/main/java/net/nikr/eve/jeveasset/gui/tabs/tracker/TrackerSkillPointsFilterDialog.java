@@ -138,7 +138,7 @@ public class TrackerSkillPointsFilterDialog extends JDialogCentered {
 				continue; //Corporation can not have skill points
 			}
 			final String ownerName = ownerType.getOwnerName();
-			TrackerSkillPointFilter filter = Settings.get().getTrackerSettings().getSkillPointFilters().get(ownerName);
+			TrackerSkillPointFilter filter = Settings.get().getTrackerSkillPointFilters().get(ownerName);
 			if (filter == null) {
 				filter = new TrackerSkillPointFilter(ownerName);
 			}
@@ -202,13 +202,13 @@ public class TrackerSkillPointsFilterDialog extends JDialogCentered {
 
 	@Override
 	protected void save() {
-		save = !compareLists(eventList, Settings.get().getTrackerSettings().getSkillPointFilters().values(), new ListComparator());
+		save = !compareLists(eventList, Settings.get().getTrackerSkillPointFilters().values(), new ListComparator());
 		if (save) {
 			try {
 				eventList.getReadWriteLock().readLock().lock();
 				Settings.lock("Tracker Skill Points Filters: Update");
 				for (TrackerSkillPointFilter filter : eventList) {
-					Settings.get().getTrackerSettings().getSkillPointFilters().put(filter.getName(), filter);
+					Settings.get().getTrackerSkillPointFilters().put(filter.getName(), filter);
 				}
 			} finally {
 				Settings.unlock("Tracker Skill Points Filters: Update");

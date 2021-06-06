@@ -131,7 +131,7 @@ public class ValueTableTab extends JMainTabSecondary {
 				filterList,
 				Settings.get().getTableFilters(NAME)
 				);
-		installFilterControl(filterControl, NAME);
+
 		//Menu
 		installMenu(program, new ValueTableMenu(), jTable, Value.class);
 
@@ -152,7 +152,7 @@ public class ValueTableTab extends JMainTabSecondary {
 	@Override
 	public void updateData() {
 		boolean isAll = true;
-		for (TrackerSkillPointFilter filter : Settings.get().getTrackerSettings().getSkillPointFilters().values()) {
+		for (TrackerSkillPointFilter filter : Settings.get().getTrackerSkillPointFilters().values()) {
 			if (!filter.isEmpty()) {
 				isAll = false;
 				break;
@@ -167,7 +167,7 @@ public class ValueTableTab extends JMainTabSecondary {
 		Value total = values.get(TabsValues.get().grandTotal());
 		total.setSkillPoints(0);
 		for (Value value : values.values()) {
-			TrackerSkillPointFilter skillPointFilter = Settings.get().getTrackerSettings().getSkillPointFilters().get(value.getName());
+			TrackerSkillPointFilter skillPointFilter = Settings.get().getTrackerSkillPointFilters().get(value.getName());
 			if (skillPointFilter != null) {
 				if (skillPointFilter.isEnabled()) {
 					value.setSkillPointsMinimum(skillPointFilter.getMinimum());

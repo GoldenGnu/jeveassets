@@ -18,7 +18,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
  */
-
 package net.nikr.eve.jeveasset.data.settings;
 
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
@@ -47,6 +46,9 @@ import net.nikr.eve.jeveasset.gui.shared.table.View;
 import net.nikr.eve.jeveasset.gui.tabs.orders.Outbid;
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewGroup;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile;
+import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerDate;
+import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerNote;
+import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerSkillPointFilter;
 import net.nikr.eve.jeveasset.i18n.DialoguesSettings;
 import net.nikr.eve.jeveasset.io.local.SettingsReader;
 import net.nikr.eve.jeveasset.io.local.SettingsWriter;
@@ -150,10 +152,15 @@ public class Settings {
 	private final Map<String, OverviewGroup> overviewGroups = new HashMap<>();
 //Export						Saved in ExportDialog.saveSettings()
 	//Lock OK
-	private final CopySettings copySettings = new CopySettings();
-	private final Map<String, ExportSettings> exportSettings = new HashMap<>();
+	private final ExportSettings exportSettings = new ExportSettings();
 //Tracker						Saved by TaskDialog.update() (on API update)
-	private final TrackerSettings trackerSettings = new TrackerSettings();
+	private final Map<TrackerDate, TrackerNote> trackerNotes = new HashMap<>();
+	private final Map<String, Boolean> trackerFilters = new HashMap<>();
+	private final Map<String, TrackerSkillPointFilter> trackerSkillPointFilters = new HashMap<>();
+	private boolean trackerSelectNew = true;
+	private boolean trackerCharacterCorporations = false;
+	private boolean trackerAllProfiles = false;
+	private List<String> trackerSelectedOwners = null;
 //Runtime flags					Is not saved to file
 	private boolean settingsLoadError = false;
 //Settings Dialog:				Saved by SettingsDialog.save()
@@ -211,8 +218,6 @@ public class Settings {
 	//									 JAutoColumnTable.ListenerClass.mouseReleased() - Moved
 	//									 ViewManager.loadView() - Load View
 	//Lock OK
-	private final Map<String, List<Filter>> currentTableFilters = new HashMap<>();
-	private final Map<String, Boolean> currentTableFiltersShown = new HashMap<>();
 	private final Map<String, List<SimpleColumn>> tableColumns = new HashMap<>();
 	//Column Width				Saved by JAutoColumnTable.saveColumnsWidth()
 	//Lock OK
@@ -306,28 +311,8 @@ public class Settings {
 		}
 	}
 
-	/***
-	 *
-	 * @return
-	 */
-	public Map<String, ExportSettings> getExportSettings() {
+	public ExportSettings getExportSettings() {
 		return exportSettings;
-	}
-
-	/***
-	 *
-	 * @param toolName
-	 * @return
-	 */
-	public ExportSettings getExportSettings(String toolName) {
-		if (!exportSettings.containsKey(toolName)) {
-			exportSettings.put(toolName, new ExportSettings(toolName));
-		}
-		return exportSettings.get(toolName);
-	}
-
-	public CopySettings getCopySettings() {
-		return copySettings;
 	}
 
 	public static void saveSettings() {
@@ -339,8 +324,48 @@ public class Settings {
 		}
 	}
 
-	public TrackerSettings getTrackerSettings() {
-		return trackerSettings;
+	public Map<TrackerDate, TrackerNote> getTrackerNotes() {
+		return trackerNotes;
+	}
+
+	public Map<String, Boolean> getTrackerFilters() {
+		return trackerFilters;
+	}
+
+	public Map<String, TrackerSkillPointFilter> getTrackerSkillPointFilters() {
+		return trackerSkillPointFilters;
+	}
+
+	public boolean isTrackerSelectNew() {
+		return trackerSelectNew;
+	}
+
+	public void setTrackerSelectNew(boolean trackerSelectNew) {
+		this.trackerSelectNew = trackerSelectNew;
+	}
+
+	public boolean isTrackerAllProfiles() {
+		return trackerAllProfiles;
+	}
+
+	public void setTrackerAllProfiles(boolean trackerAllProfiles) {
+		this.trackerAllProfiles = trackerAllProfiles;
+	}
+
+	public boolean isTrackerCharacterCorporations() {
+		return trackerCharacterCorporations;
+	}
+
+	public void setTrackerCharacterCorporations(boolean trackerCharacterCorporations) {
+		this.trackerCharacterCorporations = trackerCharacterCorporations;
+	}
+
+	public List<String> getTrackerSelectedOwners() {
+		return trackerSelectedOwners;
+	}
+
+	public void setTrackerSelectedOwners(List<String> trackerOwners) {
+		this.trackerSelectedOwners = trackerOwners;
 	}
 
 	public PriceDataSettings getPriceDataSettings() {
@@ -454,44 +479,6 @@ public class Settings {
 			tableFilters.put(key, new HashMap<>());
 		}
 		return tableFilters.get(key);
-	}
-
-	/***
-	 * @return Current table filters, list may be empty but should never be null.
-	 */
-	public Map<String, List<Filter>> getCurrentTableFilters() {
-		return currentTableFilters;
-	}
-
-	/***
-	 * @param tableName Table to look up.
-	 * @return The value of the filter if {@code key} is found. If {@code key} is not found it will be added with an
-	 * empty list and then returned.
-	 */
-	public List<Filter> getCurrentTableFilters(final String tableName) {
-		if (!currentTableFilters.containsKey(tableName)) {
-			currentTableFilters.put(tableName, new ArrayList<>());
-		}
-		return currentTableFilters.get(tableName);
-	}
-
-	/***
-	 * @return current table filters visibility state, list may be empty but should never be null.
-	 */
-	public Map<String, Boolean> getCurrentTableFiltersShown() {
-		return currentTableFiltersShown;
-	}
-
-	/***
-	 * @param tableName Table to look up.
-	 * @return The value of the filter visibility state if key is found. If key is not found it will be added as visible
-	 * and then returned.
-	 */
-	public boolean getCurrentTableFiltersShown(final String tableName) {
-		if (!currentTableFiltersShown.containsKey(tableName)) {
-			currentTableFiltersShown.put(tableName, true);
-		}
-		return currentTableFiltersShown.get(tableName);
 	}
 
 	public Map<String, List<SimpleColumn>> getTableColumns() {

@@ -40,7 +40,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import net.nikr.eve.jeveasset.data.settings.Settings;
-import net.nikr.eve.jeveasset.data.settings.SettingsUpdateListener;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.CaseInsensitiveComparator;
 import net.nikr.eve.jeveasset.gui.shared.components.JDropDownButton;
@@ -81,7 +80,7 @@ class FilterGui<E> {
 	private final ExportDialog<E> exportDialog;
 	private boolean multiUpdate = false;
 
-	private final ListenerClass settingsUpdateListener = new ListenerClass();
+	private final ListenerClass listener = new ListenerClass();
 
 	protected FilterGui(final JFrame jFrame, final FilterControl<E> filterControl) {
 		this.jFrame = jFrame;
@@ -102,14 +101,14 @@ class FilterGui<E> {
 		JButton jAddField = new JButton(GuiShared.get().addField());
 		jAddField.setIcon(Images.EDIT_ADD.getIcon());
 		jAddField.setActionCommand(FilterGuiAction.ADD.name());
-		jAddField.addActionListener(settingsUpdateListener);
+		jAddField.addActionListener(listener);
 		jToolBarLeft.addButton(jAddField);
 
 		//Reset
 		JButton jClearFields = new JButton(GuiShared.get().clearField());
 		jClearFields.setIcon(Images.FILTER_CLEAR.getIcon());
 		jClearFields.setActionCommand(FilterGuiAction.CLEAR.name());
-		jClearFields.addActionListener(settingsUpdateListener);
+		jClearFields.addActionListener(listener);
 		jToolBarLeft.addButton(jClearFields);
 
 		jToolBarLeft.addSeparator();
@@ -118,7 +117,7 @@ class FilterGui<E> {
 		JButton jSaveFilter = new JButton(GuiShared.get().saveFilter());
 		jSaveFilter.setIcon(Images.FILTER_SAVE.getIcon());
 		jSaveFilter.setActionCommand(FilterGuiAction.SAVE.name());
-		jSaveFilter.addActionListener(settingsUpdateListener);
+		jSaveFilter.addActionListener(listener);
 		jToolBarLeft.addButton(jSaveFilter);
 
 		//Load Filter
@@ -135,7 +134,7 @@ class FilterGui<E> {
 		jExportButton = new JButton(GuiShared.get().export());
 		jExportButton.setIcon(Images.DIALOG_CSV_EXPORT.getIcon());
 		jExportButton.setActionCommand(FilterGuiAction.EXPORT.name());
-		jExportButton.addActionListener(settingsUpdateListener);
+		jExportButton.addActionListener(listener);
 		jToolBarLeft.addButton(jExportButton);
 
 		jExportMenu = new JDropDownButton(GuiShared.get().export(), Images.DIALOG_CSV_EXPORT.getIcon());
@@ -145,7 +144,7 @@ class FilterGui<E> {
 		JMenuItem jExportMenuItem = new JMenuItem(GuiShared.get().exportTableData());
 		jExportMenuItem.setIcon(Images.DIALOG_CSV_EXPORT.getIcon());
 		jExportMenuItem.setActionCommand(FilterGuiAction.EXPORT.name());
-		jExportMenuItem.addActionListener(settingsUpdateListener);
+		jExportMenuItem.addActionListener(listener);
 		jExportMenu.add(jExportMenuItem);
 
 		jToolBarLeft.addSeparator();
@@ -153,7 +152,7 @@ class FilterGui<E> {
 		//Show Filters
 		jShowFilters = new JCheckBox(GuiShared.get().showFilters());
 		jShowFilters.setActionCommand(FilterGuiAction.SHOW_FILTERS.name());
-		jShowFilters.addActionListener(settingsUpdateListener);
+		jShowFilters.addActionListener(listener);
 		jShowFilters.setSelected(true);
 		jToolBarLeft.addButton(jShowFilters, 70, SwingConstants.CENTER);
 
@@ -182,21 +181,6 @@ class FilterGui<E> {
 		exportDialog.setColumns(enumColumns);
 	}
 
-	/***
-	 * @return Is the filter panel shown
-	 */
-	public boolean isFilterShown() {
-		return jShowFilters.isSelected();
-	}
-
-	/***
-	 * @param shown Whether to show the filter panel
-	 */
-	public void setFilterShown(boolean shown) {
-		jShowFilters.setSelected(shown);
-		update();
-	}
-
 	protected final void addExportOption(final JMenuItem jMenuItem) {
 		if (!jExportMenu.isVisible()) { //First
 			jExportMenu.setVisible(true);
@@ -211,7 +195,7 @@ class FilterGui<E> {
 
 	protected String getCurrentFilterName() {
 		String filterName = GuiShared.get().filterUntitled();
-		List<Filter> filters = getFilters();
+		List<Filter> filters = getFilters(true);
 		if (filters.isEmpty()) {
 			filterName = GuiShared.get().filterEmpty();
 		} else {
@@ -227,11 +211,13 @@ class FilterGui<E> {
 		return filterName;
 	}
 
-	protected List<Filter> getFilters() {
+	protected List<Filter> getFilters(boolean includeDisabled) {
 		List<Filter> filters = new ArrayList<>();
 		for (FilterPanel<E> filterPanel : filterPanels) {
 			Filter filter = filterPanel.getFilter();
-			filters.add(filter);
+			if (!filter.isEmpty() && (filter.isEnabled() || includeDisabled)) {
+				filters.add(filter);
+			}
 		}
 		return filters;
 	}
@@ -432,7 +418,7 @@ class FilterGui<E> {
 
 		jMenuItem = new JMenuItem(GuiShared.get().manageFilters(), Images.DIALOG_SETTINGS.getIcon());
 		jMenuItem.setActionCommand(FilterGuiAction.MANAGER.name());
-		jMenuItem.addActionListener(settingsUpdateListener);
+		jMenuItem.addActionListener(listener);
 		jMenuItem.setRolloverEnabled(true);
 		jLoadFilter.add(jMenuItem);
 
@@ -450,7 +436,7 @@ class FilterGui<E> {
 			jMenuItem = new JMenuItem(s, Images.FILTER_LOAD_DEFAULT.getIcon());
 			jMenuItem.setRolloverEnabled(true);
 			jMenuItem.setActionCommand(s);
-			jMenuItem.addActionListener(settingsUpdateListener);
+			jMenuItem.addActionListener(listener);
 			jLoadFilter.add(jMenuItem);
 		}
 
@@ -458,7 +444,7 @@ class FilterGui<E> {
 			jMenuItem = new JMenuItem(s, Images.FILTER_LOAD.getIcon());
 			jMenuItem.setRolloverEnabled(true);
 			jMenuItem.setActionCommand(s);
-			jMenuItem.addActionListener(settingsUpdateListener);
+			jMenuItem.addActionListener(listener);
 			jLoadFilter.add(jMenuItem);
 		}
 		updateShowing();
@@ -493,27 +479,16 @@ class FilterGui<E> {
 		return filterSave.show(new ArrayList<>(filterControl.getFilters().keySet()), new ArrayList<>(filterControl.getDefaultFilters().keySet()));
 	}
 
-	/**
-	 * Loop though set update listeners and trigger their action.
-	 */
-	private void fireSettingsUpdate() {
-		for (SettingsUpdateListener listener : filterControl.getSettingsUpdateListenerList()) {
-			listener.settingChanged();
-		}
-	}
-
 	private class ListenerClass implements ActionListener {
 
 		@Override
 		public void actionPerformed(final ActionEvent e) {
 			if (FilterGuiAction.ADD.name().equals(e.getActionCommand())) {
 				add();
-				fireSettingsUpdate();
 				return;
 			}
 			if (FilterGuiAction.CLEAR.name().equals(e.getActionCommand())) {
 				clear();
-				fireSettingsUpdate();
 				return;
 			}
 			if (FilterGuiAction.MANAGER.name().equals(e.getActionCommand())) {
@@ -522,12 +497,10 @@ class FilterGui<E> {
 			}
 			if (FilterGuiAction.SHOW_FILTERS.name().equals(e.getActionCommand())) {
 				update();
-				Settings.get().getCurrentTableFiltersShown().put(filterControl.getName(), isFilterShown());
-				fireSettingsUpdate();
 				return;
 			}
 			if (FilterGuiAction.SAVE.name().equals(e.getActionCommand())) {
-				List<Filter> filters = getFilters();
+				List<Filter> filters = getFilters(true);
 				if (filters.isEmpty()) {
 					JOptionPane.showMessageDialog(jFrame, GuiShared.get().nothingToSave(), GuiShared.get().saveFilter(), JOptionPane.PLAIN_MESSAGE);
 				} else {

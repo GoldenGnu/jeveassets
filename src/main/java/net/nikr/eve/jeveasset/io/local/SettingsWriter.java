@@ -31,7 +31,6 @@ import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder.MarketOrderRange;
 import net.nikr.eve.jeveasset.data.settings.ColorEntry;
 import net.nikr.eve.jeveasset.data.settings.ColorSettings;
 import net.nikr.eve.jeveasset.data.settings.ContractPriceManager.ContractPriceSettings;
-import net.nikr.eve.jeveasset.data.settings.CopySettings;
 import net.nikr.eve.jeveasset.data.settings.ExportSettings;
 import net.nikr.eve.jeveasset.data.settings.MarketOrdersSettings;
 import net.nikr.eve.jeveasset.data.settings.PriceDataSettings;
@@ -156,14 +155,13 @@ public class SettingsWriter extends AbstractXmlWriter {
 		writeUserItemNames(xmldoc, settings.getUserItemNames());
 		writeEveNames(xmldoc, settings.getEveNames());
 		writeTableFilters(xmldoc, settings.getTableFilters());
-		writeCurrentTableFilters(xmldoc, settings.getCurrentTableFilters(), settings.getCurrentTableFiltersShown());
 		writeTableColumns(xmldoc, settings.getTableColumns());
 		writeTableColumnsWidth(xmldoc, settings.getTableColumnsWidth());
 		writeTablesResize(xmldoc, settings.getTableResize());
 		writeTablesViews(xmldoc, settings.getTableViews());
-		writeExportSettings(xmldoc, settings.getExportSettings(), settings.getCopySettings());
-		writeTrackerNotes(xmldoc, settings.getTrackerSettings().getNotes());
-		writeTrackerFilters(xmldoc, settings.getTrackerSettings().getFilters(), settings.getTrackerSettings().isSelectNew(), settings.getTrackerSettings().getSkillPointFilters());
+		writeExportSettings(xmldoc, settings.getExportSettings());
+		writeTrackerNotes(xmldoc, settings.getTrackerNotes());
+		writeTrackerFilters(xmldoc, settings.getTrackerFilters(), settings.isTrackerSelectNew(), settings.getTrackerSkillPointFilters());
 		writeTrackerSettings(xmldoc, settings);
 		writeOwners(xmldoc, settings.getOwners(), settings.getOwnersNextUpdate());
 		writeTags(xmldoc, settings.getTags());
@@ -339,14 +337,9 @@ public class SettingsWriter extends AbstractXmlWriter {
 	private void writeTrackerSettings(final Document xmldoc,  Settings settings) {
 		Element trackerSettingsNode = xmldoc.createElementNS(null, "trackersettings");
 		xmldoc.getDocumentElement().appendChild(trackerSettingsNode);
-		setAttribute(trackerSettingsNode, "allprofiles", settings.getTrackerSettings().isAllProfiles());
-		setAttribute(trackerSettingsNode, "charactercorporations", settings.getTrackerSettings().isCharacterCorporations());
-		setAttributeOptional(trackerSettingsNode, "selectedowners", settings.getTrackerSettings().getSelectedOwners());
-		setAttributeOptional(trackerSettingsNode, "fromdate", settings.getTrackerSettings().getFromDate());
-		setAttributeOptional(trackerSettingsNode, "todate", settings.getTrackerSettings().getToDate());
-		setAttribute(trackerSettingsNode, "displaytype", settings.getTrackerSettings().getDisplayType());
-		setAttribute(trackerSettingsNode, "includezero", settings.getTrackerSettings().isIncludeZero());
-		setAttribute(trackerSettingsNode, "showoptions", settings.getTrackerSettings().getShowOptions());
+		setAttribute(trackerSettingsNode, "allprofiles", settings.isTrackerAllProfiles());
+		setAttribute(trackerSettingsNode, "charactercorporations", settings.isTrackerCharacterCorporations());
+		setAttributeOptional(trackerSettingsNode, "selectedowners", settings.getTrackerSelectedOwners());
 	}
 
 	private void writeTrackerNotes(final Document xmldoc, final Map<TrackerDate, TrackerNote> trackerNotes) {
@@ -360,12 +353,6 @@ public class SettingsWriter extends AbstractXmlWriter {
 		}
 	}
 
-	/***
-	 * Write setting for table filters to the xml settings document 'tablefilters' element.
-	 *
-	 * @param xmldoc Settings document to write to.
-	 * @param tableFilters Saved filters to be written to the document zero to many for each table.
-	 */
 	private void writeTableFilters(final Document xmldoc, final Map<String, Map<String, List<Filter>>> tableFilters) {
 		Element tablefiltersNode = xmldoc.createElementNS(null, "tablefilters");
 		xmldoc.getDocumentElement().appendChild(tablefiltersNode);
@@ -377,49 +364,16 @@ public class SettingsWriter extends AbstractXmlWriter {
 				Element filterNode = xmldoc.createElementNS(null, "filter");
 				setAttribute(filterNode, "name", filters.getKey());
 				nameNode.appendChild(filterNode);
-				writeFilters(xmldoc, filterNode, filters);
+				for (Filter filter :  filters.getValue()) {
+					Element childNode = xmldoc.createElementNS(null, "row");
+					setAttribute(childNode, "group", filter.getGroup());
+					setAttribute(childNode, "text", filter.getText());
+					setAttribute(childNode, "column",  filter.getColumn().name());
+					setAttribute(childNode, "compare", filter.getCompareType());
+					setAttribute(childNode, "logic", filter.getLogic());
+					filterNode.appendChild(childNode);
+				}
 			}
-		}
-	}
-
-	/***
-	 * Write setting for current table filters to the xml settings document 'currnettablefilters' element.
-	 *
-	 * @param xmldoc Settings document to write to.
-	 * @param tableFilters Current filters to be written to the document one per table.
-	 * @param tableFiltersShow Current filters visibility state to be written to the document one per table.
-	 */
-	private void writeCurrentTableFilters(final Document xmldoc, final Map<String, List<Filter>> tableFilters, final Map<String, Boolean> tableFiltersShow) {
-		Element currenttablefiltersNode = xmldoc.createElementNS(null, "currenttablefilters");
-		xmldoc.getDocumentElement().appendChild(currenttablefiltersNode);
-		for (Map.Entry<String, List<Filter>> filters : tableFilters.entrySet()) {
-			Element nameNode = xmldoc.createElementNS(null, "table");
-			setAttribute(nameNode, "name", filters.getKey());
-			currenttablefiltersNode.appendChild(nameNode);
-			Element filterNode = xmldoc.createElementNS(null, "filter");
-			setAttribute(filterNode, "show", tableFiltersShow.getOrDefault(filters.getKey(), true));
-			nameNode.appendChild(filterNode);
-			writeFilters(xmldoc, filterNode, filters);
-		}
-	}
-
-	/***
-	 * Write settings for individual filters rows to the xml settings document.
-	 *
-	 * @param xmldoc Settings document to write to.
-	 * @param parentNode Node of the xml document to write the filter to.
-	 * @param filters Filter to be written to the document row by row.
-	 */
-	private void writeFilters(final Document xmldoc, final Element parentNode, final Map.Entry<String, List<Filter>> filters) {
-		for (Filter filter : filters.getValue()) {
-			Element childNode = xmldoc.createElementNS(null, "row");
-			setAttribute(childNode, "group", filter.getGroup());
-			setAttribute(childNode, "text", filter.getText());
-			setAttribute(childNode, "column", filter.getColumn().name());
-			setAttribute(childNode, "compare", filter.getCompareType());
-			setAttribute(childNode, "logic", filter.getLogic());
-			setAttribute(childNode, "enabled", filter.isEnabled());
-			parentNode.appendChild(childNode);
 		}
 	}
 
@@ -703,58 +657,46 @@ public class SettingsWriter extends AbstractXmlWriter {
 		}
 	}
 
-	private void writeExportSettings(final Document xmldoc, final Map<String, ExportSettings> exportSettings, final CopySettings copySettings) {
-		Element node = xmldoc.createElementNS(null, "exports");
-		//Copy
-		setAttribute(node, "copy", copySettings.getCopyDecimalSeparator());
-
-		for(Map.Entry<String, ExportSettings> exportSetting : exportSettings.entrySet()) {
-			//Common
-			Element exportNode = xmldoc.createElementNS(null, "export");
-			setAttribute(exportNode, "name", exportSetting.getKey());
-			setAttributeOptional(exportNode, "exportformat", exportSetting.getValue().getExportFormat());
-			setAttributeOptional(exportNode, "filename", exportSetting.getValue().getFilename());
-			setAttributeOptional(exportNode, "columnselection", exportSetting.getValue().getColumnSelection());
-			setAttributeOptional(exportNode, "viewname", exportSetting.getValue().getViewName());
-			setAttributeOptional(exportNode, "filterselection", exportSetting.getValue().getFilterSelection());
-			setAttributeOptional(exportNode, "filtername", exportSetting.getValue().getFilterName());
-			node.appendChild(exportNode);
-
-			if (exportSetting.getValue().getTableExportColumns() != null &&
-					!exportSetting.getValue().getTableExportColumns().isEmpty()) {
-
-				Element tableNode = xmldoc.createElementNS(null, "table");
-				for (String column : exportSetting.getValue().getTableExportColumns()) {
-					Element columnNode = xmldoc.createElementNS(null, "column");
-					setAttribute(columnNode, "name", column);
-					tableNode.appendChild(columnNode);
-				}
-				exportNode.appendChild(tableNode);
-			}
-
-			//CSV
-			Element csvNode = xmldoc.createElementNS(null, "csv");
-			setAttribute(csvNode, "decimal", exportSetting.getValue().getCsvDecimalSeparator());
-			setAttribute(csvNode, "field", exportSetting.getValue().getFieldDelimiter());
-			setAttribute(csvNode, "line", exportSetting.getValue().getLineDelimiter());
-			exportNode.appendChild(csvNode);
-
-			//SQL
-			Element sqlNode = xmldoc.createElementNS(null, "sql");
-			setAttribute(sqlNode, "tablename", exportSetting.getValue().getTableName());
-			setAttribute(sqlNode, "createtable", exportSetting.getValue().isCreateTable());
-			setAttribute(sqlNode, "droptable", exportSetting.getValue().isDropTable());
-			setAttribute(sqlNode, "extendedinserts", exportSetting.getValue().isExtendedInserts());
-			exportNode.appendChild(sqlNode);
-
-			//Html
-			Element htmlNode = xmldoc.createElementNS(null, "html");
-			setAttribute(htmlNode, "styled", exportSetting.getValue().isHtmlStyled());
-			setAttribute(htmlNode, "igb", exportSetting.getValue().isHtmlIGB());
-			setAttribute(htmlNode, "repeatheader", exportSetting.getValue().getHtmlRepeatHeader());
-			exportNode.appendChild(htmlNode);
-
-		}
+	private void writeExportSettings(final Document xmldoc, final ExportSettings exportSettings) {
+		Element node = xmldoc.createElementNS(null, "csvexport");
 		xmldoc.getDocumentElement().appendChild(node);
+		//Copy
+		setAttribute(node, "copy", exportSettings.getCopyDecimalSeparator());
+		//CSV
+		setAttribute(node, "decimal", exportSettings.getCsvDecimalSeparator());
+		setAttribute(node, "field", exportSettings.getFieldDelimiter());
+		setAttribute(node, "line", exportSettings.getLineDelimiter());
+		//SQL
+		setAttribute(node, "sqlcreatetable", exportSettings.isCreateTable());
+		setAttribute(node, "sqldroptable", exportSettings.isDropTable());
+		setAttribute(node, "sqlextendedinserts", exportSettings.isExtendedInserts());
+		//Html
+		setAttribute(node, "htmlstyled", exportSettings.isHtmlStyled());
+		setAttribute(node, "htmligb", exportSettings.isHtmlIGB());
+		setAttribute(node, "htmlrepeatheader", exportSettings.getHtmlRepeatHeader());
+		for (Map.Entry<String, String> entry : exportSettings.getTableNames().entrySet()) {
+			Element nameNode = xmldoc.createElementNS(null, "sqltablenames");
+			setAttribute(nameNode, "tool", entry.getKey());
+			setAttribute(nameNode, "tablename", entry.getValue());
+			node.appendChild(nameNode);
+		}
+		//Shared
+		setAttribute(node, "exportformat", exportSettings.getExportFormat());
+		for (Map.Entry<String, String> entry : exportSettings.getFilenames().entrySet()) {
+			Element nameNode = xmldoc.createElementNS(null, "filenames");
+			setAttribute(nameNode, "tool", entry.getKey());
+			setAttribute(nameNode, "filename", entry.getValue());
+			node.appendChild(nameNode);
+		}
+		for (Map.Entry<String, List<String>> entry : exportSettings.getTableExportColumns()) {
+			Element nameNode = xmldoc.createElementNS(null, "table");
+			setAttribute(nameNode, "name", entry.getKey());
+			node.appendChild(nameNode);
+			for (String column : entry.getValue()) {
+				Element columnNode = xmldoc.createElementNS(null, "column");
+				setAttribute(columnNode, "name", column);
+				nameNode.appendChild(columnNode);
+			}
+		}
 	}
 }
