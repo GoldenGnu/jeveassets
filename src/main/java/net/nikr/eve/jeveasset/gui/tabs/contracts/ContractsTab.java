@@ -147,7 +147,7 @@ public class ContractsTab extends JMainTabPrimary {
 				filterList,
 				Settings.get().getTableFilters(NAME)
 		);
-
+		installFilterControl(filterControl, NAME);
 		//Menu
 		installMenu(program, new ContractsTableMenu(), jTable, MyContractItem.class);
 

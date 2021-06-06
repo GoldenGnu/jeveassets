@@ -132,7 +132,7 @@ public class TransactionTab extends JMainTabPrimary {
 				Settings.get().getTableFilters(NAME),
 				defaultFilters
 		);
-
+		installFilterControl(filterControl, NAME);
 		//Menu
 		installMenu(program, new TransactionTableMenu(), jTable, MyTransaction.class);
 

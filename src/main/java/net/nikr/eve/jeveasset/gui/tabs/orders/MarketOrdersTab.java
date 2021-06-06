@@ -311,7 +311,7 @@ public class MarketOrdersTab extends JMainTabPrimary {
 				Settings.get().getTableFilters(NAME),
 				defaultFilters
 		);
-
+		installFilterControl(filterControl, NAME);
 		//Menu
 		installMenu(program, new OrdersTableMenu(), jTable, MyMarketOrder.class);
 
