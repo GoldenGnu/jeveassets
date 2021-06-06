@@ -141,7 +141,7 @@ public class AssetsTab extends JMainTabPrimary implements TagUpdate {
 		JScrollPane jTableScroll = new JScrollPane(jTable);
 		//Table Filter
 		filterControl = new AssetFilterControl(sortedList);
-
+		installFilterControl(filterControl);
 		//Menu
 		installMenu(new AssetTableMenu(), new ColumnManager<>(program, NAME, tableFormat, tableModel, jTable, filterControl), MyAsset.class);
 

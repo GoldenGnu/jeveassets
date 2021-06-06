@@ -167,7 +167,7 @@ public class ReprocessedTab extends JMainTabSecondary {
 		JScrollPane jTableScroll = new JScrollPane(jTable);
 		//Table Filter
 		filterControl = new ReprocessedFilterControl(sortedListTotal);
-
+		installFilterControl(filterControl);
 		//Menu
 		installMenu(new ReprocessedTableMenu(), new ColumnManager<>(program, NAME, tableFormat, tableModel, jTable, filterControl), ReprocessedInterface.class);
 

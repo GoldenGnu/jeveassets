@@ -161,9 +161,9 @@ public class BackwardCompatibilitySettings extends FakeSettings implements Setti
 	}
 
 	@Override
-	public ExportSettings getExportSettings() {
+	public Map<String, ExportSettings> getExportSettings() {
 		ok.put(Function.GET_EXPORT_SETTINGS, true);
-		return new ExportSettings();
+		return new HashMap<>();
 	}
 
 	@Override

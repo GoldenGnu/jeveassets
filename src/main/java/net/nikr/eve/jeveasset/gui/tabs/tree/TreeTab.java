@@ -232,7 +232,7 @@ public class TreeTab extends JMainTabSecondary implements TagUpdate {
 		JScrollPane jTableScroll = new JScrollPane(jTable);
 		//Table Filter
 		filterControl = new TreeFilterControl();
-
+		installFilterControl(filterControl);
 		//Menu
 		installMenu(new TreeTableMenu(), new ColumnManager<>(program, NAME, tableFormat, tableModel, jTable, filterControl), TreeAsset.class);
 

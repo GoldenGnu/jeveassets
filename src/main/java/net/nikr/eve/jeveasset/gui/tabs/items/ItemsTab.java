@@ -100,7 +100,7 @@ public class ItemsTab extends JMainTabPrimary {
 		JScrollPane jTableScroll = new JScrollPane(jTable);
 		//Table Filter
 		filterControl = new ItemsFilterControl(sortedList);
-
+		installFilterControl(filterControl);
 		//Menu
 		installMenu(new ItemTableMenu(), new ColumnManager<>(program, NAME, tableFormat, tableModel, jTable, filterControl), Item.class);
 

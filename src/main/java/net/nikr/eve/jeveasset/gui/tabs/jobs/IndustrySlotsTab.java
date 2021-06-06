@@ -110,7 +110,7 @@ public class IndustrySlotsTab extends JMainTabSecondary {
 		JScrollPane jTableScroll = new JScrollPane(jTable);
 		//Table Filter
 		filterControl = new IndustrySlotFilterControl(totalSortedList);
-
+		installFilterControl(filterControl);
 		//Menu
 		installMenu(new IndustrySlotTableMenu(), new ColumnManager<>(program, NAME, tableFormat, tableModel, jTable, filterControl), IndustrySlot.class);
 

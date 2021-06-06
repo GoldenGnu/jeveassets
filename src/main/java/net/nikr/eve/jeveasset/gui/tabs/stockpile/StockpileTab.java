@@ -319,9 +319,9 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 		JScrollPane jTableScroll = new JScrollPane(jTable);
 		//Filter GUI
 		filterControl = new StockpileFilterControl(sortedListTotal);
-
 		filterControl.addExportOption(jExportXml);
 		filterControl.addExportOption(jExportText);
+		installFilterControl(filterControl);
 		//Menu
 		installMenu(new StockpileTableMenu(), new ColumnManager<>(program, NAME, tableFormat, tableModel, jTable, filterControl), StockpileItem.class);
 

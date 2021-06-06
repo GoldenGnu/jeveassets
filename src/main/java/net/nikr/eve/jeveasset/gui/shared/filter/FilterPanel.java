@@ -69,6 +69,7 @@ import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.settings.ColorEntry;
 import net.nikr.eve.jeveasset.data.settings.ColorSettings;
 import net.nikr.eve.jeveasset.data.settings.Settings;
+import net.nikr.eve.jeveasset.data.settings.SettingsUpdateListener;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.TextManager;
@@ -188,6 +189,7 @@ class FilterPanel<E> implements Comparable<FilterPanel<E>> {
 				loading = oldValue;
 				if (!loading) {
 					groupChanged();
+					fireSettingsUpdate();
 				}
 			}
 		});
@@ -368,7 +370,7 @@ class FilterPanel<E> implements Comparable<FilterPanel<E>> {
 	void setFilter(final Filter filter) {
 		boolean oldValue = loading;
 		loading = true;
-		jEnabled.setSelected(true);
+		jEnabled.setSelected(filter.isEnabled());
 		jLogic.setSelectedItem(filter.getLogic());
 		groupModel.setValue(filter.getGroup());
 		updateGroupColor();
@@ -505,6 +507,12 @@ class FilterPanel<E> implements Comparable<FilterPanel<E>> {
 	}
 
 	private void processFilterAction(final ActionEvent e) {
+		//Get the initial loading state so we can reset it at the end.
+		//We need to do this in the even that we were loading true when we entered we do not want to blindly
+		//set false after one pass.
+		//This should mean that no events triggered hear would cause additional refreshes.
+		boolean initialLoading = loading;
+		loading = true;
 		if (jColumn.equals(e.getSource())) {
 			updateNumeric(true);
 		}
@@ -521,6 +529,7 @@ class FilterPanel<E> implements Comparable<FilterPanel<E>> {
 			ColorSettings.config(jText, ColorEntry.GLOBAL_ENTRY_INVALID);
 		}
 		timer.stop();
+		loading = initialLoading;
 		refilter();
 	}
 
@@ -600,6 +609,17 @@ class FilterPanel<E> implements Comparable<FilterPanel<E>> {
 		}
 	}
 
+	/**
+	 * Loop though set update listeners and trigger their action.
+	 */
+	private void fireSettingsUpdate() {
+		if (!loading) {
+			for (SettingsUpdateListener listener : filterControl.getSettingsUpdateListenerList()) {
+				listener.settingChanged();
+			}
+		}
+	}
+
 	private class ListenerClass implements ActionListener, KeyListener, DocumentListener, DateChangeListener, ChangeListener {
 
 		@Override
@@ -627,6 +647,7 @@ class FilterPanel<E> implements Comparable<FilterPanel<E>> {
 		public void keyPressed(final KeyEvent e) {
 			if (e.getKeyCode() == KeyEvent.VK_ENTER) {
 				refilter();
+				fireSettingsUpdate();
 			}
 		}
 
@@ -639,27 +660,33 @@ class FilterPanel<E> implements Comparable<FilterPanel<E>> {
 				gui.remove(FilterPanel.this);
 				gui.addEmpty();
 				refilter();
+				fireSettingsUpdate();
 			} else if (FilterPanelAction.CLONE.name().equals(e.getActionCommand())) {
 				gui.clone(FilterPanel.this);
 				refilter();
+				fireSettingsUpdate();
 				jText.requestFocusInWindow();
 				jCompareColumn.requestFocusInWindow();
 				jDate.getComponentToggleCalendarButton().requestFocusInWindow();
 			} else if (FilterPanelAction.FILTER.name().equals(e.getActionCommand())) {
 				processFilterAction(e);
+				fireSettingsUpdate();
 			} else if (FilterPanelAction.FILTER_TIMER.name().equals(e.getActionCommand())) {
 				if (!Settings.get().isFilterOnEnter()) {
 					processFilterAction(e);
+					fireSettingsUpdate();
 				}
 			} else if (FilterPanelAction.GROUP_TIMER.name().equals(e.getActionCommand())) {
 				groupTimer.stop();
 				groupChanged();
+				fireSettingsUpdate();
 			}
 		}
 
 		@Override
-		public void dateChanged(DateChangeEvent event) {
+		public void dateChanged(DateChangeEvent e) {
 			refilter();
+			fireSettingsUpdate();
 		}
 
 		@Override

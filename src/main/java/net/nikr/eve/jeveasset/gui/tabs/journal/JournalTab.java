@@ -97,7 +97,7 @@ public class JournalTab extends JMainTabPrimary {
 		JScrollPane jTableScroll = new JScrollPane(jTable);
 		//Table Filter
 		filterControl = new JournalFilterControl(sortedList);
-
+		installFilterControl(filterControl);
 		//Menu
 		installMenu(new JournalTableMenu(), new ColumnManager<>(program, NAME, tableFormat, tableModel, jTable, filterControl), MyJournal.class);
 

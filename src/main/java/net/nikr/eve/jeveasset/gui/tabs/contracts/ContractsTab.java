@@ -140,7 +140,7 @@ public class ContractsTab extends JMainTabPrimary {
 		JScrollPane jTableScroll = new JScrollPane(jTable);
 		//Table Filter
 		filterControl = new ContractsFilterControl(sortedListSeparator);
-
+		installFilterControl(filterControl);
 		//Menu
 		installMenu(new ContractsTableMenu(), new ColumnManager<>(program, NAME, tableFormat, tableModel, jTable, filterControl), MyContractItem.class);
 

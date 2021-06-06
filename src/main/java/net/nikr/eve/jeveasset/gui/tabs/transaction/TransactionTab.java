@@ -127,7 +127,7 @@ public class TransactionTab extends JMainTabPrimary {
 		filter.add(new Filter(LogicType.AND, TransactionTableFormat.TYPE, CompareType.EQUALS, TabsTransaction.get().sell()));
 		defaultFilters.put(TabsTransaction.get().sell(), filter);
 		filterControl = new TransactionsFilterControl(sortedList, defaultFilters);
-
+		installFilterControl(filterControl);
 		//Menu
 		installMenu(new TransactionTableMenu(), new ColumnManager<>(program, NAME, tableFormat, tableModel, jTable, filterControl), MyTransaction.class);
 

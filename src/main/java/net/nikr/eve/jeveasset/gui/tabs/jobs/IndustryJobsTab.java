@@ -125,7 +125,7 @@ public class IndustryJobsTab extends JMainTabPrimary {
 		filter.add(new Filter(LogicType.AND, IndustryJobTableFormat.STATE, CompareType.EQUALS, IndustryJobState.STATE_DELIVERED.toString()));
 		defaultFilters.put(TabsJobs.get().completed(), filter);
 		filterControl = new IndustryJobsFilterControl(sortedList, defaultFilters);
-
+		installFilterControl(filterControl);
 		//Menu
 		installMenu(new JobsTableMenu(), new ColumnManager<>(program, NAME, tableFormat, tableModel, jTable, filterControl), MyIndustryJob.class);
 

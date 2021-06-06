@@ -224,7 +224,7 @@ public class ProfileData {
 					priceTypeIDs.add(blueprint.getTypeID());
 				}
 				//Manufacturing Output
-				if (industryJob.isManufacturing() && !industryJob.isDelivered()) {
+				if (industryJob.isManufacturing() && !industryJob.isDelivered() && industryJob.getProductTypeID() != null) {
 					//Output
 					Item output = ApiIdConverter.getItem(industryJob.getProductTypeID());
 					if (output.isMarketGroup()) {

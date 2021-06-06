@@ -106,6 +106,8 @@ public abstract class TabsAssets extends Bundle {
 	public abstract String columnStructureToolTip();
 	public abstract String columnItemID();
 	public abstract String columnItemIDToolTip();
+	public abstract String columnLocationID();
+	public abstract String columnLocationIDToolTip();
 	public abstract String columnTypeID();
 	public abstract String columnTypeIDToolTip();
 }

@@ -59,6 +59,7 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 		LAZY_BLACKSMITH_INVENTION,
 		LAZY_BLACKSMITH_RESEARCH,
 		LAZY_BLACKSMITH_MANUFACTURING,
+		EVE_COOKBOOK,
 		FUZZWORK_MARKET,
 		EVEMAPS_DOTLAN_STATION,
 		EVEMAPS_DOTLAN_PLANET,
@@ -296,8 +297,17 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 				}
 				return urls;
 			}
-		}
-
+		},
+		EVE_COOKBOOK() {
+			@Override
+			public Set<String> getLinks(MenuData<?> menuData) {
+				Set<String> urls = new HashSet<>();
+				for (int typeID : menuData.getBlueprintTypeIDs()) {
+					urls.add("https://www.evecookbook.com/?blueprintTypeId=" + typeID);
+				}
+				return urls;
+			}
+		},
 		;
 
 		public abstract Set<String> getLinks( MenuData<?> menuData);
@@ -332,6 +342,7 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 	private final JMenuItem jLazyBlacksmithInvention;
 	private final JMenuItem jLazyBlacksmithResearch;
 	private final JMenuItem jLazyBlacksmithManufacturing;
+	private final JMenuItem jEveCookbook;
 	private final JMenuItem jAdam4eve;
 
 	public JMenuLookup(final Program program) {
@@ -510,6 +521,12 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 		jLazyBlacksmithManufacturing.setActionCommand(MenuLookupAction.LAZY_BLACKSMITH_MANUFACTURING.name());
 		jLazyBlacksmithManufacturing.addActionListener(listener);
 		jKhonSpace.add(jLazyBlacksmithManufacturing);
+
+		jEveCookbook = new JMenuItem(GuiShared.get().eveCookbook());
+		jEveCookbook.setIcon(Images.LINK_EVE_COOKBOOK.getIcon());
+		jEveCookbook.setActionCommand(MenuLookupAction.EVE_COOKBOOK.name());
+		jEveCookbook.addActionListener(listener);
+		jIndustry.add(jEveCookbook);
 	}
 
 	@Override
@@ -683,6 +700,8 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 				DesktopUtil.browse(LookupLinks.LAZY_BLACKSMITH_MANUFACTURING.getLinks(menuData), program);
 			} else if (MenuLookupAction.LAZY_BLACKSMITH_RESEARCH.name().equals(e.getActionCommand())) {
 				DesktopUtil.browse(LookupLinks.LAZY_BLACKSMITH_RESEARCH.getLinks(menuData), program);
+			} else if (MenuLookupAction.EVE_COOKBOOK.name().equals(e.getActionCommand())) {
+				DesktopUtil.browse(LookupLinks.EVE_COOKBOOK.getLinks(menuData), program);
 			}
 		}
 	}

@@ -314,6 +314,10 @@ public class Filter {
 		this(group, LogicType.valueOf(logic), column, CompareType.valueOf(compare), text, true);
 	}
 
+	public Filter(int group, final String logic, final EnumTableColumn<?> column, final String compare, final String text, final boolean enabled) {
+		this(group, LogicType.valueOf(logic), column, CompareType.valueOf(compare), text, enabled);
+	}
+
 	public Filter(int group, final LogicType logic, final EnumTableColumn<?> column, final CompareType compare, final String text, final boolean enabled) {
 		if (logic == LogicType.AND) {
 			this.group = 0;

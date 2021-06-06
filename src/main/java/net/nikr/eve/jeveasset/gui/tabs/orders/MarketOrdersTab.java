@@ -306,7 +306,7 @@ public class MarketOrdersTab extends JMainTabPrimary {
 		filter.add(new Filter(LogicType.AND, MarketTableFormat.STATUS, CompareType.EQUALS, TabsOrders.get().statusActive()));
 		defaultFilters.put(TabsOrders.get().activeSellOrders(), filter);
 		filterControl = new MarketOrdersFilterControl(sortedList, defaultFilters);
-
+		installFilterControl(filterControl);
 		//Menu
 		installMenu(new OrdersTableMenu(), new ColumnManager<>(program, NAME, tableFormat, tableModel, jTable, filterControl), MyMarketOrder.class);
 
