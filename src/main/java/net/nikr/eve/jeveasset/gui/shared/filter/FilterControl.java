@@ -37,7 +37,6 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JTable;
-import net.nikr.eve.jeveasset.data.settings.SettingsUpdateListener;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter.AllColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.NumberValue;
@@ -48,7 +47,6 @@ public abstract class FilterControl<E> extends ExportFilterControl<E> {
 	private final String name;
 	private final EventList<E> eventList;
 	private final EventList<E> exportEventList;
-	private final List<SettingsUpdateListener> settingsUpdateListenerList;
 	private final FilterList<E> filterList;
 	private final Map<String, List<Filter>> filters;
 	private final Map<String, List<Filter>> defaultFilters;
@@ -60,7 +58,6 @@ public abstract class FilterControl<E> extends ExportFilterControl<E> {
 		name = null;
 		eventList = null;
 		exportEventList = null;
-		settingsUpdateListenerList = null;
 		filterList = null;
 		filters = null;
 		defaultFilters = null;
@@ -72,15 +69,10 @@ public abstract class FilterControl<E> extends ExportFilterControl<E> {
 		this(jFrame, name, eventList, exportEventList, filterList, filters, new HashMap<String, List<Filter>>());
 	}
 	protected FilterControl(final JFrame jFrame, final String name, final EventList<E> eventList, final EventList<E> exportEventList, final FilterList<E> filterList, final Map<String, List<Filter>> filters, final Map<String, List<Filter>> defaultFilters) {
-		this(jFrame, name, eventList, exportEventList, filterList, filters, defaultFilters, new ArrayList<SettingsUpdateListener>());
-	}
-	protected FilterControl(final JFrame jFrame, final String name, final EventList<E> eventList, final EventList<E> exportEventList, final FilterList<E> filterList, final Map<String, List<Filter>> filters, final Map<String, List<Filter>> defaultFilters, final List<SettingsUpdateListener> settingsUpdateListenerList) {
-
 		this.name = name;
 		this.eventList = eventList;
 		this.exportEventList = exportEventList;
 		this.filterList = filterList;
-		this.settingsUpdateListenerList = settingsUpdateListenerList;
 		eventList.addListEventListener(new ListEventListener<E>() {
 			@Override @SuppressWarnings("deprecation")
 			public void listChanged(ListEvent<E> listChanges) {
@@ -183,7 +175,7 @@ public abstract class FilterControl<E> extends ExportFilterControl<E> {
 
 	@Override
 	public List<Filter> getCurrentFilters() {
-		return gui.getFilters();
+		return gui.getFilters(false);
 	}
 
 	public void clearCurrentFilters() {
@@ -261,27 +253,6 @@ public abstract class FilterControl<E> extends ExportFilterControl<E> {
 
 	Map<String, List<Filter>> getDefaultFilters() {
 		return defaultFilters;
-	}
-
-	/**
-	 * @return Current list of settings update listeners. List may be empty but should never be null.
-	 */
-	public List<SettingsUpdateListener> getSettingsUpdateListenerList() {
-		return settingsUpdateListenerList;
-	}
-
-	/***
-	 * @return Is the filter panel shown
-	 */
-	public boolean isFilterShown() {
-		return gui.isFilterShown();
-	}
-
-	/***
-	 * @param shown Whether to show the filter panel
-	 */
-	public void setFilterShown(boolean shown) {
-		gui.setFilterShown(shown);
 	}
 
 	protected abstract List<EnumTableColumn<E>> getColumns();

@@ -118,7 +118,7 @@ public class IndustrySlotsTab extends JMainTabSecondary {
 				filterList,
 				Settings.get().getTableFilters(NAME)
 				);
-		installFilterControl(filterControl, NAME);
+
 		//Menu
 		installMenu(program, new IndustrySlotTableMenu(), jTable, IndustrySlot.class);
 

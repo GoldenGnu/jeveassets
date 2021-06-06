@@ -26,7 +26,6 @@ import java.awt.Dimension;
 import java.awt.Point;
 import java.net.Proxy;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -44,12 +43,9 @@ import net.nikr.eve.jeveasset.data.settings.ColorTheme.ColorThemeTypes;
 import net.nikr.eve.jeveasset.data.settings.ContractPriceManager.ContractPriceSettings;
 import net.nikr.eve.jeveasset.data.settings.ContractPriceManager.ContractPriceSettings.ContractPriceMode;
 import net.nikr.eve.jeveasset.data.settings.ContractPriceManager.ContractPriceSettings.ContractPriceSecurity;
-import net.nikr.eve.jeveasset.data.settings.ExportSettings;
-import net.nikr.eve.jeveasset.data.settings.ExportSettings.ColumnSelection;
 import net.nikr.eve.jeveasset.data.settings.ExportSettings.DecimalSeparator;
 import net.nikr.eve.jeveasset.data.settings.ExportSettings.ExportFormat;
 import net.nikr.eve.jeveasset.data.settings.ExportSettings.FieldDelimiter;
-import net.nikr.eve.jeveasset.data.settings.ExportSettings.FilterSelection;
 import net.nikr.eve.jeveasset.data.settings.ExportSettings.LineDelimiter;
 import net.nikr.eve.jeveasset.data.settings.MarketOrdersSettings;
 import net.nikr.eve.jeveasset.data.settings.PriceDataSettings;
@@ -63,9 +59,6 @@ import net.nikr.eve.jeveasset.data.settings.Settings.SettingFlag;
 import net.nikr.eve.jeveasset.data.settings.Settings.SettingsFactory;
 import net.nikr.eve.jeveasset.data.settings.Settings.TransactionProfitPrice;
 import net.nikr.eve.jeveasset.data.settings.TrackerData;
-import net.nikr.eve.jeveasset.data.settings.TrackerSettings;
-import net.nikr.eve.jeveasset.data.settings.TrackerSettings.DisplayType;
-import net.nikr.eve.jeveasset.data.settings.TrackerSettings.ShowOption;
 import net.nikr.eve.jeveasset.data.settings.UserItem;
 import net.nikr.eve.jeveasset.data.settings.tag.Tag;
 import net.nikr.eve.jeveasset.data.settings.tag.TagColor;
@@ -379,15 +372,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		}
 
 		//Export Settings
-		//Legacy support for 6.8.0 and later
-		//TODO: Remove support at some future date
-		Element exportElementLegacy = getNodeOptional(element, "csvexport");
-		if (exportElementLegacy != null) {
-			parseExportSettingsLegacy(exportElementLegacy, settings);
-		}
-
-		//Export Settings
-		Element exportElement = getNodeOptional(element, "exports");
+		Element exportElement = getNodeOptional(element, "csvexport");
 		if (exportElement != null) {
 			parseExportSettings(exportElement, settings);
 		}
@@ -450,12 +435,6 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		Element tablefiltersElement = getNodeOptional(element, "tablefilters");
 		if (tablefiltersElement != null) {
 			parseTableFilters(tablefiltersElement, settings);
-		}
-
-		//Current Table Filters (Must be loaded before Asset Filters)
-		Element currenttablefiltersElement = getNodeOptional(element, "currenttablefilters");
-		if (currenttablefiltersElement != null) {
-			parseCurrentTableFilters(currenttablefiltersElement, settings);
 		}
 
 		//Asset Filters
@@ -618,19 +597,19 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 			Element noteNode = (Element) noteNodeList.item(a);
 			String note = getString(noteNode, "note");
 			Date date = getDate(noteNode, "date");
-			settings.getTrackerSettings().getNotes().put(new TrackerDate(date), new TrackerNote(note));
+			settings.getTrackerNotes().put(new TrackerDate(date), new TrackerNote(note));
 		}
 	}
 
 	private void parseTrackerFilters(final Element element, final Settings settings) throws XmlException {
 		NodeList tableNodeList = element.getElementsByTagName("trackerfilter");
 		boolean selectNew = getBoolean(element, "selectnew");
-		settings.getTrackerSettings().setSelectNew(selectNew);
+		settings.setTrackerSelectNew(selectNew);
 		for (int a = 0; a < tableNodeList.getLength(); a++) {
 			Element trackerFilterNode = (Element) tableNodeList.item(a);
 			String id = getString(trackerFilterNode, "id");
 			boolean selected = getBoolean(trackerFilterNode, "selected");
-			settings.getTrackerSettings().getFilters().put(id, selected);
+			settings.getTrackerFilters().put(id, selected);
 		}
 		NodeList skillPointFiltersList = element.getElementsByTagName("skillpointfilters");
 		for (int a = 0; a < skillPointFiltersList.getLength(); a++) {
@@ -638,7 +617,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 			String id = getString(filterNode, "id");
 			boolean selected = getBoolean(filterNode, "selected");
 			long mimimum = getLong(filterNode, "mimimum");
-			settings.getTrackerSettings().getSkillPointFilters().put(id, new TrackerSkillPointFilter(id, selected, mimimum));
+			settings.getTrackerSkillPointFilters().put(id, new TrackerSkillPointFilter(id, selected, mimimum));
 		}
 	}
 
@@ -915,50 +894,12 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 	}
 
 	private void parseTrackerSettings(Element trackerSettingsElement, Settings settings) throws XmlException {
-		TrackerSettings trackerSettings = settings.getTrackerSettings();
 		boolean allProfiles = getBoolean(trackerSettingsElement, "allprofiles");
-		trackerSettings.setAllProfiles(allProfiles);
-
 		boolean characterCorporations = getBoolean(trackerSettingsElement, "charactercorporations");
-		trackerSettings.setCharacterCorporations(characterCorporations);
-
 		List<String> selectedOwners = getStringListOptional(trackerSettingsElement, "selectedowners");
-		trackerSettings.setSelectedOwners(selectedOwners);
-
-		Date fromDate = getDateOptional(trackerSettingsElement, "fromdate");
-		trackerSettings.setFromDate(fromDate);
-
-		Date toDate = getDateOptional(trackerSettingsElement, "todate");
-		trackerSettings.setToDate(toDate);
-
-		String displayType = getStringOptional(trackerSettingsElement, "displaytype");
-		if (displayType != null) {
-			try {
-				trackerSettings.setDisplayType(DisplayType.valueOf(displayType));
-			}
-			catch (IllegalArgumentException e) {
-				LOG.warn("Could not parse trackersettigns displaytype: " + displayType);
-			}
-		}
-
-		Boolean includeZero = getBooleanOptional(trackerSettingsElement, "includezero");
-		if (includeZero != null) {
-			trackerSettings.setIncludeZero(includeZero);
-		}
-
-		List<String> showOptions = getStringListOptional(trackerSettingsElement, "showoptions");
-		if (showOptions != null) {
-			trackerSettings.getShowOptions().clear();
-			if (!showOptions.isEmpty()) {
-				for (String showOption : showOptions) {
-					try {
-						trackerSettings.getShowOptions().add(ShowOption.valueOf(showOption));
-					} catch (IllegalArgumentException e) {
-						LOG.warn("Could not parse trackersettigns showoptions: " + showOption);
-					}
-				}
-			}
-		}
+		settings.setTrackerAllProfiles(allProfiles);
+		settings.setTrackerCharacterCorporations(characterCorporations);
+		settings.setTrackerSelectedOwners(selectedOwners);
 	}
 
 	private void parseShowToolsNodes(Element showToolsElement, Settings settings) throws XmlException {
@@ -1380,13 +1321,6 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		}
 	}
 
-	/***
-	 * Parse the table filters elements of the settings file.
-	 *
-	 * @param element The 'tablefilters' element of the xml.
-	 * @param settings The settings to be loaded to.
-	 * @throws XmlException
-	 */
 	private void parseTableFilters(final Element element, final Settings settings) throws XmlException {
 		NodeList tableNodeList = element.getElementsByTagName("table");
 		for (int a = 0; a < tableNodeList.getLength(); a++) {
@@ -1397,7 +1331,25 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 			for (int b = 0; b < filterNodeList.getLength(); b++) {
 				Element filterNode = (Element) filterNodeList.item(b);
 				String filterName = getString(filterNode, "name");
-				List<Filter> filter = parseFilters(filterNode, tableName);
+				List<Filter> filter = new ArrayList<>();
+				NodeList rowNodes = filterNode.getElementsByTagName("row");
+				for (int c = 0; c < rowNodes.getLength(); c++) {
+					Element rowNode = (Element) rowNodes.item(c);
+					int group = 1;
+					if (haveAttribute(rowNode, "group")) {
+						group = getInt(rowNode, "group");
+					}
+					String text = getString(rowNode, "text");
+					String columnString = getString(rowNode, "column");
+					EnumTableColumn<?> column =  getColumn(columnString, tableName);
+					if (column != null) {
+						String compare = getString(rowNode, "compare");
+						String logic = getString(rowNode, "logic");
+						filter.add(new Filter(group, logic, column, compare, text));
+					} else {
+						LOG.warn(columnString + " column removed from filter");
+					}
+				}
 				if (!filter.isEmpty()) {
 					filters.put(filterName, filter);
 				} else {
@@ -1406,77 +1358,6 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 			}
 			settings.getTableFilters().put(tableName, filters);
 		}
-	}
-
-	/***
-	 * Parse the current table filters elements of the settings file.
-	 *
-	 * @param element The 'currenttablefilters' element of the xml.
-	 * @param settings The settings to be loaded to.
-	 * @throws XmlException
-	 */
-	private void parseCurrentTableFilters(final Element element, final Settings settings) throws XmlException {
-		NodeList tableNodeList = element.getElementsByTagName("table");
-		for (int a = 0; a < tableNodeList.getLength(); a++) {
-			Element tableNode = (Element) tableNodeList.item(a);
-			String tableName = getString(tableNode, "name");
-			NodeList filterNodeList = tableNode.getElementsByTagName("filter");
-			List<Filter> filters = new ArrayList<>();
-
-			if (filterNodeList.getLength() == 1) {
-				Element filterNode = (Element) filterNodeList.item(0);
-
-				if(haveAttribute(filterNode, "show")) {
-					settings.getCurrentTableFiltersShown().put(tableName, getBoolean(filterNode, "show"));
-				} else {
-					settings.getCurrentTableFiltersShown().put(tableName, true);
-				}
-
-				filters = parseFilters(filterNode, tableName);
-			} else {
-				LOG.warn(tableName + " current filter not found");
-			}
-
-			if (filters.isEmpty()) {
-				LOG.warn(tableName + " current filter empty");
-			}
-			settings.getCurrentTableFilters().put(tableName, filters);
-		}
-	}
-
-	/***
-	 * Parse a filter element of the settings file. This can be used on both table and current table filters.
-	 *
-	 * @param filterNode The node of the filter element of the xml.
-	 * @param tableName The name of the table the filter is for.
-	 * @return A list of filters if the element had one. If not an empty list is returned.
-	 * @throws XmlException
-	 */
-	private List<Filter> parseFilters(Element filterNode, String tableName) throws XmlException {
-		List<Filter> filter = new ArrayList<>();
-		NodeList rowNodes = filterNode.getElementsByTagName("row");
-		for (int c = 0; c < rowNodes.getLength(); c++) {
-			Element rowNode = (Element) rowNodes.item(c);
-			int group = 1;
-			if (haveAttribute(rowNode, "group")) {
-				group = getInt(rowNode, "group");
-			}
-			boolean enabled = true;
-			if (haveAttribute(rowNode, "enabled")) {
-				enabled = getBoolean(rowNode, "enabled");
-			}
-			String text = getString(rowNode, "text");
-			String columnString = getString(rowNode, "column");
-			EnumTableColumn<?> column = getColumn(columnString, tableName);
-			if (column != null) {
-				String compare = getString(rowNode, "compare");
-				String logic = getString(rowNode, "logic");
-				filter.add(new Filter(group, logic, column, compare, text, enabled));
-			} else {
-				LOG.warn(columnString + " column removed from filter");
-			}
-		}
-		return filter;
 	}
 
 	public static EnumTableColumn<?> getColumn(final String column, final String tableName) {
@@ -1667,65 +1548,54 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		return CompareType.CONTAINS;
 	}
 
-	/***
-	 * Old method to process export settings for 6.8.0 and older
-	 */
-	@Deprecated
-	private void parseExportSettingsLegacy(final Element element, final Settings settings) throws XmlException {
+	private void parseExportSettings(final Element element, final Settings settings) throws XmlException {
 		//Copy
 		String copy = getStringOptional(element, "copy");
 		if (copy != null) {
-			settings.getCopySettings().setCopyDecimalSeparator(DecimalSeparator.valueOf(copy));
+			settings.getExportSettings().setCopyDecimalSeparator(DecimalSeparator.valueOf(copy));
 		}
-
-		ExportFormat exportFormat = null;
-		if (haveAttribute(element, "exportformat")) {
-			exportFormat = ExportFormat.valueOf(getString(element, "exportformat"));
-		}
-
 		//CSV
 		DecimalSeparator decimal = DecimalSeparator.valueOf(getString(element, "decimal"));
 		FieldDelimiter field = FieldDelimiter.valueOf(getString(element, "field"));
 		LineDelimiter line = LineDelimiter.valueOf(getString(element, "line"));
-
+		settings.getExportSettings().setCsvDecimalSeparator(decimal);
+		settings.getExportSettings().setFieldDelimiter(field);
+		settings.getExportSettings().setLineDelimiter(line);
 		//SQL
-		Boolean createTable = null;
-		Boolean dropTable = null;
-		Boolean extendedInserts = null;
 		if (haveAttribute(element, "sqlcreatetable")) {
-			createTable = getBoolean(element, "sqlcreatetable");
+			boolean createTable = getBoolean(element, "sqlcreatetable");
+			settings.getExportSettings().setCreateTable(createTable);
 		}
 		if (haveAttribute(element, "sqldroptable")) {
-			dropTable = getBoolean(element, "sqldroptable");
+			boolean dropTable = getBoolean(element, "sqldroptable");
+			settings.getExportSettings().setDropTable(dropTable);
 		}
 		if (haveAttribute(element, "sqlextendedinserts")) {
-			extendedInserts = getBoolean(element, "sqlextendedinserts");
+			boolean extendedInserts = getBoolean(element, "sqlextendedinserts");
+			settings.getExportSettings().setExtendedInserts(extendedInserts);
 		}
-
-		//HTML
-		Boolean htmlStyled = null;
-		Boolean htmlIGB = null;
-		Integer htmlRepeatHeader = null;
 		if (haveAttribute(element, "htmlstyled")) {
-			htmlStyled = getBoolean(element, "htmlstyled");
+			boolean htmlStyled = getBoolean(element, "htmlstyled");
+			settings.getExportSettings().setHtmlStyled(htmlStyled);
 		}
 		if (haveAttribute(element, "htmligb")) {
-			htmlIGB = getBoolean(element, "htmligb");
+			boolean htmlIGB = getBoolean(element, "htmligb");
+			settings.getExportSettings().setHtmlIGB(htmlIGB);
 		}
 		if (haveAttribute(element, "htmlrepeatheader")) {
-			htmlRepeatHeader = getInt(element, "htmlrepeatheader");
+			int htmlRepeatHeader = getInt(element, "htmlrepeatheader");
+			settings.getExportSettings().setHtmlRepeatHeader(htmlRepeatHeader);
 		}
-
-		Map<String, String> tableNames = new HashMap<>();
-		Map<String, String> fileNames = new HashMap<>();
-		Map<String, List<String>> columnNames = new HashMap<>();
-
+		if (haveAttribute(element, "exportformat")) {
+			ExportFormat exportFormat = ExportFormat.valueOf(getString(element, "exportformat"));
+			settings.getExportSettings().setExportFormat(exportFormat);
+		}
 		NodeList tableNamesNodeList = element.getElementsByTagName("sqltablenames");
 		for (int a = 0; a < tableNamesNodeList.getLength(); a++) {
 			Element tableNameNode = (Element) tableNamesNodeList.item(a);
 			String tool = getString(tableNameNode, "tool");
 			String tableName = getString(tableNameNode, "tablename");
-			tableNames.put(tool, tableName);
+			settings.getExportSettings().putTableName(tool, tableName);
 		}
 		//Shared
 		NodeList fileNamesNodeList = element.getElementsByTagName("filenames");
@@ -1733,7 +1603,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 			Element tableNameNode = (Element) fileNamesNodeList.item(a);
 			String tool = getString(tableNameNode, "tool");
 			String fileName = getString(tableNameNode, "filename");
-			fileNames.put(tool, fileName);
+			settings.getExportSettings().putFilename(tool, fileName);
 		}
 		NodeList tableNodeList = element.getElementsByTagName("table");
 		for (int a = 0; a < tableNodeList.getLength(); a++) {
@@ -1746,175 +1616,8 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 				String name = getString(columnNode, "name");
 				columns.add(name);
 			}
-			columnNames.put(tableName, columns);
+			settings.getExportSettings().putTableExportColumns(tableName, columns);
 		}
-
-		//List of existing tools at the time when the data format was changed 6.8.0
-		List<String> toolNames = Arrays.asList("industryjobs", "overview", "marketorders", "loadouts", "stockpile",
-				"reprocessed", "contracts", "industryslots", "journal", "assets", "materials", "treeassets", "value",
-				"items", "transaction");
-		for (String toolName : toolNames) {
-			ExportSettings exportSettings = new ExportSettings(toolName);
-			//Common
-			if (exportFormat != null) {
-				exportSettings.setExportFormat(exportFormat);
-			}
-			//CSV
-			exportSettings.setCsvDecimalSeparator(decimal);
-			exportSettings.setFieldDelimiter(field);
-			exportSettings.setLineDelimiter(line);
-			//SQL
-			if (createTable != null) {
-				exportSettings.setCreateTable(createTable);
-			}
-			if (dropTable != null) {
-				exportSettings.setDropTable(dropTable);
-			}
-			if (extendedInserts != null) {
-				exportSettings.setExtendedInserts(extendedInserts);
-			}
-			//HTML
-			if (htmlStyled != null) {
-				exportSettings.setHtmlStyled(htmlStyled);
-			}
-			if (htmlIGB != null) {
-				exportSettings.setHtmlIGB(htmlIGB);
-			}
-			if (htmlRepeatHeader != null) {
-				exportSettings.setHtmlRepeatHeader(htmlRepeatHeader);
-			}
-			//Lists
-			if (tableNames.containsKey(toolName)) {
-				exportSettings.setTableName(tableNames.get(toolName));
-			}
-			if (fileNames.containsKey(toolName)) {
-				exportSettings.setFilename(fileNames.get(toolName));
-			}
-			if (columnNames.containsKey(toolName)) {
-				exportSettings.getTableExportColumns().addAll(columnNames.get(toolName));
-			}
-			settings.getExportSettings().put(toolName, exportSettings);
-		}
-	}
-
-	/***
-	 *
-	 * @param element
-	 * @param settings
-	 * @throws XmlException
-	 */
-	private void parseExportSettings(final Element element, final Settings settings) throws XmlException {
-		//Copy
-		String copy = getStringOptional(element, "copy");
-		if (copy != null) {
-			settings.getCopySettings().setCopyDecimalSeparator(DecimalSeparator.valueOf(copy));
-		}
-
-		NodeList tableNodeList = element.getElementsByTagName("export");
-		for (int a = 0; a < tableNodeList.getLength(); a++) {
-			Element exportNode = (Element) tableNodeList.item(a);
-			String toolName = getString(exportNode, "name");
-			ExportSettings exportSettings = parseExportSetting(exportNode, toolName);
-			settings.getExportSettings().put(toolName, exportSettings);
-		}
-	}
-
-	/***
-	 *
-	 * @param exportNode
-	 * @param toolName
-	 * @return
-	 * @throws XmlException
-	 */
-	private ExportSettings parseExportSetting(final Element exportNode, final String toolName) throws XmlException {
-		ExportSettings exportSetting = new ExportSettings(toolName);
-
-		//Common
-		String exportFormat = getStringOptional(exportNode, "exportformat");
-		if (exportFormat != null) {
-			exportSetting.setExportFormat(ExportFormat.valueOf(exportFormat));
-		}
-
-		String fileName = getString(exportNode, "filename");
-		if (fileName != null) {
-			exportSetting.setFilename(fileName);
-		}
-
-		String columnSelection = getStringOptional(exportNode, "columnselection");
-		if (columnSelection != null) {
-			exportSetting.setColumnSelection(ColumnSelection.valueOf(columnSelection));
-		}
-
-		String viewName = getStringOptional(exportNode, "viewname");
-		if (viewName != null) {
-			exportSetting.setViewName(viewName);
-		}
-
-		String filterSelection = getStringOptional(exportNode, "filterselection");
-		if (filterSelection != null) {
-			exportSetting.setFilterSelection(FilterSelection.valueOf(filterSelection));
-		}
-
-		String filterName = getStringOptional(exportNode, "filtername");
-		if (filterName != null) {
-			exportSetting.setFilterName(filterName);
-		}
-
-		Element tableNode = getNodeOptional(exportNode, "table");
-		if (tableNode != null) {
-			List<String> columns = new ArrayList<>();
-			NodeList columnNodeList = tableNode.getElementsByTagName("column");
-			for (int b = 0; b < columnNodeList.getLength(); b++) {
-				Element columnNode = (Element) columnNodeList.item(b);
-				String name = getString(columnNode, "name");
-				columns.add(name);
-			}
-			exportSetting.putTableExportColumns(columns);
-		}
-
-		//CSV
-		Element csvElement = getNodeOptional(exportNode, "csv");
-		if (csvElement != null) {
-			DecimalSeparator decimal = DecimalSeparator.valueOf(getString(csvElement, "decimal"));
-			exportSetting.setCsvDecimalSeparator(decimal);
-
-			FieldDelimiter field = FieldDelimiter.valueOf(getString(csvElement, "field"));
-			exportSetting.setFieldDelimiter(field);
-
-			LineDelimiter line = LineDelimiter.valueOf(getString(csvElement, "line"));
-			exportSetting.setLineDelimiter(line);
-		}
-
-		//SQL
-		Element sqlElement = getNodeOptional(exportNode, "sql");
-		if (sqlElement != null) {
-			String tableName = getString(sqlElement, "tablename");
-			exportSetting.setTableName(tableName);
-
-			boolean createTable = getBoolean(sqlElement, "createtable");
-			exportSetting.setCreateTable(createTable);
-
-			boolean dropTable = getBoolean(sqlElement, "droptable");
-			exportSetting.setDropTable(dropTable);
-
-			boolean extendedInserts = getBoolean(sqlElement, "extendedinserts");
-			exportSetting.setExtendedInserts(extendedInserts);
-		}
-
-		//html
-		Element htmlElement = getNodeOptional(exportNode, "html");
-		if (htmlElement != null) {
-			boolean htmlStyled = getBoolean(htmlElement, "styled");
-			exportSetting.setHtmlStyled(htmlStyled);
-
-			boolean htmlIGB = getBoolean(htmlElement, "igb");
-			exportSetting.setHtmlIGB(htmlIGB);
-
-			int htmlRepeatHeader = getInt(htmlElement, "repeatheader");
-			exportSetting.setHtmlRepeatHeader(htmlRepeatHeader);
-		}
-
-		return exportSetting;
 	}
 
 	private void parseAssetAdded(final Element element) throws XmlException {

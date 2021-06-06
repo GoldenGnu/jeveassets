@@ -59,11 +59,9 @@ import javax.swing.JSeparator;
 import javax.swing.JSlider;
 import javax.swing.JTextField;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.data.settings.ExportSettings.ColumnSelection;
 import net.nikr.eve.jeveasset.data.settings.ExportSettings.DecimalSeparator;
 import net.nikr.eve.jeveasset.data.settings.ExportSettings.ExportFormat;
 import net.nikr.eve.jeveasset.data.settings.ExportSettings.FieldDelimiter;
-import net.nikr.eve.jeveasset.data.settings.ExportSettings.FilterSelection;
 import net.nikr.eve.jeveasset.data.settings.ExportSettings.LineDelimiter;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.data.settings.tag.Tags;
@@ -158,7 +156,7 @@ public class ExportDialog<E> extends JDialogCentered {
 		ListenerClass listener = new ListenerClass();
 		layout.setAutoCreateContainerGaps(false);
 
-		jFileChooser = JCustomFileChooser.createFileChooser(jFrame, Settings.get().getExportSettings(toolName).getExportFormat().getExtension());
+		jFileChooser = JCustomFileChooser.createFileChooser(jFrame, Settings.get().getExportSettings().getExportFormat().getExtension());
 	//Format
 		JPanel jFormatPanel = new JPanel();
 		jFormatPanel.setBorder(BorderFactory.createTitledBorder(DialoguesExport.get().format()));
@@ -465,19 +463,19 @@ public class ExportDialog<E> extends JDialogCentered {
 	}
 
 	private boolean browse() {
-		File file = new File(Settings.get().getExportSettings(toolName).getFilename());
-		File path = new File(Settings.get().getExportSettings(toolName).getPath());
+		File file = new File(Settings.get().getExportSettings().getFilename(toolName));
+		File path = new File(Settings.get().getExportSettings().getPath(toolName));
 		if (path.exists()) {
 			jFileChooser.setCurrentDirectory(path);
 			jFileChooser.setSelectedFile(file);
 		} else {
-			jFileChooser.setCurrentDirectory(new File(Settings.get().getExportSettings(toolName).getDefaultPath()));
-			jFileChooser.setSelectedFile(new File(Settings.get().getExportSettings(toolName).getDefaultFilename()));
+			jFileChooser.setCurrentDirectory(new File(Settings.get().getExportSettings().getDefaultPath()));
+			jFileChooser.setSelectedFile(new File(Settings.get().getExportSettings().getDefaultFilename(toolName)));
 		}
 		int bFound = jFileChooser.showDialog(getDialog(), DialoguesExport.get().ok());
 		if (bFound  == JFileChooser.APPROVE_OPTION) {
 			file = jFileChooser.getSelectedFile();
-			Settings.get().getExportSettings(toolName).setFilename(file.getAbsolutePath());
+			Settings.get().getExportSettings().putFilename(toolName, file.getAbsolutePath());
 			return true;
 		} else {
 			return false;
@@ -510,37 +508,23 @@ public class ExportDialog<E> extends JDialogCentered {
 	private void saveSettings() {
 		Settings.lock("Export Settings (Save)"); //Lock for Export Settings (Save)
 		//CSV
-		Settings.get().getExportSettings(toolName).setFieldDelimiter((FieldDelimiter) jFieldDelimiter.getSelectedItem());
-		Settings.get().getExportSettings(toolName).setLineDelimiter((LineDelimiter) jLineDelimiter.getSelectedItem());
-		Settings.get().getExportSettings(toolName).setCsvDecimalSeparator((DecimalSeparator) jDecimalSeparator.getSelectedItem());
+		Settings.get().getExportSettings().setFieldDelimiter((FieldDelimiter) jFieldDelimiter.getSelectedItem());
+		Settings.get().getExportSettings().setLineDelimiter((LineDelimiter) jLineDelimiter.getSelectedItem());
+		Settings.get().getExportSettings().setCsvDecimalSeparator((DecimalSeparator) jDecimalSeparator.getSelectedItem());
 		//SQL
-		Settings.get().getExportSettings(toolName).setTableName(jTableName.getText());
-		Settings.get().getExportSettings(toolName).setDropTable(jDropTable.isSelected());
-		Settings.get().getExportSettings(toolName).setCreateTable(jCreateTable.isSelected());
-		Settings.get().getExportSettings(toolName).setExtendedInserts(jExtendedInserts.isSelected());
+		Settings.get().getExportSettings().putTableName(toolName, jTableName.getText());
+		Settings.get().getExportSettings().setDropTable(jDropTable.isSelected());
+		Settings.get().getExportSettings().setCreateTable(jCreateTable.isSelected());
+		Settings.get().getExportSettings().setExtendedInserts(jExtendedInserts.isSelected());
 		//HTML
-		Settings.get().getExportSettings(toolName).setHtmlStyled(jHtmlStyle.isSelected());
-		Settings.get().getExportSettings(toolName).setHtmlIGB(jHtmlIGB.isSelected());
-		Settings.get().getExportSettings(toolName).setHtmlRepeatHeader(jHtmlHeaderRepeat.getValue());
+		Settings.get().getExportSettings().setHtmlStyled(jHtmlStyle.isSelected());
+		Settings.get().getExportSettings().setHtmlIGB(jHtmlIGB.isSelected());
+		Settings.get().getExportSettings().setHtmlRepeatHeader(jHtmlHeaderRepeat.getValue());
 		//Shared
 		if (jColumnSelection.getSelectedIndices().length == columns.size()) { //All is selected - nothing worth saving...
-			Settings.get().getExportSettings(toolName).putTableExportColumns(null);
+			Settings.get().getExportSettings().putTableExportColumns(toolName, null);
 		} else {
-			Settings.get().getExportSettings(toolName).putTableExportColumns(getExportColumns());
-		}
-		//Make sure there is a selected item and that it is not the filler text for empty list.
-		if (jFilters.getSelectedItem() != null
-				&& !DialoguesExport.get().noSavedFilter().equals(jFilters.getSelectedItem())) {
-			Settings.get().getExportSettings(toolName).setFilterName((String) jFilters.getSelectedItem());
-		} else  {
-			Settings.get().getExportSettings(toolName).setFilterName(null);
-		}
-		//Make sure there is a selected item and that is is not filler text for empty list.
-		if (jViews.getSelectedItem() != null
-				&& !DialoguesExport.get().viewNoSaved().equals(jViews.getSelectedItem())) {
-			Settings.get().getExportSettings(toolName).setViewName((String) jViews.getSelectedItem());
-		} else  {
-			Settings.get().getExportSettings(toolName).setViewName(null);
+			Settings.get().getExportSettings().putTableExportColumns(toolName, getExportColumns());
 		}
 		Settings.unlock("Export Settings (Save)"); //Unlock for Export Settings (Save)
 		exportFilterControl.saveSettings("Export Settings (Save)");
@@ -548,24 +532,35 @@ public class ExportDialog<E> extends JDialogCentered {
 
 	private void loadSettings() {
 		//CSV
-		jFieldDelimiter.setSelectedItem(Settings.get().getExportSettings(toolName).getFieldDelimiter());
-		jLineDelimiter.setSelectedItem(Settings.get().getExportSettings(toolName).getLineDelimiter());
-		jDecimalSeparator.setSelectedItem(Settings.get().getExportSettings(toolName).getCsvDecimalSeparator());
+		jFieldDelimiter.setSelectedItem(Settings.get().getExportSettings().getFieldDelimiter());
+		jLineDelimiter.setSelectedItem(Settings.get().getExportSettings().getLineDelimiter());
+		jDecimalSeparator.setSelectedItem(Settings.get().getExportSettings().getCsvDecimalSeparator());
 		//SQL
-		jTableName.setText(Settings.get().getExportSettings(toolName).getTableName());
-		jDropTable.setSelected(Settings.get().getExportSettings(toolName).isDropTable());
-		jCreateTable.setSelected(Settings.get().getExportSettings(toolName).isCreateTable());
-		jExtendedInserts.setSelected(Settings.get().getExportSettings(toolName).isExtendedInserts());
+		jTableName.setText(Settings.get().getExportSettings().getTableName(toolName));
+		jDropTable.setSelected(Settings.get().getExportSettings().isDropTable());
+		jCreateTable.setSelected(Settings.get().getExportSettings().isCreateTable());
+		jExtendedInserts.setSelected(Settings.get().getExportSettings().isExtendedInserts());
 		//HTML
-		jHtmlStyle.setSelected(Settings.get().getExportSettings(toolName).isHtmlStyled());
-		jHtmlIGB.setSelected(Settings.get().getExportSettings(toolName).isHtmlIGB());
-		jHtmlHeaderRepeat.setValue(Settings.get().getExportSettings(toolName).getHtmlRepeatHeader());
+		jHtmlStyle.setSelected(Settings.get().getExportSettings().isHtmlStyled());
+		jHtmlIGB.setSelected(Settings.get().getExportSettings().isHtmlIGB());
+		jHtmlHeaderRepeat.setValue(Settings.get().getExportSettings().getHtmlRepeatHeader());
 		//Filename
-		ExportFormat exportFormat = Settings.get().getExportSettings(toolName).getExportFormat();
+		ExportFormat exportFormat = Settings.get().getExportSettings().getExportFormat();
+		cardLayout.show(jOptionPanel, exportFormat.name());
+		if (exportFormat == ExportFormat.HTML) {
+			jHtml.setSelected(true);
+			jOptionPanel.setBorder(BorderFactory.createTitledBorder(DialoguesExport.get().html()));
+		} else if (exportFormat == ExportFormat.SQL) {
+			jSql.setSelected(true);
+			jOptionPanel.setBorder(BorderFactory.createTitledBorder(DialoguesExport.get().sql()));
+		} else { //CSV and Default
+			jCsv.setSelected(true);
+			jOptionPanel.setBorder(BorderFactory.createTitledBorder(DialoguesExport.get().csv()));
+		}
 		jFileChooser.setExtension(exportFormat.getExtension());
 		//Columns (Shared)
 		jColumnSelection.clearSelection();
-		List<String> list = Settings.get().getExportSettings(toolName).getTableExportColumns();
+		List<String> list = Settings.get().getExportSettings().getTableExportColumns(toolName);
 		if (list == null) {
 			jColumnSelection.clearSelection();
 		} else {
@@ -585,144 +580,84 @@ public class ExportDialog<E> extends JDialogCentered {
 			}
 			jColumnSelection.setSelectedIndices(indices);
 		}
-
-		String filterName = Settings.get().getExportSettings(toolName).getFilterName();
-		List<String> filterNames = new ArrayList<>(exportFilterControl.getAllFilters().keySet());
-		if (!filterNames.isEmpty()) {
-			Collections.sort(filterNames, new CaseInsensitiveComparator());
-			jFilters.setModel(new ListComboBoxModel<>(filterNames));
-			if(hasItem(jFilters, filterName)) {
-				jFilters.setSelectedItem(filterName);
-			}
-		} else {
-			jFilters.setModel(new ListComboBoxModel<>());
-		}
-
-		String viewName = Settings.get().getExportSettings(toolName).getViewName();
-		List<String> viewNames = new ArrayList<>(Settings.get().getTableViews(toolName).keySet());
-		if (!viewNames.isEmpty()) {
-			Collections.sort(viewNames, new CaseInsensitiveComparator());
-			jViews.setModel(new ListComboBoxModel<>(viewNames));
-			if (hasItem(jViews, viewName)) {
-				jViews.setSelectedItem(viewName);
-			}
-		} else {
-			jViews.setModel(new ListComboBoxModel<>());
-		}
-		updateDisplayElements();
 	}
 
 	private void resetSettings() {
 		Settings.lock("Export Settings (Reset)"); //Lock for Export Settings (Reset)
 		//CSV
-		Settings.get().getExportSettings(toolName).setFieldDelimiter(FieldDelimiter.COMMA);
-		Settings.get().getExportSettings(toolName).setLineDelimiter(LineDelimiter.DOS);
-		Settings.get().getExportSettings(toolName).setCsvDecimalSeparator(DecimalSeparator.DOT);
+		Settings.get().getExportSettings().setFieldDelimiter(FieldDelimiter.COMMA);
+		Settings.get().getExportSettings().setLineDelimiter(LineDelimiter.DOS);
+		Settings.get().getExportSettings().setCsvDecimalSeparator(DecimalSeparator.DOT);
 		//SQL
-		Settings.get().getExportSettings(toolName).setTableName("");
-		Settings.get().getExportSettings(toolName).setDropTable(true);
-		Settings.get().getExportSettings(toolName).setCreateTable(true);
-		Settings.get().getExportSettings(toolName).setExtendedInserts(true);
+		Settings.get().getExportSettings().putTableName(toolName, "");
+		Settings.get().getExportSettings().setDropTable(true);
+		Settings.get().getExportSettings().setCreateTable(true);
+		Settings.get().getExportSettings().setExtendedInserts(true);
 		//HTML
-		Settings.get().getExportSettings(toolName).setHtmlStyled(true);
-		Settings.get().getExportSettings(toolName).setHtmlRepeatHeader(0);
+		Settings.get().getExportSettings().setHtmlStyled(true);
+		Settings.get().getExportSettings().setHtmlRepeatHeader(0);
 		//Shared
-		Settings.get().getExportSettings(toolName).setFilename(Settings.get().getExportSettings(toolName).getDefaultFilename());
-		Settings.get().getExportSettings(toolName).putTableExportColumns(null);
-		Settings.get().getExportSettings(toolName).setExportFormat(ExportFormat.CSV);
-		Settings.get().getExportSettings(toolName).setColumnSelection(ColumnSelection.SHOWN);
-		Settings.get().getExportSettings(toolName).setFilterSelection(FilterSelection.NONE);
-		Settings.get().getExportSettings(toolName).setViewName(null);
-		Settings.get().getExportSettings(toolName).setFilterName(null);
+		Settings.get().getExportSettings().putFilename(toolName, Settings.get().getExportSettings().getDefaultFilename(toolName));
+		Settings.get().getExportSettings().putTableExportColumns(toolName, null);
+		Settings.get().getExportSettings().setExportFormat(ExportFormat.CSV);
 		Settings.unlock("Export Settings (Reset)"); //Unlock for Export Settings (Reset)
 		loadSettings();
-	}
-
-	/***
-	 *Updates the UI elements that are displayed based on the current data. This will hide or show panels. Enable
-	 *combo boxes. Etc.
-	 */
-	public void updateDisplayElements() {
-		ExportFormat exportFormat = Settings.get().getExportSettings(toolName).getExportFormat();
-		cardLayout.show(jOptionPanel, exportFormat.name());
-		if (exportFormat == ExportFormat.HTML) {
-			jHtml.setSelected(true);
-			jOptionPanel.setBorder(BorderFactory.createTitledBorder(DialoguesExport.get().html()));
-		} else if (exportFormat == ExportFormat.SQL) {
-			jSql.setSelected(true);
-			jOptionPanel.setBorder(BorderFactory.createTitledBorder(DialoguesExport.get().sql()));
-		} else { //CSV and Default
-			jCsv.setSelected(true);
-			jOptionPanel.setBorder(BorderFactory.createTitledBorder(DialoguesExport.get().csv()));
-		}
-
-		FilterSelection filterSelection = Settings.get().getExportSettings(toolName).getFilterSelection();
-		String filterName = Settings.get().getExportSettings(toolName).getFilterName();
-		if (filterSelection == FilterSelection.NONE) {
-			jNoFilter.setSelected(true);
-			jFilters.setEnabled(false);
-		} else if (filterSelection == FilterSelection.CURRENT && !exportFilterControl.getCurrentFilters().isEmpty()) {
-			jCurrentFilter.setSelected(true);
-			jFilters.setEnabled(false);
-		} else if (filterSelection == FilterSelection.SAVED && hasItem(jFilters, filterName)) {
-			jSavedFilter.setSelected(true);
-			jFilters.setEnabled(true);
-		} else {
-			//If we got here then the view selection didn't match the data and we had to default, so reset the value
-			//in the settings.
-			jNoFilter.setSelected(true);
-			jFilters.setEnabled(false);
-			Settings.get().getExportSettings(toolName).setFilterSelection(FilterSelection.NONE);
-		}
-
-		//Filters current
-		if (exportFilterControl.getCurrentFilters().isEmpty()) {
-			jCurrentFilter.setEnabled(false);
-		} else {
-			jCurrentFilter.setEnabled(true);
-		}
-
-		//Filters saved
-		if (exportFilterControl.getAllFilters().isEmpty()) {
-			jSavedFilter.setEnabled(false);
-			jFilters.getModel().setSelectedItem(DialoguesExport.get().noSavedFilter());
-		} else {
-			jSavedFilter.setEnabled(true);
-		}
-
-		ColumnSelection columnSelection = Settings.get().getExportSettings(toolName).getColumnSelection();
-		String viewName = Settings.get().getExportSettings(toolName).getViewName();
-		if (columnSelection == ColumnSelection.SHOWN) {
-			jViewCurrent.setSelected(true);
-			jViews.setEnabled(false);
-		} else if (columnSelection == ColumnSelection.SAVED && hasItem(jViews, viewName)) {
-			jViewSaved.setSelected(true);
-			jViews.setEnabled(true);
-		} else if (columnSelection == ColumnSelection.SELECTED) {
-			jViewSelect.setSelected(true);
-			jViews.setEnabled(false);
-		} else {
-			//If we got here then the column selection didn't match the data and we had to default, so reset the value
-			//in the settings.
-			jViewCurrent.setSelected(true);
-			jViews.setEnabled(false);
-			Settings.get().getExportSettings(toolName).setColumnSelection(ColumnSelection.SHOWN);
-		}
-
-		//Views
-		Map<String, View> tableViews = Settings.get().getTableViews(toolName);
-		if (tableViews.isEmpty()) {
-			jViewSaved.setEnabled(false);
-			jViews.getModel().setSelectedItem(DialoguesExport.get().viewNoSaved());
-		} else {
-			jViewSaved.setEnabled(true);
-		}
 	}
 
 	@Override
 	public void setVisible(final boolean b) {
 		if (b) {
 			loadSettings();
+			//Filters (Saved)
+			jFilters.setEnabled(false);
+			if (exportFilterControl.getAllFilters().isEmpty()) {
+				if (jSavedFilter.isSelected()) {
+					jNoFilter.setSelected(true);
+				}
+				jSavedFilter.setEnabled(false);
+				jFilters.getModel().setSelectedItem(DialoguesExport.get().noSavedFilter());
+			} else {
+				if (jSavedFilter.isSelected()) {
+					jFilters.setEnabled(true);
+				}
+				jSavedFilter.setEnabled(true);
+				List<String> filterNames = new ArrayList<>(exportFilterControl.getAllFilters().keySet());
+				Collections.sort(filterNames, new CaseInsensitiveComparator());
+				Object selectedItem = jFilters.getSelectedItem(); //Save selection
+				jFilters.setModel(new ListComboBoxModel<>(filterNames));
+				if (selectedItem != null) { //Restore selection
+					jFilters.setSelectedItem(selectedItem);
+				}
+			}
+			//Filters (Current)
+			if (exportFilterControl.getCurrentFilters().isEmpty()) {
+				if (jCurrentFilter.isSelected()) {
+					jNoFilter.setSelected(true);
+				}
+				jCurrentFilter.setEnabled(false);
+			} else {
+				jCurrentFilter.setEnabled(true);
+			}
+			//Views
+			jViews.setEnabled(false);
+			Map<String, View> tableViews = Settings.get().getTableViews(toolName);
+			if (tableViews.isEmpty()) {
+				if (jViewSaved.isSelected()) {
+					jViewCurrent.setSelected(true);
+				}
+				jViewSaved.setEnabled(false);
+				jViews.getModel().setSelectedItem(DialoguesExport.get().viewNoSaved());
+			} else {
+				if (jViewSaved.isSelected()) {
+					jViews.setEnabled(true);
+				}
+				jViewSaved.setEnabled(true);
+				Object selectedItem = jViews.getSelectedItem(); //Save selection
+				jViews.setModel(new ListComboBoxModel<>(tableViews.keySet()));
+				if (selectedItem != null) { //Restore selection
+					jViews.setSelectedItem(selectedItem);
+				}
+			}
 		}
 		super.setVisible(b);
 	}
@@ -768,7 +703,7 @@ public class ExportDialog<E> extends JDialogCentered {
 			return;
 		}
 	//Bad options
-		if (jCsv.isSelected() && Settings.get().getExportSettings(toolName).getCsvDecimalSeparator() == DecimalSeparator.COMMA && Settings.get().getExportSettings(toolName).getFieldDelimiter() == FieldDelimiter.COMMA) {
+		if (jCsv.isSelected() && Settings.get().getExportSettings().getCsvDecimalSeparator() == DecimalSeparator.COMMA && Settings.get().getExportSettings().getFieldDelimiter() == FieldDelimiter.COMMA) {
 			int nReturn = JOptionPane.showConfirmDialog(
 					getDialog(),
 					DialoguesExport.get().confirmStupidDecision(),
@@ -845,16 +780,16 @@ public class ExportDialog<E> extends JDialogCentered {
 			for (E e : items) {
 				Map<String, String> row = new HashMap<>();
 				for (EnumTableColumn<E> column : header) {
-					row.put(column.name(), format(column.getColumnValue(e), Settings.get().getExportSettings(toolName).getCsvDecimalSeparator(), false));
+					row.put(column.name(), format(column.getColumnValue(e), Settings.get().getExportSettings().getCsvDecimalSeparator(), false));
 				}
 				rows.add(row);
 			}
 			//Save data
-			saved = CsvWriter.save(Settings.get().getExportSettings(toolName).getFilename(),
+			saved = CsvWriter.save(Settings.get().getExportSettings().getFilename(toolName),
 					rows,
 					headerStrings.toArray(new String[headerStrings.size()]),
 					headerKeys.toArray(new String[headerKeys.size()]),
-					new CsvPreference.Builder('\"', Settings.get().getExportSettings(toolName).getFieldDelimiter().getValue(), Settings.get().getExportSettings(toolName).getLineDelimiter().getValue()).build());
+					new CsvPreference.Builder('\"', Settings.get().getExportSettings().getFieldDelimiter().getValue(), Settings.get().getExportSettings().getLineDelimiter().getValue()).build());
 		} else if (jHtml.isSelected()) {
 	//HTML
 			//Create data
@@ -862,17 +797,17 @@ public class ExportDialog<E> extends JDialogCentered {
 			for (E e : items) {
 				Map<EnumTableColumn<?>, String> row = new HashMap<>();
 				for (EnumTableColumn<E> column : header) {
-					row.put(column, format(column.getColumnValue(e), Settings.get().getExportSettings(toolName).getCsvDecimalSeparator(), Settings.get().getExportSettings(toolName).isHtmlStyled()));
+					row.put(column, format(column.getColumnValue(e), Settings.get().getExportSettings().getCsvDecimalSeparator(), Settings.get().getExportSettings().isHtmlStyled()));
 				}
 				rows.add(row);
 			}
 			//Save data
-			saved = HtmlWriter.save(Settings.get().getExportSettings(toolName).getFilename(),
+			saved = HtmlWriter.save(Settings.get().getExportSettings().getFilename(toolName),
 					rows,
 					new ArrayList<>(header),
 					jHtmlIGB.isSelected() ? new ArrayList<>(items) : null,
-					Settings.get().getExportSettings(toolName).isHtmlStyled(),
-					Settings.get().getExportSettings(toolName).getHtmlRepeatHeader(),
+					Settings.get().getExportSettings().isHtmlStyled(),
+					Settings.get().getExportSettings().getHtmlRepeatHeader(),
 					toolName.equals(TreeTab.NAME));
 		} else if (jSql.isSelected()) {
 	//SQL
@@ -886,13 +821,13 @@ public class ExportDialog<E> extends JDialogCentered {
 				rows.add(row);
 			}
 			//Save data
-			saved = SqlWriter.save(Settings.get().getExportSettings(toolName).getFilename(),
+			saved = SqlWriter.save(Settings.get().getExportSettings().getFilename(toolName),
 					rows,
 					new ArrayList<>(header),
-					Settings.get().getExportSettings(toolName).getTableName(),
-					Settings.get().getExportSettings(toolName).isDropTable(),
-					Settings.get().getExportSettings(toolName).isCreateTable(),
-					Settings.get().getExportSettings(toolName).isExtendedInserts());
+					Settings.get().getExportSettings().getTableName(toolName),
+					Settings.get().getExportSettings().isDropTable(),
+					Settings.get().getExportSettings().isCreateTable(),
+					Settings.get().getExportSettings().isExtendedInserts());
 		} else {
 			saved = false;
 		}
@@ -904,27 +839,6 @@ public class ExportDialog<E> extends JDialogCentered {
 		}
 
 		setVisible(false);
-	}
-
-	/***
-	 * Helper function to return if the comboBox has the item. Null string or item will return false.
-	 * @param comboBox The combo box to look for the item in.
-	 * @param item The item to look for int he combo box.
-	 * @return True if the item is found (case sensitive). False if it is not found or either parameter is null.
-	 */
-	private boolean hasItem(JComboBox<String> comboBox, String item) {
-		if (comboBox == null || item == null) {
-			return false;
-		}
-
-		for (int i = 0; i < comboBox.getModel().getSize(); i++) {
-			String comboItem = comboBox.getModel().getElementAt(i);
-			if (item.equals(comboItem)) {
-				return true;
-			}
-		}
-
-		return false;
 	}
 
 	private class ListenerClass implements ActionListener {
@@ -950,33 +864,15 @@ public class ExportDialog<E> extends JDialogCentered {
 					exportFormat = ExportFormat.SQL;
 					jOptionPanel.setBorder(BorderFactory.createTitledBorder(DialoguesExport.get().sql()));
 				}
-				Settings.get().getExportSettings(toolName).setExportFormat(exportFormat);
+				Settings.get().getExportSettings().setExportFormat(exportFormat);
 				cardLayout.show(jOptionPanel, exportFormat.name());
 				jFileChooser.setExtension(exportFormat.getExtension());
 			} else if (ExportAction.FILTER_CHANGED.name().equals(e.getActionCommand())) {
 				jFilters.setEnabled(jSavedFilter.isSelected());
-				FilterSelection filterSelection = FilterSelection.NONE;
-				if (jNoFilter.isSelected()) {
-					filterSelection = FilterSelection.NONE;
-				} else if (jCurrentFilter.isSelected()) {
-					filterSelection = FilterSelection.CURRENT;
-				} else if (jSavedFilter.isSelected()) {
-					filterSelection = FilterSelection.SAVED;
-				}
-				Settings.get().getExportSettings(toolName).setFilterSelection(filterSelection);
 			} else if (ExportAction.VIEW_CHANGED.name().equals(e.getActionCommand())) {
 				jViews.setEnabled(jViewSaved.isSelected());
 				jColumnSelection.setEnabled(jViewSelect.isSelected());
 				jViewSelectAll.setEnabled(jViewSelect.isSelected());
-				ColumnSelection columnSelection = ColumnSelection.SHOWN;
-				if (jViewCurrent.isSelected()) {
-					columnSelection = ColumnSelection.SHOWN;
-				} else if (jViewSaved.isSelected()) {
-					columnSelection = ColumnSelection.SAVED;
-				} else if (jViewSelect.isSelected()) {
-					columnSelection = ColumnSelection.SELECTED;
-				}
-				Settings.get().getExportSettings(toolName).setColumnSelection(columnSelection);
 			}
 		}
 	}

@@ -74,7 +74,7 @@ public class DataSetCreator {
 								|| ((locationID > 40000000 && locationID < 50000000) && value.getDate().before(issues943fixed)) //Deleted PI structures: https://github.com/esi/esi-issues/issues/943
 								)) {
 							value.getAssetsFilter().remove(assetValue);
-							Settings.get().getTrackerSettings().getFilters().remove(assetValue.getID());
+							Settings.get().getTrackerFilters().remove(assetValue.getID());
 						}
 					}
 				}

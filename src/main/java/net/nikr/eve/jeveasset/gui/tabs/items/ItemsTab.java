@@ -107,7 +107,6 @@ public class ItemsTab extends JMainTabPrimary {
 				filterList,
 				Settings.get().getTableFilters(NAME)
 				);
-		installFilterControl(filterControl, NAME);
 
 		//Menu
 		installMenu(program, new ItemTableMenu(), jTable, Item.class);

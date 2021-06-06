@@ -18,12 +18,13 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
  */
-
 package net.nikr.eve.jeveasset.data.settings;
 
 import java.io.File;
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import net.nikr.eve.jeveasset.i18n.DialoguesExport;
 import net.nikr.eve.jeveasset.io.shared.FileUtil;
 
@@ -126,93 +127,50 @@ public class ExportSettings {
 		}
 	}
 
-	/***
-	 * Enum that contains the options for column selection in column jcombobox.
-	 */
-	public enum ColumnSelection {
-		SHOWN("shown"),
-		SAVED("saved"),
-		SELECTED("selected");
-
-		private final String selection;
-
-		private ColumnSelection(String selection) {
-			this.selection = selection;
-		}
-
-		public String getSelection() {
-			return selection;
-		}
-	}
-
-	/***
-	 * Enum that contains the options for filter selection in filter jcombobox.
-	 */
-	public enum FilterSelection {
-		NONE("none"),
-		CURRENT("current"),
-		SAVED("saved");
-
-		private final String selection;
-
-		private FilterSelection(String selection) {
-			this.selection = selection;
-		}
-
-		public String getSelection() {
-			return selection;
-		}
-	}
-
 	private static final String PATH = FileUtil.getUserDirectory();
-
-	//Common
-	private final String toolName;
-	private final List<String> tableExportColumns = new ArrayList<>();
-	private String fileName;
-	private ExportFormat exportFormat;
-	private FilterSelection filterSelection;
-	private ColumnSelection columnSelection;
-	private String filterName;
-	private String viewName;
-
-	//CSV
+//Copy
+	private DecimalSeparator copyDecimalSeparator;
+//CSV - shared by all tools
 	private FieldDelimiter fieldDelimiter;
 	private LineDelimiter lineDelimiter;
 	private DecimalSeparator csvDecimalSeparator;
-
-	//SQL
+//SQL
+	//Shared
 	private boolean createTable; 
 	private boolean dropTable;
 	private boolean extendedInserts;
-	private String tableName;
-
-	//HTML
+	//Per tool option
+	private final Map<String, String> tableNames = new HashMap<>();
+//HTML  - shared
 	private boolean htmlStyled;
 	private int htmlRepeatHeader;
 	private boolean htmlIGB;
+//Common
+	//Shared
+	private ExportFormat exportFormat; 
+	//Per tool options
+	private final Map<String, List<String>> tableExportColumns = new HashMap<>();
+	private final Map<String, String> filenames = new HashMap<>();
 
-	public ExportSettings(String toolName) {
-		this.toolName = toolName;
-		fileName = "";
-		exportFormat = ExportFormat.CSV;
-		filterSelection = FilterSelection.NONE;
-		columnSelection = ColumnSelection.SHOWN;
-		filterName = "";
-		viewName = "";
-
+	public ExportSettings() {
+		copyDecimalSeparator = DecimalSeparator.DOT;
 		fieldDelimiter = FieldDelimiter.COMMA;
 		lineDelimiter = LineDelimiter.DOS;
 		csvDecimalSeparator = DecimalSeparator.DOT;
-
+		exportFormat = ExportFormat.CSV;
 		createTable = true;
 		dropTable = true;
 		extendedInserts = true;
-		tableName = "";
-
 		htmlStyled = true;
-		htmlRepeatHeader = 0;
 		htmlIGB = false;
+	}
+
+	public DecimalSeparator getCopyDecimalSeparator() {
+		return copyDecimalSeparator;
+	}
+
+	public void setCopyDecimalSeparator(DecimalSeparator copyDecimalSeparator) {
+		this.copyDecimalSeparator = copyDecimalSeparator;
 	}
 
 	public DecimalSeparator getCsvDecimalSeparator() {
@@ -295,55 +253,32 @@ public class ExportSettings {
 		this.exportFormat = exportFormat;
 	}
 
-	public FilterSelection getFilterSelection() {
-		return filterSelection;
+	public Map<String, String> getTableNames() {
+		return tableNames;
 	}
 
-	public void setFilterSelection(FilterSelection filterSelection) {
-		this.filterSelection = filterSelection;
-	}
-
-	public ColumnSelection getColumnSelection() {
-		return columnSelection;
-	}
-
-	public void setColumnSelection(ColumnSelection columnSelection) {
-		this.columnSelection = columnSelection;
-	}
-
-	public String getTableName() {
-		return tableName;
-	}
-
-	public void setTableName(String tableName) {
-		this.tableName = tableName;
-	}
-
-	public String getFilterName() {
-		return filterName;
-	}
-
-	public void setFilterName(String filterName) {
-		this.filterName = filterName;
-	}
-
-	public String getViewName() {
-		return viewName;
-	}
-
-	public void setViewName(String viewName) {
-		this.viewName = viewName;
-	}
-
-	public String getFilename() {
-		if(this.fileName != null && !this.fileName.isEmpty()) {
-			return this.fileName;
+	public String getTableName(final String tool) {
+		if (tableNames.containsKey(tool)) {
+			return tableNames.get(tool);
+		} else {
+			return "";
 		}
-		return getDefaultFilename();
 	}
 
-	public String getPath() {
-		String pathname = getFilename();
+	public void putTableName(final String tool, final String tableName) {
+		tableNames.put(tool, tableName);
+	}
+
+	public String getFilename(final String tool) {
+		if (filenames.containsKey(tool)) {
+			return filenames.get(tool);
+		} else {
+			return getDefaultFilename(tool);
+		}
+	}
+
+	public String getPath(final String tool) {
+		String pathname = getFilename(tool);
 		int end = pathname.lastIndexOf(File.separator);
 		if (end >= 0) {
 			return pathname.substring(0, end + 1);
@@ -352,25 +287,33 @@ public class ExportSettings {
 		}
 	}
 
-	public void setFilename(final String fileName) {
-		this.fileName = fileName;
+	public void putFilename(final String tool, final String filename) {
+		filenames.put(tool, filename);
 	}
 
-	public List<String> getTableExportColumns() {
-		return tableExportColumns;
+	public Map<String, String> getFilenames() {
+		return filenames;
 	}
-	public void putTableExportColumns(final List<String> list) {
-			tableExportColumns.clear();
-			if (list != null) {
-				tableExportColumns.addAll(list);
-			}
+
+	public List<String> getTableExportColumns(final String key) {
+		return tableExportColumns.get(key);
+	}
+	public Set<Map.Entry<String, List<String>>> getTableExportColumns() {
+		return tableExportColumns.entrySet();
+	}
+	public void putTableExportColumns(final String key, final List<String> list) {
+		if (list == null) {
+			tableExportColumns.remove(key);
+		} else {
+			tableExportColumns.put(key, list);
+		}
 	}
 
 	public String getDefaultPath() {
 		return PATH;
 	}
 
-	public String getDefaultFilename() {
-		return PATH + this.toolName + "_export." + exportFormat.getExtension();
+	public String getDefaultFilename(final String tool) {
+		return PATH + tool + "_export." + exportFormat.getExtension();
 	}
 }
