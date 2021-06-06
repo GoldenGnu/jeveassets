@@ -539,6 +539,8 @@ public class SettingsTest extends TestUtil {
 		test(settings, Function.GET_STOCKPILES);
 		test(settings, Function.GET_TABLE_COLUMNS);
 		test(settings, Function.GET_TABLE_FILTERS);
+		test(settings, Function.GET_TABLE_FORMULAS);
+		test(settings, Function.GET_TABLE_JUMPS);
 		test(settings, Function.GET_USER_ITEM_NAMES);
 		test(settings, Function.GET_USER_PRICES);
 		test(settings, Function.SET_PRICE_DATA_SETTINGS);
@@ -608,6 +610,8 @@ public class SettingsTest extends TestUtil {
 		test(settings, Function.GET_STOCKPILES);
 		test(settings, Function.GET_TABLE_COLUMNS);
 		test(settings, Function.GET_TABLE_FILTERS);
+		test(settings, Function.GET_TABLE_FORMULAS);
+		test(settings, Function.GET_TABLE_JUMPS);
 		test(settings, Function.GET_USER_ITEM_NAMES);
 		test(settings, Function.GET_USER_PRICES);
 		test(settings, Function.SET_PRICE_DATA_SETTINGS);

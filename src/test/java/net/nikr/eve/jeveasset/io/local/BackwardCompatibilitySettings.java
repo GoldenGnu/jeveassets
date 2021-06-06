@@ -40,6 +40,8 @@ import net.nikr.eve.jeveasset.data.settings.tag.Tag;
 import net.nikr.eve.jeveasset.data.settings.tag.TagID;
 import net.nikr.eve.jeveasset.data.settings.tag.Tags;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
+import net.nikr.eve.jeveasset.gui.shared.menu.JFormulaDialog.Formula;
+import net.nikr.eve.jeveasset.gui.shared.menu.JMenuJumps.Jump;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.View;
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewGroup;
@@ -63,6 +65,8 @@ public class BackwardCompatibilitySettings extends FakeSettings implements Setti
 		GET_TABLE_FILTERS_KEY,
 		GET_TABLE_RESIZE,
 		GET_TABLE_VIEWS,
+		GET_TABLE_FORMULAS,
+		GET_TABLE_JUMPS,
 		GET_TAGS,
 		GET_TAGS_ID,
 		GET_TRACKER_DATA,
@@ -83,8 +87,8 @@ public class BackwardCompatibilitySettings extends FakeSettings implements Setti
 
 	private final String settingsPath;
 	private final String name;
-	private final Map<Function, Boolean> ok = new EnumMap<Function, Boolean>(Function.class);
-	private final List<Function> tested = new ArrayList<Function>();
+	private final Map<Function, Boolean> ok = new EnumMap<>(Function.class);
+	private final List<Function> tested = new ArrayList<>();
 	private boolean settingsLoadError;
 
 	public BackwardCompatibilitySettings() {
@@ -141,7 +145,7 @@ public class BackwardCompatibilitySettings extends FakeSettings implements Setti
 	}
 
 	public List<Function> test() {
-		List<Function> functions = new ArrayList<Function>();
+		List<Function> functions = new ArrayList<>();
 		for (Function key : Function.values()) {
 			boolean wasOk = ok.get(key);
 			boolean wasTested = tested.contains(key);
@@ -165,19 +169,19 @@ public class BackwardCompatibilitySettings extends FakeSettings implements Setti
 	@Override
 	public Map<SettingFlag, Boolean> getFlags() {
 		ok.put(Function.GET_FLAGS, true);
-		return new EnumMap<SettingFlag, Boolean>(SettingFlag.class);
+		return new EnumMap<>(SettingFlag.class);
 	}
 
 	@Override
 	public Map<String, OverviewGroup> getOverviewGroups() {
 		ok.put(Function.GET_OVERVIEW_GROUPS, true);
-		return new HashMap<String, OverviewGroup>();
+		return new HashMap<>();
 	}
 
 	@Override
 	public Map<Long, String> getOwners() {
 		ok.put(Function.GET_OWNERS, true);
-		return new HashMap<Long, String>();
+		return new HashMap<>();
 	}
 
 	@Override
@@ -198,49 +202,49 @@ public class BackwardCompatibilitySettings extends FakeSettings implements Setti
 	@Override
 	public List<Stockpile> getStockpiles() {
 		ok.put(Function.GET_STOCKPILES, true);
-		return new ArrayList<Stockpile>();
+		return new ArrayList<>();
 	}
 
 	@Override
 	public Map<String, List<EnumTableFormatAdaptor.SimpleColumn>> getTableColumns() {
 		ok.put(Function.GET_TABLE_COLUMNS, true);
-		return new HashMap<String, List<EnumTableFormatAdaptor.SimpleColumn>>();
+		return new HashMap<>();
 	}
 
 	@Override
 	public Map<String, Map<String, Integer>> getTableColumnsWidth() {
 		ok.put(Function.GET_TABLE_COLUMNS_WIDTH, true);
-		return new HashMap<String, Map<String, Integer>>();
+		return new HashMap<>();
 	}
 
 	@Override
 	public Map<String, Map<String, List<Filter>>> getTableFilters() {
 		ok.put(Function.GET_TABLE_FILTERS, true);
-		return new HashMap<String, Map<String, List<Filter>>>();
+		return new HashMap<>();
 	}
 
 	@Override
 	public Map<String, List<Filter>> getTableFilters(final String key) {
 		ok.put(Function.GET_TABLE_FILTERS_KEY, true);
-		return new HashMap<String, List<Filter>>();
+		return new HashMap<>();
 	}
 
 	@Override
 	public Map<String, EnumTableFormatAdaptor.ResizeMode> getTableResize() {
 		ok.put(Function.GET_TABLE_RESIZE, true);
-		return new HashMap<String, EnumTableFormatAdaptor.ResizeMode>();
+		return new HashMap<>();
 	}
 
 	@Override
 	public Map<String, Map<String ,View>> getTableViews() {
 		ok.put(Function.GET_TABLE_VIEWS, true);
-		return new HashMap<String, Map<String ,View>>();
+		return new HashMap<>();
 	}
 
 	@Override
 	public Map<String, Tag> getTags() {
 		ok.put(Function.GET_TAGS, true);
-		return new HashMap<String, Tag>();
+		return new HashMap<>();
 	}
 
 	@Override
@@ -252,13 +256,13 @@ public class BackwardCompatibilitySettings extends FakeSettings implements Setti
 	@Override
 	public Map<Long, UserItem<Long, String>> getUserItemNames() {
 		ok.put(Function.GET_USER_ITEM_NAMES, true);
-		return new HashMap<Long, UserItem<Long, String>>();
+		return new HashMap<>();
 	}
 
 	@Override
 	public Map<Integer, UserItem<Integer, Double>> getUserPrices() {
 		ok.put(Function.GET_USER_PRICES, true);
-		return new HashMap<Integer, UserItem<Integer, Double>>();
+		return new HashMap<>();
 	}
 
 	@Override
@@ -314,5 +318,17 @@ public class BackwardCompatibilitySettings extends FakeSettings implements Setti
 	@Override
 	public void setWindowSize(final Dimension windowSize) {
 		ok.put(Function.SET_WINDOW_SIZE, true);
+	}
+
+	@Override
+	public List<Formula> getTableFormulas(String name) {
+		ok.put(Function.GET_TABLE_FORMULAS, true);
+		return new ArrayList<>();
+	}
+
+	@Override
+	public List<Jump> getTableJumps(String toolName) {
+		ok.put(Function.GET_TABLE_JUMPS, true);
+		return new ArrayList<>();
 	}
 }

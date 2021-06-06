@@ -20,18 +20,16 @@
  */
 package net.nikr.eve.jeveasset.gui.tabs.jobs;
 
-import java.util.HashMap;
-import java.util.Map;
 import net.nikr.eve.jeveasset.data.api.accounts.OwnerType;
 import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob;
 import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob.IndustryJobState;
 import net.nikr.eve.jeveasset.data.api.my.MyShip;
 import net.nikr.eve.jeveasset.data.api.raw.RawSkill;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
-import net.nikr.eve.jeveasset.data.settings.types.JumpType;
+import net.nikr.eve.jeveasset.data.settings.types.LocationType;
 
 
-public class IndustrySlot implements Comparable<IndustrySlot>, JumpType {
+public class IndustrySlot implements Comparable<IndustrySlot>, LocationType {
 
 	private final String name;
 	private final boolean total;
@@ -46,7 +44,6 @@ public class IndustrySlot implements Comparable<IndustrySlot>, JumpType {
 	private int reactionsMax = 0;
 	private int researchMax = 0;
 	private MyShip activeShip = null;
-	private final Map<Long, Integer> jumpsList = new HashMap<>();
 
 	public IndustrySlot(OwnerType ownerType) {
 		this.name = ownerType.getOwnerName();
@@ -250,22 +247,6 @@ public class IndustrySlot implements Comparable<IndustrySlot>, JumpType {
 
 	public boolean isReactionsFull() {
 		return !isReactionsFree();
-	}
-
-	//JumpType Impl
-	@Override
-	public void addJump(Long systemID, int jumps) {
-		jumpsList.put(systemID, jumps);
-	}
-
-	@Override
-	public Integer getJumps(Long systemID) {
-		return jumpsList.get(systemID);
-	}
-
-	@Override
-	public void clearJumps() {
-		jumpsList.clear();
 	}
 
 	@Override

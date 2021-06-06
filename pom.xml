@@ -1193,6 +1193,11 @@
 			<artifactId>flatlaf</artifactId>
 			<version>0.43</version>
 		</dependency>
+		<dependency>
+			<groupId>com.udojava</groupId>
+			<artifactId>EvalEx</artifactId>
+			<version>2.5</version>
+		</dependency>
 	</dependencies>
 
 	<properties>

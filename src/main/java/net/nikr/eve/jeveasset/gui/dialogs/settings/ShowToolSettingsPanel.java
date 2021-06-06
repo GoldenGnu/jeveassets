@@ -73,7 +73,7 @@ public class ShowToolSettingsPanel extends JSettingsPanel {
 	public ShowToolSettingsPanel(final Program program, final SettingsDialog settingsDialog) {
 		super(program, settingsDialog, DialoguesSettings.get().show(), Images.EDIT_SHOW.getIcon());
 
-		for (JMainTab jMainTab : program.getMainTabs()) {
+		for (JMainTab jMainTab : program.getMainTabs().values()) {
 			if (jMainTab.isCloseable()) {
 				tools.add(new Tool(jMainTab.getTitle()));
 			}

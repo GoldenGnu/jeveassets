@@ -65,7 +65,7 @@ public abstract class FilterControl<E> extends ExportFilterControl<E> {
 		filters = null;
 		defaultFilters = null;
 		gui = null;
-		cache = new HashMap<E, String>();
+		cache = new HashMap<>();
 	}
 
 	protected FilterControl(final JFrame jFrame, final String name, final EventList<E> eventList, final EventList<E> exportEventList, final FilterList<E> filterList, final Map<String, List<Filter>> filters) {
@@ -86,8 +86,8 @@ public abstract class FilterControl<E> extends ExportFilterControl<E> {
 			public void listChanged(ListEvent<E> listChanges) {
 				try {
 					eventList.getReadWriteLock().readLock().lock();
-					List<E> delete = new ArrayList<E>();
-					List<E> update = new ArrayList<E>();
+					List<E> delete = new ArrayList<>();
+					List<E> update = new ArrayList<>();
 					while(listChanges.next()) {
 						switch (listChanges.getType()) {
 							case ListEvent.DELETE:
@@ -109,8 +109,8 @@ public abstract class FilterControl<E> extends ExportFilterControl<E> {
 		this.defaultFilters = defaultFilters;
 		ListenerClass listener = new ListenerClass();
 		filterList.addListEventListener(listener);
-		gui = new FilterGui<E>(jFrame, this);
-		cache = new HashMap<E, String>();
+		gui = new FilterGui<>(jFrame, this);
+		cache = new HashMap<>();
 	}
 
 	public void clearCache() {
@@ -176,9 +176,12 @@ public abstract class FilterControl<E> extends ExportFilterControl<E> {
 		}
 	}
 
-	public void setColumns(final List<EnumTableColumn<E>> enumColumns) {
-		gui.setColumns(enumColumns);
-		cacheRebuild(); //Add or Remove column means everything have to be rebuild...
+	public void updateColumns(boolean rebuildCache) {
+		gui.updateColumns();
+		if (rebuildCache) {
+			cacheRebuild(); //Add or Remove column means everything have to be rebuild...
+			refilter();
+		}
 	}
 
 	@Override
@@ -227,7 +230,7 @@ public abstract class FilterControl<E> extends ExportFilterControl<E> {
 			isDate = isDate(column);
 			text = FilterMatcher.format(getColumnValue(items.get(0), column.name()), false);
 		}
-		return new FilterMenu<E>(gui, column, text, isNumeric, isDate);
+		return new FilterMenu<>(gui, column, text, isNumeric, isDate);
 	}
 
 	String getName() {
@@ -253,7 +256,7 @@ public abstract class FilterControl<E> extends ExportFilterControl<E> {
 	@Override
 	public Map<String, List<Filter>> getAllFilters() {
 		//Need to be updated each time something has changed....
-		Map<String, List<Filter>> allFilters = new HashMap<String, List<Filter>>();
+		Map<String, List<Filter>> allFilters = new HashMap<>();
 		allFilters.putAll(defaultFilters);
 		allFilters.putAll(filters);
 		return allFilters;
@@ -304,7 +307,7 @@ public abstract class FilterControl<E> extends ExportFilterControl<E> {
 	protected void updateFilters() { }
 
 	protected List<EnumTableColumn<E>> columnsAsList(final EnumTableColumn<E>[] fixme) {
-		List<EnumTableColumn<E>> columns = new ArrayList<EnumTableColumn<E>>();
+		List<EnumTableColumn<E>> columns = new ArrayList<>();
 		columns.addAll(Arrays.asList(fixme));
 		return columns;
 	}

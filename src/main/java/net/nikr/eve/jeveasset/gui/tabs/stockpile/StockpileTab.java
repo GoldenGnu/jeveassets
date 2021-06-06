@@ -49,7 +49,6 @@ import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
@@ -69,6 +68,7 @@ import net.nikr.eve.jeveasset.data.sde.ItemFlag;
 import net.nikr.eve.jeveasset.data.sde.StaticData;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.data.settings.tag.TagUpdate;
+import net.nikr.eve.jeveasset.data.settings.types.LocationType;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
@@ -80,12 +80,12 @@ import net.nikr.eve.jeveasset.gui.shared.components.JImportDialog.ImportReturn;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTabSecondary;
 import net.nikr.eve.jeveasset.gui.shared.components.JMultiSelectionDialog;
 import net.nikr.eve.jeveasset.gui.shared.components.JTextDialog;
-import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuData;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.TableMenu;
+import net.nikr.eve.jeveasset.gui.shared.table.ColumnManager;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.ColumnValueChangeListener;
@@ -159,7 +159,7 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 	public static final String NAME = "stockpile"; //Not to be changed!
 
 	public StockpileTab(final Program program) {
-		super(program, TabsStockpile.get().stockpile(), Images.TOOL_STOCKPILE.getIcon(), true);
+		super(program, NAME, TabsStockpile.get().stockpile(), Images.TOOL_STOCKPILE.getIcon(), true);
 
 		final ListenerClass listener = new ListenerClass();
 
@@ -314,23 +314,16 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
 		jTable.setSelectionModel(selectionModel);
 		//Listeners
-		installTable(jTable, NAME);
+		installTable(jTable);
 		//Scroll
 		JScrollPane jTableScroll = new JScrollPane(jTable);
 		//Filter GUI
-		filterControl = new StockpileFilterControl(
-				tableFormat,
-				program.getMainWindow().getFrame(),
-				eventList,
-				sortedListTotal,
-				filterList,
-				Settings.get().getTableFilters(NAME)
-				);
+		filterControl = new StockpileFilterControl(sortedListTotal);
 		filterControl.addExportOption(jExportXml);
 		filterControl.addExportOption(jExportText);
-		installFilterControl(filterControl, NAME);
+		installFilterControl(filterControl);
 		//Menu
-		installMenu(program, new StockpileTableMenu(), jTable, StockpileItem.class);
+		installMenu(new StockpileTableMenu(), new ColumnManager<>(program, NAME, tableFormat, tableModel, jTable, filterControl), StockpileItem.class);
 
 		layout.setHorizontalGroup(
 			layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
@@ -416,6 +409,11 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 	@Override
 	public void updateCache() {
 		filterControl.createCache();
+	}
+
+	@Override
+	public Collection<LocationType> getLocations() {
+		return new ArrayList<>(); //LocationsType
 	}
 
 	/**
@@ -1346,27 +1344,25 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 
 	public class StockpileFilterControl extends FilterControl<StockpileItem> {
 
-		private List<EnumTableColumn<StockpileItem>> columns = null;
-		private final EnumTableFormatAdaptor<StockpileTableFormat, StockpileItem> tableFormat;
-
-		public StockpileFilterControl(EnumTableFormatAdaptor<StockpileTableFormat, StockpileItem> tableFormat, JFrame jFrame, EventList<StockpileItem> eventList, EventList<StockpileItem> exportEventList, FilterList<StockpileItem> filterList, Map<String, List<Filter>> filters) {
-			super(jFrame, NAME, eventList, exportEventList, filterList, filters);
-			this.tableFormat = tableFormat;
+		public StockpileFilterControl(EventList<StockpileItem> exportEventList) {
+			super(program.getMainWindow().getFrame(),
+					NAME,
+					eventList,
+					exportEventList,
+					filterList,
+					Settings.get().getTableFilters(NAME)
+					);
 		}
 
 		@Override
-		protected Object getColumnValue(final StockpileItem item, final String columnString) {
-			EnumTableColumn<?> column = valueOf(columnString);
-			if (column instanceof StockpileTableFormat) {
-				StockpileTableFormat format = (StockpileTableFormat) column;
+		protected Object getColumnValue(final StockpileItem item, final String column) {
+			EnumTableColumn<?> tableColumn = valueOf(column);
+			if (tableColumn instanceof StockpileExtendedTableFormat) {
+				StockpileExtendedTableFormat format = (StockpileExtendedTableFormat) tableColumn;
 				return format.getColumnValue(item);
+			} else {
+				return tableFormat.getColumnValue(item, column);
 			}
-
-			if (column instanceof StockpileExtendedTableFormat) {
-				StockpileExtendedTableFormat format = (StockpileExtendedTableFormat) column;
-				return format.getColumnValue(item);
-			}
-			return null; //Fallback: show all...
 		}
 
 		@Override
@@ -1381,7 +1377,19 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 			} catch (IllegalArgumentException exception) {
 
 			}
-			throw new RuntimeException("Fail to parse filter column: " + column);
+			return null;
+		}
+
+		@Override
+		protected List<EnumTableColumn<StockpileItem>> getColumns() {
+			ArrayList<EnumTableColumn<StockpileItem>> columns = new ArrayList<>(tableFormat.getShownColumns());
+			columns.addAll(Arrays.asList(StockpileExtendedTableFormat.values()));
+			return columns;
+		}
+
+		@Override
+		protected List<EnumTableColumn<StockpileItem>> getShownColumns() {
+			return new ArrayList<>(tableFormat.getShownColumns());
 		}
 
 		@Override
@@ -1392,21 +1400,6 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 		@Override
 		protected void beforeFilter() {
 			jTable.saveExpandedState();
-		}
-
-		@Override
-		protected List<EnumTableColumn<StockpileItem>> getColumns() {
-			if (columns == null) {
-				columns = new ArrayList<>();
-				columns.addAll(Arrays.asList(StockpileExtendedTableFormat.values()));
-				columns.addAll(Arrays.asList(StockpileTableFormat.values()));
-			}
-			return columns;
-		}
-
-		@Override
-		protected List<EnumTableColumn<StockpileItem>> getShownColumns() {
-			return new ArrayList<>(tableFormat.getShownColumns());
 		}
 
 		@Override

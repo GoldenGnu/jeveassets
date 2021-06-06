@@ -33,8 +33,8 @@ import net.nikr.eve.jeveasset.gui.tabs.tree.TreeTab;
 
 public abstract class JMainTabSecondary extends JMainTab {
 
-	public JMainTabSecondary(Program program, String title, Icon icon, boolean closeable) {
-		super(program, title, icon, closeable);
+	public JMainTabSecondary(Program program, final String toolName, String title, Icon icon, boolean closeable) {
+		super(program, toolName, title, icon, closeable);
 	}
 
 	public JMainTabSecondary(final boolean load) {

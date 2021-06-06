@@ -23,8 +23,10 @@ package net.nikr.eve.jeveasset.gui.shared.table;
 
 import ca.odell.glazedlists.gui.AdvancedTableFormat;
 import ca.odell.glazedlists.gui.WritableTableFormat;
+import com.udojava.evalex.Expression;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -41,6 +43,10 @@ import javax.swing.table.AbstractTableModel;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
+import net.nikr.eve.jeveasset.gui.shared.menu.JFormulaDialog;
+import net.nikr.eve.jeveasset.gui.shared.menu.JFormulaDialog.Formula;
+import net.nikr.eve.jeveasset.gui.shared.table.ColumnManager.IndexColumn;
+import net.nikr.eve.jeveasset.gui.shared.table.containers.NumberValue;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -101,6 +107,10 @@ public class EnumTableFormatAdaptor<T extends Enum<T> & EnumTableColumn<Q>, Q> i
 		reset();
 	}
 
+	public T[] getEnumConstants() {
+		return enumClass.getEnumConstants();
+	}
+
 	private void reset() {
 		shownColumns = new ArrayList<>();
 		orderColumnsName = new HashMap<>();
@@ -125,10 +135,19 @@ public class EnumTableFormatAdaptor<T extends Enum<T> & EnumTableColumn<Q>, Q> i
 	}
 
 	private void addColumn(EnumTableColumn<Q> column, boolean temp) {
+		Integer index = null;
+		if (column instanceof IndexColumn) {
+			index = ((IndexColumn)column).getIndex();
+		}
 		if (!shownColumns.contains(column)) {
 			orderColumnsName.put(column.name(), column);
 			shownColumns.add(column);
-			orderColumns.add(column);
+			if (index != null && index >= 0 && index < orderColumns.size()) {
+				orderColumns.add(index, column);
+				updateColumns();
+			} else {
+				orderColumns.add(column);
+			}
 			if (temp) {
 				tempColumns.add(column);
 			}
@@ -229,7 +248,13 @@ public class EnumTableFormatAdaptor<T extends Enum<T> & EnumTableColumn<Q>, Q> i
 			toIndex++;
 		}
 		orderColumns.add(toIndex, fromColumn);
-
+		//Update IndexColumn
+		for (int i = 0; i < orderColumns.size(); i++)  {
+			EnumTableColumn<Q> column = orderColumns.get(i);
+			if (column instanceof IndexColumn) {
+				((IndexColumn)column).setIndex(i);
+			}
+		}
 		updateColumns();
 	}
 
@@ -441,17 +466,62 @@ public class EnumTableFormatAdaptor<T extends Enum<T> & EnumTableColumn<Q>, Q> i
 
 	@Override public Object getColumnValue(final Q e, final int i) {
 		try {
-			return getColumn(i).getColumnValue(e);
+			return getColumnValue(e, getColumn(i));
 		} catch (IndexOutOfBoundsException ex) {
 			return null;
 		}
 	}
+
 	public Object getColumnValue(final Q e, final String columnName) {
-		EnumTableColumn<Q> column = orderColumnsName.get(columnName);
-		if (column != null)  {
-			return column.getColumnValue(e);
-		} else {
+		return getColumnValue(e, orderColumnsName.get(columnName));
+	}
+
+	public Object getColumnValue(final Q e, final EnumTableColumn<Q> column) {
+		if (column == null) { //Better safe than sorry
 			return null;
+		}
+		Object object = column.getColumnValue(e);
+		if (object instanceof Formula) {
+			Formula formula = (Formula) object;
+			Object value = formula.getValues().get(e);
+			if (value == null) {
+				value = eval(formula, e);
+				formula.getValues().put(e, value);
+			}
+			return value;
+		} else {
+			return column.getColumnValue(e);
+		}
+	}
+
+	private Object eval(Formula formula, Q e) {
+		Expression expression = formula.getExpression();
+		for (T t : enumClass.getEnumConstants()) {
+			if (Number.class.isAssignableFrom(t.getType())) {
+				Number number = (Number) t.getColumnValue(e);
+				if (number == null) { //Handle null
+					expression.setVariable(JFormulaDialog.getHardName(t), new BigDecimal(0));
+					continue;
+				}
+				expression.setVariable(JFormulaDialog.getHardName(t), new BigDecimal(number.toString()));
+			} else if (NumberValue.class.isAssignableFrom(t.getType())) {
+				NumberValue numberValue = (NumberValue) t.getColumnValue(e);
+				if (numberValue == null) { //Handle null
+					expression.setVariable(JFormulaDialog.getHardName(t), new BigDecimal(0));
+					continue;
+				}
+				Number number = numberValue.getNumber();
+				if (number == null) { //Handle null
+					expression.setVariable(JFormulaDialog.getHardName(t), new BigDecimal(0));
+					continue;
+				}
+				expression.setVariable(JFormulaDialog.getHardName(t), new BigDecimal(number.toString()));
+			}
+		}
+		if (expression.isBoolean()) {
+			return expression.eval().compareTo(BigDecimal.ZERO) > 0 ? "True" : "False";
+		} else {
+			return expression.eval().doubleValue();
 		}
 	}
 

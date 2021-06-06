@@ -46,6 +46,8 @@ import net.nikr.eve.jeveasset.data.settings.UserItem;
 import net.nikr.eve.jeveasset.data.settings.tag.Tag;
 import net.nikr.eve.jeveasset.data.settings.tag.TagID;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
+import net.nikr.eve.jeveasset.gui.shared.menu.JFormulaDialog.Formula;
+import net.nikr.eve.jeveasset.gui.shared.menu.JMenuJumps.Jump;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.ResizeMode;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.SimpleColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.View;
@@ -161,6 +163,8 @@ public class SettingsWriter extends AbstractXmlWriter {
 		writeTableColumnsWidth(xmldoc, settings.getTableColumnsWidth());
 		writeTablesResize(xmldoc, settings.getTableResize());
 		writeTablesViews(xmldoc, settings.getTableViews());
+		writeTablesJumps(xmldoc, settings.getTableJumps());
+		writeTablesFormula(xmldoc, settings.getTableFormulas());
 		writeExportSettings(xmldoc, settings.getExportSettings(), settings.getCopySettings());
 		writeTrackerNotes(xmldoc, settings.getTrackerSettings().getNotes());
 		writeTrackerFilters(xmldoc, settings.getTrackerSettings().getFilters(), settings.getTrackerSettings().isSelectNew(), settings.getTrackerSettings().getSkillPointFilters());
@@ -485,6 +489,39 @@ public class SettingsWriter extends AbstractXmlWriter {
 				}
 			}
 			
+		}
+	}
+
+	private void writeTablesFormula(final Document xmldoc, final Map<String, List<Formula>> formulas) {
+		Element tableFormulasNode = xmldoc.createElementNS(null, "tableformulas");
+		xmldoc.getDocumentElement().appendChild(tableFormulasNode);
+		for (Map.Entry<String, List<Formula>> entry : formulas.entrySet()) {
+			Element formulasNode = xmldoc.createElementNS(null, "formulas");
+			setAttribute(formulasNode, "tool", entry.getKey());
+			tableFormulasNode.appendChild(formulasNode);
+			for (Formula formula : entry.getValue()) {
+				Element formulaNode = xmldoc.createElementNS(null, "formula");
+				setAttribute(formulaNode, "name", formula.getColumnName());
+				setAttribute(formulaNode, "expression", formula.getOriginalExpression());
+				setAttributeOptional(formulaNode, "index", formula.getIndex());
+				formulasNode.appendChild(formulaNode);
+			}
+		}
+	}
+
+	private void writeTablesJumps(final Document xmldoc, final Map<String, List<Jump>> jumps) {
+		Element tableJumpsNode = xmldoc.createElementNS(null, "tablejumps");
+		xmldoc.getDocumentElement().appendChild(tableJumpsNode);
+		for (Map.Entry<String, List<Jump>> entry : jumps.entrySet()) {
+			Element jumpsNode = xmldoc.createElementNS(null, "jumps");
+			setAttribute(jumpsNode, "tool", entry.getKey());
+			tableJumpsNode.appendChild(jumpsNode);
+			for (Jump jump : entry.getValue()) {
+				Element jumpNode = xmldoc.createElementNS(null, "jump");
+				setAttribute(jumpNode, "systemid", jump.getSystemID());
+				setAttributeOptional(jumpNode, "index", jump.getIndex());
+				jumpsNode.appendChild(jumpNode);
+			}
 		}
 	}
 
