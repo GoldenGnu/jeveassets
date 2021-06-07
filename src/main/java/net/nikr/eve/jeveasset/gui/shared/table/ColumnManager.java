@@ -36,6 +36,8 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.TableColumnModelEvent;
 import javax.swing.event.TableColumnModelListener;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
 import net.nikr.eve.jeveasset.data.sde.RouteFinder;
@@ -77,6 +79,28 @@ public class ColumnManager<T extends Enum<T> & EnumTableColumn<Q>, Q> {
 			loaded.add(toolName);
 			load();
 		}
+		//Reset cached Formula values on table update
+		tableModel.addTableModelListener(new TableModelListener() {
+			@Override
+			public void tableChanged(TableModelEvent e) {
+				if (e.getType() == TableModelEvent.UPDATE) {
+					if (e.getColumn() == TableModelEvent.ALL_COLUMNS) {
+						for (Formula formula : formulaColumns.keySet()) {
+							formula.getValues().clear();
+						}
+					} else {
+						
+						List<Q> elements = new ArrayList<>();
+						for (int i = e.getFirstRow(); i <= e.getLastRow() && i < tableModel.getRowCount(); i++) {
+							elements.add(tableModel.getElementAt(i));
+						}
+						for (Formula formula : formulaColumns.keySet()) {
+							formula.getValues().keySet().removeAll(elements);
+						}
+					}
+				}
+			}
+		});
 		jTable.getColumnModel().addColumnModelListener( new TableColumnModelListener() {
 			@Override
 			public void columnAdded(TableColumnModelEvent e) {}
