@@ -382,13 +382,17 @@ public class JFormulaDialog<T extends Enum<T> & EnumTableColumn<Q>, Q> extends J
 		private final String columnName;
 		private final Expression expression;
 		private final Map<Object, Object> values = new HashMap<>();
+		private final Collection<String> usedVariables;
+		private final Collection<String> variableColumns = new ArrayList<>();
+		private final boolean isBoolean;
 		private Integer index;
 
 		public Formula(String columnName, String expressionString, Integer index) {
 			this.expression = new Expression(expressionString);
 			this.columnName = columnName;
 			this.index = index;
-			
+			this.usedVariables = expression.getUsedVariables();
+			this.isBoolean = expression.isBoolean();
 		}
 
 		public String getColumnName() {
@@ -404,7 +408,7 @@ public class JFormulaDialog<T extends Enum<T> & EnumTableColumn<Q>, Q> extends J
 		}
 
 		public boolean isBoolean() {
-			return expression.isBoolean();
+			return isBoolean;
 		}
 
 		public Integer getIndex() {
@@ -413,6 +417,14 @@ public class JFormulaDialog<T extends Enum<T> & EnumTableColumn<Q>, Q> extends J
 
 		public Map<Object, Object> getValues() {
 			return values;
+		}
+
+		public Collection<String> getUsedVariables() {
+			return usedVariables;
+		}
+
+		public Collection<String> getVariableColumns() {
+			return variableColumns;
 		}
 
 		public void setIndex(Integer index) {
