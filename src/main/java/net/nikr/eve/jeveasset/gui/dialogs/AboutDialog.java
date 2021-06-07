@@ -139,6 +139,7 @@ public class AboutDialog extends JDialogCentered {
 				+ "&nbsp;<a href=\"https://github.com/GoldenGnu/routing\">Routing</a> (routing tool)<br>"
 				+ "&nbsp;<a href=\"https://github.com/GoldenGnu/graph\">Graph</a> (routing tool)<br>"
 				+ "&nbsp;<a href=\"https://github.com/GoldenGnu/translations\">Translations</a> (i18n)<br>"
+				+ "&nbsp;<a href=\"https://github.com/uklimaschewski/EvalEx\">EvalEx</a> (formula columns)<br>"
 				);
 		
 		JScrollPane jInfoScroll = new JScrollPane(jInfo, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
