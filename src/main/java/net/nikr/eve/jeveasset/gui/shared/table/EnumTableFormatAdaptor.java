@@ -495,30 +495,45 @@ public class EnumTableFormatAdaptor<T extends Enum<T> & EnumTableColumn<Q>, Q> i
 	}
 
 	private Object eval(Formula formula, Q e) {
-		Expression expression = formula.getExpression();
+		final Expression expression = formula.getExpression();
+		//Populate variableColumns
+		if (formula.getVariableColumns().isEmpty()) {
+			for (T t : enumClass.getEnumConstants()) {
+				if (formula.getUsedVariables().contains(JFormulaDialog.getHardName(t))) {
+					formula.getVariableColumns().add(t.name());
+				}
+			}
+		}
+		//Set variables
 		for (T t : enumClass.getEnumConstants()) {
+			if (!formula.getVariableColumns().contains(t.name())) {
+				continue;
+			}
 			if (Number.class.isAssignableFrom(t.getType())) {
 				Number number = (Number) t.getColumnValue(e);
+				String hardName = JFormulaDialog.getHardName(t);
 				if (number == null) { //Handle null
-					expression.setVariable(JFormulaDialog.getHardName(t), new BigDecimal(0));
-					continue;
+					expression.setVariable(hardName, new BigDecimal(0));
+					continue; //Done
 				}
-				expression.setVariable(JFormulaDialog.getHardName(t), new BigDecimal(number.toString()));
+				expression.setVariable(hardName, new BigDecimal(number.toString()));
 			} else if (NumberValue.class.isAssignableFrom(t.getType())) {
 				NumberValue numberValue = (NumberValue) t.getColumnValue(e);
+				String hardName = JFormulaDialog.getHardName(t);
 				if (numberValue == null) { //Handle null
-					expression.setVariable(JFormulaDialog.getHardName(t), new BigDecimal(0));
-					continue;
+					expression.setVariable(hardName, new BigDecimal(0));
+					continue; //Done
 				}
 				Number number = numberValue.getNumber();
 				if (number == null) { //Handle null
-					expression.setVariable(JFormulaDialog.getHardName(t), new BigDecimal(0));
-					continue;
+					expression.setVariable(hardName, new BigDecimal(0));
+					continue; //Done
 				}
-				expression.setVariable(JFormulaDialog.getHardName(t), new BigDecimal(number.toString()));
+				expression.setVariable(hardName, new BigDecimal(number.toString()));
 			}
 		}
-		if (expression.isBoolean()) {
+		//Eval
+		if (formula.isBoolean()) {
 			return expression.eval().compareTo(BigDecimal.ZERO) > 0 ? "True" : "False";
 		} else {
 			return expression.eval().doubleValue();
