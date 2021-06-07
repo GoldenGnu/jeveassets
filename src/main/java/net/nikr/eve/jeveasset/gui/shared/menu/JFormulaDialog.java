@@ -30,9 +30,11 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -305,10 +307,16 @@ public class JFormulaDialog<T extends Enum<T> & EnumTableColumn<Q>, Q> extends J
 
 	private boolean isFomulaValid() {
 		Expression expression = getExpression();
+		Set<String> hardNames = new HashSet<>();
 		for (T t : columnManager.getEnumConstants()) {
 			if (Number.class.isAssignableFrom(t.getType()) || NumberValue.class.isAssignableFrom(t.getType())) {
-				expression.setVariable(getHardName(t), new BigDecimal(2.0));
+				String hardName = getHardName(t);
+				expression.setVariable(hardName, new BigDecimal(2.0));
+				hardNames.add(hardName);
 			}
+		}
+		if (!hardNames.containsAll(expression.getUsedVariables())) {
+			return false; //Invalid variable
 		}
 		try {
 			expression.eval();
@@ -405,6 +413,10 @@ public class JFormulaDialog<T extends Enum<T> & EnumTableColumn<Q>, Q> extends J
 
 		public Map<Object, Object> getValues() {
 			return values;
+		}
+
+		public List<String> getUsedVariables() {
+			return usedVariables;
 		}
 
 		public void setIndex(Integer index) {
