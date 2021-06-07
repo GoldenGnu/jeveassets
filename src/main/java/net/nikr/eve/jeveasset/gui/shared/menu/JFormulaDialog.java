@@ -415,10 +415,6 @@ public class JFormulaDialog<T extends Enum<T> & EnumTableColumn<Q>, Q> extends J
 			return values;
 		}
 
-		public List<String> getUsedVariables() {
-			return usedVariables;
-		}
-
 		public void setIndex(Integer index) {
 			this.index = index;
 		}
