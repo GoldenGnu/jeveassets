@@ -293,7 +293,7 @@ public class JFormulaDialog<T extends Enum<T> & EnumTableColumn<Q>, Q> extends J
 	private String fromExpressionString(String text) {
 		for (T t : columnManager.getEnumConstants()) {
 			if (Number.class.isAssignableFrom(t.getType()) || NumberValue.class.isAssignableFrom(t.getType())) {
-				text = text.replace(getHardName(t), getSoftName(t));
+				text = text.replaceAll("\\b" + getHardName(t) + "\\b", getSoftName(t));
 			}
 		}
 		return text;
