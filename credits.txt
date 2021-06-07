@@ -286,6 +286,17 @@ License:
   Apache License (http://www.apache.org/licenses/LICENSE-2.0)
 
 ________________________________________________________________________________
+_EVALEX_________________________________________________________________________
+
+jEveAssets use EvalEx for formula columns
+
+Link:
+  https://github.com/uklimaschewski/EvalEx
+
+License:
+  https://raw.githubusercontent.com/uklimaschewski/EvalEx/master/LICENSE
+
+________________________________________________________________________________
 _COPYRIGHT______________________________________________________________________
 
 Copyright 2009-2021 Contributors (see above)
