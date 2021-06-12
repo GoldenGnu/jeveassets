@@ -43,6 +43,7 @@ import javax.swing.JLabel;
 import javax.swing.JTextPane;
 import javax.swing.SwingWorker;
 import javax.swing.text.*;
+import net.nikr.eve.jeveasset.gui.dialogs.update.TaskDialog.ErrorListener;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.i18n.DialoguesUpdate;
@@ -66,6 +67,8 @@ public abstract class UpdateTask extends SwingWorker<Void, Void> {
 	private boolean taskDone = false;
 	private boolean pause = false;
 
+	private ErrorListener errorListener;
+
 	public UpdateTask(final String name) {
 		this.name = name;
 		this.addPropertyChangeListener(new ListenerClass());
@@ -77,6 +80,21 @@ public abstract class UpdateTask extends SwingWorker<Void, Void> {
 		jShow.setIcon(Images.MISC_EXPANDED.getIcon());
 		jShow.setVisible(false);
 		log = Collections.synchronizedList(new ArrayList<>());
+	}
+
+	public void addErrorListener(ErrorListener errorListener) {
+		removeErrorListener();
+		jShow.addActionListener(errorListener);
+		jText.addMouseListener(errorListener);
+		this.errorListener = errorListener;
+	}
+
+	public void removeErrorListener() {
+		if (errorListener != null) {
+			jShow.removeActionListener(errorListener);
+			jText.removeMouseListener(errorListener);
+			errorListener = null;
+		}
 	}
 
 	public void setTotalProgress(final float end, final float done, final int start, final int max) {

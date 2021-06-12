@@ -189,8 +189,7 @@ public class TaskDialog {
 					.addComponent(updateTaskLoop.getShowButton(), 20, 20, 20)
 					.addGap(5)
 			);
-			updateTaskLoop.getShowButton().addActionListener(new ErrorListener(updateTaskLoop));
-			updateTaskLoop.getTextLabel().addMouseListener(new ErrorListener(updateTaskLoop));
+			updateTaskLoop.addErrorListener(new ErrorListener(updateTaskLoop));
 			taskWidth = Math.max(taskWidth, updateTaskLoop.getWidth() + 25);
 		}
 		horizontalGroup.addGroup(layout.createSequentialGroup()
@@ -260,6 +259,9 @@ public class TaskDialog {
 	private void update() {
 		if (index < updateTasks.size()) {
 			jOK.setEnabled(false);
+			if (updateTask != null) { //Remove PropertyChangeListener from last updateTask
+				updateTask.removePropertyChangeListener(listener);
+			}
 			updateTask = updateTasks.get(index);
 			updateTask.addPropertyChangeListener(listener);
 			updateTask.execute();
@@ -383,7 +385,11 @@ public class TaskDialog {
 			jWindow.removeWindowListener(listener);
 			jOK.removeActionListener(listener);
 			jCancel.removeActionListener(listener);
+			jMinimize.removeActionListener(listener);
 			updateTask.removePropertyChangeListener(listener);
+			for (UpdateTask updateTaskLoop : updateTasks) {
+				updateTaskLoop.removeErrorListener();
+			}
 			if (progress != null) {
 				program.getStatusPanel().removeProgress(progress);
 			}
@@ -485,7 +491,7 @@ public class TaskDialog {
 
 	}
 
-	private class ErrorListener implements MouseListener, ActionListener {
+	public class ErrorListener implements MouseListener, ActionListener {
 
 		private final UpdateTask mouseTask;
 
