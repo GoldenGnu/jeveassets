@@ -16,6 +16,28 @@
                   #### #  # #  # #  # #### #### #### #### ####
 
 ________________________________________________________________________________
+_6.9.0__________________________________________________________________________
+
+New Features:
+-As complete a restore at relaunch as possible (Issue #216) [Dultas]
+-Formula Columns (Issue #45)
+-Added evecookbook.com to the lookup menu
+-Added locationID column to the Assets tool (Issue #257)
+
+Changed:
+-Made Midpoint price fallback on a single price if one of the prices is zero
+
+Code:
+-Updated eve-esi library to version 4.4.0
+
+Bug Fixes:
+-NPE from IndustryJob.getProductTypeID() (BugID: 901, 921)
+-Fix non extended sql inserts not working [Dultas]
+-SQL export doubles now use 2 decimals (Issue #252) [Dultas]
+-Active ships 2nd+ level children didn't have the right locationID
+-Partial fix for TaskDialog never being garbage collected
+
+________________________________________________________________________________
 _6.8.0__________________________________________________________________________
 
 New Features:
