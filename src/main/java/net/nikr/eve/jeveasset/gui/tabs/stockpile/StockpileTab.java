@@ -85,7 +85,6 @@ import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuData;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.TableMenu;
-import net.nikr.eve.jeveasset.gui.shared.table.ColumnManager;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.ColumnValueChangeListener;
@@ -321,9 +320,8 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 		filterControl = new StockpileFilterControl(sortedListTotal);
 		filterControl.addExportOption(jExportXml);
 		filterControl.addExportOption(jExportText);
-		installFilterControl(filterControl);
 		//Menu
-		installMenu(new StockpileTableMenu(), new ColumnManager<>(program, NAME, tableFormat, tableModel, jTable, filterControl), StockpileItem.class);
+		installTableTool(new StockpileTableMenu(), tableFormat, tableModel, jTable, filterControl, StockpileItem.class);
 
 		layout.setHorizontalGroup(
 			layout.createParallelGroup(GroupLayout.Alignment.TRAILING)

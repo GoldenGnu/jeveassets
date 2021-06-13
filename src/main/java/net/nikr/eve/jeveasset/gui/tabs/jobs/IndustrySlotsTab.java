@@ -47,7 +47,6 @@ import net.nikr.eve.jeveasset.gui.shared.components.JMainTabSecondary;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuData;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.TableMenu;
-import net.nikr.eve.jeveasset.gui.shared.table.ColumnManager;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.EventListManager;
@@ -110,9 +109,8 @@ public class IndustrySlotsTab extends JMainTabSecondary {
 		JScrollPane jTableScroll = new JScrollPane(jTable);
 		//Table Filter
 		filterControl = new IndustrySlotFilterControl(totalSortedList);
-		installFilterControl(filterControl);
 		//Menu
-		installMenu(new IndustrySlotTableMenu(), new ColumnManager<>(program, NAME, tableFormat, tableModel, jTable, filterControl), IndustrySlot.class);
+		installTableTool(new IndustrySlotTableMenu(), tableFormat, tableModel, jTable, filterControl, IndustrySlot.class);
 
 		layout.setHorizontalGroup(
 			layout.createParallelGroup()

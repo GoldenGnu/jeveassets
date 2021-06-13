@@ -55,7 +55,6 @@ import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuData;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.TableMenu;
-import net.nikr.eve.jeveasset.gui.shared.table.ColumnManager;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
@@ -125,9 +124,8 @@ public class IndustryJobsTab extends JMainTabPrimary {
 		filter.add(new Filter(LogicType.AND, IndustryJobTableFormat.STATE, CompareType.EQUALS, IndustryJobState.STATE_DELIVERED.toString()));
 		defaultFilters.put(TabsJobs.get().completed(), filter);
 		filterControl = new IndustryJobsFilterControl(sortedList, defaultFilters);
-		installFilterControl(filterControl);
 		//Menu
-		installMenu(new JobsTableMenu(), new ColumnManager<>(program, NAME, tableFormat, tableModel, jTable, filterControl), MyIndustryJob.class);
+		installTableTool(new JobsTableMenu(), tableFormat, tableModel, jTable, filterControl, MyIndustryJob.class);
 
 		jInventionSuccess = StatusPanel.createLabel(TabsJobs.get().inventionSuccess(), Images.JOBS_INVENTION_SUCCESS.getIcon());
 		this.addStatusbarLabel(jInventionSuccess);
