@@ -237,7 +237,7 @@ public class OverviewTab extends JMainTabSecondary {
 		//Scroll
 		JScrollPane jTableScroll = new JScrollPane(jTable);
 		//Menu
-		installMenu(new OverviewTableMenu(), new ColumnManager<>(program, NAME, tableFormat, tableModel, jTable), Overview.class);
+		installMenu(new OverviewTableMenu(), new ColumnManager<>(program, NAME, tableFormat, tableModel, jTable, eventList), Overview.class);
 
 		List<EnumTableColumn<Overview>> enumColumns = new ArrayList<>();
 		enumColumns.addAll(Arrays.asList(OverviewTableFormat.values()));

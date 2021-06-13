@@ -220,7 +220,7 @@ public class LoadoutsTab extends JMainTabSecondary {
 		//Scroll
 		JScrollPane jTableScroll = new JScrollPane(jTable);
 		//Menu
-		installMenu(new LoadoutTableMenu(), new ColumnManager<>(program, NAME, tableFormat, tableModel, jTable), Loadout.class);
+		installMenu(new LoadoutTableMenu(), new ColumnManager<>(program, NAME, tableFormat, tableModel, jTable, eventList), Loadout.class);
 
 		List<EnumTableColumn<Loadout>> enumColumns = new ArrayList<>();
 		enumColumns.addAll(Arrays.asList(LoadoutExtendedTableFormat.values()));

@@ -20,7 +20,10 @@
  */
 package net.nikr.eve.jeveasset.gui.shared.table;
 
+import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.GlazedLists;
+import ca.odell.glazedlists.event.ListEvent;
+import ca.odell.glazedlists.event.ListEventListener;
 import ca.odell.glazedlists.swing.DefaultEventTableModel;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -36,8 +39,6 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.TableColumnModelEvent;
 import javax.swing.event.TableColumnModelListener;
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
 import net.nikr.eve.jeveasset.data.sde.RouteFinder;
@@ -63,11 +64,15 @@ public class ColumnManager<T extends Enum<T> & EnumTableColumn<Q>, Q> {
 	private final Map<Formula, FormulaColumn<Q>> formulaColumns = new HashMap<>();
 	private final Map<Jump, JumpColumn<Q>> jumpColumns = new HashMap<>();
 
-	public ColumnManager(Program program, String toolName, EnumTableFormatAdaptor<T, Q> tableFormat, DefaultEventTableModel<Q> tableModel, JAutoColumnTable jTable) {
-		this(program, toolName, tableFormat, tableModel, jTable, null);
-		
+	public ColumnManager(Program program, String toolName, EnumTableFormatAdaptor<T, Q> tableFormat, DefaultEventTableModel<Q> tableModel, JAutoColumnTable jTable, EventList<Q> eventList) {
+		this(program, toolName, tableFormat, tableModel, jTable, eventList, null);
 	}
+
 	public ColumnManager(Program program, String toolName, EnumTableFormatAdaptor<T, Q> tableFormat, DefaultEventTableModel<Q> tableModel, JAutoColumnTable jTable, FilterControl<Q> filterControl) {
+		this(program, toolName, tableFormat, tableModel, jTable, filterControl.getEventList(), filterControl);
+	}
+
+	private ColumnManager(Program program, String toolName, EnumTableFormatAdaptor<T, Q> tableFormat, DefaultEventTableModel<Q> tableModel, JAutoColumnTable jTable, EventList<Q> eventList, FilterControl<Q> filterControl) {
 		this.program = program;
 		this.toolName = toolName;
 		this.tableFormat = tableFormat;
@@ -79,25 +84,38 @@ public class ColumnManager<T extends Enum<T> & EnumTableColumn<Q>, Q> {
 			loaded.add(toolName);
 			load();
 		}
-		//Reset cached Formula values on table update
-		tableModel.addTableModelListener(new TableModelListener() {
-			@Override
-			public void tableChanged(TableModelEvent e) {
-				if (e.getType() == TableModelEvent.UPDATE) {
-					if (e.getColumn() == TableModelEvent.ALL_COLUMNS) {
-						for (Formula formula : formulaColumns.keySet()) {
-							formula.getValues().clear();
-						}
-					} else {
-						
-						List<Q> elements = new ArrayList<>();
-						for (int i = e.getFirstRow(); i <= e.getLastRow() && i < tableModel.getRowCount(); i++) {
-							elements.add(tableModel.getElementAt(i));
-						}
-						for (Formula formula : formulaColumns.keySet()) {
-							formula.getValues().keySet().removeAll(elements);
+		//Reset cached Formula values on list changes
+		eventList.addListEventListener(new ListEventListener<Q>() {
+			@Override @SuppressWarnings("deprecation")
+			public void listChanged(ListEvent<Q> listChanges) {
+				try {
+					eventList.getReadWriteLock().readLock().lock();
+					List<Q> reset = new ArrayList<>();
+					//For each list event
+					while(listChanges.next()) {
+						switch (listChanges.getType()) {
+							case ListEvent.DELETE:
+								Q q = listChanges.getOldValue();
+								if (q != null) {
+									reset.add(q);
+								}
+								break;
+							case ListEvent.UPDATE:
+								int index = listChanges.getIndex();
+								if (index >= 0 && index < eventList.size()) {
+									reset.add(eventList.get(index));
+								}
+								break;
 						}
 					}
+					//Remove changed values
+					if (!reset.isEmpty()) {
+						for (Formula formula : formulaColumns.keySet()) {
+							formula.getValues().keySet().removeAll(reset);
+						}
+					}
+				} finally {
+					eventList.getReadWriteLock().readLock().unlock();
 				}
 			}
 		});

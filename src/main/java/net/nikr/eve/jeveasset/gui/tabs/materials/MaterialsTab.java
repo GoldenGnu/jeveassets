@@ -162,7 +162,7 @@ public class MaterialsTab extends JMainTabSecondary {
 		//Scroll
 		jTableScroll = new JScrollPane(jTable);
 		//Menu
-		installMenu(new MaterialTableMenu(), new ColumnManager<>(program, NAME, tableFormat, tableModel, jTable), Material.class);
+		installMenu(new MaterialTableMenu(), new ColumnManager<>(program, NAME, tableFormat, tableModel, jTable, eventList), Material.class);
 
 		List<EnumTableColumn<Material>> enumColumns = new ArrayList<>();
 		enumColumns.addAll(Arrays.asList(MaterialExtenedTableFormat.values()));
