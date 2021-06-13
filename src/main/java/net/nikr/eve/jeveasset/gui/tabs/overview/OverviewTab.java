@@ -27,6 +27,7 @@ import ca.odell.glazedlists.SortedList;
 import ca.odell.glazedlists.swing.DefaultEventSelectionModel;
 import ca.odell.glazedlists.swing.DefaultEventTableModel;
 import ca.odell.glazedlists.swing.TableComparatorChooser;
+import com.sun.scenario.effect.FilterContext;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -63,6 +64,7 @@ import net.nikr.eve.jeveasset.gui.shared.components.ListComboBoxModel;
 import net.nikr.eve.jeveasset.gui.shared.filter.ExportDialog;
 import net.nikr.eve.jeveasset.gui.shared.filter.ExportFilterControl;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
+import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo.InfoItem;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuData;
@@ -677,13 +679,13 @@ public class OverviewTab extends JMainTabSecondary {
 	private class OverviewFilterControl extends ExportFilterControl<Overview> {
 
 		@Override
-		protected EnumTableColumn<?> valueOf(final String column) {
+		protected EnumTableColumn<Overview> toColumn(final String column) {
 			try {
 				return OverviewTableFormat.valueOf(column);
 			} catch (IllegalArgumentException exception) {
 
 			}
-			throw new RuntimeException("Fail to parse filter column: " + column);
+			return FilterControl.toColumn(column, NAME);
 		}
 
 		@Override

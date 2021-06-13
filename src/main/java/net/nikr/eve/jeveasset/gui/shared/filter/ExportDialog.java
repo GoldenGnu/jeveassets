@@ -573,9 +573,11 @@ public class ExportDialog<E> extends JDialogCentered {
 			List<Integer> selections = new ArrayList<>();
 			for (String column : list) {
 				try {
-					EnumTableColumn<?> enumColumn = exportFilterControl.valueOf(column);
-					int index = columnIndex.indexOf(enumColumn);
-					selections.add(index);
+					EnumTableColumn<E> enumColumn = exportFilterControl.toColumn(column);
+					if (enumColumn != null) {
+						int index = columnIndex.indexOf(enumColumn);
+						selections.add(index);
+					}
 				} catch (IllegalArgumentException ex) {
 					//ignore missing columns...
 				}	

@@ -231,7 +231,7 @@ public class IndustrySlotsTab extends JMainTabSecondary {
 		}
 
 		@Override
-		protected EnumTableColumn<?> valueOf(final String column) {
+		protected EnumTableColumn<IndustrySlot> valueOf(final String column) {
 			return IndustrySlotTableFormat.valueOf(column);
 		}
 
