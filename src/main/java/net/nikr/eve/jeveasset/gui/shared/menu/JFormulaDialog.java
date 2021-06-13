@@ -267,11 +267,11 @@ public class JFormulaDialog<T extends Enum<T> & EnumTableColumn<Q>, Q> extends J
 		validate();
 	}
 
-	public static <T extends Enum<T> & EnumTableColumn<Q>, Q> String getHardName(T t) {
+	public static String getHardName(EnumTableColumn<?> t) {
 		return  t.name().replace("_", "");
 	}
 
-	private String getSoftName(T t) {
+	private static String getSoftName(EnumTableColumn<?> t) {
 		return  "[" + t.getColumnName() + "]";
 	}
 
@@ -295,10 +295,14 @@ public class JFormulaDialog<T extends Enum<T> & EnumTableColumn<Q>, Q> extends J
 	private String fromExpressionString(String text) {
 		for (T t : columnManager.getEnumConstants()) {
 			if (Number.class.isAssignableFrom(t.getType()) || NumberValue.class.isAssignableFrom(t.getType())) {
-				text = text.replaceAll("\\b" + getHardName(t) + "\\b", getSoftName(t));
+				text = replaceAll(t, text);
 			}
 		}
 		return text;
+	}
+
+	public static String replaceAll(EnumTableColumn<?> enumColumn, String text) {
+		return text.replaceAll("\\b" + getHardName(enumColumn) + "\\b", getSoftName(enumColumn).replace("$", "\\$")); //$ is reserved for 
 	}
 
 	private Expression getExpression() {

@@ -40,6 +40,7 @@ import net.nikr.eve.jeveasset.data.sde.MyLocation;
 import net.nikr.eve.jeveasset.data.sde.ReprocessedMaterial;
 import net.nikr.eve.jeveasset.data.settings.tag.Tags;
 import net.nikr.eve.jeveasset.gui.dialogs.account.AccountTableFormat;
+import net.nikr.eve.jeveasset.gui.shared.menu.JFormulaDialog;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.tabs.assets.AssetTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.contracts.ContractsExtendedTableFormat;
@@ -194,14 +195,14 @@ public class TableFormatTest extends TestUtil {
 		}
 	}
 
-	private void test(EnumTableColumn<?> tableFormat, Class<?> expecteds, Object actual) {
-		assertNotNull(tableFormat.getClass().getSuperclass().getSimpleName() + "->" + tableFormat.name() + " was null", actual);
+	private void test(EnumTableColumn<?> enumColumn, Class<?> expecteds, Object actual) {
+		assertNotNull(enumColumn.getClass().getSuperclass().getSimpleName() + "->" + enumColumn.name() + " was null", actual);
 		if ((Number.class.isAssignableFrom(actual.getClass()) && Number.class.isAssignableFrom(expecteds))) {
 			//assertTrue(tableFormat.getClass().getSuperclass().getSimpleName() + "->" + tableFormat.name() + " expected: " + expecteds.getSimpleName() + " was: " + actual.getClass().getSimpleName(), expecteds.isAssignableFrom(actual.getClass()));
 		} else if (String.class.isAssignableFrom(expecteds)) {
 			//Handled by toString()
 		} else {
-			assertTrue(tableFormat.getClass().getSuperclass().getSimpleName() + "->" + tableFormat.name() + " expected: " + expecteds.getSimpleName() + " was: " + actual.getClass().getSimpleName(), expecteds.isAssignableFrom(actual.getClass()));
+			assertTrue(enumColumn.getClass().getSuperclass().getSimpleName() + "->" + enumColumn.name() + " expected: " + expecteds.getSimpleName() + " was: " + actual.getClass().getSimpleName(), expecteds.isAssignableFrom(actual.getClass()));
 			try {
 				assertTrue(actual.getClass() + " does not implement hashCode", actual.getClass().getMethod("hashCode").getDeclaringClass() == actual.getClass());
 				assertTrue(actual.getClass() + " does not implement equals", actual.getClass().getMethod("equals").getDeclaringClass() == actual.getClass());
@@ -210,5 +211,7 @@ public class TableFormatTest extends TestUtil {
 				//fail(ex.getMessage());
 			}
 		}
+		String text = JFormulaDialog.getHardName(enumColumn) + " * 100 / 90";
+		JFormulaDialog.replaceAll(enumColumn, text);
 	}
 }
