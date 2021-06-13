@@ -9,7 +9,7 @@ function name() {
 	return "jEveAssets";
 }
 function buglink() {
-	return 'http://localhost';
+	return 'https://localhost';
 }
 function password() {
 	return "pass";

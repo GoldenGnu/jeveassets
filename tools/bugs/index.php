@@ -236,7 +236,7 @@ $statement = $dbh->prepare($sql);
 $statement->execute();
 $rows = $statement->fetchAll(PDO::FETCH_ASSOC);
 foreach ($rows as &$row) {
-	echo '<div style="width: 400px; float: left;">'.PHP_EOL;;
+	echo '<div style="width: 400px; float: left;">'.PHP_EOL;
 	switch ($row['status']) {
 		case -2:
 			echo '<span class="status" style="background: Gainsboro;">&nbsp;Won\'t Fix&nbsp;</span>';
@@ -276,7 +276,7 @@ foreach ($rows as &$row) {
 	}
 	echo format($row['count']);
 	echo "</span>";
-	echo ' <b>Id:</b> <a href="#bugid'.format($row['id']).'" id="bugid'.format($row['id']).'">'.format($row['id']).'</a>';
+	echo ' <b>BugId:</b> <a href="#bugid'.format($row['id']).'" id="bugid'.format($row['id']).'">'.format($row['id']).'</a>';
 	echo "</div>".PHP_EOL;s;
 	if ($admin) {
 		echo '<div>';
