@@ -1,5 +1,5 @@
 <?php
-require 'conn.php';
+include 'conn.php';
 
 $os_in = filter_input(INPUT_POST, 'os');
 $java_in = filter_input(INPUT_POST, 'java');
