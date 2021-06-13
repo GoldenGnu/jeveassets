@@ -241,7 +241,7 @@ public class ContractsTab extends JMainTabPrimary {
 
 		@Override
 		protected Object getColumnValue(MyContractItem contract, String column) {
-			EnumTableColumn<?> tableColumn = valueOf(column);
+			EnumTableColumn<MyContractItem> tableColumn = valueOf(column);
 			if (tableColumn instanceof ContractsExtendedTableFormat) {
 				ContractsExtendedTableFormat format = (ContractsExtendedTableFormat) tableColumn;
 				return format.getColumnValue(contract);
@@ -251,7 +251,7 @@ public class ContractsTab extends JMainTabPrimary {
 		}
 
 		@Override
-		protected EnumTableColumn<?> valueOf(String column) {
+		protected EnumTableColumn<MyContractItem> valueOf(String column) {
 			try {
 				return ContractsTableFormat.valueOf(column);
 			} catch (IllegalArgumentException exception) {

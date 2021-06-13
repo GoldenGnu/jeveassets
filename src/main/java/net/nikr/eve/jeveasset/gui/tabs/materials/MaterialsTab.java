@@ -52,6 +52,7 @@ import net.nikr.eve.jeveasset.gui.shared.components.JMainTabSecondary;
 import net.nikr.eve.jeveasset.gui.shared.components.ListComboBoxModel;
 import net.nikr.eve.jeveasset.gui.shared.filter.ExportDialog;
 import net.nikr.eve.jeveasset.gui.shared.filter.ExportFilterControl;
+import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuData;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.TableMenu;
@@ -387,7 +388,7 @@ public class MaterialsTab extends JMainTabSecondary {
 	private class MaterialsFilterControl extends ExportFilterControl<Material> {
 
 		@Override
-		protected EnumTableColumn<?> valueOf(final String column) {
+		protected EnumTableColumn<Material> toColumn(final String column) {
 			try {
 				return MaterialTableFormat.valueOf(column);
 			} catch (IllegalArgumentException exception) {
@@ -398,7 +399,7 @@ public class MaterialsTab extends JMainTabSecondary {
 			} catch (IllegalArgumentException exception) {
 
 			}
-			throw new RuntimeException("Fail to parse filter column: " + column);
+			return FilterControl.toColumn(column, NAME);
 		}
 
 		@Override

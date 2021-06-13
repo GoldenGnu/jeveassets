@@ -172,7 +172,7 @@ public class JournalTab extends JMainTabPrimary {
 		}
 
 		@Override
-		protected EnumTableColumn<?> valueOf(final String column) {
+		protected EnumTableColumn<MyJournal> valueOf(final String column) {
 			return JournalTableFormat.valueOf(column);
 		}
 
