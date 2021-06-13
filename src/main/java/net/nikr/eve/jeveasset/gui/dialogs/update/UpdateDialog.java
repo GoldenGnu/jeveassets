@@ -67,7 +67,6 @@ import net.nikr.eve.jeveasset.io.esi.EsiOwnerGetter;
 import net.nikr.eve.jeveasset.io.esi.EsiPlanetaryInteractionGetter;
 import net.nikr.eve.jeveasset.io.esi.EsiShipGetter;
 import net.nikr.eve.jeveasset.io.esi.EsiTransactionsGetter;
-import net.nikr.eve.jeveasset.io.online.CitadelGetter;
 import net.nikr.eve.jeveasset.io.online.ContractPriceGetter;
 import net.nikr.eve.jeveasset.data.settings.ContractPriceManager;
 import net.nikr.eve.jeveasset.gui.shared.Updatable;
@@ -658,7 +657,6 @@ public class UpdateDialog extends JDialogCentered {
 						|| jBookmarks.isSelected()
 						|| jSkills.isSelected()
 						) {
-					updateTasks.add(new StructureTask());
 					updateTasks.add(new Step1Task(program.getProfileManager()));
 					updateTasks.add(new Step2Task(program.getProfileManager(),
 							jAssets.isSelected(),
@@ -904,18 +902,6 @@ public class UpdateDialog extends JDialogCentered {
 		public void update() {
 			setIcon(null);
 			ThreadWoker.start(this, updates, false);
-		}
-	}
-
-	public static class StructureTask extends UpdateTask {
-
-		public StructureTask() {
-			super(DialoguesUpdate.get().structures() + " (zKillboard/HammerTime)");
-		}
-
-		@Override
-		public void update() {
-			CitadelGetter.update(this);
 		}
 	}
 
