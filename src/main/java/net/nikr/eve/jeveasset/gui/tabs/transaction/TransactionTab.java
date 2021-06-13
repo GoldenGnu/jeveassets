@@ -53,7 +53,6 @@ import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuData;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.TableMenu;
-import net.nikr.eve.jeveasset.gui.shared.table.ColumnManager;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
@@ -127,9 +126,8 @@ public class TransactionTab extends JMainTabPrimary {
 		filter.add(new Filter(LogicType.AND, TransactionTableFormat.TYPE, CompareType.EQUALS, TabsTransaction.get().sell()));
 		defaultFilters.put(TabsTransaction.get().sell(), filter);
 		filterControl = new TransactionsFilterControl(sortedList, defaultFilters);
-		installFilterControl(filterControl);
 		//Menu
-		installMenu(new TransactionTableMenu(), new ColumnManager<>(program, NAME, tableFormat, tableModel, jTable, filterControl), MyTransaction.class);
+		installTableTool(new TransactionTableMenu(), tableFormat, tableModel, jTable, filterControl, MyTransaction.class);
 
 		//Sell
 		JLabel jSellOrders = StatusPanel.createLabel(TabsTransaction.get().sellTitle(), Images.ORDERS_SELL.getIcon());

@@ -69,7 +69,6 @@ import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo.InfoItem;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuData;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.TableMenu;
-import net.nikr.eve.jeveasset.gui.shared.table.ColumnManager;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.EventListManager;
@@ -238,7 +237,7 @@ public class OverviewTab extends JMainTabSecondary {
 		//Scroll
 		JScrollPane jTableScroll = new JScrollPane(jTable);
 		//Menu
-		installMenu(new OverviewTableMenu(), new ColumnManager<>(program, NAME, tableFormat, tableModel, jTable, eventList), Overview.class);
+		installTableTool(new OverviewTableMenu(), tableFormat, tableModel, jTable, eventList, Overview.class);
 
 		List<EnumTableColumn<Overview>> enumColumns = new ArrayList<>();
 		enumColumns.addAll(Arrays.asList(OverviewTableFormat.values()));

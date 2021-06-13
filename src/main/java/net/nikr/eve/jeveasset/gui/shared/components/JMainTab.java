@@ -21,6 +21,7 @@
 
 package net.nikr.eve.jeveasset.gui.shared.components;
 
+import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.gui.TableFormat;
 import ca.odell.glazedlists.swing.DefaultEventSelectionModel;
 import ca.odell.glazedlists.swing.DefaultEventTableModel;
@@ -87,19 +88,17 @@ public abstract class JMainTab {
 		layout.setAutoCreateContainerGaps(true);
 	}
 
-	public final <T extends Enum<T> & EnumTableColumn<Q>, Q> void installMenu(final TableMenu<Q> tableMenu, ColumnManager<T, Q> columnManager, final Class<Q> clazz) {
-		this.clazz = clazz;
-		MenuManager.install(program, tableMenu, jTable, columnManager, clazz);
+	public final <T extends Enum<T> & EnumTableColumn<Q>, Q> void installTableTool(final TableMenu<Q> tableMenu, EnumTableFormatAdaptor<T, Q> tableFormat, DefaultEventTableModel<Q> tableModel, JAutoColumnTable jTable, EventList<Q> eventList, final Class<Q> clazz) {
+		installTableTool(tableMenu, tableFormat, tableModel, jTable, eventList, null, clazz);
 	}
 
-	/**
-	 * Method to install a filter controller on a tool. The filter is installed for the tool and any current
-	 * filters found in settings are set. Listeners are added to enable update of settings on filter changes.
-	 *
-	 * @param filterControl The filter controller to be installed.
-	 * @param <T> The type of the parameter.
-	 */
-	protected final <T> void installFilterControl(final FilterControl<T> filterControl) {
+	public final <T extends Enum<T> & EnumTableColumn<Q>, Q> void installTableTool(final TableMenu<Q> tableMenu, EnumTableFormatAdaptor<T, Q> tableFormat, DefaultEventTableModel<Q> tableModel, JAutoColumnTable jTable, FilterControl<Q> filterControl, final Class<Q> clazz) {
+		installTableTool(tableMenu, tableFormat, tableModel, jTable, filterControl.getEventList(), filterControl, clazz);
+	}
+
+	private <T extends Enum<T> & EnumTableColumn<Q>, Q> void installTableTool(final TableMenu<Q> tableMenu, EnumTableFormatAdaptor<T, Q> tableFormat, DefaultEventTableModel<Q> tableModel, JAutoColumnTable jTable, EventList<Q> eventList, FilterControl<Q> filterControl, final Class<Q> clazz) {
+		this.clazz = clazz;
+		MenuManager.install(program, tableMenu, jTable, new ColumnManager<>(program, toolName, tableFormat, tableModel, jTable, eventList, filterControl), clazz);
 		if(filterControl != null && toolName != null && !toolName.isEmpty()) {
 			filterControl.clearCurrentFilters();
 			filterControl.addFilters(Settings.get().getCurrentTableFilters(toolName));

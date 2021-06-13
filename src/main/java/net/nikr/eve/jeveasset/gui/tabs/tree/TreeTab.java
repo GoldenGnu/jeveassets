@@ -82,7 +82,6 @@ import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuData;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.TableMenu;
-import net.nikr.eve.jeveasset.gui.shared.table.ColumnManager;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.EventListManager;
@@ -232,9 +231,8 @@ public class TreeTab extends JMainTabSecondary implements TagUpdate {
 		JScrollPane jTableScroll = new JScrollPane(jTable);
 		//Table Filter
 		filterControl = new TreeFilterControl();
-		installFilterControl(filterControl);
 		//Menu
-		installMenu(new TreeTableMenu(), new ColumnManager<>(program, NAME, tableFormat, tableModel, jTable, filterControl), TreeAsset.class);
+		installTableTool(new TreeTableMenu(), tableFormat, tableModel, jTable, filterControl, TreeAsset.class);
 
 		jVolume = StatusPanel.createLabel(TabsAssets.get().totalVolume(), Images.ASSETS_VOLUME.getIcon());
 		this.addStatusbarLabel(jVolume);

@@ -48,7 +48,6 @@ import net.nikr.eve.jeveasset.gui.shared.components.JMainTabSecondary;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuData;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager;
-import net.nikr.eve.jeveasset.gui.shared.table.ColumnManager;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.EventListManager;
@@ -124,7 +123,8 @@ public class LogTab extends JMainTabSecondary {
 		JScrollPane jTableScroll = new JScrollPane(jTable);
 		//Table Filter
 		filterControl = new LogFilterControl(sortedList);
-		installFilterControl(filterControl);
+		//Menu
+		installTableTool(new LogTableMenu(), tableFormat, tableModel, jTable, filterControl, AssetLogSource.class);
 
 		JFixedToolBar jToolBar = new JFixedToolBar();
 
@@ -137,9 +137,6 @@ public class LogTab extends JMainTabSecondary {
 		jExpand.setActionCommand(LogAction.EXPAND.name());
 		jExpand.addActionListener(listener);
 		jToolBar.addButton(jExpand);
-
-		//Menu
-		installMenu(new LogTableMenu(), new ColumnManager<>(program, NAME, tableFormat, tableModel, jTable, filterControl), AssetLogSource.class);
 
 		layout.setHorizontalGroup(
 			layout.createParallelGroup()

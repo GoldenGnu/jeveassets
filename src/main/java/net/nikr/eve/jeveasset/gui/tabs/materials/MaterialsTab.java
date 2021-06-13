@@ -56,7 +56,6 @@ import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuData;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.TableMenu;
-import net.nikr.eve.jeveasset.gui.shared.table.ColumnManager;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.EventListManager;
@@ -163,7 +162,7 @@ public class MaterialsTab extends JMainTabSecondary {
 		//Scroll
 		jTableScroll = new JScrollPane(jTable);
 		//Menu
-		installMenu(new MaterialTableMenu(), new ColumnManager<>(program, NAME, tableFormat, tableModel, jTable, eventList), Material.class);
+		installTableTool(new MaterialTableMenu(), tableFormat, tableModel, jTable, eventList, Material.class);
 
 		List<EnumTableColumn<Material>> enumColumns = new ArrayList<>();
 		enumColumns.addAll(Arrays.asList(MaterialExtenedTableFormat.values()));
