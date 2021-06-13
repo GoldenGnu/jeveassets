@@ -64,15 +64,7 @@ public class ColumnManager<T extends Enum<T> & EnumTableColumn<Q>, Q> {
 	private final Map<Formula, FormulaColumn<Q>> formulaColumns = new HashMap<>();
 	private final Map<Jump, JumpColumn<Q>> jumpColumns = new HashMap<>();
 
-	public ColumnManager(Program program, String toolName, EnumTableFormatAdaptor<T, Q> tableFormat, DefaultEventTableModel<Q> tableModel, JAutoColumnTable jTable, EventList<Q> eventList) {
-		this(program, toolName, tableFormat, tableModel, jTable, eventList, null);
-	}
-
-	public ColumnManager(Program program, String toolName, EnumTableFormatAdaptor<T, Q> tableFormat, DefaultEventTableModel<Q> tableModel, JAutoColumnTable jTable, FilterControl<Q> filterControl) {
-		this(program, toolName, tableFormat, tableModel, jTable, filterControl.getEventList(), filterControl);
-	}
-
-	private ColumnManager(Program program, String toolName, EnumTableFormatAdaptor<T, Q> tableFormat, DefaultEventTableModel<Q> tableModel, JAutoColumnTable jTable, EventList<Q> eventList, FilterControl<Q> filterControl) {
+	public ColumnManager(Program program, String toolName, EnumTableFormatAdaptor<T, Q> tableFormat, DefaultEventTableModel<Q> tableModel, JAutoColumnTable jTable, EventList<Q> eventList, FilterControl<Q> filterControl) {
 		this.program = program;
 		this.toolName = toolName;
 		this.tableFormat = tableFormat;

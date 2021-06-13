@@ -44,7 +44,6 @@ import net.nikr.eve.jeveasset.gui.shared.components.JMainTabPrimary;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuData;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.TableMenu;
-import net.nikr.eve.jeveasset.gui.shared.table.ColumnManager;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.EventListManager;
@@ -100,9 +99,8 @@ public class ItemsTab extends JMainTabPrimary {
 		JScrollPane jTableScroll = new JScrollPane(jTable);
 		//Table Filter
 		filterControl = new ItemsFilterControl(sortedList);
-		installFilterControl(filterControl);
 		//Menu
-		installMenu(new ItemTableMenu(), new ColumnManager<>(program, NAME, tableFormat, tableModel, jTable, filterControl), Item.class);
+		installTableTool(new ItemTableMenu(), tableFormat, tableModel, jTable, filterControl, Item.class);
 
 		layout.setHorizontalGroup(
 			layout.createParallelGroup()

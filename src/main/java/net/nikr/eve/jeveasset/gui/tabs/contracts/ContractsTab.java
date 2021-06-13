@@ -51,7 +51,6 @@ import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuUI.ContractMenuData;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuData;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.TableMenu;
-import net.nikr.eve.jeveasset.gui.shared.table.ColumnManager;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
@@ -140,9 +139,8 @@ public class ContractsTab extends JMainTabPrimary {
 		JScrollPane jTableScroll = new JScrollPane(jTable);
 		//Table Filter
 		filterControl = new ContractsFilterControl(sortedListSeparator);
-		installFilterControl(filterControl);
 		//Menu
-		installMenu(new ContractsTableMenu(), new ColumnManager<>(program, NAME, tableFormat, tableModel, jTable, filterControl), MyContractItem.class);
+		installTableTool(new ContractsTableMenu(), tableFormat, tableModel, jTable, filterControl, MyContractItem.class);
 
 		layout.setHorizontalGroup(
 				layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
