@@ -119,29 +119,31 @@ public class ColumnManager<T extends Enum<T> & EnumTableColumn<Q>, Q> {
 				}
 			}
 		});
-		jTable.getColumnModel().addColumnModelListener( new TableColumnModelListener() {
-			@Override
-			public void columnAdded(TableColumnModelEvent e) {}
+		if (filterControl != null) {
+			jTable.getColumnModel().addColumnModelListener( new TableColumnModelListener() {
+				@Override
+				public void columnAdded(TableColumnModelEvent e) {}
 
-			@Override
-			public void columnRemoved(TableColumnModelEvent e) {}
+				@Override
+				public void columnRemoved(TableColumnModelEvent e) {}
 
-			@Override
-			public void columnMoved(TableColumnModelEvent e) {
-				SwingUtilities.invokeLater(new Runnable() {
-					@Override
-					public void run() {
-						filterControl.updateColumns(false);
-					}
-				});
-			}
+				@Override
+				public void columnMoved(TableColumnModelEvent e) {
+					SwingUtilities.invokeLater(new Runnable() {
+						@Override
+						public void run() {
+							filterControl.updateColumns(false);
+						}
+					});
+				}
 
-			@Override
-			public void columnMarginChanged(ChangeEvent e) { }
+				@Override
+				public void columnMarginChanged(ChangeEvent e) { }
 
-			@Override
-			public void columnSelectionChanged(ListSelectionEvent e) { }
-		});
+				@Override
+				public void columnSelectionChanged(ListSelectionEvent e) { }
+			});
+		}
 		COLUMN_MANAGERS.put(toolName, this);
 	}
 
