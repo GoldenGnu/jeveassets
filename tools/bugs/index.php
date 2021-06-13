@@ -1,5 +1,5 @@
 <?php
-require 'conn.php';
+include 'conn.php';
 
 //Get versions
 $dbh = con();
@@ -276,7 +276,7 @@ foreach ($rows as &$row) {
 	}
 	echo format($row['count']);
 	echo "</span>";
-	echo ' <b>Id:</b> <a href="#bugid'.format($row['id']).'" id="bugid'.format($row['id']).'">'.format($row['id']).'</a>';
+	echo ' <b>BugId:</b> <a href="#bugid'.format($row['id']).'" id="bugid'.format($row['id']).'">'.format($row['id']).'</a>';
 	echo "</div>".PHP_EOL;s;
 	if ($admin) {
 		echo '<div>';
