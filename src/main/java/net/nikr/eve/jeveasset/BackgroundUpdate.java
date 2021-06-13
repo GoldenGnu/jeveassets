@@ -32,7 +32,6 @@ import net.nikr.eve.jeveasset.data.sde.StaticData;
 import net.nikr.eve.jeveasset.data.settings.AssetAddedData;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.data.settings.TrackerData;
-import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateDialog.StructureTask;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateDialog.PriceDataTask;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateDialog.Step1Task;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateDialog.Step2Task;
@@ -61,9 +60,6 @@ public class BackgroundUpdate {
 
 		ProfileManager profileManager = new ProfileManager();
 		profileManager.searchProfile();
-
-		StructureTask structureTask = new StructureTask();
-		structureTask.update();
 
 		SplashUpdater.setText("Updating DATA");
 		SplashUpdater.setProgress(0);

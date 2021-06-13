@@ -21,7 +21,6 @@
 
 package net.nikr.eve.jeveasset.data.settings;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
@@ -30,9 +29,6 @@ import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 
 public class CitadelSettings {
 	private final Map<Long, Citadel> cache = new HashMap<>();
-	private Date nextUpdate = new Date(); //Default
-	private String zKillETag = null;
-	private final long priceCacheTimer = 2 * 60 * 60 * 1000L; // 2 hours (hours*min*sec*ms)
 
 	public Citadel get(long location) {
 		return cache.get(location);
@@ -59,25 +55,4 @@ public class CitadelSettings {
 		cache.remove(locationID);
 		MyLocation.reset(locationID);
 	}
-
-	public Date getNextUpdate() {
-		return nextUpdate;
-	}
-
-	public void setNextUpdate(Date nextUpdate) {
-		this.nextUpdate = nextUpdate;
-	}
-
-	public String getZKillETag() {
-		return zKillETag;
-	}
-
-	public void setZKillETag(String zKillETag) {
-		this.zKillETag = zKillETag;
-	}
-
-	public void setNextUpdate() {
-		this.nextUpdate = new Date(new Date().getTime() + priceCacheTimer);
-	}
-
 }

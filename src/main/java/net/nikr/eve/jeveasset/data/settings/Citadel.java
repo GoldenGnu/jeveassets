@@ -30,9 +30,9 @@ public class Citadel {
 		ESI_LOCATIONS(3), //Good source
 		ESI_PLANET(3), //Planet source
 		FUZZWORK_PLANET(3), //Planet source
-		ZKILL(2), //Average source
 		USER(2), //User set this data (unless we have top-notch info, don't overwrite)
-		HAMMERTIME(1), //Better than nothing source
+		ZKILL(1), //Outdated source
+		HAMMERTIME(1), //Outdated source
 		OLD(1), //Unknown source - keep if?
 		ESI_BOOKMARKS(0), //Unknown location name, but, known system and region
 		EVEKIT_BOOKMARKS(0), //Unknown location name, but, known system and region

@@ -21,7 +21,6 @@
 
 package net.nikr.eve.jeveasset.io.local;
 
-import java.util.Date;
 import net.nikr.eve.jeveasset.data.settings.Citadel;
 import net.nikr.eve.jeveasset.data.settings.Citadel.CitadelSource;
 import net.nikr.eve.jeveasset.data.settings.CitadelSettings;
@@ -61,7 +60,6 @@ public final class CitadelReader extends AbstractXmlReader<CitadelSettings> {
 			throw new XmlException("Wrong root element name.");
 		}
 		parseCitadel(element, settings);
-		parseSettings(element, settings);
 	}
 
 	private void parseCitadel(final Element element, final CitadelSettings settings) throws XmlException {
@@ -90,16 +88,4 @@ public final class CitadelReader extends AbstractXmlReader<CitadelSettings> {
 			settings.put(id, new Citadel(id, name, systemId, userLocation, citadel, source));
 		}
 	}
-
-	private void parseSettings(final Element element, final CitadelSettings settings) throws XmlException {
-		NodeList filterNodes = element.getElementsByTagName("settings");
-		for (int i = 0; i < filterNodes.getLength(); i++) {
-			Element currentNode = (Element) filterNodes.item(i);
-			Date nextUpdate = getDate(currentNode, "nextupdate");
-			String zKillETag = getStringOptional(currentNode, "zkilletag");
-			settings.setNextUpdate(nextUpdate);
-			settings.setZKillETag(zKillETag);
-		}
-	}
-
 }

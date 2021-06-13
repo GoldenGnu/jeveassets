@@ -50,7 +50,6 @@ public final class CitadelWriter extends AbstractXmlWriter {
 			LOG.error("Citadel not saved " + ex.getMessage(), ex);
 		}
 		writeCitadels(xmldoc, settings);
-		writeSettings(xmldoc, settings);
 
 		//xmldoc.normalizeDocument();
 		try {
@@ -75,13 +74,4 @@ public final class CitadelWriter extends AbstractXmlWriter {
 			parentNode.appendChild(node);
 		}
 	}
-
-	private void writeSettings(final Document xmldoc, final CitadelSettings settings) {
-		Element parentNode = xmldoc.getDocumentElement();
-		Element node = xmldoc.createElementNS(null, "settings");
-		setAttribute(node, "nextupdate", settings.getNextUpdate());
-		setAttributeOptional(node, "zkilletag",settings.getZKillETag());
-		parentNode.appendChild(node);
-	}
-
 }
