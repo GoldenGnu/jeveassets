@@ -302,7 +302,6 @@ class FilterPanel<E> implements Comparable<FilterPanel<E>> {
 				dateColumns.add(object);
 			}
 		}
-		jColumn.setActionCommand("");
 		jColumn.setModel(new ListComboBoxModel<>(allColumns));
 		if (allColumns.contains(selectedItem)) {
 			jColumn.setSelectedItem(selectedItem);
@@ -511,7 +510,7 @@ class FilterPanel<E> implements Comparable<FilterPanel<E>> {
 		//We need to do this in the even that we were loading true when we entered we do not want to blindly
 		//set false after one pass.
 		//This should mean that no events triggered hear would cause additional refreshes.
-		boolean initialLoading = loading;
+		boolean oldValue = loading;
 		loading = true;
 		if (jColumn.equals(e.getSource())) {
 			updateNumeric(true);
@@ -529,7 +528,7 @@ class FilterPanel<E> implements Comparable<FilterPanel<E>> {
 			ColorSettings.config(jText, ColorEntry.GLOBAL_ENTRY_INVALID);
 		}
 		timer.stop();
-		loading = initialLoading;
+		loading = oldValue;
 		refilter();
 	}
 
