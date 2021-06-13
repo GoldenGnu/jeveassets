@@ -843,7 +843,7 @@ public class FilterMatcherTest extends TestUtil {
 	public class TestFilterControl extends FilterControl<Item> {
 
 		@Override
-		protected EnumTableColumn<?> valueOf(final String column) {
+		protected EnumTableColumn<Item> valueOf(final String column) {
 			return TestEnum.valueOf(column);
 		}
 

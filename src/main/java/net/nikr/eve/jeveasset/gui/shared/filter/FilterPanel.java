@@ -376,7 +376,10 @@ class FilterPanel<E> implements Comparable<FilterPanel<E>> {
 		jColumn.setSelectedItem(filter.getColumn());
 		jCompare.setSelectedItem(filter.getCompareType());
 		if (isColumnCompare()) {
-			jCompareColumn.setSelectedItem(filterControl.valueOf(filter.getText()));
+			EnumTableColumn<E> enumColumn = filterControl.toColumn(filter.getText());
+			if (enumColumn != null) {
+				jCompareColumn.setSelectedItem(enumColumn);
+			}
 		} else if (isDateCompare()) {
 			setDateString(Formater.columnStringToDate(filter.getText()));
 		} else {

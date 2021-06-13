@@ -30,14 +30,14 @@ import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 
 public abstract class ExportFilterControl<E> {
 
-	protected abstract EnumTableColumn<?> valueOf(String column);
+	protected abstract EnumTableColumn<E> toColumn(String column);
 	protected abstract List<EnumTableColumn<E>> getShownColumns();
 	protected abstract void saveSettings(final String msg);
 
 	public Map<String, List<Filter>> getAllFilters() {
-		return new HashMap<String, List<Filter>>();
+		return new HashMap<>();
 	}
 	public List<Filter> getCurrentFilters() {
-		return new ArrayList<Filter>();
+		return new ArrayList<>();
 	}
 }
