@@ -1356,7 +1356,7 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 
 		@Override
 		protected Object getColumnValue(final StockpileItem item, final String column) {
-			EnumTableColumn<?> tableColumn = valueOf(column);
+			EnumTableColumn<StockpileItem> tableColumn = valueOf(column);
 			if (tableColumn instanceof StockpileExtendedTableFormat) {
 				StockpileExtendedTableFormat format = (StockpileExtendedTableFormat) tableColumn;
 				return format.getColumnValue(item);
@@ -1366,7 +1366,7 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 		}
 
 		@Override
-		protected EnumTableColumn<?> valueOf(final String column) {
+		protected EnumTableColumn<StockpileItem> valueOf(String column) {
 			try {
 				return StockpileTableFormat.valueOf(column);
 			} catch (IllegalArgumentException exception) {

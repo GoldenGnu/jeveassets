@@ -377,7 +377,7 @@ public class ReprocessedTab extends JMainTabSecondary {
 
 		@Override
 		protected Object getColumnValue(final ReprocessedInterface reprocessed, final String column) {
-			EnumTableColumn<?> tableColumn = valueOf(column);
+			EnumTableColumn<ReprocessedInterface> tableColumn = valueOf(column);
 			if (tableColumn instanceof ReprocessedExtendedTableFormat) {
 				ReprocessedExtendedTableFormat format = (ReprocessedExtendedTableFormat) tableColumn;
 				return format.getColumnValue(reprocessed);
@@ -387,7 +387,7 @@ public class ReprocessedTab extends JMainTabSecondary {
 		}
 
 		@Override
-		protected EnumTableColumn<?> valueOf(final String column) {
+		protected EnumTableColumn<ReprocessedInterface> valueOf(final String column) {
 			try {
 				return ReprocessedTableFormat.valueOf(column);
 			} catch (IllegalArgumentException exception) {

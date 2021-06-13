@@ -239,7 +239,7 @@ public class LogTab extends JMainTabSecondary {
 		}
 
 		@Override
-		protected EnumTableColumn<?> valueOf(final String column) {
+		protected EnumTableColumn<AssetLogSource> valueOf(final String column) {
 			return LogTableFormat.valueOf(column);
 		}
 

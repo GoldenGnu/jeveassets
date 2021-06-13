@@ -77,10 +77,9 @@ import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter.AllColumn;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter.CompareType;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter.LogicType;
+import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
 import net.nikr.eve.jeveasset.gui.shared.menu.JFormulaDialog.Formula;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuJumps.Jump;
-import net.nikr.eve.jeveasset.gui.shared.table.ColumnManager.FormulaColumn;
-import net.nikr.eve.jeveasset.gui.shared.table.ColumnManager.JumpColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.ResizeMode;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.SimpleColumn;
@@ -1636,17 +1635,9 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		} catch (IllegalArgumentException exception) {
 
 		}
-		if (settings != null) {
-			for (Formula formula : settings.getTableFormulas(tableName)) {
-				if (formula.getColumnName().equals(column)) {
-					return new FormulaColumn<>(formula);
-				}
-			}
-			for (Jump jump : settings.getTableJumps(tableName)) {
-				if (jump.getName().equals(column)) {
-					return new JumpColumn<>(jump);
-				}
-			}
+		EnumTableColumn<?> enumTableColumn = FilterControl.toColumn(settings, column, tableName);
+		if (enumTableColumn != null) {
+			return enumTableColumn;
 		}
 		//All
 		if (column.equals("ALL") || column.equals("all")) {

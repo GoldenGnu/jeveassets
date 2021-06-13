@@ -62,6 +62,7 @@ import net.nikr.eve.jeveasset.gui.shared.components.JTextDialog;
 import net.nikr.eve.jeveasset.gui.shared.components.ListComboBoxModel;
 import net.nikr.eve.jeveasset.gui.shared.filter.ExportDialog;
 import net.nikr.eve.jeveasset.gui.shared.filter.ExportFilterControl;
+import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuData;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.TableMenu;
@@ -613,7 +614,7 @@ public class LoadoutsTab extends JMainTabSecondary {
 
 	private class LoadoutsFilterControl extends ExportFilterControl<Loadout> {
 		@Override
-		protected EnumTableColumn<?> valueOf(final String column) {
+		protected EnumTableColumn<Loadout> toColumn(final String column) {
 			try {
 				return LoadoutTableFormat.valueOf(column);
 			} catch (IllegalArgumentException exception) {
@@ -624,7 +625,7 @@ public class LoadoutsTab extends JMainTabSecondary {
 			} catch (IllegalArgumentException exception) {
 
 			}
-			throw new RuntimeException("Fail to parse filter column: " + column);
+			return FilterControl.toColumn(column, NAME);
 		}
 
 		@Override

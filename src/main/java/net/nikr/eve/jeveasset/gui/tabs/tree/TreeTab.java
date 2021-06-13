@@ -861,7 +861,7 @@ public class TreeTab extends JMainTabSecondary implements TagUpdate {
 		}
 
 		@Override
-		protected EnumTableColumn<?> valueOf(final String column) {
+		protected EnumTableColumn<TreeAsset> valueOf(final String column) {
 			return TreeTableFormat.valueOf(column);
 		}
 
