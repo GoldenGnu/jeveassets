@@ -3,7 +3,7 @@ include 'conn.php';
 
 //Get versions
 $dbh = con();
-$version_array = getArray($dbh, 'version');
+$version_array = getArray($dbh, 'version', true);
 $java_array = getArray($dbh, 'java');
 $os_array = getArray($dbh, 'os');
 
@@ -284,13 +284,41 @@ foreach ($rows as &$row) {
 		echo ' <input type="button" onclick="toggle(\''.$row['id'].'\', \'edit\')" id="buttonedit'.$row['id'].'" value="Show Edit" style="width: 110px;"><span id="edit'.$row['id'].'" style="display:none">';
 		echo '<form method="post" action="" style="display: inline;">';
 		echo ' <select name="status">';
-		echo '<option value="-2">Won\'t Fix</option>';
-		echo '<option value="-1">Re-Opened</option>';
-		echo '<option value="0">New</option>';
-		echo '<option value="1">Accepted</option>';
-		echo '<option value="2">Started</option>';
-		echo '<option value="3">Fixed</option>';
-		echo '<option value="4">Fix Released</option>';
+		if ($row['status'] == -2) {
+			echo '<option value="-2" selected>Won\'t Fix</option>';
+		} else {
+			echo '<option value="-2">Won\'t Fix</option>';
+		}
+		if ($row['status'] == -1) {
+			echo '<option value="-1" selected>Re-Opened</option>';
+		} else {
+			echo '<option value="-1">Re-Opened</option>';
+		}
+		if ($row['status'] == 0) {
+			echo '<option value="0" selected>New</option>';
+		} else {
+			echo '<option value="0">New</option>';
+		}
+		if ($row['status'] == 1) {
+			echo '<option value="1" selected>Accepted</option>';
+		} else {
+			echo '<option value="1">Accepted</option>';
+		}
+		if ($row['status'] == 2) {
+			echo '<option value="2" selected>Started</option>';
+		} else {
+			echo '<option value="2">Started</option>';
+		}
+		if ($row['status'] == 3) {
+			echo '<option value="3" selected>Fixed</option>';
+		} else {
+			echo '<option value="3">Fixed</option>';
+		}
+		if ($row['status'] == 4) {
+			echo '<option value="4" selected>Fix Released</option>';
+		} else {
+			echo '<option value="4">Fix Released</option>';
+		}
 		echo '</select>';
 		echo '<input type="hidden" name="id" value="'.$row['id'].'">';
 		echo ' <input type="password" name="edit">';
@@ -369,7 +397,7 @@ function makeSafe($find, $in, $default) {
 		return $value;
 	}
 }
-function getArray($dbh, $column) {
+function getArray($dbh, $column, $revers = false) {
 	$statement = $dbh->prepare("SELECT $column FROM ".table());
 	$statement->execute();
 	$rows = $statement->fetchAll(PDO::FETCH_ASSOC);
@@ -379,7 +407,11 @@ function getArray($dbh, $column) {
 		$temp = array_merge($temp, $array);
 		$array = array_unique($temp);
 	}
-	sort($array);
+	if ($revers) {
+		rsort($array);
+	} else {
+		sort($array);
+	}
 	array_unshift($array, "All");
 	return $array;
 }
