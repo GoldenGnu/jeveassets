@@ -69,7 +69,6 @@ import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.settings.ColorEntry;
 import net.nikr.eve.jeveasset.data.settings.ColorSettings;
 import net.nikr.eve.jeveasset.data.settings.Settings;
-import net.nikr.eve.jeveasset.data.settings.SettingsUpdateListener;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.TextManager;
@@ -189,7 +188,6 @@ class FilterPanel<E> implements Comparable<FilterPanel<E>> {
 				loading = oldValue;
 				if (!loading) {
 					groupChanged();
-					fireSettingsUpdate();
 				}
 			}
 		});
@@ -611,17 +609,6 @@ class FilterPanel<E> implements Comparable<FilterPanel<E>> {
 		}
 	}
 
-	/**
-	 * Loop though set update listeners and trigger their action.
-	 */
-	private void fireSettingsUpdate() {
-		if (!loading) {
-			for (SettingsUpdateListener listener : filterControl.getSettingsUpdateListenerList()) {
-				listener.settingChanged();
-			}
-		}
-	}
-
 	private class ListenerClass implements ActionListener, KeyListener, DocumentListener, DateChangeListener, ChangeListener {
 
 		@Override
@@ -649,7 +636,6 @@ class FilterPanel<E> implements Comparable<FilterPanel<E>> {
 		public void keyPressed(final KeyEvent e) {
 			if (e.getKeyCode() == KeyEvent.VK_ENTER) {
 				refilter();
-				fireSettingsUpdate();
 			}
 		}
 
@@ -662,33 +648,27 @@ class FilterPanel<E> implements Comparable<FilterPanel<E>> {
 				gui.remove(FilterPanel.this);
 				gui.addEmpty();
 				refilter();
-				fireSettingsUpdate();
 			} else if (FilterPanelAction.CLONE.name().equals(e.getActionCommand())) {
 				gui.clone(FilterPanel.this);
 				refilter();
-				fireSettingsUpdate();
 				jText.requestFocusInWindow();
 				jCompareColumn.requestFocusInWindow();
 				jDate.getComponentToggleCalendarButton().requestFocusInWindow();
 			} else if (FilterPanelAction.FILTER.name().equals(e.getActionCommand())) {
 				processFilterAction(e);
-				fireSettingsUpdate();
 			} else if (FilterPanelAction.FILTER_TIMER.name().equals(e.getActionCommand())) {
 				if (!Settings.get().isFilterOnEnter()) {
 					processFilterAction(e);
-					fireSettingsUpdate();
 				}
 			} else if (FilterPanelAction.GROUP_TIMER.name().equals(e.getActionCommand())) {
 				groupTimer.stop();
 				groupChanged();
-				fireSettingsUpdate();
 			}
 		}
 
 		@Override
 		public void dateChanged(DateChangeEvent e) {
 			refilter();
-			fireSettingsUpdate();
 		}
 
 		@Override
