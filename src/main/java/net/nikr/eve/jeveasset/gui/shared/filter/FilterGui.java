@@ -488,6 +488,7 @@ class FilterGui<E> {
 
 		filterControl.afterFilter();
 		updateShowing();
+		fireSettingsUpdate();
 	}
 
 	protected String getFilterName() {
@@ -514,7 +515,6 @@ class FilterGui<E> {
 			}
 			if (FilterGuiAction.CLEAR.name().equals(e.getActionCommand())) {
 				clear();
-				fireSettingsUpdate();
 				return;
 			}
 			if (FilterGuiAction.MANAGER.name().equals(e.getActionCommand())) {
