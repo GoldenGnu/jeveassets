@@ -16,6 +16,23 @@
                   #### #  # #  # #  # #### #### #### #### ####
 
 ________________________________________________________________________________
+_6.9.1__________________________________________________________________________
+
+Changed:
+-Removed zKillboard/HammerTime structure update (Both are dead)
+
+Code:
+-Simplified SettingsUpdateListener calls
+
+Bug Fixes:
+-NPE in ColumnManager (BugId: 941, 947)
+-Filter logic is not updated when switching between numeric/string/date columns
+-Fixed IllegalArgumentException in JFormulaDialog (BugId: 944)
+-Loading filter with formula/jump column crashes jEveAssets (BugId: 943, 942)
+-Restoring current filter failed for filters with formula/jump columns
+-Fixed StringIndexOutOfBoundsException in JFormulaDialog (BugID: 946)
+
+________________________________________________________________________________
 _6.9.0__________________________________________________________________________
 
 New Features:
