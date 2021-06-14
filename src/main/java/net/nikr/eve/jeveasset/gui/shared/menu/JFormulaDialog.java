@@ -319,13 +319,17 @@ public class JFormulaDialog<T extends Enum<T> & EnumTableColumn<Q>, Q> extends J
 				hardNames.add(hardName);
 			}
 		}
-		if (!hardNames.containsAll(expression.getUsedVariables())) {
-			return false; //Invalid variable
-		}
+		return safeEval(hardNames, expression);
+	}
+
+	public static boolean safeEval(Set<String> hardNames, Expression expression) {
 		try {
+			if (!hardNames.containsAll(expression.getUsedVariables())) {
+				return false; //Invalid variable
+			}
 			expression.eval();
 			return true;
-		} catch (ExpressionException | NumberFormatException | ArithmeticException | NullPointerException ex) {
+		} catch (StringIndexOutOfBoundsException | ExpressionException | NumberFormatException | ArithmeticException | NullPointerException ex) {
 			return false;
 		}
 	}
