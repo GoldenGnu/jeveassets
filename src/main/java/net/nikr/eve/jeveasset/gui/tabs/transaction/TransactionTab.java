@@ -298,7 +298,7 @@ public class TransactionTab extends JMainTabPrimary {
 
 		@Override
 		protected EnumTableColumn<MyTransaction> valueOf(final String column) {
-			return TransactionTableFormat.valueOf(column);
+			return tableFormat.valueOf(column);
 		}
 
 		@Override

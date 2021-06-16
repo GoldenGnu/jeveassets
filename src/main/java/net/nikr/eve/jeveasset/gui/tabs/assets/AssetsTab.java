@@ -330,7 +330,7 @@ public class AssetsTab extends JMainTabPrimary implements TagUpdate {
 
 		@Override
 		protected EnumTableColumn<MyAsset> valueOf(final String column) {
-			return AssetTableFormat.valueOf(column);
+			return tableFormat.valueOf(column);
 		}
 
 		@Override

@@ -52,7 +52,6 @@ import net.nikr.eve.jeveasset.gui.shared.components.JMainTabSecondary;
 import net.nikr.eve.jeveasset.gui.shared.components.ListComboBoxModel;
 import net.nikr.eve.jeveasset.gui.shared.filter.ExportDialog;
 import net.nikr.eve.jeveasset.gui.shared.filter.ExportFilterControl;
-import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuData;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.TableMenu;
@@ -387,18 +386,28 @@ public class MaterialsTab extends JMainTabSecondary {
 	private class MaterialsFilterControl extends ExportFilterControl<Material> {
 
 		@Override
-		protected EnumTableColumn<Material> toColumn(final String column) {
+		protected Object getColumnValue(final Material item, final String column) {
 			try {
-				return MaterialTableFormat.valueOf(column);
+				return MaterialExtenedTableFormat.valueOf(column).getColumnValue(item);
 			} catch (IllegalArgumentException exception) {
 
 			}
+			return tableFormat.getColumnValue(item, column);
+		}
+
+		@Override
+		protected EnumTableColumn<Material> valueOf(final String column) {
 			try {
 				return MaterialExtenedTableFormat.valueOf(column);
 			} catch (IllegalArgumentException exception) {
 
 			}
-			return FilterControl.toColumn(column, NAME);
+			return tableFormat.valueOf(column);
+		}
+
+		@Override
+		protected List<EnumTableColumn<Material>> getColumns() {
+			return new ArrayList<>(tableFormat.getOrderColumns());
 		}
 
 		@Override

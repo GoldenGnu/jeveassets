@@ -37,13 +37,8 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JTable;
-import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.data.settings.SettingsUpdateListener;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter.AllColumn;
-import net.nikr.eve.jeveasset.gui.shared.menu.JFormulaDialog.Formula;
-import net.nikr.eve.jeveasset.gui.shared.menu.JMenuJumps.Jump;
-import net.nikr.eve.jeveasset.gui.shared.table.ColumnManager.FormulaColumn;
-import net.nikr.eve.jeveasset.gui.shared.table.ColumnManager.JumpColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.NumberValue;
 
@@ -291,46 +286,6 @@ public abstract class FilterControl<E> extends ExportFilterControl<E> {
 	public void setFilterShown(boolean shown) {
 		gui.setFilterShown(shown);
 	}
-
-	@Override
-	protected final EnumTableColumn<E> toColumn(String column) {
-		try {
-			EnumTableColumn<E> enumTableColumn = valueOf(column);
-			if (enumTableColumn != null) {
-				return enumTableColumn;
-			}
-		} catch (IllegalArgumentException e) {
-			//No problem
-		}
-		return toColumn(column, name);
-	}
-
-	public static <E> EnumTableColumn<E> toColumn(String column, String toolName) {
-		return toColumn(Settings.get(), column, toolName);
-	}
-
-	public static <E> EnumTableColumn<E> toColumn(Settings setting, String column, String toolName) {
-		if (setting == null) {
-			return null;
-		}
-		for (Formula formula : setting.getTableFormulas(toolName)) {
-			if (formula.getColumnName().equals(column)) {
-				return new FormulaColumn<>(formula);
-			}
-		}
-		for (Jump jump : setting.getTableJumps(toolName)) {
-			if (jump.getName().equals(column)) {
-				return new JumpColumn<>(jump);
-			}
-		}
-		return null;
-	}
-
-	protected abstract List<EnumTableColumn<E>> getColumns();
-
-	protected abstract EnumTableColumn<E> valueOf(String column) throws IllegalArgumentException;
-
-	protected abstract Object getColumnValue(E item, String column);
 
 	/**
 	 * Overwrite to do stuff before filtering.
