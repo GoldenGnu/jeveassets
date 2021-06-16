@@ -77,9 +77,10 @@ import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter.AllColumn;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter.CompareType;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter.LogicType;
-import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
 import net.nikr.eve.jeveasset.gui.shared.menu.JFormulaDialog.Formula;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuJumps.Jump;
+import net.nikr.eve.jeveasset.gui.shared.table.ColumnManager.FormulaColumn;
+import net.nikr.eve.jeveasset.gui.shared.table.ColumnManager.JumpColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.ResizeMode;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.SimpleColumn;
@@ -1530,10 +1531,10 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		return filter;
 	}
 
-	public static EnumTableColumn<?> getColumn(final String column, final String tableName, Settings settings) {
+	public static EnumTableColumn<?> getColumn(final String column, final String toolName, Settings settings) {
 		//Stockpile
 		try {
-			if (tableName.equals(StockpileTab.NAME)) {
+			if (toolName.equals(StockpileTab.NAME)) {
 				return StockpileExtendedTableFormat.valueOf(column);
 			}
 		} catch (IllegalArgumentException exception) {
@@ -1541,7 +1542,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		}
 		//Stockpile (Extra)
 		try {
-			if (tableName.equals(StockpileTab.NAME)) {
+			if (toolName.equals(StockpileTab.NAME)) {
 				return StockpileTableFormat.valueOf(column);
 			}
 		} catch (IllegalArgumentException exception) {
@@ -1549,7 +1550,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		}
 		//Industry Jobs
 		try {
-			if (tableName.equals(IndustryJobsTab.NAME)) {
+			if (toolName.equals(IndustryJobsTab.NAME)) {
 				return IndustryJobTableFormat.valueOf(column);
 			}
 		} catch (IllegalArgumentException exception) {
@@ -1557,7 +1558,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		}
 		//Industry Slots
 		try {
-			if (tableName.equals(IndustrySlotsTab.NAME)) {
+			if (toolName.equals(IndustrySlotsTab.NAME)) {
 				return IndustrySlotTableFormat.valueOf(column);
 			}
 		} catch (IllegalArgumentException exception) {
@@ -1565,7 +1566,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		}
 		//Market Orders
 		try {
-			if (tableName.equals(MarketOrdersTab.NAME)) {
+			if (toolName.equals(MarketOrdersTab.NAME)) {
 				return MarketTableFormat.valueOf(column);
 			}
 		} catch (IllegalArgumentException exception) {
@@ -1573,7 +1574,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		}
 		//Journal
 		try {
-			if (tableName.equals(JournalTab.NAME)) {
+			if (toolName.equals(JournalTab.NAME)) {
 				return JournalTableFormat.valueOf(column);
 			}
 		} catch (IllegalArgumentException exception) {
@@ -1581,7 +1582,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		}
 		//Transaction
 		try {
-			if (tableName.equals(TransactionTab.NAME)) {
+			if (toolName.equals(TransactionTab.NAME)) {
 				return TransactionTableFormat.valueOf(column);
 			}
 		} catch (IllegalArgumentException exception) {
@@ -1589,7 +1590,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		}
 		//Assets
 		try {
-			if (tableName.equals(AssetsTab.NAME)) {
+			if (toolName.equals(AssetsTab.NAME)) {
 				return AssetTableFormat.valueOf(column);
 			}
 		} catch (IllegalArgumentException exception) {
@@ -1597,7 +1598,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		}
 		//Items
 		try {
-			if (tableName.equals(ItemsTab.NAME)) {
+			if (toolName.equals(ItemsTab.NAME)) {
 				return ItemTableFormat.valueOf(column);
 			}
 		} catch (IllegalArgumentException exception) {
@@ -1605,7 +1606,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		}
 		//Contracts
 		try {
-			if (tableName.equals(ContractsTab.NAME)) {
+			if (toolName.equals(ContractsTab.NAME)) {
 				return ContractsTableFormat.valueOf(column);
 			}
 		} catch (IllegalArgumentException exception) {
@@ -1613,7 +1614,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		}
 		//Contracts (Extra)
 		try {
-			if (tableName.equals(ContractsTab.NAME)) {
+			if (toolName.equals(ContractsTab.NAME)) {
 				return ContractsExtendedTableFormat.valueOf(column);
 			}
 		} catch (IllegalArgumentException exception) {
@@ -1621,7 +1622,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		}
 		//Values (Extra)
 		try {
-			if (tableName.equals(ValueTableTab.NAME)) {
+			if (toolName.equals(ValueTableTab.NAME)) {
 				return ValueTableFormat.valueOf(column);
 			}
 		} catch (IllegalArgumentException exception) {
@@ -1629,15 +1630,23 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		}
 		//Values (Extra)
 		try {
-			if (tableName.equals(TreeTab.NAME)) {
+			if (toolName.equals(TreeTab.NAME)) {
 				return TreeTableFormat.valueOf(column);
 			}
 		} catch (IllegalArgumentException exception) {
 
 		}
-		EnumTableColumn<?> enumTableColumn = FilterControl.toColumn(settings, column, tableName);
-		if (enumTableColumn != null) {
-			return enumTableColumn;
+		if (settings != null) {
+			for (Formula formula : settings.getTableFormulas(toolName)) {
+				if (formula.getColumnName().equals(column)) {
+					return new FormulaColumn<>(formula);
+				}
+			}
+			for (Jump jump : settings.getTableJumps(toolName)) {
+				if (jump.getName().equals(column)) {
+					return new JumpColumn<>(jump);
+				}
+			}
 		}
 		//All
 		if (column.equals("ALL") || column.equals("all")) {

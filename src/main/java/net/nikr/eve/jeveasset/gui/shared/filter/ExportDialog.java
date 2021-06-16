@@ -437,7 +437,7 @@ public class ExportDialog<E> extends JDialogCentered {
 	}
 
 	private void updateColumns() {
-		final List<EnumTableColumn<E>> enumColumns = filterControl.getColumns();
+		final List<EnumTableColumn<E>> enumColumns = exportFilterControl.getColumns();
 		columns.clear();
 		columnIndex.clear();
 		columnIndex.addAll(enumColumns);
@@ -573,7 +573,7 @@ public class ExportDialog<E> extends JDialogCentered {
 			List<Integer> selections = new ArrayList<>();
 			for (String column : list) {
 				try {
-					EnumTableColumn<E> enumColumn = exportFilterControl.toColumn(column);
+					EnumTableColumn<E> enumColumn = exportFilterControl.valueOf(column);
 					if (enumColumn != null) {
 						int index = columnIndex.indexOf(enumColumn);
 						selections.add(index);
@@ -698,12 +698,18 @@ public class ExportDialog<E> extends JDialogCentered {
 		if (columnSelection == ColumnSelection.SHOWN) {
 			jViewCurrent.setSelected(true);
 			jViews.setEnabled(false);
+			jColumnSelection.setEnabled(false);
+			jViewSelectAll.setEnabled(false);
 		} else if (columnSelection == ColumnSelection.SAVED && hasItem(jViews, viewName)) {
 			jViewSaved.setSelected(true);
 			jViews.setEnabled(true);
+			jColumnSelection.setEnabled(false);
+			jViewSelectAll.setEnabled(false);
 		} else if (columnSelection == ColumnSelection.SELECTED) {
 			jViewSelect.setSelected(true);
 			jViews.setEnabled(false);
+			jColumnSelection.setEnabled(true);
+			jViewSelectAll.setEnabled(true);
 		} else {
 			//If we got here then the column selection didn't match the data and we had to default, so reset the value
 			//in the settings.
@@ -851,7 +857,7 @@ public class ExportDialog<E> extends JDialogCentered {
 			for (E e : items) {
 				Map<String, String> row = new HashMap<>();
 				for (EnumTableColumn<E> column : header) {
-					row.put(column.name(), format(column.getColumnValue(e), Settings.get().getExportSettings(toolName).getCsvDecimalSeparator(), false));
+					row.put(column.name(), format(exportFilterControl.getColumnValue(e, column.name()), Settings.get().getExportSettings(toolName).getCsvDecimalSeparator(), false));
 				}
 				rows.add(row);
 			}
@@ -868,7 +874,7 @@ public class ExportDialog<E> extends JDialogCentered {
 			for (E e : items) {
 				Map<EnumTableColumn<?>, String> row = new HashMap<>();
 				for (EnumTableColumn<E> column : header) {
-					row.put(column, format(column.getColumnValue(e), Settings.get().getExportSettings(toolName).getCsvDecimalSeparator(), Settings.get().getExportSettings(toolName).isHtmlStyled()));
+					row.put(column, format(exportFilterControl.getColumnValue(e, column.name()), Settings.get().getExportSettings(toolName).getCsvDecimalSeparator(), Settings.get().getExportSettings(toolName).isHtmlStyled()));
 				}
 				rows.add(row);
 			}
@@ -887,7 +893,7 @@ public class ExportDialog<E> extends JDialogCentered {
 			for (E e : items) {
 				Map<EnumTableColumn<?>, Object> row = new HashMap<>();
 				for (EnumTableColumn<E> column : header) {
-					row.put(column, column.getColumnValue(e));
+					row.put(column, exportFilterControl.getColumnValue(e, column.name()));
 				}
 				rows.add(row);
 			}

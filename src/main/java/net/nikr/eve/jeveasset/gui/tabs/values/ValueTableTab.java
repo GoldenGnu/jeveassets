@@ -248,7 +248,7 @@ public class ValueTableTab extends JMainTabSecondary {
 
 		@Override
 		protected EnumTableColumn<Value> valueOf(final String column) {
-			return ValueTableFormat.valueOf(column);
+			return tableFormat.valueOf(column);
 		}
 
 		@Override
